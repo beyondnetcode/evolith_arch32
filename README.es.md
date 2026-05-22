@@ -5,7 +5,7 @@
 [![Method](https://img.shields.io/badge/Metodo-Spec--driven_AI--DD-blueviolet?style=for-the-badge)]()
 [![License](https://img.shields.io/badge/License-MIT-informational?style=for-the-badge)]()
 
-Este repositorio es una referencia técnica abierta para construir productos que puedan empezar como monolitos simples, crecer hacia monolitos modulares y evolucionar hacia servicios distribuidos solo cuando el producto, el equipo y la operación lo justifiquen.
+Este repositorio es el **upstream arquitectónico corporativo** — la fuente autoritativa de decisiones, estándares y patrones para todos los repositorios de producto de la organización. No es un framework que se instala. Es un contrato vivo que los equipos de producto heredan, extienden y al que contribuyen de vuelta con el tiempo.
 
 **arc32** identifica el toolset y la implementación del repositorio. No es la visión del producto. La visión es la referencia de arquitectura progresiva documentada aquí.
 
@@ -15,8 +15,24 @@ Este repositorio es una referencia técnica abierta para construir productos que
 
 ---
 
+## ¿Para Qué Sirve Este Repositorio?
+
+Este repositorio sirve tres propósitos distintos según quién lo lea.
+
+**Estás evaluando el modelo arquitectónico.**
+Lee el [Blueprint de Referencia](./reference/architecture/blueprints-es/reference-blueprint.md) y el [Registro ADR](./reference/architecture/adrs-es/README.md). Todo está documentado con su justificación y trade-offs.
+
+**Estás iniciando un nuevo repositorio de producto.**
+Esta base es tu punto de partida. Heredas su corpus completo de decisiones, estructuras tu repositorio usando su taxonomía y documentas cada punto donde el contexto de tu producto diverge. La mecánica de este proceso está definida en la **[Guía de Herencia para Repositorios Hijos](./reference/governance/standards/onboarding/child-repository-inheritance-guide.es.md)** — léela antes de escribir una sola línea de código.
+
+**Estás contribuyendo una nueva decisión arquitectónica.**
+Si la decisión es universal, pertenece aquí. Si es específica del producto, pertenece en el repositorio hijo. El [Camino de Promoción](./reference/governance/standards/onboarding/child-repository-inheritance-guide.es.md#7-camino-de-promoción) define cómo las decisiones viajan desde los repositorios de producto de vuelta a esta base.
+
+---
+
 ## Contenidos
 
+- [¿Para Qué Sirve Este Repositorio?](#para-qué-sirve-este-repositorio)
 - [Empieza Aquí](#empieza-aquí)
 - [Prerrequisitos](#prerrequisitos)
 - [El Viaje Arquitectónico](#el-viaje-arquitectónico)
@@ -33,11 +49,12 @@ Este repositorio es una referencia técnica abierta para construir productos que
 | Si quieres... | Ve a |
 |---|---|
 | Entender todo el repositorio | [Índice Maestro Global](./MASTER_INDEX.es.md) |
-| Entender cómo deben operar aquí los agentes de IA | [AGENTS.es.md](./AGENTS.es.md) |
+| **Iniciar un nuevo producto desde esta base** | **[Guía de Herencia para Repositorios Hijos](./reference/governance/standards/onboarding/child-repository-inheritance-guide.es.md)** |
 | Aprender el modelo arquitectónico | [Blueprint de Referencia](./reference/architecture/blueprints-es/reference-blueprint.md) |
 | Revisar las reglas universales | [Línea Base Arquitectónica Agnóstica](./reference/architecture/blueprints-es/authoritative-tech-stack-agnostic.md) |
 | Explorar decisiones y trade-offs | [Registro ADR](./reference/architecture/adrs-es/README.md) |
 | Inspeccionar el ejemplo ejecutable | [Demo Sandbox](./reference/knowledge/demo/README.md) |
+| Entender cómo deben operar aquí los agentes de IA | [AGENTS.es.md](./AGENTS.es.md) |
 
 ---
 

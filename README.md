@@ -5,7 +5,7 @@
 [![Method](https://img.shields.io/badge/Method-Spec--driven_AI--DD-blueviolet?style=for-the-badge)]()
 [![License](https://img.shields.io/badge/License-MIT-informational?style=for-the-badge)]()
 
-This repository is an open technical reference for building products that can start as simple monoliths, grow into modular monoliths, and evolve toward distributed services only when the product, team, and operation justify it.
+This repository is the **corporate architectural upstream** — the authoritative source of decisions, standards, and patterns for all product repositories in the organization. It is not a framework to install. It is a living contract that product teams inherit, extend, and contribute back to over time.
 
 **arc32** identifies the supporting toolset and repository implementation. It is not the product vision itself. The vision is the progressive architecture reference documented here.
 
@@ -15,8 +15,24 @@ This repository is an open technical reference for building products that can st
 
 ---
 
+## What Is This Repository For?
+
+This repository serves three distinct purposes depending on who is reading it.
+
+**You are evaluating the architecture model.**
+Read the [Reference Blueprint](./reference/architecture/blueprints/reference-blueprint.md) and the [ADR Registry](./reference/architecture/adrs/README.md). Everything is documented with its rationale and trade-offs.
+
+**You are starting a new product repository.**
+This base is your starting point. You inherit its full decision corpus, structure your repository using its taxonomy, and document every point where your product context diverges. The mechanics of this process are defined in the **[Child Repository Inheritance Guide](./reference/governance/standards/onboarding/child-repository-inheritance-guide.md)** — read it before writing a single line of code.
+
+**You are contributing a new architectural decision.**
+If the decision is universal, it belongs here. If it is product-specific, it belongs in the child repository. The [Promotion Path](./reference/governance/standards/onboarding/child-repository-inheritance-guide.md#7-promotion-path) defines how decisions move from product repositories back into this base.
+
+---
+
 ## Contents
 
+- [What Is This Repository For?](#what-is-this-repository-for)
 - [Start Here](#start-here)
 - [Prerequisites](#prerequisites)
 - [The Architecture Journey](#the-architecture-journey)
@@ -33,11 +49,12 @@ This repository is an open technical reference for building products that can st
 | If you want to... | Go to |
 |---|---|
 | Understand the whole repository | [Global Master Index](./MASTER_INDEX.md) |
-| Understand how AI agents must operate here | [AGENTS.md](./AGENTS.md) |
+| **Start a new product from this base** | **[Child Repository Inheritance Guide](./reference/governance/standards/onboarding/child-repository-inheritance-guide.md)** |
 | Learn the architecture model | [Reference Blueprint](./reference/architecture/blueprints/reference-blueprint.md) |
 | Review the universal rules | [Agnostic Architecture Baseline](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.md) |
 | Explore decisions and trade-offs | [ADR Registry](./reference/architecture/adrs/README.md) |
 | Inspect the executable example | [Demo Sandbox](./reference/knowledge/demo/README.md) |
+| Understand how AI agents must operate here | [AGENTS.md](./AGENTS.md) |
 
 ---
 

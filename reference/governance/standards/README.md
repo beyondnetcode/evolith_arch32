@@ -44,6 +44,7 @@ Tactical implementation playbooks, defensive security, and market validation.
 
 ### Phase 05: Onboarding
 * **[Quick Start Guide for New Products](./onboarding/product-quick-start.md)**
+* **[Child Repository Inheritance Guide](./onboarding/child-repository-inheritance-guide.md)** *(New)*
 
 ---
 *This documentation is agnostic to the business domain and strictly regulates the technological structure of the holding company.*

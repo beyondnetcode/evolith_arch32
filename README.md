@@ -15,6 +15,19 @@ This repository is an open technical reference for building products that can st
 
 ---
 
+## Contents
+
+- [Start Here](#start-here)
+- [Prerequisites](#prerequisites)
+- [The Architecture Journey](#the-architecture-journey)
+- [Repository Map](#repository-map)
+- [Recommended First Reads](#recommended-first-reads)
+- [Quick Start: Demo Sandbox](#quick-start-demo-sandbox)
+- [Contribution](#contribution)
+- [License](#license)
+
+---
+
 ## Start Here
 
 | If you want to... | Go to |
@@ -25,6 +38,16 @@ This repository is an open technical reference for building products that can st
 | Review the universal rules | [Agnostic Architecture Baseline](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.md) |
 | Explore decisions and trade-offs | [ADR Registry](./reference/architecture/adrs/README.md) |
 | Inspect the executable example | [Demo Sandbox](./reference/knowledge/demo/README.md) |
+
+---
+
+## Prerequisites
+
+| Requirement | Minimum Version |
+|---|---|
+| Node.js | 20+ |
+| npm | 10+ |
+| Docker + Docker Compose | Latest stable |
 
 ---
 
@@ -71,8 +94,8 @@ For role-based navigation, use the [Global Master Index](./MASTER_INDEX.md).
 ## Quick Start: Demo Sandbox
 
 ```bash
-git clone https://github.com/beyondnetcode/arc32_progresive_monolith.git
-cd arc32_progresive_monolith/src
+git clone https://github.com/beyondnetcode/arc32_nodejs_progresive_monolith.git
+cd arc32_nodejs_progresive_monolith/src
 npm install
 
 docker-compose -f ../reference/infrastructure/docker-compose.yml up -d
@@ -98,7 +121,7 @@ Before contributing, read:
 
 ## License
 
-This project is published as an open technical reference under the repository license.
+This project is published under the [MIT License](./LICENSE). You are free to use, copy, modify, merge, publish, and distribute it. Attribution is appreciated but not required.
 
 ---
 

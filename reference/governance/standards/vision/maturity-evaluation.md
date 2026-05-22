@@ -81,13 +81,39 @@ Generating uncoordinated console logs across pods with no centralized identifier
 
 ---
 
+### 2.5 The "God Module" Anti-pattern
+A single bounded context absorbs too much domain logic, becoming the new monolith inside the modular monolith.
+
+| Field | Definition & Impact Analysis |
+| :--- | :--- |
+| **Criticality** | **HIGH** (Defeats the modularization purpose) |
+| **Concrete Example** | A `CoreModule` that owns Users, Tasks, Invoices, Notifications, and Reports — all in one NestJS module with hundreds of use cases and services. |
+| **Production Impact** | The module becomes impossible to extract. Teams cannot work independently because all domain logic is intertwined. Build times degrade because the entire module must be rebuilt for any change. |
+| **Operational Risks** | When metrics trigger extraction readiness (ADR-0045), the God Module cannot be extracted without a Big Bang rewrite — the very anti-pattern the progressive architecture exists to prevent. |
+| **Immunization Defense** | Regular boundary audits against the [Bounded Context Map](../../../knowledge/demo/technical/bounded-context-map.md). Each context must have a single, clearly stated mission. Use the extraction readiness playbook to split before the module becomes too large. |
+
+---
+
+### 2.6 The "Leaky Shared Library" Anti-pattern
+Business logic accumulates in `libs/shared` or `libs/core`, creating a covert second monolith that all contexts depend on.
+
+| Field | Definition & Impact Analysis |
+| :--- | :--- |
+| **Criticality** | **HIGH** (Creates invisible coupling between bounded contexts) |
+| **Concrete Example** | A `libs/shared` library exports `UserEntity`, `TaskRepository`, and `InvoiceCalculator` — domain objects from three different bounded contexts mixed into a single shared library. |
+| **Production Impact** | Any context that imports from `libs/shared` becomes implicitly coupled to every other context's domain model. A schema change in `UserEntity` can break Task and Invoice behavior. |
+| **Operational Risks** | Makes service extraction impossible: you cannot extract the Task service if it depends on `UserEntity` from a shared lib that also contains Invoice logic. |
+| **Immunization Defense** | Shared libraries MUST contain only: (a) generic infrastructure primitives (Result type, base aggregate class, port interfaces), (b) DDD framework utilities. Domain objects, use cases, and business rules must NEVER appear in shared libraries. Enforce via `eslint-plugin-boundaries` rules restricting what `libs/shared` can export. |
+
+---
+
 ## 3. Final Maturity & Risk Assessment
 
 ### Resiliency Strength: **HIGH**
 * The insertion of native **Circuit Breakers ([ADR-0011](../../../architecture/adrs/core/0011-fault-tolerance-resiliency-patterns.md))** and the strict contract testing regime shields the backend from total failure if external systems collapse.
 * **Dual-Layer Isolation ([ADR-0010](../../../architecture/adrs/core/0010-multi-tenancy-architecture-strategy.md))** creates mathematically provable security containment for Multi-Tenancy.
 
-### Jump to: Performance Overhead: **LOW/OPTIMIZED**
+### Performance Overhead: **LOW/OPTIMIZED**
 * **4-Tier Caching** (Client -> CDN -> BFF -> Core) handles read intensity intelligently before reaching raw disk.
 * gRPC implementation for heavy internal backbones prevents the overhead of JSON/HTTP negotiation cascades.
 

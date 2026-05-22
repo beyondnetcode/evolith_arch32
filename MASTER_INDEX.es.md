@@ -27,7 +27,7 @@ Este es el índice completo de navegación para esta referencia de arquitectura 
 | Rol | Ruta de lectura |
 |---|---|
 | **Ejecutivo / Sponsor** | [Directivas Arquitectónicas](./reference/governance/standards-es/vision/architectural-directives.md) -> [Roadmap Evolutivo](./reference/governance/standards-es/vision/evolutionary-strategy-roadmap.md) -> [Matriz de Madurez](./reference/governance/standards-es/vision/maturity-matrix.md) |
-| **Product Owner / PM** | [PRD Demo](./reference/knowledge/demo/project/01-prd-demo-sandbox-es.md) -> [Glosario de Negocio](./reference/knowledge/demo/functional/business-glossary.md) -> [Backlog y Epics](./reference/knowledge/demo/project/02-backlog-and-epics-es.md) |
+| **Product Owner / PM** | [PRD Demo](./reference/knowledge/demo/project/01-prd-demo-sandbox-es.md) -> [Glosario de Negocio](./reference/knowledge/demo/functional/business-glossary.es.md) -> [Backlog y Epics](./reference/knowledge/demo/project/02-backlog-and-epics-es.md) |
 | **Arquitecto de Software** | [Blueprint de Referencia](./reference/architecture/blueprints-es/reference-blueprint.md) -> [Registro ADR](./reference/architecture/adrs-es/README.md) -> [Criterios de Extracción](./reference/architecture/adrs-es/core/0045-microservice-extraction-readiness-criteria.md) |
 | **Principal / Staff Engineer** | [Línea Base Agnóstica](./reference/architecture/blueprints-es/authoritative-tech-stack-agnostic.md) -> [Patrones Tácticos](./reference/architecture/adrs-es/core/0019-tactical-design-patterns-future-proofing.md) -> [Checklist de Simplicidad](./reference/architecture/blueprints-es/simplicity-checklist-phase-01.md) |
 | **Backend Developer** | [Manifiesto de Ingeniería](./reference/governance/standards-es/engineering/engineering-manifesto.md) -> [ADR Clean Architecture](./reference/architecture/adrs-es/nodejs/0002-clean-architecture-nestjs.md) -> [Verificación Sandbox](./reference/knowledge/demo/technical/sandbox-verification.md) |
@@ -36,7 +36,7 @@ Este es el índice completo de navegación para esta referencia de arquitectura 
 | **DevOps / SRE** | [Hub de Infraestructura](./reference/infrastructure/README.es.md) -> [Hub de Operaciones](./reference/operations/README.es.md) -> [ADR Observabilidad](./reference/architecture/adrs-es/nodejs/0007-observability-telemetry-loki-opentelemetry.md) |
 | **QA / SDET** | [ADR Pirámide de Testing](./reference/architecture/adrs-es/core/0018-testing-pyramid-quality-gates.md) -> [Guía de Contract Testing](./reference/governance/standards-es/engineering/contract-testing-guideline.md) -> [ADR Integración y E2E](./reference/architecture/adrs-es/core/0053-estrategia-pruebas-integracion-e2e.md) |
 | **Security Engineer** | [Vendor Risk Assessment](./reference/governance/standards-es/engineering/vendor-risk-assessment.md) -> [ADR Multi-Tenancy](./reference/architecture/adrs-es/core/0010-multi-tenancy-architecture-strategy.md) -> [ADR Auditoría Inmutable](./reference/architecture/adrs-es/core/0016-immutable-business-audit-trail.md) |
-| **AI Contributor** | [Estándares AI-Augmented](./reference/governance/standards-es/ai-augmented/README.md) -> [Reglas Harness](./.harness/rules/global-rules.md) -> [ADRs de IA](./reference/governance/standards-es/ai-augmented/06-adrs/README.md) |
+| **AI Contributor** | [Estándares AI-Augmented](./reference/governance/standards-es/ai-augmented/README.md) -> [Reglas Harness](./.harness/rules/global-rules.md) -> [Agentes AGENTS.es.md](./AGENTS.es.md) -> [ADRs de IA](./reference/governance/standards-es/ai-augmented/06-adrs/README.md) |
 | **New Joiner** | [Product Quick Start](./reference/governance/standards-es/onboarding/product-quick-start.md) -> [Taxonomía del Repositorio](./reference/governance/standards-es/repository-taxonomy.es.md) -> [Portal README](./README.es.md) |
 
 ---
@@ -99,9 +99,9 @@ Referencias clave:
 
 - [PRD Demo](./reference/knowledge/demo/project/01-prd-demo-sandbox-es.md)
 - [Backlog y Epics](./reference/knowledge/demo/project/02-backlog-and-epics-es.md)
-- [Glosario de Negocio](./reference/knowledge/demo/functional/business-glossary.md)
-- [Mapa de Bounded Contexts](./reference/knowledge/demo/technical/bounded-context-map.md)
-- [Matriz de Verificación Sandbox](./reference/knowledge/demo/technical/sandbox-verification.md)
+- [Glosario de Negocio](./reference/knowledge/demo/functional/business-glossary.es.md)
+- [Mapa de Bounded Contexts](./reference/knowledge/demo/technical/bounded-context-map.es.md)
+- [Matriz de Verificación Sandbox](./reference/knowledge/demo/technical/sandbox-verification.es.md)
 
 ---
 

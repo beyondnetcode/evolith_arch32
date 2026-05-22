@@ -273,19 +273,19 @@ Follows [ISO/IEC 11179](https://www.iso.org/standard/60525.html) metadata naming
 **Prohibited SQL patterns:**
 
 ```sql
--- ❌ Prefix table names
+-- WRONG: Prefix table names
 CREATE TABLE tbl_work_orders (...);
 
--- ❌ Abbreviate column names
+-- WRONG: Abbreviate column names
 ALTER TABLE work_orders ADD COLUMN wrkord_stat VARCHAR(20);
 
--- ❌ Use reserved words as names
+-- WRONG: Use reserved words as names
 CREATE TABLE order (...);  -- 'order' is a SQL reserved word
 
--- ❌ Non-descriptive PK
+-- WRONG: Non-descriptive PK
 CREATE TABLE work_orders (id INT PRIMARY KEY, ...);  -- ambiguous across joins
 
--- ✓ Correct
+-- OK Correct
 CREATE TABLE work_orders (
     id              UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(),
     reference_number VARCHAR(50)      NOT NULL,
@@ -317,10 +317,10 @@ All names must originate from the **domain ubiquitous language glossary** define
 - No technical suffixes (`Aggregate`, `Root` — **not** `WorkOrderAggregate`).
 
 ```csharp
-// ✓ Correct — the concept IS the name
+// OK: Correct — the concept IS the name
 public sealed class WorkOrder : AggregateRoot<WorkOrderId> { }
 
-// ❌ Wrong — redundant suffix
+// WRONG: Wrong — redundant suffix
 public sealed class WorkOrderAggregate : AggregateRoot<WorkOrderId> { }
 ```
 
@@ -330,8 +330,8 @@ public sealed class WorkOrderAggregate : AggregateRoot<WorkOrderId> { }
 - Distinguish from Value Objects: Entities have identity (`Id`); Value Objects do not.
 
 ```csharp
-public sealed class OrderItem { }         // ✓ Entity — has OrderItemId
-public sealed record Money(decimal Amount, Currency Currency); // ✓ Value Object — identity-less
+public sealed class OrderItem { }         // OK: Entity — has OrderItemId
+public sealed record Money(decimal Amount, Currency Currency); // OK: Value Object — identity-less
 ```
 
 ### 6.3 Value Objects
@@ -372,8 +372,8 @@ export class TypeOrmWorkOrderRepository implements WorkOrderRepository { }
 - Stateless.
 
 ```csharp
-public sealed class OrderPricingService { }          // ✓ cross-aggregate calculation
-public sealed class WorkOrderCompletionService { }   // ❌ belongs inside WorkOrder.Complete()
+public sealed class OrderPricingService { }          // OK: cross-aggregate calculation
+public sealed class WorkOrderCompletionService { }   // WRONG: belongs inside WorkOrder.Complete()
 ```
 
 ### 6.6 Domain Events
@@ -388,9 +388,9 @@ public sealed record WorkOrderCreatedEvent(...) : DomainEvent;
 public sealed record WorkOrderCompletedEvent(...) : DomainEvent;
 public sealed record OrderItemRemovedEvent(...) : DomainEvent;
 
-// ❌ Wrong — present tense
+// WRONG: Wrong — present tense
 public sealed record WorkOrderCreate(...) : DomainEvent;
-// ❌ Wrong — imperative
+// WRONG: Wrong — imperative
 public sealed record CreateWorkOrderEvent(...) : DomainEvent;
 ```
 
@@ -447,7 +447,7 @@ public sealed class DatabaseConnectionException : InfrastructureException { }
 public static readonly DomainError WorkOrderNotFound =
     new("orders.work-order.not-found", "Work order does not exist.");
 
-// ❌ Wrong — business error as exception
+// WRONG: Wrong — business error as exception
 throw new WorkOrderNotFoundException();
 ```
 
@@ -486,7 +486,7 @@ throw new WorkOrderNotFoundException();
 - IDs as strings (UUID format): `"workOrderId": "550e8400-e29b-41d4-a716-446655440000"`.
 
 ```json
-// ✓ Correct
+// OK: Correct
 {
   "workOrderId": "550e8400-e29b-41d4-a716-446655440000",
   "referenceNumber": "WO-2026-00123",
@@ -499,7 +499,7 @@ throw new WorkOrderNotFoundException();
   ]
 }
 
-// ❌ Wrong — snake_case, abbreviated, missing currency object
+// WRONG: Wrong — snake_case, abbreviated, missing currency object
 {
   "work_order_id": "...",
   "ref_num": "WO-2026-00123",
@@ -516,15 +516,15 @@ throw new WorkOrderNotFoundException();
 paths:
   /v1/work-orders:
     get:
-      operationId: listWorkOrders       # ✓
+      operationId: listWorkOrders       # OK
     post:
-      operationId: createWorkOrder      # ✓
+      operationId: createWorkOrder      # OK
   /v1/work-orders/{workOrderId}:
     get:
-      operationId: getWorkOrderById     # ✓
+      operationId: getWorkOrderById     # OK
   /v1/work-orders/{workOrderId}/complete:
     post:
-      operationId: completeWorkOrder    # ✓
+      operationId: completeWorkOrder    # OK
 ```
 
 ### 7.5 OpenAPI Schema Names
@@ -606,11 +606,11 @@ Follows the [CloudEvents 1.0 specification](https://cloudevents.io).
 ### 8.4 Prohibited Event Naming
 
 ```
-❌  UserCreated            (missing org/context prefix — collision risk)
-❌  user_created           (snake_case — violates CloudEvents convention)
-❌  USER_CREATED           (UPPER_SNAKE — not human-readable in logs)
-❌  acme.orders.CreateUser (present tense — event happened in the past)
-✓   acme.identity.user.registered
+WRONG:  UserCreated            (missing org/context prefix — collision risk)
+WRONG:  user_created           (snake_case — violates CloudEvents convention)
+WRONG:  USER_CREATED           (UPPER_SNAKE — not human-readable in logs)
+WRONG:  acme.orders.CreateUser (present tense — event happened in the past)
+OK   acme.identity.user.registered
 ```
 
 ---
@@ -650,16 +650,16 @@ Every analytical column must have a catalog entry with:
 
 | Attribute | Required | Example |
 | :--- | :--- | :--- |
-| `element_name` | ✓ | `work_order_total_cost_usd` |
-| `definition` | ✓ | "Sum of all order item costs in USD for a work order" |
-| `data_type` | ✓ | `NUMERIC(18,4)` |
+| `element_name` | OK | `work_order_total_cost_usd` |
+| `definition` | OK | "Sum of all order item costs in USD for a work order" |
+| `data_type` | OK | `NUMERIC(18,4)` |
 | `unit_of_measure` | When applicable | `USD` |
 | `allowed_values` | For enumerations | `Draft, Confirmed, InProgress, Completed, Cancelled` |
-| `source_system` | ✓ | `orders-api` |
-| `source_table` | ✓ | `orders.work_orders` |
-| `source_column` | ✓ | `total_cost` |
-| `pii_classification` | ✓ | `None`, `Sensitive`, `Restricted` |
-| `owner_team` | ✓ | `operations-domain` |
+| `source_system` | OK | `orders-api` |
+| `source_table` | OK | `orders.work_orders` |
+| `source_column` | OK | `total_cost` |
+| `pii_classification` | OK | `None`, `Sensitive`, `Restricted` |
+| `owner_team` | OK | `operations-domain` |
 
 ---
 
@@ -861,7 +861,7 @@ A code artifact is **Done** from a naming perspective when **all** of the follow
 ### 14.1 C# — Aggregate & Value Object
 
 ```csharp
-// ✓ CORRECT
+// CORRECT
 public sealed class WorkOrder : AggregateRoot<WorkOrderId>
 {
     private readonly List<OrderItem> _orderItems = [];
@@ -885,7 +885,7 @@ public sealed class WorkOrder : AggregateRoot<WorkOrderId>
     }
 }
 
-// ❌ WRONG
+// WRONG
 public class WrkOrdAggregat  // abbreviation + suffix
 {
     public int Id { get; set; }     // int ID (should be strongly typed)
@@ -897,7 +897,7 @@ public class WrkOrdAggregat  // abbreviation + suffix
 ### 14.2 TypeScript — Use Case
 
 ```typescript
-// ✓ CORRECT — file: create-work-order.use-case.ts
+// CORRECT — file: create-work-order.use-case.ts
 @Injectable()
 export class CreateWorkOrderUseCase {
   constructor(
@@ -912,7 +912,7 @@ export class CreateWorkOrderUseCase {
   }
 }
 
-// ❌ WRONG
+// WRONG
 export class CreateWO {   // abbreviation, no suffix
   constructor(private repo: any) {}  // untyped, `repo` is abbreviated
 
@@ -925,7 +925,7 @@ export class CreateWO {   // abbreviation, no suffix
 ### 14.3 Python — Repository Protocol
 
 ```python
-# ✓ CORRECT — file: work_order_repository.py
+# OK CORRECT — file: work_order_repository.py
 from abc import abstractmethod
 from typing import Protocol
 from uuid import UUID
@@ -941,7 +941,7 @@ class WorkOrderRepository(Protocol):
     async def list_by_customer(self, customer_id: UUID) -> list[WorkOrder]: ...
 
 
-# ❌ WRONG
+# WRONG: WRONG
 class WO_Repo:
     def get(self, id): ...           # abbreviated name, untyped
     def ins(self, obj): ...          # meaningless abbreviation
@@ -951,7 +951,7 @@ class WO_Repo:
 ### 14.4 SQL — Table & Constraints
 
 ```sql
--- ✓ CORRECT
+-- OK CORRECT
 CREATE TABLE orders.work_orders (
     id                  UNIQUEIDENTIFIER    NOT NULL DEFAULT NEWSEQUENTIALID(),
     reference_number    VARCHAR(50)         NOT NULL,
@@ -968,7 +968,7 @@ CREATE TABLE orders.work_orders (
 );
 CREATE INDEX ix_work_orders_customer_status ON orders.work_orders (customer_id, status);
 
--- ❌ WRONG
+-- WRONG: WRONG
 CREATE TABLE tbl_WrkOrd (       -- prefixed, PascalCase, abbreviated
     WrkOrdID    INT IDENTITY,   -- integer PK, Hungarian notation, IDENTITY without UUID
     CustID      INT,            -- abbreviated FK, no constraint name
@@ -980,7 +980,7 @@ CREATE TABLE tbl_WrkOrd (       -- prefixed, PascalCase, abbreviated
 ### 14.5 OpenAPI
 
 ```yaml
-# ✓ CORRECT
+# OK CORRECT
 paths:
   /v1/work-orders:
     post:
@@ -1010,7 +1010,7 @@ components:
           type: string
           minLength: 3
 
-# ❌ WRONG
+# WRONG: WRONG
 paths:
   /WorkOrders:            # PascalCase path
     post:
@@ -1029,7 +1029,7 @@ paths:
 ### 14.6 CloudEvents
 
 ```json
-// ✓ CORRECT
+// CORRECT
 {
   "specversion": "1.0",
   "type": "acme.orders.work-order.created",
@@ -1046,7 +1046,7 @@ paths:
   }
 }
 
-// ❌ WRONG
+// WRONG
 {
   "type": "WorkOrderCreated",        // PascalCase, no org/context prefix
   "timestamp": "15-05-2026",         // non-ISO 8601

@@ -15,16 +15,39 @@ Este repositorio es una referencia técnica abierta para construir productos que
 
 ---
 
+## Contenidos
+
+- [Empieza Aquí](#empieza-aquí)
+- [Prerrequisitos](#prerrequisitos)
+- [El Viaje Arquitectónico](#el-viaje-arquitectónico)
+- [Mapa del Repositorio](#mapa-del-repositorio)
+- [Primeras Lecturas Recomendadas](#primeras-lecturas-recomendadas)
+- [Inicio Rápido: Demo Sandbox](#inicio-rápido-demo-sandbox)
+- [Contribución](#contribución)
+- [Licencia](#licencia)
+
+---
+
 ## Empieza Aquí
 
 | Si quieres... | Ve a |
 |---|---|
 | Entender todo el repositorio | [Índice Maestro Global](./MASTER_INDEX.es.md) |
-| Entender cómo deben operar aquí los agentes de IA | [AGENTS.md](./AGENTS.md) |
+| Entender cómo deben operar aquí los agentes de IA | [AGENTS.es.md](./AGENTS.es.md) |
 | Aprender el modelo arquitectónico | [Blueprint de Referencia](./reference/architecture/blueprints-es/reference-blueprint.md) |
 | Revisar las reglas universales | [Línea Base Arquitectónica Agnóstica](./reference/architecture/blueprints-es/authoritative-tech-stack-agnostic.md) |
 | Explorar decisiones y trade-offs | [Registro ADR](./reference/architecture/adrs-es/README.md) |
 | Inspeccionar el ejemplo ejecutable | [Demo Sandbox](./reference/knowledge/demo/README.md) |
+
+---
+
+## Prerrequisitos
+
+| Requisito | Versión Mínima |
+|---|---|
+| Node.js | 20+ |
+| npm | 10+ |
+| Docker + Docker Compose | Última estable |
 
 ---
 
@@ -71,8 +94,8 @@ Para navegación por rol, usa el [Índice Maestro Global](./MASTER_INDEX.es.md).
 ## Inicio Rápido: Demo Sandbox
 
 ```bash
-git clone https://github.com/beyondnetcode/arc32_progresive_monolith.git
-cd arc32_progresive_monolith/src
+git clone https://github.com/beyondnetcode/arc32_nodejs_progresive_monolith.git
+cd arc32_nodejs_progresive_monolith/src
 npm install
 
 docker-compose -f ../reference/infrastructure/docker-compose.yml up -d
@@ -89,7 +112,7 @@ Las contribuciones son bienvenidas mediante issues, mejoras documentales, revisi
 
 Antes de contribuir, revisa:
 
-- [AGENTS.md](./AGENTS.md)
+- [AGENTS.es.md](./AGENTS.es.md)
 - [Taxonomía del Repositorio](./reference/governance/standards-es/repository-taxonomy.es.md)
 - [Manifiesto de Ingeniería](./reference/governance/standards-es/engineering/engineering-manifesto.md)
 - [ADR Gitflow](./reference/architecture/adrs-es/core/0050-estrategia-ramas-gitflow.md)
@@ -98,7 +121,7 @@ Antes de contribuir, revisa:
 
 ## Licencia
 
-Este proyecto se publica como referencia técnica abierta bajo la licencia del repositorio.
+Este proyecto se publica bajo la [Licencia MIT](./LICENSE). Eres libre de usar, copiar, modificar, fusionar, publicar y distribuirlo. Se agradece la atribución, aunque no es obligatoria.
 
 ---
 

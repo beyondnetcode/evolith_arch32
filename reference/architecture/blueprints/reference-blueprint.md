@@ -169,7 +169,55 @@ The domain never imports a concrete message broker. All async communication is r
 
 ---
 
-## 5. Technical Building Blocks - Full Container View
+## 5. Technical Building Blocks
+
+### 5.0 Phase 1 Container View — Lean MVP (Modular Monolith)
+
+> [!NOTE]
+> **Start here.** This diagram reflects the **actual Phase 1 deployment** — a single process, minimal infrastructure, and no external messaging broker. It is the recommended starting point for all new products. The full diagram in Section 5.1 shows the mature Phase 3+ state.
+
+```mermaid
+graph TD
+    subgraph ClientLayer["Client Layer"]
+        WebApp["Web App\n[React + React Query]"]
+        MobileApp["Mobile App\n[Native Offline Storage]"]
+    end
+
+    subgraph Monolith["NestJS Modular Monolith (single process)"]
+        AuthMod["Auth Module\n[schema: auth]"]
+        TaskMod["Task Module\n[schema: tasks]"]
+        TaxonomyMod["Taxonomy Module\n[schema: taxonomy]"]
+        AuditMod["Audit Module\n[schema: audit]"]
+        InMemBus["In-Memory Event Bus\n[IEventBusPort → In-Memory impl]"]
+        AuthMod --> InMemBus
+        TaskMod --> InMemBus
+        TaxonomyMod --> InMemBus
+        InMemBus --> AuditMod
+    end
+
+    subgraph Persistence["Persistence (single PostgreSQL instance)"]
+        PgSQL[("PostgreSQL\n[auth | tasks | taxonomy | audit schemas]")]
+    end
+
+    subgraph Observability["Observability"]
+        OTel["OTel Collector → Grafana/Jaeger"]
+    end
+
+    WebApp -->|"HTTPS REST"| Monolith
+    MobileApp -->|"HTTPS REST"| Monolith
+    Monolith -->|"SQL (schema-isolated)"| PgSQL
+    Monolith -.->|"Structured logs + traces"| OTel
+```
+
+**Phase 1 rules:**
+- One NestJS process. One PostgreSQL instance. Docker Compose for local dev.
+- No Kong gateway — direct HTTPS to the app. Add Kong at Phase 2 when a second client channel or external partner is onboarded.
+- In-Memory event bus. Replace with RabbitMQ only when cross-service async delivery is needed ([ADR-0015](../adrs/core/0015-event-driven-architecture-intra-domain.md)).
+- Redis is optional. Add only when a specific latency threshold is breached ([ADR-0014](../adrs/core/0014-distributed-caching-strategy-redis.md)).
+
+---
+
+### 5.1 Full Container View — Mature Architecture (Phase 3+)
 
 This C4 Level-2 Container diagram reflects **all active ADRs** in their physical runtime positions.
 
@@ -444,7 +492,19 @@ graph TD
 | **Polyglot Selection** | [ADR-0040](../adrs/core/0040-multi-runtime-selection-contracts.md) | Workload Matrix and Type-Safe Contracts | 1.2 |
 | **.NET Arch Canonical** | [ADR-0041](../adrs/dotnet/0041-canonical-dotnet-backend-architecture.md) | Clean Arch C# / Minimal APIs | 1.2 |
 | **Android Arch Canonical** | [ADR-0042](../adrs/android/0042-canonical-android-mobile-architecture.md) | Native Kotlin / Compose / Offline | 1.2 |
+| **Configurable Security Strategy** | [ADR-0044](../adrs/core/0044-configurable-security-persistence-strategy.md) | APP_FILTER vs INFRA_NATIVE persistence strategy | 4.2 |
+| **Microservice Extraction Criteria** | [ADR-0045](../adrs/core/0045-microservice-extraction-readiness-criteria.md) | Quantitative "2 of 4" extraction triggers | 4.5 |
+| **Dapr Observability Unification** | [ADR-0046](../adrs/core/0046-dapr-unified-observability.md) | W3C TraceContext unification with Dapr sidecar | 3.1, 5 |
+| **Architecture Style Selection** | [ADR-0047](../adrs/core/0047-architectural-patterns-monolith-soa-microservices.md) | Monolith vs SOA vs Microservices decision framework | 4.5 |
+| **Enterprise Taxonomy Layout** | [ADR-0048](../adrs/core/0048-enterprise-taxonomy-reference-layout.md) | Repository structure, root layout, dot-folder tooling | 2 |
+| **Naming Semantics Policy** | [ADR-0049](../adrs/core/0049-naming-semantics-clean-code-policy.md) | Clean Code naming conventions | 2 |
+| **Gitflow Branching Strategy** | [ADR-0050](../adrs/core/0050-gitflow-branching-strategy.md) | Gitflow: main / develop / feature / release / hotfix | 2 |
+| **Enterprise DB Engine Strategy** | [ADR-0051](../adrs/core/0051-enterprise-database-engine-strategy.md) | SQL Server (.NET), PostgreSQL/MongoDB (Node.js) | 4.2, 5 |
+| **Unit Testing Isolation** | [ADR-0052](../adrs/core/0052-unit-testing-isolation-strategy.md) | Stubs vs Mocks — Double-Centric Isolation per layer | 2 |
+| **Integration & E2E Testing** | [ADR-0053](../adrs/core/0053-integration-e2e-testing-strategy.md) | Testcontainers real-infra strategy | 2 |
+| **DB Design Normalization** | [ADR-0054](../adrs/core/0054-database-design-normalization-standards.md) | 3NF SQL + access-optimized NoSQL standards | 4.2, 5 |
 | **Microfrontends** | [ADR-0055](../adrs/core/0055-microfrontends-architecture-strategy.md) | Runtime UI Module Federation | 4.5, 7 |
+| **Enterprise Naming Conventions** | [ADR-0056](../adrs/core/0056-enterprise-naming-design-conventions.md) | Multi-language, multi-platform naming standard (supersedes ADR-0049) | 2 |
 
 
 ---
@@ -482,7 +542,7 @@ Strategic tracking of current design limitations and acknowledged system risks.
 ### 11.1 Inherent Risks
 | Risk ID | Description | Mitigation Strategy | Severity |
 | :--- | :--- | :--- | :--- |
-| **R-01** | **Shared DB Performance** | Physical DB packing creates single failure domain. | Enforce strict read replication and query timeout ceilings. | Medium |
+| **R-01** | **Shared DB Performance** — Physical DB packing creates single failure domain. | Enforce strict read replication and query timeout ceilings. | Medium |
 | **R-02** | **RabbitMQ Overflow** | In-memory message spikes during outage. | Mandatory **[ADR-0036](../adrs/core/0036-message-bus-delivery-strategy-fifo-dlq.md)** Flow Control / Quotas. | High |
 | **R-03** | **gRPC Polyglot Coupling** | Non-backward compatible proto changes. | Mandatory **Pact JS** Contract verification in CI. | High |
 

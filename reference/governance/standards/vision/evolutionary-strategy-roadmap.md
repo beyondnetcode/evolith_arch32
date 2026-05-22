@@ -73,7 +73,7 @@ PI = \frac{\text{Lines of Code (Domain + App)}}{\text{Lines of Code (Infrastruct
  * Persistence/Infra Code: 2,000 lines.
  * **Current PI:** $10,000 / 2,000 = 5.0$ (Healthy state). If dropped to 2.0, urgent isolation review is flagged.
 
-### Jump to: 3.2 Security Performance Delta ($\Delta P$)
+### 3.2 Security Performance Delta ($\Delta P$)
 Tracks the relative latency delta observed between application-tier and hardware-enforced containment.
 
 ```math

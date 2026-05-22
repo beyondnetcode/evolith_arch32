@@ -25,9 +25,9 @@ The structural design of the system detailed in C4 and CAP views.
 * [Quick Stack Summary](../../architecture/blueprints/tech-stack-summary.md)
 
 ### Phase 02: Architectural Decision Records (ADRs)
-The consolidated and classified history of the active 44 technical decisions.
+The consolidated and classified history of the active architectural decisions (56+ ADRs across Core, Node.js, .NET, and Android).
 * -> **[Central ADR Navigator](../../architecture/adrs/README.md)**
- * Jump to: *Jump To:* [Core](../../architecture/adrs/README.md#universal-core) | [Node.js](../../architecture/adrs/README.md#nodejs-typescript) | [.NET](../../architecture/adrs/README.md#net-c) | [Mobile](../../architecture/adrs/README.md#android-native)
+ * Jump to: [Core](../../architecture/adrs/README.md#universal-core) | [Node.js](../../architecture/adrs/README.md#nodejs-typescript) | [.NET](../../architecture/adrs/README.md#net-c) | [Mobile](../../architecture/adrs/README.md#android-native)
 
 ### Phase 03: Engineering Standards and Stack Audit
 Tactical implementation playbooks, defensive security, and market validation.

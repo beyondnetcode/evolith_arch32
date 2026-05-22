@@ -264,10 +264,10 @@ Todos los nombres deben provenir del **glosario de lenguaje ubicuo** definido po
 - Sustantivo del lenguaje ubicuo. Sin sufijos técnicos (`Aggregate`, `Root`).
 
 ```csharp
-// ✓ Correcto
+// OK: Correcto
 public sealed class WorkOrder : AggregateRoot<WorkOrderId> { }
 
-// ❌ Incorrecto — sufijo redundante
+// MAL: Incorrecto — sufijo redundante
 public sealed class WorkOrderAggregate : AggregateRoot<WorkOrderId> { }
 ```
 
@@ -276,11 +276,11 @@ public sealed class WorkOrderAggregate : AggregateRoot<WorkOrderId> { }
 - Sufijo `Event` en lenguajes OO. **No** en el campo `type` de CloudEvents.
 
 ```csharp
-// ✓ Correcto
+// OK: Correcto
 public sealed record WorkOrderCreatedEvent(...) : DomainEvent;
 public sealed record WorkOrderCompletedEvent(...) : DomainEvent;
 
-// ❌ Incorrecto — presente / imperativo
+// MAL: Incorrecto — presente / imperativo
 public sealed record WorkOrderCreate(...) : DomainEvent;
 public sealed record CreateWorkOrderEvent(...) : DomainEvent;
 ```
@@ -306,11 +306,11 @@ public sealed record ListOpenWorkOrdersQuery(CustomerId Id) : IRequest<Result<IR
 - Códigos de error: `{dominio}.{entidad}.{slug_error}` — minúsculas, separados por punto.
 
 ```csharp
-// ✓ Preferido
+// OK: Preferido
 public static readonly DomainError WorkOrderNotFound =
     new("orders.work-order.not-found", "La orden de trabajo no existe.");
 
-// ❌ Evitar — error de negocio como excepción
+// MAL: Evitar — error de negocio como excepción
 throw new WorkOrderNotFoundException();
 ```
 
@@ -358,11 +358,11 @@ throw new WorkOrderNotFoundException();
 
 **Nomenclatura prohibida:**
 ```
-❌  UserCreated           (sin prefijo de org/contexto)
-❌  user_created          (snake_case — viola CloudEvents)
-❌  USER_CREATED          (UPPER_SNAKE — ilegible en logs)
-❌  acme.orders.CreateUser (tiempo presente)
-✓   acme.identity.user.registered
+MAL:  UserCreated           (sin prefijo de org/contexto)
+MAL:  user_created          (snake_case — viola CloudEvents)
+MAL:  USER_CREATED          (UPPER_SNAKE — ilegible en logs)
+MAL:  acme.orders.CreateUser (tiempo presente)
+OK   acme.identity.user.registered
 ```
 
 ---
@@ -490,7 +490,7 @@ Un artefacto de código está **Terminado** desde una perspectiva de nomenclatur
 ### 14.1 C# — Aggregate
 
 ```csharp
-// ✓ CORRECTO
+// CORRECTO
 public sealed class WorkOrder : AggregateRoot<WorkOrderId>
 {
     public WorkOrderId Id { get; private init; }
@@ -505,7 +505,7 @@ public sealed class WorkOrder : AggregateRoot<WorkOrderId>
     }
 }
 
-// ❌ INCORRECTO
+// INCORRECTO
 public class WrkOrdAggregat  // abreviación + sufijo
 {
     public int Id { get; set; }      // ID entero, sin tipo fuerte
@@ -516,7 +516,7 @@ public class WrkOrdAggregat  // abreviación + sufijo
 ### 14.2 SQL — Tabla y restricciones
 
 ```sql
--- ✓ CORRECTO
+-- OK CORRECTO
 CREATE TABLE orders.work_orders (
     id               UNIQUEIDENTIFIER NOT NULL DEFAULT NEWSEQUENTIALID(),
     reference_number VARCHAR(50)      NOT NULL,
@@ -531,7 +531,7 @@ CREATE TABLE orders.work_orders (
 );
 CREATE INDEX ix_work_orders_customer_status ON orders.work_orders (customer_id, status);
 
--- ❌ INCORRECTO
+-- MAL: INCORRECTO
 CREATE TABLE tbl_WrkOrd (
     WrkOrdID INT IDENTITY,
     CustID   INT,
@@ -543,14 +543,14 @@ CREATE TABLE tbl_WrkOrd (
 ### 14.3 CloudEvents
 
 ```json
-// ✓ CORRECTO
+// CORRECTO
 {
   "type": "acme.orders.work-order.created",
   "time": "2026-05-15T14:30:00Z",
   "data": { "workOrderId": "...", "referenceNumber": "WO-2026-00123" }
 }
 
-// ❌ INCORRECTO
+// INCORRECTO
 {
   "type": "WorkOrderCreated",
   "timestamp": "15-05-2026",

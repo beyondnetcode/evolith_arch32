@@ -13,7 +13,7 @@ Ensure absolute separation of the core domain logic from infrastructure details.
 
 ---
 
-## Jump to: Objective 2: Production-Ready Observability
+## Objective 2: Production-Ready Observability
 Establish that tracing and logging are not afterthoughts but foundational standards.
 
 - **KR 2.1**: Standardize **100% trace propagation** across the stack via OpenTelemetry auto-instrumentation.

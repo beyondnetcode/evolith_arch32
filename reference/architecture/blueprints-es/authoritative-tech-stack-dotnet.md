@@ -69,4 +69,4 @@ No satisfacer estas definiciones de herramientas estáticas bloqueará automáti
 -> Volver al **[Índice Maestro Global](../../../MASTER_INDEX.es.md)**
 
 ---
-[Volver al Índice](./README.es.md)
+[Volver al Índice](./README.md)

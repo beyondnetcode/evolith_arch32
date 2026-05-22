@@ -1,31 +1,71 @@
 # Infrastructure & Orchestration
 
-This directory contains the necessary configuration to spin up the local development environment and the required middleware.
+> **Bilingual Navigation:** [Versión en Español](./README.es.md)
 
-## Components
-
-- **Docker Compose**: Orchestrates the following services:
- - **PostgreSQL**: Primary relational database.
- - **Redis**: Distributed cache and session store.
- - **RabbitMQ**: Asynchronous message broker.
- - **Kong Gateway**: API management and security.
- - **Vault**: Secrets management (simulated/OSS).
-
-## Getting Started
-
-1. Ensure you have Docker and Docker Compose installed.
-2. Run the environment:
- ```bash
- docker-compose up -d
- ```
-3. Verify services are running:
- ```bash
- docker ps
- ```
-
-## Configuration Files
-- `docker-compose.yml`: Main orchestration file.
-- `kong.yml`: Kong Gateway declarative configuration.
+This directory contains Docker Compose configuration and gateway declarative config for local development. Infrastructure complexity scales with the architectural phase — do not start all services on Phase 1.
 
 ---
-[Back to Index](../README.md)
+
+## Phase-Based Service Map
+
+| Service | Phase Required | Role |
+| :--- | :--- | :--- |
+| **PostgreSQL** | Phase 1 (mandatory) | Primary relational database |
+| **Redis** | Phase 1 (optional, add when latency demands it) | Distributed cache — [ADR-0014](../architecture/adrs/core/0014-distributed-caching-strategy-redis.md) |
+| **RabbitMQ** | Phase 2+ | Async message broker — [ADR-0015](../architecture/adrs/core/0015-event-driven-architecture-intra-domain.md) |
+| **Kong Gateway** | Phase 2+ | Edge API gateway — [ADR-0030](../architecture/adrs/core/0030-api-gateway-kong-vs-nestjs.md) |
+| **HashiCorp Vault** | Phase 2+ | Secrets management — [ADR-0028](../architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md) |
+
+> **Phase 1 rule:** Start with PostgreSQL only. Add Redis when a specific P95 latency threshold is breached. Add Kong and RabbitMQ only when a second client channel or cross-service async delivery is needed.
+
+---
+
+## Phase 1 — Minimal Startup
+
+```bash
+# Start only the Phase 1 minimum
+docker-compose -f reference/infrastructure/docker-compose.yml up -d postgres
+
+# Optional: add Redis if cache is needed
+docker-compose -f reference/infrastructure/docker-compose.yml up -d postgres redis
+```
+
+## Phase 2+ — Full Stack
+
+```bash
+# Start all services
+docker-compose -f reference/infrastructure/docker-compose.yml up -d
+```
+
+## Verify Running Services
+
+```bash
+docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+```
+
+---
+
+## Service Ports
+
+| Service | Port |
+| :--- | :--- |
+| PostgreSQL | `5432` |
+| Redis | `6379` |
+| RabbitMQ (AMQP) | `5672` |
+| RabbitMQ (Management UI) | `15672` |
+| Kong (Proxy) | `8000` |
+| Kong (Admin API) | `8001` |
+| HashiCorp Vault | `8200` |
+
+---
+
+## Configuration Files
+
+| File | Purpose |
+| :--- | :--- |
+| `docker-compose.yml` | Main orchestration file |
+| `kong.yml` | Kong Gateway declarative (db-less) configuration |
+
+---
+
+[Back to Repository Root](../README.md)

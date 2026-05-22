@@ -1,10 +1,16 @@
-# BMAD-METHOD — Rules Reference
+# Local Harness Rules Reference
 
+> **These rules are local to this repository. They are not part of BMAD-METHOD.**
+> They were defined on top of the BMAD framework to govern documentation quality,
+> diagram standards, and architecture consistency in the progressive monolith context.
+>
+> **Official BMAD-METHOD source:** [github.com/bmad-code-org/BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD)
+>
 > **Bilingual Navigation:** Versión en Español — pendiente
 
-The harness defines 18 binding rules that apply across all agents, all phases, and all document types. Rules are not suggestions — they are enforced automatically (where tooling allows) and are checked by agents before producing output.
+The harness defines 18 binding rules that apply across all agents, all phases, and all document types in this repository. Rules are not suggestions — they are enforced automatically (where tooling allows) and are checked by agents before producing output.
 
-This reference documents each rule with: its intent, the problem it prevents, its trigger condition, a compliance example, and adaptation notes for teams adopting this framework in a different context.
+This reference documents each rule with: its intent, the problem it prevents, its trigger condition, a compliance example, and adaptation notes for teams replicating this adoption in their own context.
 
 ---
 

@@ -1,35 +1,35 @@
-# AI-DD Frameworks Reference
+# AI-DD Frameworks — Adoption Reference
 
 > **Bilingual Navigation:** Versión en Español — pendiente
 
-This section documents the AI-driven development frameworks configured and validated in this repository. Each framework entry is self-contained and portable — any team can copy the skills, rules, and agents into their own repository without depending on this codebase.
+This section documents how this repository adopts and configures external AI-driven development frameworks. It is **not** a replacement or mirror of any framework's official documentation. Each entry describes the local implementation decisions, adaptations, and extensions made on top of the upstream framework.
 
 ---
 
-## Purpose
+## Important Distinction
 
-The implementation of BMAD-METHOD and the harness ruleset in this repository represents working, field-tested configuration. Documenting it here transforms operational setup into reusable corporate knowledge: teams can adopt the full framework, adopt only the rules layer, or cherry-pick individual agents for their context.
+The documents in this section describe **this repository's specific configuration** of each framework — the agents added, the rules defined, the playbooks written, and the harness wired up for the progressive architecture context.
+
+For the authoritative source of each framework, always refer to its official upstream repository.
 
 ---
 
-## Available Frameworks
+## Frameworks Adopted in This Repository
 
-| Framework | Description | Maturity |
+| Framework | Official Source | What Is Documented Here |
 | :--- | :--- | :--- |
-| [BMAD-METHOD](./bmad-method/README.md) | Spec-driven AI-DD with role-based agent team and harness governance rules | Active — field-tested in this repository |
+| [BMAD-METHOD](./bmad-method/README.md) | [github.com/bmad-code-org/BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD) | How this repo adopted BMAD, what was extended, and the local harness rules layer built on top |
 
 ---
 
-## How to Use This Section
-
-Each framework is documented in four parts:
+## Document Structure per Framework
 
 | Document | Purpose |
 | :--- | :--- |
-| `README.md` | What the framework is, its two operating layers, and when to use it |
-| `agents-catalog.md` | Every agent: role, scope, inputs, outputs, invocation — ready to copy |
-| `rules-reference.md` | Every rule: intent, trigger condition, example, adaptation notes |
-| `portable-setup.md` | Step-by-step guide to adopt the framework in any repository |
+| `README.md` | Adoption context — what was taken from the framework, what was added locally, and what was left out |
+| `agents-catalog.md` | Local agent configuration — how each agent is scoped for this architecture context |
+| `rules-reference.md` | Local harness rules — what they are, why they were added, and how they extend the framework |
+| `portable-setup.md` | How another team can replicate this repository's adoption in their own context |
 
 ---
 

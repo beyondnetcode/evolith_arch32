@@ -1,8 +1,14 @@
-# BMAD-METHOD — Portable Setup Guide
+# Replicating This BMAD Adoption — Setup Guide
 
+> **This guide explains how to replicate the way this repository adopted BMAD-METHOD.**
+> It is not an installation guide for BMAD-METHOD itself.
+>
+> To understand BMAD-METHOD as a framework, start with the official source:
+> [github.com/bmad-code-org/BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD)
+>
 > **Bilingual Navigation:** Versión en Español — pendiente
 
-This guide contains everything needed to adopt BMAD-METHOD in any repository. You do not need to clone or depend on this base repository — copy the files and configuration described here, adapt what is specific to your context, and you have a working AI-DD framework.
+This guide describes how to set up the same combination used in this repository: BMAD-METHOD agent team + local harness governance layer (18 rules + 4 governance agents + validation script). You do not need to clone or depend on this repository — copy the configuration described here, adapt what is specific to your context, and you have an equivalent working setup.
 
 ---
 

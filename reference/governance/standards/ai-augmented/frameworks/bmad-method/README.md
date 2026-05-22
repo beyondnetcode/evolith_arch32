@@ -1,6 +1,10 @@
-# BMAD-METHOD Framework Reference
+# BMAD-METHOD — Adoption Reference
 
-> **Status:** Active | **Version:** 1.0.0 (as configured in this repository)
+> **This document describes how this repository adopted and configured BMAD-METHOD.**
+> It is not a substitute for the official framework documentation.
+>
+> **Official BMAD-METHOD source:** [github.com/bmad-code-org/BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD)
+>
 > **Bilingual Navigation:** Versión en Español — pendiente
 
 ---
@@ -9,110 +13,76 @@
 
 | I need to... | Go to |
 | :--- | :--- |
-| Understand what BMAD is and its two layers | [Section 1 — What Is BMAD-METHOD](#1-what-is-bmad-method) |
-| See every agent and what it does | [Agents Catalog](./agents-catalog.md) |
-| See every rule with rationale and examples | [Rules Reference](./rules-reference.md) |
-| Copy this setup into my own repository | [Portable Setup Guide](./portable-setup.md) |
+| Understand what BMAD-METHOD is | [Official repository](https://github.com/bmad-code-org/BMAD-METHOD) |
+| See how this repo adopted it | [Section 1 — Adoption Context](#1-adoption-context) |
+| See the local agent configuration | [Agents Catalog](./agents-catalog.md) |
+| See the local harness rules | [Rules Reference](./rules-reference.md) |
+| Replicate this adoption in another repo | [Portable Setup Guide](./portable-setup.md) |
 
 ---
 
-## 1. What Is BMAD-METHOD
+## 1. Adoption Context
 
-BMAD-METHOD (Breakthrough Method for Agile AI-Driven Development) is a spec-driven development framework that structures AI assistance as a team of specialized agents, each with a defined role, responsibility boundary, and handoff protocol — rather than a single general-purpose AI conversation.
+BMAD-METHOD is a spec-driven AI-DD (AI-Driven Development) framework created by the `bmad-code-org` community. It structures AI assistance as a team of specialized agent personas, each with a defined role, responsibility boundary, and handoff protocol — enabling more predictable and auditable outputs than a single general-purpose AI conversation.
 
-The core insight is that different phases of software delivery require different reasoning modes: requirements analysis demands functional precision and business narrative; architecture demands structural rigor and trade-off documentation; implementation demands code discipline and security compliance. Assigning these to distinct agent personas prevents context bleed and produces more predictable, auditable outputs.
+This repository adopted BMAD-METHOD as the AI-DD method for its spec-driven development workflow and document governance. The adoption involved three decisions:
 
-In this repository, BMAD-METHOD operates in two complementary layers.
+**1. Which BMAD agents to use and how to scope them.**
+The six BMAD team agents (analyst, pm, architect, sm, dev, qa) were adopted and scoped to the progressive monolith context: hexagonal architecture constraints, multi-tenancy requirements, the specific Node.js/.NET/Android runtime profiles, and the ADR-driven decision process defined in this repository.
+
+**2. What local harness rules to add on top.**
+BMAD-METHOD does not prescribe documentation quality rules. This repository defined 18 harness rules (R-01 through R-18) as a local governance layer on top of BMAD — covering bilingual sync, UTF-8 enforcement, diagram labeling, multi-tenancy isolation standards, modular extraction readiness, and API governance. These rules are local to this repository and are not part of the BMAD-METHOD framework.
+
+**3. What lightweight governance agents to add.**
+Four harness governance agents (@po, @architect, @analyst, @devops) were defined locally for on-demand document review and architectural auditing. These complement the sequential BMAD team workflow but are not part of the upstream BMAD framework.
 
 ---
 
-## 2. The Two Layers
+## 2. What Comes From BMAD-METHOD
 
-### Layer 1 — BMAD Team Agents (`.bmad-core/`)
+The following elements in this repository originate directly from BMAD-METHOD:
 
-A full project delivery team simulated as AI agent personas. Used when building or specifying a new feature end-to-end.
-
-```
-Analyst → PM → Architect → Scrum Master → Developer → QA
-```
-
-Each agent receives defined inputs from the previous agent and produces a defined deliverable. The workflow is sequential and explicit — no agent skips its predecessor's output.
-
-| Agent | Persona | Primary Deliverable |
+| Element | Location | Notes |
 | :--- | :--- | :--- |
-| **Analyst** | Requirements & Specification Specialist | Product Brief / Functional Specification |
-| **PM** | Product & Strategy Lead | Product Requirements Document (PRD) |
-| **Architect** | Systems & Security Architect | Technical Architecture Design (TAD) |
-| **Scrum Master** | Project Coordinator & Agile Master | Sprint Backlog / Task List |
-| **Developer** | High-Performance Software Engineer | Executable code + self-review report |
-| **QA** | Quality Assurance & Security Tester | QA Report + Test Logs |
+| Six agent personas | `.bmad-core/agents/` | Scoped to this repo's stack and architecture context |
+| Sequential delivery workflow | `.bmad-core/workflows/development.yaml` | Adapted deliverable paths for this repo's directory structure |
+| Spec-driven approach | Throughout | The principle of analyst → PRD → TAD → backlog → code → QA |
 
-### Layer 2 — Harness Governance Agents (`.harness/`)
+---
 
-A lighter set of agents focused on document governance, architectural review, and continuous quality enforcement. Used on-demand during any phase of development — not sequentially.
+## 3. What Was Added Locally
 
-| Agent | Scope | Trigger |
+The following elements are **not part of BMAD-METHOD** — they were built by this repository on top of the framework:
+
+| Element | Location | Purpose |
 | :--- | :--- | :--- |
-| **@po** | Business logic, functional stories, OKRs, readability | When reviewing functional stories or product documentation |
-| **@architect** | Tech stack, system design, diagrams, ADRs | When reviewing architectural decisions or diagrams |
-| **@analyst** | Bilingual sync, backlog hygiene, cross-references | When auditing documentation or translating content |
-| **@devops** | Docker, CI/CD, security scanning, harness governance | When reviewing infrastructure or operational configuration |
+| 18 harness rules (R-01–R-18) | `.harness/rules/global-rules.md` | Document quality, diagram standards, architecture governance |
+| 4 harness governance agents | `.harness/agents/agent-specs.md` | On-demand review: @po, @architect, @analyst, @devops |
+| 4 governance playbooks | `.harness/playbooks/` | Recurring operational checklists |
+| `validate-docs.mjs` script | `.harness/scripts/` | Automated UTF-8, link, and Mermaid validation |
+| Architecture-specific constraints | Agent personas | Hexagonal boundaries, RLS, modular extraction, ADR traceability |
 
 ---
 
-## 3. The Harness Rules Layer
+## 4. What Was Left Out
 
-Orthogonal to both agent layers, the harness defines 18 binding rules (R-01 through R-18) that apply regardless of which agent is active. Rules govern documentation quality, diagram labeling, tech stack validation, multi-tenancy standards, and API governance.
+Not all BMAD-METHOD capabilities were adopted. The following were intentionally excluded:
 
-Rules are enforced by:
-- The `validate-docs.mjs` script (automated, runs in CI)
-- Agent self-check behavior (agents are instructed to apply rules before producing output)
-- Human review during PR process
-
-See the full [Rules Reference](./rules-reference.md) for rationale, trigger conditions, and adaptation guidance for each rule.
-
----
-
-## 4. The Workflow
-
-The greenfield development workflow defines the canonical sequence for building a new feature spec-to-code:
-
-```
-analysis → product-definition → architectural-design → task-breakdown → implementation → verification
-```
-
-Each step maps to a BMAD Team Agent, has a defined deliverable file path, and declares its dependency on the previous step. No step executes without its declared dependency being complete.
-
-The workflow is intentionally sequential. Parallel agent execution is only permitted for independent sub-tasks within a step (e.g., multiple endpoints designed simultaneously within architectural-design), never for cross-step dependencies.
-
----
-
-## 5. What This Framework Is Not
-
-| Misconception | Reality |
+| Capability | Reason |
 | :--- | :--- |
-| "BMAD replaces human judgment" | Agents produce structured drafts. All architectural decisions, ADRs, and merges require human review. |
-| "You must use all six BMAD agents" | The workflow is modular. A team may adopt only the @architect harness agent for ADR review without using the full BMAD team. |
-| "Rules are suggestions" | Rules R-01 through R-18 are binding directives. R-03 and link validation are enforced automatically in CI. |
-| "This only works with Claude" | The agent personas are model-agnostic markdown specifications. They work with any LLM that supports system prompts or custom instructions. |
+| Frontend-specific agent directives (React, Tailwind) | This repo is architecture-agnostic at the reference level; frontend stack is demo-specific |
+| Backlog tooling integrations | Kept as flat files to remain tool-agnostic |
+| Any BMAD community templates not aligned with ADR taxonomy | This repo uses its own ADR and story formats, defined in `.harness/templates/` |
 
 ---
 
-## 6. Relationship to This Repository's Architecture
-
-BMAD-METHOD is classified as an **optional extension** of the corporate architecture standard. It does not modify or replace any base ADR, blueprint, or governance rule. A product team operates entirely within corporate standards whether or not they adopt this framework.
-
-When a team adopts it, BMAD-METHOD accelerates the production of ADRs, functional stories, and technical architecture documents — but the standards those documents must meet remain unchanged.
-
----
-
-## Documents in This Section
+## 5. Documents in This Section
 
 | Document | Purpose |
 | :--- | :--- |
-| [Agents Catalog](./agents-catalog.md) | Full reference for all 10 agents (6 BMAD team + 4 harness), with invocation instructions and copy-ready persona files |
-| [Rules Reference](./rules-reference.md) | All 18 harness rules with intent, trigger condition, compliance example, and adaptation notes |
-| [Portable Setup Guide](./portable-setup.md) | Everything needed to adopt this framework in any repository — files, configuration, and CI integration |
+| [Agents Catalog](./agents-catalog.md) | How each agent is configured in this repo — scope, constraints, handoff protocol |
+| [Rules Reference](./rules-reference.md) | The 18 local harness rules: what they are, why they were added, how to adapt them |
+| [Portable Setup Guide](./portable-setup.md) | How another team can replicate this adoption in their own repository |
 
 ---
 

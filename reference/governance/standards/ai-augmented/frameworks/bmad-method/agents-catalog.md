@@ -1,8 +1,14 @@
-# BMAD-METHOD — Agents Catalog
+# BMAD-METHOD — Local Agent Configuration
 
+> **This document describes how agents are configured in this repository.**
+> The BMAD-METHOD agent model originates from the official framework:
+> [github.com/bmad-code-org/BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD)
+>
 > **Bilingual Navigation:** Versión en Español — pendiente
 
-This catalog documents every agent in the BMAD-METHOD framework as configured in this repository. Each entry includes the complete persona specification — copy the content of the "Portable Persona" block directly into your AI tool's system prompt, custom instructions, or agent configuration file.
+This catalog documents how each BMAD agent is configured and scoped within this repository's progressive architecture context. The persona structures follow BMAD-METHOD conventions; the constraints, stack references, and governance directives are local additions specific to this codebase.
+
+Each "Portable Persona" block reflects the **local configuration** — copy it to replicate this repository's adoption, not to reproduce the original BMAD agent definition.
 
 ---
 

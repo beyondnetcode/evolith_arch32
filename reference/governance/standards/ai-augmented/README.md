@@ -19,6 +19,7 @@ Designed for product teams and engineers who wish to integrate AI agents in a co
 
 | Module | Description |
 |--------|-------------|
+| **[Frameworks Reference](./frameworks/README.md)** | **Portable AI-DD framework documentation — BMAD-METHOD skills, rules, and agents ready to copy into any repository.** |
 | [00 - Overview](./00-overview/what-is-this.md) | Introduction, 3-tier adoption guide, and basic agentic glossary. |
 | [01 - Harness Engineering](./01-harness-engineering/harness-reference.md) | Design of the environment wrapping the model: pillars, AGENTS.md standard, and layered validation. |
 | [02 - MCP Integration](./02-mcp-integration/mcp-overview.md) | Model Context Protocol to standardize agent connection with services and data. |

@@ -28,6 +28,9 @@ This base is your starting point. You inherit its full decision corpus, structur
 **You are contributing a new architectural decision.**
 If the decision is universal, it belongs here. If it is product-specific, it belongs in the child repository. The [Promotion Path](./reference/governance/standards/onboarding/child-repository-inheritance-guide.md#7-promotion-path) defines how decisions move from product repositories back into this base.
 
+**You are setting up AI-assisted development (AI-DD).**
+This repository uses BMAD-METHOD as its AI-DD framework. The local agent configuration, harness rules, and replication guide are documented in the [AI-DD Frameworks Adoption Reference](./reference/governance/standards/ai-augmented/frameworks/README.md).
+
 ---
 
 ## Contents

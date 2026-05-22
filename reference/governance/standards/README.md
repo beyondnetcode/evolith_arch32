@@ -53,11 +53,12 @@ Tactical implementation playbooks, defensive security, and market validation.
 
 ## AI-Augmented Architecture (Optional)
 
-Optional extension for teams and products looking to incorporate AI agents,
-harness engineering, and MCP into their architecture. Does not modify or replace any
-existing corporate standard.
+Optional extension for teams and products looking to incorporate AI agents, harness engineering, and MCP into their architecture. Does not modify or replace any existing corporate standard.
 
--> [Explore AI-Augmented section](./ai-augmented/README.md)
+| Section | Description |
+| :--- | :--- |
+| [AI-Augmented Overview](./ai-augmented/README.md) | Introduction, maturity model, MCP, agentic patterns, and AI ADRs |
+| **[AI-DD Frameworks — Adoption Reference](./ai-augmented/frameworks/README.md)** | **How this repository adopted BMAD-METHOD: local agent configuration, harness rules, and replication guide** |
 
 ---
 [Back to Upper Level](../../README.md)

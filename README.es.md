@@ -28,6 +28,9 @@ Esta base es tu punto de partida. Heredas su corpus completo de decisiones, estr
 **Estás contribuyendo una nueva decisión arquitectónica.**
 Si la decisión es universal, pertenece aquí. Si es específica del producto, pertenece en el repositorio hijo. El [Camino de Promoción](./reference/governance/standards/onboarding/child-repository-inheritance-guide.es.md#7-camino-de-promoción) define cómo las decisiones viajan desde los repositorios de producto de vuelta a esta base.
 
+**Estás configurando desarrollo asistido por IA (AI-DD).**
+Este repositorio usa BMAD-METHOD como framework AI-DD. La configuración local de agentes, las reglas del harness y la guía de replicación están documentadas en la [Referencia de Adopción de Frameworks AI-DD](./reference/governance/standards/ai-augmented/frameworks/README.md).
+
 ---
 
 ## Contenidos

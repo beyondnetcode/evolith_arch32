@@ -2,20 +2,8 @@
 
 > **Navegación Bilingüe:** [English Version](../blueprints/authoritative-tech-stack-dotnet.md)
 
-**Tipo de Documento:** Apéndice de Runtime 
-**Prerrequisito:** DEBE leerse después de la **[Línea Base Agnóstica](./authoritative-tech-stack-agnostic.md)**. 
-**Ecosistema Objetivo:** Workers de Cómputo Pesado, Interoperabilidad Legacy, Procesamiento por Lotes Empresarial.
-
----
-
-## 1. Matriz de Cumplimiento Ejecutiva (Mandatos para Proveedores)
-
-# Stack Tecnológico Autorizado: Ecosistema .NET & C#
-
-> **Navegación Bilingüe:** [English Version](../blueprints/authoritative-tech-stack-dotnet.md)
-
-**Tipo de Documento:** Apéndice de Runtime 
-**Prerrequisito:** DEBE leerse después de la **[Línea Base Agnóstica](./authoritative-tech-stack-agnostic.md)**. 
+**Tipo de Documento:** Apéndice de Runtime  
+**Prerrequisito:** DEBE leerse después de la **[Línea Base Agnóstica](./authoritative-tech-stack-agnostic.md)**.  
 **Ecosistema Objetivo:** Workers de Cómputo Pesado, Interoperabilidad Legacy, Procesamiento por Lotes Empresarial.
 
 ---
@@ -53,27 +41,32 @@ Para cumplir con el mandato general de arquitectura Hexagonal, se aplican las si
 4. **`{BoundedContext}.Presentation` (o Web API)**: Punto de entrada que contiene los Controladores ASP.NET o endpoints de Minimal API, mapeando DTOs a Comandos de Aplicación.
 
 ### 2.2 Política de Gestión de Errores
-Lanzar Excepciones estándar para el control de flujo está **PROHIBIDO**. 
+Lanzar Excepciones estándar para el control de flujo está **PROHIBIDO**.  
 Los equipos DEBEN utilizar el **Patrón Result** para propagar fallos de lógica de negocio de forma segura. Se exige el uso de `OneOf<T>` o clases personalizadas `Result<T, TError>` para las respuestas de la Capa de Aplicación para garantizar el manejo de errores en tiempo de compilación en los controladores Web.
 
 ---
 
 ## 3. Detalles de Persistencia (Entity Framework Core)
 
-### 3.1 Aislamiento Multi-Tenancy (RLS)
-Al utilizar la estrategia `INFRA_NATIVE` implementando SQL Server Row-Level Security en .NET:
+### 3.1 Aislamiento Multi-Tenancy (Aplicación Primero, SQL Server RLS Después)
+Al utilizar SQL Server como motor de persistencia en .NET:
 * La capa de Infraestructura DEBE implementar un `TenantResolver` extrayendo el `tenant_id` de las `ClaimsPrincipal`.
-* El `DbContext` DEBE utilizar `connection.CreateCommand()` dentro de los eventos de apertura del contexto para ejecutar:
+* Las capas de Aplicación e Infraestructura DEBEN imponer primero el aislamiento del tenant mediante filtros de consulta de EF Core, composición de consultas scoped o adaptadores de persistencia equivalentes que apliquen automáticamente el discriminador del tenant activo.
+* El `DbContext` PUEDE adicionalmente utilizar `connection.CreateCommand()` dentro de los eventos de apertura del contexto o interceptores de conexión para ejecutar:
  ```sql
  EXEC sp_set_session_context 'tenant_id', @tenantId;
  ```
-* Los Global Query Filters nativos (`HasQueryFilter`) solo se aceptan como un respaldo secundario de seguridad. El RLS impuesto en la conexión directa es la puerta de seguridad base.
+* SQL Server Row-Level Security es la red de seguridad secundaria frente a SQL puro u omisiones de desarrolladores. No debe tratarse como el mecanismo primario de aislamiento.
 
 ### 3.2 Migraciones
-## 4. Advertencia Final de Integración para Proveedores
-
-No satisfacer estas definiciones de herramientas estáticas bloqueará automáticamente la aceptación del código de integración.
--> Volver al **[índice Maestro Global](../../../MASTER_INDEX.es.md)**
+Ejecutar automáticamente `context.Database.Migrate()` directamente desde el host Web durante el arranque de la aplicación está **FUERTEMENTE DESACONSEJADO** para clústeres de producción. Utilizar bundles de scripts SQL de Entity Framework dentro de Init-Containers de Kubernetes para proteger la atomicidad del despliegue.
 
 ---
-[Volver al Índice](./README.md)
+
+## 4. Advertencia Final de Integración para Proveedores
+
+No satisfacer estas definiciones de herramientas estáticas bloqueará automáticamente la aceptación del código de integración.  
+-> Volver al **[Índice Maestro Global](../../../MASTER_INDEX.es.md)**
+
+---
+[Volver al Índice](./README.es.md)

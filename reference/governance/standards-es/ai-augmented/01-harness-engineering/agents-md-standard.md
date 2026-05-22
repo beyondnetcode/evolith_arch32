@@ -41,6 +41,15 @@ Adoptamos la regla evolutiva propuesta por el ecosistema de ingeniería agéntic
 
 > **"Por cada error repetitivo que el agente cometa, se debe añadir una nueva regla explícita a la sección de Agent Rules de AGENTS.md para prevenir su recurrencia perpetua."**
 
+## Adiciones Recomendadas de Evolución
+
+La estructura mínima anterior es obligatoria. Los repositorios maduros DEBERÍAN además agregar:
+
+- referencias explícitas a playbooks locales del harness o runbooks recurrentes,
+- notas de autoridad de runtime aclarando dónde viven las reglas oficiales del stack,
+- reglas específicas de multi-tenancy, APIs o cumplimiento cuando esos errores se repiten,
+- recordatorios de sincronización para actualizar `AGENTS.md` cada vez que la arquitectura o el stack cambien de forma material.
+
 ## AGENTS.md vs CLAUDE.md
 - **`AGENTS.md`**: Agnóstico a la herramienta. Funciona para cualquier agente que consuma el espacio de trabajo (ej., GPT-4o con acceso a terminal, Devin, etc.).
 - **`CLAUDE.md`**: Estándar específico reconocido nativamente por `claude-code`. Se recomienda que si usas Claude Code, tengas un `CLAUDE.md` que puede ser un enlace simbólico o una copia simplificada estrictamente enfocada en los comandos que Claude consume mejor.

@@ -137,7 +137,7 @@ Según lo validado por el Arquitecto Principal, estas decisiones fundacionales e
 6. **[ADR 0006: Transición futura a Microservicios vía Dapr](../adrs-es/core/0006-future-microservices-transition-dapr.md)**: Desacoplamiento de activadores para romper monolitos en redes de nodos de malla.
 7. **[ADR 0007: Observabilidad vía OpenTelemetry](../adrs-es/nodejs/0007-observability-telemetry-loki-opentelemetry.md)**: Trazado distribuido a través de BFF, API y BD.
 8. **[ADR 0008: Patrones BFF](../adrs-es/nodejs/0008-progressive-multimodule-evolution-gateway-bff.md)**: Integración multi-canal a través de capas de traducción dedicadas.
-9. **[ADR 0010: Estrategia de Arquitectura Multi-Tenancy SaaS](../adrs-es/core/0010-multi-tenancy-architecture-strategy.md)**: Implementación de Seguridad a Nivel de Fila (RLS) física dentro de PostgreSQL para garantizar el aislamiento.
+9. **[ADR 0010: Estrategia de Arquitectura Multi-Tenancy SaaS](../adrs-es/core/0010-multi-tenancy-architecture-strategy.md)**: Aplicación de aislamiento de doble capa con filtros tenant a nivel de aplicación y failsafes nativos de base de datos según el runtime.
 10. **[ADR 0011: Circuit Breakers de Tolerancia a Fallos](../adrs-es/core/0011-fault-tolerance-resiliency-patterns.md)**: Prevención de degradación en cascada utilizando `opossum`.
 11. **[ADR 0013: Topología de Recuperación ante Desastres](../adrs-es/core/0013-cloud-infrastructure-topology-dr.md)**: Diseño de nodos multi-región.
 12. **[ADR 0014: Caché Distribuida](../adrs-es/core/0014-distributed-caching-strategy-redis.md)**: Aliviar la base de datos a través de Redis centralizado.

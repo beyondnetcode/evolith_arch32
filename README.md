@@ -20,6 +20,7 @@ This repository is an open technical reference for building products that can st
 | If you want to... | Go to |
 |---|---|
 | Understand the whole repository | [Global Master Index](./MASTER_INDEX.md) |
+| Understand how AI agents must operate here | [AGENTS.md](./AGENTS.md) |
 | Learn the architecture model | [Reference Blueprint](./reference/architecture/blueprints/reference-blueprint.md) |
 | Review the universal rules | [Agnostic Architecture Baseline](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.md) |
 | Explore decisions and trade-offs | [ADR Registry](./reference/architecture/adrs/README.md) |
@@ -88,6 +89,7 @@ Contributions are welcome through issues, documentation improvements, ADR review
 
 Before contributing, read:
 
+- [AGENTS.md](./AGENTS.md)
 - [Repository Taxonomy](./reference/governance/standards/repository-taxonomy.md)
 - [Engineering Manifesto](./reference/governance/standards/engineering/engineering-manifesto.md)
 - [Gitflow ADR](./reference/architecture/adrs/core/0050-gitflow-branching-strategy.md)

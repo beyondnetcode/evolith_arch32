@@ -31,7 +31,6 @@ All engineering squads developing within the .NET ecosystem MUST strictly enforc
 ---
 
 ## 2. Architecture Implementation (.NET Mapping)
-## 2. Architecture Implementation (.NET Mapping)
 
 To comply with the overall Hexagonal architecture mandate, the following .NET project organization rules are enforced:
 
@@ -49,14 +48,15 @@ Teams MUST utilize the **Result Pattern** to propagate business logic failures s
 
 ## 3. Persistence Details (Entity Framework Core)
 
-### 3.1 Multi-Tenancy Isolation (RLS)
-When utilizing the `INFRA_NATIVE` strategy via SQL Server Row-Level Security in .NET:
+### 3.1 Multi-Tenancy Isolation (Application First, SQL Server RLS Second)
+When utilizing SQL Server as the persistence engine in .NET:
 * The Infrastructure layer MUST implement a `TenantResolver` extracting `tenant_id` from `ClaimsPrincipal`.
-* The `DbContext` MUST utilize `connection.CreateCommand()` inside the context opening events to execute:
+* The Application and Infrastructure layers MUST enforce tenant isolation first through EF Core query filters, scoped query composition, or equivalent persistence adapters that automatically apply the active tenant discriminator.
+* The `DbContext` MAY additionally utilize `connection.CreateCommand()` inside context opening events or connection interceptors to execute:
  ```sql
  EXEC sp_set_session_context 'tenant_id', @tenantId;
  ```
-* Native Global Query Filters (`HasQueryFilter`) are only accepted as a secondary safety fallback. RLS enforced on the raw connection is the baseline security gate.
+* SQL Server Row-Level Security is the secondary safety net guarding against raw SQL or developer omissions. It must not be treated as the primary isolation mechanism.
 
 ### 3.2 Migrations
 Automatic `context.Database.Migrate()` executed directly by the Web host during application startup is **STRONGLY DISCOURAGED** for production clusters. Utilize Entity Framework **SQL Script bundles** inside Kubernetes Init-Containers to safeguard deployment atomic transactions.

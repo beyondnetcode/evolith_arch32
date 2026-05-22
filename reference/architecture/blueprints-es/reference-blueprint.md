@@ -36,7 +36,7 @@ La organización promueve una arquitectura políglota deliberada donde los entor
 | Atributo de Calidad | Origen ADR | Objetivo |
 | :--- | :--- | :--- |
 | **Evolución Progresiva** | [ADR-0006](../adrs-es/core/0006-future-microservices-transition-dapr.md), [ADR-0008](../adrs-es/nodejs/0008-progressive-multimodule-evolution-gateway-bff.md) | Camino de cero refactorización hacia microservicios vía Dapr |
-| **Multi-Tenancy SaaS** | [ADR-0010](../adrs-es/core/0010-multi-tenancy-architecture-strategy.md) | Aislamiento de Doble Capa (ORM + PostgreSQL RLS) |
+| **Multi-Tenancy SaaS** | [ADR-0010](../adrs-es/core/0010-multi-tenancy-architecture-strategy.md) | Aislamiento de Doble Capa (Filtros de Aplicación + Failsafe Nativo de BD) |
 | **Desacoplamiento Estricto** | [ADR-0002](../adrs-es/nodejs/0002-clean-architecture-nestjs.md), [ADR-0003](../adrs-es/nodejs/0003-strict-typescript-standards.md) | Aplicación de límites vía ESLint |
 | **Resiliencia** | [ADR-0011](../adrs-es/core/0011-fault-tolerance-resiliency-patterns.md) | Circuit Breakers Distribuidos (Redis + Kong) |
 | **Seguridad** | [ADR-0005](../adrs-es/core/0005-ci-cd-quality-codeql.md), [ADR-0012](../adrs-es/nodejs/0012-advanced-authorization-rbac-abac.md), [ADR-0020](../adrs-es/core/0020-identity-provider-abstraction-strategy.md), [ADR-0026](../adrs-es/nodejs/0026-mfa-passwordless-adaptive-authentication.md) | Perímetro Zero-trust + RBAC/ABAC |
@@ -150,7 +150,7 @@ graph TD
 Toda la lógica de negocio en las capas de Dominio y Aplicación tiene **cero dependencias en tiempo de ejecución** de frameworks, ORMs o servicios en la nube. La capa de infraestructura implementa Puertos de TypeScript puros.
 
 ### 4.2 Estrategia de Multi-Tenancy SaaS ([ADR-0010](../adrs-es/core/0010-multi-tenancy-architecture-strategy.md))
-Emplea **Defensa de Aislamiento de Doble Capa**. (Capa 1) Los adaptadores de persistencia añaden automáticamente el filtro `tenant_id` a las consultas genéricas. (Capa 2) Las políticas de **Row-Level Security (RLS)** de PostgreSQL compartido imponen una contención estricta de la sesión a nivel del motor SQL como mecanismo infalible absoluto.
+Emplea **Defensa de Aislamiento de Doble Capa**. (Capa 1) Los adaptadores de persistencia añaden automáticamente el filtro `tenant_id` a las consultas genéricas. (Capa 2) El motor de base de datos seleccionado puede imponer contención nativa de filas como failsafe secundario, por ejemplo PostgreSQL RLS o SQL Server RLS respaldado por contexto de sesión.
 
 ### 4.3 Patrón de Gateway de Dos Niveles ([ADR-0030](../adrs-es/core/0030-api-gateway-kong-vs-nestjs.md))
 | Nivel | Tecnología | Responsabilidad |
@@ -411,7 +411,7 @@ graph TD
 | **Observabilidad** | [ADR-0007](../adrs-es/nodejs/0007-observability-telemetry-loki-opentelemetry.md) | OpenTelemetry + Loki + Jaeger | 3.1, 5, 6 |
 | **Patrón de Gateway BFF** | [ADR-0008](../adrs-es/nodejs/0008-progressive-multimodule-evolution-gateway-bff.md) | NestJS BFF por canal de cliente | 3.1, 4.3, 5 |
 | **Fijación de Dependencias** | [ADR-0009](../adrs-es/core/0009-strict-dependency-pinning-vulnerability-management.md) | Versiones exactas + `npm audit` | 2 |
-| **Multi-Tenancy (SaaS)** | [ADR-0010](../adrs-es/core/0010-multi-tenancy-architecture-strategy.md) | PostgreSQL RLS + AsyncLocalStorage | 4.2, 5, 6.1 |
+| **Multi-Tenancy (SaaS)** | [ADR-0010](../adrs-es/core/0010-multi-tenancy-architecture-strategy.md) | Filtros de aplicación + contexto por runtime + failsafe nativo de BD | 4.2, 5, 6.1 |
 | **Circuit Breakers** | [ADR-0011](../adrs-es/core/0011-fault-tolerance-resiliency-patterns.md) | `opossum` + Exponential Backoff | 5, 6.3 |
 | **Autorización RBAC/ABAC** | [ADR-0012](../adrs-es/nodejs/0012-advanced-authorization-rbac-abac.md) | JWT Claims + NestJS Guards | 5 |
 | **Topología Cloud DR** | [ADR-0013](../adrs-es/core/0013-cloud-infrastructure-topology-dr.md) | Multi-AZ + Replicación en Streaming | 7 |

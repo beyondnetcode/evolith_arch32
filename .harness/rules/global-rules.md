@@ -16,3 +16,9 @@ Binding directives. Zero fluff.
 | **R-10** | Audit Format | Audits output: [Document, Location, Issue Type, Severity, Recommended Fix]. |
 | **R-11** | Order | Dual tasks execute: 1. PO (functional) -> 2. Architect (technical). No parallel execution. |
 | **R-12** | Conventions | Strictly enforce naming prefixes & taxonomies before merges. |
+| **R-13** | Functional Structure | Functional stories and equivalent artifacts must keep business narrative readable and isolate technical detail in a dedicated `Technical Requirements` section. |
+| **R-14** | Runtime Authority | Technical references must cite the authoritative runtime profile and stay aligned with the actual target stack. |
+| **R-15** | Multi-Tenancy Layers | Multi-tenancy standards must define application-layer isolation as primary and database-native enforcement as secondary failsafe. |
+| **R-16** | Catalog Contract | Parametric and configuration entities must define `code`, `value`, and `description` with traceability, uniqueness, auditability, and extensibility expectations. |
+| **R-17** | Modular Extraction | Shared logic and module boundaries must preserve extraction readiness for modular monolith to distributed evolution. |
+| **R-18** | Hybrid API Governance | If REST and GraphQL coexist, commands stay REST-first and query behavior must remain consistent across both surfaces. |

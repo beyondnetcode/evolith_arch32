@@ -13,7 +13,7 @@ Decisiones aplicables a cualquier producto construido sobre el framework, indepe
 * [ADR 0005: Calidad CI/CD (CodeQL)](./core/0005-ci-cd-quality-codeql.md)
 * [ADR 0006: Futuros Microservicios (Dapr)](./core/0006-future-microservices-transition-dapr.md)
 * [ADR 0009: Fijación Estricta de Dependencias](./core/0009-strict-dependency-pinning-vulnerability-management.md)
-* [ADR 0010: Estrategia Multi-Tenancy RLS](./core/0010-multi-tenancy-architecture-strategy.md)
+* [ADR 0010: Estrategia Multi-Tenancy de Doble Capa](./core/0010-multi-tenancy-architecture-strategy.md)
 * [ADR 0011: Patrones de Resiliencia](./core/0011-fault-tolerance-resiliency-patterns.md)
 * [ADR 0013: Topología Cloud & DR](./core/0013-cloud-infrastructure-topology-dr.md)
 * [ADR 0014: Caché Distribuido (Redis)](./core/0014-distributed-caching-strategy-redis.md)

@@ -36,7 +36,7 @@ The organization promotes a deliberate polyglot architecture where runtimes are 
 | Quality Attribute | Source ADR | Target |
 | :--- | :--- | :--- |
 | **Progressive Evolution** | [ADR-0006](../adrs/core/0006-future-microservices-transition-dapr.md), [ADR-0008](../adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.md) | Zero-refactoring path to microservices via Dapr |
-| **SaaS Multi-Tenancy** | [ADR-0010](../adrs/core/0010-multi-tenancy-architecture-strategy.md) | Dual-Layer Isolation (ORM + PostgreSQL RLS) |
+| **SaaS Multi-Tenancy** | [ADR-0010](../adrs/core/0010-multi-tenancy-architecture-strategy.md) | Dual-Layer Isolation (Application Filters + Native DB Failsafe) |
 | **Strict Decoupling** | [ADR-0002](../adrs/nodejs/0002-clean-architecture-nestjs.md), [ADR-0003](../adrs/nodejs/0003-strict-typescript-standards.md) | ESLint boundary enforcement |
 | **Resilience** | [ADR-0011](../adrs/core/0011-fault-tolerance-resiliency-patterns.md) | Distributed Circuit Breakers (Redis + Kong) |
 | **Security** | [ADR-0005](../adrs/core/0005-ci-cd-quality-codeql.md), [ADR-0012](../adrs/nodejs/0012-advanced-authorization-rbac-abac.md), [ADR-0020](../adrs/core/0020-identity-provider-abstraction-strategy.md), [ADR-0026](../adrs/nodejs/0026-mfa-passwordless-adaptive-authentication.md) | Zero-trust perimeter + RBAC/ABAC |
@@ -150,7 +150,7 @@ graph TD
 All business logic in the Domain and Application layers has **zero runtime dependencies** on frameworks, ORMs, or cloud services. The infrastructure layer implements pure TypeScript Ports.
 
 ### 4.2 SaaS Multi-Tenancy Strategy ([ADR-0010](../adrs/core/0010-multi-tenancy-architecture-strategy.md))
-Employs **Dual-Layer Isolation Defense**. (Layer 1) Persistence adapters automatically append `tenant_id` filtering to generic queries. (Layer 2) Shared PostgreSQL **Row-Level Security (RLS)** policies enforce strict session containment at the SQL engine level as an absolute failsafe.
+Employs **Dual-Layer Isolation Defense**. (Layer 1) Persistence adapters automatically append `tenant_id` filtering to generic queries. (Layer 2) The selected database engine may enforce native row-level containment as a secondary failsafe, such as PostgreSQL RLS or SQL Server RLS backed by session context.
 
 ### 4.3 Two-Tier Gateway Pattern ([ADR-0030](../adrs/core/0030-api-gateway-kong-vs-nestjs.md))
 | Tier | Technology | Responsibility |
@@ -411,7 +411,7 @@ graph TD
 | **Observability** | [ADR-0007](../adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md) | OpenTelemetry + Loki + Jaeger | 3.1, 5, 6 |
 | **BFF Gateway Pattern** | [ADR-0008](../adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.md) | NestJS BFF per client channel | 3.1, 4.3, 5 |
 | **Dependency Pinning** | [ADR-0009](../adrs/core/0009-strict-dependency-pinning-vulnerability-management.md) | Exact versions + `npm audit` | 2 |
-| **Multi-Tenancy (SaaS)** | [ADR-0010](../adrs/core/0010-multi-tenancy-architecture-strategy.md) | PostgreSQL RLS + AsyncLocalStorage | 4.2, 5, 6.1 |
+| **Multi-Tenancy (SaaS)** | [ADR-0010](../adrs/core/0010-multi-tenancy-architecture-strategy.md) | Application filters + runtime-specific request context + native DB failsafe | 4.2, 5, 6.1 |
 | **Circuit Breakers** | [ADR-0011](../adrs/core/0011-fault-tolerance-resiliency-patterns.md) | `opossum` + Exponential Backoff | 5, 6.3 |
 | **RBAC/ABAC Authorization** | [ADR-0012](../adrs/nodejs/0012-advanced-authorization-rbac-abac.md) | JWT Claims + NestJS Guards | 5 |
 | **Cloud DR Topology** | [ADR-0013](../adrs/core/0013-cloud-infrastructure-topology-dr.md) | Multi-AZ + Streaming Replication | 7 |

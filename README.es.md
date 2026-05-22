@@ -20,6 +20,7 @@ Este repositorio es una referencia técnica abierta para construir productos que
 | Si quieres... | Ve a |
 |---|---|
 | Entender todo el repositorio | [Índice Maestro Global](./MASTER_INDEX.es.md) |
+| Entender cómo deben operar aquí los agentes de IA | [AGENTS.md](./AGENTS.md) |
 | Aprender el modelo arquitectónico | [Blueprint de Referencia](./reference/architecture/blueprints-es/reference-blueprint.md) |
 | Revisar las reglas universales | [Línea Base Arquitectónica Agnóstica](./reference/architecture/blueprints-es/authoritative-tech-stack-agnostic.md) |
 | Explorar decisiones y trade-offs | [Registro ADR](./reference/architecture/adrs-es/README.md) |
@@ -88,6 +89,7 @@ Las contribuciones son bienvenidas mediante issues, mejoras documentales, revisi
 
 Antes de contribuir, revisa:
 
+- [AGENTS.md](./AGENTS.md)
 - [Taxonomía del Repositorio](./reference/governance/standards-es/repository-taxonomy.es.md)
 - [Manifiesto de Ingeniería](./reference/governance/standards-es/engineering/engineering-manifesto.md)
 - [ADR Gitflow](./reference/architecture/adrs-es/core/0050-estrategia-ramas-gitflow.md)

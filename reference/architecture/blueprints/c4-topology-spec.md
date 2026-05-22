@@ -137,7 +137,7 @@ As validated by the Principal Architect, all 32 foundational decisions are **off
 6. **[ADR 0006: Future Microservices transition via Dapr](../adrs/core/0006-future-microservices-transition-dapr.md)**: Decoupling triggers to break monoliths into mesh node networks.
 7. **[ADR 0007: Observability via OpenTelemetry](../adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md)**: Distributed tracing across BFF, API and DB.
 8. **[ADR 0008: BFF Patterns](../adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.md)**: Multi-channel integration via dedicated translation layers.
-9. **[ADR 0010: Multi-Tenancy SaaS Strategy](../adrs/core/0010-multi-tenancy-architecture-strategy.md)**: Implementing physical Row-Level Security (RLS) inside PostgreSQL to guarantee isolation.
+9. **[ADR 0010: Multi-Tenancy SaaS Strategy](../adrs/core/0010-multi-tenancy-architecture-strategy.md)**: Applying dual-layer isolation with application-level tenant filters and runtime-specific native database failsafes.
 10. **[ADR 0011: Fault Tolerance Circut Breakers](../adrs/core/0011-fault-tolerance-resiliency-patterns.md)**: Preventing cascade degradation using `opossum`.
 11. **[ADR 0013: Disaster Recovery Topology](../adrs/core/0013-cloud-infrastructure-topology-dr.md)**: Multi-region node design.
 12. **[ADR 0014: Distributed Caching](../adrs/core/0014-distributed-caching-strategy-redis.md)**: Offloading the database via centralized Redis.

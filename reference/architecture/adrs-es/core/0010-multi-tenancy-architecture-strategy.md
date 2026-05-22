@@ -20,17 +20,17 @@ Adoptar una **Estrategia Multi-Tenancy Híbrida "Pooled"** utilizando un **Marco
 1. **Capa 1: Aislamiento a Nivel de Aplicación (Primario - Agnóstico al Motor)**:
  La capa de adaptadores de persistencia DEBE inyectar automáticamente el filtro `tenant_id` activo en todas las consultas ejecutadas vía ORM/Constructores de Consultas (ej. usando filtros globales o interceptores de consulta del repositorio base). Esto asegura que el aislamiento funcional de datos permanezca completamente agnóstico de las capacidades específicas del motor de base de datos.
 
-2. **Capa 2: Red de Seguridad a Nivel de Base de Datos (RLS de PostgreSQL)**:
- Como una red de seguridad absoluta contra errores humanos (ej. consultas SQL puras escritas por desarrolladores que se saltan los filtros del ORM), aprovechamos la **Seguridad a Nivel de Fila (RLS)** nativa de PostgreSQL. El motor de PostgreSQL impone el filtrado físico de filas utilizando variables de sesión de transacción establecidas inmediatamente al abrir el checkout del pool de conexiones.
+2. **Capa 2: Red de Seguridad a Nivel de Base de Datos (Enforcement Nativo Específico del Motor)**:
+ Como red de seguridad absoluta frente a errores humanos (ej. consultas SQL puras escritas por desarrolladores que se saltan los filtros del ORM), los equipos DEBERÍAN aprovechar el enforcement nativo de base de datos cuando el motor seleccionado lo soporte. Los ejemplos incluyen **Row-Level Security (RLS) de PostgreSQL** o **Row-Level Security de SQL Server** respaldado por contexto de sesión. Esta capa es secundaria por diseño y nunca debe reemplazar la Capa 1.
 
-3. **Alcance de la Ejecución**: Pasar las claims de `tenant_id` de forma segura dentro de JWTs verificados. Utilizar `AsyncLocalStorage` de NestJS para mantener el contexto inmutable por petición, sirviendo como la fuente única de la verdad utilizada por los resolutores tanto de la Capa 1 como de la Capa 2.
+3. **Alcance de la Ejecución**: Pasar las claims de `tenant_id` de forma segura dentro de JWTs verificados o un contexto de identidad confiable equivalente. El contenedor de contexto por petición específico del runtime (ej. `AsyncLocalStorage` de NestJS, contexto tenant scoped de .NET) sirve como la fuente única de la verdad utilizada por los resolutores tanto de la Capa 1 como de la Capa 2.
 
 4. **Preparación para Aislamiento VIP**: Mientras el 90% de los inquilinos comparten el pool, la capa de abstracción de persistencia debe soportar inherentemente el enrutamiento de clientes Enterprise a endpoints de clúster de base de datos física completamente aislados basados en metadatos del inquilino resueltos, de forma completamente transparente para el dominio.
 
 ## Consecuencias
 
 ### Positivas
-- **Seguridad Blindada**: El aislamiento de filas se impone de forma nativa en el motor Postgres, sin confiar en el propenso a errores código de la aplicación backend.
+- **Defensa en Profundidad**: El aislamiento de filas combina corrección a nivel de aplicación con enforcement nativo de base de datos como red de seguridad.
 - **Escalabilidad Extrema**: Ejecuta cientos de inquilinos básicos en una sola instancia de Postgres sin gestionar cientos de esquemas separados.
 - **Actualizaciones Simplificadas**: Una única ruta de migración se aplica limpiamente a todos los inquilinos agrupados (Pooled) instantáneamente.
 
@@ -40,6 +40,7 @@ Adoptar una **Estrategia Multi-Tenancy Híbrida "Pooled"** utilizando un **Marco
 
 ## Referencias
 - [Documentación de RLS en PostgreSQL](https://www.postgresql.org/docs/current/ddl-rowsecurity.html)
+- [Row-Level Security de SQL Server](https://learn.microsoft.com/sql/relational-databases/security/row-level-security)
 - [ADR-0031: Estrategia de Esquema por Contexto](../../adrs/core/0031-schema-per-context-domain-event-catalog.md)
 
 ---

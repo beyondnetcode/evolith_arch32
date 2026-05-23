@@ -1,4 +1,4 @@
-# ?? Index of grafana
+# Index of grafana
 
 
 

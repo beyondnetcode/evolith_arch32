@@ -11,6 +11,7 @@ Este es el índice completo de navegación para esta referencia de arquitectura 
 
 | Intención | Entrada principal | Referencia de apoyo |
 |---|---|---|
+| Elegir una ruta de lectura eficiente | [Primeros Pasos por Rol](./reference/getting-started/README.es.md) | [Glosario Arquitectónico](./reference/governance/glossary.es.md) |
 | Entender la visión arquitectónica | [Directivas Arquitectónicas](./reference/governance/standards-es/vision/architectural-directives.md) | [Roadmap Evolutivo](./reference/governance/standards-es/vision/evolutionary-strategy-roadmap.md) |
 | Entender el modelo de arquitectura progresiva | [Blueprint de Referencia](./reference/architecture/blueprints-es/reference-blueprint.md) | [Criterios de Extracción a Microservicios](./reference/architecture/adrs-es/core/0045-microservice-extraction-readiness-criteria.md) |
 | Revisar decisiones tecnológicas | [Stack Tecnológico Autorizado](./reference/architecture/blueprints-es/authoritative-tech-stack.md) | [Línea Base Agnóstica](./reference/architecture/blueprints-es/authoritative-tech-stack-agnostic.md) |
@@ -18,6 +19,7 @@ Este es el índice completo de navegación para esta referencia de arquitectura 
 | Aprender estándares de ingeniería | [Manifiesto de Ingeniería](./reference/governance/standards-es/engineering/engineering-manifesto.md) | [Guía de Contract Testing](./reference/governance/standards-es/engineering/contract-testing-guideline.md) |
 | Entender expectativas SDLC | [Framework SDLC](./reference/governance/sdlc-es/README.md) | [SDLC enfocado en Construcción](./reference/governance/sdlc-es/02-engineering/construction-focused-sdlc-framework.md) |
 | Explorar el demo sandbox | [Hub Demo](./reference/knowledge/demo/README.md) | [Matriz de Verificación Sandbox](./reference/knowledge/demo/technical/sandbox-verification.md) |
+| Separar políticas de ejemplos de implementación | [Demo vs Referencia](./reference/knowledge/demo/demo-vs-reference.es.md) | [Taxonomía del Repositorio](./reference/governance/standards-es/repository-taxonomy.es.md) |
 | Operar o desplegar localmente | [Hub de Operaciones](./reference/operations/README.es.md) | [Hub de Infraestructura](./reference/infrastructure/README.es.md) |
 
 ---
@@ -32,7 +34,6 @@ Este es el índice completo de navegación para esta referencia de arquitectura 
 | **Principal / Staff Engineer** | [Línea Base Agnóstica](./reference/architecture/blueprints-es/authoritative-tech-stack-agnostic.md) -> [Patrones Tácticos](./reference/architecture/adrs-es/core/0019-tactical-design-patterns-future-proofing.md) -> [Checklist de Simplicidad](./reference/architecture/blueprints-es/simplicity-checklist-phase-01.md) |
 | **Backend Developer** | [Manifiesto de Ingeniería](./reference/governance/standards-es/engineering/engineering-manifesto.md) -> [ADR Clean Architecture](./reference/architecture/adrs-es/nodejs/0002-clean-architecture-nestjs.md) -> [Verificación Sandbox](./reference/knowledge/demo/technical/sandbox-verification.md) |
 | **Frontend Developer** | [ADR Resiliencia Frontend](./reference/architecture/adrs-es/nodejs/0004-frontend-offline-resilience.md) -> [ADR Gateway/BFF](./reference/architecture/adrs-es/nodejs/0008-progressive-multimodule-evolution-gateway-bff.md) -> [ADR Microfrontends](./reference/architecture/adrs-es/core/0055-estrategia-arquitectura-microfrontends.md) -> [To-Do Web App](./src/apps/todo-web/README.md) |
-
 | **DevOps / SRE** | [Hub de Infraestructura](./reference/infrastructure/README.es.md) -> [Hub de Operaciones](./reference/operations/README.es.md) -> [ADR Observabilidad](./reference/architecture/adrs-es/nodejs/0007-observability-telemetry-loki-opentelemetry.md) |
 | **QA / SDET** | [ADR Pirámide de Testing](./reference/architecture/adrs-es/core/0018-testing-pyramid-quality-gates.md) -> [Guía de Contract Testing](./reference/governance/standards-es/engineering/contract-testing-guideline.md) -> [ADR Integración y E2E](./reference/architecture/adrs-es/core/0053-estrategia-pruebas-integracion-e2e.md) |
 | **Security Engineer** | [Vendor Risk Assessment](./reference/governance/standards-es/engineering/vendor-risk-assessment.md) -> [ADR Multi-Tenancy](./reference/architecture/adrs-es/core/0010-multi-tenancy-architecture-strategy.md) -> [ADR Auditoría Inmutable](./reference/architecture/adrs-es/core/0016-immutable-business-audit-trail.md) |
@@ -47,6 +48,7 @@ Este es el índice completo de navegación para esta referencia de arquitectura 
 |---|---|
 | Blueprints | [reference/architecture/blueprints-es](./reference/architecture/blueprints-es/README.md) |
 | Registro ADR | [reference/architecture/adrs-es](./reference/architecture/adrs-es/README.md) |
+| Matriz de Decisiones ADR | [reference/architecture/adrs-es/adr-matrix](./reference/architecture/adrs-es/adr-matrix.es.md) |
 | ADRs Core | [reference/architecture/adrs-es/core](./reference/architecture/adrs-es/core/README.es.md) |
 | ADRs Node.js | [reference/architecture/adrs-es/nodejs](./reference/architecture/adrs-es/nodejs/README.es.md) |
 | ADRs .NET | [reference/architecture/adrs-es/dotnet](./reference/architecture/adrs-es/dotnet/README.es.md) |
@@ -67,6 +69,7 @@ Referencias clave:
 | Área | Entrada |
 |---|---|
 | Estándares | [reference/governance/standards-es](./reference/governance/standards-es/README.md) |
+| Glosario Arquitectónico | [reference/governance/glossary](./reference/governance/glossary.es.md) |
 | Visión | [reference/governance/standards-es/vision](./reference/governance/standards-es/vision/README.es.md) |
 | Ingeniería | [reference/governance/standards-es/engineering](./reference/governance/standards-es/engineering/README.es.md) |
 | Onboarding | [reference/governance/standards-es/onboarding](./reference/governance/standards-es/onboarding/README.es.md) |
@@ -89,6 +92,7 @@ Referencias clave:
 | Área | Entrada |
 |---|---|
 | Hub Demo | [reference/knowledge/demo](./reference/knowledge/demo/README.md) |
+| Límite Demo vs Referencia | [reference/knowledge/demo/demo-vs-reference](./reference/knowledge/demo/demo-vs-reference.es.md) |
 | Planificación Demo | [reference/knowledge/demo/project](./reference/knowledge/demo/project/README.es.md) |
 | Capa Funcional Demo | [reference/knowledge/demo/functional](./reference/knowledge/demo/functional/README.md) |
 | Capa Técnica Demo | [reference/knowledge/demo/technical](./reference/knowledge/demo/technical/README.md) |

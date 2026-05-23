@@ -53,9 +53,11 @@ This repository uses BMAD-METHOD as its AI-DD framework. The local agent configu
 |---|---|
 | Understand the whole repository | [Global Master Index](./MASTER_INDEX.md) |
 | **Start a new product from this base** | **[Child Repository Inheritance Guide](./reference/governance/standards/onboarding/child-repository-inheritance-guide.md)** |
+| Choose a reading path for your role | [Getting Started by Role](./reference/getting-started/README.md) |
 | Learn the architecture model | [Reference Blueprint](./reference/architecture/blueprints/reference-blueprint.md) |
 | Review the universal rules | [Agnostic Architecture Baseline](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.md) |
 | Explore decisions and trade-offs | [ADR Registry](./reference/architecture/adrs/README.md) |
+| Clarify project terminology | [Architecture Glossary](./reference/governance/glossary.md) |
 | Inspect the executable example | [Demo Sandbox](./reference/knowledge/demo/README.md) |
 | Understand how AI agents must operate here | [AGENTS.md](./AGENTS.md) |
 
@@ -103,11 +105,12 @@ For role-based navigation, use the [Global Master Index](./MASTER_INDEX.md).
 
 ## Recommended First Reads
 
-1. [Architectural Directives](./reference/governance/standards/vision/architectural-directives.md)
-2. [Reference Blueprint](./reference/architecture/blueprints/reference-blueprint.md)
-3. [Agnostic Architecture Baseline](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.md)
-4. [ADR Registry](./reference/architecture/adrs/README.md)
-5. [Demo Sandbox](./reference/knowledge/demo/README.md)
+1. [Getting Started by Role](./reference/getting-started/README.md)
+2. [Architectural Directives](./reference/governance/standards/vision/architectural-directives.md)
+3. [Reference Blueprint](./reference/architecture/blueprints/reference-blueprint.md)
+4. [Agnostic Architecture Baseline](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.md)
+5. [ADR Matrix](./reference/architecture/adrs/adr-matrix.md)
+6. [Demo vs Reference](./reference/knowledge/demo/demo-vs-reference.md)
 
 ---
 

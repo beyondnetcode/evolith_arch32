@@ -1,4 +1,4 @@
-# ?? Index of 07-maturity-model
+# Index of 07-maturity-model
 
 * [ai-maturity-matrix](./ai-maturity-matrix.md)
 * [self-assessment](./self-assessment.md)

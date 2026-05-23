@@ -1,4 +1,4 @@
-# ?? Índice de 06-adrs
+# Índice de 06-adrs
 
 * [adr-ai-001-harness-strategy](./adr-ai-001-harness-strategy.md)
 * [adr-ai-002-mcp-as-integration-standard](./adr-ai-002-mcp-as-integration-standard.md)

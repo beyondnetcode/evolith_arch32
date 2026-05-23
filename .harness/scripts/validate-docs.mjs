@@ -47,6 +47,7 @@ function addFailure(file, index, content, message) {
 function validateCharacters(file, content) {
   const disallowedPatterns = [
     { pattern: /\uFFFD/g, message: "contains replacement character U+FFFD" },
+    { pattern: /\?\?/g, message: "contains corrupted or placeholder marker ??" },
     { pattern: /[\u{1F000}-\u{1FAFF}]/gu, message: "contains emoji or pictographic symbol" },
     { pattern: /[\u2600-\u27BF]/gu, message: "contains emoji-like symbol" },
     { pattern: /¡/g, message: "contains inverted exclamation marker; avoid decorative punctuation in standard Markdown" },

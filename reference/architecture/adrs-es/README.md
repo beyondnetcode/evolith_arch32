@@ -4,6 +4,8 @@
 
 Bienvenido al repositorio legal del sistema. Todas las decisiones contenidas aquí han sido aprobadas por la Junta Arquitectónica Corporativa.
 
+Comienza con la [Matriz de Decisiones ADR](./adr-matrix.es.md) cuando conoces la necesidad, pero no el numero del registro.
+
 ---
 
 ## <a name="universal-core"></a> 1. Núcleo Universal (Agnóstico al Runtime)

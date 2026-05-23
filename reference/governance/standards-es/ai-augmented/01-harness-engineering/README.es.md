@@ -1,4 +1,4 @@
-# ?? Índice de 01-harness-engineering
+# Índice de 01-harness-engineering
 
 * [agents-md-standard](./agents-md-standard.md)
 * [harness-by-runtime](./harness-by-runtime.md)

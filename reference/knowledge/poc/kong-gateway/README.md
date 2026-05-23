@@ -1,4 +1,4 @@
-# ?? Index of kong-gateway
+# Index of kong-gateway
 
 
 

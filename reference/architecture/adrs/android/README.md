@@ -1,4 +1,4 @@
-# ?? Index of android
+# Index of android
 
 * [0042-canonical-android-mobile-architecture](./0042-canonical-android-mobile-architecture.md)
 

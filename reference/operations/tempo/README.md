@@ -1,4 +1,4 @@
-# ?? Index of tempo
+# Index of tempo
 
 
 

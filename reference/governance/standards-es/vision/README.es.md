@@ -1,4 +1,4 @@
-# ?? Índice de vision
+# Índice de vision
 
 * [architectural-directives](./architectural-directives.md)
 * [evolutionary-strategy-roadmap](./evolutionary-strategy-roadmap.md)

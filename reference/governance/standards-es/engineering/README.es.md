@@ -1,4 +1,4 @@
-# ?? Índice de engineering
+# Índice de engineering
 
 * [contract-testing-guideline](./contract-testing-guideline.md)
 * [detailed-stack-audit-2026](./detailed-stack-audit-2026.md)

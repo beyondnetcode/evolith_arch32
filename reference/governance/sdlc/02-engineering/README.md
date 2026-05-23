@@ -1,4 +1,4 @@
-# ?? Index of 02-engineering
+# Index of 02-engineering
 
 * [construction-focused-sdlc-framework](./construction-focused-sdlc-framework.md)
 

@@ -1,8 +1,8 @@
-# ADR-0056: Enterprise Naming & Design Conventions — Multi-Language, Multi-Platform
+# ADR-0056: Enterprise Naming & Design Conventions - Multi-Language, Multi-Platform
 
 ## Status
 
-**Proposed** — supersedes the naming scope of [ADR-0049 (Naming Semantics & Clean Code Policy)](./0049-naming-semantics-clean-code-policy.md) with binding, language-specific, and platform-specific rules.
+**Proposed** - supersedes the naming scope of [ADR-0049 (Naming Semantics & Clean Code Policy)](./0049-naming-semantics-clean-code-policy.md) with binding, language-specific, and platform-specific rules.
 
 ## Date
 
@@ -22,7 +22,7 @@ This organization operates a polyglot, multi-platform architecture spanning:
 - **APIs:** REST (OpenAPI 3.1), gRPC, GraphQL (satellite only)
 - **Databases:** SQL Server 2022, PostgreSQL 16, analytical stores (BigQuery / Synapse)
 - **Messaging:** Domain events (CloudEvents 1.0), commands, integration events via RabbitMQ / Dapr pub/sub
-- **Design paradigm:** Domain-Driven Design (DDD) — strategic and tactical
+- **Design paradigm:** Domain-Driven Design (DDD) - strategic and tactical
 - **Quality standard:** ISO/IEC 25010 (maintainability, reliability, portability)
 - **Metadata standard:** ISO/IEC 11179 (data element naming)
 
@@ -36,9 +36,9 @@ The absence of a unified naming policy across languages, layers, and platforms p
 
 | Symptom | Impact |
 | :--- | :--- |
-| `userId` in API, `user_id` in DB, `UserId` in code — three names for one concept | Integration bugs, manual mapping overhead |
-| `GetUser`, `FetchUser`, `RetrieveUser` — synonyms for the same operation | Inconsistent documentation, cognitive overload |
-| Event types like `user.created`, `UserCreated`, `USER_CREATED` — all in production | Impossible to build reliable event consumers |
+| `userId` in API, `user_id` in DB, `UserId` in code - three names for one concept | Integration bugs, manual mapping overhead |
+| `GetUser`, `FetchUser`, `RetrieveUser` - synonyms for the same operation | Inconsistent documentation, cognitive overload |
+| Event types like `user.created`, `UserCreated`, `USER_CREATED` - all in production | Impossible to build reliable event consumers |
 | Table `tbl_usr` vs `users` vs `User` across teams | Migration complexity, query errors |
 | Abbreviations: `prd`, `cust`, `auth_tkn` | Ambiguity, reduced searchability |
 
@@ -48,7 +48,7 @@ The absence of a unified naming policy across languages, layers, and platforms p
 
 Adopt a **single, binding, automated-enforcement naming standard** with the following pillars:
 
-1. **Ubiquitous Language as the Source of Truth.** Every name in code, API, database, and events originates from the domain glossary — not from implementation preferences.
+1. **Ubiquitous Language as the Source of Truth.** Every name in code, API, database, and events originates from the domain glossary - not from implementation preferences.
 2. **Ecosystem-native conventions per layer.** Each language and platform follows its community standard (PEP 8, Microsoft C# Guidelines, Google Java Style, etc.) with DDD-specific extensions.
 3. **Single concept, multiple representations.** A domain concept has exactly one canonical name in the ubiquitous language, rendered according to the rules of each layer.
 4. **Automation over documentation.** Every rule must be checkable by a linter, analyzer, or CI gate. Rules that cannot be automated are deprecated.
@@ -58,18 +58,18 @@ Adopt a **single, binding, automated-enforcement naming standard** with the foll
 ```
 Ubiquitous Language Term (English noun/verb phrase)
     │
-    ├─ C#        → PascalCase class / camelCase member
-    ├─ Java      → PascalCase class / camelCase member
-    ├─ TypeScript → PascalCase class / camelCase member
-    ├─ Python    → PascalCase class / snake_case member
-    ├─ REST URL  → kebab-case path segment
-    ├─ JSON body → camelCase property
-    ├─ SQL table → snake_case plural noun
-    ├─ SQL column → snake_case
-    └─ Event type → {domain}.{entity}.{past-participle} (dot-delimited, lowercase)
+    |- C#        -> PascalCase class / camelCase member
+    |- Java      -> PascalCase class / camelCase member
+    |- TypeScript -> PascalCase class / camelCase member
+    |- Python    -> PascalCase class / snake_case member
+    |- REST URL  -> kebab-case path segment
+    |- JSON body -> camelCase property
+    |- SQL table -> snake_case plural noun
+    |- SQL column -> snake_case
+    `- Event type -> {domain}.{entity}.{past-participle} (dot-delimited, lowercase)
 ```
 
-**Example — concept: "Work Order"**
+**Example - concept: "Work Order"**
 
 | Layer | Representation |
 | :--- | :--- |
@@ -101,7 +101,7 @@ Ubiquitous Language Term (English noun/verb phrase)
 **Rejected.** Creates integration seams. When Team A names the API field `customerId` and Team B names the DB column `customer_code`, synchronization failures cause data bugs that are expensive to trace.
 
 ### 4.4 Chosen: Ecosystem-native per layer, canonical concept from ubiquitous language
-**Adopted.** Respects each community's standard. Automated via linters. The single canonical name in the ubiquitous language acts as the stable anchor — each layer renders it according to its own rules.
+**Adopted.** Respects each community's standard. Automated via linters. The single canonical name in the ubiquitous language acts as the stable anchor - each layer renders it according to its own rules.
 
 ---
 
@@ -157,7 +157,7 @@ public sealed class OpenWorkOrdersSpecification : Specification<WorkOrder> { }
 // Policy
 public sealed class LateDeliveryPenaltyPolicy { }
 
-// Exception (domain error, use sparingly — prefer Result)
+// Exception (domain error, use sparingly - prefer Result)
 public sealed class WorkOrderNotFoundException : DomainException { }
 ```
 
@@ -170,7 +170,7 @@ Follows [Google Java Style Guide](https://google.github.io/styleguide/javaguide.
 | Construct | Convention | Example |
 | :--- | :--- | :--- |
 | Package | lowercase, domain-aligned, dot-separated | `com.acme.orders.domain.aggregates` |
-| Class / Interface / Enum | PascalCase | `WorkOrder`, `IWorkOrderRepository` → `WorkOrderRepository` (no `I` prefix) |
+| Class / Interface / Enum | PascalCase | `WorkOrder`, `IWorkOrderRepository` -> `WorkOrderRepository` (no `I` prefix) |
 | Method | camelCase (verb phrase) | `calculateTotalCost()` |
 | Field | camelCase | `workOrderId` |
 | Constant | UPPER_SNAKE_CASE | `MAX_RETRY_COUNT` |
@@ -179,7 +179,7 @@ Follows [Google Java Style Guide](https://google.github.io/styleguide/javaguide.
 | Test class | `{Subject}Test` | `WorkOrderTest` |
 | Test method | camelCase, descriptive | `completeShouldFailWhenAlreadyClosed()` |
 
-> **Java distinction from C#:** Java uses UPPER_SNAKE_CASE for constants (`static final`). Interface names do NOT use the `I` prefix — use `WorkOrderRepository` as the interface name and `JpaWorkOrderRepository` or `SqlWorkOrderRepository` for the implementation.
+> **Java distinction from C#:** Java uses UPPER_SNAKE_CASE for constants (`static final`). Interface names do NOT use the `I` prefix - use `WorkOrderRepository` as the interface name and `JpaWorkOrderRepository` or `SqlWorkOrderRepository` for the implementation.
 
 ---
 
@@ -314,13 +314,13 @@ All names must originate from the **domain ubiquitous language glossary** define
 
 - Noun phrase from ubiquitous language.
 - PascalCase in all OO languages; snake_case in Python.
-- No technical suffixes (`Aggregate`, `Root` — **not** `WorkOrderAggregate`).
+- No technical suffixes (`Aggregate`, `Root` - **not** `WorkOrderAggregate`).
 
 ```csharp
-// OK: Correct — the concept IS the name
+// OK: Correct - the concept IS the name
 public sealed class WorkOrder : AggregateRoot<WorkOrderId> { }
 
-// WRONG: Wrong — redundant suffix
+// WRONG: Wrong - redundant suffix
 public sealed class WorkOrderAggregate : AggregateRoot<WorkOrderId> { }
 ```
 
@@ -330,14 +330,14 @@ public sealed class WorkOrderAggregate : AggregateRoot<WorkOrderId> { }
 - Distinguish from Value Objects: Entities have identity (`Id`); Value Objects do not.
 
 ```csharp
-public sealed class OrderItem { }         // OK: Entity — has OrderItemId
-public sealed record Money(decimal Amount, Currency Currency); // OK: Value Object — identity-less
+public sealed class OrderItem { }         // OK: Entity - has OrderItemId
+public sealed record Money(decimal Amount, Currency Currency); // OK: Value Object - identity-less
 ```
 
 ### 6.3 Value Objects
 
 - Noun phrase or noun phrase describing a measurement/concept.
-- **Immutable** — use `record` (C#), `@dataclass(frozen=True)` (Python), `readonly` class (TypeScript).
+- **Immutable** - use `record` (C#), `@dataclass(frozen=True)` (Python), `readonly` class (TypeScript).
 - Never expose setters.
 
 ```csharp
@@ -378,25 +378,25 @@ public sealed class WorkOrderCompletionService { }   // WRONG: belongs inside Wo
 
 ### 6.6 Domain Events
 
-- **Naming:** `{Aggregate}{PastParticiple}` — always past tense; the event has already happened.
+- **Naming:** `{Aggregate}{PastParticiple}` - always past tense; the event has already happened.
 - Append `Event` suffix in strongly-typed languages to distinguish from commands.
 - Do NOT append `Event` in CloudEvents `type` field.
 
 ```csharp
-// C# — class name
+// C# - class name
 public sealed record WorkOrderCreatedEvent(...) : DomainEvent;
 public sealed record WorkOrderCompletedEvent(...) : DomainEvent;
 public sealed record OrderItemRemovedEvent(...) : DomainEvent;
 
-// WRONG: Wrong — present tense
+// WRONG: Wrong - present tense
 public sealed record WorkOrderCreate(...) : DomainEvent;
-// WRONG: Wrong — imperative
+// WRONG: Wrong - imperative
 public sealed record CreateWorkOrderEvent(...) : DomainEvent;
 ```
 
 ### 6.7 Commands
 
-- **Naming:** `{Imperative verb}{Noun}Command` — imperative mood; expresses intent.
+- **Naming:** `{Imperative verb}{Noun}Command` - imperative mood; expresses intent.
 - Immutable (record/dataclass/readonly).
 
 ```csharp
@@ -437,17 +437,17 @@ public sealed class CustomerHasActiveOrdersSpec : Specification<Customer> { }
 
 - **Prefer `Result<T>` over exceptions for business errors.**
 - When exceptions are used (infrastructure failures), suffix `Exception`.
-- Domain error codes follow `{domain}.{entity}.{error_slug}` — lowercase, dot-delimited.
+- Domain error codes follow `{domain}.{entity}.{error_slug}` - lowercase, dot-delimited.
 
 ```csharp
-// Infrastructure exception — acceptable
+// Infrastructure exception - acceptable
 public sealed class DatabaseConnectionException : InfrastructureException { }
 
-// Domain error code — preferred approach
+// Domain error code - preferred approach
 public static readonly DomainError WorkOrderNotFound =
     new("orders.work-order.not-found", "Work order does not exist.");
 
-// WRONG: Wrong — business error as exception
+// WRONG: Wrong - business error as exception
 throw new WorkOrderNotFoundException();
 ```
 
@@ -499,7 +499,7 @@ throw new WorkOrderNotFoundException();
   ]
 }
 
-// WRONG: Wrong — snake_case, abbreviated, missing currency object
+// WRONG: Wrong - snake_case, abbreviated, missing currency object
 {
   "work_order_id": "...",
   "ref_num": "WO-2026-00123",
@@ -543,7 +543,7 @@ components:
       type: object
 ```
 
-### 7.6 HTTP Status Codes — Canonical Mapping
+### 7.6 HTTP Status Codes - Canonical Mapping
 
 | Condition | Status | When |
 | :--- | :--- | :--- |
@@ -560,7 +560,7 @@ components:
 
 ---
 
-## 8. Events — CloudEvents 1.0
+## 8. Events - CloudEvents 1.0
 
 Follows the [CloudEvents 1.0 specification](https://cloudevents.io).
 
@@ -597,7 +597,7 @@ Follows the [CloudEvents 1.0 specification](https://cloudevents.io).
 
 ### 8.2 Event Subject
 
-- `{resource-type}/{resource-id}` — kebab-case resource type, ID as value.
+- `{resource-type}/{resource-id}` - kebab-case resource type, ID as value.
 
 ### 8.3 Event Data Properties
 
@@ -606,10 +606,10 @@ Follows the [CloudEvents 1.0 specification](https://cloudevents.io).
 ### 8.4 Prohibited Event Naming
 
 ```
-WRONG:  UserCreated            (missing org/context prefix — collision risk)
-WRONG:  user_created           (snake_case — violates CloudEvents convention)
-WRONG:  USER_CREATED           (UPPER_SNAKE — not human-readable in logs)
-WRONG:  acme.orders.CreateUser (present tense — event happened in the past)
+WRONG:  UserCreated            (missing org/context prefix - collision risk)
+WRONG:  user_created           (snake_case - violates CloudEvents convention)
+WRONG:  USER_CREATED           (UPPER_SNAKE - not human-readable in logs)
+WRONG:  acme.orders.CreateUser (present tense - event happened in the past)
 OK   acme.identity.user.registered
 ```
 
@@ -670,10 +670,10 @@ Every analytical column must have a catalog entry with:
 | Work Order | `WorkOrder` | `WorkOrder` | `WorkOrder` | `WorkOrder` | `/work-orders` | `workOrderId` | `work_orders` | `work_order_id` | `*.work-order.created` | `fct_work_orders` |
 | Order Item | `OrderItem` | `OrderItem` | `OrderItem` | `OrderItem` | `/order-items` | `orderItemId` | `order_items` | `order_item_id` | `*.order-item.added` | `fct_order_items` |
 | Customer | `Customer` | `Customer` | `Customer` | `Customer` | `/customers` | `customerId` | `customers` | `customer_id` | `*.customer.registered` | `dim_customers` |
-| Reference Number | `ReferenceNumber` (VO) | `ReferenceNumber` | `ReferenceNumber` | `ReferenceNumber` | `referenceNumber` (query) | `referenceNumber` | — | `reference_number` | — | `work_order_reference_bk` |
-| Created At | `CreatedAt` (property) | `createdAt` | `createdAt` | `created_at` | `createdAt` (query param) | `createdAt` | — | `created_at` | `time` (CloudEvents field) | `created_date_key` |
-| Total Cost (USD) | `TotalCost` (Money VO) | `totalCost` | `totalCost` | `total_cost` | — | `totalCost.amount` | — | `total_cost_usd` | data.totalCost | `total_cost_usd` |
-| Work Order Status | `WorkOrderStatus` (enum) | `WorkOrderStatus` | `WorkOrderStatus` | `WorkOrderStatus` | `status` (filter) | `status` | — | `status` | data.status | `dim_work_order_status` |
+| Reference Number | `ReferenceNumber` (VO) | `ReferenceNumber` | `ReferenceNumber` | `ReferenceNumber` | `referenceNumber` (query) | `referenceNumber` | - | `reference_number` | - | `work_order_reference_bk` |
+| Created At | `CreatedAt` (property) | `createdAt` | `createdAt` | `created_at` | `createdAt` (query param) | `createdAt` | - | `created_at` | `time` (CloudEvents field) | `created_date_key` |
+| Total Cost (USD) | `TotalCost` (Money VO) | `totalCost` | `totalCost` | `total_cost` | - | `totalCost.amount` | - | `total_cost_usd` | data.totalCost | `total_cost_usd` |
+| Work Order Status | `WorkOrderStatus` (enum) | `WorkOrderStatus` | `WorkOrderStatus` | `WorkOrderStatus` | `status` (filter) | `status` | - | `status` | data.status | `dim_work_order_status` |
 
 ---
 
@@ -702,7 +702,7 @@ Every analytical column must have a catalog entry with:
 
 | Tool | What it validates |
 | :--- | :--- |
-| `spectral` (Stoplight) | OpenAPI 3.1 — operationId format, kebab-case paths, required fields |
+| `spectral` (Stoplight) | OpenAPI 3.1 - operationId format, kebab-case paths, required fields |
 | `openapi-generator validate` | Schema completeness and correctness |
 | CloudEvents SDK (any language) | Event envelope schema validation |
 | `redocly lint` | OpenAPI lint + style rules |
@@ -842,7 +842,7 @@ A code artifact is **Done** from a naming perspective when **all** of the follow
 
 ```
 [ ] All class, method, property, and variable names match the ubiquitous language glossary
-[ ] Language-specific casing conventions applied (verified by linter — zero violations)
+[ ] Language-specific casing conventions applied (verified by linter - zero violations)
 [ ] No abbreviations (except approved acronyms: ID, URL, HTTP, API, DTO, ORM, JWT, SQL)
 [ ] SQL objects follow schema/table/column/constraint naming rules
 [ ] OpenAPI operationId in camelCase; paths in kebab-case; properties in camelCase
@@ -858,7 +858,7 @@ A code artifact is **Done** from a naming perspective when **all** of the follow
 
 ## 14. Correct vs Incorrect Examples
 
-### 14.1 C# — Aggregate & Value Object
+### 14.1 C# - Aggregate & Value Object
 
 ```csharp
 // CORRECT
@@ -894,10 +894,10 @@ public class WrkOrdAggregat  // abbreviation + suffix
 }
 ```
 
-### 14.2 TypeScript — Use Case
+### 14.2 TypeScript - Use Case
 
 ```typescript
-// CORRECT — file: create-work-order.use-case.ts
+// CORRECT - file: create-work-order.use-case.ts
 @Injectable()
 export class CreateWorkOrderUseCase {
   constructor(
@@ -922,10 +922,10 @@ export class CreateWO {   // abbreviation, no suffix
 }
 ```
 
-### 14.3 Python — Repository Protocol
+### 14.3 Python - Repository Protocol
 
 ```python
-# OK CORRECT — file: work_order_repository.py
+# OK CORRECT - file: work_order_repository.py
 from abc import abstractmethod
 from typing import Protocol
 from uuid import UUID
@@ -948,7 +948,7 @@ class WO_Repo:
     def list_all(self, cust): ...    # `cust` abbreviated, no type hint
 ```
 
-### 14.4 SQL — Table & Constraints
+### 14.4 SQL - Table & Constraints
 
 ```sql
 -- OK CORRECT
@@ -1066,7 +1066,7 @@ paths:
 
 - **Maintainability (ISO/IEC 25010).** Consistent naming reduces cognitive load and accelerates onboarding. New developers can predict names without consulting implementation.
 - **Integration reliability.** A single canonical concept name prevents data mapping bugs between API, database, and event consumers.
-- **Automated enforcement.** All rules are checkable by existing tooling — no manual review required for naming compliance.
+- **Automated enforcement.** All rules are checkable by existing tooling - no manual review required for naming compliance.
 - **DDD alignment.** Ubiquitous language as the naming source eliminates the "translation layer" between business and engineering.
 
 ### Negative
@@ -1082,17 +1082,17 @@ paths:
 - [Microsoft .NET Naming Guidelines](https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/naming-guidelines)
 - [Google Java Style Guide](https://google.github.io/styleguide/javaguide.html)
 - [Google TypeScript Style Guide](https://google.github.io/styleguide/tsguide.html)
-- [PEP 8 — Python Style Guide](https://peps.python.org/pep-0008/)
+- [PEP 8 - Python Style Guide](https://peps.python.org/pep-0008/)
 - [CloudEvents 1.0 Specification](https://cloudevents.io)
 - [OpenAPI 3.1 Specification](https://spec.openapis.org/oas/v3.1.0)
-- [ISO/IEC 11179 — Metadata Registries](https://www.iso.org/standard/60525.html)
-- [ISO/IEC 25010 — Systems and Software Quality](https://www.iso.org/standard/35733.html)
+- [ISO/IEC 11179 - Metadata Registries](https://www.iso.org/standard/60525.html)
+- [ISO/IEC 25010 - Systems and Software Quality](https://www.iso.org/standard/35733.html)
 - [Kimball Dimensional Modeling Techniques](https://www.kimballgroup.com)
 - [Spectral OpenAPI Linter](https://stoplight.io/open-source/spectral)
-- [sqlfluff — SQL Linter](https://docs.sqlfluff.com)
-- [ArchUnit — Architecture Testing](https://www.archunit.org)
-- [ADR-0049 — Naming Semantics & Clean Code Policy](./0049-naming-semantics-clean-code-policy.md) ← superseded scope
-- [ADR-0048 — Enterprise Taxonomy Reference Layout](./0048-enterprise-taxonomy-reference-layout.md)
+- [sqlfluff - SQL Linter](https://docs.sqlfluff.com)
+- [ArchUnit - Architecture Testing](https://www.archunit.org)
+- [ADR-0049 - Naming Semantics & Clean Code Policy](./0049-naming-semantics-clean-code-policy.md) <- superseded scope
+- [ADR-0048 - Enterprise Taxonomy Reference Layout](./0048-enterprise-taxonomy-reference-layout.md)
 
 ---
 
@@ -1100,7 +1100,7 @@ paths:
 
 | ID | Date | Requester | Context | Excepted Rule | Justification | Sunset Date | Status |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| — | — | — | — | — | — | — | — |
+| - | - | - | - | - | - | - | - |
 
 ---
 

@@ -5,6 +5,8 @@
 
 Welcome to the system's legal repository. All decisions contained herein have been approved by the Corporate Architectural Board.
 
+Start with the [ADR Decision Matrix](./adr-matrix.md) when you know the concern but not the record number.
+
 ---
 
 ## <a name="universal-core"></a> 1. Universal Core (Runtime Agnostic)

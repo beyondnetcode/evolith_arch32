@@ -1,4 +1,4 @@
-# ?? Index of 03-tools-catalog
+# Index of 03-tools-catalog
 
 * [approved-tools](./approved-tools.md)
 * [tool-catalog-template](./tool-catalog-template.md)

@@ -1,4 +1,4 @@
-# ?? Índice de nodejs
+# Índice de nodejs
 
 * [0002-clean-architecture-nestjs](./0002-clean-architecture-nestjs.md)
 * [0003-strict-typescript-standards](./0003-strict-typescript-standards.md)

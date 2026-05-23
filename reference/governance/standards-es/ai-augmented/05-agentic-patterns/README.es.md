@@ -1,4 +1,4 @@
-# ?? Índice de 05-agentic-patterns
+# Índice de 05-agentic-patterns
 
 * [human-in-the-loop](./human-in-the-loop.md)
 * [multi-agent](./multi-agent.md)

@@ -1,4 +1,4 @@
-# ?? Índice de core
+# Índice de core
 
 * [0001-monorepo-orchestration-nx](./0001-monorepo-orchestration-nx.md)
 * [0005-ci-cd-quality-codeql](./0005-ci-cd-quality-codeql.md)

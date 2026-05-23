@@ -1,4 +1,4 @@
-# ?? Índice de onboarding
+# Índice de onboarding
 
 * [product-quick-start](./product-quick-start.md)
 

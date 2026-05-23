@@ -2,6 +2,8 @@
 
 This section documents the physical implementation provided in this repository. Its sole objective is to act as a **Pattern Laboratory**, demonstrating in live code how corporate standards operate together.
 
+Before applying demo choices as general architecture policy, read [Demo vs Reference](./demo-vs-reference.md) or [Demo vs Referencia](./demo-vs-reference.es.md).
+
 ---
 
 ## Demo Navigation Map (Exhaustive)

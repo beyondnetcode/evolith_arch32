@@ -53,9 +53,11 @@ Este repositorio usa BMAD-METHOD como framework AI-DD. La configuración local d
 |---|---|
 | Entender todo el repositorio | [Índice Maestro Global](./MASTER_INDEX.es.md) |
 | **Iniciar un nuevo producto desde esta base** | **[Guía de Herencia para Repositorios Hijos](./reference/governance/standards/onboarding/child-repository-inheritance-guide.es.md)** |
+| Elegir una ruta de lectura según tu rol | [Primeros Pasos por Rol](./reference/getting-started/README.es.md) |
 | Aprender el modelo arquitectónico | [Blueprint de Referencia](./reference/architecture/blueprints-es/reference-blueprint.md) |
 | Revisar las reglas universales | [Línea Base Arquitectónica Agnóstica](./reference/architecture/blueprints-es/authoritative-tech-stack-agnostic.md) |
 | Explorar decisiones y trade-offs | [Registro ADR](./reference/architecture/adrs-es/README.md) |
+| Aclarar la terminología del proyecto | [Glosario Arquitectónico](./reference/governance/glossary.es.md) |
 | Inspeccionar el ejemplo ejecutable | [Demo Sandbox](./reference/knowledge/demo/README.md) |
 | Entender cómo deben operar aquí los agentes de IA | [AGENTS.es.md](./AGENTS.es.md) |
 
@@ -103,11 +105,12 @@ Para navegación por rol, usa el [Índice Maestro Global](./MASTER_INDEX.es.md).
 
 ## Primeras Lecturas Recomendadas
 
-1. [Directivas Arquitectónicas](./reference/governance/standards-es/vision/architectural-directives.md)
-2. [Blueprint de Referencia](./reference/architecture/blueprints-es/reference-blueprint.md)
-3. [Línea Base Arquitectónica Agnóstica](./reference/architecture/blueprints-es/authoritative-tech-stack-agnostic.md)
-4. [Registro ADR](./reference/architecture/adrs-es/README.md)
-5. [Demo Sandbox](./reference/knowledge/demo/README.md)
+1. [Primeros Pasos por Rol](./reference/getting-started/README.es.md)
+2. [Directivas Arquitectónicas](./reference/governance/standards-es/vision/architectural-directives.md)
+3. [Blueprint de Referencia](./reference/architecture/blueprints-es/reference-blueprint.md)
+4. [Línea Base Arquitectónica Agnóstica](./reference/architecture/blueprints-es/authoritative-tech-stack-agnostic.md)
+5. [Matriz ADR](./reference/architecture/adrs-es/adr-matrix.es.md)
+6. [Demo vs Referencia](./reference/knowledge/demo/demo-vs-reference.es.md)
 
 ---
 

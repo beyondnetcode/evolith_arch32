@@ -1,4 +1,4 @@
-# ?? Índice de governance-docs
+# Índice de governance-docs
 
 * [release-audit-strategy](./release-audit-strategy.md)
 

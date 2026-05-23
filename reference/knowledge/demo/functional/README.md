@@ -1,4 +1,4 @@
-# ?? Index of functional
+# Index of functional
 
 * [business-context](./business-context.md)
 * [business-glossary](./business-glossary.md)

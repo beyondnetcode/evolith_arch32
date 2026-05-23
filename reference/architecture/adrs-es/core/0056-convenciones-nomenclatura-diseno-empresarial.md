@@ -1,8 +1,8 @@
-# ADR-0056: Convenciones Empresariales de Nomenclatura y Diseño — Multi-Lenguaje, Multi-Plataforma
+# ADR-0056: Convenciones Empresariales de Nomenclatura y Diseño - Multi-Lenguaje, Multi-Plataforma
 
 ## Estado
 
-**Propuesto** — Amplía y reemplaza el alcance de nomenclatura de [ADR-0049 (Semántica y Nomenclatura Clean Code)](./0049-naming-semantics-clean-code-policy.md) con reglas vinculantes, específicas por lenguaje y plataforma.
+**Propuesto** - Amplía y reemplaza el alcance de nomenclatura de [ADR-0049 (Semántica y Nomenclatura Clean Code)](./0049-naming-semantics-clean-code-policy.md) con reglas vinculantes, específicas por lenguaje y plataforma.
 
 ## Fecha
 
@@ -22,7 +22,7 @@ Esta organización opera una arquitectura políglota y multi-plataforma que abar
 - **APIs:** REST (OpenAPI 3.1), gRPC, GraphQL (solo servicios satélite)
 - **Bases de datos:** SQL Server 2022, PostgreSQL 16, almacenes analíticos (BigQuery / Synapse)
 - **Mensajería:** Eventos de dominio (CloudEvents 1.0), comandos, eventos de integración vía RabbitMQ / Dapr pub/sub
-- **Paradigma de diseño:** Domain-Driven Design (DDD) — estratégico y táctico
+- **Paradigma de diseño:** Domain-Driven Design (DDD) - estratégico y táctico
 - **Estándar de calidad:** ISO/IEC 25010 (mantenibilidad, confiabilidad, portabilidad)
 - **Estándar de metadatos:** ISO/IEC 11179 (nomenclatura de elementos de datos)
 
@@ -36,9 +36,9 @@ La ausencia de una política unificada de nomenclatura produce:
 
 | Síntoma | Impacto |
 | :--- | :--- |
-| `userId` en API, `user_id` en BD, `UserId` en código — tres nombres para un mismo concepto | Bugs de integración, sobrecarga de mapeo manual |
-| `GetUser`, `FetchUser`, `RetrieveUser` — sinónimos para la misma operación | Documentación inconsistente, sobrecarga cognitiva |
-| Tipos de evento como `user.created`, `UserCreated`, `USER_CREATED` — todos en producción | Imposible construir consumidores de eventos confiables |
+| `userId` en API, `user_id` en BD, `UserId` en código - tres nombres para un mismo concepto | Bugs de integración, sobrecarga de mapeo manual |
+| `GetUser`, `FetchUser`, `RetrieveUser` - sinónimos para la misma operación | Documentación inconsistente, sobrecarga cognitiva |
+| Tipos de evento como `user.created`, `UserCreated`, `USER_CREATED` - todos en producción | Imposible construir consumidores de eventos confiables |
 | Tabla `tbl_usr` vs `users` vs `User` entre equipos | Complejidad en migraciones, errores de consulta |
 | Abreviaciones: `prd`, `cust`, `auth_tkn` | Ambigüedad, menor capacidad de búsqueda |
 
@@ -58,18 +58,18 @@ Adoptar un **estándar único de nomenclatura vinculante con cumplimiento automa
 ```
 Término del Lenguaje Ubicuo (sustantivo/frase verbal en inglés)
     │
-    ├─ C#         → PascalCase clase / camelCase miembro
-    ├─ Java       → PascalCase clase / camelCase miembro
-    ├─ TypeScript → PascalCase clase / camelCase miembro
-    ├─ Python     → PascalCase clase / snake_case miembro
-    ├─ URL REST   → kebab-case segmento de ruta
-    ├─ Cuerpo JSON → camelCase propiedad
-    ├─ Tabla SQL  → snake_case sustantivo plural
-    ├─ Columna SQL → snake_case
-    └─ Tipo de evento → {dominio}.{entidad}.{participio-pasado} (punto, minúsculas)
+    |- C#         -> PascalCase clase / camelCase miembro
+    |- Java       -> PascalCase clase / camelCase miembro
+    |- TypeScript -> PascalCase clase / camelCase miembro
+    |- Python     -> PascalCase clase / snake_case miembro
+    |- URL REST   -> kebab-case segmento de ruta
+    |- Cuerpo JSON -> camelCase propiedad
+    |- Tabla SQL  -> snake_case sustantivo plural
+    |- Columna SQL -> snake_case
+    `- Tipo de evento -> {dominio}.{entidad}.{participio-pasado} (punto, minúsculas)
 ```
 
-**Ejemplo — concepto: "Orden de Trabajo" (Work Order)**
+**Ejemplo - concepto: "Orden de Trabajo" (Work Order)**
 
 | Capa | Representación |
 | :--- | :--- |
@@ -101,7 +101,7 @@ Término del Lenguaje Ubicuo (sustantivo/frase verbal en inglés)
 **Rechazado.** Crea inconsistencias de integración. Cuando el Equipo A nombra el campo API `customerId` y el Equipo B nombra la columna BD `customer_code`, los fallos de sincronización generan bugs de datos costosos de rastrear.
 
 ### 4.4 Elegida: Ecosistema-nativo por capa, concepto canónico del lenguaje ubicuo
-**Adoptada.** Respeta el estándar de cada comunidad. Automatizable vía linters. El nombre canónico en el lenguaje ubicuo actúa como ancla estable — cada capa lo renderiza según sus propias reglas.
+**Adoptada.** Respeta el estándar de cada comunidad. Automatizable vía linters. El nombre canónico en el lenguaje ubicuo actúa como ancla estable - cada capa lo renderiza según sus propias reglas.
 
 ---
 
@@ -173,7 +173,7 @@ Sigue la [Guía de Estilo de Google Java](https://google.github.io/styleguide/ja
 | Constante | UPPER_SNAKE_CASE | `MAX_RETRY_COUNT` |
 | Clase de prueba | `{Sujeto}Test` | `WorkOrderTest` |
 
-> **Diferencia con C#:** Java usa UPPER_SNAKE_CASE para constantes. Las interfaces **no** llevan prefijo `I` — la implementación lleva prefijo descriptivo (`JpaWorkOrderRepository`).
+> **Diferencia con C#:** Java usa UPPER_SNAKE_CASE para constantes. Las interfaces **no** llevan prefijo `I` - la implementación lleva prefijo descriptivo (`JpaWorkOrderRepository`).
 
 ---
 
@@ -267,12 +267,12 @@ Todos los nombres deben provenir del **glosario de lenguaje ubicuo** definido po
 // OK: Correcto
 public sealed class WorkOrder : AggregateRoot<WorkOrderId> { }
 
-// MAL: Incorrecto — sufijo redundante
+// MAL: Incorrecto - sufijo redundante
 public sealed class WorkOrderAggregate : AggregateRoot<WorkOrderId> { }
 ```
 
 ### 6.2 Eventos de Dominio
-- **Formato:** `{Aggregate}{ParticipioPasado}` — siempre en tiempo pasado.
+- **Formato:** `{Aggregate}{ParticipioPasado}` - siempre en tiempo pasado.
 - Sufijo `Event` en lenguajes OO. **No** en el campo `type` de CloudEvents.
 
 ```csharp
@@ -280,7 +280,7 @@ public sealed class WorkOrderAggregate : AggregateRoot<WorkOrderId> { }
 public sealed record WorkOrderCreatedEvent(...) : DomainEvent;
 public sealed record WorkOrderCompletedEvent(...) : DomainEvent;
 
-// MAL: Incorrecto — presente / imperativo
+// MAL: Incorrecto - presente / imperativo
 public sealed record WorkOrderCreate(...) : DomainEvent;
 public sealed record CreateWorkOrderEvent(...) : DomainEvent;
 ```
@@ -303,14 +303,14 @@ public sealed record ListOpenWorkOrdersQuery(CustomerId Id) : IRequest<Result<IR
 
 ### 6.5 Errores de Dominio
 - **Preferir `Result<T>` sobre excepciones** para errores de negocio.
-- Códigos de error: `{dominio}.{entidad}.{slug_error}` — minúsculas, separados por punto.
+- Códigos de error: `{dominio}.{entidad}.{slug_error}` - minúsculas, separados por punto.
 
 ```csharp
 // OK: Preferido
 public static readonly DomainError WorkOrderNotFound =
     new("orders.work-order.not-found", "La orden de trabajo no existe.");
 
-// MAL: Evitar — error de negocio como excepción
+// MAL: Evitar - error de negocio como excepción
 throw new WorkOrderNotFoundException();
 ```
 
@@ -331,7 +331,7 @@ throw new WorkOrderNotFoundException();
 
 ---
 
-## 8. Eventos — CloudEvents 1.0
+## 8. Eventos - CloudEvents 1.0
 
 ### Patrón de nomenclatura del tipo de evento
 
@@ -359,8 +359,8 @@ throw new WorkOrderNotFoundException();
 **Nomenclatura prohibida:**
 ```
 MAL:  UserCreated           (sin prefijo de org/contexto)
-MAL:  user_created          (snake_case — viola CloudEvents)
-MAL:  USER_CREATED          (UPPER_SNAKE — ilegible en logs)
+MAL:  user_created          (snake_case - viola CloudEvents)
+MAL:  USER_CREATED          (UPPER_SNAKE - ilegible en logs)
 MAL:  acme.orders.CreateUser (tiempo presente)
 OK   acme.identity.user.registered
 ```
@@ -402,8 +402,8 @@ OK   acme.identity.user.registered
 | Work Order | `WorkOrder` | `WorkOrder` | `WorkOrder` | `WorkOrder` | `/work-orders` | `workOrderId` | `work_orders` | `work_order_id` | `*.work-order.created` | `fct_work_orders` |
 | Order Item | `OrderItem` | `OrderItem` | `OrderItem` | `OrderItem` | `/order-items` | `orderItemId` | `order_items` | `order_item_id` | `*.order-item.added` | `fct_order_items` |
 | Customer | `Customer` | `Customer` | `Customer` | `Customer` | `/customers` | `customerId` | `customers` | `customer_id` | `*.customer.registered` | `dim_customers` |
-| Created At | `CreatedAt` | `createdAt` | `createdAt` | `created_at` | `createdAt` (param) | `createdAt` | — | `created_at` | `time` (CloudEvents) | `created_date_key` |
-| Total Cost | `TotalCost` (Money VO) | `totalCost` | `totalCost` | `total_cost` | — | `totalCost.amount` | — | `total_cost_usd` | `data.totalCost` | `total_cost_usd` |
+| Created At | `CreatedAt` | `createdAt` | `createdAt` | `created_at` | `createdAt` (param) | `createdAt` | - | `created_at` | `time` (CloudEvents) | `created_date_key` |
+| Total Cost | `TotalCost` (Money VO) | `totalCost` | `totalCost` | `total_cost` | - | `totalCost.amount` | - | `total_cost_usd` | `data.totalCost` | `total_cost_usd` |
 
 ---
 
@@ -432,7 +432,7 @@ OK   acme.identity.user.registered
 
 | Herramienta | Qué valida |
 | :--- | :--- |
-| `spectral` (Stoplight) | OpenAPI 3.1 — formato operationId, paths en kebab-case |
+| `spectral` (Stoplight) | OpenAPI 3.1 - formato operationId, paths en kebab-case |
 | `sqlfluff` | Sintaxis SQL, convenciones de mayúsculas, alias explícitos |
 | CloudEvents SDK | Validación del schema del envelope del evento |
 
@@ -487,7 +487,7 @@ Un artefacto de código está **Terminado** desde una perspectiva de nomenclatur
 
 ## 14. Ejemplos Correctos vs Incorrectos
 
-### 14.1 C# — Aggregate
+### 14.1 C# - Aggregate
 
 ```csharp
 // CORRECTO
@@ -513,7 +513,7 @@ public class WrkOrdAggregat  // abreviación + sufijo
 }
 ```
 
-### 14.2 SQL — Tabla y restricciones
+### 14.2 SQL - Tabla y restricciones
 
 ```sql
 -- OK CORRECTO
@@ -582,15 +582,15 @@ CREATE TABLE tbl_WrkOrd (
 - [Directrices de Nomenclatura de Microsoft .NET](https://learn.microsoft.com/es-es/dotnet/standard/design-guidelines/naming-guidelines)
 - [Guía de Estilo de Google Java](https://google.github.io/styleguide/javaguide.html)
 - [Guía de Estilo TypeScript de Google](https://google.github.io/styleguide/tsguide.html)
-- [PEP 8 — Guía de Estilo de Python](https://peps.python.org/pep-0008/)
+- [PEP 8 - Guía de Estilo de Python](https://peps.python.org/pep-0008/)
 - [Especificación CloudEvents 1.0](https://cloudevents.io)
 - [Especificación OpenAPI 3.1](https://spec.openapis.org/oas/v3.1.0)
-- [ISO/IEC 11179 — Registros de Metadatos](https://www.iso.org/standard/60525.html)
-- [ISO/IEC 25010 — Calidad de Sistemas y Software](https://www.iso.org/standard/35733.html)
-- [Spectral — Linter OpenAPI](https://stoplight.io/open-source/spectral)
-- [sqlfluff — Linter SQL](https://docs.sqlfluff.com)
-- [ADR-0049 — Semántica y Nomenclatura Clean Code](./0049-naming-semantics-clean-code-policy.md) ← alcance superado
-- [ADR-0048 — Taxonomía Empresarial y Layout de Referencia](./0048-enterprise-taxonomy-reference-layout.md)
+- [ISO/IEC 11179 - Registros de Metadatos](https://www.iso.org/standard/60525.html)
+- [ISO/IEC 25010 - Calidad de Sistemas y Software](https://www.iso.org/standard/35733.html)
+- [Spectral - Linter OpenAPI](https://stoplight.io/open-source/spectral)
+- [sqlfluff - Linter SQL](https://docs.sqlfluff.com)
+- [ADR-0049 - Semántica y Nomenclatura Clean Code](./0049-naming-semantics-clean-code-policy.md) <- alcance superado
+- [ADR-0048 - Taxonomía Empresarial y Layout de Referencia](./0048-enterprise-taxonomy-reference-layout.md)
 - [Versión en Inglés](../../adrs/core/0056-enterprise-naming-design-conventions.md)
 
 ---
@@ -599,7 +599,7 @@ CREATE TABLE tbl_WrkOrd (
 
 | ID | Fecha | Solicitante | Contexto | Regla Excepcionada | Justificación | Fecha Vencimiento | Estado |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| — | — | — | — | — | — | — | — |
+| - | - | - | - | - | - | - | - |
 
 ---
 

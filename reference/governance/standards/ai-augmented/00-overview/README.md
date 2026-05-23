@@ -1,4 +1,4 @@
-# ?? Index of 00-overview
+# Index of 00-overview
 
 * [adoption-guide](./adoption-guide.md)
 * [glossary](./glossary.md)

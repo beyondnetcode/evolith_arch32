@@ -1,4 +1,4 @@
-# ?? Index of 02-mcp-integration
+# Index of 02-mcp-integration
 
 * [mcp-client-guide](./mcp-client-guide.md)
 * [mcp-overview](./mcp-overview.md)

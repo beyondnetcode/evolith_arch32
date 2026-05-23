@@ -1,4 +1,4 @@
-# ?? Index of usecases
+# Index of usecases
 
 * [uc-01-user-authentication](./uc-01-user-authentication.md)
 * [uc-02-create-todo-task](./uc-02-create-todo-task.md)

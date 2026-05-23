@@ -25,8 +25,9 @@ El diseño estructural del sistema detallado en vistas C4 y CAP.
 * [Resumen Rápido del Stack](../../architecture/blueprints-es/tech-stack-summary.md)
 
 ### Fase 02: Registros de Decisión Arquitectónica (ADRs)
-La historia consolidada y clasificada de las 44 decisiones técnicas activas.
+La historia consolidada y clasificada de las decisiones técnicas activas.
 * -> **[Navegador Central de ADRs](../../architecture/adrs-es/README.md)**
+* -> **[Matriz de Decisiones ADR por Necesidad](../../architecture/adrs-es/adr-matrix.es.md)**
  * Jump to: *Ir A:* [Core](../../architecture/adrs-es/README.md#universal-core) | [Node.js](../../architecture/adrs-es/README.md#nodejs-typescript) | [.NET](../../architecture/adrs-es/README.md#net-c) | [Móvil](../../architecture/adrs-es/README.md#android-native)
 
 ### Fase 03: Estándares de Ingeniería y Auditoría de Stack
@@ -44,6 +45,7 @@ Playbooks de implementación táctica, seguridad defensiva y validación de merc
 
 ### Fase 05: Onboarding (Incorporación)
 * **[Guía de Inicio Rápido para Nuevos Productos](./onboarding/product-quick-start.md)**
+* [Glosario Arquitectónico](../glossary.es.md)
 
 ---
 *Esta documentación es agnóstica al dominio del negocio y regula estrictamente la estructura tecnológica del holding.*

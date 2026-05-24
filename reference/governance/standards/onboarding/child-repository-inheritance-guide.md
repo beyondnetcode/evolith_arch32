@@ -306,7 +306,7 @@ The **User Management System (UMS)** is a production satellite of this base. It 
 
 ### The Override pattern in practice — ADR-0059
 
-arc32 permits splitting query and command surfaces into separate API tiers when scale or team ownership justifies it. UMS explicitly decided against this at MVP maturity.
+Evolith permits splitting query and command surfaces into separate API tiers when scale or team ownership justifies it. UMS explicitly decided against this at MVP maturity.
 
 **Why the override is valid:**
 - CQRS read/write separation already exists at protocol level: GraphQL (queries) vs REST (commands).

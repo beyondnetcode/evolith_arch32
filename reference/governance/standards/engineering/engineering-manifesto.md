@@ -1,9 +1,11 @@
-# Global Engineering Standards & Developer Guidelines
+# Evolith Engineering Manifesto — Global Standards & Developer Guidelines
 
 > BMAD-METHOD is referenced here only as a spec-driven AI-DD delivery method. It is not the name, acronym, or manifesto of this documentation set.
 
+This manifesto defines the non-negotiable engineering standards for every team and product built on the **Evolith** architecture platform. Compliance is mandatory; deviations require an ADR with Architecture Board sign-off.
+
 ## 1. Core Engineering Principles (Mandatory)
-All code, wrappers, and architectural designs within this monorepo **MUST** strictly adhere to the following principles. Code reviews will reject any Pull Request violating these foundations:
+All code, wrappers, and architectural designs within the Evolith reference monorepo **MUST** strictly adhere to the following principles. Code reviews will reject any Pull Request violating these foundations:
 
 * **SOLID**: Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, and Dependency Inversion.
 * **DRY (Don't Repeat Yourself)**: Eliminate unnecessary duplication. Consolidate shared logic into utilities or shared-kernel libraries.

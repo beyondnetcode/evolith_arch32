@@ -1,13 +1,13 @@
-# Progressive Monolith Architecture Reference
+# Evolith: Progressive Architecture Reference Base
 
 [![Status](https://img.shields.io/badge/Status-Active-brightgreen?style=for-the-badge)]()
 
 [![Method](https://img.shields.io/badge/Method-Spec--driven_AI--DD-blueviolet?style=for-the-badge)]()
 [![License](https://img.shields.io/badge/License-MIT-informational?style=for-the-badge)]()
 
-This repository is the **corporate architectural upstream** - the authoritative source of decisions, standards, and patterns for product repositories in the organization. It is not a framework to install. It is a living contract that product teams inherit, extend, and contribute back to over time.
+**Evolith** is the **corporate architectural upstream** — the authoritative source of decisions, standards, and patterns for product repositories in the organization. It is not a framework to install; it is a living enterprise contract that product teams inherit, extend, and contribute back to over time.
 
-**arc32** identifies the supporting toolset and repository implementation. It is not the product vision itself. The vision is the progressive architecture reference documented here.
+**Evolith** is the enterprise-grade, progressive architecture platform that powers how organizations evolve from Modular Monoliths to distributed systems — governed, traceable, and AI-assisted by design. It is the evolutionary technical DNA for all satellite repositories.
 
 > Separate conceptually before separating physically.
 
@@ -19,8 +19,8 @@ This repository is the **corporate architectural upstream** - the authoritative 
 
 This repository serves three distinct purposes depending on who is reading it.
 
-**You are evaluating the architecture model.**
-Read the [Reference Blueprint](./reference/architecture/blueprints/reference-blueprint.md) and the [ADR Registry](./reference/architecture/adrs/README.md). Everything is documented with its rationale and trade-offs.
+**You are evaluating the Evolith architecture model.**
+Read the [Reference Blueprint](./reference/architecture/blueprints/reference-blueprint.md) and the [ADR Registry](./reference/architecture/adrs/README.md). Every decision is documented with its rationale, trade-offs, and Evolith governance tier.
 
 **You are starting a new product repository.**
 This base is your starting point. You inherit its full decision corpus, structure your repository using its taxonomy, and document every point where your product context diverges. The mechanics of this process are defined in the **[Child Repository Inheritance Guide](./reference/governance/standards/onboarding/child-repository-inheritance-guide.md)** — read it before writing a single line of code.
@@ -123,7 +123,7 @@ Follow the current [UMS setup instructions](https://github.com/beyondnetcode/ums
 
 ## Contribution
 
-Contributions are welcome through issues, documentation improvements, ADR reviews, examples, tests, and lessons promoted from UMS or other product repositories.
+Contributing to Evolith means strengthening the enterprise standard. Contributions are welcome through issues, documentation improvements, ADR reviews, examples, tests, and lessons promoted from UMS or other satellite repositories.
 
 Before contributing, read:
 
@@ -141,5 +141,5 @@ This project is published under the [MIT License](./LICENSE). You are free to us
 ---
 
 <div align="center">
- <sub>2026 Progressive Architecture Reference | arc32 toolset | Spec-driven AI-DD</sub>
+ <sub>Evolith — Enterprise Architecture Platform | Progressive Reference Corpus | Spec-driven AI-DD</sub>
 </div>

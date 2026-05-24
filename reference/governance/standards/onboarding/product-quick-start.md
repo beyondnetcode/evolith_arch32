@@ -1,7 +1,7 @@
-# Getting Started Guide - New Products and UMS Evidence
+# Evolith Quick Start — Onboarding New Products onto the Platform
 
 **Role:** Developer / Solutions Architect  
-**Objective:** Apply the architecture reference to a new product without confusing policy with a sample implementation.
+**Objective:** Apply the Evolith architecture reference to a new product without confusing policy with a sample implementation.
 
 ## 1. Choose the Correct Starting Point
 
@@ -12,7 +12,7 @@
 | Run the official example | [UMS README](https://github.com/beyondnetcode/ums/blob/main/README.md) |
 | Select a runtime | [Authoritative Tech Stack Index](../../../architecture/blueprints/authoritative-tech-stack.md) |
 
-This repository is a documentation and decision upstream. It is not cloned as an application starter and does not contain a local product sandbox.
+**Evolith** is a documentation and decision upstream — not a starter template. It is not cloned as an application starter and does not contain a local product sandbox.
 
 ## 2. Applying the Reference to a Product
 

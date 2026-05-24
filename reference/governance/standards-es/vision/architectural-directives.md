@@ -1,7 +1,9 @@
-# Directivas Arquitectónicas Maestras y Estrategia de Evolución
+# Evolith — Directivas Arquitectónicas Maestras y Estrategia de Evolución
+
+**Propietario:** Evolith Architecture Board
 
 ## 1. Objetivos Globales del Sistema
-La arquitectura de referencia está diseñada para anclar todos los productos corporativos bajo estándares de entrega no negociables que aseguren la viabilidad técnica a largo plazo.
+La plataforma **Evolith** está diseñada para anclar todos los productos corporativos bajo estándares de entrega no negociables que aseguren la viabilidad técnica a largo plazo.
 
 ## 2. Requerimientos Técnicos Maestros y Evolución
 Todos los productos instanciados a partir de este blueprint DEBEN alinearse con las siguientes directivas:

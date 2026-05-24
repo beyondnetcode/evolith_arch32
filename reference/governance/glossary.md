@@ -6,8 +6,8 @@ This glossary stabilizes terminology used across the repository. Use these terms
 
 | Term | Meaning | Usage rule |
 |---|---|---|
-| Progressive architecture reference | The documentation vision: start simple, modularize deliberately, distribute only when justified. | Use for the purpose of the repository. |
-| arc32 | Supporting toolset and repository implementation. | Do not use as the product vision. |
+| Evolith vision | The documentation vision: start simple, modularize deliberately, distribute only when justified. | Use for the purpose and guiding principle of the Evolith platform. |
+| Evolith | The enterprise-grade progressive architecture platform — the authoritative source of decisions, standards, and patterns for all product repositories in the organization. | Use as the official brand name of this architecture corpus in all documentation, headings, and footers. |
 | BMAD-METHOD | Spec-driven AI-DD method that may support artifact generation and validation. | Do not use as the name or acronym of the documentation. |
 | Reference corpus | The documentation body under `reference/`. | Use for architecture, governance, knowledge, operations, and infrastructure docs. |
 | Blueprint | A canonical architecture model or structural guide. | Use for stable architectural models, not temporary notes. |

@@ -307,7 +307,7 @@ El **User Management System (UMS)** es un satelite en produccion de esta base. D
 
 ### El patron Override en la practica — ADR-0059
 
-arc32 permite separar superficies de consulta y comando en tiers de API independientes cuando la escala o la propiedad de equipos lo justifica. UMS decidio explicitamente no hacerlo en la madurez MVP.
+Evolith permite separar superficies de consulta y comando en tiers de API independientes cuando la escala o la propiedad de equipos lo justifica. UMS decidio explicitamente no hacerlo en la madurez MVP.
 
 **Por que el override es valido:**
 - La separacion CQRS lectura/escritura ya existe a nivel de protocolo: GraphQL (queries) vs REST (commands).

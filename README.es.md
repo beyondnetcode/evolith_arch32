@@ -1,13 +1,13 @@
-# Referencia de Arquitectura de Monolito Progresivo
+# Evolith: Base de Referencia de Arquitectura Progresiva
 
 [![Status](https://img.shields.io/badge/Status-Activo-brightgreen?style=for-the-badge)]()
 
 [![Method](https://img.shields.io/badge/Metodo-Spec--driven_AI--DD-blueviolet?style=for-the-badge)]()
 [![License](https://img.shields.io/badge/License-MIT-informational?style=for-the-badge)]()
 
-Este repositorio es el **upstream arquitectónico corporativo** - la fuente autoritativa de decisiones, estándares y patrones para los repositorios de producto de la organización. No es un framework que se instala. Es un contrato vivo que los equipos de producto heredan, extienden y al que contribuyen de vuelta con el tiempo.
+**Evolith** es el **upstream arquitectónico corporativo** — la fuente autoritativa de decisiones, estándares y patrones para los repositorios de producto de la organización. No es un framework que se instala; es un contrato empresarial vivo que los equipos de producto heredan, extienden y al que contribuyen de vuelta con el tiempo.
 
-**arc32** identifica el toolset y la implementación del repositorio. No es la visión del producto. La visión es la referencia de arquitectura progresiva documentada aquí.
+**Evolith** es la plataforma de arquitectura progresiva de nivel empresarial que define cómo las organizaciones evolucionan de Monolitos Modulares a sistemas distribuidos — gobernada, trazable y asistida por IA desde el diseño. Es el ADN técnico evolutivo para todos los repositorios satélites.
 
 > Separar conceptualmente antes de separar físicamente.
 
@@ -19,8 +19,8 @@ Este repositorio es el **upstream arquitectónico corporativo** - la fuente auto
 
 Este repositorio sirve tres propósitos distintos según quién lo lea.
 
-**Estás evaluando el modelo arquitectónico.**
-Lee el [Blueprint de Referencia](./reference/architecture/blueprints-es/reference-blueprint.md) y el [Registro ADR](./reference/architecture/adrs-es/README.md). Todo está documentado con su justificación y trade-offs.
+**Estás evaluando el modelo arquitectónico de Evolith.**
+Lee el [Blueprint de Referencia](./reference/architecture/blueprints-es/reference-blueprint.md) y el [Registro ADR](./reference/architecture/adrs-es/README.md). Cada decisión está documentada con su justificación, trade-offs y nivel de gobernanza Evolith.
 
 **Estás iniciando un nuevo repositorio de producto.**
 Esta base es tu punto de partida. Heredas su corpus completo de decisiones, estructuras tu repositorio usando su taxonomía y documentas cada punto donde el contexto de tu producto diverge. La mecánica de este proceso está definida en la **[Guía de Herencia para Repositorios Hijos](./reference/governance/standards/onboarding/child-repository-inheritance-guide.es.md)** — léela antes de escribir una sola línea de código.
@@ -123,7 +123,7 @@ Sigue las [instrucciones vigentes de UMS](https://github.com/beyondnetcode/ums/b
 
 ## Contribución
 
-Las contribuciones son bienvenidas mediante issues, mejoras documentales, revisión de ADRs, ejemplos, pruebas y aprendizajes promovidos desde UMS u otros repositorios de producto.
+Contribuir a Evolith significa fortalecer el estándar empresarial. Las contribuciones son bienvenidas mediante issues, mejoras documentales, revisión de ADRs, ejemplos, pruebas y aprendizajes promovidos desde UMS u otros repositorios satélites.
 
 Antes de contribuir, revisa:
 
@@ -141,5 +141,5 @@ Este proyecto se publica bajo la [Licencia MIT](./LICENSE). Eres libre de usar, 
 ---
 
 <div align="center">
- <sub>2026 Referencia de Arquitectura Progresiva | toolset arc32 | Spec-driven AI-DD</sub>
+ <sub>Evolith — Plataforma de Arquitectura Empresarial | Corpus de Referencia Progresiva | Spec-driven AI-DD</sub>
 </div>

@@ -1,9 +1,9 @@
-# Global Master Index
+# Evolith Global Master Index
 
 > Bilingual navigation: [Español](./MASTER_INDEX.es.md) 
 > Main portal: [README](./README.md)
 
-This is the complete navigation index for this progressive architecture reference. Use it when you already know what type of artifact you need, or when you want to move across repository areas without browsing directories manually.
+This is the complete navigation index for **Evolith** — the enterprise progressive architecture platform. Use it when you already know what type of artifact you need, or when you want to move across repository areas without browsing directories manually.
 
 ---
 
@@ -132,9 +132,9 @@ This repository intentionally does not maintain product application code. UMS ow
 
 ---
 
-## 8. Mandatory Compliance Baseline
+## 8. Evolith Compliance Baseline
 
-Every artifact and implementation should respect these pillars:
+Every artifact and implementation instantiated from Evolith must respect these pillars:
 
 1. [Agnostic Baseline](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.md)
 2. [Reference Architecture](./reference/architecture/blueprints/reference-blueprint.md)
@@ -145,5 +145,5 @@ Every artifact and implementation should respect these pillars:
 ---
 
 <div align="center">
- <a href="./README.md">Back to Main Portal</a>
+ <a href="./README.md">Back to Evolith Main Portal</a>
 </div>

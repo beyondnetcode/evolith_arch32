@@ -6,8 +6,8 @@ Este glosario estabiliza la terminología usada en el repositorio. Usa estos té
 
 | Término | Significado | Regla de uso |
 |---|---|---|
-| Referencia de arquitectura progresiva | La visión documental: empezar simple, modularizar deliberadamente y distribuir solo cuando se justifique. | Usar para el propósito del repositorio. |
-| arc32 | Toolset de soporte e implementación del repositorio. | No usar como visión del producto. |
+| Visión Evolith | La visión documental: empezar simple, modularizar deliberadamente y distribuir solo cuando se justifique. | Usar para el propósito y principio rector de la plataforma Evolith. |
+| Evolith | La plataforma de arquitectura progresiva de nivel empresarial — la fuente autoritativa de decisiones, estándares y patrones para todos los repositorios de producto de la organización. | Usar como la marca oficial de este corpus de arquitectura en toda documentación, encabezados y footers. |
 | BMAD-METHOD | Método spec-driven AI-DD que puede apoyar la generación y validación de artefactos. | No usar como nombre ni acrónimo de la documentación. |
 | Corpus de referencia | Cuerpo documental bajo `reference/`. | Usar para arquitectura, gobernanza, conocimiento, operaciones e infraestructura. |
 | Blueprint | Modelo arquitectónico canónico o guía estructural. | Usar para modelos estables, no para notas temporales. |

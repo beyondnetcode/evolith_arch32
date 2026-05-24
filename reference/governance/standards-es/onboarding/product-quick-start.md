@@ -1,7 +1,7 @@
-# Guia de Inicio - Nuevos Productos y Evidencia UMS
+# Evolith Quick Start — Onboarding de Nuevos Productos en la Plataforma
 
 **Rol:** Desarrollador / Arquitecto de Soluciones  
-**Objetivo:** Aplicar la referencia arquitectonica a un nuevo producto sin confundir politica con una implementacion de ejemplo.
+**Objetivo:** Aplicar la referencia arquitectónica de **Evolith** a un nuevo producto sin confundir política con una implementación de ejemplo.
 
 ## 1. Elegir el Punto de Partida Correcto
 
@@ -12,7 +12,7 @@
 | Ejecutar el ejemplo oficial | [README UMS](https://github.com/beyondnetcode/ums/blob/main/README.md) |
 | Seleccionar un runtime | [Indice del Stack Tecnologico](../../../architecture/blueprints-es/authoritative-tech-stack.md) |
 
-Este repositorio es un upstream documental y de decisiones. No se clona como starter de aplicacion y no contiene un sandbox local de producto.
+**Evolith** es un upstream documental y de decisiones — no una plantilla de inicio. No se clona como starter de aplicación y no contiene un sandbox local de producto.
 
 ## 2. Aplicar la Referencia a un Producto
 

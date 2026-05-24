@@ -1,9 +1,9 @@
-# Master Architectural Directives & Evolution Strategy
+# Evolith — Master Architectural Directives & Evolution Strategy
 
 > **Bilingual Navigation:** [Versión en Español](../../standards-es/vision/architectural-directives.md)
 
 **Status:** Approved
-**Owner:** Enterprise Architecture Office
+**Owner:** Evolith Architecture Board
 **Last reviewed:** 2026-05-22
 
 This document establishes the non-negotiable architectural directives that govern every product instantiated from this reference. It defines the baseline quality bar, the evolution philosophy, and the constraints that any architectural decision must satisfy.
@@ -12,7 +12,7 @@ This document establishes the non-negotiable architectural directives that gover
 
 ## 1. Global System Objectives
 
-The reference architecture is designed to anchor all corporate products upon delivery standards that secure long-term technical viability without sacrificing early-stage simplicity.
+The **Evolith** platform is designed to anchor all corporate products upon delivery standards that secure long-term technical viability without sacrificing early-stage simplicity.
 
 ---
 

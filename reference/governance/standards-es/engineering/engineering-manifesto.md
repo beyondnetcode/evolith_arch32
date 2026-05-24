@@ -1,9 +1,11 @@
-# Estándares Globales de Ingeniería y Guías para Desarrolladores
+# Manifiesto de Ingeniería Evolith — Estándares Globales y Guías para Desarrolladores
 
 > BMAD-METHOD se referencia aquí solo como método de entrega spec-driven AI-DD. No es el nombre, acrónimo ni manifiesto de este conjunto documental.
 
+Este manifiesto define los estándares de ingeniería no negociables para cada equipo y producto construido sobre la plataforma de arquitectura **Evolith**. El cumplimiento es obligatorio; las desviaciones requieren un ADR con aprobación del Architecture Board.
+
 ## 1. Principios Core de Ingeniería (Obligatorios)
-Todo código, wrappers y diseños arquitectónicos dentro de este monorepo **DEBEN** adherirse estrictamente a los siguientes principios. Las revisiones de código rechazarán cualquier Pull Request que viole estos fundamentos:
+Todo código, wrappers y diseños arquitectónicos dentro del monorepo de referencia Evolith **DEBEN** adherirse estrictamente a los siguientes principios. Las revisiones de código rechazarán cualquier Pull Request que viole estos fundamentos:
 
 * **SOLID**: Responsabilidad única, Abierto/Cerrado, Sustitución de Liskov, Segregación de Interfaces e Inversión de Dependencias.
 * **DRY (Don't Repeat Yourself)**: Eliminar la duplicación innecesaria. Consolidar la lógica compartida en utilidades o librerías compartidas (shared-kernel).

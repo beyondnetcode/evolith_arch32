@@ -1,9 +1,9 @@
-# Índice Maestro Global
+# Índice Maestro Global Evolith
 
 > Navegación bilingüe: [English](./MASTER_INDEX.md) 
 > Portal principal: [README](./README.es.md)
 
-Este es el índice completo de navegación para esta referencia de arquitectura progresiva. Úsalo cuando ya sepas qué tipo de artefacto necesitas o cuando quieras moverte entre áreas del repositorio sin explorar directorios manualmente.
+Este es el índice completo de navegación de **Evolith** — la plataforma empresarial de arquitectura progresiva. Úsalo cuando ya sepas qué tipo de artefacto necesitas o cuando quieras moverte entre áreas del repositorio sin explorar directorios manualmente.
 
 ---
 
@@ -131,9 +131,9 @@ Este repositorio intencionalmente no mantiene código de aplicación de producto
 
 ---
 
-## 8. Línea Base Mandatoria
+## 8. Línea Base de Cumplimiento Evolith
 
-Todo artefacto e implementación debe respetar estos pilares:
+Todo artefacto e implementación instanciada desde Evolith debe respetar estos pilares:
 
 1. [Baseline Agnóstico](./reference/architecture/blueprints-es/authoritative-tech-stack-agnostic.md)
 2. [Arquitectura de Referencia](./reference/architecture/blueprints-es/reference-blueprint.md)
@@ -144,5 +144,5 @@ Todo artefacto e implementación debe respetar estos pilares:
 ---
 
 <div align="center">
- <a href="./README.es.md">Volver al Portal Principal</a>
+ <a href="./README.es.md">Volver al Portal Principal de Evolith</a>
 </div>

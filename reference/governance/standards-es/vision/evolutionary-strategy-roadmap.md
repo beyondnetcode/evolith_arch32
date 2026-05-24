@@ -1,8 +1,8 @@
-# Estrategia Evolutiva y Tablero de Control Arquitectónico
+# Evolith — Estrategia Evolutiva y Roadmap Arquitectónico
 
 > **Navegación Bilingüe:** [English Version](../../standards/vision/evolutionary-strategy-roadmap.md)
 
-Este documento define la hoja de ruta estratégica liderada por la Arquitectura Corporativa para transformar el ecosistema desde sus cimientos hasta una plataforma global agnóstica y altamente resiliente.
+Este documento establece el roadmap estratégico de **Evolith** — la evolución técnica por fases desde la arquitectura modular fundacional hasta una plataforma global agnóstica y altamente resiliente.
 
 ---
 

@@ -1,13 +1,12 @@
 ## Project
 Open technical reference for products that start simple, mature into modular monoliths, and evolve into distributed services only when justified by product and operations.
 
-This repository defines the architectural baseline, governance standards, harness rules, and reference implementation patterns used by satellite repositories.
+This repository defines the architectural baseline, governance standards, harness rules, and reference implementation patterns used by satellite repositories. UMS is the official external executable product reference.
 
 ## Build & Run
 - Reference docs review: use the root `README.md`, `MASTER_INDEX.md`, and `reference/` tree first.
-- Demo sandbox install: `cd src && npm install`
-- Demo sandbox run: `cd src && npm run dev`
-- Demo infrastructure: `cd src && docker-compose -f ../reference/infrastructure/docker-compose.yml up -d`
+- Applied product reference: `https://github.com/beyondnetcode/ums`
+- UMS setup and run commands: follow the current UMS `README.md`; this repository does not duplicate them.
 - Markdown encoding sanitation: `python ./.bmad-core/scripts/cleanup_markdown_encoding.py`
 
 ## Architecture
@@ -20,7 +19,7 @@ This repository defines the architectural baseline, governance standards, harnes
   - `reference/governance/`
   - `.harness/`
   - `.bmad-core/`
-  - `src/` demo sandbox
+  - `reference/knowledge/demo/` UMS applied-reference boundary and migration record
 
 ## Conventions
 - Read the agnostic baseline before applying any runtime-specific guidance.
@@ -39,4 +38,4 @@ This repository defines the architectural baseline, governance standards, harnes
 ## Out of Bounds
 - Do not weaken or remove bilingual governance requirements.
 - Do not overwrite runtime-specific profiles with assumptions from another runtime.
-- Do not treat the demo sandbox as the sole source of truth for the corporate architecture.
+- Do not treat UMS product-specific choices as universal architecture without an accepted artifact in this repository.

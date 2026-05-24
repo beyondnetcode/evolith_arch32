@@ -1,30 +1,20 @@
-# Demo vs Referencia
+# Referencia Canonica vs Modelo Aplicado UMS
 
-> Navegación bilingüe: [English](./demo-vs-reference.md)
+> Navegacion bilingue: [English](./demo-vs-reference.md)
 
-Esta página evita un error común de lectura: no todo detalle de implementación en la demo es una regla universal de arquitectura.
+Este repositorio y UMS cumplen propositos diferentes. Leerlos como un mismo nivel de autoridad convertiria una eleccion de implementacion en una regla universal.
 
-## Qué Es Universal
+| Necesidad | Referencia arquitectonica canonica | Modelo aplicado UMS |
+|---|---|---|
+| Proposito | Definir estandares, blueprints, ADRs y criterios reutilizables | Demostrar esas ideas en un contexto de producto empresarial |
+| Ubicacion | Este repositorio bajo `reference/architecture/` y `reference/governance/` | [beyondnetcode/ums](https://github.com/beyondnetcode/ums) |
+| Autoridad | Normativa cuando el artefacto es aceptado u obligatorio | Evidencia y especializacion, salvo promocion mediante ADR aqui |
+| Tecnologia | Baseline agnostico y perfiles de runtime explicitos | Su stack elegido y restricciones operativas de producto |
+| Codigo ejecutable | No se mantiene en este repositorio | Se mantiene en el repositorio UMS |
 
-La guía universal vive en documentos de arquitectura y gobernanza:
+## Regla de Interpretacion
 
-- Evolución progresiva desde monolito simple a monolito modular y servicios distribuidos.
-- Principios y restricciones agnósticas de runtime.
-- ADRs y estándares aceptados como política del repositorio.
-- Reglas de nombres, documentación, calidad, seguridad y SDLC.
-
-## Qué Es Específico de la Demo
-
-La guía específica de demo vive en la documentación demo y el código fuente:
-
-- Alcance funcional To-Do.
-- Infraestructura local y cableado Docker Compose.
-- Decisiones concretas Node.js/NestJS usadas por el sandbox.
-- Simplificaciones realizadas para mantener el ejemplo entendible.
-
-## Regla de Lectura
-
-Si una decisión aparece solo en documentación demo, trátala como ejemplo. Si aparece en el registro ADR, blueprint o estándares de gobernanza, trátala como guía canónica.
+Lee primero el baseline y el registro ADR. Usa UMS para inspeccionar una implementacion coherente de identidad, acceso, auditoria, bounded contexts, APIs, observabilidad y practicas de entrega. Cuando una practica de UMS deba aplicar a todos los productos, debe promoverse a este repositorio como estandar, ADR o patron canonico.
 
 ---
-[Volver al Hub Demo](./README.md)
+[Volver al Hub de Referencia UMS](./README.md)

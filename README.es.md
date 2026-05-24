@@ -5,7 +5,7 @@
 [![Method](https://img.shields.io/badge/Metodo-Spec--driven_AI--DD-blueviolet?style=for-the-badge)]()
 [![License](https://img.shields.io/badge/License-MIT-informational?style=for-the-badge)]()
 
-Este repositorio es el **upstream arquitectónico corporativo** — la fuente autoritativa de decisiones, estándares y patrones para todos los repositorios de producto de la organización. No es un framework que se instala. Es un contrato vivo que los equipos de producto heredan, extienden y al que contribuyen de vuelta con el tiempo.
+Este repositorio es el **upstream arquitectónico corporativo** - la fuente autoritativa de decisiones, estándares y patrones para los repositorios de producto de la organización. No es un framework que se instala. Es un contrato vivo que los equipos de producto heredan, extienden y al que contribuyen de vuelta con el tiempo.
 
 **arc32** identifica el toolset y la implementación del repositorio. No es la visión del producto. La visión es la referencia de arquitectura progresiva documentada aquí.
 
@@ -29,7 +29,7 @@ Esta base es tu punto de partida. Heredas su corpus completo de decisiones, estr
 Si la decisión es universal, pertenece aquí. Si es específica del producto, pertenece en el repositorio hijo. El [Camino de Promoción](./reference/governance/standards/onboarding/child-repository-inheritance-guide.es.md#7-camino-de-promoción) define cómo las decisiones viajan desde los repositorios de producto de vuelta a esta base.
 
 **Estás configurando desarrollo asistido por IA (AI-DD).**
-Este repositorio usa BMAD-METHOD como framework AI-DD. La configuración local de agentes, las reglas del harness y la guía de replicación están documentadas en la [Referencia de Adopción de Frameworks AI-DD](./reference/governance/standards/ai-augmented/frameworks/README.md).
+Este repositorio puede usar BMAD-METHOD como método de soporte spec-driven AI-DD. No es el nombre ni la visión de este corpus documental. La configuración local de agentes, las reglas del harness y la guía de replicación están documentadas en la [Referencia de Adopción de Frameworks AI-DD](./reference/governance/standards/ai-augmented/frameworks/README.md).
 
 ---
 
@@ -41,7 +41,7 @@ Este repositorio usa BMAD-METHOD como framework AI-DD. La configuración local d
 - [El Viaje Arquitectónico](#el-viaje-arquitectónico)
 - [Mapa del Repositorio](#mapa-del-repositorio)
 - [Primeras Lecturas Recomendadas](#primeras-lecturas-recomendadas)
-- [Inicio Rápido: Demo Sandbox](#inicio-rápido-demo-sandbox)
+- [Referencia Aplicada Oficial: UMS](#referencia-aplicada-oficial-ums)
 - [Contribución](#contribución)
 - [Licencia](#licencia)
 
@@ -58,18 +58,14 @@ Este repositorio usa BMAD-METHOD como framework AI-DD. La configuración local d
 | Revisar las reglas universales | [Línea Base Arquitectónica Agnóstica](./reference/architecture/blueprints-es/authoritative-tech-stack-agnostic.md) |
 | Explorar decisiones y trade-offs | [Registro ADR](./reference/architecture/adrs-es/README.md) |
 | Aclarar la terminología del proyecto | [Glosario Arquitectónico](./reference/governance/glossary.es.md) |
-| Inspeccionar el ejemplo ejecutable | [Demo Sandbox](./reference/knowledge/demo/README.md) |
+| Inspeccionar la referencia ejecutable de producto | [Modelo Aplicado UMS](./reference/knowledge/demo/README.md) |
 | Entender cómo deben operar aquí los agentes de IA | [AGENTS.es.md](./AGENTS.es.md) |
 
 ---
 
 ## Prerrequisitos
 
-| Requisito | Versión Mínima |
-|---|---|
-| Node.js | 20+ |
-| npm | 10+ |
-| Docker + Docker Compose | Última estable |
+Este repositorio es un corpus documental y arquitectónico. Para prerrequisitos ejecutables del producto, sigue el [README vigente de UMS](https://github.com/beyondnetcode/ums/blob/main/README.md), propietario del setup oficial de la demo.
 
 ---
 
@@ -92,12 +88,12 @@ El repositorio ayuda a decidir **cuándo mantenerse simple**, **cuándo modulari
 
 | Área | Qué encontrarás |
 |---|---|
-| [reference/architecture/](./reference/architecture/blueprints-es/README.md) | Blueprints, topología, perfiles de stack y decisiones arquitectónicas |
+| [reference/architecture/](./reference/architecture/README.es.md) | Hub arquitectónico: blueprints, ADRs, perfiles de stack y patrones canónicos |
 | [reference/governance/](./reference/governance/standards-es/README.md) | Estándares de ingeniería, SDLC, onboarding y reglas de arquitectura |
 | [reference/operations/](./reference/operations/README.es.md) | Observabilidad, soporte runtime y documentación operacional |
 | [reference/infrastructure/](./reference/infrastructure/README.es.md) | Plataforma local, gateway, contenedores y activos de infraestructura |
-| [reference/knowledge/](./reference/knowledge/demo/README.md) | Documentación demo, investigación, ejemplos y material de aprendizaje |
-| [src/](./src/apps/todo-web/README.md) | Implementación de referencia y sandbox ejecutable |
+| [reference/knowledge/](./reference/knowledge/demo/README.md) | Límite del modelo aplicado UMS, registro de migración, investigación y aprendizaje |
+| [Repositorio UMS](https://github.com/beyondnetcode/ums) | Referencia oficial ejecutable de producto e instrucciones de setup |
 
 Para navegación por rol, usa el [Índice Maestro Global](./MASTER_INDEX.es.md).
 
@@ -110,28 +106,24 @@ Para navegación por rol, usa el [Índice Maestro Global](./MASTER_INDEX.es.md).
 3. [Blueprint de Referencia](./reference/architecture/blueprints-es/reference-blueprint.md)
 4. [Línea Base Arquitectónica Agnóstica](./reference/architecture/blueprints-es/authoritative-tech-stack-agnostic.md)
 5. [Matriz ADR](./reference/architecture/adrs-es/adr-matrix.es.md)
-6. [Demo vs Referencia](./reference/knowledge/demo/demo-vs-reference.es.md)
+6. [Referencia Canónica vs Modelo Aplicado UMS](./reference/knowledge/demo/demo-vs-reference.es.md)
 
 ---
 
-## Inicio Rápido: Demo Sandbox
+## Referencia Aplicada Oficial: UMS
 
 ```bash
-git clone https://github.com/beyondnetcode/arc32_nodejs_progresive_monolith.git
-cd arc32_nodejs_progresive_monolith/src
-npm install
-
-docker-compose -f ../reference/infrastructure/docker-compose.yml up -d
-npm run dev
+git clone https://github.com/beyondnetcode/ums.git
+cd ums
 ```
 
-La demo existe para mostrar patrones arquitectónicos en código. Las reglas y políticas generales permanecen en `reference/architecture/` y `reference/governance/`.
+Sigue las [instrucciones vigentes de UMS](https://github.com/beyondnetcode/ums/blob/main/README.md) para ejecutar el producto. UMS aporta evidencia de implementación empresarial; las reglas y políticas generales permanecen en `reference/architecture/` y `reference/governance/`.
 
 ---
 
 ## Contribución
 
-Las contribuciones son bienvenidas mediante issues, mejoras documentales, revisión de ADRs, ejemplos, pruebas y refinamientos de la demo.
+Las contribuciones son bienvenidas mediante issues, mejoras documentales, revisión de ADRs, ejemplos, pruebas y aprendizajes promovidos desde UMS u otros repositorios de producto.
 
 Antes de contribuir, revisa:
 

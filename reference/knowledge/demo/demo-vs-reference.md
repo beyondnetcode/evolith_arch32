@@ -1,30 +1,20 @@
-# Demo vs Reference
+# Canonical Reference vs UMS Applied Model
 
-> Bilingual navigation: [Español](./demo-vs-reference.es.md)
+> Bilingual navigation: [Espanol](./demo-vs-reference.es.md)
 
-This page prevents a common reading error: not every implementation detail in the demo is a universal architecture rule.
+This repository and UMS serve different purposes. Reading them as one authority level would turn an implementation choice into a universal rule.
 
-## What Is Universal
+| Concern | Canonical architecture reference | UMS applied model |
+|---|---|---|
+| Purpose | Define reusable standards, blueprints, ADRs, and selection criteria | Demonstrate those ideas in an enterprise product context |
+| Location | This repository under `reference/architecture/` and `reference/governance/` | [beyondnetcode/ums](https://github.com/beyondnetcode/ums) |
+| Authority | Normative where an artifact is accepted or mandatory | Evidence and specialization unless promoted by an ADR here |
+| Technology | Runtime-agnostic baseline plus explicit runtime profiles | Its selected product stack and operational constraints |
+| Executable code | Not maintained in this repository | Maintained in the UMS repository |
 
-Universal guidance belongs in architecture and governance documents:
+## Interpretation Rule
 
-- Progressive evolution from simple monolith to modular monolith to distributed services.
-- Runtime-agnostic principles and constraints.
-- ADRs and standards accepted as repository policy.
-- Naming, documentation, quality, security, and SDLC rules.
-
-## What Is Demo-Specific
-
-Demo-specific guidance belongs in the demo documentation and source code:
-
-- To-Do functional scope.
-- Local infrastructure and Docker Compose wiring.
-- Concrete Node.js/NestJS implementation choices used by the sandbox.
-- Simplifications made to keep the example understandable.
-
-## Reading Rule
-
-If a decision appears only in demo documentation, treat it as an example. If it appears in the ADR registry, blueprint, or governance standards, treat it as canonical guidance.
+Read the baseline and ADR registry first. Use UMS to inspect a coherent implementation of identity, access, auditing, bounded contexts, APIs, observability, and delivery practices. When a UMS practice is intended for all products, it must be promoted into this repository as a standard, ADR, or canonical pattern.
 
 ---
-[Back to Demo Hub](./README.md)
+[Back to UMS Reference Hub](./README.md)

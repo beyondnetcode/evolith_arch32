@@ -62,12 +62,12 @@ app.UseIdempotency();      // después de UseGlobalExceptionHandler, antes del r
 
 | Escenario | Método | Clave | Estado | Handler |
 |-----------|--------|-------|--------|---------|
-| Primera llamada | POST/PUT/PATCH | Sí | 2xx | ✅ |
-| Reintento, completado | POST/PUT/PATCH | Sí (cacheada) | 2xx reproducida | ❌ |
-| Duplicado paralelo | POST/PUT/PATCH | Sí (en vuelo) | 409 | ❌ |
-| Sin clave | POST/PUT/PATCH | No | pasa | ✅ |
-| Método seguro | GET/DELETE | Cualquiera | pasa | ✅ |
-| Error del handler | POST/PUT/PATCH | Sí | 4xx/5xx (no cacheado) | ✅ |
+| Primera llamada | POST/PUT/PATCH | Sí | 2xx | Sí |
+| Reintento, completado | POST/PUT/PATCH | Sí (cacheada) | 2xx reproducida | No |
+| Duplicado paralelo | POST/PUT/PATCH | Sí (en vuelo) | 409 | No |
+| Sin clave | POST/PUT/PATCH | No | pasa | Sí |
+| Método seguro | GET/DELETE | Cualquiera | pasa | Sí |
+| Error del handler | POST/PUT/PATCH | Sí | 4xx/5xx (no cacheado) | Sí |
 
 ---
 

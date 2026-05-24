@@ -161,7 +161,7 @@ class CategoryDeletedEvent {
 - [ADR-0006: Transición Futura a Microservicios con Dapr](../../adrs/core/0006-future-microservices-transition-dapr.md)
 - [ADR-0010: Estrategia Multi-Tenancy (RLS)](../../adrs/core/0010-multi-tenancy-architecture-strategy.md)
 - [ADR-0015: Arquitectura Dirigida por Eventos (Bus Inyectable)](../../adrs/core/0015-event-driven-architecture-intra-domain.md)
-- [Mapa de Contextos Delimitados](../../../knowledge/demo/technical/bounded-context-map.md)
+- [Modelo de Referencia Aplicado UMS](../../../knowledge/demo/README.md)
 
 ---
 [Volver al Índice](./README.es.md)

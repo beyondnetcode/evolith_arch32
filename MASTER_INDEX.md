@@ -13,13 +13,13 @@ This is the complete navigation index for this progressive architecture referenc
 |---|---|---|
 | Choose an efficient reading path | [Getting Started by Role](./reference/getting-started/README.md) | [Architecture Glossary](./reference/governance/glossary.md) |
 | Understand the architecture vision | [Architectural Directives](./reference/governance/standards/vision/architectural-directives.md) | [Evolutionary Strategy Roadmap](./reference/governance/standards/vision/evolutionary-strategy-roadmap.md) |
-| Understand the progressive architecture model | [Reference Blueprint](./reference/architecture/blueprints/reference-blueprint.md) | [Microservice Extraction Readiness Criteria](./reference/architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md) |
+| Understand the progressive architecture model | [Architecture Hub](./reference/architecture/README.md) | [Microservice Extraction Readiness Criteria](./reference/architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md) |
 | Review technology choices | [Authoritative Tech Stack](./reference/architecture/blueprints/authoritative-tech-stack.md) | [Agnostic Baseline](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.md) |
 | Review architectural decisions | [ADR Registry](./reference/architecture/adrs/README.md) | [Core ADRs](./reference/architecture/adrs/core/README.md) |
 | Learn engineering standards | [Engineering Manifesto](./reference/governance/standards/engineering/engineering-manifesto.md) | [Contract Testing Guideline](./reference/governance/standards/engineering/contract-testing-guideline.md) |
 | Understand SDLC expectations | [SDLC Framework](./reference/governance/sdlc/README.md) | [Construction-Focused SDLC](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.md) |
-| Explore the demo sandbox | [Demo Hub](./reference/knowledge/demo/README.md) | [Sandbox Verification Matrix](./reference/knowledge/demo/technical/sandbox-verification.md) |
-| Separate policy from implementation examples | [Demo vs Reference](./reference/knowledge/demo/demo-vs-reference.md) | [Repository Taxonomy](./reference/governance/standards/repository-taxonomy.md) |
+| Explore the applied product reference | [UMS Reference Hub](./reference/knowledge/demo/README.md) | [UMS Architecture Portal](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) |
+| Separate policy from implementation evidence | [Canonical Reference vs UMS Applied Model](./reference/knowledge/demo/demo-vs-reference.md) | [Repository Taxonomy](./reference/governance/standards/repository-taxonomy.md) |
 | Operate or deploy locally | [Operations Hub](./reference/operations/README.md) | [Infrastructure Hub](./reference/infrastructure/README.md) |
 
 ---
@@ -29,12 +29,12 @@ This is the complete navigation index for this progressive architecture referenc
 | Role | Reading path |
 |---|---|
 | **Executive / Sponsor** | [Architectural Directives](./reference/governance/standards/vision/architectural-directives.md) -> [Evolutionary Roadmap](./reference/governance/standards/vision/evolutionary-strategy-roadmap.md) -> [Maturity Matrix](./reference/governance/standards/vision/maturity-matrix.md) |
-| **Product Owner / PM** | [Demo PRD](./reference/knowledge/demo/project/01-prd-demo-sandbox.md) -> [Business Glossary](./reference/knowledge/demo/functional/business-glossary.md) -> [Backlog and Epics](./reference/knowledge/demo/project/02-backlog-and-epics.md) |
-| **Software Architect** | [Reference Blueprint](./reference/architecture/blueprints/reference-blueprint.md) -> [ADR Registry](./reference/architecture/adrs/README.md) -> [Microservice Extraction Criteria](./reference/architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md) |
+| **Product Owner / PM** | [UMS Reference Model](./reference/knowledge/demo/ums-reference-model.md) -> [UMS Documentation Index](https://github.com/beyondnetcode/ums/blob/main/docs/MASTER_INDEX.md) -> [Reference vs Applied Model](./reference/knowledge/demo/demo-vs-reference.md) |
+| **Software Architect** | [Architecture Hub](./reference/architecture/README.md) -> [ADR Registry](./reference/architecture/adrs/README.md) -> [UMS Architecture Portal](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) |
 | **Principal / Staff Engineer** | [Agnostic Baseline](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.md) -> [Tactical Design Patterns](./reference/architecture/adrs/core/0019-tactical-design-patterns-future-proofing.md) -> [Simplicity Checklist](./reference/architecture/blueprints/simplicity-checklist-phase-01.md) |
-| **Backend Developer** | [Engineering Manifesto](./reference/governance/standards/engineering/engineering-manifesto.md) -> [Clean Architecture ADR](./reference/architecture/adrs/nodejs/0002-clean-architecture-nestjs.md) -> [Sandbox Verification](./reference/knowledge/demo/technical/sandbox-verification.md) |
-| **Frontend Developer** | [Frontend Offline Resilience ADR](./reference/architecture/adrs/nodejs/0004-frontend-offline-resilience.md) -> [Gateway/BFF ADR](./reference/architecture/adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.md) -> [Microfrontends ADR](./reference/architecture/adrs/core/0055-microfrontends-architecture-strategy.md) -> [To-Do Web App](./src/apps/todo-web/README.md) |
-| **DevOps / SRE** | [Infrastructure Hub](./reference/infrastructure/README.md) -> [Operations Hub](./reference/operations/README.md) -> [Observability ADR](./reference/architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md) |
+| **Backend Developer** | [Engineering Manifesto](./reference/governance/standards/engineering/engineering-manifesto.md) -> [Runtime ADR Registry](./reference/architecture/adrs/README.md) -> [UMS Reference Model](./reference/knowledge/demo/ums-reference-model.md) |
+| **Frontend Developer** | [Frontend Offline Resilience ADR](./reference/architecture/adrs/nodejs/0004-frontend-offline-resilience.md) -> [Microfrontends ADR](./reference/architecture/adrs/core/0055-microfrontends-architecture-strategy.md) -> [UMS Repository](https://github.com/beyondnetcode/ums) |
+| **DevOps / SRE** | [Infrastructure Hub](./reference/infrastructure/README.md) -> [Operations Hub](./reference/operations/README.md) -> [UMS Architecture Portal](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) |
 | **QA / SDET** | [Testing Pyramid ADR](./reference/architecture/adrs/core/0018-testing-pyramid-quality-gates.md) -> [Contract Testing Guideline](./reference/governance/standards/engineering/contract-testing-guideline.md) -> [Integration and E2E Testing ADR](./reference/architecture/adrs/core/0053-integration-e2e-testing-strategy.md) |
 | **Security Engineer** | [Vendor Risk Assessment](./reference/governance/standards/engineering/vendor-risk-assessment.md) -> [Multi-Tenancy ADR](./reference/architecture/adrs/core/0010-multi-tenancy-architecture-strategy.md) -> [Immutable Audit Trail ADR](./reference/architecture/adrs/core/0016-immutable-business-audit-trail.md) |
 | **AI Contributor** | [AI-Augmented Standards](./reference/governance/standards/ai-augmented/README.md) -> [BMAD Adoption Reference](./reference/governance/standards/ai-augmented/frameworks/bmad-method/README.md) -> [Agents Catalog](./reference/governance/standards/ai-augmented/frameworks/bmad-method/agents-catalog.md) -> [Harness Rules](./.harness/rules/global-rules.md) |
@@ -46,6 +46,7 @@ This is the complete navigation index for this progressive architecture referenc
 
 | Area | Entry point |
 |---|---|
+| Architecture Hub | [reference/architecture](./reference/architecture/README.md) |
 | Blueprints | [reference/architecture/blueprints](./reference/architecture/blueprints/README.md) |
 | ADR Registry | [reference/architecture/adrs](./reference/architecture/adrs/README.md) |
 | ADR Decision Matrix | [reference/architecture/adrs/adr-matrix](./reference/architecture/adrs/adr-matrix.md) |
@@ -53,6 +54,7 @@ This is the complete navigation index for this progressive architecture referenc
 | Node.js ADRs | [reference/architecture/adrs/nodejs](./reference/architecture/adrs/nodejs/README.md) |
 | .NET ADRs | [reference/architecture/adrs/dotnet](./reference/architecture/adrs/dotnet/README.md) |
 | Android ADRs | [reference/architecture/adrs/android](./reference/architecture/adrs/android/README.md) |
+| Canonical Patterns | [reference/architecture/canonical-patterns](./reference/architecture/canonical-patterns/README.md) |
 
 Key architecture references:
 
@@ -88,25 +90,22 @@ Key governance references:
 
 ---
 
-## 5. Demo and Knowledge Base
+## 5. Applied Reference and Knowledge Base
 
 | Area | Entry point |
 |---|---|
-| Demo Hub | [reference/knowledge/demo](./reference/knowledge/demo/README.md) |
-| Demo vs Reference Boundary | [reference/knowledge/demo/demo-vs-reference](./reference/knowledge/demo/demo-vs-reference.md) |
-| Demo Project Planning | [reference/knowledge/demo/project](./reference/knowledge/demo/project/README.md) |
-| Demo Functional Layer | [reference/knowledge/demo/functional](./reference/knowledge/demo/functional/README.md) |
-| Demo Technical Layer | [reference/knowledge/demo/technical](./reference/knowledge/demo/technical/README.md) |
+| UMS Applied Reference Hub | [reference/knowledge/demo](./reference/knowledge/demo/README.md) |
+| UMS Reference Model | [reference/knowledge/demo/ums-reference-model](./reference/knowledge/demo/ums-reference-model.md) |
+| Reference vs Applied Model Boundary | [reference/knowledge/demo/demo-vs-reference](./reference/knowledge/demo/demo-vs-reference.md) |
+| Migration Record | [reference/knowledge/demo/migration-from-todo-to-ums](./reference/knowledge/demo/migration-from-todo-to-ums.md) |
 | Research | [reference/knowledge/research](./reference/knowledge/research/README.md) |
 | Proofs of Concept | [reference/knowledge/poc](./reference/knowledge/poc/README.md) |
 
-Key demo references:
+Official UMS sources:
 
-- [Demo PRD](./reference/knowledge/demo/project/01-prd-demo-sandbox.md)
-- [Backlog and Epics](./reference/knowledge/demo/project/02-backlog-and-epics.md)
-- [Business Glossary](./reference/knowledge/demo/functional/business-glossary.md)
-- [Bounded Context Map](./reference/knowledge/demo/technical/bounded-context-map.md)
-- [Sandbox Verification Matrix](./reference/knowledge/demo/technical/sandbox-verification.md)
+- [UMS Repository and Setup](https://github.com/beyondnetcode/ums/blob/main/README.md)
+- [UMS Documentation Index](https://github.com/beyondnetcode/ums/blob/main/docs/MASTER_INDEX.md)
+- [UMS Architecture Portal](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md)
 
 ---
 
@@ -122,13 +121,14 @@ Key demo references:
 
 ---
 
-## 7. Source Code
+## 7. Official Executable Reference
 
-| Component | Entry point |
+| Component | Official source |
 |---|---|
-| To-Do API | [src/apps/todo-api](./src/apps/todo-api/README.md) |
-| To-Do Web | [src/apps/todo-web](./src/apps/todo-web/README.md) |
-| Shared AOP Library | [src/libs/aop](./src/libs/aop/package.json) |
+| UMS product source and setup | [beyondnetcode/ums](https://github.com/beyondnetcode/ums) |
+| UMS architecture and traceability | [Architecture Portal](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) |
+
+This repository intentionally does not maintain product application code. UMS owns the executable demonstration of the architecture.
 
 ---
 

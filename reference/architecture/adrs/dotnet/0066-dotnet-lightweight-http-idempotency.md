@@ -22,9 +22,9 @@ This ADR defines the **lightweight variant**: an in-memory (single-node) or dist
 
 | Criterion | ADR-0063 (DB-backed) | ADR-0066 (Cache-backed) |
 |-----------|---------------------|------------------------|
-| Durability after restart | ✅ Permanent | ❌ TTL only |
-| Cross-replica consistency | ✅ DB | ✅ Redis (IDistributedCache) |
-| Audit trail of duplicates | ✅ | ❌ |
+| Durability after restart | Yes (Permanent) | No (TTL only) |
+| Cross-replica consistency | Yes (DB) | Yes (Redis (IDistributedCache)) |
+| Audit trail of duplicates | Yes | No |
 | Implementation complexity | Moderate | Low |
 | Replay latency | ~1ms DB lookup | <0.1ms memory / ~0.5ms Redis |
 | Suitable for | Payments, contracts, compliance | Standard CRUD, saga steps |
@@ -39,12 +39,12 @@ This ADR defines the **lightweight variant**: an in-memory (single-node) or dist
 
 | Scenario | HTTP Method | Key present | Response | Handler invoked |
 |----------|-------------|-------------|----------|-----------------|
-| First call | POST/PUT/PATCH | Yes | 2xx (from handler) | ✅ |
-| Retry, completed | POST/PUT/PATCH | Yes (cached) | 2xx (replayed) | ❌ |
-| Parallel duplicate | POST/PUT/PATCH | Yes (in-flight) | 409 | ❌ |
-| No key | POST/PUT/PATCH | No | Pass-through | ✅ |
-| Safe method | GET/DELETE | Any | Pass-through | ✅ |
-| Handler error | POST/PUT/PATCH | Yes | 4xx/5xx (not cached) | ✅ |
+| First call | POST/PUT/PATCH | Yes | 2xx (from handler) | Yes |
+| Retry, completed | POST/PUT/PATCH | Yes (cached) | 2xx (replayed) | No |
+| Parallel duplicate | POST/PUT/PATCH | Yes (in-flight) | 409 | No |
+| No key | POST/PUT/PATCH | No | Pass-through | Yes |
+| Safe method | GET/DELETE | Any | Pass-through | Yes |
+| Handler error | POST/PUT/PATCH | Yes | 4xx/5xx (not cached) | Yes |
 
 ### B. Implementation
 

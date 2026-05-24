@@ -1,104 +1,57 @@
-# Guía de Inicio Rápido - Iniciando un Nuevo Producto desde la Referencia
+# Guia de Inicio - Nuevos Productos y Evidencia UMS
 
-**Rol:** Desarrollador / Arquitecto de Soluciones 
-**Objetivo:** Instanciar un repositorio listo para producción desde el Framework de Referencia Corporativo.
+**Rol:** Desarrollador / Arquitecto de Soluciones  
+**Objetivo:** Aplicar la referencia arquitectonica a un nuevo producto sin confundir politica con una implementacion de ejemplo.
 
----
+## 1. Elegir el Punto de Partida Correcto
 
-> Alcance: esta guía de onboarding está optimizada para la demo ejecutable Node.js y la experiencia local del repositorio. No es un mandato universal de runtime. Los equipos que inicien un producto .NET, Android o mixto deben combinar la línea base arquitectónica universal con el perfil de stack correspondiente.
+| Necesidad | Punto de partida |
+|---|---|
+| Definir la arquitectura de un nuevo producto | [Hub de Arquitectura](../../../architecture/README.es.md) y [Guia de Herencia](../../../governance/standards/onboarding/child-repository-inheritance-guide.es.md) |
+| Revisar un ejemplo ejecutable completo | [Modelo Aplicado UMS](../../../knowledge/demo/ums-reference-model.es.md) |
+| Ejecutar el ejemplo oficial | [README UMS](https://github.com/beyondnetcode/ums/blob/main/README.md) |
+| Seleccionar un runtime | [Indice del Stack Tecnologico](../../../architecture/blueprints-es/authoritative-tech-stack.md) |
 
-## 1. Descripción General
-Esta Arquitectura de Referencia está diseñada para ser **clonada como una plantilla**, no importada como una librería `npm`. Ofrece un entorno totalmente configurado con seguridad pre-integrada, gobernanza de monorepo y pipelines de despliegue.
+Este repositorio es un upstream documental y de decisiones. No se clona como starter de aplicacion y no contiene un sandbox local de producto.
 
-## 2. Prerrequisitos
-Para el sandbox demo/de referencia, asegúrate de que tu máquina local tenga:
-* **Node.js**: v20.x (LTS)
-* **pnpm**: v8.x (o `npm` v10)
-* **Docker y Docker Compose**: v25+ (Requerido para servicios locales)
-* **Nx CLI**: Instalado globalmente vía `npm install -g nx`
+## 2. Aplicar la Referencia a un Producto
 
----
+1. Leer el baseline agnostico y la matriz ADR.
+2. Seleccionar el perfil de runtime justificado por el contexto del producto.
+3. Crear documentacion propia del producto: vision, bounded contexts, glosario, restricciones y decisiones locales.
+4. Registrar si cada ADR upstream aplicable se adopta, extiende, sobreescribe o no aplica.
+5. Usar UMS como evidencia de implementacion para preocupaciones empresariales, no como copia automatica de cada seleccion tecnologica.
 
-## 3. Procedimiento de Inicialización
+## 3. Revisar UMS
 
-### Paso A: Clonación del Repositorio
-Clona el boilerplate corporativo sin preservar los commits históricos:
-```bash
-# 1. Clonar a un nuevo directorio
-git clone --depth 1 <corporate-repo-url> mi-nuevo-producto
-
-# 2. Entrar en el proyecto
-cd mi-nuevo-producto
-
-# 3. Eliminar la referencia al origen e inicializar un Git limpio
-rm -rf .git
-git init
-git add .
-git commit -m "chore: bootstrap project from corporate reference v1.0"
-```
-
-### Paso B: Instalación de Dependencias
-La referencia utiliza un Monorepo Nx. Ejecuta la instalación en la raíz:
-```bash
-# Instalar usando lockfile estrictamente fijado
-npm ci 
-# o si usas pnpm
-pnpm install --frozen-lockfile
-```
-
-### Paso C: Configuración de Infraestructura Local
-Levanta la malla de dependencias locales unificada (PostgreSQL, Redis, RabbitMQ, Vault, Kong):
-```bash
-docker compose up -d
-```
-*Verifica que todos los contenedores estén `Up (healthy)` usando `docker ps`.*
-
----
-
-## 4. Ejecutando el Sandbox de Referencia (Producto To-Do)
-Para verificar que tu instalación funciona correctamente, arranca las aplicaciones de demostración:
+UMS es ahora la referencia aplicada oficial de producto porque demuestra preocupaciones ausentes en un ejemplo trivial: ciclo de vida de identidad, control de acceso, auditoria, bounded contexts, limites de protocolos API, persistencia, integracion frontend y documentacion operativa.
 
 ```bash
-# Iniciar el API y el BFF concurrentemente vía Nx
-nx run-many --target=serve --projects=api,web-bff
+git clone https://github.com/beyondnetcode/ums.git
+cd ums
 ```
-El Sandbox ejecuta el dominio To-Do demostrando:
-1. **Núcleo Hexagonal**: Lógica de dominio en typescript puro.
-2. **RLS Multi-Tenant**: Aislamiento de base de datos en sesiones activas.
-3. **Observabilidad**: Trazas inyectadas automáticamente.
 
----
+Usa las [instrucciones vigentes de UMS](https://github.com/beyondnetcode/ums/blob/main/README.md) para prerrequisitos y ejecucion. Los comandos permanecen en UMS para que este upstream no publique setup de producto desactualizado.
 
-## 5. Crear el Andamiaje (Scaffold) de una Nueva Característica
-No crees archivos manualmente. Utiliza los generadores de Nx para respetar los límites obligatorios de librería:
+## 4. Gates Documentales Obligatorios
+
+Antes de contribuir cambios a este corpus de referencia, ejecuta:
 
 ```bash
-# Generar una nueva librería de Contexto Delimitado
-nx g @nx/nest:library mi-nuevo-contexto --directory=libs/domain
-
-# Generar un Caso de Uso de característica dentro de la librería
-nx g @nx/nest:service use-cases/create-item --project=domain-mi-nuevo-contexto
+node .harness/scripts/validate-docs.mjs
 ```
 
-## 6. Puertas Obligatorias de Check-in
-Antes de hacer push a tu primer commit, ejecuta la suite de calidad. Si éstas fallan, el CI/CD bloqueará tu fusión:
+Al agregar o cambiar diagramas Mermaid, ejecuta tambien:
+
 ```bash
-# 1. Comprobación de Lint y Formato
-nx run-many -t lint
-
-# 2. Pirámide de Pruebas (Unitarias/Integración)
-nx run-many -t test
-
-# 3. Comprobación de Vulnerabilidades de Dependencias
-npm audit
+node .harness/scripts/validate-docs.mjs --render-mermaid
 ```
-
----
 
 ## Asistencia
-Si encuentras problemas durante el arranque, consulta:
-* **[Registros de Decisión de Arquitectura](../../../architecture/adrs-es/README.md)**: Para entender POR QUí las cosas están configuradas de esta manera.
-* **[Estándares de Ingeniería](../engineering/engineering-manifesto.md)**: Para las directrices de revisión de código.
+
+- [Registro ADR](../../../architecture/adrs-es/README.md)
+- [Taxonomia del Repositorio](../repository-taxonomy.es.md)
+- [Referencia vs Modelo Aplicado UMS](../../../knowledge/demo/demo-vs-reference.es.md)
 
 ---
-[Volver al Índice](./README.es.md)
+[Volver a Onboarding](./README.es.md)

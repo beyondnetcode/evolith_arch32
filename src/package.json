@@ -1,19 +1,12 @@
 {
   "name": "arc-corporate-ws",
   "version": "1.0.0",
-  "description": "Enterprise Monorepo for Todo System (TODO) using NestJS, React, PostgreSQL, and BMAD-METHOD (Spec-driven AI Strategy)",
+  "description": "Corporate Progressive Architecture Reference Base - Authoritative decisions, standards, and patterns",
   "private": true,
-  "workspaces": [
-    "apps/todo-api",
-    "apps/todo-web",
-    "libs/aop"
-  ],
+  "workspaces": [],
   "scripts": {
-    "dev": "npm run dev --workspaces --if-present",
-    "build": "npm run build --workspaces --if-present",
-    "start": "npm run start --workspace=app-todo-api",
-    "lint": "npm run lint --workspaces --if-present",
-    "test": "npm run test --workspaces --if-present"
+    "lint": "echo 'No local applications to lint'",
+    "test": "echo 'No local applications to test'"
   },
   "devDependencies": {
     "@commitlint/cli": "20.5.3",
@@ -23,7 +16,5 @@
     "nx": "22.7.1",
     "typescript": "5.4.5"
   },
-  "dependencies": {
-    "@vitejs/plugin-react": "4.3.3"
-  }
+  "dependencies": {}
 }

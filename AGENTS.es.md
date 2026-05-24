@@ -1,13 +1,12 @@
 ## Proyecto
 Referencia técnica abierta para productos que empiezan simple, maduran hacia monolitos modulares y evolucionan hacia servicios distribuidos solo cuando el producto y la operación lo justifican.
 
-Este repositorio define la línea base arquitectónica, los estándares de gobernanza, las reglas del harness y los patrones de implementación de referencia utilizados por repositorios satélite.
+Este repositorio define la línea base arquitectónica, los estándares de gobernanza, las reglas del harness y los patrones de implementación de referencia utilizados por repositorios satélite. UMS es la referencia externa ejecutable oficial de producto.
 
 ## Compilación y Ejecución
 - Revisión de documentación de referencia: usar primero `README.md`, `MASTER_INDEX.md` y el árbol `reference/` en la raíz.
-- Instalación del sandbox demo: `cd src && npm install`
-- Ejecución del sandbox demo: `cd src && npm run dev`
-- Infraestructura demo: `cd src && docker-compose -f ../reference/infrastructure/docker-compose.yml up -d`
+- Referencia aplicada de producto: `https://github.com/beyondnetcode/ums`
+- Setup y ejecución UMS: seguir el `README.md` vigente de UMS; este repositorio no duplica esos comandos.
 - Saneamiento de codificación Markdown: `python ./.bmad-core/scripts/cleanup_markdown_encoding.py`
 
 ## Arquitectura
@@ -20,7 +19,7 @@ Este repositorio define la línea base arquitectónica, los estándares de gober
   - `reference/governance/`
   - `.harness/`
   - `.bmad-core/`
-  - `src/` sandbox demo
+  - `reference/knowledge/demo/` límite del modelo aplicado UMS y registro de migración
 
 ## Convenciones
 - Leer la línea base agnóstica antes de aplicar cualquier guía específica de runtime.
@@ -39,4 +38,4 @@ Este repositorio define la línea base arquitectónica, los estándares de gober
 ## Fuera de Alcance
 - No debilitar ni eliminar los requisitos de gobernanza bilingüe.
 - No sobrescribir perfiles específicos de runtime con suposiciones de otro runtime.
-- No tratar el sandbox demo como la única fuente de verdad para la arquitectura corporativa.
+- No tratar elecciones específicas de producto UMS como arquitectura universal sin un artefacto aceptado en este repositorio.

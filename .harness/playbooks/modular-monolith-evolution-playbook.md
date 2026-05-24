@@ -123,7 +123,7 @@ services:
         paths: [/v1/auth]
 ```
 
-Deploy the new service, update the Kong config, and validate via the [Sandbox Verification Matrix](../../reference/knowledge/demo/technical/sandbox-verification.md). The monolith no longer handles task traffic.
+Deploy the new service, update the Kong config, and validate via the [UMS Applied Reference Model](../../reference/knowledge/demo/README.md). The monolith no longer handles task traffic.
 
 ### Step 5 — Migrate the Event Bus from In-Memory to RabbitMQ
 

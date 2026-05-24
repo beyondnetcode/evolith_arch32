@@ -8,10 +8,10 @@ Usa esta guía cuando llegues por primera vez al repositorio y necesites una rut
 
 | Rol | Empieza aquí | Luego lee | Resultado |
 |---|---|---|---|
-| Arquitecto | [Blueprint de Referencia](../architecture/blueprints-es/reference-blueprint.md) | [Matriz ADR](../architecture/adrs-es/adr-matrix.es.md) | Entender el modelo arquitectónico y el mapa de decisiones |
-| Developer | [Estándares de Ingeniería](../governance/standards-es/engineering/engineering-manifesto.md) | [Demo vs Referencia](../knowledge/demo/demo-vs-reference.es.md) | Saber qué es universal y qué es específico de la demo |
+| Arquitecto | [Hub de Arquitectura](../architecture/README.es.md) | [Matriz ADR](../architecture/adrs-es/adr-matrix.es.md) | Entender el modelo arquitectónico y el mapa de decisiones |
+| Developer | [Estándares de Ingeniería](../governance/standards-es/engineering/engineering-manifesto.md) | [Modelo de Referencia UMS](../knowledge/demo/ums-reference-model.es.md) | Saber qué es universal y cómo aparece en un producto empresarial |
 | SRE / DevOps | [Hub de Operaciones](../operations/README.es.md) | [Hub de Infraestructura](../infrastructure/README.es.md) | Entender runtime local y activos de observabilidad |
-| Producto / Funcional | [PRD Demo](../knowledge/demo/project/01-prd-demo-sandbox-es.md) | [Glosario de Negocio](../knowledge/demo/functional/business-glossary.md) | Entender alcance demo y vocabulario funcional |
+| Producto / Funcional | [Modelo de Referencia UMS](../knowledge/demo/ums-reference-model.es.md) | [Índice Documental UMS](https://github.com/beyondnetcode/ums/blob/main/docs/MASTER_INDEX.md) | Entender el alcance del producto aplicado y su documentación |
 | Contribuidor IA | [Estándares AI-Augmented](../governance/standards-es/ai-augmented/README.md) | [AGENTS.md](../../AGENTS.md) | Entender reglas de agentes y arquitectura IA opcional |
 
 ## Primera Sesión Recomendada

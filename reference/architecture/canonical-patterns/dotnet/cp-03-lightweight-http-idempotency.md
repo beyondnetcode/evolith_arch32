@@ -142,12 +142,12 @@ app.UseIdempotency();
 
 | Scenario | Method | Key | Status | Handler |
 |----------|--------|-----|--------|---------|
-| First call | POST/PUT/PATCH | Yes | 2xx | ✅ |
-| Retry, completed | POST/PUT/PATCH | Yes (cached) | 2xx replayed | ❌ |
-| Parallel duplicate | POST/PUT/PATCH | Yes (in-flight) | 409 | ❌ |
-| No key | POST/PUT/PATCH | No | pass-through | ✅ |
-| Safe method | GET/DELETE | Any | pass-through | ✅ |
-| Handler error | POST/PUT/PATCH | Yes | 4xx/5xx (not cached) | ✅ |
+| First call | POST/PUT/PATCH | Yes | 2xx | Yes |
+| Retry, completed | POST/PUT/PATCH | Yes (cached) | 2xx replayed | No |
+| Parallel duplicate | POST/PUT/PATCH | Yes (in-flight) | 409 | No |
+| No key | POST/PUT/PATCH | No | pass-through | Yes |
+| Safe method | GET/DELETE | Any | pass-through | Yes |
+| Handler error | POST/PUT/PATCH | Yes | 4xx/5xx (not cached) | Yes |
 
 ---
 

@@ -90,7 +90,7 @@ A single bounded context absorbs too much domain logic, becoming the new monolit
 | **Concrete Example** | A `CoreModule` that owns Users, Tasks, Invoices, Notifications, and Reports — all in one NestJS module with hundreds of use cases and services. |
 | **Production Impact** | The module becomes impossible to extract. Teams cannot work independently because all domain logic is intertwined. Build times degrade because the entire module must be rebuilt for any change. |
 | **Operational Risks** | When metrics trigger extraction readiness (ADR-0045), the God Module cannot be extracted without a Big Bang rewrite — the very anti-pattern the progressive architecture exists to prevent. |
-| **Immunization Defense** | Regular boundary audits against the [Bounded Context Map](../../../knowledge/demo/technical/bounded-context-map.md). Each context must have a single, clearly stated mission. Use the extraction readiness playbook to split before the module becomes too large. |
+| **Immunization Defense** | Regular boundary audits against the [UMS Applied Reference Model](../../../knowledge/demo/README.md). Each context must have a single, clearly stated mission. Use the extraction readiness playbook to split before the module becomes too large. |
 
 ---
 

@@ -8,10 +8,10 @@ Use this guide when you are new to the repository and need a short path by role.
 
 | Role | Start here | Then read | Outcome |
 |---|---|---|---|
-| Architect | [Reference Blueprint](../architecture/blueprints/reference-blueprint.md) | [ADR Matrix](../architecture/adrs/adr-matrix.md) | Understand the architecture model and decision map |
-| Developer | [Engineering Standards](../governance/standards/engineering/engineering-manifesto.md) | [Demo vs Reference](../knowledge/demo/demo-vs-reference.md) | Know what is universal and what is demo-specific |
+| Architect | [Architecture Hub](../architecture/README.md) | [ADR Matrix](../architecture/adrs/adr-matrix.md) | Understand the architecture model and decision map |
+| Developer | [Engineering Standards](../governance/standards/engineering/engineering-manifesto.md) | [UMS Reference Model](../knowledge/demo/ums-reference-model.md) | Know what is universal and how it appears in an enterprise product |
 | SRE / DevOps | [Operations Hub](../operations/README.md) | [Infrastructure Hub](../infrastructure/README.md) | Understand local runtime and observability assets |
-| Product / Functional | [Demo PRD](../knowledge/demo/project/01-prd-demo-sandbox.md) | [Business Glossary](../knowledge/demo/functional/business-glossary.md) | Understand the demo scope and functional vocabulary |
+| Product / Functional | [UMS Reference Model](../knowledge/demo/ums-reference-model.md) | [UMS Documentation Index](https://github.com/beyondnetcode/ums/blob/main/docs/MASTER_INDEX.md) | Understand the applied product scope and its documentation |
 | AI Contributor | [AI-Augmented Standards](../governance/standards/ai-augmented/README.md) | [AGENTS.md](../../AGENTS.md) | Understand agent rules and optional AI architecture |
 
 ## Recommended First Session

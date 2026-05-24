@@ -45,6 +45,11 @@ function addFailure(file, index, content, message) {
 }
 
 function validateCharacters(file, content) {
+  // Mask code blocks with spaces, preserving newlines to keep line numbers intact
+  const cleanContent = content.replace(/```[\s\S]*?```/g, (match) => {
+    return match.replace(/[^\r\n]/g, " ");
+  });
+
   const disallowedPatterns = [
     { pattern: /\uFFFD/g, message: "contains replacement character U+FFFD" },
     { pattern: /\?\?/g, message: "contains corrupted or placeholder marker ??" },
@@ -58,7 +63,7 @@ function validateCharacters(file, content) {
   ];
 
   for (const rule of disallowedPatterns) {
-    for (const match of content.matchAll(rule.pattern)) {
+    for (const match of cleanContent.matchAll(rule.pattern)) {
       addFailure(file, match.index ?? 0, content, rule.message);
     }
   }

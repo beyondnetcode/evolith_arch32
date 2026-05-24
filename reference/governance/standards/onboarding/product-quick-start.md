@@ -1,104 +1,57 @@
-# Getting Started Guide - Initiating a New Product from Reference
+# Getting Started Guide - New Products and UMS Evidence
 
-**Role:** Developer / Solutions Architect 
-**Objective:** Instantiate a production-ready repository from the Corporate Reference Framework.
+**Role:** Developer / Solutions Architect  
+**Objective:** Apply the architecture reference to a new product without confusing policy with a sample implementation.
 
----
+## 1. Choose the Correct Starting Point
 
-> Scope: this onboarding guide is optimized for the repository's executable Node.js demo and local development experience. It is not a universal runtime mandate. Teams starting a .NET, Android, or mixed-runtime product must combine the universal architecture baseline with the appropriate runtime stack profile.
+| Need | Starting point |
+|---|---|
+| Define a new product architecture | [Architecture Hub](../../../architecture/README.md) and [Child Repository Inheritance Guide](./child-repository-inheritance-guide.md) |
+| Review a complete executable example | [UMS Applied Reference Model](../../../knowledge/demo/ums-reference-model.md) |
+| Run the official example | [UMS README](https://github.com/beyondnetcode/ums/blob/main/README.md) |
+| Select a runtime | [Authoritative Tech Stack Index](../../../architecture/blueprints/authoritative-tech-stack.md) |
 
-## 1. Overview
-This Reference Architecture is designed to be **cloned as a template**, not imported as an `npm` library. It delivers a fully configured environment with pre-baked security, monorepo governance, and deployment pipelines.
+This repository is a documentation and decision upstream. It is not cloned as an application starter and does not contain a local product sandbox.
 
-## 2. Prerequisites
-For the demo/reference sandbox, ensure your local machine has:
-* **Node.js**: v20.x (LTS)
-* **pnpm**: v8.x (or `npm` v10)
-* **Docker & Docker Compose**: v25+ (Required for local services)
-* **Nx CLI**: Installed globally via `npm install -g nx`
+## 2. Applying the Reference to a Product
 
----
+1. Read the agnostic baseline and the ADR matrix.
+2. Select the runtime profile justified by the product context.
+3. Create product-owned documentation: vision, bounded contexts, glossary, constraints, and local decisions.
+4. Record whether each applicable upstream ADR is adopted, extended, overridden, or not applicable.
+5. Use UMS as implementation evidence for enterprise concerns, not as an automatic copy of every technology selection.
 
-## 3. Initialization Procedure
+## 3. Reviewing UMS
 
-### Step A: Repository Cloning
-Clone the corporate boilerplate without preserving historical commits:
-```bash
-# 1. Clone to a new directory
-git clone --depth 1 <corporate-repo-url> my-new-product
-
-# 2. Move into the project
-cd my-new-product
-
-# 3. Remove origin reference and initialize fresh Git
-rm -rf .git
-git init
-git add .
-git commit -m "chore: bootstrap project from corporate reference v1.0"
-```
-
-### Step B: Dependency Installation
-The reference uses an Nx Monorepo. Execute root installation:
-```bash
-# Install using strictly pinned lockfile
-npm ci 
-# or if using pnpm
-pnpm install --frozen-lockfile
-```
-
-### Step C: Local Infrastructure Setup
-Spin up the unified local dependency mesh (PostgreSQL, Redis, RabbitMQ, Vault, Kong):
-```bash
-docker compose up -d
-```
-*Verify all containers are `Up (healthy)` using `docker ps`.*
-
----
-
-## 4. Running the Reference Sandbox (To-Do Product)
-To verify your installation works correctly, boot up the demo applications:
+UMS is now the official applied product reference because it demonstrates concerns absent from a trivial example: identity lifecycle, access control, auditability, bounded contexts, API protocol boundaries, persistence, frontend integration, and operational documentation.
 
 ```bash
-# Start the API and BFF concurrently via Nx
-nx run-many --target=serve --projects=api,web-bff
+git clone https://github.com/beyondnetcode/ums.git
+cd ums
 ```
-The Sandbox runs the To-Do domain demonstrating:
-1. **Hexagonal Core**: Pure typescript domain logic.
-2. **Multi-Tenant RLS**: Database isolation in active sessions.
-3. **Observability**: Traces injected automatically.
 
----
+Use the current [UMS setup instructions](https://github.com/beyondnetcode/ums/blob/main/README.md) for prerequisites and execution. Commands remain in UMS so that this upstream never publishes stale product setup.
 
-## 5. Scaffold a New Feature
-Do not create files manually. Utilize the Nx generators to respect mandatory library boundaries:
+## 4. Mandatory Documentation Gates
+
+Before contributing changes to this reference corpus, run:
 
 ```bash
-# Generate a new Bounded Context library
-nx g @nx/nest:library my-new-context --directory=libs/domain
-
-# Generate a feature Use Case inside the library
-nx g @nx/nest:service use-cases/create-item --project=domain-my-new-context
+node .harness/scripts/validate-docs.mjs
 ```
 
-## 6. Mandatory Check-in Gates
-Before pushing your first commit, run the quality suite. If these fail, CI/CD will block your merge:
+When adding or changing Mermaid diagrams, also run:
+
 ```bash
-# 1. Lint & Formatting check
-nx run-many -t lint
-
-# 2. Testing Pyramid (Unit/Integration)
-nx run-many -t test
-
-# 3. Dependency Vulnerability Check
-npm audit
+node .harness/scripts/validate-docs.mjs --render-mermaid
 ```
-
----
 
 ## Assistance
-If you encounter issues during bootstrap, refer to:
-* **[Architecture Decision Records](../../../architecture/adrs/README.md)**: To understand WHY things are configured this way.
-* **[Engineering Standards](../engineering/engineering-manifesto.md)**: For code review guidelines.
+
+- [ADR Registry](../../../architecture/adrs/README.md)
+- [Repository Taxonomy](../repository-taxonomy.md)
+- [Reference vs UMS Applied Model](../../../knowledge/demo/demo-vs-reference.md)
 
 ---
-[Back to Index](./README.md)
+[Back to Onboarding](./README.md)

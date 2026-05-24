@@ -20,9 +20,9 @@ El ADR-0063 define el patrón de idempotencia B2B empresarial usando una tabla p
 
 | Criterio | ADR-0063 (respaldado por DB) | ADR-0066 (respaldado por caché) |
 |----------|------------------------------|--------------------------------|
-| Durabilidad tras reinicio | ✅ Permanente | ❌ Solo TTL |
-| Consistencia multi-réplica | ✅ DB | ✅ Redis (IDistributedCache) |
-| Registro de duplicados | ✅ | ❌ |
+| Durabilidad tras reinicio | Sí (Permanente) | No (Solo TTL) |
+| Consistencia multi-réplica | Sí (DB) | Sí (Redis (IDistributedCache)) |
+| Registro de duplicados | Sí | No |
 | Complejidad de implementación | Moderada | Baja |
 | Latencia de reproducción | ~1ms DB lookup | <0.1ms memoria / ~0.5ms Redis |
 | Adecuado para | Pagos, contratos, cumplimiento | CRUD estándar, pasos de saga |
@@ -37,12 +37,12 @@ El ADR-0063 define el patrón de idempotencia B2B empresarial usando una tabla p
 
 | Escenario | Método HTTP | Clave | Respuesta | Handler invocado |
 |-----------|-------------|-------|-----------|-----------------|
-| Primera llamada | POST/PUT/PATCH | Sí | 2xx (del handler) | ✅ |
-| Reintento, completado | POST/PUT/PATCH | Sí (cacheada) | 2xx (reproducida) | ❌ |
-| Duplicado paralelo | POST/PUT/PATCH | Sí (en vuelo) | 409 | ❌ |
-| Sin clave | POST/PUT/PATCH | No | Pasa | ✅ |
-| Método seguro | GET/DELETE | Cualquiera | Pasa | ✅ |
-| Error del handler | POST/PUT/PATCH | Sí | 4xx/5xx (no cacheado) | ✅ |
+| Primera llamada | POST/PUT/PATCH | Sí | 2xx (del handler) | Sí |
+| Reintento, completado | POST/PUT/PATCH | Sí (cacheada) | 2xx (reproducida) | No |
+| Duplicado paralelo | POST/PUT/PATCH | Sí (en vuelo) | 409 | No |
+| Sin clave | POST/PUT/PATCH | No | Pasa | Sí |
+| Método seguro | GET/DELETE | Cualquiera | Pasa | Sí |
+| Error del handler | POST/PUT/PATCH | Sí | 4xx/5xx (no cacheado) | Sí |
 
 ### B. Registro en DI y Pipeline
 

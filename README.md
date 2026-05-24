@@ -5,7 +5,7 @@
 [![Method](https://img.shields.io/badge/Method-Spec--driven_AI--DD-blueviolet?style=for-the-badge)]()
 [![License](https://img.shields.io/badge/License-MIT-informational?style=for-the-badge)]()
 
-This repository is the **corporate architectural upstream** — the authoritative source of decisions, standards, and patterns for all product repositories in the organization. It is not a framework to install. It is a living contract that product teams inherit, extend, and contribute back to over time.
+This repository is the **corporate architectural upstream** - the authoritative source of decisions, standards, and patterns for product repositories in the organization. It is not a framework to install. It is a living contract that product teams inherit, extend, and contribute back to over time.
 
 **arc32** identifies the supporting toolset and repository implementation. It is not the product vision itself. The vision is the progressive architecture reference documented here.
 
@@ -29,7 +29,7 @@ This base is your starting point. You inherit its full decision corpus, structur
 If the decision is universal, it belongs here. If it is product-specific, it belongs in the child repository. The [Promotion Path](./reference/governance/standards/onboarding/child-repository-inheritance-guide.md#7-promotion-path) defines how decisions move from product repositories back into this base.
 
 **You are setting up AI-assisted development (AI-DD).**
-This repository uses BMAD-METHOD as its AI-DD framework. The local agent configuration, harness rules, and replication guide are documented in the [AI-DD Frameworks Adoption Reference](./reference/governance/standards/ai-augmented/frameworks/README.md).
+This repository may use BMAD-METHOD as a supporting spec-driven AI-DD method. It is not the name or vision of this documentation corpus. The local agent configuration, harness rules, and replication guide are documented in the [AI-DD Frameworks Adoption Reference](./reference/governance/standards/ai-augmented/frameworks/README.md).
 
 ---
 
@@ -41,7 +41,7 @@ This repository uses BMAD-METHOD as its AI-DD framework. The local agent configu
 - [The Architecture Journey](#the-architecture-journey)
 - [Repository Map](#repository-map)
 - [Recommended First Reads](#recommended-first-reads)
-- [Quick Start: Demo Sandbox](#quick-start-demo-sandbox)
+- [Official Applied Reference: UMS](#official-applied-reference-ums)
 - [Contribution](#contribution)
 - [License](#license)
 
@@ -58,18 +58,14 @@ This repository uses BMAD-METHOD as its AI-DD framework. The local agent configu
 | Review the universal rules | [Agnostic Architecture Baseline](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.md) |
 | Explore decisions and trade-offs | [ADR Registry](./reference/architecture/adrs/README.md) |
 | Clarify project terminology | [Architecture Glossary](./reference/governance/glossary.md) |
-| Inspect the executable example | [Demo Sandbox](./reference/knowledge/demo/README.md) |
+| Inspect the executable product reference | [UMS Applied Reference Model](./reference/knowledge/demo/README.md) |
 | Understand how AI agents must operate here | [AGENTS.md](./AGENTS.md) |
 
 ---
 
 ## Prerequisites
 
-| Requirement | Minimum Version |
-|---|---|
-| Node.js | 20+ |
-| npm | 10+ |
-| Docker + Docker Compose | Latest stable |
+This repository is a documentation and architecture corpus. For executable product prerequisites, follow the current [UMS README](https://github.com/beyondnetcode/ums/blob/main/README.md), which owns the official demo setup.
 
 ---
 
@@ -92,12 +88,12 @@ The repository helps teams decide **when to stay simple**, **when to modularize*
 
 | Area | What you will find |
 |---|---|
-| [reference/architecture/](./reference/architecture/blueprints/README.md) | Blueprints, topology, stack profiles, and architectural decisions |
+| [reference/architecture/](./reference/architecture/README.md) | Architecture hub: blueprints, ADRs, stack profiles, and canonical patterns |
 | [reference/governance/](./reference/governance/standards/README.md) | Engineering standards, SDLC, onboarding, and architecture rules |
 | [reference/operations/](./reference/operations/README.md) | Observability, runtime support, and operational documentation |
 | [reference/infrastructure/](./reference/infrastructure/README.md) | Local platform, gateway, containers, and infrastructure assets |
-| [reference/knowledge/](./reference/knowledge/demo/README.md) | Demo documentation, research, examples, and learning material |
-| [src/](./src/apps/todo-web/README.md) | Reference implementation and executable sandbox |
+| [reference/knowledge/](./reference/knowledge/demo/README.md) | UMS applied-reference boundary, migration record, research, and learning material |
+| [UMS repository](https://github.com/beyondnetcode/ums) | Official executable product reference and setup instructions |
 
 For role-based navigation, use the [Global Master Index](./MASTER_INDEX.md).
 
@@ -110,28 +106,24 @@ For role-based navigation, use the [Global Master Index](./MASTER_INDEX.md).
 3. [Reference Blueprint](./reference/architecture/blueprints/reference-blueprint.md)
 4. [Agnostic Architecture Baseline](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.md)
 5. [ADR Matrix](./reference/architecture/adrs/adr-matrix.md)
-6. [Demo vs Reference](./reference/knowledge/demo/demo-vs-reference.md)
+6. [Canonical Reference vs UMS Applied Model](./reference/knowledge/demo/demo-vs-reference.md)
 
 ---
 
-## Quick Start: Demo Sandbox
+## Official Applied Reference: UMS
 
 ```bash
-git clone https://github.com/beyondnetcode/arc32_nodejs_progresive_monolith.git
-cd arc32_nodejs_progresive_monolith/src
-npm install
-
-docker-compose -f ../reference/infrastructure/docker-compose.yml up -d
-npm run dev
+git clone https://github.com/beyondnetcode/ums.git
+cd ums
 ```
 
-The demo exists to show architecture patterns in code. General rules and policies remain in `reference/architecture/` and `reference/governance/`.
+Follow the current [UMS setup instructions](https://github.com/beyondnetcode/ums/blob/main/README.md) to run the product. UMS supplies enterprise implementation evidence; general rules and policies remain in `reference/architecture/` and `reference/governance/`.
 
 ---
 
 ## Contribution
 
-Contributions are welcome through issues, documentation improvements, ADR reviews, examples, tests, and refinements to the demo.
+Contributions are welcome through issues, documentation improvements, ADR reviews, examples, tests, and lessons promoted from UMS or other product repositories.
 
 Before contributing, read:
 

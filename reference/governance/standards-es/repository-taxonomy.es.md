@@ -42,7 +42,7 @@ El repositorio contiene artefactos arquitectonicos, no una aplicacion local de p
 1. `README.es.md` explica la vision y enruta las intenciones comunes.
 2. `reference/getting-started/README.es.md` ofrece rutas cortas por rol; `MASTER_INDEX.es.md` es el mapa de navegacion completo.
 3. `reference/architecture/README.es.md` ordena la lectura de baseline, ADR, patrones canonicos y evidencia UMS.
-4. `reference/governance/glossary.es.md` controla la terminologia, incluyendo referencia de arquitectura progresiva, arc32, BMAD-METHOD, modelo aplicado UMS, ADR y patron canonico.
+4. `reference/governance/glossary.es.md` controla la terminologia, incluyendo referencia de arquitectura progresiva, Evolith, BMAD-METHOD, modelo aplicado UMS, ADR y patron canonico.
 5. `reference/architecture/adrs-es/adr-matrix.es.md` relaciona necesidades con decisiones controladoras.
 6. Los documentos profundos enlazan a un hub propietario o al indice maestro.
 

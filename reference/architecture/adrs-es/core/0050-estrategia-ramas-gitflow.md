@@ -7,7 +7,7 @@ Aceptado
 A medida que el ecosistema crece con múltiples sistemas satélites y colaboradores, la falta de una estrategia de ramas unificada ha provocado ciclos de lanzamiento inconsistentes, dificultad para rastrear el código listo para producción y regresiones ocasionales. Necesitamos un flujo de trabajo robusto y estandarizado para gestionar características, lanzamientos y correcciones de errores.
 
 ## Decisión
-Adoptaremos **Gitflow** como la estrategia de ramas obligatoria para los sistemas satélites que usen esta referencia de arquitectura progresiva y su toolset arc32.
+Adoptaremos **Gitflow** como la estrategia de ramas obligatoria para los sistemas satélites que usen esta referencia de arquitectura progresiva y su toolset Evolith.
 
 ### Modelo de Ramas:
 1. **`main`**: Almacena el historial oficial de lanzamientos. Todo el código en `main` debe estar listo para producción.

@@ -2,7 +2,7 @@
 
 > **Navegación Bilingüe:** [English version](../canonical-patterns/README.md)
 
-Los Patrones Canónicos son implementaciones de referencia listas para usar en producción que demuestran cómo las decisiones de arquitectura arc32 se materializan en código. Cada patrón mapea a uno o más ADRs y puede ser adoptado directamente por repositorios satélite.
+Los Patrones Canónicos son implementaciones de referencia listas para usar en producción que demuestran cómo las decisiones de arquitectura Evolith se materializan en código. Cada patrón mapea a uno o más ADRs y puede ser adoptado directamente por repositorios satélite.
 
 ---
 

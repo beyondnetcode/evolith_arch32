@@ -1,6 +1,6 @@
 # Especificación de Arquitectura y Especificaciones de Modelado C4
 
-Este documento detalla el riguroso diseño arquitectónico de grado empresarial para la plataforma de referencia, conforme al estándar del blueprint **arc42** y mantenido con el toolset arc32. El diseño implementa una topología **SaaS Multi-Tenant** avanzada utilizando **Gateways BFF** para gestionar la entrega a clientes.
+Este documento detalla el riguroso diseño arquitectónico de grado empresarial para la plataforma de referencia, conforme al estándar del blueprint **arc42** y mantenido con el toolset Evolith. El diseño implementa una topología **SaaS Multi-Tenant** avanzada utilizando **Gateways BFF** para gestionar la entrega a clientes.
 
 > Alcance: esta es una **topología de referencia**. Los equipos de producto pueden mapear las mismas responsabilidades arquitectónicas a distintos runtimes o herramientas aprobadas mediante perfiles de runtime y proceso ADR. Etiquetas concretas como framework, base de datos, gateway o broker son ejemplos salvo que un ADR referenciado las marque explícitamente como obligatorias.
 

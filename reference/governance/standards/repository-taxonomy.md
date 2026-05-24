@@ -42,7 +42,7 @@ The repository contains architecture artifacts, not a local product application.
 1. `README.md` explains the vision and routes common intents.
 2. `reference/getting-started/README.md` offers short paths by role; `MASTER_INDEX.md` is the complete navigation map.
 3. `reference/architecture/README.md` orders baseline, ADR, canonical-pattern, and UMS evidence reading.
-4. `reference/governance/glossary.md` controls terminology including progressive architecture reference, arc32, BMAD-METHOD, UMS applied reference model, ADR, and canonical pattern.
+4. `reference/governance/glossary.md` controls terminology including progressive architecture reference, Evolith, BMAD-METHOD, UMS applied reference model, ADR, and canonical pattern.
 5. `reference/architecture/adrs/adr-matrix.md` maps concerns to controlling decisions.
 6. Deep documents link to an owning hub or the master index.
 

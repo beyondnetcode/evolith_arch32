@@ -133,7 +133,7 @@ Los ADRs locales en repositorios hijos siguen el mismo formato que los ADRs base
 
 > **Estado:** Aceptado
 > **Fecha:** 2026-05-22
-> **Extends:** [ADR-0015 — Arquitectura Orientada a Eventos Intra-Dominio](https://github.com/beyondnetcode/arc32_nodejs_progresive_monolith/reference/architecture/adrs/core/0015-event-driven-architecture-intra-domain.md)
+> **Extends:** [ADR-0015 — Arquitectura Orientada a Eventos Intra-Dominio](https://github.com/beyondnetcode/evolith_arch32/reference/architecture/adrs/core/0015-event-driven-architecture-intra-domain.md)
 
 ## Contexto
 
@@ -157,7 +157,7 @@ La cola dead-letter `payments.dlq` recibe todos los mensajes no reconocidos desp
 
 > **Estado:** Aceptado
 > **Fecha:** 2026-05-22
-> **Overrides:** [ADR-0030 — API Gateway: Kong vs NestJS](https://github.com/beyondnetcode/arc32_nodejs_progresive_monolith/reference/architecture/adrs/core/0030-api-gateway-kong-vs-nestjs.md)
+> **Overrides:** [ADR-0030 — API Gateway: Kong vs NestJS](https://github.com/beyondnetcode/evolith_arch32/reference/architecture/adrs/core/0030-api-gateway-kong-vs-nestjs.md)
 
 ## Justificación de Divergencia
 
@@ -185,7 +185,7 @@ Pasos a ejecutar al crear un nuevo repositorio hijo desde esta base.
 ### Paso 1 — Inicializar el repositorio
 
 ```bash
-git clone --depth 1 https://github.com/beyondnetcode/arc32_nodejs_progresive_monolith.git mi-producto
+git clone --depth 1 https://github.com/beyondnetcode/evolith_arch32.git mi-producto
 cd mi-producto
 rm -rf .git
 git init
@@ -253,7 +253,7 @@ Los cambios upstream se comunican a través del registro de ADRs y el changelog 
 ```markdown
 # DECISIONS.md — [Nombre del Producto]
 
-Upstream base: https://github.com/beyondnetcode/arc32_nodejs_progresive_monolith
+Upstream base: https://github.com/beyondnetcode/evolith_arch32
 Versión base al inicializar: [hash de commit o tag]
 Última clasificación: [fecha]
 

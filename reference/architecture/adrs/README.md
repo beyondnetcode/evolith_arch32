@@ -85,10 +85,21 @@ Decisions tied to high-compute runtimes.
 * [ADR 0061: Transactional Event Lifecycle in EF Core](./dotnet/0061-transactional-event-lifecycle-ef-core.md)
 * [ADR 0062: .NET Immutable Audit Trail via DDL Triggers & Delta Capture](./dotnet/0062-dotnet-immutable-audit-trail.md)
 * [ADR 0063: B2B Request Idempotency Middleware in ASP.NET Core](./dotnet/0063-dotnet-b2b-idempotency-middleware.md)
+* **[ADR 0064: .NET Request-Scope Observability Context Propagation](./dotnet/0064-dotnet-request-scope-observability-context.md)**
+* **[ADR 0065: .NET PII-Safe Structured Logging Pipeline (Serilog)](./dotnet/0065-dotnet-pii-safe-serilog-pipeline.md)**
+* **[ADR 0066: .NET Lightweight HTTP Idempotency via IMemoryCache / IDistributedCache](./dotnet/0066-dotnet-lightweight-http-idempotency.md)**
 
 ---
 
-## <a name="android-native"></a> 4. Android Native (Kotlin) Ecosystem
+## <a name="canonical-patterns"></a> 5. Canonical Patterns (Runtime-Specific Reference Implementations)
+
+Ready-to-use code blueprints that implement the ADRs above. Adopt directly in satellite repositories.
+
+* [.NET Canonical Patterns Index](../canonical-patterns/README.md)
+
+---
+
+## <a name="android-native"></a> 6. Android Native (Kotlin) Ecosystem
 Decisions tied to resilient mobile clients.
 
 * **[ADR 0042: Canonical Android Mobile Architecture](./android/0042-canonical-android-mobile-architecture.md)**

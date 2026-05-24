@@ -58,7 +58,7 @@ Este repositorio puede usar BMAD-METHOD como método de soporte spec-driven AI-D
 | Revisar las reglas universales | [Línea Base Arquitectónica Agnóstica](./reference/architecture/blueprints-es/authoritative-tech-stack-agnostic.md) |
 | Explorar decisiones y trade-offs | [Registro ADR](./reference/architecture/adrs-es/README.md) |
 | Aclarar la terminología del proyecto | [Glosario Arquitectónico](./reference/governance/glossary.es.md) |
-| Inspeccionar la referencia ejecutable de producto | [Modelo Aplicado UMS](./reference/knowledge/demo/README.md) |
+| Inspeccionar la referencia ejecutable de producto | [Modelo Aplicado UMS](./reference/knowledge/demo/README.es.md) |
 | Entender cómo deben operar aquí los agentes de IA | [AGENTS.es.md](./AGENTS.es.md) |
 
 ---
@@ -92,7 +92,7 @@ El repositorio ayuda a decidir **cuándo mantenerse simple**, **cuándo modulari
 | [reference/governance/](./reference/governance/standards-es/README.md) | Estándares de ingeniería, SDLC, onboarding y reglas de arquitectura |
 | [reference/operations/](./reference/operations/README.es.md) | Observabilidad, soporte runtime y documentación operacional |
 | [reference/infrastructure/](./reference/infrastructure/README.es.md) | Plataforma local, gateway, contenedores y activos de infraestructura |
-| [reference/knowledge/](./reference/knowledge/demo/README.md) | Límite del modelo aplicado UMS, registro de migración, investigación y aprendizaje |
+| [reference/knowledge/](./reference/knowledge/demo/README.es.md) | Límite del modelo aplicado UMS, registro de migración, investigación y aprendizaje |
 | [Repositorio UMS](https://github.com/beyondnetcode/ums) | Referencia oficial ejecutable de producto e instrucciones de setup |
 
 Para navegación por rol, usa el [Índice Maestro Global](./MASTER_INDEX.es.md).

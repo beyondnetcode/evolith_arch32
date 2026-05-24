@@ -18,7 +18,7 @@ Este es el índice completo de navegación para esta referencia de arquitectura 
 | Revisar decisiones arquitectónicas | [Registro ADR](./reference/architecture/adrs-es/README.md) | [ADRs Core](./reference/architecture/adrs-es/core/README.es.md) |
 | Aprender estándares de ingeniería | [Manifiesto de Ingeniería](./reference/governance/standards-es/engineering/engineering-manifesto.md) | [Guía de Contract Testing](./reference/governance/standards-es/engineering/contract-testing-guideline.md) |
 | Entender expectativas SDLC | [Framework SDLC](./reference/governance/sdlc-es/README.md) | [SDLC enfocado en Construcción](./reference/governance/sdlc-es/02-engineering/construction-focused-sdlc-framework.md) |
-| Explorar la referencia aplicada de producto | [Hub de Referencia UMS](./reference/knowledge/demo/README.md) | [Portal de Arquitectura UMS](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) |
+| Explorar la referencia aplicada de producto | [Hub de Referencia UMS](./reference/knowledge/demo/README.es.md) | [Portal de Arquitectura UMS](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) |
 | Separar políticas de evidencia de implementación | [Referencia Canónica vs Modelo Aplicado UMS](./reference/knowledge/demo/demo-vs-reference.es.md) | [Taxonomía del Repositorio](./reference/governance/standards-es/repository-taxonomy.es.md) |
 | Operar o desplegar localmente | [Hub de Operaciones](./reference/operations/README.es.md) | [Hub de Infraestructura](./reference/infrastructure/README.es.md) |
 
@@ -93,7 +93,7 @@ Referencias clave:
 
 | Área | Entrada |
 |---|---|
-| Hub de Referencia Aplicada UMS | [reference/knowledge/demo](./reference/knowledge/demo/README.md) |
+| Hub de Referencia Aplicada UMS | [reference/knowledge/demo](./reference/knowledge/demo/README.es.md) |
 | Modelo de Referencia UMS | [reference/knowledge/demo/ums-reference-model](./reference/knowledge/demo/ums-reference-model.es.md) |
 | Límite Referencia vs Modelo Aplicado | [reference/knowledge/demo/demo-vs-reference](./reference/knowledge/demo/demo-vs-reference.es.md) |
 | Registro de Migración | [reference/knowledge/demo/migration-from-todo-to-ums](./reference/knowledge/demo/migration-from-todo-to-ums.es.md) |

@@ -34,6 +34,10 @@ This repository defines the architectural baseline, governance standards, harnes
 - When stack guidance changes materially, update the affected standards, `AGENTS.md`, and runtime-specific authoritative profiles together.
 - Multi-tenancy standards must preserve two layers: application-layer filtering as primary, database-native enforcement as secondary failsafe.
 - Do not convert a corporate standard into a product-specific document unless the repository area is explicitly product-scoped.
+- Mandatory Link Verification: You MUST verify all internal links and anchors before completing any documentation task.
+- Bilingual Consistency: Any update to an English document MUST have a corresponding update to its Spanish counterpart, ensuring parity in links and indices.
+- Diagram Validation: Any modified Mermaid or PlantUML block MUST be reviewed for syntax correctness.
+- Fail Fast on Docs: If unresolved links, missing references, or invalid diagrams are found, you MUST fail the task and report the anomalies rather than assuming completion.
 
 ## Out of Bounds
 - Do not weaken or remove bilingual governance requirements.

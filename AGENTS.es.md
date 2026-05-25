@@ -34,6 +34,10 @@ Este repositorio define la línea base arquitectónica, los estándares de gober
 - Cuando la guía del stack cambie materialmente, actualizar juntos los estándares afectados, `AGENTS.md` y los perfiles autoritativos específicos de runtime.
 - Los estándares de multi-tenancy deben preservar dos capas: filtrado en la capa de aplicación como primario, enforcement nativo de base de datos como failsafe secundario.
 - No convertir un estándar corporativo en un documento específico de producto a menos que el área del repositorio esté explícitamente orientada al producto.
+- Verificación Obligatoria de Enlaces: DEBES verificar todos los enlaces internos y anclas antes de marcar como completada cualquier tarea de documentación.
+- Consistencia Bilingüe: Cualquier actualización a un documento en inglés DEBE tener una actualización correspondiente en su contraparte en español, asegurando la paridad en enlaces e índices.
+- Validación de Diagramas: Cualquier bloque Mermaid o PlantUML modificado DEBE ser revisado para asegurar la correctitud de su sintaxis.
+- Fallar Rápido (Fail Fast) en Docs: Si se encuentran enlaces rotos, referencias faltantes o diagramas inválidos, DEBES fallar la tarea y reportar las anomalías en lugar de asumir la finalización.
 
 ## Fuera de Alcance
 - No debilitar ni eliminar los requisitos de gobernanza bilingüe.

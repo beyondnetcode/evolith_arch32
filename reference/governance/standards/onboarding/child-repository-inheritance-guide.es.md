@@ -68,8 +68,8 @@ Los siguientes elementos están intencionalmente limitados a este repositorio. T
 
 | Activo | Razón para No Heredarse |
 | :--- | :--- |
-| `src/apps/ums-api/` y `src/apps/ums-web/` | Implementación satélite de referencia (UMS) — no es scaffolding de producción |
-| `reference/knowledge/demo/` | El conocimiento de dominio es siempre específico del producto |
+| `src/apps/ums-api/` y `src/apps/ums-web/` | Implementación satélite de referencia ([UMS](https://github.com/beyondnetcode/ums)) — no es scaffolding de producción |
+| `reference/knowledge/demo/` | Documentación del modelo de referencia UMS — irrelevante para tu producto |
 | Glosario de negocio, mapas de stakeholders, objetivos de producto | Deben ser autoria del dominio del producto real |
 
 ---
@@ -201,7 +201,7 @@ Eliminar el contenido que no debe trasladarse sin adaptación deliberada:
 # Eliminar la implementación demo (reemplazar con el src del producto)
 rm -rf src/apps/ums-api
 
-# Eliminar el conocimiento de dominio demo (reemplazar con la documentación del dominio del producto)
+# Eliminar la documentación del modelo de referencia UMS
 rm -rf reference/knowledge/demo
 ```
 

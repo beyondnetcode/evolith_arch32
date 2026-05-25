@@ -68,8 +68,8 @@ The following elements are intentionally scoped to this repository. Carry them i
 
 | Asset | Reason Not Inherited |
 | :--- | :--- |
-| `src/apps/ums-api/` and `src/apps/ums-web/` | Applied reference satellite implementation (UMS) — not production scaffolding |
-| `reference/knowledge/demo/` | Domain knowledge is always product-specific |
+| `src/apps/ums-api/` and `src/apps/ums-web/` | Applied reference satellite implementation ([UMS](https://github.com/beyondnetcode/ums)) — not production scaffolding |
+| `reference/knowledge/demo/` | Documentation of the UMS reference model — irrelevant to your product |
 | Business glossary, stakeholder maps, product objectives | Must be authored to reflect the actual product domain |
 
 ---
@@ -200,7 +200,7 @@ Delete content that must not carry over without deliberate adaptation:
 # Remove demo implementation (replace with your product's src)
 rm -rf src/apps/ums-api
 
-# Remove demo domain knowledge (replace with your product's domain docs)
+# Remove UMS reference model documentation
 rm -rf reference/knowledge/demo
 ```
 

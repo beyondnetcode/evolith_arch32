@@ -42,7 +42,7 @@ A **child repository** is any product repository that derives from this base. Th
 | "I cloned it, so I own it independently" | The intellectual contract persists after the clone. Divergences must be documented. |
 | "I only need to read the ADRs once" | New base ADRs are published over time. Child teams triage them each planning cycle. |
 | "I can just copy the parts I like" | Selective adoption without documenting what was excluded creates invisible debt. Use the Not-Applicable operation instead. |
-| "The demo API is the template for my product" | The `todo-api` is a pattern laboratory. It proves patterns work. It is not production scaffolding. |
+| "The demo API is the template for my product" | The `ums-api` is a pattern laboratory. It proves patterns work. It is not production scaffolding. |
 
 ---
 
@@ -68,7 +68,7 @@ The following elements are intentionally scoped to this repository. Carry them i
 
 | Asset | Reason Not Inherited |
 | :--- | :--- |
-| `src/apps/todo-api/` | Pattern laboratory only — not production scaffolding |
+| `src/apps/ums-api/` | Pattern laboratory only — not production scaffolding |
 | `reference/knowledge/demo/` | Domain knowledge is always product-specific |
 | Business glossary, stakeholder maps, product objectives | Must be authored to reflect the actual product domain |
 
@@ -198,7 +198,7 @@ Delete content that must not carry over without deliberate adaptation:
 
 ```bash
 # Remove demo implementation (replace with your product's src)
-rm -rf src/apps/todo-api
+rm -rf src/apps/ums-api
 
 # Remove demo domain knowledge (replace with your product's domain docs)
 rm -rf reference/knowledge/demo
@@ -342,6 +342,7 @@ UMS exposes the governance model to its own developers in its Architecture Porta
 - [ADR Registry](../../../architecture/adrs/README.md)
 - [Agnostic Architecture Baseline](../../../architecture/blueprints/authoritative-tech-stack-agnostic.md)
 - [Engineering Manifesto](../engineering/engineering-manifesto.md)
+- [AI-Augmented Frameworks](../ai-augmented/frameworks/README.md)
 
 ---
 

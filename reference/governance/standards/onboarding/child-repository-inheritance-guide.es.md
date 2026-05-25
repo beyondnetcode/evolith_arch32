@@ -42,7 +42,7 @@ Un **repositorio hijo** es cualquier repositorio de producto que deriva de esta 
 | "Lo cloné, así que soy independiente" | El contrato intelectual persiste después del clone. Las divergencias deben documentarse. |
 | "Solo necesito leer los ADRs una vez" | Se publican nuevos ADRs base con el tiempo. Los equipos hijos los clasifican en cada ciclo de planificación. |
 | "Puedo copiar solo las partes que me gustan" | La adopción selectiva sin documentar lo excluido genera deuda invisible. Usa la operación No-Aplicable en su lugar. |
-| "La API demo es la plantilla para mi producto" | El `todo-api` es un laboratorio de patrones. Demuestra que los patrones funcionan. No es scaffolding de producción. |
+| "La API demo es la plantilla para mi producto" | El `ums-api` es un laboratorio de patrones. Demuestra que los patrones funcionan. No es scaffolding de producción. |
 
 ---
 
@@ -68,7 +68,7 @@ Los siguientes elementos están intencionalmente limitados a este repositorio. T
 
 | Activo | Razón para No Heredarse |
 | :--- | :--- |
-| `src/apps/todo-api/` | Solo laboratorio de patrones — no es scaffolding de producción |
+| `src/apps/ums-api/` | Solo laboratorio de patrones — no es scaffolding de producción |
 | `reference/knowledge/demo/` | El conocimiento de dominio es siempre específico del producto |
 | Glosario de negocio, mapas de stakeholders, objetivos de producto | Deben ser autoria del dominio del producto real |
 
@@ -199,7 +199,7 @@ Eliminar el contenido que no debe trasladarse sin adaptación deliberada:
 
 ```bash
 # Eliminar la implementación demo (reemplazar con el src del producto)
-rm -rf src/apps/todo-api
+rm -rf src/apps/ums-api
 
 # Eliminar el conocimiento de dominio demo (reemplazar con la documentación del dominio del producto)
 rm -rf reference/knowledge/demo
@@ -343,6 +343,7 @@ UMS expone el modelo de gobernanza a sus propios desarrolladores en su Portal de
 - [Registro ADR](../../../architecture/adrs-es/README.md)
 - [Línea Base Arquitectónica Agnóstica](../../../architecture/blueprints-es/authoritative-tech-stack-agnostic.md)
 - [Manifiesto de Ingeniería](../engineering/engineering-manifesto.md)
+- [Frameworks Aumentados por IA](../ai-augmented/frameworks/README.es.md)
 
 ---
 

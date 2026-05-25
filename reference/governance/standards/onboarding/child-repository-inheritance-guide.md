@@ -58,8 +58,8 @@ When a child repository is initialized from this base, the following corpus is i
 | **Structural Laws** | Blueprints, agnostic baseline, simplicity checklist | Mandatory; divergence requires documented justification |
 | **Engineering Standards** | Manifesto (SOLID/OWASP), contract testing guide, observability playbook | Mandatory |
 | **Governance Rules** | Repository taxonomy, naming conventions, harness rules R-01–R-18 | Mandatory |
-| **Infrastructure Templates** | Docker Compose phase-based map, Kong declarative config | Adoptable; child may replace with cloud-equivalent |
-| **Observability Stack** | OTel Collector, Grafana, Tempo, Loki configuration | Adoptable; child may swap backends with equivalent capability |
+| **Infrastructure Templates** | Docker Compose phase-based map, API Gateway declarative config | Adoptable; child may replace with cloud-equivalent |
+| **Observability Stack** | Telemetry collector and observability backends configuration (metrics, logs, traces) | Adoptable; child may swap backends with equivalent capability |
 | **Harness Validation** | `validate-docs.mjs` — UTF-8, relative links, Mermaid syntax | Mandatory in CI |
 
 ### 2.2 What Is Not Inherited
@@ -68,7 +68,7 @@ The following elements are intentionally scoped to this repository. Carry them i
 
 | Asset | Reason Not Inherited |
 | :--- | :--- |
-| `src/apps/ums-api/` | Pattern laboratory only — not production scaffolding |
+| `src/apps/ums-api/` and `src/apps/ums-web/` | Applied reference satellite implementation (UMS) — not production scaffolding |
 | `reference/knowledge/demo/` | Domain knowledge is always product-specific |
 | Business glossary, stakeholder maps, product objectives | Must be authored to reflect the actual product domain |
 

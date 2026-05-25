@@ -58,8 +58,8 @@ Cuando un repositorio hijo se inicializa desde esta base, el siguiente corpus es
 | **Leyes Estructurales** | Blueprints, línea base agnóstica, checklist de simplicidad | Obligatorio; la divergencia requiere justificación documentada |
 | **Estándares de Ingeniería** | Manifiesto (SOLID/OWASP), guía de contract testing, playbook de observabilidad | Obligatorio |
 | **Reglas de Gobernanza** | Taxonomía del repositorio, convenciones de nomenclatura, reglas del harness R-01–R-18 | Obligatorio |
-| **Plantillas de Infraestructura** | Mapa Docker Compose por fase, configuración declarativa de Kong | Adoptable; el hijo puede reemplazar con equivalente cloud |
-| **Stack de Observabilidad** | Configuración de OTel Collector, Grafana, Tempo, Loki | Adoptable; el hijo puede reemplazar los backends con capacidad equivalente |
+| **Plantillas de Infraestructura** | Mapa Docker Compose por fase, configuración declarativa del API Gateway | Adoptable; el hijo puede reemplazar con equivalente cloud |
+| **Stack de Observabilidad** | Configuración de colector de telemetría y backends de observabilidad (métricas, logs, trazas) | Adoptable; el hijo puede reemplazar los backends con capacidad equivalente |
 | **Validación del Harness** | `validate-docs.mjs` — UTF-8, enlaces relativos, sintaxis Mermaid | Obligatorio en CI |
 
 ### 2.2 Qué No Se Hereda
@@ -68,7 +68,7 @@ Los siguientes elementos están intencionalmente limitados a este repositorio. T
 
 | Activo | Razón para No Heredarse |
 | :--- | :--- |
-| `src/apps/ums-api/` | Solo laboratorio de patrones — no es scaffolding de producción |
+| `src/apps/ums-api/` y `src/apps/ums-web/` | Implementación satélite de referencia (UMS) — no es scaffolding de producción |
 | `reference/knowledge/demo/` | El conocimiento de dominio es siempre específico del producto |
 | Glosario de negocio, mapas de stakeholders, objetivos de producto | Deben ser autoria del dominio del producto real |
 

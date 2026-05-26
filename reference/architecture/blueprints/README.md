@@ -35,6 +35,8 @@ Read the agnostic baseline first. Then read the runtime profile for your target 
 | Document | Purpose |
 | :--- | :--- |
 | [C4 Topology Spec](./c4-topology-spec.md) | Formal C4 model definitions for all diagram levels |
+| [Observability Architecture Flow](./observability-architecture-flow.md) | End-to-end signal flow for correlation, AOP logging, traces, metrics, and telemetry sinks |
+| [Notification & Feedback Architecture](./notification-feedback-architecture.md) | Dual-visibility pattern for surfacing business errors — ephemeral toasts + persistent drawer, single extraction point, mutation factory |
 | [CAP Strategic Analysis](./cap-strategic-analysis.md) | CAP theorem trade-off analysis per phase |
 | [Multi-Cloud Deployment Scenarios](./multi-cloud-deployment-scenarios.md) | Cloud-agnostic deployment topology options |
 | [Tech Stack Summary](./tech-stack-summary.md) | Node.js / demo quick-reference card (not the universal policy) |

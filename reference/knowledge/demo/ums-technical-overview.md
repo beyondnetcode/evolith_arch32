@@ -27,6 +27,30 @@ Enterprise software fails at identity and access management in predictable ways:
 
 **UMS is the answer to all five simultaneously.** It is a User Management System designed to govern identity, fine-grained authorization, multi-tenant isolation, immutable auditing, access approvals, compliance enforcement, and Identity Governance & Administration (IGA) — in a single, architecturally disciplined, progressively built product.
 
+```mermaid
+flowchart LR
+    classDef problem fill:#7f1d1d,stroke:#ef4444,color:#fff,font-size:12px
+    classDef solution fill:#14532d,stroke:#22c55e,color:#fff,font-size:12px
+
+    P1["❌ Permissions scattered\nacross every app"]:::problem
+    P2["❌ No audit trail\n(who · what · when · why)"]:::problem
+    P3["❌ Tenant isolation\nas an afterthought"]:::problem
+    P4["❌ Authorization logic\nduplicated in every service"]:::problem
+    P5["❌ Manual role management\n→ IGA security debt"]:::problem
+
+    S1["✅ EP-02 Authorization\nCentral permission graph\n+ contextual templates"]:::solution
+    S2["✅ EP-04 Audit\nImmutable append-only log\n10-column standard schema"]:::solution
+    S3["✅ EP-01 + EP-03\nDual-layer RLS\n(id, root_tenant_id) on every table"]:::solution
+    S4["✅ EP-02 Authorization\nXACML PEP/PDP/PAP/PIP\ncompiled at resolution time"]:::solution
+    S5["✅ EP-08 IGA\nRole Maturity Model (5 levels)\nPromotion lifecycle engine"]:::solution
+
+    P1 -->|"solved by"| S1
+    P2 -->|"solved by"| S2
+    P3 -->|"solved by"| S3
+    P4 -->|"solved by"| S4
+    P5 -->|"solved by"| S5
+```
+
 ### Why It Was Chosen as the Evolith Reference
 
 UMS earns this role because it:
@@ -40,27 +64,36 @@ UMS earns this role because it:
 
 ## 2. Product Scope — What UMS Manages
 
-```
-┌──────────────────────────────────────────────────────────────┐
-│                  UMS PRODUCT BOUNDARY                        │
-│                                                              │
-│  USERS ──── belong to ──── ORGANIZATIONS (multi-tenant)     │
-│     │                           │                           │
-│     │ assigned to           governed by                      │
-│     ▼                           ▼                           │
-│  ROLES ──── grant ──── AUTHORIZATION TEMPLATES              │
-│     │                           │                           │
-│     │ evaluated by          enforced by                      │
-│     ▼                           ▼                           │
-│  PERMISSION GRAPH ──── resolved at ──── REQUEST TIME        │
-│                                                              │
-│  Everything is:                                              │
-│  • Multi-tenant (organization-scoped, RLS-isolated)         │
-│  • Immutably audited (who did what, when, from where)       │
-│  • Approval-gated (sensitive operations require workflow)    │
-│  • Compliance-tracked (document expiry, access enforcement) │
-│  • IGA-managed (role maturity, promotion lifecycle)         │
-└──────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TB
+    classDef entity fill:#1e3a5f,stroke:#3b82f6,color:#fff,font-weight:bold
+    classDef graph fill:#7f1d1d,stroke:#ef4444,color:#fff,font-weight:bold
+    classDef cross fill:#14532d,stroke:#22c55e,color:#fff,font-size:12px
+    classDef decision fill:#4a3800,stroke:#f59e0b,color:#fff
+
+    USERS["👤 Users"]:::entity
+    ORGS["🏢 Organizations\n(multi-tenant)"]:::entity
+    ROLES["🎭 Roles"]:::entity
+    TEMPLATES["📋 Authorization Templates"]:::entity
+    GRAPH["🕸️ Permission Graph\n(compiled DAG — TE-02)"]:::graph
+    REQUEST["🔐 Access Decision\n(granted / denied)"]:::decision
+
+    USERS -->|"belong to"| ORGS
+    USERS -->|"assigned to"| ROLES
+    ROLES -->|"grant"| TEMPLATES
+    ORGS -->|"govern"| TEMPLATES
+    ROLES & TEMPLATES -->|"compiled into"| GRAPH
+    GRAPH -->|"evaluated at"| REQUEST
+
+    AUD["📜 Immutable Audit\n(EP-04 — every action)"]:::cross
+    APP["✅ Approval Workflow\n(EP-06 — sensitive ops)"]:::cross
+    COMP["📄 Compliance Check\n(EP-07 — doc expiry)"]:::cross
+    IGA_N["🔄 IGA Lifecycle\n(EP-08 — role maturity)"]:::cross
+
+    REQUEST -.->|"logged"| AUD
+    REQUEST -.->|"gated"| APP
+    USERS -.->|"tracked"| COMP
+    ROLES -.->|"governed"| IGA_N
 ```
 
 ---
@@ -122,8 +155,57 @@ Most tutorials show "User + Role = Permission." UMS solves problems that make th
 ### 4.1 The Authorization Graph Problem
 A user's effective permissions are not stored — they are **compiled** at resolution time from a directed acyclic graph of roles, templates, organizational hierarchy, and contextual overrides. This compilation is the heart of EP-02 and requires the high-performance graph compiler described in ADR-0021.
 
+```mermaid
+flowchart LR
+    classDef user fill:#1e3a5f,stroke:#3b82f6,color:#fff
+    classDef role fill:#4a3800,stroke:#f59e0b,color:#fff
+    classDef template fill:#14532d,stroke:#22c55e,color:#fff
+    classDef org fill:#4a1a6b,stroke:#9c27b0,color:#fff
+    classDef result fill:#7f1d1d,stroke:#ef4444,color:#fff,font-weight:bold
+
+    U["User: Alice"]:::user
+    R1["Role: Manager"]:::role
+    R2["Role: Auditor"]:::role
+    T1["Template: CanViewReports"]:::template
+    T2["Template: CanApproveUsers"]:::template
+    T3["Template: ReadOnlyAudit"]:::template
+    ORG["Org: ACME Corp\n(tenant boundary)"]:::org
+    OVERRIDE["Context: Department=Finance\n(override: CanExportData=true)"]:::org
+
+    U --> R1 & R2
+    R1 --> T1 & T2
+    R2 --> T3
+    ORG --> OVERRIDE
+
+    COMPILER["⚡ Graph Compiler\n(TE-02 — ADR-0021)\ncompiles DAG at resolution time"]:::result
+    R1 & R2 & OVERRIDE --> COMPILER
+    COMPILER --> EFFECTIVE["✅ Effective Permissions\n{CanViewReports, CanApproveUsers,\nReadOnlyAudit, CanExportData}"]:::template
+```
+
 ### 4.2 The Multi-Tenancy Problem
 Every table carries a composite primary key `(id, root_tenant_id)` and is protected by two independent security layers: an EF Core global query filter (always active) and a SQL Server RLS predicate (failsafe). A bug in one layer cannot expose cross-tenant data. This is the two-layer model from ADR-0010.
+
+```mermaid
+flowchart TD
+    classDef req fill:#1e3a5f,stroke:#3b82f6,color:#fff
+    classDef layer fill:#4a3800,stroke:#f59e0b,color:#fff,font-weight:bold
+    classDef pass fill:#14532d,stroke:#22c55e,color:#fff
+    classDef block fill:#7f1d1d,stroke:#ef4444,color:#fff
+
+    REQ["📨 Incoming Request\nUser: Alice (tenant_id: ACME)"]:::req
+    L1["LAYER 1 — EF Core Global Query Filter\nAutomatically appends WHERE root_tenant_id = @tid\nto every query via DbContext interceptor\n(ADR-0010 PRIMARY)"]:::layer
+    L2["LAYER 2 — SQL Server RLS Predicate\nDATABASE-LEVEL filter: fn_SecurityPredicate()\nactivated via SESSION_CONTEXT\n(ADR-0010 FAILSAFE)"]:::layer
+    DB["🗄️ SQL Server 2022\nRow-Level Security"]:::pass
+    BUG["⚠️ If a bug bypasses Layer 1\n(e.g. raw query escapes EF Core)"]:::block
+    SAFE["✅ Layer 2 blocks at DB level\nData never leaves tenant boundary"]:::pass
+
+    REQ --> L1
+    L1 -->|"query filtered"| L2
+    L2 -->|"both pass"| DB
+    L1 -.->|"bug scenario"| BUG
+    BUG --> L2
+    L2 --> SAFE
+```
 
 ### 4.3 The Distributed Saga Problem
 Approvals (EP-06) and IGA (EP-08) require multi-step workflows that span multiple bounded contexts with compensating transactions. A role promotion, for example, triggers authorization graph recompilation, audit logging, compliance checks, and notification dispatch — all of which must roll back atomically if any step fails. This is governed by ADR-0035 (Distributed Sagas via Dapr).
@@ -137,6 +219,56 @@ Immutability is not optional. Every write to UMS generates an audit record that 
 ---
 
 ## 5. Architecture: Tech Stack
+
+```mermaid
+flowchart TB
+    classDef client fill:#4a1a6b,stroke:#9c27b0,color:#fff
+    classDef api fill:#1e3a5f,stroke:#3b82f6,color:#fff
+    classDef app fill:#14532d,stroke:#22c55e,color:#fff
+    classDef domain fill:#7f1d1d,stroke:#ef4444,color:#fff,font-weight:bold
+    classDef infra fill:#4a3800,stroke:#f59e0b,color:#fff
+    classDef data fill:#374151,stroke:#9ca3af,color:#fff
+
+    subgraph PRESENTATION["🖥️ Presentation Layer"]
+        direction LR
+        WEB_UI["Razor Pages / React\nAdmin Console UI"]:::client
+        API_LAYER["REST Controllers\n+ GraphQL Resolvers\n(ADR-0032)"]:::api
+    end
+
+    subgraph APPLICATION["⚙️ Application Layer (Use Cases)"]
+        direction LR
+        UC["Use Cases / Handlers\nNo framework imports\n(ADR-0002 Hexagonal)"]:::app
+        PORTS["Port Interfaces\nIUserRepository · IEventBus\nICache · IIdentityProvider"]:::app
+    end
+
+    subgraph DOMAIN["🏛️ Domain Layer (Pure)"]
+        direction LR
+        AGG["Aggregates · Entities · Value Objects\nZero infrastructure imports\n(ADR-0002 hard constraint)"]:::domain
+        EVT["Domain Events\nUserCreated · RolePromoted\nTemplateAssigned"]:::domain
+    end
+
+    subgraph INFRA["🔧 Infrastructure Layer (Adapters)"]
+        direction LR
+        EF["EF Core 8 DbContext\n+ Dapper read projections\n(ADR-0057)"]:::infra
+        RLS_A["SESSION_CONTEXT + RLS\nTenant isolation\n(ADR-0010)"]:::infra
+        BUS["Injectable Event Bus\nIn-process → RabbitMQ\n(ADR-0015)"]:::infra
+        OUTBOX_A["Transactional Outbox\n(ADR-0033)"]:::infra
+        CACHE["Redis Cache\n4-tier strategy\n(ADR-0014)"]:::infra
+        IDP["IdP Adapter\nKeycloak / AzureAD\n(ADR-0020)"]:::infra
+    end
+
+    subgraph DATA_LAYER["🗄️ Data Layer"]
+        direction LR
+        SQL["SQL Server 2022\n8 schemas · RLS predicates\nClosure table · Temporal tables"]:::data
+        REDIS_DB["Redis Cluster"]:::data
+        MQ["RabbitMQ\nFIFO · DLQ\n(ADR-0036)"]:::data
+    end
+
+    PRESENTATION --> APPLICATION
+    APPLICATION --> DOMAIN
+    APPLICATION --> INFRA
+    INFRA --> DATA_LAYER
+```
 
 | Layer | Technology | Version | Governing ADR |
 |---|---|---|---|
@@ -176,19 +308,19 @@ Technical enablers are the cross-cutting infrastructure investments that make th
 
 UMS maintains full bidirectional traceability from business requirement to code:
 
-```
-16 Functional Stories (FS)
-        │
-        ▼ each story has 5–9 Technical Stories
-89 Technical Stories (TS)
-  • MVP:      253 story points  (6-7 weeks, Phase 1)
-  • Post-MVP: 325 story points  (8-10 weeks, Phase 2)
-        │
-        ▼ each group implements
-6 Technical Enablers (TE)
-        │
-        ▼ each enabler proves
-57+ Evolith ADRs in running code
+```mermaid
+flowchart TD
+    classDef fs fill:#4a1a6b,stroke:#9c27b0,color:#fff,font-weight:bold
+    classDef ts fill:#1e3a5f,stroke:#3b82f6,color:#fff
+    classDef te fill:#4a3800,stroke:#f59e0b,color:#fff
+    classDef adr fill:#14532d,stroke:#22c55e,color:#fff
+
+    FS_BOX["📋 16 Functional Stories (FS)\nBusiness requirements with acceptance criteria\nFS-01 → FS-16"]:::fs
+    TS_BOX["⚙️ 89 Technical Stories (TS)\nMVP: 253 pts · Post-MVP: 325 pts\n5–9 TS per FS"]:::ts
+    TE_BOX["🔧 6 Technical Enablers (TE)\nCross-cutting infrastructure investments\nTE-01 → TE-06"]:::te
+    ADR_BOX["📐 57+ Evolith ADRs\nEvery TE implements one or more ADRs\nFull bidirectional traceability"]:::adr
+
+    FS_BOX --> TS_BOX --> TE_BOX --> ADR_BOX
 ```
 
 Every line of UMS code can be traced back to a functional requirement, a technical decision, and an Evolith ADR. This is the traceability model Evolith mandates (ADR-0040, V-07).

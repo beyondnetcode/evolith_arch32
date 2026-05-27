@@ -27,6 +27,30 @@ El software empresarial falla en la gestión de identidad y acceso de maneras pr
 
 **UMS es la respuesta a los cinco simultáneamente.** Es un Sistema de Gestión de Usuarios diseñado para gobernar identidad, autorización de grano fino, aislamiento multi-tenant, auditoría inmutable, aprobaciones de acceso, aplicación de compliance y Gobernanza y Administración de Identidades (IGA) — en un único producto arquitectónicamente disciplinado y progresivamente construido.
 
+```mermaid
+flowchart LR
+    classDef problem fill:#7f1d1d,stroke:#ef4444,color:#fff,font-size:12px
+    classDef solution fill:#14532d,stroke:#22c55e,color:#fff,font-size:12px
+
+    P1["❌ Permisos dispersos\nen cada aplicación"]:::problem
+    P2["❌ Sin audit trail\n(quién · qué · cuándo · por qué)"]:::problem
+    P3["❌ Aislamiento de tenant\ncomo afterthought"]:::problem
+    P4["❌ Lógica de autorización\nduplicada en cada servicio"]:::problem
+    P5["❌ Gestión manual de roles\n→ deuda de seguridad IGA"]:::problem
+
+    S1["✅ EP-02 Authorization\nGrafo central de permisos\n+ plantillas contextuales"]:::solution
+    S2["✅ EP-04 Audit\nLog inmutable solo-append\nEsquema estándar 10 columnas"]:::solution
+    S3["✅ EP-01 + EP-03\nRLS de doble capa\n(id, root_tenant_id) en cada tabla"]:::solution
+    S4["✅ EP-02 Authorization\nXACML PEP/PDP/PAP/PIP\ncompilado en tiempo de resolución"]:::solution
+    S5["✅ EP-08 IGA\nRole Maturity Model (5 niveles)\nMotor de ciclo de promoción"]:::solution
+
+    P1 -->|"resuelto por"| S1
+    P2 -->|"resuelto por"| S2
+    P3 -->|"resuelto por"| S3
+    P4 -->|"resuelto por"| S4
+    P5 -->|"resuelto por"| S5
+```
+
 ### Por Qué Fue Elegido como la Referencia Evolith
 
 UMS gana este rol porque:
@@ -40,27 +64,36 @@ UMS gana este rol porque:
 
 ## 2. Alcance del Producto — Qué Gestiona UMS
 
-```
-┌──────────────────────────────────────────────────────────────┐
-│                  FRONTERA DEL PRODUCTO UMS                   │
-│                                                              │
-│  USUARIOS ──── pertenecen a ──── ORGANIZACIONES (multi-tenant)│
-│     │                                │                      │
-│     │ asignados a               gobernadas por              │
-│     ▼                                ▼                      │
-│  ROLES ──── otorgan ──── PLANTILLAS DE AUTORIZACIÓN         │
-│     │                                │                      │
-│     │ evaluados por            aplicadas por                │
-│     ▼                                ▼                      │
-│  GRAFO DE PERMISOS ──── resuelto en ──── TIEMPO DE REQUEST  │
-│                                                              │
-│  Todo está:                                                  │
-│  • Multi-tenant (scope de organización, aislado con RLS)    │
-│  • Auditado de forma inmutable (quién hizo qué, cuándo)     │
-│  • Bajo aprobación (operaciones sensibles requieren flujo)  │
-│  • Rastreado por compliance (vencimiento de docs, acceso)   │
-│  • Gestionado por IGA (madurez de rol, ciclo de promoción)  │
-└──────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TB
+    classDef entity fill:#1e3a5f,stroke:#3b82f6,color:#fff,font-weight:bold
+    classDef graph fill:#7f1d1d,stroke:#ef4444,color:#fff,font-weight:bold
+    classDef cross fill:#14532d,stroke:#22c55e,color:#fff,font-size:12px
+    classDef decision fill:#4a3800,stroke:#f59e0b,color:#fff
+
+    USERS["👤 Usuarios"]:::entity
+    ORGS["🏢 Organizaciones\n(multi-tenant)"]:::entity
+    ROLES["🎭 Roles"]:::entity
+    TEMPLATES["📋 Plantillas de Autorización"]:::entity
+    GRAPH["🕸️ Grafo de Permisos\n(DAG compilado — TE-02)"]:::graph
+    REQUEST["🔐 Decisión de Acceso\n(concedido / denegado)"]:::decision
+
+    USERS -->|"pertenecen a"| ORGS
+    USERS -->|"asignados a"| ROLES
+    ROLES -->|"otorgan"| TEMPLATES
+    ORGS -->|"gobiernan"| TEMPLATES
+    ROLES & TEMPLATES -->|"compilados en"| GRAPH
+    GRAPH -->|"evaluado en"| REQUEST
+
+    AUD["📜 Auditoría Inmutable\n(EP-04 — cada acción)"]:::cross
+    APP["✅ Flujo de Aprobación\n(EP-06 — ops sensibles)"]:::cross
+    COMP["📄 Verificación Compliance\n(EP-07 — vencimiento docs)"]:::cross
+    IGA_N["🔄 Ciclo de Vida IGA\n(EP-08 — madurez de rol)"]:::cross
+
+    REQUEST -.->|"registrado en"| AUD
+    REQUEST -.->|"controlado por"| APP
+    USERS -.->|"rastreados en"| COMP
+    ROLES -.->|"gobernados por"| IGA_N
 ```
 
 ---
@@ -122,8 +155,57 @@ La mayoría de los tutoriales muestran "Usuario + Rol = Permiso". UMS resuelve p
 ### 4.1 El Problema del Grafo de Autorización
 Los permisos efectivos de un usuario no se almacenan — se **compilan** en tiempo de resolución a partir de un grafo acíclico dirigido de roles, plantillas, jerarquía organizacional y overrides contextuales. Esta compilación es el corazón de EP-02 y requiere el compilador de alto rendimiento descrito en ADR-0021.
 
+```mermaid
+flowchart LR
+    classDef user fill:#1e3a5f,stroke:#3b82f6,color:#fff
+    classDef role fill:#4a3800,stroke:#f59e0b,color:#fff
+    classDef template fill:#14532d,stroke:#22c55e,color:#fff
+    classDef org fill:#4a1a6b,stroke:#9c27b0,color:#fff
+    classDef result fill:#7f1d1d,stroke:#ef4444,color:#fff,font-weight:bold
+
+    U["Usuario: Alicia"]:::user
+    R1["Rol: Gerente"]:::role
+    R2["Rol: Auditor"]:::role
+    T1["Plantilla: PuedeVerReportes"]:::template
+    T2["Plantilla: PuedeAprobarUsuarios"]:::template
+    T3["Plantilla: AuditoriaSoloLectura"]:::template
+    ORG["Org: ACME Corp\n(frontera de tenant)"]:::org
+    OVERRIDE["Contexto: Departamento=Finanzas\n(override: PuedeExportarDatos=true)"]:::org
+
+    U --> R1 & R2
+    R1 --> T1 & T2
+    R2 --> T3
+    ORG --> OVERRIDE
+
+    COMPILER["⚡ Compilador de Grafo\n(TE-02 — ADR-0021)\ncompila DAG en tiempo de resolución"]:::result
+    R1 & R2 & OVERRIDE --> COMPILER
+    COMPILER --> EFFECTIVE["✅ Permisos Efectivos\n{PuedeVerReportes, PuedeAprobarUsuarios,\nAuditoriaSoloLectura, PuedeExportarDatos}"]:::template
+```
+
 ### 4.2 El Problema del Multi-Tenancy
 Cada tabla lleva una clave primaria compuesta `(id, root_tenant_id)` y está protegida por dos capas de seguridad independientes: un filtro de consulta global de EF Core (siempre activo) y un predicado RLS de SQL Server (failsafe). Un bug en una capa no puede exponer datos cross-tenant. Este es el modelo de dos capas del ADR-0010.
+
+```mermaid
+flowchart TD
+    classDef req fill:#1e3a5f,stroke:#3b82f6,color:#fff
+    classDef layer fill:#4a3800,stroke:#f59e0b,color:#fff,font-weight:bold
+    classDef pass fill:#14532d,stroke:#22c55e,color:#fff
+    classDef block fill:#7f1d1d,stroke:#ef4444,color:#fff
+
+    REQ["📨 Request Entrante\nUsuario: Alicia (tenant_id: ACME)"]:::req
+    L1["CAPA 1 — Filtro de Consulta Global EF Core\nAgrega automáticamente WHERE root_tenant_id = @tid\na cada consulta vía interceptor DbContext\n(ADR-0010 PRIMARIO)"]:::layer
+    L2["CAPA 2 — Predicado RLS de SQL Server\nFiltro a NIVEL DE BASE DE DATOS: fn_SecurityPredicate()\nactivado vía SESSION_CONTEXT\n(ADR-0010 FAILSAFE)"]:::layer
+    DB["🗄️ SQL Server 2022\nRow-Level Security"]:::pass
+    BUG["⚠️ Si un bug bypasea la Capa 1\n(ej. query raw escapa EF Core)"]:::block
+    SAFE["✅ La Capa 2 bloquea a nivel de BD\nLos datos nunca cruzan la frontera del tenant"]:::pass
+
+    REQ --> L1
+    L1 -->|"consulta filtrada"| L2
+    L2 -->|"ambas pasan"| DB
+    L1 -.->|"escenario de bug"| BUG
+    BUG --> L2
+    L2 --> SAFE
+```
 
 ### 4.3 El Problema de la Saga Distribuida
 Las Aprobaciones (EP-06) y el IGA (EP-08) requieren flujos de trabajo multi-paso que abarcan múltiples bounded contexts con transacciones compensatorias. Una promoción de rol, por ejemplo, dispara recompilación del grafo de autorización, registro de auditoría, verificaciones de compliance y envío de notificaciones — todo lo cual debe hacer rollback atómicamente si algún paso falla. Esto está gobernado por ADR-0035 (Sagas Distribuidas vía Dapr).
@@ -137,6 +219,56 @@ La inmutabilidad no es opcional. Cada escritura en UMS genera un registro de aud
 ---
 
 ## 5. Arquitectura: Tech Stack
+
+```mermaid
+flowchart TB
+    classDef client fill:#4a1a6b,stroke:#9c27b0,color:#fff
+    classDef api fill:#1e3a5f,stroke:#3b82f6,color:#fff
+    classDef app fill:#14532d,stroke:#22c55e,color:#fff
+    classDef domain fill:#7f1d1d,stroke:#ef4444,color:#fff,font-weight:bold
+    classDef infra fill:#4a3800,stroke:#f59e0b,color:#fff
+    classDef data fill:#374151,stroke:#9ca3af,color:#fff
+
+    subgraph PRESENTATION["🖥️ Capa de Presentación"]
+        direction LR
+        WEB_UI["Razor Pages / React\nConsola de Administración"]:::client
+        API_LAYER["Controladores REST\n+ Resolvers GraphQL\n(ADR-0032)"]:::api
+    end
+
+    subgraph APPLICATION["⚙️ Capa de Aplicación (Casos de Uso)"]
+        direction LR
+        UC["Casos de Uso / Handlers\nSin imports de framework\n(ADR-0002 Hexagonal)"]:::app
+        PORTS["Interfaces de Puerto\nIUserRepository · IEventBus\nICache · IIdentityProvider"]:::app
+    end
+
+    subgraph DOMAIN["🏛️ Capa de Dominio (Pura)"]
+        direction LR
+        AGG["Aggregates · Entidades · Value Objects\nCero imports de infraestructura\n(ADR-0002 restricción dura)"]:::domain
+        EVT["Eventos de Dominio\nUserCreated · RolePromoted\nTemplateAssigned"]:::domain
+    end
+
+    subgraph INFRA["🔧 Capa de Infraestructura (Adaptadores)"]
+        direction LR
+        EF["EF Core 8 DbContext\n+ proyecciones Dapper\n(ADR-0057)"]:::infra
+        RLS_A["SESSION_CONTEXT + RLS\nAislamiento de tenant\n(ADR-0010)"]:::infra
+        BUS["Event Bus Inyectable\nIn-process → RabbitMQ\n(ADR-0015)"]:::infra
+        OUTBOX_A["Transactional Outbox\n(ADR-0033)"]:::infra
+        CACHE["Cache Redis\nEstrategia 4 capas\n(ADR-0014)"]:::infra
+        IDP["Adaptador IdP\nKeycloak / AzureAD\n(ADR-0020)"]:::infra
+    end
+
+    subgraph DATA_LAYER["🗄️ Capa de Datos"]
+        direction LR
+        SQL["SQL Server 2022\n8 schemas · predicados RLS\nClosure table · Tablas temporales"]:::data
+        REDIS_DB["Clúster Redis"]:::data
+        MQ["RabbitMQ\nFIFO · DLQ\n(ADR-0036)"]:::data
+    end
+
+    PRESENTATION --> APPLICATION
+    APPLICATION --> DOMAIN
+    APPLICATION --> INFRA
+    INFRA --> DATA_LAYER
+```
 
 | Capa | Tecnología | Versión | ADR Rector |
 |---|---|---|---|
@@ -176,19 +308,19 @@ Los habilitadores técnicos son las inversiones de infraestructura transversal q
 
 UMS mantiene trazabilidad bidireccional completa desde requerimiento de negocio hasta código:
 
-```
-16 Historias Funcionales (FS)
-        │
-        ▼ cada historia tiene 5–9 Historias Técnicas
-89 Historias Técnicas (TS)
-  • MVP:      253 story points  (6-7 semanas, Fase 1)
-  • Post-MVP: 325 story points  (8-10 semanas, Fase 2)
-        │
-        ▼ cada grupo implementa
-6 Habilitadores Técnicos (TE)
-        │
-        ▼ cada habilitador prueba
-57+ ADRs Evolith en código en ejecución
+```mermaid
+flowchart TD
+    classDef fs fill:#4a1a6b,stroke:#9c27b0,color:#fff,font-weight:bold
+    classDef ts fill:#1e3a5f,stroke:#3b82f6,color:#fff
+    classDef te fill:#4a3800,stroke:#f59e0b,color:#fff
+    classDef adr fill:#14532d,stroke:#22c55e,color:#fff
+
+    FS_BOX["📋 16 Historias Funcionales (FS)\nRequerimientos de negocio con criterios de aceptación\nFS-01 → FS-16"]:::fs
+    TS_BOX["⚙️ 89 Historias Técnicas (TS)\nMVP: 253 pts · Post-MVP: 325 pts\n5–9 TS por FS"]:::ts
+    TE_BOX["🔧 6 Habilitadores Técnicos (TE)\nInversiones de infraestructura transversal\nTE-01 → TE-06"]:::te
+    ADR_BOX["📐 57+ ADRs Evolith\nCada TE implementa uno o más ADRs\nTrazabilidad bidireccional completa"]:::adr
+
+    FS_BOX --> TS_BOX --> TE_BOX --> ADR_BOX
 ```
 
 Cada línea de código UMS puede trazarse hacia atrás a un requerimiento funcional, una decisión técnica y un ADR Evolith. Este es el modelo de trazabilidad que Evolith exige (ADR-0040, V-07).

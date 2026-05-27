@@ -67,7 +67,7 @@ UMS gana este rol porque:
 ```mermaid
 flowchart TB
     classDef entity fill:#1e3a5f,stroke:#3b82f6,color:#fff,font-weight:bold
-    classDef graph fill:#7f1d1d,stroke:#ef4444,color:#fff,font-weight:bold
+    classDef permgraph fill:#7f1d1d,stroke:#ef4444,color:#fff,font-weight:bold
     classDef cross fill:#14532d,stroke:#22c55e,color:#fff,font-size:12px
     classDef decision fill:#4a3800,stroke:#f59e0b,color:#fff
 
@@ -75,7 +75,7 @@ flowchart TB
     ORGS["🏢 Organizaciones\n(multi-tenant)"]:::entity
     ROLES["🎭 Roles"]:::entity
     TEMPLATES["📋 Plantillas de Autorización"]:::entity
-    GRAPH["🕸️ Grafo de Permisos\n(DAG compilado — TE-02)"]:::graph
+    GRAPH["🕸️ Grafo de Permisos\n(DAG compilado — TE-02)"]:::permgraph
     REQUEST["🔐 Decisión de Acceso\n(concedido / denegado)"]:::decision
 
     USERS -->|"pertenecen a"| ORGS

@@ -531,7 +531,9 @@ MONTH 3+: SCALE (Phase 2 — as metrics justify)
 ───────────────────────────────────────────────
 □ Run ADR-0045 microservice extraction readiness check
 □ Extract first service only if 2-of-4 criteria met
-□ Activate native DB-level RLS
+□ Evaluate native DB-level RLS activation — optional; justified only when
+  app-side security (APP_AGNOSTIC) becomes a measurable performance bottleneck;
+  ADR-0044 / ADR-0010 govern the switch decision (INFRA_NATIVE vs APP_AGNOSTIC)
 □ Enable full distributed tracing
 □ Integrate Dapr for service mesh abstraction
 

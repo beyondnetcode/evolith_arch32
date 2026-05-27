@@ -419,7 +419,10 @@ MES 3+: ESCALA (Fase 2 — cuando las métricas lo justifiquen)
 ─────────────────────────────────────────────────────────────
 □ Ejecutar checklist de criterios ADR-0045
 □ Extraer primer servicio solo si se cumplen 2-de-4 criterios
-□ Activar RLS nativo a nivel de base de datos
+□ Evaluar activación del RLS nativo a nivel de base de datos — opcional; se
+  justifica solo cuando la seguridad a nivel de aplicación (APP_AGNOSTIC) se
+  convierte en un cuello de botella de rendimiento medible; ADR-0044 / ADR-0010
+  gobiernan la decisión de cambio (INFRA_NATIVE vs APP_AGNOSTIC)
 □ Habilitar trazado distribuido completo
 □ Integrar Dapr para abstracción de service mesh
 

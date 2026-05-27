@@ -407,7 +407,9 @@ SEMANAS 3-4: FUNDACIÓN
 SEMANAS 5-8: PRIMERA ENTREGA (Fase 1 - Monolito Modular)
 ─────────────────────────────────────────────────────────
 □ Aplicar Arquitectura Hexagonal (Puertos + Adaptadores)
-□ Definir modelo de base de datos schema-per-context
+□ Definir modelo de base de datos — un esquema único (enfoque SOA) es válido en
+  la Fase 1; schema-per-context es opcional y puede introducirse progresivamente
+  a medida que los límites del dominio se consoliden (ADR-0031 gobierna cuándo adoptarlo)
 □ Implementar pirámide de testing (gate 70% cobertura)
 □ Configurar observabilidad OTel + Loki + Grafana
 □ Seguir estrategia de ramas Gitflow

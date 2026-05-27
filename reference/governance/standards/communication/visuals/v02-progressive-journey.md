@@ -27,8 +27,8 @@ flowchart TD
     T1 -->|YES| S2
 
     subgraph S2["STAGE 2 — Modular Monolith ⭐ DEFAULT"]
-        M2["Nx monorepo with strict boundaries\nSchema-per-context database\nHexagonal Architecture enforced\nShared domain via Shared Kernel"]:::stage
-        A2["ADR-0001 · ADR-0002\nADR-0031 · ADR-0047"]:::adr
+        M2["Nx monorepo with strict boundaries\nHexagonal Architecture enforced\nShared domain via Shared Kernel\nDB: single schema (SOA) valid in Phase 1\nSchema-per-context optional → Phase 2+"]:::stage
+        A2["ADR-0001 · ADR-0002\nADR-0031 (optional Ph1) · ADR-0047"]:::adr
     end
 
     T2{"2-of-4 extraction\ncriteria met?\nADR-0045"}:::trigger
@@ -125,7 +125,7 @@ flowchart LR
 
     UMS --> A["✅ Nx monorepo\nstrict lib boundaries"]:::done
     UMS --> B["✅ Hexagonal Architecture\nPorts + Adapters in all layers"]:::done
-    UMS --> C["✅ Schema-per-context\n8 bounded context schemas"]:::done
+    UMS --> C["✅ Schema-per-context\n8 bounded contexts\n(UMS choice — optional in Ph1)"]:::done
     UMS --> D["✅ EF Core + SQL Server 2022\nwith RLS failsafe"]:::done
     UMS --> E["✅ Transactional Outbox\nfor all async writes"]:::done
     UMS --> F["✅ 70% test coverage gate\nin GitHub Actions CI"]:::done

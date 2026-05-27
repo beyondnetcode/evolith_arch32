@@ -519,7 +519,9 @@ WEEK 3-4: FOUNDATION
 WEEK 5-8: FIRST DELIVERY (Phase 1 - Modular Monolith)
 ──────────────────────────────────────────────────────
 □ Apply Hexagonal Architecture (Ports + Adapters)
-□ Define schema-per-context database model
+□ Define database model — single schema (SOA-centric) is valid in Phase 1;
+  schema-per-context is optional and can be introduced progressively as domain
+  boundaries solidify (ADR-0031 governs when to adopt it)
 □ Implement testing pyramid (70% coverage gate)
 □ Set up OTel + Loki + Grafana observability
 □ Follow Gitflow branching strategy

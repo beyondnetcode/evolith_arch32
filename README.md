@@ -60,6 +60,8 @@ This repository may use BMAD-METHOD as a supporting spec-driven AI-DD method. It
 | Clarify project terminology | [Architecture Glossary](./reference/governance/glossary.md) |
 | Inspect the executable product reference | [UMS Applied Reference Model](./reference/knowledge/demo/README.md) |
 | Understand how AI agents must operate here | [AGENTS.md](./AGENTS.md) |
+| **Explain the standard to any audience** | **[Architecture Communication Strategy](./reference/governance/standards/communication/architecture-communication-strategy.md)** |
+| **Browse visual architecture diagrams** | **[Visual Architecture Backlog](./reference/governance/standards/communication/visuals/README.md)** |
 
 ---
 

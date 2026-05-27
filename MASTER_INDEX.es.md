@@ -21,6 +21,7 @@ Este es el índice completo de navegación de **Evolith** — la plataforma empr
 | Explorar la referencia aplicada de producto | [Hub de Referencia UMS](./reference/knowledge/demo/README.es.md) | [Portal de Arquitectura UMS](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) |
 | Separar políticas de evidencia de implementación | [Referencia Canónica vs Modelo Aplicado UMS](./reference/knowledge/demo/demo-vs-reference.es.md) | [Taxonomía del Repositorio](./reference/governance/standards-es/repository-taxonomy.es.md) |
 | Operar o desplegar localmente | [Hub de Operaciones](./reference/operations/README.es.md) | [Hub de Infraestructura](./reference/infrastructure/README.es.md) |
+| Explicar el estándar a una nueva audiencia | [Estrategia de Comunicación Arquitectónica](./reference/governance/standards/communication/architecture-communication-strategy.es.md) | [Backlog Visual de Arquitectura](./reference/governance/standards/communication/visuals/README.md) |
 
 ---
 
@@ -61,6 +62,7 @@ Referencias clave:
 - [Blueprint de Referencia](./reference/architecture/blueprints-es/reference-blueprint.md)
 - [Índice del Stack Tecnológico Autorizado](./reference/architecture/blueprints-es/authoritative-tech-stack.md)
 - [Especificación C4](./reference/architecture/blueprints-es/c4-topology-spec.md)
+- [Flujo de Arquitectura de Observabilidad](./reference/architecture/blueprints-es/observability-architecture-flow.md)
 - [Análisis CAP](./reference/architecture/blueprints-es/cap-strategic-analysis.md)
 - [Escenarios Multi-Cloud](./reference/architecture/blueprints-es/multi-cloud-deployment-scenarios.md)
 
@@ -78,6 +80,8 @@ Referencias clave:
 | AI-Augmented Engineering | [reference/governance/standards-es/ai-augmented](./reference/governance/standards-es/ai-augmented/README.md) |
 | SDLC | [reference/governance/sdlc-es](./reference/governance/sdlc-es/README.md) |
 | Estándares de Documentación | [reference/governance/sdlc-es/03-documentation](./reference/governance/sdlc-es/03-documentation/README.es.md) |
+| **Estrategia de Comunicación Arquitectónica** | [reference/governance/standards/communication](./reference/governance/standards/communication/architecture-communication-strategy.es.md) |
+| **Backlog Visual de Arquitectura** | [reference/governance/standards/communication/visuals](./reference/governance/standards/communication/visuals/README.md) |
 
 Referencias clave:
 
@@ -86,6 +90,8 @@ Referencias clave:
 - [Product Quick Start](./reference/governance/standards-es/onboarding/product-quick-start.md)
 - [Estándar de Escritura de Functional Stories](./reference/governance/sdlc-es/03-documentation/functional-story-writing-standard.md)
 - [Buenas Prácticas de Documentación SDLC](./reference/governance/sdlc-es/03-documentation/sdlc-documentation-best-practices.md)
+- [Estrategia de Comunicación Arquitectónica](./reference/governance/standards/communication/architecture-communication-strategy.es.md)
+- [Backlog Visual de Arquitectura (8 diagramas Mermaid)](./reference/governance/standards/communication/visuals/README.md)
 
 ---
 

@@ -60,6 +60,8 @@ Este repositorio puede usar BMAD-METHOD como método de soporte spec-driven AI-D
 | Aclarar la terminología del proyecto | [Glosario Arquitectónico](./reference/governance/glossary.es.md) |
 | Inspeccionar la referencia ejecutable de producto | [Modelo Aplicado UMS](./reference/knowledge/demo/README.es.md) |
 | Entender cómo deben operar aquí los agentes de IA | [AGENTS.es.md](./AGENTS.es.md) |
+| **Explicar el estándar a cualquier audiencia** | **[Estrategia de Comunicación Arquitectónica](./reference/governance/standards/communication/architecture-communication-strategy.es.md)** |
+| **Explorar los diagramas visuales de arquitectura** | **[Backlog Visual de Arquitectura](./reference/governance/standards/communication/visuals/README.md)** |
 
 ---
 

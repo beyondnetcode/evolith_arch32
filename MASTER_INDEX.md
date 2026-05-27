@@ -21,6 +21,7 @@ This is the complete navigation index for **Evolith** — the enterprise progres
 | Explore the applied product reference | [UMS Reference Hub](./reference/knowledge/demo/README.md) | [UMS Architecture Portal](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) |
 | Separate policy from implementation evidence | [Canonical Reference vs UMS Applied Model](./reference/knowledge/demo/demo-vs-reference.md) | [Repository Taxonomy](./reference/governance/standards/repository-taxonomy.md) |
 | Operate or deploy locally | [Operations Hub](./reference/operations/README.md) | [Infrastructure Hub](./reference/infrastructure/README.md) |
+| Explain the standard to a new audience | [Architecture Communication Strategy](./reference/governance/standards/communication/architecture-communication-strategy.md) | [Visual Architecture Backlog](./reference/governance/standards/communication/visuals/README.md) |
 
 ---
 
@@ -61,6 +62,7 @@ Key architecture references:
 - [Reference Blueprint](./reference/architecture/blueprints/reference-blueprint.md)
 - [Authoritative Tech Stack Index](./reference/architecture/blueprints/authoritative-tech-stack.md)
 - [C4 Topology Spec](./reference/architecture/blueprints/c4-topology-spec.md)
+- [Observability Architecture Flow](./reference/architecture/blueprints/observability-architecture-flow.md)
 - [CAP Strategic Analysis](./reference/architecture/blueprints/cap-strategic-analysis.md)
 - [Multi-Cloud Deployment Scenarios](./reference/architecture/blueprints/multi-cloud-deployment-scenarios.md)
 
@@ -79,6 +81,8 @@ Key architecture references:
 | AI-DD Frameworks (BMAD adoption) | [reference/governance/standards/ai-augmented/frameworks](./reference/governance/standards/ai-augmented/frameworks/README.md) |
 | SDLC | [reference/governance/sdlc](./reference/governance/sdlc/README.md) |
 | Documentation Standards | [reference/governance/sdlc/03-documentation](./reference/governance/sdlc/03-documentation/README.md) |
+| **Architecture Communication Strategy** | [reference/governance/standards/communication](./reference/governance/standards/communication/architecture-communication-strategy.md) |
+| **Visual Architecture Backlog** | [reference/governance/standards/communication/visuals](./reference/governance/standards/communication/visuals/README.md) |
 
 Key governance references:
 
@@ -87,6 +91,8 @@ Key governance references:
 - [Product Quick Start](./reference/governance/standards/onboarding/product-quick-start.md)
 - [Functional Story Writing Standard](./reference/governance/sdlc/03-documentation/functional-story-writing-standard.md)
 - [SDLC Documentation Best Practices](./reference/governance/sdlc/03-documentation/sdlc-documentation-best-practices.md)
+- [Architecture Communication Strategy](./reference/governance/standards/communication/architecture-communication-strategy.md)
+- [Visual Architecture Backlog (8 Mermaid diagrams)](./reference/governance/standards/communication/visuals/README.md)
 
 ---
 

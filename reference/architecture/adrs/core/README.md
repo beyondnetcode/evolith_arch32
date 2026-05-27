@@ -40,6 +40,8 @@
 * [0054-database-design-normalization-standards](./0054-database-design-normalization-standards.md)
 * [0055-microfrontends-architecture-strategy](./0055-microfrontends-architecture-strategy.md)
 * [0056-enterprise-naming-design-conventions](./0056-enterprise-naming-design-conventions.md) — **Multi-language, multi-platform naming & design standard**
+* [0057-architecture-intelligence-catalog](./0057-architecture-intelligence-catalog.md)
+* [0058-ai-consumable-architecture-knowledge](./0058-ai-consumable-architecture-knowledge.md)
 
 ---
 [Back to Upper Level](../README.md)

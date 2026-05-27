@@ -13,14 +13,14 @@ Esta carpeta contiene los 8 artefactos visuales que hacen que el estándar de ar
 
 | # | Visual | Audiencia principal | Pregunta que responde |
 |---|---|---|---|
-| [V-01](./v01-executive-one-pager.md) | **Executive One-Pager** | Ejecutivo / Sponsor | ¿Qué es Evolith? ¿Por qué lo necesitamos? ¿Qué es UMS? |
-| [V-02](./v02-progressive-journey.md) | **Diagrama de Viaje Progresivo** | Todos los equipos | ¿Cuáles son las 4 etapas y qué dispara cada transición? |
-| [V-03](./v03-capability-map.md) | **Mapa de Capacidades** | Arquitectos, PMs | ¿Qué ofrece la plataforma Evolith? |
-| [V-04](./v04-adr-decision-tree.md) | **Árbol de Decisión ADR** | Arquitectos, Devs | ¿Qué ADR responde mi pregunta específica? |
-| [V-05](./v05-onboarding-journey-map.md) | **Mapa de Journey de Onboarding** | Tech Leads, RRHH | ¿Qué lee cada rol, cuándo y en qué orden? |
-| [V-06](./v06-governance-flow.md) | **Flujo de Gobernanza** | Architecture Board | ¿Cómo se escribe, revisa, aprueba y promueve un ADR? |
-| [V-07](./v07-traceability-visual.md) | **Visual de Trazabilidad** | Tech Leads, QA | ¿Cómo traza cada requerimiento UMS hacia un ADR Evolith? |
-| [V-08](./v08-infrastructure-topology.md) | **Topología de Infraestructura** | DevOps, SRE | ¿Cómo se ve la topología de despliegue completa? |
+| [V-01](./v01-executive-one-pager.es.md) | **Resumen Ejecutivo** | Ejecutivo / Sponsor | ¿Qué es Evolith? ¿Por qué lo necesitamos? ¿Qué es UMS? |
+| [V-02](./v02-progressive-journey.es.md) | **Diagrama de Viaje Progresivo** | Todos los equipos | ¿Cuáles son las 4 etapas y qué dispara cada transición? |
+| [V-03](./v03-capability-map.es.md) | **Mapa de Capacidades** | Arquitectos, PMs | ¿Qué ofrece la plataforma Evolith? |
+| [V-04](./v04-adr-decision-tree.es.md) | **Árbol de Decisión ADR** | Arquitectos, Devs | ¿Qué ADR responde mi pregunta específica? |
+| [V-05](./v05-onboarding-journey-map.es.md) | **Mapa de Journey de Onboarding** | Tech Leads, RRHH | ¿Qué lee cada rol, cuándo y en qué orden? |
+| [V-06](./v06-governance-flow.es.md) | **Flujo de Gobernanza** | Architecture Board | ¿Cómo se escribe, revisa, aprueba y promueve un ADR? |
+| [V-07](./v07-traceability-visual.es.md) | **Visual de Trazabilidad** | Tech Leads, QA | ¿Cómo traza cada requerimiento UMS hacia un ADR Evolith? |
+| [V-08](./v08-infrastructure-topology.es.md) | **Topología de Infraestructura** | DevOps, SRE | ¿Cómo se ve la topología de despliegue completa? |
 
 ---
 

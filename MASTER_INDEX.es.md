@@ -21,7 +21,7 @@ Este es el índice completo de navegación de **Evolith** — la plataforma empr
 | Explorar la referencia aplicada de producto | [Hub de Referencia UMS](./reference/knowledge/demo/README.es.md) | [Portal de Arquitectura UMS](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) |
 | Separar políticas de evidencia de implementación | [Referencia Canónica vs Modelo Aplicado UMS](./reference/knowledge/demo/demo-vs-reference.es.md) | [Taxonomía del Repositorio](./reference/governance/standards-es/repository-taxonomy.es.md) |
 | Operar o desplegar localmente | [Hub de Operaciones](./reference/operations/README.es.md) | [Hub de Infraestructura](./reference/infrastructure/README.es.md) |
-| Explicar el estándar a una nueva audiencia | [Estrategia de Comunicación Arquitectónica](./reference/governance/standards/communication/architecture-communication-strategy.es.md) | [Backlog Visual de Arquitectura](./reference/governance/standards/communication/visuals/README.md) |
+| Explicar el estándar a una nueva audiencia | [Estrategia de Comunicación Arquitectónica](./reference/governance/standards/communication/architecture-communication-strategy.es.md) | [Backlog Visual de Arquitectura](./reference/governance/standards/communication/visuals/README.es.md) |
 
 ---
 
@@ -82,7 +82,7 @@ Referencias clave:
 | SDLC | [reference/governance/sdlc-es](./reference/governance/sdlc-es/README.md) |
 | Estándares de Documentación | [reference/governance/sdlc-es/03-documentation](./reference/governance/sdlc-es/03-documentation/README.es.md) |
 | **Estrategia de Comunicación Arquitectónica** | [reference/governance/standards/communication](./reference/governance/standards/communication/architecture-communication-strategy.es.md) |
-| **Backlog Visual de Arquitectura** | [reference/governance/standards/communication/visuals](./reference/governance/standards/communication/visuals/README.md) |
+| **Backlog Visual de Arquitectura** | [reference/governance/standards/communication/visuals](./reference/governance/standards/communication/visuals/README.es.md) |
 
 Referencias clave:
 
@@ -92,7 +92,7 @@ Referencias clave:
 - [Estándar de Escritura de Functional Stories](./reference/governance/sdlc-es/03-documentation/functional-story-writing-standard.md)
 - [Buenas Prácticas de Documentación SDLC](./reference/governance/sdlc-es/03-documentation/sdlc-documentation-best-practices.md)
 - [Estrategia de Comunicación Arquitectónica](./reference/governance/standards/communication/architecture-communication-strategy.es.md)
-- [Backlog Visual de Arquitectura (8 diagramas Mermaid)](./reference/governance/standards/communication/visuals/README.md)
+- [Backlog Visual de Arquitectura (8 diagramas Mermaid)](./reference/governance/standards/communication/visuals/README.es.md)
 
 ---
 

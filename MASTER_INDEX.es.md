@@ -101,6 +101,7 @@ Referencias clave:
 | Área | Entrada |
 |---|---|
 | Hub de Referencia Aplicada UMS | [reference/knowledge/demo](./reference/knowledge/demo/README.es.md) |
+| **Visión Técnica de UMS** | [reference/knowledge/demo/ums-technical-overview](./reference/knowledge/demo/ums-technical-overview.es.md) |
 | Modelo de Referencia UMS | [reference/knowledge/demo/ums-reference-model](./reference/knowledge/demo/ums-reference-model.es.md) |
 | Límite Referencia vs Modelo Aplicado | [reference/knowledge/demo/demo-vs-reference](./reference/knowledge/demo/demo-vs-reference.es.md) |
 | Registro de Migración | [reference/knowledge/demo/migration-from-todo-to-ums](./reference/knowledge/demo/migration-from-todo-to-ums.es.md) |

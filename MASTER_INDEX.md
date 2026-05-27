@@ -102,6 +102,7 @@ Key governance references:
 | Area | Entry point |
 |---|---|
 | UMS Applied Reference Hub | [reference/knowledge/demo](./reference/knowledge/demo/README.md) |
+| **UMS Technical Overview** | [reference/knowledge/demo/ums-technical-overview](./reference/knowledge/demo/ums-technical-overview.md) |
 | UMS Reference Model | [reference/knowledge/demo/ums-reference-model](./reference/knowledge/demo/ums-reference-model.md) |
 | Reference vs Applied Model Boundary | [reference/knowledge/demo/demo-vs-reference](./reference/knowledge/demo/demo-vs-reference.md) |
 | Migration Record | [reference/knowledge/demo/migration-from-todo-to-ums](./reference/knowledge/demo/migration-from-todo-to-ums.md) |

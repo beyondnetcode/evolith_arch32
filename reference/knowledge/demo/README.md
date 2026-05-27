@@ -44,6 +44,7 @@ Explore the complete migration record and boundary definitions directly within t
 
 | Resource | Scope & Purpose |
 | :--- | :--- |
+| **[UMS Technical Overview](./ums-technical-overview.md)** | **What UMS is, its 8 bounded contexts, tech stack, key patterns, and deep links by role.** |
 | [UMS Reference Model](./ums-reference-model.md) | In-depth analysis of UMS inheritance, specialization, and core concepts. |
 | [Reference vs Applied Model](./demo-vs-reference.md) | Understanding the critical boundary between universal policy and product specialization. |
 | [Migration Ledger](./migration-from-todo-to-ums.md) | Full historical log of retired TO-DO files and migration steps executed. |

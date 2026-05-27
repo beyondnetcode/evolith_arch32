@@ -44,6 +44,7 @@ Explora el registro completo de migración y las fronteras de diseño dentro de 
 
 | Recurso | Alcance y Propósito |
 | :--- | :--- |
+| **[Visión Técnica de UMS](./ums-technical-overview.es.md)** | **Qué es UMS, sus 8 bounded contexts, stack técnico, patrones implementados y deep links por rol.** |
 | [Modelo de Referencia UMS](./ums-reference-model.es.md) | Análisis detallado de la herencia, especialización y conceptos clave de UMS. |
 | [Referencia vs Modelo Aplicado](./demo-vs-reference.es.md) | Comprensión de la frontera crítica entre políticas universales corporativas y especialización de productos. |
 | [Libro de Registro de Migración](./migration-from-todo-to-ums.es.md) | Bitácora histórica completa de los archivos To-Do retirados y pasos ejecutados. |

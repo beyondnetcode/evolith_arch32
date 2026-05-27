@@ -1,5 +1,6 @@
 # AI Architecture Assistant — Visual Diagrams
 
+> **Bilingual navigation:** [Español](./README.es.md)  
 > **Parent:** [AI Architecture Assistant](../README.md)
 
 | # | Visual | Purpose |

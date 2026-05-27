@@ -78,6 +78,7 @@ Referencias clave:
 | Ingeniería | [reference/governance/standards-es/engineering](./reference/governance/standards-es/engineering/README.es.md) |
 | Onboarding | [reference/governance/standards-es/onboarding](./reference/governance/standards-es/onboarding/README.es.md) |
 | AI-Augmented Engineering | [reference/governance/standards-es/ai-augmented](./reference/governance/standards-es/ai-augmented/README.md) |
+| **Asistente AI de Arquitectura** | [reference/governance/standards/ai-augmented/08-architecture-ai-assistant](./reference/governance/standards/ai-augmented/08-architecture-ai-assistant/README.md) |
 | SDLC | [reference/governance/sdlc-es](./reference/governance/sdlc-es/README.md) |
 | Estándares de Documentación | [reference/governance/sdlc-es/03-documentation](./reference/governance/sdlc-es/03-documentation/README.es.md) |
 | **Estrategia de Comunicación Arquitectónica** | [reference/governance/standards/communication](./reference/governance/standards/communication/architecture-communication-strategy.es.md) |

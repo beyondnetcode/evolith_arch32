@@ -28,6 +28,7 @@ Designed for product teams and engineers who wish to integrate AI agents in a co
 | [05 - Agentic Patterns](./05-agentic-patterns/patterns-overview.md) | Design patterns catalog for single agent, multi-agent, and dynamic planning. |
 | [06 - AI ADRs](./06-adrs/README.md) | Record of Architectural Decisions specific to the agentic ecosystem. |
 | [07 - Maturity Model](./07-maturity-model/ai-maturity-matrix.md) | Agentic maturity evaluation matrix across 5 operational dimensions. |
+| **[08 - AI Architecture Assistant](./08-architecture-ai-assistant/README.md)** | **Strategy to transform Evolith knowledge into the enterprise Principal Architect AI — RAG ingestion, agent ecosystem, Harness evaluation, guardrails, roadmap.** |
 
 ---
 

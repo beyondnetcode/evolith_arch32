@@ -38,7 +38,7 @@ This is the complete navigation index for **Evolith** — the enterprise progres
 | **DevOps / SRE** | [Infrastructure Hub](./reference/infrastructure/README.md) -> [Operations Hub](./reference/operations/README.md) -> [UMS Architecture Portal](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) |
 | **QA / SDET** | [Testing Pyramid ADR](./reference/architecture/adrs/core/0018-testing-pyramid-quality-gates.md) -> [Contract Testing Guideline](./reference/governance/standards/engineering/contract-testing-guideline.md) -> [Integration and E2E Testing ADR](./reference/architecture/adrs/core/0053-integration-e2e-testing-strategy.md) |
 | **Security Engineer** | [Vendor Risk Assessment](./reference/governance/standards/engineering/vendor-risk-assessment.md) -> [Multi-Tenancy ADR](./reference/architecture/adrs/core/0010-multi-tenancy-architecture-strategy.md) -> [Immutable Audit Trail ADR](./reference/architecture/adrs/core/0016-immutable-business-audit-trail.md) |
-| **AI Contributor** | [AI-Augmented Standards](./reference/governance/standards/ai-augmented/README.md) -> [BMAD Adoption Reference](./reference/governance/standards/ai-augmented/frameworks/bmad-method/README.md) -> [Agents Catalog](./reference/governance/standards/ai-augmented/frameworks/bmad-method/agents-catalog.md) -> [Harness Rules](./.harness/rules/global-rules.md) |
+| **AI Contributor** | [AI-Augmented Standards](./reference/governance/standards/ai-augmented/README.md) -> [AI Architecture Assistant](./reference/governance/standards/ai-augmented/08-architecture-ai-assistant/README.md) -> [BMAD Adoption Reference](./reference/governance/standards/ai-augmented/frameworks/bmad-method/README.md) -> [Harness Rules](./.harness/rules/global-rules.md) |
 | **New Joiner** | [Product Quick Start](./reference/governance/standards/onboarding/product-quick-start.md) -> [Repository Taxonomy](./reference/governance/standards/repository-taxonomy.md) -> [README Portal](./README.md) |
 
 ---
@@ -79,6 +79,7 @@ Key architecture references:
 | Onboarding | [reference/governance/standards/onboarding](./reference/governance/standards/onboarding/README.md) |
 | AI-Augmented Engineering | [reference/governance/standards/ai-augmented](./reference/governance/standards/ai-augmented/README.md) |
 | AI-DD Frameworks (BMAD adoption) | [reference/governance/standards/ai-augmented/frameworks](./reference/governance/standards/ai-augmented/frameworks/README.md) |
+| **AI Architecture Assistant** | [reference/governance/standards/ai-augmented/08-architecture-ai-assistant](./reference/governance/standards/ai-augmented/08-architecture-ai-assistant/README.md) |
 | SDLC | [reference/governance/sdlc](./reference/governance/sdlc/README.md) |
 | Documentation Standards | [reference/governance/sdlc/03-documentation](./reference/governance/sdlc/03-documentation/README.md) |
 | **Architecture Communication Strategy** | [reference/governance/standards/communication](./reference/governance/standards/communication/architecture-communication-strategy.md) |

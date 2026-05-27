@@ -52,6 +52,7 @@ Decisions applicable to any product built on top of the framework, regardless of
 * [ADR 0054: Database Design & Normalization Standards](./core/0054-database-design-normalization-standards.md)
 * [ADR 0055: Microfrontends Architecture Strategy](./core/0055-microfrontends-architecture-strategy.md)
 * **[ADR 0056: Enterprise Naming & Design Conventions — Multi-Language, Multi-Platform](./core/0056-enterprise-naming-design-conventions.md)**
+* [ADR 0067: Modular Monolith Database Boundary — Schema per Domain](./core/0067-modular-monolith-schema-per-domain.md)
 
 ---
 

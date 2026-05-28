@@ -37,6 +37,7 @@ This repository may use BMAD-METHOD as a supporting spec-driven AI-DD method. It
 
 - [What Is This Repository For?](#what-is-this-repository-for)
 - [Start Here](#start-here)
+- [Quick Access by Stack](#quick-access-by-stack)
 - [Prerequisites](#prerequisites)
 - [The Architecture Journey](#the-architecture-journey)
 - [Repository Map](#repository-map)
@@ -51,6 +52,7 @@ This repository may use BMAD-METHOD as a supporting spec-driven AI-DD method. It
 
 | If you want to... | Go to |
 |---|---|
+| Find Web, React, C# or .NET standards quickly | **[Quick Access — Reference Standards by Stack](./reference/quick-access/README.md)** |
 | Understand the whole repository | [Global Master Index](./MASTER_INDEX.md) |
 | **Start a new product from this base** | **[Child Repository Inheritance Guide](./reference/governance/standards/onboarding/child-repository-inheritance-guide.md)** |
 | Choose a reading path for your role | [Getting Started by Role](./reference/getting-started/README.md) |
@@ -62,6 +64,17 @@ This repository may use BMAD-METHOD as a supporting spec-driven AI-DD method. It
 | Understand how AI agents must operate here | [AGENTS.md](./AGENTS.md) |
 | **Explain the standard to any audience** | **[Architecture Communication Strategy](./reference/governance/standards/communication/architecture-communication-strategy.md)** |
 | **Browse visual architecture diagrams** | **[Visual Architecture Backlog](./reference/governance/standards/communication/visuals/README.md)** |
+
+---
+
+## Quick Access by Stack
+
+| Stack need | Direct path |
+|---|---|
+| Web / React frontend standard | [React Web Frontend Standard](./reference/governance/standards/engineering/web-frontend/react/react-web-frontend-standard.md) |
+| C# / .NET backend or workers | [.NET & C# Tech Stack Profile](./reference/architecture/blueprints/authoritative-tech-stack-dotnet.md) |
+| Runtime-agnostic baseline | [Agnostic Architecture Baseline](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.md) |
+| All stack paths in one page | [Quick Access — Reference Standards by Stack](./reference/quick-access/README.md) |
 
 ---
 
@@ -103,12 +116,13 @@ For role-based navigation, use the [Global Master Index](./MASTER_INDEX.md).
 
 ## Recommended First Reads
 
-1. [Getting Started by Role](./reference/getting-started/README.md)
-2. [Architectural Directives](./reference/governance/standards/vision/architectural-directives.md)
-3. [Reference Blueprint](./reference/architecture/blueprints/reference-blueprint.md)
-4. [Agnostic Architecture Baseline](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.md)
-5. [ADR Matrix](./reference/architecture/adrs/adr-matrix.md)
-6. [Canonical Reference vs UMS Applied Model](./reference/knowledge/demo/demo-vs-reference.md)
+1. [Quick Access — Reference Standards by Stack](./reference/quick-access/README.md)
+2. [Getting Started by Role](./reference/getting-started/README.md)
+3. [Architectural Directives](./reference/governance/standards/vision/architectural-directives.md)
+4. [Reference Blueprint](./reference/architecture/blueprints/reference-blueprint.md)
+5. [Agnostic Architecture Baseline](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.md)
+6. [ADR Matrix](./reference/architecture/adrs/adr-matrix.md)
+7. [Canonical Reference vs UMS Applied Model](./reference/knowledge/demo/demo-vs-reference.md)
 
 ---
 

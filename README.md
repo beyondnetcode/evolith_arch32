@@ -72,7 +72,8 @@ This repository may use BMAD-METHOD as a supporting spec-driven AI-DD method. It
 | Stack need | Direct path |
 |---|---|
 | Web / React frontend standard | [React Web Frontend Standard](./reference/governance/standards/engineering/web-frontend/react/react-web-frontend-standard.md) |
-| C# / .NET backend or workers | [.NET & C# Tech Stack Profile](./reference/architecture/blueprints/authoritative-tech-stack-dotnet.md) |
+| C# / .NET API standard | [.NET API Standard](./reference/governance/standards/engineering/api-dotnet/api-dotnet-standard.md) |
+| C# / .NET runtime profile | [.NET & C# Tech Stack Profile](./reference/architecture/blueprints/authoritative-tech-stack-dotnet.md) |
 | Runtime-agnostic baseline | [Agnostic Architecture Baseline](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.md) |
 | All stack paths in one page | [Quick Access — Reference Standards by Stack](./reference/quick-access/README.md) |
 

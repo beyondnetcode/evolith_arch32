@@ -8,6 +8,8 @@ This repository defines the architectural baseline, governance standards, harnes
 - Applied product reference: `https://github.com/beyondnetcode/ums`
 - UMS setup and run commands: follow the current UMS `README.md`; this repository does not duplicate them.
 - Markdown encoding sanitation: `python ./.bmad-core/scripts/cleanup_markdown_encoding.py`
+- Documentation validation: `node .harness/scripts/validate-docs.mjs`
+- Diagram render validation when Mermaid changed: `node .harness/scripts/validate-docs.mjs --render-mermaid`
 
 ## Architecture
 - Repository role: corporate progressive architecture reference, not a single-product codebase
@@ -27,6 +29,8 @@ This repository defines the architectural baseline, governance standards, harnes
 - Keep standards runtime-agnostic unless the guidance clearly belongs in a runtime-specific profile.
 - Functional stories must remain business-readable and isolate technical detail in `Technical Requirements`.
 - Prefer explicit bounded-context ownership, contract boundaries, and extraction readiness over premature distribution.
+- Use relative repository links for internal Markdown references.
+- Keep Markdown anchors stable when renaming headings; update all inbound links in the same change.
 
 ## Agent Rules
 - Read `./.harness/rules/global-rules.md` before responding or editing.
@@ -34,10 +38,20 @@ This repository defines the architectural baseline, governance standards, harnes
 - When stack guidance changes materially, update the affected standards, `AGENTS.md`, and runtime-specific authoritative profiles together.
 - Multi-tenancy standards must preserve two layers: application-layer filtering as primary, database-native enforcement as secondary failsafe.
 - Do not convert a corporate standard into a product-specific document unless the repository area is explicitly product-scoped.
-- Mandatory Link Verification: You MUST verify all internal links and anchors before completing any documentation task.
-- Bilingual Consistency: Any update to an English document MUST have a corresponding update to its Spanish counterpart, ensuring parity in links and indices.
-- Diagram Validation: Any modified Mermaid or PlantUML block MUST be reviewed for syntax correctness.
-- Fail Fast on Docs: If unresolved links, missing references, or invalid diagrams are found, you MUST fail the task and report the anomalies rather than assuming completion.
+- Mandatory Link Verification: verify all internal links and anchors before completing any documentation task.
+- Bilingual Consistency: any update to an English document must have a corresponding Spanish counterpart or an explicit documented exception.
+- Diagram Validation: any modified Mermaid block must pass syntax validation; use render validation for material diagram changes.
+- Agent Update Quality: any agent persona update must declare scope, inputs, outputs, constraints, handoff, validation checklist, and audit output format.
+- Rule Coverage: when adding or changing validation rules, update the reference rule, the global rules table, and the validation script behavior together.
+- Fail Fast on Docs: if unresolved links, missing references, invalid anchors, invalid diagrams, or language-pair gaps are found, fail the task and report the anomalies rather than assuming completion.
+
+## Documentation Quality Gates
+- Internal relative links must resolve from the file location where they appear.
+- Markdown anchors must exist in the referenced Markdown target.
+- Mermaid blocks must use supported declarations and stable node IDs for edges.
+- Bilingual navigation must not remain as a dead placeholder in finished documents.
+- UTF-8 output must not include BOM markers, replacement characters, mojibake, or emoji-range symbols.
+- CRLF line endings are not allowed in Markdown documentation.
 
 ## Out of Bounds
 - Do not weaken or remove bilingual governance requirements.

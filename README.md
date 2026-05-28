@@ -14,10 +14,18 @@ Language: [English](./README.md) | [Español](./README.es.md)
 
 ---
 
+## Fastest Entry Point
+
+> **Read this first:** [Architecture Communication & Adoption Strategy](./reference/governance/standards/communication/architecture-communication-strategy.md)  
+> The quickest way to understand Evolith, UMS, repository responsibilities, audience layers, and the adoption path.
+
+---
+
 ## Start Here
 
 | Need | Go to |
 |---|---|
+| Understand Evolith quickly | [Architecture Communication & Adoption Strategy](./reference/governance/standards/communication/architecture-communication-strategy.md) |
 | New to Evolith | [Getting Started by Role](./reference/getting-started/README.md) |
 | Find React, Web, C# or .NET standards | [Quick Access by Stack](./reference/quick-access/README.md) |
 | Understand the architecture model | [Architecture Hub](./reference/architecture/README.md) |
@@ -49,6 +57,7 @@ Language: [English](./README.md) | [Español](./README.es.md)
 
 | Standard or profile | Direct link | Use for |
 |---|---|---|
+| Architecture Communication & Adoption Strategy | [Open](./reference/governance/standards/communication/architecture-communication-strategy.md) | Fastest explanation of Evolith, UMS, repository roles, audience layers, and adoption path |
 | React Web Frontend Standard | [Open](./reference/governance/standards/engineering/web-frontend/react/react-web-frontend-standard.md) | React architecture, boilerplate, UI tokens, data access, testing, accessibility |
 | .NET API Standard | [Open](./reference/governance/standards/engineering/api-dotnet/api-dotnet-standard.md) | ASP.NET Core APIs, host bootstrap, REST/GraphQL surface, persistence, quality gates |
 | .NET & C# Tech Stack Profile | [Open](./reference/architecture/blueprints/authoritative-tech-stack-dotnet.md) | Runtime choices, libraries, platform profile |
@@ -86,12 +95,13 @@ UMS is the official executable reference model. Use it to see Evolith ideas appl
 
 ## Recommended First Reads
 
-1. [Getting Started by Role](./reference/getting-started/README.md)
-2. [Quick Access by Stack](./reference/quick-access/README.md)
-3. [Architecture Hub](./reference/architecture/README.md)
-4. [ADR Registry](./reference/architecture/adrs/README.md)
-5. [Governance Standards](./reference/governance/standards/README.md)
-6. [UMS Applied Reference](./reference/knowledge/demo/README.md)
+1. [Architecture Communication & Adoption Strategy](./reference/governance/standards/communication/architecture-communication-strategy.md)
+2. [Getting Started by Role](./reference/getting-started/README.md)
+3. [Quick Access by Stack](./reference/quick-access/README.md)
+4. [Architecture Hub](./reference/architecture/README.md)
+5. [ADR Registry](./reference/architecture/adrs/README.md)
+6. [Governance Standards](./reference/governance/standards/README.md)
+7. [UMS Applied Reference](./reference/knowledge/demo/README.md)
 
 ---
 

@@ -1,4 +1,18 @@
-# Index of engineering
+# Engineering Standards Index
+
+Use this index for engineering standards. If you are looking for the fastest route to Web, React, C#/.NET, or runtime-specific standards, start with the quick-access page first.
+
+## Fast Navigation
+
+| Need | Go to |
+| :--- | :--- |
+| Web, React, C#/.NET, Node.js, or runtime standards | [Quick Access — Reference Standards by Stack](../../../quick-access/README.md) |
+| React web frontend standard | [web-frontend/react](./web-frontend/react/README.md) |
+| C# / .NET engineering standards | [api-dotnet](./api-dotnet/README.md) |
+| C# / .NET runtime profile | [.NET & C# Tech Stack Profile](../../../architecture/blueprints/authoritative-tech-stack-dotnet.md) |
+| Runtime-agnostic baseline | [Agnostic Architecture Baseline](../../../architecture/blueprints/authoritative-tech-stack-agnostic.md) |
+
+## Documents
 
 * [api-dotnet](./api-dotnet/README.md)
 * [contract-testing-guideline](./contract-testing-guideline.md)

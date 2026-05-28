@@ -5,7 +5,7 @@
 >
 > **Official BMAD-METHOD source:** [github.com/bmad-code-org/BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD)
 >
-> **Bilingual Navigation:** Versión en Español — pendiente
+> **Bilingual Navigation:** [Version en Espanol](./README.es.md)
 
 ---
 
@@ -59,7 +59,7 @@ The following elements are **not part of BMAD-METHOD** — they were built by th
 | 18 harness rules (R-01–R-18) | `.harness/rules/global-rules.md` | Document quality, diagram standards, architecture governance |
 | 4 harness governance agents | `.harness/agents/agent-specs.md` | On-demand review: @po, @architect, @analyst, @devops |
 | 4 governance playbooks | `.harness/playbooks/` | Recurring operational checklists |
-| `validate-docs.mjs` script | `.harness/scripts/` | Automated UTF-8, link, and Mermaid validation |
+| `validate-docs.mjs` script | `.harness/scripts/` | Automated UTF-8, link, anchor, bilingual, and Mermaid validation |
 | Architecture-specific constraints | Agent personas | Hexagonal boundaries, RLS, modular extraction, ADR traceability |
 
 ---

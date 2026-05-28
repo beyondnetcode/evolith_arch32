@@ -1,6 +1,6 @@
 # AI-DD Frameworks — Adoption Reference
 
-> **Bilingual Navigation:** Versión en Español — pendiente
+> **Bilingual Navigation:** [Version en Espanol](./README.es.md)
 
 This section documents how this repository adopts and configures external AI-driven development frameworks. It is **not** a replacement or mirror of any framework's official documentation. Each entry describes the local implementation decisions, adaptations, and extensions made on top of the upstream framework.
 
@@ -19,6 +19,20 @@ For the authoritative source of each framework, always refer to its official ups
 | Framework | Official Source | What Is Documented Here |
 | :--- | :--- | :--- |
 | [BMAD-METHOD](./bmad-method/README.md) | [github.com/bmad-code-org/BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD) | How this repo adopted BMAD, what was extended, and the local harness rules layer built on top |
+
+---
+
+## Quality Gates for This Section
+
+Every framework adoption document must satisfy these gates before merge:
+
+| Gate | Requirement |
+| :--- | :--- |
+| Links | Relative links and Markdown anchors resolve from the actual file location |
+| Diagrams | Mermaid fences are syntactically valid and renderable when `--render-mermaid` is used |
+| Languages | English and Spanish variants exist when bilingual navigation is declared |
+| Agent rules | Local additions are separated from upstream framework behavior |
+| Validation | `node .harness/scripts/validate-docs.mjs` passes without warnings treated as success |
 
 ---
 

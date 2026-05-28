@@ -1,97 +1,43 @@
 # Architecture Intelligence
 
-> Curated architectural knowledge, tradeoff analysis, external references, and AI-consumable enterprise patterns.
+> Bilingual navigation: [Espanol](./README.es.md)
 
-## Purpose
+Architecture Intelligence is the curated knowledge layer that makes Evolith architecture decisions, patterns, validation rules, and adoption guidance easier for humans and AI-assisted engineering tools to consume.
 
-This section extends Evolith with curated architectural intelligence extracted from:
+This portal is an index and orientation page. It does not replace ADRs, governance standards, canonical patterns, or product applied references.
 
-- repositories
-- books
-- talks
-- conference sessions
-- videos
-- production lessons
-- applied enterprise patterns
+## Start here
 
-The goal is not to copy external ideas directly.
+| Need | Go to |
+|---|---|
+| Understand why this catalog exists | [ADR-0057 Architecture Intelligence Catalog](../../architecture/adrs/core/0057-architecture-intelligence-catalog.md) |
+| Understand AI-consumable architecture knowledge | [ADR-0058 AI-Consumable Architecture Knowledge](../../architecture/adrs/core/0058-ai-consumable-architecture-knowledge.md) |
+| Validate Architecture Intelligence artifacts | [Architecture Intelligence Validation](./validation/architecture-intelligence-validation.md) |
+| Review curated architecture patterns | [Patterns](./patterns/) |
 
-The goal is to:
-- analyze
-- contextualize
-- govern
-- classify
-- and adapt architectural knowledge into Evolith standards.
+## Current pattern examples
 
-## Objectives
+| Pattern | Purpose |
+|---|---|
+| [Bounded Context Isolation](./patterns/bounded-context-isolation.md) | Keep modular boundaries explicit across code and data ownership. |
+| [Data Ownership per Bounded Context](./patterns/data-ownership-per-bounded-context.md) | Clarify ownership rules for data inside bounded contexts. |
+| [No Cross-Domain Joins](./patterns/no-cross-domain-joins.md) | Avoid persistence coupling across modular boundaries. |
 
-- Create AI-consumable architectural knowledge.
-- Build a governed pattern catalog.
-- Explain tradeoffs and architectural reasoning.
-- Support architects, developers, QA, DevOps, and AI agents.
-- Improve architectural consistency across products.
+## What belongs here
 
-## Core Principles
+| Belongs here | Does not belong here |
+|---|---|
+| Curated architecture patterns | Product-specific implementation evidence |
+| Tradeoff analysis | Local product route, schema, header or seed decisions |
+| AI-readable architecture guidance | Unapproved enterprise standards |
+| Links back to ADRs and standards | Copies of external material without governance review |
 
-- No raw pattern adoption.
-- Every external pattern must include tradeoff analysis.
-- Every recommendation must be contextual.
-- Evolith remains technology-agnostic at strategic level.
-- Product implementations belong to satellite repositories such as UMS.
+## Governance rule
 
-## Planned Areas
+Architecture Intelligence artifacts help explain and reuse architecture knowledge. They are not standards by themselves unless they point to an approved ADR, governance standard, or canonical pattern.
 
-```text
-Architecture-Intelligence
-│
-├── Patterns
-├── References
-├── Tradeoffs
-├── Applied-Decisions
-├── AI
-└── Maps
-```
-
-## Initial Topics
-
-- Bounded Context Isolation
-- No Cross-Domain Joins
-- Modular Monolith
-- Contract First
-- AI-Assisted Engineering
-- Enterprise Architecture Governance
-- AI Knowledge Consumption
-- Architecture Radar
-
-## AI Vision
-
-This section is designed to become consumable by:
-
-- Claude
-- Codex
-- Copilot
-- Cursor
-- Harness Agents
-- Enterprise RAG systems
-
-## Relationship with Evolith
-
-This area does not replace ADRs or canonical standards.
-
-Instead, it provides:
-- architectural reasoning
-- external references
-- tradeoff analysis
-- curated patterns
-- adoption guidance
-- architecture intelligence
-
-All promoted decisions must continue flowing through:
-- ADRs
-- standards
-- blueprints
-- governance rules
+Product-specific implementation evidence remains in UMS or another satellite repository.
 
 ---
 
-[Back to Knowledge Hub](../)
+[Back to Knowledge Area](../demo/README.md) | [Back to Repository Root](../../../README.md)

@@ -1,58 +1,43 @@
-# Inteligencia Arquitectónica
+# Inteligencia Arquitectonica
 
-> Conocimiento arquitectónico curado, análisis de tradeoffs, referencias externas y patrones empresariales consumibles por IA.
+> Navegacion bilingue: [English](./README.md)
 
-## Propósito
+Inteligencia Arquitectonica es la capa de conocimiento curado que hace que las decisiones, patrones, reglas de validacion y guias de adopcion de Evolith sean mas faciles de consumir por personas y herramientas de ingenieria asistida por IA.
 
-Esta sección extiende Evolith con inteligencia arquitectónica extraída desde:
+Este portal es un indice y una pagina de orientacion. No reemplaza ADRs, estandares de gobierno, patrones canonicos ni referencias aplicadas de producto.
 
-- repositorios
-- libros
-- conferencias
-- videos
-- experiencias reales
-- patrones empresariales
+## Empieza aqui
 
-El objetivo no es copiar ideas externas directamente.
+| Necesidad | Ir a |
+|---|---|
+| Entender por que existe este catalogo | [ADR-0057 Catalogo de Inteligencia Arquitectonica](../../architecture/adrs/core/0057-architecture-intelligence-catalog.md) |
+| Entender conocimiento arquitectonico consumible por IA | [ADR-0058 Conocimiento Arquitectonico Consumible por IA](../../architecture/adrs/core/0058-ai-consumable-architecture-knowledge.md) |
+| Validar artefactos de Inteligencia Arquitectonica | [Validacion de Inteligencia Arquitectonica](./validation/architecture-intelligence-validation.md) |
+| Revisar patrones arquitectonicos curados | [Patrones](./patterns/) |
 
-El objetivo es:
-- analizar
-- contextualizar
-- gobernar
-- clasificar
-- adaptar conocimiento arquitectónico al estándar Evolith.
+## Ejemplos actuales de patrones
 
-## Objetivos
+| Patron | Proposito |
+|---|---|
+| [Bounded Context Isolation](./patterns/bounded-context-isolation.md) | Mantener limites modulares explicitos en codigo y propiedad de datos. |
+| [Data Ownership per Bounded Context](./patterns/data-ownership-per-bounded-context.md) | Aclarar reglas de propiedad de datos dentro de bounded contexts. |
+| [No Cross-Domain Joins](./patterns/no-cross-domain-joins.md) | Evitar acoplamiento de persistencia entre limites modulares. |
 
-- Crear conocimiento arquitectónico consumible por IA.
-- Construir un catálogo gobernado de patrones.
-- Explicar tradeoffs y reasoning arquitectónico.
-- Ayudar a arquitectos, desarrolladores, QA, DevOps y agentes IA.
-- Mejorar la consistencia arquitectónica entre productos.
+## Que pertenece aqui
 
-## Visión AI
+| Pertenece aqui | No pertenece aqui |
+|---|---|
+| Patrones arquitectonicos curados | Evidencia de implementacion especifica de producto |
+| Analisis de tradeoffs | Decisiones locales de rutas, schemas, headers o seeds |
+| Guia arquitectonica legible por IA | Estandares empresariales no aprobados |
+| Enlaces hacia ADRs y estandares | Copias de material externo sin revision de gobierno |
 
-Esta sección está diseñada para ser consumida por:
+## Regla de gobierno
 
-- Claude
-- Codex
-- Copilot
-- Cursor
-- Harness Agents
-- sistemas empresariales RAG
+Los artefactos de Inteligencia Arquitectonica ayudan a explicar y reutilizar conocimiento arquitectonico. No son estandares por si mismos salvo que apunten a un ADR aprobado, estandar de gobierno o patron canonico.
 
-## Relación con Evolith
+La evidencia especifica de producto permanece en UMS u otro repositorio satelite.
 
-Esta área no reemplaza:
-- ADRs
-- estándares
-- blueprints
-- gobernanza
+---
 
-Complementa Evolith mediante:
-- reasoning arquitectónico
-- referencias externas
-- análisis de tradeoffs
-- patrones curados
-- guidance de adopción
-- inteligencia arquitectónica
+[Volver al area de conocimiento](../demo/README.es.md) | [Volver al repositorio](../../../README.es.md)

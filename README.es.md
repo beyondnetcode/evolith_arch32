@@ -1,162 +1,119 @@
 # Evolith: Base de Referencia de Arquitectura Progresiva
 
 [![Status](https://img.shields.io/badge/Status-Activo-brightgreen?style=for-the-badge)]()
-
 [![Method](https://img.shields.io/badge/Metodo-Spec--driven_AI--DD-blueviolet?style=for-the-badge)]()
 [![License](https://img.shields.io/badge/License-MIT-informational?style=for-the-badge)]()
 
-**Evolith** es el **upstream arquitectónico corporativo** — la fuente autoritativa de decisiones, estándares y patrones para los repositorios de producto de la organización. No es un framework que se instala; es un contrato empresarial vivo que los equipos de producto heredan, extienden y al que contribuyen de vuelta con el tiempo.
+**Evolith es el upstream arquitectonico corporativo para repositorios de producto.** Define estandares reutilizables, reglas de gobierno, ADRs, patrones y guias operativas que los productos satelite heredan y especializan.
 
-**Evolith** es la plataforma de arquitectura progresiva de nivel empresarial que define cómo las organizaciones evolucionan de Monolitos Modulares a sistemas distribuidos — gobernada, trazable y asistida por IA desde el diseño. Es el ADN técnico evolutivo para todos los repositorios satélites.
+Evolith resuelve un problema empresarial comun: los equipos necesitan un lugar claro para distinguir que es politica reutilizable, que es implementacion especifica de producto y como las decisiones se promueven desde productos reales hacia la referencia arquitectonica.
 
-> Separar conceptualmente antes de separar físicamente.
+> Separar conceptualmente antes de separar fisicamente.
 
-[English](./README.md) | [Español](./README.es.md)
-
----
-
-## ¿Para Qué Sirve Este Repositorio?
-
-Este repositorio sirve tres propósitos distintos según quién lo lea.
-
-**Estás evaluando el modelo arquitectónico de Evolith.**
-Lee el [Blueprint de Referencia](./reference/architecture/blueprints-es/reference-blueprint.md) y el [Registro ADR](./reference/architecture/adrs-es/README.md). Cada decisión está documentada con su justificación, trade-offs y nivel de gobernanza Evolith.
-
-**Estás iniciando un nuevo repositorio de producto.**
-Esta base es tu punto de partida. Heredas su corpus completo de decisiones, estructuras tu repositorio usando su taxonomía y documentas cada punto donde el contexto de tu producto diverge. La mecánica de este proceso está definida en la **[Guía de Herencia para Repositorios Hijos](./reference/governance/standards/onboarding/child-repository-inheritance-guide.es.md)** — léela antes de escribir una sola línea de código.
-
-**Estás contribuyendo una nueva decisión arquitectónica.**
-Si la decisión es universal, pertenece aquí. Si es específica del producto, pertenece en el repositorio hijo. El [Camino de Promoción](./reference/governance/standards/onboarding/child-repository-inheritance-guide.es.md#7-camino-de-promoción) define cómo las decisiones viajan desde los repositorios de producto de vuelta a esta base.
-
-**Estás configurando desarrollo asistido por IA (AI-DD).**
-Este repositorio puede usar BMAD-METHOD como método de soporte spec-driven AI-DD. No es el nombre ni la visión de este corpus documental. La configuración local de agentes, las reglas del harness y la guía de replicación están documentadas en la [Referencia de Adopción de Frameworks AI-DD](./reference/governance/standards/ai-augmented/frameworks/README.md).
+Idioma: [English](./README.md) | [Espanol](./README.es.md)
 
 ---
 
-## Contenidos
+## Empieza aqui
 
-- [¿Para Qué Sirve Este Repositorio?](#para-qué-sirve-este-repositorio)
-- [Empieza Aquí](#empieza-aquí)
-- [Acceso Rapido por Stack](#acceso-rapido-por-stack)
-- [Prerrequisitos](#prerrequisitos)
-- [El Viaje Arquitectónico](#el-viaje-arquitectónico)
-- [Mapa del Repositorio](#mapa-del-repositorio)
-- [Primeras Lecturas Recomendadas](#primeras-lecturas-recomendadas)
-- [Referencia Aplicada Oficial: UMS](#referencia-aplicada-oficial-ums)
-- [Contribución](#contribución)
-- [Licencia](#licencia)
-
----
-
-## Empieza Aquí
-
-| Si quieres... | Ve a |
+| Necesidad | Ir a |
 |---|---|
-| Encontrar rapido estandares Web, React, C# o .NET | **[Acceso Rapido - Estandares de Referencia por Stack](./reference/quick-access/README.es.md)** |
-| Entender todo el repositorio | [Índice Maestro Global](./MASTER_INDEX.es.md) |
-| **Iniciar un nuevo producto desde esta base** | **[Guía de Herencia para Repositorios Hijos](./reference/governance/standards/onboarding/child-repository-inheritance-guide.es.md)** |
-| Elegir una ruta de lectura según tu rol | [Primeros Pasos por Rol](./reference/getting-started/README.es.md) |
-| Aprender el modelo arquitectónico | [Blueprint de Referencia](./reference/architecture/blueprints-es/reference-blueprint.md) |
-| Revisar las reglas universales | [Línea Base Arquitectónica Agnóstica](./reference/architecture/blueprints-es/authoritative-tech-stack-agnostic.md) |
-| Explorar decisiones y trade-offs | [Registro ADR](./reference/architecture/adrs-es/README.md) |
-| Aclarar la terminología del proyecto | [Glosario Arquitectónico](./reference/governance/glossary.es.md) |
-| Inspeccionar la referencia ejecutable de producto | [Modelo Aplicado UMS](./reference/knowledge/demo/README.es.md) |
-| Entender cómo deben operar aquí los agentes de IA | [AGENTS.es.md](./AGENTS.es.md) |
-| **Explicar el estándar a cualquier audiencia** | **[Estrategia de Comunicación Arquitectónica](./reference/governance/standards/communication/architecture-communication-strategy.es.md)** |
-| **Explorar los diagramas visuales de arquitectura** | **[Backlog Visual de Arquitectura](./reference/governance/standards/communication/visuals/README.es.md)** |
+| Nuevo en Evolith | [Primeros pasos por rol](./reference/getting-started/README.es.md) |
+| Encontrar estandares React, Web, C# o .NET | [Acceso rapido por stack](./reference/quick-access/README.es.md) |
+| Entender el modelo arquitectonico | [Hub de arquitectura](./reference/architecture/README.es.md) |
+| Revisar decisiones y trade-offs | [Registro ADR](./reference/architecture/adrs-es/README.md) |
+| Aplicar reglas de gobierno | [Estandares de gobierno](./reference/governance/standards-es/README.md) |
+| Ver la referencia ejecutable de producto | [Referencia aplicada UMS](./reference/knowledge/demo/README.es.md) |
+| Trabajar con ingenieria asistida por IA | [Referencia de adopcion AI-DD](./reference/governance/standards/ai-augmented/frameworks/README.es.md) |
+| Operar u observar la plataforma | [Operaciones y observabilidad](./reference/operations/README.es.md) |
+| Ejecutar infraestructura local | [Infraestructura y orquestacion](./reference/infrastructure/README.es.md) |
+| Explorar todo | [Indice maestro global](./MASTER_INDEX.es.md) |
 
 ---
 
-## Acceso Rapido por Stack
+## Rutas rapidas por rol
 
-| Necesidad | Ruta directa |
-|---|---|
-| Estandar Web / React frontend | [Estandar Web Frontend React](./reference/governance/standards/engineering/web-frontend/react/react-web-frontend-standard.es.md) |
-| Estandar API C# / .NET | [Estandar API .NET](./reference/governance/standards/engineering/api-dotnet/api-dotnet-standard.es.md) |
-| Perfil runtime C# / .NET | [Perfil Tech Stack .NET y C#](./reference/architecture/blueprints-es/authoritative-tech-stack-dotnet.md) |
-| Baseline agnostico de runtime | [Linea Base Arquitectonica Agnostica](./reference/architecture/blueprints-es/authoritative-tech-stack-agnostic.md) |
-| Todos los caminos por stack | [Acceso Rapido - Estandares de Referencia por Stack](./reference/quick-access/README.es.md) |
-
----
-
-## Prerrequisitos
-
-Este repositorio es un corpus documental y arquitectónico. Para prerrequisitos ejecutables del producto, sigue el [README vigente de UMS](https://github.com/beyondnetcode/ums/blob/main/README.md), propietario del setup oficial de la demo.
+| Rol | Empezar con | Luego leer |
+|---|---|---|
+| Arquitecto | [Hub de arquitectura](./reference/architecture/README.es.md) | [Registro ADR](./reference/architecture/adrs-es/README.md) |
+| Ingeniero backend | [Estandar API .NET](./reference/governance/standards/engineering/api-dotnet/api-dotnet-standard.es.md) | [Perfil .NET y C#](./reference/architecture/blueprints-es/authoritative-tech-stack-dotnet.md) |
+| Ingeniero frontend | [Estandar Web Frontend React](./reference/governance/standards/engineering/web-frontend/react/react-web-frontend-standard.es.md) | [Acceso rapido por stack](./reference/quick-access/README.es.md) |
+| Product o delivery lead | [Referencia aplicada UMS](./reference/knowledge/demo/README.es.md) | [Guia de herencia para repositorios hijos](./reference/governance/standards/onboarding/child-repository-inheritance-guide.es.md) |
+| DevOps o plataforma | [Operaciones y observabilidad](./reference/operations/README.es.md) | [Infraestructura y orquestacion](./reference/infrastructure/README.es.md) |
+| Usuario de ingenieria asistida por IA | [Referencia de adopcion AI-DD](./reference/governance/standards/ai-augmented/frameworks/README.es.md) | [AGENTS.es.md](./AGENTS.es.md) |
+| Revisor de gobierno | [Estandares de gobierno](./reference/governance/standards-es/README.md) | [Taxonomia del repositorio](./reference/governance/standards-es/repository-taxonomy.es.md) |
 
 ---
 
-## El Viaje Arquitectónico
+## Accesos directos a estandares
 
-La referencia arquitectónica es intencionalmente progresiva. No trata los microservicios como punto de partida por defecto.
-
-```text
-Monolito Simple
-  -> Monolito Modular
-    -> Módulos Distribuidos
-      -> Microservicios
-```
-
-El repositorio ayuda a decidir **cuándo mantenerse simple**, **cuándo modularizar** y **cuándo la distribución justifica su costo operacional**.
+| Estandar o perfil | Enlace directo | Uso |
+|---|---|---|
+| Estandar Web Frontend React | [Abrir](./reference/governance/standards/engineering/web-frontend/react/react-web-frontend-standard.es.md) | Arquitectura React, boilerplate, tokens UI, acceso a datos, testing, accesibilidad |
+| Estandar API .NET | [Abrir](./reference/governance/standards/engineering/api-dotnet/api-dotnet-standard.es.md) | APIs ASP.NET Core, bootstrap de host, superficie REST/GraphQL, persistencia, quality gates |
+| Perfil .NET y C# | [Abrir](./reference/architecture/blueprints-es/authoritative-tech-stack-dotnet.md) | Runtime, librerias, perfil de plataforma |
+| Baseline agnostico | [Abrir](./reference/architecture/blueprints-es/authoritative-tech-stack-agnostic.md) | Restricciones universales antes de decisiones por stack |
+| Todos los caminos por stack | [Abrir](./reference/quick-access/README.es.md) | Navegacion rapida para Web, React, C#/.NET, Node.js y perfiles runtime |
 
 ---
 
-## Mapa del Repositorio
+## Evolith vs UMS
 
-| Área | Qué encontrarás |
-|---|---|
-| [reference/architecture/](./reference/architecture/README.es.md) | Hub arquitectónico: blueprints, ADRs, perfiles de stack y patrones canónicos |
-| [reference/governance/](./reference/governance/standards-es/README.md) | Estándares de ingeniería, SDLC, onboarding y reglas de arquitectura |
-| [reference/operations/](./reference/operations/README.es.md) | Observabilidad, soporte runtime y documentación operacional |
-| [reference/infrastructure/](./reference/infrastructure/README.es.md) | Plataforma local, gateway, contenedores y activos de infraestructura |
-| [reference/knowledge/](./reference/knowledge/demo/README.es.md) | Límite del modelo aplicado UMS, registro de migración, investigación y aprendizaje |
-| [Repositorio UMS](https://github.com/beyondnetcode/ums) | Referencia oficial ejecutable de producto e instrucciones de setup |
+| Pregunta | Evolith | UMS |
+|---|---|---|
+| Que pertenece aqui? | Estandares reutilizables, principios, ADRs, gobierno, patrones canonicos, quality gates | Evidencia de implementacion especifica de producto y ejemplos aplicados |
+| Que no debe copiarse aqui directamente? | Rutas, headers, schemas, seeds, valores runtime y branding locales | Politica empresarial salvo promocion mediante gobierno Evolith |
+| Como una practica UMS se convierte en estandar? | Mediante ADR, estandar de gobierno o patron canonico | Aportando evidencia, no autoridad |
 
-Para navegación por rol, usa el [Índice Maestro Global](./MASTER_INDEX.es.md).
+UMS es el modelo ejecutable oficial de referencia. Usalo para ver ideas Evolith aplicadas en un producto real, pero conserva los detalles especificos en UMS salvo que se promuevan formalmente.
 
 ---
 
-## Primeras Lecturas Recomendadas
+## Mapa del repositorio
 
-1. [Acceso Rapido - Estandares de Referencia por Stack](./reference/quick-access/README.es.md)
-2. [Primeros Pasos por Rol](./reference/getting-started/README.es.md)
-3. [Directivas Arquitectónicas](./reference/governance/standards-es/vision/architectural-directives.md)
-4. [Blueprint de Referencia](./reference/architecture/blueprints-es/reference-blueprint.md)
-5. [Línea Base Arquitectónica Agnóstica](./reference/architecture/blueprints-es/authoritative-tech-stack-agnostic.md)
-6. [Matriz ADR](./reference/architecture/adrs-es/adr-matrix.es.md)
-7. [Referencia Canónica vs Modelo Aplicado UMS](./reference/knowledge/demo/demo-vs-reference.es.md)
-
----
-
-## Referencia Aplicada Oficial: UMS
-
-```bash
-git clone https://github.com/beyondnetcode/ums.git
-cd ums
-```
-
-Sigue las [instrucciones vigentes de UMS](https://github.com/beyondnetcode/ums/blob/main/README.md) para ejecutar el producto. UMS aporta evidencia de implementación empresarial; las reglas y políticas generales permanecen en `reference/architecture/` y `reference/governance/`.
+| Area | Entrada | Proposito |
+|---|---|---|
+| Arquitectura | [reference/architecture](./reference/architecture/README.es.md) | Blueprints, ADRs, perfiles runtime, patrones canonicos |
+| Gobierno | [reference/governance/standards](./reference/governance/standards-es/README.md) | Estandares empresariales, SDLC, onboarding, taxonomia, reglas de calidad |
+| Inteligencia Arquitectonica | [reference/knowledge/architecture-intelligence](./reference/knowledge/architecture-intelligence/README.es.md) | Conocimiento arquitectonico consumible por IA y gobierno del catalogo de patrones |
+| Ingenieria asistida por IA | [AI-DD Frameworks](./reference/governance/standards/ai-augmented/frameworks/README.es.md) | Reglas locales de adopcion para frameworks de desarrollo asistido por IA |
+| Operaciones | [reference/operations](./reference/operations/README.es.md) | Observabilidad, soporte runtime, guias operativas |
+| Infraestructura | [reference/infrastructure](./reference/infrastructure/README.es.md) | Plataforma local, gateway, contenedores, orquestacion |
+| Conocimiento | [reference/knowledge](./reference/knowledge/demo/README.es.md) | Referencia aplicada UMS, registros de migracion, activos de inteligencia arquitectonica |
+| Referencia de producto | [Repositorio UMS](https://github.com/beyondnetcode/ums) | Producto satelite ejecutable oficial |
 
 ---
 
-## Contribución
+## Primeras lecturas recomendadas
 
-Contribuir a Evolith significa fortalecer el estándar empresarial. Las contribuciones son bienvenidas mediante issues, mejoras documentales, revisión de ADRs, ejemplos, pruebas y aprendizajes promovidos desde UMS u otros repositorios satélites.
+1. [Primeros pasos por rol](./reference/getting-started/README.es.md)
+2. [Acceso rapido por stack](./reference/quick-access/README.es.md)
+3. [Hub de arquitectura](./reference/architecture/README.es.md)
+4. [Registro ADR](./reference/architecture/adrs-es/README.md)
+5. [Estandares de gobierno](./reference/governance/standards-es/README.md)
+6. [Referencia aplicada UMS](./reference/knowledge/demo/README.es.md)
 
-Antes de contribuir, revisa:
+---
+
+## Contribucion
+
+Contribuir a Evolith significa fortalecer el estandar empresarial. Agrega aqui guia reutilizable. Conserva la evidencia especifica de producto en repositorios satelite como UMS salvo que la practica haya sido promovida por el camino de gobierno.
+
+Antes de contribuir, lee:
 
 - [AGENTS.es.md](./AGENTS.es.md)
-- [Taxonomía del Repositorio](./reference/governance/standards-es/repository-taxonomy.es.md)
-- [Manifiesto de Ingeniería](./reference/governance/standards-es/engineering/engineering-manifesto.md)
+- [Taxonomia del repositorio](./reference/governance/standards-es/repository-taxonomy.es.md)
+- [Guia de herencia para repositorios hijos](./reference/governance/standards/onboarding/child-repository-inheritance-guide.es.md)
 - [ADR Gitflow](./reference/architecture/adrs-es/core/0050-estrategia-ramas-gitflow.md)
 
 ---
 
 ## Licencia
 
-Este proyecto se publica bajo la [Licencia MIT](./LICENSE). Puedes usar, copiar, modificar, fusionar, publicar y distribuirlo libremente. La atribución se aprecia, pero no es obligatoria.
+Este proyecto se publica bajo la [Licencia MIT](./LICENSE).
 
 ---
 
 <div align="center">
- <sub>Evolith — Enterprise Architecture Platform | Progressive Reference Corpus | Spec-driven AI-DD</sub>
+ <sub>Evolith - Enterprise Architecture Platform | Progressive Reference Corpus | Spec-driven AI-DD</sub>
 </div>

@@ -75,7 +75,7 @@ UMS is the official executable reference model. Use it to see Evolith ideas appl
 |---|---|---|
 | Architecture | [reference/architecture](./reference/architecture/README.md) | Blueprints, ADRs, runtime profiles, canonical patterns |
 | Governance | [reference/governance/standards](./reference/governance/standards/README.md) | Enterprise standards, SDLC, onboarding, taxonomy, quality rules |
-| Architecture Intelligence | [ADR-0057 Architecture Intelligence Catalog](./reference/architecture/adrs/core/0057-architecture-intelligence-catalog.md) | AI-consumable architecture knowledge and pattern catalog governance |
+| Architecture Intelligence | [reference/knowledge/architecture-intelligence](./reference/knowledge/architecture-intelligence/README.md) | AI-consumable architecture knowledge and pattern catalog governance |
 | AI-Augmented Engineering | [AI-DD Frameworks](./reference/governance/standards/ai-augmented/frameworks/README.md) | Local adoption rules for AI-assisted development frameworks |
 | Operations | [reference/operations](./reference/operations/README.md) | Observability, runtime support, operational guidance |
 | Infrastructure | [reference/infrastructure](./reference/infrastructure/README.md) | Local platform, gateway, containers, orchestration assets |

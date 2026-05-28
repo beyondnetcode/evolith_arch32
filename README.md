@@ -18,6 +18,9 @@ Language: [English](./README.md) | [Español](./README.es.md)
 
 > **Read this first:** [Architecture Communication & Adoption Strategy](./reference/governance/standards/communication/architecture-communication-strategy.md)  
 > The quickest way to understand Evolith, UMS, repository responsibilities, audience layers, and the adoption path.
+>
+> **Then use the visual index:** [Visual Architecture Backlog](./reference/governance/standards/communication/visuals/README.md)  
+> One index for the 8 explanation and communication visuals: executive one-pager, progressive journey, capability map, ADR decision tree, onboarding journey, governance flow, traceability, and infrastructure topology.
 
 ---
 
@@ -26,6 +29,7 @@ Language: [English](./README.md) | [Español](./README.es.md)
 | Need | Go to |
 |---|---|
 | Understand Evolith quickly | [Architecture Communication & Adoption Strategy](./reference/governance/standards/communication/architecture-communication-strategy.md) |
+| See all explanation and communication visuals | [Visual Architecture Backlog](./reference/governance/standards/communication/visuals/README.md) |
 | New to Evolith | [Getting Started by Role](./reference/getting-started/README.md) |
 | Find React, Web, C# or .NET standards | [Quick Access by Stack](./reference/quick-access/README.md) |
 | Understand the architecture model | [Architecture Hub](./reference/architecture/README.md) |
@@ -58,6 +62,7 @@ Language: [English](./README.md) | [Español](./README.es.md)
 | Standard or profile | Direct link | Use for |
 |---|---|---|
 | Architecture Communication & Adoption Strategy | [Open](./reference/governance/standards/communication/architecture-communication-strategy.md) | Fastest explanation of Evolith, UMS, repository roles, audience layers, and adoption path |
+| Visual Architecture Backlog | [Open](./reference/governance/standards/communication/visuals/README.md) | Index of all communication diagrams and visual explanations for executives, architects, devs, QA, DevOps, and PMs |
 | React Web Frontend Standard | [Open](./reference/governance/standards/engineering/web-frontend/react/react-web-frontend-standard.md) | React architecture, boilerplate, UI tokens, data access, testing, accessibility |
 | .NET API Standard | [Open](./reference/governance/standards/engineering/api-dotnet/api-dotnet-standard.md) | ASP.NET Core APIs, host bootstrap, REST/GraphQL surface, persistence, quality gates |
 | .NET & C# Tech Stack Profile | [Open](./reference/architecture/blueprints/authoritative-tech-stack-dotnet.md) | Runtime choices, libraries, platform profile |
@@ -84,6 +89,7 @@ UMS is the official executable reference model. Use it to see Evolith ideas appl
 |---|---|---|
 | Architecture | [reference/architecture](./reference/architecture/README.md) | Blueprints, ADRs, runtime profiles, canonical patterns |
 | Governance | [reference/governance/standards](./reference/governance/standards/README.md) | Enterprise standards, SDLC, onboarding, taxonomy, quality rules |
+| Architecture Communication | [reference/governance/standards/communication/visuals](./reference/governance/standards/communication/visuals/README.md) | Visual explanations, communication diagrams, onboarding maps, governance flow, and traceability views |
 | Architecture Intelligence | [reference/knowledge/architecture-intelligence](./reference/knowledge/architecture-intelligence/README.md) | AI-consumable architecture knowledge and pattern catalog governance |
 | AI-Augmented Engineering | [AI-DD Frameworks](./reference/governance/standards/ai-augmented/frameworks/README.md) | Local adoption rules for AI-assisted development frameworks |
 | Operations | [reference/operations](./reference/operations/README.md) | Observability, runtime support, operational guidance |
@@ -96,12 +102,13 @@ UMS is the official executable reference model. Use it to see Evolith ideas appl
 ## Recommended First Reads
 
 1. [Architecture Communication & Adoption Strategy](./reference/governance/standards/communication/architecture-communication-strategy.md)
-2. [Getting Started by Role](./reference/getting-started/README.md)
-3. [Quick Access by Stack](./reference/quick-access/README.md)
-4. [Architecture Hub](./reference/architecture/README.md)
-5. [ADR Registry](./reference/architecture/adrs/README.md)
-6. [Governance Standards](./reference/governance/standards/README.md)
-7. [UMS Applied Reference](./reference/knowledge/demo/README.md)
+2. [Visual Architecture Backlog](./reference/governance/standards/communication/visuals/README.md)
+3. [Getting Started by Role](./reference/getting-started/README.md)
+4. [Quick Access by Stack](./reference/quick-access/README.md)
+5. [Architecture Hub](./reference/architecture/README.md)
+6. [ADR Registry](./reference/architecture/adrs/README.md)
+7. [Governance Standards](./reference/governance/standards/README.md)
+8. [UMS Applied Reference](./reference/knowledge/demo/README.md)
 
 ---
 

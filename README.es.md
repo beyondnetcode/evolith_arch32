@@ -14,10 +14,18 @@ Idioma: [English](./README.md) | [Espanol](./README.es.md)
 
 ---
 
+## Entrada mas rapida
+
+> **Lee esto primero:** [Estrategia de Comunicacion y Adopcion Arquitectonica](./reference/governance/standards/communication/architecture-communication-strategy.es.md)  
+> La forma mas rapida de entender Evolith, UMS, responsabilidades de repositorios, capas de audiencia y camino de adopcion.
+
+---
+
 ## Empieza aqui
 
 | Necesidad | Ir a |
 |---|---|
+| Entender Evolith rapidamente | [Estrategia de Comunicacion y Adopcion Arquitectonica](./reference/governance/standards/communication/architecture-communication-strategy.es.md) |
 | Nuevo en Evolith | [Primeros pasos por rol](./reference/getting-started/README.es.md) |
 | Encontrar estandares React, Web, C# o .NET | [Acceso rapido por stack](./reference/quick-access/README.es.md) |
 | Entender el modelo arquitectonico | [Hub de arquitectura](./reference/architecture/README.es.md) |
@@ -49,6 +57,7 @@ Idioma: [English](./README.md) | [Espanol](./README.es.md)
 
 | Estandar o perfil | Enlace directo | Uso |
 |---|---|---|
+| Estrategia de Comunicacion y Adopcion Arquitectonica | [Abrir](./reference/governance/standards/communication/architecture-communication-strategy.es.md) | Explicacion mas rapida de Evolith, UMS, roles de repositorios, capas de audiencia y camino de adopcion |
 | Estandar Web Frontend React | [Abrir](./reference/governance/standards/engineering/web-frontend/react/react-web-frontend-standard.es.md) | Arquitectura React, boilerplate, tokens UI, acceso a datos, testing, accesibilidad |
 | Estandar API .NET | [Abrir](./reference/governance/standards/engineering/api-dotnet/api-dotnet-standard.es.md) | APIs ASP.NET Core, bootstrap de host, superficie REST/GraphQL, persistencia, quality gates |
 | Perfil .NET y C# | [Abrir](./reference/architecture/blueprints-es/authoritative-tech-stack-dotnet.md) | Runtime, librerias, perfil de plataforma |
@@ -86,12 +95,13 @@ UMS es el modelo ejecutable oficial de referencia. Usalo para ver ideas Evolith 
 
 ## Primeras lecturas recomendadas
 
-1. [Primeros pasos por rol](./reference/getting-started/README.es.md)
-2. [Acceso rapido por stack](./reference/quick-access/README.es.md)
-3. [Hub de arquitectura](./reference/architecture/README.es.md)
-4. [Registro ADR](./reference/architecture/adrs-es/README.md)
-5. [Estandares de gobierno](./reference/governance/standards-es/README.md)
-6. [Referencia aplicada UMS](./reference/knowledge/demo/README.es.md)
+1. [Estrategia de Comunicacion y Adopcion Arquitectonica](./reference/governance/standards/communication/architecture-communication-strategy.es.md)
+2. [Primeros pasos por rol](./reference/getting-started/README.es.md)
+3. [Acceso rapido por stack](./reference/quick-access/README.es.md)
+4. [Hub de arquitectura](./reference/architecture/README.es.md)
+5. [Registro ADR](./reference/architecture/adrs-es/README.md)
+6. [Estandares de gobierno](./reference/governance/standards-es/README.md)
+7. [Referencia aplicada UMS](./reference/knowledge/demo/README.es.md)
 
 ---
 

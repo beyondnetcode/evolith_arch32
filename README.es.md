@@ -18,6 +18,9 @@ Idioma: [English](./README.md) | [Espanol](./README.es.md)
 
 > **Lee esto primero:** [Estrategia de Comunicacion y Adopcion Arquitectonica](./reference/governance/standards/communication/architecture-communication-strategy.es.md)  
 > La forma mas rapida de entender Evolith, UMS, responsabilidades de repositorios, capas de audiencia y camino de adopcion.
+>
+> **Luego usa el indice visual:** [Backlog Visual de Arquitectura](./reference/governance/standards/communication/visuals/README.es.md)  
+> Un indice para los 8 visuales de explicacion y comunicacion: resumen ejecutivo, viaje progresivo, mapa de capacidades, arbol ADR, onboarding, gobernanza, trazabilidad y topologia de infraestructura.
 
 ---
 
@@ -26,6 +29,7 @@ Idioma: [English](./README.md) | [Espanol](./README.es.md)
 | Necesidad | Ir a |
 |---|---|
 | Entender Evolith rapidamente | [Estrategia de Comunicacion y Adopcion Arquitectonica](./reference/governance/standards/communication/architecture-communication-strategy.es.md) |
+| Ver todos los visuales de explicacion y comunicacion | [Backlog Visual de Arquitectura](./reference/governance/standards/communication/visuals/README.es.md) |
 | Nuevo en Evolith | [Primeros pasos por rol](./reference/getting-started/README.es.md) |
 | Encontrar estandares React, Web, C# o .NET | [Acceso rapido por stack](./reference/quick-access/README.es.md) |
 | Entender el modelo arquitectonico | [Hub de arquitectura](./reference/architecture/README.es.md) |
@@ -58,6 +62,7 @@ Idioma: [English](./README.md) | [Espanol](./README.es.md)
 | Estandar o perfil | Enlace directo | Uso |
 |---|---|---|
 | Estrategia de Comunicacion y Adopcion Arquitectonica | [Abrir](./reference/governance/standards/communication/architecture-communication-strategy.es.md) | Explicacion mas rapida de Evolith, UMS, roles de repositorios, capas de audiencia y camino de adopcion |
+| Backlog Visual de Arquitectura | [Abrir](./reference/governance/standards/communication/visuals/README.es.md) | Indice de diagramas y explicaciones visuales para ejecutivos, arquitectos, devs, QA, DevOps y PMs |
 | Estandar Web Frontend React | [Abrir](./reference/governance/standards/engineering/web-frontend/react/react-web-frontend-standard.es.md) | Arquitectura React, boilerplate, tokens UI, acceso a datos, testing, accesibilidad |
 | Estandar API .NET | [Abrir](./reference/governance/standards/engineering/api-dotnet/api-dotnet-standard.es.md) | APIs ASP.NET Core, bootstrap de host, superficie REST/GraphQL, persistencia, quality gates |
 | Perfil .NET y C# | [Abrir](./reference/architecture/blueprints-es/authoritative-tech-stack-dotnet.md) | Runtime, librerias, perfil de plataforma |
@@ -84,6 +89,7 @@ UMS es el modelo ejecutable oficial de referencia. Usalo para ver ideas Evolith 
 |---|---|---|
 | Arquitectura | [reference/architecture](./reference/architecture/README.es.md) | Blueprints, ADRs, perfiles runtime, patrones canonicos |
 | Gobierno | [reference/governance/standards](./reference/governance/standards-es/README.md) | Estandares empresariales, SDLC, onboarding, taxonomia, reglas de calidad |
+| Comunicacion arquitectonica | [reference/governance/standards/communication/visuals](./reference/governance/standards/communication/visuals/README.es.md) | Explicaciones visuales, diagramas de comunicacion, mapas de onboarding, flujo de gobernanza y vistas de trazabilidad |
 | Inteligencia Arquitectonica | [reference/knowledge/architecture-intelligence](./reference/knowledge/architecture-intelligence/README.es.md) | Conocimiento arquitectonico consumible por IA y gobierno del catalogo de patrones |
 | Ingenieria asistida por IA | [AI-DD Frameworks](./reference/governance/standards/ai-augmented/frameworks/README.es.md) | Reglas locales de adopcion para frameworks de desarrollo asistido por IA |
 | Operaciones | [reference/operations](./reference/operations/README.es.md) | Observabilidad, soporte runtime, guias operativas |
@@ -96,12 +102,13 @@ UMS es el modelo ejecutable oficial de referencia. Usalo para ver ideas Evolith 
 ## Primeras lecturas recomendadas
 
 1. [Estrategia de Comunicacion y Adopcion Arquitectonica](./reference/governance/standards/communication/architecture-communication-strategy.es.md)
-2. [Primeros pasos por rol](./reference/getting-started/README.es.md)
-3. [Acceso rapido por stack](./reference/quick-access/README.es.md)
-4. [Hub de arquitectura](./reference/architecture/README.es.md)
-5. [Registro ADR](./reference/architecture/adrs-es/README.md)
-6. [Estandares de gobierno](./reference/governance/standards-es/README.md)
-7. [Referencia aplicada UMS](./reference/knowledge/demo/README.es.md)
+2. [Backlog Visual de Arquitectura](./reference/governance/standards/communication/visuals/README.es.md)
+3. [Primeros pasos por rol](./reference/getting-started/README.es.md)
+4. [Acceso rapido por stack](./reference/quick-access/README.es.md)
+5. [Hub de arquitectura](./reference/architecture/README.es.md)
+6. [Registro ADR](./reference/architecture/adrs-es/README.md)
+7. [Estandares de gobierno](./reference/governance/standards-es/README.md)
+8. [Referencia aplicada UMS](./reference/knowledge/demo/README.es.md)
 
 ---
 

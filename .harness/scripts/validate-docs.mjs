@@ -19,6 +19,7 @@ const ignoredDirectories = new Set([
 const markdownFiles = [];
 const mermaidBlocks = [];
 const failures = [];
+const fileCache = new Map();
 
 function walk(directory) {
   for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
@@ -35,6 +36,13 @@ function walk(directory) {
   }
 }
 
+function readUtf8(file) {
+  if (!fileCache.has(file)) {
+    fileCache.set(file, fs.readFileSync(file, "utf8"));
+  }
+  return fileCache.get(file);
+}
+
 function location(file, index, content) {
   const line = content.slice(0, index).split("\n").length;
   return `${path.relative(root, file)}:${line}`;
@@ -44,13 +52,46 @@ function addFailure(file, index, content, message) {
   failures.push(`${location(file, index, content)} ${message}`);
 }
 
+function stripCodeBlocks(content) {
+  return content.replace(/```[\s\S]*?```/g, (match) => match.replace(/[^\r\n]/g, " "));
+}
+
+function githubSlug(value) {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/<[^>]*>/g, "")
+    .replace(/[`*_~]/g, "")
+    .replace(/[^\p{L}\p{N}\s-]/gu, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+}
+
+function collectAnchors(content) {
+  const anchors = new Set();
+  const seen = new Map();
+  const cleanContent = stripCodeBlocks(content);
+  const headingPattern = /^(#{1,6})\s+(.+)$/gm;
+
+  for (const match of cleanContent.matchAll(headingPattern)) {
+    const base = githubSlug(match[2]);
+    if (!base) {
+      continue;
+    }
+
+    const count = seen.get(base) ?? 0;
+    seen.set(base, count + 1);
+    anchors.add(count === 0 ? base : `${base}-${count}`);
+  }
+
+  return anchors;
+}
+
 function validateCharacters(file, content) {
-  // Mask code blocks with spaces, preserving newlines to keep line numbers intact
-  const cleanContent = content.replace(/```[\s\S]*?```/g, (match) => {
-    return match.replace(/[^\r\n]/g, " ");
-  });
+  const cleanContent = stripCodeBlocks(content);
 
   const disallowedPatterns = [
+    { pattern: /\uFEFF/g, message: "contains UTF-8 BOM marker" },
     { pattern: /\uFFFD/g, message: "contains replacement character U+FFFD" },
     { pattern: /\?\?/g, message: "contains corrupted or placeholder marker ??" },
     { pattern: /[\u{1F000}-\u{1FAFF}]/gu, message: "contains emoji or pictographic symbol" },
@@ -69,15 +110,63 @@ function validateCharacters(file, content) {
   }
 }
 
+function validateLineEndings(file, content) {
+  const crlfIndex = content.indexOf("\r\n");
+  if (crlfIndex >= 0) {
+    addFailure(file, crlfIndex, content, "contains CRLF line endings; use LF for cross-platform documentation stability");
+  }
+}
+
 function validateRelativeLinks(file, content) {
-  const linkPattern = /\]\(((?:\.\/|\.\.\/)[^)#]+)(?:#[^)]+)?\)/g;
+  const linkPattern = /!?\[[^\]]*\]\(((?:\.\/?|\.\.\/)[^)\s]+)\)/g;
   const base = path.dirname(file);
 
   for (const match of content.matchAll(linkPattern)) {
-    const target = match[1];
-    if (!fs.existsSync(path.resolve(base, target))) {
-      addFailure(file, match.index ?? 0, content, `broken relative link: ${target}`);
+    const rawTarget = match[1];
+    const [targetPath, rawAnchor] = rawTarget.split("#");
+    const resolved = path.resolve(base, decodeURI(targetPath));
+
+    if (!fs.existsSync(resolved)) {
+      addFailure(file, match.index ?? 0, content, `broken relative link: ${rawTarget}`);
+      continue;
     }
+
+    if (rawAnchor && resolved.endsWith(".md")) {
+      const anchors = collectAnchors(readUtf8(resolved));
+      const normalizedAnchor = decodeURIComponent(rawAnchor).toLowerCase();
+      if (!anchors.has(normalizedAnchor)) {
+        addFailure(file, match.index ?? 0, content, `broken markdown anchor: ${rawTarget}`);
+      }
+    }
+  }
+}
+
+function validateBilingualPair(file, content) {
+  const relative = path.relative(root, file);
+
+  if (relative.endsWith(".es.md")) {
+    const englishFile = file.replace(/\.es\.md$/, ".md");
+    if (!fs.existsSync(englishFile)) {
+      addFailure(file, 0, content, `missing English counterpart: ${path.relative(root, englishFile)}`);
+    }
+  }
+
+  const navigationLine = content.match(/^> \*\*Bilingual Navigation:\*\* (.+)$/m);
+  if (!navigationLine) {
+    return;
+  }
+
+  const navText = navigationLine[1];
+  const navIndex = navigationLine.index ?? 0;
+
+  if (/pendiente|pending/i.test(navText)) {
+    addFailure(file, navIndex, content, "bilingual navigation is marked as pending");
+    return;
+  }
+
+  const navLink = navText.match(/\[[^\]]+\]\((\.\.?\/[^)]+)\)/);
+  if (!navLink) {
+    addFailure(file, navIndex, content, "bilingual navigation must use a relative Markdown link");
   }
 }
 
@@ -116,6 +205,10 @@ function validateMermaid(file, content) {
       addFailure(file, block.index ?? 0, content, "sequenceDiagram participant label with punctuation must be quoted");
     }
 
+    if (/\]\s*--?>\s*\[/.test(body)) {
+      addFailure(file, block.index ?? 0, content, "mermaid edge appears to connect anonymous labels; assign stable node IDs before linking");
+    }
+
     mermaidBlocks.push({
       file,
       index: block.index ?? 0,
@@ -151,7 +244,7 @@ function renderMermaidBlocks() {
       addFailure(
         block.file,
         block.index,
-        fs.readFileSync(block.file, "utf8"),
+        readUtf8(block.file),
         `mermaid render failed: ${(result.stderr || result.stdout).trim()}`,
       );
     }
@@ -161,9 +254,11 @@ function renderMermaidBlocks() {
 walk(root);
 
 for (const file of markdownFiles) {
-  const content = fs.readFileSync(file, "utf8");
+  const content = readUtf8(file);
   validateCharacters(file, content);
+  validateLineEndings(file, content);
   validateRelativeLinks(file, content);
+  validateBilingualPair(file, content);
   validateMermaid(file, content);
 }
 

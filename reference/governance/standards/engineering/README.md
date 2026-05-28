@@ -1,5 +1,6 @@
 # Index of engineering
 
+* [api-dotnet](./api-dotnet/README.md)
 * [contract-testing-guideline](./contract-testing-guideline.md)
 * [detailed-stack-audit-2026](./detailed-stack-audit-2026.md)
 * [engineering-manifesto](./engineering-manifesto.md)

@@ -7,6 +7,7 @@
 * [observability-playbook](./observability-playbook.md)
 * [senior-architectural-assessment](./senior-architectural-assessment.md)
 * [vendor-risk-assessment](./vendor-risk-assessment.md)
+* [web-frontend/react](./web-frontend/react/README.md)
 
 ---
 [Back to Upper Level](../README.md)

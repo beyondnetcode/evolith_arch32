@@ -37,6 +37,7 @@ Este repositorio puede usar BMAD-METHOD como método de soporte spec-driven AI-D
 
 - [¿Para Qué Sirve Este Repositorio?](#para-qué-sirve-este-repositorio)
 - [Empieza Aquí](#empieza-aquí)
+- [Acceso Rapido por Stack](#acceso-rapido-por-stack)
 - [Prerrequisitos](#prerrequisitos)
 - [El Viaje Arquitectónico](#el-viaje-arquitectónico)
 - [Mapa del Repositorio](#mapa-del-repositorio)
@@ -51,6 +52,7 @@ Este repositorio puede usar BMAD-METHOD como método de soporte spec-driven AI-D
 
 | Si quieres... | Ve a |
 |---|---|
+| Encontrar rapido estandares Web, React, C# o .NET | **[Acceso Rapido - Estandares de Referencia por Stack](./reference/quick-access/README.es.md)** |
 | Entender todo el repositorio | [Índice Maestro Global](./MASTER_INDEX.es.md) |
 | **Iniciar un nuevo producto desde esta base** | **[Guía de Herencia para Repositorios Hijos](./reference/governance/standards/onboarding/child-repository-inheritance-guide.es.md)** |
 | Elegir una ruta de lectura según tu rol | [Primeros Pasos por Rol](./reference/getting-started/README.es.md) |
@@ -62,6 +64,18 @@ Este repositorio puede usar BMAD-METHOD como método de soporte spec-driven AI-D
 | Entender cómo deben operar aquí los agentes de IA | [AGENTS.es.md](./AGENTS.es.md) |
 | **Explicar el estándar a cualquier audiencia** | **[Estrategia de Comunicación Arquitectónica](./reference/governance/standards/communication/architecture-communication-strategy.es.md)** |
 | **Explorar los diagramas visuales de arquitectura** | **[Backlog Visual de Arquitectura](./reference/governance/standards/communication/visuals/README.es.md)** |
+
+---
+
+## Acceso Rapido por Stack
+
+| Necesidad | Ruta directa |
+|---|---|
+| Estandar Web / React frontend | [Estandar Web Frontend React](./reference/governance/standards/engineering/web-frontend/react/react-web-frontend-standard.es.md) |
+| Estandar API C# / .NET | [Estandar API .NET](./reference/governance/standards/engineering/api-dotnet/api-dotnet-standard.es.md) |
+| Perfil runtime C# / .NET | [Perfil Tech Stack .NET y C#](./reference/architecture/blueprints-es/authoritative-tech-stack-dotnet.md) |
+| Baseline agnostico de runtime | [Linea Base Arquitectonica Agnostica](./reference/architecture/blueprints-es/authoritative-tech-stack-agnostic.md) |
+| Todos los caminos por stack | [Acceso Rapido - Estandares de Referencia por Stack](./reference/quick-access/README.es.md) |
 
 ---
 
@@ -103,12 +117,13 @@ Para navegación por rol, usa el [Índice Maestro Global](./MASTER_INDEX.es.md).
 
 ## Primeras Lecturas Recomendadas
 
-1. [Primeros Pasos por Rol](./reference/getting-started/README.es.md)
-2. [Directivas Arquitectónicas](./reference/governance/standards-es/vision/architectural-directives.md)
-3. [Blueprint de Referencia](./reference/architecture/blueprints-es/reference-blueprint.md)
-4. [Línea Base Arquitectónica Agnóstica](./reference/architecture/blueprints-es/authoritative-tech-stack-agnostic.md)
-5. [Matriz ADR](./reference/architecture/adrs-es/adr-matrix.es.md)
-6. [Referencia Canónica vs Modelo Aplicado UMS](./reference/knowledge/demo/demo-vs-reference.es.md)
+1. [Acceso Rapido - Estandares de Referencia por Stack](./reference/quick-access/README.es.md)
+2. [Primeros Pasos por Rol](./reference/getting-started/README.es.md)
+3. [Directivas Arquitectónicas](./reference/governance/standards-es/vision/architectural-directives.md)
+4. [Blueprint de Referencia](./reference/architecture/blueprints-es/reference-blueprint.md)
+5. [Línea Base Arquitectónica Agnóstica](./reference/architecture/blueprints-es/authoritative-tech-stack-agnostic.md)
+6. [Matriz ADR](./reference/architecture/adrs-es/adr-matrix.es.md)
+7. [Referencia Canónica vs Modelo Aplicado UMS](./reference/knowledge/demo/demo-vs-reference.es.md)
 
 ---
 
@@ -138,10 +153,10 @@ Antes de contribuir, revisa:
 
 ## Licencia
 
-Este proyecto se publica bajo la [Licencia MIT](./LICENSE). Eres libre de usar, copiar, modificar, fusionar, publicar y distribuirlo. Se agradece la atribución, aunque no es obligatoria.
+Este proyecto se publica bajo la [Licencia MIT](./LICENSE). Puedes usar, copiar, modificar, fusionar, publicar y distribuirlo libremente. La atribución se aprecia, pero no es obligatoria.
 
 ---
 
 <div align="center">
- <sub>Evolith — Plataforma de Arquitectura Empresarial | Corpus de Referencia Progresiva | Spec-driven AI-DD</sub>
+ <sub>Evolith — Enterprise Architecture Platform | Progressive Reference Corpus | Spec-driven AI-DD</sub>
 </div>

@@ -23,16 +23,16 @@ Harness is an enterprise DevOps platform providing CI/CD, cloud cost management,
 
 | Capability | Claude Code | GitHub Copilot | Cursor / Cline | **Harness AI Agent** |
 |---|---|---|---|---|
-| IDE code generation | ✅ | ✅ | ✅ | ❌ |
-| PR review automation | ✅ | ✅ | ❌ | ✅ |
-| Pipeline orchestration | ❌ | ❌ | ❌ | ✅ |
-| Multi-agent workflow | ✅ | ❌ | ❌ | ✅ |
-| Human approval loops | ✅ | ❌ | ❌ | ✅ |
-| Private deployment | ✅ | ❌ | ❌ | ✅ |
-| CI/CD integration | ❌ | ✅ | ❌ | ✅ |
-| Governance workflows | ❌ | ❌ | ❌ | ✅ |
-| Cost tracking | ❌ | ❌ | ❌ | ✅ |
-| Knowledge base RAG | ✅ | ❌ | ❌ | ✅ (via MCP / custom) |
+| IDE code generation | Yes | Yes | Yes | No |
+| PR review automation | Yes | Yes | No | Yes |
+| Pipeline orchestration | No | No | No | Yes |
+| Multi-agent workflow | Yes | No | No | Yes |
+| Human approval loops | Yes | No | No | Yes |
+| Private deployment | Yes | No | No | Yes |
+| CI/CD integration | No | Yes | No | Yes |
+| Governance workflows | No | No | No | Yes |
+| Cost tracking | No | No | No | Yes |
+| Knowledge base RAG | Yes | No | No | Yes (via MCP / custom) |
 
 **Conclusion:** Harness AI Agent is uniquely positioned as the **orchestration and governance layer** — not as the primary code assistant, but as the platform that manages AI workflows, approval chains, and pipeline automation across all other tools.
 
@@ -230,14 +230,14 @@ This creates a **full traceability chain**: requirement → ADR → AI suggestio
 
 | Dimension | Score | Notes |
 |---|---|---|
-| Orchestration capability | 🟢 Excellent | Native multi-agent, approval workflows, pipeline integration |
-| Knowledge base integration | 🟡 Good | Via MCP or custom plugin; not native RAG |
-| IDE experience | 🔴 Limited | Not a developer IDE tool; best as CI/CD layer |
-| Self-hosted support | 🟢 Excellent | Full self-hosted option for private deployments |
-| Governance workflows | 🟢 Excellent | Native HITL approval gates, audit trails |
-| Cost | 🟡 Medium | Enterprise pricing; justified for large org use |
-| Setup complexity | 🟡 Medium | Requires pipeline configuration expertise |
-| Multi-agent support | 🟢 Excellent | Native agent orchestration |
+| Orchestration capability | [Excellent] | Native multi-agent, approval workflows, pipeline integration |
+| Knowledge base integration | [Good] | Via MCP or custom plugin; not native RAG |
+| IDE experience | [Limited] | Not a developer IDE tool; best as CI/CD layer |
+| Self-hosted support | [Excellent] | Full self-hosted option for private deployments |
+| Governance workflows | [Excellent] | Native HITL approval gates, audit trails |
+| Cost | [Medium] | Enterprise pricing; justified for large org use |
+| Setup complexity | [Medium] | Requires pipeline configuration expertise |
+| Multi-agent support | [Excellent] | Native agent orchestration |
 
 ### Recommendation
 

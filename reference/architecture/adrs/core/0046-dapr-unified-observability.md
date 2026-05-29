@@ -36,7 +36,7 @@ We hereby mandate the absolute unification of infrastructure and application tel
 
 ## References
 - [ADR-0006: Future Microservices Transition with Dapr](../core/0006-future-microservices-transition-dapr.md)
-- [Reference Blueprint - Observability Integration](../../blueprints/reference-blueprint.md#31-overall-context-pattern---full-stack-with-gateway-tiers-and-injectable-event-bus)
+- [ADR-0007: Observability Telemetry OTel](../nodejs/0007-observability-telemetry-loki-opentelemetry.md)
 - [Engineering Manifesto - Infrastructure Isolation](../../../governance/standards/engineering/engineering-manifesto.md)
 - [Authoritative Tech Stack - Validated Runtimes](../../blueprints/authoritative-tech-stack.md)
 

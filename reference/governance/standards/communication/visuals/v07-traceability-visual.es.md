@@ -106,11 +106,17 @@ flowchart LR
 ## Visual 7-C — Puntuación de Impacto ADR (ADRs Más Usados en UMS)
 
 ```mermaid
-xychart-beta horizontal
-    title "Frecuencia de Uso de ADRs en UMS (cantidad de FS cubiertas)"
-    x-axis ["ADR-0012 RBAC/ABAC", "ADR-0015 Event Bus", "ADR-0010 Multi-Tenancy", "ADR-0020 Abstracción IdP", "ADR-0033 Outbox", "ADR-0035 Sagas", "ADR-0034 CQRS", "ADR-0026 MFA", "ADR-0016 Audit Trail", "ADR-0021 Grafo Auth"]
-    y-axis "Cantidad FS" 0 --> 6
-    bar [5, 3, 3, 3, 3, 2, 2, 2, 2, 2]
+pie title "Frecuencia de Uso de ADRs en UMS (cantidad de FS cubiertas)"
+    "ADR-0012 RBAC/ABAC" : 5
+    "ADR-0015 Event Bus" : 3
+    "ADR-0010 Multi-Tenancy" : 3
+    "ADR-0020 Abstracción IdP" : 3
+    "ADR-0033 Outbox" : 3
+    "ADR-0035 Sagas" : 2
+    "ADR-0034 CQRS" : 2
+    "ADR-0026 MFA" : 2
+    "ADR-0016 Audit Trail" : 2
+    "ADR-0021 Grafo Auth" : 2
 ```
 
 ---

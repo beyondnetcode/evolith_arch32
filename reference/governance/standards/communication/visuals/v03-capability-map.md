@@ -148,10 +148,10 @@ quadrantChart
     title Capability Maturity vs Implementation Complexity
     x-axis Low Complexity --> High Complexity
     y-axis Lower Maturity --> Higher Maturity
-    quadrant-1 Advanced (Phase 3)
-    quadrant-2 Mature Foundation (Phase 1-2)
-    quadrant-3 Quick Wins (Start Here)
-    quadrant-4 Deferred (Justified Investment)
+    quadrant-1 "Advanced (Phase 3)"
+    quadrant-2 "Mature Foundation (Phase 1-2)"
+    quadrant-3 "Quick Wins (Start Here)"
+    quadrant-4 "Deferred (Justified Investment)"
 
     Engineering Manifesto: [0.12, 0.90]
     Hexagonal Architecture: [0.20, 0.85]

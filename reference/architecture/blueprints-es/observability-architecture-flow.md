@@ -50,7 +50,7 @@ flowchart LR
     Stdout --> Promtail
     Promtail --> Loki
 
-    Endpoint -. ASP.NET / HttpClient / Runtime .-> OTel
+    Endpoint -. "ASP.NET / HttpClient / Runtime" .-> OTel
     Activity -. trace/span actual .-> OTel
     OTel -->|"OTLP traces + metrics"| Collector
     Collector --> Tempo

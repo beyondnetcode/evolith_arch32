@@ -23,16 +23,16 @@ Harness es una plataforma empresarial DevOps que provee CI/CD, gestión de costo
 
 | Capacidad | Claude Code | GitHub Copilot | Cursor / Cline | **Harness AI Agent** |
 |---|---|---|---|---|
-| Generación de código en IDE | ✅ | ✅ | ✅ | ❌ |
-| Automatización de revisión de PR | ✅ | ✅ | ❌ | ✅ |
-| Orquestación de pipeline | ❌ | ❌ | ❌ | ✅ |
-| Workflow multi-agente | ✅ | ❌ | ❌ | ✅ |
-| Bucles de aprobación humana | ✅ | ❌ | ❌ | ✅ |
-| Despliegue privado | ✅ | ❌ | ❌ | ✅ |
-| Integración CI/CD | ❌ | ✅ | ❌ | ✅ |
-| Workflows de gobernanza | ❌ | ❌ | ❌ | ✅ |
-| Seguimiento de costos | ❌ | ❌ | ❌ | ✅ |
-| Knowledge base RAG | ✅ | ❌ | ❌ | ✅ (via MCP / custom) |
+| Generación de código en IDE | Sí | Sí | Sí | No |
+| Automatización de revisión de PR | Sí | Sí | No | Sí |
+| Orquestación de pipeline | No | No | No | Sí |
+| Workflow multi-agente | Sí | No | No | Sí |
+| Bucles de aprobación humana | Sí | No | No | Sí |
+| Despliegue privado | Sí | No | No | Sí |
+| Integración CI/CD | No | Sí | No | Sí |
+| Workflows de gobernanza | No | No | No | Sí |
+| Seguimiento de costos | No | No | No | Sí |
+| Knowledge base RAG | Sí | No | No | Sí (via MCP / custom) |
 
 **Conclusión:** Harness AI Agent está posicionado de forma única como la **capa de orquestación y gobernanza** — no como el asistente de código principal, sino como la plataforma que gestiona workflows de IA, cadenas de aprobación y automatización de pipelines en todas las demás herramientas.
 
@@ -230,14 +230,14 @@ Esto crea una **cadena de trazabilidad completa**: requerimiento → ADR → sug
 
 | Dimensión | Puntaje | Notas |
 |---|---|---|
-| Capacidad de orquestación | 🟢 Excelente | Multi-agente nativo, workflows de aprobación, integración de pipeline |
-| Integración de knowledge base | 🟡 Bueno | Via MCP o plugin personalizado; sin RAG nativo |
-| Experiencia IDE | 🔴 Limitado | No es una herramienta IDE para desarrolladores; mejor como capa CI/CD |
-| Soporte self-hosted | 🟢 Excelente | Opción self-hosted completa para despliegues privados |
-| Workflows de gobernanza | 🟢 Excelente | Gates de aprobación HITL nativos, audit trails |
-| Costo | 🟡 Medio | Precios empresariales; justificado para uso en gran organización |
-| Complejidad de configuración | 🟡 Medio | Requiere experiencia en configuración de pipelines |
-| Soporte multi-agente | 🟢 Excelente | Orquestación nativa de agentes |
+| Capacidad de orquestación | [Excelente] | Multi-agente nativo, workflows de aprobación, integración de pipeline |
+| Integración de knowledge base | [Bueno] | Via MCP o plugin personalizado; sin RAG nativo |
+| Experiencia IDE | [Limitado] | No es una herramienta IDE para desarrolladores; mejor como capa CI/CD |
+| Soporte self-hosted | [Excelente] | Opción self-hosted completa para despliegues privados |
+| Workflows de gobernanza | [Excelente] | Gates de aprobación HITL nativos, audit trails |
+| Costo | [Medio] | Precios empresariales; justificado para uso en gran organización |
+| Complejidad de configuración | [Medio] | Requiere experiencia en configuración de pipelines |
+| Soporte multi-agente | [Excelente] | Orquestación nativa de agentes |
 
 ### Recomendación
 

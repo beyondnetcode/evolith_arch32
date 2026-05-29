@@ -26,11 +26,16 @@ This repository defines the architectural baseline, governance standards, harnes
 ## Conventions
 - Read the agnostic baseline before applying any runtime-specific guidance.
 - Treat satellite repository lessons as candidates for promotion into reusable corporate standards.
-- Keep standards runtime-agnostic unless the guidance clearly belongs in a runtime-specific profile.
-- Functional stories must remain business-readable and isolate technical detail in `Technical Requirements`.
+- Keep standards runtime-agnostic unless the guidance belongs clearly to a runtime-specific profile.
+- Functional stories must remain business-readable and isolate technical detail in a `Technical Requirements` section.
 - Prefer explicit bounded-context ownership, contract boundaries, and extraction readiness over premature distribution.
 - Use relative repository links for internal Markdown references.
 - Keep Markdown anchors stable when renaming headings; update all inbound links in the same change.
+- **Bilingual Naming Convention:**
+  - **Pattern A** (`.es.md` suffix): Use for individual files (README, AGENTS, MASTER_INDEX, single documents).
+  - **Pattern B** (`-es/` subdirectory): Use for grouped content with multiple files (ADR collections, Standards sections).
+  - Never mix patterns within the same content area. When in doubt, use Pattern A for simplicity.
+  - All bilingual pairs must maintain exact structural parity — same filename, same position, same sections.
 
 ## Agent Rules
 - Read `./.harness/rules/global-rules.md` before responding or editing.

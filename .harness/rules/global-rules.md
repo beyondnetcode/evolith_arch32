@@ -4,7 +4,8 @@ Binding directives. Zero fluff.
 
 | ID | Rule | Constraint |
 |---|---|---|
-| **R-01** | Bilingual Sync | Spanish and English docs/diagrams must stay 100% in sync; no finished document may keep placeholder bilingual navigation. |
+| **R-01** | Bilingual Sync | Spanish and English docs/diagrams must stay 100% in sync; no finished document may keep placeholder bilingual navigation. External framework references (BMAD-METHOD) are exempt from bilingual requirements. |
+| **R-19** | Bilingual Naming | Use `.es.md` suffix for individual files; use `-es/` subdirectory for grouped content. Never mix patterns within the same area. All pairs must maintain structural parity. |
 | **R-02** | Context7 | Always consult `context7` for live architecture limits before technical tasks. |
 | **R-03** | UTF-8 Clean | Document outputs must be pure UTF-8; no BOM, CRLF, replacement characters, mojibake, or encoding artifacts allowed. |
 | **R-04** | Label Lang | Diagram labels must strictly match document language; code identifiers are exempt. |

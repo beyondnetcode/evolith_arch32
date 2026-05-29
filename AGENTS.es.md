@@ -8,6 +8,8 @@ Este repositorio define la línea base arquitectónica, los estándares de gober
 - Referencia aplicada de producto: `https://github.com/beyondnetcode/ums`
 - Setup y ejecución UMS: seguir el `README.md` vigente de UMS; este repositorio no duplica esos comandos.
 - Saneamiento de codificación Markdown: `python ./.bmad-core/scripts/cleanup_markdown_encoding.py`
+- Validación de documentación: `node .harness/scripts/validate-docs.mjs`
+- Validación de renderizado de diagramas cuando Mermaid cambió: `node .harness/scripts/validate-docs.mjs --render-mermaid`
 
 ## Arquitectura
 - Rol del repositorio: referencia de arquitectura progresiva corporativa, no una base de código para un solo producto.
@@ -27,6 +29,13 @@ Este repositorio define la línea base arquitectónica, los estándares de gober
 - Mantener los estándares agnósticos de runtime a menos que la guía pertenezca claramente a un perfil específico de runtime.
 - Las historias funcionales deben permanecer legibles para el negocio y aislar el detalle técnico en `Technical Requirements`.
 - Preferir la propiedad explícita de bounded context, los límites de contratos y la preparación para la extracción sobre la distribución prematura.
+- Usar enlaces relativos de repositorio para referencias internas de Markdown.
+- Mantener los anclas de Markdown estables al renombrar encabezados; actualizar todos los enlaces entrantes en el mismo cambio.
+- **Convenio de Nomenclatura Bilingüe:**
+  - **Patrón A** (sufijo `.es.md`): Usar para archivos individuales (README, AGENTS, MASTER_INDEX, documentos únicos).
+  - **Patrón B** (subdirectorio `-es/`): Usar para contenido agrupado con múltiples archivos (colecciones ADR, secciones de Estándares).
+  - Nunca mezclar patrones dentro de la misma área de contenido. En caso de duda, usar Patrón A por simplicidad.
+  - Todos los pares bilingües deben mantener paridad estructural exacta — mismo nombre de archivo, misma posición, mismas secciones.
 
 ## Reglas de Agentes
 - Leer `./.harness/rules/global-rules.md` antes de responder o editar.
@@ -34,10 +43,20 @@ Este repositorio define la línea base arquitectónica, los estándares de gober
 - Cuando la guía del stack cambie materialmente, actualizar juntos los estándares afectados, `AGENTS.md` y los perfiles autoritativos específicos de runtime.
 - Los estándares de multi-tenancy deben preservar dos capas: filtrado en la capa de aplicación como primario, enforcement nativo de base de datos como failsafe secundario.
 - No convertir un estándar corporativo en un documento específico de producto a menos que el área del repositorio esté explícitamente orientada al producto.
-- Verificación Obligatoria de Enlaces: DEBES verificar todos los enlaces internos y anclas antes de marcar como completada cualquier tarea de documentación.
-- Consistencia Bilingüe: Cualquier actualización a un documento en inglés DEBE tener una actualización correspondiente en su contraparte en español, asegurando la paridad en enlaces e índices.
-- Validación de Diagramas: Cualquier bloque Mermaid o PlantUML modificado DEBE ser revisado para asegurar la correctitud de su sintaxis.
-- Fallar Rápido (Fail Fast) en Docs: Si se encuentran enlaces rotos, referencias faltantes o diagramas inválidos, DEBES fallar la tarea y reportar las anomalías en lugar de asumir la finalización.
+- Verificación Obligatoria de Enlaces: verificar todos los enlaces internos y anclas antes de completar cualquier tarea de documentación.
+- Consistencia Bilingüe: cualquier actualización a un documento en inglés debe tener una contraparte en español o una excepción documentada explícitamente.
+- Validación de Diagramas: cualquier bloque Mermaid modificado debe pasar validación de sintaxis; usar validación de renderizado para cambios materiales de diagramas.
+- Calidad de Actualización de Agentes: cualquier actualización de persona de agente debe declarar alcance, entradas, salidas, restricciones, transferencia y lista de verificación de validación, y formato de salida de auditoría.
+- Cobertura de Reglas: al agregar o cambiar reglas de validación, actualizar la regla de referencia, la tabla de reglas globales y el comportamiento del script de validación juntos.
+- Fallar Rápido en Docs: si se encuentran enlaces no resueltos, referencias faltantes, anclas inválidas, diagramas inválidos o brechas de par de idiomas, fallar la tarea y reportar las anomalías en lugar de asumir la finalización.
+
+## Puertas de Calidad de Documentación
+- Los enlaces relativos internos deben resolverse desde la ubicación del archivo donde aparecen.
+- Las anclas de Markdown deben existir en el destino Markdown referenciado.
+- Los bloques Mermaid deben usar declaraciones soportadas e IDs de nodo estables para los bordes.
+- La navegación bilingüe no debe permanecer como un marcador de posición en documentos finalizados.
+- La salida UTF-8 no debe incluir marcas BOM, caracteres de reemplazo, mojibake o símbolos de rango emoji.
+- Los finales de línea CRLF no están permitidos en la documentación Markdown.
 
 ## Fuera de Alcance
 - No debilitar ni eliminar los requisitos de gobernanza bilingüe.

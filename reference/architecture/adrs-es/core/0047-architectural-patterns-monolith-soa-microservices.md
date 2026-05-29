@@ -162,7 +162,7 @@ SOA (Service-Oriented Architecture) **no es parte del eje de evolución Evolith*
 
 ### Qué es SOA
 
-Los sistemas exponen sus capacidades mediante servicios interoperables con contratos estrictos (SOAP o REST), gobernados típicamente por un Enterprise Service Bus (ESB). SOA no persigue construir nuevas aplicaciones modulares — persigue **reutilizar y conectar activos existentes**.
+Los sistemas exponen sus capacidades mediante servicios interoperables con contratos estrictos (SOAP o REST), gobernados generalmente por un Enterprise Service Bus (ESB). SOA no persigue construir nuevas aplicaciones modulares — persigue **aprovechar y conectar activos existentes**.
 
 ### Por qué Evolith no construye sobre SOA
 

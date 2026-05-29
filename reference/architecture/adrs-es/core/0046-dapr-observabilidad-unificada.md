@@ -36,7 +36,7 @@ Establecemos la unificación absoluta de la telemetría de infraestructura y run
 
 ## Referencias
 - [ADR-0006: Transición Futura a Microservicios con Dapr](../core/0006-future-microservices-transition-dapr.md)
-- [Reference Blueprint - Sección Observabilidad](../../blueprints-es/reference-blueprint.md#31-patrón-de-contexto-general---stack-completo-con-niveles-de-gateway-y-bus-de-eventos-inyectable)
+- [ADR-0007: Telemetría de Observabilidad OTel](../../adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md)
 - [Engineering Manifesto - Aislamiento de Infraestructura](../../../governance/standards/engineering/engineering-manifesto.md)
 - [Authoritative Tech Stack - Frameworks Aprobados](../../blueprints/authoritative-tech-stack.md)
 

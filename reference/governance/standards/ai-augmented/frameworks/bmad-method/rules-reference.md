@@ -6,7 +6,6 @@
 >
 > **Official BMAD-METHOD source:** [github.com/bmad-code-org/BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD)
 >
-> **Bilingual Navigation:** Versión en Español — pendiente
 
 The harness defines 18 binding rules that apply across all agents, all phases, and all document types in this repository. Rules are not suggestions — they are enforced automatically (where tooling allows) and are checked by agents before producing output.
 

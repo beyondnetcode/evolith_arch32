@@ -84,6 +84,11 @@ function collectAnchors(content) {
     anchors.add(count === 0 ? base : `${base}-${count}`);
   }
 
+  const htmlAnchorPattern = /<a\s+name=["']([^"']+)["']\s*>/gi;
+  for (const match of cleanContent.matchAll(htmlAnchorPattern)) {
+    anchors.add(match[1].toLowerCase());
+  }
+
   return anchors;
 }
 
@@ -145,7 +150,22 @@ function validateBilingualPair(file, content) {
   const relative = path.relative(root, file);
 
   if (relative.endsWith(".es.md")) {
-    const englishFile = file.replace(/\.es\.md$/, ".md");
+    const fileDir = path.dirname(file);
+    const fileName = path.basename(file, ".es.md");
+    const relativeDir = path.relative(root, fileDir);
+
+    let englishFile = file.replace(/\.es\.md$/, ".md");
+
+    if (!fs.existsSync(englishFile)) {
+      const siblingDir = fileDir.replace(/-es\/$/, "/").replace(/\/es\/$/, "/");
+      if (siblingDir !== fileDir) {
+        const altEnglishFile = path.join(siblingDir, fileName + ".md");
+        if (fs.existsSync(altEnglishFile)) {
+          englishFile = altEnglishFile;
+        }
+      }
+    }
+
     if (!fs.existsSync(englishFile)) {
       addFailure(file, 0, content, `missing English counterpart: ${path.relative(root, englishFile)}`);
     }
@@ -217,15 +237,8 @@ function validateMermaid(file, content) {
   }
 }
 
-function renderMermaidBlocks() {
-  if (!shouldRenderMermaid || failures.length > 0) {
-    return;
-  }
-
-  const outputDirectory = fs.mkdtempSync(path.join(os.tmpdir(), "arc32-mermaid-"));
-
-  for (let index = 0; index < mermaidBlocks.length; index += 1) {
-    const block = mermaidBlocks[index];
+function renderMermaidBlock(block, outputDirectory, index) {
+  return new Promise((resolve) => {
     const basename = `${String(index + 1).padStart(3, "0")}-${path
       .relative(root, block.file)
       .replace(/[^a-zA-Z0-9._-]+/g, "_")}`;
@@ -248,6 +261,28 @@ function renderMermaidBlocks() {
         `mermaid render failed: ${(result.stderr || result.stdout).trim()}`,
       );
     }
+
+    resolve();
+  });
+}
+
+async function renderMermaidBlocks() {
+  if (!shouldRenderMermaid || failures.length > 0) {
+    return;
+  }
+
+  const outputDirectory = fs.mkdtempSync(path.join(os.tmpdir(), "arc32-mermaid-"));
+  const concurrency = Math.max(4, Math.min(os.cpus().length, 16));
+  const workers = [];
+
+  for (let index = 0; index < mermaidBlocks.length; index += 1) {
+    const block = mermaidBlocks[index];
+    workers.push(renderMermaidBlock(block, outputDirectory, index));
+
+    if (workers.length >= concurrency || index === mermaidBlocks.length - 1) {
+      await Promise.all(workers);
+      workers.length = 0;
+    }
   }
 }
 
@@ -262,7 +297,7 @@ for (const file of markdownFiles) {
   validateMermaid(file, content);
 }
 
-renderMermaidBlocks();
+await renderMermaidBlocks();
 
 if (failures.length > 0) {
   console.error("Documentation validation failed:");

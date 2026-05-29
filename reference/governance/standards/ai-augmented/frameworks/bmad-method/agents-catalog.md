@@ -4,8 +4,6 @@
 > The BMAD-METHOD agent model originates from the official framework:
 > [github.com/bmad-code-org/BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD)
 >
-> **Bilingual Navigation:** Versión en Español — pendiente
-
 This catalog documents how each BMAD agent is configured and scoped within this repository's progressive architecture context. The persona structures follow BMAD-METHOD conventions; the constraints, stack references, and governance directives are local additions specific to this codebase.
 
 Each "Portable Persona" block reflects the **local configuration** — copy it to replicate this repository's adoption, not to reproduce the original BMAD agent definition.

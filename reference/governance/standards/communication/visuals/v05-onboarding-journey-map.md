@@ -41,27 +41,43 @@ flowchart LR
 ## Visual 5-B — Architect / Tech Lead Journey
 
 ```mermaid
-journey
-    title Architect / Tech Lead — First 2 Weeks
-    section Day 1: Foundation
-      Read Executive One-Pager (V-01): 5: Architect
-      Read Architecture Journey (V-02): 5: Architect
-      Understand Ecosystem Relationship: 4: Architect
-    section Day 2-3: Standards
-      Study Architectural Directives: 5: Architect
-      Read Evolutionary Roadmap: 5: Architect
-      Review Engineering Manifesto: 4: Architect
-    section Day 4-5: Decisions
-      Navigate ADR Registry (V-04): 5: Architect
-      Study ADR Decision Matrix: 4: Architect
-      Read Reference Blueprint (arc42/C4): 4: Architect
-    section Week 2: Applied Reference
-      Explore UMS Architecture Portal: 5: Architect
-      Review UMS Traceability Matrix: 4: Architect
-      Read Child Repo Inheritance Guide: 5: Architect
-    section End of Week 2: First ADR
-      Write first ADR proposal: 4: Architect
-      Submit to Architecture Board: 3: Architect
+flowchart TB
+    classDef sectionHeader fill:#0f172a,stroke:#334155,color:#fff,font-weight:bold
+    classDef task fill:#1e3a5f,stroke:#3b82f6,color:#fff
+    classDef score5 fill:#14532d,stroke:#22c55e,color:#fff
+    classDef score4 fill:#1e3a5f,stroke:#3b82f6,color:#fff
+    classDef score3 fill:#4a3800,stroke:#f59e0b,color:#fff
+
+    subgraph D1["Day 1: Foundation"]
+        B1["Read Executive One-Pager V-01"]:::task
+        B2["Read Architecture Journey V-02"]:::task
+        B3["Understand Ecosystem Relationship"]:::task
+    end
+
+    subgraph D2["Day 2-3: Standards"]
+        B4["Study Architectural Directives"]:::task
+        B5["Read Evolutionary Roadmap"]:::task
+        B6["Review Engineering Manifesto"]:::task
+    end
+
+    subgraph D3["Day 4-5: Decisions"]
+        B7["Navigate ADR Registry V-04"]:::task
+        B8["Study ADR Decision Matrix"]:::task
+        B9["Read Reference Blueprint arc42 C4"]:::task
+    end
+
+    subgraph W2["Week 2: Applied Reference"]
+        B10["Explore UMS Architecture Portal"]:::task
+        B11["Review UMS Traceability Matrix"]:::task
+        B12["Read Child Repo Inheritance Guide"]:::task
+    end
+
+    subgraph END["End of Week 2: First ADR"]
+        B13["Write first ADR proposal"]:::task
+        B14["Submit to Architecture Board"]:::task
+    end
+
+    D1 --> D2 --> D3 --> W2 --> END
 ```
 
 ---
@@ -69,24 +85,35 @@ journey
 ## Visual 5-C — Backend / Frontend Developer Journey
 
 ```mermaid
-journey
-    title Backend / Frontend Developer — First 2 Weeks
-    section Day 1: Rules
-      Read Engineering Manifesto: 5: Developer
-      Learn anti-pattern blacklist: 5: Developer
-      Understand SOLID + Hexagonal: 4: Developer
-    section Day 2: Your Runtime
-      Select Node.js or .NET profile: 5: Developer
-      Read runtime-specific ADRs (V-04-C or V-04-D): 4: Developer
-      Study Canonical Patterns CP-01..04: 5: Developer
-    section Day 3-5: Reference Code
-      Explore UMS source code: 5: Developer
-      Trace FS to ADR to TE in matrix: 4: Developer
-      Run UMS locally and observe: 4: Developer
-    section Week 2: First Deliverable
-      Write first use case with Hexagonal: 4: Developer
-      Add unit tests to 70% coverage: 4: Developer
-      Submit PR with PR checklist: 3: Developer
+flowchart TB
+    classDef sectionHeader fill:#0f172a,stroke:#334155,color:#fff,font-weight:bold
+    classDef task fill:#1e3a5f,stroke:#3b82f6,color:#fff
+
+    subgraph D1["Day 1: Rules"]
+        C1["Read Engineering Manifesto"]:::task
+        C2["Learn anti-pattern blacklist"]:::task
+        C3["Understand SOLID and Hexagonal"]:::task
+    end
+
+    subgraph D2["Day 2: Your Runtime"]
+        C4["Select Node.js or .NET profile"]:::task
+        C5["Read runtime-specific ADRs V-04-C or V-04-D"]:::task
+        C6["Study Canonical Patterns CP-01 to 04"]:::task
+    end
+
+    subgraph D3["Day 3-5: Reference Code"]
+        C7["Explore UMS source code"]:::task
+        C8["Trace FS to ADR to TE in matrix"]:::task
+        C9["Run UMS locally and observe"]:::task
+    end
+
+    subgraph W2["Week 2: First Deliverable"]
+        C10["Write first use case with Hexagonal"]:::task
+        C11["Add unit tests to 70 percent coverage"]:::task
+        C12["Submit PR with PR checklist"]:::task
+    end
+
+    D1 --> D2 --> D3 --> W2
 ```
 
 ---
@@ -94,24 +121,35 @@ journey
 ## Visual 5-D — QA / SDET Journey
 
 ```mermaid
-journey
-    title QA / SDET — First 2 Weeks
-    section Day 1: Quality Model
-      Read Testing Pyramid ADR-0018: 5: QA
-      Understand 70/20/10 split: 5: QA
-      Read Contract Testing Guideline: 4: QA
-    section Day 2-3: Testing Standards
-      Study ADR-0052 Unit Isolation: 4: QA
-      Study ADR-0053 Integration + E2E: 5: QA
-      Review CI quality gate setup: 4: QA
-    section Day 4-5: Applied Evidence
-      Review UMS test implementation: 5: QA
-      Run UMS test suite locally: 4: QA
-      Trace FS to acceptance criteria: 4: QA
-    section Week 2: First Tests
-      Write contract test for one FS: 4: QA
-      Write integration test with Testcontainers: 3: QA
-      Verify CI gate passes: 5: QA
+flowchart TB
+    classDef sectionHeader fill:#0f172a,stroke:#334155,color:#fff,font-weight:bold
+    classDef task fill:#1e3a5f,stroke:#3b82f6,color:#fff
+
+    subgraph D1["Day 1: Quality Model"]
+        Q1["Read Testing Pyramid ADR 0018"]:::task
+        Q2["Understand 70 20 10 split"]:::task
+        Q3["Read Contract Testing Guideline"]:::task
+    end
+
+    subgraph D2["Day 2-3: Testing Standards"]
+        Q4["Study ADR 0052 Unit Isolation"]:::task
+        Q5["Study ADR 0053 Integration and E2E"]:::task
+        Q6["Review CI quality gate setup"]:::task
+    end
+
+    subgraph D3["Day 4-5: Applied Evidence"]
+        Q7["Review UMS test implementation"]:::task
+        Q8["Run UMS test suite locally"]:::task
+        Q9["Trace FS to acceptance criteria"]:::task
+    end
+
+    subgraph W2["Week 2: First Tests"]
+        Q10["Write contract test for one FS"]:::task
+        Q11["Write integration test with Testcontainers"]:::task
+        Q12["Verify CI gate passes"]:::task
+    end
+
+    D1 --> D2 --> D3 --> W2
 ```
 
 ---
@@ -119,24 +157,35 @@ journey
 ## Visual 5-E — DevOps / SRE Journey
 
 ```mermaid
-journey
-    title DevOps / SRE — First 2 Weeks
-    section Day 1: Infrastructure Model
-      Read ADR-0028 Self-Hosted OSS: 5: DevOps
-      Understand OSS-first principle: 5: DevOps
-      Read Gitflow ADR-0050: 4: DevOps
-    section Day 2-3: Observability Stack
-      Study OTel + Loki + Tempo (ADR-0007): 5: DevOps
-      Review Grafana dashboard setup: 4: DevOps
-      Explore Infrastructure Hub: 4: DevOps
-    section Day 4-5: Operations
-      Read all 4 Runbooks (RB-01..04): 5: DevOps
-      Review CI/CD quality gates (ADR-0005): 4: DevOps
-      Study Multi-Cloud Scenarios: 3: DevOps
-    section Week 2: First Contribution
-      Set up OTel locally for product: 4: DevOps
-      Validate CI pipeline against ADR-0005: 4: DevOps
-      Contribute to or review a Runbook: 3: DevOps
+flowchart TB
+    classDef sectionHeader fill:#0f172a,stroke:#334155,color:#fff,font-weight:bold
+    classDef task fill:#1e3a5f,stroke:#3b82f6,color:#fff
+
+    subgraph D1["Day 1: Infrastructure Model"]
+        O1["Read ADR 0028 Self-Hosted OSS"]:::task
+        O2["Understand OSS-first principle"]:::task
+        O3["Read Gitflow ADR 0050"]:::task
+    end
+
+    subgraph D2["Day 2-3: Observability Stack"]
+        O4["Study OTel Loki Tempo ADR-0007"]:::task
+        O5["Review Grafana dashboard setup"]:::task
+        O6["Explore Infrastructure Hub"]:::task
+    end
+
+    subgraph D3["Day 4-5: Operations"]
+        O7["Read all 4 Runbooks RB-01 to 04"]:::task
+        O8["Review CI CD quality gates ADR-0005"]:::task
+        O9["Study Multi-Cloud Scenarios"]:::task
+    end
+
+    subgraph W2["Week 2: First Contribution"]
+        O10["Set up OTel locally for product"]:::task
+        O11["Validate CI pipeline against ADR-0005"]:::task
+        O12["Contribute to or review a Runbook"]:::task
+    end
+
+    D1 --> D2 --> D3 --> W2
 ```
 
 ---
@@ -144,20 +193,29 @@ journey
 ## Visual 5-F — Product Manager / PO Journey
 
 ```mermaid
-journey
-    title Product Manager / PO — First Week
-    section Day 1: Vision
-      Read Executive One-Pager: 5: PM
-      Understand Evolith vs UMS boundary: 5: PM
-      Read Evolutionary Roadmap phases: 4: PM
-    section Day 2: Scope Boundaries
-      Read UMS Reference Model: 5: PM
-      Understand Demo vs Reference boundary: 4: PM
-      Review UMS Documentation Index: 4: PM
-    section Day 3-5: Delivery Model
-      Read Functional Story Writing Standard: 5: PM
-      Understand Definition of Done: 4: PM
-      Review SDLC Framework stages: 3: PM
+flowchart TB
+    classDef sectionHeader fill:#0f172a,stroke:#334155,color:#fff,font-weight:bold
+    classDef task fill:#1e3a5f,stroke:#3b82f6,color:#fff
+
+    subgraph D1["Day 1: Vision"]
+        P1["Read Executive One-Pager"]:::task
+        P2["Understand Evolith vs UMS boundary"]:::task
+        P3["Read Evolutionary Roadmap phases"]:::task
+    end
+
+    subgraph D2["Day 2: Scope Boundaries"]
+        P4["Read UMS Reference Model"]:::task
+        P5["Understand Demo vs Reference boundary"]:::task
+        P6["Review UMS Documentation Index"]:::task
+    end
+
+    subgraph D3["Day 3-5: Delivery Model"]
+        P7["Read Functional Story Writing Standard"]:::task
+        P8["Understand Definition of Done"]:::task
+        P9["Review SDLC Framework stages"]:::task
+    end
+
+    D1 --> D2 --> D3
 ```
 
 ---

@@ -639,14 +639,14 @@ The following visual artifacts are proposed for creation, ordered by impact:
 
 | Priority | Visual | Tool | Audience | Purpose |
 |---|---|---|---|---|
-| 🔴 1 | Executive One-Pager (ecosystem overview) | Markdown / slide | Executive | Entry point for non-technical readers |
-| 🔴 2 | Progressive Journey Diagram | Mermaid / draw.io | All | Explain stages without overwhelming |
-| 🔴 3 | Capability Map (interactive) | draw.io / Miro | Architects, PMs | What Evolith provides per capability |
-| 🟠 4 | ADR Decision Tree (interactive) | draw.io / Obsidian | Architects, Devs | Navigate to the right ADR fast |
-| 🟠 5 | Onboarding Journey Map (by role) | Miro | HR, Tech Leads | Structured ramp-up for new joiners |
-| 🟠 6 | Governance Flow Diagram | Mermaid | Architects | ADR lifecycle visualization |
-| 🟡 7 | UMS → Evolith Traceability Visual | Mermaid / draw.io | Tech Leads, QA | ADR coverage heatmap |
-| 🟡 8 | Infrastructure Topology Map | draw.io | DevOps | Full deployment view |
+| [High] 1 | Executive One-Pager (ecosystem overview) | Markdown / slide | Executive | Entry point for non-technical readers |
+| [High] 2 | Progressive Journey Diagram | Mermaid / draw.io | All | Explain stages without overwhelming |
+| [High] 3 | Capability Map (interactive) | draw.io / Miro | Architects, PMs | What Evolith provides per capability |
+| [Medium] 4 | ADR Decision Tree (interactive) | draw.io / Obsidian | Architects, Devs | Navigate to the right ADR fast |
+| [Medium] 5 | Onboarding Journey Map (by role) | Miro | HR, Tech Leads | Structured ramp-up for new joiners |
+| [Medium] 6 | Governance Flow Diagram | Mermaid | Architects | ADR lifecycle visualization |
+| [Low] 7 | UMS → Evolith Traceability Visual | Mermaid / draw.io | Tech Leads, QA | ADR coverage heatmap |
+| [Low] 8 | Infrastructure Topology Map | draw.io | DevOps | Full deployment view |
 
 ---
 

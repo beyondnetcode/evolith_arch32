@@ -37,7 +37,7 @@ Definición de alcance, perfilado de personas, mapeo de OKRs y alineación con r
 | Artefacto | Objetivo y cuándo usarlo | Perfiles recomendados |
 |---|---|---|
 | [PRD — Documento de Requisitos de Producto](./04-artifact-templates/prd-template.es.md) | Captura el alcance completo del producto: personas de usuario, OKRs de negocio, límites funcionales, restricciones y no-objetivos. Se crea una vez por producto o iniciativa de release mayor. Requerido antes de cualquier trabajo de arquitectura o diseño. | Product Owner, Sponsor Ejecutivo — escrito por PO, revisado y firmado por Sponsor y Arquitecto |
-| [Mapeo SDLC–Artefactos — Fase 1](./sdlc-evolith-artifact-mapping.es.md#2-fase-1--concepción-y-descubrimiento) | Tabla de referencia que lista qué artefactos Evolith son Requeridos u Opcionales durante esta fase. Usar como checklist de cumplimiento antes de declarar la Aprobación de Negocio. | Product Owner, Revisor de Gobernanza, Arquitecto de Software |
+| [Mapeo SDLC–Artefactos — Fase 1](./sdlc-evolith-artifact-mapping.es.md#2-fase-1-concepción-y-descubrimiento) | Tabla de referencia que lista qué artefactos Evolith son Requeridos u Opcionales durante esta fase. Usar como checklist de cumplimiento antes de declarar la Aprobación de Negocio. | Product Owner, Revisor de Gobernanza, Arquitecto de Software |
 
 ---
 
@@ -55,7 +55,7 @@ Selección de patrones, producción de ADRs, definición de bounded contexts, co
 | [ADR — Registro de Decisión Arquitectónica](./04-artifact-templates/adr-template.es.md) | Captura una sola decisión arquitectónica: contexto, opciones evaluadas, opción elegida, trade-offs y consecuencias. Un ADR por decisión significativa. Requerido antes de implementar cualquier elección arquitectónica no trivial. | Arquitecto de Software, Principal / Staff Engineer — escrito por Arquitecto, revisado por Engineering Lead |
 | [Historia Funcional — Especificación de Comportamiento de Negocio](./04-artifact-templates/functional-story-template.es.md) | Describe una capacidad orientada al usuario en lenguaje de negocio. Define actores, flujos, reglas de negocio, criterios de aceptación y restricciones técnicas sin prescribir implementación. Sirve como contrato entre Producto e Ingeniería. | Product Owner, Analista de Negocio — escrito por PO/BA, revisado por Arquitecto y QA |
 | [Estándar de Escritura de Historias Funcionales](./03-documentation/functional-story-writing-standard.es.md) | Reglas normativas que rigen la estructura, el lenguaje y la completitud de las Historias Funcionales. Todos los autores de Historias Funcionales deben leerlo antes de escribir. | Product Owner, Analista de Negocio, QA / SDET — referencia normativa para todos los autores de historias |
-| [Mapeo SDLC–Artefactos — Fase 2](./sdlc-evolith-artifact-mapping.es.md#3-fase-2--diseño-y-arquitectura) | Tabla de referencia con artefactos Requeridos y Opcionales para esta fase. Usar como checklist antes de declarar el Baseline de Diseño. | Arquitecto de Software, Revisor de Gobernanza, Product Owner |
+| [Mapeo SDLC–Artefactos — Fase 2](./sdlc-evolith-artifact-mapping.es.md#3-fase-2-diseño-y-arquitectura) | Tabla de referencia con artefactos Requeridos y Opcionales para esta fase. Usar como checklist antes de declarar el Baseline de Diseño. | Arquitecto de Software, Revisor de Gobernanza, Product Owner |
 
 ---
 
@@ -71,7 +71,7 @@ Composición de código fuente, testing automatizado, aplicación de CI/CD y Def
 |---|---|---|
 | [Historia Técnica — Elemento de Trabajo de Implementación de Ingeniería](./04-artifact-templates/technical-story-template.es.md) | Descompone una Historia Funcional en una tarea de ingeniería concreta con pasos de implementación específicos, criterios de aceptación técnica y checklist de DoD. Una Historia Técnica por unidad de implementación discreta. | Desarrollador Backend, Desarrollador Frontend, Tech Lead — escrito por Ingeniero, revisado por Tech Lead y QA |
 | [Buenas Prácticas de Documentación SDLC](./03-documentation/sdlc-documentation-best-practices.es.md) | Reglas obligatorias de documentación-como-código: versionado, actualización de ADRs, documentación inline y cadencia de revisión. Aplica a toda contribución de código durante la construcción. | Todos los Ingenieros, Tech Lead — normativo, aplica a cada commit |
-| [Mapeo SDLC–Artefactos — Fase 3](./sdlc-evolith-artifact-mapping.es.md#4-fase-3--construcción) | Tabla de referencia con artefactos Requeridos y Opcionales para esta fase. Usar como checklist de cumplimiento del DoD en cada sprint. | Tech Lead, QA / SDET, Revisor de Gobernanza |
+| [Mapeo SDLC–Artefactos — Fase 3](./sdlc-evolith-artifact-mapping.es.md#4-fase-3-construcción) | Tabla de referencia con artefactos Requeridos y Opcionales para esta fase. Usar como checklist de cumplimiento del DoD en cada sprint. | Tech Lead, QA / SDET, Revisor de Gobernanza |
 
 ---
 
@@ -86,7 +86,7 @@ Verificación de regresión, escaneo de seguridad, UAT y sellado del Release Can
 | Artefacto | Objetivo y cuándo usarlo | Perfiles recomendados |
 |---|---|---|
 | [Reporte de Resumen de Testing — Registro de Validación de Puerta de Calidad](./04-artifact-templates/test-summary-report-template.es.md) | Agrega los resultados de ejecución de pruebas en las capas unitaria, de integración y E2E. Confirma que todos los umbrales de calidad obligatorios se cumplen (cobertura, complejidad, CVEs, deuda técnica). Requerido antes de sellar el RC. | QA / SDET — escrito por QA, aprobado por Tech Lead y Product Owner |
-| [Mapeo SDLC–Artefactos — Fase 4](./sdlc-evolith-artifact-mapping.es.md#5-fase-4--validación-y-qa) | Tabla de referencia para esta fase. Usar para verificar que todos los artefactos de QA requeridos estén presentes antes de la aprobación del RC. | QA / SDET, Tech Lead, Revisor de Gobernanza |
+| [Mapeo SDLC–Artefactos — Fase 4](./sdlc-evolith-artifact-mapping.es.md#5-fase-4-validación-y-qa) | Tabla de referencia para esta fase. Usar para verificar que todos los artefactos de QA requeridos estén presentes antes de la aprobación del RC. | QA / SDET, Tech Lead, Revisor de Gobernanza |
 
 ---
 
@@ -102,7 +102,7 @@ Despliegue a producción, validación de observabilidad y nominalidad de monitor
 |---|---|---|
 | [Release Notes — Registro de Despliegue a Producción](./04-artifact-templates/release-notes-template.es.md) | Registro formal del despliegue: nuevas funcionalidades, cambios incompatibles, correcciones, pasos de despliegue, procedimiento de rollback y checklist de observabilidad. Requerido antes de declarar Producción Activa. | DevOps / SRE, Tech Lead — escrito por DevOps/Tech Lead, revisado por Product Owner |
 | *Próximamente: Playbook de Lanzamientos Zero-Downtime* | Runbook operativo para despliegues blue-green y canary con restricciones de zero-downtime. | DevOps / SRE |
-| [Mapeo SDLC–Artefactos — Fase 5](./sdlc-evolith-artifact-mapping.es.md#6-fase-5--entrega-y-operaciones) | Tabla de referencia para esta fase. Usar para verificar que todos los artefactos de entrega estén en lugar antes de declarar Producción Activa. | DevOps / SRE, Revisor de Gobernanza |
+| [Mapeo SDLC–Artefactos — Fase 5](./sdlc-evolith-artifact-mapping.es.md#6-fase-5-entrega-y-operaciones) | Tabla de referencia para esta fase. Usar para verificar que todos los artefactos de entrega estén en lugar antes de declarar Producción Activa. | DevOps / SRE, Revisor de Gobernanza |
 
 ---
 ---

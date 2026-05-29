@@ -28,7 +28,7 @@ The structural design of the system detailed in C4 and CAP views.
 The consolidated and classified history of active architectural decisions across Core, Node.js, .NET, and Android.
 * -> **[Central ADR Navigator](../../architecture/adrs/README.md)**
 * -> **[ADR Decision Matrix by Concern](../../architecture/adrs/adr-matrix.md)**
- * Jump to: [Core](../../architecture/adrs/README.md#universal-core) | [Node.js](../../architecture/adrs/README.md#nodejs-typescript) | [.NET](../../architecture/adrs/README.md#net-c) | [Mobile](../../architecture/adrs/README.md#android-native)
+ * Jump to: [Core](../../architecture/adrs/README.md) | [Node.js](../../architecture/adrs/README.md) | [.NET](../../architecture/adrs/README.md) | [Mobile](../../architecture/adrs/README.md)
 
 ### Phase 03: Engineering Standards and Stack Audit
 Tactical implementation playbooks, defensive security, and market validation.

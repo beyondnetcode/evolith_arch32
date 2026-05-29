@@ -37,7 +37,7 @@ Scope definition, persona profiling, OKR mapping, and architectural constraint a
 | Artifact | Objective and when to use it | Recommended profiles |
 |---|---|---|
 | [PRD — Product Requirements Document](./04-artifact-templates/prd-template.md) | Captures the complete product scope: user personas, business OKRs, functional boundaries, constraints, and non-goals. Created once per product or major release initiative. Required before any architecture or design work begins. | Product Owner, Executive Sponsor — written by PO, reviewed and signed by Sponsor and Architect |
-| [SDLC–Evolith Artifact Mapping — Phase 1](./sdlc-evolith-artifact-mapping.md#2-phase-1--conception-and-discovery) | Reference table listing which Evolith artifacts are Required or Optional during this phase. Use it as a compliance checklist before declaring Business Sign-Off. | Product Owner, Governance Reviewer, Software Architect |
+| [SDLC–Evolith Artifact Mapping — Phase 1](./sdlc-evolith-artifact-mapping.md#2-phase-1-conception-and-discovery) | Reference table listing which Evolith artifacts are Required or Optional during this phase. Use it as a compliance checklist before declaring Business Sign-Off. | Product Owner, Governance Reviewer, Software Architect |
 
 ---
 
@@ -55,7 +55,7 @@ Pattern selection, ADR production, bounded context definition, API contracts, an
 | [ADR — Architecture Decision Record](./04-artifact-templates/adr-template.md) | Captures a single architectural decision: context, considered options, chosen option, trade-offs, and consequences. One ADR per significant decision. Required before implementing any non-trivial architectural choice. | Software Architect, Principal / Staff Engineer — written by Architect, reviewed by Engineering Lead |
 | [Functional Story — Business Behavior Specification](./04-artifact-templates/functional-story-template.md) | Describes a user-facing capability in business language. Defines actors, flows, business rules, acceptance criteria, and technical constraints without prescribing implementation. Serves as the contract between Product and Engineering. | Product Owner, Business Analyst — written by PO/BA, reviewed by Architect and QA |
 | [Functional Story Writing Standard](./03-documentation/functional-story-writing-standard.md) | Normative rules governing the structure, language, and completeness of Functional Stories. All authors of Functional Stories must read this before writing. | Product Owner, Business Analyst, QA / SDET — normative reference for all story authors |
-| [SDLC–Evolith Artifact Mapping — Phase 2](./sdlc-evolith-artifact-mapping.md#3-phase-2--design-and-architecture) | Reference table listing Required and Optional artifacts for this phase. Use as a checklist before declaring Design Baseline. | Software Architect, Governance Reviewer, Product Owner |
+| [SDLC–Evolith Artifact Mapping — Phase 2](./sdlc-evolith-artifact-mapping.md#3-phase-2-design-and-architecture) | Reference table listing Required and Optional artifacts for this phase. Use as a checklist before declaring Design Baseline. | Software Architect, Governance Reviewer, Product Owner |
 
 ---
 
@@ -71,7 +71,7 @@ Source code composition, automated testing, CI/CD enforcement, and Definition of
 |---|---|---|
 | [Technical Story — Engineering Implementation Work Item](./04-artifact-templates/technical-story-template.md) | Breaks down a Functional Story into a concrete engineering task with specific implementation steps, technical acceptance criteria, and a DoD checklist. One Technical Story per discrete implementation unit. | Backend Developer, Frontend Developer, Tech Lead — written by Engineer, reviewed by Tech Lead and QA |
 | [SDLC Documentation Best Practices](./03-documentation/sdlc-documentation-best-practices.md) | Mandatory documentation-as-code rules: versioning, ADR updates, inline documentation, and review cadence. Applies to every code contribution during construction. | All Engineers, Tech Lead — normative, applies to every commit |
-| [SDLC–Evolith Artifact Mapping — Phase 3](./sdlc-evolith-artifact-mapping.md#4-phase-3--construction) | Reference table listing Required and Optional artifacts for this phase. Use as a DoD compliance checklist on every sprint. | Tech Lead, QA / SDET, Governance Reviewer |
+| [SDLC–Evolith Artifact Mapping — Phase 3](./sdlc-evolith-artifact-mapping.md#4-phase-3-construction) | Reference table listing Required and Optional artifacts for this phase. Use as a DoD compliance checklist on every sprint. | Tech Lead, QA / SDET, Governance Reviewer |
 
 ---
 
@@ -86,7 +86,7 @@ Regression verification, security scanning, UAT, and Release Candidate stamping.
 | Artifact | Objective and when to use it | Recommended profiles |
 |---|---|---|
 | [Test Summary Report — Quality Gate Validation Record](./04-artifact-templates/test-summary-report-template.md) | Aggregates test execution results across unit, integration, and E2E layers. Confirms all mandatory quality thresholds are met (coverage, complexity, CVEs, tech debt). Required before the RC can be stamped. | QA / SDET — written by QA, signed off by Tech Lead and Product Owner |
-| [SDLC–Evolith Artifact Mapping — Phase 4](./sdlc-evolith-artifact-mapping.md#5-phase-4--validation-and-qa) | Reference table for this phase. Use to verify all required QA artifacts are present before RC sign-off. | QA / SDET, Tech Lead, Governance Reviewer |
+| [SDLC–Evolith Artifact Mapping — Phase 4](./sdlc-evolith-artifact-mapping.md#5-phase-4-validation-and-qa) | Reference table for this phase. Use to verify all required QA artifacts are present before RC sign-off. | QA / SDET, Tech Lead, Governance Reviewer |
 
 ---
 
@@ -102,7 +102,7 @@ Production deployment, observability validation, and monitoring nominality.
 |---|---|---|
 | [Release Notes — Production Deployment Record](./04-artifact-templates/release-notes-template.md) | Formal deployment record: new features, breaking changes, bug fixes, deployment steps, rollback procedure, and observability checklist. Required before Production Live is declared. | DevOps / SRE, Tech Lead — written by DevOps/Tech Lead, reviewed by Product Owner |
 | *Coming Soon: Zero-Downtime Release Playbook* | Operational runbook for blue-green and canary deployments with zero-downtime constraints. | DevOps / SRE |
-| [SDLC–Evolith Artifact Mapping — Phase 5](./sdlc-evolith-artifact-mapping.md#6-phase-5--delivery-and-operations) | Reference table for this phase. Use to verify all delivery artifacts are in place before declaring Production Live. | DevOps / SRE, Governance Reviewer |
+| [SDLC–Evolith Artifact Mapping — Phase 5](./sdlc-evolith-artifact-mapping.md#6-phase-5-delivery-and-operations) | Reference table for this phase. Use to verify all delivery artifacts are in place before declaring Production Live. | DevOps / SRE, Governance Reviewer |
 
 ---
 ---

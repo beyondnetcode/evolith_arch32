@@ -28,7 +28,7 @@ El diseño estructural del sistema detallado en vistas C4 y CAP.
 La historia consolidada y clasificada de las decisiones técnicas activas.
 * -> **[Navegador Central de ADRs](../../architecture/adrs-es/README.md)**
 * -> **[Matriz de Decisiones ADR por Necesidad](../../architecture/adrs-es/adr-matrix.es.md)**
- * Jump to: *Ir A:* [Core](../../architecture/adrs-es/README.md#universal-core) | [Node.js](../../architecture/adrs-es/README.md#nodejs-typescript) | [.NET](../../architecture/adrs-es/README.md#net-c) | [Móvil](../../architecture/adrs-es/README.md#android-native)
+ * Jump to: *Ir A:* [Core](../../architecture/adrs-es/README.md) | [Node.js](../../architecture/adrs-es/README.md) | [.NET](../../architecture/adrs-es/README.md) | [Móvil](../../architecture/adrs-es/README.md)
 
 ### Fase 03: Estándares de Ingeniería y Auditoría de Stack
 Playbooks de implementación táctica, seguridad defensiva y validación de mercado.

@@ -18,7 +18,7 @@ Concrete tooling belongs in runtime profiles:
 - [Node.js / TypeScript stack profile](./authoritative-tech-stack-nodejs.md)
 - [Android / Kotlin stack profile](./authoritative-tech-stack-android.md)
 
-Demo-specific tooling belongs only in the demo documentation or source code under `knowledge/demo/` and `src/`.
+The applied reference implementation lives in the [UMS repository](https://github.com/beyondnetcode/ums). Evolith keeps only reusable standards, ADRs, blueprints, governance rules, and reference documentation; executable details, concrete product tooling, and applied example code belong in UMS or other satellite repositories.
 
 ## 1. Executive Constraints & Non-Negotiables
 

@@ -27,4 +27,4 @@ UMS se trata solo como referencia aplicada. Los modulos de producto, endpoints c
 Una practica de API UMS se convierte en estandar Evolith solo cuando es reutilizable, validada, documentada aqui y aprobada mediante el camino correcto: ADR, estandar de gobierno o patron canonico.
 
 ---
-[Volver a estandares de ingenieria](../README.md)
+[Volver a estandares de ingenieria](../../../standards-es/engineering/README.es.md)

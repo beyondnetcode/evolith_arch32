@@ -627,11 +627,11 @@ Siempre: Referenciar ADRs existentes antes de proponer nuevos.
 - [Evaluación de la Plataforma Harness](./harness-platform-evaluation.es.md)
 - [Taxonomía de Conocimiento para IA](./knowledge-taxonomy.es.md)
 - [Diagramas Visuales del Ecosistema](./visuals/README.es.md)
-- [ADR-AI-001: Estrategia de Harness Engineering](../06-adrs/adr-ai-001-harness-strategy.md)
-- [ADR-AI-002: MCP como Estándar de Integración](../06-adrs/adr-ai-002-mcp-as-integration-standard.md)
-- [ADR-AI-005: Política Human-in-the-Loop](../06-adrs/adr-ai-005-human-in-the-loop-policy.md)
-- [Patrones Agénticos](../05-agentic-patterns/patterns-overview.md)
-- [Manifiesto de Ingeniería](../../engineering/engineering-manifesto.md)
+- [ADR-AI-001: Estrategia de Harness Engineering](../../../standards-es/ai-augmented/06-adrs/adr-ai-001-harness-strategy.md)
+- [ADR-AI-002: MCP como Estándar de Integración](../../../standards-es/ai-augmented/06-adrs/adr-ai-002-mcp-as-integration-standard.md)
+- [ADR-AI-005: Política Human-in-the-Loop](../../../standards-es/ai-augmented/06-adrs/adr-ai-005-human-in-the-loop-policy.md)
+- [Patrones Agénticos](../../../standards-es/ai-augmented/05-agentic-patterns/patterns-overview.md)
+- [Manifiesto de Ingeniería](../../../standards-es/engineering/engineering-manifesto.md)
 
 ---
 

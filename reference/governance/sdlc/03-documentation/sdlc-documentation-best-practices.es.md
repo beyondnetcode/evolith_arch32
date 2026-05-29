@@ -38,7 +38,7 @@ Maximizar la actualización no-humana de artefactos para garantizar fiabilidad.
 Los requisitos funcionales deben ser legibles por Product Owners y Analistas de Negocio antes de ser útiles para ingeniería.
 * Las Historias Funcionales DEBEN separar propósito de negocio, actores, flujos, reglas de negocio y criterios de aceptación del detalle de implementación.
 * APIs, payloads, protocolos, base de datos, caché, controles de seguridad y restricciones de runtime DEBEN ubicarse en una sección dedicada de Requisitos Técnicos.
-* Ver el [Estándar de Redacción de Historias Funcionales](./functional-story-writing-standard.md).
+* Ver el [Estándar de Redacción de Historias Funcionales](functional-story-writing-standard.es.md).
 
 ---
 

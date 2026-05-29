@@ -12,7 +12,7 @@ Usa esta guía cuando llegues por primera vez al repositorio y necesites una rut
 | Developer | [Estándares de Ingeniería](../governance/standards-es/engineering/engineering-manifesto.md) | [Modelo de Referencia UMS](../knowledge/demo/ums-reference-model.es.md) | Saber qué es universal y cómo aparece en un producto empresarial |
 | SRE / DevOps | [Hub de Operaciones](../operations/README.es.md) | [Hub de Infraestructura](../infrastructure/README.es.md) | Entender runtime local y activos de observabilidad |
 | Producto / Funcional | [Modelo de Referencia UMS](../knowledge/demo/ums-reference-model.es.md) | [Índice Documental UMS](https://github.com/beyondnetcode/ums/blob/main/docs/MASTER_INDEX.md) | Entender el alcance del producto aplicado y su documentación |
-| Contribuidor IA | [Estándares AI-Augmented](../governance/standards-es/ai-augmented/README.md) | [AGENTS.md](../../AGENTS.md) | Entender reglas de agentes y arquitectura IA opcional |
+| Contribuidor IA | [Estándares AI-Augmented](../governance/standards-es/ai-augmented/README.es.md) | [AGENTS.md](../../AGENTS.es.md) | Entender reglas de agentes y arquitectura IA opcional |
 
 ## Primera Sesión Recomendada
 

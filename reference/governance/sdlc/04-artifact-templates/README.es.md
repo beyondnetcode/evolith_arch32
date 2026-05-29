@@ -3,7 +3,7 @@
 > **Navegación bilingüe:** [English](./README.md)
 > **Propietario:** Evolith Architecture Board
 > **Estado:** Referencia activa
-> **Padre:** [Centro de Gobernanza SDLC](../README.md)
+> **Padre:** [Centro de Gobernanza SDLC](../README.es.md)
 
 ---
 
@@ -46,7 +46,7 @@ Las plantillas garantizan consistencia en todos los repositorios satélite. Los 
 Todas las plantillas deben pasar esta checklist antes de entrar a revisión de puerta:
 
 - [ ] Todas las secciones requeridas están presentes y pobladas (sin encabezados vacíos)
-- [ ] Las secciones funcionales no contienen detalle de implementación (ver [Estándar de Escritura](../03-documentation/functional-story-writing-standard.md))
+- [ ] Las secciones funcionales no contienen detalle de implementación (ver [Estándar de Escritura](../03-documentation/functional-story-writing-standard.es.md))
 - [ ] La sección de trazabilidad enlaza al menos a un ADR y a un bounded context
 - [ ] El idioma coincide con el idioma del documento (sin mezcla ES/EN dentro del mismo archivo)
 - [ ] El documento está almacenado en control de versiones junto a los artefactos de código o diseño relevantes

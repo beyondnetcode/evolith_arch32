@@ -4,7 +4,7 @@
 > **Fase:** 2 — Diseño y Arquitectura
 > **Puerta de salida:** Baseline de Diseño Aprobada
 > **Padre:** [Plantillas de Artefactos](./README.es.md)
-> **Estándar normativo:** [Estándar de Escritura de Historias Funcionales](../03-documentation/functional-story-writing-standard.md)
+> **Estándar normativo:** [Estándar de Escritura de Historias Funcionales](../03-documentation/functional-story-writing-standard.es.md)
 
 ---
 
@@ -12,7 +12,7 @@
 
 Una Historia Funcional describe una capacidad de negocio discreta. Se escribe de modo que un Product Owner pueda validar el comportamiento de negocio, y un ingeniero pueda implementarlo sin ambigüedad. Las dos preocupaciones están separadas: narrativa de negocio primero, restricciones técnicas al final.
 
-La estructura siguiente está exigida por el [Estándar de Escritura de Historias Funcionales](../03-documentation/functional-story-writing-standard.md). No elimines ni reordenes las secciones.
+La estructura siguiente está exigida por el [Estándar de Escritura de Historias Funcionales](../03-documentation/functional-story-writing-standard.es.md). No elimines ni reordenes las secciones.
 
 ---
 

@@ -49,4 +49,4 @@ Usa UMS para estudiar propiedad de bounded contexts, contratos de identidad y ac
 La documentación de entrada en inglés y español de UMS debe mantenerse alineada respecto de infraestructura y setup. Los consumidores deben seguir las instrucciones vigentes de UMS y confirmar allí cualquier discrepancia entre idiomas antes de adoptar detalles de producto.
 
 ---
-[Volver al Hub de Referencia UMS](./README.md)
+[Volver al Hub de Referencia UMS](README.es.md)

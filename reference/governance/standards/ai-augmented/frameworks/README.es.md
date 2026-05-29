@@ -18,7 +18,7 @@ Para la fuente autoritativa de cada framework, consulte siempre su repositorio o
 
 | Framework | Fuente oficial | Que se documenta aqui |
 | :--- | :--- | :--- |
-| [BMAD-METHOD](./bmad-method/README.md) | [github.com/bmad-code-org/BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD) | Como este repositorio adopto BMAD, que se extendio y que capa local de reglas harness se construyo encima |
+| [BMAD-METHOD](bmad-method/README.es.md) | [github.com/bmad-code-org/BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD) | Como este repositorio adopto BMAD, que se extendio y que capa local de reglas harness se construyo encima |
 
 ---
 
@@ -47,4 +47,4 @@ Todo documento de adopcion de framework debe cumplir estos gates antes de merge:
 
 ---
 
-[Volver a Arquitectura Aumentada por IA](../README.md)
+[Volver a Arquitectura Aumentada por IA](../../../standards-es/ai-augmented/README.md)

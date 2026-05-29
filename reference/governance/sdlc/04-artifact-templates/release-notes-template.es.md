@@ -11,7 +11,7 @@
 
 Las Release Notes son el artefacto de comunicación formal que acompaña cada despliegue a producción. Son requeridas antes de que pueda declararse la puerta de Producción Activa. La audiencia es tanto técnica (equipo de operaciones, engineering lead) como no técnica (product owner, stakeholders). Cada sección debe escribirse en consecuencia.
 
-Las Release Notes se almacenan en control de versiones etiquetadas al commit de release. Deben cumplir la regla de versionado de las [Buenas Prácticas de Documentación SDLC](../03-documentation/sdlc-documentation-best-practices.md): el estado del documento se mapea exactamente al tag del release.
+Las Release Notes se almacenan en control de versiones etiquetadas al commit de release. Deben cumplir la regla de versionado de las [Buenas Prácticas de Documentación SDLC](../03-documentation/sdlc-documentation-best-practices.es.md): el estado del documento se mapea exactamente al tag del release.
 
 ---
 

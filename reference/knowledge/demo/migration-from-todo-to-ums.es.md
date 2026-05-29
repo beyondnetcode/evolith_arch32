@@ -41,4 +41,4 @@ Este registro documenta el retiro de la anterior demo local y la adopción de [U
 Mantener este repositorio como upstream arquitectónico neutral en tecnología y UMS como referencia viva de implementación empresarial. Promover aprendizajes probados de UMS selectivamente mediante ADRs y patrones canónicos, con límites explícitos de runtime y de producto.
 
 ---
-[Volver al Hub de Referencia UMS](./README.md)
+[Volver al Hub de Referencia UMS](README.es.md)

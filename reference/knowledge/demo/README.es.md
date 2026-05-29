@@ -52,4 +52,4 @@ Explora el registro completo de migración y las fronteras de diseño dentro de 
 | [Portal de Arquitectura UMS](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) | Documentación oficial de los límites modulares y decisiones técnicas de UMS. |
 
 ---
-[Volver al Hub de Referencia](../../README.md)
+[Volver al Hub de Referencia](../../README.es.md)

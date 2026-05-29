@@ -11,7 +11,7 @@
 
 Un ADR captura una única decisión arquitectónica: el contexto que forzó la decisión, las opciones consideradas, la elección tomada y las consecuencias que siguen. Los ADRs son inmutables una vez aprobados — nunca se actualizan en el lugar. Una decisión supersedida requiere un nuevo ADR que referencia al anterior.
 
-Todo ADR en Evolith debe registrarse en el [Registro ADR](../../../architecture/adrs/README.md) y vincularse en la [Matriz de Decisiones ADR](../../../architecture/adrs/adr-matrix.md) antes de que se active la puerta de Baseline de Diseño.
+Todo ADR en Evolith debe registrarse en el [Registro ADR](../../../architecture/adrs-es/README.md) y vincularse en la [Matriz de Decisiones ADR](../../../architecture/adrs-es/adr-matrix.es.md) antes de que se active la puerta de Baseline de Diseño.
 
 ---
 

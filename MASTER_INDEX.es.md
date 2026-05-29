@@ -38,7 +38,7 @@ Este es el índice completo de navegación de **Evolith** — la plataforma empr
 | **DevOps / SRE** | [Hub de Infraestructura](./reference/infrastructure/README.es.md) -> [Hub de Operaciones](./reference/operations/README.es.md) -> [Portal de Arquitectura UMS](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) |
 | **QA / SDET** | [ADR Pirámide de Testing](./reference/architecture/adrs-es/core/0018-testing-pyramid-quality-gates.md) -> [Guía de Contract Testing](./reference/governance/standards-es/engineering/contract-testing-guideline.md) -> [ADR Integración y E2E](./reference/architecture/adrs-es/core/0053-estrategia-pruebas-integracion-e2e.md) |
 | **Security Engineer** | [Vendor Risk Assessment](./reference/governance/standards-es/engineering/vendor-risk-assessment.md) -> [ADR Multi-Tenancy](./reference/architecture/adrs-es/core/0010-multi-tenancy-architecture-strategy.md) -> [ADR Auditoría Inmutable](./reference/architecture/adrs-es/core/0016-immutable-business-audit-trail.md) |
-| **AI Contributor** | [Estándares AI-Augmented](./reference/governance/standards-es/ai-augmented/README.md) -> [Reglas Harness](./.harness/rules/global-rules.md) -> [Agentes AGENTS.es.md](./AGENTS.es.md) -> [ADRs de IA](./reference/governance/standards-es/ai-augmented/06-adrs/README.md) |
+| **AI Contributor** | [Estándares AI-Augmented](reference/governance/standards-es/ai-augmented/README.es.md) -> [Reglas Harness](./.harness/rules/global-rules.md) -> [Agentes AGENTS.es.md](./AGENTS.es.md) -> [ADRs de IA](reference/governance/standards-es/ai-augmented/06-adrs/README.es.md) |
 | **New Joiner** | [Product Quick Start](./reference/governance/standards-es/onboarding/product-quick-start.md) -> [Taxonomía del Repositorio](./reference/governance/standards-es/repository-taxonomy.es.md) -> [Portal README](./README.es.md) |
 
 ---
@@ -77,8 +77,8 @@ Referencias clave:
 | Visión | [reference/governance/standards-es/vision](./reference/governance/standards-es/vision/README.es.md) |
 | Ingeniería | [reference/governance/standards-es/engineering](./reference/governance/standards-es/engineering/README.es.md) |
 | Onboarding | [reference/governance/standards-es/onboarding](./reference/governance/standards-es/onboarding/README.es.md) |
-| AI-Augmented Engineering | [reference/governance/standards-es/ai-augmented](./reference/governance/standards-es/ai-augmented/README.md) |
-| **Asistente AI de Arquitectura** | [reference/governance/standards/ai-augmented/08-architecture-ai-assistant](./reference/governance/standards/ai-augmented/08-architecture-ai-assistant/README.md) |
+| AI-Augmented Engineering | [reference/governance/standards-es/ai-augmented](reference/governance/standards-es/ai-augmented/README.es.md) |
+| **Asistente AI de Arquitectura** | [reference/governance/standards/ai-augmented/08-architecture-ai-assistant](reference/governance/standards/ai-augmented/08-architecture-ai-assistant/README.es.md) |
 | SDLC | [reference/governance/sdlc](./reference/governance/sdlc/README.es.md) |
 | **Mapeo SDLC–Artefactos Evolith** | [reference/governance/sdlc/sdlc-evolith-artifact-mapping](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.es.md) |
 | **Plantillas de Artefactos SDLC** | [reference/governance/sdlc/04-artifact-templates](./reference/governance/sdlc/04-artifact-templates/README.es.md) |

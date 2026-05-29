@@ -17,4 +17,4 @@ Este repositorio y UMS cumplen propósitos diferentes. Leerlos como un mismo niv
 Lee primero el baseline y el registro ADR. Usa UMS para inspeccionar una implementación coherente de identidad, acceso, auditoría, bounded contexts, APIs, observabilidad y prácticas de entrega. Cuando una práctica de UMS deba aplicar a todos los productos, debe promoverse a este repositorio como estándar, ADR o patrón canónico.
 
 ---
-[Volver al Hub de Referencia UMS](./README.md)
+[Volver al Hub de Referencia UMS](README.es.md)

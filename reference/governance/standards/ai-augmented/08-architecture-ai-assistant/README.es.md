@@ -3,7 +3,7 @@
 > **Navegación bilingüe:** [English](./README.md)  
 > **Propietario:** Evolith Architecture Board  
 > **Estado:** Propuesta Estratégica — Aprobada para Adopción Incremental  
-> **Padre:** [Ingeniería AI-Augmented](../README.md)
+> **Padre:** [Ingeniería AI-Augmented](../../../standards-es/ai-augmented/README.md)
 
 ---
 

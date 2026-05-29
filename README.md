@@ -14,16 +14,6 @@ Language: [English](./README.md) | [Español](./README.es.md)
 
 ---
 
-## Fastest Entry Point
-
-> **Read this first:** [Architecture Communication & Adoption Strategy](./reference/governance/standards/communication/architecture-communication-strategy.md)  
-> The quickest way to understand Evolith, UMS, repository responsibilities, audience layers, and the adoption path.
->
-> **Then use the visual index:** [Visual Architecture Backlog](./reference/governance/standards/communication/visuals/README.md)  
-> One index for the 8 explanation and communication visuals: executive one-pager, progressive journey, capability map, ADR decision tree, onboarding journey, governance flow, traceability, and infrastructure topology.
-
----
-
 ## Start Here
 
 | Need | Go to |
@@ -49,34 +39,6 @@ Language: [English](./README.md) | [Español](./README.es.md)
 
 ---
 
-## Quick Paths by Role
-
-| Role | Start with | Then read |
-|---|---|---|
-| Architect | [Architecture Hub](./reference/architecture/README.md) | [ADR Registry](./reference/architecture/adrs/README.md) |
-| Backend engineer | [.NET API Standard](./reference/governance/standards/engineering/api-dotnet/api-dotnet-standard.md) | [.NET & C# Tech Stack Profile](./reference/architecture/blueprints/authoritative-tech-stack-dotnet.md) |
-| Frontend engineer | [React Web Frontend Standard](./reference/governance/standards/engineering/web-frontend/react/react-web-frontend-standard.md) | [Quick Access by Stack](./reference/quick-access/README.md) |
-| Product or delivery lead | [SDLC Governance Center](./reference/governance/sdlc/README.md) | [UMS Applied Reference](./reference/knowledge/demo/README.md) |
-| DevOps or platform engineer | [Operations & Observability](./reference/operations/README.md) | [Infrastructure & Orchestration](./reference/infrastructure/README.md) |
-| AI-assisted engineering user | [AI-DD Adoption Reference](./reference/governance/standards/ai-augmented/frameworks/README.md) | [AGENTS.md](./AGENTS.md) |
-| Governance reviewer | [Governance Standards](./reference/governance/standards/README.md) | [Repository Taxonomy](./reference/governance/standards/repository-taxonomy.md) |
-
----
-
-## Standards Shortcuts
-
-| Standard or profile | Direct link | Use for |
-|---|---|---|
-| Architecture Communication & Adoption Strategy | [Open](./reference/governance/standards/communication/architecture-communication-strategy.md) | Fastest explanation of Evolith, UMS, repository roles, audience layers, and adoption path |
-| Visual Architecture Backlog | [Open](./reference/governance/standards/communication/visuals/README.md) | Index of all communication diagrams and visual explanations for executives, architects, devs, QA, DevOps, and PMs |
-| React Web Frontend Standard | [Open](./reference/governance/standards/engineering/web-frontend/react/react-web-frontend-standard.md) | React architecture, boilerplate, UI tokens, data access, testing, accessibility |
-| .NET API Standard | [Open](./reference/governance/standards/engineering/api-dotnet/api-dotnet-standard.md) | ASP.NET Core APIs, host bootstrap, REST/GraphQL surface, persistence, quality gates |
-| .NET & C# Tech Stack Profile | [Open](./reference/architecture/blueprints/authoritative-tech-stack-dotnet.md) | Runtime choices, libraries, platform profile |
-| Runtime-Agnostic Baseline | [Open](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.md) | Universal architecture constraints before stack-specific decisions |
-| All stack paths | [Open](./reference/quick-access/README.md) | One-page routing for Web, React, C#/.NET, Node.js, and runtime profiles |
-
----
-
 ## Evolith vs UMS
 
 | Question | Evolith | UMS |
@@ -86,37 +48,6 @@ Language: [English](./README.md) | [Español](./README.es.md)
 | How does a UMS practice become a standard? | Through ADR, governance standard, or canonical pattern promotion | By providing evidence, not authority |
 
 UMS is the official executable reference model. Use it to see Evolith ideas applied in a real product, but keep product-specific details in UMS unless they are formally promoted.
-
----
-
-## Repository Map
-
-| Area | Entry point | Purpose |
-|---|---|---|
-| Architecture | [reference/architecture](./reference/architecture/README.md) | Blueprints, ADRs, runtime profiles, canonical patterns |
-| Governance | [reference/governance/standards](./reference/governance/standards/README.md) | Enterprise standards, onboarding, taxonomy, quality rules |
-| SDLC Governance | [reference/governance/sdlc](./reference/governance/sdlc/README.md) | Lifecycle phases, phase exit gates, artifact templates, compliance mapping |
-| Architecture Communication | [reference/governance/standards/communication/visuals](./reference/governance/standards/communication/visuals/README.md) | Visual explanations, communication diagrams, onboarding maps, governance flow, and traceability views |
-| Architecture Intelligence | [reference/knowledge/architecture-intelligence](./reference/knowledge/architecture-intelligence/README.md) | AI-consumable architecture knowledge and pattern catalog governance |
-| AI-Augmented Engineering | [AI-DD Frameworks](./reference/governance/standards/ai-augmented/frameworks/README.md) | Local adoption rules for AI-assisted development frameworks |
-| Operations | [reference/operations](./reference/operations/README.md) | Observability, runtime support, operational guidance |
-| Infrastructure | [reference/infrastructure](./reference/infrastructure/README.md) | Local platform, gateway, containers, orchestration assets |
-| Knowledge | [reference/knowledge](./reference/knowledge/demo/README.md) | UMS applied reference, migration records, architecture intelligence assets |
-| Product reference | [UMS repository](https://github.com/beyondnetcode/ums) | Official executable satellite product |
-
----
-
-## Recommended First Reads
-
-1. [Architecture Communication & Adoption Strategy](./reference/governance/standards/communication/architecture-communication-strategy.md)
-2. [Visual Architecture Backlog](./reference/governance/standards/communication/visuals/README.md)
-3. [Getting Started by Role](./reference/getting-started/README.md)
-4. [Quick Access by Stack](./reference/quick-access/README.md)
-5. [Architecture Hub](./reference/architecture/README.md)
-6. [ADR Registry](./reference/architecture/adrs/README.md)
-7. [Governance Standards](./reference/governance/standards/README.md)
-8. [SDLC Governance Center](./reference/governance/sdlc/README.md)
-9. [UMS Applied Reference](./reference/knowledge/demo/README.md)
 
 ---
 

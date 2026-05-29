@@ -2,6 +2,8 @@
 
 Este documento detalla la arquitectura de telemetría, propagación de trazas, estándares de registro y el stack de monitorización rentable para la Plantilla SCM/Referencia usando **BMAD-METHOD** como flujo spec-driven AI-DD.
 
+Para los diagramas cross-component y la ruta runtime de señales, ver [Flujo de Arquitectura de Observabilidad](../../../architecture/blueprints-es/observability-architecture-flow.md).
+
 ---
 
 ## 1. Los Tres Pilares de la Telemetría

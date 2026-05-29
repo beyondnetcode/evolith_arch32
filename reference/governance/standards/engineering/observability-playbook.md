@@ -2,6 +2,8 @@
 
 This document details the telemetry architecture, trace propagation, logging standards, and cost-effective monitoring stack for the SCM/Reference Template using the **BMAD-METHOD** as a spec-driven AI-DD workflow.
 
+For the cross-component diagrams and runtime signal path, see [Observability Architecture Flow](../../../architecture/blueprints/observability-architecture-flow.md).
+
 ---
 
 ## 1. The Three Pillars of Telemetry

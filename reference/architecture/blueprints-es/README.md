@@ -35,6 +35,7 @@ Lee primero la línea base agnóstica. Luego lee el perfil de runtime de tu stac
 | Documento | Propósito |
 | :--- | :--- |
 | [Especificación de Topología C4](./c4-topology-spec.md) | Definiciones formales del modelo C4 para todos los niveles de diagrama |
+| [Flujo de Arquitectura de Observabilidad](./observability-architecture-flow.md) | Flujo end-to-end de correlación, logging AOP, trazas, métricas y sinks de telemetría |
 | [Análisis Estratégico CAP](./cap-strategic-analysis.md) | Análisis del trade-off del teorema CAP por fase |
 | [Escenarios de Despliegue Multi-Cloud](./multi-cloud-deployment-scenarios.md) | Opciones de topología de despliegue agnósticas a la nube |
 | [Resumen del Tech Stack](./tech-stack-summary.md) | Tarjeta de referencia rápida Node.js/demo (no es política universal) |

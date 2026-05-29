@@ -14,6 +14,20 @@ Idioma: [English](./README.md) | [Espanol](./README.es.md)
 
 ---
 
+## Puntos de Entrada Clave
+
+| Punto de Entrada | Que cubre | Ir a |
+|---|---|---|
+| **Comunicacion de Arquitectura y Documentacion** | Estrategia de comunicacion, mapa documental, diagramas visuales, narrativa de comunicacion, rutas de lectura por rol, modelo de herencia Evolith | [Estrategia de Comunicacion de Arquitectura](./reference/governance/standards/communication/architecture-communication-strategy.es.md) |
+| **Flujo SDLC y Gobernanza de Entrega** | Ciclo de vida de entrega, fases, roles, quality gates, Definition of Done, expectativas de documentacion, SDLC enfocado en construccion, gobernanza de release | [Centro de Gobernanza SDLC](./reference/governance/sdlc/README.es.md) |
+
+**Sub-enlaces rapidos:**
+
+- [Hub de Arquitectura](./reference/architecture/README.es.md) · [ backlog de Arquitectura Visual](./reference/governance/standards/communication/visuals/README.es.md) · [Indice Maestro](./MASTER_INDEX.es.md) · [Rutas por Rol](./reference/getting-started/README.es.md)
+- [SDLC Enfocado en Construccion](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.es.md) · [Manifiesto de Ingenieria](./reference/governance/standards/engineering/engineering-manifesto.es.md) · [Guia de Contract Testing](./reference/governance/standards/engineering/contract-testing-guideline.es.md) · [Registro ADR](./reference/architecture/adrs/README.md)
+
+---
+
 ## Empieza aqui — Elige tu camino
 
 ### Camino 1 — Quiero una vision general de 5 minutos

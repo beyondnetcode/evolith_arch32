@@ -11,6 +11,7 @@ This log tracks all production documentation releases with their version tags, d
 
 | Version | Date | Branch | Key Changes | Hotfixes |
 |---------|------|--------|-------------|----------|
+| docs-v1.0.2 | 2026-05-29 | hotfix/docs-v1.0.2 | README highlights: Architecture Communication & Documentation entry point (with sub-links to Architecture Hub, Visual Backlog, Master Index, Getting Started), SDLC Flow & Delivery Governance entry point (with sub-links to Construction SDLC, Engineering Manifesto, Contract Testing, ADR Registry); bilingual parity maintained across EN/ES | 0 |
 | docs-v1.0.0 | 2026-05-29 | release/docs-v1.0.0 | Initial production documentation release: bilingual tooling (17 scripts), GitFlow strategy (ADR-0068), validation pipeline, coverage dashboard, ADR-0067 modular monolith | 0 |
 
 ## Upcoming (from `develop`)

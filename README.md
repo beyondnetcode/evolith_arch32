@@ -16,6 +16,20 @@ Language: [English](./README.md) | [Español](./README.es.md)
 
 ---
 
+## Key Entry Points
+
+| Entry Point | What it covers | Start here |
+|---|---|---|
+| **Architecture Communication & Documentation** | Architecture strategy, documentation map, visual diagrams, communication narrative, role-based reading paths, Evolith inheritance model | [Architecture Communication Strategy](./reference/governance/standards/communication/architecture-communication-strategy.md) |
+| **SDLC Flow & Delivery Governance** | Delivery lifecycle, phase gates, roles, quality gates, Definition of Done, documentation expectations, construction-focused SDLC, release governance | [SDLC Governance Center](./reference/governance/sdlc/README.md) |
+
+**Quick sub-links:**
+
+- [Architecture Hub](./reference/architecture/README.md) · [Visual Architecture Backlog](./reference/governance/standards/communication/visuals/README.md) · [Master Index](./MASTER_INDEX.md) · [Getting Started by Role](./reference/getting-started/README.md)
+- [Construction-Focused SDLC](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.md) · [Engineering Manifesto](./reference/governance/standards/engineering/engineering-manifesto.md) · [Contract Testing Guideline](./reference/governance/standards/engineering/contract-testing-guideline.md) · [ADR Registry](./reference/architecture/adrs/README.md)
+
+---
+
 ## Start Here — Choose Your Path
 
 ### Path 1 — I want a 5-minute overview

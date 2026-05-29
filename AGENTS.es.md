@@ -22,8 +22,11 @@ Este repositorio define la línea base arquitectónica, los estándares de gober
 El hook pre-commit (`.husky/pre-commit`) se ejecuta automáticamente en cada commit:
 1. `lint-staged` - linting de archivos staged
 2. `validate-docs.mjs` - validación completa de documentación
-3. `check-bilingual-parity.mjs` - validación estructural bilingüe + anclas
+3. `check-bilingual-parity.mjs` - validación estructural bilingüe
 4. Detección de archivos bilingües huérfanos - EN sin ES o viceversa
+
+### Glosario de Terminología
+Ver `.harness/scripts/bilingual-terminology-glossary.md` para traducciones EN/ES estandarizadas de términos técnicos. Cuando añadas nuevos términos, actualiza ambas versiones juntas.
 
 ## Arquitectura
 - Rol del repositorio: referencia de arquitectura progresiva corporativa, no una base de código para un solo producto.

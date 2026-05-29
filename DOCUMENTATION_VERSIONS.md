@@ -1,7 +1,6 @@
 # Documentation Version Log
 
-> **Bilingual Navigation:** [Versión en Español](./DOCUMENTATION_VERSIONS.es.| docs-v1.0.0 | 2026-05-29 | release/docs-v1.0.0 | Initial production documentation release: bilingual tooling, GitFlow strategy (ADR-0068), validation pipeline, coverage dashboard | 0 |
-md)
+> **Bilingual Navigation:** [Versión en Español](./DOCUMENTATION_VERSIONS.es.md)
 
 This log tracks all production documentation releases with their version tags, dates, and key changes. Updated automatically via CI on every release to `main`.
 
@@ -11,16 +10,13 @@ This log tracks all production documentation releases with their version tags, d
 
 | Version | Date | Branch | Key Changes | Hotfixes |
 |---------|------|--------|-------------|----------|
-| docs-v1.0.0 | 2026-04-15 | release/docs-v1.0.0 | Initial production documentation release | 0 |
-| docs-v1.1.0 | 2026-05-01 | release/docs-v1.1.0 | Added contract testing guidelines, API standards ADRs 0030-0040 | 0 |
-| docs-v1.1.1 | 2026-05-15 | hotfix/docs-fix-api-links | Fixed broken API reference links in architecture-communication-strategy | 3 |
-| docs-v1.2.0 | 2026-05-29 | release/docs-v1.2.0 | Added observability playbook, updated bilingual tooling scripts, ADR-0068 GitFlow documentation release strategy | 0 |
+| docs-v1.0.0 | 2026-05-29 | release/docs-v1.0.0 | Initial production documentation release: bilingual tooling (17 scripts), GitFlow strategy (ADR-0068), validation pipeline, coverage dashboard, ADR-0067 modular monolith | 0 |
 
 ## Upcoming (from `develop`)
 
 | Target Version | Planned Date | In Progress |
 |----------------|--------------|-------------|
-| docs-v1.3.0 | 2026-06-15 | feature/docs-add-security-section |
+| docs-v1.1.0 | 2026-06-15 | feature/docs-add-security-section |
 | docs-v2.0.0 | 2026-09-01 | Planned major restructuring for modular monolith documentation |
 
 ## Version Policy
@@ -29,7 +25,7 @@ This log tracks all production documentation releases with their version tags, d
 |-----------|-------------|---------|
 | **Major** (`X.0.0`) | Breaking structural changes, renamed sections that break links, ADR renumbering | `docs-v2.0.0` |
 | **Minor** (`X.Y.0`) | New documentation sections, new ADRs, new architecture areas | `docs-v1.3.0` |
-| **Patch** (`X.Y.Z`) | Bug fixes, link corrections, diagram fixes, typo corrections | `docs-v1.2.1` |
+| **Patch** (`X.Y.Z`) | Bug fixes, link corrections, diagram fixes, typo corrections | `docs-v1.1.1` |
 
 ## Release Criteria
 

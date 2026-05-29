@@ -146,6 +146,13 @@ function validateRelativeLinks(file, content) {
   }
 }
 
+function countHeaders(content) {
+  const cleanContent = stripCodeBlocks(content);
+  const headingPattern = /^#{2,3}\s+.+$/gm;
+  const matches = [...cleanContent.matchAll(headingPattern)];
+  return matches.length;
+}
+
 function validateBilingualPair(file, content) {
   const relative = path.relative(root, file);
 
@@ -168,6 +175,14 @@ function validateBilingualPair(file, content) {
 
     if (!fs.existsSync(englishFile)) {
       addFailure(file, 0, content, `missing English counterpart: ${path.relative(root, englishFile)}`);
+    } else {
+      const englishContent = readUtf8(englishFile);
+      const esHeaders = countHeaders(content);
+      const enHeaders = countHeaders(englishContent);
+
+      if (esHeaders !== enHeaders) {
+        addFailure(file, 0, content, `bilingual structural mismatch: ${enHeaders} headers in EN vs ${esHeaders} in ES`);
+      }
     }
   }
 

@@ -451,16 +451,323 @@ FUTURO: NORTH STAR (Fase 3 — decisión deliberada)
 
 ---
 
+## 7. Modelo Mental: Los Tres Círculos (Hexagonal Simplificado)
+
+```
+         ┌──────────────────────────────────┐
+         │         INFRAESTRUCTURA          │
+         │   (BDs, APIs, Cloud, UI)         │
+         │   ┌──────────────────────────┐   │
+         │   │       APLICACIÓN         │   │
+         │   │   (Casos de Uso, CQRS,   │   │
+         │   │    Orquestación)         │   │
+         │   │   ┌──────────────────┐   │   │
+         │   │   │     DOMINIO      │   │   │
+         │   │   │  (Reglas, Ent.,  │   │   │
+         │   │   │   Value Objects) │   │   │
+         │   │   │  ← PROTEGIDO →   │   │   │
+         │   │   └──────────────────┘   │   │
+         │   └──────────────────────────┘   │
+         └──────────────────────────────────┘
+                         ▲
+          Las dependencias apuntan hacia ADENTRO.
+       La Infraestructura conoce la Aplicación.
+       La Aplicación conoce el Dominio.
+       El Dominio NO CONOCE NADA fuera de sí mismo.
+```
+
+**Usa este modelo para explicar:** Por qué no escribimos SQL dentro de la lógica de negocio. Por qué no importamos Redis dentro de una clase de servicio. Por qué una entidad de dominio no tiene `@Column` decorator.
+
+---
+
+### 7.2 El Modelo de Contrato Heredado
+
+```
+   EVOLITH ARCH32                UMS (y todos los productos futuros)
+   ══════════════                ══════════════════════════════════
+   │ ADRs          │  hereda de  │ Hereda todos los ADRs           │
+   │ Blueprints    │ ──────────▶ │ Agrega ADRs de producto         │
+   │ Estándares    │             │ Documenta divergencias          │
+   │ Patrones      │             │ Promueve descubrimientos arriba │
+   └───────────────┘             └─────────────────────────────────┘
+          ▲                                    │
+          │         ruta de promoción          │
+          └────────────────────────────────────┘
+```
+
+**Usa este modelo para explicar:** Por qué UMS no es una plantilla para copiar/pegar. Por qué las decisiones arquitectónicas en UMS que son universalmente válidas viajan de vuelta hacia Evolith.
+
+---
+
+### 7.3 El Embudo de Decisión (Navegación ADR)
+
+```
+   COMIENZA AQUÍ para cada pregunta arquitectónica:
+
+   "¿Tengo una pregunta sobre...?"
+
+         ┌──────────────────────────────────────────┐
+         │ UNIVERSAL (agnóstico de runtime)         │ ─▶ ADRs Core (0001-0056)
+         │ Multi-tenancy, Eventos, CQRS, Sagas...   │
+         └──────────────────────────────────────────┘
+         ┌──────────────────────────────────────────┐
+         │ NODE.JS / TYPESCRIPT                     │ ─▶ ADRs Node (0002-0043)
+         │ NestJS, TypeORM, BFF, GraphQL...         │
+         └──────────────────────────────────────────┘
+         ┌──────────────────────────────────────────┐
+         │ .NET / C#                                │ ─▶ ADRs .NET (0057+)
+         │ EF Core, SQL Server, Clean Architecture  │
+         └──────────────────────────────────────────┘
+         ┌──────────────────────────────────────────┐
+         │ ANDROID / MÓVIL                           │ ─▶ ADRs Android
+         │ Kotlin, offline-first, GPS/scan          │
+         └──────────────────────────────────────────┘
+         ┌──────────────────────────────────────────┐
+         │ NO SÉ POR DÓNDE EMPEZAR                   │ ─▶ Matriz de Decisión ADR
+         └──────────────────────────────────────────┘
+```
+
+---
+
+## 8. Modelo de Gobernanza
+
+### 8.1 Quién Posee Qué
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│            ESTRUCTURA DE GOBERNANZA EVOLITH                 │
+├─────────────────────┬───────────────────────────────────────┤
+│ ENTE                │ RESPONSABILIDAD                       │
+├─────────────────────┼───────────────────────────────────────┤
+│ Architecture Board  │ Aprueba ADRs, posee la línea base     │
+│                     │ Evolith, arbitra disputas inter-equipo │
+├─────────────────────┼───────────────────────────────────────┤
+│ Arquitecto de       │ Posee ADRs del repositorio hijo,      │
+│ Producto (por prod.)│ documenta divergencias, nomina        │
+│                     │ promociones                           │
+├─────────────────────┼───────────────────────────────────────┤
+│ Tech Lead           │ Aplica cumplimiento en entrega diaria │
+│ (por squad)         │ revisa PRs contra restricciones ADR   │
+├─────────────────────┼───────────────────────────────────────┤
+│ Todos los Ingenieros│ Siguen los estándares; plantean issues │
+│                     │ vía propuestas ADR, no workarounds    │
+└─────────────────────┴───────────────────────────────────────┘
+```
+
+### 8.2 Flujo de Decisión
+
+```
+  Surge nueva pregunta arquitectónica
+            │
+            ▼
+  ┌─────────────────────┐      SÍ      ┌────────────────────────┐
+  │ ¿Ya existe un ADR   │ ───────────▶ │ Seguirlo. Documentar    │
+  │ que responda esto?  │              │ desviación local si hay.│
+  └─────────────────────┘              └────────────────────────┘
+            │ NO
+            ▼
+  ┌─────────────────────┐      SÍ      ┌────────────────────────┐
+  │ ¿Es específico de   │ ───────────▶ │ Escribir ADR en repo   │
+  │ producto?           │              │ hijo. No necesita Board.│
+  └─────────────────────┘              └────────────────────────┘
+            │ NO
+            ▼
+  ┌─────────────────────┐
+  │ Escribir propuesta  │
+  │ ADR para revisión   │
+  │ del Board Evolith   │
+  └─────────┬───────────┘
+            │
+     El Board revisa
+            │
+     ┌──────┴──────┐
+     │  APROBADO   │ ──▶ Merge a Evolith · Todos los repos hijos heredan
+     └─────────────┘
+```
+
+---
+
+## 9. Roadmap de Adopción Progresiva
+
+### Para un equipo de producto nuevo que parte desde Evolith:
+
+```
+SEMANAS 1-2: ORIENTACIÓN
+────────────────────────
+□ Leer las Directivas Arquitectónicas (visión)
+□ Leer el Manifiesto de Ingeniería (reglas)
+□ Leer la Línea Base Agnóstica (no negociables)
+□ Leer la Guía de Herencia para Repositorios Hijos
+□ Clonar la estructura de taxonomía del repositorio
+
+SEMANAS 3-4: FUNDACIÓN
+───────────────────────
+□ Seleccionar perfil de runtime (Node.js / .NET / Android)
+□ Leer los ADRs específicos de runtime para tu stack
+□ Estudiar los bounded contexts de UMS como referencia
+□ Configurar monorepo Nx + gates de linting
+□ Escribir el primer ADR del producto documentando la primera divergencia
+
+SEMANAS 5-8: PRIMERA ENTREGA (Fase 1 - Monolito Modular)
+────────────────────────────────────────────────────────
+□ Aplicar Arquitectura Hexagonal (Puertos + Adaptadores)
+□ Definir modelo de base de datos — un esquema único (enfoque SOA) es válido en
+  la Fase 1; schema-per-context es opcional y puede introducirse progresivamente
+  a medida que los límites del dominio se consoliden (ADR-0031 gobierna cuándo adoptarlo)
+□ Implementar pirámide de testing (gate 70% cobertura)
+□ Configurar observabilidad OTel + Loki + Grafana
+□ Seguir estrategia de ramas Gitflow
+□ Implementar Transactional Outbox para escrituras asíncronas
+
+MES 3+: ESCALA (Fase 2 — cuando las métricas lo justifiquen)
+────────────────────────────────────────────────────────────
+□ Ejecutar checklist de criterios ADR-0045
+□ Extraer primer servicio solo si se cumplen 2-de-4 criterios
+□ Evaluar activación del RLS nativo a nivel de base de datos — opcional; se
+  justifica solo cuando la seguridad a nivel de aplicación (APP_AGNOSTIC) se
+  convierte en un cuello de botella de rendimiento medible; ADR-0044 / ADR-0010
+  gobiernan la decisión de cambio (INFRA_NATIVE vs APP_AGNOSTIC)
+□ Habilitar trazado distribuido completo
+□ Integrar Dapr para abstracción de service mesh
+
+FUTURO: NORTH STAR (Fase 3 — decisión deliberada)
+─────────────────────────────────────────────────
+□ Orquestación multi-cloud
+□ Arquitectura event-driven a escala
+□ Aplicación de red Zero-trust
+□ Compliance-as-Code en pipelines CI
+```
+
+### Para un proveedor / integrador externo:
+
+```
+PASO 1: Entender el modelo de contratos (1 día)
+  → Leer: Baseline Agnóstico + ADR-0040 (contratos)
+  → Saber: OpenAPI / Protobuf / AsyncAPI son tus interfaces
+
+PASO 2: Completar checklist de vendor (1-2 días)
+  → Completar: Vendor Risk Assessment
+  → Confirmar: Frontera de adaptador — sin inyección directa de SDK
+
+PASO 3: Validación de integración (1 semana)
+  → Implementar contra la especificación OpenAPI
+  → Ejecutar contract tests (Pact o validación de schema)
+  → Verificar que no se introdujo acoplamiento de dominio
+```
+
+---
+
+## 10. Estructura Documental Recomendada
+
+### Evaluación de estructura actual:
+Los repositorios están bien organizados pero asumen familiaridad profunda. La navegación es eficiente para usuarios que saben lo que buscan, pero puede ser abrumador para lectores впер vez.
+
+### Capa de comunicación propuesta (nuevos archivos a crear):
+
+```
+evolith_arch32/
+└── reference/
+    └── governance/
+        └── standards/
+            └── communication/                         ← ESTE ARCHIVO ESTÁ AQUÍ
+                ├── architecture-communication-strategy.md   (este documento)
+                ├── executive-one-pager.md              ← 1 página, sin jerga
+                ├── visual-landscape.md                 ← solo diagramas
+                ├── audience-guide.md                   ← quién lee qué
+                └── onboarding-checklist.md             ← checklists por rol
+```
+
+### Guía de lectura por capas (divulgación progresiva):
+
+```
+CAPA 0 — Cualquier recién llegado (30 minutos)
+  → Executive One-Pager (por crear)
+  → Diagrama del Viaje Arquitectónico (sección 4 arriba)
+
+CAPA 1 — Por rol (2-4 horas)
+  → Rutas de lectura en MASTER_INDEX § 2 "Lectura Recomendada por Rol"
+
+CAPA 2 — Referencia de trabajo (ongoing)
+  → Matriz de Decisión ADR
+  → Lista de ADRs por runtime
+  → Patrones Canónicos
+
+CAPA 3 — Gobernanza profunda (según necesidad)
+  → Textos completos de ADRs
+  → Secciones del Manifiesto de Ingeniería
+  → Detalles del framework SDLC
+```
+
+---
+
+## 11. Solapamientos, Vacíos y Áreas Complementarias
+
+### Solapamientos (intencionales — redundancia saludable)
+| Tema | Ubicación en Evolith | Ubicación en UMS |
+|---|---|---|
+| Estrategia multi-tenancy | ADR-0010 | TE-03, modelo RLS, docs de arquitectura |
+| Modelo de autorización | ADR-0012, ADR-0021 | FS-02/05/07/14/16, bounded contexts |
+| Uso del bus de eventos | ADR-0015, ADR-0033 | TE-04, TE-05, FS-06/10/15 |
+| Estándares de testing | ADR-0018, ADR-0052/0053 | Pirámide de tests UMS, Testcontainers |
+
+Estos solapamientos son saludables — Evolith provee la regla; UMS muestra la evidencia.
+
+### Vacíos identificados (oportunidades)
+| Vacío | Recomendación |
+|---|---|
+| Sin guía de diseño de API | Crear ADR o estándar para naming de recursos REST, versionado, paginación |
+| Sin runbook de incidente de seguridad | Agregar RB-05 (Security Breach Response) a UMS + referencia desde Evolith |
+| Sin estándar de migración de datos | ADR necesario para estrategia de migración sin downtime |
+| Sin definiciones SLA / SLO | Agregar targets SLO a estándares de observabilidad |
+| Sin estándar de code review asistido por IA | Extender estándares de AI-Augmented Engineering |
+
+### Áreas complementarias (mayor sinergia)
+La matriz de trazabilidad FS → ADR → TE en UMS es la prueba más clara de que los ADRs de Evolith no son teóricos. Cada functional story de UMS traza hacia al menos un ADR de Evolith. Esta trazabilidad es la herramienta de comunicación más poderosa disponible — mostrarla a los escépticos.
+
+---
+
+## 12. Visuales Clave a Construir (Próximas Acciones)
+
+Los siguientes artefactos visuales se proponen para creación, ordenados por impacto:
+
+| Prioridad | Visual | Herramienta | Audiencia | Propósito |
+|---|---|---|---|---|
+| [Alta] 1 | Executive One-Pager (overview del ecosistema) | Markdown / slide | Ejecutivo | Punto de entrada para lectores no técnicos |
+| [Alta] 2 | Diagrama del Viaje Progresivo | Mermaid / draw.io | Todos | Explicar etapas sin abrumar |
+| [Alta] 3 | Mapa de Capacidades (interactivo) | draw.io / Miro | Arquitectos, PMs | Qué provee Evolith por capacidad |
+| [Media] 4 | Árbol de Decisión ADR (interactivo) | draw.io / Obsidian | Arquitectos, Devs | Navegar al ADR correcto rápido |
+| [Media] 5 | Mapa de Viaje de Onboarding (por rol) | Miro | RRHH, Tech Leads | Incorporación estructurada para nuevos |
+| [Media] 6 | Diagrama de Flujo de Gobernanza | Mermaid | Arquitectos | Visualización del ciclo de vida ADR |
+| [Baja] 7 | Visual de Trazabilidad UMS → Evolith | Mermaid / draw.io | Tech Leads, QA | Heatmap de cobertura ADR |
+| [Baja] 8 | Mapa de Topología de Infraestructura | draw.io | DevOps | Vista completa de despliegue |
+
+---
+
+## 13. El Insight Más Importante
+
+> **La complejidad en estos repositorios no es un problema de documentación — es un reflejo preciso de la arquitectura empresarial real.**
+>
+> La solución no es simplificar el contenido.
+> La solución es **exponerlo progresivamente**, comenzando con la visión de negocio,
+> y dejando que cada audiencia profundice tan lejos como su rol requiere.
+>
+> Evolith ya tiene esta estructura. La pieza faltante es una **capa de entrada clara** —
+> una página única que diga "esto es qué es, esto es por qué existe, aquí empieza".
+>
+> Eso es lo que este documento aporta, y lo que el Executive One-Pager (ver § 12) debería entregar visualmente.
+
+---
+
 ## Referencias
 
-- [Directivas Arquitectónicas](../vision/../../standards/vision/architectural-directives.md)
-- [Roadmap Evolutivo](../vision/../../standards/vision/evolutionary-strategy-roadmap.md)
-- [Manifiesto de Ingeniería](../engineering/../../standards/engineering/engineering-manifesto.md)
-- [Blueprint de Referencia](../../../architecture/blueprints/reference-blueprint.md)
+- [Directivas Arquitectónicas](../vision/architectural-directives.es.md)
+- [Roadmap de Estrategia Evolutiva](../vision/evolutionary-strategy-roadmap.es.md)
+- [Manifiesto de Ingeniería](../engineering/engineering-manifesto.es.md)
+- [Blueprint de Referencia](../../../architecture/blueprints/reference-blueprint.es.md)
 - [Registro ADR](../../../architecture/adrs/README.md)
 - [Hub de Referencia UMS](../../../knowledge/demo/README.es.md)
 - [Guía de Herencia para Repositorios Hijos](../onboarding/child-repository-inheritance-guide.es.md)
-- [Taxonomía del Repositorio](../../standards/repository-taxonomy.es.md)
+- [Taxonomía del Repositorio](./repository-taxonomy.es.md)
 
 ---
 

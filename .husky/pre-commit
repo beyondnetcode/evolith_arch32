@@ -2,3 +2,6 @@
 . "$(dirname "$0")/_/husky.sh"
 
 npx lint-staged
+
+echo "\nRunning bilingual parity check..."
+node .harness/scripts/check-bilingual-parity.mjs

@@ -48,8 +48,9 @@ Explore the complete migration record and boundary definitions directly within t
 | [UMS Reference Model](./ums-reference-model.md) | In-depth analysis of UMS inheritance, specialization, and core concepts. |
 | [Reference vs Applied Model](./demo-vs-reference.md) | Understanding the critical boundary between universal policy and product specialization. |
 | [Migration Ledger](./migration-from-todo-to-ums.md) | Full historical log of retired TO-DO files and migration steps executed. |
+| [Adoption Cases](../adoption-cases.md) | Real cases where product lessons were promoted into Evolith standards. |
 | [UMS Repository](https://github.com/beyondnetcode/ums) | View the open-source executable application codebase and current setup instructions. |
-| [UMS Architecture Portal](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) | Official documentation of UMS’s modular boundaries and architectural decisions. |
+| [UMS Architecture Portal](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) | Official documentation of UMS's modular boundaries and architectural decisions. |
 
 ---
 [Back to Reference Hub](../../README.md)

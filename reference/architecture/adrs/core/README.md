@@ -42,6 +42,8 @@
 * [0056-enterprise-naming-design-conventions](./0056-enterprise-naming-design-conventions.md) — **Multi-language, multi-platform naming & design standard**
 * [0057-architecture-intelligence-catalog](./0057-architecture-intelligence-catalog.md)
 * [0058-ai-consumable-architecture-knowledge](./0058-ai-consumable-architecture-knowledge.md)
+* [0067-modular-monolith-schema-per-domain](./0067-modular-monolith-schema-per-domain.md)
+* [0068-documentation-release-gitflow](./0068-documentation-release-gitflow.md) — **Documentation release GitFlow with bilingual quality gates**
 
 ---
 [Back to Upper Level](../README.md)

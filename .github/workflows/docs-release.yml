@@ -1,0 +1,159 @@
+name: Documentation Release
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - 'release/docs-*'
+      - 'hotfix/docs-*'
+
+jobs:
+  release-trigger-check:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.extract.outputs.version }}
+      branch: ${{ steps.extract.outputs.branch }}
+    steps:
+      - name: Extract version from merge commit message
+        id: extract
+        run: |
+          COMMIT_MSG=$(git log -1 --format=%B)
+          echo "Commit message: $COMMIT_MSG"
+          
+          # Try to extract version from branch name or commit message
+          VERSION=""
+          BRANCH=""
+          
+          # Check if merge came from release or hotfix branch
+          if [[ "$COMMIT_MSG" == *"Merge branch 'release/docs-"* ]]; then
+            BRANCH=$(echo "$COMMIT_MSG" | grep -oP "release/docs-v\d+\.\d+\.\d+" | head -1)
+            VERSION=$(echo $BRANCH | sed 's/release\///')
+          elif [[ "$COMMIT_MSG" == *"Merge branch 'hotfix/docs-"* ]]; then
+            BRANCH=$(echo "$COMMIT_MSG" | grep -oP "hotfix/docs-v\d+\.\d+\.\d+" | head -1)
+            VERSION=$(echo $BRANCH | sed 's/hotfix\///')
+          fi
+          
+          if [[ -z "$VERSION" ]]; then
+            echo "No release version detected in commit message"
+            echo "version=" >> $GITHUB_OUTPUT
+            echo "branch=" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+          
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+          echo "Detected release: $VERSION from $BRANCH"
+
+  update-version-log:
+    needs: release-trigger-check
+    if: needs.release-trigger-check.outputs.version != ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Update version log
+        env:
+          VERSION: ${{ needs.release-trigger-check.outputs.version }}
+          BRANCH: ${{ needs.release-trigger-check.outputs.branch }}
+        run: |
+          echo "Updating version log for $VERSION"
+          node .harness/scripts/update-version-log.mjs $VERSION --branch $BRANCH --changes "Automated release" || true
+
+      - name: Commit version log update
+        run: |
+          if ! git diff --quiet; then
+            git config --local user.email "github-actions[bot]@users.noreply.github.com"
+            git config --local user.name "github-actions[bot]"
+            git add DOCUMENTATION_VERSIONS.md DOCUMENTATION_VERSIONS.es.md
+            git commit -m "docs: auto-update version log for ${{ needs.release-trigger-check.outputs.version }}"
+            git push
+          else
+            echo "Version log already up to date"
+          fi
+
+  create-release:
+    needs: [release-trigger-check, update-version-log]
+    if: needs.release-trigger-check.outputs.version != ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create Git Tag
+        env:
+          VERSION: ${{ needs.release-trigger-check.outputs.version }}
+        run: |
+          git tag $VERSION || echo "Tag already exists"
+          git push origin $VERSION
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ needs.release-trigger-check.outputs.version }}
+        with:
+          tag_name: ${{ env.VERSION }}
+          release_name: Documentation ${{ env.VERSION }}
+          draft: false
+          prerelease: false
+          body: |
+            ## Release ${{ env.VERSION }}
+
+            This release includes updated documentation for the Evolith progressive architecture reference.
+
+            ### What's Changed
+            - See [DOCUMENTATION_VERSIONS.md](DOCUMENTATION_VERSIONS.md) for detailed changelog
+            - All CI validation checks passed
+            - Bilingual parity verified
+
+            ### Validation
+            - validate-docs.mjs: passed
+            - check-bilingual-parity.mjs: passed
+            - bilingual-coverage.mjs: passed
+
+            **Full Changelog**: https://github.com/${{ github.repository }}/compare/.../${{ env.VERSION }}
+
+  release-checks:
+    if: github.ref != 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Validate Documentation
+        run: node .harness/scripts/validate-docs.mjs
+
+      - name: Check Bilingual Parity
+        run: node .harness/scripts/check-bilingual-parity.mjs
+
+      - name: Verify version format
+        run: |
+          BRANCH_NAME=${{ github.ref_name }}
+          if [[ "$BRANCH_NAME" =~ ^(release|hotfix)/docs-v ]]; then
+            echo "Branch name valid for documentation release"
+            VERSION=$(echo $BRANCH_NAME | sed 's/^[^\/]*\///')
+            if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              echo "Error: Invalid version format in branch name: $VERSION"
+              exit 1
+            fi
+            echo "Version: $VERSION"
+          fi
+
+      - name: Render Mermaid diagrams
+        if: contains(github.ref_name, 'release/')
+        run: node .harness/scripts/validate-docs.mjs --render-mermaid

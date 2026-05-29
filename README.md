@@ -28,18 +28,23 @@ Language: [English](./README.md) | [Español](./README.es.md)
 
 | Need | Go to |
 |---|---|
+| **Phase 1 — Conception** | |
+| New to Evolith | [Getting Started by Role](./reference/getting-started/README.md) |
 | Understand Evolith quickly | [Architecture Communication & Adoption Strategy](./reference/governance/standards/communication/architecture-communication-strategy.md) |
 | See all explanation and communication visuals | [Visual Architecture Backlog](./reference/governance/standards/communication/visuals/README.md) |
-| New to Evolith | [Getting Started by Role](./reference/getting-started/README.md) |
-| Find React, Web, C# or .NET standards | [Quick Access by Stack](./reference/quick-access/README.md) |
+| **Phase 2 — Design and Architecture** | |
 | Understand the architecture model | [Architecture Hub](./reference/architecture/README.md) |
 | Review decisions and trade-offs | [ADR Registry](./reference/architecture/adrs/README.md) |
+| Find React, Web, C# or .NET standards | [Quick Access by Stack](./reference/quick-access/README.md) |
 | Apply governance rules | [Governance Standards](./reference/governance/standards/README.md) |
+| **Phase 3 — Construction** | |
 | Follow the software delivery lifecycle | [SDLC Governance Center](./reference/governance/sdlc/README.md) |
-| See the executable product reference | [UMS Applied Reference](./reference/knowledge/demo/README.md) |
 | Work with AI-assisted engineering | [AI-DD Adoption Reference](./reference/governance/standards/ai-augmented/frameworks/README.md) |
+| See the executable product reference | [UMS Applied Reference](./reference/knowledge/demo/README.md) |
+| **Phases 4–5 — Validation and Delivery** | |
 | Operate or observe the platform | [Operations & Observability](./reference/operations/README.md) |
 | Run local infrastructure | [Infrastructure & Orchestration](./reference/infrastructure/README.md) |
+| **All phases** | |
 | Browse everything | [Global Master Index](./MASTER_INDEX.md) |
 
 ---

@@ -28,18 +28,23 @@ Idioma: [English](./README.md) | [Espanol](./README.es.md)
 
 | Necesidad | Ir a |
 |---|---|
+| **Fase 1 — Concepcion** | |
+| Nuevo en Evolith | [Primeros pasos por rol](./reference/getting-started/README.es.md) |
 | Entender Evolith rapidamente | [Estrategia de Comunicacion y Adopcion Arquitectonica](./reference/governance/standards/communication/architecture-communication-strategy.es.md) |
 | Ver todos los visuales de explicacion y comunicacion | [Backlog Visual de Arquitectura](./reference/governance/standards/communication/visuals/README.es.md) |
-| Nuevo en Evolith | [Primeros pasos por rol](./reference/getting-started/README.es.md) |
-| Encontrar estandares React, Web, C# o .NET | [Acceso rapido por stack](./reference/quick-access/README.es.md) |
+| **Fase 2 — Diseno y Arquitectura** | |
 | Entender el modelo arquitectonico | [Hub de arquitectura](./reference/architecture/README.es.md) |
 | Revisar decisiones y trade-offs | [Registro ADR](./reference/architecture/adrs-es/README.md) |
+| Encontrar estandares React, Web, C# o .NET | [Acceso rapido por stack](./reference/quick-access/README.es.md) |
 | Aplicar reglas de gobierno | [Estandares de gobierno](./reference/governance/standards-es/README.md) |
+| **Fase 3 — Construccion** | |
 | Seguir el ciclo de vida de entrega de software | [Centro de Gobernanza SDLC](./reference/governance/sdlc/README.md) |
-| Ver la referencia ejecutable de producto | [Referencia aplicada UMS](./reference/knowledge/demo/README.es.md) |
 | Trabajar con ingenieria asistida por IA | [Referencia de adopcion AI-DD](./reference/governance/standards/ai-augmented/frameworks/README.es.md) |
+| Ver la referencia ejecutable de producto | [Referencia aplicada UMS](./reference/knowledge/demo/README.es.md) |
+| **Fases 4–5 — Validacion y Entrega** | |
 | Operar u observar la plataforma | [Operaciones y observabilidad](./reference/operations/README.es.md) |
 | Ejecutar infraestructura local | [Infraestructura y orquestacion](./reference/infrastructure/README.es.md) |
+| **Todas las fases** | |
 | Explorar todo | [Indice maestro global](./MASTER_INDEX.es.md) |
 
 ---

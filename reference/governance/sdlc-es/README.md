@@ -25,4 +25,10 @@ Políticas de preparación operativa y flujos de respuesta ante incidentes.
 * *Próximamente: Playbook de Lanzamientos Zero-Downtime.*
 
 ---
+
+## Referencia Transversal a Fases
+
+* -> **[Mapeo SDLC–Artefactos Evolith](../sdlc/sdlc-evolith-artifact-mapping.es.md)** — Qué artefactos Evolith son requeridos u opcionales en cada una de las cinco fases SDLC, con una matriz de cumplimiento consolidada.
+
+---
 [Volver al Nivel Superior](../../README.es.md)

@@ -81,6 +81,7 @@ Referencias clave:
 | **Asistente AI de Arquitectura** | [reference/governance/standards/ai-augmented/08-architecture-ai-assistant](./reference/governance/standards/ai-augmented/08-architecture-ai-assistant/README.md) |
 | SDLC | [reference/governance/sdlc-es](./reference/governance/sdlc-es/README.md) |
 | **Mapeo SDLC–Artefactos Evolith** | [reference/governance/sdlc/sdlc-evolith-artifact-mapping](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.es.md) |
+| **Plantillas de Artefactos SDLC** | [reference/governance/sdlc/04-artifact-templates](./reference/governance/sdlc/04-artifact-templates/README.es.md) |
 | Estándares de Documentación | [reference/governance/sdlc-es/03-documentation](./reference/governance/sdlc-es/03-documentation/README.es.md) |
 | **Estrategia de Comunicación Arquitectónica** | [reference/governance/standards/communication](./reference/governance/standards/communication/architecture-communication-strategy.es.md) |
 | **Backlog Visual de Arquitectura** | [reference/governance/standards/communication/visuals](./reference/governance/standards/communication/visuals/README.es.md) |

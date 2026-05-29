@@ -82,6 +82,7 @@ Key architecture references:
 | **AI Architecture Assistant** | [reference/governance/standards/ai-augmented/08-architecture-ai-assistant](./reference/governance/standards/ai-augmented/08-architecture-ai-assistant/README.md) |
 | SDLC | [reference/governance/sdlc](./reference/governance/sdlc/README.md) |
 | **SDLC–Evolith Artifact Mapping** | [reference/governance/sdlc/sdlc-evolith-artifact-mapping](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.md) |
+| **SDLC Artifact Templates** | [reference/governance/sdlc/04-artifact-templates](./reference/governance/sdlc/04-artifact-templates/README.md) |
 | Documentation Standards | [reference/governance/sdlc/03-documentation](./reference/governance/sdlc/03-documentation/README.md) |
 | **Architecture Communication Strategy** | [reference/governance/standards/communication](./reference/governance/standards/communication/architecture-communication-strategy.md) |
 | **Visual Architecture Backlog** | [reference/governance/standards/communication/visuals](./reference/governance/standards/communication/visuals/README.md) |

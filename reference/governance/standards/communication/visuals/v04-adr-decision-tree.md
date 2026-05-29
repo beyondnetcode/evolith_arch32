@@ -6,6 +6,12 @@
 
 ---
 
+## Legibility Note
+
+The ADR tree was divided into smaller diagrams to prevent Mermaid from rendering overly large, hard-to-read images that cannot be zoomed or scrolled on GitHub.
+
+---
+
 ## Visual 4-A — Top-Level Decision Funnel
 
 ```mermaid

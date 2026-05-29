@@ -14,62 +14,60 @@ Idioma: [English](./README.md) | [Espanol](./README.es.md)
 
 ---
 
-## Empieza aqui
+## Empieza aqui — Elige tu camino
 
-| Necesidad | Ir a |
-|---|---|
-| **Fase 1 — Concepcion** | |
-| Nuevo en Evolith | [Primeros pasos por rol](./reference/getting-started/README.es.md) |
-| Entender Evolith rapidamente | [Estrategia de Comunicacion y Adopcion Arquitectonica](./reference/governance/standards/communication/architecture-communication-strategy.es.md) |
-| Ver todos los visuales de explicacion y comunicacion | [Backlog Visual de Arquitectura](./reference/governance/standards/communication/visuals/README.es.md) |
-| **Fase 2 — Diseno y Arquitectura** | |
-| Entender el modelo arquitectonico | [Hub de arquitectura](./reference/architecture/README.es.md) |
-| Revisar decisiones y trade-offs | [Registro ADR](./reference/architecture/adrs/README.md) |
-| Encontrar estandares React, Web, C# o .NET | [Acceso rapido por stack](./reference/quick-access/README.es.md) |
-| Aplicar reglas de gobierno | [Estandares de gobierno](./reference/governance/standards/README.md) |
-| **Fase 3 — Construccion** | |
-| Seguir el ciclo de vida de entrega de software | [Centro de Gobernanza SDLC](./reference/governance/sdlc/README.es.md) |
-| Trabajar con ingenieria asistida por IA | [Referencia de adopcion AI-DD](./reference/governance/standards/ai-augmented/frameworks/README.es.md) |
-| Ver la referencia ejecutable de producto | [Referencia aplicada UMS](./reference/knowledge/demo/README.es.md) |
-| **Fases 4–5 — Validacion y Entrega** | |
-| Operar u observar la plataforma | [Operaciones y observabilidad](./reference/operations/README.es.md) |
-| Ejecutar infraestructura local | [Infraestructura y orquestacion](./reference/infrastructure/README.es.md) |
-| **Todas las fases** | |
-| Explorar todo | [Indice maestro global](./MASTER_INDEX.es.md) |
+### Camino 1 — Quiero una vision general de 5 minutos
+
+Lee el [Resumen Ejecutivo Visual](./reference/governance/standards/communication/visuals/v01-executive-one-pager.es.md). Responde: Que es Evolith? Por que lo necesitamos? Que es UMS?
+
+### Camino 2 — Tengo un rol especifico
+
+| Rol | Empezar aqui | Luego leer |
+|---|---|---|
+| Arquitecto | [Hub de Arquitectura](./reference/architecture/README.es.md) | [Matriz ADR](./reference/architecture/adrs/adr-matrix.es.md) |
+| Desarrollador | [Manifiesto de Ingenieria](./reference/governance/standards/engineering/engineering-manifesto.es.md) | [Modelo de Referencia UMS](./reference/knowledge/demo/README.es.md) |
+| DevOps / SRE | [Hub de Operaciones](./reference/operations/README.es.md) | [Hub de Infraestructura](./reference/infrastructure/README.es.md) |
+| Producto / PM | [Modelo de Referencia UMS](./reference/knowledge/demo/ums-reference-model.es.md) | [Casos de Adopcion](./reference/knowledge/adoption-cases.es.md) |
+| Contribuidor AI | [Estandares AI-Augmented](./reference/governance/standards/ai-augmented/README.es.md) | [AGENTS.es.md](./AGENTS.es.md) |
+
+### Camino 3 — Necesito tomar una decision arquitectonica
+
+1. Revisa el [Registro ADR](./reference/architecture/adrs/README.md) para ver si ya existe una decision
+2. Si no, usa la [Plantilla ADR](./reference/governance/sdlc/04-artifact-templates/adr-template.es.md) para proponer una
+3. Enviala a la [Junta de Arquitectura](./reference/governance/standards/communication/architecture-communication-strategy.es.md) para revision
 
 ---
 
-## Evolith vs UMS
+## Evolith vs UMS — Que va donde
 
 | Pregunta | Evolith | UMS |
 |---|---|---|
-| Que pertenece aqui? | Estandares reutilizables, principios, ADRs, gobierno, patrones canonicos, quality gates | Evidencia de implementacion especifica de producto y ejemplos aplicados |
-| Que no debe copiarse aqui directamente? | Rutas, headers, schemas, seeds, valores runtime y branding locales | Politica empresarial salvo promocion mediante gobierno Evolith |
-| Como una practica UMS se convierte en estandar? | Mediante ADR, estandar de gobierno o patron canonico | Aportando evidencia, no autoridad |
+| Que pertenece aqui? | Estandares reutilizables, principios, ADRs, gobierno, patrones canonicos, quality gates | Evidencia de implementacion especifica de producto |
+| Como contribuye un producto? | Proponer un ADR respaldado por evidencia real | Proporcionar prueba de concepto ejecutable |
+| Que permanece local? | Rutas de producto, schemas, seeds, branding | La politica empresarial debe pasar por el gobierno de Evolith |
 
-UMS es el modelo ejecutable oficial de referencia. Usalo para ver ideas Evolith aplicadas en un producto real, pero conserva los detalles especificos en UMS salvo que se promuevan formalmente.
+UMS es la referencia ejecutable oficial. Ver [Casos de Adopcion](./reference/knowledge/adoption-cases.es.md) para ejemplos reales de lecciones de productos promovidas a estandares.
 
 ---
 
 ## Contribucion
 
-Contribuir a Evolith significa fortalecer el estandar empresarial. Agrega aqui guia reutilizable. Conserva la evidencia especifica de producto en repositorios satelite como UMS salvo que la practica haya sido promovida por el camino de gobierno.
-
 Antes de contribuir, lee:
 
-- [AGENTS.es.md](./AGENTS.es.md)
-- [Taxonomia del repositorio](./reference/governance/standards/repository-taxonomy.es.md)
-- [Guia de herencia para repositorios hijos](./reference/governance/standards/onboarding/child-repository-inheritance-guide.es.md)
-- [ADR Gitflow](./reference/architecture/adrs/core/0050-estrategia-ramas-gitflow.md)
+- [AGENTS.es.md](./AGENTS.es.md) — Reglas y convenciones de agentes
+- [Taxonomia del Repositorio](./reference/governance/standards/repository-taxonomy.es.md) — Que va donde
+- [Guia de Herencia para Repositorios Hijos](./reference/governance/standards/onboarding/child-repository-inheritance-guide.es.md) — Como los productos heredan de Evolith
+
+Navegacion completa: [INDICE_MASTER.es.md](./MASTER_INDEX.es.md)
 
 ---
 
 ## Licencia
 
-Este proyecto se publica bajo la [Licencia MIT](./LICENSE).
+Publicado bajo la [Licencia MIT](./LICENSE).
 
 ---
 
 <div align="center">
- <sub>Evolith - Enterprise Architecture Platform | Progressive Reference Corpus | Spec-driven AI-DD</sub>
+  <sub>Evolith - Enterprise Architecture Platform | Progressive Reference Corpus | Spec-driven AI-DD</sub>
 </div>

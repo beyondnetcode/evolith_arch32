@@ -6,6 +6,14 @@
 
 ---
 
+## Visual Compatibility Note
+
+This version uses `flowchart` diagrams instead of `journey` maps because GitHub Mermaid can render journey maps inconsistently when they have long text, accents, multiple actors, or many activities.
+
+Journeys are broken down by role to improve readability, zoom, and maintenance.
+
+---
+
 ## Visual 5-A — Universal Onboarding Flow (All Roles)
 
 ```mermaid
@@ -239,6 +247,19 @@ flowchart TD
     S3 --> S4["STEP 4 — Validation (Week 2)\nArchitecture Board review\nIntegration test suite passes\nAdapter documented in product ADR"]:::step
     S4 --> DONE["✅ Approved Integration\nMonitored via Vendor Risk Registry"]:::doc
 ```
+
+---
+
+## Summary by Role
+
+| Role | First Focus | Expected Evidence |
+|---|---|---|
+| Architect / Tech Lead | ADRs, blueprint, UMS, inheritance | First reviewable ADR |
+| Developer | Manifesto, runtime, patterns, UMS | First PR with checklist |
+| QA / SDET | Pyramid, contract testing, E2E | First test set |
+| DevOps / SRE | Infrastructure, OTel, runbooks | Validated pipeline/runbook |
+| PM / PO | Vision, scope, SDLC | Aligned acceptance criteria |
+| Vendor | Contracts, risk, validation | Approved integration |
 
 ---
 

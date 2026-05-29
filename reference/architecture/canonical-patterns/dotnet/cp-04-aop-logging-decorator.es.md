@@ -11,7 +11,10 @@
 
 ## Problema
 
-Los command handlers necesitan logging de entrada/salida/excepción enriquecido con el envelope completo de observabilidad (TenantId, CorrelationId, SessionTrackingId, TraceId, SpanId, BoundedContext) sin acoplar el handler a `ILogger` ni a ninguna librería de logging, sin duplicar lógica de enriquecimiento, y sin filtrar valores de argumentos PII en los logs.
+Los command handlers necesitan logging de entrada/salida/excepción enriquecido con el envelope completo de observabilidad (TenantId, CorrelationId, SessionTrackingId, TraceId, SpanId, BoundedContext) sin:
+- Acoplar el handler a `ILogger` ni a ninguna librería de logging
+- Duplicar lógica de enriquecimiento entre handlers
+- Filtrar valores de argumentos PII en los logs
 
 ---
 
@@ -38,6 +41,122 @@ PiiSanitizerEnricher → Sinks                   (ADR-0065)
 
 ---
 
+## Clase Base de la Shell Library
+
+Colocar en una shell library portable (sin dependencias de producto):
+
+```csharp
+// Sin imports específicos de producto
+public abstract class StructuredAopLoggerBase : IAopLogger
+{
+    private readonly IExecutionContextAccessor _accessor;
+
+    protected StructuredAopLoggerBase(IExecutionContextAccessor accessor)
+        => _accessor = accessor;
+
+    /// <summary>
+    /// Resuelve el envelope completo de observabilidad.
+    /// Prioridad: accessor snapshot → Activity.Current baggage → requestId → ""
+    /// </summary>
+    protected ExecutionContextSnapshot ResolveExecutionContext(string requestId)
+    {
+        var current  = _accessor.Current ?? ExecutionContextSnapshot.Empty;
+        var activity = Activity.Current;
+
+        return new ExecutionContextSnapshot(
+            CorrelationId:     current.CorrelationId.FirstNonEmpty(
+                                   activity?.GetBaggageItem(ObservabilityKeys.CorrelationId),
+                                   requestId),
+            SessionTrackingId: current.SessionTrackingId.FirstNonEmpty(
+                                   activity?.GetBaggageItem(ObservabilityKeys.SessionTrackingId)),
+            TraceId:           current.TraceId.FirstNonEmpty(activity?.TraceId.ToString()),
+            SpanId:            current.SpanId.FirstNonEmpty(activity?.SpanId.ToString()));
+    }
+
+    /// <summary>
+    /// Infiere el bounded context desde el namespace del tipo handler.
+    /// Product.Application.Identity.Tenant.Commands.* → "Identity"
+    /// </summary>
+    protected static string InferBoundedContext(Type targetType)
+    {
+        var parts = targetType.Namespace?.Split('.') ?? [];
+        var appIdx = Array.IndexOf(parts, "Application");
+        return appIdx >= 0 && appIdx + 1 < parts.Length ? parts[appIdx + 1] : "Unknown";
+    }
+
+    public abstract void OnEntry(IJoinPoint jp, Argument[] args, string requestId);
+    public abstract void OnExit(IJoinPoint jp, Return ret, string requestId, long durationMs);
+    public abstract void OnException(IJoinPoint jp, string requestId, Exception ex);
+}
+```
+
+---
+
+## Implementación Satélite
+
+```csharp
+// Product.Infrastructure/Aop/ProductSerilogLogger.cs
+public sealed class ProductSerilogLogger(
+    ILoggerFactory loggerFactory,
+    ITenantContext tenantContext,
+    IExecutionContextAccessor accessor) : StructuredAopLoggerBase(accessor), IProductLogger
+{
+    public override void OnEntry(IJoinPoint jp, Argument[] args, string requestId)
+    {
+        var log = loggerFactory.CreateLogger(jp.TargetType);
+        if (!log.IsEnabled(LogLevel.Information)) return;
+
+        var ctx    = ResolveExecutionContext(requestId);
+        var tenant = tenantContext.TenantId ?? "system";
+        var bc     = InferBoundedContext(jp.TargetType);
+
+        // PII-safe: nombres + tipos CLR únicamente, nunca valores
+        var argSummary = args is { Length: > 0 }
+            ? string.Join(", ", args.Select(a => $"{a.Name}:{a.Type}"))
+            : string.Empty;
+
+        log.LogInformation(
+            "→ {BoundedContext} {Handler}.{Method} params=[{Params}] | "
+            + "tenant={TenantId} cid={CorrelationId} sid={SessionTrackingId} "
+            + "trace={TraceId} span={SpanId}",
+            bc, jp.TargetType.Name, jp.MethodInfo.Name, argSummary,
+            tenant, ctx.CorrelationId, ctx.SessionTrackingId, ctx.TraceId, ctx.SpanId);
+    }
+
+    public override void OnExit(IJoinPoint jp, Return ret, string requestId, long durationMs)
+    {
+        var log = loggerFactory.CreateLogger(jp.TargetType);
+        if (!log.IsEnabled(LogLevel.Information)) return;
+
+        var ctx    = ResolveExecutionContext(requestId);
+        var tenant = tenantContext.TenantId ?? "system";
+
+        log.LogInformation(
+            "← {BoundedContext} {Handler}.{Method} in {Duration}ms | "
+            + "tenant={TenantId} cid={CorrelationId} sid={SessionTrackingId}",
+            InferBoundedContext(jp.TargetType),
+            jp.TargetType.Name, jp.MethodInfo.Name, durationMs,
+            tenant, ctx.CorrelationId, ctx.SessionTrackingId);
+    }
+
+    public override void OnException(IJoinPoint jp, string requestId, Exception ex)
+    {
+        var log    = loggerFactory.CreateLogger(jp.TargetType);
+        var ctx    = ResolveExecutionContext(requestId);
+        var tenant = tenantContext.TenantId ?? "system";
+
+        log.LogError(ex,
+            "✗ {BoundedContext} {Handler}.{Method} threw {ExType} | "
+            + "tenant={TenantId} cid={CorrelationId} sid={SessionTrackingId}",
+            InferBoundedContext(jp.TargetType),
+            jp.TargetType.Name, jp.MethodInfo.Name, ex.GetType().Name,
+            tenant, ctx.CorrelationId, ctx.SessionTrackingId);
+    }
+}
+```
+
+---
+
 ## Interfaz Marcador (Capa de Aplicación)
 
 ```csharp
@@ -51,6 +170,7 @@ public interface IProductLogger : IAopLogger;
 ## Registro en DI
 
 ```csharp
+// Después de AddAop()
 services.AddKeyedTransient<IAopLogger, ProductSerilogLogger>(typeof(IProductLogger));
 
 // Envolver cada handler con DispatchProxy — después de AddMediatR()

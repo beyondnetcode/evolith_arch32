@@ -6,6 +6,12 @@
 
 ---
 
+## Legibility Note
+
+This version combines related capabilities into larger diagrams. The Spanish version breaks these into smaller sub-diagrams to avoid rendering issues with complex Mermaid charts on GitHub. Both versions contain the same information organized by domain.
+
+---
+
 ## Visual 3-A — Full Capability Landscape
 
 ```mermaid

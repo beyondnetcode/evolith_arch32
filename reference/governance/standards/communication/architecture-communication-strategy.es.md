@@ -680,7 +680,7 @@ Los siguientes artefactos visuales se proponen para creación, ordenados por imp
 - [Registro ADR](../../../architecture/adrs/README.md)
 - [Hub de Referencia UMS](../../../knowledge/demo/README.es.md)
 - [Guía de Herencia para Repositorios Hijos](../onboarding/child-repository-inheritance-guide.es.md)
-- [Taxonomía del Repositorio](./repository-taxonomy.es.md)
+- [Taxonomía del Repositorio](../repository-taxonomy.es.md)
 
 ---
 

@@ -125,7 +125,27 @@ Enterprise applications SHOULD use an application shell pattern with:
 
 The shell pattern is reusable. Product names, menu entries, routes, icons, and labels remain product-specific.
 
-## 8. Material Design 3 and design tokens
+## 8. Progressive UI delivery and microfrontend readiness
+
+Evolith web products MUST start with a **modular monolithic UI**. Microfrontends are a **Phase 3+ extraction strategy**, not the default starting architecture.
+
+The baseline progression is:
+
+| Phase | UI delivery model | Required guidance |
+|---|---|---|
+| Phase 1 | Single modular React application | Keep one deployable UI. Organize by routes, features, bounded contexts, shared components, and infrastructure boundaries. |
+| Phase 2 | Stronger modular UI ownership | Preserve one deployable UI while strengthening lazy loading, API boundaries, design-system governance, testing, and applied-reference mapping. |
+| Phase 3+ | Microfrontends by exception | Extract MFEs only when team scale, release contention, or independent technology lifecycle requirements justify the operational complexity. |
+
+Rules:
+
+1. Products MUST NOT start with microfrontends unless an explicit ADR deviation is approved.
+2. Module Federation, shell/orchestrator runtime composition, and per-MFE CI/CD pipelines are NOT part of the Phase 1 baseline.
+3. A modular folder structure, lazy-loaded routes, and bounded-context UI ownership SHOULD be used first to delay distribution until it is necessary.
+4. MFE extraction MUST comply with [ADR-0055: Microfrontends Architecture Strategy](../../../../../architecture/adrs/core/0055-microfrontends-architecture-strategy.md).
+5. When MFEs are introduced, design tokens, shared accessibility rules, telemetry, and cross-cutting security behavior remain governed by Evolith standards.
+
+## 9. Material Design 3 and design tokens
 
 Evolith standardizes token governance, not a single product palette.
 
@@ -147,7 +167,7 @@ Rules:
 4. Product branding values belong to the product repository.
 5. Global token changes require design-system review.
 
-## 9. State management
+## 10. State management
 
 State MUST be classified before implementation.
 
@@ -166,7 +186,7 @@ Rules:
 3. DOM side effects belong in presentation adapters or effects, not store definitions.
 4. Persistent client state must document storage, privacy, and invalidation behavior.
 
-## 10. Data access and runtime validation
+## 11. Data access and runtime validation
 
 External access MUST go through infrastructure boundaries.
 
@@ -179,7 +199,7 @@ Required rules:
 5. Mutating requests MUST include required security controls such as CSRF or equivalent when applicable.
 6. Headers and endpoint names remain product-specific.
 
-## 11. Internationalization
+## 12. Internationalization
 
 Internationalization SHOULD be centralized.
 
@@ -190,7 +210,7 @@ Rules:
 3. Translation keys belong to the product unless Evolith owns the component.
 4. Locale propagation to APIs must be documented at the request-context boundary.
 
-## 12. Testing and quality gates
+## 13. Testing and quality gates
 
 Minimum gates:
 
@@ -203,7 +223,7 @@ Minimum gates:
 
 Recommended tools may include Vitest, Testing Library, MSW, and Playwright. Making any one tool mandatory across all Evolith products requires ADR approval.
 
-## 13. Security and privacy rules
+## 14. Security and privacy rules
 
 1. Raw GUIDs or internal technical identifiers MUST NOT be displayed to end users unless explicitly required.
 2. Tenant, user, and authorization context MUST be handled through documented boundaries.
@@ -211,7 +231,7 @@ Recommended tools may include Vitest, Testing Library, MSW, and Playwright. Maki
 4. Error messages MUST be safe for users and logs.
 5. Development-only identifiers MUST be isolated from production builds.
 
-## 14. Accessibility and UX quality
+## 15. Accessibility and UX quality
 
 1. Interactive elements MUST have accessible names.
 2. Navigation structure SHOULD use semantic landmarks.
@@ -219,7 +239,7 @@ Recommended tools may include Vitest, Testing Library, MSW, and Playwright. Maki
 4. Color use MUST respect contrast requirements.
 5. Keyboard navigation MUST be considered for core flows.
 
-## 15. Promotion path from product to Evolith
+## 16. Promotion path from product to Evolith
 
 A product implementation practice may be promoted only when it satisfies all conditions:
 
@@ -229,7 +249,7 @@ A product implementation practice may be promoted only when it satisfies all con
 4. It has a documented standard, ADR, or canonical pattern in Evolith.
 5. It includes UMS or other product references as examples, not authority.
 
-## 16. Required applied-reference mapping
+## 17. Required applied-reference mapping
 
 Every product applying this standard SHOULD maintain a mapping document with:
 

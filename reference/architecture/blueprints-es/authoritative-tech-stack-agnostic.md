@@ -49,7 +49,7 @@ Obligatorio para todas las aplicaciones cliente para garantizar una evolución y
 
 | Estándar | Implementación Requerida | Justificación |
 | :--- | :--- | :--- |
-| **Entrega Progresiva de UI** | **Bundle Único -> Microfrontends** | Transición a **Module Federation** ([ADR-0055](../adrs-es/core/0055-estrategia-arquitectura-microfrontends.md)) solo al alcanzar la Fase 3+ o cuando la escala del equipo exija desplegabilidad independiente. |
+| **Entrega Progresiva de UI** | **Fase 1-2: UI monolítica modular. Fase 3+: Microfrontends por excepción.** | En Fase 1 NO se implementan microfrontends. Se inicia con una sola aplicación React modular y un solo deployable. La transición a **Module Federation** ([ADR-0055](../adrs-es/core/0055-estrategia-arquitectura-microfrontends.md)) ocurre solo al alcanzar Fase 3+ o cuando la escala del equipo, la contención de despliegues o los ciclos tecnológicos independientes exijan desplegabilidad independiente. |
 | **Gestión de Estado** | **Caché Asíncrona (Cache-first)** | Uso de patrones `stale-while-revalidate` (ej. React Query) para resiliencia ante latencia del backend ([ADR-0004](../adrs-es/nodejs/0004-frontend-offline-resilience.md)). |
 | **Consistencia de Diseño** | **Sistema de Diseño Atómico** | Todos los módulos de UI DEBEN compartir los tokens CSS corporativos y componentes atómicos para evitar derivas visuales. |
 

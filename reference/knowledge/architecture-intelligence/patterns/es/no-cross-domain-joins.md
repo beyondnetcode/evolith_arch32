@@ -55,4 +55,4 @@ Alto. Los agentes IA trabajan mejor cuando los límites de persistencia y domini
 
 ---
 
-[Volver a Architecture Intelligence](../README.es.md)
+[Volver a Architecture Intelligence](../../README.es.md)

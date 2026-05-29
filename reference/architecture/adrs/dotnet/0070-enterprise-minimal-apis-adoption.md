@@ -1,4 +1,4 @@
-# [ADR 0048](0048-enterprise-minimal-apis-adoption.md): .NET API Endpoint Strategy
+# [ADR-0070](0070-enterprise-minimal-apis-adoption.md): .NET API Endpoint Strategy
 
 ## 1. Status
 **Status**: Proposed 

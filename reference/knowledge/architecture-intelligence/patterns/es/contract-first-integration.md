@@ -56,4 +56,4 @@ Alto. Los agentes IA producen mejores resultados cuando los contratos son claros
 
 ---
 
-[Volver a Architecture Intelligence](../README.es.md)
+[Volver a Architecture Intelligence](../../README.es.md)

@@ -106,7 +106,7 @@ Phase 3 (Mesh): Each service owns its DB completely; cross-service queries via A
 ```
 
 Pending .NET ADRs:
-- [ADR-0057](../../../architecture/adrs/dotnet/0057-dotnet-data-access-strategy.md): .NET Data Access Strategy (EF Core + Dapper) — already exists, pending review for this gap
+- [ADR-0057](../../../architecture/adrs/dotnet/0071-dotnet-data-access-orm-strategy.md): .NET Data Access Strategy (EF Core + Dapper) — already exists, pending review for this gap
 - `ADR-0068: .NET gRPC Service Setup & Protobuf Contracts` — pending creation
 - `ADR-0069: .NET OpenTelemetry Configuration` — pending creation
 
@@ -293,13 +293,13 @@ app.MapGrpcService<TodoService>();
 ## 5. Prioritized Improvement Roadmap
 
 ### Sprint 1 (Immediate)
-- [] Create [ADR-0045](../../../architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md): Microservice Extraction Readiness Criteria
+- [x] [ADR-0045](../../../architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md) already exists — Microservice Extraction Readiness Criteria
 - [] Enrich [ADR-0006](../../../architecture/adrs/core/0006-future-microservices-transition-dapr.md) with Decision Gate for Dapr
 - [] Add Database Migration Path to [ADR-0031](../../../architecture/adrs/core/0031-schema-per-context-domain-event-catalog.md)
 - [] Document Strangler Fig Pattern with Kong routing in [ADR-0006](../../../architecture/adrs/core/0006-future-microservices-transition-dapr.md)
 
 ### Sprint 2 (Short Term)
-- [] Review [ADR-0057](../../../architecture/adrs/dotnet/0057-dotnet-data-access-strategy.md) — covers ORM Strategy (EF Core + Dapper); verify whether it closes the identified gap
+- [] Review [ADR-0057](../../../architecture/adrs/dotnet/0071-dotnet-data-access-orm-strategy.md) — covers ORM Strategy (EF Core + Dapper); verify whether it closes the identified gap
 - [] Create ADR-0068: .NET gRPC Setup & Protobuf Contract Governance
 - [] Create ADR-0069: .NET OTel Configuration
 - [] Update [ADR-0018](../../../architecture/adrs/core/0018-testing-pyramid-quality-gates.md) with per-layer coverage thresholds

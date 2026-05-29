@@ -49,4 +49,4 @@ Alto. Un monolito modular bien estructurado ayuda a que los agentes IA trabajen 
 
 ---
 
-[Volver a Architecture Intelligence](../README.es.md)
+[Volver a Architecture Intelligence](../../README.es.md)

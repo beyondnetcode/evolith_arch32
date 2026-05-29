@@ -27,4 +27,4 @@ UMS se trata solo como referencia aplicada. Las rutas de producto, modulos de do
 Una practica de UMS se convierte en estandar Evolith solo cuando se valida como reutilizable, se documenta aqui y se aprueba mediante el camino correspondiente: ADR, estandar de gobierno o patron canonico.
 
 ---
-[Volver a estandares de ingenieria](../README.md)
+[Volver a estandares de ingenieria](../../README.md)

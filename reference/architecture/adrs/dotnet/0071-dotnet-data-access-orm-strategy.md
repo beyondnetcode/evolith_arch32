@@ -1,4 +1,4 @@
-# ADR-0057: .NET Data Access Strategy — EF Core as Default ORM, Dapper for Optimized Reads
+# ADR-0071: .NET Data Access Strategy — EF Core as Default ORM, Dapper for Optimized Reads
 
 ## 1. Status
 

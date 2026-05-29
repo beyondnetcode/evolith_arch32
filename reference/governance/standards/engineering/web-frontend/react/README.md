@@ -27,4 +27,4 @@ UMS is treated as an applied reference only. Product routes, domain modules, ten
 A UMS practice becomes an Evolith standard only when it is validated as reusable, documented here, and approved through the proper promotion path: ADR, governance standard, or canonical pattern.
 
 ---
-[Back to Engineering Standards](../README.md)
+[Back to Engineering Standards](../../README.md)

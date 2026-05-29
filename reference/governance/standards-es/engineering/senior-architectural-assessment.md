@@ -106,7 +106,7 @@ Phase 3 (Mesh): Each service owns its DB completely; queries cross-service via A
 ```
 
 ADRs pendientes para .NET:
-- [ADR-0057](../../../architecture/adrs-es/dotnet/0057-dotnet-data-access-strategy.md): .NET Data Access Strategy (EF Core + Dapper) — ya existe, pendiente de revisión para este gap
+- [ADR-0057](../../../architecture/adrs-es/dotnet/0071-estrategia-acceso-datos-orm-dotnet.md): .NET Data Access Strategy (EF Core + Dapper) — ya existe, pendiente de revisión para este gap
 - `ADR-0068: .NET gRPC Service Setup & Protobuf Contracts` — pendiente de creación
 - `ADR-0069: .NET OpenTelemetry Configuration` — pendiente de creación
 
@@ -293,13 +293,13 @@ app.MapGrpcService<TodoService>();
 ## 5. Roadmap de Mejoras Priorizado
 
 ### Sprint 1 (Inmediato)
-- [] Crear [ADR-0045](../../../architecture/adrs-es/core/0045-microservice-extraction-readiness-criteria.md): Microservice Extraction Readiness Criteria
+- [x] [ADR-0045](../../../architecture/adrs-es/core/0045-microservice-extraction-readiness-criteria.md) ya existe — Microservice Extraction Readiness Criteria
 - [] Enriquecer [ADR-0006](../../../architecture/adrs-es/core/0006-future-microservices-transition-dapr.md) con Decision Gate para Dapr
 - [] Agregar Database Migration Path a [ADR-0031](../../../architecture/adrs-es/core/0031-schema-per-context-domain-event-catalog.md)
 - [] Documentar Strangler Fig Pattern con Kong routing en [ADR-0006](../../../architecture/adrs-es/core/0006-future-microservices-transition-dapr.md)
 
 ### Sprint 2 (Corto plazo)
-- [] Revisar [ADR-0057](../../../architecture/adrs-es/dotnet/0057-dotnet-data-access-strategy.md) — cubre ORM Strategy EF Core + Dapper; verificar si cierra el gap identificado
+- [] Revisar [ADR-0057](../../../architecture/adrs-es/dotnet/0071-estrategia-acceso-datos-orm-dotnet.md) — cubre ORM Strategy EF Core + Dapper; verificar si cierra el gap identificado
 - [] Crear ADR-0068: .NET gRPC Setup & Protobuf Contract Governance
 - [] Crear ADR-0069: .NET OTel Configuration
 - [] Actualizar [ADR-0018](../../../architecture/adrs-es/core/0018-testing-pyramid-quality-gates.md) con coverage thresholds por capa

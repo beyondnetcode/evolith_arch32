@@ -52,4 +52,4 @@ Alto. Los agentes IA generan mejores recomendaciones cuando la propiedad de dato
 
 ---
 
-[Volver a Architecture Intelligence](../README.es.md)
+[Volver a Architecture Intelligence](../../README.es.md)

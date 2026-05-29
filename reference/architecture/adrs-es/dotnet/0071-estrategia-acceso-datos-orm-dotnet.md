@@ -1,4 +1,4 @@
-# ADR-0057: Estrategia de Acceso a Datos .NET — EF Core como ORM Predeterminado, Dapper para Lecturas Optimizadas
+# ADR-0071: Estrategia de Acceso a Datos .NET — EF Core como ORM Predeterminado, Dapper para Lecturas Optimizadas
 
 ## 1. Estado
 

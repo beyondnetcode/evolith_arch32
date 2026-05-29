@@ -1,8 +1,8 @@
 # .NET (C#) ADR Index
 
 * [0041-canonical-dotnet-backend-architecture](./0041-canonical-dotnet-backend-architecture.md)
-* [0048-enterprise-minimal-apis-adoption](./0048-enterprise-minimal-apis-adoption.md)
-* **[0057-dotnet-data-access-orm-strategy](./0057-dotnet-data-access-orm-strategy.md)** — EF Core default, Dapper for optimized reads
+* [0070-enterprise-minimal-apis-adoption](./0070-enterprise-minimal-apis-adoption.md)
+* **[0071-dotnet-data-access-orm-strategy](./0071-dotnet-data-access-orm-strategy.md)** — EF Core default, Dapper for optimized reads
 * [0060-dotnet-multi-tenancy-dual-layer-strategy](./0060-dotnet-multi-tenancy-dual-layer-strategy.md)
 * [0061-transactional-event-lifecycle-ef-core](./0061-transactional-event-lifecycle-ef-core.md)
 * [0062-dotnet-immutable-audit-trail](./0062-dotnet-immutable-audit-trail.md)

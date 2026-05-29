@@ -460,7 +460,7 @@ FUTURO: NORTH STAR (Fase 3 — decisión deliberada)
 - [Registro ADR](../../../architecture/adrs-es/README.md)
 - [Hub de Referencia UMS](../../../knowledge/demo/README.es.md)
 - [Guía de Herencia para Repositorios Hijos](../onboarding/child-repository-inheritance-guide.es.md)
-- [Taxonomía del Repositorio](../repository-taxonomy.es.md)
+- [Taxonomía del Repositorio](../../standards-es/repository-taxonomy.es.md)
 
 ---
 

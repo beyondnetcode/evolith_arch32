@@ -334,7 +334,7 @@ These are the Evolith ADRs most heavily tested by UMS — organized by the archi
 ### Architecture Foundation
 | ADR | Decision | UMS Evidence |
 |---|---|---|
-| [ADR-0001](../../architecture/adrs/core/0001-nx-monorepo-orchestration.md) | Nx Monorepo Orchestration | Monorepo with strict lib boundaries and domain isolation |
+| [ADR-0001](../../architecture/adrs/core/0001-monorepo-orchestration-nx.md) | Nx Monorepo Orchestration | Monorepo with strict lib boundaries and domain isolation |
 | [ADR-0002](../../architecture/adrs/nodejs/0002-clean-architecture-nestjs.md) | Hexagonal Architecture | Ports + Adapters across all 8 bounded contexts |
 | [ADR-0047](../../architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.md) | Modular Monolith Selection | UMS is a Phase 1 modular monolith — extraction-ready but not extracted |
 
@@ -343,28 +343,27 @@ These are the Evolith ADRs most heavily tested by UMS — organized by the archi
 |---|---|---|
 | [ADR-0010](../../architecture/adrs/core/0010-multi-tenancy-architecture-strategy.md) | Dual-Layer RLS Strategy | `root_tenant_id` on every table, EF Core filter + SQL Server RLS predicate |
 | [ADR-0031](../../architecture/adrs/core/0031-schema-per-context-domain-event-catalog.md) | Schema-per-Context | 8 separate schemas, one per bounded context |
-| [ADR-0051](../../architecture/adrs/core/0051-enterprise-database-engine-selection.md) | SQL Server 2022 | Closure table, partitioning, temporal tables, RLS |
-| [ADR-0057](../../architecture/adrs/dotnet/0057-dotnet-data-access-strategy.md) | EF Core 8 + Dapper | EF Core for writes, Dapper for complex read projections |
+| [ADR-0051](../../architecture/adrs/core/0051-enterprise-database-engine-strategy.md) | SQL Server 2022 | Closure table, partitioning, temporal tables, RLS |
+| [ADR-0057](../../architecture/adrs/dotnet/0071-dotnet-data-access-orm-strategy.md) | EF Core 8 + Dapper | EF Core for writes, Dapper for complex read projections |
 
 ### Authorization
 | ADR | Decision | UMS Evidence |
 |---|---|---|
-| [ADR-0012](../../architecture/adrs/nodejs/0012-advanced-auth-rbac-abac-guards.md) | RBAC/ABAC Guards | Permission template system with contextual overrides |
-| [ADR-0021](../../architecture/adrs/nodejs/0021-high-performance-auth-graph-compilation.md) | Auth Graph Compilation | DAG compiler in TE-02 |
-| [ADR-0039](../../architecture/adrs/core/0039-xacml-authorization-architecture.md) | XACML-inspired PEP/PDP | Full PEP/PDP/PAP/PIP implementation in Authorization context |
+| [ADR-0012](../../architecture/adrs/nodejs/0012-advanced-authorization-rbac-abac.md) | RBAC/ABAC Guards | Permission template system with contextual overrides |
+| [ADR-0021](../../architecture/adrs/nodejs/0021-high-performance-auth-and-graph-compilation.md) | Auth Graph Compilation | DAG compiler in TE-02 |
 
 ### Events & Workflows
 | ADR | Decision | UMS Evidence |
 |---|---|---|
-| [ADR-0015](../../architecture/adrs/core/0015-injectable-event-bus-strategy.md) | Injectable Event Bus | In-process bus upgradeable to RabbitMQ without domain changes |
+| [ADR-0015](../../architecture/adrs/core/0015-event-driven-architecture-intra-domain.md) | Injectable Event Bus | In-process bus upgradeable to RabbitMQ without domain changes |
 | [ADR-0033](../../architecture/adrs/core/0033-transactional-outbox-pattern.md) | Transactional Outbox | TE-04, used by Compliance and Approvals contexts |
-| [ADR-0035](../../architecture/adrs/core/0035-distributed-saga-strategy.md) | Distributed Sagas | TE-05 via Dapr, used by Approvals (EP-06) and IGA (EP-08) |
-| [ADR-0034](../../architecture/adrs/core/0034-cqrs-applicability-matrix.md) | CQRS Applicability | Read/write split at protocol level (Dapper queries / EF Core commands) |
+| [ADR-0035](../../architecture/adrs/core/0035-distributed-saga-pattern-strategy.md) | Distributed Sagas | TE-05 via Dapr, used by Approvals (EP-06) and IGA (EP-08) |
+| [ADR-0034](../../architecture/adrs/core/0034-cqrs-pattern-applicability-matrix.md) | CQRS Applicability | Read/write split at protocol level (Dapper queries / EF Core commands) |
 
 ### Observability & Quality
 | ADR | Decision | UMS Evidence |
 |---|---|---|
-| [ADR-0007](../../architecture/adrs/nodejs/0007-otel-loki-structured-logging.md) | OTel + Loki | Every use case has an OTel span; W3C TraceContext propagated end-to-end |
+| [ADR-0007](../../architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md) | OTel + Loki | Every use case has an OTel span; W3C TraceContext propagated end-to-end |
 | [ADR-0016](../../architecture/adrs/core/0016-immutable-business-audit-trail.md) | Immutable Audit Trail | Append-only audit table with 10-column standard schema (EP-04) |
 | [ADR-0018](../../architecture/adrs/core/0018-testing-pyramid-quality-gates.md) | Testing Pyramid | 70% unit / 20% integration / 10% E2E enforced in GitHub Actions CI |
 

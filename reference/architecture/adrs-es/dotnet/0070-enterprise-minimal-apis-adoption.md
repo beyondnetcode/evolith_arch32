@@ -1,4 +1,4 @@
-# [ADR 0048](0048-enterprise-minimal-apis-adoption.md): Estrategia de Endpoints en APIs .NET
+# [ADR-0070](0070-enterprise-minimal-apis-adoption.md): Estrategia de Endpoints en APIs .NET
 
 ## 1. Estado
 **Estado**: Propuesto 

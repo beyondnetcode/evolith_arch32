@@ -80,8 +80,8 @@ Decisions tied to the primary runtime for APIs and BFFs.
 Decisions tied to high-compute runtimes.
 
 * **[ADR 0041: Canonical .NET Backend Architecture](./dotnet/0041-canonical-dotnet-backend-architecture.md)**
-* [ADR 0048: .NET API Endpoint Strategy](./dotnet/0048-enterprise-minimal-apis-adoption.md)
-* **[ADR 0057: .NET Data Access Strategy (EF Core / Dapper)](./dotnet/0057-dotnet-data-access-orm-strategy.md)**
+* [ADR 0048: .NET API Endpoint Strategy](./dotnet/0070-enterprise-minimal-apis-adoption.md)
+* **[ADR 0057: .NET Data Access Strategy (EF Core / Dapper)](./dotnet/0071-dotnet-data-access-orm-strategy.md)**
 * [ADR 0060: .NET Multi-Tenancy Dual-Layer Strategy (EF Core & SQL Server)](./dotnet/0060-dotnet-multi-tenancy-dual-layer-strategy.md)
 * [ADR 0061: Transactional Event Lifecycle in EF Core](./dotnet/0061-transactional-event-lifecycle-ef-core.md)
 * [ADR 0062: .NET Immutable Audit Trail via DDL Triggers & Delta Capture](./dotnet/0062-dotnet-immutable-audit-trail.md)

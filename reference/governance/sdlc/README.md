@@ -24,63 +24,97 @@ flowchart LR
 ```
 
 ---
+---
 
-## SDLC Phase Map
+## Phase 01 — Conception and Discovery
 
-### Phase 01: Conception and Discovery
+> **Objective:** Establish shared understanding of what the product must achieve and why before any design begins. Outputs from this phase authorize entry to architecture and design work.
+> **Phase exit gate:** Business Sign-Off
+> **Primary audience:** Product Owner, Executive Sponsor, Software Architect
+
 Scope definition, persona profiling, OKR mapping, and architectural constraint alignment.
 
-| Resource | Description |
-|---|---|
-| [PRD Template](./04-artifact-templates/prd-template.md) | Format template with UMS worked example |
-| [SDLC–Evolith Artifact Mapping — Phase 1](./sdlc-evolith-artifact-mapping.md#2-phase-1--conception-and-discovery) | Required and optional Evolith artifacts for this phase |
+| Artifact | Objective and when to use it | Recommended profiles |
+|---|---|---|
+| [PRD — Product Requirements Document](./04-artifact-templates/prd-template.md) | Captures the complete product scope: user personas, business OKRs, functional boundaries, constraints, and non-goals. Created once per product or major release initiative. Required before any architecture or design work begins. | Product Owner, Executive Sponsor — written by PO, reviewed and signed by Sponsor and Architect |
+| [SDLC–Evolith Artifact Mapping — Phase 1](./sdlc-evolith-artifact-mapping.md#2-phase-1--conception-and-discovery) | Reference table listing which Evolith artifacts are Required or Optional during this phase. Use it as a compliance checklist before declaring Business Sign-Off. | Product Owner, Governance Reviewer, Software Architect |
 
-### Phase 02: Design and Architecture
+---
+
+## Phase 02 — Design and Architecture
+
+> **Objective:** Produce verifiable, traceable design decisions that bound the solution space before construction starts. Architecture decisions made here constrain all subsequent phases.
+> **Phase exit gate:** Design Baseline Approved
+> **Primary audience:** Software Architect, Principal / Staff Engineer, Product Owner, QA / SDET
+
 Pattern selection, ADR production, bounded context definition, API contracts, and functional story writing.
 
-| Resource | Description |
-|---|---|
-| [Construction-Focused SDLC Framework](./02-engineering/construction-focused-sdlc-framework.md) | Phase definitions, quality thresholds, and DoD |
-| [ADR Template](./04-artifact-templates/adr-template.md) | Format template with worked example (ADR-0010) |
-| [Functional Story Template](./04-artifact-templates/functional-story-template.md) | Format template with UMS FS-01 worked example |
-| [Functional Story Writing Standard](./03-documentation/functional-story-writing-standard.md) | Normative rules for functional story structure |
-| [SDLC–Evolith Artifact Mapping — Phase 2](./sdlc-evolith-artifact-mapping.md#3-phase-2--design-and-architecture) | Required and optional Evolith artifacts for this phase |
+| Artifact | Objective and when to use it | Recommended profiles |
+|---|---|---|
+| [Construction-Focused SDLC Framework](./02-engineering/construction-focused-sdlc-framework.md) | Normative standard governing phase progression, quality thresholds, inner build loop, and the Definition of Done. Every engineer must read this before construction begins. | Software Architect, Tech Lead, All Engineers — read by everyone, enforced by Tech Lead |
+| [ADR — Architecture Decision Record](./04-artifact-templates/adr-template.md) | Captures a single architectural decision: context, considered options, chosen option, trade-offs, and consequences. One ADR per significant decision. Required before implementing any non-trivial architectural choice. | Software Architect, Principal / Staff Engineer — written by Architect, reviewed by Engineering Lead |
+| [Functional Story — Business Behavior Specification](./04-artifact-templates/functional-story-template.md) | Describes a user-facing capability in business language. Defines actors, flows, business rules, acceptance criteria, and technical constraints without prescribing implementation. Serves as the contract between Product and Engineering. | Product Owner, Business Analyst — written by PO/BA, reviewed by Architect and QA |
+| [Functional Story Writing Standard](./03-documentation/functional-story-writing-standard.md) | Normative rules governing the structure, language, and completeness of Functional Stories. All authors of Functional Stories must read this before writing. | Product Owner, Business Analyst, QA / SDET — normative reference for all story authors |
+| [SDLC–Evolith Artifact Mapping — Phase 2](./sdlc-evolith-artifact-mapping.md#3-phase-2--design-and-architecture) | Reference table listing Required and Optional artifacts for this phase. Use as a checklist before declaring Design Baseline. | Software Architect, Governance Reviewer, Product Owner |
 
-### Phase 03: Construction
+---
+
+## Phase 03 — Construction
+
+> **Objective:** Translate design decisions into working, tested, and documented software that meets the Definition of Done. All code merged to main must pass quality gates before this phase closes.
+> **Phase exit gate:** Successful Build (all quality gates green)
+> **Primary audience:** Backend Developer, Frontend Developer, Tech Lead, DevOps / SRE, QA / SDET
+
 Source code composition, automated testing, CI/CD enforcement, and Definition of Done.
 
-| Resource | Description |
-|---|---|
-| [Construction-Focused SDLC Framework — §3 Inner Loop and §4 DoD](./02-engineering/construction-focused-sdlc-framework.md) | Construction sub-phases and quality gate metrics |
-| [Technical Story Template](./04-artifact-templates/technical-story-template.md) | Format template with UMS TS-003 worked example |
-| [SDLC Documentation Best Practices](./03-documentation/sdlc-documentation-best-practices.md) | Documentation-as-code rules mandatory in this phase |
-| [SDLC–Evolith Artifact Mapping — Phase 3](./sdlc-evolith-artifact-mapping.md#4-phase-3--construction) | Required and optional Evolith artifacts for this phase |
+| Artifact | Objective and when to use it | Recommended profiles |
+|---|---|---|
+| [Technical Story — Engineering Implementation Work Item](./04-artifact-templates/technical-story-template.md) | Breaks down a Functional Story into a concrete engineering task with specific implementation steps, technical acceptance criteria, and a DoD checklist. One Technical Story per discrete implementation unit. | Backend Developer, Frontend Developer, Tech Lead — written by Engineer, reviewed by Tech Lead and QA |
+| [SDLC Documentation Best Practices](./03-documentation/sdlc-documentation-best-practices.md) | Mandatory documentation-as-code rules: versioning, ADR updates, inline documentation, and review cadence. Applies to every code contribution during construction. | All Engineers, Tech Lead — normative, applies to every commit |
+| [SDLC–Evolith Artifact Mapping — Phase 3](./sdlc-evolith-artifact-mapping.md#4-phase-3--construction) | Reference table listing Required and Optional artifacts for this phase. Use as a DoD compliance checklist on every sprint. | Tech Lead, QA / SDET, Governance Reviewer |
 
-### Phase 04: Validation and QA
+---
+
+## Phase 04 — Validation and QA
+
+> **Objective:** Formally verify that the software meets all acceptance criteria and quality thresholds before the Release Candidate is stamped. No production deployment proceeds without a sealed RC.
+> **Phase exit gate:** RC Stamped
+> **Primary audience:** QA / SDET, Tech Lead, Product Owner, Security Engineer
+
 Regression verification, security scanning, UAT, and Release Candidate stamping.
 
-| Resource | Description |
-|---|---|
-| [Test Summary Report Template](./04-artifact-templates/test-summary-report-template.md) | Format template with UMS MVP RC-1 worked example |
-| [SDLC–Evolith Artifact Mapping — Phase 4](./sdlc-evolith-artifact-mapping.md#5-phase-4--validation-and-qa) | Required and optional Evolith artifacts for this phase |
+| Artifact | Objective and when to use it | Recommended profiles |
+|---|---|---|
+| [Test Summary Report — Quality Gate Validation Record](./04-artifact-templates/test-summary-report-template.md) | Aggregates test execution results across unit, integration, and E2E layers. Confirms all mandatory quality thresholds are met (coverage, complexity, CVEs, tech debt). Required before the RC can be stamped. | QA / SDET — written by QA, signed off by Tech Lead and Product Owner |
+| [SDLC–Evolith Artifact Mapping — Phase 4](./sdlc-evolith-artifact-mapping.md#5-phase-4--validation-and-qa) | Reference table for this phase. Use to verify all required QA artifacts are present before RC sign-off. | QA / SDET, Tech Lead, Governance Reviewer |
 
-### Phase 05: Delivery and Operations
+---
+
+## Phase 05 — Delivery and Operations
+
+> **Objective:** Deploy the sealed Release Candidate to production and confirm the system is live, observable, and nominal. Production Live cannot be declared until all observability checks pass.
+> **Phase exit gate:** Production Live
+> **Primary audience:** DevOps / SRE, Tech Lead, Product Owner
+
 Production deployment, observability validation, and monitoring nominality.
 
-| Resource | Description |
-|---|---|
-| [Release Notes Template](./04-artifact-templates/release-notes-template.md) | Format template with UMS v0.1.0 worked example |
-| *Coming Soon: Zero-Downtime Release Playbook* | |
-| [SDLC–Evolith Artifact Mapping — Phase 5](./sdlc-evolith-artifact-mapping.md#6-phase-5--delivery-and-operations) | Required and optional Evolith artifacts for this phase |
+| Artifact | Objective and when to use it | Recommended profiles |
+|---|---|---|
+| [Release Notes — Production Deployment Record](./04-artifact-templates/release-notes-template.md) | Formal deployment record: new features, breaking changes, bug fixes, deployment steps, rollback procedure, and observability checklist. Required before Production Live is declared. | DevOps / SRE, Tech Lead — written by DevOps/Tech Lead, reviewed by Product Owner |
+| *Coming Soon: Zero-Downtime Release Playbook* | Operational runbook for blue-green and canary deployments with zero-downtime constraints. | DevOps / SRE |
+| [SDLC–Evolith Artifact Mapping — Phase 5](./sdlc-evolith-artifact-mapping.md#6-phase-5--delivery-and-operations) | Reference table for this phase. Use to verify all delivery artifacts are in place before declaring Production Live. | DevOps / SRE, Governance Reviewer |
 
+---
 ---
 
 ## Cross-Phase References
 
-| Resource | Description |
+The following documents apply to all five phases and must be consulted regardless of where in the lifecycle a team is operating.
+
+| Document | Role across all phases |
 |---|---|
-| **[SDLC–Evolith Artifact Mapping](./sdlc-evolith-artifact-mapping.md)** | Which Evolith artifacts are Required or Optional at each of the five phases, with a 40+ artifact compliance matrix |
-| **[Artifact Templates Hub](./04-artifact-templates/README.md)** | All six format templates with worked examples, organized by phase |
+| [SDLC–Evolith Artifact Mapping](./sdlc-evolith-artifact-mapping.md) | Master compliance matrix: 40+ Evolith artifacts mapped to the five SDLC phases with Required / Optional signal. The definitive reference for governance reviewers and team leads. |
+| [Artifact Templates Hub](./04-artifact-templates/README.md) | Index of all six format templates with blank structures and UMS worked examples. The starting point for authoring any new SDLC artifact. |
 
 ---
 

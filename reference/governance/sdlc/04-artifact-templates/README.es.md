@@ -20,14 +20,14 @@ Las plantillas garantizan consistencia en todos los repositorios satélite. Los 
 
 ## Catálogo de Plantillas por Fase SDLC
 
-| Fase | Plantilla | Propósito |
-|---|---|---|
-| **Fase 1 — Concepción** | [Plantilla PRD](./prd-template.es.md) | Documento de Requisitos de Producto — define alcance, personas y OKRs antes de que comience cualquier trabajo de diseño. |
-| **Fase 2 — Diseño** | [Plantilla ADR](./adr-template.es.md) | Registro de Decisión Arquitectónica — el formato estándar para toda decisión arquitectónica. |
-| **Fase 2 — Diseño** | [Plantilla Historia Funcional](./functional-story-template.es.md) | El formato canónico para requerimientos funcionales legibles por PO e ingeniería. Complementa el [Estándar de Escritura de Historias Funcionales](../03-documentation/functional-story-writing-standard.md). |
-| **Fase 3 — Construcción** | [Plantilla Historia Técnica](./technical-story-template.es.md) | Historia de implementación orientada a ingeniería, derivada de una Historia Funcional. |
-| **Fase 4 — Validación** | [Plantilla Reporte de Resumen de Testing](./test-summary-report-template.es.md) | Documento formal de puerta de calidad requerido antes de sellar el Release Candidate. |
-| **Fase 5 — Entrega** | [Plantilla Release Notes](./release-notes-template.es.md) | Comunicación estándar de release requerida antes de declarar Producción Activa. |
+| Fase | Artefacto | Objetivo | Perfiles recomendados |
+|---|---|---|---|
+| **Fase 1 — Concepción** | [PRD — Documento de Requisitos de Producto](./prd-template.es.md) | Captura el alcance del producto: personas, OKRs, límites funcionales, restricciones y no-objetivos. Requerido antes de cualquier trabajo de arquitectura o diseño. | Product Owner, Sponsor Ejecutivo |
+| **Fase 2 — Diseño** | [ADR — Registro de Decisión Arquitectónica](./adr-template.es.md) | Registra una sola decisión arquitectónica con contexto, opciones evaluadas, opción elegida y consecuencias. Un ADR por decisión significativa. | Arquitecto de Software, Principal / Staff Engineer |
+| **Fase 2 — Diseño** | [Historia Funcional — Especificación de Comportamiento de Negocio](./functional-story-template.es.md) | Describe una capacidad orientada al usuario en lenguaje de negocio: actores, flujos, reglas y criterios de aceptación. El contrato entre Producto e Ingeniería. Complementa el [Estándar de Escritura](../03-documentation/functional-story-writing-standard.es.md). | Product Owner, Analista de Negocio |
+| **Fase 3 — Construcción** | [Historia Técnica — Elemento de Trabajo de Implementación de Ingeniería](./technical-story-template.es.md) | Descompone una Historia Funcional en una tarea de ingeniería concreta con pasos de implementación, criterios de aceptación técnica y checklist de DoD. | Desarrollador Backend, Desarrollador Frontend, Tech Lead |
+| **Fase 4 — Validación** | [Reporte de Resumen de Testing — Registro de Validación de Puerta de Calidad](./test-summary-report-template.es.md) | Agrega resultados de pruebas y confirma que todos los umbrales de calidad obligatorios se cumplen. Requerido antes de sellar el Release Candidate. | QA / SDET, Tech Lead |
+| **Fase 5 — Entrega** | [Release Notes — Registro de Despliegue a Producción](./release-notes-template.es.md) | Registro formal del despliegue con funcionalidades, cambios incompatibles, pasos de despliegue, rollback y checklist de observabilidad. Requerido antes de declarar Producción Activa. | DevOps / SRE, Tech Lead |
 
 ---
 
@@ -58,9 +58,9 @@ Todas las plantillas deben pasar esta checklist antes de entrar a revisión de p
 | Documento | Rol |
 |---|---|
 | [Mapeo SDLC–Artefactos Evolith](../sdlc-evolith-artifact-mapping.es.md) | Cuáles de estas plantillas son Requeridas u Opcionales en cada fase. |
-| [Estándar de Escritura de Historias Funcionales](../03-documentation/functional-story-writing-standard.md) | Reglas normativas que la plantilla de Historia Funcional aplica. |
-| [Framework SDLC Orientado a Construcción](../02-engineering/construction-focused-sdlc-framework.md) | Definiciones de fase, puertas de salida y checklist DoD. |
-| [Buenas Prácticas de Documentación SDLC](../03-documentation/sdlc-documentation-best-practices.md) | Reglas de versionado, revisión y documentación como código. |
+| [Estándar de Escritura de Historias Funcionales](../03-documentation/functional-story-writing-standard.es.md) | Reglas normativas que la plantilla de Historia Funcional aplica. |
+| [Framework SDLC Orientado a Construcción](../02-engineering/construction-focused-sdlc-framework.es.md) | Definiciones de fase, puertas de salida y checklist DoD. |
+| [Buenas Prácticas de Documentación SDLC](../03-documentation/sdlc-documentation-best-practices.es.md) | Reglas de versionado, revisión y documentación como código. |
 
 ---
 

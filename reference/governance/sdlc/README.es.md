@@ -24,63 +24,97 @@ flowchart LR
 ```
 
 ---
+---
 
-## Mapa de Fases SDLC
+## Fase 01 — Concepción y Descubrimiento
 
-### Fase 01: Concepción y Descubrimiento
+> **Objetivo:** Establecer una comprensión compartida de qué debe lograr el producto y por qué, antes de comenzar cualquier diseño. Los entregables de esta fase autorizan el ingreso al trabajo de arquitectura.
+> **Puerta de salida:** Aprobación de Negocio
+> **Audiencia principal:** Product Owner, Sponsor Ejecutivo, Arquitecto de Software
+
 Definición de alcance, perfilado de personas, mapeo de OKRs y alineación con restricciones arquitectónicas.
 
-| Recurso | Descripción |
-|---|---|
-| [Plantilla PRD](./04-artifact-templates/prd-template.es.md) | Plantilla de formato con ejemplo completo de UMS |
-| [Mapeo SDLC–Artefactos — Fase 1](./sdlc-evolith-artifact-mapping.es.md#2-fase-1--concepción-y-descubrimiento) | Artefactos Evolith requeridos y opcionales para esta fase |
+| Artefacto | Objetivo y cuándo usarlo | Perfiles recomendados |
+|---|---|---|
+| [PRD — Documento de Requisitos de Producto](./04-artifact-templates/prd-template.es.md) | Captura el alcance completo del producto: personas de usuario, OKRs de negocio, límites funcionales, restricciones y no-objetivos. Se crea una vez por producto o iniciativa de release mayor. Requerido antes de cualquier trabajo de arquitectura o diseño. | Product Owner, Sponsor Ejecutivo — escrito por PO, revisado y firmado por Sponsor y Arquitecto |
+| [Mapeo SDLC–Artefactos — Fase 1](./sdlc-evolith-artifact-mapping.es.md#2-fase-1--concepción-y-descubrimiento) | Tabla de referencia que lista qué artefactos Evolith son Requeridos u Opcionales durante esta fase. Usar como checklist de cumplimiento antes de declarar la Aprobación de Negocio. | Product Owner, Revisor de Gobernanza, Arquitecto de Software |
 
-### Fase 02: Diseño y Arquitectura
+---
+
+## Fase 02 — Diseño y Arquitectura
+
+> **Objetivo:** Producir decisiones de diseño verificables y trazables que acoten el espacio de solución antes de comenzar la construcción. Las decisiones de arquitectura tomadas aquí restringen todas las fases posteriores.
+> **Puerta de salida:** Baseline de Diseño Aprobado
+> **Audiencia principal:** Arquitecto de Software, Principal / Staff Engineer, Product Owner, QA / SDET
+
 Selección de patrones, producción de ADRs, definición de bounded contexts, contratos de API y escritura de historias funcionales.
 
-| Recurso | Descripción |
-|---|---|
-| [Framework SDLC Orientado a Construcción](./02-engineering/construction-focused-sdlc-framework.es.md) | Definiciones de fase, umbrales de calidad y DoD |
-| [Plantilla ADR](./04-artifact-templates/adr-template.es.md) | Plantilla de formato con ejemplo completo (ADR-0010) |
-| [Plantilla Historia Funcional](./04-artifact-templates/functional-story-template.es.md) | Plantilla de formato con ejemplo UMS FS-01 |
-| [Estándar de Escritura de Historias Funcionales](./03-documentation/functional-story-writing-standard.es.md) | Reglas normativas para la estructura de historias funcionales |
-| [Mapeo SDLC–Artefactos — Fase 2](./sdlc-evolith-artifact-mapping.es.md#3-fase-2--diseño-y-arquitectura) | Artefactos Evolith requeridos y opcionales para esta fase |
+| Artefacto | Objetivo y cuándo usarlo | Perfiles recomendados |
+|---|---|---|
+| [Framework SDLC Orientado a Construcción](./02-engineering/construction-focused-sdlc-framework.es.md) | Estándar normativo que gobierna la progresión de fases, umbrales de calidad, el bucle interno de construcción y la Definición de Terminado. Todo ingeniero debe leerlo antes de comenzar la construcción. | Arquitecto de Software, Tech Lead, Todos los Ingenieros — lectura obligatoria, aplicado por Tech Lead |
+| [ADR — Registro de Decisión Arquitectónica](./04-artifact-templates/adr-template.es.md) | Captura una sola decisión arquitectónica: contexto, opciones evaluadas, opción elegida, trade-offs y consecuencias. Un ADR por decisión significativa. Requerido antes de implementar cualquier elección arquitectónica no trivial. | Arquitecto de Software, Principal / Staff Engineer — escrito por Arquitecto, revisado por Engineering Lead |
+| [Historia Funcional — Especificación de Comportamiento de Negocio](./04-artifact-templates/functional-story-template.es.md) | Describe una capacidad orientada al usuario en lenguaje de negocio. Define actores, flujos, reglas de negocio, criterios de aceptación y restricciones técnicas sin prescribir implementación. Sirve como contrato entre Producto e Ingeniería. | Product Owner, Analista de Negocio — escrito por PO/BA, revisado por Arquitecto y QA |
+| [Estándar de Escritura de Historias Funcionales](./03-documentation/functional-story-writing-standard.es.md) | Reglas normativas que rigen la estructura, el lenguaje y la completitud de las Historias Funcionales. Todos los autores de Historias Funcionales deben leerlo antes de escribir. | Product Owner, Analista de Negocio, QA / SDET — referencia normativa para todos los autores de historias |
+| [Mapeo SDLC–Artefactos — Fase 2](./sdlc-evolith-artifact-mapping.es.md#3-fase-2--diseño-y-arquitectura) | Tabla de referencia con artefactos Requeridos y Opcionales para esta fase. Usar como checklist antes de declarar el Baseline de Diseño. | Arquitecto de Software, Revisor de Gobernanza, Product Owner |
 
-### Fase 03: Construcción
+---
+
+## Fase 03 — Construcción
+
+> **Objetivo:** Traducir las decisiones de diseño en software funcional, probado y documentado que cumpla la Definición de Terminado. Todo código integrado a main debe pasar las puertas de calidad antes de que esta fase se cierre.
+> **Puerta de salida:** Build Exitoso (todas las puertas de calidad en verde)
+> **Audiencia principal:** Desarrollador Backend, Desarrollador Frontend, Tech Lead, DevOps / SRE, QA / SDET
+
 Composición de código fuente, testing automatizado, aplicación de CI/CD y Definición de Terminado.
 
-| Recurso | Descripción |
-|---|---|
-| [Framework SDLC — §3 Bucle Interno y §4 DoD](./02-engineering/construction-focused-sdlc-framework.es.md) | Sub-fases de construcción y métricas de puerta de calidad |
-| [Plantilla Historia Técnica](./04-artifact-templates/technical-story-template.es.md) | Plantilla de formato con ejemplo UMS TS-003 |
-| [Buenas Prácticas de Documentación SDLC](./03-documentation/sdlc-documentation-best-practices.es.md) | Reglas de documentación-como-código obligatorias en esta fase |
-| [Mapeo SDLC–Artefactos — Fase 3](./sdlc-evolith-artifact-mapping.es.md#4-fase-3--construcción) | Artefactos Evolith requeridos y opcionales para esta fase |
+| Artefacto | Objetivo y cuándo usarlo | Perfiles recomendados |
+|---|---|---|
+| [Historia Técnica — Elemento de Trabajo de Implementación de Ingeniería](./04-artifact-templates/technical-story-template.es.md) | Descompone una Historia Funcional en una tarea de ingeniería concreta con pasos de implementación específicos, criterios de aceptación técnica y checklist de DoD. Una Historia Técnica por unidad de implementación discreta. | Desarrollador Backend, Desarrollador Frontend, Tech Lead — escrito por Ingeniero, revisado por Tech Lead y QA |
+| [Buenas Prácticas de Documentación SDLC](./03-documentation/sdlc-documentation-best-practices.es.md) | Reglas obligatorias de documentación-como-código: versionado, actualización de ADRs, documentación inline y cadencia de revisión. Aplica a toda contribución de código durante la construcción. | Todos los Ingenieros, Tech Lead — normativo, aplica a cada commit |
+| [Mapeo SDLC–Artefactos — Fase 3](./sdlc-evolith-artifact-mapping.es.md#4-fase-3--construcción) | Tabla de referencia con artefactos Requeridos y Opcionales para esta fase. Usar como checklist de cumplimiento del DoD en cada sprint. | Tech Lead, QA / SDET, Revisor de Gobernanza |
 
-### Fase 04: Validación y QA
+---
+
+## Fase 04 — Validación y QA
+
+> **Objetivo:** Verificar formalmente que el software cumple todos los criterios de aceptación y umbrales de calidad antes de sellar el Release Candidate. Ningún despliegue a producción procede sin un RC sellado.
+> **Puerta de salida:** RC Sellado
+> **Audiencia principal:** QA / SDET, Tech Lead, Product Owner, Ingeniero de Seguridad
+
 Verificación de regresión, escaneo de seguridad, UAT y sellado del Release Candidate.
 
-| Recurso | Descripción |
-|---|---|
-| [Plantilla Reporte de Resumen de Testing](./04-artifact-templates/test-summary-report-template.es.md) | Plantilla de formato con ejemplo UMS MVP RC-1 |
-| [Mapeo SDLC–Artefactos — Fase 4](./sdlc-evolith-artifact-mapping.es.md#5-fase-4--validación-y-qa) | Artefactos Evolith requeridos y opcionales para esta fase |
+| Artefacto | Objetivo y cuándo usarlo | Perfiles recomendados |
+|---|---|---|
+| [Reporte de Resumen de Testing — Registro de Validación de Puerta de Calidad](./04-artifact-templates/test-summary-report-template.es.md) | Agrega los resultados de ejecución de pruebas en las capas unitaria, de integración y E2E. Confirma que todos los umbrales de calidad obligatorios se cumplen (cobertura, complejidad, CVEs, deuda técnica). Requerido antes de sellar el RC. | QA / SDET — escrito por QA, aprobado por Tech Lead y Product Owner |
+| [Mapeo SDLC–Artefactos — Fase 4](./sdlc-evolith-artifact-mapping.es.md#5-fase-4--validación-y-qa) | Tabla de referencia para esta fase. Usar para verificar que todos los artefactos de QA requeridos estén presentes antes de la aprobación del RC. | QA / SDET, Tech Lead, Revisor de Gobernanza |
 
-### Fase 05: Entrega y Operaciones
+---
+
+## Fase 05 — Entrega y Operaciones
+
+> **Objetivo:** Desplegar el Release Candidate sellado a producción y confirmar que el sistema está activo, observable y nominal. La Producción Activa no puede declararse hasta que todos los controles de observabilidad pasen.
+> **Puerta de salida:** Producción Activa
+> **Audiencia principal:** DevOps / SRE, Tech Lead, Product Owner
+
 Despliegue a producción, validación de observabilidad y nominalidad de monitoreo.
 
-| Recurso | Descripción |
-|---|---|
-| [Plantilla Release Notes](./04-artifact-templates/release-notes-template.es.md) | Plantilla de formato con ejemplo UMS v0.1.0 |
-| *Próximamente: Playbook de Lanzamientos Zero-Downtime* | |
-| [Mapeo SDLC–Artefactos — Fase 5](./sdlc-evolith-artifact-mapping.es.md#6-fase-5--entrega-y-operaciones) | Artefactos Evolith requeridos y opcionales para esta fase |
+| Artefacto | Objetivo y cuándo usarlo | Perfiles recomendados |
+|---|---|---|
+| [Release Notes — Registro de Despliegue a Producción](./04-artifact-templates/release-notes-template.es.md) | Registro formal del despliegue: nuevas funcionalidades, cambios incompatibles, correcciones, pasos de despliegue, procedimiento de rollback y checklist de observabilidad. Requerido antes de declarar Producción Activa. | DevOps / SRE, Tech Lead — escrito por DevOps/Tech Lead, revisado por Product Owner |
+| *Próximamente: Playbook de Lanzamientos Zero-Downtime* | Runbook operativo para despliegues blue-green y canary con restricciones de zero-downtime. | DevOps / SRE |
+| [Mapeo SDLC–Artefactos — Fase 5](./sdlc-evolith-artifact-mapping.es.md#6-fase-5--entrega-y-operaciones) | Tabla de referencia para esta fase. Usar para verificar que todos los artefactos de entrega estén en lugar antes de declarar Producción Activa. | DevOps / SRE, Revisor de Gobernanza |
 
+---
 ---
 
 ## Referencias Transversales a Fases
 
-| Recurso | Descripción |
+Los siguientes documentos aplican a las cinco fases y deben consultarse independientemente de en qué punto del ciclo de vida se encuentre el equipo.
+
+| Documento | Rol transversal |
 |---|---|
-| **[Mapeo SDLC–Artefactos Evolith](./sdlc-evolith-artifact-mapping.es.md)** | Qué artefactos Evolith son Requeridos u Opcionales en cada una de las cinco fases, con matriz de 40+ artefactos |
-| **[Hub de Plantillas de Artefactos](./04-artifact-templates/README.es.md)** | Las seis plantillas de formato con ejemplos completos, organizadas por fase |
+| [Mapeo SDLC–Artefactos Evolith](./sdlc-evolith-artifact-mapping.es.md) | Matriz de cumplimiento maestra: 40+ artefactos Evolith mapeados a las cinco fases SDLC con señal Requerido / Opcional. La referencia definitiva para revisores de gobernanza y líderes técnicos. |
+| [Hub de Plantillas de Artefactos](./04-artifact-templates/README.es.md) | Índice de las seis plantillas de formato con estructuras en blanco y ejemplos completos de UMS. El punto de partida para crear cualquier nuevo artefacto SDLC. |
 
 ---
 

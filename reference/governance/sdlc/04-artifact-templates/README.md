@@ -20,14 +20,14 @@ Templates enforce consistency across all satellite repositories. Satellite teams
 
 ## Template Catalog by SDLC Phase
 
-| Phase | Template | Purpose |
-|---|---|---|
-| **Phase 1 — Conception** | [PRD Template](./prd-template.md) | Product Requirements Document — defines scope, personas, and OKRs before any design work begins. |
-| **Phase 2 — Design** | [ADR Template](./adr-template.md) | Architectural Decision Record — the standard format for every architectural decision. |
-| **Phase 2 — Design** | [Functional Story Template](./functional-story-template.md) | The canonical format for functional requirements readable by PO and engineering. Complements the [Functional Story Writing Standard](../03-documentation/functional-story-writing-standard.md). |
-| **Phase 3 — Construction** | [Technical Story Template](./technical-story-template.md) | Engineering-facing implementation story derived from a Functional Story. |
-| **Phase 4 — Validation** | [Test Summary Report Template](./test-summary-report-template.md) | Formal quality gate document required before the Release Candidate is stamped. |
-| **Phase 5 — Delivery** | [Release Notes Template](./release-notes-template.md) | Standard release communication required before Production Live is declared. |
+| Phase | Artifact | Objective | Recommended profiles |
+|---|---|---|---|
+| **Phase 1 — Conception** | [PRD — Product Requirements Document](./prd-template.md) | Captures product scope, personas, OKRs, constraints, and non-goals. Required before any architecture or design work begins. | Product Owner, Executive Sponsor |
+| **Phase 2 — Design** | [ADR — Architecture Decision Record](./adr-template.md) | Records a single architectural decision with context, options evaluated, chosen option, and consequences. One ADR per significant decision. | Software Architect, Principal / Staff Engineer |
+| **Phase 2 — Design** | [Functional Story — Business Behavior Specification](./functional-story-template.md) | Describes a user-facing capability in business language: actors, flows, business rules, and acceptance criteria. The contract between Product and Engineering. Complements the [Functional Story Writing Standard](../03-documentation/functional-story-writing-standard.md). | Product Owner, Business Analyst |
+| **Phase 3 — Construction** | [Technical Story — Engineering Implementation Work Item](./technical-story-template.md) | Breaks a Functional Story into a concrete engineering task with implementation steps, technical acceptance criteria, and a DoD checklist. | Backend Developer, Frontend Developer, Tech Lead |
+| **Phase 4 — Validation** | [Test Summary Report — Quality Gate Validation Record](./test-summary-report-template.md) | Aggregates test results and confirms all mandatory quality thresholds are met. Required before the Release Candidate is stamped. | QA / SDET, Tech Lead |
+| **Phase 5 — Delivery** | [Release Notes — Production Deployment Record](./release-notes-template.md) | Formal deployment record with features, breaking changes, deployment steps, rollback procedure, and observability checklist. Required before Production Live is declared. | DevOps / SRE, Tech Lead |
 
 ---
 

@@ -79,6 +79,30 @@ Generación de logs de consola no coordinados a través de pods sin correlación
 | **Riesgos Operativos** | Alto desgaste del personal de soporte, pérdida de confianza del cliente debido a tiempos de reacción extremadamente lentos ante interrupciones graves. |
 | **Defensa de Inmunización** | **[ADR-0007](../../../architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md) (Trazado Distribuido OTel)**. Un único `TraceParent ID` viaja desde el inicio de la solicitud hasta la respuesta de la BD. Ingresar ese ID en Jaeger muestra la línea de tiempo completa del mapa de árbol instantáneamente. |
 
+### 2.5 El Anti-patrón "God Module" (Módulo Dios)
+Un único bounded context absorbe demasiada lógica de dominio, convirtiéndose en el nuevo monolito dentro del monolito modular.
+
+| Campo | Análisis de Definición e Impacto |
+| :--- | :--- |
+| **Criticidad** | **ALTA** (Neutraliza el propósito de la modularización) |
+| **Ejemplo Concreto** | Un `CoreModule` que contiene Users, Tasks, Invoices, Notifications y Reports — todo en un único módulo NestJS con cientos de casos de uso y servicios. |
+| **Impacto en Producción** | El módulo se vuelve imposible de extraer. Los equipos no pueden trabajar de forma independiente porque toda la lógica de dominio está entrelazada. Los tiempos de compilación se degradan porque el módulo completo debe reconstruirse ante cualquier cambio. |
+| **Riesgos Operativos** | Cuando las métricas activan la preparación de extracción (ADR-0045), el God Module no puede extraerse sin reescritura completa — el mismo anti-patrón que la arquitectura progresiva existe para prevenir. |
+| **Inmunización** | Auditorías regulares de límites contra el [Modelo de Referencia Aplicado UMS](../../../knowledge/demo/README.md). Cada contexto debe tener una misión única y clara. Usar el playbook de preparación de extracción para dividir antes de que el módulo se vuelva demasiado grande. |
+
+---
+
+### 2.6 El Anti-patrón "Leaky Shared Library" (Librería Compartida con Fugas)
+La lógica de negocio se acumula en `libs/shared` o `libs/core`, creando un segundo monolito oculto del que todos los contextos dependen.
+
+| Campo | Análisis de Definición e Impacto |
+| :--- | :--- |
+| **Criticidad** | **ALTA** (Crea acoplamiento invisible entre bounded contexts) |
+| **Ejemplo Concreto** | Una librería `libs/shared` exporta `UserEntity`, `TaskRepository` y `InvoiceCalculator` — objetos de dominio de tres bounded contexts diferentes mezclados en una única librería compartida. |
+| **Impacto en Producción** | Cualquier contexto que importe de `libs/shared` queda implícitamente acoplado al modelo de dominio de todos los demás contextos. Un cambio de esquema en `UserEntity` puede romper el comportamiento de Task e Invoice. |
+| **Riesgos Operativos** | Hace imposible la extracción de servicios: no se puede extraer el servicio de Task si depende de `UserEntity` de una lib compartida que también contiene lógica de Invoice. |
+| **Inmunización** | Las librerías compartidas DEBEN contener solo: (a) primitivas genéricas de infraestructura (tipo Result, clase base de aggregate, interfaces de puerto), (b) utilidades de framework DDD. Los objetos de dominio, casos de uso y reglas de negocio NUNCA deben aparecer en librerías compartidas. Aplicar mediante reglas `eslint-plugin-boundaries` que restrinjan lo que `libs/shared` puede exportar. |
+
 ---
 
 ## 3. Evaluación Final de Madurez y Riesgo

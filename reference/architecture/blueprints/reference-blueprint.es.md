@@ -169,7 +169,55 @@ El dominio nunca importa un bróker de mensajes concreto. Toda la comunicación 
 
 ---
 
-## 5. Bloques de Construcción Técnica - Vista Completa de Contenedores
+## 5. Bloques de Construcción Técnica
+
+### 5.0 Vista de Contenedor Fase 1 — MVP Lean (Monolito Modular)
+
+> [!NOTE]
+> **Comenzar aquí.** Este diagrama refleja el **despliegue real de Fase 1** — un proceso único, infraestructura mínima, y sin bróker de mensajes externo. Es el punto de partida recomendado para todos los productos nuevos. El diagrama completo en Sección 5.1 muestra el estado maduro de Fase 3+.
+
+```mermaid
+graph TD
+    subgraph ClientLayer["Capa de Cliente"]
+        WebApp["Web App\n[React + React Query]"]
+        MobileApp["Mobile App\n[Almacenamiento Offline Nativo]"]
+    end
+
+    subgraph Monolith["NestJS Modular Monolith (proceso único)"]
+        AuthMod["Módulo Auth\n[schema: auth]"]
+        TaskMod["Módulo Task\n[schema: tasks]"]
+        TaxonomyMod["Módulo Taxonomy\n[schema: taxonomy]"]
+        AuditMod["Módulo Audit\n[schema: audit]"]
+        InMemBus["Bus de Eventos En-Memoria\n[IEventBusPort → impl En-Memoria]"]
+        AuthMod --> InMemBus
+        TaskMod --> InMemBus
+        TaxonomyMod --> InMemBus
+        InMemBus --> AuditMod
+    end
+
+    subgraph Persistence["Persistencia (instancia PostgreSQL única)"]
+        PgSQL[("PostgreSQL\n[auth | tasks | taxonomy | audit schemas]")]
+    end
+
+    subgraph Observability["Observabilidad"]
+        OTel["Coleccionista OTel → Grafana/Jaeger"]
+    end
+
+    WebApp -->|"HTTPS REST"| Monolith
+    MobileApp -->|"HTTPS REST"| Monolith
+    Monolith -->|"SQL (esquemas aislados)"| PgSQL
+    Monolith -.->|"Logs estructurados + trazas"| OTel
+```
+
+**Reglas de Fase 1:**
+- Un proceso NestJS. Una instancia PostgreSQL. Docker Compose para desarrollo local.
+- Sin Kong gateway — HTTPS directo a la app. Añadir Kong en Fase 2 cuando se incorpore un segundo canal de cliente o socio externo.
+- Bus de eventos en memoria. Reemplazar con RabbitMQ solo cuando se necesite entrega asíncrona entre servicios ([ADR-0015](../adrs/core/0015-event-driven-architecture-intra-domain.md)).
+- Redis es opcional. Añadir solo cuando se vulneré un umbral de latencia específico ([ADR-0014](../adrs/core/0014-distributed-caching-strategy-redis.md)).
+
+---
+
+### 5.1 Vista Completa de Contenedores — Arquitectura Madura (Fase 3+)
 
 Este diagrama de Contenedor Nivel-2 de C4 refleja **todos los ADRs activos** en sus posiciones físicas de tiempo de ejecución.
 

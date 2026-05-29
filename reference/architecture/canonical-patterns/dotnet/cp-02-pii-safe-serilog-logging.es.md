@@ -55,6 +55,30 @@ builder.Host.UseSerilog((ctx, cfg) => cfg.ConfigureSerilog(ctx));
 
 **Formato de salida:** texto coloreado en Development, JSON compacto en Staging/Production.
 
+### 4. Program.cs Wiring
+
+```csharp
+builder.Host.UseSerilog((ctx, cfg) => cfg.ConfigureSerilog(ctx));
+```
+
+---
+
+## Configuración
+
+```json
+"Observability": {
+  "Logging": {
+    "ConsoleFormat": "CompactJson",    // "Text" (dev) o "CompactJson" (prod)
+    "MinimumLevel":  "Information"
+  }
+}
+```
+
+Sinks remotos (Seq, Loki, Elasticsearch, Application Insights):
+- Añadir el NuGet del sink al proyecto Presentation
+- Añadir la configuración del sink bajo la sección `"Serilog"` en `appsettings.json`
+- Ningún cambio de código requerido
+
 ---
 
 ## Referencia de Enmascaramiento

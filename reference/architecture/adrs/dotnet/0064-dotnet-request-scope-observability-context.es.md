@@ -112,7 +112,35 @@ RequestContextAccessor (scoped)       ← fuente única de verdad
 4. Cadena vacía
 ```
 
-### E. Reglas de Acceso por Capa
+### E. Implementación (Capa de Infraestructura)
+
+```csharp
+// Una sola clase implementa ambos puertos — registrada dos veces en DI
+public sealed class RequestContextAccessor : IRequestContext, IExecutionContextAccessor
+{
+    private ExecutionContextSnapshot _current = ExecutionContextSnapshot.Empty;
+
+    public string? CorrelationId     => _current.CorrelationId.NullIfEmpty();
+    public string? SessionTrackingId => _current.SessionTrackingId.NullIfEmpty();
+    public string? TraceId           => _current.TraceId.NullIfEmpty();
+    public string? SpanId            => _current.SpanId.NullIfEmpty();
+    public ExecutionContextSnapshot Current => _current;
+
+    public void Set(ExecutionContextSnapshot snapshot) =>
+        _current = snapshot ?? ExecutionContextSnapshot.Empty;
+}
+```
+
+### F. Prioridad de Resolución (adaptadores AOP)
+
+```
+1. RequestContextAccessor.Current (establecido por SessionTrackingMiddleware)
+2. Baggage de Activity.Current (fallback para contextos no-HTTP)
+3. Parámetro requestId del atributo de método
+4. Cadena vacía
+```
+
+### G. Reglas de Acceso por Capa
 
 | Capa | Interfaz | Acceso |
 |------|-----------|--------|

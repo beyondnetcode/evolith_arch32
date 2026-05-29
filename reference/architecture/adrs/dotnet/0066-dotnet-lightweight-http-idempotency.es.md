@@ -1,10 +1,10 @@
 # [ADR 0066](0066-dotnet-lightweight-http-idempotency.md): Idempotencia HTTP Ligera en .NET via IMemoryCache / IDistributedCache
 
 ## 1. Estado
-**Estado**: Aceptado  
-**Fecha**: 2026-05-24  
-**Alcance**: Stack Tecnológico - Confiabilidad de API .NET  
-**Origen satélite**: UMS ADR-0063 (FIX-06/RISK-05) — promovido a baseline corporativo  
+**Estado**: Aceptado
+**Fecha**: 2026-05-24
+**Alcance**: Stack Tecnológico - Confiabilidad de API .NET
+**Origen satélite**: UMS ADR-0063 (FIX-06/RISK-05) — promovido a baseline corporativo
 **Complementa**: [ADR-0063: Middleware de Idempotencia B2B (respaldado por DB)](./0063-dotnet-b2b-idempotency-middleware.md)
 
 ---
@@ -35,8 +35,8 @@ El ADR-0063 define el patrón de idempotencia B2B empresarial usando una tabla p
 
 ### A. Contrato de Comportamiento
 
-| Escenario | Método HTTP | Clave | Respuesta | Handler invocado |
-|-----------|-------------|-------|-----------|-----------------|
+| Escenario | Método HTTP | Clave presente | Respuesta | Handler invocado |
+|-----------|-------------|----------------|-----------|-----------------|
 | Primera llamada | POST/PUT/PATCH | Sí | 2xx (del handler) | Sí |
 | Reintento, completado | POST/PUT/PATCH | Sí (cacheada) | 2xx (reproducida) | No |
 | Duplicado paralelo | POST/PUT/PATCH | Sí (en vuelo) | 409 | No |
@@ -44,11 +44,88 @@ El ADR-0063 define el patrón de idempotencia B2B empresarial usando una tabla p
 | Método seguro | GET/DELETE | Cualquiera | Pasa | Sí |
 | Error del handler | POST/PUT/PATCH | Sí | 4xx/5xx (no cacheado) | Sí |
 
-### B. Registro en DI y Pipeline
+### B. Implementación
+
+```csharp
+public sealed class IdempotencyMiddleware(
+    RequestDelegate next,
+    IMemoryCache cache,
+    ILogger<IdempotencyMiddleware> logger)
+{
+    private const string Header   = "Idempotency-Key";
+    private const string InFlight = ":inflight";
+    private static readonly HashSet<string> Methods =
+        new(StringComparer.OrdinalIgnoreCase) { "POST", "PUT", "PATCH" };
+
+    public async Task InvokeAsync(HttpContext context)
+    {
+        if (!Methods.Contains(context.Request.Method)
+            || !context.Request.Headers.TryGetValue(Header, out var keyValues)
+            || string.IsNullOrWhiteSpace(keyValues.FirstOrDefault()))
+        {
+            await next(context); return;
+        }
+
+        var key = keyValues.First()!;
+
+        // Rechazar duplicado paralelo
+        if (cache.TryGetValue(key + InFlight, out _))
+        {
+            context.Response.StatusCode = 409;
+            await context.Response.WriteAsJsonAsync(
+                new { error = "request already in progress", idempotencyKey = key });
+            return;
+        }
+
+        // Reproducir request completado
+        if (cache.TryGetValue(key, out CachedResponse? cached))
+        {
+            context.Response.StatusCode  = cached!.StatusCode;
+            context.Response.ContentType = cached.ContentType;
+            await context.Response.Body.WriteAsync(cached.Body);
+            return;
+        }
+
+        // Primera llamada — ejecutar y cachear
+        cache.Set(key + InFlight, true, TimeSpan.FromMinutes(5));
+        try
+        {
+            var original = context.Response.Body;
+            using var buffer = new MemoryStream();
+            context.Response.Body = buffer;
+
+            await next(context);
+
+            buffer.Position = 0;
+            var body = buffer.ToArray();
+
+            if (context.Response.StatusCode is >= 200 and < 300)
+                cache.Set(key,
+                    new CachedResponse(context.Response.StatusCode,
+                        context.Response.ContentType ?? "application/json", body),
+                    TimeSpan.FromHours(24));
+
+            context.Response.Body = original;
+            await original.WriteAsync(body);
+        }
+        finally { cache.Remove(key + InFlight); }
+    }
+
+    private record CachedResponse(int StatusCode, string ContentType, byte[] Body);
+}
+
+public static class IdempotencyMiddlewareExtensions
+{
+    public static IApplicationBuilder UseIdempotency(this IApplicationBuilder app)
+        => app.UseMiddleware<IdempotencyMiddleware>();
+}
+```
+
+### C. Registro en DI y Pipeline
 
 ```csharp
 // services
-services.AddMemoryCache(); // o AddStackExchangeRedisCache para multi-pod
+services.AddMemoryCache(); // valor por defecto para nodo único
 
 // Program.cs — después de UseGlobalExceptionHandler, antes del routing
 app.UseIdempotency();
@@ -61,17 +138,24 @@ UseCorrelationId → UseSessionTracking → UseGlobalExceptionHandler
     → UseRateLimiter → Routes
 ```
 
-### C. Ruta de Actualización Multi-Réplica
+Posición después de `UseGlobalExceptionHandler` previene cachear respuestas de error. Posición antes del routing asegura que la reproducción ocurre antes de la selección de endpoint.
+
+### D. Ruta de Actualización Multi-Réplica
+
+Reemplazar `IMemoryCache` con `IDistributedCache` para compartir estado de idempotencia entre pods:
 
 ```csharp
 // services.AddStackExchangeRedisCache(o => o.Configuration = "redis:6379");
 // Inyectar IDistributedCache en lugar de IMemoryCache en el middleware
 ```
 
-### D. Formato de Clave y TTL
+### E. Formato de Clave
 
-- **Clave**: UUID v4 generado por el cliente, p.ej. `550e8400-e29b-41d4-a716-446655440000`
-- **TTL por defecto**: 24 horas (configurable vía `IdempotencyOptions`)
+UUID v4 generado por el cliente, p.ej. `550e8400-e29b-41d4-a716-446655440000`. El middleware no genera claves. Los clientes deben generar y retener la clave antes del primer intento y reutilizarla en los reintentos.
+
+### F. TTL
+
+Por defecto: **24 horas** (configurable vía `IdempotencyOptions`). Después del vencimiento del TTL, una clave re-enviada se trata como una nueva solicitud.
 
 ---
 

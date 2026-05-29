@@ -60,6 +60,46 @@ builder.Host.UseSerilog((ctx, cfg) => cfg.ConfigureSerilog(ctx));
 | `ssn`, `nationalId`, `taxId` | `[REDACTED]` |
 | Cualquier escalar que coincida con `x@y.z` | `xx***@***.z` |
 
+### E. Configuración
+
+```json
+"Observability": {
+  "Logging": {
+    "ConsoleFormat": "CompactJson",   // "Text" or "CompactJson"
+    "MinimumLevel": "Information",
+    "OutputTemplate": "..."           // Solo para modo texto
+  }
+}
+```
+
+### F. Patrones de Log Prohibidos y Requeridos
+
+```csharp
+// ✗ PROHIBIDO — concatenación de strings, sin campos estructurados
+_logger.LogInformation("User " + userId);
+
+// ✗ PROHIBIDO — volcado de objeto no estructurado
+_logger.LogInformation(user.ToString());
+
+// ✗ PROHIBIDO — PII en valor del template (el enricher lo capturará, pero evitarlo por diseño)
+_logger.LogInformation("Email: {email}", user.Email);
+
+// ✓ REQUERIDO — campos estructurados con nombres sin PII
+_logger.LogInformation("User {UserId} activated by {ActorId}", userId, actorId);
+```
+
+### G. Tabla de Referencia de Enmascaramiento
+
+| Nombre de propiedad | Reemplazo |
+|---------------------|-----------|
+| `email`, `emailAddress`, `mail` | `jo***@***.com` (parcial) |
+| `password`, `passwordHash`, `passwordText` | `[REDACTED]` |
+| `identityReference` | `[REDACTED]` |
+| `token`, `accessToken`, `refreshToken`, `bearerToken`, `idToken` | `[REDACTED]` |
+| `secret`, `apiKey`, `apiSecret`, `clientSecret` | `[REDACTED]` |
+| `ssn`, `nationalId`, `taxId` | `[REDACTED]` |
+| Cualquier escalar string que coincida con `x@y.z` | `xx***@***.z` |
+
 ---
 
 ## 4. Consecuencias

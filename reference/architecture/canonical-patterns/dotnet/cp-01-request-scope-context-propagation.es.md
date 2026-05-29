@@ -107,6 +107,31 @@ services.AddScoped<IExecutionContextAccessor>(sp =>
 
 ---
 
+## SessionTrackingMiddleware
+
+```csharp
+public async Task InvokeAsync(HttpContext context, RequestContextAccessor accessor)
+{
+    var sessionId = GetOrGenerate(context, ObservabilityHeaders.SessionTrackingId);
+
+    Activity.Current?.SetBaggage(ObservabilityKeys.SessionTrackingId, sessionId);
+    Activity.Current?.SetTag(ObservabilityKeys.SessionTrackingId, sessionId);
+
+    accessor.Set(new ExecutionContextSnapshot(
+        CorrelationId:     Activity.Current?.GetBaggageItem(ObservabilityKeys.CorrelationId)
+                           ?? context.TraceIdentifier ?? string.Empty,
+        SessionTrackingId: sessionId,
+        TraceId:           Activity.Current?.TraceId.ToString() ?? string.Empty,
+        SpanId:            Activity.Current?.SpanId.ToString() ?? string.Empty));
+
+    context.Response.Headers[ObservabilityHeaders.SessionTrackingId] = sessionId;
+    using (_logger.BeginScope(new Dictionary<string, object> { ["SessionTrackingId"] = sessionId }))
+        await _next(context);
+}
+```
+
+---
+
 ## Reglas de Referencia por Capa
 
 | Capa | Interfaz | Acceso |

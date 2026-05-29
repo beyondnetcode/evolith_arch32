@@ -19,7 +19,7 @@ This is the complete navigation index for **Evolith** — the enterprise progres
 | Learn engineering standards | [Engineering Manifesto](./reference/governance/standards/engineering/engineering-manifesto.md) | [Contract Testing Guideline](./reference/governance/standards/engineering/contract-testing-guideline.md) |
 | Understand SDLC expectations | [SDLC Governance Center](./reference/governance/sdlc/README.md) | [SDLC Artifact Templates](./reference/governance/sdlc/04-artifact-templates/README.md) |
 | Explore the applied product reference | [UMS Reference Hub](./reference/knowledge/demo/README.md) | [UMS Architecture Portal](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) |
-| Separate policy from implementation evidence | [Canonical Reference vs UMS Applied Model](./reference/knowledge/demo/demo-vs-reference.md) | [Repository Taxonomy](./reference/governance/standards/repository-taxonomy.md) |
+| Separate policy from implementation evidence | [Canonical Reference vs UMS Applied Model](./reference/knowledge/demo/demo-vs-reference.md) | [Repository Taxonomy](./reference/governance/standards/repository-taxonomy.es.md) |
 | Operate or deploy locally | [Operations Hub](./reference/operations/README.md) | [Infrastructure Hub](./reference/infrastructure/README.md) |
 | Explain the standard to a new audience | [Architecture Communication Strategy](./reference/governance/standards/communication/architecture-communication-strategy.md) | [Visual Architecture Backlog](./reference/governance/standards/communication/visuals/README.md) |
 
@@ -39,7 +39,7 @@ This is the complete navigation index for **Evolith** — the enterprise progres
 | **QA / SDET** | [Testing Pyramid ADR](./reference/architecture/adrs/core/0018-testing-pyramid-quality-gates.md) -> [Contract Testing Guideline](./reference/governance/standards/engineering/contract-testing-guideline.md) -> [Integration and E2E Testing ADR](./reference/architecture/adrs/core/0053-integration-e2e-testing-strategy.md) |
 | **Security Engineer** | [Vendor Risk Assessment](./reference/governance/standards/engineering/vendor-risk-assessment.md) -> [Multi-Tenancy ADR](./reference/architecture/adrs/core/0010-multi-tenancy-architecture-strategy.md) -> [Immutable Audit Trail ADR](./reference/architecture/adrs/core/0016-immutable-business-audit-trail.md) |
 | **AI Contributor** | [AI-Augmented Standards](./reference/governance/standards/ai-augmented/README.md) -> [AI Architecture Assistant](./reference/governance/standards/ai-augmented/08-architecture-ai-assistant/README.md) -> [BMAD Adoption Reference](./reference/governance/standards/ai-augmented/frameworks/bmad-method/README.md) -> [Harness Rules](./.harness/rules/global-rules.md) |
-| **New Joiner** | [Product Quick Start](./reference/governance/standards/onboarding/product-quick-start.md) -> [Repository Taxonomy](./reference/governance/standards/repository-taxonomy.md) -> [README Portal](./README.md) |
+| **New Joiner** | [Product Quick Start](./reference/governance/standards/onboarding/product-quick-start.md) -> [Repository Taxonomy](./reference/governance/standards/repository-taxonomy.es.md) -> [README Portal](./README.md) |
 
 ---
 
@@ -90,7 +90,7 @@ Key architecture references:
 Key governance references:
 
 - [Engineering Manifesto](./reference/governance/standards/engineering/engineering-manifesto.md)
-- [Repository Taxonomy](./reference/governance/standards/repository-taxonomy.md)
+- [Repository Taxonomy](./reference/governance/standards/repository-taxonomy.es.md)
 - [Product Quick Start](./reference/governance/standards/onboarding/product-quick-start.md)
 - [Functional Story Writing Standard](./reference/governance/sdlc/03-documentation/functional-story-writing-standard.md)
 - [SDLC Documentation Best Practices](./reference/governance/sdlc/03-documentation/sdlc-documentation-best-practices.md)
@@ -150,7 +150,7 @@ Every artifact and implementation instantiated from Evolith must respect these p
 2. [Reference Architecture](./reference/architecture/blueprints/reference-blueprint.md)
 3. [Engineering Manifesto](./reference/governance/standards/engineering/engineering-manifesto.md)
 4. [Definition of Done](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.md)
-5. [Repository Taxonomy](./reference/governance/standards/repository-taxonomy.md)
+5. [Repository Taxonomy](./reference/governance/standards/repository-taxonomy.es.md)
 
 ---
 

@@ -5,7 +5,7 @@
 > **Estado:** Evaluación — Recomendado para adopción en Fase 2  
 > **Última revisión:** 2026-05-27
 
-> **Disambiguación:** Este documento evalúa **Harness.io** (la plataforma empresarial DevOps) y sus capacidades de Agente AI como capa de orquestación para el Asistente AI de Arquitectura Evolith. Esto es distinto de "Harness Engineering" (la metodología para envolver modelos de IA, documentada en [01-harness-engineering](../../../standards-es/ai-augmented/01-harness-engineering/harness-reference.md)).
+> **Disambiguación:** Este documento evalúa **Harness.io** (la plataforma empresarial DevOps) y sus capacidades de Agente AI como capa de orquestación para el Asistente AI de Arquitectura Evolith. Esto es distinto de "Harness Engineering" (la metodología para envolver modelos de IA, documentada en [01-harness-engineering](../../../standards/ai-augmented/01-harness-engineering/harness-reference.md)).
 
 ---
 

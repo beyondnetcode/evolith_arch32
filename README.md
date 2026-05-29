@@ -55,7 +55,7 @@ UMS is the official executable reference. See [Adoption Cases](./reference/knowl
 Before contributing, read:
 
 - [AGENTS.md](./AGENTS.md) — Agent rules and conventions
-- [Repository Taxonomy](./reference/governance/standards/repository-taxonomy.md) — What goes where
+- [Repository Taxonomy](./reference/governance/standards/repository-taxonomy.es.md) — What goes where
 - [Child Repository Inheritance Guide](./reference/governance/standards/onboarding/child-repository-inheritance-guide.md) — How products inherit from Evolith
 
 Full navigation: [MASTER_INDEX.md](./MASTER_INDEX.md)

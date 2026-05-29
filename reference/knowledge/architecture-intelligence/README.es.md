@@ -1,6 +1,6 @@
 # Inteligencia Arquitectonica
 
-> Navegacion bilingue: [English](./README.md)
+> Navegacion bilingue: [English](./README.es.md)
 
 Inteligencia Arquitectonica es la capa de conocimiento curado que hace que las decisiones, patrones, reglas de validacion y guias de adopcion de Evolith sean mas faciles de consumir por personas y herramientas de ingenieria asistida por IA.
 

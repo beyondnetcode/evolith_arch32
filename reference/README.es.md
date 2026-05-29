@@ -6,7 +6,7 @@ Este directorio contiene el corpus de referencia arquitectónica del modelo de a
 |---|---|
 | [getting-started/](./getting-started/README.es.md) | Rutas guiadas de lectura por rol y objetivo |
 | [architecture/](./architecture/README.es.md) | Blueprints, ADRs, topología, perfiles de stack y patrones canónicos |
-| [governance/](./governance/standards-es/README.md) | Estándares de ingeniería, SDLC, onboarding y reglas de arquitectura |
+| [governance/](./governance/standards/README.md) | Estándares de ingeniería, SDLC, onboarding y reglas de arquitectura |
 | [operations/](./operations/README.es.md) | Observabilidad, soporte runtime y documentación operacional |
 | [infrastructure/](./infrastructure/README.es.md) | Plataforma local, gateway, contenedores y activos de infraestructura |
 | [knowledge/](./knowledge/demo/README.es.md) | Modelo aplicado UMS, historial de migración, investigación, ejemplos y aprendizaje |

@@ -1,6 +1,6 @@
 # Asistente AI de Arquitectura — Diagramas Visuales
 
-> **Navegación bilingüe:** [English](./README.md)  
+> **Navegación bilingüe:** [English](./README.es.md)  
 > **Padre:** [Asistente AI de Arquitectura](../README.es.md)
 
 | # | Visual | Propósito |

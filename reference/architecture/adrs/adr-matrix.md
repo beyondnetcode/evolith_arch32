@@ -1,6 +1,6 @@
 # ADR Matrix
 
-> Bilingual navigation: [Español](../adrs-es/adr-matrix.es.md)
+> Bilingual navigation: [Español](../adrs/adr-matrix.es.md)
 
 Use this matrix when you need to find decisions by concern instead of by numeric ID. It is intentionally selective: the ADR registry remains the complete catalog.
 

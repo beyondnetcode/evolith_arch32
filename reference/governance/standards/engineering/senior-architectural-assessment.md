@@ -1,6 +1,6 @@
 # Senior Technical Analysis - Progressive Architecture Reference
 
-> **Bilingual Navigation:** [Versión en Español](../../standards-es/engineering/senior-architectural-assessment.md)
+> **Bilingual Navigation:** [Versión en Español](../../standards/engineering/senior-architectural-assessment.md)
 
 ## Architectural Evaluation: Progressive Monolith -> Microservices
 **Role:** Principal Senior Architect | Stack: TypeScript/Node.js + C#/.NET

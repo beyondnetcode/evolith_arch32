@@ -288,4 +288,4 @@ Vue, Svelte, or native mobile without structural changes.
 
 ---
 
-**[Back to Blueprints Index](./README.md)** | **[Versión en Español](../blueprints-es/notification-feedback-architecture.md)**
+**[Back to Blueprints Index](./README.md)** | **[Versión en Español](../blueprints/notification-feedback-architecture.md)**

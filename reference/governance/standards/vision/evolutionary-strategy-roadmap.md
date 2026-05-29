@@ -1,6 +1,6 @@
 # Evolith — Evolutionary Strategy & Architectural Roadmap
 
-> **Bilingual Navigation:** [Versión en Español](../../standards-es/vision/evolutionary-strategy-roadmap.md)
+> **Bilingual Navigation:** [Versión en Español](../../standards/vision/evolutionary-strategy-roadmap.md)
 
 This document establishes the **Evolith** strategic roadmap — the phased technical evolution from foundational modular architecture into a highly resilient, provider-agnostic global platform.
 

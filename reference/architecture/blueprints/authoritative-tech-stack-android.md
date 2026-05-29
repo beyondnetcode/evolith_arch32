@@ -1,6 +1,6 @@
 # Authoritative Tech Stack: Android & Kotlin Ecosystem
 
-> **Bilingual Navigation:** [Versión en Español](./../blueprints-es/authoritative-tech-stack-android.md)
+> **Bilingual Navigation:** [Versión en Español](./../blueprints/authoritative-tech-stack-android.md)
 
 **Document Type:** Runtime Addendum 
 **Prerequisite:** MUST be read after the **[Agnostic Baseline](./authoritative-tech-stack-agnostic.md)**. 

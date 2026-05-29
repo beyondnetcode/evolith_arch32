@@ -1,6 +1,6 @@
 # Architectural Decision Record (ADR) Navigator
 
-> **Bilingual Navigation:** [Versión en Español](../adrs-es/README.md)
+> **Bilingual Navigation:** [Versión en Español](../adrs/README.md)
 
 
 Welcome to the system's legal repository. All decisions contained herein have been approved by the Corporate Architectural Board.

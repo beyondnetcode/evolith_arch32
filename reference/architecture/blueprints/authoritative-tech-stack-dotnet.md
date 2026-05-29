@@ -1,6 +1,6 @@
 # Authoritative Tech Stack: .NET & C# Ecosystem
 
-> **Bilingual Navigation:** [Versión en Español](../blueprints-es/authoritative-tech-stack-dotnet.md)
+> **Bilingual Navigation:** [Versión en Español](../blueprints/authoritative-tech-stack-dotnet.md)
 
 **Document Type:** Runtime Addendum 
 **Prerequisite:** MUST be read after the **[Agnostic Baseline](./authoritative-tech-stack-agnostic.md)**. 

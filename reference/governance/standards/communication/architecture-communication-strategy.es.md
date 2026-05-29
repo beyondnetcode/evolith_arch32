@@ -453,14 +453,14 @@ FUTURO: NORTH STAR (Fase 3 — decisión deliberada)
 
 ## Referencias
 
-- [Directivas Arquitectónicas](../vision/../../standards-es/vision/architectural-directives.md)
-- [Roadmap Evolutivo](../vision/../../standards-es/vision/evolutionary-strategy-roadmap.md)
-- [Manifiesto de Ingeniería](../engineering/../../standards-es/engineering/engineering-manifesto.md)
-- [Blueprint de Referencia](../../../architecture/blueprints-es/reference-blueprint.md)
-- [Registro ADR](../../../architecture/adrs-es/README.md)
+- [Directivas Arquitectónicas](../vision/../../standards/vision/architectural-directives.md)
+- [Roadmap Evolutivo](../vision/../../standards/vision/evolutionary-strategy-roadmap.md)
+- [Manifiesto de Ingeniería](../engineering/../../standards/engineering/engineering-manifesto.md)
+- [Blueprint de Referencia](../../../architecture/blueprints/reference-blueprint.md)
+- [Registro ADR](../../../architecture/adrs/README.md)
 - [Hub de Referencia UMS](../../../knowledge/demo/README.es.md)
 - [Guía de Herencia para Repositorios Hijos](../onboarding/child-repository-inheritance-guide.es.md)
-- [Taxonomía del Repositorio](../../standards-es/repository-taxonomy.es.md)
+- [Taxonomía del Repositorio](../../standards/repository-taxonomy.es.md)
 
 ---
 

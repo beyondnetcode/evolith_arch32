@@ -1,6 +1,6 @@
 # Universal Architecture Standards (Agnostic Baseline)
 
-> **Bilingual Navigation:** [Versión en Español](../blueprints-es/authoritative-tech-stack-agnostic.md)
+> **Bilingual Navigation:** [Versión en Español](../blueprints/authoritative-tech-stack-agnostic.md)
 
 **Document Type:** Corporate Standard 
 **Applicability:** Mandatory for all Runtimes (.NET, Node.js, Android) 

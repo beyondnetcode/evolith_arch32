@@ -9,7 +9,7 @@
 
 ## Acerca de Esta Plantilla
 
-El Reporte de Resumen de Testing es el documento formal de puerta de calidad requerido antes de que un Release Candidate pueda ser sellado. Prueba que el build satisface los cuatro umbrales cuantitativos definidos en el [Framework SDLC Orientado a Construcción §3.2](../02-engineering/construction-focused-sdlc-framework.es.md) y que los requisitos de distribución de la pirámide de testing del [ADR-0018](../../../architecture/adrs-es/core/0018-testing-pyramid-quality-gates.md) se han cumplido.
+El Reporte de Resumen de Testing es el documento formal de puerta de calidad requerido antes de que un Release Candidate pueda ser sellado. Prueba que el build satisface los cuatro umbrales cuantitativos definidos en el [Framework SDLC Orientado a Construcción §3.2](../02-engineering/construction-focused-sdlc-framework.es.md) y que los requisitos de distribución de la pirámide de testing del [ADR-0018](../../../architecture/adrs/core/0018-testing-pyramid-quality-gates.md) se han cumplido.
 
 Este documento lo produce QA / SDET y lo firman conjuntamente el QA Lead y el Engineering Lead. El Architecture Board puede solicitarlo durante la revisión de puerta.
 
@@ -96,7 +96,7 @@ Para cada Historia Funcional en alcance, confirma que cada Criterio de Aceptaci�
 
 ## 6. Resultados de Contract Tests
 
-(Completar solo si existen contratos inter-servicio — [Guía de Contract Testing](../../standards-es/engineering/contract-testing-guideline.md))
+(Completar solo si existen contratos inter-servicio — [Guía de Contract Testing](../../standards/engineering/contract-testing-guideline.md))
 
 | Contrato | Proveedor | Consumidor | Estado |
 |---|---|---|:---:|
@@ -211,7 +211,7 @@ Para cada Historia Funcional en alcance, confirma que cada Criterio de Aceptaci�
 
 ## 6. Resultados de Contract Tests
 
-(Completar solo si existen contratos inter-servicio — [Guía de Contract Testing](../../standards-es/engineering/contract-testing-guideline.md))
+(Completar solo si existen contratos inter-servicio — [Guía de Contract Testing](../../standards/engineering/contract-testing-guideline.md))
 
 | Contrato | Proveedor | Consumidor | Estado |
 |---|---|---|:---:|

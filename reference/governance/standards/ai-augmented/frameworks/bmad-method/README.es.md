@@ -5,7 +5,7 @@
 >
 > **Fuente oficial de BMAD-METHOD:** [github.com/bmad-code-org/BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD)
 >
-> **Navegacion bilingue:** [English Version](./README.md)
+> **Navegacion bilingue:** [English Version](./README.es.md)
 
 ---
 

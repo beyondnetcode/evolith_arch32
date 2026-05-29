@@ -1,6 +1,6 @@
 # Centro de Gobernanza SDLC Corporativa
 
-> **Navegación Bilingüe:** [English Version](./README.md)
+> **Navegación Bilingüe:** [English Version](./README.es.md)
 
 Este centro es el hub de gobernanza autorizado del Ciclo de Vida de Desarrollo de Software dentro de Evolith. Define los requisitos procedimentales, las puertas de salida de fase, los formatos de artefactos y el mapeo de cumplimiento que rigen cada producto construido desde esta plataforma de referencia.
 

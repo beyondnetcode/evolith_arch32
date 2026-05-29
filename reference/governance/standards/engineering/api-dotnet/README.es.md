@@ -1,6 +1,6 @@
 # Estandar API Dotnet
 
-> Navegacion bilingue: [English](./README.md)
+> Navegacion bilingue: [English](./README.es.md)
 
 Esta seccion define el estandar empresarial Evolith para APIs backend basadas en Dotnet. Es normativo para arquitectura API reutilizable, reglas de bootstrap, fronteras de aplicacion, gobierno de persistencia, observabilidad, seguridad, quality gates y criterios de promocion.
 
@@ -27,4 +27,4 @@ UMS se trata solo como referencia aplicada. Los modulos de producto, endpoints c
 Una practica de API UMS se convierte en estandar Evolith solo cuando es reutilizable, validada, documentada aqui y aprobada mediante el camino correcto: ADR, estandar de gobierno o patron canonico.
 
 ---
-[Volver a estandares de ingenieria](../../../standards-es/engineering/README.es.md)
+[Volver a estandares de ingenieria](../../../standards/engineering/README.es.md)

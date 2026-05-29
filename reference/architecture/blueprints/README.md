@@ -1,6 +1,6 @@
 # Architecture Blueprints
 
-> **Bilingual Navigation:** [Versión en Español](../blueprints-es/README.md)
+> **Bilingual Navigation:** [Versión en Español](../blueprints/README.md)
 
 Blueprints define the **structural laws** of the reference architecture. They are runtime-agnostic by default — concrete technology choices live in the runtime profiles.
 

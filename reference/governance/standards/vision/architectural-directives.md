@@ -1,6 +1,6 @@
 # Evolith — Master Architectural Directives & Evolution Strategy
 
-> **Bilingual Navigation:** [Versión en Español](../../standards-es/vision/architectural-directives.md)
+> **Bilingual Navigation:** [Versión en Español](../../standards/vision/architectural-directives.md)
 
 **Status:** Approved
 **Owner:** Evolith Architecture Board

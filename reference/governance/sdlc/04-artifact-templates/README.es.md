@@ -1,6 +1,6 @@
 # Plantillas de Artefactos SDLC
 
-> **Navegación bilingüe:** [English](./README.md)
+> **Navegación bilingüe:** [English](./README.es.md)
 > **Propietario:** Evolith Architecture Board
 > **Estado:** Referencia activa
 > **Padre:** [Centro de Gobernanza SDLC](../README.es.md)

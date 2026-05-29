@@ -24,9 +24,9 @@ Idioma: [English](./README.md) | [Espanol](./README.es.md)
 | Ver todos los visuales de explicacion y comunicacion | [Backlog Visual de Arquitectura](./reference/governance/standards/communication/visuals/README.es.md) |
 | **Fase 2 — Diseno y Arquitectura** | |
 | Entender el modelo arquitectonico | [Hub de arquitectura](./reference/architecture/README.es.md) |
-| Revisar decisiones y trade-offs | [Registro ADR](./reference/architecture/adrs-es/README.md) |
+| Revisar decisiones y trade-offs | [Registro ADR](./reference/architecture/adrs/README.md) |
 | Encontrar estandares React, Web, C# o .NET | [Acceso rapido por stack](./reference/quick-access/README.es.md) |
-| Aplicar reglas de gobierno | [Estandares de gobierno](./reference/governance/standards-es/README.md) |
+| Aplicar reglas de gobierno | [Estandares de gobierno](./reference/governance/standards/README.md) |
 | **Fase 3 — Construccion** | |
 | Seguir el ciclo de vida de entrega de software | [Centro de Gobernanza SDLC](./reference/governance/sdlc/README.es.md) |
 | Trabajar con ingenieria asistida por IA | [Referencia de adopcion AI-DD](./reference/governance/standards/ai-augmented/frameworks/README.es.md) |
@@ -58,9 +58,9 @@ Contribuir a Evolith significa fortalecer el estandar empresarial. Agrega aqui g
 Antes de contribuir, lee:
 
 - [AGENTS.es.md](./AGENTS.es.md)
-- [Taxonomia del repositorio](./reference/governance/standards-es/repository-taxonomy.es.md)
+- [Taxonomia del repositorio](./reference/governance/standards/repository-taxonomy.es.md)
 - [Guia de herencia para repositorios hijos](./reference/governance/standards/onboarding/child-repository-inheritance-guide.es.md)
-- [ADR Gitflow](./reference/architecture/adrs-es/core/0050-estrategia-ramas-gitflow.md)
+- [ADR Gitflow](./reference/architecture/adrs/core/0050-estrategia-ramas-gitflow.md)
 
 ---
 

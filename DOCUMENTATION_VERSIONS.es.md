@@ -10,6 +10,7 @@ Este registro rastrea todos los lanzamientos de documentación de producción co
 
 | Versión | Fecha | Rama | Cambios Clave | Hotfixes |
 |---------|------|--------|-------------|----------|
+| docs-v1.0.0 | 2026-05-29 | release/docs-v1.0.0 | Initial production documentation release: bilingual tooling, GitFlow strategy (ADR-0068), validation pipeline, coverage dashboard | 0 |
 | docs-v1.0.0 | 2026-04-15 | release/docs-v1.0.0 | Lanzamiento inicial de documentación de producción | 0 |
 | docs-v1.1.0 | 2026-05-01 | release/docs-v1.1.0 | Agregadas guías de contract testing, ADRs de estándares API 0030-0040 | 0 |
 | docs-v1.1.1 | 2026-05-15 | hotfix/docs-fix-api-links | Corregidos links rotos de referencias API en architecture-communication-strategy | 3 |

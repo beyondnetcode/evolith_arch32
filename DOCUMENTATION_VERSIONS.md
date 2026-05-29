@@ -1,6 +1,7 @@
 # Documentation Version Log
 
-> **Bilingual Navigation:** [Versión en Español](./DOCUMENTATION_VERSIONS.es.md)
+> **Bilingual Navigation:** [Versión en Español](./DOCUMENTATION_VERSIONS.es.| docs-v1.0.0 | 2026-05-29 | release/docs-v1.0.0 | Initial production documentation release: bilingual tooling, GitFlow strategy (ADR-0068), validation pipeline, coverage dashboard | 0 |
+md)
 
 This log tracks all production documentation releases with their version tags, dates, and key changes. Updated automatically via CI on every release to `main`.
 

@@ -1,6 +1,7 @@
 # Documentation Version Log
 
-> **Bilingual Navigation:** [Versión en Español](./DOCUMENTATION_VERSIONS.es.md)
+> **Bilingual Navigation:** [Versión en Español](./DOCUMENTATION_VERSIONS.es.| docs-v1.0.1 | 2026-05-29 | hotfix/docs-v1.0.1 | BMAD Agents v1.0.1: Add Docs Agent and DevOps Agent with documentation pipeline awareness, update architect/qa/sm/pm/dev agents with bilingual documentation requirements | 0 |
+md)
 
 This log tracks all production documentation releases with their version tags, dates, and key changes. Updated automatically via CI on every release to `main`.
 

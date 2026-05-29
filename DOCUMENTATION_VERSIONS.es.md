@@ -10,6 +10,7 @@ Este registro rastrea todos los lanzamientos de documentación de producción co
 
 | Versión | Fecha | Rama | Cambios Clave | Hotfixes |
 |---------|------|--------|-------------|----------|
+| docs-v1.0.1 | 2026-05-29 | hotfix/docs-v1.0.1 | BMAD Agents v1.0.1: Add Docs Agent and DevOps Agent with documentation pipeline awareness, update architect/qa/sm/pm/dev agents with bilingual documentation requirements | 0 |
 | docs-v1.0.0 | 2026-05-29 | release/docs-v1.0.0 | Lanzamiento inicial de documentación de producción: herramientas bilingües (17 scripts), estrategia GitFlow (ADR-0068), pipeline de validación, dashboard de cobertura, ADR-0067 modular monolith | 0 |
 
 ## Próximos (desde `develop`)

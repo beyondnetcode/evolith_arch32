@@ -125,7 +125,27 @@ Las aplicaciones empresariales DEBERIAN usar un patron application shell con:
 
 El patron shell es reutilizable. Nombres de producto, entradas de menu, rutas, iconos y etiquetas permanecen especificos del producto.
 
-## 8. Material Design 3 y tokens de diseno
+## 8. Entrega progresiva de UI y preparacion para microfrontends
+
+Los productos web Evolith DEBEN iniciar con una **UI monolitica modular**. Los microfrontends son una **estrategia de extraccion de Fase 3+**, no la arquitectura inicial por defecto.
+
+La progresion base es:
+
+| Fase | Modelo de entrega UI | Guia requerida |
+|---|---|---|
+| Fase 1 | Una sola aplicacion React modular | Mantener una sola UI desplegable. Organizar por rutas, features, bounded contexts, componentes compartidos y fronteras de infraestructura. |
+| Fase 2 | Ownership modular de UI mas fuerte | Mantener una sola UI desplegable mientras se fortalecen lazy loading, fronteras API, gobierno del sistema de diseno, pruebas y mapeo de referencia aplicada. |
+| Fase 3+ | Microfrontends por excepcion | Extraer MFEs solo cuando la escala de equipos, la contencion de releases o los ciclos tecnologicos independientes justifiquen la complejidad operativa. |
+
+Reglas:
+
+1. Los productos NO DEBEN iniciar con microfrontends salvo que exista una desviacion ADR explicita aprobada.
+2. Module Federation, composicion runtime con shell/orquestador y pipelines CI/CD por MFE NO forman parte de la linea base de Fase 1.
+3. Primero DEBERIAN usarse estructura modular de carpetas, rutas lazy-loaded y ownership UI por bounded context para retrasar la distribucion hasta que sea necesaria.
+4. La extraccion MFE DEBE cumplir con [ADR-0055: Estrategia de Arquitectura de Microfrontends](../../../../../architecture/adrs-es/core/0055-estrategia-arquitectura-microfrontends.md).
+5. Cuando se introducen MFEs, los tokens de diseno, reglas compartidas de accesibilidad, telemetria y comportamiento transversal de seguridad siguen gobernados por los estandares Evolith.
+
+## 9. Material Design 3 y tokens de diseno
 
 Evolith estandariza el gobierno de tokens, no una paleta unica de producto.
 
@@ -147,7 +167,7 @@ Reglas:
 4. Los valores de branding del producto pertenecen al repositorio de producto.
 5. Los cambios globales de tokens requieren revision del sistema de diseno.
 
-## 9. Gestion de estado
+## 10. Gestion de estado
 
 El estado DEBE clasificarse antes de implementarse.
 
@@ -166,7 +186,7 @@ Reglas:
 3. Los efectos DOM pertenecen a adaptadores o effects de presentacion, no a definiciones de store.
 4. El estado cliente persistente debe documentar almacenamiento, privacidad e invalidacion.
 
-## 10. Acceso a datos y validacion runtime
+## 11. Acceso a datos y validacion runtime
 
 El acceso externo DEBE pasar por fronteras de infraestructura.
 
@@ -179,7 +199,7 @@ Reglas requeridas:
 5. Las solicitudes mutantes DEBEN incluir controles de seguridad requeridos, como CSRF o equivalente cuando aplique.
 6. Los nombres de headers y endpoints permanecen especificos del producto.
 
-## 11. Internacionalizacion
+## 12. Internacionalizacion
 
 La internacionalizacion DEBERIA estar centralizada.
 
@@ -190,7 +210,7 @@ Reglas:
 3. Las translation keys pertenecen al producto salvo que Evolith posea el componente.
 4. La propagacion de locale hacia APIs debe documentarse en la frontera de request context.
 
-## 12. Pruebas y quality gates
+## 13. Pruebas y quality gates
 
 Gates minimos:
 
@@ -203,7 +223,7 @@ Gates minimos:
 
 Las herramientas recomendadas pueden incluir Vitest, Testing Library, MSW y Playwright. Hacer obligatoria una herramienta para todos los productos Evolith requiere aprobacion por ADR.
 
-## 13. Reglas de seguridad y privacidad
+## 14. Reglas de seguridad y privacidad
 
 1. GUIDs crudos o identificadores tecnicos internos NO DEBEN mostrarse a usuarios finales salvo requerimiento explicito.
 2. El contexto de tenant, usuario y autorizacion DEBE manejarse mediante fronteras documentadas.
@@ -211,7 +231,7 @@ Las herramientas recomendadas pueden incluir Vitest, Testing Library, MSW y Play
 4. Los mensajes de error DEBEN ser seguros para usuarios y logs.
 5. Los identificadores solo de desarrollo DEBEN aislarse de builds productivos.
 
-## 14. Accesibilidad y calidad UX
+## 15. Accesibilidad y calidad UX
 
 1. Los elementos interactivos DEBEN tener nombres accesibles.
 2. La estructura de navegacion DEBERIA usar landmarks semanticos.
@@ -219,7 +239,7 @@ Las herramientas recomendadas pueden incluir Vitest, Testing Library, MSW y Play
 4. El uso de color DEBE respetar requisitos de contraste.
 5. La navegacion por teclado DEBE considerarse para flujos core.
 
-## 15. Camino de promocion desde producto hacia Evolith
+## 16. Camino de promocion desde producto hacia Evolith
 
 Una practica de implementacion de producto puede promoverse solo cuando cumple todas las condiciones:
 
@@ -229,7 +249,7 @@ Una practica de implementacion de producto puede promoverse solo cuando cumple t
 4. Tiene un estandar, ADR o patron canonico documentado en Evolith.
 5. Incluye UMS u otras referencias de producto como ejemplos, no como autoridad.
 
-## 16. Mapeo obligatorio de referencia aplicada
+## 17. Mapeo obligatorio de referencia aplicada
 
 Todo producto que aplique este estandar DEBERIA mantener un documento de mapeo con:
 

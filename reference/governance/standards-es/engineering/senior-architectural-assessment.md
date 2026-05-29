@@ -106,9 +106,9 @@ Phase 3 (Mesh): Each service owns its DB completely; queries cross-service via A
 ```
 
 ADRs pendientes para .NET:
-- `ADR-0046: .NET ORM Strategy (EF Core vs Dapper)`
-- `ADR-0047: .NET gRPC Service Setup & Protobuf Contracts`
-- `ADR-0048: .NET OpenTelemetry Configuration`
+- [ADR-0057](../../../architecture/adrs-es/dotnet/0057-dotnet-data-access-strategy.md): .NET Data Access Strategy (EF Core + Dapper) — ya existe, pendiente de revisión para este gap
+- `ADR-0068: .NET gRPC Service Setup & Protobuf Contracts` — pendiente de creación
+- `ADR-0069: .NET OpenTelemetry Configuration` — pendiente de creación
 
 ---
 
@@ -299,9 +299,9 @@ app.MapGrpcService<TodoService>();
 - [] Documentar Strangler Fig Pattern con Kong routing en [ADR-0006](../../../architecture/adrs-es/core/0006-future-microservices-transition-dapr.md)
 
 ### Sprint 2 (Corto plazo)
-- [] Crear ADR-0046: .NET ORM Strategy
-- [] Crear ADR-0047: .NET gRPC Setup & Protobuf Contract Governance
-- [] Crear ADR-0048: .NET OTel Configuration
+- [] Revisar [ADR-0057](../../../architecture/adrs-es/dotnet/0057-dotnet-data-access-strategy.md) — cubre ORM Strategy EF Core + Dapper; verificar si cierra el gap identificado
+- [] Crear ADR-0068: .NET gRPC Setup & Protobuf Contract Governance
+- [] Crear ADR-0069: .NET OTel Configuration
 - [] Actualizar [ADR-0018](../../../architecture/adrs-es/core/0018-testing-pyramid-quality-gates.md) con coverage thresholds por capa
 - [] Agregar ejemplo canónico de Saga a [ADR-0035](../../../architecture/adrs-es/core/0035-distributed-saga-pattern-strategy.md)
 

@@ -106,7 +106,7 @@ UMS está descompuesto en 8 contextos delimitados estratégicos. Cada uno es un 
 |---|---|---|---|---|
 | **EP-01** | **Identity** | Ciclo de vida de usuario, autenticación, políticas de contraseña, login redirect, MFA/Passwordless | MVP | ADR-0020, ADR-0026 |
 | **EP-02** | **Authorization** | Plantillas RBAC/ABAC, compilación del grafo de permisos, proyecciones contextuales, Visual Graph Resolver | MVP | ADR-0012, ADR-0021, ADR-0022 |
-| **EP-03** | **Configuration** | Config jerárquica (ENV > SYSTEM > TENANT), resolución cacheada con TTL, proyección CQRS | MVP | ADR-0024, ADR-0034, ADR-0047 |
+| **EP-03** | **Configuration** | Config jerárquica (ENV > SYSTEM > TENANT), resolución cacheada con TTL, proyección CQRS | MVP | ADR-0024, ADR-0034 |
 | **EP-04** | **Audit** | Log de eventos inmutable, esquema de auditoría de 10 columnas en cada tabla, escrituras solo-append | MVP | ADR-0016 |
 | **EP-05** | **Console / Admin** | UI administrativa, gestión de tenants, registro de topología del sistema | MVP | ADR-0008, ADR-0030 |
 | **EP-06** | **Approvals** | Scoring de riesgo MFA adaptivo (6 factores), acceso B2B externo, administración delegada (5 tipos de scope, 8 estados) | Post-MVP | ADR-0035, ADR-0015 |
@@ -281,7 +281,7 @@ flowchart TB
 | **Outbox** | Patrón Transactional Outbox | — | ADR-0033 |
 | **Sagas** | Sagas Distribuidas vía Dapr | — | ADR-0035 |
 | **CQRS** | Escritura EF Core / lectura Dapper | — | ADR-0034 |
-| **Configuración** | Resolución jerárquica + cache TTL | — | ADR-0047 |
+| **Configuración** | Resolución jerárquica + cache TTL | — | ADR-0024 |
 | **Identidad** | OIDC / JWT (abstracción IdP) | — | ADR-0020 |
 | **Observabilidad** | OpenTelemetry + Loki + Grafana | — | ADR-0007 |
 | **Testing** | xUnit + NSubstitute + Testcontainers | — | ADR-0018, ADR-0052 |
@@ -336,7 +336,7 @@ Estos son los ADRs Evolith más fuertemente probados por UMS — organizados por
 |---|---|---|
 | [ADR-0001](../../architecture/adrs/core/0001-nx-monorepo-orchestration.md) | Orquestación Monorepo Nx | Monorepo con fronteras de lib estrictas y aislamiento de dominio |
 | [ADR-0002](../../architecture/adrs-es/nodejs/0002-clean-architecture-nestjs.md) | Arquitectura Hexagonal | Puertos + Adaptadores en los 8 bounded contexts |
-| [ADR-0047](../../architecture/adrs/core/0047-modular-monolith-soa-microservices-selection.md) | Selección Monolito Modular | UMS es un monolito modular Fase 1 — extraction-ready pero no extraído |
+| [ADR-0047](../../architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.md) | Selección Monolito Modular | UMS es un monolito modular Fase 1 — extraction-ready pero no extraído |
 
 ### Datos y Multi-Tenancy
 | ADR | Decisión | Evidencia UMS |

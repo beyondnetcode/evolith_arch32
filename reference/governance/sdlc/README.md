@@ -1,6 +1,6 @@
 # Corporate SDLC Governance Center
 
-> **Bilingual Navigation:** [Versión en Español](../sdlc-es/README.md)
+> **Bilingual Navigation:** [Versión en Español](./README.es.md)
 
 This center is the authoritative governance hub for the Software Development Lifecycle within Evolith. It defines the procedural requirements, phase exit gates, artifact formats, and compliance mapping that govern every product built from this reference platform.
 

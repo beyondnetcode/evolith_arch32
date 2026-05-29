@@ -1,6 +1,6 @@
 # Functional Story Writing Standard
 
-> Bilingual navigation: [Spanish version](../../sdlc-es/03-documentation/functional-story-writing-standard.md)
+> **Bilingual Navigation:** [Versión en Español](./functional-story-writing-standard.es.md)
 
 This standard is mandatory for satellite repositories that create Functional Stories, Use Cases, PRD feature flows, or requirements under the progressive architecture reference and spec-driven AI-DD governance model.
 

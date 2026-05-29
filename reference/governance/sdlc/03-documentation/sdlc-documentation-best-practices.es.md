@@ -1,6 +1,6 @@
 # Mejores Prácticas para la Documentación del SDLC
 
-> **Navegación Bilingüe:** [English Version](../../sdlc/03-documentation/sdlc-documentation-best-practices.md)
+> **Navegación Bilingüe:** [English Version](./sdlc-documentation-best-practices.md)
 
 Esta política dicta cómo el conocimiento técnico y arquitectónico DEBE madurar junto con las entregas de código en todas las fases del ciclo de vida, desde el MVP hasta producción.
 

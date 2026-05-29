@@ -1,6 +1,6 @@
 # Estandar de Redaccion de Historias Funcionales
 
-> Navegacion bilingue: [Version en ingles](../../sdlc/03-documentation/functional-story-writing-standard.md)
+> **Navegación Bilingüe:** [English Version](./functional-story-writing-standard.md)
 
 Este estandar es obligatorio para repositorios satelite que creen Historias Funcionales, Casos de Uso, flujos de PRD o requisitos bajo el modelo de gobernanza progressive architecture reference and spec-driven AI-DD.
 

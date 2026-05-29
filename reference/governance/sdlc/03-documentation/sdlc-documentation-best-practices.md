@@ -1,6 +1,6 @@
 # Best Practices for SDLC Documentation
 
-> **Bilingual Navigation:** [Versión en Español](../../sdlc-es/03-documentation/sdlc-documentation-best-practices.md)
+> **Bilingual Navigation:** [Versión en Español](./sdlc-documentation-best-practices.es.md)
 
 This policy dictates how architectural and technical knowledge MUST mature alongside code deliverables across all lifecycle phases from MVP to production.
 

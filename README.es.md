@@ -28,7 +28,7 @@ Idioma: [English](./README.md) | [Espanol](./README.es.md)
 | Encontrar estandares React, Web, C# o .NET | [Acceso rapido por stack](./reference/quick-access/README.es.md) |
 | Aplicar reglas de gobierno | [Estandares de gobierno](./reference/governance/standards-es/README.md) |
 | **Fase 3 — Construccion** | |
-| Seguir el ciclo de vida de entrega de software | [Centro de Gobernanza SDLC](./reference/governance/sdlc/README.md) |
+| Seguir el ciclo de vida de entrega de software | [Centro de Gobernanza SDLC](./reference/governance/sdlc/README.es.md) |
 | Trabajar con ingenieria asistida por IA | [Referencia de adopcion AI-DD](./reference/governance/standards/ai-augmented/frameworks/README.es.md) |
 | Ver la referencia ejecutable de producto | [Referencia aplicada UMS](./reference/knowledge/demo/README.es.md) |
 | **Fases 4–5 — Validacion y Entrega** | |

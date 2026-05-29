@@ -17,7 +17,7 @@ Este es el índice completo de navegación de **Evolith** — la plataforma empr
 | Revisar decisiones tecnológicas | [Stack Tecnológico Autorizado](./reference/architecture/blueprints-es/authoritative-tech-stack.md) | [Línea Base Agnóstica](./reference/architecture/blueprints-es/authoritative-tech-stack-agnostic.md) |
 | Revisar decisiones arquitectónicas | [Registro ADR](./reference/architecture/adrs-es/README.md) | [ADRs Core](./reference/architecture/adrs-es/core/README.es.md) |
 | Aprender estándares de ingeniería | [Manifiesto de Ingeniería](./reference/governance/standards-es/engineering/engineering-manifesto.md) | [Guía de Contract Testing](./reference/governance/standards-es/engineering/contract-testing-guideline.md) |
-| Entender expectativas SDLC | [Centro de Gobernanza SDLC](./reference/governance/sdlc-es/README.md) | [Plantillas de Artefactos SDLC](./reference/governance/sdlc/04-artifact-templates/README.es.md) |
+| Entender expectativas SDLC | [Centro de Gobernanza SDLC](./reference/governance/sdlc/README.es.md) | [Plantillas de Artefactos SDLC](./reference/governance/sdlc/04-artifact-templates/README.es.md) |
 | Explorar la referencia aplicada de producto | [Hub de Referencia UMS](./reference/knowledge/demo/README.es.md) | [Portal de Arquitectura UMS](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) |
 | Separar políticas de evidencia de implementación | [Referencia Canónica vs Modelo Aplicado UMS](./reference/knowledge/demo/demo-vs-reference.es.md) | [Taxonomía del Repositorio](./reference/governance/standards-es/repository-taxonomy.es.md) |
 | Operar o desplegar localmente | [Hub de Operaciones](./reference/operations/README.es.md) | [Hub de Infraestructura](./reference/infrastructure/README.es.md) |
@@ -79,10 +79,10 @@ Referencias clave:
 | Onboarding | [reference/governance/standards-es/onboarding](./reference/governance/standards-es/onboarding/README.es.md) |
 | AI-Augmented Engineering | [reference/governance/standards-es/ai-augmented](./reference/governance/standards-es/ai-augmented/README.md) |
 | **Asistente AI de Arquitectura** | [reference/governance/standards/ai-augmented/08-architecture-ai-assistant](./reference/governance/standards/ai-augmented/08-architecture-ai-assistant/README.md) |
-| SDLC | [reference/governance/sdlc-es](./reference/governance/sdlc-es/README.md) |
+| SDLC | [reference/governance/sdlc](./reference/governance/sdlc/README.es.md) |
 | **Mapeo SDLC–Artefactos Evolith** | [reference/governance/sdlc/sdlc-evolith-artifact-mapping](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.es.md) |
 | **Plantillas de Artefactos SDLC** | [reference/governance/sdlc/04-artifact-templates](./reference/governance/sdlc/04-artifact-templates/README.es.md) |
-| Estándares de Documentación | [reference/governance/sdlc-es/03-documentation](./reference/governance/sdlc-es/03-documentation/README.es.md) |
+| Estándares de Documentación | [reference/governance/sdlc/03-documentation](./reference/governance/sdlc/03-documentation/README.es.md) |
 | **Estrategia de Comunicación Arquitectónica** | [reference/governance/standards/communication](./reference/governance/standards/communication/architecture-communication-strategy.es.md) |
 | **Backlog Visual de Arquitectura** | [reference/governance/standards/communication/visuals](./reference/governance/standards/communication/visuals/README.es.md) |
 
@@ -91,8 +91,8 @@ Referencias clave:
 - [Manifiesto de Ingeniería](./reference/governance/standards-es/engineering/engineering-manifesto.md)
 - [Taxonomía del Repositorio](./reference/governance/standards-es/repository-taxonomy.es.md)
 - [Product Quick Start](./reference/governance/standards-es/onboarding/product-quick-start.md)
-- [Estándar de Escritura de Functional Stories](./reference/governance/sdlc-es/03-documentation/functional-story-writing-standard.md)
-- [Buenas Prácticas de Documentación SDLC](./reference/governance/sdlc-es/03-documentation/sdlc-documentation-best-practices.md)
+- [Estándar de Escritura de Functional Stories](./reference/governance/sdlc/03-documentation/functional-story-writing-standard.es.md)
+- [Buenas Prácticas de Documentación SDLC](./reference/governance/sdlc/03-documentation/sdlc-documentation-best-practices.es.md)
 - [Estrategia de Comunicación Arquitectónica](./reference/governance/standards/communication/architecture-communication-strategy.es.md)
 - [Backlog Visual de Arquitectura (8 diagramas Mermaid)](./reference/governance/standards/communication/visuals/README.es.md)
 
@@ -148,7 +148,7 @@ Todo artefacto e implementación instanciada desde Evolith debe respetar estos p
 1. [Baseline Agnóstico](./reference/architecture/blueprints-es/authoritative-tech-stack-agnostic.md)
 2. [Arquitectura de Referencia](./reference/architecture/blueprints-es/reference-blueprint.md)
 3. [Manifiesto de Ingeniería](./reference/governance/standards-es/engineering/engineering-manifesto.md)
-4. [Definition of Done](./reference/governance/sdlc-es/02-engineering/construction-focused-sdlc-framework.md)
+4. [Definition of Done](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.es.md)
 5. [Taxonomía del Repositorio](./reference/governance/standards-es/repository-taxonomy.es.md)
 
 ---

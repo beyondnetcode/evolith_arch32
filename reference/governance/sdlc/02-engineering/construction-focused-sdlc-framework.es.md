@@ -1,6 +1,6 @@
 # Marco de Trabajo SDLC con énfasis en la Construcción
 
-> **Navegación Bilingüe:** [English Version](../../sdlc/02-engineering/construction-focused-sdlc-framework.md)
+> **Navegación Bilingüe:** [English Version](./construction-focused-sdlc-framework.md)
 
 Este estándar normativo consolida la gobernanza que controla la progresión del Ciclo de Vida de Desarrollo de Software (SDLC), estableciendo hitos de salida rigurosos y mecanismos de control especializados para la capa de construcción.
 

@@ -7,9 +7,23 @@ This repository defines the architectural baseline, governance standards, harnes
 - Reference docs review: use the root `README.md`, `MASTER_INDEX.md`, and `reference/` tree first.
 - Applied product reference: `https://github.com/beyondnetcode/ums`
 - UMS setup and run commands: follow the current UMS `README.md`; this repository does not duplicate them.
-- Markdown encoding sanitation: `python ./.bmad-core/scripts/cleanup_markdown_encoding.py`
-- Documentation validation: `node .harness/scripts/validate-docs.mjs`
-- Diagram render validation when Mermaid changed: `node .harness/scripts/validate-docs.mjs --render-mermaid`
+
+## Validation Scripts
+
+| Script | Purpose |
+|--------|---------|
+| `node .harness/scripts/validate-docs.mjs` | Full documentation validation (links, anchors, encoding, Mermaid) |
+| `node .harness/scripts/check-bilingual-parity.mjs` | Verify EN/ES pairs have identical ## and ### header counts + anchor parity |
+| `node .harness/scripts/bilingual-coverage.mjs` | Report bilingual coverage (which files lack counterparts) |
+| `python ./.bmad-core/scripts/cleanup_markdown_encoding.py` | Sanitize UTF-8 encoding issues |
+| `node .harness/scripts/validate-docs.mjs --render-mermaid` | Render Mermaid diagrams to SVG for visual validation |
+
+### Pre-commit Hook
+The pre-commit hook (`.husky/pre-commit`) runs automatically on every commit:
+1. `lint-staged` - staged file linting
+2. `validate-docs.mjs` - full documentation validation
+3. `check-bilingual-parity.mjs` - bilingual structural + anchor validation
+4. Orphan bilingual file detection - EN without ES or vice versa
 
 ## Architecture
 - Repository role: corporate progressive architecture reference, not a single-product codebase

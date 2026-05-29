@@ -7,9 +7,23 @@ Este repositorio define la línea base arquitectónica, los estándares de gober
 - Revisión de documentación de referencia: usar primero `README.md`, `MASTER_INDEX.md` y el árbol `reference/` en la raíz.
 - Referencia aplicada de producto: `https://github.com/beyondnetcode/ums`
 - Setup y ejecución UMS: seguir el `README.md` vigente de UMS; este repositorio no duplica esos comandos.
-- Saneamiento de codificación Markdown: `python ./.bmad-core/scripts/cleanup_markdown_encoding.py`
-- Validación de documentación: `node .harness/scripts/validate-docs.mjs`
-- Validación de renderizado de diagramas cuando Mermaid cambió: `node .harness/scripts/validate-docs.mjs --render-mermaid`
+
+## Scripts de Validación
+
+| Script | Propósito |
+|--------|-----------|
+| `node .harness/scripts/validate-docs.mjs` | Validación completa de documentación (enlaces, anclas, codificación, Mermaid) |
+| `node .harness/scripts/check-bilingual-parity.mjs` | Verificar que pares EN/ES tengan idéntico número de headers ## y ### + paridad de anclas |
+| `node .harness/scripts/bilingual-coverage.mjs` | Reportar cobertura bilingüe (qué archivos carecen de contraparte) |
+| `python ./.bmad-core/scripts/cleanup_markdown_encoding.py` | Sanitizar problemas de codificación UTF-8 |
+| `node .harness/scripts/validate-docs.mjs --render-mermaid` | Renderizar diagramas Mermaid a SVG para validación visual |
+
+### Pre-commit Hook
+El hook pre-commit (`.husky/pre-commit`) se ejecuta automáticamente en cada commit:
+1. `lint-staged` - linting de archivos staged
+2. `validate-docs.mjs` - validación completa de documentación
+3. `check-bilingual-parity.mjs` - validación estructural bilingüe + anclas
+4. Detección de archivos bilingües huérfanos - EN sin ES o viceversa
 
 ## Arquitectura
 - Rol del repositorio: referencia de arquitectura progresiva corporativa, no una base de código para un solo producto.

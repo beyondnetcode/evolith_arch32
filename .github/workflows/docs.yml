@@ -1,0 +1,79 @@
+name: Documentation Validation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    name: Validate documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate docs
+        run: node .harness/scripts/validate-docs.mjs
+
+      - name: Check bilingual parity
+        run: node .harness/scripts/check-bilingual-parity.mjs
+
+      - name: Report bilingual coverage
+        run: node -e "
+const fs = require('fs');
+const path = require('path');
+
+const markdownFiles = [];
+const ignored = new Set(['.git', 'node_modules', 'dist', 'build', 'coverage', '.nx']);
+
+function walk(dir) {
+  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (ignored.has(e.name)) continue;
+    const full = path.join(dir, e.name);
+    if (e.isDirectory()) walk(full);
+    else if (e.name.endsWith('.md')) markdownFiles.push(full);
+  }
+}
+
+walk('reference');
+
+const enFiles = markdownFiles.filter(f => !f.endsWith('.es.md'));
+const esFiles = markdownFiles.filter(f => f.endsWith('.es.md'));
+
+const enWithoutEs = [];
+const esWithoutEn = [];
+
+for (const f of enFiles) {
+  const esFile = f.replace(/\.md$/, '.es.md');
+  if (!fs.existsSync(esFile)) {
+    enWithoutEs.push(path.relative('reference', f));
+  }
+}
+
+for (const f of esFiles) {
+  const enFile = f.replace(/\.es\.md$/, '.md');
+  if (!fs.existsSync(enFile)) {
+    esWithoutEn.push(path.relative('reference', f));
+  }
+}
+
+console.log('\\n=== Bilingual Coverage Report ===');
+console.log('Total EN files:', enFiles.length);
+console.log('Total ES files:', esFiles.length);
+console.log('Fully paired:', Math.min(enFiles.length - enWithoutEs.length, esFiles.length - esWithoutEn.length));
+console.log('\\nEN files without ES counterpart:', enWithoutEs.length);
+if (enWithoutEs.length > 0) enWithoutEs.forEach(f => console.log('  -', f));
+console.log('\\nES files without EN counterpart:', esWithoutEn.length);
+if (esWithoutEn.length > 0) esWithoutEn.forEach(f => console.log('  -', f));
+"

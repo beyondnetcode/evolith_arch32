@@ -18,7 +18,7 @@ Las herramientas concretas pertenecen a los perfiles por runtime:
 - [Perfil Node.js / TypeScript](./authoritative-tech-stack-nodejs.md)
 - [Perfil Android / Kotlin](./authoritative-tech-stack-android.md)
 
-Las herramientas específicas de la demo deben vivir únicamente en la documentación de demo o en el código bajo `knowledge/demo/` y `src/`.
+La implementación aplicada de referencia vive en el repositorio [UMS](https://github.com/beyondnetcode/ums). Evolith conserva únicamente estándares, ADRs, blueprints, reglas de gobierno y documentación reutilizable; los detalles ejecutables, herramientas concretas de producto y código de ejemplo aplicado pertenecen a UMS u otros repositorios satélite.
 
 ## 1. Restricciones Ejecutivas y No Negociables
 

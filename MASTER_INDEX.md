@@ -17,7 +17,7 @@ This is the complete navigation index for **Evolith** — the enterprise progres
 | Review technology choices | [Authoritative Tech Stack](./reference/architecture/blueprints/authoritative-tech-stack.md) | [Agnostic Baseline](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.md) |
 | Review architectural decisions | [ADR Registry](./reference/architecture/adrs/README.md) | [Core ADRs](./reference/architecture/adrs/core/README.md) |
 | Learn engineering standards | [Engineering Manifesto](./reference/governance/standards/engineering/engineering-manifesto.md) | [Contract Testing Guideline](./reference/governance/standards/engineering/contract-testing-guideline.md) |
-| Understand SDLC expectations | [SDLC Framework](./reference/governance/sdlc/README.md) | [Construction-Focused SDLC](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.md) |
+| Understand SDLC expectations | [SDLC Governance Center](./reference/governance/sdlc/README.md) | [SDLC Artifact Templates](./reference/governance/sdlc/04-artifact-templates/README.md) |
 | Explore the applied product reference | [UMS Reference Hub](./reference/knowledge/demo/README.md) | [UMS Architecture Portal](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) |
 | Separate policy from implementation evidence | [Canonical Reference vs UMS Applied Model](./reference/knowledge/demo/demo-vs-reference.md) | [Repository Taxonomy](./reference/governance/standards/repository-taxonomy.md) |
 | Operate or deploy locally | [Operations Hub](./reference/operations/README.md) | [Infrastructure Hub](./reference/infrastructure/README.md) |

@@ -17,7 +17,7 @@ Este es el índice completo de navegación de **Evolith** — la plataforma empr
 | Revisar decisiones tecnológicas | [Stack Tecnológico Autorizado](./reference/architecture/blueprints-es/authoritative-tech-stack.md) | [Línea Base Agnóstica](./reference/architecture/blueprints-es/authoritative-tech-stack-agnostic.md) |
 | Revisar decisiones arquitectónicas | [Registro ADR](./reference/architecture/adrs-es/README.md) | [ADRs Core](./reference/architecture/adrs-es/core/README.es.md) |
 | Aprender estándares de ingeniería | [Manifiesto de Ingeniería](./reference/governance/standards-es/engineering/engineering-manifesto.md) | [Guía de Contract Testing](./reference/governance/standards-es/engineering/contract-testing-guideline.md) |
-| Entender expectativas SDLC | [Framework SDLC](./reference/governance/sdlc-es/README.md) | [SDLC enfocado en Construcción](./reference/governance/sdlc-es/02-engineering/construction-focused-sdlc-framework.md) |
+| Entender expectativas SDLC | [Centro de Gobernanza SDLC](./reference/governance/sdlc-es/README.md) | [Plantillas de Artefactos SDLC](./reference/governance/sdlc/04-artifact-templates/README.es.md) |
 | Explorar la referencia aplicada de producto | [Hub de Referencia UMS](./reference/knowledge/demo/README.es.md) | [Portal de Arquitectura UMS](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) |
 | Separar políticas de evidencia de implementación | [Referencia Canónica vs Modelo Aplicado UMS](./reference/knowledge/demo/demo-vs-reference.es.md) | [Taxonomía del Repositorio](./reference/governance/standards-es/repository-taxonomy.es.md) |
 | Operar o desplegar localmente | [Hub de Operaciones](./reference/operations/README.es.md) | [Hub de Infraestructura](./reference/infrastructure/README.es.md) |

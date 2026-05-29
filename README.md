@@ -35,6 +35,7 @@ Language: [English](./README.md) | [Español](./README.es.md)
 | Understand the architecture model | [Architecture Hub](./reference/architecture/README.md) |
 | Review decisions and trade-offs | [ADR Registry](./reference/architecture/adrs/README.md) |
 | Apply governance rules | [Governance Standards](./reference/governance/standards/README.md) |
+| Follow the software delivery lifecycle | [SDLC Governance Center](./reference/governance/sdlc/README.md) |
 | See the executable product reference | [UMS Applied Reference](./reference/knowledge/demo/README.md) |
 | Work with AI-assisted engineering | [AI-DD Adoption Reference](./reference/governance/standards/ai-augmented/frameworks/README.md) |
 | Operate or observe the platform | [Operations & Observability](./reference/operations/README.md) |
@@ -50,7 +51,7 @@ Language: [English](./README.md) | [Español](./README.es.md)
 | Architect | [Architecture Hub](./reference/architecture/README.md) | [ADR Registry](./reference/architecture/adrs/README.md) |
 | Backend engineer | [.NET API Standard](./reference/governance/standards/engineering/api-dotnet/api-dotnet-standard.md) | [.NET & C# Tech Stack Profile](./reference/architecture/blueprints/authoritative-tech-stack-dotnet.md) |
 | Frontend engineer | [React Web Frontend Standard](./reference/governance/standards/engineering/web-frontend/react/react-web-frontend-standard.md) | [Quick Access by Stack](./reference/quick-access/README.md) |
-| Product or delivery lead | [UMS Applied Reference](./reference/knowledge/demo/README.md) | [Child Repository Inheritance Guide](./reference/governance/standards/onboarding/child-repository-inheritance-guide.md) |
+| Product or delivery lead | [SDLC Governance Center](./reference/governance/sdlc/README.md) | [UMS Applied Reference](./reference/knowledge/demo/README.md) |
 | DevOps or platform engineer | [Operations & Observability](./reference/operations/README.md) | [Infrastructure & Orchestration](./reference/infrastructure/README.md) |
 | AI-assisted engineering user | [AI-DD Adoption Reference](./reference/governance/standards/ai-augmented/frameworks/README.md) | [AGENTS.md](./AGENTS.md) |
 | Governance reviewer | [Governance Standards](./reference/governance/standards/README.md) | [Repository Taxonomy](./reference/governance/standards/repository-taxonomy.md) |
@@ -88,7 +89,8 @@ UMS is the official executable reference model. Use it to see Evolith ideas appl
 | Area | Entry point | Purpose |
 |---|---|---|
 | Architecture | [reference/architecture](./reference/architecture/README.md) | Blueprints, ADRs, runtime profiles, canonical patterns |
-| Governance | [reference/governance/standards](./reference/governance/standards/README.md) | Enterprise standards, SDLC, onboarding, taxonomy, quality rules |
+| Governance | [reference/governance/standards](./reference/governance/standards/README.md) | Enterprise standards, onboarding, taxonomy, quality rules |
+| SDLC Governance | [reference/governance/sdlc](./reference/governance/sdlc/README.md) | Lifecycle phases, phase exit gates, artifact templates, compliance mapping |
 | Architecture Communication | [reference/governance/standards/communication/visuals](./reference/governance/standards/communication/visuals/README.md) | Visual explanations, communication diagrams, onboarding maps, governance flow, and traceability views |
 | Architecture Intelligence | [reference/knowledge/architecture-intelligence](./reference/knowledge/architecture-intelligence/README.md) | AI-consumable architecture knowledge and pattern catalog governance |
 | AI-Augmented Engineering | [AI-DD Frameworks](./reference/governance/standards/ai-augmented/frameworks/README.md) | Local adoption rules for AI-assisted development frameworks |
@@ -108,7 +110,8 @@ UMS is the official executable reference model. Use it to see Evolith ideas appl
 5. [Architecture Hub](./reference/architecture/README.md)
 6. [ADR Registry](./reference/architecture/adrs/README.md)
 7. [Governance Standards](./reference/governance/standards/README.md)
-8. [UMS Applied Reference](./reference/knowledge/demo/README.md)
+8. [SDLC Governance Center](./reference/governance/sdlc/README.md)
+9. [UMS Applied Reference](./reference/knowledge/demo/README.md)
 
 ---
 

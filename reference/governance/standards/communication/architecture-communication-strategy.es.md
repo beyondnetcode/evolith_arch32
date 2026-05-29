@@ -247,7 +247,36 @@ Juntos forman un **ecosistema corporativo de dos capas:**
 
 ## 6. Estrategia de Comunicación por Audiencia
 
-### 6.1 Mensaje por Audiencia
+### 6.1 Mapa de Audiencia
+
+```
+                         ┌──────────────────┐
+                         │    EJECUTIVO /   │
+                         │     SPONSOR      │
+                         │  "Visión + ROI"  │
+                         └────────┬─────────┘
+                                  │
+               ┌──────────────────┼──────────────────┐
+               │                  │                  │
+     ┌─────────▼──────┐  ┌────────▼───────┐  ┌──────▼──────────┐
+     │   ARQUITECTO / │  │  PRODUCT OWNER │  │ PROVEEDOR       │
+     │  TECH LEAD     │  │      / PM      │  │ EXTERNO /       │
+     │ "Estándares +  │  │ "Alcance +     │  │ INTEGRADOR      │
+     │  Decisiones"   │  │  Límites"      │  │ "Contratos +    │
+     └─────────┬──────┘  └────────────────┘  │  Integración"   │
+               │                              └─────────────────┘
+    ┌──────────┼──────────┬──────────┐
+    │          │          │          │
+ ┌──▼──┐   ┌──▼──┐   ┌───▼──┐  ┌───▼──┐
+ │BACK │   │FRONT│   │ QA / │  │DEV   │
+ │END  │   │END  │   │SDET  │  │OPS   │
+ │DEV  │   │DEV  │   │      │  │/SRE  │
+ └─────┘   └─────┘   └──────┘  └──────┘
+```
+
+---
+
+### 6.2 Mensaje por Audiencia
 
 #### Para Ejecutivos / Sponsors
 **Mensaje central:** "Evolith previene el caos arquitectónico a medida que la empresa crece. Es el contrato técnico que protege la inversión."
@@ -331,6 +360,8 @@ Puntos clave:
 
 ## 7. Modelo Mental: Los Tres Círculos (Hexagonal Simplificado)
 
+### 7.1 El Modelo de los Tres Círculos
+
 ```
          ┌──────────────────────────────────┐
          │         INFRAESTRUCTURA          │
@@ -352,6 +383,91 @@ Puntos clave:
        La Infraestructura conoce la Aplicación.
        La Aplicación conoce el Dominio.
        El Dominio NO CONOCE NADA fuera de sí mismo.
+```
+
+**Usa este modelo para explicar:** Por qué no escribimos SQL dentro de la lógica de negocio. Por qué no importamos Redis dentro de una clase de servicio. Por qué una entidad de dominio no tiene decorador `@Column`.
+
+---
+
+### 7.2 El Modelo de Contrato Heredado
+
+```
+   EVOLITH ARCH32                UMS (y todos los productos futuros)
+   ══════════════                ══════════════════════════════════
+   │ ADRs          │  hereda     │ Hereda todos los ADRs            │
+   │ Blueprints    │ ──────────▶ │ Añade ADRs de producto           │
+   │ Estándares    │             │ Documenta divergencias           │
+   │ Patrones      │             │ Promueve descubrimientos upstream │
+   └───────────────┘             └─────────────────────────────────┘
+          ▲                                      │
+          │         ruta de promoción            │
+          └──────────────────────────────────────┘
+```
+
+**Usa este modelo para explicar:** Por qué UMS no es una plantilla para copiar/pegar. Por qué las decisiones arquitectónicas en UMS que son universalmente válidas viajan de vuelta upstream a Evolith.
+
+---
+
+### 7.3 El Embudo de Decisión (Navegación ADR)
+
+```
+   COMIENZA AQUÍ para cada pregunta arquitectónica:
+
+   "¿Tengo una pregunta sobre...?"
+
+         ┌──────────────────────────────────────────┐
+         │ UNIVERSAL (agnóstico de runtime)          │ ─▶ ADRs Core (0001-0056)
+         │ Multi-tenancy, Eventos, CQRS, Sagas...    │
+         └──────────────────────────────────────────┘
+         ┌──────────────────────────────────────────┐
+         │ NODE.JS / TYPESCRIPT                     │ ─▶ ADRs Node (0002-0043)
+         │ NestJS, TypeORM, BFF, GraphQL...         │
+         └──────────────────────────────────────────┘
+         ┌──────────────────────────────────────────┐
+         │ .NET / C#                                │ ─▶ ADRs .NET (0057+)
+         │ EF Core, SQL Server, Clean Architecture  │
+         └──────────────────────────────────────────┘
+         ┌──────────────────────────────────────────┐
+         │ ANDROID / MOBILE                         │ ─▶ ADRs Android
+         │ Kotlin, offline-first, GPS/scan          │
+         └──────────────────────────────────────────┘
+         ┌──────────────────────────────────────────┐
+         │ NO SÉ POR DÓNDE EMPEZAR                  │ ─▶ Matriz de Decisión ADR
+         └──────────────────────────────────────────┘
+```
+
+---
+
+### 8.2 Flujo de Decisión
+
+```
+  Surge nueva pregunta arquitectónica
+            │
+            ▼
+  ┌─────────────────────┐      SÍ     ┌────────────────────────┐
+  │ ¿Ya existe un ADR   │ ───────────▶ │ Seguirlo. Documentar    │
+  │ que responda esto?  │              │ divergencia local si    │
+  └─────────────────────┘              │ hay alguna.            │
+            │ NO                       └────────────────────────┘
+            ▼
+  ┌─────────────────────┐      SÍ     ┌────────────────────────┐
+  │ ¿Es específico del  │ ───────────▶ │ Escribir ADR en        │
+  │ producto?           │              │ repositorio hijo.      │
+  └─────────────────────┘              │ No requiere aprobación │
+                                        │ del Board.             │
+            │ NO                        └────────────────────────┘
+            ▼
+  ┌─────────────────────┐
+  │ Escribir propuesta  │
+  │ ADR para revisión   │
+  │ del Board Evolith   │
+  └─────────┬───────────┘
+            │
+     El Board revisa
+            │
+     ┌──────┴──────┐
+     │  APROBADO   │ ──▶ Merge a Evolith · Todos los repos hijos heredan
+     └─────────────┘
 ```
 
 ---
@@ -436,218 +552,16 @@ FUTURO: NORTH STAR (Fase 3 — decisión deliberada)
 
 ---
 
-## 10. El Insight Más Importante
-
-> **La complejidad en estos repositorios no es un problema de documentación — es un reflejo preciso de la arquitectura empresarial real.**
->
-> La solución no es simplificar el contenido.
-> La solución es **exponerlo progresivamente**, comenzando con la visión de negocio,
-> y dejando que cada audiencia profundice tan lejos como su rol requiere.
->
-> Evolith ya tiene esta estructura. La pieza faltante es una **capa de entrada clara** —
-> una página única que diga "esto es qué es, esto es por qué existe, aquí empieza".
->
-> Eso es lo que este documento aporta, y lo que el Executive One-Pager (ver § 12 en la versión EN) debería entregar visualmente.
-
----
-
-## 7. Modelo Mental: Los Tres Círculos (Hexagonal Simplificado)
+### Para proveedores / integradores externos:
 
 ```
-         ┌──────────────────────────────────┐
-         │         INFRAESTRUCTURA          │
-         │   (BDs, APIs, Cloud, UI)         │
-         │   ┌──────────────────────────┐   │
-         │   │       APLICACIÓN         │   │
-         │   │   (Casos de Uso, CQRS,   │   │
-         │   │    Orquestación)         │   │
-         │   │   ┌──────────────────┐   │   │
-         │   │   │     DOMINIO      │   │   │
-         │   │   │  (Reglas, Ent.,  │   │   │
-         │   │   │   Value Objects) │   │   │
-         │   │   │  ← PROTEGIDO →   │   │   │
-         │   │   └──────────────────┘   │   │
-         │   └──────────────────────────┘   │
-         └──────────────────────────────────┘
-                         ▲
-          Las dependencias apuntan hacia ADENTRO.
-       La Infraestructura conoce la Aplicación.
-       La Aplicación conoce el Dominio.
-       El Dominio NO CONOCE NADA fuera de sí mismo.
-```
-
-**Usa este modelo para explicar:** Por qué no escribimos SQL dentro de la lógica de negocio. Por qué no importamos Redis dentro de una clase de servicio. Por qué una entidad de dominio no tiene `@Column` decorator.
-
----
-
-### 7.2 El Modelo de Contrato Heredado
-
-```
-   EVOLITH ARCH32                UMS (y todos los productos futuros)
-   ══════════════                ══════════════════════════════════
-   │ ADRs          │  hereda de  │ Hereda todos los ADRs           │
-   │ Blueprints    │ ──────────▶ │ Agrega ADRs de producto         │
-   │ Estándares    │             │ Documenta divergencias          │
-   │ Patrones      │             │ Promueve descubrimientos arriba │
-   └───────────────┘             └─────────────────────────────────┘
-          ▲                                    │
-          │         ruta de promoción          │
-          └────────────────────────────────────┘
-```
-
-**Usa este modelo para explicar:** Por qué UMS no es una plantilla para copiar/pegar. Por qué las decisiones arquitectónicas en UMS que son universalmente válidas viajan de vuelta hacia Evolith.
-
----
-
-### 7.3 El Embudo de Decisión (Navegación ADR)
-
-```
-   COMIENZA AQUÍ para cada pregunta arquitectónica:
-
-   "¿Tengo una pregunta sobre...?"
-
-         ┌──────────────────────────────────────────┐
-         │ UNIVERSAL (agnóstico de runtime)         │ ─▶ ADRs Core (0001-0056)
-         │ Multi-tenancy, Eventos, CQRS, Sagas...   │
-         └──────────────────────────────────────────┘
-         ┌──────────────────────────────────────────┐
-         │ NODE.JS / TYPESCRIPT                     │ ─▶ ADRs Node (0002-0043)
-         │ NestJS, TypeORM, BFF, GraphQL...         │
-         └──────────────────────────────────────────┘
-         ┌──────────────────────────────────────────┐
-         │ .NET / C#                                │ ─▶ ADRs .NET (0057+)
-         │ EF Core, SQL Server, Clean Architecture  │
-         └──────────────────────────────────────────┘
-         ┌──────────────────────────────────────────┐
-         │ ANDROID / MÓVIL                           │ ─▶ ADRs Android
-         │ Kotlin, offline-first, GPS/scan          │
-         └──────────────────────────────────────────┘
-         ┌──────────────────────────────────────────┐
-         │ NO SÉ POR DÓNDE EMPEZAR                   │ ─▶ Matriz de Decisión ADR
-         └──────────────────────────────────────────┘
-```
-
----
-
-## 8. Modelo de Gobernanza
-
-### 8.1 Quién Posee Qué
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│            ESTRUCTURA DE GOBERNANZA EVOLITH                 │
-├─────────────────────┬───────────────────────────────────────┤
-│ ENTE                │ RESPONSABILIDAD                       │
-├─────────────────────┼───────────────────────────────────────┤
-│ Architecture Board  │ Aprueba ADRs, posee la línea base     │
-│                     │ Evolith, arbitra disputas inter-equipo │
-├─────────────────────┼───────────────────────────────────────┤
-│ Arquitecto de       │ Posee ADRs del repositorio hijo,      │
-│ Producto (por prod.)│ documenta divergencias, nomina        │
-│                     │ promociones                           │
-├─────────────────────┼───────────────────────────────────────┤
-│ Tech Lead           │ Aplica cumplimiento en entrega diaria │
-│ (por squad)         │ revisa PRs contra restricciones ADR   │
-├─────────────────────┼───────────────────────────────────────┤
-│ Todos los Ingenieros│ Siguen los estándares; plantean issues │
-│                     │ vía propuestas ADR, no workarounds    │
-└─────────────────────┴───────────────────────────────────────┘
-```
-
-### 8.2 Flujo de Decisión
-
-```
-  Surge nueva pregunta arquitectónica
-            │
-            ▼
-  ┌─────────────────────┐      SÍ      ┌────────────────────────┐
-  │ ¿Ya existe un ADR   │ ───────────▶ │ Seguirlo. Documentar    │
-  │ que responda esto?  │              │ desviación local si hay.│
-  └─────────────────────┘              └────────────────────────┘
-            │ NO
-            ▼
-  ┌─────────────────────┐      SÍ      ┌────────────────────────┐
-  │ ¿Es específico de   │ ───────────▶ │ Escribir ADR en repo   │
-  │ producto?           │              │ hijo. No necesita Board.│
-  └─────────────────────┘              └────────────────────────┘
-            │ NO
-            ▼
-  ┌─────────────────────┐
-  │ Escribir propuesta  │
-  │ ADR para revisión   │
-  │ del Board Evolith   │
-  └─────────┬───────────┘
-            │
-     El Board revisa
-            │
-     ┌──────┴──────┐
-     │  APROBADO   │ ──▶ Merge a Evolith · Todos los repos hijos heredan
-     └─────────────┘
-```
-
----
-
-## 9. Roadmap de Adopción Progresiva
-
-### Para un equipo de producto nuevo que parte desde Evolith:
-
-```
-SEMANAS 1-2: ORIENTACIÓN
-────────────────────────
-□ Leer las Directivas Arquitectónicas (visión)
-□ Leer el Manifiesto de Ingeniería (reglas)
-□ Leer la Línea Base Agnóstica (no negociables)
-□ Leer la Guía de Herencia para Repositorios Hijos
-□ Clonar la estructura de taxonomía del repositorio
-
-SEMANAS 3-4: FUNDACIÓN
-───────────────────────
-□ Seleccionar perfil de runtime (Node.js / .NET / Android)
-□ Leer los ADRs específicos de runtime para tu stack
-□ Estudiar los bounded contexts de UMS como referencia
-□ Configurar monorepo Nx + gates de linting
-□ Escribir el primer ADR del producto documentando la primera divergencia
-
-SEMANAS 5-8: PRIMERA ENTREGA (Fase 1 - Monolito Modular)
-────────────────────────────────────────────────────────
-□ Aplicar Arquitectura Hexagonal (Puertos + Adaptadores)
-□ Definir modelo de base de datos — un esquema único (enfoque SOA) es válido en
-  la Fase 1; schema-per-context es opcional y puede introducirse progresivamente
-  a medida que los límites del dominio se consoliden (ADR-0031 gobierna cuándo adoptarlo)
-□ Implementar pirámide de testing (gate 70% cobertura)
-□ Configurar observabilidad OTel + Loki + Grafana
-□ Seguir estrategia de ramas Gitflow
-□ Implementar Transactional Outbox para escrituras asíncronas
-
-MES 3+: ESCALA (Fase 2 — cuando las métricas lo justifiquen)
-────────────────────────────────────────────────────────────
-□ Ejecutar checklist de criterios ADR-0045
-□ Extraer primer servicio solo si se cumplen 2-de-4 criterios
-□ Evaluar activación del RLS nativo a nivel de base de datos — opcional; se
-  justifica solo cuando la seguridad a nivel de aplicación (APP_AGNOSTIC) se
-  convierte en un cuello de botella de rendimiento medible; ADR-0044 / ADR-0010
-  gobiernan la decisión de cambio (INFRA_NATIVE vs APP_AGNOSTIC)
-□ Habilitar trazado distribuido completo
-□ Integrar Dapr para abstracción de service mesh
-
-FUTURO: NORTH STAR (Fase 3 — decisión deliberada)
-─────────────────────────────────────────────────
-□ Orquestación multi-cloud
-□ Arquitectura event-driven a escala
-□ Aplicación de red Zero-trust
-□ Compliance-as-Code en pipelines CI
-```
-
-### Para un proveedor / integrador externo:
-
-```
-PASO 1: Entender el modelo de contratos (1 día)
-  → Leer: Baseline Agnóstico + ADR-0040 (contratos)
+PASO 1: Entender el modelo de contrato (1 día)
+  → Leer: Línea Base Agnóstica + ADR-0040 (contratos)
   → Saber: OpenAPI / Protobuf / AsyncAPI son tus interfaces
 
-PASO 2: Completar checklist de vendor (1-2 días)
-  → Completar: Vendor Risk Assessment
-  → Confirmar: Frontera de adaptador — sin inyección directa de SDK
+PASO 2: Completar checklist de proveedor (1-2 días)
+  → Completar: Evaluación de Riesgo de Proveedor
+  → Confirmar: Límite del adaptador — sin inyección directa de SDK
 
 PASO 3: Validación de integración (1 semana)
   → Implementar contra la especificación OpenAPI
@@ -655,7 +569,6 @@ PASO 3: Validación de integración (1 semana)
   → Verificar que no se introdujo acoplamiento de dominio
 ```
 
----
 
 ## 10. Estructura Documental Recomendada
 

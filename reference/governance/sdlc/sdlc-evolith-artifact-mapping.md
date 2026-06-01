@@ -9,13 +9,14 @@
 
 ## Purpose
 
-The [Construction-Focused SDLC Framework](./02-engineering/construction-focused-sdlc-framework.md) defines five formal lifecycle phases and their exit gates. This document answers a different question: **at each of those phases, which Evolith artifacts are mandatory inputs, which are recommended, and what role does the platform play in that phase?**
+The [Construction-Focused SDLC Framework](./02-engineering/construction-focused-sdlc-framework.md) defines five formal lifecycle phases and their exit gates. This document answers a different question: **at each phase, which Evolith artifacts are mandatory inputs, which are recommended, and what role does the platform play in that phase?**
 
 Use this mapping to:
 
-- Onboard a new product team and communicate exactly what they must consult at each stage
-- Conduct Architecture Board gate reviews with a traceable artifact checklist
-- Identify gaps in coverage when a phase lacks the artifacts it requires
+- Onboard a new product team and communicate exactly what must be consulted at each stage.
+- Conduct Architecture Board gate reviews with a traceable artifact checklist.
+- Identify gaps when a phase lacks required artifacts.
+- Align technical teams, QA, Product, Operations, and Technology Directors around the same evidence model.
 
 ---
 
@@ -24,9 +25,10 @@ Use this mapping to:
 | Symbol | Meaning |
 |---|---|
 | **Required** | Must be consulted or produced before the phase exit gate fires. Absence blocks the gate. |
-| **Optional** | Recommended best practice; situational based on product complexity, team maturity, or phase of the evolutionary roadmap. |
+| **Optional** | Recommended best practice; situational based on product complexity, team maturity, or evolutionary roadmap phase. |
+| **Conditional** | Required only when the triggering condition applies, such as multi-tenancy, public APIs, regulated data, or production-critical flows. |
 
-The five Evolith Compliance Baseline artifacts — listed in Section 5 — are **always required** regardless of phase. They are not repeated in the per-phase tables.
+The five Evolith Compliance Baseline artifacts listed in Section 7 are **always required** regardless of phase. They are not repeated in every per-phase table.
 
 ---
 
@@ -50,25 +52,25 @@ flowchart LR
     G4["Gate: RC\nStamped"]:::gate
     G5["Gate: Production\nLive"]:::gate
 
-    E1["Directives\nTaxonomy\nAgnostic Baseline\nADR-0047"]:::evolith
-    E2["Reference Blueprint\nADR Registry\nTech Stack\nFunctional Story Std"]:::evolith
-    E3["Engineering Manifesto\nDoD Checklist\nCI/CD ADRs\nCanonical Patterns"]:::evolith
-    E4["Testing Pyramid ADRs\nQuality Thresholds\nContract Testing"]:::evolith
-    E5["OTel / Observability\nInfrastructure Hub\nOperations Hub"]:::evolith
+    E1["Directives\nTaxonomy\nAgnostic Baseline\nPRD"]:::evolith
+    E2["Reference Blueprint\nADR Registry\nFunctional Stories\nDesign Standards"]:::evolith
+    E3["Technical Stories\nDoD Checklist\nCI/CD ADRs\nCanonical Patterns"]:::evolith
+    E4["Quality Gates\nTest Summary Report\nSecurity Scans\nAcceptance Evidence"]:::evolith
+    E5["Release Notes\nObservability\nRollback\nOperations Hub"]:::evolith
 
     P1 --> G1 --> P2 --> G2 --> P3 --> G3 --> P4 --> G4 --> P5 --> G5
-    E1 -.->|"activates at"| P1
-    E2 -.->|"activates at"| P2
-    E3 -.->|"activates at"| P3
-    E4 -.->|"activates at"| P4
-    E5 -.->|"activates at"| P5
+    E1 -.-> P1
+    E2 -.-> P2
+    E3 -.-> P3
+    E4 -.-> P4
+    E5 -.-> P5
 ```
 
 ---
 
 ## 2. Phase 1 — Conception and Discovery
 
-**Evolith role in this phase:** Establish the non-negotiable constraints *before* scope is frozen. Any product instantiation must align with the agnostic baseline and the topology selection framework before the Business Sign-Off gate fires. This phase is where the team learns what they are and are not allowed to decide.
+**Evolith role in this phase:** Establish the non-negotiable constraints before scope is frozen. Any product instantiation must align with the agnostic baseline, repository taxonomy, and topology selection framework before the Business Sign-Off gate fires.
 
 **Exit gate:** Business Sign-Off — Scope Frozen
 
@@ -76,27 +78,27 @@ flowchart LR
 
 | Artifact | Location | Why Required |
 |---|---|---|
-| **Architectural Directives** | [reference/governance/standards/vision/architectural-directives.md](../standards/vision/architectural-directives.md) | Establishes non-negotiable constraints (Hexagonal, no premature extraction, Zero-Trust from Phase 1) that bound the entire product scope. Must be read before any scope decision is made. |
-| **Repository Taxonomy** | [reference/governance/standards/repository-taxonomy.md](../standards/repository-taxonomy.md) | Defines monorepo structure, naming prefixes, and artifact classification before any file or module is created. |
-| **Agnostic Baseline** | [reference/architecture/blueprints/authoritative-tech-stack-agnostic.md](../../architecture/blueprints/authoritative-tech-stack-agnostic.md) | Defines the technology-neutral baseline that every product must conform to. No technology outside this boundary can be introduced without a new ADR. |
-| **ADR-0047 — Modular Monolith Selection** | [reference/architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.md](../../architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.md) | Confirms the mandated starting topology (Modular Monolith). Scope cannot be frozen on a microservices architecture unless the extraction criteria in ADR-0045 are already satisfied. |
-| **Engineering Manifesto** | [reference/governance/standards/engineering/engineering-manifesto.md](../standards/engineering/engineering-manifesto.md) | Sets team engineering expectations — SOLID, DRY, anti-patterns, PR standards — before any development contract is written. |
+| **PRD — Product Requirements Document** | [prd-template.md](./04-artifact-templates/prd-template.md) | Captures product scope, personas, objectives, constraints, non-goals, and sign-off evidence. |
+| **Architectural Directives** | [architectural-directives.md](../standards/vision/architectural-directives.md) | Establishes non-negotiable constraints that bound the entire product scope. |
+| **Repository Taxonomy** | [repository-taxonomy.md](../standards/repository-taxonomy.md) | Defines repository structure, naming prefixes, and artifact classification before files or modules are created. |
+| **Agnostic Baseline** | [authoritative-tech-stack-agnostic.md](../../architecture/blueprints/authoritative-tech-stack-agnostic.md) | Defines the technology-neutral baseline that every product must conform to. |
+| **ADR-0047 — Modular Monolith Selection** | [ADR-0047](../../architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.md) | Confirms the mandated starting topology unless approved extraction criteria are already satisfied. |
+| **Engineering Manifesto** | [engineering-manifesto.md](../standards/engineering/engineering-manifesto.md) | Sets team engineering expectations before development contracts are written. |
 
 ### Optional Artifacts
 
 | Artifact | Location | When to Use |
 |---|---|---|
-| Evolutionary Strategy Roadmap | [reference/governance/standards/vision/evolutionary-strategy-roadmap.md](../standards/vision/evolutionary-strategy-roadmap.md) | When the product roadmap spans multiple Evolith phases (Phase 1 MVP through Phase 3 North Star). Use for executive planning and timeline alignment. |
-| Maturity Matrix | [reference/governance/standards/vision/maturity-matrix.md](../standards/vision/maturity-matrix.md) | When performing a formal TOGAF ACMM positioning of the starting state. Useful for brownfield products migrating onto the Evolith baseline. |
-| Functional Story Writing Standard | [reference/governance/sdlc/03-documentation/functional-story-writing-standard.md](./03-documentation/functional-story-writing-standard.md) | When the product team will produce PRDs or functional stories during Conception. Recommended for teams new to the Evolith documentation model. |
-| Architecture Communication Strategy | [reference/governance/standards/communication/architecture-communication-strategy.md](../standards/communication/architecture-communication-strategy.md) | When preparing stakeholder presentations or executive briefings on the architecture vision. |
-| UMS Reference Model | [reference/knowledge/demo/ums-reference-model.md](../../knowledge/demo/ums-reference-model.md) | When the product operates in the identity, access management, or multi-tenant authorization domain and UMS patterns are directly applicable. |
+| Evolutionary Strategy Roadmap | [evolutionary-strategy-roadmap.md](../standards/vision/evolutionary-strategy-roadmap.md) | When the product roadmap spans multiple Evolith phases. |
+| Maturity Matrix | [maturity-matrix.md](../standards/vision/maturity-matrix.md) | When assessing a brownfield product or formal maturity position. |
+| Architecture Communication Strategy | [architecture-communication-strategy.md](../standards/communication/architecture-communication-strategy.md) | When preparing stakeholder or executive architecture briefings. |
+| UMS Reference Model | [ums-reference-model.md](../../knowledge/demo/ums-reference-model.md) | When the product operates in identity, access management, or multi-tenant authorization. |
 
 ---
 
 ## 3. Phase 2 — Design and Architecture
 
-**Evolith role in this phase:** Provide the canonical blueprint, the ADR decision framework, and the approved technology boundaries. Every major architectural decision in this phase must either reference an existing Evolith ADR or produce a new product-level ADR that extends it. The Reference Blueprint is the starting point, not a blank page.
+**Evolith role in this phase:** Provide the canonical blueprint, ADR decision framework, and approved technology boundaries. Every major architectural decision must reference an existing Evolith ADR or produce a product-level ADR that extends it.
 
 **Exit gate:** Design Baseline Approved
 
@@ -104,37 +106,36 @@ flowchart LR
 
 | Artifact | Location | Why Required |
 |---|---|---|
-| **Reference Blueprint** | [reference/architecture/blueprints/reference-blueprint.md](../../architecture/blueprints/reference-blueprint.md) | The canonical C4 architectural model. All product architecture diagrams must be traceable to this blueprint. |
-| **Authoritative Tech Stack** | [reference/architecture/blueprints/authoritative-tech-stack.md](../../architecture/blueprints/authoritative-tech-stack.md) | Only technologies on this list may be introduced. Additions require a new ADR with Architecture Board sign-off before Design Baseline can be approved. |
-| **ADR Decision Matrix** | [reference/architecture/adrs/adr-matrix.md](../../architecture/adrs/adr-matrix.md) | Must be consulted before creating any new ADR to confirm the decision is not already resolved. Prevents duplicate or contradictory decisions. |
-| **ADR-0002 — Hexagonal Architecture** | [reference/architecture/adrs/nodejs/0002-clean-architecture-nestjs.md](../../architecture/adrs/nodejs/0002-clean-architecture-nestjs.md) | Mandatory architectural boundary. Ports and Adapters structure must be reflected in the design from day one. |
-| **ADR-0018 — Testing Pyramid** | [reference/architecture/adrs/core/0018-testing-pyramid-quality-gates.md](../../architecture/adrs/core/0018-testing-pyramid-quality-gates.md) | The test architecture must be designed in this phase. Coverage thresholds and test-type distribution are contractual, not retrospective. |
-| **ADR-0031 — Schema-per-Context** | [reference/architecture/adrs/core/0031-schema-per-context-domain-event-catalog.md](../../architecture/adrs/core/0031-schema-per-context-domain-event-catalog.md) | Cross-schema SQL joins are architecturally prohibited. Bounded context schema boundaries must be decided in the design phase. |
-| **ADR-0032 — Protocol Selection Matrix** | [reference/architecture/adrs/core/0032-api-protocol-decision-matrix-rest-grpc-graphql.md](../../architecture/adrs/core/0032-api-protocol-decision-matrix-rest-grpc-graphql.md) | REST, gRPC, and GraphQL usage must be resolved before API contracts are produced. |
-| **ADR-0056 — Naming and Design Conventions** | [reference/architecture/adrs/core/0056-enterprise-naming-design-conventions.md](../../architecture/adrs/core/0056-enterprise-naming-design-conventions.md) | Ubiquitous language and naming rules must be established before entity and endpoint naming is finalized. |
-| **Functional Story Writing Standard** | [reference/governance/sdlc/03-documentation/functional-story-writing-standard.md](./03-documentation/functional-story-writing-standard.md) | All functional stories produced in this phase must conform to this standard before the Design Baseline gate can be approved. |
-| **SDLC Documentation Best Practices** | [reference/governance/sdlc/03-documentation/sdlc-documentation-best-practices.md](./03-documentation/sdlc-documentation-best-practices.md) | Governs how all design artifacts — blueprints, ADRs, schemas — are produced, versioned, and reviewed. |
-| **Simplicity Checklist Phase 1** | [reference/architecture/blueprints/simplicity-checklist-phase-01.md](../../architecture/blueprints/simplicity-checklist-phase-01.md) | Gates against over-engineering. Must be signed off before the Design Baseline is approved to prevent premature complexity. |
+| **Reference Blueprint** | [reference-blueprint.md](../../architecture/blueprints/reference-blueprint.md) | Canonical C4 architectural model. Product architecture diagrams must be traceable to it. |
+| **Authoritative Tech Stack** | [authoritative-tech-stack.md](../../architecture/blueprints/authoritative-tech-stack.md) | Only approved technologies may be introduced unless a new ADR is approved. |
+| **ADR Decision Matrix** | [adr-matrix.md](../../architecture/adrs/adr-matrix.md) | Prevents duplicate or contradictory architecture decisions. |
+| **ADR-0002 — Hexagonal Architecture** | [ADR-0002](../../architecture/adrs/nodejs/0002-clean-architecture-nestjs.md) | Mandatory Ports and Adapters boundary. |
+| **ADR-0018 — Testing Pyramid** | [ADR-0018](../../architecture/adrs/core/0018-testing-pyramid-quality-gates.md) | Test architecture and test-type distribution must be designed before validation. |
+| **ADR-0031 — Schema-per-Context** | [ADR-0031](../../architecture/adrs/core/0031-schema-per-context-domain-event-catalog.md) | Bounded context schema boundaries must be decided before construction. |
+| **ADR-0032 — Protocol Selection Matrix** | [ADR-0032](../../architecture/adrs/core/0032-api-protocol-decision-matrix-rest-grpc-graphql.md) | REST, gRPC, and GraphQL use must be resolved before API contracts are produced. |
+| **ADR-0056 — Naming and Design Conventions** | [ADR-0056](../../architecture/adrs/core/0056-enterprise-naming-design-conventions.md) | Ubiquitous language and naming rules must be established before entity and endpoint naming. |
+| **Functional Story Template** | [functional-story-template.md](./04-artifact-templates/functional-story-template.md) | Required structure for business behavior specifications. |
+| **Functional Story Writing Standard** | [functional-story-writing-standard.md](./03-documentation/functional-story-writing-standard.md) | Ensures business-readable stories and separation from implementation details. |
+| **SDLC Documentation Best Practices** | [sdlc-documentation-best-practices.md](./03-documentation/sdlc-documentation-best-practices.md) | Governs how design artifacts are produced, versioned, and reviewed. |
+| **Simplicity Checklist Phase 1** | [simplicity-checklist-phase-01.md](../../architecture/blueprints/simplicity-checklist-phase-01.md) | Gates against over-engineering before Design Baseline approval. |
 
-### Optional Artifacts
+### Optional or Conditional Artifacts
 
 | Artifact | Location | When to Use |
 |---|---|---|
-| C4 Topology Spec | [reference/architecture/blueprints/c4-topology-spec.md](../../architecture/blueprints/c4-topology-spec.md) | When producing formal C4 diagrams (Context, Container, Component, Code) as part of the design deliverable. |
-| CAP Strategic Analysis | [reference/architecture/blueprints/cap-strategic-analysis.md](../../architecture/blueprints/cap-strategic-analysis.md) | When making explicit consistency vs. availability tradeoffs at the database or event bus layer. |
-| Observability Architecture Flow | [reference/architecture/blueprints/observability-architecture-flow.md](../../architecture/blueprints/observability-architecture-flow.md) | When designing the distributed tracing and log aggregation topology. |
-| Multi-Cloud Deployment Scenarios | [reference/architecture/blueprints/multi-cloud-deployment-scenarios.md](../../architecture/blueprints/multi-cloud-deployment-scenarios.md) | When the product must support more than one cloud provider from Phase 1. |
-| ADR-0010 — Multi-Tenancy Dual-Layer Strategy | [reference/architecture/adrs/core/0010-multi-tenancy-architecture-strategy.md](../../architecture/adrs/core/0010-multi-tenancy-architecture-strategy.md) | Required when the product serves multiple tenants. Becomes mandatory for multi-tenant products. |
-| ADR-0045 — Extraction Readiness Criteria | [reference/architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md](../../architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md) | When the roadmap includes planned microservice extraction. Defines quantitative triggers so extraction boundaries can be designed in advance. |
-| Canonical Patterns | [reference/architecture/canonical-patterns/README.md](../../architecture/canonical-patterns/README.md) | When adopting runtime-specific reference implementations. Use to accelerate design decisions with proven patterns. |
-| UMS Technical Overview | [reference/knowledge/demo/ums-technical-overview.md](../../knowledge/demo/ums-technical-overview.md) | When the product is in the identity or authorization domain and UMS bounded context patterns are directly applicable. |
-| Visual Architecture Backlog | [reference/governance/standards/communication/visuals/README.md](../standards/communication/visuals/README.md) | When producing visual artifacts (executive one-pager, progressive journey map, onboarding diagrams) for architecture communication. |
+| ADR-0010 — Multi-Tenancy | [ADR-0010](../../architecture/adrs/core/0010-multi-tenancy-architecture-strategy.md) | Conditional: required when the product serves multiple tenants. |
+| ADR-0045 — Extraction Readiness Criteria | [ADR-0045](../../architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md) | When the roadmap includes possible microservice extraction. |
+| C4 Topology Spec | [c4-topology-spec.md](../../architecture/blueprints/c4-topology-spec.md) | When producing formal C4 diagrams. |
+| CAP Strategic Analysis | [cap-strategic-analysis.md](../../architecture/blueprints/cap-strategic-analysis.md) | When making explicit consistency vs. availability tradeoffs. |
+| Observability Architecture Flow | [observability-architecture-flow.md](../../architecture/blueprints/observability-architecture-flow.md) | When designing distributed tracing and log aggregation. |
+| Canonical Patterns | [canonical-patterns](../../architecture/canonical-patterns/README.md) | When adopting runtime-specific reference implementations. |
+| UMS Technical Overview | [ums-technical-overview.md](../../knowledge/demo/ums-technical-overview.md) | When identity or authorization patterns from UMS are directly applicable. |
 
 ---
 
 ## 4. Phase 3 — Construction
 
-**Evolith role in this phase:** Enforce code quality, architectural boundaries, and the Definition of Done on every pull request. The Engineering Manifesto, the DoD checklist, and the CI/CD pipeline configuration are the primary enforcement instruments. The construction inner loop (Env Prep → Domain Code → Unit Tests → Integration → CI Scan → Peer Review) is governed by the Construction-Focused SDLC Framework.
+**Evolith role in this phase:** Enforce code quality, architectural boundaries, and the Definition of Done on every pull request. The construction inner loop is governed by the Construction-Focused SDLC Framework.
 
 **Exit gate:** Successful Build — PR Merge Authorized
 
@@ -142,60 +143,63 @@ flowchart LR
 
 | Artifact | Location | Why Required |
 |---|---|---|
-| **Engineering Manifesto** | [reference/governance/standards/engineering/engineering-manifesto.md](../standards/engineering/engineering-manifesto.md) | SOLID, DRY, KISS, YAGNI, and the explicit anti-patterns list govern every line of code. Code reviews cite this document when blocking a PR. |
-| **Construction-Focused SDLC Framework — §3 and §4** | [reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.md](./02-engineering/construction-focused-sdlc-framework.md) | The inner construction loop (§3.1), quality threshold metrics (§3.2), and the Definition of Done checklist (§4) are non-negotiable gate conditions. |
-| **ADR-0005 — CI/CD Pipeline (CodeQL)** | [reference/architecture/adrs/core/0005-ci-cd-quality-codeql.md](../../architecture/adrs/core/0005-ci-cd-quality-codeql.md) | Mandatory automated pipeline. No merge is authorized without a passing CI run that includes linting, testing, and security scanning. |
-| **ADR-0018 — Testing Pyramid Quality Gates** | [reference/architecture/adrs/core/0018-testing-pyramid-quality-gates.md](../../architecture/adrs/core/0018-testing-pyramid-quality-gates.md) | The 70% minimum code coverage threshold is enforced in CI. Builds below this threshold are blocked. |
-| **ADR-0049 — Naming Semantics and Clean Code** | [reference/architecture/adrs/core/0049-naming-semantics-clean-code-policy.md](../../architecture/adrs/core/0049-naming-semantics-clean-code-policy.md) | Naming discipline is validated from the first commit via automated linting. |
-| **ADR-0050 — GitFlow Branching Strategy** | [reference/architecture/adrs/core/0050-gitflow-branching-strategy.md](../../architecture/adrs/core/0050-gitflow-branching-strategy.md) | Branch naming, merge policies, and release tagging are contractual. |
-| **SDLC Documentation Best Practices** | [reference/governance/sdlc/03-documentation/sdlc-documentation-best-practices.md](./03-documentation/sdlc-documentation-best-practices.md) | No feature code merges to stable branches without its corresponding documentation delta. Documentation is part of the DoD. |
-| **Canonical Patterns** | [reference/architecture/canonical-patterns/README.md](../../architecture/canonical-patterns/README.md) | Runtime-specific reference implementations that must be followed when implementing the patterns governed by the relevant ADRs. |
+| **Technical Story Template** | [technical-story-template.md](./04-artifact-templates/technical-story-template.md) | Breaks Functional Stories into implementation units with technical acceptance criteria and DoD evidence. |
+| **Engineering Manifesto** | [engineering-manifesto.md](../standards/engineering/engineering-manifesto.md) | Governs SOLID, DRY, KISS, YAGNI, anti-patterns, and PR discipline. |
+| **Construction-Focused SDLC Framework — §3 and §4** | [construction-focused-sdlc-framework.md](./02-engineering/construction-focused-sdlc-framework.md) | Defines construction loop, threshold metrics, and DoD checklist. |
+| **SDLC Quality Gates** | [quality-gates.md](./quality-gates.md) | Defines the canonical release-blocking threshold baseline: coverage >= 80%, complexity <= 15, zero high/critical CVEs, tech debt < 5%. |
+| **ADR-0005 — CI/CD Pipeline** | [ADR-0005](../../architecture/adrs/core/0005-ci-cd-quality-codeql.md) | No merge is authorized without passing CI, linting, testing, and security scanning. |
+| **ADR-0018 — Testing Pyramid Quality Gates** | [ADR-0018](../../architecture/adrs/core/0018-testing-pyramid-quality-gates.md) | Defines target test distribution: 70% unit / 20% integration / 10% E2E. Coverage blocking threshold is governed by SDLC Quality Gates. |
+| **ADR-0049 — Naming Semantics and Clean Code** | [ADR-0049](../../architecture/adrs/core/0049-naming-semantics-clean-code-policy.md) | Naming discipline is validated from the first commit. |
+| **ADR-0050 — GitFlow Branching Strategy** | [ADR-0050](../../architecture/adrs/core/0050-gitflow-branching-strategy.md) | Branch naming, merge policies, and release tagging are contractual. Alternatives require explicit ADR exception. |
+| **SDLC Documentation Best Practices** | [sdlc-documentation-best-practices.md](./03-documentation/sdlc-documentation-best-practices.md) | Documentation delta is part of the DoD. |
+| **Canonical Patterns** | [canonical-patterns](../../architecture/canonical-patterns/README.md) | Runtime-specific implementations must follow governed ADR patterns. |
 
-### Optional Artifacts
+### Optional or Conditional Artifacts
 
 | Artifact | Location | When to Use |
 |---|---|---|
-| Contract Testing Guideline | [reference/governance/standards/engineering/contract-testing-guideline.md](../standards/engineering/contract-testing-guideline.md) | When the product exposes or consumes inter-service contracts (REST OpenAPI, gRPC Protobuf, AsyncAPI). |
-| Vendor Risk Assessment | [reference/governance/standards/engineering/vendor-risk-assessment.md](../standards/engineering/vendor-risk-assessment.md) | When introducing a new third-party library or service not already in the Authoritative Tech Stack. |
-| ADR-0019 — Tactical DDD Primitives | [reference/architecture/adrs/core/0019-tactical-design-patterns-future-proofing.md](../../architecture/adrs/core/0019-tactical-design-patterns-future-proofing.md) | When applying tactical DDD patterns (Aggregates, Value Objects, Domain Events). Only use where domain complexity justifies it per the Engineering Manifesto §2. |
-| ADR-0033 — Transactional Outbox | [reference/architecture/adrs/core/0033-transactional-outbox-pattern.md](../../architecture/adrs/core/0033-transactional-outbox-pattern.md) | When implementing reliable asynchronous event dispatch. |
-| ADR-0034 — CQRS Applicability | [reference/architecture/adrs/core/0034-cqrs-pattern-applicability-matrix.md](../../architecture/adrs/core/0034-cqrs-pattern-applicability-matrix.md) | When applying command/query separation at the persistence layer. Consult the applicability matrix before applying. |
-| ADR-0035 — Distributed Sagas | [reference/architecture/adrs/core/0035-distributed-saga-pattern-strategy.md](../../architecture/adrs/core/0035-distributed-saga-pattern-strategy.md) | When implementing multi-step workflows with compensating transactions across bounded contexts. |
-| AI Architecture Assistant | [reference/governance/standards/ai-augmented/08-architecture-ai-assistant/README.md](../standards/ai-augmented/08-architecture-ai-assistant/README.md) | When the team is operating under an AI-augmented engineering workflow. Governs prompt engineering, knowledge taxonomy, and HITL policy. |
-| UMS Reference Model | [reference/knowledge/demo/ums-reference-model.md](../../knowledge/demo/ums-reference-model.md) | As a concrete pattern reference for Hexagonal Architecture, bounded context structure, and RLS implementation in .NET. |
+| Contract Testing Guideline | [contract-testing-guideline.md](../standards/engineering/contract-testing-guideline.md) | Conditional: when the product exposes or consumes inter-service contracts. |
+| Vendor Risk Assessment | [vendor-risk-assessment.md](../standards/engineering/vendor-risk-assessment.md) | When introducing a new third-party library or service. |
+| ADR-0019 — Tactical DDD Primitives | [ADR-0019](../../architecture/adrs/core/0019-tactical-design-patterns-future-proofing.md) | When applying Aggregates, Value Objects, Domain Events, or similar tactical DDD patterns. |
+| ADR-0033 — Transactional Outbox | [ADR-0033](../../architecture/adrs/core/0033-transactional-outbox-pattern.md) | When implementing reliable asynchronous event dispatch. |
+| ADR-0034 — CQRS Applicability | [ADR-0034](../../architecture/adrs/core/0034-cqrs-pattern-applicability-matrix.md) | When applying command/query separation. |
+| ADR-0035 — Distributed Sagas | [ADR-0035](../../architecture/adrs/core/0035-distributed-saga-pattern-strategy.md) | When implementing multi-step workflows with compensating transactions. |
+| AI Architecture Assistant | [AI Architecture Assistant](../standards/ai-augmented/08-architecture-ai-assistant/README.md) | When the team operates under an AI-augmented engineering workflow. |
+| UMS Reference Model | [ums-reference-model.md](../../knowledge/demo/ums-reference-model.md) | Concrete implementation reference for .NET, hexagonal boundaries, bounded contexts, and RLS. |
 
 ---
 
 ## 5. Phase 4 — Validation and QA
 
-**Evolith role in this phase:** Define the mandatory quality thresholds that the release candidate must satisfy. The testing pyramid ADRs set the contractual distribution of test types and minimum coverage. The Construction-Focused SDLC Framework §3.2 provides the four quantitative metrics (coverage, complexity, vulnerability index, technical debt ratio) that gate the RC stamp.
+**Evolith role in this phase:** Define the mandatory quality thresholds that the release candidate must satisfy. The SDLC Quality Gates document is the canonical threshold source. ADR-0018 governs target test distribution.
 
-**Exit gate:** Release Candidate (RC) Stamped
+**Exit gate:** RC Stamped
 
 ### Required Artifacts
 
 | Artifact | Location | Why Required |
 |---|---|---|
-| **Construction-Focused SDLC Framework — §3.2** | [reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.md](./02-engineering/construction-focused-sdlc-framework.md) | The four quality threshold metrics are the mathematical gate: coverage >= 80%, cyclomatic complexity <= 15, zero high/critical CVEs, tech debt ratio < 5%. All must pass before RC is stamped. |
-| **ADR-0018 — Testing Pyramid Quality Gates** | [reference/architecture/adrs/core/0018-testing-pyramid-quality-gates.md](../../architecture/adrs/core/0018-testing-pyramid-quality-gates.md) | Defines the mandatory test distribution (70% unit / 20% integration / 10% E2E) and coverage floor. Test summary reports must reference these thresholds. |
-| **ADR-0052 — Unit Testing Isolation Strategy** | [reference/architecture/adrs/core/0052-unit-testing-isolation-strategy.md](../../architecture/adrs/core/0052-unit-testing-isolation-strategy.md) | Governs mock and stub discipline. Test doubles must not bleed real infrastructure concerns into unit test assertions. |
-| **ADR-0053 — Integration and E2E Testing Strategy** | [reference/architecture/adrs/core/0053-integration-e2e-testing-strategy.md](../../architecture/adrs/core/0053-integration-e2e-testing-strategy.md) | Testcontainers-based integration testing and E2E scope are defined here. Required when the validation phase includes wired subsystem tests. |
-| **Contract Testing Guideline** | [reference/governance/standards/engineering/contract-testing-guideline.md](../standards/engineering/contract-testing-guideline.md) | Required when the product exposes inter-service contracts. Contract test results must be included in the QA Acceptance Sign-Off. |
+| **Test Summary Report Template** | [test-summary-report-template.md](./04-artifact-templates/test-summary-report-template.md) | Captures release scope, threshold metrics, test results, security scans, acceptance validation, and RC sign-off. |
+| **SDLC Quality Gates** | [quality-gates.md](./quality-gates.md) | Mathematical gate: coverage >= 80%, cyclomatic complexity <= 15, zero high/critical CVEs, tech debt ratio < 5%. |
+| **ADR-0018 — Testing Pyramid Quality Gates** | [ADR-0018](../../architecture/adrs/core/0018-testing-pyramid-quality-gates.md) | Defines the target test distribution: 70% unit / 20% integration / 10% E2E. |
+| **ADR-0052 — Unit Testing Isolation Strategy** | [ADR-0052](../../architecture/adrs/core/0052-unit-testing-isolation-strategy.md) | Governs mock and stub discipline. |
+| **ADR-0053 — Integration and E2E Testing Strategy** | [ADR-0053](../../architecture/adrs/core/0053-integration-e2e-testing-strategy.md) | Defines Testcontainers-based integration testing and E2E scope. |
+| **Contract Testing Guideline** | [contract-testing-guideline.md](../standards/engineering/contract-testing-guideline.md) | Conditional: required when the product exposes inter-service contracts. |
 
 ### Optional Artifacts
 
 | Artifact | Location | When to Use |
 |---|---|---|
-| ADR-0037 — Performance and Chaos Verification | [reference/architecture/adrs/core/0037-performance-concurrency-chaos-strategy.md](../../architecture/adrs/core/0037-performance-concurrency-chaos-strategy.md) | When the validation phase includes load testing, stress testing, or chaos engineering scenarios. Recommended for Phase 2+ products. |
-| Vendor Risk Assessment | [reference/governance/standards/engineering/vendor-risk-assessment.md](../standards/engineering/vendor-risk-assessment.md) | When the security validation phase includes a third-party dependency audit. |
-| Observability Architecture Flow | [reference/architecture/blueprints/observability-architecture-flow.md](../../architecture/blueprints/observability-architecture-flow.md) | When validating that the observability instrumentation (OTel spans, structured logs) meets the production coverage specification. |
-| UMS Architecture Portal | https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md | As a reference for how UMS implements the testing pyramid in a real .NET product — useful for QA teams calibrating integration and E2E scope. |
+| ADR-0037 — Performance and Chaos Verification | [ADR-0037](../../architecture/adrs/core/0037-performance-concurrency-chaos-strategy.md) | When validation includes load, stress, performance, or chaos scenarios. |
+| Vendor Risk Assessment | [vendor-risk-assessment.md](../standards/engineering/vendor-risk-assessment.md) | When validation includes a third-party dependency audit. |
+| Observability Architecture Flow | [observability-architecture-flow.md](../../architecture/blueprints/observability-architecture-flow.md) | When validating telemetry, structured logs, and production coverage specification. |
+| UMS Architecture Portal | https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md | Reference for a real .NET product applying Evolith testing guidance. |
 
 ---
 
 ## 6. Phase 5 — Delivery and Operations
 
-**Evolith role in this phase:** Specify the mandatory observability stack, infrastructure topology, and DR policies. OTel distributed tracing, Loki structured logging, Grafana dashboards, and the DR runbook are all defined in Evolith and consumed by the product's deployment configuration. Monitoring nominality at Production Live is validated against these specifications.
+**Evolith role in this phase:** Specify mandatory observability stack, infrastructure topology, deployment evidence, and rollback readiness. Production Live is validated against monitoring nominality and release evidence.
 
 **Exit gate:** Production Live — Monitoring Nominal
 
@@ -203,23 +207,24 @@ flowchart LR
 
 | Artifact | Location | Why Required |
 |---|---|---|
-| **ADR-0007 — OTel and Loki Observability** | [reference/architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md](../../architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md) | Distributed tracing (W3C TraceContext) and structured logging are mandatory in every production deployment. Monitoring Nominal cannot be declared without active OTel spans flowing. |
-| **ADR-0013 — Cloud Topology and DR** | [reference/architecture/adrs/core/0013-cloud-infrastructure-topology-dr.md](../../architecture/adrs/core/0013-cloud-infrastructure-topology-dr.md) | Defines the target deployment topology and disaster recovery runbook. Required before Production Live gate fires. |
-| **ADR-0005 — CI/CD Pipeline** | [reference/architecture/adrs/core/0005-ci-cd-quality-codeql.md](../../architecture/adrs/core/0005-ci-cd-quality-codeql.md) | Deployment pipeline must enforce the same quality gates in the delivery path as in the construction path. |
-| **Operations Hub** | [reference/operations/README.md](../../operations/README.md) | OTel collector configuration, Grafana dashboard templates, and Tempo tracing runbooks. Required as the observability deployment specification. |
-| **Infrastructure Hub** | [reference/infrastructure/README.md](../../infrastructure/README.md) | Infrastructure provisioning specifications that the deployment must conform to. |
-| **SDLC Documentation Best Practices** | [reference/governance/sdlc/03-documentation/sdlc-documentation-best-practices.md](./03-documentation/sdlc-documentation-best-practices.md) | Release notes and deployment runbooks must conform to this standard before Production Live can be declared. |
+| **Release Notes Template** | [release-notes-template.md](./04-artifact-templates/release-notes-template.md) | Captures release scope, deployment steps, rollback procedure, observability checklist, and links to RC evidence. |
+| **ADR-0007 — OTel and Loki Observability** | [ADR-0007](../../architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md) | Distributed tracing and structured logging are mandatory in every production deployment. |
+| **ADR-0013 — Cloud Topology and DR** | [ADR-0013](../../architecture/adrs/core/0013-cloud-infrastructure-topology-dr.md) | Defines target deployment topology and disaster recovery runbook. |
+| **ADR-0005 — CI/CD Pipeline** | [ADR-0005](../../architecture/adrs/core/0005-ci-cd-quality-codeql.md) | Deployment pipeline must enforce the same quality gates in the delivery path. |
+| **Operations Hub** | [Operations Hub](../../operations/README.md) | Observability deployment specification and runbooks. |
+| **Infrastructure Hub** | [Infrastructure Hub](../../infrastructure/README.md) | Infrastructure provisioning specifications. |
+| **SDLC Documentation Best Practices** | [sdlc-documentation-best-practices.md](./03-documentation/sdlc-documentation-best-practices.md) | Release notes and deployment runbooks must be versioned with the release. |
 
 ### Optional Artifacts
 
 | Artifact | Location | When to Use |
 |---|---|---|
-| ADR-0011 — Resiliency Patterns | [reference/architecture/adrs/core/0011-fault-tolerance-resiliency-patterns.md](../../architecture/adrs/core/0011-fault-tolerance-resiliency-patterns.md) | When the production deployment includes circuit breakers, bulkheads, or retry policies (Polly, Resilience4j). |
-| ADR-0017 — Feature Flagging Strategy | [reference/architecture/adrs/core/0017-feature-flagging-strategy.md](../../architecture/adrs/core/0017-feature-flagging-strategy.md) | When using feature flags for gradual rollout or dark launches in production. |
-| ADR-0028 — Self-Hosted OSS Infrastructure | [reference/architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md](../../architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md) | When deploying on-premise or in a hybrid cloud topology. |
-| ADR-0046 — Dapr Unified Observability | [reference/architecture/adrs/core/0046-dapr-unified-observability.md](../../architecture/adrs/core/0046-dapr-unified-observability.md) | When the product has reached Phase 2 and Dapr is active. Unified distributed tracing across Dapr sidecars requires this ADR's configuration. |
-| Multi-Cloud Deployment Scenarios | [reference/architecture/blueprints/multi-cloud-deployment-scenarios.md](../../architecture/blueprints/multi-cloud-deployment-scenarios.md) | When the production target spans multiple cloud providers. |
-| Observability Architecture Flow | [reference/architecture/blueprints/observability-architecture-flow.md](../../architecture/blueprints/observability-architecture-flow.md) | When building or validating the full Grafana + Loki + Tempo + OTel Collector pipeline. |
+| ADR-0011 — Resiliency Patterns | [ADR-0011](../../architecture/adrs/core/0011-fault-tolerance-resiliency-patterns.md) | When production includes circuit breakers, bulkheads, retry policies, or fallback strategies. |
+| ADR-0017 — Feature Flagging Strategy | [ADR-0017](../../architecture/adrs/core/0017-feature-flagging-strategy.md) | When using gradual rollout, dark launches, or runtime-controlled exposure. |
+| ADR-0028 — Self-Hosted OSS Infrastructure | [ADR-0028](../../architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md) | When deploying on-premise or hybrid cloud. |
+| ADR-0046 — Dapr Unified Observability | [ADR-0046](../../architecture/adrs/core/0046-dapr-unified-observability.md) | When Dapr is active and sidecar observability must be unified. |
+| Multi-Cloud Deployment Scenarios | [multi-cloud-deployment-scenarios.md](../../architecture/blueprints/multi-cloud-deployment-scenarios.md) | When the production target spans multiple cloud providers. |
+| Observability Architecture Flow | [observability-architecture-flow.md](../../architecture/blueprints/observability-architecture-flow.md) | When building or validating Grafana, Loki, Tempo, and OTel Collector pipelines. |
 
 ---
 
@@ -229,65 +234,44 @@ These five artifacts constitute the **Evolith Compliance Baseline**. They are no
 
 | # | Artifact | Location | Constraint |
 |---|---|---|---|
-| 1 | **Agnostic Baseline** | [reference/architecture/blueprints/authoritative-tech-stack-agnostic.md](../../architecture/blueprints/authoritative-tech-stack-agnostic.md) | Defines the technology-neutral boundaries. No technology decision may violate this baseline. |
-| 2 | **Reference Architecture (Blueprint)** | [reference/architecture/blueprints/reference-blueprint.md](../../architecture/blueprints/reference-blueprint.md) | The canonical C4 model. All product architectures are measured against this blueprint. |
-| 3 | **Engineering Manifesto** | [reference/governance/standards/engineering/engineering-manifesto.md](../standards/engineering/engineering-manifesto.md) | Sets the engineering principles that govern all code and all people. Active from Phase 1, day 1. |
-| 4 | **Definition of Done** | [reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.md](./02-engineering/construction-focused-sdlc-framework.md) | The DoD checklist applies to every iteration, sprint, and phase transition. |
-| 5 | **Repository Taxonomy** | [reference/governance/standards/repository-taxonomy.md](../standards/repository-taxonomy.md) | Naming, structure, and taxonomy rules apply from the moment the repository is created. |
+| 1 | **Agnostic Baseline** | [authoritative-tech-stack-agnostic.md](../../architecture/blueprints/authoritative-tech-stack-agnostic.md) | No technology decision may violate this baseline. |
+| 2 | **Reference Architecture (Blueprint)** | [reference-blueprint.md](../../architecture/blueprints/reference-blueprint.md) | All product architectures are measured against this blueprint. |
+| 3 | **Engineering Manifesto** | [engineering-manifesto.md](../standards/engineering/engineering-manifesto.md) | Sets engineering principles that govern code and team behavior. |
+| 4 | **Definition of Done** | [construction-focused-sdlc-framework.md](./02-engineering/construction-focused-sdlc-framework.md) | Applies to every iteration, sprint, and phase transition. |
+| 5 | **Repository Taxonomy** | [repository-taxonomy.md](../standards/repository-taxonomy.md) | Naming, structure, and taxonomy rules apply from repository creation. |
 
 ---
 
 ## 8. Consolidated Compliance Matrix
 
-The following matrix provides a one-page view of artifact density per phase. An artifact marked **R** is Required; **O** is Optional.
+The following matrix provides a one-page view of artifact density per phase. An artifact marked **R** is Required; **O** is Optional; **C** is Conditional.
 
 | Artifact | Ph 1 | Ph 2 | Ph 3 | Ph 4 | Ph 5 |
 |---|:---:|:---:|:---:|:---:|:---:|
+| PRD | **R** | — | — | — | — |
 | Architectural Directives | **R** | — | — | — | — |
 | Agnostic Baseline | **R** | **R** | **R** | **R** | **R** |
 | Repository Taxonomy | **R** | **R** | **R** | **R** | **R** |
 | ADR-0047 — Modular Monolith | **R** | O | — | — | — |
 | Engineering Manifesto | **R** | **R** | **R** | **R** | **R** |
-| Evolutionary Strategy Roadmap | O | O | — | — | — |
-| Maturity Matrix | O | — | — | — | — |
+| Functional Story Template / Standard | O | **R** | — | — | — |
 | Reference Blueprint | — | **R** | **R** | — | — |
 | Authoritative Tech Stack | — | **R** | **R** | — | — |
 | ADR Decision Matrix | — | **R** | **R** | — | — |
 | ADR-0002 — Hexagonal Architecture | — | **R** | **R** | — | — |
-| ADR-0010 — Multi-Tenancy | — | O* | **R*** | **R*** | — |
+| ADR-0010 — Multi-Tenancy | — | C | C | C | — |
 | ADR-0018 — Testing Pyramid | — | **R** | **R** | **R** | — |
-| ADR-0031 — Schema-per-Context | — | **R** | **R** | — | — |
-| ADR-0032 — Protocol Selection | — | **R** | **R** | — | — |
-| ADR-0056 — Naming Conventions | — | **R** | **R** | — | — |
-| Functional Story Writing Standard | O | **R** | — | — | — |
-| SDLC Documentation Best Practices | — | **R** | **R** | — | **R** |
-| Simplicity Checklist Phase 1 | — | **R** | — | — | — |
-| Canonical Patterns | — | O | **R** | — | — |
+| SDLC Quality Gates | — | — | **R** | **R** | **R** |
+| Technical Story Template | — | — | **R** | — | — |
 | ADR-0005 — CI/CD Pipeline | — | — | **R** | **R** | **R** |
-| ADR-0049 — Naming Semantics | — | — | **R** | — | — |
 | ADR-0050 — GitFlow Branching | — | — | **R** | — | — |
-| ADR-0019 — Tactical DDD | — | — | O | — | — |
-| ADR-0033 — Transactional Outbox | — | O | O | — | — |
-| ADR-0034 — CQRS | — | O | O | — | — |
-| ADR-0035 — Distributed Sagas | — | O | O | — | — |
-| Contract Testing Guideline | — | — | O | **R** | — |
-| ADR-0052 — Unit Testing Isolation | — | — | **R** | **R** | — |
-| ADR-0053 — Integration and E2E | — | — | **R** | **R** | — |
-| SDLC Framework §3.2 Quality Metrics | — | — | — | **R** | — |
-| ADR-0037 — Performance and Chaos | — | — | — | O | — |
-| Vendor Risk Assessment | — | — | O | O | — |
-| ADR-0007 — OTel and Loki | — | O | **R** | O | **R** |
-| ADR-0013 — Cloud Topology and DR | — | O | — | — | **R** |
-| ADR-0046 — Dapr Observability | — | — | — | — | O |
-| ADR-0011 — Resiliency Patterns | — | — | — | — | O |
-| ADR-0017 — Feature Flagging | — | — | O | — | O |
-| ADR-0028 — Self-Hosted OSS Infra | — | O | — | — | O |
+| Test Summary Report | — | — | — | **R** | — |
+| Release Notes | — | — | — | — | **R** |
 | Operations Hub | — | — | — | — | **R** |
 | Infrastructure Hub | — | — | — | — | **R** |
-| AI Architecture Assistant | — | — | O | — | — |
-| UMS Technical Overview | O | O | O | O | — |
+| UMS Technical Overview / Reference | O | O | O | O | — |
 
-> (*) ADR-0010 is Optional in Phase 2 but becomes Required in Phases 3–4 whenever the product is multi-tenant. Single-tenant products may defer.
+> ADR-0010 is conditional: required whenever the product is multi-tenant. Single-tenant products may defer.
 
 ---
 
@@ -295,11 +279,16 @@ The following matrix provides a one-page view of artifact density per phase. An 
 
 | Document | Purpose |
 |---|---|
-| [Construction-Focused SDLC Framework](./02-engineering/construction-focused-sdlc-framework.md) | The normative phase definitions and exit gate conditions that this mapping supplements. |
-| [SDLC Documentation Best Practices](./03-documentation/sdlc-documentation-best-practices.md) | Governs how artifacts produced at each phase must be written and versioned. |
+| [Corporate SDLC Governance Center](./README.md) | Main SDLC phase hub and navigation page. |
+| [Executive View for Technology Directors](./executive-view.md) | Director-level SDLC operating model. |
+| [SDLC Quality Gates](./quality-gates.md) | Canonical quality thresholds and waiver policy. |
+| [SDLC Responsibility Matrix](./responsibility-matrix.md) | Gate accountability and role expectations. |
+| [SDLC Traceability Model](./traceability-model.md) | End-to-end evidence chain from PRD to production. |
+| [Construction-Focused SDLC Framework](./02-engineering/construction-focused-sdlc-framework.md) | Phase definitions, construction loop, and DoD conditions. |
+| [SDLC Documentation Best Practices](./03-documentation/sdlc-documentation-best-practices.md) | How artifacts produced at each phase must be written and versioned. |
+| [Artifact Templates Hub](./04-artifact-templates/README.md) | Official blank templates and UMS worked examples. |
 | [Architecture Hub](../../architecture/README.md) | Entry point to the full ADR Registry, blueprints, and canonical patterns. |
-| [Evolith Compliance Baseline](../../../MASTER_INDEX.md#8-evolith-compliance-baseline) | The five mandatory artifacts in force across all phases. |
-| [Getting Started by Role](../../getting-started/README.md) | Role-specific reading paths that align with the phase where each role is most active. |
+| [Getting Started by Role](../../getting-started/README.md) | Role-specific reading paths that align with lifecycle phases. |
 
 ---
 

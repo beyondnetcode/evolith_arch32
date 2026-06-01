@@ -18,6 +18,15 @@ Las plantillas garantizan consistencia en todos los repositorios satélite. Los 
 
 ---
 
+## Materiales de Trabajo Descargables
+
+| Material | Formato | Cuándo usarlo |
+|---|---|---|
+| [Presentación Ejecutiva SDLC Evolith](../assets/evolith_product_vision_sdlc_executive_v2.pptx) | PPTX | Usar en briefings ejecutivos, alineamiento con líderes de tecnología y sesiones comerciales/de visión de producto. |
+| [Workbook SDLC Workshop y Scorecard](../assets/evolith_sdlc_workshop_scorecard_workbook_bilingual.xlsx) | XLSX | Usar en workshops hands-on con clientes para definir fases aplicables, asignaciones nominales RACI, readiness de artefactos, gates de calidad, riesgos, decisiones y seguimiento del scorecard. |
+
+---
+
 ## Catálogo de Plantillas por Fase SDLC
 
 | Fase | Artefacto | Objetivo | Perfiles recomendados |

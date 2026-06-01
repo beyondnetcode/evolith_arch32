@@ -27,6 +27,15 @@ Ninguna fase del ciclo de vida debe avanzar solo por acuerdo verbal. Cada gate r
 
 ---
 
+## Materiales Ejecutivos Descargables
+
+| Material | Formato | Propósito |
+|---|---|---|
+| [Presentación Ejecutiva SDLC Evolith](./assets/evolith_product_vision_sdlc_executive_v2.pptx) | PPTX | Visión ejecutiva del producto, flujo SDLC, artefactos clave, proceso y modelo de seguimiento. |
+| [Workbook SDLC Workshop y Scorecard](./assets/evolith_sdlc_workshop_scorecard_workbook_bilingual.xlsx) | XLSX | Workbook bilingüe hands-on para definir fases aplicables, asignación nominal RACI, readiness de artefactos, gates de calidad, riesgos, decisiones y seguimiento ejecutivo del scorecard. |
+
+---
+
 ## Modelo Operativo SDLC
 
 ```mermaid

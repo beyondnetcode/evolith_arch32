@@ -27,12 +27,16 @@ Ninguna fase del ciclo de vida debe avanzar solo por acuerdo verbal. Cada gate r
 
 ---
 
-## Materiales Ejecutivos Descargables
+## 📥 Centro de Descargas — Materiales Ejecutivos SDLC
 
-| Material | Formato | Propósito |
+> **Empieza aquí para briefings ejecutivos y workshops con clientes.** Estos son los materiales oficiales descargables para presentar la visión SDLC de Evolith y ejecutar sesiones hands-on de definición SDLC/RACI/Scorecard.
+
+| Descarga | Formato | Mejor uso |
 |---|---|---|
-| [Presentación Ejecutiva SDLC Evolith](./assets/evolith_product_vision_sdlc_executive_v2.pptx) | PPTX | Visión ejecutiva del producto, flujo SDLC, artefactos clave, proceso y modelo de seguimiento. |
-| [Workbook SDLC Workshop y Scorecard](./assets/evolith_sdlc_workshop_scorecard_workbook_bilingual.xlsx) | XLSX | Workbook bilingüe hands-on para definir fases aplicables, asignación nominal RACI, readiness de artefactos, gates de calidad, riesgos, decisiones y seguimiento ejecutivo del scorecard. |
+| **[⬇️ Descargar Presentación Ejecutiva SDLC Evolith](./assets/evolith_product_vision_sdlc_executive_v2.pptx)** | PPTX | Visión ejecutiva del producto, flujo SDLC, artefactos clave, explicación del proceso y modelo de seguimiento para líderes de tecnología. |
+| **[⬇️ Descargar Workbook SDLC Workshop y Scorecard](./assets/evolith_sdlc_workshop_scorecard_workbook_bilingual.xlsx)** | XLSX | Workbook bilingüe hands-on para definir fases aplicables, asignaciones nominales RACI, readiness de artefactos, gates de calidad, riesgos, decisiones y seguimiento ejecutivo del scorecard. |
+
+> El workbook está diseñado para usarse durante mesas de trabajo facilitadas con equipos cliente. La presentación está diseñada para alineamiento ejecutivo, visión de producto y comunicación con líderes de tecnología.
 
 ---
 

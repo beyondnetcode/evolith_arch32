@@ -27,6 +27,15 @@ No lifecycle phase should advance based on verbal agreement alone. Each gate req
 
 ---
 
+## Downloadable Executive Materials
+
+| Material | Format | Purpose |
+|---|---|---|
+| [Evolith Executive SDLC Presentation](./assets/evolith_product_vision_sdlc_executive_v2.pptx) | PPTX | Executive product vision, SDLC flow, key artifacts, process, and tracking model. |
+| [Evolith SDLC Workshop and Scorecard Workbook](./assets/evolith_sdlc_workshop_scorecard_workbook_bilingual.xlsx) | XLSX | Bilingual hands-on workbook to define applicable phases, nominal RACI assignments, artifact readiness, quality gates, risks, decisions, and executive scorecard tracking. |
+
+---
+
 ## SDLC Operating Model
 
 ```mermaid

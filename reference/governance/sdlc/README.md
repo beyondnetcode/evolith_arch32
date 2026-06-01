@@ -27,12 +27,16 @@ No lifecycle phase should advance based on verbal agreement alone. Each gate req
 
 ---
 
-## Downloadable Executive Materials
+## 📥 Download Center — Executive SDLC Materials
 
-| Material | Format | Purpose |
+> **Start here for executive briefings and client workshops.** These are the official downloadable materials for presenting the Evolith SDLC vision and running hands-on SDLC/RACI/Scorecard definition sessions.
+
+| Download | Format | Best used for |
 |---|---|---|
-| [Evolith Executive SDLC Presentation](./assets/evolith_product_vision_sdlc_executive_v2.pptx) | PPTX | Executive product vision, SDLC flow, key artifacts, process, and tracking model. |
-| [Evolith SDLC Workshop and Scorecard Workbook](./assets/evolith_sdlc_workshop_scorecard_workbook_bilingual.xlsx) | XLSX | Bilingual hands-on workbook to define applicable phases, nominal RACI assignments, artifact readiness, quality gates, risks, decisions, and executive scorecard tracking. |
+| **[⬇️ Download Evolith Executive SDLC Presentation](./assets/evolith_product_vision_sdlc_executive_v2.pptx)** | PPTX | Executive product vision, SDLC flow, key artifacts, process explanation, and tracking model for technology leaders. |
+| **[⬇️ Download Evolith SDLC Workshop and Scorecard Workbook](./assets/evolith_sdlc_workshop_scorecard_workbook_bilingual.xlsx)** | XLSX | Bilingual hands-on workbook to define applicable phases, nominal RACI assignments, artifact readiness, quality gates, risks, decisions, and executive scorecard tracking. |
+
+> The workbook is intended to be used during facilitated working sessions with customer teams. The presentation is intended for executive alignment, product vision, and technology leadership communication.
 
 ---
 

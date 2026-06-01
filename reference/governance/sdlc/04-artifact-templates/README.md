@@ -18,6 +18,15 @@ Templates enforce consistency across all satellite repositories. Satellite teams
 
 ---
 
+## Downloadable Working Materials
+
+| Material | Format | When to use it |
+|---|---|---|
+| [Evolith Executive SDLC Presentation](../assets/evolith_product_vision_sdlc_executive_v2.pptx) | PPTX | Use during executive briefings, technology leadership alignment, and commercial/product vision sessions. |
+| [Evolith SDLC Workshop and Scorecard Workbook](../assets/evolith_sdlc_workshop_scorecard_workbook_bilingual.xlsx) | XLSX | Use during hands-on client workshops to define applicable phases, nominal RACI assignments, artifact readiness, quality gates, risks, decisions, and scorecard follow-up. |
+
+---
+
 ## Template Catalog by SDLC Phase
 
 | Phase | Artifact | Objective | Recommended profiles |

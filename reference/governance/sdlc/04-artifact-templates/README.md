@@ -9,10 +9,13 @@
 
 ## Purpose
 
-This directory provides the official Evolith format templates for the artifacts required at each SDLC phase. Every template includes:
+This directory provides the official Evolith format templates for the artifacts required at each SDLC phase.
 
-1. **The canonical blank structure** — copy this as the starting point for every new artifact.
-2. **A worked example or usage guidance** — use it to calibrate the expected level of detail.
+Each artifact is now organized as a professional three-part documentation unit:
+
+1. **Artifact landing page** — explains purpose, usage rules, and navigation.
+2. **Markdown Source** — reusable canonical Markdown that teams copy into product or delivery repositories.
+3. **Rendered Example** — completed UMS example showing the expected level of detail.
 
 Templates enforce consistency across all satellite repositories. Satellite teams may extend a template with domain-specific fields but must not remove required sections.
 
@@ -27,27 +30,39 @@ Templates enforce consistency across all satellite repositories. Satellite teams
 
 ---
 
+## Template Structure
+
+| Directory / File Type | Purpose |
+|---|---|
+| `*-template.md` | Artifact landing page. Start here to understand when and how to use the artifact. |
+| `source/*-template-source.md` | Copy-ready Markdown source for creating a new artifact. |
+| `examples/*-example-ums.md` | Rendered UMS example for understanding the expected completed artifact. |
+| `*.es.md` | Spanish version following the same structure. |
+
+---
+
 ## Template Catalog by SDLC Phase
 
-| Phase | Artifact | Objective | Recommended profiles |
-|---|---|---|---|
-| **Phase 1 — Conception** | [PRD — Product Requirements Document](./prd-template.md) | Captures product scope, personas, OKRs, constraints, and non-goals. Required before any architecture or design work begins. | Product Owner, Executive Sponsor |
-| **Phase 2 — Design** | [ADR — Architecture Decision Record](./adr-template.md) | Records a single architectural decision with context, options evaluated, chosen option, and consequences. One ADR per significant decision. | Software Architect, Principal / Staff Engineer |
-| **Phase 2 — Design** | [Functional Story — Business Behavior Specification](./functional-story-template.md) | Describes a user-facing capability in business language: actors, flows, business rules, and acceptance criteria. The contract between Product and Engineering. Complements the [Functional Story Writing Standard](../03-documentation/functional-story-writing-standard.md). | Product Owner, Business Analyst |
-| **Phase 3 — Construction** | [Technical Story — Engineering Implementation Work Item](./technical-story-template.md) | Breaks a Functional Story into a concrete engineering task with implementation steps, technical acceptance criteria, and a DoD checklist. | Backend Developer, Frontend Developer, Tech Lead |
-| **Phase 4 — Validation** | [Test Summary Report — Quality Gate Validation Record](./test-summary-report-template.md) | Aggregates test results and confirms all mandatory quality thresholds are met. Required before the Release Candidate is stamped. | QA / SDET, Tech Lead |
-| **Phase 5 — Delivery** | [Release Notes — Production Deployment Record](./release-notes-template.md) | Formal deployment record with features, breaking changes, deployment steps, rollback procedure, and observability checklist. Required before Production Live is declared. | DevOps / SRE, Tech Lead |
-| **Cross-phase / Release Governance** | [SDLC Executive Scorecard](./executive-scorecard-template.md) | One-page leadership control panel summarizing phase readiness, artifact evidence, RACI ownership, quality gates, risks, decisions, and go/no-go status. Required for executive-visible, production-impacting, customer-facing, regulated, or multi-team releases. | Technology Director, Executive Sponsor, Delivery Owner, Architecture Board, QA Lead, SRE Lead |
+| Phase | Artifact | Landing Page | Markdown Source | Rendered Example | Recommended profiles |
+|---|---|---|---|---|---|
+| **Phase 1 — Conception** | PRD — Product Requirements Document | [Open](./prd-template.md) | [Source](./source/prd-template-source.md) | [Example](./examples/prd-example-ums.md) | Product Owner, Executive Sponsor |
+| **Phase 2 — Design** | ADR — Architecture Decision Record | [Open](./adr-template.md) | [Source](./source/adr-template-source.md) | [Example](./examples/adr-example-ums.md) | Software Architect, Principal / Staff Engineer |
+| **Phase 2 — Design** | Functional Story | [Open](./functional-story-template.md) | [Source](./source/functional-story-template-source.md) | [Example](./examples/functional-story-example-ums.md) | Product Owner, Business Analyst |
+| **Phase 3 — Construction** | Technical Story | [Open](./technical-story-template.md) | [Source](./source/technical-story-template-source.md) | [Example](./examples/technical-story-example-ums.md) | Backend Developer, Frontend Developer, Tech Lead |
+| **Phase 4 — Validation** | Test Summary Report | [Open](./test-summary-report-template.md) | [Source](./source/test-summary-report-template-source.md) | [Example](./examples/test-summary-report-example-ums.md) | QA / SDET, Tech Lead |
+| **Phase 5 — Delivery** | Release Notes | [Open](./release-notes-template.md) | [Source](./source/release-notes-template-source.md) | [Example](./examples/release-notes-example-ums.md) | DevOps / SRE, Tech Lead |
+| **Cross-phase / Release Governance** | SDLC Executive Scorecard | [Open](./executive-scorecard-template.md) | [Source](./source/executive-scorecard-template-source.md) | [Example](./examples/executive-scorecard-example-ums.md) | Technology Director, Executive Sponsor, Delivery Owner, Architecture Board, QA Lead, SRE Lead |
 
 ---
 
 ## How to Use a Template
 
-1. Copy the blank template section verbatim into your target artifact file.
-2. Replace every `[PLACEHOLDER]` with your actual content.
-3. Delete placeholder instructions (lines in italics or brackets) before publication.
-4. Refer to the worked example or usage guidance in the same file to calibrate the expected depth.
-5. If a section is not applicable, write `N/A — [brief reason]` rather than deleting the heading, so reviewers can see the decision was deliberate.
+1. Open the artifact landing page to understand purpose, gate relevance, and usage rules.
+2. Open the Markdown Source file when you need to create a new artifact.
+3. Copy the source into your product, release, or delivery repository.
+4. Replace every `[PLACEHOLDER]` with actual content.
+5. Review the rendered UMS example to calibrate expected depth and tone.
+6. If a section is not applicable, write `N/A — [brief reason]` rather than deleting the heading, so reviewers can see the decision was deliberate.
 
 ---
 

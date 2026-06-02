@@ -9,11 +9,7 @@ Este documento establece la taxonomia oficial y los limites de autoridad de este
 ```text
 / (raiz del repositorio)
  README.md                     # Portal publico y navegacion inicial
- README.es.md                  # Portal publico en espanol y navegacion inicial
  MASTER_INDEX.md               # Ruteo exhaustivo por rol e intencion
- MASTER_INDEX.es.md            # Ruteo exhaustivo en espanol por rol e intencion
- LICENSE                       # Licencia Dual de BeyondNet Tech
- NOTICE                        # Avisos de atribucion y propiedad intelectual
  .bmad-core/                   # Implementacion opcional del metodo spec-driven AI-DD
  .github/                      # Workflows CI y plantillas de colaboracion
  .harness/                     # Reglas de validacion documental y de agentes
@@ -21,9 +17,9 @@ Este documento establece la taxonomia oficial y los limites de autoridad de este
    getting-started/            # Rutas cortas de lectura
    architecture/               # Autoridad arquitectonica y guia de implementacion
      README.es.md              # Hub de arquitectura y orden de lectura
-     blueprints/               # Baselines, topologia y perfiles de stack
-     adrs/                     # Registros de decision y matriz de decisiones
-     canonical-patterns/       # Patrones por runtime mapeados a ADRs
+     blueprints/            # Baselines, topologia y perfiles de stack
+     adrs/                  # Registros de decision y matriz de decisiones
+     canonical-patterns/    # Patrones por runtime mapeados a ADRs
    governance/                 # Politicas, SDLC, terminologia y onboarding
    knowledge/                  # Evidencia aplicada, investigacion y aprendizaje
      demo/                     # Limite de referencia UMS y registro de migracion
@@ -70,20 +66,11 @@ Reglas obligatorias de interpretacion:
 
 Este repositorio es propietario de la linea base arquitectonica y el mecanismo de promocion. Un repositorio de producto es propietario de su dominio, codigo, restricciones operativas y decisiones locales. UMS demuestra esa relacion como modelo aplicado oficial y puede aportar decisiones candidatas a este corpus.
 
-## 6. Archivos Legales y Propiedad Intelectual
-
-Los archivos legales de la raiz definen la base de licenciamiento y atribucion del repositorio:
-
-- `LICENSE` define la Licencia Dual de BeyondNet Tech y las restricciones por defecto para activos que no esten explicitamente marcados como componentes open source.
-- `NOTICE` define avisos de atribucion y propiedad intelectual que deben preservarse donde lo requiera la licencia aplicable.
-
-Evolith ARCH32 es un framework arquitectonico y corpus de referencia empresarial propiedad de BeyondNet Tech / BeyondNet Code. UMS es una aplicacion real corporativa/empresarial de referencia construida sobre Evolith ARCH32 y debe tratarse como ejemplo aplicado, no como la totalidad de Evolith.
-
-## 7. Politica de la Raiz del Repositorio
+## 6. Politica de la Raiz del Repositorio
 
 La raiz debe mantenerse pequena y navegable. Las categorias permitidas son:
 
-- Archivos publicos de navegacion y legales: `README.md`, `README.es.md`, `MASTER_INDEX.md`, `MASTER_INDEX.es.md`, `LICENSE` y `NOTICE`.
+- Archivos publicos de navegacion y legales: `README.md`, `README.es.md`, `MASTER_INDEX.md`, `MASTER_INDEX.es.md` y `LICENSE`.
 - Dot-folders de tooling y plataforma: `.github/`, `.harness/`, `.bmad-core/` y configuracion de editores o automatizacion.
 - `reference/` para el corpus documental y arquitectonico.
 

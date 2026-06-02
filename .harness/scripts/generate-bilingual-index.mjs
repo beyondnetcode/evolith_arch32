@@ -57,7 +57,7 @@ function generateIndex(dir, pairs, language) {
     index += `| EN | ES | Status |\n`;
     index += `|----|----|--------|\n`;
 
-    for (const p of grouped[subDir].sort((a, b) => path.basename(a.en)..localeCompare(path.basename(b.en)))) {
+    for (const p of grouped[subDir].sort((a, b) => path.basename(a.en).localeCompare(path.basename(b.en)))) {
       const enName = path.basename(p.en);
       const esName = path.basename(p.es);
       const enTitle = extractTitle(fs.readFileSync(p.en, "utf8")) || enName;
@@ -66,7 +66,7 @@ function generateIndex(dir, pairs, language) {
       const enRel = path.relative(dir, p.en);
       const esRel = path.relative(dir, p.es);
 
-      index += `| [${enName}](${enRel}) | [${esName}](${esRel}) | ✅ |\n`;
+      index += `| [${enName}](${enRel}) | [${esName}](${esRel}) | OK |\n`;
     }
 
     index += "\n";
@@ -132,6 +132,6 @@ for (const area of Object.keys(areas).sort()) {
   }
 }
 
-console.log("\n✅ All indexes generated!");
+console.log("\nOK All indexes generated!");
 console.log("\nNote: Indexes are auto-generated. To update, run:");
 console.log("  node .harness/scripts/generate-bilingual-index.mjs")

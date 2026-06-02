@@ -1,19 +1,12 @@
-# Hub de Navegación Evolith
+# Índice Bilingüe: navigation
 
-> **Navegación bilingüe:** [English](./README.md)
-> **Portal raíz:** [README](../../README.es.md)
+> Índice auto-generado de pares EN/ES. No editar manualmente.
 
-Este directorio centraliza los documentos de navegación de nivel repositorio.
+## 
 
-El objetivo es reducir el ruido visible en la raíz del repositorio y mantener una experiencia estable para usuarios que ya tengan enlaces guardados.
+| EN | ES | Status |
+|----|----|--------|
+| [DOCUMENTATION_VERSIONS.md](DOCUMENTATION_VERSIONS.md) | [DOCUMENTATION_VERSIONS.es.md](DOCUMENTATION_VERSIONS.es.md) | OK |
+| [MASTER_INDEX.md](MASTER_INDEX.md) | [MASTER_INDEX.es.md](MASTER_INDEX.es.md) | OK |
+| [README.md](README.md) | [README.es.md](README.es.md) | OK |
 
-## Documentos
-
-| Documento | Propósito |
-|---|---|
-| [Índice Maestro](./MASTER_INDEX.es.md) | Índice completo de navegación del repositorio. |
-| [Registro de Versiones de Documentación](./DOCUMENTATION_VERSIONS.es.md) | Historial y política de releases documentales. |
-
-## Rutas de compatibilidad
-
-Los archivos raíz equivalentes permanecen como páginas puente ligeras hacia estas rutas nuevas.

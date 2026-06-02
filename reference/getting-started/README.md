@@ -1,26 +1,10 @@
-# Reader Paths
+# Bilingual Index: getting-started
 
-> Bilingual navigation: [Español](./README.es.md)
+> Auto-generated index of EN/ES pairs. Do not edit manually.
 
-Use this guide when you are new to the repository and need a short path by role. The master index remains the full navigation surface; this page is the lightweight entry point.
+## 
 
-## Choose Your Path
+| EN | ES | Status |
+|----|----|--------|
+| [README.md](README.md) | [README.es.md](README.es.md) | OK |
 
-| Role | Start here | Then read | Outcome |
-|---|---|---|---|
-| Architect | [Architecture Hub](../architecture/README.md) | [ADR Matrix](../architecture/adrs/adr-matrix.md) | Understand the architecture model and decision map |
-| Developer | [Engineering Standards](../governance/standards/engineering/engineering-manifesto.md) | [UMS Reference Model](../knowledge/demo/ums-reference-model.md) | Know what is universal and how it appears in an enterprise product |
-| SRE / DevOps | [Operations Hub](../operations/README.md) | [Infrastructure Hub](../infrastructure/README.md) | Understand local runtime and observability assets |
-| Product / Functional | [UMS Reference Model](../knowledge/demo/ums-reference-model.md) | [UMS Documentation Index](https://github.com/beyondnetcode/ums/blob/main/docs/MASTER_INDEX.md) | Understand the applied product scope and its documentation |
-| AI Contributor | [AI-Augmented Standards](../governance/standards/ai-augmented/README.md) | [AGENTS.md](../../AGENTS.md) | Understand agent rules and optional AI architecture |
-
-## Recommended First Session
-
-1. Read the [main README](../../README.md).
-2. Open the [Global Master Index](../../MASTER_INDEX.md).
-3. Read the [Glossary](../governance/glossary.md).
-4. Use the role path above.
-5. Validate decisions through the [ADR Matrix](../architecture/adrs/adr-matrix.md).
-
----
-[Back to Reference Hub](../README.md)

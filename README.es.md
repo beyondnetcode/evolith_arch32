@@ -2,7 +2,7 @@
 
 [![Status](https://img.shields.io/badge/Status-Activo-brightgreen?style=for-the-badge)]()
 [![Method](https://img.shields.io/badge/Metodo-Spec--driven_AI--DD-blueviolet?style=for-the-badge)]()
-[![License](https://img.shields.io/badge/License-Dual%20License-informational?style=for-the-badge)](./LICENSE)
+[![License](https://img.shields.io/badge/License-MIT-informational?style=for-the-badge)]()
 
 **Evolith es el upstream arquitectonico corporativo para repositorios de producto.** Define estandares reutilizables, reglas de gobierno, ADRs, patrones y guias operativas que los productos satelite heredan y especializan.
 
@@ -11,12 +11,6 @@ Evolith resuelve un problema empresarial comun: los equipos necesitan un lugar c
 > Separar conceptualmente antes de separar fisicamente.
 
 Idioma: [English](./README.md) | [Espanol](./README.es.md)
-
----
-
-## Licencia
-
-Licencia dual. Ver [LICENSE](./LICENSE) y [NOTICE](./NOTICE).
 
 ---
 
@@ -80,6 +74,12 @@ Antes de contribuir, lee:
 - [Guia de Herencia para Repositorios Hijos](./reference/governance/standards/onboarding/child-repository-inheritance-guide.es.md) — Como los productos heredan de Evolith
 
 Navegacion completa: [reference/navigation/MASTER_INDEX.es.md](./reference/navigation/MASTER_INDEX.es.md)
+
+---
+
+## Licencia
+
+Publicado bajo la [Licencia MIT](./LICENSE).
 
 ---
 

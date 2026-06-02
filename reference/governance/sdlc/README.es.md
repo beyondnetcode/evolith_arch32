@@ -2,7 +2,7 @@
 
 > **Navegación bilingüe:** [English Version](./README.md)
 
-Este centro es el hub de gobernanza autorizado del Ciclo de Vida de Desarrollo de Software dentro de Evolith. Define requisitos, fases, gates, artefactos, responsabilidades, trazabilidad y criterios de calidad para toda entrega de software en la organización.
+Este centro es el hub de gobernanza autorizado del Ciclo de Vida de Desarrollo de Software dentro de Evolith. Define requisitos, fases, gates, artefactos, responsabilidades, trazabilidad y criterios de seguimiento para productos construidos desde esta plataforma de referencia.
 
 ---
 
@@ -10,7 +10,7 @@ Este centro es el hub de gobernanza autorizado del Ciclo de Vida de Desarrollo d
 
 Para Directores de Tecnología, el SDLC de Evolith no debe entenderse como un proceso documental, sino como un sistema de control de delivery.
 
-Su propósito es asegurar que el trabajo financiado sea trazable, que el riesgo arquitectónico se resuelva antes de construir, que los gates de calidad sean objetivos y que la preparación operativa sea verificable antes de ir a producción.
+Su propósito es asegurar que el trabajo financiado sea trazable, que el riesgo arquitectónico se resuelva antes de construir, que los gates de calidad sean objetivos y que la preparación operativa pueda demostrarse antes del despliegue.
 
 | Necesidad ejecutiva | Ir a |
 |---|---|
@@ -27,34 +27,21 @@ Ninguna fase del ciclo de vida debe avanzar solo por acuerdo verbal. Cada gate r
 
 ---
 
-## 📥 Centro de Materiales — Evolith SDLC
+## Centro de Descargas — Materiales Ejecutivos SDLC
 
 > [!IMPORTANT]
-> Estos materiales están separados por propósito para evitar mezclar el marco corporativo Evolith con ejemplos de aplicación específicos.
+> **Empieza aquí para briefings ejecutivos y workshops con clientes.** Estos materiales v3 son el paquete oficial simplificado para explicar cómo adoptar Evolith SDLC, seleccionar fases aplicables, asignar responsables por hito y dar seguimiento con un scorecard ligero.
 >
-> **Evolith SDLC** es el marco corporativo reutilizable.  
-> **UMS** es un ejemplo aplicado para mostrar cómo implementar el marco en un sistema real.
+> Usa los enlaces siguientes para descargar los archivos directamente.
 
-### 1. Material ejecutivo corporativo
+| Descarga | Formato | Mejor uso |
+|---|---|---|
+| **[Descargar Presentación Ejecutiva SDLC Evolith v4](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith-sdlc-executive-deck.pptx)** | PPTX | Explicación ejecutiva sobre adopción Evolith SDLC, fases, artefactos y gobierno. |
+| **[Descargar Workbook SDLC Implementación v4](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith-sdlc-implementation-workbook.docx)** | DOCX | Workbook práctico para definir nivel de adopción, fases aplicables, RACI y seguimiento. |
+| **[Descargar Presentación Ejecutiva Caso UMS](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/ums-evolith-reference-executive-deck.pptx)** | PPTX | Vista ejecutiva de UMS como aplicación de referencia construida sobre Evolith. |
+| **[Descargar Workbook Aplicación UMS](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/ums-evolith-application-workbook.docx)** | DOCX | Guía práctica para iniciar una nueva aplicación empresarial usando UMS como referencia. |
 
-| Material | Formato | Mejor uso |
-|---|---:|---|
-| **[⬇️ Presentación Ejecutiva — Qué es Evolith y su propuesta SDLC](./assets/evolith-sdlc-executive-overview.es.pptx)** | PPTX | Briefing ejecutivo para dirección, CTOs, arquitectura y líderes de delivery |
-
-### 2. Material de adopción corporativa
-
-| Material | Formato | Mejor uso |
-|---|---:|---|
-| **[⬇️ Workbook — Implementación Corporativa de Evolith SDLC](./assets/evolith-corporate-sdlc-implementation-workbook.es.xlsx)** | XLSX | Diagnóstico, adopción corporativa, RACI, gates, artefactos, roadmap y scorecard |
-
-### 3. Material de ejemplo aplicado
-
-| Material | Formato | Mejor uso |
-|---|---:|---|
-| **[⬇️ Presentación — Aplicación de Evolith SDLC en UMS](./assets/evolith-sdlc-ums-application-example.es.pptx)** | PPTX | Explicar cómo aplicar Evolith SDLC usando UMS como caso práctico |
-| **[⬇️ Workbook — Nuevo Sistema usando Evolith, ejemplo UMS](./assets/evolith-new-system-implementation-workbook-ums-example.es.xlsx)** | XLSX | Guiar la definición e implementación de un nuevo sistema tomando UMS como ejemplo |
-
-> UMS es un ejemplo aplicado. Evolith SDLC es el marco corporativo reutilizable.
+> El workbook está diseñado para mesas de trabajo facilitadas con equipos cliente. La presentación está diseñada para alineamiento ejecutivo, visión de producto y comunicación con líderes de tecnología.
 
 ---
 
@@ -89,21 +76,90 @@ Para MVPs pequeños, la cadena mínima obligatoria de artefactos es:
 PRD -> Historia Funcional -> Historia Técnica -> Test Summary Report -> Release Notes
 ```
 
-Un ADR es obligatorio cuando el trabajo introduce o cambia límites arquitectónicos, selección tecnológica, modelo de seguridad, modelo de multi-tenancy, estrategia de persistencia, estrategia de API, o estrategia de observabilidad.
+Un ADR es obligatorio cuando el trabajo introduce o cambia límites arquitectónicos, selección tecnológica, modelo de seguridad, modelo de multi-tenancy, estrategia de persistencia, estrategia de contratos API, topología de despliegue, topología de observabilidad o cualquier excepción a un estándar Evolith existente.
 
 La matriz completa de cumplimiento aplica cuando el producto alcanza escala, ambientes regulados, multi-tenancy, APIs públicas, flujos críticos o dependencias entre equipos.
 
 ---
 
-## Fases y Artefactos Clave
+## Fase 01 — Concepción y Descubrimiento
 
-| Fase | Gate | Artefactos principales |
+> **Objetivo:** Establecer un entendimiento compartido de lo que debe lograr el producto y por qué antes de que comience cualquier diseño. Las salidas de esta fase autorizan la entrada al trabajo de arquitectura y diseño.
+> **Gate de salida:** Aprobación de Negocio
+> **Audiencia principal:** Product Owner, Sponsor Ejecutivo, Arquitecto de Software
+
+Definición de alcance, perfiles de usuario, mapeo de OKRs y alineación de restricciones arquitectónicas.
+
+| Artefacto | Objetivo y cuándo usarlo | Perfiles recomendados |
 |---|---|---|
-| Fase 1 — Concepción y Descubrimiento | Aprobación de Negocio | [PRD](./04-artifact-templates/prd-template.es.md), [Mapeo SDLC–Artefactos](./sdlc-evolith-artifact-mapping.es.md) |
-| Fase 2 — Diseño y Arquitectura | Baseline de Diseño | [ADR](./04-artifact-templates/adr-template.es.md), [Historia Funcional](./04-artifact-templates/functional-story-template.es.md), [Estándar de Escritura](./03-documentation/functional-story-writing-standard.es.md) |
-| Fase 3 — Construcción | Build Exitoso | [Historia Técnica](./04-artifact-templates/technical-story-template.es.md), [Buenas Prácticas de Documentación](./03-documentation/sdlc-documentation-best-practices.es.md), [Gates de Calidad](./quality-gates.es.md) |
-| Fase 4 — Validación y QA | RC Sellado | [Test Summary Report](./04-artifact-templates/test-summary-report-template.es.md), [Gates de Calidad](./quality-gates.es.md) |
-| Fase 5 — Entrega y Operaciones | Producción Activa | [Release Notes](./04-artifact-templates/release-notes-template.es.md), checklist de observabilidad y rollback |
+| [PRD — Documento de Requisitos de Producto](./04-artifact-templates/prd-template.es.md) | Captura el alcance completo del producto. Requerido antes de iniciar arquitectura. | Product Owner, Sponsor Ejecutivo |
+| [Mapeo SDLC–Artefactos — Fase 1](./sdlc-evolith-artifact-mapping.es.md#2-fase-1-concepción-y-descubrimiento) | Tabla de referencia de artefactos requeridos y opcionales. | Product Owner, Arquitecto |
+
+---
+
+## Fase 02 — Diseño y Arquitectura
+
+> **Objetivo:** Producir decisiones de diseño verificables y trazables.
+> **Gate de salida:** Baseline de Diseño Aprobado
+> **Audiencia principal:** Arquitecto, Principal Engineer, PO, QA
+
+Selección de patrones, ADRs, bounded contexts, contratos de API e historias funcionales.
+
+| Artefacto | Objetivo y cuándo usarlo | Perfiles recomendados |
+|---|---|---|
+| [Framework SDLC Orientado a Construcción](./02-engineering/construction-focused-sdlc-framework.es.md) | Estándar normativo que gobierna el progreso. | Todos los ingenieros |
+| [ADR — Registro de Decisión Arquitectónica](./04-artifact-templates/adr-template.es.md) | Captura una decisión arquitectónica significativa. | Arquitecto |
+| [Historia Funcional](./04-artifact-templates/functional-story-template.es.md) | Describe una capacidad orientada al usuario en lenguaje de negocio. | PO, BA |
+| [Estándar de Escritura de Historias Funcionales](./03-documentation/functional-story-writing-standard.es.md) | Reglas normativas para estructurar historias. | PO, BA, QA |
+| [Mapeo SDLC–Artefactos — Fase 2](./sdlc-evolith-artifact-mapping.es.md#3-fase-2-diseño-y-arquitectura) | Tabla de referencia para esta fase. | Arquitecto, Revisor de Gobierno |
+
+---
+
+## Fase 03 — Construcción
+
+> **Objetivo:** Traducir decisiones en software funcional y documentado.
+> **Gate de salida:** Build Exitoso
+> **Audiencia principal:** Desarrolladores, Tech Lead, QA, DevOps
+
+Código fuente, pruebas automatizadas, CI/CD y Definition of Done.
+
+| Artefacto | Objetivo y cuándo usarlo | Perfiles recomendados |
+|---|---|---|
+| [Historia Técnica](./04-artifact-templates/technical-story-template.es.md) | Desglosa una Historia Funcional en tareas técnicas concretas. | Desarrolladores, Tech Lead |
+| [Buenas Prácticas de Documentación](./03-documentation/sdlc-documentation-best-practices.es.md) | Reglas de documentación como código. | Todos los ingenieros |
+| [Gates de Calidad SDLC](./quality-gates.es.md) | Umbrales canónicos para calidad. | Tech Lead, QA |
+| [Mapeo SDLC–Artefactos — Fase 3](./sdlc-evolith-artifact-mapping.es.md#4-fase-3-construcción) | Tabla de referencia para esta fase. | Tech Lead, QA |
+
+---
+
+## Fase 04 — Validación y QA
+
+> **Objetivo:** Verificar formalmente que el software cumple los criterios de aceptación.
+> **Gate de salida:** RC Sellado
+> **Audiencia principal:** QA, Tech Lead, PO, Seguridad
+
+Verificación de regresión, escaneo de seguridad, UAT.
+
+| Artefacto | Objetivo y cuándo usarlo | Perfiles recomendados |
+|---|---|---|
+| [Test Summary Report](./04-artifact-templates/test-summary-report-template.es.md) | Agrega resultados de pruebas y calidad. | QA, Tech Lead |
+| [Gates de Calidad SDLC](./quality-gates.es.md) | Umbrales canónicos. | QA, Seguridad |
+| [Mapeo SDLC–Artefactos — Fase 4](./sdlc-evolith-artifact-mapping.es.md#5-fase-4-validación-y-qa) | Tabla de referencia para esta fase. | QA, Tech Lead |
+
+---
+
+## Fase 05 — Entrega y Operaciones
+
+> **Objetivo:** Desplegar el RC a producción.
+> **Gate de salida:** Producción Activa
+> **Audiencia principal:** DevOps, Tech Lead, PO
+
+Despliegue a producción y validación de observabilidad.
+
+| Artefacto | Objetivo y cuándo usarlo | Perfiles recomendados |
+|---|---|---|
+| [Release Notes](./04-artifact-templates/release-notes-template.es.md) | Registro formal de despliegue. | DevOps, Tech Lead |
+| [Mapeo SDLC–Artefactos — Fase 5](./sdlc-evolith-artifact-mapping.es.md#6-fase-5-entrega-y-operaciones) | Tabla de referencia para esta fase. | DevOps |
 
 ---
 

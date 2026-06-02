@@ -21,15 +21,17 @@ Las plantillas garantizan consistencia en todos los repositorios satélite. Los 
 
 ---
 
-## 📥 Materiales de Trabajo Descargables
+## Materiales de Trabajo Descargables
 
 > [!IMPORTANT]
 > Usa estos materiales v3 para briefings ejecutivos y workshops simplificados de implementación SDLC.
 
 | Descarga | Formato | Cuándo usarlo |
 |---|---|---|
-| **[⬇️ Descargar Presentación Ejecutiva SDLC Evolith v3](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_sdlc_executive_simple_v3.pptx)** | PPTX | Usar en briefings ejecutivos, alineamiento con líderes de tecnología y sesiones comerciales/de visión de producto. |
-| **[⬇️ Descargar Workbook SDLC Workshop v3](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_sdlc_workshop_simple_v3_hitos.xlsx)** | XLSX | Usar en workshops hands-on con clientes para definir nivel de adopción, fases aplicables, artefactos clave, responsables por hito, RACI nominal, riesgos y seguimiento del scorecard. |
+| **[Descargar Presentación Ejecutiva SDLC Evolith v4](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith-sdlc-executive-deck.pptx)** | PPTX | Usar en briefings ejecutivos, alineamiento con líderes de tecnología y sesiones comerciales/de visión de producto. |
+| **[Descargar Workbook SDLC Implementación v4](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith-sdlc-implementation-workbook.docx)** | DOCX | Usar en workshops hands-on con clientes para definir nivel de adopción, fases aplicables, artefactos clave, responsables por hito, RACI nominal, riesgos y seguimiento del scorecard. |
+| **[Descargar Presentación Ejecutiva Caso UMS](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/ums-evolith-reference-executive-deck.pptx)** | PPTX | Usar para presentar UMS como una aplicación de referencia construida sobre Evolith y los patrones aplicados. |
+| **[Descargar Workbook Aplicación UMS](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/ums-evolith-application-workbook.docx)** | DOCX | Usar como guía práctica para iniciar una nueva aplicación empresarial usando UMS como referencia. |
 
 ---
 

@@ -1,101 +1,21 @@
-# Evolith ARCH32 Dual License
+MIT License
 
-Copyright (c) 2026 BeyondNet Tech / BeyondNet Code.
-Author: Alberto Arroyo Raygada.
-All rights reserved except as expressly granted under this Dual License.
+Copyright (c) 2026 BeyondNet Code
 
-Evolith ARCH32, its documentation, architecture patterns, standards, templates, diagrams, ADRs, workbooks, reference implementations, and derived systems, including UMS as a real corporate/enterprise reference application, are intellectual property of BeyondNet Tech / BeyondNet Code.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-UMS is provided and referenced as a real corporate/enterprise reference application built on top of Evolith ARCH32. UMS is not the entirety of Evolith ARCH32 and must not be interpreted as the only possible system derived from Evolith. It is an applied implementation that demonstrates the use of Evolith architectural principles, governance, patterns, standards, security, multi-tenancy, parametrization, authentication, authorization, and documentation practices.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-This repository is made available under a dual licensing model.
-
-## 1. Open Source Components
-
-Specific files, folders, examples, or components may be designated by BeyondNet Tech as open source components.
-
-When a file, folder, example, or component is explicitly marked as open source, it may be used under the Apache License, Version 2.0, unless that asset declares a different license notice.
-
-Use under the open source component license requires that you:
-
-- Preserve the original copyright notice.
-- Preserve the applicable license notice.
-- Preserve attribution to BeyondNet Tech / BeyondNet Code and Alberto Arroyo Raygada.
-- Preserve the `NOTICE` file and any attribution notices included in the repository.
-- Clearly indicate any modifications made.
-- Do not remove references to Evolith ARCH32, UMS, BeyondNet Tech, BeyondNet Code, or the original author where they are part of the original notices, documentation, headers, or attribution files.
-
-The open source component license does not grant ownership over the Evolith ARCH32 brand, BeyondNet Tech brand, BeyondNet Code brand, logos, trademarks, commercial materials, private implementations, proprietary modules, confidential documentation, or restricted enterprise assets.
-
-## 2. Commercial / Proprietary License
-
-A separate commercial license or prior written authorization from BeyondNet Tech is required for any use that is not expressly covered by an open source component notice, including but not limited to:
-
-- Commercial exploitation of Evolith ARCH32 or derived works.
-- Use in proprietary enterprise platforms.
-- Use in SaaS, PaaS, hosted services, internal corporate platforms, or client-facing commercial systems.
-- Resale, sublicensing, consulting packages, implementation services, or derivative products based on Evolith ARCH32.
-- Creation of private commercial forks or derivative frameworks.
-- Use of UMS or any derived application as a commercial product or enterprise accelerator.
-- Use of BeyondNet Tech templates, governance models, architectural standards, diagrams, ADRs, workbooks, or implementation patterns as part of a paid product or service.
-
-Commercial use may be subject to separate commercial terms, fees, support agreements, or partnership conditions.
-
-## 3. Default Restriction
-
-Unless a file, folder, component, or example is explicitly marked as open source, all rights remain reserved by BeyondNet Tech / BeyondNet Code.
-
-No permission is granted by default to copy, modify, distribute, sublicense, publish, rebrand, sell, host, or commercially exploit Evolith ARCH32, UMS reference assets, or derived enterprise assets without prior written authorization.
-
-## 4. Protected Intellectual Property
-
-The following assets are considered protected intellectual property of BeyondNet Tech / BeyondNet Code:
-
-- Evolith ARCH32 architecture framework.
-- Governance standards.
-- Architecture decision records.
-- Domain documentation.
-- Diagrams and visual communication assets.
-- Workbooks and executive presentations.
-- Templates and reusable architectural patterns.
-- UMS reference implementation materials and documentation.
-- UMS modules, menus, resources, actions, profiles, permissions, seeds, auth graph, parametrization model, and related documentation.
-- Any child application, derivative system, or enterprise implementation created under the BeyondNet Tech ecosystem.
-
-No license is granted to use the names, brands, trademarks, logos, or identity of BeyondNet Tech, BeyondNet Code, Evolith ARCH32, or UMS except where strictly necessary to preserve attribution notices required by the applicable license.
-
-## 5. Attribution Requirement
-
-Any permitted use, copy, modification, distribution, publication, or derivative work must retain clear attribution to:
-
-BeyondNet Tech / BeyondNet Code  
-Author: Alberto Arroyo Raygada  
-Project: Evolith ARCH32  
-Reference Application: UMS
-
-Attribution must not imply endorsement, sponsorship, partnership, or authorization for commercial use unless explicitly granted in writing by BeyondNet Tech.
-
-## 6. Documentation and Non-Code Assets
-
-Documentation, diagrams, presentations, workbooks, ADRs, templates, visual assets, and governance materials may be subject to more restrictive terms than source code.
-
-Unless explicitly marked otherwise, non-code assets are provided for reference, learning, evaluation, and authorized collaboration only. They may not be reused commercially, republished, rebranded, sublicensed, or incorporated into third-party commercial materials without prior written authorization from BeyondNet Tech.
-
-## 7. No Warranty
-
-This project is provided "as is", without warranty of any kind, express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, and non-infringement.
-
-BeyondNet Tech, BeyondNet Code, and the author are not liable for any claim, damages, or other liability arising from the use of this project.
-
-## 8. License Precedence
-
-If a specific file, folder, module, or component includes its own license notice, that notice takes precedence for that specific asset.
-
-If there is any doubt about whether a use case is permitted under an open source component notice or requires a commercial license, written authorization from BeyondNet Tech is required before use.
-
-## 9. Contact
-
-For commercial licensing, enterprise use, partnerships, authorization requests, or clarification:
-
-BeyondNet Tech / BeyondNet Code  
-Email: beyondnet.peru@gmail.com
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

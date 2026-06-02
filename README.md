@@ -2,7 +2,7 @@
 
 [![Status](https://img.shields.io/badge/Status-Active-brightgreen?style=for-the-badge)]()
 [![Method](https://img.shields.io/badge/Method-Spec--driven_AI--DD-blueviolet?style=for-the-badge)]()
-[![License](https://img.shields.io/badge/License-Dual%20License-informational?style=for-the-badge)](./LICENSE)
+[![License](https://img.shields.io/badge/License-MIT-informational?style=for-the-badge)]()
 [![CI](https://img.shields.io/github/actions/workflow/status/beyondnetcode/evolith_arch32/docs.yml?style=for-the-badge&label=CI)](https://github.com/beyondnetcode/evolith_arch32/actions)
 [![Coverage](https://img.shields.io/badge/Coverage-66%25-yellow?style=for-the-badge)](./COVERAGE_REPORT.md)
 
@@ -13,12 +13,6 @@ Evolith solves a common enterprise problem: teams need one clear place to unders
 > Separate conceptually before separating physically.
 
 Language: [English](./README.md) | [Español](./README.es.md)
-
----
-
-## License
-
-Dual licensed. See [LICENSE](./LICENSE) and [NOTICE](./NOTICE).
 
 ---
 
@@ -82,6 +76,12 @@ Before contributing, read:
 - [Child Repository Inheritance Guide](./reference/governance/standards/onboarding/child-repository-inheritance-guide.md) — How products inherit from Evolith
 
 Full navigation: [reference/navigation/MASTER_INDEX.md](./reference/navigation/MASTER_INDEX.md)
+
+---
+
+## License
+
+Published under the [MIT License](./LICENSE).
 
 ---
 

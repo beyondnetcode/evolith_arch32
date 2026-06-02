@@ -9,17 +9,21 @@ This document establishes the official taxonomy and authority limits for this ar
 ```text
 / (repository root)
   README.md                     # Public portal and initial navigation
+  README.es.md                  # Spanish public portal and initial navigation
   MASTER_INDEX.md               # Exhaustive routing by role and intent
+  MASTER_INDEX.es.md            # Spanish exhaustive routing by role and intent
+  LICENSE                       # BeyondNet Tech Dual License
+  NOTICE                        # Attribution and IP notices
   .bmad-core/                   # Optional spec-driven AI-DD method implementation
   .github/                      # CI workflows and collaboration templates
   .harness/                     # Document and agent validation rules
   reference/                    # Architectural reference corpus
     getting-started/            # Short reading paths
     architecture/               # Architectural authority and implementation guide
-      README.md              # Architecture hub and reading order
-      blueprints/           # Baselines, topology, and stack profiles
-      adrs/                 # Decision records and decision matrix
-      canonical-patterns/   # Patterns by runtime mapped to ADRs
+      README.md                 # Architecture hub and reading order
+      blueprints/               # Baselines, topology, and stack profiles
+      adrs/                     # Decision records and decision matrix
+      canonical-patterns/       # Patterns by runtime mapped to ADRs
     governance/                 # Policies, SDLC, terminology, and onboarding
     knowledge/                  # Applied evidence, research, and learning
       demo/                     # UMS reference boundary and migration record
@@ -66,11 +70,20 @@ Mandatory interpretation rules:
 
 This repository owns the architectural baseline and promotion mechanism. A product repository owns its domain, code, operational constraints, and local decisions. UMS demonstrates that relationship as the official applied model and can contribute candidate decisions to this corpus.
 
-## 6. Repository Root Policy
+## 6. Legal and Intellectual Property Files
+
+The root-level legal files define the repository licensing and attribution baseline:
+
+- `LICENSE` defines the BeyondNet Tech Dual License and the default restrictions for assets that are not explicitly marked as open source components.
+- `NOTICE` defines attribution and intellectual property notices that must be preserved where required by the applicable license.
+
+Evolith ARCH32 is an architectural framework and enterprise reference corpus owned by BeyondNet Tech / BeyondNet Code. UMS is a real corporate/enterprise reference application built on top of Evolith ARCH32 and must be treated as an applied example, not as the entirety of Evolith.
+
+## 7. Repository Root Policy
 
 The root should be kept small and navigable. Permitted categories are:
 
-- Public navigation and legal files: `README.md`, `README.es.md`, `MASTER_INDEX.md`, `MASTER_INDEX.es.md`, and `LICENSE`.
+- Public navigation and legal files: `README.md`, `README.es.md`, `MASTER_INDEX.md`, `MASTER_INDEX.es.md`, `LICENSE`, and `NOTICE`.
 - Tooling and platform dot-folders: `.github/`, `.harness/`, `.bmad-core/`, and editor or automation configuration.
 - `reference/` for the documentary and architectural corpus.
 

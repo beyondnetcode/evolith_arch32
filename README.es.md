@@ -2,7 +2,7 @@
 
 [![Status](https://img.shields.io/badge/Status-Activo-brightgreen?style=for-the-badge)]()
 [![Method](https://img.shields.io/badge/Metodo-Spec--driven_AI--DD-blueviolet?style=for-the-badge)]()
-[![License](https://img.shields.io/badge/License-MIT-informational?style=for-the-badge)]()
+[![License](https://img.shields.io/badge/License-Dual%20License-informational?style=for-the-badge)](./LICENSE)
 
 **Evolith es el upstream arquitectonico corporativo para repositorios de producto.** Define estandares reutilizables, reglas de gobierno, ADRs, patrones y guias operativas que los productos satelite heredan y especializan.
 
@@ -11,6 +11,20 @@ Evolith resuelve un problema empresarial comun: los equipos necesitan un lugar c
 > Separar conceptualmente antes de separar fisicamente.
 
 Idioma: [English](./README.md) | [Espanol](./README.es.md)
+
+---
+
+## Licencia y Propiedad Intelectual
+
+Evolith ARCH32 se distribuye bajo la [Licencia Dual de BeyondNet Tech](./LICENSE), con avisos de atribucion en [NOTICE](./NOTICE).
+
+Algunos componentes pueden ser designados explicitamente como componentes open source. Salvo que un archivo, carpeta, ejemplo o componente indique expresamente que es open source, todos los derechos permanecen reservados por BeyondNet Tech / BeyondNet Code.
+
+El uso comercial, empresarial, SaaS, propietario, de consultoria, servicio alojado, framework derivado o producto empaquetado requiere autorizacion previa y por escrito de BeyondNet Tech.
+
+Evolith ARCH32 es un framework arquitectonico, modelo de gobierno, biblioteca de estandares y referencia de arquitectura empresarial creada por BeyondNet Tech. UMS es una aplicacion real corporativa/empresarial de referencia construida sobre Evolith ARCH32. UMS es un ejemplo aplicado de implementacion y no representa la totalidad de Evolith ARCH32.
+
+La atribucion a BeyondNet Tech / BeyondNet Code y Alberto Arroyo Raygada debe conservarse segun los terminos de la licencia aplicable.
 
 ---
 
@@ -79,7 +93,7 @@ Navegacion completa: [reference/navigation/MASTER_INDEX.es.md](./reference/navig
 
 ## Licencia
 
-Publicado bajo la [Licencia MIT](./LICENSE).
+Distribuido bajo la [Licencia Dual de BeyondNet Tech](./LICENSE). La atribucion se define en [NOTICE](./NOTICE).
 
 ---
 

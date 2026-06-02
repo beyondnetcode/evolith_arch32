@@ -6,6 +6,9 @@ npx lint-staged
 echo "\nRunning documentation validation..."
 node .harness/scripts/validate-docs.mjs
 
+echo "\nRunning root cleanliness validation..."
+node .harness/scripts/validate-root-cleanliness.mjs
+
 echo "\nRunning bilingual parity check..."
 node .harness/scripts/check-bilingual-parity.mjs
 

@@ -70,8 +70,8 @@ Este repositorio es propietario de la linea base arquitectonica y el mecanismo d
 
 La raiz debe mantenerse pequena y navegable. Las categorias permitidas son:
 
-- Archivos publicos de navegacion y legales: `README.md`, `README.es.md`, `MASTER_INDEX.md`, `MASTER_INDEX.es.md` y `LICENSE`.
-- Dot-folders de tooling y plataforma: `.github/`, `.harness/`, `.bmad-core/` y configuracion de editores o automatizacion.
+- Archivos publicos de navegacion y legales: `README.md`, `README.es.md`, `MASTER_INDEX.md`, `MASTER_INDEX.es.md`, `DOCUMENTATION_VERSIONS.md`, `DOCUMENTATION_VERSIONS.es.md`, `AGENTS.md`, `AGENTS.es.md` y `LICENSE`.
+- Dot-folders de tooling y plataforma: `.github/`, `.harness/`, `.husky/`, `.vscode/`, `.bmad-core/` y configuracion de editores o automatizacion (`.editorconfig`, `.gitignore`, `.markdownlint.json`).
 - `reference/` para el corpus documental y arquitectonico.
 
 No se mantienen directorios `src/` de aplicaciones en este repositorio; la implementacion ejecutable pertenece a UMS o a otro repositorio de producto con alcance explicito.

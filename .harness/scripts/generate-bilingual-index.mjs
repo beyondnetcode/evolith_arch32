@@ -97,6 +97,7 @@ function findPairs(dir) {
 }
 
 const referenceDir = path.join(root, "reference");
+const navigationDir = path.join(referenceDir, "navigation");
 
 console.log("\n=== Bilingual Index Generator ===\n");
 
@@ -104,12 +105,12 @@ const allPairs = findPairs(referenceDir);
 console.log(`Found ${allPairs.length} paired EN/ES files\n`);
 
 const topLevelIndex = generateIndex(referenceDir, allPairs, "en");
-fs.writeFileSync(path.join(root, "BILINGUAL_INDEX.md"), topLevelIndex, "utf8");
-console.log("✓ Generated BILINGUAL_INDEX.md");
+fs.writeFileSync(path.join(navigationDir, "BILINGUAL_INDEX.md"), topLevelIndex, "utf8");
+console.log("✓ Generated reference/navigation/BILINGUAL_INDEX.md");
 
 const esTopLevelIndex = generateIndex(referenceDir, allPairs, "es");
-fs.writeFileSync(path.join(root, "INDICE_BILINGUE.md"), esTopLevelIndex, "utf8");
-console.log("✓ Generated INDICE_BILINGUE.md");
+fs.writeFileSync(path.join(navigationDir, "INDICE_BILINGUE.md"), esTopLevelIndex, "utf8");
+console.log("✓ Generated reference/navigation/INDICE_BILINGUE.md");
 
 const areas = {};
 for (const p of allPairs) {

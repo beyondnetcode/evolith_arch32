@@ -70,8 +70,8 @@ This repository owns the architectural baseline and promotion mechanism. A produ
 
 The root should be kept small and navigable. Permitted categories are:
 
-- Public navigation and legal files: `README.md`, `README.es.md`, `MASTER_INDEX.md`, `MASTER_INDEX.es.md`, and `LICENSE`.
-- Tooling and platform dot-folders: `.github/`, `.harness/`, `.bmad-core/`, and editor or automation configuration.
+- Public navigation and legal files: `README.md`, `README.es.md`, `MASTER_INDEX.md`, `MASTER_INDEX.es.md`, `DOCUMENTATION_VERSIONS.md`, `DOCUMENTATION_VERSIONS.es.md`, `AGENTS.md`, `AGENTS.es.md` and `LICENSE`.
+- Tooling and platform dot-folders: `.github/`, `.harness/`, `.husky/`, `.vscode/`, `.bmad-core/`, and editor or automation configuration (`.editorconfig`, `.gitignore`, `.markdownlint.json`).
 - `reference/` for the documentary and architectural corpus.
 
 No application `src/` directories are maintained in this repository; executable implementation belongs to UMS or another product repository with explicit scope.

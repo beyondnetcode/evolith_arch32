@@ -2,7 +2,7 @@
 
 > **Navegación bilingüe:** [English Version](./README.md)
 
-Este centro es el hub de gobernanza autorizado del Ciclo de Vida de Desarrollo de Software dentro de Evolith. Define requisitos, fases, gates, artefactos, responsabilidades, trazabilidad y criterios de seguimiento para productos construidos desde esta plataforma de referencia.
+Este centro es el hub de gobernanza autorizado del Ciclo de Vida de Desarrollo de Software dentro de Evolith. Define requisitos, fases, gates, artefactos, responsabilidades, trazabilidad y criterios de calidad para toda entrega de software en la organización.
 
 ---
 
@@ -10,7 +10,7 @@ Este centro es el hub de gobernanza autorizado del Ciclo de Vida de Desarrollo d
 
 Para Directores de Tecnología, el SDLC de Evolith no debe entenderse como un proceso documental, sino como un sistema de control de delivery.
 
-Su propósito es asegurar que el trabajo financiado sea trazable, que el riesgo arquitectónico se resuelva antes de construir, que los gates de calidad sean objetivos y que la preparación operativa pueda demostrarse antes del despliegue.
+Su propósito es asegurar que el trabajo financiado sea trazable, que el riesgo arquitectónico se resuelva antes de construir, que los gates de calidad sean objetivos y que la preparación operativa sea verificable antes de ir a producción.
 
 | Necesidad ejecutiva | Ir a |
 |---|---|
@@ -30,16 +30,17 @@ Ninguna fase del ciclo de vida debe avanzar solo por acuerdo verbal. Cada gate r
 ## 📥 Centro de Descargas — Materiales Ejecutivos SDLC
 
 > [!IMPORTANT]
-> **Empieza aquí para briefings ejecutivos y workshops con clientes.** Estos materiales v3 son el paquete oficial simplificado para explicar cómo adoptar Evolith SDLC, seleccionar fases aplicables, asignar responsables por hito y dar seguimiento con un scorecard ligero.
+> **Empieza aquí para briefings ejecutivos y workshops con clientes.** Estos materiales son el paquete oficial simplificado para explicar cómo adoptar Evolith SDLC, seleccionar fases aplicables, asignar hitos de gobernanza y entrenar a equipos de ingeniería.
 >
 > Usa los enlaces siguientes para descargar los archivos directamente.
 
 | Descarga | Formato | Mejor uso |
 |---|---|---|
-| **[⬇️ Descargar Presentación Ejecutiva SDLC Evolith v3](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_sdlc_executive_simple_v3.pptx)** | PPTX | Explicación ejecutiva de 5 slides sobre adopción Evolith SDLC, fases, artefactos, RACI y seguimiento ejecutivo. |
-| **[⬇️ Descargar Workbook SDLC Workshop v3](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_sdlc_workshop_simple_v3_hitos.xlsx)** | XLSX | Workbook simplificado para definir nivel de adopción, fases aplicables, artefactos clave, responsables por hito, RACI nominal, riesgos y seguimiento del scorecard. |
+| **[⬇️ Presentación Ejecutiva UMS v4](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_arch32_ums_executive_reference_v4.pptx)** | PPTX | Briefing ejecutivo, alineamiento de stakeholders, presentación de modelo SDLC a líderes |
+| **[⬇️ Workbook de Referencia UMS v4](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_arch32_ums_workbook_reference_v4.xlsx)** | XLSX | Planificación de sprints, mapeo de hitos SDLC, seguimiento de fases y gates |
+| **[⬇️ Workbook Scorecard Bilingüe](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_sdlc_workshop_scorecard_workbook_bilingual.xlsx)** | XLSX | Evaluación de madurez SDLC, mesas de trabajo facilitadas, scoring de cumplimiento |
 
-> El workbook está diseñado para mesas de trabajo facilitadas con equipos cliente. La presentación está diseñada para alineamiento ejecutivo, visión de producto y comunicación con líderes de tecnología.
+> El workbook está diseñado para mesas de trabajo facilitadas con equipos cliente. La presentación está diseñada para alineamiento ejecutivo, visión de producto y comunicación con líderes de tecnología. El scorecard permite evaluar el nivel de adopción actual y definir un roadmap de mejora.
 
 ---
 
@@ -74,7 +75,7 @@ Para MVPs pequeños, la cadena mínima obligatoria de artefactos es:
 PRD -> Historia Funcional -> Historia Técnica -> Test Summary Report -> Release Notes
 ```
 
-Un ADR es obligatorio cuando el trabajo introduce o cambia límites arquitectónicos, selección tecnológica, modelo de seguridad, modelo de multi-tenancy, estrategia de persistencia, estrategia de contratos API, topología de despliegue, topología de observabilidad o cualquier excepción a un estándar Evolith existente.
+Un ADR es obligatorio cuando el trabajo introduce o cambia límites arquitectónicos, selección tecnológica, modelo de seguridad, modelo de multi-tenancy, estrategia de persistencia, estrategia de API, o estrategia de observabilidad.
 
 La matriz completa de cumplimiento aplica cuando el producto alcanza escala, ambientes regulados, multi-tenancy, APIs públicas, flujos críticos o dependencias entre equipos.
 
@@ -85,7 +86,7 @@ La matriz completa de cumplimiento aplica cuando el producto alcanza escala, amb
 | Fase | Gate | Artefactos principales |
 |---|---|---|
 | Fase 1 — Concepción y Descubrimiento | Aprobación de Negocio | [PRD](./04-artifact-templates/prd-template.es.md), [Mapeo SDLC–Artefactos](./sdlc-evolith-artifact-mapping.es.md) |
-| Fase 2 — Diseño y Arquitectura | Baseline de Diseño | [ADR](./04-artifact-templates/adr-template.es.md), [Historia Funcional](./04-artifact-templates/functional-story-template.es.md), [Estándar de Historias Funcionales](./03-documentation/functional-story-writing-standard.es.md) |
+| Fase 2 — Diseño y Arquitectura | Baseline de Diseño | [ADR](./04-artifact-templates/adr-template.es.md), [Historia Funcional](./04-artifact-templates/functional-story-template.es.md), [Estándar de Escritura](./03-documentation/functional-story-writing-standard.es.md) |
 | Fase 3 — Construcción | Build Exitoso | [Historia Técnica](./04-artifact-templates/technical-story-template.es.md), [Buenas Prácticas de Documentación](./03-documentation/sdlc-documentation-best-practices.es.md), [Gates de Calidad](./quality-gates.es.md) |
 | Fase 4 — Validación y QA | RC Sellado | [Test Summary Report](./04-artifact-templates/test-summary-report-template.es.md), [Gates de Calidad](./quality-gates.es.md) |
 | Fase 5 — Entrega y Operaciones | Producción Activa | [Release Notes](./04-artifact-templates/release-notes-template.es.md), checklist de observabilidad y rollback |

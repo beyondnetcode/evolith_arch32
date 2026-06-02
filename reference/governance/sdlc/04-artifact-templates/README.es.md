@@ -9,45 +9,63 @@
 
 ## Propósito
 
-Este directorio provee las plantillas de formato oficiales Evolith para los artefactos requeridos en cada fase SDLC. Cada plantilla incluye:
+Este directorio provee las plantillas de formato oficiales Evolith para los artefactos requeridos en cada fase SDLC.
 
-1. **La estructura canónica en blanco** — cópiala como punto de partida para cada nuevo artefacto.
-2. **Un ejemplo completo o guía de uso** — úsalo para calibrar el nivel de detalle esperado.
+Cada artefacto se organiza como una unidad documental profesional de tres partes:
+
+1. **Landing page del artefacto** — explica propósito, reglas de uso y navegación.
+2. **Fuente Markdown** — Markdown canónico reutilizable que los equipos copian en repositorios de producto o delivery.
+3. **Ejemplo renderizado** — ejemplo UMS completo que muestra el nivel de detalle esperado.
 
 Las plantillas garantizan consistencia en todos los repositorios satélite. Los equipos satélite pueden extender una plantilla con campos específicos de su dominio, pero no deben eliminar las secciones requeridas.
 
 ---
 
-## Materiales de Trabajo Descargables
+## 📥 Materiales de Trabajo Descargables
 
-| Material | Formato | Cuándo usarlo |
+> [!IMPORTANT]
+> Usa estos materiales v3 para briefings ejecutivos y workshops simplificados de implementación SDLC.
+
+| Descarga | Formato | Cuándo usarlo |
 |---|---|---|
-| [Presentación Ejecutiva SDLC Evolith](../assets/evolith_product_vision_sdlc_executive_v2.pptx) | PPTX | Usar en briefings ejecutivos, alineamiento con líderes de tecnología y sesiones comerciales/de visión de producto. |
-| [Workbook SDLC Workshop y Scorecard](../assets/evolith_sdlc_workshop_scorecard_workbook_bilingual.xlsx) | XLSX | Usar en workshops hands-on con clientes para definir fases aplicables, asignaciones nominales RACI, readiness de artefactos, gates de calidad, riesgos, decisiones y seguimiento del scorecard. |
+| **[⬇️ Descargar Presentación Ejecutiva SDLC Evolith v3](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_sdlc_executive_simple_v3.pptx)** | PPTX | Usar en briefings ejecutivos, alineamiento con líderes de tecnología y sesiones comerciales/de visión de producto. |
+| **[⬇️ Descargar Workbook SDLC Workshop v3](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_sdlc_workshop_simple_v3_hitos.xlsx)** | XLSX | Usar en workshops hands-on con clientes para definir nivel de adopción, fases aplicables, artefactos clave, responsables por hito, RACI nominal, riesgos y seguimiento del scorecard. |
+
+---
+
+## Estructura de Plantillas
+
+| Directorio / Tipo de archivo | Propósito |
+|---|---|
+| `*-template.es.md` | Landing page del artefacto. Empieza aquí para entender cuándo y cómo usar el artefacto. |
+| `source/*-template-source.es.md` | Fuente Markdown lista para copiar al crear un nuevo artefacto. |
+| `examples/*-example-ums.es.md` | Ejemplo renderizado UMS para entender el artefacto completado esperado. |
+| `*.md` | Versión en inglés con la misma estructura. |
 
 ---
 
 ## Catálogo de Plantillas por Fase SDLC
 
-| Fase | Artefacto | Objetivo | Perfiles recomendados |
-|---|---|---|---|
-| **Fase 1 — Concepción** | [PRD — Documento de Requisitos de Producto](./prd-template.es.md) | Captura el alcance del producto: personas, OKRs, límites funcionales, restricciones y no-objetivos. Requerido antes de cualquier trabajo de arquitectura o diseño. | Product Owner, Sponsor Ejecutivo |
-| **Fase 2 — Diseño** | [ADR — Registro de Decisión Arquitectónica](./adr-template.es.md) | Registra una sola decisión arquitectónica con contexto, opciones evaluadas, opción elegida y consecuencias. Un ADR por decisión significativa. | Arquitecto de Software, Principal / Staff Engineer |
-| **Fase 2 — Diseño** | [Historia Funcional — Especificación de Comportamiento de Negocio](./functional-story-template.es.md) | Describe una capacidad orientada al usuario en lenguaje de negocio: actores, flujos, reglas y criterios de aceptación. El contrato entre Producto e Ingeniería. Complementa el [Estándar de Escritura](../03-documentation/functional-story-writing-standard.es.md). | Product Owner, Analista de Negocio |
-| **Fase 3 — Construcción** | [Historia Técnica — Elemento de Trabajo de Implementación de Ingeniería](./technical-story-template.es.md) | Descompone una Historia Funcional en una tarea de ingeniería concreta con pasos de implementación, criterios de aceptación técnica y checklist de DoD. | Desarrollador Backend, Desarrollador Frontend, Tech Lead |
-| **Fase 4 — Validación** | [Reporte de Resumen de Testing — Registro de Validación de Puerta de Calidad](./test-summary-report-template.es.md) | Agrega resultados de pruebas y confirma que todos los umbrales de calidad obligatorios se cumplen. Requerido antes de sellar el Release Candidate. | QA / SDET, Tech Lead |
-| **Fase 5 — Entrega** | [Release Notes — Registro de Despliegue a Producción](./release-notes-template.es.md) | Registro formal del despliegue con funcionalidades, cambios incompatibles, pasos de despliegue, rollback y checklist de observabilidad. Requerido antes de declarar Producción Activa. | DevOps / SRE, Tech Lead |
-| **Transversal / Gobernanza de Release** | [Scorecard Ejecutivo SDLC](./executive-scorecard-template.es.md) | Panel de control de una página para liderazgo: readiness por fase, evidencia de artefactos, ownership RACI, gates de calidad, riesgos, decisiones y estado go/no-go. Requerido para releases con visibilidad ejecutiva, impacto productivo, exposición a cliente, regulación o dependencias multi-equipo. | Director de Tecnología, Sponsor Ejecutivo, Delivery Owner, Architecture Board, QA Lead, SRE Lead |
+| Fase | Artefacto | Landing Page | Fuente Markdown | Ejemplo Renderizado | Perfiles recomendados |
+|---|---|---|---|---|---|
+| **Fase 1 — Concepción** | PRD — Documento de Requisitos de Producto | [Abrir](./prd-template.es.md) | [Fuente](./source/prd-template-source.es.md) | [Ejemplo](./examples/prd-example-ums.es.md) | Product Owner, Sponsor Ejecutivo |
+| **Fase 2 — Diseño** | ADR — Registro de Decisión Arquitectónica | [Abrir](./adr-template.es.md) | [Fuente](./source/adr-template-source.es.md) | [Ejemplo](./examples/adr-example-ums.es.md) | Arquitecto de Software, Principal / Staff Engineer |
+| **Fase 2 — Diseño** | Historia Funcional | [Abrir](./functional-story-template.es.md) | [Fuente](./source/functional-story-template-source.es.md) | [Ejemplo](./examples/functional-story-example-ums.es.md) | Product Owner, Analista de Negocio |
+| **Fase 3 — Construcción** | Historia Técnica | [Abrir](./technical-story-template.es.md) | [Fuente](./source/technical-story-template-source.es.md) | [Ejemplo](./examples/technical-story-example-ums.es.md) | Desarrollador Backend, Desarrollador Frontend, Tech Lead |
+| **Fase 4 — Validación** | Test Summary Report | [Abrir](./test-summary-report-template.es.md) | [Fuente](./source/test-summary-report-template-source.es.md) | [Ejemplo](./examples/test-summary-report-example-ums.es.md) | QA / SDET, Tech Lead |
+| **Fase 5 — Entrega** | Release Notes | [Abrir](./release-notes-template.es.md) | [Fuente](./source/release-notes-template-source.es.md) | [Ejemplo](./examples/release-notes-example-ums.es.md) | DevOps / SRE, Tech Lead |
+| **Transversal / Gobernanza de Release** | Scorecard Ejecutivo SDLC | [Abrir](./executive-scorecard-template.es.md) | [Fuente](./source/executive-scorecard-template-source.es.md) | [Ejemplo](./examples/executive-scorecard-example-ums.es.md) | Director de Tecnología, Sponsor Ejecutivo, Delivery Owner, Architecture Board, QA Lead, SRE Lead |
 
 ---
 
 ## Cómo Usar una Plantilla
 
-1. Copia la sección de plantilla en blanco verbatim en tu nuevo archivo de artefacto.
-2. Reemplaza cada `[PLACEHOLDER]` con tu contenido real.
-3. Elimina las instrucciones de placeholder (líneas en cursiva o entre corchetes) antes de la publicación.
-4. Consulta el ejemplo completo o guía de uso en el mismo archivo para calibrar el nivel de detalle esperado.
-5. Si una sección no aplica, escribe `N/A — [breve razón]` en lugar de eliminar el encabezado, para que los revisores vean que la decisión fue deliberada.
+1. Abre la landing page del artefacto para entender propósito, relevancia de gate y reglas de uso.
+2. Abre el archivo Fuente Markdown cuando necesites crear un nuevo artefacto.
+3. Copia la fuente en tu repositorio de producto, release o delivery.
+4. Reemplaza cada `[PLACEHOLDER]` con contenido real.
+5. Revisa el ejemplo UMS renderizado para calibrar profundidad y tono esperados.
+6. Si una sección no aplica, escribe `N/A — [breve razón]` en lugar de eliminar el encabezado, para que los revisores vean que la decisión fue deliberada.
 
 ---
 

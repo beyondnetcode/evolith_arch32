@@ -31,7 +31,7 @@ Las plantillas garantizan consistencia en todos los repositorios satélite. Los 
 | **[Descargar Presentación Ejecutiva SDLC Evolith v4](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith-sdlc-executive-deck.pptx)** | PPTX | Usar en briefings ejecutivos, alineamiento con líderes de tecnología y sesiones comerciales/de visión de producto. |
 | **[Descargar Workbook SDLC Implementación v4](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith-sdlc-implementation-workbook.xlsx)** | XLSX | Usar en workshops hands-on con clientes para definir nivel de adopción, fases aplicables, artefactos clave, responsables por hito, RACI nominal, riesgos y seguimiento del scorecard. |
 | **[Descargar Presentación Ejecutiva Caso UMS](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/ums-evolith-reference-executive-deck.pptx)** | PPTX | Usar para presentar UMS como una aplicación de referencia construida sobre Evolith y los patrones aplicados. |
-| **[Descargar Workbook Seguimiento de Nuevos Sistemas](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith-new-system-sdlc-tracking-workbook.xlsx)** | XLSX | Usar como plantilla en blanco para tracking y scorecard de una nueva aplicación bajo SDLC Evolith. |
+| **[Descargar Workbook Seguimiento de Nuevos Sistemas](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith-new-system-tracking-workbook.xlsx)** | XLSX | Usar como plantilla en blanco para tracking y scorecard de una nueva aplicación bajo SDLC Evolith. |
 
 ---
 

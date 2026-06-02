@@ -39,7 +39,7 @@ Ninguna fase del ciclo de vida debe avanzar solo por acuerdo verbal. Cada gate r
 | **[Descargar Presentación Ejecutiva SDLC Evolith v4](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith-sdlc-executive-deck.pptx)** | PPTX | Explicación ejecutiva sobre adopción Evolith SDLC, fases, artefactos y gobierno. |
 | **[Descargar Workbook SDLC Implementación v4](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith-sdlc-implementation-workbook.xlsx)** | XLSX | Workbook práctico para definir nivel de adopción, fases aplicables, RACI y seguimiento. |
 | **[Descargar Presentación Ejecutiva Caso UMS](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/ums-evolith-reference-executive-deck.pptx)** | PPTX | Vista ejecutiva de UMS como aplicación de referencia construida sobre Evolith. |
-| **[Descargar Workbook Seguimiento de Nuevos Sistemas](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith-new-system-sdlc-tracking-workbook.xlsx)** | XLSX | Plantilla en blanco para tracking y scorecard de una nueva aplicación bajo SDLC Evolith. |
+| **[Descargar Workbook Seguimiento de Nuevos Sistemas](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith-new-system-tracking-workbook.xlsx)** | XLSX | Plantilla en blanco para tracking y scorecard de una nueva aplicación bajo SDLC Evolith. |
 
 > El workbook está diseñado para mesas de trabajo facilitadas con equipos cliente. La presentación está diseñada para alineamiento ejecutivo, visión de producto y comunicación con líderes de tecnología.
 

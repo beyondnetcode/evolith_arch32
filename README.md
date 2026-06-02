@@ -2,7 +2,7 @@
 
 [![Status](https://img.shields.io/badge/Status-Active-brightgreen?style=for-the-badge)]()
 [![Method](https://img.shields.io/badge/Method-Spec--driven_AI--DD-blueviolet?style=for-the-badge)]()
-[![License](https://img.shields.io/badge/License-MIT-informational?style=for-the-badge)]()
+[![License](https://img.shields.io/badge/License-Dual%20License-informational?style=for-the-badge)](./LICENSE)
 [![CI](https://img.shields.io/github/actions/workflow/status/beyondnetcode/evolith_arch32/docs.yml?style=for-the-badge&label=CI)](https://github.com/beyondnetcode/evolith_arch32/actions)
 [![Coverage](https://img.shields.io/badge/Coverage-66%25-yellow?style=for-the-badge)](./COVERAGE_REPORT.md)
 
@@ -13,6 +13,20 @@ Evolith solves a common enterprise problem: teams need one clear place to unders
 > Separate conceptually before separating physically.
 
 Language: [English](./README.md) | [Español](./README.es.md)
+
+---
+
+## License and Intellectual Property
+
+Evolith ARCH32 is distributed under a [BeyondNet Tech Dual License](./LICENSE), with attribution notices in [NOTICE](./NOTICE).
+
+Selected components may be explicitly designated as open source components. Unless a file, folder, example, or component is expressly marked as open source, all rights remain reserved by BeyondNet Tech / BeyondNet Code.
+
+Commercial, enterprise, SaaS, proprietary, consulting, hosted service, derivative framework, or productized use requires prior written authorization from BeyondNet Tech.
+
+Evolith ARCH32 is an architectural framework, governance model, standards library, and enterprise architecture reference created by BeyondNet Tech. UMS is a real corporate/enterprise reference application built on top of Evolith ARCH32. UMS is an applied implementation example and does not represent the entirety of Evolith ARCH32.
+
+Attribution to BeyondNet Tech / BeyondNet Code and Alberto Arroyo Raygada must be preserved according to the applicable license terms.
 
 ---
 
@@ -81,7 +95,7 @@ Full navigation: [reference/navigation/MASTER_INDEX.md](./reference/navigation/M
 
 ## License
 
-Published under the [MIT License](./LICENSE).
+Distributed under the [BeyondNet Tech Dual License](./LICENSE). Attribution is defined in [NOTICE](./NOTICE).
 
 ---
 

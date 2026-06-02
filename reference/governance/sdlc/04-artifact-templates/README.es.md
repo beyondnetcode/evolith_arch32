@@ -26,12 +26,27 @@ Las plantillas garantizan consistencia en todos los repositorios satélite. Los 
 > [!IMPORTANT]
 > Usa estos materiales v3 para briefings ejecutivos y workshops simplificados de implementación SDLC.
 
-| Descarga | Formato | Cuándo usarlo |
+### 📊 Kit de Comunicación Ejecutiva (Presentaciones)
+
+| Artefacto | Formato | Propósito |
 |---|---|---|
-| **[Descargar Presentación Ejecutiva SDLC Evolith v4](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith-sdlc-executive-deck.pptx)** | PPTX | Usar en briefings ejecutivos, alineamiento con líderes de tecnología y sesiones comerciales/de visión de producto. |
-| **[Descargar Workbook SDLC Implementación v4](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith-sdlc-implementation-workbook.xlsx)** | XLSX | Usar en workshops hands-on con clientes para definir nivel de adopción, fases aplicables, artefactos clave, responsables por hito, RACI nominal, riesgos y seguimiento del scorecard. |
-| **[Descargar Presentación Ejecutiva Caso UMS](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/ums-evolith-reference-executive-deck.pptx)** | PPTX | Usar para presentar UMS como una aplicación de referencia construida sobre Evolith y los patrones aplicados. |
-| **[Descargar Workbook Seguimiento de Nuevos Sistemas](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith-new-system-tracking-workbook.xlsx)** | XLSX | Usar como plantilla en blanco para tracking y scorecard de una nueva aplicación bajo SDLC Evolith. |
+| **[Evolith: Propuesta de Valor Ejecutiva](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith-sdlc-value-proposition.pptx)** | PPTX | Presentación ejecutiva para alinear visión comercial y tecnológica sobre los beneficios del SDLC Evolith. |
+| **[Evolith: Caso Práctico UMS](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith-ums-case-study.pptx)** | PPTX | Caso de éxito demostrando la aplicación de las 8 fases en un entorno industrial real (Portal Autoservicio). |
+| **[Evolith: Deep-Dive Técnico SDLC](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith-sdlc-technical-deepdive.pptx)** | PPTX | Guía operativa de ingeniería sobre las fases, Quality Gates y artefactos. |
+
+### 🛠️ Kit de Herramientas Fase por Fase (Workbooks)
+
+| Artefacto / Fase | Formato | Propósito |
+|---|---|---|
+| **[Master Workbook Integrador](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/Evolith_Master_Workbook.xlsx)** | XLSX | Tablero de control consolidado, registro de roles, trazabilidad cruzada y estado del proyecto. |
+| **[Workbook F1: Ideación](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/Evolith_Workbook_F1_Ideacion.xlsx)** | XLSX | Plantillas para el Business Case, Acta de Constitución y registro de riesgos iniciales. |
+| **[Workbook F2: Análisis](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/Evolith_Workbook_F2_Analisis.xlsx)** | XLSX | Documentación y trazabilidad de requerimientos de negocio. |
+| **[Workbook F3: Diseño](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/Evolith_Workbook_F3_Diseno.xlsx)** | XLSX | Registros de Decisiones de Arquitectura (ADRs) y Blueprint. |
+| **[Workbook F4: Construcción](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/Evolith_Workbook_F4_Construccion.xlsx)** | XLSX | Control de deuda técnica, Quality Gates en el Pipeline y Definition of Done. |
+| **[Workbook F5: Pruebas](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/Evolith_Workbook_F5_Pruebas.xlsx)** | XLSX | Plan maestro, ejecución de Casos de Prueba y bitácora de defectos. |
+| **[Workbook F6: Despliegue](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/Evolith_Workbook_F6_Despliegue.xlsx)** | XLSX | Ejecución de Runbooks, checklist pre-despliegue y planes de Rollback. |
+| **[Workbook F7: Operación](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/Evolith_Workbook_F7_Operacion.xlsx)** | XLSX | Dashboards SRE, registro de incidentes post-lanzamiento. |
+| **[Workbook F8: Retiro](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/Evolith_Workbook_F8_Retiro.xlsx)** | XLSX | Checklist seguro para la desconexión y Sunset de sistemas legacy. |
 
 ---
 

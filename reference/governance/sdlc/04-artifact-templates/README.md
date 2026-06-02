@@ -21,12 +21,15 @@ Templates enforce consistency across all satellite repositories. Satellite teams
 
 ---
 
-## Downloadable Working Materials
+## 📥 Downloadable Working Materials
 
-| Material | Format | When to use it |
+> [!IMPORTANT]
+> Use these v3 materials for executive briefings and simplified SDLC implementation workshops.
+
+| Download | Format | When to use it |
 |---|---|---|
-| [Evolith Executive SDLC Presentation](../assets/evolith_product_vision_sdlc_executive_v2.pptx) | PPTX | Use during executive briefings, technology leadership alignment, and commercial/product vision sessions. |
-| [Evolith SDLC Workshop and Scorecard Workbook](../assets/evolith_sdlc_workshop_scorecard_workbook_bilingual.xlsx) | XLSX | Use during hands-on client workshops to define applicable phases, nominal RACI assignments, artifact readiness, quality gates, risks, decisions, and scorecard follow-up. |
+| **[⬇️ Download Evolith SDLC Executive Presentation v3](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_sdlc_executive_simple_v3.pptx)** | PPTX | Use during executive briefings, technology leadership alignment, and commercial/product vision sessions. |
+| **[⬇️ Download Evolith SDLC Workshop Workbook v3](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_sdlc_workshop_simple_v3_hitos.xlsx)** | XLSX | Use during hands-on client workshops to define adoption level, applicable phases, key artifacts, milestone owners, nominal RACI assignments, risks, and scorecard follow-up. |
 
 ---
 

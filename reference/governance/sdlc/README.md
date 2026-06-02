@@ -29,14 +29,17 @@ No lifecycle phase should advance based on verbal agreement alone. Each gate req
 
 ## 📥 Download Center — Executive SDLC Materials
 
-> **Start here for executive briefings and client workshops.** These are the official downloadable materials for presenting the Evolith SDLC vision and running hands-on SDLC/RACI/Scorecard definition sessions.
+> [!IMPORTANT]
+> **Start here for executive briefings and client workshops.** These v3 materials are the simplified official package for explaining how to adopt Evolith SDLC, select applicable phases, assign milestone owners, and track execution with a lightweight scorecard.
+>
+> Use the buttons below to download the files directly.
 
 | Download | Format | Best used for |
 |---|---|---|
-| **[⬇️ Download Evolith Executive SDLC Presentation](./assets/evolith_product_vision_sdlc_executive_v2.pptx)** | PPTX | Executive product vision, SDLC flow, key artifacts, process explanation, and tracking model for technology leaders. |
-| **[⬇️ Download Evolith SDLC Workshop and Scorecard Workbook](./assets/evolith_sdlc_workshop_scorecard_workbook_bilingual.xlsx)** | XLSX | Bilingual hands-on workbook to define applicable phases, nominal RACI assignments, artifact readiness, quality gates, risks, decisions, and executive scorecard tracking. |
+| **[⬇️ Download Evolith SDLC Executive Presentation v3](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_sdlc_executive_simple_v3.pptx)** | PPTX | 5-slide executive explanation of Evolith SDLC adoption, phases, artifact set, RACI, and executive tracking. |
+| **[⬇️ Download Evolith SDLC Workshop Workbook v3](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_sdlc_workshop_simple_v3_hitos.xlsx)** | XLSX | Simplified hands-on workbook to define adoption level, applicable phases, key artifacts, milestone owners, nominal RACI, risks, and scorecard follow-up. |
 
-> The workbook is intended to be used during facilitated working sessions with customer teams. The presentation is intended for executive alignment, product vision, and technology leadership communication.
+> The workbook is intended for facilitated working sessions with customer teams. The presentation is intended for executive alignment, product vision, and technology leadership communication.
 
 ---
 

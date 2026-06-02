@@ -24,7 +24,7 @@ Templates enforce consistency across all satellite repositories. Satellite teams
 ## Downloadable Working Materials
 
 > [!IMPORTANT]
-> Use these v3 materials for executive briefings and simplified SDLC implementation workshops.
+> Use these current official materials for executive briefings, SDLC implementation workshops, and Evolith technical adoption sessions.
 
 ### 📊 Executive Communication Kit (Presentations)
 

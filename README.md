@@ -16,17 +16,9 @@ Language: [English](./README.md) | [Español](./README.es.md)
 
 ---
 
-## License and Intellectual Property
+## License
 
-Evolith ARCH32 is distributed under a [BeyondNet Tech Dual License](./LICENSE), with attribution notices in [NOTICE](./NOTICE).
-
-Selected components may be explicitly designated as open source components. Unless a file, folder, example, or component is expressly marked as open source, all rights remain reserved by BeyondNet Tech / BeyondNet Code.
-
-Commercial, enterprise, SaaS, proprietary, consulting, hosted service, derivative framework, or productized use requires prior written authorization from BeyondNet Tech.
-
-Evolith ARCH32 is an architectural framework, governance model, standards library, and enterprise architecture reference created by BeyondNet Tech. UMS is a real corporate/enterprise reference application built on top of Evolith ARCH32. UMS is an applied implementation example and does not represent the entirety of Evolith ARCH32.
-
-Attribution to BeyondNet Tech / BeyondNet Code and Alberto Arroyo Raygada must be preserved according to the applicable license terms.
+Dual licensed. See [LICENSE](./LICENSE) and [NOTICE](./NOTICE).
 
 ---
 
@@ -90,12 +82,6 @@ Before contributing, read:
 - [Child Repository Inheritance Guide](./reference/governance/standards/onboarding/child-repository-inheritance-guide.md) — How products inherit from Evolith
 
 Full navigation: [reference/navigation/MASTER_INDEX.md](./reference/navigation/MASTER_INDEX.md)
-
----
-
-## License
-
-Distributed under the [BeyondNet Tech Dual License](./LICENSE). Attribution is defined in [NOTICE](./NOTICE).
 
 ---
 

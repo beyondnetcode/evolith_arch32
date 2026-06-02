@@ -27,20 +27,34 @@ Ninguna fase del ciclo de vida debe avanzar solo por acuerdo verbal. Cada gate r
 
 ---
 
-## 📥 Centro de Descargas — Materiales Ejecutivos SDLC
+## 📥 Centro de Materiales — Evolith SDLC
 
 > [!IMPORTANT]
-> **Empieza aquí para briefings ejecutivos y workshops con clientes.** Estos materiales son el paquete oficial simplificado para explicar cómo adoptar Evolith SDLC, seleccionar fases aplicables, asignar hitos de gobernanza y entrenar a equipos de ingeniería.
+> Estos materiales están separados por propósito para evitar mezclar el marco corporativo Evolith con ejemplos de aplicación específicos.
 >
-> Usa los enlaces siguientes para descargar los archivos directamente.
+> **Evolith SDLC** es el marco corporativo reutilizable.  
+> **UMS** es un ejemplo aplicado para mostrar cómo implementar el marco en un sistema real.
 
-| Descarga | Formato | Mejor uso |
-|---|---|---|
-| **[⬇️ Presentación Ejecutiva UMS v4](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_arch32_ums_executive_reference_v4.pptx)** | PPTX | Briefing ejecutivo, alineamiento de stakeholders, presentación de modelo SDLC a líderes |
-| **[⬇️ Workbook de Referencia UMS v4](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_arch32_ums_workbook_reference_v4.xlsx)** | XLSX | Planificación de sprints, mapeo de hitos SDLC, seguimiento de fases y gates |
-| **[⬇️ Workbook Scorecard Bilingüe](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_sdlc_workshop_scorecard_workbook_bilingual.xlsx)** | XLSX | Evaluación de madurez SDLC, mesas de trabajo facilitadas, scoring de cumplimiento |
+### 1. Material ejecutivo corporativo
 
-> El workbook está diseñado para mesas de trabajo facilitadas con equipos cliente. La presentación está diseñada para alineamiento ejecutivo, visión de producto y comunicación con líderes de tecnología. El scorecard permite evaluar el nivel de adopción actual y definir un roadmap de mejora.
+| Material | Formato | Mejor uso |
+|---|---:|---|
+| **[⬇️ Presentación Ejecutiva — Qué es Evolith y su propuesta SDLC](./assets/evolith-sdlc-executive-overview.es.pptx)** | PPTX | Briefing ejecutivo para dirección, CTOs, arquitectura y líderes de delivery |
+
+### 2. Material de adopción corporativa
+
+| Material | Formato | Mejor uso |
+|---|---:|---|
+| **[⬇️ Workbook — Implementación Corporativa de Evolith SDLC](./assets/evolith-corporate-sdlc-implementation-workbook.es.xlsx)** | XLSX | Diagnóstico, adopción corporativa, RACI, gates, artefactos, roadmap y scorecard |
+
+### 3. Material de ejemplo aplicado
+
+| Material | Formato | Mejor uso |
+|---|---:|---|
+| **[⬇️ Presentación — Aplicación de Evolith SDLC en UMS](./assets/evolith-sdlc-ums-application-example.es.pptx)** | PPTX | Explicar cómo aplicar Evolith SDLC usando UMS como caso práctico |
+| **[⬇️ Workbook — Nuevo Sistema usando Evolith, ejemplo UMS](./assets/evolith-new-system-implementation-workbook-ums-example.es.xlsx)** | XLSX | Guiar la definición e implementación de un nuevo sistema tomando UMS como ejemplo |
+
+> UMS es un ejemplo aplicado. Evolith SDLC es el marco corporativo reutilizable.
 
 ---
 

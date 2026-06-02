@@ -30,9 +30,9 @@ No lifecycle phase should advance based on verbal agreement alone. Each gate req
 ## Download Center — Executive SDLC Materials
 
 > [!IMPORTANT]
-> **Start here for executive briefings and client workshops.** These v3 materials are the simplified official package for explaining how to adopt Evolith SDLC, select applicable phases, assign milestone owners, and track execution with a lightweight scorecard.
+> **Start here for executive briefings and client workshops.** These presentations are the current official package for aligning executive value, demonstrating the applied UMS reference case, and guiding the technical operation of the Evolith SDLC.
 >
-> Use the buttons below to download the files directly.
+> Use the links below to download the files directly.
 
 ### 📊 Executive Communication Kit (Presentations)
 
@@ -56,7 +56,7 @@ No lifecycle phase should advance based on verbal agreement alone. Each gate req
 | **[Workbook F7: Operation](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/Evolith_Workbook_F7_Operacion.xlsx)** | XLSX | SRE dashboards and post-launch incident tracking. |
 | **[Workbook F8: Retirement](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/Evolith_Workbook_F8_Retiro.xlsx)** | XLSX | Secure checklist for sunsetting and disconnecting legacy systems. |
 
-> The workbooks are intended for facilitated working sessions with customer teams. The presentations are intended for executive alignment, product vision, and technology leadership communication.
+> The workbooks are intended for facilitated working sessions with customer teams. The presentations are intended for executive alignment, the applied UMS case, and technical operating guidance for technology leaders.
 
 ---
 
@@ -67,16 +67,16 @@ flowchart LR
     classDef phase fill:#1e3a5f,stroke:#3b82f6,color:#fff,font-weight:bold
     classDef gate fill:#4a3800,stroke:#f59e0b,color:#fff,font-size:12px
 
-    P1["Phase 1\nConception"]:::phase
-    P2["Phase 2\nDesign"]:::phase
-    P3["Phase 3\nConstruction"]:::phase
-    P4["Phase 4\nValidation"]:::phase
-    P5["Phase 5\nDelivery"]:::phase
-    G1(["Business\nSign-Off"]):::gate
-    G2(["Design\nBaseline"]):::gate
-    G3(["Successful\nBuild"]):::gate
-    G4(["RC\nStamped"]):::gate
-    G5(["Production\nLive"]):::gate
+    P1["Phase 1<br/>Conception"]:::phase
+    P2["Phase 2<br/>Design"]:::phase
+    P3["Phase 3<br/>Construction"]:::phase
+    P4["Phase 4<br/>Validation"]:::phase
+    P5["Phase 5<br/>Delivery"]:::phase
+    G1(["Business<br/>Sign-Off"]):::gate
+    G2(["Design<br/>Baseline"]):::gate
+    G3(["Successful<br/>Build"]):::gate
+    G4(["RC<br/>Stamped"]):::gate
+    G5(["Production<br/>Live"]):::gate
 
     P1 --> G1 --> P2 --> G2 --> P3 --> G3 --> P4 --> G4 --> P5 --> G5
 ```

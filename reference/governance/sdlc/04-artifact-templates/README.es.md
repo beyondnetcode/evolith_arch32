@@ -24,7 +24,7 @@ Las plantillas garantizan consistencia en todos los repositorios satélite. Los 
 ## Materiales de Trabajo Descargables
 
 > [!IMPORTANT]
-> Usa estos materiales v3 para briefings ejecutivos y workshops simplificados de implementación SDLC.
+> Usa estos materiales oficiales vigentes para briefings ejecutivos, workshops de implementación SDLC y sesiones técnicas de adopción Evolith.
 
 ### 📊 Kit de Comunicación Ejecutiva (Presentaciones)
 

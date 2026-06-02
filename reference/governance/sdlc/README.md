@@ -2,7 +2,7 @@
 
 > **Bilingual Navigation:** [Versión en Español](./README.es.md)
 
-This center is the authoritative governance hub for the Software Development Lifecycle within Evolith. It defines the procedural requirements, phase exit gates, artifact formats, quality gates, responsibility model, traceability rules, and compliance mapping that govern every product built from this reference platform.
+This center is the authoritative governance hub for the Software Development Lifecycle within Evolith. It defines the procedural requirements, phase exit gates, artifact formats, quality gates, responsibility matrices, traceability chains, and policy for all software delivery in the organization.
 
 ---
 
@@ -30,16 +30,17 @@ No lifecycle phase should advance based on verbal agreement alone. Each gate req
 ## 📥 Download Center — Executive SDLC Materials
 
 > [!IMPORTANT]
-> **Start here for executive briefings and client workshops.** These v3 materials are the simplified official package for explaining how to adopt Evolith SDLC, select applicable phases, assign milestone owners, and track execution with a lightweight scorecard.
+> **Start here for executive briefings and client workshops.** These materials are the simplified official package for explaining how to adopt Evolith SDLC, select applicable phases, assign governance milestones, and train engineering teams.
 >
 > Use the buttons below to download the files directly.
 
 | Download | Format | Best used for |
 |---|---|---|
-| **[⬇️ Download Evolith SDLC Executive Presentation v3](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_sdlc_executive_simple_v3.pptx)** | PPTX | 5-slide executive explanation of Evolith SDLC adoption, phases, artifact set, RACI, and executive tracking. |
-| **[⬇️ Download Evolith SDLC Workshop Workbook v3](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_sdlc_workshop_simple_v3_hitos.xlsx)** | XLSX | Simplified hands-on workbook to define adoption level, applicable phases, key artifacts, milestone owners, nominal RACI, risks, and scorecard follow-up. |
+| **[⬇️ UMS Executive Presentation v4](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_arch32_ums_executive_reference_v4.pptx)** | PPTX | Executive briefing, stakeholder alignment, SDLC model presentation to leadership |
+| **[⬇️ UMS Reference Workbook v4](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_arch32_ums_workbook_reference_v4.xlsx)** | XLSX | Sprint planning, SDLC milestone mapping, phase and gate tracking |
+| **[⬇️ Bilingual Scorecard Workbook](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_sdlc_workshop_scorecard_workbook_bilingual.xlsx)** | XLSX | SDLC maturity assessment, facilitated working sessions, compliance scoring |
 
-> The workbook is intended for facilitated working sessions with customer teams. The presentation is intended for executive alignment, product vision, and technology leadership communication.
+> The workbook is intended for facilitated working sessions with customer teams. The presentation is intended for executive alignment, product vision, and technology leadership communication. The scorecard enables assessment of current adoption level and definition of an improvement roadmap.
 
 ---
 
@@ -74,7 +75,7 @@ For small MVPs, the minimum mandatory artifact chain is:
 PRD -> Functional Story -> Technical Story -> Test Summary Report -> Release Notes
 ```
 
-An ADR is mandatory whenever the work introduces or changes architecture boundaries, technology selection, security model, multi-tenancy model, persistence strategy, API contract strategy, deployment topology, observability topology, or any exception to an existing Evolith standard.
+An ADR is mandatory whenever the work introduces or changes architecture boundaries, technology selection, security model, multi-tenancy model, persistence strategy, API contract strategy, or observability strategy.
 
 The full compliance matrix applies when the product reaches scale, regulated environments, multi-tenancy, public APIs, production-critical workflows, or cross-team dependencies.
 
@@ -90,8 +91,8 @@ Scope definition, persona profiling, OKR mapping, and architectural constraint a
 
 | Artifact | Objective and when to use it | Recommended profiles |
 |---|---|---|
-| [PRD — Product Requirements Document](./04-artifact-templates/prd-template.md) | Captures the complete product scope: user personas, business OKRs, functional boundaries, constraints, and non-goals. Created once per product or major release initiative. Required before any architecture or design work begins. | Product Owner, Executive Sponsor — written by PO, reviewed and signed by Sponsor and Architect |
-| [SDLC–Evolith Artifact Mapping — Phase 1](./sdlc-evolith-artifact-mapping.md#2-phase-1-conception-and-discovery) | Reference table listing which Evolith artifacts are Required or Optional during this phase. Use it as a compliance checklist before declaring Business Sign-Off. | Product Owner, Governance Reviewer, Software Architect |
+| [PRD — Product Requirements Document](./04-artifact-templates/prd-template.md) | Captures the complete product scope: user personas, business OKRs, functional boundaries, constraints, and non-functional requirements. | Product Owner, Product Manager |
+| [SDLC–Evolith Artifact Mapping — Phase 1](./sdlc-evolith-artifact-mapping.md#2-phase-1-conception-and-discovery) | Reference table listing which Evolith artifacts are Required or Optional during this phase. Use as a DoD checklist. | Product Owner, Software Architect, Tech Lead |
 
 ---
 
@@ -105,11 +106,11 @@ Pattern selection, ADR production, bounded context definition, API contracts, an
 
 | Artifact | Objective and when to use it | Recommended profiles |
 |---|---|---|
-| [Construction-Focused SDLC Framework](./02-engineering/construction-focused-sdlc-framework.md) | Normative standard governing phase progression, quality thresholds, inner build loop, and the Definition of Done. Every engineer must read this before construction begins. | Software Architect, Tech Lead, All Engineers — read by everyone, enforced by Tech Lead |
-| [ADR — Architecture Decision Record](./04-artifact-templates/adr-template.md) | Captures a single architectural decision: context, considered options, chosen option, trade-offs, and consequences. One ADR per significant decision. Required before implementing any non-trivial architectural choice. | Software Architect, Principal / Staff Engineer — written by Architect, reviewed by Engineering Lead |
-| [Functional Story — Business Behavior Specification](./04-artifact-templates/functional-story-template.md) | Describes a user-facing capability in business language. Defines actors, flows, business rules, acceptance criteria, and technical constraints without prescribing implementation. Serves as the contract between Product and Engineering. | Product Owner, Business Analyst — written by PO/BA, reviewed by Architect and QA |
-| [Functional Story Writing Standard](./03-documentation/functional-story-writing-standard.md) | Normative rules governing the structure, language, and completeness of Functional Stories. All authors of Functional Stories must read this before writing. | Product Owner, Business Analyst, QA / SDET — normative reference for all story authors |
-| [SDLC–Evolith Artifact Mapping — Phase 2](./sdlc-evolith-artifact-mapping.md#3-phase-2-design-and-architecture) | Reference table listing Required and Optional artifacts for this phase. Use as a checklist before declaring Design Baseline. | Software Architect, Governance Reviewer, Product Owner |
+| [Construction-Focused SDLC Framework](./02-engineering/construction-focused-sdlc-framework.md) | Normative standard governing phase progression, quality thresholds, inner build loop, and the Definition of Done. | Software Architect, Tech Lead, DevOps / SRE |
+| [ADR — Architecture Decision Record](./04-artifact-templates/adr-template.md) | Captures a single architectural decision: context, considered options, chosen option, trade-offs, and consequences. | Software Architect, Principal / Staff Engineer |
+| [Functional Story — Business Behavior Specification](./04-artifact-templates/functional-story-template.md) | Describes a user-facing capability in business language. Defines actors, flows, business rules, acceptance criteria, and dependencies. | Product Owner, Software Architect, Tech Lead |
+| [Functional Story Writing Standard](./03-documentation/functional-story-writing-standard.md) | Normative rules governing the structure, language, and completeness of Functional Stories. All authored stories must conform to this standard. | Product Owner, Tech Lead |
+| [SDLC–Evolith Artifact Mapping — Phase 2](./sdlc-evolith-artifact-mapping.md#3-phase-2-design-and-architecture) | Reference table listing Required and Optional artifacts for this phase. Use to verify design readiness. | Software Architect, Tech Lead, QA / SDET |
 
 ---
 
@@ -123,10 +124,10 @@ Source code composition, automated testing, CI/CD enforcement, and Definition of
 
 | Artifact | Objective and when to use it | Recommended profiles |
 |---|---|---|
-| [Technical Story — Engineering Implementation Work Item](./04-artifact-templates/technical-story-template.md) | Breaks down a Functional Story into a concrete engineering task with specific implementation steps, technical acceptance criteria, and a DoD checklist. One Technical Story per discrete implementation unit. | Backend Developer, Frontend Developer, Tech Lead — written by Engineer, reviewed by Tech Lead and QA |
-| [SDLC Documentation Best Practices](./03-documentation/sdlc-documentation-best-practices.md) | Mandatory documentation-as-code rules: versioning, ADR updates, inline documentation, and review cadence. Applies to every code contribution during construction. | All Engineers, Tech Lead — normative, applies to every commit |
-| [SDLC Quality Gates](./quality-gates.md) | Canonical threshold baseline for coverage, complexity, CVEs, technical debt, documentation delta, and observability evidence. | Tech Lead, QA / SDET, Governance Reviewer |
-| [SDLC–Evolith Artifact Mapping — Phase 3](./sdlc-evolith-artifact-mapping.md#4-phase-3-construction) | Reference table listing Required and Optional artifacts for this phase. Use as a DoD compliance checklist on every sprint. | Tech Lead, QA / SDET, Governance Reviewer |
+| [Technical Story — Engineering Implementation Work Item](./04-artifact-templates/technical-story-template.md) | Breaks down a Functional Story into a concrete engineering task with specific implementation, test, and documentation requirements. | Backend Developer, Frontend Developer, Tech Lead |
+| [SDLC Documentation Best Practices](./03-documentation/sdlc-documentation-best-practices.md) | Mandatory documentation-as-code rules: versioning, ADR updates, inline documentation, and review criteria. | Tech Lead, Backend Developer, Frontend Developer |
+| [SDLC Quality Gates](./quality-gates.md) | Canonical threshold baseline for coverage, complexity, CVEs, technical debt, documentation delta, and observability evidence. | Tech Lead, QA / SDET, DevOps / SRE |
+| [SDLC–Evolith Artifact Mapping — Phase 3](./sdlc-evolith-artifact-mapping.md#4-phase-3-construction) | Reference table listing Required and Optional artifacts for this phase. Use as a DoD checklist. | Tech Lead, Backend Developer, Frontend Developer, QA / SDET |
 
 ---
 
@@ -140,9 +141,9 @@ Regression verification, security scanning, UAT, and Release Candidate stamping.
 
 | Artifact | Objective and when to use it | Recommended profiles |
 |---|---|---|
-| [Test Summary Report — Quality Gate Validation Record](./04-artifact-templates/test-summary-report-template.md) | Aggregates test execution results across unit, integration, and E2E layers. Confirms all mandatory quality thresholds are met (coverage, complexity, CVEs, tech debt). Required before the RC can be stamped. | QA / SDET — written by QA, signed off by Tech Lead and Product Owner |
+| [Test Summary Report — Quality Gate Validation Record](./04-artifact-templates/test-summary-report-template.md) | Aggregates test execution results across unit, integration, and E2E layers. Confirms pass/fail against all quality gates. | QA / SDET, Tech Lead, Security Engineer |
 | [SDLC Quality Gates](./quality-gates.md) | Canonical threshold baseline. Use it to confirm whether an RC may be stamped or must be blocked. | QA / SDET, Tech Lead, Security Engineer |
-| [SDLC–Evolith Artifact Mapping — Phase 4](./sdlc-evolith-artifact-mapping.md#5-phase-4-validation-and-qa) | Reference table for this phase. Use to verify all required QA artifacts are present before RC sign-off. | QA / SDET, Tech Lead, Governance Reviewer |
+| [SDLC–Evolith Artifact Mapping — Phase 4](./sdlc-evolith-artifact-mapping.md#5-phase-4-validation-and-qa) | Reference table for this phase. Use to verify all required QA artifacts are present and complete. | QA / SDET, Tech Lead |
 
 ---
 
@@ -156,9 +157,9 @@ Production deployment, observability validation, and monitoring nominality.
 
 | Artifact | Objective and when to use it | Recommended profiles |
 |---|---|---|
-| [Release Notes — Production Deployment Record](./04-artifact-templates/release-notes-template.md) | Formal deployment record: new features, breaking changes, bug fixes, deployment steps, rollback procedure, and observability checklist. Required before Production Live is declared. | DevOps / SRE, Tech Lead — written by DevOps/Tech Lead, reviewed by Product Owner |
+| [Release Notes — Production Deployment Record](./04-artifact-templates/release-notes-template.md) | Formal deployment record: new features, breaking changes, bug fixes, deployment steps, rollback procedure, and observability checklist. | DevOps / SRE, Product Owner, Tech Lead |
 | *Coming Soon: Zero-Downtime Release Playbook* | Operational runbook for blue-green and canary deployments with zero-downtime constraints. | DevOps / SRE |
-| [SDLC–Evolith Artifact Mapping — Phase 5](./sdlc-evolith-artifact-mapping.md#6-phase-5-delivery-and-operations) | Reference table for this phase. Use to verify all delivery artifacts are in place before declaring Production Live. | DevOps / SRE, Governance Reviewer |
+| [SDLC–Evolith Artifact Mapping — Phase 5](./sdlc-evolith-artifact-mapping.md#6-phase-5-delivery-and-operations) | Reference table for this phase. Use to verify all delivery artifacts are in place and production checklist is complete. | DevOps / SRE, Tech Lead |
 
 ---
 
@@ -172,7 +173,7 @@ The following documents apply across the lifecycle and must be consulted regardl
 | [SDLC Quality Gates](./quality-gates.md) | Canonical quality thresholds and waiver policy. |
 | [SDLC Responsibility Matrix](./responsibility-matrix.md) | Accountable, responsible, consulted, and evidence expectations per gate. |
 | [SDLC Traceability Model](./traceability-model.md) | End-to-end evidence chain from PRD to production observability. |
-| [SDLC–Evolith Artifact Mapping](./sdlc-evolith-artifact-mapping.md) | Master compliance matrix: 40+ Evolith artifacts mapped to the five SDLC phases with Required / Optional signal. The definitive reference for governance reviewers and team leads. |
+| [SDLC–Evolith Artifact Mapping](./sdlc-evolith-artifact-mapping.md) | Master compliance matrix: 40+ Evolith artifacts mapped to the five SDLC phases with Required / Optional signal. The definitive mapping of what must be produced when. |
 | [Artifact Templates Hub](./04-artifact-templates/README.md) | Index of all six format templates with blank structures and UMS worked examples. The starting point for authoring any new SDLC artifact. |
 
 ---

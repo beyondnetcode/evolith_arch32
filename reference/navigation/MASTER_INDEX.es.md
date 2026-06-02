@@ -20,6 +20,7 @@ Este es el índice completo de navegación de **Evolith** — la plataforma empr
 | Entender expectativas SDLC | [Centro de Gobernanza SDLC](../governance/sdlc/README.es.md) | [Plantillas de Artefactos SDLC](../governance/sdlc/04-artifact-templates/README.es.md) |
 | Explorar la referencia aplicada de producto | [Hub de Referencia UMS](../knowledge/demo/README.es.md) | [Portal de Arquitectura UMS](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) |
 | Separar políticas de evidencia de implementación | [Referencia Canónica vs Modelo Aplicado UMS](../knowledge/demo/demo-vs-reference.es.md) | [Taxonomía del Repositorio](../governance/standards/repository-taxonomy.es.md) |
+| Revisar licencia y propiedad intelectual | [Licencia Dual de BeyondNet Tech](../../LICENSE) | [NOTICE](../../NOTICE) |
 | Operar o desplegar localmente | [Hub de Operaciones](../operations/README.es.md) | [Hub de Infraestructura](../infrastructure/README.es.md) |
 | Explicar el estándar a una nueva audiencia | [Estrategia de Comunicación Arquitectónica](../governance/standards/communication/architecture-communication-strategy.es.md) | [Backlog Visual de Arquitectura](../governance/standards/communication/visuals/README.es.md) |
 
@@ -29,7 +30,7 @@ Este es el índice completo de navegación de **Evolith** — la plataforma empr
 
 | Rol | Ruta de lectura |
 |---|---|
-| **Ejecutivo / Sponsor** | [Directivas Arquitectónicas](../governance/standards/vision/architectural-directives.md) -> [Roadmap Evolutivo](../governance/standards/vision/evolutionary-strategy-roadmap.md) -> [Matriz de Madurez](../governance/standards/vision/maturity-matrix.md) |
+| **Ejecutivo / Sponsor** | [Directivas Arquitectónicas](../governance/standards/vision/architectural-directives.md) -> [Roadmap Evolutivo](../governance/standards/vision/evolutionary-strategy-roadmap.md) -> [Matriz de Madurez](../governance/standards/vision/maturity-matrix.md) -> [Licencia Dual](../../LICENSE) |
 | **Product Owner / PM** | [Modelo de Referencia UMS](../knowledge/demo/ums-reference-model.es.md) -> [Índice Documental UMS](https://github.com/beyondnetcode/ums/blob/main/docs/MASTER_INDEX.md) -> [Referencia vs Modelo Aplicado](../knowledge/demo/demo-vs-reference.es.md) |
 | **Arquitecto de Software** | [Hub de Arquitectura](../architecture/README.es.md) -> [Registro ADR](../architecture/adrs/README.md) -> [Portal de Arquitectura UMS](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) |
 | **Principal / Staff Engineer** | [Línea Base Agnóstica](../architecture/blueprints/authoritative-tech-stack-agnostic.md) -> [Patrones Tácticos](../architecture/adrs/core/0019-tactical-design-patterns-future-proofing.md) -> [Checklist de Simplicidad](../architecture/blueprints/simplicity-checklist-phase-01.md) |
@@ -68,6 +69,8 @@ Este es el índice completo de navegación de **Evolith** — la plataforma empr
 | Visión | [reference/governance/standards/vision](../governance/standards/vision/README.es.md) |
 | Ingeniería | [reference/governance/standards/engineering](../governance/standards/engineering/README.es.md) |
 | Onboarding | [reference/governance/standards/onboarding](../governance/standards/onboarding/README.es.md) |
+| Taxonomía del Repositorio | [reference/governance/standards/repository-taxonomy](../governance/standards/repository-taxonomy.es.md) |
+| Legal y Propiedad Intelectual | [Licencia Dual de BeyondNet Tech](../../LICENSE) / [NOTICE](../../NOTICE) |
 | AI-Augmented Engineering | [reference/governance/standards/ai-augmented](../governance/standards/ai-augmented/README.es.md) |
 | SDLC | [reference/governance/sdlc](../governance/sdlc/README.es.md) |
 | Mapeo SDLC–Artefactos Evolith | [reference/governance/sdlc/sdlc-evolith-artifact-mapping](../governance/sdlc/sdlc-evolith-artifact-mapping.es.md) |
@@ -130,6 +133,7 @@ Todo artefacto e implementación instanciada desde Evolith debe respetar estos p
 3. [Manifiesto de Ingeniería](../governance/standards/engineering/engineering-manifesto.md)
 4. [Definition of Done](../governance/sdlc/02-engineering/construction-focused-sdlc-framework.es.md)
 5. [Taxonomía del Repositorio](../governance/standards/repository-taxonomy.es.md)
+6. [Licencia Dual de BeyondNet Tech](../../LICENSE) y [NOTICE](../../NOTICE)
 
 ---
 

@@ -19,7 +19,8 @@ This is the complete navigation index for **Evolith** — the enterprise progres
 | Learn engineering standards | [Engineering Manifesto](../governance/standards/engineering/engineering-manifesto.md) | [Contract Testing Guideline](../governance/standards/engineering/contract-testing-guideline.md) |
 | Understand SDLC expectations | [SDLC Governance Center](../governance/sdlc/README.md) | [SDLC Artifact Templates](../governance/sdlc/04-artifact-templates/README.md) |
 | Explore the applied product reference | [UMS Reference Hub](../knowledge/demo/README.md) | [UMS Architecture Portal](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) |
-| Separate policy from implementation evidence | [Canonical Reference vs UMS Applied Model](../knowledge/demo/demo-vs-reference.md) | [Repository Taxonomy](../governance/standards/repository-taxonomy.es.md) |
+| Separate policy from implementation evidence | [Canonical Reference vs UMS Applied Model](../knowledge/demo/demo-vs-reference.md) | [Repository Taxonomy](../governance/standards/repository-taxonomy.md) |
+| Review licensing and IP terms | [BeyondNet Tech Dual License](../../LICENSE) | [NOTICE](../../NOTICE) |
 | Operate or deploy locally | [Operations Hub](../operations/README.md) | [Infrastructure Hub](../infrastructure/README.md) |
 | Explain the standard to a new audience | [Architecture Communication Strategy](../governance/standards/communication/architecture-communication-strategy.md) | [Visual Architecture Backlog](../governance/standards/communication/visuals/README.md) |
 
@@ -29,7 +30,7 @@ This is the complete navigation index for **Evolith** — the enterprise progres
 
 | Role | Reading path |
 |---|---|
-| **Executive / Sponsor** | [Architectural Directives](../governance/standards/vision/architectural-directives.md) -> [Evolutionary Roadmap](../governance/standards/vision/evolutionary-strategy-roadmap.md) -> [Maturity Matrix](../governance/standards/vision/maturity-matrix.md) |
+| **Executive / Sponsor** | [Architectural Directives](../governance/standards/vision/architectural-directives.md) -> [Evolutionary Roadmap](../governance/standards/vision/evolutionary-strategy-roadmap.md) -> [Maturity Matrix](../governance/standards/vision/maturity-matrix.md) -> [Dual License](../../LICENSE) |
 | **Product Owner / PM** | [UMS Reference Model](../knowledge/demo/ums-reference-model.md) -> [UMS Documentation Index](https://github.com/beyondnetcode/ums/blob/main/docs/MASTER_INDEX.md) -> [Reference vs Applied Model](../knowledge/demo/demo-vs-reference.md) |
 | **Software Architect** | [Architecture Hub](../architecture/README.md) -> [ADR Registry](../architecture/adrs/README.md) -> [UMS Architecture Portal](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) |
 | **Principal / Staff Engineer** | [Agnostic Baseline](../architecture/blueprints/authoritative-tech-stack-agnostic.md) -> [Tactical Design Patterns](../architecture/adrs/core/0019-tactical-design-patterns-future-proofing.md) -> [Simplicity Checklist](../architecture/blueprints/simplicity-checklist-phase-01.md) |
@@ -39,7 +40,7 @@ This is the complete navigation index for **Evolith** — the enterprise progres
 | **QA / SDET** | [Testing Pyramid ADR](../architecture/adrs/core/0018-testing-pyramid-quality-gates.md) -> [Contract Testing Guideline](../governance/standards/engineering/contract-testing-guideline.md) -> [Integration and E2E Testing ADR](../architecture/adrs/core/0053-integration-e2e-testing-strategy.md) |
 | **Security Engineer** | [Vendor Risk Assessment](../governance/standards/engineering/vendor-risk-assessment.md) -> [Multi-Tenancy ADR](../architecture/adrs/core/0010-multi-tenancy-architecture-strategy.md) -> [Immutable Audit Trail ADR](../architecture/adrs/core/0016-immutable-business-audit-trail.md) |
 | **AI Contributor** | [AI-Augmented Standards](../governance/standards/ai-augmented/README.md) -> [AI Architecture Assistant](../governance/standards/ai-augmented/08-architecture-ai-assistant/README.md) -> [BMAD Adoption Reference](../governance/standards/ai-augmented/frameworks/bmad-method/README.md) -> [Harness Rules](../../.harness/rules/global-rules.md) |
-| **New Joiner** | [Product Quick Start](../governance/standards/onboarding/product-quick-start.md) -> [Repository Taxonomy](../governance/standards/repository-taxonomy.es.md) -> [README Portal](../../README.md) |
+| **New Joiner** | [Product Quick Start](../governance/standards/onboarding/product-quick-start.md) -> [Repository Taxonomy](../governance/standards/repository-taxonomy.md) -> [README Portal](../../README.md) |
 
 ---
 
@@ -77,6 +78,8 @@ Key architecture references:
 | Vision | [reference/governance/standards/vision](../governance/standards/vision/README.md) |
 | Engineering | [reference/governance/standards/engineering](../governance/standards/engineering/README.md) |
 | Onboarding | [reference/governance/standards/onboarding](../governance/standards/onboarding/README.md) |
+| Repository Taxonomy | [reference/governance/standards/repository-taxonomy](../governance/standards/repository-taxonomy.md) |
+| Legal and IP | [BeyondNet Tech Dual License](../../LICENSE) / [NOTICE](../../NOTICE) |
 | AI-Augmented Engineering | [reference/governance/standards/ai-augmented](../governance/standards/ai-augmented/README.md) |
 | SDLC | [reference/governance/sdlc](../governance/sdlc/README.md) |
 | SDLC Artifact Mapping | [reference/governance/sdlc/sdlc-evolith-artifact-mapping](../governance/sdlc/sdlc-evolith-artifact-mapping.md) |
@@ -118,30 +121,3 @@ Official UMS sources:
 | Infrastructure | [reference/infrastructure](../infrastructure/README.md) |
 
 ---
-
-## 7. Official Executable Reference
-
-| Component | Official source |
-|---|---|
-| UMS product source and setup | [beyondnetcode/ums](https://github.com/beyondnetcode/ums) |
-| UMS architecture and traceability | [Architecture Portal](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) |
-
-This repository intentionally does not maintain product application code. UMS owns the executable demonstration of the architecture.
-
----
-
-## 8. Evolith Compliance Baseline
-
-Every artifact and implementation instantiated from Evolith must respect these pillars:
-
-1. [Agnostic Baseline](../architecture/blueprints/authoritative-tech-stack-agnostic.md)
-2. [Reference Architecture](../architecture/blueprints/reference-blueprint.md)
-3. [Engineering Manifesto](../governance/standards/engineering/engineering-manifesto.md)
-4. [Definition of Done](../governance/sdlc/02-engineering/construction-focused-sdlc-framework.md)
-5. [Repository Taxonomy](../governance/standards/repository-taxonomy.es.md)
-
----
-
-<div align="center">
- <a href="../../README.md">Back to Evolith Main Portal</a>
-</div>

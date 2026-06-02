@@ -22,10 +22,11 @@ Language: [English](./README.md) | [Español](./README.es.md)
 |---|---|---|
 | **Architecture Communication & Documentation** | Architecture strategy, documentation map, visual diagrams, communication narrative, role-based reading paths, Evolith inheritance model | [Architecture Communication Strategy](./reference/governance/standards/communication/architecture-communication-strategy.md) |
 | **SDLC Flow & Delivery Governance** | Delivery lifecycle, phase gates, roles, quality gates, Definition of Done, documentation expectations, construction-focused SDLC, release governance | [SDLC Governance Center](./reference/governance/sdlc/README.md) |
+| **Repository Navigation Hub** | Full master index, documentation version log, and root-level compatibility stubs | [Navigation Hub](./reference/navigation/README.md) |
 
 **Quick sub-links:**
 
-- [Architecture Hub](./reference/architecture/README.md) · [Visual Architecture Backlog](./reference/governance/standards/communication/visuals/README.md) · [Master Index](./MASTER_INDEX.md) · [Getting Started by Role](./reference/getting-started/README.md)
+- [Architecture Hub](./reference/architecture/README.md) · [Visual Architecture Backlog](./reference/governance/standards/communication/visuals/README.md) · [Master Index](./reference/navigation/MASTER_INDEX.md) · [Getting Started by Role](./reference/getting-started/README.md)
 - [Construction-Focused SDLC](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.md) · [Engineering Manifesto](./reference/governance/standards/engineering/engineering-manifesto.md) · [Contract Testing Guideline](./reference/governance/standards/engineering/contract-testing-guideline.md) · [ADR Registry](./reference/architecture/adrs/README.md)
 
 ---
@@ -74,7 +75,7 @@ Before contributing, read:
 - [Repository Taxonomy](./reference/governance/standards/repository-taxonomy.es.md) — What goes where
 - [Child Repository Inheritance Guide](./reference/governance/standards/onboarding/child-repository-inheritance-guide.md) — How products inherit from Evolith
 
-Full navigation: [MASTER_INDEX.md](./MASTER_INDEX.md)
+Full navigation: [reference/navigation/MASTER_INDEX.md](./reference/navigation/MASTER_INDEX.md)
 
 ---
 

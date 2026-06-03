@@ -32,6 +32,7 @@ La historia consolidada y clasificada de las decisiones técnicas activas.
 
 ### Fase 03: Estándares de Ingeniería y Auditoría de Stack
 Playbooks de implementación táctica, seguridad defensiva y validación de mercado.
+* **[Licensing & Open Source Governance — Selección Responsable de Tecnologías de Cero Costo](./engineering/licensing-and-open-source-governance.es.md)** *(Obligatorio - Selección Tecnológica)*
 * **[Opinión de Auditoría de Stack 2026](./engineering/detailed-stack-audit-2026.md)** *(Crítico - Evaluación de Licencias)*
 * **[Análisis Técnico Senior y Evaluación de Madurez](./engineering/senior-architectural-assessment.md)** *(Nuevo Roadmap)*
 * [Manifiesto de Ingeniería Global (SOLID/OWASP)](./engineering/engineering-manifesto.es.md)

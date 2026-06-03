@@ -30,23 +30,15 @@ Las plantillas garantizan consistencia en todos los repositorios satélite. Los 
 
 | Artefacto | Formato | Propósito |
 |---|---|---|
-| **[Evolith: Propuesta de Valor Ejecutiva](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_value_proposition_executive.pptx)** | PPTX | Presentación ejecutiva para alinear visión comercial y tecnológica sobre los beneficios del SDLC Evolith. |
-| **[Evolith: Caso Práctico UMS](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_ums_practical_case.pptx)** | PPTX | Caso de éxito demostrando la aplicación de las 8 fases en un entorno industrial real (Portal Autoservicio). |
-| **[Evolith: Deep-Dive Técnico SDLC](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_sdlc_technical_deep_dive.pptx)** | PPTX | Guía operativa de ingeniería sobre las fases, Quality Gates y artefactos. |
+| **[Evolith: Propuesta de Valor Ejecutiva](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_value_proposition_executive.pptx)** | PPTX | Presentación ejecutiva del valor estratégico, impacto de gobernanza e ROI. |
+| **[Evolith: Caso Práctico UMS](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_ums_practical_case.pptx)** | PPTX | Caso de éxito aplicando el framework Evolith a una transformación real. |
+| **[Evolith: Deep-Dive Técnico SDLC](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_sdlc_technical_deep_dive.pptx)** | PPTX | Guía operativa de ingeniería sobre fases, Quality Gates y artefactos. |
 
-### 🛠️ Kit de Herramientas Fase por Fase (Workbooks)
+### 🛠️ Workbook de Implementación
 
-| Artefacto / Fase | Formato | Propósito |
+| Artefacto / Alcance | Formato | Propósito |
 |---|---|---|
-| **[Master Workbook Integrador](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/Evolith_Master_Workbook.xlsx)** | XLSX | Tablero de control consolidado, registro de roles, trazabilidad cruzada y estado del proyecto. |
-| **[Workbook F1: Ideación](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/Evolith_Workbook_F1_Ideacion.xlsx)** | XLSX | Plantillas para el Business Case, Acta de Constitución y registro de riesgos iniciales. |
-| **[Workbook F2: Análisis](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/Evolith_Workbook_F2_Analisis.xlsx)** | XLSX | Documentación y trazabilidad de requerimientos de negocio. |
-| **[Workbook F3: Diseño](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/Evolith_Workbook_F3_Diseno.xlsx)** | XLSX | Registros de Decisiones de Arquitectura (ADRs) y Blueprint. |
-| **[Workbook F4: Construcción](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/Evolith_Workbook_F4_Construccion.xlsx)** | XLSX | Control de deuda técnica, Quality Gates en el Pipeline y Definition of Done. |
-| **[Workbook F5: Pruebas](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/Evolith_Workbook_F5_Pruebas.xlsx)** | XLSX | Plan maestro, ejecución de Casos de Prueba y bitácora de defectos. |
-| **[Workbook F6: Despliegue](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/Evolith_Workbook_F6_Despliegue.xlsx)** | XLSX | Ejecución de Runbooks, checklist pre-despliegue y planes de Rollback. |
-| **[Workbook F7: Operación](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/Evolith_Workbook_F7_Operacion.xlsx)** | XLSX | Dashboards SRE, registro de incidentes post-lanzamiento. |
-| **[Workbook F8: Retiro](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/Evolith_Workbook_F8_Retiro.xlsx)** | XLSX | Checklist seguro para la desconexión y Sunset de sistemas legacy. |
+| **[Workbook de Implementación SDLC Evolith F0](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_sdlc_implementation_workbook_F0.xlsx)** | XLSX | Workbook integrado consolidado para todas las fases SDLC: concepción, diseño, construcción, validación, despliegue y operaciones. Incluye plantillas, registros de roles, matrices de trazabilidad cruzada y dashboards de orquestación de proyectos para mesas de trabajo facilitadas con equipos cliente. |
 
 ---
 
@@ -66,12 +58,12 @@ Las plantillas garantizan consistencia en todos los repositorios satélite. Los 
 | Fase | Artefacto | Landing Page | Fuente Markdown | Ejemplo Renderizado | Perfiles recomendados |
 |---|---|---|---|---|---|
 | **Fase 1 — Concepción** | PRD — Documento de Requisitos de Producto | [Abrir](./prd-template.es.md) | [Fuente](./source/prd-template-source.es.md) | [Ejemplo](./examples/prd-example-ums.es.md) | Product Owner, Sponsor Ejecutivo |
-| **Fase 2 — Diseño** | ADR — Registro de Decisión Arquitectónica | [Abrir](./adr-template.es.md) | [Fuente](./source/adr-template-source.es.md) | [Ejemplo](./examples/adr-example-ums.es.md) | Arquitecto de Software, Principal / Staff Engineer |
-| **Fase 2 — Diseño** | Historia Funcional | [Abrir](./functional-story-template.es.md) | [Fuente](./source/functional-story-template-source.es.md) | [Ejemplo](./examples/functional-story-example-ums.es.md) | Product Owner, Analista de Negocio |
-| **Fase 3 — Construcción** | Historia Técnica | [Abrir](./technical-story-template.es.md) | [Fuente](./source/technical-story-template-source.es.md) | [Ejemplo](./examples/technical-story-example-ums.es.md) | Desarrollador Backend, Desarrollador Frontend, Tech Lead |
-| **Fase 4 — Validación** | Test Summary Report | [Abrir](./test-summary-report-template.es.md) | [Fuente](./source/test-summary-report-template-source.es.md) | [Ejemplo](./examples/test-summary-report-example-ums.es.md) | QA / SDET, Tech Lead |
+| **Fase 2 — Diseño** | ADR — Registro de Decisión Arquitectónica | [Abrir](./adr-template.es.md) | [Fuente](./source/adr-template-source.es.md) | [Ejemplo](./examples/adr-example-ums.es.md) | Arquitecto, Principal Engineer |
+| **Fase 2 — Diseño** | Historia Funcional | [Abrir](./functional-story-template.es.md) | [Fuente](./source/functional-story-template-source.es.md) | [Ejemplo](./examples/functional-story-example-ums.es.md) | Product Owner, Business Analyst |
+| **Fase 3 — Construcción** | Historia Técnica | [Abrir](./technical-story-template.es.md) | [Fuente](./source/technical-story-template-source.es.md) | [Ejemplo](./examples/technical-story-example-ums.es.md) | Desarrollador Backend/Frontend, Tech Lead |
+| **Fase 4 — Validación** | Test Summary Report | [Abrir](./test-summary-report-template.es.md) | [Fuente](./source/test-summary-report-template-source.es.md) | [Ejemplo](./examples/test-summary-report-example-ums.es.md) | QA / SDET, Tech Lead, Security Engineer |
 | **Fase 5 — Entrega** | Release Notes | [Abrir](./release-notes-template.es.md) | [Fuente](./source/release-notes-template-source.es.md) | [Ejemplo](./examples/release-notes-example-ums.es.md) | DevOps / SRE, Tech Lead |
-| **Transversal / Gobernanza de Release** | Scorecard Ejecutivo SDLC | [Abrir](./executive-scorecard-template.es.md) | [Fuente](./source/executive-scorecard-template-source.es.md) | [Ejemplo](./examples/executive-scorecard-example-ums.es.md) | Director de Tecnología, Sponsor Ejecutivo, Delivery Owner, Architecture Board, QA Lead, SRE Lead |
+| **Transversal / Gobernanza de Release** | Scorecard Ejecutivo SDLC | [Abrir](./executive-scorecard-template.es.md) | [Fuente](./source/executive-scorecard-template-source.es.md) | [Ejemplo](./examples/executive-scorecard-example-ums.es.md) | Director, Tech Lead |
 
 ---
 

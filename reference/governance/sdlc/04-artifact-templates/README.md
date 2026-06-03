@@ -30,23 +30,15 @@ Templates enforce consistency across all satellite repositories. Satellite teams
 
 | Artifact | Format | Purpose |
 |---|---|---|
-| **[Evolith: Executive Value Proposition](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_value_proposition_executive.pptx)** | PPTX | Executive presentation aligning commercial and technological vision on the benefits of the Evolith SDLC. |
-| **[Evolith: UMS Case Study](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_ums_practical_case.pptx)** | PPTX | Success story demonstrating the application of the 8 phases in a real industrial environment. |
+| **[Evolith: Executive Value Proposition](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_value_proposition_executive.pptx)** | PPTX | Executive briefing on Evolith's strategic value, governance impact, and ROI. |
+| **[Evolith: UMS Case Study](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_ums_practical_case.pptx)** | PPTX | Success story demonstrating the Evolith framework applied to a real-world transformation. |
 | **[Evolith: SDLC Technical Deep-Dive](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_sdlc_technical_deep_dive.pptx)** | PPTX | Engineering operational guide on phases, Quality Gates, and artifacts. |
 
-### 🛠️ Phase-by-Phase Tool Kit (Workbooks)
+### 🛠️ Implementation Workbook
 
-| Artifact / Phase | Format | Purpose |
+| Artifact / Scope | Format | Purpose |
 |---|---|---|
-| **[Master Workbook Integrator](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/Evolith_Master_Workbook.xlsx)** | XLSX | Consolidated dashboard, role registry, cross-traceability, and project status. |
-| **[Workbook F1: Ideation](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/Evolith_Workbook_F1_Ideacion.xlsx)** | XLSX | Templates for Business Case, Project Charter, and initial risk registry. |
-| **[Workbook F2: Analysis](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/Evolith_Workbook_F2_Analisis.xlsx)** | XLSX | Documentation and traceability of business requirements. |
-| **[Workbook F3: Design](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/Evolith_Workbook_F3_Diseno.xlsx)** | XLSX | Architectural Decision Records (ADRs) and Blueprint tracking. |
-| **[Workbook F4: Construction](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/Evolith_Workbook_F4_Construccion.xlsx)** | XLSX | Technical debt control, Pipeline Quality Gates, and Definition of Done. |
-| **[Workbook F5: Testing](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/Evolith_Workbook_F5_Pruebas.xlsx)** | XLSX | Master plan, test case execution, and defect log. |
-| **[Workbook F6: Deployment](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/Evolith_Workbook_F6_Despliegue.xlsx)** | XLSX | Runbook execution, pre-deployment checklists, and Rollback plans. |
-| **[Workbook F7: Operation](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/Evolith_Workbook_F7_Operacion.xlsx)** | XLSX | SRE dashboards and post-launch incident tracking. |
-| **[Workbook F8: Retirement](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/Evolith_Workbook_F8_Retiro.xlsx)** | XLSX | Secure checklist for sunsetting and disconnecting legacy systems. |
+| **[Evolith SDLC Implementation Workbook F0](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_sdlc_implementation_workbook_F0.xlsx)** | XLSX | Consolidated integrated workbook for all SDLC phases: conception, design, construction, validation, deployment, and operations. Includes templates, role registries, cross-traceability matrices, and project orchestration dashboards for facilitated working sessions with customer teams. |
 
 ---
 
@@ -66,12 +58,12 @@ Templates enforce consistency across all satellite repositories. Satellite teams
 | Phase | Artifact | Landing Page | Markdown Source | Rendered Example | Recommended profiles |
 |---|---|---|---|---|---|
 | **Phase 1 — Conception** | PRD — Product Requirements Document | [Open](./prd-template.md) | [Source](./source/prd-template-source.md) | [Example](./examples/prd-example-ums.md) | Product Owner, Executive Sponsor |
-| **Phase 2 — Design** | ADR — Architecture Decision Record | [Open](./adr-template.md) | [Source](./source/adr-template-source.md) | [Example](./examples/adr-example-ums.md) | Software Architect, Principal / Staff Engineer |
+| **Phase 2 — Design** | ADR — Architecture Decision Record | [Open](./adr-template.md) | [Source](./source/adr-template-source.md) | [Example](./examples/adr-example-ums.md) | Software Architect, Principal Engineer |
 | **Phase 2 — Design** | Functional Story | [Open](./functional-story-template.md) | [Source](./source/functional-story-template-source.md) | [Example](./examples/functional-story-example-ums.md) | Product Owner, Business Analyst |
 | **Phase 3 — Construction** | Technical Story | [Open](./technical-story-template.md) | [Source](./source/technical-story-template-source.md) | [Example](./examples/technical-story-example-ums.md) | Backend Developer, Frontend Developer, Tech Lead |
-| **Phase 4 — Validation** | Test Summary Report | [Open](./test-summary-report-template.md) | [Source](./source/test-summary-report-template-source.md) | [Example](./examples/test-summary-report-example-ums.md) | QA / SDET, Tech Lead |
+| **Phase 4 — Validation** | Test Summary Report | [Open](./test-summary-report-template.md) | [Source](./source/test-summary-report-template-source.md) | [Example](./examples/test-summary-report-example-ums.md) | QA / SDET, Tech Lead, Security Engineer |
 | **Phase 5 — Delivery** | Release Notes | [Open](./release-notes-template.md) | [Source](./source/release-notes-template-source.md) | [Example](./examples/release-notes-example-ums.md) | DevOps / SRE, Tech Lead |
-| **Cross-phase / Release Governance** | SDLC Executive Scorecard | [Open](./executive-scorecard-template.md) | [Source](./source/executive-scorecard-template-source.md) | [Example](./examples/executive-scorecard-example-ums.md) | Technology Director, Executive Sponsor, Delivery Owner, Architecture Board, QA Lead, SRE Lead |
+| **Cross-phase / Release Governance** | SDLC Executive Scorecard | [Open](./executive-scorecard-template.md) | [Source](./source/executive-scorecard-template-source.md) | [Example](./examples/executive-scorecard-example-ums.md) | Director, Tech Lead |
 
 ---
 

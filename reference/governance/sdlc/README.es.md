@@ -182,6 +182,7 @@ Los siguientes documentos aplican en toda la vida del ciclo y deben consultarse 
 | [Matriz de Responsabilidades SDLC](./responsibility-matrix.es.md) | Expectativas accountable, responsible, consulted y evidencia por gate. |
 | [Modelo de Trazabilidad SDLC](./traceability-model.es.md) | Cadena de evidencia end-to-end desde PRD hasta observabilidad operativa. |
 | [Mapeo SDLC–Artefactos Evolith](./sdlc-evolith-artifact-mapping.es.md) | Matriz de cumplimiento: 40+ artefactos Evolith mapeados a las cinco fases SDLC con señal Requerido/Opcional. Referencia definitiva de alcance de artefactos por fase. |
+| [Content Management Abstraction](../standards/engineering/content-management-abstraction.es.md) | Buena práctica opcional para acelerar Time to Market mediante contenido administrable sin contaminar el core transaccional. |
 | [Hub de Plantillas de Artefactos](./04-artifact-templates/README.es.md) | Índice de todas las plantillas con estructuras en blanco y ejemplos UMS. Punto de partida para crear artefactos SDLC oficiales. |
 
 ---

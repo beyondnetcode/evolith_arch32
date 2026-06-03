@@ -32,6 +32,7 @@ The consolidated and classified history of active architectural decisions across
 
 ### Phase 03: Engineering Standards and Stack Audit
 Tactical implementation playbooks, defensive security, and market validation.
+* **[Convention over Configuration — Evolith Design Standard for Configurable Systems](./engineering/convention-over-configuration.md)** *(Mandatory - Parameterization and Child Systems)*
 * **[Licensing & Open Source Governance — Responsible Selection of Zero-Cost Technologies](./engineering/licensing-and-open-source-governance.md)** *(Mandatory - Technology Selection)*
 * **[2026 Stack Audit Opinion](./engineering/detailed-stack-audit-2026.md)** *(Critical - License Evaluation)*
 * **[Senior Architectural Assessment & Roadmap](./engineering/senior-architectural-assessment.md)** *(New)*

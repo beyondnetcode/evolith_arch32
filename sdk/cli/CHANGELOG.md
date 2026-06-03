@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/beyondnetcode/evolith_arch32/compare/cli-v1.0.1...cli-v1.0.2) (2026-06-03)
+
+
+### Bug Fixes
+
+* resolve typescript compilation errors in cli build for release ([c147aa4](https://github.com/beyondnetcode/evolith_arch32/commit/c147aa41d1b936ae15ea7617ece608e85b35a9ba))
+
 ## [1.0.1](https://github.com/beyondnetcode/evolith_arch32/compare/cli-v1.0.0...cli-v1.0.1) (2026-06-03)
 
 

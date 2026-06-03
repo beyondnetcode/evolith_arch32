@@ -1,8 +1,8 @@
 # Corporate Standards Center (EAC)
 
-> **Bilingual Navigation:** [Versión en Español](../standards/README.md)
+> **Bilingual Navigation:** [Versión en Español](../standards/README.es.md)
 
-Welcome to the central repository of architectural truth. Every document present here is considered **Mandatory Normative** for building software within the organization.
+Welcome to the central repository of architectural truth. Every document present here is considered **Mandatory Normative** for building software within the organization, unless the document explicitly declares an **Optional** or **Conditional** classification.
 
 ---
 
@@ -35,6 +35,7 @@ Tactical implementation playbooks, defensive security, and market validation.
 * **[2026 Stack Audit Opinion](./engineering/detailed-stack-audit-2026.md)** *(Critical - License Evaluation)*
 * **[Senior Architectural Assessment & Roadmap](./engineering/senior-architectural-assessment.md)** *(New)*
 * [Global Engineering Manifesto (SOLID/OWASP)](./engineering/engineering-manifesto.md)
+* [Content Management Abstraction — Headless CMS as a Time-to-Market Accelerator](./engineering/content-management-abstraction.md) *(Optional / Conditional)*
 * [Tactical Contract Testing Guide (Pact)](./engineering/contract-testing-guideline.md)
 * [Observability Strategy Playbook](./engineering/observability-playbook.md)
 * [API Gateway Plugin Manual (Kong/Traefik)](./engineering/gateway-guidelines.md)

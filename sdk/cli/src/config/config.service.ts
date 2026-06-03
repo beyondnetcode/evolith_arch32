@@ -10,11 +10,11 @@ export interface EvolithConfig {
 
 @Injectable()
 export class ConfigService {
-  private config: Conf<EvolithConfig>;
+  private config: Conf<any>;
   private readonly logger = new Logger(ConfigService.name);
 
   constructor() {
-    this.config = new Conf<EvolithConfig>({
+    this.config = new Conf<any>({
       projectName: 'evolith-cli',
       fileExtension: 'yaml',
       defaults: {

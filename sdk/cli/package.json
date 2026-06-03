@@ -13,7 +13,10 @@
     "build": "tsc",
     "start": "node dist/main.js",
     "start:dev": "tsc -w & node dist/main.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage",
+    "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "keywords": [
     "evolith",
@@ -24,13 +27,27 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@clack/prompts": "^1.5.1",
+    "@nestjs/common": "^11.1.24",
+    "@nestjs/core": "^11.1.24",
+    "chalk": "^4.1.2",
+    "chokidar": "^5.0.0",
+    "conf": "^15.1.0",
+    "fs-extra": "^11.3.5",
+    "nest-commander": "^3.20.1",
     "ora": "^9.4.0",
     "yaml": "^2.9.0"
   },
   "devDependencies": {
+    "@nestjs/testing": "^11.1.24",
     "@types/conf": "^2.1.0",
+    "@types/fs-extra": "^11.0.4",
+    "@types/jest": "^30.0.0",
     "@types/node": "^25.9.1",
     "@types/yaml": "^1.9.6",
+    "jest": "^30.4.2",
+    "nest-commander-testing": "^3.5.1",
+    "ts-jest": "^29.4.11",
     "typescript": "^6.0.3"
   }
 }

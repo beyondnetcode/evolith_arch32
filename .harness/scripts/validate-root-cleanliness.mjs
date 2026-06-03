@@ -18,7 +18,9 @@ const allowedFiles = new Set([
   "LICENSE",
   ".editorconfig",
   ".gitignore",
-  ".markdownlint.json"
+  ".markdownlint.json",
+  ".release-please-manifest.json",
+  "release-please-config.json"
 ]);
 
 // Explicit whitelist of allowed directories in the root directory.
@@ -29,7 +31,8 @@ const allowedDirectories = new Set([
   ".harness",
   ".husky",
   ".vscode",
-  "reference"
+  "reference",
+  "sdk"
 ]);
 
 const failures = [];

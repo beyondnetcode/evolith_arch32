@@ -78,3 +78,4 @@ To learn about implementation details, technical decisions, and the domain model
 
 ## Governance
 This CLI strictly adheres to the policies established in Evolith's `AGENTS.md`.
+

@@ -37,10 +37,10 @@ jobs:
           fi
           
           if [[ -z "$VERSION" ]]; then
-            echo "No release version detected in commit message"
+            echo "No release version detected in commit message. Skipping release."
             echo "version=" >> $GITHUB_OUTPUT
             echo "branch=" >> $GITHUB_OUTPUT
-            exit 1
+            exit 0
           fi
           
           echo "version=$VERSION" >> $GITHUB_OUTPUT

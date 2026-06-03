@@ -30,9 +30,9 @@ Las plantillas garantizan consistencia en todos los repositorios satélite. Los 
 
 | Artefacto | Formato | Propósito |
 |---|---|---|
-| **[Evolith: Propuesta de Valor Ejecutiva](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith-sdlc-value-proposition.pptx)** | PPTX | Presentación ejecutiva para alinear visión comercial y tecnológica sobre los beneficios del SDLC Evolith. |
-| **[Evolith: Caso Práctico UMS](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith-ums-case-study.pptx)** | PPTX | Caso de éxito demostrando la aplicación de las 8 fases en un entorno industrial real (Portal Autoservicio). |
-| **[Evolith: Deep-Dive Técnico SDLC](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith-sdlc-technical-deepdive.pptx)** | PPTX | Guía operativa de ingeniería sobre las fases, Quality Gates y artefactos. |
+| **[Evolith: Propuesta de Valor Ejecutiva](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_value_proposition_executive.pptx)** | PPTX | Presentación ejecutiva para alinear visión comercial y tecnológica sobre los beneficios del SDLC Evolith. |
+| **[Evolith: Caso Práctico UMS](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_ums_practical_case.pptx)** | PPTX | Caso de éxito demostrando la aplicación de las 8 fases en un entorno industrial real (Portal Autoservicio). |
+| **[Evolith: Deep-Dive Técnico SDLC](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_sdlc_technical_deep_dive.pptx)** | PPTX | Guía operativa de ingeniería sobre las fases, Quality Gates y artefactos. |
 
 ### 🛠️ Kit de Herramientas Fase por Fase (Workbooks)
 

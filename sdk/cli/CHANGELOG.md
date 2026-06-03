@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/beyondnetcode/evolith_arch32/compare/cli-v1.0.2...cli-v1.0.3) (2026-06-03)
+
+
+### Bug Fixes
+
+* resolve npm metadata and link resolution ([2d51119](https://github.com/beyondnetcode/evolith_arch32/commit/2d51119f6e8d145a23f14ddce590db995cac5846))
+
 ## [1.0.2](https://github.com/beyondnetcode/evolith_arch32/compare/cli-v1.0.1...cli-v1.0.2) (2026-06-03)
 
 

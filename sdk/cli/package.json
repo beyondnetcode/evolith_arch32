@@ -25,6 +25,11 @@
   ],
   "author": "Beyondnet",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/beyondnetcode/evolith_arch32.git",
+    "directory": "sdk/cli"
+  },
   "type": "commonjs",
   "dependencies": {
     "@clack/prompts": "^1.5.1",

@@ -41,13 +41,14 @@ function githubSlug(value) {
 
 function extractTitle(content) {
   const match = content.match(/^#\s+(.+)$/m);
-  return match ? match[1]. : null;
+  return match ? match[1] : null;
 }
 
 function extractHeaders(content) {
   const headers = [];
+  const withoutCodeBlocks = content.replace(/```[\s\S]*?```/g, "");
   const pattern = /^(#{2,3})\s+(.+)$/gm;
-  for (const match of content.matchAll(pattern)) {
+  for (const match of withoutCodeBlocks.matchAll(pattern)) {
     headers.push({ level: match[1].length, text: match[2].trim() });
   }
   return headers;

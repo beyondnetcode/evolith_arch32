@@ -1,79 +1,80 @@
 # Evolith SDK CLI
 
-Bienvenido al CLI oficial de Evolith. Esta herramienta está diseñada para automatizar la adopción de los estándares, arquitectura y gobernanza de Evolith en repositorios satélite.
+Welcome to the official Evolith CLI. This tool is designed to automate the adoption of Evolith standards, architecture, and governance in satellite repositories.
 
-## Instalación
+Language: [English](./README.md) | [Español](./README.es.md)
 
-Puedes instalar la herramienta globalmente vía NPM:
+## Installation
+
+You can install the tool globally via NPM:
 
 ```bash
 npm install -g @evolith/cli
 ```
 
-O ejecutarla bajo demanda usando `npx`:
+Or run it on demand using `npx`:
 
 ```bash
 npx @evolith/cli init
 ```
 
-## Comandos Principales
+## Main Commands
 
 ### `init`
-Inicializa interactivamente un repositorio satélite, configurando las reglas de documentación bilingüe, plantillas base y agentes requeridos.
-*Soporta el modo interactivo (asistente) y modo batch vía `--config evolith.setup.json`.*
+Interactively initializes a satellite repository, setting up bilingual documentation rules, base templates, and required agents.
+*Supports interactive mode (wizard) and batch mode via `--config evolith.setup.json`.*
 
 ### `agents`
-Instala y configura agentes en tu repositorio (por ejemplo, `bmad`, `architecture`, `qa`).
+Installs and configures agents in your repository (e.g., `bmad`, `architecture`, `qa`).
 ```bash
 evolith agents install
 ```
 
 ### `validate`
-Verifica que el repositorio cumpla con la estructura y reglas de Evolith (Mermaid, anclas estables, paridad bilingüe).
-Ideal para usar en tus pipelines de CI/CD:
+Verifies that the repository complies with Evolith structure and rules (Mermaid, stable anchors, bilingual parity).
+Ideal for use in your CI/CD pipelines:
 ```bash
 evolith validate --format json
 ```
 
 ### `daemon`
-Inicia el watcher en background y el servidor MCP (Model Context Protocol) para integrarse con IDEs como VSCode o asistentes como Antigravity.
+Starts the background watcher and the MCP (Model Context Protocol) server to integrate with IDEs like VSCode or assistants like Antigravity.
 ```bash
 evolith daemon start
 ```
 
 ### `upgrade`
-Descarga las últimas reglas, templates y directrices de Evolith upstream y las aplica inteligentemente al satélite sin sobrescribir código personalizado (idempotente).
+Downloads the latest upstream Evolith rules, templates, and guidelines and intelligently applies them to the satellite without overwriting custom code (idempotent).
 
-## Cómo usarlo (How-To)
+## How-To
 
-Un flujo típico de trabajo con el CLI de Evolith en un repositorio satélite:
+A typical workflow with the Evolith CLI in a satellite repository:
 
-1. **Inicializar el entorno**:
-   Ve al directorio de tu proyecto (o créalo) y ejecuta el comando de inicialización. Esto configurará las reglas base, estructuras de directorios y plantillas:
+1. **Initialize the environment**:
+   Go to your project directory (or create it) and run the initialization command. This will set up the base rules, directory structures, and templates:
    ```bash
    npx @evolith/cli init
    ```
 
-2. **Instalar los agentes requeridos**:
-   Para añadir capacidades como validación QA o diseño de arquitectura, instala los agentes preconfigurados:
+2. **Install the required agents**:
+   To add capabilities like QA validation or architecture design, install the preconfigured agents:
    ```bash
    evolith agents install
    ```
 
-3. **Validar tu repositorio (CI/CD)**:
-   Puedes validar continuamente (por ejemplo, en un hook de pre-commit o pipeline) que la documentación bilingüe, diagramas Mermaid y enlaces sean correctos:
+3. **Validate your repository (CI/CD)**:
+   You can continuously validate (e.g., in a pre-commit hook or pipeline) that bilingual documentation, Mermaid diagrams, and links are correct:
    ```bash
    evolith validate --format json
    ```
 
-## Arquitectura
+## Architecture
 
-Para conocer los detalles de implementación, decisiones técnicas y el modelo de dominio detrás del CLI y el SDK en general, consulta la siguiente documentación de arquitectura:
+To learn about implementation details, technical decisions, and the domain model behind the CLI and the broader SDK, see the following architecture documentation:
 
-* [Arquitectura del Evolith SDK](../../reference/architecture/evolith-sdk/README.es.md)
-* [Modelo de Dominio](../../reference/architecture/evolith-sdk/domain-model.es.md)
-* [Diseño Técnico](../../reference/architecture/evolith-sdk/technical-design.es.md)
+* [Evolith SDK Architecture](../../reference/architecture/evolith-sdk/README.md)
+* [Domain Model](../../reference/architecture/evolith-sdk/domain-model.md)
+* [Technical Design](../../reference/architecture/evolith-sdk/technical-design.md)
 
-## Gobernanza
-Este CLI cumple estrictamente las políticas establecidas en `AGENTS.md` de Evolith.
-
+## Governance
+This CLI strictly adheres to the policies established in Evolith's `AGENTS.md`.

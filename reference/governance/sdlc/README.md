@@ -182,6 +182,7 @@ The following documents apply across the lifecycle and must be consulted regardl
 | [SDLC Responsibility Matrix](./responsibility-matrix.md) | Accountable, responsible, consulted, and evidence expectations per gate. |
 | [SDLC Traceability Model](./traceability-model.md) | End-to-end evidence chain from PRD to production observability. |
 | [SDLC–Evolith Artifact Mapping](./sdlc-evolith-artifact-mapping.md) | Master compliance matrix: 40+ Evolith artifacts mapped to the five SDLC phases with Required / Optional signal. The definitive reference for artifact scope per phase. |
+| [Content Management Abstraction](../standards/engineering/content-management-abstraction.md) | Optional best practice for accelerating Time to Market through manageable content without contaminating the transactional core. |
 | [Artifact Templates Hub](./04-artifact-templates/README.md) | Index of all six format templates with blank structures and UMS worked examples. The starting point for authoring any new SDLC artifact. |
 
 ---

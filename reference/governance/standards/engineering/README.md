@@ -11,6 +11,7 @@ Use this index for engineering standards. If you are looking for the fastest rou
 | C# / .NET engineering standards | [api-dotnet](./api-dotnet/README.md) |
 | C# / .NET runtime profile | [.NET & C# Tech Stack Profile](../../../architecture/blueprints/authoritative-tech-stack-dotnet.md) |
 | Runtime-agnostic baseline | [Agnostic Architecture Baseline](../../../architecture/blueprints/authoritative-tech-stack-agnostic.md) |
+| Convention, parameterization, and configuration design | [Convention over Configuration](./convention-over-configuration.md) |
 | Technology licensing and zero-cost governance | [Licensing & Open Source Governance](./licensing-and-open-source-governance.md) |
 | Optional content acceleration / Headless CMS | [Content Management Abstraction](./content-management-abstraction.md) |
 
@@ -19,6 +20,7 @@ Use this index for engineering standards. If you are looking for the fastest rou
 * [api-dotnet](./api-dotnet/README.md)
 * [content-management-abstraction](./content-management-abstraction.md)
 * [contract-testing-guideline](./contract-testing-guideline.md)
+* [convention-over-configuration](./convention-over-configuration.md)
 * [detailed-stack-audit-2026](./detailed-stack-audit-2026.md)
 * [engineering-manifesto](./engineering-manifesto.md)
 * [gateway-guidelines](./gateway-guidelines.md)

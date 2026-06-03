@@ -13,7 +13,9 @@ module.exports = {
   coverageDirectory: '../coverage',
   testEnvironment: 'node',
   moduleNameMapper: {
-    '^@clack/prompts$': '<rootDir>/../__mocks__/@clack/prompts.js'
+    '^@clack/prompts$': '<rootDir>/../__mocks__/@clack/prompts.js',
+    '^chokidar$': '<rootDir>/../__mocks__/chokidar.js',
+    '^conf$': '<rootDir>/../__mocks__/conf.js'
   },
   coverageThreshold: {
     global: {

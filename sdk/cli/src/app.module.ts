@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
-import { InitCommand } from './commands/init.command';
-import { AgentsCommand } from './commands/agents.command';
-import { ValidateCommand } from './commands/validate.command';
-import { DocsCommand } from './commands/docs.command';
-import { UpgradeCommand } from './commands/upgrade.command';
-import { DaemonCommand } from './commands/daemon.command';
-import { ConfigService } from './config/config.service';
-import { FileManagerService } from './utils/file-manager.service';
-import { SyncService } from './sync/sync.service';
-import { WatcherService } from './daemon/watcher.service';
-import { McpServerService } from './daemon/mcp-server.service';
+import { InitCommand } from './commands/init/init.command';
+import { AgentsCommand } from './commands/init/agents.command';
+import { ValidateCommand } from './commands/validate/validate.command';
+import { DocsCommand } from './commands/docs/docs.command';
+import { UpgradeCommand } from './commands/init/upgrade.command';
+import { McpServeCommand } from './commands/mcp/mcp-serve.command';
+import { ConfigService } from './core/config/config.service';
+import { FileManagerService } from './core/filesystem/file-manager.service';
+import { SyncService } from './core/sync/sync.service';
+import { WatcherService } from './core/mcp/watcher.service';
+import { McpServerService } from './core/mcp/mcp-server.service';
 
 @Module({
   imports: [],
@@ -19,7 +19,7 @@ import { McpServerService } from './daemon/mcp-server.service';
     ValidateCommand,
     DocsCommand,
     UpgradeCommand,
-    DaemonCommand,
+    McpServeCommand,
     ConfigService,
     FileManagerService,
     SyncService,

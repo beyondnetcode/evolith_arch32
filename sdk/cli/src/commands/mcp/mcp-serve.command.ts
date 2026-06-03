@@ -2,15 +2,15 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 import { Logger } from '@nestjs/common';
 import * as p from '@clack/prompts';
 import chalk from 'chalk';
-import { WatcherService } from '../daemon/watcher.service';
-import { McpServerService } from '../daemon/mcp-server.service';
+import { WatcherService } from '../../core/mcp/watcher.service';
+import { McpServerService } from '../../core/mcp/mcp-server.service';
 
 @Command({
-  name: 'daemon',
-  description: 'Inicia el servidor en segundo plano para integración IDE y Watcher',
+  name: 'mcp',
+  description: 'Inicia el servidor MCP para integración IDE y Watcher',
 })
-export class DaemonCommand extends CommandRunner {
-  private readonly logger = new Logger(DaemonCommand.name);
+export class McpServeCommand extends CommandRunner {
+  private readonly logger = new Logger(McpServeCommand.name);
 
   constructor(
     private readonly watcherService: WatcherService,
@@ -20,21 +20,21 @@ export class DaemonCommand extends CommandRunner {
   }
 
   async run(passedParam: string[]): Promise<void> {
-    const action = passedParam[0] || 'start';
+    const action = passedParam[0] || 'serve';
 
-    if (action === 'start') {
-      p.intro(chalk.bgMagenta.white.bold(' Evolith SDK Daemon '));
+    if (action === 'serve') {
+      p.intro(chalk.bgMagenta.white.bold(' Evolith SDK - MCP Serve '));
       this.logger.log('Arrancando servicios en background...');
       
       this.watcherService.startWatching();
       // El MCP Server se arranca solo por el ciclo de vida OnModuleInit
 
-      p.log.info('El Daemon está corriendo. Presiona Ctrl+C para detenerlo.');
+      p.log.info('El servidor MCP está corriendo por stdio. Presiona Ctrl+C para detenerlo.');
 
       // Mantener el proceso vivo
       return new Promise(() => {});
     } else {
-      this.logger.warn(`Acción daemon desconocida: ${action}`);
+      this.logger.warn(`Acción MCP desconocida: ${action}`);
     }
   }
 }

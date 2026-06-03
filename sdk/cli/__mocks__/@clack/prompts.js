@@ -1,1 +1,1 @@
-module.exports = { confirm: jest.fn(), intro: jest.fn(), outro: jest.fn(), log: { info: jest.fn(), warn: jest.fn(), success: jest.fn(), error: jest.fn() }, spinner: jest.fn(() => ({ start: jest.fn(), stop: jest.fn() })) };
+module.exports = { note: jest.fn(), confirm: jest.fn(), intro: jest.fn(), outro: jest.fn(), log: { info: jest.fn(), warn: jest.fn(), success: jest.fn(), error: jest.fn() }, spinner: jest.fn(() => ({ start: jest.fn(), stop: jest.fn(), message: jest.fn() })) };

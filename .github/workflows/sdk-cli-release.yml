@@ -6,6 +6,8 @@ on:
       - main
     paths:
       - 'sdk/cli/**'
+      - '.release-please-manifest.json'
+      - 'release-please-config.json'
 
 jobs:
   release-please:
@@ -13,43 +15,39 @@ jobs:
     steps:
       - uses: googleapis/release-please-action@v4
         id: release
-        with:
-          path: sdk/cli
-          release-type: node
-          package-name: '@evolith/cli'
 
       - uses: actions/checkout@v4
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.release.outputs['sdk/cli--release_created'] }}
         
       - uses: actions/setup-node@v4
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.release.outputs['sdk/cli--release_created'] }}
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies and build
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.release.outputs['sdk/cli--release_created'] }}
         working-directory: ./sdk/cli
         run: |
           npm ci
           npm run build
 
       - name: Publish to NPM
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.release.outputs['sdk/cli--release_created'] }}
         working-directory: ./sdk/cli
         run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Package binary (pkg)
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.release.outputs['sdk/cli--release_created'] }}
         working-directory: ./sdk/cli
         run: |
           npx pkg . --targets node20-linux-x64,node20-macos-x64,node20-win-x64 --out-path binaries
         
       - name: Upload Binaries to Release
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.release.outputs['sdk/cli--release_created'] }}
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ steps.release.outputs.tag_name }}
+          tag_name: ${{ steps.release.outputs['sdk/cli--tag_name'] }}
           files: sdk/cli/binaries/*

@@ -38,9 +38,9 @@ No lifecycle phase should advance based on verbal agreement alone. Each gate req
 
 | Artifact | Format | Purpose |
 |---|---|---|
-| **[Evolith: Executive Value Proposition](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith-sdlc-value-proposition.pptx)** | PPTX | Executive presentation aligning commercial and technological vision on the benefits of the Evolith SDLC. |
-| **[Evolith: UMS Case Study](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith-ums-case-study.pptx)** | PPTX | Success story demonstrating the application of the 8 phases in a real industrial environment. |
-| **[Evolith: SDLC Technical Deep-Dive](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith-sdlc-technical-deepdive.pptx)** | PPTX | Engineering operational guide on phases, Quality Gates, and artifacts. |
+| **[Evolith: Executive Value Proposition](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_value_proposition_executive.pptx)** | PPTX | Executive presentation aligning commercial and technological vision on the benefits of the Evolith SDLC. |
+| **[Evolith: UMS Case Study](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_ums_practical_case.pptx)** | PPTX | Success story demonstrating the application of the 8 phases in a real industrial environment. |
+| **[Evolith: SDLC Technical Deep-Dive](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_sdlc_technical_deep_dive.pptx)** | PPTX | Engineering operational guide on phases, Quality Gates, and artifacts. |
 
 ### 🛠️ Phase-by-Phase Tool Kit (Workbooks)
 

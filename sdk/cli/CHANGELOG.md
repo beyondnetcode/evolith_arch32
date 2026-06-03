@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/beyondnetcode/evolith_arch32/compare/cli-v1.0.0...cli-v1.0.1) (2026-06-03)
+
+
+### Bug Fixes
+
+* remove emojis, fix mojibake and resolve structural mismatch ([ce2b2fa](https://github.com/beyondnetcode/evolith_arch32/commit/ce2b2fa828024bd7789cc8cb6ebc67e1bd31b5b5))
+
 ## 1.0.0 (2026-06-03)
 
 

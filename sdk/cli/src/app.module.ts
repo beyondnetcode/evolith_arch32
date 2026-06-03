@@ -4,9 +4,12 @@ import { AgentsCommand } from './commands/agents.command';
 import { ValidateCommand } from './commands/validate.command';
 import { DocsCommand } from './commands/docs.command';
 import { UpgradeCommand } from './commands/upgrade.command';
+import { DaemonCommand } from './commands/daemon.command';
 import { ConfigService } from './config/config.service';
 import { FileManagerService } from './utils/file-manager.service';
 import { SyncService } from './sync/sync.service';
+import { WatcherService } from './daemon/watcher.service';
+import { McpServerService } from './daemon/mcp-server.service';
 
 @Module({
   imports: [],
@@ -16,9 +19,12 @@ import { SyncService } from './sync/sync.service';
     ValidateCommand,
     DocsCommand,
     UpgradeCommand,
+    DaemonCommand,
     ConfigService,
     FileManagerService,
-    SyncService
+    SyncService,
+    WatcherService,
+    McpServerService
   ],
 })
 export class AppModule {}

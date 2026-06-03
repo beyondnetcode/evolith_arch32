@@ -2,7 +2,7 @@
 
 > **Navegación Bilingüe:** [English Version](../standards/README.md)
 
-Bienvenido al repositorio central de la verdad arquitectónica. Cada documento presente aquí se considera **Normativa Obligatoria** para construir software dentro de la organización.
+Bienvenido al repositorio central de la verdad arquitectónica. Cada documento presente aquí se considera **Normativa Obligatoria** para construir software dentro de la organización, salvo que el propio documento declare explícitamente una clasificación **Opcional** o **Condicional**.
 
 ---
 
@@ -35,6 +35,7 @@ Playbooks de implementación táctica, seguridad defensiva y validación de merc
 * **[Opinión de Auditoría de Stack 2026](./engineering/detailed-stack-audit-2026.md)** *(Crítico - Evaluación de Licencias)*
 * **[Análisis Técnico Senior y Evaluación de Madurez](./engineering/senior-architectural-assessment.md)** *(Nuevo Roadmap)*
 * [Manifiesto de Ingeniería Global (SOLID/OWASP)](./engineering/engineering-manifesto.es.md)
+* [Content Management Abstraction — Headless CMS como Acelerador de Time to Market](./engineering/content-management-abstraction.es.md) *(Opcional / Condicional)*
 * [Guía Táctica de Pruebas de Contrato (Pact)](./engineering/contract-testing-guideline.md)
 * [Playbook de Estrategia de Observabilidad](./engineering/observability-playbook.md)
 * [Manual de Plugins del API Gateway (Kong/Traefik)](./engineering/gateway-guidelines.md)

@@ -8,6 +8,16 @@
 
 **Evolith is the corporate architecture upstream for product repositories.** It defines reusable architecture standards, governance rules, ADRs, patterns, and operating guidance that satellite products inherit and specialize.
 
+## Evolith SDK CLI (Oficial)
+
+Para automatizar la adopción de Evolith en nuevos repositorios satélite o integrar herramientas IDE (vía OpenCode/MCP), recomendamos fuertemente utilizar el CLI oficial.
+
+👉 **[Ver Documentación del CLI](./sdk/cli/README.md)**
+
+```bash
+npx @evolith/cli init
+```
+
 Evolith solves a common enterprise problem: teams need one clear place to understand what is reusable policy, what is a product-specific implementation, and how decisions are promoted from real products back into the architecture reference.
 
 > Separate conceptually before separating physically.

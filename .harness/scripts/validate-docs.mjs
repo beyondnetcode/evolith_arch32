@@ -264,7 +264,7 @@ function renderMermaidBlock(block, outputDirectory, index) {
 
     const result = spawnSync(
       "npx",
-      ["-y", "@mermaid-js/mermaid-cli", "-i", input, "-o", output, "-b", "transparent"],
+      ["-y", "@mermaid-js/mermaid-cli", "-i", input, "-o", output, "-b", "transparent", "-p", path.join(root, ".harness/scripts/puppeteer-config.json")],
       { encoding: "utf8" },
     );
 

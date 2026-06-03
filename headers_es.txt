@@ -1,9 +1,0 @@
-# Evolith: Base de Referencia de Arquitectura Progresiva
-## Puntos de Entrada Clave
-## Empieza aqui — Elige tu camino
-### Camino 1 — Quiero una vision general de 5 minutos
-### Camino 2 — Tengo un rol especifico
-### Camino 3 — Necesito tomar una decision arquitectonica
-## Evolith vs UMS — Que va donde
-## Contribucion
-## Licencia

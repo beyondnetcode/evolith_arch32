@@ -76,3 +76,4 @@ Para conocer los detalles de implementación, decisiones técnicas y el modelo d
 
 ## Gobernanza
 Este CLI cumple estrictamente las políticas establecidas en `AGENTS.md` de Evolith.
+

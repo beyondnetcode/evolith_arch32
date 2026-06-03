@@ -5,6 +5,8 @@ import { ValidateCommand } from './commands/validate.command';
 import { DocsCommand } from './commands/docs.command';
 import { UpgradeCommand } from './commands/upgrade.command';
 import { ConfigService } from './config/config.service';
+import { FileManagerService } from './utils/file-manager.service';
+import { SyncService } from './sync/sync.service';
 
 @Module({
   imports: [],
@@ -14,7 +16,9 @@ import { ConfigService } from './config/config.service';
     ValidateCommand,
     DocsCommand,
     UpgradeCommand,
-    ConfigService
+    ConfigService,
+    FileManagerService,
+    SyncService
   ],
 })
 export class AppModule {}

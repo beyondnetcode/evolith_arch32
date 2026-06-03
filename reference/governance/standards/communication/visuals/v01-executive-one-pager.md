@@ -22,27 +22,27 @@ flowchart TB
     classDef board fill:#4a1a6b,stroke:#9c27b0,color:#ffffff,font-weight:bold
     classDef label fill:#f5f5f5,stroke:#ccc,color:#333,font-style:italic
 
-    BOARD["🏛️ Architecture Board\nOwns the corporate architecture baseline"]:::board
+    BOARD["️ Architecture Board\nOwns the corporate architecture baseline"]:::board
 
     subgraph EVOLITH["EVOLITH ARCH32 — Corporate Architecture Reference"]
-        E1["📐 ADR Registry\nDecision records with context, rationale and trade-offs"]:::framework
-        E2["🗺️ Blueprints and Patterns\nReference models, canonical patterns, topology guidance"]:::framework
-        E3["📜 SDLC and Engineering Standards\nDefinition of Done, quality gates, artifact templates"]:::framework
-        E4["🔒 Governance\nBoard ownership, repository taxonomy, evolution rules"]:::framework
+        E1[" ADR Registry\nDecision records with context, rationale and trade-offs"]:::framework
+        E2["️ Blueprints and Patterns\nReference models, canonical patterns, topology guidance"]:::framework
+        E3[" SDLC and Engineering Standards\nDefinition of Done, quality gates, artifact templates"]:::framework
+        E4[" Governance\nBoard ownership, repository taxonomy, evolution rules"]:::framework
     end
 
     subgraph UMS["UMS — Enterprise Reference Product"]
-        U1["⚙️ Running .NET 10 Product\nIdentity and authorization reference implementation"]:::product
-        U2["🧩 DDD Bounded Contexts\nIdentity, Authorization, Configuration, Approvals, Compliance, IGA, Audit, Cache, Console"]:::product
-        U3["📊 Observability and Operations\nOpenTelemetry, logs, traces, dashboards, runbooks"]:::product
-        U4["🏗️ Applied Evidence\nCode, tests, CI/CD, data model and traceability documentation"]:::product
+        U1["️ Running .NET 10 Product\nIdentity and authorization reference implementation"]:::product
+        U2[" DDD Bounded Contexts\nIdentity, Authorization, Configuration, Approvals, Compliance, IGA, Audit, Cache, Console"]:::product
+        U3[" Observability and Operations\nOpenTelemetry, logs, traces, dashboards, runbooks"]:::product
+        U4["️ Applied Evidence\nCode, tests, CI/CD, data model and traceability documentation"]:::product
     end
 
     BOARD --> EVOLITH
     EVOLITH -->|"sets the reusable rules"| UMS
     UMS -.->|"promotes proven lessons upstream"| EVOLITH
 
-    NOTE["💡 Evolith = The Rules   |   UMS = The Proof"]:::label
+    NOTE[" Evolith = The Rules   |   UMS = The Proof"]:::label
     UMS --> NOTE
 ```
 
@@ -56,13 +56,13 @@ flowchart LR
     classDef solution fill:#14532d,stroke:#22c55e,color:#ffffff,font-weight:bold
     classDef outcome fill:#1e3a5f,stroke:#3b82f6,color:#ffffff,font-weight:bold
 
-    P1["❌ Without Evolith\nEvery team reinvents architecture, standards and delivery rules"]:::problem
-    P2["❌ Without UMS\nArchitecture rules remain theoretical and unproven"]:::problem
+    P1[" Without Evolith\nEvery team reinvents architecture, standards and delivery rules"]:::problem
+    P2[" Without UMS\nArchitecture rules remain theoretical and unproven"]:::problem
 
-    S1["✅ With Evolith\nOne governed architecture baseline inherited by all products"]:::solution
-    S2["✅ With UMS\nA real product validates the baseline with executable evidence"]:::solution
+    S1[" With Evolith\nOne governed architecture baseline inherited by all products"]:::solution
+    S2[" With UMS\nA real product validates the baseline with executable evidence"]:::solution
 
-    O["🎯 OUTCOME\nPredictable delivery, lower architecture risk and reusable learning across teams"]:::outcome
+    O[" OUTCOME\nPredictable delivery, lower architecture risk and reusable learning across teams"]:::outcome
 
     P1 --> S1
     P2 --> S2

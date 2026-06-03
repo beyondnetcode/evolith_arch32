@@ -21,19 +21,19 @@ flowchart TD
     classDef category fill:#4a3800,stroke:#f59e0b,color:#fff,font-weight:bold
     classDef runtime fill:#4a1a6b,stroke:#9c27b0,color:#fff
 
-    START(["❓ I have an\narchitectural question"])
+    START([" I have an\narchitectural question"])
 
     Q1{"Is the concern\nruntime-agnostic?\n(applies to Node.js\nAND .NET AND Android)"}:::question
 
     START --> Q1
 
-    Q1 -->|YES — universal concern| CORE["🌐 CORE ADRs\nRuntime-Agnostic\n→ Visual 4-B"]:::category
+    Q1 -->|YES — universal concern| CORE[" CORE ADRs\nRuntime-Agnostic\n→ Visual 4-B"]:::category
     Q1 -->|NO — runtime-specific| RT{"Which runtime?"}:::question
 
     RT --> NODE["🟢 Node.js / TypeScript\n→ Visual 4-C"]:::runtime
-    RT --> DOTNET["🔵 .NET / C#\n→ Visual 4-D"]:::runtime
-    RT --> ANDROID["🤖 Android / Kotlin\n→ ADR Android Registry"]:::runtime
-    RT -->|"not sure yet"| MATRIX["📊 ADR Decision Matrix\nfilter by concern tag"]:::category
+    RT --> DOTNET[" .NET / C#\n→ Visual 4-D"]:::runtime
+    RT --> ANDROID[" Android / Kotlin\n→ ADR Android Registry"]:::runtime
+    RT -->|"not sure yet"| MATRIX[" ADR Decision Matrix\nfilter by concern tag"]:::category
 ```
 
 ---
@@ -46,7 +46,7 @@ flowchart TD
     classDef adr fill:#14532d,stroke:#22c55e,color:#fff,font-size:13px
     classDef group fill:#0f172a,stroke:#334155,color:#aaa,font-style:italic
 
-    CORE(["🌐 Core Concern"])
+    CORE([" Core Concern"])
 
     CORE --> QA{"Architecture\nstage / structure?"}:::q
     QA --> A1["ADR-0047\nMonolith vs SOA vs Microservices\nSelection Framework"]:::adr
@@ -160,7 +160,7 @@ flowchart TD
     classDef q fill:#4a1a6b,stroke:#9c27b0,color:#fff
     classDef adr fill:#1e3a5f,stroke:#3b82f6,color:#fff,font-size:13px
 
-    DOTNET(["🔵 .NET Question"])
+    DOTNET([" .NET Question"])
 
     DOTNET --> DA{"Data access\nstrategy?"}:::q
     DA --> DA1["ADR-0057\n.NET Data Access — EF Core 8\nMandatory ORM + Dapper rules"]:::adr

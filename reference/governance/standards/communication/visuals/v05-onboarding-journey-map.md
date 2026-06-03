@@ -26,7 +26,7 @@ flowchart LR
     D1["DAY 1\nOrientation"]:::day --> A1["Read: Executive One-Pager\nV-01 visual\n30 min"]:::action
     A1 --> A2["Read: Architecture Journey\nV-02 visual\n20 min"]:::action
     A2 --> G1{"Can you explain\nthe 4 stages and\nwhy we default to\nModular Monolith?"}:::gate
-    G1 -->|YES| O1["✅ Foundation cleared"]:::outcome
+    G1 -->|YES| O1[" Foundation cleared"]:::outcome
     G1 -->|NO| A1
 
     O1 --> D2["DAY 2-3\nRole Path"]:::day
@@ -41,7 +41,7 @@ flowchart LR
 
     PATH_ARCH & PATH_DEV & PATH_QA & PATH_OPS & PATH_PM --> D3["WEEK 2\nFirst Contribution"]:::day
     D3 --> G2{"Can you write\nor review an ADR?"}:::gate
-    G2 -->|YES| DONE["✅ Onboarded"]:::outcome
+    G2 -->|YES| DONE[" Onboarded"]:::outcome
 ```
 
 ---
@@ -237,15 +237,15 @@ flowchart TD
     classDef doc fill:#14532d,stroke:#22c55e,color:#fff
     classDef stop fill:#7f1d1d,stroke:#ef4444,color:#fff
 
-    START(["🤝 External Vendor\nJoins Ecosystem"])
+    START([" External Vendor\nJoins Ecosystem"])
 
     START --> S1["STEP 1 — Understand Contracts (Day 1)\nRead: Agnostic Baseline\nRead: ADR-0040 Multi-Runtime Contracts"]:::step
     S1 --> S2["STEP 2 — Risk Assessment (Day 2)\nComplete: Vendor Risk Assessment checklist\nConfirm: Adapter boundary respected"]:::step
     S2 --> G1{"Assessment\npassed?"}:::gate
-    G1 -->|NO — issues found| STOP["⛔ Integration not approved\nuntil issues resolved"]:::stop
+    G1 -->|NO — issues found| STOP[" Integration not approved\nuntil issues resolved"]:::stop
     G1 -->|YES| S3["STEP 3 — Contract Implementation (Week 1)\nImplement against OpenAPI spec\nRun contract tests (Pact/schema)\nVerify no domain coupling"]:::step
     S3 --> S4["STEP 4 — Validation (Week 2)\nArchitecture Board review\nIntegration test suite passes\nAdapter documented in product ADR"]:::step
-    S4 --> DONE["✅ Approved Integration\nMonitored via Vendor Risk Registry"]:::doc
+    S4 --> DONE[" Approved Integration\nMonitored via Vendor Risk Registry"]:::doc
 ```
 
 ---

@@ -78,19 +78,19 @@ REPOSITORIO EVOLITH                   BASE DE CONOCIMIENTO AI
 ───────────────────                   ──────────────────────
 
 reference/architecture/adrs/          ┌─────────────────────┐
-  archivos *.md (57+ ADRs)  ────────▶ │  ADR Vector Store   │
+  archivos *.md (57+ ADRs)  ──────── │  ADR Vector Store   │
                                        │  (por sección       │
 reference/architecture/                │   + etiquetas meta) │
-  blueprints/*.md           ────────▶ │  Blueprint Store    │
+  blueprints/*.md           ──────── │  Blueprint Store    │
                                        └─────────────────────┘
 reference/governance/
-  standards/**/*.md         ────────▶ ┌─────────────────────┐
+  standards/**/*.md         ──────── ┌─────────────────────┐
                                        │  Standards Store    │
 reference/architecture/                │  (reglas de         │
-  canonical-patterns/*.md   ────────▶ │   aplicación +      │
+  canonical-patterns/*.md   ──────── │   aplicación +      │
                                        │   ejemplos de código)│
                                        └─────────────────────┘
-AGENTS.md / .harness/rules/ ────────▶ ┌─────────────────────┐
+AGENTS.md / .harness/rules/ ──────── ┌─────────────────────┐
   global-rules.md                      │  System Prompt Core │
                                        │  (siempre inyectado)│
                                        └─────────────────────┘

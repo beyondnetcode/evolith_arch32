@@ -15,7 +15,7 @@ flowchart TD
     classDef adr fill:#14532d,stroke:#22c55e,color:#fff,font-size:12px
     classDef forbidden fill:#7f1d1d,stroke:#ef4444,color:#fff
 
-    START(["🚀 New Product\nIdea"]) --> S1
+    START([" New Product\nIdea"]) --> S1
 
     subgraph S1["STAGE 1 — Simple Monolith"]
         M1["Single deployable unit\nNo module boundaries yet\nSmallest viable structure"]:::stage
@@ -26,7 +26,7 @@ flowchart TD
     T1 -->|NO — stay here| S1
     T1 -->|YES| S2
 
-    subgraph S2["STAGE 2 — Modular Monolith ⭐ DEFAULT"]
+    subgraph S2["STAGE 2 — Modular Monolith  DEFAULT"]
         M2["Nx monorepo with strict boundaries\nHexagonal Architecture enforced\nShared domain via Shared Kernel\nDB: single schema (SOA) valid in Phase 1\nSchema-per-context optional → Phase 2+"]:::stage
         A2["ADR-0001 · ADR-0002\nADR-0031 (optional Ph1) · ADR-0047"]:::adr
     end
@@ -51,7 +51,7 @@ flowchart TD
         A4["ADR-0013 · ADR-0046\nADR-0055 · Roadmap Phase 3"]:::adr
     end
 
-    WARN["⛔ NEVER SKIP STAGES\nMicroservices without Stage 2 discipline\n= Distributed Monolith (worst of both worlds)"]:::forbidden
+    WARN[" NEVER SKIP STAGES\nMicroservices without Stage 2 discipline\n= Distributed Monolith (worst of both worlds)"]:::forbidden
     S4 -.-> WARN
 ```
 
@@ -72,10 +72,10 @@ flowchart LR
     S3["Stage 3\nDistributed\nModules"]:::s3
     S4["Stage 4\nMicro-\nservices"]:::s4
 
-    S1 --- C1["✓ Fast to ship\n✓ Low ops cost\n✓ Easy to understand\n✗ No scalability story yet"]:::cap
-    S2 --- C2["✓ Domain isolation\n✓ Team autonomy\n✓ Testable boundaries\n✓ Zero-refactor upgrade path\n✓ UMS lives here today"]:::cap
-    S3 --- C3["✓ Independent scaling\n✓ Fault isolation\n✓ Polyglot possible\n✗ Distributed tracing required\n✗ Higher ops burden"]:::cap
-    S4 --- C4["✓ Full cloud sovereignty\n✓ Infinite scalability\n✓ Zero vendor lock-in\n✗ Requires mature platform team\n✗ High operational investment"]:::cap
+    S1 --- C1[" Fast to ship\n Low ops cost\n Easy to understand\n No scalability story yet"]:::cap
+    S2 --- C2[" Domain isolation\n Team autonomy\n Testable boundaries\n Zero-refactor upgrade path\n UMS lives here today"]:::cap
+    S3 --- C3[" Independent scaling\n Fault isolation\n Polyglot possible\n Distributed tracing required\n Higher ops burden"]:::cap
+    S4 --- C4[" Full cloud sovereignty\n Infinite scalability\n Zero vendor lock-in\n Requires mature platform team\n High operational investment"]:::cap
 ```
 
 ---
@@ -91,10 +91,10 @@ flowchart TD
 
     EVAL["Evaluate module for\nmicroservice extraction"]
 
-    C1["📊 Criterion 1\nIndependent scaling needed\n(traffic profile differs significantly)"]:::criterion
-    C2["👥 Criterion 2\nDedicated team ownership\n(≥ 2 engineers full-time on module)"]:::criterion
-    C3["🔒 Criterion 3\nIsolated compliance boundary\n(different SLA, security, or regulatory zone)"]:::criterion
-    C4["⚡ Criterion 4\nPerformance bottleneck proven\n(p95 > threshold after optimization)"]:::criterion
+    C1[" Criterion 1\nIndependent scaling needed\n(traffic profile differs significantly)"]:::criterion
+    C2[" Criterion 2\nDedicated team ownership\n(≥ 2 engineers full-time on module)"]:::criterion
+    C3[" Criterion 3\nIsolated compliance boundary\n(different SLA, security, or regulatory zone)"]:::criterion
+    C4[" Criterion 4\nPerformance bottleneck proven\n(p95 > threshold after optimization)"]:::criterion
 
     EVAL --> C1
     EVAL --> C2
@@ -108,8 +108,8 @@ flowchart TD
     C3 --> GATE
     C4 --> GATE
 
-    GATE -->|YES — extract| PASS["✅ Proceed with extraction\nBoard review required\nDocument in child ADR"]:::pass
-    GATE -->|NO — wait| FAIL["⛔ Do NOT extract\nStay in Modular Monolith\nRevisit in next quarter"]:::fail
+    GATE -->|YES — extract| PASS[" Proceed with extraction\nBoard review required\nDocument in child ADR"]:::pass
+    GATE -->|NO — wait| FAIL[" Do NOT extract\nStay in Modular Monolith\nRevisit in next quarter"]:::fail
 ```
 
 ---
@@ -123,14 +123,14 @@ flowchart LR
 
     UMS["UMS Today\nPhase 1\nModular Monolith"]:::arch
 
-    UMS --> A["✅ Nx monorepo\nstrict lib boundaries"]:::done
-    UMS --> B["✅ Hexagonal Architecture\nPorts + Adapters in all layers"]:::done
-    UMS --> C["✅ Schema-per-context\n8 bounded contexts\n(UMS choice — optional in Ph1)"]:::done
-    UMS --> D["✅ EF Core + SQL Server 2022\nwith RLS failsafe"]:::done
-    UMS --> E["✅ Transactional Outbox\nfor all async writes"]:::done
-    UMS --> F["✅ 70% test coverage gate\nin GitHub Actions CI"]:::done
-    UMS --> G["✅ OTel + Loki + Grafana\nobservability stack"]:::done
-    UMS --> H["✅ Full ADR traceability\n16 FS → ADR → TE matrix"]:::done
+    UMS --> A[" Nx monorepo\nstrict lib boundaries"]:::done
+    UMS --> B[" Hexagonal Architecture\nPorts + Adapters in all layers"]:::done
+    UMS --> C[" Schema-per-context\n8 bounded contexts\n(UMS choice — optional in Ph1)"]:::done
+    UMS --> D[" EF Core + SQL Server 2022\nwith RLS failsafe"]:::done
+    UMS --> E[" Transactional Outbox\nfor all async writes"]:::done
+    UMS --> F[" 70% test coverage gate\nin GitHub Actions CI"]:::done
+    UMS --> G[" OTel + Loki + Grafana\nobservability stack"]:::done
+    UMS --> H[" Full ADR traceability\n16 FS → ADR → TE matrix"]:::done
 ```
 
 ---

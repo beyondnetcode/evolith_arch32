@@ -34,7 +34,7 @@ Ninguna fase del ciclo de vida debe avanzar solo por acuerdo verbal. Cada gate r
 >
 > Usa los enlaces siguientes para descargar los archivos directamente.
 
-### 📊 Kit de Comunicación Ejecutiva (Presentaciones)
+###  Kit de Comunicación Ejecutiva (Presentaciones)
 
 | Artefacto | Formato | Propósito |
 |---|---|---|
@@ -42,7 +42,7 @@ Ninguna fase del ciclo de vida debe avanzar solo por acuerdo verbal. Cada gate r
 | **[Evolith: Caso Práctico UMS](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_ums_practical_case.pptx)** | PPTX | Caso de éxito demostrando la aplicación del framework Evolith en una transformación real de monolito modular a microservicios. |
 | **[Evolith: Deep-Dive Técnico SDLC](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_sdlc_technical_deep_dive.pptx)** | PPTX | Guía operativa de ingeniería sobre fases, Quality Gates y artefactos. |
 
-### 🛠️ Workbook de Implementación
+### ️ Workbook de Implementación
 
 | Artefacto / Alcance | Formato | Propósito |
 |---|---|---|

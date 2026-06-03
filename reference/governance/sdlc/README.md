@@ -34,7 +34,7 @@ No lifecycle phase should advance based on verbal agreement alone. Each gate req
 >
 > Use the links below to download the files directly.
 
-### 📊 Executive Communication Kit (Presentations)
+###  Executive Communication Kit (Presentations)
 
 | Artifact | Format | Purpose |
 |---|---|---|
@@ -42,7 +42,7 @@ No lifecycle phase should advance based on verbal agreement alone. Each gate req
 | **[Evolith: UMS Case Study](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_ums_practical_case.pptx)** | PPTX | Success story demonstrating the Evolith framework applied to a real-world modular monolith-to-microservices transformation. |
 | **[Evolith: SDLC Technical Deep-Dive](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_sdlc_technical_deep_dive.pptx)** | PPTX | Engineering operational guide on phases, Quality Gates, and artifacts. |
 
-### 🛠️ Implementation Workbook
+### ️ Implementation Workbook
 
 | Artifact / Scope | Format | Purpose |
 |---|---|---|

@@ -20,14 +20,14 @@ Este documento define **exactamente cómo debe estructurarse cada tipo de artefa
 ├──────────────────────┬───────────────┬───────────────┬──────────┤
 │ TIPO DE ARTEFACTO    │ VOLUMEN       │ PRIORIDAD     │ FASE     │
 ├──────────────────────┼───────────────┼───────────────┼──────────┤
-│ ADRs (Core)          │ 56 docs       │ 🔴 Crítico    │ 0        │
-│ ADRs (Node.js)       │ 14 docs       │ 🔴 Crítico    │ 0        │
-│ ADRs (.NET)          │ 1+ docs       │ 🔴 Crítico    │ 0        │
+│ ADRs (Core)          │ 56 docs       │  Crítico    │ 0        │
+│ ADRs (Node.js)       │ 14 docs       │  Crítico    │ 0        │
+│ ADRs (.NET)          │ 1+ docs       │  Crítico    │ 0        │
 │ ADRs (Android)       │ n docs        │ 🟠 Alto       │ 1        │
-│ Patrones Canónicos   │ 8 docs        │ 🔴 Crítico    │ 0        │
-│ Manifiesto Ingeniería│ 1 doc         │ 🔴 Crítico    │ 0        │
-│ Conv. de Nombres     │ 1 doc         │ 🔴 Crítico    │ 0        │
-│ Blueprint Referencia │ 1 doc         │ 🔴 Crítico    │ 0        │
+│ Patrones Canónicos   │ 8 docs        │  Crítico    │ 0        │
+│ Manifiesto Ingeniería│ 1 doc         │  Crítico    │ 0        │
+│ Conv. de Nombres     │ 1 doc         │  Crítico    │ 0        │
+│ Blueprint Referencia │ 1 doc         │  Crítico    │ 0        │
 │ Directivas Arquitec. │ 1 doc         │ 🟠 Alto       │ 0        │
 │ Glosario             │ 1 doc         │ 🟠 Alto       │ 0        │
 │ SDLC / DoD           │ 3 docs        │ 🟠 Alto       │ 1        │

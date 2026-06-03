@@ -97,12 +97,12 @@ Sinks remotos (Seq, Loki, Elasticsearch, Application Insights):
 ## Patrones Prohibidos / Requeridos
 
 ```csharp
-// ✗ PROHIBIDO
+//  PROHIBIDO
 _logger.LogInformation("User " + userId);
 _logger.LogInformation(user.ToString());
 _logger.LogInformation("Email: {email}", user.Email);
 
-// ✓ REQUERIDO
+//  REQUERIDO
 _logger.LogInformation("User {UserId} created by {ActorId}", userId, actorId);
 ```
 

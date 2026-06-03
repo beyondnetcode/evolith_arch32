@@ -32,17 +32,17 @@ flowchart LR
     classDef problem fill:#7f1d1d,stroke:#ef4444,color:#fff,font-size:12px
     classDef solution fill:#14532d,stroke:#22c55e,color:#fff,font-size:12px
 
-    P1["❌ Permisos dispersos\nen cada aplicación"]:::problem
-    P2["❌ Sin audit trail\n(quién · qué · cuándo · por qué)"]:::problem
-    P3["❌ Aislamiento de tenant\ncomo afterthought"]:::problem
-    P4["❌ Lógica de autorización\nduplicada en cada servicio"]:::problem
-    P5["❌ Gestión manual de roles\n→ deuda de seguridad IGA"]:::problem
+    P1[" Permisos dispersos\nen cada aplicación"]:::problem
+    P2[" Sin audit trail\n(quién · qué · cuándo · por qué)"]:::problem
+    P3[" Aislamiento de tenant\ncomo afterthought"]:::problem
+    P4[" Lógica de autorización\nduplicada en cada servicio"]:::problem
+    P5[" Gestión manual de roles\n→ deuda de seguridad IGA"]:::problem
 
-    S1["✅ EP-02 Authorization\nGrafo central de permisos\n+ plantillas contextuales"]:::solution
-    S2["✅ EP-04 Audit\nLog inmutable solo-append\nEsquema estándar 10 columnas"]:::solution
-    S3["✅ EP-01 + EP-03\nRLS de doble capa\n(id, root_tenant_id) en cada tabla"]:::solution
-    S4["✅ EP-02 Authorization\nXACML PEP/PDP/PAP/PIP\ncompilado en tiempo de resolución"]:::solution
-    S5["✅ EP-08 IGA\nRole Maturity Model (5 niveles)\nMotor de ciclo de promoción"]:::solution
+    S1[" EP-02 Authorization\nGrafo central de permisos\n+ plantillas contextuales"]:::solution
+    S2[" EP-04 Audit\nLog inmutable solo-append\nEsquema estándar 10 columnas"]:::solution
+    S3[" EP-01 + EP-03\nRLS de doble capa\n(id, root_tenant_id) en cada tabla"]:::solution
+    S4[" EP-02 Authorization\nXACML PEP/PDP/PAP/PIP\ncompilado en tiempo de resolución"]:::solution
+    S5[" EP-08 IGA\nRole Maturity Model (5 niveles)\nMotor de ciclo de promoción"]:::solution
 
     P1 -->|"resuelto por"| S1
     P2 -->|"resuelto por"| S2
@@ -71,12 +71,12 @@ flowchart TB
     classDef cross fill:#14532d,stroke:#22c55e,color:#fff,font-size:12px
     classDef decision fill:#4a3800,stroke:#f59e0b,color:#fff
 
-    USERS["👤 Usuarios"]:::entity
-    ORGS["🏢 Organizaciones\n(multi-tenant)"]:::entity
-    ROLES["🎭 Roles"]:::entity
-    TEMPLATES["📋 Plantillas de Autorización"]:::entity
-    GRAPH["🕸️ Grafo de Permisos\n(DAG compilado — TE-02)"]:::permgraph
-    REQUEST["🔐 Decisión de Acceso\n(concedido / denegado)"]:::decision
+    USERS[" Usuarios"]:::entity
+    ORGS[" Organizaciones\n(multi-tenant)"]:::entity
+    ROLES[" Roles"]:::entity
+    TEMPLATES[" Plantillas de Autorización"]:::entity
+    GRAPH["️ Grafo de Permisos\n(DAG compilado — TE-02)"]:::permgraph
+    REQUEST[" Decisión de Acceso\n(concedido / denegado)"]:::decision
 
     USERS -->|"pertenecen a"| ORGS
     USERS -->|"asignados a"| ROLES
@@ -85,10 +85,10 @@ flowchart TB
     ROLES & TEMPLATES -->|"compilados en"| GRAPH
     GRAPH -->|"evaluado en"| REQUEST
 
-    AUD["📜 Auditoría Inmutable\n(EP-04 — cada acción)"]:::cross
-    APP["✅ Flujo de Aprobación\n(EP-06 — ops sensibles)"]:::cross
-    COMP["📄 Verificación Compliance\n(EP-07 — vencimiento docs)"]:::cross
-    IGA_N["🔄 Ciclo de Vida IGA\n(EP-08 — madurez de rol)"]:::cross
+    AUD[" Auditoría Inmutable\n(EP-04 — cada acción)"]:::cross
+    APP[" Flujo de Aprobación\n(EP-06 — ops sensibles)"]:::cross
+    COMP[" Verificación Compliance\n(EP-07 — vencimiento docs)"]:::cross
+    IGA_N[" Ciclo de Vida IGA\n(EP-08 — madurez de rol)"]:::cross
 
     REQUEST -.->|"registrado en"| AUD
     REQUEST -.->|"controlado por"| APP
@@ -177,9 +177,9 @@ flowchart LR
     R2 --> T3
     ORG --> OVERRIDE
 
-    COMPILER["⚡ Compilador de Grafo\n(TE-02 — ADR-0021)\ncompila DAG en tiempo de resolución"]:::result
+    COMPILER[" Compilador de Grafo\n(TE-02 — ADR-0021)\ncompila DAG en tiempo de resolución"]:::result
     R1 & R2 & OVERRIDE --> COMPILER
-    COMPILER --> EFFECTIVE["✅ Permisos Efectivos\n{PuedeVerReportes, PuedeAprobarUsuarios,\nAuditoriaSoloLectura, PuedeExportarDatos}"]:::template
+    COMPILER --> EFFECTIVE[" Permisos Efectivos\n{PuedeVerReportes, PuedeAprobarUsuarios,\nAuditoriaSoloLectura, PuedeExportarDatos}"]:::template
 ```
 
 ### 4.2 El Problema del Multi-Tenancy
@@ -192,12 +192,12 @@ flowchart TD
     classDef pass fill:#14532d,stroke:#22c55e,color:#fff
     classDef block fill:#7f1d1d,stroke:#ef4444,color:#fff
 
-    REQ["📨 Request Entrante\nUsuario: Alicia (tenant_id: ACME)"]:::req
+    REQ[" Request Entrante\nUsuario: Alicia (tenant_id: ACME)"]:::req
     L1["CAPA 1 — Filtro de Consulta Global EF Core\nAgrega automáticamente WHERE root_tenant_id = @tid\na cada consulta vía interceptor DbContext\n(ADR-0010 PRIMARIO)"]:::layer
     L2["CAPA 2 — Predicado RLS de SQL Server\nFiltro a NIVEL DE BASE DE DATOS: fn_SecurityPredicate()\nactivado vía SESSION_CONTEXT\n(ADR-0010 FAILSAFE)"]:::layer
-    DB["🗄️ SQL Server 2022\nRow-Level Security"]:::pass
-    BUG["⚠️ Si un bug bypasea la Capa 1\n(ej. query raw escapa EF Core)"]:::block
-    SAFE["✅ La Capa 2 bloquea a nivel de BD\nLos datos nunca cruzan la frontera del tenant"]:::pass
+    DB["️ SQL Server 2022\nRow-Level Security"]:::pass
+    BUG["️ Si un bug bypasea la Capa 1\n(ej. query raw escapa EF Core)"]:::block
+    SAFE[" La Capa 2 bloquea a nivel de BD\nLos datos nunca cruzan la frontera del tenant"]:::pass
 
     REQ --> L1
     L1 -->|"consulta filtrada"| L2
@@ -229,25 +229,25 @@ flowchart TB
     classDef infra fill:#4a3800,stroke:#f59e0b,color:#fff
     classDef data fill:#374151,stroke:#9ca3af,color:#fff
 
-    subgraph PRESENTATION["🖥️ Capa de Presentación"]
+    subgraph PRESENTATION["️ Capa de Presentación"]
         direction LR
         WEB_UI["Razor Pages / React\nConsola de Administración"]:::client
         API_LAYER["Controladores REST\n+ Resolvers GraphQL\n(ADR-0032)"]:::api
     end
 
-    subgraph APPLICATION["⚙️ Capa de Aplicación (Casos de Uso)"]
+    subgraph APPLICATION["️ Capa de Aplicación (Casos de Uso)"]
         direction LR
         UC["Casos de Uso / Handlers\nSin imports de framework\n(ADR-0002 Hexagonal)"]:::app
         PORTS["Interfaces de Puerto\nIUserRepository · IEventBus\nICache · IIdentityProvider"]:::app
     end
 
-    subgraph DOMAIN["🏛️ Capa de Dominio (Pura)"]
+    subgraph DOMAIN["️ Capa de Dominio (Pura)"]
         direction LR
         AGG["Aggregates · Entidades · Value Objects\nCero imports de infraestructura\n(ADR-0002 restricción dura)"]:::domain
         EVT["Eventos de Dominio\nUserCreated · RolePromoted\nTemplateAssigned"]:::domain
     end
 
-    subgraph INFRA["🔧 Capa de Infraestructura (Adaptadores)"]
+    subgraph INFRA[" Capa de Infraestructura (Adaptadores)"]
         direction LR
         EF["EF Core 8 DbContext\n+ proyecciones Dapper\n(ADR-0057)"]:::infra
         RLS_A["SESSION_CONTEXT + RLS\nAislamiento de tenant\n(ADR-0010)"]:::infra
@@ -257,7 +257,7 @@ flowchart TB
         IDP["Adaptador IdP\nKeycloak / AzureAD\n(ADR-0020)"]:::infra
     end
 
-    subgraph DATA_LAYER["🗄️ Capa de Datos"]
+    subgraph DATA_LAYER["️ Capa de Datos"]
         direction LR
         SQL["SQL Server 2022\n8 schemas · predicados RLS\nClosure table · Tablas temporales"]:::data
         REDIS_DB["Clúster Redis"]:::data
@@ -315,10 +315,10 @@ flowchart TD
     classDef te fill:#4a3800,stroke:#f59e0b,color:#fff
     classDef adr fill:#14532d,stroke:#22c55e,color:#fff
 
-    FS_BOX["📋 16 Historias Funcionales (FS)\nRequerimientos de negocio con criterios de aceptación\nFS-01 → FS-16"]:::fs
-    TS_BOX["⚙️ 89 Historias Técnicas (TS)\nMVP: 253 pts · Post-MVP: 325 pts\n5–9 TS por FS"]:::ts
-    TE_BOX["🔧 6 Habilitadores Técnicos (TE)\nInversiones de infraestructura transversal\nTE-01 → TE-06"]:::te
-    ADR_BOX["📐 57+ ADRs Evolith\nCada TE implementa uno o más ADRs\nTrazabilidad bidireccional completa"]:::adr
+    FS_BOX[" 16 Historias Funcionales (FS)\nRequerimientos de negocio con criterios de aceptación\nFS-01 → FS-16"]:::fs
+    TS_BOX["️ 89 Historias Técnicas (TS)\nMVP: 253 pts · Post-MVP: 325 pts\n5–9 TS por FS"]:::ts
+    TE_BOX[" 6 Habilitadores Técnicos (TE)\nInversiones de infraestructura transversal\nTE-01 → TE-06"]:::te
+    ADR_BOX[" 57+ ADRs Evolith\nCada TE implementa uno o más ADRs\nTrazabilidad bidireccional completa"]:::adr
 
     FS_BOX --> TS_BOX --> TE_BOX --> ADR_BOX
 ```

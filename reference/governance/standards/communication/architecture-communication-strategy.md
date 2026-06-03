@@ -179,7 +179,7 @@ The most important mental model is the **evolutionary path**. Nothing is skipped
  ─────────────          ──────────────────        ─────────────────
 
  ┌─────────────┐        ┌──────────────────┐      ADR-0047
- │ New product │──────▶ │ Simple Monolith  │      Simplicity Checklist
+ │ New product │────── │ Simple Monolith  │      Simplicity Checklist
  │ idea        │        └────────┬─────────┘      Phase 01 Blueprint
  └─────────────┘                 │
                                  │ team grows,
@@ -222,22 +222,22 @@ This map answers "what can the Evolith platform do for a product team?"
 │   ARCHITECTURAL  │   ENGINEERING    │    DELIVERY     │ OPERATIONS │
 │   CAPABILITIES   │   CAPABILITIES   │  CAPABILITIES   │ CAPABILITY │
 ├──────────────────┼──────────────────┼─────────────────┼────────────┤
-│ ✓ Progressive    │ ✓ SOLID/Clean    │ ✓ SDLC stages   │ ✓ OTel     │
+│  Progressive    │  SOLID/Clean    │  SDLC stages   │  OTel     │
 │   evolution path │   Code baseline  │   defined       │   tracing  │
 │                  │                  │                 │            │
-│ ✓ Multi-tenancy  │ ✓ DDD tactical   │ ✓ Definition    │ ✓ Grafana  │
+│  Multi-tenancy  │  DDD tactical   │  Definition    │  Grafana  │
 │   dual-layer RLS │   toolkit        │   of Done       │   dashbrd  │
 │                  │                  │                 │            │
-│ ✓ Zero-trust     │ ✓ Anti-pattern   │ ✓ Story writing │ ✓ Loki     │
+│  Zero-trust     │  Anti-pattern   │  Story writing │  Loki     │
 │   security model │   blacklist      │   standard      │   logging  │
 │                  │                  │                 │            │
-│ ✓ Polyglot       │ ✓ Test pyramid   │ ✓ Gitflow       │ ✓ Runbooks │
+│  Polyglot       │  Test pyramid   │  Gitflow       │  Runbooks │
 │   multi-runtime  │   70% gate       │   branching     │   (RB 1-4) │
 │                  │                  │                 │            │
-│ ✓ Event-driven   │ ✓ Naming         │ ✓ CI/CD quality │ ✓ DB       │
+│  Event-driven   │  Naming         │  CI/CD quality │  DB       │
 │   architecture   │   conventions    │   gates         │   failover │
 │                  │                  │                 │            │
-│ ✓ Contract-first │ ✓ Canonical      │ ✓ ADR review    │ ✓ Cache    │
+│  Contract-first │  Canonical      │  ADR review    │  Cache    │
 │   API design     │   patterns       │   process       │   recovery │
 ├──────────────────┴──────────────────┴─────────────────┴────────────┤
 │           All capabilities are runtime-agnostic by default.        │
@@ -395,7 +395,7 @@ Talking points:
   EVOLITH ARCH32                UMS (and all future products)
   ══════════════                ════════════════════════════
   │ ADRs          │  inherits   │ Inherits all ADRs          │
-  │ Blueprints    │ ──────────▶ │ Adds product ADRs          │
+  │ Blueprints    │ ────────── │ Adds product ADRs          │
   │ Standards     │             │ Documents divergences      │
   │ Patterns      │             │ Promotes discoveries back  │
   └───────────────┘             └────────────────────────────┘
@@ -416,23 +416,23 @@ Talking points:
   "Do I have a question about...?"
 
         ┌──────────────────────────────────────────┐
-        │ UNIVERSAL (runtime agnostic)             │ ─▶ Core ADRs (0001-0056)
+        │ UNIVERSAL (runtime agnostic)             │ ─ Core ADRs (0001-0056)
         │ Multi-tenancy, Events, CQRS, Sagas...    │
         └──────────────────────────────────────────┘
         ┌──────────────────────────────────────────┐
-        │ NODE.JS / TYPESCRIPT                     │ ─▶ Node ADRs (0002-0043)
+        │ NODE.JS / TYPESCRIPT                     │ ─ Node ADRs (0002-0043)
         │ NestJS, TypeORM, BFF, GraphQL...         │
         └──────────────────────────────────────────┘
         ┌──────────────────────────────────────────┐
-        │ .NET / C#                                │ ─▶ .NET ADRs (0057+)
+        │ .NET / C#                                │ ─ .NET ADRs (0057+)
         │ EF Core, SQL Server, Clean Architecture  │
         └──────────────────────────────────────────┘
         ┌──────────────────────────────────────────┐
-        │ ANDROID / MOBILE                         │ ─▶ Android ADRs
+        │ ANDROID / MOBILE                         │ ─ Android ADRs
         │ Kotlin, offline-first, GPS/scan          │
         └──────────────────────────────────────────┘
         ┌──────────────────────────────────────────┐
-        │ DON'T KNOW WHERE TO START                │ ─▶ ADR Decision Matrix
+        │ DON'T KNOW WHERE TO START                │ ─ ADR Decision Matrix
         └──────────────────────────────────────────┘
 ```
 
@@ -469,14 +469,14 @@ Talking points:
            │
            ▼
  ┌─────────────────────┐      YES     ┌────────────────────────┐
- │ Does an ADR already │ ───────────▶ │ Follow it. Document     │
+ │ Does an ADR already │ ─────────── │ Follow it. Document     │
  │ answer this?        │              │ local deviation if any. │
  └─────────────────────┘              └────────────────────────┘
            │ NO
            ▼
  ┌─────────────────────┐
  │ Is it product-      │      YES     ┌────────────────────────┐
- │ specific?           │ ───────────▶ │ Write ADR in child repo │
+ │ specific?           │ ─────────── │ Write ADR in child repo │
  └─────────────────────┘              │ No Board approval needed│
            │ NO                        └────────────────────────┘
            ▼
@@ -489,7 +489,7 @@ Talking points:
     Board reviews
            │
     ┌──────┴──────┐
-    │  APPROVED   │ ──▶ Merged into Evolith · All child repos inherit
+    │  APPROVED   │ ── Merged into Evolith · All child repos inherit
     └─────────────┘
 ```
 

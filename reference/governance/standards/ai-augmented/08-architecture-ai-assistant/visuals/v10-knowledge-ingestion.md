@@ -13,7 +13,7 @@ flowchart LR
     classDef store fill:#14532d,stroke:#22c55e,color:#fff
     classDef query fill:#4a1a6b,stroke:#9c27b0,color:#fff
 
-    subgraph SOURCE["📁 Evolith Repository (Source of Truth)"]
+    subgraph SOURCE[" Evolith Repository (Source of Truth)"]
         direction TB
         S1["reference/architecture/adrs/**/*.md\n57+ ADRs"]:::source
         S2["reference/architecture/\ncanonical-patterns/**/*.md"]:::source
@@ -22,7 +22,7 @@ flowchart LR
         S5["AGENTS.md · .harness/rules/\nglobal-rules.md"]:::source
     end
 
-    subgraph PIPELINE["⚙️ Ingestion Pipeline (CI-triggered)"]
+    subgraph PIPELINE["️ Ingestion Pipeline (CI-triggered)"]
         direction TB
         P1["1. Parse Markdown\nExtract sections by H2/H3\nheadings"]:::process
         P2["2. Enrich Metadata\nADD: adr_id · runtime · phase\ndomain · severity · status"]:::process
@@ -31,7 +31,7 @@ flowchart LR
         P5["5. Index + Store\nVector DB + metadata\nfilters"]:::process
     end
 
-    subgraph STORES["🗄️ Knowledge Stores"]
+    subgraph STORES["️ Knowledge Stores"]
         direction TB
         VS1["ADR Vector Store\nChroma / Qdrant\n(self-hosted)"]:::store
         VS2["Patterns Store"]:::store
@@ -39,7 +39,7 @@ flowchart LR
         VS4["System Prompt Store\n(always-injected)"]:::store
     end
 
-    subgraph RETRIEVAL["🔍 Retrieval Layer (At query time)"]
+    subgraph RETRIEVAL[" Retrieval Layer (At query time)"]
         direction TB
         R1["Pre-filter\nruntime + phase + status\nfrom metadata"]:::query
         R2["Semantic Search\nvector similarity\ntop-k chunks"]:::query
@@ -97,7 +97,7 @@ stateDiagram-v2
     note right of ProposedChunk
         Indexed with status=proposed
         Retrieval returns with
-        ⚠️ "DRAFT — not approved" flag
+        ️ "DRAFT — not approved" flag
     end note
 
     ProposedChunk --> ApprovedChunk : Board approves ADR
@@ -135,7 +135,7 @@ flowchart LR
     classDef server fill:#14532d,stroke:#22c55e,color:#fff
     classDef client fill:#1e3a5f,stroke:#3b82f6,color:#fff
 
-    subgraph MCP_SERVER["🔌 Evolith MCP Server (ADR-AI-002)"]
+    subgraph MCP_SERVER[" Evolith MCP Server (ADR-AI-002)"]
         direction TB
         T1["tool: search_adrs\nargs: query, runtime, phase\nreturns: top-k ADR chunks"]:::tool
         T2["tool: get_adr\nargs: adr_id\nreturns: full ADR structured"]:::tool

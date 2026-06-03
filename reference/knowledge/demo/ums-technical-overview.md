@@ -32,17 +32,17 @@ flowchart LR
     classDef problem fill:#7f1d1d,stroke:#ef4444,color:#fff,font-size:12px
     classDef solution fill:#14532d,stroke:#22c55e,color:#fff,font-size:12px
 
-    P1["❌ Permissions scattered\nacross every app"]:::problem
-    P2["❌ No audit trail\n(who · what · when · why)"]:::problem
-    P3["❌ Tenant isolation\nas an afterthought"]:::problem
-    P4["❌ Authorization logic\nduplicated in every service"]:::problem
-    P5["❌ Manual role management\n→ IGA security debt"]:::problem
+    P1[" Permissions scattered\nacross every app"]:::problem
+    P2[" No audit trail\n(who · what · when · why)"]:::problem
+    P3[" Tenant isolation\nas an afterthought"]:::problem
+    P4[" Authorization logic\nduplicated in every service"]:::problem
+    P5[" Manual role management\n→ IGA security debt"]:::problem
 
-    S1["✅ EP-02 Authorization\nCentral permission graph\n+ contextual templates"]:::solution
-    S2["✅ EP-04 Audit\nImmutable append-only log\n10-column standard schema"]:::solution
-    S3["✅ EP-01 + EP-03\nDual-layer RLS\n(id, root_tenant_id) on every table"]:::solution
-    S4["✅ EP-02 Authorization\nXACML PEP/PDP/PAP/PIP\ncompiled at resolution time"]:::solution
-    S5["✅ EP-08 IGA\nRole Maturity Model (5 levels)\nPromotion lifecycle engine"]:::solution
+    S1[" EP-02 Authorization\nCentral permission graph\n+ contextual templates"]:::solution
+    S2[" EP-04 Audit\nImmutable append-only log\n10-column standard schema"]:::solution
+    S3[" EP-01 + EP-03\nDual-layer RLS\n(id, root_tenant_id) on every table"]:::solution
+    S4[" EP-02 Authorization\nXACML PEP/PDP/PAP/PIP\ncompiled at resolution time"]:::solution
+    S5[" EP-08 IGA\nRole Maturity Model (5 levels)\nPromotion lifecycle engine"]:::solution
 
     P1 -->|"solved by"| S1
     P2 -->|"solved by"| S2
@@ -71,12 +71,12 @@ flowchart TB
     classDef cross fill:#14532d,stroke:#22c55e,color:#fff,font-size:12px
     classDef decision fill:#4a3800,stroke:#f59e0b,color:#fff
 
-    USERS["👤 Users"]:::entity
-    ORGS["🏢 Organizations\n(multi-tenant)"]:::entity
-    ROLES["🎭 Roles"]:::entity
-    TEMPLATES["📋 Authorization Templates"]:::entity
-    GRAPH["🕸️ Permission Graph\n(compiled DAG — TE-02)"]:::permgraph
-    REQUEST["🔐 Access Decision\n(granted / denied)"]:::decision
+    USERS[" Users"]:::entity
+    ORGS[" Organizations\n(multi-tenant)"]:::entity
+    ROLES[" Roles"]:::entity
+    TEMPLATES[" Authorization Templates"]:::entity
+    GRAPH["️ Permission Graph\n(compiled DAG — TE-02)"]:::permgraph
+    REQUEST[" Access Decision\n(granted / denied)"]:::decision
 
     USERS -->|"belong to"| ORGS
     USERS -->|"assigned to"| ROLES
@@ -85,10 +85,10 @@ flowchart TB
     ROLES & TEMPLATES -->|"compiled into"| GRAPH
     GRAPH -->|"evaluated at"| REQUEST
 
-    AUD["📜 Immutable Audit\n(EP-04 — every action)"]:::cross
-    APP["✅ Approval Workflow\n(EP-06 — sensitive ops)"]:::cross
-    COMP["📄 Compliance Check\n(EP-07 — doc expiry)"]:::cross
-    IGA_N["🔄 IGA Lifecycle\n(EP-08 — role maturity)"]:::cross
+    AUD[" Immutable Audit\n(EP-04 — every action)"]:::cross
+    APP[" Approval Workflow\n(EP-06 — sensitive ops)"]:::cross
+    COMP[" Compliance Check\n(EP-07 — doc expiry)"]:::cross
+    IGA_N[" IGA Lifecycle\n(EP-08 — role maturity)"]:::cross
 
     REQUEST -.->|"logged"| AUD
     REQUEST -.->|"gated"| APP
@@ -177,9 +177,9 @@ flowchart LR
     R2 --> T3
     ORG --> OVERRIDE
 
-    COMPILER["⚡ Graph Compiler\n(TE-02 — ADR-0021)\ncompiles DAG at resolution time"]:::result
+    COMPILER[" Graph Compiler\n(TE-02 — ADR-0021)\ncompiles DAG at resolution time"]:::result
     R1 & R2 & OVERRIDE --> COMPILER
-    COMPILER --> EFFECTIVE["✅ Effective Permissions\n{CanViewReports, CanApproveUsers,\nReadOnlyAudit, CanExportData}"]:::template
+    COMPILER --> EFFECTIVE[" Effective Permissions\n{CanViewReports, CanApproveUsers,\nReadOnlyAudit, CanExportData}"]:::template
 ```
 
 ### 4.2 The Multi-Tenancy Problem
@@ -192,12 +192,12 @@ flowchart TD
     classDef pass fill:#14532d,stroke:#22c55e,color:#fff
     classDef block fill:#7f1d1d,stroke:#ef4444,color:#fff
 
-    REQ["📨 Incoming Request\nUser: Alice (tenant_id: ACME)"]:::req
+    REQ[" Incoming Request\nUser: Alice (tenant_id: ACME)"]:::req
     L1["LAYER 1 — EF Core Global Query Filter\nAutomatically appends WHERE root_tenant_id = @tid\nto every query via DbContext interceptor\n(ADR-0010 PRIMARY)"]:::layer
     L2["LAYER 2 — SQL Server RLS Predicate\nDATABASE-LEVEL filter: fn_SecurityPredicate()\nactivated via SESSION_CONTEXT\n(ADR-0010 FAILSAFE)"]:::layer
-    DB["🗄️ SQL Server 2022\nRow-Level Security"]:::pass
-    BUG["⚠️ If a bug bypasses Layer 1\n(e.g. raw query escapes EF Core)"]:::block
-    SAFE["✅ Layer 2 blocks at DB level\nData never leaves tenant boundary"]:::pass
+    DB["️ SQL Server 2022\nRow-Level Security"]:::pass
+    BUG["️ If a bug bypasses Layer 1\n(e.g. raw query escapes EF Core)"]:::block
+    SAFE[" Layer 2 blocks at DB level\nData never leaves tenant boundary"]:::pass
 
     REQ --> L1
     L1 -->|"query filtered"| L2
@@ -229,25 +229,25 @@ flowchart TB
     classDef infra fill:#4a3800,stroke:#f59e0b,color:#fff
     classDef data fill:#374151,stroke:#9ca3af,color:#fff
 
-    subgraph PRESENTATION["🖥️ Presentation Layer"]
+    subgraph PRESENTATION["️ Presentation Layer"]
         direction LR
         WEB_UI["Razor Pages / React\nAdmin Console UI"]:::client
         API_LAYER["REST Controllers\n+ GraphQL Resolvers\n(ADR-0032)"]:::api
     end
 
-    subgraph APPLICATION["⚙️ Application Layer (Use Cases)"]
+    subgraph APPLICATION["️ Application Layer (Use Cases)"]
         direction LR
         UC["Use Cases / Handlers\nNo framework imports\n(ADR-0002 Hexagonal)"]:::app
         PORTS["Port Interfaces\nIUserRepository · IEventBus\nICache · IIdentityProvider"]:::app
     end
 
-    subgraph DOMAIN["🏛️ Domain Layer (Pure)"]
+    subgraph DOMAIN["️ Domain Layer (Pure)"]
         direction LR
         AGG["Aggregates · Entities · Value Objects\nZero infrastructure imports\n(ADR-0002 hard constraint)"]:::domain
         EVT["Domain Events\nUserCreated · RolePromoted\nTemplateAssigned"]:::domain
     end
 
-    subgraph INFRA["🔧 Infrastructure Layer (Adapters)"]
+    subgraph INFRA[" Infrastructure Layer (Adapters)"]
         direction LR
         EF["EF Core 8 DbContext\n+ Dapper read projections\n(ADR-0057)"]:::infra
         RLS_A["SESSION_CONTEXT + RLS\nTenant isolation\n(ADR-0010)"]:::infra
@@ -257,7 +257,7 @@ flowchart TB
         IDP["IdP Adapter\nKeycloak / AzureAD\n(ADR-0020)"]:::infra
     end
 
-    subgraph DATA_LAYER["🗄️ Data Layer"]
+    subgraph DATA_LAYER["️ Data Layer"]
         direction LR
         SQL["SQL Server 2022\n8 schemas · RLS predicates\nClosure table · Temporal tables"]:::data
         REDIS_DB["Redis Cluster"]:::data
@@ -315,10 +315,10 @@ flowchart TD
     classDef te fill:#4a3800,stroke:#f59e0b,color:#fff
     classDef adr fill:#14532d,stroke:#22c55e,color:#fff
 
-    FS_BOX["📋 16 Functional Stories (FS)\nBusiness requirements with acceptance criteria\nFS-01 → FS-16"]:::fs
-    TS_BOX["⚙️ 89 Technical Stories (TS)\nMVP: 253 pts · Post-MVP: 325 pts\n5–9 TS per FS"]:::ts
-    TE_BOX["🔧 6 Technical Enablers (TE)\nCross-cutting infrastructure investments\nTE-01 → TE-06"]:::te
-    ADR_BOX["📐 57+ Evolith ADRs\nEvery TE implements one or more ADRs\nFull bidirectional traceability"]:::adr
+    FS_BOX[" 16 Functional Stories (FS)\nBusiness requirements with acceptance criteria\nFS-01 → FS-16"]:::fs
+    TS_BOX["️ 89 Technical Stories (TS)\nMVP: 253 pts · Post-MVP: 325 pts\n5–9 TS per FS"]:::ts
+    TE_BOX[" 6 Technical Enablers (TE)\nCross-cutting infrastructure investments\nTE-01 → TE-06"]:::te
+    ADR_BOX[" 57+ Evolith ADRs\nEvery TE implements one or more ADRs\nFull bidirectional traceability"]:::adr
 
     FS_BOX --> TS_BOX --> TE_BOX --> ADR_BOX
 ```

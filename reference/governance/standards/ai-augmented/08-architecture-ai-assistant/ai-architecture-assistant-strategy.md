@@ -28,16 +28,16 @@ The AI Architecture Assistant operates as a **Principal Architect** persona with
 ├─────────────────┬───────────────────────────────────────────────┤
 │ MODE            │ BEHAVIOR                                      │
 ├─────────────────┼───────────────────────────────────────────────┤
-│ 🧭 GUIDE        │ Proactively explains the right architectural  │
+│  GUIDE        │ Proactively explains the right architectural  │
 │                 │ approach before code is written               │
 ├─────────────────┼───────────────────────────────────────────────┤
-│ ✅ VALIDATE     │ Reviews generated code against ADRs and       │
+│  VALIDATE     │ Reviews generated code against ADRs and       │
 │                 │ standards; flags violations with citations     │
 ├─────────────────┼───────────────────────────────────────────────┤
-│ 🔍 QUERY        │ Answers "which ADR governs X?" or             │
+│  QUERY        │ Answers "which ADR governs X?" or             │
 │                 │ "what is the canonical pattern for Y?"         │
 ├─────────────────┼───────────────────────────────────────────────┤
-│ 🚫 BLOCK        │ Rejects suggestions that violate              │
+│  BLOCK        │ Rejects suggestions that violate              │
 │                 │ non-negotiable constraints (hard guardrails)   │
 └─────────────────┴───────────────────────────────────────────────┘
 ```
@@ -77,18 +77,18 @@ EVOLITH REPOSITORY                    AI KNOWLEDGE BASE
 ─────────────────                     ─────────────────
 
 reference/architecture/adrs/          ┌─────────────────────┐
-  *.md files (57+ ADRs)     ────────▶ │  ADR Vector Store   │
+  *.md files (57+ ADRs)     ──────── │  ADR Vector Store   │
                                        │  (chunked by section│
 reference/architecture/                │   + metadata tags)  │
-  blueprints/*.md           ────────▶ │  Blueprint Store    │
+  blueprints/*.md           ──────── │  Blueprint Store    │
                                        └─────────────────────┘
 reference/governance/
-  standards/**/*.md         ────────▶ ┌─────────────────────┐
+  standards/**/*.md         ──────── ┌─────────────────────┐
                                        │  Standards Store    │
 reference/architecture/                │  (enforcement rules │
-  canonical-patterns/*.md   ────────▶ │   + code examples)  │
+  canonical-patterns/*.md   ──────── │   + code examples)  │
                                        └─────────────────────┘
-AGENTS.md / .harness/rules/ ────────▶ ┌─────────────────────┐
+AGENTS.md / .harness/rules/ ──────── ┌─────────────────────┐
   global-rules.md                      │  System Prompt Core │
                                        │  (always injected)  │
                                        └─────────────────────┘

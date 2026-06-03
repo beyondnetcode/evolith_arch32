@@ -146,7 +146,7 @@ public sealed class ProductSerilogLogger(
         var tenant = tenantContext.TenantId ?? "system";
 
         log.LogError(ex,
-            "✗ {BoundedContext} {Handler}.{Method} threw {ExType} | "
+            " {BoundedContext} {Handler}.{Method} threw {ExType} | "
             + "tenant={TenantId} cid={CorrelationId} sid={SessionTrackingId}",
             InferBoundedContext(jp.TargetType),
             jp.TargetType.Name, jp.MethodInfo.Name, ex.GetType().Name,
@@ -204,7 +204,7 @@ public async Task<Result<CreateOrderResponse>> Handle(
 ← Orders CreateOrderCommandHandler.Handle in 38ms |
   tenant=acme cid=a3f1b7c2 sid=f9d8e1a0
 
-✗ Orders CreateOrderCommandHandler.Handle threw ValidationException |
+ Orders CreateOrderCommandHandler.Handle threw ValidationException |
   tenant=acme cid=a3f1b7c2 sid=f9d8e1a0
 ```
 

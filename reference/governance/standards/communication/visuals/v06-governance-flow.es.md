@@ -113,7 +113,7 @@ flowchart TD
     classDef gate fill:#4a3800,stroke:#f59e0b,color:#fff,font-weight:bold
     classDef action fill:#374151,stroke:#9ca3af,color:#fff
 
-    START(["💡 Descubrimiento en\nRepositorio de Producto\n(ej. UMS)"]):::prod
+    START([" Descubrimiento en\nRepositorio de Producto\n(ej. UMS)"]):::prod
 
     S1["El Arquitecto de Producto identifica\nuna decisión que puede ser universal\n\nDocs: ADR del producto + evidencia\nde implementación real"]:::prod
 
@@ -147,7 +147,7 @@ flowchart TB
     classDef human fill:#1e3a5f,stroke:#3b82f6,color:#fff
     classDef policy fill:#4a1a6b,stroke:#9c27b0,color:#fff
 
-    subgraph AUTOMATED["🤖 APLICACIÓN AUTOMATIZADA (No puede omitirse)"]
+    subgraph AUTOMATED[" APLICACIÓN AUTOMATIZADA (No puede omitirse)"]
         direction LR
         AE1["eslint-plugin-boundaries\nBloquea imports cross-capa\nen CI"]:::auto
         AE2["Gate de cobertura de tests\n≥70% aplicado en\nGitHub Actions"]:::auto
@@ -156,7 +156,7 @@ flowchart TB
         AE5["Verificación de aislamiento de schema\nSin joins SQL cross-schema\n→ ADR-0031"]:::auto
     end
 
-    subgraph HUMAN["👤 REVISIÓN HUMANA (Tech Lead + Arquitecto)"]
+    subgraph HUMAN[" REVISIÓN HUMANA (Tech Lead + Arquitecto)"]
         direction LR
         HR1["Revisión Arquitectónica de PR\nFronteras Hexagonales\nDisciplina Puerto/Adaptador"]:::human
         HR2["Verificación de Cobertura ADR\nCada nuevo patrón tiene\nun ADR que lo rige"]:::human
@@ -164,7 +164,7 @@ flowchart TB
         HR4["Sin extracción prematura\nCriterios ADR-0045\nno violados"]:::human
     end
 
-    subgraph BOARD["🏛️ SUPERVISIÓN DEL BOARD (Architecture Board)"]
+    subgraph BOARD["️ SUPERVISIÓN DEL BOARD (Architecture Board)"]
         direction LR
         BO1["Revisión ADR Trimestral\nADRs reemplazados/deprecados\nprocesados"]:::policy
         BO2["Gobernanza del Tech Stack\nNuevas herramientas requieren\nADR aprobado por Board"]:::policy

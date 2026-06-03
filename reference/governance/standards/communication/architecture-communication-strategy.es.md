@@ -177,7 +177,7 @@ Juntos forman un **ecosistema corporativo de dos capas:**
  ────────────────────   ────────────────────       ──────────────────
 
  ┌─────────────────┐    ┌──────────────────┐      ADR-0047
- │ Nueva idea de   │──▶ │ Monolito Simple  │      Checklist Simplicidad
+ │ Nueva idea de   │── │ Monolito Simple  │      Checklist Simplicidad
  │ producto        │    └────────┬─────────┘      Blueprint Fase 01
  └─────────────────┘             │
                                  │ crece el equipo,
@@ -218,24 +218,24 @@ Juntos forman un **ecosistema corporativo de dos capas:**
 │  CAPACIDADES     │  CAPACIDADES DE  │  CAPACIDADES    │ OPERACIONES│
 │  ARQUITECTÓNICAS │  INGENIERÍA      │  DE ENTREGA     │            │
 ├──────────────────┼──────────────────┼─────────────────┼────────────┤
-│ ✓ Ruta de        │ ✓ Baseline       │ ✓ Etapas SDLC   │ ✓ Trazado  │
+│  Ruta de        │  Baseline       │  Etapas SDLC   │  Trazado  │
 │   evolución      │   SOLID/Clean    │   definidas     │   OTel     │
 │   progresiva     │   Code           │                 │            │
 │                  │                  │                 │            │
-│ ✓ Multi-tenancy  │ ✓ Toolkit DDD    │ ✓ Definition    │ ✓ Grafana  │
+│  Multi-tenancy  │  Toolkit DDD    │  Definition    │  Grafana  │
 │   RLS dual-layer │   táctico        │   of Done       │   dashbrd  │
 │                  │                  │                 │            │
-│ ✓ Modelo Zero-   │ ✓ Lista negra    │ ✓ Estándar      │ ✓ Loki     │
+│  Modelo Zero-   │  Lista negra    │  Estándar      │  Loki     │
 │   trust de       │   anti-patrones  │   escritura de  │   logging  │
 │   seguridad      │                  │   stories       │            │
 │                  │                  │                 │            │
-│ ✓ Multi-runtime  │ ✓ Pirámide de    │ ✓ Ramas         │ ✓ Runbooks │
+│  Multi-runtime  │  Pirámide de    │  Ramas         │  Runbooks │
 │   políglota      │   testing 70%    │   Gitflow       │   (RB 1-4) │
 │                  │                  │                 │            │
-│ ✓ Arquitectura   │ ✓ Convenciones   │ ✓ Quality gates │ ✓ Failover │
+│  Arquitectura   │  Convenciones   │  Quality gates │  Failover │
 │   event-driven   │   de nombres     │   CI/CD         │   DB       │
 │                  │                  │                 │            │
-│ ✓ API design     │ ✓ Patrones       │ ✓ Proceso de    │ ✓ Recovery │
+│  API design     │  Patrones       │  Proceso de    │  Recovery │
 │   contract-first │   canónicos      │   revisión ADR  │   caché    │
 ├──────────────────┴──────────────────┴─────────────────┴────────────┤
 │      Todas las capacidades son runtime-agnósticas por defecto.     │
@@ -395,7 +395,7 @@ Puntos clave:
    EVOLITH ARCH32                UMS (y todos los productos futuros)
    ══════════════                ══════════════════════════════════
    │ ADRs          │  hereda     │ Hereda todos los ADRs            │
-   │ Blueprints    │ ──────────▶ │ Añade ADRs de producto           │
+   │ Blueprints    │ ────────── │ Añade ADRs de producto           │
    │ Estándares    │             │ Documenta divergencias           │
    │ Patrones      │             │ Promueve descubrimientos upstream │
    └───────────────┘             └─────────────────────────────────┘
@@ -416,23 +416,23 @@ Puntos clave:
    "¿Tengo una pregunta sobre...?"
 
          ┌──────────────────────────────────────────┐
-         │ UNIVERSAL (agnóstico de runtime)          │ ─▶ ADRs Core (0001-0056)
+         │ UNIVERSAL (agnóstico de runtime)          │ ─ ADRs Core (0001-0056)
          │ Multi-tenancy, Eventos, CQRS, Sagas...    │
          └──────────────────────────────────────────┘
          ┌──────────────────────────────────────────┐
-         │ NODE.JS / TYPESCRIPT                     │ ─▶ ADRs Node (0002-0043)
+         │ NODE.JS / TYPESCRIPT                     │ ─ ADRs Node (0002-0043)
          │ NestJS, TypeORM, BFF, GraphQL...         │
          └──────────────────────────────────────────┘
          ┌──────────────────────────────────────────┐
-         │ .NET / C#                                │ ─▶ ADRs .NET (0057+)
+         │ .NET / C#                                │ ─ ADRs .NET (0057+)
          │ EF Core, SQL Server, Clean Architecture  │
          └──────────────────────────────────────────┘
          ┌──────────────────────────────────────────┐
-         │ ANDROID / MOBILE                         │ ─▶ ADRs Android
+         │ ANDROID / MOBILE                         │ ─ ADRs Android
          │ Kotlin, offline-first, GPS/scan          │
          └──────────────────────────────────────────┘
          ┌──────────────────────────────────────────┐
-         │ NO SÉ POR DÓNDE EMPEZAR                  │ ─▶ Matriz de Decisión ADR
+         │ NO SÉ POR DÓNDE EMPEZAR                  │ ─ Matriz de Decisión ADR
          └──────────────────────────────────────────┘
 ```
 
@@ -445,13 +445,13 @@ Puntos clave:
             │
             ▼
   ┌─────────────────────┐      SÍ     ┌────────────────────────┐
-  │ ¿Ya existe un ADR   │ ───────────▶ │ Seguirlo. Documentar    │
+  │ ¿Ya existe un ADR   │ ─────────── │ Seguirlo. Documentar    │
   │ que responda esto?  │              │ divergencia local si    │
   └─────────────────────┘              │ hay alguna.            │
             │ NO                       └────────────────────────┘
             ▼
   ┌─────────────────────┐      SÍ     ┌────────────────────────┐
-  │ ¿Es específico del  │ ───────────▶ │ Escribir ADR en        │
+  │ ¿Es específico del  │ ─────────── │ Escribir ADR en        │
   │ producto?           │              │ repositorio hijo.      │
   └─────────────────────┘              │ No requiere aprobación │
                                         │ del Board.             │
@@ -466,7 +466,7 @@ Puntos clave:
      El Board revisa
             │
      ┌──────┴──────┐
-     │  APROBADO   │ ──▶ Merge a Evolith · Todos los repos hijos heredan
+     │  APROBADO   │ ── Merge a Evolith · Todos los repos hijos heredan
      └─────────────┘
 ```
 

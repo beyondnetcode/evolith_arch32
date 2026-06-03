@@ -15,7 +15,7 @@ flowchart TD
     classDef adr fill:#14532d,stroke:#22c55e,color:#fff,font-size:12px
     classDef forbidden fill:#7f1d1d,stroke:#ef4444,color:#fff
 
-    START(["🚀 Nueva Idea\nde Producto"]) --> S1
+    START([" Nueva Idea\nde Producto"]) --> S1
 
     subgraph S1["ETAPA 1 — Monolito Simple"]
         M1["Unidad deployable única\nSin fronteras de módulo aún\nEstructura mínima viable"]:::stage
@@ -26,7 +26,7 @@ flowchart TD
     T1 -->|NO — quedarse aquí| S1
     T1 -->|SÍ| S2
 
-    subgraph S2["ETAPA 2 — Monolito Modular ⭐ DEFAULT"]
+    subgraph S2["ETAPA 2 — Monolito Modular  DEFAULT"]
         M2["Monorepo Nx con fronteras estrictas\nArquitectura Hexagonal aplicada\nDominio compartido via Shared Kernel\nDB: schema único (SOA) válido en Fase 1\nSchema-per-context opcional → Fase 2+"]:::stage
         A2["ADR-0001 · ADR-0002\nADR-0031 (opcional Fase 1) · ADR-0047"]:::adr
     end
@@ -51,7 +51,7 @@ flowchart TD
         A4["ADR-0013 · ADR-0046\nADR-0055 · Roadmap Fase 3"]:::adr
     end
 
-    WARN["⛔ NUNCA SALTAR ETAPAS\nMicroservicios sin la disciplina de la Etapa 2\n= Monolito Distribuido (lo peor de ambos mundos)"]:::forbidden
+    WARN[" NUNCA SALTAR ETAPAS\nMicroservicios sin la disciplina de la Etapa 2\n= Monolito Distribuido (lo peor de ambos mundos)"]:::forbidden
     S4 -.-> WARN
 ```
 
@@ -72,10 +72,10 @@ flowchart LR
     S3["Etapa 3\nMódulos\nDistribuidos"]:::s3
     S4["Etapa 4\nMicro-\nservicios"]:::s4
 
-    S1 --- C1["✓ Rápido para ship\n✓ Costo operacional bajo\n✓ Fácil de entender\n✗ Sin estrategia de escalabilidad aún"]:::cap
-    S2 --- C2["✓ Aislamiento de dominio\n✓ Autonomía de equipo\n✓ Fronteras testeables\n✓ Ruta de upgrade sin refactoring\n✓ UMS vive aquí hoy"]:::cap
-    S3 --- C3["✓ Escala independiente\n✓ Aislamiento de fallos\n✓ Polyglot posible\n✗ Tracing distribuido requerido\n✗ Mayor carga operacional"]:::cap
-    S4 --- C4["✓ Soberanía cloud completa\n✓ Escalabilidad infinita\n✓ Zero vendor lock-in\n✗ Requiere equipo de plataforma maduro\n✗ Alta inversión operacional"]:::cap
+    S1 --- C1[" Rápido para ship\n Costo operacional bajo\n Fácil de entender\n Sin estrategia de escalabilidad aún"]:::cap
+    S2 --- C2[" Aislamiento de dominio\n Autonomía de equipo\n Fronteras testeables\n Ruta de upgrade sin refactoring\n UMS vive aquí hoy"]:::cap
+    S3 --- C3[" Escala independiente\n Aislamiento de fallos\n Polyglot posible\n Tracing distribuido requerido\n Mayor carga operacional"]:::cap
+    S4 --- C4[" Soberanía cloud completa\n Escalabilidad infinita\n Zero vendor lock-in\n Requiere equipo de plataforma maduro\n Alta inversión operacional"]:::cap
 ```
 
 ---
@@ -91,10 +91,10 @@ flowchart TD
 
     EVAL["Evaluar módulo para\nextracción a microservicio"]
 
-    C1["📊 Criterio 1\nEscala independiente necesaria\n(perfil de tráfico difiere significativamente)"]:::criterion
-    C2["👥 Criterio 2\nPropiedad de equipo dedicado\n(≥ 2 ingenieros full-time en el módulo)"]:::criterion
-    C3["🔒 Criterio 3\nFrontera de compliance aislada\n(SLA, seguridad o zona regulatoria diferente)"]:::criterion
-    C4["⚡ Criterio 4\nCuello de botella de performance probado\n(p95 > umbral tras optimización)"]:::criterion
+    C1[" Criterio 1\nEscala independiente necesaria\n(perfil de tráfico difiere significativamente)"]:::criterion
+    C2[" Criterio 2\nPropiedad de equipo dedicado\n(≥ 2 ingenieros full-time en el módulo)"]:::criterion
+    C3[" Criterio 3\nFrontera de compliance aislada\n(SLA, seguridad o zona regulatoria diferente)"]:::criterion
+    C4[" Criterio 4\nCuello de botella de performance probado\n(p95 > umbral tras optimización)"]:::criterion
 
     EVAL --> C1
     EVAL --> C2
@@ -108,8 +108,8 @@ flowchart TD
     C3 --> GATE
     C4 --> GATE
 
-    GATE -->|SÍ — extraer| PASS["✅ Proceder con extracción\nRevisión del Board requerida\nDocumentar en ADR hijo"]:::pass
-    GATE -->|NO — esperar| FAIL["⛔ NO extraer\nPermanecer en Monolito Modular\nRevisitar en el próximo trimestre"]:::fail
+    GATE -->|SÍ — extraer| PASS[" Proceder con extracción\nRevisión del Board requerida\nDocumentar en ADR hijo"]:::pass
+    GATE -->|NO — esperar| FAIL[" NO extraer\nPermanecer en Monolito Modular\nRevisitar en el próximo trimestre"]:::fail
 ```
 
 ---
@@ -123,14 +123,14 @@ flowchart LR
 
     UMS["UMS Hoy\nFase 1\nMonolito Modular"]:::arch
 
-    UMS --> A["✅ Monorepo Nx\nfronteras de lib estrictas"]:::done
-    UMS --> B["✅ Arquitectura Hexagonal\nPuertos + Adaptadores en todas las capas"]:::done
-    UMS --> C["✅ Schema-per-context\n8 bounded contexts\n(elección UMS — opcional en Fase 1)"]:::done
-    UMS --> D["✅ EF Core + SQL Server 2022\ncon failsafe RLS"]:::done
-    UMS --> E["✅ Transactional Outbox\npara todas las escrituras async"]:::done
-    UMS --> F["✅ Gate de cobertura 70%\nen GitHub Actions CI"]:::done
-    UMS --> G["✅ OTel + Loki + Grafana\nstack de observabilidad"]:::done
-    UMS --> H["✅ Trazabilidad ADR completa\nmatriz 16 FS → ADR → TE"]:::done
+    UMS --> A[" Monorepo Nx\nfronteras de lib estrictas"]:::done
+    UMS --> B[" Arquitectura Hexagonal\nPuertos + Adaptadores en todas las capas"]:::done
+    UMS --> C[" Schema-per-context\n8 bounded contexts\n(elección UMS — opcional en Fase 1)"]:::done
+    UMS --> D[" EF Core + SQL Server 2022\ncon failsafe RLS"]:::done
+    UMS --> E[" Transactional Outbox\npara todas las escrituras async"]:::done
+    UMS --> F[" Gate de cobertura 70%\nen GitHub Actions CI"]:::done
+    UMS --> G[" OTel + Loki + Grafana\nstack de observabilidad"]:::done
+    UMS --> H[" Trazabilidad ADR completa\nmatriz 16 FS → ADR → TE"]:::done
 ```
 
 ---

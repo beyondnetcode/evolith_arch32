@@ -16,7 +16,7 @@ flowchart TB
     classDef te fill:#4a3800,stroke:#f59e0b,color:#fff,font-size:11px
     classDef hot fill:#7f1d1d,stroke:#ef4444,color:#fff,font-size:11px
 
-    subgraph IDENTITY["🔐 CLÚSTER IDENTIDAD"]
+    subgraph IDENTITY[" CLÚSTER IDENTIDAD"]
         FS01["FS-01\nAutenticación de Usuario"]:::fs
         FS08["FS-08\nRedireccionamiento Login Hosted"]:::fs
         FS09["FS-09\nMFA / Passwordless Adaptiva"]:::fs
@@ -25,7 +25,7 @@ flowchart TB
         FS01 & FS08 & FS09 --> ADR_ID --> TE_ID
     end
 
-    subgraph AUTHZ["🛡️ CLÚSTER AUTORIZACIÓN"]
+    subgraph AUTHZ["️ CLÚSTER AUTORIZACIÓN"]
         FS02["FS-02\nCrear Plantilla de Auth"]:::fs
         FS05["FS-05\nCrear Perfil / Plantilla Manual"]:::fs
         FS07["FS-07\nResolvedor Visual de Grafo"]:::fs
@@ -36,7 +36,7 @@ flowchart TB
         FS02 & FS05 & FS07 & FS14 & FS16 --> ADR_AZ --> TE_AZ
     end
 
-    subgraph TENANT["🏢 CLÚSTER TENANCY"]
+    subgraph TENANT[" CLÚSTER TENANCY"]
         FS03["FS-03\nRegistrar Organización"]:::fs
         FS04["FS-04\nRegistrar Topología del Sistema"]:::fs
         ADR_TN["ADR-0010 RLS Multi-Tenancy\nADR-0031 Schema por Contexto\nADR-0034 CQRS"]:::adr
@@ -44,7 +44,7 @@ flowchart TB
         FS03 & FS04 --> ADR_TN --> TE_TN
     end
 
-    subgraph EVENTS["⚡ CLÚSTER EVENTOS"]
+    subgraph EVENTS[" CLÚSTER EVENTOS"]
         FS06["FS-06\nAsignación Auto de Plantilla"]:::fs
         FS10["FS-10\nAcceso B2B Externo / Aprobación"]:::fs
         FS11["FS-11\nCarga de Documento"]:::fs
@@ -55,7 +55,7 @@ flowchart TB
         FS06 & FS10 & FS11 & FS12 & FS15 --> ADR_EV --> TE_EV
     end
 
-    subgraph CONFIG["⚙️ CLÚSTER CONFIGURACIÓN"]
+    subgraph CONFIG["️ CLÚSTER CONFIGURACIÓN"]
         FS13["FS-13\nConfiguración Jerárquica"]:::fs
         ADR_CF["ADR-0024 Plataforma de Config\nADR-0034 CQRS"]:::adr
         TE_CF["TE-06 Reconstrucción Proyección CQRS"]:::te

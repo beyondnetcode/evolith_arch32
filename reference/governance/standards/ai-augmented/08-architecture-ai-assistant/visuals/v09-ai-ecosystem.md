@@ -15,7 +15,7 @@ flowchart TB
     classDef gate fill:#7f1d1d,stroke:#ef4444,color:#fff
     classDef human fill:#374151,stroke:#9ca3af,color:#fff
 
-    subgraph DEVS["👤 Developer Layer"]
+    subgraph DEVS[" Developer Layer"]
         direction LR
         T1["Claude Code"]:::developer
         T2["Cursor / Cline / Roo"]:::developer
@@ -23,7 +23,7 @@ flowchart TB
         T4["Continue / Codex"]:::developer
     end
 
-    subgraph KNOWLEDGE["📚 Evolith Knowledge Base (RAG)"]
+    subgraph KNOWLEDGE[" Evolith Knowledge Base (RAG)"]
         direction LR
         K1["ADR Vector Store\n57+ ADRs indexed\nby runtime+phase+domain"]:::knowledge
         K2["Patterns Store\nCP-01..08\nwith code templates"]:::knowledge
@@ -31,16 +31,16 @@ flowchart TB
         K4["System Prompt Core\nALWAYS injected\nHard constraints"]:::knowledge
     end
 
-    subgraph AGENTS["🤖 Specialist Agent Layer"]
+    subgraph AGENTS[" Specialist Agent Layer"]
         direction LR
-        A1["🧭 Architect\nAgent\nADR lookup\nPattern rec"]:::agent
-        A2["✅ Reviewer\nAgent\nPR compliance\nHard blocks"]:::agent
-        A3["⚙️ Coder\nAgent\nScaffold gen\nRefactor"]:::agent
-        A4["🧪 QA\nAgent\nTest gen\nCoverage"]:::agent
-        A5["🚀 DevOps\nAgent\nIaC + OTel\nRunbooks"]:::agent
+        A1[" Architect\nAgent\nADR lookup\nPattern rec"]:::agent
+        A2[" Reviewer\nAgent\nPR compliance\nHard blocks"]:::agent
+        A3["️ Coder\nAgent\nScaffold gen\nRefactor"]:::agent
+        A4[" QA\nAgent\nTest gen\nCoverage"]:::agent
+        A5[" DevOps\nAgent\nIaC + OTel\nRunbooks"]:::agent
     end
 
-    subgraph HARNESS["🎛️ Harness AI — Orchestration Layer"]
+    subgraph HARNESS["️ Harness AI — Orchestration Layer"]
         direction LR
         H1["Orchestrator\nRoutes to\nspecialist agents"]:::harness
         H2["Approval Gates\nHuman-in-the-loop\nBoard workflows"]:::harness
@@ -48,7 +48,7 @@ flowchart TB
         H4["Audit Trail\nImmutable log of\nall AI actions"]:::harness
     end
 
-    subgraph GATES["🚦 CI/CD Quality Gates"]
+    subgraph GATES[" CI/CD Quality Gates"]
         direction LR
         G1["eslint-boundaries\nDomain isolation"]:::gate
         G2["ADR citation\nvalidator"]:::gate
@@ -56,7 +56,7 @@ flowchart TB
         G4["Security scan\nCodeQL"]:::gate
     end
 
-    subgraph HUMANS["👥 Human Oversight"]
+    subgraph HUMANS[" Human Oversight"]
         direction LR
         HU1["Developer\nreviews suggestions"]:::human
         HU2["Tech Lead\nfinal PR merge"]:::human
@@ -89,11 +89,11 @@ flowchart LR
     CODEX["Codex / OpenAI"]:::tool
     CONTINUE["Continue"]:::tool
 
-    ARCH["🧭 Architect Agent\n(ADR lookup, pattern rec,\nphase guidance)"]:::agent
-    CODER["⚙️ Coder Agent\n(scaffold, refactor,\npattern impl)"]:::agent
-    REVIEW["✅ Reviewer Agent\n(PR compliance,\nhard blocks, citations)"]:::agent
-    QA["🧪 QA Agent\n(test gen, coverage,\ncontract tests)"]:::agent
-    DEVOPS["🚀 DevOps Agent\n(IaC, OTel config,\nrunbooks)"]:::agent
+    ARCH[" Architect Agent\n(ADR lookup, pattern rec,\nphase guidance)"]:::agent
+    CODER["️ Coder Agent\n(scaffold, refactor,\npattern impl)"]:::agent
+    REVIEW[" Reviewer Agent\n(PR compliance,\nhard blocks, citations)"]:::agent
+    QA[" QA Agent\n(test gen, coverage,\ncontract tests)"]:::agent
+    DEVOPS[" DevOps Agent\n(IaC, OTel config,\nrunbooks)"]:::agent
 
     CLAUDE --> ARCH & CODER & REVIEW
     CURSOR --> CODER & ARCH
@@ -165,11 +165,11 @@ flowchart TD
 
     S4{"STEP 4 — CONSTRAINT CHECK\nDoes the proposed solution\nviolate any hard constraint?"}:::check
 
-    BLOCK["🚫 BLOCK\nExplain violation\nCite ADR\nSuggest fix"]:::block
+    BLOCK[" BLOCK\nExplain violation\nCite ADR\nSuggest fix"]:::block
 
     S5["STEP 5 — CITATION\nEvery output includes:\n• ADR ID and title\n• Phase label\n• Mandatory vs optional"]:::step
 
-    PASS["✅ GENERATE OUTPUT\nWith full citations"]:::pass
+    PASS[" GENERATE OUTPUT\nWith full citations"]:::pass
 
     INPUT --> S1 --> S2 --> S3 --> S4
     S4 -->|VIOLATION FOUND| BLOCK

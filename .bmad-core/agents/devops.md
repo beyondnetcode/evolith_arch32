@@ -176,33 +176,33 @@ node .harness/scripts/satellite-sync.mjs pull/push/status/list
 
 ### main
 ```
-☑ Require pull request reviews: 2 (one must be senior)
-☑ Status checks required: validate-docs.mjs, check-bilingual-parity.mjs, docs-release.yml
-☑ Dismiss stale reviews: yes
-☑ Require review from code owners: yes
-☑ Allow force pushes: NO
+ Require pull request reviews: 2 (one must be senior)
+ Status checks required: validate-docs.mjs, check-bilingual-parity.mjs, docs-release.yml
+ Dismiss stale reviews: yes
+ Require review from code owners: yes
+ Allow force pushes: NO
 ```
 
 ### develop
 ```
-☑ Require pull request reviews: 1
-☑ Status checks required: validate-docs.mjs, check-bilingual-parity.mjs
-☑ Allow force pushes: NO (except rebase)
+ Require pull request reviews: 1
+ Status checks required: validate-docs.mjs, check-bilingual-parity.mjs
+ Allow force pushes: NO (except rebase)
 ```
 
 ### release/docs-*
 ```
-☑ Require pull request reviews: 2
-☑ Status checks required: all release checks
-☑ Restrict branch creation: maintainers only
-☑ Allow force pushes: NO
+ Require pull request reviews: 2
+ Status checks required: all release checks
+ Restrict branch creation: maintainers only
+ Allow force pushes: NO
 ```
 
 ### hotfix/docs-*
 ```
-☑ Require pull request reviews: 1
-☑ Must include hotfix justification in PR
-☑ Status checks required: validate-docs.mjs, check-bilingual-parity.mjs
+ Require pull request reviews: 1
+ Must include hotfix justification in PR
+ Status checks required: validate-docs.mjs, check-bilingual-parity.mjs
 ```
 
 ## Integration with Other Agents

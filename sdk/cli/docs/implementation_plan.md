@@ -12,7 +12,7 @@ Basado en los nuevos requerimientos (Daemon, Integración IDE, MCP) y el uso de 
 3. **Servidor MCP/API Integrado:** El Daemon necesita exponer endpoints locales para Antigravity/VSCode. NestJS brilla exactamente en esto.
 
 **Base de Datos Local (YAML / JSON):**
-Para mantener el estado de sincronización de plantillas, configuración del CLI y caché de repositorios satélites locales, usaremos **archivos de configuración en formato YAML o JSON** (ubicados típicamente en `~/.evolith/config.yaml`).
+Para mantener el estado de sincronización de plantillas, configuración del CLI y caché de repositorios satélites locales, usaremos **archivos de configuración en formato YAML o JSON** (ubicados generalmente en `~/.evolith/config.yaml`).
 
 **Integración con IDEs (VSCode / Antigravity - OpenCode Style):**
 El daemon de NestJS incluirá un servidor MCP (Model Context Protocol). Esto permitirá que asistentes como Antigravity o extensiones de VSCode descubran los comandos del CLI nativamente, permitiendo a los usuarios invocar comandos de Evolith directamente desde el chat del IDE o la paleta de comandos (similar a OpenCode).

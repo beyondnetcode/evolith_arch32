@@ -18,24 +18,24 @@ flowchart TB
     classDef obs fill:#0f172a,stroke:#334155,color:#aaa
     classDef db fill:#7f1d1d,stroke:#ef4444,color:#fff
 
-    subgraph CLIENTS["📱 Clientes"]
+    subgraph CLIENTS[" Clientes"]
         direction LR
         WEB["Navegador Web\nReact / Next.js"]:::client
         MOB["App Android\nKotlin / Offline-first"]:::client
         B2B["Partner B2B\nSistema Externo"]:::client
     end
 
-    subgraph EDGE["🔀 Capa Edge — ADR-0030"]
+    subgraph EDGE[" Capa Edge — ADR-0030"]
         KONG["Kong API Gateway\nRate limiting · Aplicación de Auth\nTerminación TLS · Enrutamiento"]:::gateway
     end
 
-    subgraph BFF_LAYER["🎯 Capa BFF — ADR-0008"]
+    subgraph BFF_LAYER[" Capa BFF — ADR-0008"]
         BFF_WEB["NestJS BFF Web\nOrquestación · SSR · Auth"]:::bff
         BFF_MOB["NestJS BFF Mobile\nSync offline · Compresión"]:::bff
         BFF_B2B["NestJS BFF B2B\nValidación de contrato · Rate"]:::bff
     end
 
-    subgraph SERVICES["⚙️ Servicios Core — ADR-0047"]
+    subgraph SERVICES["️ Servicios Core — ADR-0047"]
         SVC_ID["Servicio Identidad\n.NET 8 / UMS EP-01"]:::service
         SVC_AZ["Servicio Autorización\n.NET 8 / UMS EP-02"]:::service
         SVC_CF["Servicio Configuración\n.NET 8 / UMS EP-03"]:::service
@@ -45,7 +45,7 @@ flowchart TB
         SVC_IG["Servicio IGA\n.NET 8 / UMS EP-08"]:::service
     end
 
-    subgraph INFRA_LAYER["🏗️ Infraestructura — ADR-0028"]
+    subgraph INFRA_LAYER["️ Infraestructura — ADR-0028"]
         DAPR["Dapr Sidecar Mesh\nDescubrimiento de servicios · Pub/Sub\nAlmacén de estado · Secrets"]:::infra
         RMQ["RabbitMQ\nEvent Bus · FIFO · DLQ\nADR-0015/0036"]:::infra
         REDIS["Redis Cluster\nCache 4 Niveles\nADR-0014"]:::infra
@@ -53,14 +53,14 @@ flowchart TB
         MINIO["MinIO\nAlmacenamiento S3-compatible\nADR-0028"]:::infra
     end
 
-    subgraph DATA["🗄️ Capa de Datos — ADR-0031/0051"]
+    subgraph DATA["️ Capa de Datos — ADR-0031/0051"]
         DB_ID["SQL Server 2022\nSchema Identidad\n+ Predicados RLS"]:::db
         DB_AZ["SQL Server 2022\nSchema Autorización\n+ Closure Table"]:::db
         DB_CF["SQL Server 2022\nSchema Configuración"]:::db
         DB_AU["SQL Server 2022\nSchema Auditoría\nSolo-append"]:::db
     end
 
-    subgraph OBS["📡 Observabilidad — ADR-0007/0046"]
+    subgraph OBS[" Observabilidad — ADR-0007/0046"]
         direction LR
         OTEL["OTel Collector\nW3C TraceContext"]:::obs
         LOKI["Loki\nLogs Estructurados"]:::obs
@@ -88,7 +88,7 @@ flowchart TB
     classDef infra fill:#4a3800,stroke:#f59e0b,color:#fff
     classDef obs fill:#1e3a5f,stroke:#3b82f6,color:#fff
 
-    subgraph LOCAL["🖥️ Máquina del Desarrollador — docker-compose"]
+    subgraph LOCAL["️ Máquina del Desarrollador — docker-compose"]
         direction TB
 
         subgraph APP["Contenedores de Aplicación"]
@@ -132,9 +132,9 @@ flowchart LR
     classDef onprem fill:#374151,stroke:#9ca3af,color:#fff
     classDef core fill:#14532d,stroke:#22c55e,color:#fff
 
-    CORE["🎯 Core Evolith\n(Servicios Agnósticos de Runtime)\nSin SDK de cloud en la capa de dominio"]:::core
+    CORE[" Core Evolith\n(Servicios Agnósticos de Runtime)\nSin SDK de cloud en la capa de dominio"]:::core
 
-    subgraph AWS["☁️ Perfil AWS"]
+    subgraph AWS["️ Perfil AWS"]
         direction TB
         AW1["EKS (Kubernetes)"]:::aws
         AW2["RDS SQL Server"]:::aws
@@ -143,7 +143,7 @@ flowchart LR
         AW5["MSK (Kafka)"]:::aws
     end
 
-    subgraph AZURE["☁️ Perfil Azure"]
+    subgraph AZURE["️ Perfil Azure"]
         direction TB
         AZ1["AKS (Kubernetes)"]:::azure
         AZ2["Azure SQL"]:::azure
@@ -152,7 +152,7 @@ flowchart LR
         AZ5["Azure Service Bus"]:::azure
     end
 
-    subgraph ONPREM["🏢 On-Premise / Híbrido"]
+    subgraph ONPREM[" On-Premise / Híbrido"]
         direction TB
         OP1["K8s (self-hosted)"]:::onprem
         OP2["SQL Server 2022\n(bare metal)"]:::onprem
@@ -180,7 +180,7 @@ flowchart TD
     classDef trusted fill:#14532d,stroke:#22c55e,color:#fff
     classDef service fill:#1e3a5f,stroke:#3b82f6,color:#fff
 
-    INTERNET(["🌐 Internet\n(Zero Trust)"]):::untrusted
+    INTERNET([" Internet\n(Zero Trust)"]):::untrusted
 
     subgraph P1["Capa Perímetro (Kong + WAF)"]
         KONG2["Kong Gateway\nProtección OWASP Top 10\nRate limiting · mTLS"]:::perimeter
@@ -233,17 +233,17 @@ flowchart LR
     G5{"Gate 5\nRevisión de\nArquitectura\nFirma del Tech Lead"}:::gate
 
     PR --> G1
-    G1 -->|FALLA| DEV1["🔴 Corregir linting\no violación de import"]:::dev
+    G1 -->|FALLA| DEV1[" Corregir linting\no violación de import"]:::dev
     G1 -->|PASA| G2
-    G2 -->|FALLA| DEV2["🔴 Agregar\nunit tests faltantes"]:::dev
+    G2 -->|FALLA| DEV2[" Agregar\nunit tests faltantes"]:::dev
     G2 -->|PASA| G3
-    G3 -->|FALLA| DEV3["🔴 Corregir problemas\nde integración o contrato"]:::dev
+    G3 -->|FALLA| DEV3[" Corregir problemas\nde integración o contrato"]:::dev
     G3 -->|PASA| G4
-    G4 -->|FALLA| DEV4["🔴 Parchear\ndependencia vulnerable"]:::dev
+    G4 -->|FALLA| DEV4[" Parchear\ndependencia vulnerable"]:::dev
     G4 -->|PASA| G5
-    G5 -->|FALLA| DEV5["🔴 Abordar\nfeedback de arquitectura"]:::dev
-    G5 -->|PASA| MERGE["✅ Merge a main"]:::pass
-    MERGE --> DEPLOY["🚀 Desplegar a\nstaging / prod\nvia GitHub Actions"]:::deploy
+    G5 -->|FALLA| DEV5[" Abordar\nfeedback de arquitectura"]:::dev
+    G5 -->|PASA| MERGE[" Merge a main"]:::pass
+    MERGE --> DEPLOY[" Desplegar a\nstaging / prod\nvia GitHub Actions"]:::deploy
 ```
 
 ---

@@ -18,24 +18,24 @@ flowchart TB
     classDef obs fill:#0f172a,stroke:#334155,color:#aaa
     classDef db fill:#7f1d1d,stroke:#ef4444,color:#fff
 
-    subgraph CLIENTS["📱 Clients"]
+    subgraph CLIENTS[" Clients"]
         direction LR
         WEB["Web Browser\nReact / Next.js"]:::client
         MOB["Android App\nKotlin / Offline-first"]:::client
         B2B["B2B Partner\nExternal System"]:::client
     end
 
-    subgraph EDGE["🔀 Edge Layer — ADR-0030"]
+    subgraph EDGE[" Edge Layer — ADR-0030"]
         KONG["Kong API Gateway\nRate limiting · Auth enforcement\nTLS termination · Routing"]:::gateway
     end
 
-    subgraph BFF_LAYER["🎯 BFF Layer — ADR-0008"]
+    subgraph BFF_LAYER[" BFF Layer — ADR-0008"]
         BFF_WEB["NestJS BFF Web\nOrchestration · SSR · Auth"]:::bff
         BFF_MOB["NestJS BFF Mobile\nOffline sync · Compression"]:::bff
         BFF_B2B["NestJS BFF B2B\nContract validation · Rate"]:::bff
     end
 
-    subgraph SERVICES["⚙️ Core Services — ADR-0047"]
+    subgraph SERVICES["️ Core Services — ADR-0047"]
         SVC_ID["Identity Service\n.NET 8 / UMS EP-01"]:::service
         SVC_AZ["Authorization Service\n.NET 8 / UMS EP-02"]:::service
         SVC_CF["Configuration Service\n.NET 8 / UMS EP-03"]:::service
@@ -45,7 +45,7 @@ flowchart TB
         SVC_IG["IGA Service\n.NET 8 / UMS EP-08"]:::service
     end
 
-    subgraph INFRA_LAYER["🏗️ Infrastructure — ADR-0028"]
+    subgraph INFRA_LAYER["️ Infrastructure — ADR-0028"]
         DAPR["Dapr Sidecar Mesh\nService discovery · Pub/Sub\nState store · Secrets"]:::infra
         RMQ["RabbitMQ\nEvent Bus · FIFO · DLQ\nADR-0015/0036"]:::infra
         REDIS["Redis Cluster\n4-Tier Cache\nADR-0014"]:::infra
@@ -53,14 +53,14 @@ flowchart TB
         MINIO["MinIO\nS3-compatible storage\nADR-0028"]:::infra
     end
 
-    subgraph DATA["🗄️ Data Layer — ADR-0031/0051"]
+    subgraph DATA["️ Data Layer — ADR-0031/0051"]
         DB_ID["SQL Server 2022\nIdentity Schema\n+ RLS Predicates"]:::db
         DB_AZ["SQL Server 2022\nAuthorization Schema\n+ Closure Table"]:::db
         DB_CF["SQL Server 2022\nConfiguration Schema"]:::db
         DB_AU["SQL Server 2022\nAudit Schema\nAppend-only"]:::db
     end
 
-    subgraph OBS["📡 Observability — ADR-0007/0046"]
+    subgraph OBS[" Observability — ADR-0007/0046"]
         direction LR
         OTEL["OTel Collector\nW3C TraceContext"]:::obs
         LOKI["Loki\nStructured Logs"]:::obs
@@ -88,7 +88,7 @@ flowchart TB
     classDef infra fill:#4a3800,stroke:#f59e0b,color:#fff
     classDef obs fill:#1e3a5f,stroke:#3b82f6,color:#fff
 
-    subgraph LOCAL["🖥️ Developer Machine — docker-compose"]
+    subgraph LOCAL["️ Developer Machine — docker-compose"]
         direction TB
 
         subgraph APP["Application Containers"]
@@ -132,9 +132,9 @@ flowchart LR
     classDef onprem fill:#374151,stroke:#9ca3af,color:#fff
     classDef core fill:#14532d,stroke:#22c55e,color:#fff
 
-    CORE["🎯 Evolith Core\n(Runtime-Agnostic Services)\nNo cloud SDK in domain layer"]:::core
+    CORE[" Evolith Core\n(Runtime-Agnostic Services)\nNo cloud SDK in domain layer"]:::core
 
-    subgraph AWS["☁️ AWS Profile"]
+    subgraph AWS["️ AWS Profile"]
         direction TB
         AW1["EKS (Kubernetes)"]:::aws
         AW2["RDS SQL Server"]:::aws
@@ -143,7 +143,7 @@ flowchart LR
         AW5["MSK (Kafka)"]:::aws
     end
 
-    subgraph AZURE["☁️ Azure Profile"]
+    subgraph AZURE["️ Azure Profile"]
         direction TB
         AZ1["AKS (Kubernetes)"]:::azure
         AZ2["Azure SQL"]:::azure
@@ -152,7 +152,7 @@ flowchart LR
         AZ5["Azure Service Bus"]:::azure
     end
 
-    subgraph ONPREM["🏢 On-Premise / Hybrid"]
+    subgraph ONPREM[" On-Premise / Hybrid"]
         direction TB
         OP1["K8s (self-hosted)"]:::onprem
         OP2["SQL Server 2022\n(on bare metal)"]:::onprem
@@ -180,7 +180,7 @@ flowchart TD
     classDef trusted fill:#14532d,stroke:#22c55e,color:#fff
     classDef service fill:#1e3a5f,stroke:#3b82f6,color:#fff
 
-    INTERNET(["🌐 Internet\n(Zero Trust)"]):::untrusted
+    INTERNET([" Internet\n(Zero Trust)"]):::untrusted
 
     subgraph P1["Perimeter Layer (Kong + WAF)"]
         KONG2["Kong Gateway\nOWASP Top 10 protection\nRate limiting · mTLS"]:::perimeter
@@ -233,17 +233,17 @@ flowchart LR
     G5{"Gate 5\nArchitecture\nReview\nTech Lead sign-off"}:::gate
 
     PR --> G1
-    G1 -->|FAIL| DEV1["🔴 Fix linting\nor import violation"]:::dev
+    G1 -->|FAIL| DEV1[" Fix linting\nor import violation"]:::dev
     G1 -->|PASS| G2
-    G2 -->|FAIL| DEV2["🔴 Add missing\nunit tests"]:::dev
+    G2 -->|FAIL| DEV2[" Add missing\nunit tests"]:::dev
     G2 -->|PASS| G3
-    G3 -->|FAIL| DEV3["🔴 Fix integration\nor contract issues"]:::dev
+    G3 -->|FAIL| DEV3[" Fix integration\nor contract issues"]:::dev
     G3 -->|PASS| G4
-    G4 -->|FAIL| DEV4["🔴 Patch vulnerable\ndependency"]:::dev
+    G4 -->|FAIL| DEV4[" Patch vulnerable\ndependency"]:::dev
     G4 -->|PASS| G5
-    G5 -->|FAIL| DEV5["🔴 Address arch\nfeedback"]:::dev
-    G5 -->|PASS| MERGE["✅ Merge to main"]:::pass
-    MERGE --> DEPLOY["🚀 Deploy to\nstaging / prod\nvia GitHub Actions"]:::deploy
+    G5 -->|FAIL| DEV5[" Address arch\nfeedback"]:::dev
+    G5 -->|PASS| MERGE[" Merge to main"]:::pass
+    MERGE --> DEPLOY[" Deploy to\nstaging / prod\nvia GitHub Actions"]:::deploy
 ```
 
 ---

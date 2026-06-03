@@ -26,7 +26,7 @@ Las plantillas garantizan consistencia en todos los repositorios satélite. Los 
 > [!IMPORTANT]
 > Usa estos materiales oficiales vigentes para briefings ejecutivos, workshops de implementación SDLC y sesiones técnicas de adopción Evolith.
 
-### 📊 Kit de Comunicación Ejecutiva (Presentaciones)
+###  Kit de Comunicación Ejecutiva (Presentaciones)
 
 | Artefacto | Formato | Propósito |
 |---|---|---|
@@ -34,7 +34,7 @@ Las plantillas garantizan consistencia en todos los repositorios satélite. Los 
 | **[Evolith: Caso Práctico UMS](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_ums_practical_case.pptx)** | PPTX | Caso de éxito aplicando el framework Evolith a una transformación real. |
 | **[Evolith: Deep-Dive Técnico SDLC](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_sdlc_technical_deep_dive.pptx)** | PPTX | Guía operativa de ingeniería sobre fases, Quality Gates y artefactos. |
 
-### 🛠️ Workbook de Implementación
+### ️ Workbook de Implementación
 
 | Artefacto / Alcance | Formato | Propósito |
 |---|---|---|

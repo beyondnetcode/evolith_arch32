@@ -111,7 +111,7 @@ flowchart TD
     classDef gate fill:#4a3800,stroke:#f59e0b,color:#fff,font-weight:bold
     classDef action fill:#374151,stroke:#9ca3af,color:#fff
 
-    START(["💡 Discovery in\nProduct Repository\n(e.g. UMS)"]):::prod
+    START([" Discovery in\nProduct Repository\n(e.g. UMS)"]):::prod
 
     S1["Product Architect identifies\ndecision that may be universal\n\nDocs: product ADR + evidence\nfrom real implementation"]:::prod
 
@@ -145,7 +145,7 @@ flowchart TB
     classDef human fill:#1e3a5f,stroke:#3b82f6,color:#fff
     classDef policy fill:#4a1a6b,stroke:#9c27b0,color:#fff
 
-    subgraph AUTOMATED["🤖 AUTOMATED ENFORCEMENT (Cannot be bypassed)"]
+    subgraph AUTOMATED[" AUTOMATED ENFORCEMENT (Cannot be bypassed)"]
         direction LR
         AE1["eslint-plugin-boundaries\nBlocks cross-layer imports\nin CI"]:::auto
         AE2["Test coverage gate\n≥70% enforced in\nGitHub Actions"]:::auto
@@ -154,7 +154,7 @@ flowchart TB
         AE5["Schema isolation check\nNo cross-schema SQL joins\n→ ADR-0031"]:::auto
     end
 
-    subgraph HUMAN["👤 HUMAN REVIEW (Tech Lead + Architect)"]
+    subgraph HUMAN[" HUMAN REVIEW (Tech Lead + Architect)"]
         direction LR
         HR1["PR Architecture Review\nHexagonal boundaries\nPort/Adapter discipline"]:::human
         HR2["ADR Coverage Check\nEvery new pattern has\na governing ADR"]:::human
@@ -162,7 +162,7 @@ flowchart TB
         HR4["No premature extraction\nADR-0045 criteria\nnot violated"]:::human
     end
 
-    subgraph BOARD["🏛️ BOARD OVERSIGHT (Architecture Board)"]
+    subgraph BOARD["️ BOARD OVERSIGHT (Architecture Board)"]
         direction LR
         BO1["Quarterly ADR Review\nSuperseded/deprecated\nADRs processed"]:::policy
         BO2["Tech Stack Governance\nNew tools require\nBoard-approved ADR"]:::policy

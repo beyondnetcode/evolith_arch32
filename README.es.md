@@ -10,6 +10,16 @@ Evolith resuelve un problema empresarial comun: los equipos necesitan un lugar c
 
 > Separar conceptualmente antes de separar fisicamente.
 
+## Evolith SDK CLI (Oficial)
+
+Para automatizar la adopción de Evolith en nuevos repositorios satélite o integrar herramientas IDE (vía OpenCode/MCP), recomendamos fuertemente utilizar el CLI oficial.
+
+ **[Ver Documentación del CLI](./sdk/cli/README.md)**
+
+```bash
+npx @evolith/cli init
+```
+
 Idioma: [English](./README.md) | [Espanol](./README.es.md)
 
 ---

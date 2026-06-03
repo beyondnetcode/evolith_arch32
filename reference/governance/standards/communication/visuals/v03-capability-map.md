@@ -24,9 +24,9 @@ flowchart TB
     classDef cap_sec fill:#7f1d1d,stroke:#ef4444,color:#fff
     classDef cap_gov fill:#374151,stroke:#9ca3af,color:#fff
 
-    TITLE["⚡ EVOLITH — ENTERPRISE ARCHITECTURE PLATFORM\nCapability Map"]:::title
+    TITLE[" EVOLITH — ENTERPRISE ARCHITECTURE PLATFORM\nCapability Map"]:::title
 
-    subgraph ARCH["🗺️ ARCHITECTURE CAPABILITIES"]
+    subgraph ARCH["️ ARCHITECTURE CAPABILITIES"]
         direction LR
         A1["Progressive\nEvolution Path\n→ 4 stages"]:::cap_arch
         A2["Multi-Tenancy\nDual-Layer RLS\n→ ADR-0010"]:::cap_arch
@@ -36,7 +36,7 @@ flowchart TB
         A6["Microservice\nExtraction Criteria\n→ ADR-0045"]:::cap_arch
     end
 
-    subgraph ENG["⚙️ ENGINEERING CAPABILITIES"]
+    subgraph ENG["️ ENGINEERING CAPABILITIES"]
         direction LR
         E1["SOLID / Clean Code\nEnforced in CI\n→ Manifesto §1"]:::cap_eng
         E2["DDD Tactical\nToolkit\n→ ADR-0019/0029"]:::cap_eng
@@ -46,7 +46,7 @@ flowchart TB
         E6["Naming\nConventions\n→ ADR-0056"]:::cap_eng
     end
 
-    subgraph DEL["📦 DELIVERY CAPABILITIES"]
+    subgraph DEL[" DELIVERY CAPABILITIES"]
         direction LR
         D1["SDLC\nFramework\n3 phases"]:::cap_del
         D2["Definition\nof Done\nper stage"]:::cap_del
@@ -56,7 +56,7 @@ flowchart TB
         D6["ADR Review\nProcess\n→ Board"]:::cap_del
     end
 
-    subgraph OBS["📡 OBSERVABILITY CAPABILITIES"]
+    subgraph OBS[" OBSERVABILITY CAPABILITIES"]
         direction LR
         O1["OpenTelemetry\nW3C TraceContext\n→ ADR-0007"]:::cap_ops
         O2["Loki\nStructured Logs\n→ OTel stack"]:::cap_ops
@@ -65,7 +65,7 @@ flowchart TB
         O5["Operational\nRunbooks RB-01..04\n→ UMS"]:::cap_ops
     end
 
-    subgraph SEC["🔒 SECURITY CAPABILITIES"]
+    subgraph SEC[" SECURITY CAPABILITIES"]
         direction LR
         S1["Zero-Trust\nPrinciples\n→ Phase 1+"]:::cap_sec
         S2["RBAC / ABAC\nAuthorization\n→ ADR-0012"]:::cap_sec
@@ -75,7 +75,7 @@ flowchart TB
         S6["Vendor Risk\nAssessment\n→ Checklist"]:::cap_sec
     end
 
-    subgraph GOV["🏛️ GOVERNANCE CAPABILITIES"]
+    subgraph GOV["️ GOVERNANCE CAPABILITIES"]
         direction LR
         G1["Architecture\nBoard\n→ Board Charter"]:::cap_gov
         G2["ADR Registry\n57 decisions\n→ All runtimes"]:::cap_gov
@@ -106,38 +106,38 @@ flowchart LR
 
     subgraph CORE["Runtime-Agnostic Core"]
         direction TB
-        R0A["✅ Progressive Evolution"]:::full
-        R0B["✅ Multi-Tenancy Strategy"]:::full
-        R0C["✅ Event-Driven Architecture"]:::full
-        R0D["✅ Testing Pyramid 70%"]:::full
-        R0E["✅ Observability OTel"]:::full
-        R0F["✅ Immutable Audit"]:::full
-        R0G["✅ Feature Flagging"]:::full
-        R0H["✅ Gitflow / CI-CD"]:::full
+        R0A[" Progressive Evolution"]:::full
+        R0B[" Multi-Tenancy Strategy"]:::full
+        R0C[" Event-Driven Architecture"]:::full
+        R0D[" Testing Pyramid 70%"]:::full
+        R0E[" Observability OTel"]:::full
+        R0F[" Immutable Audit"]:::full
+        R0G[" Feature Flagging"]:::full
+        R0H[" Gitflow / CI-CD"]:::full
     end
 
     subgraph NODE["Node.js / TypeScript"]
         direction TB
-        N1["✅ NestJS Clean Architecture\nADR-0002"]:::full
-        N2["✅ BFF / API Gateway\nADR-0008/0030"]:::full
-        N3["✅ Auth Graph Compiler\nADR-0021"]:::full
-        N4["✅ TypeORM + Dapper\nADR-0043"]:::full
-        N5["✅ MFA Adaptive\nADR-0026"]:::full
+        N1[" NestJS Clean Architecture\nADR-0002"]:::full
+        N2[" BFF / API Gateway\nADR-0008/0030"]:::full
+        N3[" Auth Graph Compiler\nADR-0021"]:::full
+        N4[" TypeORM + Dapper\nADR-0043"]:::full
+        N5[" MFA Adaptive\nADR-0026"]:::full
     end
 
     subgraph DOTNET[".NET / C#"]
         direction TB
-        D1["✅ EF Core 8 ORM\nADR-0057"]:::full
-        D2["✅ Hexagonal / Ports\nClean Architecture"]:::full
-        D3["✅ SQL Server RLS\n2-layer model"]:::full
-        D4["✅ XACML Auth\nADR-0039"]:::full
-        D5["⚙️ More .NET ADRs\nin progress"]:::partial
+        D1[" EF Core 8 ORM\nADR-0057"]:::full
+        D2[" Hexagonal / Ports\nClean Architecture"]:::full
+        D3[" SQL Server RLS\n2-layer model"]:::full
+        D4[" XACML Auth\nADR-0039"]:::full
+        D5["️ More .NET ADRs\nin progress"]:::partial
     end
 
     subgraph ANDROID["Android / Kotlin"]
         direction TB
-        A1["✅ Offline-First\nADR-0004"]:::full
-        A2["⚙️ Expanded profile\nin progress"]:::partial
+        A1[" Offline-First\nADR-0004"]:::full
+        A2["️ Expanded profile\nin progress"]:::partial
     end
 
     CORE --> NODE

@@ -20,14 +20,14 @@ This document defines **exactly how each Evolith artifact type must be structure
 ├──────────────────────┬───────────────┬───────────────┬──────────┤
 │ ARTIFACT TYPE        │ VOLUME        │ PRIORITY      │ PHASE    │
 ├──────────────────────┼───────────────┼───────────────┼──────────┤
-│ ADRs (Core)          │ 56 docs       │ 🔴 Critical   │ 0        │
-│ ADRs (Node.js)       │ 14 docs       │ 🔴 Critical   │ 0        │
-│ ADRs (.NET)          │ 1+ docs       │ 🔴 Critical   │ 0        │
+│ ADRs (Core)          │ 56 docs       │  Critical   │ 0        │
+│ ADRs (Node.js)       │ 14 docs       │  Critical   │ 0        │
+│ ADRs (.NET)          │ 1+ docs       │  Critical   │ 0        │
 │ ADRs (Android)       │ n docs        │ 🟠 High       │ 1        │
-│ Canonical Patterns   │ 8 docs        │ 🔴 Critical   │ 0        │
-│ Engineering Manifesto│ 1 doc         │ 🔴 Critical   │ 0        │
-│ Naming Conventions   │ 1 doc         │ 🔴 Critical   │ 0        │
-│ Reference Blueprint  │ 1 doc         │ 🔴 Critical   │ 0        │
+│ Canonical Patterns   │ 8 docs        │  Critical   │ 0        │
+│ Engineering Manifesto│ 1 doc         │  Critical   │ 0        │
+│ Naming Conventions   │ 1 doc         │  Critical   │ 0        │
+│ Reference Blueprint  │ 1 doc         │  Critical   │ 0        │
 │ Architectural Direct.│ 1 doc         │ 🟠 High       │ 0        │
 │ Glossary             │ 1 doc         │ 🟠 High       │ 0        │
 │ SDLC / DoD           │ 3 docs        │ 🟠 High       │ 1        │

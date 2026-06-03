@@ -22,27 +22,27 @@ flowchart TB
     classDef board fill:#4a1a6b,stroke:#9c27b0,color:#ffffff,font-weight:bold
     classDef label fill:#f5f5f5,stroke:#ccc,color:#333,font-style:italic
 
-    BOARD["🏛️ Architecture Board\nGobierna la baseline arquitectónica corporativa"]:::board
+    BOARD["️ Architecture Board\nGobierna la baseline arquitectónica corporativa"]:::board
 
     subgraph EVOLITH["EVOLITH ARCH32 — Referencia Corporativa de Arquitectura"]
-        E1["📐 Registro ADR\nDecisiones con contexto, justificación y trade-offs"]:::framework
-        E2["🗺️ Blueprints y Patrones\nModelos de referencia, patrones canónicos y guías de topología"]:::framework
-        E3["📜 SDLC y Estándares de Ingeniería\nDefinition of Done, quality gates y plantillas de artefactos"]:::framework
-        E4["🔒 Gobernanza\nPropiedad del Board, taxonomía de repositorios y reglas de evolución"]:::framework
+        E1[" Registro ADR\nDecisiones con contexto, justificación y trade-offs"]:::framework
+        E2["️ Blueprints y Patrones\nModelos de referencia, patrones canónicos y guías de topología"]:::framework
+        E3[" SDLC y Estándares de Ingeniería\nDefinition of Done, quality gates y plantillas de artefactos"]:::framework
+        E4[" Gobernanza\nPropiedad del Board, taxonomía de repositorios y reglas de evolución"]:::framework
     end
 
     subgraph UMS["UMS — Producto Empresarial de Referencia"]
-        U1["⚙️ Producto .NET 10 en ejecución\nImplementación de referencia de identidad y autorización"]:::product
-        U2["🧩 Bounded Contexts DDD\nIdentity, Authorization, Configuration, Approvals, Compliance, IGA, Audit, Cache, Console"]:::product
-        U3["📊 Observabilidad y Operaciones\nOpenTelemetry, logs, trazas, dashboards y runbooks"]:::product
-        U4["🏗️ Evidencia Aplicada\nCódigo, pruebas, CI/CD, modelo de datos y documentación de trazabilidad"]:::product
+        U1["️ Producto .NET 10 en ejecución\nImplementación de referencia de identidad y autorización"]:::product
+        U2[" Bounded Contexts DDD\nIdentity, Authorization, Configuration, Approvals, Compliance, IGA, Audit, Cache, Console"]:::product
+        U3[" Observabilidad y Operaciones\nOpenTelemetry, logs, trazas, dashboards y runbooks"]:::product
+        U4["️ Evidencia Aplicada\nCódigo, pruebas, CI/CD, modelo de datos y documentación de trazabilidad"]:::product
     end
 
     BOARD --> EVOLITH
     EVOLITH -->|"define reglas reutilizables"| UMS
     UMS -.->|"promueve aprendizajes probados hacia arriba"| EVOLITH
 
-    NOTE["💡 Evolith = Las Reglas   |   UMS = La Prueba"]:::label
+    NOTE[" Evolith = Las Reglas   |   UMS = La Prueba"]:::label
     UMS --> NOTE
 ```
 
@@ -56,13 +56,13 @@ flowchart LR
     classDef solution fill:#14532d,stroke:#22c55e,color:#ffffff,font-weight:bold
     classDef outcome fill:#1e3a5f,stroke:#3b82f6,color:#ffffff,font-weight:bold
 
-    P1["❌ Sin Evolith\nCada equipo reinventa arquitectura, estándares y reglas de delivery"]:::problem
-    P2["❌ Sin UMS\nLas reglas arquitectónicas quedan teóricas y sin evidencia ejecutable"]:::problem
+    P1[" Sin Evolith\nCada equipo reinventa arquitectura, estándares y reglas de delivery"]:::problem
+    P2[" Sin UMS\nLas reglas arquitectónicas quedan teóricas y sin evidencia ejecutable"]:::problem
 
-    S1["✅ Con Evolith\nUna baseline arquitectónica gobernada heredada por todos los productos"]:::solution
-    S2["✅ Con UMS\nUn producto real valida la baseline con evidencia ejecutable"]:::solution
+    S1[" Con Evolith\nUna baseline arquitectónica gobernada heredada por todos los productos"]:::solution
+    S2[" Con UMS\nUn producto real valida la baseline con evidencia ejecutable"]:::solution
 
-    O["🎯 RESULTADO\nDelivery predecible, menor riesgo arquitectónico y aprendizaje reutilizable entre equipos"]:::outcome
+    O[" RESULTADO\nDelivery predecible, menor riesgo arquitectónico y aprendizaje reutilizable entre equipos"]:::outcome
 
     P1 --> S1
     P2 --> S2

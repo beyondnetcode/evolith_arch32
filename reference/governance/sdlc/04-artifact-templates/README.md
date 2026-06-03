@@ -26,7 +26,7 @@ Templates enforce consistency across all satellite repositories. Satellite teams
 > [!IMPORTANT]
 > Use these current official materials for executive briefings, SDLC implementation workshops, and Evolith technical adoption sessions.
 
-### 📊 Executive Communication Kit (Presentations)
+###  Executive Communication Kit (Presentations)
 
 | Artifact | Format | Purpose |
 |---|---|---|
@@ -34,7 +34,7 @@ Templates enforce consistency across all satellite repositories. Satellite teams
 | **[Evolith: UMS Case Study](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_ums_practical_case.pptx)** | PPTX | Success story demonstrating the Evolith framework applied to a real-world transformation. |
 | **[Evolith: SDLC Technical Deep-Dive](https://github.com/beyondnetcode/evolith_arch32/raw/main/reference/governance/sdlc/assets/evolith_sdlc_technical_deep_dive.pptx)** | PPTX | Engineering operational guide on phases, Quality Gates, and artifacts. |
 
-### 🛠️ Implementation Workbook
+### ️ Implementation Workbook
 
 | Artifact / Scope | Format | Purpose |
 |---|---|---|

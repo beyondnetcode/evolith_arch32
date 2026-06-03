@@ -151,16 +151,16 @@ public static LoggerConfiguration ConfigureSerilog(
 ### F. Forbidden and Required Log Patterns
 
 ```csharp
-// ✗ FORBIDDEN — string concatenation, no structured fields
+//  FORBIDDEN — string concatenation, no structured fields
 _logger.LogInformation("User " + userId);
 
-// ✗ FORBIDDEN — unstructured object dump
+//  FORBIDDEN — unstructured object dump
 _logger.LogInformation(user.ToString());
 
-// ✗ FORBIDDEN — PII in template value (enricher will catch, but avoid by design)
+//  FORBIDDEN — PII in template value (enricher will catch, but avoid by design)
 _logger.LogInformation("Email: {email}", user.Email);
 
-// ✓ REQUIRED — structured fields with non-PII names
+//  REQUIRED — structured fields with non-PII names
 _logger.LogInformation("User {UserId} activated by {ActorId}", userId, actorId);
 ```
 

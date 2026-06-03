@@ -177,16 +177,16 @@ Remote sinks (Seq, Loki, Elasticsearch, Application Insights):
 ## Forbidden / Required Patterns
 
 ```csharp
-// ✗ string concatenation
+//  string concatenation
 _logger.LogInformation("User " + userId);
 
-// ✗ unstructured object dump
+//  unstructured object dump
 _logger.LogInformation(user.ToString());
 
-// ✗ PII in template (enricher catches it — but avoid by design)
+//  PII in template (enricher catches it — but avoid by design)
 _logger.LogInformation("Email: {email}", user.Email);
 
-// ✓ structured fields with non-PII names
+//  structured fields with non-PII names
 _logger.LogInformation("User {UserId} created by {ActorId}", userId, actorId);
 ```
 

@@ -13,7 +13,7 @@ flowchart TB
     classDef l3 fill:#14532d,stroke:#22c55e,color:#fff,font-weight:bold
     classDef item fill:#1e3a5f,stroke:#3b82f6,color:#fff,font-size:12px
 
-    subgraph L1["🔴 LAYER 1 — SYSTEM PROMPT (Always Active)"]
+    subgraph L1[" LAYER 1 — SYSTEM PROMPT (Always Active)"]
         direction LR
         L1A["Evolith identity\n& role definition"]:::item
         L1B["Hard blocks list\n(10 non-negotiables)"]:::item
@@ -61,36 +61,36 @@ flowchart TD
     AI(["AI-generated code\nor suggestion"])
 
     C1{"Infrastructure import\ninside domain class?"}:::check
-    C1 -->|YES| B1["🚫 HARD BLOCK\nADR-0002 violation\nMove to adapter"]:::block
+    C1 -->|YES| B1[" HARD BLOCK\nADR-0002 violation\nMove to adapter"]:::block
     C1 -->|NO| C2
 
     C2{"Raw SQL with string\nconcatenation?"}:::check
-    C2 -->|YES| B2["🚫 HARD BLOCK\nSQL injection risk\nUse parameterized query"]:::block
+    C2 -->|YES| B2[" HARD BLOCK\nSQL injection risk\nUse parameterized query"]:::block
     C2 -->|NO| C3
 
     C3{"Hardcoded secret\nor credential?"}:::check
-    C3 -->|YES| B3["🚫 HARD BLOCK\nSecurity violation\nUse Vault / env variable"]:::block
+    C3 -->|YES| B3[" HARD BLOCK\nSecurity violation\nUse Vault / env variable"]:::block
     C3 -->|NO| C4
 
     C4{"Cross-schema SQL\njoin?"}:::check
-    C4 -->|YES| B4["🚫 HARD BLOCK\nADR-0031 violation\nUse domain events or API"]:::block
+    C4 -->|YES| B4[" HARD BLOCK\nADR-0031 violation\nUse domain events or API"]:::block
     C4 -->|NO| C5
 
     C5{"Stored procedure with\nbusiness logic?"}:::check
-    C5 -->|YES| B5["🚫 HARD BLOCK\nZero DB Business Logic rule\nMove logic to domain layer"]:::block
+    C5 -->|YES| B5[" HARD BLOCK\nZero DB Business Logic rule\nMove logic to domain layer"]:::block
     C5 -->|NO| C6
 
     C6{"SDK import outside\nadapter boundary?"}:::check
-    C6 -->|YES| B6["🚫 HARD BLOCK\nVendor lock-in violation\nWrap in Port/Adapter"]:::block
+    C6 -->|YES| B6[" HARD BLOCK\nVendor lock-in violation\nWrap in Port/Adapter"]:::block
     C6 -->|NO| C7
 
     C7{"Missing OTel span\non new use case?"}:::check
-    C7 -->|YES| W1["⚠️ WARNING\nADR-0007: Add OTel instrumentation\nSuggest span template"]:::warn
+    C7 -->|YES| W1["️ WARNING\nADR-0007: Add OTel instrumentation\nSuggest span template"]:::warn
     C7 -->|NO| C8
 
     C8{"Test coverage drops\nbelow 70%?"}:::check
-    C8 -->|YES| W2["⚠️ WARNING\nADR-0018: Add missing tests\nCoverage gate will block CI"]:::warn
-    C8 -->|NO| PASS["✅ PASS\nAll guardrail checks cleared"]:::pass
+    C8 -->|YES| W2["️ WARNING\nADR-0018: Add missing tests\nCoverage gate will block CI"]:::warn
+    C8 -->|NO| PASS[" PASS\nAll guardrail checks cleared"]:::pass
 ```
 
 ---
@@ -128,7 +128,7 @@ sequenceDiagram
     HA->>AA: Trigger: Knowledge Re-ingestion Agent
     AA->>AA: Re-index new ADR into vector store
     AA->>HA: Re-ingestion complete
-    HA->>GH: Comment: "ADR indexed in knowledge base ✅"
+    HA->>GH: Comment: "ADR indexed in knowledge base "
 ```
 
 ---
@@ -151,8 +151,8 @@ flowchart LR
     G5["Gate 5\nADR citation check\n(AI-specific gate)"]:::gate
     G6["Gate 6\nArch Board review\n(new patterns only)"]:::gate
 
-    PASS["✅ All gates passed\nPR ready for\nTech Lead merge"]:::pass
-    FAIL["🔴 Gate failed\nAI agent notified\nwith fix suggestion\n+ ADR citation"]:::fail
+    PASS[" All gates passed\nPR ready for\nTech Lead merge"]:::pass
+    FAIL[" Gate failed\nAI agent notified\nwith fix suggestion\n+ ADR citation"]:::fail
 
     PR --> G1
     G1 -->|FAIL| FAIL

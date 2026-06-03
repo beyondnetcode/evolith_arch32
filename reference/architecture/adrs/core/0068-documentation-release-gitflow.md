@@ -121,38 +121,38 @@ Every documentation change MUST go through a Pull Request:
 
 ### All Documentation PRs
 ```
-✅ lint-staged (markdownlint, prettier)
-✅ validate-docs.mjs (links, anchors, encoding, Mermaid syntax)
-✅ check-bilingual-parity.mjs (## and ### header count match)
+ lint-staged (markdownlint, prettier)
+ validate-docs.mjs (links, anchors, encoding, Mermaid syntax)
+ check-bilingual-parity.mjs (## and ### header count match)
 ```
 
 ### PRs to `develop`
 ```
-✅ bilingual-coverage.mjs (must not decrease overall coverage below threshold)
-✅ doc-complexity-score.mjs (must not decrease avg complexity below baseline)
+ bilingual-coverage.mjs (must not decrease overall coverage below threshold)
+ doc-complexity-score.mjs (must not decrease avg complexity below baseline)
 ```
 
 ### PRs to `release/docs-*`
 ```
-✅ validate-docs.mjs --render-mermaid (renders diagrams to verify correctness)
-✅ bilingual-cross-ref.mjs (verifies all internal links resolve both EN/ES)
-✅ broken-link-scan (external link verification)
-✅ adr-number-check (ensures no ADR numbering conflicts)
+ validate-docs.mjs --render-mermaid (renders diagrams to verify correctness)
+ bilingual-cross-ref.mjs (verifies all internal links resolve both EN/ES)
+ broken-link-scan (external link verification)
+ adr-number-check (ensures no ADR numbering conflicts)
 ```
 
 ### PRs to `main`
 ```
-✅ All release branch checks
-✅ version-log-update.mjs (must update DOCUMENTATION_VERSIONS.md)
-✅ git-tag-create check (verifies tag format docs-vX.Y.Z)
-✅ coverage-impact.yml bot comment (must show coverage change < 1%)
+ All release branch checks
+ version-log-update.mjs (must update DOCUMENTATION_VERSIONS.md)
+ git-tag-create check (verifies tag format docs-vX.Y.Z)
+ coverage-impact.yml bot comment (must show coverage change < 1%)
 ```
 
 ### Hotfix PRs
 ```
-✅ validate-docs.mjs (links, anchors)
-✅ check-bilingual-parity.mjs (fast track)
-✅ hotfix-justification (inline comment explaining why normal workflow bypassed)
+ validate-docs.mjs (links, anchors)
+ check-bilingual-parity.mjs (fast track)
+ hotfix-justification (inline comment explaining why normal workflow bypassed)
 ```
 
 ---
@@ -392,65 +392,65 @@ UMS (as a child repository per ADR-0025 and child-repository-inheritance-guide) 
 
 ### `main` Protection
 ```
-☑ Require pull request reviews before merging
+ Require pull request reviews before merging
   - Required reviewers: 2
   - Dismiss stale reviews: yes
   - Require review from code owners: yes
 
-☑ Require status checks to pass before merging
+ Require status checks to pass before merging
   - validate-docs.mjs: required
   - check-bilingual-parity.mjs: required
   - docs-release.yml: required
 
-☑ Require branches to be up to date before merging: yes
+ Require branches to be up to date before merging: yes
 
-☑ Restrict who can push to main: maintainers only
+ Restrict who can push to main: maintainers only
 
-☑ Allow force pushes: NO
+ Allow force pushes: NO
 ```
 
 ### `develop` Protection
 ```
-☑ Require pull request reviews before merging
+ Require pull request reviews before merging
   - Required reviewers: 1
   - Dismiss stale reviews: yes
 
-☑ Require status checks to pass before merging
+ Require status checks to pass before merging
   - validate-docs.mjs: required
   - check-bilingual-parity.mjs: required
 
-☑ Require branches to be up to date before merging: yes
+ Require branches to be up to date before merging: yes
 
-☑ Allow force pushes: NO (except for rebasing feature branches)
+ Allow force pushes: NO (except for rebasing feature branches)
 ```
 
 ### `release/docs-*` Protection
 ```
-☑ Require pull request reviews before merging
+ Require pull request reviews before merging
   - Required reviewers: 2
   - One must be senior technical writer or architect
 
-☑ Require status checks to pass before merging
+ Require status checks to pass before merging
   - All release checks required
 
-☑ Require branches to be up to date before merging: yes
+ Require branches to be up to date before merging: yes
 
-☑ Restrict who can create release branches: maintainers
+ Restrict who can create release branches: maintainers
 
-☑ Allow force pushes: NO
+ Allow force pushes: NO
 ```
 
 ### `hotfix/docs-*` Protection
 ```
-☑ Require pull request reviews before merging
+ Require pull request reviews before merging
   - Required reviewers: 1
   - Must include hotfix justification
 
-☑ Require status checks to pass before merging
+ Require status checks to pass before merging
   - validate-docs.mjs: required
   - check-bilingual-parity.mjs: required
 
-☑ Allow force pushes: NO
+ Allow force pushes: NO
 ```
 
 ---

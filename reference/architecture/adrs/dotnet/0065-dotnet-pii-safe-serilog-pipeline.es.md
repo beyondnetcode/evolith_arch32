@@ -75,16 +75,16 @@ builder.Host.UseSerilog((ctx, cfg) => cfg.ConfigureSerilog(ctx));
 ### F. Patrones de Log Prohibidos y Requeridos
 
 ```csharp
-// ✗ PROHIBIDO — concatenación de strings, sin campos estructurados
+//  PROHIBIDO — concatenación de strings, sin campos estructurados
 _logger.LogInformation("User " + userId);
 
-// ✗ PROHIBIDO — volcado de objeto no estructurado
+//  PROHIBIDO — volcado de objeto no estructurado
 _logger.LogInformation(user.ToString());
 
-// ✗ PROHIBIDO — PII en valor del template (el enricher lo capturará, pero evitarlo por diseño)
+//  PROHIBIDO — PII en valor del template (el enricher lo capturará, pero evitarlo por diseño)
 _logger.LogInformation("Email: {email}", user.Email);
 
-// ✓ REQUERIDO — campos estructurados con nombres sin PII
+//  REQUERIDO — campos estructurados con nombres sin PII
 _logger.LogInformation("User {UserId} activated by {ActorId}", userId, actorId);
 ```
 

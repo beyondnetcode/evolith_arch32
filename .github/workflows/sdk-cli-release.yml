@@ -8,6 +8,7 @@ on:
       - 'sdk/cli/**'
       - '.release-please-manifest.json'
       - 'release-please-config.json'
+      - '.github/workflows/**'
 
 jobs:
   release-please:

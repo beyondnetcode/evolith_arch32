@@ -2,6 +2,18 @@
 
 ## [1.1.0](https://github.com/beyondnetcode/evolith_arch32/compare/cli-v1.0.3...cli-v1.1.0) (2026-06-04)
 
+
+### Features
+
+* **cli:** add sdlc ddd and handoff command mocks ([e40260f](https://github.com/beyondnetcode/evolith_arch32/commit/e40260f46c040df7cb034b29860fc498debd2698))
+
+
+### Bug Fixes
+
+* sync bilingual CHANGELOG structure - add missing 1.0.3 header to ES version ([e8ac5f0](https://github.com/beyondnetcode/evolith_arch32/commit/e8ac5f00d72770df988f9b7aa6685faa2626744c))
+
+## [1.1.0](https://github.com/beyondnetcode/evolith_arch32/compare/cli-v1.0.3...cli-v1.1.0) (2026-06-04)
+
 ### Features
 
 * **cli:** add sdlc command suite with handoff and ddd scaffolding mocks ([e40260f](https://github.com/beyondnetcode/evolith_arch32/commit/e40260f))

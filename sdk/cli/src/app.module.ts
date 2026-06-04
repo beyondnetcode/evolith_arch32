@@ -13,6 +13,7 @@ import { McpServerService } from './core/mcp/mcp-server.service';
 import { SdlcCommand } from './commands/sdlc/sdlc.command';
 import { HandoffCommand } from './commands/sdlc/handoff.command';
 import { GenerateDomainCommand } from './commands/sdlc/generate-domain.command';
+import { ScaffoldCommand } from './commands/architecture/scaffold.command';
 
 @Module({
   imports: [],
@@ -30,7 +31,8 @@ import { GenerateDomainCommand } from './commands/sdlc/generate-domain.command';
     McpServerService,
     SdlcCommand,
     HandoffCommand,
-    GenerateDomainCommand
+    GenerateDomainCommand,
+    ScaffoldCommand
   ],
 })
 export class AppModule {}

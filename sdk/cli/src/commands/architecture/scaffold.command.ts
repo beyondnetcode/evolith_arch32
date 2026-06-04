@@ -51,7 +51,7 @@ export class ScaffoldCommand extends CommandRunner {
 
       // 3. Generar Microfrontends
       s.message(`Generando Microfrontends Host y Remotes (${frontendFramework.toUpperCase()})...`);
-      await this.strategy.generateHostApp('tracker-host', ['tracker-remote-agile', 'tracker-remote-qa'], frontendFramework);
+      await this.strategy.generateHostApp('tracker-host', ['trackerRemoteAgile', 'trackerRemoteQa'], frontendFramework);
 
       // 4. Generar Shells (Kernels Compartidos)
       s.message('Generando Shells transversales...');

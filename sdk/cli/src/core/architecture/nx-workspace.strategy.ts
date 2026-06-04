@@ -27,7 +27,7 @@ export class NxWorkspaceStrategy implements WorkspaceManagerStrategy {
     const targetDir = this.getTargetDir();
     console.log(chalk.gray(`> Executing in ${targetDir}: npm ${command}`));
     try {
-      execSync(`npm ${command}`, { cwd: targetDir, stdio: 'inherit' });
+      execSync(`npm ${command} --legacy-peer-deps`, { cwd: targetDir, stdio: 'inherit' });
     } catch (error) {
       console.error(chalk.red(`\nFailed to execute npm command: npm ${command}`));
       throw error;
@@ -47,15 +47,15 @@ export class NxWorkspaceStrategy implements WorkspaceManagerStrategy {
 
   async generateHostApp(name: string, remotes: string[], framework: string): Promise<void> {
     console.log(chalk.cyan(`\n🏗️  Generating MFE Host App [${name}] with Remotes [${remotes.join(', ')}]...`));
-    // Example: nx g @nx/react:host tracker-host --remotes=tracker-remote-agile,tracker-remote-qa
+    // Example: nx g @nx/react:host --name=tracker-host --remotes=tracker-remote-agile,tracker-remote-qa --directory=apps/tracker-host
     const fw = framework.toLowerCase();
     const remotesFlag = remotes.length > 0 ? `--remotes=${remotes.join(',')}` : '';
-    this.runNx(`g @nx/${fw}:host ${name} ${remotesFlag}`);
+    this.runNx(`g @nx/${fw}:host --name=${name} ${remotesFlag} --directory=apps/${name}`);
   }
 
   async generateApiApp(name: string): Promise<void> {
     console.log(chalk.cyan(`\n⚙️  Generating NestJS API App [${name}]...`));
-    this.runNx(`g @nx/nest:app ${name}`);
+    this.runNx(`g @nx/nest:app --name=${name} --directory=apps/${name}`);
   }
 
   async generateLibrary(name: string, type: 'domain' | 'shell' | 'shared'): Promise<void> {
@@ -65,9 +65,9 @@ export class NxWorkspaceStrategy implements WorkspaceManagerStrategy {
     // If it's shared/ui, it should be the frontend framework, but we'll stick to @nx/js for generic or @nx/nest.
     if (type === 'shared' && name.includes('ui')) {
       // Simplification for the POC: just use @nx/js to avoid framework dependency complexities here
-      this.runNx(`g @nx/js:library ${type}/${name}`);
+      this.runNx(`g @nx/js:library --name=${name} --directory=libs/${type}/${name}`);
     } else {
-      this.runNx(`g @nx/nest:library ${type}/${name}`);
+      this.runNx(`g @nx/nest:library --name=${name} --directory=libs/${type}/${name}`);
     }
   }
 }

@@ -62,7 +62,7 @@ Templates enforce consistency across all satellite repositories. Satellite teams
 | **Phase 1 — Conception** | Ballpark Estimation | [Open](./ballpark-estimation-template.md) | Included | Included | Architect, Tech Lead |
 | **Phase 1 — Conception** | Evolith User Story | [Open](./evolith-user-story-template.md) | Included | Included | AI Agent, PM |
 | **Phase 1 — Conception** | Agile Backlog | [Open](./agile-backlog-template.md) | Included | Included | Product Owner |
-| **Phase 1 — Conception** | CLI Impact Analysis | [Open](./cli-impact-analysis-discovery.md) | Included | Included | Platform Architect |
+| **Phase 1 — Conception** | CLI Impact Analysis | [Open](./cli-impact-analysis.md) | Included | Included | Platform Architect |
 | **Phase 1 — Conception** | PRD — Product Requirements Document | [Open](./prd-template.md) | [Source](./source/prd-template-source.md) | [Example](./examples/prd-example-ums.md) | Product Owner, Executive Sponsor |
 | **Phase 2 — Design** | DDD Model | [Open](./ddd-model-template.md) | Included | N/A | Architect, Tech Lead |
 | **Phase 2 — Design** | ADR — Architecture Decision Record | [Open](./adr-template.md) | [Source](./source/adr-template-source.md) | [Example](./examples/adr-example-ums.md) | Software Architect, Principal Engineer |

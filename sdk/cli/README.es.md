@@ -43,6 +43,14 @@ Inicia el watcher en background y el servidor MCP (Model Context Protocol) para 
 evolith daemon start
 ```
 
+### `sdlc`
+Orquesta la generación de artefactos y transiciones (Handoffs) entre las fases del ciclo de vida (Discovery, Design, Construction).
+```bash
+evolith sdlc init discovery
+evolith sdlc handoff to-ddd --from backlog.json
+evolith sdlc generate domain --from ddd-model.md
+```
+
 ### `upgrade`
 Descarga las últimas reglas, templates y directrices de Evolith upstream y las aplica inteligentemente al satélite sin sobrescribir código personalizado (idempotente).
 

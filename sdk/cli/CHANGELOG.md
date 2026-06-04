@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.2.0](https://github.com/beyondnetcode/evolith_arch32/compare/cli-v1.1.0...cli-v1.2.0) (2026-06-04)
+
+
+### Features
+
+* **cli:** add evolutionary phase routing and selective SDLC domain generation ([5daa68b](https://github.com/beyondnetcode/evolith_arch32/commit/5daa68b86030b98ac5c7f6b42fbafdea3d9e3f47))
+* **cli:** add extensible scaffolding command via strategy pattern and fix missing shebang ([06a1d33](https://github.com/beyondnetcode/evolith_arch32/commit/06a1d33a9b422a842697f4f45945a3bd776fb522))
+* **cli:** prompt user dynamically for api, host, and remote app names ([561dafe](https://github.com/beyondnetcode/evolith_arch32/commit/561dafe3a7621a17b540cae5d808aedc872fee27))
+
+
+### Bug Fixes
+
+* **cli:** add legacy peer deps to prevent ERESOLVE during MFE generation ([706e0dc](https://github.com/beyondnetcode/evolith_arch32/commit/706e0dc2857ba9955932d46e8ef003228826dcca))
+
 ## [1.1.0](https://github.com/beyondnetcode/evolith_arch32/compare/cli-v1.0.3...cli-v1.1.0) (2026-06-04)
 
 

@@ -45,6 +45,12 @@ export class NxWorkspaceStrategy implements WorkspaceManagerStrategy {
     }
   }
 
+  async generateStandardWebApp(name: string, framework: string): Promise<void> {
+    console.log(chalk.cyan(`\n🏗️  Generating Standard Web App (Phase 1) [${name}]...`));
+    const fw = framework.toLowerCase();
+    this.runNx(`g @nx/${fw}:app --name=${name} --directory=apps/${name}`);
+  }
+
   async generateHostApp(name: string, remotes: string[], framework: string): Promise<void> {
     console.log(chalk.cyan(`\n🏗️  Generating MFE Host App [${name}] with Remotes [${remotes.join(', ')}]...`));
     // Example: nx g @nx/react:host --name=tracker-host --remotes=tracker-remote-agile,tracker-remote-qa --directory=apps/tracker-host

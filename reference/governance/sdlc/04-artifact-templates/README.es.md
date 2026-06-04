@@ -57,6 +57,12 @@ Las plantillas garantizan consistencia en todos los repositorios satélite. Los 
 
 | Fase | Artefacto | Landing Page | Fuente Markdown | Ejemplo Renderizado | Perfiles recomendados |
 |---|---|---|---|---|---|
+| **Fase 1 — Concepción** | Discovery Canvas | [Abrir](./discovery-canvas-template.es.md) | Incluido | Incluido | PM, Solicitante |
+| **Fase 1 — Concepción** | Business Case ROI | [Abrir](./business-case-roi-template.es.md) | Incluido | Incluido | Product Owner |
+| **Fase 1 — Concepción** | Ballpark Estimation | [Abrir](./ballpark-estimation-template.es.md) | Incluido | Incluido | Arquitecto, Tech Lead |
+| **Fase 1 — Concepción** | Historia de Usuario Evolith | [Abrir](./evolith-user-story-template.es.md) | Incluido | Incluido | Agente AI, PM |
+| **Fase 1 — Concepción** | Agile Backlog | [Abrir](./agile-backlog-template.es.md) | Incluido | Incluido | Product Owner |
+| **Fase 1 — Concepción** | Análisis de Impacto CLI | [Abrir](./cli-impact-analysis-discovery.es.md) | Incluido | Incluido | Arquitecto de Plataforma |
 | **Fase 1 — Concepción** | PRD — Documento de Requisitos de Producto | [Abrir](./prd-template.es.md) | [Fuente](./source/prd-template-source.es.md) | [Ejemplo](./examples/prd-example-ums.es.md) | Product Owner, Sponsor Ejecutivo |
 | **Fase 2 — Diseño** | ADR — Registro de Decisión Arquitectónica | [Abrir](./adr-template.es.md) | [Fuente](./source/adr-template-source.es.md) | [Ejemplo](./examples/adr-example-ums.es.md) | Arquitecto, Principal Engineer |
 | **Fase 2 — Diseño** | Historia Funcional | [Abrir](./functional-story-template.es.md) | [Fuente](./source/functional-story-template-source.es.md) | [Ejemplo](./examples/functional-story-example-ums.es.md) | Product Owner, Business Analyst |

@@ -78,6 +78,12 @@ flowchart LR
 
 | Artefacto | Ubicación | Por qué es requerido |
 |---|---|---|
+| **Discovery Canvas** | [discovery-canvas-template.es.md](./04-artifact-templates/discovery-canvas-template.es.md) | Registro de iniciativa, dolor del cliente y valor esperado. |
+| **Business Case ROI** | [business-case-roi-template.es.md](./04-artifact-templates/business-case-roi-template.es.md) | Sustento de viabilidad financiera, Time to Market y KPIs. |
+| **Ballpark Estimation** | [ballpark-estimation-template.es.md](./04-artifact-templates/ballpark-estimation-template.es.md) | Estimación T-Shirt Sizing de esfuerzo y equipo. |
+| **Historia de Usuario Evolith** | [evolith-user-story-template.es.md](./04-artifact-templates/evolith-user-story-template.es.md) | Definición atómica con criterios BDD y separación técnica. |
+| **Agile Backlog** | [agile-backlog-template.es.md](./04-artifact-templates/agile-backlog-template.es.md) | Agrupación versionada de historias listas para priorización. |
+| **Análisis de Impacto CLI** | [cli-impact-analysis-discovery.es.md](./04-artifact-templates/cli-impact-analysis-discovery.es.md) | Capacidades requeridas por el CLI para scaffolding y handoff. |
 | **PRD — Documento de Requisitos de Producto** | [prd-template.es.md](./04-artifact-templates/prd-template.es.md) | Captura alcance, personas, objetivos, restricciones, no-objetivos y evidencia de aprobación. |
 | **Directivas Arquitectónicas** | [architectural-directives.md](../standards/vision/architectural-directives.md) | Establece restricciones no negociables que acotan todo el alcance del producto. |
 | **Taxonomía de Repositorio** | [repository-taxonomy.md](../standards/repository-taxonomy.md) | Define estructura de repositorio, prefijos de nombres y clasificación de artefactos antes de crear archivos o módulos. |

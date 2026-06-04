@@ -76,9 +76,15 @@ flowchart LR
 
 ### Required Artifacts
 
-| Artifact | Location | Why Required |
+| Artifact | Location | Why it is required |
 |---|---|---|
-| **PRD — Product Requirements Document** | [prd-template.md](./04-artifact-templates/prd-template.md) | Captures product scope, personas, objectives, constraints, non-goals, and sign-off evidence. |
+| **Discovery Canvas** | [discovery-canvas-template.md](./04-artifact-templates/discovery-canvas-template.md) | Initiative registration, customer pain point, and expected value. |
+| **Business Case ROI** | [business-case-roi-template.md](./04-artifact-templates/business-case-roi-template.md) | Support for financial viability, Time to Market, and KPIs. |
+| **Ballpark Estimation** | [ballpark-estimation-template.md](./04-artifact-templates/ballpark-estimation-template.md) | T-Shirt Sizing estimation of effort and team size. |
+| **Evolith User Story** | [evolith-user-story-template.md](./04-artifact-templates/evolith-user-story-template.md) | Atomic definition with BDD criteria and technical separation. |
+| **Agile Backlog** | [agile-backlog-template.md](./04-artifact-templates/agile-backlog-template.md) | Versioned grouping of stories ready for prioritization. |
+| **CLI Impact Analysis** | [cli-impact-analysis-discovery.md](./04-artifact-templates/cli-impact-analysis-discovery.md) | Required CLI capabilities for scaffolding and handoff. |
+| **PRD — Product Requirements Document** | [prd-template.md](./04-artifact-templates/prd-template.md) | Captures scope, personas, goals, constraints, non-goals, and approval evidence. |
 | **Architectural Directives** | [architectural-directives.md](../standards/vision/architectural-directives.md) | Establishes non-negotiable constraints that bound the entire product scope. |
 | **Repository Taxonomy** | [repository-taxonomy.md](../standards/repository-taxonomy.md) | Defines repository structure, naming prefixes, and artifact classification before files or modules are created. |
 | **Agnostic Baseline** | [authoritative-tech-stack-agnostic.md](../../architecture/blueprints/authoritative-tech-stack-agnostic.md) | Defines the technology-neutral baseline that every product must conform to. |

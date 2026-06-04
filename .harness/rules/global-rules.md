@@ -23,6 +23,11 @@ Binding directives. Zero fluff.
 | **R-16** | Catalog Contract | Parametric and configuration entities must define `code`, `value`, and `description` with traceability, uniqueness, auditability, and extensibility expectations. |
 | **R-17** | Modular Extraction | Shared logic and module boundaries must preserve extraction readiness for modular monolith to distributed evolution. |
 | **R-18** | Hybrid API Governance | If REST and GraphQL coexist, commands stay REST-first and query behavior must remain consistent across both surfaces. |
+| **R-20** | Satellite Upstream Promotion | All satellite projects must push discovered architectural patterns upstream to EVOLITH. The EVOLITH CLI must assist in scaffolding and enforcing these common behaviors across all children. |
+| **R-21** | Cross-Cutting Shells | Infrastructural logic (workflows, config, integration) must be encapsulated in shared Shells. Do not pollute Bounded Contexts. |
+| **R-22** | Small Aggregates | Use UUID lists (`List<UUID>`) for massive 1:N relations to preserve O(1) performance and prevent optimistic concurrency deadlocks. |
+| **R-23** | Dynamic Domain Gates | Dynamic tenant workflows must be secured at the domain level via an internal `RequirementChecklist` evaluated before state transitions. |
+| **R-24** | Diagram Ergonomics | Complex Domain-Driven Design (DDD) models must not be rendered as a single monolithic diagram. They must be split into at least three views (Business Core, Workflow/Audit, and Cross-Cutting Shells) with a visual legend. |
 
 ## Mandatory Validation Gates
 

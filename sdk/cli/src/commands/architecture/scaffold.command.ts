@@ -1,5 +1,5 @@
 import { Command, CommandRunner, Option } from 'nest-commander';
-import { intro, outro, select, spinner } from '@clack/prompts';
+import { intro, outro, select, text, spinner } from '@clack/prompts';
 import chalk from 'chalk';
 import { WorkspaceManagerStrategy } from '../../core/architecture/workspace-manager.strategy';
 import { NxWorkspaceStrategy } from '../../core/architecture/nx-workspace.strategy';
@@ -37,6 +37,26 @@ export class ScaffoldCommand extends CommandRunner {
       }) as string;
     }
 
+    const apiName = await text({
+      message: '¿Cuál será el nombre de la API principal (Backend)?',
+      placeholder: 'tracker-api',
+      defaultValue: 'tracker-api'
+    }) as string;
+
+    const hostName = await text({
+      message: '¿Cuál será el nombre de la aplicación Host (Microfrontend Web principal)?',
+      placeholder: 'tracker-host',
+      defaultValue: 'tracker-host'
+    }) as string;
+
+    const remotesInput = await text({
+      message: 'Ingresa los nombres de los Microfrontends Remotos separados por comas:',
+      placeholder: 'trackerRemoteAgile, trackerRemoteQa',
+      defaultValue: 'trackerRemoteAgile, trackerRemoteQa'
+    }) as string;
+
+    const remotes = remotesInput.split(',').map(r => r.trim()).filter(r => r.length > 0);
+
     const s = spinner();
     s.start('Iniciando el proceso de andamiaje...');
 
@@ -46,12 +66,12 @@ export class ScaffoldCommand extends CommandRunner {
       await this.strategy.installDependencies(frontendFramework, orm);
 
       // 2. Generar Backend API
-      s.message('Generando la Service API (NestJS)...');
-      await this.strategy.generateApiApp('tracker-api');
+      s.message(`Generando la Service API (NestJS) [${apiName}]...`);
+      await this.strategy.generateApiApp(apiName);
 
       // 3. Generar Microfrontends
       s.message(`Generando Microfrontends Host y Remotes (${frontendFramework.toUpperCase()})...`);
-      await this.strategy.generateHostApp('tracker-host', ['trackerRemoteAgile', 'trackerRemoteQa'], frontendFramework);
+      await this.strategy.generateHostApp(hostName, remotes, frontendFramework);
 
       // 4. Generar Shells (Kernels Compartidos)
       s.message('Generando Shells transversales...');

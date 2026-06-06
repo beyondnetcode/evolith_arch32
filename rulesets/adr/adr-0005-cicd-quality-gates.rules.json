@@ -1,0 +1,97 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/rulesets/adr/adr-0005-cicd-quality-gates.rules.json",
+  "title": "ADR-0005 — CI/CD Security Quality Gates Rules",
+  "description": "Machine-readable rules encoding ADR-0005 CI/CD Security Quality Gates. Mandatory gates for every merge to protected branches.",
+  "version": "1.0.0",
+  "adrId": "ADR-0005",
+  "adrTitle": "CI/CD Security Quality Gates with CodeQL",
+  "status": "Approved",
+  "date": "2026-05-08",
+  "effectiveDate": "2026-05-08",
+  "rules": [
+    {
+      "id": "CICD-01",
+      "severity": "MUST",
+      "category": "security-scan",
+      "title": "CodeQL Static Analysis runs on every PR",
+      "description": "GitHub CodeQL must run on every pull request. Scans for OWASP Top 10 vulnerability patterns in TypeScript source code. PRs with High or Critical findings are BLOCKED from merging.",
+      "rationale": "ADR-0005 §Decision: Security enforced mechanically, not left to human review.",
+      "validationQuery": "CI pipeline includes CodeQL scan step. PRs with CRITICAL/HIGH findings cannot complete merge.",
+      "blocking": true,
+      "sla": {
+        "critical": "24 hours",
+        "high": "72 hours"
+      }
+    },
+    {
+      "id": "CICD-02",
+      "severity": "MUST",
+      "category": "dependency-scan",
+      "title": "Dependency vulnerability scan blocks merge",
+      "description": "npm audit --audit-level=high (or equivalent for other languages) runs in CI. Any dependency with a High or Critical CVE blocks the pipeline.",
+      "rationale": "ADR-0005 §Decision: Third-party dependencies can introduce known CVEs that go undetected without automated scanning.",
+      "validationQuery": "CI pipeline runs dependency audit. Pipeline fails on High/Critical CVE detection.",
+      "blocking": true
+    },
+    {
+      "id": "CICD-03",
+      "severity": "MUST",
+      "category": "secret-detection",
+      "title": "Secret detection enabled on repository",
+      "description": "GitHub's built-in secret scanning is enabled on the repository to detect accidentally committed API keys or credentials. Commits containing secrets are rejected.",
+      "rationale": "ADR-0005 §Decision: Secret detection prevents credential leakage at the source.",
+      "validationQuery": "Secret scanning is enabled in repository settings. Pre-commit hooks detect known secret patterns.",
+      "blocking": true
+    },
+    {
+      "id": "CICD-04",
+      "severity": "MUST",
+      "category": "pipeline-structure",
+      "title": "All quality gates execute before merge",
+      "description": "All quality gates (CodeQL, dependency scan, lint, tests, coverage) MUST complete successfully before a PR can merge. No merge with failing pipeline.",
+      "rationale": "ADR-0005 §Pipeline gates: Mechanical enforcement before merge.",
+      "validationQuery": "Protected branch requires all CI checks green. No override allowed without explicit waiver.",
+      "blocking": true
+    },
+    {
+      "id": "CICD-05",
+      "severity": "MUST",
+      "category": "documentation",
+      "title": "Security findings documented with justification",
+      "description": "False positive suppressions require documented justification comments in code. Suppressed findings must include a reason and an issue tracker reference.",
+      "rationale": "ADR-0005 §Consequences: False positives require manual suppression with documented justification.",
+      "validationQuery": "Suppressed findings have inline comments explaining justification and JIRA/Ticket reference.",
+      "blocking": false
+    },
+    {
+      "id": "CICD-06",
+      "severity": "MUST",
+      "category": "sla-compliance",
+      "title": "Critical findings resolved within 24 hours",
+      "description": "All Critical severity findings from CodeQL or dependency scans MUST be resolved within 24 hours of detection.",
+      "rationale": "ADR-0005 §SLA: Critical findings require immediate response.",
+      "validationQuery": "Issue tracker has Critical findings with age <= 24 hours or explicit SLA waiver.",
+      "blocking": false,
+      "enforcement": "Issue tracker integration or automated escalation"
+    },
+    {
+      "id": "CICD-07",
+      "severity": "MUST",
+      "category": "sla-compliance",
+      "title": "High findings resolved within 72 hours",
+      "description": "All High severity findings from CodeQL or dependency scans MUST be resolved within 72 hours of detection.",
+      "rationale": "ADR-0005 §SLA: High findings require timely response.",
+      "validationQuery": "Issue tracker has High findings with age <= 72 hours or explicit SLA waiver.",
+      "blocking": false
+    }
+  ],
+  "references": [
+    "reference/architecture/adrs/core/0005-ci-cd-quality-codeql.md",
+    "reference/architecture/adrs/core/0009-strict-dependency-pinning-vulnerability-management.md"
+  ],
+  "exitCriteria": {
+    "description": "All CI/CD gates pass. Protected branches enforce all checks. SLA compliance tracked.",
+    "validationTools": ["GitHub Actions", "CodeQL", "npm audit", "pre-commit hooks"]
+  }
+}

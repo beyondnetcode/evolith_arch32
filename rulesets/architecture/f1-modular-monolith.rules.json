@@ -1,0 +1,105 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/rulesets/architecture/f1-modular-monolith.rules.json",
+  "title": "F1 — Modular Monolith Architecture Rules",
+  "description": "Rules governing the mandatory starting topology for all Evolith satellites. F1 is the only permitted entry point unless extraction criteria are already satisfied.",
+  "version": "1.0.0",
+  "phase": "F1",
+  "effectiveDate": "2026-01-01",
+  "rules": [
+    {
+      "id": "F1-R01",
+      "severity": "MUST",
+      "category": "topology",
+      "title": "Single Deployment Unit",
+      "description": "All bounded contexts MUST be deployed as a single artifact (monolith). No autonomous deployment of individual modules is permitted.",
+      "rationale": "ADR-0047 mandates modular monolith as the canonical starting topology. Premature extraction introduces operational complexity without proven scalability drivers.",
+      "validationQuery": "Verify all modules compile into a single assembly/container image. No independent module deployment pipelines.",
+      "blocking": true
+    },
+    {
+      "id": "F1-R02",
+      "severity": "MUST",
+      "category": "bounded-contexts",
+      "title": "Explicit Bounded Context Boundaries",
+      "description": "Each bounded context MUST be implemented as a clearly separated module with its own namespace/package and zero runtimeshared database.",
+      "rationale": "ADR-0031 (Schema-per-Context) requires each bounded context to own its schema. Runtime shared databases create implicit coupling.",
+      "validationQuery": "Each bounded context has isolated persistence (separate DB/schema). No cross-context direct table access.",
+      "blocking": true
+    },
+    {
+      "id": "F1-R03",
+      "severity": "MUST",
+      "category": "hexagonal-architecture",
+      "title": "Ports and Adapters Boundary",
+      "description": "All bounded contexts MUST implement hexagonal architecture (ADR-0002). Domain layer has zero external dependencies. Infrastructure adapters are injected via ports.",
+      "rationale": "Hexagonal architecture enables future extraction by decoupling domain logic from infrastructure concerns.",
+      "validationQuery": "Domain layer has no imports from Infrastructure. Adapters implement port interfaces defined in Application layer.",
+      "blocking": true
+    },
+    {
+      "id": "F1-R04",
+      "severity": "MUST",
+      "category": "communication",
+      "title": "Inter-Context Communication via Ports",
+      "description": "Cross-bounded-context communication MUST use explicit application-layer port interfaces. No direct infrastructure-to-infrastructure calls.",
+      "rationale": "Enforces clean dependency direction. Changes in one context do not directly break another context.",
+      "validationQuery": "No cross-context imports at the Infrastructure layer. All inter-context calls go through Application ports.",
+      "blocking": true
+    },
+    {
+      "id": "F1-R05",
+      "severity": "MUST",
+      "category": "persistence",
+      "title": "No Shared Database Across Bounded Contexts",
+      "description": "Each bounded context MUST have its own database schema or database instance. Shared database is prohibited.",
+      "rationale": "ADR-0031 enforces schema-per-context ownership. Shared database prevents independent evolution of contexts.",
+      "validationQuery": "Each bounded context maps to a separate schema (PostgreSQL schema separation) or separate database instance.",
+      "blocking": true
+    },
+    {
+      "id": "F1-R06",
+      "severity": "MUST",
+      "category": "async-boundaries",
+      "title": "Async Events Use Domain Events",
+      "description": "When bounded contexts emit events for async reaction, they MUST use domain events with explicit event contracts (ADR-0015). No implicit table-polling or direct queue manipulation.",
+      "rationale": "Domain events enforce explicit contract boundaries and make cross-context reactions auditable.",
+      "validationQuery": "Event-driven reactions subscribe to domain event types, not database change streams.",
+      "blocking": false
+    },
+    {
+      "id": "F1-R07",
+      "severity": "MUST",
+      "category": "extraction-readiness",
+      "title": "Maintain Extraction Readiness Score",
+      "description": "Satellite MUST track and maintain extraction readiness score per ADR-0045. Score MUST be >= 70% to pass Phase 2 Design gate when F2 is planned.",
+      "rationale": "ADR-0045 defines concrete readiness criteria. Measuring continuously prevents technical debt accumulation.",
+      "validationQuery": "Extraction readiness assessment documented and updated at each phase transition. Score >= 70% for F2 transition.",
+      "blocking": false
+    },
+    {
+      "id": "F1-R08",
+      "severity": "MUST",
+      "category": "observability",
+      "title": "Observability Instrumentation",
+      "description": "All bounded contexts MUST emit OTel traces with CorrelationId, TraceId, and SpanId per ADR-0007. Logs MUST include structured SessionTrackingId.",
+      "rationale": "Production readiness requires observability from day one. ADR-0064 defines .NET context propagation; ADR-0007 covers Node.js.",
+      "validationQuery": "All API endpoints produce traces with bounded context tag. Logs include SessionTrackingId scope.",
+      "blocking": false
+    }
+  ],
+  "extractionCriteria": {
+    "minScore": 70,
+    "requiredADRs": ["ADR-0045", "ADR-0047"],
+    "reference": "adr/0045-microservice-extraction-readiness-criteria.md"
+  },
+  "exitGate": {
+    "description": "F1 exits when extraction readiness score >= 70% AND architecture board approves F2 transition.",
+    "requiredArtifacts": [
+      "ADR-0045 assessment (current score)",
+      "ADR-0047 confirmation (topology still valid)",
+      "Bounded context map with ownership",
+      "Inter-context contract registry"
+    ]
+  }
+}

@@ -694,6 +694,6 @@ agents:
 
 ## See Also
 
-- [MCP Integration Guide](../docs/MCP-INTEGRATION.md)
-- [Command Reference](../docs/planning/cli-command-catalog.md)
+- [MCP Integration Guide](./docs/MCP-INTEGRATION.md)
+- [Command Reference](./docs/planning/cli-command-catalog.md)
 - [ADR-0069: MCP Server Protocol Implementation](../../reference/architecture/adrs/core/0069-mcp-server-protocol-implementation.md)

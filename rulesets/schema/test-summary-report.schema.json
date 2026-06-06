@@ -1,0 +1,158 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/schema/test-summary-report.schema.json",
+  "title": "Test Summary Report",
+  "description": "JSON Schema for validating Evolith Test Summary Report artifacts. Required for RC Stamped gate (Phase 4).",
+  "type": "object",
+  "required": ["releaseCandidate", "date", "qualityGates", "testPyramid", "securityScan", "storyValidation"],
+  "additionalProperties": false,
+  "properties": {
+    "releaseCandidate": {
+      "type": "string",
+      "pattern": "^RC-\\d+\\.\\d+\\.\\d+$",
+      "description": "Release Candidate identifier following pattern RC-X.Y.Z."
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date when test summary was generated."
+    },
+    "qualityGates": {
+      "type": "object",
+      "required": ["coverage", "complexity", "cves", "techDebt"],
+      "additionalProperties": false,
+      "properties": {
+        "coverage": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "value": { "type": "number", "minimum": 0, "maximum": 100 },
+            "threshold": { "type": "number" },
+            "passed": { "type": "boolean" }
+          }
+        },
+        "complexity": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "maxCyclomatic": { "type": "number" },
+            "threshold": { "type": "number" },
+            "passed": { "type": "boolean" }
+          }
+        },
+        "cves": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "critical": { "type": "integer", "minimum": 0 },
+            "high": { "type": "integer", "minimum": 0 },
+            "medium": { "type": "integer" },
+            "passed": { "type": "boolean" }
+          }
+        },
+        "techDebt": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "ratio": { "type": "number" },
+            "threshold": { "type": "number" },
+            "passed": { "type": "boolean" }
+          }
+        }
+      }
+    },
+    "testPyramid": {
+      "type": "object",
+      "required": ["unit", "integration", "e2e", "total"],
+      "additionalProperties": false,
+      "properties": {
+        "unit": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "count": { "type": "integer" },
+            "percentage": { "type": "number" },
+            "target": { "type": "number" }
+          }
+        },
+        "integration": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "count": { "type": "integer" },
+            "percentage": { "type": "number" },
+            "target": { "type": "number" }
+          }
+        },
+        "e2e": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "count": { "type": "integer" },
+            "percentage": { "type": "number" },
+            "target": { "type": "number" }
+          }
+        },
+        "total": {
+          "type": "integer",
+          "description": "Total test count across all layers."
+        },
+        "passed": {
+          "type": "boolean",
+          "description": "Whether pyramid distribution matches target within tolerance."
+        }
+      }
+    },
+    "securityScan": {
+      "type": "object",
+      "required": ["tool", "criticalFindings", "highFindings", "passed"],
+      "additionalProperties": false,
+      "properties": {
+        "tool": { "type": "string" },
+        "criticalFindings": { "type": "integer" },
+        "highFindings": { "type": "integer" },
+        "mediumFindings": { "type": "integer" },
+        "passed": { "type": "boolean" }
+      }
+    },
+    "storyValidation": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["storyId", "criteria", "result"],
+        "additionalProperties": false,
+        "properties": {
+          "storyId": { "type": "string" },
+          "criteria": { "type": "string" },
+          "result": { "type": "string", "enum": ["Passed", "Failed", "Waived"] }
+        }
+      },
+      "description": "Acceptance criteria validation per Functional Story."
+    },
+    "waivers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["criterion", "justification", "owner", "expirationDate"],
+        "additionalProperties": false,
+        "properties": {
+          "criterion": { "type": "string" },
+          "justification": { "type": "string" },
+          "owner": { "type": "string" },
+          "expirationDate": { "type": "string", "format": "date" }
+        }
+      },
+      "description": "Explicit waivers for failed gates. Must include justification and expiration."
+    },
+    "signOff": {
+      "type": "object",
+      "required": ["qaLead", "techLead", "date"],
+      "additionalProperties": false,
+      "properties": {
+        "qaLead": { "type": "string" },
+        "techLead": { "type": "string" },
+        "date": { "type": "string", "format": "date" }
+      }
+    }
+  }
+}

@@ -142,6 +142,37 @@ Every artifact and implementation instantiated from Evolith must respect these p
 
 ---
 
+## 9. Rulesets (Machine-Readable Governance)
+
+Rulesets are the machine-readable enforcement layer of the Evolith governance framework. Satellite repositories inherit rules via `evolith.yaml`.
+
+| Area | Entry point |
+|---|---|
+| Rulesets Hub | [rulesets](../../rulesets/README.md) |
+| Schemas | [rulesets/schema](../../rulesets/schema/README.md) |
+| Architecture Rules | [rulesets/architecture](../../rulesets/architecture/README.md) |
+| SDLC Rules | [rulesets/sdlc](../../rulesets/sdlc/README.md) |
+| Governance Rules | [rulesets/governance](../../rulesets/governance/README.md) |
+
+Machine-readable rule files:
+
+- [ADR Schema](../../rulesets/schema/adr.schema.json)
+- [PRD Schema](../../rulesets/schema/prd.schema.json)
+- [Functional Story Schema](../../rulesets/schema/functional-story.schema.json)
+- [Technical Story Schema](../../rulesets/schema/technical-story.schema.json)
+- [Test Summary Report Schema](../../rulesets/schema/test-summary-report.schema.json)
+- [Release Notes Schema](../../rulesets/schema/release-notes.schema.json)
+- [Evolith.yaml Schema](../../rulesets/schema/evolith-yaml.schema.json)
+- [F1 Modular Monolith Rules](../../rulesets/architecture/f1-modular-monolith.rules.json)
+- [F2 Distributed Modules Rules](../../rulesets/architecture/f2-distributed-modules.rules.json)
+- [F3 Microservices Rules](../../rulesets/architecture/f3-microservices.rules.json)
+- [Phase Gates Rules](../../rulesets/sdlc/phase-gates.rules.json)
+- [Quality Thresholds Rules](../../rulesets/sdlc/quality-thresholds.rules.json)
+- [Inheritance Rules](../../rulesets/governance/inheritance.rules.json)
+- [Satellite Contracts Rules](../../rulesets/governance/satellite-contracts.rules.json)
+
+---
+
 <div align="center">
- <a href="../../README.md">Back to Evolith Main Portal</a>
+  <a href="../../README.md">Back to Evolith Main Portal</a>
 </div>

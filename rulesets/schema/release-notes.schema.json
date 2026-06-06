@@ -1,0 +1,138 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/schema/release-notes.schema.json",
+  "title": "Release Notes",
+  "description": "JSON Schema for validating Evolith Release Notes artifacts. Required for Production Live gate (Phase 5).",
+  "type": "object",
+  "required": ["version", "releaseCandidate", "date", "scope", "deployment", "rollback", "observability"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version of this release."
+    },
+    "releaseCandidate": {
+      "type": "string",
+      "pattern": "^RC-\\d+\\.\\d+\\.\\d+$",
+      "description": "RC ID this release is based on."
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Deployment date. ISO 8601 format."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["Draft", "Deployed", "Rolled Back"],
+      "default": "Draft"
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "newFeatures": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "breakingChanges": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "bugFixes": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "improvements": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "deployment": {
+      "type": "object",
+      "required": ["environment", "steps", "artifacts"],
+      "additionalProperties": false,
+      "properties": {
+        "environment": {
+          "type": "string",
+          "enum": ["Production", "Staging", "Canary"]
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["step", "command"],
+            "additionalProperties": false,
+            "properties": {
+              "step": { "type": "integer" },
+              "description": { "type": "string" },
+              "command": { "type": "string" },
+              "rollbackCommand": { "type": "string" }
+            }
+          },
+          "minItems": 1
+        },
+        "artifacts": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Docker images, DLLs, or artifacts deployed."
+        }
+      }
+    },
+    "rollback": {
+      "type": "object",
+      "required": ["procedure", "decisionCriteria"],
+      "additionalProperties": false,
+      "properties": {
+        "procedure": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "decisionCriteria": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Conditions under which rollback must be initiated."
+        },
+        "lastGoodVersion": { "type": "string" }
+      }
+    },
+    "observability": {
+      "type": "object",
+      "required": ["dashboards", "alerts", "healthEndpoint"],
+      "additionalProperties": false,
+      "properties": {
+        "dashboards": {
+          "type": "array",
+          "items": { "type": "string", "format": "uri" }
+        },
+        "alerts": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Alert names or IDs activated for this release."
+        },
+        "healthEndpoint": { "type": "string" },
+        "metricsValidation": {
+          "type": "boolean",
+          "description": "Whether metrics were verified nominal before sign-off."
+        }
+      }
+    },
+    "testSummaryRef": {
+      "type": "string",
+      "description": "Reference to Test Summary Report that validated this RC."
+    },
+    "signOff": {
+      "type": "object",
+      "required": ["devOpsLead", "techLead", "date"],
+      "additionalProperties": false,
+      "properties": {
+        "devOpsLead": { "type": "string" },
+        "techLead": { "type": "string" },
+        "productOwner": { "type": "string" },
+        "date": { "type": "string", "format": "date" }
+      }
+    }
+  }
+}

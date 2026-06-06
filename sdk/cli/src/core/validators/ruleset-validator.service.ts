@@ -303,4 +303,440 @@ export class RulesetValidatorService {
     }
     return issues;
   }
+
+  async validateArchitecture(satellitePath: string, corePath?: string, level?: 'F1' | 'F2' | 'F3' | 'ALL'): Promise<ArchitectureValidationResult> {
+    const resolvedCorePath = corePath || this.findCorePath(satellitePath);
+    const issues: ValidationIssue[] = [];
+    let rulesChecked = 0;
+
+    const levels = level === 'ALL' || !level
+      ? ['F1', 'F2', 'F3']
+      : [level];
+
+    for (const lvl of levels) {
+      const rulesetPath = path.join(resolvedCorePath, 'rulesets', 'architecture', `f${lvl.toLowerCase()}-${lvl === 'F1' ? 'modular-monolith' : lvl === 'F2' ? 'distributed-modules' : 'microservices'}.rules.json`);
+
+      if (!await this.fs.exists(rulesetPath)) {
+        issues.push({
+          ruleId: `ARCH-${lvl}-MISSING`,
+          severity: 'SHOULD',
+          category: 'architecture',
+          title: `${lvl} ruleset not found`,
+          description: `Could not find ${lvl} architecture rules at ${rulesetPath}`,
+          blocking: false,
+        });
+        continue;
+      }
+
+      const content = await this.fs.readFile(rulesetPath);
+      const ruleset = JSON.parse(content);
+      const rules = ruleset.rules || [];
+
+      rulesChecked += rules.length;
+
+      for (const rule of rules) {
+        const validationResult = await this.validateArchitectureRule(satellitePath, rule, lvl);
+        if (validationResult) {
+          issues.push(...validationResult);
+        }
+      }
+    }
+
+    const blockingCount = issues.filter(i => i.blocking).length;
+
+    return {
+      status: blockingCount > 0 ? 'failed' : 'passed',
+      levels: levels as string[],
+      rulesChecked,
+      issues,
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  private async validateArchitectureRule(satellitePath: string, rule: { id: string; severity: string; category: string; title: string; description: string; blocking: boolean; validationQuery?: string }, level: string): Promise<ValidationIssue[] | null> {
+    const issues: ValidationIssue[] = [];
+
+    switch (rule.category) {
+      case 'topology':
+        this.validateTopologyRule(satellitePath, rule, issues);
+        break;
+      case 'bounded-contexts':
+        this.validateBoundedContextsRule(satellitePath, rule, issues);
+        break;
+      case 'hexagonal-architecture':
+        await this.validateHexagonalRule(satellitePath, rule, issues);
+        break;
+      case 'communication':
+        await this.validateCommunicationRule(satellitePath, rule, issues);
+        break;
+      case 'persistence':
+        this.validatePersistenceRule(satellitePath, rule, issues);
+        break;
+      case 'async-boundaries':
+        await this.validateAsyncRule(satellitePath, rule, issues);
+        break;
+      case 'extraction-readiness':
+        this.validateExtractionReadinessRule(satellitePath, rule, issues);
+        break;
+      case 'observability':
+        this.validateObservabilityRule(satellitePath, rule, issues);
+        break;
+      case 'module-autonomy':
+        await this.validateModuleAutonomyRule(satellitePath, rule, issues);
+        break;
+      case 'contract-stability':
+        await this.validateContractStabilityRule(satellitePath, rule, issues);
+        break;
+      case 'data-ownership':
+        this.validateDataOwnershipRule(satellitePath, rule, issues);
+        break;
+      case 'async-communication':
+        await this.validateAsyncCommunicationRule(satellitePath, rule, issues);
+        break;
+      case 'distributed-tracing':
+        this.validateDistributedTracingRule(satellitePath, rule, issues);
+        break;
+      case 'containerization':
+        this.validateContainerizationRule(satellitePath, rule, issues);
+        break;
+      case 'service-boundaries':
+        await this.validateServiceBoundariesRule(satellitePath, rule, issues);
+        break;
+      default:
+        break;
+    }
+
+    return issues.length > 0 ? issues : null;
+  }
+
+  private async validateTopologyRule(satellitePath: string, rule: { id: string; severity: string; category: string; title: string; description: string; blocking: boolean }, issues: ValidationIssue[]) {
+    const packageJsonPath = path.join(satellitePath, 'package.json');
+
+    if (rule.id === 'F1-R01') {
+      if (await this.fs.exists(packageJsonPath)) {
+        const pkg = await this.fs.readJson(packageJsonPath) as { workspaces?: unknown };
+        if (pkg.workspaces) {
+          issues.push({
+            ruleId: rule.id,
+            severity: rule.severity as 'MUST' | 'SHOULD' | 'COULD',
+            category: rule.category,
+            title: rule.title,
+            description: `${rule.description} - Monorepo workspace detected`,
+            blocking: rule.blocking,
+          });
+        }
+      }
+    }
+  }
+
+  private async validateBoundedContextsRule(satellitePath: string, rule: { id: string; severity: string; category: string; title: string; description: string; blocking: boolean }, issues: ValidationIssue[]) {
+    const srcPath = path.join(satellitePath, 'src');
+    if (await this.fs.exists(srcPath)) {
+      const entries = await this.fs.readdirNames(srcPath);
+      const moduleCount = entries.filter(e => !e.startsWith('.')).length;
+
+      if (rule.id === 'F1-R02') {
+        if (moduleCount < 2) {
+          issues.push({
+            ruleId: rule.id,
+            severity: rule.severity as 'MUST' | 'SHOULD' | 'COULD',
+            category: rule.category,
+            title: rule.title,
+            description: `${rule.description} - Found only ${moduleCount} module(s) in src/`,
+            blocking: rule.blocking,
+          });
+        }
+      }
+    }
+  }
+
+  private async validateHexagonalRule(satellitePath: string, rule: { id: string; severity: string; category: string; title: string; description: string; blocking: boolean }, issues: ValidationIssue[]) {
+    if (rule.id === 'F1-R03') {
+      const srcPath = path.join(satellitePath, 'src');
+      const hasPorts = await this.fs.exists(path.join(srcPath, 'ports')) ||
+                       await this.fs.exists(path.join(srcPath, 'Ports')) ||
+                       await this.fs.exists(path.join(srcPath, 'application/ports'));
+
+      if (!hasPorts) {
+        issues.push({
+          ruleId: rule.id,
+          severity: rule.severity as 'MUST' | 'SHOULD' | 'COULD',
+          category: rule.category,
+          title: rule.title,
+          description: `${rule.description} - No ports directory found (expected: src/ports or src/application/ports)`,
+          blocking: rule.blocking,
+        });
+      }
+    }
+  }
+
+  private async validateCommunicationRule(satellitePath: string, rule: { id: string; severity: string; category: string; title: string; description: string; blocking: boolean }, issues: ValidationIssue[]) {
+    if (rule.id === 'F1-R04' || rule.id === 'F2-R03') {
+      const contractsPath = path.join(satellitePath, 'contracts');
+      const hasContracts = await this.fs.exists(contractsPath);
+      if (!hasContracts) {
+        issues.push({
+          ruleId: rule.id,
+          severity: rule.severity as 'MUST' | 'SHOULD' | 'COULD',
+          category: rule.category,
+          title: rule.title,
+          description: `${rule.description} - No contracts/ directory found for inter-module contracts`,
+          blocking: rule.blocking,
+        });
+      }
+    }
+  }
+
+  private async validatePersistenceRule(satellitePath: string, rule: { id: string; severity: string; category: string; title: string; description: string; blocking: boolean }, issues: ValidationIssue[]) {
+    if (rule.id === 'F1-R05') {
+      const aclPath = path.join(satellitePath, 'acl');
+      if (!await this.fs.exists(aclPath)) {
+        issues.push({
+          ruleId: rule.id,
+          severity: rule.severity as 'MUST' | 'SHOULD' | 'COULD',
+          category: rule.category,
+          title: rule.title,
+          description: `${rule.description} - No acl/ directory found (should contain one subdirectory per bounded context)`,
+          blocking: rule.blocking,
+        });
+      } else {
+        const entries = await this.fs.readdirNames(aclPath);
+        if (entries.length < 2) {
+          issues.push({
+            ruleId: rule.id,
+            severity: rule.severity as 'MUST' | 'SHOULD' | 'COULD',
+            category: rule.category,
+            title: rule.title,
+            description: `${rule.description} - Found ${entries.length} bounded context(s) in acl/ (expected multiple)`,
+            blocking: rule.blocking,
+          });
+        }
+      }
+    }
+  }
+
+  private async validateAsyncRule(satellitePath: string, rule: { id: string; severity: string; category: string; title: string; description: string; blocking: boolean }, issues: ValidationIssue[]) {
+    if (rule.id === 'F1-R06') {
+      const eventsPath = path.join(satellitePath, 'events') ||
+                         path.join(satellitePath, 'src', 'events') ||
+                         path.join(satellitePath, 'src', 'domain', 'events');
+      const hasEvents = await this.fs.exists(eventsPath);
+      if (!hasEvents) {
+        issues.push({
+          ruleId: rule.id,
+          severity: rule.severity as 'MUST' | 'SHOULD' | 'COULD',
+          category: rule.category,
+          title: rule.title,
+          description: `${rule.description} - No events directory found`,
+          blocking: rule.blocking,
+        });
+      }
+    }
+  }
+
+  private async validateExtractionReadinessRule(satellitePath: string, rule: { id: string; severity: string; category: string; title: string; description: string; blocking: boolean }, issues: ValidationIssue[]) {
+    const extractionReadinessPath = path.join(satellitePath, 'docs', 'extraction-readiness.md');
+    const hasExtractionReadiness = await this.fs.exists(extractionReadinessPath);
+    if (!hasExtractionReadiness) {
+      issues.push({
+        ruleId: rule.id,
+        severity: rule.severity as 'MUST' | 'SHOULD' | 'COULD',
+        category: rule.category,
+        title: rule.title,
+        description: `${rule.description} - No extraction-readiness.md found in docs/`,
+        blocking: rule.blocking,
+      });
+    }
+  }
+
+  private async validateObservabilityRule(satellitePath: string, rule: { id: string; severity: string; category: string; title: string; description: string; blocking: boolean }, issues: ValidationIssue[]) {
+    const hasPkgJson = await this.fs.exists(path.join(satellitePath, 'package.json'));
+    if (hasPkgJson) {
+      const otelConfigPath = path.join(satellitePath, 'otel.config.js') ||
+                            path.join(satellitePath, 'opentelemetry.config.js') ||
+                            path.join(satellitePath, 'src', 'instrumentation.ts');
+      let hasOtel = false;
+      for (const p of [otelConfigPath]) {
+        if (await this.fs.exists(p)) {
+          hasOtel = true;
+          break;
+        }
+      }
+      if (!hasOtel) {
+        issues.push({
+          ruleId: rule.id,
+          severity: rule.severity as 'MUST' | 'SHOULD' | 'COULD',
+          category: rule.category,
+          title: rule.title,
+          description: `${rule.description} - No OpenTelemetry instrumentation found`,
+          blocking: rule.blocking,
+        });
+      }
+    }
+  }
+
+  private async validateModuleAutonomyRule(satellitePath: string, rule: { id: string; severity: string; category: string; title: string; description: string; blocking: boolean }, issues: ValidationIssue[]) {
+    if (rule.id === 'F2-R01') {
+      const srcPath = path.join(satellitePath, 'src');
+      if (await this.fs.exists(srcPath)) {
+        const entries = await this.fs.readdirNames(srcPath);
+        let hasIndependentModules = false;
+        for (const entry of entries) {
+          if (await this.fs.exists(path.join(srcPath, entry, 'package.json'))) {
+            hasIndependentModules = true;
+            break;
+          }
+        }
+        if (!hasIndependentModules && entries.length > 1) {
+          issues.push({
+            ruleId: rule.id,
+            severity: rule.severity as 'MUST' | 'SHOULD' | 'COULD',
+            category: rule.category,
+            title: rule.title,
+            description: `${rule.description} - No independent module package.json files found`,
+            blocking: rule.blocking,
+          });
+        }
+      }
+    }
+  }
+
+  private async validateContractStabilityRule(satellitePath: string, rule: { id: string; severity: string; category: string; title: string; description: string; blocking: boolean }, issues: ValidationIssue[]) {
+    if (rule.id === 'F2-R02') {
+      const contractsPath = path.join(satellitePath, 'contracts');
+      const hasContracts = await this.fs.exists(contractsPath);
+      if (!hasContracts) {
+        issues.push({
+          ruleId: rule.id,
+          severity: rule.severity as 'MUST' | 'SHOULD' | 'COULD',
+          category: rule.category,
+          title: rule.title,
+          description: `${rule.description} - No contracts directory found`,
+          blocking: rule.blocking,
+        });
+      } else {
+        const contractFiles = (await this.fs.readdirNames(contractsPath)).filter(f =>
+          f.endsWith('.proto') || f.endsWith('.avsc') || f.endsWith('.json')
+        );
+        if (contractFiles.length === 0) {
+          issues.push({
+            ruleId: rule.id,
+            severity: rule.severity as 'MUST' | 'SHOULD' | 'COULD',
+            category: rule.category,
+            title: rule.title,
+            description: `${rule.description} - No contract definition files (.proto, .avsc, .json schema) found`,
+            blocking: rule.blocking,
+          });
+        }
+      }
+    }
+  }
+
+  private validateDataOwnershipRule(satellitePath: string, rule: { id: string; severity: string; category: string; title: string; description: string; blocking: boolean }, issues: ValidationIssue[]) {
+    if (rule.id === 'F2-R03') {
+      const aclPath = path.join(satellitePath, 'acl');
+      if (!this.fs.existsSync(aclPath)) {
+        issues.push({
+          ruleId: rule.id,
+          severity: rule.severity as 'MUST' | 'SHOULD' | 'COULD',
+          category: rule.category,
+          title: rule.title,
+          description: `${rule.description} - No acl directory for data ownership enforcement`,
+          blocking: rule.blocking,
+        });
+      }
+    }
+  }
+
+  private async validateAsyncCommunicationRule(satellitePath: string, rule: { id: string; severity: string; category: string; title: string; description: string; blocking: boolean }, issues: ValidationIssue[]) {
+    if (rule.id === 'F2-R04') {
+      const eventsPath = path.join(satellitePath, 'events') || path.join(satellitePath, 'src', 'events');
+      const hasEvents = await this.fs.exists(eventsPath);
+      if (hasEvents) {
+        const eventFiles = (await this.fs.readdirNames(eventsPath)).filter(f => f.endsWith('.json') || f.endsWith('.schema.json'));
+        if (eventFiles.length === 0) {
+          issues.push({
+            ruleId: rule.id,
+            severity: rule.severity as 'MUST' | 'SHOULD' | 'COULD',
+            category: rule.category,
+            title: rule.title,
+            description: `${rule.description} - No schema-validated event files found`,
+            blocking: rule.blocking,
+          });
+        }
+      }
+    }
+  }
+
+  private async validateDistributedTracingRule(satellitePath: string, rule: { id: string; severity: string; category: string; title: string; description: string; blocking: boolean }, issues: ValidationIssue[]) {
+    const tracerSetupFiles = [
+      path.join(satellitePath, 'src', 'tracing.ts'),
+      path.join(satellitePath, 'src', 'instrumentation.ts'),
+      path.join(satellitePath, 'opentelemetry.config.js'),
+    ];
+
+    const existsResults = await Promise.all(tracerSetupFiles.map(f => this.fs.exists(f)));
+    const hasTracerSetup = existsResults.some(Boolean);
+    if (!hasTracerSetup) {
+      issues.push({
+        ruleId: rule.id,
+        severity: rule.severity as 'MUST' | 'SHOULD' | 'COULD',
+        category: rule.category,
+        title: rule.title,
+        description: `${rule.description} - No distributed tracing setup found`,
+        blocking: rule.blocking,
+      });
+    }
+  }
+
+  private async validateContainerizationRule(satellitePath: string, rule: { id: string; severity: string; category: string; title: string; description: string; blocking: boolean }, issues: ValidationIssue[]) {
+    const dockerfilePath = path.join(satellitePath, 'Dockerfile');
+    const dockerfileExists = await this.fs.exists(dockerfilePath);
+
+    if (rule.id === 'F3-R01' && !dockerfileExists) {
+      issues.push({
+        ruleId: rule.id,
+        severity: rule.severity as 'MUST' | 'SHOULD' | 'COULD',
+        category: rule.category,
+        title: rule.title,
+        description: `${rule.description} - No Dockerfile found at repository root`,
+        blocking: rule.blocking,
+      });
+    }
+  }
+
+  private async validateServiceBoundariesRule(satellitePath: string, rule: { id: string; severity: string; category: string; title: string; description: string; blocking: boolean }, issues: ValidationIssue[]) {
+    const srcPath = path.join(satellitePath, 'src');
+    if (await this.fs.exists(srcPath)) {
+      const entries = await this.fs.readdirNames(srcPath);
+      const dirEntries: string[] = [];
+
+      for (const entry of entries) {
+        const entryPath = path.join(srcPath, entry);
+        const stat = await this.fs.stat(entryPath);
+        if (stat.isDirectory && stat.isDirectory()) {
+          dirEntries.push(entry);
+        }
+      }
+
+      if (rule.id === 'F3-R02' && dirEntries.length < 2) {
+        issues.push({
+          ruleId: rule.id,
+          severity: rule.severity as 'MUST' | 'SHOULD' | 'COULD',
+          category: rule.category,
+          title: rule.title,
+          description: `${rule.description} - Only ${dirEntries.length} service(s) found (expected multiple independent services)`,
+          blocking: rule.blocking,
+        });
+      }
+    }
+  }
+}
+
+export interface ArchitectureValidationResult {
+  status: 'passed' | 'failed' | 'warning';
+  levels: string[];
+  rulesChecked: number;
+  issues: ValidationIssue[];
+  timestamp: string;
 }

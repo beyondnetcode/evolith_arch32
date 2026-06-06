@@ -104,7 +104,7 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 | ID | Descripción | Comp. | Prioridad | Complejidad | Estado | Avance |
 |----|-------------|-------|-----------|-------------|--------|--------|
 | **G-12** | **Implementar protocolo servidor MCP (JSON-RPC stdio)** | MCP | 🔴 CRÍTICO | M (2-3 sem) | ✅ DONE | 100% |
-| G-01 | Validación arquitectura F1/F2/F3 en CLI | Core | 🟠 ALTA | M (2-3 sem) | 🔵 TODO | 0% |
+| G-01 | Validación arquitectura F1/F2/F3 en CLI | Core | 🟠 ALTA | M (2-3 sem) | ✅ DONE | 100% |
 | G-03 | Ejecutar transiciones de Phase Gates | Tracker | 🟠 ALTA | L (3-4 sem) | 🔵 TODO | 0% |
 | G-04 | Detección de Architecture Drift | Tracker | 🟠 ALTA | L (3-4 sem) | 🔵 TODO | 0% |
 | G-07 | Comando `smart-cli agents install` | CLI | 🟠 ALTA | S (1 sem) | 🔵 TODO | 0% |

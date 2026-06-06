@@ -2,7 +2,7 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 import * as p from '@clack/prompts';
 import * as chalk from 'chalk';
 import { ValidateSatelliteUseCase } from '../../application/use-cases/validate-satellite.use-case';
-import { ValidationResult } from '../../core/validators/ruleset-validator.service';
+import { ValidationResult, ValidationIssue, RulesetValidatorService } from '../../core/validators/ruleset-validator.service';
 import { logger } from '../../core/observability';
 import { OutputFormatterService, OutputFormat } from '../../infrastructure/formatters/output-formatter.service';
 
@@ -12,6 +12,8 @@ interface ValidateCommandOptions {
   satellite?: string;
   core?: string;
   ruleset?: string;
+  architecture?: boolean;
+  archLevel?: string;
 }
 
 @Command({
@@ -41,6 +43,32 @@ export class ValidateCommand extends CommandRunner {
         })).result;
       } else {
         result = (await this.useCase.execute({ satellitePath, corePath })).result;
+      }
+
+      if (options?.architecture) {
+        const validator = new RulesetValidatorService();
+        const archLevel = (options?.archLevel as 'F1' | 'F2' | 'F3' | 'ALL') || 'ALL';
+
+        interface ArchResult {
+          status: 'passed' | 'failed' | 'warning';
+          levels: string[];
+          rulesChecked: number;
+          issues: ValidationIssue[];
+          timestamp: string;
+        }
+
+        const archResult: ArchResult = await validator.validateArchitecture(satellitePath, corePath, archLevel);
+
+        const allIssues = [...result.issues, ...archResult.issues];
+        const blockingCount = allIssues.filter(i => i.blocking).length;
+
+        result = {
+          status: blockingCount > 0 ? 'failed' : allIssues.length > 0 ? 'warning' : 'passed',
+          rulesChecked: result.rulesChecked + archResult.rulesChecked,
+          issues: allIssues,
+          coreRef: result.coreRef,
+          timestamp: new Date().toISOString(),
+        };
       }
     } catch (error) {
       s.stop();
@@ -170,6 +198,22 @@ export class ValidateCommand extends CommandRunner {
     description: 'Validar ruleset específico (adr-0002, acl, open-core, inheritance)',
   })
   parseRuleset(val: string): string {
+    return val;
+  }
+
+  @Option({
+    flags: '-a, --arch',
+    description: 'Incluir validación de arquitectura F1/F2/F3',
+  })
+  parseArchitecture(): boolean {
+    return true;
+  }
+
+  @Option({
+    flags: '-l, --arch-level [level]',
+    description: 'Nivel de arquitectura: F1, F2, F3, ALL (default: ALL)',
+  })
+  parseArchLevel(val: string): string {
     return val;
   }
 }

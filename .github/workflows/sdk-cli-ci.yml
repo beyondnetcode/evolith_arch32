@@ -33,7 +33,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          fetch-tags: true
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -92,6 +91,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: ${{ env.CLI_DIR }}/package-lock.json
 
       - name: Install Dependencies
         working-directory: ${{ env.CLI_DIR }}
@@ -115,6 +116,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: ${{ env.CLI_DIR }}/package-lock.json
 
       - name: Install Dependencies
         working-directory: ${{ env.CLI_DIR }}
@@ -151,7 +154,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          fetch-tags: true
 
       - name: Setup Node.js
         uses: actions/setup-node@v4

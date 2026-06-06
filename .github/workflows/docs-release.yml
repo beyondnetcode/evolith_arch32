@@ -17,6 +17,8 @@ jobs:
       version: ${{ steps.extract.outputs.version }}
       branch: ${{ steps.extract.outputs.branch }}
     steps:
+      - uses: actions/checkout@v4
+
       - name: Extract version from merge commit message
         id: extract
         run: |

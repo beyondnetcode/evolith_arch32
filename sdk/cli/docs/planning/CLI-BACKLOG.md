@@ -9,10 +9,11 @@ This backlog tracks all improvements, gaps, and feature requests for the Evolith
 ## GAPS CRÍTICOS
 
 ### GAP-001: Shell Autocomplete
-**Status:** 🟡 Pending
+**Status:** ✅ Implemented
 **Priority:** 🔴 High
 **Phase:** 1
 **Created:** 2026-06-06
+**Completed:** 2026-06-06
 
 **Description:** Users cannot tab-complete commands, subcommands, options, or arguments.
 
@@ -32,10 +33,11 @@ evolith adr <TAB>      # → create list get update matrix
 ---
 
 ### GAP-002: Command History
-**Status:** 🟡 Pending
+**Status:** ✅ Implemented
 **Priority:** 🔴 High
 **Phase:** 1
 **Created:** 2026-06-06
+**Completed:** 2026-06-06
 
 **Description:** No command history tracking or retrieval.
 
@@ -52,10 +54,11 @@ evolith history clear        # Clear history
 ---
 
 ### GAP-003: Table/YAML Output Formats
-**Status:** 🟡 Pending
+**Status:** ✅ Implemented
 **Priority:** 🔴 High
 **Phase:** 1
 **Created:** 2026-06-06
+**Completed:** 2026-06-06
 
 **Description:** Only JSON output supported. Table and YAML formats missing.
 
@@ -409,21 +412,21 @@ eval "$(evolith init --shell)"  # Adds custom prompt info
 
 | Category | Total | Completed | In Progress | Pending |
 |----------|-------|-----------|-------------|---------|
-| Gaps Críticos | 3 | 0 | 0 | 3 |
+| Gaps Críticos | 3 | 3 | 0 | 0 |
 | Enterprise Readiness | 3 | 0 | 0 | 3 |
 | Developer Experience | 4 | 0 | 0 | 4 |
 | Distribution | 2 | 0 | 0 | 2 |
 | Nice-to-Have | 4 | 0 | 0 | 4 |
-| **Total** | **16** | **3** | **0** | **13** |
+| **Total** | **16** | **6** | **0** | **10** |
 
 ---
 
 ## Phase Roadmap
 
 ### Phase 1 (Weeks 1-2): UX Essentials
-- [ ] GAP-001: Shell Autocomplete
-- [ ] GAP-002: Command History
-- [ ] GAP-003: Table/YAML Output
+- [x] GAP-001: Shell Autocomplete
+- [x] GAP-002: Command History
+- [x] GAP-003: Table/YAML Output
 
 ### Phase 2 (Weeks 3-4): Enterprise Ready
 - [ ] GAP-004: Multiple Profiles
@@ -452,3 +455,4 @@ eval "$(evolith init --shell)"  # Adds custom prompt info
 |------|------|--------|
 | 2026-06-06 | All | Initial backlog created |
 | 2026-06-06 | DONE-001, DONE-002, DONE-003 | Marked as completed |
+| 2026-06-06 | GAP-001, GAP-002, GAP-003 | Phase 1 completed: Autocomplete, History, Table/YAML output |

@@ -85,5 +85,5 @@ jobs:
           file: ./sdk/cli/Dockerfile
           push: true
           tags: |
-            evolith/cli:latest
-            evolith/cli:${{ github.sha }}
+            beyondnetperu/evolith-cli:latest
+            beyondnetperu/evolith-cli:${{ github.sha }}

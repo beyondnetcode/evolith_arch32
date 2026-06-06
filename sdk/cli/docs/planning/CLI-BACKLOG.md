@@ -9,7 +9,7 @@ This backlog tracks all improvements, gaps, and feature requests for the Evolith
 ## GAPS CRÍTICOS
 
 ### GAP-001: Shell Autocomplete
-**Status:** ✅ Implemented
+**Status:** [DONE] Implemented
 **Priority:** 🔴 High
 **Phase:** 1
 **Created:** 2026-06-06
@@ -33,7 +33,7 @@ evolith adr <TAB>      # → create list get update matrix
 ---
 
 ### GAP-002: Command History
-**Status:** ✅ Implemented
+**Status:** [DONE] Implemented
 **Priority:** 🔴 High
 **Phase:** 1
 **Created:** 2026-06-06
@@ -54,7 +54,7 @@ evolith history clear        # Clear history
 ---
 
 ### GAP-003: Table/YAML Output Formats
-**Status:** ✅ Implemented
+**Status:** [DONE] Implemented
 **Priority:** 🔴 High
 **Phase:** 1
 **Created:** 2026-06-06
@@ -372,7 +372,7 @@ eval "$(evolith init --shell)"  # Adds custom prompt info
 ## COMPLETED ITEMS
 
 ### DONE-001: MCP Native Integration
-**Status:** ✅ Completed
+**Status:** [DONE] Completed
 **Completed:** 2026-06-06
 
 **Description:** MCP server implemented with stdio transport.
@@ -385,7 +385,7 @@ eval "$(evolith init --shell)"  # Adds custom prompt info
 ---
 
 ### DONE-002: Structured Logging
-**Status:** ✅ Completed
+**Status:** [DONE] Completed
 **Completed:** 2026-06-06
 
 **Description:** JSON structured logging with context.
@@ -397,7 +397,7 @@ eval "$(evolith init --shell)"  # Adds custom prompt info
 ---
 
 ### DONE-003: Bilingual Support (EN/ES)
-**Status:** ✅ Completed
+**Status:** [DONE] Completed
 **Completed:** 2026-06-06
 
 **Description:** All commands available in English and Spanish.

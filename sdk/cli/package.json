@@ -1,7 +1,7 @@
 {
   "name": "@evolith/cli",
-  "version": "1.1.0",
-  "description": "Evolith SDK Command Line Interface",
+  "version": "1.0.0-beta.1",
+  "description": "Evolith SDK CLI - Governance, standards validation, and AI agent integration for satellite repositories",
   "main": "dist/main.js",
   "bin": {
     "evolith": "./dist/main.js"
@@ -16,24 +16,45 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "evolith",
     "sdk",
-    "cli"
+    "cli",
+    "governance",
+    "standards",
+    "validation",
+    "adr",
+    "architecture-decision-records",
+    "mcp",
+    "model-context-protocol",
+    "ai-agents",
+    "satellite-repository",
+    "clean-architecture"
   ],
-  "author": "Beyondnet",
+  "homepage": "https://github.com/beyondnetcode/evolith_arch32#readme",
+  "author": "Beyondnet <dev@beyondnetcode.com>",
   "license": "ISC",
   "repository": {
     "type": "git",
     "url": "https://github.com/beyondnetcode/evolith_arch32.git",
     "directory": "sdk/cli"
   },
-  "type": "commonjs",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "dist/",
+    "shell/",
+    "templates/",
+    "README.md",
+    "ARCHITECTURE.md"
+  ],
   "dependencies": {
     "@clack/prompts": "^1.5.1",
-    "@modelcontextprotocol/sdk": "^0.5.0",
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "@nestjs/common": "^11.1.24",
     "@nestjs/core": "^11.1.24",
     "chalk": "^4.1.2",

@@ -449,6 +449,114 @@ eval "$(evolith init --shell)"  # Adds custom prompt info
 
 ---
 
+## Distribution Priority (Current Focus)
+
+The following items are prioritized for making the CLI consumable by users and AI agents.
+
+### DIS-001: CLI README.md
+**Status:** 🟡 Pending
+**Priority:** 🔴 High
+**Created:** 2026-06-06
+
+**Description:** Complete README.md with installation, quickstart, and command reference.
+
+**Expected:**
+- Installation instructions (npm, direct binary)
+- Quickstart guide (3 commands to get started)
+- MCP integration examples for Cursor, Claude Desktop
+- Command reference with examples
+- Troubleshooting section
+
+---
+
+### DIS-002: MCP Integration Examples
+**Status:** 🟡 Pending
+**Priority:** 🔴 High
+**Created:** 2026-06-06
+
+**Description:** Working examples of AI agents using the Evolith MCP server.
+
+**Expected:**
+- Cursor AI configuration example
+- Claude Desktop configuration example  
+- Example AI agent sessions showing MCP tool usage
+- Step-by-step guide for AI-first workflow
+
+---
+
+### DIS-003: npm Package Preparation
+**Status:** 🟡 Pending
+**Priority:** 🔴 High
+**Created:** 2026-06-06
+
+**Description:** Prepare package.json for public npm publication.
+
+**Expected:**
+- Version bump to 1.0.0-alpha or beta
+- Update description, keywords, repository
+- Add FUNDING.yml, engines field
+- Validate npm install works
+- Add npm registry publication workflow
+
+---
+
+### DIS-004: Docker Image
+**Status:** 🟡 Pending
+**Priority:** 🟡 Medium
+**Created:** 2026-06-06
+
+**Description:** Official Docker image for CI/CD usage.
+
+**Expected:**
+- Dockerfile in root
+- Multi-stage build for small image
+- Test container in CI
+
+---
+
+### DIS-005: Quickstart Guide
+**Status:** 🟡 Pending
+**Priority:** 🟡 Medium
+**Created:** 2026-06-06
+
+**Description:** 5-minute quickstart for new users.
+
+**Expected:**
+- Create evolith.yaml example
+- Run first validation
+- Install first agent
+- Generate first ADR
+
+---
+
+## Deprecated Phases (Deferred)
+
+Phase 2-4 have been deferred to focus on Distribution first.
+
+### Phase 2 (Weeks 3-4): Enterprise Ready
+**Status:** ⏸️ Deferred
+- GAP-004: Multiple Profiles
+- GAP-005: Extension/Plugin System  
+- GAP-006: SSO/SAML Authentication
+
+### Phase 3 (Weeks 5-6): Developer Experience
+**Status:** ⏸️ Deferred
+- GAP-007: API Browser/Explorer
+- GAP-008: Auto-Update Mechanism
+- GAP-009: Real-time Progress/Streaming
+- GAP-010: Subcommand Depth
+
+### Phase 4 (Future): Polish
+**Status:** ⏸️ Deferred
+- GAP-011: Package Manager Distribution
+- GAP-012: Docker Image
+- GAP-013: Aliases
+- GAP-014: Interactive Wizards
+- GAP-015: Fixtures/Test Data
+- GAP-016: Shell Integration
+
+---
+
 ## Changelog
 
 | Date | Item | Change |
@@ -456,3 +564,5 @@ eval "$(evolith init --shell)"  # Adds custom prompt info
 | 2026-06-06 | All | Initial backlog created |
 | 2026-06-06 | DONE-001, DONE-002, DONE-003 | Marked as completed |
 | 2026-06-06 | GAP-001, GAP-002, GAP-003 | Phase 1 completed: Autocomplete, History, Table/YAML output |
+| 2026-06-06 | Phase 2-4 | DEPRECATED - Deferred to focus on Distribution first |
+| 2026-06-06 | DIS-001 to DIS-005 | Added Distribution Priority items |

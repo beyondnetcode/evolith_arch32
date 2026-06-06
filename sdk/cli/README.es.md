@@ -14,7 +14,7 @@ Interfaz de línea de comandos para gobernanza, validación de estándares e int
 ### npm (Recomendado)
 
 ```bash
-npm install -g @evolith/cli
+npm install -g @evolith/smart-cli
 ```
 
 ### Manual
@@ -24,8 +24,8 @@ Descarga el binario más reciente desde [GitHub Releases](https://github.com/bey
 ### Verificar Instalación
 
 ```bash
-evolith --version
-# evolith version 1.0.0
+smart-cli --version
+# smart-cli version 0.0.1-beta
 ```
 
 ## Inicio Rápido
@@ -34,7 +34,7 @@ evolith --version
 
 ```bash
 cd tu-proyecto
-evolith init
+smart-cli init
 ```
 
 Esto crea un archivo `evolith.yaml` con la configuración por defecto.
@@ -42,7 +42,7 @@ Esto crea un archivo `evolith.yaml` con la configuración por defecto.
 ### 2. Ejecutar la Primera Validación
 
 ```bash
-evolith validate
+smart-cli validate
 ```
 
 Salida:
@@ -54,7 +54,7 @@ Salida:
 ### 3. Instalar un Agente
 
 ```bash
-evolith agents install
+smart-cli agents install
 # Seleccionar la plantilla "standard" cuando se solicite
 ```
 
@@ -65,7 +65,7 @@ evolith agents install
 Valida el cumplimiento del repositorio contra los estándares de Evolith.
 
 ```bash
-evolith validate [opciones]
+smart-cli validate [opciones]
 
 Opciones:
   --satellite <ruta>    Ruta al repositorio satélite (por defecto: cwd)
@@ -79,16 +79,16 @@ Opciones:
 
 ```bash
 # Validación básica
-evolith validate
+smart-cli validate
 
 # Salida JSON para automatización
-evolith validate --format json
+smart-cli validate --format json
 
 # Salida en tabla para humanos
-evolith validate --format table
+smart-cli validate --format table
 
 # Validar ruleset específico
-evolith validate --ruleset acl
+smart-cli validate --ruleset acl
 ```
 
 ### adr
@@ -96,7 +96,7 @@ evolith validate --ruleset acl
 Gestionar Registros de Decisiones de Arquitectura.
 
 ```bash
-evolith adr <comando>
+smart-cli adr <comando>
 
 Comandos:
   create     Crear nuevo ADR
@@ -110,13 +110,13 @@ Comandos:
 
 ```bash
 # Crear nuevo ADR
-evolith adr create
+smart-cli adr create
 
 # Listar todos los ADR
-evolith adr list
+smart-cli adr list
 
 # Obtener ADR específico
-evolith adr get ADR-0002
+smart-cli adr get ADR-0002
 ```
 
 ### standards
@@ -124,7 +124,7 @@ evolith adr get ADR-0002
 Gestionar estándares de gobernanza.
 
 ```bash
-evolith standards <comando>
+smart-cli standards <comando>
 
 Comandos:
   init       Inicializar directorio de estándares
@@ -138,10 +138,10 @@ Comandos:
 
 ```bash
 # Inicializar estándares
-evolith standards init
+smart-cli standards init
 
 # Listar estándares
-evolith standards list
+smart-cli standards list
 ```
 
 ### agents
@@ -149,7 +149,7 @@ evolith standards list
 Instalar y gestionar agentes de Evolith.
 
 ```bash
-evolith agents <comando>
+smart-cli agents <comando>
 
 Comandos:
   install    Instalar nuevo agente
@@ -163,10 +163,10 @@ Comandos:
 
 ```bash
 # Instalación interactiva
-evolith agents install
+smart-cli agents install
 
 # Listar agentes
-evolith agents list
+smart-cli agents list
 ```
 
 ### history
@@ -174,7 +174,7 @@ evolith agents list
 Ver y gestionar historial de comandos.
 
 ```bash
-evolith history [opciones]
+smart-cli history [opciones]
 
 Opciones:
   --list              Listar comandos recientes
@@ -188,13 +188,13 @@ Opciones:
 
 ```bash
 # Mostrar últimos 20 comandos
-evolith history
+smart-cli history
 
 # Mostrar estadísticas
-evolith history --stats
+smart-cli history --stats
 
 # Buscar comandos
-evolith history --search validate
+smart-cli history --search validate
 ```
 
 ### completion
@@ -202,7 +202,7 @@ evolith history --search validate
 Generar scripts de completado de shell.
 
 ```bash
-evolith completion --install <shell>
+smart-cli completion --install <shell>
 
 Shells soportados: bash, zsh, fish
 ```
@@ -211,10 +211,10 @@ Shells soportados: bash, zsh, fish
 
 ```bash
 # Instalar completado bash
-evolith completion --install bash
+smart-cli completion --install bash
 
 # Instalar completado zsh
-evolith completion --install zsh
+smart-cli completion --install zsh
 ```
 
 ## Servidor MCP (Integración con Agentes IA)
@@ -224,7 +224,7 @@ La CLI de Evolith incluye un servidor MCP para integración con agentes IA.
 ### Iniciar el Servidor MCP
 
 ```bash
-evolith mcp serve
+smart-cli mcp serve
 ```
 
 El servidor se comunica vía stdio JSON-RPC.
@@ -232,7 +232,7 @@ El servidor se comunica vía stdio JSON-RPC.
 También puedes iniciar en modo HTTP:
 
 ```bash
-evolith mcp serve --transport http --port 3000
+smart-cli mcp serve --transport http --port 3000
 ```
 
 ### Herramientas MCP Disponibles
@@ -258,7 +258,7 @@ Agregar a `~/.cursor/mcp.json`:
 {
   "mcpServers": {
     "evolith": {
-      "command": "evolith",
+      "command": "smart-cli",
       "args": ["mcp", "serve"]
     }
   }
@@ -273,7 +273,7 @@ Agregar a `~/Library/Application Support/Claude/claude_desktop_config.json`:
 {
   "mcpServers": {
     "evolith": {
-      "command": "evolith",
+      "command": "smart-cli",
       "args": ["mcp", "serve"]
     }
   }
@@ -335,16 +335,16 @@ Todos los comandos soportan múltiples formatos de salida:
 
 ```bash
 # JSON (por defecto para automatización)
-evolith validate --format json
+smart-cli validate --format json
 
 # Tabla (legible para humanos)
-evolith validate --format table
+smart-cli validate --format table
 
 # YAML (integración en pipelines)
-evolith validate --format yaml
+smart-cli validate --format yaml
 
 # Markdown (documentación)
-evolith validate --format markdown
+smart-cli validate --format markdown
 ```
 
 ## Solución de Problemas
@@ -363,7 +363,7 @@ export PATH="$(npm config get prefix)/bin:$PATH"
 Asegúrate de que el servidor MCP está corriendo:
 
 ```bash
-evolith mcp serve &
+smart-cli mcp serve &
 ```
 
 ### La validación falla
@@ -372,7 +372,7 @@ Verifica que tu `evolith.yaml` existe y es válido:
 
 ```bash
 cat evolith.yaml
-evolith validate --verbose
+smart-cli validate --verbose
 ```
 
 ## Desarrollo

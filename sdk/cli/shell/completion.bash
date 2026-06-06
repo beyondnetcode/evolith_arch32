@@ -1,9 +1,9 @@
 #!/bin/bash
-# Evolith CLI Bash Completion
+# Evolith Smart CLI Bash Completion
 # Install: source this file or add to ~/.bashrc
-# Also: evolith completion --install to auto-install
+# Also: smart-cli completion --install to auto-install
 
-_evolith_completions() {
+_smart_cli_completions() {
     local cur prev words cword
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
@@ -58,10 +58,10 @@ _evolith_completions() {
     return 0
 }
 
-complete -F _evolith_completions evolith
+complete -F _smart_cli_completions smart-cli
 
 # Auto-install function
-_evolith_install() {
+_smart_cli_install() {
     local shell="$1"
     if [[ "$shell" == "bash" ]]; then
         local profile="${HOME}/.bashrc"
@@ -80,6 +80,6 @@ _evolith_install() {
         fi
         echo "Zsh completion installed. Reload shell or run: source $profile"
     else
-        echo "Usage: evolith completion --install [bash|zsh]"
+        echo "Usage: smart-cli completion --install [bash|zsh]"
     fi
 }

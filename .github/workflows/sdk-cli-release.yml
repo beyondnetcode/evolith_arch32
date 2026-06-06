@@ -130,7 +130,7 @@ jobs:
             console.log('Name:', pkg.name);
             console.log('Version:', pkg.version);
             console.log('Main:', pkg.main);
-            console.log('Bin:', pkg.bin.evolith);
+            console.log('Bin:', pkg.bin['smart-cli']);
           "
 
   # ============================================
@@ -165,7 +165,7 @@ jobs:
 
       - name: Confirm Publication
         run: |
-          echo "✅ Published @evolith/cli@${{ needs.release-please.outputs.version }} to NPM"
+          echo "✅ Published @evolith/smart-cli@${{ needs.release-please.outputs.version }} to NPM"
 
   # ============================================
   # GATE 4: Package Binaries
@@ -211,7 +211,7 @@ jobs:
         shell: bash
         run: |
           if [ "${{ matrix.ext }}" != "" ]; then
-            mv ${{ env.CLI_DIR }}/binaries/evolith ${{ env.CLI_DIR }}/binaries/evolith${{ matrix.ext }}
+            mv ${{ env.CLI_DIR }}/binaries/smart-cli ${{ env.CLI_DIR }}/binaries/smart-cli${{ matrix.ext }}
           fi
           ls -la ${{ env.CLI_DIR }}/binaries/
 
@@ -234,19 +234,19 @@ jobs:
       - name: Setup Binary
         shell: bash
         run: |
-          chmod +x ./binaries/evolith
+          chmod +x ./binaries/smart-cli
           echo "Binary prepared for smoke test"
 
       - name: Smoke Test - Help Command
         shell: bash
         run: |
-          ./binaries/evolith --help || { echo "❌ Binary failed to execute"; exit 1; }
+          ./binaries/smart-cli --help || { echo "❌ Binary failed to execute"; exit 1; }
           echo "✅ Binary executable works"
 
       - name: Smoke Test - Version
         shell: bash
         run: |
-          VERSION=$(./binaries/evolith --version 2>/dev/null || echo "unknown")
+          VERSION=$(./binaries/smart-cli --version 2>/dev/null || echo "unknown")
           echo "Binary version: $VERSION"
 
       - name: Smoke Test - Init Command
@@ -254,7 +254,7 @@ jobs:
         run: |
           mkdir -p /tmp/evolith-test
           cd /tmp/evolith-test
-          echo "test-project" | ./binaries/evolith init --runtime nodejs --monorepo none --arch clean || true
+          echo "test-project" | ./binaries/smart-cli init --runtime nodejs --monorepo none --arch clean || true
           ls -la
           echo "✅ Init command smoke test completed"
 
@@ -300,15 +300,15 @@ jobs:
             ### 📦 Assets
             | Platform | Architecture | Download |
             |----------|--------------|----------|
-            | Linux | x64 | [evolith](release-assets/evolith) |
-            | macOS | x64 | [evolith](release-assets/evolith) |
-            | Windows | x64 | [evolith.exe](release-assets/evolith.exe) |
+            | Linux | x64 | [smart-cli](release-assets/smart-cli) |
+            | macOS | x64 | [smart-cli](release-assets/smart-cli) |
+            | Windows | x64 | [smart-cli.exe](release-assets/smart-cli.exe) |
 
             ### 🚀 Installation
 
             ```bash
             # NPM
-            npm install -g @evolith/cli
+            npm install -g @evolith/smart-cli
 
             # Or download binary directly
             ```

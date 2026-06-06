@@ -2,7 +2,7 @@
   "packages": {
     "sdk/cli": {
       "release-type": "node",
-      "package-name": "@evolith/cli"
+      "package-name": "@evolith/smart-cli"
     }
   }
 }

@@ -24,9 +24,9 @@ RUN npm run build
 # Stage 2: Runtime
 FROM node:20-alpine AS runtime
 
-LABEL org.opencontainers.image.title="Evolith CLI"
-LABEL org.opencontainers.image.description="Evolith SDK Command Line Interface - Governance, standards validation, and AI agent integration"
-LABEL org.opencontainers.image.version="1.0.0-beta"
+LABEL org.opencontainers.image.title="Evolith Smart CLI"
+LABEL org.opencontainers.image.description="Evolith Smart CLI - Governance, standards validation, and AI agent integration"
+LABEL org.opencontainers.image.version="0.0.1-beta"
 LABEL org.opencontainers.image.authors="Beyondnet"
 LABEL org.opencontainers.image.source="https://github.com/beyondnetcode/evolith_arch32"
 

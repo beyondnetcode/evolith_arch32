@@ -14,7 +14,7 @@ Command-line interface for Evolith governance, standards validation, and AI agen
 ### npm (Recommended)
 
 ```bash
-npm install -g @evolith/cli
+npm install -g @evolith/smart-cli
 ```
 
 ### Manual
@@ -24,8 +24,8 @@ Download the latest binary from [GitHub Releases](https://github.com/beyondnetco
 ### Verify Installation
 
 ```bash
-evolith --version
-# evolith version 1.0.0
+smart-cli --version
+# smart-cli version 0.0.1-beta
 ```
 
 ## Quickstart
@@ -34,7 +34,7 @@ evolith --version
 
 ```bash
 cd your-project
-evolith init
+smart-cli init
 ```
 
 This creates an `evolith.yaml` file with default configuration.
@@ -42,7 +42,7 @@ This creates an `evolith.yaml` file with default configuration.
 ### 2. Run First Validation
 
 ```bash
-evolith validate
+smart-cli validate
 ```
 
 Output:
@@ -54,7 +54,7 @@ Output:
 ### 3. Install an Agent
 
 ```bash
-evolith agents install
+smart-cli agents install
 # Select "standard" template when prompted
 ```
 
@@ -65,7 +65,7 @@ evolith agents install
 Validate repository compliance against Evolith standards.
 
 ```bash
-evolith validate [options]
+smart-cli validate [options]
 
 Options:
   --satellite <path>    Path to satellite repository (default: cwd)
@@ -79,16 +79,16 @@ Options:
 
 ```bash
 # Basic validation
-evolith validate
+smart-cli validate
 
 # JSON output for automation
-evolith validate --format json
+smart-cli validate --format json
 
 # Table output for humans
-evolith validate --format table
+smart-cli validate --format table
 
 # Validate specific ruleset
-evolith validate --ruleset acl
+smart-cli validate --ruleset acl
 ```
 
 ### adr
@@ -96,7 +96,7 @@ evolith validate --ruleset acl
 Manage Architecture Decision Records.
 
 ```bash
-evolith adr <command>
+smart-cli adr <command>
 
 Commands:
   create     Create new ADR
@@ -110,13 +110,13 @@ Commands:
 
 ```bash
 # Create new ADR
-evolith adr create
+smart-cli adr create
 
 # List all ADRs
-evolith adr list
+smart-cli adr list
 
 # Get specific ADR
-evolith adr get ADR-0002
+smart-cli adr get ADR-0002
 ```
 
 ### standards
@@ -124,7 +124,7 @@ evolith adr get ADR-0002
 Manage governance standards.
 
 ```bash
-evolith standards <command>
+smart-cli standards <command>
 
 Commands:
   init       Initialize standards directory
@@ -138,10 +138,10 @@ Commands:
 
 ```bash
 # Initialize standards
-evolith standards init
+smart-cli standards init
 
 # List standards
-evolith standards list
+smart-cli standards list
 ```
 
 ### agents
@@ -149,7 +149,7 @@ evolith standards list
 Install and manage Evolith agents.
 
 ```bash
-evolith agents <command>
+smart-cli agents <command>
 
 Commands:
   install    Install new agent
@@ -163,10 +163,10 @@ Commands:
 
 ```bash
 # Interactive install
-evolith agents install
+smart-cli agents install
 
 # List agents
-evolith agents list
+smart-cli agents list
 ```
 
 ### history
@@ -174,7 +174,7 @@ evolith agents list
 View and manage command history.
 
 ```bash
-evolith history [options]
+smart-cli history [options]
 
 Options:
   --list              List recent commands
@@ -188,13 +188,13 @@ Options:
 
 ```bash
 # Show last 20 commands
-evolith history
+smart-cli history
 
 # Show statistics
-evolith history --stats
+smart-cli history --stats
 
 # Search commands
-evolith history --search validate
+smart-cli history --search validate
 ```
 
 ### completion
@@ -202,7 +202,7 @@ evolith history --search validate
 Generate shell completion scripts.
 
 ```bash
-evolith completion --install <shell>
+smart-cli completion --install <shell>
 
 Supported shells: bash, zsh, fish
 ```
@@ -211,10 +211,10 @@ Supported shells: bash, zsh, fish
 
 ```bash
 # Install bash completion
-evolith completion --install bash
+smart-cli completion --install bash
 
 # Install zsh completion
-evolith completion --install zsh
+smart-cli completion --install zsh
 ```
 
 ## MCP Server (AI Agent Integration)
@@ -224,7 +224,7 @@ The Evolith CLI includes an MCP server for AI agent integration.
 ### Starting the MCP Server
 
 ```bash
-evolith mcp serve
+smart-cli mcp serve
 ```
 
 The server communicates via stdio JSON-RPC.
@@ -252,7 +252,7 @@ Add to `~/.cursor/mcp.json`:
 {
   "mcpServers": {
     "evolith": {
-      "command": "evolith",
+      "command": "smart-cli",
       "args": ["mcp", "serve"]
     }
   }
@@ -267,7 +267,7 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 {
   "mcpServers": {
     "evolith": {
-      "command": "evolith",
+      "command": "smart-cli",
       "args": ["mcp", "serve"]
     }
   }
@@ -329,16 +329,16 @@ All commands support multiple output formats:
 
 ```bash
 # JSON (default for automation)
-evolith validate --format json
+smart-cli validate --format json
 
 # Table (human-readable)
-evolith validate --format table
+smart-cli validate --format table
 
 # YAML (pipeline integration)
-evolith validate --format yaml
+smart-cli validate --format yaml
 
 # Markdown (documentation)
-evolith validate --format markdown
+smart-cli validate --format markdown
 ```
 
 ## Troubleshooting
@@ -357,7 +357,7 @@ export PATH="$(npm config get prefix)/bin:$PATH"
 Ensure the MCP server is running:
 
 ```bash
-evolith mcp serve &
+smart-cli mcp serve &
 ```
 
 ### Validation fails
@@ -366,7 +366,7 @@ Check your `evolith.yaml` exists and is valid:
 
 ```bash
 cat evolith.yaml
-evolith validate --verbose
+smart-cli validate --verbose
 ```
 
 ## Development

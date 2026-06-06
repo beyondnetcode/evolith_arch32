@@ -56,6 +56,7 @@ jobs:
         working-directory: sdk/cli
 
       - name: Publish to npm
+        if: contains(github.event.head_commit.message, 'bump version')
         run: npm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }} && npm publish --access public --tag beta
         working-directory: sdk/cli
 

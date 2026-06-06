@@ -8,14 +8,20 @@ import { listResources, readResource } from './resources';
 import { listPrompts, getPrompt } from './prompts';
 import { McpMetricsService } from './metrics.service';
 
+export type McpTransport = 'stdio' | 'http';
+
 export interface McpServerOptions {
   rulesetValidator?: RulesetValidatorService;
   metricsService?: McpMetricsService;
+  apiKey?: string;
+  port?: number;
+  transport?: McpTransport;
 }
 
 interface McpServerInstance {
   setRequestHandler(schema: unknown, handler: (request: unknown) => Promise<unknown>): void;
   connect(transport: unknown): Promise<void>;
+  start(): Promise<void>;
 }
 
 interface McpTransportInstance {
@@ -23,6 +29,7 @@ interface McpTransportInstance {
 
 let ServerClass: new (options: { name: string; version: string }) => McpServerInstance;
 let StdioTransportClass: new () => McpTransportInstance;
+let StreamableHttpTransportClass: new (options?: { port?: number; host?: string }) => McpTransportInstance;
 
 async function loadMcpSdk() {
   if (ServerClass) return;
@@ -31,10 +38,21 @@ async function loadMcpSdk() {
     const mcp = await import('@modelcontextprotocol/sdk');
     ServerClass = mcp.Server as unknown as new (options: { name: string; version: string }) => McpServerInstance;
     StdioTransportClass = mcp.StdioServerTransport as unknown as new () => McpTransportInstance;
+
+    const httpTransport = await import('@modelcontextprotocol/sdk/server/streamableHttp');
+    if (httpTransport.StreamableHTTPServerTransport) {
+      StreamableHttpTransportClass = httpTransport.StreamableHTTPServerTransport as unknown as new (options?: { port?: number; host?: string }) => McpTransportInstance;
+    }
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
     throw new Error(`Failed to load @modelcontextprotocol/sdk: ${msg}. Install with: npm install @modelcontextprotocol/sdk`);
   }
+}
+
+function validateApiKey(apiKey: string | undefined, validKey: string | undefined): boolean {
+  if (!validKey) return true;
+  if (!apiKey) return false;
+  return apiKey === validKey;
 }
 
 const LIST_TOOLS_REQUEST_SCHEMA: unknown = {
@@ -71,17 +89,20 @@ export class EvolithMcpServer {
   private readonly logger = new Logger(EvolithMcpServer.name);
   private rulesetValidator: RulesetValidatorService;
   private metricsService: McpMetricsService;
+  private apiKey: string | undefined;
+  private port: number;
   private serverInstance: McpServerInstance | null = null;
 
   constructor(options: McpServerOptions = {}) {
     this.rulesetValidator = options.rulesetValidator || new RulesetValidatorService();
     this.metricsService = options.metricsService || new McpMetricsService();
+    this.apiKey = options.apiKey || process.env.EVOLITH_API_KEY;
+    this.port = options.port || parseInt(process.env.PORT || '3000', 10);
   }
 
   async initialize(): Promise<void> {
     await loadMcpSdk();
 
-    const self = this;
     this.serverInstance = new ServerClass({
       name: 'evolith-mcp-server',
       version: '1.0.0',
@@ -93,7 +114,18 @@ export class EvolithMcpServer {
 
     this.serverInstance.setRequestHandler(CALL_TOOL_REQUEST_SCHEMA, async (request: unknown) => {
       const req = request as { name: string; arguments?: Record<string, unknown> };
-      return this.handleCallTool(req.name, req.arguments || {});
+
+      if (!validateApiKey(req.arguments?.apiKey as string | undefined, this.apiKey)) {
+        return {
+          content: [{ type: 'text' as const, text: JSON.stringify({ error: true, message: 'Invalid API key' }) }],
+          isError: true,
+        };
+      }
+
+      const args = { ...req.arguments };
+      delete args.apiKey;
+
+      return this.handleCallTool(req.name, args);
     });
 
     this.serverInstance.setRequestHandler(LIST_RESOURCES_REQUEST_SCHEMA, async () => {
@@ -115,12 +147,35 @@ export class EvolithMcpServer {
     this.logger.log('Evolith MCP Server initialized');
   }
 
-  async connect(): Promise<void> {
+  async connect(transport: McpTransport = 'stdio'): Promise<void> {
     if (!this.serverInstance) {
       await this.initialize();
     }
-    const transport = new StdioTransportClass();
-    await this.serverInstance!.connect(transport);
+
+    if (transport === 'http') {
+      await this.startHttpServer();
+    } else {
+      const stdioTransport = new StdioTransportClass();
+      await this.serverInstance!.connect(stdioTransport);
+    }
+  }
+
+  private async startHttpServer(): Promise<void> {
+    if (!StreamableHttpTransportClass) {
+      this.logger.warn('Streamable HTTP transport not available, falling back to stdio');
+      const stdioTransport = new StdioTransportClass();
+      await this.serverInstance!.connect(stdioTransport);
+      return;
+    }
+
+    this.logger.log(`Starting HTTP MCP server on port ${this.port}`);
+
+    const httpTransport = new StreamableHttpTransportClass({
+      port: this.port,
+      host: '0.0.0.0',
+    }) as any;
+
+    await this.serverInstance!.connect(httpTransport);
   }
 
   private async handleListTools() {
@@ -367,6 +422,7 @@ async function handleConfigTools(name: string, args: Record<string, unknown>) {
 
 export async function startMcpServer(options: McpServerOptions = {}) {
   const server = new EvolithMcpServer(options);
-  await server.connect();
+  const transport = (options as any).transport || 'stdio';
+  await server.connect(transport);
   return server;
 }

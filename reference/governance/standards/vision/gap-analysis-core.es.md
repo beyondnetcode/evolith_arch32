@@ -90,9 +90,8 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 | TODO | IN PROGRESS | BLOCKED | DONE |
 |------|-------------|---------|------|
 | G-02 (ACL Jira) | - | - | G-12 (Protocolo MCP) |
-| G-03 (Phase Gates) | | | G-16 (Paridad EN/ES) |
-| G-05 (DORA Metrics) | | | |
-| G-06 (Scorecards) | | | |
+| G-05 (DORA Metrics) | | | G-16 (Paridad EN/ES) |
+| G-06 (Scorecards) | | | G-03 (Phase Gates) |
 | G-10 (SDLC Ops) | | | |
 | G-11 (Scaffold Docs) | | | |
 | G-13 (MCP Tools) | | | |
@@ -105,7 +104,7 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 |----|-------------|-------|-----------|-------------|--------|--------|
 | **G-12** | **Implementar protocolo servidor MCP (JSON-RPC stdio)** | MCP | 🔴 CRÍTICO | M (2-3 sem) | ✅ DONE | 100% |
 | G-01 | Validación arquitectura F1/F2/F3 en CLI | Core | 🟠 ALTA | M (2-3 sem) | ✅ DONE | 100% |
-| G-03 | Ejecutar transiciones de Phase Gates | Tracker | 🟠 ALTA | L (3-4 sem) | 🔵 TODO | 0% |
+| G-03 | Ejecutar transiciones de Phase Gates | CLI | 🟠 ALTA | L (3-4 sem) | ✅ DONE | 100% |
 | G-04 | Detección de Architecture Drift | Tracker | 🟠 ALTA | L (3-4 sem) | 🔵 TODO | 0% |
 | G-07 | Comando `smart-cli agents install` | CLI | 🟠 ALTA | S (1 sem) | 🔵 TODO | 0% |
 | G-08 | Camino de upgrade seguro para satélites | CLI | 🟠 ALTA | M (2-3 sem) | 🔵 TODO | 0% |

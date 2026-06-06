@@ -1,8 +1,8 @@
 <div align="center">
 
-# Evolith
+# Evolith: Progressive Architecture Reference Base
 
-### Progressive Architecture Reference Base
+> **Bilingual Navigation:** [Versión en Español](./README.es.md)
 
 [![Status](https://img.shields.io/badge/Status-Active-brightgreen?style=for-the-badge)]()
 [![Method](https://img.shields.io/badge/Method-Spec--driven_AI--DD-blueviolet?style=for-the-badge)]()

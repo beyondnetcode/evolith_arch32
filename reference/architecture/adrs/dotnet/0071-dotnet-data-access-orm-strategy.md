@@ -362,7 +362,7 @@ services.AddScoped<IAuthGraphReadService, AuthGraphQueryService>(); // Dapper �
 When Dapper is introduced for a new query, the engineer must add an entry to the bounded context's `DataAccessDecisions.md`:
 
 ```markdown
-## DA-001 — Auth Graph Projection (Dapper)
+<!-- DA-001 — Auth Graph Projection (Dapper) -->
 - **Date**: 2026-05-15
 - **Author**: @engineer
 - **Query**: `GetByUserAsync` in `AuthGraphQueryService`

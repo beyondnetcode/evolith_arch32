@@ -10,6 +10,7 @@
 * **[0064-dotnet-request-scope-observability-context](./0064-dotnet-request-scope-observability-context.md)** — scoped context propagation without IHttpContextAccessor
 * **[0065-dotnet-pii-safe-serilog-pipeline](./0065-dotnet-pii-safe-serilog-pipeline.md)** — PII masking at Serilog pipeline level
 * **[0066-dotnet-lightweight-http-idempotency](./0066-dotnet-lightweight-http-idempotency.md)** — IMemoryCache/IDistributedCache idempotency (complements ADR-0063)
+* **[0069-dotnet-grpc-service-setup-protobuf-contracts](./0069-dotnet-grpc-service-setup-protobuf-contracts.md)** — canonical .NET gRPC server setup, IHttpClientFactory clients, OTel instrumentation
 
 ---
 [Back to Upper Level](../README.md) | [Canonical Patterns](../../canonical-patterns/README.md)

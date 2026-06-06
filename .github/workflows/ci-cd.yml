@@ -52,10 +52,8 @@ jobs:
         working-directory: sdk/cli
 
       - name: Publish to npm
-        run: npm publish
+        run: npm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }} && npm publish --access public --tag beta
         working-directory: sdk/cli
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   docker:
     name: Build & Push Docker

@@ -20,7 +20,7 @@ export class ValidateCommand extends CommandRunner {
   private validator = new RulesetValidatorService();
 
   async run(passedParam: string[], options?: ValidateCommandOptions): Promise<void> {
-    p.intro(chalk.bgMagenta.white.bold(' Evolith SDK - Validación de Estándares '));
+    p.intro(' Evolith SDK - Validación de Estándares ');
 
     const satellitePath = options?.satellite || process.cwd();
     const corePath = options?.core || undefined;

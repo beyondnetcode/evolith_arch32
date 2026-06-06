@@ -19,7 +19,8 @@ If you are onboarding a new satellite repository, start here:
 1. **[Governance Rules](./governance/)** — `evolith.yaml` contract and inheritance rules
 2. **[Architecture Rules](./architecture/)** — F1/F2/F3 phase progression rules
 3. **[SDLC Rules](./sdlc/)** — Quality gates and threshold definitions
-4. **[Schemas](./schema/)** — JSON Schema for validating Evolith artifacts
+4. **[Anti-Corruption Layer Rules](./acl/)** — External system integration governance
+5. **[Schemas](./schema/)** — JSON Schema for validating Evolith artifacts
 
 ---
 
@@ -58,12 +59,16 @@ rulesets/
 │   ├── definition-of-done.rules.json     # DoD checklist
 │   ├── engineering-manifesto.rules.json  # SOLID, DRY, KISS, YAGNI
 │   └── repository-taxonomy.rules.json    # Naming, structure
+├── acl/                        # Anti-Corruption Layer rules (NEW)
+│   ├── anti-corruption-layer.rules.json  # ACL enforcement
+│   └── anti-corruption-layer.rules.es.json
 ├── sdlc/                       # SDLC gate rules
 │   ├── phase-gates.rules.json
 │   └── quality-thresholds.rules.json
 └── governance/                 # Federated governance rules
     ├── inheritance.rules.json
-    └── satellite-contracts.rules.json
+    ├── satellite-contracts.rules.json
+    └── open-core-boundary.rules.json  # Core vs Enterprise separation
 ```
 
 ---

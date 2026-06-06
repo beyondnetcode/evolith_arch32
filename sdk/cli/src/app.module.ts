@@ -14,6 +14,7 @@ import { SdlcCommand } from './commands/sdlc/sdlc.command';
 import { HandoffCommand } from './commands/sdlc/handoff.command';
 import { GenerateDomainCommand } from './commands/sdlc/generate-domain.command';
 import { ScaffoldCommand } from './commands/architecture/scaffold.command';
+import { RulesetValidatorService } from './core/validators/ruleset-validator.service';
 
 @Module({
   imports: [],
@@ -32,7 +33,8 @@ import { ScaffoldCommand } from './commands/architecture/scaffold.command';
     SdlcCommand,
     HandoffCommand,
     GenerateDomainCommand,
-    ScaffoldCommand
+    ScaffoldCommand,
+    RulesetValidatorService
   ],
 })
 export class AppModule {}

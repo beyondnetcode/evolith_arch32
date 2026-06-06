@@ -18,8 +18,9 @@ Si estás integrando un nuevo repositorio satélite, comienza aquí:
 
 1. **[Reglas de Gobernanza](./governance/)** — contrato `evolith.yaml` y reglas de herencia
 2. **[Reglas de Arquitectura](./architecture/)** — reglas de progresión de fase F1/F2/F3
-3. **[Reglas SDLC](./sdlc/)** — definitiones de quality gates y thresholds
-4. **[Schemas](./schema/)** — JSON Schema para validación de artefactos Evolith
+3. **[Reglas SDLC](./sdlc/)** — definiciónes de quality gates y thresholds
+4. **[Reglas Anti-Corrupción](./acl/)** — gobernanza de integración con sistemas externos
+5. **[Schemas](./schema/)** — JSON Schema para validación de artefactos Evolith
 
 ---
 
@@ -30,21 +31,44 @@ rulesets/
 ├── schema/                     # Definiciones de JSON Schema
 │   ├── adr.schema.json         # Validación de artefacto ADR
 │   ├── prd.schema.json         # Validación de artefacto PRD
-│   ├── functional-story.schema.json
-│   ├── technical-story.schema.json
-│   ├── test-summary-report.schema.json
-│   ├── release-notes.schema.json
-│   └── evolith-yaml.schema.json
+│   ├── discovery-canvas.schema.json     # Fase 1
+│   ├── business-case-roi.schema.json     # Fase 1
+│   ├── ballpark-estimation.schema.json   # Fase 1
+│   ├── evolith-user-story.schema.json    # Fase 1
+│   ├── agile-backlog.schema.json          # Fase 1
+│   ├── cli-impact-analysis.schema.json   # Fase 1-2
+│   ├── functional-story.schema.json      # Fase 2
+│   ├── technical-story.schema.json       # Fase 3
+│   ├── test-summary-report.schema.json   # Fase 4
+│   ├── release-notes.schema.json         # Fase 5
+│   └── evolith-yaml.schema.json  # Gobernanza satélite
 ├── architecture/               # Reglas de fase de arquitectura
 │   ├── f1-modular-monolith.rules.json
 │   ├── f2-distributed-modules.rules.json
 │   └── f3-microservices.rules.json
+├── adr/                        # Reglas encoding ADR
+│   ├── adr-0002-hexagonal-architecture.rules.json
+│   ├── adr-0005-cicd-quality-gates.rules.json
+│   ├── adr-0018-testing-pyramid.rules.json
+│   ├── adr-0032-protocol-selection.rules.json
+│   ├── adr-0040-multi-runtime.rules.json
+│   ├── adr-0050-gitflow-branching.rules.json
+│   └── adr-0010-multi-tenancy.rules.json
+├── cross-cutting/              # Reglas de baseline de compliance
+│   ├── compliance-baseline.rules.json    # 5 pilares
+│   ├── definition-of-done.rules.json     # Checklist DoD
+│   ├── engineering-manifesto.rules.json  # SOLID, DRY, KISS, YAGNI
+│   └── repository-taxonomy.rules.json    # Nomenclatura, estructura
+├── acl/                        # Reglas Anti-Corruption Layer
+│   ├── anti-corruption-layer.rules.json  # Aplicación ACL
+│   └── anti-corruption-layer.rules.es.json
 ├── sdlc/                       # Reglas de gates SDLC
 │   ├── phase-gates.rules.json
 │   └── quality-thresholds.rules.json
 └── governance/                 # Reglas de gobernanza federada
     ├── inheritance.rules.json
-    └── satellite-contracts.rules.json
+    ├── satellite-contracts.rules.json
+    └── open-core-boundary.rules.json  # Frontera Core vs Enterprise
 ```
 
 ---

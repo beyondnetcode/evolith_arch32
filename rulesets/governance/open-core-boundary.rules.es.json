@@ -1,0 +1,148 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/rulesets/governance/open-core-boundary.rules.json",
+  "title": "Reglas de Frontera Open-Core",
+  "description": "Reglas que definen la frontera entre Evolith Core (código abierto, libremente disponible) y Evolith Enterprise (SaaS, pago). Estas reglas previenen la contaminación entre capas y protegen la estrategia Open-Core.",
+  "version": "1.0.0",
+  "effectiveDate": "2026-06-06",
+  "scope": "all",
+  "category": "open-core",
+  "principles": [
+    {
+      "id": "OCB-01",
+      "principle": "Core Permanece Independiente de Licencia",
+      "statement": "Los rulesets, esquemas, ADRs y estándares de Evolith Core NO DEBEN referenciar ni depender de ninguna licencia comercial, feature flag de pago, o dependencia exclusiva de enterprise.",
+      "rationale": "Core es la fundación constitucional. Si requiere componentes comerciales, los productos satélite se vuelven dependientes de Evolith la empresa, no de Evolith el framework.",
+      "severity": "MUST",
+      "validationQuery": "Todos los rulesets, schemas y ADRs no tienen import/reference a paquetes enterprise-only, license keys, o feature flags. El análisis de código muestra cero dependencias de enterprise SDKs en artefactos Core.",
+      "blocking": true,
+      "references": [
+        "reference/governance/standards/vision/evolith-product-vision-master.es.md#5-business-strategy-open-core"
+      ]
+    },
+    {
+      "id": "OCB-02",
+      "principle": "Features Enterprise Marcadas Explícitamente",
+      "statement": "Cualquier regla, schema o artefacto que sea solo Enterprise DEBE estar explícitamente marcado con 'availability: enterprise' en su metadata. Artefactos sin marcar por defecto son Core (abierto).",
+      "rationale": "Ambigüedad sobre qué es Core vs Enterprise crea confusión de compliance. Marcado explícito asegura fronteras claras.",
+      "severity": "MUST",
+      "validationQuery": "Artefactos Enterprise incluyen campo de metadata 'availability: enterprise'. Artefactos Core omiten el campo o setean 'availability: core'. Ningún artefacto sin este campo puede ser tratado como enterprise-only.",
+      "blocking": true,
+      "references": [
+        "reference/governance/standards/vision/evolith-product-vision-master.es.md#5-business-strategy-open-core"
+      ]
+    },
+    {
+      "id": "OCB-03",
+      "principle": "ACLs Son Features Enterprise",
+      "statement": "Las implementaciones de Anti-Corruption Layer para Jira, Trello, Linear y sistemas externos similares son features Enterprise. Core provee las reglas ACL; las integraciones en sí pertenecen a Enterprise.",
+      "rationale": "Los ACLs son el vector de monetización para Evolith. Deben permanecer en la capa Enterprise para proteger el modelo de negocio mientras son gobernados por reglas Core.",
+      "severity": "MUST",
+      "validationQuery": "El código de implementación de ACL está etiquetado 'enterprise' en el repositorio. Los rulesets Core referencian requisitos ACL pero no incluyen código de implementación.",
+      "blocking": true,
+      "references": [
+        "reference/governance/standards/vision/evolith-product-vision-master.es.md#5-business-strategy-open-core"
+      ]
+    },
+    {
+      "id": "OCB-04",
+      "principle": "CLI y MCP Permanecen Core",
+      "statement": "Las implementaciones de command-line interface y MCP server DEBEN permanecer completamente abiertas en Core. No pueden estar detrás de licencias pagadas o suscripciones enterprise.",
+      "rationale": "CLI y MCP son la capa de exposición primaria para Evolith Core. Hacerlos enterprise-only bloquearía la adopción y contradiría la misión de democratización.",
+      "severity": "MUST",
+      "validationQuery": "El código fuente de CLI tiene licencia MIT o Apache 2.0. La implementación del servidor MCP no tiene chequeo de licencia en runtime. Todos los comandos CLI funcionan sin credenciales enterprise.",
+      "blocking": true,
+      "references": [
+        "reference/governance/standards/vision/evolith-product-vision-master.es.md#5-business-strategy-open-core"
+      ]
+    },
+    {
+      "id": "OCB-05",
+      "principle": "Features de Tracker No Pueden Penetrar Core",
+      "statement": "Features específicas de Evolith Tracker (SaaS dashboard, analítica avanzada, UI de gestión multi-tenancy, logs de auditoría UI) no pueden ser implementadas como reglas o estándares Core.",
+      "rationale": "Tracker es la capa comercial SaaS. Sus detalles de implementación no deben influir en las definiciones Core.",
+      "severity": "MUST",
+      "validationQuery": "Los rulesets Core no contain references a 'tracker', 'saas', 'dashboard', 'multi-tenant-ui', o conceptos similares específicos de Tracker. El namespace de reglas está limpio.",
+      "blocking": true,
+      "references": [
+        "reference/governance/standards/vision/evolith-product-vision-master.es.md#5-business-strategy-open-core"
+      ]
+    },
+    {
+      "id": "OCB-06",
+      "principle": "Reference Corpus Es Core",
+      "statement": "El Reference Corpus (ADRs, estándares, blueprints, taxonomías, rulesets, schemas) es Core y libremente disponible. No hay nivel de acceso dentro de Core (ej., 'basic' vs 'premium' standards).",
+      "rationale": "Todos los estándares son iguales en Core. Poner algunos estándares detrás de paywall fragmentaría la baseline constitucional.",
+      "severity": "MUST",
+      "validationQuery": "Todos los documentos de reference/ son públicamente accesibles. Ningún documento referencia un nivel 'premium' o 'enterprise' dentro de Core.",
+      "blocking": true,
+      "references": [
+        "reference/governance/standards/vision/evolith-product-vision-master.es.md#5-business-strategy-open-core"
+      ]
+    },
+    {
+      "id": "OCB-07",
+      "principle": "Innovaciones Enterprise Pueden Promocionar a Core",
+      "statement": "Features inicialmente desarrolladas en Evolith Enterprise (Tracker) pueden ser promocionadas a Core via el proceso estándar de ADR, siempre que beneficien al ecosistema más amplio.",
+      "rationale": "La capa enterprise es un motor de innovación. Features exitosas deben ascender a Core para beneficio universal, siguiendo el proceso de promoción de gobernanza federada.",
+      "severity": "SHOULD",
+      "validationQuery": "Features enterprise que abordan concerns arquitectónicos generales son rastreadas para promoción via revisión del Architecture Board. La promoción sigue el ciclo de vida estándar de ADR.",
+      "blocking": false,
+      "references": [
+        "reference/governance/standards/vision/evolith-product-vision-master.es.md#5-business-strategy-open-core",
+        "rulesets/governance/inheritance.rules.json"
+      ]
+    },
+    {
+      "id": "OCB-08",
+      "principle": "Core No Puede Requerir Enterprise para Funcionar",
+      "statement": "Los productos satélite deben poder implementar las reglas Core sin comprar o suscribirse a Evolith Enterprise. Las features Enterprise son aditivas, nunca bloqueantes.",
+      "rationale": "El Core debe permanecer independientemente viable. Si implementar Core requiere licencia enterprise, el modelo Open-Core colapsa.",
+      "severity": "MUST",
+      "validationQuery": "Test end-to-end ejecuta el ruleset Core contra un satélite sin credenciales enterprise. Todas las reglas Core se validan exitosamente sin integración enterprise.",
+      "blocking": true,
+      "references": [
+        "reference/governance/standards/vision/evolith-product-vision-master.es.md#5-business-strategy-open-core"
+      ]
+    }
+  ],
+  "openCoreMatrix": {
+    "description": "Separación definitiva entre features Core (abierto) y Enterprise (pagado)",
+    "core": [
+      "Constitución Core (rulesets/, reference/)",
+      "ADRs y Estándares",
+      "Interfaces CLI y MCP",
+      "JSON Schemas para todos los tipos de artefacto",
+      "Reglas de Phase Gates",
+      "Reglas de fase de arquitectura (F1/F2/F3)",
+      "Reglas de herencia de gobernanza",
+      "Engineering manifesto",
+      "Definition of Done",
+      "Repository taxonomy",
+      "Agente de Análisis de Impacto"
+    ],
+    "enterprise": [
+      "Plataforma SaaS Evolith Tracker",
+      "Dashboards y scorecards avanzados",
+      "Implementaciones ACL (Jira, Trello, Linear)",
+      "Reports ejecutivos de auditoría",
+      "Gestión UI multi-tenant",
+      "Integración de soporte prioritario",
+      "Analítica y reportería enterprise",
+      "Automación de compliance más allá de reglas Core",
+      "Gestión de permisos más allá de ACL basado en archivos"
+    ]
+  },
+  "governance": {
+    "complianceVerification": "Las reglas de frontera Open-Core son verificadas durante pre-commit via impact-analysis-synchronizer.mjs cuando cualquier ruleset es modificado.",
+    "exceptionProcess": "Revisión del Architecture Board requerida para cualquier regla que difumine la frontera Core/Enterprise. La excepción debe incluir justificación de negocio y análisis de impacto de adopción.",
+    "metrics": [
+      "opencore.enterprise-leaks.count — features enterprise encontradas en artefactos Core",
+      "opencore.core-dependencies.count — reglas Core requiriendo features enterprise"
+    ]
+  },
+  "bilingual": {
+    "en": "Open-Core Boundary Rules",
+    "es": "Reglas de Frontera Open-Core"
+  }
+}

@@ -11,6 +11,7 @@ Este registro rastrea todos los lanzamientos de documentación de producción co
 
 | Versión | Fecha | Rama | Cambios Clave | Hotfixes |
 |---------|------|--------|-------------|----------|
+| docs-v1.0.0 | 2026-06-06 | release/docs-v1.0.0 | CLI v1.0.0 release: servidor MCP con transporte HTTP, Dockerfile, publish npm, integración Docker Hub, 35 rulesets, agente de análisis de impacto | 0 |
 | docs-v1.0.2 | 2026-05-29 | hotfix/docs-v1.0.2 | README highlights: punto de entrada Comunicacion de Arquitectura y Documentacion, punto de entrada Flujo SDLC y Gobernanza de Entrega; paridad bilingüe mantenida EN/ES | 0 |
 | docs-v1.0.1 | 2026-05-29 | hotfix/docs-v1.0.1 | BMAD Agents v1.0.1: Add Docs Agent and DevOps Agent with documentation pipeline awareness, update architect/qa/sm/pm/dev agents with bilingual documentation requirements | 0 |
 | docs-v1.0.0 | 2026-05-29 | release/docs-v1.0.0 | Lanzamiento inicial de documentación de producción: herramientas bilingües, estrategia GitFlow, pipeline de validación, dashboard de cobertura, ADR-0067 modular monolith | 0 |

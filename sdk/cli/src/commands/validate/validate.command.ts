@@ -4,6 +4,7 @@ import * as chalk from 'chalk';
 import { ValidateSatelliteUseCase } from '../../application/use-cases/validate-satellite.use-case';
 import { ValidationResult } from '../../core/validators/ruleset-validator.service';
 import { logger } from '../../core/observability';
+import { OutputFormatterService, OutputFormat } from '../../infrastructure/formatters/output-formatter.service';
 
 interface ValidateCommandOptions {
   format?: string;
@@ -50,8 +51,33 @@ export class ValidateCommand extends CommandRunner {
 
     s.stop();
 
-    if (options?.format === 'json') {
+    const format = (options?.format as OutputFormat) || 'markdown';
+    const formatter = new OutputFormatterService();
+
+    if (format === 'json') {
       const output = JSON.stringify(result, null, 2);
+      if (options?.output) {
+        const fs = await import('fs-extra');
+        await fs.writeFile(options.output, output, 'utf-8');
+        p.log.success(`Reporte guardado en ${options.output}`);
+      } else {
+        console.log(output);
+      }
+    } else if (format === 'table' || format === 'yaml' || format === 'markdown') {
+      const tableData = {
+        status: result.status,
+        rulesChecked: result.rulesChecked,
+        issues: result.issues.map(i => ({
+          ruleId: i.ruleId,
+          severity: i.severity,
+          category: i.category,
+          title: i.title,
+          blocking: i.blocking ? 'YES' : 'no',
+        })),
+        coreRef: result.coreRef,
+        timestamp: result.timestamp,
+      };
+      const output = formatter.format(tableData, { format, colors: true });
       if (options?.output) {
         const fs = await import('fs-extra');
         await fs.writeFile(options.output, output, 'utf-8');
@@ -109,7 +135,7 @@ export class ValidateCommand extends CommandRunner {
 
   @Option({
     flags: '-f, --format [string]',
-    description: 'Formato de salida (json)',
+    description: 'Formato de salida (json, table, yaml, markdown)',
   })
   parseFormat(val: string): string {
     return val;

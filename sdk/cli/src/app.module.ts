@@ -16,6 +16,8 @@ import { GenerateDomainCommand } from './commands/sdlc/generate-domain.command';
 import { ScaffoldCommand } from './commands/architecture/scaffold.command';
 import { ADRCommand } from './commands/adr/adr.command';
 import { StandardsCommand } from './commands/standards/standards.command';
+import { CompletionCommand } from './commands/completion/completion.command';
+import { HistoryCommand } from './commands/history/history.command';
 
 @Module({
   imports: [],
@@ -37,6 +39,8 @@ import { StandardsCommand } from './commands/standards/standards.command';
     ScaffoldCommand,
     ADRCommand,
     StandardsCommand,
+    CompletionCommand,
+    HistoryCommand,
   ],
 })
 export class AppModule {}

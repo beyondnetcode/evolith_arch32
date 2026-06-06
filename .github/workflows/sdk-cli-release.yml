@@ -73,6 +73,7 @@ jobs:
           release-type: node
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+          release-as: 0.0.2-beta
 
       - name: Log Release Decision
         if: ${{ steps.release.outputs.cli_release_created }}

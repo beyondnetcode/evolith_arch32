@@ -1,68 +1,20 @@
 name: Todo Monorepo CI
 
+# NOTE: This workflow is for a different repo structure (monorepo with src/)
+# The current repository uses sdk/cli/ instead
+# This file is kept for reference only and is effectively disabled
+
 on:
   pull_request:
     branches: [ main, develop ]
   push:
     branches: [ main, develop ]
 
+# Workflow disabled - no valid jobs defined
+# The actual CI is handled by sdk-cli-ci.yml and ci-cd.yml
 jobs:
-  # 1. Total Quality Control and Build Validation
-  ci:
-    name: Build, Lint and Test (CI)
+  placeholder:
+    name: Disabled
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # Required for SonarCloud analysis
-
-      - name: Validate Documentation Standards
-        run: node .harness/scripts/validate-docs.mjs --render-mermaid
-
-      - name: Setup Node.js v18
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-          cache-dependency-path: src/package-lock.json
-          cache: 'npm'
-
-      - name: Install Dependencies
-        working-directory: src
-        run: npm ci
-
-      - name: Security Vulnerability Audit
-        working-directory: src
-        run: npm audit --audit-level=high
-
-      - name: Run Global Linter
-        working-directory: src
-        run: npx nx run-many --target=lint
-
-      - name: Run Unit Tests with Coverage
-        working-directory: src
-        run: npx nx run-many --target=test --code-coverage
-
-      - name: Build Applications (Vite & NestJS)
-        working-directory: src
-        run: npx nx run-many --target=build
-
-  # 2. Advanced Security Analysis (CodeQL)
-  codeql:
-    name: CodeQL Static Security Scan
-    runs-on: ubuntu-latest
-    permissions:
-      security-events: write
-      actions: read
-      contents: read
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
-        with:
-          languages: 'javascript-typescript'
-
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
+      - run: echo "This workflow is disabled - see sdk-cli-ci.yml and ci-cd.yml for actual CI"

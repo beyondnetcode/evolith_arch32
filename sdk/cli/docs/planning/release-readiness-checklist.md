@@ -74,25 +74,25 @@ These gates apply to every release regardless of phase.
 
 ### 4.1 Agent Management Commands
 
-- [ ] `evolith agent install` creates valid ruleset structure
-- [ ] `evolith agent list` shows installed agents
-- [ ] `evolith agent validate` validates agent ruleset
-- [ ] `evolith agent upgrade` handles version upgrades
-- [ ] `evolith agent remove` cleanly removes agent
+- [ ] `smart-cli agent install` creates valid ruleset structure
+- [ ] `smart-cli agent list` shows installed agents
+- [ ] `smart-cli agent validate` validates agent ruleset
+- [ ] `smart-cli agent upgrade` handles version upgrades
+- [ ] `smart-cli agent remove` cleanly removes agent
 
 ### 4.2 Architecture Validation
 
-- [ ] `evolith architecture validate` checks F1 modular independence
-- [ ] `evolith architecture validate` checks F2 contract boundaries
-- [ ] `evolith architecture validate` checks F3 extraction readiness
+- [ ] `smart-cli architecture validate` checks F1 modular independence
+- [ ] `smart-cli architecture validate` checks F2 contract boundaries
+- [ ] `smart-cli architecture validate` checks F3 extraction readiness
 - [ ] Validation output includes specific rule violations with codes
 
 ### 4.3 SDLC Operations
 
-- [ ] `evolith sdlc handoff` generates artifact manifest
-- [ ] `evolith sdlc handoff` validates phase gate requirements
-- [ ] `evolith sdlc status` shows current phase gate status
-- [ ] `evolith sdlc advance` triggers phase transition (if authorized)
+- [ ] `smart-cli sdlc handoff` generates artifact manifest
+- [ ] `smart-cli sdlc handoff` validates phase gate requirements
+- [ ] `smart-cli sdlc status` shows current phase gate status
+- [ ] `smart-cli sdlc advance` triggers phase transition (if authorized)
 
 ---
 
@@ -100,7 +100,7 @@ These gates apply to every release regardless of phase.
 
 ### 5.1 MCP Server Core
 
-- [ ] MCP server starts via `evolith mcp` command
+- [ ] MCP server starts via `smart-cli mcp` command
 - [ ] JSON-RPC 2.0 compliance verified
 - [ ] StdioServerTransport implemented correctly
 - [ ] Server responds to `initialize` request

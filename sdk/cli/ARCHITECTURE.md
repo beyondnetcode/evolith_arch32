@@ -1,8 +1,8 @@
-# Evolith CLI Architecture
+# Evolith Smart CLI Architecture
 
 ## Overview
 
-The Evolith CLI is a NestJS-based command-line application that provides governance, standards validation, and tool selection capabilities for satellite repositories. It follows Clean Architecture principles with clear separation of concerns.
+The Evolith Smart CLI is a NestJS-based command-line application that provides governance, standards validation, and tool selection capabilities for satellite repositories. It follows Clean Architecture principles with clear separation of concerns.
 
 ## Architecture Layers
 

@@ -176,7 +176,7 @@ interface SDLCService {
 ### 3.1 Command Structure
 
 ```
-evolith <domain> <action> [options]
+smart-cli <domain> <action> [options]
 
 Domains:
   core        - Core information and management

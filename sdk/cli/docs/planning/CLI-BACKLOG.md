@@ -19,9 +19,9 @@ This backlog tracks all improvements, gaps, and feature requests for the Evolith
 
 **Expected Behavior:**
 ```bash
-evolith <TAB>          # → validate adr standards agents sdlc init mcp
-evolith validate --<TAB>  # → --satellite --core --format --output --ruleset
-evolith adr <TAB>      # → create list get update matrix
+smart-cli <TAB>          # → validate adr standards agents sdlc init mcp
+smart-cli validate --<TAB>  # → --satellite --core --format --output --ruleset
+smart-cli adr <TAB>      # → create list get update matrix
 ```
 
 **References:**
@@ -43,9 +43,9 @@ evolith adr <TAB>      # → create list get update matrix
 
 **Expected Behavior:**
 ```bash
-evolith history list         # List recent commands
-evolith history show <id>    # Show command details
-evolith history clear        # Clear history
+smart-cli history list         # List recent commands
+smart-cli history show <id>    # Show command details
+smart-cli history clear        # Clear history
 ```
 
 **References:**
@@ -64,8 +64,8 @@ evolith history clear        # Clear history
 
 **Expected Behavior:**
 ```bash
-evolith validate --output table  # Human-readable table
-evolith adr list --format yaml   # YAML output for pipelines
+smart-cli validate --output table  # Human-readable table
+smart-cli adr list --format yaml   # YAML output for pipelines
 ```
 
 **References:**
@@ -88,9 +88,9 @@ evolith adr list --format yaml   # YAML output for pipelines
 
 **Expected Behavior:**
 ```bash
-evolith config --profile production set coreRef.version "1.0.0"
-evolith validate --profile production
-EVOLITH_PROFILE=staging evolith validate
+smart-cli config --profile production set coreRef.version "1.0.0"
+smart-cli validate --profile production
+EVOLITH_PROFILE=staging smart-cli validate
 ```
 
 **References:**
@@ -109,10 +109,10 @@ EVOLITH_PROFILE=staging evolith validate
 
 **Expected Behavior:**
 ```bash
-evolith ext install evolith/adr-generator
-evolith ext list
-evolith ext uninstall adr-generator
-evolith ext update
+smart-cli ext install smart-cli/adr-generator
+smart-cli ext list
+smart-cli ext uninstall adr-generator
+smart-cli ext update
 ```
 
 **References:**
@@ -131,9 +131,9 @@ evolith ext update
 
 **Expected Behavior:**
 ```bash
-evolith auth login --sso --provider okta
-evolith auth status
-evolith auth logout
+smart-cli auth login --sso --provider okta
+smart-cli auth status
+smart-cli auth logout
 ```
 
 **References:**
@@ -154,10 +154,10 @@ evolith auth logout
 
 **Expected Behavior:**
 ```bash
-evolith browse              # Opens docs in browser
-evolith commands list       # Lists all commands with descriptions
-evolith commands search validate  # Search for commands
-evolith <command> --help    # Better contextual help
+smart-cli browse              # Opens docs in browser
+smart-cli commands list       # Lists all commands with descriptions
+smart-cli commands search validate  # Search for commands
+smart-cli <command> --help    # Better contextual help
 ```
 
 **References:**
@@ -175,9 +175,9 @@ evolith <command> --help    # Better contextual help
 
 **Expected Behavior:**
 ```bash
-evolith update              # Check and install updates
-evolith version             # Show current version
-# On startup: "A new version (1.2.0) is available. Run 'evolith update'"
+smart-cli update              # Check and install updates
+smart-cli version             # Show current version
+# On startup: "A new version (1.2.0) is available. Run 'smart-cli update'"
 ```
 
 **References:**
@@ -196,9 +196,9 @@ evolith version             # Show current version
 
 **Expected Behavior:**
 ```bash
-evolith validate --verbose  # Show real-time progress
+smart-cli validate --verbose  # Show real-time progress
 # Output:
-# [1/5] Checking evolith.yaml...
+# [1/5] Checking smart-cli.yaml...
 # [2/5] Validating ADR registry...
 # [3/5] Running ACL checks...
 # [4/5] Validating architecture...
@@ -221,15 +221,15 @@ evolith validate --verbose  # Show real-time progress
 **Expected Behavior:**
 ```bash
 # Current (flat)
-evolith adr create
-evolith adr list
+smart-cli adr create
+smart-cli adr list
 
 # Desired (nested)
-evolith adr status list
-evolith adr status get <id>
-evolith validate ruleset list
-evolith validate ruleset acl detail
-evolith validate ruleset open-core check
+smart-cli adr status list
+smart-cli adr status get <id>
+smart-cli validate ruleset list
+smart-cli validate ruleset acl detail
+smart-cli validate ruleset open-core check
 ```
 
 **References:**
@@ -250,9 +250,9 @@ evolith validate ruleset open-core check
 
 **Expected Behavior:**
 ```bash
-brew install evolith/tap/cli
-apt install evolith-cli
-yum install evolith-cli
+brew install smart-cli/tap/cli
+apt install smart-cli-cli
+yum install smart-cli-cli
 winget install Evolith.CLI
 ```
 
@@ -270,9 +270,9 @@ winget install Evolith.CLI
 
 **Expected Behavior:**
 ```bash
-docker run evolith/cli validate --satellite /repo
+docker run smart-cli/cli validate --satellite /repo
 # In CI/CD
-docker pull evolith/cli:latest
+docker pull smart-cli/cli:latest
 ```
 
 **References:**
@@ -293,10 +293,10 @@ docker pull evolith/cli:latest
 
 **Expected Behavior:**
 ```bash
-evolith alias set validate v
-evolith alias set "adr create" adr-new
-evolith alias list
-evolith alias delete validate
+smart-cli alias set validate v
+smart-cli alias set "adr create" adr-new
+smart-cli alias list
+smart-cli alias delete validate
 ```
 
 **References:**
@@ -314,7 +314,7 @@ evolith alias delete validate
 
 **Expected Behavior:**
 ```bash
-evolith init --wizard  # Interactive setup wizard
+smart-cli init --wizard  # Interactive setup wizard
 # Step 1: Select runtime
 # Step 2: Configure core path
 # Step 3: Set governance version
@@ -337,9 +337,9 @@ evolith init --wizard  # Interactive setup wizard
 
 **Expected Behavior:**
 ```bash
-evolith fixture generate  # Generate sample evolith.yaml
-evolith fixture list      # List available fixtures
-evolith fixture apply sample-project  # Apply fixture to current dir
+smart-cli fixture generate  # Generate sample smart-cli.yaml
+smart-cli fixture list      # List available fixtures
+smart-cli fixture apply sample-project  # Apply fixture to current dir
 ```
 
 **References:**
@@ -359,7 +359,7 @@ evolith fixture apply sample-project  # Apply fixture to current dir
 **Expected Behavior:**
 ```bash
 # In .bashrc/.zshrc
-eval "$(evolith init --shell)"  # Adds custom prompt info
+eval "$(smart-cli init --shell)"  # Adds custom prompt info
 # Shows current phase in prompt: [phase-2] my-project $
 ```
 
@@ -522,7 +522,7 @@ The following items are prioritized for making the CLI consumable by users and A
 **Description:** 5-minute quickstart for new users.
 
 **Expected:**
-- Create evolith.yaml example
+- Create smart-cli.yaml example
 - Run first validation
 - Install first agent
 - Generate first ADR

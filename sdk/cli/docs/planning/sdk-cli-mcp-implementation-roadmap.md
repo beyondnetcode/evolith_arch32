@@ -72,7 +72,7 @@ Complete CLI command implementations, replacing stubs with real logic.
 - Real E2E tests with assertions
 
 ### Quality Gate
-- `evolith validate --all` passes on Core
+- `smart-cli validate --all` passes on Core
 - E2E tests for all commands
 
 ---

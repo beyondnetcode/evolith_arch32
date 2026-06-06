@@ -8,7 +8,7 @@
 
 ## 1. Command Syntax
 
-All commands follow: `evolith <domain> <action> [options]`
+All commands follow: `smart-cli <domain> <action> [options]`
 
 ### Global Options (all commands)
 
@@ -27,403 +27,403 @@ All commands follow: `evolith <domain> <action> [options]`
 
 ## 2. General Commands
 
-### `evolith version`
+### `smart-cli version`
 **Purpose:** Show CLI version and Core compatibility
 ```bash
-evolith version
-# Output: @evolith/cli v1.1.0 | Core v1.0.0 | SDK v1.0.0
+smart-cli version
+# Output: @smart-cli/cli v1.1.0 | Core v1.0.0 | SDK v1.0.0
 ```
 
-### `evolith help [command]`
+### `smart-cli help [command]`
 **Purpose:** Show help for CLI or specific command
 ```bash
-evolith help validate
+smart-cli help validate
 ```
 
-### `evolith doctor`
+### `smart-cli doctor`
 **Purpose:** Check CLI health and configuration
 ```bash
-evolith doctor
+smart-cli doctor
 # Checks: Node version, Core presence, config validity, network
 ```
 
-### `evolith info`
+### `smart-cli info`
 **Purpose:** Show CLI capabilities and configured Core
 ```bash
-evolith info
+smart-cli info
 ```
 
 ---
 
 ## 3. Core Commands
 
-### `evolith core info`
+### `smart-cli core info`
 **Purpose:** Show Core metadata
 ```bash
-evolith core info [--core <path>]
+smart-cli core info [--core <path>]
 ```
 
-### `evolith core validate`
+### `smart-cli core validate`
 **Purpose:** Validate Core integrity
 ```bash
-evolith core validate [--core <path>]
+smart-cli core validate [--core <path>]
 ```
 
-### `evolith core update`
+### `smart-cli core update`
 **Purpose:** Check for and apply Core updates
 ```bash
-evolith core update [--core <path>] [--force]
+smart-cli core update [--core <path>] [--force]
 ```
 
-### `evolith core search <query>`
+### `smart-cli core search <query>`
 **Purpose:** Search Core content
 ```bash
-evolith core search "hexagonal architecture"
+smart-cli core search "hexagonal architecture"
 ```
 
-### `evolith core index`
+### `smart-cli core index`
 **Purpose:** Show full Core index
 ```bash
-evolith core index [--format json]
+smart-cli core index [--format json]
 ```
 
 ---
 
 ## 4. Ruleset Commands
 
-### `evolith ruleset list`
+### `smart-cli ruleset list`
 **Purpose:** List all available rulesets
 ```bash
-evolith ruleset list [--category <category>]
+smart-cli ruleset list [--category <category>]
 # Categories: architecture, sdlc, governance, adr, cross-cutting, acl
 ```
 
-### `evolith ruleset show <rulesetId>`
+### `smart-cli ruleset show <rulesetId>`
 **Purpose:** Show ruleset details
 ```bash
-evolith ruleset show adr-0002
-evolith ruleset show inheritance
+smart-cli ruleset show adr-0002
+smart-cli ruleset show inheritance
 ```
 
-### `evolith ruleset validate`
+### `smart-cli ruleset validate`
 **Purpose:** Validate satellite against rulesets
 ```bash
-evolith ruleset validate [--satellite <path>] [--ruleset <id>]
+smart-cli ruleset validate [--satellite <path>] [--ruleset <id>]
 ```
 
-### `evolith ruleset explain <ruleId>`
+### `smart-cli ruleset explain <ruleId>`
 **Purpose:** Explain a rule's intent and validation
 ```bash
-evolith ruleset explain HXA-01
+smart-cli ruleset explain HXA-01
 ```
 
-### `evolith ruleset dependencies <rulesetId>`
+### `smart-cli ruleset dependencies <rulesetId>`
 **Purpose:** Show ruleset dependencies
 ```bash
-evolith ruleset dependencies adr-0002
+smart-cli ruleset dependencies adr-0002
 ```
 
 ---
 
 ## 5. Validate Commands
 
-### `evolith validate project`
+### `smart-cli validate project`
 **Purpose:** Validate entire satellite project
 ```bash
-evolith validate project [--satellite <path>] [--format json]
+smart-cli validate project [--satellite <path>] [--format json]
 ```
 **Uses:** All applicable rulesets
 
-### `evolith validate architecture`
+### `smart-cli validate architecture`
 **Purpose:** Validate architecture rules (F1/F2/F3)
 ```bash
-evolith validate architecture [--satellite <path>]
+smart-cli validate architecture [--satellite <path>]
 ```
 **Uses:** f1-modular-monolith, f2-distributed-modules, f3-microservices
 
-### `evolith validate sdlc`
+### `smart-cli validate sdlc`
 **Purpose:** Validate SDLC rules
 ```bash
-evolith validate sdlc [--satellite <path>]
+smart-cli validate sdlc [--satellite <path>]
 ```
 **Uses:** phase-gates, quality-thresholds
 
-### `evolith validate all`
+### `smart-cli validate all`
 **Purpose:** Validate against all rulesets
 ```bash
-evolith validate all [--satellite <path>]
+smart-cli validate all [--satellite <path>]
 ```
 
 ---
 
 ## 6. Artifact Commands
 
-### `evolith artifact list`
+### `smart-cli artifact list`
 **Purpose:** List available artifact templates
 ```bash
-evolith artifact list [--phase <1-5>]
+smart-cli artifact list [--phase <1-5>]
 ```
 
-### `evolith artifact show <templateId>`
+### `smart-cli artifact show <templateId>`
 **Purpose:** Show artifact template details
 ```bash
-evolith artifact show functional-story
+smart-cli artifact show functional-story
 ```
 
-### `evolith artifact generate`
+### `smart-cli artifact generate`
 **Purpose:** Generate artifact from template
 ```bash
-evolith artifact generate <templateId> [--context <json>] [--output <path>]
+smart-cli artifact generate <templateId> [--context <json>] [--output <path>]
 ```
 
-### `evolith artifact validate <file>`
+### `smart-cli artifact validate <file>`
 **Purpose:** Validate artifact against schema
 ```bash
-evolith artifact validate ./docs/user-story.md
+smart-cli artifact validate ./docs/user-story.md
 ```
 
-### `evolith artifact trace <artifactId>`
+### `smart-cli artifact trace <artifactId>`
 **Purpose:** Show artifact traceability
 ```bash
-evolith artifact trace US-001
+smart-cli artifact trace US-001
 ```
 
 ---
 
 ## 7. SDLC Commands
 
-### `evolith sdlc status`
+### `smart-cli sdlc status`
 **Purpose:** Show current SDLC status
 ```bash
-evolith sdlc status [--satellite <path>]
+smart-cli sdlc status [--satellite <path>]
 ```
 
-### `evolith sdlc next`
+### `smart-cli sdlc next`
 **Purpose:** Show next action in SDLC
 ```bash
-evolith sdlc next [--satellite <path>]
+smart-cli sdlc next [--satellite <path>]
 ```
 
-### `evolith sdlc report`
+### `smart-cli sdlc report`
 **Purpose:** Generate SDLC report
 ```bash
-evolith sdlc report [--satellite <path>] [--format json] [--output <path>]
+smart-cli sdlc report [--satellite <path>] [--format json] [--output <path>]
 ```
 
 ---
 
 ## 8. Gate Commands
 
-### `evolith gate list`
+### `smart-cli gate list`
 **Purpose:** List all phase gates
 ```bash
-evolith gate list [--phase <1-5>]
+smart-cli gate list [--phase <1-5>]
 ```
 
-### `evolith gate status <phase> <gate>`
+### `smart-cli gate status <phase> <gate>`
 **Purpose:** Show gate status
 ```bash
-evolith gate status 3 2  # Phase 3, Gate 2 (Successful Build)
+smart-cli gate status 3 2  # Phase 3, Gate 2 (Successful Build)
 ```
 
-### `evolith gate validate <phase> <gate>`
+### `smart-cli gate validate <phase> <gate>`
 **Purpose:** Validate gate requirements
 ```bash
-evolith gate validate 3 2 [--satellite <path>]
+smart-cli gate validate 3 2 [--satellite <path>]
 ```
 
-### `evolith gate evidence <phase> <gate>`
+### `smart-cli gate evidence <phase> <gate>`
 **Purpose:** Show gate evidence
 ```bash
-evolith gate evidence 3 2 [--satellite <path>]
+smart-cli gate evidence 3 2 [--satellite <path>]
 ```
 
 ---
 
 ## 9. ADR Commands
 
-### `evolith adr list`
+### `smart-cli adr list`
 **Purpose:** List ADRs
 ```bash
-evolith adr list [--status <status>] [--runtime <runtime>]
+smart-cli adr list [--status <status>] [--runtime <runtime>]
 # Status: proposed, accepted, deprecated, superseded
 # Runtime: core, nodejs, dotnet
 ```
 
-### `evolith adr show <adrId>`
+### `smart-cli adr show <adrId>`
 **Purpose:** Show ADR details
 ```bash
-evolith adr show ADR-0002
+smart-cli adr show ADR-0002
 ```
 
-### `evolith adr search <query>`
+### `smart-cli adr search <query>`
 **Purpose:** Search ADRs
 ```bash
-evolith adr search "hexagonal"
+smart-cli adr search "hexagonal"
 ```
 
-### `evolith adr create`
+### `smart-cli adr create`
 **Purpose:** Create new ADR (interactive)
 ```bash
-evolith adr create [--context <json>]
+smart-cli adr create [--context <json>]
 ```
 
-### `evolith adr validate <file>`
+### `smart-cli adr validate <file>`
 **Purpose:** Validate ADR against schema
 ```bash
-evolith adr validate ./docs/adr/my-decision.md
+smart-cli adr validate ./docs/adr/my-decision.md
 ```
 
-### `evolith adr dependencies <adrId>`
+### `smart-cli adr dependencies <adrId>`
 **Purpose:** Show ADR dependencies
 ```bash
-evolith adr dependencies ADR-0018
+smart-cli adr dependencies ADR-0018
 ```
 
 ---
 
 ## 10. Agent Commands
 
-### `evolith agent list`
+### `smart-cli agent list`
 **Purpose:** List available agents
 ```bash
-evolith agent list
+smart-cli agent list
 ```
 
-### `evolith agent show <agentId>`
+### `smart-cli agent show <agentId>`
 **Purpose:** Show agent capabilities
 ```bash
-evolith agent show @architect
+smart-cli agent show @architect
 ```
 
-### `evolith agent install [--agents <names>]`
+### `smart-cli agent install [--agents <names>]`
 **Purpose:** Install agents to satellite
 ```bash
-evolith agent install --agents @po,@architect --satellite <path>
+smart-cli agent install --agents @po,@architect --satellite <path>
 ```
 
-### `evolith agent validate`
+### `smart-cli agent validate`
 **Purpose:** Validate agent configuration
 ```bash
-evolith agent validate [--satellite <path>]
+smart-cli agent validate [--satellite <path>]
 ```
 
 ---
 
 ## 11. Architecture Commands
 
-### `evolith architecture list`
+### `smart-cli architecture list`
 **Purpose:** List architecture phases
 ```bash
-evolith architecture list
+smart-cli architecture list
 ```
 
-### `evolith architecture show <phase>`
+### `smart-cli architecture show <phase>`
 **Purpose:** Show phase details
 ```bash
-evolith architecture show F1
+smart-cli architecture show F1
 ```
 
-### `evolith architecture initialize`
+### `smart-cli architecture initialize`
 **Purpose:** Initialize architecture for satellite
 ```bash
-evolith architecture initialize F1 [--satellite <path>]
+smart-cli architecture initialize F1 [--satellite <path>]
 ```
 
-### `evolith architecture validate`
+### `smart-cli architecture validate`
 **Purpose:** Validate against current phase rules
 ```bash
-evolith architecture validate [--satellite <path>]
+smart-cli architecture validate [--satellite <path>]
 ```
 
-### `evolith architecture drift`
+### `smart-cli architecture drift`
 **Purpose:** Detect architectural drift
 ```bash
-evolith architecture drift [--satellite <path>]
+smart-cli architecture drift [--satellite <path>]
 ```
 
-### `evolith architecture report`
+### `smart-cli architecture report`
 **Purpose:** Generate architecture report
 ```bash
-evolith architecture report [--satellite <path>] [--format json]
+smart-cli architecture report [--satellite <path>] [--format json]
 ```
 
 ---
 
 ## 12. Scaffold Commands
 
-### `evolith scaffold project`
+### `smart-cli scaffold project`
 **Purpose:** Scaffold new satellite project
 ```bash
-evolith scaffold project --name <name> --type <type> [--phase F1|F2|F3]
+smart-cli scaffold project --name <name> --type <type> [--phase F1|F2|F3]
 ```
 
-### `evolith scaffold domain`
+### `smart-cli scaffold domain`
 **Purpose:** Scaffold new domain
 ```bash
-evolith scaffold domain --name <name> --bounded-context <context>
+smart-cli scaffold domain --name <name> --bounded-context <context>
 ```
 
-### `evolith scaffold workspace`
+### `smart-cli scaffold workspace`
 **Purpose:** Scaffold Nx workspace
 ```bash
-evolith scaffold workspace --frontend <react|angular> --orm <prisma|typeorm>
+smart-cli scaffold workspace --frontend <react|angular> --orm <prisma|typeorm>
 ```
 
 ---
 
 ## 13. Evidence Commands
 
-### `evolith evidence list`
+### `smart-cli evidence list`
 **Purpose:** List collected evidence
 ```bash
-evolith evidence list [--scope <scope>]
+smart-cli evidence list [--scope <scope>]
 ```
 
-### `evolith evidence collect`
+### `smart-cli evidence collect`
 **Purpose:** Collect evidence for compliance
 ```bash
-evolith evidence collect [--satellite <path>] [--scope <scope>]
+smart-cli evidence collect [--satellite <path>] [--scope <scope>]
 ```
 
-### `evolith evidence validate`
+### `smart-cli evidence validate`
 **Purpose:** Validate evidence completeness
 ```bash
-evolith evidence validate [--satellite <path>]
+smart-cli evidence validate [--satellite <path>]
 ```
 
-### `evolith evidence export`
+### `smart-cli evidence export`
 **Purpose:** Export evidence report
 ```bash
-evolith evidence export --format <sarif|json|markdown> --output <path>
+smart-cli evidence export --format <sarif|json|markdown> --output <path>
 ```
 
 ---
 
 ## 14. Report Commands
 
-### `evolith report compliance`
+### `smart-cli report compliance`
 **Purpose:** Generate compliance report
 ```bash
-evolith report compliance [--satellite <path>] [--format json]
+smart-cli report compliance [--satellite <path>] [--format json]
 ```
 
-### `evolith report coverage`
+### `smart-cli report coverage`
 **Purpose:** Generate coverage report
 ```bash
-evolith report coverage [--satellite <path>]
+smart-cli report coverage [--satellite <path>]
 ```
 
-### `evolith report drift`
+### `smart-cli report drift`
 **Purpose:** Generate drift report
 ```bash
-evolith report drift [--satellite <path>]
+smart-cli report drift [--satellite <path>]
 ```
 
-### `evolith report executive`
+### `smart-cli report executive`
 **Purpose:** Generate executive summary (DORA+SPACE)
 ```bash
-evolith report executive [--satellite <path>] [--format json]
+smart-cli report executive [--satellite <path>] [--format json]
 ```
 
 ---

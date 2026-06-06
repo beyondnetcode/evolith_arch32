@@ -23,15 +23,15 @@ Para un CLI que se distribuirá vía NPM y binarios autónomos (NuGet/pkg), llev
 ## Execution Modes
 
 El CLI soportará múltiples formas de ejecución para adaptarse al entorno del usuario:
-1. **Global (NPM):** `npm install -g @evolith/cli` permitiendo usar `evolith init` en cualquier directorio.
-2. **Npx (On-demand):** `npx @evolith/cli init` para asegurar usar siempre la última versión sin instalarla globalmente.
+1. **Global (NPM):** `npm install -g @evolith/smart-cli` permitiendo usar `smart-cli init` en cualquier directorio.
+2. **Npx (On-demand):** `npx @evolith/smart-cli init` para asegurar usar siempre la última versión sin instalarla globalmente.
 3. **Local/Script:** Ejecución desde el paquete local clonado (`npm run cli -- init`) útil para desarrollo del propio SDK.
-4. **Daemon Service:** Ejecución en segundo plano persistente (`evolith daemon start`).
+4. **Daemon Service:** Ejecución en segundo plano persistente (`smart-cli daemon start`).
 
 ## Template Management & Synchronization
 
 Las plantillas vivirán dentro de `sdk/cli/templates/` para asegurar que el paquete distribuido (NPM) sea autocontenido y portable.
-**Mecanismo de sincronización:** Se desarrollará un script interno/comando (`evolith internal sync-templates`) que se ejecutará en tiempo de compilación o mediante un Hook de Git. Este script copiará los archivos oficiales de `.harness/` y `reference/` hacia `sdk/cli/templates/`, garantizando que el CLI siempre se empaquete con la última versión de los estándares de Evolith sin obligar al usuario a hacer mantenimiento manual.
+**Mecanismo de sincronización:** Se desarrollará un script interno/comando (`smart-cli internal sync-templates`) que se ejecutará en tiempo de compilación o mediante un Hook de Git. Este script copiará los archivos oficiales de `.harness/` y `reference/` hacia `sdk/cli/templates/`, garantizando que el CLI siempre se empaquete con la última versión de los estándares de Evolith sin obligar al usuario a hacer mantenimiento manual.
 
 ## Características "Premium" del CLI
 1. **Terminal UI (TUI) Moderna:** Uso de `@clack/prompts` para el modo interactivo (tipo *stepper*, similar a SvelteKit) y `ora` para indicadores de carga rápidos y limpios.
@@ -39,13 +39,13 @@ Las plantillas vivirán dentro de `sdk/cli/templates/` para asegurar que el paqu
 3. **Idempotencia:** Ejecutar el comando múltiples veces generará el mismo resultado esperado. El CLI saltará (`[SKIP]`) las configuraciones que ya estén aplicadas según el estándar.
 4. **Auto-Update Notifications:** Al finalizar la ejecución, el CLI verificará asíncronamente en NPM si existe una nueva versión y sugerirá la actualización.
 5. **Telemetría Opt-In:** Se recopilarán datos básicos de uso de comandos (completamente anónimo y desactivable) para medir la adopción en la organización.
-6. **Reportes de Auditoría (CI/CD Gates):** El comando `evolith validate` soportará `--format json` para generar reportes estructurados que permitan a los pipelines de los satélites bloquear o aprobar _Pull Requests_ en base a las métricas de gobernanza.
-7. **Git Hooks Automáticos:** Durante la inicialización (`evolith init`), el CLI configurará **Husky** en el repositorio satélite para asegurar validaciones _pre-commit_ (paridad bilingüe, anclas, diagramas) directamente en la máquina del desarrollador.
+6. **Reportes de Auditoría (CI/CD Gates):** El comando `smart-cli validate` soportará `--format json` para generar reportes estructurados que permitan a los pipelines de los satélites bloquear o aprobar _Pull Requests_ en base a las métricas de gobernanza.
+7. **Git Hooks Automáticos:** Durante la inicialización (`smart-cli init`), el CLI configurará **Husky** en el repositorio satélite para asegurar validaciones _pre-commit_ (paridad bilingüe, anclas, diagramas) directamente en la máquina del desarrollador.
 
 ## CI/CD Pipeline & GitHub Releases
 Se configurará un pipeline completo de GitHub Actions (`.github/workflows/sdk-cli-release.yml`) encargado de:
 - **Automatizar Changelogs:** Generación automática de *Release Notes* basada en Conventional Commits (usando herramientas como `release-please` o `standard-version`).
-- **NPM & NuGet Publishing:** Publicar automáticamente el paquete `@evolith/cli` a NPM, y empaquetar una distribución binaria usando `pkg` para distribuirlo opcionalmente vía NuGet u otros repositorios de binarios internos.
+- **NPM & NuGet Publishing:** Publicar automáticamente el paquete `@evolith/smart-cli` a NPM, y empaquetar una distribución binaria usando `pkg` para distribuirlo opcionalmente vía NuGet u otros repositorios de binarios internos.
 - **GitHub Releases:** Etiquetar y publicar la versión en la pestaña de Releases de GitHub.
 
 ## Proposed Changes
@@ -72,7 +72,7 @@ Punto de entrada ejecutable del CLI usando `CommandFactory` de NestJS.
 Módulo raíz que importa los sub-módulos (Commands, Daemon, Database, Utils).
 
 #### [NEW] /sdk/cli/src/commands/init.command.ts
-Comando `evolith init` implementado como un Command de NestJS. Maneja modo interactivo y batch.
+Comando `smart-cli init` implementado como un Command de NestJS. Maneja modo interactivo y batch.
 
 #### [NEW] /sdk/cli/src/commands/agents.command.ts
 #### [NEW] /sdk/cli/src/commands/validate.command.ts
@@ -129,6 +129,6 @@ Se agregarán los enlaces directos y resaltados apuntando a la documentación of
 - Se verificará que el CLI pueda ser invocado (ej. `node ./bin/evolith.js --help`).
 
 ### Manual Verification
-- Ejecutar `evolith init` en una carpeta de prueba interactiva y validar el `setup-report.md` generado.
-- Ejecutar `evolith init --config evolith.setup.json` con un archivo de prueba para comprobar el modo desatendido.
+- Ejecutar `smart-cli init` en una carpeta de prueba interactiva y validar el `setup-report.md` generado.
+- Ejecutar `smart-cli init --config evolith.setup.json` con un archivo de prueba para comprobar el modo desatendido.
 - Verificar que los archivos generados en la carpeta de prueba incluyan `README.md`, `AGENTS.md` y estructura de directorios acorde a los estándares Evolith.

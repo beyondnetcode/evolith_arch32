@@ -9,8 +9,8 @@ This backlog tracks all improvements, gaps, and feature requests for the Evolith
 ## GAPS CRÍTICOS
 
 ### GAP-001: Shell Autocomplete
-**Status:** ✅ Implemented
-**Priority:** 🔴 High
+**Status:** [DONE] Implemented
+**Priority:** [HIGH] High
 **Phase:** 1
 **Created:** 2026-06-06
 **Completed:** 2026-06-06
@@ -33,8 +33,8 @@ evolith adr <TAB>      # → create list get update matrix
 ---
 
 ### GAP-002: Command History
-**Status:** ✅ Implemented
-**Priority:** 🔴 High
+**Status:** [DONE] Implemented
+**Priority:** [HIGH] High
 **Phase:** 1
 **Created:** 2026-06-06
 **Completed:** 2026-06-06
@@ -54,8 +54,8 @@ evolith history clear        # Clear history
 ---
 
 ### GAP-003: Table/YAML Output Formats
-**Status:** ✅ Implemented
-**Priority:** 🔴 High
+**Status:** [DONE] Implemented
+**Priority:** [HIGH] High
 **Phase:** 1
 **Created:** 2026-06-06
 **Completed:** 2026-06-06
@@ -79,8 +79,8 @@ evolith adr list --format yaml   # YAML output for pipelines
 ## ENTERPRISE READINESS
 
 ### GAP-004: Multiple Profiles
-**Status:** 🟡 Pending
-**Priority:** 🔴 High
+**Status:** [MEDIUM] Pending
+**Priority:** [HIGH] High
 **Phase:** 2
 **Created:** 2026-06-06
 
@@ -100,8 +100,8 @@ EVOLITH_PROFILE=staging evolith validate
 ---
 
 ### GAP-005: Extension/Plugin System
-**Status:** 🟡 Pending
-**Priority:** 🔴 High
+**Status:** [MEDIUM] Pending
+**Priority:** [HIGH] High
 **Phase:** 2
 **Created:** 2026-06-06
 
@@ -122,8 +122,8 @@ evolith ext update
 ---
 
 ### GAP-006: SSO/SAML Authentication
-**Status:** 🟡 Pending
-**Priority:** 🔴 High
+**Status:** [MEDIUM] Pending
+**Priority:** [HIGH] High
 **Phase:** 2
 **Created:** 2026-06-06
 
@@ -145,8 +145,8 @@ evolith auth logout
 ## DEVELOPER EXPERIENCE
 
 ### GAP-007: API Browser/Explorer
-**Status:** 🟡 Pending
-**Priority:** 🟡 Medium
+**Status:** [MEDIUM] Pending
+**Priority:** [MEDIUM] Medium
 **Phase:** 3
 **Created:** 2026-06-06
 
@@ -166,8 +166,8 @@ evolith <command> --help    # Better contextual help
 ---
 
 ### GAP-008: Auto-Update Mechanism
-**Status:** 🟡 Pending
-**Priority:** 🟡 Medium
+**Status:** [MEDIUM] Pending
+**Priority:** [MEDIUM] Medium
 **Phase:** 3
 **Created:** 2026-06-06
 
@@ -187,8 +187,8 @@ evolith version             # Show current version
 ---
 
 ### GAP-009: Real-time Progress/Streaming
-**Status:** 🟡 Pending
-**Priority:** 🟡 Medium
+**Status:** [MEDIUM] Pending
+**Priority:** [MEDIUM] Medium
 **Phase:** 3
 **Created:** 2026-06-06
 
@@ -211,8 +211,8 @@ evolith validate --verbose  # Show real-time progress
 ---
 
 ### GAP-010: Subcommand Depth
-**Status:** 🟡 Pending
-**Priority:** 🟡 Medium
+**Status:** [MEDIUM] Pending
+**Priority:** [MEDIUM] Medium
 **Phase:** 3
 **Created:** 2026-06-06
 
@@ -241,8 +241,8 @@ evolith validate ruleset open-core check
 ## DISTRIBUTION
 
 ### GAP-011: Package Manager Distribution
-**Status:** 🟡 Pending
-**Priority:** 🟡 Medium
+**Status:** [MEDIUM] Pending
+**Priority:** [MEDIUM] Medium
 **Phase:** 3
 **Created:** 2026-06-06
 
@@ -261,8 +261,8 @@ winget install Evolith.CLI
 ---
 
 ### GAP-012: Docker Image
-**Status:** 🟡 Pending
-**Priority:** 🟡 Medium
+**Status:** [MEDIUM] Pending
+**Priority:** [MEDIUM] Medium
 **Phase:** 3
 **Created:** 2026-06-06
 
@@ -284,8 +284,8 @@ docker pull evolith/cli:latest
 ## NICE-TO-HAVE
 
 ### GAP-013: Aliases
-**Status:** 🟡 Pending
-**Priority:** 🟢 Low
+**Status:** [MEDIUM] Pending
+**Priority:** [LOW] Low
 **Phase:** 4
 **Created:** 2026-06-06
 
@@ -305,8 +305,8 @@ evolith alias delete validate
 ---
 
 ### GAP-014: Interactive Wizards
-**Status:** 🟡 Pending
-**Priority:** 🟢 Low
+**Status:** [MEDIUM] Pending
+**Priority:** [LOW] Low
 **Phase:** 4
 **Created:** 2026-06-06
 
@@ -328,8 +328,8 @@ evolith init --wizard  # Interactive setup wizard
 ---
 
 ### GAP-015: Fixtures/Test Data
-**Status:** 🟡 Pending
-**Priority:** 🟢 Low
+**Status:** [MEDIUM] Pending
+**Priority:** [LOW] Low
 **Phase:** 4
 **Created:** 2026-06-06
 
@@ -349,8 +349,8 @@ evolith fixture apply sample-project  # Apply fixture to current dir
 ---
 
 ### GAP-016: Shell Integration
-**Status:** 🟡 Pending
-**Priority:** 🟢 Low
+**Status:** [MEDIUM] Pending
+**Priority:** [LOW] Low
 **Phase:** 4
 **Created:** 2026-06-06
 
@@ -372,7 +372,7 @@ eval "$(evolith init --shell)"  # Adds custom prompt info
 ## COMPLETED ITEMS
 
 ### DONE-001: MCP Native Integration
-**Status:** ✅ Completed
+**Status:** [DONE] Completed
 **Completed:** 2026-06-06
 
 **Description:** MCP server implemented with stdio transport.
@@ -385,7 +385,7 @@ eval "$(evolith init --shell)"  # Adds custom prompt info
 ---
 
 ### DONE-002: Structured Logging
-**Status:** ✅ Completed
+**Status:** [DONE] Completed
 **Completed:** 2026-06-06
 
 **Description:** JSON structured logging with context.
@@ -397,7 +397,7 @@ eval "$(evolith init --shell)"  # Adds custom prompt info
 ---
 
 ### DONE-003: Bilingual Support (EN/ES)
-**Status:** ✅ Completed
+**Status:** [DONE] Completed
 **Completed:** 2026-06-06
 
 **Description:** All commands available in English and Spanish.
@@ -454,8 +454,8 @@ eval "$(evolith init --shell)"  # Adds custom prompt info
 The following items are prioritized for making the CLI consumable by users and AI agents.
 
 ### DIS-001: CLI README.md
-**Status:** 🟡 Pending
-**Priority:** 🔴 High
+**Status:** [MEDIUM] Pending
+**Priority:** [HIGH] High
 **Created:** 2026-06-06
 
 **Description:** Complete README.md with installation, quickstart, and command reference.
@@ -470,8 +470,8 @@ The following items are prioritized for making the CLI consumable by users and A
 ---
 
 ### DIS-002: MCP Integration Examples
-**Status:** 🟡 Pending
-**Priority:** 🔴 High
+**Status:** [MEDIUM] Pending
+**Priority:** [HIGH] High
 **Created:** 2026-06-06
 
 **Description:** Working examples of AI agents using the Evolith MCP server.
@@ -485,8 +485,8 @@ The following items are prioritized for making the CLI consumable by users and A
 ---
 
 ### DIS-003: npm Package Preparation
-**Status:** 🟡 Pending
-**Priority:** 🔴 High
+**Status:** [MEDIUM] Pending
+**Priority:** [HIGH] High
 **Created:** 2026-06-06
 
 **Description:** Prepare package.json for public npm publication.
@@ -501,8 +501,8 @@ The following items are prioritized for making the CLI consumable by users and A
 ---
 
 ### DIS-004: Docker Image
-**Status:** 🟡 Pending
-**Priority:** 🟡 Medium
+**Status:** [MEDIUM] Pending
+**Priority:** [MEDIUM] Medium
 **Created:** 2026-06-06
 
 **Description:** Official Docker image for CI/CD usage.
@@ -515,8 +515,8 @@ The following items are prioritized for making the CLI consumable by users and A
 ---
 
 ### DIS-005: Quickstart Guide
-**Status:** 🟡 Pending
-**Priority:** 🟡 Medium
+**Status:** [MEDIUM] Pending
+**Priority:** [MEDIUM] Medium
 **Created:** 2026-06-06
 
 **Description:** 5-minute quickstart for new users.

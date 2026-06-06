@@ -1,37 +1,37 @@
-# Smart CLI Architecture
+# Arquitectura del Smart CLI
 
-> **Audience:** Developers, Architects, DevOps Engineers  
-> **Purpose:** Document the system architecture, components, data models, and flows for the Evolith Smart CLI  
-> **Bilingual:** [Español](./ARCHITECTURE.es.md)
-
----
-
-## Table of Contents
-
-1. [System Overview](#1-system-overview)
-2. [Component Architecture](#2-component-architecture)
-3. [Command Flow](#3-command-flow)
-4. [Data Models](#4-data-models)
-5. [Phase State Machine](#5-phase-state-machine)
-6. [Sequence Diagrams](#6-sequence-diagrams)
-7. [Infrastructure Deployment](#7-infrastructure-deployment)
-8. [Technical Requirements](#8-technical-requirements)
+> **Audiencia:** Desarrolladores, Arquitectos, Ingenieros DevOps  
+> **Propósito:** Documentar la arquitectura del sistema, componentes, modelos de datos y flujos del Evolith Smart CLI  
+> **Bilingual:** [English](./ARCHITECTURE.md)
 
 ---
 
-## 1. System Overview
+## Tabla de Contenidos
 
-### 1-1 High-Level Architecture
+1. [Visión General del Sistema](#1-visión-general-del-sistema)
+2. [Arquitectura de Componentes](#2-arquitectura-de-componentes)
+3. [Flujo de Comandos](#3-flujo-de-comandos)
+4. [Modelos de Datos](#4-modelos-de-datos)
+5. [Máquina de Estados de Fase](#5-máquina-de-estados-de-fase)
+6. [Diagramas de Secuencia](#6-diagramas-de-secuencia)
+7. [Despliegue de Infraestructura](#7-despliegue-de-infraestructura)
+8. [Requisitos Técnicos](#8-requisitos-técnicos)
+
+---
+
+## 1. Visión General del Sistema
+
+### 1-1 Arquitectura de Alto Nivel
 
 ```mermaid
 graph TB
-    subgraph CLI["Smart CLI Interface"]
-        CLI_User(["👤 User"])
+    subgraph CLI["Interfaz Smart CLI"]
+        CLI_User(["👤 Usuario"])
         CLI_Shell["Shell Completion"]
-        CLI_History["Command History"]
+        CLI_History["Historial de Comandos"]
     end
 
-    subgraph Commands["Command Layer"]
+    subgraph Commands["Capa de Comandos"]
         CMD_Init["init"]
         CMD_Validate["validate"]
         CMD_ADR["adr"]
@@ -42,30 +42,30 @@ graph TB
         CMD_Docs["docs"]
     end
 
-    subgraph Application["Application Layer"]
+    subgraph Application["Capa de Aplicación"]
         UC_Validate["ValidateSatelliteUseCase"]
         UC_Handoff["HandoffToolUseCase"]
         UC_AgentMgmt["AgentManagementUseCase"]
     end
 
-    subgraph Domain["Domain Layer"]
+    subgraph Domain["Capa de Dominio"]
         DOM_ADR["ADRService"]
         DOM_Standards["StandardsService"]
         DOM_ToolSel["ToolSelectionService"]
         DOM_SDLC["SDLCService"]
     end
 
-    subgraph Infrastructure["Infrastructure Layer"]
+    subgraph Infrastructure["Capa de Infraestructura"]
         INF_Catalog["CatalogLoader"]
         INF_Config["ConfigService"]
         INF_FileMgr["FileManagerService"]
         INF_CLI["CommandExecutor"]
     end
 
-    subgraph External["External Systems"]
-        EXT_NPM["NPM Registry"]
-        EXT_GitHub["GitHub API"]
-        EXT_MCP["MCP Clients\n(Cursor, Claude)"]
+    subgraph External["Sistemas Externos"]
+        EXT_NPM["Registro NPM"]
+        EXT_GitHub["API de GitHub"]
+        EXT_MCP["Clientes MCP\n(Cursor, Claude)"]
     end
 
     CLI_User --> Commands
@@ -84,13 +84,13 @@ graph TB
 
 ---
 
-## 2. Component Architecture
+## 2. Arquitectura de Componentes
 
-### 2-1 Clean Architecture Layers
+### 2-1 Capas de Clean Architecture
 
 ```mermaid
 graph TB
-    subgraph Presentation["Presentation Layer<br/>(src/commands/)"]
+    subgraph Presentation["Capa de Presentación<br/>(src/commands/)"]
         P1["init.command.ts"]
         P2["validate.command.ts"]
         P3["adr.command.ts"]
@@ -102,20 +102,20 @@ graph TB
         P9["completion.command.ts"]
     end
 
-    subgraph UseCases["Application Layer<br/>(src/application/)"]
+    subgraph UseCases["Capa de Aplicación<br/>(src/application/)"]
         U1["ValidateSatelliteUseCase"]
         U2["HandoffToolUseCase"]
         U3["AgentManagementUseCase"]
     end
 
-    subgraph Services["Domain Layer<br/>(src/domain/services/)"]
+    subgraph Services["Capa de Dominio<br/>(src/domain/services/)"]
         S1["ADRService"]
         S2["StandardsService"]
         S3["ToolSelectionService"]
         S4["PhaseService"]
     end
 
-    subgraph Entities["Domain Layer<br/>(src/domain/entities/)"]
+    subgraph Entities["Capa de Dominio<br/>(src/domain/entities/)"]
         E1["Phase"]
         E2["Project"]
         E3["Tool"]
@@ -123,13 +123,13 @@ graph TB
         E5["GateResult"]
     end
 
-    subgraph Infra["Infrastructure Layer<br/>(src/infrastructure/)"]
+    subgraph Infra["Capa de Infraestructura<br/>(src/infrastructure/)"]
         I1["CatalogLoader"]
         I2["CommandExecutor"]
         I3["OutputFormatter"]
     end
 
-    subgraph Core["Core Layer<br/>(src/core/)"]
+    subgraph Core["Capa Core<br/>(src/core/)"]
         C1["ConfigService"]
         C2["MCPServerService"]
         C3["WatcherService"]
@@ -156,27 +156,27 @@ graph TB
     class C1,C2,C3,C4 core
 ```
 
-### 2-2 MCP Server Architecture
+### 2-2 Arquitectura del Servidor MCP
 
 ```mermaid
 graph TB
-    subgraph MCP["MCP Server"]
+    subgraph MCP["Servidor MCP"]
         MCP_API["MCP SDK\nServer"]
-        MCP_Res["Resources\n/evolith/core/info\n/evolith/adrs\n/evolith/standards"]
-        MCP_Tools["Tools\nvalidate\nadr-create\nagent-install\nsdlc-handoff"]
+        MCP_Res["Recursos\n/evolith/core/info\n/evolith/adrs\n/evolith/standards"]
+        MCP_Tools["Herramientas\nvalidate\nadr-create\nagent-install\nsdlc-handoff"]
         MCP_Prompts["Prompts\nvalidate-repository\nagent-onboarding"]
-        MCP_Metrics["Metrics Service"]
+        MCP_Metrics["Servicio de Métricas"]
     end
 
-    subgraph Transport["Transport Layer"]
-        T_STDIO["stdio (default)"]
-        T_HTTP["HTTP (optional)"]
+    subgraph Transport["Capa de Transporte"]
+        T_STDIO["stdio (por defecto)"]
+        T_HTTP["HTTP (opcional)"]
     end
 
-    subgraph Clients["MCP Clients"]
+    subgraph Clients["Clientes MCP"]
         C_Cursor["Cursor AI"]
         C_Claude["Claude Desktop"]
-        C_Agents["AI Agents"]
+        C_Agents["Agentes IA"]
     end
 
     Clients --> Transport
@@ -197,19 +197,19 @@ graph TB
 
 ---
 
-## 3. Command Flow
+## 3. Flujo de Comandos
 
-### 3-1 Command Resolution Flow
+### 3-1 Flujo de Resolución de Comandos
 
 ```mermaid
 sequenceDiagram
     participant User
     participant CLI as Smart CLI
-    participant Parser as Command Parser
-    participant Registry as Command Registry
-    participant UseCase as Use Case
-    participant Domain as Domain Services
-    participant Infra as Infrastructure
+    participant Parser as Parser de Comandos
+    participant Registry as Registro de Comandos
+    participant UseCase as Caso de Uso
+    participant Domain as Servicios de Dominio
+    participant Infra as Infraestructura
 
     User->>CLI: smart-cli validate --satellite /repo
     CLI->>Parser: parse(args)
@@ -224,25 +224,25 @@ sequenceDiagram
     UseCase-->>CLI: formattedOutput
     CLI-->>User: table/json/markdown
 
-    Note over User,Infra: Full validation flow with gate checks
+    Note over User,Infra: Flujo completo de validación con verificaciones de gates
 ```
 
-### 3-2 Init Command Flow
+### 3-2 Flujo del Comando Init
 
 ```mermaid
 flowchart TB
-    A["smart-cli init"] --> B{"Interactive\nor Batch?"}
-    B -->|"Interactive"| C["Prompt for:\n- Project name\n- Runtime (NodeJS/.NET/Android)\n- Architecture pattern\n- Monorepo option\n- Agents to install"]
-    B -->|"Batch"| D["Read from\nconfig file"]
-    C --> E["Create evolith.yaml"]
+    A["smart-cli init"] --> B{"Interactivo\no Batch?"}
+    B -->|"Interactivo"| C["Solicitar:\n- Nombre del proyecto\n- Runtime (NodeJS/.NET/Android)\n- Patrón de arquitectura\n- Opción de monorepo\n- Agentes a instalar"]
+    B -->|"Batch"| D["Leer desde\narchivo de config"]
+    C --> E["Crear evolith.yaml"]
     D --> E
-    E --> F["Create directory structure"]
-    F --> G["Install agents"]
+    E --> F["Crear estructura de directorios"]
+    F --> G["Instalar agentes"]
     G --> H{"Git init?"}
-    H -->|"Yes"| I["Setup git + husky"]
-    H -->|"No"| J["Setup complete"]
+    H -->|"Sí"| I["Setup git + husky"]
+    H -->|"No"| J["Setup completo"]
     I --> J
-    J --> K["Generate setup-report.md"]
+    J --> K["Generar setup-report.md"]
 
     style A fill:#1e3a5f,stroke:#3b82f6,color:#fff
     style K fill:#065f46,stroke:#10b981,color:#fff
@@ -250,13 +250,13 @@ flowchart TB
 
 ---
 
-## 4. Data Models
+## 4. Modelos de Datos
 
-### 4-1 Entity Relationship Diagram
+### 4-1 Diagrama de Entidad-Relación
 
 ```mermaid
 erDiagram
-    PROJECT ||--o| PHASE : currentPhase
+    PROJECT ||--o| PHASE : faseActual
     PROJECT {
         string id PK
         string name
@@ -265,7 +265,7 @@ erDiagram
         ProjectConfigData config
     }
 
-    PHASE ||--o{ GATE_CHECK : contains
+    PHASE ||--o{ GATE_CHECK : contiene
     PHASE {
         string value PK
         string label
@@ -274,7 +274,7 @@ erDiagram
         string[] artifacts
     }
 
-    GATE_CHECK ||--o| GATE_RESULT : produces
+    GATE_CHECK ||--o| GATE_RESULT : produce
     GATE_CHECK {
         string id
         string description
@@ -290,7 +290,7 @@ erDiagram
         string error
     }
 
-    PROJECT ||--o{ TOOL : uses
+    PROJECT ||--o{ TOOL : usa
     TOOL {
         string id PK
         string name
@@ -300,7 +300,7 @@ erDiagram
         string[] commands
     }
 
-    TRANSITION_RESULT ||--|| PROJECT : transitions
+    TRANSITION_RESULT ||--|| PROJECT : transiciona
     TRANSITION_RESULT {
         boolean success
         string fromPhase
@@ -311,7 +311,7 @@ erDiagram
         string[] errors
     }
 
-    ADR ||--o| PROJECT : belongsTo
+    ADR ||--o| PROJECT : perteneceA
     ADR {
         string id PK
         string title
@@ -321,7 +321,7 @@ erDiagram
         date updatedAt
     }
 
-    AGENT ||--o{ PROJECT : installedOn
+    AGENT ||--o{ PROJECT : instaladoEn
     AGENT {
         string id PK
         string name
@@ -331,7 +331,7 @@ erDiagram
     }
 ```
 
-### 4-2 Project Configuration Schema
+### 4-2 Esquema de Configuración del Proyecto
 
 ```mermaid
 classDiagram
@@ -373,11 +373,11 @@ classDiagram
     ProjectConfigData --> ArchitecturePattern
 ```
 
-### 4-3 Tool Catalog Schema
+### 4-3 Esquema del Catálogo de Herramientas
 
 ```mermaid
 erDiagram
-    TOOL_CATALOG ||--|{ TOOL : contains
+    TOOL_CATALOG ||--|{ TOOL : contiene
     TOOL_CATALOG {
         string version
         string lastUpdated
@@ -395,7 +395,7 @@ erDiagram
         string[] dependencies
     }
 
-    TOOL ||--o{ RUNTIME_COMPATIBILITY : supports
+    TOOL ||--o{ RUNTIME_COMPATIBILITY : soporta
     RUNTIME_COMPATIBILITY {
         string toolId
         string runtimeId
@@ -405,9 +405,9 @@ erDiagram
 
 ---
 
-## 5. Phase State Machine
+## 5. Máquina de Estados de Fase
 
-### 5-1 SDLC Phase Transitions
+### 5-1 Transiciones de Fase SDLC
 
 ```mermaid
 stateDiagram-v2
@@ -421,48 +421,48 @@ stateDiagram-v2
     Phase5 --> [*]: smart-cli sdlc handoff --to production
 
     note right of Phase0
-        Discovery & Business Case
-        Tools: context-mapper, ballpark
+        Descubrimiento y Caso de Negocio
+        Herramientas: context-mapper, ballpark
     end note
 
     note right of Phase1
-        Architecture & Design
-        Tools: ddd-model, architecture-ask
+        Arquitectura y Diseño
+        Herramientas: ddd-model, architecture-ask
     end note
 
     note right of Phase2
-        Implementation Scaffolding
-        Tools: scaffold, generate-domain
+        Andamiaje de Implementación
+        Herramientas: scaffold, generate-domain
     end note
 
     note right of Phase3
-        Core Development
-        Tools: validate, test-runner
+        Desarrollo del Core
+        Herramientas: validate, test-runner
     end note
 
     note right of Phase4
-        Quality Gates
-        Tools: security-scan, coverage-check
+        Puertas de Calidad
+        Herramientas: security-scan, coverage-check
     end note
 
     note right of Phase5
-        Observability Setup
-        Tools: otel-config, tracing-setup
+        Configuración de Observabilidad
+        Herramientas: otel-config, tracing-setup
     end note
 ```
 
-### 5-2 Gate Check Flow
+### 5-2 Flujo de Verificación de Gates
 
 ```mermaid
 flowchart TB
-    A["Phase Transition Request"] --> B["Load Gate Checks"]
-    B --> C{"All Required\nGates Pass?"}
-    C -->|"Yes"| D["Execute Tools"]
-    C -->|"No"| E["Show Failures"]
-    D --> F["Update Phase"]
-    E --> G["Block Transition"]
-    F --> H["Generate Handoff Report"]
-    G --> I["Exit with Error"]
+    A["Solicitud de Transición de Fase"] --> B["Cargar Verificaciones de Gate"]
+    B --> C{"¿Todos los Gates\nRequeridos Pasan?"}
+    C -->|"Sí"| D["Ejecutar Herramientas"]
+    C -->|"No"| E["Mostrar Fallos"]
+    D --> F["Actualizar Fase"]
+    E --> G["Bloquear Transición"]
+    F --> H["Generar Reporte de Handoff"]
+    G --> I["Salir con Error"]
 
     style A fill:#1e3a5f,stroke:#3b82f6,color:#fff
     style F fill:#065f46,stroke:#10b981,color:#fff
@@ -471,14 +471,14 @@ flowchart TB
 
 ---
 
-## 6. Sequence Diagrams
+## 6. Diagramas de Secuencia
 
-### 6-1 MCP Tool Invocation: validate
+### 6-1 Invocación de Herramienta MCP: validate
 
 ```mermaid
 sequenceDiagram
     participant Client as Cursor/Claude
-    participant MCP as MCP Server
+    participant MCP as Servidor MCP
     participant Tool as ValidateTool
     participant Domain as ValidationService
     participant Infra as FileManager
@@ -495,7 +495,7 @@ sequenceDiagram
     MCP-->>Client: formatted result
 ```
 
-### 6-2 Agent Installation Flow
+### 6-2 Flujo de Instalación de Agente
 
 ```mermaid
 sequenceDiagram
@@ -515,36 +515,36 @@ sequenceDiagram
     Infra->>Infra: updateevolith.yaml()
     Infra-->>UseCase: installationResult
     UseCase-->>CLI: success message
-    CLI-->>User: @architect installed successfully
+    CLI-->>User: @architect instalado exitosamente
 ```
 
 ---
 
-## 7. Infrastructure Deployment
+## 7. Despliegue de Infraestructura
 
-### 7-1 Deployment Architecture
+### 7-1 Arquitectura de Despliegue
 
 ```mermaid
 graph TB
-    subgraph Development["Development Environment"]
-        DEV_User["Developer"]
+    subgraph Development["Entorno de Desarrollo"]
+        DEV_User["Desarrollador"]
         DEV_CLI["smart-cli local"]
     end
 
-    subgraph Installation["Installation Methods"]
+    subgraph Installation["Métodos de Instalación"]
         NPM["npm install -g\n@evolith/smart-cli"]
         NPX["npx @evolith/smart-cli"]
-        Binary["Download from\nGitHub Releases"]
-        Docker["Docker Image\nevolith/smart-cli"]
+        Binary["Descargar desde\nGitHub Releases"]
+        Docker["Imagen Docker\nevolith/smart-cli"]
     end
 
-    subgraph Runtime["Runtime Context"]
+    subgraph Runtime["Contexto de Ejecución"]
         RT_Config["~/.evolith/config.yaml"]
         RT_Cache["~/.cache/evolith-core"]
-        RT_History["Command History\n~/.evolith/history"]
+        RT_History["Historial de Comandos\n~/.evolith/history"]
     end
 
-    subgraph Satellite["Satellite Repository"]
+    subgraph Satellite["Repositorio Satélite"]
         SAT_Config["evolith.yaml"]
         SAT_Rulesets[".evolith/rulesets"]
         SAT_Hooks[".husky/pre-commit"]
@@ -572,25 +572,25 @@ graph TB
     class SAT_Config,SAT_Rulesets,SAT_Hooks sat
 ```
 
-### 7-2 File System Layout
+### 7-2 Estructura del Sistema de Archivos
 
 ```mermaid
 graph TB
-    subgraph Root["Satellite Repository Root"]
+    subgraph Root["Raíz del Repositorio Satélite"]
         ROOT["/satellite-repo/"]
         ROOT_YAML["evolith.yaml"]
         ROOT_GIT[".git/"]
         ROOT_HUSKY[".husky/"]
     end
 
-    subgraph EvolithDir[".evolith/ Directory"]
+    subgraph EvolithDir[".evolith/ Directorio"]
         E_RULESETS[".evolith/rulesets/"]
         E_AGENTS[".evolith/agents/"]
         E_CACHE[".evolith/cache/"]
         E_STATE[".evolith/state.json"]
     end
 
-    subgraph Templates["CLI Templates"]
+    subgraph Templates["Plantillas del CLI"]
         TMPL_Evolith["evolith.yaml.example"]
         TMPL_Agents["agent-templates/"]
     end
@@ -606,50 +606,50 @@ graph TB
 
 ---
 
-## 8. Technical Requirements
+## 8. Requisitos Técnicos
 
-### 8-1 Runtime Requirements
+### 8-1 Requisitos de Runtime
 
-| Requirement | Version | Notes |
-|-------------|---------|-------|
-| Node.js | >= 18.0.0 | LTS recommended |
-| npm | >= 9.0.0 | For global install |
-| Git | >= 2.30 | For git operations |
-| Memory | 512MB min | For MCP server |
-| Disk | 200MB min | For CLI + cache |
+| Requisito | Versión | Notas |
+|-----------|---------|-------|
+| Node.js | >= 18.0.0 | LTS recomendado |
+| npm | >= 9.0.0 | Para instalación global |
+| Git | >= 2.30 | Para operaciones git |
+| Memoria | 512MB min | Para servidor MCP |
+| Disco | 200MB min | Para CLI + cache |
 
-### 8-2 Dependencies
+### 8-2 Dependencias
 
-| Package | Version | Purpose |
-|---------|---------|---------|
-| @nestjs/common | ^11.1.24 | DI & modularity |
-| @nestjs/core | ^11.1.24 | NestJS runtime |
-| nest-commander | ^3.20.1 | CLI framework |
-| @clack/prompts | ^1.5.1 | Interactive UI |
-| @modelcontextprotocol/sdk | ^1.29.0 | MCP protocol |
-| chalk | ^4.1.2 | Colored output |
-| yaml | ^2.9.0 | Config parsing |
-| chokidar | ^5.0.0 | File watching |
-| fs-extra | ^11.3.5 | File operations |
+| Paquete | Versión | Propósito |
+|---------|---------|-----------|
+| @nestjs/common | ^11.1.24 | DI y modularidad |
+| @nestjs/core | ^11.1.24 | Runtime de NestJS |
+| nest-commander | ^3.20.1 | Framework CLI |
+| @clack/prompts | ^1.5.1 | UI interactiva |
+| @modelcontextprotocol/sdk | ^1.29.0 | Protocolo MCP |
+| chalk | ^4.1.2 | Salida con colores |
+| yaml | ^2.9.0 | Parseo de config |
+| chokidar | ^5.0.0 | Watcher de archivos |
+| fs-extra | ^11.3.5 | Operaciones de archivos |
 | ora | ^9.4.0 | Spinners |
 
-### 8-3 Environment Variables
+### 8-3 Variables de Entorno
 
-| Variable | Default | Purpose |
-|----------|---------|---------|
-| `EVOLITH_CONFIG_PATH` | `~/.evolith` | Config directory |
-| `EVOLITH_LOG_LEVEL` | `info` | Logging level |
-| `EVOLITH_CORE_PATH` | `../evolith` | Core reference |
-| `EVOLITH_PROFILE` | `default` | Config profile |
+| Variable | Por Defecto | Propósito |
+|----------|-------------|-----------|
+| `EVOLITH_CONFIG_PATH` | `~/.evolith` | Directorio de config |
+| `EVOLITH_LOG_LEVEL` | `info` | Nivel de logging |
+| `EVOLITH_CORE_PATH` | `../evolith` | Referencia al core |
+| `EVOLITH_PROFILE` | `default` | Perfil de config |
 | `EVOLITH_NO_CACHE` | `false` | Skip cache |
-| `EVOLITH_FORCE_COLOR` | `auto` | Force colors |
+| `EVOLITH_FORCE_COLOR` | `auto` | Forzar colores |
 
 ---
 
-## Appendix: Configuration Schema
+## Apéndice: Esquema de Configuración
 
 ```yaml
-# evolith.yaml - Satellite Configuration
+# evolith.yaml - Configuración del Satélite
 apiVersion: evolith.dev/v1
 kind: Satellite
 
@@ -684,16 +684,16 @@ agents:
 
 ---
 
-## Document Version
+## Versión del Documento
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0.0 | 2026-06-06 | Evolith Team | Initial architecture documentation |
+| Versión | Fecha | Autor | Cambios |
+|---------|------|-------|---------|
+| 1.0.0 | 2026-06-06 | Equipo Evolith | Documentación inicial de arquitectura |
 
 ---
 
-## See Also
+## Ver También
 
-- [MCP Integration Guide](../docs/MCP-INTEGRATION.md)
-- [Command Reference](../docs/planning/cli-command-catalog.md)
-- [ADR-0069: MCP Server Protocol Implementation](../../reference/architecture/adrs/core/0069-mcp-server-protocol-implementation.md)
+- [Guía de Integración MCP](../docs/MCP-INTEGRATION.es.md)
+- [Catálogo de Comandos](../docs/planning/cli-command-catalog.md)
+- [ADR-0069: Implementación del Protocolo Servidor MCP](../../reference/architecture/adrs/core/0069-mcp-server-protocol-implementation.es.md)

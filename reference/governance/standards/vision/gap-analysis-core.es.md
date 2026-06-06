@@ -89,8 +89,8 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 
 | TODO | IN PROGRESS | BLOCKED | DONE |
 |------|-------------|---------|------|
-| G-02 (ACL Jira) | G-12 🔴 CRÍTICO | - | G-16 (Paridad EN/ES) |
-| G-03 (Phase Gates) | | | |
+| G-02 (ACL Jira) | - | - | G-12 (Protocolo MCP) |
+| G-03 (Phase Gates) | | | G-16 (Paridad EN/ES) |
 | G-05 (DORA Metrics) | | | |
 | G-06 (Scorecards) | | | |
 | G-10 (SDLC Ops) | | | |
@@ -103,7 +103,7 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 
 | ID | Descripción | Comp. | Prioridad | Complejidad | Estado | Avance |
 |----|-------------|-------|-----------|-------------|--------|--------|
-| **G-12** | **Implementar protocolo servidor MCP (JSON-RPC stdio)** | MCP | 🔴 CRÍTICO | M (2-3 sem) | 🔵 TODO | 0% |
+| **G-12** | **Implementar protocolo servidor MCP (JSON-RPC stdio)** | MCP | 🔴 CRÍTICO | M (2-3 sem) | ✅ DONE | 100% |
 | G-01 | Validación arquitectura F1/F2/F3 en CLI | Core | 🟠 ALTA | M (2-3 sem) | 🔵 TODO | 0% |
 | G-03 | Ejecutar transiciones de Phase Gates | Tracker | 🟠 ALTA | L (3-4 sem) | 🔵 TODO | 0% |
 | G-04 | Detección de Architecture Drift | Tracker | 🟠 ALTA | L (3-4 sem) | 🔵 TODO | 0% |

@@ -89,8 +89,8 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 
 | TODO | IN PROGRESS | BLOCKED | DONE |
 |------|-------------|---------|------|
-| G-02 (ACL Jira) | G-12 🔴 CRITICAL | - | G-16 (EN/ES Parity) |
-| G-03 (Phase Gates) | | | |
+| G-02 (ACL Jira) | - | - | G-12 (MCP Protocol) |
+| G-03 (Phase Gates) | | | G-16 (EN/ES Parity) |
 | G-05 (DORA Metrics) | | | |
 | G-06 (Scorecards) | | | |
 | G-10 (SDLC Ops) | | | |
@@ -103,7 +103,7 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 
 | ID | Description | Comp. | Priority | Complexity | Status | Progress |
 |----|-------------|-------|----------|------------|--------|----------|
-| **G-12** | **Implement MCP server protocol (JSON-RPC stdio)** | MCP | 🔴 CRITICAL | M (2-3 wk) | 🔵 TODO | 0% |
+| **G-12** | **Implement MCP server protocol (JSON-RPC stdio)** | MCP | 🔴 CRITICAL | M (2-3 wk) | ✅ DONE | 100% |
 | G-01 | F1/F2/F3 architecture validation in CLI | Core | 🟠 HIGH | M (2-3 wk) | 🔵 TODO | 0% |
 | G-03 | Execute Phase Gate transitions | Tracker | 🟠 HIGH | L (3-4 wk) | 🔵 TODO | 0% |
 | G-04 | Architecture Drift detection | Tracker | 🟠 HIGH | L (3-4 wk) | 🔵 TODO | 0% |

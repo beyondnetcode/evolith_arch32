@@ -5,5 +5,8 @@
   "description": "Evolith Architecture Reference - Monorepo root",
   "workspaces": [
     "sdk/cli"
-  ]
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.26.0"
+  }
 }

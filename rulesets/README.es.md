@@ -68,7 +68,8 @@ rulesets/
 └── governance/                 # Reglas de gobernanza federada
     ├── inheritance.rules.json
     ├── satellite-contracts.rules.json
-    └── open-core-boundary.rules.json  # Frontera Core vs Enterprise
+    ├── open-core-boundary.rules.json  # Frontera Core vs Enterprise
+    └── executive-scorecards.rules.json  # Métricas DORA + SPACE
 ```
 
 ---

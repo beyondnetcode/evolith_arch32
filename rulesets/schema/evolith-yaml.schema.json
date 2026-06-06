@@ -133,7 +133,13 @@
             "adrRegistry": {
               "type": "array",
               "items": { "type": "string" },
-              "description": "Local ADRs maintained by this satellite (not yet promoted to Core)."
+              "description": "Local ADRs maintained by this satellite (not yet promoted to Core). Each ADR file must have 'EvolithSatellite' in frontmatter tags to distinguish from Core ADRs."
+            },
+            "localAdrTagEnforcement": {
+              "type": "string",
+              "enum": ["enforced", "documented"],
+              "default": "enforced",
+              "description": "Whether local ADR tag enforcement is automated (enforced) or documented only. Defaults to enforced."
             },
             "coverageTarget": {
               "type": "number",
@@ -155,6 +161,29 @@
               "description": "Active quality waivers with expiration dates."
             }
           }
+        },
+        "governance": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "executiveSponsor": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "name": { "type": "string" },
+                "role": { "type": "string" },
+                "email": { "type": "string", "format": "email" },
+                "lastReviewDate": { "type": "string", "format": "date" }
+              },
+              "description": "Executive sponsor responsible for quarterly governance review. Required for SPACE-05 metric compliance."
+            },
+            "nextReviewDate": {
+              "type": "string",
+              "format": "date",
+              "description": "Date of next scheduled governance review."
+            }
+          },
+          "description": "Executive governance metadata for scorecard metrics."
         }
       }
     }

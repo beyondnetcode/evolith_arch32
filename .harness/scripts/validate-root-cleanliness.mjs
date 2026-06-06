@@ -23,12 +23,14 @@ const allowedFiles = new Set([
   "release-please-config.json",
   "COVERAGE_REPORT.md",
   "cli-core-parity-tracking.md",
-  "evolith-validated-tool-catalog.md"
+  "evolith-validated-tool-catalog.md",
+  "package.json"
 ]);
 
 // Explicit whitelist of allowed directories in the root directory.
 const allowedDirectories = new Set([
   ".bmad-core",
+  ".claude",
   ".git",
   ".github",
   ".harness",

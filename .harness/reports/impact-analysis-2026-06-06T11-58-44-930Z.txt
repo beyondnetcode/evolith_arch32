@@ -1,0 +1,65 @@
+══════════════════════════════════════════════════════════════════════
+  EVOLITH CORE — IMPACT ANALYSIS & SYNCHRONIZATION REPORT
+══════════════════════════════════════════════════════════════════════
+
+  Analysis ID    : 0413914c-3608-4a30-ac2c-e7f1e579e0f2
+  Timestamp      : 2026-06-06T11:58:44.916Z
+  Trigger        : pre_commit (5a14dda3f33dbce74745dd0bb00cba411993b75d)
+  Execution Time : 119ms
+  Idempotent     : ✗ No
+
+──────────────────────────────────────────────────────────────────────
+  1. CHANGES DETECTED
+──────────────────────────────────────────────────────────────────────
+
+  [HARNESS] 3 change(s):
+    ~ .husky/pre-commit
+       Type: modify | Severity: high
+    + .harness/schemas/impact-analysis.schema.json
+       Type: create | Severity: high
+    + .harness/scripts/impact-analysis-synchronizer.mjs
+       Type: create | Severity: high
+
+──────────────────────────────────────────────────────────────────────
+  2. IMPACT MAP (Affected Zones)
+──────────────────────────────────────────────────────────────────────
+
+  HARNESS (3 file(s)):
+    → .husky/pre-commit
+    → .harness/schemas/impact-analysis.schema.json
+    → .harness/scripts/impact-analysis-synchronizer.mjs
+
+  RULESETS (3 file(s)):
+    → .husky/pre-commit
+    → .harness/schemas/impact-analysis.schema.json
+    → .harness/scripts/impact-analysis-synchronizer.mjs
+
+  VALIDATORS (3 file(s)):
+    → .husky/pre-commit
+    → .harness/schemas/impact-analysis.schema.json
+    → .harness/scripts/impact-analysis-synchronizer.mjs
+
+  NAVIGATION (3 file(s)):
+    → .husky/pre-commit
+    → .harness/schemas/impact-analysis.schema.json
+    → .harness/scripts/impact-analysis-synchronizer.mjs
+
+──────────────────────────────────────────────────────────────────────
+  3. SYNCHRONIZATIONS
+──────────────────────────────────────────────────────────────────────
+  Applied: 7 | Skipped: 0 | Failed: 0 | Manual: 0
+
+
+──────────────────────────────────────────────────────────────────────
+  4. RISKS & PENDING MANUAL ACTIONS
+──────────────────────────────────────────────────────────────────────
+
+  1 RISK(S):
+
+    [HIGH] Harness modification may affect CI/CD pipeline behavior
+    Affected: .husky/pre-commit
+    Mitigation: Verify all validation scripts still pass after harness change
+
+══════════════════════════════════════════════════════════════════════
+  SUMMARY: Impact Analysis completed. 3 change(s) detected, affecting 3 component(s). 7 sync(s) applied, 0 skipped, 1 risk(s)
+══════════════════════════════════════════════════════════════════════

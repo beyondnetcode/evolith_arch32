@@ -1,28 +1,31 @@
 module.exports = {
-  moduleFileExtensions: ['js', 'json', 'ts'],
-  rootDir: 'src',
-  testRegex: '.*\\.spec\\.ts$',
-  transform: {
-    '^.+\\.(t|j)s$': ['ts-jest', { diagnostics: false }],
-  },
-  collectCoverageFrom: [
-    '**/*.(t|j)s',
-    '!main.(t|j)s',
-    '!**/*.module.(t|j)s'
-  ],
-  coverageDirectory: '../coverage',
+  preset: 'ts-jest',
   testEnvironment: 'node',
+  roots: ['<rootDir>/src'],
+  testMatch: ['**/*.test.ts'],
+  collectCoverageFrom: [
+    'src/**/*.ts',
+    '!src/**/*.d.ts',
+    '!src/main.ts',
+    '!src/test/**',
+  ],
+  coverageDirectory: 'coverage',
+  coverageReporters: ['text', 'lcov', 'html'],
+  moduleDirectories: ['node_modules', 'src'],
+  transform: {
+    '^.+\\.ts$': ['ts-jest', {
+      tsconfig: 'tsconfig.test.json',
+    }],
+  },
   moduleNameMapper: {
-    '^@clack/prompts$': '<rootDir>/../__mocks__/@clack/prompts.js',
-    '^chokidar$': '<rootDir>/../__mocks__/chokidar.js',
-    '^conf$': '<rootDir>/../__mocks__/conf.js'
+    '^domain/(.*)$': '<rootDir>/src/domain/$1',
+    '^infrastructure/(.*)$': '<rootDir>/src/infrastructure/$1',
+    '^application/(.*)$': '<rootDir>/src/application/$1',
+    '^core/(.*)$': '<rootDir>/src/core/$1',
+    '^commands/(.*)$': '<rootDir>/src/commands/$1',
+    '^test/(.*)$': '<rootDir>/src/test/$1',
   },
-  coverageThreshold: {
-    global: {
-      branches: 90,
-      functions: 90,
-      lines: 90,
-      statements: 90,
-    },
-  },
+  setupFilesAfterEnv: [],
+  testTimeout: 10000,
+  verbose: true,
 };

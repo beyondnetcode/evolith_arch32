@@ -1,7 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
-import * as fs from 'fs-extra';
 import * as path from 'path';
-import * as yaml from 'yaml';
+import { getContainer, ILogger, IFileSystem, IConfigParser } from '../abstractions';
 
 export interface ValidationResult {
   status: 'passed' | 'failed' | 'warning';
@@ -41,9 +39,24 @@ export interface EvolithYaml {
   };
 }
 
-@Injectable()
+export interface RulesetValidatorOptions {
+  fileSystem?: IFileSystem;
+  configParser?: IConfigParser;
+  logger?: ILogger;
+}
+
 export class RulesetValidatorService {
-  private readonly logger = new Logger(RulesetValidatorService.name);
+  private readonly logger: ILogger;
+  private readonly fs: IFileSystem;
+  private readonly configParser: IConfigParser;
+
+  constructor(options?: RulesetValidatorOptions) {
+    const container = getContainer();
+
+    this.logger = options?.logger || container.createLogger('RulesetValidatorService');
+    this.fs = options?.fileSystem || container.createFileSystem();
+    this.configParser = options?.configParser || container.createConfigParser('yaml');
+  }
 
   async validate(satellitePath: string, corePath?: string): Promise<ValidationResult> {
     const issues: ValidationIssue[] = [];
@@ -55,7 +68,7 @@ export class RulesetValidatorService {
     let coreRefVersion: string | null = null;
     let coreRefPath: string | null = null;
 
-    if (!await fs.pathExists(evolithYamlPath)) {
+    if (!await this.fs.exists(evolithYamlPath)) {
       issues.push({
         ruleId: 'GOV-01',
         severity: 'MUST',
@@ -120,9 +133,9 @@ export class RulesetValidatorService {
       'acl/anti-corruption-layer.rules.json',
     );
     const satelliteAclPath = path.join(satellitePath, 'acl');
-    if (aclRules && await fs.pathExists(satelliteAclPath)) {
+    if (aclRules && await this.fs.exists(satelliteAclPath)) {
       rulesChecked += aclRules.length;
-      const aclDir = await fs.readdir(satelliteAclPath);
+      const aclDir = await this.fs.readdirNames(satelliteAclPath);
       if (aclDir.length === 0) {
         issues.push({
           ruleId: 'ACL-01',
@@ -143,8 +156,8 @@ export class RulesetValidatorService {
     if (openCoreRules) {
       rulesChecked += openCoreRules.length;
       const packageJsonPath = path.join(satellitePath, 'package.json');
-      if (await fs.pathExists(packageJsonPath)) {
-        const packageJson = await fs.readJson(packageJsonPath);
+      if (await this.fs.exists(packageJsonPath)) {
+        const packageJson = await this.fs.readJson(packageJsonPath) as { license?: string };
         if (packageJson.license?.startsWith('Enterprise') || packageJson.license === 'UNLICENSED') {
           issues.push({
             ruleId: 'OCB-01',
@@ -186,8 +199,8 @@ export class RulesetValidatorService {
   }
 
   private async loadEvolithYaml(filePath: string): Promise<EvolithYaml> {
-    const content = await fs.readFile(filePath, 'utf-8');
-    return yaml.parse(content) as EvolithYaml;
+    const content = await this.fs.readFile(filePath);
+    return this.configParser.parse(content) as EvolithYaml;
   }
 
   private async loadRuleset(
@@ -195,11 +208,11 @@ export class RulesetValidatorService {
     relativePath: string,
   ): Promise<Array<{ id: string; severity: string; title: string; description: string; blocking: boolean }> | null> {
     const fullPath = path.join(corePath, 'rulesets', relativePath);
-    if (!await fs.pathExists(fullPath)) {
+    if (!await this.fs.exists(fullPath)) {
       return null;
     }
     try {
-      const content = await fs.readFile(fullPath, 'utf-8');
+      const content = await this.fs.readFile(fullPath);
       const parsed = JSON.parse(content);
       const rules: Array<{ id: string; severity: string; title: string; description: string; blocking: boolean }> = [];
 
@@ -238,7 +251,7 @@ export class RulesetValidatorService {
     while (parts.length > 0) {
       parts.pop();
       const candidate = path.join(parts.join(path.sep), 'rulesets');
-      if (fs.pathExistsSync(candidate)) {
+      if (this.fs.existsSync(candidate)) {
         return parts.join(path.sep);
       }
     }

@@ -1,8 +1,9 @@
 import { Command, CommandRunner, Option } from 'nest-commander';
 import * as p from '@clack/prompts';
 import * as chalk from 'chalk';
-import * as path from 'path';
-import { RulesetValidatorService, ValidationResult } from '../../core/validators/ruleset-validator.service';
+import { ValidateSatelliteUseCase } from '../../application/use-cases/validate-satellite.use-case';
+import { ValidationResult } from '../../core/validators/ruleset-validator.service';
+import { logger } from '../../core/observability';
 
 interface ValidateCommandOptions {
   format?: string;
@@ -17,7 +18,7 @@ interface ValidateCommandOptions {
   description: 'Verifica que el repositorio satélite cumpla los estándares mínimos de Evolith',
 })
 export class ValidateCommand extends CommandRunner {
-  private validator = new RulesetValidatorService();
+  private useCase = new ValidateSatelliteUseCase();
 
   async run(passedParam: string[], options?: ValidateCommandOptions): Promise<void> {
     p.intro(' Evolith SDK - Validación de Estándares ');
@@ -30,18 +31,21 @@ export class ValidateCommand extends CommandRunner {
 
     let result: ValidationResult;
 
-    if (options?.ruleset) {
-      const coreResolved = corePath || this.findCoreFromSatellite(satellitePath);
-      const issues = await this.validator.loadRulesetById(coreResolved, options.ruleset);
-      result = {
-        status: issues.some(i => i.blocking) ? 'failed' : issues.length > 0 ? 'warning' : 'passed',
-        rulesChecked: issues.length,
-        issues,
-        coreRef: { version: null, path: coreResolved },
-        timestamp: new Date().toISOString(),
-      };
-    } else {
-      result = await this.validator.validate(satellitePath, corePath);
+    try {
+      if (options?.ruleset) {
+        result = (await this.useCase.execute({
+          satellitePath,
+          corePath,
+          rulesetId: options.ruleset,
+        })).result;
+      } else {
+        result = (await this.useCase.execute({ satellitePath, corePath })).result;
+      }
+    } catch (error) {
+      s.stop();
+      logger.error('Validation failed', { error });
+      p.log.error(chalk.red(`Error durante validación: ${error}`));
+      process.exit(1);
     }
 
     s.stop();
@@ -101,23 +105,6 @@ export class ValidateCommand extends CommandRunner {
     if (result.coreRef.version) {
       p.log.info(chalk.cyan(`Core version pinneada: ${result.coreRef.version}`));
     }
-  }
-
-  private findCoreFromSatellite(satellitePath: string): string {
-    const parts = satellitePath.split(path.sep);
-    while (parts.length > 0) {
-      parts.pop();
-      const candidate = path.join(parts.join(path.sep), 'rulesets');
-      try {
-        const fs = require('fs-extra');
-        if (fs.pathExistsSync(candidate)) {
-          return parts.join(path.sep);
-        }
-      } catch {
-        continue;
-      }
-    }
-    return satellitePath;
   }
 
   @Option({

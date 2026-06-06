@@ -1,0 +1,352 @@
+# Evolith CLI Commands Matrix
+
+> **Document Type:** Corporate Standard
+> **Status:** Active
+> **Date:** 2026-06-06
+> **Purpose:** Define which CLI commands Evolith CLI can execute vs which require external tools.
+
+---
+
+## 1. Command Support Categories
+
+| Category | Description |
+|----------|-------------|
+| **Native** | Evolith implements and executes directly |
+| **Scaffold** | Evolith generates config files only, requires external CLI |
+| **Delegated** | External tool must be installed; Evolith only orchestrates |
+| **Unsupported** | Not implemented; requires manual execution |
+
+---
+
+## 2. Runtime Commands
+
+### Node.js / TypeScript (Native)
+
+| Tool | Command | Support | Notes |
+|------|---------|---------|-------|
+| npm | `npm init` | ✅ Native | Project initialization |
+| npm | `npm install` | ✅ Native | Install dependencies |
+| npm | `npm run <script>` | ✅ Native | Execute scripts |
+| npx | `npx tsc` | ✅ Native | TypeScript compilation |
+| npx | `npx eslint` | ✅ Native | Linting |
+| npx | `npx jest` | ✅ Native | Test execution |
+| pnpm | `pnpm install` | ⚠️ Scaffold | Generates pnpm-workspace.yaml |
+| yarn | `yarn install` | ⚠️ Scaffold | Generates yarn.lock |
+
+### .NET / C# (Native)
+
+| Tool | Command | Support | Notes |
+|------|---------|---------|-------|
+| dotnet CLI | `dotnet new` | ✅ Native | Project templates |
+| dotnet CLI | `dotnet build` | ✅ Native | Compilation |
+| dotnet CLI | `dotnet test` | ✅ Native | Test execution |
+| dotnet CLI | `dotnet run` | ✅ Native | Run application |
+| dotnet CLI | `dotnet add package` | ✅ Native | Add NuGet package |
+| dotnet CLI | `dotnet ef` | ⚠️ Scaffold | Requires EF Core tools |
+
+### Python (Native)
+
+| Tool | Command | Support | Notes |
+|------|---------|---------|-------|
+| pip | `pip install` | ✅ Native | Install packages |
+| poetry | `poetry install` | ⚠️ Scaffold | Generates pyproject.toml |
+| uv | `uv pip install` | ⚠️ Scaffold | Requires uv installed |
+| pytest | `pytest` | ✅ Native | Test execution |
+| black | `black .` | ✅ Native | Code formatting |
+| ruff | `ruff check` | ✅ Native | Linting |
+| mypy | `mypy .` | ✅ Native | Type checking |
+
+---
+
+## 3. Monorepo Commands
+
+### Nx (Delegated - Requires npx nx)
+
+| Command | Support | Implementation |
+|---------|---------|----------------|
+| `npx nx generate @nx/node:application` | ⚠️ Delegated | Check `nx` available, then execute |
+| `npx nx build` | ⚠️ Delegated | Check `nx` available, then execute |
+| `npx nx affected:build` | ⚠️ Delegated | Check `nx` available, then execute |
+| `npx nx serve` | ⚠️ Delegated | Check `nx` available, then execute |
+
+**Platform Detection:** `npx nx --version`
+
+### NPM Workspaces (Native - Uses npm CLI)
+
+| Command | Support | Implementation |
+|---------|---------|----------------|
+| `npm install --workspaces` | ✅ Native | Standard npm |
+| `npm run build --workspaces` | ✅ Native | Standard npm |
+| `npm run test --workspaces` | ✅ Native | Standard npm |
+
+### Rush (Delegated - Requires rush)
+
+| Command | Support | Implementation |
+|---------|---------|----------------|
+| `rush install` | ⚠️ Delegated | Check `rush` available |
+| `rush build` | ⚠️ Delegated | Check `rush` available |
+| `rush add` | ⚠️ Delegated | Check `rush` available |
+
+**Platform Detection:** `npx @microsoft/rush --version`
+
+---
+
+## 4. Architecture Pattern Commands
+
+### Clean Architecture (Scaffold Only)
+
+| Layer | Files Generated | CLI Command |
+|-------|-----------------|-------------|
+| Controllers | `src/controllers/*.ts` | None - just scaffold |
+| Services | `src/services/*.ts` | None - just scaffold |
+| Repositories | `src/repositories/*.ts` | None - just scaffold |
+
+### Hexagonal Architecture (Scaffold Only)
+
+| Layer | Files Generated | CLI Command |
+|-------|-----------------|-------------|
+| Ports | `src/ports/*.ts` | None - just scaffold |
+| Adapters | `src/adapters/*.ts` | None - just scaffold |
+| Domain | `src/domain/*.ts` | None - just scaffold |
+
+### DDD (Scaffold Only)
+
+| Concept | Files Generated | CLI Command |
+|---------|-----------------|-------------|
+| Aggregate | `src/domain/aggregates/*.ts` | None - just scaffold |
+| Value Object | `src/domain/value-objects/*.ts` | None - just scaffold |
+| Domain Event | `src/domain/events/*.ts` | None - just scaffold |
+
+---
+
+## 5. Build & Tool Commands
+
+### TypeScript
+
+| Command | Support | Implementation |
+|---------|---------|----------------|
+| `tsc --init` | ✅ Native | Generate tsconfig.json |
+| `tsc` | ✅ Native | Compile TypeScript |
+| `ts-node` | ⚠️ Scaffold | Install via npm, run via npx |
+
+### ESLint
+
+| Command | Support | Implementation |
+|---------|---------|----------------|
+| `npx eslint --init` | ✅ Native | Initialize ESLint config |
+| `npx eslint .` | ✅ Native | Lint files |
+
+### Prettier
+
+| Command | Support | Implementation |
+|---------|---------|----------------|
+| `npx prettier --write .` | ✅ Native | Format files |
+| `npx prettier --check .` | ✅ Native | Check formatting |
+
+### Jest
+
+| Command | Support | Implementation |
+|---------|---------|----------------|
+| `npx jest --init` | ✅ Native | Initialize Jest config |
+| `npx jest` | ✅ Native | Run tests |
+
+---
+
+## 6. CI/CD Commands
+
+### GitHub Actions (Scaffold Only)
+
+| File | Generated | CLI Command |
+|------|-----------|-------------|
+| `.github/workflows/ci.yml` | ✅ | None - file generation |
+| `.github/workflows/deploy.yml` | ✅ | None - file generation |
+
+**Verification:** File exists check
+
+### GitLab CI (Scaffold Only)
+
+| File | Generated | CLI Command |
+|------|-----------|-------------|
+| `.gitlab-ci.yml` | ✅ | None - file generation |
+
+### Azure Pipelines (Scaffold Only)
+
+| File | Generated | CLI Command |
+|------|-----------|-------------|
+| `azure-pipelines.yml` | ✅ | None - file generation |
+
+---
+
+## 7. Container Commands
+
+### Docker (Delegated - Requires docker CLI)
+
+| Command | Support | Implementation |
+|---------|---------|----------------|
+| `docker build` | ⚠️ Delegated | Check `docker --version` |
+| `docker run` | ⚠️ Delegated | Check `docker --version` |
+| `docker-compose up` | ⚠️ Delegated | Check `docker-compose --version` |
+
+**Platform Detection:** `docker --version`
+
+### Kubernetes (Delegated - Requires kubectl)
+
+| Command | Support | Implementation |
+|---------|---------|----------------|
+| `kubectl apply -f` | ⚠️ Delegated | Check `kubectl version` |
+| `helm template` | ⚠️ Delegated | Check `helm version` |
+
+**Platform Detection:** `kubectl version --client`
+
+### Kaniko (Delegated - Requires kaniko)
+
+| Command | Support | Implementation |
+|---------|---------|----------------|
+| `kaniko` | ❌ Unsupported | Not implemented - use docker directly |
+
+---
+
+## 8. Observability Commands
+
+### OpenTelemetry (Scaffold Only)
+
+| Tool | Generated | Notes |
+|------|-----------|-------|
+| otel-collector-config.yaml | ✅ | Config file generation |
+| instrumentation | ✅ | Code injection templates |
+| exporter configs | ✅ | Config file generation |
+
+**No direct CLI calls** - all config-only
+
+### Jaeger (Delegated)
+
+| Command | Support | Implementation |
+|---------|---------|----------------|
+| `jaeger-agent` | ⚠️ Delegated | Requires jaeger binary |
+| Query UI | ❌ Unsupported | Use hosted solution |
+
+### Prometheus (Delegated)
+
+| Command | Support | Implementation |
+|---------|---------|----------------|
+| `prometheus` | ⚠️ Delegated | Requires prometheus binary |
+| `promtool` | ⚠️ Delegated | Config validation |
+
+### Grafana (Delegated)
+
+| Command | Support | Implementation |
+|---------|---------|----------------|
+| Provision dashboards | ⚠️ Scaffold | JSON provisioning |
+| API configuration | ❌ Unsupported | Manual or external |
+
+---
+
+## 9. Secrets Management
+
+### Environment Variables (Native)
+
+| Command | Support | Implementation |
+|---------|---------|----------------|
+| Generate `.env` | ✅ Native | File generation |
+| Validate `.env` exists | ✅ Native | File check |
+
+### HashiCorp Vault (Delegated)
+
+| Command | Support | Implementation |
+|---------|---------|----------------|
+| `vault kv get` | ⚠️ Delegated | Requires vault CLI |
+| `vault agent` | ❌ Unsupported | Manual deployment |
+
+### AWS Secrets Manager (Delegated)
+
+| Command | Support | Implementation |
+|---------|---------|----------------|
+| AWS CLI | ⚠️ Delegated | Requires aws CLI |
+| SDK integration | ⚠️ Scaffold | Config file generation |
+
+---
+
+## 10. Summary Matrix
+
+### Native (Evolith executes directly)
+
+| Category | Commands |
+|----------|----------|
+| npm | init, install, run |
+| dotnet | new, build, test, run, add package |
+| pip | install |
+| pytest | (via python -m) |
+| black, ruff, mypy | direct execution |
+| eslint, prettier, jest | npx execution |
+| File generation | All scaffold operations |
+
+### Scaffold Only (Evolith generates configs)
+
+| Category | Tools |
+|----------|-------|
+| Monorepo configs | pnpm-workspace.yaml, rush.json |
+| Architecture | Layer files (no CLI) |
+| CI/CD | GitHub Actions, GitLab CI, Azure |
+| Container | Dockerfile, docker-compose.yml |
+| Observability | Config files (otel, prometheus, grafana) |
+
+### Delegated (Requires external CLI)
+
+| Tool | Detection Command |
+|------|-------------------|
+| nx | `npx nx --version` |
+| rush | `npx @microsoft/rush --version` |
+| docker | `docker --version` |
+| kubectl | `kubectl version --client` |
+| helm | `helm version` |
+| vault | `vault --version` |
+| kaniko | ❌ Not supported |
+
+### Unsupported
+
+| Tool | Reason |
+|------|--------|
+| Kaniko | Not implemented |
+| Jaeger agent standalone | Use all-in-one |
+| Vault agent | Manual deployment required |
+| Grafana API provisioning | External management |
+| AWS SSM Parameter Store | External SDK |
+
+---
+
+## 11. Platform Detection Flow
+
+```
+User selects "nx" →
+  Check: npx nx --version
+    If success → Execute nx commands
+    If fail → Error: "Nx not installed. Run: npm install -D nx"
+```
+
+```
+User selects "docker" →
+  Check: docker --version
+    If success → Can execute docker build/run
+    If fail → Warning: "Docker not available. Install from https://docker.com"
+```
+
+---
+
+## 12. Implementation Requirements
+
+For each delegated tool, implement:
+
+1. **Detection**: `which` or `--version` check
+2. **Error message**: Clear instruction if not found
+3. **Graceful degradation**: Offer alternatives
+
+Example:
+```typescript
+async function executeNxCommand(cmd: string): Promise<void> {
+  const available = await checkTool('nx', 'npx nx --version');
+  if (!available) {
+    throw new Error('Nx not installed. Run: npm install -D nx @nx/node');
+  }
+  return exec(`npx nx ${cmd}`);
+}
+```

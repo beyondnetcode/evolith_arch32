@@ -44,6 +44,7 @@
 * [0058-ai-consumable-architecture-knowledge](./0058-ai-consumable-architecture-knowledge.md)
 * [0067-modular-monolith-schema-per-domain](./0067-modular-monolith-schema-per-domain.md)
 * [0068-documentation-release-gitflow](./0068-documentation-release-gitflow.md) — **Documentation release GitFlow with bilingual quality gates**
+* [0069-mcp-server-protocol-implementation](./0069-mcp-server-protocol-implementation.md) — **MCP server protocol for AI agent governance integration**
 
 ---
 [Back to Upper Level](../README.md)

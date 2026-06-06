@@ -1,0 +1,137 @@
+{
+  "analysisId": "0413914c-3608-4a30-ac2c-e7f1e579e0f2",
+  "timestamp": "2026-06-06T11:58:44.916Z",
+  "trigger": {
+    "type": "pre_commit",
+    "source": "5a14dda3f33dbce74745dd0bb00cba411993b75d"
+  },
+  "changes": [
+    {
+      "file": ".husky/pre-commit",
+      "category": "HARNESS",
+      "changeType": "modify",
+      "severity": "high",
+      "adrId": null,
+      "justification": "Detected via all analysis"
+    },
+    {
+      "file": ".harness/schemas/impact-analysis.schema.json",
+      "category": "HARNESS",
+      "changeType": "create",
+      "severity": "high",
+      "adrId": null,
+      "justification": "Detected via all analysis"
+    },
+    {
+      "file": ".harness/scripts/impact-analysis-synchronizer.mjs",
+      "category": "HARNESS",
+      "changeType": "create",
+      "severity": "high",
+      "adrId": null,
+      "justification": "Detected via all analysis"
+    }
+  ],
+  "impactMap": {
+    "harness": [
+      ".husky/pre-commit",
+      ".harness/schemas/impact-analysis.schema.json",
+      ".harness/scripts/impact-analysis-synchronizer.mjs"
+    ],
+    "agents": [],
+    "rulesets": [
+      ".husky/pre-commit",
+      ".harness/schemas/impact-analysis.schema.json",
+      ".harness/scripts/impact-analysis-synchronizer.mjs"
+    ],
+    "adrs": [],
+    "documentation": [],
+    "templates": [],
+    "validators": [
+      ".husky/pre-commit",
+      ".harness/schemas/impact-analysis.schema.json",
+      ".harness/scripts/impact-analysis-synchronizer.mjs"
+    ],
+    "navigation": [
+      ".husky/pre-commit",
+      ".harness/schemas/impact-analysis.schema.json",
+      ".harness/scripts/impact-analysis-synchronizer.mjs"
+    ],
+    "bilingual": []
+  },
+  "synchronizations": [
+    {
+      "type": "bilingual_sync",
+      "target": ".husky/pre-commit",
+      "action": "validated",
+      "changeSource": ".husky/pre-commit",
+      "details": "Bilingual pair EN→ES synchronized"
+    },
+    {
+      "type": "schema_update",
+      "target": ".husky/pre-commit",
+      "action": "validated",
+      "changeSource": ".husky/pre-commit",
+      "details": "Pre-commit hook validated"
+    },
+    {
+      "type": "bilingual_sync",
+      "target": ".harness/schemas/impact-analysis.schema.json",
+      "action": "validated",
+      "changeSource": ".harness/schemas/impact-analysis.schema.json",
+      "details": "Bilingual pair EN→ES synchronized"
+    },
+    {
+      "type": "schema_update",
+      "target": ".harness/schemas/impact-analysis.schema.json",
+      "action": "validated",
+      "changeSource": ".harness/schemas/impact-analysis.schema.json",
+      "details": "Schema validated: Impact Analysis Record"
+    },
+    {
+      "type": "bilingual_sync",
+      "target": ".harness/scripts/impact-analysis-synchronizer.mjs",
+      "action": "validated",
+      "changeSource": ".harness/scripts/impact-analysis-synchronizer.mjs",
+      "details": "Bilingual pair EN→ES synchronized"
+    },
+    {
+      "type": "schema_update",
+      "target": ".harness/scripts/impact-analysis-synchronizer.mjs",
+      "action": "validated",
+      "changeSource": ".harness/scripts/impact-analysis-synchronizer.mjs",
+      "details": "Module validated: 4 imports, 0 exports"
+    },
+    {
+      "type": "index_update",
+      "target": ".harness/scripts",
+      "action": "updated",
+      "changeSource": ".harness/scripts/impact-analysis-synchronizer.mjs",
+      "details": "New script registered: impact-analysis-synchronizer.mjs"
+    }
+  ],
+  "risks": [
+    {
+      "risk": "Harness modification may affect CI/CD pipeline behavior",
+      "severity": "high",
+      "affectedComponent": ".husky/pre-commit",
+      "mitigation": "Verify all validation scripts still pass after harness change"
+    }
+  ],
+  "pendingManualActions": [],
+  "report": {
+    "summary": "Impact Analysis completed. 3 change(s) detected, affecting 3 component(s). 7 sync(s) applied, 0 skipped, 1 risk(s)",
+    "changesDetected": 3,
+    "componentsAffected": 3,
+    "synchronizationsApplied": 7,
+    "synchronizationsSkipped": 0,
+    "failures": 0,
+    "risksIdentified": 1,
+    "manualActionsRequired": 0
+  },
+  "executionMetadata": {
+    "analyzerVersion": "1.0.0",
+    "rulesetVersion": "1.0.0",
+    "executionTimeMs": 119,
+    "idempotent": false
+  }
+}

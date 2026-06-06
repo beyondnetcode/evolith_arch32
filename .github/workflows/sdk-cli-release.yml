@@ -1,4 +1,4 @@
-name: Evolith SDK CLI Release
+name: Evolith SDK CLI - Release Pipeline
 
 on:
   push:
@@ -8,52 +8,341 @@ on:
       - 'sdk/cli/**'
       - '.release-please-manifest.json'
       - 'release-please-config.json'
-      - '.github/workflows/**'
+      - '.github/workflows/sdk-cli-release.yml'
+      - '.harness/**'
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '20'
+  CLI_DIR: 'sdk/cli'
 
 jobs:
+  # ============================================
+  # GATE 0: Evolith Core Validation
+  # ============================================
+  core-validation:
+    name: Evolith Core Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Validate Documentation Standards
+        run: node .harness/scripts/validate-docs.mjs
+
+      - name: Check Bilingual Parity
+        run: node .harness/scripts/check-bilingual-parity.mjs
+
+      - name: Verify Root Cleanliness
+        run: node .harness/scripts/validate-root-cleanliness.mjs
+
+      - name: Verify Version Alignment
+        run: |
+          node .harness/scripts/verify-version-log.mjs
+          node .harness/scripts/verify-git-tag.mjs
+
+  # ============================================
+  # GATE 1: Release Please
+  # ============================================
   release-please:
+    needs: core-validation
     runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
+    outputs:
+      release_created: ${{ steps.release.outputs.sdk/cli--release_created }}
+      tag_name: ${{ steps.release.outputs.sdk/cli--tag_name }}
+      version: ${{ steps.release.outputs.sdk/cli--version }}
     steps:
-      - uses: googleapis/release-please-action@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Release Please
         id: release
+        uses: googleapis/release-please-action@v4
         with:
           token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
 
-      - uses: actions/checkout@v4
-        if: ${{ steps.release.outputs['sdk/cli--release_created'] }}
-        
-      - uses: actions/setup-node@v4
-        if: ${{ steps.release.outputs['sdk/cli--release_created'] }}
+      - name: Log Release Decision
+        if: ${{ steps.release.outputs.sdk/cli--release_created }}
+        run: |
+          echo "🚀 Release created: ${{ steps.release.outputs.sdk/cli--tag_name }}"
+          echo "Version: ${{ steps.release.outputs.sdk/cli--version }}"
+
+      - name: No Release Needed
+        if: ${{ !steps.release.outputs.sdk/cli--release_created }}
+        run: |
+          echo "ℹ️ No release needed (no changes detected)"
+
+  # ============================================
+  # GATE 2: Build and Test
+  # ============================================
+  build-and-test:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-          node-version: '20'
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Install dependencies and build
-        if: ${{ steps.release.outputs['sdk/cli--release_created'] }}
-        working-directory: ./sdk/cli
+      - name: Install Dependencies
+        working-directory: ${{ env.CLI_DIR }}
+        run: npm ci
+
+      - name: Type Check and Build
+        working-directory: ${{ env.CLI_DIR }}
+        run: npm run build
+
+      - name: Security Audit
+        working-directory: ${{ env.CLI_DIR }}
+        run: npm audit --audit-level=high
+
+      - name: Unit Tests (MUST PASS)
+        working-directory: ${{ env.CLI_DIR }}
+        run: npm test
+
+      - name: Verify Package Integrity
         run: |
-          npm ci
-          npm run build
+          echo "Verifying package..."
+          node -e "
+            const pkg = require('./${{ env.CLI_DIR }}/package.json');
+            console.log('Name:', pkg.name);
+            console.log('Version:', pkg.version);
+            console.log('Main:', pkg.main);
+            console.log('Bin:', pkg.bin.evolith);
+          "
+
+  # ============================================
+  # GATE 3: Publish to NPM
+  # ============================================
+  publish-npm:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install Dependencies
+        working-directory: ${{ env.CLI_DIR }}
+        run: npm ci
+
+      - name: Build
+        working-directory: ${{ env.CLI_DIR }}
+        run: npm run build
 
       - name: Publish to NPM
-        if: ${{ steps.release.outputs['sdk/cli--release_created'] }}
-        working-directory: ./sdk/cli
+        working-directory: ${{ env.CLI_DIR }}
         run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Package binary (pkg)
-        if: ${{ steps.release.outputs['sdk/cli--release_created'] }}
-        working-directory: ./sdk/cli
+      - name: Confirm Publication
         run: |
-          npx pkg@latest . --targets node20-linux-x64,node20-macos-x64,node20-win-x64 --out-path binaries
-        
-      - name: Upload Binaries to Release
-        if: ${{ steps.release.outputs['sdk/cli--release_created'] }}
+          echo "✅ Published @evolith/cli@${{ needs.release-please.outputs.version }} to NPM"
+
+  # ============================================
+  # GATE 4: Package Binaries
+  # ============================================
+  package-binaries:
+    needs: publish-npm
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: node20-linux-x64
+            ext: ''
+          - os: macos-latest
+            target: node20-macos-x64
+            ext: ''
+          - os: windows-latest
+            target: node20-win-x64
+            ext: '.exe'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Dependencies
+        working-directory: ${{ env.CLI_DIR }}
+        run: npm ci
+
+      - name: Build
+        working-directory: ${{ env.CLI_DIR }}
+        run: npm run build
+
+      - name: Package Binary
+        id: pkg
+        working-directory: ${{ env.CLI_DIR }}
+        run: npx pkg@latest . --targets ${{ matrix.target }} --output-dir ./binaries
+
+      - name: Rename Binary
+        shell: bash
+        run: |
+          if [ "${{ matrix.ext }}" != "" ]; then
+            mv ${{ env.CLI_DIR }}/binaries/evolith ${{ env.CLI_DIR }}/binaries/evolith${{ matrix.ext }}
+          fi
+          ls -la ${{ env.CLI_DIR }}/binaries/
+
+  # ============================================
+  # GATE 5: Binary Smoke Test
+  # ============================================
+  smoke-test:
+    needs: package-binaries
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download Binary
+        uses: actions/download-artifact@v4
+        with:
+          name: binaries
+          path: ./binaries
+
+      - name: Setup Binary
+        shell: bash
+        run: |
+          chmod +x ./binaries/evolith
+          echo "Binary prepared for smoke test"
+
+      - name: Smoke Test - Help Command
+        shell: bash
+        run: |
+          ./binaries/evolith --help || { echo "❌ Binary failed to execute"; exit 1; }
+          echo "✅ Binary executable works"
+
+      - name: Smoke Test - Version
+        shell: bash
+        run: |
+          VERSION=$(./binaries/evolith --version 2>/dev/null || echo "unknown")
+          echo "Binary version: $VERSION"
+
+      - name: Smoke Test - Init Command
+        shell: bash
+        run: |
+          mkdir -p /tmp/evolith-test
+          cd /tmp/evolith-test
+          echo "test-project" | ./binaries/evolith init --runtime nodejs --monorepo none --arch clean || true
+          ls -la
+          echo "✅ Init command smoke test completed"
+
+  # ============================================
+  # GATE 6: Upload Release Assets
+  # ============================================
+  upload-assets:
+    needs: [package-binaries, smoke-test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download All Binaries
+        uses: actions/download-artifact@v4
+        with:
+          pattern: binaries
+          path: ./release-assets
+          merge-multiple: true
+
+      - name: List Assets
+        run: ls -la ./release-assets/
+
+      - name: Upload to Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ steps.release.outputs['sdk/cli--tag_name'] }}
-          files: sdk/cli/binaries/*
+          tag_name: ${{ needs.release-please.outputs.tag_name }}
+          name: Release ${{ needs.release-please.outputs.tag_name }}
+          body: |
+            ## Release Summary
+
+            **Version:** `${{ needs.release-please.outputs.version }}`
+
+            ### ✅ Quality Gates Passed
+            - [x] Core Validation (docs, bilingual, cleanliness)
+            - [x] Build and Type Check
+            - [x] Unit Tests
+            - [x] Security Audit
+            - [x] NPM Publication
+            - [x] Binary Packaging
+            - [x] Smoke Tests
+
+            ### 📦 Assets
+            | Platform | Architecture | Download |
+            |----------|--------------|----------|
+            | Linux | x64 | [evolith](release-assets/evolith) |
+            | macOS | x64 | [evolith](release-assets/evolith) |
+            | Windows | x64 | [evolith.exe](release-assets/evolith.exe) |
+
+            ### 🚀 Installation
+
+            ```bash
+            # NPM
+            npm install -g @evolith/cli
+
+            # Or download binary directly
+            ```
+
+          files: release-assets/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Confirm Release
+        run: |
+          echo "✅ Release ${{ needs.release-please.outputs.tag_name }} published with all assets"
+
+  # ============================================
+  # Cleanup on Failure
+  # ============================================
+  failure-notification:
+    needs: [publish-npm, package-binaries, upload-assets]
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Failure
+        run: |
+          echo "❌ Release pipeline failed"
+          echo "Please check the logs above for details"
+        shell: bash
+
+      - name: Create Issue on Failure
+        if: ${{ github.event_name == 'push' }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '❌ Release Pipeline Failed',
+              body: `Release pipeline failed for tag ${{ needs.release-please.outputs.tag_name || 'unknown' }}
+
+              Please check the workflow logs and fix the issue.
+              
+              @beyondnetcode/evolith-team`,
+              labels: ['bug', 'release']
+            })

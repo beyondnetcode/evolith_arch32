@@ -1,40 +1,33 @@
-import { Command, CommandRunner, Option } from 'nest-commander';
+import { Command, CommandRunner } from 'nest-commander';
 import { Logger } from '@nestjs/common';
-import * as p from '@clack/prompts';
 import chalk from 'chalk';
-import { WatcherService } from '../../core/mcp/watcher.service';
-import { McpServerService } from '../../core/mcp/mcp-server.service';
+import { startMcpServer } from '../../core/mcp/server';
+import { RulesetValidatorService } from '../../core/validators/ruleset-validator.service';
 
 @Command({
   name: 'mcp',
-  description: 'Inicia el servidor MCP para integración IDE y Watcher',
+  description: 'Start Evolith MCP server for AI agent integration via stdio',
 })
 export class McpServeCommand extends CommandRunner {
   private readonly logger = new Logger(McpServeCommand.name);
-
-  constructor(
-    private readonly watcherService: WatcherService,
-    private readonly mcpServer: McpServerService,
-  ) {
-    super();
-  }
 
   async run(passedParam: string[]): Promise<void> {
     const action = passedParam[0] || 'serve';
 
     if (action === 'serve') {
-      p.intro(chalk.bgMagenta.white.bold(' Evolith SDK - MCP Serve '));
-      this.logger.log('Arrancando servicios en background...');
-      
-      this.watcherService.startWatching();
-      // El MCP Server se arranca solo por el ciclo de vida OnModuleInit
+      console.log(chalk.bgMagenta.white.bold(' Evolith SDK - MCP Server '));
+      this.logger.log('Starting MCP server over stdio...');
 
-      p.log.info('El servidor MCP está corriendo por stdio. Presiona Ctrl+C para detenerlo.');
+      const validator = new RulesetValidatorService();
+      await startMcpServer({ rulesetValidator: validator });
 
-      // Mantener el proceso vivo
-      return new Promise(() => {});
+      return;
+    } else if (action === 'version') {
+      console.log('Evolith MCP Server v1.0.0');
+      return;
     } else {
-      this.logger.warn(`Acción MCP desconocida: ${action}`);
+      this.logger.warn(`Unknown MCP action: ${action}`);
+      console.log(`Unknown action: ${action}. Use 'evolith mcp serve' to start the server.`);
     }
   }
 }

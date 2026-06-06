@@ -1,0 +1,196 @@
+{
+  "_comment": "Evolith Runtime Catalog - Extensible configuration. Add new runtimes without code changes.",
+  "catalogVersion": "1.0.0",
+  "lastUpdated": "2026-06-06",
+  "runtimes": [
+    {
+      "id": "nodejs",
+      "name": "Node.js",
+      "versions": ["18.x", "20.x LTS", "22.x"],
+      "defaultVersion": "20.x LTS",
+      "language": "JavaScript",
+      "typeSystem": "dynamic",
+      "frameworks": [
+        { "id": "nestjs", "name": "NestJS", "version": "10.x" },
+        { "id": "express", "name": "Express", "version": "4.x" },
+        { "id": "fastify", "name": "Fastify", "version": "4.x" }
+      ],
+      "databases": [
+        { "id": "postgresql", "name": "PostgreSQL", "orm": "TypeORM" },
+        { "id": "mongodb", "name": "MongoDB", "orm": "Mongoose" },
+        { "id": "mysql", "name": "MySQL", "orm": "TypeORM" },
+        { "id": "redis", "name": "Redis", "type": "cache" }
+      ],
+      "buildTools": ["npm", "pnpm", "yarn"],
+      "testFrameworks": ["jest", "vitest", "mocha"],
+      "packageManager": "npm"
+    },
+    {
+      "id": "typescript",
+      "name": "TypeScript",
+      "versions": ["5.x"],
+      "defaultVersion": "5.x",
+      "language": "TypeScript",
+      "typeSystem": "static",
+      "frameworks": [
+        { "id": "nestjs", "name": "NestJS", "version": "10.x" }
+      ],
+      "databases": [
+        { "id": "postgresql", "name": "PostgreSQL", "orm": "TypeORM" },
+        { "id": "mongodb", "name": "MongoDB", "orm": "Mongoose" }
+      ],
+      "buildTools": ["tsc", "esbuild", "swc"],
+      "testFrameworks": ["jest", "vitest"],
+      "packageManager": "npm"
+    },
+    {
+      "id": "dotnet",
+      "name": ".NET",
+      "versions": ["6.x", "7.x", "8.x LTS"],
+      "defaultVersion": "8.x LTS",
+      "language": "C#",
+      "typeSystem": "static",
+      "frameworks": [
+        { "id": "aspnetcore", "name": "ASP.NET Core", "version": "8.x" },
+        { "id": "blazor", "name": "Blazor", "version": "8.x" },
+        { "id": "MAUI", "name": ".NET MAUI", "version": "8.x" }
+      ],
+      "databases": [
+        { "id": "postgresql", "name": "PostgreSQL", "orm": "EF Core" },
+        { "id": "sqlserver", "name": "SQL Server", "orm": "EF Core" },
+        { "id": "sqlite", "name": "SQLite", "orm": "EF Core" }
+      ],
+      "buildTools": ["dotnet CLI", "msbuild"],
+      "testFrameworks": ["xUnit", "NUnit", "MSTest"],
+      "packageManager": "nuget"
+    },
+    {
+      "id": "python",
+      "name": "Python",
+      "versions": ["3.11", "3.12", "3.13"],
+      "defaultVersion": "3.12",
+      "language": "Python",
+      "typeSystem": "dynamic",
+      "frameworks": [
+        { "id": "fastapi", "name": "FastAPI", "version": "0.110.x" },
+        { "id": "django", "name": "Django", "version": "5.x" },
+        { "id": "flask", "name": "Flask", "version": "3.x" }
+      ],
+      "databases": [
+        { "id": "postgresql", "name": "PostgreSQL", "orm": "SQLAlchemy" },
+        { "id": "mysql", "name": "MySQL", "orm": "SQLAlchemy" },
+        { "id": "sqlite", "name": "SQLite", "orm": "SQLAlchemy" }
+      ],
+      "buildTools": ["pip", "poetry", "uv"],
+      "testFrameworks": ["pytest", "unittest"],
+      "packageManager": "pip"
+    }
+  ],
+  "monorepoOptions": [
+    {
+      "id": "none",
+      "name": "None",
+      "description": "Monolito simple - un solo paquete",
+      "defaults": {
+        "structure": "single",
+        "ciStrategy": "monolithic"
+      }
+    },
+    {
+      "id": "nx",
+      "name": "Nx",
+      "description": "Nx - Graph de dependencias, CI optimizado, affected builds",
+      "frameworks": ["nestjs", "typescript"],
+      "defaults": {
+        "structure": "monorepo",
+        "ciStrategy": "affected",
+        "libraryStructure": "strict"
+      }
+    },
+    {
+      "id": "npm-workspaces",
+      "name": "NPM Workspaces",
+      "description": "NPM Workspaces - Simple, flat, sin overhead",
+      "frameworks": ["nodejs", "typescript"],
+      "defaults": {
+        "structure": "monorepo",
+        "ciStrategy": "monolithic"
+      }
+    },
+    {
+      "id": "pnpm-workspaces",
+      "name": "PNPM Workspaces",
+      "description": "PNPM - Efectivo en espacio, fast installs",
+      "frameworks": ["nodejs", "typescript"],
+      "defaults": {
+        "structure": "monorepo",
+        "ciStrategy": "monolithic"
+      }
+    },
+    {
+      "id": "rush",
+      "name": "Rush",
+      "description": "Rush - Enterprise, con policy enforcement",
+      "frameworks": ["nodejs", "typescript"],
+      "defaults": {
+        "structure": "monorepo",
+        "ciStrategy": "incremental",
+        "policyEnforcement": true
+      }
+    }
+  ],
+  "architecturePatterns": [
+    {
+      "id": "clean",
+      "name": "Clean Architecture",
+      "description": "Controller → Service → Repository - Capas simples",
+      "layers": ["Presentation", "Application", "Domain", "Infrastructure"]
+    },
+    {
+      "id": "hexagonal",
+      "name": "Hexagonal (Ports & Adapters)",
+      "description": "Dominio aislado, puertos definidos, adaptadores externos",
+      "layers": ["Adapters", "Ports", "Domain"]
+    },
+    {
+      "id": "ddd",
+      "name": "DDD (Domain-Driven Design)",
+      "description": "Agregados, Value Objects, Domain Events, Bounded Contexts",
+      "layers": ["Presentation", "Application", "Domain", "Infrastructure"],
+      "dddConcepts": ["Aggregate", "ValueObject", "Entity", "DomainEvent", "BoundedContext"]
+    },
+    {
+      "id": "clean-hex",
+      "name": "Clean + Hexagonal",
+      "description": "Clean con puertos explícitos",
+      "layers": ["Adapters", "Ports", "Application", "Domain", "Infrastructure"]
+    },
+    {
+      "id": "hex-ddd",
+      "name": "Hexagonal + DDD",
+      "description": "Puertos con dominio rico",
+      "layers": ["Adapters", "Ports", "Application", "Domain", "Infrastructure"],
+      "dddConcepts": ["Aggregate", "ValueObject", "Entity", "DomainEvent"]
+    },
+    {
+      "id": "event-driven",
+      "name": "Event-Driven",
+      "description": "Event sourcing, CQRS, messaging patterns",
+      "layers": ["Api", "Commands", "Events", "Consumers", "Storage"],
+      "dddConcepts": ["Aggregate", "DomainEvent", "Projection", "ReadModel"]
+    }
+  ],
+  "databaseDefaults": {
+    "nodejs": "postgresql",
+    "typescript": "postgresql",
+    "dotnet": "sqlserver",
+    "python": "postgresql"
+  },
+  "apiProtocols": [
+    { "id": "rest", "name": "REST", "description": "HTTP/JSON RESTful API" },
+    { "id": "graphql", "name": "GraphQL", "description": "Query language for APIs" },
+    { "id": "grpc", "name": "gRPC", "description": "High-performance RPC" },
+    { "id": "websocket", "name": "WebSocket", "description": "Real-time bidirectional" },
+    { "id": "webhook", "name": "Webhook", "description": "Event-driven callbacks" }
+  ]
+}

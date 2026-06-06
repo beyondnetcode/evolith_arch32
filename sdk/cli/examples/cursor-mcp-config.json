@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "evolith": {
+      "command": "evolith",
+      "args": ["mcp", "serve"],
+      "env": {
+        "EVOLITH_CORE_PATH": "../evolith"
+      }
+    }
+  }
+}

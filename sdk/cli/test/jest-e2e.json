@@ -1,11 +1,7 @@
-{ "moduleFileExtensions": ["js", "json", "ts"], "rootDir": ".",  "testEnvironment": "node",
-  "testRegex": ".e2e-spec.ts$",
-  "transform": {
-    "^.+\\.(t|j)s$": ["ts-jest", { "diagnostics": false }]
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist-test"
   },
-  "moduleNameMapper": {
-    "^@clack/prompts$": "<rootDir>/../__mocks__/@clack/prompts.js",
-    "^chokidar$": "<rootDir>/../__mocks__/chokidar.js",
-    "^conf$": "<rootDir>/../__mocks__/conf.js"
-  }
+  "include": ["test/**/*"]
 }

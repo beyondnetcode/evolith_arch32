@@ -1,0 +1,45 @@
+# Evolith Configuration
+# This file defines the governance and architectural standards for a satellite repository.
+# It is the single source of truth for all Evolith enforcement and validation.
+
+coreRef:
+  version: "1.0.0"
+  path: "../evolith"
+
+governance:
+  version: "1.0"
+  adrRegistry:
+    - id: "ADR-0001"
+      status: "accepted"
+      title: "Architecture Decision Record Template"
+    - id: "ADR-0002"
+      status: "accepted"
+      title: "Hexagonal Architecture for Core Services"
+
+product:
+  name: "example-satellite"
+  type: "library"
+  runtime: "typescript"
+
+metadata:
+  createdAt: "2024-01-15T10:00:00Z"
+  lastValidated: "2024-01-15T10:00:00Z"
+  sdlc:
+    currentPhase: "phase-2"
+    phaseHistory:
+      - phase: "phase-0"
+        enteredAt: "2024-01-10T09:00:00Z"
+        completedAt: "2024-01-12T17:30:00Z"
+        artifacts:
+          - "requirements.md"
+          - "architecture-draft.md"
+      - phase: "phase-1"
+        enteredAt: "2024-01-12T17:30:00Z"
+        completedAt: "2024-01-14T12:00:00Z"
+        artifacts:
+          - "sdlc-manifest.json"
+          - "tool-handoff.json"
+      - phase: "phase-2"
+        enteredAt: "2024-01-14T12:00:00Z"
+
+encoding: "utf-8"

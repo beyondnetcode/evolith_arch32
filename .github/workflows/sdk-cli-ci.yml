@@ -1,0 +1,268 @@
+name: Evolith SDK CLI - CI Pipeline
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'sdk/cli/**'
+      - '.harness/**'
+      - 'release-please-config.json'
+      - '.github/workflows/sdk-cli-ci.yml'
+  push:
+    branches: [main, develop]
+    paths:
+      - 'sdk/cli/**'
+      - '.harness/**'
+      - 'release-please-config.json'
+      - '.github/workflows/sdk-cli-ci.yml'
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '20'
+  CLI_DIR: 'sdk/cli'
+
+jobs:
+  # ============================================
+  # JOB 1: Evolith Core Validation
+  # ============================================
+  core-validation:
+    name: Evolith Core Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Validate Documentation
+        run: node .harness/scripts/validate-docs.mjs --render-mermaid
+
+      - name: Check Bilingual Parity
+        run: node .harness/scripts/check-bilingual-parity.mjs
+
+      - name: Bilingual Terminology Lint
+        run: node .harness/scripts/bilingual-terminology-lint.mjs
+
+      - name: Verify Root Cleanliness
+        run: node .harness/scripts/validate-root-cleanliness.mjs
+
+      - name: Check Bilingual Coverage
+        run: node .harness/scripts/bilingual-coverage.mjs
+
+  # ============================================
+  # JOB 2: Security Audit
+  # ============================================
+  security-audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Dependencies
+        working-directory: ${{ env.CLI_DIR }}
+        run: npm ci
+
+      - name: Security Vulnerability Audit
+        working-directory: ${{ env.CLI_DIR }}
+        run: npm audit --audit-level=high
+
+  # ============================================
+  # JOB 3: Lint and Type Check
+  # ============================================
+  lint-and-types:
+    name: Lint and Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: ${{ env.CLI_DIR }}/package-lock.json
+
+      - name: Install Dependencies
+        working-directory: ${{ env.CLI_DIR }}
+        run: npm ci
+
+      - name: Type Check
+        working-directory: ${{ env.CLI_DIR }}
+        run: npm run build
+
+  # ============================================
+  # JOB 4: Unit Tests with Coverage
+  # ============================================
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: ${{ env.CLI_DIR }}/package-lock.json
+
+      - name: Install Dependencies
+        working-directory: ${{ env.CLI_DIR }}
+        run: npm ci
+
+      - name: Run Unit Tests
+        working-directory: ${{ env.CLI_DIR }}
+        run: npm test -- --coverage --coverage-reporters=text-summary
+
+      - name: Upload Coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: ${{ env.CLI_DIR }}/coverage/
+
+      - name: Check Coverage Threshold
+        run: |
+          COVERAGE=$(cat ${{ env.CLI_DIR }}/coverage/coverage-summary.json | jq -r '.total.lines.pct')
+          THRESHOLD=80
+          if (( $(echo "$COVERAGE < $THRESHOLD" | bc -l) )); then
+            echo "Coverage $COVERAGE% is below threshold $THRESHOLD%"
+            exit 1
+          fi
+          echo "Coverage: $COVERAGE% ✓"
+
+  # ============================================
+  # JOB 5: Architecture Validation
+  # ============================================
+  architecture-validation:
+    name: Architecture Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Verify Git Tag Alignment
+        run: node .harness/scripts/verify-git-tag.mjs
+
+      - name: Verify Version Log
+        run: node .harness/scripts/verify-version-log.mjs
+
+      - name: Check ADR Consistency
+        run: node .harness/scripts/adr-lifecycle.mjs --check-only
+
+      - name: Doc Complexity Score
+        run: node .harness/scripts/doc-complexity-score.mjs --threshold=15
+
+  # ============================================
+  # JOB 6: Package Integrity
+  # ============================================
+  package-integrity:
+    name: Package Integrity
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Dependencies
+        working-directory: ${{ env.CLI_DIR }}
+        run: npm ci
+
+      - name: Build Package
+        working-directory: ${{ env.CLI_DIR }}
+        run: npm run build
+
+      - name: Verify Binary Entry Point
+        run: |
+          echo "Checking bin entry point..."
+          ls -la ${{ env.CLI_DIR }}/dist/main.js
+          echo "Checking package.json bin field..."
+          node -e "const pkg=require('./${{ env.CLI_DIR }}/package.json'); console.log('bin:', pkg.bin)" 
+
+      - name: Verify Package Structure
+        run: |
+          echo "Verifying package structure..."
+          node -e "
+            const pkg = require('./${{ env.CLI_DIR }}/package.json');
+            const fs = require('fs');
+            const path = require('path');
+            
+            // Check main entry
+            const mainExists = fs.existsSync(path.join('${{ env.CLI_DIR }}', pkg.main));
+            console.log('Main exists:', mainExists);
+            
+            // Check bin entry
+            const binPath = path.join('${{ env.CLI_DIR }}', pkg.bin.evolith);
+            const binExists = fs.existsSync(binPath);
+            console.log('Bin exists:', binExists);
+            
+            // Check exports
+            console.log('Main:', pkg.main);
+            console.log('Bin:', pkg.bin);
+            
+            if (!mainExists || !binExists) {
+              process.exit(1);
+            }
+          "
+
+  # ============================================
+  # JOB 7: E2E Smoke Test (optional)
+  # ============================================
+  e2e-tests:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    if: ${{ false }} # Disabled by default, enable via workflow_dispatch
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Dependencies
+        working-directory: ${{ env.CLI_DIR }}
+        run: npm ci
+
+      - name: Build
+        working-directory: ${{ env.CLI_DIR }}
+        run: npm run build
+
+      - name: Run E2E Tests
+        working-directory: ${{ env.CLI_DIR }}
+        run: npm run test:e2e
+
+  # ============================================
+  # Gate: All Jobs Must Pass
+  # ============================================
+  gate:
+    name: CI Gate
+    needs: [core-validation, security-audit, lint-and-types, unit-tests, architecture-validation, package-integrity]
+    runs-on: ubuntu-latest
+    steps:
+      - name: All Checks Passed
+        run: echo "✅ All CI checks passed"

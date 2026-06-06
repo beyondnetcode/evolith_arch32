@@ -52,10 +52,14 @@ for (const f of files) {
 }
 
 if (orphans.length > 0) {
-  console.log('\\n⚠ Orphan files detected (EN without ES):');
+  console.log('\n⚠ Orphan files detected (EN without ES):');
   orphans.forEach(o => console.log('  -', o));
   process.exit(1);
 } else {
-  console.log('✓ No orphan bilingual files');
+  echo "✓ No orphan bilingual files"
 }
+
+echo ""
+echo "Running impact analysis & synchronization..."
+node .harness/scripts/impact-analysis-synchronizer.mjs --staged --verbose --fail-on-risk
 "

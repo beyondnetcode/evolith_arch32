@@ -1,0 +1,266 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/.harness/schemas/impact-analysis.schema.json",
+  "title": "Impact Analysis Record",
+  "description": "Schema for Evolith Core impact analysis and synchronization records.",
+  "type": "object",
+  "required": ["analysisId", "timestamp", "trigger", "changes", "impactMap", "synchronizations", "report"],
+  "additionalProperties": false,
+  "properties": {
+    "analysisId": {
+      "type": "string",
+      "description": "Unique identifier for this analysis run (UUID)."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of analysis execution."
+    },
+    "trigger": {
+      "type": "object",
+      "required": ["type", "source"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["pre_commit", "manual", "scheduled", "webhook"],
+          "description": "What triggered this analysis."
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of the trigger (commit SHA, user, etc.)."
+        },
+        "commitMessage": {
+          "type": "string",
+          "description": "Commit message if triggered by git commit."
+        }
+      }
+    },
+    "changes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["file", "category", "changeType", "severity"],
+        "additionalProperties": false,
+        "properties": {
+          "file": {
+            "type": "string",
+            "description": "File path relative to repository root."
+          },
+          "category": {
+            "type": "string",
+            "enum": ["ADR", "DOCS", "RULES", "ARCH", "HARNESS", "FEATURE", "SCHEMA"],
+            "description": "Primary change category."
+          },
+          "subCategory": {
+            "type": "string",
+            "description": "More specific sub-category."
+          },
+          "changeType": {
+            "type": "string",
+            "enum": ["create", "modify", "delete", "rename"],
+            "description": "Type of change."
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["critical", "high", "medium", "low"],
+            "description": "Impact severity of this change."
+          },
+          "adrId": {
+            "type": "string",
+            "description": "If change is ADR-related, the ADR ID."
+          },
+          "justification": {
+            "type": "string",
+            "description": "Why this change was made (from commit message or PR)."
+          }
+        }
+      },
+      "description": "All detected changes in this analysis."
+    },
+    "impactMap": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "harness": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Harness scripts, agents, and rules affected."
+        },
+        "agents": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Agent configurations and rules affected."
+        },
+        "rulesets": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Rulesets and schemas affected."
+        },
+        "adrs": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "ADR registry entries affected."
+        },
+        "documentation": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Documentation files affected."
+        },
+        "templates": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Artifact templates affected."
+        },
+        "validators": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Validation scripts affected."
+        },
+        "navigation": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Navigation indexes affected."
+        }
+      },
+      "description": "Map of impact zones with affected component paths."
+    },
+    "synchronizations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "target", "action", "status"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["index_update", "bilingual_sync", "schema_update", "navigation_sync", "cross_ref_sync", "template_validation", "rule_propagation"]
+          },
+          "target": {
+            "type": "string",
+            "description": "Target file or component."
+          },
+          "action": {
+            "type": "string",
+            "enum": ["created", "updated", "validated", "skipped", "failed"],
+            "description": "Action taken."
+          },
+          "changeSource": {
+            "type": "string",
+            "description": "Which change triggered this synchronization."
+          },
+          "details": {
+            "type": "string",
+            "description": "Details about the synchronization action."
+          },
+          "status": {
+            "type": "string",
+            "enum": ["success", "skipped", "failed", "requires_manual"],
+            "description": "Synchronization status."
+          }
+        }
+      },
+      "description": "All synchronization actions taken or skipped."
+    },
+    "risks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "risk": {
+            "type": "string",
+            "description": "Description of the risk."
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["critical", "high", "medium", "low"]
+          },
+          "affectedComponent": {
+            "type": "string"
+          },
+          "mitigation": {
+            "type": "string",
+            "description": "Proposed mitigation strategy."
+          }
+        }
+      },
+      "description": "Identified risks that require attention."
+    },
+    "pendingManualActions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "type": "string",
+            "description": "Manual action required."
+          },
+          "reason": {
+            "type": "string",
+            "description": "Why this cannot be automated."
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["critical", "high", "medium", "low"]
+          },
+          "affectedComponent": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Actions that require manual intervention."
+    },
+    "report": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "summary": {
+          "type": "string",
+          "description": "Human-readable summary of the analysis."
+        },
+        "changesDetected": {
+          "type": "integer"
+        },
+        "componentsAffected": {
+          "type": "integer"
+        },
+        "synchronizationsApplied": {
+          "type": "integer"
+        },
+        "synchronizationsSkipped": {
+          "type": "integer"
+        },
+        "failures": {
+          "type": "integer"
+        },
+        "risksIdentified": {
+          "type": "integer"
+        },
+        "manualActionsRequired": {
+          "type": "integer"
+        }
+      }
+    },
+    "executionMetadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "analyzerVersion": {
+          "type": "string"
+        },
+        "rulesetVersion": {
+          "type": "string"
+        },
+        "executionTimeMs": {
+          "type": "integer"
+        },
+        "idempotent": {
+          "type": "boolean",
+          "description": "Whether this run was idempotent (no unnecessary changes)."
+        }
+      }
+    }
+  }
+}

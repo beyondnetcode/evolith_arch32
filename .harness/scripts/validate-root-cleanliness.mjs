@@ -20,7 +20,10 @@ const allowedFiles = new Set([
   ".gitignore",
   ".markdownlint.json",
   ".release-please-manifest.json",
-  "release-please-config.json"
+  "release-please-config.json",
+  "COVERAGE_REPORT.md",
+  "cli-core-parity-tracking.md",
+  "evolith-validated-tool-catalog.md"
 ]);
 
 // Explicit whitelist of allowed directories in the root directory.
@@ -32,6 +35,7 @@ const allowedDirectories = new Set([
   ".husky",
   ".vscode",
   "reference",
+  "rulesets",
   "sdk"
 ]);
 

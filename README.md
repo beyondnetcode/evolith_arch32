@@ -1,4 +1,8 @@
-# Evolith: Progressive Architecture Reference Base
+<div align="center">
+
+# Evolith
+
+### Progressive Architecture Reference Base
 
 [![Status](https://img.shields.io/badge/Status-Active-brightgreen?style=for-the-badge)]()
 [![Method](https://img.shields.io/badge/Method-Spec--driven_AI--DD-blueviolet?style=for-the-badge)]()
@@ -6,23 +10,42 @@
 [![CI](https://img.shields.io/github/actions/workflow/status/beyondnetcode/evolith_arch32/docs.yml?style=for-the-badge&label=CI)](https://github.com/beyondnetcode/evolith_arch32/actions)
 [![Coverage](https://img.shields.io/badge/Coverage-66%25-yellow?style=for-the-badge)](./COVERAGE_REPORT.md)
 
-**Evolith is the corporate architecture upstream for product repositories.** It defines reusable architecture standards, governance rules, ADRs, patterns, and operating guidance that satellite products inherit and specialize.
+<br/>
+
+<a href="./reference/governance/sdlc/assets/master-view.png" title="Evolith E2E Product Vision — click to enlarge">
+  <img src="./reference/governance/sdlc/assets/master-view.png"
+       alt="Evolith E2E Product Vision"
+       width="780"
+       style="border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);" />
+</a>
+
+<sub>↑ Evolith E2E Product Vision · MD3 — <i>click to enlarge</i></sub>
+
+<br/>
+
+**Evolith is the corporate architecture upstream for product repositories.**<br/>
+It defines reusable architecture standards, governance rules, ADRs, patterns,<br/>
+and operating guidance that satellite products inherit and specialize.
+
+> *Separate conceptually before separating physically.*
+
+Language: [English](./README.md) | [Español](./README.es.md)
+
+</div>
+
+---
 
 ## Evolith SDK CLI (Oficial)
 
 Para automatizar la adopción de Evolith en nuevos repositorios satélite o integrar herramientas IDE (vía OpenCode/MCP), recomendamos fuertemente utilizar el CLI oficial.
 
- **[Ver Documentación del CLI](./sdk/cli/README.md)**
+**[Ver Documentación del CLI](./sdk/cli/README.md)**
 
 ```bash
 npx @evolith/cli init
 ```
 
 Evolith solves a common enterprise problem: teams need one clear place to understand what is reusable policy, what is a product-specific implementation, and how decisions are promoted from real products back into the architecture reference.
-
-> Separate conceptually before separating physically.
-
-Language: [English](./README.md) | [Español](./README.es.md)
 
 ---
 

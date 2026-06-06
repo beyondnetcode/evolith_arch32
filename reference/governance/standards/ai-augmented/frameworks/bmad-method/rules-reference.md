@@ -181,13 +181,13 @@ VIOLATION: @architect recommends Kafka for a Phase 1 implementation without an
 ```markdown
 # STORY-001: User Login
 
-## Business Narrative
+<!-- ## Business Narrative -->
 As a [user], I want to [action] so that [business value].
 
-### Acceptance Criteria
+<!-- ### Acceptance Criteria -->
 - Scenario 1: [Given/When/Then in business terms]
 
-## Technical Requirements
+<!-- ## Technical Requirements -->
 - Auth method: JWT RS256, 15-minute expiry
 - Storage: HttpOnly cookie, Secure flag, SameSite=Strict
 - Schema: auth.users table, bcrypt hash comparison
@@ -413,7 +413,7 @@ VIOLATION:
 The following is a condensed version of all 18 rules suitable for pasting directly into an `AGENTS.md`, `.cursorrules`, or AI tool system prompt:
 
 ```markdown
-## Binding Harness Rules
+<!-- ## Binding Harness Rules -->
 
 | ID | Rule | Constraint |
 |---|---|---|

@@ -9,7 +9,7 @@ Standard blueprints to save structure tokens.
 **I want to** [Actionable Objective]
 **So that** [Business Benefit]
 
-### Acceptance Criteria
+<!-- ### Acceptance Criteria -->
 - [] Scenario 1: [Given/When/Then]
 ```
 

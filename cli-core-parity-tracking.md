@@ -39,11 +39,11 @@ This document tracks the gap between **what Evolith Core defines** (rulesets, ph
 
 | Phase Gate | CLI Command | Current Behavior | Gap |
 |------------|-------------|------------------|-----|
-| Phase 1 | `evolith init` | [OK] Prompts for name, type, agents, features | [MISSING] No PRD validation, no business case check |
-| Phase 2 | `evolith sdlc handoff` | [MISSING] MOCK — no interactive phase selection | [MISSING] No ADR registry check, no bounded context validation |
-| Phase 3 | `evolith sdlc handoff` | [MISSING] MOCK | [MISSING] No CI integration, no coverage threshold check |
-| Phase 4 | `evolith sdlc handoff` | [MISSING] MOCK | [MISSING] No security scan, no quality metrics |
-| Phase 5 | `evolith sdlc handoff` | [MISSING] MOCK | [MISSING] No observability check, no rollback validation |
+| Phase 1 | `smart-cli init` | [OK] Prompts for name, type, agents, features | [MISSING] No PRD validation, no business case check |
+| Phase 2 | `smart-cli sdlc handoff` | [MISSING] MOCK — no interactive phase selection | [MISSING] No ADR registry check, no bounded context validation |
+| Phase 3 | `smart-cli sdlc handoff` | [MISSING] MOCK | [MISSING] No CI integration, no coverage threshold check |
+| Phase 4 | `smart-cli sdlc handoff` | [MISSING] MOCK | [MISSING] No security scan, no quality metrics |
+| Phase 5 | `smart-cli sdlc handoff` | [MISSING] MOCK | [MISSING] No observability check, no rollback validation |
 
 ### 2.3 Missing Phase Gate Artifacts
 
@@ -108,7 +108,7 @@ Phase 3 artifacts required but NOT checked by CLI:
 
 | Principle | Statement | CLI Validation | Gap |
 |-----------|-----------|----------------|-----|
-| ACL-01 | Schema Validation Before Ingestion | [MISSING] None | No ACL validation in `evolith validate` |
+| ACL-01 | Schema Validation Before Ingestion | [MISSING] None | No ACL validation in `smart-cli validate` |
 | ACL-02 | Transformation Traceability | [MISSING] None | No audit trail check |
 | ACL-03 | Reject Non-Compliant Data | [MISSING] None | No rejection enforcement |
 | ACL-04 | ACL Version Synchronization | [MISSING] None | No version drift check |
@@ -119,7 +119,7 @@ Phase 3 artifacts required but NOT checked by CLI:
 
 | Rule | Description | CLI Validation | Gap |
 |------|-------------|----------------|-----|
-| OCB-01 | Core license-agnostic | [OK] Implemented | Works in `evolith validate` |
+| OCB-01 | Core license-agnostic | [OK] Implemented | Works in `smart-cli validate` |
 | OCB-02 | Enterprise marking | [WARNING] Partial | No enterprise artifact flagging |
 | OCB-03 | ACL as Enterprise | [MISSING] None | No ACL vs Core boundary check |
 | OCB-04 | CLI/MCP as Core | [MISSING] None | No CLI/MCP classification |
@@ -139,7 +139,7 @@ Phase 3 artifacts required but NOT checked by CLI:
 
 ## 5. CLI Commands vs Core Definitions
 
-### 5.1 `evolith init`
+### 5.1 `smart-cli init`
 
 | Feature | Evolith Core Defines | CLI Executes | Parity |
 |---------|---------------------|--------------|--------|
@@ -152,7 +152,7 @@ Phase 3 artifacts required but NOT checked by CLI:
 | Rulesets to inherit | ACL, Open-Core, ADRs | [MISSING] Not shown | [MISSING] GAP |
 | Phase gate artifacts | Should be scaffolded | [MISSING] Not created | [MISSING] GAP |
 
-### 5.2 `evolith validate`
+### 5.2 `smart-cli validate`
 
 | Rule | Evolith Core | CLI Status | Gap |
 |------|-------------|------------|-----|
@@ -165,7 +165,7 @@ Phase 3 artifacts required but NOT checked by CLI:
 | ADR rules | ADR compliance | [MISSING] Not validated | [MISSING] GAP |
 | Phase gates | Phase requirements | [MISSING] Not validated | [MISSING] GAP |
 
-### 5.3 `evolith agents`
+### 5.3 `smart-cli agents`
 
 | Feature | Evolith Core Defines | CLI Status | Gap |
 |---------|---------------------|------------|-----|
@@ -177,7 +177,7 @@ Phase 3 artifacts required but NOT checked by CLI:
 | ACL integration | ACL-01 through ACL-06 | [MISSING] Not enforced | [MISSING] GAP |
 | Agent ADR rules | HXA, TP, etc. | [MISSING] Not validated | [MISSING] GAP |
 
-### 5.4 `evolith sdlc`
+### 5.4 `smart-cli sdlc`
 
 | Feature | Evolith Core Defines | CLI Status | Gap |
 |---------|---------------------|------------|-----|
@@ -191,7 +191,7 @@ Phase 3 artifacts required but NOT checked by CLI:
 | Quality thresholds | Phase 4 gate | [MISSING] Not checked | [MISSING] GAP |
 | Observability | Phase 5 gate | [MISSING] Not checked | [MISSING] GAP |
 
-### 5.5 `evolith mcp`
+### 5.5 `smart-cli mcp`
 
 | Feature | Evolith Core Defines | CLI Status | Gap |
 |---------|---------------------|------------|-----|
@@ -221,7 +221,7 @@ Phase 3 artifacts required but NOT checked by CLI:
 
 ### 6.2 Required Interactive Flows
 
-#### Flow 1: `evolith init` Enhanced
+#### Flow 1: `smart-cli init` Enhanced
 ```typescript
 const initFlow = await p.group({
   name: () => p.text({ message: 'Repository name:' }),
@@ -238,7 +238,7 @@ const initFlow = await p.group({
 });
 ```
 
-#### Flow 2: `evolith sdlc handoff` Interactive
+#### Flow 2: `smart-cli sdlc handoff` Interactive
 ```typescript
 const handoffFlow = await p.group({
   fromPhase: () => p.select({
@@ -261,7 +261,7 @@ const handoffFlow = await p.group({
 });
 ```
 
-#### Flow 3: `evolith validate` Fix Flow
+#### Flow 3: `smart-cli validate` Fix Flow
 ```typescript
 const validateFlow = await p.group({
   autoFix: () => p.confirm({ message: 'Auto-fix solvable issues?' }),

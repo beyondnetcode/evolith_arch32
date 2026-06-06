@@ -143,7 +143,7 @@ sdk/cli/
 │   ├── cli/
 │   │   ├── index.ts              # CLI entry point
 │   │   └── commands/
-│   │       └── mcp.ts            # 'evolith mcp' command
+│   │       └── mcp.ts            # 'smart-cli mcp' command
 │   ├── mcp/
 │   │   ├── server.ts             # McpServer class
 │   │   ├── tools/
@@ -200,7 +200,7 @@ export class EvolithMcpServer extends Server {
 
 ### 3.4 CLI Integration
 
-The MCP server is invoked via `evolith mcp` subcommand:
+The MCP server is invoked via `smart-cli mcp` subcommand:
 
 ```typescript
 export const mcpCommand = new Command('mcp')

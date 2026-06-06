@@ -70,7 +70,7 @@ No component creates its own truth. Every rule, artifact, and standard must be t
 ├── @evolith/sdk-sdlc        # Phase gates, evidence collection
 └── @evolith/sdk-mcp         # MCP protocol adapters
 
-@evolith/cli (current)
+@evolith/smart-cli (current)
 └── Implements CLI commands using @evolith/sdk-core
 ```
 
@@ -518,7 +518,7 @@ Satellites can define local rulesets that extend Core:
 
 ### Phase 1: SDK Extraction
 1. Extract Core logic into `@evolith/sdk-core`
-2. Keep CLI in `@evolith/cli` using SDK
+2. Keep CLI in `@evolith/smart-cli` using SDK
 3. Maintain backward compatibility
 
 ### Phase 2: MCP Completion

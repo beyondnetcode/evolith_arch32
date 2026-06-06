@@ -42,7 +42,7 @@ Para automatizar la adopción de Evolith en nuevos repositorios satélite o inte
 **[Ver Documentación del CLI](./sdk/cli/README.md)**
 
 ```bash
-npx @evolith/cli init
+npx @evolith/smart-cli init
 ```
 
 Evolith solves a common enterprise problem: teams need one clear place to understand what is reusable policy, what is a product-specific implementation, and how decisions are promoted from real products back into the architecture reference.

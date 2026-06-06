@@ -17,7 +17,7 @@ Para automatizar la adopción de Evolith en nuevos repositorios satélite o inte
  **[Ver Documentación del CLI](./sdk/cli/README.md)**
 
 ```bash
-npx @evolith/cli init
+npx @evolith/smart-cli init
 ```
 
 Idioma: [English](./README.md) | [Espanol](./README.es.md)

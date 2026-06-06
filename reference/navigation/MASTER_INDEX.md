@@ -74,7 +74,7 @@ Key architecture references:
 |---|---|
 | Standards | [reference/governance/standards](../governance/standards/README.md) |
 | Architecture Glossary | [reference/governance/glossary](../governance/glossary.md) |
-| Vision | [reference/governance/standards/vision](../governance/standards/vision/README.md) | ⚠️ [Gap Analysis vs Vision](./governance/standards/vision/gap-analysis-core.md) |
+| Vision | [reference/governance/standards/vision](../governance/standards/vision/README.md) | ⚠️ [Gap Analysis vs Vision](../governance/standards/vision/gap-analysis-core.md) |
 | Engineering | [reference/governance/standards/engineering](../governance/standards/engineering/README.md) |
 | Onboarding | [reference/governance/standards/onboarding](../governance/standards/onboarding/README.md) |
 | AI-Augmented Engineering | [reference/governance/standards/ai-augmented](../governance/standards/ai-augmented/README.md) |

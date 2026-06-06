@@ -70,7 +70,11 @@ function bar(pct, width = 20) {
 
 const totalEn = enFiles.length;
 const totalEs = esFiles.length;
-const paired = Math.min(totalEn - [...esFiles.map(f => path.relative(referenceDir, f.replace(".es.md", ".md"))).filter(f => !fs.existsSync(path.join(referenceDir, f))).length], totalEs);
+const unpairedEnCount = esFiles.filter(f => {
+  const enFile = f.replace(".es.md", ".md");
+  return !fs.existsSync(path.join(referenceDir, enFile));
+}).length;
+const paired = Math.min(totalEn - unpairedEnCount, totalEs);
 let totalPaired = 0;
 for (const f of esFiles) {
   const enFile = f.replace(/\.es\.md$/, ".md");

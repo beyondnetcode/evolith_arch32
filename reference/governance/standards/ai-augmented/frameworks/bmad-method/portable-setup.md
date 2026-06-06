@@ -65,19 +65,19 @@ Create `.harness/agents/agent-specs.md` with the following content. Adapt scope 
 ```markdown
 # Agent Personas Specification
 
-## @po (Product Owner)
+<!-- ## @po (Product Owner) -->
 - **Scope**: Business logic, functional stories, OKRs, readability.
 - **Directives**: No implementation jargon. Prioritize user experience and business outcome.
 
-## @architect (Software Architect)
+<!-- ## @architect (Software Architect) -->
 - **Scope**: Tech stack, system design, diagrams (C4, ERD, sequence), ADRs.
 - **Directives**: Enforce hexagonal boundaries, RLS enforcement, port portability, stack coherence.
 
-## @analyst (Business Analyst)
+<!-- ## @analyst (Business Analyst) -->
 - **Scope**: Document sync, backlog hygiene, use case taxonomies.
 - **Directives**: Ensure 100% bilingual equivalence and precise cross-references.
 
-## @devops (DevSecOps Engineer)
+<!-- ## @devops (DevSecOps Engineer) -->
 - **Scope**: Docker configs, CI/CD pipelines, security scanning, harness governance.
 - **Directives**: Enforce security standards, UTF-8 sanitization, and token economy.
 ```
@@ -109,20 +109,20 @@ Create one file per playbook in `.harness/playbooks/`. Adapt trigger conditions 
 ```markdown
 # Document Governance Playbook
 
-## Use When
+<!-- ## Use When -->
 - reviewing requirements
 - updating functional stories
 - editing ADRs or blueprints
 - validating documentation sync
 
-## Mandatory Checks
+<!-- ## Mandatory Checks -->
 1. Functional content is readable to Product Owners and Business Analysts.
 2. Technical detail is isolated in a dedicated Technical Requirements section.
 3. Document language variants stay synchronized.
 4. Diagram labels match document language.
 5. Runtime-specific claims point to the correct authoritative profile.
 
-## Audit Output Format
+<!-- ## Audit Output Format -->
 - artifact
 - location
 - issue type
@@ -134,18 +134,18 @@ Create one file per playbook in `.harness/playbooks/`. Adapt trigger conditions 
 ```markdown
 # API Governance Playbook
 
-## Use When
+<!-- ## Use When -->
 - reviewing backend contracts
 - designing REST endpoints
 - validating query handlers or repositories
 
-## Mandatory Checks
+<!-- ## Mandatory Checks -->
 1. Command and query responsibilities are explicit.
 2. Pagination, filtering, sorting are centralized.
 3. Error mapping stays structured and predictable.
 4. Multi-tenancy keeps primary application-layer filtering.
 
-## Architectural Goal
+<!-- ## Architectural Goal -->
 The API remains maintainable as a modular monolith today and extractable tomorrow.
 ```
 
@@ -176,15 +176,15 @@ Create `AGENTS.md` at your repository root with the following structure:
 ```markdown
 # AGENTS.md — [Your Repository Name]
 
-## Project Overview
+<!-- ## Project Overview -->
 [Brief description of what this repository is and does]
 
-## Build and Run
+<!-- ## Build and Run -->
 [Commands to install dependencies, start the project, run tests]
 
-## Agent Team
+<!-- ## Agent Team -->
 
-### BMAD Team Agents (Sequential Workflow)
+<!-- ### BMAD Team Agents (Sequential Workflow) -->
 Invoke by role for spec-driven feature delivery:
 - **analyst**: Requirements analysis and functional specification
 - **pm**: PRD creation and backlog management
@@ -195,7 +195,7 @@ Invoke by role for spec-driven feature delivery:
 
 Agent personas: `.bmad-core/agents/`
 
-### Harness Governance Agents (On-Demand)
+<!-- ### Harness Governance Agents (On-Demand) -->
 Invoke by tag for document and architecture governance:
 - **@po**: Functional story readability and business narrative
 - **@architect**: ADR review, diagram audit, stack validation
@@ -204,7 +204,7 @@ Invoke by tag for document and architecture governance:
 
 Agent specs: `.harness/agents/agent-specs.md`
 
-## Binding Rules
+<!-- ## Binding Rules -->
 All agents operate under 18 binding rules. Full reference: `.harness/rules/global-rules.md`
 
 Key rules always active:
@@ -213,10 +213,10 @@ Key rules always active:
 - R-04: Diagram labels match document language (code identifiers exempt)
 - R-10: Audit output format: [Document, Location, Issue Type, Severity, Fix]
 
-## Conventions
+<!-- ## Conventions -->
 [Your naming conventions, ADR format, directory taxonomy]
 
-## Out of Bounds
+<!-- ## Out of Bounds -->
 - Never commit secrets, tokens, or credentials
 - Never modify files outside the scope of the current task
 - Never skip the validation script before committing documentation changes

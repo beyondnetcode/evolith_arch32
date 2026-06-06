@@ -11,28 +11,28 @@ An agent without an `AGENTS.md` must rediscover the stack, guess test commands, 
 Every repository implementing Level 1 or higher AI-Augmentation must possess an `AGENTS.md` file in its root directory with the following strict anatomy:
 
 ```markdown
-## Project
+<!-- ## Project -->
 [Concise 2-line description explaining the business purpose of this project]
 
-## Build & Run
+<!-- ## Build & Run -->
 - Build: `[Exact command, e.g., npm run build]`
 - Test: `[Command for unit tests, e.g., npx nx run test my-app]`
 - Lint: `[Lint and fix command, e.g., npm run lint -- --fix]`
 
-## Architecture
+<!-- ## Architecture -->
 - Runtime: [Node.js vXX / .NET X.X / Android SDK XX]
 - DB: [Engine, e.g., PostgreSQL 16 + Drizzle ORM]
 - Key modules: [Short list of critical modules or layers in this repo]
 
-## Conventions
+<!-- ## Conventions -->
 - [Critical convention 1, e.g., Use Result Monad for service returns]
 - [Critical convention 2, e.g., UI components must be Server Components by default]
 
-## Agent Rules
+<!-- ## Agent Rules -->
 - [Rule preventing known error 1, e.g., NEVER delete existing tests to make a fix pass]
 - [Rule preventing known error 2, e.g., If editing a Drizzle entity, run 'npm run db:generate' immediately]
 
-## Out of Bounds
+<!-- ## Out of Bounds -->
 - [Which parts of the repo MUST NOT BE TOUCHED, e.g., Do not modify files in /legacy folder or CI/CD workflows]
 ```
 

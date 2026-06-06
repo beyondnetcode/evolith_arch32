@@ -1,14 +1,27 @@
-# Document & Story Templates
+# Plantillas de Documentos e Historias
 
-> **Nota:** Este archivo es un esqueleto inicial. Por favor, complete la traducción.
+Plantillas estándar para ahorrar tokens de estructura.
 
 ---
 
-## Template 01: Functional User Story
+## Template 01: Historia de Usuario Funcional
 
-*Contenido pendiente de traducción.*
+```markdown
+# HISTORIA-[ID]: [Título Breve]
+**Como un** [Rol de Usuario]
+**Quiero** [Objetivo Accionable]
+**Para que** [Beneficio de Negocio]
 
-## Template 02: Architectural Decision Record (ADR)
+<!-- ### Criterios de Aceptación -->
+- [] Escenario 1: [Dado/Cuando/Entonces]
+```
 
-*Contenido pendiente de traducción.*
+## Template 02: Registro de Decisión Arquitectónica (ADR)
 
+```markdown
+# ADR-[ID]: [Título Decisivo]
+- **Estado**: [Propuesto | Aceptado | Supeditado]
+- **Contexto**: [Definición del Problema]
+- **Decisión**: [Solución Adoptada y Trade-offs]
+- **Consecuencias**: [Impacto a largo plazo]
+```

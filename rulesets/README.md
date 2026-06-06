@@ -27,18 +27,37 @@ If you are onboarding a new satellite repository, start here:
 
 ```
 rulesets/
-├── schema/                     # JSON Schema definitions
+├── schema/                     # JSON Schema definitions (13 schemas)
 │   ├── adr.schema.json         # ADR artifact validation
 │   ├── prd.schema.json         # PRD artifact validation
-│   ├── functional-story.schema.json
-│   ├── technical-story.schema.json
-│   ├── test-summary-report.schema.json
-│   ├── release-notes.schema.json
-│   └── evolith-yaml.schema.json
+│   ├── discovery-canvas.schema.json     # Phase 1
+│   ├── business-case-roi.schema.json     # Phase 1
+│   ├── ballpark-estimation.schema.json   # Phase 1
+│   ├── evolith-user-story.schema.json    # Phase 1
+│   ├── agile-backlog.schema.json          # Phase 1
+│   ├── cli-impact-analysis.schema.json   # Phase 1-2
+│   ├── functional-story.schema.json      # Phase 2
+│   ├── technical-story.schema.json       # Phase 3
+│   ├── test-summary-report.schema.json   # Phase 4
+│   ├── release-notes.schema.json         # Phase 5
+│   └── evolith-yaml.schema.json  # Satellite governance
 ├── architecture/               # Architecture phase rules
 │   ├── f1-modular-monolith.rules.json
 │   ├── f2-distributed-modules.rules.json
 │   └── f3-microservices.rules.json
+├── adr/                        # ADR-encoded rules (7 ADRs)
+│   ├── adr-0002-hexagonal-architecture.rules.json
+│   ├── adr-0005-cicd-quality-gates.rules.json
+│   ├── adr-0018-testing-pyramid.rules.json
+│   ├── adr-0032-protocol-selection.rules.json
+│   ├── adr-0040-multi-runtime.rules.json
+│   ├── adr-0050-gitflow-branching.rules.json
+│   └── adr-0010-multi-tenancy.rules.json
+├── cross-cutting/              # Compliance baseline rules
+│   ├── compliance-baseline.rules.json    # 5 pillars
+│   ├── definition-of-done.rules.json     # DoD checklist
+│   ├── engineering-manifesto.rules.json  # SOLID, DRY, KISS, YAGNI
+│   └── repository-taxonomy.rules.json    # Naming, structure
 ├── sdlc/                       # SDLC gate rules
 │   ├── phase-gates.rules.json
 │   └── quality-thresholds.rules.json

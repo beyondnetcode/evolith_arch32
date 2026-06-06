@@ -1,0 +1,97 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/schema/business-case-roi.schema.json",
+  "title": "Business Case ROI",
+  "description": "JSON Schema for validating Evolith Business Case ROI artifacts. Phase 1 required artifact for financing approval.",
+  "type": "object",
+  "required": ["initiativeId", "executiveSummary", "financialAnalysis", "kpis"],
+  "additionalProperties": false,
+  "properties": {
+    "initiativeId": {
+      "type": "string",
+      "description": "Reference to the originating Discovery Canvas ID."
+    },
+    "executiveSummary": {
+      "type": "string",
+      "minLength": 50,
+      "description": "Brief description of the business case based on Discovery Canvas."
+    },
+    "strategicAlignment": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "How this initiative aligns with company OKRs."
+    },
+    "financialAnalysis": {
+      "type": "object",
+      "required": ["expectedBenefit", "currency", "targetTimeInMonths"],
+      "additionalProperties": false,
+      "properties": {
+        "expectedBenefit": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Monetized expected benefit value."
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$",
+          "description": "ISO 4217 currency code (e.g., USD, EUR)."
+        },
+        "opportunityCost": {
+          "type": "string",
+          "description": "Description of what happens if this initiative is not executed."
+        },
+        "targetTimeInMonths": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 60,
+          "description": "Time to market for MVP in months."
+        },
+        "capex": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Capital expenditure estimate."
+        },
+        "opex": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Operational expenditure estimate."
+        }
+      }
+    },
+    "kpis": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "current", "target"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string" },
+          "current": { "type": "string" },
+          "target": { "type": "string" },
+          "unit": { "type": "string" }
+        }
+      },
+      "minItems": 1,
+      "description": "Key Performance Indicators with current and target values."
+    },
+    "approvalStatus": {
+      "type": "string",
+      "enum": ["Draft", "Under Review", "Approved", "Rejected"],
+      "default": "Draft"
+    },
+    "approver": {
+      "type": "string",
+      "description": "Name of the approving authority."
+    },
+    "approvalDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "budgetAllocated": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Approved budget amount."
+    }
+  }
+}

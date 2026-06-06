@@ -24,8 +24,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache-dependency-path: src/package-lock.json
-          cache: 'npm'
 
       - name: Install Dependencies
         working-directory: src

@@ -92,8 +92,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          cache-dependency-path: ${{ env.CLI_DIR }}/package-lock.json
 
       - name: Install Dependencies
         working-directory: ${{ env.CLI_DIR }}
@@ -117,8 +115,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          cache-dependency-path: ${{ env.CLI_DIR }}/package-lock.json
 
       - name: Install Dependencies
         working-directory: ${{ env.CLI_DIR }}

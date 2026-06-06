@@ -83,32 +83,63 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 
 ---
 
-## 3. Detailed Gap Analysis
+## 3. Gap Tracking Board
 
-### 3.1 Gap Analysis Table
+### 3.1 Kanban View — Summary by Status
 
-| ID | Pillar/Component | Vision Requirement | Current State | Gap | Priority |
-|----|------------------|-------------------|---------------|-----|----------|
-| G-01 | Core / Rulesets | F1/F2/F3 Architecture validation | CLI validate only checks GOV, INH, ACL, OCB | Partial | HIGH |
-| G-02 | Core / ACL | Jira, Trello, Linear integrations | Only generic anti-corruption-layer.rules.json | Missing | MEDIUM |
-| G-03 | Tracker / Phase Gates | Execute phase transitions | No implementation | Missing | HIGH |
-| G-04 | Tracker / Drift Detection | Real-time architecture drift tracking | No implementation | Missing | HIGH |
-| G-05 | Tracker / DORA+SPACE | Consolidated metrics dashboard | No implementation | Missing | MEDIUM |
-| G-06 | Tracker / Scorecards | Executive real-time scorecards | Rules defined but not operational | Partial | MEDIUM |
-| G-07 | CLI / Agent Install | `smart-cli agents install` command | Stub - TODO comment only | Missing | HIGH |
-| G-08 | CLI / Upgrade | Safe satellite upgrade path | Stub - TODO comment only | Missing | HIGH |
-| G-09 | CLI / Architecture Validate | F1/F2/F3 architecture rules validation | Not implemented | Missing | HIGH |
-| G-10 | CLI / SDLC Operations | Phase handoff, artifact generation | Mock/POC only | Partial | MEDIUM |
-| G-11 | CLI / Docs Scaffold | Documentation scaffolding | Stub - TODO comment only | Missing | MEDIUM |
-| **G-12** | **MCP / Server Protocol** | **JSON-RPC over stdio** | **Stub logs only** | **Missing** | **CRITICAL** |
-| G-13 | MCP / Tools | validate_project, detect_drift, etc. | Skeleton files exist | Partial | HIGH |
-| G-14 | MCP / Resources | Core info, rulesets as resources | Empty implementation | Missing | MEDIUM |
-| G-15 | MCP / Prompts | Reusable interaction patterns | Empty implementation | Missing | LOW |
-| G-16 | Core / Bilingual Parity | Full EN/ES documentation | ~90% coverage | Partial | LOW |
-| G-17 | Testing / Coverage | >80% unit test coverage | ~25% coverage | Missing | HIGH |
-| G-18 | Testing / E2E | Real E2E tests with assertions | Stubs only | Missing | HIGH |
+| TODO | IN PROGRESS | BLOCKED | DONE |
+|------|-------------|---------|------|
+| G-02 (ACL Jira) | G-12 🔴 CRITICAL | - | G-16 (EN/ES Parity) |
+| G-03 (Phase Gates) | | | |
+| G-05 (DORA Metrics) | | | |
+| G-06 (Scorecards) | | | |
+| G-10 (SDLC Ops) | | | |
+| G-11 (Scaffold Docs) | | | |
+| G-13 (MCP Tools) | | | |
+| G-14 (MCP Resources) | | | |
+| G-15 (MCP Prompts) | | | |
 
-### 3.2 Critical Gaps Detail
+### 3.2 Detailed Tracking Table
+
+| ID | Description | Comp. | Priority | Complexity | Status | Progress |
+|----|-------------|-------|----------|------------|--------|----------|
+| **G-12** | **Implement MCP server protocol (JSON-RPC stdio)** | MCP | 🔴 CRITICAL | M (2-3 wk) | 🔵 TODO | 0% |
+| G-01 | F1/F2/F3 architecture validation in CLI | Core | 🟠 HIGH | M (2-3 wk) | 🔵 TODO | 0% |
+| G-03 | Execute Phase Gate transitions | Tracker | 🟠 HIGH | L (3-4 wk) | 🔵 TODO | 0% |
+| G-04 | Architecture Drift detection | Tracker | 🟠 HIGH | L (3-4 wk) | 🔵 TODO | 0% |
+| G-07 | `smart-cli agents install` command | CLI | 🟠 HIGH | S (1 wk) | 🔵 TODO | 0% |
+| G-08 | Safe satellite upgrade path | CLI | 🟠 HIGH | M (2-3 wk) | 🔵 TODO | 0% |
+| G-09 | Architecture rules validation in CLI | CLI | 🟠 HIGH | M (2-3 wk) | 🔵 TODO | 0% |
+| G-17 | Unit test coverage >80% | Testing | 🟠 HIGH | L (3-4 wk) | 🔵 TODO | 25% |
+| G-18 | Real E2E tests with assertions | Testing | 🟠 HIGH | L (3-4 wk) | 🔵 TODO | 0% |
+| G-02 | ACL integrations Jira/Trello/Linear | Core | 🟡 MEDIUM | M (2-3 wk) | 🔵 TODO | 0% |
+| G-05 | DORA+SPACE metrics dashboard | Tracker | 🟡 MEDIUM | L (3-4 wk) | 🔵 TODO | 0% |
+| G-06 | Real-time executive scorecards | Tracker | 🟡 MEDIUM | L (3-4 wk) | 🔵 TODO | 0% |
+| G-10 | Phase transitions and artifact generation | CLI | 🟡 MEDIUM | M (2-3 wk) | 🔵 TODO | 0% |
+| G-11 | Documentation scaffolding | CLI | 🟡 MEDIUM | S (1 wk) | 🔵 TODO | 0% |
+| G-13 | Implement 10+ MCP tools | MCP | 🟡 MEDIUM | L (3-4 wk) | 🔵 TODO | 20% |
+| G-14 | MCP Resources (Core info, rulesets) | MCP | 🟡 MEDIUM | M (2-3 wk) | 🔵 TODO | 0% |
+| G-15 | Reusable MCP prompts | MCP | 🟢 LOW | XS (<1 wk) | 🔵 TODO | 0% |
+| G-16 | 100% EN/ES bilingual parity | Core | 🟢 LOW | XS (<1 wk) | ✅ DONE | 90% |
+
+### 3.3 Traffic Light Legend
+
+| Symbol | Status | Meaning |
+|--------|--------|---------|
+| 🔴 CRITICAL | Blocking | Prevents progress in multiple areas |
+| 🟠 HIGH | Priority | Core functionality missing |
+| 🟡 MEDIUM | Second | Important but not blocking |
+| 🟢 LOW | Nice-to-have | Minor improvements |
+| 🔵 TODO | Pending | Not started |
+| 🟡 IN PROGRESS | Active | Work in progress |
+| 🔴 BLOCKED | Blocked | External impediment |
+| ✅ DONE | Completed | Delivered |
+
+---
+
+## 4. Detailed Gap Analysis
+
+### 4.1 Critical Gaps Detail
 
 #### G-12: MCP Server Protocol Implementation (CRITICAL)
 
@@ -137,7 +168,7 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 
 ---
 
-## 4. Priority Matrix
+## 5. Priority Matrix
 
 | Priority | Gaps | Criteria |
 |----------|------|----------|
@@ -156,7 +187,7 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 
 ---
 
-## 5. Recommendations Roadmap
+## 6. Recommendations Roadmap
 
 ### Phase 1: Foundation (Weeks 1-4) - CRITICAL/HIGH
 
@@ -186,7 +217,7 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 
 ---
 
-## 6. Status Summary
+## 7. Status Summary
 
 ### Component Status
 
@@ -213,7 +244,7 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 
 ---
 
-## 7. What Is Working Well
+## 8. What Is Working Well
 
 1. **Comprehensive ADR Registry** - 70+ ADRs across multiple runtimes
 2. **Strong Bilingual Coverage** - ~90% of documents have EN/ES pairs
@@ -225,7 +256,7 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 
 ---
 
-## 8. Critical Path to Vision Alignment
+## 9. Critical Path to Vision Alignment
 
 ```
 Current State                          Vision Goal
@@ -246,7 +277,7 @@ Current State                          Vision Goal
 
 ---
 
-## 9. Out of Scope
+## 10. Out of Scope
 
 The following are explicitly **out of scope** for Evolith Core:
 

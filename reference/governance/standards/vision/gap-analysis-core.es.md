@@ -83,32 +83,63 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 
 ---
 
-## 3. Análisis de Brechas Detallado
+## 3. Tablero de Seguimiento de Brechas
 
-### 3.1 Tabla de Brechas
+### 3.1 Vista Kanban — Resumen por Estado
 
-| ID | Pilar/Componente | Requisito de Visión | Estado Actual | Brecha | Prioridad |
-|----|------------------|---------------------|---------------|--------|-----------|
-| G-01 | Core / Rulesets | Validación arquitectura F1/F2/F3 | CLI validate solo verifica GOV, INH, ACL, OCB | Parcial | ALTA |
-| G-02 | Core / ACL | Integraciones Jira, Trello, Linear | Solo generic anti-corruption-layer.rules.json | Faltante | MEDIA |
-| G-03 | Tracker / Phase Gates | Ejecutar transiciones de fase | Sin implementación | Faltante | ALTA |
-| G-04 | Tracker / Detección Drift | Rastreo de drift arquitectónico | Sin implementación | Faltante | ALTA |
-| G-05 | Tracker / DORA+SPACE | Dashboard de métricas consolidadas | Sin implementación | Faltante | MEDIA |
-| G-06 | Tracker / Scorecards | Scorecards ejecutivos en tiempo real | Reglas definidas pero no operativas | Parcial | MEDIA |
-| G-07 | CLI / Instalación Agentes | Comando `smart-cli agents install` | Stub - Solo comentario TODO | Faltante | ALTA |
-| G-08 | CLI / Upgrade | Camino de upgrade seguro para satélites | Stub - Solo comentario TODO | Faltante | ALTA |
-| G-09 | CLI / Validación Arquitectura | Validación de reglas F1/F2/F3 | No implementado | Faltante | ALTA |
-| G-10 | CLI / Operaciones SDLC | Transición de fase, generación de artefactos | Mock/POC únicamente | Parcial | MEDIA |
-| G-11 | CLI / Scaffold Docs | Andamiaje de documentación | Stub - Solo comentario TODO | Faltante | MEDIA |
-| **G-12** | **MCP / Protocolo Server** | **JSON-RPC sobre stdio** | **Stub logs únicamente** | **Faltante** | **CRÍTICO** |
-| G-13 | MCP / Herramientas | validate_project, detect_drift, etc. | Archivos esqueleto existen | Parcial | ALTA |
-| G-14 | MCP / Recursos | Info Core, rulesets como recursos | Implementación vacía | Faltante | MEDIA |
-| G-15 | MCP / Prompts | Patrones de interacción reutilizables | Implementación vacía | Faltante | BAJA |
-| G-16 | Core / Paridad Bilingüe | Documentación completa EN/ES | ~90% cobertura | Parcial | BAJA |
-| G-17 | Testing / Cobertura | >80% cobertura de tests unitarios | ~25% cobertura | Faltante | ALTA |
-| G-18 | Testing / E2E | Tests E2E reales con aserciones | Stubs únicamente | Faltante | ALTA |
+| TODO | IN PROGRESS | BLOCKED | DONE |
+|------|-------------|---------|------|
+| G-02 (ACL Jira) | G-12 🔴 CRÍTICO | - | G-16 (Paridad EN/ES) |
+| G-03 (Phase Gates) | | | |
+| G-05 (DORA Metrics) | | | |
+| G-06 (Scorecards) | | | |
+| G-10 (SDLC Ops) | | | |
+| G-11 (Scaffold Docs) | | | |
+| G-13 (MCP Tools) | | | |
+| G-14 (MCP Resources) | | | |
+| G-15 (MCP Prompts) | | | |
 
-### 3.2 Brechas Críticas Detalle
+### 3.2 Tabla de Seguimiento Detallada
+
+| ID | Descripción | Comp. | Prioridad | Complejidad | Estado | Avance |
+|----|-------------|-------|-----------|-------------|--------|--------|
+| **G-12** | **Implementar protocolo servidor MCP (JSON-RPC stdio)** | MCP | 🔴 CRÍTICO | M (2-3 sem) | 🔵 TODO | 0% |
+| G-01 | Validación arquitectura F1/F2/F3 en CLI | Core | 🟠 ALTA | M (2-3 sem) | 🔵 TODO | 0% |
+| G-03 | Ejecutar transiciones de Phase Gates | Tracker | 🟠 ALTA | L (3-4 sem) | 🔵 TODO | 0% |
+| G-04 | Detección de Architecture Drift | Tracker | 🟠 ALTA | L (3-4 sem) | 🔵 TODO | 0% |
+| G-07 | Comando `smart-cli agents install` | CLI | 🟠 ALTA | S (1 sem) | 🔵 TODO | 0% |
+| G-08 | Camino de upgrade seguro para satélites | CLI | 🟠 ALTA | M (2-3 sem) | 🔵 TODO | 0% |
+| G-09 | Validación reglas arquitectura en CLI | CLI | 🟠 ALTA | M (2-3 sem) | 🔵 TODO | 0% |
+| G-17 | Cobertura tests unitarios >80% | Testing | 🟠 ALTA | L (3-4 sem) | 🔵 TODO | 25% |
+| G-18 | Tests E2E reales con aserciones | Testing | 🟠 ALTA | L (3-4 sem) | 🔵 TODO | 0% |
+| G-02 | Integraciones ACL Jira/Trello/Linear | Core | 🟡 MEDIA | M (2-3 sem) | 🔵 TODO | 0% |
+| G-05 | Dashboard métricas DORA+SPACE | Tracker | 🟡 MEDIA | L (3-4 sem) | 🔵 TODO | 0% |
+| G-06 | Scorecards ejecutivos en tiempo real | Tracker | 🟡 MEDIA | L (3-4 sem) | 🔵 TODO | 0% |
+| G-10 | Transiciones de fase y generación artefactos | CLI | 🟡 MEDIA | M (2-3 sem) | 🔵 TODO | 0% |
+| G-11 | Andamiaje de documentación | CLI | 🟡 MEDIA | S (1 sem) | 🔵 TODO | 0% |
+| G-13 | Implementar 10+ herramientas MCP | MCP | 🟡 MEDIA | L (3-4 sem) | 🔵 TODO | 20% |
+| G-14 | Recursos MCP (Info Core, rulesets) | MCP | 🟡 MEDIA | M (2-3 sem) | 🔵 TODO | 0% |
+| G-15 | Prompts MCP reutilizables | MCP | 🟢 BAJA | XS (<1 sem) | 🔵 TODO | 0% |
+| G-16 | Paridad bilingüe 100% EN/ES | Core | 🟢 BAJA | XS (<1 sem) | ✅ DONE | 90% |
+
+### 3.3 Leyenda de Semáforos
+
+| Símbolo | Estado | Significado |
+|---------|--------|-------------|
+| 🔴 CRÍTICO | Bloqueante | Impide progreso en múltiples áreas |
+| 🟠 ALTA | Prioridad | Funcionalidad core faltante |
+| 🟡 MEDIA | SECOND | Importante pero no bloqueante |
+| 🟢 BAJA | Nice-to-have | Mejoras menores |
+| 🔵 TODO | Pendiente | No iniciado |
+| 🟡 IN PROGRESS | En Curso | Trabajo activo |
+| 🔴 BLOCKED | Bloqueado | Impedimento externo |
+| ✅ DONE | Completado | Entregado |
+
+---
+
+## 4. Análisis de Brechas Detallado
+
+### 4.1 Brechas Críticas Detalle
 
 #### G-12: Implementación del Protocolo del Servidor MCP (CRÍTICO)
 
@@ -119,7 +150,7 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 **Corrección Requerida:**
 1. Implementar `StdioServerTransport` de @modelcontextprotocol/sdk
 2. Implementar handlers de tools/list, tools/call
-3. Implementar handlers de resources/list, resources/read
+3. Implementar handlers de resource/list, resource/read
 
 ---
 
@@ -137,7 +168,7 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 
 ---
 
-## 4. Matriz de Prioridades
+## 5. Matriz de Prioridades
 
 | Prioridad | Brechas | Criterios |
 |-----------|---------|-----------|
@@ -156,7 +187,7 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 
 ---
 
-## 5. Hoja de Ruta de Recomendaciones
+## 6. Hoja de Ruta de Recomendaciones
 
 ### Fase 1: Fundamentos (Semanas 1-4) - CRÍTICO/ALTO
 
@@ -186,7 +217,7 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 
 ---
 
-## 6. Resumen de Estado
+## 7. Resumen de Estado
 
 ### Estado de Componentes
 
@@ -213,7 +244,7 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 
 ---
 
-## 7. Qué Está Funcionando Bien
+## 8. Qué Está Funcionando Bien
 
 1. **Registro ADR Integral** - 70+ ADRs en múltiples runtimes
 2. **Fuerte Cobertura Bilingüe** - ~90% de documentos tienen pares EN/ES
@@ -225,7 +256,7 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 
 ---
 
-## 8. Camino Crítico hacia Alineación de Visión
+## 9. Camino Crítico hacia Alineación de Visión
 
 ```
 Estado Actual                        Meta de Visión
@@ -246,7 +277,7 @@ Estado Actual                        Meta de Visión
 
 ---
 
-## 9. Fuera de Alcance
+## 10. Fuera de Alcance
 
 Los siguientes están explícitamente **fuera de alcance** para Evolith Core:
 

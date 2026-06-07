@@ -92,7 +92,7 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 | G-02 (ACL Jira) | - | - | G-12 (MCP Protocol) |
 | G-05 (DORA Metrics) | | | G-16 (EN/ES Parity) |
 | G-06 (Scorecards) | | | G-03 (Phase Gates) |
-| G-10 (SDLC Ops) | | | |
+| G-10 (SDLC Ops) | | | G-04 (Architecture Drift) |
 | G-11 (Scaffold Docs) | | | |
 | G-13 (MCP Tools) | | | |
 | G-14 (MCP Resources) | | | |
@@ -105,7 +105,7 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 | **G-12** | **Implement MCP server protocol (JSON-RPC stdio)** | MCP | 🔴 CRITICAL | M (2-3 wk) | ✅ DONE | 100% |
 | G-01 | F1/F2/F3 architecture validation in CLI | Core | 🟠 HIGH | M (2-3 wk) | ✅ DONE | 100% |
 | G-03 | Execute Phase Gate transitions | CLI | 🟠 HIGH | L (3-4 wk) | ✅ DONE | 100% |
-| G-04 | Architecture Drift detection | Tracker | 🟠 HIGH | L (3-4 wk) | 🔵 TODO | 0% |
+| G-04 | Architecture Drift detection | CLI | 🟠 HIGH | L (3-4 wk) | ✅ DONE | 100% |
 | G-07 | `smart-cli agents install` command | CLI | 🟠 HIGH | S (1 wk) | 🔵 TODO | 0% |
 | G-08 | Safe satellite upgrade path | CLI | 🟠 HIGH | M (2-3 wk) | 🔵 TODO | 0% |
 | G-09 | Architecture rules validation in CLI | CLI | 🟠 HIGH | M (2-3 wk) | 🔵 TODO | 0% |

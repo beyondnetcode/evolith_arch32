@@ -1,4 +1,5 @@
 import { Logger } from '@nestjs/common';
+import * as http from 'node:http';
 import { RulesetValidatorService } from '../validators/ruleset-validator.service';
 import { handleValidateTool } from './tools/validate';
 import { handleAgentTools } from './tools/agent';
@@ -107,6 +108,185 @@ class MinimalStdioTransport implements Transport {
   }
 }
 
+class MinimalHttpTransport implements Transport {
+  onclose?: () => void;
+  onerror?: (error: Error) => void;
+  onmessage?: (message: unknown) => void;
+
+  private server: http.Server | null = null;
+  private readonly port: number;
+  private readonly apiKey?: string;
+  private readonly logger = new Logger(MinimalHttpTransport.name);
+  private sseClients: Array<{ id: string; res: http.ServerResponse }> = [];
+  private started: boolean = false;
+
+  constructor(port: number, apiKey?: string) {
+    this.port = port;
+    this.apiKey = apiKey;
+  }
+
+  async start(): Promise<void> {
+    if (this.started) return;
+    this.started = true;
+
+    this.server = http.createServer((req, res) => {
+      this.handleRequest(req, res);
+    });
+
+    this.server.on('error', (error: Error) => {
+      this.logger.error(`HTTP server error: ${error.message}`);
+      if (this.onerror) {
+        this.onerror(error);
+      }
+    });
+
+    this.server.on('close', () => {
+      if (this.onclose) {
+        this.onclose();
+      }
+    });
+
+    await new Promise<void>((resolve, reject) => {
+      this.server!.listen(this.port, '127.0.0.1', () => {
+        this.logger.log(`Evolith MCP HTTP server listening on http://127.0.0.1:${this.port}`);
+        resolve();
+      });
+      this.server!.on('error', reject);
+    });
+  }
+
+  async close(): Promise<void> {
+    this.started = false;
+
+    for (const client of this.sseClients) {
+      client.res.end();
+    }
+    this.sseClients = [];
+
+    if (this.server) {
+      await new Promise<void>((resolve) => {
+        this.server!.close(() => resolve());
+      });
+      this.server = null;
+    }
+  }
+
+  async send(message: unknown): Promise<void> {
+    const data = `event: message\ndata: ${JSON.stringify(message)}\n\n`;
+    const clientsToRemove: typeof this.sseClients = [];
+
+    for (const client of this.sseClients) {
+      try {
+        client.res.write(data);
+      } catch {
+        clientsToRemove.push(client);
+      }
+    }
+
+    for (const client of clientsToRemove) {
+      const index = this.sseClients.indexOf(client);
+      if (index > -1) {
+        this.sseClients.splice(index, 1);
+      }
+    }
+  }
+
+  private handleRequest(req: http.IncomingMessage, res: http.ServerResponse): void {
+    const url = new URL(req.url || '/', `http://127.0.0.1:${this.port}`);
+
+    if (!this.validateAuth(req, res)) {
+      return;
+    }
+
+    if (req.method === 'POST' && url.pathname === '/message') {
+      this.handlePostMessage(req, res);
+    } else if (req.method === 'GET' && url.pathname === '/sse') {
+      this.handleSseConnection(req, res);
+    } else if (req.method === 'GET' && url.pathname === '/health') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ status: 'ok', transport: 'http', protocol: 'mcp' }));
+    } else {
+      res.writeHead(404, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Not found' }));
+    }
+  }
+
+  private validateAuth(req: http.IncomingMessage, res: http.ServerResponse): boolean {
+    if (!this.apiKey) return true;
+
+    const authHeader = req.headers.authorization || '';
+    const bearerToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
+    const apiKeyHeader = req.headers['x-api-key'] as string | undefined;
+
+    if (bearerToken !== this.apiKey && apiKeyHeader !== this.apiKey) {
+      res.writeHead(401, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Unauthorized', message: 'Invalid or missing API key' }));
+      return false;
+    }
+
+    return true;
+  }
+
+  private async handlePostMessage(req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
+    let body = '';
+
+    req.on('data', (chunk: Buffer) => {
+      body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+      try {
+        const message = JSON.parse(body);
+        if (this.onmessage) {
+          await this.onmessage(message);
+        }
+        res.writeHead(202, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ status: 'accepted' }));
+      } catch (error) {
+        this.logger.error(`Invalid POST message: ${error}`);
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Invalid JSON' }));
+      }
+    });
+
+    req.on('error', (error: Error) => {
+      this.logger.error(`Request error: ${error.message}`);
+      if (this.onerror) {
+        this.onerror(error);
+      }
+      if (!res.headersSent) {
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Internal server error' }));
+      }
+    });
+  }
+
+  private handleSseConnection(req: http.IncomingMessage, res: http.ServerResponse): void {
+    const clientId = `client-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+
+    res.writeHead(200, {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
+      'Access-Control-Allow-Origin': '*',
+    });
+
+    res.write(': connected\n\n');
+
+    this.sseClients.push({ id: clientId, res });
+
+    req.on('close', () => {
+      const index = this.sseClients.findIndex(c => c.id === clientId);
+      if (index > -1) {
+        this.sseClients.splice(index, 1);
+      }
+      this.logger.debug(`SSE client disconnected: ${clientId}`);
+    });
+
+    this.logger.debug(`SSE client connected: ${clientId}`);
+  }
+}
+
 interface JsonRpcRequest {
   jsonrpc: '2.0';
   id: number | string | null;
@@ -126,15 +306,28 @@ class DirectMcpServer {
   private readonly logger = new Logger(DirectMcpServer.name);
   private rulesetValidator: RulesetValidatorService;
   private metricsService: McpMetricsService;
+  private readonly transportType: McpTransport;
 
-  constructor(rulesetValidator?: RulesetValidatorService, metricsService?: McpMetricsService) {
-    this.transport = new MinimalStdioTransport();
+  constructor(
+    transportType: McpTransport = 'stdio',
+    port: number = 49100,
+    apiKey?: string,
+    rulesetValidator?: RulesetValidatorService,
+    metricsService?: McpMetricsService
+  ) {
+    this.transportType = transportType;
     this.rulesetValidator = rulesetValidator || new RulesetValidatorService();
     this.metricsService = metricsService || new McpMetricsService();
+
+    if (transportType === 'http') {
+      this.transport = new MinimalHttpTransport(port, apiKey);
+    } else {
+      this.transport = new MinimalStdioTransport();
+    }
   }
 
   async start(): Promise<void> {
-    const transport = this.transport as MinimalStdioTransport;
+    const transport = this.transport;
     transport.onmessage = async (message: unknown) => {
       await this.handleMessage(message);
     };
@@ -144,7 +337,7 @@ class DirectMcpServer {
     };
 
     await transport.start();
-    this.logger.log('Evolith MCP Server started on stdio');
+    this.logger.log(`Evolith MCP Server started on ${this.transportType}`);
   }
 
   async stop(): Promise<void> {
@@ -590,7 +783,16 @@ function validateApiKey(apiKey: string | undefined, validKey: string | undefined
 }
 
 export async function startMcpServer(options: McpServerOptions = {}) {
-  const server = new DirectMcpServer(options.rulesetValidator, options.metricsService);
+  const transport = options.transport || 'stdio';
+  const port = options.port || 49100;
+
+  const server = new DirectMcpServer(
+    transport,
+    port,
+    options.apiKey,
+    options.rulesetValidator,
+    options.metricsService
+  );
   await server.start();
   return server;
 }

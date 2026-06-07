@@ -15,7 +15,7 @@
     "start:dev": "tsc -w & node dist/main.js",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
+    "test:cov": "jest --coverage --runInBand --forceExit",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prepublishOnly": "npm run build"
   },

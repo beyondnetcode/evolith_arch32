@@ -434,4 +434,251 @@ describe('MCP Server', () => {
       await expect(server.stop()).resolves.not.toThrow();
     });
   });
+
+  describe('MinimalHttpTransport', () => {
+    let testPort: number;
+
+    beforeEach(() => {
+      testPort = 51000 + Math.floor(Math.random() * 1000);
+    });
+
+    afterEach(async () => {
+      await new Promise(resolve => setTimeout(resolve, 50));
+    });
+
+    it('should start HTTP server on specified port', async () => {
+      const server = await startMcpServer({
+        transport: 'http',
+        port: testPort,
+      });
+
+      expect(server).toBeDefined();
+      await server.stop();
+    });
+
+    it('should start HTTP server with API key', async () => {
+      const server = await startMcpServer({
+        transport: 'http',
+        port: testPort,
+        apiKey: 'test-api-key',
+      });
+
+      expect(server).toBeDefined();
+      await server.stop();
+    });
+
+    it('should handle health endpoint', async () => {
+      const server = await startMcpServer({
+        transport: 'http',
+        port: testPort,
+      });
+
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      const http = await import('node:http');
+      const response = await new Promise<string>((resolve, reject) => {
+        http.get(`http://127.0.0.1:${testPort}/health`, (res) => {
+          let data = '';
+          res.on('data', (chunk) => { data += chunk; });
+          res.on('end', () => resolve(data));
+        }).on('error', reject);
+      });
+
+      expect(JSON.parse(response)).toEqual({ status: 'ok', transport: 'http', protocol: 'mcp' });
+      await server.stop();
+    });
+
+    it('should reject requests without valid API key', async () => {
+      const server = await startMcpServer({
+        transport: 'http',
+        port: testPort,
+        apiKey: 'secret-key',
+      });
+
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      const http = await import('node:http');
+      const response = await new Promise<{ statusCode: number; body: string }>((resolve, reject) => {
+        const req = http.request(`http://127.0.0.1:${testPort}/health`, { method: 'GET' }, (res) => {
+          let data = '';
+          res.on('data', (chunk) => { data += chunk; });
+          res.on('end', () => resolve({ statusCode: res.statusCode || 0, body: data }));
+        });
+        req.on('error', reject);
+        req.end();
+      });
+
+      expect(response.statusCode).toBe(401);
+      expect(JSON.parse(response.body).error).toBe('Unauthorized');
+      await server.stop();
+    });
+
+    it('should allow requests with valid API key via Bearer token', async () => {
+      const server = await startMcpServer({
+        transport: 'http',
+        port: testPort,
+        apiKey: 'secret-key',
+      });
+
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      const http = await import('node:http');
+      const response = await new Promise<{ statusCode: number; body: string }>((resolve, reject) => {
+        const req = http.request(`http://127.0.0.1:${testPort}/health`, {
+          method: 'GET',
+          headers: { 'Authorization': 'Bearer secret-key' },
+        }, (res) => {
+          let data = '';
+          res.on('data', (chunk) => { data += chunk; });
+          res.on('end', () => resolve({ statusCode: res.statusCode || 0, body: data }));
+        });
+        req.on('error', reject);
+        req.end();
+      });
+
+      expect(response.statusCode).toBe(200);
+      await server.stop();
+    });
+
+    it('should allow requests with valid API key via X-API-Key header', async () => {
+      const server = await startMcpServer({
+        transport: 'http',
+        port: testPort,
+        apiKey: 'secret-key',
+      });
+
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      const http = await import('node:http');
+      const response = await new Promise<{ statusCode: number; body: string }>((resolve, reject) => {
+        const req = http.request(`http://127.0.0.1:${testPort}/health`, {
+          method: 'GET',
+          headers: { 'X-API-Key': 'secret-key' },
+        }, (res) => {
+          let data = '';
+          res.on('data', (chunk) => { data += chunk; });
+          res.on('end', () => resolve({ statusCode: res.statusCode || 0, body: data }));
+        });
+        req.on('error', reject);
+        req.end();
+      });
+
+      expect(response.statusCode).toBe(200);
+      await server.stop();
+    });
+
+    it('should accept POST messages on /message endpoint', async () => {
+      const server = await startMcpServer({
+        transport: 'http',
+        port: testPort,
+      });
+
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      const http = await import('node:http');
+      const message = JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'initialize' });
+      const response = await new Promise<{ statusCode: number; body: string }>((resolve, reject) => {
+        const req = http.request(`http://127.0.0.1:${testPort}/message`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+        }, (res) => {
+          let data = '';
+          res.on('data', (chunk) => { data += chunk; });
+          res.on('end', () => resolve({ statusCode: res.statusCode || 0, body: data }));
+        });
+        req.on('error', reject);
+        req.write(message);
+        req.end();
+      });
+
+      expect(response.statusCode).toBe(202);
+      expect(JSON.parse(response.body).status).toBe('accepted');
+      await server.stop();
+    });
+
+    it('should reject invalid JSON on POST', async () => {
+      const server = await startMcpServer({
+        transport: 'http',
+        port: testPort,
+      });
+
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      const http = await import('node:http');
+      const response = await new Promise<{ statusCode: number }>((resolve, reject) => {
+        const req = http.request(`http://127.0.0.1:${testPort}/message`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+        }, (res) => {
+          res.on('data', () => {});
+          res.on('end', () => resolve({ statusCode: res.statusCode || 0 }));
+        });
+        req.on('error', reject);
+        req.write('not valid json');
+        req.end();
+      });
+
+      expect(response.statusCode).toBe(400);
+      await server.stop();
+    });
+
+    it('should establish SSE connection on /sse endpoint', async () => {
+      const server = await startMcpServer({
+        transport: 'http',
+        port: testPort,
+      });
+
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      const http = await import('node:http');
+      const sseData = await new Promise<string>((resolve, reject) => {
+        const req = http.get(`http://127.0.0.1:${testPort}/sse`, (res) => {
+          let data = '';
+          res.on('data', (chunk) => { data += chunk; });
+          setTimeout(() => resolve(data), 100);
+        });
+        req.on('error', reject);
+      });
+
+      expect(sseData).toContain(': connected');
+      await server.stop();
+    });
+
+    it('should return 404 for unknown routes', async () => {
+      const server = await startMcpServer({
+        transport: 'http',
+        port: testPort,
+      });
+
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      const http = await import('node:http');
+      const response = await new Promise<{ statusCode: number }>((resolve, reject) => {
+        http.get(`http://127.0.0.1:${testPort}/unknown`, (res) => {
+          res.on('data', () => {});
+          res.on('end', () => resolve({ statusCode: res.statusCode || 0 }));
+        }).on('error', reject);
+      });
+
+      expect(response.statusCode).toBe(404);
+      await server.stop();
+    });
+
+    it('should close all SSE clients on server stop', async () => {
+      const server = await startMcpServer({
+        transport: 'http',
+        port: testPort,
+      });
+
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      const http = await import('node:http');
+      const sseReq = http.get(`http://127.0.0.1:${testPort}/sse`, () => {});
+
+      await server.stop();
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      sseReq.destroy();
+    });
+  });
 });

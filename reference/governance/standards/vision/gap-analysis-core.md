@@ -109,16 +109,16 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 | G-07 | `smart-cli agents install` command | CLI | 🟠 HIGH | S (1 wk) | ✅ DONE | 100% |
 | G-08 | Safe satellite upgrade path | CLI | 🟠 HIGH | M (2-3 wk) | ✅ DONE | 100% |
 | G-09 | Architecture rules validation in CLI | CLI | 🟠 HIGH | M (2-3 wk) | ✅ DONE | 100% |
-| G-17 | Unit test coverage >80% | Testing | 🟠 HIGH | L (3-4 wk) | 🔵 TODO | 25% |
-| G-18 | Real E2E tests with assertions | Testing | 🟠 HIGH | L (3-4 wk) | 🔵 TODO | 0% |
-| G-02 | ACL integrations Jira/Trello/Linear | Core | 🟡 MEDIUM | M (2-3 wk) | 🔵 TODO | 0% |
-| G-05 | DORA+SPACE metrics dashboard | Tracker | 🟡 MEDIUM | L (3-4 wk) | 🔵 TODO | 0% |
-| G-06 | Real-time executive scorecards | Tracker | 🟡 MEDIUM | L (3-4 wk) | 🔵 TODO | 0% |
-| G-10 | Phase transitions and artifact generation | CLI | 🟡 MEDIUM | M (2-3 wk) | 🔵 TODO | 0% |
-| G-11 | Documentation scaffolding | CLI | 🟡 MEDIUM | S (1 wk) | 🔵 TODO | 0% |
-| G-13 | Implement 10+ MCP tools | MCP | 🟡 MEDIUM | L (3-4 wk) | 🔵 TODO | 20% |
-| G-14 | MCP Resources (Core info, rulesets) | MCP | 🟡 MEDIUM | M (2-3 wk) | 🔵 TODO | 0% |
-| G-15 | Reusable MCP prompts | MCP | 🟢 LOW | XS (<1 wk) | 🔵 TODO | 0% |
+| G-17 | Unit test coverage >80% | Testing | 🟠 HIGH | L (3-4 wk) | 🟡 IN_PROGRESS | 33% |
+| G-18 | Real E2E tests with assertions | Testing | 🟠 HIGH | L (3-4 wk) | 🟡 IN_PROGRESS | 40% |
+| G-02 | ACL integrations Jira/Trello/Linear | Core | 🟡 MEDIUM | M (2-3 wk) | ⏸️ DEFERRED | 0% |
+| G-05 | DORA+SPACE metrics dashboard | Tracker | 🟡 MEDIUM | L (3-4 wk) | ⏸️ DEFERRED | 0% |
+| G-06 | Real-time executive scorecards | Tracker | 🟡 MEDIUM | L (3-4 wk) | ⏸️ DEFERRED | 0% |
+| G-10 | Phase transitions and artifact generation | CLI | 🟡 MEDIUM | M (2-3 wk) | ✅ DONE | 100% |
+| G-11 | Documentation scaffolding | CLI | 🟡 MEDIUM | S (1 wk) | ✅ DONE | 100% |
+| G-13 | Implement 10+ MCP tools | MCP | 🟡 MEDIUM | L (3-4 wk) | ✅ DONE | 100% |
+| G-14 | MCP Resources (Core info, rulesets) | MCP | 🟡 MEDIUM | M (2-3 wk) | ✅ DONE | 100% |
+| G-15 | Reusable MCP prompts | MCP | 🟢 LOW | XS (<1 wk) | ✅ DONE | 100% |
 | G-16 | 100% EN/ES bilingual parity | Core | 🟢 LOW | XS (<1 wk) | ✅ DONE | 90% |
 
 ### 3.3 Traffic Light Legend

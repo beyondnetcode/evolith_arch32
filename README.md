@@ -31,27 +31,27 @@ and operating guidance that satellite products inherit and specialize.
 
 ---
 
-## 📑 Quick Navigation Menu
+## Quick Navigation Menu
 
 | Category | Entry Point | Description |
 |----------|-------------|-------------|
-| 📚 **Architecture** | [Hub](./reference/architecture/README.md) | Patterns, blueprints, decisions |
-| 🏛️ **ADRs** | [Registry](./reference/architecture/adrs/README.md) | 70+ architecture decisions |
-| 🏗️ **Engineering** | [Manifesto](./reference/governance/standards/engineering/engineering-manifesto.md) | Standards, conventions |
-| 🚦 **SDLC** | [Governance](./reference/governance/sdlc/README.md) | Phase gates, delivery flow |
-| 🤖 **AI & Tools** | [Smart CLI](./sdk/cli/README.md) | `npx @evolith/smart-cli init` |
-| 📊 **Vision** | [Product Vision](./reference/governance/standards/vision/evolith-product-vision-master.md) | Strategy & roadmap |
-| 🔍 **Gap Analysis** | [Analysis](./reference/governance/standards/vision/gap-analysis-core.md) | Current state vs vision |
-| 📋 **Full Index** | [Master Index](./reference/navigation/MASTER_INDEX.md) | Complete navigation |
-| 🚀 **Applied Reference** | [UMS Demo](./reference/knowledge/demo/README.md) | Real product example |
+| **Architecture** | [Hub](./reference/architecture/README.md) | Patterns, blueprints, decisions |
+| **ADRs** | [Registry](./reference/architecture/adrs/README.md) | 70+ architecture decisions |
+| **Engineering** | [Manifesto](./reference/governance/standards/engineering/engineering-manifesto.md) | Standards, conventions |
+| **SDLC** | [Governance](./reference/governance/sdlc/README.md) | Phase gates, delivery flow |
+| **AI & Tools** | [Smart CLI](./sdk/cli/README.md) | `npx @evolith/smart-cli init` |
+| **Vision** | [Product Vision](./reference/governance/standards/vision/evolith-product-vision-master.md) | Strategy & roadmap |
+| **Gap Analysis** | [Analysis](./reference/governance/standards/vision/gap-analysis-core.md) | Current state vs vision |
+| **Full Index** | [Master Index](./reference/navigation/MASTER_INDEX.md) | Complete navigation |
+| **Applied Reference** | [UMS Demo](./reference/knowledge/demo/README.md) | Real product example |
 
 ---
 
-## 🎯 Start Here — Choose Your Path
+## Start Here — Choose Your Path
 
 ### Path 1 — 5-Minute Overview
 
-📄 [Executive One-Pager](./reference/governance/standards/communication/visuals/v01-executive-one-pager.md) · [Español](./reference/governance/standards/communication/visuals/v01-executive-one-pager.es.md)
+ [Executive One-Pager](./reference/governance/standards/communication/visuals/v01-executive-one-pager.md) · [Español](./reference/governance/standards/communication/visuals/v01-executive-one-pager.es.md)
 
 *What is Evolith? Why do we need it? What is UMS?*
 
@@ -59,11 +59,11 @@ and operating guidance that satellite products inherit and specialize.
 
 | Role | Start Here | Then Read |
 |------|------------|-----------|
-| 🏛️ **Architect** | [Architecture Hub](./reference/architecture/README.md) | [ADR Matrix](./reference/architecture/adrs/adr-matrix.md) |
-| 👨‍💻 **Developer** | [Engineering Manifesto](./reference/governance/standards/engineering/engineering-manifesto.md) | [UMS Reference](./reference/knowledge/demo/README.md) |
-| 🛠️ **DevOps/SRE** | [Operations Hub](./reference/operations/README.md) | [Infrastructure](./reference/infrastructure/README.md) |
-| 📦 **Product/PM** | [UMS Reference Model](./reference/knowledge/demo/ums-reference-model.md) | [Adoption Cases](./reference/knowledge/adoption-cases.md) |
-| 🤖 **AI Contributor** | [AI-Augmented Standards](./reference/governance/standards/ai-augmented/README.md) | [AGENTS.md](./AGENTS.md) |
+| **Architect** | [Architecture Hub](./reference/architecture/README.md) | [ADR Matrix](./reference/architecture/adrs/adr-matrix.md) |
+| **Developer** | [Engineering Manifesto](./reference/governance/standards/engineering/engineering-manifesto.md) | [UMS Reference](./reference/knowledge/demo/README.md) |
+| **DevOps/SRE** | [Operations Hub](./reference/operations/README.md) | [Infrastructure](./reference/infrastructure/README.md) |
+| **Product/PM** | [UMS Reference Model](./reference/knowledge/demo/ums-reference-model.md) | [Adoption Cases](./reference/knowledge/adoption-cases.md) |
+| **AI Contributor** | [AI-Augmented Standards](./reference/governance/standards/ai-augmented/README.md) | [AGENTS.md](./AGENTS.md) |
 
 ### Path 3 — Make an Architectural Decision
 
@@ -73,9 +73,9 @@ and operating guidance that satellite products inherit and specialize.
 
 ---
 
-## 📂 Repository Structure (Deep Dive)
+## Repository Structure (Deep Dive)
 
-### 📚 Architecture & Patterns
+### Architecture & Patterns
 | Artifact | Purpose |
 |----------|---------|
 | [Architecture Hub](./reference/architecture/README.md) | Central entry for architecture |
@@ -83,7 +83,7 @@ and operating guidance that satellite products inherit and specialize.
 | [Canonical Patterns](./reference/architecture/canonical-patterns/README.md) | Reusable design patterns |
 | [C4 Topology Spec](./reference/architecture/blueprints/c4-topology-spec.md) | System visualization |
 
-### 🏛️ Architecture Decision Records
+### Architecture Decision Records
 | Artifact | Purpose |
 |----------|---------|
 | [ADR Registry](./reference/architecture/adrs/README.md) | All ADRs by runtime |
@@ -92,7 +92,7 @@ and operating guidance that satellite products inherit and specialize.
 | [.NET ADRs](./reference/architecture/adrs/dotnet/README.md) | .NET specific |
 | [ADR Matrix](./reference/architecture/adrs/adr-matrix.md) | Decision overview |
 
-### 🏗️ Engineering Standards
+### Engineering Standards
 | Artifact | Purpose |
 |----------|---------|
 | [Engineering Manifesto](./reference/governance/standards/engineering/engineering-manifesto.md) | Core principles |
@@ -100,29 +100,29 @@ and operating guidance that satellite products inherit and specialize.
 | [Observability](./reference/governance/standards/engineering/observability-playbook.md) | Monitoring & tracing |
 | [Vendor Risk](./reference/governance/standards/engineering/vendor-risk-assessment.md) | Third-party assessment |
 
-### 🚦 SDLC & Delivery
+### SDLC & Delivery
 | Artifact | Purpose |
 |----------|---------|
 | [SDLC Governance](./reference/governance/sdlc/README.md) | Phase gates, quality gates |
 | [Artifact Templates](./reference/governance/sdlc/04-artifact-templates/README.md) | PRD, ADR, Stories templates |
 | [Definition of Done](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.md) | DoD checklist |
 
-### 🤖 AI-Augmented Engineering
+### AI-Augmented Engineering
 | Artifact | Purpose |
 |----------|---------|
 | [AI Standards](./reference/governance/standards/ai-augmented/README.md) | AI integration standards |
 | [MCP Integration](./reference/governance/standards/ai-augmented/02-mcp-integration/README.md) | MCP protocol guide |
 | [Smart CLI](./sdk/cli/README.md) | CLI for satellite onboarding |
 
-### 📊 Vision & Strategy
+### Vision & Strategy
 | Artifact | Purpose |
 |----------|---------|
 | [Product Vision](./reference/governance/standards/vision/evolith-product-vision-master.md) | Full vision statement |
-| [Gap Analysis](./reference/governance/standards/vision/gap-analysis-core.md) | ⚠️ **NEW** Current state vs vision |
+| [Gap Analysis](./reference/governance/standards/vision/gap-analysis-core.md) | **NEW** Current state vs vision |
 | [Evolutionary Roadmap](./reference/governance/standards/vision/evolutionary-strategy-roadmap.md) | Phase-by-phase plan |
 | [Maturity Matrix](./reference/governance/standards/vision/maturity-matrix.md) | Organization maturity assessment |
 
-### 🚀 Applied Reference
+### Applied Reference
 | Artifact | Purpose |
 |----------|---------|
 | [UMS Reference Hub](./reference/knowledge/demo/README.md) | Applied product reference |
@@ -131,7 +131,7 @@ and operating guidance that satellite products inherit and specialize.
 
 ---
 
-## 🔧 Tools & Scripts
+## Tools & Scripts
 
 ### Smart CLI (Official)
 ```bash
@@ -149,10 +149,10 @@ smart-cli adr list
 smart-cli mcp serve
 ```
 
-📖 [CLI Documentation](./sdk/cli/README.md)
-📊 [CLI Architecture](./sdk/cli/ARCHITECTURE.md)
-🎯 [CLI Product Vision](./sdk/cli/docs/VISION.md)
-🔍 [Gap Analysis](./sdk/cli/docs/planning/sdk-cli-mcp-current-state-assessment.md)
+ [CLI Documentation](./sdk/cli/README.md)
+ [CLI Architecture](./sdk/cli/ARCHITECTURE.md)
+ [CLI Product Vision](./sdk/cli/docs/VISION.md)
+ [Gap Analysis](./sdk/cli/docs/planning/sdk-cli-mcp-current-state-assessment.md)
 
 ### Pre-commit Hooks
 | Hook | Purpose |
@@ -163,7 +163,7 @@ smart-cli mcp serve
 
 ---
 
-## 📖 Evolith vs UMS — What Goes Where
+## Evolith vs UMS — What Goes Where
 
 | Question | Evolith (Reference) | UMS (Product) |
 |----------|---------------------|---------------|
@@ -175,7 +175,7 @@ UMS is the official executable reference. See [Adoption Cases](./reference/knowl
 
 ---
 
-## 🤝 Contribution
+## Contribution
 
 Before contributing, read:
 
@@ -185,7 +185,7 @@ Before contributing, read:
 
 ---
 
-## 📋 All Navigation Indexes
+## All Navigation Indexes
 
 | Index | Purpose |
 |-------|---------|

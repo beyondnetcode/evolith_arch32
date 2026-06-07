@@ -38,7 +38,7 @@ jest.mock('./tools/sdlc', () => ({
 }));
 
 jest.mock('./tools/moscow', () => ({
-  handleMoscoTools: jest.fn().mockResolvedValue({ success: true }),
+  handleMoscowTools: jest.fn().mockResolvedValue({ success: true }),
 }));
 
 jest.mock('./resources', () => ({
@@ -138,8 +138,8 @@ describe('MCP Server', () => {
     });
 
     it('should handle evolith-moscow tools', async () => {
-      const { handleMoscoTools } = require('./tools/moscow');
-      handleMoscoTools.mockResolvedValue({ success: true });
+      const { handleMoscowTools } = require('./tools/moscow');
+      handleMoscowTools.mockResolvedValue({ success: true });
 
       const server = await startMcpServer();
 

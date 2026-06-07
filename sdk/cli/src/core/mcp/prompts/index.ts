@@ -97,7 +97,7 @@ export async function getPrompt(args: unknown) {
       template = buildRulesetAnalysisPrompt(promptArgs);
       break;
     case 'evolith/moscow-prioritization':
-      template = buildMoscowPrioritizationPrompt(promptArgs);
+      template = buildMoscowwPrioritizationPrompt(promptArgs);
       break;
   }
 
@@ -198,7 +198,7 @@ For each rule in the ruleset:
 4. Suggest validation approaches`;
 }
 
-function buildMoscowPrioritizationPrompt(args: Record<string, string>): string {
+function buildMoscowwPrioritizationPrompt(args: Record<string, string>): string {
   return `Please create a MoSCoW prioritization matrix for the SDLC discovery phase.
 
 Repository: ${args.path || '<path>'}

@@ -1,4 +1,4 @@
-import { MoscoPrioritizationService, MoscoItem, MoscoAnalysis } from './moscow-prioritization.service';
+import { MoscowPrioritizationService, MoscowItem, MoscowAnalysis } from './moscow-prioritization.service';
 
 jest.mock('../../core/abstractions', () => ({
   getContainer: jest.fn(),
@@ -20,13 +20,13 @@ const mockContainer = {
   createConfigParser: jest.fn(),
 };
 
-describe('MoscoPrioritizationService', () => {
-  let service: MoscoPrioritizationService;
+describe('MoscowPrioritizationService', () => {
+  let service: MoscowPrioritizationService;
 
   beforeEach(() => {
     jest.clearAllMocks();
     (getContainer as jest.Mock).mockReturnValue(mockContainer);
-    service = new MoscoPrioritizationService();
+    service = new MoscowPrioritizationService();
   });
 
   describe('createAnalysis', () => {
@@ -194,7 +194,7 @@ describe('MoscoPrioritizationService', () => {
 
   describe('validateAnalysis', () => {
     it('should detect empty analysis', () => {
-      const analysis: MoscoAnalysis = {
+      const analysis: MoscowAnalysis = {
         repository: '/test',
         phase: 'phase-0',
         items: [],
@@ -210,7 +210,7 @@ describe('MoscoPrioritizationService', () => {
     });
 
     it('should detect missing MUST items', () => {
-      const analysis: MoscoAnalysis = {
+      const analysis: MoscowAnalysis = {
         repository: '/test',
         phase: 'phase-0',
         items: [
@@ -228,7 +228,7 @@ describe('MoscoPrioritizationService', () => {
     });
 
     it('should detect too many MUST items', () => {
-      const analysis: MoscoAnalysis = {
+      const analysis: MoscowAnalysis = {
         repository: '/test',
         phase: 'phase-0',
         items: [
@@ -248,7 +248,7 @@ describe('MoscoPrioritizationService', () => {
     });
 
     it('should detect invalid priorities', () => {
-      const analysis: MoscoAnalysis = {
+      const analysis: MoscowAnalysis = {
         repository: '/test',
         phase: 'phase-0',
         items: [
@@ -266,7 +266,7 @@ describe('MoscoPrioritizationService', () => {
     });
 
     it('should detect duplicate IDs', () => {
-      const analysis: MoscoAnalysis = {
+      const analysis: MoscowAnalysis = {
         repository: '/test',
         phase: 'phase-0',
         items: [
@@ -285,7 +285,7 @@ describe('MoscoPrioritizationService', () => {
     });
 
     it('should return valid for correct analysis', () => {
-      const analysis: MoscoAnalysis = {
+      const analysis: MoscowAnalysis = {
         repository: '/test',
         phase: 'phase-0',
         items: [
@@ -307,7 +307,7 @@ describe('MoscoPrioritizationService', () => {
 
   describe('generateReport', () => {
     it('should generate markdown report', () => {
-      const analysis: MoscoAnalysis = {
+      const analysis: MoscowAnalysis = {
         repository: '/test/repo',
         phase: 'phase-0',
         items: [
@@ -331,7 +331,7 @@ describe('MoscoPrioritizationService', () => {
     });
 
     it('should include validation issues in report', () => {
-      const analysis: MoscoAnalysis = {
+      const analysis: MoscowAnalysis = {
         repository: '/test',
         phase: 'phase-0',
         items: [],

@@ -10,7 +10,6 @@ import { ConfigService } from './core/config/config.service';
 import { FileManagerService } from './core/filesystem/file-manager.service';
 import { SyncService } from './core/sync/sync.service';
 import { WatcherService } from './core/mcp/watcher.service';
-import { McpServerService } from './core/mcp/mcp-server.service';
 import { SdlcCommand } from './commands/sdlc/sdlc.command';
 import { HandoffCommand } from './commands/sdlc/handoff.command';
 import { GenerateDomainCommand } from './commands/sdlc/generate-domain.command';
@@ -249,16 +248,6 @@ describe('AppModule', () => {
     const service = module.get(WatcherService);
     expect(service).toBeDefined();
     expect(service).toBeInstanceOf(WatcherService);
-  });
-
-  it('should provide McpServerService', async () => {
-    const module = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
-
-    const service = module.get(McpServerService);
-    expect(service).toBeDefined();
-    expect(service).toBeInstanceOf(McpServerService);
   });
 
   it('should provide SdlcCommand', async () => {

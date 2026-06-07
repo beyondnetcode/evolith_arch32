@@ -2,21 +2,21 @@ import * as path from 'path';
 import { getContainer } from '../../core/abstractions';
 import { IFileSystem } from '../../core/abstractions';
 
-export type MoscoPriority = 'MUST' | 'SHOULD' | 'COULD' | 'WONT';
+export type MoscowPriority = 'MUST' | 'SHOULD' | 'COULD' | 'WONT';
 
-export interface MoscoItem {
+export interface MoscowItem {
   id: string;
   description: string;
-  priority: MoscoPriority;
+  priority: MoscowPriority;
   category: string;
   rationale: string;
   phase: string;
 }
 
-export interface MoscoAnalysis {
+export interface MoscowAnalysis {
   repository: string;
   phase: string;
-  items: MoscoItem[];
+  items: MoscowItem[];
   summary: {
     must: number;
     should: number;
@@ -28,7 +28,7 @@ export interface MoscoAnalysis {
   updatedAt: string;
 }
 
-export class MoscoPrioritizationService {
+export class MoscowPrioritizationService {
   private readonly fs: IFileSystem;
 
   constructor() {
@@ -36,8 +36,8 @@ export class MoscoPrioritizationService {
     this.fs = container.createFileSystem();
   }
 
-  async createAnalysis(repoPath: string, phase: string, items: Omit<MoscoItem, 'id'>[]): Promise<MoscoAnalysis> {
-    const analysis: MoscoAnalysis = {
+  async createAnalysis(repoPath: string, phase: string, items: Omit<MoscowItem, 'id'>[]): Promise<MoscowAnalysis> {
+    const analysis: MoscowAnalysis = {
       repository: repoPath,
       phase,
       items: items.map((item, index) => ({
@@ -65,18 +65,18 @@ export class MoscoPrioritizationService {
     return analysis;
   }
 
-  async loadAnalysis(repoPath: string, phase: string): Promise<MoscoAnalysis | null> {
+  async loadAnalysis(repoPath: string, phase: string): Promise<MoscowAnalysis | null> {
     const analysisPath = this.getAnalysisPath(repoPath, phase);
 
     if (await this.fs.exists(analysisPath)) {
       const content = await this.fs.readFile(analysisPath);
-      return JSON.parse(content) as MoscoAnalysis;
+      return JSON.parse(content) as MoscowAnalysis;
     }
 
     return null;
   }
 
-  async updateItem(repoPath: string, phase: string, itemId: string, updates: Partial<MoscoItem>): Promise<MoscoAnalysis | null> {
+  async updateItem(repoPath: string, phase: string, itemId: string, updates: Partial<MoscowItem>): Promise<MoscowAnalysis | null> {
     const analysis = await this.loadAnalysis(repoPath, phase);
     if (!analysis) return null;
 
@@ -96,7 +96,7 @@ export class MoscoPrioritizationService {
     return analysis;
   }
 
-  async removeItem(repoPath: string, phase: string, itemId: string): Promise<MoscoAnalysis | null> {
+  async removeItem(repoPath: string, phase: string, itemId: string): Promise<MoscowAnalysis | null> {
     const analysis = await this.loadAnalysis(repoPath, phase);
     if (!analysis) return null;
 
@@ -137,7 +137,7 @@ export class MoscoPrioritizationService {
     return analyses;
   }
 
-  validateAnalysis(analysis: MoscoAnalysis): { valid: boolean; issues: string[] } {
+  validateAnalysis(analysis: MoscowAnalysis): { valid: boolean; issues: string[] } {
     const issues: string[] = [];
 
     if (analysis.items.length === 0) {
@@ -171,7 +171,7 @@ export class MoscoPrioritizationService {
     };
   }
 
-  generateReport(analysis: MoscoAnalysis): string {
+  generateReport(analysis: MoscowAnalysis): string {
     const lines = [
       `# MoSCoW Prioritization Report`,
       ``,
@@ -194,7 +194,7 @@ export class MoscoPrioritizationService {
       ``,
     ];
 
-    for (const priority of ['MUST', 'SHOULD', 'COULD', 'WONT'] as MoscoPriority[]) {
+    for (const priority of ['MUST', 'SHOULD', 'COULD', 'WONT'] as MoscowPriority[]) {
       const items = analysis.items.filter(i => i.priority === priority);
       if (items.length > 0) {
         lines.push(`### ${priority}`);
@@ -230,7 +230,7 @@ export class MoscoPrioritizationService {
     return path.join(repoPath, '.evolith', 'moscow', `${phase}.json`);
   }
 
-  private async saveAnalysis(repoPath: string, phase: string, analysis: MoscoAnalysis): Promise<void> {
+  private async saveAnalysis(repoPath: string, phase: string, analysis: MoscowAnalysis): Promise<void> {
     const analysisPath = this.getAnalysisPath(repoPath, phase);
     await this.fs.ensureDir(path.dirname(analysisPath));
     await this.fs.writeJson(analysisPath, analysis);

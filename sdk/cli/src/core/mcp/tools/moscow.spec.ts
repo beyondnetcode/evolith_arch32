@@ -1,4 +1,4 @@
-import { handleMoscoTools } from './moscow';
+import { handleMoscowTools } from './moscow';
 
 jest.mock('./tool-utils', () => ({
   getFileSystem: jest.fn(),
@@ -17,7 +17,7 @@ const mockFileSystem = {
 };
 
 jest.mock('../../../domain/services/moscow-prioritization.service', () => ({
-  MoscoPrioritizationService: jest.fn().mockImplementation(() => ({
+  MoscowPrioritizationService: jest.fn().mockImplementation(() => ({
     createAnalysis: jest.fn(),
     loadAnalysis: jest.fn(),
     updateItem: jest.fn(),
@@ -28,27 +28,27 @@ jest.mock('../../../domain/services/moscow-prioritization.service', () => ({
   })),
 }));
 
-import { MoscoPrioritizationService } from '../../../domain/services/moscow-prioritization.service';
+import { MoscowPrioritizationService } from '../../../domain/services/moscow-prioritization.service';
 
 describe('MCP Tools - moscow', () => {
-  let mockService: jest.Mocked<MoscoPrioritizationService>;
+  let mockService: jest.Mocked<MoscowPrioritizationService>;
 
   beforeEach(() => {
     jest.clearAllMocks();
     (getFileSystem as jest.Mock).mockReturnValue(mockFileSystem);
-    mockService = new MoscoPrioritizationService() as jest.Mocked<MoscoPrioritizationService>;
+    mockService = new MoscowPrioritizationService() as jest.Mocked<MoscowPrioritizationService>;
   });
 
   describe('evolith-moscow-create', () => {
     it('should return error when path is missing', async () => {
-      const result = await handleMoscoTools('evolith-moscow-create', {});
+      const result = await handleMoscowTools('evolith-moscow-create', {});
 
       expect(result).toHaveProperty('error', true);
       expect(result).toHaveProperty('message', 'path is required');
     });
 
     it('should return error when items are missing', async () => {
-      const result = await handleMoscoTools('evolith-moscow-create', { path: '/test/repo' });
+      const result = await handleMoscowTools('evolith-moscow-create', { path: '/test/repo' });
 
       expect(result).toHaveProperty('error', true);
       expect(result).toHaveProperty('message', 'items array is required');
@@ -67,7 +67,7 @@ describe('MCP Tools - moscow', () => {
         updatedAt: '2026-01-01',
       });
 
-      const result = await handleMoscoTools('evolith-moscow-create', {
+      const result = await handleMoscowTools('evolith-moscow-create', {
         path: '/test/repo',
         items,
       }, mockService);
@@ -79,7 +79,7 @@ describe('MCP Tools - moscow', () => {
 
   describe('evolith-moscow-load', () => {
     it('should return error when path is missing', async () => {
-      const result = await handleMoscoTools('evolith-moscow-load', {});
+      const result = await handleMoscowTools('evolith-moscow-load', {});
 
       expect(result).toHaveProperty('error', true);
       expect(result).toHaveProperty('message', 'path is required');
@@ -88,7 +88,7 @@ describe('MCP Tools - moscow', () => {
     it('should return error when analysis not found', async () => {
       mockService.loadAnalysis.mockResolvedValue(null);
 
-      const result = await handleMoscoTools('evolith-moscow-load', { path: '/test/repo' }, mockService);
+      const result = await handleMoscowTools('evolith-moscow-load', { path: '/test/repo' }, mockService);
 
       expect(result).toHaveProperty('error', true);
       expect(result).toHaveProperty('message');
@@ -105,7 +105,7 @@ describe('MCP Tools - moscow', () => {
       };
       mockService.loadAnalysis.mockResolvedValue(mockAnalysis);
 
-      const result = await handleMoscoTools('evolith-moscow-load', { path: '/test/repo' }, mockService);
+      const result = await handleMoscowTools('evolith-moscow-load', { path: '/test/repo' }, mockService);
 
       expect(result).toEqual(mockAnalysis);
     });
@@ -113,7 +113,7 @@ describe('MCP Tools - moscow', () => {
 
   describe('evolith-moscow-update', () => {
     it('should return error when itemId is missing', async () => {
-      const result = await handleMoscoTools('evolith-moscow-update', { path: '/test/repo' });
+      const result = await handleMoscowTools('evolith-moscow-update', { path: '/test/repo' });
 
       expect(result).toHaveProperty('error', true);
       expect(result).toHaveProperty('message', 'itemId is required');
@@ -122,7 +122,7 @@ describe('MCP Tools - moscow', () => {
     it('should return error when item not found', async () => {
       mockService.updateItem.mockResolvedValue(null);
 
-      const result = await handleMoscoTools('evolith-moscow-update', {
+      const result = await handleMoscowTools('evolith-moscow-update', {
         path: '/test/repo',
         itemId: 'P-001',
         updates: { priority: 'SHOULD' },
@@ -141,7 +141,7 @@ describe('MCP Tools - moscow', () => {
         updatedAt: '2026-01-01',
       });
 
-      const result = await handleMoscoTools('evolith-moscow-update', {
+      const result = await handleMoscowTools('evolith-moscow-update', {
         path: '/test/repo',
         itemId: 'P-001',
         updates: { priority: 'SHOULD' },
@@ -153,7 +153,7 @@ describe('MCP Tools - moscow', () => {
 
   describe('evolith-moscow-remove', () => {
     it('should return error when itemId is missing', async () => {
-      const result = await handleMoscoTools('evolith-moscow-remove', { path: '/test/repo' });
+      const result = await handleMoscowTools('evolith-moscow-remove', { path: '/test/repo' });
 
       expect(result).toHaveProperty('error', true);
       expect(result).toHaveProperty('message', 'itemId is required');
@@ -169,7 +169,7 @@ describe('MCP Tools - moscow', () => {
         updatedAt: '2026-01-01',
       });
 
-      const result = await handleMoscoTools('evolith-moscow-remove', {
+      const result = await handleMoscowTools('evolith-moscow-remove', {
         path: '/test/repo',
         itemId: 'P-001',
       }, mockService);
@@ -180,7 +180,7 @@ describe('MCP Tools - moscow', () => {
 
   describe('evolith-moscow-list', () => {
     it('should return error when path is missing', async () => {
-      const result = await handleMoscoTools('evolith-moscow-list', {});
+      const result = await handleMoscowTools('evolith-moscow-list', {});
 
       expect(result).toHaveProperty('error', true);
       expect(result).toHaveProperty('message', 'path is required');
@@ -191,7 +191,7 @@ describe('MCP Tools - moscow', () => {
         { phase: 'phase-0', path: '/test/.evolith/moscow/phase-0.json', updatedAt: '2026-01-01' },
       ]);
 
-      const result = await handleMoscoTools('evolith-moscow-list', { path: '/test/repo' }, mockService);
+      const result = await handleMoscowTools('evolith-moscow-list', { path: '/test/repo' }, mockService);
 
       expect(result).toHaveProperty('analyses');
       expect(result).toHaveProperty('count', 1);
@@ -200,7 +200,7 @@ describe('MCP Tools - moscow', () => {
 
   describe('evolith-moscow-validate', () => {
     it('should return error when path is missing', async () => {
-      const result = await handleMoscoTools('evolith-moscow-validate', {});
+      const result = await handleMoscowTools('evolith-moscow-validate', {});
 
       expect(result).toHaveProperty('error', true);
       expect(result).toHaveProperty('message', 'path is required');
@@ -217,7 +217,7 @@ describe('MCP Tools - moscow', () => {
       });
       mockService.validateAnalysis.mockReturnValue({ valid: true, issues: [] });
 
-      const result = await handleMoscoTools('evolith-moscow-validate', { path: '/test/repo' }, mockService);
+      const result = await handleMoscowTools('evolith-moscow-validate', { path: '/test/repo' }, mockService);
 
       expect(result).toHaveProperty('valid', true);
     });
@@ -225,7 +225,7 @@ describe('MCP Tools - moscow', () => {
 
   describe('evolith-moscow-report', () => {
     it('should return error when path is missing', async () => {
-      const result = await handleMoscoTools('evolith-moscow-report', {});
+      const result = await handleMoscowTools('evolith-moscow-report', {});
 
       expect(result).toHaveProperty('error', true);
       expect(result).toHaveProperty('message', 'path is required');
@@ -242,7 +242,7 @@ describe('MCP Tools - moscow', () => {
       });
       mockService.generateReport.mockReturnValue('# Report');
 
-      const result = await handleMoscoTools('evolith-moscow-report', { path: '/test/repo' }, mockService);
+      const result = await handleMoscowTools('evolith-moscow-report', { path: '/test/repo' }, mockService);
 
       expect(result).toHaveProperty('report', '# Report');
     });
@@ -250,7 +250,7 @@ describe('MCP Tools - moscow', () => {
 
   describe('unknown tool', () => {
     it('should throw error for unknown MoSCoW tool', async () => {
-      await expect(handleMoscoTools('evolith-moscow-unknown', { path: '/test/repo' }))
+      await expect(handleMoscowTools('evolith-moscow-unknown', { path: '/test/repo' }))
         .rejects.toThrow('Unknown MoSCoW tool');
     });
   });

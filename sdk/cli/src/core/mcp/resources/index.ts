@@ -47,10 +47,10 @@ export async function readResource(args: unknown) {
   } else if (uri === 'evolith://repository/config') {
     return await getRepositoryConfig(fs, configParser);
   } else if (uri === 'evolith://moscow/phase-0') {
-    return await getMoscowAnalysis(fs, 'phase-0');
+    return await getMoscowwAnalysis(fs, 'phase-0');
   } else if (uri.startsWith('evolith://moscow/')) {
     const phase = uri.replace('evolith://moscow/', '');
-    return await getMoscowAnalysis(fs, phase);
+    return await getMoscowwAnalysis(fs, phase);
   } else if (uri === 'evolith://open-core/artifacts') {
     return await getOpenCoreArtifacts(fs);
   } else if (uri === 'evolith://acl/rules') {
@@ -179,7 +179,7 @@ async function getAclRules(fs: IFileSystem) {
   return { error: 'ACL rules not found' };
 }
 
-async function getMoscowAnalysis(fs: IFileSystem, phase: string) {
+async function getMoscowwAnalysis(fs: IFileSystem, phase: string) {
   const dir = process.cwd();
   const moscowPath = path.join(dir, '.evolith', 'moscow', `${phase}.json`);
 

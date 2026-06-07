@@ -1,7 +1,7 @@
 import { Phase, GateResult } from '../entities';
 import { IPhaseGates, GateResult as IGateResult } from '../interfaces';
 
-export { MoscoPrioritizationService, MoscoItem, MoscoAnalysis, MoscoPriority } from './moscow-prioritization.service';
+export { MoscowPrioritizationService, MoscowItem, MoscowAnalysis, MoscowPriority } from './moscow-prioritization.service';
 
 export class PhaseService implements IPhaseGates {
   private readonly phases: Phase[];

@@ -1,8 +1,8 @@
 import { getFileSystem, getContainer } from './tool-utils';
 import { IFileSystem } from '../../abstractions';
-import { MoscoPrioritizationService, MoscoItem, MoscoAnalysis } from '../../../domain/services/moscow-prioritization.service';
+import { MoscowPrioritizationService, MoscowItem, MoscowAnalysis } from '../../../domain/services/moscow-prioritization.service';
 
-export async function handleMoscoTools(toolName: string, args: Record<string, unknown>, moscoService?: MoscoPrioritizationService) {
+export async function handleMoscowTools(toolName: string, args: Record<string, unknown>, moscoService?: MoscowPrioritizationService) {
   const fs = getFileSystem();
   const repoPath = args.path as string;
   const phase = (args.phase as string) || 'phase-0';
@@ -11,7 +11,7 @@ export async function handleMoscoTools(toolName: string, args: Record<string, un
     return { error: true, message: 'path is required' };
   }
 
-  const service = moscoService || new MoscoPrioritizationService();
+  const service = moscoService || new MoscowPrioritizationService();
 
   switch (toolName) {
     case 'evolith-moscow-create':
@@ -33,8 +33,8 @@ export async function handleMoscoTools(toolName: string, args: Record<string, un
   }
 }
 
-async function moscowCreate(repoPath: string, phase: string, args: Record<string, unknown>, service: MoscoPrioritizationService) {
-  const items = args.items as Array<Omit<MoscoItem, 'id'>>;
+async function moscowCreate(repoPath: string, phase: string, args: Record<string, unknown>, service: MoscowPrioritizationService) {
+  const items = args.items as Array<Omit<MoscowItem, 'id'>>;
 
   if (!items || items.length === 0) {
     return { error: true, message: 'items array is required' };
@@ -49,7 +49,7 @@ async function moscowCreate(repoPath: string, phase: string, args: Record<string
   };
 }
 
-async function moscowLoad(repoPath: string, phase: string, service: MoscoPrioritizationService) {
+async function moscowLoad(repoPath: string, phase: string, service: MoscowPrioritizationService) {
   const analysis = await service.loadAnalysis(repoPath, phase);
 
   if (!analysis) {
@@ -59,9 +59,9 @@ async function moscowLoad(repoPath: string, phase: string, service: MoscoPriorit
   return analysis;
 }
 
-async function moscowUpdate(repoPath: string, phase: string, args: Record<string, unknown>, service: MoscoPrioritizationService) {
+async function moscowUpdate(repoPath: string, phase: string, args: Record<string, unknown>, service: MoscowPrioritizationService) {
   const itemId = args.itemId as string;
-  const updates = args.updates as Partial<MoscoItem>;
+  const updates = args.updates as Partial<MoscowItem>;
 
   if (!itemId) {
     return { error: true, message: 'itemId is required' };
@@ -80,7 +80,7 @@ async function moscowUpdate(repoPath: string, phase: string, args: Record<string
   };
 }
 
-async function moscowRemove(repoPath: string, phase: string, args: Record<string, unknown>, service: MoscoPrioritizationService) {
+async function moscowRemove(repoPath: string, phase: string, args: Record<string, unknown>, service: MoscowPrioritizationService) {
   const itemId = args.itemId as string;
 
   if (!itemId) {
@@ -100,7 +100,7 @@ async function moscowRemove(repoPath: string, phase: string, args: Record<string
   };
 }
 
-async function moscowList(repoPath: string, service: MoscoPrioritizationService) {
+async function moscowList(repoPath: string, service: MoscowPrioritizationService) {
   const analyses = await service.listAnalyses(repoPath);
 
   return {
@@ -109,7 +109,7 @@ async function moscowList(repoPath: string, service: MoscoPrioritizationService)
   };
 }
 
-async function moscowValidate(repoPath: string, phase: string, service: MoscoPrioritizationService) {
+async function moscowValidate(repoPath: string, phase: string, service: MoscowPrioritizationService) {
   const analysis = await service.loadAnalysis(repoPath, phase);
 
   if (!analysis) {
@@ -125,7 +125,7 @@ async function moscowValidate(repoPath: string, phase: string, service: MoscoPri
   };
 }
 
-async function moscowReport(repoPath: string, phase: string, service: MoscoPrioritizationService) {
+async function moscowReport(repoPath: string, phase: string, service: MoscowPrioritizationService) {
   const analysis = await service.loadAnalysis(repoPath, phase);
 
   if (!analysis) {

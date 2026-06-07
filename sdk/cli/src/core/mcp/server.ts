@@ -4,7 +4,7 @@ import { handleValidateTool } from './tools/validate';
 import { handleAgentTools } from './tools/agent';
 import { handleArchitectureTools } from './tools/architecture';
 import { handleSdlcTools } from './tools/sdlc';
-import { handleMoscoTools } from './tools/moscow';
+import { handleMoscowTools } from './tools/moscow';
 import { listResources, readResource } from './resources';
 import { listPrompts, getPrompt } from './prompts';
 import { McpMetricsService } from './metrics.service';
@@ -489,7 +489,7 @@ class DirectMcpServer {
       } else if (name === 'evolith-metrics') {
         result = this.metricsService.getMetrics();
       } else if (name.startsWith('evolith-moscow')) {
-        result = await handleMoscoTools(name, args);
+        result = await handleMoscowTools(name, args);
       } else {
         throw new Error(`Unknown tool: ${name}`);
       }

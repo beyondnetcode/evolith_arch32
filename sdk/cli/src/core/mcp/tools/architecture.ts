@@ -1,12 +1,14 @@
 import * as path from 'path';
 import { getFileSystem, getContainer } from './tool-utils';
 import { IFileSystem, IConfigParser } from '../../abstractions';
+import { DeepArchitectureAnalyzer } from '../../validators/deep-architecture-analyzer';
 
 export async function handleArchitectureTools(args: Record<string, unknown>) {
   const fs = getFileSystem();
   const configParser = getContainer().createConfigParser('yaml');
   const repoPath = args.path as string;
   const level = (args.level as string) || 'F1';
+  const deep = (args.deep as boolean) || false;
 
   if (!repoPath) {
     return { error: true, message: 'path is required' };
@@ -26,17 +28,91 @@ export async function handleArchitectureTools(args: Record<string, unknown>) {
     issues.push(...await validateF3ExtractionReadiness(repoPath, fs, configParser));
   }
 
+  if (deep) {
+    const deepResults = await runDeepAnalysis(repoPath);
+    issues.push(...deepResults);
+  }
+
   const blockingCount = issues.filter(i => i.blocking).length;
 
   return {
     level,
     repository: repoPath,
+    deepAnalysis: deep,
     status: blockingCount > 0 ? 'failed' : 'passed',
     issuesChecked: issues.length,
     blockingIssues: blockingCount,
     issues,
     timestamp: new Date().toISOString(),
   };
+}
+
+async function runDeepAnalysis(repoPath: string): Promise<Array<{ ruleId: string; level: string; title: string; severity: string; blocking: boolean }>> {
+  const issues: Array<{ ruleId: string; level: string; title: string; severity: string; blocking: boolean }> = [];
+
+  try {
+    const analyzer = new DeepArchitectureAnalyzer(repoPath);
+    const result = await analyzer.analyze();
+
+    for (const violation of result.layerViolations) {
+      issues.push({
+        ruleId: violation.ruleId,
+        level: 'F1',
+        title: `Layer violation: ${violation.fromLayer} → ${violation.toLayer} (${violation.fromFile} imports ${violation.toFile})`,
+        severity: violation.severity,
+        blocking: violation.blocking,
+      });
+    }
+
+    for (const violation of result.contextViolations) {
+      issues.push({
+        ruleId: violation.ruleId,
+        level: 'F2',
+        title: `Context coupling: ${violation.fromContext} → ${violation.toContext} (${violation.fromFile} imports ${violation.toFile})`,
+        severity: violation.severity,
+        blocking: violation.blocking,
+      });
+    }
+
+    for (const issue of result.dependencyInversionIssues) {
+      issues.push({
+        ruleId: issue.ruleId,
+        level: 'F1',
+        title: issue.issue,
+        severity: issue.severity,
+        blocking: issue.blocking,
+      });
+    }
+
+    const couplingSummary: Record<string, unknown> = {};
+    for (const [context, instability] of Object.entries(result.couplingMetrics.instability)) {
+      couplingSummary[context] = {
+        instability: instability.toFixed(2),
+        afferent: result.couplingMetrics.afferentCoupling[context] || 0,
+        efferent: result.couplingMetrics.efferentCoupling[context] || 0,
+      };
+    }
+
+    if (Object.keys(couplingSummary).length > 0) {
+      issues.push({
+        ruleId: 'ARCH-COUPLING',
+        level: 'F2',
+        title: `Coupling metrics: ${JSON.stringify(couplingSummary)}`,
+        severity: 'MAY',
+        blocking: false,
+      });
+    }
+  } catch (error) {
+    issues.push({
+      ruleId: 'ARCH-DEEP-ERROR',
+      level: 'F1',
+      title: `Deep analysis failed: ${error instanceof Error ? error.message : String(error)}`,
+      severity: 'SHOULD',
+      blocking: false,
+    });
+  }
+
+  return issues;
 }
 
 async function validateF1ModularIndependence(repoPath: string, fs: IFileSystem, configParser: IConfigParser): Promise<Array<{ ruleId: string; level: string; title: string; severity: string; blocking: boolean }>> {

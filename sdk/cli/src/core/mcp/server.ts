@@ -503,12 +503,13 @@ class DirectMcpServer {
         },
         {
           name: 'evolith-architecture-validate',
-          description: 'Validate repository architecture against F1/F2/F3 rules',
+          description: 'Validate repository architecture against F1/F2/F3 rules. Use deep=true for import graph analysis, layer violations, and coupling metrics.',
           inputSchema: {
             type: 'object',
             properties: {
               path: { type: 'string' },
               level: { type: 'string', description: 'F1, F2, or F3' },
+              deep: { type: 'boolean', description: 'Enable deep static analysis (import graph, layer violations, coupling metrics)', default: false },
             },
             required: ['path'],
           },

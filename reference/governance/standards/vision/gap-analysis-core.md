@@ -110,7 +110,7 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 | G-08 | Safe satellite upgrade path | CLI | 🟠 HIGH | M (2-3 wk) | ✅ DONE | 100% |
 | G-09 | Architecture rules validation in CLI | CLI | 🟠 HIGH | M (2-3 wk) | ✅ DONE | 100% |
 | G-17 | Unit test coverage >80% | Testing | 🟠 HIGH | L (3-4 wk) | 🟡 IN_PROGRESS | 33% |
-| G-18 | Real E2E tests with assertions | Testing | 🟠 HIGH | L (3-4 wk) | 🔵 TODO | 0% |
+| G-18 | Real E2E tests with assertions | Testing | 🟠 HIGH | L (3-4 wk) | 🟡 IN_PROGRESS | 40% |
 | G-02 | ACL integrations Jira/Trello/Linear | Core | 🟡 MEDIUM | M (2-3 wk) | 🔵 TODO | 0% |
 | G-05 | DORA+SPACE metrics dashboard | Tracker | 🟡 MEDIUM | L (3-4 wk) | 🔵 TODO | 0% |
 | G-06 | Real-time executive scorecards | Tracker | 🟡 MEDIUM | L (3-4 wk) | 🔵 TODO | 0% |

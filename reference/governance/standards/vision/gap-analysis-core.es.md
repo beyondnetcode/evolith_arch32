@@ -110,7 +110,7 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 | G-08 | Camino de upgrade seguro para satélites | CLI | 🟠 ALTA | M (2-3 sem) | ✅ DONE | 100% |
 | G-09 | Validación reglas arquitectura en CLI | CLI | 🟠 ALTA | M (2-3 sem) | ✅ DONE | 100% |
 | G-17 | Cobertura tests unitarios >80% | Testing | 🟠 ALTA | L (3-4 sem) | 🟡 IN_PROGRESS | 33% |
-| G-18 | Tests E2E reales con aserciones | Testing | 🟠 ALTA | L (3-4 sem) | 🔵 TODO | 0% |
+| G-18 | Tests E2E reales con aserciones | Testing | 🟠 ALTA | L (3-4 sem) | 🟡 IN_PROGRESS | 40% |
 | G-02 | Integraciones ACL Jira/Trello/Linear | Core | 🟡 MEDIA | M (2-3 sem) | 🔵 TODO | 0% |
 | G-05 | Dashboard métricas DORA+SPACE | Tracker | 🟡 MEDIA | L (3-4 sem) | 🔵 TODO | 0% |
 | G-06 | Scorecards ejecutivos en tiempo real | Tracker | 🟡 MEDIA | L (3-4 sem) | 🔵 TODO | 0% |

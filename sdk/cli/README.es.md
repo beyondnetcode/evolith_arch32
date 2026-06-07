@@ -407,6 +407,13 @@ sdk/cli/
 └── docs/              # Documentación
 ```
 
+## Documentación
+
+- [Guía de Demo SMART CLI](docs/SMART-CLI-DEMO.es.md) - Guía completa que cubre todos los comandos, flujo SDLC, tipos de producto, integración MCP y validación de arquitectura
+- [Visión](docs/VISION.es.md) - Visión y hoja de ruta de la CLI
+- [Modelos de Datos](docs/data-models.es.md) - Modelos de datos del dominio
+- [Integración MCP](docs/MCP-INTEGRATION.md) - Detalles de integración del servidor MCP
+
 ## Contribuir
 
 1. Haz fork del repositorio

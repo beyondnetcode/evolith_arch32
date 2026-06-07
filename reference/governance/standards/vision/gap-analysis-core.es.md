@@ -116,9 +116,9 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 | G-06 | Scorecards ejecutivos en tiempo real | Tracker | 🟡 MEDIA | L (3-4 sem) | 🔵 TODO | 0% |
 | G-10 | Transiciones de fase y generación artefactos | CLI | 🟡 MEDIA | M (2-3 sem) | ✅ DONE | 100% |
 | G-11 | Andamiaje de documentación | CLI | 🟡 MEDIA | S (1 sem) | ✅ DONE | 100% |
-| G-13 | Implementar 10+ herramientas MCP | MCP | 🟡 MEDIA | L (3-4 sem) | 🔵 TODO | 20% |
-| G-14 | Recursos MCP (Info Core, rulesets) | MCP | 🟡 MEDIA | M (2-3 sem) | 🔵 TODO | 0% |
-| G-15 | Prompts MCP reutilizables | MCP | 🟢 BAJA | XS (<1 sem) | 🔵 TODO | 0% |
+| G-13 | Implementar 10+ herramientas MCP | MCP | 🟡 MEDIA | L (3-4 sem) | ✅ DONE | 100% |
+| G-14 | Recursos MCP (Info Core, rulesets) | MCP | 🟡 MEDIA | M (2-3 sem) | ✅ DONE | 100% |
+| G-15 | Prompts MCP reutilizables | MCP | 🟢 BAJA | XS (<1 sem) | ✅ DONE | 100% |
 | G-16 | Paridad bilingüe 100% EN/ES | Core | 🟢 BAJA | XS (<1 sem) | ✅ DONE | 90% |
 
 ### 3.3 Leyenda de Semáforos

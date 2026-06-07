@@ -116,9 +116,9 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 | G-06 | Real-time executive scorecards | Tracker | 🟡 MEDIUM | L (3-4 wk) | 🔵 TODO | 0% |
 | G-10 | Phase transitions and artifact generation | CLI | 🟡 MEDIUM | M (2-3 wk) | ✅ DONE | 100% |
 | G-11 | Documentation scaffolding | CLI | 🟡 MEDIUM | S (1 wk) | ✅ DONE | 100% |
-| G-13 | Implement 10+ MCP tools | MCP | 🟡 MEDIUM | L (3-4 wk) | 🔵 TODO | 20% |
-| G-14 | MCP Resources (Core info, rulesets) | MCP | 🟡 MEDIUM | M (2-3 wk) | 🔵 TODO | 0% |
-| G-15 | Reusable MCP prompts | MCP | 🟢 LOW | XS (<1 wk) | 🔵 TODO | 0% |
+| G-13 | Implement 10+ MCP tools | MCP | 🟡 MEDIUM | L (3-4 wk) | ✅ DONE | 100% |
+| G-14 | MCP Resources (Core info, rulesets) | MCP | 🟡 MEDIUM | M (2-3 wk) | ✅ DONE | 100% |
+| G-15 | Reusable MCP prompts | MCP | 🟢 LOW | XS (<1 wk) | ✅ DONE | 100% |
 | G-16 | 100% EN/ES bilingual parity | Core | 🟢 LOW | XS (<1 wk) | ✅ DONE | 90% |
 
 ### 3.3 Traffic Light Legend

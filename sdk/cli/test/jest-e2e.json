@@ -1,7 +1,13 @@
 {
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "outDir": "./dist-test"
+  "moduleFileExtensions": ["js", "json", "ts"],
+  "rootDir": ".",
+  "testEnvironment": "node",
+  "testMatch": ["**/*.e2e-spec.ts", "**/e2e/*.test.ts"],
+  "transform": {
+    "^.+\\.ts$": "ts-jest"
   },
-  "include": ["test/**/*"]
+  "moduleDirectories": ["node_modules", "src"],
+  "testTimeout": 30000,
+  "verbose": true,
+  "forceExit": true
 }

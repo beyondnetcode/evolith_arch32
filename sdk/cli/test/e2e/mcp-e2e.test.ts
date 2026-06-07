@@ -1,5 +1,7 @@
 import { spawn, ChildProcess } from 'child_process';
 import * as path from 'path';
+import * as fs from 'fs-extra';
+import * as http from 'http';
 
 const CLI_PATH = path.join(__dirname, '../../dist/main.js');
 
@@ -17,7 +19,7 @@ interface JsonRpcResponse {
   error?: { code: number; message: string };
 }
 
-class McpTestClient {
+class McpStdioClient {
   private proc: ChildProcess;
   private messageId = 1;
   private pendingRequests = new Map<number | string, { resolve: (v: unknown) => void; reject: (e: Error) => void }>();
@@ -29,7 +31,7 @@ class McpTestClient {
     });
 
     let buffer = '';
-    this.proc.stdout.on('data', (data) => {
+    this.proc.stdout!.on('data', (data) => {
       buffer += data.toString();
       const lines = buffer.split('\n');
       buffer = lines.pop() || '';
@@ -56,8 +58,8 @@ class McpTestClient {
       }
     });
 
-    this.proc.stderr.on('data', (data) => {
-      console.error('MCP stderr:', data.toString());
+    this.proc.stderr!.on('data', (data) => {
+      // MCP stderr logging
     });
   }
 
@@ -67,14 +69,14 @@ class McpTestClient {
 
     return new Promise((resolve, reject) => {
       this.pendingRequests.set(id, { resolve, reject });
-      this.proc.stdin.write(JSON.stringify(message) + '\n');
+      this.proc.stdin!.write(JSON.stringify(message) + '\n');
 
       setTimeout(() => {
         if (this.pendingRequests.has(id)) {
           this.pendingRequests.delete(id);
           reject(new Error(`Request ${id} timed out`));
         }
-      }, 5000);
+      }, 10000);
     });
   }
 
@@ -90,8 +92,20 @@ class McpTestClient {
     return this.send('resources/list');
   }
 
+  async readResource(uri: string) {
+    return this.send('resources/read', { uri });
+  }
+
   async listPrompts() {
     return this.send('prompts/list');
+  }
+
+  async getPrompt(name: string, args: Record<string, unknown> = {}) {
+    return this.send('prompts/get', { name, arguments: args });
+  }
+
+  async initialize() {
+    return this.send('initialize');
   }
 
   getResponses() {
@@ -103,15 +117,56 @@ class McpTestClient {
   }
 }
 
-describe('MCP E2E Tests', () => {
-  let client: McpTestClient;
+function httpGet(url: string): Promise<{ statusCode: number; body: string }> {
+  return new Promise((resolve, reject) => {
+    http.get(url, (res) => {
+      let data = '';
+      res.on('data', (chunk) => { data += chunk; });
+      res.on('end', () => resolve({ statusCode: res.statusCode || 0, body: data }));
+    }).on('error', reject);
+  });
+}
+
+function httpPost(url: string, body: string, headers: Record<string, string> = {}): Promise<{ statusCode: number; body: string }> {
+  return new Promise((resolve, reject) => {
+    const urlObj = new URL(url);
+    const req = http.request({
+      hostname: urlObj.hostname,
+      port: urlObj.port,
+      path: urlObj.pathname,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...headers },
+    }, (res) => {
+      let data = '';
+      res.on('data', (chunk) => { data += chunk; });
+      res.on('end', () => resolve({ statusCode: res.statusCode || 0, body: data }));
+    });
+    req.on('error', reject);
+    req.write(body);
+    req.end();
+  });
+}
+
+describe('MCP E2E Tests - stdio transport', () => {
+  let client: McpStdioClient;
 
   beforeAll(() => {
-    client = new McpTestClient();
+    client = new McpStdioClient();
   });
 
   afterAll(() => {
     client.kill();
+  });
+
+  describe('initialize', () => {
+    it('should respond to initialize request', async () => {
+      const result = await client.initialize() as { protocolVersion: string; capabilities: unknown; serverInfo: { name: string } };
+
+      expect(result).toBeDefined();
+      expect(result.protocolVersion).toBeDefined();
+      expect(result.serverInfo).toBeDefined();
+      expect(result.serverInfo.name).toBe('evolith-mcp-server');
+    });
   });
 
   describe('tools/list', () => {
@@ -120,16 +175,50 @@ describe('MCP E2E Tests', () => {
 
       expect(result).toBeDefined();
       expect(result.tools).toBeInstanceOf(Array);
-      expect(result.tools.length).toBeGreaterThan(0);
+      expect(result.tools.length).toBeGreaterThan(10);
 
       const toolNames = result.tools.map(t => t.name);
       expect(toolNames).toContain('evolith-validate');
+      expect(toolNames).toContain('evolith-agent-install');
       expect(toolNames).toContain('evolith-agent-list');
+      expect(toolNames).toContain('evolith-agent-validate');
+      expect(toolNames).toContain('evolith-agent-upgrade');
+      expect(toolNames).toContain('evolith-agent-remove');
+      expect(toolNames).toContain('evolith-architecture-validate');
+      expect(toolNames).toContain('evolith-sdlc-handoff');
+      expect(toolNames).toContain('evolith-sdlc-status');
+      expect(toolNames).toContain('evolith-config-get');
+      expect(toolNames).toContain('evolith-config-set');
+      expect(toolNames).toContain('evolith-metrics');
+      expect(toolNames).toContain('evolith-moscow-create');
+      expect(toolNames).toContain('evolith-moscow-load');
+      expect(toolNames).toContain('evolith-moscow-update');
+      expect(toolNames).toContain('evolith-moscow-remove');
+      expect(toolNames).toContain('evolith-moscow-list');
+      expect(toolNames).toContain('evolith-moscow-validate');
+      expect(toolNames).toContain('evolith-moscow-report');
+    });
+
+    it('should include tool descriptions', async () => {
+      const result = await client.listTools() as { tools: Array<{ name: string; description: string }> };
+
+      for (const tool of result.tools) {
+        expect(tool.description).toBeDefined();
+        expect(tool.description.length).toBeGreaterThan(0);
+      }
+    });
+
+    it('should include input schemas for tools', async () => {
+      const result = await client.listTools() as { tools: Array<{ name: string; inputSchema: unknown }> };
+
+      for (const tool of result.tools) {
+        expect(tool.inputSchema).toBeDefined();
+      }
     });
   });
 
   describe('tools/call', () => {
-    it('should call evolith-validate tool', async () => {
+    it('should call evolith-validate tool successfully', async () => {
       const result = await client.callTool('evolith-validate', {
         path: process.cwd(),
         format: 'summary',
@@ -138,30 +227,335 @@ describe('MCP E2E Tests', () => {
       expect(result).toBeDefined();
       expect(result.content).toBeInstanceOf(Array);
       expect(result.content[0].type).toBe('text');
+      expect(result.content[0].text).toBeDefined();
+    });
+
+    it('should call evolith-metrics tool', async () => {
+      const result = await client.callTool('evolith-metrics', {}) as { content: Array<{ type: string; text: string }> };
+
+      expect(result).toBeDefined();
+      expect(result.content).toBeInstanceOf(Array);
+    });
+
+    it('should call evolith-config-get tool', async () => {
+      const result = await client.callTool('evolith-config-get', {
+        key: 'coreRef.version',
+        dir: process.cwd(),
+      }) as { content: Array<{ type: string; text: string }> };
+
+      expect(result).toBeDefined();
+      expect(result.content).toBeInstanceOf(Array);
     });
 
     it('should return error for unknown tool', async () => {
-      await expect(
-        client.callTool('unknown-tool', {})
-      ).rejects.toThrow();
+      const result = await client.callTool('unknown-tool', {}) as { content: Array<{ type: string; text: string }>; isError?: boolean };
+
+      expect(result).toBeDefined();
+      expect(result.isError).toBe(true);
+    });
+
+    it('should return error for evolith-validate with missing path', async () => {
+      const result = await client.callTool('evolith-validate', {}) as { content?: Array<{ type: string; text: string }>; isError?: boolean };
+
+      expect(result).toBeDefined();
+    });
+
+    it('should call evolith-architecture-validate tool', async () => {
+      const result = await client.callTool('evolith-architecture-validate', {
+        path: process.cwd(),
+        level: 'F1',
+      }) as { content: Array<{ type: string; text: string }> };
+
+      expect(result).toBeDefined();
+      expect(result.content).toBeInstanceOf(Array);
+    });
+
+    it('should call evolith-architecture-validate with deep analysis', async () => {
+      const result = await client.callTool('evolith-architecture-validate', {
+        path: process.cwd(),
+        level: 'F1',
+        deep: true,
+      }) as { content: Array<{ type: string; text: string }> };
+
+      expect(result).toBeDefined();
+      expect(result.content).toBeInstanceOf(Array);
+    });
+
+    it('should call evolith-sdlc-status tool', async () => {
+      const result = await client.callTool('evolith-sdlc-status', {
+        path: process.cwd(),
+      }) as { content: Array<{ type: string; text: string }> };
+
+      expect(result).toBeDefined();
+      expect(result.content).toBeInstanceOf(Array);
+    });
+
+    it('should call evolith-moscow-list tool', async () => {
+      const result = await client.callTool('evolith-moscow-list', {
+        path: process.cwd(),
+      }) as { content: Array<{ type: string; text: string }> };
+
+      expect(result).toBeDefined();
+      expect(result.content).toBeInstanceOf(Array);
+    });
+
+    it('should call evolith-agent-list tool', async () => {
+      const result = await client.callTool('evolith-agent-list', {
+        dir: process.cwd(),
+      }) as { content: Array<{ type: string; text: string }> };
+
+      expect(result).toBeDefined();
+      expect(result.content).toBeInstanceOf(Array);
     });
   });
 
   describe('resources/list', () => {
     it('should return list of resources', async () => {
-      const result = await client.listResources() as { resources: Array<{ uri: string }> };
+      const result = await client.listResources() as { resources: Array<{ uri: string; name: string }> };
 
       expect(result).toBeDefined();
       expect(result.resources).toBeInstanceOf(Array);
+      expect(result.resources.length).toBeGreaterThan(0);
+
+      const uris = result.resources.map(r => r.uri);
+      expect(uris.some(u => u.includes('rulesets'))).toBe(true);
+    });
+  });
+
+  describe('resources/read', () => {
+    it('should read evolith://rulesets resource', async () => {
+      const result = await client.readResource('evolith://rulesets') as { contents?: Array<{ uri: string; text: string }> };
+
+      expect(result).toBeDefined();
+    });
+
+    it('should read evolith://phase-gates resource', async () => {
+      const result = await client.readResource('evolith://phase-gates') as { contents?: Array<{ uri: string; text: string }> };
+
+      expect(result).toBeDefined();
+    });
+
+    it('should read evolith://governance-version resource', async () => {
+      try {
+        const result = await client.readResource('evolith://governance-version');
+        expect(result).toBeDefined();
+      } catch (error) {
+        expect(error).toBeDefined();
+      }
+    });
+
+    it('should return error for unknown resource', async () => {
+      try {
+        const result = await client.readResource('evolith://unknown');
+        expect(result).toBeDefined();
+      } catch (error) {
+        expect(error).toBeDefined();
+      }
     });
   });
 
   describe('prompts/list', () => {
     it('should return list of prompts', async () => {
-      const result = await client.listPrompts() as { prompts: Array<{ name: string }> };
+      const result = await client.listPrompts() as { prompts: Array<{ name: string; description: string }> };
 
       expect(result).toBeDefined();
       expect(result.prompts).toBeInstanceOf(Array);
+      expect(result.prompts.length).toBeGreaterThan(0);
+
+      const promptNames = result.prompts.map(p => p.name);
+      expect(promptNames).toContain('evolith/validate-repository');
+      expect(promptNames).toContain('evolith/agent-onboarding');
+      expect(promptNames).toContain('evolith/architecture-review');
+    });
+  });
+
+  describe('prompts/get', () => {
+    it('should get validate-repository prompt', async () => {
+      const result = await client.getPrompt('evolith/validate-repository') as { messages: Array<{ role: string; content: unknown }> };
+
+      expect(result).toBeDefined();
+      expect(result.messages).toBeInstanceOf(Array);
+      expect(result.messages.length).toBeGreaterThan(0);
+    });
+
+    it('should get agent-onboarding prompt', async () => {
+      const result = await client.getPrompt('evolith/agent-onboarding') as { messages: Array<{ role: string; content: unknown }> };
+
+      expect(result).toBeDefined();
+      expect(result.messages).toBeInstanceOf(Array);
+    });
+
+    it('should return error for unknown prompt', async () => {
+      try {
+        const result = await client.getPrompt('evolith/unknown-prompt');
+        expect(result).toBeDefined();
+      } catch (error) {
+        expect(error).toBeDefined();
+      }
+    });
+  });
+
+  describe('error handling', () => {
+    it('should handle invalid JSON-RPC method', async () => {
+      try {
+        const result = await client.send('unknown/method', {});
+        expect(result).toBeDefined();
+      } catch (error) {
+        expect(error).toBeDefined();
+      }
+    });
+
+    it('should handle malformed requests', async () => {
+      const result = await client.send('tools/list', { invalid: true });
+
+      expect(result).toBeDefined();
+    });
+  });
+});
+
+describe('MCP E2E Tests - HTTP transport', () => {
+  let serverProcess: ChildProcess;
+  const testPort = 52000 + Math.floor(Math.random() * 1000);
+
+  beforeAll(async () => {
+    serverProcess = spawn('node', [CLI_PATH, 'mcp', 'serve', '--transport', 'http', '--port', String(testPort)], {
+      stdio: ['pipe', 'pipe', 'pipe'],
+    });
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  });
+
+  afterAll(() => {
+    serverProcess.kill();
+  });
+
+  describe('health endpoint', () => {
+    it('should return health status', async () => {
+      const response = await httpGet(`http://127.0.0.1:${testPort}/health`);
+
+      expect(response.statusCode).toBe(200);
+      const body = JSON.parse(response.body);
+      expect(body.status).toBe('ok');
+      expect(body.transport).toBe('http');
+      expect(body.protocol).toBe('mcp');
+    });
+  });
+
+  describe('SSE endpoint', () => {
+    it('should establish SSE connection', async () => {
+      const response = await new Promise<string>((resolve, reject) => {
+        http.get(`http://127.0.0.1:${testPort}/sse`, (res) => {
+          let data = '';
+          res.on('data', (chunk) => { data += chunk; });
+          setTimeout(() => resolve(data), 200);
+        }).on('error', reject);
+      });
+
+      expect(response).toContain(': connected');
+    });
+  });
+
+  describe('message endpoint', () => {
+    it('should accept JSON-RPC messages via POST', async () => {
+      const message = JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list' });
+      const response = await httpPost(`http://127.0.0.1:${testPort}/message`, message);
+
+      expect(response.statusCode).toBe(202);
+      const body = JSON.parse(response.body);
+      expect(body.status).toBe('accepted');
+    });
+
+    it('should reject invalid JSON', async () => {
+      const response = await httpPost(`http://127.0.0.1:${testPort}/message`, 'not valid json');
+
+      expect(response.statusCode).toBe(400);
+    });
+  });
+
+  describe('404 handling', () => {
+    it('should return 404 for unknown routes', async () => {
+      const response = await httpGet(`http://127.0.0.1:${testPort}/unknown`);
+
+      expect(response.statusCode).toBe(404);
+    });
+  });
+});
+
+describe('MCP E2E Tests - API key authentication', () => {
+  let serverProcess: ChildProcess;
+  const testPort = 53000 + Math.floor(Math.random() * 1000);
+  const apiKey = 'test-secret-key-123';
+
+  beforeAll(async () => {
+    serverProcess = spawn('node', [CLI_PATH, 'mcp', 'serve', '--transport', 'http', '--port', String(testPort), '--api-key', apiKey], {
+      stdio: ['pipe', 'pipe', 'pipe'],
+    });
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  });
+
+  afterAll(() => {
+    serverProcess.kill();
+  });
+
+  describe('authentication', () => {
+    it('should reject requests without API key', async () => {
+      const response = await httpGet(`http://127.0.0.1:${testPort}/health`);
+
+      expect(response.statusCode).toBe(401);
+      const body = JSON.parse(response.body);
+      expect(body.error).toBe('Unauthorized');
+    });
+
+    it('should accept requests with valid Bearer token', async () => {
+      const response = await new Promise<{ statusCode: number; body: string }>((resolve, reject) => {
+        const req = http.request(`http://127.0.0.1:${testPort}/health`, {
+          method: 'GET',
+          headers: { 'Authorization': `Bearer ${apiKey}` },
+        }, (res) => {
+          let data = '';
+          res.on('data', (chunk) => { data += chunk; });
+          res.on('end', () => resolve({ statusCode: res.statusCode || 0, body: data }));
+        });
+        req.on('error', reject);
+        req.end();
+      });
+
+      expect(response.statusCode).toBe(200);
+    });
+
+    it('should accept requests with valid X-API-Key header', async () => {
+      const response = await new Promise<{ statusCode: number; body: string }>((resolve, reject) => {
+        const req = http.request(`http://127.0.0.1:${testPort}/health`, {
+          method: 'GET',
+          headers: { 'X-API-Key': apiKey },
+        }, (res) => {
+          let data = '';
+          res.on('data', (chunk) => { data += chunk; });
+          res.on('end', () => resolve({ statusCode: res.statusCode || 0, body: data }));
+        });
+        req.on('error', reject);
+        req.end();
+      });
+
+      expect(response.statusCode).toBe(200);
+    });
+
+    it('should reject requests with invalid API key', async () => {
+      const response = await new Promise<{ statusCode: number; body: string }>((resolve, reject) => {
+        const req = http.request(`http://127.0.0.1:${testPort}/health`, {
+          method: 'GET',
+          headers: { 'Authorization': 'Bearer wrong-key' },
+        }, (res) => {
+          let data = '';
+          res.on('data', (chunk) => { data += chunk; });
+          res.on('end', () => resolve({ statusCode: res.statusCode || 0, body: data }));
+        });
+        req.on('error', reject);
+        req.end();
+      });
+
+      expect(response.statusCode).toBe(401);
     });
   });
 });

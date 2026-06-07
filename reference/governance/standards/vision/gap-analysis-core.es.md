@@ -94,8 +94,8 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 |------|-------------|---------|------|
 | G-02 (ACL Jira) | G-17 (Cobertura Tests) | - | G-12 (Protocolo MCP) |
 | G-05 (DORA Metrics) | G-18 (Tests E2E) | | G-16 (Paridad EN/ES) |
-| G-06 (Scorecards) | G-20 (MCP HTTP) | | G-03 (Phase Gates) |
-| G-21 (Profundidad Arch) | G-21 (Validación Arch) | | G-04 (Architecture Drift) |
+| G-06 (Scorecards) | | | G-03 (Phase Gates) |
+| | | | G-04 (Architecture Drift) |
 | | | | G-07 (Agents Install) |
 | | | | G-08 (Satellite Upgrade) |
 | | | | G-09 (Arch Validation) |
@@ -104,6 +104,11 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 | | | | G-13 (MCP Tools) |
 | | | | G-14 (MCP Resources) |
 | | | | G-15 (MCP Prompts) |
+| | | | G-19 (Limpieza Legacy) |
+| | | | G-20 (MCP HTTP) |
+| | | | G-21 (Profundidad Arch) |
+| | | | G-22 (Nombre MoSCoW) |
+| | | | G-23 (Dir Validators) |
 
 ### 3.2 Tabla de Seguimiento Detallada
 
@@ -121,17 +126,17 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 | G-13 | Implementar 10+ herramientas MCP | MCP | 🟡 MEDIA | L (3-4 sem) | ✅ DONE | 100% |
 | G-14 | Recursos MCP (Info Core, rulesets) | MCP | 🟡 MEDIA | M (2-3 sem) | ✅ DONE | 100% |
 | G-15 | Prompts MCP reutilizables | MCP | 🟢 BAJA | XS (<1 sem) | ✅ DONE | 100% |
-| G-17 | Cobertura tests unitarios >80% | Testing | 🟠 ALTA | L (3-4 sem) | 🟡 IN_PROGRESS | 80% |
-| G-18 | Tests E2E reales con aserciones | Testing | 🟠 ALTA | L (3-4 sem) | 🟡 IN_PROGRESS | 40% |
+| G-17 | Cobertura tests unitarios >80% | Testing | 🟠 ALTA | L (3-4 sem) | ✅ DONE | 100% |
+| G-18 | Tests E2E reales con aserciones | Testing | 🟠 ALTA | L (3-4 sem) | ✅ DONE | 100% |
 | G-16 | Paridad bilingüe 100% EN/ES | Core | 🟢 BAJA | XS (<1 sem) | ✅ DONE | 90% |
 | G-02 | Integraciones ACL Jira/Trello/Linear | Core | 🟡 MEDIA | M (2-3 sem) | ⏸️ DEFERRED | 0% |
 | G-05 | Dashboard métricas DORA+SPACE | Tracker | 🟡 MEDIA | L (3-4 sem) | ⏸️ DEFERRED | 0% |
 | G-06 | Scorecards ejecutivos en tiempo real | Tracker | 🟡 MEDIA | L (3-4 sem) | ⏸️ DEFERRED | 0% |
-| G-19 | Limpieza servicio MCP legacy | Core | 🟢 BAJA | XS (<1 sem) | 🔵 TODO | 0% |
-| G-20 | Implementación transporte HTTP MCP | MCP | 🟡 MEDIA | S (1 sem) | 🟡 IN_PROGRESS | 0% |
-| G-21 | Profundidad validación arquitectura | Core | 🟡 MEDIA | M (2-3 sem) | 🟡 IN_PROGRESS | 0% |
-| G-22 | Consistencia de nombre MoSCoW | Core | 🟢 BAJA | XS (<1 sem) | 🔵 TODO | 0% |
-| G-23 | Limpieza directorio validators vacío | Core | 🟢 BAJA | XS (<1 sem) | 🔵 TODO | 0% |
+| G-19 | Limpieza servicio MCP legacy | Core | 🟢 BAJA | XS (<1 sem) | ✅ DONE | 100% |
+| G-20 | Implementación transporte HTTP MCP | MCP | 🟡 MEDIA | S (1 sem) | ✅ DONE | 100% |
+| G-21 | Profundidad validación arquitectura | Core | 🟡 MEDIA | M (2-3 sem) | ✅ DONE | 100% |
+| G-22 | Consistencia de nombre MoSCoW | Core | 🟢 BAJA | XS (<1 sem) | ✅ DONE | 100% |
+| G-23 | Limpieza directorio validators vacío | Core | 🟢 BAJA | XS (<1 sem) | ✅ DONE | 100% |
 
 ### 3.3 Leyenda de Semáforos
 

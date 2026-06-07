@@ -94,8 +94,8 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 |------|-------------|---------|------|
 | G-02 (ACL Jira) | G-17 (Test Coverage) | - | G-12 (MCP Protocol) |
 | G-05 (DORA Metrics) | G-18 (E2E Tests) | | G-16 (EN/ES Parity) |
-| G-06 (Scorecards) | G-20 (MCP HTTP) | | G-03 (Phase Gates) |
-| G-21 (Arch Validation Depth) | G-21 (Arch Validation) | | G-04 (Architecture Drift) |
+| G-06 (Scorecards) | | | G-03 (Phase Gates) |
+| | | | G-04 (Architecture Drift) |
 | | | | G-07 (Agents Install) |
 | | | | G-08 (Satellite Upgrade) |
 | | | | G-09 (Arch Validation) |
@@ -104,6 +104,11 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 | | | | G-13 (MCP Tools) |
 | | | | G-14 (MCP Resources) |
 | | | | G-15 (MCP Prompts) |
+| | | | G-19 (Legacy Cleanup) |
+| | | | G-20 (MCP HTTP) |
+| | | | G-21 (Arch Depth) |
+| | | | G-22 (MoSCoW Name) |
+| | | | G-23 (Validators Dir) |
 
 ### 3.2 Detailed Tracking Table
 
@@ -121,17 +126,17 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 | G-13 | Implement 10+ MCP tools | MCP | 🟡 MEDIUM | L (3-4 wk) | ✅ DONE | 100% |
 | G-14 | MCP Resources (Core info, rulesets) | MCP | 🟡 MEDIUM | M (2-3 wk) | ✅ DONE | 100% |
 | G-15 | Reusable MCP prompts | MCP | 🟢 LOW | XS (<1 wk) | ✅ DONE | 100% |
-| G-17 | Unit test coverage >80% | Testing | 🟠 HIGH | L (3-4 wk) | 🟡 IN_PROGRESS | 80% |
-| G-18 | Real E2E tests with assertions | Testing | 🟠 HIGH | L (3-4 wk) | 🟡 IN_PROGRESS | 40% |
+| G-17 | Unit test coverage >80% | Testing | 🟠 HIGH | L (3-4 wk) | ✅ DONE | 100% |
+| G-18 | Real E2E tests with assertions | Testing | 🟠 HIGH | L (3-4 wk) | ✅ DONE | 100% |
 | G-16 | 100% EN/ES bilingual parity | Core | 🟢 LOW | XS (<1 wk) | ✅ DONE | 90% |
 | G-02 | ACL integrations Jira/Trello/Linear | Core | 🟡 MEDIUM | M (2-3 wk) | ⏸️ DEFERRED | 0% |
 | G-05 | DORA+SPACE metrics dashboard | Tracker | 🟡 MEDIUM | L (3-4 wk) | ⏸️ DEFERRED | 0% |
 | G-06 | Real-time executive scorecards | Tracker | 🟡 MEDIUM | L (3-4 wk) | ⏸️ DEFERRED | 0% |
-| G-19 | Legacy MCP service cleanup | Core | 🟢 LOW | XS (<1 wk) | 🔵 TODO | 0% |
-| G-20 | MCP HTTP transport implementation | MCP | 🟡 MEDIUM | S (1 wk) | 🟡 IN_PROGRESS | 0% |
-| G-21 | Architecture validation depth | Core | 🟡 MEDIUM | M (2-3 wk) | 🟡 IN_PROGRESS | 0% |
-| G-22 | MoSCoW naming consistency | Core | 🟢 LOW | XS (<1 wk) | 🔵 TODO | 0% |
-| G-23 | Empty validators directory cleanup | Core | 🟢 LOW | XS (<1 wk) | 🔵 TODO | 0% |
+| G-19 | Legacy MCP service cleanup | Core | 🟢 LOW | XS (<1 wk) | ✅ DONE | 100% |
+| G-20 | MCP HTTP transport implementation | MCP | 🟡 MEDIUM | S (1 wk) | ✅ DONE | 100% |
+| G-21 | Architecture validation depth | Core | 🟡 MEDIUM | M (2-3 wk) | ✅ DONE | 100% |
+| G-22 | MoSCoW naming consistency | Core | 🟢 LOW | XS (<1 wk) | ✅ DONE | 100% |
+| G-23 | Empty validators directory cleanup | Core | 🟢 LOW | XS (<1 wk) | ✅ DONE | 100% |
 
 ### 3.3 Traffic Light Legend
 

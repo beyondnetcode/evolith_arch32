@@ -93,7 +93,7 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 | G-05 (DORA Metrics) | | | G-16 (Paridad EN/ES) |
 | G-06 (Scorecards) | | | G-03 (Phase Gates) |
 | G-10 (SDLC Ops) | | | G-04 (Architecture Drift) |
-| G-11 (Scaffold Docs) | | | |
+| G-11 (Scaffold Docs) | | | G-07 (Agents Install) |
 | G-13 (MCP Tools) | | | |
 | G-14 (MCP Resources) | | | |
 | G-15 (MCP Prompts) | | | |
@@ -106,7 +106,7 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 | G-01 | Validación arquitectura F1/F2/F3 en CLI | Core | 🟠 ALTA | M (2-3 sem) | ✅ DONE | 100% |
 | G-03 | Ejecutar transiciones de Phase Gates | CLI | 🟠 ALTA | L (3-4 sem) | ✅ DONE | 100% |
 | G-04 | Detección de Architecture Drift | CLI | 🟠 ALTA | L (3-4 sem) | ✅ DONE | 100% |
-| G-07 | Comando `smart-cli agents install` | CLI | 🟠 ALTA | S (1 sem) | 🔵 TODO | 0% |
+| G-07 | Comando `smart-cli agents install` | CLI | 🟠 ALTA | S (1 sem) | ✅ DONE | 100% |
 | G-08 | Camino de upgrade seguro para satélites | CLI | 🟠 ALTA | M (2-3 sem) | 🔵 TODO | 0% |
 | G-09 | Validación reglas arquitectura en CLI | CLI | 🟠 ALTA | M (2-3 sem) | 🔵 TODO | 0% |
 | G-17 | Cobertura tests unitarios >80% | Testing | 🟠 ALTA | L (3-4 sem) | 🔵 TODO | 25% |

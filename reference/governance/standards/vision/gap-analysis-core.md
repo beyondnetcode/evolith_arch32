@@ -93,7 +93,7 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 | G-05 (DORA Metrics) | | | G-16 (EN/ES Parity) |
 | G-06 (Scorecards) | | | G-03 (Phase Gates) |
 | G-10 (SDLC Ops) | | | G-04 (Architecture Drift) |
-| G-11 (Scaffold Docs) | | | |
+| G-11 (Scaffold Docs) | | | G-07 (Agents Install) |
 | G-13 (MCP Tools) | | | |
 | G-14 (MCP Resources) | | | |
 | G-15 (MCP Prompts) | | | |
@@ -106,7 +106,7 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 | G-01 | F1/F2/F3 architecture validation in CLI | Core | 🟠 HIGH | M (2-3 wk) | ✅ DONE | 100% |
 | G-03 | Execute Phase Gate transitions | CLI | 🟠 HIGH | L (3-4 wk) | ✅ DONE | 100% |
 | G-04 | Architecture Drift detection | CLI | 🟠 HIGH | L (3-4 wk) | ✅ DONE | 100% |
-| G-07 | `smart-cli agents install` command | CLI | 🟠 HIGH | S (1 wk) | 🔵 TODO | 0% |
+| G-07 | `smart-cli agents install` command | CLI | 🟠 HIGH | S (1 wk) | ✅ DONE | 100% |
 | G-08 | Safe satellite upgrade path | CLI | 🟠 HIGH | M (2-3 wk) | 🔵 TODO | 0% |
 | G-09 | Architecture rules validation in CLI | CLI | 🟠 HIGH | M (2-3 wk) | 🔵 TODO | 0% |
 | G-17 | Unit test coverage >80% | Testing | 🟠 HIGH | L (3-4 wk) | 🔵 TODO | 25% |

@@ -45,6 +45,9 @@
 * [0067-modular-monolith-schema-per-domain](./0067-modular-monolith-schema-per-domain.md)
 * [0068-documentation-release-gitflow](./0068-documentation-release-gitflow.md) — **Documentation release GitFlow with bilingual quality gates**
 * [0069-mcp-server-protocol-implementation](./0069-mcp-server-protocol-implementation.md) — **MCP server protocol for AI agent governance integration**
+* [0070-lean-root-repository-taxonomy](./0070-lean-root-repository-taxonomy.md) — **Lean root: src/ vs docs/ binary dichotomy for satellite repositories**
+* [0071-domain-layer-base-class-inheritance-strategy](./0071-domain-layer-base-class-inheritance-strategy.md) — **Domain layer inheritance trade-off: shell base classes vs. Domain.Abstractions**
+* [0072-utc-dates-timezone-language-resolution](./0072-utc-dates-timezone-language-resolution.md) — **UTC storage, browser timezone detection, and language priority chain**
 
 ---
 [Back to Upper Level](../README.md)

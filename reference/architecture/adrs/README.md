@@ -53,6 +53,9 @@ Decisions applicable to any product built on top of the framework, regardless of
 * [ADR 0055: Microfrontends Architecture Strategy](./core/0055-microfrontends-architecture-strategy.md)
 * **[ADR 0056: Enterprise Naming & Design Conventions — Multi-Language, Multi-Platform](./core/0056-enterprise-naming-design-conventions.md)**
 * [ADR 0067: Modular Monolith Database Boundary — Schema per Domain](./core/0067-modular-monolith-schema-per-domain.md)
+* [ADR 0070: Lean Root Repository Taxonomy](./core/0070-lean-root-repository-taxonomy.md)
+* [ADR 0071: Domain Layer Base Class and Inheritance Strategy](./core/0071-domain-layer-base-class-inheritance-strategy.md)
+* [ADR 0072: UTC Date Storage, Browser Timezone Detection, and Language Resolution](./core/0072-utc-dates-timezone-language-resolution.md)
 
 ---
 
@@ -73,6 +76,11 @@ Decisions tied to the primary runtime for APIs and BFFs.
 * [ADR 0029: Tactical DDD Primitives](./nodejs/0029-tactical-ddd-primitives-library.md)
 * [ADR 0038: Result Pattern TS Implementation](./nodejs/0038-error-handling-result-pattern-strategy.md)
 * [ADR 0043: Data Access Strategy & ORM](./nodejs/0043-data-access-orm-strategy.md)
+* **[ADR 0044: Frontend Clean Architecture Layer Boundaries](./nodejs/0044-frontend-clean-architecture-layer-boundaries.md)**
+* **[ADR 0045: Zustand + TanStack Query State Management](./nodejs/0045-zustand-tanstack-query-state-management.md)**
+* [ADR 0046: Prohibition of Raw Technical Identifiers in UI](./nodejs/0046-no-raw-identifiers-in-ui.md)
+* **[ADR 0047: Actionable User Error Contract and Correlated Diagnostics](./nodejs/0047-actionable-user-error-contract.md)**
+* [ADR 0048: Feature Flag System Scope and Structured Criteria Model](./nodejs/0048-feature-flag-system-scope-criteria-model.md)
 
 ---
 
@@ -89,6 +97,7 @@ Decisions tied to high-compute runtimes.
 * **[ADR 0064: .NET Request-Scope Observability Context Propagation](./dotnet/0064-dotnet-request-scope-observability-context.md)**
 * **[ADR 0065: .NET PII-Safe Structured Logging Pipeline (Serilog)](./dotnet/0065-dotnet-pii-safe-serilog-pipeline.md)**
 * **[ADR 0066: .NET Lightweight HTTP Idempotency via IMemoryCache / IDistributedCache](./dotnet/0066-dotnet-lightweight-http-idempotency.md)**
+* **[ADR 0072: .NET AOP Cross-Cutting Concern Strategy (DispatchProxy)](./dotnet/0072-dotnet-aop-cross-cutting-concern-strategy.md)**
 
 ---
 

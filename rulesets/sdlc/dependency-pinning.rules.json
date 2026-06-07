@@ -1,0 +1,161 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/rulesets/sdlc/dependency-pinning.rules.json",
+  "title": "Dependency Pinning and Vulnerability Management Rules",
+  "description": "Machine-readable enforcement of ADR-0009 (Strict Dependency Pinning and Automated Vulnerability Management). Applies to all Evolith satellite repositories containing package.json files.",
+  "version": "1.0.0",
+  "adrId": "ADR-0009",
+  "adrTitle": "Strict Dependency Pinning and Automated Vulnerability Management",
+  "status": "Approved",
+  "effectiveDate": "2026-06-07",
+  "rules": [
+    {
+      "id": "DEP-01",
+      "severity": "MUST NOT",
+      "category": "version-pinning",
+      "title": "No caret (^) range specifiers in package.json",
+      "description": "Every dependency in package.json (dependencies, devDependencies, peerDependencies, optionalDependencies) MUST use an exact version string. The caret prefix (^) is prohibited. Example: use '18.3.1', not '^18.3.1'.",
+      "rationale": "ADR-0009 §1: Caret ranges allow automatic minor/patch upgrades during npm install, breaking reproducibility and making CVE introduction unpredictable.",
+      "validationQuery": "grep -r '\"\\^' package.json — zero matches expected in any package.json file.",
+      "blocking": true,
+      "checklistItem": "no-caret-ranges",
+      "autoFixStrategy": "Remove ^ prefix from all dependency versions. Run 'npm install --save-exact' or 'npm pkg set dependencies.<pkg>=<version>' with exact version.",
+      "appliesTo": ["dependencies", "devDependencies", "peerDependencies", "optionalDependencies"]
+    },
+    {
+      "id": "DEP-02",
+      "severity": "MUST NOT",
+      "category": "version-pinning",
+      "title": "No tilde (~) range specifiers in package.json",
+      "description": "Every dependency in package.json MUST use an exact version string. The tilde prefix (~) is prohibited. Example: use '18.3.1', not '~18.3.1'.",
+      "rationale": "ADR-0009 §1: Tilde ranges allow automatic patch upgrades, breaking reproducibility in the same way as caret ranges.",
+      "validationQuery": "grep -r '\"~' package.json — zero matches expected in any package.json file.",
+      "blocking": true,
+      "checklistItem": "no-tilde-ranges",
+      "autoFixStrategy": "Remove ~ prefix from all dependency versions. Pin to exact current resolved version from package-lock.json.",
+      "appliesTo": ["dependencies", "devDependencies", "peerDependencies", "optionalDependencies"]
+    },
+    {
+      "id": "DEP-03",
+      "severity": "MUST NOT",
+      "category": "version-pinning",
+      "title": "No wildcard (*) or latest-tag version specifiers",
+      "description": "Version specifiers using '*', 'latest', 'x', or 'X' wildcards are prohibited. Every package must reference a specific semver string.",
+      "rationale": "ADR-0009 §1: Wildcard versions resolve to arbitrary latest at install time, making the dependency tree completely non-deterministic.",
+      "validationQuery": "Verify no dependency value matches: *, latest, x, X, or empty string.",
+      "blocking": true,
+      "checklistItem": "no-wildcard-versions"
+    },
+    {
+      "id": "DEP-04",
+      "severity": "MUST",
+      "category": "lock-file",
+      "title": "package-lock.json (or equivalent) must be committed",
+      "description": "A lock file (package-lock.json for npm, yarn.lock for Yarn, pnpm-lock.yaml for pnpm) MUST be committed to version control and kept current. The lock file is the source of truth for reproducible builds.",
+      "rationale": "ADR-0009 §4: CI pipelines must execute 'npm ci' which requires a committed lock file. Without it, npm install resolves fresh versions on every run.",
+      "validationQuery": "Lock file exists in repository root (or workspace root) and is not in .gitignore.",
+      "blocking": true,
+      "checklistItem": "lock-file-committed"
+    },
+    {
+      "id": "DEP-05",
+      "severity": "MUST",
+      "category": "ci-installation",
+      "title": "CI pipelines use 'npm ci' not 'npm install'",
+      "description": "Continuous Integration pipelines MUST use 'npm ci' (clean install) to install dependencies. 'npm install' is prohibited in CI because it may update the lock file and resolve different versions.",
+      "rationale": "ADR-0009 §4: 'npm ci' installs exactly what the lock file specifies. 'npm install' may silently update packages, defeating the purpose of pinning.",
+      "validationQuery": "CI workflow files (.github/workflows/*.yml) contain 'npm ci' for dependency installation. No 'npm install' step present in CI dependency installation steps.",
+      "blocking": true,
+      "checklistItem": "ci-uses-npm-ci"
+    },
+    {
+      "id": "DEP-06",
+      "severity": "MUST",
+      "category": "security-audit",
+      "title": "CI pipeline runs npm audit at high severity level",
+      "description": "Every PR and main branch CI run MUST execute 'npm audit --audit-level=high'. Any High or Critical CVE causes an immediate build failure and blocks merge.",
+      "rationale": "ADR-0009 §3: Zero-Tolerance CI check for High/Critical vulnerabilities is the primary automated security gate.",
+      "validationQuery": "CI workflow includes 'npm audit --audit-level=high' or equivalent. Build fails when exit code is non-zero.",
+      "blocking": true,
+      "checklistItem": "ci-npm-audit-high"
+    },
+    {
+      "id": "DEP-07",
+      "severity": "MUST",
+      "category": "security-audit",
+      "title": "Zero High or Critical CVEs in production dependencies",
+      "description": "No High or Critical CVEs may be present in the production dependency tree at time of merge to main or at release. Medium CVEs require documented justification.",
+      "rationale": "ADR-0009 §3 and quality-thresholds QT-03: Zero High/Critical CVE tolerance in production releases. This rule is consistent with the cross-cutting security threshold.",
+      "baseline": {
+        "critical": 0,
+        "high": 0,
+        "medium": "documented-justification-required"
+      },
+      "blocking": true,
+      "checklistItem": "zero-high-critical-cves"
+    },
+    {
+      "id": "DEP-08",
+      "severity": "SHOULD",
+      "category": "overrides",
+      "title": "npm overrides entries must be documented with CVE reference",
+      "description": "When the 'overrides' field in package.json is used to force a transitive dependency to a safe version, each override entry MUST include a comment or corresponding entry in a companion overrides-rationale.json documenting the CVE or reason for the override.",
+      "rationale": "Overrides are a powerful escape hatch that can mask dependency resolution issues if undocumented. Each override should be traceable to a specific security finding or compatibility requirement.",
+      "validationQuery": "If package.json contains an 'overrides' section, each override key corresponds to a documented rationale. Check CHANGELOG.md, PR description, or companion overrides-rationale.json.",
+      "blocking": false,
+      "checklistItem": "overrides-documented"
+    },
+    {
+      "id": "DEP-09",
+      "severity": "SHOULD",
+      "category": "bot-policy",
+      "title": "Automated dependency update bot configured",
+      "description": "Repositories SHOULD have Dependabot or Renovate configured to propose dependency bump PRs automatically. This ensures managed incremental upgrades rather than accumulated drift.",
+      "rationale": "ADR-0009 §2: Automated bot policy is required for sustainable maintenance of exact-pinned dependencies. Without it, pins become stale security liabilities.",
+      "validationQuery": "File .github/dependabot.yml or .renovaterc.json (or equivalent) exists and is configured for the npm ecosystem.",
+      "blocking": false,
+      "checklistItem": "dependency-bot-configured"
+    },
+    {
+      "id": "DEP-10",
+      "severity": "MUST",
+      "category": "version-pinning",
+      "title": "Workspaces inherit the exact-version policy",
+      "description": "In monorepos using npm workspaces, Yarn workspaces, or pnpm workspaces, the exact-version policy (no ^ or ~) applies to ALL workspace package.json files, not just the root package.json.",
+      "rationale": "ADR-0009 §1 applies universally. Workspace packages that use ranges introduce non-determinism even when the root is pinned.",
+      "validationQuery": "All package.json files in workspace packages (not just root) are free of ^ and ~ prefixes.",
+      "blocking": true,
+      "checklistItem": "workspaces-pinned"
+    }
+  ],
+  "waiverPolicy": {
+    "description": "A waiver may be used only when the organization deliberately accepts a temporary deviation from the pinning or audit policy.",
+    "requiredFields": ["rule", "justification", "affectedPackages", "owner", "expirationDate", "mitigationPlan"],
+    "exceptions": {
+      "cves": "High/Critical CVEs cannot be waived in production releases without explicit Executive Risk Acceptance. Medium CVEs require documented justification with remediation timeline.",
+      "ranges": "Range specifiers (^ or ~) cannot be used in production package.json files. peerDependencies in published libraries may use ranges by exception with Architecture Board approval."
+    }
+  },
+  "summaryChecklist": [
+    "no-caret-ranges",
+    "no-tilde-ranges",
+    "no-wildcard-versions",
+    "lock-file-committed",
+    "ci-uses-npm-ci",
+    "ci-npm-audit-high",
+    "zero-high-critical-cves",
+    "overrides-documented",
+    "dependency-bot-configured",
+    "workspaces-pinned"
+  ],
+  "references": {
+    "adrDocument": "reference/architecture/adrs/core/0009-strict-dependency-pinning-vulnerability-management.md",
+    "securityThresholds": "rulesets/sdlc/quality-thresholds.rules.json",
+    "definitionOfDone": "rulesets/cross-cutting/definition-of-done.rules.json",
+    "cicdAdr": "reference/architecture/adrs/core/0005-ci-cd-quality-codeql.md"
+  },
+  "exitCriteria": {
+    "description": "All MUST rules must pass. SHOULD rules are strongly recommended but advisory. A dependency-pinning violation BLOCKS merge to main.",
+    "validationTools": ["npm audit", "grep for ^ and ~ in package.json files", "lock file presence check", "CI workflow analysis"]
+  }
+}

@@ -11,8 +11,20 @@ describe('Agents Command (e2e)', () => {
     }).compile();
   });
 
-  it('should run agents install', async () => {
-    await CommandTestFactory.run(commandInstance, ['agents', 'install']);
-    expect(true).toBe(true);
+  it('should run agents install with dry-run', async () => {
+    const result = await CommandTestFactory.run(commandInstance, ['agents', 'install', '--dry-run']);
+    expect(result).toBeDefined();
+    expect(typeof result).toBe('string');
+  });
+
+  it('should run agents list command', async () => {
+    const result = await CommandTestFactory.run(commandInstance, ['agents', 'list']);
+    expect(result).toBeDefined();
+  });
+
+  it('should show agents help', async () => {
+    const result = await CommandTestFactory.run(commandInstance, ['agents', '--help']);
+    expect(result).toBeDefined();
+    expect(result).toContain('agents');
   });
 });

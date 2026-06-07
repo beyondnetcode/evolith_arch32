@@ -18,6 +18,7 @@ import { ADRCommand } from './commands/adr/adr.command';
 import { StandardsCommand } from './commands/standards/standards.command';
 import { CompletionCommand } from './commands/completion/completion.command';
 import { HistoryCommand } from './commands/history/history.command';
+import { DriftCommand } from './commands/drift/drift.command';
 
 @Module({
   imports: [],
@@ -41,6 +42,7 @@ import { HistoryCommand } from './commands/history/history.command';
     StandardsCommand,
     CompletionCommand,
     HistoryCommand,
+    DriftCommand,
   ],
 })
 export class AppModule {}

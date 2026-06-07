@@ -2,7 +2,7 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   roots: ['<rootDir>/src'],
-  testMatch: ['**/*.test.ts'],
+  testMatch: ['**/*.spec.ts', '**/*.test.ts'],
   collectCoverageFrom: [
     'src/**/*.ts',
     '!src/**/*.d.ts',
@@ -24,6 +24,9 @@ module.exports = {
     '^core/(.*)$': '<rootDir>/src/core/$1',
     '^commands/(.*)$': '<rootDir>/src/commands/$1',
     '^test/(.*)$': '<rootDir>/src/test/$1',
+    '^@clack/prompts$': '<rootDir>/src/test/__mocks__/clack-prompts.ts',
+    '^conf$': '<rootDir>/src/test/__mocks__/conf.ts',
+    '^chokidar$': '<rootDir>/src/test/__mocks__/chokidar.ts',
   },
   setupFilesAfterEnv: [],
   testTimeout: 10000,

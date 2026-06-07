@@ -11,8 +11,19 @@ describe('MCP Serve Command (e2e)', () => {
     }).compile();
   });
 
-  it('should handle mcp unknown action cleanly', async () => {
-    await CommandTestFactory.run(commandInstance, ['mcp', 'stop']);
-    expect(true).toBe(true);
+  it('should handle mcp stop action cleanly', async () => {
+    const result = await CommandTestFactory.run(commandInstance, ['mcp', 'stop']);
+    expect(result).toBeDefined();
+  });
+
+  it('should handle mcp start action', async () => {
+    const result = await CommandTestFactory.run(commandInstance, ['mcp', 'start']);
+    expect(result).toBeDefined();
+  });
+
+  it('should show mcp help', async () => {
+    const result = await CommandTestFactory.run(commandInstance, ['mcp', '--help']);
+    expect(result).toBeDefined();
+    expect(result).toContain('mcp');
   });
 });

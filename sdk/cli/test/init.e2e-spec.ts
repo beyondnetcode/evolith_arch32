@@ -6,17 +6,25 @@ describe('Init Command (e2e)', () => {
   let commandInstance: TestingModule;
 
   beforeAll(async () => {
-    // Inicializar el CLI virtual usando nest-commander-testing
     commandInstance = await CommandTestFactory.createTestingCommand({
       imports: [AppModule],
     }).compile();
   });
 
   it('should run init with --dry-run without throwing errors', async () => {
-    // Run the command with the dry run flag
-    await CommandTestFactory.run(commandInstance, ['init', '--dry-run']);
-    
-    // We expect the execution to complete cleanly
-    expect(true).toBe(true);
+    const result = await CommandTestFactory.run(commandInstance, ['init', '--dry-run']);
+    expect(result).toBeDefined();
+    expect(typeof result).toBe('string');
+  });
+
+  it('should run init with --name flag', async () => {
+    const result = await CommandTestFactory.run(commandInstance, ['init', '--name', 'test-project']);
+    expect(result).toBeDefined();
+  });
+
+  it('should show help when --help flag is used', async () => {
+    const result = await CommandTestFactory.run(commandInstance, ['init', '--help']);
+    expect(result).toBeDefined();
+    expect(result).toContain('init');
   });
 });

@@ -11,8 +11,20 @@ describe('Docs Command (e2e)', () => {
     }).compile();
   });
 
-  it('should run docs command', async () => {
-    await CommandTestFactory.run(commandInstance, ['docs']);
-    expect(true).toBe(true);
+  it('should run docs command and return output', async () => {
+    const result = await CommandTestFactory.run(commandInstance, ['docs']);
+    expect(result).toBeDefined();
+    expect(typeof result).toBe('string');
+  });
+
+  it('should run docs with validate subcommand', async () => {
+    const result = await CommandTestFactory.run(commandInstance, ['docs', 'validate']);
+    expect(result).toBeDefined();
+  });
+
+  it('should show docs help', async () => {
+    const result = await CommandTestFactory.run(commandInstance, ['docs', '--help']);
+    expect(result).toBeDefined();
+    expect(result).toContain('docs');
   });
 });

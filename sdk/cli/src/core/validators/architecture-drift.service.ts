@@ -1,0 +1,344 @@
+import * as path from 'path';
+import { getContainer, IFileSystem, ILogger } from '../abstractions';
+import { RulesetValidatorService, ArchitectureValidationResult, ValidationIssue } from './ruleset-validator.service';
+
+export interface DriftReport {
+  projectId: string;
+  declaredLevel: string;
+  detectedLevel: string;
+  driftDetected: boolean;
+  driftSeverity: 'critical' | 'high' | 'medium' | 'low' | 'none';
+  newViolations: DriftViolation[];
+  resolvedViolations: DriftViolation[];
+  persistentViolations: DriftViolation[];
+  overallScore: number;
+  timestamp: string;
+  historyPath: string;
+}
+
+export interface DriftViolation {
+  ruleId: string;
+  severity: 'MUST' | 'SHOULD' | 'COULD';
+  category: string;
+  title: string;
+  description: string;
+  blocking: boolean;
+  firstDetected: string;
+  status: 'new' | 'persistent' | 'resolved';
+}
+
+export interface DriftHistoryEntry {
+  timestamp: string;
+  declaredLevel: string;
+  detectedLevel: string;
+  violationsCount: number;
+  blockingViolationsCount: number;
+  overallScore: number;
+  violations: DriftViolation[];
+}
+
+export interface DriftDetectionOptions {
+  projectPath: string;
+  corePath?: string;
+  declaredLevel?: 'F1' | 'F2' | 'F3';
+  storeHistory?: boolean;
+  historyPath?: string;
+}
+
+export class ArchitectureDriftService {
+  private readonly fs: IFileSystem;
+  private readonly logger: ILogger;
+  private readonly validator: RulesetValidatorService;
+
+  constructor(corePath?: string) {
+    const container = getContainer();
+    this.fs = container.createFileSystem();
+    this.logger = container.createLogger('ArchitectureDriftService');
+    this.validator = new RulesetValidatorService();
+  }
+
+  async detectDrift(options: DriftDetectionOptions): Promise<DriftReport> {
+    const declaredLevel = options.declaredLevel || await this.getDeclaredLevel(options.projectPath, options.corePath);
+    const resolvedCorePath = options.corePath || this.findCorePath(options.projectPath);
+
+    this.logger.info('Starting architecture drift detection', JSON.stringify({ declaredLevel, projectPath: options.projectPath }));
+
+    const validationResult = await this.validator.validateArchitecture(
+      options.projectPath,
+      resolvedCorePath,
+      declaredLevel,
+    );
+
+    const history = options.storeHistory !== false
+      ? await this.loadHistory(options.projectPath, options.historyPath)
+      : [];
+
+    const previousViolations = history.length > 0
+      ? history[history.length - 1].violations
+      : [];
+
+    const currentViolations = this.mapIssuesToViolations(validationResult.issues);
+    const newViolations = this.findNewViolations(currentViolations, previousViolations);
+    const resolvedViolations = this.findResolvedViolations(currentViolations, previousViolations);
+    const persistentViolations = currentViolations.filter(
+      v => !newViolations.some(nv => nv.ruleId === v.ruleId)
+    );
+
+    const driftDetected = newViolations.length > 0 || this.hasLevelDrift(declaredLevel, validationResult);
+    const driftSeverity = this.calculateDriftSeverity(newViolations, persistentViolations, validationResult);
+    const overallScore = this.calculateOverallScore(validationResult);
+
+    const report: DriftReport = {
+      projectId: this.getProjectId(options.projectPath),
+      declaredLevel,
+      detectedLevel: this.detectActualLevel(options.projectPath, resolvedCorePath),
+      driftDetected,
+      driftSeverity,
+      newViolations,
+      resolvedViolations,
+      persistentViolations,
+      overallScore,
+      timestamp: new Date().toISOString(),
+      historyPath: options.historyPath || path.join(options.projectPath, '.evolith', 'drift-history.json'),
+    };
+
+    if (options.storeHistory !== false) {
+      await this.storeHistory(options.projectPath, report, history, options.historyPath);
+    }
+
+    if (driftDetected) {
+      this.logger.warn('Architecture drift detected', JSON.stringify({
+        newViolations: newViolations.length,
+        persistentViolations: persistentViolations.length,
+        resolvedViolations: resolvedViolations.length,
+      }));
+    } else {
+      this.logger.info('No architecture drift detected');
+    }
+
+    return report;
+  }
+
+  async detectLevelDrift(projectPath: string, corePath?: string): Promise<{
+    declared: string;
+    detected: string;
+    drifted: boolean;
+  }> {
+    const declaredLevel = await this.getDeclaredLevel(projectPath, corePath);
+    const resolvedCorePath = corePath || this.findCorePath(projectPath);
+    const detectedLevel = this.detectActualLevel(projectPath, resolvedCorePath);
+
+    return {
+      declared: declaredLevel,
+      detected: detectedLevel,
+      drifted: declaredLevel !== detectedLevel,
+    };
+  }
+
+  async getDriftHistory(projectPath: string, historyPath?: string): Promise<DriftHistoryEntry[]> {
+    return this.loadHistory(projectPath, historyPath);
+  }
+
+  async getDriftTrend(projectPath: string, historyPath?: string): Promise<{
+    trend: 'improving' | 'stable' | 'degrading';
+    entries: DriftHistoryEntry[];
+  }> {
+    const history = await this.loadHistory(projectPath, historyPath);
+
+    if (history.length < 2) {
+      return { trend: 'stable', entries: history };
+    }
+
+    const recent = history.slice(-5);
+    const firstScore = recent[0].overallScore;
+    const lastScore = recent[recent.length - 1].overallScore;
+
+    let trend: 'improving' | 'stable' | 'degrading';
+    if (lastScore > firstScore + 5) {
+      trend = 'improving';
+    } else if (lastScore < firstScore - 5) {
+      trend = 'degrading';
+    } else {
+      trend = 'stable';
+    }
+
+    return { trend, entries: recent };
+  }
+
+  private async getDeclaredLevel(projectPath: string, corePath?: string): Promise<'F1' | 'F2' | 'F3'> {
+    const resolvedCorePath = corePath || this.findCorePath(projectPath);
+    const evolithYamlPath = path.join(projectPath, 'evolith.yaml');
+
+    if (await this.fs.exists(evolithYamlPath)) {
+      try {
+        const content = await this.fs.readFile(evolithYamlPath);
+        const config = JSON.parse(content) as { product?: { architecture?: string } };
+        const arch = config.product?.architecture;
+        if (arch === 'F1' || arch === 'F2' || arch === 'F3') {
+          return arch;
+        }
+      } catch {
+        // Fall through to detection
+      }
+    }
+
+    return this.detectActualLevel(projectPath, resolvedCorePath) as 'F1' | 'F2' | 'F3';
+  }
+
+  private detectActualLevel(projectPath: string, corePath: string): string {
+    const srcPath = path.join(projectPath, 'src');
+    const hasDockerfile = this.fs.existsSync(path.join(projectPath, 'Dockerfile'));
+    const hasContracts = this.fs.existsSync(path.join(projectPath, 'contracts'));
+    const hasEvents = this.fs.existsSync(path.join(projectPath, 'events')) ||
+                      this.fs.existsSync(path.join(projectPath, 'src', 'events'));
+
+    if (hasDockerfile && hasContracts && hasEvents) {
+      return 'F3';
+    }
+
+    if (hasContracts && hasEvents) {
+      return 'F2';
+    }
+
+    return 'F1';
+  }
+
+  private mapIssuesToViolations(issues: ValidationIssue[]): DriftViolation[] {
+    return issues.map(issue => ({
+      ruleId: issue.ruleId,
+      severity: issue.severity,
+      category: issue.category,
+      title: issue.title,
+      description: issue.description,
+      blocking: issue.blocking,
+      firstDetected: new Date().toISOString(),
+      status: 'new' as const,
+    }));
+  }
+
+  private findNewViolations(current: DriftViolation[], previous: DriftViolation[]): DriftViolation[] {
+    const previousRuleIds = new Set(previous.map(v => v.ruleId));
+    return current
+      .filter(v => !previousRuleIds.has(v.ruleId))
+      .map(v => ({ ...v, status: 'new' as const }));
+  }
+
+  private findResolvedViolations(current: DriftViolation[], previous: DriftViolation[]): DriftViolation[] {
+    const currentRuleIds = new Set(current.map(v => v.ruleId));
+    return previous
+      .filter(v => !currentRuleIds.has(v.ruleId))
+      .map(v => ({ ...v, status: 'resolved' as const }));
+  }
+
+  private hasLevelDrift(declaredLevel: string, validationResult: ArchitectureValidationResult): boolean {
+    if (validationResult.status === 'failed') {
+      const blockingIssues = validationResult.issues.filter(i => i.blocking);
+      return blockingIssues.length > 0;
+    }
+    return false;
+  }
+
+  private calculateDriftSeverity(
+    newViolations: DriftViolation[],
+    persistentViolations: DriftViolation[],
+    validationResult: ArchitectureValidationResult,
+  ): 'critical' | 'high' | 'medium' | 'low' | 'none' {
+    const blockingNew = newViolations.filter(v => v.blocking);
+    const blockingPersistent = persistentViolations.filter(v => v.blocking);
+
+    if (blockingNew.length > 0) {
+      return 'critical';
+    }
+
+    if (blockingPersistent.length > 2) {
+      return 'high';
+    }
+
+    if (newViolations.length > 0) {
+      return 'medium';
+    }
+
+    if (persistentViolations.length > 0) {
+      return 'low';
+    }
+
+    return 'none';
+  }
+
+  private calculateOverallScore(validationResult: ArchitectureValidationResult): number {
+    if (validationResult.rulesChecked === 0) {
+      return 100;
+    }
+
+    const blockingIssues = validationResult.issues.filter(i => i.blocking).length;
+    const nonBlockingIssues = validationResult.issues.filter(i => !i.blocking).length;
+
+    const blockingPenalty = blockingIssues * 15;
+    const nonBlockingPenalty = nonBlockingIssues * 5;
+
+    const score = Math.max(0, 100 - blockingPenalty - nonBlockingPenalty);
+    return Math.min(100, score);
+  }
+
+  private async loadHistory(projectPath: string, historyPath?: string): Promise<DriftHistoryEntry[]> {
+    const historyFile = historyPath || path.join(projectPath, '.evolith', 'drift-history.json');
+
+    if (!await this.fs.exists(historyFile)) {
+      return [];
+    }
+
+    try {
+      const content = await this.fs.readFile(historyFile);
+      return JSON.parse(content) as DriftHistoryEntry[];
+    } catch {
+      return [];
+    }
+  }
+
+  private async storeHistory(
+    projectPath: string,
+    report: DriftReport,
+    history: DriftHistoryEntry[],
+    historyPath?: string,
+  ): Promise<void> {
+    const historyFile = historyPath || path.join(projectPath, '.evolith', 'drift-history.json');
+
+    const entry: DriftHistoryEntry = {
+      timestamp: report.timestamp,
+      declaredLevel: report.declaredLevel,
+      detectedLevel: report.detectedLevel,
+      violationsCount: report.newViolations.length + report.persistentViolations.length,
+      blockingViolationsCount: [...report.newViolations, ...report.persistentViolations].filter(v => v.blocking).length,
+      overallScore: report.overallScore,
+      violations: [...report.newViolations, ...report.persistentViolations],
+    };
+
+    history.push(entry);
+
+    const maxHistoryEntries = 50;
+    if (history.length > maxHistoryEntries) {
+      history = history.slice(-maxHistoryEntries);
+    }
+
+    const historyDir = path.dirname(historyFile);
+    await this.fs.ensureDir(historyDir);
+    await this.fs.writeJson(historyFile, history);
+  }
+
+  private getProjectId(projectPath: string): string {
+    const parts = projectPath.split(path.sep);
+    return parts[parts.length - 1] || 'unknown';
+  }
+
+  private findCorePath(projectPath: string): string {
+    const parts = projectPath.split(path.sep);
+    while (parts.length > 0) {
+      parts.pop();
+      const candidate = path.join(parts.join(path.sep), 'rulesets');
+      if (this.fs.existsSync(candidate)) {
+        return parts.join(path.sep);
+      }
+    }
+    return path.join(projectPath, '..', 'evolith');
+  }
+}

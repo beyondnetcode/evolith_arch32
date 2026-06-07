@@ -3,6 +3,7 @@ import { catalogLoader } from '../../infrastructure/catalog/catalog-loader';
 import { npmProvider, dotnetProvider, pythonProvider, nxProvider } from '../../infrastructure/cli/providers';
 import { PlatformNotFoundError, ValidationError } from '../../core/errors';
 import { logger, Timed, commandWatcher } from '../../core/observability';
+import { PhaseGateValidatorService, GateValidationResult } from '../../core/validators/phase-gate-validator.service';
 
 export interface InitProjectInput {
   name: string;
@@ -277,10 +278,12 @@ evolith sdlc status
 export class PhaseTransitionUseCase {
   private readonly fs: any;
   private readonly phaseService: PhaseService;
+  private readonly gateValidator: PhaseGateValidatorService;
 
-  constructor(fs: any) {
+  constructor(fs: any, corePath?: string) {
     this.fs = fs;
     this.phaseService = new PhaseService();
+    this.gateValidator = new PhaseGateValidatorService(corePath);
   }
 
   @Timed('PhaseTransitionUseCase.execute')
@@ -295,7 +298,11 @@ export class PhaseTransitionUseCase {
       return { success: false, from, to, gateResults: [], executedTools: [], warnings, errors };
     }
 
-    const gateResults = await this.validateGates(from, cwd);
+    const targetPhaseNumber = this.phaseService.getPhaseIndex(to);
+    const gateResults = targetPhaseNumber >= 0
+      ? await this.validateGatesWithValidator(targetPhaseNumber, cwd)
+      : await this.validateGatesLegacy(from, cwd);
+
     const failedRequiredGates = gateResults.filter(g => !g.passed && g.required);
 
     if (failedRequiredGates.length > 0) {
@@ -318,7 +325,50 @@ export class PhaseTransitionUseCase {
     };
   }
 
-  private async validateGates(phase: string, cwd: string): Promise<GateResult[]> {
+  async getGateStatus(cwd: string): Promise<{
+    currentPhase: number;
+    gatesPassed: number;
+    gatesFailed: number;
+    gatesPending: number;
+    results: GateValidationResult[];
+  }> {
+    return this.gateValidator.getGateStatus(cwd);
+  }
+
+  private async validateGatesWithValidator(phaseNumber: number, cwd: string): Promise<GateResult[]> {
+    try {
+      const result = await this.gateValidator.validateGate(phaseNumber, cwd);
+      const gates: GateResult[] = [];
+
+      for (const evidence of result.evidenceResults) {
+        gates.push({
+          id: `${result.gateId}-${evidence.artifact.replace(/\s+/g, '-')}`,
+          passed: evidence.passed,
+          description: evidence.validationMessage,
+          required: evidence.required,
+        });
+      }
+
+      for (const blocking of result.blockingChecks) {
+        if (blocking.triggered) {
+          gates.push({
+            id: `${result.gateId}-BLOCK-${blocking.criterion.replace(/\s+/g, '-').substring(0, 30)}`,
+            passed: false,
+            description: `Blocking: ${blocking.criterion} — ${blocking.action}`,
+            required: true,
+          });
+        }
+      }
+
+      return gates;
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      logger.warn(`Gate validator failed, falling back to legacy validation: ${message}`);
+      return this.validateGatesLegacy(this.phaseService.getAllPhases()[phaseNumber]?.value || 'phase-0', cwd);
+    }
+  }
+
+  private async validateGatesLegacy(phase: string, cwd: string): Promise<GateResult[]> {
     const gates: GateResult[] = [];
     const evolithYamlPath = `${cwd}/evolith.yaml`;
 
@@ -344,14 +394,14 @@ export class PhaseTransitionUseCase {
   }
 }
 
-interface GateResult {
+export interface GateResult {
   id: string;
   passed: boolean;
   description: string;
   required: boolean;
 }
 
-interface PhaseTransitionResult {
+export interface PhaseTransitionResult {
   success: boolean;
   from: string;
   to: string;

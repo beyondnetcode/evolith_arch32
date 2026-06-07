@@ -216,6 +216,7 @@ export class PhaseGateValidatorService {
       'Discovery Canvas': path.join(projectPath, 'reference', 'governance', 'sdlc', '04-artifact-templates', 'discovery-canvas-template.md'),
       'Business Case ROI': path.join(projectPath, 'reference', 'governance', 'sdlc', '04-artifact-templates', 'business-case-roi-template.md'),
       'Ballpark Estimation': path.join(projectPath, 'reference', 'governance', 'sdlc', '04-artifact-templates', 'ballpark-estimation-template.md'),
+      'MoSCoW Prioritization Matrix': path.join(projectPath, '.evolith', 'moscow', 'phase-0.json'),
       'ADR Registry': path.join(projectPath, 'reference', 'architecture', 'adrs', 'adr-matrix.json'),
       'Functional Stories': path.join(projectPath, 'reference', 'governance', 'sdlc', '04-artifact-templates', 'functional-story-template.md'),
       'Bounded Context Map': path.join(projectPath, 'reference', 'architecture', 'contexts', 'bounded-context-map.md'),
@@ -281,7 +282,8 @@ export class PhaseGateValidatorService {
 
     if (criterionText.includes('scope is ambiguous') || criterionText.includes('funding')) {
       const prdEvidence = evidenceResults.find(e => e.artifact === 'PRD');
-      return !prdEvidence?.found;
+      const moscowEvidence = evidenceResults.find(e => e.artifact === 'MoSCoW Prioritization Matrix');
+      return !prdEvidence?.found || !moscowEvidence?.found;
     }
 
     if (criterionText.includes('architecture decisions are undocumented')) {

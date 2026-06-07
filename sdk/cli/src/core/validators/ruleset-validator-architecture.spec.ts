@@ -101,10 +101,10 @@ describe('RulesetValidatorService - Architecture Validation', () => {
       expect(result.levels).toEqual(['F2']);
     });
 
-    it('should return passed status when no blocking issues', async () => {
+    it('should return failed status when blocking issues exist', async () => {
       const result = await service.validateArchitecture('/project', '/core', 'F1');
 
-      expect(result.status).toBe('passed');
+      expect(result.status).toBe('failed');
     });
 
     it('should return issues array even when validation passes', async () => {

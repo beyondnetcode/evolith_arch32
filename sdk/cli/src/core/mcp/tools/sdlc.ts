@@ -13,10 +13,11 @@ interface PhaseRequirement {
 const PHASE_REQUIREMENTS: PhaseRequirement[] = [
   {
     phase: 'phase-0',
-    artifacts: ['evolith.yaml', 'README.md'],
+    artifacts: ['evolith.yaml', 'README.md', '.evolith/moscow/phase-0.json'],
     checks: [
       { id: 'PG0-01', description: 'evolith.yaml exists and is valid', required: true },
       { id: 'PG0-02', description: 'Core ref version pinned', required: true },
+      { id: 'PG0-03', description: 'MoSCoW prioritization matrix created for discovery phase', required: true },
     ],
   },
   {

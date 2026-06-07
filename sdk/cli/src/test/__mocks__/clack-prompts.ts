@@ -17,3 +17,4 @@ export const cancel = jest.fn();
 export const multiselect = jest.fn();
 export const group = jest.fn();
 export const log = mockLog;
+export const note = jest.fn();

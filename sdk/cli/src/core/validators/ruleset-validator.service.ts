@@ -358,10 +358,10 @@ export class RulesetValidatorService {
 
     switch (rule.category) {
       case 'topology':
-        this.validateTopologyRule(satellitePath, rule, issues);
+        await this.validateTopologyRule(satellitePath, rule, issues);
         break;
       case 'bounded-contexts':
-        this.validateBoundedContextsRule(satellitePath, rule, issues);
+        await this.validateBoundedContextsRule(satellitePath, rule, issues);
         break;
       case 'hexagonal-architecture':
         await this.validateHexagonalRule(satellitePath, rule, issues);
@@ -370,16 +370,16 @@ export class RulesetValidatorService {
         await this.validateCommunicationRule(satellitePath, rule, issues);
         break;
       case 'persistence':
-        this.validatePersistenceRule(satellitePath, rule, issues);
+        await this.validatePersistenceRule(satellitePath, rule, issues);
         break;
       case 'async-boundaries':
         await this.validateAsyncRule(satellitePath, rule, issues);
         break;
       case 'extraction-readiness':
-        this.validateExtractionReadinessRule(satellitePath, rule, issues);
+        await this.validateExtractionReadinessRule(satellitePath, rule, issues);
         break;
       case 'observability':
-        this.validateObservabilityRule(satellitePath, rule, issues);
+        await this.validateObservabilityRule(satellitePath, rule, issues);
         break;
       case 'module-autonomy':
         await this.validateModuleAutonomyRule(satellitePath, rule, issues);
@@ -394,10 +394,10 @@ export class RulesetValidatorService {
         await this.validateAsyncCommunicationRule(satellitePath, rule, issues);
         break;
       case 'distributed-tracing':
-        this.validateDistributedTracingRule(satellitePath, rule, issues);
+        await this.validateDistributedTracingRule(satellitePath, rule, issues);
         break;
       case 'containerization':
-        this.validateContainerizationRule(satellitePath, rule, issues);
+        await this.validateContainerizationRule(satellitePath, rule, issues);
         break;
       case 'service-boundaries':
         await this.validateServiceBoundariesRule(satellitePath, rule, issues);

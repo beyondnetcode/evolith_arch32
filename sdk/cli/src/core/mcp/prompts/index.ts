@@ -53,6 +53,14 @@ const PROMPTS: Prompt[] = [
       { name: 'path', description: 'Path to the repository', required: false },
     ],
   },
+  {
+    name: 'evolith/moscow-prioritization',
+    description: 'Template for creating MoSCoW prioritization matrix for SDLC discovery phase',
+    arguments: [
+      { name: 'path', description: 'Path to the repository', required: true },
+      { name: 'phase', description: 'Phase to prioritize (default: phase-0)', required: false },
+    ],
+  },
 ];
 
 export async function listPrompts() {
@@ -87,6 +95,9 @@ export async function getPrompt(args: unknown) {
       break;
     case 'evolith/ruleset-analysis':
       template = buildRulesetAnalysisPrompt(promptArgs);
+      break;
+    case 'evolith/moscow-prioritization':
+      template = buildMoscowPrioritizationPrompt(promptArgs);
       break;
   }
 
@@ -185,4 +196,30 @@ For each rule in the ruleset:
 2. Explain the governance intent
 3. Provide examples of compliance and non-compliance
 4. Suggest validation approaches`;
+}
+
+function buildMoscowPrioritizationPrompt(args: Record<string, string>): string {
+  return `Please create a MoSCoW prioritization matrix for the SDLC discovery phase.
+
+Repository: ${args.path || '<path>'}
+Phase: ${args.phase || 'phase-0'}
+
+Use the evolith-moscow-create tool to create the analysis with items categorized as:
+
+**MUST** - Non-negotiable requirements for phase success
+**SHOULD** - Important but not critical; can be deferred if necessary
+**COULD** - Desirable but not necessary; nice-to-have improvements
+**WONT** - Explicitly excluded from this phase (but may be considered later)
+
+For each item, provide:
+- description: Clear statement of the requirement
+- category: Functional area (e.g., "Governance", "Architecture", "Documentation")
+- rationale: Why this item has this priority level
+
+Best practices:
+- Keep MUST items under 60% of total items
+- Every initiative should have at least one MUST item
+- WONT items should be explicitly documented to avoid scope creep
+
+After creating the analysis, use evolith-moscow-validate to ensure the prioritization is well-formed.`;
 }

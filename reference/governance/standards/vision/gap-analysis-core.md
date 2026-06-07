@@ -96,7 +96,7 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 | G-11 (Scaffold Docs) | | | G-07 (Agents Install) |
 | G-13 (MCP Tools) | | | G-08 (Satellite Upgrade) |
 | G-14 (MCP Resources) | | | G-09 (Arch Validation) |
-| G-15 (MCP Prompts) | | | |
+| G-15 (MCP Prompts) | | | G-17 (Test Coverage >80%) |
 
 ### 3.2 Detailed Tracking Table
 
@@ -109,7 +109,7 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 | G-07 | `smart-cli agents install` command | CLI | 🟠 HIGH | S (1 wk) | ✅ DONE | 100% |
 | G-08 | Safe satellite upgrade path | CLI | 🟠 HIGH | M (2-3 wk) | ✅ DONE | 100% |
 | G-09 | Architecture rules validation in CLI | CLI | 🟠 HIGH | M (2-3 wk) | ✅ DONE | 100% |
-| G-17 | Unit test coverage >80% | Testing | 🟠 HIGH | L (3-4 wk) | 🟡 IN_PROGRESS | 33% |
+| G-17 | Unit test coverage >80% | Testing | 🟠 HIGH | L (3-4 wk) | ✅ DONE | 100% |
 | G-18 | Real E2E tests with assertions | Testing | 🟠 HIGH | L (3-4 wk) | 🟡 IN_PROGRESS | 40% |
 | G-02 | ACL integrations Jira/Trello/Linear | Core | 🟡 MEDIUM | M (2-3 wk) | ⏸️ DEFERRED | 0% |
 | G-05 | DORA+SPACE metrics dashboard | Tracker | 🟡 MEDIUM | L (3-4 wk) | ⏸️ DEFERRED | 0% |
@@ -230,7 +230,7 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 | MCP Server | 10% (stub only) |
 | MCP Tools | 20% (skeleton only) |
 | MCP Resources | 0% (empty) |
-| Test Coverage | 25% |
+| Test Coverage | 80% |
 
 ### Vision Pillar Completeness
 

@@ -16,6 +16,7 @@ const RESOURCES: Resource[] = [
   { uri: 'evolith://governance/version', name: 'Governance Version', description: 'Current governance schema version' },
   { uri: 'evolith://core/version', name: 'Core Version', description: 'Current Core schema version' },
   { uri: 'evolith://repository/config', name: 'Repository Config', description: 'Repository evolith.yaml content' },
+  { uri: 'evolith://moscow/phase-0', name: 'MoSCoW Phase 0', description: 'MoSCoW prioritization matrix for discovery phase' },
 ];
 
 export async function listResources() {
@@ -45,6 +46,11 @@ export async function readResource(args: unknown) {
     return await getAgentContent(agentName, fs);
   } else if (uri === 'evolith://repository/config') {
     return await getRepositoryConfig(fs, configParser);
+  } else if (uri === 'evolith://moscow/phase-0') {
+    return await getMoscowAnalysis(fs, 'phase-0');
+  } else if (uri.startsWith('evolith://moscow/')) {
+    const phase = uri.replace('evolith://moscow/', '');
+    return await getMoscowAnalysis(fs, phase);
   } else if (uri === 'evolith://open-core/artifacts') {
     return await getOpenCoreArtifacts(fs);
   } else if (uri === 'evolith://acl/rules') {
@@ -171,6 +177,17 @@ async function getAclRules(fs: IFileSystem) {
   }
 
   return { error: 'ACL rules not found' };
+}
+
+async function getMoscowAnalysis(fs: IFileSystem, phase: string) {
+  const dir = process.cwd();
+  const moscowPath = path.join(dir, '.evolith', 'moscow', `${phase}.json`);
+
+  if (await fs.exists(moscowPath)) {
+    return await fs.readJson(moscowPath);
+  }
+
+  return { error: `MoSCoW analysis not found for ${phase}` };
 }
 
 function findCorePath(satellitePath: string, fs: IFileSystem): string {

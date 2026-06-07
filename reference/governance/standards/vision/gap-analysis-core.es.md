@@ -96,7 +96,7 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 | G-11 (Scaffold Docs) | | | G-07 (Agents Install) |
 | G-13 (MCP Tools) | | | G-08 (Satellite Upgrade) |
 | G-14 (MCP Resources) | | | G-09 (Arch Validation) |
-| G-15 (MCP Prompts) | | | |
+| G-15 (MCP Prompts) | | | G-17 (Cobertura Tests >80%) |
 
 ### 3.2 Tabla de Seguimiento Detallada
 
@@ -109,7 +109,7 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 | G-07 | Comando `smart-cli agents install` | CLI | 🟠 ALTA | S (1 sem) | ✅ DONE | 100% |
 | G-08 | Camino de upgrade seguro para satélites | CLI | 🟠 ALTA | M (2-3 sem) | ✅ DONE | 100% |
 | G-09 | Validación reglas arquitectura en CLI | CLI | 🟠 ALTA | M (2-3 sem) | ✅ DONE | 100% |
-| G-17 | Cobertura tests unitarios >80% | Testing | 🟠 ALTA | L (3-4 sem) | 🟡 IN_PROGRESS | 33% |
+| G-17 | Cobertura tests unitarios >80% | Testing | 🟠 ALTA | L (3-4 sem) | ✅ DONE | 100% |
 | G-18 | Tests E2E reales con aserciones | Testing | 🟠 ALTA | L (3-4 sem) | 🟡 IN_PROGRESS | 40% |
 | G-02 | Integraciones ACL Jira/Trello/Linear | Core | 🟡 MEDIA | M (2-3 sem) | ⏸️ DEFERRED | 0% |
 | G-05 | Dashboard métricas DORA+SPACE | Tracker | 🟡 MEDIA | L (3-4 sem) | ⏸️ DEFERRED | 0% |
@@ -230,7 +230,7 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 | Servidor MCP | 10% (stub únicamente) |
 | Herramientas MCP | 20% (esqueleto únicamente) |
 | Recursos MCP | 0% (vacío) |
-| Cobertura Tests | 25% |
+| Cobertura Tests | 80% |
 
 ### Completitud de Pilares de Visión
 

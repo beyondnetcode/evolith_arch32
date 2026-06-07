@@ -28,6 +28,10 @@
         {
           "artifact": "Ballpark Estimation",
           "validation": "T-Shirt sizing completed with team composition"
+        },
+        {
+          "artifact": "MoSCoW Prioritization Matrix",
+          "validation": "MoSCoW analysis completed for Phase 0 with at least one MUST item and valid priority distribution"
         }
       ],
       "blockingCriteria": [

@@ -4,6 +4,7 @@ import { handleValidateTool } from './tools/validate';
 import { handleAgentTools } from './tools/agent';
 import { handleArchitectureTools } from './tools/architecture';
 import { handleSdlcTools } from './tools/sdlc';
+import { handleMoscoTools } from './tools/moscow';
 import { listResources, readResource } from './resources';
 import { listPrompts, getPrompt } from './prompts';
 import { McpMetricsService } from './metrics.service';
@@ -376,6 +377,93 @@ class DirectMcpServer {
             properties: {},
           },
         },
+        {
+          name: 'evolith-moscow-create',
+          description: 'Create a new MoSCoW prioritization analysis for a phase',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              path: { type: 'string', description: 'Path to the repository' },
+              phase: { type: 'string', description: 'Phase identifier (e.g., phase-0)', default: 'phase-0' },
+              items: { type: 'array', description: 'Array of MoSCoW items with description, priority, category, rationale' },
+            },
+            required: ['path', 'items'],
+          },
+        },
+        {
+          name: 'evolith-moscow-load',
+          description: 'Load an existing MoSCoW analysis for a phase',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              path: { type: 'string' },
+              phase: { type: 'string', default: 'phase-0' },
+            },
+            required: ['path'],
+          },
+        },
+        {
+          name: 'evolith-moscow-update',
+          description: 'Update an item in a MoSCoW analysis',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              path: { type: 'string' },
+              phase: { type: 'string', default: 'phase-0' },
+              itemId: { type: 'string' },
+              updates: { type: 'object' },
+            },
+            required: ['path', 'itemId'],
+          },
+        },
+        {
+          name: 'evolith-moscow-remove',
+          description: 'Remove an item from a MoSCoW analysis',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              path: { type: 'string' },
+              phase: { type: 'string', default: 'phase-0' },
+              itemId: { type: 'string' },
+            },
+            required: ['path', 'itemId'],
+          },
+        },
+        {
+          name: 'evolith-moscow-list',
+          description: 'List all MoSCoW analyses for a repository',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              path: { type: 'string' },
+            },
+            required: ['path'],
+          },
+        },
+        {
+          name: 'evolith-moscow-validate',
+          description: 'Validate a MoSCoW analysis for correctness',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              path: { type: 'string' },
+              phase: { type: 'string', default: 'phase-0' },
+            },
+            required: ['path'],
+          },
+        },
+        {
+          name: 'evolith-moscow-report',
+          description: 'Generate a markdown report from a MoSCoW analysis',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              path: { type: 'string' },
+              phase: { type: 'string', default: 'phase-0' },
+            },
+            required: ['path'],
+          },
+        },
       ],
     };
   }
@@ -400,6 +488,8 @@ class DirectMcpServer {
         result = await this.handleConfigTools(name, args);
       } else if (name === 'evolith-metrics') {
         result = this.metricsService.getMetrics();
+      } else if (name.startsWith('evolith-moscow')) {
+        result = await handleMoscoTools(name, args);
       } else {
         throw new Error(`Unknown tool: ${name}`);
       }

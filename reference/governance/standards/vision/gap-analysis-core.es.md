@@ -96,8 +96,8 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 | G-02 (ACL Jira) | G-18 (Tests E2E) | - | G-12 (Protocolo MCP) |
 | G-05 (DORA Metrics) | | | G-16 (Paridad EN/ES) |
 | G-06 (Scorecards) | | | G-03 (Phase Gates) |
-| G-25 (Maturity Matrix CLI/MCP) | | | |
-| G-27 (Enforcement CI satelites) | | | |
+| G-27 (Enforcement CI satelites) | | | G-24 (números G-17 actualizados) |
+| | | | G-25 (Maturity Matrix CLI/MCP) |
 | | | | G-04 (Architecture Drift) |
 | | | | G-07 (Agents Install) |
 | | | | G-08 (Satellite Upgrade) |
@@ -142,7 +142,7 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 | G-22 | Consistencia de nombre MoSCoW | Core | BAJA | XS (<1 sem) | DONE | 100% |
 | G-23 | Limpieza directorio validators vacío | Core | BAJA | XS (<1 sem) | DONE | 100% |
 | G-24 | Números de G-17 en tabla estaban desactualizados | Docs | BAJA | XS (<1 sem) | DONE | Actualizados a 88.70%/89.80%/76.93%/83.58% — 1 369 tests |
-| G-25 | maturity-matrix.md no cubre CLI/MCP | Docs | MEDIA | S (1 sem) | TODO | Evaluación TOGAF ACMM faltante para capa de exposición tecnológica |
+| G-25 | maturity-matrix.md no cubre CLI/MCP | Docs | MEDIA | S (1 sem) | DONE | Evaluación CLI/MCP de 5 dimensiones agregada; score combinado 3.72/5.0 |
 | G-26 | Target branch coverage vs. real (77% vs. 80%) | Testing | MEDIA | - | ACEPTADO | Target revisado a ≥75%; real 76.93% — baseline aceptado |
 | G-27 | Enforcement de gobernanza federada es solo advisory | Core | MEDIA | M (2-3 sem) | TODO | CI de satelites no ejecuta `smart-cli validate` automáticamente |
 
@@ -280,11 +280,16 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 
 **Estado:** Responsabilidad de Tracker SaaS. Reglas definidas pero sin dashboard operativo.
 
-#### G-25: Maturity Matrix — Cobertura CLI/MCP Faltante (TODO)
+#### G-25: Maturity Matrix — Cobertura CLI/MCP (RESUELTA — 100%)
 
-**Brecha:** `maturity-matrix.md` (evaluación TOGAF ACMM, fecha 2026-05-10) cubre los pilares arquitectónicos del Reference Skeleton pero no incluye una evaluación de la capa de Exposición Tecnológica (CLI + servidor MCP). Los pilares Seguridad, Rendimiento, Confiabilidad, Excelencia Operacional y Mantenibilidad están evaluados para la arquitectura de runtime de productos, no para las herramientas CLI ni la implementación del protocolo MCP.
+**Entregado:** `maturity-matrix.md` actualizado con evaluación TOGAF ACMM de 5 dimensiones para la capa de Exposición Tecnológica:
+- Dimensión 1: Conformidad de Protocolo y Transporte — L4 Gestionado
+- Dimensión 2: Cobertura de Tests y Puertas de Calidad — L4 Gestionado
+- Dimensión 3: Completitud de Exposición de Gobernanza — L4 Gestionado
+- Dimensión 4: Experiencia del Desarrollador CLI — L3 Definido
+- Dimensión 5: Enforcement de Gobernanza Federada — L3 Definido
 
-**Corrección Requerida:** Agregar una dimensión CLI/MCP a `maturity-matrix.md` (o un documento complementario dedicado) cubriendo: gobernanza de cobertura de tests, conformidad del protocolo de transporte, pipeline de evidencia smoke, y completitud de herramientas/recursos/prompts MCP.
+**Score Capa CLI + MCP: 3.6 / 5.0 | Score Combinado Evolith Core: 3.72 / 5.0**
 
 #### G-26: Target de Branch Coverage Revisado (ACEPTADO)
 
@@ -325,7 +330,7 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 | Prioridad | Brechas | Criterios |
 |-----------|---------|-----------|
 | **ALTA** | G-18 | Evidencia smoke externa para release readiness |
-| **MEDIA** | G-02, G-05, G-06, G-25, G-27 | Importante pero no bloqueante |
+| **MEDIA** | G-02, G-05, G-06, G-27 | Importante pero no bloqueante |
 | **BAJA** | G-16 | Limpieza y nice-to-have |
 
 ### Esfuerzo vs. Impacto

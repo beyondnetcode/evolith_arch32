@@ -94,8 +94,8 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 | TODO | IN PROGRESS | BLOCKED | DONE |
 |------|-------------|---------|------|
 | G-02 (ACL Jira) | G-18 (E2E Tests) | - | G-12 (MCP Protocol) |
-| G-25 (Maturity Matrix CLI/MCP) | | | |
-| G-27 (Satellite CI enforcement) | | | |
+| | | | G-25 (Maturity Matrix CLI/MCP) |
+| G-27 (Satellite CI enforcement) | | | G-24 (G-17 numbers updated) |
 | G-05 (DORA Metrics) | | | G-16 (EN/ES Parity) |
 | G-06 (Scorecards) | | | G-03 (Phase Gates) |
 | | | | G-04 (Architecture Drift) |
@@ -142,7 +142,7 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 | G-22 | MoSCoW naming consistency | Core | LOW | XS (<1 wk) | DONE | 100% |
 | G-23 | Empty validators directory cleanup | Core | LOW | XS (<1 wk) | DONE | 100% |
 | G-24 | G-17 tracking table numbers were stale | Docs | LOW | XS (<1 wk) | DONE | Updated to 88.70%/89.80%/76.93%/83.58% — 1 369 tests |
-| G-25 | maturity-matrix.md does not cover CLI/MCP pillars | Docs | MEDIUM | S (1 wk) | TODO | TOGAF ACMM assessment missing for technological exposure layer |
+| G-25 | maturity-matrix.md does not cover CLI/MCP pillars | Docs | MEDIUM | S (1 wk) | DONE | Added 5-dimension CLI/MCP assessment; combined score 3.72/5.0 |
 | G-26 | Branch coverage target vs. actual (77% vs. 80%) | Testing | MEDIUM | - | ACCEPTED | Branch target revised to ≥75%; actual 76.93% — accepted baseline |
 | G-27 | Federated governance enforcement is advisory-only | Core | MEDIUM | M (2-3 wk) | TODO | Satellite CI does not auto-run `smart-cli validate`; enforcement is pull-based |
 
@@ -280,11 +280,16 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 
 **Status:** Tracker SaaS responsibility. Rules defined but no operational dashboard.
 
-#### G-25: Maturity Matrix — CLI/MCP Coverage Missing (TODO)
+#### G-25: Maturity Matrix — CLI/MCP Coverage (RESOLVED — 100%)
 
-**Gap:** `maturity-matrix.md` (TOGAF ACMM assessment, dated 2026-05-10) covers the Reference Skeleton architectural pillars but does not include an evaluation of the Technological Exposure layer (CLI + MCP server). The pillars Security, Performance, Reliability, Operational Excellence, and Maintainability are assessed for the product runtime architecture, not for the CLI tooling and MCP protocol implementation.
+**Delivered:** `maturity-matrix.md` updated with a full 5-dimension TOGAF ACMM assessment for the Technological Exposure layer:
+- Dimension 1: Protocol Conformance & Transport — L4 Managed
+- Dimension 2: Test Coverage & Quality Gates — L4 Managed
+- Dimension 3: Governance Exposure Completeness — L4 Managed
+- Dimension 4: CLI Developer Experience — L3 Defined
+- Dimension 5: Federated Governance Enforcement — L3 Defined
 
-**Fix Required:** Add a CLI/MCP dimension to `maturity-matrix.md` (or a dedicated companion document) covering: test coverage governance, transport protocol conformance, smoke evidence pipeline, and MCP tool/resource/prompt completeness.
+**CLI + MCP Layer Score: 3.6 / 5.0 | Combined Evolith Core Score: 3.72 / 5.0**
 
 #### G-26: Branch Coverage Target Revised (ACCEPTED)
 
@@ -325,7 +330,7 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 | Priority | Gaps | Criteria |
 |----------|------|----------|
 | **HIGH** | G-18 | External smoke evidence for release readiness |
-| **MEDIUM** | G-02, G-05, G-06, G-25, G-27 | Important but not blocking |
+| **MEDIUM** | G-02, G-05, G-06, G-27 | Important but not blocking |
 | **LOW** | G-16 | Cleanup and nice-to-have |
 
 ### Effort vs. Impact

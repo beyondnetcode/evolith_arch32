@@ -22,6 +22,7 @@ export class ScaffoldCommand extends CommandRunner {
         options: [
           { value: 'react', label: 'React' },
           { value: 'angular', label: 'Angular' },
+          { value: 'vue', label: 'Vue 3 (Vite)' },
         ],
       }) as string;
     }

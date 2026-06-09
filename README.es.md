@@ -194,7 +194,11 @@ Abre la fase en la que estas trabajando. Cada seccion agrupa los documentos, est
 
 ## Herramientas y Automatizacion
 
+<details>
+<summary><strong>Smart CLI y hooks de validacion</strong></summary>
+
 ### Smart CLI (Oficial)
+
 ```bash
 # Inicializar nuevo repositorio satélite
 npx @evolith/smart-cli init
@@ -221,16 +225,7 @@ smart-cli mcp serve
 - [check-bilingual-parity.mjs](./.harness/scripts/check-bilingual-parity.mjs) - validacion de paridad estructural EN/ES.
 - [impact-analysis-synchronizer.mjs](./.harness/scripts/impact-analysis-synchronizer.mjs) - sincronizacion de impacto cross-repo.
 
----
-
-## Evolith vs UMS
-
-- Evolith posee estandares reutilizables, principios, ADRs, gobernanza, patrones canonicos y reglas machine-readable.
-- UMS posee evidencia de implementacion especifica del producto, prueba ejecutable, rutas, schemas, seeds, branding y decisiones de runtime que aun no han sido promovidas.
-- Un producto contribuye de vuelta a Evolith proponiendo un ADR, estandar, regla o patron respaldado por evidencia de implementacion.
-- La politica enterprise pertenece a Evolith solo despues de revision de gobernanza; las decisiones locales permanecen en el repositorio del producto.
-
-UMS es la referencia ejecutable oficial. Ver [Casos de Adopción](./reference/knowledge/adoption-cases.es.md) para ejemplos reales.
+</details>
 
 ---
 

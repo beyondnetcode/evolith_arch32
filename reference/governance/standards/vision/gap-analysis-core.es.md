@@ -93,9 +93,10 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 
 | TODO | IN PROGRESS | BLOCKED | DONE |
 |------|-------------|---------|------|
-| G-02 (ACL Jira) | G-18 (Tests E2E) | - | G-12 (Protocolo MCP) |
+| G-02 (ACL Jira) | - | - | G-12 (Protocolo MCP) |
 | G-05 (DORA Metrics) | | | G-16 (Paridad EN/ES) |
 | G-06 (Scorecards) | | | G-03 (Phase Gates) |
+| | | | G-18 (smoke E2E) |
 | | | | G-24 (números G-17 actualizados) |
 | | | | G-25 (Maturity Matrix CLI/MCP) |
 | | | | G-27 (Enforcement CI satelites) |
@@ -132,7 +133,7 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 | G-14 | Recursos MCP (Info Core, rulesets) | MCP | MEDIA | M (2-3 sem) | DONE | 100% |
 | G-15 | Prompts MCP reutilizables | MCP | BAJA | XS (<1 sem) | DONE | 100% |
 | G-17 | Cobertura tests ≥75% branches / ≥80% stmts | Testing | ALTA | L (3-4 sem) | DONE | 88.70% stmts · 89.80% lines · 76.93% branches · 83.58% fns — 1 369 tests; --forceExit eliminado |
-| G-18 | Tests E2E reales con aserciones | Testing | ALTA | L (3-4 sem) | EN PROGRESO | Suite E2E verde; smoke externo IDE/MCP pendiente |
+| G-18 | Tests E2E reales con aserciones | Testing | ALTA | L (3-4 sem) | DONE | Smoke stdio (T1) + HTTP/SSE (T2); /health, /sse, initialize, tools/list, resources/list, prompts/list, tools/call — verificados via proceso cliente externo |
 | G-16 | Paridad bilingüe 100% EN/ES | Core | BAJA | XS (<1 sem) | DONE | 90% |
 | G-02 | Integraciones ACL Jira/Trello/Linear | Core | MEDIA | M (2-3 sem) | DEFERRED | 0% |
 | G-05 | Dashboard métricas DORA+SPACE | Tracker | MEDIA | L (3-4 sem) | DEFERRED | 0% |
@@ -246,9 +247,23 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 
 `--forceExit` eliminado; teardown limpio; ruido de consola silenciado; artefacto JSON generado vía reporter `json-summary`.
 
-#### G-18: Tests E2E Reales con Aserciones (EN PROGRESO — 40%)
+#### G-18: Tests E2E Reales con Aserciones (DONE — 100%)
 
-**Estado:** La infraestructura E2E existe y la suite E2E local pasa. Release readiness aún necesita evidencia smoke externa que ejercite MCP initialize, tools/list, resources/list, prompts/list y llamadas representativas desde un proceso cliente.
+**Entregado:** `examples/mcp-test.js` extendido con dos bloques de transporte:
+
+**Transporte 1 — stdio** (proceso hijo externo `node dist/main.js mcp serve`):
+- `initialize` — serverInfo + capabilities verificados
+- `tools/list` — 19 herramientas, incluye evolith-validate, evolith-metrics, evolith-architecture-validate
+- `resources/list` — 7 recursos
+- `prompts/list` — 7 prompts
+- `tools/call` evolith-metrics — content[0].type === 'text'
+
+**Transporte 2 — HTTP/SSE** (servidor HTTP externo en puerto 49400):
+- `GET /health` — 200, body.status === 'ok'
+- `GET /sse` — 200, content-type: text/event-stream
+- `POST /message` → respuesta SSE para: initialize, tools/list, resources/list, prompts/list, tools/call
+
+`npm run mcp:smoke` — ambos transportes pasaron en menos de 15 s.
 
 #### G-20: Transporte HTTP MCP (RESUELTA — 100%)
 
@@ -340,7 +355,7 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 
 | Prioridad | Brechas | Criterios |
 |-----------|---------|-----------|
-| **ALTA** | G-18 | Evidencia smoke externa para release readiness |
+| **ALTA** | — | Todas las brechas de alta prioridad resueltas |
 | **MEDIA** | G-02, G-05, G-06 | Importante pero no bloqueante (Tracker SaaS diferido) |
 | **BAJA** | G-16 | Limpieza y nice-to-have |
 
@@ -348,7 +363,7 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 
 | Esfuerzo → | XS (<1sem) | S (1sem) | M (2-3sem) | L (3-4sem) |
 |------------|------------|----------|------------|------------|
-| **Impacto ALTO** | - | G-18 | - | G-17, G-27 |
+| **Impacto ALTO** | - | - | - | G-17, G-18, G-27 |
 | **Impacto MEDIO** | - | - | G-02 | G-05, G-06 |
 | **Impacto BAJO** | G-16 | - | - | - |
 
@@ -446,9 +461,8 @@ Estado Actual                        Meta de Visión
 ```
 
 **Camino Crítico:**
-1. **Evidencia E2E MCP (G-18)** — Evidencia smoke a nivel cliente externo desde sesión real de IDE/agente (Cursor o Claude Desktop)
-2. **Maturity Matrix CLI/MCP (G-25)** — Extender evaluación TOGAF ACMM para cubrir la capa de exposición tecnológica
-3. **Incrementos de Validación Arquitectónica** — Grafo de imports, checks de violación de capas, aislamiento de bounded-contexts como nuevas reglas acotadas
+1. **Incrementos de Validación Arquitectónica** — Grafo de imports, checks de violación de capas, aislamiento de bounded-contexts como nuevas reglas acotadas
+2. **Adaptadores ACL (G-02)** — Adaptadores runtime de Jira/Trello/Linear cuando se inicie el Tracker SaaS
 
 ---
 

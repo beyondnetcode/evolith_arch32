@@ -25,7 +25,7 @@ Descarga el binario más reciente desde [GitHub Releases](https://github.com/bey
 
 ```bash
 smart-cli --version
-# smart-cli version 0.0.1-beta
+# smart-cli version 0.0.3-beta
 ```
 
 ## Inicio Rápido

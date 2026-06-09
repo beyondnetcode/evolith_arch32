@@ -40,9 +40,9 @@ export class HandoffCommand extends CommandRunner {
       const result = await useCase.execute(options.from, options.to, [], process.cwd());
 
       if (result.success) {
-        console.log(chalk.green(`✓ Transitioned from ${options.from} to ${options.to}`));
+        p.log.success(`✓ Transitioned from ${options.from} to ${options.to}`);
       } else {
-        console.log(chalk.red(`✗ Transition failed: ${result.errors.join(', ')}`));
+        p.log.error(`✗ Transition failed: ${result.errors.join(', ')}`);
         process.exit(1);
       }
       return;

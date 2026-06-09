@@ -1,26 +1,26 @@
 import { GenerateDomainCommand } from './generate-domain.command';
+import * as p from '@clack/prompts';
 
 describe('GenerateDomainCommand', () => {
   let command: GenerateDomainCommand;
   let logSpy: jest.SpyInstance;
-  let errorSpy: jest.SpyInstance;
 
   beforeEach(() => {
     command = new GenerateDomainCommand();
+    jest.clearAllMocks();
+    // Mock output lines that remain as console.log
     logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
-    errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   afterEach(() => {
     logSpy.mockRestore();
-    errorSpy.mockRestore();
   });
 
   describe('run', () => {
     it('should show error when target is missing', async () => {
       await command.run([], { from: 'ddd-model.md' });
 
-      expect(errorSpy).toHaveBeenCalledWith(
+      expect(p.log.error as jest.Mock).toHaveBeenCalledWith(
         expect.stringContaining('Error')
       );
     });
@@ -28,7 +28,7 @@ describe('GenerateDomainCommand', () => {
     it('should show error when from is missing', async () => {
       await command.run(['domain'], {});
 
-      expect(errorSpy).toHaveBeenCalledWith(
+      expect(p.log.error as jest.Mock).toHaveBeenCalledWith(
         expect.stringContaining('Error')
       );
     });
@@ -36,7 +36,7 @@ describe('GenerateDomainCommand', () => {
     it('should show error when both are missing', async () => {
       await command.run([], {});
 
-      expect(errorSpy).toHaveBeenCalledWith(
+      expect(p.log.error as jest.Mock).toHaveBeenCalledWith(
         expect.stringContaining('Error')
       );
     });

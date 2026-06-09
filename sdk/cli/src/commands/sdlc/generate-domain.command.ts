@@ -1,5 +1,6 @@
 import { Command, CommandRunner, Option } from 'nest-commander';
 import chalk from 'chalk';
+import * as p from '@clack/prompts';
 
 @Command({
   name: 'generate',
@@ -14,8 +15,8 @@ export class GenerateDomainCommand extends CommandRunner {
     const fromFile = options?.from;
 
     if (!target || !fromFile) {
-      console.error(chalk.red('Error: Both generation target and source file must be specified.'));
-      console.log(chalk.yellow('Example: evolith sdlc generate domain --from ddd-model.md'));
+      p.log.error('Error: Both generation target and source file must be specified.');
+      p.log.info(chalk.yellow('Example: evolith sdlc generate domain --from ddd-model.md'));
       return;
     }
 

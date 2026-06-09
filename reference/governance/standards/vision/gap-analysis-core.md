@@ -93,9 +93,10 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 
 | TODO | IN PROGRESS | BLOCKED | DONE |
 |------|-------------|---------|------|
-| G-02 (ACL Jira) | G-18 (E2E Tests) | - | G-12 (MCP Protocol) |
+| G-02 (ACL Jira) | - | - | G-12 (MCP Protocol) |
 | | | | G-25 (Maturity Matrix CLI/MCP) |
 | | | | G-27 (Satellite CI enforcement) |
+| | | | G-18 (E2E smoke) |
 | | | | G-24 (G-17 numbers updated) |
 | G-05 (DORA Metrics) | | | G-16 (EN/ES Parity) |
 | G-06 (Scorecards) | | | G-03 (Phase Gates) |
@@ -132,7 +133,7 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 | G-14 | MCP Resources (Core info, rulesets) | MCP | MEDIUM | M (2-3 wk) | DONE | 100% |
 | G-15 | Reusable MCP prompts | MCP | LOW | XS (<1 wk) | DONE | 100% |
 | G-17 | Unit test coverage ≥75% branches / ≥80% stmts | Testing | HIGH | L (3-4 wk) | DONE | 88.70% stmts · 89.80% lines · 76.93% branches · 83.58% fns — 1 369 tests; --forceExit removed |
-| G-18 | Real E2E tests with assertions | Testing | HIGH | L (3-4 wk) | IN PROGRESS | E2E suite green; external IDE/MCP smoke pending |
+| G-18 | Real E2E tests with assertions | Testing | HIGH | L (3-4 wk) | DONE | stdio smoke (T1) + HTTP/SSE smoke (T2); /health, /sse, initialize, tools/list, resources/list, prompts/list, tools/call — all verified via external client process |
 | G-16 | 100% EN/ES bilingual parity | Core | LOW | XS (<1 wk) | DONE | 90% |
 | G-02 | ACL integrations Jira/Trello/Linear | Core | MEDIUM | M (2-3 wk) | DEFERRED | 0% |
 | G-05 | DORA+SPACE metrics dashboard | Tracker | MEDIUM | L (3-4 wk) | DEFERRED | 0% |
@@ -246,9 +247,23 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 
 `--forceExit` removed; teardown is clean; console noise silenced; JSON summary artifact generated via `json-summary` reporter.
 
-#### G-18: Real E2E Tests with Assertions (IN PROGRESS — 40%)
+#### G-18: Real E2E Tests with Assertions (DONE — 100%)
 
-**Status:** E2E infrastructure exists and the local E2E suite passes. Release readiness still needs external smoke evidence that exercises MCP initialize, tools/list, resources/list, prompts/list, and representative tool calls from a client process.
+**Delivered:** `examples/mcp-test.js` extended with two transport blocks:
+
+**Transport 1 — stdio** (external `node dist/main.js mcp serve` child process):
+- `initialize` — serverInfo + capabilities verified
+- `tools/list` — 19 tools, includes evolith-validate, evolith-metrics, evolith-architecture-validate
+- `resources/list` — 7 resources
+- `prompts/list` — 7 prompts
+- `tools/call` evolith-metrics — content[0].type === 'text'
+
+**Transport 2 — HTTP/SSE** (external HTTP server on port 49400):
+- `GET /health` — 200, body.status === 'ok'
+- `GET /sse` — 200, content-type: text/event-stream
+- `POST /message` → SSE response for: initialize, tools/list, resources/list, prompts/list, tools/call
+
+`npm run mcp:smoke` — both transports passed in < 15 s.
 
 #### G-20: MCP HTTP Transport (RESOLVED — 100%)
 
@@ -340,7 +355,7 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 
 | Priority | Gaps | Criteria |
 |----------|------|----------|
-| **HIGH** | G-18 | External smoke evidence for release readiness |
+| **HIGH** | — | All high-priority gaps resolved |
 | **MEDIUM** | G-02, G-05, G-06 | Important but not blocking (Tracker SaaS deferred) |
 | **LOW** | G-16 | Cleanup and nice-to-have |
 
@@ -348,7 +363,7 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 
 | Effort → | XS (<1wk) | S (1wk) | M (2-3wk) | L (3-4wk) |
 |----------|-----------|---------|-----------|-----------|
-| **HIGH Impact** | - | G-18 | - | G-17, G-27 |
+| **HIGH Impact** | - | - | - | G-17, G-18, G-27 |
 | **MEDIUM Impact** | - | - | G-02 | G-05, G-06 |
 | **LOW Impact** | G-16 | - | - | - |
 
@@ -446,9 +461,8 @@ Current State                          Vision Goal
 ```
 
 **Critical Path:**
-1. **MCP E2E Evidence (G-18)** — External client-level smoke evidence from a real IDE/agent session (Cursor or Claude Desktop)
-2. **Maturity Matrix CLI/MCP (G-25)** — Extend TOGAF ACMM assessment to cover the technological exposure layer
-3. **Architecture Validation Increments** — Import graph, layer violation checks, bounded-context isolation as new scoped rules
+1. **Architecture Validation Increments** — Import graph, layer violation checks, bounded-context isolation as new scoped rules
+2. **ACL Adapters (G-02)** — Jira/Trello/Linear runtime adapters when Tracker SaaS is initiated
 
 ---
 

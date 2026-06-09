@@ -125,7 +125,7 @@ jobs:
 
       - name: Run Unit Tests
         working-directory: ${{ env.CLI_DIR }}
-        run: npm test -- --coverage --coverage-reporters=text-summary
+        run: npm run test:cov -- --coverage-reporters=text-summary
 
       - name: Upload Coverage
         uses: actions/upload-artifact@v4
@@ -234,7 +234,6 @@ jobs:
   e2e-tests:
     name: E2E Tests
     runs-on: ubuntu-latest
-    if: ${{ false }} # Disabled by default, enable via workflow_dispatch
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -261,7 +260,7 @@ jobs:
   # ============================================
   gate:
     name: CI Gate
-    needs: [core-validation, security-audit, lint-and-types, unit-tests, architecture-validation, package-integrity]
+    needs: [core-validation, security-audit, lint-and-types, unit-tests, e2e-tests, architecture-validation, package-integrity]
     runs-on: ubuntu-latest
     steps:
       - name: All Checks Passed

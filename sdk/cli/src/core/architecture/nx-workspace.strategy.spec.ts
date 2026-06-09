@@ -26,6 +26,8 @@ function npmCalls(): string[] {
 
 beforeEach(() => {
   jest.clearAllMocks();
+  // Re-silence every test so inner spies that call mockRestore() don't bleed output.
+  jest.spyOn(console, 'log').mockImplementation(() => {});
 });
 
 // ── tests ─────────────────────────────────────────────────────────────────────

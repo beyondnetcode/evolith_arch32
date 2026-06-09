@@ -84,6 +84,8 @@ const mockCalculateDora = calculateDora as jest.Mock;
 
 beforeEach(() => {
   jest.clearAllMocks();
+  // Re-silence every test so inner spies that call mockRestore() don't bleed output.
+  jest.spyOn(console, 'log').mockImplementation(() => {});
 
   (getContainer as jest.Mock).mockReturnValue(mockContainer);
   (p.spinner as jest.Mock).mockReturnValue(mockSpinnerInstance);

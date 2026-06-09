@@ -12,20 +12,31 @@ const mockedExecutor = commandExecutor as jest.Mocked<typeof commandExecutor>;
 
 describe('CommandWatcher', () => {
   let watcher: CommandWatcher;
+  let consoleSpies: jest.SpyInstance[];
 
   beforeEach(() => {
     jest.clearAllMocks();
     watcher = new CommandWatcher();
+    consoleSpies = [
+      jest.spyOn(console, 'info').mockImplementation(() => {}),
+      jest.spyOn(console, 'warn').mockImplementation(() => {}),
+      jest.spyOn(console, 'error').mockImplementation(() => {}),
+      jest.spyOn(console, 'log').mockImplementation(() => {}),
+    ];
     mockedExecutor.checkTool.mockResolvedValue({
       name: 'node',
+      command: 'node --version',
       available: true,
       version: 'v1',
     });
   });
 
+  afterEach(() => {
+    consoleSpies.forEach(spy => spy.mockRestore());
+  });
+
   it('records successful command traces with platform checks', async () => {
     mockedExecutor.execute.mockResolvedValue({
-      command: 'node --version',
       exitCode: 0,
       success: true,
       stdout: 'v1',
@@ -46,7 +57,6 @@ describe('CommandWatcher', () => {
 
   it('records failed command traces and clears history', async () => {
     mockedExecutor.execute.mockResolvedValue({
-      command: 'bad',
       exitCode: 1,
       success: false,
       stdout: '',
@@ -72,11 +82,11 @@ describe('CommandWatcher', () => {
   it('reports unavailable platform checks', async () => {
     mockedExecutor.checkTool.mockResolvedValue({
       name: 'gh',
+      command: 'gh --version',
       available: false,
       installHint: 'install gh',
     });
     mockedExecutor.execute.mockResolvedValue({
-      command: 'gh --version',
       exitCode: 0,
       success: true,
       stdout: '',
@@ -98,27 +108,35 @@ describe('CommandWatcher', () => {
 
   it('prints summaries for successful and failed traces', async () => {
     mockedExecutor.execute
-      .mockResolvedValueOnce({ command: 'ok', exitCode: 0, success: true, stdout: '', stderr: '' })
-      .mockResolvedValueOnce({ command: 'bad', exitCode: 2, success: false, stdout: '', stderr: 'nope' });
-    const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
-
+      .mockResolvedValueOnce({ exitCode: 0, success: true, stdout: '', stderr: '' })
+      .mockResolvedValueOnce({ exitCode: 2, success: false, stdout: '', stderr: 'nope' });
     await watcher.executeWithTrace('ok');
     await watcher.executeWithTrace('bad');
     watcher.printSummary();
 
-    expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('[CMD-'));
-    logSpy.mockRestore();
+    expect(console.log).toHaveBeenCalledWith(expect.stringContaining('[CMD-'));
   });
 });
 
 describe('CommandBuilder', () => {
+  let consoleSpies: jest.SpyInstance[];
+
   beforeEach(() => {
     jest.clearAllMocks();
+    consoleSpies = [
+      jest.spyOn(console, 'info').mockImplementation(() => {}),
+      jest.spyOn(console, 'warn').mockImplementation(() => {}),
+      jest.spyOn(console, 'error').mockImplementation(() => {}),
+      jest.spyOn(console, 'log').mockImplementation(() => {}),
+    ];
+  });
+
+  afterEach(() => {
+    consoleSpies.forEach(spy => spy.mockRestore());
   });
 
   it('builds commands fluently and executes them with a fresh watcher', async () => {
     mockedExecutor.execute.mockResolvedValue({
-      command: 'npm test -- --runInBand',
       exitCode: 0,
       success: true,
       stdout: 'ok',

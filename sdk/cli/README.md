@@ -25,7 +25,7 @@ Download the latest binary from [GitHub Releases](https://github.com/beyondnetco
 
 ```bash
 smart-cli --version
-# smart-cli version 0.0.1-beta
+# smart-cli version 0.0.3-beta
 ```
 
 ## Quickstart

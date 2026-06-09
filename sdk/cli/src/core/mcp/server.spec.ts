@@ -67,6 +67,7 @@ describe('MCP Server', () => {
 
       expect(server).toBeDefined();
       expect(server.stop).toBeDefined();
+      await server.stop();
     });
 
     it('should start server with custom validator', async () => {
@@ -77,6 +78,7 @@ describe('MCP Server', () => {
       const server = await startMcpServer(options);
 
       expect(server).toBeDefined();
+      await server.stop();
     });
 
     it('should start server with metrics service', async () => {
@@ -87,6 +89,7 @@ describe('MCP Server', () => {
       const server = await startMcpServer(options);
 
       expect(server).toBeDefined();
+      await server.stop();
     });
 
     it('should stop server cleanly', async () => {

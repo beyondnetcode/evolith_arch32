@@ -37,7 +37,7 @@
 * [0051-estrategia-motor-base-datos-empresarial](./0051-estrategia-motor-base-datos-empresarial.es.md)
 * [0052-estrategia-aislamiento-pruebas-unitarias](./0052-estrategia-aislamiento-pruebas-unitarias.es.md)
 * [0053-estrategia-pruebas-integracion-e2e](./0053-estrategia-pruebas-integracion-e2e.es.md)
-* [0054-estandares-diseño-normalizacion-base-datos](./0054-estandares-diseño-normalizacion-base-datos.es.md)
+* [0054-database-design-normalization-standards](./0054-database-design-normalization-standards.es.md)
 * [0055-estrategia-arquitectura-microfrontends](./0055-estrategia-arquitectura-microfrontends.es.md)
 * **[0056-convenciones-nomenclatura-diseno-empresarial](./0056-convenciones-nomenclatura-diseno-empresarial.es.md)** — Multi-language, multi-platform naming & design standard
 * [0068-gitflow-lanzamiento-documentacion](./0068-documentation-release-gitflow.es.md) — **GitFlow de lanzamiento de documentación con quality gates bilingües**

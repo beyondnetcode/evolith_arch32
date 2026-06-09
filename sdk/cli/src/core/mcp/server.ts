@@ -47,19 +47,16 @@ class MinimalStdioTransport implements Transport {
   private readonly stdout: import('node:stream').Writable;
   private readBuffer: string = '';
   private started: boolean;
+  private readonly handleData: (chunk: Buffer) => void;
+  private readonly handleEnd: () => void;
+  private readonly handleError: (err: Error) => void;
 
   constructor(stdin?: import('node:stream').Readable, stdout?: import('node:stream').Writable) {
     this.stdin = stdin || process.stdin;
     this.stdout = stdout || process.stdout;
     this.readBuffer = '';
     this.started = false;
-  }
-
-  async start(): Promise<void> {
-    if (this.started) return;
-    this.started = true;
-
-    this.stdin.on('data', (chunk: Buffer) => {
+    this.handleData = (chunk: Buffer) => {
       this.readBuffer += chunk.toString();
       let newlineIndex: number;
       while ((newlineIndex = this.readBuffer.indexOf('\n')) !== -1) {
@@ -71,29 +68,44 @@ class MinimalStdioTransport implements Transport {
             if (this.onmessage) {
               this.onmessage(message);
             }
-          } catch (e) {
+          } catch {
             if (this.onerror) {
               this.onerror(new Error(`Invalid JSON: ${line}`));
             }
           }
         }
       }
-    });
-
-    this.stdin.on('end', () => {
+    };
+    this.handleEnd = () => {
       if (this.onclose) {
         this.onclose();
       }
-    });
-
-    this.stdin.on('error', (err: Error) => {
+    };
+    this.handleError = (err: Error) => {
       if (this.onerror) {
         this.onerror(err);
       }
-    });
+    };
+  }
+
+  async start(): Promise<void> {
+    if (this.started) return;
+    this.started = true;
+
+    this.stdin.on('data', this.handleData);
+    this.stdin.on('end', this.handleEnd);
+    this.stdin.on('error', this.handleError);
   }
 
   async close(): Promise<void> {
+    if (!this.started) return;
+    this.stdin.off('data', this.handleData);
+    this.stdin.off('end', this.handleEnd);
+    this.stdin.off('error', this.handleError);
+    this.onmessage = undefined;
+    this.onerror = undefined;
+    this.onclose = undefined;
+    this.readBuffer = '';
     this.started = false;
   }
 

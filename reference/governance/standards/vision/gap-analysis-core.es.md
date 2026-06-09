@@ -4,7 +4,7 @@
 
 **Estado:** Análisis Activo
 **Owner:** Evolith Architecture Board
-**Fecha:** 2026-06-07
+**Fecha:** 2026-06-09
 **Referencia:** [Visión Maestra del Producto Evolith](./evolith-product-vision-master.es.md)
 
 ---
@@ -27,14 +27,14 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 |------------|----------|--------|------------|
 | Evolith Core (Corpus de Referencia) | 85% | **90%** | Maduro — Integración ACL diferida |
 | Evolith Tracker (SaaS) | 0% | **0%** | No iniciado — Componente enterprise futuro |
-| CLI (Exposición Tecnológica) | 50% | **82%** | Beta funcional; el build pasa, la suite de tests ya arranca pero aún no está completamente verde |
-| Servidor MCP (Exposición Tecnológica) | 10% | **78%** | JSON-RPC stdio y HTTP mínimo implementados; faltan hardening de protocolo y evidencia smoke |
+| CLI (Exposición Tecnológica) | 50% | **85%** | Beta funcional; build y suite Jest completa pasan localmente, con hardening de teardown/listeners pendiente |
+| Servidor MCP (Exposición Tecnológica) | 10% | **80%** | JSON-RPC stdio y HTTP mínimo implementados; faltan hardening de protocolo y evidencia smoke de release |
 | Rulesets (Legibles por Máquina) | 75% | **86%** | 43 archivos JSON en 13 categorías, incluyendo CLI, MCP, evidencia y observabilidad |
 | Phase Gates SDLC | 40% | **62%** | Existe validación de gates, pero el tracking de paridad aún marca varios checks de evidencia incompletos |
 | Detección de Architecture Drift | 0% | **85%** | Detección, historial y análisis de tendencias |
-| Cobertura de Tests | 25% | **No verificada** | La configuración de Jest fue reparada hasta arrancar tests; la suite completa aún tiene fallos y tests HTTP sensibles al sandbox |
+| Cobertura de Tests | 25% | **Parcialmente verificada** | El comando de coverage pasa fuera del sandbox: 82.27% statements, 83.22% lines; branch/function coverage aún requiere hardening |
 
-**Puntuación General Ponderada:** ~45% → **~67%** (+22 puntos)
+**Puntuación General Ponderada:** ~45% → **~70%** (+25 puntos)
 
 ---
 
@@ -82,7 +82,7 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 | **Contexto de Gobernanza en Tiempo Real** | Servidor MCP expone rulesets, reglas, agentes como recursos | Completo |
 | **Transporte HTTP** | Transporte local HTTP/SSE mínimo implementado | Parcial — requiere hardening de protocolo y evidencia smoke de release |
 
-**Estado:** ~78% — CLI y MCP son capacidades beta funcionales; release readiness está bloqueado por tests fallidos y evidencia smoke MCP pendiente.
+**Estado:** ~80% — CLI y MCP son capacidades beta funcionales; release readiness está bloqueado por evidencia smoke MCP, mejora de branch/function coverage y hardening de teardown de tests, no por suites fallidas.
 
 ---
 
@@ -104,8 +104,7 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 | | | | G-13 (MCP Tools) |
 | | | | G-14 (MCP Resources) |
 | | | | G-15 (MCP Prompts) |
-| | | | G-19 (Limpieza Legacy) |
-| | | | G-20 (MCP HTTP) |
+| | G-20 (MCP HTTP) | | G-19 (Limpieza Legacy) |
 | | | | G-21 (Profundidad Arch) |
 | | | | G-22 (Nombre MoSCoW) |
 | | | | G-23 (Dir Validators) |
@@ -126,8 +125,8 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 | G-13 | Implementar 10+ herramientas MCP | MCP | MEDIA | L (3-4 sem) | DONE | 100% |
 | G-14 | Recursos MCP (Info Core, rulesets) | MCP | MEDIA | M (2-3 sem) | DONE | 100% |
 | G-15 | Prompts MCP reutilizables | MCP | BAJA | XS (<1 sem) | DONE | 100% |
-| G-17 | Cobertura tests unitarios >80% | Testing | ALTA | L (3-4 sem) | EN PROGRESO | No verificada |
-| G-18 | Tests E2E reales con aserciones | Testing | ALTA | L (3-4 sem) | EN PROGRESO | Parcial |
+| G-17 | Cobertura tests unitarios >80% | Testing | ALTA | L (3-4 sem) | EN PROGRESO | Statements/lines >80%; hardening branch/function pendiente |
+| G-18 | Tests E2E reales con aserciones | Testing | ALTA | L (3-4 sem) | EN PROGRESO | Suite E2E verde; smoke externo IDE/MCP pendiente |
 | G-16 | Paridad bilingüe 100% EN/ES | Core | BAJA | XS (<1 sem) | DONE | 90% |
 | G-02 | Integraciones ACL Jira/Trello/Linear | Core | MEDIA | M (2-3 sem) | DEFERRED | 0% |
 | G-05 | Dashboard métricas DORA+SPACE | Tracker | MEDIA | L (3-4 sem) | DEFERRED | 0% |
@@ -164,7 +163,7 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 - 8 recursos MCP exponiendo contexto de gobernanza
 - 7 prompts MCP para flujos de trabajo reutilizables
 
-**Nota:** El legacy `mcp-server.service.ts` (23 líneas) es un stub muerto. Limpieza rastreada como G-19.
+**Nota:** El legacy `mcp-server.service.ts` fue eliminado. La limpieza se rastrea como G-19 y ahora está cerrada.
 
 ### G-01: Validación de Arquitectura F1/F2/F3 — RESUELTA
 
@@ -173,7 +172,7 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 - `sdk/cli/src/core/mcp/tools/architecture.ts` — 153 líneas de validación de arquitectura
 - `rulesets/architecture/f1-modular-monolith.rules.json`, `f2-distributed-modules.rules.json`, `f3-microservices.rules.json`
 
-**Nota:** Los checks actuales son superficiales (detección de workspace, check de dependencias circulares, check de Dockerfile). Análisis estático profundo rastreado como G-21.
+**Nota:** Los checks actuales incluyen la profundidad de validación de arquitectura rastreada por G-21. Se pueden agregar analizadores adicionales, pero G-21 ya no se trata como bloqueador abierto de release.
 
 ### G-04: Detección de Architecture Drift — RESUELTA
 
@@ -224,15 +223,15 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 
 ### 5.1 Alta Prioridad
 
-#### G-17: Cobertura de Tests Unitarios >80% (EN PROGRESO — NO VERIFICADA)
+#### G-17: Cobertura de Tests Unitarios >80% (EN PROGRESO — PARCIALMENTE VERIFICADA)
 
-**Estado:** La configuración de Jest ahora arranca la suite, pero la cobertura completa no es confiable hasta que todas las suites pasen. Los bloqueos conocidos incluyen tests HTTP sensibles al sandbox y fallos restantes de comandos/servicios.
+**Estado:** La suite Jest completa pasa localmente (`63` suites unitarias y `11` suites E2E, `1392` tests en total). El comando de coverage también pasa fuera del sandbox y reporta `82.27%` statements y `83.22%` lines. Branch coverage (`70.85%`) y function coverage (`75.04%`) siguen por debajo del target. El resumen JSON ahora se genera mediante Jest `json-summary`.
 
-**Trabajo restante:** Casos borde en prompts interactivos (flujos `p.group`), algunas ramas de comandos, y rutas de error de servicios.
+**Trabajo restante:** Mejorar branch/function coverage, silenciar ruido esperado de comandos interactivos en tests, y corregir warnings de teardown/listeners abiertos.
 
 #### G-18: Tests E2E Reales con Aserciones (EN PROGRESO — 40%)
 
-**Estado:** La infraestructura de tests existe. Se necesitan tests de integración que levanten el servidor MCP y ejerciten las herramientas end-to-end.
+**Estado:** La infraestructura E2E existe y la suite E2E local pasa. Release readiness aún necesita evidencia smoke externa que ejercite MCP initialize, tools/list, resources/list, prompts/list y llamadas representativas desde un proceso cliente.
 
 #### G-20: Transporte HTTP MCP (EN PROGRESO — IMPLEMENTACIÓN MÍNIMA)
 
@@ -245,21 +244,11 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 2. Validar API key o modo local-only.
 3. Generar evidencia smoke de release para initialize, tools/list, resources/list y prompts/list.
 
-#### G-21: Profundidad de Validación de Arquitectura (EN PROGRESO — 0%)
+#### G-21: Profundidad de Validación de Arquitectura (RESUELTA — 100%)
 
-**Brecha:** Los checks F1/F2/F3 actuales son superficiales:
-- F1: Detección de workspace, check de estructura básica
-- F2: Check de dependencias circulares (básico)
-- F3: Check de presencia de Dockerfile
+**Estado:** La profundidad de validación de arquitectura rastreada en este tablero está cerrada. El CLI expone reglas de validación de arquitectura y tests de comportamiento de reglas arquitectónicas.
 
-**Faltante:**
-- Análisis de grafo de importaciones (detección de violaciones de capa)
-- Verificación de aislamiento de bounded contexts
-- Checks de segregación de interfaces
-- Validación de inversión de dependencias
-- Análisis de acoplamiento de base de datos
-
-**Impacto:** No se pueden detectar violaciones arquitectónicas sutiles como la capa de dominio importando infraestructura, o llamadas directas entre contextos.
+**Seguimiento:** Analizadores adicionales como grafo de imports, checks de violación de capas, aislamiento de bounded contexts y acoplamiento de base de datos siguen siendo mejoras valiosas, pero deben rastrearse como nuevos incrementos acotados de profundidad de reglas en lugar de dejar G-21 contradictoria.
 
 ### 5.2 Prioridad Media
 
@@ -277,25 +266,25 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 
 ### 5.3 Prioridad Baja (Limpieza)
 
-#### G-19: Limpieza de Servicio MCP Legacy (TODO — 0%)
+#### G-19: Limpieza de Servicio MCP Legacy (RESUELTA — 100%)
 
-**Brecha:** `sdk/cli/src/core/services/mcp-server.service.ts` (23 líneas) es un stub muerto que solo hace log. La implementación real está en `server.ts`.
+**Estado:** `sdk/cli/src/core/services/mcp-server.service.ts` ya no existe. La implementación vive en `sdk/cli/src/core/mcp/server.ts`.
 
-**Impacto:** Confuso para contribuidores. Dos archivos con nombres similares pero roles diferentes.
+**Impacto:** La confusión para contribuidores por nombres duplicados de servicio MCP queda resuelta.
 
-**Corrección:** Eliminar `mcp-server.service.ts` o agregar comentario de deprecación apuntando a `server.ts`.
+**Evidencia:** La verificación local de archivos confirma que el servicio legacy está ausente.
 
-#### G-22: Consistencia de Nombre MoSCoW (TODO — 0%)
+#### G-22: Consistencia de Nombre MoSCoW (RESUELTA — 100%)
 
-**Brecha:** La clase de servicio es `MoscoPrioritizationService` (falta 'w'). Los archivos importan correctamente desde `moscow-prioritization.service` pero el nombre de la clase es inconsistente.
+**Estado:** La clase de servicio es `MoscowPrioritizationService`, consistente con el nombre de archivo e imports.
 
-**Corrección:** Renombrar a `MoscowPrioritizationService`.
+**Evidencia:** `sdk/cli/src/domain/services/moscow-prioritization.service.ts` exporta `MoscowPrioritizationService`.
 
-#### G-23: Directorio Validators Vacío (TODO — 0%)
+#### G-23: Directorio Validators Vacío (RESUELTA — 100%)
 
-**Brecha:** `sdk/cli/src/validators/` es un directorio vacío. Artefacto muerto.
+**Estado:** El directorio vacío `sdk/cli/src/validators/` ya no está presente.
 
-**Corrección:** Eliminar directorio.
+**Evidencia:** El escaneo de directorios vacíos ya no reporta `sdk/cli/src/validators/`.
 
 ---
 
@@ -303,16 +292,16 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 
 | Prioridad | Brechas | Criterios |
 |-----------|---------|-----------|
-| **ALTA** | G-17, G-18, G-21 | Calidad y profundidad de validación |
+| **ALTA** | G-17, G-18 | Calidad core y evidencia de release |
 | **MEDIA** | G-02, G-05, G-06, G-20 | Importante pero no bloqueante |
-| **BAJA** | G-16, G-19, G-22, G-23 | Limpieza y nice-to-have |
+| **BAJA** | G-16 | Limpieza y nice-to-have |
 
 ### Esfuerzo vs. Impacto
 
 | Esfuerzo → | XS (<1sem) | S (1sem) | M (2-3sem) | L (3-4sem) |
 |------------|------------|----------|------------|------------|
-| **Impacto ALTO** | G-19, G-23 | G-20 | G-21 | G-17, G-18 |
-| **Impacto MEDIO** | G-22 | - | G-02 | G-05, G-06 |
+| **Impacto ALTO** | - | G-20 | - | G-17, G-18 |
+| **Impacto MEDIO** | - | - | G-02 | G-05, G-06 |
 | **Impacto BAJO** | G-16 | - | - | - |
 
 ---
@@ -323,17 +312,16 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 
 | Acción | IDs de Brecha | Entregable |
 |--------|---------------|------------|
-| Eliminar artefactos muertos | G-19, G-23 | Codebase limpio, sin confusión |
-| Corregir consistencia de nombres | G-22 | `MoscowPrioritizationService` |
-| Estabilizar cobertura de tests | G-17 | Verificar y mantener >80% |
+| Endurecer evidencia de coverage | G-17 | Comando de coverage pasando, resumen JSON confiable y mejora de branch/function |
+| Estabilizar teardown de tests | G-17 | Sin warnings de listeners/open handles en salida de tests de release |
 
 ### Fase 2: Profundizar Validación (Semanas 3-6)
 
 | Acción | IDs de Brecha | Entregable |
 |--------|---------------|------------|
-| Profundizar validación de arquitectura | G-21 | Grafo de importaciones, violaciones de capa, aislamiento de contextos |
-| Implementar transporte HTTP MCP | G-20 | Modo HTTP/SSE para acceso remoto |
-| Tests E2E reales | G-18 | Suite de tests de integración para servidor MCP |
+| Agregar incrementos de validación arquitectónica | Nuevo seguimiento | Grafo de importaciones, violaciones de capa, aislamiento de contextos |
+| Endurecer transporte HTTP MCP | G-20 | Conformidad de protocolo y evidencia de modo de autenticación |
+| Producir evidencia smoke MCP | G-18, G-20 | Initialize, tools/list, resources/list, prompts/list |
 
 ### Fase 3: Consolidación (Semanas 7-12)
 
@@ -361,13 +349,13 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 | ADRs | 100% (70+ archivos en 4 runtimes) |
 | Rulesets (JSON) | 86% (43 archivos en 13 categorías) |
 | JSON Schemas | 100% (14/14 archivos) |
-| Comandos CLI | 82% (beta funcional; tests de release no verdes) |
-| Servidor MCP | 78% (stdio más HTTP mínimo; evidencia smoke pendiente) |
+| Comandos CLI | 85% (beta funcional; tests verdes, statement/line coverage sobre 80%, branch/function y teardown pendientes) |
+| Servidor MCP | 80% (stdio más HTTP mínimo; evidencia smoke pendiente) |
 | Herramientas MCP | 95% (17 herramientas funcionales) |
 | Recursos MCP | 90% (8 recursos) |
 | Prompts MCP | 95% (7 prompts) |
 | Architecture Drift | 85% (detección + historial + tendencias) |
-| Cobertura Tests | No verificada hasta que la suite Jest completa pase |
+| Cobertura Tests | Parcialmente verificada: 82.27% statements, 83.22% lines; hardening branch/function pendiente |
 
 ### Completitud de Pilares de Visión
 
@@ -375,8 +363,8 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 |-----------------|-------------|--------------|
 | Evolith Core | 90% | Integraciones ACL (diferidas) |
 | Evolith Tracker | 0% | Futuro — fuera de alcance |
-| CLI | 82% | Beta funcional |
-| MCP | 78% | HTTP mínimo implementado; hardening pendiente |
+| CLI | 85% | Tests verdes; statement/line coverage sobre 80%; evidencia branch/function pendiente |
+| MCP | 80% | HTTP mínimo implementado; hardening pendiente |
 
 ---
 
@@ -389,7 +377,7 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 5. **Implementación CLI Completa** — 13 comandos cubriendo todos los requisitos de visión
 6. **Servidor MCP Funcional** — 596 líneas de implementación JSON-RPC con 17 herramientas, 8 recursos, 7 prompts
 7. **Detección de Architecture Drift** — Detección, almacenamiento de historial y análisis de tendencias
-8. **Inventario Amplio de Tests** — existen muchos specs, pero la cobertura de release no está verificada hasta que la suite esté verde
+8. **Inventario Amplio de Tests** — la suite Jest local completa está verde; statement/line coverage supera 80%, con hardening branch/function pendiente
 9. **Gobernanza Federada** — Herencia y contratos de satélite funcionando
 10. **Phase Gates SDLC** — Ejecutables vía CLI con manifiestos de handoff
 
@@ -409,10 +397,10 @@ Estado Actual                        Meta de Visión
 ```
 
 **Camino Crítico:**
-1. **Estabilidad de Cobertura Tests (G-17)** — Dejar Jest verde, luego verificar y mantener >80%
-2. **Profundidad de Validación Arquitectura (G-21)** — Superficial → análisis estático profundo
-3. **Transporte HTTP MCP (G-20)** — Endurecer la implementación HTTP/SSE mínima con evidencia smoke
-4. **Limpieza de Código (G-19, G-22, G-23)** — Eliminar artefactos muertos, corregir nombres
+1. **Estabilidad de Cobertura Tests (G-17)** — Mantener statement/line coverage >80% y elevar branch/function coverage hacia la misma barra
+2. **Transporte HTTP MCP (G-20)** — Endurecer la implementación HTTP/SSE mínima con evidencia smoke
+3. **Evidencia E2E MCP (G-18)** — Producir evidencia smoke a nivel cliente para release readiness
+4. **Incrementos de Validación Arquitectónica** — Agregar analizadores estáticos más profundos como nuevos seguimientos acotados
 
 ---
 

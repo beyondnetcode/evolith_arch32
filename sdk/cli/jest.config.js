@@ -9,7 +9,7 @@ module.exports = {
     '!src/test/**',
   ],
   coverageDirectory: 'coverage',
-  coverageReporters: ['text', 'lcov', 'html'],
+  coverageReporters: ['text', 'lcov', 'html', 'json-summary'],
   moduleDirectories: ['node_modules', 'src'],
   transform: {
     '^.+\\.ts$': ['ts-jest', {

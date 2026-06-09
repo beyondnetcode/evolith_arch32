@@ -673,12 +673,21 @@ describe('MCP Server', () => {
       await new Promise(resolve => setTimeout(resolve, 50));
 
       const http = await import('node:http');
-      const sseReq = http.get(`http://127.0.0.1:${testPort}/sse`, () => {});
-
-      await server.stop();
-      await new Promise(resolve => setTimeout(resolve, 50));
-
-      sseReq.destroy();
+      await new Promise<void>((resolve, reject) => {
+        const sseReq = http.get(`http://127.0.0.1:${testPort}/sse`, (res) => {
+          res.once('data', () => {
+            server.stop().then(() => {
+              sseReq.destroy();
+              resolve();
+            }).catch(reject);
+          });
+          res.once('error', reject);
+        });
+        sseReq.once('error', (err: NodeJS.ErrnoException) => {
+          if (err.code === 'ECONNRESET' || err.code === 'ECONNREFUSED') resolve();
+          else reject(err);
+        });
+      });
     });
   });
 });

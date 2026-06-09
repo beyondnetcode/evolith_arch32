@@ -111,6 +111,11 @@ services.AddAopProxy<IRequestHandler<CreateCommand, Result<Response>>, CreateCom
 - El envoltorio de continuación async añade un pequeño overhead de asignación por llamada de método async (~1 asignación).
 - El escaneo de ensamblados de MediatR registra los handlers antes de `AddAopProxy<>` — el orden de registro del proxy debe ser explícito.
 
+### Decisiones No Tomadas
+
+- **Tejido en tiempo de compilación** (PostSharp, Fody) no fue evaluado. La complejidad de build añadida no está justificada a la escala habitual de un satélite.
+- **Castle.DynamicProxy / interceptores Autofac** siguen disponibles como alternativas futuras si la restricción de interfaz de `DispatchProxy` resulta limitante.
+
 ---
 
 ## Referencias

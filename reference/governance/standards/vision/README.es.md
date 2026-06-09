@@ -5,7 +5,7 @@
 * [maturity-evaluation](./maturity-evaluation.es.md)
 * [maturity-matrix](./maturity-matrix.es.md)
 * [evolith-product-vision-master](./evolith-product-vision-master.es.md)
-* [gap-analysis-core](./gap-analysis-core.es.md) ⚠️ **NUEVO** — Análisis estado actual vs visión
+* [gap-analysis-core](./gap-analysis-core.es.md) **[NUEVO]** — Análisis estado actual vs visión
 
 ---
 [Volver al Nivel Superior](../README.es.md)

@@ -253,12 +253,21 @@ smart-cli mcp serve --transport http --port 3000
 | `evolith-agent-install` | Instalar nuevo agente |
 | `evolith-agent-list` | Listar agentes instalados |
 | `evolith-agent-validate` | Validar ruleset del agente |
-| `evolith-architecture-validate` | Validar arquitectura |
-| `evolith-sdlc-handoff` | Generar transición de fase |
-| `evolith-sdlc-status` | Mostrar estado de fase SDLC |
-| `evolith-config-get` | Obtener valor de configuración |
-| `evolith-config-set` | Establecer valor de configuración |
+| `evolith-agent-upgrade` | Actualizar un agente existente |
+| `evolith-agent-remove` | Eliminar un agente |
+| `evolith-architecture-validate` | Validar arquitectura (F1/F2/F3) con análisis profundo opcional |
+| `evolith-sdlc-handoff` | Generar manifiesto de artefactos de transición de fase |
+| `evolith-sdlc-status` | Mostrar estado de phase gate SDLC |
+| `evolith-config-get` | Obtener valor de configuración de `evolith.yaml` |
+| `evolith-config-set` | Establecer valor de configuración en `evolith.yaml` |
 | `evolith-metrics` | Obtener métricas del servidor MCP |
+| `evolith-moscow-create` | Crear un nuevo análisis de priorización MoSCoW |
+| `evolith-moscow-load` | Cargar un análisis MoSCoW existente |
+| `evolith-moscow-update` | Actualizar un ítem en un análisis MoSCoW |
+| `evolith-moscow-remove` | Eliminar un ítem de un análisis MoSCoW |
+| `evolith-moscow-list` | Listar todos los análisis MoSCoW de un repositorio |
+| `evolith-moscow-validate` | Validar la corrección de un análisis MoSCoW |
+| `evolith-moscow-report` | Generar un reporte markdown desde un análisis MoSCoW |
 
 ### Configuración para Cursor AI
 
@@ -307,15 +316,15 @@ Resultado: ✓ El repositorio cumple con los estándares de Evolith
          Reglas verificadas: 12
          Todas las puertas pasaron
 
-Tú: Muéstrame los ADR
-Agente: Déjame obtener la lista de ADR...
+Tú: Muéstrame el estado SDLC
+Agente: Déjame verificar el estado de los phase gates...
 
-      await mcp.callTool('evolith-adr-list', {})
+      await mcp.callTool('evolith-sdlc-status', {
+        path: '/user/project'
+      })
 
-Resultado: Se encontraron 5 ADR:
-         - ADR-0001: Plantilla de Registro de Decisión de Arquitectura
-         - ADR-0002: Arquitectura Hexagonal (aceptado)
-         - ADR-0003: Pirámide de Pruebas (aceptado)
+Resultado: Fase 1 — 3 gates pasados, 0 fallados
+         Todos los artefactos de evidencia presentes
 ```
 
 ## Configuración
@@ -399,8 +408,14 @@ npm link  # Enlazar globalmente para pruebas
 ### Ejecutar Pruebas
 
 ```bash
+# Ejecutar todas las pruebas
 npm test
+
+# Ejecutar con reporte de cobertura
+npm run test:cov
 ```
+
+**Cobertura (v0.0.3-beta):** 88.7% statements · 89.8% lines · 77.0% branches · 83.6% functions · 1 369 tests
 
 ### Estructura del Proyecto
 

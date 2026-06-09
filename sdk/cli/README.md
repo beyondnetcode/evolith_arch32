@@ -247,12 +247,21 @@ The smoke verifies `initialize`, `tools/list`, `resources/list`, `prompts/list`,
 | `evolith-agent-install` | Install new agent |
 | `evolith-agent-list` | List installed agents |
 | `evolith-agent-validate` | Validate agent ruleset |
-| `evolith-architecture-validate` | Validate architecture |
-| `evolith-sdlc-handoff` | Generate phase handoff |
-| `evolith-sdlc-status` | Show SDLC phase status |
-| `evolith-config-get` | Get configuration value |
-| `evolith-config-set` | Set configuration value |
+| `evolith-agent-upgrade` | Upgrade an existing agent |
+| `evolith-agent-remove` | Remove an agent |
+| `evolith-architecture-validate` | Validate architecture (F1/F2/F3) with optional deep analysis |
+| `evolith-sdlc-handoff` | Generate phase handoff artifact manifest |
+| `evolith-sdlc-status` | Show SDLC phase gate status |
+| `evolith-config-get` | Get configuration value from `evolith.yaml` |
+| `evolith-config-set` | Set configuration value in `evolith.yaml` |
 | `evolith-metrics` | Get MCP server metrics |
+| `evolith-moscow-create` | Create a new MoSCoW prioritization analysis |
+| `evolith-moscow-load` | Load an existing MoSCoW analysis |
+| `evolith-moscow-update` | Update an item in a MoSCoW analysis |
+| `evolith-moscow-remove` | Remove an item from a MoSCoW analysis |
+| `evolith-moscow-list` | List all MoSCoW analyses for a repository |
+| `evolith-moscow-validate` | Validate a MoSCoW analysis for correctness |
+| `evolith-moscow-report` | Generate a markdown report from a MoSCoW analysis |
 
 ### Cursor AI Configuration
 
@@ -301,15 +310,15 @@ Result: ✓ Repository is compliant with Evolith standards
         Rules checked: 12
         All gates passed
 
-You: Show me the ADRs
-Agent: Let me fetch the ADR list...
+You: Show me the SDLC status
+Agent: Let me check the phase gate status...
 
-      await mcp.callTool('evolith-adr-list', {})
+      await mcp.callTool('evolith-sdlc-status', {
+        path: '/user/project'
+      })
 
-Result: Found 5 ADRs:
-        - ADR-0001: Architecture Decision Record Template
-        - ADR-0002: Hexagonal Architecture (accepted)
-        - ADR-0003: Testing Pyramid (accepted)
+Result: Phase 1 — 3 gates passed, 0 failed
+        All evidence artifacts present
 ```
 
 ## Configuration
@@ -393,8 +402,14 @@ npm link  # Link globally for testing
 ### Running Tests
 
 ```bash
+# Run all tests
 npm test
+
+# Run with coverage report
+npm run test:cov
 ```
+
+**Coverage (as of v0.0.3-beta):** 88.7% statements · 89.8% lines · 77.0% branches · 83.6% functions · 1 369 tests
 
 ### Project Structure
 

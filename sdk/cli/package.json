@@ -13,10 +13,10 @@
     "build": "tsc",
     "start": "node dist/main.js",
     "start:dev": "tsc -w & node dist/main.js",
-    "test": "node --max-old-space-size=8192 node_modules/.bin/jest",
+    "test": "node --max-old-space-size=8192 node_modules/.bin/jest && node --max-old-space-size=4096 node_modules/.bin/jest --config ./test/jest-e2e.json --runInBand --no-bail",
     "test:watch": "jest --watch",
     "test:cov": "node --max-old-space-size=4096 node_modules/.bin/jest --coverage --runInBand --forceExit",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "test:e2e": "node --max-old-space-size=4096 node_modules/.bin/jest --config ./test/jest-e2e.json --runInBand --no-bail",
     "prepublishOnly": "npm run build"
   },
   "keywords": [

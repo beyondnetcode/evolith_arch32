@@ -88,7 +88,8 @@ product:
       const result = await runCli(['validate', '--satellite', testRepoPath, '--format', 'json']);
 
       expect(result.exitCode).toBe(0);
-      expect(result.stdout).toContain('passed');
+      // Accept 'passed' or 'warning' — SHOULD violations produce warnings, not failures
+      expect(result.stdout).toMatch(/"status":\s*"(passed|warning)"/);
     });
 
     it('should fail without evolith.yaml', async () => {

@@ -234,14 +234,11 @@ export class RuleEvaluationEngine {
     rule: NormalizedRule,
     ctx: EvaluationContext,
   ): Promise<RuleEvaluationResult> {
-    const packagePaths = [
-      path.join(ctx.satellitePath, 'package.json'),
-      path.join(ctx.corePath, 'sdk', 'cli', 'package.json'),
-    ];
-
     const violations: string[] = [];
+    // DEP-10: check all workspace package.json files under satellitePath
+    // DEP-01/02/03: check only the satellite root package.json
     const targets = rule.id === 'DEP-10'
-      ? packagePaths
+      ? await this.findWorkspacePackageJsons(ctx.satellitePath)
       : [path.join(ctx.satellitePath, 'package.json')];
 
     for (const pkgPath of targets) {
@@ -367,6 +364,11 @@ export class RuleEvaluationEngine {
       // TAX-06 applies to satellites only, not to Core itself
       if (ctx.satellitePath === ctx.corePath) {
         return { rule, result: 'skipped', message: 'Not applicable when validating Core itself' };
+      }
+      // Only evaluate if the satellite has a package.json (i.e. it is a real code project)
+      const hasPkg = await this.fs.exists(path.join(ctx.satellitePath, 'package.json'));
+      if (!hasPkg) {
+        return { rule, result: 'skipped', message: 'Satellite has no package.json — directory structure check not applicable' };
       }
       const required = ['src', 'tests', 'docs'];
       const missing = [];
@@ -646,6 +648,35 @@ export class RuleEvaluationEngine {
   private async findSpecFiles(dir: string): Promise<string[]> {
     const all = await this.listFilesRecursive(dir);
     return all.filter(f => f.includes('.spec.') || f.includes('.test.'));
+  }
+
+  private async findWorkspacePackageJsons(rootPath: string): Promise<string[]> {
+    const rootPkg = path.join(rootPath, 'package.json');
+    const files: string[] = [];
+
+    if (await this.fs.exists(rootPkg)) {
+      files.push(rootPkg);
+      const raw = await this.fs.readJson(rootPkg) as Record<string, unknown>;
+      const workspaces = raw['workspaces'] as string[] | { packages?: string[] } | undefined;
+      const patterns: string[] = Array.isArray(workspaces)
+        ? workspaces
+        : (workspaces?.packages ?? []);
+
+      for (const pattern of patterns) {
+        // Resolve simple glob patterns like 'sdk/*' or 'packages/*'
+        const base = pattern.replace(/\/\*.*$/, '');
+        const wsBase = path.join(rootPath, base);
+        if (await this.fs.exists(wsBase)) {
+          const entries = await this.fs.readdirNames(wsBase);
+          for (const entry of entries) {
+            const pkgPath = path.join(wsBase, entry, 'package.json');
+            if (await this.fs.exists(pkgPath)) files.push(pkgPath);
+          }
+        }
+      }
+    }
+
+    return files.length > 0 ? files : [rootPkg];
   }
 
   toValidationIssues(results: RuleEvaluationResult[]): ValidationIssue[] {

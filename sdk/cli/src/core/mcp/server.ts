@@ -18,6 +18,9 @@ export interface McpServerOptions {
   apiKey?: string;
   port?: number;
   transport?: McpTransport;
+  /** For testing only: inject custom streams into the stdio transport. */
+  stdin?: import('node:stream').Readable;
+  stdout?: import('node:stream').Writable;
 }
 
 interface McpServerInstance {
@@ -325,7 +328,9 @@ class DirectMcpServer {
     port: number = 49100,
     apiKey?: string,
     rulesetValidator?: RulesetValidatorService,
-    metricsService?: McpMetricsService
+    metricsService?: McpMetricsService,
+    stdin?: import('node:stream').Readable,
+    stdout?: import('node:stream').Writable,
   ) {
     this.transportType = transportType;
     this.rulesetValidator = rulesetValidator || new RulesetValidatorService();
@@ -334,7 +339,7 @@ class DirectMcpServer {
     if (transportType === 'http') {
       this.transport = new MinimalHttpTransport(port, apiKey);
     } else {
-      this.transport = new MinimalStdioTransport();
+      this.transport = new MinimalStdioTransport(stdin, stdout);
     }
   }
 
@@ -804,7 +809,9 @@ export async function startMcpServer(options: McpServerOptions = {}) {
     port,
     options.apiKey,
     options.rulesetValidator,
-    options.metricsService
+    options.metricsService,
+    options.stdin,
+    options.stdout,
   );
   await server.start();
   return server;

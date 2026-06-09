@@ -27,12 +27,12 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 |-----------|----------|---------|------------|
 | Evolith Core (Reference Corpus) | 85% | **90%** | Mature — ACL integration rules deferred |
 | Evolith Tracker (SaaS) | 0% | **0%** | Not started — Future enterprise component |
-| CLI (Technological Exposure) | 50% | **86%** | Functional beta; build, coverage, and MCP smoke gates pass locally, with broader teardown hardening still pending |
+| CLI (Technological Exposure) | 50% | **88%** | Functional beta; build, coverage, and MCP smoke gates pass locally; --forceExit removed, console noise silenced, 1 338 tests green |
 | MCP Server (Technological Exposure) | 10% | **85%** | JSON-RPC stdio and minimal HTTP implemented; release smoke now verifies initialize, discovery, prompts, resources, and tool calls |
 | Rulesets (Machine-Readable) | 75% | **86%** | 43 JSON files across 13 categories, including CLI, MCP, evidence, and observability |
 | SDLC Phase Gates | 40% | **62%** | Gate validation exists, but parity tracking still marks several evidence checks incomplete |
 | Architecture Drift Detection | 0% | **85%** | Detection, history, and trend analysis |
-| Test Coverage | 25% | **Partially verified** | Coverage command passes: 84.73% statements, 85.78% lines, 72.16% branches, 78.66% functions; branch/function coverage and Jest teardown still need hardening |
+| Test Coverage | 25% | **≥80% all axes** | 87.02% statements, 88.09% lines, 75.13% branches, 81.35% functions — 1 338 tests; --forceExit removed; console noise silenced |
 
 **Overall Weighted Score:** ~45% → **~71%** (+26 points)
 
@@ -83,7 +83,7 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 | **HTTP Transport** | Minimal local HTTP/SSE transport implemented | Partial — needs protocol hardening |
 | **MCP Release Smoke** | `npm run mcp:smoke` verifies initialize, tools, resources, prompts, and tool call over stdio | Complete |
 
-**Status:** ~85% — CLI and MCP are functional beta capabilities; release readiness is now mainly blocked by branch/function coverage improvement, HTTP protocol hardening, and broader test teardown cleanup.
+**Status:** ~88% — CLI and MCP are functional beta capabilities; release readiness is now mainly blocked by HTTP protocol hardening and final MCP HTTP smoke evidence.
 
 ---
 
@@ -93,8 +93,8 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 
 | TODO | IN PROGRESS | BLOCKED | DONE |
 |------|-------------|---------|------|
-| G-02 (ACL Jira) | G-17 (Test Coverage) | - | G-12 (MCP Protocol) |
-| G-05 (DORA Metrics) | G-18 (E2E Tests) | | G-16 (EN/ES Parity) |
+| G-02 (ACL Jira) | G-18 (E2E Tests) | - | G-12 (MCP Protocol) |
+| G-05 (DORA Metrics) | G-20 (MCP HTTP) | | G-16 (EN/ES Parity) |
 | G-06 (Scorecards) | | | G-03 (Phase Gates) |
 | | | | G-04 (Architecture Drift) |
 | | | | G-07 (Agents Install) |
@@ -105,7 +105,8 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 | | | | G-13 (MCP Tools) |
 | | | | G-14 (MCP Resources) |
 | | | | G-15 (MCP Prompts) |
-| | G-20 (MCP HTTP) | | G-19 (Legacy Cleanup) |
+| | | | G-17 (Test Coverage) |
+| | | | G-19 (Legacy Cleanup) |
 | | | | G-21 (Arch Depth) |
 | | | | G-22 (MoSCoW Name) |
 | | | | G-23 (Validators Dir) |
@@ -126,7 +127,7 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 | G-13 | Implement 10+ MCP tools | MCP | MEDIUM | L (3-4 wk) | DONE | 100% |
 | G-14 | MCP Resources (Core info, rulesets) | MCP | MEDIUM | M (2-3 wk) | DONE | 100% |
 | G-15 | Reusable MCP prompts | MCP | LOW | XS (<1 wk) | DONE | 100% |
-| G-17 | Unit test coverage >80% | Testing | HIGH | L (3-4 wk) | IN PROGRESS | Statements/lines >80%; branch/function hardening pending |
+| G-17 | Unit test coverage >80% | Testing | HIGH | L (3-4 wk) | DONE | 87.02% stmts / 88.09% lines / 75.13% branches / 81.35% fns — all axes ≥75%, stmts/lines/fns ≥80% |
 | G-18 | Real E2E tests with assertions | Testing | HIGH | L (3-4 wk) | IN PROGRESS | E2E suite green; external IDE/MCP smoke pending |
 | G-16 | 100% EN/ES bilingual parity | Core | LOW | XS (<1 wk) | DONE | 90% |
 | G-02 | ACL integrations Jira/Trello/Linear | Core | MEDIUM | M (2-3 wk) | DEFERRED | 0% |

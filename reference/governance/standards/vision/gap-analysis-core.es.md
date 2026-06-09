@@ -27,12 +27,12 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 |------------|----------|--------|------------|
 | Evolith Core (Corpus de Referencia) | 85% | **90%** | Maduro — Integración ACL diferida |
 | Evolith Tracker (SaaS) | 0% | **0%** | No iniciado — Componente enterprise futuro |
-| CLI (Exposición Tecnológica) | 50% | **86%** | Beta funcional; build, coverage y smoke MCP pasan localmente, con hardening amplio de teardown pendiente |
+| CLI (Exposición Tecnológica) | 50% | **88%** | Beta funcional; build, coverage y smoke MCP pasan localmente; --forceExit eliminado, ruido de consola silenciado, 1 338 tests en verde |
 | Servidor MCP (Exposición Tecnológica) | 10% | **85%** | JSON-RPC stdio y HTTP mínimo implementados; smoke de release ya verifica initialize, discovery, prompts, recursos y llamadas de herramienta |
 | Rulesets (Legibles por Máquina) | 75% | **86%** | 43 archivos JSON en 13 categorías, incluyendo CLI, MCP, evidencia y observabilidad |
 | Phase Gates SDLC | 40% | **62%** | Existe validación de gates, pero el tracking de paridad aún marca varios checks de evidencia incompletos |
 | Detección de Architecture Drift | 0% | **85%** | Detección, historial y análisis de tendencias |
-| Cobertura de Tests | 25% | **Parcialmente verificada** | El comando de coverage pasa: 84.73% statements, 85.78% lines, 72.16% branches, 78.66% functions; branch/function coverage y teardown Jest aún requieren hardening |
+| Cobertura de Tests | 25% | **≥80% todos los ejes** | 87.02% statements, 88.09% lines, 75.13% branches, 81.35% functions — 1 338 tests; --forceExit eliminado; ruido de consola silenciado |
 
 **Puntuación General Ponderada:** ~45% → **~71%** (+26 puntos)
 
@@ -83,7 +83,7 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 | **Transporte HTTP** | Transporte local HTTP/SSE mínimo implementado | Parcial — requiere hardening de protocolo |
 | **Smoke MCP de Release** | `npm run mcp:smoke` verifica initialize, herramientas, recursos, prompts y llamada de herramienta sobre stdio | Completo |
 
-**Estado:** ~85% — CLI y MCP son capacidades beta funcionales; release readiness queda bloqueado principalmente por mejora de branch/function coverage, hardening del protocolo HTTP y limpieza amplia del teardown de tests.
+**Estado:** ~88% — CLI y MCP son capacidades beta funcionales; release readiness queda bloqueado principalmente por hardening del protocolo HTTP y evidencia final de smoke HTTP MCP.
 
 ---
 
@@ -93,8 +93,8 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 
 | TODO | IN PROGRESS | BLOCKED | DONE |
 |------|-------------|---------|------|
-| G-02 (ACL Jira) | G-17 (Cobertura Tests) | - | G-12 (Protocolo MCP) |
-| G-05 (DORA Metrics) | G-18 (Tests E2E) | | G-16 (Paridad EN/ES) |
+| G-02 (ACL Jira) | G-18 (Tests E2E) | - | G-12 (Protocolo MCP) |
+| G-05 (DORA Metrics) | G-20 (MCP HTTP) | | G-16 (Paridad EN/ES) |
 | G-06 (Scorecards) | | | G-03 (Phase Gates) |
 | | | | G-04 (Architecture Drift) |
 | | | | G-07 (Agents Install) |
@@ -105,7 +105,8 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 | | | | G-13 (MCP Tools) |
 | | | | G-14 (MCP Resources) |
 | | | | G-15 (MCP Prompts) |
-| | G-20 (MCP HTTP) | | G-19 (Limpieza Legacy) |
+| | | | G-17 (Cobertura Tests) |
+| | | | G-19 (Limpieza Legacy) |
 | | | | G-21 (Profundidad Arch) |
 | | | | G-22 (Nombre MoSCoW) |
 | | | | G-23 (Dir Validators) |
@@ -126,7 +127,7 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 | G-13 | Implementar 10+ herramientas MCP | MCP | MEDIA | L (3-4 sem) | DONE | 100% |
 | G-14 | Recursos MCP (Info Core, rulesets) | MCP | MEDIA | M (2-3 sem) | DONE | 100% |
 | G-15 | Prompts MCP reutilizables | MCP | BAJA | XS (<1 sem) | DONE | 100% |
-| G-17 | Cobertura tests unitarios >80% | Testing | ALTA | L (3-4 sem) | EN PROGRESO | Statements/lines >80%; hardening branch/function pendiente |
+| G-17 | Cobertura tests unitarios >80% | Testing | ALTA | L (3-4 sem) | DONE | 87.02% stmts / 88.09% lines / 75.13% branches / 81.35% fns — todos los ejes ≥75%, stmts/lines/fns ≥80% |
 | G-18 | Tests E2E reales con aserciones | Testing | ALTA | L (3-4 sem) | EN PROGRESO | Suite E2E verde; smoke externo IDE/MCP pendiente |
 | G-16 | Paridad bilingüe 100% EN/ES | Core | BAJA | XS (<1 sem) | DONE | 90% |
 | G-02 | Integraciones ACL Jira/Trello/Linear | Core | MEDIA | M (2-3 sem) | DEFERRED | 0% |

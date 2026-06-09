@@ -6,7 +6,7 @@
 Aprobado
 
 ## Fecha
-2026-05-10
+2026-06-09
 
 ## Contexto y Propósito
 Como Director Técnico y Arquitecto Empresarial, es crítico medir la calidad objetiva y la evolución del Sistema de Referencia utilizando estándares internacionalmente reconocidos.
@@ -76,15 +76,99 @@ Evaluamos la arquitectura del Esqueleto de Referencia frente a los 5 pilares cr�
 
 ---
 
-## 3. Resumen Ejecutivo y Calificación
+---
+
+## 3. Capa de Exposición Tecnológica — Evaluación de Madurez CLI + MCP
+
+Esta sección extiende la evaluación TOGAF ACMM para cubrir la **capa de Exposición Tecnológica** (CLI de Evolith + Servidor MCP), requerida por [G-25](./gap-analysis-core.es.md#g-25-maturity-matrix-cobertura-climcp-resuelta-100).
+
+### Dimensión 1: Conformidad de Protocolo MCP y Transporte
+**Nivel de Madurez Actual: 4 (Gestionado)**
+* **Evidencia:**
+  * `MinimalStdioTransport` — JSON-RPC 2.0 con buffer de líneas sobre stdin/stdout; `onmessage`, `onerror`, `onclose` todos conectados.
+  * `MinimalHttpTransport` — servidor HTTP/SSE con `/health`, `/message` (POST), `/sse` (GET), fallback 404; autenticación Bearer-token y X-API-Key validada por solicitud.
+  * Outer-catch endurecido: `transport.send()` en recuperación de error envuelto en try/catch anidado — sin rechazos no manejados.
+  * Limpieza de clientes SSE muertos en escritura fallida.
+  * Script `mcp:smoke` verifica `initialize`, `tools/list`, `resources/list`, `prompts/list` y `tools/call` en cada ejecución contra el binario compilado.
+* **Camino al Nivel 5:** Evidencia smoke de integración IDE externa (Cursor / Claude Desktop) formalizada en CI (G-18). Tests de conformidad de protocolo automatizados contra el changelog de versiones de la especificación MCP.
+
+### Dimensión 2: Cobertura de Tests y Puertas de Calidad
+**Nivel de Madurez Actual: 4 (Gestionado)**
+* **Evidencia:**
+  * 1 369 tests en 63 suites unitarias + 11 suites E2E — todos verdes.
+  * Cobertura statements: **88.70%** · Lines: **89.80%** · Branches: **76.93%** (target ≥75%) · Functions: **83.58%**.
+  * `--forceExit` eliminado; teardown limpio; sin warnings de open-handles.
+  * Artefacto de resumen JSON generado via reporter `json-summary`.
+  * `server.ts` (núcleo MCP): 85.8% statements · 96% functions.
+* **Camino al Nivel 5:** Enforcement de puertas de cobertura en CI como check bloqueante (actualmente advisory). Elevar branch coverage a ≥80% con el tiempo.
+
+### Dimensión 3: Completitud de Exposición de Gobernanza
+**Nivel de Madurez Actual: 4 (Gestionado)**
+* **Evidencia:**
+  * **17 herramientas MCP** cubriendo validate, ciclo de vida de agentes (5), arquitectura F1/F2/F3, handoff/estado SDLC, config get/set, métricas y priorización MoSCoW (7).
+  * **8 recursos MCP** exponiendo rulesets, phase-gates, agentes, versiones, config, moscow y acl en tiempo real.
+  * **7 prompts MCP** para flujos de validate, onboarding, arquitectura, phase-gate, handoff, ruleset y moscow.
+  * Todas las herramientas, recursos y prompts registrados y cubiertos por la suite de tests de enrutamiento HTTP.
+* **Camino al Nivel 5:** Actualización dinámica de recursos (hot-reload de rulesets sin reiniciar el servidor). Versionado de recursos alineado a actualizaciones del corpus Core.
+
+### Dimensión 4: Experiencia del Desarrollador CLI
+**Nivel de Madurez Actual: 3 (Definido)**
+* **Evidencia:**
+  * 13 comandos cubriendo todas las operaciones requeridas por la visión.
+  * Completado de shell para bash, zsh y fish.
+  * Documentación bilingüe (paridad EN/ES 100%, validada por script automatizado).
+  * Ejemplos de configuración para Cursor AI y Claude Desktop en README.
+  * `mcp:smoke` ejecutable en menos de 5 segundos.
+* **Camino al Nivel 4:** Evidencia smoke de integración IDE end-to-end (G-18). Composite action CI para satélites para que `smart-cli validate` se ejecute automáticamente en PRs de satélites (G-27).
+
+### Dimensión 5: Enforcement de Gobernanza Federada en Runtime
+**Nivel de Madurez Actual: 3 (Definido)**
+* **Evidencia:**
+  * Modelo de herencia, contratos de satélites y reglas de Open-Core boundary completamente definidos.
+  * `smart-cli validate --ruleset inheritance` ejecutable por cualquier satélite.
+  * Archivos de reglas ACL presentes en `rulesets/acl/`.
+* **Camino al Nivel 4:** Composite action de GitHub Actions (G-27) que los repositorios satélite incluyen para ejecutar `smart-cli validate` como gate bloqueante de PR. Adaptadores ACL en runtime para Jira/Trello/Linear (G-02, alcance Tracker SaaS).
+
+### Score Resumen CLI + MCP
+
+| Dimensión | Nivel | Score |
+|-----------|-------|-------|
+| Conformidad de Protocolo y Transporte | 4 — Gestionado | 4.0 |
+| Cobertura de Tests y Puertas de Calidad | 4 — Gestionado | 4.0 |
+| Completitud de Exposición de Gobernanza | 4 — Gestionado | 4.0 |
+| Experiencia del Desarrollador CLI | 3 — Definido | 3.0 |
+| Enforcement de Gobernanza Federada | 3 — Definido | 3.0 |
+
+**Score Capa CLI + MCP: 3.6 / 5.0 (De Definido a Gestionado)**
+
+---
+
+## 4. Resumen Ejecutivo y Calificación
 
 Basado en los criterios TOGAF ACMM aplicados a nuestra arquitectura actual evaluada con apoyo del método spec-driven AI-DD:
 
-**Puntuación Global de Madurez Arquitectónica del Esqueleto de Referencia: 3.8 / 5.0 (De Definido a Gestionado)**
+### Esqueleto de Referencia (Arquitectura de Runtime)
+
+**Puntuación: 3.8 / 5.0 (De Definido a Gestionado)**
 
 La arquitectura del Esqueleto de Referencia está actualmente en transición de un sistema perfectamente documentado (Nivel 3) a un sistema totalmente automatizado y gobernado (Nivel 4). La aplicación estricta de ADRs, límites estáticos (`eslint-plugin-boundaries`), y puertas de calidad CI/CD asegura que el sistema no se degrade en deuda técnica.
 
 Para alcanzar el **Nivel 5 (Optimizado)**, la organización de ingeniería debe centrarse en la Ingeniería del Caos, despliegues Multi-Región Activo-Activo, y la eventual división en microservicios Dapr a medida que la carga operativa lo demande.
+
+### Capa de Exposición Tecnológica (CLI + MCP)
+
+**Puntuación: 3.6 / 5.0 (De Definido a Gestionado)**
+
+La CLI y el servidor MCP han alcanzado un estado beta funcional con sólida cobertura de tests y evidencia smoke verificada. La implementación del protocolo está endurecida (outer-catch, lifecycle handlers, auth). El delta restante hacia el Nivel 4 es el enforcement de CI en satélites (G-27) y la evidencia smoke formal de IDE externo (G-18).
+
+### Score Combinado Evolith Core
+
+| Capa | Peso | Score |
+|------|------|-------|
+| Esqueleto de Referencia (Arquitectura de Runtime) | 60% | 3.8 |
+| Exposición Tecnológica (CLI + MCP) | 40% | 3.6 |
+
+**Madurez Global Evolith Core: 3.72 / 5.0 (De Definido a Gestionado)**
 
 ---
 

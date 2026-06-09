@@ -6,7 +6,7 @@
 Approved
 
 ## Date
-2026-05-10
+2026-06-09
 
 ## Context & Purpose
 As the Technical Manager and Enterprise Architect, it is critical to measure the objective quality and evolution of the Reference System using internationally recognized standards. 
@@ -76,15 +76,99 @@ We evaluate the Reference Skeleton architecture against the 5 critical pillars o
 
 ---
 
-## 3. Executive Summary & Scoring
+---
+
+## 3. Technological Exposure Layer — CLI + MCP Maturity Assessment
+
+This section extends the TOGAF ACMM assessment to cover the **Technological Exposure layer** (Evolith CLI + MCP Server) as required by [G-25](./gap-analysis-core.md#g-25-maturity-matrix-climcp-coverage-resolved-100).
+
+### Dimension 1: MCP Protocol Conformance & Transport
+**Current Maturity Level: 4 (Managed)**
+* **Evidence:**
+  * `MinimalStdioTransport` — line-buffered JSON-RPC 2.0 over stdin/stdout; `onmessage`, `onerror`, `onclose` all wired.
+  * `MinimalHttpTransport` — HTTP/SSE server with `/health`, `/message` (POST), `/sse` (GET), 404 fallback; Bearer-token and X-API-Key authentication validated per request.
+  * Outer-catch hardened: `transport.send()` inside error recovery wrapped in nested try/catch — no unhandled rejections.
+  * Dead SSE client cleanup on broken write.
+  * `mcp:smoke` script verifies `initialize`, `tools/list`, `resources/list`, `prompts/list`, and `tools/call` on every run against the compiled binary.
+* **Path to Level 5:** External IDE integration smoke (Cursor / Claude Desktop) formally evidenced as part of CI (G-18). Automated protocol conformance test against the MCP specification version changelog.
+
+### Dimension 2: Test Coverage & Quality Gates
+**Current Maturity Level: 4 (Managed)**
+* **Evidence:**
+  * 1 369 tests across 63 unit suites + 11 E2E suites — all green.
+  * Statement coverage: **88.70%** · Line: **89.80%** · Branch: **76.93%** (target ≥75%) · Function: **83.58%**.
+  * `--forceExit` removed; teardown is clean; no open-handle warnings.
+  * JSON coverage summary artifact generated via `json-summary` reporter.
+  * `server.ts` (MCP core): 85.8% statements · 96% functions.
+* **Path to Level 5:** Enforce coverage gates in CI as a blocking check (currently advisory). Lift branch coverage to ≥80% over time.
+
+### Dimension 3: Governance Exposure Completeness
+**Current Maturity Level: 4 (Managed)**
+* **Evidence:**
+  * **17 MCP tools** covering validate, agent lifecycle (5), architecture F1/F2/F3, SDLC handoff/status, config get/set, metrics, and MoSCoW prioritization (7).
+  * **8 MCP resources** exposing rulesets, phase-gates, agents, versions, config, moscow, and acl in real-time.
+  * **7 MCP prompts** for validate, onboarding, architecture, phase-gate, handoff, ruleset, and moscow workflows.
+  * All tools, resources, and prompts registered and covered by the HTTP routing test suite.
+* **Path to Level 5:** Dynamic resource refresh (hot-reload rulesets without server restart). Resource versioning aligned to Core corpus updates.
+
+### Dimension 4: CLI Developer Experience
+**Current Maturity Level: 3 (Defined)**
+* **Evidence:**
+  * 13 commands covering all vision-required operations.
+  * Shell completion for bash, zsh, and fish.
+  * Bilingual documentation (EN/ES parity 100%, validated by automated script).
+  * Cursor AI and Claude Desktop configuration examples in README.
+  * `mcp:smoke` runnable in < 5 seconds.
+* **Path to Level 4:** End-to-end IDE integration smoke evidence (G-18). Satellite CI composite action ships so `smart-cli validate` runs automatically on satellite PRs (G-27).
+
+### Dimension 5: Federated Governance Runtime Enforcement
+**Current Maturity Level: 3 (Defined)**
+* **Evidence:**
+  * Inheritance model, satellite contracts, and Open-Core boundary rules fully defined.
+  * `smart-cli validate --ruleset inheritance` executable by any satellite.
+  * ACL rule files present in `rulesets/acl/`.
+* **Path to Level 4:** GitHub Actions composite action (G-27) that satellite repositories include to run `smart-cli validate` as a blocking PR gate. ACL runtime adapters for Jira/Trello/Linear (G-02, Tracker SaaS scope).
+
+### CLI + MCP Summary Score
+
+| Dimension | Level | Score |
+|-----------|-------|-------|
+| Protocol Conformance & Transport | 4 — Managed | 4.0 |
+| Test Coverage & Quality Gates | 4 — Managed | 4.0 |
+| Governance Exposure Completeness | 4 — Managed | 4.0 |
+| CLI Developer Experience | 3 — Defined | 3.0 |
+| Federated Governance Enforcement | 3 — Defined | 3.0 |
+
+**CLI + MCP Layer Score: 3.6 / 5.0 (Defined to Managed)**
+
+---
+
+## 4. Executive Summary & Scoring
 
 Based on the TOGAF ACMM criteria applied to our current architecture evaluated with support from the spec-driven AI-DD method:
 
-**Overall Reference Skeleton Architectural Maturity Score: 3.8 / 5.0 (Defined to Managed)**
+### Reference Skeleton (Runtime Architecture)
 
-The Reference Skeleton architecture is currently transitioning from a perfectly documented system (Level 3) to a fully automated and governed system (Level 4). The strict enforcement of ADRs, static boundaries (`eslint-plugin-boundaries`), and CI/CD quality gates ensures that the system will not degrade into technical debt. 
+**Score: 3.8 / 5.0 (Defined to Managed)**
+
+The Reference Skeleton architecture is currently transitioning from a perfectly documented system (Level 3) to a fully automated and governed system (Level 4). The strict enforcement of ADRs, static boundaries (`eslint-plugin-boundaries`), and CI/CD quality gates ensures that the system will not degrade into technical debt.
 
 To reach **Level 5 (Optimizing)**, the engineering organization must focus on Chaos Engineering, Multi-Region Active-Active deployments, and the eventual split into Dapr microservices as operational load demands it.
+
+### Technological Exposure Layer (CLI + MCP)
+
+**Score: 3.6 / 5.0 (Defined to Managed)**
+
+The CLI and MCP server have reached a functional beta state with strong test coverage and verified smoke evidence. Protocol implementation is hardened (outer-catch, lifecycle handlers, auth). The remaining delta to Level 4 is satellite CI enforcement (G-27) and formal external IDE smoke evidence (G-18).
+
+### Combined Evolith Core Score
+
+| Layer | Weight | Score |
+|-------|--------|-------|
+| Reference Skeleton (Runtime Architecture) | 60% | 3.8 |
+| Technological Exposure (CLI + MCP) | 40% | 3.6 |
+
+**Overall Evolith Core Maturity: 3.72 / 5.0 (Defined to Managed)**
 
 ---
 

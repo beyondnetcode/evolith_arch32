@@ -1,0 +1,143 @@
+name: Evolith Governance Validation
+description: >
+  Validates repository compliance against Evolith Core standards using smart-cli validate.
+  Designed to run as a PR gate in satellite repositories.
+
+inputs:
+  satellite-path:
+    description: 'Path to the satellite repository root (default: repository root)'
+    required: false
+    default: '.'
+  core-path:
+    description: 'Path to the Evolith Core repository (for local/monorepo use)'
+    required: false
+    default: ''
+  ruleset:
+    description: 'Ruleset to validate: acl | open-core | inheritance | (empty = all)'
+    required: false
+    default: ''
+  node-version:
+    description: 'Node.js version to install'
+    required: false
+    default: '20'
+  cli-version:
+    description: 'Version of @evolith/smart-cli to install (default: latest)'
+    required: false
+    default: 'latest'
+  fail-on-violation:
+    description: 'Exit with code 1 (fail the job) when violations are found'
+    required: false
+    default: 'true'
+
+outputs:
+  compliance-status:
+    description: 'compliant | non-compliant'
+    value: ${{ steps.validate.outputs.compliance-status }}
+  violations-count:
+    description: 'Number of violations found'
+    value: ${{ steps.validate.outputs.violations-count }}
+  report-path:
+    description: 'Absolute path to the generated JSON report artifact'
+    value: ${{ steps.validate.outputs.report-path }}
+
+runs:
+  using: composite
+  steps:
+    # ------------------------------------------------------------------
+    # 1. Node.js setup
+    # ------------------------------------------------------------------
+    - name: Setup Node.js ${{ inputs.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    # ------------------------------------------------------------------
+    # 2. Install Evolith CLI globally
+    # ------------------------------------------------------------------
+    - name: Install @evolith/smart-cli@${{ inputs.cli-version }}
+      shell: bash
+      run: npm install -g @evolith/smart-cli@${{ inputs.cli-version }}
+
+    # ------------------------------------------------------------------
+    # 3. Run governance validation
+    # ------------------------------------------------------------------
+    - name: Run smart-cli validate
+      id: validate
+      shell: bash
+      run: |
+        ARGS=""
+
+        if [ "${{ inputs.satellite-path }}" != "." ]; then
+          ARGS="$ARGS --satellite ${{ inputs.satellite-path }}"
+        fi
+
+        if [ -n "${{ inputs.core-path }}" ]; then
+          ARGS="$ARGS --core ${{ inputs.core-path }}"
+        fi
+
+        if [ -n "${{ inputs.ruleset }}" ]; then
+          ARGS="$ARGS --ruleset ${{ inputs.ruleset }}"
+        fi
+
+        REPORT_PATH="${RUNNER_TEMP}/evolith-report.json"
+        echo "report-path=${REPORT_PATH}" >> "${GITHUB_OUTPUT}"
+
+        echo "::group::Evolith governance validation"
+        echo "Command: smart-cli validate ${ARGS} --format json --output ${REPORT_PATH}"
+        echo ""
+
+        set +e
+        smart-cli validate ${ARGS} --format json --output "${REPORT_PATH}"
+        EXIT_CODE=$?
+        set -e
+
+        echo "::endgroup::"
+
+        VIOLATIONS=0
+        if [ -f "${REPORT_PATH}" ] && command -v jq &>/dev/null; then
+          VIOLATIONS=$(jq -r '.summary.violations // 0' "${REPORT_PATH}" 2>/dev/null || echo "0")
+        fi
+
+        if [ "${EXIT_CODE}" -eq 0 ]; then
+          echo "compliance-status=compliant" >> "${GITHUB_OUTPUT}"
+        else
+          echo "compliance-status=non-compliant" >> "${GITHUB_OUTPUT}"
+        fi
+
+        echo "violations-count=${VIOLATIONS}" >> "${GITHUB_OUTPUT}"
+
+        if [ "${{ inputs.fail-on-violation }}" = "true" ] && [ "${EXIT_CODE}" -ne 0 ]; then
+          echo "::error::Evolith governance validation failed. Violations: ${VIOLATIONS}"
+          exit 1
+        fi
+
+    # ------------------------------------------------------------------
+    # 4. Write job summary (always runs, even on failure)
+    # ------------------------------------------------------------------
+    - name: Write governance summary
+      if: always()
+      shell: bash
+      run: |
+        STATUS="${{ steps.validate.outputs.compliance-status }}"
+        VIOLATIONS="${{ steps.validate.outputs.violations-count }}"
+
+        {
+          echo "## Evolith Governance Validation"
+          echo ""
+          if [ "${STATUS}" = "compliant" ]; then
+            echo "**Status:** Compliant -- all rules passed"
+          else
+            echo "**Status:** Non-compliant -- ${VIOLATIONS} violation(s) found"
+          fi
+          echo ""
+          echo "| Parameter | Value |"
+          echo "|-----------|-------|"
+          echo "| Satellite path | \`${{ inputs.satellite-path }}\` |"
+          if [ -n "${{ inputs.ruleset }}" ]; then
+            echo "| Ruleset | \`${{ inputs.ruleset }}\` |"
+          else
+            echo "| Ruleset | all |"
+          fi
+          echo "| CLI version | \`${{ inputs.cli-version }}\` |"
+          echo "| Node.js | \`${{ inputs.node-version }}\` |"
+        } >> "${GITHUB_STEP_SUMMARY}"

@@ -193,8 +193,37 @@ evolith sdlc status
         await this.scaffoldPython(input, projectDir);
         break;
       default:
-        throw new Error(`Runtime ${input.runtime} scaffolding not implemented`);
+        await this.scaffoldGeneric(input, projectDir);
+        break;
     }
+  }
+
+  /**
+   * Generic fallback scaffold for runtimes not yet fully supported.
+   * Creates the minimal Evolith-compatible layout so the project can be
+   * initialised without error; a SETUP.md guides the developer from there.
+   */
+  private async scaffoldGeneric(input: InitProjectInput, projectDir: string): Promise<void> {
+    await this.fs.ensureDir(`${projectDir}/src`);
+    await this.fs.writeFile(`${projectDir}/src/.gitkeep`, '');
+    const setupMd = `# ${input.name} — Setup
+
+Runtime \`${input.runtime}\` does not have a full Evolith scaffold template yet.
+
+## Next steps
+
+1. Add your entry-point files inside \`src/\`
+2. Run \`evolith validate\` once your project structure is in place
+3. Open a PR to contribute a \`scaffold${input.runtime.charAt(0).toUpperCase()}${input.runtime.slice(1)}\` method to Evolith core
+
+## Evolith commands that work today
+
+\`\`\`bash
+evolith validate
+evolith sdlc gate-status
+\`\`\`
+`;
+    await this.fs.writeFile(`${projectDir}/SETUP.md`, setupMd);
   }
 
   private async scaffoldNodeJs(input: InitProjectInput, projectDir: string): Promise<void> {
@@ -270,7 +299,10 @@ evolith sdlc status
       case 'python':
         return { available: await pythonProvider.isAvailable() };
       default:
-        return { available: false };
+        return {
+          available: false,
+          installHint: `Install the ${runtime} runtime and ensure it is on your PATH.`,
+        };
     }
   }
 }

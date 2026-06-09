@@ -20,6 +20,7 @@ export class CommandHistoryService {
   private readonly historyFile: string;
   private history: CommandHistory;
   private entryCounter = 0;
+  private initialized = false;
 
   constructor(repoPath?: string) {
     const basePath = repoPath || process.env.HOME || '/root';
@@ -29,6 +30,8 @@ export class CommandHistoryService {
   }
 
   async initialize(): Promise<void> {
+    if (this.initialized) return;
+    this.initialized = true;
     const dir = path.dirname(this.historyFile);
     await fs.ensureDir(dir);
 

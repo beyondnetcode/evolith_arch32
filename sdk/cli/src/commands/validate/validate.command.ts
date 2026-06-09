@@ -195,7 +195,7 @@ export class ValidateCommand extends CommandRunner {
 
   @Option({
     flags: '-r, --ruleset [id]',
-    description: 'Validar ruleset específico (adr-0002, acl, open-core, inheritance)',
+    description: 'Validar ruleset específico (adr-0002, acl, open-core, inheritance, cli-release, cli-parity, evidence, mcp, observability)',
   })
   parseRuleset(val: string): string {
     return val;

@@ -283,7 +283,7 @@ export class PhaseGateValidatorService {
     if (criterionText.includes('scope is ambiguous') || criterionText.includes('funding')) {
       const prdEvidence = evidenceResults.find(e => e.artifact === 'PRD');
       const moscowEvidence = evidenceResults.find(e => e.artifact === 'MoSCoW Prioritization Matrix');
-      return !prdEvidence?.found || !moscowEvidence?.found;
+      return !prdEvidence?.found || (moscowEvidence !== undefined && !moscowEvidence.found);
     }
 
     if (criterionText.includes('architecture decisions are undocumented')) {

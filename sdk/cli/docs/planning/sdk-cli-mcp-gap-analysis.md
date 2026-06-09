@@ -1,9 +1,24 @@
 # SDK/CLI/MCP Gap Analysis
 
-> **Status:** Analysis Complete
+> **Status:** Superseded Historical Analysis
 > **Date:** 2026-06-06
+> **Superseded By:** `reference/governance/standards/vision/gap-analysis-core.md` current verified state
+> **Bilingual Exception:** SDK planning notes currently have no ES counterpart; authoritative bilingual status is maintained in the vision gap analysis pair.
 
 ---
+
+## 0. Current Status Correction — 2026-06-08
+
+This gap analysis is retained as historical context only. Several items marked as missing are now partially or fully implemented in source, while release readiness is still blocked by tests and MCP smoke evidence.
+
+Current active gaps:
+- Make the full Jest suite green and verify coverage.
+- Harden minimal MCP HTTP/SSE transport with protocol conformance tests.
+- Generate release smoke evidence for MCP initialize, tools/list, resources/list, and prompts/list.
+- Continue closing CLI/Core parity for phase gates, architecture rules, ACL, ADR rules, and evidence manifests.
+
+Use the current Core gap analysis for active planning:
+[Evolith Core Gap Analysis](../../../../reference/governance/standards/vision/gap-analysis-core.md)
 
 ## 1. Gap Summary
 

@@ -29,111 +29,181 @@ y guía operativa que los productos satélite heredan y especializan.
 
 > *Separar conceptualmente antes de separar físicamente.*
 
----
-
-## 📑 Menú de Navegación Rápida
-
-| Categoría | Punto de Entrada | Descripción |
-|----------|------------------|-------------|
-| 📚 **Arquitectura** | [Hub](./reference/architecture/README.md) | Patrones, blueprints, decisiones |
-| 🏛️ **ADRs** | [Registro](./reference/architecture/adrs/README.md) | 70+ decisiones arquitectónicas |
-| 🏗️ **Ingeniería** | [Manifiesto](./reference/governance/standards/engineering/engineering-manifesto.md) | Estándares, convenciones |
-| 🚦 **SDLC** | [Gobernanza](./reference/governance/sdlc/README.md) | Phase gates, flujo de entrega |
-| 🤖 **AI & Herramientas** | [Smart CLI](./sdk/cli/README.md) | `npx @evolith/smart-cli init` |
-| 📊 **Visión** | [Visión del Producto](./reference/governance/standards/vision/evolith-product-vision-master.es.md) | Estrategia y hoja de ruta |
-| 🔍 **Análisis de Brechas** | [Análisis](./reference/governance/standards/vision/gap-analysis-core.es.md) | ⚠️ **NUEVO** Estado actual vs visión |
-| 📋 **Índice Completo** | [Índice Maestro](./reference/navigation/MASTER_INDEX.md) | Navegación completa |
-| 🚀 **Referencia Aplicada** | [UMS Demo](./reference/knowledge/demo/README.md) | Ejemplo de producto real |
+</div>
 
 ---
 
-## 🎯 Comienza Aquí — Elige Tu Camino
+## Comienza Aqui
 
-### Camino 1 — Vista de 5 Minutos
+<details>
+<summary><strong>Puntos de entrada principales</strong></summary>
 
-📄 [Resumen Ejecutivo](./reference/governance/standards/communication/visuals/v01-executive-one-pager.es.md)
+- [Resumen Ejecutivo](./reference/governance/standards/communication/visuals/v01-executive-one-pager.es.md) - explicacion de cinco minutos sobre Evolith, UMS y la propuesta de valor.
+- [Primeros Pasos por Rol](./reference/getting-started/README.es.md) - rutas de lectura recomendadas para ejecutivos, arquitectos, ingenieros, QA, SRE, producto y contribuidores IA.
+- [Vision del Producto](./reference/governance/standards/vision/evolith-product-vision-master.es.md) - direccion estrategica, hoja de ruta y modelo de madurez.
+- [Centro de Gobernanza SDLC](./reference/governance/sdlc/README.es.md) - fases, gates, artefactos y modelo de trazabilidad autoritativos.
+- [Indice Maestro Global](./reference/navigation/MASTER_INDEX.es.md) - navegacion completa del repositorio cuando ya sabes que artefacto necesitas.
 
-*¿Qué es Evolith? ¿Por qué lo necesitamos? ¿Qué es UMS?*
+</details>
 
-### Camino 2 — Por Rol
+## Navegacion SDLC
 
-| Rol | Comienza Aquí | Luego Lee |
-|-----|---------------|-----------|
-| 🏛️ **Arquitecto** | [Hub de Arquitectura](./reference/architecture/README.md) | [Matriz ADR](./reference/architecture/adrs/adr-matrix.md) |
-| 👨‍💻 **Desarrollador** | [Manifiesto de Ingeniería](./reference/governance/standards/engineering/engineering-manifesto.md) | [Referencia UMS](./reference/knowledge/demo/README.md) |
-| 🛠️ **DevOps/SRE** | [Hub de Operaciones](./reference/operations/README.md) | [Infraestructura](./reference/infrastructure/README.md) |
-| 📦 **Producto/PM** | [Modelo de Referencia UMS](./reference/knowledge/demo/ums-reference-model.md) | [Casos de Adopción](./reference/knowledge/adoption-cases.md) |
-| 🤖 **Contribuidor IA** | [Estándares IA](./reference/governance/standards/ai-augmented/README.md) | [AGENTS.md](./AGENTS.md) |
+Abre la fase en la que estas trabajando. Cada seccion agrupa los documentos, estandares y reglas machine-readable que soportan su gate.
 
-### Camino 3 — Tomar una Decisión Arquitectónica
+<details>
+<summary><strong>Fase 01 - Concepcion y Descubrimiento</strong></summary>
 
-1. Revisa el [Registro ADR](./reference/architecture/adrs/README.md) — ¿existe ya la decisión?
-2. Si no, usa la [Plantilla ADR](./reference/governance/sdlc/04-artifact-templates/adr-template.es.md)
-3. Envía a revisión del [Tablero de Arquitectura](./reference/governance/standards/communication/architecture-communication-strategy.md)
+- Documentos y plantillas
+  - [Discovery Canvas](./reference/governance/sdlc/04-artifact-templates/discovery-canvas-template.es.md)
+  - [Business Case ROI](./reference/governance/sdlc/04-artifact-templates/business-case-roi-template.es.md)
+  - [Ballpark Estimation](./reference/governance/sdlc/04-artifact-templates/ballpark-estimation-template.es.md)
+  - [PRD - Documento de Requerimientos de Producto](./reference/governance/sdlc/04-artifact-templates/prd-template.es.md)
+  - [Evolith User Story](./reference/governance/sdlc/04-artifact-templates/evolith-user-story-template.es.md)
+  - [Agile Backlog](./reference/governance/sdlc/04-artifact-templates/agile-backlog-template.es.md)
+  - [CLI Impact Analysis](./reference/governance/sdlc/04-artifact-templates/cli-impact-analysis.es.md)
+- Estandares y guia
+  - [Directivas Arquitectonicas](./reference/governance/standards/vision/architectural-directives.es.md)
+  - [Taxonomia del Repositorio](./reference/governance/standards/repository-taxonomy.es.md)
+  - [Baseline Agnostica](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.es.md)
+  - [Manifiesto de Ingenieria](./reference/governance/standards/engineering/engineering-manifesto.es.md)
+  - [Mapeo de Artefactos SDLC](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.es.md)
+- Reglas y schemas
+  - [Discovery Canvas Schema](./rulesets/schema/discovery-canvas.schema.json)
+  - [Business Case ROI Schema](./rulesets/schema/business-case-roi.schema.json)
+  - [Ballpark Estimation Schema](./rulesets/schema/ballpark-estimation.schema.json)
+  - [PRD Schema](./rulesets/schema/prd.schema.json)
+  - [Evolith User Story Schema](./rulesets/schema/evolith-user-story.schema.json)
+  - [Agile Backlog Schema](./rulesets/schema/agile-backlog.schema.json)
+  - [CLI Impact Analysis Schema](./rulesets/schema/cli-impact-analysis.schema.json)
+  - [Phase Gates Rules](./rulesets/sdlc/phase-gates.rules.json)
 
----
+</details>
 
-## 📂 Estructura del Repositorio (Exploración Profunda)
+<details>
+<summary><strong>Fase 02 - Diseno y Arquitectura</strong></summary>
 
-### 📚 Arquitectura y Patrones
-| Artefacto | Propósito |
-|-----------|-----------|
-| [Hub de Arquitectura](./reference/architecture/README.md) | Entrada central para arquitectura |
-| [Blueprints](./reference/architecture/blueprints/README.md) | Stacks técnicos, modelos de referencia |
-| [Patrones Canónicos](./reference/architecture/canonical-patterns/README.md) | Patrones de diseño reutilizables |
-| [Spec Topología C4](./reference/architecture/blueprints/c4-topology-spec.md) | Visualización de sistemas |
+- Documentos y plantillas
+  - [Plantilla ADR](./reference/governance/sdlc/04-artifact-templates/adr-template.es.md)
+  - [Plantilla de Historia Funcional](./reference/governance/sdlc/04-artifact-templates/functional-story-template.es.md)
+  - [Plantilla de Modelo DDD](./reference/governance/sdlc/04-artifact-templates/ddd-model-template.es.md)
+- Estandares y guia
+  - [Hub de Arquitectura](./reference/architecture/README.es.md)
+  - [Blueprint de Referencia](./reference/architecture/blueprints/reference-blueprint.es.md)
+  - [Tech Stack Autoritativo](./reference/architecture/blueprints/authoritative-tech-stack.es.md)
+  - [Registro ADR](./reference/architecture/adrs/README.es.md)
+  - [Matriz de Decision ADR](./reference/architecture/adrs/adr-matrix.es.md)
+  - [Estandar de Escritura de Historias Funcionales](./reference/governance/sdlc/03-documentation/functional-story-writing-standard.es.md)
+  - [Buenas Practicas de Documentacion SDLC](./reference/governance/sdlc/03-documentation/sdlc-documentation-best-practices.es.md)
+  - [Checklist de Simplicidad Fase 1](./reference/architecture/blueprints/simplicity-checklist-phase-01.es.md)
+  - [Mapeo de Artefactos SDLC](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.es.md)
+- Reglas y schemas
+  - [ADR Schema](./rulesets/schema/adr.schema.json)
+  - [Functional Story Schema](./rulesets/schema/functional-story.schema.json)
+  - [Reglas de Arquitectura](./rulesets/architecture/README.md)
+  - [Reglas ADR](./rulesets/adr/README.md)
 
-### 🏛️ Registros de Decisiones Arquitectónicas
-| Artefacto | Propósito |
-|-----------|-----------|
-| [Registro ADR](./reference/architecture/adrs/README.md) | Todos los ADRs por runtime |
-| [ADRs Core](./reference/architecture/adrs/core/README.md) | Decisiones agnósticas de lenguaje |
-| [ADRs Node.js](./reference/architecture/adrs/nodejs/README.md) | Específico de Node.js |
-| [ADRs .NET](./reference/architecture/adrs/dotnet/README.md) | Específico de .NET |
-| [Matriz ADR](./reference/architecture/adrs/adr-matrix.md) | Resumen de decisiones |
+</details>
 
-### 🏗️ Estándares de Ingeniería
-| Artefacto | Propósito |
-|-----------|-----------|
-| [Manifiesto de Ingeniería](./reference/governance/standards/engineering/engineering-manifesto.md) | Principios core |
-| [Contract Testing](./reference/governance/standards/engineering/contract-testing-guideline.es.md) | Testing de integración |
-| [Observabilidad](./reference/governance/standards/engineering/observability-playbook.es.md) | Monitoreo y tracing |
-| [Riesgo de Proveedores](./reference/governance/standards/engineering/vendor-risk-assessment.es.md) | Evaluación de terceros |
+<details>
+<summary><strong>Fase 03 - Construccion</strong></summary>
 
-### 🚦 SDLC y Entrega
-| Artefacto | Propósito |
-|-----------|-----------|
-| [Gobernanza SDLC](./reference/governance/sdlc/README.md) | Phase gates, quality gates |
-| [Plantillas de Artefactos](./reference/governance/sdlc/04-artifact-templates/README.md) | PRD, ADR, Historias |
-| [Definition of Done](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.es.md) | Checklist de DoD |
+- Documentos y plantillas
+  - [Plantilla de Historia Tecnica](./reference/governance/sdlc/04-artifact-templates/technical-story-template.es.md)
+  - [Hub de Plantillas de Artefactos](./reference/governance/sdlc/04-artifact-templates/README.es.md)
+- Estandares y guia
+  - [Framework SDLC Enfocado en Construccion](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.es.md)
+  - [Definition of Done](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.es.md)
+  - [Quality Gates SDLC](./reference/governance/sdlc/quality-gates.es.md)
+  - [Patrones Canonicos](./reference/architecture/canonical-patterns/README.es.md)
+  - [Guia de Contract Testing](./reference/governance/standards/engineering/contract-testing-guideline.es.md)
+  - [Evaluacion de Riesgo de Proveedores](./reference/governance/standards/engineering/vendor-risk-assessment.es.md)
+  - [Estandares de Ingenieria Augmentada por IA](./reference/governance/standards/ai-augmented/README.es.md)
+  - [Mapeo de Artefactos SDLC](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.es.md)
+- Reglas y schemas
+  - [Technical Story Schema](./rulesets/schema/technical-story.schema.json)
+  - [Definition of Done Rules](./rulesets/cross-cutting/definition-of-done.rules.json)
+  - [Engineering Manifesto Rules](./rulesets/cross-cutting/engineering-manifesto.rules.json)
+  - [Quality Thresholds Rules](./rulesets/sdlc/quality-thresholds.rules.json)
+  - [Dependency Pinning Rules](./rulesets/sdlc/dependency-pinning.rules.json)
 
-### 🤖 Ingeniería Augmentada por IA
-| Artefacto | Propósito |
-|-----------|-----------|
-| [Estándares IA](./reference/governance/standards/ai-augmented/README.md) | Estándares de integración IA |
-| [Integración MCP](./reference/governance/standards/ai-augmented/02-mcp-integration/README.es.md) | Guía del protocolo MCP |
-| [Smart CLI](./sdk/cli/README.es.md) | CLI para onboarding de satélites |
+</details>
 
-### 📊 Visión y Estrategia
-| Artefacto | Propósito |
-|-----------|-----------|
-| [Visión del Producto](./reference/governance/standards/vision/evolith-product-vision-master.es.md) | Declaración completa de visión |
-| [Análisis de Brechas](./reference/governance/standards/vision/gap-analysis-core.es.md) | ⚠️ **NUEVO** Estado actual vs visión |
-| [Hoja de Ruta Evolutiva](./reference/governance/standards/vision/evolutionary-strategy-roadmap.es.md) | Plan fase por fase |
-| [Matriz de Madurez](./reference/governance/standards/vision/maturity-matrix.es.md) | Evaluación de madurez organizacional |
+<details>
+<summary><strong>Fase 04 - Validacion y QA</strong></summary>
 
-### 🚀 Referencia Aplicada
-| Artefacto | Propósito |
-|-----------|-----------|
-| [Hub de Referencia UMS](./reference/knowledge/demo/README.md) | Referencia de producto aplicada |
-| [Arquitectura UMS](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) | Docs externos de UMS |
-| [Casos de Adopción](./reference/knowledge/adoption-cases.es.md) | Lecciones de productos reales |
+- Documentos y plantillas
+  - [Plantilla de Test Summary Report](./reference/governance/sdlc/04-artifact-templates/test-summary-report-template.es.md)
+- Estandares y guia
+  - [Quality Gates SDLC](./reference/governance/sdlc/quality-gates.es.md)
+  - [Modelo de Trazabilidad SDLC](./reference/governance/sdlc/traceability-model.es.md)
+  - [ADR de Testing Pyramid](./reference/architecture/adrs/core/0018-testing-pyramid-quality-gates.es.md)
+  - [ADR de Aislamiento de Unit Testing](./reference/architecture/adrs/core/0052-unit-testing-isolation-strategy.es.md)
+  - [ADR de Integration y E2E Testing](./reference/architecture/adrs/core/0053-integration-e2e-testing-strategy.es.md)
+  - [Mapeo de Artefactos SDLC](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.es.md)
+- Reglas y schemas
+  - [Test Summary Report Schema](./rulesets/schema/test-summary-report.schema.json)
+  - [Quality Thresholds Rules](./rulesets/sdlc/quality-thresholds.rules.json)
+  - [Testing Pyramid Rules](./rulesets/adr/adr-0018-testing-pyramid.rules.json)
 
----
+</details>
 
-## 🔧 Herramientas y Scripts
+<details>
+<summary><strong>Fase 05 - Entrega y Operaciones</strong></summary>
+
+- Documentos y plantillas
+  - [Plantilla de Release Notes](./reference/governance/sdlc/04-artifact-templates/release-notes-template.es.md)
+- Estandares y guia
+  - [Hub de Operaciones](./reference/operations/README.es.md)
+  - [Hub de Infraestructura](./reference/infrastructure/README.es.md)
+  - [Playbook de Observabilidad](./reference/governance/standards/engineering/observability-playbook.es.md)
+  - [Flujo de Arquitectura de Observabilidad](./reference/architecture/blueprints/observability-architecture-flow.es.md)
+  - [Escenarios de Despliegue Multi-Cloud](./reference/architecture/blueprints/multi-cloud-deployment-scenarios.es.md)
+  - [Mapeo de Artefactos SDLC](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.es.md)
+- Reglas y schemas
+  - [Release Notes Schema](./rulesets/schema/release-notes.schema.json)
+  - [CI/CD Quality Gates Rules](./rulesets/adr/adr-0005-cicd-quality-gates.rules.json)
+  - [GitFlow Branching Rules](./rulesets/adr/adr-0050-gitflow-branching.rules.json)
+
+</details>
+
+## Referencias Transversales
+
+<details>
+<summary><strong>Arquitectura, gobernanza y referencia aplicada</strong></summary>
+
+- Baseline de arquitectura
+  - [Hub de Arquitectura](./reference/architecture/README.es.md)
+  - [Blueprints](./reference/architecture/blueprints/README.es.md)
+  - [Baseline Agnostica](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.es.md)
+  - [Blueprint de Referencia](./reference/architecture/blueprints/reference-blueprint.es.md)
+  - [Spec de Topologia C4](./reference/architecture/blueprints/c4-topology-spec.es.md)
+- Decisiones de arquitectura
+  - [Registro ADR](./reference/architecture/adrs/README.es.md)
+  - [ADRs Core](./reference/architecture/adrs/core/README.es.md)
+  - [ADRs Node.js](./reference/architecture/adrs/nodejs/README.es.md)
+  - [ADRs .NET](./reference/architecture/adrs/dotnet/README.es.md)
+  - [ADRs Android](./reference/architecture/adrs/android/README.es.md)
+- Gobernanza y navegacion
+  - [Estandares de Gobernanza](./reference/governance/standards/README.es.md)
+  - [Indice Bilingue](./reference/navigation/BILINGUAL_INDEX.md)
+  - [Hub de Navegacion](./reference/navigation/README.es.md)
+  - [Hub de Rulesets](./rulesets/README.es.md)
+- Referencia aplicada
+  - [Hub de Referencia UMS](./reference/knowledge/demo/README.es.md)
+  - [Modelo de Referencia UMS](./reference/knowledge/demo/ums-reference-model.es.md)
+  - [Referencia Canonica vs Modelo Aplicado UMS](./reference/knowledge/demo/demo-vs-reference.es.md)
+  - [Portal de Arquitectura UMS](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md)
+  - [Casos de Adopcion](./reference/knowledge/adoption-cases.es.md)
+
+</details>
+
+## Herramientas y Automatizacion
+
+<details>
+<summary><strong>Smart CLI y hooks de validacion</strong></summary>
 
 ### Smart CLI (Oficial)
+
 ```bash
 # Inicializar nuevo repositorio satélite
 npx @evolith/smart-cli init
@@ -149,53 +219,28 @@ smart-cli adr list
 smart-cli mcp serve
 ```
 
-📖 [Documentación CLI](./sdk/cli/README.es.md)
-📊 [Arquitectura CLI](./sdk/cli/ARCHITECTURE.es.md)
-🎯 [Visión del Producto CLI](./sdk/cli/docs/VISION.es.md)
-🔍 [Análisis de Estado](./sdk/cli/docs/planning/sdk-cli-mcp-current-state-assessment.md)
+- [Documentacion CLI](./sdk/cli/README.es.md)
+- [Arquitectura CLI](./sdk/cli/ARCHITECTURE.es.md)
+- [Vision del Producto CLI](./sdk/cli/docs/VISION.es.md)
+- [Analisis de Estado](./sdk/cli/docs/planning/sdk-cli-mcp-current-state-assessment.md)
 
 ### Pre-commit Hooks
-| Hook | Propósito |
-|------|-----------|
-| [validate-docs.mjs](./.harness/scripts/validate-docs.mjs) | Validación de links y anchors |
-| [check-bilingual-parity.mjs](./.harness/scripts/check-bilingual-parity.mjs) | Paridad estructural EN/ES |
-| [impact-analysis-synchronizer.mjs](./.harness/scripts/impact-analysis-synchronizer.mjs) | Sync de impacto cross-repo |
+
+- [validate-docs.mjs](./.harness/scripts/validate-docs.mjs) - validacion de links, anchors, encoding y Mermaid.
+- [check-bilingual-parity.mjs](./.harness/scripts/check-bilingual-parity.mjs) - validacion de paridad estructural EN/ES.
+- [impact-analysis-synchronizer.mjs](./.harness/scripts/impact-analysis-synchronizer.mjs) - sincronizacion de impacto cross-repo.
+
+</details>
 
 ---
 
-## 📖 Evolith vs UMS — Qué Va Dónde
-
-| Pregunta | Evolith (Referencia) | UMS (Producto) |
-|----------|----------------------|----------------|
-| ¿Qué pertenece aquí? | Estándares reutilizables, principios, ADRs, gobernanza, patrones canónicos | Evidencia de implementación específica del producto |
-| ¿Cómo contribuye un producto? | Proponer un ADR respaldado por evidencia real | Proporcionar prueba de concepto ejecutable |
-| ¿Qué stays local? | La política enterprise debe pasar por gobernanza | Rutas de producto, esquemas, seeds, branding |
-
-UMS es la referencia ejecutable oficial. Ver [Casos de Adopción](./reference/knowledge/adoption-cases.es.md) para ejemplos reales.
-
----
-
-## 🤝 Contribución
+## Contribucion
 
 Antes de contribuir, lee:
 
 - [AGENTS.md](./AGENTS.md) — Reglas y convenciones de agentes
-- [Taxonomía del Repositorio](./reference/governance/standards/repository-taxonomy.md) — Qué va dónde
-- [Guía de Herencia](./reference/governance/standards/onboarding/child-repository-inheritance-guide.es.md) — Cómo los productos heredan
-
----
-
-## 📋 Todos los Índices de Navegación
-
-| Índice | Propósito |
-|--------|-----------|
-| [Índice Maestro](./reference/navigation/MASTER_INDEX.md) | Navegación completa del repositorio |
-| [Índice de Arquitectura](./reference/architecture/README.md) | Todos los artefactos de arquitectura |
-| [Índice de Visión](./reference/governance/standards/vision/README.es.md) | Estrategia y análisis de brechas |
-| [Índice SDLC](./reference/governance/sdlc/README.md) | Artefactos de entrega y gobernanza |
-| [Índice Bilingüe](./reference/navigation/BILINGUAL_INDEX.md) | Pares de documentos EN/ES |
-
----
+- [Taxonomia del Repositorio](./reference/governance/standards/repository-taxonomy.es.md) — Que va donde
+- [Guia de Herencia](./reference/governance/standards/onboarding/child-repository-inheritance-guide.es.md) — Como los productos heredan
 
 ## Licencia
 

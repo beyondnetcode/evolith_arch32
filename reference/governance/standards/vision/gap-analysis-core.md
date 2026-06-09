@@ -27,12 +27,12 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 |-----------|----------|---------|------------|
 | Evolith Core (Reference Corpus) | 85% | **90%** | Mature — ACL integration rules deferred |
 | Evolith Tracker (SaaS) | 0% | **0%** | Not started — Future enterprise component |
-| CLI (Technological Exposure) | 50% | **85%** | 13 commands, 3,269 lines of implementation |
-| MCP Server (Technological Exposure) | 10% | **80%** | Full JSON-RPC stdio, 17 tools, 8 resources, 7 prompts |
-| Rulesets (Machine-Readable) | 75% | **82%** | 37 JSON files across 9 categories |
-| SDLC Phase Gates | 40% | **70%** | Executable via CLI with handoff manifests |
+| CLI (Technological Exposure) | 50% | **82%** | Functional beta; build passes, test suite now starts but is not fully green |
+| MCP Server (Technological Exposure) | 10% | **78%** | JSON-RPC stdio and minimal HTTP implemented; protocol hardening and smoke evidence pending |
+| Rulesets (Machine-Readable) | 75% | **86%** | 43 JSON files across 13 categories, including CLI, MCP, evidence, and observability |
+| SDLC Phase Gates | 40% | **62%** | Gate validation exists, but parity tracking still marks several evidence checks incomplete |
 | Architecture Drift Detection | 0% | **85%** | Detection, history, and trend analysis |
-| Test Coverage | 25% | **80%** | 49 spec files, 1,000+ tests |
+| Test Coverage | 25% | **Unverified** | Jest configuration repaired enough to start tests; full suite still has failing suites and sandbox-sensitive HTTP tests |
 
 **Overall Weighted Score:** ~45% → **~67%** (+22 points)
 
@@ -47,7 +47,7 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 | **Architectural Directives** | Implemented | Complete |
 | **ADRs (Architecture Decision Records)** | 70+ ADRs across core, nodejs, dotnet, android | Complete |
 | **Standards & Taxonomies** | Repository taxonomy, engineering manifesto, conventions | Complete |
-| **Rulesets (Machine-Readable)** | 37 JSON files across 9 categories | Complete |
+| **Rulesets (Machine-Readable)** | 43 JSON files across 13 categories | Complete |
 | **Schemas (Phase Gate Artifacts)** | 14 JSON schemas in `rulesets/schema/` | Complete |
 | **Federated Governance Model** | Inheritance rules, satellite contracts | Complete |
 | **ACL (Anti-Corruption Layer) Rules** | `rulesets/acl/anti-corruption-layer.rules.json` + 3 additional rule files | Complete |
@@ -80,9 +80,9 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 | **MCP Prompts** | 7 prompts: validate, onboarding, architecture, phase-gate, handoff, ruleset, moscow | Complete |
 | **IDE Integration (Cursor, Claude Desktop)** | Config examples exist | Not tested end-to-end |
 | **Real-time Governance Context** | MCP server exposes rulesets, rules, agents as resources | Complete |
-| **HTTP Transport** | Declared in interface but not implemented | Partial (G-20) |
+| **HTTP Transport** | Minimal local HTTP/SSE transport implemented | Partial — needs protocol hardening and release smoke evidence |
 
-**Status:** ~82% — CLI and MCP server fully functional, HTTP transport pending
+**Status:** ~78% — CLI and MCP are functional beta capabilities; release readiness is blocked by failing tests and pending MCP smoke evidence.
 
 ---
 
@@ -114,48 +114,48 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 
 | ID | Description | Comp. | Priority | Complexity | Status | Progress |
 |----|-------------|-------|----------|------------|--------|----------|
-| **G-12** | **Implement MCP server protocol (JSON-RPC stdio)** | MCP | 🔴 CRITICAL | M (2-3 wk) | ✅ DONE | 100% |
-| G-01 | F1/F2/F3 architecture validation in CLI | Core | 🟠 HIGH | M (2-3 wk) | ✅ DONE | 100% |
-| G-03 | Execute Phase Gate transitions | CLI | 🟠 HIGH | L (3-4 wk) | ✅ DONE | 100% |
-| G-04 | Architecture Drift detection | CLI | 🟠 HIGH | L (3-4 wk) | ✅ DONE | 100% |
-| G-07 | `smart-cli agents install` command | CLI | 🟠 HIGH | S (1 wk) | ✅ DONE | 100% |
-| G-08 | Safe satellite upgrade path | CLI | 🟠 HIGH | M (2-3 wk) | ✅ DONE | 100% |
-| G-09 | Architecture rules validation in CLI | CLI | 🟠 HIGH | M (2-3 wk) | ✅ DONE | 100% |
-| G-10 | Phase transitions and artifact generation | CLI | 🟡 MEDIUM | M (2-3 wk) | ✅ DONE | 100% |
-| G-11 | Documentation scaffolding | CLI | 🟡 MEDIUM | S (1 wk) | ✅ DONE | 100% |
-| G-13 | Implement 10+ MCP tools | MCP | 🟡 MEDIUM | L (3-4 wk) | ✅ DONE | 100% |
-| G-14 | MCP Resources (Core info, rulesets) | MCP | 🟡 MEDIUM | M (2-3 wk) | ✅ DONE | 100% |
-| G-15 | Reusable MCP prompts | MCP | 🟢 LOW | XS (<1 wk) | ✅ DONE | 100% |
-| G-17 | Unit test coverage >80% | Testing | 🟠 HIGH | L (3-4 wk) | ✅ DONE | 100% |
-| G-18 | Real E2E tests with assertions | Testing | 🟠 HIGH | L (3-4 wk) | ✅ DONE | 100% |
-| G-16 | 100% EN/ES bilingual parity | Core | 🟢 LOW | XS (<1 wk) | ✅ DONE | 90% |
-| G-02 | ACL integrations Jira/Trello/Linear | Core | 🟡 MEDIUM | M (2-3 wk) | ⏸️ DEFERRED | 0% |
-| G-05 | DORA+SPACE metrics dashboard | Tracker | 🟡 MEDIUM | L (3-4 wk) | ⏸️ DEFERRED | 0% |
-| G-06 | Real-time executive scorecards | Tracker | 🟡 MEDIUM | L (3-4 wk) | ⏸️ DEFERRED | 0% |
-| G-19 | Legacy MCP service cleanup | Core | 🟢 LOW | XS (<1 wk) | ✅ DONE | 100% |
-| G-20 | MCP HTTP transport implementation | MCP | 🟡 MEDIUM | S (1 wk) | ✅ DONE | 100% |
-| G-21 | Architecture validation depth | Core | 🟡 MEDIUM | M (2-3 wk) | ✅ DONE | 100% |
-| G-22 | MoSCoW naming consistency | Core | 🟢 LOW | XS (<1 wk) | ✅ DONE | 100% |
-| G-23 | Empty validators directory cleanup | Core | 🟢 LOW | XS (<1 wk) | ✅ DONE | 100% |
+| **G-12** | **Implement MCP server protocol (JSON-RPC stdio)** | MCP | CRITICAL | M (2-3 wk) | DONE | 100% |
+| G-01 | F1/F2/F3 architecture validation in CLI | Core | HIGH | M (2-3 wk) | DONE | 100% |
+| G-03 | Execute Phase Gate transitions | CLI | HIGH | L (3-4 wk) | DONE | 100% |
+| G-04 | Architecture Drift detection | CLI | HIGH | L (3-4 wk) | DONE | 100% |
+| G-07 | `smart-cli agents install` command | CLI | HIGH | S (1 wk) | DONE | 100% |
+| G-08 | Safe satellite upgrade path | CLI | HIGH | M (2-3 wk) | DONE | 100% |
+| G-09 | Architecture rules validation in CLI | CLI | HIGH | M (2-3 wk) | DONE | 100% |
+| G-10 | Phase transitions and artifact generation | CLI | MEDIUM | M (2-3 wk) | DONE | 100% |
+| G-11 | Documentation scaffolding | CLI | MEDIUM | S (1 wk) | DONE | 100% |
+| G-13 | Implement 10+ MCP tools | MCP | MEDIUM | L (3-4 wk) | DONE | 100% |
+| G-14 | MCP Resources (Core info, rulesets) | MCP | MEDIUM | M (2-3 wk) | DONE | 100% |
+| G-15 | Reusable MCP prompts | MCP | LOW | XS (<1 wk) | DONE | 100% |
+| G-17 | Unit test coverage >80% | Testing | HIGH | L (3-4 wk) | IN PROGRESS | Unverified |
+| G-18 | Real E2E tests with assertions | Testing | HIGH | L (3-4 wk) | IN PROGRESS | Partial |
+| G-16 | 100% EN/ES bilingual parity | Core | LOW | XS (<1 wk) | DONE | 90% |
+| G-02 | ACL integrations Jira/Trello/Linear | Core | MEDIUM | M (2-3 wk) | DEFERRED | 0% |
+| G-05 | DORA+SPACE metrics dashboard | Tracker | MEDIUM | L (3-4 wk) | DEFERRED | 0% |
+| G-06 | Real-time executive scorecards | Tracker | MEDIUM | L (3-4 wk) | DEFERRED | 0% |
+| G-19 | Legacy MCP service cleanup | Core | LOW | XS (<1 wk) | DONE | 100% |
+| G-20 | MCP HTTP transport implementation | MCP | MEDIUM | S (1 wk) | IN PROGRESS | Minimal transport implemented; smoke evidence pending |
+| G-21 | Architecture validation depth | Core | MEDIUM | M (2-3 wk) | DONE | 100% |
+| G-22 | MoSCoW naming consistency | Core | LOW | XS (<1 wk) | DONE | 100% |
+| G-23 | Empty validators directory cleanup | Core | LOW | XS (<1 wk) | DONE | 100% |
 
 ### 3.3 Traffic Light Legend
 
 | Symbol | Status | Meaning |
 |--------|--------|---------|
-| 🔴 CRITICAL | Blocking | Prevents progress in multiple areas |
-| 🟠 HIGH | Priority | Core functionality missing |
-| 🟡 MEDIUM | Second | Important but not blocking |
-| 🟢 LOW | Nice-to-have | Minor improvements |
-| 🔵 TODO | Pending | Not started |
-| 🟡 IN PROGRESS | Active | Work in progress |
-| 🔴 BLOCKED | Blocked | External impediment |
-| ✅ DONE | Completed | Delivered |
+| CRITICAL | Blocking | Prevents progress in multiple areas |
+| HIGH | Priority | Core functionality missing |
+| MEDIUM | Second | Important but not blocking |
+| LOW | Nice-to-have | Minor improvements |
+| TODO | Pending | Not started |
+| IN PROGRESS | Active | Work in progress |
+| BLOCKED | Blocked | External impediment |
+| DONE | Completed | Delivered |
 
 ---
 
 ## 4. Resolved Gaps (Previously Open)
 
-### G-12: MCP Server Protocol Implementation — RESOLVED ✅
+### G-12: MCP Server Protocol Implementation — RESOLVED
 
 **Delivered:** `sdk/cli/src/core/mcp/server.ts` — 596 lines implementing:
 - `MinimalStdioTransport` — full JSON-RPC over stdio with line-buffered parsing
@@ -166,7 +166,7 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 
 **Note:** Legacy `mcp-server.service.ts` (23 lines) is a dead stub. Cleanup tracked as G-19.
 
-### G-01: F1/F2/F3 Architecture Validation — RESOLVED ✅
+### G-01: F1/F2/F3 Architecture Validation — RESOLVED
 
 **Delivered:**
 - `sdk/cli/src/commands/validate/validate.command.ts` — `--arch` flag for F1/F2/F3 validation
@@ -175,33 +175,33 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 
 **Note:** Current checks are superficial (workspace detection, circular dep check, Dockerfile check). Deeper static analysis tracked as G-21.
 
-### G-04: Architecture Drift Detection — RESOLVED ✅
+### G-04: Architecture Drift Detection — RESOLVED
 
 **Delivered:**
 - `sdk/cli/src/core/validators/architecture-drift.service.ts` — drift detection, violation tracking, history, trend analysis
 - `sdk/cli/src/commands/drift/drift.command.ts` — 214 lines with `--json`, `--history`, `--trend` flags
 
-### G-07: Agent Install Command — RESOLVED ✅
+### G-07: Agent Install Command — RESOLVED
 
 **Delivered:** `sdk/cli/src/commands/init/agents.command.ts` — 538 lines with install/list/validate/upgrade/remove and template support.
 
-### G-08: Satellite Upgrade Path — RESOLVED ✅
+### G-08: Satellite Upgrade Path — RESOLVED
 
 **Delivered:** `sdk/cli/src/commands/init/upgrade.command.ts` — 173 lines with dry-run, breaking change detection, safe upgrade path.
 
-### G-09: Architecture Rules Validation — RESOLVED ✅
+### G-09: Architecture Rules Validation — RESOLVED
 
 **Delivered:** `RulesetValidatorService.validateArchitecture()` with full test coverage in `ruleset-validator-architecture.spec.ts`.
 
-### G-10: SDLC Phase Transitions — RESOLVED ✅
+### G-10: SDLC Phase Transitions — RESOLVED
 
 **Delivered:** `sdk/cli/src/core/mcp/tools/sdlc.ts` — 177 lines with handoff manifest generation and gate status.
 
-### G-11: Documentation Scaffolding — RESOLVED ✅
+### G-11: Documentation Scaffolding — RESOLVED
 
 **Delivered:** `sdk/cli/src/commands/docs/docs.command.ts` — 193 lines with template support and dry-run mode.
 
-### G-13: MCP Tools (10+) — RESOLVED ✅
+### G-13: MCP Tools (10+) — RESOLVED
 
 **Delivered:** 17 tools across 5 tool files:
 - `validate.ts` — governance validation
@@ -210,11 +210,11 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 - `sdlc.ts` — 2 SDLC tools
 - `moscow.ts` — 7 MoSCoW prioritization tools
 
-### G-14: MCP Resources — RESOLVED ✅
+### G-14: MCP Resources — RESOLVED
 
 **Delivered:** `sdk/cli/src/core/mcp/resources/index.ts` — 203 lines, 8 resources.
 
-### G-15: MCP Prompts — RESOLVED ✅
+### G-15: MCP Prompts — RESOLVED
 
 **Delivered:** `sdk/cli/src/core/mcp/prompts/index.ts` — 225 lines, 7 prompts.
 
@@ -224,9 +224,9 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 
 ### 5.1 High Priority
 
-#### G-17: Unit Test Coverage >80% (IN PROGRESS — 80%)
+#### G-17: Unit Test Coverage >80% (IN PROGRESS — UNVERIFIED)
 
-**Status:** Coverage reached 80.25% (statements) in previous session. Current analysis shows 62% file ratio (49 spec files / 79 source files). The discrepancy is due to coverage counting methodology — statement coverage is 80%, but file-level coverage is lower.
+**Status:** The Jest configuration now starts the suite, but full coverage cannot be trusted until all suites pass. Current known blockers include sandbox-sensitive HTTP tests and remaining command/service test failures.
 
 **Remaining work:** Edge cases in interactive prompts (`p.group` flows), some command branches, and service error paths.
 
@@ -234,16 +234,16 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 
 **Status:** Test infrastructure exists. Need integration tests that spin up MCP server and exercise tools end-to-end.
 
-#### G-20: MCP HTTP Transport (IN PROGRESS — 0%)
+#### G-20: MCP HTTP Transport (IN PROGRESS — MINIMAL IMPLEMENTATION)
 
-**Gap:** `server.ts` declares `http` transport in the interface but only implements `stdio`.
+**Gap:** `server.ts` implements a minimal local HTTP/SSE transport, but release readiness still needs protocol conformance tests, authentication-mode validation, and smoke evidence.
 
-**Impact:** Cannot expose MCP server over HTTP for web-based IDE integrations or remote access.
+**Impact:** HTTP transport should be treated as beta until MCP protocol compliance and security evidence are generated.
 
 **Fix Required:**
-1. Implement `StreamableHttpTransport` from @modelcontextprotocol/sdk
-2. Add HTTP server with SSE support
-3. Add API key authentication for HTTP mode
+1. Add protocol conformance tests for HTTP/SSE.
+2. Validate API key or local-only mode.
+3. Generate release smoke evidence for initialize, tools/list, resources/list, and prompts/list.
 
 #### G-21: Architecture Validation Depth (IN PROGRESS — 0%)
 
@@ -359,15 +359,15 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 |-----------|--------|
 | Core Documents | 90% (570 markdown files, 285 bilingual pairs) |
 | ADRs | 100% (70+ files across 4 runtimes) |
-| Rulesets (JSON) | 82% (37 files across 9 categories) |
+| Rulesets (JSON) | 86% (43 files across 13 categories) |
 | JSON Schemas | 100% (14/14 files) |
-| CLI Commands | 85% (13 full implementations, 3,269 lines) |
-| MCP Server | 80% (full stdio, HTTP pending) |
+| CLI Commands | 82% (functional beta; release tests not green) |
+| MCP Server | 78% (stdio plus minimal HTTP; smoke evidence pending) |
 | MCP Tools | 95% (17 tools functional) |
 | MCP Resources | 90% (8 resources) |
 | MCP Prompts | 95% (7 prompts) |
 | Architecture Drift | 85% (detection + history + trend) |
-| Test Coverage | 80% (49 spec files, 1,000+ tests) |
+| Test Coverage | Unverified until full Jest suite passes |
 
 ### Vision Pillar Completeness
 
@@ -375,8 +375,8 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 |---------------|--------------|----------|
 | Evolith Core | 90% | ACL integrations (deferred) |
 | Evolith Tracker | 0% | Future — out of scope |
-| CLI | 85% | Near complete |
-| MCP | 80% | HTTP transport pending |
+| CLI | 82% | Functional beta |
+| MCP | 78% | Minimal HTTP implemented; hardening pending |
 
 ---
 
@@ -384,12 +384,12 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 
 1. **Comprehensive ADR Registry** — 70+ ADRs across multiple runtimes
 2. **Perfect Bilingual Parity** — 285/570 files have exact EN/ES pairs
-3. **Machine-Readable Rulesets** — 37 JSON files across governance, architecture, ACL, SDLC
+3. **Machine-Readable Rulesets** — 43 JSON files across governance, architecture, ACL, SDLC, CLI, MCP, evidence, and observability
 4. **Complete JSON Schemas** — 14 schemas for artifact validation
 5. **Full CLI Implementation** — 13 commands covering all vision requirements
 6. **Functional MCP Server** — 596-line JSON-RPC implementation with 17 tools, 8 resources, 7 prompts
 7. **Architecture Drift Detection** — Detection, history storage, and trend analysis
-8. **Strong Test Coverage** — 80% statement coverage, 1,000+ tests
+8. **Broad Test Inventory** — many spec files exist, but release coverage is unverified until the suite is green
 9. **Federated Governance** — Inheritance and satellite contracts working
 10. **SDLC Phase Gates** — Executable via CLI with handoff manifests
 
@@ -401,17 +401,17 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 Current State                          Vision Goal
      ↓                                     ↓
 ┌─────────────┐                    ┌─────────────────────┐
-│  CLI 85%    │───────────────────►│  CLI 100%           │
-│  MCP 80%    │───────────────────►│  MCP 100%           │
+│  CLI 82%    │───────────────────►│  CLI 100%           │
+│  MCP 78%    │───────────────────►│  MCP 100%           │
 │  Core 90%   │───────────────────►│  Core 95%           │
 │  Tracker 0% │                    │  Tracker 0% (future)│
 └─────────────┘                    └─────────────────────┘
 ```
 
 **Critical Path:**
-1. **Test Coverage Stability (G-17)** — Maintain >80%, add E2E tests
+1. **Test Coverage Stability (G-17)** — Make Jest green, then verify and maintain >80%
 2. **Architecture Validation Depth (G-21)** — Superficial → deep static analysis
-3. **MCP HTTP Transport (G-20)** — Complete declared interface
+3. **MCP HTTP Transport (G-20)** — Harden minimal HTTP/SSE implementation with smoke evidence
 4. **Code Cleanup (G-19, G-22, G-23)** — Remove dead artifacts, fix naming
 
 ---

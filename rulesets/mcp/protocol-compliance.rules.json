@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/rulesets/mcp/protocol-compliance.rules.json",
+  "title": "MCP Protocol Compliance Rules",
+  "description": "Minimum behavior required for Evolith MCP server transports and handlers.",
+  "version": "1.0.0",
+  "effectiveDate": "2026-06-08",
+  "scope": "core-cli",
+  "category": "mcp",
+  "rules": [
+    {
+      "id": "MCP-01",
+      "severity": "MUST",
+      "category": "protocol",
+      "title": "Initialize Request Must Return Capabilities",
+      "description": "The MCP server MUST respond to initialize with protocolVersion, capabilities, and serverInfo.",
+      "validationQuery": "Send JSON-RPC initialize request and validate response shape.",
+      "blocking": true
+    },
+    {
+      "id": "MCP-02",
+      "severity": "MUST",
+      "category": "tools",
+      "title": "Tools List Must Be Complete and Stable",
+      "description": "tools/list MUST expose every supported tool with name, description, and inputSchema.",
+      "validationQuery": "Call tools/list and validate each tool descriptor.",
+      "blocking": true
+    },
+    {
+      "id": "MCP-03",
+      "severity": "MUST",
+      "category": "resources",
+      "title": "Resources Must Preserve Core Traceability",
+      "description": "resources/read responses MUST identify the Core artifact or ruleset source behind the returned context.",
+      "validationQuery": "Read representative resources and verify source traceability metadata or content path.",
+      "blocking": true
+    },
+    {
+      "id": "MCP-04",
+      "severity": "MUST",
+      "category": "security",
+      "title": "HTTP Transport Requires Explicit Authentication Mode",
+      "description": "When HTTP transport is enabled outside local development, an API key or equivalent authentication mode MUST be configured.",
+      "validationQuery": "Inspect MCP transport config for apiKey or local-only mode.",
+      "blocking": true
+    },
+    {
+      "id": "MCP-05",
+      "severity": "SHOULD",
+      "category": "observability",
+      "title": "MCP Calls Should Emit Metrics",
+      "description": "Tool calls SHOULD record latency, success, failure, and error class metrics.",
+      "validationQuery": "Call a tool and inspect MCP metrics output.",
+      "blocking": false
+    }
+  ]
+}
+

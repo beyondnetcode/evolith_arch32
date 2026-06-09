@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/rulesets/cli/release-readiness.rules.json",
+  "title": "CLI Release Readiness Rules",
+  "description": "Minimum release gates for Evolith Smart CLI, SDK, and MCP exposure.",
+  "version": "1.0.0",
+  "effectiveDate": "2026-06-08",
+  "scope": "core-cli",
+  "category": "release-readiness",
+  "rules": [
+    {
+      "id": "CLI-RR-01",
+      "severity": "MUST",
+      "category": "build",
+      "title": "TypeScript Build Must Pass",
+      "description": "The CLI package MUST compile with npm run build before any release candidate is tagged.",
+      "validationQuery": "Run npm run build in sdk/cli and require exit code 0.",
+      "evidenceRequired": ["build log", "package version"],
+      "blocking": true
+    },
+    {
+      "id": "CLI-RR-02",
+      "severity": "MUST",
+      "category": "tests",
+      "title": "Unit and Integration Tests Must Start and Pass",
+      "description": "The CLI test runner MUST start successfully and all non-quarantined tests MUST pass.",
+      "validationQuery": "Run npm test -- --runInBand in sdk/cli and require exit code 0.",
+      "evidenceRequired": ["test summary", "failing suite list when blocked"],
+      "blocking": true
+    },
+    {
+      "id": "CLI-RR-03",
+      "severity": "MUST",
+      "category": "dependencies",
+      "title": "Dependency Graph Must Be Reproducible",
+      "description": "The CLI workspace MUST keep a committed package lock and no missing transitive dependencies.",
+      "validationQuery": "Run npm install --workspace @evolith/smart-cli, npm ls, and verify package-lock.json is present.",
+      "evidenceRequired": ["package-lock.json", "npm ls output"],
+      "blocking": true
+    },
+    {
+      "id": "CLI-RR-04",
+      "severity": "MUST",
+      "category": "mcp",
+      "title": "MCP Smoke Test Must Pass",
+      "description": "The MCP server MUST respond to initialize and tools/list over the supported release transport.",
+      "validationQuery": "Start smart-cli mcp serve and execute initialize plus tools/list JSON-RPC smoke requests.",
+      "evidenceRequired": ["initialize response", "tools/list response"],
+      "blocking": true
+    },
+    {
+      "id": "CLI-RR-05",
+      "severity": "SHOULD",
+      "category": "documentation",
+      "title": "Release Documentation Must Match Implementation",
+      "description": "CLI README, architecture, vision, gap analysis, and parity docs SHOULD describe the current implemented state without contradictions.",
+      "validationQuery": "Review CLI documentation state markers against source commands and tests.",
+      "evidenceRequired": ["documentation diff", "gap analysis update"],
+      "blocking": false
+    }
+  ]
+}
+

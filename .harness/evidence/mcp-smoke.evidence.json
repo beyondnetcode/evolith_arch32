@@ -1,0 +1,585 @@
+{
+  "id": "mcp-smoke-1780971411617",
+  "source": "mcp-smoke.mjs",
+  "generatedAt": "2026-06-09T02:16:51.617Z",
+  "producer": "evolith-harness/mcp-smoke",
+  "sourceRef": "sdk/cli/dist/main.js",
+  "status": "passed",
+  "evaluatedRules": [
+    "MCP-01",
+    "MCP-02",
+    "MCP-03",
+    "MCP-05",
+    "CLI-RR-04"
+  ],
+  "blockingFailures": [],
+  "retentionPeriod": "90d",
+  "owner": "evolith-core-team",
+  "results": {
+    "initialize": {
+      "ok": true,
+      "response": {
+        "protocolVersion": "2024-11-05",
+        "capabilities": {
+          "tools": {},
+          "resources": {},
+          "prompts": {}
+        },
+        "serverInfo": {
+          "name": "evolith-mcp-server",
+          "version": "1.0.0"
+        }
+      },
+      "error": null
+    },
+    "tools/list": {
+      "ok": true,
+      "response": {
+        "tools": [
+          {
+            "name": "evolith-validate",
+            "description": "Validate a repository against Evolith governance rules",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "Path to the repository to validate"
+                },
+                "format": {
+                  "type": "string",
+                  "description": "Output format: json, summary, table",
+                  "default": "json"
+                },
+                "ruleset": {
+                  "type": "string",
+                  "description": "Specific ruleset to validate"
+                },
+                "corePath": {
+                  "type": "string",
+                  "description": "Path to Evolith Core"
+                }
+              },
+              "required": [
+                "path"
+              ]
+            }
+          },
+          {
+            "name": "evolith-agent-install",
+            "description": "Install a new Evolith agent",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Name of the agent to install"
+                },
+                "template": {
+                  "type": "string",
+                  "description": "Template: standard, minimal, enterprise",
+                  "default": "standard"
+                },
+                "dir": {
+                  "type": "string",
+                  "description": "Directory to install into"
+                }
+              },
+              "required": [
+                "name"
+              ]
+            }
+          },
+          {
+            "name": "evolith-agent-list",
+            "description": "List all installed Evolith agents",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "dir": {
+                  "type": "string",
+                  "description": "Directory to search"
+                }
+              }
+            }
+          },
+          {
+            "name": "evolith-agent-validate",
+            "description": "Validate a specific agent ruleset",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "dir": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name"
+              ]
+            }
+          },
+          {
+            "name": "evolith-agent-upgrade",
+            "description": "Upgrade an existing Evolith agent",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "dir": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name"
+              ]
+            }
+          },
+          {
+            "name": "evolith-agent-remove",
+            "description": "Remove an Evolith agent",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "dir": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name"
+              ]
+            }
+          },
+          {
+            "name": "evolith-architecture-validate",
+            "description": "Validate repository architecture against F1/F2/F3 rules. Use deep=true for import graph analysis, layer violations, and coupling metrics.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "level": {
+                  "type": "string",
+                  "description": "F1, F2, or F3"
+                },
+                "deep": {
+                  "type": "boolean",
+                  "description": "Enable deep static analysis (import graph, layer violations, coupling metrics)",
+                  "default": false
+                }
+              },
+              "required": [
+                "path"
+              ]
+            }
+          },
+          {
+            "name": "evolith-sdlc-handoff",
+            "description": "Generate SDLC phase handoff artifact manifest",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "fromPhase": {
+                  "type": "string"
+                },
+                "toPhase": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "path",
+                "fromPhase",
+                "toPhase"
+              ]
+            }
+          },
+          {
+            "name": "evolith-sdlc-status",
+            "description": "Show current SDLC phase gate status",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "path"
+              ]
+            }
+          },
+          {
+            "name": "evolith-config-get",
+            "description": "Get Evolith configuration value",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string"
+                },
+                "dir": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "key"
+              ]
+            }
+          },
+          {
+            "name": "evolith-config-set",
+            "description": "Set Evolith configuration value",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "dir": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "key",
+                "value"
+              ]
+            }
+          },
+          {
+            "name": "evolith-metrics",
+            "description": "Get MCP server metrics",
+            "inputSchema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          {
+            "name": "evolith-moscow-create",
+            "description": "Create a new MoSCoW prioritization analysis for a phase",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "Path to the repository"
+                },
+                "phase": {
+                  "type": "string",
+                  "description": "Phase identifier (e.g., phase-0)",
+                  "default": "phase-0"
+                },
+                "items": {
+                  "type": "array",
+                  "description": "Array of MoSCoW items with description, priority, category, rationale"
+                }
+              },
+              "required": [
+                "path",
+                "items"
+              ]
+            }
+          },
+          {
+            "name": "evolith-moscow-load",
+            "description": "Load an existing MoSCoW analysis for a phase",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "phase": {
+                  "type": "string",
+                  "default": "phase-0"
+                }
+              },
+              "required": [
+                "path"
+              ]
+            }
+          },
+          {
+            "name": "evolith-moscow-update",
+            "description": "Update an item in a MoSCoW analysis",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "phase": {
+                  "type": "string",
+                  "default": "phase-0"
+                },
+                "itemId": {
+                  "type": "string"
+                },
+                "updates": {
+                  "type": "object"
+                }
+              },
+              "required": [
+                "path",
+                "itemId"
+              ]
+            }
+          },
+          {
+            "name": "evolith-moscow-remove",
+            "description": "Remove an item from a MoSCoW analysis",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "phase": {
+                  "type": "string",
+                  "default": "phase-0"
+                },
+                "itemId": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "path",
+                "itemId"
+              ]
+            }
+          },
+          {
+            "name": "evolith-moscow-list",
+            "description": "List all MoSCoW analyses for a repository",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "path"
+              ]
+            }
+          },
+          {
+            "name": "evolith-moscow-validate",
+            "description": "Validate a MoSCoW analysis for correctness",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "phase": {
+                  "type": "string",
+                  "default": "phase-0"
+                }
+              },
+              "required": [
+                "path"
+              ]
+            }
+          },
+          {
+            "name": "evolith-moscow-report",
+            "description": "Generate a markdown report from a MoSCoW analysis",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "phase": {
+                  "type": "string",
+                  "default": "phase-0"
+                }
+              },
+              "required": [
+                "path"
+              ]
+            }
+          }
+        ]
+      },
+      "error": null
+    },
+    "resources/list": {
+      "ok": true,
+      "response": {
+        "resources": [
+          {
+            "uri": "evolith://rulesets",
+            "name": "Rulesets",
+            "description": "List of all available rulesets in Evolith Core"
+          },
+          {
+            "uri": "evolith://phase-gates",
+            "name": "Phase Gates",
+            "description": "Phase gate definitions and requirements"
+          },
+          {
+            "uri": "evolith://agents",
+            "name": "Agents",
+            "description": "List of installed Evolith agents"
+          },
+          {
+            "uri": "evolith://governance/version",
+            "name": "Governance Version",
+            "description": "Current governance schema version"
+          },
+          {
+            "uri": "evolith://core/version",
+            "name": "Core Version",
+            "description": "Current Core schema version"
+          },
+          {
+            "uri": "evolith://repository/config",
+            "name": "Repository Config",
+            "description": "Repository evolith.yaml content"
+          },
+          {
+            "uri": "evolith://moscow/phase-0",
+            "name": "MoSCoW Phase 0",
+            "description": "MoSCoW prioritization matrix for discovery phase"
+          }
+        ]
+      },
+      "error": null
+    },
+    "prompts/list": {
+      "ok": true,
+      "response": {
+        "prompts": [
+          {
+            "name": "evolith/validate-repository",
+            "description": "Template for validating a repository against Evolith governance rules",
+            "arguments": [
+              {
+                "name": "path",
+                "description": "Path to the repository to validate",
+                "required": true
+              },
+              {
+                "name": "ruleset",
+                "description": "Specific ruleset to focus on (optional)",
+                "required": false
+              }
+            ]
+          },
+          {
+            "name": "evolith/agent-onboarding",
+            "description": "Template for installing and configuring a new Evolith agent",
+            "arguments": [
+              {
+                "name": "name",
+                "description": "Name of the agent to create",
+                "required": true
+              },
+              {
+                "name": "template",
+                "description": "Template to use: standard, minimal, enterprise",
+                "required": false
+              }
+            ]
+          },
+          {
+            "name": "evolith/architecture-review",
+            "description": "Template for performing F1/F2/F3 architecture validation review",
+            "arguments": [
+              {
+                "name": "path",
+                "description": "Path to the repository",
+                "required": true
+              },
+              {
+                "name": "level",
+                "description": "Architecture level: F1, F2, or F3",
+                "required": false
+              }
+            ]
+          },
+          {
+            "name": "evolith/phase-gate-check",
+            "description": "Template for checking phase gate readiness",
+            "arguments": [
+              {
+                "name": "path",
+                "description": "Path to the repository",
+                "required": true
+              }
+            ]
+          },
+          {
+            "name": "evolith/sdlc-handoff",
+            "description": "Template for executing SDLC phase handoff",
+            "arguments": [
+              {
+                "name": "path",
+                "description": "Path to the repository",
+                "required": true
+              },
+              {
+                "name": "fromPhase",
+                "description": "Source phase",
+                "required": true
+              },
+              {
+                "name": "toPhase",
+                "description": "Target phase",
+                "required": true
+              }
+            ]
+          },
+          {
+            "name": "evolith/ruleset-analysis",
+            "description": "Template for analyzing a ruleset for compliance",
+            "arguments": [
+              {
+                "name": "ruleset",
+                "description": "Ruleset ID to analyze",
+                "required": true
+              },
+              {
+                "name": "path",
+                "description": "Path to the repository",
+                "required": false
+              }
+            ]
+          },
+          {
+            "name": "evolith/moscow-prioritization",
+            "description": "Template for creating MoSCoW prioritization matrix for SDLC discovery phase",
+            "arguments": [
+              {
+                "name": "path",
+                "description": "Path to the repository",
+                "required": true
+              },
+              {
+                "name": "phase",
+                "description": "Phase to prioritize (default: phase-0)",
+                "required": false
+              }
+            ]
+          }
+        ]
+      },
+      "error": null
+    }
+  }
+}

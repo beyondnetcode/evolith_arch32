@@ -1,6 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "isolatedModules": true,
     "baseUrl": "./src",
     "paths": {
       "domain/*": ["domain/*"],

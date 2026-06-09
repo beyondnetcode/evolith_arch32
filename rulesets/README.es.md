@@ -20,7 +20,11 @@ Si estás integrando un nuevo repositorio satélite, comienza aquí:
 2. **[Reglas de Arquitectura](./architecture/)** — reglas de progresión de fase F1/F2/F3
 3. **[Reglas SDLC](./sdlc/)** — definiciónes de quality gates y thresholds
 4. **[Reglas Anti-Corrupción](./acl/)** — gobernanza de integración con sistemas externos
-5. **[Schemas](./schema/)** — JSON Schema para validación de artefactos Evolith
+5. **[Reglas del CLI](./cli/)** — preparación de release del Smart CLI y paridad con Core
+6. **[Reglas de Evidencia](./evidence/)** — manifests de evidencia auditable
+7. **[Reglas MCP](./mcp/)** — cumplimiento del protocolo MCP
+8. **[Reglas de Observabilidad](./observability/)** — evidencia de telemetría para operación
+9. **[Schemas](./schema/)** — JSON Schema para validación de artefactos Evolith
 
 ---
 
@@ -65,6 +69,15 @@ rulesets/
 ├── sdlc/                       # Reglas de gates SDLC
 │   ├── phase-gates.rules.json
 │   └── quality-thresholds.rules.json
+├── cli/                        # Reglas de release y paridad del Smart CLI
+│   ├── release-readiness.rules.json
+│   └── core-parity.rules.json
+├── evidence/                   # Contrato de evidencia auditable
+│   └── evidence-manifest.rules.json
+├── mcp/                        # Reglas de exposición del protocolo MCP
+│   └── protocol-compliance.rules.json
+├── observability/              # Reglas de evidencia de telemetría
+│   └── telemetry-evidence.rules.json
 └── governance/                 # Reglas de gobernanza federada
     ├── inheritance.rules.json
     ├── satellite-contracts.rules.json

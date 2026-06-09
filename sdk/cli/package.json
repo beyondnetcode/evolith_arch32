@@ -1,6 +1,6 @@
 {
   "name": "@evolith/smart-cli",
-  "version": "0.0.2-beta",
+  "version": "0.0.3-beta",
   "description": "Evolith Smart CLI - Governance, standards validation, and AI agent integration for satellite repositories",
   "main": "dist/main.js",
   "bin": {
@@ -13,9 +13,9 @@
     "build": "tsc",
     "start": "node dist/main.js",
     "start:dev": "tsc -w & node dist/main.js",
-    "test": "jest",
+    "test": "node --max-old-space-size=8192 node_modules/.bin/jest",
     "test:watch": "jest --watch",
-    "test:cov": "jest --coverage --runInBand --forceExit",
+    "test:cov": "node --max-old-space-size=4096 node_modules/.bin/jest --coverage --runInBand --forceExit",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prepublishOnly": "npm run build"
   },
@@ -57,12 +57,17 @@
     "@modelcontextprotocol/sdk": "^1.29.0",
     "@nestjs/common": "^11.1.24",
     "@nestjs/core": "^11.1.24",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
     "chalk": "^4.1.2",
     "chokidar": "^5.0.0",
     "conf": "^15.1.0",
     "fs-extra": "^11.3.5",
+    "iconv-lite": "^0.7.2",
+    "inherits": "^2.0.4",
     "nest-commander": "^3.20.1",
     "ora": "^9.4.0",
+    "path-to-regexp": "^8.4.2",
     "yaml": "^2.9.0"
   },
   "devDependencies": {
@@ -72,6 +77,8 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^25.9.1",
     "@types/yaml": "^1.9.6",
+    "debug": "^4.4.3",
+    "fast-json-stable-stringify": "^2.1.0",
     "jest": "^30.4.2",
     "nest-commander-testing": "^3.5.1",
     "ts-jest": "^29.4.11",

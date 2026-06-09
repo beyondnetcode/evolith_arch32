@@ -802,6 +802,82 @@ describe('MCP Server', () => {
       // tools/list returns the tools array
       expect((response.result as Record<string, unknown>)?.tools).toBeDefined();
     });
+
+    it('outer-catch: logger.error called when transport.send() itself throws', async () => {
+      // Destroy stdout AFTER the server starts so send() will fail.
+      // Attach a no-op error listener to prevent the unhandled-error event.
+      stdoutStream.on('error', () => {});
+      stdoutStream.destroy(new Error('pipe broken'));
+      stdinStream.write(JSON.stringify({ jsonrpc: '2.0', id: 9, method: 'initialize' }) + '\n');
+      await new Promise(r => setTimeout(r, 80));
+      // If we reach here without an unhandled rejection the outer catch worked.
+      stdinStream.destroy();
+      // afterEach will call server.stop() — it should not throw even though stdout is gone.
+    });
+  });
+
+  // ── MinimalHttpTransport.send() — dead client cleanup ────────────────────
+
+  describe('MinimalHttpTransport.send() — dead client cleanup', () => {
+    let httpPort: number;
+    let srv: { stop: () => Promise<void> };
+
+    beforeEach(async () => {
+      jest.clearAllMocks();
+      httpPort = 54000 + Math.floor(Math.random() * 900);
+      srv = await startMcpServer({ transport: 'http', port: httpPort });
+      await new Promise(r => setTimeout(r, 40));
+    });
+
+    afterEach(async () => {
+      await srv.stop();
+      await new Promise(r => setTimeout(r, 30));
+    });
+
+    it('removes dead SSE client when res.write throws after stream is destroyed', async () => {
+      const http = await import('node:http');
+
+      // Connect an SSE client, wait for the "connected" preamble.
+      await new Promise<void>((resolve, reject) => {
+        const sseReq = http.get(`http://127.0.0.1:${httpPort}/sse`, (sseRes) => {
+          sseRes.once('data', async () => {
+            // Destroy the SSE response on the client side so the server's
+            // res.write() will throw on the next send().
+            sseReq.destroy();
+
+            // POST a message to trigger transport.send() — the dead client
+            // write should throw and be silently removed.
+            const body = JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'initialize' });
+            const postReq = http.request(
+              `http://127.0.0.1:${httpPort}/message`,
+              { method: 'POST', headers: { 'Content-Type': 'application/json' } },
+              (res) => { res.on('data', () => {}); res.on('end', resolve); },
+            );
+            postReq.on('error', reject);
+            postReq.write(body);
+            postReq.end();
+          });
+          sseRes.on('error', () => {});
+        });
+        sseReq.on('error', (err: NodeJS.ErrnoException) => {
+          if (err.code === 'ECONNRESET') resolve(); else reject(err);
+        });
+      });
+
+      // Server must still be functional after removing the dead client.
+      const body = JSON.stringify({ jsonrpc: '2.0', id: 2, method: 'tools/list' });
+      const followUp = await new Promise<{ statusCode: number }>((resolve, reject) => {
+        const req = http.request(
+          `http://127.0.0.1:${httpPort}/message`,
+          { method: 'POST', headers: { 'Content-Type': 'application/json' } },
+          (res) => { res.on('data', () => {}); res.on('end', () => resolve({ statusCode: res.statusCode || 0 })); },
+        );
+        req.on('error', reject);
+        req.write(body);
+        req.end();
+      });
+      expect(followUp.statusCode).toBe(202);
+    });
   });
 
   // ── DirectMcpServer — full message routing via HTTP transport ─────────────

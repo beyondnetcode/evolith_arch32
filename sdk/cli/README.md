@@ -229,6 +229,16 @@ smart-cli mcp serve
 
 The server communicates via stdio JSON-RPC.
 
+### MCP Smoke Test
+
+Use the smoke test before releases or MCP protocol changes:
+
+```bash
+npm run mcp:smoke
+```
+
+The smoke verifies `initialize`, `tools/list`, `resources/list`, `prompts/list`, and a real `tools/call` through the built CLI.
+
 ### Available MCP Tools
 
 | Tool | Description |

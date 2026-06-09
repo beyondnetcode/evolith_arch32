@@ -27,14 +27,14 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 |------------|----------|--------|------------|
 | Evolith Core (Corpus de Referencia) | 85% | **90%** | Maduro — Integración ACL diferida |
 | Evolith Tracker (SaaS) | 0% | **0%** | No iniciado — Componente enterprise futuro |
-| CLI (Exposición Tecnológica) | 50% | **85%** | Beta funcional; build y suite Jest completa pasan localmente, con hardening de teardown/listeners pendiente |
-| Servidor MCP (Exposición Tecnológica) | 10% | **80%** | JSON-RPC stdio y HTTP mínimo implementados; faltan hardening de protocolo y evidencia smoke de release |
+| CLI (Exposición Tecnológica) | 50% | **86%** | Beta funcional; build, coverage y smoke MCP pasan localmente, con hardening amplio de teardown pendiente |
+| Servidor MCP (Exposición Tecnológica) | 10% | **85%** | JSON-RPC stdio y HTTP mínimo implementados; smoke de release ya verifica initialize, discovery, prompts, recursos y llamadas de herramienta |
 | Rulesets (Legibles por Máquina) | 75% | **86%** | 43 archivos JSON en 13 categorías, incluyendo CLI, MCP, evidencia y observabilidad |
 | Phase Gates SDLC | 40% | **62%** | Existe validación de gates, pero el tracking de paridad aún marca varios checks de evidencia incompletos |
 | Detección de Architecture Drift | 0% | **85%** | Detección, historial y análisis de tendencias |
-| Cobertura de Tests | 25% | **Parcialmente verificada** | El comando de coverage pasa fuera del sandbox: 82.27% statements, 83.22% lines; branch/function coverage aún requiere hardening |
+| Cobertura de Tests | 25% | **Parcialmente verificada** | El comando de coverage pasa: 84.73% statements, 85.78% lines, 72.16% branches, 78.66% functions; branch/function coverage y teardown Jest aún requieren hardening |
 
-**Puntuación General Ponderada:** ~45% → **~70%** (+25 puntos)
+**Puntuación General Ponderada:** ~45% → **~71%** (+26 puntos)
 
 ---
 
@@ -80,9 +80,10 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 | **Prompts MCP** | 7 prompts: validate, onboarding, architecture, phase-gate, handoff, ruleset, moscow | Completo |
 | **Integración IDE (Cursor, Claude Desktop)** | Ejemplos de config existen | No probado end-to-end |
 | **Contexto de Gobernanza en Tiempo Real** | Servidor MCP expone rulesets, reglas, agentes como recursos | Completo |
-| **Transporte HTTP** | Transporte local HTTP/SSE mínimo implementado | Parcial — requiere hardening de protocolo y evidencia smoke de release |
+| **Transporte HTTP** | Transporte local HTTP/SSE mínimo implementado | Parcial — requiere hardening de protocolo |
+| **Smoke MCP de Release** | `npm run mcp:smoke` verifica initialize, herramientas, recursos, prompts y llamada de herramienta sobre stdio | Completo |
 
-**Estado:** ~80% — CLI y MCP son capacidades beta funcionales; release readiness está bloqueado por evidencia smoke MCP, mejora de branch/function coverage y hardening de teardown de tests, no por suites fallidas.
+**Estado:** ~85% — CLI y MCP son capacidades beta funcionales; release readiness queda bloqueado principalmente por mejora de branch/function coverage, hardening del protocolo HTTP y limpieza amplia del teardown de tests.
 
 ---
 

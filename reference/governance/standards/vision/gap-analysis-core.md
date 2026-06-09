@@ -27,14 +27,14 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 |-----------|----------|---------|------------|
 | Evolith Core (Reference Corpus) | 85% | **90%** | Mature — ACL integration rules deferred |
 | Evolith Tracker (SaaS) | 0% | **0%** | Not started — Future enterprise component |
-| CLI (Technological Exposure) | 50% | **85%** | Functional beta; build and full Jest suite pass locally, with teardown/listener hardening still pending |
-| MCP Server (Technological Exposure) | 10% | **80%** | JSON-RPC stdio and minimal HTTP implemented; protocol hardening and release smoke evidence pending |
+| CLI (Technological Exposure) | 50% | **86%** | Functional beta; build, coverage, and MCP smoke gates pass locally, with broader teardown hardening still pending |
+| MCP Server (Technological Exposure) | 10% | **85%** | JSON-RPC stdio and minimal HTTP implemented; release smoke now verifies initialize, discovery, prompts, resources, and tool calls |
 | Rulesets (Machine-Readable) | 75% | **86%** | 43 JSON files across 13 categories, including CLI, MCP, evidence, and observability |
 | SDLC Phase Gates | 40% | **62%** | Gate validation exists, but parity tracking still marks several evidence checks incomplete |
 | Architecture Drift Detection | 0% | **85%** | Detection, history, and trend analysis |
-| Test Coverage | 25% | **Partially verified** | Coverage command passes outside the sandbox: 82.27% statements, 83.22% lines; branch/function coverage still needs hardening |
+| Test Coverage | 25% | **Partially verified** | Coverage command passes: 84.73% statements, 85.78% lines, 72.16% branches, 78.66% functions; branch/function coverage and Jest teardown still need hardening |
 
-**Overall Weighted Score:** ~45% → **~70%** (+25 points)
+**Overall Weighted Score:** ~45% → **~71%** (+26 points)
 
 ---
 
@@ -80,9 +80,10 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 | **MCP Prompts** | 7 prompts: validate, onboarding, architecture, phase-gate, handoff, ruleset, moscow | Complete |
 | **IDE Integration (Cursor, Claude Desktop)** | Config examples exist | Not tested end-to-end |
 | **Real-time Governance Context** | MCP server exposes rulesets, rules, agents as resources | Complete |
-| **HTTP Transport** | Minimal local HTTP/SSE transport implemented | Partial — needs protocol hardening and release smoke evidence |
+| **HTTP Transport** | Minimal local HTTP/SSE transport implemented | Partial — needs protocol hardening |
+| **MCP Release Smoke** | `npm run mcp:smoke` verifies initialize, tools, resources, prompts, and tool call over stdio | Complete |
 
-**Status:** ~80% — CLI and MCP are functional beta capabilities; release readiness is blocked by MCP smoke evidence, branch/function coverage improvement, and test teardown hardening rather than failing suites.
+**Status:** ~85% — CLI and MCP are functional beta capabilities; release readiness is now mainly blocked by branch/function coverage improvement, HTTP protocol hardening, and broader test teardown cleanup.
 
 ---
 

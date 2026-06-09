@@ -17,6 +17,7 @@
     "test:watch": "jest --watch",
     "test:cov": "node --max-old-space-size=4096 node_modules/.bin/jest --coverage --runInBand --forceExit",
     "test:e2e": "node --max-old-space-size=4096 node_modules/.bin/jest --config ./test/jest-e2e.json --runInBand --no-bail",
+    "mcp:smoke": "npm run build && node examples/mcp-test.js",
     "prepublishOnly": "npm run build"
   },
   "keywords": [

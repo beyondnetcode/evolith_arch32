@@ -95,7 +95,8 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 |------|-------------|---------|------|
 | G-02 (ACL Jira) | G-18 (E2E Tests) | - | G-12 (MCP Protocol) |
 | | | | G-25 (Maturity Matrix CLI/MCP) |
-| G-27 (Satellite CI enforcement) | | | G-24 (G-17 numbers updated) |
+| | | | G-27 (Satellite CI enforcement) |
+| | | | G-24 (G-17 numbers updated) |
 | G-05 (DORA Metrics) | | | G-16 (EN/ES Parity) |
 | G-06 (Scorecards) | | | G-03 (Phase Gates) |
 | | | | G-04 (Architecture Drift) |
@@ -144,7 +145,7 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 | G-24 | G-17 tracking table numbers were stale | Docs | LOW | XS (<1 wk) | DONE | Updated to 88.70%/89.80%/76.93%/83.58% — 1 369 tests |
 | G-25 | maturity-matrix.md does not cover CLI/MCP pillars | Docs | MEDIUM | S (1 wk) | DONE | Added 5-dimension CLI/MCP assessment; combined score 3.72/5.0 |
 | G-26 | Branch coverage target vs. actual (77% vs. 80%) | Testing | MEDIUM | - | ACCEPTED | Branch target revised to ≥75%; actual 76.93% — accepted baseline |
-| G-27 | Federated governance enforcement is advisory-only | Core | MEDIUM | M (2-3 wk) | TODO | Satellite CI does not auto-run `smart-cli validate`; enforcement is pull-based |
+| G-27 | Federated governance enforcement is advisory-only | Core | MEDIUM | M (2-3 wk) | DONE | Composite action `.github/actions/evolith-validate`; satellites `uses: beyondnetcode/evolith_arch32/.github/actions/evolith-validate@main` |
 
 ### 3.3 Traffic Light Legend
 
@@ -295,11 +296,21 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 
 **Status:** Branch coverage stands at 76.93%. Original target was 80%; target has been revised to ≥75% following maturity analysis. Actual exceeds revised target. No further action required.
 
-#### G-27: Federated Governance Enforcement Is Advisory-Only (TODO)
+#### G-27: Federated Governance Enforcement (RESOLVED — 100%)
 
-**Gap:** Satellite repositories (e.g., `evolith_tracker`, UMS) inherit the Core Constitution by convention. There is no CI hook that automatically runs `smart-cli validate` on satellite PRs. A satellite can drift from Core rulesets without any blocking signal.
+**Delivered:** `.github/actions/evolith-validate/` — reusable GitHub Actions composite action:
+- Installs `@evolith/smart-cli` at a configurable version
+- Runs `smart-cli validate` with inputs for `satellite-path`, `ruleset`, `core-path`, `fail-on-violation`
+- Outputs `compliance-status`, `violations-count`, `report-path`
+- Writes a compliance summary to the GitHub Actions job summary on every run
+- EN/ES README with copy-paste workflow examples
 
-**Fix Required:** Define a GitHub Actions / CI composite action that satellite repos can include to run `smart-cli validate` as a PR gate. Track as a follow-up incremental governance enabler.
+**Usage in satellite repos:**
+```yaml
+- uses: beyondnetcode/evolith_arch32/.github/actions/evolith-validate@main
+  with:
+    ruleset: inheritance
+```
 
 ### 5.3 Low Priority (Cleanup)
 
@@ -330,14 +341,14 @@ This document provides a comprehensive gap analysis of the Evolith Core reposito
 | Priority | Gaps | Criteria |
 |----------|------|----------|
 | **HIGH** | G-18 | External smoke evidence for release readiness |
-| **MEDIUM** | G-02, G-05, G-06, G-27 | Important but not blocking |
+| **MEDIUM** | G-02, G-05, G-06 | Important but not blocking (Tracker SaaS deferred) |
 | **LOW** | G-16 | Cleanup and nice-to-have |
 
 ### Effort vs. Impact
 
 | Effort → | XS (<1wk) | S (1wk) | M (2-3wk) | L (3-4wk) |
 |----------|-----------|---------|-----------|-----------|
-| **HIGH Impact** | - | G-18, G-27 | - | G-17 |
+| **HIGH Impact** | - | G-18 | - | G-17, G-27 |
 | **MEDIUM Impact** | - | - | G-02 | G-05, G-06 |
 | **LOW Impact** | G-16 | - | - | - |
 
@@ -437,8 +448,7 @@ Current State                          Vision Goal
 **Critical Path:**
 1. **MCP E2E Evidence (G-18)** — External client-level smoke evidence from a real IDE/agent session (Cursor or Claude Desktop)
 2. **Maturity Matrix CLI/MCP (G-25)** — Extend TOGAF ACMM assessment to cover the technological exposure layer
-3. **Satellite CI Enforcement (G-27)** — GitHub Actions composite action so satellite repos run `smart-cli validate` as a PR gate
-4. **Architecture Validation Increments** — Import graph, layer violation checks, bounded-context isolation as new scoped rules
+3. **Architecture Validation Increments** — Import graph, layer violation checks, bounded-context isolation as new scoped rules
 
 ---
 

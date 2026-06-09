@@ -235,7 +235,7 @@ export class PhaseGateValidatorService {
     return artifactPaths[artifact] || path.join(projectPath, artifact);
   }
 
-  private async validateSchema(schemaRef: string, artifactPath: string, projectPath: string): Promise<boolean> {
+  private async validateSchema(schemaRef: string, artifactPath: string, _projectPath: string): Promise<boolean> {
     try {
       const schemaPath = path.join(path.dirname(this.rulesetPath), schemaRef);
       if (!await this.fs.exists(schemaPath)) {
@@ -243,13 +243,28 @@ export class PhaseGateValidatorService {
         return false;
       }
 
+      const schemaContent = await this.fs.readFile(schemaPath);
       const artifactContent = await this.fs.readFile(artifactPath);
-      if (!artifactContent || artifactContent.trim().length === 0) {
-        return false;
+      if (!artifactContent || artifactContent.trim().length === 0) return false;
+
+      const schema = JSON.parse(schemaContent) as object;
+      const artifact = JSON.parse(artifactContent) as object;
+
+      const { default: Ajv } = await import('ajv');
+      const { default: addFormats } = await import('ajv-formats');
+      const ajv = new Ajv({ strict: false, allErrors: true });
+      addFormats(ajv);
+      const validate = ajv.compile(schema);
+      const valid = validate(artifact);
+
+      if (!valid && validate.errors) {
+        const summary = validate.errors.slice(0, 3).map(e => `${e.instancePath} ${e.message}`).join('; ');
+        this.logger.warn(`Schema validation failed for ${artifactPath}: ${summary}`);
       }
 
-      return true;
-    } catch {
+      return Boolean(valid);
+    } catch (err: unknown) {
+      this.logger.warn(`Schema validation error: ${err instanceof Error ? err.message : String(err)}`);
       return false;
     }
   }

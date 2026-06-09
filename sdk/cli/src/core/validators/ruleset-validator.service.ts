@@ -1,5 +1,6 @@
 import * as path from 'path';
 import { getContainer, ILogger, IFileSystem, IConfigParser } from '../abstractions';
+import { RuleEvaluationEngine } from './rule-evaluation-engine';
 
 export interface ValidationResult {
   status: 'passed' | 'failed' | 'warning';
@@ -49,13 +50,15 @@ export class RulesetValidatorService {
   private readonly logger: ILogger;
   private readonly fs: IFileSystem;
   private readonly configParser: IConfigParser;
+  private readonly engine: RuleEvaluationEngine;
 
   constructor(options?: RulesetValidatorOptions) {
     const container = getContainer();
 
-    this.logger = options?.logger || container.createLogger('RulesetValidatorService');
-    this.fs = options?.fileSystem || container.createFileSystem();
-    this.configParser = options?.configParser || container.createConfigParser('yaml');
+    this.logger = options?.logger ?? container.createLogger('RulesetValidatorService');
+    this.fs = options?.fileSystem ?? container.createFileSystem();
+    this.configParser = options?.configParser ?? container.createConfigParser('yaml');
+    this.engine = new RuleEvaluationEngine({ fileSystem: this.fs, logger: this.logger });
   }
 
   async validate(satellitePath: string, corePath?: string): Promise<ValidationResult> {
@@ -185,6 +188,16 @@ export class RulesetValidatorService {
         file: 'evolith.yaml',
         blocking: false,
       });
+    }
+
+    // Run declarative rule evaluation engine over all discovered rulesets
+    try {
+      const engineResults = await this.engine.discoverAndEvaluate(satellitePath, resolvedCorePath);
+      const evaluated = engineResults.filter(r => r.result !== 'skipped');
+      rulesChecked += evaluated.length;
+      issues.push(...this.engine.toValidationIssues(engineResults));
+    } catch (err: unknown) {
+      this.logger.warn(`Rule engine error: ${err instanceof Error ? err.message : String(err)}`);
     }
 
     const status = issues.some(i => i.blocking) ? 'failed' : issues.length > 0 ? 'warning' : 'passed';

@@ -29,6 +29,8 @@ and operating guidance that satellite products inherit and specialize.
 
 > *Separate conceptually before separating physically.*
 
+</div>
+
 ---
 
 ## Start Here
@@ -41,9 +43,9 @@ and operating guidance that satellite products inherit and specialize.
 
 ## SDLC Navigation
 
-Use this tree when you want to move through Evolith the same way a product moves from idea to production. Each phase groups the documents, standards, and machine-readable rules that support its gate.
+Open the phase you are working in. Each section groups the documents, standards, and machine-readable rules that support its gate.
 
-<details open>
+<details>
 <summary><strong>Phase 01 - Conception and Discovery</strong></summary>
 
 - Documents and templates
@@ -161,6 +163,9 @@ Use this tree when you want to move through Evolith the same way a product moves
 
 ## Cross-Cutting References
 
+<details>
+<summary><strong>Architecture, governance, and applied reference</strong></summary>
+
 - Architecture baseline
   - [Architecture Hub](./reference/architecture/README.md)
   - [Blueprints](./reference/architecture/blueprints/README.md)
@@ -184,6 +189,8 @@ Use this tree when you want to move through Evolith the same way a product moves
   - [Canonical Reference vs UMS Applied Model](./reference/knowledge/demo/demo-vs-reference.md)
   - [UMS Architecture Portal](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md)
   - [Adoption Cases](./reference/knowledge/adoption-cases.md)
+
+</details>
 
 ## Tools and Automation
 

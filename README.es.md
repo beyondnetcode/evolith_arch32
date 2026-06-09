@@ -29,6 +29,8 @@ y guía operativa que los productos satélite heredan y especializan.
 
 > *Separar conceptualmente antes de separar físicamente.*
 
+</div>
+
 ---
 
 ## Comienza Aqui
@@ -41,9 +43,9 @@ y guía operativa que los productos satélite heredan y especializan.
 
 ## Navegacion SDLC
 
-Usa este arbol cuando quieras recorrer Evolith de la misma forma en que un producto avanza desde la idea hasta produccion. Cada fase agrupa los documentos, estandares y reglas machine-readable que soportan su gate.
+Abre la fase en la que estas trabajando. Cada seccion agrupa los documentos, estandares y reglas machine-readable que soportan su gate.
 
-<details open>
+<details>
 <summary><strong>Fase 01 - Concepcion y Descubrimiento</strong></summary>
 
 - Documentos y plantillas
@@ -161,6 +163,9 @@ Usa este arbol cuando quieras recorrer Evolith de la misma forma en que un produ
 
 ## Referencias Transversales
 
+<details>
+<summary><strong>Arquitectura, gobernanza y referencia aplicada</strong></summary>
+
 - Baseline de arquitectura
   - [Hub de Arquitectura](./reference/architecture/README.es.md)
   - [Blueprints](./reference/architecture/blueprints/README.es.md)
@@ -184,6 +189,8 @@ Usa este arbol cuando quieras recorrer Evolith de la misma forma en que un produ
   - [Referencia Canonica vs Modelo Aplicado UMS](./reference/knowledge/demo/demo-vs-reference.es.md)
   - [Portal de Arquitectura UMS](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md)
   - [Casos de Adopcion](./reference/knowledge/adoption-cases.es.md)
+
+</details>
 
 ## Herramientas y Automatizacion
 

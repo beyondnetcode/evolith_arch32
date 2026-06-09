@@ -19,7 +19,7 @@ export class SdlcCommand extends CommandRunner {
     p.intro(chalk.bgCyan.white.bold(' Evolith SDLC CLI '));
     p.log.info(chalk.bold('Available subcommands:'));
     p.log.info(`  ${chalk.cyan('handoff')}     - Transition artifacts between phases`);
-    p.log.info(`  ${chalk.cyan('generate')}    - Generate code from models (e.g. domain from DDD)`);
+    p.log.info(`  ${chalk.cyan('generate')}    - ${chalk.yellow('[alpha]')} Generate code from models (e.g. domain from DDD)`);
     p.log.info(`  ${chalk.cyan('gate-status')} - Display current SDLC phase gate validation status`);
     p.outro(chalk.gray('Run `evolith sdlc <subcommand> --help` for more information.'));
   }

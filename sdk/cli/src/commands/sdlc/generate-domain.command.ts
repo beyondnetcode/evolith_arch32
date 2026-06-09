@@ -4,7 +4,7 @@ import * as p from '@clack/prompts';
 
 @Command({
   name: 'generate',
-  description: 'Generates code scaffolding based on SDLC artifacts (e.g. domain from ddd-model)',
+  description: '[alpha] Generates code scaffolding based on SDLC artifacts (e.g. domain from ddd-model) — POC/stub, not production-ready',
 })
 export class GenerateDomainCommand extends CommandRunner {
   async run(
@@ -20,16 +20,16 @@ export class GenerateDomainCommand extends CommandRunner {
       return;
     }
 
-    console.log(chalk.blueBright(`\n⚙️ [MOCK] Scaffolding ${target} from ${fromFile}...\n`));
-    
-    // MOCK implementation
-    console.log(chalk.cyan('1. Parsing Markdown AST...'));
-    console.log(chalk.cyan('2. Extracting Mermaid classDiagram blocks...'));
-    console.log(chalk.cyan('3. Translating <<Entity>> and <<Value Object>> stereotypes...'));
-    console.log(chalk.cyan('4. Scaffolding Hexagonal Architecture folders and TypeScript/C# files...'));
-    
-    console.log(chalk.greenBright(`\n✅ Generation completed successfully (POC mode).`));
-    console.log(chalk.gray('In a real scenario, the source code files for the Domain Layer would have been created in your project.\n'));
+    p.intro(chalk.bgYellow.black.bold(' [alpha] evolith sdlc generate '));
+    p.log.warn('This command is a POC stub — it does not create real files.');
+    p.log.info(`Target: ${chalk.cyan(target)}  Source: ${chalk.cyan(fromFile)}`);
+    p.log.info('');
+    p.log.info(chalk.dim('Steps that will run in the production implementation:'));
+    p.log.info(chalk.dim('  1. Parse Markdown AST'));
+    p.log.info(chalk.dim('  2. Extract Mermaid classDiagram blocks'));
+    p.log.info(chalk.dim('  3. Translate <<Entity>> / <<Value Object>> stereotypes'));
+    p.log.info(chalk.dim('  4. Scaffold Hexagonal Architecture folders & TypeScript files'));
+    p.outro(chalk.yellow('⚠️  No files were written. Track progress: https://github.com/evolith/core/issues'));
   }
 
   @Option({

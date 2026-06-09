@@ -41,27 +41,21 @@ describe('GenerateDomainCommand', () => {
       );
     });
 
-    it('should scaffold domain when target and from are provided', async () => {
+    it('should display alpha warning and step list when target and from are provided', async () => {
       await command.run(['domain'], { from: 'ddd-model.md' });
 
-      expect(logSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Scaffolding domain')
+      // p.intro called with [alpha] header
+      expect(p.intro).toHaveBeenCalledWith(expect.stringContaining('alpha'));
+
+      // p.log.warn called with POC notice
+      expect(p.log.warn as jest.Mock).toHaveBeenCalledWith(
+        expect.stringContaining('POC stub')
       );
-      expect(logSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Parsing Markdown AST')
-      );
-      expect(logSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Extracting Mermaid')
-      );
-      expect(logSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Translating')
-      );
-      expect(logSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Scaffolding Hexagonal')
-      );
-      expect(logSpy).toHaveBeenCalledWith(
-        expect.stringContaining('completed successfully')
-      );
+
+      // Step descriptions visible in p.log.info calls
+      const infoCalls = (p.log.info as jest.Mock).mock.calls.flat().join(' ');
+      expect(infoCalls).toContain('Parse Markdown AST');
+      expect(infoCalls).toContain('Scaffold');
     });
   });
 

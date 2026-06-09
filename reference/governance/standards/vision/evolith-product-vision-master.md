@@ -31,13 +31,66 @@ Reference Corpus (Constitution)
 
 ### 2.2 Evolith Tracker
 
-The **SaaS Suite** that executes and traces the SDLC proposed by the Core. It acts as the audit engine and management layer, guaranteeing compliance with Core rules.
+The **SaaS SDLC Orchestrator & Auditor Suite** that executes and traces the SDLC defined by the Core. It is not a traditional task manager (not Jira or Trello) — it is an **AI-Native End-to-End Engineering Suite** composed of 5 independent progressive monolithic systems (modules), each corresponding to a Phase Gate. It acts as the audit engine and management layer, guaranteeing compliance with Core rules through an immutable governance contract.
 
-**Core Responsibilities:**
-- Execute the 5 Phase Gates
-- Track Architecture Drift (adherence index)
-- Consolidate DORA + SPACE metrics
-- Provide real-time executive scorecards
+> Repository: [`evolith_tracker`](https://github.com/beyondnetcode/evolith_tracker)
+
+#### 2.2.1 Execution Modes (Dual-Track & Hybrid)
+
+The Tracker supports three operational modes, configurable per module via *Convention over Configuration*:
+
+| Mode | Who Executes | Use Case |
+|------|-------------|----------|
+| **Traditional (Human-Driven)** | Engineering teams | Scrum/Kanban/PMI ceremonies |
+| **AI-Native (Agent-Driven)** | BMAD AI Agents | Spec-Driven autonomous execution |
+| **Hybrid** | Humans govern · Agents execute | Discovery meetings + automated Design phase |
+
+#### 2.2.2 The 5 Phase Gate Modules
+
+```
+Phase 1          Phase 2            Phase 3           Phase 4          Phase 5
+Discovery ──── Spec-Driven ──── Construction ──── Automated QA ──── Release
+  │              Design               │                │              Planner
+  │                │                  │                │                │
+  ▼                ▼                  ▼                ▼                ▼
+Business       Contract           Drift-free        .harness       Dynamic
+Sign-Off       Design             Build             Guardian       Rollout +
+(Canvas)       (OpenAPI/ADR)      (Agile/AI)        (Contract      Re-Do Flow
+                                                     Testing)
+```
+
+| Module | Gate | Key Capability |
+|--------|------|----------------|
+| **Product Discovery & Ideation Hub** | Business Sign-Off | AI-challenged Discovery Canvas · ROI/KPI gate before any design is authorized |
+| **Architecture Spec-Driven** | Design Baseline | Spec-as-Source · OpenAPI/AsyncAPI contracts · ADR verification · human approves contracts, not code |
+| **Construction Tracking** | Successful Build | Methodology-agnostic engine (Scrum/Kanban/BMAD) · real-time drift detection |
+| **Automated QA & Integration** | RC Stamped | Deep `.harness` integration · contract testing · Root Cleanness validation · SAST/DAST |
+| **Dynamic Release Planner** | Production Live | Multi-country/multi-channel dashboards · Regression Score · Re-Do Flow contingency engine |
+
+#### 2.2.3 Architectural Pillars
+
+- **Multi-Tenant Progressive Monolith:** 5 independent modules deployable as SaaS or On-Premise, with absolute TenantID isolation.
+- **Hexagonal Architecture (Ports & Adapters):** Core domain shielded against AI or methodology changes.
+- **Delegated Identity (UMS):** No own user management — consumes AuthN, AuthZ, and RACI roles from the UMS SaaS.
+- **Upstream Immutability:** The Tracker does not invent rules. Any improvement must be proposed as an ADR to `evolith_arch32`. Only after Core approval does the Tracker inherit the change.
+
+#### 2.2.4 Core Responsibilities
+
+- Execute and enforce the 5 Phase Gates
+- Track **Architecture Drift Index** (0% tolerance — no code deployed without a backing Spec and ADR)
+- Consolidate **DORA + SPACE metrics** via CQRS async engine
+- Provide real-time executive scorecards (Adherence, Deployment Frequency, Lead Time, Change Failure Rate)
+- Activate **Re-Do Flow** contingency engine when a release gate is blocked
+
+#### 2.2.5 Business Value (ROI from Discovery Canvas)
+
+| KPI | Target |
+|-----|--------|
+| Deployment Frequency | Weekly → Daily (On-Demand) via automated quality gates |
+| Lead Time for Changes | -50% from ideation to production |
+| Architecture Adherence Index | 100% Spec↔Code correlation · zero drift |
+| Change Failure Rate | < 2% via deep `.harness` contract testing integration |
+| Refactoring Cost (Technical Debt) | -40% reduction in rework hours |
 
 ### 2.3 Technological Exposure (CLI + MCP)
 

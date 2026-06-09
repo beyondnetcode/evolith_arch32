@@ -1,30 +1,42 @@
-import { Command, CommandRunner } from 'nest-commander';
+import { Command, CommandRunner, Option } from 'nest-commander';
 import chalk from 'chalk';
 import * as p from '@clack/prompts';
 import { getContainer } from '../../core/di/container';
 import { PhaseTransitionUseCase } from '../../application/services';
 import { PhaseGateValidatorService } from '../../core/validators/phase-gate-validator.service';
+import { readGitLog, isGitRepo } from '../../core/metrics/git-log-reader';
+import { calculateDora, DoraMetric, DoraRating } from '../../core/metrics/dora-calculator';
+
+function ratingBadge(rating: DoraRating): string {
+  switch (rating) {
+    case 'elite':   return chalk.blueBright('◆ elite');
+    case 'high':    return chalk.green('● high');
+    case 'medium':  return chalk.yellow('● medium');
+    case 'low':     return chalk.red('● low');
+    default:        return chalk.gray('○ unknown');
+  }
+}
 
 @Command({
   name: 'gate-status',
-  description: 'Display current SDLC phase gate validation status',
+  description: 'Display current SDLC phase gate validation status and DORA metrics',
 })
 export class GateStatusCommand extends CommandRunner {
   async run(
     _passedParam: string[],
-    _options?: Record<string, any>,
+    options?: Record<string, any>,
   ): Promise<void> {
     const fs = getContainer().createFileSystem() as any;
     const useCase = new PhaseTransitionUseCase(fs);
     const cwd = process.cwd();
+    const sinceDays: number = options?.since ?? 90;
 
     const spinner = p.spinner();
-    spinner.start('Validating phase gates...');
+    spinner.start('Validating phase gates…');
 
     try {
       const status = await useCase.getGateStatus(cwd);
       spinner.stop();
-
       this.printGateStatus(status);
     } catch (error: unknown) {
       spinner.stop();
@@ -32,6 +44,36 @@ export class GateStatusCommand extends CommandRunner {
       p.log.error(`Failed to validate gates: ${message}`);
       process.exit(1);
     }
+
+    // ── DORA metrics ────────────────────────────────────────────────────────
+    spinner.start('Reading git history for DORA metrics…');
+    try {
+      const hasGit = await isGitRepo(cwd);
+      if (!hasGit) {
+        spinner.stop('');
+        p.log.warn('DORA metrics skipped — not a git repository.');
+        return;
+      }
+
+      const commits = await readGitLog({ cwd, sinceDays });
+      spinner.stop(`Analysed ${commits.length} commits (last ${sinceDays} days)`);
+
+      const dora = calculateDora(commits, sinceDays);
+      this.printDora(dora);
+    } catch (err: unknown) {
+      spinner.stop('');
+      const msg = err instanceof Error ? err.message : String(err);
+      p.log.warn(`DORA metrics unavailable: ${msg}`);
+    }
+  }
+
+  @Option({
+    flags: '--since <days>',
+    description: 'Days of git history to analyse for DORA metrics (default: 90)',
+  })
+  parseSince(val: string): number {
+    const n = parseInt(val, 10);
+    return isNaN(n) || n < 1 ? 90 : n;
   }
 
   private printGateStatus(status: {
@@ -102,6 +144,41 @@ export class GateStatusCommand extends CommandRunner {
       }
     }
 
+    console.log('');
+  }
+
+  private printDora(dora: ReturnType<typeof calculateDora>): void {
+    console.log(chalk.bold('\n📊 DORA Metrics\n'));
+
+    if (!dora.available) {
+      console.log(chalk.gray('  No commit history found in the analysis window.'));
+      console.log('');
+      return;
+    }
+
+    console.log(chalk.dim(`  Based on ${dora.totalCommits} commits over the last ${dora.analyzedDays} days\n`));
+
+    const rows: Array<{ name: string; metric: DoraMetric }> = [
+      { name: 'Deployment Frequency', metric: dora.deploymentFrequency },
+      { name: 'Lead Time for Changes', metric: dora.leadTimeForChanges },
+      { name: 'Change Failure Rate',   metric: dora.changeFailureRate },
+      { name: 'Time to Restore',       metric: dora.timeToRestore },
+    ];
+
+    for (const { name, metric } of rows) {
+      const badge = ratingBadge(metric.rating);
+      const nameCol = name.padEnd(24);
+      const valueCol = metric.label.padEnd(18);
+      console.log(`  ${nameCol} ${valueCol} ${badge}`);
+    }
+
+    console.log('');
+    console.log(chalk.dim('  Ratings: ') +
+      chalk.blueBright('◆ elite') + chalk.dim('  ') +
+      chalk.green('● high') + chalk.dim('  ') +
+      chalk.yellow('● medium') + chalk.dim('  ') +
+      chalk.red('● low') + chalk.dim('  ') +
+      chalk.gray('○ unknown'));
     console.log('');
   }
 }

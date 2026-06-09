@@ -81,7 +81,9 @@
     "fast-json-stable-stringify": "^2.1.0",
     "jest": "^30.4.2",
     "nest-commander-testing": "^3.5.1",
+    "once": "^1.4.0",
     "ts-jest": "^29.4.11",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "wrappy": "^1.0.2"
   }
 }

@@ -1,10 +1,26 @@
 # SDK/CLI/MCP Current State Assessment
 
-> **Status:** Diagnostic Complete
+> **Status:** Superseded Historical Diagnostic
 > **Date:** 2026-06-06
 > **Reference:** Evolith Product Vision Master §2.3
+> **Superseded By:** `reference/governance/standards/vision/gap-analysis-core.md` current verified state
+> **Bilingual Exception:** SDK planning notes currently have no ES counterpart; authoritative bilingual status is maintained in the vision gap analysis pair.
 
 ---
+
+## 0. Current Status Correction — 2026-06-08
+
+This diagnostic is retained as historical context only. It no longer reflects the current CLI/MCP implementation.
+
+Verified current state:
+- TypeScript build passes with `npm run build`.
+- MCP is no longer a stub; JSON-RPC stdio and minimal local HTTP/SSE transports exist.
+- MCP exposes tools, resources, prompts, and metrics handlers.
+- `npm test` now starts the suite after repairing Jest configuration and missing dependencies, but the full suite is not yet green.
+- Release readiness remains blocked by failing/sandbox-sensitive tests and missing MCP smoke evidence.
+
+Use the current Core gap analysis for active planning:
+[Evolith Core Gap Analysis](../../../../reference/governance/standards/vision/gap-analysis-core.md)
 
 ## 1. Executive Summary
 

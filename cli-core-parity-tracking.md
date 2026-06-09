@@ -4,8 +4,20 @@
 > **Status:** Draft — Pending Interactive Prompts Implementation
 > **Date:** 2026-06-06
 > **Owner:** SDK Team
+> **Bilingual Exception:** This root tracking scratchpad currently has no ES counterpart; authoritative bilingual state is maintained in `reference/governance/standards/vision/gap-analysis-core.md` and `.es.md`.
 
 ---
+
+## 0. Current Status Correction — 2026-06-08
+
+This tracking document remains useful for parity gaps, but several implementation status labels are stale. Current verified state:
+
+- CLI build passes.
+- MCP protocol is implemented for stdio and has a minimal HTTP/SSE transport.
+- The test runner starts after Jest configuration and dependency repairs, but the full suite is not green.
+- New rulesets now exist for CLI release readiness, CLI/Core parity, evidence manifests, MCP protocol compliance, and observability evidence.
+
+Keep using the tables below for gap categories, but treat source code plus the current vision gap analysis as the authoritative implementation status.
 
 ## 1. Executive Summary
 

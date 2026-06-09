@@ -27,12 +27,12 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 |------------|----------|--------|------------|
 | Evolith Core (Corpus de Referencia) | 85% | **90%** | Maduro — Integración ACL diferida |
 | Evolith Tracker (SaaS) | 0% | **0%** | No iniciado — Componente enterprise futuro |
-| CLI (Exposición Tecnológica) | 50% | **85%** | 13 comandos, 3,269 líneas de implementación |
-| Servidor MCP (Exposición Tecnológica) | 10% | **80%** | JSON-RPC stdio completo, 17 herramientas, 8 recursos, 7 prompts |
-| Rulesets (Legibles por Máquina) | 75% | **82%** | 37 archivos JSON en 9 categorías |
-| Phase Gates SDLC | 40% | **70%** | Ejecutables vía CLI con manifiestos de handoff |
+| CLI (Exposición Tecnológica) | 50% | **82%** | Beta funcional; el build pasa, la suite de tests ya arranca pero aún no está completamente verde |
+| Servidor MCP (Exposición Tecnológica) | 10% | **78%** | JSON-RPC stdio y HTTP mínimo implementados; faltan hardening de protocolo y evidencia smoke |
+| Rulesets (Legibles por Máquina) | 75% | **86%** | 43 archivos JSON en 13 categorías, incluyendo CLI, MCP, evidencia y observabilidad |
+| Phase Gates SDLC | 40% | **62%** | Existe validación de gates, pero el tracking de paridad aún marca varios checks de evidencia incompletos |
 | Detección de Architecture Drift | 0% | **85%** | Detección, historial y análisis de tendencias |
-| Cobertura de Tests | 25% | **80%** | 49 archivos spec, 1,000+ tests |
+| Cobertura de Tests | 25% | **No verificada** | La configuración de Jest fue reparada hasta arrancar tests; la suite completa aún tiene fallos y tests HTTP sensibles al sandbox |
 
 **Puntuación General Ponderada:** ~45% → **~67%** (+22 puntos)
 
@@ -47,7 +47,7 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 | **Directivas Arquitectónicas** | Implementado | Completo |
 | **ADRs (Architecture Decision Records)** | 70+ ADRs en core, nodejs, dotnet, android | Completo |
 | **Estándares y Taxonomías** | Taxonomy, manifiesto de ingeniería, convenciones | Completo |
-| **Rulesets (Legibles por Máquina)** | 37 archivos JSON en 9 categorías | Completo |
+| **Rulesets (Legibles por Máquina)** | 43 archivos JSON en 13 categorías | Completo |
 | **Esquemas (Artefactos Phase Gate)** | 14 JSON schemas en `rulesets/schema/` | Completo |
 | **Modelo de Gobernanza Federada** | Reglas de herencia, contratos de satélite | Completo |
 | **Reglas ACL (Anti-Corruption Layer)** | `rulesets/acl/anti-corruption-layer.rules.json` + 3 archivos adicionales | Completo |
@@ -80,9 +80,9 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 | **Prompts MCP** | 7 prompts: validate, onboarding, architecture, phase-gate, handoff, ruleset, moscow | Completo |
 | **Integración IDE (Cursor, Claude Desktop)** | Ejemplos de config existen | No probado end-to-end |
 | **Contexto de Gobernanza en Tiempo Real** | Servidor MCP expone rulesets, reglas, agentes como recursos | Completo |
-| **Transporte HTTP** | Declarado en interfaz pero no implementado | Parcial (G-20) |
+| **Transporte HTTP** | Transporte local HTTP/SSE mínimo implementado | Parcial — requiere hardening de protocolo y evidencia smoke de release |
 
-**Estado:** ~82% — CLI y servidor MCP completamente funcionales, transporte HTTP pendiente
+**Estado:** ~78% — CLI y MCP son capacidades beta funcionales; release readiness está bloqueado por tests fallidos y evidencia smoke MCP pendiente.
 
 ---
 
@@ -114,48 +114,48 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 
 | ID | Descripción | Comp. | Prioridad | Complejidad | Estado | Avance |
 |----|-------------|-------|-----------|-------------|--------|--------|
-| **G-12** | **Implementar protocolo servidor MCP (JSON-RPC stdio)** | MCP | 🔴 CRÍTICO | M (2-3 sem) | ✅ DONE | 100% |
-| G-01 | Validación arquitectura F1/F2/F3 en CLI | Core | 🟠 ALTA | M (2-3 sem) | ✅ DONE | 100% |
-| G-03 | Ejecutar transiciones de Phase Gates | CLI | 🟠 ALTA | L (3-4 sem) | ✅ DONE | 100% |
-| G-04 | Detección de Architecture Drift | CLI | 🟠 ALTA | L (3-4 sem) | ✅ DONE | 100% |
-| G-07 | Comando `smart-cli agents install` | CLI | 🟠 ALTA | S (1 sem) | ✅ DONE | 100% |
-| G-08 | Camino de upgrade seguro para satélites | CLI | 🟠 ALTA | M (2-3 sem) | ✅ DONE | 100% |
-| G-09 | Validación reglas arquitectura en CLI | CLI | 🟠 ALTA | M (2-3 sem) | ✅ DONE | 100% |
-| G-10 | Transiciones de fase y generación artefactos | CLI | 🟡 MEDIA | M (2-3 sem) | ✅ DONE | 100% |
-| G-11 | Andamiaje de documentación | CLI | 🟡 MEDIA | S (1 sem) | ✅ DONE | 100% |
-| G-13 | Implementar 10+ herramientas MCP | MCP | 🟡 MEDIA | L (3-4 sem) | ✅ DONE | 100% |
-| G-14 | Recursos MCP (Info Core, rulesets) | MCP | 🟡 MEDIA | M (2-3 sem) | ✅ DONE | 100% |
-| G-15 | Prompts MCP reutilizables | MCP | 🟢 BAJA | XS (<1 sem) | ✅ DONE | 100% |
-| G-17 | Cobertura tests unitarios >80% | Testing | 🟠 ALTA | L (3-4 sem) | ✅ DONE | 100% |
-| G-18 | Tests E2E reales con aserciones | Testing | 🟠 ALTA | L (3-4 sem) | ✅ DONE | 100% |
-| G-16 | Paridad bilingüe 100% EN/ES | Core | 🟢 BAJA | XS (<1 sem) | ✅ DONE | 90% |
-| G-02 | Integraciones ACL Jira/Trello/Linear | Core | 🟡 MEDIA | M (2-3 sem) | ⏸️ DEFERRED | 0% |
-| G-05 | Dashboard métricas DORA+SPACE | Tracker | 🟡 MEDIA | L (3-4 sem) | ⏸️ DEFERRED | 0% |
-| G-06 | Scorecards ejecutivos en tiempo real | Tracker | 🟡 MEDIA | L (3-4 sem) | ⏸️ DEFERRED | 0% |
-| G-19 | Limpieza servicio MCP legacy | Core | 🟢 BAJA | XS (<1 sem) | ✅ DONE | 100% |
-| G-20 | Implementación transporte HTTP MCP | MCP | 🟡 MEDIA | S (1 sem) | ✅ DONE | 100% |
-| G-21 | Profundidad validación arquitectura | Core | 🟡 MEDIA | M (2-3 sem) | ✅ DONE | 100% |
-| G-22 | Consistencia de nombre MoSCoW | Core | 🟢 BAJA | XS (<1 sem) | ✅ DONE | 100% |
-| G-23 | Limpieza directorio validators vacío | Core | 🟢 BAJA | XS (<1 sem) | ✅ DONE | 100% |
+| **G-12** | **Implementar protocolo servidor MCP (JSON-RPC stdio)** | MCP | CRITICO | M (2-3 sem) | DONE | 100% |
+| G-01 | Validación arquitectura F1/F2/F3 en CLI | Core | ALTA | M (2-3 sem) | DONE | 100% |
+| G-03 | Ejecutar transiciones de Phase Gates | CLI | ALTA | L (3-4 sem) | DONE | 100% |
+| G-04 | Detección de Architecture Drift | CLI | ALTA | L (3-4 sem) | DONE | 100% |
+| G-07 | Comando `smart-cli agents install` | CLI | ALTA | S (1 sem) | DONE | 100% |
+| G-08 | Camino de upgrade seguro para satélites | CLI | ALTA | M (2-3 sem) | DONE | 100% |
+| G-09 | Validación reglas arquitectura en CLI | CLI | ALTA | M (2-3 sem) | DONE | 100% |
+| G-10 | Transiciones de fase y generación artefactos | CLI | MEDIA | M (2-3 sem) | DONE | 100% |
+| G-11 | Andamiaje de documentación | CLI | MEDIA | S (1 sem) | DONE | 100% |
+| G-13 | Implementar 10+ herramientas MCP | MCP | MEDIA | L (3-4 sem) | DONE | 100% |
+| G-14 | Recursos MCP (Info Core, rulesets) | MCP | MEDIA | M (2-3 sem) | DONE | 100% |
+| G-15 | Prompts MCP reutilizables | MCP | BAJA | XS (<1 sem) | DONE | 100% |
+| G-17 | Cobertura tests unitarios >80% | Testing | ALTA | L (3-4 sem) | EN PROGRESO | No verificada |
+| G-18 | Tests E2E reales con aserciones | Testing | ALTA | L (3-4 sem) | EN PROGRESO | Parcial |
+| G-16 | Paridad bilingüe 100% EN/ES | Core | BAJA | XS (<1 sem) | DONE | 90% |
+| G-02 | Integraciones ACL Jira/Trello/Linear | Core | MEDIA | M (2-3 sem) | DEFERRED | 0% |
+| G-05 | Dashboard métricas DORA+SPACE | Tracker | MEDIA | L (3-4 sem) | DEFERRED | 0% |
+| G-06 | Scorecards ejecutivos en tiempo real | Tracker | MEDIA | L (3-4 sem) | DEFERRED | 0% |
+| G-19 | Limpieza servicio MCP legacy | Core | BAJA | XS (<1 sem) | DONE | 100% |
+| G-20 | Implementación transporte HTTP MCP | MCP | MEDIA | S (1 sem) | EN PROGRESO | Transporte mínimo implementado; evidencia smoke pendiente |
+| G-21 | Profundidad validación arquitectura | Core | MEDIA | M (2-3 sem) | DONE | 100% |
+| G-22 | Consistencia de nombre MoSCoW | Core | BAJA | XS (<1 sem) | DONE | 100% |
+| G-23 | Limpieza directorio validators vacío | Core | BAJA | XS (<1 sem) | DONE | 100% |
 
 ### 3.3 Leyenda de Semáforos
 
 | Símbolo | Estado | Significado |
 |---------|--------|-------------|
-| 🔴 CRÍTICO | Bloqueante | Impide progreso en múltiples áreas |
-| 🟠 ALTA | Prioridad | Funcionalidad core faltante |
-| 🟡 MEDIA | SECOND | Importante pero no bloqueante |
-| 🟢 BAJA | Nice-to-have | Mejoras menores |
-| 🔵 TODO | Pendiente | No iniciado |
-| 🟡 IN PROGRESS | En Curso | Trabajo activo |
-| 🔴 BLOCKED | Bloqueado | Impedimento externo |
-| ✅ DONE | Completado | Entregado |
+| CRITICO | Bloqueante | Impide progreso en múltiples áreas |
+| ALTA | Prioridad | Funcionalidad core faltante |
+| MEDIA | SECOND | Importante pero no bloqueante |
+| BAJA | Nice-to-have | Mejoras menores |
+| TODO | Pendiente | No iniciado |
+| IN PROGRESS | En Curso | Trabajo activo |
+| BLOCKED | Bloqueado | Impedimento externo |
+| DONE | Completado | Entregado |
 
 ---
 
 ## 4. Brechas Resueltas (Anteriormente Abiertas)
 
-### G-12: Implementación del Protocolo del Servidor MCP — RESUELTA ✅
+### G-12: Implementación del Protocolo del Servidor MCP — RESUELTA
 
 **Entregado:** `sdk/cli/src/core/mcp/server.ts` — 596 líneas implementando:
 - `MinimalStdioTransport` — JSON-RPC completo sobre stdio con parsing line-buffered
@@ -166,7 +166,7 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 
 **Nota:** El legacy `mcp-server.service.ts` (23 líneas) es un stub muerto. Limpieza rastreada como G-19.
 
-### G-01: Validación de Arquitectura F1/F2/F3 — RESUELTA ✅
+### G-01: Validación de Arquitectura F1/F2/F3 — RESUELTA
 
 **Entregado:**
 - `sdk/cli/src/commands/validate/validate.command.ts` — flag `--arch` para validación F1/F2/F3
@@ -175,33 +175,33 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 
 **Nota:** Los checks actuales son superficiales (detección de workspace, check de dependencias circulares, check de Dockerfile). Análisis estático profundo rastreado como G-21.
 
-### G-04: Detección de Architecture Drift — RESUELTA ✅
+### G-04: Detección de Architecture Drift — RESUELTA
 
 **Entregado:**
 - `sdk/cli/src/core/validators/architecture-drift.service.ts` — detección de drift, rastreo de violaciones, historial, análisis de tendencias
 - `sdk/cli/src/commands/drift/drift.command.ts` — 214 líneas con flags `--json`, `--history`, `--trend`
 
-### G-07: Comando de Instalación de Agentes — RESUELTA ✅
+### G-07: Comando de Instalación de Agentes — RESUELTA
 
 **Entregado:** `sdk/cli/src/commands/init/agents.command.ts` — 538 líneas con install/list/validate/upgrade/remove y soporte de plantillas.
 
-### G-08: Camino de Upgrade de Satélites — RESUELTA ✅
+### G-08: Camino de Upgrade de Satélites — RESUELTA
 
 **Entregado:** `sdk/cli/src/commands/init/upgrade.command.ts` — 173 líneas con dry-run, detección de cambios rupturistas, camino de upgrade seguro.
 
-### G-09: Validación de Reglas de Arquitectura — RESUELTA ✅
+### G-09: Validación de Reglas de Arquitectura — RESUELTA
 
 **Entregado:** `RulesetValidatorService.validateArchitecture()` con cobertura completa de tests en `ruleset-validator-architecture.spec.ts`.
 
-### G-10: Transiciones de Fase SDLC — RESUELTA ✅
+### G-10: Transiciones de Fase SDLC — RESUELTA
 
 **Entregado:** `sdk/cli/src/core/mcp/tools/sdlc.ts` — 177 líneas con generación de manifiestos de handoff y estado de gates.
 
-### G-11: Andamiaje de Documentación — RESUELTA ✅
+### G-11: Andamiaje de Documentación — RESUELTA
 
 **Entregado:** `sdk/cli/src/commands/docs/docs.command.ts` — 193 líneas con soporte de plantillas y modo dry-run.
 
-### G-13: Herramientas MCP (10+) — RESUELTA ✅
+### G-13: Herramientas MCP (10+) — RESUELTA
 
 **Entregado:** 17 herramientas en 5 archivos:
 - `validate.ts` — validación de gobernanza
@@ -210,11 +210,11 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 - `sdlc.ts` — 2 herramientas SDLC
 - `moscow.ts` — 7 herramientas de priorización MoSCoW
 
-### G-14: Recursos MCP — RESUELTA ✅
+### G-14: Recursos MCP — RESUELTA
 
 **Entregado:** `sdk/cli/src/core/mcp/resources/index.ts` — 203 líneas, 8 recursos.
 
-### G-15: Prompts MCP — RESUELTA ✅
+### G-15: Prompts MCP — RESUELTA
 
 **Entregado:** `sdk/cli/src/core/mcp/prompts/index.ts` — 225 líneas, 7 prompts.
 
@@ -224,9 +224,9 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 
 ### 5.1 Alta Prioridad
 
-#### G-17: Cobertura de Tests Unitarios >80% (EN PROGRESO — 80%)
+#### G-17: Cobertura de Tests Unitarios >80% (EN PROGRESO — NO VERIFICADA)
 
-**Estado:** La cobertura alcanzó 80.25% (statements) en la sesión anterior. El análisis actual muestra 62% de ratio de archivos (49 archivos spec / 79 archivos fuente). La discrepancia se debe a la metodología de conteo — la cobertura por statements es 80%, pero la cobertura a nivel de archivo es menor.
+**Estado:** La configuración de Jest ahora arranca la suite, pero la cobertura completa no es confiable hasta que todas las suites pasen. Los bloqueos conocidos incluyen tests HTTP sensibles al sandbox y fallos restantes de comandos/servicios.
 
 **Trabajo restante:** Casos borde en prompts interactivos (flujos `p.group`), algunas ramas de comandos, y rutas de error de servicios.
 
@@ -234,16 +234,16 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 
 **Estado:** La infraestructura de tests existe. Se necesitan tests de integración que levanten el servidor MCP y ejerciten las herramientas end-to-end.
 
-#### G-20: Transporte HTTP MCP (EN PROGRESO — 0%)
+#### G-20: Transporte HTTP MCP (EN PROGRESO — IMPLEMENTACIÓN MÍNIMA)
 
-**Brecha:** `server.ts` declara transporte `http` en la interfaz pero solo implementa `stdio`.
+**Brecha:** `server.ts` implementa un transporte local HTTP/SSE mínimo, pero release readiness aún requiere tests de conformidad de protocolo, validación de modo de autenticación y evidencia smoke.
 
-**Impacto:** No se puede exponer el servidor MCP sobre HTTP para integraciones IDE web o acceso remoto.
+**Impacto:** El transporte HTTP debe tratarse como beta hasta generar evidencia de cumplimiento de protocolo y seguridad.
 
 **Corrección Requerida:**
-1. Implementar `StreamableHttpTransport` de @modelcontextprotocol/sdk
-2. Agregar servidor HTTP con soporte SSE
-3. Agregar autenticación por API key para modo HTTP
+1. Agregar tests de conformidad para HTTP/SSE.
+2. Validar API key o modo local-only.
+3. Generar evidencia smoke de release para initialize, tools/list, resources/list y prompts/list.
 
 #### G-21: Profundidad de Validación de Arquitectura (EN PROGRESO — 0%)
 
@@ -359,15 +359,15 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 |------------|--------|
 | Documentos Core | 90% (570 archivos markdown, 285 pares bilingües) |
 | ADRs | 100% (70+ archivos en 4 runtimes) |
-| Rulesets (JSON) | 82% (37 archivos en 9 categorías) |
+| Rulesets (JSON) | 86% (43 archivos en 13 categorías) |
 | JSON Schemas | 100% (14/14 archivos) |
-| Comandos CLI | 85% (13 implementaciones completas, 3,269 líneas) |
-| Servidor MCP | 80% (stdio completo, HTTP pendiente) |
+| Comandos CLI | 82% (beta funcional; tests de release no verdes) |
+| Servidor MCP | 78% (stdio más HTTP mínimo; evidencia smoke pendiente) |
 | Herramientas MCP | 95% (17 herramientas funcionales) |
 | Recursos MCP | 90% (8 recursos) |
 | Prompts MCP | 95% (7 prompts) |
 | Architecture Drift | 85% (detección + historial + tendencias) |
-| Cobertura Tests | 80% (49 archivos spec, 1,000+ tests) |
+| Cobertura Tests | No verificada hasta que la suite Jest completa pase |
 
 ### Completitud de Pilares de Visión
 
@@ -375,8 +375,8 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 |-----------------|-------------|--------------|
 | Evolith Core | 90% | Integraciones ACL (diferidas) |
 | Evolith Tracker | 0% | Futuro — fuera de alcance |
-| CLI | 85% | Casi completo |
-| MCP | 80% | Transporte HTTP pendiente |
+| CLI | 82% | Beta funcional |
+| MCP | 78% | HTTP mínimo implementado; hardening pendiente |
 
 ---
 
@@ -384,12 +384,12 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 
 1. **Registro ADR Integral** — 70+ ADRs en múltiples runtimes
 2. **Paridad Bilingüe Perfecta** — 285/570 archivos tienen pares EN/ES exactos
-3. **Rulesets Legibles por Máquina** — 37 archivos JSON en gobernanza, arquitectura, ACL, SDLC
+3. **Rulesets Legibles por Máquina** — 43 archivos JSON en gobernanza, arquitectura, ACL, SDLC, CLI, MCP, evidencia y observabilidad
 4. **JSON Schemas Completos** — 14 schemas para validación de artefactos
 5. **Implementación CLI Completa** — 13 comandos cubriendo todos los requisitos de visión
 6. **Servidor MCP Funcional** — 596 líneas de implementación JSON-RPC con 17 herramientas, 8 recursos, 7 prompts
 7. **Detección de Architecture Drift** — Detección, almacenamiento de historial y análisis de tendencias
-8. **Fuerte Cobertura de Tests** — 80% cobertura por statements, 1,000+ tests
+8. **Inventario Amplio de Tests** — existen muchos specs, pero la cobertura de release no está verificada hasta que la suite esté verde
 9. **Gobernanza Federada** — Herencia y contratos de satélite funcionando
 10. **Phase Gates SDLC** — Ejecutables vía CLI con manifiestos de handoff
 
@@ -409,9 +409,9 @@ Estado Actual                        Meta de Visión
 ```
 
 **Camino Crítico:**
-1. **Estabilidad de Cobertura Tests (G-17)** — Mantener >80%, agregar tests E2E
+1. **Estabilidad de Cobertura Tests (G-17)** — Dejar Jest verde, luego verificar y mantener >80%
 2. **Profundidad de Validación Arquitectura (G-21)** — Superficial → análisis estático profundo
-3. **Transporte HTTP MCP (G-20)** — Completar interfaz declarada
+3. **Transporte HTTP MCP (G-20)** — Endurecer la implementación HTTP/SSE mínima con evidencia smoke
 4. **Limpieza de Código (G-19, G-22, G-23)** — Eliminar artefactos muertos, corregir nombres
 
 ---

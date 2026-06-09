@@ -20,7 +20,11 @@ If you are onboarding a new satellite repository, start here:
 2. **[Architecture Rules](./architecture/)** — F1/F2/F3 phase progression rules
 3. **[SDLC Rules](./sdlc/)** — Quality gates and threshold definitions
 4. **[Anti-Corruption Layer Rules](./acl/)** — External system integration governance
-5. **[Schemas](./schema/)** — JSON Schema for validating Evolith artifacts
+5. **[CLI Rules](./cli/)** — Smart CLI release readiness and Core parity
+6. **[Evidence Rules](./evidence/)** — Auditable evidence manifests
+7. **[MCP Rules](./mcp/)** — MCP protocol compliance
+8. **[Observability Rules](./observability/)** — Telemetry evidence for operations
+9. **[Schemas](./schema/)** — JSON Schema for validating Evolith artifacts
 
 ---
 
@@ -65,6 +69,15 @@ rulesets/
 ├── sdlc/                       # SDLC gate rules
 │   ├── phase-gates.rules.json
 │   └── quality-thresholds.rules.json
+├── cli/                        # Smart CLI release and parity rules
+│   ├── release-readiness.rules.json
+│   └── core-parity.rules.json
+├── evidence/                   # Auditable evidence contract
+│   └── evidence-manifest.rules.json
+├── mcp/                        # MCP protocol exposure rules
+│   └── protocol-compliance.rules.json
+├── observability/              # Telemetry evidence rules
+│   └── telemetry-evidence.rules.json
 └── governance/                 # Federated governance rules
     ├── inheritance.rules.json
     ├── satellite-contracts.rules.json

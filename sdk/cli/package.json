@@ -61,8 +61,10 @@
     "chokidar": "^5.0.0",
     "conf": "^15.1.0",
     "fs-extra": "^11.3.5",
+    "inherits": "^2.0.4",
     "nest-commander": "^3.20.1",
     "ora": "^9.4.0",
+    "path-to-regexp": "^8.4.2",
     "yaml": "^2.9.0"
   },
   "devDependencies": {
@@ -72,6 +74,8 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^25.9.1",
     "@types/yaml": "^1.9.6",
+    "debug": "^4.4.3",
+    "fast-json-stable-stringify": "^2.1.0",
     "jest": "^30.4.2",
     "nest-commander-testing": "^3.5.1",
     "ts-jest": "^29.4.11",

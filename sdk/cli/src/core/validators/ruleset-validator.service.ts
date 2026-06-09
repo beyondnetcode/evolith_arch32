@@ -275,6 +275,11 @@ export class RulesetValidatorService {
       'acl': 'acl/anti-corruption-layer.rules.json',
       'open-core': 'governance/open-core-boundary.rules.json',
       'inheritance': 'governance/inheritance.rules.json',
+      'cli-release': 'cli/release-readiness.rules.json',
+      'cli-parity': 'cli/core-parity.rules.json',
+      'evidence': 'evidence/evidence-manifest.rules.json',
+      'mcp': 'mcp/protocol-compliance.rules.json',
+      'observability': 'observability/telemetry-evidence.rules.json',
     };
 
     const relativePath = mapping[rulesetId.toLowerCase()];
@@ -284,7 +289,7 @@ export class RulesetValidatorService {
         severity: 'SHOULD',
         category: 'governance',
         title: `Unknown ruleset ID: ${rulesetId}`,
-        description: 'Available ruleset IDs: adr-0002, adr-0005, adr-0010, adr-0018, adr-0032, adr-0040, adr-0050, acl, open-core, inheritance',
+        description: 'Available ruleset IDs: adr-0002, adr-0005, adr-0010, adr-0018, adr-0032, adr-0040, adr-0050, acl, open-core, inheritance, cli-release, cli-parity, evidence, mcp, observability',
         blocking: false,
       });
       return issues;

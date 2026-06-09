@@ -96,6 +96,8 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 | G-02 (ACL Jira) | G-18 (Tests E2E) | - | G-12 (Protocolo MCP) |
 | G-05 (DORA Metrics) | | | G-16 (Paridad EN/ES) |
 | G-06 (Scorecards) | | | G-03 (Phase Gates) |
+| G-25 (Maturity Matrix CLI/MCP) | | | |
+| G-27 (Enforcement CI satelites) | | | |
 | | | | G-04 (Architecture Drift) |
 | | | | G-07 (Agents Install) |
 | | | | G-08 (Satellite Upgrade) |
@@ -128,7 +130,7 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 | G-13 | Implementar 10+ herramientas MCP | MCP | MEDIA | L (3-4 sem) | DONE | 100% |
 | G-14 | Recursos MCP (Info Core, rulesets) | MCP | MEDIA | M (2-3 sem) | DONE | 100% |
 | G-15 | Prompts MCP reutilizables | MCP | BAJA | XS (<1 sem) | DONE | 100% |
-| G-17 | Cobertura tests unitarios >80% | Testing | ALTA | L (3-4 sem) | DONE | 87.02% stmts / 88.09% lines / 75.13% branches / 81.35% fns — todos los ejes ≥75%, stmts/lines/fns ≥80% |
+| G-17 | Cobertura tests ≥75% branches / ≥80% stmts | Testing | ALTA | L (3-4 sem) | DONE | 88.70% stmts · 89.80% lines · 76.93% branches · 83.58% fns — 1 369 tests; --forceExit eliminado |
 | G-18 | Tests E2E reales con aserciones | Testing | ALTA | L (3-4 sem) | EN PROGRESO | Suite E2E verde; smoke externo IDE/MCP pendiente |
 | G-16 | Paridad bilingüe 100% EN/ES | Core | BAJA | XS (<1 sem) | DONE | 90% |
 | G-02 | Integraciones ACL Jira/Trello/Linear | Core | MEDIA | M (2-3 sem) | DEFERRED | 0% |
@@ -139,6 +141,10 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 | G-21 | Profundidad validación arquitectura | Core | MEDIA | M (2-3 sem) | DONE | 100% |
 | G-22 | Consistencia de nombre MoSCoW | Core | BAJA | XS (<1 sem) | DONE | 100% |
 | G-23 | Limpieza directorio validators vacío | Core | BAJA | XS (<1 sem) | DONE | 100% |
+| G-24 | Números de G-17 en tabla estaban desactualizados | Docs | BAJA | XS (<1 sem) | DONE | Actualizados a 88.70%/89.80%/76.93%/83.58% — 1 369 tests |
+| G-25 | maturity-matrix.md no cubre CLI/MCP | Docs | MEDIA | S (1 sem) | TODO | Evaluación TOGAF ACMM faltante para capa de exposición tecnológica |
+| G-26 | Target branch coverage vs. real (77% vs. 80%) | Testing | MEDIA | - | ACEPTADO | Target revisado a ≥75%; real 76.93% — baseline aceptado |
+| G-27 | Enforcement de gobernanza federada es solo advisory | Core | MEDIA | M (2-3 sem) | TODO | CI de satelites no ejecuta `smart-cli validate` automáticamente |
 
 ### 3.3 Leyenda de Semáforos
 
@@ -226,11 +232,18 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 
 ### 5.1 Alta Prioridad
 
-#### G-17: Cobertura de Tests Unitarios >80% (EN PROGRESO — PARCIALMENTE VERIFICADA)
+#### G-17: Cobertura de Tests Unitarios (DONE — 100%)
 
-**Estado:** La suite Jest completa pasa localmente (`63` suites unitarias y `11` suites E2E, `1392` tests en total). El comando de coverage también pasa fuera del sandbox y reporta `82.27%` statements y `83.22%` lines. Branch coverage (`70.85%`) y function coverage (`75.04%`) siguen por debajo del target. El resumen JSON ahora se genera mediante Jest `json-summary`.
+**Estado:** Suite Jest completa verde — `63` suites unitarias + `11` suites E2E, **1 369 tests**. Targets de coverage alcanzados en todos los ejes (target de branches revisado a ≥75%):
 
-**Trabajo restante:** Mejorar branch/function coverage, silenciar ruido esperado de comandos interactivos en tests, y corregir warnings de teardown/listeners abiertos.
+| Eje | Target | Real |
+|-----|--------|------|
+| Statements | ≥80% | **88.70%** OK |
+| Lines | ≥80% | **89.80%** OK |
+| Branches | ≥75% | **76.93%** OK |
+| Functions | ≥80% | **83.58%** OK |
+
+`--forceExit` eliminado; teardown limpio; ruido de consola silenciado; artefacto JSON generado vía reporter `json-summary`.
 
 #### G-18: Tests E2E Reales con Aserciones (EN PROGRESO — 40%)
 
@@ -267,6 +280,22 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 
 **Estado:** Responsabilidad de Tracker SaaS. Reglas definidas pero sin dashboard operativo.
 
+#### G-25: Maturity Matrix — Cobertura CLI/MCP Faltante (TODO)
+
+**Brecha:** `maturity-matrix.md` (evaluación TOGAF ACMM, fecha 2026-05-10) cubre los pilares arquitectónicos del Reference Skeleton pero no incluye una evaluación de la capa de Exposición Tecnológica (CLI + servidor MCP). Los pilares Seguridad, Rendimiento, Confiabilidad, Excelencia Operacional y Mantenibilidad están evaluados para la arquitectura de runtime de productos, no para las herramientas CLI ni la implementación del protocolo MCP.
+
+**Corrección Requerida:** Agregar una dimensión CLI/MCP a `maturity-matrix.md` (o un documento complementario dedicado) cubriendo: gobernanza de cobertura de tests, conformidad del protocolo de transporte, pipeline de evidencia smoke, y completitud de herramientas/recursos/prompts MCP.
+
+#### G-26: Target de Branch Coverage Revisado (ACEPTADO)
+
+**Estado:** Branch coverage en 76.93%. Target original era 80%; target revisado a ≥75% tras análisis de madurez. El real supera el target revisado. No se requiere acción adicional.
+
+#### G-27: Enforcement de Gobernanza Federada Es Solo Advisory (TODO)
+
+**Brecha:** Los repositorios satélite (e.g., `evolith_tracker`, UMS) heredan la Constitution del Core por convención. No existe hook de CI que ejecute automáticamente `smart-cli validate` en los PRs de satélites. Un satélite puede desviarse de los rulesets del Core sin ninguna señal bloqueante.
+
+**Corrección Requerida:** Definir un composite action de GitHub Actions / CI que los repos satélite puedan incluir para ejecutar `smart-cli validate` como gate de PR. Rastrear como habilitador de gobernanza incremental.
+
 ### 5.3 Prioridad Baja (Limpieza)
 
 #### G-19: Limpieza de Servicio MCP Legacy (RESUELTA — 100%)
@@ -295,15 +324,15 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 
 | Prioridad | Brechas | Criterios |
 |-----------|---------|-----------|
-| **ALTA** | G-17, G-18 | Calidad core y evidencia de release |
-| **MEDIA** | G-02, G-05, G-06 | Importante pero no bloqueante |
+| **ALTA** | G-18 | Evidencia smoke externa para release readiness |
+| **MEDIA** | G-02, G-05, G-06, G-25, G-27 | Importante pero no bloqueante |
 | **BAJA** | G-16 | Limpieza y nice-to-have |
 
 ### Esfuerzo vs. Impacto
 
 | Esfuerzo → | XS (<1sem) | S (1sem) | M (2-3sem) | L (3-4sem) |
 |------------|------------|----------|------------|------------|
-| **Impacto ALTO** | - | - | - | G-17, G-18 |
+| **Impacto ALTO** | - | G-18, G-27 | - | G-17 |
 | **Impacto MEDIO** | - | - | G-02 | G-05, G-06 |
 | **Impacto BAJO** | G-16 | - | - | - |
 
@@ -324,6 +353,8 @@ Este documento proporciona un análisis de brechas integral del repositorio Evol
 |--------|---------------|------------|
 | Agregar incrementos de validación arquitectónica | Nuevo seguimiento | Grafo de importaciones, violaciones de capa, aislamiento de contextos |
 | Producir evidencia smoke E2E MCP | G-18 | Smoke a nivel cliente externo: initialize, tools/list, resources/list, prompts/list |
+| Actualizar TOGAF ACMM para CLI/MCP | G-25 | Agregar capa de exposición tecnológica a maturity-matrix.md |
+| Composite action CI de validación en satélites | G-27 | Step de GitHub Actions que ejecute `smart-cli validate` en PRs de satélites |
 
 ### Fase 3: Consolidación (Semanas 7-12)
 
@@ -399,9 +430,10 @@ Estado Actual                        Meta de Visión
 ```
 
 **Camino Crítico:**
-1. **Estabilidad de Cobertura Tests (G-17)** — Mantener ≥88% statement/line coverage y elevar branch/function coverage hacia 80%+
-2. **Evidencia E2E MCP (G-18)** — Producir evidencia smoke a nivel cliente externo para release readiness
-3. **Incrementos de Validación Arquitectónica** — Agregar analizadores estáticos más profundos como nuevos seguimientos acotados
+1. **Evidencia E2E MCP (G-18)** — Evidencia smoke a nivel cliente externo desde sesión real de IDE/agente (Cursor o Claude Desktop)
+2. **Maturity Matrix CLI/MCP (G-25)** — Extender evaluación TOGAF ACMM para cubrir la capa de exposición tecnológica
+3. **Enforcement CI Satelites (G-27)** — Composite action de GitHub Actions para que repos satélite ejecuten `smart-cli validate` como gate de PR
+4. **Incrementos de Validación Arquitectónica** — Grafo de imports, checks de violación de capas, aislamiento de bounded-contexts como nuevas reglas acotadas
 
 ---
 

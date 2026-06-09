@@ -2,8 +2,8 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://evolith.dev/rulesets/adr/adr-0050-gitflow-branching.rules.json",
   "title": "ADR-0050 — GitFlow Branching Strategy Rules",
-  "description": "Machine-readable rules encoding ADR-0050 GitFlow Branching Strategy. Contractual branch naming, merge policies, and release tagging.",
-  "version": "1.0.0",
+  "description": "Machine-readable rules encoding ADR-0050 GitFlow Branching Strategy. Contractual branch naming, promotion policies, merge policies, and release tagging.",
+  "version": "1.1.0",
   "adrId": "ADR-0050",
   "adrTitle": "GitFlow Branching Strategy",
   "status": "Approved",
@@ -29,11 +29,11 @@
       "severity": "MUST",
       "category": "branch-naming",
       "title": "Protected branches enforce direct push prohibition",
-      "description": "Direct push to protected branches (main, develop, release/*) is prohibited. All changes MUST come through pull requests with code review.",
+      "description": "Direct push to protected branches (main, develop, qa, uat, release/*) is prohibited. All changes MUST come through pull requests with code review.",
       "rationale": "ADR-0050 §Decision: Protected branches require PR workflow for audit trail and review.",
-      "validationQuery": "GitHub/GitLab branch protection rules block direct push to main, develop, release/*.",
+      "validationQuery": "GitHub/GitLab branch protection rules block direct push to main, develop, qa, uat, release/*.",
       "blocking": true,
-      "protectedBranches": ["main", "develop", "release/*"]
+      "protectedBranches": ["main", "develop", "qa", "uat", "release/*"]
     },
     {
       "id": "GIT-03",
@@ -95,6 +95,26 @@
       "validationQuery": "Commit messages validated via commitlint or equivalent. Non-conforming commits blocked in CI.",
       "blocking": true,
       "pattern": "^(feat|fix|docs|style|refactor|test|chore)(\\([a-z-]+\\))?: .+"
+    },
+    {
+      "id": "GIT-09",
+      "severity": "MUST",
+      "category": "promotion-policy",
+      "title": "Environment promotion follows develop to qa to uat to main",
+      "description": "Promotions MUST follow the sequence develop -> qa -> uat -> main, with release/* inserted between uat and main when release hardening needs isolation.",
+      "rationale": "ADR-0050 §Promotion Criteria: Environment branches represent deployable states and require evidence-based promotion.",
+      "validationQuery": "Promotion PR source and target follow develop->qa, qa->uat, uat->release/* or uat->main, release/*->main.",
+      "blocking": true
+    },
+    {
+      "id": "GIT-10",
+      "severity": "MUST",
+      "category": "code-review",
+      "title": "Higher environments require stronger approval",
+      "description": "Pull requests into qa, uat, main, release/*, and hotfix/* MUST require at least two approvals unless an explicit incident exception applies.",
+      "rationale": "ADR-0050 §Pull Requests, Reviews, and Merge: Promotion branches need stronger review because they represent deployable environment states.",
+      "validationQuery": "Branch protection or repository rules require minimum two approvals for qa, uat, main, release/*, and hotfix/*.",
+      "blocking": true
     }
   ],
   "branchTypes": [
@@ -102,13 +122,15 @@
     { "type": "bugfix/", "lifetime": "until merged", "target": "develop" },
     { "type": "hotfix/", "lifetime": "hours to days", "target": "main + develop" },
     { "type": "release/", "lifetime": "1-4 weeks", "target": "main" },
-    { "type": "chore/", "lifetime": "until merged", "target": "develop" }
+    { "type": "chore/", "lifetime": "until merged", "target": "develop" },
+    { "type": "qa", "lifetime": "permanent", "target": "uat" },
+    { "type": "uat", "lifetime": "permanent", "target": "main or release/*" }
   ],
   "references": [
     "reference/architecture/adrs/core/0050-gitflow-branching-strategy.md"
   ],
   "exitCriteria": {
-    "description": "Branch naming validated in CI. Protected branches enforce PR workflow. Release tags follow semver.",
-    "validationTools": ["commitlint", "branch protection rules", "GitHub Actions"]
+    "description": "Branch naming validated in CI. Protected branches enforce PR workflow and promotion sequence. Release tags follow semver.",
+    "validationTools": ["commitlint", "branch protection rules", "GitHub Actions", "CODEOWNERS", "CodeQL"]
   }
 }

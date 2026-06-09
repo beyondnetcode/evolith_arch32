@@ -542,7 +542,7 @@ jobs:
 
 ## Referencias
 
-- [ADR-0050: Estrategia de Branching Gitflow](./0050-estrategia-ramas-gitflow.es.md)
+- [ADR-0050: Estrategia de Branching Gitflow](./0050-gitflow-branching-strategy.es.md)
 - [Mejores Prácticas de Documentación SDLC](../../../governance/sdlc/03-documentation/sdlc-documentation-best-practices.es.md)
 - [Guía de Herencia de Repositorios Hijos](../../../governance/standards/onboarding/child-repository-inheritance-guide.es.md)
 - [Glosario de Terminología Bilingüe](../../../../.harness/scripts/bilingual-terminology-glossary.md)

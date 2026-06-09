@@ -35,11 +35,16 @@ y guía operativa que los productos satélite heredan y especializan.
 
 ## Comienza Aqui
 
+<details>
+<summary><strong>Puntos de entrada principales</strong></summary>
+
 - [Resumen Ejecutivo](./reference/governance/standards/communication/visuals/v01-executive-one-pager.es.md) - explicacion de cinco minutos sobre Evolith, UMS y la propuesta de valor.
 - [Primeros Pasos por Rol](./reference/getting-started/README.es.md) - rutas de lectura recomendadas para ejecutivos, arquitectos, ingenieros, QA, SRE, producto y contribuidores IA.
 - [Vision del Producto](./reference/governance/standards/vision/evolith-product-vision-master.es.md) - direccion estrategica, hoja de ruta y modelo de madurez.
 - [Centro de Gobernanza SDLC](./reference/governance/sdlc/README.es.md) - fases, gates, artefactos y modelo de trazabilidad autoritativos.
 - [Indice Maestro Global](./reference/navigation/MASTER_INDEX.es.md) - navegacion completa del repositorio cuando ya sabes que artefacto necesitas.
+
+</details>
 
 ## Navegacion SDLC
 

@@ -353,6 +353,10 @@ class DirectMcpServer {
       this.logger.error(`Transport error: ${error.message}`);
     };
 
+    transport.onclose = () => {
+      this.logger.log('Transport closed');
+    };
+
     await transport.start();
     this.logger.log(`Evolith MCP Server started on ${this.transportType}`);
   }
@@ -419,7 +423,11 @@ class DirectMcpServer {
           message: error instanceof Error ? error.message : String(error),
         },
       };
-      await this.transport.send(errorResponse);
+      try {
+        await this.transport.send(errorResponse);
+      } catch {
+        // Transport is unrecoverable; error already logged above.
+      }
     }
   }
 
@@ -792,12 +800,6 @@ class DirectMcpServer {
     const { getPrompt } = await import('./prompts');
     return getPrompt(params);
   }
-}
-
-function validateApiKey(apiKey: string | undefined, validKey: string | undefined): boolean {
-  if (!validKey) return true;
-  if (!apiKey) return false;
-  return apiKey === validKey;
 }
 
 export async function startMcpServer(options: McpServerOptions = {}) {

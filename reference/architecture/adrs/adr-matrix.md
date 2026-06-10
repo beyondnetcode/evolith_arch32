@@ -19,6 +19,7 @@ Use this matrix when you need to find decisions by concern instead of by numeric
 | Feature flag internals | [ADR-0017](./core/0017-feature-flagging-strategy.md), [ADR-0025](./core/0025-feature-flag-provider-abstraction.md), [ADR-0048 nodejs](./nodejs/0048-feature-flag-system-scope-criteria-model.md) | Backend, Architects | Universal |
 | Documentation and taxonomy | [ADR-0048](./core/0048-enterprise-taxonomy-reference-layout.md), [ADR-0049](./core/0049-naming-semantics-clean-code-policy.md), [ADR-0056](./core/0056-enterprise-naming-design-conventions.md), [ADR-0070](./core/0070-lean-root-repository-taxonomy.md) | All contributors | Universal |
 | .NET AOP and cross-cutting | [ADR-0072 .NET](./dotnet/0072-dotnet-aop-cross-cutting-concern-strategy.md), [ADR-0064 .NET](./dotnet/0064-dotnet-request-scope-observability-context.md), [ADR-0065 .NET](./dotnet/0065-dotnet-pii-safe-serilog-pipeline.md) | .NET Backend | .NET |
+| CLI/MCP machine output contract | [ADR-0073](./core/0073-unified-cli-output-contract.md), [ADR-0069](./core/0069-mcp-server-protocol-implementation.md) | Tracker, CI/CD, AI agents | Universal |
 | Domain model governance | [ADR-0071](./core/0071-domain-layer-base-class-inheritance-strategy.md), [ADR-0019](./core/0019-tactical-design-patterns-future-proofing.md) | Architects, .NET Backend | Universal |
 
 ---

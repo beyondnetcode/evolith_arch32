@@ -54,6 +54,8 @@ Tracker database.
 
 ---
 
+> **Contract ratification:** the output envelope, `GateEvidence` schema, global flags, and naming defined below are ratified by [ADR 0073](../../../architecture/adrs/core/0073-unified-cli-output-contract.md) (status: Proposed). On conflict, the ADR prevails.
+
 ## 3. Gap Analysis — What the CLI Needs to Support the Tracker
 
 The table below lists what must be added to the existing CLI (`@evolith/smart-cli`)

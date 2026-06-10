@@ -58,6 +58,7 @@ Decisions applicable to any product built on top of the framework, regardless of
 * [ADR 0070: Lean Root Repository Taxonomy](./core/0070-lean-root-repository-taxonomy.md)
 * [ADR 0071: Domain Layer Base Class and Inheritance Strategy](./core/0071-domain-layer-base-class-inheritance-strategy.md)
 * [ADR 0072: UTC Date Storage, Browser Timezone Detection, and Language Resolution](./core/0072-utc-dates-timezone-language-resolution.md)
+* [ADR 0073: Unified CLI/MCP Output Contract and Gate Evidence Schema](./core/0073-unified-cli-output-contract.md)
 
 ---
 

@@ -54,6 +54,8 @@ escriben en la base de datos del Tracker.
 
 ---
 
+> **Ratificación de contrato:** el envelope de salida, el schema `GateEvidence`, los flags globales y el naming definidos abajo quedan ratificados por el [ADR 0073](../../../architecture/adrs/core/0073-unified-cli-output-contract.es.md) (estado: Propuesto). Ante conflicto, prevalece el ADR.
+
 ## 3. Análisis de Brechas — Qué Necesita el CLI para Soportar el Tracker
 
 La tabla a continuación lista lo que debe agregarse al CLI existente

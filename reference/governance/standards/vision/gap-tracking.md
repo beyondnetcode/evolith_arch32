@@ -32,7 +32,7 @@ It supersedes and absorbs (2026-06-10): `gap-analysis-core.md` (narrative gap an
 
 | ID | Gap | Phase | Criticality | Complexity | Status |
 |----|-----|:---:|:---:|:---:|:---:|
-| [GT-01](#gt-01) | Unified contract ADR (output envelope + GateEvidence + global flags) | F0 | P0 | S | PENDING |
+| [GT-01](#gt-01) | Unified contract ADR (output envelope + GateEvidence + global flags) | F0 | P0 | S | IN-PROGRESS |
 | [GT-02](#gt-02) | `GateEvidence` modeled in the domain layer | F1 | P0 | M | PENDING |
 | [GT-03](#gt-03) | `EvaluateGateUseCase` + `gate evaluate` command | F1 | P0 | M | PENDING |
 | [GT-04](#gt-04) | Remove service locator from domain · relocate telemetry | F1 | P1 | S | PENDING |
@@ -66,7 +66,7 @@ It supersedes and absorbs (2026-06-10): `gap-analysis-core.md` (narrative gap an
 <a name="gt-01"></a>
 #### GT-01 · Unified contract ADR
 
-- **Criticality:** P0 · **Complexity:** S · **Status:** PENDING
+- **Criticality:** P0 · **Complexity:** S · **Status:** IN-PROGRESS — drafted as [ADR 0073](../../../architecture/adrs/core/0073-unified-cli-output-contract.md) (2026-06-10), pending Board approval
 - **Objective:** Author and approve a single ADR in Evolith Core that reconciles the two divergent contract proposals — the Core-side [`GateEvidence`](./sdlc-tracker-technical-interfaces.md) structure and the Tracker-side output envelope (`{success, data, meta}`, error codes, global flags `--format/--dry-run/--phase`). Must also resolve binary naming (`smart-cli` vs `evolith` alias). Verified 2026-06-10: all 27 rulesets already carry a `version` field consumable as `rulesetVersion`.
 - **Done when:** ADR approved by the Architecture Board; both gap documents (Core and Tracker repos) updated to point to it.
 

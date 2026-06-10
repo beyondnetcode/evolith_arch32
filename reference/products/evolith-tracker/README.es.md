@@ -1,0 +1,89 @@
+# Evolith Tracker
+
+> **Navegación bilingüe:** [English version](./README.md)
+
+**Clasificación:** Product-Specific Design  
+**Producto:** Evolith Tracker  
+**Suite Padre:** [Evolith Product Suite](../../product-suite/README.es.md)  
+**Core Gobernante:** [Evolith Core](../../core/README.es.md)
+
+---
+
+## 1. Rol del Producto
+
+Evolith Tracker es el producto runtime de gobernanza de Evolith Product Suite.
+
+Implementa Core y SDLC Governance al poseer:
+
+- estado runtime de tenant, producto, proceso y fase;
+- Gate Decisions y Phase Transitions canónicas;
+- aceptación y linaje de evidencias, aprobaciones y excepciones;
+- registros de agent runs y provider connections;
+- historial de auditoría y experiencia unificada;
+- administración de plugins, adapters y proveedores.
+
+Tracker no redefine las reglas Core ni la gobernanza SDLC. Las ejecuta.
+
+---
+
+## 2. Áreas de Diseño del Producto
+
+| Área | Responsabilidad |
+|---|---|
+| **Visión y Alcance** | Outcomes, personas, límites y roadmap específicos de Tracker |
+| **Arquitectura** | Contenedores, bounded contexts, servicios, dependencias y despliegue |
+| **Modelo de Dominio** | Agregados como Process, Gate Decision, Evidence Graph, Approval, Exception y Provider Connection |
+| **Interfaces** | REST, MCP gateway, eventos, acciones UI y contratos del producto |
+| **UX** | Workspaces de tenant, producto, fase, gate, evidencia, proveedores y auditoría |
+| **Seguridad** | Integración UMS, consumo del grafo de autorización, límites tenant y secretos |
+| **Integraciones** | Uso de puertos neutrales, plugins, adapters y ACLs |
+| **ADRs** | Decisiones arquitectónicas específicas del producto |
+
+---
+
+## 3. Baseline Actual de Diseño
+
+- [Diseño de Interfaces Técnicas de Tracker](../../governance/standards/vision/sdlc-tracker-technical-interfaces.es.md)
+- [Diseño Objetivo de Composición Gobernada](../../governance/standards/vision/evolith-governed-composition-target-design.es.md)
+- [Modelo de Abstracción de Proveedores y Plugins](../../governance/standards/vision/evolith-provider-abstraction-plugin-model.es.md)
+- [Trazabilidad SDLC y Evidence Graph](../../governance/sdlc/traceability-model.es.md)
+
+> Durante la migración, estos archivos permanecen en rutas heredadas. Su clasificación ya es explícita: el diseño de Tracker pertenece aquí; los principios universales permanecen en Core; la semántica SDLC permanece en Governance.
+
+---
+
+## 4. Límites No Negociables
+
+1. Tracker consume definiciones Core; no las redefine autoritativamente.
+2. Tracker posee el estado canónico de gobernanza runtime.
+3. CLI, MCP, CI, agentes y proveedores producen evaluaciones o evidencias, no la autoridad final del gate.
+4. Toda capacidad externa entra mediante contratos neutrales.
+5. Los proveedores por defecto son reemplazables por política del tenant.
+6. Los schemas específicos permanecen detrás de ACLs.
+7. La evidencia y las decisiones históricas permanecen legibles después de reemplazar proveedores.
+8. Los ADRs de producto no se convierten en ADRs Core sin promoción del Architecture Board.
+
+---
+
+## 5. Estructura Canónica Planificada
+
+```text
+reference/products/evolith-tracker/
+├── README.es.md
+├── vision/
+├── functional/
+├── architecture/
+├── domain-model/
+├── interfaces/
+├── ux/
+├── security/
+├── integrations/
+├── deployment/
+└── adrs/
+```
+
+La migración debe preservar paridad bilingüe y compatibilidad con enlaces heredados.
+
+---
+
+[Volver a Diseños Específicos de Productos](../README.es.md)

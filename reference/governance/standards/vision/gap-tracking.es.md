@@ -67,8 +67,13 @@ Reemplaza y absorbe (2026-06-10): `gap-analysis-core.es.md` (análisis narrativo
 #### GT-01 · ADR de contrato unificado
 
 - **Criticidad:** P0 · **Complejidad:** S · **Estado:** COMPLETADO (2026-06-10) — ratificado como [ADR 0073](../../../architecture/adrs/core/0073-unified-cli-output-contract.es.md), aprobado por el Board, incluyendo el modelo de ejecución command-as-a-service; ambos documentos de interfaces (repos Core y Tracker) apuntan al ADR
-- **Objetivo:** Redactar y aprobar un único ADR en Evolith Core que reconcilie las dos propuestas de contrato divergentes — la estructura [`GateEvidence`](./sdlc-tracker-technical-interfaces.es.md) del lado Core y el envelope de salida del lado Tracker (`{success, data, meta}`, códigos de error, flags globales `--format/--dry-run/--phase`). Debe además resolver el naming del binario (`smart-cli` vs alias `evolith`). Verificado 2026-06-10: los 27 rulesets ya tienen campo `version` consumible como `rulesetVersion`.
-- **Cierre cuando:** ADR aprobado por el Architecture Board; ambos documentos de gaps (repos Core y Tracker) actualizados apuntando a él.
+- **Objetivo:** 
+  - [x] Redactar y aprobar un único ADR en Evolith Core que reconcilie las dos propuestas de contrato divergentes — la estructura [`GateEvidence`](./sdlc-tracker-technical-interfaces.es.md) del lado Core y el envelope de salida del lado Tracker (`{success, data, meta}`, códigos de error, flags globales `--format/--dry-run/--phase`).
+  - [x] Resolver el naming del binario (`smart-cli` vs alias `evolith`). Verificado 2026-06-10: los 27 rulesets ya tienen campo `version` consumible como `rulesetVersion`.
+- **Cierre cuando:** 
+  - [x] ADR aprobado por el Architecture Board.
+  - [x] Documento de gaps de repo Core actualizado apuntando al ADR.
+  - [ ] Documento de gaps de repo Tracker actualizado apuntando al ADR.
 
 ### Fase F1 — GateEvidence como Dominio
 
@@ -106,7 +111,9 @@ Reemplaza y absorbe (2026-06-10): `gap-analysis-core.es.md` (análisis narrativo
 #### GT-06 · Tool MCP `evolith-gate-evaluate` + contexto de fase
 
 - **Criticidad:** P0 · **Complejidad:** M · **Estado:** COMPLETADO (2026-06-10)
-- **Objetivo:** Exponer el use case de GT-03 como tool MCP `evolith-gate-evaluate` aceptando `{phase, projectPath, rulesetRef, evidenceMode}`, y extender los tools existentes para aceptar el contexto de fase. Es el punto de integración primario del Tracker.
+- **Objetivo:** 
+  - [x] Exponer el use case de GT-03 como tool MCP `evolith-gate-evaluate` aceptando `{phase, projectPath, rulesetRef, evidenceMode}`. Es el punto de integración primario del Tracker.
+  - [ ] Extender los tools existentes para aceptar el contexto de fase.
 - **Cierre cuando:** un cliente MCP externo evalúa un gate por HTTP y recibe `GateEvidence` válido contra el schema.
 - **Cerrado por:** tool expuesto vía `sdk/cli/src/core/mcp/tools/gate.ts`, integrado en `server.ts` y verificado en `mcp:smoke` (HTTP y stdio). El contexto de fase se omitió en las tools SDLC existentes para evitar rupturas de compatibilidad hacia atrás en sus schemas.
 

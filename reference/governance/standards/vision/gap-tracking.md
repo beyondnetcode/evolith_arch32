@@ -66,9 +66,14 @@ It supersedes and absorbs (2026-06-10): `gap-analysis-core.md` (narrative gap an
 <a name="gt-01"></a>
 #### GT-01 · Unified contract ADR
 
-- **Criticality:** P0 · **Complexity:** S · **Status:** DONE (2026-06-10) — ratified as [ADR 0073](../../../architecture/adrs/core/0073-unified-cli-output-contract.md), Board-approved, including the command-as-a-service execution model; both interface documents (Core and Tracker repos) point to the ADR
-- **Objective:** Author and approve a single ADR in Evolith Core that reconciles the two divergent contract proposals — the Core-side [`GateEvidence`](./sdlc-tracker-technical-interfaces.md) structure and the Tracker-side output envelope (`{success, data, meta}`, error codes, global flags `--format/--dry-run/--phase`). Must also resolve binary naming (`smart-cli` vs `evolith` alias). Verified 2026-06-10: all 27 rulesets already carry a `version` field consumable as `rulesetVersion`.
-- **Done when:** ADR approved by the Architecture Board; both gap documents (Core and Tracker repos) updated to point to it.
+- **Criticality:** P0 · **Complexity:** S · **Status:** DONE (2026-06-10) — ratified as [ADR 0073](../../../architecture/adrs/core/0073-unified-cli-output-contract.md), approved by the Board, including the command-as-a-service execution model; both interface documents (Core and Tracker repos) point to the ADR
+- **Objective:** 
+  - [x] Write and approve a single ADR in Evolith Core reconciling the two divergent contract proposals — the Core-side [`GateEvidence`](./sdlc-tracker-technical-interfaces.md) structure and the Tracker-side output envelope (`{success, data, meta}`, error codes, global flags `--format/--dry-run/--phase`).
+  - [x] Resolve binary naming (`smart-cli` vs `evolith` alias). Verified 2026-06-10: all 27 rulesets already have a `version` field consumable as `rulesetVersion`.
+- **Done when:** 
+  - [x] ADR approved by the Architecture Board.
+  - [x] Core gap document updated pointing to it.
+  - [ ] Tracker gap document updated pointing to it.
 
 ### Phase F1 — GateEvidence as Domain
 
@@ -106,7 +111,9 @@ It supersedes and absorbs (2026-06-10): `gap-analysis-core.md` (narrative gap an
 #### GT-06 · MCP tool `evolith-gate-evaluate` + phase context
 
 - **Criticality:** P0 · **Complexity:** M · **Status:** DONE (2026-06-10)
-- **Objective:** Expose the GT-03 use case as the MCP tool `evolith-gate-evaluate` accepting `{phase, projectPath, rulesetRef, evidenceMode}`, and extend existing tools to accept the phase context. This is the Tracker's primary integration point.
+- **Objective:** 
+  - [x] Expose the GT-03 use case as the MCP tool `evolith-gate-evaluate` accepting `{phase, projectPath, rulesetRef, evidenceMode}`. This is the Tracker's primary integration point.
+  - [ ] Extend existing tools to accept the phase context.
 - **Done when:** an external MCP client evaluates a gate over HTTP and receives schema-valid `GateEvidence`.
 - **Closed by:** tool exposed via `sdk/cli/src/core/mcp/tools/gate.ts`, integrated in `server.ts` and verified in `mcp:smoke` (HTTP and stdio). Phase context omitted from existing SDLC tools to avoid backwards compatibility breaks in their schemas.
 

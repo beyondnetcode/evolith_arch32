@@ -98,6 +98,10 @@ jobs:
         working-directory: ${{ env.CLI_DIR }}
         run: npm ci
 
+      - name: Architecture Boundary Lint (eslint-plugin-boundaries)
+        working-directory: ${{ env.CLI_DIR }}
+        run: npm run lint
+
       - name: Type Check
         working-directory: ${{ env.CLI_DIR }}
         run: npm run build

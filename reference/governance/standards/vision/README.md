@@ -10,6 +10,14 @@
 * [strategic-positioning-comparative-landscape](./evolith-strategic-positioning-comparative-landscape.md) — **Detailed comparative evidence**: Evolith versus Langfuse, Claude Cowork, and the complete Atlassian enterprise stack
 * [ai-assisted-validation-workflow](./evolith-ai-assisted-validation-workflow.md) — **Operational validation workflow**: Claude Research/Chat/Cowork followed by Claude Code with structured skills and human approval
 
+## New-Vision Design Package — Review Before Code
+
+* [governed-composition-target-design](./evolith-governed-composition-target-design.md) — **Target architecture**: Core defines, providers execute, CLI/MCP evaluate, Tracker decides and audits
+* [provider-abstraction-plugin-model](./evolith-provider-abstraction-plugin-model.md) — **Foundational product premise**: every tool is adaptable, interchangeable, replaceable, and installable through plugins, add-ins, adapters, or connectors
+* [sdlc-tracker-technical-interfaces](./sdlc-tracker-technical-interfaces.md) — **Technical interface baseline**: Evidence Graph, Gate Decision, Phase Transition, provider ports, REST, MCP, agents, and tenant authority
+
+> The design package authorizes documentation and architecture review only. No source-code implementation is authorized until the Architecture Board approves the target designs and required ADRs.
+
 ## Monitoring (the only two tracking surfaces)
 
 * [gap-tracking](./gap-tracking.md) — **Gap Tracking Board**: criticality, complexity, and live status per gap

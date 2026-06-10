@@ -25,7 +25,18 @@ jobs:
           node-version: "20"
 
       - name: Validate docs
-        run: node .harness/scripts/validate-docs.mjs
+        shell: bash
+        run: |
+          set -o pipefail
+          node .harness/scripts/validate-docs.mjs 2>&1 | tee documentation-validation.log
+
+      - name: Upload validation diagnostics
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: documentation-validation-log
+          path: documentation-validation.log
+          retention-days: 30
 
       - name: Check bilingual parity
         run: node .harness/scripts/check-bilingual-parity.mjs

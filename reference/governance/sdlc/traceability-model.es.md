@@ -1,163 +1,236 @@
-# Modelo de Trazabilidad SDLC
+# Modelo de Trazabilidad SDLC y Evidence Graph
 
-> **Navegación bilingüe:** [English version](./traceability-model.md)
-> **Owner:** Evolith Architecture Board
-> **Estado:** Referencia activa
-> **Padre:** [Centro de Gobernanza SDLC Corporativa](./README.es.md)
-
----
-
-## Propósito
-
-Este documento define cómo Evolith traza el trabajo desde la intención de negocio hasta la evidencia productiva.
-
-La trazabilidad es obligatoria porque toda decisión de producto, cambio de código, gate de calidad y release productivo debe poder explicarse posteriormente.
+> **Navegación bilingüe:** [English version](./traceability-model.md)  
+> **Owner:** Evolith Architecture Board  
+> **Estado:** Diseño Propuesto — Pendiente de Revisión del Architecture Board  
+> **Padre:** [Centro de Gobernanza SDLC Corporativa](./README.es.md)  
+> **Diseño Objetivo:** [Diseño Objetivo de Composición Gobernada](../standards/vision/evolith-governed-composition-target-design.es.md)
 
 ---
 
-## Principio de Trazabilidad
+## 1. Propósito
 
-Todo cambio productivo debe responder tres preguntas:
+Este documento define cómo Evolith traza intención de negocio, decisiones de producto, actividad de proveedores, ejecución humana y agéntica, evaluaciones técnicas, decisiones de gates y evidencia productiva.
 
-1. Por qué se financió este cambio?
-2. Qué decisión de arquitectura o diseño lo permitió?
-3. Qué evidencia demuestra que fue construido, probado y liberado de forma segura?
-
-Si alguna respuesta falta, el cambio no es completamente trazable.
+La trazabilidad no es solo una cadena lineal de documentos. Es un **Evidence Graph** gobernado cuyos nodos preservan identidad de origen, contexto del tenant, integridad, versión de políticas e historial canónico de decisiones.
 
 ---
 
-## Cadena Canónica de Evidencia
+## 2. Preguntas de Trazabilidad
+
+Todo cambio productivo debe responder:
+
+1. ¿Por qué se financió?
+2. ¿Qué cliente, problema, objetivo y supuesto lo justificaron?
+3. ¿La capacidad se construyó, adoptó, embebió, integró, extendió o rechazó?
+4. ¿Qué decisiones de producto y arquitectura lo gobernaron?
+5. ¿Qué humanos, agentes, herramientas y proveedores participaron?
+6. ¿Qué reglas, prompts, skills, modelos y versiones se utilizaron?
+7. ¿Qué evidencia demuestra construcción, pruebas, seguridad y liberación?
+8. ¿Qué evaluaciones técnicas se produjeron?
+9. ¿Quién aprobó excepciones o riesgo residual?
+10. ¿Qué Gate Decision del Tracker autorizó producción?
+
+Si falta una respuesta obligatoria, el cambio no es completamente trazable.
+
+---
+
+## 3. Evidence Graph
 
 ```mermaid
 flowchart LR
-    PRD[PRD\nIntención de Negocio]
-    FS[Historia Funcional\nComportamiento de Negocio]
-    ADR[ADR / Restricción de Diseño\nDecisión Arquitectónica]
-    TS[Historia Técnica\nUnidad de Implementación]
-    PR[Pull Request\nCambio de Código]
-    TSR[Test Summary Report\nEvidencia de Calidad]
-    RN[Release Notes\nEvidencia de Despliegue]
-    PROD[Evidencia Productiva\nObservabilidad / Rollback]
+    PROBLEM["Problema y Evidencia del Cliente"]
+    ASSUMPTIONS["Registro de Supuestos"]
+    DISPOSITION["Disposición de Capacidad\nAdoptar · Embeber · Integrar · Extender · Construir · Rechazar"]
+    PRD["PRD e Intención de Negocio"]
+    FS["Historia Funcional"]
+    ADR["ADR / Decisión de Producto"]
+    TS["Historia Técnica"]
+    WORK["Work Item Externo o Nativo"]
+    CODE["Commit / Pull Request"]
+    AGENT["Agent Run\nModelo · Prompt · Skill · Tool Calls"]
+    CI["Evidencia de Pipeline / Pruebas / Seguridad"]
+    OBS["Trace / Costo / Latencia / Runtime"]
+    RELEASE["Evidencia de Release y Despliegue"]
+    EVAL["Technical Evaluation Results"]
+    APPROVAL["Aprobaciones y Excepciones"]
+    DECISION["Gate Decision Canónica del Tracker"]
+    TRANSITION["Phase Transition Autorizada"]
 
+    PROBLEM --> ASSUMPTIONS --> DISPOSITION --> PRD
     PRD --> FS
     FS --> ADR
     FS --> TS
     ADR --> TS
-    TS --> PR
-    PR --> TSR
-    TSR --> RN
-    RN --> PROD
+    TS --> WORK
+    WORK --> CODE
+    AGENT --> WORK
+    AGENT --> CODE
+    CODE --> CI
+    CI --> OBS
+    OBS --> RELEASE
+
+    PRD --> EVAL
+    ADR --> EVAL
+    CODE --> EVAL
+    AGENT --> EVAL
+    CI --> EVAL
+    OBS --> EVAL
+    RELEASE --> EVAL
+
+    EVAL --> DECISION
+    APPROVAL --> DECISION
+    DECISION --> TRANSITION
 ```
 
+El grafo puede ramificarse, agregarse y referenciar sistemas externos. Evolith no duplica cada payload del proveedor; conserva referencias canónicas, metadata de integridad, hechos normalizados y relaciones de decisión.
+
 ---
 
-## Enlaces Requeridos por Artefacto
+## 4. Tipos de Nodos Canónicos
 
-| Artefacto | Debe enlazar a | Por qué |
+| Nodo | Propósito | Fuente Autoritativa |
 |---|---|---|
-| PRD | Objetivos de negocio, métricas de éxito, restricciones, índice de Historias Funcionales | Demuestra que el producto o release vale la pena construirlo |
-| Historia Funcional | PRD padre, ADRs gobernantes, bounded context, Historias Técnicas | Demuestra que el comportamiento de negocio está acotado y es implementable |
-| ADR | Estándares relacionados, bounded contexts afectados, consecuencias | Demuestra que las decisiones de diseño fueron explícitas y revisadas |
-| Historia Técnica | Historia Funcional padre, ADRs gobernantes, bounded context, Historias Técnicas relacionadas | Demuestra que el trabajo de implementación está ligado a necesidad y diseño aprobados |
-| Pull Request | Historia Técnica, pruebas, delta documental | Demuestra que el cambio de código tiene intención acotada y evidencia revisable |
-| Test Summary Report | Historias Funcionales, Historias Técnicas, ejecuciones CI, métricas de calidad | Demuestra calidad del release candidate y criterios de aceptación |
-| Release Notes | Tag de release, Test Summary Report, pasos de despliegue, rollback, dashboard de observabilidad | Demuestra que el despliegue productivo es controlado y reversible |
+| **Intención de Negocio** | Problema, cliente, objetivo, KPI y valor esperado | Artefacto Evolith aprobado |
+| **Supuesto** | Creencia falsable, confianza y plan de validación | Evolith Tracker |
+| **Disposición de Capacidad** | Decisión build-versus-compose y alternativas | Registro de decisión del Tracker |
+| **Artifact Reference** | PRD, historia, ADR, contrato, informe o release | Repositorio o proveedor documental |
+| **Work Reference** | Tarea externa o nativa y estado operativo | Proveedor de gestión de trabajo |
+| **Execution Reference** | Agent run, pipeline, prueba, scan o deployment | Proveedor de ejecución |
+| **Evidence Item** | Prueba canónica con linaje e integridad | Evolith Evidence Graph |
+| **Technical Evaluation** | Evaluación determinista contra reglas | CLI, MCP, CI o evaluador especializado |
+| **Approval** | Autorización humana responsable | Evolith Tracker |
+| **Exception** | Riesgo residual, expiración y mitigación | Evolith Tracker |
+| **Gate Decision** | Resultado canónico de gobernanza | Evolith Tracker |
+| **Phase Transition** | Cambio de estado autorizado | Evolith Tracker |
 
 ---
 
-## Regla Mínima de Trazabilidad
+## 5. Metadata Mínima de Evidencia
 
-Para delivery MVP, la cadena mínima navegable es:
+Toda evidencia aceptada incluye:
+
+- identificador estable;
+- tenant, producto, proceso, fase, gate y criterio;
+- tipo de evidencia y versión de schema;
+- conexión de proveedor e identificador externo;
+- URL de origen cuando exista;
+- productor humano, agente, CI o sistema;
+- versiones de modelo, prompt y skill cuando aplique;
+- referencias a artefacto, commit, PR, pipeline, prueba, trace, deployment o documento;
+- timestamp de captura y hash de contenido;
+- clasificación de datos y política de retención;
+- duración, costo, latencia o tokens cuando aplique;
+- evaluaciones técnicas relacionadas;
+- aprobaciones, excepciones y Gate Decision final.
+
+---
+
+## 6. Regla de Abstracción de Proveedores
+
+La trazabilidad se basa en capacidades, no en vendors.
 
 ```text
-PRD -> Historia Funcional -> Historia Técnica -> Pull Request -> Test Summary Report -> Release Notes
+Tipo Canónico de Evidencia
+        -> Provider Port
+            -> Plugin / Adapter / Connector
+                -> Proveedor Actual
 ```
 
-Un ADR es obligatorio cuando el trabajo introduce o cambia:
-
-- Límites arquitectónicos.
-- Selección tecnológica.
-- Modelo de seguridad.
-- Modelo de multi-tenancy.
-- Estrategia de persistencia.
-- Protocolo API o estrategia de contratos.
-- Topología de despliegue u observabilidad.
-- Cualquier excepción a un estándar Evolith existente.
+Reemplazar Jira, Langfuse, Superset, GitHub, Claude, un framework de pruebas o cualquier otro proveedor no debe romper la trazabilidad. La evidencia histórica permanece legible mediante identificadores Evolith estables y snapshots del proveedor.
 
 ---
 
-## Estándar de Trazabilidad en Pull Request
+## 7. Evaluación, Decisión y Transición
 
-Todo Pull Request debe incluir un bloque compacto de trazabilidad:
+| Objeto | Estados | Autoridad |
+|---|---|---|
+| **Technical Evaluation Result** | `compliant`, `non_compliant`, `indeterminate`, `error` | Evaluador stateless |
+| **Gate Decision** | `approved`, `rejected`, `blocked`, `approved_with_exception` | Evolith Tracker |
+| **Phase Transition** | `requested`, `authorized`, `executed`, `failed`, `cancelled` | Evolith Tracker |
+
+Una evaluación técnica nunca cambia el estado de fase. Un evento de proveedor nunca cambia el estado de fase. Solo una Gate Decision autorizada puede habilitar una Phase Transition.
+
+---
+
+## 8. Cadena Mínima Comprobable
+
+```text
+Problema
+  -> Registro de Supuestos
+  -> Disposición de Capacidad
+  -> PRD
+  -> Historia Funcional
+  -> ADR / Decisión de Producto
+  -> Historia Técnica o Work Item Mapeado
+  -> Código / Agente / Ejecución de Proveedor
+  -> Evidencia de Pruebas y Seguridad
+  -> Evidencia de Release
+  -> Evaluaciones Técnicas
+  -> Aprobación o Excepción
+  -> Gate Decision
+  -> Phase Transition
+```
+
+Un ADR es obligatorio cuando el trabajo introduce o cambia límites arquitectónicos, semántica de contratos de proveedores, seguridad, multi-tenancy, persistencia, contratos API, topología de despliegue u observabilidad, estructura canónica de evidencia o una excepción a un estándar Evolith.
+
+---
+
+## 9. Bloque de Trazabilidad en Pull Request
 
 ```markdown
-## Trazabilidad
+## Trazabilidad Evolith
 
-- Historia Funcional: FS-XX — [Título]
-- Historia Técnica: TS-XXX — [Título]
-- ADRs gobernantes: ADR-XXXX, ADR-YYYY
-- Bounded Context: [Nombre del contexto]
-- Delta documental: [Link o N/A con razón]
-- Evidencia de pruebas: [Ejecución CI / link a reporte]
+- Producto / Proceso: [IDs]
+- Historia Funcional: [ID y enlace]
+- Historia Técnica o Work Item: [ID y proveedor]
+- ADRs / Decisiones Gobernantes: [IDs]
+- Disposición de Capacidad: [Construir / Integrar / ...]
+- Provider Connections: [Tipo e IDs estables]
+- Evidence Items: [IDs estables]
+- Evidencia de Pruebas / Seguridad: [IDs]
+- Delta Documental: [Link o N/A con razón]
 ```
 
-Si un campo no aplica, escribir `N/A — [razón]` en lugar de eliminarlo.
+Los identificadores nativos del proveedor pueden incluirse, pero las referencias estables Evolith son obligatorias.
 
 ---
 
-## Checklist de Trazabilidad para Gate Review
+## 10. Checklist de Gate Review
 
-| Gate | El revisor debe confirmar |
+| Gate | Confirmación Requerida |
 |---|---|
-| Aprobación de Negocio | El PRD tiene objetivos, restricciones, personas, alcance, no-objetivos y aprobación |
-| Baseline de Diseño | Historias Funcionales y ADRs están enlazados y no contradicen estándares Evolith |
-| Build Exitoso | Pull Requests enlazan a Historias Técnicas y pasan evidencia de DoD |
-| RC Sellado | Test Summary Report valida todas las Historias Funcionales en alcance y métricas obligatorias |
-| Producción Activa | Release Notes enlaza evidencia RC, tag de release, rollback y prueba de observabilidad |
+| **Business Sign-Off** | Problema, cliente, supuestos, ROI/KPIs, alternativas y disposición aprobados |
+| **Design Baseline** | Intención funcional, ADRs, contratos, abstracciones, plan de evidencia y seguridad completos |
+| **Successful Build** | Código o capacidad integrada mapea a trabajo aprobado, CI, documentación, drift y linaje |
+| **RC Stamped** | Evidencia de pruebas, seguridad, contratos, agentes y excepciones satisface umbrales |
+| **Production Live** | Release, observabilidad, rollback, deployment y riesgo residual completos |
 
 ---
 
-## Anti-Patrones
+## 11. Anti-Patrones
 
-| Anti-patrón | Riesgo |
+| Anti-Patrón | Riesgo |
 |---|---|
-| Decisiones arquitectónicas code-first | La arquitectura queda implícita y no gobernable |
-| Historias Funcionales con lenguaje API-first | Producto no puede validar comportamiento de negocio independientemente |
-| Historias Técnicas sin Historia Funcional padre | El trabajo técnico queda desconectado del valor de negocio |
-| Release Notes sin Test Summary Report | El release productivo carece de evidencia objetiva de calidad |
-| Observabilidad agregada después del despliegue | La preparación productiva no puede demostrarse en el gate |
+| IDs de vendors como identidad canónica | El reemplazo rompe trazabilidad |
+| Output de agente aceptado sin validación | El contenido generado se vuelve autoridad no auditada |
+| Evaluador técnico aprueba directamente un gate | Se evade la autoridad canónica |
+| Payload crudo persistido como dominio | El schema del proveedor contamina Evolith |
+| Construcción sin análisis de alternativas | Evolith recrea capacidades commodity |
+| Remover plugin destruye evidencia histórica | Auditoría y compliance quedan inválidos |
+| Release sin Gate Decision enlazada | Producción no puede demostrarse autorizada |
 
 ---
 
-## Ejemplo de Referencia UMS
+## 12. Documentos Relacionados
 
-Una capacidad de identidad estilo UMS debe ser trazable así:
-
-| Paso de cadena | Ejemplo |
-|---|---|
-| Intención de negocio | PRD define gobierno de identidad y acceso tenant-aware |
-| Comportamiento funcional | Historia Funcional define asignación de rol con alcance tenant |
-| Decisión arquitectónica | ADR define restricciones de multi-tenancy y límites de autorización |
-| Implementación técnica | Historia Técnica implementa el caso de uso de asignación de rol |
-| Evidencia de código | Pull Request implementa dominio, aplicación, infraestructura, API y pruebas |
-| Evidencia de calidad | Test Summary Report valida matriz de autorización y escaneos de seguridad |
-| Evidencia de release | Release Notes documenta despliegue, rollback y controles de observabilidad |
+- [Diseño Objetivo de Composición Gobernada](../standards/vision/evolith-governed-composition-target-design.es.md)
+- [Modelo de Abstracción de Proveedores y Plugins](../standards/vision/evolith-provider-abstraction-plugin-model.es.md)
+- [Diseño Técnico del Tracker](../standards/vision/sdlc-tracker-technical-interfaces.es.md)
+- [Hub de Plantillas de Artefactos](./04-artifact-templates/README.es.md)
+- [Matriz de Responsabilidades](./responsibility-matrix.es.md)
+- [Quality Gates](./quality-gates.es.md)
 
 ---
 
-## Documentos Relacionados
-
-| Documento | Propósito |
-|---|---|
-| [Hub de Plantillas de Artefactos](./04-artifact-templates/README.es.md) | Plantillas canónicas con secciones de trazabilidad. |
-| [Estándar de Escritura de Historias Funcionales](./03-documentation/functional-story-writing-standard.es.md) | Reglas para requisitos funcionales legibles por negocio. |
-| [Plantilla de Historia Técnica](./04-artifact-templates/technical-story-template.es.md) | Elemento de trabajo de ingeniería con campos de trazabilidad. |
-| [Plantilla de Test Summary Report](./04-artifact-templates/test-summary-report-template.es.md) | Evidencia de calidad antes del RC sellado. |
-| [Plantilla de Release Notes](./04-artifact-templates/release-notes-template.es.md) | Evidencia de despliegue productivo. |
-
----
-
-<div align="center">
-  <sub>Evolith — Enterprise Architecture Platform | Modelo de Trazabilidad SDLC</sub>
-</div>
+*Este modelo es una baseline de diseño. Rulesets, schemas y código no deben cambiar hasta que el Architecture Board apruebe el nuevo paquete de diseño.*

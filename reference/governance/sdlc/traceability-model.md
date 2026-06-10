@@ -1,163 +1,238 @@
-# SDLC Traceability Model
+# SDLC Traceability and Evidence Graph Model
 
-> **Bilingual navigation:** [Versión en Español](./traceability-model.es.md)
-> **Owner:** Evolith Architecture Board
-> **Status:** Active reference
-> **Parent:** [Corporate SDLC Governance Center](./README.md)
-
----
-
-## Purpose
-
-This document defines how Evolith traces work from business intent to production evidence.
-
-Traceability is mandatory because every product decision, code change, quality gate, and production release must be explainable after the fact.
+> **Bilingual navigation:** [Versión en Español](./traceability-model.es.md)  
+> **Owner:** Evolith Architecture Board  
+> **Status:** Proposed Design — Pending Architecture Board Review  
+> **Parent:** [Corporate SDLC Governance Center](./README.md)  
+> **Target Design:** [Governed Composition Target Design](../standards/vision/evolith-governed-composition-target-design.md)
 
 ---
 
-## Traceability Principle
+## 1. Purpose
 
-Every production change must answer three questions:
+This document defines how Evolith traces business intent, product decisions, provider activity, human and agent execution, technical evaluations, gate decisions, and production evidence.
 
-1. Why was this change funded?
-2. What architecture or design decision allowed it?
-3. What evidence proves it was built, tested, and released safely?
-
-If any answer is missing, the change is not fully traceable.
+Traceability is not a linear document chain only. It is a governed **Evidence Graph** whose nodes preserve source identity, tenant context, integrity, policy version, and canonical decision history.
 
 ---
 
-## Canonical Evidence Chain
+## 2. Traceability Questions
+
+Every production change must answer:
+
+1. Why was the change funded?
+2. Which customer, problem, objective, and assumption justified it?
+3. Was the capability built, adopted, embedded, integrated, extended, or rejected?
+4. Which architecture and product decisions governed it?
+5. Which humans, agents, tools, and providers participated?
+6. Which rules, prompts, skills, models, and versions were used?
+7. What evidence proves it was built, tested, secured, and released safely?
+8. Which technical evaluations were produced?
+9. Who approved exceptions or residual risk?
+10. Which Tracker Gate Decision authorized production?
+
+If any mandatory answer is unavailable, the change is not fully traceable.
+
+---
+
+## 3. Evidence Graph
 
 ```mermaid
 flowchart LR
-    PRD[PRD\nBusiness Intent]
-    FS[Functional Story\nBusiness Behavior]
-    ADR[ADR / Design Constraint\nArchitecture Decision]
-    TS[Technical Story\nImplementation Unit]
-    PR[Pull Request\nCode Change]
-    TSR[Test Summary Report\nQuality Evidence]
-    RN[Release Notes\nDeployment Evidence]
-    PROD[Production Evidence\nObservability / Rollback]
+    PROBLEM["Problem and Customer Evidence"]
+    ASSUMPTIONS["Assumption Register"]
+    DISPOSITION["Capability Disposition\nAdopt · Embed · Integrate · Extend · Build · Reject"]
+    PRD["PRD and Business Intent"]
+    FS["Functional Story"]
+    ADR["ADR / Product Decision"]
+    TS["Technical Story"]
+    WORK["External or Native Work Item"]
+    CODE["Commit / Pull Request"]
+    AGENT["Agent Run\nModel · Prompt · Skill · Tool Calls"]
+    CI["Pipeline / Test / Security Evidence"]
+    OBS["Trace / Cost / Latency / Runtime Evidence"]
+    RELEASE["Release and Deployment Evidence"]
+    EVAL["Technical Evaluation Results"]
+    APPROVAL["Approvals and Exceptions"]
+    DECISION["Canonical Tracker Gate Decision"]
+    TRANSITION["Authorized Phase Transition"]
 
+    PROBLEM --> ASSUMPTIONS --> DISPOSITION --> PRD
     PRD --> FS
     FS --> ADR
     FS --> TS
     ADR --> TS
-    TS --> PR
-    PR --> TSR
-    TSR --> RN
-    RN --> PROD
+    TS --> WORK
+    WORK --> CODE
+    AGENT --> WORK
+    AGENT --> CODE
+    CODE --> CI
+    CI --> OBS
+    OBS --> RELEASE
+
+    PRD --> EVAL
+    ADR --> EVAL
+    CODE --> EVAL
+    AGENT --> EVAL
+    CI --> EVAL
+    OBS --> EVAL
+    RELEASE --> EVAL
+
+    EVAL --> DECISION
+    APPROVAL --> DECISION
+    DECISION --> TRANSITION
 ```
 
+The graph may branch, aggregate, and reference external systems. Evolith does not duplicate every provider payload; it stores canonical references, integrity metadata, normalized facts, and decision relationships.
+
 ---
 
-## Required Links by Artifact
+## 4. Canonical Node Types
 
-| Artifact | Must Link To | Why |
+| Node | Purpose | Authoritative Source |
 |---|---|---|
-| PRD | Business objectives, success metrics, constraints, Functional Story index | Proves the product or release is worth building |
-| Functional Story | Parent PRD, governing ADRs, bounded context, Technical Stories | Proves business behavior is bounded and implementable |
-| ADR | Related standards, affected bounded contexts, consequences | Proves design decisions were explicit and reviewed |
-| Technical Story | Parent Functional Story, governing ADRs, bounded context, related Technical Stories | Proves implementation work is tied to approved need and design |
-| Pull Request | Technical Story, tests, documentation delta | Proves code change has scoped intent and reviewable evidence |
-| Test Summary Report | Functional Stories, Technical Stories, CI runs, quality metrics | Proves release candidate quality and acceptance criteria |
-| Release Notes | Release tag, Test Summary Report, deployment steps, rollback plan, observability dashboard | Proves production deployment is controlled and reversible |
+| **Business Intent** | Problem, customer, objective, KPI and expected value | Approved Evolith artifact |
+| **Assumption** | Falsifiable belief, confidence and validation plan | Evolith Tracker |
+| **Capability Disposition** | Build-versus-compose decision and alternatives | Evolith Tracker decision record |
+| **Artifact Reference** | PRD, story, ADR, contract, report or release document | Source repository or document provider |
+| **Work Reference** | External or native task and operational status | Connected work-management provider |
+| **Execution Reference** | Agent run, pipeline, test, scan or deployment | Connected execution provider |
+| **Evidence Item** | Canonical proof with source lineage and integrity | Evolith Evidence Graph |
+| **Technical Evaluation** | Deterministic assessment against rules | CLI, MCP, CI or specialized evaluator |
+| **Approval** | Accountable human authorization | Evolith Tracker |
+| **Exception** | Accepted residual risk, expiry and mitigation | Evolith Tracker |
+| **Gate Decision** | Canonical governance outcome | Evolith Tracker |
+| **Phase Transition** | Authorized state change | Evolith Tracker |
 
 ---
 
-## Minimum Traceability Rule
+## 5. Minimum Evidence Metadata
 
-For MVP delivery, the minimum navigable chain is:
+Every accepted evidence item includes:
+
+- stable evidence identifier;
+- tenant, product, process, phase, gate and criterion references;
+- evidence type and schema version;
+- provider connection and external identifier;
+- source URL when available;
+- producer identity: human, agent, CI or system;
+- model, prompt and skill versions when applicable;
+- artifact, commit, pull request, pipeline, test, trace, deployment or document references;
+- capture timestamp and content hash;
+- data classification and retention policy;
+- duration, cost, latency or token usage when applicable;
+- related technical evaluations;
+- approval, exception and final Gate Decision references.
+
+---
+
+## 6. Provider Abstraction Rule
+
+Traceability is capability-based, not vendor-based.
 
 ```text
-PRD -> Functional Story -> Technical Story -> Pull Request -> Test Summary Report -> Release Notes
+Canonical Evidence Type
+        -> Provider Port
+            -> Plugin / Adapter / Connector
+                -> Current Provider
 ```
 
-An ADR is mandatory whenever the work introduces or changes:
-
-- Architecture boundaries.
-- Technology selection.
-- Security model.
-- Multi-tenancy model.
-- Persistence strategy.
-- API protocol or contract strategy.
-- Deployment or observability topology.
-- Any exception to an existing Evolith standard.
+Replacing Jira, Langfuse, Superset, GitHub, Claude, a test framework, or any other provider must not break canonical traceability. Historical evidence remains readable through stable Evolith identifiers and provider snapshots.
 
 ---
 
-## Pull Request Traceability Standard
+## 7. Evaluation, Decision, and Transition
 
-Every Pull Request should include a compact traceability block:
+| Object | Status Vocabulary | Authority |
+|---|---|---|
+| **Technical Evaluation Result** | `compliant`, `non_compliant`, `indeterminate`, `error` | Stateless evaluator |
+| **Gate Decision** | `approved`, `rejected`, `blocked`, `approved_with_exception` | Evolith Tracker |
+| **Phase Transition** | `requested`, `authorized`, `executed`, `failed`, `cancelled` | Evolith Tracker |
+
+A technical evaluation never changes phase state. A provider event never changes phase state. Only an authorized Gate Decision may authorize a Phase Transition.
+
+---
+
+## 8. Minimum Provable Chain
+
+For the first vertical product slice, the minimum navigable chain is:
+
+```text
+Problem
+  -> Assumption Register
+  -> Capability Disposition
+  -> PRD
+  -> Functional Story
+  -> ADR / Product Decision
+  -> Technical Story or Mapped Work Item
+  -> Code / Agent / Provider Execution
+  -> Test and Security Evidence
+  -> Release Evidence
+  -> Technical Evaluations
+  -> Approval or Exception
+  -> Gate Decision
+  -> Phase Transition
+```
+
+An ADR is mandatory whenever the work introduces or changes architecture boundaries, provider-contract semantics, security, multi-tenancy, persistence, API contracts, deployment topology, observability topology, canonical evidence structure, or an exception to an Evolith standard.
+
+---
+
+## 9. Pull Request Traceability Block
 
 ```markdown
-## Traceability
+## Evolith Traceability
 
-- Functional Story: FS-XX — [Title]
-- Technical Story: TS-XXX — [Title]
-- Governing ADRs: ADR-XXXX, ADR-YYYY
-- Bounded Context: [Context name]
+- Product / Process: [IDs]
+- Functional Story: [ID and link]
+- Technical Story or Work Item: [ID and provider]
+- Governing ADRs / Decisions: [IDs]
+- Capability Disposition: [Build / Integrate / ...]
+- Provider Connections: [Provider type and stable connection IDs]
+- Evidence Items: [Stable evidence IDs]
+- Test / Security Evidence: [IDs]
 - Documentation Delta: [Link or N/A with reason]
-- Test Evidence: [CI run / test report link]
 ```
 
-If a field is not applicable, write `N/A — [reason]` instead of deleting it.
+Provider-native identifiers may be included, but stable Evolith references are mandatory.
 
 ---
 
-## Gate Review Traceability Checklist
+## 10. Gate Review Checklist
 
 | Gate | Reviewer Must Confirm |
 |---|---|
-| Business Sign-Off | PRD has objectives, constraints, personas, scope, non-goals, and sign-off |
-| Design Baseline | Functional Stories and ADRs are linked and do not contradict Evolith standards |
-| Successful Build | Pull Requests link back to Technical Stories and pass DoD evidence |
-| RC Stamped | Test Summary Report validates all in-scope Functional Stories and mandatory quality metrics |
-| Production Live | Release Notes link to RC evidence, release tag, rollback plan, and observability proof |
+| **Business Sign-Off** | Problem, customer, assumptions, ROI/KPIs, capability alternatives and disposition are approved |
+| **Design Baseline** | Functional intent, ADRs, contracts, provider abstractions, evidence plan and security constraints are complete |
+| **Successful Build** | Code or integrated capability maps to approved work, CI evidence, documentation, drift and provider lineage |
+| **RC Stamped** | Test, security, contract, agent and exception evidence satisfy approved thresholds |
+| **Production Live** | Release, observability, rollback, deployment and residual-risk approval are complete |
 
 ---
 
-## Anti-Patterns
+## 11. Anti-Patterns
 
 | Anti-Pattern | Risk |
 |---|---|
-| Code-first architecture decisions | Architecture becomes implicit and impossible to govern |
-| Functional Stories with API-first language | Product cannot validate business behavior independently |
-| Technical Stories without parent Functional Story | Engineering work becomes disconnected from business value |
-| Release Notes without Test Summary Report | Production release lacks objective quality evidence |
-| Observability added after deployment | Production readiness cannot be proven at the gate |
+| Vendor IDs used as canonical identities | Provider replacement breaks traceability |
+| Agent output accepted without evidence validation | Generated content becomes unaudited authority |
+| Technical evaluator directly approves a gate | Canonical decision authority is bypassed |
+| Raw provider payload persisted as domain state | Vendor schema contaminates Evolith bounded contexts |
+| Build decision without alternative analysis | Evolith recreates mature commodity products |
+| Plugin removal destroys historical evidence | Audit and compliance history becomes invalid |
+| Release evidence without linked Gate Decision | Production cannot be proven as authorized |
 
 ---
 
-## UMS Reference Example
+## 12. Related Documents
 
-A UMS-style identity capability should be traceable as follows:
-
-| Chain Step | Example |
-|---|---|
-| Business intent | PRD defines tenant-aware identity and access governance |
-| Functional behavior | Functional Story defines assigning a tenant-scoped role |
-| Architecture decision | ADR defines multi-tenancy and authorization boundary constraints |
-| Technical implementation | Technical Story implements the role assignment use case |
-| Code evidence | Pull Request implements domain, application, infrastructure, API, and tests |
-| Quality evidence | Test Summary Report validates authorization matrix and security scans |
-| Release evidence | Release Notes document deployment, rollback, and observability checks |
+- [Governed Composition Target Design](../standards/vision/evolith-governed-composition-target-design.md)
+- [Provider Abstraction and Plugin Model](../standards/vision/evolith-provider-abstraction-plugin-model.md)
+- [Tracker Technical Interface Design](../standards/vision/sdlc-tracker-technical-interfaces.md)
+- [Artifact Templates Hub](./04-artifact-templates/README.md)
+- [Responsibility Matrix](./responsibility-matrix.md)
+- [Quality Gates](./quality-gates.md)
 
 ---
 
-## Related Documents
-
-| Document | Purpose |
-|---|---|
-| [Artifact Templates Hub](./04-artifact-templates/README.md) | Canonical templates containing traceability sections. |
-| [Functional Story Writing Standard](./03-documentation/functional-story-writing-standard.md) | Rules for business-readable functional requirements. |
-| [Technical Story Template](./04-artifact-templates/technical-story-template.md) | Engineering work item with traceability fields. |
-| [Test Summary Report Template](./04-artifact-templates/test-summary-report-template.md) | Quality evidence before RC stamp. |
-| [Release Notes Template](./04-artifact-templates/release-notes-template.md) | Production deployment evidence. |
-
----
-
-<div align="center">
-  <sub>Evolith — Enterprise Architecture Platform | SDLC Traceability Model</sub>
-</div>
+*This model is a design baseline. Rulesets, schemas, and code must not be changed until the Architecture Board approves the new design package.*

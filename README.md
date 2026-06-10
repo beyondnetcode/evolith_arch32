@@ -1,57 +1,22 @@
-<div align="center">
-
 # Evolith: Progressive Architecture Reference Base
 
-> **Bilingual Navigation:** [Versión en Español](./README.es.md)
+> **Bilingual navigation:** [Versión en Español](./README.es.md)
 
-[![Status](https://img.shields.io/badge/Status-Active-brightgreen?style=for-the-badge)]()
-[![Method](https://img.shields.io/badge/Method-Spec--driven_AI--DD-blueviolet?style=for-the-badge)]()
-[![License](https://img.shields.io/badge/License-MIT-informational?style=for-the-badge)]()
-[![CI](https://img.shields.io/github/actions/workflow/status/beyondnetcode/evolith_arch32/docs.yml?style=for-the-badge&label=CI)](https://github.com/beyondnetcode/evolith_arch32/actions)
-[![Coverage](https://img.shields.io/badge/Docs-100%25-brightgreen?style=for-the-badge)](./COVERAGE_REPORT.md)
-
-<br/>
-
-<a href="./reference/governance/sdlc/assets/master-view.png" title="Evolith E2E Product Vision — click to enlarge">
-  <img src="./reference/governance/sdlc/assets/master-view.png"
-       alt="Evolith E2E Product Vision"
-       width="780"
-       style="border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);" />
-</a>
-
-<sub>↑ Evolith E2E Product Vision · MD3 — <i>click to enlarge</i></sub>
-
-<br/>
-
-**Evolith is the corporate architecture upstream for product repositories.**<br/>
-It defines reusable architecture standards, governance rules, ADRs, patterns,<br/>
-and operating guidance that satellite products inherit and specialize.
-
-> *Separate conceptually before separating physically.*
-
-</div>
-
----
+Evolith defines architecture standards, governance, ADRs, patterns, and operational guidance that satellite products inherit and specialize.
 
 ## Start Here
 
-<details>
-<summary><strong>Primary entry points</strong></summary>
-
-- [Executive One-Pager](./reference/governance/standards/communication/visuals/v01-executive-one-pager.md) - five-minute explanation of Evolith, UMS, and the value proposition.
-- [Getting Started by Role](./reference/getting-started/README.md) - recommended reading paths for executives, architects, engineers, QA, SRE, product, and AI contributors.
-- [Product Vision](./reference/governance/standards/vision/evolith-product-vision-master.md) - strategic direction, roadmap, and maturity model.
-- [SDLC Governance Center](./reference/governance/sdlc/README.md) - authoritative lifecycle phases, gates, artifacts, and traceability model.
-- [Global Master Index](./reference/navigation/MASTER_INDEX.md) - complete repository navigation when you already know what artifact you need.
-
-</details>
+- [Executive One-Pager](./reference/governance/standards/communication/visuals/v01-executive-one-pager.md)
+- [Getting Started by Role](./reference/getting-started/README.md)
+- [Product Vision](./reference/governance/standards/vision/evolith-product-vision-master.md)
+- [SDLC Governance Center](./reference/governance/sdlc/README.md)
+- [Global Master Index](./reference/navigation/MASTER_INDEX.md)
 
 ## SDLC Navigation
 
-Open the phase you are working in. Each table is grouped in the following strict type order: **Format, Rule, Standard, Guide, Decision, Record, Matrix, Manifest, Reference, Index, Checklist**.
+The six tables exclusively use these types and this order: **Format, Rule, Standard, Guide, Decision, Record, Matrix, Manifest, Reference, Index, Checklist**.
 
-<details>
-<summary><strong>Phase 01 - Conception and Discovery</strong></summary>
+### Phase 01 - Conception and Discovery
 
 | Type | Document |
 |---|---|
@@ -61,7 +26,7 @@ Open the phase you are working in. Each table is grouped in the following strict
 | Format | [CLI Impact Analysis](./reference/governance/sdlc/04-artifact-templates/cli-impact-analysis.md) |
 | Format | [Discovery Canvas](./reference/governance/sdlc/04-artifact-templates/discovery-canvas-template.md) |
 | Format | [Evolith User Story](./reference/governance/sdlc/04-artifact-templates/evolith-user-story-template.md) |
-| Format | [PRD - Product Requirements Document](./reference/governance/sdlc/04-artifact-templates/prd-template.md) |
+| Format | [PRD](./reference/governance/sdlc/04-artifact-templates/prd-template.md) |
 | Rule | [Agile Backlog Schema](./rulesets/schema/agile-backlog.schema.json) |
 | Rule | [Ballpark Estimation Schema](./rulesets/schema/ballpark-estimation.schema.json) |
 | Rule | [Business Case ROI Schema](./rulesets/schema/business-case-roi.schema.json) |
@@ -76,10 +41,7 @@ Open the phase you are working in. Each table is grouped in the following strict
 | Manifest | [Engineering Manifesto](./reference/governance/standards/engineering/engineering-manifesto.md) |
 | Reference | [Agnostic Baseline](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.md) |
 
-</details>
-
-<details>
-<summary><strong>Phase 02 - Design and Architecture</strong></summary>
+### Phase 02 - Design and Architecture
 
 | Type | Document |
 |---|---|
@@ -100,10 +62,7 @@ Open the phase you are working in. Each table is grouped in the following strict
 | Index | [Architecture Hub](./reference/architecture/README.md) |
 | Checklist | [Simplicity Checklist Phase 1](./reference/architecture/blueprints/simplicity-checklist-phase-01.md) |
 
-</details>
-
-<details>
-<summary><strong>Phase 03 - Construction</strong></summary>
+### Phase 03 - Construction
 
 | Type | Document |
 |---|---|
@@ -123,10 +82,7 @@ Open the phase you are working in. Each table is grouped in the following strict
 | Reference | [Canonical Patterns](./reference/architecture/canonical-patterns/README.md) |
 | Index | [Artifact Templates Hub](./reference/governance/sdlc/04-artifact-templates/README.md) |
 
-</details>
-
-<details>
-<summary><strong>Phase 04 - Validation and QA</strong></summary>
+### Phase 04 - Validation and QA
 
 | Type | Document |
 |---|---|
@@ -141,10 +97,7 @@ Open the phase you are working in. Each table is grouped in the following strict
 | Matrix | [SDLC Artifact Mapping](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.md) |
 | Reference | [SDLC Traceability Model](./reference/governance/sdlc/traceability-model.md) |
 
-</details>
-
-<details>
-<summary><strong>Phase 05 - Delivery and Operations</strong></summary>
+### Phase 05 - Delivery and Operations
 
 | Type | Document |
 |---|---|
@@ -159,20 +112,15 @@ Open the phase you are working in. Each table is grouped in the following strict
 | Index | [Infrastructure Hub](./reference/infrastructure/README.md) |
 | Index | [Operations Hub](./reference/operations/README.md) |
 
-</details>
-
 ## Cross-Cutting References
-
-<details>
-<summary><strong>Architecture, governance, and applied reference</strong></summary>
 
 | Type | Document |
 |---|---|
 | Standard | [C4 Topology Spec](./reference/architecture/blueprints/c4-topology-spec.md) |
 | Standard | [Governance Standards](./reference/governance/standards/README.md) |
 | Record | [ADR Registry](./reference/architecture/adrs/README.md) |
-| Record | [Gap Tracking Board](./reference/governance/standards/vision/gap-tracking.md) — single board for every open gap |
-| Record | [Maturity Assessment](./reference/governance/standards/vision/maturity-assessment.md) — TOGAF ACMM/WAF scoring and vision alignment |
+| Record | [Gap Tracking Board](./reference/governance/standards/vision/gap-tracking.md) |
+| Record | [Maturity Assessment](./reference/governance/standards/vision/maturity-assessment.md) |
 | Reference | [Adoption Cases](./reference/knowledge/adoption-cases.md) |
 | Reference | [Agnostic Baseline](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.md) |
 | Reference | [Canonical Reference vs UMS Applied Model](./reference/knowledge/demo/demo-vs-reference.md) |
@@ -190,61 +138,21 @@ Open the phase you are working in. Each table is grouped in the following strict
 | Index | [UMS Architecture Portal](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) |
 | Index | [UMS Reference Hub](./reference/knowledge/demo/README.md) |
 
-</details>
-
 ## Tools and Automation
-
-<details>
-<summary><strong>Smart CLI and validation hooks</strong></summary>
-
-### Smart CLI (Official)
-
-```bash
-# Initialize new satellite repository
-npx @evolith/smart-cli init
-
-# Validate against Evolith standards
-smart-cli validate
-
-# Manage ADRs
-smart-cli adr create
-smart-cli adr list
-
-# MCP server for AI assistants
-smart-cli mcp serve
-```
 
 - [CLI Documentation](./sdk/cli/README.md)
 - [CLI Architecture](./sdk/cli/ARCHITECTURE.md)
 - [CLI Product Vision](./sdk/cli/docs/VISION.md)
-- [Gap Analysis](./sdk/cli/docs/planning/sdk-cli-mcp-current-state-assessment.md)
-
-### Pre-commit Hooks
-
-- [validate-docs.mjs](./.harness/scripts/validate-docs.mjs) - link, anchor, encoding, and Mermaid validation.
-- [check-bilingual-parity.mjs](./.harness/scripts/check-bilingual-parity.mjs) - EN/ES structure parity validation.
-- [impact-analysis-synchronizer.mjs](./.harness/scripts/impact-analysis-synchronizer.mjs) - cross-repository impact synchronization.
-
-</details>
-
----
+- [Current-State Assessment](./sdk/cli/docs/planning/sdk-cli-mcp-current-state-assessment.md)
+- [Documentation Validator](./.harness/scripts/validate-docs.mjs)
+- [Bilingual Parity Validator](./.harness/scripts/check-bilingual-parity.mjs)
 
 ## Contribution
 
-Before contributing, read:
-
-- [AGENTS.md](./AGENTS.md) — Agent rules and conventions
-- [Repository Taxonomy](./reference/governance/standards/repository-taxonomy.md) — What goes where
-- [Child Repository Inheritance Guide](./reference/governance/standards/onboarding/child-repository-inheritance-guide.md) — How products inherit
-
----
+- [AGENTS.md](./AGENTS.md)
+- [Repository Taxonomy](./reference/governance/standards/repository-taxonomy.md)
+- [Child Repository Inheritance Guide](./reference/governance/standards/onboarding/child-repository-inheritance-guide.md)
 
 ## License
 
 Published under the [MIT License](./LICENSE).
-
----
-
-<div align="center">
-  <sub>Evolith - Enterprise Architecture Platform | Progressive Reference Corpus | Spec-driven AI-DD</sub>
-</div>

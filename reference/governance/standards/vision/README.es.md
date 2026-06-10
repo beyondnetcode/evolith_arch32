@@ -1,8 +1,14 @@
-# Índice de vision
+# Índice de visión
 
 * [architectural-directives](./architectural-directives.es.md)
 * [evolutionary-strategy-roadmap](./evolutionary-strategy-roadmap.es.md)
 * [evolith-product-vision-master](./evolith-product-vision-master.es.md)
+
+## Documentos estratégicos hijos
+
+* [framework estratégico consolidado](./evolith-strategic-validation-and-composition-framework.es.md)
+* [análisis comparativo](./evolith-strategic-positioning-comparative-landscape.es.md)
+* [workflow de validación asistida](./evolith-ai-assisted-validation-workflow.es.md)
 
 ## Monitoreo (las únicas dos superficies de seguimiento)
 

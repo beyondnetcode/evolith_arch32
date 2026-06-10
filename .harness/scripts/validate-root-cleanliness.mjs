@@ -24,7 +24,8 @@ const allowedFiles = new Set([
   "COVERAGE_REPORT.md",
   "cli-core-parity-tracking.md",
   "evolith-validated-tool-catalog.md",
-  "package.json"
+  "package.json",
+  "package-lock.json"
 ]);
 
 // Explicit whitelist of allowed directories in the root directory.

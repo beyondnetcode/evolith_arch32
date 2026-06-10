@@ -43,8 +43,8 @@ graph TD
 - Introduce el ciclo de vida del stack operativo de gestión de Kong.
 
 ## Referencias
-- [ADR-0008: Patrones Progresivos de BFF](../../adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.md)
-- [ADR-0027: Borde de Protocolo Dual](../../adrs/nodejs/0027-dual-protocol-rest-grpc-api-gateway.md)
+- [ADR-0008: Patrones Progresivos de BFF](../../adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.es.md)
+- [ADR-0027: Borde de Protocolo Dual](../../adrs/nodejs/0027-dual-protocol-rest-grpc-api-gateway.es.md)
 
 
 

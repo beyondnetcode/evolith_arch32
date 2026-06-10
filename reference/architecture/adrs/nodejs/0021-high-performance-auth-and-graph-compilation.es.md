@@ -27,8 +27,8 @@ Estandarizar los gateways de inicio de sesión de autenticación para producir *
 - Exige una rigurosa lógica de invalidación de caché de Redis explícitamente vinculada a cualquier evento de escritura de gestión de permisos.
 
 ## Referencias
-- [ADR-0014: Caché Redis](../../adrs/core/0014-distributed-caching-strategy-redis.md)
-- [ADR-0022: Autorización Contextual](../../adrs/nodejs/0022-contextual-auth-and-pluggable-projections.md)
+- [ADR-0014: Caché Redis](../../adrs/core/0014-distributed-caching-strategy-redis.es.md)
+- [ADR-0022: Autorización Contextual](../../adrs/nodejs/0022-contextual-auth-and-pluggable-projections.es.md)
 
 
 

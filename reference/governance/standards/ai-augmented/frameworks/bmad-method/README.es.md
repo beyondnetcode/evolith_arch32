@@ -5,7 +5,7 @@
 >
 > **Fuente oficial de BMAD-METHOD:** [github.com/bmad-code-org/BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD)
 >
-> **Navegacion bilingue:** [English Version](./README.es.md)
+> **Navegacion bilingue:** [English Version](./README.md)
 
 ---
 
@@ -15,9 +15,9 @@
 | :--- | :--- |
 | Entender que es BMAD-METHOD | [Repositorio oficial](https://github.com/bmad-code-org/BMAD-METHOD) |
 | Ver como este repositorio lo adopto | [Seccion 1 — Contexto de Adopcion](#1-contexto-de-adopcion) |
-| Ver la configuracion local de agentes | [Catalogo de Agentes](./agents-catalog.md) |
-| Ver las reglas locales del harness | [Referencia de Reglas](./rules-reference.md) |
-| Replicar esta adopcion en otro repositorio | [Guia de Setup Portable](./portable-setup.md) |
+| Ver la configuracion local de agentes | [Catalogo de Agentes](./agents-catalog.es.md) |
+| Ver las reglas locales del harness | [Referencia de Reglas](./rules-reference.es.md) |
+| Replicar esta adopcion en otro repositorio | [Guia de Setup Portable](./portable-setup.es.md) |
 
 ---
 
@@ -80,9 +80,9 @@ No se adoptaron todas las capacidades de BMAD-METHOD. Lo siguiente fue excluido 
 
 | Documento | Proposito |
 | :--- | :--- |
-| [Catalogo de Agentes](./agents-catalog.md) | Como se configura cada agente en este repositorio: alcance, restricciones y protocolo de handoff |
-| [Referencia de Reglas](./rules-reference.md) | Las 18 reglas locales harness: que son, por que se agregaron y como adaptarlas |
-| [Guia de Setup Portable](./portable-setup.md) | Como otro equipo puede replicar esta adopcion en su propio repositorio |
+| [Catalogo de Agentes](./agents-catalog.es.md) | Como se configura cada agente en este repositorio: alcance, restricciones y protocolo de handoff |
+| [Referencia de Reglas](./rules-reference.es.md) | Las 18 reglas locales harness: que son, por que se agregaron y como adaptarlas |
+| [Guia de Setup Portable](./portable-setup.es.md) | Como otro equipo puede replicar esta adopcion en su propio repositorio |
 
 ---
 

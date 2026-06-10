@@ -1,6 +1,6 @@
 # Frameworks AI-DD — Referencia de Adopcion
 
-> **Navegacion bilingue:** [English Version](./README.es.md)
+> **Navegacion bilingue:** [English Version](./README.md)
 
 Esta seccion documenta como este repositorio adopta y configura frameworks externos de desarrollo dirigido por IA. No reemplaza ni replica la documentacion oficial de ningun framework. Cada entrada describe las decisiones locales de implementacion, adaptaciones y extensiones construidas sobre el framework original.
 
@@ -47,4 +47,4 @@ Todo documento de adopcion de framework debe cumplir estos gates antes de merge:
 
 ---
 
-[Volver a Arquitectura Aumentada por IA](../../../standards/ai-augmented/README.md)
+[Volver a Arquitectura Aumentada por IA](../../../standards/ai-augmented/README.es.md)

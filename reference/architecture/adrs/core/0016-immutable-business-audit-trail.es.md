@@ -27,8 +27,8 @@ Desplegar una **Estrategia de Auditoría Híbrida** equilibrando la lectura dire
 - La huella de almacenamiento físico se expande linealmente indefinidamente a través de continuas adiciones; los archivados eventualmente requerirán políticas de rotación de ciclo de vida.
 
 ## Referencias
-- [ADR-0031: Catálogo de Eventos de Dominio](../../adrs/core/0031-schema-per-context-domain-event-catalog.md)
-- [ADR-0015: Arquitectura Dirigida por Eventos](../../adrs/core/0015-event-driven-architecture-intra-domain.md)
+- [ADR-0031: Catálogo de Eventos de Dominio](../../adrs/core/0031-schema-per-context-domain-event-catalog.es.md)
+- [ADR-0015: Arquitectura Dirigida por Eventos](../../adrs/core/0015-event-driven-architecture-intra-domain.es.md)
 
 
 

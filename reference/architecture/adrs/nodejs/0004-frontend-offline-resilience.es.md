@@ -31,7 +31,7 @@ Estrategias clave:
 
 ## Referencias
 - [Documentación de TanStack Query](https://tanstack.com/query)
-- [ADR-0011: Patrones de Resiliencia y Tolerancia a Fallos](../../adrs/core/0011-fault-tolerance-resiliency-patterns.md)
+- [ADR-0011: Patrones de Resiliencia y Tolerancia a Fallos](../../adrs/core/0011-fault-tolerance-resiliency-patterns.es.md)
 
 
 

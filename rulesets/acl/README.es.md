@@ -38,4 +38,4 @@ The Anti-Corruption Layer ruleset governs all integrations with external systems
 - [Evolith Core Inheritance Rules](../governance/inheritance.rules.json)
 
 ---
-[Back to Rulesets Hub](../README.md)
+[Back to Rulesets Hub](../README.es.md)

@@ -53,7 +53,7 @@ MediatR `IPipelineBehavior<TRequest, TResponse>` ya se usa para preocupaciones d
 | Preocupación | Mecanismo | Se aplica a |
 |---|---|---|
 | Validación de entrada | `ValidationBehavior` (MediatR `IPipelineBehavior`) | Todos los comandos uniformemente |
-| Idempotencia | `IdempotencyMiddleware` (HTTP — véase [ADR-0066](./0066-dotnet-lightweight-http-idempotency.md)) | Todos los endpoints mutantes |
+| Idempotencia | `IdempotencyMiddleware` (HTTP — véase [ADR-0066](./0066-dotnet-lightweight-http-idempotency.es.md)) | Todos los endpoints mutantes |
 | Logging (selectivo) | `LoggerAspect` vía `DispatchProxy` | Por handler, opt-in mediante `[LoggerAspect]` |
 | Rastreo | `TracingAspect` vía `DispatchProxy` | Por handler, opt-in mediante `[Tracing]` |
 | Métricas | `MetricsAspect` vía `DispatchProxy` | Por handler, opt-in mediante `[Metrics]` |
@@ -120,10 +120,10 @@ services.AddAopProxy<IRequestHandler<CreateCommand, Result<Response>>, CreateCom
 
 ## Referencias
 
-- [ADR-0041: Arquitectura Canónica de Backend .NET](./0041-canonical-dotnet-backend-architecture.md)
-- [ADR-0064: Contexto de Observabilidad de Scope de Solicitud .NET](./0064-dotnet-request-scope-observability-context.md)
-- [ADR-0065: Pipeline Serilog Seguro contra PII .NET](./0065-dotnet-pii-safe-serilog-pipeline.md)
-- [ADR-0066: Idempotencia HTTP Ligera .NET](./0066-dotnet-lightweight-http-idempotency.md)
+- [ADR-0041: Arquitectura Canónica de Backend .NET](./0041-canonical-dotnet-backend-architecture.es.md)
+- [ADR-0064: Contexto de Observabilidad de Scope de Solicitud .NET](./0064-dotnet-request-scope-observability-context.es.md)
+- [ADR-0065: Pipeline Serilog Seguro contra PII .NET](./0065-dotnet-pii-safe-serilog-pipeline.es.md)
+- [ADR-0066: Idempotencia HTTP Ligera .NET](./0066-dotnet-lightweight-http-idempotency.es.md)
 
 
 
@@ -146,4 +146,4 @@ services.AddAopProxy<IRequestHandler<CreateCommand, Result<Response>>, CreateCom
 > Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
 
 ---
-[Volver al Índice](./README.md)
+[Volver al Índice](./README.es.md)

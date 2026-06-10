@@ -117,7 +117,7 @@ _logger.LogInformation("User {UserId} activated by {ActorId}", userId, actorId);
 
 ---
 
-**[Volver al Índice ADR .NET](./README.es.md)** | **[Registro ADR](../README.md)**
+**[Volver al Índice ADR .NET](./README.es.md)** | **[Registro ADR](../README.es.md)**
 
 ## Objetivo y Alcance
 

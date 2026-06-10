@@ -39,7 +39,7 @@ Mandar la separación completa de código/lógica física ÚNICAMENTE si se cump
 
 ## Referencias
 - [Patrón CQRS (Martin Fowler)](https://martinfowler.com/bliki/CQRS.html)
-- [ADR-0002: Arquitectura Hexagonal Limpia](../../adrs/nodejs/0002-clean-architecture-nestjs.md)
+- [ADR-0002: Arquitectura Hexagonal Limpia](../../adrs/nodejs/0002-clean-architecture-nestjs.es.md)
 
 
 

@@ -1,6 +1,6 @@
 # Stack Tecnológico Autorizado: Ecosistema Android & Kotlin
 
-> **Navegación Bilingüe:** [English Version](./authoritative-tech-stack-android.es.md)
+> **Navegación Bilingüe:** [English Version](./authoritative-tech-stack-android.md)
 
 **Tipo de Documento:** Apéndice de Runtime 
 **Prerrequisito:** DEBE leerse después de la **[Línea Base Agnóstica](./authoritative-tech-stack-agnostic.es.md)**. 
@@ -20,4 +20,4 @@
 -> Volver al **[índice Maestro Global](../../../MASTER_INDEX.es.md)**
 
 ---
-[Volver al Índice](./README.md)
+[Volver al Índice](./README.es.md)

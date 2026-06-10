@@ -366,4 +366,4 @@ export const mcpCommand = new Command('mcp')
 
 ---
 
-[Back to Index](./README.md)
+[Back to Index](./README.es.md)

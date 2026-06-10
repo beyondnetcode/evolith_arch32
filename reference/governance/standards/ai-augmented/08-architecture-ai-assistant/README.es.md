@@ -1,9 +1,9 @@
 # 08 — Asistente AI de Arquitectura Evolith
 
-> **Navegación bilingüe:** [English](./README.es.md)  
+> **Navegación bilingüe:** [English](./README.md)  
 > **Propietario:** Evolith Architecture Board  
 > **Estado:** Propuesta Estratégica — Aprobada para Adopción Incremental  
-> **Padre:** [Ingeniería AI-Augmented](../../../standards/ai-augmented/README.md)
+> **Padre:** [Ingeniería AI-Augmented](../../../standards/ai-augmented/README.es.md)
 
 ---
 

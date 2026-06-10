@@ -44,8 +44,8 @@ Adoptar una **Estrategia de Persistencia Configurable** utilizando el patrón St
 - **Consistencia**: Idéntica en ambas estrategias puesto que la autoridad de la regla reside invariablemente en el Dominio.
 
 ## Referencias
-- [ADR-0002: Arquitectura Hexagonal Limpia con NestJS](../../adrs/nodejs/0002-clean-architecture-nestjs.md)
-- [ADR-0010: Estrategia de Arquitectura Multi-Tenancy](../../adrs/core/0010-multi-tenancy-architecture-strategy.md)
+- [ADR-0002: Arquitectura Hexagonal Limpia con NestJS](../../adrs/nodejs/0002-clean-architecture-nestjs.es.md)
+- [ADR-0010: Estrategia de Arquitectura Multi-Tenancy](../../adrs/core/0010-multi-tenancy-architecture-strategy.es.md)
 
 
 

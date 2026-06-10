@@ -28,7 +28,7 @@ Imponer patrones Funcionales y de Estructura específicos que protejan la pureza
 
 ## Referencias
 - [Guía del Patrón Result](https://khalilstemmler.com/articles/enterprise-typescript-nodejs/functional-error-handling-design-patterns/)
-- [ADR-0029: Primitivas DDD Tácticas](../../adrs/nodejs/0029-tactical-ddd-primitives-library.md)
+- [ADR-0029: Primitivas DDD Tácticas](../../adrs/nodejs/0029-tactical-ddd-primitives-library.es.md)
 
 
 

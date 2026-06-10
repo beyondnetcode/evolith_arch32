@@ -1,6 +1,6 @@
 # Estandar Web Frontend - React
 
-> Navegacion bilingue: [English](./README.es.md)
+> Navegacion bilingue: [English](./README.md)
 
 Esta seccion define el estandar empresarial Evolith para frontends web basados en React. Es normativo para arquitectura reutilizable, reglas de boilerplate, gobierno del sistema de diseno, quality gates y criterios de promocion.
 

@@ -25,7 +25,7 @@ Las aplicaciones frontend construidas sobre esta plataforma suelen mezclar respo
 - Bases de código frágiles ante cambios de infraestructura (REST → gRPC, Axios → Fetch).
 - Responsabilidades indistinguibles durante la revisión de código.
 
-Los frontends satélite de Evolith deben aplicar la misma disciplina arquitectónica ya exigida en el backend (véase [ADR-0002](./0002-clean-architecture-nestjs.md)).
+Los frontends satélite de Evolith deben aplicar la misma disciplina arquitectónica ya exigida en el backend (véase [ADR-0002](./0002-clean-architecture-nestjs.es.md)).
 
 ---
 
@@ -111,8 +111,8 @@ Cada capa expone una API pública a través de archivos barrel `index.ts`. Las i
 
 ## Referencias
 
-- [ADR-0002: Arquitectura Limpia con NestJS](./0002-clean-architecture-nestjs.md)
-- [ADR-0045: Gestión de Estado Zustand + TanStack Query](./0045-zustand-tanstack-query-state-management.md)
+- [ADR-0002: Arquitectura Limpia con NestJS](./0002-clean-architecture-nestjs.es.md)
+- [ADR-0045: Gestión de Estado Zustand + TanStack Query](./0045-zustand-tanstack-query-state-management.es.md)
 
 
 
@@ -140,4 +140,4 @@ Cada capa expone una API pública a través de archivos barrel `index.ts`. Las i
 > Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
 
 ---
-[Volver al Índice](./README.md)
+[Volver al Índice](./README.es.md)

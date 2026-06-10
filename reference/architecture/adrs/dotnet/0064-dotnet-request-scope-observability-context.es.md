@@ -166,7 +166,7 @@ public sealed class RequestContextAccessor : IRequestContext, IExecutionContextA
 
 ---
 
-**[Volver al Índice ADR .NET](./README.es.md)** | **[Registro ADR](../README.md)**
+**[Volver al Índice ADR .NET](./README.es.md)** | **[Registro ADR](../README.es.md)**
 
 ## Evidencias y Criterios de Evaluación
 

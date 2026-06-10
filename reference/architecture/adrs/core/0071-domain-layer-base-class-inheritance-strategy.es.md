@@ -104,8 +104,8 @@ grep -r "using MediatR" src/Domain/ --include="*.cs"
 
 ## Referencias
 
-- [ADR-0041: Arquitectura Canónica de Backend .NET](../dotnet/0041-canonical-dotnet-backend-architecture.md)
-- [ADR-0019: Patrones de Diseño Funcional Táctico](./0019-tactical-design-patterns-future-proofing.md)
+- [ADR-0041: Arquitectura Canónica de Backend .NET](../dotnet/0041-canonical-dotnet-backend-architecture.es.md)
+- [ADR-0019: Patrones de Diseño Funcional Táctico](./0019-tactical-design-patterns-future-proofing.es.md)
 
 
 
@@ -119,4 +119,4 @@ grep -r "using MediatR" src/Domain/ --include="*.cs"
 > Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
 
 ---
-[Volver al Índice](./README.md)
+[Volver al Índice](./README.es.md)

@@ -677,7 +677,7 @@ Los siguientes artefactos visuales se proponen para creación, ordenados por imp
 - [Roadmap de Estrategia Evolutiva](../vision/evolutionary-strategy-roadmap.es.md)
 - [Manifiesto de Ingeniería](../engineering/engineering-manifesto.es.md)
 - [Blueprint de Referencia](../../../architecture/blueprints/reference-blueprint.es.md)
-- [Registro ADR](../../../architecture/adrs/README.md)
+- [Registro ADR](../../../architecture/adrs/README.es.md)
 - [Hub de Referencia UMS](../../../knowledge/demo/README.es.md)
 - [Guía de Herencia para Repositorios Hijos](../onboarding/child-repository-inheritance-guide.es.md)
 - [Taxonomía del Repositorio](../repository-taxonomy.es.md)

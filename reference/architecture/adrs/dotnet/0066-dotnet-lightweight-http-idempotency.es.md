@@ -5,7 +5,7 @@
 **Fecha**: 2026-05-24
 **Alcance**: Stack Tecnológico - Confiabilidad de API .NET
 **Origen satélite**: UMS ADR-0063 (FIX-06/RISK-05) — promovido a baseline corporativo
-**Complementa**: [ADR-0063: Middleware de Idempotencia B2B (respaldado por DB)](./0063-dotnet-b2b-idempotency-middleware.md)
+**Complementa**: [ADR-0063: Middleware de Idempotencia B2B (respaldado por DB)](./0063-dotnet-b2b-idempotency-middleware.es.md)
 
 ---
 
@@ -175,7 +175,7 @@ Por defecto: **24 horas** (configurable vía `IdempotencyOptions`). Después del
 
 ---
 
-**[Volver al Índice ADR .NET](./README.es.md)** | **[Registro ADR](../README.md)** | **[Variante DB ADR-0063](./0063-dotnet-b2b-idempotency-middleware.md)**
+**[Volver al Índice ADR .NET](./README.es.md)** | **[Registro ADR](../README.es.md)** | **[Variante DB ADR-0063](./0063-dotnet-b2b-idempotency-middleware.es.md)**
 
 ## Objetivo y Alcance
 

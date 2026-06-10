@@ -27,7 +27,7 @@ Orquestar un **Borde de Tiempo de Ejecución de Protocolo Dual** estricto empare
 - Los desarrolladores deben generar y compilar librerías Proto localmente, complicando ligeramente el tiempo de rampa de las estaciones de trabajo de desarrollo locales.
 
 ## Referencias
-- [ADR-0002: Arquitectura Limpia](../../adrs/nodejs/0002-clean-architecture-nestjs.md)
+- [ADR-0002: Arquitectura Limpia](../../adrs/nodejs/0002-clean-architecture-nestjs.es.md)
 - [Sitio Oficial de gRPC](https://grpc.io/)
 
 

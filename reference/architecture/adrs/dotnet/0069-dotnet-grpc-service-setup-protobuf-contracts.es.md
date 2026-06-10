@@ -1,4 +1,4 @@
-# [ADR 0069](0069-dotnet-grpc-service-setup-protobuf-contracts.es.md): Configuración de Servicios gRPC en .NET y Contratos Protobuf
+# [ADR 0069](0069-dotnet-grpc-service-setup-protobuf-contracts.md): Configuración de Servicios gRPC en .NET y Contratos Protobuf
 
 ## 1. Estado
 **Estado**: Propuesto
@@ -11,7 +11,7 @@
 
 ## 2. Contexto
 
-[ADR-0032](../core/0032-api-protocol-decision-matrix-rest-grpc-graphql.md) mandates **gRPC (Protocol Buffers over HTTP/2)** para toda comunicación interna servicio-a-servicio. [ADR-0040](../core/0040-multi-runtime-selection-contracts.md) refuerza esto requiriendo gRPC para comunicación síncrona entre runtime (Node.js ↔ .NET).
+[ADR-0032](../core/0032-api-protocol-decision-matrix-rest-grpc-graphql.es.md) mandates **gRPC (Protocol Buffers over HTTP/2)** para toda comunicación interna servicio-a-servicio. [ADR-0040](../core/0040-multi-runtime-selection-contracts.es.md) refuerza esto requiriendo gRPC para comunicación síncrona entre runtime (Node.js ↔ .NET).
 
 Sin embargo, actualmente no existe guía canónica en .NET para:
 - Configurar infraestructura de servidor gRPC dentro de la arquitectura hexagonal Evolith
@@ -32,7 +32,7 @@ Los repositorios satélite .NET implementan configuraciones gRPC ad-hoc que arri
 | **Cobertura de Observabilidad** | Llamadas gRPC deben emitir Spans con atributos gRPC-específicos (método, estado, nombre servicio) |
 | **Postura de Seguridad** | Todo tráfico gRPC debe usar TLS; gRPC plaintext no autenticado está bloqueado |
 | **Readiness de Health Probes** | Kubernetes liveness/readiness probes deben funcionar contra servicios gRPC |
-| **Cumplimiento de Patrones Canónicos** | Debe encajar en los límites de arquitectura hexagonal definidos en [ADR-0002](../nodejs/0002-clean-architecture-nestjs.md) y [ADR-0041](./0041-canonical-dotnet-backend-architecture.md) |
+| **Cumplimiento de Patrones Canónicos** | Debe encajar en los límites de arquitectura hexagonal definidos en [ADR-0002](../nodejs/0002-clean-architecture-nestjs.es.md) y [ADR-0041](./0041-canonical-dotnet-backend-architecture.es.md) |
 
 ---
 
@@ -52,7 +52,7 @@ Adoptamos **Opción C** como la configuración canónica gRPC para .NET.
 
 ### A. Estructura Canónica de Proyecto
 
-Todos los servicios gRPC .NET DEBEN seguir esta estructura, alineada con [ADR-0041](./0041-canonical-dotnet-backend-architecture.md):
+Todos los servicios gRPC .NET DEBEN seguir esta estructura, alineada con [ADR-0041](./0041-canonical-dotnet-backend-architecture.es.md):
 
 ```
 /src
@@ -252,12 +252,12 @@ builder.Services.AddGrpcHealthChecks()
 | Functional Story | N/A |
 | Technical Story | N/A |
 | Bounded context afectado | Cross-cutting (todos los contextos .NET usando gRPC) |
-| ADRs Evolith relacionados | [ADR-0032](../core/0032-api-protocol-decision-matrix-rest-grpc-graphql.md), [ADR-0040](../core/0040-multi-runtime-selection-contracts.md), [ADR-0064](./0064-dotnet-request-scope-observability-context.md), [ADR-0005](../core/0005-ci-cd-quality-codeql.md) |
+| ADRs Evolith relacionados | [ADR-0032](../core/0032-api-protocol-decision-matrix-rest-grpc-graphql.es.md), [ADR-0040](../core/0040-multi-runtime-selection-contracts.es.md), [ADR-0064](./0064-dotnet-request-scope-observability-context.es.md), [ADR-0005](../core/0005-ci-cd-quality-codeql.es.md) |
 | Referencia Externa Relacionada | [gRPC para .NET](https://grpc.io/docs/languages/csharp/), [Instrumentación OTel gRPC .NET](https://opentelemetry.io/docs/instrumentation/net/instrumentation-configuration/) |
 
 ---
 
-**[Volver al Índice ADR .NET](./README.md)** | **[Registro ADR](../README.md)**
+**[Volver al Índice ADR .NET](./README.es.md)** | **[Registro ADR](../README.es.md)**
 
 ## Objetivo y Alcance
 

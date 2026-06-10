@@ -1,6 +1,6 @@
 # Estandar API Dotnet
 
-> Navegacion bilingue: [English](./README.es.md)
+> Navegacion bilingue: [English](./README.md)
 
 Esta seccion define el estandar empresarial Evolith para APIs backend basadas en Dotnet. Es normativo para arquitectura API reutilizable, reglas de bootstrap, fronteras de aplicacion, gobierno de persistencia, observabilidad, seguridad, quality gates y criterios de promocion.
 

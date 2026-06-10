@@ -334,38 +334,38 @@ Estos son los ADRs Evolith más fuertemente probados por UMS — organizados por
 ### Fundación Arquitectónica
 | ADR | Decisión | Evidencia UMS |
 |---|---|---|
-| [ADR-0001](../../architecture/adrs/core/0001-monorepo-orchestration-nx.md) | Orquestación Monorepo Nx | Monorepo con fronteras de lib estrictas y aislamiento de dominio |
-| [ADR-0002](../../architecture/adrs/nodejs/0002-clean-architecture-nestjs.md) | Arquitectura Hexagonal | Puertos + Adaptadores en los 8 bounded contexts |
-| [ADR-0047](../../architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.md) | Selección Monolito Modular | UMS es un monolito modular Fase 1 — extraction-ready pero no extraído |
+| [ADR-0001](../../architecture/adrs/core/0001-monorepo-orchestration-nx.es.md) | Orquestación Monorepo Nx | Monorepo con fronteras de lib estrictas y aislamiento de dominio |
+| [ADR-0002](../../architecture/adrs/nodejs/0002-clean-architecture-nestjs.es.md) | Arquitectura Hexagonal | Puertos + Adaptadores en los 8 bounded contexts |
+| [ADR-0047](../../architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.es.md) | Selección Monolito Modular | UMS es un monolito modular Fase 1 — extraction-ready pero no extraído |
 
 ### Datos y Multi-Tenancy
 | ADR | Decisión | Evidencia UMS |
 |---|---|---|
-| [ADR-0010](../../architecture/adrs/core/0010-multi-tenancy-architecture-strategy.md) | Estrategia RLS Doble Capa | `root_tenant_id` en cada tabla, filtro EF Core + predicado RLS SQL Server |
-| [ADR-0031](../../architecture/adrs/core/0031-schema-per-context-domain-event-catalog.md) | Schema-per-Context | 8 schemas separados, uno por bounded context |
+| [ADR-0010](../../architecture/adrs/core/0010-multi-tenancy-architecture-strategy.es.md) | Estrategia RLS Doble Capa | `root_tenant_id` en cada tabla, filtro EF Core + predicado RLS SQL Server |
+| [ADR-0031](../../architecture/adrs/core/0031-schema-per-context-domain-event-catalog.es.md) | Schema-per-Context | 8 schemas separados, uno por bounded context |
 | [ADR-0051](../../architecture/adrs/core/0051-enterprise-database-engine-strategy.es.md) | SQL Server 2022 | Closure table, particionamiento, tablas temporales, RLS |
 | [ADR-0057](../../architecture/adrs/dotnet/0071-dotnet-data-access-orm-strategy.es.md) | EF Core 8 + Dapper | EF Core para escrituras, Dapper para proyecciones de lectura complejas |
 
 ### Autorización
 | ADR | Decisión | Evidencia UMS |
 |---|---|---|
-| [ADR-0012](../../architecture/adrs/nodejs/0012-advanced-authorization-rbac-abac.md) | Guards RBAC/ABAC | Sistema de plantillas de permisos con overrides contextuales |
-| [ADR-0021](../../architecture/adrs/nodejs/0021-high-performance-auth-and-graph-compilation.md) | Compilación del Grafo de Auth | Compilador DAG en TE-02 |
+| [ADR-0012](../../architecture/adrs/nodejs/0012-advanced-authorization-rbac-abac.es.md) | Guards RBAC/ABAC | Sistema de plantillas de permisos con overrides contextuales |
+| [ADR-0021](../../architecture/adrs/nodejs/0021-high-performance-auth-and-graph-compilation.es.md) | Compilación del Grafo de Auth | Compilador DAG en TE-02 |
 
 ### Eventos y Flujos de Trabajo
 | ADR | Decisión | Evidencia UMS |
 |---|---|---|
-| [ADR-0015](../../architecture/adrs/core/0015-event-driven-architecture-intra-domain.md) | Event Bus Inyectable | Bus in-process actualizable a RabbitMQ sin cambios en el dominio |
-| [ADR-0033](../../architecture/adrs/core/0033-transactional-outbox-pattern.md) | Transactional Outbox | TE-04, usado por los contextos Compliance y Approvals |
-| [ADR-0035](../../architecture/adrs/core/0035-distributed-saga-pattern-strategy.md) | Sagas Distribuidas | TE-05 vía Dapr, usado por Approvals (EP-06) e IGA (EP-08) |
-| [ADR-0034](../../architecture/adrs/core/0034-cqrs-pattern-applicability-matrix.md) | Aplicabilidad CQRS | Split lectura/escritura a nivel de protocolo (consultas Dapper / comandos EF Core) |
+| [ADR-0015](../../architecture/adrs/core/0015-event-driven-architecture-intra-domain.es.md) | Event Bus Inyectable | Bus in-process actualizable a RabbitMQ sin cambios en el dominio |
+| [ADR-0033](../../architecture/adrs/core/0033-transactional-outbox-pattern.es.md) | Transactional Outbox | TE-04, usado por los contextos Compliance y Approvals |
+| [ADR-0035](../../architecture/adrs/core/0035-distributed-saga-pattern-strategy.es.md) | Sagas Distribuidas | TE-05 vía Dapr, usado por Approvals (EP-06) e IGA (EP-08) |
+| [ADR-0034](../../architecture/adrs/core/0034-cqrs-pattern-applicability-matrix.es.md) | Aplicabilidad CQRS | Split lectura/escritura a nivel de protocolo (consultas Dapper / comandos EF Core) |
 
 ### Observabilidad y Calidad
 | ADR | Decisión | Evidencia UMS |
 |---|---|---|
-| [ADR-0007](../../architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md) | OTel + Loki | Cada caso de uso tiene un span OTel; W3C TraceContext propagado de extremo a extremo |
-| [ADR-0016](../../architecture/adrs/core/0016-immutable-business-audit-trail.md) | Audit Trail Inmutable | Tabla de auditoría solo-append con esquema estándar de 10 columnas (EP-04) |
-| [ADR-0018](../../architecture/adrs/core/0018-testing-pyramid-quality-gates.md) | Pirámide de Testing | 70% unit / 20% integración / 10% E2E aplicado en GitHub Actions CI |
+| [ADR-0007](../../architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.es.md) | OTel + Loki | Cada caso de uso tiene un span OTel; W3C TraceContext propagado de extremo a extremo |
+| [ADR-0016](../../architecture/adrs/core/0016-immutable-business-audit-trail.es.md) | Audit Trail Inmutable | Tabla de auditoría solo-append con esquema estándar de 10 columnas (EP-04) |
+| [ADR-0018](../../architecture/adrs/core/0018-testing-pyramid-quality-gates.es.md) | Pirámide de Testing | 70% unit / 20% integración / 10% E2E aplicado en GitHub Actions CI |
 
 ---
 

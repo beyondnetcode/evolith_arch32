@@ -28,8 +28,8 @@ Introducir un **Contexto Delimitado de Gestión de Características y Configurac
 - Modesta expansión de la topología del esquema de base de datos y de las estrategias de gobernanza de claves Redis activas.
 
 ## Referencias
-- [ADR-0025: Estrategia de Abstracción de Feature Flags](../../adrs/core/0025-feature-flag-provider-abstraction.md)
-- [ADR-0014: Estrategia de Caché Redis](../../adrs/core/0014-distributed-caching-strategy-redis.md)
+- [ADR-0025: Estrategia de Abstracción de Feature Flags](../../adrs/core/0025-feature-flag-provider-abstraction.es.md)
+- [ADR-0014: Estrategia de Caché Redis](../../adrs/core/0014-distributed-caching-strategy-redis.es.md)
 
 
 

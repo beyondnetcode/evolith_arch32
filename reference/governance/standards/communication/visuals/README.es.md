@@ -1,6 +1,6 @@
 # Evolith — Backlog Visual de Arquitectura
 
-> **Navegación bilingüe:** [English](./README.es.md)  
+> **Navegación bilingüe:** [English](./README.md)  
 > **Documento padre:** [Estrategia de Comunicación Arquitectónica](../architecture-communication-strategy.es.md)  
 > **Propietario:** Evolith Architecture Board  
 > Todos los diagramas se renderizan nativamente en GitHub con Mermaid.

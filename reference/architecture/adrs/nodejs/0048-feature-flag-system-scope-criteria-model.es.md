@@ -13,7 +13,7 @@ Aceptado
 Pila tecnológica — Modelo de Dominio para Feature Flags (todos los satélites de Evolith)
 
 > **Origen en satélite:** Validado originalmente en el satélite UMS (UMS ADR-0068). Promovido a línea base corporativa de Evolith.
-> **Complementa:** [ADR-0017: Estrategia de Feature Flagging](../core/0017-feature-flagging-strategy.md), [ADR-0025: Abstracción de Proveedor de Feature Flags](../core/0025-feature-flag-provider-abstraction.md)
+> **Complementa:** [ADR-0017: Estrategia de Feature Flagging](../core/0017-feature-flagging-strategy.es.md), [ADR-0025: Abstracción de Proveedor de Feature Flags](../core/0025-feature-flag-provider-abstraction.es.md)
 
 ---
 
@@ -102,9 +102,9 @@ La gestión de feature flags es una responsabilidad de configuración, no un sub
 
 ## Referencias
 
-- [ADR-0017: Estrategia de Feature Flagging](../core/0017-feature-flagging-strategy.md)
-- [ADR-0025: Abstracción de Proveedor de Feature Flags](../core/0025-feature-flag-provider-abstraction.md)
-- [ADR-0034: Matriz de Aplicabilidad CQRS](../core/0034-cqrs-pattern-applicability-matrix.md)
+- [ADR-0017: Estrategia de Feature Flagging](../core/0017-feature-flagging-strategy.es.md)
+- [ADR-0025: Abstracción de Proveedor de Feature Flags](../core/0025-feature-flag-provider-abstraction.es.md)
+- [ADR-0034: Matriz de Aplicabilidad CQRS](../core/0034-cqrs-pattern-applicability-matrix.es.md)
 
 
 
@@ -127,4 +127,4 @@ La gestión de feature flags es una responsabilidad de configuración, no un sub
 > Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
 
 ---
-[Volver al Índice](./README.md)
+[Volver al Índice](./README.es.md)

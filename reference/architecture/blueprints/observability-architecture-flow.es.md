@@ -3,11 +3,11 @@
 Este blueprint explica cómo un servicio alineado con Evolith debe propagar correlación por request, correlación de sesión, trazas, logs y métricas a través de middleware, decoradores de aplicación, instrumentación de runtime y la plataforma de observabilidad.
 
 Complementa:
-- [Observability Playbook](../../governance/standards/engineering/observability-playbook.md)
-- [CP-01: Propagación de Contexto Scoped por Request](../canonical-patterns/dotnet/cp-01-request-scope-context-propagation.md)
-- [CP-02: Logging PII-Safe con Serilog](../canonical-patterns/dotnet/cp-02-pii-safe-serilog-logging.md)
-- [CP-04: Decorador AOP de Logging](../canonical-patterns/dotnet/cp-04-aop-logging-decorator.md)
-- [ADR-0064: .NET Request-Scope Observability Context](../adrs/dotnet/0064-dotnet-request-scope-observability-context.md)
+- [Observability Playbook](../../governance/standards/engineering/observability-playbook.es.md)
+- [CP-01: Propagación de Contexto Scoped por Request](../canonical-patterns/dotnet/cp-01-request-scope-context-propagation.es.md)
+- [CP-02: Logging PII-Safe con Serilog](../canonical-patterns/dotnet/cp-02-pii-safe-serilog-logging.es.md)
+- [CP-04: Decorador AOP de Logging](../canonical-patterns/dotnet/cp-04-aop-logging-decorator.es.md)
+- [ADR-0064: .NET Request-Scope Observability Context](../adrs/dotnet/0064-dotnet-request-scope-observability-context.es.md)
 
 ## 1. Flujo Lógico de Señales
 

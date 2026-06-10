@@ -12,11 +12,11 @@ Este es el índice completo de navegación de **Evolith** — la plataforma empr
 | Intención | Entrada principal | Referencia de apoyo |
 |---|---|---|
 | Elegir una ruta de lectura eficiente | [Primeros Pasos por Rol](../getting-started/README.es.md) | [Glosario Arquitectónico](../governance/glossary.es.md) |
-| Entender la visión arquitectónica | [Directivas Arquitectónicas](../governance/standards/vision/architectural-directives.md) | [Roadmap Evolutivo](../governance/standards/vision/evolutionary-strategy-roadmap.md) |
-| Entender el modelo de arquitectura progresiva | [Hub de Arquitectura](../architecture/README.es.md) | [Criterios de Extracción a Microservicios](../architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md) |
-| Revisar decisiones tecnológicas | [Stack Tecnológico Autorizado](../architecture/blueprints/authoritative-tech-stack.md) | [Línea Base Agnóstica](../architecture/blueprints/authoritative-tech-stack-agnostic.md) |
-| Revisar decisiones arquitectónicas | [Registro ADR](../architecture/adrs/README.md) | [ADRs Core](../architecture/adrs/core/README.es.md) |
-| Aprender estándares de ingeniería | [Manifiesto de Ingeniería](../governance/standards/engineering/engineering-manifesto.md) | [Guía de Contract Testing](../governance/standards/engineering/contract-testing-guideline.md) |
+| Entender la visión arquitectónica | [Directivas Arquitectónicas](../governance/standards/vision/architectural-directives.es.md) | [Roadmap Evolutivo](../governance/standards/vision/evolutionary-strategy-roadmap.es.md) |
+| Entender el modelo de arquitectura progresiva | [Hub de Arquitectura](../architecture/README.es.md) | [Criterios de Extracción a Microservicios](../architecture/adrs/core/0045-microservice-extraction-readiness-criteria.es.md) |
+| Revisar decisiones tecnológicas | [Stack Tecnológico Autorizado](../architecture/blueprints/authoritative-tech-stack.es.md) | [Línea Base Agnóstica](../architecture/blueprints/authoritative-tech-stack-agnostic.es.md) |
+| Revisar decisiones arquitectónicas | [Registro ADR](../architecture/adrs/README.es.md) | [ADRs Core](../architecture/adrs/core/README.es.md) |
+| Aprender estándares de ingeniería | [Manifiesto de Ingeniería](../governance/standards/engineering/engineering-manifesto.es.md) | [Guía de Contract Testing](../governance/standards/engineering/contract-testing-guideline.es.md) |
 | Entender expectativas SDLC | [Centro de Gobernanza SDLC](../governance/sdlc/README.es.md) | [Plantillas de Artefactos SDLC](../governance/sdlc/04-artifact-templates/README.es.md) |
 | Explorar la referencia aplicada de producto | [Hub de Referencia UMS](../knowledge/demo/README.es.md) | [Portal de Arquitectura UMS](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) |
 | Separar políticas de evidencia de implementación | [Referencia Canónica vs Modelo Aplicado UMS](../knowledge/demo/demo-vs-reference.es.md) | [Taxonomía del Repositorio](../governance/standards/repository-taxonomy.es.md) |
@@ -29,17 +29,17 @@ Este es el índice completo de navegación de **Evolith** — la plataforma empr
 
 | Rol | Ruta de lectura |
 |---|---|
-| **Ejecutivo / Sponsor** | [Directivas Arquitectónicas](../governance/standards/vision/architectural-directives.md) -> [Roadmap Evolutivo](../governance/standards/vision/evolutionary-strategy-roadmap.md) -> [Evaluación de Madurez](../governance/standards/vision/maturity-assessment.es.md) |
+| **Ejecutivo / Sponsor** | [Directivas Arquitectónicas](../governance/standards/vision/architectural-directives.es.md) -> [Roadmap Evolutivo](../governance/standards/vision/evolutionary-strategy-roadmap.es.md) -> [Evaluación de Madurez](../governance/standards/vision/maturity-assessment.es.md) |
 | **Product Owner / PM** | [Modelo de Referencia UMS](../knowledge/demo/ums-reference-model.es.md) -> [Índice Documental UMS](https://github.com/beyondnetcode/ums/blob/main/docs/MASTER_INDEX.md) -> [Referencia vs Modelo Aplicado](../knowledge/demo/demo-vs-reference.es.md) |
-| **Arquitecto de Software** | [Hub de Arquitectura](../architecture/README.es.md) -> [Registro ADR](../architecture/adrs/README.md) -> [Portal de Arquitectura UMS](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) |
-| **Principal / Staff Engineer** | [Línea Base Agnóstica](../architecture/blueprints/authoritative-tech-stack-agnostic.md) -> [Patrones Tácticos](../architecture/adrs/core/0019-tactical-design-patterns-future-proofing.md) -> [Checklist de Simplicidad](../architecture/blueprints/simplicity-checklist-phase-01.md) |
-| **Backend Developer** | [Manifiesto de Ingeniería](../governance/standards/engineering/engineering-manifesto.md) -> [Registro ADR por Runtime](../architecture/adrs/README.md) -> [Modelo de Referencia UMS](../knowledge/demo/ums-reference-model.es.md) |
-| **Frontend Developer** | [ADR Resiliencia Frontend](../architecture/adrs/nodejs/0004-frontend-offline-resilience.md) -> [ADR Microfrontends](../architecture/adrs/core/0055-microfrontends-architecture-strategy.es.md) -> [Repositorio UMS](https://github.com/beyondnetcode/ums) |
+| **Arquitecto de Software** | [Hub de Arquitectura](../architecture/README.es.md) -> [Registro ADR](../architecture/adrs/README.es.md) -> [Portal de Arquitectura UMS](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) |
+| **Principal / Staff Engineer** | [Línea Base Agnóstica](../architecture/blueprints/authoritative-tech-stack-agnostic.es.md) -> [Patrones Tácticos](../architecture/adrs/core/0019-tactical-design-patterns-future-proofing.es.md) -> [Checklist de Simplicidad](../architecture/blueprints/simplicity-checklist-phase-01.es.md) |
+| **Backend Developer** | [Manifiesto de Ingeniería](../governance/standards/engineering/engineering-manifesto.es.md) -> [Registro ADR por Runtime](../architecture/adrs/README.es.md) -> [Modelo de Referencia UMS](../knowledge/demo/ums-reference-model.es.md) |
+| **Frontend Developer** | [ADR Resiliencia Frontend](../architecture/adrs/nodejs/0004-frontend-offline-resilience.es.md) -> [ADR Microfrontends](../architecture/adrs/core/0055-microfrontends-architecture-strategy.es.md) -> [Repositorio UMS](https://github.com/beyondnetcode/ums) |
 | **DevOps / SRE** | [Hub de Infraestructura](../infrastructure/README.es.md) -> [Hub de Operaciones](../operations/README.es.md) -> [Portal de Arquitectura UMS](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) |
-| **QA / SDET** | [ADR Pirámide de Testing](../architecture/adrs/core/0018-testing-pyramid-quality-gates.md) -> [Guía de Contract Testing](../governance/standards/engineering/contract-testing-guideline.md) -> [ADR Integración y E2E](../architecture/adrs/core/0053-integration-e2e-testing-strategy.es.md) |
-| **Security Engineer** | [Vendor Risk Assessment](../governance/standards/engineering/vendor-risk-assessment.md) -> [ADR Multi-Tenancy](../architecture/adrs/core/0010-multi-tenancy-architecture-strategy.md) -> [ADR Auditoría Inmutable](../architecture/adrs/core/0016-immutable-business-audit-trail.md) |
-| **AI Contributor** | [Estándares AI-Augmented](../governance/standards/ai-augmented/README.es.md) -> [Reglas Harness](../../.harness/rules/global-rules.md) -> [Agentes](../../AGENTS.es.md) |
-| **New Joiner** | [Product Quick Start](../governance/standards/onboarding/product-quick-start.md) -> [Taxonomía del Repositorio](../governance/standards/repository-taxonomy.es.md) -> [Portal README](../../README.es.md) |
+| **QA / SDET** | [ADR Pirámide de Testing](../architecture/adrs/core/0018-testing-pyramid-quality-gates.es.md) -> [Guía de Contract Testing](../governance/standards/engineering/contract-testing-guideline.es.md) -> [ADR Integración y E2E](../architecture/adrs/core/0053-integration-e2e-testing-strategy.es.md) |
+| **Security Engineer** | [Vendor Risk Assessment](../governance/standards/engineering/vendor-risk-assessment.es.md) -> [ADR Multi-Tenancy](../architecture/adrs/core/0010-multi-tenancy-architecture-strategy.es.md) -> [ADR Auditoría Inmutable](../architecture/adrs/core/0016-immutable-business-audit-trail.es.md) |
+| **AI Contributor** | [Estándares AI-Augmented](../governance/standards/ai-augmented/README.es.md) -> [Reglas Harness](../../.harness/rules/global-rules.es.md) -> [Agentes](../../AGENTS.es.md) |
+| **New Joiner** | [Product Quick Start](../governance/standards/onboarding/product-quick-start.es.md) -> [Taxonomía del Repositorio](../governance/standards/repository-taxonomy.es.md) -> [Portal README](../../README.es.md) |
 
 ---
 
@@ -48,15 +48,15 @@ Este es el índice completo de navegación de **Evolith** — la plataforma empr
 | Área | Entrada |
 |---|---|
 | Hub de Arquitectura | [reference/architecture](../architecture/README.es.md) |
-| Blueprints | [reference/architecture/blueprints](../architecture/blueprints/README.md) |
-| Registro ADR | [reference/architecture/adrs](../architecture/adrs/README.md) |
+| Blueprints | [reference/architecture/blueprints](../architecture/blueprints/README.es.md) |
+| Registro ADR | [reference/architecture/adrs](../architecture/adrs/README.es.md) |
 | Matriz de Decisiones ADR | [reference/architecture/adrs/adr-matrix](../architecture/adrs/adr-matrix.es.md) |
 | Estándar de Autoría de ADRs | [reference/architecture/adrs/adr-authoring-standard](../architecture/adrs/adr-authoring-standard.es.md) |
 | ADRs Core | [reference/architecture/adrs/core](../architecture/adrs/core/README.es.md) |
 | ADRs Node.js | [reference/architecture/adrs/nodejs](../architecture/adrs/nodejs/README.es.md) |
 | ADRs .NET | [reference/architecture/adrs/dotnet](../architecture/adrs/dotnet/README.es.md) |
 | ADRs Android | [reference/architecture/adrs/android](../architecture/adrs/android/README.es.md) |
-| Patrones Canónicos | [reference/architecture/canonical-patterns](../architecture/canonical-patterns/README.md) |
+| Patrones Canónicos | [reference/architecture/canonical-patterns](../architecture/canonical-patterns/README.es.md) |
 
 ---
 
@@ -64,7 +64,7 @@ Este es el índice completo de navegación de **Evolith** — la plataforma empr
 
 | Área | Entrada |
 |---|---|
-| Estándares | [reference/governance/standards](../governance/standards/README.md) |
+| Estándares | [reference/governance/standards](../governance/standards/README.es.md) |
 | Glosario Arquitectónico | [reference/governance/glossary](../governance/glossary.es.md) |
 | Visión | [reference/governance/standards/vision](../governance/standards/vision/README.es.md) |
 | Tablero de Seguimiento de Gaps | [reference/governance/standards/vision/gap-tracking](../governance/standards/vision/gap-tracking.es.md) |
@@ -90,8 +90,8 @@ Este es el índice completo de navegación de **Evolith** — la plataforma empr
 | Modelo de Referencia UMS | [reference/knowledge/demo/ums-reference-model](../knowledge/demo/ums-reference-model.es.md) |
 | Límite Referencia vs Modelo Aplicado | [reference/knowledge/demo/demo-vs-reference](../knowledge/demo/demo-vs-reference.es.md) |
 | Registro de Migración | [reference/knowledge/demo/migration-from-todo-to-ums](../knowledge/demo/migration-from-todo-to-ums.es.md) |
-| Investigación | [reference/knowledge/research](../knowledge/research/README.md) |
-| Proofs of Concept | [reference/knowledge/poc](../knowledge/poc/README.md) |
+| Investigación | [reference/knowledge/research](../knowledge/research/README.es.md) |
+| Proofs of Concept | [reference/knowledge/poc](../knowledge/poc/README.es.md) |
 
 Fuentes oficiales UMS:
 
@@ -106,9 +106,9 @@ Fuentes oficiales UMS:
 | Área | Entrada |
 |---|---|
 | Operaciones | [reference/operations](../operations/README.es.md) |
-| OpenTelemetry | [reference/operations/otel](../operations/otel/README.md) |
-| Grafana | [reference/operations/grafana](../operations/grafana/README.md) |
-| Tempo | [reference/operations/tempo](../operations/tempo/README.md) |
+| OpenTelemetry | [reference/operations/otel](../operations/otel/README.es.md) |
+| Grafana | [reference/operations/grafana](../operations/grafana/README.es.md) |
+| Tempo | [reference/operations/tempo](../operations/tempo/README.es.md) |
 | Infraestructura | [reference/infrastructure](../infrastructure/README.es.md) |
 
 ---
@@ -128,9 +128,9 @@ Este repositorio intencionalmente no mantiene código de aplicación de producto
 
 Todo artefacto e implementación instanciada desde Evolith debe respetar estos pilares:
 
-1. [Baseline Agnóstico](../architecture/blueprints/authoritative-tech-stack-agnostic.md)
-2. [Arquitectura de Referencia](../architecture/blueprints/reference-blueprint.md)
-3. [Manifiesto de Ingeniería](../governance/standards/engineering/engineering-manifesto.md)
+1. [Baseline Agnóstico](../architecture/blueprints/authoritative-tech-stack-agnostic.es.md)
+2. [Arquitectura de Referencia](../architecture/blueprints/reference-blueprint.es.md)
+3. [Manifiesto de Ingeniería](../governance/standards/engineering/engineering-manifesto.es.md)
 4. [Definition of Done](../governance/sdlc/02-engineering/construction-focused-sdlc-framework.es.md)
 5. [Taxonomía del Repositorio](../governance/standards/repository-taxonomy.es.md)
 

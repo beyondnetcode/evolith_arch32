@@ -30,7 +30,7 @@ Estandarizar la utilización del ecosistema de primitivas **`@nestjslatam/ddd`**
 - Introduce otra dependencia interna superficial. (Mitigado limpiamente vía la abstracción de Barrel).
 
 ## Referencias
-- [ADR-0002: Arquitectura Hexagonal](../../adrs/nodejs/0002-clean-architecture-nestjs.md)
+- [ADR-0002: Arquitectura Hexagonal](../../adrs/nodejs/0002-clean-architecture-nestjs.es.md)
 - [documentación de @nestjslatam/ddd](https://github.com/nestjslatam/ddd)
 
 

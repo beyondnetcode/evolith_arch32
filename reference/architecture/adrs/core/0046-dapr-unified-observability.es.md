@@ -1,4 +1,4 @@
-# [ADR 0046](0046-dapr-unified-observability.es.md): Adopción de Dapr y unificación de trazabilidad con el stack de observabilidad existente
+# [ADR 0046](0046-dapr-unified-observability.md): Adopción de Dapr y unificación de trazabilidad con el stack de observabilidad existente
 
 ## Estado
 Aprobado
@@ -16,7 +16,7 @@ Dapr introduce un comportamiento nativo y automático de telemetría basado en e
 ## Decisión
 Establecemos la unificación absoluta de la telemetría de infraestructura y runtime bajo las siguientes directrices de ingeniería:
 
-1. **Adopción del Sidecar**: Consolidar a Dapr como el mecanismo primario de comunicación inter-servicio e integración de componentes de infraestructura, alineado con el [ADR-0006](../core/0006-future-microservices-transition-dapr.md).
+1. **Adopción del Sidecar**: Consolidar a Dapr como el mecanismo primario de comunicación inter-servicio e integración de componentes de infraestructura, alineado con el [ADR-0006](../core/0006-future-microservices-transition-dapr.es.md).
 2. **Unificación de Correlación (Pivot a W3C)**: La aplicación **cesará la generación de identificadores de correlación manuales**. En su lugar, extraerá dinámicamente el `trace-id` del header `traceparent` inyectado automáticamente por el sidecar de Dapr y lo establecerá como el valor primario en todos los metadatos de los logs estructurados de aplicación.
 3. **Vinculación de Spans**: Los logs de aplicación DEBEN incluir también el `span-id` activo para permitir el anclaje directo entre una línea de log y un segmento específico del árbol de ejecución en el trazado distribuido.
 4. **Instrumentación vía OpenTelemetry**: Se utilizará el SDK agnóstico de OpenTelemetry en el runtime para heredar y propagar la cabecera TraceContext a lo largo de toda la ejecución interna del dominio, garantizando la continuidad de la traza.
@@ -35,10 +35,10 @@ Establecemos la unificación absoluta de la telemetría de infraestructura y run
 - **Curva de Aprendizaje**: Requiere la capacitación técnica del equipo de desarrollo sobre la mecánica y estructura del estándar W3C TraceContext.
 
 ## Referencias
-- [ADR-0006: Transición Futura a Microservicios con Dapr](../core/0006-future-microservices-transition-dapr.md)
-- [ADR-0007: Telemetría de Observabilidad OTel](../../adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md)
-- [Engineering Manifesto - Aislamiento de Infraestructura](../../../governance/standards/engineering/engineering-manifesto.md)
-- [Authoritative Tech Stack - Frameworks Aprobados](../../blueprints/authoritative-tech-stack.md)
+- [ADR-0006: Transición Futura a Microservicios con Dapr](../core/0006-future-microservices-transition-dapr.es.md)
+- [ADR-0007: Telemetría de Observabilidad OTel](../../adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.es.md)
+- [Engineering Manifesto - Aislamiento de Infraestructura](../../../governance/standards/engineering/engineering-manifesto.es.md)
+- [Authoritative Tech Stack - Frameworks Aprobados](../../blueprints/authoritative-tech-stack.es.md)
 
 
 

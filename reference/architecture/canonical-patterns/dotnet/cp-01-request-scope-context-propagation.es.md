@@ -2,7 +2,7 @@
 
 **Tipo:** Patrón Canónico — .NET (C#)  
 **Estado:** Aceptado  
-**ADR relacionado:** [ADR-0064: Propagación del Contexto de Observabilidad en .NET](../../adrs/dotnet/0064-dotnet-request-scope-observability-context.md)
+**ADR relacionado:** [ADR-0064: Propagación del Contexto de Observabilidad en .NET](../../adrs/dotnet/0064-dotnet-request-scope-observability-context.es.md)
 
 ---
 
@@ -161,5 +161,5 @@ public OutboxDispatcherJob(ExecutionContextSnapshot originatingContext) { ... }
 
 ## Patrones Relacionados
 
-- [CP-04: Decorator de Logging AOP](./cp-04-aop-logging-decorator.md)
-- [ADR-0064](../../adrs/dotnet/0064-dotnet-request-scope-observability-context.md)
+- [CP-04: Decorator de Logging AOP](./cp-04-aop-logging-decorator.es.md)
+- [ADR-0064](../../adrs/dotnet/0064-dotnet-request-scope-observability-context.es.md)

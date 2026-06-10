@@ -1,4 +1,4 @@
-# [ADR 0051](0051-enterprise-database-engine-strategy.es.md): Estrategia de Selección de Motores de Base de Datos Empresarial
+# [ADR 0051](0051-enterprise-database-engine-strategy.md): Estrategia de Selección de Motores de Base de Datos Empresarial
 
 ## 1. Metadatos
 * **ADR ID:** 0051
@@ -9,8 +9,8 @@
 * **Fecha:** 2026-05-14
 * **Tags:** `Gobierno`, `Persistencia`, `Base de Datos`, `Estándares`
 * **ADRs Relacionados:** 
- * [ADR-0044: Estrategia de Persistencia de Seguridad Configurable](./0044-configurable-security-persistence-strategy.md)
- * [ADR-0047: Evolución de Patrones Arquitectónicos](./0047-architectural-patterns-monolith-soa-microservices.md)
+ * [ADR-0044: Estrategia de Persistencia de Seguridad Configurable](./0044-configurable-security-persistence-strategy.es.md)
+ * [ADR-0047: Evolución de Patrones Arquitectónicos](./0047-architectural-patterns-monolith-soa-microservices.es.md)
 
 ---
 

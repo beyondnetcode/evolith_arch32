@@ -2,7 +2,7 @@
 
 **Tipo:** Patrón Canónico — .NET (C#)  
 **Estado:** Aceptado  
-**ADR relacionado:** [ADR-0065: Pipeline de Logging Seguro de PII en .NET](../../adrs/dotnet/0065-dotnet-pii-safe-serilog-pipeline.md)
+**ADR relacionado:** [ADR-0065: Pipeline de Logging Seguro de PII en .NET](../../adrs/dotnet/0065-dotnet-pii-safe-serilog-pipeline.es.md)
 
 ---
 
@@ -110,6 +110,6 @@ _logger.LogInformation("User {UserId} created by {ActorId}", userId, actorId);
 
 ## Patrones Relacionados
 
-- [CP-01: Propagación del Contexto](./cp-01-request-scope-context-propagation.md)
-- [CP-04: Decorator de Logging AOP](./cp-04-aop-logging-decorator.md)
-- [ADR-0065](../../adrs/dotnet/0065-dotnet-pii-safe-serilog-pipeline.md)
+- [CP-01: Propagación del Contexto](./cp-01-request-scope-context-propagation.es.md)
+- [CP-04: Decorator de Logging AOP](./cp-04-aop-logging-decorator.es.md)
+- [ADR-0065](../../adrs/dotnet/0065-dotnet-pii-safe-serilog-pipeline.es.md)

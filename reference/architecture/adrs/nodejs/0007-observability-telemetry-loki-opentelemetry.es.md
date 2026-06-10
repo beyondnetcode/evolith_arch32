@@ -40,7 +40,7 @@ Adoptar el estándar **OpenTelemetry (OTel)** como el espinazo unificado de obse
 
 ## Referencias
 - [Documentación de OpenTelemetry](https://opentelemetry.io)
-- [ADR-0002: Arquitectura Hexagonal Limpia](../../adrs/nodejs/0002-clean-architecture-nestjs.md)
+- [ADR-0002: Arquitectura Hexagonal Limpia](../../adrs/nodejs/0002-clean-architecture-nestjs.es.md)
 
 
 

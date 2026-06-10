@@ -9,8 +9,8 @@
 * **Date:** 2026-05-14
 * **Tags:** `Database`, `Design`, `Normalization`, `SQL`, `NoSQL`, `Best-Practices`
 * **Related ADRs:**
-  * [ADR-0031: Schema-per-Context Isolation](./0031-schema-per-context-domain-event-catalog.md)
-  * [ADR-0051: Enterprise Database Engine Strategy](./0051-enterprise-database-engine-strategy.md)
+  * [ADR-0031: Schema-per-Context Isolation](./0031-schema-per-context-domain-event-catalog.es.md)
+  * [ADR-0051: Enterprise Database Engine Strategy](./0051-enterprise-database-engine-strategy.es.md)
 
 ---
 
@@ -104,4 +104,4 @@ A well-designed database is the foundation of a resilient system. By enforcing 3
 > Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
 
 ---
-[Back to Index](../../../../MASTER_INDEX.md)
+[Back to Index](../../../../MASTER_INDEX.es.md)

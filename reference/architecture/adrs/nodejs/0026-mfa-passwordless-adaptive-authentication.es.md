@@ -28,7 +28,7 @@ Desplegar un **Marco de MFA Adaptativo Gestionado por Riesgo** que impulse la pi
 - Mínima sobrecarga de procesamiento de criptografía requerida por cada inicio de sesión.
 
 ## Referencias
-- [ADR-0020: Abstracción de IdP](../../adrs/core/0020-identity-provider-abstraction-strategy.md)
+- [ADR-0020: Abstracción de IdP](../../adrs/core/0020-identity-provider-abstraction-strategy.es.md)
 - [Guía Oficial de WebAuthn](https://webauthn.guide/)
 
 

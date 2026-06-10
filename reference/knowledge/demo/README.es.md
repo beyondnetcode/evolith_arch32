@@ -1,6 +1,6 @@
 # UMS como el Modelo de Referencia Empresarial Oficial
 
-> Navegación bilingüe: [English version](./README.es.md)
+> Navegación bilingüe: [English version](./README.md)
 
 Este portal establece la relación de arquitectura corporativa entre la línea base de arquitectura progresiva y su referencia oficial y ejecutable a nivel de producto: el sistema de código abierto **User Management System (UMS)**.
 

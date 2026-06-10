@@ -185,6 +185,8 @@ Open the phase you are working in. Each section groups the documents, standards,
   - [Android ADRs](./reference/architecture/adrs/android/README.md)
 - Governance and navigation
   - [Governance Standards](./reference/governance/standards/README.md)
+  - [Maturity Assessment](./reference/governance/standards/vision/maturity-assessment.md) - TOGAF ACMM/WAF scoring, vision alignment, and open-gap links
+  - [Gap Tracking Board](./reference/governance/standards/vision/gap-tracking.md) - single board for every open gap (criticality, complexity, status)
   - [Bilingual Index](./reference/navigation/BILINGUAL_INDEX.md)
   - [Navigation Hub](./reference/navigation/README.md)
   - [Rulesets Hub](./rulesets/README.md)

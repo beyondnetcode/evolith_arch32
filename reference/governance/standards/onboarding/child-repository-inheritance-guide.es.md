@@ -339,10 +339,10 @@ UMS expone el modelo de gobernanza a sus propios desarrolladores en su Portal de
 ## Documentos Relacionados
 
 - [Taxonomía del Repositorio](../../standards/repository-taxonomy.es.md)
-- [Guía de Inicio Rápido para Nuevos Productos](../../standards/onboarding/product-quick-start.md)
-- [Registro ADR](../../../architecture/adrs/README.md)
-- [Línea Base Arquitectónica Agnóstica](../../../architecture/blueprints/authoritative-tech-stack-agnostic.md)
-- [Manifiesto de Ingeniería](../../standards/engineering/engineering-manifesto.md)
+- [Guía de Inicio Rápido para Nuevos Productos](../../standards/onboarding/product-quick-start.es.md)
+- [Registro ADR](../../../architecture/adrs/README.es.md)
+- [Línea Base Arquitectónica Agnóstica](../../../architecture/blueprints/authoritative-tech-stack-agnostic.es.md)
+- [Manifiesto de Ingeniería](../../standards/engineering/engineering-manifesto.es.md)
 - [Frameworks Aumentados por IA](../ai-augmented/frameworks/README.es.md)
 
 ---

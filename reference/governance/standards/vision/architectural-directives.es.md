@@ -19,7 +19,7 @@ La plataforma **Evolith** está diseñada para anclar todos los productos corpor
 Todos los productos instanciados a partir de este blueprint DEBEN alinearse con las siguientes directivas:
 
 ### 2.1 Progresión Evolutiva
-Los sistemas se inician como un **Monolito Modular** (basado en Nx) para garantizar un rápido tiempo de salida al mercado inicial. Los módulos de dominio están lógicamente aislados mediante límites de librería estrictos desde el primer día, permitiendo la extracción quirúrgica a **Microservicios** sin requerir reescrituras del capa de dominio. Ver los disparadores cuantitativos de extracción en [ADR-0045](../../../architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md) y el marco de selección en [ADR-0047](../../../architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.md).
+Los sistemas se inician como un **Monolito Modular** (basado en Nx) para garantizar un rápido tiempo de salida al mercado inicial. Los módulos de dominio están lógicamente aislados mediante límites de librería estrictos desde el primer día, permitiendo la extracción quirúrgica a **Microservicios** sin requerir reescrituras del capa de dominio. Ver los disparadores cuantitativos de extracción en [ADR-0045](../../../architecture/adrs/core/0045-microservice-extraction-readiness-criteria.es.md) y el marco de selección en [ADR-0047](../../../architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.es.md).
 
 **Etapas:**
 ```text
@@ -30,12 +30,12 @@ Ninguna etapa se omite. Ninguna etapa es obligatoria más allá de lo que el neg
 
 ### 2.2 Preparación para Alta Concurrencia
 El sistema DEBE soportar ráfagas repentinas y no uniformes de carga de usuarios. Esto se logra mediante:
-- Topología de contenedores con auto-escalado ([ADR-0028](../../../architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md))
-- Estrategias de caché de 4 niveles ([ADR-0014](../../../architecture/adrs/core/0014-distributed-caching-strategy-redis.md))
-- Abstracción de Bus de Eventos no bloqueante ([ADR-0015](../../../architecture/adrs/core/0015-event-driven-architecture-intra-domain.md))
+- Topología de contenedores con auto-escalado ([ADR-0028](../../../architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.es.md))
+- Estrategias de caché de 4 niveles ([ADR-0014](../../../architecture/adrs/core/0014-distributed-caching-strategy-redis.es.md))
+- Abstracción de Bus de Eventos no bloqueante ([ADR-0015](../../../architecture/adrs/core/0015-event-driven-architecture-intra-domain.es.md))
 
 ### 2.3 Integridad Transaccional
-Cada mutación de estado debe ser estrictamente atómica. Los estados de escritura inconsistentes se previenen mediante controles explícitos de Unidad de Trabajo y, donde se requiere propagación asíncrona, el patrón Transactional Outbox ([ADR-0033](../../../architecture/adrs/core/0033-transactional-outbox-pattern.md)).
+Cada mutación de estado debe ser estrictamente atómica. Los estados de escritura inconsistentes se previenen mediante controles explícitos de Unidad de Trabajo y, donde se requiere propagación asíncrona, el patrón Transactional Outbox ([ADR-0033](../../../architecture/adrs/core/0033-transactional-outbox-pattern.es.md)).
 
 ### 2.4 Seguro, Dinámico y Extensible
 Los principios de arquitectura Zero-Trust se aplican desde la Fase 1. Los adaptadores de infraestructura están totalmente desacoplados de la lógica de dominio, permitiendo que nuevas herramientas o servicios externos se intercambien en caliente sin impactar los flujos de valor centrales. Los proveedores de identidad, buses de eventos, cachés y motores de almacenamiento son todos inyectables mediante el límite Puerto/Adaptador.
@@ -49,14 +49,14 @@ La capa de Dominio debe contener cero referencias a SDKs de nube, librerías ORM
 
 | Restricción | Mecanismo de Aplicación | Referencia |
 | :--- | :--- | :--- |
-| Arquitectura Hexagonal obligatoria | Gate de CI con `eslint-plugin-boundaries` | [ADR-0002](../../../architecture/adrs/nodejs/0002-clean-architecture-nestjs.md) |
-| Sin extracción prematura de microservicios | Regla cuantitativa "2 de 4" aplicada por el Architecture Board | [ADR-0045](../../../architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md) |
-| Schema-per-Context desde el día uno | Los SQL joins cross-schema están arquitectónicamente prohibidos | [ADR-0031](../../../architecture/adrs/core/0031-schema-per-context-domain-event-catalog.md) |
-| Comunicación inter-servicio Contract-First | OpenAPI (público), gRPC/Protobuf (interno), AsyncAPI (asíncrono) | [ADR-0040](../../../architecture/adrs/core/0040-multi-runtime-selection-contracts.md) |
-| Portabilidad de infraestructura | Almacenamiento compatible con S3, selección OSS-first | [ADR-0028](../../../architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md) |
-| Cobertura mínima de pruebas | 70% aplicada en CI; Testcontainers para pruebas de integración | [ADR-0018](../../../architecture/adrs/core/0018-testing-pyramid-quality-gates.md) |
-| Trazado distribuido unificado | OpenTelemetry W3C TraceContext, sin agentes APM propietarios | [ADR-0007](../../../architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md) |
-| Estándares de nomenclatura | Lenguaje Ubicuo como fuente de verdad, linting automatizado | [ADR-0056](../../../architecture/adrs/core/0056-enterprise-naming-design-conventions.md) |
+| Arquitectura Hexagonal obligatoria | Gate de CI con `eslint-plugin-boundaries` | [ADR-0002](../../../architecture/adrs/nodejs/0002-clean-architecture-nestjs.es.md) |
+| Sin extracción prematura de microservicios | Regla cuantitativa "2 de 4" aplicada por el Architecture Board | [ADR-0045](../../../architecture/adrs/core/0045-microservice-extraction-readiness-criteria.es.md) |
+| Schema-per-Context desde el día uno | Los SQL joins cross-schema están arquitectónicamente prohibidos | [ADR-0031](../../../architecture/adrs/core/0031-schema-per-context-domain-event-catalog.es.md) |
+| Comunicación inter-servicio Contract-First | OpenAPI (público), gRPC/Protobuf (interno), AsyncAPI (asíncrono) | [ADR-0040](../../../architecture/adrs/core/0040-multi-runtime-selection-contracts.es.md) |
+| Portabilidad de infraestructura | Almacenamiento compatible con S3, selección OSS-first | [ADR-0028](../../../architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.es.md) |
+| Cobertura mínima de pruebas | 70% aplicada en CI; Testcontainers para pruebas de integración | [ADR-0018](../../../architecture/adrs/core/0018-testing-pyramid-quality-gates.es.md) |
+| Trazado distribuido unificado | OpenTelemetry W3C TraceContext, sin agentes APM propietarios | [ADR-0007](../../../architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.es.md) |
+| Estándares de nomenclatura | Lenguaje Ubicuo como fuente de verdad, linting automatizado | [ADR-0056](../../../architecture/adrs/core/0056-enterprise-naming-design-conventions.es.md) |
 
 ---
 

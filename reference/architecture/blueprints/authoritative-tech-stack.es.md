@@ -10,10 +10,10 @@ Usa este documento como índice de navegación, no como mandato de un único sta
 
 Por favor, proceda al nuevo mapeo autorizado:
 
-1. **[LEER PRIMERO: Línea Base Agnóstica Universal](./authoritative-tech-stack-agnostic.md)**: Restricciones de arquitectura de sistemas aplicables a CADA entorno de ejecución.
-2. **[LEER SEGUNDO: Stack del Framework .NET / C#](./authoritative-tech-stack-dotnet.md)**
-3. **[LEER SEGUNDO: Stack de Node.js / TypeScript](./authoritative-tech-stack-nodejs.md)**
-4. **[LEER SEGUNDO: Stack de Android / Kotlin](./authoritative-tech-stack-android.md)**
+1. **[LEER PRIMERO: Línea Base Agnóstica Universal](./authoritative-tech-stack-agnostic.es.md)**: Restricciones de arquitectura de sistemas aplicables a CADA entorno de ejecución.
+2. **[LEER SEGUNDO: Stack del Framework .NET / C#](./authoritative-tech-stack-dotnet.es.md)**
+3. **[LEER SEGUNDO: Stack de Node.js / TypeScript](./authoritative-tech-stack-nodejs.es.md)**
+4. **[LEER SEGUNDO: Stack de Android / Kotlin](./authoritative-tech-stack-android.es.md)**
 
 ---
-[Volver al Índice](./README.md)
+[Volver al Índice](./README.es.md)

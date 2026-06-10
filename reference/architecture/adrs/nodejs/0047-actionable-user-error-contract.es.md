@@ -123,10 +123,10 @@ El feedback al usuario se entrega a través del mecanismo centralizado de notifi
 
 ## Referencias
 
-- [ADR-0038: Patrón Result para Manejo de Errores](./0038-error-handling-result-pattern-strategy.md)
-- [ADR-0045: Gestión de Estado Zustand + TanStack Query](./0045-zustand-tanstack-query-state-management.md)
-- [ADR-0064 .NET: Contexto de Observabilidad de Scope de Solicitud](../dotnet/0064-dotnet-request-scope-observability-context.md)
-- [ADR-0065 .NET: Pipeline Serilog Seguro contra PII](../dotnet/0065-dotnet-pii-safe-serilog-pipeline.md)
+- [ADR-0038: Patrón Result para Manejo de Errores](./0038-error-handling-result-pattern-strategy.es.md)
+- [ADR-0045: Gestión de Estado Zustand + TanStack Query](./0045-zustand-tanstack-query-state-management.es.md)
+- [ADR-0064 .NET: Contexto de Observabilidad de Scope de Solicitud](../dotnet/0064-dotnet-request-scope-observability-context.es.md)
+- [ADR-0065 .NET: Pipeline Serilog Seguro contra PII](../dotnet/0065-dotnet-pii-safe-serilog-pipeline.es.md)
 
 
 
@@ -148,4 +148,4 @@ El feedback al usuario se entrega a través del mecanismo centralizado de notifi
 > Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
 
 ---
-[Volver al Índice](./README.md)
+[Volver al Índice](./README.es.md)

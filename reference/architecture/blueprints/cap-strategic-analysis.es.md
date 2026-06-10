@@ -25,8 +25,8 @@ Nuestra arquitectura no elige ciegamente un solo lado. En su lugar, segmenta el 
 * **Perfil Tecnológico**: Runtime transaccional de API + motor SQL relacional con garantías ACID.
 * **Comportamiento ante Partición**: Si el modelo relacional primario de escritura experimenta una partición de cerebro dividido (split-brain), las operaciones de escritura se detienen para prevenir la corrupción de datos en lugar de aceptar escrituras sucias.
 * **Referencias ADR**:
- * [ADR-0010: Aislamiento Doble Capa](../adrs/core/0010-multi-tenancy-architecture-strategy.md)
- * [ADR-0019: Patrón de Unidad de Trabajo](../adrs/core/0019-tactical-design-patterns-future-proofing.md)
+ * [ADR-0010: Aislamiento Doble Capa](../adrs/core/0010-multi-tenancy-architecture-strategy.es.md)
+ * [ADR-0019: Patrón de Unidad de Trabajo](../adrs/core/0019-tactical-design-patterns-future-proofing.es.md)
 * **Pros**: Cero corrupción de saldos, inventario preciso, verdad completa de auditoría de seguridad.
 * **Contras**: Altamente degradado durante la interrupción del clúster de base de datos.
 
@@ -35,9 +35,9 @@ Nuestra arquitectura no elige ciegamente un solo lado. En su lugar, segmenta el 
 * **Perfil Tecnológico**: Caché distribuida + bróker de mensajería durable + caché CDN/cliente.
 * **Comportamiento ante Partición**: Si el Nodo A no puede hablar con el Nodo B, ambos continuarán sirviendo datos desde su caché o cola local, incluso si los datos están ligeramente desactualizados (Consistencia Eventual).
 * **Referencias ADR**:
- * [ADR-0014: Caché Distribuida de 4 Niveles](../adrs/core/0014-distributed-caching-strategy-redis.md)
- * [ADR-0036: Control de Flujo del Bus de Mensajes](../adrs/core/0036-message-bus-delivery-strategy-fifo-dlq.md)
- * [ADR-0004: Resiliencia Offline del Frontend](../adrs/nodejs/0004-frontend-offline-resilience.md)
+ * [ADR-0014: Caché Distribuida de 4 Niveles](../adrs/core/0014-distributed-caching-strategy-redis.es.md)
+ * [ADR-0036: Control de Flujo del Bus de Mensajes](../adrs/core/0036-message-bus-delivery-strategy-fifo-dlq.es.md)
+ * [ADR-0004: Resiliencia Offline del Frontend](../adrs/nodejs/0004-frontend-offline-resilience.es.md)
 * **Pros**: Latencia extremadamente baja, operacional durante la degradación parcial de la red.
 * **Contras**: La mecánica "Stale-While-Revalidate" requiere que los desarrolladores diseñen UIs que manejen la llegada eventual de datos.
 
@@ -47,9 +47,9 @@ Nuestra arquitectura no elige ciegamente un solo lado. En su lugar, segmenta el 
 
 | Divergencia del Eje CAP | Escenario de Riesgo Real | Defensa y Mitigación Arquitectónica |
 | :--- | :--- | :--- |
-| **Consistencia vs Disponibilidad** | La caché distribuida retiene una versión antigua de los permisos de un inquilino tras un cambio de rol dinámico. | **Mitigación**: Políticas de desalojo cache-aside en escritura + compilación de autorización híbrida imponiendo búsqueda inmediata de gráfico en BD para alcances de alta seguridad ([ADR-0021](../adrs/nodejs/0021-high-performance-auth-and-graph-compilation.md)). |
-| **Fallos de Particionado** | La red del bus de mensajes cae mientras se escriben las actualizaciones de la BD (fallo de escritura doble). | **Mitigación**: **Patrón Transactional Outbox ([ADR-0033](../adrs/core/0033-transactional-outbox-pattern.md))** guarda el evento en el almacén relacional (zona CP) y garantiza su publicación posterior al bróker, convirtiendo una crisis en un retraso gestionado. |
-| **Sincronización de Estado** | Dos microservicios separados procesan eventos fuera de secuencia debido al lag de la red. | **Mitigación**: **Estándar de Consumidor Idempotente e imposición de FIFO ([ADR-0036](../adrs/core/0036-message-bus-delivery-strategy-fifo-dlq.md))** asegura que la convergencia eventual regrese exactamente al estado correcto. |
+| **Consistencia vs Disponibilidad** | La caché distribuida retiene una versión antigua de los permisos de un inquilino tras un cambio de rol dinámico. | **Mitigación**: Políticas de desalojo cache-aside en escritura + compilación de autorización híbrida imponiendo búsqueda inmediata de gráfico en BD para alcances de alta seguridad ([ADR-0021](../adrs/nodejs/0021-high-performance-auth-and-graph-compilation.es.md)). |
+| **Fallos de Particionado** | La red del bus de mensajes cae mientras se escriben las actualizaciones de la BD (fallo de escritura doble). | **Mitigación**: **Patrón Transactional Outbox ([ADR-0033](../adrs/core/0033-transactional-outbox-pattern.es.md))** guarda el evento en el almacén relacional (zona CP) y garantiza su publicación posterior al bróker, convirtiendo una crisis en un retraso gestionado. |
+| **Sincronización de Estado** | Dos microservicios separados procesan eventos fuera de secuencia debido al lag de la red. | **Mitigación**: **Estándar de Consumidor Idempotente e imposición de FIFO ([ADR-0036](../adrs/core/0036-message-bus-delivery-strategy-fifo-dlq.es.md))** asegura que la convergencia eventual regrese exactamente al estado correcto. |
 
 ---
 
@@ -68,4 +68,4 @@ Nuestra arquitectura no elige ciegamente un solo lado. En su lugar, segmenta el 
 **Estado de Evaluación**: Verificado consistente con Estándares Internacionales de Arquitectura Empresarial.
 
 ---
-[Volver al Índice](./README.md)
+[Volver al Índice](./README.es.md)

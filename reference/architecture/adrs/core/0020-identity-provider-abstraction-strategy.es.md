@@ -29,8 +29,8 @@ Separar la verificación de credenciales de la capa de negocio vía la **inyecci
 - Aumenta la complejidad de la factoría de inicialización requerida para instanciar correctamente los controladores de credenciales adecuados basados en el contexto del host en tiempo de ejecución.
 
 ## Referencias
-- [ADR-0026: MFA y Passwordless](../../adrs/nodejs/0026-mfa-passwordless-adaptive-authentication.md)
-- [ADR-0002: Arquitectura Hexagonal Limpia](../../adrs/nodejs/0002-clean-architecture-nestjs.md)
+- [ADR-0026: MFA y Passwordless](../../adrs/nodejs/0026-mfa-passwordless-adaptive-authentication.es.md)
+- [ADR-0002: Arquitectura Hexagonal Limpia](../../adrs/nodejs/0002-clean-architecture-nestjs.es.md)
 
 
 

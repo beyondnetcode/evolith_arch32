@@ -1,6 +1,6 @@
 # Stack Tecnológico Autorizado: Ecosistema .NET & C#
 
-> **Navegación Bilingüe:** [English Version](../blueprints/authoritative-tech-stack-dotnet.es.md)
+> **Navegación Bilingüe:** [English Version](../blueprints/authoritative-tech-stack-dotnet.md)
 
 **Tipo de Documento:** Apéndice de Runtime  
 **Prerrequisito:** DEBE leerse después de la **[Línea Base Agnóstica](./authoritative-tech-stack-agnostic.es.md)**.  
@@ -69,4 +69,4 @@ No satisfacer estas definiciones de herramientas estáticas bloqueará automáti
 -> Volver al **[Índice Maestro Global](../../../MASTER_INDEX.es.md)**
 
 ---
-[Volver al Índice](./README.md)
+[Volver al Índice](./README.es.md)

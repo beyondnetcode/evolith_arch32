@@ -15,7 +15,7 @@ Esta arquitectura de referencia proporciona un plano estandarizado para construi
 ### 1.1 Propósito y Aplicabilidad
 Este patrón está diseñado específicamente para sistemas que:
 * Tienen una fuerte orientación hacia la **utilización intensiva de APIs** con clientes multi-canal (Web, Móvil, B2B).
-* Requieren **aislamiento SaaS multi-tenant** nativo a nivel del motor de base de datos ([ADR-0010](../adrs/core/0010-multi-tenancy-architecture-strategy.md)).
+* Requieren **aislamiento SaaS multi-tenant** nativo a nivel del motor de base de datos ([ADR-0010](../adrs/core/0010-multi-tenancy-architecture-strategy.es.md)).
 * Deben soportar una **evolución progresiva** desde un Monolito Modular hacia Microservicios Distribuidos.
 
 > [!IMPORTANT]
@@ -35,23 +35,23 @@ La organización promueve una arquitectura políglota deliberada donde los entor
 ### 1.3 Atributos de Calidad Obligatorios
 | Atributo de Calidad | Origen ADR | Objetivo |
 | :--- | :--- | :--- |
-| **Evolución Progresiva** | [ADR-0006](../adrs/core/0006-future-microservices-transition-dapr.md), [ADR-0008](../adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.md) | Camino de cero refactorización hacia microservicios vía Dapr |
-| **Multi-Tenancy SaaS** | [ADR-0010](../adrs/core/0010-multi-tenancy-architecture-strategy.md) | Aislamiento de Doble Capa (Filtros de Aplicación + Failsafe Nativo de BD) |
-| **Desacoplamiento Estricto** | [ADR-0002](../adrs/nodejs/0002-clean-architecture-nestjs.md), [ADR-0003](../adrs/nodejs/0003-strict-typescript-standards.md) | Aplicación de límites vía ESLint |
-| **Resiliencia** | [ADR-0011](../adrs/core/0011-fault-tolerance-resiliency-patterns.md) | Circuit Breakers Distribuidos (Redis + Kong) |
-| **Seguridad** | [ADR-0005](../adrs/core/0005-ci-cd-quality-codeql.md), [ADR-0012](../adrs/nodejs/0012-advanced-authorization-rbac-abac.md), [ADR-0020](../adrs/core/0020-identity-provider-abstraction-strategy.md), [ADR-0026](../adrs/nodejs/0026-mfa-passwordless-adaptive-authentication.md) | Perímetro Zero-trust + RBAC/ABAC |
-| **Latencia de API Interna** | [ADR-0014](../adrs/core/0014-distributed-caching-strategy-redis.md), [ADR-0021](../adrs/nodejs/0021-high-performance-auth-and-graph-compilation.md) | Caché de 4 Niveles (Cliente + CDN + BFF + Core) |
-| **Observabilidad** | [ADR-0007](../adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md), [ADR-0046](../adrs/core/0046-dapr-unified-observability.es.md) | OTel + Loki + trazado distribuido |
-| **Auditoría Inmutable** | [ADR-0016](../adrs/core/0016-immutable-business-audit-trail.md) | Registro de auditoría de solo adición |
-| **Soberanía Tecnológica** | [ADR-0002](../adrs/nodejs/0002-clean-architecture-nestjs.md), [ADR-0028](../adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md) | Infra/AOP 100% intercambiable sin impacto en la lógica |
+| **Evolución Progresiva** | [ADR-0006](../adrs/core/0006-future-microservices-transition-dapr.es.md), [ADR-0008](../adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.es.md) | Camino de cero refactorización hacia microservicios vía Dapr |
+| **Multi-Tenancy SaaS** | [ADR-0010](../adrs/core/0010-multi-tenancy-architecture-strategy.es.md) | Aislamiento de Doble Capa (Filtros de Aplicación + Failsafe Nativo de BD) |
+| **Desacoplamiento Estricto** | [ADR-0002](../adrs/nodejs/0002-clean-architecture-nestjs.es.md), [ADR-0003](../adrs/nodejs/0003-strict-typescript-standards.es.md) | Aplicación de límites vía ESLint |
+| **Resiliencia** | [ADR-0011](../adrs/core/0011-fault-tolerance-resiliency-patterns.es.md) | Circuit Breakers Distribuidos (Redis + Kong) |
+| **Seguridad** | [ADR-0005](../adrs/core/0005-ci-cd-quality-codeql.es.md), [ADR-0012](../adrs/nodejs/0012-advanced-authorization-rbac-abac.es.md), [ADR-0020](../adrs/core/0020-identity-provider-abstraction-strategy.es.md), [ADR-0026](../adrs/nodejs/0026-mfa-passwordless-adaptive-authentication.es.md) | Perímetro Zero-trust + RBAC/ABAC |
+| **Latencia de API Interna** | [ADR-0014](../adrs/core/0014-distributed-caching-strategy-redis.es.md), [ADR-0021](../adrs/nodejs/0021-high-performance-auth-and-graph-compilation.es.md) | Caché de 4 Niveles (Cliente + CDN + BFF + Core) |
+| **Observabilidad** | [ADR-0007](../adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.es.md), [ADR-0046](../adrs/core/0046-dapr-unified-observability.es.md) | OTel + Loki + trazado distribuido |
+| **Auditoría Inmutable** | [ADR-0016](../adrs/core/0016-immutable-business-audit-trail.es.md) | Registro de auditoría de solo adición |
+| **Soberanía Tecnológica** | [ADR-0002](../adrs/nodejs/0002-clean-architecture-nestjs.es.md), [ADR-0028](../adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.es.md) | Infra/AOP 100% intercambiable sin impacto en la lógica |
 | **Modularización de UI** | [ADR-0055](../adrs/core/0055-microfrontends-architecture-strategy.es.md) | Microfrontends (Module Federation) para Fase 3+ |
 
 
 #### Marcos Estratégicos Complementarios
 Para comprender profundamente la postura matemática y de riesgo de esta arquitectura, consulte:
 * -> **[Evaluación de Madurez](../../governance/standards/vision/maturity-assessment.es.md)**
-* -> **[Análisis Estratégico del Teorema CAP](./cap-strategic-analysis.md)**
-* -> **[Escenarios de Despliegue Multi-Cloud](./multi-cloud-deployment-scenarios.md)**
+* -> **[Análisis Estratégico del Teorema CAP](./cap-strategic-analysis.es.md)**
+* -> **[Escenarios de Despliegue Multi-Cloud](./multi-cloud-deployment-scenarios.es.md)**
 
 ---
 
@@ -59,11 +59,11 @@ Para comprender profundamente la postura matemática y de riesgo de esta arquite
 
 Cualquier sistema basado en este blueprint debe adherirse a los siguientes pilares no negociables:
 
-* **Gobernanza del Stack ([ADR-0001](../adrs/core/0001-monorepo-orchestration-nx.md))**: Nx Monorepo + npm Workspaces para una gobernanza centralizada de dependencias.
-* **Mandato de Ingeniería ([ADR-0002](../adrs/nodejs/0002-clean-architecture-nestjs.md), [ADR-0003](../adrs/nodejs/0003-strict-typescript-standards.md))**: SOLID, Código Limpio, Arquitectura Hexagonal (Puertos/Adaptadores simples obligatorios), TypeScript estricto.
-* **Seguridad de Dependencias ([ADR-0009](../adrs/core/0009-strict-dependency-pinning-vulnerability-management.md))**: Todas las versiones de dependencias fijadas. Sin rangos `^` o `~`. Escaneo automatizado de vulnerabilidades en CI.
-* **Puertas de Calidad ([ADR-0018](../adrs/core/0018-testing-pyramid-quality-gates.md))**: Pirámide de pruebas automatizada. Mínimo 70% de cobertura obligatoria en CI.
-* **Portabilidad de Infraestructura ([ADR-0028](../adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md))**: Prioridad de OSS autohospedado (MinIO, RabbitMQ, Vault) sobre el bloqueo de nube.
+* **Gobernanza del Stack ([ADR-0001](../adrs/core/0001-monorepo-orchestration-nx.es.md))**: Nx Monorepo + npm Workspaces para una gobernanza centralizada de dependencias.
+* **Mandato de Ingeniería ([ADR-0002](../adrs/nodejs/0002-clean-architecture-nestjs.es.md), [ADR-0003](../adrs/nodejs/0003-strict-typescript-standards.es.md))**: SOLID, Código Limpio, Arquitectura Hexagonal (Puertos/Adaptadores simples obligatorios), TypeScript estricto.
+* **Seguridad de Dependencias ([ADR-0009](../adrs/core/0009-strict-dependency-pinning-vulnerability-management.es.md))**: Todas las versiones de dependencias fijadas. Sin rangos `^` o `~`. Escaneo automatizado de vulnerabilidades en CI.
+* **Puertas de Calidad ([ADR-0018](../adrs/core/0018-testing-pyramid-quality-gates.es.md))**: Pirámide de pruebas automatizada. Mínimo 70% de cobertura obligatoria en CI.
+* **Portabilidad de Infraestructura ([ADR-0028](../adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.es.md))**: Prioridad de OSS autohospedado (MinIO, RabbitMQ, Vault) sobre el bloqueo de nube.
 
 ---
 
@@ -72,11 +72,11 @@ Cualquier sistema basado en este blueprint debe adherirse a los siguientes pilar
 ### 3.1 Patrón de Contexto General - Stack Completo con Niveles de Gateway y Bus de Eventos Inyectable
 
 Este diagrama captura el contexto completo del sistema. Refleja:
-- **[ADR-0030](../adrs/core/0030-api-gateway-kong-vs-nestjs.md)**: Gateway de Dos Niveles (Kong Edge + NestJS BFF)
-- **[ADR-0008](../adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.md)**: Evolución Progresiva Multi-Módulo con BFF dedicado por canal de cliente
-- **[ADR-0015](../adrs/core/0015-event-driven-architecture-intra-domain.md)**: Abstracción Inyectable `IEventBusPort` (En Memoria -> RabbitMQ -> Kafka)
-- **[ADR-0020](../adrs/core/0020-identity-provider-abstraction-strategy.md)**: Proveedor de Identidad Conectable vía Patrón Strategy
-- **[ADR-0007](../adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md)**: Trazado OpenTelemetry en todos los niveles
+- **[ADR-0030](../adrs/core/0030-api-gateway-kong-vs-nestjs.es.md)**: Gateway de Dos Niveles (Kong Edge + NestJS BFF)
+- **[ADR-0008](../adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.es.md)**: Evolución Progresiva Multi-Módulo con BFF dedicado por canal de cliente
+- **[ADR-0015](../adrs/core/0015-event-driven-architecture-intra-domain.es.md)**: Abstracción Inyectable `IEventBusPort` (En Memoria -> RabbitMQ -> Kafka)
+- **[ADR-0020](../adrs/core/0020-identity-provider-abstraction-strategy.es.md)**: Proveedor de Identidad Conectable vía Patrón Strategy
+- **[ADR-0007](../adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.es.md)**: Trazado OpenTelemetry en todos los niveles
 
 ```mermaid
 graph TD
@@ -146,22 +146,22 @@ graph TD
 
 ## 4. Estrategia de Solución
 
-### 4.1 Arquitectura Hexagonal - Puertos y Adaptadores ([ADR-0002](../adrs/nodejs/0002-clean-architecture-nestjs.md))
+### 4.1 Arquitectura Hexagonal - Puertos y Adaptadores ([ADR-0002](../adrs/nodejs/0002-clean-architecture-nestjs.es.md))
 Toda la lógica de negocio en las capas de Dominio y Aplicación tiene **cero dependencias en tiempo de ejecución** de frameworks, ORMs o servicios en la nube. La capa de infraestructura implementa Puertos de TypeScript puros.
 
-### 4.2 Estrategia de Multi-Tenancy SaaS ([ADR-0010](../adrs/core/0010-multi-tenancy-architecture-strategy.md))
+### 4.2 Estrategia de Multi-Tenancy SaaS ([ADR-0010](../adrs/core/0010-multi-tenancy-architecture-strategy.es.md))
 Emplea **Defensa de Aislamiento de Doble Capa**. (Capa 1) Los adaptadores de persistencia añaden automáticamente el filtro `tenant_id` a las consultas genéricas. (Capa 2) El motor de base de datos seleccionado puede imponer contención nativa de filas como failsafe secundario, por ejemplo PostgreSQL RLS o SQL Server RLS respaldado por contexto de sesión.
 
-### 4.3 Patrón de Gateway de Dos Niveles ([ADR-0030](../adrs/core/0030-api-gateway-kong-vs-nestjs.md))
+### 4.3 Patrón de Gateway de Dos Niveles ([ADR-0030](../adrs/core/0030-api-gateway-kong-vs-nestjs.es.md))
 | Nivel | Tecnología | Responsabilidad |
 | :--- | :--- | :--- |
 | **Tier 1 - Edge** | Kong OSS (NGINX/OpenResty) | Rate Limiting, validación JWT, terminación SSL, Enrutamiento |
 | **Tier 2 - BFF** | NestJS | Agregación de datos, formateo de cargas útiles, lógica específica del cliente |
 
-### 4.4 Bus de Eventos Inyectable ([ADR-0015](../adrs/core/0015-event-driven-architecture-intra-domain.md))
+### 4.4 Bus de Eventos Inyectable ([ADR-0015](../adrs/core/0015-event-driven-architecture-intra-domain.es.md))
 El dominio nunca importa un bróker de mensajes concreto. Toda la comunicación asíncrona se enruta a través de `IEventBusPort`. La implementación concreta (En Memoria / RabbitMQ / Kafka) es inyectada por el contenedor DI de NestJS al inicio, controlada por una variable de entorno.
 
-### 4.5 Ruta de Evolución Progresiva ([ADR-0006](../adrs/core/0006-future-microservices-transition-dapr.md))
+### 4.5 Ruta de Evolución Progresiva ([ADR-0006](../adrs/core/0006-future-microservices-transition-dapr.es.md))
 1. **Hito 1 - Monolito Modular**: Proceso único, módulos de dominio lógicamente aislados.
 2. **Hito 2 - Extracción de Servicios**: Dominios críticos extraídos como microproyectos Nx con BDs aisladas, consumidos vía gRPC/Dapr.
 3. **Hito 3 - Malla Completa de Microservicios**: Dapr Sidecars, Malla de Servicios, Kong como superficie de API unificada y **extracción de Microfrontends** ([ADR-0055](../adrs/core/0055-microfrontends-architecture-strategy.es.md)).
@@ -212,8 +212,8 @@ graph TD
 **Reglas de Fase 1:**
 - Un proceso NestJS. Una instancia PostgreSQL. Docker Compose para desarrollo local.
 - Sin Kong gateway — HTTPS directo a la app. Añadir Kong en Fase 2 cuando se incorpore un segundo canal de cliente o socio externo.
-- Bus de eventos en memoria. Reemplazar con RabbitMQ solo cuando se necesite entrega asíncrona entre servicios ([ADR-0015](../adrs/core/0015-event-driven-architecture-intra-domain.md)).
-- Redis es opcional. Añadir solo cuando se vulneré un umbral de latencia específico ([ADR-0014](../adrs/core/0014-distributed-caching-strategy-redis.md)).
+- Bus de eventos en memoria. Reemplazar con RabbitMQ solo cuando se necesite entrega asíncrona entre servicios ([ADR-0015](../adrs/core/0015-event-driven-architecture-intra-domain.es.md)).
+- Redis es opcional. Añadir solo cuando se vulneré un umbral de latencia específico ([ADR-0014](../adrs/core/0014-distributed-caching-strategy-redis.es.md)).
 
 ---
 
@@ -316,7 +316,7 @@ graph TD
 
 ## 6. Vista de Tiempo de Ejecución - Patrones de Flujo de Petición
 
-### 6.1 Flujo de Petición Autenticada ([ADR-0030](../adrs/core/0030-api-gateway-kong-vs-nestjs.md), [ADR-0008](../adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.md), [ADR-0021](../adrs/nodejs/0021-high-performance-auth-and-graph-compilation.md), [ADR-0014](../adrs/core/0014-distributed-caching-strategy-redis.md))
+### 6.1 Flujo de Petición Autenticada ([ADR-0030](../adrs/core/0030-api-gateway-kong-vs-nestjs.es.md), [ADR-0008](../adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.es.md), [ADR-0021](../adrs/nodejs/0021-high-performance-auth-and-graph-compilation.es.md), [ADR-0014](../adrs/core/0014-distributed-caching-strategy-redis.es.md))
 
 ```mermaid
 sequenceDiagram
@@ -363,7 +363,7 @@ sequenceDiagram
  end
 ```
 
-### 6.2 Flujo de Eventos Asíncronos - Bus Inyectable ([ADR-0015](../adrs/core/0015-event-driven-architecture-intra-domain.md), [ADR-0016](../adrs/core/0016-immutable-business-audit-trail.md))
+### 6.2 Flujo de Eventos Asíncronos - Bus Inyectable ([ADR-0015](../adrs/core/0015-event-driven-architecture-intra-domain.es.md), [ADR-0016](../adrs/core/0016-immutable-business-audit-trail.es.md))
 
 ```mermaid
 sequenceDiagram
@@ -381,7 +381,7 @@ sequenceDiagram
  Note over AuditDB: UPDATE/DELETE bloqueados por trigger de BD
 ```
 
-### 6.3 Flujo de Resiliencia - Circuit Breaker ([ADR-0011](../adrs/core/0011-fault-tolerance-resiliency-patterns.md))
+### 6.3 Flujo de Resiliencia - Circuit Breaker ([ADR-0011](../adrs/core/0011-fault-tolerance-resiliency-patterns.es.md))
 
 ```mermaid
 sequenceDiagram
@@ -403,7 +403,7 @@ sequenceDiagram
 
 ---
 
-## 7. Vista de Despliegue - Infraestructura Cloud Objetivo ([ADR-0013](../adrs/core/0013-cloud-infrastructure-topology-dr.md), [ADR-0028](../adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md))
+## 7. Vista de Despliegue - Infraestructura Cloud Objetivo ([ADR-0013](../adrs/core/0013-cloud-infrastructure-topology-dr.es.md), [ADR-0028](../adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.es.md))
 > [!IMPORTANT]
 > **Estrategia de Despliegue Progresivo**: El diagrama siguiente representa la arquitectura de despliegue objetivo en estado maduro (**Fase 3+**). De acuerdo con el principio de Complejidad Progresiva, en la **Fase 1 (Monolito)** se permite la ejecución directa de los contenedores en hosts de cómputo mínimo (VMs, Container Apps o Docker Compose), escalando hacia clústeres gestionados únicamente cuando la descomposición modular lo requiera. En esta fase, los **Microfrontends** ([ADR-0055](../adrs/core/0055-microfrontends-architecture-strategy.es.md)) se despliegan de forma independiente en sus respectivos clústeres u orígenes de CDN.
 
@@ -450,48 +450,48 @@ graph TD
 
 | Preocupación Arquitectónica | ADR(s) Implementado(s) | Patrón / Tecnología | Sección del Diagrama |
 | :--- | :--- | :--- | :--- |
-| **Gobernanza de Monorepo** | [ADR-0001](../adrs/core/0001-monorepo-orchestration-nx.md) | Nx + npm workspaces | 2 |
-| **Arquitectura Hexagonal** | [ADR-0002](../adrs/nodejs/0002-clean-architecture-nestjs.md) | Puertos y Adaptadores | 4.1, 5 |
-| **Estándares de TypeScript** | [ADR-0003](../adrs/nodejs/0003-strict-typescript-standards.md) | Modo estricto + ESLint Boundaries | 2 |
-| **Resiliencia en Frontend** | [ADR-0004](../adrs/nodejs/0004-frontend-offline-resilience.md) | Caché offline de React Query | 3.1 |
-| **Seguridad CI/CD** | [ADR-0005](../adrs/core/0005-ci-cd-quality-codeql.md) | CodeQL + GitHub Actions | 2 |
-| **Camino a Microservicios** | [ADR-0006](../adrs/core/0006-future-microservices-transition-dapr.md) | Triggers de migración Dapr Sidecar | 4.5 |
-| **Observabilidad** | [ADR-0007](../adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md) | OpenTelemetry + Loki + Jaeger | 3.1, 5, 6 |
-| **Patrón de Gateway BFF** | [ADR-0008](../adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.md) | NestJS BFF por canal de cliente | 3.1, 4.3, 5 |
-| **Fijación de Dependencias** | [ADR-0009](../adrs/core/0009-strict-dependency-pinning-vulnerability-management.md) | Versiones exactas + `npm audit` | 2 |
-| **Multi-Tenancy (SaaS)** | [ADR-0010](../adrs/core/0010-multi-tenancy-architecture-strategy.md) | Filtros de aplicación + contexto por runtime + failsafe nativo de BD | 4.2, 5, 6.1 |
-| **Circuit Breakers** | [ADR-0011](../adrs/core/0011-fault-tolerance-resiliency-patterns.md) | `opossum` + Exponential Backoff | 5, 6.3 |
-| **Autorización RBAC/ABAC** | [ADR-0012](../adrs/nodejs/0012-advanced-authorization-rbac-abac.md) | JWT Claims + NestJS Guards | 5 |
-| **Topología Cloud DR** | [ADR-0013](../adrs/core/0013-cloud-infrastructure-topology-dr.md) | Multi-AZ + Replicación en Streaming | 7 |
-| **Caché Distribuida** | [ADR-0014](../adrs/core/0014-distributed-caching-strategy-redis.md) | Caché Escalonada Multi-Capa tras `ICachePort` | 5, 6.1 |
-| **Orientado a Eventos (Bus Inyectable)** | [ADR-0015](../adrs/core/0015-event-driven-architecture-intra-domain.md) | `IEventBusPort` -> En-Mem / RabbitMQ | 3.1, 4.4, 5, 6.2 |
-| **Pista de Auditoría Inmutable** | [ADR-0016](../adrs/core/0016-immutable-business-audit-trail.md) | Tabla append-only + trigger de BD | 5, 6.2 |
-| **Feature Flagging** | [ADR-0017](../adrs/core/0017-feature-flagging-strategy.md) | `IFeatureFlagPort` (Unleash/ConfigCat) | 5 |
-| **Pirámide de Pruebas** | [ADR-0018](../adrs/core/0018-testing-pyramid-quality-gates.md) | Unitarias + Contrato (Pact) + E2E | 2 |
-| **Patrones Funcionales / Result** | [ADR-0019](../adrs/core/0019-tactical-design-patterns-future-proofing.md) | `Result<T,E>` en lugar de excepciones | 4.1 |
-| **Abstracción de Proveedor Identidad** | [ADR-0020](../adrs/core/0020-identity-provider-abstraction-strategy.md) | Strategy Pattern -> Auth0/Entra/Zitadel | 3.1, 5 |
-| **Compilación de Gráfico de Auth** | [ADR-0021](../adrs/nodejs/0021-high-performance-auth-and-graph-compilation.md) | Gráfico de permisos en caché Redis < 5ms | 5 |
-| **Proyecciones Conectables** | [ADR-0022](../adrs/nodejs/0022-contextual-auth-and-pluggable-projections.md) | Proyecciones de lectura conscientes del contexto | 5 |
-| **Núcleo de Autenticación Centralizado** | [ADR-0023](../adrs/nodejs/0023-centralized-ums-vs-decentralized-access.md) | Núcleo compartido de autorización | 5 |
-| **Plataforma de Config and Features** | [ADR-0024](../adrs/core/0024-configuration-feature-management-platform.md) | Motor de parámetros multi-IdP | 5 |
-| **Abstracción de Feature Flags** | [ADR-0025](../adrs/core/0025-feature-flag-provider-abstraction.md) | Proveedores conectables de `IFeatureFlagPort` | 5 |
-| **MFA y Passkeys** | [ADR-0026](../adrs/nodejs/0026-mfa-passwordless-adaptive-authentication.md) | WebAuthn + Passkeys + TOTP + Adaptativo | 5 |
-| **Protocolo Dual REST/gRPC** | [ADR-0027](../adrs/nodejs/0027-dual-protocol-rest-grpc-api-gateway.md) | REST (externo) + gRPC (interno) | 3.1 |
-| **Infraestructura OSS Autohospedada** | [ADR-0028](../adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md) | MinIO + RabbitMQ + Vault OSS | 5, 7 |
-| **Primitivas DDD Tácticas** | [ADR-0029](../adrs/nodejs/0029-tactical-ddd-primitives-library.md) | `@nestjslatam/ddd` vía re-exportaciones | 4.1 |
-| **Gateway de Dos Niveles** | [ADR-0030](../adrs/core/0030-api-gateway-kong-vs-nestjs.md) | Kong (Edge) + NestJS BFF (Agregación) | 3.1, 4.3, 5, 6.1 |
-| **Catálogo de Eventos de Dominio** | [ADR-0031](../adrs/core/0031-schema-per-context-domain-event-catalog.md) | Extracción multi-esquema + Contratos Asíncronos | 5, 6.2 |
-| **Selección de Protocolo** | [ADR-0032](../adrs/core/0032-api-protocol-decision-matrix-rest-grpc-graphql.md) | gRPC (Int) vs REST (Ext) vs GraphQL | 3.1, 5, 6.1 |
-| **Transactional Outbox** | [ADR-0033](../adrs/core/0033-transactional-outbox-pattern.md) | DB Atómica + Garantía atómica de eventos | 6.2 |
-| **Separación CQRS** | [ADR-0034](../adrs/core/0034-cqrs-pattern-applicability-matrix.md) | Matriz de Evaluación para Modelos de Lectura/Escritura | 5, 6.1 |
-| **Sagas Distribuidas** | [ADR-0035](../adrs/core/0035-distributed-saga-pattern-strategy.md) | Estrategia de Transacción Compensatoria | 6.2 |
-| **Estrategia de Mensajería** | [ADR-0036](../adrs/core/0036-message-bus-delivery-strategy-fifo-dlq.md) | Políticas FIFO vs Disparar y Olvidar vs DLQ | 6.2 |
-| **Pruebas de Rendimiento** | [ADR-0037](../adrs/core/0037-performance-concurrency-chaos-strategy.md) | Carga K6 + Verificación de Contratos Pact | 5, 6.3 |
-| **Gestión de Errores** | [ADR-0038](../adrs/nodejs/0038-error-handling-result-pattern-strategy.md) | Patrón Result + Límites Unificados | 5, 6.3 |
-| **Selector de Despliegue** | [ADR-0039](../adrs/core/0039-deployment-topology-abstraction-switcher.md) | Abstracción de Topología basada en Factory | 7 |
-| **Selección Políglota** | [ADR-0040](../adrs/core/0040-multi-runtime-selection-contracts.md) | Matriz de Carga de Trabajo y Contratos Type-Safe | 1.2 |
-| **Arquitectura Canónica .NET** | [ADR-0041](../adrs/dotnet/0041-canonical-dotnet-backend-architecture.md) | Clean Arch C# / Minimal APIs | 1.2 |
-| **Arquitectura Canónica Android** | [ADR-0042](../adrs/android/0042-canonical-android-mobile-architecture.md) | Kotlin Nativo / Compose / Offline | 1.2 |
+| **Gobernanza de Monorepo** | [ADR-0001](../adrs/core/0001-monorepo-orchestration-nx.es.md) | Nx + npm workspaces | 2 |
+| **Arquitectura Hexagonal** | [ADR-0002](../adrs/nodejs/0002-clean-architecture-nestjs.es.md) | Puertos y Adaptadores | 4.1, 5 |
+| **Estándares de TypeScript** | [ADR-0003](../adrs/nodejs/0003-strict-typescript-standards.es.md) | Modo estricto + ESLint Boundaries | 2 |
+| **Resiliencia en Frontend** | [ADR-0004](../adrs/nodejs/0004-frontend-offline-resilience.es.md) | Caché offline de React Query | 3.1 |
+| **Seguridad CI/CD** | [ADR-0005](../adrs/core/0005-ci-cd-quality-codeql.es.md) | CodeQL + GitHub Actions | 2 |
+| **Camino a Microservicios** | [ADR-0006](../adrs/core/0006-future-microservices-transition-dapr.es.md) | Triggers de migración Dapr Sidecar | 4.5 |
+| **Observabilidad** | [ADR-0007](../adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.es.md) | OpenTelemetry + Loki + Jaeger | 3.1, 5, 6 |
+| **Patrón de Gateway BFF** | [ADR-0008](../adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.es.md) | NestJS BFF por canal de cliente | 3.1, 4.3, 5 |
+| **Fijación de Dependencias** | [ADR-0009](../adrs/core/0009-strict-dependency-pinning-vulnerability-management.es.md) | Versiones exactas + `npm audit` | 2 |
+| **Multi-Tenancy (SaaS)** | [ADR-0010](../adrs/core/0010-multi-tenancy-architecture-strategy.es.md) | Filtros de aplicación + contexto por runtime + failsafe nativo de BD | 4.2, 5, 6.1 |
+| **Circuit Breakers** | [ADR-0011](../adrs/core/0011-fault-tolerance-resiliency-patterns.es.md) | `opossum` + Exponential Backoff | 5, 6.3 |
+| **Autorización RBAC/ABAC** | [ADR-0012](../adrs/nodejs/0012-advanced-authorization-rbac-abac.es.md) | JWT Claims + NestJS Guards | 5 |
+| **Topología Cloud DR** | [ADR-0013](../adrs/core/0013-cloud-infrastructure-topology-dr.es.md) | Multi-AZ + Replicación en Streaming | 7 |
+| **Caché Distribuida** | [ADR-0014](../adrs/core/0014-distributed-caching-strategy-redis.es.md) | Caché Escalonada Multi-Capa tras `ICachePort` | 5, 6.1 |
+| **Orientado a Eventos (Bus Inyectable)** | [ADR-0015](../adrs/core/0015-event-driven-architecture-intra-domain.es.md) | `IEventBusPort` -> En-Mem / RabbitMQ | 3.1, 4.4, 5, 6.2 |
+| **Pista de Auditoría Inmutable** | [ADR-0016](../adrs/core/0016-immutable-business-audit-trail.es.md) | Tabla append-only + trigger de BD | 5, 6.2 |
+| **Feature Flagging** | [ADR-0017](../adrs/core/0017-feature-flagging-strategy.es.md) | `IFeatureFlagPort` (Unleash/ConfigCat) | 5 |
+| **Pirámide de Pruebas** | [ADR-0018](../adrs/core/0018-testing-pyramid-quality-gates.es.md) | Unitarias + Contrato (Pact) + E2E | 2 |
+| **Patrones Funcionales / Result** | [ADR-0019](../adrs/core/0019-tactical-design-patterns-future-proofing.es.md) | `Result<T,E>` en lugar de excepciones | 4.1 |
+| **Abstracción de Proveedor Identidad** | [ADR-0020](../adrs/core/0020-identity-provider-abstraction-strategy.es.md) | Strategy Pattern -> Auth0/Entra/Zitadel | 3.1, 5 |
+| **Compilación de Gráfico de Auth** | [ADR-0021](../adrs/nodejs/0021-high-performance-auth-and-graph-compilation.es.md) | Gráfico de permisos en caché Redis < 5ms | 5 |
+| **Proyecciones Conectables** | [ADR-0022](../adrs/nodejs/0022-contextual-auth-and-pluggable-projections.es.md) | Proyecciones de lectura conscientes del contexto | 5 |
+| **Núcleo de Autenticación Centralizado** | [ADR-0023](../adrs/nodejs/0023-centralized-ums-vs-decentralized-access.es.md) | Núcleo compartido de autorización | 5 |
+| **Plataforma de Config and Features** | [ADR-0024](../adrs/core/0024-configuration-feature-management-platform.es.md) | Motor de parámetros multi-IdP | 5 |
+| **Abstracción de Feature Flags** | [ADR-0025](../adrs/core/0025-feature-flag-provider-abstraction.es.md) | Proveedores conectables de `IFeatureFlagPort` | 5 |
+| **MFA y Passkeys** | [ADR-0026](../adrs/nodejs/0026-mfa-passwordless-adaptive-authentication.es.md) | WebAuthn + Passkeys + TOTP + Adaptativo | 5 |
+| **Protocolo Dual REST/gRPC** | [ADR-0027](../adrs/nodejs/0027-dual-protocol-rest-grpc-api-gateway.es.md) | REST (externo) + gRPC (interno) | 3.1 |
+| **Infraestructura OSS Autohospedada** | [ADR-0028](../adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.es.md) | MinIO + RabbitMQ + Vault OSS | 5, 7 |
+| **Primitivas DDD Tácticas** | [ADR-0029](../adrs/nodejs/0029-tactical-ddd-primitives-library.es.md) | `@nestjslatam/ddd` vía re-exportaciones | 4.1 |
+| **Gateway de Dos Niveles** | [ADR-0030](../adrs/core/0030-api-gateway-kong-vs-nestjs.es.md) | Kong (Edge) + NestJS BFF (Agregación) | 3.1, 4.3, 5, 6.1 |
+| **Catálogo de Eventos de Dominio** | [ADR-0031](../adrs/core/0031-schema-per-context-domain-event-catalog.es.md) | Extracción multi-esquema + Contratos Asíncronos | 5, 6.2 |
+| **Selección de Protocolo** | [ADR-0032](../adrs/core/0032-api-protocol-decision-matrix-rest-grpc-graphql.es.md) | gRPC (Int) vs REST (Ext) vs GraphQL | 3.1, 5, 6.1 |
+| **Transactional Outbox** | [ADR-0033](../adrs/core/0033-transactional-outbox-pattern.es.md) | DB Atómica + Garantía atómica de eventos | 6.2 |
+| **Separación CQRS** | [ADR-0034](../adrs/core/0034-cqrs-pattern-applicability-matrix.es.md) | Matriz de Evaluación para Modelos de Lectura/Escritura | 5, 6.1 |
+| **Sagas Distribuidas** | [ADR-0035](../adrs/core/0035-distributed-saga-pattern-strategy.es.md) | Estrategia de Transacción Compensatoria | 6.2 |
+| **Estrategia de Mensajería** | [ADR-0036](../adrs/core/0036-message-bus-delivery-strategy-fifo-dlq.es.md) | Políticas FIFO vs Disparar y Olvidar vs DLQ | 6.2 |
+| **Pruebas de Rendimiento** | [ADR-0037](../adrs/core/0037-performance-concurrency-chaos-strategy.es.md) | Carga K6 + Verificación de Contratos Pact | 5, 6.3 |
+| **Gestión de Errores** | [ADR-0038](../adrs/nodejs/0038-error-handling-result-pattern-strategy.es.md) | Patrón Result + Límites Unificados | 5, 6.3 |
+| **Selector de Despliegue** | [ADR-0039](../adrs/core/0039-deployment-topology-abstraction-switcher.es.md) | Abstracción de Topología basada en Factory | 7 |
+| **Selección Políglota** | [ADR-0040](../adrs/core/0040-multi-runtime-selection-contracts.es.md) | Matriz de Carga de Trabajo y Contratos Type-Safe | 1.2 |
+| **Arquitectura Canónica .NET** | [ADR-0041](../adrs/dotnet/0041-canonical-dotnet-backend-architecture.es.md) | Clean Arch C# / Minimal APIs | 1.2 |
+| **Arquitectura Canónica Android** | [ADR-0042](../adrs/android/0042-canonical-android-mobile-architecture.es.md) | Kotlin Nativo / Compose / Offline | 1.2 |
 | **Microfrontends** | [ADR-0055](../adrs/core/0055-microfrontends-architecture-strategy.es.md) | Module Federation de UI en tiempo de ejecución | 4.5, 7 |
 
 
@@ -501,18 +501,18 @@ graph TD
 
 | Métrica | Objetivo | ADR(s) Aplicables |
 | :--- | :--- | :--- |
-| **Latencia de API (P95)** | < 50ms | [ADR-0014](../adrs/core/0014-distributed-caching-strategy-redis.md), [ADR-0021](../adrs/nodejs/0021-high-performance-auth-and-graph-compilation.md) |
-| **Resolución de Gráfico de Auth** | < 5ms | [ADR-0021](../adrs/nodejs/0021-high-performance-auth-and-graph-compilation.md) |
-| **Vulnerabilidades SAST** | 0 Altas/Críticas | [ADR-0005](../adrs/core/0005-ci-cd-quality-codeql.md), [ADR-0009](../adrs/core/0009-strict-dependency-pinning-vulnerability-management.md) |
-| **Cobertura de Pruebas** | 70% | [ADR-0018](../adrs/core/0018-testing-pyramid-quality-gates.md) |
-| **Huella de Memoria** | Baja inactividad (densidad de microservicios) | [ADR-0002](../adrs/nodejs/0002-clean-architecture-nestjs.md), [ADR-0006](../adrs/core/0006-future-microservices-transition-dapr.md) |
-| **Filtración de Datos de Tenencia** | Tolerancia cero | [ADR-0010](../adrs/core/0010-multi-tenancy-architecture-strategy.md) (Aislamiento Doble Capa) |
+| **Latencia de API (P95)** | < 50ms | [ADR-0014](../adrs/core/0014-distributed-caching-strategy-redis.es.md), [ADR-0021](../adrs/nodejs/0021-high-performance-auth-and-graph-compilation.es.md) |
+| **Resolución de Gráfico de Auth** | < 5ms | [ADR-0021](../adrs/nodejs/0021-high-performance-auth-and-graph-compilation.es.md) |
+| **Vulnerabilidades SAST** | 0 Altas/Críticas | [ADR-0005](../adrs/core/0005-ci-cd-quality-codeql.es.md), [ADR-0009](../adrs/core/0009-strict-dependency-pinning-vulnerability-management.es.md) |
+| **Cobertura de Pruebas** | 70% | [ADR-0018](../adrs/core/0018-testing-pyramid-quality-gates.es.md) |
+| **Huella de Memoria** | Baja inactividad (densidad de microservicios) | [ADR-0002](../adrs/nodejs/0002-clean-architecture-nestjs.es.md), [ADR-0006](../adrs/core/0006-future-microservices-transition-dapr.es.md) |
+| **Filtración de Datos de Tenencia** | Tolerancia cero | [ADR-0010](../adrs/core/0010-multi-tenancy-architecture-strategy.es.md) (Aislamiento Doble Capa) |
 
 ---
 
 ## 10. Implementación de Referencia Canónica
 
--> **[Volver a la Raíz del Proyecto y Guía de Inicio](../../README.md)**
+-> **[Volver a la Raíz del Proyecto y Guía de Inicio](../../README.es.md)**
 
 Implementado usando:
 - **Framework**: NestJS (v10) con límites estrictamente hexagonales.
@@ -531,12 +531,12 @@ Seguimiento estratégico de las limitaciones actuales del diseño y riesgos del 
 | ID del Riesgo | Descripción | Estrategia de Mitigación | Severidad |
 | :--- | :--- | :--- | :--- |
 | **R-01** | **Rendimiento de BD Compartida** | El empaquetamiento físico de la BD crea un dominio de fallo único. | Imponer replicación de lectura estricta y techos de tiempo de espera de consulta. | Media |
-| **R-02** | **Desbordamiento de RabbitMQ** | Picos de mensajes en memoria durante interrupciones. | Control de Flujo / Cuotas obligatorias según **[ADR-0036](../adrs/core/0036-message-bus-delivery-strategy-fifo-dlq.md)**. | Alta |
+| **R-02** | **Desbordamiento de RabbitMQ** | Picos de mensajes en memoria durante interrupciones. | Control de Flujo / Cuotas obligatorias según **[ADR-0036](../adrs/core/0036-message-bus-delivery-strategy-fifo-dlq.es.md)**. | Alta |
 | **R-03** | **Acoplamiento Políglota gRPC** | Cambios de protocolo no compatibles con versiones anteriores. | Verificación obligatoria de contratos **Pact JS** en CI. | Alta |
 
 ### 11.2 Deuda Técnica Conocida
 * **Hinchazón de Monorepo**: A medida que el conteo de librerías supere las 200+, la gestión de caché Nx requerirá la migración de almacenamiento en caché local a la nube.
-* **Vulnerabilidad de Librería de Día Cero**: Los ciclos de actualización rápidos impuestos por la fijación estricta de dependencias ([ADR-0009](../adrs/core/0009-strict-dependency-pinning-vulnerability-management.md)) pueden consumir entre el 5% y 10% del ancho de banda de desarrollo mensual.
+* **Vulnerabilidad de Librería de Día Cero**: Los ciclos de actualización rápidos impuestos por la fijación estricta de dependencias ([ADR-0009](../adrs/core/0009-strict-dependency-pinning-vulnerability-management.es.md)) pueden consumir entre el 5% y 10% del ancho de banda de desarrollo mensual.
 
 ---
 
@@ -555,4 +555,4 @@ Nomenclatura de referencia utilizada por este blueprint.
 * **Patrón Saga**: Gestión de la consistencia transaccional distribuida a través de eventos de compensación.
 
 ---
-[Volver al Índice](./README.md)
+[Volver al Índice](./README.es.md)

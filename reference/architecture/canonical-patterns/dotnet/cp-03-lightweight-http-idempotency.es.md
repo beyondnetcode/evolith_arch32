@@ -2,7 +2,7 @@
 
 **Tipo:** Patrón Canónico — .NET (C#)  
 **Estado:** Aceptado  
-**ADR relacionado:** [ADR-0066: Idempotencia HTTP Ligera en .NET](../../adrs/dotnet/0066-dotnet-lightweight-http-idempotency.md)
+**ADR relacionado:** [ADR-0066: Idempotencia HTTP Ligera en .NET](../../adrs/dotnet/0066-dotnet-lightweight-http-idempotency.es.md)
 
 ---
 
@@ -73,5 +73,5 @@ app.UseIdempotency();      // después de UseGlobalExceptionHandler, antes del r
 
 ## Patrones Relacionados
 
-- [ADR-0066](../../adrs/dotnet/0066-dotnet-lightweight-http-idempotency.md)
-- [Variante DB — ADR-0063](../../adrs/dotnet/0063-dotnet-b2b-idempotency-middleware.md)
+- [ADR-0066](../../adrs/dotnet/0066-dotnet-lightweight-http-idempotency.es.md)
+- [Variante DB — ADR-0063](../../adrs/dotnet/0063-dotnet-b2b-idempotency-middleware.es.md)

@@ -1,6 +1,6 @@
 # Stack Tecnológico Autorizado: Ecosistema Node.js & TypeScript
 
-> **Navegación Bilingüe:** [English Version](./authoritative-tech-stack-nodejs.es.md)
+> **Navegación Bilingüe:** [English Version](./authoritative-tech-stack-nodejs.md)
 
 **Tipo de Documento:** Apéndice de Runtime 
 **Prerrequisito:** DEBE leerse después de la **[Línea Base Agnóstica](./authoritative-tech-stack-agnostic.es.md)**. 
@@ -47,4 +47,4 @@ Las soluciones Node.js DEBEN utilizar aislamiento estricto de librerías impuest
 -> Volver al **[índice Maestro Global](../../../MASTER_INDEX.es.md)**
 
 ---
-[Volver al Índice](./README.md)
+[Volver al Índice](./README.es.md)

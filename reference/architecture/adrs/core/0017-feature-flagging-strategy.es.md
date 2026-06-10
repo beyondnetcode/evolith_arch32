@@ -27,8 +27,8 @@ Tratar el enrutamiento dinámico de características como una **Inyección de In
 - Introduce bifurcaciones lógicas dinámicas que inflan la complejidad ciclomática de las pruebas.
 
 ## Referencias
-- [ADR-0025: Abstracción de Feature Flags](../../adrs/core/0025-feature-flag-provider-abstraction.md)
-- [ADR-0024: Gestión de Configuración](../../adrs/core/0024-configuration-feature-management-platform.md)
+- [ADR-0025: Abstracción de Feature Flags](../../adrs/core/0025-feature-flag-provider-abstraction.es.md)
+- [ADR-0024: Gestión de Configuración](../../adrs/core/0024-configuration-feature-management-platform.es.md)
 
 
 

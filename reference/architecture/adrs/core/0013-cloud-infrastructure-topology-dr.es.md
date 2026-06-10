@@ -27,8 +27,8 @@ Diseñar la topología de infraestructura apuntando a patrones Cloud-Native que 
 - Requiere pipelines CI/CD sofisticados diseñados para configuraciones de orquestación de múltiples objetivos.
 
 ## Referencias
-- [ADR-0011: Tolerancia a Fallos](../../adrs/core/0011-fault-tolerance-resiliency-patterns.md)
-- [ADR-0028: Estrategia Híbrida Autohospedada](../../adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md)
+- [ADR-0011: Tolerancia a Fallos](../../adrs/core/0011-fault-tolerance-resiliency-patterns.es.md)
+- [ADR-0028: Estrategia Híbrida Autohospedada](../../adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.es.md)
 
 
 

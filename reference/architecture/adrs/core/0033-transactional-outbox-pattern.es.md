@@ -29,7 +29,7 @@ Adoptar formalmente el **Patrón Transactional Outbox** para garantizar la propa
 
 ## Referencias
 - [Transactional Outbox Pattern (Microservices.io)](https://microservices.io/patterns/data/transactional-outbox.html)
-- [ADR-0015: Bus de Eventos Inyectable](./0015-event-driven-architecture-intra-domain.md)
+- [ADR-0015: Bus de Eventos Inyectable](./0015-event-driven-architecture-intra-domain.es.md)
 
 
 

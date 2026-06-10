@@ -185,7 +185,9 @@ Abre la fase en la que estas trabajando. Cada seccion agrupa los documentos, est
   - [ADRs Android](./reference/architecture/adrs/android/README.es.md)
 - Gobernanza y navegacion
   - [Estandares de Gobernanza](./reference/governance/standards/README.es.md)
-  - [Indice Bilingue](./reference/navigation/BILINGUAL_INDEX.md)
+  - [Evaluacion de Madurez](./reference/governance/standards/vision/maturity-assessment.es.md) - scoring TOGAF ACMM/WAF, alineacion con la vision y enlaces a gaps abiertos
+  - [Tablero de Seguimiento de Gaps](./reference/governance/standards/vision/gap-tracking.es.md) - tablero unico de gaps abiertos (criticidad, complejidad, estado)
+  - [Indice Bilingue](./reference/navigation/BILINGUAL_INDEX.es.md)
   - [Hub de Navegacion](./reference/navigation/README.es.md)
   - [Hub de Rulesets](./rulesets/README.es.md)
 - Referencia aplicada

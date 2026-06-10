@@ -7,7 +7,7 @@ Aprobado
 2026-05-12
 
 ## Contexto
-El [ADR 0006](../core/0006-future-microservices-transition-dapr.md) define los hitos de evolución de la arquitectura de Monolito Modular hacia Microservicios y el [ADR-0047](../core/0047-architectural-patterns-monolith-soa-microservices.md) provee el marco de selección macro. Sin embargo, se requerían criterios cuantitativos específicos y objetivos para activar físicamente la transición de extracción de un servicio. Sin estas reglas explícitas, las decisiones de división corren el riesgo de estar impulsadas por intuición o presiones, lo que deriva en fallos de migración y sobrecarga operativa prematura.
+El [ADR 0006](../core/0006-future-microservices-transition-dapr.es.md) define los hitos de evolución de la arquitectura de Monolito Modular hacia Microservicios y el [ADR-0047](../core/0047-architectural-patterns-monolith-soa-microservices.es.md) provee el marco de selección macro. Sin embargo, se requerían criterios cuantitativos específicos y objetivos para activar físicamente la transición de extracción de un servicio. Sin estas reglas explícitas, las decisiones de división corren el riesgo de estar impulsadas por intuición o presiones, lo que deriva en fallos de migración y sobrecarga operativa prematura.
 
 ## Decisión
 Formalizar la regla **"2 de 4"** como disparador cuantitativo obligatorio para la extracción de un Bounded Context hacia un servicio independiente.
@@ -24,7 +24,7 @@ Un módulo de dominio DEBE considerarse un candidato válido para la fase de ext
 ### Procedimiento Operativo de Extracción:
 1. **Validación:** El Lead Developer del Squad presenta la métrica al Architectural Board.
 2. **Aislamiento Temporal:** Configuración de routing en Gateway (Kong) para habilitar el patrón Strangler Fig.
-3. **Desacoplamiento de DB:** Migración de schema hacia una instancia independiente según fase 2 del Database Migration Path ([ADR-0031](../core/0031-schema-per-context-domain-event-catalog.md)).
+3. **Desacoplamiento de DB:** Migración de schema hacia una instancia independiente según fase 2 del Database Migration Path ([ADR-0031](../core/0031-schema-per-context-domain-event-catalog.es.md)).
 
 ## Consecuencias
 
@@ -34,11 +34,11 @@ Un módulo de dominio DEBE considerarse un candidato válido para la fase de ext
 - Alineación explícita con la arquitectura basada en métricas y observables.
 
 ### Negativas
-- Requiere que la observabilidad ([ADR-0007](../nodejs/0007-observability-telemetry-loki-opentelemetry.md)) esté plenamente operativa para capturar los indicadores P95 por módulo.
+- Requiere que la observabilidad ([ADR-0007](../nodejs/0007-observability-telemetry-loki-opentelemetry.es.md)) esté plenamente operativa para capturar los indicadores P95 por módulo.
 
 ## Referencias
-- [ADR 0006: Future Microservices Transition](../core/0006-future-microservices-transition-dapr.md)
-- [ADR 0047: Marco de Selección: Monolito vs SOA vs Microservicios](../core/0047-architectural-patterns-monolith-soa-microservices.md)
+- [ADR 0006: Future Microservices Transition](../core/0006-future-microservices-transition-dapr.es.md)
+- [ADR 0047: Marco de Selección: Monolito vs SOA vs Microservicios](../core/0047-architectural-patterns-monolith-soa-microservices.es.md)
 - Sam Newman - *Building Microservices* (2nd Ed. 2021)
 
 

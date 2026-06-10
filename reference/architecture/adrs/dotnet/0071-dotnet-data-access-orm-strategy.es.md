@@ -7,14 +7,14 @@
 | **Estado** | Aprobado |
 | **Fecha** | 2026-05-15 |
 | **Alcance** | Stack Tecnológico — Acceso a Datos .NET |
-| **Supercede** | Guía parcial en [ADR-0041](./0041-canonical-dotnet-backend-architecture.md) |
-| **Relacionado** | [ADR-0034: Aplicabilidad de CQRS](../core/0034-cqrs-pattern-applicability-matrix.md), [ADR-0033: Outbox Transaccional](../core/0033-transactional-outbox-pattern.md), [ADR-0010: RLS Multi-Tenancy](../core/0010-multi-tenancy-architecture-strategy.md) |
+| **Supercede** | Guía parcial en [ADR-0041](./0041-canonical-dotnet-backend-architecture.es.md) |
+| **Relacionado** | [ADR-0034: Aplicabilidad de CQRS](../core/0034-cqrs-pattern-applicability-matrix.es.md), [ADR-0033: Outbox Transaccional](../core/0033-transactional-outbox-pattern.es.md), [ADR-0010: RLS Multi-Tenancy](../core/0010-multi-tenancy-architecture-strategy.es.md) |
 
 ---
 
 ## 2. Contexto
 
-La plataforma .NET en esta arquitectura maneja cargas de trabajo de alto cómputo: resolución de grafos de autorización, reportes de cumplimiento, flujos de promoción de roles IGA y operaciones de datos multi-tenant. [ADR-0041](./0041-canonical-dotnet-backend-architecture.md) estableció Entity Framework Core (EF Core) como ORM principal y autorizó Dapper para cargas de lectura de alto rendimiento, pero dejó sin definir el límite entre ambos.
+La plataforma .NET en esta arquitectura maneja cargas de trabajo de alto cómputo: resolución de grafos de autorización, reportes de cumplimiento, flujos de promoción de roles IGA y operaciones de datos multi-tenant. [ADR-0041](./0041-canonical-dotnet-backend-architecture.es.md) estableció Entity Framework Core (EF Core) como ORM principal y autorizó Dapper para cargas de lectura de alto rendimiento, pero dejó sin definir el límite entre ambos.
 
 Sin límites explícitos, los equipos corren el riesgo de:
 
@@ -435,7 +435,7 @@ Evaluar en **Q4 2026** si:
 
 ---
 
-[Volver al Índice .NET](./README.es.md) | [Volver al Navegador de ADRs](../README.md)
+[Volver al Índice .NET](./README.es.md) | [Volver al Navegador de ADRs](../README.es.md)
 
 ## Objetivo y Alcance
 

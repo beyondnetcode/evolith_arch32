@@ -23,4 +23,4 @@ Este documento sirve como salvaguarda contra la sobre-ingeniería prematura. Ant
  **Nota de Gobernanza**: Si más de 3 ítems en este checklist NO se cumplen, la arquitectura se considera en riesgo de Hipertrofia Prematura y debe ser revisada para su simplificación antes de iniciar la Fase de Construcción.
 
 ---
-[Volver al Índice](./README.md)
+[Volver al Índice](./README.es.md)

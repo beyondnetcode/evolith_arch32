@@ -32,7 +32,7 @@ timeline
 
 | Dominio | Estrategia |
 | :--- | :--- |
-| **Arquitectura** | Monolito Modular con límites estrictos ([ADR-0047](../../../architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.md)). |
+| **Arquitectura** | Monolito Modular con límites estrictos ([ADR-0047](../../../architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.es.md)). |
 | **Persistencia** | Instancia única relacional. Seguridad forzada en Capa de Aplicación (`APP_AGNOSTIC`). |
 | **Foco Crítico** | Definición férrea de Contratos API First y validación exhaustiva de las reglas de negocio core sin ruido de infraestructura. |
 
@@ -41,7 +41,7 @@ timeline
 
 | Dominio | Estrategia |
 | :--- | :--- |
-| **Arquitectura** | Extracción selectiva de servicios críticos mediante gatillos cuantitativos ([ADR-0045](../../../architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md)). |
+| **Arquitectura** | Extracción selectiva de servicios críticos mediante gatillos cuantitativos ([ADR-0045](../../../architecture/adrs/core/0045-microservice-extraction-readiness-criteria.es.md)). |
 | **Persistencia** | Activación del Modo Híbrido. Implementación de RLS Nativo (`INFRA_NATIVE`) en producción para optimización de latencia, manteniendo el fallback en código funcional para tests. |
 | **Foco Crítico** | Observabilidad Completa (Tracing distribuido + Logs estructurados) y optimización radical de la latencia en I/O. |
 

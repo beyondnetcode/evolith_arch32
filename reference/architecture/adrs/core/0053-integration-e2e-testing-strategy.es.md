@@ -1,4 +1,4 @@
-# [ADR 0053](0053-integration-e2e-testing-strategy.es.md): Estrategia de Pruebas de Integración y E2E
+# [ADR 0053](0053-integration-e2e-testing-strategy.md): Estrategia de Pruebas de Integración y E2E
 
 ## 1. Metadatos
 * **ADR ID:** 0053
@@ -9,7 +9,7 @@
 * **Fecha:** 2026-05-14
 * **Tags:** `Pruebas`, `Integración`, `E2E`, `Testcontainers`, `Calidad`
 * **ADRs Relacionados:** 
- * [ADR-0018: Pirámide de Pruebas y Puertas de Calidad Automatizadas](./0018-testing-pyramid-quality-gates.md)
+ * [ADR-0018: Pirámide de Pruebas y Puertas de Calidad Automatizadas](./0018-testing-pyramid-quality-gates.es.md)
  * [ADR-0052: Estrategia de Aislamiento de Pruebas Unitarias](./0052-unit-testing-isolation-strategy.es.md)
 
 ---

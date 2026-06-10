@@ -26,8 +26,8 @@ Subsumir la invocación de selectores de características (feature toggles) bajo
 - Costo de mantenimiento asociado al sostenimiento de múltiples clases de adaptadores especializados orientados a diversos formatos de proveedores.
 
 ## Referencias
-- [ADR-0024: Plataforma de Configuración](../../adrs/core/0024-configuration-feature-management-platform.md)
-- [ADR-0002: Arquitectura Hexagonal](../../adrs/nodejs/0002-clean-architecture-nestjs.md)
+- [ADR-0024: Plataforma de Configuración](../../adrs/core/0024-configuration-feature-management-platform.es.md)
+- [ADR-0002: Arquitectura Hexagonal](../../adrs/nodejs/0002-clean-architecture-nestjs.es.md)
 
 
 

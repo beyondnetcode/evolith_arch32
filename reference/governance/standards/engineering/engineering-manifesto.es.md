@@ -85,7 +85,7 @@ Cada vez que se toma una decisión técnica (ej. escribir un nuevo ADR, elegir u
 > [!IMPORTANT]
 > **Canon de Evolución Progresiva**: La arquitectura evoluciona en complejidad incremental. La Fase 1 es deliberadamente simple y no exige tecnologías, patrones o procesos que excedan las necesidades de un monolito modular. Cada requisito adicional se introduce en la fase donde la arquitectura lo justifica objetivamente, no antes.
 
-La infraestructura nunca debe sobrecargar los ciclos de desarrollo tempranos. La carga operativa debe escalar simétricamente con la madurez de la arquitectura, tal como define el [Reference Blueprint](../../../architecture/blueprints/reference-blueprint.md):
+La infraestructura nunca debe sobrecargar los ciclos de desarrollo tempranos. La carga operativa debe escalar simétricamente con la madurez de la arquitectura, tal como define el [Reference Blueprint](../../../architecture/blueprints/reference-blueprint.es.md):
 - **Fase 1 (Monolito Modular):** Despliegue ligero en contenedores estándar (OCI) sobre máquinas virtuales, App Services o Docker Compose. No se requiere clúster de orquestación.
 - **Fase 2 (Módulos Desacoplables):** Instrumentación de telemetría y manifiestos listos para orquestación, manteniendo el despliegue simplificado.
 - **Fase 3+ (Servicios Distribuidos):** Se activa obligatoriamente la orquestación mediante **Kubernetes** gestionado o autohospedado.

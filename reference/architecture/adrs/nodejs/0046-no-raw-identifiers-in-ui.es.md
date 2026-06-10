@@ -61,8 +61,8 @@ Esta práctica:
 
 ## Referencias
 
-- [ADR-0044: Límites de Capas — Arquitectura Limpia en Frontend](./0044-frontend-clean-architecture-layer-boundaries.md)
-- [ADR-0049: Semántica de Nomenclatura y Política de Código Limpio](../core/0049-naming-semantics-clean-code-policy.md)
+- [ADR-0044: Límites de Capas — Arquitectura Limpia en Frontend](./0044-frontend-clean-architecture-layer-boundaries.es.md)
+- [ADR-0049: Semántica de Nomenclatura y Política de Código Limpio](../core/0049-naming-semantics-clean-code-policy.es.md)
 
 
 
@@ -90,4 +90,4 @@ Esta práctica:
 > Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
 
 ---
-[Volver al Índice](./README.md)
+[Volver al Índice](./README.es.md)

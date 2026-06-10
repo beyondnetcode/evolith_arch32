@@ -54,8 +54,8 @@ Establecemos una **Matriz de Ajuste de Protocolo Estricta** adaptada a niveles a
 - Introduce costos de configuración para capas de ejecución GraphQL y herramientas de gobernanza de esquemas dentro de los stacks BFF.
 
 ## Referencias
-- [ADR-0027: Estrategia de Protocolo Dual](../../adrs/nodejs/0027-dual-protocol-rest-grpc-api-gateway.md)
-- [ADR-0030: Patrones de Gateway de Dos Capas](../../adrs/core/0030-api-gateway-kong-vs-nestjs.md)
+- [ADR-0027: Estrategia de Protocolo Dual](../../adrs/nodejs/0027-dual-protocol-rest-grpc-api-gateway.es.md)
+- [ADR-0030: Patrones de Gateway de Dos Capas](../../adrs/core/0030-api-gateway-kong-vs-nestjs.es.md)
 
 
 

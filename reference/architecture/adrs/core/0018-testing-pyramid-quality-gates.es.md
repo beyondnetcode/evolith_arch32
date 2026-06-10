@@ -28,7 +28,7 @@ Comprometerse con una jerarquía de pruebas de software estándar y el bloqueo m
 - Requiere orquestación activa (testcontainers) para mantener la optimización de velocidad local.
 
 ## Referencias
-- [ADR-0005: Puertas de Seguridad](../../adrs/core/0005-ci-cd-quality-codeql.md)
+- [ADR-0005: Puertas de Seguridad](../../adrs/core/0005-ci-cd-quality-codeql.es.md)
 
 
 

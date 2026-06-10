@@ -7,7 +7,7 @@
 | EN | ES | Status |
 |----|----|--------|
 | [adoption-cases.md](adoption-cases.md) | [adoption-cases.es.md](adoption-cases.es.md) | OK |
-| [README.md](README.md) | [README.es.md](README.es.md) | OK |
+| [README.md](README.md) | [README.es.md](README.md) | OK |
 
 ## architecture-intelligence
 

@@ -258,7 +258,7 @@ Mantenido en la raíz del repositorio. Actualizado automáticamente vía CI en c
 - **Minor**: New documentation sections, new ADRs, new architecture areas
 - **Patch**: Bug fixes, link corrections, diagram fixes, typos
 
-See [ADR-0068](./0068-documentation-release-gitflow.es.md) for full policy.
+See [ADR-0068](./0068-documentation-release-gitflow.md) for full policy.
 ```
 
 ### Integración CI para Log de Versiones
@@ -545,7 +545,7 @@ jobs:
 - [ADR-0050: Estrategia de Branching Gitflow](./0050-gitflow-branching-strategy.es.md)
 - [Mejores Prácticas de Documentación SDLC](../../../governance/sdlc/03-documentation/sdlc-documentation-best-practices.es.md)
 - [Guía de Herencia de Repositorios Hijos](../../../governance/standards/onboarding/child-repository-inheritance-guide.es.md)
-- [Glosario de Terminología Bilingüe](../../../../.harness/scripts/bilingual-terminology-glossary.md)
+- [Glosario de Terminología Bilingüe](../../../../.harness/scripts/bilingual-terminology-glossary.es.md)
 
 ---
 

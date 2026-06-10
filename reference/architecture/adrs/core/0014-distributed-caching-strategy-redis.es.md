@@ -40,7 +40,7 @@ Retener namespaces Redis compartidos dedicados que sirvan al dominio de la API C
 
 ## Referencias
 - [Patrón Redis Cache-Aside](https://redis.io/docs/develop/cache/)
-- [ADR-0002: Arquitectura Hexagonal Limpia](../../adrs/nodejs/0002-clean-architecture-nestjs.md)
+- [ADR-0002: Arquitectura Hexagonal Limpia](../../adrs/nodejs/0002-clean-architecture-nestjs.es.md)
 
 
 

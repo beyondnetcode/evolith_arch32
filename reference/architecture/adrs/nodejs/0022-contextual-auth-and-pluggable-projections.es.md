@@ -27,8 +27,8 @@ Separar la lógica de Validación de Identidad enteramente de las capacidades de
 - Requiere sincronía de invalidación de caché a través de los diferentes formatos compilados.
 
 ## Referencias
-- [ADR-0021: Grafo Auth de Alto Rendimiento](../../adrs/nodejs/0021-high-performance-auth-and-graph-compilation.md)
-- [ADR-0020: Estrategia de IdP](../../adrs/core/0020-identity-provider-abstraction-strategy.md)
+- [ADR-0021: Grafo Auth de Alto Rendimiento](../../adrs/nodejs/0021-high-performance-auth-and-graph-compilation.es.md)
+- [ADR-0020: Estrategia de IdP](../../adrs/core/0020-identity-provider-abstraction-strategy.es.md)
 
 
 

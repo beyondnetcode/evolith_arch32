@@ -3,9 +3,9 @@
 **Tipo:** Patrón Canónico — .NET (C#)  
 **Estado:** Aceptado  
 **ADRs relacionados:**
-- [ADR-0041: Arquitectura .NET Backend Canónica](../../adrs/dotnet/0041-canonical-dotnet-backend-architecture.md)
-- [ADR-0064: Contexto de Observabilidad con Scope de Request](../../adrs/dotnet/0064-dotnet-request-scope-observability-context.md)
-- [ADR-0065: Pipeline Serilog Seguro de PII](../../adrs/dotnet/0065-dotnet-pii-safe-serilog-pipeline.md)
+- [ADR-0041: Arquitectura .NET Backend Canónica](../../adrs/dotnet/0041-canonical-dotnet-backend-architecture.es.md)
+- [ADR-0064: Contexto de Observabilidad con Scope de Request](../../adrs/dotnet/0064-dotnet-request-scope-observability-context.es.md)
+- [ADR-0065: Pipeline Serilog Seguro de PII](../../adrs/dotnet/0065-dotnet-pii-safe-serilog-pipeline.es.md)
 
 ---
 
@@ -221,6 +221,6 @@ public async Task<Result<CreateOrderResponse>> Handle(
 
 ## Patrones Relacionados
 
-- [CP-01: Propagación del Contexto](./cp-01-request-scope-context-propagation.md)
-- [CP-02: Logging Seguro de PII](./cp-02-pii-safe-serilog-logging.md)
-- [ADR-0064](../../adrs/dotnet/0064-dotnet-request-scope-observability-context.md) · [ADR-0065](../../adrs/dotnet/0065-dotnet-pii-safe-serilog-pipeline.md)
+- [CP-01: Propagación del Contexto](./cp-01-request-scope-context-propagation.es.md)
+- [CP-02: Logging Seguro de PII](./cp-02-pii-safe-serilog-logging.es.md)
+- [ADR-0064](../../adrs/dotnet/0064-dotnet-request-scope-observability-context.es.md) · [ADR-0065](../../adrs/dotnet/0065-dotnet-pii-safe-serilog-pipeline.es.md)

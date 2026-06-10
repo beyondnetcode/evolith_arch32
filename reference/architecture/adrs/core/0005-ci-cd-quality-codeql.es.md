@@ -35,7 +35,7 @@ Integrar **GitHub CodeQL** y **npm audit** como puertas de calidad obligatorias 
 
 ## Referencias
 - [Documentación de GitHub CodeQL](https://docs.github.com/en/code-security/code-scanning)
-- [ADR-0009: Fijación Estricta de Dependencias](../../adrs/core/0009-strict-dependency-pinning-vulnerability-management.md)
+- [ADR-0009: Fijación Estricta de Dependencias](../../adrs/core/0009-strict-dependency-pinning-vulnerability-management.es.md)
 
 
 

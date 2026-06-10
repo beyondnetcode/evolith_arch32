@@ -28,7 +28,7 @@ Implementar una Arquitectura Híbrida tendiendo un puente entre el control de ac
 
 ## Referencias
 - [Documentación de NestJS Guard](https://docs.nestjs.com/guards)
-- [ADR-0010: Multi-Tenancy (RLS)](../../adrs/core/0010-multi-tenancy-architecture-strategy.md)
+- [ADR-0010: Multi-Tenancy (RLS)](../../adrs/core/0010-multi-tenancy-architecture-strategy.es.md)
 
 
 

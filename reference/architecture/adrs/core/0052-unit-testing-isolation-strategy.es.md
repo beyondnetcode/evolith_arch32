@@ -1,4 +1,4 @@
-# [ADR 0052](0052-unit-testing-isolation-strategy.es.md): Estrategia de Aislamiento de Pruebas Unitarias (Mocks vs Stubs)
+# [ADR 0052](0052-unit-testing-isolation-strategy.md): Estrategia de Aislamiento de Pruebas Unitarias (Mocks vs Stubs)
 
 ## 1. Metadatos
 * **ADR ID:** 0052
@@ -9,8 +9,8 @@
 * **Fecha:** 2026-05-14
 * **Tags:** `Pruebas`, `Calidad`, `Ingeniería-de-Software`, `Mejores-Prácticas`
 * **ADRs Relacionados:** 
- * [ADR-0018: Pirámide de Pruebas y Puertas de Calidad Automatizadas](./0018-testing-pyramid-quality-gates.md)
- * [ADR-0019: Patrones de Diseño Táctico](./0019-tactical-design-patterns-future-proofing.md)
+ * [ADR-0018: Pirámide de Pruebas y Puertas de Calidad Automatizadas](./0018-testing-pyramid-quality-gates.es.md)
+ * [ADR-0019: Patrones de Diseño Táctico](./0019-tactical-design-patterns-future-proofing.es.md)
 
 ---
 

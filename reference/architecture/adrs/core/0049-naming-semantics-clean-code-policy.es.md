@@ -9,8 +9,8 @@
 * **Fecha:** 2026-05-13
 * **Tags:** `Governance`, `Clean-Code`, `Naming-Conventions`, `Maintainability`, `E2E-Standards`
 * **ADRs Relacionados:** 
- * [ADR-0002: Arquitectura Hexagonal Limpia con NestJS](../nodejs/0002-clean-architecture-nestjs.md)
- * [ADR-0003: Estándares Estrictos de TypeScript](../nodejs/0003-strict-typescript-standards.md)
+ * [ADR-0002: Arquitectura Hexagonal Limpia con NestJS](../nodejs/0002-clean-architecture-nestjs.es.md)
+ * [ADR-0003: Estándares Estrictos de TypeScript](../nodejs/0003-strict-typescript-standards.es.md)
 
 ---
 
@@ -78,7 +78,7 @@ Esta utilización es una **Política Requerida** y se auditará mediante:
 ## 6. Referencias
 - *Clean Code: A Handbook of Agile Software Craftsmanship* (Robert C. Martin).
 - [Google TypeScript Style Guide](https://google.github.io/styleguide/tsguide.html).
-- [ADR-0003: Estándares Estrictos de TypeScript](../nodejs/0003-strict-typescript-standards.md)
+- [ADR-0003: Estándares Estrictos de TypeScript](../nodejs/0003-strict-typescript-standards.es.md)
 
 
 

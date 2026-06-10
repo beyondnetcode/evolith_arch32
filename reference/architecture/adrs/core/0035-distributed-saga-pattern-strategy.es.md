@@ -13,22 +13,22 @@ A medida que la plataforma evoluciona de un Monolito Modular hacia servicios dis
 Adoptar la siguiente matriz corporativa para definir la estrategia de implementación para transacciones de larga duración o multi-servicio:
 
 ### 1. La Regla de Local Primero
-Antes de desplegar una Saga, verifica si el proceso de negocio puede ser contenido dentro de un **único Contexto Delimitado**. Si es así, IMPONER el uso del **Patrón Unit of Work** ([ADR-0019](0019-tactical-design-patterns-future-proofing.md)) para ejecutar una transacción ACID estándar localmente. Esto se prefiere el 100% de las veces.
+Antes de desplegar una Saga, verifica si el proceso de negocio puede ser contenido dentro de un **único Contexto Delimitado**. Si es así, IMPONER el uso del **Patrón Unit of Work** ([ADR-0019](0019-tactical-design-patterns-future-proofing.es.md)) para ejecutar una transacción ACID estándar localmente. Esto se prefiere el 100% de las veces.
 
 ### 2. Paso de Evolución: La Condición de Aplicabilidad de la Saga
 Mandar una implementación de Saga ÚNICAMENTE cuando:
-1. La transacción deba abarcar **dos o más bases de datos de microservicios separadas** (Particionadas físicamente según [ADR-0031](0031-schema-per-context-domain-event-catalog.md)).
+1. La transacción deba abarcar **dos o más bases de datos de microservicios separadas** (Particionadas físicamente según [ADR-0031](0031-schema-per-context-domain-event-catalog.es.md)).
 2. No se requiera consistencia inmediata, pero la **Consistencia Eventual Garantizada** sea obligatoria.
 3. Un fallo en el paso N requiera una **Acción de Rollback/Compensación** explícita en el paso N-1.
 
 ### 3. Gobernanza del Estilo de Implementación
-* **Coreografía (Saga Dirigida por Eventos)**: Recomendación estándar para cadenas cortas (2 a 3 pasos). Los servicios escuchan el Bus de Eventos ([ADR-0015](0015-event-driven-architecture-intra-domain.md)) y reaccionan directamente a los eventos de finalización/fallo. Sin controlador central.
+* **Coreografía (Saga Dirigida por Eventos)**: Recomendación estándar para cadenas cortas (2 a 3 pasos). Los servicios escuchan el Bus de Eventos ([ADR-0015](0015-event-driven-architecture-intra-domain.es.md)) y reaccionan directamente a los eventos de finalización/fallo. Sin controlador central.
 * **Orquestación (Saga Dirigida por Comandos)**: Recomendación obligatoria para flujos de trabajo complejos (> 3 pasos). Requiere un componente Orquestador de Saga dedicado que gestione la ejecución del flujo de trabajo centralizado y emita comandos de compensación explícitamente.
 
 ### 4. Mecánicas Obligatorias
 Cualquier implementación de Saga DEBE implementar:
 - **Consumidores Idempotentes**: Todos los pasos deben detectar e ignorar mensajes duplicados.
-- **Transactional Outbox** ([ADR-0033](0033-transactional-outbox-pattern.md)): Para garantizar que el evento inicial de arranque nunca se pierda.
+- **Transactional Outbox** ([ADR-0033](0033-transactional-outbox-pattern.es.md)): Para garantizar que el evento inicial de arranque nunca se pierda.
 
 ## Consecuencias
 
@@ -39,11 +39,11 @@ Cualquier implementación de Saga DEBE implementar:
 
 ### Negativas
 - Aumenta significativamente la complejidad debido a la lógica obligatoria de transacciones de "Deshacer" (Compensación).
-- Depurar los flujos de trabajo entre servicios es más complejo, dependiendo en gran medida de la correlación unificada de trazas distribuidas ([ADR-0007](../nodejs/0007-observability-telemetry-loki-opentelemetry.md)).
+- Depurar los flujos de trabajo entre servicios es más complejo, dependiendo en gran medida de la correlación unificada de trazas distribuidas ([ADR-0007](../nodejs/0007-observability-telemetry-loki-opentelemetry.es.md)).
 
 ## Referencias
 - [Patrón de transacciones distribuidas Saga](https://learn.microsoft.com/es-es/azure/architecture/reference-architectures/saga/saga)
-- [ADR-0033: Patrón Transactional Outbox](../../adrs/core/0033-transactional-outbox-pattern.md)
+- [ADR-0033: Patrón Transactional Outbox](../../adrs/core/0033-transactional-outbox-pattern.es.md)
 
 
 

@@ -38,40 +38,40 @@ La evaluación usa los 5 niveles estándar del ACMM:
 
 ### Pilar 1: Seguridad y Compliance — **Nivel 4 (Gestionado)**
 * **Evidencia:**
-  * Pipeline de seguridad zero-cost vía CodeQL ([ADR-0005](../../../architecture/adrs/core/0005-ci-cd-quality-codeql.md)).
-  * Dependency pinning estricto previene ataques de supply chain ([ADR-0009](../../../architecture/adrs/core/0009-strict-dependency-pinning-vulnerability-management.md)).
-  * Aislamiento de datos multi-tenant vía Row-Level Security ([ADR-0010](../../../architecture/adrs/core/0010-multi-tenancy-architecture-strategy.md)).
-  * Audit trails inmutables vía CDC ([ADR-0016](../../../architecture/adrs/core/0016-immutable-business-audit-trail.md)).
+  * Pipeline de seguridad zero-cost vía CodeQL ([ADR-0005](../../../architecture/adrs/core/0005-ci-cd-quality-codeql.es.md)).
+  * Fijación estricta de versiones de dependencias (lockfiles exactos, sin rangos) con gestión automatizada de vulnerabilidades ([ADR-0009](../../../architecture/adrs/core/0009-strict-dependency-pinning-vulnerability-management.es.md)).
+  * Aislamiento de datos multi-tenant vía Row-Level Security ([ADR-0010](../../../architecture/adrs/core/0010-multi-tenancy-architecture-strategy.es.md)).
+  * Audit trails inmutables vía CDC ([ADR-0016](../../../architecture/adrs/core/0016-immutable-business-audit-trail.es.md)).
 * **Camino al Nivel 5:** penetration testing automatizado en CI; rotación dinámica de secretos.
 
 ### Pilar 2: Eficiencia de Performance — **Nivel 4 (Gestionado)**
 * **Evidencia:**
-  * Compilación del grafo de auth bajo 5 ms usando Redis ([ADR-0021](../../../architecture/adrs/nodejs/0021-high-performance-auth-and-graph-compilation.md)).
-  * Estrategia dual-protocolo: REST público, gRPC interno ([ADR-0027](../../../architecture/adrs/nodejs/0027-dual-protocol-rest-grpc-api-gateway.md)).
-  * Payloads frontend optimizados vía BFF Gateway ([ADR-0008](../../../architecture/adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.md)).
+  * Compilación del grafo de auth bajo 5 ms usando Redis ([ADR-0021](../../../architecture/adrs/nodejs/0021-high-performance-auth-and-graph-compilation.es.md)).
+  * Estrategia dual-protocolo: REST público, gRPC interno ([ADR-0027](../../../architecture/adrs/nodejs/0027-dual-protocol-rest-grpc-api-gateway.es.md)).
+  * Payloads frontend optimizados vía BFF Gateway ([ADR-0008](../../../architecture/adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.es.md)).
 * **Camino al Nivel 5:** auto-escalado serverless; caching predictivo.
 
 ### Pilar 3: Confiabilidad y Resiliencia — **Nivel 3 (Definido) → avanzando a 4**
 * **Evidencia:**
-  * Resiliencia offline de frontend vía React Query ([ADR-0004](../../../architecture/adrs/nodejs/0004-frontend-offline-resilience.md)).
-  * Circuit breakers (`opossum`) y retries ([ADR-0011](../../../architecture/adrs/core/0011-fault-tolerance-resiliency-patterns.md)).
-  * Topología DR multi-región propuesta ([ADR-0013](../../../architecture/adrs/core/0013-cloud-infrastructure-topology-dr.md)).
+  * Resiliencia offline de frontend vía React Query ([ADR-0004](../../../architecture/adrs/nodejs/0004-frontend-offline-resilience.es.md)).
+  * Circuit breakers (`opossum`) y retries ([ADR-0011](../../../architecture/adrs/core/0011-fault-tolerance-resiliency-patterns.es.md)).
+  * Topología DR multi-región propuesta ([ADR-0013](../../../architecture/adrs/core/0013-cloud-infrastructure-topology-dr.es.md)).
 * **Camino al Nivel 5:** drills regulares de chaos engineering; multi-región activo-activo.
 
 ### Pilar 4: Excelencia Operacional — **Nivel 4 (Gestionado)**
 * **Evidencia:**
-  * Builds deterministas de monorepo vía Nx ([ADR-0001](../../../architecture/adrs/core/0001-monorepo-orchestration-nx.md)).
-  * Telemetría vía stack LGTM y OpenTelemetry ([ADR-0007](../../../architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md)).
-  * Feature flagging desacopla deployment de release ([ADR-0017](../../../architecture/adrs/core/0017-feature-flagging-strategy.md)).
-  * Quality gates aplican umbrales de coverage en CI ([ADR-0018](../../../architecture/adrs/core/0018-testing-pyramid-quality-gates.md)).
+  * Builds deterministas de monorepo vía Nx ([ADR-0001](../../../architecture/adrs/core/0001-monorepo-orchestration-nx.es.md)).
+  * Telemetría vía stack LGTM y OpenTelemetry ([ADR-0007](../../../architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.es.md)).
+  * Feature flagging desacopla deployment de release ([ADR-0017](../../../architecture/adrs/core/0017-feature-flagging-strategy.es.md)).
+  * Quality gates aplican umbrales de coverage en CI ([ADR-0018](../../../architecture/adrs/core/0018-testing-pyramid-quality-gates.es.md)).
 * **Camino al Nivel 5:** deployments blue/green autónomos; detección de anomalías en logs con IA.
 
 ### Pilar 5: Mantenibilidad y Extensibilidad — **Nivel 4 (Gestionado)**
 * **Evidencia:**
-  * Boundaries hexagonales desacoplando core de infraestructura ([ADR-0002](../../../architecture/adrs/nodejs/0002-clean-architecture-nestjs.md)).
-  * Patrones de diseño táctico (monada Result) ([ADR-0019](../../../architecture/adrs/core/0019-tactical-design-patterns-future-proofing.md)).
-  * Desacoplamiento event-driven de módulos de dominio ([ADR-0015](../../../architecture/adrs/core/0015-event-driven-architecture-intra-domain.md)).
-* **Camino al Nivel 5:** transición monolito-a-Dapr con cero cambios de dominio ([ADR-0006](../../../architecture/adrs/core/0006-future-microservices-transition-dapr.md)). Nota: el enforcement hexagonal estricto en el propio CLI sigue abierto — ver [GT-19](./gap-tracking.es.md#gt-19).
+  * Boundaries hexagonales desacoplando core de infraestructura ([ADR-0002](../../../architecture/adrs/nodejs/0002-clean-architecture-nestjs.es.md)).
+  * Patrones de diseño táctico (monada Result) ([ADR-0019](../../../architecture/adrs/core/0019-tactical-design-patterns-future-proofing.es.md)).
+  * Desacoplamiento event-driven de módulos de dominio ([ADR-0015](../../../architecture/adrs/core/0015-event-driven-architecture-intra-domain.es.md)).
+* **Camino al Nivel 5:** transición monolito-a-Dapr con cero cambios de dominio ([ADR-0006](../../../architecture/adrs/core/0006-future-microservices-transition-dapr.es.md)). Nota: el enforcement hexagonal estricto en el propio CLI sigue abierto — ver [GT-19](./gap-tracking.es.md#gt-19).
 
 ---
 
@@ -104,9 +104,9 @@ La evaluación usa los 5 niveles estándar del ACMM:
 | Cluster de Patrón | Patrón Específico | Aplicabilidad | Madurez / Riesgo | Justificación |
 | :--- | :--- | :--- | :--- | :--- |
 | **Integración** | **Strangler Fig** | Core Crítico | 100% Listo | Estrategia fundacional: módulos lógicamente aislados para extracción incremental sin downtime. |
-| **Composición** | **BFF (Backend for Frontend)** | Core Obligatorio | 100% Adoptado | Capas NestJS especializadas por dispositivo ([ADR-0008](../../../architecture/adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.md)). |
-| **Confiabilidad** | **Circuit Breaker** | Operacional | 100% Adoptado | Breakers distribuidos compartiendo estado vía Redis ([ADR-0011](../../../architecture/adrs/core/0011-fault-tolerance-resiliency-patterns.md)) + healthchecks de edge. |
-| **Base de Datos** | **Schema Per Context** | Core Obligatorio | 100% Adoptado | Previene contaminación de joins cross-dominio ([ADR-0031](../../../architecture/adrs/core/0031-schema-per-context-domain-event-catalog.md)). |
+| **Composición** | **BFF (Backend for Frontend)** | Core Obligatorio | 100% Adoptado | Capas NestJS especializadas por dispositivo ([ADR-0008](../../../architecture/adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.es.md)). |
+| **Confiabilidad** | **Circuit Breaker** | Operacional | 100% Adoptado | Breakers distribuidos compartiendo estado vía Redis ([ADR-0011](../../../architecture/adrs/core/0011-fault-tolerance-resiliency-patterns.es.md)) + healthchecks de edge. |
+| **Base de Datos** | **Schema Per Context** | Core Obligatorio | 100% Adoptado | Previene contaminación de joins cross-dominio ([ADR-0031](../../../architecture/adrs/core/0031-schema-per-context-domain-event-catalog.es.md)). |
 | **Escalabilidad** | **CQRS (Básico)** | Opcional | Roadmap | Read-models solo cuando la contención de escritura lo exija. |
 | **Consistencia** | **Patrón Saga** | Futuro Distribuido | Roadmap | Reservado para transacciones distribuidas de Fase 3+. |
 | **Mensajería** | **Transactional Outbox** | Fase 2+ | Roadmap | Consistencia atómica estado-DB/eventos a escala asíncrona. |
@@ -121,16 +121,16 @@ La arquitectura despliega "anticuerpos" explícitos contra los seis anti-patrone
 
 | Anti-Patrón | Criticidad | Defensa de Inmunización |
 | :--- | :--- | :--- |
-| **Monolito Distribuido** | EXTREMA | Bus de eventos asíncrono ([ADR-0015](../../../architecture/adrs/core/0015-event-driven-architecture-intra-domain.md)) + aislamiento hexagonal ([ADR-0002](../../../architecture/adrs/nodejs/0002-clean-architecture-nestjs.md)): mensajería fire-and-forget, sin cadenas síncronas cross-módulo. |
-| **Entrelazamiento de BD Compartida** | MUY ALTA | Schema PostgreSQL aislado por contexto ([ADR-0031](../../../architecture/adrs/core/0031-schema-per-context-domain-event-catalog.md)); joins cross-schema físicamente bloqueados. |
+| **Monolito Distribuido** | EXTREMA | Bus de eventos asíncrono ([ADR-0015](../../../architecture/adrs/core/0015-event-driven-architecture-intra-domain.es.md)) + aislamiento hexagonal ([ADR-0002](../../../architecture/adrs/nodejs/0002-clean-architecture-nestjs.es.md)): mensajería fire-and-forget, sin cadenas síncronas cross-módulo. |
+| **Entrelazamiento de BD Compartida** | MUY ALTA | Schema PostgreSQL aislado por contexto ([ADR-0031](../../../architecture/adrs/core/0031-schema-per-context-domain-event-catalog.es.md)); joins cross-schema físicamente bloqueados. |
 | **Fat Controller / Smart Pipe** | ALTA | Dumb Pipes / Smart Endpoints: el gateway ejecuta solo políticas agnósticas (JWT, SSL, rate limit); toda decisión de negocio vive en el hexágono de aplicación testeado. |
-| **Log Shards (Ceguera)** | ALTA | Tracing distribuido OTel ([ADR-0007](../../../architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md)): un TraceParent ID desde el inicio del request hasta la respuesta de BD. |
+| **Log Shards (Ceguera)** | ALTA | Tracing distribuido OTel ([ADR-0007](../../../architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.es.md)): un TraceParent ID desde el inicio del request hasta la respuesta de BD. |
 | **God Module** | ALTA | Auditorías regulares de boundaries contra el [Modelo de Referencia Aplicado UMS](../../../knowledge/demo/README.es.md); el playbook de extracción divide antes de que un módulo crezca demasiado. |
 | **Leaky Shared Library** | ALTA | Libs compartidas restringidas a primitivas genéricas y utilidades DDD; objetos de dominio prohibidos, enforced vía `eslint-plugin-boundaries`. |
 
 **Fortaleza de resiliencia: ALTA** — circuit breakers + contract testing blindan el backend contra fallas en cascada; aislamiento de tenant de doble capa da contención demostrable.
 **Overhead de performance: BAJO** — caching de 4 niveles (Cliente → CDN → BFF → Core) y backbones internos gRPC.
-**Controles de riesgo residual:** snapshots semanales de performance con K6 y verificación de contratos Pact JS en CI ([ADR-0037](../../../architecture/adrs/core/0037-performance-concurrency-chaos-strategy.md)).
+**Controles de riesgo residual:** snapshots semanales de performance con K6 y verificación de contratos Pact JS en CI ([ADR-0037](../../../architecture/adrs/core/0037-performance-concurrency-chaos-strategy.es.md)).
 
 ---
 

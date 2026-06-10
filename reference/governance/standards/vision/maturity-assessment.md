@@ -39,7 +39,7 @@ The assessment uses the 5 standard ACMM levels:
 ### Pillar 1: Security & Compliance — **Level 4 (Managed)**
 * **Evidence:**
   * Zero-Cost Security Pipeline via CodeQL ([ADR-0005](../../../architecture/adrs/core/0005-ci-cd-quality-codeql.md)).
-  * Strict Dependency Pinning prevents supply-chain attacks ([ADR-0009](../../../architecture/adrs/core/0009-strict-dependency-pinning-vulnerability-management.md)).
+  * Strict dependency version pinning (exact lockfiles, no ranges) with automated vulnerability management ([ADR-0009](../../../architecture/adrs/core/0009-strict-dependency-pinning-vulnerability-management.md)).
   * Multi-tenant data isolation via Row-Level Security ([ADR-0010](../../../architecture/adrs/core/0010-multi-tenancy-architecture-strategy.md)).
   * Immutable audit trails via CDC ([ADR-0016](../../../architecture/adrs/core/0016-immutable-business-audit-trail.md)).
 * **Path to Level 5:** automated penetration testing in CI; dynamic secrets rotation.

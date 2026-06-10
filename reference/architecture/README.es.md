@@ -6,7 +6,7 @@
 
 | EN | ES | Status |
 |----|----|--------|
-| [README.md](README.md) | [README.es.md](README.es.md) | OK |
+| [README.md](README.md) | [README.es.md](README.md) | OK |
 
 ## adrs
 

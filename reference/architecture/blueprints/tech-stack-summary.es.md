@@ -2,7 +2,7 @@
 
 > Alcance: este documento **no** es la política universal de arquitectura.
 >
-> Es una referencia rápida específica para el runtime Node.js / TypeScript y para el sandbox demo del repositorio. Las reglas transversales viven en la [Línea Base Agnóstica Universal](./authoritative-tech-stack-agnostic.md). Las alternativas por runtime viven en los perfiles [.NET](./authoritative-tech-stack-dotnet.md), [Node.js](./authoritative-tech-stack-nodejs.md) y [Android](./authoritative-tech-stack-android.md).
+> Es una referencia rápida específica para el runtime Node.js / TypeScript y para el sandbox demo del repositorio. Las reglas transversales viven en la [Línea Base Agnóstica Universal](./authoritative-tech-stack-agnostic.es.md). Las alternativas por runtime viven en los perfiles [.NET](./authoritative-tech-stack-dotnet.es.md), [Node.js](./authoritative-tech-stack-nodejs.es.md) y [Android](./authoritative-tech-stack-android.es.md).
 
 Esta hoja sirve como referencia de herramientas por capa arquitectónica para desarrolladores y agentes autónomos que trabajan en la implementación de referencia Node.js.
 
@@ -31,17 +31,17 @@ Esta hoja sirve como referencia de herramientas por capa arquitectónica para de
 * **Patrón Arquitectónico:** Arquitectura Hexagonal (Puertos y Adaptadores)
 * **Estrategia de Monorepo:** Nx Monorepo
 * **Patrón de Ejecución:** Monolito Modular (Listo para Dapr)
-* **Patrón de Segregación:** CQRS Híbrido (Regulado por Matriz [ADR-0034](../adrs/core/0034-cqrs-pattern-applicability-matrix.md))
+* **Patrón de Segregación:** CQRS Híbrido (Regulado por Matriz [ADR-0034](../adrs/core/0034-cqrs-pattern-applicability-matrix.es.md))
 * **Inyección de Dependencias:** Contenedor DI nativo de NestJS
 
 ### 5. Capa de Datos
-* **Base de Datos Relacional Principal:** PostgreSQL v16 (Aislamiento Esquema Por Contexto, [ADR-0031](../adrs/core/0031-schema-per-context-domain-event-catalog.md))
+* **Base de Datos Relacional Principal:** PostgreSQL v16 (Aislamiento Esquema Por Contexto, [ADR-0031](../adrs/core/0031-schema-per-context-domain-event-catalog.es.md))
 * **Mapeo Relacional (ORM):** TypeORM (TypeScript)
 * **Consultas de Alto Rendimiento:** Driver nativo `pg`
 * **Motor de Migración de Esquema:** Migraciones TypeORM vía Init-Containers de Kubernetes
 * **Caché en Memoria:** Redis v7.2 (Replicaciones Sentinel / Cluster)
 * **Almacén de Objetos y Activos:** MinIO (Compatible con S3, Autohospedado)
-* **Bróker de Mensajes Asíncrono:** RabbitMQ gobernado por control de flujo ([ADR-0036](../adrs/core/0036-message-bus-delivery-strategy-fifo-dlq.md)) y Outbox ([ADR-0033](../adrs/core/0033-transactional-outbox-pattern.md))
+* **Bróker de Mensajes Asíncrono:** RabbitMQ gobernado por control de flujo ([ADR-0036](../adrs/core/0036-message-bus-delivery-strategy-fifo-dlq.es.md)) y Outbox ([ADR-0033](../adrs/core/0033-transactional-outbox-pattern.es.md))
 
 ### 6. Estrategia de Multi-tenancy
 * **Modelo de Aislamiento de Datos:** Base de Datos Compartida con Row-Level Security (RLS)
@@ -66,7 +66,7 @@ Esta hoja sirve como referencia de herramientas por capa arquitectónica para de
 * **Auditoría de Dependencias:** CLI de Snyk + `npm audit` dentro de las pipelines de CI/CD
 
 ### 10. Estrategia de Gestión de Errores
-* **Estándar de Patrón:** Patrón Result Funcional (`neverthrow`) según [ADR-0038](../adrs/nodejs/0038-error-handling-result-pattern-strategy.md)
+* **Estándar de Patrón:** Patrón Result Funcional (`neverthrow`) según [ADR-0038](../adrs/nodejs/0038-error-handling-result-pattern-strategy.es.md)
 * **Barrera Global:** NestJS ExceptionFilter capturando IDs de traza interna opacos.
 
 ### 11. Experiencia del Desarrollador (DevEx)
@@ -78,4 +78,4 @@ Esta hoja sirve como referencia de herramientas por capa arquitectónica para de
 * **Pruebas End-to-End (E2E):** Playwright
 
 ---
-[Volver al Índice](./README.md)
+[Volver al Índice](./README.es.md)

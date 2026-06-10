@@ -16,37 +16,37 @@ Principios no negociables de crecimiento, diagnósticos de consistencia y modelo
 
 ### Fase 01: Blueprint y Topología (arc42)
 El diseño estructural del sistema detallado en vistas C4 y CAP.
-* **[Blueprint Corporativo Multi-Runtime](../../architecture/blueprints/reference-blueprint.md)** *(Lectura Obligatoria)*
-* [Especificación C4 Topología de Contenedores](../../architecture/blueprints/c4-topology-spec.md)
-* [Análisis Estratégico del Teorema CAP](../../architecture/blueprints/cap-strategic-analysis.md)
-* [Escenarios de Despliegue Multi-Cloud](../../architecture/blueprints/multi-cloud-deployment-scenarios.md)
-* [Stack Tecnológico Autoritativo](../../architecture/blueprints/authoritative-tech-stack.md)
-* [Resumen Rápido del Stack](../../architecture/blueprints/tech-stack-summary.md)
+* **[Blueprint Corporativo Multi-Runtime](../../architecture/blueprints/reference-blueprint.es.md)** *(Lectura Obligatoria)*
+* [Especificación C4 Topología de Contenedores](../../architecture/blueprints/c4-topology-spec.es.md)
+* [Análisis Estratégico del Teorema CAP](../../architecture/blueprints/cap-strategic-analysis.es.md)
+* [Escenarios de Despliegue Multi-Cloud](../../architecture/blueprints/multi-cloud-deployment-scenarios.es.md)
+* [Stack Tecnológico Autoritativo](../../architecture/blueprints/authoritative-tech-stack.es.md)
+* [Resumen Rápido del Stack](../../architecture/blueprints/tech-stack-summary.es.md)
 
 ### Fase 02: Registros de Decisión Arquitectónica (ADRs)
 La historia consolidada y clasificada de las decisiones técnicas activas.
-* -> **[Navegador Central de ADRs](../../architecture/adrs/README.md)**
+* -> **[Navegador Central de ADRs](../../architecture/adrs/README.es.md)**
 * -> **[Matriz de Decisiones ADR por Necesidad](../../architecture/adrs/adr-matrix.es.md)**
- * Jump to: *Ir A:* [Core](../../architecture/adrs/README.md) | [Node.js](../../architecture/adrs/README.md) | [.NET](../../architecture/adrs/README.md) | [Móvil](../../architecture/adrs/README.md)
+ * Jump to: *Ir A:* [Core](../../architecture/adrs/README.es.md) | [Node.js](../../architecture/adrs/README.es.md) | [.NET](../../architecture/adrs/README.es.md) | [Móvil](../../architecture/adrs/README.es.md)
 
 ### Fase 03: Estándares de Ingeniería y Auditoría de Stack
 Playbooks de implementación táctica, seguridad defensiva y validación de mercado.
 * **[Convención sobre Configuración — Estándar de Diseño Evolith para Sistemas Configurables](./engineering/convention-over-configuration.es.md)** *(Obligatorio - Parametrización y Sistemas Hijos)*
 * **[Licensing & Open Source Governance — Selección Responsable de Tecnologías de Cero Costo](./engineering/licensing-and-open-source-governance.es.md)** *(Obligatorio - Selección Tecnológica)*
-* **[Opinión de Auditoría de Stack 2026](./engineering/detailed-stack-audit-2026.md)** *(Crítico - Evaluación de Licencias)*
-* **[Análisis Técnico Senior y Evaluación de Madurez](./engineering/senior-architectural-assessment.md)** *(Nuevo Roadmap)*
+* **[Opinión de Auditoría de Stack 2026](./engineering/detailed-stack-audit-2026.es.md)** *(Crítico - Evaluación de Licencias)*
+* **[Análisis Técnico Senior y Evaluación de Madurez](./engineering/senior-architectural-assessment.es.md)** *(Nuevo Roadmap)*
 * [Manifiesto de Ingeniería Global (SOLID/OWASP)](./engineering/engineering-manifesto.es.md)
 * [Content Management Abstraction — Headless CMS como Acelerador de Time to Market](./engineering/content-management-abstraction.es.md) *(Opcional / Condicional)*
-* [Guía Táctica de Pruebas de Contrato (Pact)](./engineering/contract-testing-guideline.md)
-* [Playbook de Estrategia de Observabilidad](./engineering/observability-playbook.md)
-* [Manual de Plugins del API Gateway (Kong/Traefik)](./engineering/gateway-guidelines.md)
-* [Evaluación de Riesgos de Proveedores y Cadena de Suministro](./engineering/vendor-risk-assessment.md)
+* [Guía Táctica de Pruebas de Contrato (Pact)](./engineering/contract-testing-guideline.es.md)
+* [Playbook de Estrategia de Observabilidad](./engineering/observability-playbook.es.md)
+* [Manual de Plugins del API Gateway (Kong/Traefik)](./engineering/gateway-guidelines.es.md)
+* [Evaluación de Riesgos de Proveedores y Cadena de Suministro](./engineering/vendor-risk-assessment.es.md)
 
 ### Fase 04: Gobernanza y Entrega
-* [Estrategia de Lanzamiento y Auditoría (Nx)](./governance-docs/release-audit-strategy.md)
+* [Estrategia de Lanzamiento y Auditoría (Nx)](./governance-docs/release-audit-strategy.es.md)
 
 ### Fase 05: Onboarding (Incorporación)
-* **[Guía de Inicio Rápido para Nuevos Productos](./onboarding/product-quick-start.md)**
+* **[Guía de Inicio Rápido para Nuevos Productos](./onboarding/product-quick-start.es.md)**
 * [Glosario Arquitectónico](../glossary.es.md)
 
 ---
@@ -60,7 +60,7 @@ Extensión opcional para equipos y productos que buscan incorporar agentes de IA
 harness engineering y MCP en su arquitectura. No modifica ni reemplaza ningún
 estándar corporativo existente.
 
--> [Explorar sección de Arquitectura Aumentada por IA](./ai-augmented/README.md)
+-> [Explorar sección de Arquitectura Aumentada por IA](./ai-augmented/README.es.md)
 
 ---
 [Volver al Nivel Superior](../../README.es.md)

@@ -30,7 +30,7 @@ Adoptar **Nx** como la herramienta de orquestación de monorepo, combinada con *
 
 ## Referencias
 - [Documentación de Nx](https://nx.dev)
-- [ADR-0003: Estándares Estrictos de TypeScript](../../adrs/nodejs/0003-strict-typescript-standards.md)
+- [ADR-0003: Estándares Estrictos de TypeScript](../../adrs/nodejs/0003-strict-typescript-standards.es.md)
 
 
 

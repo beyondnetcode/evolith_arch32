@@ -139,7 +139,7 @@ Algunas situaciones requieren intervención manual:
 | Documento | Propósito |
 |---|---|
 | [AGENTS.md](../../AGENTS.md) | Reglas y convenciones de agentes |
-| [Global Rules](../../.harness/rules/global-rules.md) | Reglas de validación del harness |
+| [Global Rules](../../.harness/rules/global-rules.es.md) | Reglas de validación del harness |
 | [Impact Analysis Schema](../../.harness/schemas/impact-analysis.schema.json) | JSON Schema para registros de análisis |
 
 ---

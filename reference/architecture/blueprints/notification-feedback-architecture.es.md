@@ -283,9 +283,9 @@ porte a Angular, Vue, Svelte o mobile nativo sin cambios estructurales.
 
 ## Documentos Relacionados
 
-- [Flujo de Arquitectura de Observabilidad](./observability-architecture-flow.md)
-- [Tech Stack Autoritativo — Node.js](./authoritative-tech-stack-nodejs.md)
+- [Flujo de Arquitectura de Observabilidad](./observability-architecture-flow.es.md)
+- [Tech Stack Autoritativo — Node.js](./authoritative-tech-stack-nodejs.es.md)
 
 ---
 
-**[Volver al Índice de Blueprints](./README.md)** | **[English version](../blueprints/notification-feedback-architecture.md)**
+**[Volver al Índice de Blueprints](./README.es.md)** | **[English version](../blueprints/notification-feedback-architecture.md)**

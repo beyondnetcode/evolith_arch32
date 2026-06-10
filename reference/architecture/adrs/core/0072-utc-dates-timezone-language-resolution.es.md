@@ -127,8 +127,8 @@ Todos los sistemas satélite de Evolith deben seguir el mismo estándar para que
 - [RFC 3339 — Fecha y Hora en Internet](https://tools.ietf.org/html/rfc3339)
 - [ISO 8601 — Formato de fecha y hora](https://www.iso.org/iso-8601-date-and-time-format.html)
 - [MDN: Intl.DateTimeFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat)
-- [ADR-0016: Rastro de Auditoría Inmutable de Negocio](./0016-immutable-business-audit-trail.md)
-- [ADR-0044: Límites de Capas — Arquitectura Limpia en Frontend](../nodejs/0044-frontend-clean-architecture-layer-boundaries.md)
+- [ADR-0016: Rastro de Auditoría Inmutable de Negocio](./0016-immutable-business-audit-trail.es.md)
+- [ADR-0044: Límites de Capas — Arquitectura Limpia en Frontend](../nodejs/0044-frontend-clean-architecture-layer-boundaries.es.md)
 
 
 
@@ -146,4 +146,4 @@ Todos los sistemas satélite de Evolith deben seguir el mismo estándar para que
 > Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
 
 ---
-[Volver al Índice](./README.md)
+[Volver al Índice](./README.es.md)

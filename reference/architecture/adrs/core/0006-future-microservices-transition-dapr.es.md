@@ -17,7 +17,7 @@ Adoptar **Dapr (Distributed Application Runtime)** como el runtime sidecar de mi
 | Hito | Descripción |
 | :--- | :--- |
 | **M1 - Monolito Modular** | Estado actual. Proceso único con módulos de contexto delimitado aislados. |
-| **M2 - Extracción de Servicios** | Contextos de alto tráfico o desplegables independientemente extraídos como microproyectos Nx. Se activa bajo las reglas en [ADR-0045](../core/0045-microservice-extraction-readiness-criteria.md). |
+| **M2 - Extracción de Servicios** | Contextos de alto tráfico o desplegables independientemente extraídos como microproyectos Nx. Se activa bajo las reglas en [ADR-0045](../core/0045-microservice-extraction-readiness-criteria.es.md). |
 | **M3 - Malla Completa (Full Mesh)** | Estado avanzado del ecosistema donde la interacción a nivel de infraestructura utiliza la abstracción de Sidecar. |
 
 ### Puerta de Decisión de Dapr (Activation Gate)
@@ -40,7 +40,7 @@ routes:
  service: core-monolith
 ```
 
-**Restricción clave:** El Core de dominio debe cambiar **cero líneas** cuando se introduzca Dapr. Todas las llamadas al SDK de Dapr se envuelven detrás de las abstracciones existentes `IEventBusPort` e `ICachePort` ([ADR-0015](0015-event-driven-architecture-intra-domain.md), [ADR-0014](0014-distributed-caching-strategy-redis.md)).
+**Restricción clave:** El Core de dominio debe cambiar **cero líneas** cuando se introduzca Dapr. Todas las llamadas al SDK de Dapr se envuelven detrás de las abstracciones existentes `IEventBusPort` e `ICachePort` ([ADR-0015](0015-event-driven-architecture-intra-domain.es.md), [ADR-0014](0014-distributed-caching-strategy-redis.es.md)).
 
 ## Consecuencias
 
@@ -62,8 +62,8 @@ Con la introducción de Dapr en fases avanzadas, se formalizan los siguientes ma
 3. **Exportación Centralizada**: Ambas fuentes de telemetría (Sidecar + App) deben utilizar el recolector OpenTelemetry unificado para garantizar vistas de traza de extremo a extremo coherentes.
 
 ## Referencias
-- [ADR-0015: Arquitectura Dirigida por Eventos](../../adrs/core/0015-event-driven-architecture-intra-domain.md)
-- [ADR-0031: Esquema por Contexto y Catálogo de Eventos de Dominio](../../adrs/core/0031-schema-per-context-domain-event-catalog.md)
+- [ADR-0015: Arquitectura Dirigida por Eventos](../../adrs/core/0015-event-driven-architecture-intra-domain.es.md)
+- [ADR-0031: Esquema por Contexto y Catálogo de Eventos de Dominio](../../adrs/core/0031-schema-per-context-domain-event-catalog.es.md)
 - [ADR-0046: Observabilidad Unificada Dapr](./0046-dapr-unified-observability.es.md)
 - [Documentación de Dapr](https://dapr.io)
 

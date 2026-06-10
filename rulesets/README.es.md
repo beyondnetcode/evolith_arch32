@@ -128,9 +128,9 @@ flowchart LR
 | Documento | Propósito |
 |---|---|
 | [AGENTS.md](../AGENTS.md) | Reglas y convenciones de agentes |
-| [Repository Taxonomy](../reference/governance/standards/repository-taxonomy.md) | Qué va dónde en Evolith |
-| [Child Repository Inheritance](../reference/governance/standards/onboarding/child-repository-inheritance-guide.md) | Cómo productos heredan de Evolith |
-| [Navigation Hub](../reference/navigation/README.md) | Navegación completa del repositorio |
+| [Repository Taxonomy](../reference/governance/standards/repository-taxonomy.es.md) | Qué va dónde en Evolith |
+| [Child Repository Inheritance](../reference/governance/standards/onboarding/child-repository-inheritance-guide.es.md) | Cómo productos heredan de Evolith |
+| [Navigation Hub](../reference/navigation/README.es.md) | Navegación completa del repositorio |
 
 ---
 

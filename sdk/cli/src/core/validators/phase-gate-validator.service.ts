@@ -52,6 +52,7 @@ export interface BlockingCheckResult {
 }
 
 export interface PhaseGatesRuleset {
+  version?: string;
   gates: PhaseGateDefinition[];
 }
 
@@ -84,6 +85,12 @@ export class PhaseGateValidatorService {
       this.logger.error(`Failed to load phase gates ruleset: ${message}`);
       throw new Error(`Cannot load phase gates ruleset from ${this.rulesetPath}: ${message}`);
     }
+  }
+
+  /** Version of the loaded phase-gates ruleset, required by the ADR-0073 GateEvidence contract. */
+  async getRulesetVersion(): Promise<string> {
+    const ruleset = await this.loadRuleset();
+    return ruleset.version ?? '0.0.0';
   }
 
   async validateGate(phaseNumber: number, projectPath: string): Promise<GateValidationResult> {

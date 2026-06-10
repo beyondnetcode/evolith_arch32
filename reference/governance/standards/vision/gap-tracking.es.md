@@ -34,7 +34,7 @@ Reemplaza y absorbe (2026-06-10): `gap-analysis-core.es.md` (análisis narrativo
 |----|-----|:---:|:---:|:---:|:---:|
 | [GT-01](#gt-01) | ADR de contrato unificado (envelope de salida + GateEvidence + flags globales) | F0 | P0 | S | COMPLETADO |
 | [GT-02](#gt-02) | `GateEvidence` modelado en la capa de dominio | F1 | P0 | M | COMPLETADO |
-| [GT-03](#gt-03) | `EvaluateGateUseCase` + comando `gate evaluate` | F1 | P0 | M | PENDIENTE |
+| [GT-03](#gt-03) | `EvaluateGateUseCase` + comando `gate evaluate` | F1 | P0 | M | COMPLETADO |
 | [GT-04](#gt-04) | Eliminar service locator del dominio · reubicar telemetría | F1 | P1 | S | PENDIENTE |
 | [GT-05](#gt-05) | Reemplazar `MinimalHttpTransport` por Streamable HTTP del SDK MCP | F2 | P1 | M | PENDIENTE |
 | [GT-06](#gt-06) | Tool MCP `evolith-gate-evaluate` + contexto de fase en tools existentes | F2 | P0 | M | PENDIENTE |
@@ -55,7 +55,7 @@ Reemplaza y absorbe (2026-06-10): `gap-analysis-core.es.md` (análisis narrativo
 | [GT-21](#gt-21) | Revisión de ubicación de ADRs Core centrados en herramientas | Transversal | P2 | M | PENDIENTE |
 | [GT-22](#gt-22) | Esquema de unicidad de IDs de ADR (colisiones entre categorías) | Transversal | P2 | S | PENDIENTE |
 
-**Progreso:** 3 / 22 completados · 1 diferido
+**Progreso:** 4 / 22 completados · 1 diferido
 
 ---
 
@@ -82,9 +82,9 @@ Reemplaza y absorbe (2026-06-10): `gap-analysis-core.es.md` (análisis narrativo
 <a name="gt-03"></a>
 #### GT-03 · `EvaluateGateUseCase` + comando `gate evaluate`
 
-- **Criticidad:** P0 · **Complejidad:** M · **Estado:** PENDIENTE
+- **Criticidad:** P0 · **Complejidad:** M · **Estado:** COMPLETADO (2026-06-10)
 - **Objetivo:** Crear un use case de capa application que orqueste `phase-gate-validator.service` y `rule-evaluation-engine` (clarificando sus responsabilidades solapadas), expuesto como `gate evaluate --phase <p> --format json` emitiendo el contrato de GT-02.
-- **Cierre cuando:** un test E2E demuestra que el comando devuelve `GateEvidence` válido contra el schema para cada una de las 5 fases.
+- **Cerrado por:** `EvaluateGateUseCase` (capa application; frontera de responsabilidades documentada: gates → PhaseGateValidatorService, cumplimiento general de rulesets → RuleEvaluationEngine vía `validate`), nuevo comando `gate` emitiendo el envelope ADR-0073 con eco de contexto y exit code 1 ante gates fallidos; 6 tests unitarios + 8 E2E validando `GateEvidence` conforme al schema para las 5 fases más envelopes de error (INVALID_PHASE, VALIDATION_FAILED). Suite completa: 1 510 tests verdes.
 
 <a name="gt-04"></a>
 #### GT-04 · Eliminar service locator del dominio · reubicar telemetría

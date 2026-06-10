@@ -34,7 +34,7 @@ It supersedes and absorbs (2026-06-10): `gap-analysis-core.md` (narrative gap an
 |----|-----|:---:|:---:|:---:|:---:|
 | [GT-01](#gt-01) | Unified contract ADR (output envelope + GateEvidence + global flags) | F0 | P0 | S | DONE |
 | [GT-02](#gt-02) | `GateEvidence` modeled in the domain layer | F1 | P0 | M | DONE |
-| [GT-03](#gt-03) | `EvaluateGateUseCase` + `gate evaluate` command | F1 | P0 | M | PENDING |
+| [GT-03](#gt-03) | `EvaluateGateUseCase` + `gate evaluate` command | F1 | P0 | M | DONE |
 | [GT-04](#gt-04) | Remove service locator from domain · relocate telemetry | F1 | P1 | S | PENDING |
 | [GT-05](#gt-05) | Replace `MinimalHttpTransport` with MCP SDK Streamable HTTP | F2 | P1 | M | PENDING |
 | [GT-06](#gt-06) | MCP tool `evolith-gate-evaluate` + phase context on existing tools | F2 | P0 | M | PENDING |
@@ -55,7 +55,7 @@ It supersedes and absorbs (2026-06-10): `gap-analysis-core.md` (narrative gap an
 | [GT-21](#gt-21) | Placement review of tool-centric Core ADRs | Cross | P2 | M | PENDING |
 | [GT-22](#gt-22) | ADR ID uniqueness scheme (cross-category collisions) | Cross | P2 | S | PENDING |
 
-**Progress:** 3 / 22 done · 1 deferred
+**Progress:** 4 / 22 done · 1 deferred
 
 ---
 
@@ -82,9 +82,9 @@ It supersedes and absorbs (2026-06-10): `gap-analysis-core.md` (narrative gap an
 <a name="gt-03"></a>
 #### GT-03 · `EvaluateGateUseCase` + `gate evaluate` command
 
-- **Criticality:** P0 · **Complexity:** M · **Status:** PENDING
+- **Criticality:** P0 · **Complexity:** M · **Status:** DONE (2026-06-10)
 - **Objective:** Create an application-layer use case orchestrating `phase-gate-validator.service` and `rule-evaluation-engine` (clarifying their overlapping responsibilities), exposed as `gate evaluate --phase <p> --format json` emitting the GT-02 contract.
-- **Done when:** E2E test shows the command returns schema-valid `GateEvidence` for each of the 5 phases.
+- **Closed by:** `EvaluateGateUseCase` (application layer; responsibility boundary documented: gates → PhaseGateValidatorService, general ruleset compliance → RuleEvaluationEngine via `validate`), new `gate` command emitting the ADR-0073 envelope with context echo and exit code 1 on failed gates; 6 unit tests + 8 E2E tests validating schema-valid `GateEvidence` for all 5 phases plus error envelopes (INVALID_PHASE, VALIDATION_FAILED). Full suite: 1 510 tests green.
 
 <a name="gt-04"></a>
 #### GT-04 · Remove service locator from domain · relocate telemetry

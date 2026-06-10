@@ -18,6 +18,7 @@ import { StandardsCommand } from './commands/standards/standards.command';
 import { CompletionCommand } from './commands/completion/completion.command';
 import { HistoryCommand } from './commands/history/history.command';
 import { DriftCommand } from './commands/drift/drift.command';
+import { GateCommand } from './commands/gate/gate.command';
 
 @Module({
   imports: [],
@@ -41,6 +42,7 @@ import { DriftCommand } from './commands/drift/drift.command';
     CompletionCommand,
     HistoryCommand,
     DriftCommand,
+    GateCommand,
   ],
 })
 export class AppModule {}

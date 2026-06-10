@@ -164,9 +164,9 @@ The system is transitioning from fully documented (Level 3) to automatically gov
 
 ### Open Gaps
 
-All open gaps live exclusively on the **[Gap Tracking Board](./gap-tracking.md)** — current state: 18 pending, 1 deferred, 3 done out of 22 `GT` items, plus the closed legacy `G-01…G-27` archive. The maturity-relevant subset:
+All open gaps live exclusively on the **[Gap Tracking Board](./gap-tracking.md)** — current state: 17 pending, 1 deferred, 4 done out of 22 `GT` items, plus the closed legacy `G-01…G-27` archive. The maturity-relevant subset:
 
-* **Tracker contract (P0):** [GT-03](./gap-tracking.md#gt-03), [GT-06](./gap-tracking.md#gt-06) — contract ratified by [ADR 0073](../../../architecture/adrs/core/0073-unified-cli-output-contract.md)
+* **Tracker contract (P0):** [GT-06](./gap-tracking.md#gt-06) — contract ratified by [ADR 0073](../../../architecture/adrs/core/0073-unified-cli-output-contract.md)
 * **Gate evidence depth (P1):** [GT-08](./gap-tracking.md#gt-08), [GT-09](./gap-tracking.md#gt-09), [GT-10](./gap-tracking.md#gt-10), [GT-11](./gap-tracking.md#gt-11)
 * **Architecture integrity (P1):** [GT-04](./gap-tracking.md#gt-04), [GT-17](./gap-tracking.md#gt-17), [GT-19](./gap-tracking.md#gt-19)
 * **Exposure & distribution (P1):** [GT-05](./gap-tracking.md#gt-05), [GT-12](./gap-tracking.md#gt-12), [GT-13](./gap-tracking.md#gt-13), [GT-14](./gap-tracking.md#gt-14), [GT-18](./gap-tracking.md#gt-18)

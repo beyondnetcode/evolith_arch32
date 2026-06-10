@@ -92,6 +92,57 @@ Sign-Off       Design             Build             Guardian       Rollout +
 | Change Failure Rate | < 2% via deep `.harness` contract testing integration |
 | Refactoring Cost (Technical Debt) | -40% reduction in rework hours |
 
+#### 2.2.6 Technical Interface Layer — CLI · MCP · REST · Agents
+
+The Tracker is not a feature of the CLI — it is an independent platform that
+**orchestrates** the CLI, MCP server, REST services, and autonomous agents to
+drive the SDLC lifecycle. Each interface serves a distinct consumer class:
+
+```
+┌─────────────────────────────────────────────────────┐
+│                  SDLC Tracker                        │
+│                                                      │
+│  Phase 1 ──► Phase 2 ──► Phase 3 ──► Phase 4/5      │
+│     │           │           │           │            │
+└─────┼───────────┼───────────┼───────────┼────────────┘
+      │           │           │           │
+   REST API    MCP tools   CLI embed   Agents
+  (frontend   (AI/agents)  (chatbox)  (auto-gates)
+   + CI/CD)
+      │           │           │           │
+      └───────────┴───────────┴───────────┘
+                        │
+               Evolith Core (read-only)
+            rulesets · ADRs · standards
+```
+
+**Interface responsibilities:**
+
+| Interface | Consumer | Purpose |
+|-----------|----------|---------|
+| **MCP HTTP/SSE** | AI agents, LLMs | Gate evaluation, metrics, architecture validation |
+| **REST API** | Tracker frontend, CI/CD pipelines | Phase management, gate status, satellite registration |
+| **CLI chatbox embed** | Developer (in-UI) | Session-aware conversational guidance per phase |
+| **Autonomous agents** | Phase transitions | Automatic gate evaluation without human trigger |
+| **Webhook / event bus** | Tracker internal | Reactive gate pass/fail propagation |
+
+**Tracker database — owned state (Tracker-exclusive, no external write access):**
+
+The Tracker maintains its own database as sole source of runtime truth.
+Evolith Core is consumed read-only for rulesets and governance definitions.
+
+| Entity | Purpose |
+|--------|---------|
+| `SatelliteProject` | Registered satellite repositories |
+| `SDLCProcess` | One active flow instance per project |
+| `PhaseExecution` | Execution record per phase |
+| `GateEvaluation` | Gate result with evidence and ruleset reference |
+| `ChatboxSession` | Conversational session with turn history and tool-call log |
+| `AgentRun` | Autonomous agent execution at phase transitions |
+
+> Full interface contracts, data models, and CLI extension requirements:
+> [SDLC Tracker — Technical Interface Design](./sdlc-tracker-technical-interfaces.md)
+
 ### 2.3 Technological Exposure (CLI + MCP)
 
 The interoperability layer that exposes Core knowledge via CLI and MCP servers, enabling any LLM or IDE to consume governance as real-time context.
@@ -254,6 +305,7 @@ This repository (**Evolith**) serves as the **Evolith Core** — the Reference C
 - [Maturity Evaluation](./maturity-evaluation.md) — Anti-pattern immunization and pattern readiness
 - [Maturity Matrix](./maturity-matrix.md) — TOGAF ACMM assessment
 - [SDLC Artifact Mapping](../../sdlc/sdlc-evolith-artifact-mapping.md) — Complete artifact-to-gate traceability
+- [SDLC Tracker — Technical Interface Design](./sdlc-tracker-technical-interfaces.md) — CLI/MCP/REST/Agent interface contracts and Tracker DB model
 
 ---
 

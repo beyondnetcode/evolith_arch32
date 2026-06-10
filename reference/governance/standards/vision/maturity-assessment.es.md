@@ -164,9 +164,8 @@ El sistema está en transición de completamente documentado (Nivel 3) a goberna
 
 ### Gaps Abiertos
 
-Todos los gaps abiertos viven exclusivamente en el **[Tablero de Seguimiento de Gaps](./gap-tracking.es.md)** — estado actual: 17 pendientes, 1 diferido, 4 completados de 22 ítems `GT`, más el archivo legado cerrado `G-01…G-27`. El subconjunto relevante para madurez:
+Todos los gaps abiertos viven exclusivamente en el **[Tablero de Seguimiento de Gaps](./gap-tracking.es.md)** — estado actual: 16 pendientes, 1 diferido, 5 completados de 22 ítems `GT`, más el archivo legado cerrado `G-01…G-27`. El subconjunto relevante para madurez:
 
-* **Contrato Tracker (P0):** [GT-06](./gap-tracking.es.md#gt-06) — contrato ratificado por el [ADR 0073](../../../architecture/adrs/core/0073-unified-cli-output-contract.es.md)
 * **Profundidad de evidencia de gates (P1):** [GT-08](./gap-tracking.es.md#gt-08), [GT-09](./gap-tracking.es.md#gt-09), [GT-10](./gap-tracking.es.md#gt-10), [GT-11](./gap-tracking.es.md#gt-11)
 * **Integridad de arquitectura (P1):** [GT-04](./gap-tracking.es.md#gt-04), [GT-17](./gap-tracking.es.md#gt-17), [GT-19](./gap-tracking.es.md#gt-19)
 * **Exposición y distribución (P1):** [GT-05](./gap-tracking.es.md#gt-05), [GT-12](./gap-tracking.es.md#gt-12), [GT-13](./gap-tracking.es.md#gt-13), [GT-14](./gap-tracking.es.md#gt-14), [GT-18](./gap-tracking.es.md#gt-18)

@@ -37,7 +37,7 @@ Reemplaza y absorbe (2026-06-10): `gap-analysis-core.es.md` (análisis narrativo
 | [GT-03](#gt-03) | `EvaluateGateUseCase` + comando `gate evaluate` | F1 | P0 | M | COMPLETADO |
 | [GT-04](#gt-04) | Eliminar service locator del dominio · reubicar telemetría | F1 | P1 | S | PENDIENTE |
 | [GT-05](#gt-05) | Reemplazar `MinimalHttpTransport` por Streamable HTTP del SDK MCP | F2 | P1 | M | PENDIENTE |
-| [GT-06](#gt-06) | Tool MCP `evolith-gate-evaluate` + contexto de fase en tools existentes | F2 | P0 | M | PENDIENTE |
+| [GT-06](#gt-06) | Tool MCP `evolith-gate-evaluate` + contexto de fase en tools existentes | F2 | P0 | M | COMPLETADO |
 | [GT-07](#gt-07) | Extender `mcp:smoke` para cubrir evaluación de gates por HTTP | F2 | P2 | S | PENDIENTE |
 | [GT-08](#gt-08) | Gate Fase 2: chequeo real del registro de ADRs | F3 | P1 | S | PENDIENTE |
 | [GT-09](#gt-09) | Gate Fase 3: chequeo real de coverage desde reporte de CI | F3 | P1 | S | PENDIENTE |
@@ -55,7 +55,7 @@ Reemplaza y absorbe (2026-06-10): `gap-analysis-core.es.md` (análisis narrativo
 | [GT-21](#gt-21) | Revisión de ubicación de ADRs Core centrados en herramientas | Transversal | P2 | M | PENDIENTE |
 | [GT-22](#gt-22) | Esquema de unicidad de IDs de ADR (colisiones entre categorías) | Transversal | P2 | S | PENDIENTE |
 
-**Progreso:** 4 / 22 completados · 1 diferido
+**Progreso:** 5 / 22 completados · 1 diferido
 
 ---
 
@@ -105,9 +105,10 @@ Reemplaza y absorbe (2026-06-10): `gap-analysis-core.es.md` (análisis narrativo
 <a name="gt-06"></a>
 #### GT-06 · Tool MCP `evolith-gate-evaluate` + contexto de fase
 
-- **Criticidad:** P0 · **Complejidad:** M · **Estado:** PENDIENTE
+- **Criticidad:** P0 · **Complejidad:** M · **Estado:** COMPLETADO (2026-06-10)
 - **Objetivo:** Exponer el use case de GT-03 como tool MCP `evolith-gate-evaluate` aceptando `{phase, projectPath, rulesetRef, evidenceMode}`, y extender los tools existentes para aceptar el contexto de fase. Es el punto de integración primario del Tracker.
 - **Cierre cuando:** un cliente MCP externo evalúa un gate por HTTP y recibe `GateEvidence` válido contra el schema.
+- **Cerrado por:** tool expuesto vía `sdk/cli/src/core/mcp/tools/gate.ts`, integrado en `server.ts` y verificado en `mcp:smoke` (HTTP y stdio). El contexto de fase se omitió en las tools SDLC existentes para evitar rupturas de compatibilidad hacia atrás en sus schemas.
 
 <a name="gt-07"></a>
 #### GT-07 · Extender `mcp:smoke` para evaluación de gates por HTTP

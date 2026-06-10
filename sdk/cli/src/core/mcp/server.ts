@@ -6,6 +6,7 @@ import { handleAgentTools } from './tools/agent';
 import { handleArchitectureTools } from './tools/architecture';
 import { handleSdlcTools } from './tools/sdlc';
 import { handleMoscowTools } from './tools/moscow';
+import { handleGateEvaluateTool } from './tools/gate';
 import { listResources, readResource } from './resources';
 import { listPrompts, getPrompt } from './prompts';
 import { McpMetricsService } from './metrics.service';
@@ -468,6 +469,23 @@ class DirectMcpServer {
           },
         },
         {
+          name: 'evolith-gate-evaluate',
+          description: 'Evaluate a specific SDLC phase gate',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              phase: { type: 'string', description: 'Phase identifier (discovery, design, construction, qa, release)' },
+              projectPath: { type: 'string', description: 'Path to the repository to validate' },
+              rulesetRef: { type: 'string', description: 'Optional ruleset reference' },
+              evidenceMode: { type: 'string', description: 'full or summary', default: 'full' },
+              evaluatedBy: { type: 'string', description: 'human, agent, or ci', default: 'agent' },
+              initiative: { type: 'string', description: 'Optional initiative context' },
+              tenant: { type: 'string', description: 'Optional tenant context' },
+            },
+            required: ['phase', 'projectPath'],
+          },
+        },
+        {
           name: 'evolith-agent-install',
           description: 'Install a new Evolith agent',
           inputSchema: {
@@ -697,6 +715,8 @@ class DirectMcpServer {
 
       if (name === 'evolith-validate') {
         result = await handleValidateTool(args, this.rulesetValidator);
+      } else if (name === 'evolith-gate-evaluate') {
+        result = await handleGateEvaluateTool(args);
       } else if (name.startsWith('evolith-agent')) {
         result = await handleAgentTools(name, args);
       } else if (name === 'evolith-architecture-validate') {

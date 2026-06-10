@@ -268,6 +268,16 @@ async function runStdioSmoke() {
     assert(metrics.content[0]?.type === 'text', 'tools/call metrics: first item not text');
     console.log('  tools/call         OK  (evolith-metrics)');
 
+    const gateEval = await checkedRequest(6, 'tools/call', {
+      name: 'evolith-gate-evaluate',
+      arguments: { phase: 'discovery', projectPath: repoRoot, evidenceMode: 'summary' }
+    });
+    assert(Array.isArray(gateEval.content), 'tools/call gate-evaluate: content not an array');
+    const gateEnvelope = JSON.parse(gateEval.content[0].text);
+    assert(gateEnvelope.success !== undefined, 'tools/call gate-evaluate: envelope must have success field');
+    assert(gateEnvelope.meta?.command === 'evolith gate evaluate', 'tools/call gate-evaluate: missing or invalid meta.command');
+    console.log('  tools/call         OK  (evolith-gate-evaluate stdio)');
+
     console.log('Transport 1 PASSED\n');
   } finally {
     for (const resolver of pending.values()) {
@@ -333,6 +343,7 @@ async function runHttpSmoke() {
       { id: 102, method: 'resources/list' },
       { id: 103, method: 'prompts/list' },
       { id: 104, method: 'tools/call', params: { name: 'evolith-metrics', arguments: {} } },
+      { id: 105, method: 'tools/call', params: { name: 'evolith-gate-evaluate', arguments: { phase: 'discovery', projectPath: repoRoot } } },
     ]);
 
     const init = results.get(100);
@@ -359,6 +370,13 @@ async function runHttpSmoke() {
     assert(Array.isArray(metrics?.content), 'HTTP tools/call metrics: content not an array');
     assert(metrics.content[0]?.type === 'text', 'HTTP tools/call metrics: first item not text');
     console.log('  tools/call         OK  (evolith-metrics, HTTP)');
+
+    const gateEvalHttp = results.get(105);
+    assert(Array.isArray(gateEvalHttp?.content), 'HTTP tools/call gate-evaluate: content not an array');
+    const gateEnvelopeHttp = JSON.parse(gateEvalHttp.content[0].text);
+    assert(gateEnvelopeHttp.success !== undefined, 'HTTP tools/call gate-evaluate: envelope must have success field');
+    assert(gateEnvelopeHttp.meta?.command === 'evolith gate evaluate', 'HTTP tools/call gate-evaluate: missing or invalid meta.command');
+    console.log('  tools/call         OK  (evolith-gate-evaluate, HTTP)');
 
     console.log('Transport 2 PASSED\n');
   } catch (err) {

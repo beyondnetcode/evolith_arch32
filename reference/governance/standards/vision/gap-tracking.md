@@ -37,7 +37,7 @@ It supersedes and absorbs (2026-06-10): `gap-analysis-core.md` (narrative gap an
 | [GT-03](#gt-03) | `EvaluateGateUseCase` + `gate evaluate` command | F1 | P0 | M | DONE |
 | [GT-04](#gt-04) | Remove service locator from domain · relocate telemetry | F1 | P1 | S | PENDING |
 | [GT-05](#gt-05) | Replace `MinimalHttpTransport` with MCP SDK Streamable HTTP | F2 | P1 | M | PENDING |
-| [GT-06](#gt-06) | MCP tool `evolith-gate-evaluate` + phase context on existing tools | F2 | P0 | M | PENDING |
+| [GT-06](#gt-06) | MCP tool `evolith-gate-evaluate` + phase context on existing tools | F2 | P0 | M | DONE |
 | [GT-07](#gt-07) | Extend `mcp:smoke` to cover gate evaluation over HTTP | F2 | P2 | S | PENDING |
 | [GT-08](#gt-08) | Phase 2 gate: real ADR registry check | F3 | P1 | S | PENDING |
 | [GT-09](#gt-09) | Phase 3 gate: real coverage check from CI report | F3 | P1 | S | PENDING |
@@ -55,7 +55,7 @@ It supersedes and absorbs (2026-06-10): `gap-analysis-core.md` (narrative gap an
 | [GT-21](#gt-21) | Placement review of tool-centric Core ADRs | Cross | P2 | M | PENDING |
 | [GT-22](#gt-22) | ADR ID uniqueness scheme (cross-category collisions) | Cross | P2 | S | PENDING |
 
-**Progress:** 4 / 22 done · 1 deferred
+**Progress:** 5 / 22 done · 1 deferred
 
 ---
 
@@ -105,9 +105,10 @@ It supersedes and absorbs (2026-06-10): `gap-analysis-core.md` (narrative gap an
 <a name="gt-06"></a>
 #### GT-06 · MCP tool `evolith-gate-evaluate` + phase context
 
-- **Criticality:** P0 · **Complexity:** M · **Status:** PENDING
+- **Criticality:** P0 · **Complexity:** M · **Status:** DONE (2026-06-10)
 - **Objective:** Expose the GT-03 use case as the MCP tool `evolith-gate-evaluate` accepting `{phase, projectPath, rulesetRef, evidenceMode}`, and extend existing tools to accept the phase context. This is the Tracker's primary integration point.
 - **Done when:** an external MCP client evaluates a gate over HTTP and receives schema-valid `GateEvidence`.
+- **Closed by:** tool exposed via `sdk/cli/src/core/mcp/tools/gate.ts`, integrated in `server.ts` and verified in `mcp:smoke` (HTTP and stdio). Phase context omitted from existing SDLC tools to avoid backwards compatibility breaks in their schemas.
 
 <a name="gt-07"></a>
 #### GT-07 · Extend `mcp:smoke` for gate evaluation over HTTP

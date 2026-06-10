@@ -4,7 +4,7 @@
 
 ## Estado
 
-Propuesto — pendiente de aprobación del Evolith Architecture Board. La aprobación cierra [GT-01](../../../governance/standards/vision/gap-tracking.es.md#gt-01).
+Aprobado — Evolith Architecture Board, 2026-06-10. Cierra [GT-01](../../../governance/standards/vision/gap-tracking.es.md#gt-01).
 
 ## Fecha
 
@@ -23,7 +23,7 @@ Hoy el CLI no implementa ninguno de los dos contratos: `--format json` existe en
 
 **Objetivo:** ratificar un contrato único de salida que toda superficie machine-facing del CLI y servidor MCP de Evolith emita, para que el Tracker, los pipelines de CI y los agentes de IA parseen resultados de manera uniforme.
 
-**En alcance:** el envelope JSON de salida; el schema `GateEvidence` como payload de evaluación de gates; el conjunto de flags globales; el registro de códigos de error; naming del binario y de los tools MCP. **Fuera de alcance:** la implementación de la evaluación de gates ([GT-02](../../../governance/standards/vision/gap-tracking.es.md#gt-02)/[GT-03](../../../governance/standards/vision/gap-tracking.es.md#gt-03)), la selección de transporte ([GT-05](../../../governance/standards/vision/gap-tracking.es.md#gt-05)), la semántica de webhooks/eventos ([GT-14](../../../governance/standards/vision/gap-tracking.es.md#gt-14)), y el renderizado human-facing (table/markdown), que permanece libre.
+**En alcance:** el envelope JSON de salida; el schema `GateEvidence` como payload de evaluación de gates; el conjunto de flags globales; el registro de códigos de error; naming del binario y de los tools MCP; el modelo de ejecución command-as-a-service (invocación remota de operaciones registradas vía MCP/REST). **Fuera de alcance:** la implementación de la evaluación de gates ([GT-02](../../../governance/standards/vision/gap-tracking.es.md#gt-02)/[GT-03](../../../governance/standards/vision/gap-tracking.es.md#gt-03)), la selección de transporte ([GT-05](../../../governance/standards/vision/gap-tracking.es.md#gt-05)), la semántica de webhooks/eventos ([GT-14](../../../governance/standards/vision/gap-tracking.es.md#gt-14)), y el renderizado human-facing (table/markdown), que permanece libre.
 
 ## Opciones Consideradas
 
@@ -63,6 +63,7 @@ En fallo, `success: false` y un objeto `error` reemplaza a `data`:
 3. **Flags globales:** `--format <json|table|yaml|markdown>` en todo comando; `--dry-run` en todo comando de escritura; `--phase <discovery|design|construction|qa|release>` en comandos de alcance de gate. Los flags de contexto `--initiative` / `--tenant` se aceptan y se hacen eco, nunca se persisten.
 4. **Registro inicial de códigos de error:** `GATE_BLOCKED`, `VALIDATION_FAILED`, `RULESET_NOT_FOUND`, `SCHEMA_INVALID`, `INVALID_PHASE`, `NOT_A_SATELLITE`, `IO_ERROR`, `INTERNAL_ERROR`. Los códigos son append-only; renombrar o reutilizar un código es un breaking change que exige un ADR que reemplace a este.
 5. **Naming:** el paquete añade un alias de bin `evolith` junto a `smart-cli` (que permanece por compatibilidad); la documentación y los ejemplos nuevos usan `evolith <verbo> <sustantivo>`. Los nombres de tools MCP espejan los comandos CLI unidos por guiones (`evolith-gate-evaluate` ↔ `evolith gate evaluate`).
+6. **Modelo de ejecución Command-as-a-Service:** toda operación gobernada se implementa una sola vez como use case de capa application y se expone por tres adapters delgados — el comando CLI (terminal), un tool MCP (agentes de IA y el Tracker vía stdio/HTTP) y, donde el Tracker lo requiera, un endpoint REST. Un consumidor externo envía el comando por cualquier superficie, Evolith ejecuta por detrás el mismo use case, y devuelve el mismo envelope. Dos restricciones: (a) **sin ejecución arbitraria de comandos** — solo las operaciones explícitamente registradas son invocables remotamente (el registro es la lista de tools MCP; un endpoint genérico de "ejecutar cualquier string de shell/CLI" queda prohibido como superficie de inyección); (b) **paridad de superficies** — una operación invocable remotamente debe aceptar los mismos parámetros y devolver el mismo envelope que su forma CLI, de modo que el comportamiento se testea una sola vez.
 
 **Justificación:** el envelope da al Tracker, CI y agentes un solo parser; los payloads tipados mantienen la frontera estricta (regla ACL: rechazar, no normalizar); el statelessness se preserva tratando el contexto como solo-eco; el naming converge en la marca del producto sin romper a los consumidores existentes de `smart-cli`.
 

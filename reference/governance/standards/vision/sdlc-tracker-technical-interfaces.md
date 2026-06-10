@@ -54,7 +54,7 @@ Tracker database.
 
 ---
 
-> **Contract ratification:** the output envelope, `GateEvidence` schema, global flags, and naming defined below are ratified by [ADR 0073](../../../architecture/adrs/core/0073-unified-cli-output-contract.md) (status: Proposed). On conflict, the ADR prevails.
+> **Contract ratification:** the output envelope, `GateEvidence` schema, global flags, and naming defined below are ratified by [ADR 0073](../../../architecture/adrs/core/0073-unified-cli-output-contract.md) (status: Approved 2026-06-10). On conflict, the ADR prevails.
 
 ## 3. Gap Analysis — What the CLI Needs to Support the Tracker
 

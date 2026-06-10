@@ -32,7 +32,7 @@ Reemplaza y absorbe (2026-06-10): `gap-analysis-core.es.md` (análisis narrativo
 
 | ID | Gap | Fase | Criticidad | Complejidad | Estado |
 |----|-----|:---:|:---:|:---:|:---:|
-| [GT-01](#gt-01) | ADR de contrato unificado (envelope de salida + GateEvidence + flags globales) | F0 | P0 | S | EN-PROGRESO |
+| [GT-01](#gt-01) | ADR de contrato unificado (envelope de salida + GateEvidence + flags globales) | F0 | P0 | S | COMPLETADO |
 | [GT-02](#gt-02) | `GateEvidence` modelado en la capa de dominio | F1 | P0 | M | PENDIENTE |
 | [GT-03](#gt-03) | `EvaluateGateUseCase` + comando `gate evaluate` | F1 | P0 | M | PENDIENTE |
 | [GT-04](#gt-04) | Eliminar service locator del dominio · reubicar telemetría | F1 | P1 | S | PENDIENTE |
@@ -55,7 +55,7 @@ Reemplaza y absorbe (2026-06-10): `gap-analysis-core.es.md` (análisis narrativo
 | [GT-21](#gt-21) | Revisión de ubicación de ADRs Core centrados en herramientas | Transversal | P2 | M | PENDIENTE |
 | [GT-22](#gt-22) | Esquema de unicidad de IDs de ADR (colisiones entre categorías) | Transversal | P2 | S | PENDIENTE |
 
-**Progreso:** 1 / 22 completados · 1 diferido
+**Progreso:** 2 / 22 completados · 1 diferido
 
 ---
 
@@ -66,7 +66,7 @@ Reemplaza y absorbe (2026-06-10): `gap-analysis-core.es.md` (análisis narrativo
 <a name="gt-01"></a>
 #### GT-01 · ADR de contrato unificado
 
-- **Criticidad:** P0 · **Complejidad:** S · **Estado:** EN-PROGRESO — redactado como [ADR 0073](../../../architecture/adrs/core/0073-unified-cli-output-contract.es.md) (2026-06-10), pendiente de aprobación del Board
+- **Criticidad:** P0 · **Complejidad:** S · **Estado:** COMPLETADO (2026-06-10) — ratificado como [ADR 0073](../../../architecture/adrs/core/0073-unified-cli-output-contract.es.md), aprobado por el Board, incluyendo el modelo de ejecución command-as-a-service; ambos documentos de interfaces (repos Core y Tracker) apuntan al ADR
 - **Objetivo:** Redactar y aprobar un único ADR en Evolith Core que reconcilie las dos propuestas de contrato divergentes — la estructura [`GateEvidence`](./sdlc-tracker-technical-interfaces.es.md) del lado Core y el envelope de salida del lado Tracker (`{success, data, meta}`, códigos de error, flags globales `--format/--dry-run/--phase`). Debe además resolver el naming del binario (`smart-cli` vs alias `evolith`). Verificado 2026-06-10: los 27 rulesets ya tienen campo `version` consumible como `rulesetVersion`.
 - **Cierre cuando:** ADR aprobado por el Architecture Board; ambos documentos de gaps (repos Core y Tracker) actualizados apuntando a él.
 

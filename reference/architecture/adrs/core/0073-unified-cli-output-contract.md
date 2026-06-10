@@ -4,7 +4,7 @@
 
 ## Status
 
-Proposed — pending Evolith Architecture Board approval. Approval closes [GT-01](../../../governance/standards/vision/gap-tracking.md#gt-01).
+Approved — Evolith Architecture Board, 2026-06-10. Closes [GT-01](../../../governance/standards/vision/gap-tracking.md#gt-01).
 
 ## Date
 
@@ -23,7 +23,7 @@ Today the CLI implements neither contract: `--format json` exists on some comman
 
 **Objective:** ratify a single output contract that every machine-facing surface of the Evolith CLI and MCP server emits, so the Tracker, CI pipelines, and AI agents can parse results uniformly.
 
-**In scope:** the JSON output envelope; the `GateEvidence` schema as the gate-evaluation payload; the global flag set; the error-code registry; binary and MCP tool naming. **Out of scope:** the implementation of gate evaluation itself ([GT-02](../../../governance/standards/vision/gap-tracking.md#gt-02)/[GT-03](../../../governance/standards/vision/gap-tracking.md#gt-03)), transport selection ([GT-05](../../../governance/standards/vision/gap-tracking.md#gt-05)), webhook/event semantics ([GT-14](../../../governance/standards/vision/gap-tracking.md#gt-14)), and human-facing (table/markdown) rendering, which remains free-form.
+**In scope:** the JSON output envelope; the `GateEvidence` schema as the gate-evaluation payload; the global flag set; the error-code registry; binary and MCP tool naming; the command-as-a-service execution model (remote invocation of registered operations via MCP/REST). **Out of scope:** the implementation of gate evaluation itself ([GT-02](../../../governance/standards/vision/gap-tracking.md#gt-02)/[GT-03](../../../governance/standards/vision/gap-tracking.md#gt-03)), transport selection ([GT-05](../../../governance/standards/vision/gap-tracking.md#gt-05)), webhook/event semantics ([GT-14](../../../governance/standards/vision/gap-tracking.md#gt-14)), and human-facing (table/markdown) rendering, which remains free-form.
 
 ## Options Considered
 
@@ -63,6 +63,7 @@ On failure, `success: false` and an `error` object replaces `data`:
 3. **Global flags:** `--format <json|table|yaml|markdown>` on every command; `--dry-run` on every write command; `--phase <discovery|design|construction|qa|release>` on gate-scoped commands. Context flags `--initiative` / `--tenant` are accepted and echoed, never persisted.
 4. **Initial error-code registry:** `GATE_BLOCKED`, `VALIDATION_FAILED`, `RULESET_NOT_FOUND`, `SCHEMA_INVALID`, `INVALID_PHASE`, `NOT_A_SATELLITE`, `IO_ERROR`, `INTERNAL_ERROR`. Codes are append-only; renaming or reusing a code is a breaking change requiring a superseding ADR.
 5. **Naming:** the package adds an `evolith` bin alias alongside `smart-cli` (which remains for compatibility); documentation and new examples use `evolith <verb> <noun>`. MCP tool names mirror CLI commands with dash-joining (`evolith-gate-evaluate` ↔ `evolith gate evaluate`).
+6. **Command-as-a-Service execution model:** every governed operation is implemented once as an application-layer use case and exposed through three thin adapters — the CLI command (terminal), an MCP tool (AI agents and the Tracker over stdio/HTTP), and, where the Tracker requires it, a REST endpoint. An external consumer sends the command through any surface, Evolith executes the same use case behind it, and returns the same envelope. Two constraints: (a) **no arbitrary command execution** — only explicitly registered operations are remotely invocable (the registry is the MCP tool list; a generic "run any shell/CLI string" endpoint is prohibited as an injection surface); (b) **surface parity** — a remotely invocable operation must accept the same parameters and return the same envelope as its CLI form, so behavior is testable once.
 
 **Rationale:** the envelope gives the Tracker, CI, and agents one parser; schema-typed payloads keep the boundary strict (ACL rule: reject, don't normalize); statelessness is preserved by treating context as echo-only; naming converges on the product brand without breaking existing `smart-cli` consumers.
 

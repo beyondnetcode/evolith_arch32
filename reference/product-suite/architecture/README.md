@@ -10,9 +10,9 @@ It must not contain universal architecture principles that belong in Evolith Cor
 
 ## Current Documents
 
-- [Governed Composition Target Design](../../../governance/standards/vision/evolith-governed-composition-target-design.md)
-- [Provider Abstraction and Plugin Model](../../../governance/standards/vision/evolith-provider-abstraction-plugin-model.md) — migration target: Core Architecture Principle
-- [Tracker Technical Interfaces](../../../governance/standards/vision/sdlc-tracker-technical-interfaces.md) — migration target: Tracker Product Design
+- [Governed Composition Target Design](../../governance/standards/vision/evolith-governed-composition-target-design.md)
+- [Provider Abstraction and Plugin Model](../../governance/standards/vision/evolith-provider-abstraction-plugin-model.md) — migration target: Core Architecture Principle
+- [Tracker Technical Interfaces](../../governance/standards/vision/sdlc-tracker-technical-interfaces.md) — migration target: Tracker Product Design
 
 During migration, this index separates Suite architecture from Core and product implementation.
 

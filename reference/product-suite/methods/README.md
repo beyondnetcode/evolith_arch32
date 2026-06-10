@@ -8,7 +8,7 @@ This area contains portfolio-level discovery, validation, research, experimentat
 
 ## Current Documents
 
-- [AI-Assisted Product Validation Workflow](../../../governance/standards/vision/evolith-ai-assisted-validation-workflow.md)
+- [AI-Assisted Product Validation Workflow](../../governance/standards/vision/evolith-ai-assisted-validation-workflow.md)
 
 Methods may use named tools as optional execution aids, but they must preserve human accountability and provider neutrality.
 

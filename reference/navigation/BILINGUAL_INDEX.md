@@ -60,17 +60,17 @@
 | [0040-multi-runtime-selection-contracts.md](architecture/adrs/core/0040-multi-runtime-selection-contracts.md) | [0040-multi-runtime-selection-contracts.es.md](architecture/adrs/core/0040-multi-runtime-selection-contracts.es.md) | OK |
 | [0044-configurable-security-persistence-strategy.md](architecture/adrs/core/0044-configurable-security-persistence-strategy.md) | [0044-configurable-security-persistence-strategy.es.md](architecture/adrs/core/0044-configurable-security-persistence-strategy.es.md) | OK |
 | [0045-microservice-extraction-readiness-criteria.md](architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md) | [0045-microservice-extraction-readiness-criteria.es.md](architecture/adrs/core/0045-microservice-extraction-readiness-criteria.es.md) | OK |
-| [0046-dapr-observabilidad-unificada.md](architecture/adrs/core/0046-dapr-observabilidad-unificada.md) | [0046-dapr-observabilidad-unificada.es.md](architecture/adrs/core/0046-dapr-observabilidad-unificada.es.md) | OK |
+| [0046-dapr-unified-observability.md](architecture/adrs/core/0046-dapr-unified-observability.md) | [0046-dapr-unified-observability.es.md](architecture/adrs/core/0046-dapr-unified-observability.es.md) | OK |
 | [0047-architectural-patterns-monolith-soa-microservices.md](architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.md) | [0047-architectural-patterns-monolith-soa-microservices.es.md](architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.es.md) | OK |
 | [0048-enterprise-taxonomy-reference-layout.md](architecture/adrs/core/0048-enterprise-taxonomy-reference-layout.md) | [0048-enterprise-taxonomy-reference-layout.es.md](architecture/adrs/core/0048-enterprise-taxonomy-reference-layout.es.md) | OK |
 | [0049-naming-semantics-clean-code-policy.md](architecture/adrs/core/0049-naming-semantics-clean-code-policy.md) | [0049-naming-semantics-clean-code-policy.es.md](architecture/adrs/core/0049-naming-semantics-clean-code-policy.es.md) | OK |
 | [0050-estrategia-ramas-gitflow.md](architecture/adrs/core/0050-estrategia-ramas-gitflow.md) | [0050-estrategia-ramas-gitflow.es.md](architecture/adrs/core/0050-estrategia-ramas-gitflow.es.md) | OK |
-| [0051-estrategia-motor-base-datos-empresarial.md](architecture/adrs/core/0051-estrategia-motor-base-datos-empresarial.md) | [0051-estrategia-motor-base-datos-empresarial.es.md](architecture/adrs/core/0051-estrategia-motor-base-datos-empresarial.es.md) | OK |
-| [0052-estrategia-aislamiento-pruebas-unitarias.md](architecture/adrs/core/0052-estrategia-aislamiento-pruebas-unitarias.md) | [0052-estrategia-aislamiento-pruebas-unitarias.es.md](architecture/adrs/core/0052-estrategia-aislamiento-pruebas-unitarias.es.md) | OK |
-| [0053-estrategia-pruebas-integracion-e2e.md](architecture/adrs/core/0053-estrategia-pruebas-integracion-e2e.md) | [0053-estrategia-pruebas-integracion-e2e.es.md](architecture/adrs/core/0053-estrategia-pruebas-integracion-e2e.es.md) | OK |
+| [0051-enterprise-database-engine-strategy.md](architecture/adrs/core/0051-enterprise-database-engine-strategy.md) | [0051-enterprise-database-engine-strategy.es.md](architecture/adrs/core/0051-enterprise-database-engine-strategy.es.md) | OK |
+| [0052-unit-testing-isolation-strategy.md](architecture/adrs/core/0052-unit-testing-isolation-strategy.md) | [0052-unit-testing-isolation-strategy.es.md](architecture/adrs/core/0052-unit-testing-isolation-strategy.es.md) | OK |
+| [0053-integration-e2e-testing-strategy.md](architecture/adrs/core/0053-integration-e2e-testing-strategy.md) | [0053-integration-e2e-testing-strategy.es.md](architecture/adrs/core/0053-integration-e2e-testing-strategy.es.md) | OK |
 | [0054-estandares-diseño-normalizacion-base-datos.md](architecture/adrs/core/0054-estandares-diseño-normalizacion-base-datos.md) | [0054-estandares-diseño-normalizacion-base-datos.es.md](architecture/adrs/core/0054-estandares-diseño-normalizacion-base-datos.es.md) | OK |
-| [0055-estrategia-arquitectura-microfrontends.md](architecture/adrs/core/0055-estrategia-arquitectura-microfrontends.md) | [0055-estrategia-arquitectura-microfrontends.es.md](architecture/adrs/core/0055-estrategia-arquitectura-microfrontends.es.md) | OK |
-| [0056-convenciones-nomenclatura-diseno-empresarial.md](architecture/adrs/core/0056-convenciones-nomenclatura-diseno-empresarial.md) | [0056-convenciones-nomenclatura-diseno-empresarial.es.md](architecture/adrs/core/0056-convenciones-nomenclatura-diseno-empresarial.es.md) | OK |
+| [0055-microfrontends-architecture-strategy.md](architecture/adrs/core/0055-microfrontends-architecture-strategy.md) | [0055-microfrontends-architecture-strategy.es.md](architecture/adrs/core/0055-microfrontends-architecture-strategy.es.md) | OK |
+| [0056-enterprise-naming-design-conventions.md](architecture/adrs/core/0056-enterprise-naming-design-conventions.md) | [0056-enterprise-naming-design-conventions.es.md](architecture/adrs/core/0056-enterprise-naming-design-conventions.es.md) | OK |
 | [0068-documentation-release-gitflow.md](architecture/adrs/core/0068-documentation-release-gitflow.md) | [0068-documentation-release-gitflow.es.md](architecture/adrs/core/0068-documentation-release-gitflow.es.md) | OK |
 | [README.md](architecture/adrs/core/README.md) | [README.es.md](architecture/adrs/core/README.es.md) | OK |
 
@@ -87,7 +87,7 @@
 | [0065-dotnet-pii-safe-serilog-pipeline.md](architecture/adrs/dotnet/0065-dotnet-pii-safe-serilog-pipeline.md) | [0065-dotnet-pii-safe-serilog-pipeline.es.md](architecture/adrs/dotnet/0065-dotnet-pii-safe-serilog-pipeline.es.md) | OK |
 | [0066-dotnet-lightweight-http-idempotency.md](architecture/adrs/dotnet/0066-dotnet-lightweight-http-idempotency.md) | [0066-dotnet-lightweight-http-idempotency.es.md](architecture/adrs/dotnet/0066-dotnet-lightweight-http-idempotency.es.md) | OK |
 | [0070-enterprise-minimal-apis-adoption.md](architecture/adrs/dotnet/0070-enterprise-minimal-apis-adoption.md) | [0070-enterprise-minimal-apis-adoption.es.md](architecture/adrs/dotnet/0070-enterprise-minimal-apis-adoption.es.md) | OK |
-| [0071-estrategia-acceso-datos-orm-dotnet.md](architecture/adrs/dotnet/0071-estrategia-acceso-datos-orm-dotnet.md) | [0071-estrategia-acceso-datos-orm-dotnet.es.md](architecture/adrs/dotnet/0071-estrategia-acceso-datos-orm-dotnet.es.md) | OK |
+| [0071-dotnet-data-access-orm-strategy.md](architecture/adrs/dotnet/0071-dotnet-data-access-orm-strategy.md) | [0071-dotnet-data-access-orm-strategy.es.md](architecture/adrs/dotnet/0071-dotnet-data-access-orm-strategy.es.md) | OK |
 | [README.md](architecture/adrs/dotnet/README.md) | [README.es.md](architecture/adrs/dotnet/README.es.md) | OK |
 
 ## architecture/adrs/nodejs
@@ -322,8 +322,7 @@
 |----|----|--------|
 | [architectural-directives.md](governance/standards/vision/architectural-directives.md) | [architectural-directives.es.md](governance/standards/vision/architectural-directives.es.md) | OK |
 | [evolutionary-strategy-roadmap.md](governance/standards/vision/evolutionary-strategy-roadmap.md) | [evolutionary-strategy-roadmap.es.md](governance/standards/vision/evolutionary-strategy-roadmap.es.md) | OK |
-| [maturity-evaluation.md](governance/standards/vision/maturity-evaluation.md) | [maturity-evaluation.es.md](governance/standards/vision/maturity-evaluation.es.md) | OK |
-| [maturity-matrix.md](governance/standards/vision/maturity-matrix.md) | [maturity-matrix.es.md](governance/standards/vision/maturity-matrix.es.md) | OK |
+| [maturity-assessment.md](governance/standards/vision/maturity-assessment.md) | [maturity-assessment.es.md](governance/standards/vision/maturity-assessment.es.md) | OK |
 | [README.md](governance/standards/vision/README.md) | [README.es.md](governance/standards/vision/README.es.md) | OK |
 
 ## infrastructure

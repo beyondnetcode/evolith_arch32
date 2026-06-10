@@ -63,8 +63,7 @@ La capa de Dominio debe contener cero referencias a SDKs de nube, librerías ORM
 ## 4. Lectura Suplementaria
 
 - [Roadmap de Estrategia Evolutiva](./evolutionary-strategy-roadmap.es.md) — Roadmap técnico fase por fase con KPIs medibles
-- [Matriz de Madurez](./maturity-matrix.es.md) — Evaluación TOGAF ACMM de la arquitectura de referencia actual
-- [Evaluación de Madurez de Diseño](./maturity-evaluation.es.md) — Inmunización de anti-patrones y preparación de patrones
+- [Evaluación de Madurez](./maturity-assessment.es.md) — Evaluación TOGAF ACMM, inmunización de anti-patrones y preparación de patrones
 - [Blueprint de Referencia](../../../architecture/blueprints/reference-blueprint.es.md) — Modelo arquitectónico C4 completo
 
 ---

@@ -29,14 +29,14 @@ Este es el índice completo de navegación de **Evolith** — la plataforma empr
 
 | Rol | Ruta de lectura |
 |---|---|
-| **Ejecutivo / Sponsor** | [Directivas Arquitectónicas](../governance/standards/vision/architectural-directives.md) -> [Roadmap Evolutivo](../governance/standards/vision/evolutionary-strategy-roadmap.md) -> [Matriz de Madurez](../governance/standards/vision/maturity-matrix.md) |
+| **Ejecutivo / Sponsor** | [Directivas Arquitectónicas](../governance/standards/vision/architectural-directives.md) -> [Roadmap Evolutivo](../governance/standards/vision/evolutionary-strategy-roadmap.md) -> [Evaluación de Madurez](../governance/standards/vision/maturity-assessment.es.md) |
 | **Product Owner / PM** | [Modelo de Referencia UMS](../knowledge/demo/ums-reference-model.es.md) -> [Índice Documental UMS](https://github.com/beyondnetcode/ums/blob/main/docs/MASTER_INDEX.md) -> [Referencia vs Modelo Aplicado](../knowledge/demo/demo-vs-reference.es.md) |
 | **Arquitecto de Software** | [Hub de Arquitectura](../architecture/README.es.md) -> [Registro ADR](../architecture/adrs/README.md) -> [Portal de Arquitectura UMS](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) |
 | **Principal / Staff Engineer** | [Línea Base Agnóstica](../architecture/blueprints/authoritative-tech-stack-agnostic.md) -> [Patrones Tácticos](../architecture/adrs/core/0019-tactical-design-patterns-future-proofing.md) -> [Checklist de Simplicidad](../architecture/blueprints/simplicity-checklist-phase-01.md) |
 | **Backend Developer** | [Manifiesto de Ingeniería](../governance/standards/engineering/engineering-manifesto.md) -> [Registro ADR por Runtime](../architecture/adrs/README.md) -> [Modelo de Referencia UMS](../knowledge/demo/ums-reference-model.es.md) |
-| **Frontend Developer** | [ADR Resiliencia Frontend](../architecture/adrs/nodejs/0004-frontend-offline-resilience.md) -> [ADR Microfrontends](../architecture/adrs/core/0055-estrategia-arquitectura-microfrontends.md) -> [Repositorio UMS](https://github.com/beyondnetcode/ums) |
+| **Frontend Developer** | [ADR Resiliencia Frontend](../architecture/adrs/nodejs/0004-frontend-offline-resilience.md) -> [ADR Microfrontends](../architecture/adrs/core/0055-microfrontends-architecture-strategy.es.md) -> [Repositorio UMS](https://github.com/beyondnetcode/ums) |
 | **DevOps / SRE** | [Hub de Infraestructura](../infrastructure/README.es.md) -> [Hub de Operaciones](../operations/README.es.md) -> [Portal de Arquitectura UMS](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) |
-| **QA / SDET** | [ADR Pirámide de Testing](../architecture/adrs/core/0018-testing-pyramid-quality-gates.md) -> [Guía de Contract Testing](../governance/standards/engineering/contract-testing-guideline.md) -> [ADR Integración y E2E](../architecture/adrs/core/0053-estrategia-pruebas-integracion-e2e.md) |
+| **QA / SDET** | [ADR Pirámide de Testing](../architecture/adrs/core/0018-testing-pyramid-quality-gates.md) -> [Guía de Contract Testing](../governance/standards/engineering/contract-testing-guideline.md) -> [ADR Integración y E2E](../architecture/adrs/core/0053-integration-e2e-testing-strategy.es.md) |
 | **Security Engineer** | [Vendor Risk Assessment](../governance/standards/engineering/vendor-risk-assessment.md) -> [ADR Multi-Tenancy](../architecture/adrs/core/0010-multi-tenancy-architecture-strategy.md) -> [ADR Auditoría Inmutable](../architecture/adrs/core/0016-immutable-business-audit-trail.md) |
 | **AI Contributor** | [Estándares AI-Augmented](../governance/standards/ai-augmented/README.es.md) -> [Reglas Harness](../../.harness/rules/global-rules.md) -> [Agentes](../../AGENTS.es.md) |
 | **New Joiner** | [Product Quick Start](../governance/standards/onboarding/product-quick-start.md) -> [Taxonomía del Repositorio](../governance/standards/repository-taxonomy.es.md) -> [Portal README](../../README.es.md) |
@@ -51,6 +51,7 @@ Este es el índice completo de navegación de **Evolith** — la plataforma empr
 | Blueprints | [reference/architecture/blueprints](../architecture/blueprints/README.md) |
 | Registro ADR | [reference/architecture/adrs](../architecture/adrs/README.md) |
 | Matriz de Decisiones ADR | [reference/architecture/adrs/adr-matrix](../architecture/adrs/adr-matrix.es.md) |
+| Estándar de Autoría de ADRs | [reference/architecture/adrs/adr-authoring-standard](../architecture/adrs/adr-authoring-standard.es.md) |
 | ADRs Core | [reference/architecture/adrs/core](../architecture/adrs/core/README.es.md) |
 | ADRs Node.js | [reference/architecture/adrs/nodejs](../architecture/adrs/nodejs/README.es.md) |
 | ADRs .NET | [reference/architecture/adrs/dotnet](../architecture/adrs/dotnet/README.es.md) |
@@ -66,6 +67,8 @@ Este es el índice completo de navegación de **Evolith** — la plataforma empr
 | Estándares | [reference/governance/standards](../governance/standards/README.md) |
 | Glosario Arquitectónico | [reference/governance/glossary](../governance/glossary.es.md) |
 | Visión | [reference/governance/standards/vision](../governance/standards/vision/README.es.md) |
+| Tablero de Seguimiento de Gaps | [reference/governance/standards/vision/gap-tracking](../governance/standards/vision/gap-tracking.es.md) |
+| Evaluación de Madurez | [reference/governance/standards/vision/maturity-assessment](../governance/standards/vision/maturity-assessment.es.md) |
 | Ingeniería | [reference/governance/standards/engineering](../governance/standards/engineering/README.es.md) |
 | Onboarding | [reference/governance/standards/onboarding](../governance/standards/onboarding/README.es.md) |
 | AI-Augmented Engineering | [reference/governance/standards/ai-augmented](../governance/standards/ai-augmented/README.es.md) |

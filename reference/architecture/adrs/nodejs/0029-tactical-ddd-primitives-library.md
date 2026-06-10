@@ -33,5 +33,25 @@ Standardize on utilizing the **`@nestjslatam/ddd`** primitives ecosystem within 
 - [ADR-0002: Hexagonal Architecture](../../adrs/nodejs/0002-clean-architecture-nestjs.md)
 - [@nestjslatam/ddd docs](https://github.com/nestjslatam/ddd)
 
+
+
+
+
+## Objective and Scope
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Evidence and Evaluation Criteria
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Related Decisions and Standards
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Current Sources
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
 ---
 [Back to Index](./README.md)

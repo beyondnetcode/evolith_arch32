@@ -98,5 +98,20 @@ Los repositorios satélite deben:
 - [ADR-0048: Taxonomía Empresarial y Diseño de Referencia](./0048-enterprise-taxonomy-reference-layout.md)
 - [ADR-0049: Semántica de Nomenclatura y Política de Código Limpio](./0049-naming-semantics-clean-code-policy.md)
 
+
+
+
+## Opciones Consideradas
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Evidencias y Criterios de Evaluación
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Decisiones y Estándares Relacionados
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
 ---
 [Volver al Índice](./README.md)

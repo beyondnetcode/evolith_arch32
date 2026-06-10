@@ -61,5 +61,35 @@ En la base de datos, las políticas de seguridad RLS bloquean el acceso no autor
 ## 5. Revisión
 Evaluar los impactos de rendimiento bajo cargas altamente concurrentes en la próxima sesión del comité de arquitectura.
 
+
+
+
+
+
+
+## Objetivo y Alcance
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Opciones Consideradas
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Evidencias y Criterios de Evaluación
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Decisiones y Estándares Relacionados
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Fuentes Actuales
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
 ---
 [Volver al Índice](./README.es.md)

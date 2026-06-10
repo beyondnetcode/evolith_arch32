@@ -20,10 +20,10 @@
 | **Motor de Pruebas** | **Jest** | 29.x | **Sí** | Mocha, Ava |
 | **Orquestador Monorepo**| **Nx** | 18.x+ | **Sí** | Turborepo, Lerna |
 > [!TIP]
-> **Aislamiento de Pruebas:** Los desarrolladores DEBEN seguir la estrategia de aislamiento definida en el [ADR-0052](../adrs/core/0052-estrategia-aislamiento-pruebas-unitarias.es.md) al utilizar Mocks (verificación de interacción) o Stubs (configuración de estado).
+> **Aislamiento de Pruebas:** Los desarrolladores DEBEN seguir la estrategia de aislamiento definida en el [ADR-0052](../adrs/core/0052-unit-testing-isolation-strategy.es.md) al utilizar Mocks (verificación de interacción) o Stubs (configuración de estado).
 
 >
-> **Pruebas de Infraestructura:** Las pruebas de Integración y E2E DEBEN utilizar **Testcontainers** como se define en el [ADR-0053](../adrs/core/0053-estrategia-pruebas-integracion-e2e.es.md) para garantizar la paridad con producción.
+> **Pruebas de Infraestructura:** Las pruebas de Integración y E2E DEBEN utilizar **Testcontainers** como se define en el [ADR-0053](../adrs/core/0053-integration-e2e-testing-strategy.es.md) para garantizar la paridad con producción.
 
 
 ---

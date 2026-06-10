@@ -28,3 +28,6 @@
 
 *Contenido pendiente de traducción.*
 
+
+
+Todo ADR debe cumplir el [Estándar de Autoría de ADRs](./adr-authoring-standard.es.md).

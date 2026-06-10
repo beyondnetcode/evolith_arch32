@@ -43,5 +43,35 @@ El marco canónico de .NET consiste en:
 ### Negativas
 * **Huella Operativa**: Estado inactivo de memoria ligeramente mayor comparado con scripts node ligeros, mitigado por trimming y compilación AOT.
 
+
+
+
+
+
+
+## Objetivo y Alcance
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Opciones Consideradas
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Evidencias y Criterios de Evaluación
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Decisiones y Estándares Relacionados
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Fuentes Actuales
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
 ---
 [Volver al Índice](./README.es.md)

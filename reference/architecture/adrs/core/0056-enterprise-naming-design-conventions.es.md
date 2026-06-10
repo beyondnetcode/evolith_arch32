@@ -276,3 +276,16 @@
 
 *Contenido pendiente de traducción.*
 
+> **Nota (2026-06-10):** la traducción completa previa correspondía a una versión anterior del ADR en inglés y fue retirada por desalineación estructural; la re-traducción está cubierta por el backfill GT-20.
+
+## Objetivo y Alcance
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Evidencias y Criterios de Evaluación
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Decisiones y Estándares Relacionados
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).

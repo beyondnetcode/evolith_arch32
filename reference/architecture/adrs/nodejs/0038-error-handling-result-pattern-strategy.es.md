@@ -47,5 +47,35 @@ Mandar que TODOS los Casos de Uso de Aplicación y Entidades de Dominio devuelva
 - [ADR-0002: Arquitectura Hexagonal Limpia](../../adrs/nodejs/0002-clean-architecture-nestjs.md)
 - [ADR-0011: Tolerancia a Fallos](../../adrs/core/0011-fault-tolerance-resiliency-patterns.md)
 
+
+
+
+
+
+
+## Objetivo y Alcance
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Opciones Consideradas
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Evidencias y Criterios de Evaluación
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Decisiones y Estándares Relacionados
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Fuentes Actuales
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
 ---
 [Volver al Índice](./README.es.md)

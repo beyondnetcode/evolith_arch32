@@ -252,5 +252,15 @@ The **Modular Monolith** is not an obsolete technology: it is the correct starti
 
 Corporate posture: **Strict modularity always. Network distribution only when the pain is measurable and verifiable.**
 
+
+
+## Objective and Scope
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Related Decisions and Standards
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
 ---
 [Back to Index](./README.md)

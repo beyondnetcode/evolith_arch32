@@ -343,8 +343,8 @@ Estos son los ADRs Evolith más fuertemente probados por UMS — organizados por
 |---|---|---|
 | [ADR-0010](../../architecture/adrs/core/0010-multi-tenancy-architecture-strategy.md) | Estrategia RLS Doble Capa | `root_tenant_id` en cada tabla, filtro EF Core + predicado RLS SQL Server |
 | [ADR-0031](../../architecture/adrs/core/0031-schema-per-context-domain-event-catalog.md) | Schema-per-Context | 8 schemas separados, uno por bounded context |
-| [ADR-0051](../../architecture/adrs/core/0051-estrategia-motor-base-datos-empresarial.md) | SQL Server 2022 | Closure table, particionamiento, tablas temporales, RLS |
-| [ADR-0057](../../architecture/adrs/dotnet/0071-estrategia-acceso-datos-orm-dotnet.md) | EF Core 8 + Dapper | EF Core para escrituras, Dapper para proyecciones de lectura complejas |
+| [ADR-0051](../../architecture/adrs/core/0051-enterprise-database-engine-strategy.es.md) | SQL Server 2022 | Closure table, particionamiento, tablas temporales, RLS |
+| [ADR-0057](../../architecture/adrs/dotnet/0071-dotnet-data-access-orm-strategy.es.md) | EF Core 8 + Dapper | EF Core para escrituras, Dapper para proyecciones de lectura complejas |
 
 ### Autorización
 | ADR | Decisión | Evidencia UMS |

@@ -30,5 +30,25 @@ Commit to a standard software testing hierarchy and mechanical deployment blocki
 ## References
 - [ADR-0005: Security Gates](../../adrs/core/0005-ci-cd-quality-codeql.md)
 
+
+
+
+
+## Objective and Scope
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Options Considered
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Evidence and Evaluation Criteria
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Related Decisions and Standards
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
 ---
 [Back to Index](./README.md)

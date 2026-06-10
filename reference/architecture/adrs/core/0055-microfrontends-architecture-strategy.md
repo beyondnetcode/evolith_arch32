@@ -55,3 +55,19 @@ Microfrontends MUST NOT be used as a default starting architecture, a trend-driv
 * **Negative**: Increased infrastructure complexity (CI/CD pipelines per MFE), risk of visual inconsistency if the design system is bypassed, initial overhead in orchestrator setup.
 * **Neutral**: Requires a centralized "Shell" or "Orchestrator" application to manage routing and shared state.
 * **Governance**: Any product introducing MFEs before Phase 3 MUST document an explicit ADR deviation with business, team-scale, and deployment evidence.
+
+## Objective and Scope
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Options Considered
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Evidence and Evaluation Criteria
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Related Decisions and Standards
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).

@@ -54,17 +54,17 @@
 | [0040-multi-runtime-selection-contracts.md](adrs/core/0040-multi-runtime-selection-contracts.md) | [0040-multi-runtime-selection-contracts.es.md](adrs/core/0040-multi-runtime-selection-contracts.es.md) | OK |
 | [0044-configurable-security-persistence-strategy.md](adrs/core/0044-configurable-security-persistence-strategy.md) | [0044-configurable-security-persistence-strategy.es.md](adrs/core/0044-configurable-security-persistence-strategy.es.md) | OK |
 | [0045-microservice-extraction-readiness-criteria.md](adrs/core/0045-microservice-extraction-readiness-criteria.md) | [0045-microservice-extraction-readiness-criteria.es.md](adrs/core/0045-microservice-extraction-readiness-criteria.es.md) | OK |
-| [0046-dapr-observabilidad-unificada.md](adrs/core/0046-dapr-observabilidad-unificada.md) | [0046-dapr-observabilidad-unificada.es.md](adrs/core/0046-dapr-observabilidad-unificada.es.md) | OK |
+| [0046-dapr-unified-observability.es.md](adrs/core/0046-dapr-unified-observability.es.md) | [0046-dapr-unified-observability.es.md](adrs/core/0046-dapr-unified-observability.es.md) | OK |
 | [0047-architectural-patterns-monolith-soa-microservices.md](adrs/core/0047-architectural-patterns-monolith-soa-microservices.md) | [0047-architectural-patterns-monolith-soa-microservices.es.md](adrs/core/0047-architectural-patterns-monolith-soa-microservices.es.md) | OK |
 | [0048-enterprise-taxonomy-reference-layout.md](adrs/core/0048-enterprise-taxonomy-reference-layout.md) | [0048-enterprise-taxonomy-reference-layout.es.md](adrs/core/0048-enterprise-taxonomy-reference-layout.es.md) | OK |
 | [0049-naming-semantics-clean-code-policy.md](adrs/core/0049-naming-semantics-clean-code-policy.md) | [0049-naming-semantics-clean-code-policy.es.md](adrs/core/0049-naming-semantics-clean-code-policy.es.md) | OK |
 | [0050-estrategia-ramas-gitflow.md](adrs/core/0050-estrategia-ramas-gitflow.md) | [0050-estrategia-ramas-gitflow.es.md](adrs/core/0050-estrategia-ramas-gitflow.es.md) | OK |
-| [0051-estrategia-motor-base-datos-empresarial.md](adrs/core/0051-estrategia-motor-base-datos-empresarial.md) | [0051-estrategia-motor-base-datos-empresarial.es.md](adrs/core/0051-estrategia-motor-base-datos-empresarial.es.md) | OK |
-| [0052-estrategia-aislamiento-pruebas-unitarias.md](adrs/core/0052-estrategia-aislamiento-pruebas-unitarias.md) | [0052-estrategia-aislamiento-pruebas-unitarias.es.md](adrs/core/0052-estrategia-aislamiento-pruebas-unitarias.es.md) | OK |
-| [0053-estrategia-pruebas-integracion-e2e.md](adrs/core/0053-estrategia-pruebas-integracion-e2e.md) | [0053-estrategia-pruebas-integracion-e2e.es.md](adrs/core/0053-estrategia-pruebas-integracion-e2e.es.md) | OK |
+| [0051-enterprise-database-engine-strategy.es.md](adrs/core/0051-enterprise-database-engine-strategy.es.md) | [0051-enterprise-database-engine-strategy.es.md](adrs/core/0051-enterprise-database-engine-strategy.es.md) | OK |
+| [0052-unit-testing-isolation-strategy.es.md](adrs/core/0052-unit-testing-isolation-strategy.es.md) | [0052-unit-testing-isolation-strategy.es.md](adrs/core/0052-unit-testing-isolation-strategy.es.md) | OK |
+| [0053-integration-e2e-testing-strategy.es.md](adrs/core/0053-integration-e2e-testing-strategy.es.md) | [0053-integration-e2e-testing-strategy.es.md](adrs/core/0053-integration-e2e-testing-strategy.es.md) | OK |
 | [0054-estandares-diseño-normalizacion-base-datos.md](adrs/core/0054-estandares-diseño-normalizacion-base-datos.md) | [0054-estandares-diseño-normalizacion-base-datos.es.md](adrs/core/0054-estandares-diseño-normalizacion-base-datos.es.md) | OK |
-| [0055-estrategia-arquitectura-microfrontends.md](adrs/core/0055-estrategia-arquitectura-microfrontends.md) | [0055-estrategia-arquitectura-microfrontends.es.md](adrs/core/0055-estrategia-arquitectura-microfrontends.es.md) | OK |
-| [0056-convenciones-nomenclatura-diseno-empresarial.md](adrs/core/0056-convenciones-nomenclatura-diseno-empresarial.md) | [0056-convenciones-nomenclatura-diseno-empresarial.es.md](adrs/core/0056-convenciones-nomenclatura-diseno-empresarial.es.md) | OK |
+| [0055-microfrontends-architecture-strategy.es.md](adrs/core/0055-microfrontends-architecture-strategy.es.md) | [0055-microfrontends-architecture-strategy.es.md](adrs/core/0055-microfrontends-architecture-strategy.es.md) | OK |
+| [0056-enterprise-naming-design-conventions.es.md](adrs/core/0056-enterprise-naming-design-conventions.es.md) | [0056-enterprise-naming-design-conventions.es.md](adrs/core/0056-enterprise-naming-design-conventions.es.md) | OK |
 | [0068-documentation-release-gitflow.md](adrs/core/0068-documentation-release-gitflow.md) | [0068-documentation-release-gitflow.es.md](adrs/core/0068-documentation-release-gitflow.es.md) | OK |
 | [README.md](adrs/core/README.md) | [README.es.md](adrs/core/README.es.md) | OK |
 
@@ -81,7 +81,7 @@
 | [0065-dotnet-pii-safe-serilog-pipeline.md](adrs/dotnet/0065-dotnet-pii-safe-serilog-pipeline.md) | [0065-dotnet-pii-safe-serilog-pipeline.es.md](adrs/dotnet/0065-dotnet-pii-safe-serilog-pipeline.es.md) | OK |
 | [0066-dotnet-lightweight-http-idempotency.md](adrs/dotnet/0066-dotnet-lightweight-http-idempotency.md) | [0066-dotnet-lightweight-http-idempotency.es.md](adrs/dotnet/0066-dotnet-lightweight-http-idempotency.es.md) | OK |
 | [0070-enterprise-minimal-apis-adoption.md](adrs/dotnet/0070-enterprise-minimal-apis-adoption.md) | [0070-enterprise-minimal-apis-adoption.es.md](adrs/dotnet/0070-enterprise-minimal-apis-adoption.es.md) | OK |
-| [0071-estrategia-acceso-datos-orm-dotnet.md](adrs/dotnet/0071-estrategia-acceso-datos-orm-dotnet.md) | [0071-estrategia-acceso-datos-orm-dotnet.es.md](adrs/dotnet/0071-estrategia-acceso-datos-orm-dotnet.es.md) | OK |
+| [0071-dotnet-data-access-orm-strategy.es.md](adrs/dotnet/0071-dotnet-data-access-orm-strategy.es.md) | [0071-dotnet-data-access-orm-strategy.es.md](adrs/dotnet/0071-dotnet-data-access-orm-strategy.es.md) | OK |
 | [README.md](adrs/dotnet/README.md) | [README.es.md](adrs/dotnet/README.es.md) | OK |
 
 ## adrs/nodejs

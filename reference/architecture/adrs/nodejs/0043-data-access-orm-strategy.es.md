@@ -67,5 +67,29 @@ Las migraciones deben escribirse explícitamente a través de archivos TypeScrip
 - [ADR-0010: Estrategia de Arquitectura Multi-Tenancy](../../adrs/core/0010-multi-tenancy-architecture-strategy.md)
 - [ADR-0029: Primitivas DDD Tácticas](../../adrs/nodejs/0029-tactical-ddd-primitives-library.md)
 
+
+
+
+
+## Objetivo y Alcance
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Opciones Consideradas
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Decisiones y Estándares Relacionados
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Fuentes Actuales
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
 ---
 [Volver al Índice](./README.es.md)

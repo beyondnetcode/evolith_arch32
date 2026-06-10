@@ -128,5 +128,24 @@ El feedback al usuario se entrega a través del mecanismo centralizado de notifi
 - [ADR-0064 .NET: Contexto de Observabilidad de Scope de Solicitud](../dotnet/0064-dotnet-request-scope-observability-context.md)
 - [ADR-0065 .NET: Pipeline Serilog Seguro contra PII](../dotnet/0065-dotnet-pii-safe-serilog-pipeline.md)
 
+
+
+
+## Evidencias y Criterios de Evaluación
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Decisiones y Estándares Relacionados
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Fuentes Actuales
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
 ---
 [Volver al Índice](./README.md)

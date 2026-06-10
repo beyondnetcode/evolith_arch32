@@ -51,5 +51,20 @@ To mitigate code disorder, the following non-negotiable rules are enforced:
 ## 5. Review
 Evaluate in **Q2 of next year** whether the ecosystem's maturity allows us to formally deprecate Controllers for all new software projects.
 
+
+
+
+## Objective and Scope
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Related Decisions and Standards
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Current Sources
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
 ---
 [Back to Index](./README.md)

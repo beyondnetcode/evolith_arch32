@@ -57,5 +57,25 @@ Establecemos una **Matriz de Ajuste de Protocolo Estricta** adaptada a niveles a
 - [ADR-0027: Estrategia de Protocolo Dual](../../adrs/nodejs/0027-dual-protocol-rest-grpc-api-gateway.md)
 - [ADR-0030: Patrones de Gateway de Dos Capas](../../adrs/core/0030-api-gateway-kong-vs-nestjs.md)
 
+
+
+
+
+## Objetivo y Alcance
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Opciones Consideradas
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Evidencias y Criterios de Evaluación
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Decisiones y Estándares Relacionados
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
 ---
 [Volver al Índice](./README.es.md)

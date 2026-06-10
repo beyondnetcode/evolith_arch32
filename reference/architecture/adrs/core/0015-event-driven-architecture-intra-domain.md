@@ -60,5 +60,25 @@ When a bounded context is extracted into an independent microservice:
 - [ADR-0007: Observability with OpenTelemetry](../../adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md)
 - [ADR-0031: Schema-per-Context and Domain Event Catalog](../../adrs/core/0031-schema-per-context-domain-event-catalog.md)
 
+
+
+
+
+## Objective and Scope
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Options Considered
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Evidence and Evaluation Criteria
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Related Decisions and Standards
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
 ---
 [Back to Index](./README.md)

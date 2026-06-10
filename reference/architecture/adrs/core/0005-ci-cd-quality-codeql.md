@@ -37,5 +37,25 @@ Integrate **GitHub CodeQL** and **npm audit** as mandatory quality gates in the 
 - [GitHub CodeQL Documentation](https://docs.github.com/en/code-security/code-scanning)
 - [ADR-0009: Strict Dependency Pinning](../../adrs/core/0009-strict-dependency-pinning-vulnerability-management.md)
 
+
+
+
+
+## Objective and Scope
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Options Considered
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Evidence and Evaluation Criteria
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Related Decisions and Standards
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
 ---
 [Back to Index](./README.md)

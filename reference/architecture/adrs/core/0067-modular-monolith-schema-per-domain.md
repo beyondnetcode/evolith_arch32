@@ -144,3 +144,15 @@ A product-specific ADR may specialize the database engine details, schema names,
 Products are compliant when they preserve the baseline rule that each module/domain owns its persistence boundary and cross-module persistence access is governed through explicit architectural contracts.
 
 Using schema-per-domain is the recommended Evolith reference strategy when the selected database engine supports schemas, but it is not the only compliant implementation mechanism.
+
+## Objective and Scope
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Evidence and Evaluation Criteria
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Related Decisions and Standards
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).

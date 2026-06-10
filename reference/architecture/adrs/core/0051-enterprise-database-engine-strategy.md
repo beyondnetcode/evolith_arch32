@@ -78,5 +78,20 @@ The enterprise standard for database engines is now differentiated by runtime an
 ## Strategic Conclusion
 By aligning our persistence strategy with the strengths of each runtime, we ensure that our systems are built on the most stable and performant foundations available. SQL Server for .NET and PostgreSQL/MongoDB for Node.js represent the industry's best practices for enterprise-grade polyglot architectures.
 
+
+
+
+## Objective and Scope
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Options Considered
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Related Decisions and Standards
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
 ---
 [Back to Index](../../../../MASTER_INDEX.md)

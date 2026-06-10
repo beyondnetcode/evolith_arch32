@@ -302,8 +302,7 @@ This repository (**Evolith**) serves as the **Evolith Core** — the Reference C
 
 - [Architectural Directives](./architectural-directives.md) — Non-negotiable technical constraints
 - [Evolutionary Strategy Roadmap](./evolutionary-strategy-roadmap.md) — Phase-by-phase technical roadmap
-- [Maturity Evaluation](./maturity-evaluation.md) — Anti-pattern immunization and pattern readiness
-- [Maturity Matrix](./maturity-matrix.md) — TOGAF ACMM assessment
+- [Maturity Assessment](./maturity-assessment.md) — TOGAF ACMM assessment, anti-pattern immunization, and pattern readiness
 - [SDLC Artifact Mapping](../../sdlc/sdlc-evolith-artifact-mapping.md) — Complete artifact-to-gate traceability
 - [SDLC Tracker — Technical Interface Design](./sdlc-tracker-technical-interfaces.md) — CLI/MCP/REST/Agent interface contracts and Tracker DB model
 

@@ -65,8 +65,7 @@ The Domain layer must contain zero references to cloud SDKs, ORM libraries, or H
 ## 4. Supplemental Reading
 
 - [Evolutionary Strategy Roadmap](./evolutionary-strategy-roadmap.md) — Phase-by-phase technical roadmap with measurable KPIs
-- [Maturity Matrix](./maturity-matrix.md) — TOGAF ACMM assessment of the current reference architecture
-- [Design Maturity Evaluation](./maturity-evaluation.md) — Anti-pattern immunization and pattern readiness
+- [Maturity Assessment](./maturity-assessment.md) — TOGAF ACMM assessment, anti-pattern immunization, and pattern readiness
 - [Reference Blueprint](../../../architecture/blueprints/reference-blueprint.md) — Full C4 architectural model
 
 ---

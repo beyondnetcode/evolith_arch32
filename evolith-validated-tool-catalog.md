@@ -235,7 +235,7 @@ interface EvolithTool {
 To add a tool to the catalog:
 
 1. Create ADR referencing the tool
-2. Add entry to `cli-core-parity-tracking.md` tool matrix
+2. Register the gap/feature in `reference/governance/standards/vision/gap-tracking.md` (single tracking board)
 3. Implement CLI integration if executable
 4. Update this catalog with version constraints
 
@@ -262,4 +262,4 @@ Tools explicitly rejected by Evolith Core (require ADR to overturn):
 - [Authoritative Tech Stack - Node.js](./reference/architecture/blueprints/authoritative-tech-stack-nodejs.md)
 - [Authoritative Tech Stack - .NET](./reference/architecture/blueprints/authoritative-tech-stack-dotnet.md)
 - [Phase Gates Ruleset](./rulesets/sdlc/phase-gates.rules.json)
-- [CLI/Core Parity Tracking](./cli-core-parity-tracking.md)
+- [Gap Tracking Board](./reference/governance/standards/vision/gap-tracking.md)

@@ -29,17 +29,17 @@
 * [0040-multi-runtime-selection-contracts](./0040-multi-runtime-selection-contracts.md)
 * [0044-configurable-security-persistence-strategy](./0044-configurable-security-persistence-strategy.md)
 * [0045-microservice-extraction-readiness-criteria](./0045-microservice-extraction-readiness-criteria.md)
-* [0046-dapr-observabilidad-unificada](./0046-dapr-observabilidad-unificada.es.md)
+* [0046-dapr-unified-observability](./0046-dapr-unified-observability.es.md)
 * [0047-architectural-patterns-monolith-soa-microservices](./0047-architectural-patterns-monolith-soa-microservices.md)
 * [0048-enterprise-taxonomy-reference-layout](./0048-enterprise-taxonomy-reference-layout.md)
 * [0049-naming-semantics-clean-code-policy](./0049-naming-semantics-clean-code-policy.md)
 * [0050-gitflow-branching-strategy](./0050-gitflow-branching-strategy.es.md)
-* [0051-estrategia-motor-base-datos-empresarial](./0051-estrategia-motor-base-datos-empresarial.es.md)
-* [0052-estrategia-aislamiento-pruebas-unitarias](./0052-estrategia-aislamiento-pruebas-unitarias.es.md)
-* [0053-estrategia-pruebas-integracion-e2e](./0053-estrategia-pruebas-integracion-e2e.es.md)
+* [0051-enterprise-database-engine-strategy](./0051-enterprise-database-engine-strategy.es.md)
+* [0052-unit-testing-isolation-strategy](./0052-unit-testing-isolation-strategy.es.md)
+* [0053-integration-e2e-testing-strategy](./0053-integration-e2e-testing-strategy.es.md)
 * [0054-database-design-normalization-standards](./0054-database-design-normalization-standards.es.md)
-* [0055-estrategia-arquitectura-microfrontends](./0055-estrategia-arquitectura-microfrontends.es.md)
-* **[0056-convenciones-nomenclatura-diseno-empresarial](./0056-convenciones-nomenclatura-diseno-empresarial.es.md)** — Multi-language, multi-platform naming & design standard
+* [0055-microfrontends-architecture-strategy](./0055-microfrontends-architecture-strategy.es.md)
+* **[0056-enterprise-naming-design-conventions](./0056-enterprise-naming-design-conventions.es.md)** — Multi-language, multi-platform naming & design standard
 * [0068-gitflow-lanzamiento-documentacion](./0068-documentation-release-gitflow.es.md) — **GitFlow de lanzamiento de documentación con quality gates bilingües**
 
 ---

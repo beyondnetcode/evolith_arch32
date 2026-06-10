@@ -252,5 +252,15 @@ El **Monolito Modular** no es una tecnología obsoleta: es el punto de partida c
 
 Postura corporativa: **Modularidad estricta siempre. Distribución en red solo cuando el dolor sea medible y verificable.**
 
+
+
+## Objetivo y Alcance
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Decisiones y Estándares Relacionados
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
 ---
 [Volver al Índice](./README.es.md)

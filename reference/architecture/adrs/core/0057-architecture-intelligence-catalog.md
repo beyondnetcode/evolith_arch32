@@ -63,5 +63,20 @@ External ideas are not standards by default. A catalog item becomes normative on
 - [Pattern Card Template](../../../knowledge/architecture-intelligence/patterns/pattern-card-template.md)
 - [Architecture Radar](../../../knowledge/architecture-intelligence/tradeoffs/architecture-radar.md)
 
+
+
+
+## Objective and Scope
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Options Considered
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Evidence and Evaluation Criteria
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
 ---
 [Back to ADR Registry](./README.md)

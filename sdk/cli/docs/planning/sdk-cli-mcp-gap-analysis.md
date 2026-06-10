@@ -2,8 +2,8 @@
 
 > **Status:** Superseded Historical Analysis
 > **Date:** 2026-06-06
-> **Superseded By:** `reference/governance/standards/vision/gap-analysis-core.md` current verified state
-> **Bilingual Exception:** SDK planning notes currently have no ES counterpart; authoritative bilingual status is maintained in the vision gap analysis pair.
+> **Superseded By:** `reference/governance/standards/vision/gap-tracking.md` (single gap tracking board)
+> **Bilingual Exception:** SDK planning notes currently have no ES counterpart; authoritative bilingual status is maintained in the vision gap-tracking pair.
 
 ---
 
@@ -18,7 +18,7 @@ Current active gaps:
 - Continue closing CLI/Core parity for phase gates, architecture rules, ACL, ADR rules, and evidence manifests.
 
 Use the current Core gap analysis for active planning:
-[Evolith Core Gap Analysis](../../../../reference/governance/standards/vision/gap-analysis-core.md)
+[Evolith Core Gap Tracking Board](../../../../reference/governance/standards/vision/gap-tracking.md)
 
 ## 1. Gap Summary
 

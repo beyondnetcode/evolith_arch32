@@ -12,8 +12,7 @@ Welcome to the central repository of architectural truth. Every document present
 Non-negotiable principles of growth, consistency diagnostics, and self-assessment models.
 * [Architectural Directives and Evolution](./vision/architectural-directives.md)
 * **[Evolutionary Strategy and Dashboard](./vision/evolutionary-strategy-roadmap.md)** *(Global Vision)*
-* [Corporate Maturity Matrix](./vision/maturity-matrix.md)
-* [Dynamic Maturity Evaluation](./vision/maturity-evaluation.md)
+* [Maturity Assessment](./vision/maturity-assessment.md)
 
 ### Phase 01: Blueprint and Topology (arc42)
 The structural design of the system detailed in C4 and CAP views.

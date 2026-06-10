@@ -47,5 +47,25 @@ Adoptar una **Estrategia de Persistencia Configurable** utilizando el patrón St
 - [ADR-0002: Arquitectura Hexagonal Limpia con NestJS](../../adrs/nodejs/0002-clean-architecture-nestjs.md)
 - [ADR-0010: Estrategia de Arquitectura Multi-Tenancy](../../adrs/core/0010-multi-tenancy-architecture-strategy.md)
 
+
+
+
+
+## Objetivo y Alcance
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Opciones Consideradas
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Evidencias y Criterios de Evaluación
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Decisiones y Estándares Relacionados
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
 ---
 [Volver al Índice](./README.es.md)

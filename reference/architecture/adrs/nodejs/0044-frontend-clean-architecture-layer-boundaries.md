@@ -114,5 +114,30 @@ Each layer exposes a public API through `index.ts` barrel files. Cross-layer imp
 - [ADR-0002: Clean Architecture with NestJS](./0002-clean-architecture-nestjs.md)
 - [ADR-0045: Zustand + TanStack Query State Management](./0045-zustand-tanstack-query-state-management.md)
 
+
+
+
+
+
+## Options Considered
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Evidence and Evaluation Criteria
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Related Decisions and Standards
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Technology Watch (Trends, Maturity, Adoption, Support)
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Current Sources
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
 ---
 [Back to Index](./README.md)

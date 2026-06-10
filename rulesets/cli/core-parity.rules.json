@@ -14,7 +14,7 @@
       "category": "traceability",
       "title": "Every Executable Core Rule Has a Parity Record",
       "description": "Each Core ruleset rule intended for automation MUST declare CLI status, MCP status, test status, and evidence status.",
-      "validationQuery": "Compare rulesets/**/*.rules.json against cli-core-parity-tracking.md or generated parity manifest.",
+      "validationQuery": "Compare rulesets/**/*.rules.json against reference/governance/standards/vision/gap-tracking.md or generated parity manifest.",
       "evidenceRequired": ["parity manifest"],
       "blocking": true
     },

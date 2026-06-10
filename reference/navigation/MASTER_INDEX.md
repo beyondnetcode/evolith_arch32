@@ -29,7 +29,7 @@ This is the complete navigation index for **Evolith** — the enterprise progres
 
 | Role | Reading path |
 |---|---|
-| **Executive / Sponsor** | [Architectural Directives](../governance/standards/vision/architectural-directives.md) -> [Evolutionary Roadmap](../governance/standards/vision/evolutionary-strategy-roadmap.md) -> [Maturity Matrix](../governance/standards/vision/maturity-matrix.md) |
+| **Executive / Sponsor** | [Architectural Directives](../governance/standards/vision/architectural-directives.md) -> [Evolutionary Roadmap](../governance/standards/vision/evolutionary-strategy-roadmap.md) -> [Maturity Assessment](../governance/standards/vision/maturity-assessment.md) |
 | **Product Owner / PM** | [UMS Reference Model](../knowledge/demo/ums-reference-model.md) -> [UMS Documentation Index](https://github.com/beyondnetcode/ums/blob/main/docs/MASTER_INDEX.md) -> [Reference vs Applied Model](../knowledge/demo/demo-vs-reference.md) |
 | **Software Architect** | [Architecture Hub](../architecture/README.md) -> [ADR Registry](../architecture/adrs/README.md) -> [UMS Architecture Portal](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) |
 | **Principal / Staff Engineer** | [Agnostic Baseline](../architecture/blueprints/authoritative-tech-stack-agnostic.md) -> [Tactical Design Patterns](../architecture/adrs/core/0019-tactical-design-patterns-future-proofing.md) -> [Simplicity Checklist](../architecture/blueprints/simplicity-checklist-phase-01.md) |
@@ -51,6 +51,7 @@ This is the complete navigation index for **Evolith** — the enterprise progres
 | Blueprints | [reference/architecture/blueprints](../architecture/blueprints/README.md) |
 | ADR Registry | [reference/architecture/adrs](../architecture/adrs/README.md) |
 | ADR Decision Matrix | [reference/architecture/adrs/adr-matrix](../architecture/adrs/adr-matrix.md) |
+| ADR Authoring Standard | [reference/architecture/adrs/adr-authoring-standard](../architecture/adrs/adr-authoring-standard.md) |
 | Core ADRs | [reference/architecture/adrs/core](../architecture/adrs/core/README.md) |
 | Node.js ADRs | [reference/architecture/adrs/nodejs](../architecture/adrs/nodejs/README.md) |
 | .NET ADRs | [reference/architecture/adrs/dotnet](../architecture/adrs/dotnet/README.md) |
@@ -74,7 +75,9 @@ Key architecture references:
 |---|---|
 | Standards | [reference/governance/standards](../governance/standards/README.md) |
 | Architecture Glossary | [reference/governance/glossary](../governance/glossary.md) |
-| Vision | [reference/governance/standards/vision](../governance/standards/vision/README.md) | [Gap Analysis vs Vision](../governance/standards/vision/gap-analysis-core.md) |
+| Vision | [reference/governance/standards/vision](../governance/standards/vision/README.md) |
+| Gap Tracking Board | [reference/governance/standards/vision/gap-tracking](../governance/standards/vision/gap-tracking.md) |
+| Maturity Assessment | [reference/governance/standards/vision/maturity-assessment](../governance/standards/vision/maturity-assessment.md) |
 | Engineering | [reference/governance/standards/engineering](../governance/standards/engineering/README.md) |
 | Onboarding | [reference/governance/standards/onboarding](../governance/standards/onboarding/README.md) |
 | AI-Augmented Engineering | [reference/governance/standards/ai-augmented](../governance/standards/ai-augmented/README.md) |

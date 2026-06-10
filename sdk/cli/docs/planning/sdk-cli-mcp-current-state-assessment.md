@@ -3,7 +3,7 @@
 > **Status:** Superseded Historical Diagnostic
 > **Date:** 2026-06-06
 > **Reference:** Evolith Product Vision Master §2.3
-> **Superseded By:** `reference/governance/standards/vision/gap-analysis-core.md` current verified state
+> **Superseded By:** `reference/governance/standards/vision/gap-tracking.md` (single gap tracking board)
 > **Bilingual Exception:** SDK planning notes currently have no ES counterpart; authoritative bilingual status is maintained in the vision gap analysis pair.
 
 ---
@@ -20,7 +20,7 @@ Verified current state:
 - Release readiness remains blocked by failing/sandbox-sensitive tests and missing MCP smoke evidence.
 
 Use the current Core gap analysis for active planning:
-[Evolith Core Gap Analysis](../../../../reference/governance/standards/vision/gap-analysis-core.md)
+[Evolith Core Gap Tracking Board](../../../../reference/governance/standards/vision/gap-tracking.md)
 
 ## 1. Executive Summary
 

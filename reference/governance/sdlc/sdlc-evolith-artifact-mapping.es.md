@@ -96,7 +96,7 @@ flowchart LR
 | Artefacto | Ubicación | Cuándo usarlo |
 |---|---|---|
 | Roadmap de Estrategia Evolutiva | [evolutionary-strategy-roadmap.md](../standards/vision/evolutionary-strategy-roadmap.md) | Cuando el roadmap del producto abarca múltiples fases Evolith. |
-| Matriz de Madurez | [maturity-matrix.md](../standards/vision/maturity-matrix.md) | Cuando se evalúa un producto brownfield o una posición formal de madurez. |
+| Evaluación de Madurez | [maturity-assessment.es.md](../standards/vision/maturity-assessment.es.md) | Cuando se evalúa un producto brownfield o una posición formal de madurez. |
 | Estrategia de Comunicación Arquitectónica | [architecture-communication-strategy.md](../standards/communication/architecture-communication-strategy.md) | Al preparar briefings de arquitectura para stakeholders o ejecutivos. |
 | Modelo de Referencia UMS | [ums-reference-model.md](../../knowledge/demo/ums-reference-model.md) | Cuando el producto opera en identidad, access management o autorización multi-tenant. |
 

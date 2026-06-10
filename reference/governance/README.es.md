@@ -181,7 +181,6 @@
 |----|----|--------|
 | [architectural-directives.md](standards/vision/architectural-directives.md) | [architectural-directives.es.md](standards/vision/architectural-directives.es.md) | OK |
 | [evolutionary-strategy-roadmap.md](standards/vision/evolutionary-strategy-roadmap.md) | [evolutionary-strategy-roadmap.es.md](standards/vision/evolutionary-strategy-roadmap.es.md) | OK |
-| [maturity-evaluation.md](standards/vision/maturity-evaluation.md) | [maturity-evaluation.es.md](standards/vision/maturity-evaluation.es.md) | OK |
-| [maturity-matrix.md](standards/vision/maturity-matrix.md) | [maturity-matrix.es.md](standards/vision/maturity-matrix.es.md) | OK |
+| [maturity-assessment.md](standards/vision/maturity-assessment.md) | [maturity-assessment.es.md](standards/vision/maturity-assessment.es.md) | OK |
 | [README.md](standards/vision/README.md) | [README.es.md](standards/vision/README.es.md) | OK |
 

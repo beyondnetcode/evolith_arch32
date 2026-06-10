@@ -185,5 +185,15 @@ No agregar ramas permanentes mas alla de `main`, `develop`, `qa` y `uat` sin una
   - Requiere higiene activa de ramas y back-merges disciplinados.
   - Una automatizacion pobre puede convertir las ramas de promocion en cuellos de botella manuales.
 
+
+
+## Objetivo y Alcance
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Decisiones y Estándares Relacionados
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
 ---
 [Volver al Indice](./README.es.md)

@@ -185,5 +185,15 @@ Do not add long-lived branches beyond `main`, `develop`, `qa`, and `uat` without
   - Requires active branch hygiene and disciplined back-merges.
   - Poor automation can turn promotion branches into manual bottlenecks.
 
+
+
+## Objective and Scope
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Related Decisions and Standards
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
 ---
 [Back to Index](./README.md)

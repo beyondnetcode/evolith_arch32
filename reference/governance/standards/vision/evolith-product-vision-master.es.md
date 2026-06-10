@@ -251,8 +251,7 @@ Este repositorio (**Evolith**) sirve como el **Evolith Core** — el Reference C
 
 - [Directivas Arquitectónicas](./architectural-directives.es.md) — Restricciones técnicas no negociables
 - [Roadmap de Estrategia Evolutiva](./evolutionary-strategy-roadmap.es.md) — Hoja de ruta técnica fase por fase
-- [Evaluación de Madurez](./maturity-evaluation.es.md) — Inmunización anti-pattern y preparación de patrones
-- [Matriz de Madurez](./maturity-matrix.es.md) — Evaluación TOGAF ACMM
+- [Evaluación de Madurez](./maturity-assessment.es.md) — Evaluación TOGAF ACMM, inmunización anti-pattern y preparación de patrones
 - [Mapeo de Artefactos SDLC](../../sdlc/sdlc-evolith-artifact-mapping.es.md) — Trazabilidad completa artefacto-a-gate
 - [SDLC Tracker — Diseño de Interfaces Técnicas](./sdlc-tracker-technical-interfaces.es.md) — Contratos de interfaces CLI/MCP/REST/Agentes y modelo de BD del Tracker
 

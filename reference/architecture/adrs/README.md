@@ -1,11 +1,13 @@
 # Architectural Decision Record (ADR) Navigator
 
-> **Bilingual Navigation:** [Versión en Español](../adrs/README.md)
+> **Bilingual Navigation:** [Versión en Español](./README.es.md)
 
 
 Welcome to the system's legal repository. All decisions contained herein have been approved by the Corporate Architectural Board.
 
 Start with the [ADR Decision Matrix](./adr-matrix.md) when you know the concern but not the record number.
+
+Every ADR must comply with the [ADR Authoring Standard](./adr-authoring-standard.md) — it defines the Core vs Platform classification, the required sections, and the file/identity rules.
 
 ---
 

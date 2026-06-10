@@ -43,5 +43,25 @@ Adopt a **Hybrid "Pooled" Multi-Tenancy Strategy** utilizing a mandatory **"Defe
 - [SQL Server Row-Level Security](https://learn.microsoft.com/sql/relational-databases/security/row-level-security)
 - [ADR-0031: Schema-per-Context Strategy](../../adrs/core/0031-schema-per-context-domain-event-catalog.md)
 
+
+
+
+
+## Objective and Scope
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Options Considered
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Evidence and Evaluation Criteria
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Related Decisions and Standards
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
 ---
 [Back to Index](./README.md)

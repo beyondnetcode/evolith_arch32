@@ -55,5 +55,20 @@ We decree a **Strict Factory-Driven Abstraction** strategy for deployment switch
 * **Gate**: Unit tests must instantiate both adapter variants to guarantee identical contract compliance.
 * **Compliance Checklist**: A Pull Request introducing an infrastructure dependency MUST include dynamic binding logic within the central `InfraModule` factory.
 
+
+
+
+## Objective and Scope
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Evidence and Evaluation Criteria
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Related Decisions and Standards
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
 ---
 [Back to Index](./README.md)

@@ -130,5 +130,25 @@ services.AddAopProxy<IRequestHandler<CreateCommand, Result<Response>>, CreateCom
 - [ADR-0065: .NET PII-Safe Serilog Pipeline](./0065-dotnet-pii-safe-serilog-pipeline.md)
 - [ADR-0066: .NET Lightweight HTTP Idempotency](./0066-dotnet-lightweight-http-idempotency.md)
 
+
+
+
+
+## Evidence and Evaluation Criteria
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Related Decisions and Standards
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Technology Watch (Trends, Maturity, Adoption, Support)
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Current Sources
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
 ---
 [Back to Index](./README.md)

@@ -78,5 +78,25 @@ We establish a mandatory strategy for heavy-weight testing layers.
 ## Strategic Conclusion
 By moving away from in-memory simulations and adopting a container-based integration strategy, we significantly increase the reliability of our deployment pipeline. The extra execution time is a justified trade-off for the confidence gained in our infrastructure-dependent code.
 
+
+
+
+
+## Objective and Scope
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Options Considered
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Evidence and Evaluation Criteria
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Related Decisions and Standards
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
 ---
 [Back to Index](../../../../MASTER_INDEX.md)

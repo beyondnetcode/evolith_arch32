@@ -36,5 +36,25 @@ Las reglas inmutables son:
 * **Refactoring Inicial:** Implicó un cambio mayor a nivel de carpetas que requirió re-escribir hipervínculos internos en toda la documentación.
 * **Curva de Aprendizaje:** Los nuevos desarrolladores deben ser capacitados sobre la política de taxonomía (ubicada en `reference/governance/standards/repository-taxonomy.es.md`) antes de crear nuevas carpetas.
 
+
+
+
+
+## Objetivo y Alcance
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Opciones Consideradas
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Evidencias y Criterios de Evaluación
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Decisiones y Estándares Relacionados
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
 ---
 [Volver al Registro ADR](./README.es.md)

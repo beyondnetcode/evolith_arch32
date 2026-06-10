@@ -2,10 +2,12 @@
 
 * [architectural-directives](./architectural-directives.md)
 * [evolutionary-strategy-roadmap](./evolutionary-strategy-roadmap.md)
-* [maturity-evaluation](./maturity-evaluation.md)
-* [maturity-matrix](./maturity-matrix.md)
 * [evolith-product-vision-master](./evolith-product-vision-master.md)
-* [gap-analysis-core](./gap-analysis-core.md) **[NEW]** — Current state vs vision analysis
+
+## Monitoring (the only two tracking surfaces)
+
+* [gap-tracking](./gap-tracking.md) — **Gap Tracking Board**: criticality, complexity, and live status per gap
+* [maturity-assessment](./maturity-assessment.md) — **Maturity Assessment**: international standards (TOGAF ACMM/WAF), vision alignment, and links to open gaps
 
 ---
 [Back to Upper Level](../README.md)

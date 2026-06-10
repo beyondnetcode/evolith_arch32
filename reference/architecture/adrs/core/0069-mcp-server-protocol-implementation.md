@@ -348,6 +348,21 @@ export const mcpCommand = new Command('mcp')
 - [Open-Core Boundary Rules](../../../../rulesets/governance/open-core-boundary.rules.json)
 - [@modelcontextprotocol/sdk](https://modelcontextprotocol.io)
 
+
+
+
+## Options Considered
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Evidence and Evaluation Criteria
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Related Decisions and Standards
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
 ---
 
 [Back to Index](./README.md)

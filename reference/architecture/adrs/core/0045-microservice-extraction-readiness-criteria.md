@@ -41,5 +41,20 @@ A domain module MUST be deemed a valid candidate for the extraction phase (Miles
 - [ADR 0047: Selection Framework: Monolith vs SOA vs Microservices](../core/0047-architectural-patterns-monolith-soa-microservices.md)
 - Sam Newman - *Building Microservices* (2nd Ed. 2021)
 
+
+
+
+## Objective and Scope
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Options Considered
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
+## Related Decisions and Standards
+
+> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-tracking.md#gt-20) (ADR standardization 2026-06-10).
+
 ---
 [Back to Index](./README.md)

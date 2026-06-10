@@ -96,7 +96,7 @@ flowchart LR
 | Artifact | Location | When to Use |
 |---|---|---|
 | Evolutionary Strategy Roadmap | [evolutionary-strategy-roadmap.md](../standards/vision/evolutionary-strategy-roadmap.md) | When the product roadmap spans multiple Evolith phases. |
-| Maturity Matrix | [maturity-matrix.md](../standards/vision/maturity-matrix.md) | When assessing a brownfield product or formal maturity position. |
+| Maturity Assessment | [maturity-assessment.md](../standards/vision/maturity-assessment.md) | When assessing a brownfield product or formal maturity position. |
 | Architecture Communication Strategy | [architecture-communication-strategy.md](../standards/communication/architecture-communication-strategy.md) | When preparing stakeholder or executive architecture briefings. |
 | UMS Reference Model | [ums-reference-model.md](../../knowledge/demo/ums-reference-model.md) | When the product operates in identity, access management, or multi-tenant authorization. |
 

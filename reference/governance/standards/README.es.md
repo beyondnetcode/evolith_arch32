@@ -12,8 +12,7 @@ Bienvenido al repositorio central de la verdad arquitectónica. Cada documento p
 Principios no negociables de crecimiento, diagnósticos de consistencia y modelos de autoevaluación.
 * [Directivas Arquitectónicas y Evolución](./vision/architectural-directives.es.md)
 * **[Estrategia Evolutiva y Tablero de Control](./vision/evolutionary-strategy-roadmap.es.md)** *(Visión Global)*
-* [Matriz de Madurez Corporativa](./vision/maturity-matrix.md)
-* [Evaluación de Madurez Dinámica](./vision/maturity-evaluation.md)
+* [Evaluación de Madurez](./vision/maturity-assessment.es.md)
 
 ### Fase 01: Blueprint y Topología (arc42)
 El diseño estructural del sistema detallado en vistas C4 y CAP.

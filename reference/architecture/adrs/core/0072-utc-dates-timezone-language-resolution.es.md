@@ -130,5 +130,20 @@ Todos los sistemas satélite de Evolith deben seguir el mismo estándar para que
 - [ADR-0016: Rastro de Auditoría Inmutable de Negocio](./0016-immutable-business-audit-trail.md)
 - [ADR-0044: Límites de Capas — Arquitectura Limpia en Frontend](../nodejs/0044-frontend-clean-architecture-layer-boundaries.md)
 
+
+
+
+## Opciones Consideradas
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Evidencias y Criterios de Evaluación
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Decisiones y Estándares Relacionados
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
 ---
 [Volver al Índice](./README.md)

@@ -1,8 +1,11 @@
 # Evolith CLI Backlog
 
+> **Status:** Superseded Historical Backlog — do not add new items here.
+> **Superseded By:** [`reference/governance/standards/vision/gap-tracking.md`](../../../../reference/governance/standards/vision/gap-tracking.md) — the single gap tracking board for Evolith Core.
+
 ## Overview
 
-This backlog tracks all improvements, gaps, and feature requests for the Evolith CLI. Items are prioritized by impact and effort, organized by phases.
+This backlog tracked improvements, gaps, and feature requests for the Evolith CLI. It is preserved for historical traceability; active tracking lives exclusively in the gap tracking board linked above.
 
 ---
 

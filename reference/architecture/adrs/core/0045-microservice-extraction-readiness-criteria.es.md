@@ -41,5 +41,20 @@ Un módulo de dominio DEBE considerarse un candidato válido para la fase de ext
 - [ADR 0047: Marco de Selección: Monolito vs SOA vs Microservicios](../core/0047-architectural-patterns-monolith-soa-microservices.md)
 - Sam Newman - *Building Microservices* (2nd Ed. 2021)
 
+
+
+
+## Objetivo y Alcance
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Opciones Consideradas
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
+## Decisiones y Estándares Relacionados
+
+> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-tracking.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+
 ---
 [Volver al Índice](./README.es.md)

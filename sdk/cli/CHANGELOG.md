@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Features
+
+* **cli:** enforce hexagonal architecture layer boundaries with eslint-plugin-boundaries; adds `npm run lint` script and CI lint gate
+
 ## [1.1.0](https://github.com/beyondnetcode/evolith_arch32/compare/cli-v1.0.3...cli-v1.1.0) (2026-06-04)
 
 

@@ -2,398 +2,508 @@
 
 > **Bilingual Navigation:** [Versión en Español](./sdlc-tracker-technical-interfaces.es.md)
 
-**Status:** Draft — Pending Architecture Board Review
-**Owner:** Evolith Architecture Board
-**Last Updated:** 2026-06-09
+**Status:** Proposed Design — Pending Architecture Board Review  
+**Owner:** Evolith Architecture Board  
+**Last Updated:** 2026-06-10  
+**Parent Design:** [Governed Composition Target Design](./evolith-governed-composition-target-design.md)  
+**Implementation Status:** Documentation only — no source-code change authorized
 
 ---
 
 ## 1. Purpose
 
-This document defines the technical interface architecture that enables the
-**Evolith SDLC Tracker** to orchestrate the CLI, MCP server, REST services,
-and autonomous agents across the 5 SDLC Phase Gates.
+This document defines the technical interfaces through which Evolith Tracker governs the SDLC while composing external work systems, agents, observability, analytics, repositories, CI/CD, testing, security, and deployment platforms.
 
-The Tracker is an independent platform. It does not extend the CLI — it
-**calls** the CLI and other services as stateless evaluation providers,
-persisting all state in its own database.
+The responsibility model is:
+
+> **Core defines. Providers execute. CLI and MCP evaluate. Tracker decides and audits.**
+
+Tracker is not an extension of the CLI. It is the canonical runtime governance system.
 
 ---
 
-## 2. Architectural Principle — Separation of Concerns
+## 2. Architectural Invariants
 
+1. Tracker owns process, phase, gate, decision, approval, exception, and audit state.
+2. Evolith Core is read-only at runtime and supplies versioned rules, schemas, standards, and contracts.
+3. CLI, MCP, CI, and external evaluators return technical results; they never mutate canonical phase state.
+4. External systems remain authoritative for their native operational facts.
+5. Tracker decides whether those facts satisfy Core and tenant governance.
+6. Agents execute bounded activities and produce evidence; they cannot approve gates.
+7. Every provider is isolated behind a provider-neutral port and ACL.
+8. All canonical decisions reference the exact policy, evidence, approvals, and exceptions used.
+
+---
+
+## 3. Target Interface Architecture
+
+```mermaid
+flowchart TB
+    classDef tracker fill:#14532d,stroke:#22c55e,color:#fff
+    classDef core fill:#1e3a5f,stroke:#3b82f6,color:#fff
+    classDef provider fill:#4a1d96,stroke:#a855f7,color:#fff
+    classDef actor fill:#4a3800,stroke:#f59e0b,color:#fff
+
+    HUMAN["Humans and Enterprise Clients"]:::actor
+    AGENT["Autonomous Agents and LLMs"]:::actor
+
+    subgraph TRACKER["Evolith Tracker"]
+        API["Governance REST API"]:::tracker
+        MCPGW["MCP Gateway"]:::tracker
+        ORCH["Process and Phase Orchestrator"]:::tracker
+        DECISION["Gate Decision Engine"]:::tracker
+        EVIDENCE["Evidence Graph Service"]:::tracker
+        POLICY["Policy Resolution Service"]:::tracker
+        PROVIDERS["Provider Registry and ACL Runtime"]:::tracker
+        AUDIT["Approval, Exception and Audit Service"]:::tracker
+    end
+
+    CORE["Evolith Core\nRulesets · Schemas · Standards · Contracts"]:::core
+    EVALUATOR["Evolith SDK / CLI / MCP\nStateless Evaluation Runtime"]:::core
+
+    WORK["Work Management Providers"]:::provider
+    SCM["Repository and CI/CD Providers"]:::provider
+    OBS["LLM and Runtime Observability Providers"]:::provider
+    BI["Analytics Providers"]:::provider
+    QA["Testing, Security and Deployment Providers"]:::provider
+
+    HUMAN --> API
+    AGENT --> MCPGW
+    API --> ORCH
+    MCPGW --> ORCH
+    ORCH --> POLICY
+    ORCH --> EVIDENCE
+    ORCH --> DECISION
+    DECISION --> AUDIT
+
+    POLICY --> CORE
+    POLICY --> EVALUATOR
+    EVALUATOR --> POLICY
+
+    PROVIDERS --> WORK
+    PROVIDERS --> SCM
+    PROVIDERS --> OBS
+    PROVIDERS --> BI
+    PROVIDERS --> QA
+    PROVIDERS --> EVIDENCE
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                     SDLC Tracker                             │
-│  ┌──────────────┐  ┌──────────────┐  ┌───────────────────┐  │
-│  │   Process    │  │    Gate      │  │     Chatbox       │  │
-│  │ Orchestrator │  │  Evaluation  │  │     Service       │  │
-│  └──────┬───────┘  └──────┬───────┘  └────────┬──────────┘  │
-│         │                 │                   │              │
-│  ┌──────▼─────────────────▼───────────────────▼──────────┐  │
-│  │                    REST API Gateway                    │  │
-│  └──────────────────────────┬───────────────────────────┘   │
-│                             │                                │
-│  ┌──────────────────────────▼───────────────────────────┐   │
-│  │              State Store (Tracker DB)                 │   │
-│  │   SatelliteProject · SDLCProcess · PhaseExecution     │   │
-│  │   GateEvaluation · ChatboxSession · AgentRun          │   │
-│  └──────────────────────────────────────────────────────┘   │
-└──────────────────────┬──────────────────────────────────────┘
-                       │  calls (stateless evaluation)
-          ┌────────────┼────────────────┐
-          │            │                │
-   MCP HTTP/SSE    REST API        Evolith Core
-  (CLI tools)    (satellites)     (read-only rules)
-```
-
-**Key invariant:** The CLI and MCP server are **stateless**. They receive a
-request, evaluate against Core rulesets, and return a result. The Tracker
-writes the result to its own database. Neither Core nor the CLI write to the
-Tracker database.
 
 ---
 
-> **Contract ratification:** the output envelope, `GateEvidence` schema, global flags, and naming defined below are ratified by [ADR 0073](../../../architecture/adrs/core/0073-unified-cli-output-contract.md) (status: Approved 2026-06-10). On conflict, the ADR prevails.
+## 4. Canonical Contract Separation
 
-## 3. Gap Analysis — What the CLI Needs to Support the Tracker
+### 4.1 Evidence Item
 
-The table below lists what must be added to the existing CLI (`@evolith/smart-cli`)
-for the Tracker to function. The CLI **remains stateless** in all cases.
-
-| Gap | What Is Needed | CLI Layer | New MCP Tool | New REST Endpoint |
-|-----|---------------|-----------|:---:|:---:|
-| **Phase-scoped validation** | Gate evaluation accepting a phase context parameter | `application` | Yes — `evolith-gate-evaluate` | No |
-| **Event emission** | Webhook POST to Tracker when gate completes | `infrastructure` | No | No — outbound webhook |
-| **Chatbox endpoint** | Session-aware conversational HTTP endpoint (text in, streamed text out) | `core` | Yes — `evolith-chat` | Yes — `POST /chat` |
-| **Structured gate evidence** | Gate tools must return structured JSON evidence (not just pass/fail) | `domain` | Extend existing tools | No |
-| **Phase context resolver** | Accept `{ phase, projectId, rulesetRef }` as input on all MCP tools | `application` | Extend existing tools | No |
-| **Autonomous agent trigger** | Agent that evaluates all gates for a phase transition without human call | `core` | Yes — `evolith-phase-advance` | Yes — `POST /phase/advance` |
-
----
-
-## 4. Interface Contracts
-
-### 4.1 Tracker → CLI/MCP (Gate Evaluation)
-
-**Protocol:** MCP HTTP/SSE — `POST /message`, responses via `GET /sse`
+A provider, human, agent, or CI system submits an immutable evidence reference.
 
 ```typescript
-// Request payload (JSON-RPC 2.0)
-interface GateEvaluateRequest {
-  jsonrpc: '2.0';
+interface EvidenceItem {
   id: string;
-  method: 'tools/call';
-  params: {
-    name: 'evolith-gate-evaluate';
-    arguments: {
-      phase: 'discovery' | 'design' | 'construction' | 'qa' | 'release';
-      projectPath: string;       // satellite repo path
-      rulesetRef: string;        // reference to Core ruleset (e.g. "rulesets/phase-gates/design.yaml")
-      evidenceMode: 'full' | 'summary';
-    };
-  };
-}
+  tenantId: string;
+  productId: string;
+  processId: string;
+  phaseExecutionId: string;
+  gateId?: string;
+  criterionId?: string;
 
-// Response (via SSE data event)
-interface GateEvaluateResponse {
-  jsonrpc: '2.0';
+  evidenceType: string;
+  schemaRef: string;
+  schemaVersion: string;
+
+  source: {
+    providerConnectionId: string;
+    providerType: string;
+    externalId: string;
+    sourceUrl?: string;
+  };
+
+  producer: {
+    actorType: 'human' | 'agent' | 'ci' | 'system';
+    actorId: string;
+    modelRef?: string;
+    promptVersion?: string;
+    skillVersion?: string;
+  };
+
+  references: Array<{
+    type: 'artifact' | 'commit' | 'pull_request' | 'pipeline' | 'test' | 'deployment' | 'trace' | 'document';
+    id: string;
+    url?: string;
+  }>;
+
+  integrity: {
+    contentHash: string;
+    capturedAt: string;
+    signatureRef?: string;
+  };
+
+  telemetry?: {
+    durationMs?: number;
+    cost?: number;
+    inputTokens?: number;
+    outputTokens?: number;
+  };
+
+  classification: string;
+  retentionPolicyRef: string;
+}
+```
+
+### 4.2 Technical Evaluation Result
+
+Produced by SDK, CLI, MCP, CI, or a specialized evaluator. It is not a canonical gate decision.
+
+```typescript
+interface TechnicalEvaluationResult {
   id: string;
-  result: {
-    content: Array<{
-      type: 'text';
-      text: string;              // structured JSON evidence as text
-    }>;
-  };
-}
-
-// Parsed evidence structure
-interface GateEvidence {
   gateId: string;
-  phase: string;
-  verdict: 'passed' | 'failed' | 'skipped';
+  criterionId: string;
+  status: 'compliant' | 'non_compliant' | 'indeterminate' | 'error';
   rulesetRef: string;
   rulesetVersion: string;
-  violations: Array<{
+  evidenceIds: string[];
+  findings: Array<{
     ruleId: string;
-    severity: 'error' | 'warning';
-    location: string;
+    severity: 'error' | 'warning' | 'info';
+    location?: string;
     message: string;
   }>;
-  evaluatedAt: string;           // ISO 8601
-  evaluatedBy: 'human' | 'agent' | 'ci';
-}
-```
-
-### 4.2 Tracker REST API (Frontend + CI/CD)
-
-**Base URL:** `https://tracker.evolith.io/api/v1`  
-**Auth:** Bearer token (delegated to UMS)
-
-```typescript
-// Satellite registration
-// POST /satellites
-interface RegisterSatelliteRequest {
-  name: string;
-  repoUrl: string;
-  rulesetRef: string;            // points to Evolith Core
-}
-interface RegisterSatelliteResponse {
-  id: string;                    // SatelliteProject.id
-  createdAt: string;
-}
-
-// Start SDLC process
-// POST /satellites/:id/processes
-interface StartProcessResponse {
-  processId: string;             // SDLCProcess.id
-  currentPhase: string;
-  startedAt: string;
-}
-
-// Advance phase (triggers gate evaluation)
-// POST /processes/:id/advance
-interface AdvancePhaseRequest {
-  triggeredBy: 'human' | 'agent' | 'ci';
-  notes?: string;
-}
-interface AdvancePhaseResponse {
-  processId: string;
-  previousPhase: string;
-  currentPhase: string;
-  gateVerdict: 'passed' | 'failed' | 'blocked';
-  gateEvaluationId: string;
-}
-
-// Get process status
-// GET /processes/:id
-interface ProcessStatusResponse {
-  processId: string;
-  satelliteId: string;
-  currentPhase: string;
-  phases: PhaseExecution[];
-  driftIndex: number;            // 0–100, 0 = no drift
-}
-
-// Get gate history
-// GET /processes/:id/gates
-interface GateHistoryResponse {
-  gates: GateEvaluation[];
-}
-```
-
-### 4.3 Chatbox API (Developer In-UI)
-
-**Endpoint:** `POST /chat/sessions` (create), `POST /chat/sessions/:id/messages` (send)  
-**Protocol:** HTTP with SSE streaming response
-
-```typescript
-// Create chatbox session
-// POST /chat/sessions
-interface CreateSessionRequest {
-  processId: string;             // ties session to active SDLC process
-  phase: string;
-  modelRef?: string;             // LLM model; falls back to configured default
-}
-interface CreateSessionResponse {
-  sessionId: string;             // ChatboxSession.id
-  contextSnapshot: {
-    phase: string;
-    currentGateStatus: string;
-    recentViolations: number;
+  evaluatedAt: string;
+  evaluator: {
+    type: 'cli' | 'mcp' | 'ci' | 'agent' | 'specialized_provider';
+    version: string;
   };
 }
-
-// Send message (response streamed via SSE)
-// POST /chat/sessions/:id/messages
-interface SendMessageRequest {
-  role: 'user';
-  content: string;
-  toolHint?: 'evolith-validate' | 'evolith-metrics' | 'auto';
-}
-// SSE stream events:
-// data: {"type":"token","value":"..."}
-// data: {"type":"tool_call","tool":"evolith-validate","result":{...}}
-// data: {"type":"done","turnId":"..."}
-
-// Offline/degraded fallback:
-// If no LLM API key is configured, the chatbox routes all queries through
-// MCP tools only and returns structured text (no generative response).
 ```
 
-### 4.4 Agent Interface (Autonomous Gate Evaluation)
+### 4.3 Gate Decision
 
-**Trigger:** Phase transition event from the Process Orchestrator  
-**Protocol:** Internal event bus → Agent runner → MCP tool calls
+Produced only by Tracker.
 
 ```typescript
-interface AgentTriggerEvent {
-  type: 'phase.transition.requested';
+interface GateDecision {
+  id: string;
+  processId: string;
+  phaseExecutionId: string;
+  gateId: string;
+  status: 'approved' | 'rejected' | 'blocked' | 'approved_with_exception';
+  policySnapshotRef: string;
+  evidenceSnapshotRef: string;
+  technicalEvaluationIds: string[];
+  approvalIds: string[];
+  exceptionIds: string[];
+  decidedAt: string;
+  decidedBy: {
+    system: 'evolith-tracker';
+    accountableActorId?: string;
+  };
+  rationale: string;
+}
+```
+
+### 4.4 Phase Transition
+
+```typescript
+interface PhaseTransition {
+  id: string;
   processId: string;
   fromPhase: string;
   toPhase: string;
-  triggeredBy: 'human' | 'ci';
-  timestamp: string;
-}
-
-interface AgentRunRecord {
-  id: string;                    // AgentRun.id
-  processId: string;
-  triggerEvent: AgentTriggerEvent;
-  agentType: 'gate-evaluator';
-  toolCallLog: Array<{
-    tool: string;
-    input: object;
-    output: object;
-    durationMs: number;
-  }>;
-  outcome: 'passed' | 'failed' | 'error';
-  gateEvaluationId: string;      // ref to GateEvaluation created
-  startedAt: string;
-  completedAt: string;
-}
-```
-
-### 4.5 Satellite CI Integration
-
-Satellites call the Tracker from their CI pipeline to report events and
-receive gate verdicts synchronously.
-
-```typescript
-// POST /webhooks/ci-event
-interface CIEventRequest {
-  satelliteId: string;
-  event: 'build.completed' | 'tests.passed' | 'coverage.reported';
-  phase: string;
-  payload: {
-    branch: string;
-    commitSha: string;
-    coverage?: number;
-    testsPassed?: number;
-    testsFailed?: number;
-  };
-}
-interface CIEventResponse {
-  accepted: boolean;
-  gateVerdict?: 'passed' | 'failed' | 'pending';
-  message?: string;
+  gateDecisionId: string;
+  status: 'requested' | 'authorized' | 'executed' | 'failed' | 'cancelled';
+  requestedBy: string;
+  requestedAt: string;
+  executedAt?: string;
 }
 ```
 
 ---
 
-## 5. Tracker Database — Entity Model
+## 5. Gate Decision Sequence
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant C as Client / Human / Agent / CI
+    participant T as Tracker Orchestrator
+    participant P as Provider Runtime
+    participant E as Evidence Graph
+    participant R as Policy Resolver
+    participant V as Stateless Evaluator
+    participant D as Gate Decision Engine
+    participant H as Human Approver
+
+    C->>T: POST transition request
+    T->>P: Collect or refresh provider evidence
+    P-->>E: Submit normalized EvidenceItems
+    T->>R: Resolve Core and tenant policy snapshot
+    R->>V: Evaluate gate criteria
+    V-->>R: TechnicalEvaluationResults
+    R-->>D: Policy snapshot + evaluations
+    E-->>D: Evidence snapshot
+
+    alt Approval or exception required
+        D->>H: Approval request
+        H-->>D: Approval / rejection / exception
+    end
+
+    D->>D: Persist canonical GateDecision
+
+    alt approved
+        D-->>T: Authorized decision
+        T->>T: Execute PhaseTransition
+        T-->>C: New canonical phase state
+    else rejected or blocked
+        D-->>T: Blocking decision
+        T-->>C: Missing evidence, findings and required actions
+    end
+```
+
+---
+
+## 6. Tracker REST API
+
+**Base URL:** `https://tracker.evolith.io/api/v1`  
+**Authorization:** UMS-delegated bearer token and tenant graph
+
+### 6.1 Products and Processes
 
 ```typescript
-interface SatelliteProject {
-  id: string;
+interface RegisterProductRequest {
+  tenantId: string;
   name: string;
-  repoUrl: string;
-  rulesetRef: string;            // read-only pointer to Evolith Core
-  registeredAt: string;
-  active: boolean;
+  repositoryRef?: string;
+  governanceProfileRef: string;
 }
 
-interface SDLCProcess {
-  id: string;
-  satelliteId: string;           // ref SatelliteProject
-  currentPhase: 'discovery' | 'design' | 'construction' | 'qa' | 'release' | 'completed';
-  startedAt: string;
-  completedAt?: string;
-  status: 'active' | 'blocked' | 'completed' | 'abandoned';
+interface StartProcessRequest {
+  productId: string;
+  processTemplateRef: string;
 }
+```
 
-interface PhaseExecution {
-  id: string;
-  processId: string;             // ref SDLCProcess
-  phase: string;
-  enteredAt: string;
-  exitedAt?: string;
-  outcome?: 'passed' | 'failed' | 'skipped';
+### 6.2 Evidence Submission
+
+```text
+POST /evidence
+POST /evidence/import
+GET  /evidence/:id
+GET  /processes/:id/evidence-graph
+```
+
+All submission endpoints validate provider identity, tenant boundary, schema, lineage, and integrity before an item becomes eligible evidence.
+
+### 6.3 Transition Request
+
+```typescript
+interface RequestTransition {
+  requestedBy: string;
+  targetPhase: string;
   notes?: string;
 }
 
-interface GateEvaluation {
-  id: string;
-  phaseExecutionId: string;      // ref PhaseExecution
-  gateId: string;
-  rulesetRef: string;            // Core ruleset used (read-only reference)
-  rulesetVersion: string;
-  evaluationMode: 'sync' | 'async' | 'agent';
-  verdict: 'passed' | 'failed' | 'skipped' | 'pending';
-  evidencePayload: GateEvidence; // full structured evidence (see §4.1)
-  evaluatedAt: string;
-  evaluatedBy: 'human' | 'agent' | 'ci';
+interface TransitionResponse {
+  transitionId: string;
+  decisionId?: string;
+  status: 'requested' | 'authorized' | 'executed' | 'blocked' | 'failed';
+  currentPhase: string;
+  missingEvidence?: string[];
+  requiredActions?: string[];
 }
+```
 
-interface ChatboxSession {
-  id: string;
-  processId: string;             // ref SDLCProcess
-  phaseExecutionId: string;      // ref PhaseExecution
-  startedAt: string;
-  modelRef: string;
-  turns: Array<{
-    id: string;
-    role: 'user' | 'assistant';
-    content: string;
-    toolCalls?: Array<{ tool: string; input: object; output: object }>;
-    timestamp: string;
-    tokenUsage?: { prompt: number; completion: number };
-  }>;
-  closedAt?: string;
-}
+```text
+POST /processes/:id/transitions
+GET  /transitions/:id
+GET  /decisions/:id
+```
 
-interface AgentRun {
-  id: string;
-  processId: string;             // ref SDLCProcess
-  triggerEvent: AgentTriggerEvent;
-  agentType: string;
-  toolCallLog: Array<{ tool: string; input: object; output: object; durationMs: number }>;
-  outcome: 'passed' | 'failed' | 'error';
-  gateEvaluationId?: string;    // ref GateEvaluation produced
-  startedAt: string;
-  completedAt?: string;
-  errorMessage?: string;
-}
+### 6.4 Approvals and Exceptions
+
+```text
+POST /decisions/:id/approvals
+POST /decisions/:id/exceptions
+GET  /decisions/:id/audit
 ```
 
 ---
 
-## 6. Design Prompt for Architecture Specification
+## 7. MCP and CLI Interfaces
 
-The following prompt captures the full design scope for the Claude Design agent
-tasked with defining the complete Tracker system architecture. It serves as the
-canonical reference for the Architecture Spec-Driven phase of the Tracker itself.
+CLI and MCP expose the same application use cases and unified output envelope, but their semantics are technical rather than canonical.
 
-**Scope:** The design agent must produce (A) C4 Level-1 System Context Diagram,
-(B) C4 Level-2 Container Diagram, (C) full interface contracts for all five
-integration surfaces (MCP, REST, Chatbox, Agents, CI webhooks), (D) Gate data
-model, (E) ChatboxSession data model, (F) CLI extension requirements table, and
-(G) technology recommendations for each Tracker container.
+### 7.1 Evaluation Tool
 
-**Constraints for the design agent:**
-- CLI hexagonal architecture must be preserved and remain stateless
-- Tracker database is internal — no direct external write access
-- MCP HTTP/SSE is canonical for AI/agent consumers; REST for non-AI consumers
-- Chatbox must degrade gracefully without an LLM API key (MCP-tools-only mode)
-- All gate evaluations must carry full traceability: ruleset ref + version + timestamp
+```typescript
+interface EvaluateCriterionRequest {
+  processContext: {
+    tenantId: string;
+    productId: string;
+    processId: string;
+    phase: string;
+    gateId: string;
+  };
+  rulesetRef: string;
+  evidenceIds: string[];
+}
+```
+
+```text
+evolith criterion evaluate
+evolith gate assess
+MCP: evolith-criterion-evaluate
+MCP: evolith-gate-assess
+```
+
+These operations return `TechnicalEvaluationResult`. They never return or persist a `GateDecision`.
+
+### 7.2 Context and Evidence Tools
+
+```text
+evolith-context-resolve
+evolith-evidence-validate
+evolith-artifact-validate
+evolith-drift-detect
+```
+
+### 7.3 Prohibited Interfaces
+
+The following interfaces are prohibited:
+
+- generic remote shell execution;
+- CLI or MCP command that mutates canonical Tracker phase state;
+- agent tool that self-approves a gate;
+- evidence submission without tenant and source identity;
+- provider payload accepted directly into the canonical domain without ACL mapping.
 
 ---
 
-## 7. Relationship to Evolith Core
+## 8. Provider Port Contracts
 
-| Concern | Owned By | Access |
-|---------|---------|--------|
-| Rulesets and governance definitions | Evolith Core | Read-only from Tracker |
-| SDLC process state | Tracker DB | Write/read by Tracker only |
-| Gate evaluation logic | CLI / MCP tools | Called by Tracker, stateless |
-| Chatbox session history | Tracker DB | Write/read by Tracker only |
-| Agent execution records | Tracker DB | Write/read by Tracker only |
+```typescript
+interface ProviderPort<TCapability, TRequest, TResult> {
+  providerType: string;
+  capabilities(): Promise<TCapability[]>;
+  execute(request: TRequest): Promise<TResult>;
+  health(): Promise<ProviderHealth>;
+}
+```
 
-Any rule change must follow the **Upstream Immutability** principle: proposed
-as an ADR to `evolith_arch32`, approved by the Architecture Board, then
-inherited by the Tracker.
+| Port | Primary Result |
+|---|---|
+| Work Management | Canonical work-item references and status facts |
+| Repository | Commit, branch, pull-request and tag references |
+| CI/CD | Build, test, artifact and deployment-run evidence |
+| Agent Execution | Output artifact, execution log and usage evidence |
+| LLM Observability | Trace, evaluation, cost, latency and prompt metadata |
+| Analytics | Published governed dataset or embedded-view reference |
+| Testing | Test-result and coverage evidence |
+| Security | Finding and risk-classification evidence |
+| Deployment | Environment, release, rollout and rollback evidence |
+| Collaboration | Notification, acknowledgment and approval-delivery facts |
 
 ---
 
-*This document is the technical companion to [Evolith Product Vision Master](./evolith-product-vision-master.md) §2.2.6.*
+## 9. Tracker Domain Model
+
+```mermaid
+erDiagram
+    TENANT ||--o{ PRODUCT : owns
+    PRODUCT ||--o{ SDLC_PROCESS : runs
+    SDLC_PROCESS ||--o{ PHASE_EXECUTION : contains
+    PHASE_EXECUTION ||--o{ PHASE_TRANSITION : requests
+    PHASE_EXECUTION ||--o{ GATE_DECISION : produces
+    GATE_DECISION }o--o{ TECHNICAL_EVALUATION : considers
+    GATE_DECISION }o--o{ APPROVAL : requires
+    GATE_DECISION }o--o{ EXCEPTION : may_include
+    TECHNICAL_EVALUATION }o--o{ EVIDENCE_ITEM : evaluates
+    EVIDENCE_ITEM }o--|| PROVIDER_CONNECTION : originates_from
+    PRODUCT ||--o{ PROVIDER_CONNECTION : configures
+    SDLC_PROCESS ||--o{ AGENT_RUN : records
+    AGENT_RUN }o--o{ EVIDENCE_ITEM : produces
+```
+
+### 9.1 Aggregate Ownership
+
+| Aggregate | Primary Responsibility |
+|---|---|
+| **SDLC Process** | Current phase and lifecycle |
+| **Phase Execution** | Entry, activity, completion and transition history |
+| **Evidence Graph** | Evidence identity, lineage, relationships and integrity |
+| **Gate Decision** | Canonical governance outcome |
+| **Approval and Exception** | Human accountability and accepted residual risk |
+| **Provider Connection** | Tenant-scoped provider configuration and health |
+| **Agent Run** | Bounded execution and generated evidence |
+
+---
+
+## 10. Chatbox and Agent Interface
+
+The chatbox is a governed intermediary over Tracker services.
+
+```typescript
+interface CreateChatSessionRequest {
+  tenantId: string;
+  productId: string;
+  processId: string;
+  phaseExecutionId?: string;
+  modelPolicyRef?: string;
+}
+```
+
+Every tool call is authorized against the tenant graph, logged as an execution reference, and linked to any resulting evidence.
+
+Agents receive:
+
+- an activity contract;
+- approved context references;
+- permitted tools;
+- expected artifact schemas;
+- evidence requirements;
+- timeout and cost boundaries;
+- human-approval conditions.
+
+Agents return outputs and execution evidence only.
+
+---
+
+## 11. Design Migration Map
+
+| Previous Concept | Target Concept |
+|---|---|
+| `GateEvidence.verdict = passed/failed` | `TechnicalEvaluationResult.status = compliant/non_compliant/...` |
+| CLI manages phase transition | Tracker owns `PhaseTransition` |
+| Agent outcome passes/fails gate | Agent produces evidence and execution outcome |
+| CI receives gate verdict directly from evaluator | CI submits evidence; Tracker returns canonical decision status |
+| One evidence payload embedded in gate record | Evidence Graph snapshot referenced by Gate Decision |
+| ACL only for Jira-style systems | Provider ports and ACLs across all external capabilities |
+
+Existing ADR 0073 remains valid for the unified output envelope but requires a companion decision clarifying evaluation-versus-decision semantics before implementation.
+
+---
+
+## 12. Pre-Code Approval Checklist
+
+- [ ] Target design approved.
+- [ ] Evaluation and decision vocabulary approved.
+- [ ] Evidence Graph aggregate boundaries approved.
+- [ ] Provider-port taxonomy approved.
+- [ ] REST and MCP contracts reviewed.
+- [ ] UMS authorization flow reviewed.
+- [ ] Tenant isolation and data-classification rules reviewed.
+- [ ] Required ADRs identified.
+- [ ] Ruleset and schema migration plan approved.
+- [ ] No source-code implementation has begun.
+
+---
+
+## 13. Related Documents
+
+- [Governed Composition Target Design](./evolith-governed-composition-target-design.md)
+- [Evolith Product Vision Master](./evolith-product-vision-master.md)
+- [SDLC Traceability Model](../../sdlc/traceability-model.md)
+- [ADR 0073 — Unified CLI/MCP Output Contract](../../../architecture/adrs/core/0073-unified-cli-output-contract.md)
+
+---
+
+*This document is the target technical interface baseline. It supersedes the earlier design interpretation but does not authorize code changes until approved by the Architecture Board.*

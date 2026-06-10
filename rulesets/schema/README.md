@@ -17,6 +17,8 @@ JSON Schema definitions for validating Evolith SDLC artifacts.
 | [test-summary-report.schema.json](./test-summary-report.schema.json) | Validate Test Summary Report | Test Summary Report | 4 |
 | [release-notes.schema.json](./release-notes.schema.json) | Validate Release Notes completeness | Release Notes | 5 |
 | [evolith-yaml.schema.json](./evolith-yaml.schema.json) | Validate satellite evolith.yaml contract | Satellite governance | All |
+| [gate-evidence.schema.json](./gate-evidence.schema.json) | Validate structured gate-evaluation evidence (core/ADR-0073) | Gate Evidence | All |
+| [output-envelope.schema.json](./output-envelope.schema.json) | Validate the universal machine output envelope (core/ADR-0073) | CLI/MCP/REST output | All |
 
 **Phase 1 Coverage:** 7 schemas (Discovery Canvas, Business Case ROI, Ballpark Estimation, Evolith User Story, Agile Backlog, CLI Impact Analysis, PRD)
 

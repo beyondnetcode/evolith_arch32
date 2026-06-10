@@ -1,0 +1,97 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/schema/output-envelope.schema.json",
+  "title": "Machine Output Envelope",
+  "description": "Universal envelope emitted by every machine-readable Evolith surface (CLI --format json, MCP tool results, REST), as ratified by core/ADR-0073. 'data' is success-only and schema-typed per operation (e.g. gate-evidence.schema.json); 'error' is failure-only.",
+  "type": "object",
+  "required": ["success", "meta"],
+  "additionalProperties": false,
+  "properties": {
+    "success": {
+      "type": "boolean",
+      "description": "Operation outcome discriminator. true requires 'data'; false requires 'error'."
+    },
+    "data": {
+      "description": "Operation result payload. Present only when success is true. Shape is operation-specific and schema-typed."
+    },
+    "error": {
+      "type": "object",
+      "required": ["code", "message"],
+      "additionalProperties": false,
+      "description": "Failure detail. Present only when success is false.",
+      "properties": {
+        "code": {
+          "type": "string",
+          "enum": [
+            "GATE_BLOCKED",
+            "VALIDATION_FAILED",
+            "RULESET_NOT_FOUND",
+            "SCHEMA_INVALID",
+            "INVALID_PHASE",
+            "NOT_A_SATELLITE",
+            "IO_ERROR",
+            "INTERNAL_ERROR"
+          ],
+          "description": "Registered machine-readable error code. The registry is append-only per core/ADR-0073."
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Human-readable failure explanation."
+        },
+        "details": {
+          "type": "object",
+          "description": "Optional structured failure context (violations, paths, hints)."
+        }
+      }
+    },
+    "meta": {
+      "type": "object",
+      "required": ["command", "executedAt", "durationMs", "correlationId"],
+      "additionalProperties": false,
+      "description": "Execution metadata present on every response.",
+      "properties": {
+        "command": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Canonical command identity (e.g. 'evolith gate evaluate')."
+        },
+        "executedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of execution."
+        },
+        "durationMs": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Wall-clock execution time in milliseconds."
+        },
+        "correlationId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Caller-supplied or generated correlation identifier for tracing."
+        },
+        "context": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Verbatim echo of caller-supplied context. The CLI never persists or interprets these values.",
+          "properties": {
+            "initiative": { "type": "string" },
+            "tenant": { "type": "string" },
+            "phase": { "type": "string" }
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "success": { "const": true } } },
+      "then": { "required": ["success", "data", "meta"], "not": { "required": ["error"] } }
+    },
+    {
+      "if": { "properties": { "success": { "const": false } } },
+      "then": { "required": ["success", "error", "meta"], "not": { "required": ["data"] } }
+    }
+  ]
+}

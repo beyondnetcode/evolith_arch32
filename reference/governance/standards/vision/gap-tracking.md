@@ -33,7 +33,7 @@ It supersedes and absorbs (2026-06-10): `gap-analysis-core.md` (narrative gap an
 | ID | Gap | Phase | Criticality | Complexity | Status |
 |----|-----|:---:|:---:|:---:|:---:|
 | [GT-01](#gt-01) | Unified contract ADR (output envelope + GateEvidence + global flags) | F0 | P0 | S | DONE |
-| [GT-02](#gt-02) | `GateEvidence` modeled in the domain layer | F1 | P0 | M | PENDING |
+| [GT-02](#gt-02) | `GateEvidence` modeled in the domain layer | F1 | P0 | M | DONE |
 | [GT-03](#gt-03) | `EvaluateGateUseCase` + `gate evaluate` command | F1 | P0 | M | PENDING |
 | [GT-04](#gt-04) | Remove service locator from domain · relocate telemetry | F1 | P1 | S | PENDING |
 | [GT-05](#gt-05) | Replace `MinimalHttpTransport` with MCP SDK Streamable HTTP | F2 | P1 | M | PENDING |
@@ -55,7 +55,7 @@ It supersedes and absorbs (2026-06-10): `gap-analysis-core.md` (narrative gap an
 | [GT-21](#gt-21) | Placement review of tool-centric Core ADRs | Cross | P2 | M | PENDING |
 | [GT-22](#gt-22) | ADR ID uniqueness scheme (cross-category collisions) | Cross | P2 | S | PENDING |
 
-**Progress:** 2 / 22 done · 1 deferred
+**Progress:** 3 / 22 done · 1 deferred
 
 ---
 
@@ -75,9 +75,9 @@ It supersedes and absorbs (2026-06-10): `gap-analysis-core.md` (narrative gap an
 <a name="gt-02"></a>
 #### GT-02 · `GateEvidence` modeled in the domain layer
 
-- **Criticality:** P0 · **Complexity:** M · **Status:** PENDING
+- **Criticality:** P0 · **Complexity:** M · **Status:** DONE (2026-06-10)
 - **Objective:** Implement `GateEvidence` (`verdict`, `violations[]`, `rulesetRef`, `rulesetVersion`, `evaluatedAt`, `evaluatedBy`) and the output envelope as domain types in `sdk/cli/src/domain/`, with a JSON schema published in `rulesets/schema/`.
-- **Done when:** domain types exist with unit tests; schema validates sample evidence; no presentation-layer concerns leak into the types.
+- **Closed by:** `sdk/cli/src/domain/gate-evidence.ts` (pure domain types + envelope constructors + `deriveVerdict`), `rulesets/schema/gate-evidence.schema.json` and `rulesets/schema/output-envelope.schema.json`, 18 unit tests validating domain-built samples against both schemas via ajv.
 
 <a name="gt-03"></a>
 #### GT-03 · `EvaluateGateUseCase` + `gate evaluate` command

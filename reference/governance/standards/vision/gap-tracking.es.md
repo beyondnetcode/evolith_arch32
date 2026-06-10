@@ -33,7 +33,7 @@ Reemplaza y absorbe (2026-06-10): `gap-analysis-core.es.md` (análisis narrativo
 | ID | Gap | Fase | Criticidad | Complejidad | Estado |
 |----|-----|:---:|:---:|:---:|:---:|
 | [GT-01](#gt-01) | ADR de contrato unificado (envelope de salida + GateEvidence + flags globales) | F0 | P0 | S | COMPLETADO |
-| [GT-02](#gt-02) | `GateEvidence` modelado en la capa de dominio | F1 | P0 | M | PENDIENTE |
+| [GT-02](#gt-02) | `GateEvidence` modelado en la capa de dominio | F1 | P0 | M | COMPLETADO |
 | [GT-03](#gt-03) | `EvaluateGateUseCase` + comando `gate evaluate` | F1 | P0 | M | PENDIENTE |
 | [GT-04](#gt-04) | Eliminar service locator del dominio · reubicar telemetría | F1 | P1 | S | PENDIENTE |
 | [GT-05](#gt-05) | Reemplazar `MinimalHttpTransport` por Streamable HTTP del SDK MCP | F2 | P1 | M | PENDIENTE |
@@ -55,7 +55,7 @@ Reemplaza y absorbe (2026-06-10): `gap-analysis-core.es.md` (análisis narrativo
 | [GT-21](#gt-21) | Revisión de ubicación de ADRs Core centrados en herramientas | Transversal | P2 | M | PENDIENTE |
 | [GT-22](#gt-22) | Esquema de unicidad de IDs de ADR (colisiones entre categorías) | Transversal | P2 | S | PENDIENTE |
 
-**Progreso:** 2 / 22 completados · 1 diferido
+**Progreso:** 3 / 22 completados · 1 diferido
 
 ---
 
@@ -75,9 +75,9 @@ Reemplaza y absorbe (2026-06-10): `gap-analysis-core.es.md` (análisis narrativo
 <a name="gt-02"></a>
 #### GT-02 · `GateEvidence` modelado en la capa de dominio
 
-- **Criticidad:** P0 · **Complejidad:** M · **Estado:** PENDIENTE
+- **Criticidad:** P0 · **Complejidad:** M · **Estado:** COMPLETADO (2026-06-10)
 - **Objetivo:** Implementar `GateEvidence` (`verdict`, `violations[]`, `rulesetRef`, `rulesetVersion`, `evaluatedAt`, `evaluatedBy`) y el envelope de salida como tipos de dominio en `sdk/cli/src/domain/`, con JSON schema publicado en `rulesets/schema/`.
-- **Cierre cuando:** los tipos de dominio existen con tests unitarios; el schema valida evidencia de ejemplo; ningún concern de presentación se filtra en los tipos.
+- **Cerrado por:** `sdk/cli/src/domain/gate-evidence.ts` (tipos de dominio puros + constructores de envelope + `deriveVerdict`), `rulesets/schema/gate-evidence.schema.json` y `rulesets/schema/output-envelope.schema.json`, 18 tests unitarios validando muestras construidas desde el dominio contra ambos schemas vía ajv.
 
 <a name="gt-03"></a>
 #### GT-03 · `EvaluateGateUseCase` + comando `gate evaluate`

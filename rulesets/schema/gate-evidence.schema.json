@@ -1,0 +1,85 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/schema/gate-evidence.schema.json",
+  "title": "Gate Evidence",
+  "description": "Structured evidence returned by every phase-gate evaluation, as ratified by core/ADR-0073. This is the canonical `data` payload for gate evaluation across CLI, MCP, and REST surfaces.",
+  "type": "object",
+  "required": [
+    "gateId",
+    "phase",
+    "verdict",
+    "rulesetRef",
+    "rulesetVersion",
+    "violations",
+    "evaluatedAt",
+    "evaluatedBy"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "gateId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Stable identifier of the evaluated gate (e.g. 'design-baseline-approved')."
+    },
+    "phase": {
+      "type": "string",
+      "enum": ["discovery", "design", "construction", "qa", "release"],
+      "description": "SDLC phase the gate belongs to."
+    },
+    "verdict": {
+      "type": "string",
+      "enum": ["passed", "failed", "skipped"],
+      "description": "Evaluation outcome. 'failed' is mandatory when any violation has severity 'error'."
+    },
+    "rulesetRef": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Reference to the Evolith Core ruleset evaluated (e.g. 'rulesets/sdlc/phase-gates.rules.json')."
+    },
+    "rulesetVersion": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Version of the referenced ruleset at evaluation time, taken from its 'version' field."
+    },
+    "violations": {
+      "type": "array",
+      "description": "Every rule violation found. Empty array when the gate passes cleanly.",
+      "items": {
+        "type": "object",
+        "required": ["ruleId", "severity", "location", "message"],
+        "additionalProperties": false,
+        "properties": {
+          "ruleId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Identifier of the violated rule within the referenced ruleset."
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["error", "warning"],
+            "description": "'error' blocks the gate; 'warning' is advisory."
+          },
+          "location": {
+            "type": "string",
+            "description": "Where the violation was found (file path, artifact name, or logical location)."
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Actionable human-readable explanation of the violation."
+          }
+        }
+      }
+    },
+    "evaluatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of the evaluation."
+    },
+    "evaluatedBy": {
+      "type": "string",
+      "enum": ["human", "agent", "ci"],
+      "description": "Actor class that triggered the evaluation."
+    }
+  }
+}

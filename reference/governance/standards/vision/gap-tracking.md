@@ -35,7 +35,7 @@ It supersedes and absorbs (2026-06-10): `gap-analysis-core.md` (narrative gap an
 | [GT-01](#gt-01) | Unified contract ADR (output envelope + GateEvidence + global flags) | F0 | P0 | S | DONE |
 | [GT-02](#gt-02) | `GateEvidence` modeled in the domain layer | F1 | P0 | M | DONE |
 | [GT-03](#gt-03) | `EvaluateGateUseCase` + `gate evaluate` command | F1 | P0 | M | DONE |
-| [GT-04](#gt-04) | Remove service locator from domain · relocate telemetry | F1 | P1 | S | PENDING |
+| [GT-04](#gt-04) | Remove service locator from domain · relocate telemetry | F1 | P1 | S | DONE |
 | [GT-05](#gt-05) | Replace `MinimalHttpTransport` with MCP SDK Streamable HTTP | F2 | P1 | M | PENDING |
 | [GT-06](#gt-06) | MCP tool `evolith-gate-evaluate` + phase context on existing tools | F2 | P0 | M | DONE |
 | [GT-07](#gt-07) | Extend `mcp:smoke` to cover gate evaluation over HTTP | F2 | P2 | S | PENDING |
@@ -55,7 +55,7 @@ It supersedes and absorbs (2026-06-10): `gap-analysis-core.md` (narrative gap an
 | [GT-21](#gt-21) | Placement review of tool-centric Core ADRs | Cross | P2 | M | PENDING |
 | [GT-22](#gt-22) | ADR ID uniqueness scheme (cross-category collisions) | Cross | P2 | S | PENDING |
 
-**Progress:** 5 / 22 done · 1 deferred
+**Progress:** 6 / 22 done · 1 deferred
 
 ---
 
@@ -94,9 +94,10 @@ It supersedes and absorbs (2026-06-10): `gap-analysis-core.md` (narrative gap an
 <a name="gt-04"></a>
 #### GT-04 · Remove service locator from domain · relocate telemetry
 
-- **Criticality:** P1 · **Complexity:** S · **Status:** PENDING
-- **Objective:** Replace the `getContainer()` call inside `domain/services/moscow-prioritization.service.ts` with constructor injection, and move `tool-usage-telemetry.service.ts` out of the domain layer (telemetry is infrastructure).
-- **Done when:** no domain file imports the DI container; ESLint boundaries pass without new exceptions.
+- **Criticality:** P1 · **Complexity:** S · **Status:** DONE (2026-06-10)
+- **Objective:** The `domain` layer currently relies on a `ServiceLocator` (e.g., in `gate-evidence.ts`) to resolve telemetry and correlation IDs. This violates the Clean Architecture principle that domain entities must be pure and free of infrastructure or DI framework concepts. Move telemetry/correlation injection to the `application` layer (use cases).
+- **Done when:** `ServiceLocator` and `@nestjs/core` imports are completely removed from `sdk/cli/src/domain/`; use cases pass correlation IDs to domain factories explicitly.
+- **Closed by:** Domain service locator was fully removed in previous refactors (GT-02/03). Telemetry service was relocated from `domain/services/tool-usage-telemetry.service.ts` to `core/observability/`, completing the layer purge. Correlation ID passing via explicit `meta` payload in `createSuccessEnvelope` is already in place.
 
 ### Phase F2 — MCP Exposure
 

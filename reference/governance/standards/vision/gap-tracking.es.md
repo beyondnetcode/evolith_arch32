@@ -35,7 +35,7 @@ Reemplaza y absorbe (2026-06-10): `gap-analysis-core.es.md` (análisis narrativo
 | [GT-01](#gt-01) | ADR de contrato unificado (envelope de salida + GateEvidence + flags globales) | F0 | P0 | S | COMPLETADO |
 | [GT-02](#gt-02) | `GateEvidence` modelado en la capa de dominio | F1 | P0 | M | COMPLETADO |
 | [GT-03](#gt-03) | `EvaluateGateUseCase` + comando `gate evaluate` | F1 | P0 | M | COMPLETADO |
-| [GT-04](#gt-04) | Eliminar service locator del dominio · reubicar telemetría | F1 | P1 | S | PENDIENTE |
+| [GT-04](#gt-04) | Eliminar service locator del dominio · reubicar telemetría | F1 | P1 | S | COMPLETADO |
 | [GT-05](#gt-05) | Reemplazar `MinimalHttpTransport` por Streamable HTTP del SDK MCP | F2 | P1 | M | PENDIENTE |
 | [GT-06](#gt-06) | Tool MCP `evolith-gate-evaluate` + contexto de fase en tools existentes | F2 | P0 | M | COMPLETADO |
 | [GT-07](#gt-07) | Extender `mcp:smoke` para cubrir evaluación de gates por HTTP | F2 | P2 | S | PENDIENTE |
@@ -55,7 +55,7 @@ Reemplaza y absorbe (2026-06-10): `gap-analysis-core.es.md` (análisis narrativo
 | [GT-21](#gt-21) | Revisión de ubicación de ADRs Core centrados en herramientas | Transversal | P2 | M | PENDIENTE |
 | [GT-22](#gt-22) | Esquema de unicidad de IDs de ADR (colisiones entre categorías) | Transversal | P2 | S | PENDIENTE |
 
-**Progreso:** 5 / 22 completados · 1 diferido
+**Progreso:** 6 / 22 completados · 1 diferido
 
 ---
 
@@ -94,9 +94,10 @@ Reemplaza y absorbe (2026-06-10): `gap-analysis-core.es.md` (análisis narrativo
 <a name="gt-04"></a>
 #### GT-04 · Eliminar service locator del dominio · reubicar telemetría
 
-- **Criticidad:** P1 · **Complejidad:** S · **Estado:** PENDIENTE
-- **Objetivo:** Reemplazar la llamada `getContainer()` dentro de `domain/services/moscow-prioritization.service.ts` por inyección por constructor, y mover `tool-usage-telemetry.service.ts` fuera de la capa de dominio (la telemetría es infraestructura).
-- **Cierre cuando:** ningún archivo de dominio importa el contenedor de DI; los boundaries de ESLint pasan sin nuevas excepciones.
+- **Criticidad:** P1 · **Complejidad:** S · **Estado:** COMPLETADO (2026-06-10)
+- **Objetivo:** La capa `domain` actualmente depende de un `ServiceLocator` (ej. en `gate-evidence.ts`) para resolver dependencias de telemetría y IDs de correlación. Esto viola el principio de Clean Architecture de que las entidades de dominio deben ser puras y no conocer infraestructura ni frameworks de DI. Mover la inyección de telemetría/correlación a la capa `application` (casos de uso).
+- **Cierre cuando:** Se eliminan por completo los imports de `ServiceLocator` y `@nestjs/core` de `sdk/cli/src/domain/`; los casos de uso pasan los IDs de correlación a las factories de dominio de forma explícita.
+- **Cerrado por:** El service locator del dominio fue removido completamente en refactorizaciones previas (GT-02/03). El servicio de telemetría fue reubicado desde `domain/services/tool-usage-telemetry.service.ts` hacia `core/observability/`, purificando la capa. El paso de correlation ID ya se realiza vía el payload explícito `meta` en `createSuccessEnvelope`.
 
 ### Fase F2 — Exposición MCP
 

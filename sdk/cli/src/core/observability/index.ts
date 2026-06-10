@@ -22,3 +22,9 @@ export {
   CommandTrace,
   CommandBuilder,
 } from './command-watcher';
+export {
+  ToolUsageTelemetry,
+  ToolUsageEvent,
+  ToolUsageStats,
+  TelemetryReport,
+} from './tool-usage-telemetry.service';

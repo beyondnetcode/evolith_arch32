@@ -60,7 +60,7 @@ Criterios de ordenamiento: primero la criticidad (`P1` antes que `P2`), luego vi
 
 | ID | Gap | Fase | Criticidad | Complejidad | Estado |
 |----|-----|:---:|:---:|:---:|:---:|
-| [GT-05](#gt-05) | Reemplazar `MinimalHttpTransport` por Streamable HTTP del SDK MCP | F2 | P1 | M | PENDIENTE |
+| [GT-05](#gt-05) | Reemplazar `MinimalHttpTransport` por Streamable HTTP del SDK MCP | F2 | P1 | M | COMPLETADO |
 | [GT-08](#gt-08) | Gate Fase 2: chequeo real del registro de ADRs | F3 | P1 | S | PENDIENTE |
 | [GT-09](#gt-09) | Gate Fase 3: chequeo real de coverage desde reporte de CI | F3 | P1 | S | PENDIENTE |
 | [GT-12](#gt-12) | `--dry-run` en todas las operaciones de escritura | F3 | P1 | S | PENDIENTE |

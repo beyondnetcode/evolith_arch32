@@ -10,6 +10,7 @@ import { handleGateEvaluateTool } from './tools/gate';
 import { listResources, readResource } from './resources';
 import { listPrompts, getPrompt } from './prompts';
 import { McpMetricsService } from './metrics.service';
+import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 
 export type McpTransport = 'stdio' | 'http';
 
@@ -124,7 +125,7 @@ class MinimalStdioTransport implements Transport {
   }
 }
 
-class MinimalHttpTransport implements Transport {
+class McpHttpTransportWrapper implements Transport {
   onclose?: () => void;
   onerror?: (error: Error) => void;
   onmessage?: (message: unknown) => void;
@@ -132,13 +133,26 @@ class MinimalHttpTransport implements Transport {
   private server: http.Server | null = null;
   private readonly port: number;
   private readonly apiKey?: string;
-  private readonly logger = new Logger(MinimalHttpTransport.name);
-  private sseClients: Array<{ id: string; res: http.ServerResponse }> = [];
+  private readonly logger = new Logger(McpHttpTransportWrapper.name);
   private started: boolean = false;
+  private readonly mcpTransport: StreamableHTTPServerTransport;
 
   constructor(port: number, apiKey?: string) {
     this.port = port;
     this.apiKey = apiKey;
+    this.mcpTransport = new StreamableHTTPServerTransport({
+      sessionIdGenerator: () => Math.random().toString(36).substring(2, 10)
+    });
+    
+    this.mcpTransport.onerror = (error) => {
+      if (this.onerror) this.onerror(error);
+    };
+    this.mcpTransport.onclose = () => {
+      if (this.onclose) this.onclose();
+    };
+    this.mcpTransport.onmessage = (message) => {
+      if (this.onmessage) this.onmessage(message);
+    };
   }
 
   async start(): Promise<void> {
@@ -173,11 +187,8 @@ class MinimalHttpTransport implements Transport {
 
   async close(): Promise<void> {
     this.started = false;
-
-    for (const client of this.sseClients) {
-      client.res.end();
-    }
-    this.sseClients = [];
+    
+    await this.mcpTransport.close();
 
     if (this.server) {
       await new Promise<void>((resolve) => {
@@ -188,23 +199,7 @@ class MinimalHttpTransport implements Transport {
   }
 
   async send(message: unknown): Promise<void> {
-    const data = `event: message\ndata: ${JSON.stringify(message)}\n\n`;
-    const clientsToRemove: typeof this.sseClients = [];
-
-    for (const client of this.sseClients) {
-      try {
-        client.res.write(data);
-      } catch {
-        clientsToRemove.push(client);
-      }
-    }
-
-    for (const client of clientsToRemove) {
-      const index = this.sseClients.indexOf(client);
-      if (index > -1) {
-        this.sseClients.splice(index, 1);
-      }
-    }
+    await this.mcpTransport.send(message as any);
   }
 
   private handleRequest(req: http.IncomingMessage, res: http.ServerResponse): void {
@@ -214,17 +209,16 @@ class MinimalHttpTransport implements Transport {
       return;
     }
 
-    if (req.method === 'POST' && url.pathname === '/message') {
-      this.handlePostMessage(req, res);
-    } else if (req.method === 'GET' && url.pathname === '/sse') {
-      this.handleSseConnection(req, res);
-    } else if (req.method === 'GET' && url.pathname === '/health') {
+    if (req.method === 'GET' && url.pathname === '/health') {
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ status: 'ok', transport: 'http', protocol: 'mcp' }));
-    } else {
-      res.writeHead(404, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'Not found' }));
+      return;
     }
+
+    // We cast to any because StreamableHTTPServerTransport expects req.auth from its middleware
+    this.mcpTransport.handleRequest(req as any, res).catch((err) => {
+       this.logger.error(`MCP Transport error: ${err.message}`);
+    });
   }
 
   private validateAuth(req: http.IncomingMessage, res: http.ServerResponse): boolean {
@@ -241,65 +235,6 @@ class MinimalHttpTransport implements Transport {
     }
 
     return true;
-  }
-
-  private async handlePostMessage(req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
-    let body = '';
-
-    req.on('data', (chunk: Buffer) => {
-      body += chunk.toString();
-    });
-
-    req.on('end', async () => {
-      try {
-        const message = JSON.parse(body);
-        if (this.onmessage) {
-          await this.onmessage(message);
-        }
-        res.writeHead(202, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ status: 'accepted' }));
-      } catch (error) {
-        this.logger.error(`Invalid POST message: ${error}`);
-        res.writeHead(400, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'Invalid JSON' }));
-      }
-    });
-
-    req.on('error', (error: Error) => {
-      this.logger.error(`Request error: ${error.message}`);
-      if (this.onerror) {
-        this.onerror(error);
-      }
-      if (!res.headersSent) {
-        res.writeHead(500, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'Internal server error' }));
-      }
-    });
-  }
-
-  private handleSseConnection(req: http.IncomingMessage, res: http.ServerResponse): void {
-    const clientId = `client-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
-
-    res.writeHead(200, {
-      'Content-Type': 'text/event-stream',
-      'Cache-Control': 'no-cache',
-      'Connection': 'keep-alive',
-      'Access-Control-Allow-Origin': '*',
-    });
-
-    res.write(': connected\n\n');
-
-    this.sseClients.push({ id: clientId, res });
-
-    req.on('close', () => {
-      const index = this.sseClients.findIndex(c => c.id === clientId);
-      if (index > -1) {
-        this.sseClients.splice(index, 1);
-      }
-      this.logger.debug(`SSE client disconnected: ${clientId}`);
-    });
-
-    this.logger.debug(`SSE client connected: ${clientId}`);
   }
 }
 
@@ -338,7 +273,7 @@ class DirectMcpServer {
     this.metricsService = metricsService || new McpMetricsService();
 
     if (transportType === 'http') {
-      this.transport = new MinimalHttpTransport(port, apiKey);
+      this.transport = new McpHttpTransportWrapper(port, apiKey);
     } else {
       this.transport = new MinimalStdioTransport(stdin, stdout);
     }

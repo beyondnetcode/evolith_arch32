@@ -105,78 +105,7 @@ function waitForHealth(port, timeoutMs = 8000) {
   });
 }
 
-/**
- * Connect to GET /sse, POST each request to /message, collect JSON-RPC
- * responses from the SSE stream keyed by request id.
- * Returns a Map<id, result>.
- */
-function runHttpRpc(port, requests) {
-  return new Promise((resolveAll, rejectAll) => {
-    const results = new Map();
-    const pending = new Set(requests.map((r) => r.id));
-    let sseBuffer = '';
-
-    const sseReq = http.get(
-      { hostname: 'localhost', port, path: '/sse' },
-      (sseRes) => {
-        sseRes.on('data', (chunk) => {
-          sseBuffer += chunk.toString();
-          const events = sseBuffer.split('\n\n');
-          sseBuffer = events.pop() ?? '';
-
-          for (const event of events) {
-            const dataLine = event.split('\n').find((l) => l.startsWith('data: '));
-            if (!dataLine) continue;
-            let msg;
-            try { msg = JSON.parse(dataLine.slice(6)); } catch { continue; }
-            if (msg.id == null) continue;
-
-            results.set(msg.id, msg.error ? null : msg.result);
-            pending.delete(msg.id);
-            if (pending.size === 0) {
-              sseReq.destroy();
-              resolveAll(results);
-            }
-          }
-        });
-
-        sseRes.on('error', (err) => {
-          if (err.code !== 'ECONNRESET') rejectAll(err);
-        });
-      },
-    );
-
-    sseReq.on('error', (err) => {
-      if (err.code !== 'ECONNRESET') rejectAll(err);
-    });
-
-    // Give SSE connection 250 ms to establish, then send requests serially
-    setTimeout(async () => {
-      try {
-        for (const req of requests) {
-          await httpPost(`http://localhost:${port}/message`, {
-            jsonrpc: '2.0',
-            id: req.id,
-            method: req.method,
-            params: req.params ?? {},
-          });
-        }
-      } catch (err) {
-        rejectAll(err);
-      }
-    }, 250);
-
-    // Global timeout
-    setTimeout(() => {
-      if (pending.size > 0) {
-        sseReq.destroy();
-        rejectAll(
-          new Error(`HTTP RPC timeout. No response for IDs: ${[...pending].join(', ')}`),
-        );
-      }
-    }, 10000);
-  });
-}
+// Removed manual HTTP RPC helpers as we now use the official MCP Client for Streamable HTTP
 
 // ---------------------------------------------------------------------------
 // Transport 1 — stdio smoke
@@ -321,64 +250,48 @@ async function runHttpSmoke() {
     assert(healthBody?.status === 'ok', `/health: body.status was ${JSON.stringify(healthBody?.status)}`);
     console.log('  /health            OK');
 
-    // 3. /sse Content-Type
-    const sseProbe = await new Promise((resolve, reject) => {
-      const req = http.get({ hostname: 'localhost', port, path: '/sse' }, (res) => {
-        resolve({ status: res.statusCode, contentType: res.headers['content-type'] });
-        res.destroy();
-      });
-      req.on('error', reject);
-    });
-    assert(sseProbe.status === 200, `/sse: status ${sseProbe.status}`);
-    assert(
-      (sseProbe.contentType || '').includes('text/event-stream'),
-      `/sse: content-type was ${sseProbe.contentType}`,
-    );
-    console.log('  /sse               OK  (text/event-stream)');
+    // 3. JSON-RPC over Streamable HTTP using official SDK Client
+    const { Client } = require('@modelcontextprotocol/sdk/client/index.js');
+    const { StreamableHTTPClientTransport } = require('@modelcontextprotocol/sdk/client/streamableHttp.js');
+    const { z } = require('zod');
+    
+    // We send requests to the root endpoint which is handled by StreamableHTTPServerTransport
+    const transport = new StreamableHTTPClientTransport(new URL(`http://localhost:${port}/`));
+    const client = new Client({ name: 'evolith-smoke-client', version: '1.0.0' }, { capabilities: {} });
+    
+    await client.connect(transport);
+    console.log('  initialize         OK  (HTTP Streamable)');
 
-    // 4. JSON-RPC over POST /message + SSE responses
-    const results = await runHttpRpc(port, [
-      { id: 100, method: 'initialize' },
-      { id: 101, method: 'tools/list' },
-      { id: 102, method: 'resources/list' },
-      { id: 103, method: 'prompts/list' },
-      { id: 104, method: 'tools/call', params: { name: 'evolith-metrics', arguments: {} } },
-      { id: 105, method: 'tools/call', params: { name: 'evolith-gate-evaluate', arguments: { phase: 'discovery', projectPath: repoRoot } } },
-    ]);
-
-    const init = results.get(100);
-    assert(init?.serverInfo?.name === 'evolith-mcp-server', 'HTTP initialize: serverInfo.name mismatch');
-    assert(init?.capabilities?.tools, 'HTTP initialize: missing tools capability');
-    console.log('  initialize         OK  (HTTP)');
-
-    const tools = results.get(101);
+    const tools = await client.request({ method: 'tools/list' }, z.any());
     assert(Array.isArray(tools?.tools), 'HTTP tools/list: not an array');
     assert(tools.tools.length > 0, 'HTTP tools/list: empty');
     console.log(`  tools/list         OK  (${tools.tools.length} tools, HTTP)`);
 
-    const resources = results.get(102);
+    const resources = await client.request({ method: 'resources/list' }, z.any());
     assert(Array.isArray(resources?.resources), 'HTTP resources/list: not an array');
     assert(resources.resources.length > 0, 'HTTP resources/list: empty');
     console.log(`  resources/list     OK  (${resources.resources.length} resources, HTTP)`);
 
-    const prompts = results.get(103);
+    const prompts = await client.request({ method: 'prompts/list' }, z.any());
     assert(Array.isArray(prompts?.prompts), 'HTTP prompts/list: not an array');
     assert(prompts.prompts.length > 0, 'HTTP prompts/list: empty');
     console.log(`  prompts/list       OK  (${prompts.prompts.length} prompts, HTTP)`);
 
-    const metrics = results.get(104);
+    const metrics = await client.request({ method: 'tools/call', params: { name: 'evolith-metrics', arguments: {} } }, z.any());
     assert(Array.isArray(metrics?.content), 'HTTP tools/call metrics: content not an array');
     assert(metrics.content[0]?.type === 'text', 'HTTP tools/call metrics: first item not text');
     console.log('  tools/call         OK  (evolith-metrics, HTTP)');
 
-    const gateEvalHttp = results.get(105);
+    const gateEvalHttp = await client.request({ method: 'tools/call', params: { name: 'evolith-gate-evaluate', arguments: { phase: 'discovery', projectPath: repoRoot } } }, z.any());
     assert(Array.isArray(gateEvalHttp?.content), 'HTTP tools/call gate-evaluate: content not an array');
     const gateEnvelopeHttp = JSON.parse(gateEvalHttp.content[0].text);
     assert(gateEnvelopeHttp.success !== undefined, 'HTTP tools/call gate-evaluate: envelope must have success field');
     assert(gateEnvelopeHttp.meta?.command === 'evolith gate evaluate', 'HTTP tools/call gate-evaluate: missing or invalid meta.command');
     console.log('  tools/call         OK  (evolith-gate-evaluate, HTTP)');
 
-    console.log('Transport 2 PASSED\n');
+    await client.close();
+
+    console.log('Transport 2 PASSED\\n');
   } catch (err) {
     if (stderrBuf.trim()) {
       console.error('  Server stderr:', stderrBuf.trim());

@@ -134,78 +134,78 @@ and operating guidance that satellite products inherit and specialize.
 <details>
 <summary><strong>Phase 01 - Conception and Discovery</strong></summary>
 
-| Link (URL) | Description (brief explanation) | Goal / Objective | Typification (category or type) |
-|---|---|---|---|
-| [Discovery Canvas](./reference/governance/sdlc/04-artifact-templates/discovery-canvas-template.md) | Discovery canvas | Define vision and feasibility | Documents and templates |
-| [Business Case ROI](./reference/governance/sdlc/04-artifact-templates/business-case-roi-template.md) | ROI analysis | Justify business value | Documents and templates |
-| [Ballpark Estimation](./reference/governance/sdlc/04-artifact-templates/ballpark-estimation-template.md) | High-level estimation | Project costs and times | Documents and templates |
-| [PRD - Product Requirements Document](./reference/governance/sdlc/04-artifact-templates/prd-template.md) | Product requirements | Specify functional needs | Documents and templates |
-| [Evolith User Story](./reference/governance/sdlc/04-artifact-templates/evolith-user-story-template.md) | User story template | Standardize agile stories | Documents and templates |
-| [Agile Backlog](./reference/governance/sdlc/04-artifact-templates/agile-backlog-template.md) | Backlog template | Organize deliverables | Documents and templates |
-| [CLI Impact Analysis](./reference/governance/sdlc/04-artifact-templates/cli-impact-analysis.md) | CLI impact analysis | Evaluate cross-repo changes | Documents and templates |
-| [Discovery Canvas Schema](./rulesets/schema/discovery-canvas.schema.json) | Discovery canvas validation schema | Validate artifact structure | Rules and schemas |
-| [Business Case ROI Schema](./rulesets/schema/business-case-roi.schema.json) | Business case validation schema | Validate artifact structure | Rules and schemas |
-| [Ballpark Estimation Schema](./rulesets/schema/ballpark-estimation.schema.json) | Estimation validation schema | Validate artifact structure | Rules and schemas |
-| [PRD Schema](./rulesets/schema/prd.schema.json) | PRD validation schema | Validate artifact structure | Rules and schemas |
-| [Evolith User Story Schema](./rulesets/schema/evolith-user-story.schema.json) | User story validation schema | Validate artifact structure | Rules and schemas |
-| [Agile Backlog Schema](./rulesets/schema/agile-backlog.schema.json) | Backlog validation schema | Validate artifact structure | Rules and schemas |
-| [CLI Impact Analysis Schema](./rulesets/schema/cli-impact-analysis.schema.json) | Impact analysis validation schema | Validate artifact structure | Rules and schemas |
-| [Phase Gates Rules](./rulesets/sdlc/phase-gates.rules.json) | Automated gate rules | Validate compliance in CI | Rules and schemas |
+| Link (URL) | Description (brief explanation) | Goal / Objective | Typification (category or type) | Requirement |
+|---|---|---|---|---|
+| [Discovery Canvas](./reference/governance/sdlc/04-artifact-templates/discovery-canvas-template.md) | Discovery canvas | Define vision and feasibility | Documents and templates | **Mandatory** |
+| [Business Case ROI](./reference/governance/sdlc/04-artifact-templates/business-case-roi-template.md) | ROI analysis | Justify business value | Documents and templates | Optional |
+| [Ballpark Estimation](./reference/governance/sdlc/04-artifact-templates/ballpark-estimation-template.md) | High-level estimation | Project costs and times | Documents and templates | Optional |
+| [PRD - Product Requirements Document](./reference/governance/sdlc/04-artifact-templates/prd-template.md) | Product requirements | Specify functional needs | Documents and templates | **Mandatory** |
+| [Evolith User Story](./reference/governance/sdlc/04-artifact-templates/evolith-user-story-template.md) | User story template | Standardize agile stories | Documents and templates | **Mandatory** |
+| [Agile Backlog](./reference/governance/sdlc/04-artifact-templates/agile-backlog-template.md) | Backlog template | Organize deliverables | Documents and templates | **Mandatory** |
+| [CLI Impact Analysis](./reference/governance/sdlc/04-artifact-templates/cli-impact-analysis.md) | CLI impact analysis | Evaluate cross-repo changes | Documents and templates | Optional |
+| [Discovery Canvas Schema](./rulesets/schema/discovery-canvas.schema.json) | Discovery canvas validation schema | Validate artifact structure | Rules and schemas | **Mandatory** |
+| [Business Case ROI Schema](./rulesets/schema/business-case-roi.schema.json) | Business case validation schema | Validate artifact structure | Rules and schemas | Optional |
+| [Ballpark Estimation Schema](./rulesets/schema/ballpark-estimation.schema.json) | Estimation validation schema | Validate artifact structure | Rules and schemas | Optional |
+| [PRD Schema](./rulesets/schema/prd.schema.json) | PRD validation schema | Validate artifact structure | Rules and schemas | **Mandatory** |
+| [Evolith User Story Schema](./rulesets/schema/evolith-user-story.schema.json) | User story validation schema | Validate artifact structure | Rules and schemas | **Mandatory** |
+| [Agile Backlog Schema](./rulesets/schema/agile-backlog.schema.json) | Backlog validation schema | Validate artifact structure | Rules and schemas | **Mandatory** |
+| [CLI Impact Analysis Schema](./rulesets/schema/cli-impact-analysis.schema.json) | Impact analysis validation schema | Validate artifact structure | Rules and schemas | Optional |
+| [Phase Gates Rules](./rulesets/sdlc/phase-gates.rules.json) | Automated gate rules | Validate compliance in CI | Rules and schemas | **Mandatory** |
 
 </details>
 
 <details>
 <summary><strong>Phase 02 - Design and Architecture</strong></summary>
 
-| Link (URL) | Description (brief explanation) | Goal / Objective | Typification (category or type) |
-|---|---|---|---|
-| [ADR Template](./reference/governance/sdlc/04-artifact-templates/adr-template.md) | ADR template | Document key decisions | Documents and templates |
-| [Functional Story Template](./reference/governance/sdlc/04-artifact-templates/functional-story-template.md) | Functional story template | Detail behavior | Documents and templates |
-| [DDD Model Template](./reference/governance/sdlc/04-artifact-templates/ddd-model-template.md) | DDD model template | Model system domains | Documents and templates |
-| [Functional Story Writing Standard](./reference/governance/sdlc/03-documentation/functional-story-writing-standard.md) | Functional story standard | Ensure specs quality | Standards and guidance |
-| [SDLC Documentation Best Practices](./reference/governance/sdlc/03-documentation/sdlc-documentation-best-practices.md) | Documentation best practices | Improve documentation quality | Standards and guidance |
-| [ADR Schema](./rulesets/schema/adr.schema.json) | JSON validation schema | Validate data structure | Rules and schemas |
-| [Functional Story Schema](./rulesets/schema/functional-story.schema.json) | JSON validation schema | Validate data structure | Rules and schemas |
+| Link (URL) | Description (brief explanation) | Goal / Objective | Typification (category or type) | Requirement |
+|---|---|---|---|---|
+| [ADR Template](./reference/governance/sdlc/04-artifact-templates/adr-template.md) | ADR template | Document key decisions | Documents and templates | Optional |
+| [Functional Story Template](./reference/governance/sdlc/04-artifact-templates/functional-story-template.md) | Functional story template | Detail behavior | Documents and templates | **Mandatory** |
+| [DDD Model Template](./reference/governance/sdlc/04-artifact-templates/ddd-model-template.md) | DDD model template | Model system domains | Documents and templates | Optional |
+| [Functional Story Writing Standard](./reference/governance/sdlc/03-documentation/functional-story-writing-standard.md) | Functional story standard | Ensure specs quality | Standards and guidance | **Mandatory** |
+| [SDLC Documentation Best Practices](./reference/governance/sdlc/03-documentation/sdlc-documentation-best-practices.md) | Documentation best practices | Improve documentation quality | Standards and guidance | **Mandatory** |
+| [ADR Schema](./rulesets/schema/adr.schema.json) | JSON validation schema | Validate data structure | Rules and schemas | Optional |
+| [Functional Story Schema](./rulesets/schema/functional-story.schema.json) | JSON validation schema | Validate data structure | Rules and schemas | **Mandatory** |
 
 </details>
 
 <details>
 <summary><strong>Phase 03 - Construction</strong></summary>
 
-| Link (URL) | Description (brief explanation) | Goal / Objective | Typification (category or type) |
-|---|---|---|---|
-| [Artifact Templates Hub](./reference/governance/sdlc/04-artifact-templates/README.md) | Templates hub | Centralize SDLC formats | Documents and templates |
-| [Technical Story Template](./reference/governance/sdlc/04-artifact-templates/technical-story-template.md) | Technical story template | Structure technical tasks | Documents and templates |
-| [Construction-Focused SDLC Framework](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.md) | Construction framework | Regulate technical execution | Standards and guidance |
-| [Definition of Done](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.md) | Completeness criteria (DoD) | Define when a deliverable is done | Standards and guidance |
-| [SDLC Quality Gates](./reference/governance/sdlc/quality-gates.md) | Quality gates | Establish approval thresholds | Standards and guidance |
-| [Technical Story Schema](./rulesets/schema/technical-story.schema.json) | JSON validation schema | Validate data structure | Rules and schemas |
-| [Definition of Done Rules](./rulesets/cross-cutting/definition-of-done.rules.json) | Automated rules | Validate compliance in CI | Rules and schemas |
-| [Quality Thresholds Rules](./rulesets/sdlc/quality-thresholds.rules.json) | Automated rules | Validate compliance in CI | Rules and schemas |
-| [Dependency Pinning Rules](./rulesets/sdlc/dependency-pinning.rules.json) | Automated rules | Validate compliance in CI | Rules and schemas |
+| Link (URL) | Description (brief explanation) | Goal / Objective | Typification (category or type) | Requirement |
+|---|---|---|---|---|
+| [Artifact Templates Hub](./reference/governance/sdlc/04-artifact-templates/README.md) | Templates hub | Centralize SDLC formats | Documents and templates | **Mandatory** |
+| [Technical Story Template](./reference/governance/sdlc/04-artifact-templates/technical-story-template.md) | Technical story template | Structure technical tasks | Documents and templates | **Mandatory** |
+| [Construction-Focused SDLC Framework](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.md) | Construction framework | Regulate technical execution | Standards and guidance | **Mandatory** |
+| [Definition of Done](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.md) | Completeness criteria (DoD) | Define when a deliverable is done | Standards and guidance | **Mandatory** |
+| [SDLC Quality Gates](./reference/governance/sdlc/quality-gates.md) | Quality gates | Establish approval thresholds | Standards and guidance | **Mandatory** |
+| [Technical Story Schema](./rulesets/schema/technical-story.schema.json) | JSON validation schema | Validate data structure | Rules and schemas | **Mandatory** |
+| [Definition of Done Rules](./rulesets/cross-cutting/definition-of-done.rules.json) | Automated rules | Validate compliance in CI | Rules and schemas | **Mandatory** |
+| [Quality Thresholds Rules](./rulesets/sdlc/quality-thresholds.rules.json) | Automated rules | Validate compliance in CI | Rules and schemas | **Mandatory** |
+| [Dependency Pinning Rules](./rulesets/sdlc/dependency-pinning.rules.json) | Automated rules | Validate compliance in CI | Rules and schemas | **Mandatory** |
 
 </details>
 
 <details>
 <summary><strong>Phase 04 - Validation and QA</strong></summary>
 
-| Link (URL) | Description (brief explanation) | Goal / Objective | Typification (category or type) |
-|---|---|---|---|
-| [Test Summary Report Template](./reference/governance/sdlc/04-artifact-templates/test-summary-report-template.md) | Test summary report | Consolidate QA results | Documents and templates |
-| [SDLC Traceability Model](./reference/governance/sdlc/traceability-model.md) | Traceability model | Link requirements and tests | Standards and guidance |
-| [Test Summary Report Schema](./rulesets/schema/test-summary-report.schema.json) | Test summary report validation schema | Validate artifact structure | Rules and schemas |
+| Link (URL) | Description (brief explanation) | Goal / Objective | Typification (category or type) | Requirement |
+|---|---|---|---|---|
+| [Test Summary Report Template](./reference/governance/sdlc/04-artifact-templates/test-summary-report-template.md) | Test summary report | Consolidate QA results | Documents and templates | **Mandatory** |
+| [SDLC Traceability Model](./reference/governance/sdlc/traceability-model.md) | Traceability model | Link requirements and tests | Standards and guidance | **Mandatory** |
+| [Test Summary Report Schema](./rulesets/schema/test-summary-report.schema.json) | Test summary report validation schema | Validate artifact structure | Rules and schemas | **Mandatory** |
 
 </details>
 
 <details>
 <summary><strong>Phase 05 - Delivery and Operations</strong></summary>
 
-| Link (URL) | Description (brief explanation) | Goal / Objective | Typification (category or type) |
-|---|---|---|---|
-| [Release Notes Template](./reference/governance/sdlc/04-artifact-templates/release-notes-template.md) | Release notes template | Communicate release changes | Documents and templates |
-| [Release Notes Schema](./rulesets/schema/release-notes.schema.json) | Release notes validation schema | Validate artifact structure | Rules and schemas |
-| [CI/CD Quality Gates Rules](./rulesets/adr/adr-0005-cicd-quality-gates.rules.json) | CI/CD gates rules (ADR-0005) | Automate pipeline validation | Rules and schemas |
-| [GitFlow Branching Rules](./rulesets/adr/adr-0050-gitflow-branching.rules.json) | Branching strategy ADR | Establish Git flow | Rules and schemas |
+| Link (URL) | Description (brief explanation) | Goal / Objective | Typification (category or type) | Requirement |
+|---|---|---|---|---|
+| [Release Notes Template](./reference/governance/sdlc/04-artifact-templates/release-notes-template.md) | Release notes template | Communicate release changes | Documents and templates | **Mandatory** |
+| [Release Notes Schema](./rulesets/schema/release-notes.schema.json) | Release notes validation schema | Validate artifact structure | Rules and schemas | **Mandatory** |
+| [CI/CD Quality Gates Rules](./rulesets/adr/adr-0005-cicd-quality-gates.rules.json) | CI/CD gates rules (ADR-0005) | Automate pipeline validation | Rules and schemas | **Mandatory** |
+| [GitFlow Branching Rules](./rulesets/adr/adr-0050-gitflow-branching.rules.json) | Branching strategy ADR | Establish Git flow | Rules and schemas | **Mandatory** |
 
 </details>
 

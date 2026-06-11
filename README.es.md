@@ -134,78 +134,78 @@ y guía operativa que los productos satélite heredan y especializan.
 <details>
 <summary><strong>Fase 01 - Concepcion y Descubrimiento</strong></summary>
 
-| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
-|---|---|---|---|
-| [Discovery Canvas](./reference/governance/sdlc/04-artifact-templates/discovery-canvas-template.es.md) | Lienzo de descubrimiento | Definir visión y viabilidad | Documentos y plantillas |
-| [Business Case ROI](./reference/governance/sdlc/04-artifact-templates/business-case-roi-template.es.md) | Análisis de ROI | Justificar valor de negocio | Documentos y plantillas |
-| [Ballpark Estimation](./reference/governance/sdlc/04-artifact-templates/ballpark-estimation-template.es.md) | Estimación a gran escala | Proyectar costos y tiempos | Documentos y plantillas |
-| [PRD - Documento de Requerimientos de Producto](./reference/governance/sdlc/04-artifact-templates/prd-template.es.md) | Documento de requerimientos | Especificar necesidades funcionales | Documentos y plantillas |
-| [Evolith User Story](./reference/governance/sdlc/04-artifact-templates/evolith-user-story-template.es.md) | Plantilla de historia de usuario | Estandarizar historias ágiles | Documentos y plantillas |
-| [Agile Backlog](./reference/governance/sdlc/04-artifact-templates/agile-backlog-template.es.md) | Plantilla de backlog | Organizar entregables | Documentos y plantillas |
-| [CLI Impact Analysis](./reference/governance/sdlc/04-artifact-templates/cli-impact-analysis.es.md) | Análisis de impacto CLI | Evaluar cambios cross-repo | Documentos y plantillas |
-| [Discovery Canvas Schema](./rulesets/schema/discovery-canvas.schema.json) | Esquema de validación del discovery canvas | Validar estructura del artefacto | Reglas y schemas |
-| [Business Case ROI Schema](./rulesets/schema/business-case-roi.schema.json) | Esquema de validación del business case | Validar estructura del artefacto | Reglas y schemas |
-| [Ballpark Estimation Schema](./rulesets/schema/ballpark-estimation.schema.json) | Esquema de validación de estimación | Validar estructura del artefacto | Reglas y schemas |
-| [PRD Schema](./rulesets/schema/prd.schema.json) | Esquema de validación del PRD | Validar estructura del artefacto | Reglas y schemas |
-| [Evolith User Story Schema](./rulesets/schema/evolith-user-story.schema.json) | Esquema de validación de user story | Validar estructura del artefacto | Reglas y schemas |
-| [Agile Backlog Schema](./rulesets/schema/agile-backlog.schema.json) | Esquema de validación del backlog | Validar estructura del artefacto | Reglas y schemas |
-| [CLI Impact Analysis Schema](./rulesets/schema/cli-impact-analysis.schema.json) | Esquema de validación del análisis de impacto | Validar estructura del artefacto | Reglas y schemas |
-| [Phase Gates Rules](./rulesets/sdlc/phase-gates.rules.json) | Reglas automatizadas de gates | Validar cumplimiento en CI | Reglas y schemas |
+| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) | Requisito |
+|---|---|---|---|---|
+| [Discovery Canvas](./reference/governance/sdlc/04-artifact-templates/discovery-canvas-template.es.md) | Lienzo de descubrimiento | Definir visión y viabilidad | Documentos y plantillas | **Obligatorio** |
+| [Business Case ROI](./reference/governance/sdlc/04-artifact-templates/business-case-roi-template.es.md) | Análisis de ROI | Justificar valor de negocio | Documentos y plantillas | Opcional |
+| [Ballpark Estimation](./reference/governance/sdlc/04-artifact-templates/ballpark-estimation-template.es.md) | Estimación a gran escala | Proyectar costos y tiempos | Documentos y plantillas | Opcional |
+| [PRD - Documento de Requerimientos de Producto](./reference/governance/sdlc/04-artifact-templates/prd-template.es.md) | Documento de requerimientos | Especificar necesidades funcionales | Documentos y plantillas | **Obligatorio** |
+| [Evolith User Story](./reference/governance/sdlc/04-artifact-templates/evolith-user-story-template.es.md) | Plantilla de historia de usuario | Estandarizar historias ágiles | Documentos y plantillas | **Obligatorio** |
+| [Agile Backlog](./reference/governance/sdlc/04-artifact-templates/agile-backlog-template.es.md) | Plantilla de backlog | Organizar entregables | Documentos y plantillas | **Obligatorio** |
+| [CLI Impact Analysis](./reference/governance/sdlc/04-artifact-templates/cli-impact-analysis.es.md) | Análisis de impacto CLI | Evaluar cambios cross-repo | Documentos y plantillas | Opcional |
+| [Discovery Canvas Schema](./rulesets/schema/discovery-canvas.schema.json) | Esquema de validación del discovery canvas | Validar estructura del artefacto | Reglas y schemas | **Obligatorio** |
+| [Business Case ROI Schema](./rulesets/schema/business-case-roi.schema.json) | Esquema de validación del business case | Validar estructura del artefacto | Reglas y schemas | Opcional |
+| [Ballpark Estimation Schema](./rulesets/schema/ballpark-estimation.schema.json) | Esquema de validación de estimación | Validar estructura del artefacto | Reglas y schemas | Opcional |
+| [PRD Schema](./rulesets/schema/prd.schema.json) | Esquema de validación del PRD | Validar estructura del artefacto | Reglas y schemas | **Obligatorio** |
+| [Evolith User Story Schema](./rulesets/schema/evolith-user-story.schema.json) | Esquema de validación de user story | Validar estructura del artefacto | Reglas y schemas | **Obligatorio** |
+| [Agile Backlog Schema](./rulesets/schema/agile-backlog.schema.json) | Esquema de validación del backlog | Validar estructura del artefacto | Reglas y schemas | **Obligatorio** |
+| [CLI Impact Analysis Schema](./rulesets/schema/cli-impact-analysis.schema.json) | Esquema de validación del análisis de impacto | Validar estructura del artefacto | Reglas y schemas | Opcional |
+| [Phase Gates Rules](./rulesets/sdlc/phase-gates.rules.json) | Reglas automatizadas de gates | Validar cumplimiento en CI | Reglas y schemas | **Obligatorio** |
 
 </details>
 
 <details>
 <summary><strong>Fase 02 - Diseno y Arquitectura</strong></summary>
 
-| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
-|---|---|---|---|
-| [Plantilla ADR](./reference/governance/sdlc/04-artifact-templates/adr-template.es.md) | Plantilla de ADR | Documentar decisiones clave | Documentos y plantillas |
-| [Plantilla de Historia Funcional](./reference/governance/sdlc/04-artifact-templates/functional-story-template.es.md) | Plantilla de historia funcional | Detallar comportamiento | Documentos y plantillas |
-| [Plantilla de Modelo DDD](./reference/governance/sdlc/04-artifact-templates/ddd-model-template.es.md) | Plantilla de modelo DDD | Modelar dominios del sistema | Documentos y plantillas |
-| [Estandar de Escritura de Historias Funcionales](./reference/governance/sdlc/03-documentation/functional-story-writing-standard.es.md) | Estándar de historias funcionales | Asegurar calidad de specs | Estandares y guia |
-| [Buenas Practicas de Documentacion SDLC](./reference/governance/sdlc/03-documentation/sdlc-documentation-best-practices.es.md) | Prácticas de documentación | Mejorar calidad documental | Estandares y guia |
-| [ADR Schema](./rulesets/schema/adr.schema.json) | Esquema de validación JSON | Validar estructura de datos | Reglas y schemas |
-| [Functional Story Schema](./rulesets/schema/functional-story.schema.json) | Esquema de validación JSON | Validar estructura de datos | Reglas y schemas |
+| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) | Requisito |
+|---|---|---|---|---|
+| [Plantilla ADR](./reference/governance/sdlc/04-artifact-templates/adr-template.es.md) | Plantilla de ADR | Documentar decisiones clave | Documentos y plantillas | Opcional |
+| [Plantilla de Historia Funcional](./reference/governance/sdlc/04-artifact-templates/functional-story-template.es.md) | Plantilla de historia funcional | Detallar comportamiento | Documentos y plantillas | **Obligatorio** |
+| [Plantilla de Modelo DDD](./reference/governance/sdlc/04-artifact-templates/ddd-model-template.es.md) | Plantilla de modelo DDD | Modelar dominios del sistema | Documentos y plantillas | Opcional |
+| [Estandar de Escritura de Historias Funcionales](./reference/governance/sdlc/03-documentation/functional-story-writing-standard.es.md) | Estándar de historias funcionales | Asegurar calidad de specs | Estandares y guia | **Obligatorio** |
+| [Buenas Practicas de Documentacion SDLC](./reference/governance/sdlc/03-documentation/sdlc-documentation-best-practices.es.md) | Prácticas de documentación | Mejorar calidad documental | Estandares y guia | **Obligatorio** |
+| [ADR Schema](./rulesets/schema/adr.schema.json) | Esquema de validación JSON | Validar estructura de datos | Reglas y schemas | Opcional |
+| [Functional Story Schema](./rulesets/schema/functional-story.schema.json) | Esquema de validación JSON | Validar estructura de datos | Reglas y schemas | **Obligatorio** |
 
 </details>
 
 <details>
 <summary><strong>Fase 03 - Construccion</strong></summary>
 
-| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
-|---|---|---|---|
-| [Hub de Plantillas de Artefactos](./reference/governance/sdlc/04-artifact-templates/README.es.md) | Hub de plantillas | Centralizar formatos SDLC | Documentos y plantillas |
-| [Plantilla de Historia Tecnica](./reference/governance/sdlc/04-artifact-templates/technical-story-template.es.md) | Plantilla de historia técnica | Estructurar tareas técnicas | Documentos y plantillas |
-| [Framework SDLC Enfocado en Construccion](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.es.md) | Framework de construcción | Normar ejecución técnica | Estandares y guia |
-| [Definition of Done](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.es.md) | Criterios de completitud (DoD) | Definir cuándo un entregable está terminado | Estandares y guia |
-| [Quality Gates SDLC](./reference/governance/sdlc/quality-gates.es.md) | Gates de calidad | Establecer umbrales de aprobación | Estandares y guia |
-| [Technical Story Schema](./rulesets/schema/technical-story.schema.json) | Esquema de validación JSON | Validar estructura de datos | Reglas y schemas |
-| [Definition of Done Rules](./rulesets/cross-cutting/definition-of-done.rules.json) | Reglas automatizadas | Validar cumplimiento en CI | Reglas y schemas |
-| [Quality Thresholds Rules](./rulesets/sdlc/quality-thresholds.rules.json) | Reglas automatizadas | Validar cumplimiento en CI | Reglas y schemas |
-| [Dependency Pinning Rules](./rulesets/sdlc/dependency-pinning.rules.json) | Reglas automatizadas | Validar cumplimiento en CI | Reglas y schemas |
+| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) | Requisito |
+|---|---|---|---|---|
+| [Hub de Plantillas de Artefactos](./reference/governance/sdlc/04-artifact-templates/README.es.md) | Hub de plantillas | Centralizar formatos SDLC | Documentos y plantillas | **Obligatorio** |
+| [Plantilla de Historia Tecnica](./reference/governance/sdlc/04-artifact-templates/technical-story-template.es.md) | Plantilla de historia técnica | Estructurar tareas técnicas | Documentos y plantillas | **Obligatorio** |
+| [Framework SDLC Enfocado en Construccion](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.es.md) | Framework de construcción | Normar ejecución técnica | Estandares y guia | **Obligatorio** |
+| [Definition of Done](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.es.md) | Criterios de completitud (DoD) | Definir cuándo un entregable está terminado | Estandares y guia | **Obligatorio** |
+| [Quality Gates SDLC](./reference/governance/sdlc/quality-gates.es.md) | Gates de calidad | Establecer umbrales de aprobación | Estandares y guia | **Obligatorio** |
+| [Technical Story Schema](./rulesets/schema/technical-story.schema.json) | Esquema de validación JSON | Validar estructura de datos | Reglas y schemas | **Obligatorio** |
+| [Definition of Done Rules](./rulesets/cross-cutting/definition-of-done.rules.json) | Reglas automatizadas | Validar cumplimiento en CI | Reglas y schemas | **Obligatorio** |
+| [Quality Thresholds Rules](./rulesets/sdlc/quality-thresholds.rules.json) | Reglas automatizadas | Validar cumplimiento en CI | Reglas y schemas | **Obligatorio** |
+| [Dependency Pinning Rules](./rulesets/sdlc/dependency-pinning.rules.json) | Reglas automatizadas | Validar cumplimiento en CI | Reglas y schemas | **Obligatorio** |
 
 </details>
 
 <details>
 <summary><strong>Fase 04 - Validacion y QA</strong></summary>
 
-| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
-|---|---|---|---|
-| [Plantilla de Test Summary Report](./reference/governance/sdlc/04-artifact-templates/test-summary-report-template.es.md) | Reporte de pruebas | Consolidar resultados de QA | Documentos y plantillas |
-| [Modelo de Trazabilidad SDLC](./reference/governance/sdlc/traceability-model.es.md) | Modelo de trazabilidad | Vincular requerimientos y pruebas | Estandares y guia |
-| [Test Summary Report Schema](./rulesets/schema/test-summary-report.schema.json) | Esquema de validación del reporte de pruebas | Validar estructura del artefacto | Reglas y schemas |
+| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) | Requisito |
+|---|---|---|---|---|
+| [Plantilla de Test Summary Report](./reference/governance/sdlc/04-artifact-templates/test-summary-report-template.es.md) | Reporte de pruebas | Consolidar resultados de QA | Documentos y plantillas | **Obligatorio** |
+| [Modelo de Trazabilidad SDLC](./reference/governance/sdlc/traceability-model.es.md) | Modelo de trazabilidad | Vincular requerimientos y pruebas | Estandares y guia | **Obligatorio** |
+| [Test Summary Report Schema](./rulesets/schema/test-summary-report.schema.json) | Esquema de validación del reporte de pruebas | Validar estructura del artefacto | Reglas y schemas | **Obligatorio** |
 
 </details>
 
 <details>
 <summary><strong>Fase 05 - Entrega y Operaciones</strong></summary>
 
-| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
-|---|---|---|---|
-| [Plantilla de Release Notes](./reference/governance/sdlc/04-artifact-templates/release-notes-template.es.md) | Plantilla de notas de versión | Comunicar cambios de release | Documentos y plantillas |
-| [Release Notes Schema](./rulesets/schema/release-notes.schema.json) | Esquema de validación de release notes | Validar estructura del artefacto | Reglas y schemas |
-| [CI/CD Quality Gates Rules](./rulesets/adr/adr-0005-cicd-quality-gates.rules.json) | Reglas de gates CI/CD (ADR-0005) | Automatizar validación en pipelines | Reglas y schemas |
-| [GitFlow Branching Rules](./rulesets/adr/adr-0050-gitflow-branching.rules.json) | Estrategia de ramas (ADR) | Establecer flujo de Git | Reglas y schemas |
+| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) | Requisito |
+|---|---|---|---|---|
+| [Plantilla de Release Notes](./reference/governance/sdlc/04-artifact-templates/release-notes-template.es.md) | Plantilla de notas de versión | Comunicar cambios de release | Documentos y plantillas | **Obligatorio** |
+| [Release Notes Schema](./rulesets/schema/release-notes.schema.json) | Esquema de validación de release notes | Validar estructura del artefacto | Reglas y schemas | **Obligatorio** |
+| [CI/CD Quality Gates Rules](./rulesets/adr/adr-0005-cicd-quality-gates.rules.json) | Reglas de gates CI/CD (ADR-0005) | Automatizar validación en pipelines | Reglas y schemas | **Obligatorio** |
+| [GitFlow Branching Rules](./rulesets/adr/adr-0050-gitflow-branching.rules.json) | Estrategia de ramas (ADR) | Establecer flujo de Git | Reglas y schemas | **Obligatorio** |
 
 </details>
 

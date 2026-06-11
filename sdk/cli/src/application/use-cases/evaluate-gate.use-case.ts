@@ -9,6 +9,7 @@ import {
   GateViolation,
   deriveVerdict,
 } from '../../domain/gate-evidence';
+import { WebhookNotifierPort } from '../ports/webhook-notifier.port';
 
 /**
  * Evaluates one SDLC phase gate and emits the ADR-0073 `GateEvidence` payload.
@@ -35,11 +36,15 @@ export interface EvaluateGateInput {
   projectPath: string;
   corePath?: string;
   evaluatedBy?: EvaluatorKind;
+  webhookUrl?: string;
 }
 
 export class EvaluateGateUseCase {
-  constructor(private readonly validatorFactory: (corePath?: string) => PhaseGateValidatorService =
-    corePath => new PhaseGateValidatorService(corePath)) {}
+  constructor(
+    private readonly validatorFactory: (corePath?: string) => PhaseGateValidatorService =
+      corePath => new PhaseGateValidatorService(corePath),
+    private readonly webhookNotifier?: WebhookNotifierPort
+  ) {}
 
   async execute(input: EvaluateGateInput): Promise<GateEvidence> {
     const validator = this.validatorFactory(input.corePath);
@@ -48,7 +53,7 @@ export class EvaluateGateUseCase {
     const rulesetVersion = await validator.getRulesetVersion();
     const violations = this.toViolations(result);
 
-    return {
+    const evidence: GateEvidence = {
       gateId: this.slugify(result.name),
       phase: input.phase,
       verdict: deriveVerdict(violations),
@@ -58,6 +63,12 @@ export class EvaluateGateUseCase {
       evaluatedAt: new Date().toISOString(),
       evaluatedBy: input.evaluatedBy ?? 'human',
     };
+
+    if (input.webhookUrl && this.webhookNotifier) {
+      await this.webhookNotifier.notify(input.webhookUrl, evidence);
+    }
+
+    return evidence;
   }
 
   private toViolations(result: GateValidationResult): GateViolation[] {

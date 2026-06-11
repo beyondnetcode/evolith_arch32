@@ -9,6 +9,7 @@ import {
   EvaluatorKind,
   OutputMeta
 } from '../../../domain/gate-evidence';
+import { WebhookAdapter } from '../../../infrastructure/adapters/webhook.adapter';
 
 export async function handleGateEvaluateTool(args: Record<string, unknown>) {
   const startTime = Date.now();
@@ -20,6 +21,7 @@ export async function handleGateEvaluateTool(args: Record<string, unknown>) {
   const evaluatedBy = (args.evaluatedBy as EvaluatorKind) || 'agent';
   const initiative = args.initiative as string | undefined;
   const tenant = args.tenant as string | undefined;
+  const webhookUrl = args.webhookUrl as string | undefined;
 
   const context: Record<string, string> = {};
   if (initiative) context.initiative = initiative;
@@ -43,12 +45,13 @@ export async function handleGateEvaluateTool(args: Record<string, unknown>) {
   }
 
   try {
-    const useCase = new EvaluateGateUseCase();
+    const useCase = new EvaluateGateUseCase(undefined, new WebhookAdapter());
     const input: EvaluateGateInput = {
       phase: phaseRaw as GatePhase,
       projectPath,
       corePath,
       evaluatedBy,
+      webhookUrl,
     };
 
     const evidence = await useCase.execute(input);

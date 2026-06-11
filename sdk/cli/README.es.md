@@ -338,7 +338,7 @@ Evolith usa un archivo `evolith.yaml` en la raíz del repositorio:
 ```yaml
 coreRef:
   version: "1.0.0"
-  path: "../evolith"
+  path: "../../evolith"
 
 governance:
   version: "1.0"

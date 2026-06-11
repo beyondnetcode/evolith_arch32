@@ -332,7 +332,7 @@ Evolith uses an `evolith.yaml` file in the repository root:
 ```yaml
 coreRef:
   version: "1.0.0"
-  path: "../evolith"
+  path: "../../evolith"
 
 governance:
   version: "1.0"

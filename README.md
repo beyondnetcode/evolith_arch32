@@ -67,14 +67,14 @@ Open the phase you are working in. Each section groups the documents, standards,
 | [Agnostic Baseline](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.md) | Agnostic tech stack | Define baseline technologies | Standards and guidance |
 | [Engineering Manifesto](./reference/governance/standards/engineering/engineering-manifesto.md) | Engineering manifesto | Establish technical principles | Standards and guidance |
 | [SDLC Artifact Mapping](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.md) | Artifact mapping | Link phases and deliverables | Standards and guidance |
-| [Discovery Canvas Schema](./rulesets/schema/discovery-canvas.schema.json) | Discovery canvas | Define vision and feasibility | Rules and schemas |
-| [Business Case ROI Schema](./rulesets/schema/business-case-roi.schema.json) | ROI analysis | Justify business value | Rules and schemas |
-| [Ballpark Estimation Schema](./rulesets/schema/ballpark-estimation.schema.json) | High-level estimation | Project costs and times | Rules and schemas |
-| [PRD Schema](./rulesets/schema/prd.schema.json) | Product requirements | Specify functional needs | Rules and schemas |
-| [Evolith User Story Schema](./rulesets/schema/evolith-user-story.schema.json) | User story template | Standardize agile stories | Rules and schemas |
-| [Agile Backlog Schema](./rulesets/schema/agile-backlog.schema.json) | Backlog template | Organize deliverables | Rules and schemas |
-| [CLI Impact Analysis Schema](./rulesets/schema/cli-impact-analysis.schema.json) | CLI impact analysis | Evaluate cross-repo changes | Rules and schemas |
-| [Phase Gates Rules](./rulesets/sdlc/phase-gates.rules.json) | Automated rules | Validate compliance in CI | Rules and schemas |
+| [Discovery Canvas Schema](./rulesets/schema/discovery-canvas.schema.json) | Discovery canvas validation schema | Validate artifact structure | Rules and schemas |
+| [Business Case ROI Schema](./rulesets/schema/business-case-roi.schema.json) | Business case validation schema | Validate artifact structure | Rules and schemas |
+| [Ballpark Estimation Schema](./rulesets/schema/ballpark-estimation.schema.json) | Estimation validation schema | Validate artifact structure | Rules and schemas |
+| [PRD Schema](./rulesets/schema/prd.schema.json) | PRD validation schema | Validate artifact structure | Rules and schemas |
+| [Evolith User Story Schema](./rulesets/schema/evolith-user-story.schema.json) | User story validation schema | Validate artifact structure | Rules and schemas |
+| [Agile Backlog Schema](./rulesets/schema/agile-backlog.schema.json) | Backlog validation schema | Validate artifact structure | Rules and schemas |
+| [CLI Impact Analysis Schema](./rulesets/schema/cli-impact-analysis.schema.json) | Impact analysis validation schema | Validate artifact structure | Rules and schemas |
+| [Phase Gates Rules](./rulesets/sdlc/phase-gates.rules.json) | Automated gate rules | Validate compliance in CI | Rules and schemas |
 
 </details>
 
@@ -110,7 +110,7 @@ Open the phase you are working in. Each section groups the documents, standards,
 | [Technical Story Template](./reference/governance/sdlc/04-artifact-templates/technical-story-template.md) | Technical story template | Structure technical tasks | Documents and templates |
 | [Artifact Templates Hub](./reference/governance/sdlc/04-artifact-templates/README.md) | Templates hub | Centralize SDLC formats | Documents and templates |
 | [Construction-Focused SDLC Framework](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.md) | Construction framework | Regulate technical execution | Standards and guidance |
-| [Definition of Done](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.md) | Construction framework | Regulate technical execution | Standards and guidance |
+| [Definition of Done](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.md) | Completeness criteria (DoD) | Define when a deliverable is done | Standards and guidance |
 | [SDLC Quality Gates](./reference/governance/sdlc/quality-gates.md) | Quality gates | Establish approval thresholds | Standards and guidance |
 | [Canonical Patterns](./reference/architecture/canonical-patterns/README.md) | Canonical patterns | Reuse proven solutions | Standards and guidance |
 | [Contract Testing Guideline](./reference/governance/standards/engineering/contract-testing-guideline.md) | Contract testing guideline | Ensure API compatibility | Standards and guidance |
@@ -119,7 +119,7 @@ Open the phase you are working in. Each section groups the documents, standards,
 | [SDLC Artifact Mapping](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.md) | Artifact mapping | Link phases and deliverables | Standards and guidance |
 | [Technical Story Schema](./rulesets/schema/technical-story.schema.json) | JSON validation schema | Validate data structure | Rules and schemas |
 | [Definition of Done Rules](./rulesets/cross-cutting/definition-of-done.rules.json) | Automated rules | Validate compliance in CI | Rules and schemas |
-| [Engineering Manifesto Rules](./rulesets/cross-cutting/engineering-manifesto.rules.json) | Engineering manifesto | Establish technical principles | Rules and schemas |
+| [Engineering Manifesto Rules](./rulesets/cross-cutting/engineering-manifesto.rules.json) | Engineering manifesto rules | Verify principles compliance in CI | Rules and schemas |
 | [Quality Thresholds Rules](./rulesets/sdlc/quality-thresholds.rules.json) | Automated rules | Validate compliance in CI | Rules and schemas |
 | [Dependency Pinning Rules](./rulesets/sdlc/dependency-pinning.rules.json) | Automated rules | Validate compliance in CI | Rules and schemas |
 
@@ -133,11 +133,11 @@ Open the phase you are working in. Each section groups the documents, standards,
 | [Test Summary Report Template](./reference/governance/sdlc/04-artifact-templates/test-summary-report-template.md) | Test summary report | Consolidate QA results | Documents and templates |
 | [SDLC Quality Gates](./reference/governance/sdlc/quality-gates.md) | Quality gates | Establish approval thresholds | Standards and guidance |
 | [SDLC Traceability Model](./reference/governance/sdlc/traceability-model.md) | Traceability model | Link requirements and tests | Standards and guidance |
-| [Testing Pyramid ADR](./reference/architecture/adrs/core/0018-testing-pyramid-quality-gates.md) | Quality gates | Establish approval thresholds | Standards and guidance |
+| [Testing Pyramid ADR](./reference/architecture/adrs/core/0018-testing-pyramid-quality-gates.md) | Testing pyramid and automated gates | Define layered testing strategy | Standards and guidance |
 | [Unit Testing Isolation ADR](./reference/architecture/adrs/core/0052-unit-testing-isolation-strategy.md) | Testing isolation ADR | Regulate mocks usage | Standards and guidance |
 | [Integration and E2E Testing ADR](./reference/architecture/adrs/core/0053-integration-e2e-testing-strategy.md) | Integration tests ADR | Establish end-to-end tests | Standards and guidance |
 | [SDLC Artifact Mapping](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.md) | Artifact mapping | Link phases and deliverables | Standards and guidance |
-| [Test Summary Report Schema](./rulesets/schema/test-summary-report.schema.json) | Test summary report | Consolidate QA results | Rules and schemas |
+| [Test Summary Report Schema](./rulesets/schema/test-summary-report.schema.json) | Test summary report validation schema | Validate artifact structure | Rules and schemas |
 | [Quality Thresholds Rules](./rulesets/sdlc/quality-thresholds.rules.json) | Automated rules | Validate compliance in CI | Rules and schemas |
 | [Testing Pyramid Rules](./rulesets/adr/adr-0018-testing-pyramid.rules.json) | Testing pyramid ADR | Define testing strategy | Rules and schemas |
 
@@ -155,8 +155,8 @@ Open the phase you are working in. Each section groups the documents, standards,
 | [Observability Architecture Flow](./reference/architecture/blueprints/observability-architecture-flow.md) | Observability architecture flow | Trace signals propagation | Standards and guidance |
 | [Multi-Cloud Deployment Scenarios](./reference/architecture/blueprints/multi-cloud-deployment-scenarios.md) | Multi-cloud scenarios | Define cloud topologies | Standards and guidance |
 | [SDLC Artifact Mapping](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.md) | Artifact mapping | Link phases and deliverables | Standards and guidance |
-| [Release Notes Schema](./rulesets/schema/release-notes.schema.json) | Release notes template | Communicate release changes | Rules and schemas |
-| [CI/CD Quality Gates Rules](./rulesets/adr/adr-0005-cicd-quality-gates.rules.json) | Quality gates | Establish approval thresholds | Rules and schemas |
+| [Release Notes Schema](./rulesets/schema/release-notes.schema.json) | Release notes validation schema | Validate artifact structure | Rules and schemas |
+| [CI/CD Quality Gates Rules](./rulesets/adr/adr-0005-cicd-quality-gates.rules.json) | CI/CD gates rules (ADR-0005) | Automate pipeline validation | Rules and schemas |
 | [GitFlow Branching Rules](./rulesets/adr/adr-0050-gitflow-branching.rules.json) | Branching strategy ADR | Establish Git flow | Rules and schemas |
 
 </details>

@@ -67,14 +67,14 @@ Abre la fase en la que estas trabajando. Cada seccion agrupa los documentos, est
 | [Baseline Agnostica](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.es.md) | Stack agnóstico | Definir tecnologías base | Estandares y guia |
 | [Manifiesto de Ingenieria](./reference/governance/standards/engineering/engineering-manifesto.es.md) | Manifiesto de ingeniería | Establecer principios técnicos | Estandares y guia |
 | [Mapeo de Artefactos SDLC](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.es.md) | Mapeo de artefactos | Vincular fases y entregables | Estandares y guia |
-| [Discovery Canvas Schema](./rulesets/schema/discovery-canvas.schema.json) | Lienzo de descubrimiento | Definir visión y viabilidad | Reglas y schemas |
-| [Business Case ROI Schema](./rulesets/schema/business-case-roi.schema.json) | Análisis de ROI | Justificar valor de negocio | Reglas y schemas |
-| [Ballpark Estimation Schema](./rulesets/schema/ballpark-estimation.schema.json) | Estimación a gran escala | Proyectar costos y tiempos | Reglas y schemas |
-| [PRD Schema](./rulesets/schema/prd.schema.json) | Documento de requerimientos | Especificar necesidades funcionales | Reglas y schemas |
-| [Evolith User Story Schema](./rulesets/schema/evolith-user-story.schema.json) | Plantilla de historia de usuario | Estandarizar historias ágiles | Reglas y schemas |
-| [Agile Backlog Schema](./rulesets/schema/agile-backlog.schema.json) | Plantilla de backlog | Organizar entregables | Reglas y schemas |
-| [CLI Impact Analysis Schema](./rulesets/schema/cli-impact-analysis.schema.json) | Análisis de impacto CLI | Evaluar cambios cross-repo | Reglas y schemas |
-| [Phase Gates Rules](./rulesets/sdlc/phase-gates.rules.json) | Reglas automatizadas | Validar cumplimiento en CI | Reglas y schemas |
+| [Discovery Canvas Schema](./rulesets/schema/discovery-canvas.schema.json) | Esquema de validación del discovery canvas | Validar estructura del artefacto | Reglas y schemas |
+| [Business Case ROI Schema](./rulesets/schema/business-case-roi.schema.json) | Esquema de validación del business case | Validar estructura del artefacto | Reglas y schemas |
+| [Ballpark Estimation Schema](./rulesets/schema/ballpark-estimation.schema.json) | Esquema de validación de estimación | Validar estructura del artefacto | Reglas y schemas |
+| [PRD Schema](./rulesets/schema/prd.schema.json) | Esquema de validación del PRD | Validar estructura del artefacto | Reglas y schemas |
+| [Evolith User Story Schema](./rulesets/schema/evolith-user-story.schema.json) | Esquema de validación de user story | Validar estructura del artefacto | Reglas y schemas |
+| [Agile Backlog Schema](./rulesets/schema/agile-backlog.schema.json) | Esquema de validación del backlog | Validar estructura del artefacto | Reglas y schemas |
+| [CLI Impact Analysis Schema](./rulesets/schema/cli-impact-analysis.schema.json) | Esquema de validación del análisis de impacto | Validar estructura del artefacto | Reglas y schemas |
+| [Phase Gates Rules](./rulesets/sdlc/phase-gates.rules.json) | Reglas automatizadas de gates | Validar cumplimiento en CI | Reglas y schemas |
 
 </details>
 
@@ -110,7 +110,7 @@ Abre la fase en la que estas trabajando. Cada seccion agrupa los documentos, est
 | [Plantilla de Historia Tecnica](./reference/governance/sdlc/04-artifact-templates/technical-story-template.es.md) | Plantilla de historia técnica | Estructurar tareas técnicas | Documentos y plantillas |
 | [Hub de Plantillas de Artefactos](./reference/governance/sdlc/04-artifact-templates/README.es.md) | Hub de plantillas | Centralizar formatos SDLC | Documentos y plantillas |
 | [Framework SDLC Enfocado en Construccion](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.es.md) | Framework de construcción | Normar ejecución técnica | Estandares y guia |
-| [Definition of Done](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.es.md) | Framework de construcción | Normar ejecución técnica | Estandares y guia |
+| [Definition of Done](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.es.md) | Criterios de completitud (DoD) | Definir cuándo un entregable está terminado | Estandares y guia |
 | [Quality Gates SDLC](./reference/governance/sdlc/quality-gates.es.md) | Gates de calidad | Establecer umbrales de aprobación | Estandares y guia |
 | [Patrones Canonicos](./reference/architecture/canonical-patterns/README.es.md) | Patrones canónicos | Reutilizar soluciones probadas | Estandares y guia |
 | [Guia de Contract Testing](./reference/governance/standards/engineering/contract-testing-guideline.es.md) | Guía de pruebas de contrato | Asegurar compatibilidad de APIs | Estandares y guia |
@@ -119,7 +119,7 @@ Abre la fase en la que estas trabajando. Cada seccion agrupa los documentos, est
 | [Mapeo de Artefactos SDLC](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.es.md) | Mapeo de artefactos | Vincular fases y entregables | Estandares y guia |
 | [Technical Story Schema](./rulesets/schema/technical-story.schema.json) | Esquema de validación JSON | Validar estructura de datos | Reglas y schemas |
 | [Definition of Done Rules](./rulesets/cross-cutting/definition-of-done.rules.json) | Reglas automatizadas | Validar cumplimiento en CI | Reglas y schemas |
-| [Engineering Manifesto Rules](./rulesets/cross-cutting/engineering-manifesto.rules.json) | Manifiesto de ingeniería | Establecer principios técnicos | Reglas y schemas |
+| [Engineering Manifesto Rules](./rulesets/cross-cutting/engineering-manifesto.rules.json) | Reglas del manifiesto de ingeniería | Verificar cumplimiento de principios en CI | Reglas y schemas |
 | [Quality Thresholds Rules](./rulesets/sdlc/quality-thresholds.rules.json) | Reglas automatizadas | Validar cumplimiento en CI | Reglas y schemas |
 | [Dependency Pinning Rules](./rulesets/sdlc/dependency-pinning.rules.json) | Reglas automatizadas | Validar cumplimiento en CI | Reglas y schemas |
 
@@ -133,11 +133,11 @@ Abre la fase en la que estas trabajando. Cada seccion agrupa los documentos, est
 | [Plantilla de Test Summary Report](./reference/governance/sdlc/04-artifact-templates/test-summary-report-template.es.md) | Reporte de pruebas | Consolidar resultados de QA | Documentos y plantillas |
 | [Quality Gates SDLC](./reference/governance/sdlc/quality-gates.es.md) | Gates de calidad | Establecer umbrales de aprobación | Estandares y guia |
 | [Modelo de Trazabilidad SDLC](./reference/governance/sdlc/traceability-model.es.md) | Modelo de trazabilidad | Vincular requerimientos y pruebas | Estandares y guia |
-| [ADR de Testing Pyramid](./reference/architecture/adrs/core/0018-testing-pyramid-quality-gates.es.md) | Gates de calidad | Establecer umbrales de aprobación | Estandares y guia |
+| [ADR de Testing Pyramid](./reference/architecture/adrs/core/0018-testing-pyramid-quality-gates.es.md) | Pirámide de pruebas y gates automatizados | Definir estrategia de testeo por capas | Estandares y guia |
 | [ADR de Aislamiento de Unit Testing](./reference/architecture/adrs/core/0052-unit-testing-isolation-strategy.es.md) | Aislamiento de pruebas (ADR) | Normar uso de mocks | Estandares y guia |
 | [ADR de Integration y E2E Testing](./reference/architecture/adrs/core/0053-integration-e2e-testing-strategy.es.md) | Pruebas de integración y E2E (ADR) | Establecer pruebas end-to-end | Estandares y guia |
 | [Mapeo de Artefactos SDLC](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.es.md) | Mapeo de artefactos | Vincular fases y entregables | Estandares y guia |
-| [Test Summary Report Schema](./rulesets/schema/test-summary-report.schema.json) | Reporte de pruebas | Consolidar resultados de QA | Reglas y schemas |
+| [Test Summary Report Schema](./rulesets/schema/test-summary-report.schema.json) | Esquema de validación del reporte de pruebas | Validar estructura del artefacto | Reglas y schemas |
 | [Quality Thresholds Rules](./rulesets/sdlc/quality-thresholds.rules.json) | Reglas automatizadas | Validar cumplimiento en CI | Reglas y schemas |
 | [Testing Pyramid Rules](./rulesets/adr/adr-0018-testing-pyramid.rules.json) | Pirámide de pruebas (ADR) | Definir estrategia de testeo | Reglas y schemas |
 
@@ -155,8 +155,8 @@ Abre la fase en la que estas trabajando. Cada seccion agrupa los documentos, est
 | [Flujo de Arquitectura de Observabilidad](./reference/architecture/blueprints/observability-architecture-flow.es.md) | Arquitectura de observabilidad | Trazar propagación de señales | Estandares y guia |
 | [Escenarios de Despliegue Multi-Cloud](./reference/architecture/blueprints/multi-cloud-deployment-scenarios.es.md) | Escenarios multi-cloud | Definir topologías cloud | Estandares y guia |
 | [Mapeo de Artefactos SDLC](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.es.md) | Mapeo de artefactos | Vincular fases y entregables | Estandares y guia |
-| [Release Notes Schema](./rulesets/schema/release-notes.schema.json) | Plantilla de notas de versión | Comunicar cambios de release | Reglas y schemas |
-| [CI/CD Quality Gates Rules](./rulesets/adr/adr-0005-cicd-quality-gates.rules.json) | Gates de calidad | Establecer umbrales de aprobación | Reglas y schemas |
+| [Release Notes Schema](./rulesets/schema/release-notes.schema.json) | Esquema de validación de release notes | Validar estructura del artefacto | Reglas y schemas |
+| [CI/CD Quality Gates Rules](./rulesets/adr/adr-0005-cicd-quality-gates.rules.json) | Reglas de gates CI/CD (ADR-0005) | Automatizar validación en pipelines | Reglas y schemas |
 | [GitFlow Branching Rules](./rulesets/adr/adr-0050-gitflow-branching.rules.json) | Estrategia de ramas (ADR) | Establecer flujo de Git | Reglas y schemas |
 
 </details>

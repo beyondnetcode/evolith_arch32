@@ -264,10 +264,12 @@ smart-cli adr list
 smart-cli mcp serve
 ```
 
-- [Documentacion CLI](./sdk/cli/README.es.md)
-- [Arquitectura CLI](./sdk/cli/ARCHITECTURE.es.md)
-- [Vision del Producto CLI](./sdk/cli/docs/VISION.es.md)
-- [Analisis de Estado](./sdk/cli/docs/planning/sdk-cli-mcp-current-state-assessment.md)
+| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
+|---|---|---|---|
+| [Documentacion CLI](./sdk/cli/README.es.md) | Documentación técnica del CLI | Entender la herramienta | Referencia de producto |
+| [Arquitectura CLI](./sdk/cli/ARCHITECTURE.es.md) | Arquitectura de Smart CLI | Diseño interno de la CLI | Arquitectura de producto |
+| [Vision del Producto CLI](./sdk/cli/docs/VISION.es.md) | Visión del producto CLI | Plan a largo plazo | Visión de producto |
+| [Analisis de Estado](./sdk/cli/docs/planning/sdk-cli-mcp-current-state-assessment.md) | Análisis del estado de la CLI | Monitorear el progreso actual | Referencia de producto |
 
 </details>
 

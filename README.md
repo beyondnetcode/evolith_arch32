@@ -264,10 +264,12 @@ smart-cli adr list
 smart-cli mcp serve
 ```
 
-- [CLI Documentation](./sdk/cli/README.md)
-- [CLI Architecture](./sdk/cli/ARCHITECTURE.md)
-- [CLI Product Vision](./sdk/cli/docs/VISION.md)
-- [Gap Analysis](./sdk/cli/docs/planning/sdk-cli-mcp-current-state-assessment.md)
+| Link (URL) | Description (brief explanation) | Goal / Objective | Typification (category or type) |
+|---|---|---|---|
+| [CLI Documentation](./sdk/cli/README.md) | CLI technical documentation | Understand the tool | Product reference |
+| [CLI Architecture](./sdk/cli/ARCHITECTURE.md) | Smart CLI architecture | CLI internal design | Product architecture |
+| [CLI Product Vision](./sdk/cli/docs/VISION.md) | CLI product vision | Long-term plan | Product vision |
+| [Gap Analysis](./sdk/cli/docs/planning/sdk-cli-mcp-current-state-assessment.md) | CLI state analysis | Monitor current progress | Product reference |
 
 </details>
 

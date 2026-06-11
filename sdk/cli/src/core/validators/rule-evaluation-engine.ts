@@ -1,6 +1,8 @@
 import * as path from 'path';
 import { getContainer, IFileSystem, ILogger } from '../abstractions';
 import { ValidationIssue } from './ruleset-validator.service';
+import Ajv from 'ajv';
+import addFormats from 'ajv-formats';
 
 export interface NormalizedRule {
   id: string;
@@ -32,11 +34,16 @@ const ALREADY_CHECKED = new Set(['GOV-01', 'GOV-02', 'INH-02', 'ACL-01', 'OCB-01
 export class RuleEvaluationEngine {
   private readonly fs: IFileSystem;
   private readonly logger: ILogger;
+  private readonly ajv: Ajv;
+  private validateSchema: any;
 
   constructor(options?: { fileSystem?: IFileSystem; logger?: ILogger }) {
     const container = getContainer();
     this.fs = options?.fileSystem ?? container.createFileSystem();
     this.logger = options?.logger ?? container.createLogger('RuleEvaluationEngine');
+    
+    this.ajv = new Ajv({ allErrors: true });
+    addFormats(this.ajv);
   }
 
   async discoverAndEvaluate(
@@ -68,10 +75,27 @@ export class RuleEvaluationEngine {
       try {
         const content = await this.fs.readFile(filePath);
         const parsed = JSON.parse(content) as Record<string, unknown>;
+        
+        // Exclude SDLC gate rulesets from standard validation here since PhaseGateValidator handles them
+        if (!filePath.endsWith('phase-gates.rules.json')) {
+          if (!this.validateSchema) {
+            const schemaPath = path.join(rulesetsDir, 'schema', 'ruleset-standard.schema.json');
+            const schemaContent = await this.fs.readFile(schemaPath);
+            this.validateSchema = this.ajv.compile(JSON.parse(schemaContent));
+          }
+          const valid = this.validateSchema(parsed);
+          if (!valid) {
+             throw new Error(`Schema validation failed: ${this.ajv.errorsText(this.validateSchema.errors)}`);
+          }
+        }
+
         const relative = filePath.replace(corePath + path.sep, '');
         rules.push(...this.normalizeRuleset(parsed, relative));
       } catch (err: unknown) {
-        this.logger.warn(`Failed to load ${filePath}: ${err instanceof Error ? err.message : String(err)}`);
+        // As requested by user: throw error for malformed rulesets instead of just warning
+        const message = err instanceof Error ? err.message : String(err);
+        this.logger.error(`Malformed ruleset detected at ${filePath}: ${message}`);
+        throw new Error(`Ruleset validation error in ${filePath}: ${message}`);
       }
     }
 

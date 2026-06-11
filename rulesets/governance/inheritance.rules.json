@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "../schema/ruleset-standard.schema.json",
   "$id": "https://evolith.dev/rulesets/governance/inheritance.rules.json",
   "title": "Evolith Core Inheritance Rules",
   "description": "Rules governing how satellite repositories inherit governance, architecture, and SDLC rules from Evolith Core. Satellites cannot modify Core rules.",

@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "../schema/ruleset-standard.schema.json",
   "$id": "https://evolith.dev/rulesets/governance/open-core-boundary.rules.json",
   "title": "Open-Core Boundary Rules",
   "description": "Rules defining the boundary between Evolith Core (open source, freely available) and Evolith Enterprise (SaaS, paid). These rules prevent contamination between layers and protect the Open-Core strategy.",

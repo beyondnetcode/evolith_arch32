@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "../schema/ruleset-standard.schema.json",
   "$id": "https://evolith.dev/rulesets/cross-cutting/definition-of-done.rules.json",
   "title": "Definition of Done Rules",
   "description": "Machine-readable encoding of the Evolith Definition of Done. Mandatory checklist for every Technical Story before it can be marked Done.",
@@ -125,6 +125,11 @@
   ],
   "exitCriteria": {
     "description": "All MUST items checked. Story cannot be marked Done without all blocking items satisfied.",
-    "validationTools": ["CI pipeline", "coverage reports", "PR review", "story tracker"]
+    "validationTools": [
+      "CI pipeline",
+      "coverage reports",
+      "PR review",
+      "story tracker"
+    ]
   }
 }

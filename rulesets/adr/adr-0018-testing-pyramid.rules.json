@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "../schema/ruleset-standard.schema.json",
   "$id": "https://evolith.dev/rulesets/adr/adr-0018-testing-pyramid.rules.json",
   "title": "ADR-0018 — Testing Pyramid and Quality Gates Rules",
   "description": "Machine-readable rules encoding ADR-0018 Testing Pyramid. Enforces layered testing with distribution targets and blocking thresholds.",
@@ -105,6 +105,11 @@
   ],
   "exitCriteria": {
     "description": "Pyramid distribution validated per release. Coverage thresholds enforced in CI. SLA compliance tracked.",
-    "validationTools": ["Jest", "Istanbul", "testcontainers", "supertest"]
+    "validationTools": [
+      "Jest",
+      "Istanbul",
+      "testcontainers",
+      "supertest"
+    ]
   }
 }

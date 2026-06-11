@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "../schema/ruleset-standard.schema.json",
   "$id": "https://evolith.dev/rulesets/mcp/protocol-compliance.rules.json",
   "title": "MCP Protocol Compliance Rules",
   "description": "Minimum behavior required for Evolith MCP server transports and handlers.",
@@ -55,4 +55,3 @@
     }
   ]
 }
-

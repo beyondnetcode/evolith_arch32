@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "../schema/ruleset-standard.schema.json",
   "$id": "https://evolith.dev/rulesets/architecture/f1-modular-monolith.rules.json",
   "title": "F1 — Modular Monolith Architecture Rules",
   "description": "Rules governing the mandatory starting topology for all Evolith satellites. F1 is the only permitted entry point unless extraction criteria are already satisfied.",
@@ -90,7 +90,10 @@
   ],
   "extractionCriteria": {
     "minScore": 70,
-    "requiredADRs": ["ADR-0045", "ADR-0047"],
+    "requiredADRs": [
+      "ADR-0045",
+      "ADR-0047"
+    ],
     "reference": "adr/0045-microservice-extraction-readiness-criteria.md"
   },
   "exitGate": {

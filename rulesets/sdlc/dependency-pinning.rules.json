@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "../schema/ruleset-standard.schema.json",
   "$id": "https://evolith.dev/rulesets/sdlc/dependency-pinning.rules.json",
   "title": "Dependency Pinning and Vulnerability Management Rules",
   "description": "Machine-readable enforcement of ADR-0009 (Strict Dependency Pinning and Automated Vulnerability Management). Applies to all Evolith satellite repositories containing package.json files.",
@@ -20,7 +20,12 @@
       "blocking": true,
       "checklistItem": "no-caret-ranges",
       "autoFixStrategy": "Remove ^ prefix from all dependency versions. Run 'npm install --save-exact' or 'npm pkg set dependencies.<pkg>=<version>' with exact version.",
-      "appliesTo": ["dependencies", "devDependencies", "peerDependencies", "optionalDependencies"]
+      "appliesTo": [
+        "dependencies",
+        "devDependencies",
+        "peerDependencies",
+        "optionalDependencies"
+      ]
     },
     {
       "id": "DEP-02",
@@ -33,7 +38,12 @@
       "blocking": true,
       "checklistItem": "no-tilde-ranges",
       "autoFixStrategy": "Remove ~ prefix from all dependency versions. Pin to exact current resolved version from package-lock.json.",
-      "appliesTo": ["dependencies", "devDependencies", "peerDependencies", "optionalDependencies"]
+      "appliesTo": [
+        "dependencies",
+        "devDependencies",
+        "peerDependencies",
+        "optionalDependencies"
+      ]
     },
     {
       "id": "DEP-03",
@@ -130,7 +140,14 @@
   ],
   "waiverPolicy": {
     "description": "A waiver may be used only when the organization deliberately accepts a temporary deviation from the pinning or audit policy.",
-    "requiredFields": ["rule", "justification", "affectedPackages", "owner", "expirationDate", "mitigationPlan"],
+    "requiredFields": [
+      "rule",
+      "justification",
+      "affectedPackages",
+      "owner",
+      "expirationDate",
+      "mitigationPlan"
+    ],
     "exceptions": {
       "cves": "High/Critical CVEs cannot be waived in production releases without explicit Executive Risk Acceptance. Medium CVEs require documented justification with remediation timeline.",
       "ranges": "Range specifiers (^ or ~) cannot be used in production package.json files. peerDependencies in published libraries may use ranges by exception with Architecture Board approval."
@@ -148,14 +165,19 @@
     "dependency-bot-configured",
     "workspaces-pinned"
   ],
-  "references": {
-    "adrDocument": "reference/architecture/adrs/core/0009-strict-dependency-pinning-vulnerability-management.md",
-    "securityThresholds": "rulesets/sdlc/quality-thresholds.rules.json",
-    "definitionOfDone": "rulesets/cross-cutting/definition-of-done.rules.json",
-    "cicdAdr": "reference/architecture/adrs/core/0005-ci-cd-quality-codeql.md"
-  },
+  "references": [
+    "reference/architecture/adrs/core/0009-strict-dependency-pinning-vulnerability-management.md",
+    "rulesets/sdlc/quality-thresholds.rules.json",
+    "rulesets/cross-cutting/definition-of-done.rules.json",
+    "reference/architecture/adrs/core/0005-ci-cd-quality-codeql.md"
+  ],
   "exitCriteria": {
     "description": "All MUST rules must pass. SHOULD rules are strongly recommended but advisory. A dependency-pinning violation BLOCKS merge to main.",
-    "validationTools": ["npm audit", "grep for ^ and ~ in package.json files", "lock file presence check", "CI workflow analysis"]
+    "validationTools": [
+      "npm audit",
+      "grep for ^ and ~ in package.json files",
+      "lock file presence check",
+      "CI workflow analysis"
+    ]
   }
 }

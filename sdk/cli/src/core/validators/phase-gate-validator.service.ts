@@ -1,5 +1,7 @@
 import * as path from 'path';
 import { getContainer, IFileSystem, ILogger } from '../abstractions';
+import Ajv from 'ajv';
+import addFormats from 'ajv-formats';
 
 export interface PhaseGateDefinition {
   phase: number;
@@ -61,6 +63,8 @@ export class PhaseGateValidatorService {
   private readonly logger: ILogger;
   private readonly rulesetPath: string;
   private cachedRuleset: PhaseGatesRuleset | null = null;
+  private readonly ajv: Ajv;
+  private readonly validateSchema: any;
 
   constructor(corePath?: string) {
     const container = getContainer();
@@ -69,6 +73,12 @@ export class PhaseGateValidatorService {
 
     const resolvedCorePath = corePath || this.findCorePath(process.cwd());
     this.rulesetPath = path.join(resolvedCorePath, 'rulesets', 'sdlc', 'phase-gates.rules.json');
+    
+    this.ajv = new Ajv({ allErrors: true });
+    addFormats(this.ajv);
+    
+    // We load the schema synchronously for instantiation, or we could load it in loadRuleset.
+    // It's better to load the schema from file dynamically.
   }
 
   async loadRuleset(): Promise<PhaseGatesRuleset> {
@@ -78,7 +88,21 @@ export class PhaseGateValidatorService {
 
     try {
       const content = await this.fs.readFile(this.rulesetPath);
-      this.cachedRuleset = JSON.parse(content) as PhaseGatesRuleset;
+      const parsed = JSON.parse(content);
+      
+      // Load schema and validate
+      if (!this.validateSchema) {
+        const schemaPath = path.join(path.dirname(this.rulesetPath), '../schema/ruleset-sdlc.schema.json');
+        const schemaContent = await this.fs.readFile(schemaPath);
+        (this as any).validateSchema = this.ajv.compile(JSON.parse(schemaContent));
+      }
+      
+      const valid = this.validateSchema(parsed);
+      if (!valid) {
+        throw new Error(`Ruleset validation failed: ${this.ajv.errorsText(this.validateSchema.errors)}`);
+      }
+
+      this.cachedRuleset = parsed as PhaseGatesRuleset;
       return this.cachedRuleset;
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);

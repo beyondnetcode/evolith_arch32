@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "../schema/ruleset-standard.schema.json",
   "$id": "https://evolith.dev/rulesets/cross-cutting/repository-taxonomy.rules.json",
   "title": "Repository Taxonomy Rules",
   "description": "Machine-readable encoding of the Evolith Repository Taxonomy. Naming, structure, and artifact classification rules for all Evolith repositories.",
@@ -14,7 +14,11 @@
       "description": "All file names use kebab-case (lowercase with hyphens). No spaces, no underscores in file names. Example: my-file-name.md, user-service.ts.",
       "validationQuery": "File names validated via linting or CI script. Pattern: ^[a-z0-9-]+\\.[a-z]+$",
       "blocking": true,
-      "examples": ["my-file.md", "user-service.ts", "api-gateway.ts"]
+      "examples": [
+        "my-file.md",
+        "user-service.ts",
+        "api-gateway.ts"
+      ]
     },
     {
       "id": "TAX-02",
@@ -25,7 +29,11 @@
       "rationale": "ADR-0056: Ubiquitous language enforcement. PascalCase for types/components.",
       "validationQuery": "ESLint naming-convention for classes and interfaces.",
       "blocking": true,
-      "examples": ["UserService", "HttpClient", "ApiResponse"]
+      "examples": [
+        "UserService",
+        "HttpClient",
+        "ApiResponse"
+      ]
     },
     {
       "id": "TAX-03",
@@ -36,7 +44,11 @@
       "rationale": "ADR-0056: camelCase for variables and functions.",
       "validationQuery": "ESLint naming-convention for variables and functions.",
       "blocking": true,
-      "examples": ["getUserById", "userData", "isValid"]
+      "examples": [
+        "getUserById",
+        "userData",
+        "isValid"
+      ]
     },
     {
       "id": "TAX-04",
@@ -46,7 +58,10 @@
       "description": "Compile-time constants and configuration keys use UPPER_SNAKE_CASE.",
       "validationQuery": "ESLint naming-convention for constants.",
       "blocking": false,
-      "examples": ["MAX_RETRY_COUNT", "API_BASE_URL"]
+      "examples": [
+        "MAX_RETRY_COUNT",
+        "API_BASE_URL"
+      ]
     },
     {
       "id": "TAX-05",
@@ -57,7 +72,11 @@
       "rationale": "Repository Taxonomy defines three entry points with clear ownership.",
       "validationQuery": "Top-level directories match taxonomy. No arbitrary content directories added.",
       "blocking": true,
-      "structure": ["reference/", "sdk/", "rulesets/"]
+      "structure": [
+        "reference/",
+        "sdk/",
+        "rulesets/"
+      ]
     },
     {
       "id": "TAX-06",
@@ -68,7 +87,12 @@
       "rationale": "Repository Taxonomy standard satellite structure.",
       "validationQuery": "Satellite root has src/, tests/, docs/ directories. Hexagonal layers under src/.",
       "blocking": true,
-      "structure": ["src/Domain", "src/Application", "src/Infrastructure", "src/Api"]
+      "structure": [
+        "src/Domain",
+        "src/Application",
+        "src/Infrastructure",
+        "src/Api"
+      ]
     },
     {
       "id": "TAX-07",
@@ -79,7 +103,10 @@
       "rationale": "ADR-0048: Canonical numbering enables sorting and referencing.",
       "validationQuery": "ADR filenames match pattern: ^[0-9]{4}-[a-z-]+\\.md$",
       "blocking": true,
-      "examples": ["0002-clean-architecture-nestjs.md", "0069-dotnet-grpc-service-setup-protobuf-contracts.md"]
+      "examples": [
+        "0002-clean-architecture-nestjs.md",
+        "0069-dotnet-grpc-service-setup-protobuf-contracts.md"
+      ]
     },
     {
       "id": "TAX-08",
@@ -119,6 +146,10 @@
   ],
   "exitCriteria": {
     "description": "All files follow naming conventions. Directory structure matches taxonomy. ADR files correctly numbered.",
-    "validationTools": ["CI naming validation", "directory structure check", "ADR numbering validation"]
+    "validationTools": [
+      "CI naming validation",
+      "directory structure check",
+      "ADR numbering validation"
+    ]
   }
 }

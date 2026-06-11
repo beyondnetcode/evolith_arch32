@@ -35,11 +35,14 @@ describe('RuleEvaluationEngine — normalisation', () => {
       exists: jest.fn().mockResolvedValue(true),
       readdirNames: jest.fn().mockResolvedValue(['dep.rules.json']),
       stat: jest.fn().mockResolvedValue({ isDirectory: () => false }),
-      readFile: jest.fn().mockResolvedValue(JSON.stringify({
-        rules: [
-          { id: 'DEP-01', severity: 'MUST NOT', category: 'version-pinning', title: 'No ^', description: 'No caret', blocking: true },
-        ],
-      })),
+      readFile: jest.fn().mockImplementation(async (p: string) => {
+        if (p.endsWith('.schema.json')) return JSON.stringify({ type: 'object' });
+        return JSON.stringify({
+          rules: [
+            { id: 'DEP-01', severity: 'MUST NOT', category: 'version-pinning', title: 'No ^', description: 'No caret', blocking: true },
+          ],
+        });
+      }),
     });
     const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
     const rules = await engine.loadAllRulesets('/core');
@@ -53,11 +56,14 @@ describe('RuleEvaluationEngine — normalisation', () => {
       exists: jest.fn().mockResolvedValue(true),
       readdirNames: jest.fn().mockResolvedValue(['acl.rules.json']),
       stat: jest.fn().mockResolvedValue({ isDirectory: () => false }),
-      readFile: jest.fn().mockResolvedValue(JSON.stringify({
-        principles: [
-          { id: 'ACL-01', principle: 'Validate', statement: 'Validate incoming data', severity: 'MUST', validationQuery: 'check', blocking: true },
-        ],
-      })),
+      readFile: jest.fn().mockImplementation(async (p: string) => {
+        if (p.endsWith('.schema.json')) return JSON.stringify({ type: 'object' });
+        return JSON.stringify({
+          principles: [
+            { id: 'ACL-01', principle: 'Validate', statement: 'Validate incoming data', severity: 'MUST', validationQuery: 'check', blocking: true },
+          ],
+        });
+      }),
     });
     const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
     const rules = await engine.loadAllRulesets('/core');
@@ -71,11 +77,14 @@ describe('RuleEvaluationEngine — normalisation', () => {
       exists: jest.fn().mockResolvedValue(true),
       readdirNames: jest.fn().mockResolvedValue(['manifesto.rules.json']),
       stat: jest.fn().mockResolvedValue({ isDirectory: () => false }),
-      readFile: jest.fn().mockResolvedValue(JSON.stringify({
-        principles: [
-          { name: 'Quality', acronym: 'Q', rules: [{ text: 'do quality' }] },
-        ],
-      })),
+      readFile: jest.fn().mockImplementation(async (p: string) => {
+        if (p.endsWith('.schema.json')) return JSON.stringify({ type: 'object' });
+        return JSON.stringify({
+          principles: [
+            { name: 'Quality', acronym: 'Q', rules: [{ text: 'do quality' }] },
+          ],
+        });
+      }),
     });
     const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
     const rules = await engine.loadAllRulesets('/core');
@@ -87,11 +96,14 @@ describe('RuleEvaluationEngine — normalisation', () => {
       exists: jest.fn().mockResolvedValue(true),
       readdirNames: jest.fn().mockResolvedValue(['inh.rules.json']),
       stat: jest.fn().mockResolvedValue({ isDirectory: () => false }),
-      readFile: jest.fn().mockResolvedValue(JSON.stringify({
-        principles: [
-          { id: 'INH-01', principle: 'Immutability', statement: 'Core is immutable', enforcement: 'CLI validates' },
-        ],
-      })),
+      readFile: jest.fn().mockImplementation(async (p: string) => {
+        if (p.endsWith('.schema.json')) return JSON.stringify({ type: 'object' });
+        return JSON.stringify({
+          principles: [
+            { id: 'INH-01', principle: 'Immutability', statement: 'Core is immutable', enforcement: 'CLI validates' },
+          ],
+        });
+      }),
     });
     const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
     const rules = await engine.loadAllRulesets('/core');
@@ -274,13 +286,16 @@ describe('RuleEvaluationEngine — discoverAndEvaluate dispatch', () => {
       exists: jest.fn().mockResolvedValue(true),
       readdirNames: jest.fn().mockResolvedValue(['gov.rules.json']),
       stat: jest.fn().mockResolvedValue({ isDirectory: () => false }),
-      readFile: jest.fn().mockResolvedValue(JSON.stringify({
-        rules: [
-          { id: 'GOV-01', severity: 'MUST', title: 'G', description: '', blocking: true },
-          { id: 'INH-02', severity: 'MUST', title: 'I', description: '', blocking: true },
-          { id: 'ACL-01', severity: 'MUST', title: 'A', description: '', blocking: true },
-        ],
-      })),
+      readFile: jest.fn().mockImplementation(async (p: string) => {
+        if (p.endsWith('.schema.json')) return JSON.stringify({ type: 'object' });
+        return JSON.stringify({
+          rules: [
+            { id: 'GOV-01', severity: 'MUST', title: 'G', description: '', blocking: true },
+            { id: 'INH-02', severity: 'MUST', title: 'I', description: '', blocking: true },
+            { id: 'ACL-01', severity: 'MUST', title: 'A', description: '', blocking: true },
+          ],
+        });
+      }),
     });
     const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
     const results = await engine.discoverAndEvaluate('/sat', '/core');
@@ -292,9 +307,12 @@ describe('RuleEvaluationEngine — discoverAndEvaluate dispatch', () => {
       exists: jest.fn().mockResolvedValue(true),
       readdirNames: jest.fn().mockResolvedValue(['custom.rules.json']),
       stat: jest.fn().mockResolvedValue({ isDirectory: () => false }),
-      readFile: jest.fn().mockResolvedValue(JSON.stringify({
-        rules: [{ id: 'CUSTOM-99', severity: 'SHOULD', title: 'Custom', description: '', blocking: false }],
-      })),
+      readFile: jest.fn().mockImplementation(async (p: string) => {
+        if (p.endsWith('.schema.json')) return JSON.stringify({ type: 'object' });
+        return JSON.stringify({
+          rules: [{ id: 'CUSTOM-99', severity: 'SHOULD', title: 'Custom', description: '', blocking: false }],
+        });
+      }),
     });
     const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
     const results = await engine.discoverAndEvaluate('/sat', '/core');
@@ -312,9 +330,12 @@ describe('RuleEvaluationEngine — discoverAndEvaluate dispatch', () => {
       }),
       readdirNames: jest.fn().mockResolvedValue(['dep.rules.json']),
       stat: jest.fn().mockResolvedValue({ isDirectory: () => false }),
-      readFile: jest.fn().mockResolvedValue(JSON.stringify({
-        rules: [{ id: 'DEP-04', severity: 'MUST', category: 'version-pinning', title: 'L', description: '', blocking: true }],
-      })),
+      readFile: jest.fn().mockImplementation(async (p: string) => {
+        if (p.endsWith('.schema.json')) return JSON.stringify({ type: 'object' });
+        return JSON.stringify({
+          rules: [{ id: 'DEP-04', severity: 'MUST', category: 'version-pinning', title: 'L', description: '', blocking: true }],
+        });
+      }),
     });
     const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: logger as any });
     const results = await engine.discoverAndEvaluate('/sat', '/core');
@@ -514,11 +535,13 @@ describe('RuleEvaluationEngine — parse error handling', () => {
       exists: jest.fn().mockResolvedValue(true),
       readdirNames: jest.fn().mockResolvedValue(['bad.rules.json']),
       stat: jest.fn().mockResolvedValue({ isDirectory: () => false }),
-      readFile: jest.fn().mockResolvedValue('not valid json {{{'),
+      readFile: jest.fn().mockImplementation(async (p: string) => {
+        if (p.endsWith('.schema.json')) return JSON.stringify({ type: 'object' });
+        return 'not valid json {{{';
+      }),
     });
     const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: logger as any });
-    const rules = await engine.loadAllRulesets('/core');
-    expect(rules).toHaveLength(0);
-    expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining('bad.rules.json'));
+    await expect(engine.loadAllRulesets('/core')).rejects.toThrow('Ruleset validation error');
+    expect(logger.error).toHaveBeenCalledWith(expect.stringContaining('bad.rules.json'));
   });
 });

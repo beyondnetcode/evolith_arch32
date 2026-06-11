@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "../schema/ruleset-standard.schema.json",
   "$id": "https://evolith.dev/rulesets/adr/adr-0010-multi-tenancy.rules.json",
   "title": "ADR-0010 — Multi-Tenancy Architecture Strategy Rules",
   "description": "Machine-readable rules encoding ADR-0010 Multi-Tenancy Architecture. Conditional rules for products serving multiple tenants with dual-layer filtering.",
@@ -98,9 +98,21 @@
     }
   ],
   "schemaStrategies": [
-    { "strategy": "shared-schema", "description": "All tenants share same database schema with tenant_id column", "useWhen": "Low sensitivity, high tenant count" },
-    { "strategy": "schema-per-tenant", "description": "Each tenant has own PostgreSQL schema", "useWhen": "Moderate sensitivity, moderate tenant count" },
-    { "strategy": "db-per-tenant", "description": "Each tenant has own database", "useWhen": "High sensitivity, low tenant count, strong isolation required" }
+    {
+      "strategy": "shared-schema",
+      "description": "All tenants share same database schema with tenant_id column",
+      "useWhen": "Low sensitivity, high tenant count"
+    },
+    {
+      "strategy": "schema-per-tenant",
+      "description": "Each tenant has own PostgreSQL schema",
+      "useWhen": "Moderate sensitivity, moderate tenant count"
+    },
+    {
+      "strategy": "db-per-tenant",
+      "description": "Each tenant has own database",
+      "useWhen": "High sensitivity, low tenant count, strong isolation required"
+    }
   ],
   "references": [
     "reference/architecture/adrs/core/0010-multi-tenancy-architecture-strategy.md",
@@ -108,6 +120,10 @@
   ],
   "exitCriteria": {
     "description": "All tenant-scoped queries include tenant_id filter. Database RLS enforced. Tenant context propagated through all layers.",
-    "validationTools": ["SQL analysis", "integration tests with tenant isolation", "security scan"]
+    "validationTools": [
+      "SQL analysis",
+      "integration tests with tenant isolation",
+      "security scan"
+    ]
   }
 }

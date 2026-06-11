@@ -65,6 +65,7 @@ Ordering criteria: criticality first (`P1` before `P2`), then quick wins (`S` be
 | [GT-09](#gt-09) | Phase 3 gate: real coverage check from CI report | F3 | P1 | S | DONE |
 | [GT-12](#gt-12) | `--dry-run` on all write operations | F3 | P1 | S | DONE |
 | [GT-14](#gt-14) | Outbound webhook on gate completion | F4 | P1 | S | DONE |
+| [GT-19](#gt-19) | Schema alignment for standard rulesets | F5 | P1 | S | DONE |
 | [GT-18](#gt-18) | Publish `@evolith/smart-cli` to npm | F5 | P1 | S | PENDING |
 | [GT-10](#gt-10) | Phase 4 gate: security scan evidence | F3 | P1 | M | PENDING |
 | [GT-11](#gt-11) | Phase 5 gate: observability + rollback evidence | F3 | P1 | M | PENDING |

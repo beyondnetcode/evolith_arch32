@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "../schema/ruleset-standard.schema.json",
   "$id": "https://evolith.dev/rulesets/acl/anti-corruption-layer.rules.json",
   "title": "Anti-Corruption Layer (ACL) Rules",
   "description": "Rules governing integration with external systems (Jira, Trello, Linear, GitHub, Confluence). ACLs normalize and validate external data against Core artifacts, preventing external chaos from contaminating Evolith governance.",

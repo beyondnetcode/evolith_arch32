@@ -1,139 +1,96 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "../schema/ruleset-standard.schema.json",
   "$id": "https://evolith.dev/rulesets/sdlc/quality-thresholds.rules.json",
   "title": "SDLC Quality Threshold Rules",
   "description": "Canonical release-blocking quality thresholds for Evolith satellites. These thresholds apply to all SDLC phases where construction or validation occurs.",
   "version": "1.0.0",
   "effectiveDate": "2026-01-01",
-  "thresholds": [
-    {
-      "id": "QT-01",
-      "metric": "Code Coverage",
-      "category": "testing",
-      "appliesTo": ["Phase 3 Construction", "Phase 4 Validation"],
-      "baseline": {
-        "businessLogic": 80,
-        "domainLayer": 95,
-        "applicationLayer": 85,
-        "infrastructureLayer": 60,
-        "bffControllerLayer": 70
-      },
-      "blockingThreshold": 80,
-      "blockingStatement": "Coverage below 80% on business logic BLOCKS merge (Phase 3) and RC stamp (Phase 4).",
-      "measurement": "Per-layer coverage measured via Istanbul/JaCoCo with path-based thresholds. Aggregate coverage is insufficient.",
-      "enforcement": "CI enforced via coverageThresholds in jest/istanbul config. Must be configured per layer, not just aggregate."
-    },
-    {
-      "id": "QT-02",
-      "metric": "Cyclomatic Complexity",
-      "category": "code-quality",
-      "appliesTo": ["Phase 3 Construction", "Phase 4 Validation"],
-      "baseline": {
-        "perMethod": 15,
-        "perFunction": 15
-      },
-      "blockingThreshold": "exceeds 15 without refactoring or waiver",
-      "blockingStatement": "Methods or functions exceeding cyclomatic complexity of 15 BLOCK merge or RC stamp without refactoring plan or explicit waiver.",
-      "measurement": "Measured via SonarQube, CodeClimate, or equivalent. Enforced in CI.",
-      "enforcement": "SonarQube quality gate fails on new code exceeding complexity threshold."
-    },
-    {
-      "id": "QT-03",
-      "metric": "Security Vulnerabilities",
-      "category": "security",
-      "appliesTo": ["Phase 3 Construction", "Phase 4 Validation", "Phase 5 Delivery"],
-      "baseline": {
-        "critical": 0,
-        "high": 0,
-        "medium": 0
-      },
-      "blockingThreshold": "Zero High or Critical CVEs tolerated in production releases",
-      "blockingStatement": "Any High or Critical CVE BLOCKS merge, RC stamp, and production release. Medium CVEs require justification.",
-      "measurement": "Measured via GitHub CodeQL, Snyk, or OWASP Dependency-Check. CVE data must be in SARIF format for CI integration.",
-      "enforcement": "CI pipeline fails on High/Critical CVE detection. No bypass without explicit security waiver + Executive Risk Acceptance."
-    },
-    {
-      "id": "QT-04",
-      "metric": "Technical Debt Ratio",
-      "category": "code-quality",
-      "appliesTo": ["Phase 4 Validation"],
-      "baseline": {
-        "ratio": "< 5%",
-        "description": "Percentage of code flagged as technical debt vs. healthy code"
-      },
-      "blockingThreshold": "Exceeding 5% without approved remediation plan BLOCKS RC stamp",
-      "blockingStatement": "Technical debt ratio > 5% BLOCKS RC stamp unless a remediation plan with explicit timeline and owner is approved.",
-      "measurement": "SonarQube technical debt ratio metric. Tracked per module and aggregate.",
-      "enforcement": "Remediation plan must be documented in issue tracker with due date and accountable owner."
-    },
-    {
-      "id": "QT-05",
-      "metric": "Testing Pyramid Distribution",
-      "category": "testing",
-      "appliesTo": ["Phase 2 Design", "Phase 4 Validation"],
-      "baseline": {
-        "unit": 70,
-        "integration": 20,
-        "e2e": 10,
-        "tolerance": 5
-      },
-      "blockingThreshold": "Materially deviating from 70/20/10 distribution without explanation",
-      "blockingStatement": "Release with materially skewed distribution (e.g., 40% unit / 50% integration) requires written explanation. Not a hard block but must be reviewed.",
-      "measurement": "Test count distribution by type, not by execution time. Istanbul/jest coverage reports used for verification.",
-      "enforcement": "ADR-0018 testing pyramid distribution remains the target shape. Explanation required when materially deviating."
-    },
-    {
-      "id": "QT-06",
-      "metric": "Documentation Delta",
-      "category": "documentation",
-      "appliesTo": ["Phase 3 Construction", "Phase 5 Delivery"],
-      "baseline": {
-        "description": "Required when behavior, architecture, API, or operations change"
-      },
-      "blockingThreshold": "Missing documentation for behavioral, architectural, API, or operational changes BLOCKS merge or Production Live",
-      "blockingStatement": "Code changes that alter behavior, introduce new API endpoints, change architecture, or modify operations without corresponding documentation BLOCK merge and Production Live.",
-      "measurement": "PR diff includes documentation changes alongside code changes. Reviewer checklist includes documentation review.",
-      "enforcement": "PR template includes documentation checklist. Reviewer approves documentation adequacy."
-    },
-    {
-      "id": "QT-07",
-      "metric": "Observability Evidence",
-      "category": "operations",
-      "appliesTo": ["Phase 5 Delivery"],
-      "baseline": {
-        "description": "Required for all production paths"
-      },
-      "blockingThreshold": "Production paths without observable telemetry BLOCK Production Live",
-      "blockingStatement": "Any production API path without traces, structured logs, or metrics BLOCKS Production Live declaration.",
-      "measurement": "OTel collector verified receiving spans and logs from all production services. Grafana/Loki confirms data flowing.",
-      "enforcement": "Deployment pipeline includes observability verification step before Production Live sign-off."
-    },
-    {
-      "id": "QT-08",
-      "metric": "API Contract Compatibility",
-      "category": "contract",
-      "appliesTo": ["Phase 3 Construction"],
-      "baseline": {
-        "description": "No breaking changes to published API contracts without version bump"
-      },
-      "blockingThreshold": "Breaking changes to internal inter-module contracts BLOCK merge",
-      "blockingStatement": "Breaking changes to inter-module (gRPC/REST) contracts BLOCK merge. Consumer-driven contract tests must pass.",
-      "measurement": "Pact or equivalent contract testing framework. Contract version incremented on breaking changes.",
-      "enforcement": "Contract tests run in CI. Failing contract tests block merge regardless of unit test status."
-    }
-  ],
   "waiverPolicy": {
     "description": "A waiver may be used only when the organization deliberately accepts a temporary deviation.",
-    "requiredFields": ["criterion", "justification", "risk", "owner", "expirationDate", "mitigationPlan", "approvalAuthority"],
+    "requiredFields": [
+      "criterion",
+      "justification",
+      "risk",
+      "owner",
+      "expirationDate",
+      "mitigationPlan",
+      "approvalAuthority"
+    ],
     "exceptions": {
       "cves": "High/Critical security vulnerabilities cannot be waived in production releases without explicit Executive Risk Acceptance",
       "coverage": "Business logic coverage below 80% cannot be waived without Architecture Board approval and remediation plan"
     }
   },
-  "reference": {
-    "qualityGatesDoc": "../sdlc/phase-gates.rules.json",
-    "adrTestingPyramid": "adr/0018-testing-pyramid-quality-gates.md",
-    "adrNamingSemantics": "adr/0049-naming-semantics-clean-code-policy.md",
-    "adrCICD": "adr/0005-ci-cd-quality-codeql.md"
-  }
+  "rules": [
+    {
+      "id": "QT-01",
+      "severity": "MUST",
+      "category": "testing",
+      "title": "Code Coverage",
+      "description": "Coverage below 80% on business logic BLOCKS merge (Phase 3) and RC stamp (Phase 4).",
+      "blocking": true
+    },
+    {
+      "id": "QT-02",
+      "severity": "MUST",
+      "category": "code-quality",
+      "title": "Cyclomatic Complexity",
+      "description": "Methods or functions exceeding cyclomatic complexity of 15 BLOCK merge or RC stamp without refactoring plan or explicit waiver.",
+      "blocking": true
+    },
+    {
+      "id": "QT-03",
+      "severity": "MUST",
+      "category": "security",
+      "title": "Security Vulnerabilities",
+      "description": "Any High or Critical CVE BLOCKS merge, RC stamp, and production release. Medium CVEs require justification.",
+      "blocking": true
+    },
+    {
+      "id": "QT-04",
+      "severity": "MUST",
+      "category": "code-quality",
+      "title": "Technical Debt Ratio",
+      "description": "Technical debt ratio > 5% BLOCKS RC stamp unless a remediation plan with explicit timeline and owner is approved.",
+      "blocking": true
+    },
+    {
+      "id": "QT-05",
+      "severity": "MUST",
+      "category": "testing",
+      "title": "Testing Pyramid Distribution",
+      "description": "Release with materially skewed distribution (e.g., 40% unit / 50% integration) requires written explanation. Not a hard block but must be reviewed.",
+      "blocking": true
+    },
+    {
+      "id": "QT-06",
+      "severity": "MUST",
+      "category": "documentation",
+      "title": "Documentation Delta",
+      "description": "Code changes that alter behavior, introduce new API endpoints, change architecture, or modify operations without corresponding documentation BLOCK merge and Production Live.",
+      "blocking": true
+    },
+    {
+      "id": "QT-07",
+      "severity": "MUST",
+      "category": "operations",
+      "title": "Observability Evidence",
+      "description": "Any production API path without traces, structured logs, or metrics BLOCKS Production Live declaration.",
+      "blocking": true
+    },
+    {
+      "id": "QT-08",
+      "severity": "MUST",
+      "category": "contract",
+      "title": "API Contract Compatibility",
+      "description": "Breaking changes to inter-module (gRPC/REST) contracts BLOCK merge. Consumer-driven contract tests must pass.",
+      "blocking": true
+    }
+  ],
+  "references": [
+    "../sdlc/phase-gates.rules.json",
+    "adr/0018-testing-pyramid-quality-gates.md",
+    "adr/0049-naming-semantics-clean-code-policy.md",
+    "adr/0005-ci-cd-quality-codeql.md"
+  ]
 }

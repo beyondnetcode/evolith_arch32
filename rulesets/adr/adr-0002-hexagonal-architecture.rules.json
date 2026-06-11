@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "../schema/ruleset-standard.schema.json",
   "$id": "https://evolith.dev/rulesets/adr/adr-0002-hexagonal-architecture.rules.json",
   "title": "ADR-0002 — Hexagonal Architecture (Ports & Adapters) Rules",
   "description": "Machine-readable rules encoding ADR-0002 Clean Hexagonal Architecture. Mandatory structural pattern for all Evolith applications.",
@@ -94,6 +94,10 @@
   ],
   "exitCriteria": {
     "description": "All HXA rules are validated in CI via eslint-plugin-boundaries and import analysis.",
-    "validationTools": ["eslint-plugin-boundaries", "dependency-cruiser", "custom AST rules"]
+    "validationTools": [
+      "eslint-plugin-boundaries",
+      "dependency-cruiser",
+      "custom AST rules"
+    ]
   }
 }

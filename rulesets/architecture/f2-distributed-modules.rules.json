@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "../schema/ruleset-standard.schema.json",
   "$id": "https://evolith.dev/rulesets/architecture/f2-distributed-modules.rules.json",
   "title": "F2 — Distributed Modules Architecture Rules",
   "description": "Rules governing the distributed modules phase. Module boundaries are formalized; inter-module contracts are explicit and versioned.",
@@ -90,7 +90,13 @@
   ],
   "f3Prerequisites": {
     "minScore": 80,
-    "requiredRules": ["F2-R01", "F2-R02", "F2-R03", "F2-R05", "F2-R06"],
+    "requiredRules": [
+      "F2-R01",
+      "F2-R02",
+      "F2-R03",
+      "F2-R05",
+      "F2-R06"
+    ],
     "reference": "adr/0045-microservice-extraction-readiness-criteria.md"
   },
   "exitGate": {

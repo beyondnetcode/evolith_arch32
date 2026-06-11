@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "../schema/ruleset-standard.schema.json",
   "$id": "https://evolith.dev/rulesets/adr/adr-0040-multi-runtime.rules.json",
   "title": "ADR-0040 — Multi-Runtime Selection Matrix Rules",
   "description": "Machine-readable rules encoding ADR-0040 Multi-Runtime Selection. Defines runtime selection by workload profile and inter-runtime communication rules.",
@@ -100,9 +100,21 @@
     }
   ],
   "runtimeMatrix": [
-    { "workload": "Web APIs, BFF, I/O Bound", "runtime": "Node.js/TypeScript", "rationale": "High I/O concurrency, rapid delivery" },
-    { "workload": "High Compute, ETL, Batch", "runtime": ".NET (C#)", "rationale": "Superior multi-threading, typed compute" },
-    { "workload": "Operative Mobility", "runtime": "Android (Kotlin)", "rationale": "Direct hardware access, strict offline mode" }
+    {
+      "workload": "Web APIs, BFF, I/O Bound",
+      "runtime": "Node.js/TypeScript",
+      "rationale": "High I/O concurrency, rapid delivery"
+    },
+    {
+      "workload": "High Compute, ETL, Batch",
+      "runtime": ".NET (C#)",
+      "rationale": "Superior multi-threading, typed compute"
+    },
+    {
+      "workload": "Operative Mobility",
+      "runtime": "Android (Kotlin)",
+      "rationale": "Direct hardware access, strict offline mode"
+    }
   ],
   "references": [
     "reference/architecture/adrs/core/0040-multi-runtime-selection-contracts.md",
@@ -110,6 +122,10 @@
   ],
   "exitCriteria": {
     "description": "Runtime selection documented per service. Inter-runtime communication uses gRPC/RabbitMQ. Contracts versioned centrally.",
-    "validationTools": ["evolits.yaml validation", "gRPC", "Pact"]
+    "validationTools": [
+      "evolits.yaml validation",
+      "gRPC",
+      "Pact"
+    ]
   }
 }

@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "../schema/ruleset-standard.schema.json",
   "$id": "https://evolith.dev/rulesets/cli/core-parity.rules.json",
   "title": "CLI/Core Parity Rules",
   "description": "Rules ensuring Evolith Core governance capabilities are exposed consistently through CLI and MCP.",
@@ -15,7 +15,9 @@
       "title": "Every Executable Core Rule Has a Parity Record",
       "description": "Each Core ruleset rule intended for automation MUST declare CLI status, MCP status, test status, and evidence status.",
       "validationQuery": "Compare rulesets/**/*.rules.json against reference/governance/standards/vision/gap-tracking.md or generated parity manifest.",
-      "evidenceRequired": ["parity manifest"],
+      "evidenceRequired": [
+        "parity manifest"
+      ],
       "blocking": true
     },
     {
@@ -25,7 +27,10 @@
       "title": "CLI and MCP Must Use Shared Validation Logic",
       "description": "A validation capability MUST NOT implement divergent business logic in CLI and MCP adapters.",
       "validationQuery": "Verify CLI commands and MCP tools call shared services or use cases for the same capability.",
-      "evidenceRequired": ["source references", "contract tests"],
+      "evidenceRequired": [
+        "source references",
+        "contract tests"
+      ],
       "blocking": true
     },
     {
@@ -35,7 +40,9 @@
       "title": "Equivalent CLI and MCP Results Must Be Semantically Consistent",
       "description": "The same validation request through CLI and MCP MUST return the same rule outcomes, severities, and blocking status.",
       "validationQuery": "Run paired CLI/MCP fixture tests and compare normalized JSON results.",
-      "evidenceRequired": ["paired fixture report"],
+      "evidenceRequired": [
+        "paired fixture report"
+      ],
       "blocking": true
     },
     {
@@ -45,9 +52,10 @@
       "title": "Parity Gaps Must Remain Visible",
       "description": "Partial or missing parity SHOULD be documented with owner, priority, and planned closure date.",
       "validationQuery": "Inspect parity tracking for owner, priority, and closure metadata.",
-      "evidenceRequired": ["updated parity tracking"],
+      "evidenceRequired": [
+        "updated parity tracking"
+      ],
       "blocking": false
     }
   ]
 }
-

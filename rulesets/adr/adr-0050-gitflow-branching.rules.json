@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "../schema/ruleset-standard.schema.json",
   "$id": "https://evolith.dev/rulesets/adr/adr-0050-gitflow-branching.rules.json",
   "title": "ADR-0050 — GitFlow Branching Strategy Rules",
   "description": "Machine-readable rules encoding ADR-0050 GitFlow Branching Strategy. Contractual branch naming, promotion policies, merge policies, and release tagging.",
@@ -33,7 +33,13 @@
       "rationale": "ADR-0050 §Decision: Protected branches require PR workflow for audit trail and review.",
       "validationQuery": "GitHub/GitLab branch protection rules block direct push to main, develop, qa, uat, release/*.",
       "blocking": true,
-      "protectedBranches": ["main", "develop", "qa", "uat", "release/*"]
+      "protectedBranches": [
+        "main",
+        "develop",
+        "qa",
+        "uat",
+        "release/*"
+      ]
     },
     {
       "id": "GIT-03",
@@ -118,19 +124,53 @@
     }
   ],
   "branchTypes": [
-    { "type": "feature/", "lifetime": "until merged", "target": "develop" },
-    { "type": "bugfix/", "lifetime": "until merged", "target": "develop" },
-    { "type": "hotfix/", "lifetime": "hours to days", "target": "main + develop" },
-    { "type": "release/", "lifetime": "1-4 weeks", "target": "main" },
-    { "type": "chore/", "lifetime": "until merged", "target": "develop" },
-    { "type": "qa", "lifetime": "permanent", "target": "uat" },
-    { "type": "uat", "lifetime": "permanent", "target": "main or release/*" }
+    {
+      "type": "feature/",
+      "lifetime": "until merged",
+      "target": "develop"
+    },
+    {
+      "type": "bugfix/",
+      "lifetime": "until merged",
+      "target": "develop"
+    },
+    {
+      "type": "hotfix/",
+      "lifetime": "hours to days",
+      "target": "main + develop"
+    },
+    {
+      "type": "release/",
+      "lifetime": "1-4 weeks",
+      "target": "main"
+    },
+    {
+      "type": "chore/",
+      "lifetime": "until merged",
+      "target": "develop"
+    },
+    {
+      "type": "qa",
+      "lifetime": "permanent",
+      "target": "uat"
+    },
+    {
+      "type": "uat",
+      "lifetime": "permanent",
+      "target": "main or release/*"
+    }
   ],
   "references": [
     "reference/architecture/adrs/core/0050-gitflow-branching-strategy.md"
   ],
   "exitCriteria": {
     "description": "Branch naming validated in CI. Protected branches enforce PR workflow and promotion sequence. Release tags follow semver.",
-    "validationTools": ["commitlint", "branch protection rules", "GitHub Actions", "CODEOWNERS", "CodeQL"]
+    "validationTools": [
+      "commitlint",
+      "branch protection rules",
+      "GitHub Actions",
+      "CODEOWNERS",
+      "CodeQL"
+    ]
   }
 }

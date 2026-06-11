@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "../schema/ruleset-standard.schema.json",
   "$id": "https://evolith.dev/rulesets/governance/satellite-contracts.rules.json",
   "title": "Satellite Contract Rules",
   "description": "Rules defining the required and optional structure of satellite evolith.yaml files. These contracts enable the federated governance model.",
@@ -123,48 +123,53 @@
       }
     ]
   },
-  "validationRules": [
+  "rules": [
     {
       "id": "SVC-01",
-      "rule": "Satellite must have exactly one evolith.yaml in repository root",
-      "enforcement": "CLI validates single evolith.yaml at repo root. Nested evolith.yaml files are prohibited."
+      "title": "Satellite must have exactly one evolith.yaml in repository root",
+      "enforcement": "CLI validates single evolith.yaml at repo root. Nested evolith.yaml files are prohibited.",
+      "description": "CLI validates single evolith.yaml at repo root. Nested evolith.yaml files are prohibited."
     },
     {
       "id": "SVC-02",
-      "rule": "Satellite name must be unique across all Evolith satellites",
-      "enforcement": "CLI checks against Evolith satellite registry before allowing first push."
+      "title": "Satellite name must be unique across all Evolith satellites",
+      "enforcement": "CLI checks against Evolith satellite registry before allowing first push.",
+      "description": "CLI checks against Evolith satellite registry before allowing first push."
     },
     {
       "id": "SVC-03",
-      "rule": "F1 phase satellites must reference ADR-0047 in spec.compliance.adrRegistry",
-      "enforcement": "Satellites in F1 phase must include ADR-0047 confirming modular monolith starting point."
+      "title": "F1 phase satellites must reference ADR-0047 in spec.compliance.adrRegistry",
+      "enforcement": "Satellites in F1 phase must include ADR-0047 confirming modular monolith starting point.",
+      "description": "Satellites in F1 phase must include ADR-0047 confirming modular monolith starting point."
     },
     {
       "id": "SVC-04",
-      "rule": "Satellites in F2 or F3 must have extraction readiness score documented",
-      "enforcement": "Satellites with phase F2 or F3 must have ADR-0045 assessment with score >= 70% (F2) or >= 80% (F3)."
+      "title": "Satellites in F2 or F3 must have extraction readiness score documented",
+      "enforcement": "Satellites with phase F2 or F3 must have ADR-0045 assessment with score >= 70% (F2) or >= 80% (F3).",
+      "description": "Satellites with phase F2 or F3 must have ADR-0045 assessment with score >= 70% (F2) or >= 80% (F3)."
     },
     {
       "id": "SVC-05",
-      "rule": "Core version referenced must exist in Evolith Core registry",
-      "enforcement": "CLI validates coreRef.version against Evolith Core releases. Unknown versions trigger error."
+      "title": "Core version referenced must exist in Evolith Core registry",
+      "enforcement": "CLI validates coreRef.version against Evolith Core releases. Unknown versions trigger error.",
+      "description": "CLI validates coreRef.version against Evolith Core releases. Unknown versions trigger error."
     }
   ],
   "migrationRules": [
     {
       "id": "MIG-01",
-      "rule": "Satellite can upgrade governance version via CLI upgrade command",
+      "title": "Satellite can upgrade governance version via CLI upgrade command",
       "command": "evolith upgrade --target-version <version>",
       "description": "CLI automates version update, rule diff review, and CI validation"
     },
     {
       "id": "MIG-02",
-      "rule": "Phase transition (F1 → F2 → F3) requires Architecture Board approval artifact",
+      "title": "Phase transition (F1 → F2 → F3) requires Architecture Board approval artifact",
       "description": "Phase transition is not automated. Board must review and explicitly approve before satellite updates metadata.phase"
     },
     {
       "id": "MIG-03",
-      "rule": "Satellite archival: satellite marks itself as Deprecated in evolith.yaml",
+      "title": "Satellite archival: satellite marks itself as Deprecated in evolith.yaml",
       "description": "Deprecated satellites are retained for audit but no longer receive Core rule updates"
     }
   ],

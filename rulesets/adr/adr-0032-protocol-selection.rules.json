@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "../schema/ruleset-standard.schema.json",
   "$id": "https://evolith.dev/rulesets/adr/adr-0032-protocol-selection.rules.json",
   "title": "ADR-0032 — API Protocol Selection Matrix Rules",
   "description": "Machine-readable rules encoding ADR-0032 Protocol Selection Matrix. Mandatory protocol selection for internal, external, and BFF communication.",
@@ -86,12 +86,36 @@
     }
   ],
   "protocolMatrix": [
-    { "scenario": "Machine-to-Machine (Internal)", "protocol": "gRPC", "justification": "Low latency, binary compaction, strongly typed" },
-    { "scenario": "File Uploads/Streams", "protocol": "gRPC / REST", "justification": "Native streaming or simple multipart" },
-    { "scenario": "Public Open API / Developer Docs", "protocol": "REST", "justification": "Universal standard, easiest vendor adoption" },
-    { "scenario": "High-Density Aggregate Dashboards", "protocol": "GraphQL", "justification": "Resolves under-fetching / recursive lookups" },
-    { "scenario": "Low-Power Mobile Data Retrieval", "protocol": "GraphQL", "justification": "Client strictly defines data shape" },
-    { "scenario": "Standard CRUD", "protocol": "REST", "justification": "Predictable cacheability, native HTTP semantics" }
+    {
+      "scenario": "Machine-to-Machine (Internal)",
+      "protocol": "gRPC",
+      "justification": "Low latency, binary compaction, strongly typed"
+    },
+    {
+      "scenario": "File Uploads/Streams",
+      "protocol": "gRPC / REST",
+      "justification": "Native streaming or simple multipart"
+    },
+    {
+      "scenario": "Public Open API / Developer Docs",
+      "protocol": "REST",
+      "justification": "Universal standard, easiest vendor adoption"
+    },
+    {
+      "scenario": "High-Density Aggregate Dashboards",
+      "protocol": "GraphQL",
+      "justification": "Resolves under-fetching / recursive lookups"
+    },
+    {
+      "scenario": "Low-Power Mobile Data Retrieval",
+      "protocol": "GraphQL",
+      "justification": "Client strictly defines data shape"
+    },
+    {
+      "scenario": "Standard CRUD",
+      "protocol": "REST",
+      "justification": "Predictable cacheability, native HTTP semantics"
+    }
   ],
   "references": [
     "reference/architecture/adrs/core/0032-api-protocol-decision-matrix-rest-grpc-graphql.md",
@@ -100,6 +124,11 @@
   ],
   "exitCriteria": {
     "description": "All inter-service communication uses correct protocol per matrix. Contracts centralized and versioned.",
-    "validationTools": ["gRPC", "OpenAPI", "Pact", "network traffic analysis"]
+    "validationTools": [
+      "gRPC",
+      "OpenAPI",
+      "Pact",
+      "network traffic analysis"
+    ]
   }
 }

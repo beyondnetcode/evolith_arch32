@@ -328,6 +328,7 @@ describe('PhaseGateValidatorService', () => {
       (mockFs.exists as jest.Mock).mockResolvedValue(true);
       (mockFs.readFile as jest.Mock).mockImplementation((p: string) => {
         if (p.includes('phase-gates.rules.json')) return Promise.resolve(JSON.stringify(mockRuleset));
+        if (p.includes('.schema.json')) return Promise.resolve(JSON.stringify({ type: 'object', properties: { gates: { type: 'array' } } }));
         return Promise.resolve('valid content');
       });
 
@@ -341,6 +342,7 @@ describe('PhaseGateValidatorService', () => {
       (mockFs.exists as jest.Mock).mockResolvedValue(true);
       (mockFs.readFile as jest.Mock).mockImplementation((p: string) => {
         if (p.includes('phase-gates.rules.json')) return Promise.resolve(JSON.stringify(mockRuleset));
+        if (p.includes('.schema.json')) return Promise.resolve(JSON.stringify({ type: 'object', properties: { gates: { type: 'array' } } }));
         return Promise.resolve('');
       });
 
@@ -399,6 +401,7 @@ describe('PhaseGateValidatorService', () => {
       (mockFs.readFile as jest.Mock).mockImplementation((p: string) => {
         if (p.includes('adr-matrix.json')) return Promise.resolve(JSON.stringify({ adrs: [] }));
         if (p.includes('phase-gates.rules.json')) return Promise.resolve(JSON.stringify(mockRuleset));
+        if (p.includes('.schema.json')) return Promise.resolve(JSON.stringify({ type: 'object', properties: { gates: { type: 'array' } } }));
         return Promise.resolve('valid content');
       });
 

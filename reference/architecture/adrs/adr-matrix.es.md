@@ -16,7 +16,7 @@ Usa esta matriz cuando necesites encontrar decisiones por preocupación y no por
 | Testing y calidad | [ADR-0018](./core/0018-testing-pyramid-quality-gates.es.md), [ADR-0052](./core/0052-unit-testing-isolation-strategy.es.md), [ADR-0053](./core/0053-integration-e2e-testing-strategy.es.md) | QA, Developers | Universal |
 | Frontend y modularidad UI | [ADR-0004](./nodejs/0004-frontend-offline-resilience.es.md), [ADR-0055](./core/0055-microfrontends-architecture-strategy.es.md) | Frontend, Arquitectos | Universal más implementación frontend |
 | Documentación y taxonomía | [ADR-0048](./core/0048-enterprise-taxonomy-reference-layout.es.md), [ADR-0049](./core/0049-naming-semantics-clean-code-policy.es.md), [ADR-0056](./core/0056-enterprise-naming-design-conventions.es.md) | Todos los contribuidores | Universal |
-| Contrato de salida máquina CLI/MCP | [ADR-0073](./core/0073-unified-cli-output-contract.es.md) | Tracker, CI/CD, agentes IA | Universal |
+| CLI, Gobernanza y MCP | [Core ADR-0041](./core/0041-dual-engine-policy-evaluation.es.md), [ADR-0073](./core/0073-unified-cli-output-contract.es.md), [ADR-0069](./core/0069-mcp-server-protocol-implementation.es.md) | Arquitectos, CI/CD, agentes IA | Universal |
 
 ---
 [Volver al Registro ADR](./README.es.md)

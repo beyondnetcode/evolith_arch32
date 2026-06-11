@@ -73,7 +73,11 @@ Options:
   --format <format>     Output format: json, table, yaml, markdown
   --output <file>       Write output to file
   --ruleset <id>        Validate specific ruleset (acl, open-core, inheritance)
+  --engine <engine>     Policy evaluation engine: native or opa (default: native)
 ```
+
+**Dual-Engine Policy Evaluation:**
+The CLI supports evaluating policies using either the built-in TypeScript engine (`native`) or Open Policy Agent WebAssembly modules (`opa`). See [Core ADR-0041](../../reference/architecture/adrs/core/0041-dual-engine-policy-evaluation.md) for details.
 
 **Examples:**
 

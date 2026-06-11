@@ -49,6 +49,7 @@ Decisions applicable to any product built on top of the framework, regardless of
 | [ADR 0037: Performance & Chaos Verification](./core/0037-performance-concurrency-chaos-strategy.md) | Performance, concurrency, and chaos strategy | Verify behavior under stress | Core ADR | Yes |
 | [ADR 0039: Deployment Topology Switcher](./core/0039-deployment-topology-abstraction-switcher.md) | Deployment topology abstraction switcher | Swap topologies safely | Core ADR | Yes |
 | [ADR 0040: Multi-Runtime Matrix & Contracts](./core/0040-multi-runtime-selection-contracts.md) | Multi-runtime selection and contracts (root governance) | Govern runtime selection | Core ADR | Yes |
+| [ADR 0041: Dual-Engine Policy Evaluation](./core/0041-dual-engine-policy-evaluation.md) | Dual-Engine Policy Evaluation (Native + OPA) | Standardize policy evaluation | Core ADR | Yes |
 | [ADR 0044: Configurable Security Persistence Strategy](./core/0044-configurable-security-persistence-strategy.md) | Configurable security persistence strategy | Adapt security storage | Core ADR | Yes |
 | [ADR 0045: Microservice Extraction Readiness Criteria](./core/0045-microservice-extraction-readiness-criteria.md) | Readiness criteria before extracting microservices | Gate decomposition | Core ADR | Yes |
 | [ADR 0046: Dapr Adoption & Unified Observability](./core/0046-dapr-unified-observability.md) | Dapr adoption with unified observability | Standardize runtime sidecars | Core ADR | Yes |

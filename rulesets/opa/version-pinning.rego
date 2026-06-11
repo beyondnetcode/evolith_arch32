@@ -53,3 +53,40 @@ violations[{"id": "DEP-03", "message": msg}] {
     disallowed[version]
     msg := sprintf("package.json#devDependencies.%v=%v (Wildcard/Latest pinning not allowed)", [pkg, version])
 }
+
+# DEP-10 applies to all packages in the workspace
+violations[{"id": "DEP-10", "message": msg}] {
+    ws := input.satellite.workspacePackageJsons[_]
+    deps := ws.content.dependencies
+    some pkg
+    version := deps[pkg]
+    startswith(version, "^")
+    msg := sprintf("%v#dependencies.%v=%v", [ws.path, pkg, version])
+}
+
+violations[{"id": "DEP-10", "message": msg}] {
+    ws := input.satellite.workspacePackageJsons[_]
+    deps := ws.content.devDependencies
+    some pkg
+    version := deps[pkg]
+    startswith(version, "^")
+    msg := sprintf("%v#devDependencies.%v=%v", [ws.path, pkg, version])
+}
+
+violations[{"id": "DEP-10", "message": msg}] {
+    ws := input.satellite.workspacePackageJsons[_]
+    deps := ws.content.dependencies
+    some pkg
+    version := deps[pkg]
+    startswith(version, "~")
+    msg := sprintf("%v#dependencies.%v=%v", [ws.path, pkg, version])
+}
+
+violations[{"id": "DEP-10", "message": msg}] {
+    ws := input.satellite.workspacePackageJsons[_]
+    deps := ws.content.devDependencies
+    some pkg
+    version := deps[pkg]
+    startswith(version, "~")
+    msg := sprintf("%v#devDependencies.%v=%v", [ws.path, pkg, version])
+}

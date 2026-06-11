@@ -205,6 +205,9 @@ describe('PhaseTransitionUseCase', () => {
           return Promise.resolve(true);
         }),
         readFile: jest.fn().mockImplementation((p: string) => {
+          if (p.includes('.schema.json')) {
+            return Promise.resolve(JSON.stringify({ type: 'object', properties: { gates: { type: 'array' } } }));
+          }
           if (p.includes('phase-gates.rules.json')) return Promise.resolve(JSON.stringify({
             gates: [{
               phase: 1,
@@ -229,7 +232,6 @@ describe('PhaseTransitionUseCase', () => {
         createFileSystem: () => failingExistsMockFs,
       };
       getContainer().setFileSystemProvider(failingExistsProvider);
-
       const failingExistsUseCase = new PhaseTransitionUseCase(failingExistsMockFs, '/core');
       const result = await failingExistsUseCase.execute('phase-0', 'phase-1', [], '/project');
 

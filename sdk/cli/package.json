@@ -13,6 +13,7 @@
     "build": "tsc",
     "start": "node dist/main.js",
     "start:dev": "tsc -w & node dist/main.js",
+    "build:policy": "npm run build:policy --prefix ../../",
     "test": "node --max-old-space-size=8192 node_modules/.bin/jest && node --max-old-space-size=4096 node_modules/.bin/jest --config ./test/jest-e2e.json --runInBand --no-bail",
     "test:watch": "jest --watch",
     "test:cov": "node --max-old-space-size=4096 node_modules/.bin/jest --coverage --runInBand",

@@ -4,7 +4,8 @@
   "private": true,
   "description": "Evolith Architecture Reference - Monorepo root",
   "scripts": {
-    "prepare": "husky"
+    "prepare": "husky",
+    "build:policy": "node ./.harness/scripts/compile-opa-wasm.mjs"
   },
   "workspaces": [
     "sdk/cli"

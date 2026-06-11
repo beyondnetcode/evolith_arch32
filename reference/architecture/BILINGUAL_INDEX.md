@@ -65,6 +65,7 @@
 | [0037-performance-concurrency-chaos-strategy.md](adrs/core/0037-performance-concurrency-chaos-strategy.md) | [0037-performance-concurrency-chaos-strategy.es.md](adrs/core/0037-performance-concurrency-chaos-strategy.es.md) | OK |
 | [0039-deployment-topology-abstraction-switcher.md](adrs/core/0039-deployment-topology-abstraction-switcher.md) | [0039-deployment-topology-abstraction-switcher.es.md](adrs/core/0039-deployment-topology-abstraction-switcher.es.md) | OK |
 | [0040-multi-runtime-selection-contracts.md](adrs/core/0040-multi-runtime-selection-contracts.md) | [0040-multi-runtime-selection-contracts.es.md](adrs/core/0040-multi-runtime-selection-contracts.es.md) | OK |
+| [0041-dual-engine-policy-evaluation.md](adrs/core/0041-dual-engine-policy-evaluation.md) | [0041-dual-engine-policy-evaluation.es.md](adrs/core/0041-dual-engine-policy-evaluation.es.md) | OK |
 | [0044-configurable-security-persistence-strategy.md](adrs/core/0044-configurable-security-persistence-strategy.md) | [0044-configurable-security-persistence-strategy.es.md](adrs/core/0044-configurable-security-persistence-strategy.es.md) | OK |
 | [0045-microservice-extraction-readiness-criteria.md](adrs/core/0045-microservice-extraction-readiness-criteria.md) | [0045-microservice-extraction-readiness-criteria.es.md](adrs/core/0045-microservice-extraction-readiness-criteria.es.md) | OK |
 | [0046-dapr-unified-observability.md](adrs/core/0046-dapr-unified-observability.md) | [0046-dapr-unified-observability.es.md](adrs/core/0046-dapr-unified-observability.es.md) | OK |

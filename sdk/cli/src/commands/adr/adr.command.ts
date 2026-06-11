@@ -13,6 +13,7 @@ interface ADRCommandOptions {
   matrix?: boolean;
   status?: string;
   reason?: string;
+  dryRun?: boolean;
 }
 
 @Command({
@@ -30,23 +31,23 @@ export class ADRCommand extends CommandRunner {
     const fs = getContainer().createFileSystem() as any;
 
     if (options?.create) {
-      await this.createADR(fs);
+      await this.createADR(fs, options.dryRun);
     } else if (options?.list) {
       await this.listADRs(fs);
     } else if (options?.get) {
       await this.getADR(fs, options.get);
     } else if (options?.update) {
-      await this.updateADR(fs, options.update, options.status, options.reason);
+      await this.updateADR(fs, options.update, options.status, options.reason, options.dryRun);
     } else if (options?.matrix) {
       await this.showMatrix(fs);
     } else {
-      await this.interactiveMode(fs);
+      await this.interactiveMode(fs, options?.dryRun);
     }
 
     this.timer.end();
   }
 
-  private async interactiveMode(fs: any): Promise<void> {
+  private async interactiveMode(fs: any, dryRun = false): Promise<void> {
     console.clear();
     p.intro(chalk.bgCyan.white.bold(' Evolith ADR - Architecture Decision Records '));
 
@@ -63,7 +64,7 @@ export class ADRCommand extends CommandRunner {
 
     switch (action) {
       case 'create':
-        await this.createADR(fs);
+        await this.createADR(fs, dryRun);
         break;
       case 'list':
         await this.listADRs(fs);
@@ -87,13 +88,13 @@ export class ADRCommand extends CommandRunner {
           ],
         });
         const reason = await p.text({ message: 'Razón del cambio:' });
-        await this.updateADR(fs, updateId as string, newStatus as string, reason as string);
+        await this.updateADR(fs, updateId as string, newStatus as string, reason as string, dryRun);
         break;
     }
   }
 
-  private async createADR(fs: any): Promise<void> {
-    logger.info('Creating new ADR');
+  private async createADR(fs: any, dryRun = false): Promise<void> {
+    logger.info('Creating new ADR', { dryRun });
 
     const title = await p.text({
       message: 'Título del ADR:',
@@ -144,10 +145,14 @@ export class ADRCommand extends CommandRunner {
         tags,
       };
 
-      const adr = await service.create(input);
+      const adr = await service.create(input, dryRun);
       spinner.stop();
 
-      p.log.success(chalk.green(`✓ ADR ${adr.id} creado exitosamente`));
+      if (dryRun) {
+        p.log.warn(chalk.yellow(`[DRY-RUN] ADR ${adr.id} simulated creation`));
+      } else {
+        p.log.success(chalk.green(`✓ ADR ${adr.id} creado exitosamente`));
+      }
       p.log.info(`  Título: ${adr.title}`);
       p.log.info(`  Estado: ${adr.status}`);
       p.log.info(`  Archivo: reference/architecture/adrs/${adr.id}.md`);
@@ -206,8 +211,8 @@ export class ADRCommand extends CommandRunner {
     }
   }
 
-  private async updateADR(fs: any, id: string, status: string, reason?: string): Promise<void> {
-    logger.info('Updating ADR status', { id, status });
+  private async updateADR(fs: any, id: string, status: string, reason?: string, dryRun = false): Promise<void> {
+    logger.info('Updating ADR status', { id, status, dryRun });
 
     if (!status) {
       p.log.error('Estado requerido. Usa --status <Accepted|Deprecated|Superseded|Amended>');
@@ -219,11 +224,15 @@ export class ADRCommand extends CommandRunner {
     spinner.start(`Actualizando ADR ${id}...`);
 
     try {
-      const updated = await service.updateStatus(id, status as any, reason);
+      const updated = await service.updateStatus(id, status as any, reason, dryRun);
       spinner.stop();
 
       if (updated) {
-        p.log.success(chalk.green(`✓ ADR ${id} actualizado a ${status}`));
+        if (dryRun) {
+          p.log.warn(chalk.yellow(`[DRY-RUN] ADR ${id} update simulated to ${status}`));
+        } else {
+          p.log.success(chalk.green(`✓ ADR ${id} actualizado a ${status}`));
+        }
       } else {
         p.log.error(chalk.red(`ADR ${id} no encontrado`));
       }
@@ -314,6 +323,14 @@ export class ADRCommand extends CommandRunner {
     description: 'Mostrar ADR Matrix summary',
   })
   parseMatrix(): boolean {
+    return true;
+  }
+
+  @Option({
+    flags: '-d, --dry-run',
+    description: 'Ejecuta en modo simulacro sin alterar archivos',
+  })
+  parseDryRun(): boolean {
     return true;
   }
 }

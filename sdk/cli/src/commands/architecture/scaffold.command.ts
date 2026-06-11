@@ -12,6 +12,11 @@ export class ScaffoldCommand extends CommandRunner {
   private strategy: WorkspaceManagerStrategy = new NxWorkspaceStrategy();
 
   async run(passedParam: string[], options?: Record<string, any>): Promise<void> {
+    const dryRun = options?.dryRun || false;
+    if (this.strategy.setDryRun) {
+      this.strategy.setDryRun(dryRun);
+    }
+
     console.log();
     intro(chalk.bgBlue.white.bold(' Evolith Architecture Scaffolding '));
 
@@ -131,7 +136,11 @@ export class ScaffoldCommand extends CommandRunner {
       await this.strategy.generateLibrary('mocks', 'shared');
 
       s.stop('Andamiaje arquitectónico completado exitosamente.');
-      outro(chalk.green('✅ Toda la topología Evolith ha sido generada en el directorio ./src.'));
+      if (dryRun) {
+        outro(chalk.yellow('⚠ Modo DRY-RUN activado: No se realizaron cambios en el disco.'));
+      } else {
+        outro(chalk.green('✅ Toda la topología Evolith ha sido generada en el directorio ./src.'));
+      }
     } catch (error) {
       s.stop('Error durante el andamiaje.');
       outro(chalk.red('❌ El proceso falló. Revisa los logs anteriores para más detalles.'));
@@ -152,6 +161,14 @@ export class ScaffoldCommand extends CommandRunner {
   })
   parseOrm(val: string): string {
     return val;
+  }
+
+  @Option({
+    flags: '-d, --dry-run',
+    description: 'Ejecuta en modo simulacro sin alterar archivos',
+  })
+  parseDryRun(): boolean {
+    return true;
   }
 }
 

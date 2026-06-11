@@ -30,7 +30,7 @@ export class ADRService {
     this.adrDir = `${basePath}/reference/architecture/adrs`;
   }
 
-  async create(input: CreateADRInput): Promise<ADR> {
+  async create(input: CreateADRInput, dryRun = false): Promise<ADR> {
     const adrNumber = await this.getNextNumber();
     const adr: ADR = {
       id: `ADR-${String(adrNumber).padStart(4, '0')}`,
@@ -45,11 +45,13 @@ export class ADRService {
       tags: input.tags || [],
     };
 
-    await this.fs.ensureDir(this.adrDir);
-    await this.fs.writeJson(`${this.adrDir}/ADR-${String(adrNumber).padStart(4, '0')}.json`, adr);
-    await this.fs.writeFile(`${this.adrDir}/ADR-${String(adrNumber).padStart(4, '0')}.md`, this.renderMarkdown(adr));
+    if (!dryRun) {
+      await this.fs.ensureDir(this.adrDir);
+      await this.fs.writeJson(`${this.adrDir}/ADR-${String(adrNumber).padStart(4, '0')}.json`, adr);
+      await this.fs.writeFile(`${this.adrDir}/ADR-${String(adrNumber).padStart(4, '0')}.md`, this.renderMarkdown(adr));
 
-    await this.updateMatrix(adr);
+      await this.updateMatrix(adr);
+    }
 
     return adr;
   }
@@ -80,7 +82,7 @@ export class ADRService {
     );
   }
 
-  async updateStatus(id: string, status: ADRStatus, reason?: string): Promise<ADR | undefined> {
+  async updateStatus(id: string, status: ADRStatus, reason?: string, dryRun = false): Promise<ADR | undefined> {
     const adr = await this.get(id);
     if (!adr) return undefined;
 
@@ -93,8 +95,10 @@ export class ADRService {
       },
     };
 
-    await this.fs.writeJson(`${this.adrDir}/${adr.id}.json`, updated);
-    await this.fs.writeFile(`${this.adrDir}/${adr.id}.md`, this.renderMarkdown(updated));
+    if (!dryRun) {
+      await this.fs.writeJson(`${this.adrDir}/${adr.id}.json`, updated);
+      await this.fs.writeFile(`${this.adrDir}/${adr.id}.md`, this.renderMarkdown(updated));
+    }
 
     return updated;
   }

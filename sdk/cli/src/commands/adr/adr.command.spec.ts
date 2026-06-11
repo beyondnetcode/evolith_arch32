@@ -221,7 +221,8 @@ describe('ADRCommand', () => {
       expect(mockUpdateStatus).toHaveBeenCalledWith(
         'ADR-0001',
         'Accepted',
-        'Approved by team'
+        'Approved by team',
+        false
       );
       expect(p.log.success).toHaveBeenCalled();
     });
@@ -429,6 +430,50 @@ describe('ADRCommand', () => {
     });
   });
 
+  describe('dryRun mode', () => {
+    it('should simulate create action when --dry-run flag is passed', async () => {
+      (p.text as jest.Mock)
+        .mockResolvedValueOnce('Simulated ADR')
+        .mockResolvedValueOnce('Context')
+        .mockResolvedValueOnce('Decision')
+        .mockResolvedValueOnce('Positive')
+        .mockResolvedValueOnce('Negative')
+        .mockResolvedValueOnce('');
+      mockCreate.mockResolvedValue({
+        id: 'ADR-0001',
+        title: 'Simulated ADR',
+        status: 'Proposed',
+        date: '2024-01-01',
+      });
+
+      await command.run([], { create: true, dryRun: true });
+
+      expect(mockCreate).toHaveBeenCalledWith(expect.anything(), true);
+      expect(p.log.warn).toHaveBeenCalledWith(expect.stringContaining('[DRY-RUN]'));
+    });
+
+    it('should simulate update action when --dry-run flag is passed', async () => {
+      mockUpdateStatus.mockResolvedValue({
+        id: 'ADR-0001',
+        title: 'Old ADR',
+        status: 'Accepted',
+        date: '2024-01-01',
+        context: 'Context',
+        decision: 'Decision',
+        consequences: { positive: [], negative: [] },
+      });
+
+      await command.run([], {
+        update: 'ADR-0001',
+        status: 'Accepted',
+        dryRun: true,
+      });
+
+      expect(mockUpdateStatus).toHaveBeenCalledWith('ADR-0001', 'Accepted', undefined, true);
+      expect(p.log.warn).toHaveBeenCalledWith(expect.stringContaining('[DRY-RUN]'));
+    });
+  });
+
   describe('option parsers', () => {
     it('should parse create option', () => {
       expect(command.parseCreate()).toBe(true);
@@ -456,6 +501,10 @@ describe('ADRCommand', () => {
 
     it('should parse matrix option', () => {
       expect(command.parseMatrix()).toBe(true);
+    });
+
+    it('should parse dry-run option', () => {
+      expect(command.parseDryRun()).toBe(true);
     });
   });
 });

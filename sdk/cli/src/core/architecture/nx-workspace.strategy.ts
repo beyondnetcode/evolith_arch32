@@ -15,6 +15,11 @@ const MFE_CAPABLE_FRAMEWORKS = new Set(['react', 'angular']);
 export class NxWorkspaceStrategy implements WorkspaceManagerStrategy {
   /** Tracks the active frontend framework after installDependencies is called. */
   private frontendFramework = 'react';
+  private dryRun = false;
+
+  setDryRun(dryRun: boolean): void {
+    this.dryRun = dryRun;
+  }
 
   private getTargetDir(): string {
     const currentDir = process.cwd();
@@ -23,6 +28,10 @@ export class NxWorkspaceStrategy implements WorkspaceManagerStrategy {
 
   private runNx(command: string) {
     const targetDir = this.getTargetDir();
+    if (this.dryRun) {
+      console.log(chalk.yellow(`[DRY-RUN] Would execute in ${targetDir}: npx nx ${command}`));
+      return;
+    }
     console.log(chalk.gray(`> Executing in ${targetDir}: npx nx ${command}`));
     try {
       execSync(`npx nx ${command} --no-interactive`, { cwd: targetDir, stdio: 'inherit' });
@@ -34,6 +43,10 @@ export class NxWorkspaceStrategy implements WorkspaceManagerStrategy {
 
   private runNpm(command: string) {
     const targetDir = this.getTargetDir();
+    if (this.dryRun) {
+      console.log(chalk.yellow(`[DRY-RUN] Would execute in ${targetDir}: npm ${command}`));
+      return;
+    }
     console.log(chalk.gray(`> Executing in ${targetDir}: npm ${command}`));
     try {
       execSync(`npm ${command} --legacy-peer-deps`, { cwd: targetDir, stdio: 'inherit' });

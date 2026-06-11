@@ -265,22 +265,65 @@ sequenceDiagram
 **Base URL:** `https://tracker.evolith.io/api/v1`  
 **Autorización:** Bearer token delegado a UMS y grafo del tenant
 
+### 6.1 Productos y Procesos
+
+```typescript
+interface RegisterProductRequest {
+  tenantId: string;
+  name: string;
+  repositoryRef?: string;
+  governanceProfileRef: string;
+}
+
+interface StartProcessRequest {
+  productId: string;
+  processTemplateRef: string;
+}
+```
+
+### 6.2 Envío de Evidencia
+
 ```text
-POST /products
-POST /products/:id/processes
 POST /evidence
 POST /evidence/import
 GET  /evidence/:id
 GET  /processes/:id/evidence-graph
+```
+
+Todos los endpoints de evidencia validan la identidad del proveedor, la frontera del tenant, el schema, el linaje y la integridad antes de que un elemento se convierta en evidencia elegible.
+
+### 6.3 Solicitud de Transición
+
+```typescript
+interface RequestTransition {
+  requestedBy: string;
+  targetPhase: string;
+  notes?: string;
+}
+
+interface TransitionResponse {
+  transitionId: string;
+  decisionId?: string;
+  status: 'requested' | 'authorized' | 'executed' | 'blocked' | 'failed';
+  currentPhase: string;
+  missingEvidence?: string[];
+  requiredActions?: string[];
+}
+```
+
+```text
 POST /processes/:id/transitions
 GET  /transitions/:id
 GET  /decisions/:id
+```
+
+### 6.4 Aprobaciones y Excepciones
+
+```text
 POST /decisions/:id/approvals
 POST /decisions/:id/exceptions
 GET  /decisions/:id/audit
 ```
-
-Los endpoints de evidencia validan identidad del proveedor, tenant, schema, linaje e integridad antes de que un elemento sea elegible.
 
 ---
 
@@ -288,26 +331,41 @@ Los endpoints de evidencia validan identidad del proveedor, tenant, schema, lina
 
 CLI y MCP exponen los mismos casos de uso y envelope unificado, pero su semántica es técnica, no canónica.
 
+### 7.1 Herramienta de Evaluación
+
+```typescript
+interface EvaluateCriterionRequest {
+  processContext: {
+    tenantId: string;
+    productId: string;
+    processId: string;
+    phase: string;
+    gateId: string;
+  };
+  rulesetRef: string;
+  evidenceIds: string[];
+}
+```
+
 ```text
 evolith criterion evaluate
 evolith gate assess
-evolith context resolve
-evolith evidence validate
-evolith artifact validate
-evolith drift detect
+MCP: evolith-criterion-evaluate
+MCP: evolith-gate-assess
+```
 
-MCP:
-evolith-criterion-evaluate
-evolith-gate-assess
+Estas operaciones retornan `TechnicalEvaluationResult`. Nunca crean ni persisten una `GateDecision`.
+
+### 7.2 Herramientas de Contexto y Evidencia
+
+```text
 evolith-context-resolve
 evolith-evidence-validate
 evolith-artifact-validate
 evolith-drift-detect
 ```
 
-`criterion evaluate` y `gate assess` retornan `TechnicalEvaluationResult`. Nunca crean ni persisten `GateDecision`.
-
-### Interfaces Prohibidas
+### 7.3 Interfaces Prohibidas
 
 - ejecución remota genérica de shell;
 - comandos CLI/MCP que muten estado canónico de fase;
@@ -364,6 +422,8 @@ erDiagram
     SDLC_PROCESS ||--o{ AGENT_RUN : records
     AGENT_RUN }o--o{ EVIDENCE_ITEM : produces
 ```
+
+### 9.1 Propiedad de Agregados
 
 | Agregado | Responsabilidad |
 |---|---|

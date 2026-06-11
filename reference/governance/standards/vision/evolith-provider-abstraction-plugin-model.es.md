@@ -89,6 +89,8 @@ flowchart LR
     REGISTRY --> PLUGIN
 ```
 
+### 3.1 Responsabilidades de Capa
+
 | Capa | Responsabilidad |
 |---|---|
 | **Dominio Canónico** | Conceptos de negocio y gobernanza sin vocabulario de proveedores |
@@ -118,7 +120,7 @@ El tipo es un detalle de implementación. Todos cumplen los mismos contratos de 
 
 ---
 
-## 5. Selección y Defaults
+## 5. Selección de Proveedores y Defaults
 
 ### 5.1 Alcance de Resolución
 
@@ -284,6 +286,8 @@ Ningún proveedor se selecciona solo por ser default; debe satisfacer la capacid
 
 ## 9. Fallos, Fallback y Reemplazo
 
+### 9.1 Modos de Fallo
+
 | Condición | Comportamiento Requerido |
 |---|---|
 | Proveedor no disponible | Marcar fuente no disponible; no fabricar evidencia ni aprobar silenciosamente |
@@ -292,6 +296,8 @@ Ningún proveedor se selecciona solo por ser default; debe satisfacer la capacid
 | Límite de costo excedido | Pausar o enrutar según fallback aprobado |
 | Violación de residencia | Bloquear ejecución y alertar responsables |
 | Versión incompatible | Impedir activación y conservar versión compatible |
+
+### 9.2 Flujo de Reemplazo
 
 ```mermaid
 flowchart LR
@@ -356,7 +362,7 @@ Los plugins in-process requieren un nivel de confianza y certificación superior
 - adaptadores de referencia y comunidad;
 - reglas de compatibilidad y ejemplos.
 
-### Tracker Enterprise
+### Enterprise Tracker
 
 - registry y administración por tenant;
 - adaptadores certificados y gestionados;

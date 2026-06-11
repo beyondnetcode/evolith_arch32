@@ -8,9 +8,9 @@ This area contains portfolio strategy, business model, Open-Core direction, comp
 
 ## Current Documents
 
-- [Strategic Validation and Composition Framework](../../../governance/standards/vision/evolith-strategic-validation-and-composition-framework.md)
-- [AI-Assisted Product Validation Workflow](../../../governance/standards/vision/evolith-ai-assisted-validation-workflow.md)
-- [Evolutionary Strategy Roadmap](../../../governance/standards/vision/evolutionary-strategy-roadmap.md)
+- [Strategic Validation and Composition Framework](../../governance/standards/vision/evolith-strategic-validation-and-composition-framework.md)
+- [AI-Assisted Product Validation Workflow](../../governance/standards/vision/evolith-ai-assisted-validation-workflow.md)
+- [Evolutionary Strategy Roadmap](../../governance/standards/vision/evolutionary-strategy-roadmap.md)
 
 The files remain at legacy locations during migration but are classified as Product Suite strategy.
 

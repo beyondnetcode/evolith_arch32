@@ -10,9 +10,9 @@ No debe contener principios universales que pertenecen a Evolith Core ni detalle
 
 ## Documentos Actuales
 
-- [Diseño Objetivo de Composición Gobernada](../../../governance/standards/vision/evolith-governed-composition-target-design.es.md)
-- [Modelo de Abstracción de Proveedores y Plugins](../../../governance/standards/vision/evolith-provider-abstraction-plugin-model.es.md) — destino: Core Architecture Principle
-- [Interfaces Técnicas de Tracker](../../../governance/standards/vision/sdlc-tracker-technical-interfaces.es.md) — destino: Tracker Product Design
+- [Diseño Objetivo de Composición Gobernada](../../governance/standards/vision/evolith-governed-composition-target-design.es.md)
+- [Modelo de Abstracción de Proveedores y Plugins](../../governance/standards/vision/evolith-provider-abstraction-plugin-model.es.md) — destino: Core Architecture Principle
+- [Interfaces Técnicas de Tracker](../../governance/standards/vision/sdlc-tracker-technical-interfaces.es.md) — destino: Tracker Product Design
 
 Durante la migración, este índice separa arquitectura de Suite, principios Core e implementación de productos.
 

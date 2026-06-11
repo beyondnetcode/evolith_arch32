@@ -166,31 +166,29 @@ Open the phase you are working in. Each section groups the documents, standards,
 <details>
 <summary><strong>Architecture, governance, and applied reference</strong></summary>
 
-- Architecture baseline
-  - [Architecture Hub](./reference/architecture/README.md)
-  - [Blueprints](./reference/architecture/blueprints/README.md)
-  - [Agnostic Baseline](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.md)
-  - [Reference Blueprint](./reference/architecture/blueprints/reference-blueprint.md)
-  - [C4 Topology Spec](./reference/architecture/blueprints/c4-topology-spec.md)
-- Architecture decisions
-  - [ADR Registry](./reference/architecture/adrs/README.md)
-  - [Core ADRs](./reference/architecture/adrs/core/README.md)
-  - [Node.js ADRs](./reference/architecture/adrs/nodejs/README.md)
-  - [.NET ADRs](./reference/architecture/adrs/dotnet/README.md)
-  - [Android ADRs](./reference/architecture/adrs/android/README.md)
-- Governance and navigation
-  - [Governance Standards](./reference/governance/standards/README.md)
-  - [Maturity Assessment](./reference/governance/standards/vision/maturity-assessment.md) - TOGAF ACMM/WAF scoring, vision alignment, and open-gap links
-  - [Gap Tracking Board](./reference/governance/standards/vision/gap-tracking.md) - single board for every open gap (criticality, complexity, status)
-  - [Bilingual Index](./reference/navigation/BILINGUAL_INDEX.md)
-  - [Navigation Hub](./reference/navigation/README.md)
-  - [Rulesets Hub](./rulesets/README.md)
-- Applied reference
-  - [UMS Reference Hub](./reference/knowledge/demo/README.md)
-  - [UMS Reference Model](./reference/knowledge/demo/ums-reference-model.md)
-  - [Canonical Reference vs UMS Applied Model](./reference/knowledge/demo/demo-vs-reference.md)
-  - [UMS Architecture Portal](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md)
-  - [Adoption Cases](./reference/knowledge/adoption-cases.md)
+| Link (URL) | Description (brief explanation) | Goal / Objective | Typification (category or type) |
+|---|---|---|---|
+| [Architecture Hub](./reference/architecture/README.md) | Architecture hub | Centralize design resources | Architecture baseline |
+| [Blueprints](./reference/architecture/blueprints/README.md) | Blueprints directory | Guide reference architectures | Architecture baseline |
+| [Agnostic Baseline](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.md) | Agnostic tech stack | Define baseline technologies | Architecture baseline |
+| [Reference Blueprint](./reference/architecture/blueprints/reference-blueprint.md) | Reference blueprint | Guide standard implementation | Architecture baseline |
+| [C4 Topology Spec](./reference/architecture/blueprints/c4-topology-spec.md) | C4 topology spec | Standardize architecture diagrams | Architecture baseline |
+| [ADR Registry](./reference/architecture/adrs/README.md) | ADRs registry | Maintain decision history | Architecture decisions |
+| [Core ADRs](./reference/architecture/adrs/core/README.md) | Core ADRs | Core system decisions | Architecture decisions |
+| [Node.js ADRs](./reference/architecture/adrs/nodejs/README.md) | Node.js ADRs | Node ecosystem decisions | Architecture decisions |
+| [.NET ADRs](./reference/architecture/adrs/dotnet/README.md) | .NET ADRs | .NET ecosystem decisions | Architecture decisions |
+| [Android ADRs](./reference/architecture/adrs/android/README.md) | Android ADRs | Mobile ecosystem decisions | Architecture decisions |
+| [Governance Standards](./reference/governance/standards/README.md) | Governance standards | Align teams to policies | Governance and navigation |
+| [Maturity Assessment](./reference/governance/standards/vision/maturity-assessment.md) | Maturity assessment | Measure current architecture state | Governance and navigation |
+| [Gap Tracking Board](./reference/governance/standards/vision/gap-tracking.md) | Gap tracking board | Monitor technical gaps | Governance and navigation |
+| [Bilingual Index](./reference/navigation/BILINGUAL_INDEX.md) | Bilingual index | Map EN/ES correspondence | Governance and navigation |
+| [Navigation Hub](./reference/navigation/README.md) | Navigation hub | Facilitate documentation access | Governance and navigation |
+| [Rulesets Hub](./rulesets/README.md) | Rulesets hub | Centralize validation rules | Governance and navigation |
+| [UMS Reference Hub](./reference/knowledge/demo/README.md) | UMS reference hub | Demonstrate real implementation | Applied reference |
+| [UMS Reference Model](./reference/knowledge/demo/ums-reference-model.md) | UMS reference model | Guide satellite product development | Applied reference |
+| [Canonical Reference vs UMS Applied Model](./reference/knowledge/demo/demo-vs-reference.md) | Canonical vs UMS | Compare theory and application | Applied reference |
+| [UMS Architecture Portal](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) | UMS architecture portal | Document UMS specifically | Applied reference |
+| [Adoption Cases](./reference/knowledge/adoption-cases.md) | Adoption cases | Showcase success and learning | Applied reference |
 
 </details>
 

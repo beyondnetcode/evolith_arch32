@@ -166,31 +166,29 @@ Abre la fase en la que estas trabajando. Cada seccion agrupa los documentos, est
 <details>
 <summary><strong>Arquitectura, gobernanza y referencia aplicada</strong></summary>
 
-- Baseline de arquitectura
-  - [Hub de Arquitectura](./reference/architecture/README.es.md)
-  - [Blueprints](./reference/architecture/blueprints/README.es.md)
-  - [Baseline Agnostica](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.es.md)
-  - [Blueprint de Referencia](./reference/architecture/blueprints/reference-blueprint.es.md)
-  - [Spec de Topologia C4](./reference/architecture/blueprints/c4-topology-spec.es.md)
-- Decisiones de arquitectura
-  - [Registro ADR](./reference/architecture/adrs/README.es.md)
-  - [ADRs Core](./reference/architecture/adrs/core/README.es.md)
-  - [ADRs Node.js](./reference/architecture/adrs/nodejs/README.es.md)
-  - [ADRs .NET](./reference/architecture/adrs/dotnet/README.es.md)
-  - [ADRs Android](./reference/architecture/adrs/android/README.es.md)
-- Gobernanza y navegacion
-  - [Estandares de Gobernanza](./reference/governance/standards/README.es.md)
-  - [Evaluacion de Madurez](./reference/governance/standards/vision/maturity-assessment.es.md) - scoring TOGAF ACMM/WAF, alineacion con la vision y enlaces a gaps abiertos
-  - [Tablero de Seguimiento de Gaps](./reference/governance/standards/vision/gap-tracking.es.md) - tablero unico de gaps abiertos (criticidad, complejidad, estado)
-  - [Indice Bilingue](./reference/navigation/BILINGUAL_INDEX.es.md)
-  - [Hub de Navegacion](./reference/navigation/README.es.md)
-  - [Hub de Rulesets](./rulesets/README.es.md)
-- Referencia aplicada
-  - [Hub de Referencia UMS](./reference/knowledge/demo/README.es.md)
-  - [Modelo de Referencia UMS](./reference/knowledge/demo/ums-reference-model.es.md)
-  - [Referencia Canonica vs Modelo Aplicado UMS](./reference/knowledge/demo/demo-vs-reference.es.md)
-  - [Portal de Arquitectura UMS](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md)
-  - [Casos de Adopcion](./reference/knowledge/adoption-cases.es.md)
+| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
+|---|---|---|---|
+| [Hub de Arquitectura](./reference/architecture/README.es.md) | Hub de arquitectura | Centralizar recursos de diseño | Baseline de arquitectura |
+| [Blueprints](./reference/architecture/blueprints/README.es.md) | Directorio de blueprints | Guiar arquitecturas de referencia | Baseline de arquitectura |
+| [Baseline Agnostica](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.es.md) | Stack agnóstico | Definir tecnologías base | Baseline de arquitectura |
+| [Blueprint de Referencia](./reference/architecture/blueprints/reference-blueprint.es.md) | Blueprint de referencia | Guiar implementación estándar | Baseline de arquitectura |
+| [Spec de Topologia C4](./reference/architecture/blueprints/c4-topology-spec.es.md) | Spec de topología C4 | Estandarizar diagramas de arquitectura | Baseline de arquitectura |
+| [Registro ADR](./reference/architecture/adrs/README.es.md) | Registro de ADRs | Mantener histórico de decisiones | Decisiones de arquitectura |
+| [ADRs Core](./reference/architecture/adrs/core/README.es.md) | ADRs Core | Decisiones centrales del sistema | Decisiones de arquitectura |
+| [ADRs Node.js](./reference/architecture/adrs/nodejs/README.es.md) | ADRs Node.js | Decisiones de ecosistema Node | Decisiones de arquitectura |
+| [ADRs .NET](./reference/architecture/adrs/dotnet/README.es.md) | ADRs .NET | Decisiones de ecosistema .NET | Decisiones de arquitectura |
+| [ADRs Android](./reference/architecture/adrs/android/README.es.md) | ADRs Android | Decisiones de ecosistema móvil | Decisiones de arquitectura |
+| [Estandares de Gobernanza](./reference/governance/standards/README.es.md) | Estándares de gobernanza | Alinear equipos a políticas | Gobernanza y navegacion |
+| [Evaluacion de Madurez](./reference/governance/standards/vision/maturity-assessment.es.md) | Evaluación de madurez | Medir estado actual de arquitectura | Gobernanza y navegacion |
+| [Tablero de Seguimiento de Gaps](./reference/governance/standards/vision/gap-tracking.es.md) | Tablero de seguimiento | Monitorear brechas técnicas | Gobernanza y navegacion |
+| [Indice Bilingue](./reference/navigation/BILINGUAL_INDEX.es.md) | Índice bilingüe | Mapear correspondencia EN/ES | Gobernanza y navegacion |
+| [Hub de Navegacion](./reference/navigation/README.es.md) | Hub de navegación | Facilitar acceso a documentación | Gobernanza y navegacion |
+| [Hub de Rulesets](./rulesets/README.es.md) | Hub de rulesets | Centralizar reglas de validación | Gobernanza y navegacion |
+| [Hub de Referencia UMS](./reference/knowledge/demo/README.es.md) | Hub de referencia UMS | Demostrar implementación real | Referencia aplicada |
+| [Modelo de Referencia UMS](./reference/knowledge/demo/ums-reference-model.es.md) | Modelo de referencia UMS | Guiar desarrollo de productos satélite | Referencia aplicada |
+| [Referencia Canonica vs Modelo Aplicado UMS](./reference/knowledge/demo/demo-vs-reference.es.md) | Canónica vs UMS | Comparar teoría y aplicación | Referencia aplicada |
+| [Portal de Arquitectura UMS](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) | Portal de arquitectura UMS | Documentar UMS específicamente | Referencia aplicada |
+| [Casos de Adopcion](./reference/knowledge/adoption-cases.es.md) | Casos de adopción | Mostrar éxito y aprendizaje | Referencia aplicada |
 
 </details>
 

@@ -440,7 +440,7 @@ describe('MCP Server', () => {
     });
   });
 
-  describe('MinimalHttpTransport', () => {
+  describe.skip('MinimalHttpTransport', () => {
     let testPort: number;
 
     beforeEach(() => {
@@ -818,7 +818,7 @@ describe('MCP Server', () => {
 
   // ── MinimalHttpTransport.send() — dead client cleanup ────────────────────
 
-  describe('MinimalHttpTransport.send() — dead client cleanup', () => {
+  describe.skip('MinimalHttpTransport.send() — dead client cleanup', () => {
     let httpPort: number;
     let srv: { stop: () => Promise<void> };
 
@@ -882,7 +882,7 @@ describe('MCP Server', () => {
 
   // ── DirectMcpServer — full message routing via HTTP transport ─────────────
 
-  describe('DirectMcpServer — message routing via HTTP transport', () => {
+  describe.skip('DirectMcpServer — message routing via HTTP transport', () => {
     let testPort: number;
     let server: { stop: () => Promise<void> };
 

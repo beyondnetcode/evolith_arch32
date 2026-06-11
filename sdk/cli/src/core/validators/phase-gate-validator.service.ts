@@ -310,7 +310,23 @@ export class PhaseGateValidatorService {
 
     if (criterionText.includes('architecture decisions are undocumented')) {
       const adrEvidence = evidenceResults.find(e => e.artifact === 'ADR Registry');
-      return !adrEvidence?.found;
+      if (!adrEvidence?.found) return true;
+
+      try {
+        const adrPath = path.join(projectPath, 'reference', 'architecture', 'adrs', 'adr-matrix.json');
+        if (await this.fs.exists(adrPath)) {
+          const content = await this.fs.readFile(adrPath);
+          const matrix = JSON.parse(content) as { adrs?: unknown[] };
+          if (!matrix.adrs || matrix.adrs.length === 0) {
+            return true;
+          }
+        }
+      } catch (err: unknown) {
+        this.logger.warn(`Failed to validate ADR registry content: ${err instanceof Error ? err.message : String(err)}`);
+        return true;
+      }
+
+      return false;
     }
 
     if (criterionText.includes('bounded context')) {

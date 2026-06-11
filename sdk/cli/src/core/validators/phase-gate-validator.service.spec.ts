@@ -125,7 +125,10 @@ describe('PhaseGateValidatorService', () => {
     jest.clearAllMocks();
 
     mockFs = createMockFileSystem({
-      readFile: jest.fn().mockResolvedValue(JSON.stringify(mockRuleset)),
+      readFile: jest.fn().mockImplementation((p: string) => {
+        if (p.includes('adr-matrix.json')) return Promise.resolve(JSON.stringify({ adrs: [{ id: 'ADR-0001' }] }));
+        return Promise.resolve(JSON.stringify(mockRuleset));
+      }),
     });
     const mockProvider: IFileSystemProvider = {
       createFileSystem: () => mockFs,
@@ -337,6 +340,20 @@ describe('PhaseGateValidatorService', () => {
       (mockFs.exists as jest.Mock).mockImplementation((p: string) => {
         if (p.includes('adr-matrix.json')) return Promise.resolve(false);
         return Promise.resolve(true);
+      });
+
+      const result = await service.validateGate(2, '/project');
+
+      const adrBlock = result.blockingChecks.find(b => b.criterion.toLowerCase().includes('undocumented'));
+      expect(adrBlock?.triggered).toBe(true);
+    });
+
+    it('should detect undocumented architecture decisions when ADR Registry is empty', async () => {
+      (mockFs.exists as jest.Mock).mockResolvedValue(true);
+      (mockFs.readFile as jest.Mock).mockImplementation((p: string) => {
+        if (p.includes('adr-matrix.json')) return Promise.resolve(JSON.stringify({ adrs: [] }));
+        if (p.includes('phase-gates.rules.json')) return Promise.resolve(JSON.stringify(mockRuleset));
+        return Promise.resolve('valid content');
       });
 
       const result = await service.validateGate(2, '/project');

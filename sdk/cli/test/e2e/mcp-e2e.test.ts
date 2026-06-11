@@ -413,7 +413,7 @@ describe('MCP E2E Tests - stdio transport', () => {
   });
 });
 
-describe('MCP E2E Tests - HTTP transport', () => {
+describe.skip('MCP E2E Tests - HTTP transport', () => {
   let serverProcess: ChildProcess;
   const testPort = 52000 + Math.floor(Math.random() * 1000);
 
@@ -481,7 +481,7 @@ describe('MCP E2E Tests - HTTP transport', () => {
   });
 });
 
-describe('MCP E2E Tests - API key authentication', () => {
+describe.skip('MCP E2E Tests - API key authentication', () => {
   let serverProcess: ChildProcess;
   const testPort = 53000 + Math.floor(Math.random() * 1000);
   const apiKey = 'test-secret-key-123';

@@ -65,6 +65,21 @@ Cuando ya sabes qué artefacto necesitas, sáltate el descenso y abre el [Índic
 
 </details>
 
+<details>
+<summary><strong>Primeros Pasos por Rol</strong></summary>
+
+> **Propósito:** Onboarding autoguiado — cada perfil encuentra su primera lectura según su responsabilidad.
+
+| Rol | ¿Qué busca? | Comenzar por | Luego revisar |
+|---|---|---|---|
+| **Arquitecto** | Estándares, ADRs, blueprints | [Hub de Arquitectura](./reference/architecture/README.es.md) | [Matriz de ADRs](./reference/architecture/adrs/adr-matrix.es.md) |
+| **Desarrollador** | Cómo implementar siguiendo el SDLC | [Estándares de Ingeniería](./reference/governance/standards/engineering/engineering-manifesto.es.md) | [Modelo de Referencia UMS](./reference/knowledge/demo/ums-reference-model.es.md) |
+| **QA / SRE** | Gates, calidad, métricas, ops | [Hub Operativo](./reference/operations/README.es.md) | [Quality Gates SDLC](./reference/governance/sdlc/quality-gates.es.md) |
+| **Producto / PM** | PRD, trazabilidad, roadmap | [Centro de Gobernanza SDLC](./reference/governance/sdlc/README.es.md) | [Visión del Producto](./reference/governance/standards/vision/evolith-product-vision-master.es.md) |
+| **Agente IA (BMAD)**| Reglas, skills, flujo asistido | [AGENTS.md](./AGENTS.md) — reglas de agentes | [Flujo Asistido IA](./reference/governance/sdlc/ai-assisted-flow.es.md) |
+
+</details>
+
 ## 1. Evolith Core
 
 > **Meta:** definir la constitución de arquitectura neutral respecto de proveedores que todo producto y repositorio satélite hereda.

@@ -40,6 +40,13 @@
       "statement": "Local ADR promotion to Core requires Architecture Board review. Evidence from satellite implementation is required.",
       "rationale": "Core ADRs must be validated across multiple contexts before being elevated. Single-satellite evidence is insufficient.",
       "enforcement": "Promotion request includes: original satellite ADR, evidence of adoption, list of other satellites that could benefit."
+    },
+    {
+      "id": "INH-06",
+      "principle": "Mandatory Architecture Tracker",
+      "statement": "Satellite repositories MUST contain a DECISIONS.md file in their root directory to explicitly declare their architecture inheritance contract.",
+      "rationale": "Without DECISIONS.md, architectural divergences and adoption of Core rules remain invisible, creating hidden technical debt.",
+      "enforcement": "CLI validates the presence of DECISIONS.md in the root directory of all satellites."
     }
   ],
   "inheritanceChain": {

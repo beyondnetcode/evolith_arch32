@@ -192,6 +192,7 @@ Los siguientes documentos aplican a todo el ciclo de vida y deben consultarse si
 | [Matriz de Responsabilidades SDLC](./responsibility-matrix.es.md) | Expectativas accountable, responsible, consulted y evidencia por gate | Asignar la propiedad de los gates | Estándar | Sí |
 | [Modelo de Trazabilidad SDLC](./traceability-model.es.md) | Cadena de evidencia de extremo a extremo desde PRD hasta observabilidad | Garantizar la trazabilidad | Estándar | Sí |
 | [Mapeo SDLC–Artefactos Evolith](./sdlc-evolith-artifact-mapping.es.md) | Matriz de cumplimiento: 40+ artefactos mapeados a las cinco fases con señal Requerido/Opcional | Definir el alcance de artefactos por fase | Referencia | Sí |
+| [Flujo Asistido IA](./ai-assisted-flow.es.md) | Ejecutar toda la cadena de trazabilidad SDLC usando agentes IA BMAD | Acelerar SDLC con IA | Guía | No |
 | [Content Management Abstraction](../standards/engineering/content-management-abstraction.es.md) | Práctica opcional para acelerar time-to-market mediante contenido administrable | Acelerar la entrega de contenido | Estándar | No |
 | [Hub de Plantillas de Artefactos](./04-artifact-templates/README.es.md) | Índice de todas las plantillas con estructuras en blanco y ejemplos UMS | Empezar a crear cualquier artefacto | Hub de área | Sí |
 

@@ -52,3 +52,10 @@
 | Governing ADRs | [Links] |
 | Pull Request | [Link] |
 | Test evidence | [Link] |
+
+---
+
+<p align="center">
+  <strong>© Beyondnet Tech</strong> · www.beyondnet.info<br>
+  Last revision: 2026-06-11
+</p>

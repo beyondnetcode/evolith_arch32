@@ -192,6 +192,7 @@ The following documents apply across the lifecycle and must be consulted regardl
 | [SDLC Responsibility Matrix](./responsibility-matrix.md) | Accountable, responsible, consulted, and evidence expectations per gate | Assign gate ownership | Standard | Yes |
 | [SDLC Traceability Model](./traceability-model.md) | End-to-end evidence chain from PRD to production observability | Guarantee traceability | Standard | Yes |
 | [SDLC–Evolith Artifact Mapping](./sdlc-evolith-artifact-mapping.md) | Master compliance matrix: 40+ artifacts mapped to the five phases with Required/Optional signal | Define artifact scope per phase | Reference | Yes |
+| [AI-Assisted Flow](./ai-assisted-flow.md) | Execute the entire SDLC traceability chain using BMAD AI agents | Accelerate SDLC with AI | Guide | No |
 | [Content Management Abstraction](../standards/engineering/content-management-abstraction.md) | Optional practice for accelerating time-to-market through manageable content | Accelerate content delivery | Standard | No |
 | [Artifact Templates Hub](./04-artifact-templates/README.md) | Index of all format templates with blank structures and UMS worked examples | Start authoring any artifact | Area hub | Yes |
 

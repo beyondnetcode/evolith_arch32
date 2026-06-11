@@ -76,7 +76,7 @@ export class NativeEvaluator implements IRuleEvaluatorStrategy {
     if (id === 'TAX-07' || id === 'TAX-08') return this.evalAdrNaming.bind(this);
 
     // Governance / inheritance (static fields in evolith.yaml)
-    if (id === 'INH-01') return this.evalInheritance.bind(this);
+    if (id === 'INH-01' || id === 'INH-06') return this.evalInheritance.bind(this);
 
     return null;
   }
@@ -462,11 +462,25 @@ export class NativeEvaluator implements IRuleEvaluatorStrategy {
     rule: NormalizedRule,
     ctx: EvaluationContext,
   ): Promise<RuleEvaluationResult> {
-    const satelliteRulesets = path.join(ctx.satellitePath, 'rulesets');
-    if (ctx.satellitePath !== ctx.corePath && await this.fs.exists(satelliteRulesets)) {
-      return { rule, result: 'failed', message: 'Satellite contains a rulesets/ directory — inheriting from Core only is required' };
+    if (rule.id === 'INH-01') {
+      const satelliteRulesets = path.join(ctx.satellitePath, 'rulesets');
+      if (ctx.satellitePath !== ctx.corePath && await this.fs.exists(satelliteRulesets)) {
+        return { rule, result: 'failed', message: 'Satellite contains a rulesets/ directory — inheriting from Core only is required' };
+      }
+      return { rule, result: 'passed' };
     }
-    return { rule, result: 'passed' };
+
+    if (rule.id === 'INH-06') {
+      if (ctx.satellitePath !== ctx.corePath) {
+        const decisionsFile = path.join(ctx.satellitePath, 'DECISIONS.md');
+        if (!await this.fs.exists(decisionsFile)) {
+          return { rule, result: 'failed', message: 'Satellite missing DECISIONS.md in root directory' };
+        }
+      }
+      return { rule, result: 'passed' };
+    }
+
+    return { rule, result: 'skipped', message: 'Unhandled INH rule' };
   }
 
   private async listFilesRecursive(dir: string): Promise<string[]> {

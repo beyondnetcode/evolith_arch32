@@ -58,3 +58,10 @@
 | Approved by | [Name / Role] |
 | Conditions | [Conditions or N/A] |
 | Production timestamp | [YYYY-MM-DD HH:mm TZ] |
+
+---
+
+<p align="center">
+  <strong>© Beyondnet Tech</strong> · www.beyondnet.info<br>
+  Last revision: 2026-06-11
+</p>

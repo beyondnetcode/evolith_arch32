@@ -7,3 +7,10 @@ violations[{"id": "INH-01", "message": "Satellite contains a rulesets/ directory
     dirs := {dir | dir := input.satellite.directories[_]}
     dirs["rulesets"]
 }
+
+violations[{"id": "INH-06", "message": "Satellite missing DECISIONS.md in root directory"}] {
+    input.satellitePath != input.corePath
+    
+    files := {file | file := input.satellite.files[_]}
+    not files["DECISIONS.md"]
+}

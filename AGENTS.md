@@ -56,6 +56,17 @@ See `.harness/scripts/bilingual-terminology-glossary.md` for standardized EN/ES 
   - Never mix patterns within the same content area. When in doubt, use Pattern A for simplicity.
   - All bilingual pairs must maintain exact structural parity — same filename, same position, same sections.
 
+## Folder Boundaries - `reference/` vs `docs/`
+
+This repository has **two distinct documentation layers** by design:
+
+| Layer | Folder | Owner | Purpose |
+| :--- | :--- | :--- | :--- |
+| Architectural Reference Corpus | `reference/` | Architecture / Governance | Reusable, normative, cross-product baseline |
+| Planning & Implementation Artifacts | `docs/` | BMAD Method / Teams | PRDs, epics, stories, specific product retrospectives |
+
+These two layers do not overlap. Architectural decisions go in `reference/architecture/adrs/`. Product plans go in `docs/planning-artifacts/`. Do not create content in `docs/` that should live in `reference/`, or vice versa.
+
 ## Agent Rules
 - Read `./.harness/rules/global-rules.md` before responding or editing.
 - Use the relevant playbook from `./.harness/playbooks/` for audits, architecture reviews, and repeated engineering tasks.

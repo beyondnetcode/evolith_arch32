@@ -54,6 +54,17 @@ Ver `.harness/scripts/bilingual-terminology-glossary.md` para traducciones EN/ES
   - Nunca mezclar patrones dentro de la misma área de contenido. En caso de duda, usar Patrón A por simplicidad.
   - Todos los pares bilingües deben mantener paridad estructural exacta — mismo nombre de archivo, misma posición, mismas secciones.
 
+## Frontera de Carpetas — `reference/` vs `docs/`
+
+Este repositorio tiene **dos capas documentales distintas** por diseño:
+
+| Capa | Carpeta | Propietario | Propósito |
+| :--- | :--- | :--- | :--- |
+| Corpus de Referencia Arquitectónica | `reference/` | Arquitectura / Gobernanza | Línea base normativa, reutilizable y cross-product |
+| Artefactos de Planificación e Implementación | `docs/` | BMAD Method / Equipos | PRDs, épicas, historias, retrospectivas específicas de producto |
+
+Estas dos capas no se solapan. Las decisiones arquitectónicas van en `reference/architecture/adrs/`. Los planes de producto van en `docs/planning-artifacts/`. No crear contenido en `docs/` que deba vivir en `reference/`, ni viceversa.
+
 ## Reglas de Agentes
 - Leer `./.harness/rules/global-rules.md` antes de responder o editar.
 - Usar el playbook relevante de `./.harness/playbooks/` para auditorías, revisiones de arquitectura y tareas de ingeniería repetidas.

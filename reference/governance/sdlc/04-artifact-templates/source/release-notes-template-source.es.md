@@ -58,3 +58,10 @@
 | Aprobado por | [Nombre / Rol] |
 | Condiciones | [Condiciones o N/A] |
 | Timestamp productivo | [AAAA-MM-DD HH:mm TZ] |
+
+---
+
+<p align="center">
+  <strong>© Beyondnet Tech</strong> · www.beyondnet.info<br>
+  Última revisión: 2026-06-11
+</p>

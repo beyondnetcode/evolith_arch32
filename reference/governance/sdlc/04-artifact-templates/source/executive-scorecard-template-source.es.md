@@ -73,3 +73,10 @@
 | Aprobado por | [Nombre / Rol] |
 | Condiciones | [Condiciones o N/A] |
 | Próxima Revisión | [AAAA-MM-DD] |
+
+---
+
+<p align="center">
+  <strong>© Beyondnet Tech</strong> · www.beyondnet.info<br>
+  Última revisión: 2026-06-11
+</p>

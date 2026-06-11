@@ -61,3 +61,10 @@
 | ADRs gobernantes | [Links] |
 | Historias Técnicas | [Links] |
 | Evidencia de calidad | [Link cuando esté disponible] |
+
+---
+
+<p align="center">
+  <strong>© Beyondnet Tech</strong> · www.beyondnet.info<br>
+  Última revisión: 2026-06-11
+</p>

@@ -5,6 +5,8 @@
 > Owner: [Responsable de arquitectura]
 > Fase relacionada: [Diseño | Construcción | Validación | Entrega]
 > Artefactos relacionados: [Links a PRD / Historia Funcional / Historia Técnica]
+> Extends: [ADR-NNNN o Ninguno]
+> Overrides: [ADR-NNNN o Ninguno]
 
 ---
 
@@ -64,3 +66,10 @@
 | Historia Técnica | [Link] |
 | Bounded context afectado | [Contexto] |
 | ADRs Evolith relacionados | [Links ADR] |
+
+---
+
+<p align="center">
+  <strong>© Beyondnet Tech</strong> · www.beyondnet.info<br>
+  Última revisión: 2026-06-11
+</p>

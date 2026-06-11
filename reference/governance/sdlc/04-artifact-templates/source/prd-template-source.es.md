@@ -102,3 +102,10 @@
 | Architecture Board | | | Pendiente |
 | Engineering Lead | | | Pendiente |
 | Sponsor | | | Pendiente |
+
+---
+
+<p align="center">
+  <strong>© Beyondnet Tech</strong> · www.beyondnet.info<br>
+  Última revisión: 2026-06-11
+</p>

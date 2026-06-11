@@ -212,6 +212,27 @@ y guía operativa que los productos satélite heredan y especializan.
 ## Products
 
 <details>
+<summary><strong>Evolith Product Suite</strong></summary>
+
+| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
+|---|---|---|---|
+| [Hub de Product Suite](./reference/product-suite/README.es.md) | Portafolio de productos | Estrategia y posicionamiento | Referencia de producto |
+| [Vision del Suite](./reference/product-suite/vision/README.es.md) | Visión de Evolith Suite | Dirección del ecosistema | Visión de producto |
+| [Estrategia del Suite](./reference/product-suite/strategy/README.es.md) | Estrategia y ejecución | Hoja de ruta | Estrategia |
+
+</details>
+
+<details>
+<summary><strong>Evolith Tracker</strong></summary>
+
+| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
+|---|---|---|---|
+| [Evolith Tracker Hub](./reference/products/evolith-tracker/README.es.md) | Hub de Evolith Tracker | Producto de gobernanza | Referencia de producto |
+| [Arquitectura de Tracker](./reference/products/evolith-tracker/architecture/README.es.md) | Arquitectura del producto | Diseño técnico | Arquitectura de producto |
+
+</details>
+
+<details>
 <summary><strong>UMS (Referencia Aplicada)</strong></summary>
 
 | Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |

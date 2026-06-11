@@ -56,7 +56,7 @@ and operating guidance that satellite products inherit and specialize.
 | Link (URL) | Description (brief explanation) | Goal / Objective | Typification (category or type) |
 |---|---|---|---|
 | [Architecture Hub](./reference/architecture/README.md) | Architecture hub | Centralize design resources | Architecture baseline |
-| [Blueprints](./reference/architecture/blueprints/README.md) | Blueprints directory | Guide reference architectures | Architecture baseline |
+| [Blueprints](./reference/architecture/README.md) | Blueprints directory | Guide reference architectures | Architecture baseline |
 | [Agnostic Baseline](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.md) | Agnostic tech stack | Define baseline technologies | Architecture baseline |
 | [Reference Blueprint](./reference/architecture/blueprints/reference-blueprint.md) | Reference blueprint | Guide standard implementation | Architecture baseline |
 | [Authoritative Tech Stack](./reference/architecture/blueprints/authoritative-tech-stack.md) | Authoritative tech stack | Regulate technology usage | Architecture baseline |
@@ -210,6 +210,27 @@ and operating guidance that satellite products inherit and specialize.
 </details>
 
 ## Products
+
+<details>
+<summary><strong>Evolith Product Suite</strong></summary>
+
+| Link (URL) | Description (brief explanation) | Goal / Objective | Typification (category or type) |
+|---|---|---|---|
+| [Product Suite Hub](./reference/product-suite/README.md) | Product portfolio | Strategy and positioning | Product reference |
+| [Suite Vision](./reference/product-suite/vision/README.md) | Evolith Suite vision | Ecosystem direction | Product vision |
+| [Suite Strategy](./reference/product-suite/strategy/README.md) | Strategy and execution | Roadmap | Strategy |
+
+</details>
+
+<details>
+<summary><strong>Evolith Tracker</strong></summary>
+
+| Link (URL) | Description (brief explanation) | Goal / Objective | Typification (category or type) |
+|---|---|---|---|
+| [Evolith Tracker Hub](./reference/products/evolith-tracker/README.md) | Evolith Tracker hub | Governance product | Product reference |
+| [Tracker Architecture](./reference/products/evolith-tracker/architecture/README.md) | Product architecture | Technical design | Product architecture |
+
+</details>
 
 <details>
 <summary><strong>UMS (Applied Reference)</strong></summary>

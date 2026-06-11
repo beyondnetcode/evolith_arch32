@@ -9,9 +9,9 @@ This area contains the portfolio-level vision of the Evolith Product Suite. It e
 
 ## Current Canonical Documents
 
-- [Evolith Product Vision Master](../../../governance/standards/vision/evolith-product-vision-master.md)
-- [Strategic Validation and Composition Framework](../../../governance/standards/vision/evolith-strategic-validation-and-composition-framework.md)
-- [Governed Composition Target Design](../../../governance/standards/vision/evolith-governed-composition-target-design.md)
+- [Evolith Product Vision Master](../../governance/standards/vision/evolith-product-vision-master.md)
+- [Strategic Validation and Composition Framework](../../governance/standards/vision/evolith-strategic-validation-and-composition-framework.md)
+- [Governed Composition Target Design](../../governance/standards/vision/evolith-governed-composition-target-design.md)
 
 > The linked files remain in legacy locations during the compatibility migration. Their classification is now Product Suite, not Evolith Core.
 

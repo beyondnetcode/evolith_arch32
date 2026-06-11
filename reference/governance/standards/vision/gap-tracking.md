@@ -62,7 +62,7 @@ Ordering criteria: criticality first (`P1` before `P2`), then quick wins (`S` be
 |----|-----|:---:|:---:|:---:|:---:|
 | [GT-05](#gt-05) | Replace `MinimalHttpTransport` with MCP SDK Streamable HTTP | F2 | P1 | M | DONE |
 | [GT-08](#gt-08) | Phase 2 gate: real ADR registry check | F3 | P1 | S | DONE |
-| [GT-09](#gt-09) | Phase 3 gate: real coverage check from CI report | F3 | P1 | S | PENDING |
+| [GT-09](#gt-09) | Phase 3 gate: real coverage check from CI report | F3 | P1 | S | DONE |
 | [GT-12](#gt-12) | `--dry-run` on all write operations | F3 | P1 | S | PENDING |
 | [GT-14](#gt-14) | Outbound webhook on gate completion | F4 | P1 | S | PENDING |
 | [GT-18](#gt-18) | Publish `@evolith/smart-cli` to npm | F5 | P1 | S | PENDING |

@@ -345,8 +345,22 @@ export class PhaseGateValidatorService {
     }
 
     if (criterionText.includes('coverage below')) {
-      const coveragePath = path.join(projectPath, 'coverage');
-      return !await this.fs.exists(coveragePath);
+      const summaryPath = path.join(projectPath, 'coverage', 'coverage-summary.json');
+      if (!await this.fs.exists(summaryPath)) {
+        return true;
+      }
+      try {
+        const content = await this.fs.readFile(summaryPath);
+        const summary = JSON.parse(content) as { total?: { statements?: { pct?: number } } };
+        const pct = summary.total?.statements?.pct;
+        if (typeof pct !== 'number' || pct < 80) {
+          return true;
+        }
+      } catch (err: unknown) {
+        this.logger.warn(`Failed to parse coverage-summary.json: ${err instanceof Error ? err.message : String(err)}`);
+        return true;
+      }
+      return false;
     }
 
     if (criterionText.includes('cve')) {

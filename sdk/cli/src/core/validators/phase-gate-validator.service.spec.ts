@@ -206,6 +206,48 @@ describe('PhaseGateValidatorService', () => {
       await expect(service.validateGate(99, '/project')).rejects.toThrow('Phase gate 99 not defined');
     });
 
+    it('should pass gate 3 when coverage is 80% or higher', async () => {
+      (mockFs.exists as jest.Mock).mockImplementation((p: string) => Promise.resolve(true));
+      (mockFs.readFile as jest.Mock).mockImplementation((p: string) => {
+        if (p.includes('coverage-summary.json')) {
+          return Promise.resolve(JSON.stringify({ total: { statements: { pct: 85 } } }));
+        }
+        if (p.includes('adr-matrix.json')) {
+          return Promise.resolve(JSON.stringify({ adrs: [{ id: '1' }] }));
+        }
+        if (p.includes('phase-gates.rules.json')) {
+          return Promise.resolve(JSON.stringify(mockRuleset));
+        }
+        return Promise.resolve('{}');
+      });
+
+      const result = await service.validateGate(3, '/project');
+      const coverageBlock = result.blockingChecks.find(b => b.criterion.includes('Coverage below threshold'));
+      
+      expect(coverageBlock?.triggered).toBe(false);
+    });
+
+    it('should fail gate 3 when coverage is below 80%', async () => {
+      (mockFs.exists as jest.Mock).mockImplementation((p: string) => Promise.resolve(true));
+      (mockFs.readFile as jest.Mock).mockImplementation((p: string) => {
+        if (p.includes('coverage-summary.json')) {
+          return Promise.resolve(JSON.stringify({ total: { statements: { pct: 79 } } }));
+        }
+        if (p.includes('adr-matrix.json')) {
+          return Promise.resolve(JSON.stringify({ adrs: [{ id: '1' }] }));
+        }
+        if (p.includes('phase-gates.rules.json')) {
+          return Promise.resolve(JSON.stringify(mockRuleset));
+        }
+        return Promise.resolve('{}');
+      });
+
+      const result = await service.validateGate(3, '/project');
+      const coverageBlock = result.blockingChecks.find(b => b.criterion.includes('Coverage below threshold'));
+      
+      expect(coverageBlock?.triggered).toBe(true);
+    });
+
     it('should return correct accountable role and waiver authority', async () => {
       const result = await service.validateGate(1, '/project');
 

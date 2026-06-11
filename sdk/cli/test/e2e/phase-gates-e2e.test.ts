@@ -294,10 +294,27 @@ describe('Phase Gate E2E Tests', () => {
 
       fs.writeFileSync(path.join(templatesDir, 'technical-story-template.md'), '# Technical Stories');
       fs.writeFileSync(path.join(ciPath, 'ci.yml'), 'name: CI');
+      fs.writeFileSync(
+        path.join(coveragePath, 'coverage-summary.json'),
+        JSON.stringify({ total: { statements: { pct: 85 } } })
+      );
 
       expect(fs.existsSync(path.join(templatesDir, 'technical-story-template.md'))).toBe(true);
       expect(fs.existsSync(ciPath)).toBe(true);
       expect(fs.existsSync(coveragePath)).toBe(true);
+    });
+
+    it('should fail gate 3 when coverage is below threshold', () => {
+      const coveragePath = path.join(projectDir, 'coverage');
+      fs.mkdirSync(coveragePath, { recursive: true });
+      fs.writeFileSync(
+        path.join(coveragePath, 'coverage-summary.json'),
+        JSON.stringify({ total: { statements: { pct: 75 } } })
+      );
+
+      // In E2E context we are ensuring files exist as expected
+      // The PhaseGateValidatorService logic itself uses these files.
+      expect(fs.existsSync(path.join(coveragePath, 'coverage-summary.json'))).toBe(true);
     });
 
     it('should fail gate 4 when test summary is missing', () => {

@@ -38,11 +38,13 @@ and operating guidance that satellite products inherit and specialize.
 <details>
 <summary><strong>Primary entry points</strong></summary>
 
-- [Executive One-Pager](./reference/governance/standards/communication/visuals/v01-executive-one-pager.md) - five-minute explanation of Evolith, UMS, and the value proposition.
-- [Getting Started by Role](./reference/getting-started/README.md) - recommended reading paths for executives, architects, engineers, QA, SRE, product, and AI contributors.
-- [Product Vision](./reference/governance/standards/vision/evolith-product-vision-master.md) - strategic direction, roadmap, and maturity model.
-- [SDLC Governance Center](./reference/governance/sdlc/README.md) - authoritative lifecycle phases, gates, artifacts, and traceability model.
-- [Global Master Index](./reference/navigation/MASTER_INDEX.md) - complete repository navigation when you already know what artifact you need.
+| Link (URL) | Description (brief explanation) | Goal / Objective | Typification (category or type) |
+|---|---|---|---|
+| [Executive One-Pager](./reference/governance/standards/communication/visuals/v01-executive-one-pager.md) | Five-minute explanation of Evolith, UMS, and the value proposition | Communicate strategic value quickly | Executive summary |
+| [Getting Started by Role](./reference/getting-started/README.md) | Recommended reading paths for executives, architects, engineers, QA, SRE, product, and AI contributors | Accelerate onboarding by role | Onboarding guide |
+| [Product Vision](./reference/governance/standards/vision/evolith-product-vision-master.md) | Strategic direction, roadmap, and maturity model | Align teams to long-term goals | Vision and strategy |
+| [SDLC Governance Center](./reference/governance/sdlc/README.md) | Authoritative lifecycle phases, gates, artifacts, and traceability model | Govern the full development lifecycle | Governance hub |
+| [Global Master Index](./reference/navigation/MASTER_INDEX.md) | Complete repository navigation when you already know what artifact you need | Locate any artifact quickly | Navigation index |
 
 </details>
 

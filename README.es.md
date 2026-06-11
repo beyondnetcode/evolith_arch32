@@ -38,11 +38,13 @@ y guía operativa que los productos satélite heredan y especializan.
 <details>
 <summary><strong>Puntos de entrada principales</strong></summary>
 
-- [Resumen Ejecutivo](./reference/governance/standards/communication/visuals/v01-executive-one-pager.es.md) - explicacion de cinco minutos sobre Evolith, UMS y la propuesta de valor.
-- [Primeros Pasos por Rol](./reference/getting-started/README.es.md) - rutas de lectura recomendadas para ejecutivos, arquitectos, ingenieros, QA, SRE, producto y contribuidores IA.
-- [Vision del Producto](./reference/governance/standards/vision/evolith-product-vision-master.es.md) - direccion estrategica, hoja de ruta y modelo de madurez.
-- [Centro de Gobernanza SDLC](./reference/governance/sdlc/README.es.md) - fases, gates, artefactos y modelo de trazabilidad autoritativos.
-- [Indice Maestro Global](./reference/navigation/MASTER_INDEX.es.md) - navegacion completa del repositorio cuando ya sabes que artefacto necesitas.
+| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
+|---|---|---|---|
+| [Resumen Ejecutivo](./reference/governance/standards/communication/visuals/v01-executive-one-pager.es.md) | Explicación de cinco minutos sobre Evolith, UMS y la propuesta de valor | Comunicar valor estratégico rápidamente | Resumen ejecutivo |
+| [Primeros Pasos por Rol](./reference/getting-started/README.es.md) | Rutas de lectura recomendadas para ejecutivos, arquitectos, ingenieros, QA, SRE, producto y contribuidores IA | Acelerar onboarding por rol | Guía de incorporación |
+| [Vision del Producto](./reference/governance/standards/vision/evolith-product-vision-master.es.md) | Dirección estratégica, hoja de ruta y modelo de madurez | Alinear equipos a objetivos a largo plazo | Visión y estrategia |
+| [Centro de Gobernanza SDLC](./reference/governance/sdlc/README.es.md) | Fases, gates, artefactos y modelo de trazabilidad autoritativos | Gobernar el ciclo de vida completo | Hub de gobernanza |
+| [Indice Maestro Global](./reference/navigation/MASTER_INDEX.es.md) | Navegación completa del repositorio cuando ya sabes qué artefacto necesitas | Localizar cualquier artefacto rápidamente | Índice de navegación |
 
 </details>
 

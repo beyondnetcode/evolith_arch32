@@ -2,35 +2,166 @@ import { getFileSystem, getContainer } from './tool-utils';
 import { IFileSystem } from '../../abstractions';
 import { MoscowPrioritizationService, MoscowItem, MoscowAnalysis } from '../../../domain/services/moscow-prioritization.service';
 
-export async function handleMoscowTools(toolName: string, args: Record<string, unknown>, moscoService?: MoscowPrioritizationService) {
-  const fs = getFileSystem();
-  const repoPath = args.path as string;
-  const phase = (args.phase as string) || 'phase-0';
+import { IMcpToolHandler } from '../mcp-tool.registry';
 
-  if (!repoPath) {
-    return { error: true, message: 'path is required' };
-  }
-
-  const service = moscoService || new MoscowPrioritizationService();
-
-  switch (toolName) {
-    case 'evolith-moscow-create':
-      return moscowCreate(repoPath, phase, args, moscoService);
-    case 'evolith-moscow-load':
-      return moscowLoad(repoPath, phase, moscoService);
-    case 'evolith-moscow-update':
-      return moscowUpdate(repoPath, phase, args, moscoService);
-    case 'evolith-moscow-remove':
-      return moscowRemove(repoPath, phase, args, moscoService);
-    case 'evolith-moscow-list':
-      return moscowList(repoPath, moscoService);
-    case 'evolith-moscow-validate':
-      return moscowValidate(repoPath, phase, moscoService);
-    case 'evolith-moscow-report':
-      return moscowReport(repoPath, phase, moscoService);
-    default:
-      throw new Error(`Unknown MoSCoW tool: ${toolName}`);
-  }
+export function getMoscowTools(): IMcpToolHandler[] {
+  return [
+    {
+      schema: {
+        name: 'evolith-moscow-create',
+        description: 'Create a new MoSCoW prioritization analysis',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            path: { type: 'string' },
+            phase: { type: 'string' },
+            items: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  title: { type: 'string' },
+                  description: { type: 'string' },
+                  category: { type: 'string', description: 'MUST, SHOULD, COULD, WONT' },
+                  effort: { type: 'string', description: 'high, medium, low' },
+                  value: { type: 'string', description: 'high, medium, low' },
+                },
+                required: ['title', 'category'],
+              },
+            },
+          },
+          required: ['path', 'items'],
+        },
+      },
+      execute: async (args, deps) => {
+        const repoPath = args.path as string;
+        const phase = (args.phase as string) || 'phase-0';
+        const service = deps?.moscowService || new MoscowPrioritizationService();
+        return moscowCreate(repoPath, phase, args, service);
+      }
+    },
+    {
+      schema: {
+        name: 'evolith-moscow-load',
+        description: 'Load an existing MoSCoW analysis',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            path: { type: 'string' },
+            phase: { type: 'string' },
+          },
+          required: ['path', 'phase'],
+        },
+      },
+      execute: async (args, deps) => {
+        const repoPath = args.path as string;
+        const phase = (args.phase as string) || 'phase-0';
+        const service = deps?.moscowService || new MoscowPrioritizationService();
+        return moscowLoad(repoPath, phase, service);
+      }
+    },
+    {
+      schema: {
+        name: 'evolith-moscow-update',
+        description: 'Update a specific item in a MoSCoW analysis',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            path: { type: 'string' },
+            phase: { type: 'string' },
+            itemId: { type: 'string' },
+            updates: { type: 'object' },
+          },
+          required: ['path', 'phase', 'itemId', 'updates'],
+        },
+      },
+      execute: async (args, deps) => {
+        const repoPath = args.path as string;
+        const phase = (args.phase as string) || 'phase-0';
+        const service = deps?.moscowService || new MoscowPrioritizationService();
+        return moscowUpdate(repoPath, phase, args, service);
+      }
+    },
+    {
+      schema: {
+        name: 'evolith-moscow-remove',
+        description: 'Remove a specific item from a MoSCoW analysis',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            path: { type: 'string' },
+            phase: { type: 'string' },
+            itemId: { type: 'string' },
+          },
+          required: ['path', 'phase', 'itemId'],
+        },
+      },
+      execute: async (args, deps) => {
+        const repoPath = args.path as string;
+        const phase = (args.phase as string) || 'phase-0';
+        const service = deps?.moscowService || new MoscowPrioritizationService();
+        return moscowRemove(repoPath, phase, args, service);
+      }
+    },
+    {
+      schema: {
+        name: 'evolith-moscow-list',
+        description: 'List all MoSCoW analyses in a repository',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            path: { type: 'string' },
+          },
+          required: ['path'],
+        },
+      },
+      execute: async (args, deps) => {
+        const repoPath = args.path as string;
+        const service = deps?.moscowService || new MoscowPrioritizationService();
+        return moscowList(repoPath, service);
+      }
+    },
+    {
+      schema: {
+        name: 'evolith-moscow-validate',
+        description: 'Validate a MoSCoW analysis rules (e.g. 60/20/20 split)',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            path: { type: 'string' },
+            phase: { type: 'string' },
+          },
+          required: ['path', 'phase'],
+        },
+      },
+      execute: async (args, deps) => {
+        const repoPath = args.path as string;
+        const phase = (args.phase as string) || 'phase-0';
+        const service = deps?.moscowService || new MoscowPrioritizationService();
+        return moscowValidate(repoPath, phase, service);
+      }
+    },
+    {
+      schema: {
+        name: 'evolith-moscow-report',
+        description: 'Generate a markdown report of a MoSCoW analysis',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            path: { type: 'string' },
+            phase: { type: 'string' },
+          },
+          required: ['path', 'phase'],
+        },
+      },
+      execute: async (args, deps) => {
+        const repoPath = args.path as string;
+        const phase = (args.phase as string) || 'phase-0';
+        const service = deps?.moscowService || new MoscowPrioritizationService();
+        return moscowReport(repoPath, phase, service);
+      }
+    }
+  ];
 }
 
 async function moscowCreate(repoPath: string, phase: string, args: Record<string, unknown>, service: MoscowPrioritizationService) {

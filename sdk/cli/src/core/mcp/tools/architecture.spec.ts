@@ -1,4 +1,4 @@
-import { handleArchitectureTools } from './architecture';
+import { getArchitectureTools } from './architecture';
 
 jest.mock('./tool-utils', () => ({
   getFileSystem: jest.fn(),
@@ -21,17 +21,23 @@ const mockConfigParser = {
 };
 
 describe('MCP Tools - architecture', () => {
+  let executeHandler: (args: any) => Promise<any>;
+
   beforeEach(() => {
     jest.clearAllMocks();
     (getFileSystem as jest.Mock).mockReturnValue(mockFileSystem);
     (getContainer as jest.Mock).mockReturnValue({
       createConfigParser: jest.fn().mockReturnValue(mockConfigParser),
     });
+
+    const tools = getArchitectureTools();
+    const handler = tools.find(t => t.schema.name === 'evolith-architecture-validate');
+    executeHandler = handler!.execute;
   });
 
   describe('handleArchitectureTools', () => {
     it('should return error when path is missing', async () => {
-      const result = await handleArchitectureTools({});
+      const result = await executeHandler({});
 
       expect(result).toHaveProperty('error', true);
       expect(result).toHaveProperty('message', 'path is required');
@@ -40,7 +46,7 @@ describe('MCP Tools - architecture', () => {
     it('should validate F1 level by default', async () => {
       mockFileSystem.exists.mockResolvedValue(false);
 
-      const result = await handleArchitectureTools({ path: '/test/repo' });
+      const result = await executeHandler({ path: '/test/repo' });
 
       expect(result).toHaveProperty('level', 'F1');
       expect(result).toHaveProperty('repository', '/test/repo');
@@ -51,7 +57,7 @@ describe('MCP Tools - architecture', () => {
       mockFileSystem.readJson.mockResolvedValue({ workspaces: ['packages/*'] });
       mockFileSystem.readdirNames.mockResolvedValue(['module1', 'module2', 'module3', 'module4', 'module5', 'module6']);
 
-      const result = await handleArchitectureTools({ path: '/test/repo', level: 'F1' });
+      const result = await executeHandler({ path: '/test/repo', level: 'F1' });
 
       expect(result).toHaveProperty('level', 'F1');
       expect(result.issues).toBeDefined();
@@ -61,7 +67,7 @@ describe('MCP Tools - architecture', () => {
       mockFileSystem.exists.mockResolvedValue(true);
       mockFileSystem.readJson.mockResolvedValue({ workspaces: ['packages/*'] });
 
-      const result = await handleArchitectureTools({ path: '/test/repo', level: 'F1' });
+      const result = await executeHandler({ path: '/test/repo', level: 'F1' });
 
       const workspaceIssue = result.issues.find((i: any) => i.ruleId === 'F1-01');
       expect(workspaceIssue).toBeDefined();
@@ -72,7 +78,7 @@ describe('MCP Tools - architecture', () => {
       mockFileSystem.readJson.mockResolvedValue({});
       mockFileSystem.readdirNames.mockResolvedValue(['main.ts']);
 
-      const result = await handleArchitectureTools({ path: '/test/repo', level: 'F1' });
+      const result = await executeHandler({ path: '/test/repo', level: 'F1' });
 
       const singleModuleIssue = result.issues.find((i: any) => i.ruleId === 'F1-02');
       expect(singleModuleIssue).toBeDefined();
@@ -83,7 +89,7 @@ describe('MCP Tools - architecture', () => {
       mockFileSystem.readdirNames.mockResolvedValue(['module1', 'module2']);
       mockFileSystem.stat.mockResolvedValue({ isDirectory: () => true });
 
-      const result = await handleArchitectureTools({ path: '/test/repo', level: 'F2' });
+      const result = await executeHandler({ path: '/test/repo', level: 'F2' });
 
       expect(result).toHaveProperty('level', 'F2');
     });
@@ -96,7 +102,7 @@ describe('MCP Tools - architecture', () => {
       mockFileSystem.readFile.mockResolvedValue('product:\n  type: module');
       mockConfigParser.parse.mockReturnValue({ product: { type: 'module' } });
 
-      const result = await handleArchitectureTools({ path: '/test/repo', level: 'F3' });
+      const result = await executeHandler({ path: '/test/repo', level: 'F3' });
 
       expect(result).toHaveProperty('level', 'F3');
     });
@@ -109,7 +115,7 @@ describe('MCP Tools - architecture', () => {
       mockFileSystem.readFile.mockResolvedValue('');
       mockConfigParser.parse.mockReturnValue({});
 
-      const result = await handleArchitectureTools({ path: '/test/repo', level: 'F2' });
+      const result = await executeHandler({ path: '/test/repo', level: 'F2' });
 
       const f1Issues = result.issues.filter((i: any) => i.level === 'F1');
       const f2Issues = result.issues.filter((i: any) => i.level === 'F2');
@@ -132,7 +138,7 @@ describe('MCP Tools - architecture', () => {
       mockFileSystem.readFile.mockResolvedValue('product:\n  type: module');
       mockConfigParser.parse.mockReturnValue({ product: { type: 'module' } });
 
-      const result = await handleArchitectureTools({ path: '/test/repo', level: 'F3' });
+      const result = await executeHandler({ path: '/test/repo', level: 'F3' });
 
       const f1Issues = result.issues.filter((i: any) => i.level === 'F1');
       const f2Issues = result.issues.filter((i: any) => i.level === 'F2');
@@ -155,7 +161,7 @@ describe('MCP Tools - architecture', () => {
       mockFileSystem.readFile.mockResolvedValue('product:\n  type: microservice');
       mockConfigParser.parse.mockReturnValue({ product: { type: 'microservice' } });
 
-      const result = await handleArchitectureTools({ path: '/test/repo', level: 'F3' });
+      const result = await executeHandler({ path: '/test/repo', level: 'F3' });
 
       expect(result).toHaveProperty('status');
     });
@@ -163,7 +169,7 @@ describe('MCP Tools - architecture', () => {
     it('should return passed status when no blocking issues', async () => {
       mockFileSystem.exists.mockResolvedValue(false);
 
-      const result = await handleArchitectureTools({ path: '/test/repo' });
+      const result = await executeHandler({ path: '/test/repo' });
 
       expect(result.status).toBe('passed');
     });
@@ -171,7 +177,7 @@ describe('MCP Tools - architecture', () => {
     it('should include timestamp in response', async () => {
       mockFileSystem.exists.mockResolvedValue(false);
 
-      const result = await handleArchitectureTools({ path: '/test/repo' });
+      const result = await executeHandler({ path: '/test/repo' });
 
       expect(result).toHaveProperty('timestamp');
     });
@@ -179,7 +185,7 @@ describe('MCP Tools - architecture', () => {
     it('should count blocking issues correctly', async () => {
       mockFileSystem.exists.mockResolvedValue(false);
 
-      const result = await handleArchitectureTools({ path: '/test/repo' });
+      const result = await executeHandler({ path: '/test/repo' });
 
       expect(result).toHaveProperty('blockingIssues', 0);
     });

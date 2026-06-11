@@ -129,38 +129,69 @@ export class DeepArchitectureAnalyzer {
   }
 
   private async findSourceFiles(dir: string): Promise<string[]> {
-    const files: string[] = [];
     const entries = await fs.readdir(dir);
-
-    for (const entry of entries) {
+    const promises = entries.map(async (entry) => {
       const fullPath = path.join(dir, entry);
       const stat = await fs.stat(fullPath);
 
       if (stat.isDirectory() && !entry.startsWith('.') && entry !== 'node_modules' && entry !== 'dist' && entry !== 'build') {
-        files.push(...await this.findSourceFiles(fullPath));
+        return this.findSourceFiles(fullPath);
       } else if (stat.isFile() && (entry.endsWith('.ts') || entry.endsWith('.tsx') || entry.endsWith('.js') || entry.endsWith('.jsx'))) {
-        files.push(fullPath);
+        return [fullPath];
       }
-    }
+      return [];
+    });
 
-    return files;
+    const results = await Promise.all(promises);
+    return results.flat();
   }
 
   private async extractImports(filePath: string): Promise<string[]> {
     try {
+      const ts = await import('typescript');
       const content = await fs.readFile(filePath, 'utf-8');
       const imports: string[] = [];
 
-      const importRegex = /(?:import\s+(?:.*?\s+from\s+)?['"]([^'"]+)['"]|require\s*\(\s*['"]([^'"]+)['"]\s*\))/g;
-      let match;
+      const sourceFile = ts.createSourceFile(
+        filePath,
+        content,
+        ts.ScriptTarget.Latest,
+        true
+      );
 
-      while ((match = importRegex.exec(content)) !== null) {
-        const importPath = match[1] || match[2];
-        if (importPath && !importPath.startsWith('node:') && !importPath.startsWith('http')) {
-          imports.push(importPath);
+      const visit = (node: any) => {
+        if (ts.isImportDeclaration(node)) {
+          if (node.moduleSpecifier && ts.isStringLiteral(node.moduleSpecifier)) {
+            const importPath = node.moduleSpecifier.text;
+            if (importPath && !importPath.startsWith('node:') && !importPath.startsWith('http')) {
+              imports.push(importPath);
+            }
+          }
+        } else if (ts.isCallExpression(node)) {
+          if (node.expression && ts.isIdentifier(node.expression)) {
+            if (node.expression.text === 'require') {
+              const arg = node.arguments[0];
+              if (arg && ts.isStringLiteral(arg)) {
+                const importPath = arg.text;
+                if (importPath && !importPath.startsWith('node:') && !importPath.startsWith('http')) {
+                  imports.push(importPath);
+                }
+              }
+            }
+          } else if (node.expression && node.expression.kind === ts.SyntaxKind.ImportKeyword) {
+             const arg = node.arguments[0];
+             if (arg && ts.isStringLiteral(arg)) {
+                const importPath = arg.text;
+                if (importPath && !importPath.startsWith('node:') && !importPath.startsWith('http')) {
+                  imports.push(importPath);
+                }
+             }
+          }
         }
-      }
+        ts.forEachChild(node, visit);
+      };
 
+      visit(sourceFile);
       return imports;
     } catch {
       return [];

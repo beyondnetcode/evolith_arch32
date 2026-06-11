@@ -80,7 +80,9 @@ describe('ValidateCommand', () => {
   let exitSpy: jest.SpyInstance;
 
   beforeEach(() => {
-    command = new ValidateCommand();
+    const useCase = new ValidateSatelliteUseCase();
+    const validator = new RulesetValidatorService();
+    command = new ValidateCommand(useCase, validator);
     logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
     exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
     jest.clearAllMocks();

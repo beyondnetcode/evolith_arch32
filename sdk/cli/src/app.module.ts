@@ -20,6 +20,11 @@ import { HistoryCommand } from './commands/history/history.command';
 import { DriftCommand } from './commands/drift/drift.command';
 import { GateCommand } from './commands/gate/gate.command';
 
+import { ValidateSatelliteUseCase } from './application/use-cases/validate-satellite.use-case';
+import { EvaluateGateUseCase } from './application/use-cases/evaluate-gate.use-case';
+import { RulesetValidatorService } from './core/validators/ruleset-validator.service';
+import { PromptService } from './infrastructure/prompts/prompt.service';
+
 @Module({
   imports: [],
   providers: [
@@ -43,6 +48,10 @@ import { GateCommand } from './commands/gate/gate.command';
     HistoryCommand,
     DriftCommand,
     GateCommand,
+    ValidateSatelliteUseCase,
+    EvaluateGateUseCase,
+    RulesetValidatorService,
+    PromptService,
   ],
 })
 export class AppModule {}

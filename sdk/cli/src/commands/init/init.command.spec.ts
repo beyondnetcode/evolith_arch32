@@ -97,17 +97,24 @@ jest.mock('../../core/observability', () => ({
 
 import * as p from '@clack/prompts';
 import { InitializeProjectUseCase } from '../../application/services';
+import { PromptService } from '../../infrastructure/prompts/prompt.service';
 
 const mockExecute = jest.fn();
+const mockAskInitOptions = jest.fn();
 
 (InitializeProjectUseCase as jest.Mock).mockImplementation(() => ({
   execute: mockExecute,
+}));
+
+(PromptService as jest.Mock) = jest.fn().mockImplementation(() => ({
+  askInitOptions: mockAskInitOptions,
 }));
 
 describe('InitCommand', () => {
   let command: InitCommand;
   let logSpy: jest.SpyInstance;
   let exitSpy: jest.SpyInstance;
+  let promptService: PromptService;
 
   const defaultSelection = {
     projectName: 'my-project',
@@ -120,7 +127,6 @@ describe('InitCommand', () => {
     observability: 'otel',
     features: ['adr', 'hooks'],
     agents: ['bmad'],
-    confirmInit: true,
   };
 
   const defaultResult = {
@@ -131,12 +137,14 @@ describe('InitCommand', () => {
   };
 
   beforeEach(() => {
-    command = new InitCommand();
+    promptService = new PromptService();
+    command = new InitCommand(promptService);
     logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
     exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
     jest.clearAllMocks();
     mockExecute.mockReset();
     mockExecute.mockResolvedValue(defaultResult);
+    mockAskInitOptions.mockReset();
   });
 
   afterEach(() => {
@@ -146,16 +154,16 @@ describe('InitCommand', () => {
 
   describe('run', () => {
     it('should show intro and prompt for project configuration', async () => {
-      (p.group as jest.Mock).mockResolvedValue(defaultSelection);
+      mockAskInitOptions.mockResolvedValue(defaultSelection);
 
       await command.run([], {});
 
       expect(p.intro).toHaveBeenCalled();
-      expect(p.group).toHaveBeenCalled();
+      expect(mockAskInitOptions).toHaveBeenCalled();
     });
 
     it('should call InitializeProjectUseCase with correct input', async () => {
-      (p.group as jest.Mock).mockResolvedValue(defaultSelection);
+      mockAskInitOptions.mockResolvedValue(defaultSelection);
 
       await command.run([], {});
 
@@ -177,7 +185,7 @@ describe('InitCommand', () => {
     });
 
     it('should show success message when initialization succeeds', async () => {
-      (p.group as jest.Mock).mockResolvedValue(defaultSelection);
+      mockAskInitOptions.mockResolvedValue(defaultSelection);
 
       await command.run([], {});
 
@@ -186,7 +194,7 @@ describe('InitCommand', () => {
     });
 
     it('should show artifacts created in success output', async () => {
-      (p.group as jest.Mock).mockResolvedValue(defaultSelection);
+      mockAskInitOptions.mockResolvedValue(defaultSelection);
 
       await command.run([], {});
 
@@ -196,7 +204,7 @@ describe('InitCommand', () => {
     });
 
     it('should show warnings when initialization has warnings', async () => {
-      (p.group as jest.Mock).mockResolvedValue(defaultSelection);
+      mockAskInitOptions.mockResolvedValue(defaultSelection);
       mockExecute.mockResolvedValue({
         success: true,
         artifacts: ['my-project/evolith.yaml'],
@@ -210,7 +218,7 @@ describe('InitCommand', () => {
     });
 
     it('should show error message when initialization fails', async () => {
-      (p.group as jest.Mock).mockResolvedValue(defaultSelection);
+      mockAskInitOptions.mockResolvedValue(defaultSelection);
       mockExecute.mockResolvedValue({
         success: false,
         artifacts: [],
@@ -224,10 +232,7 @@ describe('InitCommand', () => {
     });
 
     it('should cancel initialization when confirmInit is false', async () => {
-      (p.group as jest.Mock).mockResolvedValue({
-        ...defaultSelection,
-        confirmInit: false,
-      });
+      mockAskInitOptions.mockResolvedValue(null);
 
       await command.run([], {});
 
@@ -235,23 +240,8 @@ describe('InitCommand', () => {
       expect(p.outro).toHaveBeenCalled();
     });
 
-    it('should handle onCancel from p.group', async () => {
-      const groupMock = p.group as jest.Mock;
-      groupMock.mockImplementation(async (_schema, options) => {
-        if (options?.onCancel) {
-          options.onCancel();
-        }
-        return {};
-      });
-      exitSpy.mockImplementation(() => {
-        throw new Error('process.exit called');
-      });
-
-      await expect(command.run([], {})).rejects.toThrow('process.exit called');
-    });
-
     it('should log operation start', async () => {
-      (p.group as jest.Mock).mockResolvedValue(defaultSelection);
+      mockAskInitOptions.mockResolvedValue(defaultSelection);
 
       await command.run([], {});
 

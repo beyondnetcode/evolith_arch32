@@ -258,6 +258,7 @@ class DirectMcpServer {
   private rulesetValidator: RulesetValidatorService;
   private metricsService: McpMetricsService;
   private readonly transportType: McpTransport;
+  private registry: import('./mcp-tool.registry').McpToolRegistry;
 
   constructor(
     transportType: McpTransport = 'stdio',
@@ -277,6 +278,63 @@ class DirectMcpServer {
     } else {
       this.transport = new MinimalStdioTransport(stdin, stdout);
     }
+
+    this.registry = this.initializeRegistry();
+  }
+
+  private initializeRegistry() {
+    const { McpToolRegistry } = require('./mcp-tool.registry');
+    const { getAllTools } = require('./tools');
+    const registry = new McpToolRegistry();
+
+    const tools = getAllTools();
+    for (const tool of tools) {
+      registry.register(tool);
+    }
+
+    registry.register({
+      schema: {
+        name: 'evolith-metrics',
+        description: 'Get MCP server metrics',
+        inputSchema: { type: 'object', properties: {} },
+      },
+      execute: async () => this.metricsService.getMetrics(),
+    });
+
+    registry.register({
+      schema: {
+        name: 'evolith-config-get',
+        description: 'Get Evolith configuration value',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            key: { type: 'string' },
+            dir: { type: 'string' },
+          },
+          required: ['key'],
+        },
+      },
+      execute: async (args: Record<string, unknown>) => this.handleConfigGet(args),
+    });
+
+    registry.register({
+      schema: {
+        name: 'evolith-config-set',
+        description: 'Set Evolith configuration value',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            key: { type: 'string' },
+            value: { type: 'string' },
+            dir: { type: 'string' },
+          },
+          required: ['key', 'value'],
+        },
+      },
+      execute: async (args: Record<string, unknown>) => this.handleConfigSet(args),
+    });
+
+    return registry;
   }
 
   async start(): Promise<void> {
@@ -362,7 +420,6 @@ class DirectMcpServer {
       try {
         await this.transport.send(errorResponse);
       } catch {
-        // Transport is unrecoverable; error already logged above.
       }
     }
   }
@@ -370,7 +427,7 @@ class DirectMcpServer {
   private async dispatchRequest(method: string, params: Record<string, unknown>): Promise<unknown> {
     switch (method) {
       case 'tools/list':
-        return this.handleListTools();
+        return { tools: this.registry.listTools() };
       case 'tools/call':
         return this.handleCallTool(params);
       case 'resources/list':
@@ -386,287 +443,23 @@ class DirectMcpServer {
     }
   }
 
-  private handleListTools() {
-    return {
-      tools: [
-        {
-          name: 'evolith-validate',
-          description: 'Validate a repository against Evolith governance rules',
-          inputSchema: {
-            type: 'object',
-            properties: {
-              path: { type: 'string', description: 'Path to the repository to validate' },
-              format: { type: 'string', description: 'Output format: json, summary, table', default: 'json' },
-              ruleset: { type: 'string', description: 'Specific ruleset to validate' },
-              corePath: { type: 'string', description: 'Path to Evolith Core' },
-            },
-            required: ['path'],
-          },
-        },
-        {
-          name: 'evolith-gate-evaluate',
-          description: 'Evaluate a specific SDLC phase gate',
-          inputSchema: {
-            type: 'object',
-            properties: {
-              phase: { type: 'string', description: 'Phase identifier (discovery, design, construction, qa, release)' },
-              projectPath: { type: 'string', description: 'Path to the repository to validate' },
-              rulesetRef: { type: 'string', description: 'Optional ruleset reference' },
-              evidenceMode: { type: 'string', description: 'full or summary', default: 'full' },
-              evaluatedBy: { type: 'string', description: 'human, agent, or ci', default: 'agent' },
-              initiative: { type: 'string', description: 'Optional initiative context' },
-              tenant: { type: 'string', description: 'Optional tenant context' },
-            },
-            required: ['phase', 'projectPath'],
-          },
-        },
-        {
-          name: 'evolith-agent-install',
-          description: 'Install a new Evolith agent',
-          inputSchema: {
-            type: 'object',
-            properties: {
-              name: { type: 'string', description: 'Name of the agent to install' },
-              template: { type: 'string', description: 'Template: standard, minimal, enterprise', default: 'standard' },
-              dir: { type: 'string', description: 'Directory to install into' },
-            },
-            required: ['name'],
-          },
-        },
-        {
-          name: 'evolith-agent-list',
-          description: 'List all installed Evolith agents',
-          inputSchema: {
-            type: 'object',
-            properties: {
-              dir: { type: 'string', description: 'Directory to search' },
-            },
-          },
-        },
-        {
-          name: 'evolith-agent-validate',
-          description: 'Validate a specific agent ruleset',
-          inputSchema: {
-            type: 'object',
-            properties: {
-              name: { type: 'string' },
-              dir: { type: 'string' },
-            },
-            required: ['name'],
-          },
-        },
-        {
-          name: 'evolith-agent-upgrade',
-          description: 'Upgrade an existing Evolith agent',
-          inputSchema: {
-            type: 'object',
-            properties: {
-              name: { type: 'string' },
-              dir: { type: 'string' },
-            },
-            required: ['name'],
-          },
-        },
-        {
-          name: 'evolith-agent-remove',
-          description: 'Remove an Evolith agent',
-          inputSchema: {
-            type: 'object',
-            properties: {
-              name: { type: 'string' },
-              dir: { type: 'string' },
-            },
-            required: ['name'],
-          },
-        },
-        {
-          name: 'evolith-architecture-validate',
-          description: 'Validate repository architecture against F1/F2/F3 rules. Use deep=true for import graph analysis, layer violations, and coupling metrics.',
-          inputSchema: {
-            type: 'object',
-            properties: {
-              path: { type: 'string' },
-              level: { type: 'string', description: 'F1, F2, or F3' },
-              deep: { type: 'boolean', description: 'Enable deep static analysis (import graph, layer violations, coupling metrics)', default: false },
-            },
-            required: ['path'],
-          },
-        },
-        {
-          name: 'evolith-sdlc-handoff',
-          description: 'Generate SDLC phase handoff artifact manifest',
-          inputSchema: {
-            type: 'object',
-            properties: {
-              path: { type: 'string' },
-              fromPhase: { type: 'string' },
-              toPhase: { type: 'string' },
-            },
-            required: ['path', 'fromPhase', 'toPhase'],
-          },
-        },
-        {
-          name: 'evolith-sdlc-status',
-          description: 'Show current SDLC phase gate status',
-          inputSchema: {
-            type: 'object',
-            properties: {
-              path: { type: 'string' },
-            },
-            required: ['path'],
-          },
-        },
-        {
-          name: 'evolith-config-get',
-          description: 'Get Evolith configuration value',
-          inputSchema: {
-            type: 'object',
-            properties: {
-              key: { type: 'string' },
-              dir: { type: 'string' },
-            },
-            required: ['key'],
-          },
-        },
-        {
-          name: 'evolith-config-set',
-          description: 'Set Evolith configuration value',
-          inputSchema: {
-            type: 'object',
-            properties: {
-              key: { type: 'string' },
-              value: { type: 'string' },
-              dir: { type: 'string' },
-            },
-            required: ['key', 'value'],
-          },
-        },
-        {
-          name: 'evolith-metrics',
-          description: 'Get MCP server metrics',
-          inputSchema: {
-            type: 'object',
-            properties: {},
-          },
-        },
-        {
-          name: 'evolith-moscow-create',
-          description: 'Create a new MoSCoW prioritization analysis for a phase',
-          inputSchema: {
-            type: 'object',
-            properties: {
-              path: { type: 'string', description: 'Path to the repository' },
-              phase: { type: 'string', description: 'Phase identifier (e.g., phase-0)', default: 'phase-0' },
-              items: { type: 'array', description: 'Array of MoSCoW items with description, priority, category, rationale' },
-            },
-            required: ['path', 'items'],
-          },
-        },
-        {
-          name: 'evolith-moscow-load',
-          description: 'Load an existing MoSCoW analysis for a phase',
-          inputSchema: {
-            type: 'object',
-            properties: {
-              path: { type: 'string' },
-              phase: { type: 'string', default: 'phase-0' },
-            },
-            required: ['path'],
-          },
-        },
-        {
-          name: 'evolith-moscow-update',
-          description: 'Update an item in a MoSCoW analysis',
-          inputSchema: {
-            type: 'object',
-            properties: {
-              path: { type: 'string' },
-              phase: { type: 'string', default: 'phase-0' },
-              itemId: { type: 'string' },
-              updates: { type: 'object' },
-            },
-            required: ['path', 'itemId'],
-          },
-        },
-        {
-          name: 'evolith-moscow-remove',
-          description: 'Remove an item from a MoSCoW analysis',
-          inputSchema: {
-            type: 'object',
-            properties: {
-              path: { type: 'string' },
-              phase: { type: 'string', default: 'phase-0' },
-              itemId: { type: 'string' },
-            },
-            required: ['path', 'itemId'],
-          },
-        },
-        {
-          name: 'evolith-moscow-list',
-          description: 'List all MoSCoW analyses for a repository',
-          inputSchema: {
-            type: 'object',
-            properties: {
-              path: { type: 'string' },
-            },
-            required: ['path'],
-          },
-        },
-        {
-          name: 'evolith-moscow-validate',
-          description: 'Validate a MoSCoW analysis for correctness',
-          inputSchema: {
-            type: 'object',
-            properties: {
-              path: { type: 'string' },
-              phase: { type: 'string', default: 'phase-0' },
-            },
-            required: ['path'],
-          },
-        },
-        {
-          name: 'evolith-moscow-report',
-          description: 'Generate a markdown report from a MoSCoW analysis',
-          inputSchema: {
-            type: 'object',
-            properties: {
-              path: { type: 'string' },
-              phase: { type: 'string', default: 'phase-0' },
-            },
-            required: ['path'],
-          },
-        },
-      ],
-    };
-  }
-
   private async handleCallTool(params: Record<string, unknown>): Promise<unknown> {
     const name = params.name as string;
     const args = params.arguments as Record<string, unknown> || {};
     const startTime = Date.now();
 
     try {
-      let result: unknown;
-
-      if (name === 'evolith-validate') {
-        result = await handleValidateTool(args, this.rulesetValidator);
-      } else if (name === 'evolith-gate-evaluate') {
-        result = await handleGateEvaluateTool(args);
-      } else if (name.startsWith('evolith-agent')) {
-        result = await handleAgentTools(name, args);
-      } else if (name === 'evolith-architecture-validate') {
-        result = await handleArchitectureTools(args);
-      } else if (name.startsWith('evolith-sdlc')) {
-        result = await handleSdlcTools(name, args);
-      } else if (name === 'evolith-config-get' || name === 'evolith-config-set') {
-        result = await this.handleConfigTools(name, args);
-      } else if (name === 'evolith-metrics') {
-        result = this.metricsService.getMetrics();
-      } else if (name.startsWith('evolith-moscow')) {
-        result = await handleMoscowTools(name, args);
-      } else {
+      const tool = this.registry.getTool(name);
+      if (!tool) {
         throw new Error(`Unknown tool: ${name}`);
       }
+
+      const deps = {
+        validator: this.rulesetValidator,
+        metricsService: this.metricsService
+      };
+
+      const result = await tool.execute(args, deps);
 
       const latencyMs = Date.now() - startTime;
       this.metricsService.recordToolCall(name, latencyMs, true);
@@ -697,7 +490,7 @@ class DirectMcpServer {
     }
   }
 
-  private async handleConfigTools(name: string, args: Record<string, unknown>) {
+  private async handleConfigGet(args: Record<string, unknown>) {
     const fs = await import('fs-extra');
     const path = await import('path');
     const yaml = await import('yaml');
@@ -710,30 +503,41 @@ class DirectMcpServer {
     }
 
     const config = yaml.parse(await fs.readFile(configPath, 'utf-8'));
-
-    if (name === 'evolith-config-get') {
-      const key = args.key as string;
-      const keys = key.split('.');
-      let value: unknown = config;
-      for (const k of keys) {
-        value = (value as Record<string, unknown>)?.[k];
-      }
-      return { key, value: value ?? null };
-    } else {
-      const key = args.key as string;
-      const value = args.value as string;
-      const keys = key.split('.');
-      let target: Record<string, unknown> = config;
-      for (let i = 0; i < keys.length - 1; i++) {
-        if (!target[keys[i]]) {
-          target[keys[i]] = {};
-        }
-        target = target[keys[i]] as Record<string, unknown>;
-      }
-      target[keys[keys.length - 1]] = value;
-      await fs.writeFile(configPath, yaml.stringify(config));
-      return { key, value, updated: true };
+    const key = args.key as string;
+    const keys = key.split('.');
+    let value: unknown = config;
+    for (const k of keys) {
+      value = (value as Record<string, unknown>)?.[k];
     }
+    return { key, value: value ?? null };
+  }
+
+  private async handleConfigSet(args: Record<string, unknown>) {
+    const fs = await import('fs-extra');
+    const path = await import('path');
+    const yaml = await import('yaml');
+
+    const dir = (args.dir as string) || process.cwd();
+    const configPath = path.join(dir, 'evolith.yaml');
+
+    if (!(await fs.pathExists(configPath))) {
+      throw new Error('evolith.yaml not found');
+    }
+
+    const config = yaml.parse(await fs.readFile(configPath, 'utf-8'));
+    const key = args.key as string;
+    const value = args.value as string;
+    const keys = key.split('.');
+    let target: Record<string, unknown> = config;
+    for (let i = 0; i < keys.length - 1; i++) {
+      if (!target[keys[i]]) {
+        target[keys[i]] = {};
+      }
+      target = target[keys[i]] as Record<string, unknown>;
+    }
+    target[keys[keys.length - 1]] = value;
+    await fs.writeFile(configPath, yaml.stringify(config));
+    return { key, value, updated: true };
   }
 
   private async handleListResources(): Promise<unknown> {

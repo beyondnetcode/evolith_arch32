@@ -1,5 +1,4 @@
 import * as path from 'path';
-import * as fs from 'fs-extra';
 import { IFileSystem } from '../../core/abstractions/interfaces';
 
 export interface AgentInfo {
@@ -8,6 +7,9 @@ export interface AgentInfo {
   template: string;
   rulesetFiles: string[];
   installedAt: string;
+  description?: string;
+  adrs?: string[];
+  rulesets?: string[];
   lastValidated?: string;
 }
 
@@ -19,7 +21,7 @@ export interface AgentRegistry {
 export class AgentRegistryService {
   private readonly fs: IFileSystem;
   private readonly registryFileName = 'agents-registry.json';
-  private readonly agentsDirName = '.evolith/agents';
+  private readonly agentsDirName = 'rulesets/agents';
 
   constructor(fs: IFileSystem) {
     this.fs = fs;
@@ -47,9 +49,9 @@ export class AgentRegistryService {
       const stat = await this.fs.stat(agentPath);
 
       if (stat.isDirectory()) {
-        const agentJsonPath = path.join(agentPath, 'agent.json');
-        if (await this.fs.exists(agentJsonPath)) {
-          const agentData = await this.fs.readJson(agentJsonPath) as AgentInfo;
+        const agentConfigPath = path.join(agentPath, 'agent.config.json');
+        if (await this.fs.exists(agentConfigPath)) {
+          const agentData = await this.fs.readJson(agentConfigPath) as AgentInfo;
           agents.push(agentData);
         }
       }
@@ -58,21 +60,25 @@ export class AgentRegistryService {
     return agents;
   }
 
-  async register(repoPath: string, agent: AgentInfo): Promise<void> {
+  async installAgent(repoPath: string, agentInfo: AgentInfo, rulesetContent: Record<string, unknown>): Promise<void> {
     const agentsPath = path.join(repoPath, this.agentsDirName);
     await this.fs.ensureDir(agentsPath);
 
-    const agentPath = path.join(agentsPath, agent.name);
+    const agentPath = path.join(agentsPath, agentInfo.name);
     await this.fs.ensureDir(agentPath);
 
-    await this.fs.writeJson(path.join(agentPath, 'agent.json'), agent);
+    const configPath = path.join(agentPath, 'agent.config.json');
+    const rulesetPath = path.join(agentPath, 'agent.rules.json');
+
+    await this.fs.writeJson(configPath, agentInfo);
+    await this.fs.writeJson(rulesetPath, rulesetContent);
 
     const registry = await this.loadOrCreateRegistry(agentsPath);
-    const existingIdx = registry.agents.findIndex(a => a.name === agent.name);
+    const existingIdx = registry.agents.findIndex(a => a.name === agentInfo.name);
     if (existingIdx >= 0) {
-      registry.agents[existingIdx] = agent;
+      registry.agents[existingIdx] = agentInfo;
     } else {
-      registry.agents.push(agent);
+      registry.agents.push(agentInfo);
     }
     registry.lastUpdated = new Date().toISOString();
     await this.fs.writeJson(path.join(agentsPath, this.registryFileName), registry);
@@ -108,6 +114,30 @@ export class AgentRegistryService {
   async getAgent(repoPath: string, agentName: string): Promise<AgentInfo | undefined> {
     const agents = await this.discover(repoPath);
     return agents.find(a => a.name === agentName);
+  }
+
+  async updateAgent(repoPath: string, agentName: string, config: AgentInfo, rulesetContent: Record<string, unknown>): Promise<boolean> {
+    const agentsPath = path.join(repoPath, this.agentsDirName);
+    const agentPath = path.join(agentsPath, agentName);
+
+    if (!(await this.fs.exists(agentPath))) {
+      return false;
+    }
+
+    await this.fs.writeJson(path.join(agentPath, 'agent.config.json'), config);
+    await this.fs.writeJson(path.join(agentPath, 'agent.rules.json'), rulesetContent);
+
+    const registryPath = path.join(agentsPath, this.registryFileName);
+    if (await this.fs.exists(registryPath)) {
+      const registry = await this.fs.readJson(registryPath) as AgentRegistry;
+      const idx = registry.agents.findIndex(a => a.name === agentName);
+      if (idx >= 0) {
+        registry.agents[idx] = config;
+        registry.lastUpdated = new Date().toISOString();
+        await this.fs.writeJson(registryPath, registry);
+      }
+    }
+    return true;
   }
 
   async updateLastValidated(repoPath: string, agentName: string): Promise<void> {

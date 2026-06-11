@@ -23,23 +23,38 @@ jest.mock('./metrics.service', () => ({
 }));
 
 jest.mock('./tools/validate', () => ({
-  handleValidateTool: jest.fn().mockResolvedValue({ status: 'passed' }),
+  getValidateTools: jest.fn().mockReturnValue([{
+    schema: { name: 'evolith-validate' },
+    execute: jest.fn().mockResolvedValue({ status: 'passed' })
+  }]),
 }));
 
 jest.mock('./tools/agent', () => ({
-  handleAgentTools: jest.fn().mockResolvedValue({ success: true }),
+  getAgentTools: jest.fn().mockReturnValue([{
+    schema: { name: 'evolith-agent-install' },
+    execute: jest.fn().mockResolvedValue({ success: true })
+  }]),
 }));
 
 jest.mock('./tools/architecture', () => ({
-  handleArchitectureTools: jest.fn().mockResolvedValue({ status: 'passed' }),
+  getArchitectureTools: jest.fn().mockReturnValue([{
+    schema: { name: 'evolith-architecture-validate' },
+    execute: jest.fn().mockResolvedValue({ status: 'passed' })
+  }]),
 }));
 
 jest.mock('./tools/sdlc', () => ({
-  handleSdlcTools: jest.fn().mockResolvedValue({ currentPhase: 'phase-0' }),
+  getSdlcTools: jest.fn().mockReturnValue([{
+    schema: { name: 'evolith-sdlc-status' },
+    execute: jest.fn().mockResolvedValue({ currentPhase: 'phase-0' })
+  }]),
 }));
 
 jest.mock('./tools/moscow', () => ({
-  handleMoscowTools: jest.fn().mockResolvedValue({ success: true }),
+  getMoscowTools: jest.fn().mockReturnValue([{
+    schema: { name: 'evolith-moscow-analyze' },
+    execute: jest.fn().mockResolvedValue({ success: true })
+  }]),
 }));
 
 jest.mock('./resources', () => ({

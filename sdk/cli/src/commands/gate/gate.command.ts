@@ -35,7 +35,9 @@ interface GateCommandOptions {
   description: 'Phase gate operations (action: evaluate) emitting ADR-0073 GateEvidence',
 })
 export class GateCommand extends CommandRunner {
-  private readonly useCase = new EvaluateGateUseCase();
+  constructor(private readonly useCase: EvaluateGateUseCase) {
+    super();
+  }
 
   async run(inputs: string[], options?: GateCommandOptions): Promise<void> {
     const startedAt = Date.now();

@@ -1,4 +1,4 @@
-import { handleGateEvaluateTool } from './gate';
+import { getGateTools } from './gate';
 // eslint-disable-next-line boundaries/element-types
 import { EvaluateGateUseCase } from '../../../application/use-cases/evaluate-gate.use-case';
 
@@ -6,12 +6,17 @@ jest.mock('../../../application/use-cases/evaluate-gate.use-case');
 
 describe('handleGateEvaluateTool', () => {
   let mockExecute: jest.Mock;
+  let executeHandler: (args: any) => Promise<any>;
 
   beforeEach(() => {
     mockExecute = jest.fn();
     (EvaluateGateUseCase as jest.Mock).mockImplementation(() => ({
       execute: mockExecute
     }));
+
+    const tools = getGateTools();
+    const handler = tools.find(t => t.schema.name === 'evolith-gate-evaluate');
+    executeHandler = handler!.execute;
   });
 
   afterEach(() => {
@@ -19,7 +24,7 @@ describe('handleGateEvaluateTool', () => {
   });
 
   it('should return error for invalid phase', async () => {
-    const result = await handleGateEvaluateTool({ phase: 'invalid-phase', projectPath: '/fake' });
+    const result = await executeHandler({ phase: 'invalid-phase', projectPath: '/fake' });
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.code).toBe('INVALID_PHASE');
@@ -27,7 +32,7 @@ describe('handleGateEvaluateTool', () => {
   });
 
   it('should return error if projectPath is missing', async () => {
-    const result = await handleGateEvaluateTool({ phase: 'discovery' });
+    const result = await executeHandler({ phase: 'discovery' });
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.code).toBe('IO_ERROR');
@@ -49,7 +54,7 @@ describe('handleGateEvaluateTool', () => {
     };
     mockExecute.mockResolvedValue(fakeEvidence);
 
-    const result = await handleGateEvaluateTool({
+    const result = await executeHandler({
       phase: 'discovery',
       projectPath: '/fake',
       evidenceMode: 'full'
@@ -79,7 +84,7 @@ describe('handleGateEvaluateTool', () => {
     };
     mockExecute.mockResolvedValue(fakeEvidence);
 
-    const result = await handleGateEvaluateTool({
+    const result = await executeHandler({
       phase: 'discovery',
       projectPath: '/fake',
       evidenceMode: 'summary'
@@ -96,7 +101,7 @@ describe('handleGateEvaluateTool', () => {
   it('should catch unhandled errors and wrap them in INTERNAL_ERROR', async () => {
     mockExecute.mockRejectedValue(new Error('Something bad'));
 
-    const result = await handleGateEvaluateTool({ phase: 'discovery', projectPath: '/fake' });
+    const result = await executeHandler({ phase: 'discovery', projectPath: '/fake' });
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.code).toBe('INTERNAL_ERROR');
@@ -107,7 +112,7 @@ describe('handleGateEvaluateTool', () => {
   it('should include context in meta if initiative and tenant are passed', async () => {
     mockExecute.mockResolvedValue({ violations: [] });
 
-    const result = await handleGateEvaluateTool({
+    const result = await executeHandler({
       phase: 'discovery',
       projectPath: '/fake',
       initiative: 'init-1',

@@ -56,24 +56,55 @@ const PHASE_REQUIREMENTS: PhaseRequirement[] = [
   },
 ];
 
-export async function handleSdlcTools(toolName: string, args: Record<string, unknown>) {
-  const fs = getFileSystem();
-  const configParser = getContainer().createConfigParser('yaml');
-  const repoPath = args.path as string;
+import { IMcpToolHandler } from '../mcp-tool.registry';
 
-  if (!repoPath) {
-    return { error: true, message: 'path is required' };
-  }
-
-  if (toolName === 'evolith-sdlc-status') {
-    return sdlcStatus(repoPath, fs, configParser);
-  } else if (toolName === 'evolith-sdlc-handoff') {
-    const fromPhase = args.fromPhase as string;
-    const toPhase = args.toPhase as string;
-    return sdlcHandoff(repoPath, fromPhase, toPhase, fs, configParser);
-  }
-
-  throw new Error(`Unknown SDLC tool: ${toolName}`);
+export function getSdlcTools(): IMcpToolHandler[] {
+  return [
+    {
+      schema: {
+        name: 'evolith-sdlc-status',
+        description: 'Get the current SDLC phase status',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            path: { type: 'string' },
+          },
+          required: ['path'],
+        },
+      },
+      execute: async (args) => {
+        const fs = getFileSystem();
+        const configParser = getContainer().createConfigParser('yaml');
+        const repoPath = args.path as string;
+        if (!repoPath) return { error: true, message: 'path is required' };
+        return sdlcStatus(repoPath, fs, configParser);
+      }
+    },
+    {
+      schema: {
+        name: 'evolith-sdlc-handoff',
+        description: 'Perform a phase gate handoff (e.g. phase-0 to phase-1)',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            path: { type: 'string' },
+            fromPhase: { type: 'string' },
+            toPhase: { type: 'string' },
+          },
+          required: ['path', 'fromPhase', 'toPhase'],
+        },
+      },
+      execute: async (args) => {
+        const fs = getFileSystem();
+        const configParser = getContainer().createConfigParser('yaml');
+        const repoPath = args.path as string;
+        if (!repoPath) return { error: true, message: 'path is required' };
+        const fromPhase = args.fromPhase as string;
+        const toPhase = args.toPhase as string;
+        return sdlcHandoff(repoPath, fromPhase, toPhase, fs, configParser);
+      }
+    }
+  ];
 }
 
 async function sdlcStatus(repoPath: string, fs: IFileSystem, configParser: IConfigParser) {

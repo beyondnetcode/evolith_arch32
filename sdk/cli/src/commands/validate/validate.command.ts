@@ -22,7 +22,12 @@ interface ValidateCommandOptions {
   description: 'Verifica que el repositorio satélite cumpla los estándares mínimos de Evolith',
 })
 export class ValidateCommand extends CommandRunner {
-  private useCase = new ValidateSatelliteUseCase();
+  constructor(
+    private readonly useCase: ValidateSatelliteUseCase,
+    private readonly validator: RulesetValidatorService,
+  ) {
+    super();
+  }
 
   async run(passedParam: string[], options?: ValidateCommandOptions): Promise<void> {
     p.intro(' Evolith SDK - Validación de Estándares ');
@@ -50,7 +55,6 @@ export class ValidateCommand extends CommandRunner {
       }
 
       if (options?.architecture) {
-        const validator = new RulesetValidatorService();
         const archLevel = (options?.archLevel as 'F1' | 'F2' | 'F3' | 'ALL') || 'ALL';
 
         interface ArchResult {
@@ -61,7 +65,7 @@ export class ValidateCommand extends CommandRunner {
           timestamp: string;
         }
 
-        const archResult: ArchResult = await validator.validateArchitecture(satellitePath, corePath, archLevel);
+        const archResult: ArchResult = await this.validator.validateArchitecture(satellitePath, corePath, archLevel);
 
         const allIssues = [...result.issues, ...archResult.issues];
         const blockingCount = allIssues.filter(i => i.blocking).length;

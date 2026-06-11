@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { RulesetValidatorService, ValidationResult } from '../../core/validators/ruleset-validator.service';
 
 export interface ValidateSatelliteInput {
@@ -12,6 +13,7 @@ export interface ValidateSatelliteOutput {
   formattedOutput?: string;
 }
 
+@Injectable()
 export class ValidateSatelliteUseCase {
   private readonly validator: RulesetValidatorService;
 

@@ -1,39 +1,60 @@
 import { RulesetValidatorService } from '../../validators/ruleset-validator.service';
 
-export async function handleValidateTool(
-  args: Record<string, unknown>,
-  validator: RulesetValidatorService,
-) {
-  const path = args.path as string;
-  const format = (args.format as string) || 'json';
-  const ruleset = args.ruleset as string | undefined;
-  const corePath = args.corePath as string | undefined;
+import { IMcpToolHandler } from '../mcp-tool.registry';
 
-  if (!path) {
-    return { error: true, message: 'path is required' };
-  }
+export function getValidateTools(): IMcpToolHandler[] {
+  return [
+    {
+      schema: {
+        name: 'evolith-validate',
+        description: 'Validate a satellite repository against Evolith rules',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            path: { type: 'string', description: 'Path to the satellite repository' },
+            format: { type: 'string', description: 'Output format (json, summary, table)', default: 'json' },
+            ruleset: { type: 'string', description: 'Optional ID of a specific ruleset to load' },
+            corePath: { type: 'string', description: 'Optional explicit path to the Evolith core repository' },
+          },
+          required: ['path'],
+        },
+      },
+      execute: async (args, deps) => {
+        const path = args.path as string;
+        const format = (args.format as string) || 'json';
+        const ruleset = args.ruleset as string | undefined;
+        const corePath = args.corePath as string | undefined;
 
-  if (ruleset) {
-    const coreRepoPath = corePath || findCorePath(path);
-    const issues = await validator.loadRulesetById(coreRepoPath, ruleset);
-    return {
-      tool: 'evolith-validate',
-      ruleset,
-      corePath: coreRepoPath,
-      issues,
-      timestamp: new Date().toISOString(),
-    };
-  }
+        if (!path) {
+          return { error: true, message: 'path is required' };
+        }
 
-  const result = await validator.validate(path, corePath);
+        const validator = deps?.validator || new RulesetValidatorService();
 
-  if (format === 'summary') {
-    return formatSummary(result);
-  } else if (format === 'table') {
-    return formatTable(result);
-  }
+        if (ruleset) {
+          const coreRepoPath = corePath || findCorePath(path);
+          const issues = await validator.loadRulesetById(coreRepoPath, ruleset);
+          return {
+            tool: 'evolith-validate',
+            ruleset,
+            corePath: coreRepoPath,
+            issues,
+            timestamp: new Date().toISOString(),
+          };
+        }
 
-  return result;
+        const result = await validator.validate(path, corePath);
+
+        if (format === 'summary') {
+          return formatSummary(result);
+        } else if (format === 'table') {
+          return formatTable(result);
+        }
+
+        return result;
+      }
+    }
+  ];
 }
 
 function formatSummary(result: { status: string; rulesChecked: number; issues: Array<{ ruleId: string; severity: string; title: string; blocking: boolean }> }) {

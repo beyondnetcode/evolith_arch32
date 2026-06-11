@@ -3,48 +3,69 @@ import { getFileSystem, getContainer } from './tool-utils';
 import { IFileSystem, IConfigParser } from '../../abstractions';
 import { DeepArchitectureAnalyzer } from '../../validators/deep-architecture-analyzer';
 
-export async function handleArchitectureTools(args: Record<string, unknown>) {
-  const fs = getFileSystem();
-  const configParser = getContainer().createConfigParser('yaml');
-  const repoPath = args.path as string;
-  const level = (args.level as string) || 'F1';
-  const deep = (args.deep as boolean) || false;
+import { IMcpToolHandler } from '../mcp-tool.registry';
 
-  if (!repoPath) {
-    return { error: true, message: 'path is required' };
-  }
+export function getArchitectureTools(): IMcpToolHandler[] {
+  return [
+    {
+      schema: {
+        name: 'evolith-architecture-validate',
+        description: 'Validate repository architecture against F1/F2/F3 rules. Use deep=true for import graph analysis, layer violations, and coupling metrics.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            path: { type: 'string' },
+            level: { type: 'string', description: 'F1, F2, or F3' },
+            deep: { type: 'boolean', description: 'Enable deep static analysis (import graph, layer violations, coupling metrics)', default: false },
+          },
+          required: ['path'],
+        },
+      },
+      execute: async (args) => {
+        const fs = getFileSystem();
+        const configParser = getContainer().createConfigParser('yaml');
+        const repoPath = args.path as string;
+        const level = (args.level as string) || 'F1';
+        const deep = (args.deep as boolean) || false;
 
-  const issues: Array<{ ruleId: string; level: string; title: string; severity: string; blocking: boolean }> = [];
+        if (!repoPath) {
+          return { error: true, message: 'path is required' };
+        }
 
-  if (level === 'F1' || level === 'F2' || level === 'F3') {
-    issues.push(...await validateF1ModularIndependence(repoPath, fs, configParser));
-  }
+        const issues: Array<{ ruleId: string; level: string; title: string; severity: string; blocking: boolean }> = [];
 
-  if (level === 'F2' || level === 'F3') {
-    issues.push(...await validateF2ContractBoundaries(repoPath, fs));
-  }
+        if (level === 'F1' || level === 'F2' || level === 'F3') {
+          issues.push(...await validateF1ModularIndependence(repoPath, fs, configParser));
+        }
 
-  if (level === 'F3') {
-    issues.push(...await validateF3ExtractionReadiness(repoPath, fs, configParser));
-  }
+        if (level === 'F2' || level === 'F3') {
+          issues.push(...await validateF2ContractBoundaries(repoPath, fs));
+        }
 
-  if (deep) {
-    const deepResults = await runDeepAnalysis(repoPath);
-    issues.push(...deepResults);
-  }
+        if (level === 'F3') {
+          issues.push(...await validateF3ExtractionReadiness(repoPath, fs, configParser));
+        }
 
-  const blockingCount = issues.filter(i => i.blocking).length;
+        if (deep) {
+          const deepResults = await runDeepAnalysis(repoPath);
+          issues.push(...deepResults);
+        }
 
-  return {
-    level,
-    repository: repoPath,
-    deepAnalysis: deep,
-    status: blockingCount > 0 ? 'failed' : 'passed',
-    issuesChecked: issues.length,
-    blockingIssues: blockingCount,
-    issues,
-    timestamp: new Date().toISOString(),
-  };
+        const blockingCount = issues.filter(i => i.blocking).length;
+
+        return {
+          level,
+          repository: repoPath,
+          deepAnalysis: deep,
+          status: blockingCount > 0 ? 'failed' : 'passed',
+          issuesChecked: issues.length,
+          blockingIssues: blockingCount,
+          issues,
+          timestamp: new Date().toISOString(),
+        };
+      }
+    }
+  ];
 }
 
 async function runDeepAnalysis(repoPath: string): Promise<Array<{ ruleId: string; level: string; title: string; severity: string; blocking: boolean }>> {

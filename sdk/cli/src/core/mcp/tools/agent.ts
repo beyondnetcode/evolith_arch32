@@ -10,25 +10,105 @@ interface AgentInfo {
   rulesetPath: string;
 }
 
-export async function handleAgentTools(toolName: string, args: Record<string, unknown>) {
-  const fs = getFileSystem();
-  const dir = (args.dir as string) || process.cwd();
-  const name = args.name as string;
+import { IMcpToolHandler } from '../mcp-tool.registry';
 
-  switch (toolName) {
-    case 'evolith-agent-install':
-      return agentInstall(name, (args.template as string) || 'standard', dir, fs);
-    case 'evolith-agent-list':
-      return agentList(dir, fs);
-    case 'evolith-agent-validate':
-      return agentValidate(name, dir, fs);
-    case 'evolith-agent-upgrade':
-      return agentUpgrade(name, dir, fs);
-    case 'evolith-agent-remove':
-      return agentRemove(name, dir, fs);
-    default:
-      throw new Error(`Unknown agent tool: ${toolName}`);
-  }
+export function getAgentTools(): IMcpToolHandler[] {
+  return [
+    {
+      schema: {
+        name: 'evolith-agent-install',
+        description: 'Install a new Evolith agent',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            name: { type: 'string', description: 'Name of the agent to install' },
+            template: { type: 'string', description: 'Template: standard, minimal, enterprise', default: 'standard' },
+            dir: { type: 'string', description: 'Directory to install into' },
+          },
+          required: ['name'],
+        },
+      },
+      execute: async (args) => {
+        const fs = getFileSystem();
+        const dir = (args.dir as string) || process.cwd();
+        return agentInstall(args.name as string, (args.template as string) || 'standard', dir, fs);
+      }
+    },
+    {
+      schema: {
+        name: 'evolith-agent-list',
+        description: 'List all installed Evolith agents',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            dir: { type: 'string', description: 'Directory to search' },
+          },
+        },
+      },
+      execute: async (args) => {
+        const fs = getFileSystem();
+        const dir = (args.dir as string) || process.cwd();
+        return agentList(dir, fs);
+      }
+    },
+    {
+      schema: {
+        name: 'evolith-agent-validate',
+        description: 'Validate a specific agent ruleset',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            dir: { type: 'string' },
+          },
+          required: ['name'],
+        },
+      },
+      execute: async (args) => {
+        const fs = getFileSystem();
+        const dir = (args.dir as string) || process.cwd();
+        return agentValidate(args.name as string, dir, fs);
+      }
+    },
+    {
+      schema: {
+        name: 'evolith-agent-upgrade',
+        description: 'Upgrade an existing Evolith agent',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            dir: { type: 'string' },
+          },
+          required: ['name'],
+        },
+      },
+      execute: async (args) => {
+        const fs = getFileSystem();
+        const dir = (args.dir as string) || process.cwd();
+        return agentUpgrade(args.name as string, dir, fs);
+      }
+    },
+    {
+      schema: {
+        name: 'evolith-agent-remove',
+        description: 'Remove an Evolith agent',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            dir: { type: 'string' },
+          },
+          required: ['name'],
+        },
+      },
+      execute: async (args) => {
+        const fs = getFileSystem();
+        const dir = (args.dir as string) || process.cwd();
+        return agentRemove(args.name as string, dir, fs);
+      }
+    }
+  ];
 }
 
 async function agentInstall(name: string, template: string, dir: string, fs: IFileSystem) {

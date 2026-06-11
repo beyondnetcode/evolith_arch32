@@ -1,3 +1,4 @@
+import { Injectable, Optional, Inject } from '@nestjs/common';
 import {
   PhaseGateValidatorService,
   GateValidationResult,
@@ -39,11 +40,12 @@ export interface EvaluateGateInput {
   webhookUrl?: string;
 }
 
+@Injectable()
 export class EvaluateGateUseCase {
   constructor(
-    private readonly validatorFactory: (corePath?: string) => PhaseGateValidatorService =
+    @Optional() @Inject('VALIDATOR_FACTORY') private readonly validatorFactory: (corePath?: string) => PhaseGateValidatorService =
       corePath => new PhaseGateValidatorService(corePath),
-    private readonly webhookNotifier?: WebhookNotifierPort
+    @Optional() @Inject('WEBHOOK_NOTIFIER') private readonly webhookNotifier?: WebhookNotifierPort
   ) {}
 
   async execute(input: EvaluateGateInput): Promise<GateEvidence> {

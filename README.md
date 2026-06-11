@@ -201,6 +201,19 @@ The five phases below run from conception to operations; each section lists that
 >
 > **Domain hubs:** [Product Suite](./reference/product-suite/README.md) (portfolio vision and strategy) · [Product Designs](./reference/products/README.md) (per-product internals)
 
+<details open>
+<summary><strong>Suite Tracking — pending work, audit, and maturity</strong></summary>
+
+The two canonical tracking surfaces for the suite — everything pending, audited, or measured lives in one of these:
+
+| Link (URL) | Description (brief explanation) | Goal / Objective | Typification (category or type) |
+|---|---|---|---|
+| [Gap Tracking Board](./reference/governance/standards/vision/gap-tracking.md) | Single board for every open gap: prioritized execution queue (what to finish next), full dashboard by status, and per-gap goal and closure criteria | See instantly what remains and in which order | Tracking board |
+| [Maturity Assessment](./reference/governance/standards/vision/maturity-assessment.md) | Single maturity evaluation: TOGAF ACMM matrix, WAF review, patterns/anti-patterns audit, and vision alignment | Measure how mature the suite is and where to invest | Maturity matrix and audit |
+| [Documentation Coverage Report](./COVERAGE_REPORT.md) | Bilingual documentation coverage status | Audit documentation completeness | Coverage report |
+
+</details>
+
 <details>
 <summary><strong>Evolith Product Suite</strong></summary>
 

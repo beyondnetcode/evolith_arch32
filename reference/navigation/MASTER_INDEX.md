@@ -5,7 +5,7 @@
 
 This is the complete navigation index for **Evolith** — the enterprise progressive architecture platform. Use it when you already know what type of artifact you need, or when you want to move across repository areas without browsing directories manually.
 
-The index follows the portal's order: orientation first (sections 1–2), then the three domains from generic to specific — **Core**, **SDLC**, **Products** (sections 3–5) — and finally machine-readable rules and navigation meta-surfaces (sections 6–7).
+The index is organized for fast navigation: orientation first (sections 1–2), then architecture split between **agnostic Core** and **platform/runtime specific** (sections 3–4), the **SDLC phase by phase with every artifact inside** (section 5), **products** (section 6), and finally machine-readable rules and navigation meta-surfaces (sections 7–8).
 
 Every document entry uses the same five fields: **Document** (linked title), **Description** (what the document does), **Goal / Objective** (why it exists), **Type** (document category), and **Mandatory** (Yes when the document is normative or required reading for its domain; No when it is informative or optional).
 
@@ -50,15 +50,17 @@ Every document entry uses the same five fields: **Document** (linked title), **D
 </details>
 
 <details>
-<summary><strong>3. Evolith Core — Architecture Constitution</strong></summary>
+<summary><strong>3. Evolith Core — Agnostic Architecture (provider- and runtime-neutral)</strong></summary>
 
-> **Goal:** keep every universal, provider-neutral rule in one governed corpus. Start at the [Evolith Core Hub](../core/README.md) for the domain's goal, boundaries, and dependency rule.
+> **Goal:** keep every universal, provider-neutral rule in one governed corpus. Start at the [Evolith Core Hub](../core/README.md) for the domain's goal, boundaries, and dependency rule. Anything that names a runtime or vendor lives in section 4, not here.
 
 | Document | Description | Goal / Objective | Type | Mandatory |
 |---|---|---|---|---|
 | [Evolith Core Hub](../core/README.md) | Defines what Core is, what it is not, its domains, invariants, and dependency rule | Anchor the provider-neutral constitution | Domain hub | Yes |
 | [Architecture Hub](../architecture/README.md) | Groups directives, canonical patterns, blueprints, and the agnostic tech baseline | Guide corporate design | Area hub | Yes |
-| [General ADR Registry](../architecture/adrs/README.md) | Groups the decision matrix and all Evolith ADRs (Core, Node, .NET, Android) | Preserve decision history and governance | Area hub | Yes |
+| [Agnostic Architecture Baseline](../architecture/blueprints/authoritative-tech-stack-agnostic.md) | Runtime-agnostic architecture constraints for every stack | Constrain all stacks uniformly | Universal baseline | Yes |
+| [Core ADRs (agnostic)](../architecture/adrs/core/README.md) | The 45 runtime-agnostic architecture decisions | Preserve universal decision history | Decision registry | Yes |
+| [ADR Decision Matrix](../architecture/adrs/adr-matrix.md) | Finds the controlling ADR by architectural concern | Speed up decision discovery | Decision index | Yes |
 | [Standards and Governance Center](../governance/standards/README.md) | Groups technical directives, maturity assessment, glossary, manifestos, and onboarding | Align teams to unified policies | Area hub | Yes |
 | [Operations Hub](../operations/README.md) | Groups observability guides (OpenTelemetry, Tempo, Grafana) and SRE deployments | Standardize operations | Area hub | No |
 | [Infrastructure Hub](../infrastructure/README.md) | Describes the phase-based local platform: database, cache, broker, gateway, and secrets | Standardize the local runtime | Area hub | No |
@@ -66,24 +68,95 @@ Every document entry uses the same five fields: **Document** (linked title), **D
 </details>
 
 <details>
-<summary><strong>4. Evolith SDLC — Lifecycle Governance</strong></summary>
+<summary><strong>4. Platform- and Runtime-Specific (Node.js · .NET · Android · named vendors)</strong></summary>
 
-> **Goal:** govern the five lifecycle phases with explicit gates, artifacts, and traceability. Start at the [SDLC Governance Center](../governance/sdlc/README.md).
+> **Goal:** isolate everything that names a runtime, tool, or vendor — so Core stays neutral and platform choices stay replaceable.
 
 | Document | Description | Goal / Objective | Type | Mandatory |
 |---|---|---|---|---|
-| [SDLC Governance Center](../governance/sdlc/README.md) | Authoritative documentation on phases, gates, roles, and deliverable mapping | Govern the full lifecycle | Domain hub | Yes |
-| [Artifact Templates Hub](../governance/sdlc/04-artifact-templates/README.md) | Canonical templates for every phase artifact, from Discovery Canvas to Release Notes | Standardize deliverables | Area hub | Yes |
-| [SDLC Quality Gates](../governance/sdlc/quality-gates.md) | Approval thresholds each phase must satisfy before advancing | Enforce phase quality | Standard | Yes |
-| [SDLC Traceability Model](../governance/sdlc/traceability-model.md) | How requirements, stories, tests, and releases stay linked end to end | Guarantee end-to-end traceability | Standard | Yes |
-| [SDLC Artifact Mapping](../governance/sdlc/sdlc-evolith-artifact-mapping.md) | Mapping between phases and expected deliverables | Link phases and deliverables | Reference | No |
+| [General ADR Registry](../architecture/adrs/README.md) | All ADRs classified by scope: agnostic Core plus runtime ecosystems | Find the controlling decision per scope | Area hub | Yes |
+| [Node.js / TypeScript ADRs](../architecture/adrs/nodejs/README.md) | Decisions tied to the Node.js/TypeScript runtime | Govern the Node.js ecosystem | Decision registry | Yes |
+| [.NET (C#) ADRs](../architecture/adrs/dotnet/README.md) | Decisions tied to the .NET runtime | Govern the .NET ecosystem | Decision registry | Yes |
+| [Android (Kotlin) ADRs](../architecture/adrs/android/README.md) | Decisions tied to native mobile clients | Govern the Android ecosystem | Decision registry | Yes |
+| [Runtime Profiles Index](../architecture/blueprints/authoritative-tech-stack.md) | Approved tech stack profiles per runtime (Node.js, .NET, Android) | Bound technology choices per runtime | Blueprint index | Yes |
+| [Canonical Patterns](../architecture/canonical-patterns/README.md) | Runtime-specific reference implementations of the ADRs | Reuse proven implementations | Pattern index | No |
+| [Platforms Hub](../platforms/README.md) | Named tools, vendors, adapters, licensing, and deployment profiles | Isolate provider decisions | Area hub | Yes |
+| [Validated Tool Catalog](../platforms/validated-tool-catalog.md) | Validated tools per phase, pattern, and runtime (consumed by the Smart CLI) | Bound tool choices to validated options | Corporate standard | Yes |
+| [Quick Access by Stack](../quick-access/README.md) | Shortest path to the React, .NET, and Node.js standards | Reduce navigation friction | Navigation index | No |
 
 </details>
 
 <details>
-<summary><strong>5. Evolith Products — Suite, Designs, and Applied Reference</strong></summary>
+<summary><strong>5. Evolith SDLC — Navigation by Phase (everything per phase)</strong></summary>
 
-> **Goal:** navigate from portfolio strategy down to each product's internals and the applied evidence that validates them. Start at the [Product Suite Hub](../product-suite/README.md).
+> **Goal:** govern the five lifecycle phases with explicit gates, artifacts, and traceability. Start at the [SDLC Governance Center](../governance/sdlc/README.md); below, every phase lists all of its artifacts.
+
+**Cross-phase governance** — applies to every phase:
+
+| Document | Description | Goal / Objective | Type | Mandatory |
+|---|---|---|---|---|
+| [SDLC Governance Center](../governance/sdlc/README.md) | Authoritative documentation on phases, gates, roles, and deliverable mapping | Govern the full lifecycle | Domain hub | Yes |
+| [Artifact Templates Hub](../governance/sdlc/04-artifact-templates/README.md) | Canonical templates for every phase artifact | Standardize deliverables | Area hub | Yes |
+| [SDLC Quality Gates](../governance/sdlc/quality-gates.md) | Approval thresholds each phase must satisfy before advancing | Enforce phase quality | Standard | Yes |
+| [SDLC Traceability Model](../governance/sdlc/traceability-model.md) | How requirements, stories, tests, and releases stay linked end to end | Guarantee end-to-end traceability | Standard | Yes |
+| [SDLC Responsibility Matrix](../governance/sdlc/responsibility-matrix.md) | Accountability and evidence expectations per gate | Assign gate ownership | Standard | Yes |
+| [SDLC Artifact Mapping](../governance/sdlc/sdlc-evolith-artifact-mapping.md) | Mapping between phases and expected deliverables | Link phases and deliverables | Reference | No |
+| [SDLC Executive View](../governance/sdlc/executive-view.md) | Director-level operating model for funding, risk, and gates | Operate the SDLC at director level | Reference | No |
+
+**Phase 01 — Conception and Discovery** · exit gate: Business Sign-Off
+
+| Document | Description | Goal / Objective | Type | Mandatory |
+|---|---|---|---|---|
+| [Discovery Canvas](../governance/sdlc/04-artifact-templates/discovery-canvas-template.md) | Discovery canvas | Define vision and feasibility | Template | Yes |
+| [PRD — Product Requirements Document](../governance/sdlc/04-artifact-templates/prd-template.md) | Product requirements | Specify functional needs | Template | Yes |
+| [Evolith User Story](../governance/sdlc/04-artifact-templates/evolith-user-story-template.md) | User story template | Standardize agile stories | Template | Yes |
+| [Agile Backlog](../governance/sdlc/04-artifact-templates/agile-backlog-template.md) | Backlog template | Organize deliverables | Template | Yes |
+| [Business Case ROI](../governance/sdlc/04-artifact-templates/business-case-roi-template.md) | ROI analysis | Justify business value | Template | No |
+| [Ballpark Estimation](../governance/sdlc/04-artifact-templates/ballpark-estimation-template.md) | High-level estimation | Project costs and times | Template | No |
+| [CLI Impact Analysis](../governance/sdlc/04-artifact-templates/cli-impact-analysis.md) | CLI impact analysis | Evaluate cross-repo changes | Template | No |
+| [Validation Schemas & Rules](../../rulesets/README.md) | Canvas, PRD, and Backlog schemas plus gate rules | Validate compliance in CI | Rules and schemas | Yes |
+
+**Phase 02 — Design and Architecture** · exit gate: Design Baseline Approved
+
+| Document | Description | Goal / Objective | Type | Mandatory |
+|---|---|---|---|---|
+| [Functional Story Template](../governance/sdlc/04-artifact-templates/functional-story-template.md) | Business behavior specification | Specify behavior verifiably | Template | Yes |
+| [Functional Story Writing Standard](../governance/sdlc/03-documentation/functional-story-writing-standard.md) | Normative writing rules for functional stories | Ensure specification quality | Standard | Yes |
+| [SDLC Documentation Best Practices](../governance/sdlc/03-documentation/sdlc-documentation-best-practices.md) | Documentation-as-code rules | Keep documentation honest | Standard | Yes |
+| [ADR Template](../governance/sdlc/04-artifact-templates/adr-template.md) | Architecture decision record template | Document boundary-crossing decisions | Template | No |
+| [DDD Model Template](../governance/sdlc/04-artifact-templates/ddd-model-template.md) | Domain modeling template | Model system domains | Template | No |
+| [Validation Schemas & Rules](../../rulesets/README.md) | ADR and Functional Story schemas | Validate structure in CI | Rules and schemas | Yes |
+
+**Phase 03 — Construction** · exit gate: Successful Build
+
+| Document | Description | Goal / Objective | Type | Mandatory |
+|---|---|---|---|---|
+| [Technical Story Template](../governance/sdlc/04-artifact-templates/technical-story-template.md) | Engineering work item template | Structure technical work | Template | Yes |
+| [Construction-Focused SDLC Framework](../governance/sdlc/02-engineering/construction-focused-sdlc-framework.md) | Phase progression, build loop, and Definition of Done | Regulate technical execution | Standard | Yes |
+| [SDLC Quality Gates](../governance/sdlc/quality-gates.md) | Coverage, complexity, CVE, and debt thresholds | Enforce build quality | Standard | Yes |
+| [Validation Schemas & Rules](../../rulesets/README.md) | Technical Story schema, DoD rules, thresholds, dependency pinning | Validate compliance in CI | Rules and schemas | Yes |
+
+**Phase 04 — Validation and QA** · exit gate: RC Stamped
+
+| Document | Description | Goal / Objective | Type | Mandatory |
+|---|---|---|---|---|
+| [Test Summary Report Template](../governance/sdlc/04-artifact-templates/test-summary-report-template.md) | Consolidated QA validation record | Consolidate QA evidence | Template | Yes |
+| [SDLC Traceability Model](../governance/sdlc/traceability-model.md) | Requirement-to-test evidence chain | Link requirements and tests | Standard | Yes |
+| [Validation Schemas & Rules](../../rulesets/README.md) | Test Summary Report schema | Validate compliance in CI | Rules and schemas | Yes |
+
+**Phase 05 — Delivery and Operations** · exit gate: Production Live
+
+| Document | Description | Goal / Objective | Type | Mandatory |
+|---|---|---|---|---|
+| [Release Notes Template](../governance/sdlc/04-artifact-templates/release-notes-template.md) | Production deployment record | Communicate the release | Template | Yes |
+| [Validation Schemas & Rules](../../rulesets/README.md) | Release Notes schema, CI/CD gate rules (ADR-0005), GitFlow (ADR-0050) | Automate pipeline validation | Rules and schemas | Yes |
+
+</details>
+
+<details>
+<summary><strong>6. Evolith Products — Suite, Designs, and Applied Reference</strong></summary>
+
+> **Goal:** navigate from portfolio strategy down to each product's internals and the applied evidence that validates them. Start at the [Product Suite Hub](../product-suite/README.md). Suite tracking (gap board and maturity assessment) is surfaced in the [root README](../../README.md).
 
 | Document | Description | Goal / Objective | Type | Mandatory |
 |---|---|---|---|---|
@@ -91,7 +164,8 @@ Every document entry uses the same five fields: **Document** (linked title), **D
 | [Product Designs Hub](../products/README.md) | Functional and technical design per product; entry to the Tracker hub | Contain product internals | Area hub | Yes |
 | [Tracker Hub](../products/evolith-tracker/README.md) | Tracker product architecture and technical interfaces | Design the governance product | Product hub | No |
 | [Smart CLI Hub](../../sdk/cli/README.md) | CLI documentation, architecture, vision, and state analysis | Understand the tooling product | Product hub | No |
-| [Platforms Hub](../platforms/README.md) | Named tools, vendors, adapters, licensing, and deployment profiles | Isolate provider decisions | Area hub | Yes |
+| [Gap Tracking Board](../governance/standards/vision/gap-tracking.md) | Execution queue and dashboard of every open gap in the suite | See what remains and in which order | Tracking board | Yes |
+| [Maturity Assessment](../governance/standards/vision/maturity-assessment.md) | TOGAF ACMM matrix, WAF review, and patterns audit | Measure suite maturity | Maturity matrix and audit | Yes |
 | [UMS Reference Hub](../knowledge/demo/README.md) | Showcases the adoption of Evolith directives in a practical demonstrative environment (UMS) | Demonstrate real implementation | Applied reference | No |
 | [Knowledge and Research Hub](../knowledge/README.md) | Platform adoption metrics, PoCs, and research | Capture evidence and learning | Area hub | No |
 | [UMS Repository](https://github.com/beyondnetcode/ums) | Official external repository that implements the architecture ecosystem | Provide executable evidence | External repository | No |
@@ -99,7 +173,7 @@ Every document entry uses the same five fields: **Document** (linked title), **D
 </details>
 
 <details>
-<summary><strong>6. Rulesets and Validation (Machine-Readable)</strong></summary>
+<summary><strong>7. Rulesets and Validation (Machine-Readable)</strong></summary>
 
 > **Goal:** turn the constitution into automated, CI-enforceable rules.
 
@@ -110,7 +184,7 @@ Every document entry uses the same five fields: **Document** (linked title), **D
 </details>
 
 <details>
-<summary><strong>7. Navigation and Documentation Surfaces</strong></summary>
+<summary><strong>8. Navigation and Documentation Surfaces</strong></summary>
 
 > **Goal:** keep navigation, bilingual coverage, and documentation releases observable.
 

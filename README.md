@@ -292,8 +292,7 @@ smart-cli mcp serve
 
 | Link (URL) | Description (brief explanation) | Goal / Objective | Typification (category or type) |
 |---|---|---|---|
-| [Navigation Hub](./reference/navigation/README.md) | Home of all repository-level navigation surfaces | Centralize navigation | Navigation hub |
-| [Global Master Index](./reference/navigation/MASTER_INDEX.md) | Complete repository navigation by intent, role, and domain | Locate any artifact quickly | Navigation index |
+| [Global Master Index](./reference/navigation/MASTER_INDEX.md) | The single complete navigation surface: by intent, by role, by SDLC phase (every artifact per phase), and with agnostic Core separated from platform-specific | Locate any artifact quickly | Navigation index |
 | [Bilingual Index](./reference/navigation/BILINGUAL_INDEX.md) | Auto-generated EN/ES pairing status for the reference corpus | Audit bilingual coverage | Navigation index |
 | [Quick Access by Stack](./reference/quick-access/README.md) | Shortest path to React, .NET, and Node.js standards | Reduce navigation friction | Navigation index |
 | [Documentation Taxonomy](./reference/documentation-taxonomy.md) | What kind of document belongs where | Keep the corpus organized | Governance reference |

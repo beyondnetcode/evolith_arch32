@@ -55,16 +55,7 @@ and operating guidance that satellite products inherit and specialize.
 
 | Link (URL) | Description (brief explanation) | Goal / Objective | Typification (category or type) |
 |---|---|---|---|
-| [Architecture Hub](./reference/architecture/README.md) | Architecture hub | Centralize design resources | Architecture baseline |
-| [Blueprints](./reference/architecture/README.md) | Blueprints directory | Guide reference architectures | Architecture baseline |
-| [Agnostic Baseline](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.md) | Agnostic tech stack | Define baseline technologies | Architecture baseline |
-| [Reference Blueprint](./reference/architecture/blueprints/reference-blueprint.md) | Reference blueprint | Guide standard implementation | Architecture baseline |
-| [Authoritative Tech Stack](./reference/architecture/blueprints/authoritative-tech-stack.md) | Authoritative tech stack | Regulate technology usage | Architecture baseline |
-| [C4 Topology Spec](./reference/architecture/blueprints/c4-topology-spec.md) | C4 topology spec | Standardize architecture diagrams | Architecture baseline |
-| [Canonical Patterns](./reference/architecture/canonical-patterns/README.md) | Canonical patterns | Reuse proven solutions | Architecture baseline |
-| [Observability Architecture Flow](./reference/architecture/blueprints/observability-architecture-flow.md) | Observability architecture flow | Trace signals propagation | Architecture baseline |
-| [Multi-Cloud Deployment Scenarios](./reference/architecture/blueprints/multi-cloud-deployment-scenarios.md) | Multi-cloud scenarios | Define cloud topologies | Architecture baseline |
-| [Simplicity Checklist Phase 1](./reference/architecture/blueprints/simplicity-checklist-phase-01.md) | Simplicity checklist | Prevent over-engineering | Architecture baseline |
+| [Architectural Directives & Hub](./reference/architecture/README.md) | Single entry point to directives, blueprints, base stack and topologies | Guide corporate design | Architecture hub |
 
 </details>
 
@@ -73,15 +64,7 @@ and operating guidance that satellite products inherit and specialize.
 
 | Link (URL) | Description (brief explanation) | Goal / Objective | Typification (category or type) |
 |---|---|---|---|
-| [ADR Registry](./reference/architecture/adrs/README.md) | ADRs registry | Maintain decision history | Architecture decisions |
-| [ADR Decision Matrix](./reference/architecture/adrs/adr-matrix.md) | ADR decision matrix | Visualize decision impact | Architecture decisions |
-| [Core ADRs](./reference/architecture/adrs/core/README.md) | Core ADRs | Core system decisions | Architecture decisions |
-| [Node.js ADRs](./reference/architecture/adrs/nodejs/README.md) | Node.js ADRs | Node ecosystem decisions | Architecture decisions |
-| [.NET ADRs](./reference/architecture/adrs/dotnet/README.md) | .NET ADRs | .NET ecosystem decisions | Architecture decisions |
-| [Android ADRs](./reference/architecture/adrs/android/README.md) | Android ADRs | Mobile ecosystem decisions | Architecture decisions |
-| [Testing Pyramid ADR](./reference/architecture/adrs/core/0018-testing-pyramid-quality-gates.md) | Testing pyramid and automated gates | Define layered testing strategy | Architecture decisions |
-| [Unit Testing Isolation ADR](./reference/architecture/adrs/core/0052-unit-testing-isolation-strategy.md) | Testing isolation ADR | Regulate mocks usage | Architecture decisions |
-| [Integration and E2E Testing ADR](./reference/architecture/adrs/core/0053-integration-e2e-testing-strategy.md) | Integration tests ADR | Establish end-to-end tests | Architecture decisions |
+| [General ADR Registry](./reference/architecture/adrs/README.md) | Central hub grouping the decision matrix and all ecosystem ADRs | Maintain history and governance | Decisions hub |
 
 </details>
 
@@ -90,20 +73,8 @@ and operating guidance that satellite products inherit and specialize.
 
 | Link (URL) | Description (brief explanation) | Goal / Objective | Typification (category or type) |
 |---|---|---|---|
-| [Governance Standards](./reference/governance/standards/README.md) | Governance standards | Align teams to policies | Governance |
-| [Architectural Directives](./reference/governance/standards/vision/architectural-directives.md) | Architectural directives | Align corporate design | Governance |
-| [Repository Taxonomy](./reference/governance/standards/repository-taxonomy.md) | Repository taxonomy | Classify repositories | Governance |
-| [Engineering Manifesto](./reference/governance/standards/engineering/engineering-manifesto.md) | Engineering manifesto | Establish technical principles | Governance |
-| [Maturity Assessment](./reference/governance/standards/vision/maturity-assessment.md) | Maturity assessment | Measure current architecture state | Governance |
-| [Gap Tracking Board](./reference/governance/standards/vision/gap-tracking.md) | Gap tracking board | Monitor technical gaps | Governance |
-| [Contract Testing Guideline](./reference/governance/standards/engineering/contract-testing-guideline.md) | Contract testing guideline | Ensure API compatibility | Engineering standards |
-| [Vendor Risk Assessment](./reference/governance/standards/engineering/vendor-risk-assessment.md) | Vendor risk assessment | Mitigate technological lock-in | Engineering standards |
-| [AI-Augmented Standards](./reference/governance/standards/ai-augmented/README.md) | AI-augmented standards | Guide AI-driven development | Engineering standards |
-| [Observability Playbook](./reference/governance/standards/engineering/observability-playbook.md) | Observability playbook | Guide telemetry | Engineering standards |
-| [Operations Hub](./reference/operations/README.md) | Operations hub | Centralize operational guides | Navigation hub |
-| [Infrastructure Hub](./reference/infrastructure/README.md) | Infrastructure hub | Regulate deployments | Navigation hub |
-| [Navigation Hub](./reference/navigation/README.md) | Navigation hub | Facilitate documentation access | Navigation hub |
-| [Bilingual Index](./reference/navigation/BILINGUAL_INDEX.md) | Bilingual index | Map EN/ES correspondence | Navigation hub |
+| [Standards and Governance Center](./reference/governance/standards/README.md) | Main directory for manifestos, taxonomies, technical directives and observability | Align teams to unified policies | Governance hub |
+| [Infrastructure & Operations Hub](./reference/operations/README.md) | Consolidated access to deployments, SRE guides and infrastructure | Standardize deployments and operations | Operations hub |
 
 </details>
 
@@ -112,11 +83,7 @@ and operating guidance that satellite products inherit and specialize.
 
 | Link (URL) | Description (brief explanation) | Goal / Objective | Typification (category or type) |
 |---|---|---|---|
-| [Rulesets Hub](./rulesets/README.md) | Rulesets hub | Centralize validation rules | Rules and schemas |
-| [Architecture Rules](./rulesets/architecture/README.md) | Architecture rules | Validate design | Rules and schemas |
-| [ADR Rules](./rulesets/adr/README.md) | ADR rules | Ensure decision format | Rules and schemas |
-| [Engineering Manifesto Rules](./rulesets/cross-cutting/engineering-manifesto.rules.json) | Engineering manifesto rules | Verify principles compliance in CI | Rules and schemas |
-| [Testing Pyramid Rules](./rulesets/adr/adr-0018-testing-pyramid.rules.json) | Testing pyramid ADR | Define testing strategy | Rules and schemas |
+| [General Rulesets Hub](./rulesets/README.md) | Centralizes all automated architecture rules, schemas and CI validation | Validate automated compliance | Rules hub |
 
 </details>
 
@@ -143,14 +110,7 @@ and operating guidance that satellite products inherit and specialize.
 | [Evolith User Story](./reference/governance/sdlc/04-artifact-templates/evolith-user-story-template.md) | User story template | Standardize agile stories | Documents and templates | **Mandatory** |
 | [Agile Backlog](./reference/governance/sdlc/04-artifact-templates/agile-backlog-template.md) | Backlog template | Organize deliverables | Documents and templates | **Mandatory** |
 | [CLI Impact Analysis](./reference/governance/sdlc/04-artifact-templates/cli-impact-analysis.md) | CLI impact analysis | Evaluate cross-repo changes | Documents and templates | Optional |
-| [Discovery Canvas Schema](./rulesets/schema/discovery-canvas.schema.json) | Discovery canvas validation schema | Validate artifact structure | Rules and schemas | **Mandatory** |
-| [Business Case ROI Schema](./rulesets/schema/business-case-roi.schema.json) | Business case validation schema | Validate artifact structure | Rules and schemas | Optional |
-| [Ballpark Estimation Schema](./rulesets/schema/ballpark-estimation.schema.json) | Estimation validation schema | Validate artifact structure | Rules and schemas | Optional |
-| [PRD Schema](./rulesets/schema/prd.schema.json) | PRD validation schema | Validate artifact structure | Rules and schemas | **Mandatory** |
-| [Evolith User Story Schema](./rulesets/schema/evolith-user-story.schema.json) | User story validation schema | Validate artifact structure | Rules and schemas | **Mandatory** |
-| [Agile Backlog Schema](./rulesets/schema/agile-backlog.schema.json) | Backlog validation schema | Validate artifact structure | Rules and schemas | **Mandatory** |
-| [CLI Impact Analysis Schema](./rulesets/schema/cli-impact-analysis.schema.json) | Impact analysis validation schema | Validate artifact structure | Rules and schemas | Optional |
-| [Phase Gates Rules](./rulesets/sdlc/phase-gates.rules.json) | Automated gate rules | Validate compliance in CI | Rules and schemas | **Mandatory** |
+| [Validation Schemas & Rules (Phase 1)](./rulesets/README.md) | Validation schemas for Canvas, PRD, Backlog and Gate rules | Validate compliance in CI | Rules and schemas | **Mandatory** |
 
 </details>
 
@@ -164,8 +124,7 @@ and operating guidance that satellite products inherit and specialize.
 | [DDD Model Template](./reference/governance/sdlc/04-artifact-templates/ddd-model-template.md) | DDD model template | Model system domains | Documents and templates | Optional |
 | [Functional Story Writing Standard](./reference/governance/sdlc/03-documentation/functional-story-writing-standard.md) | Functional story standard | Ensure specs quality | Standards and guidance | **Mandatory** |
 | [SDLC Documentation Best Practices](./reference/governance/sdlc/03-documentation/sdlc-documentation-best-practices.md) | Documentation best practices | Improve documentation quality | Standards and guidance | **Mandatory** |
-| [ADR Schema](./rulesets/schema/adr.schema.json) | JSON validation schema | Validate data structure | Rules and schemas | Optional |
-| [Functional Story Schema](./rulesets/schema/functional-story.schema.json) | JSON validation schema | Validate data structure | Rules and schemas | **Mandatory** |
+| [Validation Schemas & Rules (Phase 2)](./rulesets/README.md) | Validation schemas for ADRs and Functional Stories | Validate data structure | Rules and schemas | **Mandatory** |
 
 </details>
 
@@ -176,13 +135,9 @@ and operating guidance that satellite products inherit and specialize.
 |---|---|---|---|---|
 | [Artifact Templates Hub](./reference/governance/sdlc/04-artifact-templates/README.md) | Templates hub | Centralize SDLC formats | Documents and templates | **Mandatory** |
 | [Technical Story Template](./reference/governance/sdlc/04-artifact-templates/technical-story-template.md) | Technical story template | Structure technical tasks | Documents and templates | **Mandatory** |
-| [Construction-Focused SDLC Framework](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.md) | Construction framework | Regulate technical execution | Standards and guidance | **Mandatory** |
-| [Definition of Done](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.md) | Completeness criteria (DoD) | Define when a deliverable is done | Standards and guidance | **Mandatory** |
+| [Construction-Focused SDLC Framework](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.md) | Construction framework and Definition of Done (DoD) | Regulate technical execution | Standards and guidance | **Mandatory** |
 | [SDLC Quality Gates](./reference/governance/sdlc/quality-gates.md) | Quality gates | Establish approval thresholds | Standards and guidance | **Mandatory** |
-| [Technical Story Schema](./rulesets/schema/technical-story.schema.json) | JSON validation schema | Validate data structure | Rules and schemas | **Mandatory** |
-| [Definition of Done Rules](./rulesets/cross-cutting/definition-of-done.rules.json) | Automated rules | Validate compliance in CI | Rules and schemas | **Mandatory** |
-| [Quality Thresholds Rules](./rulesets/sdlc/quality-thresholds.rules.json) | Automated rules | Validate compliance in CI | Rules and schemas | **Mandatory** |
-| [Dependency Pinning Rules](./rulesets/sdlc/dependency-pinning.rules.json) | Automated rules | Validate compliance in CI | Rules and schemas | **Mandatory** |
+| [Validation Schemas & Rules (Phase 3)](./rulesets/README.md) | Schemas for Technical Stories, DoD rules, Thresholds and Dependency Pinning | Validate compliance in CI | Rules and schemas | **Mandatory** |
 
 </details>
 
@@ -193,7 +148,7 @@ and operating guidance that satellite products inherit and specialize.
 |---|---|---|---|---|
 | [Test Summary Report Template](./reference/governance/sdlc/04-artifact-templates/test-summary-report-template.md) | Test summary report | Consolidate QA results | Documents and templates | **Mandatory** |
 | [SDLC Traceability Model](./reference/governance/sdlc/traceability-model.md) | Traceability model | Link requirements and tests | Standards and guidance | **Mandatory** |
-| [Test Summary Report Schema](./rulesets/schema/test-summary-report.schema.json) | Test summary report validation schema | Validate artifact structure | Rules and schemas | **Mandatory** |
+| [Validation Schemas & Rules (Phase 4)](./rulesets/README.md) | Test summary report validation schema | Validate compliance in CI | Rules and schemas | **Mandatory** |
 
 </details>
 
@@ -203,9 +158,7 @@ and operating guidance that satellite products inherit and specialize.
 | Link (URL) | Description (brief explanation) | Goal / Objective | Typification (category or type) | Requirement |
 |---|---|---|---|---|
 | [Release Notes Template](./reference/governance/sdlc/04-artifact-templates/release-notes-template.md) | Release notes template | Communicate release changes | Documents and templates | **Mandatory** |
-| [Release Notes Schema](./rulesets/schema/release-notes.schema.json) | Release notes validation schema | Validate artifact structure | Rules and schemas | **Mandatory** |
-| [CI/CD Quality Gates Rules](./rulesets/adr/adr-0005-cicd-quality-gates.rules.json) | CI/CD gates rules (ADR-0005) | Automate pipeline validation | Rules and schemas | **Mandatory** |
-| [GitFlow Branching Rules](./rulesets/adr/adr-0050-gitflow-branching.rules.json) | Branching strategy ADR | Establish Git flow | Rules and schemas | **Mandatory** |
+| [Validation Schemas & Rules (Phase 5)](./rulesets/README.md) | Release notes validation schema, CI/CD gates rules (ADR-0005) and GitFlow (ADR-0050) | Automate pipeline validation | Rules and schemas | **Mandatory** |
 
 </details>
 
@@ -216,9 +169,7 @@ and operating guidance that satellite products inherit and specialize.
 
 | Link (URL) | Description (brief explanation) | Goal / Objective | Typification (category or type) |
 |---|---|---|---|
-| [Product Suite Hub](./reference/product-suite/README.md) | Product portfolio | Strategy and positioning | Product reference |
-| [Suite Vision](./reference/product-suite/vision/README.md) | Evolith Suite vision | Ecosystem direction | Product vision |
-| [Suite Strategy](./reference/product-suite/strategy/README.md) | Strategy and execution | Roadmap | Strategy |
+| [Product Suite Hub](./reference/product-suite/README.md) | Single entry point to portfolio vision, strategy and positioning | Ecosystem direction | Product reference |
 
 </details>
 
@@ -227,8 +178,7 @@ and operating guidance that satellite products inherit and specialize.
 
 | Link (URL) | Description (brief explanation) | Goal / Objective | Typification (category or type) |
 |---|---|---|---|
-| [Evolith Tracker Hub](./reference/products/evolith-tracker/README.md) | Evolith Tracker hub | Governance product | Product reference |
-| [Tracker Architecture](./reference/products/evolith-tracker/architecture/README.md) | Product architecture | Technical design | Product architecture |
+| [Evolith Tracker Hub](./reference/products/evolith-tracker/README.md) | Central hub grouping Tracker product architecture and technical interfaces | Governance product | Product reference |
 
 </details>
 
@@ -237,10 +187,7 @@ and operating guidance that satellite products inherit and specialize.
 
 | Link (URL) | Description (brief explanation) | Goal / Objective | Typification (category or type) |
 |---|---|---|---|
-| [UMS Reference Hub](./reference/knowledge/demo/README.md) | UMS reference hub | Demonstrate real implementation | Applied reference |
-| [UMS Reference Model](./reference/knowledge/demo/ums-reference-model.md) | UMS reference model | Guide satellite product development | Applied reference |
-| [Canonical Reference vs UMS Applied Model](./reference/knowledge/demo/demo-vs-reference.md) | Canonical vs UMS | Compare theory and application | Applied reference |
-| [UMS Architecture Portal](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) | UMS architecture portal | Document UMS specifically | Applied reference |
+| [UMS Reference Hub](./reference/knowledge/demo/README.md) | Consolidated access to UMS reference models, comparisons and architecture portal | Demonstrate real implementation | Applied reference |
 
 </details>
 
@@ -266,10 +213,7 @@ smart-cli mcp serve
 
 | Link (URL) | Description (brief explanation) | Goal / Objective | Typification (category or type) |
 |---|---|---|---|
-| [CLI Documentation](./sdk/cli/README.md) | CLI technical documentation | Understand the tool | Product reference |
-| [CLI Architecture](./sdk/cli/ARCHITECTURE.md) | Smart CLI architecture | CLI internal design | Product architecture |
-| [CLI Product Vision](./sdk/cli/docs/VISION.md) | CLI product vision | Long-term plan | Product vision |
-| [Gap Analysis](./sdk/cli/docs/planning/sdk-cli-mcp-current-state-assessment.md) | CLI state analysis | Monitor current progress | Product reference |
+| [Smart CLI Hub](./sdk/cli/README.md) | Central access to CLI documentation, architecture, vision and state analysis | Understand the tool | Product reference |
 
 </details>
 

@@ -55,26 +55,26 @@ Abre la fase en la que estas trabajando. Cada seccion agrupa los documentos, est
 
 | Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
 |---|---|---|---|
-| [Discovery Canvas](./reference/governance/sdlc/04-artifact-templates/discovery-canvas-template.es.md) | <!-- TODO --> | <!-- TODO --> | Documentos y plantillas |
-| [Business Case ROI](./reference/governance/sdlc/04-artifact-templates/business-case-roi-template.es.md) | <!-- TODO --> | <!-- TODO --> | Documentos y plantillas |
-| [Ballpark Estimation](./reference/governance/sdlc/04-artifact-templates/ballpark-estimation-template.es.md) | <!-- TODO --> | <!-- TODO --> | Documentos y plantillas |
-| [PRD - Documento de Requerimientos de Producto](./reference/governance/sdlc/04-artifact-templates/prd-template.es.md) | <!-- TODO --> | <!-- TODO --> | Documentos y plantillas |
-| [Evolith User Story](./reference/governance/sdlc/04-artifact-templates/evolith-user-story-template.es.md) | <!-- TODO --> | <!-- TODO --> | Documentos y plantillas |
-| [Agile Backlog](./reference/governance/sdlc/04-artifact-templates/agile-backlog-template.es.md) | <!-- TODO --> | <!-- TODO --> | Documentos y plantillas |
-| [CLI Impact Analysis](./reference/governance/sdlc/04-artifact-templates/cli-impact-analysis.es.md) | <!-- TODO --> | <!-- TODO --> | Documentos y plantillas |
-| [Directivas Arquitectonicas](./reference/governance/standards/vision/architectural-directives.es.md) | <!-- TODO --> | <!-- TODO --> | Estandares y guia |
-| [Taxonomia del Repositorio](./reference/governance/standards/repository-taxonomy.es.md) | <!-- TODO --> | <!-- TODO --> | Estandares y guia |
-| [Baseline Agnostica](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.es.md) | <!-- TODO --> | <!-- TODO --> | Estandares y guia |
-| [Manifiesto de Ingenieria](./reference/governance/standards/engineering/engineering-manifesto.es.md) | <!-- TODO --> | <!-- TODO --> | Estandares y guia |
-| [Mapeo de Artefactos SDLC](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.es.md) | <!-- TODO --> | <!-- TODO --> | Estandares y guia |
-| [Discovery Canvas Schema](./rulesets/schema/discovery-canvas.schema.json) | <!-- TODO --> | <!-- TODO --> | Reglas y schemas |
-| [Business Case ROI Schema](./rulesets/schema/business-case-roi.schema.json) | <!-- TODO --> | <!-- TODO --> | Reglas y schemas |
-| [Ballpark Estimation Schema](./rulesets/schema/ballpark-estimation.schema.json) | <!-- TODO --> | <!-- TODO --> | Reglas y schemas |
-| [PRD Schema](./rulesets/schema/prd.schema.json) | <!-- TODO --> | <!-- TODO --> | Reglas y schemas |
-| [Evolith User Story Schema](./rulesets/schema/evolith-user-story.schema.json) | <!-- TODO --> | <!-- TODO --> | Reglas y schemas |
-| [Agile Backlog Schema](./rulesets/schema/agile-backlog.schema.json) | <!-- TODO --> | <!-- TODO --> | Reglas y schemas |
-| [CLI Impact Analysis Schema](./rulesets/schema/cli-impact-analysis.schema.json) | <!-- TODO --> | <!-- TODO --> | Reglas y schemas |
-| [Phase Gates Rules](./rulesets/sdlc/phase-gates.rules.json) | <!-- TODO --> | <!-- TODO --> | Reglas y schemas |
+| [Discovery Canvas](./reference/governance/sdlc/04-artifact-templates/discovery-canvas-template.es.md) | Lienzo de descubrimiento | Definir visión y viabilidad | Documentos y plantillas |
+| [Business Case ROI](./reference/governance/sdlc/04-artifact-templates/business-case-roi-template.es.md) | Análisis de ROI | Justificar valor de negocio | Documentos y plantillas |
+| [Ballpark Estimation](./reference/governance/sdlc/04-artifact-templates/ballpark-estimation-template.es.md) | Estimación a gran escala | Proyectar costos y tiempos | Documentos y plantillas |
+| [PRD - Documento de Requerimientos de Producto](./reference/governance/sdlc/04-artifact-templates/prd-template.es.md) | Documento de requerimientos | Especificar necesidades funcionales | Documentos y plantillas |
+| [Evolith User Story](./reference/governance/sdlc/04-artifact-templates/evolith-user-story-template.es.md) | Plantilla de historia de usuario | Estandarizar historias ágiles | Documentos y plantillas |
+| [Agile Backlog](./reference/governance/sdlc/04-artifact-templates/agile-backlog-template.es.md) | Plantilla de backlog | Organizar entregables | Documentos y plantillas |
+| [CLI Impact Analysis](./reference/governance/sdlc/04-artifact-templates/cli-impact-analysis.es.md) | Análisis de impacto CLI | Evaluar cambios cross-repo | Documentos y plantillas |
+| [Directivas Arquitectonicas](./reference/governance/standards/vision/architectural-directives.es.md) | Directivas de arquitectura | Alinear diseño corporativo | Estandares y guia |
+| [Taxonomia del Repositorio](./reference/governance/standards/repository-taxonomy.es.md) | Taxonomía de repositorios | Clasificar repositorios | Estandares y guia |
+| [Baseline Agnostica](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.es.md) | Stack agnóstico | Definir tecnologías base | Estandares y guia |
+| [Manifiesto de Ingenieria](./reference/governance/standards/engineering/engineering-manifesto.es.md) | Manifiesto de ingeniería | Establecer principios técnicos | Estandares y guia |
+| [Mapeo de Artefactos SDLC](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.es.md) | Mapeo de artefactos | Vincular fases y entregables | Estandares y guia |
+| [Discovery Canvas Schema](./rulesets/schema/discovery-canvas.schema.json) | Lienzo de descubrimiento | Definir visión y viabilidad | Reglas y schemas |
+| [Business Case ROI Schema](./rulesets/schema/business-case-roi.schema.json) | Análisis de ROI | Justificar valor de negocio | Reglas y schemas |
+| [Ballpark Estimation Schema](./rulesets/schema/ballpark-estimation.schema.json) | Estimación a gran escala | Proyectar costos y tiempos | Reglas y schemas |
+| [PRD Schema](./rulesets/schema/prd.schema.json) | Documento de requerimientos | Especificar necesidades funcionales | Reglas y schemas |
+| [Evolith User Story Schema](./rulesets/schema/evolith-user-story.schema.json) | Plantilla de historia de usuario | Estandarizar historias ágiles | Reglas y schemas |
+| [Agile Backlog Schema](./rulesets/schema/agile-backlog.schema.json) | Plantilla de backlog | Organizar entregables | Reglas y schemas |
+| [CLI Impact Analysis Schema](./rulesets/schema/cli-impact-analysis.schema.json) | Análisis de impacto CLI | Evaluar cambios cross-repo | Reglas y schemas |
+| [Phase Gates Rules](./rulesets/sdlc/phase-gates.rules.json) | Reglas automatizadas | Validar cumplimiento en CI | Reglas y schemas |
 
 </details>
 
@@ -83,22 +83,22 @@ Abre la fase en la que estas trabajando. Cada seccion agrupa los documentos, est
 
 | Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
 |---|---|---|---|
-| [Plantilla ADR](./reference/governance/sdlc/04-artifact-templates/adr-template.es.md) | <!-- TODO --> | <!-- TODO --> | Documentos y plantillas |
-| [Plantilla de Historia Funcional](./reference/governance/sdlc/04-artifact-templates/functional-story-template.es.md) | <!-- TODO --> | <!-- TODO --> | Documentos y plantillas |
-| [Plantilla de Modelo DDD](./reference/governance/sdlc/04-artifact-templates/ddd-model-template.es.md) | <!-- TODO --> | <!-- TODO --> | Documentos y plantillas |
-| [Hub de Arquitectura](./reference/architecture/README.es.md) | <!-- TODO --> | <!-- TODO --> | Estandares y guia |
-| [Blueprint de Referencia](./reference/architecture/blueprints/reference-blueprint.es.md) | <!-- TODO --> | <!-- TODO --> | Estandares y guia |
-| [Tech Stack Autoritativo](./reference/architecture/blueprints/authoritative-tech-stack.es.md) | <!-- TODO --> | <!-- TODO --> | Estandares y guia |
-| [Registro ADR](./reference/architecture/adrs/README.es.md) | <!-- TODO --> | <!-- TODO --> | Estandares y guia |
-| [Matriz de Decision ADR](./reference/architecture/adrs/adr-matrix.es.md) | <!-- TODO --> | <!-- TODO --> | Estandares y guia |
-| [Estandar de Escritura de Historias Funcionales](./reference/governance/sdlc/03-documentation/functional-story-writing-standard.es.md) | <!-- TODO --> | <!-- TODO --> | Estandares y guia |
-| [Buenas Practicas de Documentacion SDLC](./reference/governance/sdlc/03-documentation/sdlc-documentation-best-practices.es.md) | <!-- TODO --> | <!-- TODO --> | Estandares y guia |
-| [Checklist de Simplicidad Fase 1](./reference/architecture/blueprints/simplicity-checklist-phase-01.es.md) | <!-- TODO --> | <!-- TODO --> | Estandares y guia |
-| [Mapeo de Artefactos SDLC](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.es.md) | <!-- TODO --> | <!-- TODO --> | Estandares y guia |
-| [ADR Schema](./rulesets/schema/adr.schema.json) | <!-- TODO --> | <!-- TODO --> | Reglas y schemas |
-| [Functional Story Schema](./rulesets/schema/functional-story.schema.json) | <!-- TODO --> | <!-- TODO --> | Reglas y schemas |
-| [Reglas de Arquitectura](./rulesets/architecture/README.md) | <!-- TODO --> | <!-- TODO --> | Reglas y schemas |
-| [Reglas ADR](./rulesets/adr/README.md) | <!-- TODO --> | <!-- TODO --> | Reglas y schemas |
+| [Plantilla ADR](./reference/governance/sdlc/04-artifact-templates/adr-template.es.md) | Plantilla de ADR | Documentar decisiones clave | Documentos y plantillas |
+| [Plantilla de Historia Funcional](./reference/governance/sdlc/04-artifact-templates/functional-story-template.es.md) | Plantilla de historia funcional | Detallar comportamiento | Documentos y plantillas |
+| [Plantilla de Modelo DDD](./reference/governance/sdlc/04-artifact-templates/ddd-model-template.es.md) | Plantilla de modelo DDD | Modelar dominios del sistema | Documentos y plantillas |
+| [Hub de Arquitectura](./reference/architecture/README.es.md) | Hub de arquitectura | Centralizar recursos de diseño | Estandares y guia |
+| [Blueprint de Referencia](./reference/architecture/blueprints/reference-blueprint.es.md) | Blueprint de referencia | Guiar implementación estándar | Estandares y guia |
+| [Tech Stack Autoritativo](./reference/architecture/blueprints/authoritative-tech-stack.es.md) | Stack autoritativo | Normar uso de tecnologías | Estandares y guia |
+| [Registro ADR](./reference/architecture/adrs/README.es.md) | Registro de ADRs | Mantener histórico de decisiones | Estandares y guia |
+| [Matriz de Decision ADR](./reference/architecture/adrs/adr-matrix.es.md) | Matriz de decisiones ADR | Visualizar impacto de decisiones | Estandares y guia |
+| [Estandar de Escritura de Historias Funcionales](./reference/governance/sdlc/03-documentation/functional-story-writing-standard.es.md) | Estándar de historias funcionales | Asegurar calidad de specs | Estandares y guia |
+| [Buenas Practicas de Documentacion SDLC](./reference/governance/sdlc/03-documentation/sdlc-documentation-best-practices.es.md) | Prácticas de documentación | Mejorar calidad documental | Estandares y guia |
+| [Checklist de Simplicidad Fase 1](./reference/architecture/blueprints/simplicity-checklist-phase-01.es.md) | Checklist de simplicidad | Prevenir sobre-ingeniería | Estandares y guia |
+| [Mapeo de Artefactos SDLC](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.es.md) | Mapeo de artefactos | Vincular fases y entregables | Estandares y guia |
+| [ADR Schema](./rulesets/schema/adr.schema.json) | Esquema de validación JSON | Validar estructura de datos | Reglas y schemas |
+| [Functional Story Schema](./rulesets/schema/functional-story.schema.json) | Esquema de validación JSON | Validar estructura de datos | Reglas y schemas |
+| [Reglas de Arquitectura](./rulesets/architecture/README.md) | Reglas de arquitectura | Validar diseño | Reglas y schemas |
+| [Reglas ADR](./rulesets/adr/README.md) | Reglas de ADR | Asegurar formato de decisiones | Reglas y schemas |
 
 </details>
 
@@ -107,21 +107,21 @@ Abre la fase en la que estas trabajando. Cada seccion agrupa los documentos, est
 
 | Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
 |---|---|---|---|
-| [Plantilla de Historia Tecnica](./reference/governance/sdlc/04-artifact-templates/technical-story-template.es.md) | <!-- TODO --> | <!-- TODO --> | Documentos y plantillas |
-| [Hub de Plantillas de Artefactos](./reference/governance/sdlc/04-artifact-templates/README.es.md) | <!-- TODO --> | <!-- TODO --> | Documentos y plantillas |
-| [Framework SDLC Enfocado en Construccion](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.es.md) | <!-- TODO --> | <!-- TODO --> | Estandares y guia |
-| [Definition of Done](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.es.md) | <!-- TODO --> | <!-- TODO --> | Estandares y guia |
-| [Quality Gates SDLC](./reference/governance/sdlc/quality-gates.es.md) | <!-- TODO --> | <!-- TODO --> | Estandares y guia |
-| [Patrones Canonicos](./reference/architecture/canonical-patterns/README.es.md) | <!-- TODO --> | <!-- TODO --> | Estandares y guia |
-| [Guia de Contract Testing](./reference/governance/standards/engineering/contract-testing-guideline.es.md) | <!-- TODO --> | <!-- TODO --> | Estandares y guia |
-| [Evaluacion de Riesgo de Proveedores](./reference/governance/standards/engineering/vendor-risk-assessment.es.md) | <!-- TODO --> | <!-- TODO --> | Estandares y guia |
-| [Estandares de Ingenieria Augmentada por IA](./reference/governance/standards/ai-augmented/README.es.md) | <!-- TODO --> | <!-- TODO --> | Estandares y guia |
-| [Mapeo de Artefactos SDLC](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.es.md) | <!-- TODO --> | <!-- TODO --> | Estandares y guia |
-| [Technical Story Schema](./rulesets/schema/technical-story.schema.json) | <!-- TODO --> | <!-- TODO --> | Reglas y schemas |
-| [Definition of Done Rules](./rulesets/cross-cutting/definition-of-done.rules.json) | <!-- TODO --> | <!-- TODO --> | Reglas y schemas |
-| [Engineering Manifesto Rules](./rulesets/cross-cutting/engineering-manifesto.rules.json) | <!-- TODO --> | <!-- TODO --> | Reglas y schemas |
-| [Quality Thresholds Rules](./rulesets/sdlc/quality-thresholds.rules.json) | <!-- TODO --> | <!-- TODO --> | Reglas y schemas |
-| [Dependency Pinning Rules](./rulesets/sdlc/dependency-pinning.rules.json) | <!-- TODO --> | <!-- TODO --> | Reglas y schemas |
+| [Plantilla de Historia Tecnica](./reference/governance/sdlc/04-artifact-templates/technical-story-template.es.md) | Plantilla de historia técnica | Estructurar tareas técnicas | Documentos y plantillas |
+| [Hub de Plantillas de Artefactos](./reference/governance/sdlc/04-artifact-templates/README.es.md) | Hub de plantillas | Centralizar formatos SDLC | Documentos y plantillas |
+| [Framework SDLC Enfocado en Construccion](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.es.md) | Framework de construcción | Normar ejecución técnica | Estandares y guia |
+| [Definition of Done](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.es.md) | Framework de construcción | Normar ejecución técnica | Estandares y guia |
+| [Quality Gates SDLC](./reference/governance/sdlc/quality-gates.es.md) | Gates de calidad | Establecer umbrales de aprobación | Estandares y guia |
+| [Patrones Canonicos](./reference/architecture/canonical-patterns/README.es.md) | Patrones canónicos | Reutilizar soluciones probadas | Estandares y guia |
+| [Guia de Contract Testing](./reference/governance/standards/engineering/contract-testing-guideline.es.md) | Guía de pruebas de contrato | Asegurar compatibilidad de APIs | Estandares y guia |
+| [Evaluacion de Riesgo de Proveedores](./reference/governance/standards/engineering/vendor-risk-assessment.es.md) | Evaluación de riesgo de proveedores | Mitigar bloqueo tecnológico | Estandares y guia |
+| [Estandares de Ingenieria Augmentada por IA](./reference/governance/standards/ai-augmented/README.es.md) | Estándares de IA aumentada | Guiar desarrollo con IA | Estandares y guia |
+| [Mapeo de Artefactos SDLC](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.es.md) | Mapeo de artefactos | Vincular fases y entregables | Estandares y guia |
+| [Technical Story Schema](./rulesets/schema/technical-story.schema.json) | Esquema de validación JSON | Validar estructura de datos | Reglas y schemas |
+| [Definition of Done Rules](./rulesets/cross-cutting/definition-of-done.rules.json) | Reglas automatizadas | Validar cumplimiento en CI | Reglas y schemas |
+| [Engineering Manifesto Rules](./rulesets/cross-cutting/engineering-manifesto.rules.json) | Manifiesto de ingeniería | Establecer principios técnicos | Reglas y schemas |
+| [Quality Thresholds Rules](./rulesets/sdlc/quality-thresholds.rules.json) | Reglas automatizadas | Validar cumplimiento en CI | Reglas y schemas |
+| [Dependency Pinning Rules](./rulesets/sdlc/dependency-pinning.rules.json) | Reglas automatizadas | Validar cumplimiento en CI | Reglas y schemas |
 
 </details>
 
@@ -130,16 +130,16 @@ Abre la fase en la que estas trabajando. Cada seccion agrupa los documentos, est
 
 | Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
 |---|---|---|---|
-| [Plantilla de Test Summary Report](./reference/governance/sdlc/04-artifact-templates/test-summary-report-template.es.md) | <!-- TODO --> | <!-- TODO --> | Documentos y plantillas |
-| [Quality Gates SDLC](./reference/governance/sdlc/quality-gates.es.md) | <!-- TODO --> | <!-- TODO --> | Estandares y guia |
-| [Modelo de Trazabilidad SDLC](./reference/governance/sdlc/traceability-model.es.md) | <!-- TODO --> | <!-- TODO --> | Estandares y guia |
-| [ADR de Testing Pyramid](./reference/architecture/adrs/core/0018-testing-pyramid-quality-gates.es.md) | <!-- TODO --> | <!-- TODO --> | Estandares y guia |
-| [ADR de Aislamiento de Unit Testing](./reference/architecture/adrs/core/0052-unit-testing-isolation-strategy.es.md) | <!-- TODO --> | <!-- TODO --> | Estandares y guia |
-| [ADR de Integration y E2E Testing](./reference/architecture/adrs/core/0053-integration-e2e-testing-strategy.es.md) | <!-- TODO --> | <!-- TODO --> | Estandares y guia |
-| [Mapeo de Artefactos SDLC](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.es.md) | <!-- TODO --> | <!-- TODO --> | Estandares y guia |
-| [Test Summary Report Schema](./rulesets/schema/test-summary-report.schema.json) | <!-- TODO --> | <!-- TODO --> | Reglas y schemas |
-| [Quality Thresholds Rules](./rulesets/sdlc/quality-thresholds.rules.json) | <!-- TODO --> | <!-- TODO --> | Reglas y schemas |
-| [Testing Pyramid Rules](./rulesets/adr/adr-0018-testing-pyramid.rules.json) | <!-- TODO --> | <!-- TODO --> | Reglas y schemas |
+| [Plantilla de Test Summary Report](./reference/governance/sdlc/04-artifact-templates/test-summary-report-template.es.md) | Reporte de pruebas | Consolidar resultados de QA | Documentos y plantillas |
+| [Quality Gates SDLC](./reference/governance/sdlc/quality-gates.es.md) | Gates de calidad | Establecer umbrales de aprobación | Estandares y guia |
+| [Modelo de Trazabilidad SDLC](./reference/governance/sdlc/traceability-model.es.md) | Modelo de trazabilidad | Vincular requerimientos y pruebas | Estandares y guia |
+| [ADR de Testing Pyramid](./reference/architecture/adrs/core/0018-testing-pyramid-quality-gates.es.md) | Gates de calidad | Establecer umbrales de aprobación | Estandares y guia |
+| [ADR de Aislamiento de Unit Testing](./reference/architecture/adrs/core/0052-unit-testing-isolation-strategy.es.md) | Aislamiento de pruebas (ADR) | Normar uso de mocks | Estandares y guia |
+| [ADR de Integration y E2E Testing](./reference/architecture/adrs/core/0053-integration-e2e-testing-strategy.es.md) | Pruebas de integración y E2E (ADR) | Establecer pruebas end-to-end | Estandares y guia |
+| [Mapeo de Artefactos SDLC](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.es.md) | Mapeo de artefactos | Vincular fases y entregables | Estandares y guia |
+| [Test Summary Report Schema](./rulesets/schema/test-summary-report.schema.json) | Reporte de pruebas | Consolidar resultados de QA | Reglas y schemas |
+| [Quality Thresholds Rules](./rulesets/sdlc/quality-thresholds.rules.json) | Reglas automatizadas | Validar cumplimiento en CI | Reglas y schemas |
+| [Testing Pyramid Rules](./rulesets/adr/adr-0018-testing-pyramid.rules.json) | Pirámide de pruebas (ADR) | Definir estrategia de testeo | Reglas y schemas |
 
 </details>
 
@@ -148,16 +148,16 @@ Abre la fase en la que estas trabajando. Cada seccion agrupa los documentos, est
 
 | Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
 |---|---|---|---|
-| [Plantilla de Release Notes](./reference/governance/sdlc/04-artifact-templates/release-notes-template.es.md) | <!-- TODO --> | <!-- TODO --> | Documentos y plantillas |
-| [Hub de Operaciones](./reference/operations/README.es.md) | <!-- TODO --> | <!-- TODO --> | Estandares y guia |
-| [Hub de Infraestructura](./reference/infrastructure/README.es.md) | <!-- TODO --> | <!-- TODO --> | Estandares y guia |
-| [Playbook de Observabilidad](./reference/governance/standards/engineering/observability-playbook.es.md) | <!-- TODO --> | <!-- TODO --> | Estandares y guia |
-| [Flujo de Arquitectura de Observabilidad](./reference/architecture/blueprints/observability-architecture-flow.es.md) | <!-- TODO --> | <!-- TODO --> | Estandares y guia |
-| [Escenarios de Despliegue Multi-Cloud](./reference/architecture/blueprints/multi-cloud-deployment-scenarios.es.md) | <!-- TODO --> | <!-- TODO --> | Estandares y guia |
-| [Mapeo de Artefactos SDLC](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.es.md) | <!-- TODO --> | <!-- TODO --> | Estandares y guia |
-| [Release Notes Schema](./rulesets/schema/release-notes.schema.json) | <!-- TODO --> | <!-- TODO --> | Reglas y schemas |
-| [CI/CD Quality Gates Rules](./rulesets/adr/adr-0005-cicd-quality-gates.rules.json) | <!-- TODO --> | <!-- TODO --> | Reglas y schemas |
-| [GitFlow Branching Rules](./rulesets/adr/adr-0050-gitflow-branching.rules.json) | <!-- TODO --> | <!-- TODO --> | Reglas y schemas |
+| [Plantilla de Release Notes](./reference/governance/sdlc/04-artifact-templates/release-notes-template.es.md) | Plantilla de notas de versión | Comunicar cambios de release | Documentos y plantillas |
+| [Hub de Operaciones](./reference/operations/README.es.md) | Hub de operaciones | Centralizar guías operativas | Estandares y guia |
+| [Hub de Infraestructura](./reference/infrastructure/README.es.md) | Hub de infraestructura | Normar despliegues | Estandares y guia |
+| [Playbook de Observabilidad](./reference/governance/standards/engineering/observability-playbook.es.md) | Playbook de observabilidad | Guiar telemetría | Estandares y guia |
+| [Flujo de Arquitectura de Observabilidad](./reference/architecture/blueprints/observability-architecture-flow.es.md) | Arquitectura de observabilidad | Trazar propagación de señales | Estandares y guia |
+| [Escenarios de Despliegue Multi-Cloud](./reference/architecture/blueprints/multi-cloud-deployment-scenarios.es.md) | Escenarios multi-cloud | Definir topologías cloud | Estandares y guia |
+| [Mapeo de Artefactos SDLC](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.es.md) | Mapeo de artefactos | Vincular fases y entregables | Estandares y guia |
+| [Release Notes Schema](./rulesets/schema/release-notes.schema.json) | Plantilla de notas de versión | Comunicar cambios de release | Reglas y schemas |
+| [CI/CD Quality Gates Rules](./rulesets/adr/adr-0005-cicd-quality-gates.rules.json) | Gates de calidad | Establecer umbrales de aprobación | Reglas y schemas |
+| [GitFlow Branching Rules](./rulesets/adr/adr-0050-gitflow-branching.rules.json) | Estrategia de ramas (ADR) | Establecer flujo de Git | Reglas y schemas |
 
 </details>
 

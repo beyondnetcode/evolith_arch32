@@ -9,9 +9,9 @@ Esta área contiene la visión de portafolio de Evolith Product Suite. Explica q
 
 ## Documentos Canónicos Actuales
 
-- [Visión Maestra del Producto Evolith](../../../governance/standards/vision/evolith-product-vision-master.es.md)
-- [Framework Estratégico de Validación y Composición](../../../governance/standards/vision/evolith-strategic-validation-and-composition-framework.es.md)
-- [Diseño Objetivo de Composición Gobernada](../../../governance/standards/vision/evolith-governed-composition-target-design.es.md)
+- [Visión Maestra del Producto Evolith](../../governance/standards/vision/evolith-product-vision-master.es.md)
+- [Framework Estratégico de Validación y Composición](../../governance/standards/vision/evolith-strategic-validation-and-composition-framework.es.md)
+- [Diseño Objetivo de Composición Gobernada](../../governance/standards/vision/evolith-governed-composition-target-design.es.md)
 
 > Durante la migración de compatibilidad, los archivos enlazados permanecen en sus ubicaciones heredadas. Su clasificación actual es Product Suite, no Evolith Core.
 

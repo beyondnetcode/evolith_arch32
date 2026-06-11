@@ -5,8 +5,8 @@
 **Status:** Active Tracking
 **Owner:** Evolith Architecture Board
 **Created:** 2026-06-10
-**Last Updated:** 2026-06-10
-**References:** [Product Vision Master](./evolith-product-vision-master.md) · [SDLC Tracker Technical Interfaces](./sdlc-tracker-technical-interfaces.md)
+**Last Updated:** 2026-06-11
+**References:** [Product Vision Master](./evolith-product-vision-master.md) · [SDLC Tracker Technical Interfaces](./sdlc-tracker-technical-interfaces.md) · [Maturity Assessment](./maturity-assessment.md) · [ADR Authoring Standard](../../../architecture/adrs/adr-authoring-standard.md)
 
 ---
 
@@ -30,32 +30,64 @@ It supersedes and absorbs (2026-06-10): `gap-analysis-core.md` (narrative gap an
 
 ## 2. Dashboard
 
+### 2.1 Recommended Execution Order (pending work queue)
+
+Ordering criteria: criticality first (`P1` before `P2`), then quick wins (`S` before `M` before `L`) within the active phase plan (F2 → F3 → F4 → F5 → Cross), respecting dependencies (GT-22 decides ADR identity before GT-21 relocates files; GT-19 and GT-20 advance incrementally alongside everything else).
+
+| # | ID | Activity | Goal (what success looks like) | Crit. | Compl. | Refs |
+|:-:|----|----------|--------------------------------|:---:|:---:|------|
+| 1 | [GT-05](#gt-05) | Replace hand-rolled HTTP transport with MCP SDK Streamable HTTP | Spec-compliant MCP server with session handling | P1 | M | [MCP rules](../../../../rulesets/mcp/README.md) |
+| 2 | [GT-08](#gt-08) | Phase 2 gate: real ADR registry check | Design without ADR backing fails the gate | P1 | S | [Quality Gates](../../sdlc/quality-gates.md) |
+| 3 | [GT-09](#gt-09) | Phase 3 gate: real coverage check | Coverage <80% blocks Successful Build | P1 | S | [Quality Gates](../../sdlc/quality-gates.md) |
+| 4 | [GT-12](#gt-12) | `--dry-run` on `architecture scaffold` and `adr` | Every write command previews safely | P1 | S | [ADR 0073](../../../architecture/adrs/core/0073-unified-cli-output-contract.md) |
+| 5 | [GT-10](#gt-10) | Phase 4 gate: security scan evidence | High/Critical CVEs block the RC | P1 | M | [Quality Gates](../../sdlc/quality-gates.md) |
+| 6 | [GT-11](#gt-11) | Phase 5 gate: observability + rollback evidence | No rollback plan, no Production Live | P1 | M | [Traceability Model](../../sdlc/traceability-model.md) |
+| 7 | [GT-14](#gt-14) | Outbound webhook on gate completion | Tracker receives `GateEvidence` push | P1 | S | [Tracker Interfaces](./sdlc-tracker-technical-interfaces.md) |
+| 8 | [GT-13](#gt-13) | `evolith-phase-advance` autonomous gate runner | One call evaluates a full phase transition | P1 | M | [Tracker Interfaces](./sdlc-tracker-technical-interfaces.md) |
+| 9 | [GT-18](#gt-18) | Publish `@evolith/smart-cli` to npm | `npm i -g` works from the public registry | P1 | S | [Smart CLI Hub](../../../../sdk/cli/README.md) |
+| 10 | [GT-20](#gt-20) | ADR content backfill (164 files with stub sections) | No ADR carries a GT-20 marker | P1 | L | [Authoring Standard](../../../architecture/adrs/adr-authoring-standard.md) |
+| 11 | [GT-19](#gt-19) | Hexagonal migration of `core/` god-layer (opportunistic) | `core/` = composition root only | P1 | L | [ADR Registry](../../../architecture/adrs/README.md) |
+| 12 | [GT-07](#gt-07) | `mcp:smoke` covers gate evaluation over HTTP | Contract regressions fail the release smoke | P2 | S | [MCP rules](../../../../rulesets/mcp/README.md) |
+| 13 | [GT-22](#gt-22) | ADR ID uniqueness scheme | Unambiguous citation for colliding IDs | P2 | S | [ADR Matrix](../../../architecture/adrs/adr-matrix.md) |
+| 14 | [GT-26](#gt-26) | Zero-Downtime Release Playbook | Phase 5 "Coming Soon" replaced by a real runbook | P2 | S | [SDLC Center](../../sdlc/README.md) |
+| 15 | [GT-17](#gt-17) | DI consolidation + ESLint boundary hardening | One DI mechanism, strict layer boundaries | P2 | M | [Smart CLI Hub](../../../../sdk/cli/README.md) |
+| 16 | [GT-21](#gt-21) | Relocate tool-centric Core ADRs (after GT-22) | Every Core ADR passes the litmus test | P2 | M | [Authoring Standard](../../../architecture/adrs/adr-authoring-standard.md) |
+| 17 | [GT-24](#gt-24) | Execute declared documentation migrations | Zero "migration pending" markers | P2 | M | [Product Suite Hub](../../../product-suite/README.md) |
+| 18 | [GT-23](#gt-23) | Spanish translation backfill (73 skeleton files) | No skeleton markers under `reference/` | P2 | L | [Bilingual Index](../../../navigation/BILINGUAL_INDEX.md) |
+| 19 | [GT-25](#gt-25) | First provider profiles for platform categories | Each category holds ≥1 real profile | P2 | L | [Platforms Hub](../../../platforms/README.md) |
+
+### 2.2 Full Dashboard (status → criticality → complexity)
+
 | ID | Gap | Phase | Criticality | Complexity | Status |
 |----|-----|:---:|:---:|:---:|:---:|
+| [GT-05](#gt-05) | Replace `MinimalHttpTransport` with MCP SDK Streamable HTTP | F2 | P1 | M | PENDING |
+| [GT-08](#gt-08) | Phase 2 gate: real ADR registry check | F3 | P1 | S | PENDING |
+| [GT-09](#gt-09) | Phase 3 gate: real coverage check from CI report | F3 | P1 | S | PENDING |
+| [GT-12](#gt-12) | `--dry-run` on all write operations | F3 | P1 | S | PENDING |
+| [GT-14](#gt-14) | Outbound webhook on gate completion | F4 | P1 | S | PENDING |
+| [GT-18](#gt-18) | Publish `@evolith/smart-cli` to npm | F5 | P1 | S | PENDING |
+| [GT-10](#gt-10) | Phase 4 gate: security scan evidence | F3 | P1 | M | PENDING |
+| [GT-11](#gt-11) | Phase 5 gate: observability + rollback evidence | F3 | P1 | M | PENDING |
+| [GT-13](#gt-13) | `evolith-phase-advance` autonomous gate runner | F4 | P1 | M | PENDING |
+| [GT-19](#gt-19) | Incremental hexagonal migration of `core/` god-layer | Cross | P1 | L | PENDING |
+| [GT-20](#gt-20) | ADR content backfill to authoring standard | Cross | P1 | L | PENDING |
+| [GT-07](#gt-07) | Extend `mcp:smoke` to cover gate evaluation over HTTP | F2 | P2 | S | PENDING |
+| [GT-22](#gt-22) | ADR ID uniqueness scheme (cross-category collisions) | Cross | P2 | S | PENDING |
+| [GT-26](#gt-26) | Zero-Downtime Release Playbook for SDLC Phase 5 | Cross | P2 | S | PENDING |
+| [GT-17](#gt-17) | DI consolidation + ESLint boundary hardening | F5 | P2 | M | PENDING |
+| [GT-21](#gt-21) | Placement review of tool-centric Core ADRs | Cross | P2 | M | PENDING |
+| [GT-24](#gt-24) | Execute declared documentation migrations | Cross | P2 | M | PENDING |
+| [GT-23](#gt-23) | Spanish translation backfill of the reference corpus | Cross | P2 | L | PENDING |
+| [GT-25](#gt-25) | First provider profiles for platform categories | Cross | P2 | L | PENDING |
+| [GT-15](#gt-15) | Session-aware chatbox endpoint | F4 | P2 | L | DEFERRED |
 | [GT-01](#gt-01) | Unified contract ADR (output envelope + GateEvidence + global flags) | F0 | P0 | S | DONE |
 | [GT-02](#gt-02) | `GateEvidence` modeled in the domain layer | F1 | P0 | M | DONE |
 | [GT-03](#gt-03) | `EvaluateGateUseCase` + `gate evaluate` command | F1 | P0 | M | DONE |
-| [GT-04](#gt-04) | Remove service locator from domain · relocate telemetry | F1 | P1 | S | DONE |
-| [GT-05](#gt-05) | Replace `MinimalHttpTransport` with MCP SDK Streamable HTTP | F2 | P1 | M | PENDING |
 | [GT-06](#gt-06) | MCP tool `evolith-gate-evaluate` + phase context on existing tools | F2 | P0 | M | DONE |
-| [GT-07](#gt-07) | Extend `mcp:smoke` to cover gate evaluation over HTTP | F2 | P2 | S | PENDING |
-| [GT-08](#gt-08) | Phase 2 gate: real ADR registry check | F3 | P1 | S | PENDING |
-| [GT-09](#gt-09) | Phase 3 gate: real coverage check from CI report | F3 | P1 | S | PENDING |
-| [GT-10](#gt-10) | Phase 4 gate: security scan evidence | F3 | P1 | M | PENDING |
-| [GT-11](#gt-11) | Phase 5 gate: observability + rollback evidence | F3 | P1 | M | PENDING |
-| [GT-12](#gt-12) | `--dry-run` on all write operations | F3 | P1 | S | PENDING |
-| [GT-13](#gt-13) | `evolith-phase-advance` autonomous gate runner | F4 | P1 | M | PENDING |
-| [GT-14](#gt-14) | Outbound webhook on gate completion | F4 | P1 | S | PENDING |
-| [GT-15](#gt-15) | Session-aware chatbox endpoint | F4 | P2 | L | DEFERRED |
+| [GT-04](#gt-04) | Remove service locator from domain · relocate telemetry | F1 | P1 | S | DONE |
 | [GT-16](#gt-16) | Documentation consolidation (single source of truth) | F5 | P2 | S | DONE |
-| [GT-17](#gt-17) | DI consolidation + ESLint boundary hardening | F5 | P2 | M | PENDING |
-| [GT-18](#gt-18) | Publish `@evolith/smart-cli` to npm | F5 | P1 | S | PENDING |
-| [GT-19](#gt-19) | Incremental hexagonal migration of `core/` god-layer | Cross | P1 | L | PENDING |
-| [GT-20](#gt-20) | ADR content backfill to authoring standard | Cross | P1 | L | PENDING |
-| [GT-21](#gt-21) | Placement review of tool-centric Core ADRs | Cross | P2 | M | PENDING |
-| [GT-22](#gt-22) | ADR ID uniqueness scheme (cross-category collisions) | Cross | P2 | S | PENDING |
 
-**Progress:** 6 / 22 done · 1 deferred
+**Progress:** 6 / 26 done · 1 deferred · 19 pending
 
 ---
 
@@ -237,6 +269,42 @@ It supersedes and absorbs (2026-06-10): `gap-analysis-core.md` (narrative gap an
 - **Criticality:** P2 · **Complexity:** S · **Status:** PENDING
 - **Objective:** Resolve the cross-category ID collisions (core/0044–0048 vs nodejs/0044–0048; core/0069–0072 vs dotnet/0069–0072): decide between global renumbering (high link blast radius) or formalized category-qualified citation (`core/ADR-0044`), and update `adr-matrix` and rulesets accordingly. The Authoring Standard provisionally mandates category-qualified citation.
 - **Done when:** the decision is recorded (ADR or standard update) and `adr-matrix` reflects unambiguous identities.
+
+<a name="gt-23"></a>
+#### GT-23 · Spanish translation backfill of the reference corpus
+
+- **Criticality:** P2 · **Complexity:** L · **Status:** PENDING
+- **Goal:** every document under `reference/` and `rulesets/` is readable in Spanish with no declared skeleton placeholders.
+- **Objective:** Translate the 73 files marked "esqueleto inicial / pendiente de traducción" (inventory 2026-06-11), concentrated in `governance/standards/ai-augmented/*` (~33 files) and `knowledge/architecture-intelligence/patterns` (~10), plus 4 core ADR bodies (including `core/0056`, intentionally skeletal until its EN stabilizes). English remains the deciding source; Spanish mirrors header structure (bilingual parity). The 17 additional skeletons under `.harness/` and `.bmad-core/` are tool-consumed and out of scope.
+- **Done when:** `grep -rl "pendiente de traducción" reference/ rulesets/` returns zero files and `check-bilingual-parity.mjs` passes.
+- **References:** [Bilingual Index](../../../navigation/BILINGUAL_INDEX.md) · [Terminology Glossary](../../../../.harness/scripts/bilingual-terminology-glossary.md)
+
+<a name="gt-24"></a>
+#### GT-24 · Execute declared documentation migrations
+
+- **Criticality:** P2 · **Complexity:** M · **Status:** PENDING
+- **Goal:** the physical location of every document matches its declared taxonomy classification — no more "migration pending" notes.
+- **Objective:** Execute the migrations the hubs already declare: (1) move suite vision/strategy/positioning documents from the legacy `governance/standards/vision/` path into their `product-suite/` areas; (2) migrate Smart CLI and MCP Services documentation into `reference/products/`; (3) promote [Provider Abstraction and Plugin Model](./evolith-provider-abstraction-plugin-model.md) to a Core architecture principle; (4) move [Tracker Technical Interfaces](./sdlc-tracker-technical-interfaces.md) to the Tracker product design. Each move leaves a compatibility stub at the old path and fixes every inbound link in the same change.
+- **Done when:** no "migration pending / migración pendiente" marker remains in `reference/` or `sdk/`; `validate-docs.mjs` passes.
+- **References:** [Product Suite Hub](../../../product-suite/README.md) · [Product Designs Hub](../../../products/README.md) · [Documentation Taxonomy](../../../documentation-taxonomy.md)
+
+<a name="gt-25"></a>
+#### GT-25 · First provider profiles for platform categories
+
+- **Criticality:** P2 · **Complexity:** L · **Status:** PENDING
+- **Goal:** the Platform Guidance domain stops being an empty promise — each planned category holds at least one real provider profile.
+- **Objective:** Author provider profiles following the required-content checklist in the [Platforms Hub](../../../platforms/README.md) (capabilities, limitations, licensing, tenant isolation, adapter mapping, replaceability, current sources), starting with the categories the products already depend on: `scm/` (GitHub), `ci-cd/` (GitHub Actions), `observability/` (OTel stack), `security/` (CodeQL/Trivy).
+- **Done when:** every category directory exists with ≥1 profile (EN+ES) linked from the platforms hub table.
+- **References:** [Platforms Hub](../../../platforms/README.md) · [Validated Tool Catalog](../../../platforms/validated-tool-catalog.md)
+
+<a name="gt-26"></a>
+#### GT-26 · Zero-Downtime Release Playbook
+
+- **Criticality:** P2 · **Complexity:** S · **Status:** PENDING
+- **Goal:** SDLC Phase 5 links a real operational runbook instead of a "Coming Soon" placeholder.
+- **Objective:** Write the blue-green and canary deployment playbook announced in the [SDLC Governance Center](../../sdlc/README.md) Phase 5 table (EN+ES), covering zero-downtime constraints, rollback triggers, and observability checkpoints, and link it from the Phase 5 artifact table.
+- **Done when:** the Phase 5 row links the playbook and no "Coming Soon / Próximamente" marker remains in the SDLC center.
+- **References:** [SDLC Governance Center](../../sdlc/README.md) · [Quality Gates](../../sdlc/quality-gates.md)
 
 ---
 

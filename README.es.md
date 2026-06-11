@@ -283,7 +283,6 @@ smart-cli mcp serve
 | [Índice Maestro Global](./reference/navigation/MASTER_INDEX.es.md) | Navegación completa del repositorio por intención, rol y dominio | Localizar cualquier artefacto rápidamente | Índice de navegación |
 | [Índice Bilingüe](./reference/navigation/BILINGUAL_INDEX.es.md) | Estado autogenerado del emparejamiento EN/ES del corpus de referencia | Auditar cobertura bilingüe | Índice de navegación |
 | [Acceso Rápido por Stack](./reference/quick-access/README.es.md) | Camino más corto a los estándares de React, .NET y Node.js | Reducir fricción de navegación | Índice de navegación |
-| [Versiones de Documentación](./reference/navigation/DOCUMENTATION_VERSIONS.es.md) | Historial y política de releases documentales | Trazar releases documentales | Registro de versiones |
 | [Taxonomía Documental](./reference/documentation-taxonomy.es.md) | Qué tipo de documento pertenece a cada lugar | Mantener el corpus organizado | Referencia de gobernanza |
 
 ## Contribucion

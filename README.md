@@ -283,7 +283,6 @@ smart-cli mcp serve
 | [Global Master Index](./reference/navigation/MASTER_INDEX.md) | Complete repository navigation by intent, role, and domain | Locate any artifact quickly | Navigation index |
 | [Bilingual Index](./reference/navigation/BILINGUAL_INDEX.md) | Auto-generated EN/ES pairing status for the reference corpus | Audit bilingual coverage | Navigation index |
 | [Quick Access by Stack](./reference/quick-access/README.md) | Shortest path to React, .NET, and Node.js standards | Reduce navigation friction | Navigation index |
-| [Documentation Versions](./reference/navigation/DOCUMENTATION_VERSIONS.md) | Documentation release history and policy | Trace documentation releases | Version log |
 | [Documentation Taxonomy](./reference/documentation-taxonomy.md) | What kind of document belongs where | Keep the corpus organized | Governance reference |
 
 ## Contribution

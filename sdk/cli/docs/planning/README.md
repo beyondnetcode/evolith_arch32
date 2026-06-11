@@ -21,6 +21,8 @@ This directory contains planning documents for the SDK, CLI, and MCP components 
 | [Implementation Roadmap](./sdk-cli-mcp-implementation-roadmap.md) | Complete | 6-phase plan (XS to XL effort) |
 | [Testing Strategy](./testing-strategy.md) | Complete | Unit, integration, E2E testing approach |
 | [Release Readiness Checklist](./release-readiness-checklist.md) | Complete | Phase-gate release criteria |
+| [SDLC Handoff Protocol](../HANDOFF-PROTOCOL.md) | Complete | Knowledge, context, and artifact transfer between SDLC phases and agents |
+| [Historical CLI Backlog](./CLI-BACKLOG.md) | Superseded | Preserved for traceability; active tracking lives in the [gap-tracking board](../../../../reference/governance/standards/vision/gap-tracking.md) |
 
 ---
 

@@ -16,6 +16,12 @@ Los documentos de plataforma implementan contratos Core y requisitos de producto
 - Exigir que cada perfil de proveedor documente capacidades, límites, aislamiento y rutas de migración antes de su adopción.
 - Garantizar que cualquier proveedor por defecto pueda reemplazarse sin reescribir los contratos de Core ni de producto.
 
+## Documentos Actuales
+
+| Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
+|---|---|---|---|---|
+| [Catálogo de Herramientas Validadas](./validated-tool-catalog.es.md) | Herramientas validadas por fase, patrón de arquitectura y runtime; consumido por el Smart CLI para selección interactiva | Acotar las elecciones de herramientas a opciones validadas | Estándar corporativo | Sí |
+
 ## Categorías
 
 Categorías de proveedores planificadas, ordenadas según qué tan temprano las necesita un producto (gestión de trabajo primero, colaboración al final). Cada una contendrá perfiles de proveedor cuando se documenten:

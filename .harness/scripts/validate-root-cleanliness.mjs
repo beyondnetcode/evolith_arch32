@@ -22,7 +22,6 @@ const allowedFiles = new Set([
   ".release-please-manifest.json",
   "release-please-config.json",
   "COVERAGE_REPORT.md",
-  "evolith-validated-tool-catalog.md",
   "package.json",
   "package-lock.json"
 ]);

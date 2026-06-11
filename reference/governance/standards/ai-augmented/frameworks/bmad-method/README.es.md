@@ -56,10 +56,11 @@ Los siguientes elementos **no forman parte de BMAD-METHOD**; fueron construidos 
 
 | Elemento | Ubicacion | Proposito |
 | :--- | :--- | :--- |
-| 18 reglas harness (R-01–R-18) | `.harness/rules/global-rules.md` | Calidad documental, estandares de diagramas y gobernanza arquitectonica |
-| 4 agentes de gobernanza harness | `.harness/agents/agent-specs.md` | Revision bajo demanda: @po, @architect, @analyst, @devops |
-| 4 playbooks de gobernanza | `.harness/playbooks/` | Checklists operativos recurrentes |
+| 18 reglas harness (R-01–R-18) | [`.harness/rules/global-rules.md`](../../../../../../.harness/rules/global-rules.es.md) | Calidad documental, estandares de diagramas y gobernanza arquitectonica |
+| 4 agentes de gobernanza harness | [`.harness/agents/agent-specs.md`](../../../../../../.harness/agents/agent-specs.es.md) | Revision bajo demanda: @po, @architect, @analyst, @devops |
+| 4 playbooks de gobernanza | [`.harness/playbooks/`](../../../../../../.harness/playbooks/README.es.md) | Checklists operativos recurrentes |
 | Script `validate-docs.mjs` | `.harness/scripts/` | Validacion automatizada de UTF-8, links, anclas, bilingue y Mermaid |
+| Decision de layout modular del harness | [`.harness/adr/0001`](../../../../../../.harness/adr/0001-modular-system-architecture.es.md) | Por que el harness usa documentos pequenos de responsabilidad unica |
 | Restricciones arquitectonicas especificas | Personas de agente | Limites hexagonales, RLS, extraccion modular, trazabilidad ADR |
 
 ---
@@ -72,7 +73,7 @@ No se adoptaron todas las capacidades de BMAD-METHOD. Lo siguiente fue excluido 
 | :--- | :--- |
 | Directivas frontend especificas (React, Tailwind) | Este repositorio es agnostico a nivel de referencia; el stack frontend es especifico de demos |
 | Integraciones con herramientas de backlog | Se mantuvo en archivos planos para preservar independencia de herramientas |
-| Plantillas comunitarias BMAD no alineadas con la taxonomia ADR | Este repositorio usa sus propios formatos de ADR e historias en `.harness/templates/` |
+| Plantillas comunitarias BMAD no alineadas con la taxonomia ADR | Este repositorio usa sus propios formatos de ADR e historias en [`.harness/templates/`](../../../../../../.harness/templates/blueprints.es.md) |
 
 ---
 

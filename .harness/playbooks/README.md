@@ -4,25 +4,25 @@ Reusable workflows for agents and contributors working under BMAD-METHOD governa
 
 ## Available Playbooks
 
-1. `document-governance-playbook.md`
+1. [document-governance-playbook.md](./document-governance-playbook.md)
    - bilingual synchronization
    - business-first functional writing
    - stack coherence
    - diagram traceability
 
-2. `api-governance-playbook.md`
+2. [api-governance-playbook.md](./api-governance-playbook.md)
    - REST and GraphQL coexistence
    - query normalization
    - error contracts
    - runtime-specific persistence alignment
 
-3. `modular-monolith-evolution-playbook.md`
+3. [modular-monolith-evolution-playbook.md](./modular-monolith-evolution-playbook.md)
    - bounded-context ownership
    - extraction readiness
    - shared logic placement
    - outbox and integration boundaries
 
-4. `agents-governance-playbook.md`
+4. [agents-governance-playbook.md](./agents-governance-playbook.md)
    - how to evolve `AGENTS.md`
    - when to promote repeated lessons into rules
    - how satellite learnings become corporate standards

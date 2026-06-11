@@ -806,6 +806,7 @@
 |----|----|--------|
 | [BILINGUAL_INDEX.md](platforms/BILINGUAL_INDEX.md) | [BILINGUAL_INDEX.es.md](platforms/BILINGUAL_INDEX.es.md) | OK |
 | [README.md](platforms/README.md) | [README.es.md](platforms/README.es.md) | OK |
+| [validated-tool-catalog.md](platforms/validated-tool-catalog.md) | [validated-tool-catalog.es.md](platforms/validated-tool-catalog.es.md) | OK |
 
 </details>
 

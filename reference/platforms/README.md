@@ -16,6 +16,12 @@ Platform documents implement Core contracts and product requirements. They do no
 - Require each provider profile to document capabilities, limits, isolation, and migration paths before adoption.
 - Guarantee that any default provider can be replaced without rewriting Core or product contracts.
 
+## Current Documents
+
+| Document | Description | Goal / Objective | Type | Mandatory |
+|---|---|---|---|---|
+| [Validated Tool Catalog](./validated-tool-catalog.md) | Validated tools per phase, architecture pattern, and runtime; consumed by the Smart CLI for interactive selection | Bound tool choices to validated options | Corporate standard | Yes |
+
 ## Categories
 
 Planned provider categories, ordered by how early a product needs them (work management first, collaboration last). Each will hold provider profiles once documented:

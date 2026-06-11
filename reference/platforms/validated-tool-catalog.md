@@ -1,5 +1,7 @@
 # Evolith Validated Tool Catalog
 
+> **Bilingual navigation:** [Versión en Español](./validated-tool-catalog.es.md)
+
 > **Document Type:** Corporate Standard
 > **Status:** Active
 > **Date:** 2026-06-06
@@ -258,8 +260,8 @@ Tools explicitly rejected by Evolith Core (require ADR to overturn):
 
 ## References
 
-- [Authoritative Tech Stack - Agnostic](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.md)
-- [Authoritative Tech Stack - Node.js](./reference/architecture/blueprints/authoritative-tech-stack-nodejs.md)
-- [Authoritative Tech Stack - .NET](./reference/architecture/blueprints/authoritative-tech-stack-dotnet.md)
-- [Phase Gates Ruleset](./rulesets/sdlc/phase-gates.rules.json)
-- [Gap Tracking Board](./reference/governance/standards/vision/gap-tracking.md)
+- [Authoritative Tech Stack - Agnostic](../architecture/blueprints/authoritative-tech-stack-agnostic.md)
+- [Authoritative Tech Stack - Node.js](../architecture/blueprints/authoritative-tech-stack-nodejs.md)
+- [Authoritative Tech Stack - .NET](../architecture/blueprints/authoritative-tech-stack-dotnet.md)
+- [Phase Gates Ruleset](../../rulesets/sdlc/phase-gates.rules.json)
+- [Gap Tracking Board](../governance/standards/vision/gap-tracking.md)

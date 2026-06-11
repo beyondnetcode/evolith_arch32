@@ -48,9 +48,88 @@ y guía operativa que los productos satélite heredan y especializan.
 
 </details>
 
-## Navegacion SDLC
+## Evolith Core
 
-Abre la fase en la que estas trabajando. Cada seccion agrupa los documentos, estandares y reglas machine-readable que soportan su gate.
+<details>
+<summary><strong>Arquitectura y Blueprints</strong></summary>
+
+| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
+|---|---|---|---|
+| [Hub de Arquitectura](./reference/architecture/README.es.md) | Hub de arquitectura | Centralizar recursos de diseño | Baseline de arquitectura |
+| [Blueprints](./reference/architecture/blueprints/README.es.md) | Directorio de blueprints | Guiar arquitecturas de referencia | Baseline de arquitectura |
+| [Baseline Agnostica](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.es.md) | Stack agnóstico | Definir tecnologías base | Baseline de arquitectura |
+| [Blueprint de Referencia](./reference/architecture/blueprints/reference-blueprint.es.md) | Blueprint de referencia | Guiar implementación estándar | Baseline de arquitectura |
+| [Tech Stack Autoritativo](./reference/architecture/blueprints/authoritative-tech-stack.es.md) | Stack autoritativo | Normar uso de tecnologías | Baseline de arquitectura |
+| [Spec de Topologia C4](./reference/architecture/blueprints/c4-topology-spec.es.md) | Spec de topología C4 | Estandarizar diagramas de arquitectura | Baseline de arquitectura |
+| [Patrones Canonicos](./reference/architecture/canonical-patterns/README.es.md) | Patrones canónicos | Reutilizar soluciones probadas | Baseline de arquitectura |
+| [Flujo de Arquitectura de Observabilidad](./reference/architecture/blueprints/observability-architecture-flow.es.md) | Arquitectura de observabilidad | Trazar propagación de señales | Baseline de arquitectura |
+| [Escenarios de Despliegue Multi-Cloud](./reference/architecture/blueprints/multi-cloud-deployment-scenarios.es.md) | Escenarios multi-cloud | Definir topologías cloud | Baseline de arquitectura |
+| [Checklist de Simplicidad Fase 1](./reference/architecture/blueprints/simplicity-checklist-phase-01.es.md) | Checklist de simplicidad | Prevenir sobre-ingeniería | Baseline de arquitectura |
+
+</details>
+
+<details>
+<summary><strong>Decisiones de Arquitectura (ADRs)</strong></summary>
+
+| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
+|---|---|---|---|
+| [Registro ADR](./reference/architecture/adrs/README.es.md) | Registro de ADRs | Mantener histórico de decisiones | Decisiones de arquitectura |
+| [Matriz de Decision ADR](./reference/architecture/adrs/adr-matrix.es.md) | Matriz de decisiones ADR | Visualizar impacto de decisiones | Decisiones de arquitectura |
+| [ADRs Core](./reference/architecture/adrs/core/README.es.md) | ADRs Core | Decisiones centrales del sistema | Decisiones de arquitectura |
+| [ADRs Node.js](./reference/architecture/adrs/nodejs/README.es.md) | ADRs Node.js | Decisiones de ecosistema Node | Decisiones de arquitectura |
+| [ADRs .NET](./reference/architecture/adrs/dotnet/README.es.md) | ADRs .NET | Decisiones de ecosistema .NET | Decisiones de arquitectura |
+| [ADRs Android](./reference/architecture/adrs/android/README.es.md) | ADRs Android | Decisiones de ecosistema móvil | Decisiones de arquitectura |
+| [ADR de Testing Pyramid](./reference/architecture/adrs/core/0018-testing-pyramid-quality-gates.es.md) | Pirámide de pruebas y gates automatizados | Definir estrategia de testeo por capas | Decisiones de arquitectura |
+| [ADR de Aislamiento de Unit Testing](./reference/architecture/adrs/core/0052-unit-testing-isolation-strategy.es.md) | Aislamiento de pruebas (ADR) | Normar uso de mocks | Decisiones de arquitectura |
+| [ADR de Integration y E2E Testing](./reference/architecture/adrs/core/0053-integration-e2e-testing-strategy.es.md) | Pruebas de integración y E2E (ADR) | Establecer pruebas end-to-end | Decisiones de arquitectura |
+
+</details>
+
+<details>
+<summary><strong>Estandares y Gobernanza</strong></summary>
+
+| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
+|---|---|---|---|
+| [Estandares de Gobernanza](./reference/governance/standards/README.es.md) | Estándares de gobernanza | Alinear equipos a políticas | Gobernanza |
+| [Directivas Arquitectonicas](./reference/governance/standards/vision/architectural-directives.es.md) | Directivas de arquitectura | Alinear diseño corporativo | Gobernanza |
+| [Taxonomia del Repositorio](./reference/governance/standards/repository-taxonomy.es.md) | Taxonomía de repositorios | Clasificar repositorios | Gobernanza |
+| [Manifiesto de Ingenieria](./reference/governance/standards/engineering/engineering-manifesto.es.md) | Manifiesto de ingeniería | Establecer principios técnicos | Gobernanza |
+| [Evaluacion de Madurez](./reference/governance/standards/vision/maturity-assessment.es.md) | Evaluación de madurez | Medir estado actual de arquitectura | Gobernanza |
+| [Tablero de Seguimiento de Gaps](./reference/governance/standards/vision/gap-tracking.es.md) | Tablero de seguimiento | Monitorear brechas técnicas | Gobernanza |
+| [Guia de Contract Testing](./reference/governance/standards/engineering/contract-testing-guideline.es.md) | Guía de pruebas de contrato | Asegurar compatibilidad de APIs | Estandares de ingenieria |
+| [Evaluacion de Riesgo de Proveedores](./reference/governance/standards/engineering/vendor-risk-assessment.es.md) | Evaluación de riesgo de proveedores | Mitigar bloqueo tecnológico | Estandares de ingenieria |
+| [Estandares de Ingenieria Augmentada por IA](./reference/governance/standards/ai-augmented/README.es.md) | Estándares de IA aumentada | Guiar desarrollo con IA | Estandares de ingenieria |
+| [Playbook de Observabilidad](./reference/governance/standards/engineering/observability-playbook.es.md) | Playbook de observabilidad | Guiar telemetría | Estandares de ingenieria |
+| [Hub de Operaciones](./reference/operations/README.es.md) | Hub de operaciones | Centralizar guías operativas | Hub de navegacion |
+| [Hub de Infraestructura](./reference/infrastructure/README.es.md) | Hub de infraestructura | Normar despliegues | Hub de navegacion |
+| [Hub de Navegacion](./reference/navigation/README.es.md) | Hub de navegación | Facilitar acceso a documentación | Hub de navegacion |
+| [Indice Bilingue](./reference/navigation/BILINGUAL_INDEX.es.md) | Índice bilingüe | Mapear correspondencia EN/ES | Hub de navegacion |
+
+</details>
+
+<details>
+<summary><strong>Rulesets y Validacion</strong></summary>
+
+| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
+|---|---|---|---|
+| [Hub de Rulesets](./rulesets/README.es.md) | Hub de rulesets | Centralizar reglas de validación | Reglas y schemas |
+| [Reglas de Arquitectura](./rulesets/architecture/README.md) | Reglas de arquitectura | Validar diseño | Reglas y schemas |
+| [Reglas ADR](./rulesets/adr/README.md) | Reglas de ADR | Asegurar formato de decisiones | Reglas y schemas |
+| [Engineering Manifesto Rules](./rulesets/cross-cutting/engineering-manifesto.rules.json) | Reglas del manifiesto de ingeniería | Verificar cumplimiento de principios en CI | Reglas y schemas |
+| [Testing Pyramid Rules](./rulesets/adr/adr-0018-testing-pyramid.rules.json) | Pirámide de pruebas (ADR) | Definir estrategia de testeo | Reglas y schemas |
+
+</details>
+
+## SDLC
+
+<details>
+<summary><strong>Referencias Generales del SDLC</strong></summary>
+
+| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
+|---|---|---|---|
+| [Mapeo de Artefactos SDLC](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.es.md) | Mapeo de artefactos | Vincular fases y entregables | Estandares y guia |
+
+</details>
 
 <details>
 <summary><strong>Fase 01 - Concepcion y Descubrimiento</strong></summary>
@@ -64,11 +143,6 @@ Abre la fase en la que estas trabajando. Cada seccion agrupa los documentos, est
 | [Evolith User Story](./reference/governance/sdlc/04-artifact-templates/evolith-user-story-template.es.md) | Plantilla de historia de usuario | Estandarizar historias ágiles | Documentos y plantillas |
 | [Agile Backlog](./reference/governance/sdlc/04-artifact-templates/agile-backlog-template.es.md) | Plantilla de backlog | Organizar entregables | Documentos y plantillas |
 | [CLI Impact Analysis](./reference/governance/sdlc/04-artifact-templates/cli-impact-analysis.es.md) | Análisis de impacto CLI | Evaluar cambios cross-repo | Documentos y plantillas |
-| [Directivas Arquitectonicas](./reference/governance/standards/vision/architectural-directives.es.md) | Directivas de arquitectura | Alinear diseño corporativo | Estandares y guia |
-| [Taxonomia del Repositorio](./reference/governance/standards/repository-taxonomy.es.md) | Taxonomía de repositorios | Clasificar repositorios | Estandares y guia |
-| [Baseline Agnostica](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.es.md) | Stack agnóstico | Definir tecnologías base | Estandares y guia |
-| [Manifiesto de Ingenieria](./reference/governance/standards/engineering/engineering-manifesto.es.md) | Manifiesto de ingeniería | Establecer principios técnicos | Estandares y guia |
-| [Mapeo de Artefactos SDLC](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.es.md) | Mapeo de artefactos | Vincular fases y entregables | Estandares y guia |
 | [Discovery Canvas Schema](./rulesets/schema/discovery-canvas.schema.json) | Esquema de validación del discovery canvas | Validar estructura del artefacto | Reglas y schemas |
 | [Business Case ROI Schema](./rulesets/schema/business-case-roi.schema.json) | Esquema de validación del business case | Validar estructura del artefacto | Reglas y schemas |
 | [Ballpark Estimation Schema](./rulesets/schema/ballpark-estimation.schema.json) | Esquema de validación de estimación | Validar estructura del artefacto | Reglas y schemas |
@@ -88,19 +162,10 @@ Abre la fase en la que estas trabajando. Cada seccion agrupa los documentos, est
 | [Plantilla ADR](./reference/governance/sdlc/04-artifact-templates/adr-template.es.md) | Plantilla de ADR | Documentar decisiones clave | Documentos y plantillas |
 | [Plantilla de Historia Funcional](./reference/governance/sdlc/04-artifact-templates/functional-story-template.es.md) | Plantilla de historia funcional | Detallar comportamiento | Documentos y plantillas |
 | [Plantilla de Modelo DDD](./reference/governance/sdlc/04-artifact-templates/ddd-model-template.es.md) | Plantilla de modelo DDD | Modelar dominios del sistema | Documentos y plantillas |
-| [Hub de Arquitectura](./reference/architecture/README.es.md) | Hub de arquitectura | Centralizar recursos de diseño | Estandares y guia |
-| [Blueprint de Referencia](./reference/architecture/blueprints/reference-blueprint.es.md) | Blueprint de referencia | Guiar implementación estándar | Estandares y guia |
-| [Tech Stack Autoritativo](./reference/architecture/blueprints/authoritative-tech-stack.es.md) | Stack autoritativo | Normar uso de tecnologías | Estandares y guia |
-| [Registro ADR](./reference/architecture/adrs/README.es.md) | Registro de ADRs | Mantener histórico de decisiones | Estandares y guia |
-| [Matriz de Decision ADR](./reference/architecture/adrs/adr-matrix.es.md) | Matriz de decisiones ADR | Visualizar impacto de decisiones | Estandares y guia |
 | [Estandar de Escritura de Historias Funcionales](./reference/governance/sdlc/03-documentation/functional-story-writing-standard.es.md) | Estándar de historias funcionales | Asegurar calidad de specs | Estandares y guia |
 | [Buenas Practicas de Documentacion SDLC](./reference/governance/sdlc/03-documentation/sdlc-documentation-best-practices.es.md) | Prácticas de documentación | Mejorar calidad documental | Estandares y guia |
-| [Checklist de Simplicidad Fase 1](./reference/architecture/blueprints/simplicity-checklist-phase-01.es.md) | Checklist de simplicidad | Prevenir sobre-ingeniería | Estandares y guia |
-| [Mapeo de Artefactos SDLC](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.es.md) | Mapeo de artefactos | Vincular fases y entregables | Estandares y guia |
 | [ADR Schema](./rulesets/schema/adr.schema.json) | Esquema de validación JSON | Validar estructura de datos | Reglas y schemas |
 | [Functional Story Schema](./rulesets/schema/functional-story.schema.json) | Esquema de validación JSON | Validar estructura de datos | Reglas y schemas |
-| [Reglas de Arquitectura](./rulesets/architecture/README.md) | Reglas de arquitectura | Validar diseño | Reglas y schemas |
-| [Reglas ADR](./rulesets/adr/README.md) | Reglas de ADR | Asegurar formato de decisiones | Reglas y schemas |
 
 </details>
 
@@ -109,19 +174,13 @@ Abre la fase en la que estas trabajando. Cada seccion agrupa los documentos, est
 
 | Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
 |---|---|---|---|
-| [Plantilla de Historia Tecnica](./reference/governance/sdlc/04-artifact-templates/technical-story-template.es.md) | Plantilla de historia técnica | Estructurar tareas técnicas | Documentos y plantillas |
 | [Hub de Plantillas de Artefactos](./reference/governance/sdlc/04-artifact-templates/README.es.md) | Hub de plantillas | Centralizar formatos SDLC | Documentos y plantillas |
+| [Plantilla de Historia Tecnica](./reference/governance/sdlc/04-artifact-templates/technical-story-template.es.md) | Plantilla de historia técnica | Estructurar tareas técnicas | Documentos y plantillas |
 | [Framework SDLC Enfocado en Construccion](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.es.md) | Framework de construcción | Normar ejecución técnica | Estandares y guia |
 | [Definition of Done](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.es.md) | Criterios de completitud (DoD) | Definir cuándo un entregable está terminado | Estandares y guia |
 | [Quality Gates SDLC](./reference/governance/sdlc/quality-gates.es.md) | Gates de calidad | Establecer umbrales de aprobación | Estandares y guia |
-| [Patrones Canonicos](./reference/architecture/canonical-patterns/README.es.md) | Patrones canónicos | Reutilizar soluciones probadas | Estandares y guia |
-| [Guia de Contract Testing](./reference/governance/standards/engineering/contract-testing-guideline.es.md) | Guía de pruebas de contrato | Asegurar compatibilidad de APIs | Estandares y guia |
-| [Evaluacion de Riesgo de Proveedores](./reference/governance/standards/engineering/vendor-risk-assessment.es.md) | Evaluación de riesgo de proveedores | Mitigar bloqueo tecnológico | Estandares y guia |
-| [Estandares de Ingenieria Augmentada por IA](./reference/governance/standards/ai-augmented/README.es.md) | Estándares de IA aumentada | Guiar desarrollo con IA | Estandares y guia |
-| [Mapeo de Artefactos SDLC](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.es.md) | Mapeo de artefactos | Vincular fases y entregables | Estandares y guia |
 | [Technical Story Schema](./rulesets/schema/technical-story.schema.json) | Esquema de validación JSON | Validar estructura de datos | Reglas y schemas |
 | [Definition of Done Rules](./rulesets/cross-cutting/definition-of-done.rules.json) | Reglas automatizadas | Validar cumplimiento en CI | Reglas y schemas |
-| [Engineering Manifesto Rules](./rulesets/cross-cutting/engineering-manifesto.rules.json) | Reglas del manifiesto de ingeniería | Verificar cumplimiento de principios en CI | Reglas y schemas |
 | [Quality Thresholds Rules](./rulesets/sdlc/quality-thresholds.rules.json) | Reglas automatizadas | Validar cumplimiento en CI | Reglas y schemas |
 | [Dependency Pinning Rules](./rulesets/sdlc/dependency-pinning.rules.json) | Reglas automatizadas | Validar cumplimiento en CI | Reglas y schemas |
 
@@ -133,15 +192,8 @@ Abre la fase en la que estas trabajando. Cada seccion agrupa los documentos, est
 | Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
 |---|---|---|---|
 | [Plantilla de Test Summary Report](./reference/governance/sdlc/04-artifact-templates/test-summary-report-template.es.md) | Reporte de pruebas | Consolidar resultados de QA | Documentos y plantillas |
-| [Quality Gates SDLC](./reference/governance/sdlc/quality-gates.es.md) | Gates de calidad | Establecer umbrales de aprobación | Estandares y guia |
 | [Modelo de Trazabilidad SDLC](./reference/governance/sdlc/traceability-model.es.md) | Modelo de trazabilidad | Vincular requerimientos y pruebas | Estandares y guia |
-| [ADR de Testing Pyramid](./reference/architecture/adrs/core/0018-testing-pyramid-quality-gates.es.md) | Pirámide de pruebas y gates automatizados | Definir estrategia de testeo por capas | Estandares y guia |
-| [ADR de Aislamiento de Unit Testing](./reference/architecture/adrs/core/0052-unit-testing-isolation-strategy.es.md) | Aislamiento de pruebas (ADR) | Normar uso de mocks | Estandares y guia |
-| [ADR de Integration y E2E Testing](./reference/architecture/adrs/core/0053-integration-e2e-testing-strategy.es.md) | Pruebas de integración y E2E (ADR) | Establecer pruebas end-to-end | Estandares y guia |
-| [Mapeo de Artefactos SDLC](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.es.md) | Mapeo de artefactos | Vincular fases y entregables | Estandares y guia |
 | [Test Summary Report Schema](./rulesets/schema/test-summary-report.schema.json) | Esquema de validación del reporte de pruebas | Validar estructura del artefacto | Reglas y schemas |
-| [Quality Thresholds Rules](./rulesets/sdlc/quality-thresholds.rules.json) | Reglas automatizadas | Validar cumplimiento en CI | Reglas y schemas |
-| [Testing Pyramid Rules](./rulesets/adr/adr-0018-testing-pyramid.rules.json) | Pirámide de pruebas (ADR) | Definir estrategia de testeo | Reglas y schemas |
 
 </details>
 
@@ -151,53 +203,28 @@ Abre la fase en la que estas trabajando. Cada seccion agrupa los documentos, est
 | Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
 |---|---|---|---|
 | [Plantilla de Release Notes](./reference/governance/sdlc/04-artifact-templates/release-notes-template.es.md) | Plantilla de notas de versión | Comunicar cambios de release | Documentos y plantillas |
-| [Hub de Operaciones](./reference/operations/README.es.md) | Hub de operaciones | Centralizar guías operativas | Estandares y guia |
-| [Hub de Infraestructura](./reference/infrastructure/README.es.md) | Hub de infraestructura | Normar despliegues | Estandares y guia |
-| [Playbook de Observabilidad](./reference/governance/standards/engineering/observability-playbook.es.md) | Playbook de observabilidad | Guiar telemetría | Estandares y guia |
-| [Flujo de Arquitectura de Observabilidad](./reference/architecture/blueprints/observability-architecture-flow.es.md) | Arquitectura de observabilidad | Trazar propagación de señales | Estandares y guia |
-| [Escenarios de Despliegue Multi-Cloud](./reference/architecture/blueprints/multi-cloud-deployment-scenarios.es.md) | Escenarios multi-cloud | Definir topologías cloud | Estandares y guia |
-| [Mapeo de Artefactos SDLC](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.es.md) | Mapeo de artefactos | Vincular fases y entregables | Estandares y guia |
 | [Release Notes Schema](./rulesets/schema/release-notes.schema.json) | Esquema de validación de release notes | Validar estructura del artefacto | Reglas y schemas |
 | [CI/CD Quality Gates Rules](./rulesets/adr/adr-0005-cicd-quality-gates.rules.json) | Reglas de gates CI/CD (ADR-0005) | Automatizar validación en pipelines | Reglas y schemas |
 | [GitFlow Branching Rules](./rulesets/adr/adr-0050-gitflow-branching.rules.json) | Estrategia de ramas (ADR) | Establecer flujo de Git | Reglas y schemas |
 
 </details>
 
-## Referencias Transversales
+## Products
 
 <details>
-<summary><strong>Arquitectura, gobernanza y referencia aplicada</strong></summary>
+<summary><strong>UMS (Referencia Aplicada)</strong></summary>
 
 | Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
 |---|---|---|---|
-| [Hub de Arquitectura](./reference/architecture/README.es.md) | Hub de arquitectura | Centralizar recursos de diseño | Baseline de arquitectura |
-| [Blueprints](./reference/architecture/blueprints/README.es.md) | Directorio de blueprints | Guiar arquitecturas de referencia | Baseline de arquitectura |
-| [Baseline Agnostica](./reference/architecture/blueprints/authoritative-tech-stack-agnostic.es.md) | Stack agnóstico | Definir tecnologías base | Baseline de arquitectura |
-| [Blueprint de Referencia](./reference/architecture/blueprints/reference-blueprint.es.md) | Blueprint de referencia | Guiar implementación estándar | Baseline de arquitectura |
-| [Spec de Topologia C4](./reference/architecture/blueprints/c4-topology-spec.es.md) | Spec de topología C4 | Estandarizar diagramas de arquitectura | Baseline de arquitectura |
-| [Registro ADR](./reference/architecture/adrs/README.es.md) | Registro de ADRs | Mantener histórico de decisiones | Decisiones de arquitectura |
-| [ADRs Core](./reference/architecture/adrs/core/README.es.md) | ADRs Core | Decisiones centrales del sistema | Decisiones de arquitectura |
-| [ADRs Node.js](./reference/architecture/adrs/nodejs/README.es.md) | ADRs Node.js | Decisiones de ecosistema Node | Decisiones de arquitectura |
-| [ADRs .NET](./reference/architecture/adrs/dotnet/README.es.md) | ADRs .NET | Decisiones de ecosistema .NET | Decisiones de arquitectura |
-| [ADRs Android](./reference/architecture/adrs/android/README.es.md) | ADRs Android | Decisiones de ecosistema móvil | Decisiones de arquitectura |
-| [Estandares de Gobernanza](./reference/governance/standards/README.es.md) | Estándares de gobernanza | Alinear equipos a políticas | Gobernanza y navegacion |
-| [Evaluacion de Madurez](./reference/governance/standards/vision/maturity-assessment.es.md) | Evaluación de madurez | Medir estado actual de arquitectura | Gobernanza y navegacion |
-| [Tablero de Seguimiento de Gaps](./reference/governance/standards/vision/gap-tracking.es.md) | Tablero de seguimiento | Monitorear brechas técnicas | Gobernanza y navegacion |
-| [Indice Bilingue](./reference/navigation/BILINGUAL_INDEX.es.md) | Índice bilingüe | Mapear correspondencia EN/ES | Gobernanza y navegacion |
-| [Hub de Navegacion](./reference/navigation/README.es.md) | Hub de navegación | Facilitar acceso a documentación | Gobernanza y navegacion |
-| [Hub de Rulesets](./rulesets/README.es.md) | Hub de rulesets | Centralizar reglas de validación | Gobernanza y navegacion |
 | [Hub de Referencia UMS](./reference/knowledge/demo/README.es.md) | Hub de referencia UMS | Demostrar implementación real | Referencia aplicada |
 | [Modelo de Referencia UMS](./reference/knowledge/demo/ums-reference-model.es.md) | Modelo de referencia UMS | Guiar desarrollo de productos satélite | Referencia aplicada |
 | [Referencia Canonica vs Modelo Aplicado UMS](./reference/knowledge/demo/demo-vs-reference.es.md) | Canónica vs UMS | Comparar teoría y aplicación | Referencia aplicada |
 | [Portal de Arquitectura UMS](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) | Portal de arquitectura UMS | Documentar UMS específicamente | Referencia aplicada |
-| [Casos de Adopcion](./reference/knowledge/adoption-cases.es.md) | Casos de adopción | Mostrar éxito y aprendizaje | Referencia aplicada |
 
 </details>
 
-## Herramientas y Automatizacion
-
 <details>
-<summary><strong>Smart CLI y hooks de validacion</strong></summary>
+<summary><strong>Smart CLI</strong></summary>
 
 ### Smart CLI (Oficial)
 
@@ -220,6 +247,15 @@ smart-cli mcp serve
 - [Arquitectura CLI](./sdk/cli/ARCHITECTURE.es.md)
 - [Vision del Producto CLI](./sdk/cli/docs/VISION.es.md)
 - [Analisis de Estado](./sdk/cli/docs/planning/sdk-cli-mcp-current-state-assessment.md)
+
+</details>
+
+<details>
+<summary><strong>Casos de Adopcion y Herramientas</strong></summary>
+
+| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
+|---|---|---|---|
+| [Casos de Adopcion](./reference/knowledge/adoption-cases.es.md) | Casos de adopción | Mostrar éxito y aprendizaje | Referencia aplicada |
 
 ### Pre-commit Hooks
 

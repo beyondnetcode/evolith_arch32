@@ -14,6 +14,7 @@ interface ValidateCommandOptions {
   ruleset?: string;
   architecture?: boolean;
   archLevel?: string;
+  engine?: string;
 }
 
 @Command({
@@ -35,14 +36,17 @@ export class ValidateCommand extends CommandRunner {
     let result: ValidationResult;
 
     try {
+      const engine = options?.engine === 'opa' ? 'opa' : 'native';
+
       if (options?.ruleset) {
         result = (await this.useCase.execute({
           satellitePath,
           corePath,
           rulesetId: options.ruleset,
+          engine
         })).result;
       } else {
-        result = (await this.useCase.execute({ satellitePath, corePath })).result;
+        result = (await this.useCase.execute({ satellitePath, corePath, engine })).result;
       }
 
       if (options?.architecture) {
@@ -214,6 +218,14 @@ export class ValidateCommand extends CommandRunner {
     description: 'Nivel de arquitectura: F1, F2, F3, ALL (default: ALL)',
   })
   parseArchLevel(val: string): string {
+    return val;
+  }
+
+  @Option({
+    flags: '-e, --engine [engine]',
+    description: 'Motor de validación a utilizar: native (por defecto) u opa',
+  })
+  parseEngine(val: string): string {
     return val;
   }
 }

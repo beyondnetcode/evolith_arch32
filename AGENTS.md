@@ -67,6 +67,7 @@ See `.harness/scripts/bilingual-terminology-glossary.md` for standardized EN/ES 
 - Diagram Validation: any modified Mermaid block must pass syntax validation; use render validation for material diagram changes.
 - Agent Update Quality: any agent persona update must declare scope, inputs, outputs, constraints, handoff, validation checklist, and audit output format.
 - Rule Coverage: when adding or changing validation rules, update the reference rule, the global rules table, and the validation script behavior together.
+- Dual-Engine Parity: when creating or modifying architectural rules, you MUST implement the logic in BOTH the Native TypeScript evaluator and a corresponding OPA `.rego` file.
 - Fail Fast on Docs: if unresolved links, missing references, invalid anchors, invalid diagrams, or language-pair gaps are found, fail the task and report the anomalies rather than assuming completion.
 
 ## Documentation Quality Gates

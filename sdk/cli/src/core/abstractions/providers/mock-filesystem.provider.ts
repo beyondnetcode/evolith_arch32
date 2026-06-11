@@ -62,6 +62,11 @@ export class MockFileSystemProvider implements IFileSystem {
     return entry.content || '';
   }
 
+  async readFileBuffer(filePath: string): Promise<Buffer> {
+    const content = await this.readFile(filePath);
+    return Buffer.from(content);
+  }
+
   async readJson(filePath: string): Promise<unknown> {
     const normalized = this.normalize(filePath);
     const entry = this.files.get(normalized);

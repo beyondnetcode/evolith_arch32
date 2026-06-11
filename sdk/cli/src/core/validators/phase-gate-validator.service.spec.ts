@@ -126,8 +126,12 @@ describe('PhaseGateValidatorService', () => {
 
     mockFs = createMockFileSystem({
       readFile: jest.fn().mockImplementation((p: string) => {
+        if (p.includes('.schema.json')) {
+          return Promise.resolve(JSON.stringify({ type: 'object', properties: { gates: { type: 'array' } } }));
+        }
         if (p.includes('adr-matrix.json')) return Promise.resolve(JSON.stringify({ adrs: [{ id: 'ADR-0001' }] }));
-        return Promise.resolve(JSON.stringify(mockRuleset));
+        if (p.includes('phase-gates.rules.json')) return Promise.resolve(JSON.stringify(mockRuleset));
+        return Promise.resolve(JSON.stringify({})); // default valid JSON
       }),
     });
     const mockProvider: IFileSystemProvider = {
@@ -155,7 +159,7 @@ describe('PhaseGateValidatorService', () => {
       await service.loadRuleset();
       await service.loadRuleset();
 
-      expect(mockFs.readFile).toHaveBeenCalledTimes(1);
+      expect(mockFs.readFile).toHaveBeenCalledTimes(2); // 1 for ruleset, 1 for schema
     });
 
     it('should throw when ruleset file cannot be read', async () => {

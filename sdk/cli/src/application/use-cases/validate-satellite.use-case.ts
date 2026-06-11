@@ -4,6 +4,7 @@ export interface ValidateSatelliteInput {
   satellitePath: string;
   corePath?: string;
   rulesetId?: string;
+  engine?: 'native' | 'opa';
 }
 
 export interface ValidateSatelliteOutput {
@@ -19,13 +20,19 @@ export class ValidateSatelliteUseCase {
   }
 
   async execute(input: ValidateSatelliteInput): Promise<ValidateSatelliteOutput> {
-    const { satellitePath, corePath, rulesetId } = input;
+    const { satellitePath, corePath, rulesetId, engine } = input;
+    
+    // If validator wasn't provided, we can re-instantiate it if the engine is custom
+    let activeValidator = this.validator;
+    if (engine) {
+      activeValidator = new RulesetValidatorService({ engineType: engine });
+    }
 
     let result: ValidationResult;
 
     if (rulesetId) {
       const coreResolved = corePath || this.findCoreFromSatellite(satellitePath);
-      const issues = await this.validator.loadRulesetById(coreResolved, rulesetId);
+      const issues = await activeValidator.loadRulesetById(coreResolved, rulesetId);
       result = {
         status: issues.some(i => i.blocking) ? 'failed' : issues.length > 0 ? 'warning' : 'passed',
         rulesChecked: issues.length,
@@ -34,7 +41,7 @@ export class ValidateSatelliteUseCase {
         timestamp: new Date().toISOString(),
       };
     } else {
-      result = await this.validator.validate(satellitePath, corePath);
+      result = await activeValidator.validate(satellitePath, corePath);
     }
 
     return { result };

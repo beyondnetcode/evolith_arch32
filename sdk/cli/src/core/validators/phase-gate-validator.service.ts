@@ -64,7 +64,7 @@ export class PhaseGateValidatorService {
   private readonly rulesetPath: string;
   private cachedRuleset: PhaseGatesRuleset | null = null;
   private readonly ajv: Ajv;
-  private readonly validateSchema: any;
+  private schemaValidator: any;
 
   constructor(corePath?: string) {
     const container = getContainer();
@@ -91,15 +91,15 @@ export class PhaseGateValidatorService {
       const parsed = JSON.parse(content);
       
       // Load schema and validate
-      if (!this.validateSchema) {
+      if (!this.schemaValidator) {
         const schemaPath = path.join(path.dirname(this.rulesetPath), '../schema/ruleset-sdlc.schema.json');
         const schemaContent = await this.fs.readFile(schemaPath);
-        (this as any).validateSchema = this.ajv.compile(JSON.parse(schemaContent));
+        this.schemaValidator = this.ajv.compile(JSON.parse(schemaContent));
       }
       
-      const valid = this.validateSchema(parsed);
+      const valid = this.schemaValidator(parsed);
       if (!valid) {
-        throw new Error(`Ruleset validation failed: ${this.ajv.errorsText(this.validateSchema.errors)}`);
+        throw new Error(`Ruleset validation failed: ${this.ajv.errorsText(this.schemaValidator.errors)}`);
       }
 
       this.cachedRuleset = parsed as PhaseGatesRuleset;

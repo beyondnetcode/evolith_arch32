@@ -1,4 +1,5 @@
 import { RuleEvaluationEngine, NormalizedRule } from './rule-evaluation-engine';
+import { NativeEvaluator } from './evaluators/native-evaluator';
 import { IFileSystem, ILogger } from '../abstractions';
 
 const makeFs = (overrides: Partial<IFileSystem> = {}): IFileSystem =>
@@ -44,7 +45,8 @@ describe('RuleEvaluationEngine — normalisation', () => {
         });
       }),
     });
-    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
+    const strategy = new NativeEvaluator(fs, makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger(), strategy });
     const rules = await engine.loadAllRulesets('/core');
     expect(rules).toHaveLength(1);
     expect(rules[0].id).toBe('DEP-01');
@@ -65,7 +67,8 @@ describe('RuleEvaluationEngine — normalisation', () => {
         });
       }),
     });
-    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
+    const strategy = new NativeEvaluator(fs, makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger(), strategy });
     const rules = await engine.loadAllRulesets('/core');
     expect(rules[0].id).toBe('ACL-01');
     expect(rules[0].title).toBe('Validate');
@@ -86,7 +89,8 @@ describe('RuleEvaluationEngine — normalisation', () => {
         });
       }),
     });
-    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
+    const strategy = new NativeEvaluator(fs, makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger(), strategy });
     const rules = await engine.loadAllRulesets('/core');
     expect(rules).toHaveLength(0);
   });
@@ -105,7 +109,8 @@ describe('RuleEvaluationEngine — normalisation', () => {
         });
       }),
     });
-    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
+    const strategy = new NativeEvaluator(fs, makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger(), strategy });
     const rules = await engine.loadAllRulesets('/core');
     expect(rules[0].category).toBe('inheritance');
   });
@@ -119,12 +124,13 @@ describe('RuleEvaluationEngine — version-pinning evaluator', () => {
       readdirNames: jest.fn().mockResolvedValue([]),
       stat: jest.fn().mockResolvedValue({ isDirectory: () => false }),
     });
-    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
+    const strategy = new NativeEvaluator(fs, makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger(), strategy });
     const rule = makeRule({ id: 'DEP-01', category: 'version-pinning' });
     const results = await engine.discoverAndEvaluate('/sat', '/core');
     expect(results.filter(r => r.rule.id === 'DEP-01')).toHaveLength(0); // no rulesets discovered, just check logic
     // Direct test via loadAllRulesets + evaluate path
-    const result = await (engine as any).evalVersionPinning(rule, ctx);
+    const result = await (strategy as any).evalVersionPinning(rule, ctx);
     expect(result.result).toBe('passed');
   });
 
@@ -133,9 +139,10 @@ describe('RuleEvaluationEngine — version-pinning evaluator', () => {
       exists: jest.fn().mockResolvedValue(true),
       readJson: jest.fn().mockResolvedValue({ dependencies: { lodash: '^4.17.21' } }),
     });
-    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
+    const strategy = new NativeEvaluator(fs, makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger(), strategy });
     const rule = makeRule({ id: 'DEP-01', category: 'version-pinning' });
-    const result = await (engine as any).evalVersionPinning(rule, ctx);
+    const result = await (strategy as any).evalVersionPinning(rule, ctx);
     expect(result.result).toBe('failed');
     expect(result.message).toContain('lodash');
   });
@@ -145,9 +152,10 @@ describe('RuleEvaluationEngine — version-pinning evaluator', () => {
       exists: jest.fn().mockResolvedValue(true),
       readJson: jest.fn().mockResolvedValue({ devDependencies: { jest: '~29.0.0' } }),
     });
-    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
+    const strategy = new NativeEvaluator(fs, makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger(), strategy });
     const rule = makeRule({ id: 'DEP-02', category: 'version-pinning' });
-    const result = await (engine as any).evalVersionPinning(rule, ctx);
+    const result = await (strategy as any).evalVersionPinning(rule, ctx);
     expect(result.result).toBe('failed');
   });
 });
@@ -157,17 +165,19 @@ describe('RuleEvaluationEngine — lock-file evaluator', () => {
     const fs = makeFs({
       exists: jest.fn().mockImplementation(async (p: string) => p.endsWith('package-lock.json')),
     });
-    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
+    const strategy = new NativeEvaluator(fs, makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger(), strategy });
     const rule = makeRule({ id: 'DEP-04', category: 'lock-file' });
-    const result = await (engine as any).evalLockFile(rule, ctx);
+    const result = await (strategy as any).evalLockFile(rule, ctx);
     expect(result.result).toBe('passed');
   });
 
   it('fails when no package-lock.json anywhere', async () => {
     const fs = makeFs({ exists: jest.fn().mockResolvedValue(false) });
-    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
+    const strategy = new NativeEvaluator(fs, makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger(), strategy });
     const rule = makeRule({ id: 'DEP-04', category: 'lock-file' });
-    const result = await (engine as any).evalLockFile(rule, ctx);
+    const result = await (strategy as any).evalLockFile(rule, ctx);
     expect(result.result).toBe('failed');
   });
 });
@@ -186,9 +196,10 @@ describe('RuleEvaluationEngine — evidence evaluator', () => {
       readdirNames: jest.fn().mockResolvedValue(['smoke.json']),
       readFile: jest.fn().mockResolvedValue(manifest),
     });
-    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
+    const strategy = new NativeEvaluator(fs, makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger(), strategy });
     const rule = makeRule({ id: 'EVD-01', category: 'identity' });
-    const result = await (engine as any).evalEvidence(rule, { ...ctx, corePath: '/core' });
+    const result = await (strategy as any).evalEvidence(rule, { ...ctx, corePath: '/core' });
     expect(result.result).toBe('passed');
   });
 
@@ -201,9 +212,10 @@ describe('RuleEvaluationEngine — evidence evaluator', () => {
       readdirNames: jest.fn().mockResolvedValue(['smoke.json']),
       readFile: jest.fn().mockResolvedValue(manifest),
     });
-    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
+    const strategy = new NativeEvaluator(fs, makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger(), strategy });
     const rule = makeRule({ id: 'EVD-01', category: 'identity' });
-    const result = await (engine as any).evalEvidence(rule, { ...ctx, corePath: '/core' });
+    const result = await (strategy as any).evalEvidence(rule, { ...ctx, corePath: '/core' });
     expect(result.result).toBe('failed');
     expect(result.message).toContain('id');
   });
@@ -213,9 +225,10 @@ describe('RuleEvaluationEngine — evidence evaluator', () => {
       exists: jest.fn().mockImplementation(async (p: string) => p === evidencePath),
       readdirNames: jest.fn().mockResolvedValue([]),
     });
-    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
+    const strategy = new NativeEvaluator(fs, makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger(), strategy });
     const rule = makeRule({ id: 'EVD-01', category: 'identity' });
-    const result = await (engine as any).evalEvidence(rule, { ...ctx, corePath: '/core' });
+    const result = await (strategy as any).evalEvidence(rule, { ...ctx, corePath: '/core' });
     expect(result.result).toBe('failed');
   });
 
@@ -226,9 +239,10 @@ describe('RuleEvaluationEngine — evidence evaluator', () => {
       readdirNames: jest.fn().mockResolvedValue(['ev.json']),
       readFile: jest.fn().mockResolvedValue(manifest),
     });
-    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
+    const strategy = new NativeEvaluator(fs, makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger(), strategy });
     const rule = makeRule({ id: 'EVD-02', category: 'traceability' });
-    const result = await (engine as any).evalEvidence(rule, { ...ctx, corePath: '/core' });
+    const result = await (strategy as any).evalEvidence(rule, { ...ctx, corePath: '/core' });
     expect(result.result).toBe('failed');
     expect(result.message).toContain('sourceRef');
   });
@@ -240,24 +254,27 @@ describe('RuleEvaluationEngine — build evaluator', () => {
       exists: jest.fn().mockImplementation(async (p: string) =>
         p.endsWith('dist/main.js')),
     });
-    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
+    const strategy = new NativeEvaluator(fs, makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger(), strategy });
     const rule = makeRule({ id: 'CLI-RR-01', category: 'build' });
-    const result = await (engine as any).evalBuild(rule, { ...ctx, corePath: '/core' });
+    const result = await (strategy as any).evalBuild(rule, { ...ctx, corePath: '/core' });
     expect(result.result).toBe('passed');
   });
 
   it('fails when dist/main.js missing', async () => {
     const fs = makeFs({ exists: jest.fn().mockResolvedValue(false) });
-    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
+    const strategy = new NativeEvaluator(fs, makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger(), strategy });
     const rule = makeRule({ id: 'CLI-RR-01', category: 'build' });
-    const result = await (engine as any).evalBuild(rule, { ...ctx, corePath: '/core' });
+    const result = await (strategy as any).evalBuild(rule, { ...ctx, corePath: '/core' });
     expect(result.result).toBe('failed');
   });
 });
 
 describe('RuleEvaluationEngine — toValidationIssues', () => {
   it('maps failed results to ValidationIssues', () => {
-    const engine = new RuleEvaluationEngine({ fileSystem: makeFs(), logger: makeLogger() });
+    const strategy = new NativeEvaluator(makeFs(), makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: makeFs(), logger: makeLogger(), strategy });
     const rule = makeRule({ id: 'DEP-01', severity: 'MUST', blocking: true });
     const issues = engine.toValidationIssues([
       { rule, result: 'failed', message: 'caret found' },
@@ -271,7 +288,8 @@ describe('RuleEvaluationEngine — toValidationIssues', () => {
   });
 
   it('converts MUST NOT severity to MUST for ValidationIssue', () => {
-    const engine = new RuleEvaluationEngine({ fileSystem: makeFs(), logger: makeLogger() });
+    const strategy = new NativeEvaluator(makeFs(), makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: makeFs(), logger: makeLogger(), strategy });
     const rule = makeRule({ id: 'DEP-01', severity: 'MUST NOT', blocking: true });
     const issues = engine.toValidationIssues([{ rule, result: 'failed', message: 'x' }]);
     expect(issues[0].severity).toBe('MUST');
@@ -297,7 +315,8 @@ describe('RuleEvaluationEngine — discoverAndEvaluate dispatch', () => {
         });
       }),
     });
-    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
+    const strategy = new NativeEvaluator(fs, makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger(), strategy });
     const results = await engine.discoverAndEvaluate('/sat', '/core');
     expect(results).toHaveLength(0);
   });
@@ -314,7 +333,8 @@ describe('RuleEvaluationEngine — discoverAndEvaluate dispatch', () => {
         });
       }),
     });
-    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
+    const strategy = new NativeEvaluator(fs, makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger(), strategy });
     const results = await engine.discoverAndEvaluate('/sat', '/core');
     expect(results[0].result).toBe('skipped');
     expect(results[0].message).toContain('external system');
@@ -350,9 +370,10 @@ describe('RuleEvaluationEngine — discoverAndEvaluate dispatch', () => {
 describe('RuleEvaluationEngine — CI workflow evaluators', () => {
   it('skips DEP-05 when .github/workflows directory absent', async () => {
     const fs = makeFs({ exists: jest.fn().mockResolvedValue(false) });
-    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
+    const strategy = new NativeEvaluator(fs, makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger(), strategy });
     const rule = makeRule({ id: 'DEP-05', category: 'version-pinning' });
-    const result = await (engine as any).evalCiInstall(rule, ctx);
+    const result = await (strategy as any).evalCiInstall(rule, ctx);
     expect(result.result).toBe('skipped');
   });
 
@@ -362,9 +383,10 @@ describe('RuleEvaluationEngine — CI workflow evaluators', () => {
       readdirNames: jest.fn().mockResolvedValue(['ci.yml']),
       readFile: jest.fn().mockResolvedValue('run: npm ci\n'),
     });
-    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
+    const strategy = new NativeEvaluator(fs, makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger(), strategy });
     const rule = makeRule({ id: 'DEP-05', category: 'version-pinning' });
-    const result = await (engine as any).evalCiInstall(rule, ctx);
+    const result = await (strategy as any).evalCiInstall(rule, ctx);
     expect(result.result).toBe('passed');
   });
 
@@ -374,9 +396,10 @@ describe('RuleEvaluationEngine — CI workflow evaluators', () => {
       readdirNames: jest.fn().mockResolvedValue(['ci.yml']),
       readFile: jest.fn().mockResolvedValue('run: npm install\n'),
     });
-    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
+    const strategy = new NativeEvaluator(fs, makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger(), strategy });
     const rule = makeRule({ id: 'DEP-06', category: 'version-pinning' });
-    const result = await (engine as any).evalCiAudit(rule, ctx);
+    const result = await (strategy as any).evalCiAudit(rule, ctx);
     expect(result.result).toBe('failed');
   });
 });
@@ -388,17 +411,19 @@ describe('RuleEvaluationEngine — evalDependabot (DEP-09)', () => {
     const fs = makeFs({
       exists: jest.fn().mockImplementation(async (p: string) => p.endsWith('dependabot.yml')),
     });
-    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
+    const strategy = new NativeEvaluator(fs, makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger(), strategy });
     const rule = makeRule({ id: 'DEP-09', category: 'version-pinning' });
-    const result = await (engine as any).evalDependabot(rule, ctx);
+    const result = await (strategy as any).evalDependabot(rule, ctx);
     expect(result.result).toBe('passed');
   });
 
   it('fails when no dependabot or renovate config found', async () => {
     const fs = makeFs({ exists: jest.fn().mockResolvedValue(false) });
-    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
+    const strategy = new NativeEvaluator(fs, makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger(), strategy });
     const rule = makeRule({ id: 'DEP-09', category: 'version-pinning' });
-    const result = await (engine as any).evalDependabot(rule, ctx);
+    const result = await (strategy as any).evalDependabot(rule, ctx);
     expect(result.result).toBe('failed');
   });
 });
@@ -410,9 +435,10 @@ describe('RuleEvaluationEngine — evalDirectoryStructure', () => {
     const fs = makeFs({
       exists: jest.fn().mockResolvedValue(true),
     });
-    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
+    const strategy = new NativeEvaluator(fs, makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger(), strategy });
     const rule = makeRule({ id: 'TAX-05', category: 'naming-conventions' });
-    const result = await (engine as any).evalDirectoryStructure(rule, ctx);
+    const result = await (strategy as any).evalDirectoryStructure(rule, ctx);
     expect(result.result).toBe('passed');
   });
 
@@ -420,33 +446,37 @@ describe('RuleEvaluationEngine — evalDirectoryStructure', () => {
     const fs = makeFs({
       exists: jest.fn().mockImplementation(async (p: string) => p.endsWith('reference')),
     });
-    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
+    const strategy = new NativeEvaluator(fs, makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger(), strategy });
     const rule = makeRule({ id: 'TAX-05', category: 'naming-conventions' });
-    const result = await (engine as any).evalDirectoryStructure(rule, ctx);
+    const result = await (strategy as any).evalDirectoryStructure(rule, ctx);
     expect(result.result).toBe('failed');
     expect(result.message).toContain('Missing');
   });
 
   it('skips TAX-06 when satellitePath === corePath', async () => {
-    const engine = new RuleEvaluationEngine({ fileSystem: makeFs(), logger: makeLogger() });
+    const strategy = new NativeEvaluator(makeFs(), makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: makeFs(), logger: makeLogger(), strategy });
     const rule = makeRule({ id: 'TAX-06', category: 'naming-conventions' });
-    const result = await (engine as any).evalDirectoryStructure(rule, { satellitePath: '/core', corePath: '/core' });
+    const result = await (strategy as any).evalDirectoryStructure(rule, { satellitePath: '/core', corePath: '/core' });
     expect(result.result).toBe('skipped');
   });
 
   it('skips TAX-06 when satellite has no package.json', async () => {
     const fs = makeFs({ exists: jest.fn().mockResolvedValue(false) });
-    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
+    const strategy = new NativeEvaluator(fs, makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger(), strategy });
     const rule = makeRule({ id: 'TAX-06', category: 'naming-conventions' });
-    const result = await (engine as any).evalDirectoryStructure(rule, ctx);
+    const result = await (strategy as any).evalDirectoryStructure(rule, ctx);
     expect(result.result).toBe('skipped');
   });
 
   it('passes TAX-06 when satellite has src/tests/docs', async () => {
     const fs = makeFs({ exists: jest.fn().mockResolvedValue(true) });
-    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
+    const strategy = new NativeEvaluator(fs, makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger(), strategy });
     const rule = makeRule({ id: 'TAX-06', category: 'naming-conventions' });
-    const result = await (engine as any).evalDirectoryStructure(rule, ctx);
+    const result = await (strategy as any).evalDirectoryStructure(rule, ctx);
     expect(result.result).toBe('passed');
   });
 });
@@ -458,25 +488,28 @@ describe('RuleEvaluationEngine — evalInheritance (INH-01)', () => {
     const fs = makeFs({
       exists: jest.fn().mockImplementation(async (p: string) => p === '/sat/rulesets'),
     });
-    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
+    const strategy = new NativeEvaluator(fs, makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger(), strategy });
     const rule = makeRule({ id: 'INH-01' });
-    const result = await (engine as any).evalInheritance(rule, ctx);
+    const result = await (strategy as any).evalInheritance(rule, ctx);
     expect(result.result).toBe('failed');
   });
 
   it('passes when satellite does not have its own rulesets/', async () => {
     const fs = makeFs({ exists: jest.fn().mockResolvedValue(false) });
-    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
+    const strategy = new NativeEvaluator(fs, makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger(), strategy });
     const rule = makeRule({ id: 'INH-01' });
-    const result = await (engine as any).evalInheritance(rule, ctx);
+    const result = await (strategy as any).evalInheritance(rule, ctx);
     expect(result.result).toBe('passed');
   });
 
   it('passes when satellitePath === corePath (Core self-validation)', async () => {
     const fs = makeFs({ exists: jest.fn().mockResolvedValue(true) });
-    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
+    const strategy = new NativeEvaluator(fs, makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger(), strategy });
     const rule = makeRule({ id: 'INH-01' });
-    const result = await (engine as any).evalInheritance(rule, { satellitePath: '/core', corePath: '/core' });
+    const result = await (strategy as any).evalInheritance(rule, { satellitePath: '/core', corePath: '/core' });
     expect(result.result).toBe('passed');
   });
 });
@@ -486,9 +519,10 @@ describe('RuleEvaluationEngine — evalInheritance (INH-01)', () => {
 describe('RuleEvaluationEngine — evalMcpSecurity (MCP-04)', () => {
   it('skips when server.ts not found', async () => {
     const fs = makeFs({ exists: jest.fn().mockResolvedValue(false) });
-    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
+    const strategy = new NativeEvaluator(fs, makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger(), strategy });
     const rule = makeRule({ id: 'MCP-04' });
-    const result = await (engine as any).evalMcpSecurity(rule, ctx);
+    const result = await (strategy as any).evalMcpSecurity(rule, ctx);
     expect(result.result).toBe('skipped');
   });
 
@@ -497,9 +531,10 @@ describe('RuleEvaluationEngine — evalMcpSecurity (MCP-04)', () => {
       exists: jest.fn().mockResolvedValue(true),
       readFile: jest.fn().mockResolvedValue('bind: localhost'),
     });
-    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
+    const strategy = new NativeEvaluator(fs, makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger(), strategy });
     const rule = makeRule({ id: 'MCP-04' });
-    const result = await (engine as any).evalMcpSecurity(rule, ctx);
+    const result = await (strategy as any).evalMcpSecurity(rule, ctx);
     expect(result.result).toBe('passed');
   });
 });
@@ -511,17 +546,19 @@ describe('RuleEvaluationEngine — evalCliDocs (CLI-RR-05)', () => {
     const fs = makeFs({
       exists: jest.fn().mockImplementation(async (p: string) => p.endsWith('README.md')),
     });
-    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
+    const strategy = new NativeEvaluator(fs, makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger(), strategy });
     const rule = makeRule({ id: 'CLI-RR-05' });
-    const result = await (engine as any).evalCliDocs(rule, ctx);
+    const result = await (strategy as any).evalCliDocs(rule, ctx);
     expect(result.result).toBe('passed');
   });
 
   it('fails when neither README.md nor ARCHITECTURE.md found', async () => {
     const fs = makeFs({ exists: jest.fn().mockResolvedValue(false) });
-    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger() });
+    const strategy = new NativeEvaluator(fs, makeLogger());
+    const engine = new RuleEvaluationEngine({ fileSystem: fs, logger: makeLogger(), strategy });
     const rule = makeRule({ id: 'CLI-RR-05' });
-    const result = await (engine as any).evalCliDocs(rule, ctx);
+    const result = await (strategy as any).evalCliDocs(rule, ctx);
     expect(result.result).toBe('failed');
   });
 });

@@ -1,6 +1,8 @@
 import * as path from 'path';
 import { getContainer, ILogger, IFileSystem, IConfigParser } from '../abstractions';
 import { RuleEvaluationEngine } from './rule-evaluation-engine';
+import { NativeEvaluator } from './evaluators/native-evaluator';
+import { OpaEvaluator } from './evaluators/opa-evaluator';
 
 export interface ValidationResult {
   status: 'passed' | 'failed' | 'warning';
@@ -44,6 +46,7 @@ export interface RulesetValidatorOptions {
   fileSystem?: IFileSystem;
   configParser?: IConfigParser;
   logger?: ILogger;
+  engineType?: 'native' | 'opa';
 }
 
 export class RulesetValidatorService {
@@ -58,7 +61,16 @@ export class RulesetValidatorService {
     this.logger = options?.logger ?? container.createLogger('RulesetValidatorService');
     this.fs = options?.fileSystem ?? container.createFileSystem();
     this.configParser = options?.configParser ?? container.createConfigParser('yaml');
-    this.engine = new RuleEvaluationEngine({ fileSystem: this.fs, logger: this.logger });
+    
+    const strategy = options?.engineType === 'opa' 
+      ? new OpaEvaluator(this.fs, this.logger) 
+      : new NativeEvaluator(this.fs, this.logger);
+      
+    this.engine = new RuleEvaluationEngine({ 
+      fileSystem: this.fs, 
+      logger: this.logger,
+      strategy 
+    });
   }
 
   async validate(satellitePath: string, corePath?: string): Promise<ValidationResult> {

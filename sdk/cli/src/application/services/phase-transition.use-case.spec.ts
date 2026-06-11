@@ -46,8 +46,11 @@ const createMockFileSystem = (overrides?: Partial<IFileSystem>): IFileSystem => 
     exists: jest.fn().mockResolvedValue(true),
     existsSync: jest.fn().mockReturnValue(true),
     readFile: jest.fn().mockImplementation((p: string) => {
+      if (p.includes('.schema.json')) {
+        return Promise.resolve(JSON.stringify({ type: 'object', properties: { gates: { type: 'array' } } }));
+      }
       if (p.includes('phase-gates.rules.json')) return Promise.resolve(mockRulesetContent);
-      return Promise.resolve('');
+      return Promise.resolve(JSON.stringify({}));
     }),
     readJson: jest.fn().mockResolvedValue({}),
     readdirNames: jest.fn().mockResolvedValue([]),

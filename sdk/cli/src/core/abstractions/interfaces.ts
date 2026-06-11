@@ -22,6 +22,7 @@ export interface IFileSystem {
   exists(path: string, options?: FileExistsOptions): Promise<boolean>;
   existsSync(path: string): boolean;
   readFile(path: string, options?: FileReadOptions): Promise<string>;
+  readFileBuffer(path: string): Promise<Buffer>;
   readJson(path: string, options?: FileReadOptions): Promise<unknown>;
   writeFile(path: string, content: string, options?: FileWriteOptions): Promise<void>;
   writeJson(path: string, data: unknown, options?: FileWriteOptions): Promise<void>;

@@ -28,6 +28,7 @@ Binding directives. Zero fluff.
 | **R-22** | Small Aggregates | Use UUID lists (`List<UUID>`) for massive 1:N relations to preserve O(1) performance and prevent optimistic concurrency deadlocks. |
 | **R-23** | Dynamic Domain Gates | Dynamic tenant workflows must be secured at the domain level via an internal `RequirementChecklist` evaluated before state transitions. |
 | **R-24** | Diagram Ergonomics | Complex Domain-Driven Design (DDD) models must not be rendered as a single monolithic diagram. They must be split into at least three views (Business Core, Workflow/Audit, and Cross-Cutting Shells) with a visual legend. |
+| **R-25** | Dual-Engine Parity | Any addition or modification to an architectural rule must be implemented in both the Native TypeScript Evaluator and its corresponding OPA `.rego` file. The CLI must guarantee seamless switching between both engines. |
 
 ## Mandatory Validation Gates
 

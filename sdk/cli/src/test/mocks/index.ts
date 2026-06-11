@@ -16,6 +16,11 @@ export class MockFileSystem implements IFileSystem {
     return content;
   }
 
+  async readFileBuffer(path: string): Promise<Buffer> {
+    const content = await this.readFile(path);
+    return Buffer.from(content);
+  }
+
   async writeFile(path: string, content: string): Promise<void> {
     this.files.set(path, content);
   }
@@ -65,6 +70,17 @@ export class MockFileSystem implements IFileSystem {
   async remove(path: string): Promise<void> {
     this.files.delete(path);
     this.directories.delete(path);
+  }
+
+  async readdir(path: string): Promise<any[]> {
+    return [];
+  }
+
+  async stat(path: string): Promise<any> {
+    return {
+      isDirectory: () => this.directories.has(path),
+      isFile: () => this.files.has(path)
+    };
   }
 
   setFile(path: string, content: string): void {

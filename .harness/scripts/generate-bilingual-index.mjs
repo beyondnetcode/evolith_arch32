@@ -47,13 +47,14 @@ function generateIndex(dir, pairs, language) {
   const sortedDirs = Object.keys(grouped).sort();
 
   for (const subDir of sortedDirs) {
+    let sectionTitle;
     if (subDir === ".") {
-      index += `## Files\n\n`;
+      sectionTitle = "Files";
     } else {
-      const subDirDisplay = subDir.replace(/^\.\//, "");
-      index += `## ${subDirDisplay}\n\n`;
+      sectionTitle = subDir.replace(/^\.\//, "");
     }
 
+    index += `<details>\n<summary><strong>${sectionTitle}</strong></summary>\n\n`;
     index += `| EN | ES | Status |\n`;
     index += `|----|----|--------|\n`;
 
@@ -69,7 +70,7 @@ function generateIndex(dir, pairs, language) {
       index += `| [${enName}](${enRel}) | [${esName}](${esRel}) | OK |\n`;
     }
 
-    index += "\n";
+    index += "\n</details>\n\n";
   }
 
   return index;
@@ -109,7 +110,7 @@ fs.writeFileSync(path.join(navigationDir, "BILINGUAL_INDEX.md"), topLevelIndex, 
 console.log("✓ Generated reference/navigation/BILINGUAL_INDEX.md");
 
 const esTopLevelIndex = generateIndex(referenceDir, allPairs, "es");
-fs.writeFileSync(path.join(navigationDir, "INDICE_BILINGUE.md"), esTopLevelIndex, "utf8");
+fs.writeFileSync(path.join(navigationDir, "BILINGUAL_INDEX.es.md"), esTopLevelIndex, "utf8");
 console.log("✓ Generated reference/navigation/INDICE_BILINGUE.md");
 
 const areas = {};

@@ -1,35 +1,31 @@
-# Evolith Product-Specific Designs
+# Bilingual Index: products
 
-> **Bilingual navigation:** [Versión en Español](./README.es.md)
+> Auto-generated index of EN/ES pairs. Do not edit manually.
 
-This domain contains the functional and technical design of individual products in the Evolith Product Suite.
+<details>
+<summary><strong></strong></summary>
 
-Product documents implement Evolith Core and SDLC Governance. They cannot redefine universal Core rules.
+| EN | ES | Status |
+|----|----|--------|
+| [README.md](README.md) | [README.es.md](README.es.md) | OK |
 
-## Products
+</details>
 
-- [Evolith Tracker](./evolith-tracker/README.md)
-- Evolith Smart CLI — migration pending
-- Evolith MCP Services — migration pending
-- Future products — add only after Product Vision approval
+<details>
+<summary><strong>evolith-tracker</strong></summary>
 
-## Allowed Content
+| EN | ES | Status |
+|----|----|--------|
+| [README.md](evolith-tracker/README.md) | [README.es.md](evolith-tracker/README.es.md) | OK |
 
-- product vision and scope;
-- bounded contexts and domain model;
-- interfaces and APIs;
-- persistence and deployment design;
-- product UX;
-- product-local security and authorization;
-- product ADRs;
-- integration and adapter usage.
+</details>
 
-## Excluded Content
+<details>
+<summary><strong>evolith-tracker/architecture</strong></summary>
 
-- universal architecture principles;
-- Core ADRs;
-- generic SDLC gates and artifact rules;
-- provider-specific selection rationale not scoped to this product;
-- suite-level positioning and commercial strategy.
+| EN | ES | Status |
+|----|----|--------|
+| [README.md](evolith-tracker/architecture/README.md) | [README.es.md](evolith-tracker/architecture/README.es.md) | OK |
 
-[Back to Reference Hub](../README.md)
+</details>
+

@@ -7,7 +7,8 @@ This is the complete navigation index for **Evolith** — the enterprise progres
 
 ---
 
-## 1. Start by Intent
+<details>
+<summary><strong>1. Start by Intent</strong></summary>
 
 | Intent | Primary entry point | Supporting reference |
 |---|---|---|
@@ -23,9 +24,10 @@ This is the complete navigation index for **Evolith** — the enterprise progres
 | Operate or deploy locally | [Operations Hub](../operations/README.md) | [Infrastructure Hub](../infrastructure/README.md) |
 | Explain the standard to a new audience | [Architecture Communication Strategy](../governance/standards/communication/architecture-communication-strategy.md) | [Visual Architecture Backlog](../governance/standards/communication/visuals/README.md) |
 
----
+</details>
 
-## 2. Recommended Reading by Role
+<details>
+<summary><strong>2. Recommended Reading by Role</strong></summary>
 
 | Role | Reading path |
 |---|---|
@@ -41,138 +43,48 @@ This is the complete navigation index for **Evolith** — the enterprise progres
 | **AI Contributor** | [AI-Augmented Standards](../governance/standards/ai-augmented/README.md) -> [AI Architecture Assistant](../governance/standards/ai-augmented/08-architecture-ai-assistant/README.md) -> [BMAD Adoption Reference](../governance/standards/ai-augmented/frameworks/bmad-method/README.md) -> [Harness Rules](../../.harness/rules/global-rules.md) |
 | **New Joiner** | [Product Quick Start](../governance/standards/onboarding/product-quick-start.md) -> [Repository Taxonomy](../governance/standards/repository-taxonomy.es.md) -> [README Portal](../../README.md) |
 
----
+</details>
 
-## 3. Architecture
+<details>
+<summary><strong>3. Core Architecture</strong></summary>
 
-| Area | Entry point |
-|---|---|
-| Architecture Hub | [reference/architecture](../architecture/README.md) |
-| Blueprints | [reference/architecture/blueprints](../architecture/blueprints/README.md) |
-| ADR Registry | [reference/architecture/adrs](../architecture/adrs/README.md) |
-| ADR Decision Matrix | [reference/architecture/adrs/adr-matrix](../architecture/adrs/adr-matrix.md) |
-| ADR Authoring Standard | [reference/architecture/adrs/adr-authoring-standard](../architecture/adrs/adr-authoring-standard.md) |
-| Core ADRs | [reference/architecture/adrs/core](../architecture/adrs/core/README.md) |
-| Node.js ADRs | [reference/architecture/adrs/nodejs](../architecture/adrs/nodejs/README.md) |
-| .NET ADRs | [reference/architecture/adrs/dotnet](../architecture/adrs/dotnet/README.md) |
-| Android ADRs | [reference/architecture/adrs/android](../architecture/adrs/android/README.md) |
-| Canonical Patterns | [reference/architecture/canonical-patterns](../architecture/canonical-patterns/README.md) |
+| Area | Single Entry Point | Description |
+|---|---|---|
+| Directives and Blueprints | [Architecture Hub](../architecture/README.md) | Central hub grouping directives, canonical patterns, blueprints, and the agnostic tech baseline. |
+| Architecture Decisions (ADRs) | [General ADR Registry](../architecture/adrs/README.md) | The general index that groups the decision matrix and all Evolith ADRs (Core, Node, .NET, Android). |
 
-Key architecture references:
+</details>
 
-- [Reference Blueprint](../architecture/blueprints/reference-blueprint.md)
-- [Authoritative Tech Stack Index](../architecture/blueprints/authoritative-tech-stack.md)
-- [C4 Topology Spec](../architecture/blueprints/c4-topology-spec.md)
-- [Observability Architecture Flow](../architecture/blueprints/observability-architecture-flow.md)
-- [CAP Strategic Analysis](../architecture/blueprints/cap-strategic-analysis.md)
-- [Multi-Cloud Deployment Scenarios](../architecture/blueprints/multi-cloud-deployment-scenarios.md)
+<details>
+<summary><strong>4. Governance and Standards</strong></summary>
 
----
+| Area | Single Entry Point | Description |
+|---|---|---|
+| Governance & Standards | [Standards and Governance Center](../governance/standards/README.md) | Access to technical directives, maturity assessment, glossary, manifestos, and onboarding. |
+| SDLC | [SDLC Governance Center](../governance/sdlc/README.md) | Authoritative documentation on phases, artifact templates, and deliverable mapping. |
+| Operations & Infrastructure | [Operations Hub](../operations/README.md) | Groups infrastructure, OpenTelemetry guides, Tempo, Grafana, and SRE deployments. |
 
-## 4. Governance
+</details>
 
-| Area | Entry point |
-|---|---|
-| Standards | [reference/governance/standards](../governance/standards/README.md) |
-| Architecture Glossary | [reference/governance/glossary](../governance/glossary.md) |
-| Vision | [reference/governance/standards/vision](../governance/standards/vision/README.md) |
-| Gap Tracking Board | [reference/governance/standards/vision/gap-tracking](../governance/standards/vision/gap-tracking.md) |
-| Maturity Assessment | [reference/governance/standards/vision/maturity-assessment](../governance/standards/vision/maturity-assessment.md) |
-| Engineering | [reference/governance/standards/engineering](../governance/standards/engineering/README.md) |
-| Onboarding | [reference/governance/standards/onboarding](../governance/standards/onboarding/README.md) |
-| AI-Augmented Engineering | [reference/governance/standards/ai-augmented](../governance/standards/ai-augmented/README.md) |
-| SDLC | [reference/governance/sdlc](../governance/sdlc/README.md) |
-| SDLC Artifact Mapping | [reference/governance/sdlc/sdlc-evolith-artifact-mapping](../governance/sdlc/sdlc-evolith-artifact-mapping.md) |
-| SDLC Artifact Templates | [reference/governance/sdlc/04-artifact-templates](../governance/sdlc/04-artifact-templates/README.md) |
-| Documentation Standards | [reference/governance/sdlc/03-documentation](../governance/sdlc/03-documentation/README.md) |
-| Architecture Communication Strategy | [reference/governance/standards/communication](../governance/standards/communication/architecture-communication-strategy.md) |
-| Visual Architecture Backlog | [reference/governance/standards/communication/visuals](../governance/standards/communication/visuals/README.md) |
+<details>
+<summary><strong>5. Applied Reference and Executables</strong></summary>
 
----
+| Area | Single Entry Point | Description |
+|---|---|---|
+| UMS Applied Reference | [UMS Reference Hub](../knowledge/demo/README.md) | Showcases the adoption of Evolith directives in a practical demonstrative environment (UMS). |
+| Adoption Cases and Knowledge | [Knowledge and Research Hub](../knowledge/README.md) | Platform adoption metrics, PoCs, and research. |
+| UMS Product (Code) | [UMS Repository](https://github.com/beyondnetcode/ums) | Official external repository that implements the architecture ecosystem. |
 
-## 5. Applied Reference and Knowledge Base
+</details>
 
-| Area | Entry point |
-|---|---|
-| UMS Applied Reference Hub | [reference/knowledge/demo](../knowledge/demo/README.md) |
-| UMS Technical Overview | [reference/knowledge/demo/ums-technical-overview](../knowledge/demo/ums-technical-overview.md) |
-| UMS Reference Model | [reference/knowledge/demo/ums-reference-model](../knowledge/demo/ums-reference-model.md) |
-| Reference vs Applied Model Boundary | [reference/knowledge/demo/demo-vs-reference](../knowledge/demo/demo-vs-reference.md) |
-| Migration Record | [reference/knowledge/demo/migration-from-todo-to-ums](../knowledge/demo/migration-from-todo-to-ums.md) |
-| Research | [reference/knowledge/research](../knowledge/research/README.md) |
-| Proofs of Concept | [reference/knowledge/poc](../knowledge/poc/README.md) |
+<details>
+<summary><strong>6. Rulesets and Validation (Machine-Readable)</strong></summary>
 
-Official UMS sources:
+| Area | Single Entry Point | Description |
+|---|---|---|
+| General Rulesets Hub | [Rulesets Hub](../../rulesets/README.md) | Central index for all schemas, architecture rules, CI/CD rules, SDLC, and automated governance. |
 
-- [UMS Repository and Setup](https://github.com/beyondnetcode/ums/blob/main/README.md)
-- [UMS Documentation Index](https://github.com/beyondnetcode/ums/blob/main/docs/MASTER_INDEX.md)
-- [UMS Architecture Portal](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md)
-
----
-
-## 6. Operations and Infrastructure
-
-| Area | Entry point |
-|---|---|
-| Operations | [reference/operations](../operations/README.md) |
-| OpenTelemetry | [reference/operations/otel](../operations/otel/README.md) |
-| Grafana | [reference/operations/grafana](../operations/grafana/README.md) |
-| Tempo | [reference/operations/tempo](../operations/tempo/README.md) |
-| Infrastructure | [reference/infrastructure](../infrastructure/README.md) |
-
----
-
-## 7. Official Executable Reference
-
-| Component | Official source |
-|---|---|
-| UMS product source and setup | [beyondnetcode/ums](https://github.com/beyondnetcode/ums) |
-| UMS architecture and traceability | [Architecture Portal](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) |
-
-This repository intentionally does not maintain product application code. UMS owns the executable demonstration of the architecture.
-
----
-
-## 8. Evolith Compliance Baseline
-
-Every artifact and implementation instantiated from Evolith must respect these pillars:
-
-1. [Agnostic Baseline](../architecture/blueprints/authoritative-tech-stack-agnostic.md)
-2. [Reference Architecture](../architecture/blueprints/reference-blueprint.md)
-3. [Engineering Manifesto](../governance/standards/engineering/engineering-manifesto.md)
-4. [Definition of Done](../governance/sdlc/02-engineering/construction-focused-sdlc-framework.md)
-5. [Repository Taxonomy](../governance/standards/repository-taxonomy.es.md)
-
----
-
-## 9. Rulesets (Machine-Readable Governance)
-
-Rulesets are the machine-readable enforcement layer of the Evolith governance framework. Satellite repositories inherit rules via `evolith.yaml`.
-
-| Area | Entry point |
-|---|---|
-| Rulesets Hub | [rulesets](../../rulesets/README.md) |
-| Schemas | [rulesets/schema](../../rulesets/schema/README.md) |
-| Architecture Rules | [rulesets/architecture](../../rulesets/architecture/README.md) |
-| SDLC Rules | [rulesets/sdlc](../../rulesets/sdlc/README.md) |
-| Governance Rules | [rulesets/governance](../../rulesets/governance/README.md) |
-
-Machine-readable rule files:
-
-- [ADR Schema](../../rulesets/schema/adr.schema.json)
-- [PRD Schema](../../rulesets/schema/prd.schema.json)
-- [Functional Story Schema](../../rulesets/schema/functional-story.schema.json)
-- [Technical Story Schema](../../rulesets/schema/technical-story.schema.json)
-- [Test Summary Report Schema](../../rulesets/schema/test-summary-report.schema.json)
-- [Release Notes Schema](../../rulesets/schema/release-notes.schema.json)
-- [Evolith.yaml Schema](../../rulesets/schema/evolith-yaml.schema.json)
-- [F1 Modular Monolith Rules](../../rulesets/architecture/f1-modular-monolith.rules.json)
-- [F2 Distributed Modules Rules](../../rulesets/architecture/f2-distributed-modules.rules.json)
-- [F3 Microservices Rules](../../rulesets/architecture/f3-microservices.rules.json)
-- [Phase Gates Rules](../../rulesets/sdlc/phase-gates.rules.json)
-- [Quality Thresholds Rules](../../rulesets/sdlc/quality-thresholds.rules.json)
-- [Inheritance Rules](../../rulesets/governance/inheritance.rules.json)
-- [Satellite Contracts Rules](../../rulesets/governance/satellite-contracts.rules.json)
+</details>
 
 ---
 

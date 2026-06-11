@@ -1,35 +1,31 @@
-# Diseños Específicos de Productos Evolith
+# Índice Bilingüe: products
 
-> **Navegación bilingüe:** [English version](./README.md)
+> Índice auto-generado de pares EN/ES. No editar manualmente.
 
-Este dominio contiene el diseño funcional y técnico de cada producto de Evolith Product Suite.
+<details>
+<summary><strong></strong></summary>
 
-Los documentos de producto implementan Evolith Core y SDLC Governance. No pueden redefinir reglas universales del Core.
+| EN | ES | Status |
+|----|----|--------|
+| [README.md](README.md) | [README.es.md](README.es.md) | OK |
 
-## Productos
+</details>
 
-- [Evolith Tracker](./evolith-tracker/README.es.md)
-- Evolith Smart CLI — migración pendiente
-- Evolith MCP Services — migración pendiente
-- Productos futuros — solo después de aprobar su Product Vision
+<details>
+<summary><strong>evolith-tracker</strong></summary>
 
-## Contenido Permitido
+| EN | ES | Status |
+|----|----|--------|
+| [README.md](evolith-tracker/README.md) | [README.es.md](evolith-tracker/README.es.md) | OK |
 
-- visión y alcance del producto;
-- bounded contexts y modelo de dominio;
-- interfaces y APIs;
-- persistencia y despliegue;
-- UX del producto;
-- seguridad y autorización específicas;
-- ADRs del producto;
-- uso de integraciones y adapters.
+</details>
 
-## Contenido Excluido
+<details>
+<summary><strong>evolith-tracker/architecture</strong></summary>
 
-- principios arquitectónicos universales;
-- ADRs Core;
-- gates y reglas genéricas del SDLC;
-- selección de proveedores sin alcance explícito del producto;
-- posicionamiento y estrategia comercial de la Suite.
+| EN | ES | Status |
+|----|----|--------|
+| [README.md](evolith-tracker/architecture/README.md) | [README.es.md](evolith-tracker/architecture/README.es.md) | OK |
 
-[Volver al Hub de Referencia](../README.es.md)
+</details>
+

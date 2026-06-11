@@ -1,25 +1,67 @@
-# Evolith Product Suite
+# Bilingual Index: product-suite
 
-> **Bilingual navigation:** [Versión en Español](./README.es.md)
+> Auto-generated index of EN/ES pairs. Do not edit manually.
 
-This domain contains the product portfolio vision, strategy, positioning, roadmap, methods, ecosystem, and executive communication for the Evolith Suite.
+<details>
+<summary><strong></strong></summary>
 
-It does not define universal architecture rules, SDLC governance standards, or product-internal implementation details.
+| EN | ES | Status |
+|----|----|--------|
+| [README.md](README.md) | [README.es.md](README.es.md) | OK |
 
-## Areas
+</details>
 
-- [Vision](./vision/README.md)
-- [Strategy](./strategy/README.md)
-- [Positioning](./positioning/README.md)
-- [Methods](./methods/README.md)
-- [Architecture](./architecture/README.md)
-- [Communication](./communication/README.md)
+<details>
+<summary><strong>architecture</strong></summary>
 
-## Boundary
+| EN | ES | Status |
+|----|----|--------|
+| [README.md](architecture/README.md) | [README.es.md](architecture/README.es.md) | OK |
 
-- Universal principles belong in [`reference/architecture/`](../architecture/README.md).
-- Phase, gate, artifact, evidence, and role governance belongs in [`reference/governance/sdlc/`](../governance/sdlc/README.md).
-- Product-internal designs belong in [`reference/products/`](../products/README.md).
-- Named technologies and vendors belong in [`reference/platforms/`](../platforms/README.md).
+</details>
 
-[Back to Reference Hub](../README.md)
+<details>
+<summary><strong>communication</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [README.md](communication/README.md) | [README.es.md](communication/README.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>methods</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [README.md](methods/README.md) | [README.es.md](methods/README.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>positioning</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [README.md](positioning/README.md) | [README.es.md](positioning/README.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>strategy</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [README.md](strategy/README.md) | [README.es.md](strategy/README.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>vision</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [README.md](vision/README.md) | [README.es.md](vision/README.es.md) | OK |
+
+</details>
+

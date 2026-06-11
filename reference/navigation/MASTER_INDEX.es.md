@@ -7,7 +7,8 @@ Este es el índice completo de navegación de **Evolith** — la plataforma empr
 
 ---
 
-## 1. Empieza por Intención
+<details>
+<summary><strong>1. Empieza por Intención</strong></summary>
 
 | Intención | Entrada principal | Referencia de apoyo |
 |---|---|---|
@@ -23,9 +24,10 @@ Este es el índice completo de navegación de **Evolith** — la plataforma empr
 | Operar o desplegar localmente | [Hub de Operaciones](../operations/README.es.md) | [Hub de Infraestructura](../infrastructure/README.es.md) |
 | Explicar el estándar a una nueva audiencia | [Estrategia de Comunicación Arquitectónica](../governance/standards/communication/architecture-communication-strategy.es.md) | [Backlog Visual de Arquitectura](../governance/standards/communication/visuals/README.es.md) |
 
----
+</details>
 
-## 2. Lectura Recomendada por Rol
+<details>
+<summary><strong>2. Lectura Recomendada por Rol</strong></summary>
 
 | Rol | Ruta de lectura |
 |---|---|
@@ -41,129 +43,48 @@ Este es el índice completo de navegación de **Evolith** — la plataforma empr
 | **AI Contributor** | [Estándares AI-Augmented](../governance/standards/ai-augmented/README.es.md) -> [Reglas Harness](../../.harness/rules/global-rules.es.md) -> [Agentes](../../AGENTS.es.md) |
 | **New Joiner** | [Product Quick Start](../governance/standards/onboarding/product-quick-start.es.md) -> [Taxonomía del Repositorio](../governance/standards/repository-taxonomy.es.md) -> [Portal README](../../README.es.md) |
 
----
+</details>
 
-## 3. Arquitectura
+<details>
+<summary><strong>3. Arquitectura Central</strong></summary>
 
-| Área | Entrada |
-|---|---|
-| Hub de Arquitectura | [reference/architecture](../architecture/README.es.md) |
-| Blueprints | [reference/architecture/blueprints](../architecture/blueprints/README.es.md) |
-| Registro ADR | [reference/architecture/adrs](../architecture/adrs/README.es.md) |
-| Matriz de Decisiones ADR | [reference/architecture/adrs/adr-matrix](../architecture/adrs/adr-matrix.es.md) |
-| Estándar de Autoría de ADRs | [reference/architecture/adrs/adr-authoring-standard](../architecture/adrs/adr-authoring-standard.es.md) |
-| ADRs Core | [reference/architecture/adrs/core](../architecture/adrs/core/README.es.md) |
-| ADRs Node.js | [reference/architecture/adrs/nodejs](../architecture/adrs/nodejs/README.es.md) |
-| ADRs .NET | [reference/architecture/adrs/dotnet](../architecture/adrs/dotnet/README.es.md) |
-| ADRs Android | [reference/architecture/adrs/android](../architecture/adrs/android/README.es.md) |
-| Patrones Canónicos | [reference/architecture/canonical-patterns](../architecture/canonical-patterns/README.es.md) |
+| Área | Único Punto de Acceso | Descripción |
+|---|---|---|
+| Directivas y Blueprints | [Hub de Arquitectura](../architecture/README.es.md) | Hub central que agrupa las directivas, patrones canónicos, blueprints y la línea base de tecnología agnóstica. |
+| Decisiones de Arquitectura (ADRs) | [Registro General de ADRs](../architecture/adrs/README.es.md) | Índice general que agrupa la matriz de decisiones y todos los ADRs de Evolith (Core, Node, .NET, Android). |
 
----
+</details>
 
-## 4. Gobernanza
+<details>
+<summary><strong>4. Gobernanza y Estándares</strong></summary>
 
-| Área | Entrada |
-|---|---|
-| Estándares | [reference/governance/standards](../governance/standards/README.es.md) |
-| Glosario Arquitectónico | [reference/governance/glossary](../governance/glossary.es.md) |
-| Visión | [reference/governance/standards/vision](../governance/standards/vision/README.es.md) |
-| Tablero de Seguimiento de Gaps | [reference/governance/standards/vision/gap-tracking](../governance/standards/vision/gap-tracking.es.md) |
-| Evaluación de Madurez | [reference/governance/standards/vision/maturity-assessment](../governance/standards/vision/maturity-assessment.es.md) |
-| Ingeniería | [reference/governance/standards/engineering](../governance/standards/engineering/README.es.md) |
-| Onboarding | [reference/governance/standards/onboarding](../governance/standards/onboarding/README.es.md) |
-| AI-Augmented Engineering | [reference/governance/standards/ai-augmented](../governance/standards/ai-augmented/README.es.md) |
-| SDLC | [reference/governance/sdlc](../governance/sdlc/README.es.md) |
-| Mapeo SDLC–Artefactos Evolith | [reference/governance/sdlc/sdlc-evolith-artifact-mapping](../governance/sdlc/sdlc-evolith-artifact-mapping.es.md) |
-| Plantillas de Artefactos SDLC | [reference/governance/sdlc/04-artifact-templates](../governance/sdlc/04-artifact-templates/README.es.md) |
-| Estándares de Documentación | [reference/governance/sdlc/03-documentation](../governance/sdlc/03-documentation/README.es.md) |
-| Estrategia de Comunicación Arquitectónica | [reference/governance/standards/communication](../governance/standards/communication/architecture-communication-strategy.es.md) |
-| Backlog Visual de Arquitectura | [reference/governance/standards/communication/visuals](../governance/standards/communication/visuals/README.es.md) |
+| Área | Único Punto de Acceso | Descripción |
+|---|---|---|
+| Gobernanza y Estándares | [Centro de Estándares y Gobernanza](../governance/standards/README.es.md) | Acceso a directivas técnicas, evaluación de madurez, glosario, manifiestos y onboarding. |
+| SDLC (Ciclo de Vida) | [Centro de Gobernanza SDLC](../governance/sdlc/README.es.md) | Documentación autoritativa sobre las fases, plantillas de artefactos y mapeos de entregables. |
+| Operaciones e Infraestructura | [Hub Operativo](../operations/README.es.md) | Agrupa infraestructura, guías de OpenTelemetry, Tempo, Grafana y despliegues SRE. |
 
----
+</details>
 
-## 5. Referencia Aplicada y Base de Conocimiento
+<details>
+<summary><strong>5. Referencia Aplicada y Ejecutable</strong></summary>
 
-| Área | Entrada |
-|---|---|
-| Hub de Referencia Aplicada UMS | [reference/knowledge/demo](../knowledge/demo/README.es.md) |
-| Visión Técnica de UMS | [reference/knowledge/demo/ums-technical-overview](../knowledge/demo/ums-technical-overview.es.md) |
-| Modelo de Referencia UMS | [reference/knowledge/demo/ums-reference-model](../knowledge/demo/ums-reference-model.es.md) |
-| Límite Referencia vs Modelo Aplicado | [reference/knowledge/demo/demo-vs-reference](../knowledge/demo/demo-vs-reference.es.md) |
-| Registro de Migración | [reference/knowledge/demo/migration-from-todo-to-ums](../knowledge/demo/migration-from-todo-to-ums.es.md) |
-| Investigación | [reference/knowledge/research](../knowledge/research/README.es.md) |
-| Proofs of Concept | [reference/knowledge/poc](../knowledge/poc/README.es.md) |
+| Área | Único Punto de Acceso | Descripción |
+|---|---|---|
+| Referencia Aplicada UMS | [Hub de Referencia UMS](../knowledge/demo/README.es.md) | Muestra la adopción de las directivas Evolith en un entorno práctico demostrativo (UMS). |
+| Casos de Uso y Adopción | [Hub de Conocimiento e Investigación](../knowledge/README.es.md) | Investigación, PoCs y métricas de adopción de la plataforma. |
+| Producto UMS (Código) | [Repositorio UMS](https://github.com/beyondnetcode/ums) | Repositorio oficial externo que implementa el ecosistema de arquitectura. |
 
-Fuentes oficiales UMS:
+</details>
 
-- [Repositorio y Setup UMS](https://github.com/beyondnetcode/ums/blob/main/README.md)
-- [Índice Documental UMS](https://github.com/beyondnetcode/ums/blob/main/docs/MASTER_INDEX.md)
-- [Portal de Arquitectura UMS](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md)
+<details>
+<summary><strong>6. Rulesets y Validación (Machine-Readable)</strong></summary>
 
----
+| Área | Único Punto de Acceso | Descripción |
+|---|---|---|
+| Hub General de Rulesets | [Rulesets Hub](../../rulesets/README.es.md) | Índice central para todos los schemas, reglas de arquitectura, CI/CD, SDLC y gobernanza en formato automatizado. |
 
-## 6. Operaciones e Infraestructura
-
-| Área | Entrada |
-|---|---|
-| Operaciones | [reference/operations](../operations/README.es.md) |
-| OpenTelemetry | [reference/operations/otel](../operations/otel/README.es.md) |
-| Grafana | [reference/operations/grafana](../operations/grafana/README.es.md) |
-| Tempo | [reference/operations/tempo](../operations/tempo/README.es.md) |
-| Infraestructura | [reference/infrastructure](../infrastructure/README.es.md) |
-
----
-
-## 7. Referencia Ejecutable Oficial
-
-| Componente | Fuente oficial |
-|---|---|
-| Código y setup del producto UMS | [beyondnetcode/ums](https://github.com/beyondnetcode/ums) |
-| Arquitectura y trazabilidad UMS | [Portal de Arquitectura](https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md) |
-
-Este repositorio intencionalmente no mantiene código de aplicación de producto. UMS es propietario de la demostración ejecutable de la arquitectura.
-
----
-
-## 8. Línea Base de Cumplimiento Evolith
-
-Todo artefacto e implementación instanciada desde Evolith debe respetar estos pilares:
-
-1. [Baseline Agnóstico](../architecture/blueprints/authoritative-tech-stack-agnostic.es.md)
-2. [Arquitectura de Referencia](../architecture/blueprints/reference-blueprint.es.md)
-3. [Manifiesto de Ingeniería](../governance/standards/engineering/engineering-manifesto.es.md)
-4. [Definition of Done](../governance/sdlc/02-engineering/construction-focused-sdlc-framework.es.md)
-5. [Taxonomía del Repositorio](../governance/standards/repository-taxonomy.es.md)
-
----
-
-## 9. Rulesets (Gobernanza Machine-Readable)
-
-Los Rulesets son la capa de ejecución machine-readable del framework de gobernanza Evolith. Los repositorios satélite heredan reglas vía `evolith.yaml`.
-
-| Área | Entrada |
-|---|---|
-| Hub de Rulesets | [rulesets](../../rulesets/README.es.md) |
-| Schemas | [rulesets/schema](../../rulesets/schema/README.md) |
-| Reglas de Arquitectura | [rulesets/architecture](../../rulesets/architecture/README.md) |
-| Reglas SDLC | [rulesets/sdlc](../../rulesets/sdlc/README.md) |
-| Reglas de Gobernanza | [rulesets/governance](../../rulesets/governance/README.md) |
-
-Archivos de reglas machine-readable:
-
-- [Schema ADR](../../rulesets/schema/adr.schema.json)
-- [Schema PRD](../../rulesets/schema/prd.schema.json)
-- [Schema Functional Story](../../rulesets/schema/functional-story.schema.json)
-- [Schema Technical Story](../../rulesets/schema/technical-story.schema.json)
-- [Schema Test Summary Report](../../rulesets/schema/test-summary-report.schema.json)
-- [Schema Release Notes](../../rulesets/schema/release-notes.schema.json)
-- [Schema Evolith.yaml](../../rulesets/schema/evolith-yaml.schema.json)
-- [Reglas F1 Modular Monolith](../../rulesets/architecture/f1-modular-monolith.rules.json)
-- [Reglas F2 Módulos Distribuidos](../../rulesets/architecture/f2-distributed-modules.rules.json)
-- [Reglas F3 Microservicios](../../rulesets/architecture/f3-microservices.rules.json)
-- [Reglas Phase Gates](../../rulesets/sdlc/phase-gates.rules.json)
-- [Reglas Quality Thresholds](../../rulesets/sdlc/quality-thresholds.rules.json)
-- [Reglas de Herencia](../../rulesets/governance/inheritance.rules.json)
-- [Reglas de Contratos Satélite](../../rulesets/governance/satellite-contracts.rules.json)
+</details>
 
 ---
 

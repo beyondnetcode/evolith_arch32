@@ -16,26 +16,30 @@ Este directorio contiene el corpus de referencia Evolith, separado explícitamen
 
 ## Fronteras Principales
 
-| Área | Propósito |
-|---|---|
-| [Evolith Core](./core/README.es.md) | Arquitectura, gobernanza SDLC, estándares, rulesets, schemas y ADRs Core autoritativos y neutrales respecto de proveedores |
-| [Evolith Product Suite](./product-suite/README.es.md) | Visión del portafolio, estrategia, posicionamiento, arquitectura de suite, roadmap y comunicación |
-| [Diseños Específicos de Productos](./products/README.es.md) | Diseño funcional y técnico de Tracker, Smart CLI, servicios MCP y productos futuros |
-| [Guías de Plataformas y Proveedores](./platforms/README.es.md) | Herramientas y vendors nombrados, adapters, licencias, perfiles de despliegue y ADRs específicos |
+Los cuatro dominios primarios, ordenados de lo más genérico (la constitución) a lo más específico (proveedores nombrados):
+
+| Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
+|---|---|---|---|---|
+| [Evolith Core](./core/README.es.md) | Arquitectura, gobernanza SDLC, estándares, rulesets, schemas y ADRs Core autoritativos y neutrales respecto de proveedores | Anclar la constitución que todo producto hereda | Hub de dominio | Sí |
+| [Evolith Product Suite](./product-suite/README.es.md) | Visión del portafolio, estrategia, posicionamiento, arquitectura de suite, roadmap y comunicación | Dirigir el ecosistema | Hub de dominio | Sí |
+| [Diseños Específicos de Productos](./products/README.es.md) | Diseño funcional y técnico de Tracker, Smart CLI, servicios MCP y productos futuros | Contener los internos de producto | Hub de área | Sí |
+| [Guías de Plataformas y Proveedores](./platforms/README.es.md) | Herramientas y vendors nombrados, adapters, licencias, perfiles de despliegue y ADRs específicos | Aislar decisiones de proveedores | Hub de área | Sí |
 
 ## Áreas de Referencia de Soporte
 
-| Área | Propósito |
-|---|---|
-| [getting-started/](./getting-started/README.es.md) | Rutas guiadas de lectura por rol y objetivo |
-| [architecture/](./architecture/README.es.md) | Blueprints Core, ADRs, topología, contratos y patrones canónicos |
-| [governance/](./governance/standards/README.es.md) | Estándares y gobernanza de ingeniería Core |
-| [Gobernanza SDLC](./governance/sdlc/README.es.md) | Fases, gates, artefactos, evidencias, roles, trazabilidad y métricas |
-| [operations/](./operations/README.es.md) | Observabilidad, soporte runtime y documentación operacional |
-| [infrastructure/](./infrastructure/README.es.md) | Plataforma local, gateway, contenedores y activos de infraestructura |
-| [knowledge/](./knowledge/demo/README.es.md) | Referencias aplicadas, evidencia UMS, investigación, ejemplos y lecciones |
-| [quick-access/](./quick-access/README.es.md) | Camino más corto a los estándares autoritativos por stack |
-| [navigation/](./navigation/README.es.md) | Índice maestro, índice bilingüe y registro de versiones documentales |
+Áreas de soporte, ordenadas del onboarding a la meta-navegación:
+
+| Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
+|---|---|---|---|---|
+| [Primeros Pasos](./getting-started/README.es.md) | Rutas guiadas de lectura por rol y objetivo | Acelerar el onboarding | Guía de incorporación | No |
+| [Arquitectura](./architecture/README.es.md) | Blueprints Core, ADRs, topología, contratos y patrones canónicos | Guiar el diseño corporativo | Hub de área | Sí |
+| [Gobernanza y Estándares](./governance/standards/README.es.md) | Estándares y gobernanza de ingeniería Core | Alinear equipos a políticas unificadas | Hub de área | Sí |
+| [Gobernanza SDLC](./governance/sdlc/README.es.md) | Fases, gates, artefactos, evidencias, roles, trazabilidad y métricas | Gobernar el ciclo de vida completo | Hub de dominio | Sí |
+| [Operaciones](./operations/README.es.md) | Observabilidad, soporte runtime y documentación operacional | Estandarizar operaciones | Hub de área | No |
+| [Infraestructura](./infrastructure/README.es.md) | Plataforma local, gateway, contenedores y activos de infraestructura | Estandarizar el runtime local | Hub de área | No |
+| [Conocimiento](./knowledge/README.es.md) | Referencias aplicadas, evidencia UMS, investigación, ejemplos y lecciones | Capturar evidencia y aprendizaje | Hub de área | No |
+| [Acceso Rápido](./quick-access/README.es.md) | Camino más corto a los estándares autoritativos por stack | Reducir fricción de navegación | Índice de navegación | No |
+| [Navegación](./navigation/README.es.md) | Índice maestro, índice bilingüe y registro de versiones documentales | Centralizar la navegación | Hub de navegación | Sí |
 
 ## Gobernanza Documental
 

@@ -1,118 +1,34 @@
-# Bilingual Index: knowledge
+# Knowledge and Research Hub
 
-> Auto-generated index of EN/ES pairs. Do not edit manually.
+> Bilingual navigation: [Español](./README.es.md)
 
-<details>
-<summary><strong></strong></summary>
+This area captures applied evidence: how the Evolith constitution behaves in real products, experiments, and research.
 
-| EN | ES | Status |
-|----|----|--------|
-| [adoption-cases.md](adoption-cases.md) | [adoption-cases.es.md](adoption-cases.es.md) | OK |
-| [README.md](README.md) | [README.es.md](README.es.md) | OK |
-| [rules-summary.md](rules-summary.md) | [rules-summary.es.md](rules-summary.es.md) | OK |
+## Goal and Objectives
 
-</details>
+> **Goal:** collect the evidence that validates (or challenges) Core decisions before lessons are promoted upstream.
 
-<details>
-<summary><strong>architecture-intelligence</strong></summary>
+**Objectives:**
 
-| EN | ES | Status |
-|----|----|--------|
-| [README.md](architecture-intelligence/README.md) | [README.es.md](architecture-intelligence/README.es.md) | OK |
+- Keep the UMS applied reference as the canonical demonstration of the standard.
+- Record adoption cases, PoCs, and research with enough detail to inform Core changes.
+- Separate evidence (this area) from policy (Core), so products never mistake examples for rules.
 
-</details>
+## Areas
 
-<details>
-<summary><strong>architecture-intelligence/ai</strong></summary>
+Ordered from the canonical applied reference to exploratory research:
 
-| EN | ES | Status |
-|----|----|--------|
-| [ai-knowledge-strategy.md](architecture-intelligence/ai/ai-knowledge-strategy.md) | [ai-knowledge-strategy.es.md](architecture-intelligence/ai/ai-knowledge-strategy.es.md) | OK |
+| Document | Description | Goal / Objective | Type | Mandatory |
+|---|---|---|---|---|
+| [UMS Reference Hub](./demo/README.md) | UMS reference models, comparisons, and architecture portal | Demonstrate real implementation | Applied reference | Yes |
+| [Adoption Cases](./adoption-cases.md) | Documented platform adoption successes and lessons | Showcase success and learning | Applied reference | No |
+| [Rules Summary](./rules-summary.md) | Condensed view of the governing rules | Summarize the rule corpus | Reference | No |
+| [Architecture Intelligence](./architecture-intelligence/README.md) | AI-consumable architecture knowledge catalog | Make knowledge machine-consumable | Area hub | No |
+| [Proofs of Concept](./poc/README.md) | Experimental validations (e.g., Kong Gateway) | De-risk decisions with experiments | Area hub | No |
+| [Research](./research/README.md) | Ongoing research notes | Explore future directions | Area hub | No |
 
-</details>
+The EN/ES pairing status for every knowledge document is tracked in the [Bilingual Index](./BILINGUAL_INDEX.md).
 
-<details>
-<summary><strong>architecture-intelligence/patterns</strong></summary>
+---
 
-| EN | ES | Status |
-|----|----|--------|
-| [bounded-context-isolation.md](architecture-intelligence/patterns/bounded-context-isolation.md) | [bounded-context-isolation.es.md](architecture-intelligence/patterns/bounded-context-isolation.es.md) | OK |
-| [contract-first-integration.md](architecture-intelligence/patterns/contract-first-integration.md) | [contract-first-integration.es.md](architecture-intelligence/patterns/contract-first-integration.es.md) | OK |
-| [data-ownership-per-bounded-context.md](architecture-intelligence/patterns/data-ownership-per-bounded-context.md) | [data-ownership-per-bounded-context.es.md](architecture-intelligence/patterns/data-ownership-per-bounded-context.es.md) | OK |
-| [modular-monolith-first.md](architecture-intelligence/patterns/modular-monolith-first.md) | [modular-monolith-first.es.md](architecture-intelligence/patterns/modular-monolith-first.es.md) | OK |
-| [no-cross-domain-joins.md](architecture-intelligence/patterns/no-cross-domain-joins.md) | [no-cross-domain-joins.es.md](architecture-intelligence/patterns/no-cross-domain-joins.es.md) | OK |
-| [pattern-card-template.md](architecture-intelligence/patterns/pattern-card-template.md) | [pattern-card-template.es.md](architecture-intelligence/patterns/pattern-card-template.es.md) | OK |
-
-</details>
-
-<details>
-<summary><strong>architecture-intelligence/patterns/es</strong></summary>
-
-| EN | ES | Status |
-|----|----|--------|
-| [contract-first-integration.md](architecture-intelligence/patterns/es/contract-first-integration.md) | [contract-first-integration.es.md](architecture-intelligence/patterns/es/contract-first-integration.es.md) | OK |
-| [data-ownership-per-bounded-context.md](architecture-intelligence/patterns/es/data-ownership-per-bounded-context.md) | [data-ownership-per-bounded-context.es.md](architecture-intelligence/patterns/es/data-ownership-per-bounded-context.es.md) | OK |
-| [modular-monolith-first.md](architecture-intelligence/patterns/es/modular-monolith-first.md) | [modular-monolith-first.es.md](architecture-intelligence/patterns/es/modular-monolith-first.es.md) | OK |
-| [no-cross-domain-joins.md](architecture-intelligence/patterns/es/no-cross-domain-joins.md) | [no-cross-domain-joins.es.md](architecture-intelligence/patterns/es/no-cross-domain-joins.es.md) | OK |
-
-</details>
-
-<details>
-<summary><strong>architecture-intelligence/tradeoffs</strong></summary>
-
-| EN | ES | Status |
-|----|----|--------|
-| [architecture-radar.md](architecture-intelligence/tradeoffs/architecture-radar.md) | [architecture-radar.es.md](architecture-intelligence/tradeoffs/architecture-radar.es.md) | OK |
-
-</details>
-
-<details>
-<summary><strong>architecture-intelligence/validation</strong></summary>
-
-| EN | ES | Status |
-|----|----|--------|
-| [architecture-intelligence-validation.md](architecture-intelligence/validation/architecture-intelligence-validation.md) | [architecture-intelligence-validation.es.md](architecture-intelligence/validation/architecture-intelligence-validation.es.md) | OK |
-
-</details>
-
-<details>
-<summary><strong>demo</strong></summary>
-
-| EN | ES | Status |
-|----|----|--------|
-| [demo-vs-reference.md](demo/demo-vs-reference.md) | [demo-vs-reference.es.md](demo/demo-vs-reference.es.md) | OK |
-| [migration-from-todo-to-ums.md](demo/migration-from-todo-to-ums.md) | [migration-from-todo-to-ums.es.md](demo/migration-from-todo-to-ums.es.md) | OK |
-| [README.md](demo/README.md) | [README.es.md](demo/README.es.md) | OK |
-| [ums-reference-model.md](demo/ums-reference-model.md) | [ums-reference-model.es.md](demo/ums-reference-model.es.md) | OK |
-| [ums-technical-overview.md](demo/ums-technical-overview.md) | [ums-technical-overview.es.md](demo/ums-technical-overview.es.md) | OK |
-
-</details>
-
-<details>
-<summary><strong>poc</strong></summary>
-
-| EN | ES | Status |
-|----|----|--------|
-| [README.md](poc/README.md) | [README.es.md](poc/README.es.md) | OK |
-
-</details>
-
-<details>
-<summary><strong>poc/kong-gateway</strong></summary>
-
-| EN | ES | Status |
-|----|----|--------|
-| [README.md](poc/kong-gateway/README.md) | [README.es.md](poc/kong-gateway/README.es.md) | OK |
-
-</details>
-
-<details>
-<summary><strong>research</strong></summary>
-
-| EN | ES | Status |
-|----|----|--------|
-| [minimal-apis-vs-controllers-analysis.md](research/minimal-apis-vs-controllers-analysis.md) | [minimal-apis-vs-controllers-analysis.es.md](research/minimal-apis-vs-controllers-analysis.es.md) | OK |
-| [README.md](research/README.md) | [README.es.md](research/README.es.md) | OK |
-
-</details>
-
+[Back to Reference Hub](../README.md)

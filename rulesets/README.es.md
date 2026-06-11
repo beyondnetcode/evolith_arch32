@@ -8,23 +8,31 @@ Reglas de gobernanza machine-readable que los repositorios satélite heredan y c
 
 ## Propósito
 
+> **Meta:** convertir la constitución escrita por humanos en reglas automatizadas exigibles en CI que los satélites no puedan eludir en silencio.
+>
+> **Objetivos:** versionar cada regla, validar cada artefacto contra un schema y custodiar automáticamente cada transición de fase.
+
 Los Rulesets de Evolith son la **capa de ejecución machine-readable** del framework de gobernanza Evolith. Mientras `reference/` contiene estándares escritos por humanos, ADRs y documentación, `rulesets/` contiene las reglas concretas, esquemas y contratos que las herramientas (CLI, pipelines CI, linters) consumen para **validar** el cumplimiento de satélites.
 
 ---
 
-## Punto de Entrada
+## Categorías de Reglas
 
-Si estás integrando un nuevo repositorio satélite, comienza aquí:
+Si estás integrando un nuevo repositorio satélite, lee las categorías en este orden — del contrato de herencia a la validación de artefactos:
 
-1. **[Reglas de Gobernanza](./governance/)** — contrato `evolith.yaml` y reglas de herencia
-2. **[Reglas de Arquitectura](./architecture/)** — reglas de progresión de fase F1/F2/F3
-3. **[Reglas SDLC](./sdlc/)** — definiciónes de quality gates y thresholds
-4. **[Reglas Anti-Corrupción](./acl/)** — gobernanza de integración con sistemas externos
-5. **[Reglas del CLI](./cli/)** — preparación de release del Smart CLI y paridad con Core
-6. **[Reglas de Evidencia](./evidence/)** — manifests de evidencia auditable
-7. **[Reglas MCP](./mcp/)** — cumplimiento del protocolo MCP
-8. **[Reglas de Observabilidad](./observability/)** — evidencia de telemetría para operación
-9. **[Schemas](./schema/)** — JSON Schema para validación de artefactos Evolith
+| Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
+|---|---|---|---|---|
+| [Reglas de Gobernanza](./governance/README.es.md) | Contrato `evolith.yaml` y reglas de herencia | Gobernar la herencia de satélites | Categoría de reglas | Sí |
+| [Reglas de Arquitectura](./architecture/README.es.md) | Reglas de progresión de fase F1/F2/F3 | Custodiar las fases de arquitectura | Categoría de reglas | Sí |
+| [Reglas Codificadas desde ADRs](./adr/README.es.md) | Reglas derivadas de ADRs aceptados | Hacer cumplir las decisiones automáticamente | Categoría de reglas | Sí |
+| [Reglas Transversales](./cross-cutting/README.es.md) | Baseline de cumplimiento, Definition of Done, manifiesto y taxonomía | Hacer cumplir las reglas transversales | Categoría de reglas | Sí |
+| [Reglas SDLC](./sdlc/README.es.md) | Definiciones de quality gates y thresholds | Hacer cumplir la calidad del ciclo de vida | Categoría de reglas | Sí |
+| [Reglas Anti-Corrupción](./acl/README.es.md) | Gobernanza de integración con sistemas externos | Proteger los límites del dominio | Categoría de reglas | Sí |
+| [Reglas del CLI](./cli/README.es.md) | Preparación de release del Smart CLI y paridad con Core | Custodiar los releases del CLI | Categoría de reglas | Sí |
+| [Reglas de Evidencia](./evidence/README.es.md) | Manifests de evidencia auditable | Estandarizar la evidencia | Categoría de reglas | Sí |
+| [Reglas MCP](./mcp/README.es.md) | Cumplimiento del protocolo MCP | Validar la exposición MCP | Categoría de reglas | Sí |
+| [Reglas de Observabilidad](./observability/README.es.md) | Evidencia de telemetría para operación | Verificar la evidencia de telemetría | Categoría de reglas | Sí |
+| [Schemas](./schema/README.es.md) | JSON Schema para validación de artefactos Evolith | Validar la estructura de artefactos | Colección de schemas | Sí |
 
 ---
 
@@ -125,12 +133,12 @@ flowchart LR
 
 ## Documentos Relacionados
 
-| Documento | Propósito |
-|---|---|
-| [AGENTS.md](../AGENTS.md) | Reglas y convenciones de agentes |
-| [Repository Taxonomy](../reference/governance/standards/repository-taxonomy.es.md) | Qué va dónde en Evolith |
-| [Child Repository Inheritance](../reference/governance/standards/onboarding/child-repository-inheritance-guide.es.md) | Cómo productos heredan de Evolith |
-| [Navigation Hub](../reference/navigation/README.es.md) | Navegación completa del repositorio |
+| Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
+|---|---|---|---|---|
+| [AGENTS.md](../AGENTS.es.md) | Reglas y convenciones de agentes | Gobernar las contribuciones de agentes | Estándar | Sí |
+| [Taxonomía del Repositorio](../reference/governance/standards/repository-taxonomy.es.md) | Qué va dónde en Evolith | Mantener el repositorio organizado | Estándar de gobernanza | Sí |
+| [Guía de Herencia de Repositorios Hijos](../reference/governance/standards/onboarding/child-repository-inheritance-guide.es.md) | Cómo los productos heredan de Evolith | Estandarizar la herencia | Guía | Sí |
+| [Hub de Navegación](../reference/navigation/README.es.md) | Navegación completa del repositorio | Centralizar la navegación | Hub de navegación | No |
 
 ---
 

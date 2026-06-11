@@ -57,14 +57,14 @@ Products consume Core. They do not redefine it.
 
 ## 3. Core Domains
 
-| Core Domain | Canonical Location | Responsibility |
-|---|---|---|
-| **Architecture** | [`reference/architecture/`](../architecture/README.md) | Principles, patterns, reference models, contracts, and Core ADRs |
-| **SDLC Governance** | [`reference/governance/sdlc/`](../governance/sdlc/README.md) | Phases, gates, artifacts, evidence, roles, exceptions, traceability, and metrics |
-| **Engineering Standards** | [`reference/governance/standards/`](../governance/standards/README.md) | Reusable standards and governance rules |
-| **Rulesets and Schemas** | [`rulesets/`](../../rulesets/) | Machine-consumable policy and validation contracts |
-| **Core Taxonomy** | [`reference/governance/`](../governance/) | Canonical terminology, classifications, and governance boundaries |
-| **Applied Evidence** | [`reference/knowledge/`](../knowledge/) | Lessons and evidence from satellite implementations, pending upstream review |
+| Document | Description | Goal / Objective | Type | Mandatory |
+|---|---|---|---|---|
+| [Architecture Hub](../architecture/README.md) | Principles, patterns, reference models, contracts, and Core ADRs | Guide corporate design | Area hub | Yes |
+| [SDLC Governance Center](../governance/sdlc/README.md) | Phases, gates, artifacts, evidence, roles, exceptions, traceability, and metrics | Govern the full lifecycle | Domain hub | Yes |
+| [Standards and Governance Center](../governance/standards/README.md) | Reusable standards and governance rules | Align teams to unified policies | Area hub | Yes |
+| [Rulesets Hub](../../rulesets/README.md) | Machine-consumable policy and validation contracts | Validate compliance automatically | Rules hub | Yes |
+| [Governance Hub](../governance/README.md) | Canonical terminology, classifications, and governance boundaries | Keep language and boundaries consistent | Area hub | Yes |
+| [Knowledge Hub](../knowledge/README.md) | Lessons and evidence from satellite implementations, pending upstream review | Capture evidence and learning | Area hub | No |
 
 ---
 
@@ -137,15 +137,16 @@ Suite vision, business positioning, roadmaps, UX, product APIs, and commercial m
 
 ---
 
-## 8. Navigation
+## 8. Related Navigation
 
-- [Documentation Taxonomy](../documentation-taxonomy.md)
-- [Architecture](../architecture/README.md)
-- [SDLC Governance](../governance/sdlc/README.md)
-- [Engineering Standards](../governance/standards/README.md)
-- [Evolith Product Suite](../product-suite/README.md)
-- [Product-Specific Designs](../products/README.md)
-- [Platform and Provider Guidance](../platforms/README.md)
+Documents outside Core that complete the picture (Core's own domains are listed in section 3):
+
+| Document | Description | Goal / Objective | Type | Mandatory |
+|---|---|---|---|---|
+| [Documentation Taxonomy](../documentation-taxonomy.md) | Defines what kind of document belongs where | Keep the corpus organized | Governance standard | Yes |
+| [Evolith Product Suite](../product-suite/README.md) | Portfolio vision, strategy, positioning, and communication | Direct the ecosystem | Domain hub | Yes |
+| [Product-Specific Designs](../products/README.md) | Functional and technical design per product | Contain product internals | Area hub | Yes |
+| [Platform and Provider Guidance](../platforms/README.md) | Named tools, vendors, adapters, and deployment profiles | Isolate provider decisions | Area hub | Yes |
 
 ---
 

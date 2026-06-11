@@ -6,9 +6,15 @@
 
 Esta área contiene comunicación ejecutiva, para inversores, de producto y transversal de Evolith Product Suite.
 
+> **Meta:** explicar la Suite y su valor a cada audiencia sin distorsionar la verdad gobernada.
+>
+> **Objetivos:** mantener el mensaje ejecutivo, a inversores y de producto consistente con la gobernanza Core, y claramente informativo (nunca normativo).
+
 ## Documentos Actuales
 
-- [One-Pager Ejecutivo](../../governance/standards/communication/visuals/v01-executive-one-pager.es.md)
+| Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
+|---|---|---|---|---|
+| [One-Pager Ejecutivo](../../governance/standards/communication/visuals/v01-executive-one-pager.es.md) | Explicación de cinco minutos sobre Evolith, UMS y la propuesta de valor | Comunicar valor estratégico rápidamente | Resumen ejecutivo | Sí |
 
 Los documentos de comunicación explican la Suite y su valor. Son informativos y no pueden redefinir Core Architecture, SDLC Governance ni contratos de implementación de productos.
 

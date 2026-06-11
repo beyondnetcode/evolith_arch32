@@ -1,58 +1,65 @@
-# Índice Bilingüe: operations
+# Operaciones y Observabilidad
 
-> Índice auto-generado de pares EN/ES. No editar manualmente.
+> **Navegación bilingüe:** [English version](./README.md)
 
-<details>
-<summary><strong></strong></summary>
+Este directorio contiene la configuración operativa y el stack de observabilidad para la referencia de arquitectura progresiva. Todos los componentes son OSS, auto-hospedados y agnósticos al proveedor según el [ADR-0028](../architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md).
 
-| EN | ES | Status |
-|----|----|--------|
-| [README.md](README.md) | [README.es.md](README.es.md) | OK |
+## Meta y Objetivos
 
-</details>
+> **Meta:** hacer que la plataforma de referencia sea observable y operable en local con un stack completamente OSS y neutral respecto de proveedores.
 
-<details>
-<summary><strong>grafana</strong></summary>
+**Objetivos:**
 
-| EN | ES | Status |
-|----|----|--------|
-| [README.md](grafana/README.md) | [README.es.md](grafana/README.es.md) | OK |
+- Proveer un stack de observabilidad listo para ejecutar (OpenTelemetry, Grafana, Tempo, Loki) con un solo comando.
+- Mantener cada componente operativo trazable al ADR que lo gobierna.
+- Documentar la ruta de verificación desde una petición de la aplicación hasta su traza distribuida completa.
 
-</details>
+---
 
-<details>
-<summary><strong>grafana/provisioning</strong></summary>
+## Stack de Observabilidad
 
-| EN | ES | Status |
-|----|----|--------|
-| [README.md](grafana/provisioning/README.md) | [README.es.md](grafana/provisioning/README.es.md) | OK |
+| Componente | Rol | Puerto Local |
+| :--- | :--- | :--- |
+| **OpenTelemetry Collector** | Recibe trazas y logs de todos los servicios y los distribuye a los backends | — |
+| **Grafana** | Dashboards, consultas de logs (Loki), exploración de trazas | `3001` |
+| **Tempo** | Backend de trazado distribuido (almacena spans) | `3200` |
+| **Loki** | Backend de agregación de logs | `3100` |
 
-</details>
+La estrategia de instrumentación completa está definida en el [ADR-0007](../architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md).
 
-<details>
-<summary><strong>grafana/provisioning/datasources</strong></summary>
+---
 
-| EN | ES | Status |
-|----|----|--------|
-| [README.md](grafana/provisioning/datasources/README.md) | [README.es.md](grafana/provisioning/datasources/README.es.md) | OK |
+## Iniciar el Stack de Observabilidad
 
-</details>
+```bash
+# Desde la raíz del repositorio — inicia OTel, Grafana, Tempo, Loki
+docker-compose -f reference/infrastructure/docker-compose.yml up -d otel-collector grafana tempo loki
 
-<details>
-<summary><strong>otel</strong></summary>
+# Verificar que Grafana es accesible
+open http://localhost:3001   # credenciales por defecto: admin / admin
+```
 
-| EN | ES | Status |
-|----|----|--------|
-| [README.md](otel/README.md) | [README.es.md](otel/README.es.md) | OK |
+Para ver trazas distribuidas: abrir Grafana → Explore → seleccionar la fuente de datos **Tempo** → pegar un `traceId` desde los logs de la aplicación.
 
-</details>
+---
 
-<details>
-<summary><strong>tempo</strong></summary>
+## Archivos de Configuración
 
-| EN | ES | Status |
-|----|----|--------|
-| [README.md](tempo/README.md) | [README.es.md](tempo/README.es.md) | OK |
+| Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
+|---|---|---|---|---|
+| [otel-collector-config.yaml](./otel/otel-collector-config.yaml) | Pipeline del Collector OTel: receivers, processors, exporters | Enrutar telemetría a los backends | Archivo de configuración | Sí |
+| [tempo.yaml](./tempo/tempo.yaml) | Configuración del backend Tempo | Configurar el backend de trazado | Archivo de configuración | Sí |
+| [datasources.yml](./grafana/provisioning/datasources/datasources.yml) | Datasources de Grafana aprovisionados automáticamente (Tempo, Loki) | Aprovisionar dashboards automáticamente | Archivo de configuración | Sí |
 
-</details>
+---
 
+## Verificación de Trazas
+
+1. Ejecutar la API y realizar cualquier petición autenticada.
+2. Copiar el `traceId` de la salida de logs JSON estructurado.
+3. Abrir `http://localhost:3001` → Explore → Tempo → pegar el `traceId`.
+4. Aparece el árbol completo de spans (Kong → BFF → CoreAPI → PostgreSQL).
+
+---
+
+[Volver a la Raíz del Repositorio](../README.es.md)

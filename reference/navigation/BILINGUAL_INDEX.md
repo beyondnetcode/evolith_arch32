@@ -18,6 +18,7 @@
 
 | EN | ES | Status |
 |----|----|--------|
+| [BILINGUAL_INDEX.md](architecture/BILINGUAL_INDEX.md) | [BILINGUAL_INDEX.es.md](architecture/BILINGUAL_INDEX.es.md) | OK |
 | [README.md](architecture/README.md) | [README.es.md](architecture/README.es.md) | OK |
 
 </details>
@@ -218,6 +219,7 @@
 
 | EN | ES | Status |
 |----|----|--------|
+| [BILINGUAL_INDEX.md](core/BILINGUAL_INDEX.md) | [BILINGUAL_INDEX.es.md](core/BILINGUAL_INDEX.es.md) | OK |
 | [README.md](core/README.md) | [README.es.md](core/README.es.md) | OK |
 
 </details>
@@ -227,6 +229,7 @@
 
 | EN | ES | Status |
 |----|----|--------|
+| [BILINGUAL_INDEX.md](getting-started/BILINGUAL_INDEX.md) | [BILINGUAL_INDEX.es.md](getting-started/BILINGUAL_INDEX.es.md) | OK |
 | [README.md](getting-started/README.md) | [README.es.md](getting-started/README.es.md) | OK |
 
 </details>
@@ -236,6 +239,7 @@
 
 | EN | ES | Status |
 |----|----|--------|
+| [BILINGUAL_INDEX.md](governance/BILINGUAL_INDEX.md) | [BILINGUAL_INDEX.es.md](governance/BILINGUAL_INDEX.es.md) | OK |
 | [glossary.md](governance/glossary.md) | [glossary.es.md](governance/glossary.es.md) | OK |
 | [README.md](governance/README.md) | [README.es.md](governance/README.es.md) | OK |
 
@@ -608,6 +612,7 @@
 
 | EN | ES | Status |
 |----|----|--------|
+| [BILINGUAL_INDEX.md](infrastructure/BILINGUAL_INDEX.md) | [BILINGUAL_INDEX.es.md](infrastructure/BILINGUAL_INDEX.es.md) | OK |
 | [README.md](infrastructure/README.md) | [README.es.md](infrastructure/README.es.md) | OK |
 
 </details>
@@ -618,6 +623,7 @@
 | EN | ES | Status |
 |----|----|--------|
 | [adoption-cases.md](knowledge/adoption-cases.md) | [adoption-cases.es.md](knowledge/adoption-cases.es.md) | OK |
+| [BILINGUAL_INDEX.md](knowledge/BILINGUAL_INDEX.md) | [BILINGUAL_INDEX.es.md](knowledge/BILINGUAL_INDEX.es.md) | OK |
 | [README.md](knowledge/README.md) | [README.es.md](knowledge/README.es.md) | OK |
 | [rules-summary.md](knowledge/rules-summary.md) | [rules-summary.es.md](knowledge/rules-summary.es.md) | OK |
 
@@ -743,6 +749,7 @@
 
 | EN | ES | Status |
 |----|----|--------|
+| [BILINGUAL_INDEX.md](operations/BILINGUAL_INDEX.md) | [BILINGUAL_INDEX.es.md](operations/BILINGUAL_INDEX.es.md) | OK |
 | [README.md](operations/README.md) | [README.es.md](operations/README.es.md) | OK |
 
 </details>
@@ -797,6 +804,7 @@
 
 | EN | ES | Status |
 |----|----|--------|
+| [BILINGUAL_INDEX.md](platforms/BILINGUAL_INDEX.md) | [BILINGUAL_INDEX.es.md](platforms/BILINGUAL_INDEX.es.md) | OK |
 | [README.md](platforms/README.md) | [README.es.md](platforms/README.es.md) | OK |
 
 </details>
@@ -806,6 +814,7 @@
 
 | EN | ES | Status |
 |----|----|--------|
+| [BILINGUAL_INDEX.md](product-suite/BILINGUAL_INDEX.md) | [BILINGUAL_INDEX.es.md](product-suite/BILINGUAL_INDEX.es.md) | OK |
 | [README.md](product-suite/README.md) | [README.es.md](product-suite/README.es.md) | OK |
 
 </details>
@@ -869,6 +878,7 @@
 
 | EN | ES | Status |
 |----|----|--------|
+| [BILINGUAL_INDEX.md](products/BILINGUAL_INDEX.md) | [BILINGUAL_INDEX.es.md](products/BILINGUAL_INDEX.es.md) | OK |
 | [README.md](products/README.md) | [README.es.md](products/README.es.md) | OK |
 
 </details>
@@ -896,6 +906,7 @@
 
 | EN | ES | Status |
 |----|----|--------|
+| [BILINGUAL_INDEX.md](quick-access/BILINGUAL_INDEX.md) | [BILINGUAL_INDEX.es.md](quick-access/BILINGUAL_INDEX.es.md) | OK |
 | [README.md](quick-access/README.md) | [README.es.md](quick-access/README.es.md) | OK |
 
 </details>

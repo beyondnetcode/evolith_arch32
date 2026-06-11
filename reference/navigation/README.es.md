@@ -19,11 +19,11 @@ Mantenerlos aquí reduce el ruido en la raíz y preserva la experiencia de usuar
 
 ## Documentos
 
-| Documento | Propósito |
-|---|---|
-| [Índice Maestro](./MASTER_INDEX.es.md) | Índice completo de navegación del repositorio. |
-| [Índice Bilingüe](./BILINGUAL_INDEX.es.md) | Estado autogenerado del emparejamiento EN/ES de cada documento de referencia. |
-| [Registro de Versiones de Documentación](./DOCUMENTATION_VERSIONS.es.md) | Historial y política de releases documentales. |
+| Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
+|---|---|---|---|---|
+| [Índice Maestro](./MASTER_INDEX.es.md) | Índice completo de navegación del repositorio por intención, rol y dominio | Localizar cualquier artefacto rápidamente | Índice de navegación | Sí |
+| [Índice Bilingüe](./BILINGUAL_INDEX.es.md) | Estado autogenerado del emparejamiento EN/ES de cada documento de referencia | Auditar cobertura bilingüe | Índice autogenerado | No |
+| [Registro de Versiones de Documentación](./DOCUMENTATION_VERSIONS.es.md) | Historial y política de releases documentales | Trazar releases documentales | Registro de versiones | No |
 
 ## Compatibilidad
 

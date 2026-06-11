@@ -57,14 +57,14 @@ Los productos consumen Core. No lo redefinen.
 
 ## 3. Dominios Core
 
-| Dominio Core | Ubicación Canónica | Responsabilidad |
-|---|---|---|
-| **Arquitectura** | [`reference/architecture/`](../architecture/README.es.md) | Principios, patrones, modelos de referencia, contratos y ADRs Core |
-| **Gobernanza SDLC** | [`reference/governance/sdlc/`](../governance/sdlc/README.es.md) | Fases, gates, artefactos, evidencias, roles, excepciones, trazabilidad y métricas |
-| **Estándares de Ingeniería** | [`reference/governance/standards/`](../governance/standards/README.es.md) | Estándares reutilizables y reglas de gobernanza |
-| **Rulesets y Schemas** | [`rulesets/`](../../rulesets/) | Políticas y contratos de validación consumibles por máquinas |
-| **Taxonomía Core** | [`reference/governance/`](../governance/) | Terminología, clasificaciones y límites canónicos |
-| **Evidencia Aplicada** | [`reference/knowledge/`](../knowledge/) | Lecciones de satélites pendientes de revisión upstream |
+| Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
+|---|---|---|---|---|
+| [Hub de Arquitectura](../architecture/README.es.md) | Principios, patrones, modelos de referencia, contratos y ADRs Core | Guiar el diseño corporativo | Hub de área | Sí |
+| [Centro de Gobernanza SDLC](../governance/sdlc/README.es.md) | Fases, gates, artefactos, evidencias, roles, excepciones, trazabilidad y métricas | Gobernar el ciclo de vida completo | Hub de dominio | Sí |
+| [Centro de Estándares y Gobernanza](../governance/standards/README.es.md) | Estándares reutilizables y reglas de gobernanza | Alinear equipos a políticas unificadas | Hub de área | Sí |
+| [Rulesets Hub](../../rulesets/README.es.md) | Políticas y contratos de validación consumibles por máquinas | Validar cumplimiento automáticamente | Hub de reglas | Sí |
+| [Hub de Gobernanza](../governance/README.es.md) | Terminología, clasificaciones y límites canónicos | Mantener consistentes el lenguaje y los límites | Hub de área | Sí |
+| [Hub de Conocimiento](../knowledge/README.es.md) | Lecciones de satélites pendientes de revisión upstream | Capturar evidencia y aprendizaje | Hub de área | No |
 
 ---
 
@@ -137,15 +137,16 @@ La visión de la Suite, posicionamiento comercial, roadmaps, UX, APIs de product
 
 ---
 
-## 8. Navegación
+## 8. Navegación Relacionada
 
-- [Taxonomía de Documentación](../documentation-taxonomy.es.md)
-- [Arquitectura](../architecture/README.es.md)
-- [Gobernanza SDLC](../governance/sdlc/README.es.md)
-- [Estándares de Ingeniería](../governance/standards/README.es.md)
-- [Evolith Product Suite](../product-suite/README.es.md)
-- [Diseños Específicos de Productos](../products/README.es.md)
-- [Guías de Plataformas y Proveedores](../platforms/README.es.md)
+Documentos fuera de Core que completan el panorama (los dominios propios de Core están listados en la sección 3):
+
+| Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
+|---|---|---|---|---|
+| [Taxonomía de Documentación](../documentation-taxonomy.es.md) | Define qué tipo de documento pertenece a cada lugar | Mantener el corpus organizado | Estándar de gobernanza | Sí |
+| [Evolith Product Suite](../product-suite/README.es.md) | Visión del portafolio, estrategia, posicionamiento y comunicación | Dirigir el ecosistema | Hub de dominio | Sí |
+| [Diseños Específicos de Productos](../products/README.es.md) | Diseño funcional y técnico por producto | Contener los internos de producto | Hub de área | Sí |
+| [Guías de Plataformas y Proveedores](../platforms/README.es.md) | Herramientas nombradas, vendors, adapters y perfiles de despliegue | Aislar decisiones de proveedores | Hub de área | Sí |
 
 ---
 

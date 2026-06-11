@@ -18,16 +18,20 @@ Platform documents implement Core contracts and product requirements. They do no
 
 ## Categories
 
-- `work-management/` — Jira, Azure DevOps, GitHub Issues, Linear, and alternatives
-- `agents/` — Claude, OpenAI, Gemini, local models, and future providers
-- `observability/` — Langfuse, OpenTelemetry, and alternatives
-- `analytics/` — Apache Superset, Grafana, Power BI, and alternatives
-- `scm/` — GitHub, GitLab, Azure Repos, Bitbucket
-- `ci-cd/` — GitHub Actions, Azure Pipelines, GitLab CI, Jenkins, Tekton
-- `testing/` — framework-specific test providers
-- `security/` — CodeQL, Trivy, Snyk, Semgrep, and alternatives
-- `deployment/` — Kubernetes, cloud, serverless, VM, and on-premise profiles
-- `collaboration/` — email, Teams, Slack, and alternatives
+Planned provider categories, ordered by how early a product needs them (work management first, collaboration last). Each will hold provider profiles once documented:
+
+| Document | Description | Goal / Objective | Type | Mandatory |
+|---|---|---|---|---|
+| `work-management/` | Jira, Azure DevOps, GitHub Issues, Linear, and alternatives | Abstract work-management providers | Planned category | No |
+| `agents/` | Claude, OpenAI, Gemini, local models, and future providers | Abstract AI agent providers | Planned category | No |
+| `observability/` | Langfuse, OpenTelemetry, and alternatives | Abstract observability providers | Planned category | No |
+| `analytics/` | Apache Superset, Grafana, Power BI, and alternatives | Abstract analytics providers | Planned category | No |
+| `scm/` | GitHub, GitLab, Azure Repos, Bitbucket | Abstract source-control providers | Planned category | No |
+| `ci-cd/` | GitHub Actions, Azure Pipelines, GitLab CI, Jenkins, Tekton | Abstract CI/CD providers | Planned category | No |
+| `testing/` | Framework-specific test providers | Abstract testing providers | Planned category | No |
+| `security/` | CodeQL, Trivy, Snyk, Semgrep, and alternatives | Abstract security-scanning providers | Planned category | No |
+| `deployment/` | Kubernetes, cloud, serverless, VM, and on-premise profiles | Abstract deployment targets | Planned category | No |
+| `collaboration/` | Email, Teams, Slack, and alternatives | Abstract collaboration providers | Planned category | No |
 
 ## Required Content for Provider Profiles
 

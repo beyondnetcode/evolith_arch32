@@ -7,6 +7,8 @@ This is the complete navigation index for **Evolith** — the enterprise progres
 
 The index follows the portal's order: orientation first (sections 1–2), then the three domains from generic to specific — **Core**, **SDLC**, **Products** (sections 3–5) — and finally machine-readable rules and navigation meta-surfaces (sections 6–7).
 
+Every document entry uses the same five fields: **Document** (linked title), **Description** (what the document does), **Goal / Objective** (why it exists), **Type** (document category), and **Mandatory** (Yes when the document is normative or required reading for its domain; No when it is informative or optional).
+
 ---
 
 <details>
@@ -52,14 +54,14 @@ The index follows the portal's order: orientation first (sections 1–2), then t
 
 > **Goal:** keep every universal, provider-neutral rule in one governed corpus. Start at the [Evolith Core Hub](../core/README.md) for the domain's goal, boundaries, and dependency rule.
 
-| Area | Single Entry Point | Description |
-|---|---|---|
-| Core Domain Hub | [Evolith Core](../core/README.md) | What Core is, what it is not, its domains, invariants, and dependency rule. |
-| Directives and Blueprints | [Architecture Hub](../architecture/README.md) | Central hub grouping directives, canonical patterns, blueprints, and the agnostic tech baseline. |
-| Architecture Decisions (ADRs) | [General ADR Registry](../architecture/adrs/README.md) | The general index that groups the decision matrix and all Evolith ADRs (Core, Node, .NET, Android). |
-| Standards and Governance | [Standards and Governance Center](../governance/standards/README.md) | Technical directives, maturity assessment, glossary, manifestos, and onboarding. |
-| Operations | [Operations Hub](../operations/README.md) | Observability guides (OpenTelemetry, Tempo, Grafana) and SRE deployments. |
-| Infrastructure | [Infrastructure Hub](../infrastructure/README.md) | Phase-based local platform: database, cache, broker, gateway, and secrets. |
+| Document | Description | Goal / Objective | Type | Mandatory |
+|---|---|---|---|---|
+| [Evolith Core Hub](../core/README.md) | Defines what Core is, what it is not, its domains, invariants, and dependency rule | Anchor the provider-neutral constitution | Domain hub | Yes |
+| [Architecture Hub](../architecture/README.md) | Groups directives, canonical patterns, blueprints, and the agnostic tech baseline | Guide corporate design | Area hub | Yes |
+| [General ADR Registry](../architecture/adrs/README.md) | Groups the decision matrix and all Evolith ADRs (Core, Node, .NET, Android) | Preserve decision history and governance | Area hub | Yes |
+| [Standards and Governance Center](../governance/standards/README.md) | Groups technical directives, maturity assessment, glossary, manifestos, and onboarding | Align teams to unified policies | Area hub | Yes |
+| [Operations Hub](../operations/README.md) | Groups observability guides (OpenTelemetry, Tempo, Grafana) and SRE deployments | Standardize operations | Area hub | No |
+| [Infrastructure Hub](../infrastructure/README.md) | Describes the phase-based local platform: database, cache, broker, gateway, and secrets | Standardize the local runtime | Area hub | No |
 
 </details>
 
@@ -68,13 +70,13 @@ The index follows the portal's order: orientation first (sections 1–2), then t
 
 > **Goal:** govern the five lifecycle phases with explicit gates, artifacts, and traceability. Start at the [SDLC Governance Center](../governance/sdlc/README.md).
 
-| Area | Single Entry Point | Description |
-|---|---|---|
-| SDLC Governance Center | [SDLC Hub](../governance/sdlc/README.md) | Authoritative documentation on phases, gates, roles, and deliverable mapping. |
-| Artifact Templates | [Artifact Templates Hub](../governance/sdlc/04-artifact-templates/README.md) | Canonical templates for every phase artifact, from Discovery Canvas to Release Notes. |
-| Quality Gates | [SDLC Quality Gates](../governance/sdlc/quality-gates.md) | Approval thresholds each phase must satisfy before advancing. |
-| Traceability | [SDLC Traceability Model](../governance/sdlc/traceability-model.md) | How requirements, stories, tests, and releases stay linked end to end. |
-| Artifact Mapping | [SDLC Artifact Mapping](../governance/sdlc/sdlc-evolith-artifact-mapping.md) | Mapping between phases and expected deliverables. |
+| Document | Description | Goal / Objective | Type | Mandatory |
+|---|---|---|---|---|
+| [SDLC Governance Center](../governance/sdlc/README.md) | Authoritative documentation on phases, gates, roles, and deliverable mapping | Govern the full lifecycle | Domain hub | Yes |
+| [Artifact Templates Hub](../governance/sdlc/04-artifact-templates/README.md) | Canonical templates for every phase artifact, from Discovery Canvas to Release Notes | Standardize deliverables | Area hub | Yes |
+| [SDLC Quality Gates](../governance/sdlc/quality-gates.md) | Approval thresholds each phase must satisfy before advancing | Enforce phase quality | Standard | Yes |
+| [SDLC Traceability Model](../governance/sdlc/traceability-model.md) | How requirements, stories, tests, and releases stay linked end to end | Guarantee end-to-end traceability | Standard | Yes |
+| [SDLC Artifact Mapping](../governance/sdlc/sdlc-evolith-artifact-mapping.md) | Mapping between phases and expected deliverables | Link phases and deliverables | Reference | No |
 
 </details>
 
@@ -83,16 +85,16 @@ The index follows the portal's order: orientation first (sections 1–2), then t
 
 > **Goal:** navigate from portfolio strategy down to each product's internals and the applied evidence that validates them. Start at the [Product Suite Hub](../product-suite/README.md).
 
-| Area | Single Entry Point | Description |
-|---|---|---|
-| Product Suite (portfolio) | [Product Suite Hub](../product-suite/README.md) | Portfolio vision, strategy, positioning, methods, suite architecture, and communication. |
-| Product Designs | [Product Designs Hub](../products/README.md) | Functional and technical design per product; entry to the Tracker hub. |
-| Evolith Tracker | [Tracker Hub](../products/evolith-tracker/README.md) | Tracker product architecture and technical interfaces. |
-| Smart CLI | [Smart CLI Hub](../../sdk/cli/README.md) | CLI documentation, architecture, vision, and state analysis. |
-| Platform and Provider Guidance | [Platforms Hub](../platforms/README.md) | Named tools, vendors, adapters, licensing, and deployment profiles. |
-| UMS Applied Reference | [UMS Reference Hub](../knowledge/demo/README.md) | Showcases the adoption of Evolith directives in a practical demonstrative environment (UMS). |
-| Adoption Cases and Knowledge | [Knowledge and Research Hub](../knowledge/README.md) | Platform adoption metrics, PoCs, and research. |
-| UMS Product (Code) | [UMS Repository](https://github.com/beyondnetcode/ums) | Official external repository that implements the architecture ecosystem. |
+| Document | Description | Goal / Objective | Type | Mandatory |
+|---|---|---|---|---|
+| [Product Suite Hub](../product-suite/README.md) | Portfolio vision, strategy, positioning, methods, suite architecture, and communication | Direct the ecosystem | Domain hub | Yes |
+| [Product Designs Hub](../products/README.md) | Functional and technical design per product; entry to the Tracker hub | Contain product internals | Area hub | Yes |
+| [Tracker Hub](../products/evolith-tracker/README.md) | Tracker product architecture and technical interfaces | Design the governance product | Product hub | No |
+| [Smart CLI Hub](../../sdk/cli/README.md) | CLI documentation, architecture, vision, and state analysis | Understand the tooling product | Product hub | No |
+| [Platforms Hub](../platforms/README.md) | Named tools, vendors, adapters, licensing, and deployment profiles | Isolate provider decisions | Area hub | Yes |
+| [UMS Reference Hub](../knowledge/demo/README.md) | Showcases the adoption of Evolith directives in a practical demonstrative environment (UMS) | Demonstrate real implementation | Applied reference | No |
+| [Knowledge and Research Hub](../knowledge/README.md) | Platform adoption metrics, PoCs, and research | Capture evidence and learning | Area hub | No |
+| [UMS Repository](https://github.com/beyondnetcode/ums) | Official external repository that implements the architecture ecosystem | Provide executable evidence | External repository | No |
 
 </details>
 
@@ -101,9 +103,9 @@ The index follows the portal's order: orientation first (sections 1–2), then t
 
 > **Goal:** turn the constitution into automated, CI-enforceable rules.
 
-| Area | Single Entry Point | Description |
-|---|---|---|
-| General Rulesets Hub | [Rulesets Hub](../../rulesets/README.md) | Central index for all schemas, architecture rules, CI/CD rules, SDLC, and automated governance. |
+| Document | Description | Goal / Objective | Type | Mandatory |
+|---|---|---|---|---|
+| [Rulesets Hub](../../rulesets/README.md) | Central index for all schemas, architecture rules, CI/CD rules, SDLC, and automated governance | Validate compliance automatically | Rules hub | Yes |
 
 </details>
 
@@ -112,14 +114,14 @@ The index follows the portal's order: orientation first (sections 1–2), then t
 
 > **Goal:** keep navigation, bilingual coverage, and documentation releases observable.
 
-| Area | Single Entry Point | Description |
-|---|---|---|
-| Navigation Hub | [Navigation Hub](./README.md) | Home of repository-level navigation documents. |
-| Bilingual Index | [Bilingual Index](./BILINGUAL_INDEX.md) | Auto-generated EN/ES pairing status for the reference corpus. |
-| Quick Access by Stack | [Quick Access](../quick-access/README.md) | Shortest path to React, .NET, and Node.js standards. |
-| Documentation Versions | [Documentation Version Log](./DOCUMENTATION_VERSIONS.md) | Documentation release history and policy. |
-| Documentation Taxonomy | [Documentation Taxonomy](../documentation-taxonomy.md) | What kind of document belongs where. |
-| Reader Paths | [Getting Started by Role](../getting-started/README.md) | Role-based reading paths for new readers. |
+| Document | Description | Goal / Objective | Type | Mandatory |
+|---|---|---|---|---|
+| [Navigation Hub](./README.md) | Home of repository-level navigation documents | Centralize navigation | Navigation hub | Yes |
+| [Bilingual Index](./BILINGUAL_INDEX.md) | Auto-generated EN/ES pairing status for the reference corpus | Audit bilingual coverage | Auto-generated index | No |
+| [Quick Access by Stack](../quick-access/README.md) | Shortest path to React, .NET, and Node.js standards | Reduce navigation friction | Navigation index | No |
+| [Documentation Version Log](./DOCUMENTATION_VERSIONS.md) | Documentation release history and policy | Trace documentation releases | Version log | No |
+| [Documentation Taxonomy](../documentation-taxonomy.md) | Defines what kind of document belongs where | Keep the corpus organized | Governance standard | Yes |
+| [Getting Started by Role](../getting-started/README.md) | Role-based reading paths for new readers | Accelerate onboarding | Onboarding guide | No |
 
 </details>
 

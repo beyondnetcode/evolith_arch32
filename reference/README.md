@@ -16,26 +16,30 @@ This directory contains the Evolith reference corpus, explicitly separated betwe
 
 ## Primary Boundaries
 
-| Area | Purpose |
-|---|---|
-| [Evolith Core](./core/README.md) | Authoritative, provider-neutral architecture, SDLC governance, standards, rulesets, schemas, and Core ADRs |
-| [Evolith Product Suite](./product-suite/README.md) | Product portfolio vision, strategy, positioning, suite architecture, roadmap, and communication |
-| [Product-Specific Designs](./products/README.md) | Functional and technical design for Tracker, Smart CLI, MCP services, and future products |
-| [Platform and Provider Guidance](./platforms/README.md) | Named tools, vendors, adapters, licensing, deployment profiles, and platform-specific ADRs |
+The four primary domains, ordered from the most generic (the constitution) to the most specific (named providers):
+
+| Document | Description | Goal / Objective | Type | Mandatory |
+|---|---|---|---|---|
+| [Evolith Core](./core/README.md) | Authoritative, provider-neutral architecture, SDLC governance, standards, rulesets, schemas, and Core ADRs | Anchor the constitution every product inherits | Domain hub | Yes |
+| [Evolith Product Suite](./product-suite/README.md) | Product portfolio vision, strategy, positioning, suite architecture, roadmap, and communication | Direct the ecosystem | Domain hub | Yes |
+| [Product-Specific Designs](./products/README.md) | Functional and technical design for Tracker, Smart CLI, MCP services, and future products | Contain product internals | Area hub | Yes |
+| [Platform and Provider Guidance](./platforms/README.md) | Named tools, vendors, adapters, licensing, deployment profiles, and platform-specific ADRs | Isolate provider decisions | Area hub | Yes |
 
 ## Supporting Reference Areas
 
-| Area | Purpose |
-|---|---|
-| [getting-started/](./getting-started/README.md) | Guided reading paths by reader role and objective |
-| [architecture/](./architecture/README.md) | Core architecture blueprints, ADRs, topology, contracts, and canonical patterns |
-| [governance/](./governance/standards/README.md) | Core engineering standards and governance |
-| [SDLC Governance](./governance/sdlc/README.md) | Phases, gates, artifacts, evidence, roles, traceability, and metrics |
-| [operations/](./operations/README.md) | Observability, runtime support, and operational documentation |
-| [infrastructure/](./infrastructure/README.md) | Local platform, gateway, containers, and infrastructure assets |
-| [knowledge/](./knowledge/demo/README.md) | Applied references, UMS evidence, research, examples, and lessons |
-| [quick-access/](./quick-access/README.md) | Shortest path to the authoritative standards per stack |
-| [navigation/](./navigation/README.md) | Master index, bilingual index, and documentation version log |
+Supporting areas, ordered from onboarding to meta-navigation:
+
+| Document | Description | Goal / Objective | Type | Mandatory |
+|---|---|---|---|---|
+| [Getting Started](./getting-started/README.md) | Guided reading paths by reader role and objective | Accelerate onboarding | Onboarding guide | No |
+| [Architecture](./architecture/README.md) | Core architecture blueprints, ADRs, topology, contracts, and canonical patterns | Guide corporate design | Area hub | Yes |
+| [Governance and Standards](./governance/standards/README.md) | Core engineering standards and governance | Align teams to unified policies | Area hub | Yes |
+| [SDLC Governance](./governance/sdlc/README.md) | Phases, gates, artifacts, evidence, roles, traceability, and metrics | Govern the full lifecycle | Domain hub | Yes |
+| [Operations](./operations/README.md) | Observability, runtime support, and operational documentation | Standardize operations | Area hub | No |
+| [Infrastructure](./infrastructure/README.md) | Local platform, gateway, containers, and infrastructure assets | Standardize the local runtime | Area hub | No |
+| [Knowledge](./knowledge/README.md) | Applied references, UMS evidence, research, examples, and lessons | Capture evidence and learning | Area hub | No |
+| [Quick Access](./quick-access/README.md) | Shortest path to the authoritative standards per stack | Reduce navigation friction | Navigation index | No |
+| [Navigation](./navigation/README.md) | Master index, bilingual index, and documentation version log | Centralize navigation | Navigation hub | Yes |
 
 ## Documentation Governance
 

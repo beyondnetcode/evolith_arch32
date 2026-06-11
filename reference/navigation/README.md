@@ -19,11 +19,11 @@ Keeping them here reduces root-level noise while preserving user experience thro
 
 ## Documents
 
-| Document | Purpose |
-|---|---|
-| [Master Index](./MASTER_INDEX.md) | Complete repository navigation index. |
-| [Bilingual Index](./BILINGUAL_INDEX.md) | Auto-generated EN/ES pairing status for every reference document. |
-| [Documentation Version Log](./DOCUMENTATION_VERSIONS.md) | Documentation release history and release policy. |
+| Document | Description | Goal / Objective | Type | Mandatory |
+|---|---|---|---|---|
+| [Master Index](./MASTER_INDEX.md) | Complete repository navigation index by intent, role, and domain | Locate any artifact quickly | Navigation index | Yes |
+| [Bilingual Index](./BILINGUAL_INDEX.md) | Auto-generated EN/ES pairing status for every reference document | Audit bilingual coverage | Auto-generated index | No |
+| [Documentation Version Log](./DOCUMENTATION_VERSIONS.md) | Documentation release history and release policy | Trace documentation releases | Version log | No |
 
 ## Compatibility
 

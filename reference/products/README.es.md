@@ -18,12 +18,12 @@ Los documentos de producto implementan Evolith Core y SDLC Governance. No pueden
 
 ## Productos
 
-| Producto | Hub | Estado |
-|---|---|---|
-| Evolith Tracker | [Hub del Tracker](./evolith-tracker/README.es.md) | Activo |
-| Evolith Smart CLI | [Hub del Smart CLI](../../sdk/cli/README.es.md) | Documentado en `sdk/cli/` — migración a este dominio pendiente |
-| Evolith MCP Services | — | Migración pendiente |
-| Productos futuros | — | Solo después de aprobar su Product Vision |
+| Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
+|---|---|---|---|---|
+| [Hub del Tracker](./evolith-tracker/README.es.md) | Producto activo: arquitectura e interfaces técnicas de Evolith Tracker | Diseñar el producto de gobernanza | Hub de producto | No |
+| [Hub del Smart CLI](../../sdk/cli/README.es.md) | Producto activo documentado en `sdk/cli/`; migración a este dominio pendiente | Entender el producto de tooling | Hub de producto | No |
+| Evolith MCP Services | Producto planificado; migración pendiente, aún sin hub | Exponer interacciones MCP gobernadas | Hub de producto (planificado) | No |
+| Productos futuros | Se añaden solo tras aprobar su Product Vision | Crecer la suite bajo gobernanza | Hub de producto (planificado) | No |
 
 ## Contenido Permitido
 

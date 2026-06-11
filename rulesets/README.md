@@ -8,23 +8,31 @@ Machine-readable governance rules that satellite repositories inherit and valida
 
 ## Purpose
 
+> **Goal:** turn the human-authored constitution into automated, CI-enforceable rules that satellites cannot silently bypass.
+>
+> **Objectives:** version every rule, validate every artifact against a schema, and gate every phase transition automatically.
+
 Evolith Rulesets are the **machine-readable enforcement layer** of the Evolith governance framework. While `reference/` contains human-authored standards, ADRs, and documentation, `rulesets/` contains the concrete rules, schemas, and contracts that tools (CLI, CI pipelines, linters) consume to **validate** satellite compliance.
 
 ---
 
-## Entry Point
+## Rule Categories
 
-If you are onboarding a new satellite repository, start here:
+If you are onboarding a new satellite repository, read the categories in this order — from inheritance contract to artifact validation:
 
-1. **[Governance Rules](./governance/)** — `evolith.yaml` contract and inheritance rules
-2. **[Architecture Rules](./architecture/)** — F1/F2/F3 phase progression rules
-3. **[SDLC Rules](./sdlc/)** — Quality gates and threshold definitions
-4. **[Anti-Corruption Layer Rules](./acl/)** — External system integration governance
-5. **[CLI Rules](./cli/)** — Smart CLI release readiness and Core parity
-6. **[Evidence Rules](./evidence/)** — Auditable evidence manifests
-7. **[MCP Rules](./mcp/)** — MCP protocol compliance
-8. **[Observability Rules](./observability/)** — Telemetry evidence for operations
-9. **[Schemas](./schema/)** — JSON Schema for validating Evolith artifacts
+| Document | Description | Goal / Objective | Type | Mandatory |
+|---|---|---|---|---|
+| [Governance Rules](./governance/README.md) | `evolith.yaml` contract and inheritance rules | Govern satellite inheritance | Ruleset category | Yes |
+| [Architecture Rules](./architecture/README.md) | F1/F2/F3 phase progression rules | Gate architecture phases | Ruleset category | Yes |
+| [ADR-Encoded Rules](./adr/README.md) | Rules derived from accepted ADRs | Enforce ADR decisions automatically | Ruleset category | Yes |
+| [Cross-Cutting Rules](./cross-cutting/README.md) | Compliance baseline, Definition of Done, manifesto, and taxonomy rules | Enforce cross-cutting compliance | Ruleset category | Yes |
+| [SDLC Rules](./sdlc/README.md) | Quality gates and threshold definitions | Enforce lifecycle quality | Ruleset category | Yes |
+| [Anti-Corruption Layer Rules](./acl/README.md) | External system integration governance | Protect domain boundaries | Ruleset category | Yes |
+| [CLI Rules](./cli/README.md) | Smart CLI release readiness and Core parity | Gate CLI releases | Ruleset category | Yes |
+| [Evidence Rules](./evidence/README.md) | Auditable evidence manifests | Standardize evidence | Ruleset category | Yes |
+| [MCP Rules](./mcp/README.md) | MCP protocol compliance | Validate MCP exposure | Ruleset category | Yes |
+| [Observability Rules](./observability/README.md) | Telemetry evidence for operations | Verify telemetry evidence | Ruleset category | Yes |
+| [Schemas](./schema/README.md) | JSON Schema for validating Evolith artifacts | Validate artifact structure | Schema collection | Yes |
 
 ---
 
@@ -125,12 +133,12 @@ flowchart LR
 
 ## Related Documents
 
-| Document | Purpose |
-|---|---|
-| [AGENTS.md](../AGENTS.md) | Agent rules and conventions |
-| [Repository Taxonomy](../reference/governance/standards/repository-taxonomy.md) | What goes where in Evolith |
-| [Child Repository Inheritance](../reference/governance/standards/onboarding/child-repository-inheritance-guide.md) | How products inherit from Evolith |
-| [Navigation Hub](../reference/navigation/README.md) | Full repository navigation |
+| Document | Description | Goal / Objective | Type | Mandatory |
+|---|---|---|---|---|
+| [AGENTS.md](../AGENTS.md) | Agent rules and conventions | Govern agent contributions | Standard | Yes |
+| [Repository Taxonomy](../reference/governance/standards/repository-taxonomy.md) | What goes where in Evolith | Keep the repository organized | Governance standard | Yes |
+| [Child Repository Inheritance](../reference/governance/standards/onboarding/child-repository-inheritance-guide.md) | How products inherit from Evolith | Standardize inheritance | Guide | Yes |
+| [Navigation Hub](../reference/navigation/README.md) | Full repository navigation | Centralize navigation | Navigation hub | No |
 
 ---
 

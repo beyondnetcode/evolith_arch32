@@ -18,12 +18,12 @@ Use this page when you already know the target stack and need the shortest path 
 
 ## Direct Standard Links
 
-| Need | Direct link | Authority |
-| :--- | :--- | :--- |
-| React Web frontend standard | [React Web Frontend Standard](../governance/standards/engineering/web-frontend/react/react-web-frontend-standard.md) | Evolith normative standard |
-| C# / .NET API standard | [.NET API Standard](../governance/standards/engineering/api-dotnet/api-dotnet-standard.md) | Evolith normative standard |
-| .NET and C# runtime profile | [.NET & C# Tech Stack Profile](../architecture/blueprints/authoritative-tech-stack-dotnet.md) | Evolith runtime profile |
-| Runtime-agnostic baseline | [Agnostic Architecture Baseline](../architecture/blueprints/authoritative-tech-stack-agnostic.md) | Evolith universal baseline |
+| Document | Description | Goal / Objective | Type | Mandatory |
+|---|---|---|---|---|
+| [React Web Frontend Standard](../governance/standards/engineering/web-frontend/react/react-web-frontend-standard.md) | Authoritative standard for React web frontends | Standardize React delivery | Normative standard | Yes |
+| [.NET API Standard](../governance/standards/engineering/api-dotnet/api-dotnet-standard.md) | Authoritative standard for C# / .NET APIs | Standardize .NET API delivery | Normative standard | Yes |
+| [.NET & C# Tech Stack Profile](../architecture/blueprints/authoritative-tech-stack-dotnet.md) | Approved runtime profile for .NET and C# workloads | Fix the approved .NET stack | Runtime profile | Yes |
+| [Agnostic Architecture Baseline](../architecture/blueprints/authoritative-tech-stack-agnostic.md) | Runtime-agnostic architecture baseline for every stack | Constrain all stacks uniformly | Universal baseline | Yes |
 
 ---
 

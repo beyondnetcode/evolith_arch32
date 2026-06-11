@@ -18,12 +18,12 @@ Usa esta pagina cuando ya sabes el stack objetivo y necesitas el camino mas cort
 
 ## Enlaces Directos a Estandares
 
-| Necesidad | Enlace directo | Autoridad |
-| :--- | :--- | :--- |
-| Estandar frontend React Web | [Estandar Web Frontend React](../governance/standards/engineering/web-frontend/react/react-web-frontend-standard.es.md) | Estandar normativo Evolith |
-| Estandar API C# / .NET | [Estandar API .NET](../governance/standards/engineering/api-dotnet/api-dotnet-standard.es.md) | Estandar normativo Evolith |
-| Perfil runtime .NET y C# | [Perfil Tech Stack .NET y C#](../architecture/blueprints/authoritative-tech-stack-dotnet.md) | Perfil runtime Evolith |
-| Baseline agnostico de runtime | [Baseline Arquitectonico Agnostico](../architecture/blueprints/authoritative-tech-stack-agnostic.md) | Baseline universal Evolith |
+| Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
+|---|---|---|---|---|
+| [Estandar Web Frontend React](../governance/standards/engineering/web-frontend/react/react-web-frontend-standard.es.md) | Estandar autoritativo para frontends web en React | Estandarizar la entrega React | Estandar normativo | Sí |
+| [Estandar API .NET](../governance/standards/engineering/api-dotnet/api-dotnet-standard.es.md) | Estandar autoritativo para APIs C# / .NET | Estandarizar la entrega de APIs .NET | Estandar normativo | Sí |
+| [Perfil Tech Stack .NET y C#](../architecture/blueprints/authoritative-tech-stack-dotnet.md) | Perfil runtime aprobado para cargas .NET y C# | Fijar el stack .NET aprobado | Perfil runtime | Sí |
+| [Baseline Arquitectonico Agnostico](../architecture/blueprints/authoritative-tech-stack-agnostic.md) | Baseline arquitectonico agnostico de runtime para todos los stacks | Restringir todos los stacks uniformemente | Baseline universal | Sí |
 
 ---
 

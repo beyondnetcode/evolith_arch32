@@ -1,65 +1,18 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
-npx lint-staged
-
-echo "\nRunning documentation validation..."
+echo "Running documentation validation..."
 node .harness/scripts/validate-docs.mjs
 
-echo "\nRunning root cleanliness validation..."
+echo ""
+echo "Running root cleanliness validation..."
 node .harness/scripts/validate-root-cleanliness.mjs
 
-echo "\nRunning bilingual parity check..."
+echo ""
+echo "Running bilingual parity check..."
 node .harness/scripts/check-bilingual-parity.mjs
 
-echo "\nChecking for orphan bilingual files..."
-node -e "
-const fs = require('fs');
-const path = require('path');
-
-const files = [];
-const seen = new Set();
-
-function walk(dir) {
-  const entries = fs.readdirSync(dir, { withFileTypes: true });
-  for (const e of entries) {
-    if (e.name === 'node_modules' || e.name === '.git' || e.name === '.husky') continue;
-    const full = path.join(dir, e.name);
-    if (e.isDirectory()) walk(full);
-    else if (e.name.endsWith('.md')) files.push(full);
-  }
-}
-
-walk('reference');
-
-const orphans = [];
-for (const f of files) {
-  const base = f.replace(/\\.es\\.md$/, '.md');
-  const es = f.replace(/\\.md$/, '.es.md');
-  if (f.endsWith('.es.md') && !files.includes(base) && fs.existsSync(base.replace(/\\.es\\.md/, '.md'))) {
-    // this is fine, .es.md exists without .md but the .md doesn't exist
-  }
-  if (f.endsWith('.md') && !f.endsWith('.es.md')) {
-    const esFile = f.replace(/\\.md$/, '.es.md');
-    if (!fs.existsSync(esFile) && !f.includes('/node_modules/')) {
-      const rel = path.relative(process.cwd(), f);
-      const dir = path.dirname(rel);
-      if (!dir.includes('node_modules') && !dir.includes('.git')) {
-        orphans.push(rel + ' → missing ' + rel.replace(/\\.md$/, '.es.md'));
-      }
-    }
-  }
-}
-
-if (orphans.length > 0) {
-  console.log('\n⚠ Orphan files detected (EN without ES):');
-  orphans.forEach(o => console.log('  -', o));
-  process.exit(1);
-} else {
-  echo "✓ No orphan bilingual files"
-}
+echo ""
+echo "Checking for orphan bilingual files..."
+node .harness/scripts/check-orphan-bilingual.mjs
 
 echo ""
 echo "Running impact analysis & synchronization..."
 node .harness/scripts/impact-analysis-synchronizer.mjs --staged --verbose --fail-on-risk
-"

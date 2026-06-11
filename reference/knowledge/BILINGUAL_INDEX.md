@@ -8,6 +8,7 @@
 | EN | ES | Status |
 |----|----|--------|
 | [adoption-cases.md](adoption-cases.md) | [adoption-cases.es.md](adoption-cases.es.md) | OK |
+| [BILINGUAL_INDEX.md](BILINGUAL_INDEX.md) | [BILINGUAL_INDEX.es.md](BILINGUAL_INDEX.es.md) | OK |
 | [README.md](README.md) | [README.es.md](README.es.md) | OK |
 | [rules-summary.md](rules-summary.md) | [rules-summary.es.md](rules-summary.es.md) | OK |
 

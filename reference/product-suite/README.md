@@ -18,14 +18,16 @@ It does not define universal architecture rules, SDLC governance standards, or p
 
 ## Areas
 
-| Area | Entry point | What you will find |
-|---|---|---|
-| Vision | [Vision](./vision/README.md) | Portfolio direction and long-term goals |
-| Strategy | [Strategy](./strategy/README.md) | Roadmap and investment priorities |
-| Positioning | [Positioning](./positioning/README.md) | Market positioning and differentiation |
-| Methods | [Methods](./methods/README.md) | Shared product methods and practices |
-| Architecture | [Architecture](./architecture/README.md) | Suite-level architecture and product relationships |
-| Communication | [Communication](./communication/README.md) | Executive communication and visuals |
+The six areas, ordered from direction (vision) to delivery support (communication):
+
+| Document | Description | Goal / Objective | Type | Mandatory |
+|---|---|---|---|---|
+| [Vision](./vision/README.md) | Portfolio direction and long-term goals | Align the portfolio to one vision | Area hub | Yes |
+| [Strategy](./strategy/README.md) | Roadmap and investment priorities | Sequence the portfolio bets | Area hub | Yes |
+| [Positioning](./positioning/README.md) | Market positioning and differentiation | Differentiate the suite | Area hub | No |
+| [Methods](./methods/README.md) | Shared product methods and practices | Standardize product practice | Area hub | No |
+| [Architecture](./architecture/README.md) | Suite-level architecture and product relationships | Relate the products coherently | Area hub | Yes |
+| [Communication](./communication/README.md) | Executive communication and visuals | Communicate the suite consistently | Area hub | No |
 
 ## Boundary
 

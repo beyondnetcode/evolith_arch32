@@ -18,16 +18,20 @@ Los documentos de plataforma implementan contratos Core y requisitos de producto
 
 ## Categorías
 
-- `work-management/` — Jira, Azure DevOps, GitHub Issues, Linear y alternativas
-- `agents/` — Claude, OpenAI, Gemini, modelos locales y futuros proveedores
-- `observability/` — Langfuse, OpenTelemetry y alternativas
-- `analytics/` — Apache Superset, Grafana, Power BI y alternativas
-- `scm/` — GitHub, GitLab, Azure Repos y Bitbucket
-- `ci-cd/` — GitHub Actions, Azure Pipelines, GitLab CI, Jenkins y Tekton
-- `testing/` — proveedores específicos de frameworks de pruebas
-- `security/` — CodeQL, Trivy, Snyk, Semgrep y alternativas
-- `deployment/` — Kubernetes, cloud, serverless, VM y perfiles on-premise
-- `collaboration/` — email, Teams, Slack y alternativas
+Categorías de proveedores planificadas, ordenadas según qué tan temprano las necesita un producto (gestión de trabajo primero, colaboración al final). Cada una contendrá perfiles de proveedor cuando se documenten:
+
+| Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
+|---|---|---|---|---|
+| `work-management/` | Jira, Azure DevOps, GitHub Issues, Linear y alternativas | Abstraer proveedores de gestión de trabajo | Categoría planificada | No |
+| `agents/` | Claude, OpenAI, Gemini, modelos locales y futuros proveedores | Abstraer proveedores de agentes IA | Categoría planificada | No |
+| `observability/` | Langfuse, OpenTelemetry y alternativas | Abstraer proveedores de observabilidad | Categoría planificada | No |
+| `analytics/` | Apache Superset, Grafana, Power BI y alternativas | Abstraer proveedores de analítica | Categoría planificada | No |
+| `scm/` | GitHub, GitLab, Azure Repos y Bitbucket | Abstraer proveedores de control de código | Categoría planificada | No |
+| `ci-cd/` | GitHub Actions, Azure Pipelines, GitLab CI, Jenkins y Tekton | Abstraer proveedores de CI/CD | Categoría planificada | No |
+| `testing/` | Proveedores específicos de frameworks de pruebas | Abstraer proveedores de testing | Categoría planificada | No |
+| `security/` | CodeQL, Trivy, Snyk, Semgrep y alternativas | Abstraer proveedores de escaneo de seguridad | Categoría planificada | No |
+| `deployment/` | Kubernetes, cloud, serverless, VM y perfiles on-premise | Abstraer destinos de despliegue | Categoría planificada | No |
+| `collaboration/` | Email, Teams, Slack y alternativas | Abstraer proveedores de colaboración | Categoría planificada | No |
 
 ## Contenido Requerido en Perfiles de Proveedor
 

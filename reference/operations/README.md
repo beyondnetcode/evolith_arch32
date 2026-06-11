@@ -1,58 +1,65 @@
-# Bilingual Index: operations
+# Operations & Observability
 
-> Auto-generated index of EN/ES pairs. Do not edit manually.
+> **Bilingual Navigation:** [Versión en Español](./README.es.md)
 
-<details>
-<summary><strong></strong></summary>
+This directory contains the operational configuration and observability stack for the progressive architecture reference. All components are OSS, self-hosted, and vendor-neutral per [ADR-0028](../architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md).
 
-| EN | ES | Status |
-|----|----|--------|
-| [README.md](README.md) | [README.es.md](README.es.md) | OK |
+## Goal and Objectives
 
-</details>
+> **Goal:** make the reference platform observable and operable locally with a fully OSS, vendor-neutral stack.
 
-<details>
-<summary><strong>grafana</strong></summary>
+**Objectives:**
 
-| EN | ES | Status |
-|----|----|--------|
-| [README.md](grafana/README.md) | [README.es.md](grafana/README.es.md) | OK |
+- Provide a ready-to-run observability stack (OpenTelemetry, Grafana, Tempo, Loki) with one command.
+- Keep every operational component traceable to the ADR that governs it.
+- Document the verification path from an application request to its full distributed trace.
 
-</details>
+---
 
-<details>
-<summary><strong>grafana/provisioning</strong></summary>
+## Observability Stack
 
-| EN | ES | Status |
-|----|----|--------|
-| [README.md](grafana/provisioning/README.md) | [README.es.md](grafana/provisioning/README.es.md) | OK |
+| Component | Role | Local Port |
+| :--- | :--- | :--- |
+| **OpenTelemetry Collector** | Receives traces and logs from all services, fans out to backends | — |
+| **Grafana** | Dashboards, log queries (Loki), trace exploration | `3001` |
+| **Tempo** | Distributed tracing backend (stores spans) | `3200` |
+| **Loki** | Log aggregation backend | `3100` |
 
-</details>
+The full instrumentation strategy is defined in [ADR-0007](../architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md).
 
-<details>
-<summary><strong>grafana/provisioning/datasources</strong></summary>
+---
 
-| EN | ES | Status |
-|----|----|--------|
-| [README.md](grafana/provisioning/datasources/README.md) | [README.es.md](grafana/provisioning/datasources/README.es.md) | OK |
+## Starting the Observability Stack
 
-</details>
+```bash
+# From repository root — starts OTel, Grafana, Tempo, Loki
+docker-compose -f reference/infrastructure/docker-compose.yml up -d otel-collector grafana tempo loki
 
-<details>
-<summary><strong>otel</strong></summary>
+# Verify Grafana is reachable
+open http://localhost:3001   # default credentials: admin / admin
+```
 
-| EN | ES | Status |
-|----|----|--------|
-| [README.md](otel/README.md) | [README.es.md](otel/README.es.md) | OK |
+To view distributed traces: open Grafana → Explore → select **Tempo** datasource → paste a `traceId` from application logs.
 
-</details>
+---
 
-<details>
-<summary><strong>tempo</strong></summary>
+## Configuration Files
 
-| EN | ES | Status |
-|----|----|--------|
-| [README.md](tempo/README.md) | [README.es.md](tempo/README.es.md) | OK |
+| Document | Description | Goal / Objective | Type | Mandatory |
+|---|---|---|---|---|
+| [otel-collector-config.yaml](./otel/otel-collector-config.yaml) | OTel Collector pipeline: receivers, processors, exporters | Route telemetry to backends | Configuration file | Yes |
+| [tempo.yaml](./tempo/tempo.yaml) | Tempo backend configuration | Configure the tracing backend | Configuration file | Yes |
+| [datasources.yml](./grafana/provisioning/datasources/datasources.yml) | Auto-provisioned Grafana datasources (Tempo, Loki) | Provision dashboards automatically | Configuration file | Yes |
 
-</details>
+---
 
+## Verifying Traces
+
+1. Run the API and make any authenticated request.
+2. Copy the `traceId` from the structured JSON log output.
+3. Open `http://localhost:3001` → Explore → Tempo → paste the `traceId`.
+4. The full span tree (Kong → BFF → CoreAPI → PostgreSQL) appears.
+
+---
+
+[Back to Repository Root](../README.md)

@@ -5,6 +5,8 @@
 
 Este es el índice completo de navegación de **Evolith** — la plataforma empresarial de arquitectura progresiva. Úsalo cuando ya sepas qué tipo de artefacto necesitas o cuando quieras moverte entre áreas del repositorio sin explorar directorios manualmente.
 
+El índice sigue el orden del portal: primero orientación (secciones 1–2), luego los tres dominios de lo genérico a lo específico — **Core**, **SDLC**, **Products** (secciones 3–5) — y finalmente las reglas machine-readable y las superficies meta de navegación (secciones 6–7).
+
 ---
 
 <details>
@@ -46,31 +48,48 @@ Este es el índice completo de navegación de **Evolith** — la plataforma empr
 </details>
 
 <details>
-<summary><strong>3. Arquitectura Central</strong></summary>
+<summary><strong>3. Evolith Core — Constitución de Arquitectura</strong></summary>
+
+> **Meta:** mantener cada regla universal y neutral respecto de proveedores en un único corpus gobernado. Empieza por el [Hub de Evolith Core](../core/README.es.md) para la meta, los límites y la regla de dependencia del dominio.
 
 | Área | Único Punto de Acceso | Descripción |
 |---|---|---|
+| Hub del Dominio Core | [Evolith Core](../core/README.es.md) | Qué es Core, qué no es, sus dominios, invariantes y regla de dependencia. |
 | Directivas y Blueprints | [Hub de Arquitectura](../architecture/README.es.md) | Hub central que agrupa las directivas, patrones canónicos, blueprints y la línea base de tecnología agnóstica. |
 | Decisiones de Arquitectura (ADRs) | [Registro General de ADRs](../architecture/adrs/README.es.md) | Índice general que agrupa la matriz de decisiones y todos los ADRs de Evolith (Core, Node, .NET, Android). |
+| Estándares y Gobernanza | [Centro de Estándares y Gobernanza](../governance/standards/README.es.md) | Directivas técnicas, evaluación de madurez, glosario, manifiestos y onboarding. |
+| Operaciones | [Hub Operativo](../operations/README.es.md) | Guías de observabilidad (OpenTelemetry, Tempo, Grafana) y despliegues SRE. |
+| Infraestructura | [Hub de Infraestructura](../infrastructure/README.es.md) | Plataforma local por fases: base de datos, caché, bróker, gateway y secretos. |
 
 </details>
 
 <details>
-<summary><strong>4. Gobernanza y Estándares</strong></summary>
+<summary><strong>4. Evolith SDLC — Gobernanza del Ciclo de Vida</strong></summary>
+
+> **Meta:** gobernar las cinco fases del ciclo de vida con gates, artefactos y trazabilidad explícitos. Empieza por el [Centro de Gobernanza SDLC](../governance/sdlc/README.es.md).
 
 | Área | Único Punto de Acceso | Descripción |
 |---|---|---|
-| Gobernanza y Estándares | [Centro de Estándares y Gobernanza](../governance/standards/README.es.md) | Acceso a directivas técnicas, evaluación de madurez, glosario, manifiestos y onboarding. |
-| SDLC (Ciclo de Vida) | [Centro de Gobernanza SDLC](../governance/sdlc/README.es.md) | Documentación autoritativa sobre las fases, plantillas de artefactos y mapeos de entregables. |
-| Operaciones e Infraestructura | [Hub Operativo](../operations/README.es.md) | Agrupa infraestructura, guías de OpenTelemetry, Tempo, Grafana y despliegues SRE. |
+| Centro de Gobernanza SDLC | [Hub SDLC](../governance/sdlc/README.es.md) | Documentación autoritativa sobre fases, gates, roles y mapeo de entregables. |
+| Plantillas de Artefactos | [Hub de Plantillas de Artefactos](../governance/sdlc/04-artifact-templates/README.es.md) | Plantillas canónicas para cada artefacto de fase, del Discovery Canvas a las Release Notes. |
+| Quality Gates | [Quality Gates SDLC](../governance/sdlc/quality-gates.es.md) | Umbrales de aprobación que cada fase debe satisfacer antes de avanzar. |
+| Trazabilidad | [Modelo de Trazabilidad SDLC](../governance/sdlc/traceability-model.es.md) | Cómo requerimientos, historias, pruebas y releases permanecen vinculados de extremo a extremo. |
+| Mapeo de Artefactos | [Mapeo de Artefactos SDLC](../governance/sdlc/sdlc-evolith-artifact-mapping.es.md) | Mapeo entre fases y entregables esperados. |
 
 </details>
 
 <details>
-<summary><strong>5. Referencia Aplicada y Ejecutable</strong></summary>
+<summary><strong>5. Evolith Products — Suite, Diseños y Referencia Aplicada</strong></summary>
+
+> **Meta:** navegar desde la estrategia del portafolio hasta los internos de cada producto y la evidencia aplicada que los valida. Empieza por el [Hub de Product Suite](../product-suite/README.es.md).
 
 | Área | Único Punto de Acceso | Descripción |
 |---|---|---|
+| Product Suite (portafolio) | [Hub de Product Suite](../product-suite/README.es.md) | Visión del portafolio, estrategia, posicionamiento, métodos, arquitectura de suite y comunicación. |
+| Diseños de Producto | [Hub de Diseños de Producto](../products/README.es.md) | Diseño funcional y técnico por producto; entrada al hub del Tracker. |
+| Evolith Tracker | [Hub del Tracker](../products/evolith-tracker/README.es.md) | Arquitectura e interfaces técnicas del producto Tracker. |
+| Smart CLI | [Hub del Smart CLI](../../sdk/cli/README.es.md) | Documentación, arquitectura, visión y análisis de estado de la CLI. |
+| Guías de Plataformas y Proveedores | [Hub de Plataformas](../platforms/README.es.md) | Herramientas nombradas, vendors, adapters, licencias y perfiles de despliegue. |
 | Referencia Aplicada UMS | [Hub de Referencia UMS](../knowledge/demo/README.es.md) | Muestra la adopción de las directivas Evolith en un entorno práctico demostrativo (UMS). |
 | Casos de Uso y Adopción | [Hub de Conocimiento e Investigación](../knowledge/README.es.md) | Investigación, PoCs y métricas de adopción de la plataforma. |
 | Producto UMS (Código) | [Repositorio UMS](https://github.com/beyondnetcode/ums) | Repositorio oficial externo que implementa el ecosistema de arquitectura. |
@@ -80,9 +99,27 @@ Este es el índice completo de navegación de **Evolith** — la plataforma empr
 <details>
 <summary><strong>6. Rulesets y Validación (Machine-Readable)</strong></summary>
 
+> **Meta:** convertir la constitución en reglas automatizadas exigibles en CI.
+
 | Área | Único Punto de Acceso | Descripción |
 |---|---|---|
 | Hub General de Rulesets | [Rulesets Hub](../../rulesets/README.es.md) | Índice central para todos los schemas, reglas de arquitectura, CI/CD, SDLC y gobernanza en formato automatizado. |
+
+</details>
+
+<details>
+<summary><strong>7. Navegación y Superficies Documentales</strong></summary>
+
+> **Meta:** mantener observables la navegación, la cobertura bilingüe y los releases documentales.
+
+| Área | Único Punto de Acceso | Descripción |
+|---|---|---|
+| Hub de Navegación | [Hub de Navegación](./README.es.md) | Hogar de los documentos de navegación de nivel repositorio. |
+| Índice Bilingüe | [Índice Bilingüe](./BILINGUAL_INDEX.es.md) | Estado autogenerado del emparejamiento EN/ES del corpus de referencia. |
+| Acceso Rápido por Stack | [Acceso Rápido](../quick-access/README.es.md) | Camino más corto a los estándares de React, .NET y Node.js. |
+| Versiones de Documentación | [Registro de Versiones](./DOCUMENTATION_VERSIONS.es.md) | Historial y política de releases documentales. |
+| Taxonomía Documental | [Taxonomía de Documentación](../documentation-taxonomy.es.md) | Qué tipo de documento pertenece a cada lugar. |
+| Rutas de Lectura | [Primeros Pasos por Rol](../getting-started/README.es.md) | Rutas de lectura por rol para lectores nuevos. |
 
 </details>
 

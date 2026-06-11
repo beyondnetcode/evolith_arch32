@@ -1,0 +1,31 @@
+# Índice Bilingüe: products
+
+> Índice auto-generado de pares EN/ES. No editar manualmente.
+
+<details>
+<summary><strong>Files</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [README.md](README.md) | [README.es.md](README.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>evolith-tracker</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [README.md](evolith-tracker/README.md) | [README.es.md](evolith-tracker/README.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>evolith-tracker/architecture</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [README.md](evolith-tracker/architecture/README.md) | [README.es.md](evolith-tracker/architecture/README.es.md) | OK |
+
+</details>
+

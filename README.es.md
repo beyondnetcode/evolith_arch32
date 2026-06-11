@@ -33,7 +33,24 @@ y guía operativa que los productos satélite heredan y especializan.
 
 ---
 
+## Como Esta Organizado Este Repositorio
+
+La documentación de Evolith fluye de la superficie más general al artefacto más específico. Cada página pertenece a uno de tres dominios — **Evolith Core** (la constitución de arquitectura), **Evolith SDLC** (gobernanza del ciclo de vida) y **Evolith Products** (la suite) — y cada dominio desciende por los mismos niveles:
+
+| Nivel | Superficie | Úsala para |
+|---|---|---|
+| 1. Portal | Este README | Elegir un dominio o una ruta de inicio |
+| 2. Hubs de dominio | [Evolith Core](./reference/core/README.es.md) · [Evolith SDLC](./reference/governance/sdlc/README.es.md) · [Evolith Products](./reference/product-suite/README.es.md) | Entender la meta, los objetivos y los límites de cada dominio |
+| 3. Hubs de área | Arquitectura, ADRs, Estándares, Fases SDLC, Diseños de producto | Localizar la familia de artefactos de una preocupación |
+| 4. Documentos de detalle | ADRs, plantillas, estándares, rulesets, guías | Aplicar un artefacto específico y autoritativo |
+
+Cuando ya sabes qué artefacto necesitas, sáltate el descenso y abre el [Índice Maestro Global](./reference/navigation/MASTER_INDEX.es.md).
+
 ## Comienza Aqui
+
+> **Meta:** orientar a cualquier lector — ejecutivo, arquitecto, ingeniero o agente IA — en menos de cinco minutos.
+>
+> **Objetivos:** explicar qué es Evolith, dirigir a cada rol a su ruta de lectura más corta y exponer el índice de navegación completo para acceso directo.
 
 <details>
 <summary><strong>Puntos de entrada principales</strong></summary>
@@ -48,7 +65,13 @@ y guía operativa que los productos satélite heredan y especializan.
 
 </details>
 
-## Evolith Core
+## 1. Evolith Core
+
+> **Meta:** definir la constitución de arquitectura neutral respecto de proveedores que todo producto y repositorio satélite hereda.
+>
+> **Objetivos:** centralizar directivas arquitectónicas y blueprints, preservar el histórico de decisiones mediante ADRs, alinear equipos en estándares y gobernanza, y automatizar el cumplimiento con rulesets.
+>
+> **Hub de dominio:** [Evolith Core](./reference/core/README.es.md) — qué es Core, qué no es, sus dominios y su regla de dependencia.
 
 <details>
 <summary><strong>Arquitectura y Blueprints</strong></summary>
@@ -87,7 +110,15 @@ y guía operativa que los productos satélite heredan y especializan.
 
 </details>
 
-## SDLC
+## 2. Evolith SDLC
+
+> **Meta:** gobernar el ciclo de vida de desarrollo completo mediante cinco fases con gates explícitos y evidencia verificable.
+>
+> **Objetivos:** mapear cada fase a sus artefactos obligatorios y opcionales, estandarizar plantillas, hacer cumplir quality gates y trazabilidad, y validar el cumplimiento automáticamente en CI.
+>
+> **Hub de dominio:** [Centro de Gobernanza SDLC](./reference/governance/sdlc/README.es.md) — fases, gates, artefactos, roles y el modelo de trazabilidad.
+
+Las cinco fases siguientes van de la concepción a las operaciones; cada sección lista los artefactos de esa fase con su nivel de requisito.
 
 <details>
 <summary><strong>Referencias Generales del SDLC</strong></summary>
@@ -162,7 +193,13 @@ y guía operativa que los productos satélite heredan y especializan.
 
 </details>
 
-## Products
+## 3. Evolith Products
+
+> **Meta:** entregar la constitución Core como productos funcionales y demostrarla con referencias aplicadas.
+>
+> **Objetivos:** dirigir el portafolio mediante la Product Suite, documentar el diseño interno de cada producto, demostrar adopción real mediante UMS y casos de adopción, y dotar de herramientas el flujo con la Smart CLI.
+>
+> **Hubs de dominio:** [Product Suite](./reference/product-suite/README.es.md) (visión y estrategia del portafolio) · [Diseños de Producto](./reference/products/README.es.md) (internos por producto)
 
 <details>
 <summary><strong>Evolith Product Suite</strong></summary>
@@ -233,6 +270,21 @@ smart-cli mcp serve
 </details>
 
 ---
+
+## 4. Navegacion y Mapa Documental
+
+> **Meta:** hacer que cada documento sea localizable en dos clics o menos, en ambos idiomas.
+>
+> **Objetivos:** mantener el índice maestro como superficie de navegación completa, auditar la paridad EN/ES y registrar los releases documentales.
+
+| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
+|---|---|---|---|
+| [Hub de Navegación](./reference/navigation/README.es.md) | Hogar de todas las superficies de navegación de nivel repositorio | Centralizar la navegación | Hub de navegación |
+| [Índice Maestro Global](./reference/navigation/MASTER_INDEX.es.md) | Navegación completa del repositorio por intención, rol y dominio | Localizar cualquier artefacto rápidamente | Índice de navegación |
+| [Índice Bilingüe](./reference/navigation/BILINGUAL_INDEX.es.md) | Estado autogenerado del emparejamiento EN/ES del corpus de referencia | Auditar cobertura bilingüe | Índice de navegación |
+| [Acceso Rápido por Stack](./reference/quick-access/README.es.md) | Camino más corto a los estándares de React, .NET y Node.js | Reducir fricción de navegación | Índice de navegación |
+| [Versiones de Documentación](./reference/navigation/DOCUMENTATION_VERSIONS.es.md) | Historial y política de releases documentales | Trazar releases documentales | Registro de versiones |
+| [Taxonomía Documental](./reference/documentation-taxonomy.es.md) | Qué tipo de documento pertenece a cada lugar | Mantener el corpus organizado | Referencia de gobernanza |
 
 ## Contribucion
 

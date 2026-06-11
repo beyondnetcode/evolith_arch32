@@ -4,6 +4,16 @@
 
 Este directorio contiene el corpus de referencia Evolith, separado explícitamente entre la **Constitución Evolith Core** y **Evolith Product Suite**.
 
+## Meta y Objetivos
+
+> **Meta:** organizar todo el corpus de referencia de modo que cada documento tenga exactamente un hogar, desde el dominio más genérico hasta el artefacto más específico.
+
+**Objetivos:**
+
+- Separar los cuatro dominios primarios (Core, Product Suite, Diseños de Producto, Guías de Plataforma) con fronteras explícitas y auditables.
+- Dar a cada dominio un hub que declare su propia meta, objetivos y límites antes de listar su contenido.
+- Encaminar las preocupaciones de soporte (onboarding, arquitectura, gobernanza, operaciones, conocimiento) a través de hubs de área dedicados.
+
 ## Fronteras Principales
 
 | Área | Propósito |
@@ -24,6 +34,8 @@ Este directorio contiene el corpus de referencia Evolith, separado explícitamen
 | [operations/](./operations/README.es.md) | Observabilidad, soporte runtime y documentación operacional |
 | [infrastructure/](./infrastructure/README.es.md) | Plataforma local, gateway, contenedores y activos de infraestructura |
 | [knowledge/](./knowledge/demo/README.es.md) | Referencias aplicadas, evidencia UMS, investigación, ejemplos y lecciones |
+| [quick-access/](./quick-access/README.es.md) | Camino más corto a los estándares autoritativos por stack |
+| [navigation/](./navigation/README.es.md) | Índice maestro, índice bilingüe y registro de versiones documentales |
 
 ## Gobernanza Documental
 

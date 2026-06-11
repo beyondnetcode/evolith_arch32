@@ -33,7 +33,24 @@ and operating guidance that satellite products inherit and specialize.
 
 ---
 
+## How This Repository Is Organized
+
+Evolith documentation flows from the most general surface to the most specific artifact. Every page belongs to one of three domains — **Evolith Core** (the architecture constitution), **Evolith SDLC** (lifecycle governance), and **Evolith Products** (the suite) — and every domain descends through the same levels:
+
+| Level | Surface | Use it to |
+|---|---|---|
+| 1. Portal | This README | Choose a domain or a starting path |
+| 2. Domain hubs | [Evolith Core](./reference/core/README.md) · [Evolith SDLC](./reference/governance/sdlc/README.md) · [Evolith Products](./reference/product-suite/README.md) | Understand each domain's goal, objectives, and boundaries |
+| 3. Area hubs | Architecture, ADRs, Standards, SDLC phases, Product designs | Locate the family of artifacts for one concern |
+| 4. Detail documents | ADRs, templates, standards, rulesets, guides | Apply one specific, authoritative artifact |
+
+When you already know which artifact you need, skip the descent and open the [Global Master Index](./reference/navigation/MASTER_INDEX.md).
+
 ## Start Here
+
+> **Goal:** orient any reader — executive, architect, engineer, or AI agent — in less than five minutes.
+>
+> **Objectives:** explain what Evolith is, route each role to its shortest reading path, and expose the full navigation index for direct access.
 
 <details>
 <summary><strong>Primary entry points</strong></summary>
@@ -48,7 +65,13 @@ and operating guidance that satellite products inherit and specialize.
 
 </details>
 
-## Evolith Core
+## 1. Evolith Core
+
+> **Goal:** define the provider-neutral architecture constitution that every product and satellite repository inherits.
+>
+> **Objectives:** centralize architecture directives and blueprints, preserve decision history through ADRs, align teams on standards and governance, and automate compliance with rulesets.
+>
+> **Domain hub:** [Evolith Core](./reference/core/README.md) — what Core is, what it is not, its domains, and its dependency rule.
 
 <details>
 <summary><strong>Architecture and Blueprints</strong></summary>
@@ -87,7 +110,15 @@ and operating guidance that satellite products inherit and specialize.
 
 </details>
 
-## SDLC
+## 2. Evolith SDLC
+
+> **Goal:** govern the full development lifecycle through five phases with explicit gates and verifiable evidence.
+>
+> **Objectives:** map every phase to its mandatory and optional artifacts, standardize templates, enforce quality gates and traceability, and validate compliance automatically in CI.
+>
+> **Domain hub:** [SDLC Governance Center](./reference/governance/sdlc/README.md) — phases, gates, artifacts, roles, and the traceability model.
+
+The five phases below run from conception to operations; each section lists that phase's artifacts with their requirement level.
 
 <details>
 <summary><strong>General SDLC References</strong></summary>
@@ -162,7 +193,13 @@ and operating guidance that satellite products inherit and specialize.
 
 </details>
 
-## Products
+## 3. Evolith Products
+
+> **Goal:** deliver the Core constitution as working products and prove it through applied references.
+>
+> **Objectives:** direct the portfolio through the Product Suite, document each product's internal design, demonstrate real adoption through UMS and adoption cases, and tool the workflow with the Smart CLI.
+>
+> **Domain hubs:** [Product Suite](./reference/product-suite/README.md) (portfolio vision and strategy) · [Product Designs](./reference/products/README.md) (per-product internals)
 
 <details>
 <summary><strong>Evolith Product Suite</strong></summary>
@@ -233,6 +270,21 @@ smart-cli mcp serve
 </details>
 
 ---
+
+## 4. Navigation and Documentation Map
+
+> **Goal:** make every document findable in two clicks or less, in both languages.
+>
+> **Objectives:** maintain the master index as the complete navigation surface, audit EN/ES parity, and record documentation releases.
+
+| Link (URL) | Description (brief explanation) | Goal / Objective | Typification (category or type) |
+|---|---|---|---|
+| [Navigation Hub](./reference/navigation/README.md) | Home of all repository-level navigation surfaces | Centralize navigation | Navigation hub |
+| [Global Master Index](./reference/navigation/MASTER_INDEX.md) | Complete repository navigation by intent, role, and domain | Locate any artifact quickly | Navigation index |
+| [Bilingual Index](./reference/navigation/BILINGUAL_INDEX.md) | Auto-generated EN/ES pairing status for the reference corpus | Audit bilingual coverage | Navigation index |
+| [Quick Access by Stack](./reference/quick-access/README.md) | Shortest path to React, .NET, and Node.js standards | Reduce navigation friction | Navigation index |
+| [Documentation Versions](./reference/navigation/DOCUMENTATION_VERSIONS.md) | Documentation release history and policy | Trace documentation releases | Version log |
+| [Documentation Taxonomy](./reference/documentation-taxonomy.md) | What kind of document belongs where | Keep the corpus organized | Governance reference |
 
 ## Contribution
 

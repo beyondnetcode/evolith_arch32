@@ -1,13 +1,152 @@
-# Bilingual Index: core
+# Evolith Core
 
-> Auto-generated index of EN/ES pairs. Do not edit manually.
+> **Bilingual navigation:** [Versión en Español](./README.es.md)
 
-<details>
-<summary><strong></strong></summary>
+**Classification:** Core Architecture and Governance Corpus  
+**Status:** Authoritative  
+**Owner:** Evolith Architecture Board
 
-| EN | ES | Status |
-|----|----|--------|
-| [README.md](README.md) | [README.es.md](README.es.md) | OK |
+---
 
-</details>
+## Goal and Objectives
 
+> **Goal:** keep a single, provider-neutral engineering Constitution that every Evolith product and satellite repository can inherit without modification.
+
+**Objectives:**
+
+- Centralize universal architecture principles, Core ADRs, and canonical contracts in one authoritative place.
+- Guarantee that governance (SDLC, standards, rulesets) survives changes of product, framework, tool, or vendor.
+- Provide a clear dependency direction: Core governs the Suite; products consume Core and propose improvements upstream with evidence.
+
+---
+
+## 1. What Evolith Core Is
+
+Evolith Core is the **provider-neutral engineering Constitution** shared by every Evolith product and satellite implementation.
+
+It defines:
+
+- universal architecture principles and patterns;
+- Core ADRs and canonical contracts;
+- the five-phase SDLC and Phase Gate governance;
+- artifact, evidence, traceability, and responsibility standards;
+- rulesets, schemas, taxonomies, and validation requirements;
+- security, tenant-isolation, and provider-abstraction rules;
+- the process for promoting validated lessons upstream.
+
+Core is intended to remain valid even when a product, framework, model, tool, or vendor changes.
+
+---
+
+## 2. What Evolith Core Is Not
+
+Evolith Core is not:
+
+- Evolith Tracker;
+- Smart CLI, a chatbox, or an MCP product;
+- a task-management platform;
+- an LLM or autonomous agent;
+- a dashboard or BI implementation;
+- a named provider integration;
+- a SaaS deployment or commercial edition;
+- the internal design of any product in the Evolith Suite.
+
+Products consume Core. They do not redefine it.
+
+---
+
+## 3. Core Domains
+
+| Core Domain | Canonical Location | Responsibility |
+|---|---|---|
+| **Architecture** | [`reference/architecture/`](../architecture/README.md) | Principles, patterns, reference models, contracts, and Core ADRs |
+| **SDLC Governance** | [`reference/governance/sdlc/`](../governance/sdlc/README.md) | Phases, gates, artifacts, evidence, roles, exceptions, traceability, and metrics |
+| **Engineering Standards** | [`reference/governance/standards/`](../governance/standards/README.md) | Reusable standards and governance rules |
+| **Rulesets and Schemas** | [`rulesets/`](../../rulesets/) | Machine-consumable policy and validation contracts |
+| **Core Taxonomy** | [`reference/governance/`](../governance/) | Canonical terminology, classifications, and governance boundaries |
+| **Applied Evidence** | [`reference/knowledge/`](../knowledge/) | Lessons and evidence from satellite implementations, pending upstream review |
+
+---
+
+## 4. Dependency Rule
+
+```text
+Evolith Core
+    ↓ governs
+Evolith Product Suite
+    ↓ contains
+Tracker · Smart CLI · MCP Services · Plugins · Future Products
+    ↓ integrates through abstractions
+Named Tools and Providers
+```
+
+The dependency direction is one-way:
+
+1. Core defines universal constraints.
+2. Suite products conform to Core.
+3. Provider implementations conform to product and Core contracts.
+4. Validated lessons may be proposed upstream.
+5. Only the Architecture Board can approve a Core change.
+
+---
+
+## 5. ADR Boundaries
+
+### Core ADR
+
+A Core ADR:
+
+- applies across products;
+- remains provider-neutral;
+- defines architecture decisions, patterns, contracts, or universal constraints;
+- cannot select Langfuse, Jira, Claude, Superset, GitHub, Azure DevOps, or another vendor as a universal requirement.
+
+### Product ADR
+
+A Product ADR belongs to one Suite product and may define its internal architecture, persistence, APIs, UX, or deployment.
+
+### Platform-Specific ADR
+
+A Platform-Specific ADR may select or evaluate a named technology, provider, deployment profile, license, or adapter implementation.
+
+---
+
+## 6. Core Invariants
+
+1. Core is provider-neutral.
+2. Core rules are versioned and reviewable.
+3. Product-specific schemas cannot leak into canonical Core contracts.
+4. Named tools are examples or provider profiles, not universal dependencies.
+5. Human accountability remains explicit.
+6. Runtime products preserve evidence and decision lineage.
+7. Satellite lessons require evidence and Architecture Board approval before promotion.
+8. Core documentation is bilingual when required by repository policy.
+
+---
+
+## 7. Relationship to the Product Suite
+
+The Product Suite uses Core to deliver operational capabilities:
+
+- Tracker executes governance state and audit.
+- Smart CLI and MCP expose governed interactions and evaluations.
+- Plugins and adapters connect external capabilities.
+- Future products may consume the same Constitution.
+
+Suite vision, business positioning, roadmaps, UX, product APIs, and commercial models belong in the [Evolith Product Suite](../product-suite/README.md), not in Core.
+
+---
+
+## 8. Navigation
+
+- [Documentation Taxonomy](../documentation-taxonomy.md)
+- [Architecture](../architecture/README.md)
+- [SDLC Governance](../governance/sdlc/README.md)
+- [Engineering Standards](../governance/standards/README.md)
+- [Evolith Product Suite](../product-suite/README.md)
+- [Product-Specific Designs](../products/README.md)
+- [Platform and Provider Guidance](../platforms/README.md)
+
+---
+
+[Back to Reference Hub](../README.md)

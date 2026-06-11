@@ -48,7 +48,7 @@ function generateIndex(dir, pairs, language) {
 
   for (const subDir of sortedDirs) {
     let sectionTitle;
-    if (subDir === ".") {
+    if (subDir === "." || subDir === "") {
       sectionTitle = "Files";
     } else {
       sectionTitle = subDir.replace(/^\.\//, "");
@@ -111,7 +111,7 @@ console.log("✓ Generated reference/navigation/BILINGUAL_INDEX.md");
 
 const esTopLevelIndex = generateIndex(referenceDir, allPairs, "es");
 fs.writeFileSync(path.join(navigationDir, "BILINGUAL_INDEX.es.md"), esTopLevelIndex, "utf8");
-console.log("✓ Generated reference/navigation/INDICE_BILINGUE.md");
+console.log("✓ Generated reference/navigation/BILINGUAL_INDEX.es.md");
 
 const areas = {};
 for (const p of allPairs) {
@@ -121,16 +121,20 @@ for (const p of allPairs) {
   areas[area].push(p);
 }
 
+// Area indexes are written to BILINGUAL_INDEX.md, never README.md:
+// hub READMEs are curated navigation content and must not be overwritten.
+// "navigation" is skipped because the top-level index already lives there.
 for (const area of Object.keys(areas).sort()) {
+  if (area === "navigation" || area === "root") continue;
   const areaDir = path.join(referenceDir, area);
   if (fs.existsSync(areaDir)) {
     const areaIndex = generateIndex(areaDir, areas[area], "en");
-    fs.writeFileSync(path.join(areaDir, "README.md"), areaIndex, "utf8");
-    console.log(`✓ Generated ${area}/README.md`);
+    fs.writeFileSync(path.join(areaDir, "BILINGUAL_INDEX.md"), areaIndex, "utf8");
+    console.log(`✓ Generated ${area}/BILINGUAL_INDEX.md`);
 
     const esAreaIndex = generateIndex(areaDir, areas[area], "es");
-    fs.writeFileSync(path.join(areaDir, "README.es.md"), esAreaIndex, "utf8");
-    console.log(`✓ Generated ${area}/README.es.md`);
+    fs.writeFileSync(path.join(areaDir, "BILINGUAL_INDEX.es.md"), esAreaIndex, "utf8");
+    console.log(`✓ Generated ${area}/BILINGUAL_INDEX.es.md`);
   }
 }
 

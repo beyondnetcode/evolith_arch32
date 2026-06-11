@@ -4,6 +4,16 @@
 
 This directory contains the Evolith reference corpus, explicitly separated between the **Evolith Core Constitution** and the **Evolith Product Suite**.
 
+## Goal and Objectives
+
+> **Goal:** organize the entire reference corpus so that every document has exactly one home, from the most generic domain down to the most specific artifact.
+
+**Objectives:**
+
+- Separate the four primary domains (Core, Product Suite, Product Designs, Platform Guidance) with explicit, auditable boundaries.
+- Give every domain a hub that states its own goal, objectives, and limits before listing its contents.
+- Route supporting concerns (onboarding, architecture, governance, operations, knowledge) through dedicated area hubs.
+
 ## Primary Boundaries
 
 | Area | Purpose |
@@ -24,6 +34,8 @@ This directory contains the Evolith reference corpus, explicitly separated betwe
 | [operations/](./operations/README.md) | Observability, runtime support, and operational documentation |
 | [infrastructure/](./infrastructure/README.md) | Local platform, gateway, containers, and infrastructure assets |
 | [knowledge/](./knowledge/demo/README.md) | Applied references, UMS evidence, research, examples, and lessons |
+| [quick-access/](./quick-access/README.md) | Shortest path to the authoritative standards per stack |
+| [navigation/](./navigation/README.md) | Master index, bilingual index, and documentation version log |
 
 ## Documentation Governance
 

@@ -1,67 +1,37 @@
-# Bilingual Index: product-suite
+# Evolith Product Suite
 
-> Auto-generated index of EN/ES pairs. Do not edit manually.
+> **Bilingual navigation:** [Versión en Español](./README.es.md)
 
-<details>
-<summary><strong></strong></summary>
+This domain contains the product portfolio vision, strategy, positioning, roadmap, methods, ecosystem, and executive communication for the Evolith Suite.
 
-| EN | ES | Status |
-|----|----|--------|
-| [README.md](README.md) | [README.es.md](README.es.md) | OK |
+It does not define universal architecture rules, SDLC governance standards, or product-internal implementation details.
 
-</details>
+## Goal and Objectives
 
-<details>
-<summary><strong>architecture</strong></summary>
+> **Goal:** define where the Evolith product portfolio is going and how its products reinforce each other — without leaking strategy into Core or product internals.
 
-| EN | ES | Status |
-|----|----|--------|
-| [README.md](architecture/README.md) | [README.es.md](architecture/README.es.md) | OK |
+**Objectives:**
 
-</details>
+- Maintain a single portfolio vision, roadmap, and positioning shared by every Suite product.
+- Document how products relate (suite architecture, methods, ecosystem) at the portfolio level.
+- Provide executive-grade communication material that stays consistent with Core governance.
 
-<details>
-<summary><strong>communication</strong></summary>
+## Areas
 
-| EN | ES | Status |
-|----|----|--------|
-| [README.md](communication/README.md) | [README.es.md](communication/README.es.md) | OK |
+| Area | Entry point | What you will find |
+|---|---|---|
+| Vision | [Vision](./vision/README.md) | Portfolio direction and long-term goals |
+| Strategy | [Strategy](./strategy/README.md) | Roadmap and investment priorities |
+| Positioning | [Positioning](./positioning/README.md) | Market positioning and differentiation |
+| Methods | [Methods](./methods/README.md) | Shared product methods and practices |
+| Architecture | [Architecture](./architecture/README.md) | Suite-level architecture and product relationships |
+| Communication | [Communication](./communication/README.md) | Executive communication and visuals |
 
-</details>
+## Boundary
 
-<details>
-<summary><strong>methods</strong></summary>
+- Universal principles belong in [`reference/architecture/`](../architecture/README.md).
+- Phase, gate, artifact, evidence, and role governance belongs in [`reference/governance/sdlc/`](../governance/sdlc/README.md).
+- Product-internal designs belong in [`reference/products/`](../products/README.md).
+- Named technologies and vendors belong in [`reference/platforms/`](../platforms/README.md).
 
-| EN | ES | Status |
-|----|----|--------|
-| [README.md](methods/README.md) | [README.es.md](methods/README.es.md) | OK |
-
-</details>
-
-<details>
-<summary><strong>positioning</strong></summary>
-
-| EN | ES | Status |
-|----|----|--------|
-| [README.md](positioning/README.md) | [README.es.md](positioning/README.es.md) | OK |
-
-</details>
-
-<details>
-<summary><strong>strategy</strong></summary>
-
-| EN | ES | Status |
-|----|----|--------|
-| [README.md](strategy/README.md) | [README.es.md](strategy/README.es.md) | OK |
-
-</details>
-
-<details>
-<summary><strong>vision</strong></summary>
-
-| EN | ES | Status |
-|----|----|--------|
-| [README.md](vision/README.md) | [README.es.md](vision/README.es.md) | OK |
-
-</details>
-
+[Back to Reference Hub](../README.md)

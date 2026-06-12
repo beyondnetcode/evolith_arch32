@@ -389,17 +389,90 @@ export class PhaseGateValidatorService {
 
     if (criterionText.includes('cve')) {
       const securityPath = path.join(projectPath, 'security-scan.json');
-      return !await this.fs.exists(securityPath);
+      if (!await this.fs.exists(securityPath)) return true;
+
+      try {
+        const content = await this.fs.readFile(securityPath);
+        const scan = JSON.parse(content) as {
+          status?: string;
+          vulnerabilities?: any;
+          exceptions?: any[];
+        };
+
+        if (scan.status === 'failed' || scan.status === 'error') return true;
+
+        let critical = 0;
+        let high = 0;
+        let exceptions = 0;
+
+        if (scan.vulnerabilities && typeof scan.vulnerabilities === 'object') {
+          if (Array.isArray(scan.vulnerabilities)) {
+            critical = scan.vulnerabilities.filter((v: any) => v.severity === 'critical' || v.severity === 'CRITICAL').length;
+            high = scan.vulnerabilities.filter((v: any) => v.severity === 'high' || v.severity === 'HIGH').length;
+          } else {
+            critical = scan.vulnerabilities.critical || 0;
+            high = scan.vulnerabilities.high || 0;
+          }
+        }
+
+        if (Array.isArray(scan.exceptions)) {
+          exceptions = scan.exceptions.length;
+        }
+
+        if (critical + high > exceptions) return true;
+      } catch (err: unknown) {
+        this.logger.warn(`Failed to parse security-scan.json: ${err instanceof Error ? err.message : String(err)}`);
+        return true;
+      }
+      return false;
     }
 
     if (criterionText.includes('monitoring')) {
       const observabilityPath = path.join(projectPath, 'observability');
-      return !await this.fs.exists(observabilityPath);
+      if (!await this.fs.exists(observabilityPath)) return true;
+
+      let hasReadiness = false;
+      try {
+        const files = await this.fs.readDirectory(observabilityPath);
+        const contentChecks = await Promise.all(files.map(async file => {
+          if (file.name.endsWith('.md') || file.name.endsWith('.json') || file.name.endsWith('.yml') || file.name.endsWith('.yaml')) {
+            const content = await this.fs.readFile(path.join(observabilityPath, file.name));
+            const lower = content.toLowerCase();
+            return (lower.includes('health') || lower.includes('indicator') || lower.includes('slo') || lower.includes('sli')) && 
+                   (lower.includes('alert') || lower.includes('owner') || lower.includes('pager'));
+          }
+          return false;
+        }));
+        hasReadiness = contentChecks.some(Boolean);
+      } catch (err) {
+        this.logger.warn(`Failed to read observability directory: ${err instanceof Error ? err.message : String(err)}`);
+      }
+      return !hasReadiness;
     }
 
     if (criterionText.includes('rollback')) {
       const releaseEvidence = evidenceResults.find(e => e.artifact === 'Release Notes');
-      return !releaseEvidence?.found;
+      if (!releaseEvidence?.found) return true;
+
+      try {
+        const releasePath = this.resolveArtifactPath(releaseEvidence.artifact, projectPath);
+        if (await this.fs.exists(releasePath)) {
+          const content = await this.fs.readFile(releasePath);
+          const lower = content.toLowerCase();
+          
+          const hasRollbackData = lower.includes('rollback action') && !lower.includes('[action]');
+          const hasRehearsal = lower.includes('rehearsal') || lower.includes('trigger');
+          const hasRollbackSection = lower.includes('rollback plan') && content.length > 200;
+          
+          if (!hasRollbackData && !hasRehearsal && !hasRollbackSection) {
+            return true;
+          }
+        }
+      } catch (err) {
+        this.logger.warn(`Failed to read Release Notes: ${err instanceof Error ? err.message : String(err)}`);
+        return true;
+      }
+      return false;
     }
 
     if (criterionText.includes('traceable')) {

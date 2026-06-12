@@ -105,7 +105,11 @@ class McpStdioClient {
   }
 
   async initialize() {
-    return this.send('initialize');
+    return this.send('initialize', {
+      protocolVersion: '2024-11-05',
+      capabilities: {},
+      clientInfo: { name: 'test', version: '1.0.0' }
+    });
   }
 
   getResponses() {

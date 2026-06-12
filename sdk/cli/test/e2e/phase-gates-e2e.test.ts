@@ -327,6 +327,7 @@ describe('Phase Gate E2E Tests', () => {
       fs.mkdirSync(templatesDir, { recursive: true });
 
       fs.writeFileSync(path.join(templatesDir, 'test-summary-report-template.md'), '# Test Summary Report');
+      fs.writeFileSync(path.join(projectDir, 'security-scan.json'), JSON.stringify({ status: 'success', vulnerabilities: { critical: 0, high: 0 } }));
 
       expect(fs.existsSync(path.join(templatesDir, 'test-summary-report-template.md'))).toBe(true);
     });
@@ -343,7 +344,8 @@ describe('Phase Gate E2E Tests', () => {
       fs.mkdirSync(templatesDir, { recursive: true });
       fs.mkdirSync(observabilityPath, { recursive: true });
 
-      fs.writeFileSync(path.join(templatesDir, 'release-notes-template.md'), '# Release Notes');
+      fs.writeFileSync(path.join(templatesDir, 'release-notes-template.md'), '# Release Notes\n## 4. Rollback Plan\n| Scenario | Rollback Action | Owner |\n|---|---|---|\n| Failure | Revert to previous | Ops |\n');
+      fs.writeFileSync(path.join(observabilityPath, 'health.md'), 'Health indicators and alert owner: PagerDuty');
 
       expect(fs.existsSync(path.join(templatesDir, 'release-notes-template.md'))).toBe(true);
       expect(fs.existsSync(observabilityPath)).toBe(true);

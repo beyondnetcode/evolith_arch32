@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { Injectable } from '@nestjs/common';
 import {
   ICatalogLoader,
   Runtime,
@@ -59,6 +60,7 @@ interface DelegatedCommands {
   rush: string[];
 }
 
+@Injectable()
 export class CatalogLoader implements ICatalogLoader {
   private runtimeCatalog: RuntimeCatalog | null = null;
   private toolCatalog: ToolCatalogJson | null = null;
@@ -160,5 +162,3 @@ export class CatalogLoader implements ICatalogLoader {
     this.commandsMatrix = null;
   }
 }
-
-export const catalogLoader = new CatalogLoader();

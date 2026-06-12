@@ -1,5 +1,5 @@
 import { PhaseService } from '../../domain/services';
-import { catalogLoader } from '../../infrastructure/catalog/catalog-loader';
+import { CatalogLoader } from '../../infrastructure/catalog/catalog-loader';
 import { npmProvider, dotnetProvider, pythonProvider, nxProvider } from '../../infrastructure/cli/providers';
 import { PlatformNotFoundError, ValidationError } from '../../core/errors';
 import { logger, Timed, commandWatcher } from '../../core/observability';
@@ -27,10 +27,12 @@ export interface InitProjectResult {
 
 export class InitializeProjectUseCase {
   private readonly fs: any;
+  private readonly catalogLoader: CatalogLoader;
   private readonly phaseService: PhaseService;
 
-  constructor(fs: any) {
+  constructor(fs: any, catalogLoader: CatalogLoader) {
     this.fs = fs;
+    this.catalogLoader = catalogLoader;
     this.phaseService = new PhaseService();
   }
 
@@ -41,22 +43,22 @@ export class InitializeProjectUseCase {
     const artifacts: string[] = [];
 
     try {
-      const runtimes = catalogLoader.loadRuntimeCatalog();
-      const runtime = runtimes.find(r => r.id === input.runtime);
+      const runtimes = this.catalogLoader.loadRuntimeCatalog();
+      const runtime = runtimes.find((r: any) => r.id === input.runtime);
       if (!runtime) {
         errors.push(`Runtime ${input.runtime} not found`);
         return { success: false, artifacts, warnings, errors };
       }
 
-      const monorepos = catalogLoader.getMonorepoOptions();
-      const monorepo = monorepos.find(m => m.id === input.monorepo);
+      const monorepos = this.catalogLoader.getMonorepoOptions();
+      const monorepo = monorepos.find((m: any) => m.id === input.monorepo);
       if (!monorepo) {
         errors.push(`Monorepo ${input.monorepo} not found`);
         return { success: false, artifacts, warnings, errors };
       }
 
-      const architectures = catalogLoader.getArchitecturePatterns();
-      const architecture = architectures.find(a => a.id === input.architecture);
+      const architectures = this.catalogLoader.getArchitecturePatterns();
+      const architecture = architectures.find((a: any) => a.id === input.architecture);
       if (!architecture) {
         errors.push(`Architecture ${input.architecture} not found`);
         return { success: false, artifacts, warnings, errors };

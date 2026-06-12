@@ -1,10 +1,9 @@
-import { Command, CommandRunner, Option } from 'nest-commander';
-import * as p from '@clack/prompts';
-import * as chalk from 'chalk';
+import { Command, Option } from 'nest-commander';
 import { ValidateSatelliteUseCase } from '../../application/use-cases/validate-satellite.use-case';
 import { ValidationResult, ValidationIssue, RulesetValidatorService } from '../../core/validators/ruleset-validator.service';
-import { logger } from '../../core/observability';
 import { OutputFormatterService, OutputFormat } from '../../infrastructure/formatters/output-formatter.service';
+import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
+import { PromptService } from '../../infrastructure/prompts/prompt.service';
 
 interface ValidateCommandOptions {
   format?: string;
@@ -21,22 +20,22 @@ interface ValidateCommandOptions {
   name: 'validate',
   description: 'Verifica que el repositorio satélite cumpla los estándares mínimos de Evolith',
 })
-export class ValidateCommand extends CommandRunner {
+export class ValidateCommand extends BaseEvolithCommand {
   constructor(
     private readonly useCase: ValidateSatelliteUseCase,
     private readonly validator: RulesetValidatorService,
+    promptService: PromptService
   ) {
-    super();
+    super('ValidateCommand', promptService);
   }
 
-  async run(passedParam: string[], options?: ValidateCommandOptions): Promise<void> {
-    p.intro(' Evolith SDK - Validación de Estándares ');
+  async executeCommand(passedParam: string[], options?: ValidateCommandOptions): Promise<void> {
+    this.promptService.showIntro('Evolith SDK - Validación de Estándares');
 
     const satellitePath = options?.satellite || process.cwd();
     const corePath = options?.core || undefined;
 
-    const s = p.spinner();
-    s.start('Analizando repositorio...');
+    this.promptService.startSpinner('Analizando repositorio...');
 
     let result: ValidationResult;
 
@@ -79,13 +78,11 @@ export class ValidateCommand extends CommandRunner {
         };
       }
     } catch (error) {
-      s.stop();
-      logger.error('Validation failed', { error });
-      p.log.error(chalk.red(`Error durante validación: ${error}`));
-      process.exit(1);
+      this.promptService.stopSpinner();
+      throw error;
     }
 
-    s.stop();
+    this.promptService.stopSpinner();
 
     const format = (options?.format as OutputFormat) || 'markdown';
     const formatter = new OutputFormatterService();
@@ -95,7 +92,7 @@ export class ValidateCommand extends CommandRunner {
       if (options?.output) {
         const fs = await import('fs-extra');
         await fs.writeFile(options.output, output, 'utf-8');
-        p.log.success(`Reporte guardado en ${options.output}`);
+        this.promptService.showSuccess(`Reporte guardado en ${options.output}`);
       } else {
         console.log(output);
       }
@@ -117,7 +114,7 @@ export class ValidateCommand extends CommandRunner {
       if (options?.output) {
         const fs = await import('fs-extra');
         await fs.writeFile(options.output, output, 'utf-8');
-        p.log.success(`Reporte guardado en ${options.output}`);
+        this.promptService.showSuccess(`Reporte guardado en ${options.output}`);
       } else {
         console.log(output);
       }
@@ -126,18 +123,18 @@ export class ValidateCommand extends CommandRunner {
     }
 
     if (result.status === 'failed') {
-      p.outro(chalk.red('❌ La validación ha fallado. Revise los errores acima.'));
+      this.promptService.showOutro('❌ La validación ha fallado. Revise los errores arriba.');
       process.exit(1);
     } else if (result.status === 'warning') {
-      p.outro(chalk.yellow('⚠️ La validación ha terminado con advertencias.'));
+      this.promptService.showOutro('⚠️ La validación ha terminado con advertencias.');
     } else {
-      p.outro(chalk.green('✅ El repositorio cumple con todos los estándares de Evolith.'));
+      this.promptService.showOutro('✅ El repositorio cumple con todos los estándares de Evolith.');
     }
   }
 
   private printHumanReport(result: ValidationResult): void {
     if (result.issues.length === 0) {
-      p.log.success('No se encontraron problemas.');
+      this.promptService.showSuccess('No se encontraron problemas.');
       return;
     }
 
@@ -145,27 +142,27 @@ export class ValidateCommand extends CommandRunner {
     const warnings = result.issues.filter(i => !i.blocking);
 
     if (blocking.length > 0) {
-      p.log.error(chalk.red(`\n${blocking.length} error(es) bloqueante(s):`));
+      this.promptService.showError(`\\n${blocking.length} error(es) bloqueante(s):`);
       for (const issue of blocking) {
-        p.log.error(chalk.red(`  [${issue.ruleId}] ${issue.title}`));
-        p.log.error(chalk.red(`    ${issue.description}`));
+        this.promptService.showError(`  [${issue.ruleId}] ${issue.title}`);
+        this.promptService.showError(`    ${issue.description}`);
         if (issue.file) {
-          p.log.error(chalk.red(`    Archivo: ${issue.file}`));
+          this.promptService.showError(`    Archivo: ${issue.file}`);
         }
       }
     }
 
     if (warnings.length > 0) {
-      p.log.warn(chalk.yellow(`\n${warnings.length} advertencia(es):`));
+      this.promptService.showWarning(`\\n${warnings.length} advertencia(es):`);
       for (const issue of warnings) {
-        p.log.warn(chalk.yellow(`  [${issue.ruleId}] ${issue.title}`));
-        p.log.warn(chalk.yellow(`    ${issue.description}`));
+        this.promptService.showWarning(`  [${issue.ruleId}] ${issue.title}`);
+        this.promptService.showWarning(`    ${issue.description}`);
       }
     }
 
-    p.log.info(chalk.cyan(`\nReglas verificadas: ${result.rulesChecked}`));
+    this.promptService.showInfo(`\\nReglas verificadas: ${result.rulesChecked}`);
     if (result.coreRef.version) {
-      p.log.info(chalk.cyan(`Core version pinneada: ${result.coreRef.version}`));
+      this.promptService.showInfo(`Core version pinneada: ${result.coreRef.version}`);
     }
   }
 

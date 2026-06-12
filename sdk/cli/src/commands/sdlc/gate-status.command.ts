@@ -1,11 +1,11 @@
-import { Command, CommandRunner, Option } from 'nest-commander';
+import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
-import * as p from '@clack/prompts';
 import { getContainer } from '../../core/di/container';
 import { PhaseTransitionUseCase } from '../../application/services';
 import { PhaseGateValidatorService } from '../../core/validators/phase-gate-validator.service';
 import { readGitLog, isGitRepo } from '../../core/metrics/git-log-reader';
 import { calculateDora, DoraMetric, DoraRating } from '../../core/metrics/dora-calculator';
+import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 
 function ratingBadge(rating: DoraRating): string {
   switch (rating) {
@@ -21,8 +21,12 @@ function ratingBadge(rating: DoraRating): string {
   name: 'gate-status',
   description: 'Display current SDLC phase gate validation status and DORA metrics',
 })
-export class GateStatusCommand extends CommandRunner {
-  async run(
+export class GateStatusCommand extends BaseEvolithCommand {
+  constructor() {
+    super('GateStatusCommand');
+  }
+
+  async executeCommand(
     _passedParam: string[],
     options?: Record<string, any>,
   ): Promise<void> {
@@ -31,39 +35,36 @@ export class GateStatusCommand extends CommandRunner {
     const cwd = process.cwd();
     const sinceDays: number = options?.since ?? 90;
 
-    const spinner = p.spinner();
-    spinner.start('Validating phase gates…');
+    this.promptService.startSpinner('Validating phase gates…');
 
     try {
       const status = await useCase.getGateStatus(cwd);
-      spinner.stop();
+      this.promptService.stopSpinner();
       this.printGateStatus(status);
     } catch (error: unknown) {
-      spinner.stop();
-      const message = error instanceof Error ? error.message : String(error);
-      p.log.error(`Failed to validate gates: ${message}`);
-      process.exit(1);
+      this.promptService.stopSpinner();
+      throw error; // Let BaseEvolithCommand handle it
     }
 
     // ── DORA metrics ────────────────────────────────────────────────────────
-    spinner.start('Reading git history for DORA metrics…');
+    this.promptService.startSpinner('Reading git history for DORA metrics…');
     try {
       const hasGit = await isGitRepo(cwd);
       if (!hasGit) {
-        spinner.stop('');
-        p.log.warn('DORA metrics skipped — not a git repository.');
+        this.promptService.stopSpinner('');
+        this.promptService.showWarning('DORA metrics skipped — not a git repository.');
         return;
       }
 
       const commits = await readGitLog({ cwd, sinceDays });
-      spinner.stop(`Analysed ${commits.length} commits (last ${sinceDays} days)`);
+      this.promptService.stopSpinner(`Analysed ${commits.length} commits (last ${sinceDays} days)`);
 
       const dora = calculateDora(commits, sinceDays);
       this.printDora(dora);
     } catch (err: unknown) {
-      spinner.stop('');
+      this.promptService.stopSpinner('');
       const msg = err instanceof Error ? err.message : String(err);
-      p.log.warn(`DORA metrics unavailable: ${msg}`);
+      this.promptService.showWarning(`DORA metrics unavailable: ${msg}`);
     }
   }
 

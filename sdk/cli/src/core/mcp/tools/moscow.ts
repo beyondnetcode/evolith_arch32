@@ -165,6 +165,10 @@ export function getMoscowTools(): IMcpToolHandler[] {
 }
 
 async function moscowCreate(repoPath: string, phase: string, args: Record<string, unknown>, service: MoscowPrioritizationService) {
+  if (!repoPath) {
+    return { error: true, message: 'path is required' };
+  }
+
   const items = args.items as Array<Omit<MoscowItem, 'id'>>;
 
   if (!items || items.length === 0) {
@@ -181,6 +185,7 @@ async function moscowCreate(repoPath: string, phase: string, args: Record<string
 }
 
 async function moscowLoad(repoPath: string, phase: string, service: MoscowPrioritizationService) {
+  if (!repoPath) return { error: true, message: 'path is required' };
   const analysis = await service.loadAnalysis(repoPath, phase);
 
   if (!analysis) {
@@ -191,6 +196,7 @@ async function moscowLoad(repoPath: string, phase: string, service: MoscowPriori
 }
 
 async function moscowUpdate(repoPath: string, phase: string, args: Record<string, unknown>, service: MoscowPrioritizationService) {
+  if (!repoPath) return { error: true, message: 'path is required' };
   const itemId = args.itemId as string;
   const updates = args.updates as Partial<MoscowItem>;
 
@@ -212,6 +218,7 @@ async function moscowUpdate(repoPath: string, phase: string, args: Record<string
 }
 
 async function moscowRemove(repoPath: string, phase: string, args: Record<string, unknown>, service: MoscowPrioritizationService) {
+  if (!repoPath) return { error: true, message: 'path is required' };
   const itemId = args.itemId as string;
 
   if (!itemId) {
@@ -232,15 +239,17 @@ async function moscowRemove(repoPath: string, phase: string, args: Record<string
 }
 
 async function moscowList(repoPath: string, service: MoscowPrioritizationService) {
+  if (!repoPath) return { error: true, message: 'path is required' };
   const analyses = await service.listAnalyses(repoPath);
 
   return {
-    analyses,
-    count: analyses.length,
+    analyses: analyses || [],
+    count: analyses ? analyses.length : 0,
   };
 }
 
 async function moscowValidate(repoPath: string, phase: string, service: MoscowPrioritizationService) {
+  if (!repoPath) return { error: true, message: 'path is required' };
   const analysis = await service.loadAnalysis(repoPath, phase);
 
   if (!analysis) {
@@ -257,6 +266,7 @@ async function moscowValidate(repoPath: string, phase: string, service: MoscowPr
 }
 
 async function moscowReport(repoPath: string, phase: string, service: MoscowPrioritizationService) {
+  if (!repoPath) return { error: true, message: 'path is required' };
   const analysis = await service.loadAnalysis(repoPath, phase);
 
   if (!analysis) {

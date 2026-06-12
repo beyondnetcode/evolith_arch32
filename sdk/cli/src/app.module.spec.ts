@@ -106,13 +106,13 @@ jest.mock('./core/di/container', () => ({
 }));
 
 jest.mock('./infrastructure/catalog/catalog-loader', () => ({
-  catalogLoader: {
+  CatalogLoader: jest.fn().mockImplementation(() => ({
     loadRuntimeCatalog: jest.fn(() => []),
     getMonorepoOptions: jest.fn(() => []),
     getArchitecturePatterns: jest.fn(() => []),
     getDefaultDatabase: jest.fn(() => 'postgresql'),
     getApiProtocols: jest.fn(() => []),
-  },
+  })),
 }));
 
 jest.mock('./application/services', () => ({

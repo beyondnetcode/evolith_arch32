@@ -265,9 +265,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 **Título:** Restaurar la línea base de build, tests y smoke del CLI
 
-- **Gap:** El refactor actual del CLI pasa lint pero no compila, lo que también impide ejecutar el smoke MCP y deja suites unitarias en rojo.
+- **Gap:** El refactor del CLI había roto su baseline ejecutable de release: lint pasaba, pero compilación, suites unitarias y smoke MCP no.
 - **Propósito:** Restablecer una línea base ejecutable de release antes de tratar capacidades de CLI, MCP o policy engine como evidencia de producto completado.
-- **Evidencia actual / ejemplo:** `npm run build` reporta errores de contratos TypeScript en carga de catálogo, history, tools MCP, prompts e infraestructura de comandos. `npm test` reporta actualmente 10 suites fallidas y 58 tests fallidos; `npm run mcp:smoke` se detiene en el build fallido.
+- **Evidencia actual / ejemplo:** Cerrado el 2026-06-12. `npm run lint` y `npm run build` pasan; 70 suites unitarias pasan con 1,237 tests; 12 suites E2E pasan con 110 tests; `npm run mcp:smoke` pasa inicialización, discovery, métricas y evaluación de gates mediante stdio y Streamable HTTP.
 - **Cierre cuando:** desde un checkout limpio pasan lint, build, tests unitarios y smoke MCP stdio/HTTP; ninguna ruta crítica de release se satisface solo con tests omitidos.
 - **Referencias:** [Smart CLI](../../../../sdk/cli/README.es.md) · [ADR-0073 Contrato Unificado de Salida del CLI](../../../architecture/adrs/core/0073-unified-cli-output-contract.es.md) · [Quality Gates](../../sdlc/quality-gates.es.md)
 

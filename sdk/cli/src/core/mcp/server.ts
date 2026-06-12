@@ -1,14 +1,6 @@
 import { Logger } from '@nestjs/common';
 import * as http from 'node:http';
 import { RulesetValidatorService } from '../validators/ruleset-validator.service';
-import { handleValidateTool } from './tools/validate';
-import { handleAgentTools } from './tools/agent';
-import { handleArchitectureTools } from './tools/architecture';
-import { handleSdlcTools } from './tools/sdlc';
-import { handleMoscowTools } from './tools/moscow';
-import { handleGateEvaluateTool } from './tools/gate';
-import { listResources, readResource } from './resources';
-import { listPrompts, getPrompt } from './prompts';
 import { McpMetricsService } from './metrics.service';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 

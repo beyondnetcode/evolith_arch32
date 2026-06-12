@@ -1,8 +1,8 @@
-import { Command, CommandRunner, Option } from 'nest-commander';
+import { Command, Option } from 'nest-commander';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import * as p from '@clack/prompts';
 import chalk from 'chalk';
+import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 
 interface DocsCommandOptions {
   dryRun?: boolean;
@@ -94,12 +94,16 @@ product:
   name: 'docs',
   description: 'Scaffolds base documentation required by Evolith',
 })
-export class DocsCommand extends CommandRunner {
-  async run(passedParam: string[], options?: DocsCommandOptions): Promise<void> {
+export class DocsCommand extends BaseEvolithCommand {
+  constructor() {
+    super('DocsCommand');
+  }
+
+  async executeCommand(passedParam: string[], options?: DocsCommandOptions): Promise<void> {
     const dryRun = options?.dryRun || false;
     const force = options?.force || false;
 
-    p.intro(chalk.bgYellow.black.bold(' Evolith SDK - Document Scaffold '));
+    this.promptService.showIntro('Evolith SDK - Document Scaffold');
 
     const targetDir = process.cwd();
     const templates = this.getTemplates(options?.template);
@@ -121,21 +125,21 @@ export class DocsCommand extends CommandRunner {
     }
 
     if (filesToCreate.length === 0 && filesToUpdate.length === 0) {
-      p.log.info('All documentation files already exist. Use --force to overwrite.');
-      p.outro(chalk.yellow('No changes made.'));
+      this.promptService.showInfo('All documentation files already exist. Use --force to overwrite.');
+      this.promptService.showOutro(chalk.yellow('No changes made.'));
       return;
     }
 
-    p.log.info(`Files to create: ${filesToCreate.length}`);
-    p.log.info(`Files to update: ${filesToUpdate.length}`);
-    p.log.info(`Files skipped: ${filesSkipped.length}`);
+    this.promptService.showInfo(`Files to create: ${filesToCreate.length}`);
+    this.promptService.showInfo(`Files to update: ${filesToUpdate.length}`);
+    this.promptService.showInfo(`Files skipped: ${filesSkipped.length}`);
 
     if (dryRun) {
-      p.log.info(chalk.cyan('[DRY RUN] No files will be written.'));
+      this.promptService.showInfo(chalk.cyan('[DRY RUN] No files will be written.'));
       for (const t of [...filesToCreate, ...filesToUpdate]) {
-        p.log.message(`  ${chalk.green('+')} ${t.filename} - ${t.description}`);
+        this.promptService.showInfo(`  ${chalk.green('+')} ${t.filename} - ${t.description}`);
       }
-      p.outro(chalk.green('Dry run completed.'));
+      this.promptService.showOutro(chalk.green('Dry run completed.'));
       return;
     }
 
@@ -146,18 +150,18 @@ export class DocsCommand extends CommandRunner {
       const filePath = path.join(targetDir, template.filename);
       await fs.ensureDir(path.dirname(filePath));
       await fs.writeFile(filePath, template.content, 'utf-8');
-      p.log.success(`Created: ${template.filename}`);
+      this.promptService.showSuccess(`Created: ${template.filename}`);
       created++;
     }
 
     for (const template of filesToUpdate) {
       const filePath = path.join(targetDir, template.filename);
       await fs.writeFile(filePath, template.content, 'utf-8');
-      p.log.success(`Updated: ${template.filename}`);
+      this.promptService.showSuccess(`Updated: ${template.filename}`);
       updated++;
     }
 
-    p.outro(chalk.green(`Documentation scaffolded: ${created} created, ${updated} updated.`));
+    this.promptService.showOutro(chalk.green(`Documentation scaffolded: ${created} created, ${updated} updated.`));
   }
 
   private getTemplates(templateName?: string): DocTemplate[] {

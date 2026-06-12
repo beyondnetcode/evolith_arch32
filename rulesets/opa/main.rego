@@ -7,6 +7,7 @@ import data.evolith.evidence.violations as evidence_violations
 import data.evolith.mcp.violations as mcp_violations
 import data.evolith.ci_cd.violations as ci_cd_violations
 import data.evolith.governance.violations as gov_violations
+import data.evolith.architecture.violations as arch_violations
 
 violations[v] {
 	v := vp_violations[_]
@@ -34,4 +35,8 @@ violations[v] {
 
 violations[v] {
 	v := gov_violations[_]
+}
+
+violations[v] {
+	v := arch_violations[_]
 }

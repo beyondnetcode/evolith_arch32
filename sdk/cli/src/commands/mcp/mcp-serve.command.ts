@@ -1,8 +1,8 @@
-import { Command, CommandRunner, Option } from 'nest-commander';
-import { Logger } from '@nestjs/common';
+import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { startMcpServer, McpTransport } from '../../core/mcp/server';
 import { RulesetValidatorService } from '../../core/validators/ruleset-validator.service';
+import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 
 interface McpServeOptions {
   transport?: McpTransport;
@@ -14,10 +14,12 @@ interface McpServeOptions {
   name: 'mcp',
   description: 'Start Evolith MCP server for AI agent integration',
 })
-export class McpServeCommand extends CommandRunner {
-  private readonly logger = new Logger(McpServeCommand.name);
+export class McpServeCommand extends BaseEvolithCommand {
+  constructor() {
+    super('McpServeCommand');
+  }
 
-  async run(passedParam: string[], options?: McpServeOptions): Promise<void> {
+  async executeCommand(passedParam: string[], options?: McpServeOptions): Promise<void> {
     const action = passedParam[0] || 'serve';
 
     if (action === 'serve') {
@@ -26,13 +28,13 @@ export class McpServeCommand extends CommandRunner {
       const apiKey = options?.apiKey || process.env.EVOLITH_API_KEY;
 
       if (transport === 'http') {
-        console.log(chalk.bgMagenta.white.bold(' Evolith SDK - MCP Server (HTTP) '));
+        this.promptService.showIntro('Evolith SDK - MCP Server (HTTP)');
         this.logger.log(`Starting MCP server over HTTP on port ${port}...`);
         if (apiKey) {
-          console.log(chalk.cyan('API key authentication enabled'));
+          this.promptService.showInfo(chalk.cyan('API key authentication enabled'));
         }
       } else {
-        console.log(chalk.bgMagenta.white.bold(' Evolith SDK - MCP Server (stdio) '));
+        this.promptService.showIntro('Evolith SDK - MCP Server (stdio)');
         this.logger.log('Starting MCP server over stdio...');
       }
 
@@ -46,11 +48,11 @@ export class McpServeCommand extends CommandRunner {
 
       return;
     } else if (action === 'version') {
-      console.log('Evolith MCP Server v1.0.0');
+      this.promptService.showInfo('Evolith MCP Server v1.0.0');
       return;
     } else {
       this.logger.warn(`Unknown MCP action: ${action}`);
-      console.log(`Unknown action: ${action}. Use 'evolith mcp serve' to start the server.`);
+      this.promptService.showError(`Unknown action: ${action}. Use 'evolith mcp serve' to start the server.`);
     }
   }
 

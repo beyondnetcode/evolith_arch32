@@ -24,6 +24,7 @@ import { ValidateSatelliteUseCase } from './application/use-cases/validate-satel
 import { EvaluateGateUseCase } from './application/use-cases/evaluate-gate.use-case';
 import { RulesetValidatorService } from './core/validators/ruleset-validator.service';
 import { PromptService } from './infrastructure/prompts/prompt.service';
+import { CatalogLoader } from './infrastructure/catalog/catalog-loader';
 
 @Module({
   imports: [],
@@ -52,6 +53,7 @@ import { PromptService } from './infrastructure/prompts/prompt.service';
     EvaluateGateUseCase,
     RulesetValidatorService,
     PromptService,
+    CatalogLoader,
   ],
 })
 export class AppModule {}

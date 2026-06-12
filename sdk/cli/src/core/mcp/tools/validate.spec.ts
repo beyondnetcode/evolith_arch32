@@ -1,4 +1,4 @@
-import { handleValidateTool } from './validate';
+import { getValidateTools } from './validate';
 
 jest.mock('../../validators/ruleset-validator.service', () => ({
   RulesetValidatorService: jest.fn().mockImplementation(() => ({
@@ -8,6 +8,18 @@ jest.mock('../../validators/ruleset-validator.service', () => ({
 }));
 
 import { RulesetValidatorService } from '../../validators/ruleset-validator.service';
+
+
+const handleValidateTool = async (args: any, deps?: any) => {
+  const tools = getValidateTools();
+  const tool = tools.find((t: any) => t.schema.name === 'evolith-validate');
+  if (!tool) throw new Error('Unknown tool');
+  let toolDeps = deps;
+  if (deps && !deps.validator) {
+    toolDeps = { validator: deps };
+  }
+  return tool.execute(args, toolDeps);
+};
 
 describe('MCP Tools - validate', () => {
   let mockValidator: jest.Mocked<RulesetValidatorService>;

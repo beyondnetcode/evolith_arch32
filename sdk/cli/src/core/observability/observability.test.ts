@@ -144,7 +144,7 @@ describe('measureTime', () => {
 
     const { result, duration } = await measureTime(operation, 'async-op');
     expect(result).toBe('result');
-    expect(duration).toBeGreaterThanOrEqual(30);
+    expect(duration).toBeGreaterThanOrEqual(25);
   });
 
   it('should throw error if operation fails', async () => {

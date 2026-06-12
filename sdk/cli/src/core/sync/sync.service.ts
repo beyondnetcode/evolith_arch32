@@ -1,26 +1,32 @@
-import { Injectable, Logger } from '@nestjs/common';
-import * as fs from 'fs-extra';
-import * as path from 'path';
+import { Injectable, Logger } from "@nestjs/common";
+import * as fs from "fs-extra";
+import * as path from "path";
+import { ConfigService } from "../config/config.service";
 
 @Injectable()
 export class SyncService {
   private readonly logger = new Logger(SyncService.name);
 
+  constructor(private readonly configService: ConfigService) {}
+
   async syncTemplatesFromUpstream(): Promise<void> {
-    // Esta función asume que se ejecuta desde la raíz de sdk/cli y el repo de Evolith está 2 niveles arriba.
-    const evolithRoot = path.join(process.cwd(), '..', '..');
-    const templatesDir = path.join(process.cwd(), 'templates');
+    const syncConfig = this.configService.get("sync");
 
-    this.logger.log(`Sincronizando templates desde ${evolithRoot} hacia ${templatesDir}`);
+    // Si no está configurado, asume que se ejecuta desde la raíz de sdk/cli y el repo de Evolith está 2 niveles arriba.
+    const evolithRoot =
+      syncConfig?.upstreamRoot || path.join(process.cwd(), "..", "..");
+    const templatesDir = path.join(process.cwd(), "templates");
 
-    const filesToSync = [
-      'README.md',
-      'README.es.md',
-      'AGENTS.md',
-      'AGENTS.es.md',
-      'LICENSE',
-      '.harness/rules/global-rules.md'
-    ];
+    this.logger.log(
+      `Sincronizando templates desde ${evolithRoot} hacia ${templatesDir}`,
+    );
+
+    const filesToSync = syncConfig?.files || [];
+
+    if (filesToSync.length === 0) {
+      this.logger.warn("No files configured for synchronization.");
+      return;
+    }
 
     for (const file of filesToSync) {
       const source = path.join(evolithRoot, file);
@@ -34,6 +40,6 @@ export class SyncService {
       }
     }
 
-    this.logger.log('Sincronización de templates completada.');
+    this.logger.log("Sincronización de templates completada.");
   }
 }

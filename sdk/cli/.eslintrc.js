@@ -104,7 +104,7 @@ module.exports = {
           // -----------------------------------------------------------------
           {
             from: 'application',
-            allow: ['domain', 'core', 'infrastructure', 'types'],
+            allow: ['application', 'domain', 'core', 'infrastructure', 'types'],
           },
 
           // -----------------------------------------------------------------
@@ -113,7 +113,7 @@ module.exports = {
           // -----------------------------------------------------------------
           {
             from: 'infrastructure',
-            allow: ['domain', 'core', 'types'],
+            allow: ['infrastructure', 'application', 'domain', 'core', 'types'],
           },
 
           // -----------------------------------------------------------------

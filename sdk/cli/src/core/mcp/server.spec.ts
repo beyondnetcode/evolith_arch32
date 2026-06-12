@@ -118,51 +118,31 @@ describe('MCP Server', () => {
 
   describe('DirectMcpServer - tool handling', () => {
     it('should handle evolith-validate tool', async () => {
-      const { handleValidateTool } = require('./tools/validate');
-      handleValidateTool.mockResolvedValue({ status: 'passed', rulesChecked: 5 });
-
       const server = await startMcpServer();
-
       expect(server).toBeDefined();
       await server.stop();
     });
 
     it('should handle evolith-agent tools', async () => {
-      const { handleAgentTools } = require('./tools/agent');
-      handleAgentTools.mockResolvedValue({ success: true, agent: 'test' });
-
       const server = await startMcpServer();
-
       expect(server).toBeDefined();
       await server.stop();
     });
 
     it('should handle evolith-architecture-validate tool', async () => {
-      const { handleArchitectureTools } = require('./tools/architecture');
-      handleArchitectureTools.mockResolvedValue({ status: 'passed', level: 'F1' });
-
       const server = await startMcpServer();
-
       expect(server).toBeDefined();
       await server.stop();
     });
 
     it('should handle evolith-sdlc tools', async () => {
-      const { handleSdlcTools } = require('./tools/sdlc');
-      handleSdlcTools.mockResolvedValue({ currentPhase: 'phase-1' });
-
       const server = await startMcpServer();
-
       expect(server).toBeDefined();
       await server.stop();
     });
 
     it('should handle evolith-moscow tools', async () => {
-      const { handleMoscowTools } = require('./tools/moscow');
-      handleMoscowTools.mockResolvedValue({ success: true });
-
       const server = await startMcpServer();
-
       expect(server).toBeDefined();
       await server.stop();
     });
@@ -236,9 +216,6 @@ describe('MCP Server', () => {
 
   describe('DirectMcpServer - error handling', () => {
     it('should handle tool errors gracefully', async () => {
-      const { handleValidateTool } = require('./tools/validate');
-      handleValidateTool.mockRejectedValue(new Error('Validation failed'));
-
       const server = await startMcpServer();
 
       expect(server).toBeDefined();
@@ -246,9 +223,6 @@ describe('MCP Server', () => {
     });
 
     it('should record errors in metrics', async () => {
-      const { handleValidateTool } = require('./tools/validate');
-      handleValidateTool.mockRejectedValue(new Error('Test error'));
-
       const server = await startMcpServer({ metricsService: mockMetrics });
 
       expect(server).toBeDefined();
@@ -311,9 +285,6 @@ describe('MCP Server', () => {
     });
 
     it('should handle non-string tool results by JSON stringifying', async () => {
-      const { handleValidateTool } = require('./tools/validate');
-      handleValidateTool.mockResolvedValue({ complex: { nested: 'object' } });
-
       const server = await startMcpServer();
 
       expect(server).toBeDefined();
@@ -321,9 +292,6 @@ describe('MCP Server', () => {
     });
 
     it('should handle string tool results directly', async () => {
-      const { handleValidateTool } = require('./tools/validate');
-      handleValidateTool.mockResolvedValue('plain string result');
-
       const server = await startMcpServer();
 
       expect(server).toBeDefined();
@@ -331,9 +299,6 @@ describe('MCP Server', () => {
     });
 
     it('should handle non-Error thrown values in tool calls', async () => {
-      const { handleValidateTool } = require('./tools/validate');
-      handleValidateTool.mockRejectedValue('string error');
-
       const server = await startMcpServer();
 
       expect(server).toBeDefined();
@@ -372,9 +337,6 @@ describe('MCP Server', () => {
     });
 
     it('should handle dispatch errors gracefully', async () => {
-      const { handleValidateTool } = require('./tools/validate');
-      handleValidateTool.mockRejectedValue(new Error('Internal error'));
-
       const server = await startMcpServer();
 
       expect(server).toBeDefined();

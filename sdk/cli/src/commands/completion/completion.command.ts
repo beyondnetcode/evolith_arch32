@@ -1,7 +1,8 @@
-import { Command, CommandRunner, Option } from 'nest-commander';
+import { Command, Option } from 'nest-commander';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import chalk from 'chalk';
+import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 
 interface CompletionCommandOptions {
   install?: string;
@@ -12,11 +13,15 @@ interface CompletionCommandOptions {
   name: 'completion',
   description: 'Generate shell completion scripts for evolith CLI',
 })
-export class CompletionCommand extends CommandRunner {
+export class CompletionCommand extends BaseEvolithCommand {
   private readonly completed = chalk.green('✓');
   private readonly error = chalk.red('✗');
 
-  async run(passedParam: string[], options?: CompletionCommandOptions): Promise<void> {
+  constructor() {
+    super('CompletionCommand');
+  }
+
+  async executeCommand(passedParam: string[], options?: CompletionCommandOptions): Promise<void> {
     const shell = options?.shell || this.detectShell();
 
     if (options?.install) {
@@ -39,8 +44,8 @@ export class CompletionCommand extends CommandRunner {
     const completionDir = path.join(path.dirname(cliPath), '..', 'shell');
 
     if (!(await fs.pathExists(completionDir))) {
-      console.log(`${this.error} Completion scripts not found at ${completionDir}`);
-      console.log('Run "evolith completion" to generate them manually.');
+      this.promptService.showError(`${this.error} Completion scripts not found at ${completionDir}`);
+      this.promptService.showInfo('Run "evolith completion" to generate them manually.');
       return;
     }
 
@@ -55,8 +60,8 @@ export class CompletionCommand extends CommandRunner {
         await this.installFish(completionDir);
         break;
       default:
-        console.log(`${this.error} Unknown shell: ${shell}`);
-        console.log('Supported shells: bash, zsh, fish');
+        this.promptService.showError(`${this.error} Unknown shell: ${shell}`);
+        this.promptService.showInfo('Supported shells: bash, zsh, fish');
     }
   }
 
@@ -65,7 +70,7 @@ export class CompletionCommand extends CommandRunner {
     const completionScript = path.join(completionDir, 'completion.bash');
 
     if (!(await fs.pathExists(completionScript))) {
-      console.log(`${this.error} Bash completion script not found`);
+      this.promptService.showError(`${this.error} Bash completion script not found`);
       return;
     }
 
@@ -76,15 +81,15 @@ export class CompletionCommand extends CommandRunner {
     if (await fs.pathExists(bashrc)) {
       content = await fs.readFile(bashrc, 'utf-8');
       if (content.includes(marker)) {
-        console.log(`${this.completed} Bash completion already installed`);
+        this.promptService.showSuccess(`${this.completed} Bash completion already installed`);
         return;
       }
     }
 
     await fs.appendFile(bashrc, `\n${marker}\n${line}\n`);
-    console.log(`${this.completed} Bash completion installed`);
-    console.log(`  Added to ${bashrc}`);
-    console.log('  Reload shell or run: source ~/.bashrc');
+    this.promptService.showSuccess(`${this.completed} Bash completion installed`);
+    this.promptService.showInfo(`  Added to ${bashrc}`);
+    this.promptService.showInfo('  Reload shell or run: source ~/.bashrc');
   }
 
   private async installZsh(completionDir: string): Promise<void> {
@@ -92,7 +97,7 @@ export class CompletionCommand extends CommandRunner {
     const completionScript = path.join(completionDir, 'completion.zsh');
 
     if (!(await fs.pathExists(completionScript))) {
-      console.log(`${this.error} Zsh completion script not found`);
+      this.promptService.showError(`${this.error} Zsh completion script not found`);
       return;
     }
 
@@ -103,15 +108,15 @@ export class CompletionCommand extends CommandRunner {
     if (await fs.pathExists(zshrc)) {
       content = await fs.readFile(zshrc, 'utf-8');
       if (content.includes(marker)) {
-        console.log(`${this.completed} Zsh completion already installed`);
+        this.promptService.showSuccess(`${this.completed} Zsh completion already installed`);
         return;
       }
     }
 
     await fs.appendFile(zshrc, `\n${marker}\n${line}\n`);
-    console.log(`${this.completed} Zsh completion installed`);
-    console.log(`  Added to ${zshrc}`);
-    console.log('  Reload shell or run: source ~/.zshrc');
+    this.promptService.showSuccess(`${this.completed} Zsh completion installed`);
+    this.promptService.showInfo(`  Added to ${zshrc}`);
+    this.promptService.showInfo('  Reload shell or run: source ~/.zshrc');
   }
 
   private async installFish(completionDir: string): Promise<void> {
@@ -120,45 +125,45 @@ export class CompletionCommand extends CommandRunner {
     const targetScript = path.join(fishDir, 'evolith.fish');
 
     if (!(await fs.pathExists(completionScript))) {
-      console.log(`${this.error} Fish completion script not found`);
+      this.promptService.showError(`${this.error} Fish completion script not found`);
       return;
     }
 
     await fs.ensureDir(fishDir);
     await fs.copy(completionScript, targetScript);
 
-    console.log(`${this.completed} Fish completion installed`);
-    console.log(`  Copied to ${targetScript}`);
-    console.log('  Reload shell or run: fish -l');
+    this.promptService.showSuccess(`${this.completed} Fish completion installed`);
+    this.promptService.showInfo(`  Copied to ${targetScript}`);
+    this.promptService.showInfo('  Reload shell or run: fish -l');
   }
 
   private async showCompletionHelp(shell: string): Promise<void> {
-    console.log(chalk.bgCyan.black.bold('\n Evolith CLI - Shell Completion \n'));
-    console.log('This command generates shell completion scripts for better UX.\n');
+    this.promptService.showIntro('Evolith CLI - Shell Completion');
+    this.promptService.showInfo('This command generates shell completion scripts for better UX.\n');
 
-    console.log(chalk.bold('Usage:'));
-    console.log('  evolith completion --install <shell>    Install completion for shell');
-    console.log('  evolith completion --shell <shell>      Show completion for shell\n');
+    this.promptService.showInfo(chalk.bold('Usage:'));
+    this.promptService.showInfo('  evolith completion --install <shell>    Install completion for shell');
+    this.promptService.showInfo('  evolith completion --shell <shell>      Show completion for shell\n');
 
-    console.log(chalk.bold('Supported shells:'));
-    console.log('  bash    - Bash (add to ~/.bashrc)');
-    console.log('  zsh     - Zsh (add to ~/.zshrc)');
-    console.log('  fish    - Fish (copy to completions dir)\n');
+    this.promptService.showInfo(chalk.bold('Supported shells:'));
+    this.promptService.showInfo('  bash    - Bash (add to ~/.bashrc)');
+    this.promptService.showInfo('  zsh     - Zsh (add to ~/.zshrc)');
+    this.promptService.showInfo('  fish    - Fish (copy to completions dir)\n');
 
-    console.log(chalk.bold('Examples:'));
-    console.log('  # Install bash completion');
-    console.log('  evolith completion --install bash');
-    console.log('');
-    console.log('  # Install zsh completion');
-    console.log('  evolith completion --install zsh');
-    console.log('');
-    console.log('  # Install fish completion');
-    console.log('  evolith completion --install fish\n');
+    this.promptService.showInfo(chalk.bold('Examples:'));
+    this.promptService.showInfo('  # Install bash completion');
+    this.promptService.showInfo('  evolith completion --install bash');
+    this.promptService.showInfo('');
+    this.promptService.showInfo('  # Install zsh completion');
+    this.promptService.showInfo('  evolith completion --install zsh');
+    this.promptService.showInfo('');
+    this.promptService.showInfo('  # Install fish completion');
+    this.promptService.showInfo('  evolith completion --install fish\n');
 
-    console.log(chalk.bold(`Detected shell: ${shell}`));
-    console.log('');
-    console.log(chalk.dim('For manual installation, source the completion script:'));
-    console.log(chalk.dim(`  source /path/to/evolith/shell/completion.${shell}`));
+    this.promptService.showInfo(chalk.bold(`Detected shell: ${shell}`));
+    this.promptService.showInfo('');
+    this.promptService.showInfo(chalk.dim('For manual installation, source the completion script:'));
+    this.promptService.showInfo(chalk.dim(`  source /path/to/evolith/shell/completion.${shell}`));
   }
 
   private async findCliPath(): Promise<string> {

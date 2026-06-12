@@ -10,18 +10,23 @@ jest.mock('../../core/validators/ruleset-validator.service', () => ({
 
 describe('McpServeCommand', () => {
   let command: McpServeCommand;
+  const promptService = {
+    showIntro: jest.fn(),
+    showInfo: jest.fn(),
+    showError: jest.fn(),
+  };
 
   beforeEach(() => {
     command = new McpServeCommand();
+    (command as any).promptService = promptService;
     jest.clearAllMocks();
-    jest.spyOn(console, 'log').mockImplementation(() => {});
   });
 
   describe('run', () => {
     it('should start MCP server with stdio transport by default', async () => {
       await command.run([], {});
 
-      expect(console.log).toHaveBeenCalledWith(
+      expect(promptService.showIntro).toHaveBeenCalledWith(
         expect.stringContaining('stdio')
       );
     });
@@ -29,7 +34,7 @@ describe('McpServeCommand', () => {
     it('should start MCP server with http transport when specified', async () => {
       await command.run([], { transport: 'http', port: 3000 });
 
-      expect(console.log).toHaveBeenCalledWith(
+      expect(promptService.showIntro).toHaveBeenCalledWith(
         expect.stringContaining('HTTP')
       );
     });
@@ -37,7 +42,7 @@ describe('McpServeCommand', () => {
     it('should show API key enabled message when apiKey provided', async () => {
       await command.run([], { transport: 'http', port: 3000, apiKey: 'test-key' });
 
-      expect(console.log).toHaveBeenCalledWith(
+      expect(promptService.showInfo).toHaveBeenCalledWith(
         expect.stringContaining('API key authentication enabled')
       );
     });
@@ -45,13 +50,13 @@ describe('McpServeCommand', () => {
     it('should handle version action', async () => {
       await command.run(['version'], {});
 
-      expect(console.log).toHaveBeenCalledWith('Evolith MCP Server v1.0.0');
+      expect(promptService.showInfo).toHaveBeenCalledWith('Evolith MCP Server v1.0.0');
     });
 
     it('should warn about unknown action', async () => {
       await command.run(['unknown'], {});
 
-      expect(console.log).toHaveBeenCalledWith(
+      expect(promptService.showError).toHaveBeenCalledWith(
         expect.stringContaining('Unknown action')
       );
     });

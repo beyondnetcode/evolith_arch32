@@ -134,17 +134,14 @@ describe('GateStatusCommand', () => {
       consoleSpy.mockRestore();
     });
 
-    it('calls p.log.error and process.exit(1) when getGateStatus throws', async () => {
+    it('reports and rejects when getGateStatus throws', async () => {
       mockGetGateStatus.mockRejectedValue(new Error('satellite missing'));
-      const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
 
-      await command.run([], {});
+      await expect(command.run([], {})).rejects.toThrow('satellite missing');
 
       expect(p.log.error).toHaveBeenCalledWith(
         expect.stringContaining('satellite missing'),
       );
-      expect(exitSpy).toHaveBeenCalledWith(1);
-      exitSpy.mockRestore();
     });
 
     it('prints failed gates with waiver authority', async () => {

@@ -1,7 +1,7 @@
 {
-  "id": "mcp-smoke-1780971411617",
+  "id": "mcp-smoke-1781227978173",
   "source": "mcp-smoke.mjs",
-  "generatedAt": "2026-06-09T02:16:51.617Z",
+  "generatedAt": "2026-06-12T01:32:58.173Z",
   "producer": "evolith-harness/mcp-smoke",
   "sourceRef": "sdk/cli/dist/main.js",
   "status": "passed",
@@ -36,35 +36,6 @@
       "ok": true,
       "response": {
         "tools": [
-          {
-            "name": "evolith-validate",
-            "description": "Validate a repository against Evolith governance rules",
-            "inputSchema": {
-              "type": "object",
-              "properties": {
-                "path": {
-                  "type": "string",
-                  "description": "Path to the repository to validate"
-                },
-                "format": {
-                  "type": "string",
-                  "description": "Output format: json, summary, table",
-                  "default": "json"
-                },
-                "ruleset": {
-                  "type": "string",
-                  "description": "Specific ruleset to validate"
-                },
-                "corePath": {
-                  "type": "string",
-                  "description": "Path to Evolith Core"
-                }
-              },
-              "required": [
-                "path"
-              ]
-            }
-          },
           {
             "name": "evolith-agent-install",
             "description": "Install a new Evolith agent",
@@ -182,8 +153,237 @@
             }
           },
           {
+            "name": "evolith-gate-evaluate",
+            "description": "Evaluate a specific SDLC phase gate",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "phase": {
+                  "type": "string",
+                  "description": "Phase identifier (discovery, design, construction, qa, release)"
+                },
+                "projectPath": {
+                  "type": "string",
+                  "description": "Path to the repository to validate"
+                },
+                "rulesetRef": {
+                  "type": "string",
+                  "description": "Optional ruleset reference"
+                },
+                "evidenceMode": {
+                  "type": "string",
+                  "description": "full or summary",
+                  "default": "full"
+                },
+                "evaluatedBy": {
+                  "type": "string",
+                  "description": "human, agent, or ci",
+                  "default": "agent"
+                },
+                "initiative": {
+                  "type": "string",
+                  "description": "Optional initiative context"
+                },
+                "tenant": {
+                  "type": "string",
+                  "description": "Optional tenant context"
+                }
+              },
+              "required": [
+                "phase",
+                "projectPath"
+              ]
+            }
+          },
+          {
+            "name": "evolith-moscow-create",
+            "description": "Create a new MoSCoW prioritization analysis",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "phase": {
+                  "type": "string"
+                },
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "category": {
+                        "type": "string",
+                        "description": "MUST, SHOULD, COULD, WONT"
+                      },
+                      "effort": {
+                        "type": "string",
+                        "description": "high, medium, low"
+                      },
+                      "value": {
+                        "type": "string",
+                        "description": "high, medium, low"
+                      }
+                    },
+                    "required": [
+                      "title",
+                      "category"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "path",
+                "items"
+              ]
+            }
+          },
+          {
+            "name": "evolith-moscow-load",
+            "description": "Load an existing MoSCoW analysis",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "phase": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "path",
+                "phase"
+              ]
+            }
+          },
+          {
+            "name": "evolith-moscow-update",
+            "description": "Update a specific item in a MoSCoW analysis",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "phase": {
+                  "type": "string"
+                },
+                "itemId": {
+                  "type": "string"
+                },
+                "updates": {
+                  "type": "object"
+                }
+              },
+              "required": [
+                "path",
+                "phase",
+                "itemId",
+                "updates"
+              ]
+            }
+          },
+          {
+            "name": "evolith-moscow-remove",
+            "description": "Remove a specific item from a MoSCoW analysis",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "phase": {
+                  "type": "string"
+                },
+                "itemId": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "path",
+                "phase",
+                "itemId"
+              ]
+            }
+          },
+          {
+            "name": "evolith-moscow-list",
+            "description": "List all MoSCoW analyses in a repository",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "path"
+              ]
+            }
+          },
+          {
+            "name": "evolith-moscow-validate",
+            "description": "Validate a MoSCoW analysis rules (e.g. 60/20/20 split)",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "phase": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "path",
+                "phase"
+              ]
+            }
+          },
+          {
+            "name": "evolith-moscow-report",
+            "description": "Generate a markdown report of a MoSCoW analysis",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "phase": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "path",
+                "phase"
+              ]
+            }
+          },
+          {
+            "name": "evolith-sdlc-status",
+            "description": "Get the current SDLC phase status",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "path"
+              ]
+            }
+          },
+          {
             "name": "evolith-sdlc-handoff",
-            "description": "Generate SDLC phase handoff artifact manifest",
+            "description": "Perform a phase gate handoff (e.g. phase-0 to phase-1)",
             "inputSchema": {
               "type": "object",
               "properties": {
@@ -205,18 +405,40 @@
             }
           },
           {
-            "name": "evolith-sdlc-status",
-            "description": "Show current SDLC phase gate status",
+            "name": "evolith-validate",
+            "description": "Validate a satellite repository against Evolith rules",
             "inputSchema": {
               "type": "object",
               "properties": {
                 "path": {
-                  "type": "string"
+                  "type": "string",
+                  "description": "Path to the satellite repository"
+                },
+                "format": {
+                  "type": "string",
+                  "description": "Output format (json, summary, table)",
+                  "default": "json"
+                },
+                "ruleset": {
+                  "type": "string",
+                  "description": "Optional ID of a specific ruleset to load"
+                },
+                "corePath": {
+                  "type": "string",
+                  "description": "Optional explicit path to the Evolith core repository"
                 }
               },
               "required": [
                 "path"
               ]
+            }
+          },
+          {
+            "name": "evolith-metrics",
+            "description": "Get MCP server metrics",
+            "inputSchema": {
+              "type": "object",
+              "properties": {}
             }
           },
           {
@@ -256,161 +478,6 @@
               "required": [
                 "key",
                 "value"
-              ]
-            }
-          },
-          {
-            "name": "evolith-metrics",
-            "description": "Get MCP server metrics",
-            "inputSchema": {
-              "type": "object",
-              "properties": {}
-            }
-          },
-          {
-            "name": "evolith-moscow-create",
-            "description": "Create a new MoSCoW prioritization analysis for a phase",
-            "inputSchema": {
-              "type": "object",
-              "properties": {
-                "path": {
-                  "type": "string",
-                  "description": "Path to the repository"
-                },
-                "phase": {
-                  "type": "string",
-                  "description": "Phase identifier (e.g., phase-0)",
-                  "default": "phase-0"
-                },
-                "items": {
-                  "type": "array",
-                  "description": "Array of MoSCoW items with description, priority, category, rationale"
-                }
-              },
-              "required": [
-                "path",
-                "items"
-              ]
-            }
-          },
-          {
-            "name": "evolith-moscow-load",
-            "description": "Load an existing MoSCoW analysis for a phase",
-            "inputSchema": {
-              "type": "object",
-              "properties": {
-                "path": {
-                  "type": "string"
-                },
-                "phase": {
-                  "type": "string",
-                  "default": "phase-0"
-                }
-              },
-              "required": [
-                "path"
-              ]
-            }
-          },
-          {
-            "name": "evolith-moscow-update",
-            "description": "Update an item in a MoSCoW analysis",
-            "inputSchema": {
-              "type": "object",
-              "properties": {
-                "path": {
-                  "type": "string"
-                },
-                "phase": {
-                  "type": "string",
-                  "default": "phase-0"
-                },
-                "itemId": {
-                  "type": "string"
-                },
-                "updates": {
-                  "type": "object"
-                }
-              },
-              "required": [
-                "path",
-                "itemId"
-              ]
-            }
-          },
-          {
-            "name": "evolith-moscow-remove",
-            "description": "Remove an item from a MoSCoW analysis",
-            "inputSchema": {
-              "type": "object",
-              "properties": {
-                "path": {
-                  "type": "string"
-                },
-                "phase": {
-                  "type": "string",
-                  "default": "phase-0"
-                },
-                "itemId": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "path",
-                "itemId"
-              ]
-            }
-          },
-          {
-            "name": "evolith-moscow-list",
-            "description": "List all MoSCoW analyses for a repository",
-            "inputSchema": {
-              "type": "object",
-              "properties": {
-                "path": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "path"
-              ]
-            }
-          },
-          {
-            "name": "evolith-moscow-validate",
-            "description": "Validate a MoSCoW analysis for correctness",
-            "inputSchema": {
-              "type": "object",
-              "properties": {
-                "path": {
-                  "type": "string"
-                },
-                "phase": {
-                  "type": "string",
-                  "default": "phase-0"
-                }
-              },
-              "required": [
-                "path"
-              ]
-            }
-          },
-          {
-            "name": "evolith-moscow-report",
-            "description": "Generate a markdown report from a MoSCoW analysis",
-            "inputSchema": {
-              "type": "object",
-              "properties": {
-                "path": {
-                  "type": "string"
-                },
-                "phase": {
-                  "type": "string",
-                  "default": "phase-0"
-                }
-              },
-              "required": [
-                "path"
               ]
             }
           }

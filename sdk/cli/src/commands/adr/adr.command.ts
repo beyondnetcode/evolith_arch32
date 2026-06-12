@@ -1,9 +1,9 @@
-import { Command, CommandRunner, Option } from 'nest-commander';
-import * as p from '@clack/prompts';
+import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { getContainer } from '../../core/di/container';
 import { ADRService, CreateADRInput, ADR, ADCMatrix } from '../../domain/services/adr.service';
 import { logger, OperationTimer } from '../../core/observability';
+import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 
 interface ADRCommandOptions {
   create?: boolean;
@@ -20,14 +20,18 @@ interface ADRCommandOptions {
   name: 'adr',
   description: 'Gestión de Architecture Decision Records (ADRs)',
 })
-export class ADRCommand extends CommandRunner {
+export class ADRCommand extends BaseEvolithCommand {
   private readonly timer = new OperationTimer();
 
-  async run(
+  constructor() {
+    super('ADRCommand');
+  }
+
+  async executeCommand(
     passedParam: string[],
     options?: ADRCommandOptions,
   ): Promise<void> {
-    this.timer.start('ADRCommand.run');
+    this.timer.start('ADRCommand.executeCommand');
     const fs = getContainer().createFileSystem() as any;
 
     if (options?.create) {
@@ -49,9 +53,9 @@ export class ADRCommand extends CommandRunner {
 
   private async interactiveMode(fs: any, dryRun = false): Promise<void> {
     console.clear();
-    p.intro(chalk.bgCyan.white.bold(' Evolith ADR - Architecture Decision Records '));
+    this.promptService.showIntro('Evolith ADR - Architecture Decision Records');
 
-    const action = await p.select({
+    const action = await this.promptService.select({
       message: '¿Qué acción deseas realizar?',
       options: [
         { value: 'create', label: 'Crear ADR', hint: 'Nuevo Architecture Decision Record' },
@@ -73,12 +77,12 @@ export class ADRCommand extends CommandRunner {
         await this.showMatrix(fs);
         break;
       case 'get':
-        const id = await p.text({ message: 'ID del ADR (ej: ADR-0001):' });
+        const id = await this.promptService.text({ message: 'ID del ADR (ej: ADR-0001):' });
         await this.getADR(fs, id as string);
         break;
       case 'update':
-        const updateId = await p.text({ message: 'ID del ADR:' });
-        const newStatus = await p.select({
+        const updateId = await this.promptService.text({ message: 'ID del ADR:' });
+        const newStatus = await this.promptService.select({
           message: 'Nuevo estado:',
           options: [
             { value: 'Accepted', label: 'Accepted' },
@@ -87,7 +91,7 @@ export class ADRCommand extends CommandRunner {
             { value: 'Amended', label: 'Amended' },
           ],
         });
-        const reason = await p.text({ message: 'Razón del cambio:' });
+        const reason = await this.promptService.text({ message: 'Razón del cambio:' });
         await this.updateADR(fs, updateId as string, newStatus as string, reason as string, dryRun);
         break;
     }
@@ -96,33 +100,33 @@ export class ADRCommand extends CommandRunner {
   private async createADR(fs: any, dryRun = false): Promise<void> {
     logger.info('Creating new ADR', { dryRun });
 
-    const title = await p.text({
+    const title = await this.promptService.text({
       message: 'Título del ADR:',
       placeholder: 'Use PostgreSQL as primary database',
       validate: (v) => String(v).length < 5 ? 'Título demasiado corto' : undefined,
     }) as string;
 
-    const context = await p.text({
+    const context = await this.promptService.text({
       message: 'Contexto (describe el problema):',
       placeholder: 'Necesitamos decidir sobre la base de datos...',
     }) as string;
 
-    const decision = await p.text({
+    const decision = await this.promptService.text({
       message: 'Decisión (qué se decidió):',
       placeholder: 'Se decidió usar PostgreSQL porque...',
     }) as string;
 
-    const positive = await p.text({
+    const positive = await this.promptService.text({
       message: 'Consecuencias positivas (una por línea, separadas por pipe |):',
       placeholder: 'Mejora rendimiento | Consistency',
     }) as string;
 
-    const negative = await p.text({
+    const negative = await this.promptService.text({
       message: 'Consecuencias negativas (una por línea, separadas por pipe |):',
       placeholder: 'Mayor complejidad | Costo adicional',
     }) as string;
 
-    const tagsInput = await p.text({
+    const tagsInput = await this.promptService.text({
       message: 'Tags (separados por comma, opcional):',
       placeholder: 'database, backend, infrastructure',
     }) as string;
@@ -133,8 +137,7 @@ export class ADRCommand extends CommandRunner {
 
     const service = new ADRService(fs, process.cwd());
 
-    const spinner = p.spinner();
-    spinner.start('Creando ADR...');
+    this.promptService.startSpinner('Creando ADR...');
 
     try {
       const input: CreateADRInput = {
@@ -146,20 +149,20 @@ export class ADRCommand extends CommandRunner {
       };
 
       const adr = await service.create(input, dryRun);
-      spinner.stop();
+      this.promptService.stopSpinner();
 
       if (dryRun) {
-        p.log.warn(chalk.yellow(`[DRY-RUN] ADR ${adr.id} simulated creation`));
+        this.promptService.showWarning(`[DRY-RUN] ADR ${adr.id} simulated creation`);
       } else {
-        p.log.success(chalk.green(`✓ ADR ${adr.id} creado exitosamente`));
+        this.promptService.showSuccess(`✓ ADR ${adr.id} creado exitosamente`);
       }
-      p.log.info(`  Título: ${adr.title}`);
-      p.log.info(`  Estado: ${adr.status}`);
-      p.log.info(`  Archivo: reference/architecture/adrs/${adr.id}.md`);
+      this.promptService.showInfo(`  Título: ${adr.title}`);
+      this.promptService.showInfo(`  Estado: ${adr.status}`);
+      this.promptService.showInfo(`  Archivo: reference/architecture/adrs/${adr.id}.md`);
     } catch (error) {
-      spinner.stop();
+      this.promptService.stopSpinner();
       logger.error('Failed to create ADR', { error });
-      p.log.error(chalk.red('✗ Error creando ADR'));
+      this.promptService.showError('✗ Error creando ADR');
     }
   }
 
@@ -170,11 +173,11 @@ export class ADRCommand extends CommandRunner {
     const adrs = await service.list();
 
     if (adrs.length === 0) {
-      p.log.warn('No hay ADRs registrados. Usa "evolith adr --create" para crear el primero.');
+      this.promptService.showWarning('No hay ADRs registrados. Usa "evolith adr --create" para crear el primero.');
       return;
     }
 
-    p.log.info(`\nTotal ADRs: ${adrs.length}\n`);
+    this.promptService.showInfo(`\nTotal ADRs: ${adrs.length}\n`);
 
     const table = adrs.map(adr => ({
       id: adr.id,
@@ -193,7 +196,7 @@ export class ADRCommand extends CommandRunner {
     const adr = await service.get(id);
 
     if (!adr) {
-      p.log.error(chalk.red(`ADR ${id} no encontrado`));
+      this.promptService.showError(`ADR ${id} no encontrado`);
       return;
     }
 
@@ -215,31 +218,30 @@ export class ADRCommand extends CommandRunner {
     logger.info('Updating ADR status', { id, status, dryRun });
 
     if (!status) {
-      p.log.error('Estado requerido. Usa --status <Accepted|Deprecated|Superseded|Amended>');
+      this.promptService.showError('Estado requerido. Usa --status <Accepted|Deprecated|Superseded|Amended>');
       return;
     }
 
     const service = new ADRService(fs, process.cwd());
-    const spinner = p.spinner();
-    spinner.start(`Actualizando ADR ${id}...`);
+    this.promptService.startSpinner(`Actualizando ADR ${id}...`);
 
     try {
       const updated = await service.updateStatus(id, status as any, reason, dryRun);
-      spinner.stop();
+      this.promptService.stopSpinner();
 
       if (updated) {
         if (dryRun) {
-          p.log.warn(chalk.yellow(`[DRY-RUN] ADR ${id} update simulated to ${status}`));
+          this.promptService.showWarning(`[DRY-RUN] ADR ${id} update simulated to ${status}`);
         } else {
-          p.log.success(chalk.green(`✓ ADR ${id} actualizado a ${status}`));
+          this.promptService.showSuccess(`✓ ADR ${id} actualizado a ${status}`);
         }
       } else {
-        p.log.error(chalk.red(`ADR ${id} no encontrado`));
+        this.promptService.showError(`ADR ${id} no encontrado`);
       }
     } catch (error) {
-      spinner.stop();
+      this.promptService.stopSpinner();
       logger.error('Failed to update ADR', { error });
-      p.log.error(chalk.red('✗ Error actualizando ADR'));
+      this.promptService.showError('✗ Error actualizando ADR');
     }
   }
 

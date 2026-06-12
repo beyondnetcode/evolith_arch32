@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SyncService } from './sync.service';
 import * as fs from 'fs-extra';
+import { ConfigService } from '../config/config.service';
 
 jest.mock('fs-extra');
 
@@ -9,7 +10,18 @@ describe('SyncService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [SyncService],
+      providers: [
+        SyncService,
+        {
+          provide: ConfigService,
+          useValue: {
+            get: jest.fn().mockReturnValue({
+              upstreamRoot: '/upstream',
+              files: ['a', 'b', 'c', 'd', 'e', 'f'],
+            }),
+          },
+        },
+      ],
     }).compile();
 
     service = module.get<SyncService>(SyncService);

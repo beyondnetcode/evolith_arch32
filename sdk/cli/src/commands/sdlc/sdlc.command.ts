@@ -1,6 +1,6 @@
-import { Command, CommandRunner, Option } from 'nest-commander';
+import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
-import * as p from '@clack/prompts';
+import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 
 import { HandoffCommand } from './handoff.command';
 import { GenerateDomainCommand } from './generate-domain.command';
@@ -11,16 +11,20 @@ import { GateStatusCommand } from './gate-status.command';
   description: 'Orchestrates the generation of artifacts and transitions (Handoffs) between the lifecycle phases (Discovery, Design, Construction)',
   subCommands: [HandoffCommand, GenerateDomainCommand, GateStatusCommand],
 })
-export class SdlcCommand extends CommandRunner {
-  async run(
+export class SdlcCommand extends BaseEvolithCommand {
+  constructor() {
+    super('SdlcCommand');
+  }
+
+  async executeCommand(
     passedParam: string[],
     options?: Record<string, any>,
   ): Promise<void> {
-    p.intro(chalk.bgCyan.white.bold(' Evolith SDLC CLI '));
-    p.log.info(chalk.bold('Available subcommands:'));
-    p.log.info(`  ${chalk.cyan('handoff')}     - Transition artifacts between phases`);
-    p.log.info(`  ${chalk.cyan('generate')}    - ${chalk.yellow('[alpha]')} Generate code from models (e.g. domain from DDD)`);
-    p.log.info(`  ${chalk.cyan('gate-status')} - Display current SDLC phase gate validation status`);
-    p.outro(chalk.gray('Run `evolith sdlc <subcommand> --help` for more information.'));
+    this.promptService.showIntro('Evolith SDLC CLI');
+    this.promptService.showInfo(chalk.bold('Available subcommands:'));
+    this.promptService.showInfo(`  ${chalk.cyan('handoff')}     - Transition artifacts between phases`);
+    this.promptService.showInfo(`  ${chalk.cyan('generate')}    - ${chalk.yellow('[alpha]')} Generate code from models (e.g. domain from DDD)`);
+    this.promptService.showInfo(`  ${chalk.cyan('gate-status')} - Display current SDLC phase gate validation status`);
+    this.promptService.showOutro(chalk.gray('Run `evolith sdlc <subcommand> --help` for more information.'));
   }
 }

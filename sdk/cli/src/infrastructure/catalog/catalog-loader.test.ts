@@ -1,4 +1,4 @@
-import { CatalogLoader, catalogLoader } from './catalog-loader';
+import { CatalogLoader } from './catalog-loader';
 
 describe('CatalogLoader', () => {
   let loader: CatalogLoader;
@@ -202,13 +202,6 @@ describe('CatalogLoader', () => {
       const second = loader.loadRuntimeCatalog();
 
       expect(first).toEqual(second);
-    });
-  });
-
-  describe('singleton instance', () => {
-    it('should export catalogLoader singleton', () => {
-      expect(catalogLoader).toBeDefined();
-      expect(catalogLoader.loadRuntimeCatalog).toBeDefined();
     });
   });
 });

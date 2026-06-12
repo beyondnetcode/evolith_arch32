@@ -1,29 +1,5 @@
 import { ValidateCommand } from './validate.command';
 
-jest.mock('@clack/prompts', () => ({
-  intro: jest.fn(),
-  outro: jest.fn(),
-  spinner: jest.fn(() => ({ start: jest.fn(), stop: jest.fn() })),
-  log: {
-    info: jest.fn(),
-    warn: jest.fn(),
-    success: jest.fn(),
-    error: jest.fn(),
-    message: jest.fn(),
-  },
-}));
-
-jest.mock('chalk', () => {
-  const chalkFn = (str: string) => str;
-  chalkFn.green = (str: string) => str;
-  chalkFn.red = (str: string) => str;
-  chalkFn.bold = (str: string) => str;
-  chalkFn.yellow = (str: string) => str;
-  chalkFn.blue = (str: string) => str;
-  chalkFn.cyan = (str: string) => str;
-  return chalkFn;
-});
-
 jest.mock('../../application/use-cases/validate-satellite.use-case', () => ({
   ValidateSatelliteUseCase: jest.fn().mockImplementation(() => ({
     execute: jest.fn(),
@@ -35,6 +11,20 @@ jest.mock('../../core/validators/ruleset-validator.service', () => ({
     validate: jest.fn(),
     validateArchitecture: jest.fn(),
     loadRulesetById: jest.fn(),
+  })),
+}));
+
+jest.mock('../../infrastructure/prompts/prompt.service', () => ({
+  PromptService: jest.fn().mockImplementation(() => ({
+    showIntro: jest.fn(),
+    showOutro: jest.fn(),
+    showSuccess: jest.fn(),
+    showError: jest.fn(),
+    showWarning: jest.fn(),
+    showInfo: jest.fn(),
+    startSpinner: jest.fn(),
+    stopSpinner: jest.fn(),
+    confirm: jest.fn(),
   })),
 }));
 
@@ -52,10 +42,10 @@ jest.mock('../../infrastructure/formatters/output-formatter.service', () => ({
   })),
 }));
 
-import * as p from '@clack/prompts';
 import { ValidateSatelliteUseCase } from '../../application/use-cases/validate-satellite.use-case';
 import { RulesetValidatorService } from '../../core/validators/ruleset-validator.service';
 import { OutputFormatterService } from '../../infrastructure/formatters/output-formatter.service';
+import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { logger } from '../../core/observability';
 
 const mockExecute = jest.fn();
@@ -78,11 +68,13 @@ describe('ValidateCommand', () => {
   let command: ValidateCommand;
   let logSpy: jest.SpyInstance;
   let exitSpy: jest.SpyInstance;
+  let promptServiceMock: jest.Mocked<PromptService>;
 
   beforeEach(() => {
     const useCase = new ValidateSatelliteUseCase();
     const validator = new RulesetValidatorService();
-    command = new ValidateCommand(useCase, validator);
+    promptServiceMock = new PromptService() as jest.Mocked<PromptService>;
+    command = new ValidateCommand(useCase, validator, promptServiceMock);
     logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
     exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
     jest.clearAllMocks();
@@ -111,7 +103,7 @@ describe('ValidateCommand', () => {
 
       await command.run([], {});
 
-      expect(p.intro).toHaveBeenCalled();
+      expect(promptServiceMock.showIntro).toHaveBeenCalled();
       expect(mockExecute).toHaveBeenCalled();
     });
 
@@ -208,7 +200,7 @@ describe('ValidateCommand', () => {
 
       await command.run([], { architecture: true });
 
-      expect(p.outro).toHaveBeenCalledWith(
+      expect(promptServiceMock.showOutro).toHaveBeenCalledWith(
         expect.stringContaining('fallado')
       );
     });
@@ -231,7 +223,7 @@ describe('ValidateCommand', () => {
 
       await command.run([], { format: 'json', output: '/tmp/report.json' });
 
-      expect(p.log.success).toHaveBeenCalled();
+      expect(promptServiceMock.showSuccess).toHaveBeenCalled();
     });
 
     it('should output table format when format is table', async () => {
@@ -263,7 +255,7 @@ describe('ValidateCommand', () => {
 
       await command.run([], { format: 'unknown' });
 
-      expect(p.log.success).toHaveBeenCalledWith(
+      expect(promptServiceMock.showSuccess).toHaveBeenCalledWith(
         expect.stringContaining('problemas')
       );
     });
@@ -273,7 +265,7 @@ describe('ValidateCommand', () => {
 
       await command.run([], {});
 
-      expect(p.outro).toHaveBeenCalledWith(
+      expect(promptServiceMock.showOutro).toHaveBeenCalledWith(
         expect.stringContaining('cumple')
       );
     });
@@ -296,7 +288,7 @@ describe('ValidateCommand', () => {
 
       await command.run([], {});
 
-      expect(p.outro).toHaveBeenCalledWith(
+      expect(promptServiceMock.showOutro).toHaveBeenCalledWith(
         expect.stringContaining('advertencias')
       );
     });
@@ -319,7 +311,7 @@ describe('ValidateCommand', () => {
 
       await command.run([], {});
 
-      expect(p.outro).toHaveBeenCalledWith(
+      expect(promptServiceMock.showOutro).toHaveBeenCalledWith(
         expect.stringContaining('fallado')
       );
       expect(exitSpy).toHaveBeenCalledWith(1);
@@ -327,14 +319,10 @@ describe('ValidateCommand', () => {
 
     it('should handle validation errors and exit', async () => {
       mockExecute.mockRejectedValue(new Error('Validation failed'));
-      exitSpy.mockImplementation(() => {
-        throw new Error('process.exit called');
-      });
 
-      await expect(command.run([], {})).rejects.toThrow('process.exit called');
+      await expect(command.run([], {})).rejects.toThrow('Validation failed');
 
-      expect(p.log.error).toHaveBeenCalled();
-      expect(exitSpy).toHaveBeenCalledWith(1);
+      expect(promptServiceMock.showError).toHaveBeenCalled();
     });
 
     it('should display blocking issues in human report', async () => {
@@ -356,7 +344,7 @@ describe('ValidateCommand', () => {
 
       await command.run([], { format: 'unknown' });
 
-      expect(p.log.error).toHaveBeenCalledWith(
+      expect(promptServiceMock.showError).toHaveBeenCalledWith(
         expect.stringContaining('bloqueante')
       );
     });
@@ -379,7 +367,7 @@ describe('ValidateCommand', () => {
 
       await command.run([], { format: 'unknown' });
 
-      expect(p.log.warn).toHaveBeenCalledWith(
+      expect(promptServiceMock.showWarning).toHaveBeenCalledWith(
         expect.stringContaining('advertencia')
       );
     });
@@ -401,7 +389,7 @@ describe('ValidateCommand', () => {
 
       await command.run([], { format: 'unknown' });
 
-      expect(p.log.info).toHaveBeenCalledWith(
+      expect(promptServiceMock.showInfo).toHaveBeenCalledWith(
         expect.stringContaining('1.0.0')
       );
     });

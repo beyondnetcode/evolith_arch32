@@ -12,7 +12,6 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 
 | ID | Gap | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|
-| [`GT-28`](./gap-reference-catalog.es.md#gt-28) | Restaurar baseline de build, tests y smoke del CLI | F0 | P0 | M | `EN-PROGRESO` |
 | [`GT-29`](./gap-reference-catalog.es.md#gt-29) | Paridad de ejecución de reglas Native/OPA | F1 | P0 | L | `EN-PROGRESO` |
 | [`GT-32`](./gap-reference-catalog.es.md#gt-32) | Validación de hipótesis de cliente y comprador | Producto | P0 | M | `PENDIENTE` |
 | [`GT-30`](./gap-reference-catalog.es.md#gt-30) | Kernel mínimo de gobernanza Tracker | Producto | P0 | L | `PENDIENTE` |
@@ -45,11 +44,12 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-02`](./gap-reference-catalog.es.md#gt-02) | `GateEvidence` modelado en la capa de dominio | F1 | P0 | M | `COMPLETADO` |
 | [`GT-03`](./gap-reference-catalog.es.md#gt-03) | `EvaluateGateUseCase` y comando `gate evaluate` | F1 | P0 | M | `COMPLETADO` |
 | [`GT-06`](./gap-reference-catalog.es.md#gt-06) | Tool MCP `evolith-gate-evaluate` | F2 | P0 | M | `COMPLETADO` |
+| [`GT-28`](./gap-reference-catalog.es.md#gt-28) | Restaurar baseline de build, tests y smoke del CLI | F0 | P0 | M | `COMPLETADO` |
 | [`GT-04`](./gap-reference-catalog.es.md#gt-04) | Eliminar service locator del dominio | F1 | P1 | S | `COMPLETADO` |
 | [`GT-16`](./gap-reference-catalog.es.md#gt-16) | Consolidación documental | F5 | P2 | S | `COMPLETADO` |
 | [`GT-27`](./gap-reference-catalog.es.md#gt-27) | Consistencia semántica del tracking canónico | Transversal | P0 | S | `COMPLETADO` |
 
-**Progreso:** 7 / 36 completados · 12 en progreso · 16 pendientes · 1 diferido
+**Progreso:** 8 / 36 completados · 11 en progreso · 16 pendientes · 1 diferido
 
 **Ordenamiento:** criticidad (`P0` → `P1` → `P2`), estado activo (`EN-PROGRESO` → `PENDIENTE` → `DIFERIDO`) y complejidad (`S` → `M` → `L`). Los gaps completados aparecen después del trabajo activo.
 

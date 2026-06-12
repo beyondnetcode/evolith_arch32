@@ -1,11 +1,10 @@
-import { Command, CommandRunner, Option } from 'nest-commander';
-import * as p from '@clack/prompts';
+import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { getContainer } from '../../core/di/container';
-import { catalogLoader } from '../../infrastructure/catalog/catalog-loader';
+import { CatalogLoader } from '../../infrastructure/catalog/catalog-loader';
 import { PhaseService, ToolSelectionService } from '../../domain/services';
 import { PhaseTransitionUseCase } from '../../application/services';
-import { EvolithError } from '../../core/errors';
+import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 
 interface HandoffOptions {
   from?: string;
@@ -19,17 +18,17 @@ interface HandoffOptions {
   name: 'handoff',
   description: 'Transitions artifacts between SDLC phases with interactive guided flow',
 })
-export class HandoffCommand extends CommandRunner {
+export class HandoffCommand extends BaseEvolithCommand {
   private readonly phaseService: PhaseService;
   private readonly toolSelectionService: ToolSelectionService;
 
-  constructor() {
-    super();
+  constructor(private readonly catalogLoader: CatalogLoader) {
+    super('HandoffCommand');
     this.phaseService = new PhaseService();
     this.toolSelectionService = new ToolSelectionService();
   }
 
-  async run(
+  async executeCommand(
     passedParam: string[],
     options?: HandoffOptions,
   ): Promise<void> {
@@ -40,152 +39,125 @@ export class HandoffCommand extends CommandRunner {
       const result = await useCase.execute(options.from, options.to, [], process.cwd());
 
       if (result.success) {
-        p.log.success(`✓ Transitioned from ${options.from} to ${options.to}`);
+        this.promptService.showSuccess(`✓ Transitioned from ${options.from} to ${options.to}`);
       } else {
-        p.log.error(`✗ Transition failed: ${result.errors.join(', ')}`);
-        process.exit(1);
+        throw new Error(`Transition failed: ${result.errors.join(', ')}`);
       }
       return;
     }
 
     console.clear();
-    p.intro(chalk.bgCyan.white.bold(' Evolith SDLC - Phase Handoff '));
+    this.promptService.showIntro('Evolith SDLC - Phase Handoff');
 
     const phases = this.phaseService.getAllPhases();
 
-    const selection = await p.group({
-      fromPhase: () => p.select({
-        message: 'Select current phase:',
-        options: phases.map(phase => ({
-          value: phase.value,
-          label: phase.label,
-          hint: phase.description,
-        })),
-      }),
-
-      toPhase: ({ results }) => {
-        const currentPhase = this.phaseService.getPhase(results.fromPhase as string);
-        const nextPhase = currentPhase ? this.phaseService.getNextPhase(currentPhase.value) : undefined;
-
-        if (!nextPhase) {
-          return p.select({
-            message: 'No next phase available.',
-            options: [{ value: '', label: 'N/A' }],
-          });
-        }
-
-        return p.select({
-          message: 'Select target phase:',
-          options: [{
-            value: nextPhase.value,
-            label: nextPhase.label,
-            hint: nextPhase.description,
-          }],
-          initialValue: nextPhase.value,
-        });
-      },
-
-      validateGates: () => p.confirm({
-        message: 'Validate phase gate requirements before handoff?',
-        initialValue: true,
-      }),
-
-      uploadEvidence: () => p.confirm({
-        message: 'Generate/upload mandatory evidence artifacts?',
-        initialValue: true,
-      }),
-
-      selectTools: () => p.confirm({
-        message: 'Configure tools for target phase?',
-        initialValue: true,
-      }),
-
-      tools: async ({ results }) => {
-        if (!results.selectTools) return [];
-
-        const targetPhase = results.toPhase as string;
-        const toolGroups = this.getToolGroupsForPhase(targetPhase);
-        const selectedTools: string[] = [];
-
-        for (const [groupKey, group] of Object.entries(toolGroups)) {
-          const useDefault = await p.confirm({
-            message: `${group.question} (Default: ${group.defaultOption})`,
-            initialValue: true,
-          });
-
-          if (!useDefault && group.options) {
-            const selected = await p.multiselect({
-              message: `Select ${groupKey} tools:`,
-              options: group.options,
-            });
-            if (Array.isArray(selected) && selected.every(s => typeof s === 'string')) {
-              selectedTools.push(...selected as string[]);
-            }
-          } else {
-            const defaultTools = this.toolSelectionService.getDefaultTools(targetPhase);
-            selectedTools.push(...defaultTools);
-          }
-        }
-
-        return selectedTools;
-      },
-
-      forceHandoff: () => p.confirm({
-        message: 'Force handoff even if some checks fail? (Requires waiver)',
-        initialValue: false,
-      }),
-    }, {
-      onCancel: () => {
-        p.cancel('Handoff cancelled.');
-        process.exit(0);
-      }
+    const fromPhase = await this.promptService.select({
+      message: 'Select current phase:',
+      options: phases.map(phase => ({
+        value: phase.value,
+        label: phase.label,
+        hint: phase.description,
+      })),
     });
 
-    const spinner = p.spinner();
-    spinner.start(`Processing handoff from ${selection.fromPhase} to ${selection.toPhase}...`);
+    const currentPhase = this.phaseService.getPhase(fromPhase);
+    const nextPhaseInfo = currentPhase ? this.phaseService.getNextPhase(currentPhase.value) : undefined;
+
+    let toPhase = '';
+    if (!nextPhaseInfo) {
+      toPhase = await this.promptService.select({
+        message: 'No next phase available.',
+        options: [{ value: '', label: 'N/A' }],
+      });
+    } else {
+      toPhase = await this.promptService.select({
+        message: 'Select target phase:',
+        options: [{
+          value: nextPhaseInfo.value,
+          label: nextPhaseInfo.label,
+          hint: nextPhaseInfo.description,
+        }],
+        initialValue: nextPhaseInfo.value,
+      });
+    }
+
+    const validateGates = await this.promptService.confirm('Validate phase gate requirements before handoff?', true);
+    const uploadEvidence = await this.promptService.confirm('Generate/upload mandatory evidence artifacts?', true);
+    const selectTools = await this.promptService.confirm('Configure tools for target phase?', true);
+
+    const tools: string[] = [];
+    if (selectTools) {
+      const targetPhase = toPhase;
+      const toolGroups = this.getToolGroupsForPhase(targetPhase);
+
+      for (const [groupKey, group] of Object.entries(toolGroups)) {
+        const useDefault = await this.promptService.confirm(`${group.question} (Default: ${group.defaultOption})`, true);
+
+        if (!useDefault && group.options) {
+          const selected = await this.promptService.multiselect({
+            message: `Select ${groupKey} tools:`,
+            options: group.options.map((o: any) => ({
+              value: o.value,
+              label: o.label,
+              hint: o.hint
+            })),
+          });
+          if (Array.isArray(selected) && selected.every((s: any) => typeof s === 'string')) {
+            tools.push(...selected as string[]);
+          }
+        } else {
+          const defaultTools = this.toolSelectionService.getDefaultTools(targetPhase);
+          tools.push(...defaultTools);
+        }
+      }
+    }
+
+    const forceHandoff = await this.promptService.confirm('Force handoff even if some checks fail? (Requires waiver)', false);
+
+    this.promptService.startSpinner(`Processing handoff from ${fromPhase} to ${toPhase}...`);
 
     const useCase = new PhaseTransitionUseCase(fs);
     const result = await useCase.execute(
-      selection.fromPhase as string,
-      selection.toPhase as string,
-      (selection.tools as string[]) || [],
+      fromPhase,
+      toPhase,
+      tools,
       process.cwd()
     );
 
-    spinner.stop();
+    this.promptService.stopSpinner();
 
     if (result.success) {
-      p.log.success(chalk.green(`✓ Handoff ${selection.fromPhase} → ${selection.toPhase} completed`));
+      this.promptService.showSuccess(`✓ Handoff ${fromPhase} → ${toPhase} completed`);
 
       if (result.gateResults.length > 0) {
-        p.log.info('\nGate Validation Results:');
+        this.promptService.showInfo('\nGate Validation Results:');
         result.gateResults.forEach(gate => {
           const icon = gate.passed ? chalk.green('✓') : chalk.red('✗');
           const required = gate.required ? '[REQUIRED]' : '[OPTIONAL]';
-          p.log.info(`  ${icon} ${gate.id} ${required}: ${gate.description}`);
+          this.promptService.showInfo(`  ${icon} ${gate.id} ${required}: ${gate.description}`);
         });
       }
 
       if (result.executedTools.length > 0) {
-        p.log.info(`\nTools configured: ${result.executedTools.join(', ')}`);
+        this.promptService.showInfo(`\nTools configured: ${result.executedTools.join(', ')}`);
       }
 
-      const nextSteps = this.getNextSteps(selection.toPhase as string);
-      p.note(nextSteps, 'Next Steps');
+      const nextSteps = this.getNextSteps(toPhase);
+      console.log(chalk.cyan(`\nNext Steps:\n${chalk.white(nextSteps)}`));
     } else {
-      p.log.error(chalk.red('✗ Handoff failed'));
-      result.errors.forEach(err => p.log.error(`  - ${err}`));
+      this.promptService.showError('✗ Handoff failed');
+      result.errors.forEach(err => this.promptService.showError(`  - ${err}`));
 
       if (result.gateResults.some(g => !g.passed && g.required)) {
-        p.log.warn('Fix failed required gates or use --force with Architecture Board waiver.');
+        this.promptService.showWarning('Fix failed required gates or use --force with Architecture Board waiver.');
       }
     }
 
-    p.outro(result.success ? chalk.green('Completed') : chalk.red('Failed'));
+    this.promptService.showOutro(result.success ? chalk.green('Completed') : chalk.red('Failed'));
   }
 
   private getToolGroupsForPhase(phase: string): Record<string, { question: string; defaultOption: string; options?: any[]; tools: string[] }> {
-    const toolCatalog = catalogLoader.loadToolCatalog();
+    const toolCatalog = this.catalogLoader.loadToolCatalog();
     const phaseDef = toolCatalog.phases[phase];
 
     if (!phaseDef) {

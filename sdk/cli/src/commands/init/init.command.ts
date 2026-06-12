@@ -1,11 +1,11 @@
-import { Command, CommandRunner, Option } from 'nest-commander';
-import * as p from '@clack/prompts';
+import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { getContainer } from '../../core/di/container';
 import { InitializeProjectUseCase, InitProjectInput } from '../../application/services';
 import { logger, errorReporter, OperationTimer } from '../../core/observability';
-import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { Injectable } from '@nestjs/common';
+import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
+import { CatalogLoader } from '../../infrastructure/catalog/catalog-loader';
 
 interface InitCommandOptions {
   dryRun?: boolean;
@@ -21,45 +21,44 @@ interface InitCommandOptions {
   name: 'init',
   description: 'Inicializa un repositorio satélite de Evolith con selección interactiva de herramientas',
 })
-export class InitCommand extends CommandRunner {
+export class InitCommand extends BaseEvolithCommand {
   private readonly operationTimer = new OperationTimer();
 
-  constructor(private readonly promptService: PromptService) {
-    super();
+  constructor(private readonly catalogLoader: CatalogLoader) {
+    super('InitCommand');
   }
 
-  async run(
+  async executeCommand(
     passedParam: string[],
     options?: InitCommandOptions,
   ): Promise<void> {
-    this.operationTimer.start('InitCommand.run');
+    this.operationTimer.start('InitCommand.executeCommand');
 
     logger.info('Starting project initialization', { options });
 
     const fs = getContainer().createFileSystem() as any;
-    const useCase = new InitializeProjectUseCase(fs);
+    const useCase = new InitializeProjectUseCase(fs, this.catalogLoader);
 
     console.clear();
-    p.intro(chalk.bgCyan.white.bold(' Evolith - Project Initialization '));
+    this.promptService.showIntro('Evolith - Project Initialization');
 
-    const inputData = await this.promptService.askInitOptions();
+    const inputData = await this.promptService.askInitOptions(this.catalogLoader);
 
     if (!inputData) {
-      p.outro(chalk.yellow('Inicialización cancelada.'));
+      this.promptService.showOutro(chalk.yellow('Inicialización cancelada.'));
       return;
     }
 
-    const spinner = p.spinner();
-    spinner.start('Aplicando estándares de Evolith...');
+    this.promptService.startSpinner('Aplicando estándares de Evolith...');
 
     const input: InitProjectInput = {
       ...inputData,
-      name: (inputData as any).projectName,
+      name: (inputData as any).name || (inputData as any).projectName,
     } as InitProjectInput;
 
     const result = await useCase.execute(input, process.cwd());
 
-    spinner.stop();
+    this.promptService.stopSpinner();
 
     const durationMs = this.operationTimer.end();
 
@@ -70,14 +69,14 @@ export class InitCommand extends CommandRunner {
         durationMs,
       });
 
-      p.log.success(chalk.green(`✓ Proyecto ${input.name} inicializado`));
-      p.log.info(`  Artifacts creados: ${result.artifacts.length}`);
-      result.artifacts.forEach(a => p.log.info(`    - ${a}`));
+      this.promptService.showSuccess(`✓ Proyecto ${input.name} inicializado`);
+      this.promptService.showInfo(`  Artifacts creados: ${result.artifacts.length}`);
+      result.artifacts.forEach(a => this.promptService.showInfo(`    - ${a}`));
 
       if (result.warnings.length > 0) {
         logger.warn('Initialization completed with warnings', { warnings: result.warnings });
-        p.log.warn('Warnings:');
-        result.warnings.forEach(w => p.log.warn(`  - ${w}`));
+        this.promptService.showWarning('Warnings:');
+        result.warnings.forEach(w => this.promptService.showWarning(`  - ${w}`));
       }
 
       const nextSteps = `
@@ -87,16 +86,17 @@ Proximos pasos:
   3. evolith agents install
   4. evolith sdlc handoff --from phase-0 --to phase-1
 `;
-      p.note(nextSteps, 'Siguiente paso');
+      // p.note is removed, use showInfo or console.log
+      console.log(chalk.cyan(`\nSiguiente paso:\n${nextSteps}`));
     } else {
       errorReporter.report(result.errors, { operation: 'InitializeProjectUseCase.execute' });
       logger.error('Project initialization failed', { errors: result.errors, durationMs });
-      p.log.error(chalk.red('✗ Inicialización fallida'));
-      result.errors.forEach(e => p.log.error(`  - ${e}`));
+      this.promptService.showError('✗ Inicialización fallida');
+      result.errors.forEach(e => this.promptService.showError(`  - ${e}`));
       errorReporter.printSummary();
     }
 
-    p.outro(result.success ? chalk.green('¡Completado!') : chalk.red('Error'));
+    this.promptService.showOutro(result.success ? chalk.green('¡Completado!') : chalk.red('Error'));
   }
 
   @Option({

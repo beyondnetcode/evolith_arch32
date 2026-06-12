@@ -69,6 +69,12 @@ export class ValidationError extends EvolithError {
   }
 }
 
+export class UserCancelledError extends EvolithError {
+  constructor(message: string = 'User cancelled the operation') {
+    super(message, 'USER_CANCELLED');
+  }
+}
+
 export function isEvolithError(error: unknown): error is EvolithError {
   return error instanceof EvolithError;
 }

@@ -1,10 +1,10 @@
-import { Command, CommandRunner, Option } from 'nest-commander';
-import * as p from '@clack/prompts';
+import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { getFileSystem, getContainer } from '../../core/mcp/tools/tool-utils';
 import { AgentRegistryService, AgentInfo } from '../../domain/services/agent-registry.service';
 import { buildAgentRuleset } from '../../core/agents/agent-ruleset-builder';
 import { RulesetValidatorService } from '../../core/validators/ruleset-validator.service';
+import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 
 interface AgentsCommandOptions {
   install?: string;
@@ -49,15 +49,15 @@ const AVAILABLE_RULESETS = [
   name: 'agents',
   description: 'Instala, lista, valida o remueve agentes de Evolith en el repositorio satélite',
 })
-export class AgentsCommand extends CommandRunner {
+export class AgentsCommand extends BaseEvolithCommand {
   private readonly registry: AgentRegistryService;
 
   constructor() {
-    super();
+    super('AgentsCommand');
     this.registry = new AgentRegistryService(getFileSystem());
   }
 
-  async run(passedParam: string[], options?: AgentsCommandOptions): Promise<void> {
+  async executeCommand(passedParam: string[], options?: AgentsCommandOptions): Promise<void> {
     const action = passedParam[0] || 'menu';
     console.clear();
 
@@ -73,9 +73,9 @@ export class AgentsCommand extends CommandRunner {
   }
 
   private async showMenu(): Promise<void> {
-    p.intro(chalk.bgCyan.white.bold(' Evolith SDK - Agent Management '));
+    this.promptService.showIntro('Evolith SDK - Agent Management');
 
-    const selection = await p.select({
+    const selection = await this.promptService.select({
       message: 'Select an action:',
       options: [
         { value: 'install', label: 'Install New Agent', hint: 'Create a new agent with template and rulesets' },
@@ -88,7 +88,7 @@ export class AgentsCommand extends CommandRunner {
     });
 
     if (selection === 'exit') {
-      p.outro(chalk.blue('Agent management closed.'));
+      this.promptService.showOutro(chalk.blue('Agent management closed.'));
       return;
     }
 
@@ -102,112 +102,110 @@ export class AgentsCommand extends CommandRunner {
   }
 
   private async installAgent(_options?: AgentsCommandOptions): Promise<void> {
-    p.intro(chalk.bgGreen.white.bold(' Evolith SDK - Agent Installation '));
+    this.promptService.showIntro('Evolith SDK - Agent Installation');
 
-    const agentInfo = await p.group({
-      name: () => p.text({
-        message: 'Agent name (kebab-case, e.g., my-agent):',
-        placeholder: 'my-agent',
-        validate: (value) => {
-          if (!value) return 'Agent name is required';
-          if (value.includes(' ')) return 'Name cannot contain spaces';
-          if (!/^[a-z0-9-]+$/.test(value)) return 'Use lowercase letters, numbers, and hyphens only';
-        },
-      }),
-      template: () => p.select({
-        message: 'Select agent template:',
-        options: AGENT_TEMPLATES,
-      }),
-      description: () => p.text({
-        message: 'Agent description (optional):',
-        placeholder: 'Agent for handling specific governance tasks',
-      }),
-      adrs: () => p.multiselect({
-        message: 'Select ADR rulesets to include:',
-        options: AVAILABLE_ADRS,
-        required: false,
-      }),
-      rulesets: () => p.multiselect({
-        message: 'Select additional rulesets:',
-        options: AVAILABLE_RULESETS,
-        required: false,
-      }),
-      confirmInstall: () => p.confirm({
-        message: 'Ready to install agent?',
-        initialValue: true,
-      }),
-    }, {
-      onCancel: () => { p.cancel('Installation cancelled.'); process.exit(0); },
+    const name = await this.promptService.text({
+      message: 'Agent name (kebab-case, e.g., my-agent):',
+      placeholder: 'my-agent',
+      validate: (value) => {
+        if (!value) return 'Agent name is required';
+        if (value.includes(' ')) return 'Name cannot contain spaces';
+        if (!/^[a-z0-9-]+$/.test(value)) return 'Use lowercase letters, numbers, and hyphens only';
+      },
     });
 
-    if (!agentInfo.confirmInstall) {
-      p.outro(chalk.yellow('Installation cancelled.'));
+    const template = await this.promptService.select({
+      message: 'Select agent template:',
+      options: AGENT_TEMPLATES,
+    });
+
+    const description = await this.promptService.text({
+      message: 'Agent description (optional):',
+      placeholder: 'Agent for handling specific governance tasks',
+    });
+
+    const adrs = await this.promptService.multiselect({
+      message: 'Select ADR rulesets to include:',
+      options: AVAILABLE_ADRS,
+      required: false,
+    });
+
+    const rulesets = await this.promptService.multiselect({
+      message: 'Select additional rulesets:',
+      options: AVAILABLE_RULESETS,
+      required: false,
+    });
+
+    const confirmInstall = await this.promptService.confirm('Ready to install agent?', true);
+
+    if (!confirmInstall) {
+      this.promptService.showOutro(chalk.yellow('Installation cancelled.'));
       return;
     }
 
     const rulesetContent = buildAgentRuleset({
-      name: agentInfo.name,
-      template: agentInfo.template,
-      adrs: agentInfo.adrs as string[],
-      rulesets: agentInfo.rulesets as string[],
+      name,
+      template,
+      adrs,
+      rulesets,
     });
 
     const config: AgentInfo = {
-      name: agentInfo.name,
+      name,
       version: '1.0.0',
-      template: agentInfo.template,
-      description: agentInfo.description,
-      adrs: agentInfo.adrs as string[],
-      rulesets: agentInfo.rulesets as string[],
+      template,
+      description,
+      adrs,
+      rulesets,
       rulesetFiles: ['agent.rules.json'],
       installedAt: new Date().toISOString()
     };
 
     await this.registry.installAgent(process.cwd(), config, rulesetContent);
 
-    p.log.success(chalk.green(`\n✓ Agent '${agentInfo.name}' installed successfully`));
-    p.note(`Next steps:\n  1. Review agent rules\n  2. Validate agent: evolith agents validate`, 'Next Steps');
-    p.outro(chalk.green('Agent installation complete.'));
+    this.promptService.showSuccess(`\n✓ Agent '${name}' installed successfully`);
+    this.promptService.showInfo(`Next steps:\n  1. Review agent rules\n  2. Validate agent: evolith agents validate`);
+    this.promptService.showOutro(chalk.green('Agent installation complete.'));
   }
 
   private async listAgents(_options?: AgentsCommandOptions): Promise<void> {
-    p.intro(chalk.bgBlue.white.bold(' Evolith SDK - Agent List '));
+    this.promptService.showIntro('Evolith SDK - Agent List');
 
     const agents = await this.registry.discover(process.cwd());
 
     if (agents.length === 0) {
-      p.log.warn('No agents installed.');
-      p.log.info('Run "evolith agents install" to install your first agent.');
+      this.promptService.showWarning('No agents installed.');
+      this.promptService.showInfo('Run "evolith agents install" to install your first agent.');
       return;
     }
 
-    p.log.info(`Found ${agents.length} installed agent(s):\n`);
+    this.promptService.showInfo(`Found ${agents.length} installed agent(s):\n`);
 
     for (const agent of agents) {
       const principlesCount = 0; // We can't read principles count without loading the ruleset JSON directly, skip for simplicity.
-      p.log.info(chalk.cyan(`  • ${agent.name}`));
-      p.log.info(chalk.gray(`    Version: ${agent.version} | Template: ${agent.template}`));
+      this.promptService.showInfo(chalk.cyan(`  • ${agent.name}`));
+      this.promptService.showInfo(chalk.gray(`    Version: ${agent.version} | Template: ${agent.template}`));
     }
 
-    p.outro(chalk.green(`\n${agents.length} agent(s) found.`));
+    this.promptService.showOutro(chalk.green(`\n${agents.length} agent(s) found.`));
   }
 
   private async validateAgent(_options?: AgentsCommandOptions): Promise<void> {
-    p.intro(chalk.bgYellow.white.bold(' Evolith SDK - Agent Validation '));
+    this.promptService.showIntro('Evolith SDK - Agent Validation');
 
     const agents = await this.registry.discover(process.cwd());
 
     if (agents.length === 0) {
-      p.log.warn('No agents installed to validate.');
+      this.promptService.showWarning('No agents installed to validate.');
       return;
     }
 
-    const agentToValidate = await p.select({
+    const agentToValidate = await this.promptService.select({
       message: 'Select agent to validate:',
       options: agents.map(a => ({ value: a.name, label: a.name })),
     });
 
-    p.log.info('\nValidating agent ruleset against engine...\n');
+    this.promptService.showInfo('\nValidating agent ruleset against engine...\n');
     
     // We will use RulesetValidatorService simply to process the rules via engine
     // or validate its structural schema.
@@ -215,7 +213,7 @@ export class AgentsCommand extends CommandRunner {
     const rulesetPath = `${process.cwd()}/rulesets/agents/${String(agentToValidate)}/agent.rules.json`;
     
     if (!await fs.exists(rulesetPath)) {
-      p.log.error(`Ruleset file not found: ${rulesetPath}`);
+      this.promptService.showError(`Ruleset file not found: ${rulesetPath}`);
       return;
     }
 
@@ -233,59 +231,56 @@ export class AgentsCommand extends CommandRunner {
 
     if (issues.length === 0) {
       await this.registry.updateLastValidated(process.cwd(), String(agentToValidate));
-      p.log.success(chalk.green('\n✓ Agent validation passed'));
+      this.promptService.showSuccess('\n✓ Agent validation passed');
     } else {
-      p.log.error(chalk.red(`\n✗ Agent validation failed: ${issues.length} issue(s) found`));
+      this.promptService.showError(`\n✗ Agent validation failed: ${issues.length} issue(s) found`);
       for (const issue of issues) {
-        p.log.error(`  - [${issue.field}] ${issue.message}`);
+        this.promptService.showError(`  - [${issue.field}] ${issue.message}`);
       }
     }
 
-    p.outro(issues.length === 0 ? chalk.green('Validation complete.') : chalk.red('Validation complete with errors.'));
+    this.promptService.showOutro(issues.length === 0 ? chalk.green('Validation complete.') : chalk.red('Validation complete with errors.'));
   }
 
   private async removeAgent(_options?: AgentsCommandOptions): Promise<void> {
-    p.intro(chalk.bgRed.white.bold(' Evolith SDK - Agent Removal '));
+    this.promptService.showIntro('Evolith SDK - Agent Removal');
 
     const agents = await this.registry.discover(process.cwd());
 
     if (agents.length === 0) {
-      p.log.warn('No agents installed to remove.');
+      this.promptService.showWarning('No agents installed to remove.');
       return;
     }
 
-    const agentToRemove = await p.select({
+    const agentToRemove = await this.promptService.select({
       message: 'Select agent to remove:',
       options: agents.map(a => ({ value: a.name, label: a.name })),
     });
 
-    const confirm = await p.confirm({
-      message: `Are you sure you want to remove agent '${String(agentToRemove)}'? This cannot be undone.`,
-      initialValue: false,
-    });
+    const confirm = await this.promptService.confirm(`Are you sure you want to remove agent '${String(agentToRemove)}'? This cannot be undone.`, false);
 
     if (!confirm) {
-      p.outro(chalk.yellow('Removal cancelled.'));
+      this.promptService.showOutro(chalk.yellow('Removal cancelled.'));
       return;
     }
 
     await this.registry.unregister(process.cwd(), String(agentToRemove));
 
-    p.log.success(chalk.green(`\n✓ Agent '${String(agentToRemove)}' removed successfully`));
-    p.outro(chalk.green('Agent removal complete.'));
+    this.promptService.showSuccess(`\n✓ Agent '${String(agentToRemove)}' removed successfully`);
+    this.promptService.showOutro(chalk.green('Agent removal complete.'));
   }
 
   private async upgradeAgent(_options?: AgentsCommandOptions): Promise<void> {
-    p.intro(chalk.bgMagenta.white.bold(' Evolith SDK - Agent Upgrade '));
+    this.promptService.showIntro('Evolith SDK - Agent Upgrade');
 
     const agents = await this.registry.discover(process.cwd());
 
     if (agents.length === 0) {
-      p.log.warn('No agents installed to upgrade.');
+      this.promptService.showWarning('No agents installed to upgrade.');
       return;
     }
 
-    const agentName = await p.select({
+    const agentName = await this.promptService.select({
       message: 'Select agent to upgrade:',
       options: agents.map(a => ({ value: a.name, label: a.name })),
     });
@@ -297,7 +292,7 @@ export class AgentsCommand extends CommandRunner {
     const rulesetPath = `${process.cwd()}/rulesets/agents/${agent.name}/agent.rules.json`;
     
     if (!await fs.exists(rulesetPath)) {
-      p.log.error('Agent ruleset not found');
+      this.promptService.showError('Agent ruleset not found');
       return;
     }
 
@@ -312,8 +307,8 @@ export class AgentsCommand extends CommandRunner {
 
     await this.registry.updateAgent(process.cwd(), agent.name, agent, ruleset);
 
-    p.log.success(chalk.green(`\n✓ Agent '${agent.name}' upgraded: ${parts.join('.')} → ${newVersion}`));
-    p.outro(chalk.green('Agent upgrade complete.'));
+    this.promptService.showSuccess(`\n✓ Agent '${agent.name}' upgraded: ${parts.join('.')} → ${newVersion}`);
+    this.promptService.showOutro(chalk.green('Agent upgrade complete.'));
   }
 
   @Option({ flags: '-i, --install [name]', description: 'Install a new agent' })

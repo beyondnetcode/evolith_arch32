@@ -131,9 +131,9 @@ describe('ScaffoldCommand', () => {
       mockMultiselect.mockResolvedValue(['discovery']);
       mockStrategy.installDependencies.mockRejectedValueOnce(new Error('Install failed'));
 
-      await command.run([], {});
+      await expect(command.run([], {})).rejects.toThrow('Install failed');
 
-      expect(mockSpinnerInstance.stop).toHaveBeenCalledWith('Error durante el andamiaje.');
+      expect(mockSpinnerInstance.stop).toHaveBeenCalledWith('Command failed.');
       expect(mockOutro).toHaveBeenCalled();
     });
 

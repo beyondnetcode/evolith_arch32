@@ -1,11 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
 import Conf from 'conf';
 
+export interface SyncConfig {
+  upstreamRoot: string;
+  files: string[];
+}
+
 export interface EvolithConfig {
   version: string;
   lastUpdateCheck?: string;
   telemetryEnabled: boolean;
   knownSatellites: string[];
+  sync: SyncConfig;
 }
 
 @Injectable()
@@ -21,6 +27,17 @@ export class ConfigService {
         version: '1.0.0',
         telemetryEnabled: true,
         knownSatellites: [],
+        sync: {
+          upstreamRoot: '',
+          files: [
+            'README.md',
+            'README.es.md',
+            'AGENTS.md',
+            'AGENTS.es.md',
+            'LICENSE',
+            '.harness/rules/global-rules.md'
+          ]
+        }
       },
     });
     this.logger.debug(`Config loaded from: ${this.config.path}`);

@@ -1,6 +1,7 @@
-import { Command, CommandRunner, Option } from 'nest-commander';
+import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { CommandHistoryService } from '../../core/services/command-history.service';
+import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 
 interface HistoryCommandOptions {
   list?: boolean;
@@ -16,15 +17,15 @@ interface HistoryCommandOptions {
   name: 'history',
   description: 'View and manage command history',
 })
-export class HistoryCommand extends CommandRunner {
+export class HistoryCommand extends BaseEvolithCommand {
   private readonly historyService: CommandHistoryService;
 
   constructor() {
-    super();
+    super('HistoryCommand');
     this.historyService = new CommandHistoryService();
   }
 
-  async run(passedParam: string[], options?: HistoryCommandOptions): Promise<void> {
+  async executeCommand(passedParam: string[], options?: HistoryCommandOptions): Promise<void> {
     if (options?.stats) {
       await this.showStats();
     } else if (options?.get) {
@@ -41,17 +42,17 @@ export class HistoryCommand extends CommandRunner {
   }
 
   private async listHistory(limit = 20): Promise<void> {
-    console.log(chalk.bgCyan.black.bold('\n Evolith CLI - Command History \n'));
+    this.promptService.showIntro('Evolith CLI - Command History');
 
     const entries = await this.historyService.list(limit);
 
     if (entries.length === 0) {
-      console.log(chalk.yellow('  No commands in history'));
-      console.log('\n  Commands will be recorded automatically as you use evolith CLI.');
+      this.promptService.showWarning('No commands in history');
+      this.promptService.showInfo('Commands will be recorded automatically as you use evolith CLI.');
       return;
     }
 
-    console.log(chalk.dim(`Showing last ${entries.length} commands\n`));
+    this.promptService.showInfo(chalk.dim(`Showing last ${entries.length} commands\n`));
 
     const header = `${chalk.bold('ID')}|${chalk.bold('Time')}|${chalk.bold('Command')}|${chalk.bold('Status')}|${chalk.bold('Duration')}`;
     console.log(header);
@@ -77,20 +78,21 @@ export class HistoryCommand extends CommandRunner {
       );
     }
 
-    console.log(chalk.dim('\nUse: evolith history --get <id> for details'));
-    console.log(chalk.dim('Use: evolith history --search <query> to search'));
-    console.log(chalk.dim('Use: evolith history --stats to see statistics'));
+    this.promptService.showInfo('');
+    this.promptService.showInfo(chalk.dim('Use: evolith history --get <id> for details'));
+    this.promptService.showInfo(chalk.dim('Use: evolith history --search <query> to search'));
+    this.promptService.showInfo(chalk.dim('Use: evolith history --stats to see statistics'));
   }
 
   private async showEntry(id: string): Promise<void> {
     const entry = await this.historyService.get(id);
 
     if (!entry) {
-      console.log(chalk.red(`\nEntry not found: ${id}\n`));
+      this.promptService.showError(`Entry not found: ${id}`);
       return;
     }
 
-    console.log(chalk.bgCyan.black.bold(`\n Command History Entry: ${id} \n`));
+    this.promptService.showIntro(`Command History Entry: ${id}`);
 
     console.log(chalk.bold('Timestamp:'), new Date(entry.timestamp).toLocaleString('es-ES'));
     console.log(chalk.bold('Command:'), chalk.cyan(entry.command));
@@ -105,16 +107,16 @@ export class HistoryCommand extends CommandRunner {
   }
 
   private async searchEntries(query: string): Promise<void> {
-    console.log(chalk.bgCyan.black.bold(`\n Searching: "${query}" \n`));
+    this.promptService.showIntro(`Searching: "${query}"`);
 
     const entries = await this.historyService.search(query);
 
     if (entries.length === 0) {
-      console.log(chalk.yellow(`  No matches found for: ${query}`));
+      this.promptService.showWarning(`No matches found for: ${query}`);
       return;
     }
 
-    console.log(chalk.dim(`Found ${entries.length} matching entries\n`));
+    this.promptService.showInfo(chalk.dim(`Found ${entries.length} matching entries\n`));
 
     for (const entry of entries.slice(0, 20)) {
       const time = new Date(entry.timestamp).toLocaleString('es-ES');
@@ -130,7 +132,7 @@ export class HistoryCommand extends CommandRunner {
   private async showStats(): Promise<void> {
     const stats = await this.historyService.stats();
 
-    console.log(chalk.bgCyan.black.bold('\n Command History Statistics \n'));
+    this.promptService.showIntro('Command History Statistics');
 
     console.log(chalk.bold('Total Commands:'), stats.totalCommands);
     console.log(chalk.bold('Success Rate:'), chalk.green(stats.successRate));
@@ -146,18 +148,16 @@ export class HistoryCommand extends CommandRunner {
   }
 
   private async clearHistory(): Promise<void> {
-    console.log(chalk.bgYellow.black.bold('\n Clear History \n'));
-    console.log('This will permanently delete all command history.\n');
+    this.promptService.showIntro('Clear History');
+    this.promptService.showInfo('This will permanently delete all command history.\n');
 
-    const confirm = await import('@clack/prompts').then(p =>
-      p.confirm({ message: 'Are you sure you want to clear history?' })
-    );
+    const confirm = await this.promptService.confirm('Are you sure you want to clear history?');
 
     if (confirm) {
       await this.historyService.clear();
-      console.log(chalk.green('\n✓ History cleared\n'));
+      this.promptService.showSuccess('✓ History cleared');
     } else {
-      console.log(chalk.dim('\nCancelled\n'));
+      this.promptService.showInfo(chalk.dim('Cancelled'));
     }
   }
 

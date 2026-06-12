@@ -93,7 +93,10 @@ describe('AgentRegistryService', () => {
     it('should update existing agent', async () => {
       mockFileSystem.exists.mockResolvedValue(true);
       mockFileSystem.readJson.mockResolvedValue({
-        name: 'test-agent', version: '0.9.0', template: 'standard', rulesetFiles: [], installedAt: '2026-01-01'
+        agents: [
+          { name: 'test-agent', version: '0.9.0', template: 'standard', rulesetFiles: [], installedAt: '2026-01-01' }
+        ],
+        lastUpdated: '2026-01-01'
       });
 
       const agent: AgentInfo = {
@@ -114,7 +117,12 @@ describe('AgentRegistryService', () => {
     it('should remove agent from registry', async () => {
       mockFileSystem.exists.mockImplementation((p: string) => {
         if (p.endsWith('rulesets/agents/agent-a')) return Promise.resolve(true);
+        if (p.endsWith('agents-registry.json')) return Promise.resolve(true);
         return Promise.resolve(false);
+      });
+      mockFileSystem.readJson.mockResolvedValue({
+        agents: [{ name: 'agent-a', version: '1.0.0', template: 'standard', rulesetFiles: [], installedAt: '2026-01-01' }],
+        lastUpdated: '2026-01-01'
       });
 
       const result = await service.unregister('/test-repo', 'agent-a');
@@ -136,7 +144,8 @@ describe('AgentRegistryService', () => {
     it('should return agent by name', async () => {
       mockFileSystem.exists.mockResolvedValue(true);
       mockFileSystem.readJson.mockResolvedValue({
-        name: 'test-agent', version: '1.0.0', template: 'standard', rulesetFiles: [], installedAt: '2026-01-01'
+        agents: [{ name: 'test-agent', version: '1.0.0', template: 'standard', rulesetFiles: [], installedAt: '2026-01-01' }],
+        lastUpdated: '2026-01-01'
       });
 
       const result = await service.getAgent('/test-repo', 'test-agent');

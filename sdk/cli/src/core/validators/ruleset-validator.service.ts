@@ -91,6 +91,15 @@ export class RulesetValidatorService {
       const evolithYaml = await this.loadEvolithYaml(evolithYamlPath);
       coreRefVersion = evolithYaml.coreRef?.version || null;
       coreRefPath = evolithYaml.coreRef?.path || null;
+    } else {
+      issues.push({
+        ruleId: 'GOV-000',
+        severity: 'MUST',
+        category: 'governance',
+        title: 'Missing evolith.yaml',
+        description: 'Every satellite repository must have an evolith.yaml file at the root.',
+        blocking: true,
+      });
     }
 
     // Run declarative rule evaluation engine over all discovered rulesets

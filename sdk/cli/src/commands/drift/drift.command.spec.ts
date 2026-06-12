@@ -227,23 +227,16 @@ describe('DriftCommand', () => {
 
     it('should handle detection errors and exit', async () => {
       mockDetectDrift.mockRejectedValue(new Error('Detection failed'));
-      exitSpy.mockImplementation(() => {
-        throw new Error('process.exit called');
-      });
 
-      await expect(command.run([], {})).rejects.toThrow('process.exit called');
+      await expect(command.run([], {})).rejects.toThrow('Detection failed');
 
       expect(p.log.error).toHaveBeenCalled();
-      expect(exitSpy).toHaveBeenCalledWith(1);
     });
 
     it('should handle non-Error thrown objects', async () => {
       mockDetectDrift.mockRejectedValue('Some string error');
-      exitSpy.mockImplementation(() => {
-        throw new Error('process.exit called');
-      });
 
-      await expect(command.run([], {})).rejects.toThrow('process.exit called');
+      await expect(command.run([], {})).rejects.toThrow('Some string error');
 
       expect(p.log.error).toHaveBeenCalled();
     });

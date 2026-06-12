@@ -1,9 +1,9 @@
-import { Command, CommandRunner, Option } from 'nest-commander';
-import * as p from '@clack/prompts';
+import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { getContainer } from '../../core/di/container';
-import { StandardsService, Standard, StandardCategory, ValidationResult } from '../../domain/services/standards.service';
+import { StandardsService, StandardCategory } from '../../domain/services/standards.service';
 import { logger } from '../../core/observability';
+import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 
 interface StandardsCommandOptions {
   init?: boolean;
@@ -19,8 +19,12 @@ interface StandardsCommandOptions {
   name: 'standards',
   description: 'Gestión de estándares Evolith (arquitectura, gobernanza, operaciones)',
 })
-export class StandardsCommand extends CommandRunner {
-  async run(
+export class StandardsCommand extends BaseEvolithCommand {
+  constructor() {
+    super('StandardsCommand');
+  }
+
+  async executeCommand(
     passedParam: string[],
     options?: StandardsCommandOptions,
   ): Promise<void> {
@@ -43,9 +47,9 @@ export class StandardsCommand extends CommandRunner {
 
   private async interactiveMode(fs: any): Promise<void> {
     console.clear();
-    p.intro(chalk.bgCyan.white.bold(' Evolith Standards - Corporate Standards Management '));
+    this.promptService.showIntro('Evolith Standards - Corporate Standards Management');
 
-    const action = await p.select({
+    const action = await this.promptService.select({
       message: '¿Qué acción deseas realizar?',
       options: [
         { value: 'init', label: 'Inicializar', hint: 'Crear estructura de standards' },
@@ -64,16 +68,16 @@ export class StandardsCommand extends CommandRunner {
         await this.listStandards(fs);
         break;
       case 'get':
-        const id = await p.text({ message: 'ID del Standard:' });
+        const id = await this.promptService.text({ message: 'ID del Standard:' });
         await this.getStandard(fs, id as string);
         break;
       case 'validate':
-        const code = await p.text({ message: 'Código a validar:' });
+        const code = await this.promptService.text({ message: 'Código a validar:' });
         await this.validateStandards(fs, code as string);
         break;
       case 'export':
-        const exportId = await p.text({ message: 'ID del Standard:' });
-        const format = await p.select({
+        const exportId = await this.promptService.text({ message: 'ID del Standard:' });
+        const format = await this.promptService.select({
           message: 'Formato:',
           options: [
             { value: 'markdown', label: 'Markdown' },
@@ -89,20 +93,19 @@ export class StandardsCommand extends CommandRunner {
     logger.info('Initializing standards directory structure');
 
     const service = new StandardsService(fs, process.cwd());
-    const spinner = p.spinner();
-    spinner.start('Inicializando...');
+    this.promptService.startSpinner('Inicializando...');
 
     try {
       await service.initialize();
-      spinner.stop();
-      p.log.success(chalk.green('✓ Estructura de standards creada'));
-      p.log.info('  Ubicación: reference/standards/');
-      p.log.info('  Subcarpetas: rulesets/, templates/');
-      p.log.info('\nPara ver los standards disponibles, usa: evolith standards --list');
+      this.promptService.stopSpinner();
+      this.promptService.showSuccess('✓ Estructura de standards creada');
+      this.promptService.showInfo('  Ubicación: reference/standards/');
+      this.promptService.showInfo('  Subcarpetas: rulesets/, templates/');
+      this.promptService.showInfo('\nPara ver los standards disponibles, usa: evolith standards --list');
     } catch (error) {
-      spinner.stop();
+      this.promptService.stopSpinner();
       logger.error('Failed to initialize standards', { error });
-      p.log.error(chalk.red('✗ Error inicializando standards'));
+      this.promptService.showError('✗ Error inicializando standards');
     }
   }
 
@@ -114,8 +117,8 @@ export class StandardsCommand extends CommandRunner {
     const standards = await service.list(cat);
 
     if (standards.length === 0) {
-      p.log.warn('No hay standards registrados.');
-      p.log.info('Usa "evolith standards --init" para inicializar la estructura.');
+      this.promptService.showWarning('No hay standards registrados.');
+      this.promptService.showInfo('Usa "evolith standards --init" para inicializar la estructura.');
       return;
     }
 
@@ -139,7 +142,7 @@ export class StandardsCommand extends CommandRunner {
     const standard = await service.get(id);
 
     if (!standard) {
-      p.log.error(chalk.red(`Standard ${id} no encontrado`));
+      this.promptService.showError(`Standard ${id} no encontrado`);
       return;
     }
 
@@ -162,7 +165,7 @@ export class StandardsCommand extends CommandRunner {
 
   private async validateStandards(fs: any, code: string): Promise<void> {
     if (!code) {
-      p.log.error('Código requerido para validación');
+      this.promptService.showError('Código requerido para validación');
       return;
     }
 
@@ -199,7 +202,7 @@ export class StandardsCommand extends CommandRunner {
       console.log(`\n${output}\n`);
     } catch (error) {
       logger.error('Failed to export standard', { error });
-      p.log.error(chalk.red(`Error exportando standard: ${error}`));
+      this.promptService.showError(`Error exportando standard: ${error}`);
     }
   }
 

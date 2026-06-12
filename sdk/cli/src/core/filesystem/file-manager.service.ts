@@ -1,52 +1,46 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as fs from 'fs-extra';
-import * as path from 'path';
-import * as p from '@clack/prompts';
-import chalk from 'chalk';
+
+export interface SafeCopyResult {
+  status: 'copied' | 'skipped' | 'conflict' | 'error';
+  message?: string;
+}
+
+export interface SafeCopyOptions {
+  dryRun?: boolean;
+  overwrite?: boolean;
+}
 
 @Injectable()
 export class FileManagerService {
   private readonly logger = new Logger(FileManagerService.name);
 
-  async safeCopy(source: string, destination: string, dryRun: boolean = false): Promise<boolean> {
+  async safeCopy(source: string, destination: string, options: SafeCopyOptions = {}): Promise<SafeCopyResult> {
+    const { dryRun = false, overwrite = false } = options;
+
     if (!await fs.pathExists(source)) {
       this.logger.error(`Source file does not exist: ${source}`);
-      return false;
+      return { status: 'error', message: `Source file does not exist: ${source}` };
     }
 
     if (await fs.pathExists(destination)) {
-      // Idempotency check: compare contents or ask user
       const sourceContent = await fs.readFile(source, 'utf-8');
       const destContent = await fs.readFile(destination, 'utf-8');
 
       if (sourceContent === destContent) {
-        p.log.info(chalk.gray(`[SKIP] ${destination} ya cumple con el estándar.`));
-        return true;
+        return { status: 'skipped', message: `[SKIP] ${destination} ya cumple con el estándar.` };
       }
 
-      if (!dryRun) {
-        const overwrite = await p.confirm({
-          message: `El archivo ${destination} ya existe y es distinto. ¿Deseas sobrescribirlo?`,
-          initialValue: false,
-        });
-
-        if (!overwrite) {
-          p.log.warn(`[SKIP] Omitido: ${destination}`);
-          return false;
-        }
-      } else {
-        p.log.info(chalk.yellow(`[DRY-RUN] Se sobrescribiría: ${destination}`));
-        return true;
+      if (!overwrite) {
+        return { status: 'conflict', message: `El archivo ${destination} ya existe y es distinto.` };
       }
     }
 
     if (!dryRun) {
       await fs.copy(source, destination, { overwrite: true });
-      p.log.success(`[CREADO/ACTUALIZADO] ${destination}`);
+      return { status: 'copied', message: `[CREADO/ACTUALIZADO] ${destination}` };
     } else {
-      p.log.info(chalk.yellow(`[DRY-RUN] Se crearía: ${destination}`));
+      return { status: 'skipped', message: `[DRY-RUN] Se crearía/actualizaría: ${destination}` };
     }
-
-    return true;
   }
 }

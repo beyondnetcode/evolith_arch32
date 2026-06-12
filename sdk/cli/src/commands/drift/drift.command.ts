@@ -1,7 +1,8 @@
-import { Command, CommandRunner, Option } from 'nest-commander';
+import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
-import * as p from '@clack/prompts';
 import { ArchitectureDriftService, DriftReport, DriftViolation } from '../../core/validators/architecture-drift.service';
+import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
+import { PromptService } from '../../infrastructure/prompts/prompt.service';
 
 interface DriftOptions {
   path?: string;
@@ -15,8 +16,12 @@ interface DriftOptions {
   name: 'drift',
   description: 'Detect architecture drift from declared architecture level (F1/F2/F3)',
 })
-export class DriftCommand extends CommandRunner {
-  async run(
+export class DriftCommand extends BaseEvolithCommand {
+  constructor(promptService: PromptService) {
+    super('DriftCommand', promptService);
+  }
+
+  async executeCommand(
     _passedParam: string[],
     options?: DriftOptions,
   ): Promise<void> {
@@ -35,8 +40,7 @@ export class DriftCommand extends CommandRunner {
       return;
     }
 
-    const spinner = p.spinner();
-    spinner.start('Detecting architecture drift...');
+    this.promptService.startSpinner('Detecting architecture drift...');
 
     try {
       const report = await service.detectDrift({
@@ -45,7 +49,7 @@ export class DriftCommand extends CommandRunner {
         storeHistory: true,
       });
 
-      spinner.stop();
+      this.promptService.stopSpinner();
 
       if (options?.json) {
         console.log(JSON.stringify(report, null, 2));
@@ -54,10 +58,8 @@ export class DriftCommand extends CommandRunner {
 
       this.printDriftReport(report);
     } catch (error: unknown) {
-      spinner.stop();
-      const message = error instanceof Error ? error.message : String(error);
-      p.log.error(`Drift detection failed: ${message}`);
-      process.exit(1);
+      this.promptService.stopSpinner();
+      throw error;
     }
   }
 

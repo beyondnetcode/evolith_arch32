@@ -53,12 +53,12 @@ describe('GenerateDomainCommand', () => {
       );
     });
 
-    it('exits when model file not found', async () => {
-      await command.run(['domain'], { from: '/nonexistent/model.md' });
+    it('rejects when model file not found', async () => {
+      await expect(command.run(['domain'], { from: '/nonexistent/model.md' }))
+        .rejects.toThrow('Model file not found');
       expect(p.log.error as jest.Mock).toHaveBeenCalledWith(
         expect.stringContaining('not found')
       );
-      expect(exitSpy).toHaveBeenCalledWith(1);
     });
   });
 

@@ -8,7 +8,7 @@ import { InitializeProjectUseCase, InitProjectInput } from './index';
 // ── mocks ──────────────────────────────────────────────────────────────────────
 
 jest.mock('../../infrastructure/catalog/catalog-loader', () => ({
-  catalogLoader: {
+  CatalogLoader: jest.fn().mockImplementation(() => ({
     loadRuntimeCatalog: jest.fn(() => [
       { id: 'nodejs',     name: 'Node.js',    defaultVersion: '20.x', language: 'JavaScript', databases: [{ id: 'postgresql', name: 'PostgreSQL', orm: 'TypeORM' }] },
       { id: 'typescript', name: 'TypeScript', defaultVersion: '5.x',  language: 'TypeScript', databases: [{ id: 'postgresql', name: 'PostgreSQL', orm: 'TypeORM' }] },
@@ -24,7 +24,7 @@ jest.mock('../../infrastructure/catalog/catalog-loader', () => ({
     ]),
     getDefaultDatabase: jest.fn(() => 'postgresql'),
     getApiProtocols: jest.fn(() => [{ id: 'rest', name: 'REST', description: '' }]),
-  },
+  }))
 }));
 
 jest.mock('../../infrastructure/cli/providers', () => ({
@@ -81,7 +81,7 @@ describe('InitializeProjectUseCase', () => {
   describe('nodejs runtime', () => {
     it('returns success and creates evolith.yaml + README', async () => {
       const fs = makeFs();
-      const uc = new InitializeProjectUseCase(fs);
+      const uc = new InitializeProjectUseCase(fs, new (require("../../infrastructure/catalog/catalog-loader").CatalogLoader)());
       const result = await uc.execute(makeInput({ runtime: 'nodejs' }), '/tmp');
       expect(result.success).toBe(true);
       expect(result.errors).toHaveLength(0);
@@ -91,21 +91,21 @@ describe('InitializeProjectUseCase', () => {
 
     it('writes package.json for nodejs', async () => {
       const fs = makeFs();
-      await new InitializeProjectUseCase(fs).execute(makeInput({ runtime: 'nodejs' }), '/tmp');
+      await new InitializeProjectUseCase(fs, new (require("../../infrastructure/catalog/catalog-loader").CatalogLoader)()).execute(makeInput({ runtime: 'nodejs' }), '/tmp');
       const writeJsonCalls = fs.writeJson.mock.calls.map((c: any[]) => c[0]);
       expect(writeJsonCalls.some((p: string) => p.endsWith('package.json'))).toBe(true);
     });
 
     it('writes tsconfig.json for typescript', async () => {
       const fs = makeFs();
-      await new InitializeProjectUseCase(fs).execute(makeInput({ runtime: 'typescript' }), '/tmp');
+      await new InitializeProjectUseCase(fs, new (require("../../infrastructure/catalog/catalog-loader").CatalogLoader)()).execute(makeInput({ runtime: 'typescript' }), '/tmp');
       const writeJsonCalls = fs.writeJson.mock.calls.map((c: any[]) => c[0]);
       expect(writeJsonCalls.some((p: string) => p.endsWith('tsconfig.json'))).toBe(true);
     });
 
     it('does NOT write tsconfig.json for plain nodejs', async () => {
       const fs = makeFs();
-      await new InitializeProjectUseCase(fs).execute(makeInput({ runtime: 'nodejs' }), '/tmp');
+      await new InitializeProjectUseCase(fs, new (require("../../infrastructure/catalog/catalog-loader").CatalogLoader)()).execute(makeInput({ runtime: 'nodejs' }), '/tmp');
       const writeJsonCalls = fs.writeJson.mock.calls.map((c: any[]) => c[0]);
       expect(writeJsonCalls.some((p: string) => p.endsWith('tsconfig.json'))).toBe(false);
     });
@@ -116,13 +116,13 @@ describe('InitializeProjectUseCase', () => {
   describe('dotnet runtime', () => {
     it('returns success', async () => {
       const fs = makeFs();
-      const result = await new InitializeProjectUseCase(fs).execute(makeInput({ runtime: 'dotnet' }), '/tmp');
+      const result = await new InitializeProjectUseCase(fs, new (require("../../infrastructure/catalog/catalog-loader").CatalogLoader)()).execute(makeInput({ runtime: 'dotnet' }), '/tmp');
       expect(result.success).toBe(true);
     });
 
     it('writes a .csproj file', async () => {
       const fs = makeFs();
-      await new InitializeProjectUseCase(fs).execute(makeInput({ runtime: 'dotnet' }), '/tmp');
+      await new InitializeProjectUseCase(fs, new (require("../../infrastructure/catalog/catalog-loader").CatalogLoader)()).execute(makeInput({ runtime: 'dotnet' }), '/tmp');
       const writeFileCalls = fs.writeFile.mock.calls.map((c: any[]) => c[0]);
       expect(writeFileCalls.some((p: string) => p.endsWith('.csproj'))).toBe(true);
     });
@@ -133,20 +133,20 @@ describe('InitializeProjectUseCase', () => {
   describe('python runtime', () => {
     it('returns success', async () => {
       const fs = makeFs();
-      const result = await new InitializeProjectUseCase(fs).execute(makeInput({ runtime: 'python' }), '/tmp');
+      const result = await new InitializeProjectUseCase(fs, new (require("../../infrastructure/catalog/catalog-loader").CatalogLoader)()).execute(makeInput({ runtime: 'python' }), '/tmp');
       expect(result.success).toBe(true);
     });
 
     it('writes requirements.txt', async () => {
       const fs = makeFs();
-      await new InitializeProjectUseCase(fs).execute(makeInput({ runtime: 'python' }), '/tmp');
+      await new InitializeProjectUseCase(fs, new (require("../../infrastructure/catalog/catalog-loader").CatalogLoader)()).execute(makeInput({ runtime: 'python' }), '/tmp');
       const writeFileCalls = fs.writeFile.mock.calls.map((c: any[]) => c[0]);
       expect(writeFileCalls.some((p: string) => p.endsWith('requirements.txt'))).toBe(true);
     });
 
     it('writes pyproject.toml', async () => {
       const fs = makeFs();
-      await new InitializeProjectUseCase(fs).execute(makeInput({ runtime: 'python' }), '/tmp');
+      await new InitializeProjectUseCase(fs, new (require("../../infrastructure/catalog/catalog-loader").CatalogLoader)()).execute(makeInput({ runtime: 'python' }), '/tmp');
       const writeJsonCalls = fs.writeJson.mock.calls.map((c: any[]) => c[0]);
       expect(writeJsonCalls.some((p: string) => p.endsWith('pyproject.toml'))).toBe(true);
     });
@@ -157,7 +157,7 @@ describe('InitializeProjectUseCase', () => {
   describe('generic fallback for unknown runtimes', () => {
     it('returns success instead of throwing', async () => {
       const fs = makeFs();
-      const result = await new InitializeProjectUseCase(fs).execute(
+      const result = await new InitializeProjectUseCase(fs, new (require("../../infrastructure/catalog/catalog-loader").CatalogLoader)()).execute(
         makeInput({ runtime: 'java' }), '/tmp',
       );
       expect(result.success).toBe(true);
@@ -166,14 +166,14 @@ describe('InitializeProjectUseCase', () => {
 
     it('creates src/ directory', async () => {
       const fs = makeFs();
-      await new InitializeProjectUseCase(fs).execute(makeInput({ runtime: 'java' }), '/tmp');
+      await new InitializeProjectUseCase(fs, new (require("../../infrastructure/catalog/catalog-loader").CatalogLoader)()).execute(makeInput({ runtime: 'java' }), '/tmp');
       const ensureDirCalls = fs.ensureDir.mock.calls.map((c: any[]) => c[0]);
       expect(ensureDirCalls.some((p: string) => p.endsWith('/src'))).toBe(true);
     });
 
     it('writes SETUP.md with runtime name and next steps', async () => {
       const fs = makeFs();
-      await new InitializeProjectUseCase(fs).execute(makeInput({ runtime: 'java' }), '/tmp');
+      await new InitializeProjectUseCase(fs, new (require("../../infrastructure/catalog/catalog-loader").CatalogLoader)()).execute(makeInput({ runtime: 'java' }), '/tmp');
       const writeFileCalls: Array<[string, string]> = fs.writeFile.mock.calls;
       const setupCall = writeFileCalls.find(([p]) => p.endsWith('SETUP.md'));
       expect(setupCall).toBeDefined();
@@ -183,7 +183,7 @@ describe('InitializeProjectUseCase', () => {
 
     it('includes runtime name in SETUP.md capitalised scaffold method hint', async () => {
       const fs = makeFs();
-      await new InitializeProjectUseCase(fs).execute(makeInput({ runtime: 'java' }), '/tmp');
+      await new InitializeProjectUseCase(fs, new (require("../../infrastructure/catalog/catalog-loader").CatalogLoader)()).execute(makeInput({ runtime: 'java' }), '/tmp');
       const writeFileCalls: Array<[string, string]> = fs.writeFile.mock.calls;
       const setupCall = writeFileCalls.find(([p]) => p.endsWith('SETUP.md'));
       expect(setupCall![1]).toContain('scaffoldJava');
@@ -191,7 +191,7 @@ describe('InitializeProjectUseCase', () => {
 
     it('adds platform warning to result.warnings for unknown runtime', async () => {
       const fs = makeFs();
-      const result = await new InitializeProjectUseCase(fs).execute(
+      const result = await new InitializeProjectUseCase(fs, new (require("../../infrastructure/catalog/catalog-loader").CatalogLoader)()).execute(
         makeInput({ runtime: 'java' }), '/tmp',
       );
       expect(result.warnings.some(w => w.includes('java'))).toBe(true);
@@ -199,7 +199,7 @@ describe('InitializeProjectUseCase', () => {
 
     it('installHint mentions the runtime (java is in catalog but has no provider)', async () => {
       const fs = makeFs();
-      const result = await new InitializeProjectUseCase(fs).execute(
+      const result = await new InitializeProjectUseCase(fs, new (require("../../infrastructure/catalog/catalog-loader").CatalogLoader)()).execute(
         makeInput({ runtime: 'java' }), '/tmp',
       );
       // checkRuntimePlatform default returns installHint with runtime name
@@ -212,7 +212,7 @@ describe('InitializeProjectUseCase', () => {
   describe('optional features', () => {
     it('creates ADR matrix when feature adr is selected', async () => {
       const fs = makeFs();
-      await new InitializeProjectUseCase(fs).execute(
+      await new InitializeProjectUseCase(fs, new (require("../../infrastructure/catalog/catalog-loader").CatalogLoader)()).execute(
         makeInput({ features: ['adr'] }), '/tmp',
       );
       const writeJsonCalls = fs.writeJson.mock.calls.map((c: any[]) => c[0]);
@@ -221,7 +221,7 @@ describe('InitializeProjectUseCase', () => {
 
     it('creates husky pre-commit hook when hooks feature selected', async () => {
       const fs = makeFs();
-      await new InitializeProjectUseCase(fs).execute(
+      await new InitializeProjectUseCase(fs, new (require("../../infrastructure/catalog/catalog-loader").CatalogLoader)()).execute(
         makeInput({ features: ['hooks'] }), '/tmp',
       );
       const writeFileCalls = fs.writeFile.mock.calls.map((c: any[]) => c[0]);
@@ -230,7 +230,7 @@ describe('InitializeProjectUseCase', () => {
 
     it('creates ACL ruleset when acl feature selected', async () => {
       const fs = makeFs();
-      await new InitializeProjectUseCase(fs).execute(
+      await new InitializeProjectUseCase(fs, new (require("../../infrastructure/catalog/catalog-loader").CatalogLoader)()).execute(
         makeInput({ features: ['acl'] }), '/tmp',
       );
       const writeJsonCalls = fs.writeJson.mock.calls.map((c: any[]) => c[0]);
@@ -242,10 +242,11 @@ describe('InitializeProjectUseCase', () => {
 
   describe('catalog validation', () => {
     it('returns failure when runtime not in catalog', async () => {
-      const { catalogLoader } = require('../../infrastructure/catalog/catalog-loader');
+      const { CatalogLoader } = require('../../infrastructure/catalog/catalog-loader');
+      const catalogLoader = new CatalogLoader();
       (catalogLoader.loadRuntimeCatalog as jest.Mock).mockReturnValueOnce([]);
       const fs = makeFs();
-      const result = await new InitializeProjectUseCase(fs).execute(
+      const result = await new InitializeProjectUseCase(fs, catalogLoader).execute(
         makeInput({ runtime: 'nodejs' }), '/tmp',
       );
       expect(result.success).toBe(false);
@@ -253,10 +254,11 @@ describe('InitializeProjectUseCase', () => {
     });
 
     it('returns failure when monorepo not in catalog', async () => {
-      const { catalogLoader } = require('../../infrastructure/catalog/catalog-loader');
+      const { CatalogLoader } = require('../../infrastructure/catalog/catalog-loader');
+      const catalogLoader = new CatalogLoader();
       (catalogLoader.getMonorepoOptions as jest.Mock).mockReturnValueOnce([]);
       const fs = makeFs();
-      const result = await new InitializeProjectUseCase(fs).execute(
+      const result = await new InitializeProjectUseCase(fs, catalogLoader).execute(
         makeInput({ monorepo: 'none' }), '/tmp',
       );
       expect(result.success).toBe(false);
@@ -264,10 +266,11 @@ describe('InitializeProjectUseCase', () => {
     });
 
     it('returns failure when architecture not in catalog', async () => {
-      const { catalogLoader } = require('../../infrastructure/catalog/catalog-loader');
+      const { CatalogLoader } = require('../../infrastructure/catalog/catalog-loader');
+      const catalogLoader = new CatalogLoader();
       (catalogLoader.getArchitecturePatterns as jest.Mock).mockReturnValueOnce([]);
       const fs = makeFs();
-      const result = await new InitializeProjectUseCase(fs).execute(
+      const result = await new InitializeProjectUseCase(fs, catalogLoader).execute(
         makeInput({ architecture: 'clean' }), '/tmp',
       );
       expect(result.success).toBe(false);

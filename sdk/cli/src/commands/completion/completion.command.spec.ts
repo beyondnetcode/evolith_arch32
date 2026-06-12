@@ -30,6 +30,16 @@ describe('CompletionCommand', () => {
   beforeEach(() => {
     command = new CompletionCommand();
     logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    (command as any).promptService = {
+      showIntro: (message: string) => console.log(message),
+      showOutro: (message: string) => console.log(message),
+      showInfo: (message: string) => console.log(message),
+      showSuccess: (message: string) => console.log(message),
+      showWarning: (message: string) => console.log(message),
+      showError: (message: string) => console.log(message),
+      startSpinner: jest.fn(),
+      stopSpinner: jest.fn(),
+    };
     jest.clearAllMocks();
   });
 

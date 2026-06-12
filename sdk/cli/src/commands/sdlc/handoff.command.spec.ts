@@ -1,18 +1,31 @@
-import { HandoffCommand } from './handoff.command';
-import * as p from '@clack/prompts';
-import { getContainer } from '../../core/di/container';
-import { catalogLoader } from '../../infrastructure/catalog/catalog-loader';
+import { HandoffCommand } from "./handoff.command";
+import * as p from "@clack/prompts";
+import { getContainer } from "../../core/di/container";
+import { CatalogLoader } from "../../infrastructure/catalog/catalog-loader";
 
-jest.mock('@clack/prompts');
-jest.mock('../../core/di/container');
-jest.mock('../../infrastructure/catalog/catalog-loader');
-jest.mock('../../application/services', () => {
+jest.mock("@clack/prompts");
+jest.mock("../../core/di/container");
+jest.mock("../../infrastructure/catalog/catalog-loader", () => {
+  return {
+    CatalogLoader: jest.fn().mockImplementation(() => ({
+      loadToolCatalog: jest.fn(),
+      loadRuntimeCatalog: jest.fn(),
+      getMonorepoOptions: jest.fn(),
+      getArchitecturePatterns: jest.fn(),
+      getDefaultDatabase: jest.fn(),
+      getApiProtocols: jest.fn(),
+      loadCommandsMatrix: jest.fn(),
+      reload: jest.fn(),
+    })),
+  };
+});
+jest.mock("../../application/services", () => {
   return {
     PhaseTransitionUseCase: jest.fn().mockImplementation(() => ({
       execute: jest.fn().mockResolvedValue({
         success: true,
-        from: 'phase-1',
-        to: 'phase-2',
+        from: "phase-1",
+        to: "phase-2",
         gateResults: [],
         executedTools: [],
         warnings: [],
@@ -50,28 +63,35 @@ const mockFs = {
 
 const mockContainer = {
   createFileSystem: jest.fn().mockReturnValue(mockFs),
-  createLogger: jest.fn().mockReturnValue({ info: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn() }),
+  createLogger: jest
+    .fn()
+    .mockReturnValue({
+      info: jest.fn(),
+      warn: jest.fn(),
+      error: jest.fn(),
+      debug: jest.fn(),
+    }),
 };
 
 const mockToolCatalog = {
   phases: {
-    'phase-1': {
+    "phase-1": {
       toolGroups: {
         linting: {
-          question: 'Select linting tool',
-          defaultOption: 'eslint',
-          options: [{ value: 'eslint', label: 'ESLint' }],
-          tools: ['eslint'],
+          question: "Select linting tool",
+          defaultOption: "eslint",
+          options: [{ value: "eslint", label: "ESLint" }],
+          tools: ["eslint"],
         },
       },
     },
-    'phase-2': {
+    "phase-2": {
       toolGroups: {
         governance: {
-          question: 'Select governance tool',
-          defaultOption: 'adr',
-          options: [{ value: 'adr', label: 'ADR' }],
-          tools: ['adr'],
+          question: "Select governance tool",
+          defaultOption: "adr",
+          options: [{ value: "adr", label: "ADR" }],
+          tools: ["adr"],
         },
       },
     },
@@ -81,28 +101,34 @@ const mockToolCatalog = {
 
 const mockExecute = jest.fn().mockResolvedValue({
   success: true,
-  from: 'phase-1',
-  to: 'phase-2',
+  from: "phase-1",
+  to: "phase-2",
   gateResults: [],
   executedTools: [],
   warnings: [],
   errors: [],
 });
 
-const { PhaseTransitionUseCase } = require('../../application/services');
+const { PhaseTransitionUseCase } = require("../../application/services");
 
-describe('HandoffCommand', () => {
+describe("HandoffCommand", () => {
   let command: HandoffCommand;
+  let catalogLoader: jest.Mocked<CatalogLoader>;
 
   beforeEach(() => {
     jest.clearAllMocks();
     (getContainer as jest.Mock).mockReturnValue(mockContainer);
-    (catalogLoader.loadToolCatalog as jest.Mock).mockReturnValue(mockToolCatalog);
+
+    catalogLoader = new CatalogLoader() as jest.Mocked<CatalogLoader>;
+    (catalogLoader.loadToolCatalog as jest.Mock).mockReturnValue(
+      mockToolCatalog,
+    );
+
     mockSpinner.mockReturnValue(mockSpinnerInstance);
     mockExecute.mockResolvedValue({
       success: true,
-      from: 'phase-1',
-      to: 'phase-2',
+      from: "phase-1",
+      to: "phase-2",
       gateResults: [],
       executedTools: [],
       warnings: [],
@@ -111,49 +137,51 @@ describe('HandoffCommand', () => {
     PhaseTransitionUseCase.mockImplementation(() => ({
       execute: mockExecute,
     }));
-    command = new HandoffCommand();
+    command = new HandoffCommand(catalogLoader);
   });
 
-  describe('run - non-interactive mode', () => {
-    it('should execute handoff with from and to options', async () => {
-      await command.run([], { from: 'phase-1', to: 'phase-2' });
+  describe("run - non-interactive mode", () => {
+    it("should execute handoff with from and to options", async () => {
+      await command.run([], { from: "phase-1", to: "phase-2" });
 
       expect(mockContainer.createFileSystem).toHaveBeenCalled();
-      expect(mockExecute).toHaveBeenCalledWith('phase-1', 'phase-2', [], expect.any(String));
+      expect(mockExecute).toHaveBeenCalledWith(
+        "phase-1",
+        "phase-2",
+        [],
+        expect.any(String),
+      );
     });
 
-    it('should exit with code 1 on failed transition', async () => {
+    it("should reject a failed transition", async () => {
       mockExecute.mockResolvedValueOnce({
         success: false,
-        from: 'phase-5',
-        to: 'phase-1',
+        from: "phase-5",
+        to: "phase-1",
         gateResults: [],
         executedTools: [],
         warnings: [],
-        errors: ['Invalid transition'],
+        errors: ["Invalid transition"],
       });
-      const exitSpy = jest.spyOn(process, 'exit').mockImplementation((() => {}) as any);
-
-      await command.run([], { from: 'phase-5', to: 'phase-1' });
-
-      expect(exitSpy).toHaveBeenCalledWith(1);
-      exitSpy.mockRestore();
+      await expect(
+        command.run([], { from: "phase-5", to: "phase-1" }),
+      ).rejects.toThrow("Transition failed: Invalid transition");
     });
 
-    it('should pass tools array to use case when provided', async () => {
-      await command.run([], { from: 'phase-1', to: 'phase-2' });
+    it("should pass tools array to use case when provided", async () => {
+      await command.run([], { from: "phase-1", to: "phase-2" });
 
       expect(mockExecute).toHaveBeenCalledWith(
-        'phase-1',
-        'phase-2',
+        "phase-1",
+        "phase-2",
         [],
         expect.any(String),
       );
     });
   });
 
-  describe('run - interactive mode', () => {
-    it('should run interactive handoff flow', async () => {
+  describe("run - interactive mode", () => {
+    it("should run interactive handoff flow", async () => {
       mockGroup.mockImplementation(async (callbacks: any) => {
         const results: Record<string, any> = {};
         results.fromPhase = await callbacks.fromPhase();
@@ -167,25 +195,26 @@ describe('HandoffCommand', () => {
       });
 
       mockSelect
-        .mockResolvedValueOnce('phase-1')
-        .mockResolvedValueOnce('phase-2');
+        .mockResolvedValueOnce("phase-1")
+        .mockResolvedValueOnce("phase-2");
       mockConfirm
         .mockResolvedValueOnce(true)
         .mockResolvedValueOnce(true)
         .mockResolvedValueOnce(true)
         .mockResolvedValueOnce(true)
         .mockResolvedValueOnce(false);
-      mockMultiselect.mockResolvedValue(['eslint']);
+      mockMultiselect.mockResolvedValue(["eslint"]);
 
       await command.run([], {});
 
       expect(mockIntro).toHaveBeenCalled();
-      expect(mockGroup).toHaveBeenCalled();
+      expect(mockSelect).toHaveBeenCalled();
+      expect(mockConfirm).toHaveBeenCalled();
       expect(mockSpinnerInstance.start).toHaveBeenCalled();
       expect(mockSpinnerInstance.stop).toHaveBeenCalled();
     });
 
-    it('should display completion message on success', async () => {
+    it("should display completion message on success", async () => {
       mockGroup.mockImplementation(async (callbacks: any) => {
         const results: Record<string, any> = {};
         results.fromPhase = await callbacks.fromPhase();
@@ -199,8 +228,8 @@ describe('HandoffCommand', () => {
       });
 
       mockSelect
-        .mockResolvedValueOnce('phase-0')
-        .mockResolvedValueOnce('phase-1');
+        .mockResolvedValueOnce("phase-0")
+        .mockResolvedValueOnce("phase-1");
       mockConfirm
         .mockResolvedValueOnce(true)
         .mockResolvedValueOnce(true)
@@ -209,18 +238,22 @@ describe('HandoffCommand', () => {
 
       await command.run([], {});
 
-      expect(mockOutro).toHaveBeenCalledWith(expect.stringContaining('Completed'));
+      expect(mockOutro).toHaveBeenCalledWith(
+        expect.stringContaining("Completed"),
+      );
     });
 
-    it('should handle handoff failure', async () => {
+    it("should handle handoff failure", async () => {
       mockExecute.mockResolvedValueOnce({
         success: false,
-        from: 'phase-5',
-        to: '',
-        gateResults: [{ id: 'G1', passed: false, description: 'Failed', required: true }],
+        from: "phase-5",
+        to: "",
+        gateResults: [
+          { id: "G1", passed: false, description: "Failed", required: true },
+        ],
         executedTools: [],
         warnings: [],
-        errors: ['Transition failed'],
+        errors: ["Transition failed"],
       });
 
       mockGroup.mockImplementation(async (callbacks: any) => {
@@ -235,9 +268,7 @@ describe('HandoffCommand', () => {
         return results;
       });
 
-      mockSelect
-        .mockResolvedValueOnce('phase-5')
-        .mockResolvedValueOnce('');
+      mockSelect.mockResolvedValueOnce("phase-5").mockResolvedValueOnce("");
       mockConfirm
         .mockResolvedValueOnce(true)
         .mockResolvedValueOnce(true)
@@ -246,10 +277,10 @@ describe('HandoffCommand', () => {
 
       await command.run([], {});
 
-      expect(mockOutro).toHaveBeenCalledWith(expect.stringContaining('Failed'));
+      expect(mockOutro).toHaveBeenCalledWith(expect.stringContaining("Failed"));
     });
 
-    it('should skip tool selection when selectTools is false', async () => {
+    it("should skip tool selection when selectTools is false", async () => {
       mockGroup.mockImplementation(async (callbacks: any) => {
         const results: Record<string, any> = {};
         results.fromPhase = await callbacks.fromPhase();
@@ -263,8 +294,8 @@ describe('HandoffCommand', () => {
       });
 
       mockSelect
-        .mockResolvedValueOnce('phase-1')
-        .mockResolvedValueOnce('phase-2');
+        .mockResolvedValueOnce("phase-1")
+        .mockResolvedValueOnce("phase-2");
       mockConfirm
         .mockResolvedValueOnce(true)
         .mockResolvedValueOnce(true)
@@ -276,7 +307,8 @@ describe('HandoffCommand', () => {
       expect(mockMultiselect).not.toHaveBeenCalled();
     });
 
-    it('should show next steps on successful handoff', async () => {
+    it("should show next steps on successful handoff", async () => {
+      const logSpy = jest.spyOn(console, "log").mockImplementation(() => {});
       mockGroup.mockImplementation(async (callbacks: any) => {
         const results: Record<string, any> = {};
         results.fromPhase = await callbacks.fromPhase();
@@ -290,8 +322,8 @@ describe('HandoffCommand', () => {
       });
 
       mockSelect
-        .mockResolvedValueOnce('phase-1')
-        .mockResolvedValueOnce('phase-2');
+        .mockResolvedValueOnce("phase-1")
+        .mockResolvedValueOnce("phase-2");
       mockConfirm
         .mockResolvedValueOnce(true)
         .mockResolvedValueOnce(true)
@@ -300,19 +332,32 @@ describe('HandoffCommand', () => {
 
       await command.run([], {});
 
-      expect(mockNote).toHaveBeenCalled();
+      expect(logSpy).toHaveBeenCalledWith(
+        expect.stringContaining("Next Steps"),
+      );
+      logSpy.mockRestore();
     });
 
-    it('should display gate validation results when present', async () => {
+    it("should display gate validation results when present", async () => {
       mockExecute.mockResolvedValueOnce({
         success: true,
-        from: 'phase-0',
-        to: 'phase-1',
+        from: "phase-0",
+        to: "phase-1",
         gateResults: [
-          { id: 'PG1-01', passed: true, description: 'package.json exists', required: true },
-          { id: 'PG1-02', passed: false, description: 'src/ exists', required: false },
+          {
+            id: "PG1-01",
+            passed: true,
+            description: "package.json exists",
+            required: true,
+          },
+          {
+            id: "PG1-02",
+            passed: false,
+            description: "src/ exists",
+            required: false,
+          },
         ],
-        executedTools: ['eslint'],
+        executedTools: ["eslint"],
         warnings: [],
         errors: [],
       });
@@ -330,8 +375,8 @@ describe('HandoffCommand', () => {
       });
 
       mockSelect
-        .mockResolvedValueOnce('phase-0')
-        .mockResolvedValueOnce('phase-1');
+        .mockResolvedValueOnce("phase-0")
+        .mockResolvedValueOnce("phase-1");
       mockConfirm
         .mockResolvedValueOnce(true)
         .mockResolvedValueOnce(true)
@@ -340,88 +385,90 @@ describe('HandoffCommand', () => {
 
       await command.run([], {});
 
-      expect(mockOutro).toHaveBeenCalledWith(expect.stringContaining('Completed'));
+      expect(mockOutro).toHaveBeenCalledWith(
+        expect.stringContaining("Completed"),
+      );
     });
   });
 
-  describe('getToolGroupsForPhase', () => {
-    it('should return tool groups for valid phase', () => {
+  describe("getToolGroupsForPhase", () => {
+    it("should return tool groups for valid phase", () => {
       const command_any = command as any;
-      const result = command_any.getToolGroupsForPhase('phase-1');
+      const result = command_any.getToolGroupsForPhase("phase-1");
 
-      expect(result).toHaveProperty('linting');
+      expect(result).toHaveProperty("linting");
     });
 
-    it('should return empty object for invalid phase', () => {
+    it("should return empty object for invalid phase", () => {
       const command_any = command as any;
-      const result = command_any.getToolGroupsForPhase('invalid-phase');
+      const result = command_any.getToolGroupsForPhase("invalid-phase");
 
       expect(result).toEqual({});
     });
   });
 
-  describe('getNextSteps', () => {
-    it('should return next steps for phase-1', () => {
+  describe("getNextSteps", () => {
+    it("should return next steps for phase-1", () => {
       const command_any = command as any;
-      const result = command_any.getNextSteps('phase-1');
+      const result = command_any.getNextSteps("phase-1");
 
-      expect(result).toContain('evolith validate');
+      expect(result).toContain("evolith validate");
     });
 
-    it('should return next steps for phase-2', () => {
+    it("should return next steps for phase-2", () => {
       const command_any = command as any;
-      const result = command_any.getNextSteps('phase-2');
+      const result = command_any.getNextSteps("phase-2");
 
-      expect(result).toContain('rulesets');
+      expect(result).toContain("rulesets");
     });
 
-    it('should return next steps for phase-3', () => {
+    it("should return next steps for phase-3", () => {
       const command_any = command as any;
-      const result = command_any.getNextSteps('phase-3');
+      const result = command_any.getNextSteps("phase-3");
 
-      expect(result).toContain('ADRs');
+      expect(result).toContain("ADRs");
     });
 
-    it('should return next steps for phase-4', () => {
+    it("should return next steps for phase-4", () => {
       const command_any = command as any;
-      const result = command_any.getNextSteps('phase-4');
+      const result = command_any.getNextSteps("phase-4");
 
-      expect(result).toContain('CI/CD');
+      expect(result).toContain("CI/CD");
     });
 
-    it('should return next steps for phase-5', () => {
+    it("should return next steps for phase-5", () => {
       const command_any = command as any;
-      const result = command_any.getNextSteps('phase-5');
+      const result = command_any.getNextSteps("phase-5");
 
-      expect(result).toContain('DORA');
+      expect(result).toContain("DORA");
     });
 
-    it('should return empty string for unknown phase', () => {
+    it("should return empty string for unknown phase", () => {
       const command_any = command as any;
-      const result = command_any.getNextSteps('unknown');
+      const result = command_any.getNextSteps("unknown");
 
-      expect(result).toBe('');
+      expect(result).toBe("");
     });
   });
 
-  describe('option parsers', () => {
-    it('parseFrom should return value', () => {
-      expect(command.parseFrom('phase-1')).toBe('phase-1');
+  describe("option parsers", () => {
+    it("parseFrom should return value", () => {
+      expect(command.parseFrom("phase-1")).toBe("phase-1");
     });
 
-    it('parseTo should return value', () => {
-      expect(command.parseTo('phase-2')).toBe('phase-2');
+    it("parseTo should return value", () => {
+      expect(command.parseTo("phase-2")).toBe("phase-2");
     });
 
-    it('parseArtifacts should return true', () => {
+    it("parseArtifacts should return true", () => {
       expect(command.parseArtifacts()).toBe(true);
     });
 
-    it('parseValidate should return true', () => {
+    it("parseValidate should return true", () => {
       expect(command.parseValidate()).toBe(true);
     });
 
-    it('parseForce should return true', () => {
+    it("parseForce should return true", () => {
       expect(command.parseForce()).toBe(true);
     });
   });

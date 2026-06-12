@@ -1,7 +1,8 @@
-import { Command, CommandRunner, Option } from 'nest-commander';
-import * as p from '@clack/prompts';
+import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { SatelliteUpgradeService, UpgradePlan } from '../../core/upgrade/satellite-upgrade.service';
+import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
+import { PromptService } from '../../infrastructure/prompts/prompt.service';
 
 interface UpgradeCommandOptions {
   dryRun?: boolean;
@@ -14,25 +15,27 @@ interface UpgradeCommandOptions {
   name: 'upgrade',
   description: 'Actualiza el repositorio satélite cuando el upstream Evolith recibe nuevas reglas',
 })
-export class UpgradeCommand extends CommandRunner {
-  async run(passedParam: string[], options?: UpgradeCommandOptions): Promise<void> {
+export class UpgradeCommand extends BaseEvolithCommand {
+  constructor(promptService: PromptService) {
+    super('UpgradeCommand', promptService);
+  }
+
+  async executeCommand(passedParam: string[], options?: UpgradeCommandOptions): Promise<void> {
     const satellitePath = process.cwd();
     const corePath = options?.core || this.findCorePath(satellitePath);
 
     const service = new SatelliteUpgradeService();
 
-    p.intro(chalk.bgBlueBright.white.bold(' Evolith SDK - Satélite Upgrade '));
-
-    const spinner = p.spinner();
-    spinner.start('Planning upgrade...');
+    this.promptService.showIntro('Evolith SDK - Satélite Upgrade');
+    this.promptService.startSpinner('Planning upgrade...');
 
     try {
       const plan = await service.planUpgrade({ satellitePath, corePath });
-      spinner.stop();
+      this.promptService.stopSpinner();
 
       if (plan.changes.length === 0) {
-        p.log.info(chalk.green('✓ Satellite is already up to date'));
-        p.outro(chalk.blue('No upgrade needed.'));
+        this.promptService.showSuccess('Satellite is already up to date');
+        this.promptService.showOutro('No upgrade needed.');
         return;
       }
 
@@ -45,29 +48,26 @@ export class UpgradeCommand extends CommandRunner {
           dryRun: true,
         });
 
-        p.log.info(chalk.yellow('Dry run complete - no changes applied'));
-        p.outro(chalk.blue('Dry run finished.'));
+        this.promptService.showInfo('Dry run complete - no changes applied');
+        this.promptService.showOutro('Dry run finished.');
         return;
       }
 
       if (plan.breakingChanges.length > 0 && !options?.force) {
-        p.log.warn(chalk.red(`⚠ ${plan.breakingChanges.length} breaking change(s) detected`));
-        p.log.info('Use --force to proceed with breaking changes');
-        p.outro(chalk.yellow('Upgrade cancelled.'));
+        this.promptService.showWarning(`⚠ ${plan.breakingChanges.length} breaking change(s) detected`);
+        this.promptService.showInfo('Use --force to proceed with breaking changes');
+        this.promptService.showOutro('Upgrade cancelled.');
         return;
       }
 
-      const confirm = await p.confirm({
-        message: `Apply ${plan.changes.length} change(s)?`,
-        initialValue: true,
-      });
+      const confirm = await this.promptService.confirm(`Apply ${plan.changes.length} change(s)?`, true);
 
       if (!confirm) {
-        p.outro(chalk.yellow('Upgrade cancelled.'));
+        this.promptService.showOutro('Upgrade cancelled.');
         return;
       }
 
-      spinner.start('Applying upgrade...');
+      this.promptService.startSpinner('Applying upgrade...');
 
       const result = await service.executeUpgrade({
         satellitePath,
@@ -75,23 +75,21 @@ export class UpgradeCommand extends CommandRunner {
         force: options?.force,
       });
 
-      spinner.stop();
+      this.promptService.stopSpinner();
 
       const report = await service.getUpgradeReport(result);
-      p.note(report, 'Upgrade Report');
+      console.log(`\n${chalk.bgCyan.black(' Upgrade Report ')}\n${report}\n`);
 
       if (result.success) {
-        p.log.success(chalk.green(`✓ Upgrade complete: ${result.changesApplied} change(s) applied`));
+        this.promptService.showSuccess(`Upgrade complete: ${result.changesApplied} change(s) applied`);
       } else {
-        p.log.error(chalk.red(`✗ Upgrade completed with errors: ${result.errors.length}`));
+        this.promptService.showError(`Upgrade completed with errors: ${result.errors.length}`);
       }
 
-      p.outro(result.success ? chalk.green('Upgrade finished.') : chalk.red('Upgrade finished with errors.'));
+      this.promptService.showOutro(result.success ? 'Upgrade finished.' : 'Upgrade finished with errors.');
     } catch (error: unknown) {
-      spinner.stop();
-      const message = error instanceof Error ? error.message : String(error);
-      p.log.error(`Upgrade failed: ${message}`);
-      process.exit(1);
+      this.promptService.stopSpinner();
+      throw error;
     }
   }
 

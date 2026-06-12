@@ -1,6 +1,5 @@
-import { Command, CommandRunner, Option } from 'nest-commander';
+import { Command, Option } from 'nest-commander';
 import { randomUUID } from 'node:crypto';
-import * as p from '@clack/prompts';
 import chalk from 'chalk';
 import { EvaluateGateUseCase } from '../../application/use-cases/evaluate-gate.use-case';
 import {
@@ -13,6 +12,8 @@ import {
   GATE_PHASES,
   ErrorCode,
 } from '../../domain/gate-evidence';
+import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
+import { PromptService } from '../../infrastructure/prompts/prompt.service';
 
 interface GateCommandOptions {
   phase?: string;
@@ -34,12 +35,15 @@ interface GateCommandOptions {
   arguments: '<action>',
   description: 'Phase gate operations (action: evaluate) emitting ADR-0073 GateEvidence',
 })
-export class GateCommand extends CommandRunner {
-  constructor(private readonly useCase: EvaluateGateUseCase) {
-    super();
+export class GateCommand extends BaseEvolithCommand {
+  constructor(
+    private readonly useCase: EvaluateGateUseCase,
+    promptService: PromptService
+  ) {
+    super('GateCommand', promptService);
   }
 
-  async run(inputs: string[], options?: GateCommandOptions): Promise<void> {
+  async executeCommand(inputs: string[], options?: GateCommandOptions): Promise<void> {
     const startedAt = Date.now();
     const meta = (command: string): OutputMeta => {
       const context: ExecutionContext = {};
@@ -60,10 +64,10 @@ export class GateCommand extends CommandRunner {
     const fail = (code: ErrorCode, message: string): void => {
       if (json) {
         console.log(JSON.stringify(createErrorEnvelope(code, message, meta(commandId)), null, 2));
+        process.exit(1);
       } else {
-        p.log.error(chalk.red(message));
+        throw new Error(message);
       }
-      process.exit(1);
     };
 
     const action = inputs[0];
@@ -107,17 +111,17 @@ export class GateCommand extends CommandRunner {
   }
 
   private printHuman(evidence: GateEvidence): void {
-    p.intro(chalk.cyan(`Gate ${evidence.gateId} — phase ${evidence.phase}`));
+    this.promptService.showIntro(`Gate ${evidence.gateId} — phase ${evidence.phase}`);
     const color = evidence.verdict === 'passed' ? chalk.green : chalk.red;
-    p.log.info(`Verdict: ${color(evidence.verdict.toUpperCase())} (ruleset ${evidence.rulesetRef}@${evidence.rulesetVersion})`);
+    this.promptService.showInfo(`Verdict: ${color(evidence.verdict.toUpperCase())} (ruleset ${evidence.rulesetRef}@${evidence.rulesetVersion})`);
     for (const v of evidence.violations) {
       const tag = v.severity === 'error' ? chalk.red('[error]') : chalk.yellow('[warning]');
-      p.log.warn(`${tag} ${v.ruleId} @ ${v.location}: ${v.message}`);
+      this.promptService.showWarning(`${tag} ${v.ruleId} @ ${v.location}: ${v.message}`);
     }
     if (evidence.violations.length === 0) {
-      p.log.success('No violations.');
+      this.promptService.showSuccess('No violations.');
     }
-    p.outro(`Evaluated by ${evidence.evaluatedBy} at ${evidence.evaluatedAt}`);
+    this.promptService.showOutro(`Evaluated by ${evidence.evaluatedBy} at ${evidence.evaluatedAt}`);
   }
 
   @Option({ flags: '-p, --phase <phase>', description: 'SDLC phase: discovery, design, construction, qa, release' })

@@ -1,10 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { FileManagerService } from './file-manager.service';
 import * as fs from 'fs-extra';
-import * as p from '@clack/prompts';
 
 jest.mock('fs-extra');
-jest.mock('@clack/prompts');
 
 describe('FileManagerService', () => {
   let service: FileManagerService;
@@ -22,10 +20,11 @@ describe('FileManagerService', () => {
     expect(service).toBeDefined();
   });
 
-  it('should return false if source does not exist', async () => {
+  it('should return error if source does not exist', async () => {
     (fs.pathExists as jest.Mock).mockResolvedValueOnce(false);
     const result = await service.safeCopy('src', 'dest');
-    expect(result).toBe(false);
+    expect(result.status).toBe('error');
+    expect(result.message).toContain('Source file does not exist: src');
   });
 
   it('should skip if destination exists and contents are identical', async () => {
@@ -33,36 +32,19 @@ describe('FileManagerService', () => {
     (fs.readFile as unknown as jest.Mock).mockResolvedValue('same content');
 
     const result = await service.safeCopy('src', 'dest');
-    expect(result).toBe(true);
+    expect(result.status).toBe('skipped');
     expect(fs.copy).not.toHaveBeenCalled();
   });
 
-  it('should ask for confirmation if destination exists and contents differ (not dry-run)', async () => {
+  it('should return conflict if destination exists and contents differ', async () => {
     (fs.pathExists as jest.Mock).mockResolvedValue(true);
     (fs.readFile as unknown as jest.Mock)
       .mockResolvedValueOnce('source content')
       .mockResolvedValueOnce('dest content');
-    
-    // User declines overwrite
-    (p.confirm as jest.Mock).mockResolvedValueOnce(false);
 
-    const result = await service.safeCopy('src', 'dest', false);
-    expect(result).toBe(false);
+    const result = await service.safeCopy('src', 'dest', { overwrite: false });
+    expect(result.status).toBe('conflict');
     expect(fs.copy).not.toHaveBeenCalled();
-  });
-
-  it('should overwrite if user confirms', async () => {
-    (fs.pathExists as jest.Mock).mockResolvedValue(true);
-    (fs.readFile as unknown as jest.Mock)
-      .mockResolvedValueOnce('source content')
-      .mockResolvedValueOnce('dest content');
-    
-    // User accepts overwrite
-    (p.confirm as jest.Mock).mockResolvedValueOnce(true);
-
-    const result = await service.safeCopy('src', 'dest', false);
-    expect(result).toBe(true);
-    expect(fs.copy).toHaveBeenCalledWith('src', 'dest', { overwrite: true });
   });
 
   it('should copy if destination does not exist', async () => {
@@ -70,8 +52,8 @@ describe('FileManagerService', () => {
       .mockResolvedValueOnce(true) // source exists
       .mockResolvedValueOnce(false); // dest does not exist
 
-    const result = await service.safeCopy('src', 'dest', false);
-    expect(result).toBe(true);
+    const result = await service.safeCopy('src', 'dest', { overwrite: true });
+    expect(result.status).toBe('copied');
     expect(fs.copy).toHaveBeenCalledWith('src', 'dest', { overwrite: true });
   });
 
@@ -80,8 +62,8 @@ describe('FileManagerService', () => {
       .mockResolvedValueOnce(true)
       .mockResolvedValueOnce(false);
 
-    const result = await service.safeCopy('src', 'dest', true);
-    expect(result).toBe(true);
+    const result = await service.safeCopy('src', 'dest', { dryRun: true });
+    expect(result.status).toBe('skipped');
     expect(fs.copy).not.toHaveBeenCalled();
   });
 });

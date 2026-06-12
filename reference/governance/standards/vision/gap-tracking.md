@@ -12,7 +12,6 @@ This board is the single source of truth for gap priority and status. Select a g
 
 | ID | Gap | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|
-| [`GT-28`](./gap-reference-catalog.md#gt-28) | Restore CLI build, test, and smoke baseline | F0 | P0 | M | `IN-PROGRESS` |
 | [`GT-29`](./gap-reference-catalog.md#gt-29) | Native/OPA rule execution parity | F1 | P0 | L | `IN-PROGRESS` |
 | [`GT-32`](./gap-reference-catalog.md#gt-32) | Customer and buyer hypothesis validation | Product | P0 | M | `PENDING` |
 | [`GT-30`](./gap-reference-catalog.md#gt-30) | Minimum Tracker governance kernel | Product | P0 | L | `PENDING` |
@@ -45,11 +44,12 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-02`](./gap-reference-catalog.md#gt-02) | `GateEvidence` modeled in the domain layer | F1 | P0 | M | `DONE` |
 | [`GT-03`](./gap-reference-catalog.md#gt-03) | `EvaluateGateUseCase` and `gate evaluate` command | F1 | P0 | M | `DONE` |
 | [`GT-06`](./gap-reference-catalog.md#gt-06) | MCP tool `evolith-gate-evaluate` | F2 | P0 | M | `DONE` |
+| [`GT-28`](./gap-reference-catalog.md#gt-28) | Restore CLI build, test, and smoke baseline | F0 | P0 | M | `DONE` |
 | [`GT-04`](./gap-reference-catalog.md#gt-04) | Remove service locator from domain | F1 | P1 | S | `DONE` |
 | [`GT-16`](./gap-reference-catalog.md#gt-16) | Documentation consolidation | F5 | P2 | S | `DONE` |
 | [`GT-27`](./gap-reference-catalog.md#gt-27) | Canonical tracking semantic consistency | Cross | P0 | S | `DONE` |
 
-**Progress:** 7 / 36 done · 12 in progress · 16 pending · 1 deferred
+**Progress:** 8 / 36 done · 11 in progress · 16 pending · 1 deferred
 
 **Ordering:** criticality (`P0` → `P1` → `P2`), active status (`IN-PROGRESS` → `PENDING` → `DEFERRED`), then complexity (`S` → `M` → `L`). Completed gaps follow active work.
 

@@ -48,7 +48,7 @@ jest.mock('../../core/di/container', () => ({
 }));
 
 jest.mock('../../infrastructure/catalog/catalog-loader', () => ({
-  catalogLoader: {
+  CatalogLoader: jest.fn().mockImplementation(() => ({
     loadRuntimeCatalog: jest.fn(() => [
       { id: 'nodejs', name: 'Node.js', defaultVersion: '20.x', language: 'JavaScript', databases: [{ id: 'postgresql', name: 'PostgreSQL', type: 'relational' }] },
       { id: 'dotnet', name: '.NET', defaultVersion: '8.0', language: 'C#', databases: [{ id: 'sqlserver', name: 'SQL Server', type: 'relational' }] },
@@ -66,7 +66,7 @@ jest.mock('../../infrastructure/catalog/catalog-loader', () => ({
       { id: 'rest', name: 'REST', description: 'RESTful API' },
       { id: 'graphql', name: 'GraphQL', description: 'GraphQL API' },
     ]),
-  },
+  })),
 }));
 
 jest.mock('../../application/services', () => ({
@@ -106,15 +106,10 @@ const mockAskInitOptions = jest.fn();
   execute: mockExecute,
 }));
 
-(PromptService as jest.Mock) = jest.fn().mockImplementation(() => ({
-  askInitOptions: mockAskInitOptions,
-}));
-
 describe('InitCommand', () => {
   let command: InitCommand;
   let logSpy: jest.SpyInstance;
   let exitSpy: jest.SpyInstance;
-  let promptService: PromptService;
 
   const defaultSelection = {
     projectName: 'my-project',
@@ -137,8 +132,10 @@ describe('InitCommand', () => {
   };
 
   beforeEach(() => {
-    promptService = new PromptService();
-    command = new InitCommand(promptService);
+    jest.spyOn(PromptService.prototype, 'askInitOptions').mockImplementation(mockAskInitOptions);
+    const { CatalogLoader } = require('../../infrastructure/catalog/catalog-loader');
+    const catalogLoader = new CatalogLoader();
+    command = new InitCommand(catalogLoader);
     logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
     exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
     jest.clearAllMocks();

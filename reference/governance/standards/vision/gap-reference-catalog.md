@@ -265,9 +265,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 **Title:** Restore the CLI build, test, and smoke baseline
 
-- **Gap:** The current CLI refactor passes lint but does not compile, which also prevents the MCP smoke suite from running and leaves unit suites red.
+- **Gap:** The CLI refactor had broken its executable release baseline: lint passed, but compilation, unit suites, and MCP smoke did not.
 - **Purpose:** Re-establish an executable release baseline before treating CLI, MCP, or policy-engine capabilities as complete product evidence.
-- **Current evidence / example:** `npm run build` reports TypeScript contract errors across catalog loading, history, MCP tools, prompts, and command infrastructure. `npm test` currently reports 10 failing suites and 58 failing tests; `npm run mcp:smoke` stops at the failed build.
+- **Current evidence / example:** Closed on 2026-06-12. `npm run lint` and `npm run build` pass; 70 unit suites pass with 1,237 tests; 12 E2E suites pass with 110 tests; `npm run mcp:smoke` passes `initialize`, discovery, metrics, and gate evaluation over both stdio and Streamable HTTP.
 - **Done when:** from a clean checkout, CLI lint, build, unit tests, and MCP stdio/HTTP smoke all pass; no release-critical path is satisfied only by skipped tests.
 - **References:** [Smart CLI](../../../../sdk/cli/README.md) · [ADR-0073 Unified CLI Output Contract](../../../architecture/adrs/core/0073-unified-cli-output-contract.md) · [Quality Gates](../../sdlc/quality-gates.md)
 

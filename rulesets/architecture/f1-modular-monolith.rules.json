@@ -86,6 +86,36 @@
       "rationale": "Production readiness requires observability from day one. ADR-0064 defines .NET context propagation; ADR-0007 covers Node.js.",
       "validationQuery": "All API endpoints produce traces with bounded context tag. Logs include SessionTrackingId scope.",
       "blocking": false
+    },
+    {
+      "id": "F1-R09",
+      "severity": "MUST",
+      "category": "dependency-injection",
+      "title": "Strict Dependency Inversion Principle (DIP)",
+      "description": "Application and Domain services MUST NOT be instantiated manually via 'new' keywords within other services or controllers. Dependencies MUST be injected via constructor using a DI container.",
+      "rationale": "Manual instantiation tightly couples classes to specific implementations, violating DIP and preventing effective unit testing and future architectural decoupling.",
+      "validationQuery": "Verify AST for 'new' expressions instantiating domain/application services within other services/controllers. Expected 0 occurrences.",
+      "blocking": true
+    },
+    {
+      "id": "F1-R10",
+      "severity": "MUST",
+      "category": "static-analysis",
+      "title": "AST-Based Code Analysis Mandatory",
+      "description": "Static code analysis, architecture compliance checks, and automated refactoring MUST use Abstract Syntax Tree (AST) parsing. Regular Expressions (Regex) for structural code parsing are prohibited.",
+      "rationale": "Regex is fragile for code parsing and cannot reliably understand context, nesting, or syntax variations. AST provides accurate structural representation.",
+      "validationQuery": "Scan architecture validation scripts for structural regex patterns targeting source code instead of AST parser usage.",
+      "blocking": true
+    },
+    {
+      "id": "F1-R11",
+      "severity": "MUST",
+      "category": "separation-of-concerns",
+      "title": "Strict UI and Logic Isolation (SoC)",
+      "description": "Interactive UI logic (e.g., CLI prompts, HTTP request extraction) MUST NOT leak into Application Use Cases or Domain logic. The Ports & Adapters boundary MUST be respected.",
+      "rationale": "Leaking UI concerns into application logic prevents reusing the same logic across different interfaces (e.g., CLI vs MCP vs HTTP) and makes automated testing difficult.",
+      "validationQuery": "Verify Application/Domain layers have zero imports from UI/CLI libraries (e.g., '@clack/prompts', 'inquirer', 'express').",
+      "blocking": true
     }
   ],
   "extractionCriteria": {

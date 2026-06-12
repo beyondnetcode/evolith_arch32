@@ -1,32 +1,5 @@
 import { UpgradeCommand } from './upgrade.command';
 
-jest.mock('@clack/prompts', () => ({
-  intro: jest.fn(),
-  outro: jest.fn(),
-  note: jest.fn(),
-  confirm: jest.fn(),
-  spinner: jest.fn(() => ({ start: jest.fn(), stop: jest.fn() })),
-  log: {
-    info: jest.fn(),
-    warn: jest.fn(),
-    success: jest.fn(),
-    error: jest.fn(),
-    message: jest.fn(),
-  },
-}));
-
-jest.mock('chalk', () => {
-  const chalkFn = (str: string) => str;
-  chalkFn.green = (str: string) => str;
-  chalkFn.red = (str: string) => str;
-  chalkFn.bold = (str: string) => str;
-  chalkFn.yellow = (str: string) => str;
-  chalkFn.blue = (str: string) => str;
-  chalkFn.cyan = (str: string) => str;
-  chalkFn.bgBlueBright = { white: { bold: (str: string) => str } };
-  return chalkFn;
-});
-
 jest.mock('../../core/upgrade/satellite-upgrade.service', () => ({
   SatelliteUpgradeService: jest.fn().mockImplementation(() => ({
     planUpgrade: jest.fn(),
@@ -35,8 +8,22 @@ jest.mock('../../core/upgrade/satellite-upgrade.service', () => ({
   })),
 }));
 
-import * as p from '@clack/prompts';
+jest.mock('../../infrastructure/prompts/prompt.service', () => ({
+  PromptService: jest.fn().mockImplementation(() => ({
+    showIntro: jest.fn(),
+    showOutro: jest.fn(),
+    showSuccess: jest.fn(),
+    showError: jest.fn(),
+    showWarning: jest.fn(),
+    showInfo: jest.fn(),
+    startSpinner: jest.fn(),
+    stopSpinner: jest.fn(),
+    confirm: jest.fn(),
+  })),
+}));
+
 import { SatelliteUpgradeService } from '../../core/upgrade/satellite-upgrade.service';
+import { PromptService } from '../../infrastructure/prompts/prompt.service';
 
 const mockPlanUpgrade = jest.fn();
 const mockExecuteUpgrade = jest.fn();
@@ -52,9 +39,11 @@ describe('UpgradeCommand', () => {
   let command: UpgradeCommand;
   let logSpy: jest.SpyInstance;
   let exitSpy: jest.SpyInstance;
+  let promptServiceMock: jest.Mocked<PromptService>;
 
   beforeEach(() => {
-    command = new UpgradeCommand();
+    promptServiceMock = new PromptService() as jest.Mocked<PromptService>;
+    command = new UpgradeCommand(promptServiceMock);
     logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
     exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
     jest.clearAllMocks();
@@ -80,7 +69,7 @@ describe('UpgradeCommand', () => {
 
       await command.run([], {});
 
-      expect(p.intro).toHaveBeenCalled();
+      expect(promptServiceMock.showIntro).toHaveBeenCalled();
       expect(mockPlanUpgrade).toHaveBeenCalled();
     });
 
@@ -95,10 +84,10 @@ describe('UpgradeCommand', () => {
 
       await command.run([], {});
 
-      expect(p.log.info).toHaveBeenCalledWith(
+      expect(promptServiceMock.showSuccess).toHaveBeenCalledWith(
         expect.stringContaining('already up to date')
       );
-      expect(p.outro).toHaveBeenCalled();
+      expect(promptServiceMock.showOutro).toHaveBeenCalled();
     });
 
     it('should run dry run when dryRun option is set', async () => {
@@ -125,7 +114,7 @@ describe('UpgradeCommand', () => {
       expect(mockExecuteUpgrade).toHaveBeenCalledWith(
         expect.objectContaining({ dryRun: true })
       );
-      expect(p.log.info).toHaveBeenCalledWith(
+      expect(promptServiceMock.showInfo).toHaveBeenCalledWith(
         expect.stringContaining('Dry run complete')
       );
     });
@@ -141,8 +130,8 @@ describe('UpgradeCommand', () => {
 
       await command.run([], {});
 
-      expect(p.log.warn).toHaveBeenCalled();
-      expect(p.outro).toHaveBeenCalledWith(
+      expect(promptServiceMock.showWarning).toHaveBeenCalled();
+      expect(promptServiceMock.showOutro).toHaveBeenCalledWith(
         expect.stringContaining('Upgrade cancelled')
       );
     });
@@ -155,7 +144,7 @@ describe('UpgradeCommand', () => {
         targetVersion: '1.1.0',
         estimatedRisk: 'medium',
       });
-      (p.confirm as jest.Mock).mockResolvedValue(true);
+      promptServiceMock.confirm.mockResolvedValue(true);
       mockExecuteUpgrade.mockResolvedValue({
         success: true,
         changesApplied: 1,
@@ -182,11 +171,11 @@ describe('UpgradeCommand', () => {
         targetVersion: '1.1.0',
         estimatedRisk: 'low',
       });
-      (p.confirm as jest.Mock).mockResolvedValue(false);
+      promptServiceMock.confirm.mockResolvedValue(false);
 
       await command.run([], {});
 
-      expect(p.outro).toHaveBeenCalledWith(
+      expect(promptServiceMock.showOutro).toHaveBeenCalledWith(
         expect.stringContaining('Upgrade cancelled')
       );
     });
@@ -199,7 +188,7 @@ describe('UpgradeCommand', () => {
         targetVersion: '1.1.0',
         estimatedRisk: 'low',
       });
-      (p.confirm as jest.Mock).mockResolvedValue(true);
+      promptServiceMock.confirm.mockResolvedValue(true);
       mockExecuteUpgrade.mockResolvedValue({
         success: true,
         changesApplied: 1,
@@ -213,8 +202,8 @@ describe('UpgradeCommand', () => {
 
       await command.run([], {});
 
-      expect(p.log.success).toHaveBeenCalled();
-      expect(p.outro).toHaveBeenCalledWith(
+      expect(promptServiceMock.showSuccess).toHaveBeenCalled();
+      expect(promptServiceMock.showOutro).toHaveBeenCalledWith(
         expect.stringContaining('Upgrade finished')
       );
     });
@@ -227,7 +216,7 @@ describe('UpgradeCommand', () => {
         targetVersion: '1.1.0',
         estimatedRisk: 'low',
       });
-      (p.confirm as jest.Mock).mockResolvedValue(true);
+      promptServiceMock.confirm.mockResolvedValue(true);
       mockExecuteUpgrade.mockResolvedValue({
         success: false,
         changesApplied: 0,
@@ -241,29 +230,27 @@ describe('UpgradeCommand', () => {
 
       await command.run([], {});
 
-      expect(p.log.error).toHaveBeenCalled();
+      expect(promptServiceMock.showError).toHaveBeenCalled();
     });
 
     it('should handle upgrade errors and exit', async () => {
       mockPlanUpgrade.mockRejectedValue(new Error('Upgrade failed'));
 
-      await command.run([], {});
+      await expect(command.run([], {})).rejects.toThrow('Upgrade failed');
 
-      expect(p.log.error).toHaveBeenCalledWith(
+      expect(promptServiceMock.showError).toHaveBeenCalledWith(
         expect.stringContaining('Upgrade failed')
       );
-      expect(exitSpy).toHaveBeenCalledWith(1);
     });
 
     it('should handle non-Error exceptions', async () => {
       mockPlanUpgrade.mockRejectedValue('string error');
 
-      await command.run([], {});
+      await expect(command.run([], {})).rejects.toThrow('string error');
 
-      expect(p.log.error).toHaveBeenCalledWith(
-        expect.stringContaining('Upgrade failed')
+      expect(promptServiceMock.showError).toHaveBeenCalledWith(
+        expect.stringContaining('string error')
       );
-      expect(exitSpy).toHaveBeenCalledWith(1);
     });
 
     it('should use custom core path when provided', async () => {

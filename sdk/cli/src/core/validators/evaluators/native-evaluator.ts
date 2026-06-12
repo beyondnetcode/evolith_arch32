@@ -1,5 +1,5 @@
 import { IFileSystem, ILogger } from '../../abstractions';
-import { NormalizedRule } from '../rule-evaluation-engine';
+import { NormalizedRule } from '../../../domain/models/normalized-rule';
 import { IRuleEvaluatorStrategy, EvaluationContext, RuleEvaluationResult } from './evaluator.interface';
 import { INativeRuleHandler } from './handlers/rule-handler.interface';
 import { EvidenceRuleHandler } from './handlers/evidence-rule.handler';

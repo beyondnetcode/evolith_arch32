@@ -1,6 +1,6 @@
 import { OpaEvaluator } from './opa-evaluator';
 import { createMockFileSystem, createMockLogger } from '../../../test/mocks';
-import { NormalizedRule } from '../rule-evaluation-engine';
+import { NormalizedRule } from '../../../domain/models/normalized-rule';
 import { EvaluationContext } from './evaluator.interface';
 import * as path from 'path';
 

@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { IFileSystem, ILogger } from '../../abstractions';
-import { NormalizedRule } from '../rule-evaluation-engine';
+import { NormalizedRule } from '../../../domain/models/normalized-rule';
 import { IRuleEvaluatorStrategy, EvaluationContext, RuleEvaluationResult } from './evaluator.interface';
 import { loadPolicy } from '@open-policy-agent/opa-wasm';
 import { OpaInputBuilder } from './opa-input-builder';

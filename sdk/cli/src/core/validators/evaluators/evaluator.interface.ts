@@ -1,4 +1,4 @@
-import { NormalizedRule } from '../rule-evaluation-engine';
+import { NormalizedRule } from '../../../domain/models/normalized-rule';
 import { ValidationIssue } from '../ruleset-validator.service';
 
 export interface EvaluationContext {

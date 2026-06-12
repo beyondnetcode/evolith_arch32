@@ -1,6 +1,6 @@
 import { getFileSystem, getContainer } from './tool-utils';
 import { IFileSystem } from '../../abstractions';
-import { MoscowPrioritizationService, MoscowItem, MoscowAnalysis } from '../../../domain/services/moscow-prioritization.service';
+import { MoscowPrioritizationService, MoscowItem, MoscowAnalysis } from '../../../infrastructure/adapters/moscow-prioritization.service';
 
 import { IMcpToolHandler } from '../mcp-tool.registry';
 

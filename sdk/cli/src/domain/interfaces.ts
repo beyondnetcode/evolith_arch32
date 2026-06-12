@@ -22,6 +22,10 @@ export interface ICatalogLoader {
   loadRuntimeCatalog(): Runtime[];
   loadToolCatalog(): ToolCatalog;
   loadCommandsMatrix(): CommandsMatrix;
+  getMonorepoOptions(): MonorepoOption[];
+  getArchitecturePatterns(): ArchitecturePattern[];
+  getDefaultDatabase(runtimeId: string): string;
+  getApiProtocols(): Array<{ id: string; name: string; description: string }>;
 }
 
 export interface Runtime {
@@ -137,6 +141,10 @@ export interface ICatalogLoader {
   loadRuntimeCatalog(): Runtime[];
   loadToolCatalog(): ToolCatalog;
   loadCommandsMatrix(): CommandsMatrix;
+  getMonorepoOptions(): MonorepoOption[];
+  getArchitecturePatterns(): ArchitecturePattern[];
+  getDefaultDatabase(runtimeId: string): string;
+  getApiProtocols(): Array<{ id: string; name: string; description: string }>;
 }
 
 export interface ToolCatalog {

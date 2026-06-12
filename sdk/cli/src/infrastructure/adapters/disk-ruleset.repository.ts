@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { IFileSystem, ILogger } from '../../core/abstractions';
-import { NormalizedRule } from '../../core/validators/rule-evaluation-engine';
+import { NormalizedRule } from '../../domain/models/normalized-rule';
 import { IRulesetRepository } from '../../domain/ports/ruleset-repository.port';
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';

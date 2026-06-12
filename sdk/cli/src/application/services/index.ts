@@ -1,6 +1,7 @@
 import { PhaseService } from '../../domain/services';
-import { CatalogLoader } from '../../infrastructure/catalog/catalog-loader';
-import { npmProvider, dotnetProvider, pythonProvider, nxProvider } from '../../infrastructure/cli/providers';
+import { ICatalogLoader } from '../../domain/interfaces';
+import { IPlatformProviders } from '../ports/platform-detection.port';
+import { IWebhookNotifier } from '../ports/webhook-notifier.port';
 import { PlatformNotFoundError, ValidationError } from '../../core/errors';
 import { logger, Timed, commandWatcher } from '../../core/observability';
 import { PhaseGateValidatorService, GateValidationResult } from '../../core/validators/phase-gate-validator.service';
@@ -27,10 +28,10 @@ export interface InitProjectResult {
 
 export class InitializeProjectUseCase {
   private readonly fs: any;
-  private readonly catalogLoader: CatalogLoader;
+  private readonly catalogLoader: ICatalogLoader;
   private readonly phaseService: PhaseService;
 
-  constructor(fs: any, catalogLoader: CatalogLoader) {
+  constructor(fs: any, catalogLoader: ICatalogLoader, private readonly platformProviders?: IPlatformProviders) {
     this.fs = fs;
     this.catalogLoader = catalogLoader;
     this.phaseService = new PhaseService();
@@ -295,11 +296,11 @@ evolith sdlc gate-status
     switch (runtime) {
       case 'nodejs':
       case 'typescript':
-        return { available: await npmProvider.isAvailable() };
+        return { available: this.platformProviders ? await this.platformProviders.npm.isAvailable() : true };
       case 'dotnet':
-        return { available: await dotnetProvider.isAvailable() };
+        return { available: this.platformProviders ? await this.platformProviders.dotnet.isAvailable() : true };
       case 'python':
-        return { available: await pythonProvider.isAvailable() };
+        return { available: this.platformProviders ? await this.platformProviders.python.isAvailable() : true };
       default:
         return {
           available: false,
@@ -314,7 +315,7 @@ export class PhaseTransitionUseCase {
   private readonly phaseService: PhaseService;
   private readonly gateValidator: PhaseGateValidatorService;
 
-  constructor(fs: any, corePath?: string) {
+  constructor(fs: any, corePath?: string, private readonly webhookNotifier?: IWebhookNotifier) {
     this.fs = fs;
     this.phaseService = new PhaseService();
     this.gateValidator = new PhaseGateValidatorService(corePath);

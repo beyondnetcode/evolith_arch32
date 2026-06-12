@@ -1,7 +1,7 @@
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { getFileSystem, getContainer } from '../../core/mcp/tools/tool-utils';
-import { AgentRegistryService, AgentInfo } from '../../domain/services/agent-registry.service';
+import { AgentRegistryService, AgentInfo } from '../../infrastructure/adapters/agent-registry.service';
 import { buildAgentRuleset } from '../../core/agents/agent-ruleset-builder';
 import { RulesetValidatorService } from '../../core/validators/ruleset-validator.service';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';

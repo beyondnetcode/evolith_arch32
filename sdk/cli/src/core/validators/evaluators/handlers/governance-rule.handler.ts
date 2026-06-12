@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { IFileSystem, IConfigParser } from '../../../abstractions';
-import { NormalizedRule } from '../../rule-evaluation-engine';
+import { NormalizedRule } from '../../../../domain/models/normalized-rule';
 import { EvaluationContext, RuleEvaluationResult } from '../evaluator.interface';
 import { INativeRuleHandler } from './rule-handler.interface';
 import { getContainer } from '../../../abstractions';

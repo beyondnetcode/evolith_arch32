@@ -1,7 +1,7 @@
-import { WebhookNotifierPort } from '../../application/ports/webhook-notifier.port';
+import { IWebhookNotifier } from '../../application/ports/webhook-notifier.port';
 import { GateEvidence } from '../../domain/gate-evidence';
 
-export class WebhookAdapter implements WebhookNotifierPort {
+export class WebhookAdapter implements IWebhookNotifier {
   async notify(url: string, evidence: GateEvidence): Promise<void> {
     const response = await fetch(url, {
       method: 'POST',

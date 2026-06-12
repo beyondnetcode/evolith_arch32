@@ -92,7 +92,7 @@ module.exports = {
           // -----------------------------------------------------------------
           {
             from: 'domain',
-            allow: ['domain', 'core', 'types'],
+            allow: ['domain', 'types'],
           },
 
           // -----------------------------------------------------------------
@@ -104,7 +104,7 @@ module.exports = {
           // -----------------------------------------------------------------
           {
             from: 'application',
-            allow: ['application', 'domain', 'core', 'infrastructure', 'types'],
+            allow: ['application', 'domain', 'core', 'types'],
           },
 
           // -----------------------------------------------------------------

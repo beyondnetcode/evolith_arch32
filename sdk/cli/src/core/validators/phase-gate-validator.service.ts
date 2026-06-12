@@ -433,7 +433,7 @@ export class PhaseGateValidatorService {
 
       let hasReadiness = false;
       try {
-        const files = await this.fs.readDirectory(observabilityPath);
+        const files = await this.fs.readdir(observabilityPath);
         const contentChecks = await Promise.all(files.map(async file => {
           if (file.name.endsWith('.md') || file.name.endsWith('.json') || file.name.endsWith('.yml') || file.name.endsWith('.yaml')) {
             const content = await this.fs.readFile(path.join(observabilityPath, file.name));

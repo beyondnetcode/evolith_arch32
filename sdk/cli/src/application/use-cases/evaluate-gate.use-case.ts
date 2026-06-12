@@ -10,7 +10,7 @@ import {
   GateViolation,
   deriveVerdict,
 } from '../../domain/gate-evidence';
-import { WebhookNotifierPort } from '../ports/webhook-notifier.port';
+import { IWebhookNotifier } from '../ports/webhook-notifier.port';
 
 /**
  * Evaluates one SDLC phase gate and emits the ADR-0073 `GateEvidence` payload.
@@ -45,7 +45,7 @@ export class EvaluateGateUseCase {
   constructor(
     @Optional() @Inject('VALIDATOR_FACTORY') private readonly validatorFactory: (corePath?: string) => PhaseGateValidatorService =
       corePath => new PhaseGateValidatorService(corePath),
-    @Optional() @Inject('WEBHOOK_NOTIFIER') private readonly webhookNotifier?: WebhookNotifierPort
+    @Optional() @Inject('WEBHOOK_NOTIFIER') private readonly webhookNotifier?: IWebhookNotifier
   ) {}
 
   async execute(input: EvaluateGateInput): Promise<GateEvidence> {

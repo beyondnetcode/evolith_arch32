@@ -71,7 +71,7 @@ La evaluación usa los 5 niveles estándar del ACMM:
   * Boundaries hexagonales desacoplando core de infraestructura ([ADR-0002](../../../architecture/adrs/nodejs/0002-clean-architecture-nestjs.es.md)).
   * Patrones de diseño táctico (monada Result) ([ADR-0019](../../../architecture/adrs/core/0019-tactical-design-patterns-future-proofing.es.md)).
   * Desacoplamiento event-driven de módulos de dominio ([ADR-0015](../../../architecture/adrs/core/0015-event-driven-architecture-intra-domain.es.md)).
-* **Camino al Nivel 5:** transición monolito-a-Dapr con cero cambios de dominio ([ADR-0006](../../../architecture/adrs/core/0006-future-microservices-transition-dapr.es.md)). Nota: el enforcement hexagonal estricto en el propio CLI sigue abierto — ver [GT-19](./gap-tracking.es.md#gt-19).
+* **Camino al Nivel 5:** transición monolito-a-Dapr con cero cambios de dominio ([ADR-0006](../../../architecture/adrs/core/0006-future-microservices-transition-dapr.es.md)). Nota: el enforcement hexagonal estricto en el propio CLI sigue abierto — ver [GT-19](./gap-reference-catalog.es.md#gt-19).
 
 ---
 
@@ -79,7 +79,7 @@ La evaluación usa los 5 niveles estándar del ACMM:
 
 ### Dimensión 1: Conformidad de Protocolo MCP y Transporte — **Nivel 4 (Gestionado)**
 * **Evidencia:** transporte stdio JSON-RPC 2.0; transporte HTTP/SSE mínimo con `/health`, `/message`, `/sse` y auth Bearer/X-API-Key; recuperación de errores endurecida; `mcp:smoke` verifica initialize, discovery y tool calls en cada release.
-* **Camino al Nivel 5:** adoptar el transporte Streamable HTTP oficial del SDK MCP ([GT-05](./gap-tracking.es.md#gt-05)); conformidad de protocolo automatizada contra el changelog de la spec MCP.
+* **Camino al Nivel 5:** adoptar el transporte Streamable HTTP oficial del SDK MCP ([GT-05](./gap-reference-catalog.es.md#gt-05)); conformidad de protocolo automatizada contra el changelog de la spec MCP.
 
 ### Dimensión 2: Cobertura de Tests y Quality Gates — **Nivel 4 (Gestionado)**
 * **Evidencia:** ~1 369 tests (unit + E2E) verdes; 88.70% statements · 89.80% lines · 76.93% branches (meta ≥75%) · 83.58% functions; teardown limpio sin `--forceExit`.
@@ -87,15 +87,15 @@ La evaluación usa los 5 niveles estándar del ACMM:
 
 ### Dimensión 3: Completitud de Exposición de Gobernanza — **Nivel 4 (Gestionado)**
 * **Evidencia:** 17+ tools MCP, 8 resources, 7 prompts cubriendo validación, agentes, arquitectura, SDLC y priorización; todo cubierto por tests de routing.
-* **Camino al Nivel 5:** evaluación de gates expuesta como tool de evidencia estructurada ([GT-06](./gap-tracking.es.md#gt-06)); hot-reload de rulesets.
+* **Camino al Nivel 5:** evaluación de gates expuesta como tool de evidencia estructurada ([GT-06](./gap-reference-catalog.es.md#gt-06)); hot-reload de rulesets.
 
 ### Dimensión 4: Experiencia de Desarrollador CLI — **Nivel 3 (Definido)**
 * **Evidencia:** 13 comandos; shell completion (bash/zsh/fish); paridad documental EN/ES 100%; `mcp:smoke` bajo 5 segundos; métricas DORA calculadas desde historia git real en `gate-status`.
-* **Camino al Nivel 4:** envelope de salida unificado y flags globales ([GT-01](./gap-tracking.es.md#gt-01)); cobertura completa de `--dry-run` ([GT-12](./gap-tracking.es.md#gt-12)); publicación en npm ([GT-18](./gap-tracking.es.md#gt-18)).
+* **Camino al Nivel 4:** envelope de salida unificado y flags globales ([GT-01](./gap-reference-catalog.es.md#gt-01)); cobertura completa de `--dry-run` ([GT-12](./gap-reference-catalog.es.md#gt-12)); publicación en npm ([GT-18](./gap-reference-catalog.es.md#gt-18)).
 
 ### Dimensión 5: Enforcement Runtime de Gobernanza Federada — **Nivel 3 (Definido)**
 * **Evidencia:** modelo de herencia, contratos de satélites y reglas de boundary Open-Core definidos; `smart-cli validate` ejecutable por cualquier satélite; composite action de CI `evolith-validate` disponible para gates de PR en satélites.
-* **Camino al Nivel 4:** evidencia de phase gates profundizada de chequeos de solo-existencia a validación de contenido/umbral ([GT-08](./gap-tracking.es.md#gt-08)–[GT-11](./gap-tracking.es.md#gt-11)); adapters ACL runtime (alcance Tracker).
+* **Camino al Nivel 4:** evidencia de phase gates profundizada de chequeos de solo-existencia a validación de contenido/umbral ([GT-08](./gap-reference-catalog.es.md#gt-08)–[GT-11](./gap-reference-catalog.es.md#gt-11)); adapters ACL runtime (alcance Tracker).
 
 ---
 
@@ -141,11 +141,11 @@ Match pilar por pilar contra la [Visión Maestra del Producto](./evolith-product
 | Pilar de Visión | Requisito de Visión | Alineación | Notas |
 |---|---|:---:|---|
 | **Evolith Core** | Reference Corpus (Constitución): directivas, ADRs, estándares, rulesets, schemas | ~90% | 70+ ADRs, 27 rulesets versionados en 13 categorías, 14 schemas de phase gates. Reglas de integración ACL definidas pero no ejecutadas (alcance Tracker). |
-| **Evolith Tracker** | Orquestador SaaS del SDLC | 0% (por diseño) | Repositorio aparte; la obligación del Core es el contrato CLI/MCP que consumirá — ítems abiertos [GT-01](./gap-tracking.es.md#gt-01)…[GT-06](./gap-tracking.es.md#gt-06), [GT-13](./gap-tracking.es.md#gt-13), [GT-14](./gap-tracking.es.md#gt-14). |
+| **Evolith Tracker** | Orquestador SaaS del SDLC | 0% (por diseño) | Repositorio aparte; la obligación del Core es el contrato CLI/MCP que consumirá — ítems abiertos [GT-01](./gap-reference-catalog.es.md#gt-01)…[GT-06](./gap-reference-catalog.es.md#gt-06), [GT-13](./gap-reference-catalog.es.md#gt-13), [GT-14](./gap-reference-catalog.es.md#gt-14). |
 | **Exposición Tecnológica** | CLI + MCP sirviendo gobernanza como contexto en tiempo real | ~85–90% | Beta funcional: 13 comandos, MCP stdio + HTTP, DORA real, detección de drift, scaffolding hexagonal. Restante: contrato Tracker, upgrade de transporte, publicación npm. |
-| **5 Phase Gates** | Gates auditables con evidencia bloqueante | ~62% | Los 5 gates evalúan; los criterios bloqueantes son chequeos de solo-existencia — validación de contenido/umbral pendiente ([GT-08](./gap-tracking.es.md#gt-08)–[GT-11](./gap-tracking.es.md#gt-11)). |
+| **5 Phase Gates** | Gates auditables con evidencia bloqueante | ~62% | Los 5 gates evalúan; los criterios bloqueantes son chequeos de solo-existencia — validación de contenido/umbral pendiente ([GT-08](./gap-reference-catalog.es.md#gt-08)–[GT-11](./gap-reference-catalog.es.md#gt-11)). |
 | **Gobernanza Federada** | Herencia hub-and-spoke, validación de satélites | ~80% | Reglas de herencia + composite action de CI para satélites entregadas; ACLs runtime diferidas al Tracker. |
-| **Estrategia Open-Core** | Tier gratuito CLI+MCP públicamente disponible | Pendiente | Publicación bloqueada solo por logística de release ([GT-18](./gap-tracking.es.md#gt-18)). |
+| **Estrategia Open-Core** | Tier gratuito CLI+MCP públicamente disponible | Pendiente | Publicación bloqueada solo por logística de release ([GT-18](./gap-reference-catalog.es.md#gt-18)). |
 
 ---
 
@@ -166,9 +166,9 @@ El sistema está en transición de completamente documentado (Nivel 3) a goberna
 
 Todos los gaps abiertos viven exclusivamente en el **[Tablero de Seguimiento de Gaps](./gap-tracking.es.md)** — estado actual: 16 pendientes, 1 diferido, 5 completados de 22 ítems `GT`, más el archivo legado cerrado `G-01…G-27`. El subconjunto relevante para madurez:
 
-* **Profundidad de evidencia de gates (P1):** [GT-08](./gap-tracking.es.md#gt-08), [GT-09](./gap-tracking.es.md#gt-09), [GT-10](./gap-tracking.es.md#gt-10), [GT-11](./gap-tracking.es.md#gt-11)
-* **Integridad de arquitectura (P1):** [GT-04](./gap-tracking.es.md#gt-04), [GT-17](./gap-tracking.es.md#gt-17), [GT-19](./gap-tracking.es.md#gt-19)
-* **Exposición y distribución (P1):** [GT-05](./gap-tracking.es.md#gt-05), [GT-12](./gap-tracking.es.md#gt-12), [GT-13](./gap-tracking.es.md#gt-13), [GT-14](./gap-tracking.es.md#gt-14), [GT-18](./gap-tracking.es.md#gt-18)
+* **Profundidad de evidencia de gates (P1):** [GT-08](./gap-reference-catalog.es.md#gt-08), [GT-09](./gap-reference-catalog.es.md#gt-09), [GT-10](./gap-reference-catalog.es.md#gt-10), [GT-11](./gap-reference-catalog.es.md#gt-11)
+* **Integridad de arquitectura (P1):** [GT-04](./gap-reference-catalog.es.md#gt-04), [GT-17](./gap-reference-catalog.es.md#gt-17), [GT-19](./gap-reference-catalog.es.md#gt-19)
+* **Exposición y distribución (P1):** [GT-05](./gap-reference-catalog.es.md#gt-05), [GT-12](./gap-reference-catalog.es.md#gt-12), [GT-13](./gap-reference-catalog.es.md#gt-13), [GT-14](./gap-reference-catalog.es.md#gt-14), [GT-18](./gap-reference-catalog.es.md#gt-18)
 
 ---
 

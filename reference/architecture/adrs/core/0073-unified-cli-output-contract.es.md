@@ -4,7 +4,7 @@
 
 ## Estado
 
-Aprobado — Evolith Architecture Board, 2026-06-10. Cierra [GT-01](../../../governance/standards/vision/gap-tracking.es.md#gt-01).
+Aprobado — Evolith Architecture Board, 2026-06-10. Cierra [GT-01](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-01).
 
 ## Fecha
 
@@ -23,7 +23,7 @@ Hoy el CLI no implementa ninguno de los dos contratos: `--format json` existe en
 
 **Objetivo:** ratificar un contrato único de salida que toda superficie machine-facing del CLI y servidor MCP de Evolith emita, para que el Tracker, los pipelines de CI y los agentes de IA parseen resultados de manera uniforme.
 
-**En alcance:** el envelope JSON de salida; el schema `GateEvidence` como payload de evaluación de gates; el conjunto de flags globales; el registro de códigos de error; naming del binario y de los tools MCP; el modelo de ejecución command-as-a-service (invocación remota de operaciones registradas vía MCP/REST). **Fuera de alcance:** la implementación de la evaluación de gates ([GT-02](../../../governance/standards/vision/gap-tracking.es.md#gt-02)/[GT-03](../../../governance/standards/vision/gap-tracking.es.md#gt-03)), la selección de transporte ([GT-05](../../../governance/standards/vision/gap-tracking.es.md#gt-05)), la semántica de webhooks/eventos ([GT-14](../../../governance/standards/vision/gap-tracking.es.md#gt-14)), y el renderizado human-facing (table/markdown), que permanece libre.
+**En alcance:** el envelope JSON de salida; el schema `GateEvidence` como payload de evaluación de gates; el conjunto de flags globales; el registro de códigos de error; naming del binario y de los tools MCP; el modelo de ejecución command-as-a-service (invocación remota de operaciones registradas vía MCP/REST). **Fuera de alcance:** la implementación de la evaluación de gates ([GT-02](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-02)/[GT-03](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-03)), la selección de transporte ([GT-05](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-05)), la semántica de webhooks/eventos ([GT-14](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-14)), y el renderizado human-facing (table/markdown), que permanece libre.
 
 ## Opciones Consideradas
 
@@ -71,7 +71,7 @@ En fallo, `success: false` y un objeto `error` reemplaza a `data`:
 
 Criterios usados para juzgar las opciones: (a) el Tracker puede consumir resultados de gates sin parsing a medida; (b) el CLI permanece stateless según los [invariantes de interfaz del Tracker](../../../governance/standards/vision/sdlc-tracker-technical-interfaces.es.md); (c) cero breaking change para la salida human-facing actual; (d) implementable incrementalmente por comando.
 
-Evidencia: ambos documentos de diseño fuente; estado de código verificado el 2026-06-10 — `--format json` es hoy solo-presentación, los 27 rulesets están versionados, `--dry-run` ya existe en 5 de 7 comandos de escritura (gap trazado como [GT-12](../../../governance/standards/vision/gap-tracking.es.md#gt-12)).
+Evidencia: ambos documentos de diseño fuente; estado de código verificado el 2026-06-10 — `--format json` es hoy solo-presentación, los 27 rulesets están versionados, `--dry-run` ya existe en 5 de 7 comandos de escritura (gap trazado como [GT-12](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-12)).
 
 ## Consecuencias, Riesgos y Trade-offs
 
@@ -93,7 +93,7 @@ Evidencia: ambos documentos de diseño fuente; estado de código verificado el 2
 - [ADR 0069: Implementación del Protocolo de Servidor MCP](./0069-mcp-server-protocol-implementation.es.md) — transporte sobre el que viaja este contrato
 - [ADR 0032: Matriz de Decisión de Protocolos API](./0032-api-protocol-decision-matrix-rest-grpc-graphql.es.md) — principios de selección de protocolo
 - [Estándar de Autoría de ADRs](../adr-authoring-standard.es.md) — estructura de este ADR
-- Ítems de gap: [GT-01](../../../governance/standards/vision/gap-tracking.es.md#gt-01) (esta decisión), GT-02/GT-03/GT-06 (implementación), GT-12 (completar `--dry-run`), GT-18 (publicación npm bajo el alias `evolith`)
+- Ítems de gap: [GT-01](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-01) (esta decisión), GT-02/GT-03/GT-06 (implementación), GT-12 (completar `--dry-run`), GT-18 (publicación npm bajo el alias `evolith`)
 - Rulesets: `rulesets/cli/core-parity.rules.json`, futuro `rulesets/schema/gate-evidence.schema.json`
 
 ---

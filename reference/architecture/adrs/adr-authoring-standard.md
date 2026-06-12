@@ -60,7 +60,7 @@ Platform ADRs must define a **review trigger**: the condition (date or event, e.
 ## 5. Compliance
 
 - New ADRs: full compliance with this standard is a Design Baseline gate criterion.
-- Existing ADRs: structural sections were normalized on 2026-06-10; content backfill of sections 2, 3, 5, 8 (and 9–10 for platform ADRs) is tracked as [GT-20](../../governance/standards/vision/gap-tracking.md#gt-20). Placement review of tool-centric Core ADRs is tracked as [GT-21](../../governance/standards/vision/gap-tracking.md#gt-21).
+- Existing ADRs: structural sections were normalized on 2026-06-10; content backfill of sections 2, 3, 5, 8 (and 9–10 for platform ADRs) is tracked as [GT-20](../../governance/standards/vision/gap-reference-catalog.md#gt-20). Placement review of tool-centric Core ADRs is tracked as [GT-21](../../governance/standards/vision/gap-reference-catalog.md#gt-21).
 - Canonical template: [ADR Template](../../governance/sdlc/04-artifact-templates/adr-template.md).
 
 ---

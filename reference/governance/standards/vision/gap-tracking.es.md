@@ -12,7 +12,7 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 
 | ID | Gap | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|
-| [`GT-29`](./gap-reference-catalog.es.md#gt-29) | Paridad de ejecución de reglas Native/OPA | F1 | P0 | L | `EN-PROGRESO` |
+| [`GT-29`](./gap-reference-catalog.es.md#gt-29) | Paridad de ejecución de reglas Native/OPA | F1 | P0 | L | `COMPLETADO` |
 | [`GT-32`](./gap-reference-catalog.es.md#gt-32) | Validación de hipótesis de cliente y comprador | Producto | P0 | M | `PENDIENTE` |
 | [`GT-30`](./gap-reference-catalog.es.md#gt-30) | Kernel mínimo de gobernanza Tracker | Producto | P0 | L | `PENDIENTE` |
 | [`GT-31`](./gap-reference-catalog.es.md#gt-31) | Vertical slice del Producto Mínimo Comprobable | Producto | P0 | L | `PENDIENTE` |
@@ -49,7 +49,7 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-16`](./gap-reference-catalog.es.md#gt-16) | Consolidación documental | F5 | P2 | S | `COMPLETADO` |
 | [`GT-27`](./gap-reference-catalog.es.md#gt-27) | Consistencia semántica del tracking canónico | Transversal | P0 | S | `COMPLETADO` |
 
-**Progreso:** 8 / 36 completados · 11 en progreso · 16 pendientes · 1 diferido
+**Progreso:** 9 / 36 completados · 10 en progreso · 16 pendientes · 1 diferido
 
 **Ordenamiento:** criticidad (`P0` → `P1` → `P2`), estado activo (`EN-PROGRESO` → `PENDIENTE` → `DIFERIDO`) y complejidad (`S` → `M` → `L`). Los gaps completados aparecen después del trabajo activo.
 

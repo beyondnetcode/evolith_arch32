@@ -293,16 +293,6 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 ### Product Proof
 
-#### GT-31
-
-**Title:** Minimum Provable Product vertical slice
-
-- **Gap:** No end-to-end implementation currently demonstrates the Evolith thesis from tenant and product context through five governed gates to production evidence and learning.
-- **Purpose:** Prove or falsify that Evolith can compose replaceable providers while preserving canonical governance, evidence lineage, and measurable delivery value.
-- **Current evidence / example:** A representative slice should connect one tenant, one product, one work provider, repository and CI, an agent, observability, analytics, and the five gates, with Tracker remaining the only authority for canonical decisions.
-- **Done when:** the slice completes a real governed delivery flow; every decision links to source evidence and policy version; at least one provider can be replaced through its port; elapsed time, intervention count, and decision quality are measured.
-- **References:** [Minimum Provable Product](./evolith-product-vision-master.md#10-minimum-provable-product) · [Strategic Validation and Composition Framework](./evolith-strategic-validation-and-composition-framework.md)
-
 #### GT-33
 
 **Title:** Evidence-backed maturity scoring

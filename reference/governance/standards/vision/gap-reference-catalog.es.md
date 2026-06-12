@@ -293,16 +293,6 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 ### Prueba de Producto
 
-#### GT-31
-
-**Título:** Vertical slice del Producto Mínimo Comprobable
-
-- **Gap:** Ninguna implementación end-to-end demuestra actualmente la tesis de Evolith desde el contexto de tenant y producto, a través de cinco gates gobernados, hasta evidencia de producción y aprendizaje.
-- **Propósito:** Probar o refutar que Evolith puede componer proveedores reemplazables preservando gobernanza canónica, linaje de evidencia y valor de entrega medible.
-- **Evidencia actual / ejemplo:** Un slice representativo debe conectar un tenant, un producto, un proveedor de trabajo, repositorio y CI, un agente, observabilidad, analytics y los cinco gates, manteniendo al Tracker como única autoridad para decisiones canónicas.
-- **Cierre cuando:** el slice completa un flujo real de entrega gobernada; cada decisión enlaza evidencia fuente y versión de política; al menos un proveedor puede reemplazarse mediante su port; se miden tiempo transcurrido, cantidad de intervenciones y calidad de decisión.
-- **Referencias:** [Producto Mínimo Comprobable](./evolith-product-vision-master.es.md#10-producto-mínimo-comprobable) · [Framework de Validación Estratégica y Composición](./evolith-strategic-validation-and-composition-framework.es.md)
-
 #### GT-33
 
 **Título:** Scoring de madurez respaldado por evidencia

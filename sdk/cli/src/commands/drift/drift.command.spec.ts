@@ -26,7 +26,7 @@ jest.mock('chalk', () => {
   return chalkFn;
 });
 
-jest.mock('../../core/validators/architecture-drift.service', () => ({
+jest.mock('../../application/validators/architecture-drift.service', () => ({
   ArchitectureDriftService: jest.fn().mockImplementation(() => ({
     detectDrift: jest.fn(),
     getDriftHistory: jest.fn(),
@@ -35,7 +35,7 @@ jest.mock('../../core/validators/architecture-drift.service', () => ({
 }));
 
 import * as p from '@clack/prompts';
-import { ArchitectureDriftService } from '../../core/validators/architecture-drift.service';
+import { ArchitectureDriftService } from '../../application/validators/architecture-drift.service';
 
 const mockDetectDrift = jest.fn();
 const mockGetDriftHistory = jest.fn();

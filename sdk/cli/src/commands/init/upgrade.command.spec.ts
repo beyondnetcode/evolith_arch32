@@ -1,6 +1,6 @@
 import { UpgradeCommand } from './upgrade.command';
 
-jest.mock('../../core/upgrade/satellite-upgrade.service', () => ({
+jest.mock('../../application/upgrade/satellite-upgrade.service', () => ({
   SatelliteUpgradeService: jest.fn().mockImplementation(() => ({
     planUpgrade: jest.fn(),
     executeUpgrade: jest.fn(),
@@ -22,7 +22,7 @@ jest.mock('../../infrastructure/prompts/prompt.service', () => ({
   })),
 }));
 
-import { SatelliteUpgradeService } from '../../core/upgrade/satellite-upgrade.service';
+import { SatelliteUpgradeService } from '../../application/upgrade/satellite-upgrade.service';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 
 const mockPlanUpgrade = jest.fn();

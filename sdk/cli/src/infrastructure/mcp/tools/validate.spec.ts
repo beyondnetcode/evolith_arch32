@@ -1,13 +1,13 @@
 import { getValidateTools } from './validate';
 
-jest.mock('../../../core/validators/ruleset-validator.service', () => ({
+jest.mock('../../../application/validators/ruleset-validator.service', () => ({
   RulesetValidatorService: jest.fn().mockImplementation(() => ({
     validate: jest.fn(),
     loadRulesetById: jest.fn(),
   })),
 }));
 
-import { RulesetValidatorService } from '../../../core/validators/ruleset-validator.service';
+import { RulesetValidatorService } from '../../../application/validators/ruleset-validator.service';
 
 
 const handleValidateTool = async (args: any, deps?: any) => {

@@ -2,9 +2,9 @@ import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { Inject } from '@nestjs/common';
 import { PhaseTransitionUseCase } from '../../application/services';
-import { PhaseGateValidatorService } from '../../core/validators/phase-gate-validator.service';
-import { readGitLog, isGitRepo } from '../../core/metrics/git-log-reader';
-import { calculateDora, DoraMetric, DoraRating } from '../../core/metrics/dora-calculator';
+import { PhaseGateValidatorService } from '../../application/validators/phase-gate-validator.service';
+import { readGitLog, isGitRepo } from '../../domain/metrics/git-log-reader';
+import { calculateDora, DoraMetric, DoraRating } from '../../domain/metrics/dora-calculator';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 
 function ratingBadge(rating: DoraRating): string {

@@ -15,7 +15,7 @@ jest.mock('chalk', () => {
   return chalkFn;
 });
 
-jest.mock('../../core/services/command-history.service', () => ({
+jest.mock('../../application/services/services/command-history.service', () => ({
   CommandHistoryService: jest.fn().mockImplementation(() => ({
     list: jest.fn(),
     get: jest.fn(),
@@ -31,7 +31,7 @@ jest.mock('@clack/prompts', () => ({
 }));
 
 import chalk from 'chalk';
-import { CommandHistoryService } from '../../core/services/command-history.service';
+import { CommandHistoryService } from '../../application/services/services/command-history.service';
 import * as p from '@clack/prompts';
 
 const mockList = jest.fn();

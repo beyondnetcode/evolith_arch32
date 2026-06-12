@@ -1,6 +1,6 @@
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
-import { SatelliteUpgradeService, UpgradePlan } from '../../core/upgrade/satellite-upgrade.service';
+import { SatelliteUpgradeService, UpgradePlan } from '../../application/upgrade/satellite-upgrade.service';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 

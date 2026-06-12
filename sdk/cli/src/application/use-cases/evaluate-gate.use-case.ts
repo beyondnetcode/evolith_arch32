@@ -2,7 +2,7 @@ import { Injectable, Optional, Inject } from '@nestjs/common';
 import {
   PhaseGateValidatorService,
   GateValidationResult,
-} from '../../core/validators/phase-gate-validator.service';
+} from '../../application/validators/phase-gate-validator.service';
 import {
   EvaluatorKind,
   GateEvidence,

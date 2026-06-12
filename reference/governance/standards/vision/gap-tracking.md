@@ -12,7 +12,6 @@ This board is the single source of truth for gap priority and status. Select a g
 
 | ID | Gap | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|
-| [`GT-19`](./gap-reference-catalog.md#gt-19) | Incremental hexagonal migration of `core/` | Cross | P1 | L | `IN-PROGRESS` |
 | [`GT-18`](./gap-reference-catalog.md#gt-18) | Publish `@evolith/smart-cli` to npm | F5 | P1 | S | `PENDING` |
 | [`GT-34`](./gap-reference-catalog.md#gt-34) | Roadmap reprioritization around governance proof | Product | P1 | S | `PENDING` |
 | [`GT-13`](./gap-reference-catalog.md#gt-13) | `evolith-phase-advance` proposal runner | F4 | P1 | M | `PENDING` |
@@ -45,6 +44,7 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-10`](./gap-reference-catalog.md#gt-10) | Phase 4 security scan content validation | F3 | P1 | M | `DONE` |
 | [`GT-11`](./gap-reference-catalog.md#gt-11) | Phase 5 observability and rollback validation | F3 | P1 | M | `DONE` |
 | [`GT-16`](./gap-reference-catalog.md#gt-16) | Documentation consolidation | F5 | P2 | S | `DONE` |
+| [`GT-19`](./gap-reference-catalog.md#gt-19) | Incremental hexagonal migration of `core/` | Cross | P1 | L | `DONE` |
 
 **Progress:** 16 / 33 done · 3 in progress · 13 pending · 1 deferred
 

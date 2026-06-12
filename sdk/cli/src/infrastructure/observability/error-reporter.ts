@@ -1,5 +1,5 @@
 import { logger, LogLevel } from './structured-logger';
-import { EvolithError, isEvolithError, getErrorContext, getErrorCode } from '../../core/errors';
+import { EvolithError, isEvolithError, getErrorContext, getErrorCode } from '../../domain/errors';
 
 export interface ErrorReport {
   id: string;
@@ -53,17 +53,17 @@ export class ErrorReporter {
 
     if (isEvolithError(error)) {
       errorInfo = {
-        name: error.name,
-        message: error.message,
-        code: error.code,
-        stack: error.stack,
+        name: (error as Error).name,
+        message: (error as Error).message,
+        code: (error as any).code,
+        stack: (error as Error).stack,
       };
-      suggestion = this.getSuggestionForCode(error.code);
+      suggestion = this.getSuggestionForCode((error as any).code);
     } else if (error instanceof Error) {
       errorInfo = {
-        name: error.name,
-        message: error.message,
-        stack: error.stack,
+        name: (error as Error).name,
+        message: (error as Error).message,
+        stack: (error as Error).stack,
       };
       suggestion = this.getSuggestionForError(error);
     } else {
@@ -111,13 +111,13 @@ export class ErrorReporter {
   }
 
   private getSuggestionForError(error: Error): string {
-    if (error.message.includes('ENOENT')) {
+    if ((error as Error).message.includes('ENOENT')) {
       return 'File or directory not found. Check the path and ensure it exists.';
     }
-    if (error.message.includes('EACCES')) {
+    if ((error as Error).message.includes('EACCES')) {
       return 'Permission denied. Check file/directory permissions.';
     }
-    if (error.message.includes('ENOEXEC')) {
+    if ((error as Error).message.includes('ENOEXEC')) {
       return 'Executable not found. Install the required tool.';
     }
     return 'An unexpected error occurred. Check logs for details.';

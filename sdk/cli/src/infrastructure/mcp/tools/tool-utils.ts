@@ -1,10 +1,10 @@
-import { IFileSystem } from '../../../core/abstractions';
+import { IFileSystem } from '../../../domain/interfaces';
 
 let cachedFs: IFileSystem | null = null;
 
 export function getFileSystem(): IFileSystem {
   if (!cachedFs) {
-    cachedFs = require('../../core/abstractions/providers/node-filesystem.provider').NodeFileSystemProvider.prototype.createFileSystem();
+    cachedFs = require('../../infrastructure/providers/node-filesystem.provider').NodeFileSystemProvider.prototype.createFileSystem();
   }
   return cachedFs;
 }

@@ -10,7 +10,7 @@ import {
   CommandsMatrix,
   PhaseDefinition,
 } from '../../domain/interfaces';
-import { CatalogLoadError } from '../../core/errors';
+import { CatalogLoadError } from '../../domain/errors';
 
 interface RuntimeCatalog {
   _comment?: string;

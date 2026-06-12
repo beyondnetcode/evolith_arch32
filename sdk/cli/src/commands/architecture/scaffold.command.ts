@@ -1,7 +1,7 @@
 import { Command, Option } from 'nest-commander';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
-import { WorkspaceManagerStrategy } from '../../core/architecture/workspace-manager.strategy';
-import { NxWorkspaceStrategy } from '../../core/architecture/nx-workspace.strategy';
+import { WorkspaceManagerStrategy } from '../../application/architecture/workspace-manager.strategy';
+import { NxWorkspaceStrategy } from '../../application/architecture/nx-workspace.strategy';
 
 @Command({
   name: 'scaffold',

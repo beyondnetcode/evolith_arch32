@@ -1,5 +1,5 @@
 import { EvaluateGateUseCase, PHASE_GATES_RULESET_REF, PHASE_TO_GATE_NUMBER } from './evaluate-gate.use-case';
-import { GateValidationResult, PhaseGateValidatorService } from '../../core/validators/phase-gate-validator.service';
+import { GateValidationResult, PhaseGateValidatorService } from '../application/validators/phase-gate-validator.service';
 import { GATE_PHASES } from '../../domain/gate-evidence';
 
 function validationResult(overrides: Partial<GateValidationResult> = {}): GateValidationResult {

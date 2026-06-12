@@ -1,21 +1,21 @@
 import { GateStatusCommand } from './gate-status.command';
 import * as p from '@clack/prompts';
-import { getContainer } from '../../core/di/container';
-import { isGitRepo, readGitLog } from '../../core/metrics/git-log-reader';
-import { calculateDora } from '../../core/metrics/dora-calculator';
+import { getContainer } from '../../infrastructure/di/container';
+import { isGitRepo, readGitLog } from '../../domain/metrics/git-log-reader';
+import { calculateDora } from '../../domain/metrics/dora-calculator';
 
 // ── mocks ──────────────────────────────────────────────────────────────────────
 
 jest.mock('@clack/prompts');
-jest.mock('../../core/di/container', () => ({
+jest.mock('../../infrastructure/di/container', () => ({
   getContainer: () => ({
     setFileSystemProvider: () => {},
     createFileSystem: () => mockFs
   }),
   resetContainer: () => {}
 }), { virtual: true });
-jest.mock('../../core/metrics/git-log-reader');
-jest.mock('../../core/metrics/dora-calculator');
+jest.mock('../../domain/metrics/git-log-reader');
+jest.mock('../../domain/metrics/dora-calculator');
 
 const mockGetGateStatus = jest.fn();
 

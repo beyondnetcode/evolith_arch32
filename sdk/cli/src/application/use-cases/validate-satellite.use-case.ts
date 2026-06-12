@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { RulesetValidatorService, ValidationResult } from '../../core/validators/ruleset-validator.service';
+import { RulesetValidatorService, ValidationResult } from '../../application/validators/ruleset-validator.service';
 
 export interface ValidateSatelliteInput {
   satellitePath: string;

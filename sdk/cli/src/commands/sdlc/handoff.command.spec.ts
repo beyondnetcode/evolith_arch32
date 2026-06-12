@@ -17,7 +17,7 @@ jest.mock("../../infrastructure/catalog/catalog-loader", () => {
     })),
   };
 });
-jest.mock("../../application/services", () => {
+jest.mock('../../application/services', () => {
   return {
     PhaseTransitionUseCase: jest.fn().mockImplementation(() => ({
       execute: jest.fn().mockResolvedValue({
@@ -107,7 +107,7 @@ const mockExecute = jest.fn().mockResolvedValue({
   errors: [],
 });
 
-const { PhaseTransitionUseCase } = require("../../application/services");
+const { PhaseTransitionUseCase } = require('../../application/services');
 
 describe("HandoffCommand", () => {
   let command: HandoffCommand;

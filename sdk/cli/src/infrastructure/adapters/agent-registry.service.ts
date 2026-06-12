@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { IFileSystem } from '../../core/abstractions/interfaces';
+import { IFileSystem } from '../../domain/interfaces';
 
 export interface AgentInfo {
   name: string;

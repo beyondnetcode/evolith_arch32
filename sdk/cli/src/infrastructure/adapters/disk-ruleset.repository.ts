@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { IFileSystem, ILogger } from '../../core/abstractions';
+import { IFileSystem, ILogger } from '../../domain/interfaces';
 import { NormalizedRule } from '../../domain/models/normalized-rule';
 import { IRulesetRepository } from '../../domain/ports/ruleset-repository.port';
 import Ajv from 'ajv';

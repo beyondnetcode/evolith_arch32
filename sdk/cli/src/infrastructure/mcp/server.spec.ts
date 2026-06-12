@@ -1,9 +1,9 @@
 import { startMcpServer, McpServerOptions } from './server';
 import { McpMetricsService } from './metrics.service';
-import { RulesetValidatorService } from '../../core/validators/ruleset-validator.service';
+import { RulesetValidatorService } from '../../application/validators/ruleset-validator.service';
 import { PassThrough } from 'node:stream';
 
-jest.mock('../../core/validators/ruleset-validator.service', () => ({
+jest.mock('../../application/validators/ruleset-validator.service', () => ({
   RulesetValidatorService: jest.fn().mockImplementation(() => ({
     validate: jest.fn(),
     loadRulesetById: jest.fn(),

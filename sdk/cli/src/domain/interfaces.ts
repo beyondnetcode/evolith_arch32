@@ -1,4 +1,53 @@
-export interface CommandResult {
+export interface FileExistsOptions {
+  cwd?: string;
+}
+
+export interface FileReadOptions {
+  encoding?: BufferEncoding;
+  cwd?: string;
+}
+
+export interface FileWriteOptions {
+  encoding?: BufferEncoding;
+  cwd?: string;
+}
+
+export interface DirEntry {
+  name: string;
+  isDirectory: () => boolean;
+  isFile: () => boolean;
+}
+
+
+
+export interface IConfigParser {
+  parse(content: string): unknown;
+  stringify(data: unknown): string;
+}
+
+export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+
+export interface LogEntry {
+  level: LogLevel;
+  message: string;
+  context?: string;
+  timestamp: string;
+}
+
+
+
+export interface ILoggerProvider {
+  createLogger(context: string): ILogger;
+}
+
+
+
+export interface IConfigParserProvider {
+  createConfigParser(format: string): IConfigParser;
+}
+
+export const SUPPORTED_FORMATS = ['yaml', 'json'] as const;
+export type SupportedFormat = typeof SUPPORTED_FORMATS[number];export interface CommandResult {
   success: boolean;
   stdout: string;
   stderr: string;
@@ -191,13 +240,20 @@ export interface ObservabilityCommands {
 }
 
 export interface IFileSystem {
-  exists(path: string): Promise<boolean>;
   readFile(path: string): Promise<string>;
+  readFileBuffer(path: string): Promise<Buffer>;
   writeFile(path: string, content: string): Promise<void>;
-  readJson<T>(path: string): Promise<T>;
-  writeJson(path: string, data: unknown): Promise<void>;
-  ensureDir(path: string): Promise<void>;
+  exists(path: string): Promise<boolean>;
+  existsSync(path: string): boolean;
+  readJson<T = any>(path: string): Promise<T>;
+  writeJson(path: string, content: any): Promise<void>;
+  mkdir(path: string): Promise<void>;
+  readdir(path: string): Promise<any[]>;
   readdirNames(path: string): Promise<string[]>;
+  copy(src: string, dest: string): Promise<void>;
+  ensureDir(path: string): Promise<void>;
+  ensureFile(path: string): Promise<void>;
+  stat(path: string): Promise<any>;
   remove(path: string): Promise<void>;
 }
 
@@ -207,10 +263,10 @@ export interface IConfigParser {
 }
 
 export interface ILogger {
-  info(message: string, context?: Record<string, unknown>): void;
-  warn(message: string, context?: Record<string, unknown>): void;
-  error(message: string, context?: Record<string, unknown>): void;
-  debug(message: string, context?: Record<string, unknown>): void;
+  info(message: string, context?: any): void;
+  warn(message: string, context?: any): void;
+  error(message: string, context?: any): void;
+  debug(message: string, context?: any): void;
 }
 
 export interface IProjectInitializer {
@@ -266,3 +322,19 @@ export interface ValidationResult {
   errors: string[];
   warnings: string[];
 }
+export interface FileExistsOptions {
+  checkType?: 'file' | 'directory';
+}
+
+export interface FileReadOptions {
+  encoding?: BufferEncoding | null;
+  flag?: string;
+}
+
+export interface FileWriteOptions {
+  encoding?: BufferEncoding | null;
+  mode?: number;
+  flag?: string;
+}
+
+export interface IFileSystemProvider extends IFileSystem {}

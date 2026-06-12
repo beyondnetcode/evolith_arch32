@@ -4,7 +4,7 @@ import chalk from "chalk";
 import { CatalogLoader } from "../catalog/catalog-loader";
 import { InitProjectInput } from "../../application/services";
 import { Injectable } from "@nestjs/common";
-import { UserCancelledError } from "../../core/errors";
+import { UserCancelledError } from '../../domain/errors';
 
 @Injectable()
 export class PromptService {

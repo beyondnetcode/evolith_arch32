@@ -1,5 +1,5 @@
 import { PhaseTransitionUseCase, GateResult, PhaseTransitionResult } from '../../application/services';
-import { getContainer, resetContainer, IFileSystemProvider, IFileSystem } from '../../core/abstractions';
+import { getContainer, resetContainer, IFileSystemProvider, IFileSystem } from '../../domain/interfaces';
 
 const mockRulesetContent = JSON.stringify({
   gates: [

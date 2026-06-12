@@ -5,9 +5,9 @@ import { ValidateCommand } from './commands/validate/validate.command';
 import { DocsCommand } from './commands/docs/docs.command';
 import { UpgradeCommand } from './commands/init/upgrade.command';
 import { McpServeCommand } from './commands/mcp/mcp-serve.command';
-import { ConfigService } from './core/config/config.service';
-import { FileManagerService } from './core/filesystem/file-manager.service';
-import { SyncService } from './core/sync/sync.service';
+import { ConfigService } from './infrastructure/config/config.service';
+import { FileManagerService } from './infrastructure/filesystem/file-manager.service';
+import { SyncService } from './application/sync/sync.service';
 import { WatcherService } from './infrastructure/mcp/watcher.service';
 import { SdlcCommand } from './commands/sdlc/sdlc.command';
 import { HandoffCommand } from './commands/sdlc/handoff.command';
@@ -22,13 +22,13 @@ import { GateCommand } from './commands/gate/gate.command';
 
 import { ValidateSatelliteUseCase } from './application/use-cases/validate-satellite.use-case';
 import { EvaluateGateUseCase } from './application/use-cases/evaluate-gate.use-case';
-import { RulesetValidatorService } from './core/validators/ruleset-validator.service';
+import { RulesetValidatorService } from './application/validators/ruleset-validator.service';
 import { PromptService } from './infrastructure/prompts/prompt.service';
 import { CatalogLoader } from './infrastructure/catalog/catalog-loader';
 import { WebhookAdapter } from './infrastructure/adapters/webhook.adapter';
-import { NodeFileSystemProvider } from './core/abstractions/providers/node-filesystem.provider';
-import { NestLoggerProvider } from './core/abstractions/providers/logger.provider';
-import { YamlConfigParserProvider } from './core/abstractions/providers/config-parser.provider';
+import { NodeFileSystemProvider } from './infrastructure/providers/node-filesystem.provider';
+import { NestLoggerProvider } from './infrastructure/providers/logger.provider';
+import { YamlConfigParserProvider } from './infrastructure/providers/config-parser.provider';
 
 @Module({
   imports: [],

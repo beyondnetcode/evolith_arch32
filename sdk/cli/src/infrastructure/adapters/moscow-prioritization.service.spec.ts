@@ -1,10 +1,10 @@
 import { MoscowPrioritizationService, MoscowItem, MoscowAnalysis } from './moscow-prioritization.service';
 
-jest.mock('../../core/abstractions', () => ({
+jest.mock('../../domain/interfaces', () => ({
   getContainer: jest.fn(),
 }));
 
-import { getContainer } from '../../core/abstractions';
+import { getContainer } from '../../domain/interfaces';
 
 const mockFileSystem = {
   exists: jest.fn(),

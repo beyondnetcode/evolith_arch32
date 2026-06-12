@@ -1,4 +1,4 @@
-import { IFileSystem, IConfigParser } from '../../../core/abstractions';
+import { IFileSystem, IConfigParser } from '../../../domain/interfaces';
 import { IMcpToolHandler } from '../mcp-tool.registry';
 import { getAgentTools } from './agent';
 import { getArchitectureTools } from './architecture';

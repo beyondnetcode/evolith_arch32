@@ -2,9 +2,9 @@ import { PhaseService } from '../../domain/services';
 import { ICatalogLoader } from '../../domain/interfaces';
 import { IPlatformProviders } from '../ports/platform-detection.port';
 import { IWebhookNotifier } from '../ports/webhook-notifier.port';
-import { PlatformNotFoundError, ValidationError } from '../../core/errors';
+import { PlatformNotFoundError, ValidationError } from '../../domain/errors';
 
-import { PhaseGateValidatorService, GateValidationResult } from '../../core/validators/phase-gate-validator.service';
+import { PhaseGateValidatorService, GateValidationResult } from '../../application/validators/phase-gate-validator.service';
 
 export interface InitProjectInput {
   name: string;

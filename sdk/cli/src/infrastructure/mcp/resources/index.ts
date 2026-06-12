@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { getFileSystem } from '../tools/tool-utils';
-import { IFileSystem } from '../../../core/abstractions';
+import { IFileSystem } from '../../../domain/interfaces';
 
 interface Resource {
   uri: string;
@@ -25,7 +25,7 @@ export async function listResources() {
 
 export async function readResource(args: unknown) {
   const fs = getFileSystem();
-  const configParser = require('../../../core/abstractions/providers/config-parser.provider').YamlConfigParserProvider.prototype.createConfigParser('yaml');
+  const configParser = require('../../providers/config-parser.provider').YamlConfigParserProvider.prototype.createConfigParser('yaml');
   const uri = (args as { uri: string }).uri;
 
   if (uri === 'evolith://rulesets') {

@@ -32,7 +32,7 @@ jest.mock('chalk', () => {
   return chalkFn;
 });
 
-jest.mock('../../core/di/container', () => ({
+jest.mock('../../infrastructure/di/container', () => ({
   getContainer: jest.fn(() => ({
     createFileSystem: jest.fn(() => ({
       exists: jest.fn(),

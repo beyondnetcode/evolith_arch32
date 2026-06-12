@@ -1,7 +1,7 @@
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import { ICommandExecutor, PlatformCheck } from '../../domain/interfaces';
-import { CommandExecutionError } from '../../core/errors';
+import { CommandExecutionError } from '../../domain/errors';
 
 const execAsync = promisify(exec);
 

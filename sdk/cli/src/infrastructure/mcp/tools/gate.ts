@@ -1,4 +1,4 @@
-import { IFileSystem, IConfigParser } from '../../../core/abstractions';
+import { IFileSystem, IConfigParser } from '../../../domain/interfaces';
 import { randomUUID } from 'crypto';
 // eslint-disable-next-line boundaries/element-types
 import { EvaluateGateUseCase, EvaluateGateInput } from '../../../application/use-cases/evaluate-gate.use-case';

@@ -1,6 +1,6 @@
 import * as path from 'path';
-import { IFileSystem, IConfigParser } from '../../../core/abstractions';
-import { DeepArchitectureAnalyzer } from '../../../core/validators/deep-architecture-analyzer';
+import { IFileSystem, IConfigParser } from '../../../domain/interfaces';
+import { DeepArchitectureAnalyzer } from '../../../application/validators/deep-architecture-analyzer';
 
 import { IMcpToolHandler } from '../mcp-tool.registry';
 

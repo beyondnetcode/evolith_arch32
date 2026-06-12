@@ -6,9 +6,9 @@ import { ValidateCommand } from './commands/validate/validate.command';
 import { DocsCommand } from './commands/docs/docs.command';
 import { UpgradeCommand } from './commands/init/upgrade.command';
 import { McpServeCommand } from './commands/mcp/mcp-serve.command';
-import { ConfigService } from './core/config/config.service';
-import { FileManagerService } from './core/filesystem/file-manager.service';
-import { SyncService } from './core/sync/sync.service';
+import { ConfigService } from './infrastructure/config/config.service';
+import { FileManagerService } from './infrastructure/filesystem/file-manager.service';
+import { SyncService } from './application/sync/sync.service';
 import { WatcherService } from './infrastructure/mcp/watcher.service';
 import { SdlcCommand } from './commands/sdlc/sdlc.command';
 import { HandoffCommand } from './commands/sdlc/handoff.command';
@@ -74,7 +74,7 @@ jest.mock('./infrastructure/mcp/tools/tool-utils', () => ({
   })),
 }));
 
-jest.mock('./core/di/container', () => ({
+jest.mock('./infrastructure/di/container', () => ({
   getContainer: jest.fn(() => ({
     createFileSystem: jest.fn(() => ({
       exists: jest.fn(),

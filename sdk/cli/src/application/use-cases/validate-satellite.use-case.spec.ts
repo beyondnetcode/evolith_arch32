@@ -1,7 +1,7 @@
 import { ValidateSatelliteUseCase } from './validate-satellite.use-case';
-import { RulesetValidatorService, ValidationResult } from '../../core/validators/ruleset-validator.service';
+import { RulesetValidatorService, ValidationResult } from '../../application/validators/ruleset-validator.service';
 
-jest.mock('../../core/validators/ruleset-validator.service');
+jest.mock('../../application/validators/ruleset-validator.service');
 
 describe('ValidateSatelliteUseCase', () => {
   let mockValidator: jest.Mocked<RulesetValidatorService>;

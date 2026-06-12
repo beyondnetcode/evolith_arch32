@@ -1,6 +1,6 @@
 import * as path from 'path';
-import { IFileSystem } from '../../core/abstractions';
-import { NodeFileSystemProvider } from '../../core/abstractions/providers/node-filesystem.provider';
+import { IFileSystem } from '../../domain/interfaces';
+import { NodeFileSystemProvider } from '../../infrastructure/providers/node-filesystem.provider';
 
 export type MoscowPriority = 'MUST' | 'SHOULD' | 'COULD' | 'WONT';
 

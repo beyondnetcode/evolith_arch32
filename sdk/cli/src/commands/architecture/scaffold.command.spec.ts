@@ -1,9 +1,9 @@
 import { ScaffoldCommand } from './scaffold.command';
 import * as p from '@clack/prompts';
-import { NxWorkspaceStrategy } from '../../core/architecture/nx-workspace.strategy';
+import { NxWorkspaceStrategy } from '../../application/architecture/nx-workspace.strategy';
 
 jest.mock('@clack/prompts');
-jest.mock('../../core/architecture/nx-workspace.strategy');
+jest.mock('../../application/architecture/nx-workspace.strategy');
 
 const mockStrategy = {
   installDependencies: jest.fn().mockResolvedValue(undefined),

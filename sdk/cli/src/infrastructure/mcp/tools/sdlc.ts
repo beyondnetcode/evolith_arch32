@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { IFileSystem, IConfigParser } from '../../../core/abstractions';
+import { IFileSystem, IConfigParser } from '../../../domain/interfaces';
 
 const PHASES = ['phase-0', 'phase-1', 'phase-2', 'phase-3', 'phase-4'];
 

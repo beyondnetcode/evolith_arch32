@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 import * as http from 'node:http';
-import { RulesetValidatorService } from '../../core/validators/ruleset-validator.service';
+import { RulesetValidatorService } from '../../application/validators/ruleset-validator.service';
 import { McpMetricsService } from './metrics.service';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';

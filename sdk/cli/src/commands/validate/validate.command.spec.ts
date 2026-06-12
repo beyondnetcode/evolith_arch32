@@ -6,7 +6,7 @@ jest.mock('../../application/use-cases/validate-satellite.use-case', () => ({
   })),
 }));
 
-jest.mock('../../core/validators/ruleset-validator.service', () => ({
+jest.mock('../../application/validators/ruleset-validator.service', () => ({
   RulesetValidatorService: jest.fn().mockImplementation(() => ({
     validate: jest.fn(),
     validateArchitecture: jest.fn(),
@@ -43,7 +43,7 @@ jest.mock('../../infrastructure/formatters/output-formatter.service', () => ({
 }));
 
 import { ValidateSatelliteUseCase } from '../../application/use-cases/validate-satellite.use-case';
-import { RulesetValidatorService } from '../../core/validators/ruleset-validator.service';
+import { RulesetValidatorService } from '../../application/validators/ruleset-validator.service';
 import { OutputFormatterService } from '../../infrastructure/formatters/output-formatter.service';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { logger } from '../../infrastructure/observability';

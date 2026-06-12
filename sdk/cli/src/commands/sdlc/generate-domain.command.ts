@@ -2,8 +2,8 @@ import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import { parseDddModel } from '../../core/generators/mermaid-class-parser';
-import { scaffoldHexagonal } from '../../core/generators/hexagonal-scaffolder';
+import { parseDddModel } from '../../application/generators/mermaid-class-parser';
+import { scaffoldHexagonal } from '../../application/generators/hexagonal-scaffolder';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 
 @Command({

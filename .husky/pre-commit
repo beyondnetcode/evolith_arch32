@@ -16,3 +16,11 @@ node .harness/scripts/check-orphan-bilingual.mjs
 echo ""
 echo "Running impact analysis & synchronization..."
 node .harness/scripts/impact-analysis-synchronizer.mjs --staged --verbose --fail-on-risk
+
+echo ""
+echo "Generating documentation inventories..."
+node .harness/scripts/generate-inventories.mjs
+
+echo ""
+echo "Validating tracking boards..."
+node .harness/scripts/validate-tracking.mjs

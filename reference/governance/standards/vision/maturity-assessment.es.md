@@ -153,7 +153,7 @@ Match pilar por pilar contra la [Visión Maestra del Producto](./evolith-product
 
 | Pilar de Visión | Requisito de Visión | Estado Basado en Evidencia | Notas |
 |---|---|:---:|---|
-| **Evolith Core** | Reference Corpus (Constitución): directivas, ADRs, estándares, rulesets, schemas | `Implementado` | 70+ ADRs, 27 rulesets versionados. Reglas de integración ACL definidas pero no ejecutadas (alcance Tracker). |
+| **Evolith Core** | Reference Corpus (Constitución): directivas, ADRs, estándares, rulesets, schemas | `Implementado` | Ver [Inventario del Corpus de Referencia](./inventory-summary.es.md) en vivo. Reglas de integración ACL definidas pero no ejecutadas (alcance Tracker). |
 | **Evolith Tracker** | Orquestador SaaS del SDLC | `Visionado` | Repositorio aparte; la obligación del Core es el contrato CLI/MCP que consumirá. |
 | **Exposición Tecnológica** | CLI + MCP sirviendo gobernanza como contexto en tiempo real | `Implementado` | Beta funcional: 13 comandos, MCP stdio + HTTP. Restante: contrato Tracker, upgrade de transporte. |
 | **5 Phase Gates** | Gates auditables con evidencia bloqueante | `Implementado` | Los 5 gates evalúan; los criterios bloqueantes son chequeos de solo-existencia. |

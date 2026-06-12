@@ -153,7 +153,7 @@ Pillar-by-pillar match against the [Product Vision Master](./evolith-product-vis
 
 | Vision Pillar | Vision Requirement | Evidence-Backed State | Notes |
 |---|---|:---:|---|
-| **Evolith Core** | Reference Corpus (Constitution): directives, ADRs, standards, rulesets, schemas | `Implemented` | 70+ ADRs, 27 versioned rulesets. ACL integration rules defined but not executed (Tracker scope). |
+| **Evolith Core** | Reference Corpus (Constitution): directives, ADRs, standards, rulesets, schemas | `Implemented` | See live [Reference Corpus Inventory](./inventory-summary.md). ACL integration rules defined but not executed (Tracker scope). |
 | **Evolith Tracker** | SaaS SDLC orchestrator | `Visioned` | Separate repository; Core's obligation is the CLI/MCP contract it will consume. |
 | **Technological Exposure** | CLI + MCP serving governance as real-time context | `Implemented` | Functional beta: 13 commands, MCP stdio + HTTP. Remaining: Tracker contract, transport upgrade. |
 | **5 Phase Gates** | Auditable gates with blocking evidence | `Implemented` | All 5 gates evaluate; blocking criteria are existence-only checks. |

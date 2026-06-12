@@ -19,8 +19,8 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-12`](./gap-reference-catalog.md#gt-12) | `--dry-run` on all write operations | F3 | P1 | S | `DONE` |
 | [`GT-14`](./gap-reference-catalog.md#gt-14) | Outbound webhook on gate completion | F4 | P1 | S | `DONE` |
 | [`GT-05`](./gap-reference-catalog.md#gt-05) | MCP SDK Streamable HTTP transport | F2 | P1 | M | `DONE` |
-| [`GT-10`](./gap-reference-catalog.md#gt-10) | Phase 4 security scan content validation | F3 | P1 | M | `IN-PROGRESS` |
-| [`GT-11`](./gap-reference-catalog.md#gt-11) | Phase 5 observability and rollback validation | F3 | P1 | M | `IN-PROGRESS` |
+| [`GT-10`](./gap-reference-catalog.md#gt-10) | Phase 4 security scan content validation | F3 | P1 | M | `DONE` |
+| [`GT-11`](./gap-reference-catalog.md#gt-11) | Phase 5 observability and rollback validation | F3 | P1 | M | `DONE` |
 | [`GT-17`](./gap-reference-catalog.md#gt-17) | DI consolidation and strict boundaries | F5 | P1 | M | `IN-PROGRESS` |
 | [`GT-19`](./gap-reference-catalog.md#gt-19) | Incremental hexagonal migration of `core/` | Cross | P1 | L | `IN-PROGRESS` |
 | [`GT-18`](./gap-reference-catalog.md#gt-18) | Publish `@evolith/smart-cli` to npm | F5 | P1 | S | `PENDING` |

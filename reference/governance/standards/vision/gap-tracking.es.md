@@ -19,8 +19,8 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-12`](./gap-reference-catalog.es.md#gt-12) | `--dry-run` en todas las operaciones de escritura | F3 | P1 | S | `COMPLETADO` |
 | [`GT-14`](./gap-reference-catalog.es.md#gt-14) | Webhook saliente al completar un gate | F4 | P1 | S | `COMPLETADO` |
 | [`GT-05`](./gap-reference-catalog.es.md#gt-05) | Transporte Streamable HTTP del SDK MCP | F2 | P1 | M | `COMPLETADO` |
-| [`GT-10`](./gap-reference-catalog.es.md#gt-10) | Validación de contenido del security scan en Fase 4 | F3 | P1 | M | `EN-PROGRESO` |
-| [`GT-11`](./gap-reference-catalog.es.md#gt-11) | Validación de observabilidad y rollback en Fase 5 | F3 | P1 | M | `EN-PROGRESO` |
+| [`GT-10`](./gap-reference-catalog.es.md#gt-10) | Validación de contenido del security scan en Fase 4 | F3 | P1 | M | `COMPLETADO` |
+| [`GT-11`](./gap-reference-catalog.es.md#gt-11) | Validación de observabilidad y rollback en Fase 5 | F3 | P1 | M | `COMPLETADO` |
 | [`GT-17`](./gap-reference-catalog.es.md#gt-17) | Consolidación DI y boundaries estrictos | F5 | P1 | M | `EN-PROGRESO` |
 | [`GT-19`](./gap-reference-catalog.es.md#gt-19) | Migración hexagonal incremental de `core/` | Transversal | P1 | L | `EN-PROGRESO` |
 | [`GT-18`](./gap-reference-catalog.es.md#gt-18) | Publicar `@evolith/smart-cli` en npm | F5 | P1 | S | `PENDIENTE` |

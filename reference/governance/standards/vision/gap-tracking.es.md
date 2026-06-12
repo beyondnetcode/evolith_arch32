@@ -46,7 +46,7 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-16`](./gap-reference-catalog.es.md#gt-16) | Consolidación documental | F5 | P2 | S | `COMPLETADO` |
 | [`GT-27`](./gap-reference-catalog.es.md#gt-27) | Consistencia semántica del tracking canónico | Transversal | P0 | S | `COMPLETADO` |
 
-**Progreso:** 10 / 33 completados · 9 en progreso · 13 pendientes · 1 diferido
+**Progreso:** 12 / 33 completados · 7 en progreso · 13 pendientes · 1 diferido
 
 **Ordenamiento:** criticidad (`P0` → `P1` → `P2`), estado activo (`EN-PROGRESO` → `PENDIENTE` → `DIFERIDO`) y complejidad (`S` → `M` → `L`). Los gaps completados aparecen después del trabajo activo.
 

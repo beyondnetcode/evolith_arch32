@@ -18,9 +18,10 @@
 
 > The design package authorizes documentation and architecture review only. No source-code implementation is authorized until the Architecture Board approves the target designs and required ADRs.
 
-## Monitoring (the only two tracking surfaces)
+## Monitoring and Reference
 
-* [gap-tracking](./gap-tracking.md) — **Gap Tracking Board**: criticality, complexity, and live status per gap
+* [gap-tracking](./gap-tracking.md) — **Gap Tracking Board**: single table with criticality, complexity, and live status per gap
+* [gap-reference-catalog](./gap-reference-catalog.md) — **Gap Reference Catalog**: problem, purpose, evidence, closure criteria, and references linked from the board
 * [maturity-assessment](./maturity-assessment.md) — **Maturity Assessment**: international standards (TOGAF ACMM/WAF), vision alignment, and links to open gaps
 
 ---

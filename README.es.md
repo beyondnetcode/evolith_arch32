@@ -223,7 +223,7 @@ Las dos superficies canónicas de seguimiento de la suite — todo lo pendiente,
 
 | Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
 |---|---|---|---|
-| [Tablero de Gaps](./reference/governance/standards/vision/gap-tracking.es.md) | Tablero único de gaps abiertos: cola de ejecución priorizada (qué terminar a continuación), dashboard completo por estado, y meta y criterio de cierre por gap | Ver al instante qué falta y en qué orden | Tablero de seguimiento |
+| [Tablero de Gaps](./reference/governance/standards/vision/gap-tracking.es.md) | Tabla compacta única para todos los gaps, ordenada por criticidad, estado y complejidad; cada ID abre su referencia detallada | Ver al instante qué falta y abrir la explicación solo cuando sea necesaria | Tablero de seguimiento |
 | [Evaluación de Madurez](./reference/governance/standards/vision/maturity-assessment.es.md) | Evaluación de madurez única: matriz TOGAF ACMM, revisión WAF, auditoría de patrones/anti-patrones y alineación con la visión | Medir qué tan madura está la suite y dónde invertir | Matriz de madurez y auditoría |
 | [Reporte de Cobertura Documental](./COVERAGE_REPORT.md) | Estado de cobertura de la documentación bilingüe | Auditar la completitud documental | Reporte de cobertura |
 

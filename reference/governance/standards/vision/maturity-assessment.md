@@ -136,7 +136,7 @@ The architecture deploys explicit "antibodies" against the six highest-risk anti
 
 ## 7. Product Vision Alignment
 
-Pillar-by-pillar match against the [Product Vision Master](./evolith-product-vision-master.md). Detailed component scores live in the [Baseline Snapshot](./gap-tracking.md#4-baseline-snapshot-absorbed-from-gap-analysis-core-2026-06-09) of the Gap Tracking Board.
+Pillar-by-pillar match against the [Product Vision Master](./evolith-product-vision-master.md). Detailed component scores live in the [Baseline Snapshot](./gap-reference-catalog.md#2-historical-baseline-snapshot) of the Gap Reference Catalog.
 
 | Vision Pillar | Vision Requirement | Alignment | Notes |
 |---|---|:---:|---|

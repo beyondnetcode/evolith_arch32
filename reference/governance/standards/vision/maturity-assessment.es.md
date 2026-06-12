@@ -22,21 +22,25 @@ Esta es la **única evaluación de madurez** de Evolith Core. Mide tres cosas:
 
 ---
 
-## 2. Definición de Niveles de Madurez (TOGAF ACMM)
+## 2. Definición de Niveles de Madurez y Estados con Evidencia
 
-La evaluación usa los 5 niveles estándar del ACMM:
+La evaluación usa los 5 niveles estándar del ACMM (1: Inicial a 5: Optimizante). Sin embargo, para evitar mezclar capacidades diseñadas con las validadas, cada capacidad debe declarar su **Estado basado en Evidencia**:
 
-* **Nivel 1: Inicial (Ad-Hoc)** — Sin arquitectura formal. Procesos caóticos, indocumentados y reactivos.
-* **Nivel 2: En Desarrollo** — Proceso básico de arquitectura. Algunos estándares existen pero sin enforcement consistente.
-* **Nivel 3: Definido** — Arquitectura bien definida, documentada (Modelo C4, ADRs) e integrada al SDLC.
-* **Nivel 4: Gestionado** — Arquitectura medida cuantitativamente (CodeQL, coverage, drift) y gobernada automáticamente.
-* **Nivel 5: Optimizante** — Mejora arquitectónica continua (desacoplamiento progresivo, auto-escalado, drills de caos).
+* **Visionado** (Peso 0.0) — Concepto o estrategia únicamente. Sin diseño formal.
+* **Diseñado** (Peso 0.2) — Architecture Decision Record (ADR) aprobado, sin implementación de código.
+* **Prototipado** (Peso 0.5) — Prueba de concepto o PR en borrador. No apto para producción.
+* **Implementado** (Peso 0.8) — Mergeado en `main` y ejecutable, pero sin métricas operacionales completas o tests automáticos.
+* **Validado** (Peso 1.0) — Pasa todos los quality gates, tests y está activo en CI/CD.
+* **Escalado** (Peso 1.2+) — Multi-región, auto-escalado dinámicamente, o endurecido por chaos engineering.
+
+*Sólo los estados "Validado" o "Escalado" otorgan el puntaje total del Nivel ACMM. Los estados "Diseñado" o "Implementado" imponen una penalización de incertidumbre en el puntaje agregado.*
 
 ---
 
 ## 3. Evaluación de la Arquitectura Runtime (Pilares Well-Architected)
 
 ### Pilar 1: Seguridad y Compliance — **Nivel 4 (Gestionado)**
+* **Estado:** `Validado`
 * **Evidencia:**
   * Pipeline de seguridad zero-cost vía CodeQL ([ADR-0005](../../../architecture/adrs/core/0005-ci-cd-quality-codeql.es.md)).
   * Fijación estricta de versiones de dependencias (lockfiles exactos, sin rangos) con gestión automatizada de vulnerabilidades ([ADR-0009](../../../architecture/adrs/core/0009-strict-dependency-pinning-vulnerability-management.es.md)).
@@ -45,13 +49,15 @@ La evaluación usa los 5 niveles estándar del ACMM:
 * **Camino al Nivel 5:** penetration testing automatizado en CI; rotación dinámica de secretos.
 
 ### Pilar 2: Eficiencia de Performance — **Nivel 4 (Gestionado)**
+* **Estado:** `Implementado` (Requiere validación por load testing)
 * **Evidencia:**
   * Compilación del grafo de auth bajo 5 ms usando Redis ([ADR-0021](../../../architecture/adrs/nodejs/0021-high-performance-auth-and-graph-compilation.es.md)).
   * Estrategia dual-protocolo: REST público, gRPC interno ([ADR-0027](../../../architecture/adrs/nodejs/0027-dual-protocol-rest-grpc-api-gateway.es.md)).
   * Payloads frontend optimizados vía BFF Gateway ([ADR-0008](../../../architecture/adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.es.md)).
 * **Camino al Nivel 5:** auto-escalado serverless; caching predictivo.
 
-### Pilar 3: Confiabilidad y Resiliencia — **Nivel 3 (Definido) → avanzando a 4**
+### Pilar 3: Confiabilidad y Resiliencia — **Nivel 3 (Definido)**
+* **Estado:** `Diseñado` (ADRs aprobados, faltan pruebas de circuit breaker)
 * **Evidencia:**
   * Resiliencia offline de frontend vía React Query ([ADR-0004](../../../architecture/adrs/nodejs/0004-frontend-offline-resilience.es.md)).
   * Circuit breakers (`opossum`) y retries ([ADR-0011](../../../architecture/adrs/core/0011-fault-tolerance-resiliency-patterns.es.md)).
@@ -59,6 +65,7 @@ La evaluación usa los 5 niveles estándar del ACMM:
 * **Camino al Nivel 5:** drills regulares de chaos engineering; multi-región activo-activo.
 
 ### Pilar 4: Excelencia Operacional — **Nivel 4 (Gestionado)**
+* **Estado:** `Validado`
 * **Evidencia:**
   * Builds deterministas de monorepo vía Nx ([ADR-0001](../../../architecture/adrs/core/0001-monorepo-orchestration-nx.es.md)).
   * Telemetría vía stack LGTM y OpenTelemetry ([ADR-0007](../../../architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.es.md)).
@@ -67,6 +74,7 @@ La evaluación usa los 5 niveles estándar del ACMM:
 * **Camino al Nivel 5:** deployments blue/green autónomos; detección de anomalías en logs con IA.
 
 ### Pilar 5: Mantenibilidad y Extensibilidad — **Nivel 4 (Gestionado)**
+* **Estado:** `Validado`
 * **Evidencia:**
   * Boundaries hexagonales desacoplando core de infraestructura ([ADR-0002](../../../architecture/adrs/nodejs/0002-clean-architecture-nestjs.es.md)).
   * Patrones de diseño táctico (monada Result) ([ADR-0019](../../../architecture/adrs/core/0019-tactical-design-patterns-future-proofing.es.md)).
@@ -78,22 +86,27 @@ La evaluación usa los 5 niveles estándar del ACMM:
 ## 4. Evaluación de la Exposición Tecnológica (CLI + MCP)
 
 ### Dimensión 1: Conformidad de Protocolo MCP y Transporte — **Nivel 4 (Gestionado)**
+* **Estado:** `Implementado` (Requiere Streamable HTTP)
 * **Evidencia:** transporte stdio JSON-RPC 2.0; transporte HTTP/SSE mínimo con `/health`, `/message`, `/sse` y auth Bearer/X-API-Key; recuperación de errores endurecida; `mcp:smoke` verifica initialize, discovery y tool calls en cada release.
 * **Camino al Nivel 5:** adoptar el transporte Streamable HTTP oficial del SDK MCP ([GT-05](./gap-reference-catalog.es.md#gt-05)); conformidad de protocolo automatizada contra el changelog de la spec MCP.
 
 ### Dimensión 2: Cobertura de Tests y Quality Gates — **Nivel 4 (Gestionado)**
+* **Estado:** `Validado`
 * **Evidencia:** ~1 369 tests (unit + E2E) verdes; 88.70% statements · 89.80% lines · 76.93% branches (meta ≥75%) · 83.58% functions; teardown limpio sin `--forceExit`.
 * **Camino al Nivel 5:** gates de coverage bloqueantes en CI; coverage de branches ≥80%.
 
 ### Dimensión 3: Completitud de Exposición de Gobernanza — **Nivel 4 (Gestionado)**
+* **Estado:** `Implementado` (Falta integración Tracker)
 * **Evidencia:** 17+ tools MCP, 8 resources, 7 prompts cubriendo validación, agentes, arquitectura, SDLC y priorización; todo cubierto por tests de routing.
 * **Camino al Nivel 5:** evaluación de gates expuesta como tool de evidencia estructurada ([GT-06](./gap-reference-catalog.es.md#gt-06)); hot-reload de rulesets.
 
 ### Dimensión 4: Experiencia de Desarrollador CLI — **Nivel 3 (Definido)**
+* **Estado:** `Validado`
 * **Evidencia:** 13 comandos; shell completion (bash/zsh/fish); paridad documental EN/ES 100%; `mcp:smoke` bajo 5 segundos; métricas DORA calculadas desde historia git real en `gate-status`.
 * **Camino al Nivel 4:** envelope de salida unificado y flags globales ([GT-01](./gap-reference-catalog.es.md#gt-01)); cobertura completa de `--dry-run` ([GT-12](./gap-reference-catalog.es.md#gt-12)); publicación en npm ([GT-18](./gap-reference-catalog.es.md#gt-18)).
 
 ### Dimensión 5: Enforcement Runtime de Gobernanza Federada — **Nivel 3 (Definido)**
+* **Estado:** `Diseñado` (Existen reglas, falta validación de contenido)
 * **Evidencia:** modelo de herencia, contratos de satélites y reglas de boundary Open-Core definidos; `smart-cli validate` ejecutable por cualquier satélite; composite action de CI `evolith-validate` disponible para gates de PR en satélites.
 * **Camino al Nivel 4:** evidencia de phase gates profundizada de chequeos de solo-existencia a validación de contenido/umbral ([GT-08](./gap-reference-catalog.es.md#gt-08)–[GT-11](./gap-reference-catalog.es.md#gt-11)); adapters ACL runtime (alcance Tracker).
 
@@ -101,15 +114,15 @@ La evaluación usa los 5 niveles estándar del ACMM:
 
 ## 5. Matriz de Madurez de Patrones (Catálogo Internacional de Patrones)
 
-| Cluster de Patrón | Patrón Específico | Aplicabilidad | Madurez / Riesgo | Justificación |
+| Cluster de Patrón | Patrón Específico | Aplicabilidad | Estado Basado en Evidencia | Justificación |
 | :--- | :--- | :--- | :--- | :--- |
-| **Integración** | **Strangler Fig** | Core Crítico | 100% Listo | Estrategia fundacional: módulos lógicamente aislados para extracción incremental sin downtime. |
-| **Composición** | **BFF (Backend for Frontend)** | Core Obligatorio | 100% Adoptado | Capas NestJS especializadas por dispositivo ([ADR-0008](../../../architecture/adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.es.md)). |
-| **Confiabilidad** | **Circuit Breaker** | Operacional | 100% Adoptado | Breakers distribuidos compartiendo estado vía Redis ([ADR-0011](../../../architecture/adrs/core/0011-fault-tolerance-resiliency-patterns.es.md)) + healthchecks de edge. |
-| **Base de Datos** | **Schema Per Context** | Core Obligatorio | 100% Adoptado | Previene contaminación de joins cross-dominio ([ADR-0031](../../../architecture/adrs/core/0031-schema-per-context-domain-event-catalog.es.md)). |
-| **Escalabilidad** | **CQRS (Básico)** | Opcional | Roadmap | Read-models solo cuando la contención de escritura lo exija. |
-| **Consistencia** | **Patrón Saga** | Futuro Distribuido | Roadmap | Reservado para transacciones distribuidas de Fase 3+. |
-| **Mensajería** | **Transactional Outbox** | Fase 2+ | Roadmap | Consistencia atómica estado-DB/eventos a escala asíncrona. |
+| **Integración** | **Strangler Fig** | Core Crítico | `Validado` | Estrategia fundacional: módulos lógicamente aislados para extracción incremental sin downtime. |
+| **Composición** | **BFF (Backend for Frontend)** | Core Obligatorio | `Implementado` | Capas NestJS especializadas por dispositivo ([ADR-0008](../../../architecture/adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.es.md)). |
+| **Confiabilidad** | **Circuit Breaker** | Operacional | `Diseñado` | Breakers distribuidos compartiendo estado vía Redis ([ADR-0011](../../../architecture/adrs/core/0011-fault-tolerance-resiliency-patterns.es.md)) + healthchecks de edge. |
+| **Base de Datos** | **Schema Per Context** | Core Obligatorio | `Validado` | Previene contaminación de joins cross-dominio ([ADR-0031](../../../architecture/adrs/core/0031-schema-per-context-domain-event-catalog.es.md)). |
+| **Escalabilidad** | **CQRS (Básico)** | Opcional | `Visionado` | Read-models solo cuando la contención de escritura lo exija. |
+| **Consistencia** | **Patrón Saga** | Futuro Distribuido | `Visionado` | Reservado para transacciones distribuidas de Fase 3+. |
+| **Mensajería** | **Transactional Outbox** | Fase 2+ | `Visionado` | Consistencia atómica estado-DB/eventos a escala asíncrona. |
 
 **Leyenda:** *Adoptado* — completamente diseñado y verificado en specs. *Roadmap* — infraestructura lista, implementación diferida a demanda. *Incompatible* — ninguno identificado actualmente.
 
@@ -138,14 +151,14 @@ La arquitectura despliega "anticuerpos" explícitos contra los seis anti-patrone
 
 Match pilar por pilar contra la [Visión Maestra del Producto](./evolith-product-vision-master.es.md). Los scores detallados por componente viven en el [Snapshot de Línea Base](./gap-reference-catalog.es.md#2-snapshot-histórico-de-línea-base) del Catálogo de Referencia de Gaps.
 
-| Pilar de Visión | Requisito de Visión | Alineación | Notas |
+| Pilar de Visión | Requisito de Visión | Estado Basado en Evidencia | Notas |
 |---|---|:---:|---|
-| **Evolith Core** | Reference Corpus (Constitución): directivas, ADRs, estándares, rulesets, schemas | ~90% | 70+ ADRs, 27 rulesets versionados en 13 categorías, 14 schemas de phase gates. Reglas de integración ACL definidas pero no ejecutadas (alcance Tracker). |
-| **Evolith Tracker** | Orquestador SaaS del SDLC | 0% (por diseño) | Repositorio aparte; la obligación del Core es el contrato CLI/MCP que consumirá — ítems abiertos [GT-01](./gap-reference-catalog.es.md#gt-01)…[GT-06](./gap-reference-catalog.es.md#gt-06), [GT-13](./gap-reference-catalog.es.md#gt-13), [GT-14](./gap-reference-catalog.es.md#gt-14). |
-| **Exposición Tecnológica** | CLI + MCP sirviendo gobernanza como contexto en tiempo real | ~85–90% | Beta funcional: 13 comandos, MCP stdio + HTTP, DORA real, detección de drift, scaffolding hexagonal. Restante: contrato Tracker, upgrade de transporte, publicación npm. |
-| **5 Phase Gates** | Gates auditables con evidencia bloqueante | ~62% | Los 5 gates evalúan; los criterios bloqueantes son chequeos de solo-existencia — validación de contenido/umbral pendiente ([GT-08](./gap-reference-catalog.es.md#gt-08)–[GT-11](./gap-reference-catalog.es.md#gt-11)). |
-| **Gobernanza Federada** | Herencia hub-and-spoke, validación de satélites | ~80% | Reglas de herencia + composite action de CI para satélites entregadas; ACLs runtime diferidas al Tracker. |
-| **Estrategia Open-Core** | Tier gratuito CLI+MCP públicamente disponible | Pendiente | Publicación bloqueada solo por logística de release ([GT-18](./gap-reference-catalog.es.md#gt-18)). |
+| **Evolith Core** | Reference Corpus (Constitución): directivas, ADRs, estándares, rulesets, schemas | `Implementado` | 70+ ADRs, 27 rulesets versionados. Reglas de integración ACL definidas pero no ejecutadas (alcance Tracker). |
+| **Evolith Tracker** | Orquestador SaaS del SDLC | `Visionado` | Repositorio aparte; la obligación del Core es el contrato CLI/MCP que consumirá. |
+| **Exposición Tecnológica** | CLI + MCP sirviendo gobernanza como contexto en tiempo real | `Implementado` | Beta funcional: 13 comandos, MCP stdio + HTTP. Restante: contrato Tracker, upgrade de transporte. |
+| **5 Phase Gates** | Gates auditables con evidencia bloqueante | `Implementado` | Los 5 gates evalúan; los criterios bloqueantes son chequeos de solo-existencia. |
+| **Gobernanza Federada** | Herencia hub-and-spoke, validación de satélites | `Diseñado` | Reglas de herencia + composite action de CI para satélites entregadas; ACLs runtime diferidas. |
+| **Estrategia Open-Core** | Tier gratuito CLI+MCP públicamente disponible | `Prototipado` | Publicación bloqueada solo por logística de release ([GT-18](./gap-reference-catalog.es.md#gt-18)). |
 
 ---
 
@@ -153,22 +166,22 @@ Match pilar por pilar contra la [Visión Maestra del Producto](./evolith-product
 
 ### Score Combinado (TOGAF ACMM)
 
-| Capa | Peso | Score |
-|------|------|-------|
-| Arquitectura Runtime (pilares Well-Architected) | 60% | 3.8 |
-| Exposición Tecnológica (CLI + MCP) | 40% | 3.6 |
+| Capa | Peso | Score (Con Evidencia) |
+|------|------|-----------------------|
+| Arquitectura Runtime (pilares Well-Architected) | 60% | 3.4 ± 0.4 |
+| Exposición Tecnológica (CLI + MCP) | 40% | 3.2 ± 0.4 |
 
-**Madurez Global de Evolith Core: 3.72 / 5.0 (Definido → Gestionado)**
+**Madurez Global de Evolith Core: 3.32 ± 0.4 / 5.0 (Definido → Gestionado)**
 
-El sistema está en transición de completamente documentado (Nivel 3) a gobernado automáticamente (Nivel 4). Los deltas al Nivel 4 en todas las dimensiones se trackean como ítems de gap; los deltas al Nivel 5 son roadmap (chaos engineering, activo-activo, split a Dapr).
+El sistema está en transición de completamente documentado (Nivel 3) a gobernado automáticamente (Nivel 4). Al forzar el respaldo por evidencia estricta, el puntaje incorpora formalmente una **penalidad de incertidumbre** para los elementos que están `Diseñados` o `Implementados` pero carecen de validación automatizada completa.
 
 ### Gaps Abiertos
 
-Todos los gaps abiertos viven exclusivamente en el **[Tablero de Seguimiento de Gaps](./gap-tracking.es.md)** — estado actual: 16 pendientes, 1 diferido, 5 completados de 22 ítems `GT`, más el archivo legado cerrado `G-01…G-27`. El subconjunto relevante para madurez:
+Todos los gaps abiertos viven exclusivamente en el **[Tablero de Seguimiento de Gaps](./gap-tracking.es.md)** — estado actual: 16 pendientes, 1 diferido, 6 completados de 23 ítems `GT`, más el archivo legado cerrado `G-01…G-27`. El subconjunto relevante para madurez:
 
 * **Profundidad de evidencia de gates (P1):** [GT-08](./gap-reference-catalog.es.md#gt-08), [GT-09](./gap-reference-catalog.es.md#gt-09), [GT-10](./gap-reference-catalog.es.md#gt-10), [GT-11](./gap-reference-catalog.es.md#gt-11)
 * **Integridad de arquitectura (P1):** [GT-04](./gap-reference-catalog.es.md#gt-04), [GT-17](./gap-reference-catalog.es.md#gt-17), [GT-19](./gap-reference-catalog.es.md#gt-19)
-* **Exposición y distribución (P1):** [GT-05](./gap-reference-catalog.es.md#gt-05), [GT-12](./gap-reference-catalog.es.md#gt-12), [GT-13](./gap-reference-catalog.es.md#gt-13), [GT-14](./gap-reference-catalog.es.md#gt-14), [GT-18](./gap-reference-catalog.es.md#gt-18)
+* **Exposición y distribución (P1):** [GT-05](./gap-reference-catalog.es.md#gt-05), [GT-12](./gap-reference-catalog.es.md#gt-12), [GT-14](./gap-reference-catalog.es.md#gt-14), [GT-18](./gap-reference-catalog.es.md#gt-18)
 
 ---
 

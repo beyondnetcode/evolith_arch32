@@ -22,21 +22,25 @@ This is the **single maturity assessment** for Evolith Core. It measures three t
 
 ---
 
-## 2. Maturity Levels Definition (TOGAF ACMM)
+## 2. Maturity Levels & Evidence-Backed States
 
-The assessment uses the 5 standard ACMM levels:
+The assessment scores against the 5 standard TOGAF ACMM levels (1: Initial to 5: Optimizing). However, to prevent conflating designed capabilities with validated ones, every capability must declare its **Evidence-Backed State**:
 
-* **Level 1: Initial (Ad-Hoc)** — No formal architecture. IT processes are chaotic, undocumented, and reactive.
-* **Level 2: Under Development** — Basic architecture process in place. Some standards exist but are not consistently enforced.
-* **Level 3: Defined** — Architecture is well-defined, documented (C4 Model, ADRs), and integrated into the SDLC.
-* **Level 4: Managed** — Architecture is quantitatively measured (CodeQL, coverage, drift) and governed automatically.
-* **Level 5: Optimizing** — Continuous architectural improvement (progressive decoupling, auto-scaling, chaos drills).
+* **Visioned** (Weight 0.0) — Concept or strategy only. No formal design.
+* **Designed** (Weight 0.2) — Approved Architecture Decision Record (ADR), but no code implementation.
+* **Prototyped** (Weight 0.5) — Proof of concept or draft PR. Not production-ready.
+* **Implemented** (Weight 0.8) — Merged to `main` and executable, but lacking full operational metrics or automated testing.
+* **Validated** (Weight 1.0) — Passing all quality gates, tests, and active in CI/CD.
+* **Scaled** (Weight 1.2+) — Multi-region, dynamically auto-scaled, or hardened by chaos engineering.
+
+*Only "Validated" or "Scaled" states grant the full ACMM Level score. "Designed" or "Implemented" states impose an uncertainty penalty on the aggregate score.*
 
 ---
 
 ## 3. Runtime Architecture Assessment (Well-Architected Pillars)
 
 ### Pillar 1: Security & Compliance — **Level 4 (Managed)**
+* **State:** `Validated`
 * **Evidence:**
   * Zero-Cost Security Pipeline via CodeQL ([ADR-0005](../../../architecture/adrs/core/0005-ci-cd-quality-codeql.md)).
   * Strict dependency version pinning (exact lockfiles, no ranges) with automated vulnerability management ([ADR-0009](../../../architecture/adrs/core/0009-strict-dependency-pinning-vulnerability-management.md)).
@@ -45,13 +49,15 @@ The assessment uses the 5 standard ACMM levels:
 * **Path to Level 5:** automated penetration testing in CI; dynamic secrets rotation.
 
 ### Pillar 2: Performance Efficiency — **Level 4 (Managed)**
+* **State:** `Implemented` (Needs load-testing validation)
 * **Evidence:**
   * Auth graph compilation under 5 ms using Redis ([ADR-0021](../../../architecture/adrs/nodejs/0021-high-performance-auth-and-graph-compilation.md)).
   * Dual-protocol strategy: REST public, gRPC internal ([ADR-0027](../../../architecture/adrs/nodejs/0027-dual-protocol-rest-grpc-api-gateway.md)).
   * Optimized frontend payloads via BFF Gateway ([ADR-0008](../../../architecture/adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.md)).
 * **Path to Level 5:** serverless auto-scaling; predictive caching.
 
-### Pillar 3: Reliability & Resiliency — **Level 3 (Defined) → moving to 4**
+### Pillar 3: Reliability & Resiliency — **Level 3 (Defined)**
+* **State:** `Designed` (ADRs approved, missing circuit breaker tests)
 * **Evidence:**
   * Frontend offline resilience via React Query ([ADR-0004](../../../architecture/adrs/nodejs/0004-frontend-offline-resilience.md)).
   * Circuit breakers (`opossum`) and retries ([ADR-0011](../../../architecture/adrs/core/0011-fault-tolerance-resiliency-patterns.md)).
@@ -59,6 +65,7 @@ The assessment uses the 5 standard ACMM levels:
 * **Path to Level 5:** regular chaos engineering drills; active-active multi-region.
 
 ### Pillar 4: Operational Excellence — **Level 4 (Managed)**
+* **State:** `Validated`
 * **Evidence:**
   * Deterministic monorepo builds via Nx ([ADR-0001](../../../architecture/adrs/core/0001-monorepo-orchestration-nx.md)).
   * Telemetry via LGTM stack and OpenTelemetry ([ADR-0007](../../../architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md)).
@@ -67,6 +74,7 @@ The assessment uses the 5 standard ACMM levels:
 * **Path to Level 5:** autonomous blue/green deployments; AI-driven log anomaly detection.
 
 ### Pillar 5: Maintainability & Extensibility — **Level 4 (Managed)**
+* **State:** `Validated`
 * **Evidence:**
   * Hexagonal boundaries decoupling core from infrastructure ([ADR-0002](../../../architecture/adrs/nodejs/0002-clean-architecture-nestjs.md)).
   * Tactical design patterns (Result monad) ([ADR-0019](../../../architecture/adrs/core/0019-tactical-design-patterns-future-proofing.md)).
@@ -78,22 +86,27 @@ The assessment uses the 5 standard ACMM levels:
 ## 4. Technological Exposure Assessment (CLI + MCP)
 
 ### Dimension 1: MCP Protocol Conformance & Transport — **Level 4 (Managed)**
+* **State:** `Implemented` (Needs Streamable HTTP)
 * **Evidence:** JSON-RPC 2.0 stdio transport; minimal HTTP/SSE transport with `/health`, `/message`, `/sse` and Bearer/X-API-Key auth; hardened error recovery; `mcp:smoke` verifies initialize, discovery, and tool calls on every release.
 * **Path to Level 5:** adopt the official MCP SDK Streamable HTTP transport ([GT-05](./gap-reference-catalog.md#gt-05)); automated protocol conformance against the MCP spec changelog.
 
 ### Dimension 2: Test Coverage & Quality Gates — **Level 4 (Managed)**
+* **State:** `Validated`
 * **Evidence:** ~1 369 tests (unit + E2E) green; 88.70% statements · 89.80% lines · 76.93% branches (target ≥75%) · 83.58% functions; clean teardown without `--forceExit`.
 * **Path to Level 5:** blocking coverage gates in CI; branch coverage ≥80%.
 
 ### Dimension 3: Governance Exposure Completeness — **Level 4 (Managed)**
+* **State:** `Implemented` (Missing Tracker integration)
 * **Evidence:** 17+ MCP tools, 8 resources, 7 prompts covering validation, agents, architecture, SDLC, and prioritization; all covered by routing tests.
 * **Path to Level 5:** gate evaluation exposed as a structured-evidence tool ([GT-06](./gap-reference-catalog.md#gt-06)); hot-reload of rulesets.
 
 ### Dimension 4: CLI Developer Experience — **Level 3 (Defined)**
+* **State:** `Validated`
 * **Evidence:** 13 commands; shell completion (bash/zsh/fish); 100% EN/ES documentation parity; `mcp:smoke` under 5 seconds; DORA metrics computed from real git history in `gate-status`.
 * **Path to Level 4:** unified output envelope and global flags ([GT-01](./gap-reference-catalog.md#gt-01)); complete `--dry-run` coverage ([GT-12](./gap-reference-catalog.md#gt-12)); npm publication ([GT-18](./gap-reference-catalog.md#gt-18)).
 
 ### Dimension 5: Federated Governance Runtime Enforcement — **Level 3 (Defined)**
+* **State:** `Designed` (Rules exist, content validation missing)
 * **Evidence:** inheritance model, satellite contracts, and Open-Core boundary rules defined; `smart-cli validate` executable by any satellite; CI composite action `evolith-validate` available for satellite PR gates.
 * **Path to Level 4:** phase-gate evidence deepened from existence-only checks to content/threshold validation ([GT-08](./gap-reference-catalog.md#gt-08)–[GT-11](./gap-reference-catalog.md#gt-11)); ACL runtime adapters (Tracker scope).
 
@@ -101,15 +114,15 @@ The assessment uses the 5 standard ACMM levels:
 
 ## 5. Pattern Maturity Matrix (International Pattern Catalog)
 
-| Pattern Cluster | Specific Pattern | Applicability | Maturity / Risk Score | Rationale |
+| Pattern Cluster | Specific Pattern | Applicability | Evidence-Backed State | Rationale |
 | :--- | :--- | :--- | :--- | :--- |
-| **Integration** | **Strangler Fig** | Critical Core | 100% Ready | Foundational strategy: modules logically isolated for incremental extraction without downtime. |
-| **Composition** | **BFF (Backend for Frontend)** | Core Mandatory | 100% Adopted | Specialized NestJS layers per device ([ADR-0008](../../../architecture/adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.md)). |
-| **Reliability** | **Circuit Breaker** | Operational | 100% Adopted | Distributed breakers sharing state via Redis ([ADR-0011](../../../architecture/adrs/core/0011-fault-tolerance-resiliency-patterns.md)) + edge healthchecks. |
-| **Database** | **Schema Per Context** | Core Mandatory | 100% Adopted | Prevents cross-domain join poisoning ([ADR-0031](../../../architecture/adrs/core/0031-schema-per-context-domain-event-catalog.md)). |
-| **Scalability** | **CQRS (Basic)** | Optional | Roadmap | Read-models only when write contention demands it. |
-| **Consistency** | **Saga Pattern** | Distributed Future | Roadmap | Reserved for Phase 3+ distributed transactions. |
-| **Messaging** | **Transactional Outbox** | Phase 2+ | Roadmap | Atomic DB-state/event consistency at async scale. |
+| **Integration** | **Strangler Fig** | Critical Core | `Validated` | Foundational strategy: modules logically isolated for incremental extraction without downtime. |
+| **Composition** | **BFF (Backend for Frontend)** | Core Mandatory | `Implemented` | Specialized NestJS layers per device ([ADR-0008](../../../architecture/adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.md)). |
+| **Reliability** | **Circuit Breaker** | Operational | `Designed` | Distributed breakers sharing state via Redis ([ADR-0011](../../../architecture/adrs/core/0011-fault-tolerance-resiliency-patterns.md)) + edge healthchecks. |
+| **Database** | **Schema Per Context** | Core Mandatory | `Validated` | Prevents cross-domain join poisoning ([ADR-0031](../../../architecture/adrs/core/0031-schema-per-context-domain-event-catalog.md)). |
+| **Scalability** | **CQRS (Basic)** | Optional | `Visioned` | Read-models only when write contention demands it. |
+| **Consistency** | **Saga Pattern** | Distributed Future | `Visioned` | Reserved for Phase 3+ distributed transactions. |
+| **Messaging** | **Transactional Outbox** | Phase 2+ | `Visioned` | Atomic DB-state/event consistency at async scale. |
 
 **Legend:** *Adopted* — fully designed and verified in specs. *Roadmap* — infrastructure-ready, implementation deferred to demand. *Incompatible* — none currently identified.
 
@@ -138,14 +151,14 @@ The architecture deploys explicit "antibodies" against the six highest-risk anti
 
 Pillar-by-pillar match against the [Product Vision Master](./evolith-product-vision-master.md). Detailed component scores live in the [Baseline Snapshot](./gap-reference-catalog.md#2-historical-baseline-snapshot) of the Gap Reference Catalog.
 
-| Vision Pillar | Vision Requirement | Alignment | Notes |
+| Vision Pillar | Vision Requirement | Evidence-Backed State | Notes |
 |---|---|:---:|---|
-| **Evolith Core** | Reference Corpus (Constitution): directives, ADRs, standards, rulesets, schemas | ~90% | 70+ ADRs, 27 versioned rulesets in 13 categories, 14 phase-gate schemas. ACL integration rules defined but not executed (Tracker scope). |
-| **Evolith Tracker** | SaaS SDLC orchestrator | 0% (by design) | Separate repository; Core's obligation is the CLI/MCP contract it will consume — open items [GT-01](./gap-reference-catalog.md#gt-01)…[GT-06](./gap-reference-catalog.md#gt-06), [GT-13](./gap-reference-catalog.md#gt-13), [GT-14](./gap-reference-catalog.md#gt-14). |
-| **Technological Exposure** | CLI + MCP serving governance as real-time context | ~85–90% | Functional beta: 13 commands, MCP stdio + HTTP, real DORA, drift detection, hexagonal scaffolding. Remaining: Tracker contract, transport upgrade, npm publication. |
-| **5 Phase Gates** | Auditable gates with blocking evidence | ~62% | All 5 gates evaluate; blocking criteria are existence-only checks — content/threshold validation pending ([GT-08](./gap-reference-catalog.md#gt-08)–[GT-11](./gap-reference-catalog.md#gt-11)). |
-| **Federated Governance** | Hub-and-spoke inheritance, satellite validation | ~80% | Inheritance rules + satellite CI composite action shipped; runtime ACLs deferred to Tracker. |
-| **Open-Core Strategy** | Free CLI+MCP tier publicly available | Pending | Publication blocked only by release logistics ([GT-18](./gap-reference-catalog.md#gt-18)). |
+| **Evolith Core** | Reference Corpus (Constitution): directives, ADRs, standards, rulesets, schemas | `Implemented` | 70+ ADRs, 27 versioned rulesets. ACL integration rules defined but not executed (Tracker scope). |
+| **Evolith Tracker** | SaaS SDLC orchestrator | `Visioned` | Separate repository; Core's obligation is the CLI/MCP contract it will consume. |
+| **Technological Exposure** | CLI + MCP serving governance as real-time context | `Implemented` | Functional beta: 13 commands, MCP stdio + HTTP. Remaining: Tracker contract, transport upgrade. |
+| **5 Phase Gates** | Auditable gates with blocking evidence | `Implemented` | All 5 gates evaluate; blocking criteria are existence-only checks. |
+| **Federated Governance** | Hub-and-spoke inheritance, satellite validation | `Designed` | Inheritance rules + satellite CI composite action shipped; runtime ACLs deferred. |
+| **Open-Core Strategy** | Free CLI+MCP tier publicly available | `Prototyped` | Publication blocked only by release logistics ([GT-18](./gap-reference-catalog.md#gt-18)). |
 
 ---
 
@@ -153,22 +166,22 @@ Pillar-by-pillar match against the [Product Vision Master](./evolith-product-vis
 
 ### Combined Score (TOGAF ACMM)
 
-| Layer | Weight | Score |
-|-------|--------|-------|
-| Runtime Architecture (Well-Architected pillars) | 60% | 3.8 |
-| Technological Exposure (CLI + MCP) | 40% | 3.6 |
+| Layer | Weight | Score (Evidence-Backed) |
+|-------|--------|-------------------------|
+| Runtime Architecture (Well-Architected pillars) | 60% | 3.4 ± 0.4 |
+| Technological Exposure (CLI + MCP) | 40% | 3.2 ± 0.4 |
 
-**Overall Evolith Core Maturity: 3.72 / 5.0 (Defined → Managed)**
+**Overall Evolith Core Maturity: 3.32 ± 0.4 / 5.0 (Defined → Managed)**
 
-The system is transitioning from fully documented (Level 3) to automatically governed (Level 4). The deltas to Level 4 across all dimensions are tracked as gap items; the deltas to Level 5 are roadmap (chaos engineering, active-active, Dapr split).
+The system is transitioning from fully documented (Level 3) to automatically governed (Level 4). By enforcing strict evidence backing, the score formally incorporates an **uncertainty penalty** for items that are `Designed` or `Implemented` but lack full automated validation.
 
 ### Open Gaps
 
-All open gaps live exclusively on the **[Gap Tracking Board](./gap-tracking.md)** — current state: 16 pending, 1 deferred, 5 done out of 22 `GT` items, plus the closed legacy `G-01…G-27` archive. The maturity-relevant subset:
+All open gaps live exclusively on the **[Gap Tracking Board](./gap-tracking.md)** — current state: 16 pending, 1 deferred, 6 done out of 23 `GT` items, plus the closed legacy `G-01…G-27` archive. The maturity-relevant subset:
 
 * **Gate evidence depth (P1):** [GT-08](./gap-reference-catalog.md#gt-08), [GT-09](./gap-reference-catalog.md#gt-09), [GT-10](./gap-reference-catalog.md#gt-10), [GT-11](./gap-reference-catalog.md#gt-11)
 * **Architecture integrity (P1):** [GT-04](./gap-reference-catalog.md#gt-04), [GT-17](./gap-reference-catalog.md#gt-17), [GT-19](./gap-reference-catalog.md#gt-19)
-* **Exposure & distribution (P1):** [GT-05](./gap-reference-catalog.md#gt-05), [GT-12](./gap-reference-catalog.md#gt-12), [GT-13](./gap-reference-catalog.md#gt-13), [GT-14](./gap-reference-catalog.md#gt-14), [GT-18](./gap-reference-catalog.md#gt-18)
+* **Exposure & distribution (P1):** [GT-05](./gap-reference-catalog.md#gt-05), [GT-12](./gap-reference-catalog.md#gt-12), [GT-14](./gap-reference-catalog.md#gt-14), [GT-18](./gap-reference-catalog.md#gt-18)
 
 ---
 

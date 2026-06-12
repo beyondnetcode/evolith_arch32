@@ -18,9 +18,10 @@
 
 > Este paquete autoriza únicamente revisión documental y arquitectónica. No se autoriza implementación de código hasta que el Architecture Board apruebe los diseños objetivo y los ADRs requeridos.
 
-## Monitoreo (las únicas dos superficies de seguimiento)
+## Monitoreo y Referencia
 
-* [gap-tracking](./gap-tracking.es.md) — **Tablero de Seguimiento de Gaps**: criticidad, complejidad y estado vivo por gap
+* [gap-tracking](./gap-tracking.es.md) — **Tablero de Seguimiento de Gaps**: tabla única con criticidad, complejidad y estado vivo por gap
+* [gap-reference-catalog](./gap-reference-catalog.es.md) — **Catálogo de Referencia de Gaps**: problema, propósito, evidencia, criterios de cierre y referencias enlazados desde el tablero
 * [maturity-assessment](./maturity-assessment.es.md) — **Evaluación de Madurez**: estándares internacionales (TOGAF ACMM/WAF), alineación con la visión y enlaces a gaps abiertos
 
 ---

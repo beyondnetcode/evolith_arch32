@@ -136,7 +136,7 @@ La arquitectura despliega "anticuerpos" explícitos contra los seis anti-patrone
 
 ## 7. Alineación con la Visión del Producto
 
-Match pilar por pilar contra la [Visión Maestra del Producto](./evolith-product-vision-master.es.md). Los scores detallados por componente viven en el [Snapshot de Línea Base](./gap-tracking.es.md#4-snapshot-de-línea-base-absorbido-de-gap-analysis-core-2026-06-09) del Tablero de Gaps.
+Match pilar por pilar contra la [Visión Maestra del Producto](./evolith-product-vision-master.es.md). Los scores detallados por componente viven en el [Snapshot de Línea Base](./gap-reference-catalog.es.md#2-snapshot-histórico-de-línea-base) del Catálogo de Referencia de Gaps.
 
 | Pilar de Visión | Requisito de Visión | Alineación | Notas |
 |---|---|:---:|---|

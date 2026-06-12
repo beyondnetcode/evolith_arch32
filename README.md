@@ -223,7 +223,7 @@ The two canonical tracking surfaces for the suite — everything pending, audite
 
 | Link (URL) | Description (brief explanation) | Goal / Objective | Typification (category or type) |
 |---|---|---|---|
-| [Gap Tracking Board](./reference/governance/standards/vision/gap-tracking.md) | Single board for every open gap: prioritized execution queue (what to finish next), full dashboard by status, and per-gap goal and closure criteria | See instantly what remains and in which order | Tracking board |
+| [Gap Tracking Board](./reference/governance/standards/vision/gap-tracking.md) | Single compact table for every gap, ordered by criticality, status, and complexity; each ID opens its detailed reference | See instantly what remains and open the explanation only when needed | Tracking board |
 | [Maturity Assessment](./reference/governance/standards/vision/maturity-assessment.md) | Single maturity evaluation: TOGAF ACMM matrix, WAF review, patterns/anti-patterns audit, and vision alignment | Measure how mature the suite is and where to invest | Maturity matrix and audit |
 | [Documentation Coverage Report](./COVERAGE_REPORT.md) | Bilingual documentation coverage status | Audit documentation completeness | Coverage report |
 

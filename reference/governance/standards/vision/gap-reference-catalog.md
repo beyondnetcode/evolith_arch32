@@ -293,16 +293,6 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 ### Product Proof
 
-#### GT-30
-
-**Title:** Minimum Tracker governance kernel
-
-- **Gap:** Tracker is a detailed target design but not an executable product; the audited public repository currently contains documentation and no source implementation.
-- **Purpose:** Implement the smallest authoritative runtime that can own process, evidence, gate decisions, approvals, exceptions, and audit state.
-- **Current evidence / example:** The technical interfaces define tenant-aware contracts and aggregate ownership, but there is no service that persists a process, accepts normalized evidence, or records an immutable `GateDecision`.
-- **Done when:** an executable Tracker service authenticates a tenant, persists one product process, evaluates and stores evidence lineage, records an immutable gate decision, and exposes its audit trail through an approved interface.
-- **References:** [Tracker Technical Interfaces](./sdlc-tracker-technical-interfaces.md) · [Governed Composition Target Design](./evolith-governed-composition-target-design.md)
-
 #### GT-31
 
 **Title:** Minimum Provable Product vertical slice

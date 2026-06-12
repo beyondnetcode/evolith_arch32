@@ -293,16 +293,6 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 ### Prueba de Producto
 
-#### GT-30
-
-**Título:** Kernel mínimo de gobernanza del Tracker
-
-- **Gap:** Tracker es un target design detallado, pero no un producto ejecutable; el repositorio público auditado contiene actualmente documentación y ningún código fuente de implementación.
-- **Propósito:** Implementar el runtime autoritativo más pequeño capaz de poseer proceso, evidencia, decisiones de gate, aprobaciones, excepciones y estado de auditoría.
-- **Evidencia actual / ejemplo:** Las interfaces técnicas definen contratos tenant-aware y ownership de agregados, pero no existe un servicio que persista un proceso, acepte evidencia normalizada o registre un `GateDecision` inmutable.
-- **Cierre cuando:** un servicio Tracker ejecutable autentica un tenant, persiste un proceso de producto, evalúa y almacena el linaje de evidencia, registra una decisión de gate inmutable y expone su audit trail mediante una interfaz aprobada.
-- **Referencias:** [Interfaces Técnicas del Tracker](./sdlc-tracker-technical-interfaces.es.md) · [Target Design de Composición Gobernada](./evolith-governed-composition-target-design.es.md)
-
 #### GT-31
 
 **Título:** Vertical slice del Producto Mínimo Comprobable

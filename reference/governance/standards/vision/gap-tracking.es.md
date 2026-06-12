@@ -9,44 +9,49 @@
 
 Este tablero es la única fuente de verdad para prioridad y estado de los gaps. Selecciona un ID para abrir la descripción del problema, propósito, evidencia, criterios de cierre y referencias.
 
+<a name="gt-01"></a><a name="gt-02"></a><a name="gt-03"></a><a name="gt-04"></a><a name="gt-05"></a><a name="gt-06"></a><a name="gt-07"></a><a name="gt-08"></a><a name="gt-09"></a>
+<a name="gt-10"></a><a name="gt-11"></a><a name="gt-12"></a><a name="gt-13"></a><a name="gt-14"></a><a name="gt-15"></a><a name="gt-16"></a><a name="gt-17"></a><a name="gt-18"></a>
+<a name="gt-19"></a><a name="gt-20"></a><a name="gt-21"></a><a name="gt-22"></a><a name="gt-23"></a><a name="gt-24"></a><a name="gt-25"></a><a name="gt-26"></a><a name="gt-27"></a>
+<a name="gt-28"></a><a name="gt-29"></a><a name="gt-30"></a><a name="gt-31"></a><a name="gt-32"></a><a name="gt-33"></a><a name="gt-34"></a><a name="gt-35"></a><a name="gt-36"></a>
+
 | ID | Gap | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|
-| <a name="gt-28"></a>[GT-28](./gap-reference-catalog.es.md#gt-28) | Restaurar baseline de build, tests y smoke del CLI | F0 | P0 | M | EN-PROGRESO |
-| <a name="gt-29"></a>[GT-29](./gap-reference-catalog.es.md#gt-29) | Paridad de ejecución de reglas Native/OPA | F1 | P0 | L | EN-PROGRESO |
-| <a name="gt-32"></a>[GT-32](./gap-reference-catalog.es.md#gt-32) | Validación de hipótesis de cliente y comprador | Producto | P0 | M | PENDIENTE |
-| <a name="gt-30"></a>[GT-30](./gap-reference-catalog.es.md#gt-30) | Kernel mínimo de gobernanza Tracker | Producto | P0 | L | PENDIENTE |
-| <a name="gt-31"></a>[GT-31](./gap-reference-catalog.es.md#gt-31) | Vertical slice del Producto Mínimo Comprobable | Producto | P0 | L | PENDIENTE |
-| <a name="gt-07"></a>[GT-07](./gap-reference-catalog.es.md#gt-07) | Smoke de release para evaluación de gates MCP | F2 | P1 | S | EN-PROGRESO |
-| <a name="gt-08"></a>[GT-08](./gap-reference-catalog.es.md#gt-08) | Validación real del registro ADR en Fase 2 | F3 | P1 | S | EN-PROGRESO |
-| <a name="gt-09"></a>[GT-09](./gap-reference-catalog.es.md#gt-09) | Enforcement real de coverage en Fase 3 | F3 | P1 | S | EN-PROGRESO |
-| <a name="gt-12"></a>[GT-12](./gap-reference-catalog.es.md#gt-12) | `--dry-run` en todas las operaciones de escritura | F3 | P1 | S | EN-PROGRESO |
-| <a name="gt-14"></a>[GT-14](./gap-reference-catalog.es.md#gt-14) | Webhook saliente al completar un gate | F4 | P1 | S | EN-PROGRESO |
-| <a name="gt-05"></a>[GT-05](./gap-reference-catalog.es.md#gt-05) | Transporte Streamable HTTP del SDK MCP | F2 | P1 | M | EN-PROGRESO |
-| <a name="gt-10"></a>[GT-10](./gap-reference-catalog.es.md#gt-10) | Validación de contenido del security scan en Fase 4 | F3 | P1 | M | EN-PROGRESO |
-| <a name="gt-11"></a>[GT-11](./gap-reference-catalog.es.md#gt-11) | Validación de observabilidad y rollback en Fase 5 | F3 | P1 | M | EN-PROGRESO |
-| <a name="gt-17"></a>[GT-17](./gap-reference-catalog.es.md#gt-17) | Consolidación DI y boundaries estrictos | F5 | P1 | M | EN-PROGRESO |
-| <a name="gt-19"></a>[GT-19](./gap-reference-catalog.es.md#gt-19) | Migración hexagonal incremental de `core/` | Transversal | P1 | L | EN-PROGRESO |
-| <a name="gt-18"></a>[GT-18](./gap-reference-catalog.es.md#gt-18) | Publicar `@evolith/smart-cli` en npm | F5 | P1 | S | PENDIENTE |
-| <a name="gt-34"></a>[GT-34](./gap-reference-catalog.es.md#gt-34) | Repriorización del roadmap alrededor de la prueba de gobernanza | Producto | P1 | S | PENDIENTE |
-| <a name="gt-13"></a>[GT-13](./gap-reference-catalog.es.md#gt-13) | Ejecutor de propuestas `evolith-phase-advance` | F4 | P1 | M | PENDIENTE |
-| <a name="gt-33"></a>[GT-33](./gap-reference-catalog.es.md#gt-33) | Scoring de madurez basado en evidencia | Producto | P1 | M | PENDIENTE |
-| <a name="gt-35"></a>[GT-35](./gap-reference-catalog.es.md#gt-35) | Inventarios automáticos y validación del tracking | Transversal | P1 | M | PENDIENTE |
-| <a name="gt-20"></a>[GT-20](./gap-reference-catalog.es.md#gt-20) | Backfill de ADRs al estándar de autoría | Transversal | P1 | L | PENDIENTE |
-| <a name="gt-22"></a>[GT-22](./gap-reference-catalog.es.md#gt-22) | Esquema de unicidad de IDs ADR | Transversal | P2 | S | PENDIENTE |
-| <a name="gt-26"></a>[GT-26](./gap-reference-catalog.es.md#gt-26) | Playbook de Zero-Downtime Release | Transversal | P2 | S | PENDIENTE |
-| <a name="gt-21"></a>[GT-21](./gap-reference-catalog.es.md#gt-21) | Revisión de ubicación de ADRs Core tool-céntricos | Transversal | P2 | M | PENDIENTE |
-| <a name="gt-24"></a>[GT-24](./gap-reference-catalog.es.md#gt-24) | Ejecutar migraciones documentales declaradas | Transversal | P2 | M | PENDIENTE |
-| <a name="gt-23"></a>[GT-23](./gap-reference-catalog.es.md#gt-23) | Backfill de traducciones españolas | Transversal | P2 | L | PENDIENTE |
-| <a name="gt-25"></a>[GT-25](./gap-reference-catalog.es.md#gt-25) | Primeros perfiles de proveedor | Transversal | P2 | L | PENDIENTE |
-| <a name="gt-36"></a>[GT-36](./gap-reference-catalog.es.md#gt-36) | Cobertura lingüística de reglas machine-readable | Transversal | P2 | L | PENDIENTE |
-| <a name="gt-15"></a>[GT-15](./gap-reference-catalog.es.md#gt-15) | Endpoint de chatbox con sesión | F4 | P2 | L | DIFERIDO |
-| <a name="gt-01"></a>[GT-01](./gap-reference-catalog.es.md#gt-01) | ADR de contrato unificado | F0 | P0 | S | COMPLETADO |
-| <a name="gt-02"></a>[GT-02](./gap-reference-catalog.es.md#gt-02) | `GateEvidence` modelado en la capa de dominio | F1 | P0 | M | COMPLETADO |
-| <a name="gt-03"></a>[GT-03](./gap-reference-catalog.es.md#gt-03) | `EvaluateGateUseCase` y comando `gate evaluate` | F1 | P0 | M | COMPLETADO |
-| <a name="gt-06"></a>[GT-06](./gap-reference-catalog.es.md#gt-06) | Tool MCP `evolith-gate-evaluate` | F2 | P0 | M | COMPLETADO |
-| <a name="gt-04"></a>[GT-04](./gap-reference-catalog.es.md#gt-04) | Eliminar service locator del dominio | F1 | P1 | S | COMPLETADO |
-| <a name="gt-16"></a>[GT-16](./gap-reference-catalog.es.md#gt-16) | Consolidación documental | F5 | P2 | S | COMPLETADO |
-| <a name="gt-27"></a>[GT-27](./gap-reference-catalog.es.md#gt-27) | Consistencia semántica del tracking canónico | Transversal | P0 | S | COMPLETADO |
+| [GT-28](./gap-reference-catalog.es.md#gt-28) | Restaurar baseline de build, tests y smoke del CLI | F0 | P0 | M | EN-PROGRESO |
+| [GT-29](./gap-reference-catalog.es.md#gt-29) | Paridad de ejecución de reglas Native/OPA | F1 | P0 | L | EN-PROGRESO |
+| [GT-32](./gap-reference-catalog.es.md#gt-32) | Validación de hipótesis de cliente y comprador | Producto | P0 | M | PENDIENTE |
+| [GT-30](./gap-reference-catalog.es.md#gt-30) | Kernel mínimo de gobernanza Tracker | Producto | P0 | L | PENDIENTE |
+| [GT-31](./gap-reference-catalog.es.md#gt-31) | Vertical slice del Producto Mínimo Comprobable | Producto | P0 | L | PENDIENTE |
+| [GT-07](./gap-reference-catalog.es.md#gt-07) | Smoke de release para evaluación de gates MCP | F2 | P1 | S | EN-PROGRESO |
+| [GT-08](./gap-reference-catalog.es.md#gt-08) | Validación real del registro ADR en Fase 2 | F3 | P1 | S | EN-PROGRESO |
+| [GT-09](./gap-reference-catalog.es.md#gt-09) | Enforcement real de coverage en Fase 3 | F3 | P1 | S | EN-PROGRESO |
+| [GT-12](./gap-reference-catalog.es.md#gt-12) | `--dry-run` en todas las operaciones de escritura | F3 | P1 | S | EN-PROGRESO |
+| [GT-14](./gap-reference-catalog.es.md#gt-14) | Webhook saliente al completar un gate | F4 | P1 | S | EN-PROGRESO |
+| [GT-05](./gap-reference-catalog.es.md#gt-05) | Transporte Streamable HTTP del SDK MCP | F2 | P1 | M | EN-PROGRESO |
+| [GT-10](./gap-reference-catalog.es.md#gt-10) | Validación de contenido del security scan en Fase 4 | F3 | P1 | M | EN-PROGRESO |
+| [GT-11](./gap-reference-catalog.es.md#gt-11) | Validación de observabilidad y rollback en Fase 5 | F3 | P1 | M | EN-PROGRESO |
+| [GT-17](./gap-reference-catalog.es.md#gt-17) | Consolidación DI y boundaries estrictos | F5 | P1 | M | EN-PROGRESO |
+| [GT-19](./gap-reference-catalog.es.md#gt-19) | Migración hexagonal incremental de `core/` | Transversal | P1 | L | EN-PROGRESO |
+| [GT-18](./gap-reference-catalog.es.md#gt-18) | Publicar `@evolith/smart-cli` en npm | F5 | P1 | S | PENDIENTE |
+| [GT-34](./gap-reference-catalog.es.md#gt-34) | Repriorización del roadmap alrededor de la prueba de gobernanza | Producto | P1 | S | PENDIENTE |
+| [GT-13](./gap-reference-catalog.es.md#gt-13) | Ejecutor de propuestas `evolith-phase-advance` | F4 | P1 | M | PENDIENTE |
+| [GT-33](./gap-reference-catalog.es.md#gt-33) | Scoring de madurez basado en evidencia | Producto | P1 | M | PENDIENTE |
+| [GT-35](./gap-reference-catalog.es.md#gt-35) | Inventarios automáticos y validación del tracking | Transversal | P1 | M | PENDIENTE |
+| [GT-20](./gap-reference-catalog.es.md#gt-20) | Backfill de ADRs al estándar de autoría | Transversal | P1 | L | PENDIENTE |
+| [GT-22](./gap-reference-catalog.es.md#gt-22) | Esquema de unicidad de IDs ADR | Transversal | P2 | S | PENDIENTE |
+| [GT-26](./gap-reference-catalog.es.md#gt-26) | Playbook de Zero-Downtime Release | Transversal | P2 | S | PENDIENTE |
+| [GT-21](./gap-reference-catalog.es.md#gt-21) | Revisión de ubicación de ADRs Core tool-céntricos | Transversal | P2 | M | PENDIENTE |
+| [GT-24](./gap-reference-catalog.es.md#gt-24) | Ejecutar migraciones documentales declaradas | Transversal | P2 | M | PENDIENTE |
+| [GT-23](./gap-reference-catalog.es.md#gt-23) | Backfill de traducciones españolas | Transversal | P2 | L | PENDIENTE |
+| [GT-25](./gap-reference-catalog.es.md#gt-25) | Primeros perfiles de proveedor | Transversal | P2 | L | PENDIENTE |
+| [GT-36](./gap-reference-catalog.es.md#gt-36) | Cobertura lingüística de reglas machine-readable | Transversal | P2 | L | PENDIENTE |
+| [GT-15](./gap-reference-catalog.es.md#gt-15) | Endpoint de chatbox con sesión | F4 | P2 | L | DIFERIDO |
+| [GT-01](./gap-reference-catalog.es.md#gt-01) | ADR de contrato unificado | F0 | P0 | S | COMPLETADO |
+| [GT-02](./gap-reference-catalog.es.md#gt-02) | `GateEvidence` modelado en la capa de dominio | F1 | P0 | M | COMPLETADO |
+| [GT-03](./gap-reference-catalog.es.md#gt-03) | `EvaluateGateUseCase` y comando `gate evaluate` | F1 | P0 | M | COMPLETADO |
+| [GT-06](./gap-reference-catalog.es.md#gt-06) | Tool MCP `evolith-gate-evaluate` | F2 | P0 | M | COMPLETADO |
+| [GT-04](./gap-reference-catalog.es.md#gt-04) | Eliminar service locator del dominio | F1 | P1 | S | COMPLETADO |
+| [GT-16](./gap-reference-catalog.es.md#gt-16) | Consolidación documental | F5 | P2 | S | COMPLETADO |
+| [GT-27](./gap-reference-catalog.es.md#gt-27) | Consistencia semántica del tracking canónico | Transversal | P0 | S | COMPLETADO |
 
 **Progreso:** 7 / 36 completados · 12 en progreso · 16 pendientes · 1 diferido
 

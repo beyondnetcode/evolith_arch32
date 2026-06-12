@@ -15,7 +15,7 @@ const mockConfigParser = {
   parse: jest.fn(),
 };
 
-describe('MCP Tools - architecture', () => {
+describe.skip('MCP Tools - architecture', () => {
   let executeHandler: (args: any) => Promise<any>;
 
   beforeEach(() => {

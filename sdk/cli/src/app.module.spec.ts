@@ -145,6 +145,7 @@ describe('AppModule', () => {
   it('should compile the module', async () => {
     const module = await Test.createTestingModule({
       imports: [AppModule],
+      providers: [{ provide: 'IFileSystem', useValue: {} }, { provide: 'ILogger', useValue: {} }, { provide: 'IConfigParser', useValue: {} }]
     }).compile();
 
     expect(module).toBeDefined();
@@ -153,6 +154,7 @@ describe('AppModule', () => {
   it('should provide InitCommand', async () => {
     const module = await Test.createTestingModule({
       imports: [AppModule],
+      providers: [{ provide: 'IFileSystem', useValue: {} }, { provide: 'ILogger', useValue: {} }, { provide: 'IConfigParser', useValue: {} }]
     }).compile();
 
     const command = module.get(InitCommand);
@@ -163,6 +165,7 @@ describe('AppModule', () => {
   it('should provide AgentsCommand', async () => {
     const module = await Test.createTestingModule({
       imports: [AppModule],
+      providers: [{ provide: 'IFileSystem', useValue: {} }, { provide: 'ILogger', useValue: {} }, { provide: 'IConfigParser', useValue: {} }]
     }).compile();
 
     const command = module.get(AgentsCommand);
@@ -173,6 +176,7 @@ describe('AppModule', () => {
   it('should provide ValidateCommand', async () => {
     const module = await Test.createTestingModule({
       imports: [AppModule],
+      providers: [{ provide: 'IFileSystem', useValue: {} }, { provide: 'ILogger', useValue: {} }, { provide: 'IConfigParser', useValue: {} }]
     }).compile();
 
     const command = module.get(ValidateCommand);
@@ -183,6 +187,7 @@ describe('AppModule', () => {
   it('should provide DocsCommand', async () => {
     const module = await Test.createTestingModule({
       imports: [AppModule],
+      providers: [{ provide: 'IFileSystem', useValue: {} }, { provide: 'ILogger', useValue: {} }, { provide: 'IConfigParser', useValue: {} }]
     }).compile();
 
     const command = module.get(DocsCommand);
@@ -193,6 +198,7 @@ describe('AppModule', () => {
   it('should provide UpgradeCommand', async () => {
     const module = await Test.createTestingModule({
       imports: [AppModule],
+      providers: [{ provide: 'IFileSystem', useValue: {} }, { provide: 'ILogger', useValue: {} }, { provide: 'IConfigParser', useValue: {} }]
     }).compile();
 
     const command = module.get(UpgradeCommand);
@@ -203,6 +209,7 @@ describe('AppModule', () => {
   it('should provide McpServeCommand', async () => {
     const module = await Test.createTestingModule({
       imports: [AppModule],
+      providers: [{ provide: 'IFileSystem', useValue: {} }, { provide: 'ILogger', useValue: {} }, { provide: 'IConfigParser', useValue: {} }]
     }).compile();
 
     const command = module.get(McpServeCommand);
@@ -213,6 +220,7 @@ describe('AppModule', () => {
   it('should provide ConfigService', async () => {
     const module = await Test.createTestingModule({
       imports: [AppModule],
+      providers: [{ provide: 'IFileSystem', useValue: {} }, { provide: 'ILogger', useValue: {} }, { provide: 'IConfigParser', useValue: {} }]
     }).compile();
 
     const service = module.get(ConfigService);
@@ -223,6 +231,7 @@ describe('AppModule', () => {
   it('should provide FileManagerService', async () => {
     const module = await Test.createTestingModule({
       imports: [AppModule],
+      providers: [{ provide: 'IFileSystem', useValue: {} }, { provide: 'ILogger', useValue: {} }, { provide: 'IConfigParser', useValue: {} }]
     }).compile();
 
     const service = module.get(FileManagerService);
@@ -233,6 +242,7 @@ describe('AppModule', () => {
   it('should provide SyncService', async () => {
     const module = await Test.createTestingModule({
       imports: [AppModule],
+      providers: [{ provide: 'IFileSystem', useValue: {} }, { provide: 'ILogger', useValue: {} }, { provide: 'IConfigParser', useValue: {} }]
     }).compile();
 
     const service = module.get(SyncService);
@@ -243,6 +253,7 @@ describe('AppModule', () => {
   it('should provide WatcherService', async () => {
     const module = await Test.createTestingModule({
       imports: [AppModule],
+      providers: [{ provide: 'IFileSystem', useValue: {} }, { provide: 'ILogger', useValue: {} }, { provide: 'IConfigParser', useValue: {} }]
     }).compile();
 
     const service = module.get(WatcherService);
@@ -253,6 +264,7 @@ describe('AppModule', () => {
   it('should provide SdlcCommand', async () => {
     const module = await Test.createTestingModule({
       imports: [AppModule],
+      providers: [{ provide: 'IFileSystem', useValue: {} }, { provide: 'ILogger', useValue: {} }, { provide: 'IConfigParser', useValue: {} }]
     }).compile();
 
     const command = module.get(SdlcCommand);
@@ -263,6 +275,7 @@ describe('AppModule', () => {
   it('should provide HandoffCommand', async () => {
     const module = await Test.createTestingModule({
       imports: [AppModule],
+      providers: [{ provide: 'IFileSystem', useValue: {} }, { provide: 'ILogger', useValue: {} }, { provide: 'IConfigParser', useValue: {} }]
     }).compile();
 
     const command = module.get(HandoffCommand);
@@ -273,6 +286,7 @@ describe('AppModule', () => {
   it('should provide GenerateDomainCommand', async () => {
     const module = await Test.createTestingModule({
       imports: [AppModule],
+      providers: [{ provide: 'IFileSystem', useValue: {} }, { provide: 'ILogger', useValue: {} }, { provide: 'IConfigParser', useValue: {} }]
     }).compile();
 
     const command = module.get(GenerateDomainCommand);
@@ -283,6 +297,7 @@ describe('AppModule', () => {
   it('should provide ScaffoldCommand', async () => {
     const module = await Test.createTestingModule({
       imports: [AppModule],
+      providers: [{ provide: 'IFileSystem', useValue: {} }, { provide: 'ILogger', useValue: {} }, { provide: 'IConfigParser', useValue: {} }]
     }).compile();
 
     const command = module.get(ScaffoldCommand);
@@ -293,6 +308,7 @@ describe('AppModule', () => {
   it('should provide ADRCommand', async () => {
     const module = await Test.createTestingModule({
       imports: [AppModule],
+      providers: [{ provide: 'IFileSystem', useValue: {} }, { provide: 'ILogger', useValue: {} }, { provide: 'IConfigParser', useValue: {} }]
     }).compile();
 
     const command = module.get(ADRCommand);
@@ -303,6 +319,7 @@ describe('AppModule', () => {
   it('should provide StandardsCommand', async () => {
     const module = await Test.createTestingModule({
       imports: [AppModule],
+      providers: [{ provide: 'IFileSystem', useValue: {} }, { provide: 'ILogger', useValue: {} }, { provide: 'IConfigParser', useValue: {} }]
     }).compile();
 
     const command = module.get(StandardsCommand);
@@ -313,6 +330,7 @@ describe('AppModule', () => {
   it('should provide CompletionCommand', async () => {
     const module = await Test.createTestingModule({
       imports: [AppModule],
+      providers: [{ provide: 'IFileSystem', useValue: {} }, { provide: 'ILogger', useValue: {} }, { provide: 'IConfigParser', useValue: {} }]
     }).compile();
 
     const command = module.get(CompletionCommand);
@@ -323,6 +341,7 @@ describe('AppModule', () => {
   it('should provide HistoryCommand', async () => {
     const module = await Test.createTestingModule({
       imports: [AppModule],
+      providers: [{ provide: 'IFileSystem', useValue: {} }, { provide: 'ILogger', useValue: {} }, { provide: 'IConfigParser', useValue: {} }]
     }).compile();
 
     const command = module.get(HistoryCommand);
@@ -333,6 +352,7 @@ describe('AppModule', () => {
   it('should provide DriftCommand', async () => {
     const module = await Test.createTestingModule({
       imports: [AppModule],
+      providers: [{ provide: 'IFileSystem', useValue: {} }, { provide: 'ILogger', useValue: {} }, { provide: 'IConfigParser', useValue: {} }]
     }).compile();
 
     const command = module.get(DriftCommand);
@@ -343,6 +363,7 @@ describe('AppModule', () => {
   it('should be a valid NestJS module', async () => {
     const module = await Test.createTestingModule({
       imports: [AppModule],
+      providers: [{ provide: 'IFileSystem', useValue: {} }, { provide: 'ILogger', useValue: {} }, { provide: 'IConfigParser', useValue: {} }]
     }).compile();
 
     expect(module).toBeDefined();

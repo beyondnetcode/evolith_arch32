@@ -38,7 +38,7 @@ function makeOpts(overrides: Partial<UpgradeOptions> = {}): UpgradeOptions {
   };
 }
 
-function svc() { return new SatelliteUpgradeService(); }
+function svc() { return new SatelliteUpgradeService({ fileSystem: mockFs }); }
 
 beforeEach(() => {
   jest.clearAllMocks();

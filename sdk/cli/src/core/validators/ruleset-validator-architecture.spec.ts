@@ -1,5 +1,5 @@
 import { RulesetValidatorService, ArchitectureValidationResult } from './ruleset-validator.service';
-import { getContainer, resetContainer, IFileSystemProvider, IFileSystem } from '../abstractions';
+import { IFileSystem } from '../abstractions';
 
 const createMockFileSystem = (overrides?: Partial<IFileSystem>): IFileSystem => {
   const mock = {
@@ -52,8 +52,7 @@ describe('RulesetValidatorService - Architecture Validation', () => {
   let mockFs: IFileSystem;
 
   beforeEach(() => {
-    resetContainer();
-    jest.clearAllMocks();
+        jest.clearAllMocks();
 
     mockFs = createMockFileSystem({
       readFile: jest.fn().mockImplementation((p: string) => {
@@ -66,14 +65,12 @@ describe('RulesetValidatorService - Architecture Validation', () => {
     const mockProvider: IFileSystemProvider = {
       createFileSystem: () => mockFs,
     };
-    getContainer().setFileSystemProvider(mockProvider);
-
-    service = new RulesetValidatorService();
+    
+    service = new RulesetValidatorService({ fileSystem: mockFs });
   });
 
   afterEach(() => {
-    resetContainer();
-  });
+      });
 
   describe('validateArchitecture', () => {
     it('should validate F1 architecture level', async () => {

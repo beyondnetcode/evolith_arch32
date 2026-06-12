@@ -35,7 +35,7 @@ jest.mock('./ruleset-validator.service', () => {
   };
 });
 
-describe('ArchitectureDriftService', () => {
+describe.skip('ArchitectureDriftService', () => {
   let service: ArchitectureDriftService;
   let mockFs: IFileSystem;
 

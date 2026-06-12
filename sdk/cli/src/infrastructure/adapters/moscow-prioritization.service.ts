@@ -31,8 +31,8 @@ export interface MoscowAnalysis {
 export class MoscowPrioritizationService {
   private readonly fs: IFileSystem;
 
-  constructor() {
-    this.fs = new NodeFileSystemProvider().createFileSystem();
+  constructor(options?: { fileSystem?: any; logger?: any }) {
+    this.fs = options?.fileSystem ?? new NodeFileSystemProvider().createFileSystem();
   }
 
   async createAnalysis(repoPath: string, phase: string, items: Omit<MoscowItem, 'id'>[]): Promise<MoscowAnalysis> {

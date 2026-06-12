@@ -53,10 +53,10 @@ export class ArchitectureDriftService {
   private readonly logger: ILogger;
   private readonly validator: RulesetValidatorService;
 
-  constructor(corePath?: string) {
-    this.fs = new NodeFileSystemProvider().createFileSystem();
-    this.logger = new NestLoggerProvider().createLogger('ArchitectureDriftService');
-    this.validator = new RulesetValidatorService();
+  constructor(corePath?: string, options?: { fileSystem?: any; logger?: any; validator?: any }) {
+    this.fs = options?.fileSystem ?? new NodeFileSystemProvider().createFileSystem();
+    this.logger = options?.logger ?? new NestLoggerProvider().createLogger('ArchitectureDriftService');
+    this.validator = options?.validator ?? new RulesetValidatorService();
   }
 
   async detectDrift(options: DriftDetectionOptions): Promise<DriftReport> {

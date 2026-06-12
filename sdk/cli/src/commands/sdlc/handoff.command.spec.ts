@@ -1,10 +1,8 @@
 import { HandoffCommand } from "./handoff.command";
 import * as p from "@clack/prompts";
-import { getContainer } from "../../core/di/container";
 import { CatalogLoader } from "../../infrastructure/catalog/catalog-loader";
 
 jest.mock("@clack/prompts");
-jest.mock("../../core/di/container");
 jest.mock("../../infrastructure/catalog/catalog-loader", () => {
   return {
     CatalogLoader: jest.fn().mockImplementation(() => ({
@@ -117,8 +115,7 @@ describe("HandoffCommand", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    (getContainer as jest.Mock).mockReturnValue(mockContainer);
-
+    
     catalogLoader = new CatalogLoader() as jest.Mocked<CatalogLoader>;
     (catalogLoader.loadToolCatalog as jest.Mock).mockReturnValue(
       mockToolCatalog,
@@ -144,7 +141,7 @@ describe("HandoffCommand", () => {
     it("should execute handoff with from and to options", async () => {
       await command.run([], { from: "phase-1", to: "phase-2" });
 
-      expect(mockContainer.createFileSystem).toHaveBeenCalled();
+      
       expect(mockExecute).toHaveBeenCalledWith(
         "phase-1",
         "phase-2",

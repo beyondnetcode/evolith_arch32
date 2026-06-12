@@ -1,5 +1,5 @@
 import { PhaseGateValidatorService, PhaseGatesRuleset, GateValidationResult } from './phase-gate-validator.service';
-import { getContainer, resetContainer, IFileSystemProvider, IFileSystem } from '../abstractions';
+import { IFileSystem } from '../abstractions';
 
 const createMockFileSystem = (overrides?: Partial<IFileSystem>): IFileSystem => {
   const mock = {
@@ -121,8 +121,7 @@ describe('PhaseGateValidatorService', () => {
   let mockFs: IFileSystem;
 
   beforeEach(() => {
-    resetContainer();
-    jest.clearAllMocks();
+        jest.clearAllMocks();
 
     mockFs = createMockFileSystem({
       readFile: jest.fn().mockImplementation((p: string) => {
@@ -134,17 +133,12 @@ describe('PhaseGateValidatorService', () => {
         return Promise.resolve(JSON.stringify({})); // default valid JSON
       }),
     });
-    const mockProvider: IFileSystemProvider = {
-      createFileSystem: () => mockFs,
-    };
-    getContainer().setFileSystemProvider(mockProvider);
-
-    service = new PhaseGateValidatorService('/core');
+        
+    service = new PhaseGateValidatorService('/core', { fileSystem: mockFs });
   });
 
   afterEach(() => {
-    resetContainer();
-  });
+      });
 
   describe('loadRuleset', () => {
     it('should load and cache the ruleset from file', async () => {

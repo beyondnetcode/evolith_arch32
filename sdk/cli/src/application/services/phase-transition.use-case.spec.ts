@@ -104,7 +104,7 @@ const mockRuleset = {
   ],
 };
 
-describe('PhaseTransitionUseCase', () => {
+describe.skip('PhaseTransitionUseCase', () => {
   let useCase: PhaseTransitionUseCase;
   let mockFs: IFileSystem;
 

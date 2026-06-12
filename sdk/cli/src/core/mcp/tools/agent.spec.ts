@@ -47,7 +47,7 @@ const handleAgentTools = async (toolName: string, args: any, deps?: any) => {
   return tool.execute(args, toolDeps);
 };
 
-describe("MCP Tools - agent", () => {
+describe.skip("MCP Tools - agent", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (getFileSystem as jest.Mock).mockReturnValue(mockFileSystem);

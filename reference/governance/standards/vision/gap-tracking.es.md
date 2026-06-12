@@ -12,7 +12,6 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 
 | ID | Gap | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|
-| [`GT-15`](./gap-reference-catalog.es.md#gt-15) | Endpoint de chatbox con sesión | F4 | P2 | L | `DIFERIDO` |
 | [`GT-23`](./gap-reference-catalog.es.md#gt-23) | Backfill de traducciones españolas | Transversal | P2 | L | `PENDIENTE` |
 | [`GT-24`](./gap-reference-catalog.es.md#gt-24) | Ejecutar migraciones documentales declaradas | Transversal | P2 | M | `PENDIENTE` |
 | [`GT-25`](./gap-reference-catalog.es.md#gt-25) | Primeros perfiles de proveedor | Transversal | P2 | L | `PENDIENTE` |
@@ -31,6 +30,7 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-12`](./gap-reference-catalog.es.md#gt-12) | `--dry-run` en todas las operaciones de escritura | F3 | P1 | S | `COMPLETADO` |
 | [`GT-13`](./gap-reference-catalog.es.md#gt-13) | Ejecutor de propuestas `evolith-phase-advance` | F4 | P1 | M | `COMPLETADO` |
 | [`GT-14`](./gap-reference-catalog.es.md#gt-14) | Webhook saliente al completar un gate | F4 | P1 | S | `COMPLETADO` |
+| [`GT-15`](./gap-reference-catalog.es.md#gt-15) | Endpoint de chatbox con sesión | F4 | P2 | L | `COMPLETADO` |
 | [`GT-16`](./gap-reference-catalog.es.md#gt-16) | Consolidación documental | F5 | P2 | S | `COMPLETADO` |
 | [`GT-17`](./gap-reference-catalog.es.md#gt-17) | Consolidación DI y boundaries estrictos | F5 | P1 | M | `COMPLETADO` |
 | [`GT-18`](./gap-reference-catalog.es.md#gt-18) | Publicar `@evolith/smart-cli` en npm | F5 | P1 | S | `COMPLETADO` |
@@ -46,7 +46,7 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-34`](./gap-reference-catalog.es.md#gt-34) | Repriorización del roadmap alrededor de la prueba de gobernanza | Producto | P1 | S | `COMPLETADO` |
 | [`GT-35`](./gap-reference-catalog.es.md#gt-35) | Inventarios automáticos y validación del tracking | Transversal | P1 | M | `COMPLETADO` |
 
-**Progreso:** 28 / 33 completados · 0 en progreso · 4 pendientes · 1 diferido
+**Progreso:** 29 / 33 completados · 0 en progreso · 4 pendientes · 0 diferidos
 
 **Ordenamiento:** criticidad (`P0` → `P1` → `P2`), estado activo (`EN-PROGRESO` → `PENDIENTE` → `DIFERIDO`) y complejidad (`S` → `M` → `L`). Los gaps completados aparecen después del trabajo activo.
 

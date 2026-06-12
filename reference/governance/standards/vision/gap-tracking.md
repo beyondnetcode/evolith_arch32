@@ -12,7 +12,6 @@ This board is the single source of truth for gap priority and status. Select a g
 
 | ID | Gap | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|
-| [`GT-15`](./gap-reference-catalog.md#gt-15) | Session-aware chatbox endpoint | F4 | P2 | L | `DEFERRED` |
 | [`GT-23`](./gap-reference-catalog.md#gt-23) | Spanish translation backfill | Cross | P2 | L | `PENDING` |
 | [`GT-24`](./gap-reference-catalog.md#gt-24) | Execute declared documentation migrations | Cross | P2 | M | `PENDING` |
 | [`GT-25`](./gap-reference-catalog.md#gt-25) | First provider profiles | Cross | P2 | L | `PENDING` |
@@ -31,6 +30,7 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-12`](./gap-reference-catalog.md#gt-12) | `--dry-run` on all write operations | F3 | P1 | S | `DONE` |
 | [`GT-13`](./gap-reference-catalog.md#gt-13) | `evolith-phase-advance` proposal runner | F4 | P1 | M | `DONE` |
 | [`GT-14`](./gap-reference-catalog.md#gt-14) | Outbound webhook on gate completion | F4 | P1 | S | `DONE` |
+| [`GT-15`](./gap-reference-catalog.md#gt-15) | Session-aware chatbox endpoint | F4 | P2 | L | `DONE` |
 | [`GT-16`](./gap-reference-catalog.md#gt-16) | Documentation consolidation | F5 | P2 | S | `DONE` |
 | [`GT-17`](./gap-reference-catalog.md#gt-17) | DI consolidation and strict boundaries | F5 | P1 | M | `DONE` |
 | [`GT-18`](./gap-reference-catalog.md#gt-18) | Publish `@evolith/smart-cli` to npm | F5 | P1 | S | `DONE` |
@@ -46,7 +46,7 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-34`](./gap-reference-catalog.md#gt-34) | Roadmap reprioritization around governance proof | Product | P1 | S | `DONE` |
 | [`GT-35`](./gap-reference-catalog.md#gt-35) | Automated inventories and tracking validation | Cross | P1 | M | `DONE` |
 
-**Progress:** 28 / 33 done · 0 in progress · 4 pending · 1 deferred
+**Progress:** 29 / 33 done · 0 in progress · 4 pending · 0 deferred
 
 **Ordering:** criticality (`P0` → `P1` → `P2`), active status (`IN-PROGRESS` → `PENDING` → `DEFERRED`), then complexity (`S` → `M` → `L`). Completed gaps follow active work.
 

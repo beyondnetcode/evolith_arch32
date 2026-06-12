@@ -22,45 +22,71 @@ Nuestra visión consiste en construir un ecosistema donde la **Infraestructura e
 ```mermaid
 timeline
  title Hoja de Ruta Arquitectónica (Evolución Temporal)
- Fase 1 : The Lean Foundation (MVP) : Monolito Modular : Contratos API First : Seguridad en Capa de Aplicación (Agnóstico)
- Fase 2 : Scale and Decoupling : Extracción de Servicios Críticos : Activación Híbrida RLS : Observabilidad Total e I/O Optimizada
- Fase 3 : North Star : Agnosticismo Multi-Cloud : Arquitectura Dirigida por Eventos : Red Zero Trust y Cumplimiento Automatizado
+ Fase 1 : Baseline : Fundamentos y Estándares : CLI Scaffolding
+ Fase 2 : Governance Kernel : MCP SDK : Validación por Phase-gates
+ Fase 3 : Vertical Slice : Validación Core : Referencia Aplicada (UMS)
+ Fase 4 : Controlled Pilot : Adopción Satélite : Feedback Directo
+ Fase 5 : Scale : Multi-Cloud & EDA : Abstracción Zero Trust
 ```
 
-### Fase 1: The Lean Foundation (MVP) - Corto Plazo
-**Enfoque:** Time-to-Market con Integridad de Dominio.
+### Fase 1: Baseline (Corto Plazo)
+**Enfoque:** Fundamentos, reglas y estructuras modulares.
 
 | Dominio | Estrategia |
 | :--- | :--- |
-| **Arquitectura** | Monolito Modular con límites estrictos ([ADR-0047](../../../architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.es.md)). |
-| **Persistencia** | Instancia única relacional. Seguridad forzada en Capa de Aplicación (`APP_AGNOSTIC`). |
-| **Foco Crítico** | Definición férrea de Contratos API First y validación exhaustiva de las reglas de negocio core sin ruido de infraestructura. |
+| **Arquitectura** | Monolito Modular con límites estrictamente forzados. |
+| **Persistencia** | Instancia única relacional. Seguridad forzada en Capa de Aplicación. |
+| **Entregables** | CLI scaffolding, guías arquitectónicas agnósticas. |
 
-### Fase 2: Scale and Decoupling - Mediano Plazo
-**Enfoque:** Eficiencia Operativa y Segregación.
-
-| Dominio | Estrategia |
-| :--- | :--- |
-| **Arquitectura** | Extracción selectiva de servicios críticos mediante gatillos cuantitativos ([ADR-0045](../../../architecture/adrs/core/0045-microservice-extraction-readiness-criteria.es.md)). |
-| **Persistencia** | Activación del Modo Híbrido. Implementación de RLS Nativo (`INFRA_NATIVE`) en producción para optimización de latencia, manteniendo el fallback en código funcional para tests. |
-| **Foco Crítico** | Observabilidad Completa (Tracing distribuido + Logs estructurados) y optimización radical de la latencia en I/O. |
-
-### Fase 3: North Star (Resilience and Sovereignty) - Largo Plazo
-**Enfoque:** Agnosticismo Total y Soberanía de Datos.
+### Fase 2: Governance Kernel (Corto Plazo)
+**Enfoque:** Validación automatizada y mecanismos de gobernanza.
 
 | Dominio | Estrategia |
 | :--- | :--- |
-| **Arquitectura** | Orquestación Multi-Cloud plena y Arquitectura Dirigida por Eventos (EDA) robusta. |
-| **Persistencia** | Migración dinámica de proveedores en tiempo récord (< 24h). Abstracción de persistencia total. |
-| **Foco Crítico** | Red Zero Trust absoluta y Compliance-as-Code automatizado en cada Pull Request. |
+| **Arquitectura** | Implementación de chequeo automático de reglas y validación vía SDK MCP. |
+| **Entregables** | Estándares interpretables por máquina (OPA/Rego), lógica de Phase-gates. |
+
+### Fase 3: Vertical Slice (Mediano Plazo)
+**Enfoque:** Demostración del kernel de gobernanza en una ruta de producto completa.
+
+| Dominio | Estrategia |
+| :--- | :--- |
+| **Arquitectura** | Aplicación de la base teórica a un producto real y desplegable (`ums`). |
+| **Foco Crítico** | Validación del Producto Mínimo Probable (MPP). |
+
+### Fase 4: Controlled Pilot (Mediano Plazo)
+**Enfoque:** Prueba de eficacia en escenarios del mundo real.
+
+| Dominio | Estrategia |
+| :--- | :--- |
+| **Arquitectura** | Adopción guiada por repositorios satélite seleccionados. |
+| **Foco Crítico** | Adaptación de estándares en función de retroalimentación empírica y evidencia de carga. |
+
+### Fase 5: Scale (Largo Plazo)
+**Enfoque:** Eficiencia operativa, procesamiento distribuido y abstracción.
+
+| Dominio | Estrategia |
+| :--- | :--- |
+| **Arquitectura** | Extracción selectiva de servicios críticos activada por métricas cuantitativas. |
+| **Foco Crítico** | Escalamiento de la infraestructura, introducción de abstracción de plataforma amplia. |
 
 ---
 
-## 3. Tablero de Observabilidad y KPIs (Métricas Arquitectónicas)
+## 3. Tecnologías Diferidas y Triggers de Evidencia
+
+Para secuenciar la inversión de manera responsable, la opcionalidad costosa se retrasa hasta que la evidencia explícita lo justifique. El roadmap impone los siguientes disparadores (triggers):
+
+- **Arquitectura Distribuida (Dapr / EDA):** Activado por un volumen de eventos de dominio cruzado que excede los umbrales de procesamiento (>X eventos/seg) o el escalado organizacional a >2 equipos de dominio independientes.
+- **Abstracción Multi-Cloud:** Activado por una evaluación de riesgo explícita del proveedor o un mandato regulatorio de cumplimiento (no por optimización técnica prematura).
+- **Red Zero-Trust (Full Mesh):** Activado por implementaciones a escala más allá de un único clúster Kubernetes o un requerimiento de auditoría de seguridad documentado.
+
+---
+
+## 4. Tablero de Observabilidad y KPIs (Métricas Arquitectónicas)
 
 Para asegurar la deriva arquitectónica cero, evaluamos cada fase con el siguiente set de métricas deterministas.
 
-### 3.1 índice de Agnosticismo ($PI$)
+### 4.1 Índice de Agnosticismo ($PI$)
 Mide el acoplamiento saludable vs. contaminación de infraestructura.
 
 ```math
@@ -73,7 +99,7 @@ PI = \frac{\text{Líneas de Código (Dominio + Aplicación)}}{\text{Líneas de C
  * Código de Persistencia/Infra: 2,000 líneas.
  * **PI Actual:** $10,000 / 2,000 = 5.0$ (Estado Sano). Si baja a 2.0, se requiere auditoría urgente.
 
-### Jump to: 3.2 Delta de Rendimiento de Seguridad ($\Delta P$)
+### 4.2 Delta de Rendimiento de Seguridad ($\Delta P$)
 Impacto de latencia comparativo entre el filtrado por software vs. el filtrado nativo por hardware.
 
 ```math
@@ -86,13 +112,13 @@ Impacto de latencia comparativo entre el filtrado por software vs. el filtrado n
  * Modo Agnóstico App: 45ms de respuesta.
  * **Impacto:** Aumento de 5ms (+12.5%). **PASA EL CONTROL** (Menor al 15%).
 
-### 3.3 Tiempo de Recuperación y Migración (MTTM)
+### 4.3 Tiempo de Recuperación y Migración (MTTM)
 Esfuerzo real necesario para reemplazar por completo un adaptador de infraestructura crítica.
 
 * **Meta:** Menor a 24 horas hombre para servicios críticos en la Fase 3.
 * **Ejemplo Práctico:** Un equipo de 3 desarrolladores debe ser capaz de migrar de TypeORM a Drizzle en una sola jornada laboral (8h x 3 = 24h) gracias al desacoplamiento de la interfaz `IRepositoryPort`.
 
-### 3.4 Ratio de Deuda Técnica Planeada ($RTD$)
+### 4.4 Ratio de Deuda Técnica Planeada ($RTD$)
 Garantía de salud del código base contra la presión de producto.
 
 ```math
@@ -104,7 +130,7 @@ RTD = \frac{\text{Tickets de Refactorización}}{\text{Tickets de Funcionalidades
 
 ---
 
-## 4. Manifiesto de Principios e Innegociables
+## 5. Manifiesto de Principios e Innegociables
 
 Para evitar el caos evolutivo, se establecen las siguientes prohibiciones técnicas:
 
@@ -114,7 +140,7 @@ Para evitar el caos evolutivo, se establecen las siguientes prohibiciones técni
 
 ---
 
-## 5. Estrategia de Compliance y Recuperación
+## 6. Estrategia de Compliance y Recuperación
 
 ### Mapeo de Controles ISO 27001 por Entorno
 

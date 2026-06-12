@@ -22,45 +22,71 @@ Our core vision states that **Infrastructure is an Implementation Detail**, asse
 ```mermaid
 timeline
  title Architectural Stage Roadmap (Timeline Overview)
- Phase 1 : The Lean Foundation (MVP) : Modular Monolith : API-First Contracts : App-Side Security (Agnostic)
- Phase 2 : Scale and Decoupling : Critical Service Extraction : Hybrid RLS Activation : Full Observability and Optimized I/O
- Phase 3 : North Star : Multi-Cloud Agnosticism : Event-Driven Architecture : Zero Trust Network and Auto Compliance
+ Phase 1 : Baseline : Foundation & Standards : CLI Scaffolding
+ Phase 2 : Governance Kernel : MCP SDK : Phase-gates Validation
+ Phase 3 : Vertical Slice : Core Validation : Applied Reference (UMS)
+ Phase 4 : Controlled Pilot : Satellite Adoption : Direct Feedback
+ Phase 5 : Scale : Multi-Cloud & EDA : Zero Trust Abstraction
 ```
 
-### Phase 1: The Lean Foundation (MVP) - Short Term
-**Focus:** Time-to-Market with Uncompromised Domain Integrity.
+### Phase 1: Baseline (Short Term)
+**Focus:** Foundation, rules, and modular structures.
 
 | Dimension | Strategy |
 | :--- | :--- |
-| **Architecture** | Modular Monolith with strongly enforced boundaries ([ADR-0047](../../../architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.md)). |
-| **Persistence** | Single relational instance. Application-side enforced security (`APP_AGNOSTIC`). |
-| **Critical Focus** | Rigid API-First contract definition and comprehensive validation of core business rules without infrastructure noise. |
+| **Architecture** | Modular Monolith with strongly enforced boundaries. |
+| **Persistence** | Single relational instance. Application-side enforced security. |
+| **Deliverables** | CLI scaffolding, agnostic architectural guidelines. |
 
-### Phase 2: Scale and Decoupling - Medium Term
-**Focus:** Operational Efficiency and Component Segregation.
-
-| Dimension | Strategy |
-| :--- | :--- |
-| **Architecture** | Selective extraction of critical components triggered by quantitative metrics ([ADR-0045](../../../architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md)). |
-| **Persistence** | Activation of Hybrid Mode. Deploying native RLS (`INFRA_NATIVE`) to production for database speed, maintaining safe codebase fallbacks for test harness suites. |
-| **Critical Focus** | Comprehensive Observability (distributed tracing + structured logs) and aggressive reduction of I/O persistence latency. |
-
-### Phase 3: North Star (Resilience and Sovereignty) - Long Term
-**Focus:** Total Cloud Agnosticism and Hardened Data Sovereignty.
+### Phase 2: Governance Kernel (Short Term)
+**Focus:** Automated validation and governance mechanics.
 
 | Dimension | Strategy |
 | :--- | :--- |
-| **Architecture** | Full Multi-Cloud orchestration layered atop a robust Event-Driven Architecture (EDA). |
-| **Persistence** | Ability to switch cloud persistence vendors in record time (< 24h). Total abstraction. |
-| **Critical Focus** | Absolute Zero-Trust networking and automated Compliance-as-Code baked into every CI Pipeline pull request. |
+| **Architecture** | Implementation of automated rule-checking and validation via MCP SDK. |
+| **Deliverables** | Machine-readable standards (OPA/Rego), Phase-gates logic. |
+
+### Phase 3: Vertical Slice (Medium Term)
+**Focus:** Demonstrating the governance kernel on a complete product path.
+
+| Dimension | Strategy |
+| :--- | :--- |
+| **Architecture** | Applying the theoretical baseline to a real, deployable product (`ums`). |
+| **Critical Focus** | Validating the Minimum Provable Product (MPP). |
+
+### Phase 4: Controlled Pilot (Medium Term)
+**Focus:** Proving efficacy in real-world scenarios.
+
+| Dimension | Strategy |
+| :--- | :--- |
+| **Architecture** | Guided adoption by select satellite repositories. |
+| **Critical Focus** | Adapting standards based on empirical feedback and load evidence. |
+
+### Phase 5: Scale (Long Term)
+**Focus:** Operational efficiency, distributed processing, and abstraction.
+
+| Dimension | Strategy |
+| :--- | :--- |
+| **Architecture** | Selective extraction of critical services triggered by quantitative metrics. |
+| **Critical Focus** | Scaling the infrastructure, introducing broad platform abstraction. |
 
 ---
 
-## 3. Observability Dashboard and KPIs (Architectural Metrics)
+## 3. Deferred Technologies and Evidence Triggers
+
+To sequence investment responsibly, expensive optionality is delayed until explicit evidence justifies it. The roadmap enforces these triggers:
+
+- **Distributed Architecture (Dapr / EDA):** Triggered by cross-domain event volume exceeding processing thresholds (>X events/sec) or the organizational scaling of >2 independent domain teams.
+- **Multi-Cloud Abstraction:** Triggered by an explicit provider risk assessment or a specific compliance/regulatory mandate (not premature technical optimization).
+- **Zero-Trust Network (Full Mesh):** Triggered by scaling deployments beyond a single Kubernetes cluster or a documented security audit requirement.
+
+---
+
+## 4. Observability Dashboard and KPIs (Architectural Metrics)
 
 To ensure zero structural drift over time, every phase is measured via strict deterministic equations.
 
-### 3.1 Agnosticism Index ($PI$)
+### 4.1 Agnosticism Index ($PI$)
 Quantifies healthy decoupling versus logic leaks into messy infrastructure layers.
 
 ```math
@@ -73,7 +99,7 @@ PI = \frac{\text{Lines of Code (Domain + App)}}{\text{Lines of Code (Infrastruct
  * Persistence/Infra Code: 2,000 lines.
  * **Current PI:** $10,000 / 2,000 = 5.0$ (Healthy state). If dropped to 2.0, urgent isolation review is flagged.
 
-### 3.2 Security Performance Delta ($\Delta P$)
+### 4.2 Security Performance Delta ($\Delta P$)
 Tracks the relative latency delta observed between application-tier and hardware-enforced containment.
 
 ```math
@@ -86,13 +112,13 @@ Tracks the relative latency delta observed between application-tier and hardware
  * Agnostic App Mode: 45ms read response.
  * **Impact:** 5ms increase (+12.5%). **PASSED** (Threshold below 15%).
 
-### 3.3 Mean Time to Migration (MTTM)
+### 4.3 Mean Time to Migration (MTTM)
 Objective effort assessed in transitioning or hot-swapping a foundational infrastructural component.
 
 * **Goal:** Under 24 man-hours total elapsed effort for primary services by entering Phase 3.
 * **Practical Example:** A concentrated team of 3 staff engineers executes a full adapter swap from TypeORM to Drizzle within a single shared 8-hour workday (8h x 3 = 24h total effort).
 
-### 3.4 Planned Technical Debt Ratio ($RTD$)
+### 4.4 Planned Technical Debt Ratio ($RTD$)
 Protects code core stability against aggressive external product feature velocity.
 
 ```math
@@ -104,7 +130,7 @@ RTD = \frac{\text{Refactoring Tickets}}{\text{Feature Tickets}}
 
 ---
 
-## 4. Principle Manifesto and Non-Negotiables
+## 5. Principle Manifesto and Non-Negotiables
 
 To preempt evolutionary decay, the subsequent barriers are implemented globally:
 
@@ -114,7 +140,7 @@ To preempt evolutionary decay, the subsequent barriers are implemented globally:
 
 ---
 
-## 5. Compliance and Operational Resiliency Strategy
+## 6. Compliance and Operational Resiliency Strategy
 
 ### Mapping ISO 27001 Controls per Environment
 

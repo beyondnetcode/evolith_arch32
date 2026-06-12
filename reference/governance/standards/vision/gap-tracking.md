@@ -12,7 +12,6 @@ This board is the single source of truth for gap priority and status. Select a g
 
 | ID | Gap | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|
-| [`GT-25`](./gap-reference-catalog.md#gt-25) | First provider profiles | Cross | P2 | L | `PENDING` |
 | [`GT-36`](./gap-reference-catalog.md#gt-36) | Machine-readable rules language coverage | Cross | P2 | L | `PENDING` |
 | [`GT-01`](./gap-reference-catalog.md#gt-01) | Unified contract ADR | F0 | P0 | S | `DONE` |
 | [`GT-02`](./gap-reference-catalog.md#gt-02) | `GateEvidence` modeled in the domain layer | F1 | P0 | M | `DONE` |
@@ -45,8 +44,9 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-34`](./gap-reference-catalog.md#gt-34) | Roadmap reprioritization around governance proof | Product | P1 | S | `DONE` |
 | [`GT-35`](./gap-reference-catalog.md#gt-35) | Automated inventories and tracking validation | Cross | P1 | M | `DONE` |
 | [`GT-24`](./gap-reference-catalog.md#gt-24) | Execute declared documentation migrations | Cross | P2 | M | `DONE` |
+| [`GT-25`](./gap-reference-catalog.md#gt-25) | First provider profiles | Cross | P2 | L | `DONE` |
 
-**Progress:** 31 / 33 done · 0 in progress · 2 pending · 0 deferred
+**Progress:** 32 / 33 done · 0 in progress · 1 pending · 0 deferred
 
 **Ordering:** criticality (`P0` → `P1` → `P2`), active status (`IN-PROGRESS` → `PENDING` → `DEFERRED`), then complexity (`S` → `M` → `L`). Completed gaps follow active work.
 

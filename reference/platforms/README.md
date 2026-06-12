@@ -30,12 +30,12 @@ Planned provider categories, ordered by how early a product needs them (work man
 |---|---|---|---|---|
 | `work-management/` | Jira, Azure DevOps, GitHub Issues, Linear, and alternatives | Abstract work-management providers | Planned category | No |
 | `agents/` | Claude, OpenAI, Gemini, local models, and future providers | Abstract AI agent providers | Planned category | No |
-| `observability/` | Langfuse, OpenTelemetry, and alternatives | Abstract observability providers | Planned category | No |
+| [`observability/`](./observability/otel-stack-profile.md) | Langfuse, OpenTelemetry, and alternatives | Abstract observability providers | Active category | No |
 | `analytics/` | Apache Superset, Grafana, Power BI, and alternatives | Abstract analytics providers | Planned category | No |
-| `scm/` | GitHub, GitLab, Azure Repos, Bitbucket | Abstract source-control providers | Planned category | No |
-| `ci-cd/` | GitHub Actions, Azure Pipelines, GitLab CI, Jenkins, Tekton | Abstract CI/CD providers | Planned category | No |
+| [`scm/`](./scm/github-profile.md) | GitHub, GitLab, Azure Repos, Bitbucket | Abstract source-control providers | Active category | No |
+| [`ci-cd/`](./ci-cd/github-actions-profile.md) | GitHub Actions, Azure Pipelines, GitLab CI, Jenkins, Tekton | Abstract CI/CD providers | Active category | No |
 | `testing/` | Framework-specific test providers | Abstract testing providers | Planned category | No |
-| `security/` | CodeQL, Trivy, Snyk, Semgrep, and alternatives | Abstract security-scanning providers | Planned category | No |
+| [`security/`](./security/codeql-trivy-profile.md) | CodeQL, Trivy, Snyk, Semgrep, and alternatives | Abstract security-scanning providers | Active category | No |
 | `deployment/` | Kubernetes, cloud, serverless, VM, and on-premise profiles | Abstract deployment targets | Planned category | No |
 | `collaboration/` | Email, Teams, Slack, and alternatives | Abstract collaboration providers | Planned category | No |
 

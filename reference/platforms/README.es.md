@@ -30,12 +30,12 @@ Categorías de proveedores planificadas, ordenadas según qué tan temprano las 
 |---|---|---|---|---|
 | `work-management/` | Jira, Azure DevOps, GitHub Issues, Linear y alternativas | Abstraer proveedores de gestión de trabajo | Categoría planificada | No |
 | `agents/` | Claude, OpenAI, Gemini, modelos locales y futuros proveedores | Abstraer proveedores de agentes IA | Categoría planificada | No |
-| `observability/` | Langfuse, OpenTelemetry y alternativas | Abstraer proveedores de observabilidad | Categoría planificada | No |
+| [`observability/`](./observability/otel-stack-profile.es.md) | Langfuse, OpenTelemetry y alternativas | Abstraer proveedores de observabilidad | Categoría activa | No |
 | `analytics/` | Apache Superset, Grafana, Power BI y alternativas | Abstraer proveedores de analítica | Categoría planificada | No |
-| `scm/` | GitHub, GitLab, Azure Repos y Bitbucket | Abstraer proveedores de control de código | Categoría planificada | No |
-| `ci-cd/` | GitHub Actions, Azure Pipelines, GitLab CI, Jenkins y Tekton | Abstraer proveedores de CI/CD | Categoría planificada | No |
+| [`scm/`](./scm/github-profile.es.md) | GitHub, GitLab, Azure Repos y Bitbucket | Abstraer proveedores de control de código | Categoría activa | No |
+| [`ci-cd/`](./ci-cd/github-actions-profile.es.md) | GitHub Actions, Azure Pipelines, GitLab CI, Jenkins y Tekton | Abstraer proveedores de CI/CD | Categoría activa | No |
 | `testing/` | Proveedores específicos de frameworks de pruebas | Abstraer proveedores de testing | Categoría planificada | No |
-| `security/` | CodeQL, Trivy, Snyk, Semgrep y alternativas | Abstraer proveedores de escaneo de seguridad | Categoría planificada | No |
+| [`security/`](./security/codeql-trivy-profile.es.md) | CodeQL, Trivy, Snyk, Semgrep y alternativas | Abstraer proveedores de escaneo de seguridad | Categoría activa | No |
 | `deployment/` | Kubernetes, cloud, serverless, VM y perfiles on-premise | Abstraer destinos de despliegue | Categoría planificada | No |
 | `collaboration/` | Email, Teams, Slack y alternativas | Abstraer proveedores de colaboración | Categoría planificada | No |
 

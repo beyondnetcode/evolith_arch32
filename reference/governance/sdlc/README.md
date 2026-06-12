@@ -176,7 +176,7 @@ Production deployment, observability validation, and monitoring nominality.
 | Document | Description | Goal / Objective | Type | Mandatory |
 |---|---|---|---|---|
 | [Release Notes — Production Deployment Record](./04-artifact-templates/release-notes-template.md) | Formal deployment record: features, breaking changes, fixes, rollback procedures, observability baselines | Communicate the release | Template | Yes |
-| *Coming Soon: Zero-Downtime Release Playbook* | Operational runbook for blue-green and canary deployments | Deploy without downtime | Playbook (planned) | No |
+| [Zero-Downtime Release Playbook](./01-playbooks/zero-downtime-release.md) | Operational runbook for blue-green and canary deployments | Deploy without downtime | Playbook | No |
 | [Artifact Mapping — Phase 5](./sdlc-evolith-artifact-mapping.md#6-phase-5-delivery-and-operations) | Delivery artifacts required for this phase | Validate gate completeness | Reference | No |
 
 ---

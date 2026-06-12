@@ -12,7 +12,6 @@ This board is the single source of truth for gap priority and status. Select a g
 
 | ID | Gap | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|
-| [`GT-26`](./gap-reference-catalog.md#gt-26) | Zero-Downtime Release Playbook | Cross | P2 | S | `PENDING` |
 | [`GT-21`](./gap-reference-catalog.md#gt-21) | Placement review of tool-centric Core ADRs | Cross | P2 | M | `PENDING` |
 | [`GT-24`](./gap-reference-catalog.md#gt-24) | Execute declared documentation migrations | Cross | P2 | M | `PENDING` |
 | [`GT-23`](./gap-reference-catalog.md#gt-23) | Spanish translation backfill | Cross | P2 | L | `PENDING` |
@@ -45,8 +44,9 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-35`](./gap-reference-catalog.md#gt-35) | Automated inventories and tracking validation | Cross | P1 | M | `DONE` |
 | [`GT-20`](./gap-reference-catalog.md#gt-20) | ADR content backfill to authoring standard | Cross | P1 | L | `DONE` |
 | [`GT-22`](./gap-reference-catalog.md#gt-22) | ADR ID uniqueness scheme | Cross | P2 | S | `DONE` |
+| [`GT-26`](./gap-reference-catalog.md#gt-26) | Zero-Downtime Release Playbook | Cross | P2 | S | `DONE` |
 
-**Progress:** 26 / 33 done · 0 in progress · 6 pending · 1 deferred
+**Progress:** 27 / 33 done · 0 in progress · 5 pending · 1 deferred
 
 **Ordering:** criticality (`P0` → `P1` → `P2`), active status (`IN-PROGRESS` → `PENDING` → `DEFERRED`), then complexity (`S` → `M` → `L`). Completed gaps follow active work.
 

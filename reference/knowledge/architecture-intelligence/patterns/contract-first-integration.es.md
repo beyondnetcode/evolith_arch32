@@ -1,54 +1,91 @@
 # Contract First Integration
 
-> **Nota:** Este archivo es un esqueleto inicial. Por favor, complete la traducción.
 
 ---
 
 ## Source
 
-*Contenido pendiente de traducción.*
+- Enterprise integration architecture
+- Domain-Driven Design
+- API-first and event-first delivery practices
 
 ## Problem
 
-*Contenido pendiente de traducción.*
+When teams integrate modules through implementation details, the architecture becomes fragile.
+
+Common symptoms include:
+
+- direct entity sharing
+- leaking persistence models
+- unstable internal APIs
+- undocumented event payloads
+- breaking changes without visibility
 
 ## Context
 
-*Contenido pendiente de traducción.*
+This pattern applies to modular monoliths, distributed modules, and microservice-ready architectures where domain boundaries must remain explicit.
 
 ## Solution
 
-*Contenido pendiente de traducción.*
+Define integration contracts before implementation coupling appears.
+
+Contracts may include:
+
+- API contracts
+- event contracts
+- query contracts
+- command contracts
+- schema definitions
+- versioned integration messages
 
 ## Rules
 
-*Contenido pendiente de traducción.*
+- A module must not consume another module's internal tables or entities.
+- Integration must happen through documented contracts.
+- Contract changes must be reviewed as architecture-impacting changes.
+- Contracts must be versioned when consumers can be affected.
 
 ## Benefits
 
-*Contenido pendiente de traducción.*
+- reduces coupling
+- improves provider/team alignment
+- supports automated contract testing
+- enables safer AI-assisted implementation
+- improves compatibility with future distributed deployment
 
 ## Tradeoffs
 
-*Contenido pendiente de traducción.*
+- requires more upfront design
+- requires governance discipline
+- may slow quick local integrations
+- requires contract testing for critical flows
 
 ## Evolith Position
 
-*Contenido pendiente de traducción.*
+Recommended.
 
 ## Adoption Level
 
-*Contenido pendiente de traducción.*
+Enterprise.
 
 ## AI Impact
 
-*Contenido pendiente de traducción.*
+High. AI agents can generate safer code when integration contracts are explicit and discoverable.
 
 ## Related ADRs
 
-*Contenido pendiente de traducción.*
+- [ADR-0032: API Protocol Decision Matrix](../../../architecture/adrs/core/0032-api-protocol-decision-matrix-rest-grpc-graphql.md)
+- [ADR-0053: Integration and E2E Testing Strategy](../../../architecture/adrs/core/0053-integration-e2e-testing-strategy.md)
+- [ADR-0058: AI-Consumable Architecture Knowledge](../../../architecture/adrs/core/0058-ai-consumable-architecture-knowledge.md)
 
 ## Anti-Patterns
 
-*Contenido pendiente de traducción.*
+- direct entity sharing across modules
+- undocumented events
+- using database schema as integration contract
+- breaking consumers without compatibility strategy
+
+---
+
+[Back to Architecture Intelligence](../README.md)
 

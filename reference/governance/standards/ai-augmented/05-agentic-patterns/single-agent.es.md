@@ -1,14 +1,18 @@
 # Pattern: Single Agent with Tools
 
-> **Nota:** Este archivo es un esqueleto inicial. Por favor, complete la traducción.
 
 ---
 
 ## When to Use
-
-*Contenido pendiente de traducción.*
-
+- La tarea no requiere subtareas paralelas.
+- El número de herramientas es pequeño (< 10).
+- El dominio del conocimiento está altamente concentrado.
 ## Workflow
+1. El usuario envía un mensaje.
+2. El agente selecciona la herramienta A.
+3. El arnés ejecuta la herramienta A.
+4. Razones del agente sobre el resultado.
+5. El agente proporciona una respuesta final al usuario.
 
-*Contenido pendiente de traducción.*
-
+---
+[Volver al índice](./README.md)

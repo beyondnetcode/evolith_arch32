@@ -1,42 +1,41 @@
 # Propiedad de datos por Bounded Context
 
-> **Nota:** Este archivo es un esqueleto inicial. Por favor, complete la traducción.
 
 ---
 
 ## Problema
+Un sistema modular pierde claridad cuando varios módulos dependen de las mismas estructuras internas de datos.
 
-*Contenido pendiente de traducción.*
-
+Esto genera límites débiles, responsabilidad ambigua y mayor impacto ante cambios.
 ## Contexto
-
-*Contenido pendiente de traducción.*
-
+Aplica cuando el producto se organiza por contextos acotados, módulos o capacidades de negocio.
 ## Solución
+Cada contexto acotado debe ser dueño de los datos necesarios para aplicar sus reglas.
 
-*Contenido pendiente de traducción.*
-
+Otros contextos deben colaborar mediante contratos, eventos, proyecciones o modelos de lectura.
 ## Reglas
-
-*Contenido pendiente de traducción.*
-
+- Cada contexto posee su modelo de escritura.
+- Otros contextos no modifican directamente datos internos.
+- Las necesidades de lectura compartida deben modelarse explícitamente.
+- La duplicación controlada de lectura es aceptable si reduce la compatibilidad.
 ## Beneficios
-
-*Contenido pendiente de traducción.*
-
+- propiedad clara
+- límites más fuertes
+- evolución más segura
+- mejor trazabilidad
+- mejor preparación para extracción futura
 ## Tradeoffs
-
-*Contenido pendiente de traducción.*
-
+- puede requerir duplicación de lectura
+- puede requerir sincronización
+- puede introducir consistencia eventual
+- requiere diseño explícito de informes
 ## Posición Evolith
-
-*Contenido pendiente de traducción.*
-
+Recomendado.
 ## Nivel de adopción
-
-*Contenido pendiente de traducción.*
-
+Empresarial.
 ## Impacto IA
+Alto. Los agentes IA generan mejores recomendaciones cuando la propiedad de datos es clara.
 
-*Contenido pendiente de traducción.*
+---
 
+[Volver a Arquitectura Inteligente](../../README.es.md)

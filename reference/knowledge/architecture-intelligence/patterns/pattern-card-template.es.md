@@ -1,62 +1,53 @@
 # Pattern Card Template
 
-> **Nota:** Este archivo es un esqueleto inicial. Por favor, complete la traducción.
 
 ---
 
 ## Pattern Name
-
-*Contenido pendiente de traducción.*
-
+Nombre corto y preciso.
 ## Source
+De donde surge la idea.
 
-*Contenido pendiente de traducción.*
-
+Ejemplos:
+- libro
+- hablar
+- vídeo
+- repositorio
+- lección de producción interna
+- evidencia UMS
 ## Problem
-
-*Contenido pendiente de traducción.*
-
+Describe el problema arquitectónico que se está resolviendo.
 ## Context
-
-*Contenido pendiente de traducción.*
-
+Cuando suele aparecer este problema.
 ## Solution
-
-*Contenido pendiente de traducción.*
-
+Describa el enfoque recomendado.
 ## Benefits
-
-*Contenido pendiente de traducción.*
-
+Enumere los principales beneficios.
 ## Tradeoffs
-
-*Contenido pendiente de traducción.*
-
+Enumere los costos, los riesgos, la complejidad y el impacto operativo.
 ## Evolith Position
-
-*Contenido pendiente de traducción.*
-
+Valores permitidos:
+- Recomendado
+- Condicional
+- experimentales
+- No recomendado
 ## Adoption Level
-
-*Contenido pendiente de traducción.*
-
+Valores permitidos:
+- Equipo
+- Producto
+- Empresa
+- Investigación
 ## AI Impact
-
-*Contenido pendiente de traducción.*
-
+Explique cómo este patrón afecta la ingeniería asistida por IA.
 ## Related ADRs
-
-*Contenido pendiente de traducción.*
-
+Enlace que controla los ADR o ADR candidatos.
 ## Related Standards
-
-*Contenido pendiente de traducción.*
-
+Vincular estándares de gobernanza o ingeniería.
 ## Validation Rules
-
-*Contenido pendiente de traducción.*
-
+Defina lo que se debe verificar antes de aplicar el patrón.
 ## Anti-Patterns
+Enumere implementaciones incorrectas comunes.
 
-*Contenido pendiente de traducción.*
+---
 
+[Volver a Arquitectura Inteligente](../README.md)

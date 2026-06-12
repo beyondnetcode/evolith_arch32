@@ -1,42 +1,45 @@
 # Integración Contract First
 
-> **Nota:** Este archivo es un esqueleto inicial. Por favor, complete la traducción.
 
 ---
 
 ## Problema
-
-*Contenido pendiente de traducción.*
-
+Los módulos pierden independencia cuando se comunican mediante detalles internos en lugar de contratos claros.
 ## Contexto
-
-*Contenido pendiente de traducción.*
-
+Aplicación a arquitecturas modulares donde los dominios deben colaborar sin depender de implementación interna.
 ## Solución
+Definir contratos explícitos antes de integrar módulos.
 
-*Contenido pendiente de traducción.*
+Los contratos pueden ser:
 
+- API
+- eventos
+- comandos
+- consultas
+- esquemas versionados
 ## Reglas
-
-*Contenido pendiente de traducción.*
-
+- Integrar mediante contratos documentados.
+- Evitar depender de modelos internos de otros módulos.
+- Revisar cambios de contrato como cambios arquitectónicos.
+- Validar contratos críticos con pruebas automatizadas.
 ## Beneficios
-
-*Contenido pendiente de traducción.*
-
+- reducir acoplamiento
+- mejora de la coordinación entre equipos
+- facilitar pruebas de contrato
+- mejora de uso por agentes IA
+- preparación evolución distribuida
 ## Tradeoffs
-
-*Contenido pendiente de traducción.*
-
+- requiere diseño inicial
+- exige disciplina de versionado
+- requiere gobernanza
+- puede requerir pruebas adicionales
 ## Posición Evolith
-
-*Contenido pendiente de traducción.*
-
+Recomendado.
 ## Nivel de adopción
-
-*Contenido pendiente de traducción.*
-
+Empresarial.
 ## Impacto IA
+Alto. Los agentes IA producen mejores resultados cuando los contratos son claros y estables.
 
-*Contenido pendiente de traducción.*
+---
 
+[Volver a Arquitectura Inteligente](../../README.es.md)

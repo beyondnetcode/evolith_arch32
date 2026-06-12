@@ -12,7 +12,6 @@ This board is the single source of truth for gap priority and status. Select a g
 
 | ID | Gap | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|
-| [`GT-23`](./gap-reference-catalog.md#gt-23) | Spanish translation backfill | Cross | P2 | L | `PENDING` |
 | [`GT-24`](./gap-reference-catalog.md#gt-24) | Execute declared documentation migrations | Cross | P2 | M | `PENDING` |
 | [`GT-25`](./gap-reference-catalog.md#gt-25) | First provider profiles | Cross | P2 | L | `PENDING` |
 | [`GT-36`](./gap-reference-catalog.md#gt-36) | Machine-readable rules language coverage | Cross | P2 | L | `PENDING` |
@@ -38,6 +37,7 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-20`](./gap-reference-catalog.md#gt-20) | ADR content backfill to authoring standard | Cross | P1 | L | `DONE` |
 | [`GT-21`](./gap-reference-catalog.md#gt-21) | Placement review of tool-centric Core ADRs | Cross | P2 | M | `DONE` |
 | [`GT-22`](./gap-reference-catalog.md#gt-22) | ADR ID uniqueness scheme | Cross | P2 | S | `DONE` |
+| [`GT-23`](./gap-reference-catalog.md#gt-23) | Spanish translation backfill | Cross | P2 | L | `DONE` |
 | [`GT-26`](./gap-reference-catalog.md#gt-26) | Zero-Downtime Release Playbook | Cross | P2 | S | `DONE` |
 | [`GT-27`](./gap-reference-catalog.md#gt-27) | Canonical tracking semantic consistency | Cross | P0 | S | `DONE` |
 | [`GT-28`](./gap-reference-catalog.md#gt-28) | Restore CLI build, test, and smoke baseline | F0 | P0 | M | `DONE` |
@@ -46,7 +46,7 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-34`](./gap-reference-catalog.md#gt-34) | Roadmap reprioritization around governance proof | Product | P1 | S | `DONE` |
 | [`GT-35`](./gap-reference-catalog.md#gt-35) | Automated inventories and tracking validation | Cross | P1 | M | `DONE` |
 
-**Progress:** 29 / 33 done · 0 in progress · 4 pending · 0 deferred
+**Progress:** 30 / 33 done · 0 in progress · 3 pending · 0 deferred
 
 **Ordering:** criticality (`P0` → `P1` → `P2`), active status (`IN-PROGRESS` → `PENDING` → `DEFERRED`), then complexity (`S` → `M` → `L`). Completed gaps follow active work.
 

@@ -1,46 +1,69 @@
 # Bounded Context Isolation
 
-> **Nota:** Este archivo es un esqueleto inicial. Por favor, complete la traducción.
 
 ---
 
 ## Source Inspiration
-
-*Contenido pendiente de traducción.*
-
+- Diseño basado en dominios
+- Prácticas monolíticas modulares empresariales.
+- Patrones de arquitectura distribuida moderna.
+- Principio arquitectónico "No unir mesas a través de límites modulares"
 ## Problem
+Muchos monolitos modulares sólo lo son a nivel de código.
 
-*Contenido pendiente de traducción.*
+La capa de persistencia permanece completamente acoplada a través de:
+- uniones entre dominios
+- DbContexts compartidos
+- acceso directo a la entidad
+- repositorios compartidos
+- claves foráneas entre módulos
 
+Esto crea:
+- acoplamiento oculto
+- baja autonomía
+- evolución difícil
+- Complejidad del razonamiento de la IA
+- mala escalabilidad
 ## Evolith Position
-
-*Contenido pendiente de traducción.*
-
+Recomendado.
 ## Principle
-
-*Contenido pendiente de traducción.*
-
+Cada contexto acotado debe:
+- poseer su persistencia
+- poseer sus reglas
+- exponer contratos
+- evitar el acceso directo de persistencia desde dominios externos
 ## Allowed Integration
-
-*Contenido pendiente de traducción.*
-
+- contratos
+- API
+- eventos
+- proyecciones
+- leer modelos
+- servicios de consulta
 ## Forbidden Integration
-
-*Contenido pendiente de traducción.*
-
+- uniones entre dominios
+- repositorios compartidos
+- acceso directo a DbSet entre dominios
+- contextos Db globales
 ## Benefits
-
-*Contenido pendiente de traducción.*
-
+- autonomía modular
+- evolución independiente
+- propiedad más clara
+- mejor ingeniería asistida por IA
+- descomposición más segura en sistemas distribuidos
 ## Tradeoffs
-
-*Contenido pendiente de traducción.*
-
+- mayor complejidad de la integración
+- posible duplicación de datos
+- posibles escenarios de coherencia
+- contratos más explícitos
 ## AI Impact
+Alto.
 
-*Contenido pendiente de traducción.*
-
+Los agentes de IA razonan mucho mejor cuando los dominios están aislados conceptual y técnicamente.
 ## Related ADR Candidates
+- ADR: aislamiento de contexto limitado
+- ADR: No se permiten uniones a bases de datos entre dominios
+- ADR: Primera integración del contrato
 
-*Contenido pendiente de traducción.*
+---
 
+[Volver a Arquitectura Inteligente](../README.md)

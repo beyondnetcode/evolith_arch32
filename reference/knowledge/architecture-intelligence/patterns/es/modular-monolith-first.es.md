@@ -1,42 +1,38 @@
 # Monolito Modular Primero
 
-> **Nota:** Este archivo es un esqueleto inicial. Por favor, complete la traducción.
 
 ---
 
 ## Problema
+Muchos equipos adoptan microservicios antes de tener límites de dominio claros, madurez operativa y disciplina de entrega.
 
-*Contenido pendiente de traducción.*
-
+Esto suele aumentar la complejidad, los costos y la dificultad de diagnóstico.
 ## Contexto
-
-*Contenido pendiente de traducción.*
-
+Aplica cuando un producto estructura necesita empresarial, pero todavía no justifica la distribución física.
 ## Solución
-
-*Contenido pendiente de traducción.*
-
+Comenzar con un monolito modular, separando dominios conceptual y técnicamente antes de separarlos básicamente.
 ## Reglas
-
-*Contenido pendiente de traducción.*
-
+- Los módulos deben representar límites de dominio real.
+- La integración interna debe ser específica.
+- Se debe preservar la posibilidad de extracción futura.
+- La distribución física no debe ser el punto de partida por defecto.
 ## Beneficios
-
-*Contenido pendiente de traducción.*
-
+- menor complejidad inicial
+- entrega más rápida
+- mejor propiedad de dominio
+- mejor transición futura
+- mejor incorporación para equipos y proveedores
 ## Tradeoffs
-
-*Contenido pendiente de traducción.*
-
+- requiere disciplina modular
+- los límites deben gobernarse activamente
+- se debe evitar convertirlo en un sistema acoplado por conveniencia
 ## Posición Evolith
-
-*Contenido pendiente de traducción.*
-
+Recomendado.
 ## Nivel de adopción
-
-*Contenido pendiente de traducción.*
-
+Empresarial.
 ## Impacto IA
+Alto. Un monolito modular bien estructurado ayuda a que los agentes IA trabajen dentro de límites claros.
 
-*Contenido pendiente de traducción.*
+---
 
+[Volver a Arquitectura Inteligente](../../README.es.md)

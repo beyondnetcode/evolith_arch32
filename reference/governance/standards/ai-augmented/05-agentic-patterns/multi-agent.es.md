@@ -1,10 +1,12 @@
 # Pattern: Multi-Agent Orchestration
 
-> **Nota:** Este archivo es un esqueleto inicial. Por favor, complete la traducción.
 
 ---
 
 ## Benefits
+- Reduce drásticamente las alucinaciones al limitar el número de herramientas por agente.
+- Permite utilizar diferentes modelos para diferentes tareas (por ejemplo, Gemini para leer código, GPT-4o mini para resumir errores).
+- Facilita las pruebas granulares de cada especialista de forma aislada.
 
-*Contenido pendiente de traducción.*
-
+---
+[Volver al índice](./README.md)

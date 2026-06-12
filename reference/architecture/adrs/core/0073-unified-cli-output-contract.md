@@ -4,7 +4,7 @@
 
 ## Status
 
-Approved — Evolith Architecture Board, 2026-06-10. Closes [GT-01](../../../governance/standards/vision/gap-tracking.md#gt-01).
+Approved — Evolith Architecture Board, 2026-06-10. Closes [GT-01](../../../governance/standards/vision/gap-reference-catalog.md#gt-01).
 
 ## Date
 
@@ -23,7 +23,7 @@ Today the CLI implements neither contract: `--format json` exists on some comman
 
 **Objective:** ratify a single output contract that every machine-facing surface of the Evolith CLI and MCP server emits, so the Tracker, CI pipelines, and AI agents can parse results uniformly.
 
-**In scope:** the JSON output envelope; the `GateEvidence` schema as the gate-evaluation payload; the global flag set; the error-code registry; binary and MCP tool naming; the command-as-a-service execution model (remote invocation of registered operations via MCP/REST). **Out of scope:** the implementation of gate evaluation itself ([GT-02](../../../governance/standards/vision/gap-tracking.md#gt-02)/[GT-03](../../../governance/standards/vision/gap-tracking.md#gt-03)), transport selection ([GT-05](../../../governance/standards/vision/gap-tracking.md#gt-05)), webhook/event semantics ([GT-14](../../../governance/standards/vision/gap-tracking.md#gt-14)), and human-facing (table/markdown) rendering, which remains free-form.
+**In scope:** the JSON output envelope; the `GateEvidence` schema as the gate-evaluation payload; the global flag set; the error-code registry; binary and MCP tool naming; the command-as-a-service execution model (remote invocation of registered operations via MCP/REST). **Out of scope:** the implementation of gate evaluation itself ([GT-02](../../../governance/standards/vision/gap-reference-catalog.md#gt-02)/[GT-03](../../../governance/standards/vision/gap-reference-catalog.md#gt-03)), transport selection ([GT-05](../../../governance/standards/vision/gap-reference-catalog.md#gt-05)), webhook/event semantics ([GT-14](../../../governance/standards/vision/gap-reference-catalog.md#gt-14)), and human-facing (table/markdown) rendering, which remains free-form.
 
 ## Options Considered
 
@@ -71,7 +71,7 @@ On failure, `success: false` and an `error` object replaces `data`:
 
 Criteria used to judge the options: (a) Tracker can consume gate results without bespoke parsing; (b) CLI remains stateless per the [Tracker interface invariants](../../../governance/standards/vision/sdlc-tracker-technical-interfaces.md); (c) zero breaking change for current human-facing output; (d) implementable incrementally per command.
 
-Evidence: both source design documents; verified code state of 2026-06-10 — `--format json` is presentation-only today, all 27 rulesets are versioned, `--dry-run` already exists on 5 of 7 write commands (gap tracked as [GT-12](../../../governance/standards/vision/gap-tracking.md#gt-12)).
+Evidence: both source design documents; verified code state of 2026-06-10 — `--format json` is presentation-only today, all 27 rulesets are versioned, `--dry-run` already exists on 5 of 7 write commands (gap tracked as [GT-12](../../../governance/standards/vision/gap-reference-catalog.md#gt-12)).
 
 ## Consequences, Risks, and Trade-offs
 
@@ -93,7 +93,7 @@ Evidence: both source design documents; verified code state of 2026-06-10 — `-
 - [ADR 0069: MCP Server Protocol Implementation](./0069-mcp-server-protocol-implementation.md) — transport this contract rides on
 - [ADR 0032: API Protocol Decision Matrix](./0032-api-protocol-decision-matrix-rest-grpc-graphql.md) — protocol selection principles
 - [ADR Authoring Standard](../adr-authoring-standard.md) — this ADR's structure
-- Gap items: [GT-01](../../../governance/standards/vision/gap-tracking.md#gt-01) (this decision), GT-02/GT-03/GT-06 (implementation), GT-12 (`--dry-run` completion), GT-18 (npm publication under the `evolith` alias)
+- Gap items: [GT-01](../../../governance/standards/vision/gap-reference-catalog.md#gt-01) (this decision), GT-02/GT-03/GT-06 (implementation), GT-12 (`--dry-run` completion), GT-18 (npm publication under the `evolith` alias)
 - Rulesets: `rulesets/cli/core-parity.rules.json`, future `rulesets/schema/gate-evidence.schema.json`
 
 ---

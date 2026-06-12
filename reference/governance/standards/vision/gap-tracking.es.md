@@ -18,7 +18,7 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-09`](./gap-reference-catalog.es.md#gt-09) | Enforcement real de coverage en Fase 3 | F3 | P1 | S | `COMPLETADO` |
 | [`GT-12`](./gap-reference-catalog.es.md#gt-12) | `--dry-run` en todas las operaciones de escritura | F3 | P1 | S | `COMPLETADO` |
 | [`GT-14`](./gap-reference-catalog.es.md#gt-14) | Webhook saliente al completar un gate | F4 | P1 | S | `COMPLETADO` |
-| [`GT-05`](./gap-reference-catalog.es.md#gt-05) | Transporte Streamable HTTP del SDK MCP | F2 | P1 | M | `EN-PROGRESO` |
+| [`GT-05`](./gap-reference-catalog.es.md#gt-05) | Transporte Streamable HTTP del SDK MCP | F2 | P1 | M | `COMPLETADO` |
 | [`GT-10`](./gap-reference-catalog.es.md#gt-10) | Validación de contenido del security scan en Fase 4 | F3 | P1 | M | `EN-PROGRESO` |
 | [`GT-11`](./gap-reference-catalog.es.md#gt-11) | Validación de observabilidad y rollback en Fase 5 | F3 | P1 | M | `EN-PROGRESO` |
 | [`GT-17`](./gap-reference-catalog.es.md#gt-17) | Consolidación DI y boundaries estrictos | F5 | P1 | M | `EN-PROGRESO` |
@@ -46,7 +46,7 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-16`](./gap-reference-catalog.es.md#gt-16) | Consolidación documental | F5 | P2 | S | `COMPLETADO` |
 | [`GT-27`](./gap-reference-catalog.es.md#gt-27) | Consistencia semántica del tracking canónico | Transversal | P0 | S | `COMPLETADO` |
 
-**Progreso:** 14 / 33 completados · 5 en progreso · 13 pendientes · 1 diferido
+**Progreso:** 15 / 33 completados · 4 en progreso · 13 pendientes · 1 diferido
 
 **Ordenamiento:** criticidad (`P0` → `P1` → `P2`), estado activo (`EN-PROGRESO` → `PENDIENTE` → `DIFERIDO`) y complejidad (`S` → `M` → `L`). Los gaps completados aparecen después del trabajo activo.
 

@@ -168,7 +168,7 @@ async function runStdioSmoke() {
   }
 
   try {
-    const initialize = await checkedRequest(1, 'initialize');
+    const initialize = await checkedRequest(1, 'initialize', { protocolVersion: '2024-11-05', capabilities: {}, clientInfo: { name: 'test', version: '1.0.0' } });
     assert(initialize.serverInfo?.name === 'evolith-mcp-server', 'initialize: serverInfo.name mismatch');
     assert(initialize.capabilities?.tools, 'initialize: missing tools capability');
     assert(initialize.capabilities?.resources, 'initialize: missing resources capability');

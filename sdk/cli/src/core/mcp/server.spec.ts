@@ -718,7 +718,7 @@ describe('MCP Server', () => {
 
     it('parses a valid JSON-RPC message and writes a response to stdout', async () => {
       const responseP = nextStdoutMessage();
-      stdinStream.write(JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'initialize' }) + '\n');
+      stdinStream.write(JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'initialize', params: { protocolVersion: '2024-11-05', capabilities: {}, clientInfo: { name: 'test', version: '1.0.0' } } }) + '\n');
       const response = await responseP;
       expect(response).toMatchObject({ jsonrpc: '2.0', id: 1 });
       expect((response.result as Record<string, unknown>)?.protocolVersion).toBe('2024-11-05');
@@ -727,14 +727,14 @@ describe('MCP Server', () => {
     it('processes two messages written in one chunk', async () => {
       const first = nextStdoutMessage();
       stdinStream.write(
-        JSON.stringify({ jsonrpc: '2.0', id: 2, method: 'initialize' }) + '\n' +
-        JSON.stringify({ jsonrpc: '2.0', id: 3, method: 'initialize' }) + '\n',
+        JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'initialize', params: { protocolVersion: '2024-11-05', capabilities: {}, clientInfo: { name: 'test', version: '1.0.0' } } }) + '\n' +
+        JSON.stringify({ jsonrpc: '2.0', id: 2, method: 'initialize', params: { protocolVersion: '2024-11-05', capabilities: {}, clientInfo: { name: 'test', version: '1.0.0' } } }) + '\n',
       );
       const r1 = await first;
-      expect(r1).toMatchObject({ id: 2 });
+      expect(r1).toMatchObject({ id: 1 });
       const second = nextStdoutMessage();
       const r2 = await second;
-      expect(r2).toMatchObject({ id: 3 });
+      expect(r2).toMatchObject({ id: 2 });
     });
 
     it('ignores blank / whitespace-only lines without emitting any response', async () => {
@@ -751,7 +751,7 @@ describe('MCP Server', () => {
       stdinStream.write('{ this is not : valid json }\n');
       await new Promise(r => setTimeout(r, 40));
       const responseP = nextStdoutMessage();
-      stdinStream.write(JSON.stringify({ jsonrpc: '2.0', id: 99, method: 'initialize' }) + '\n');
+      stdinStream.write(JSON.stringify({ jsonrpc: '2.0', id: 99, method: 'initialize', params: { protocolVersion: '2024-11-05', capabilities: {}, clientInfo: { name: 'test', version: '1.0.0' } } }) + '\n');
       const response = await responseP;
       expect(response).toMatchObject({ jsonrpc: '2.0', id: 99 });
     });

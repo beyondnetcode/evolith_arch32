@@ -3,6 +3,16 @@ import * as http from 'node:http';
 import { RulesetValidatorService } from '../validators/ruleset-validator.service';
 import { McpMetricsService } from './metrics.service';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import {
+  CallToolRequestSchema,
+  ListToolsRequestSchema,
+  ListResourcesRequestSchema,
+  ReadResourceRequestSchema,
+  ListPromptsRequestSchema,
+  GetPromptRequestSchema,
+} from '@modelcontextprotocol/sdk/types.js';
 
 export type McpTransport = 'stdio' | 'http';
 
@@ -12,245 +22,22 @@ export interface McpServerOptions {
   apiKey?: string;
   port?: number;
   transport?: McpTransport;
-  /** For testing only: inject custom streams into the stdio transport. */
   stdin?: import('node:stream').Readable;
   stdout?: import('node:stream').Writable;
 }
 
-interface McpServerInstance {
-  setRequestHandler(schema: unknown, handler: (request: unknown) => Promise<unknown>): void;
-  connect(transport: unknown): Promise<void>;
-  start(): Promise<void>;
-}
-
-interface McpTransportInstance {
-}
-
-interface Transport {
-  onclose?: () => void;
-  onerror?: (error: Error) => void;
-  onmessage?: (message: unknown) => void;
-  start(): Promise<void>;
-  close(): Promise<void>;
-  send(message: unknown): Promise<void>;
-}
-
-class MinimalStdioTransport implements Transport {
-  onclose?: () => void;
-  onerror?: (error: Error) => void;
-  onmessage?: (message: unknown) => void;
-
-  private readonly stdin: import('node:stream').Readable;
-  private readonly stdout: import('node:stream').Writable;
-  private readBuffer: string = '';
-  private started: boolean;
-  private readonly handleData: (chunk: Buffer) => void;
-  private readonly handleEnd: () => void;
-  private readonly handleError: (err: Error) => void;
-
-  constructor(stdin?: import('node:stream').Readable, stdout?: import('node:stream').Writable) {
-    this.stdin = stdin || process.stdin;
-    this.stdout = stdout || process.stdout;
-    this.readBuffer = '';
-    this.started = false;
-    this.handleData = (chunk: Buffer) => {
-      this.readBuffer += chunk.toString();
-      let newlineIndex: number;
-      while ((newlineIndex = this.readBuffer.indexOf('\n')) !== -1) {
-        const line = this.readBuffer.slice(0, newlineIndex).trim();
-        this.readBuffer = this.readBuffer.slice(newlineIndex + 1);
-        if (line) {
-          try {
-            const message = JSON.parse(line);
-            if (this.onmessage) {
-              this.onmessage(message);
-            }
-          } catch {
-            if (this.onerror) {
-              this.onerror(new Error(`Invalid JSON: ${line}`));
-            }
-          }
-        }
-      }
-    };
-    this.handleEnd = () => {
-      if (this.onclose) {
-        this.onclose();
-      }
-    };
-    this.handleError = (err: Error) => {
-      if (this.onerror) {
-        this.onerror(err);
-      }
-    };
-  }
-
-  async start(): Promise<void> {
-    if (this.started) return;
-    this.started = true;
-
-    this.stdin.on('data', this.handleData);
-    this.stdin.on('end', this.handleEnd);
-    this.stdin.on('error', this.handleError);
-  }
-
-  async close(): Promise<void> {
-    if (!this.started) return;
-    this.stdin.off('data', this.handleData);
-    this.stdin.off('end', this.handleEnd);
-    this.stdin.off('error', this.handleError);
-    this.onmessage = undefined;
-    this.onerror = undefined;
-    this.onclose = undefined;
-    this.readBuffer = '';
-    this.started = false;
-  }
-
-  async send(message: unknown): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const json = JSON.stringify(message) + '\n';
-      this.stdout.write(json, (err?: Error) => {
-        if (err) reject(err);
-        else resolve();
-      });
-    });
-  }
-}
-
-class McpHttpTransportWrapper implements Transport {
-  onclose?: () => void;
-  onerror?: (error: Error) => void;
-  onmessage?: (message: unknown) => void;
-
-  private server: http.Server | null = null;
-  private readonly port: number;
-  private readonly apiKey?: string;
-  private readonly logger = new Logger(McpHttpTransportWrapper.name);
-  private started: boolean = false;
-  private readonly mcpTransport: StreamableHTTPServerTransport;
-
-  constructor(port: number, apiKey?: string) {
-    this.port = port;
-    this.apiKey = apiKey;
-    this.mcpTransport = new StreamableHTTPServerTransport({
-      sessionIdGenerator: () => Math.random().toString(36).substring(2, 10)
-    });
-    
-    this.mcpTransport.onerror = (error) => {
-      if (this.onerror) this.onerror(error);
-    };
-    this.mcpTransport.onclose = () => {
-      if (this.onclose) this.onclose();
-    };
-    this.mcpTransport.onmessage = (message) => {
-      if (this.onmessage) this.onmessage(message);
-    };
-  }
-
-  async start(): Promise<void> {
-    if (this.started) return;
-    this.started = true;
-
-    this.server = http.createServer((req, res) => {
-      this.handleRequest(req, res);
-    });
-
-    this.server.on('error', (error: Error) => {
-      this.logger.error(`HTTP server error: ${error.message}`);
-      if (this.onerror) {
-        this.onerror(error);
-      }
-    });
-
-    this.server.on('close', () => {
-      if (this.onclose) {
-        this.onclose();
-      }
-    });
-
-    await new Promise<void>((resolve, reject) => {
-      this.server!.listen(this.port, '127.0.0.1', () => {
-        this.logger.log(`Evolith MCP HTTP server listening on http://127.0.0.1:${this.port}`);
-        resolve();
-      });
-      this.server!.on('error', reject);
-    });
-  }
-
-  async close(): Promise<void> {
-    this.started = false;
-    
-    await this.mcpTransport.close();
-
-    if (this.server) {
-      await new Promise<void>((resolve) => {
-        this.server!.close(() => resolve());
-      });
-      this.server = null;
-    }
-  }
-
-  async send(message: unknown): Promise<void> {
-    await this.mcpTransport.send(message as any);
-  }
-
-  private handleRequest(req: http.IncomingMessage, res: http.ServerResponse): void {
-    const url = new URL(req.url || '/', `http://127.0.0.1:${this.port}`);
-
-    if (!this.validateAuth(req, res)) {
-      return;
-    }
-
-    if (req.method === 'GET' && url.pathname === '/health') {
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ status: 'ok', transport: 'http', protocol: 'mcp' }));
-      return;
-    }
-
-    // We cast to any because StreamableHTTPServerTransport expects req.auth from its middleware
-    this.mcpTransport.handleRequest(req as any, res).catch((err) => {
-       this.logger.error(`MCP Transport error: ${err.message}`);
-    });
-  }
-
-  private validateAuth(req: http.IncomingMessage, res: http.ServerResponse): boolean {
-    if (!this.apiKey) return true;
-
-    const authHeader = req.headers.authorization || '';
-    const bearerToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
-    const apiKeyHeader = req.headers['x-api-key'] as string | undefined;
-
-    if (bearerToken !== this.apiKey && apiKeyHeader !== this.apiKey) {
-      res.writeHead(401, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'Unauthorized', message: 'Invalid or missing API key' }));
-      return false;
-    }
-
-    return true;
-  }
-}
-
-interface JsonRpcRequest {
-  jsonrpc: '2.0';
-  id: number | string | null;
-  method: string;
-  params?: Record<string, unknown>;
-}
-
-interface JsonRpcResponse {
-  jsonrpc: '2.0';
-  id: number | string | null;
-  result?: unknown;
-  error?: { code: number; message: string; data?: unknown };
-}
-
-class DirectMcpServer {
-  private transport: Transport;
-  private readonly logger = new Logger(DirectMcpServer.name);
+export class EvolithMcpServer {
+  private server: Server;
+  private readonly logger = new Logger(EvolithMcpServer.name);
   private rulesetValidator: RulesetValidatorService;
   private metricsService: McpMetricsService;
-  private readonly transportType: McpTransport;
   private registry: import('./mcp-tool.registry').McpToolRegistry;
+  private httpServer: http.Server | null = null;
+  private readonly transportType: McpTransport;
+  private readonly port: number;
+  private readonly apiKey?: string;
+  private readonly stdin?: import('node:stream').Readable;
+  private readonly stdout?: import('node:stream').Writable;
 
   constructor(
     transportType: McpTransport = 'stdio',
@@ -262,16 +49,26 @@ class DirectMcpServer {
     stdout?: import('node:stream').Writable,
   ) {
     this.transportType = transportType;
+    this.port = port;
+    this.apiKey = apiKey;
+    this.stdin = stdin;
+    this.stdout = stdout;
     this.rulesetValidator = rulesetValidator || new RulesetValidatorService();
     this.metricsService = metricsService || new McpMetricsService();
 
-    if (transportType === 'http') {
-      this.transport = new McpHttpTransportWrapper(port, apiKey);
-    } else {
-      this.transport = new MinimalStdioTransport(stdin, stdout);
-    }
+    this.server = new Server({
+      name: 'evolith-mcp-server',
+      version: '1.0.0',
+    }, {
+      capabilities: {
+        tools: {},
+        resources: {},
+        prompts: {},
+      }
+    });
 
     this.registry = this.initializeRegistry();
+    this.registerHandlers();
   }
 
   private initializeRegistry() {
@@ -329,157 +126,79 @@ class DirectMcpServer {
     return registry;
   }
 
-  async start(): Promise<void> {
-    const transport = this.transport;
-    transport.onmessage = async (message: unknown) => {
-      await this.handleMessage(message);
-    };
+  private registerHandlers() {
+    this.server.setRequestHandler(ListToolsRequestSchema, async () => {
+      return { tools: this.registry.listTools() };
+    });
 
-    transport.onerror = (error: Error) => {
-      this.logger.error(`Transport error: ${error.message}`);
-    };
+    this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
+      const { name, arguments: args } = request.params;
+      const startTime = Date.now();
 
-    transport.onclose = () => {
-      this.logger.log('Transport closed');
-    };
-
-    await transport.start();
-    this.logger.log(`Evolith MCP Server started on ${this.transportType}`);
-  }
-
-  async stop(): Promise<void> {
-    await this.transport.close();
-  }
-
-  private async handleMessage(rawMessage: unknown): Promise<void> {
-    try {
-      const request = rawMessage as JsonRpcRequest;
-      this.logger.debug(`Received: ${JSON.stringify(request)}`);
-
-      if (request.method === 'initialize') {
-        const response: JsonRpcResponse = {
-          jsonrpc: '2.0',
-          id: request.id,
-          result: {
-            protocolVersion: '2024-11-05',
-            capabilities: {
-              tools: {},
-              resources: {},
-              prompts: {},
-            },
-            serverInfo: {
-              name: 'evolith-mcp-server',
-              version: '1.0.0',
-            },
-          },
-        };
-        await this.transport.send(response);
-        return;
-      }
-
-      let result: unknown;
       try {
-        result = await this.dispatchRequest(request.method, request.params || {});
+        const tool = this.registry.getTool(name);
+        if (!tool) {
+          throw new Error(`Unknown tool: ${name}`);
+        }
+
+        const deps = {
+          validator: this.rulesetValidator,
+          metricsService: this.metricsService
+        };
+
+        const result = await tool.execute(args as Record<string, unknown>, deps);
+        const latencyMs = Date.now() - startTime;
+        this.metricsService.recordToolCall(name, latencyMs, true);
+
+        return {
+          content: [
+            {
+              type: 'text',
+              text: typeof result === 'string' ? result : JSON.stringify(result, null, 2),
+            },
+          ],
+        };
       } catch (error) {
-        const errorResponse: JsonRpcResponse = {
-          jsonrpc: '2.0',
-          id: request.id,
-          error: {
-            code: -32603,
-            message: error instanceof Error ? error.message : String(error),
-          },
+        const latencyMs = Date.now() - startTime;
+        const message = error instanceof Error ? error.message : String(error);
+        this.metricsService.recordToolCall(name, latencyMs, false);
+        this.metricsService.recordError(message.substring(0, 50));
+
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify({ error: true, message }),
+            },
+          ],
+          isError: true,
         };
-        await this.transport.send(errorResponse);
-        return;
       }
+    });
 
-      const response: JsonRpcResponse = {
-        jsonrpc: '2.0',
-        id: request.id,
-        result,
-      };
-      await this.transport.send(response);
-    } catch (error) {
-      this.logger.error(`Error handling message: ${error}`);
-      const errorResponse: JsonRpcResponse = {
-        jsonrpc: '2.0',
-        id: null,
-        error: {
-          code: -32603,
-          message: error instanceof Error ? error.message : String(error),
-        },
-      };
-      try {
-        await this.transport.send(errorResponse);
-      } catch {
-      }
-    }
-  }
+    this.server.setRequestHandler(ListResourcesRequestSchema, async () => {
+      const { listResources } = await import('./resources');
+      const result = await listResources() as any;
+      return result;
+    });
 
-  private async dispatchRequest(method: string, params: Record<string, unknown>): Promise<unknown> {
-    switch (method) {
-      case 'tools/list':
-        return { tools: this.registry.listTools() };
-      case 'tools/call':
-        return this.handleCallTool(params);
-      case 'resources/list':
-        return this.handleListResources();
-      case 'resources/read':
-        return this.handleReadResource(params);
-      case 'prompts/list':
-        return this.handleListPrompts();
-      case 'prompts/get':
-        return this.handleGetPrompt(params);
-      default:
-        throw new Error(`Method not found: ${method}`);
-    }
-  }
+    this.server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+      const { readResource } = await import('./resources');
+      const result = await readResource(request.params) as any;
+      return result;
+    });
 
-  private async handleCallTool(params: Record<string, unknown>): Promise<unknown> {
-    const name = params.name as string;
-    const args = params.arguments as Record<string, unknown> || {};
-    const startTime = Date.now();
+    this.server.setRequestHandler(ListPromptsRequestSchema, async () => {
+      const { listPrompts } = await import('./prompts');
+      const result = await listPrompts() as any;
+      return result;
+    });
 
-    try {
-      const tool = this.registry.getTool(name);
-      if (!tool) {
-        throw new Error(`Unknown tool: ${name}`);
-      }
-
-      const deps = {
-        validator: this.rulesetValidator,
-        metricsService: this.metricsService
-      };
-
-      const result = await tool.execute(args, deps);
-
-      const latencyMs = Date.now() - startTime;
-      this.metricsService.recordToolCall(name, latencyMs, true);
-
-      return {
-        content: [
-          {
-            type: 'text' as const,
-            text: typeof result === 'string' ? result : JSON.stringify(result, null, 2),
-          },
-        ],
-      };
-    } catch (error) {
-      const latencyMs = Date.now() - startTime;
-      const message = error instanceof Error ? error.message : String(error);
-      this.metricsService.recordToolCall(name, latencyMs, false);
-      this.metricsService.recordError(message.substring(0, 50));
-
-      return {
-        content: [
-          {
-            type: 'text' as const,
-            text: JSON.stringify({ error: true, message }),
-          },
-        ],
-        isError: true,
-      };
-    }
+    this.server.setRequestHandler(GetPromptRequestSchema, async (request) => {
+      const { getPrompt } = await import('./prompts');
+      const result = await getPrompt(request.params) as any;
+      return result;
+    });
   }
 
   private async handleConfigGet(args: Record<string, unknown>) {
@@ -532,24 +251,74 @@ class DirectMcpServer {
     return { key, value, updated: true };
   }
 
-  private async handleListResources(): Promise<unknown> {
-    const { listResources } = await import('./resources');
-    return listResources();
+  private validateAuth(req: http.IncomingMessage, res: http.ServerResponse): boolean {
+    if (!this.apiKey) return true;
+
+    const authHeader = req.headers.authorization || '';
+    const bearerToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
+    const apiKeyHeader = req.headers['x-api-key'] as string | undefined;
+
+    if (bearerToken !== this.apiKey && apiKeyHeader !== this.apiKey) {
+      res.writeHead(401, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Unauthorized', message: 'Invalid or missing API key' }));
+      return false;
+    }
+
+    return true;
   }
 
-  private async handleReadResource(params: Record<string, unknown>): Promise<unknown> {
-    const { readResource } = await import('./resources');
-    return readResource(params);
+  async start(): Promise<void> {
+    if (this.transportType === 'http') {
+      const transport = new StreamableHTTPServerTransport({
+        sessionIdGenerator: () => Math.random().toString(36).substring(2, 10)
+      });
+      
+      this.httpServer = http.createServer((req, res) => {
+        if (!this.validateAuth(req, res)) return;
+
+        const url = new URL(req.url || '/', `http://127.0.0.1:${this.port}`);
+        if (req.method === 'GET' && url.pathname === '/health') {
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ status: 'ok', transport: 'http', protocol: 'mcp' }));
+          return;
+        }
+
+        transport.handleRequest(req as any, res).catch((err) => {
+           this.logger.error(`MCP Transport error: ${err.message}`);
+        });
+      });
+
+      this.httpServer.on('error', (error: Error) => {
+        this.logger.error(`HTTP server error: ${error.message}`);
+      });
+
+      await new Promise<void>((resolve, reject) => {
+        this.httpServer!.listen(this.port, '127.0.0.1', () => {
+          this.logger.log(`Evolith MCP HTTP server listening on http://127.0.0.1:${this.port}`);
+          resolve();
+        });
+        this.httpServer!.on('error', reject);
+      });
+
+      await this.server.connect(transport);
+    } else {
+      const transport = new StdioServerTransport(
+        this.stdin,
+        this.stdout
+      );
+      await this.server.connect(transport);
+      this.logger.log(`Evolith MCP Server started on stdio`);
+    }
   }
 
-  private async handleListPrompts(): Promise<unknown> {
-    const { listPrompts } = await import('./prompts');
-    return listPrompts();
-  }
-
-  private async handleGetPrompt(params: Record<string, unknown>): Promise<unknown> {
-    const { getPrompt } = await import('./prompts');
-    return getPrompt(params);
+  async stop(): Promise<void> {
+    await this.server.close();
+    if (this.httpServer) {
+      await new Promise<void>((resolve) => {
+        this.httpServer!.close(() => resolve());
+      });
+      this.httpServer = null;
+    }
   }
 }
 
@@ -557,7 +326,7 @@ export async function startMcpServer(options: McpServerOptions = {}) {
   const transport = options.transport || 'stdio';
   const port = options.port || 49100;
 
-  const server = new DirectMcpServer(
+  const server = new EvolithMcpServer(
     transport,
     port,
     options.apiKey,
@@ -567,5 +336,5 @@ export async function startMcpServer(options: McpServerOptions = {}) {
     options.stdout,
   );
   await server.start();
-  return server;
+  return server; // Actually returning the EvolithMcpServer instance, but we can return it.
 }

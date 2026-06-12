@@ -102,7 +102,7 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
         break;
 
       case 'extraction-readiness':
-        {
+        if (rule.id === 'F1-R07') {
           const extractionReadinessPath = path.join(satellitePath, 'docs', 'extraction-readiness.md');
           if (!await this.fs.exists(extractionReadinessPath)) {
             result = 'failed';
@@ -112,7 +112,7 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
         break;
 
       case 'observability':
-        {
+        if (rule.id === 'F1-R08') {
           if (await this.fs.exists(path.join(satellitePath, 'package.json'))) {
             const otelConfigPath = path.join(satellitePath, 'otel.config.js') ||
                                   path.join(satellitePath, 'opentelemetry.config.js') ||
@@ -236,11 +236,156 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
         }
         break;
 
+      case 'separation-of-concerns':
+        if (rule.id === 'F1-R11') {
+          const srcPath = path.join(satellitePath, 'src');
+          if (await this.fs.exists(srcPath)) {
+            const files = await this.getAllFilesRecursive(srcPath);
+            const tsFiles = files.filter(f => f.endsWith('.ts') && !f.endsWith('.spec.ts') && !f.endsWith('.test.ts'));
+            
+            for (const file of tsFiles) {
+              if (file.includes('/application/') || file.includes('/domain/') || file.includes('/use-cases/')) {
+                const content = await this.fs.readFile(file);
+                const ts = require('typescript');
+                const sourceFile = ts.createSourceFile(
+                  file,
+                  content,
+                  ts.ScriptTarget.Latest,
+                  true
+                );
+
+                let hasUiImport = false;
+                const checkNode = (node: any) => {
+                  if (ts.isImportDeclaration(node)) {
+                    const importPath = node.moduleSpecifier.getText().replace(/['"]/g, '');
+                    if (['@clack/prompts', 'inquirer', 'commander', 'express'].includes(importPath)) {
+                      hasUiImport = true;
+                    }
+                  }
+                  ts.forEachChild(node, checkNode);
+                };
+                checkNode(sourceFile);
+
+                if (hasUiImport) {
+                  result = 'failed';
+                  message = `${rule.description} - UI/CLI library imported in logic layer file: ${file}`;
+                  break;
+                }
+              }
+            }
+          }
+        }
+        break;
+
+      case 'dependency-injection':
+        if (rule.id === 'F1-R09') {
+          const srcPath = path.join(satellitePath, 'src');
+          if (await this.fs.exists(srcPath)) {
+            const files = await this.getAllFilesRecursive(srcPath);
+            const tsFiles = files.filter(f => f.endsWith('.ts') && !f.endsWith('.spec.ts') && !f.endsWith('.test.ts') && !f.endsWith('app.module.ts') && !f.endsWith('registry.ts'));
+            
+            for (const file of tsFiles) {
+              const content = await this.fs.readFile(file);
+              const ts = require('typescript');
+              const sourceFile = ts.createSourceFile(
+                file,
+                content,
+                ts.ScriptTarget.Latest,
+                true
+              );
+
+              let hasManualInstantiation = false;
+              const checkNode = (node: any) => {
+                if (ts.isNewExpression(node)) {
+                  const className = node.expression.getText();
+                  if (/(Service|UseCase|Repository|Adapter)$/.test(className)) {
+                    hasManualInstantiation = true;
+                  }
+                }
+                ts.forEachChild(node, checkNode);
+              };
+              checkNode(sourceFile);
+
+              if (hasManualInstantiation) {
+                result = 'failed';
+                message = `${rule.description} - Manual instantiation (new keyword) of Service/UseCase/Repository detected in: ${file}`;
+                break;
+              }
+            }
+          }
+        }
+        break;
+
+      case 'static-analysis':
+        if (rule.id === 'F1-R10') {
+          const srcPath = path.join(satellitePath, 'src');
+          if (await this.fs.exists(srcPath)) {
+            const files = await this.getAllFilesRecursive(srcPath);
+            const analyzerFiles = files.filter(f => f.includes('analyzer') && f.endsWith('.ts') && !f.endsWith('.spec.ts'));
+            
+            for (const file of analyzerFiles) {
+              const content = await this.fs.readFile(file);
+              const ts = require('typescript');
+              const sourceFile = ts.createSourceFile(
+                file,
+                content,
+                ts.ScriptTarget.Latest,
+                true
+              );
+
+              let hasAstImport = false;
+              let usesRegexForCode = false;
+
+              const checkNode = (node: any) => {
+                if (ts.isImportDeclaration(node)) {
+                  const importPath = node.moduleSpecifier.getText().replace(/['"]/g, '');
+                  if (importPath === 'typescript' || importPath === '@babel/parser') {
+                    hasAstImport = true;
+                  }
+                }
+                // Check if the file uses regex for code structure (heuristic: /Regex/ or /match/)
+                if (content.includes('RegExp') || content.includes('.match(')) {
+                    // Check if they are actually parsing something complex with Regex instead of AST
+                    // We assume if it doesn't have AST import but uses Regex, it violates R10
+                    usesRegexForCode = true;
+                }
+
+                ts.forEachChild(node, checkNode);
+              };
+              checkNode(sourceFile);
+
+              if (!hasAstImport && usesRegexForCode) {
+                result = 'failed';
+                message = `${rule.description} - Analyzer file appears to use Regex without an AST parser like typescript: ${file}`;
+                break;
+              }
+            }
+          }
+        }
+        break;
+
       default:
         result = 'skipped';
         break;
     }
 
     return { rule, result, message };
+  }
+
+  private async getAllFilesRecursive(dir: string): Promise<string[]> {
+    const files: string[] = [];
+    if (!await this.fs.exists(dir)) return files;
+    const entries = await this.fs.readdirNames(dir);
+    for (const entry of entries) {
+      if (entry === '.' || entry === '..') continue;
+      const full = path.join(dir, entry);
+      const stat = await this.fs.stat(full);
+      if (stat.isDirectory()) {
+        files.push(...await this.getAllFilesRecursive(full));
+      } else {
+        files.push(full);
+      }
+    }
+    return files;
   }
 }

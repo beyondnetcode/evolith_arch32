@@ -12,7 +12,7 @@ This board is the single source of truth for gap priority and status. Select a g
 
 | ID | Gap | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|
-| [`GT-29`](./gap-reference-catalog.md#gt-29) | Native/OPA rule execution parity | F1 | P0 | L | `IN-PROGRESS` |
+| [`GT-29`](./gap-reference-catalog.md#gt-29) | Native/OPA rule execution parity | F1 | P0 | L | `DONE` |
 | [`GT-32`](./gap-reference-catalog.md#gt-32) | Customer and buyer hypothesis validation | Product | P0 | M | `PENDING` |
 | [`GT-30`](./gap-reference-catalog.md#gt-30) | Minimum Tracker governance kernel | Product | P0 | L | `PENDING` |
 | [`GT-31`](./gap-reference-catalog.md#gt-31) | Minimum Provable Product vertical slice | Product | P0 | L | `PENDING` |
@@ -49,7 +49,7 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-16`](./gap-reference-catalog.md#gt-16) | Documentation consolidation | F5 | P2 | S | `DONE` |
 | [`GT-27`](./gap-reference-catalog.md#gt-27) | Canonical tracking semantic consistency | Cross | P0 | S | `DONE` |
 
-**Progress:** 8 / 36 done · 11 in progress · 16 pending · 1 deferred
+**Progress:** 9 / 36 done · 10 in progress · 16 pending · 1 deferred
 
 **Ordering:** criticality (`P0` → `P1` → `P2`), active status (`IN-PROGRESS` → `PENDING` → `DEFERRED`), then complexity (`S` → `M` → `L`). Completed gaps follow active work.
 

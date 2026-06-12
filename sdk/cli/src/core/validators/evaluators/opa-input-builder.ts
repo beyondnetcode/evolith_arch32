@@ -19,8 +19,14 @@ export class OpaInputBuilder {
         hasDependabot: await this.fs.exists(path.join(ctx.satellitePath, '.github', 'dependabot.yml')),
         hasRenovate: await this.fs.exists(path.join(ctx.satellitePath, '.renovaterc.json')),
         directories: await this.getTopLevelDirs(ctx.satellitePath),
+        hasContracts: await this.fs.exists(path.join(ctx.satellitePath, 'contracts')),
+        hasAcl: await this.fs.exists(path.join(ctx.satellitePath, 'acl')),
+        hasEvents: await this.fs.exists(path.join(ctx.satellitePath, 'events')) || await this.fs.exists(path.join(ctx.satellitePath, 'src', 'events')),
+        hasExtractionReadiness: await this.fs.exists(path.join(ctx.satellitePath, 'docs', 'extraction-readiness.md')),
+        hasOtel: await this.fs.exists(path.join(ctx.satellitePath, 'otel.config.js')) || await this.fs.exists(path.join(ctx.satellitePath, 'opentelemetry.config.js')) || await this.fs.exists(path.join(ctx.satellitePath, 'src', 'instrumentation.ts')),
         workflows: satelliteWorkflows,
-        workspacePackageJsons: await this.readWorkspacePackageJsons(ctx.satellitePath)
+        workspacePackageJsons: await this.readWorkspacePackageJsons(ctx.satellitePath),
+        sourceFiles: await this.analyzeSourceFiles(ctx.satellitePath)
       },
       core: {
         packageJson: await this.safeReadJson(path.join(ctx.corePath, 'package.json')),
@@ -162,5 +168,73 @@ export class OpaInputBuilder {
       }
     }
     return files;
+  }
+
+  private async analyzeSourceFiles(rootPath: string): Promise<any[]> {
+    const srcPath = path.join(rootPath, 'src');
+    if (!await this.fs.exists(srcPath)) return [];
+    
+    const allFiles = await this.listFilesRecursive(srcPath);
+    const tsFiles = allFiles.filter(f => f.endsWith('.ts'));
+    const sourceFilesInfo: any[] = [];
+    
+    // We import typescript here to avoid tying it strictly if the plugin doesn't need it
+    let ts: any;
+    try {
+      ts = require('typescript');
+    } catch {
+      // If typescript is not installed, return minimal file info
+      for (const file of tsFiles) {
+        const content = await this.safeReadFile(file);
+        sourceFilesInfo.push({ path: file, content: content || '' });
+      }
+      return sourceFilesInfo;
+    }
+
+    for (const file of tsFiles) {
+      const content = await this.safeReadFile(file) || '';
+      const info: any = {
+        path: file.replace(rootPath, ''),
+        content: content,
+        hasAstImport: false,
+        hasManualInstantiation: false,
+        hasUiImport: false,
+        usesRegexForCode: content.includes('RegExp') || content.includes('.match(')
+      };
+
+      if (!file.endsWith('.spec.ts') && !file.endsWith('.test.ts')) {
+        const sourceFile = ts.createSourceFile(
+          file,
+          content,
+          ts.ScriptTarget.Latest,
+          true
+        );
+
+        const checkNode = (node: any) => {
+          if (ts.isImportDeclaration(node)) {
+            const importPath = node.moduleSpecifier.getText().replace(/['"]/g, '');
+            if (importPath === 'typescript' || importPath === '@babel/parser') {
+              info.hasAstImport = true;
+            }
+            if (['@clack/prompts', 'inquirer', 'commander', 'express'].includes(importPath)) {
+              info.hasUiImport = true;
+            }
+          }
+          if (ts.isNewExpression(node)) {
+            const className = node.expression.getText();
+            if (/(Service|UseCase|Repository|Adapter)$/.test(className)) {
+              info.hasManualInstantiation = true;
+            }
+          }
+          ts.forEachChild(node, checkNode);
+        };
+        
+        checkNode(sourceFile);
+      }
+
+      sourceFilesInfo.push(info);
+    }
+
+    return sourceFilesInfo;
   }
 }

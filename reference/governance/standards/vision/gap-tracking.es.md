@@ -12,7 +12,6 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 
 | ID | Gap | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|
-| [`GT-13`](./gap-reference-catalog.es.md#gt-13) | Ejecutor de propuestas `evolith-phase-advance` | F4 | P1 | M | `PENDIENTE` |
 | [`GT-33`](./gap-reference-catalog.es.md#gt-33) | Scoring de madurez basado en evidencia | Producto | P1 | M | `PENDIENTE` |
 | [`GT-35`](./gap-reference-catalog.es.md#gt-35) | Inventarios automáticos y validación del tracking | Transversal | P1 | M | `PENDIENTE` |
 | [`GT-20`](./gap-reference-catalog.es.md#gt-20) | Backfill de ADRs al estándar de autoría | Transversal | P1 | L | `PENDIENTE` |
@@ -45,6 +44,7 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-19`](./gap-reference-catalog.es.md#gt-19) | Migración hexagonal incremental de `core/` | Transversal | P1 | L | `COMPLETADO` |
 | [`GT-18`](./gap-reference-catalog.es.md#gt-18) | Publicar `@evolith/smart-cli` en npm | F5 | P1 | S | `COMPLETADO` |
 | [`GT-34`](./gap-reference-catalog.es.md#gt-34) | Repriorización del roadmap alrededor de la prueba de gobernanza | Producto | P1 | S | `COMPLETADO` |
+| [`GT-13`](./gap-reference-catalog.es.md#gt-13) | Ejecutor de propuestas `evolith-phase-advance` | F4 | P1 | M | `COMPLETADO` |
 
 **Progreso:** 16 / 33 completados · 3 en progreso · 13 pendientes · 1 diferido
 

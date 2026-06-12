@@ -12,7 +12,6 @@ This board is the single source of truth for gap priority and status. Select a g
 
 | ID | Gap | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|
-| [`GT-13`](./gap-reference-catalog.md#gt-13) | `evolith-phase-advance` proposal runner | F4 | P1 | M | `PENDING` |
 | [`GT-33`](./gap-reference-catalog.md#gt-33) | Evidence-backed maturity scoring | Product | P1 | M | `PENDING` |
 | [`GT-35`](./gap-reference-catalog.md#gt-35) | Automated inventories and tracking validation | Cross | P1 | M | `PENDING` |
 | [`GT-20`](./gap-reference-catalog.md#gt-20) | ADR content backfill to authoring standard | Cross | P1 | L | `PENDING` |
@@ -45,6 +44,7 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-19`](./gap-reference-catalog.md#gt-19) | Incremental hexagonal migration of `core/` | Cross | P1 | L | `DONE` |
 | [`GT-18`](./gap-reference-catalog.md#gt-18) | Publish `@evolith/smart-cli` to npm | F5 | P1 | S | `DONE` |
 | [`GT-34`](./gap-reference-catalog.md#gt-34) | Roadmap reprioritization around governance proof | Product | P1 | S | `DONE` |
+| [`GT-13`](./gap-reference-catalog.md#gt-13) | `evolith-phase-advance` proposal runner | F4 | P1 | M | `DONE` |
 
 **Progress:** 16 / 33 done · 3 in progress · 13 pending · 1 deferred
 

@@ -6,6 +6,7 @@ import { getGateTools } from './gate';
 import { getMoscowTools } from './moscow';
 import { getSdlcTools } from './sdlc';
 import { getValidateTools } from './validate';
+import { getPhaseAdvanceTools } from './phase-advance';
 
 export function getAllTools(fs: IFileSystem, configParser: IConfigParser): IMcpToolHandler[] {
   return [
@@ -15,5 +16,6 @@ export function getAllTools(fs: IFileSystem, configParser: IConfigParser): IMcpT
     ...getMoscowTools(fs, configParser),
     ...getSdlcTools(fs, configParser),
     ...getValidateTools(fs, configParser),
+    ...getPhaseAdvanceTools(fs, configParser),
   ];
 }

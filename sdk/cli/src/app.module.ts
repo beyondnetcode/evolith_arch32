@@ -19,9 +19,11 @@ import { CompletionCommand } from './commands/completion/completion.command';
 import { HistoryCommand } from './commands/history/history.command';
 import { DriftCommand } from './commands/drift/drift.command';
 import { GateCommand } from './commands/gate/gate.command';
+import { PhaseAdvanceCommand } from './commands/phase/phase-advance.command';
 
 import { ValidateSatelliteUseCase } from './application/use-cases/validate-satellite.use-case';
 import { EvaluateGateUseCase } from './application/use-cases/evaluate-gate.use-case';
+import { ProposePhaseAdvanceUseCase } from './application/use-cases/propose-phase-advance.use-case';
 import { RulesetValidatorService } from './application/validators/ruleset-validator.service';
 import { PromptService } from './infrastructure/prompts/prompt.service';
 import { CatalogLoader } from './infrastructure/catalog/catalog-loader';
@@ -53,8 +55,10 @@ import { YamlConfigParserProvider } from './infrastructure/providers/config-pars
     HistoryCommand,
     DriftCommand,
     GateCommand,
+    PhaseAdvanceCommand,
     ValidateSatelliteUseCase,
     EvaluateGateUseCase,
+    ProposePhaseAdvanceUseCase,
     RulesetValidatorService,
     PromptService,
     CatalogLoader,

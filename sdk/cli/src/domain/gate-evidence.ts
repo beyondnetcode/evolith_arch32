@@ -61,6 +61,14 @@ export interface GateEvidence {
   readonly evaluatedBy: EvaluatorKind;
 }
 
+export interface PhaseTransitionProposal {
+  readonly fromPhase: GatePhase;
+  readonly toPhase: GatePhase;
+  readonly evidence: GateEvidence;
+  readonly isRecommended: boolean;
+  readonly proposedAt: string;
+}
+
 /** Verbatim echo of caller-supplied context. Never persisted or interpreted. */
 export interface ExecutionContext {
   readonly initiative?: string;

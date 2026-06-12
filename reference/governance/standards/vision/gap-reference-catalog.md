@@ -299,7 +299,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Purpose:** Make maturity reporting useful for investment and release decisions by tying every score to observable evidence.
 - **Current evidence / example:** Tracker has extensive design documentation but no executable implementation, while the historical CLI baseline reports green release gates that are currently failing under GT-28.
 - **Done when:** every scored capability declares a state such as Visioned, Designed, Prototyped, Implemented, Validated, or Scaled; each non-vision state links to qualifying evidence; aggregate scores are recalculated from those states and expose uncertainty.
-- **References:** [Maturity Assessment](./maturity-assessment.md) · [Metrics and Capability Maturity](./evolith-product-vision-master.md#11-metrics-and-capability-maturity)
+- **References:** [Maturity Assessment](./maturity-assessment.md) · [Metrics and Capability Maturity](../../../product-suite/vision/evolith-product-vision-master.md#11-metrics-and-capability-maturity)
 
 #### GT-34
 
@@ -309,7 +309,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Purpose:** Sequence investment around the core thesis and delay expensive optionality until evidence justifies it.
 - **Current evidence / example:** The next planning horizon should prioritize release baseline, Tracker kernel, vertical slice, and pilot learning; distributed-runtime and provider breadth should have explicit evidence triggers.
 - **Done when:** the roadmap orders work as baseline → governance kernel → vertical slice → controlled pilot → scale; deferred technologies name measurable adoption, load, compliance, or provider-pressure triggers; dependencies map to this gap board.
-- **References:** [Evolutionary Strategy Roadmap](./evolutionary-strategy-roadmap.md) · [Minimum Provable Product](./evolith-product-vision-master.md#10-minimum-provable-product) · [Strategic Validation and Composition Framework](./evolith-strategic-validation-and-composition-framework.md)
+- **References:** [Evolutionary Strategy Roadmap](./evolutionary-strategy-roadmap.md) · [Minimum Provable Product](../../../product-suite/vision/evolith-product-vision-master.md#10-minimum-provable-product) · [Strategic Validation and Composition Framework](./evolith-strategic-validation-and-composition-framework.md)
 
 ---
 

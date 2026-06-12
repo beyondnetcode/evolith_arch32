@@ -52,7 +52,7 @@ graph TD
 - Requires discipline to keep business logic out of the BFF (it should only orchestrate and compose).
 
 ## References
-- [ADR-0030: Kong Gateway vs NestJS BFF](../../adrs/core/0030-api-gateway-kong-vs-nestjs.md)
+- [ADR-0030: Kong Gateway vs NestJS BFF](../../adrs/core/0030-two-tier-distributed-gateway-model.md)
 
 
 
@@ -75,7 +75,7 @@ Unknown (historical record; evaluated against general architectural principles o
 
 ## Related Decisions and Standards
 
-- [ADR-0030: Kong Gateway vs NestJS BFF](../../adrs/core/0030-api-gateway-kong-vs-nestjs.md)
+- [ADR-0030: Kong Gateway vs NestJS BFF](../../adrs/core/0030-two-tier-distributed-gateway-model.md)
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 

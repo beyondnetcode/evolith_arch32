@@ -252,7 +252,7 @@ builder.Services.AddGrpcHealthChecks()
 | Functional Story | N/A |
 | Technical Story | N/A |
 | Bounded context afectado | Cross-cutting (todos los contextos .NET usando gRPC) |
-| ADRs Evolith relacionados | [ADR-0032](../core/0032-api-protocol-decision-matrix-rest-grpc-graphql.es.md), [ADR-0040](../core/0040-multi-runtime-selection-contracts.es.md), [ADR-0064](./0064-dotnet-request-scope-observability-context.es.md), [ADR-0005](../core/0005-ci-cd-quality-codeql.es.md) |
+| ADRs Evolith relacionados | [ADR-0032](../core/0032-api-protocol-decision-matrix-rest-grpc-graphql.es.md), [ADR-0040](../core/0040-multi-runtime-selection-contracts.es.md), [ADR-0064](./0064-dotnet-request-scope-observability-context.es.md), [ADR-0005](../core/0005-automated-sast-quality-gates.es.md) |
 | Referencia Externa Relacionada | [gRPC para .NET](https://grpc.io/docs/languages/csharp/), [Instrumentación OTel gRPC .NET](https://opentelemetry.io/docs/instrumentation/net/instrumentation-configuration/) |
 
 ---

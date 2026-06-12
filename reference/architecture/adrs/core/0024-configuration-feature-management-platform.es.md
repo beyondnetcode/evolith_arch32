@@ -29,7 +29,7 @@ Introducir un **Contexto Delimitado de Gestión de Características y Configurac
 
 ## Referencias
 - [ADR-0025: Estrategia de Abstracción de Feature Flags](../../adrs/core/0025-feature-flag-provider-abstraction.es.md)
-- [ADR-0014: Estrategia de Caché Redis](../../adrs/core/0014-distributed-caching-strategy-redis.es.md)
+- [ADR-0014: Estrategia de Caché Redis](../../adrs/core/0014-multi-layer-distributed-caching-strategy.es.md)
 
 
 
@@ -51,7 +51,7 @@ Desconocido (registro histórico; evaluado contra principios generales de arquit
 ## Decisiones y Estándares Relacionados
 
 - [ADR-0025: Estrategia de Abstracción de Feature Flags](../../adrs/core/0025-feature-flag-provider-abstraction.es.md)
-- [ADR-0014: Estrategia de Caché Redis](../../adrs/core/0014-distributed-caching-strategy-redis.es.md)
+- [ADR-0014: Estrategia de Caché Redis](../../adrs/core/0014-multi-layer-distributed-caching-strategy.es.md)
 
 ---
 [Volver al Índice](./README.es.md)

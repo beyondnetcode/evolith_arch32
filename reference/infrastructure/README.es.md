@@ -21,9 +21,9 @@ Este directorio contiene la configuración de Docker Compose y la configuración
 | Servicio | Fase Requerida | Rol |
 | :--- | :--- | :--- |
 | **PostgreSQL** | Fase 1 (obligatorio) | Base de datos relacional primaria |
-| **Redis** | Fase 1 (opcional, agregar cuando la latencia lo exija) | Caché distribuida — [ADR-0014](../architecture/adrs/core/0014-distributed-caching-strategy-redis.md) |
+| **Redis** | Fase 1 (opcional, agregar cuando la latencia lo exija) | Caché distribuida — [ADR-0014](../architecture/adrs/core/0014-multi-layer-distributed-caching-strategy.md) |
 | **RabbitMQ** | Fase 2+ | Bróker de mensajes async — [ADR-0015](../architecture/adrs/core/0015-event-driven-architecture-intra-domain.md) |
-| **Kong Gateway** | Fase 2+ | Gateway de API perimetral — [ADR-0030](../architecture/adrs/core/0030-api-gateway-kong-vs-nestjs.md) |
+| **Kong Gateway** | Fase 2+ | Gateway de API perimetral — [ADR-0030](../architecture/adrs/core/0030-two-tier-distributed-gateway-model.md) |
 | **HashiCorp Vault** | Fase 2+ | Gestión de secretos — [ADR-0028](../architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md) |
 
 > **Regla Fase 1:** Comenzar solo con PostgreSQL. Agregar Redis cuando se supere un umbral P95 de latencia específico. Agregar Kong y RabbitMQ solo cuando se necesite un segundo canal de cliente o entrega async entre servicios.

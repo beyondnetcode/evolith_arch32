@@ -31,7 +31,7 @@ El núcleo de la aplicación está completamente aislado del bloqueo de proveedo
 * **Estrategia de Mitigación**: Si los costos de licencia se vuelven prohibitivos, el adaptador de infraestructura debe cambiarse a **Keycloak** (100% Código Abierto y gratuito). Sin embargo, esto traslada el costo financiero de la licencia al mantenimiento de DevOps (escalado de Kubernetes, gestión de base de datos).
 
 ### Riesgo de Licenciamiento Medio: Caché Distribuido Redis
-* **Contexto**: [ADR-0014](../../../architecture/adrs/core/0014-distributed-caching-strategy-redis.es.md) impone Redis para el almacenamiento en caché.
+* **Contexto**: [ADR-0014](../../../architecture/adrs/core/0014-multi-layer-distributed-caching-strategy.es.md) impone Redis para el almacenamiento en caché.
 * **El Riesgo**: Redis Inc. cambió recientemente su licencia de BSD a RSALv2 (Fuente Disponible, no estrictamente Código Abierto OSI). Aunque es gratuito para uso interno, plantea preocupaciones legales para el alojamiento de servicios gestionados.
 * **Estrategia de Mitigación**: En caso de requisitos estrictos de cumplimiento de código abierto o despliegue autohospedado ([ADR-0028](../../../architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.es.md)), el equipo de operaciones está autorizado a usar **Valkey** (el fork de Código Abierto de Redis de la Linux Foundation) como un reemplazo directo.
 

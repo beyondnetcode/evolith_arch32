@@ -55,7 +55,7 @@ We establish a **Strict Protocol Fit Matrix** tailored to specific architectural
 
 ## References
 - [ADR-0027: Dual Protocol Strategy](../../adrs/nodejs/0027-dual-protocol-rest-grpc-api-gateway.md)
-- [ADR-0030: Two-Tier Gateway Patterns](../../adrs/core/0030-api-gateway-kong-vs-nestjs.md)
+- [ADR-0030: Two-Tier Gateway Patterns](../../adrs/core/0030-two-tier-distributed-gateway-model.md)
 
 
 
@@ -77,7 +77,7 @@ Unknown (historical record; evaluated against general architectural principles o
 ## Related Decisions and Standards
 
 - [ADR-0027: Dual Protocol Strategy](../../adrs/nodejs/0027-dual-protocol-rest-grpc-api-gateway.md)
-- [ADR-0030: Two-Tier Gateway Patterns](../../adrs/core/0030-api-gateway-kong-vs-nestjs.md)
+- [ADR-0030: Two-Tier Gateway Patterns](../../adrs/core/0030-two-tier-distributed-gateway-model.md)
 
 ---
 [Back to Index](./README.md)

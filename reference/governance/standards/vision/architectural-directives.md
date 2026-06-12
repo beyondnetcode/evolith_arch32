@@ -33,7 +33,7 @@ No stage is skipped. No stage is mandatory beyond what the business, team size, 
 ### 2.2 High Concurrency Readiness
 The system MUST sustain sudden, non-uniform bursts of user load. This is achieved through:
 - Auto-scaling container topology ([ADR-0028](../../../architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md))
-- 4-tier caching strategies ([ADR-0014](../../../architecture/adrs/core/0014-distributed-caching-strategy-redis.md))
+- 4-tier caching strategies ([ADR-0014](../../../architecture/adrs/core/0014-multi-layer-distributed-caching-strategy.md))
 - Non-blocking Event Bus abstraction ([ADR-0015](../../../architecture/adrs/core/0015-event-driven-architecture-intra-domain.md))
 
 ### 2.3 Transactional Integrity

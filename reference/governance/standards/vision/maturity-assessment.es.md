@@ -42,7 +42,7 @@ La evaluación usa los 5 niveles estándar del ACMM (1: Inicial a 5: Optimizante
 ### Pilar 1: Seguridad y Compliance — **Nivel 4 (Gestionado)**
 * **Estado:** `Validado`
 * **Evidencia:**
-  * Pipeline de seguridad zero-cost vía CodeQL ([ADR-0005](../../../architecture/adrs/core/0005-ci-cd-quality-codeql.es.md)).
+  * Pipeline de seguridad zero-cost vía CodeQL ([ADR-0005](../../../architecture/adrs/core/0005-automated-sast-quality-gates.es.md)).
   * Fijación estricta de versiones de dependencias (lockfiles exactos, sin rangos) con gestión automatizada de vulnerabilidades ([ADR-0009](../../../architecture/adrs/core/0009-strict-dependency-pinning-vulnerability-management.es.md)).
   * Aislamiento de datos multi-tenant vía Row-Level Security ([ADR-0010](../../../architecture/adrs/core/0010-multi-tenancy-architecture-strategy.es.md)).
   * Audit trails inmutables vía CDC ([ADR-0016](../../../architecture/adrs/core/0016-immutable-business-audit-trail.es.md)).
@@ -67,7 +67,7 @@ La evaluación usa los 5 niveles estándar del ACMM (1: Inicial a 5: Optimizante
 ### Pilar 4: Excelencia Operacional — **Nivel 4 (Gestionado)**
 * **Estado:** `Validado`
 * **Evidencia:**
-  * Builds deterministas de monorepo vía Nx ([ADR-0001](../../../architecture/adrs/core/0001-monorepo-orchestration-nx.es.md)).
+  * Builds deterministas de monorepo vía Nx ([ADR-0001](../../../architecture/adrs/core/0001-monorepo-orchestration-principle.es.md)).
   * Telemetría vía stack LGTM y OpenTelemetry ([ADR-0007](../../../architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.es.md)).
   * Feature flagging desacopla deployment de release ([ADR-0017](../../../architecture/adrs/core/0017-feature-flagging-strategy.es.md)).
   * Quality gates aplican umbrales de coverage en CI ([ADR-0018](../../../architecture/adrs/core/0018-testing-pyramid-quality-gates.es.md)).
@@ -79,7 +79,7 @@ La evaluación usa los 5 niveles estándar del ACMM (1: Inicial a 5: Optimizante
   * Boundaries hexagonales desacoplando core de infraestructura ([ADR-0002](../../../architecture/adrs/nodejs/0002-clean-architecture-nestjs.es.md)).
   * Patrones de diseño táctico (monada Result) ([ADR-0019](../../../architecture/adrs/core/0019-tactical-design-patterns-future-proofing.es.md)).
   * Desacoplamiento event-driven de módulos de dominio ([ADR-0015](../../../architecture/adrs/core/0015-event-driven-architecture-intra-domain.es.md)).
-* **Camino al Nivel 5:** transición monolito-a-Dapr con cero cambios de dominio ([ADR-0006](../../../architecture/adrs/core/0006-future-microservices-transition-dapr.es.md)). Nota: el enforcement hexagonal estricto en el propio CLI sigue abierto — ver [GT-19](./gap-reference-catalog.es.md#gt-19).
+* **Camino al Nivel 5:** transición monolito-a-Dapr con cero cambios de dominio ([ADR-0006](../../../architecture/adrs/core/0006-microservices-transition-sidecar-pattern.es.md)). Nota: el enforcement hexagonal estricto en el propio CLI sigue abierto — ver [GT-19](./gap-reference-catalog.es.md#gt-19).
 
 ---
 

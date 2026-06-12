@@ -38,14 +38,14 @@
 
 | EN | ES | Status |
 |----|----|--------|
-| [0001-monorepo-orchestration-nx.md](adrs/core/0001-monorepo-orchestration-nx.md) | [0001-monorepo-orchestration-nx.es.md](adrs/core/0001-monorepo-orchestration-nx.es.md) | OK |
-| [0005-ci-cd-quality-codeql.md](adrs/core/0005-ci-cd-quality-codeql.md) | [0005-ci-cd-quality-codeql.es.md](adrs/core/0005-ci-cd-quality-codeql.es.md) | OK |
-| [0006-future-microservices-transition-dapr.md](adrs/core/0006-future-microservices-transition-dapr.md) | [0006-future-microservices-transition-dapr.es.md](adrs/core/0006-future-microservices-transition-dapr.es.md) | OK |
+| [0001-monorepo-orchestration-principle.md](adrs/core/0001-monorepo-orchestration-principle.md) | [0001-monorepo-orchestration-principle.es.md](adrs/core/0001-monorepo-orchestration-principle.es.md) | OK |
+| [0005-automated-sast-quality-gates.md](adrs/core/0005-automated-sast-quality-gates.md) | [0005-automated-sast-quality-gates.es.md](adrs/core/0005-automated-sast-quality-gates.es.md) | OK |
+| [0006-microservices-transition-sidecar-pattern.md](adrs/core/0006-microservices-transition-sidecar-pattern.md) | [0006-microservices-transition-sidecar-pattern.es.md](adrs/core/0006-microservices-transition-sidecar-pattern.es.md) | OK |
 | [0009-strict-dependency-pinning-vulnerability-management.md](adrs/core/0009-strict-dependency-pinning-vulnerability-management.md) | [0009-strict-dependency-pinning-vulnerability-management.es.md](adrs/core/0009-strict-dependency-pinning-vulnerability-management.es.md) | OK |
 | [0010-multi-tenancy-architecture-strategy.md](adrs/core/0010-multi-tenancy-architecture-strategy.md) | [0010-multi-tenancy-architecture-strategy.es.md](adrs/core/0010-multi-tenancy-architecture-strategy.es.md) | OK |
 | [0011-fault-tolerance-resiliency-patterns.md](adrs/core/0011-fault-tolerance-resiliency-patterns.md) | [0011-fault-tolerance-resiliency-patterns.es.md](adrs/core/0011-fault-tolerance-resiliency-patterns.es.md) | OK |
 | [0013-cloud-infrastructure-topology-dr.md](adrs/core/0013-cloud-infrastructure-topology-dr.md) | [0013-cloud-infrastructure-topology-dr.es.md](adrs/core/0013-cloud-infrastructure-topology-dr.es.md) | OK |
-| [0014-distributed-caching-strategy-redis.md](adrs/core/0014-distributed-caching-strategy-redis.md) | [0014-distributed-caching-strategy-redis.es.md](adrs/core/0014-distributed-caching-strategy-redis.es.md) | OK |
+| [0014-multi-layer-distributed-caching-strategy.md](adrs/core/0014-multi-layer-distributed-caching-strategy.md) | [0014-multi-layer-distributed-caching-strategy.es.md](adrs/core/0014-multi-layer-distributed-caching-strategy.es.md) | OK |
 | [0015-event-driven-architecture-intra-domain.md](adrs/core/0015-event-driven-architecture-intra-domain.md) | [0015-event-driven-architecture-intra-domain.es.md](adrs/core/0015-event-driven-architecture-intra-domain.es.md) | OK |
 | [0016-immutable-business-audit-trail.md](adrs/core/0016-immutable-business-audit-trail.md) | [0016-immutable-business-audit-trail.es.md](adrs/core/0016-immutable-business-audit-trail.es.md) | OK |
 | [0017-feature-flagging-strategy.md](adrs/core/0017-feature-flagging-strategy.md) | [0017-feature-flagging-strategy.es.md](adrs/core/0017-feature-flagging-strategy.es.md) | OK |
@@ -55,7 +55,7 @@
 | [0024-configuration-feature-management-platform.md](adrs/core/0024-configuration-feature-management-platform.md) | [0024-configuration-feature-management-platform.es.md](adrs/core/0024-configuration-feature-management-platform.es.md) | OK |
 | [0025-feature-flag-provider-abstraction.md](adrs/core/0025-feature-flag-provider-abstraction.md) | [0025-feature-flag-provider-abstraction.es.md](adrs/core/0025-feature-flag-provider-abstraction.es.md) | OK |
 | [0028-self-hosted-hybrid-infrastructure-on-premise.md](adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md) | [0028-self-hosted-hybrid-infrastructure-on-premise.es.md](adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.es.md) | OK |
-| [0030-api-gateway-kong-vs-nestjs.md](adrs/core/0030-api-gateway-kong-vs-nestjs.md) | [0030-api-gateway-kong-vs-nestjs.es.md](adrs/core/0030-api-gateway-kong-vs-nestjs.es.md) | OK |
+| [0030-two-tier-distributed-gateway-model.md](adrs/core/0030-two-tier-distributed-gateway-model.md) | [0030-two-tier-distributed-gateway-model.es.md](adrs/core/0030-two-tier-distributed-gateway-model.es.md) | OK |
 | [0031-schema-per-context-domain-event-catalog.md](adrs/core/0031-schema-per-context-domain-event-catalog.md) | [0031-schema-per-context-domain-event-catalog.es.md](adrs/core/0031-schema-per-context-domain-event-catalog.es.md) | OK |
 | [0032-api-protocol-decision-matrix-rest-grpc-graphql.md](adrs/core/0032-api-protocol-decision-matrix-rest-grpc-graphql.md) | [0032-api-protocol-decision-matrix-rest-grpc-graphql.es.md](adrs/core/0032-api-protocol-decision-matrix-rest-grpc-graphql.es.md) | OK |
 | [0033-transactional-outbox-pattern.md](adrs/core/0033-transactional-outbox-pattern.md) | [0033-transactional-outbox-pattern.es.md](adrs/core/0033-transactional-outbox-pattern.es.md) | OK |
@@ -68,7 +68,7 @@
 | [0041-dual-engine-policy-evaluation.md](adrs/core/0041-dual-engine-policy-evaluation.md) | [0041-dual-engine-policy-evaluation.es.md](adrs/core/0041-dual-engine-policy-evaluation.es.md) | OK |
 | [0044-configurable-security-persistence-strategy.md](adrs/core/0044-configurable-security-persistence-strategy.md) | [0044-configurable-security-persistence-strategy.es.md](adrs/core/0044-configurable-security-persistence-strategy.es.md) | OK |
 | [0045-microservice-extraction-readiness-criteria.md](adrs/core/0045-microservice-extraction-readiness-criteria.md) | [0045-microservice-extraction-readiness-criteria.es.md](adrs/core/0045-microservice-extraction-readiness-criteria.es.md) | OK |
-| [0046-dapr-unified-observability.md](adrs/core/0046-dapr-unified-observability.md) | [0046-dapr-unified-observability.es.md](adrs/core/0046-dapr-unified-observability.es.md) | OK |
+| [0046-unified-observability-tracecontext.md](adrs/core/0046-unified-observability-tracecontext.md) | [0046-unified-observability-tracecontext.es.md](adrs/core/0046-unified-observability-tracecontext.es.md) | OK |
 | [0047-architectural-patterns-monolith-soa-microservices.md](adrs/core/0047-architectural-patterns-monolith-soa-microservices.md) | [0047-architectural-patterns-monolith-soa-microservices.es.md](adrs/core/0047-architectural-patterns-monolith-soa-microservices.es.md) | OK |
 | [0048-enterprise-taxonomy-reference-layout.md](adrs/core/0048-enterprise-taxonomy-reference-layout.md) | [0048-enterprise-taxonomy-reference-layout.es.md](adrs/core/0048-enterprise-taxonomy-reference-layout.es.md) | OK |
 | [0049-naming-semantics-clean-code-policy.md](adrs/core/0049-naming-semantics-clean-code-policy.md) | [0049-naming-semantics-clean-code-policy.es.md](adrs/core/0049-naming-semantics-clean-code-policy.es.md) | OK |
@@ -83,7 +83,7 @@
 | [0058-ai-consumable-architecture-knowledge.md](adrs/core/0058-ai-consumable-architecture-knowledge.md) | [0058-ai-consumable-architecture-knowledge.es.md](adrs/core/0058-ai-consumable-architecture-knowledge.es.md) | OK |
 | [0067-modular-monolith-schema-per-domain.md](adrs/core/0067-modular-monolith-schema-per-domain.md) | [0067-modular-monolith-schema-per-domain.es.md](adrs/core/0067-modular-monolith-schema-per-domain.es.md) | OK |
 | [0068-documentation-release-gitflow.md](adrs/core/0068-documentation-release-gitflow.md) | [0068-documentation-release-gitflow.es.md](adrs/core/0068-documentation-release-gitflow.es.md) | OK |
-| [0069-mcp-server-protocol-implementation.md](adrs/core/0069-mcp-server-protocol-implementation.md) | [0069-mcp-server-protocol-implementation.es.md](adrs/core/0069-mcp-server-protocol-implementation.es.md) | OK |
+| [0069-ai-agent-context-protocol-integration.md](adrs/core/0069-ai-agent-context-protocol-integration.md) | [0069-ai-agent-context-protocol-integration.es.md](adrs/core/0069-ai-agent-context-protocol-integration.es.md) | OK |
 | [0070-lean-root-repository-taxonomy.md](adrs/core/0070-lean-root-repository-taxonomy.md) | [0070-lean-root-repository-taxonomy.es.md](adrs/core/0070-lean-root-repository-taxonomy.es.md) | OK |
 | [0071-domain-layer-base-class-inheritance-strategy.md](adrs/core/0071-domain-layer-base-class-inheritance-strategy.md) | [0071-domain-layer-base-class-inheritance-strategy.es.md](adrs/core/0071-domain-layer-base-class-inheritance-strategy.es.md) | OK |
 | [0072-utc-dates-timezone-language-resolution.md](adrs/core/0072-utc-dates-timezone-language-resolution.md) | [0072-utc-dates-timezone-language-resolution.es.md](adrs/core/0072-utc-dates-timezone-language-resolution.es.md) | OK |

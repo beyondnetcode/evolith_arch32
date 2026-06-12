@@ -22,14 +22,14 @@ Decisiones aplicables a cualquier producto construido sobre el framework, sin im
 
 | Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
 |---|---|---|---|---|
-| [ADR 0001: Orquestación de Monorepo (Nx)](./core/0001-monorepo-orchestration-nx.es.md) | Decisión de orquestación del monorepo basada en Nx | Estandarizar la orquestación de builds | ADR Core | Sí |
-| [ADR 0005: Calidad CI/CD (CodeQL)](./core/0005-ci-cd-quality-codeql.es.md) | Quality gates de CI/CD con análisis estático | Hacer cumplir la calidad del pipeline | ADR Core | Sí |
-| [ADR 0006: Microservicios Futuros (Dapr)](./core/0006-future-microservices-transition-dapr.es.md) | Ruta de transición hacia microservicios usando Dapr | Preparar una descomposición controlada | ADR Core | Sí |
+| [ADR 0001: Orquestación de Monorepo (Nx)](./core/0001-monorepo-orchestration-principle.es.md) | Decisión de orquestación del monorepo basada en Nx | Estandarizar la orquestación de builds | ADR Core | Sí |
+| [ADR 0005: Calidad CI/CD (CodeQL)](./core/0005-automated-sast-quality-gates.es.md) | Quality gates de CI/CD con análisis estático | Hacer cumplir la calidad del pipeline | ADR Core | Sí |
+| [ADR 0006: Microservicios Futuros (Dapr)](./core/0006-microservices-transition-sidecar-pattern.es.md) | Ruta de transición hacia microservicios usando Dapr | Preparar una descomposición controlada | ADR Core | Sí |
 | [ADR 0009: Pinning Estricto de Dependencias](./core/0009-strict-dependency-pinning-vulnerability-management.es.md) | Pinning de dependencias y gestión de vulnerabilidades | Controlar la cadena de suministro | ADR Core | Sí |
 | [ADR 0010: Estrategia Multi-Tenancy de Doble Capa](./core/0010-multi-tenancy-architecture-strategy.es.md) | Estrategia de arquitectura multi-tenant | Aislar tenants con seguridad | ADR Core | Sí |
 | [ADR 0011: Patrones de Resiliencia](./core/0011-fault-tolerance-resiliency-patterns.es.md) | Patrones de tolerancia a fallos y resiliencia | Sobrevivir a fallos parciales | ADR Core | Sí |
 | [ADR 0013: Topología Cloud y DR](./core/0013-cloud-infrastructure-topology-dr.es.md) | Topología de infraestructura cloud y recuperación ante desastres | Planificar infraestructura resiliente | ADR Core | Sí |
-| [ADR 0014: Caché Distribuida (Redis)](./core/0014-distributed-caching-strategy-redis.es.md) | Estrategia de caché distribuida | Estandarizar las decisiones de caché | ADR Core | Sí |
+| [ADR 0014: Caché Distribuida (Redis)](./core/0014-multi-layer-distributed-caching-strategy.es.md) | Estrategia de caché distribuida | Estandarizar las decisiones de caché | ADR Core | Sí |
 | [ADR 0015: Bus de Eventos Inyectable](./core/0015-event-driven-architecture-intra-domain.es.md) | Arquitectura orientada a eventos dentro de dominios | Desacoplar la comunicación de dominio | ADR Core | Sí |
 | [ADR 0016: Auditoría Inmutable](./core/0016-immutable-business-audit-trail.es.md) | Pista de auditoría de negocio inmutable | Garantizar la auditabilidad | ADR Core | Sí |
 | [ADR 0017: Estrategia de Feature Flags](./core/0017-feature-flagging-strategy.es.md) | Estrategia de feature flagging | Controlar el riesgo de rollout | ADR Core | Sí |
@@ -39,7 +39,7 @@ Decisiones aplicables a cualquier producto construido sobre el framework, sin im
 | [ADR 0024: Plataforma de Configuración y Features](./core/0024-configuration-feature-management-platform.es.md) | Plataforma de gestión de configuración y features | Centralizar la configuración | ADR Core | Sí |
 | [ADR 0025: Abstracción del Proveedor de Feature Flags](./core/0025-feature-flag-provider-abstraction.es.md) | Abstracción del proveedor de feature flags | Mantener los vendors de flags reemplazables | ADR Core | Sí |
 | [ADR 0028: Infraestructura OSS Auto-Hospedada](./core/0028-self-hosted-hybrid-infrastructure-on-premise.es.md) | Infraestructura híbrida on-premise auto-hospedada | Mantener neutralidad de proveedores en runtime | ADR Core | Sí |
-| [ADR 0030: API Gateway (Kong vs Nest)](./core/0030-api-gateway-kong-vs-nestjs.es.md) | Trade-off de selección del API gateway | Estandarizar el perímetro | ADR Core | Sí |
+| [ADR 0030: API Gateway (Kong vs Nest)](./core/0030-two-tier-distributed-gateway-model.es.md) | Trade-off de selección del API gateway | Estandarizar el perímetro | ADR Core | Sí |
 | [ADR 0031: Schema Aislado por Contexto](./core/0031-schema-per-context-domain-event-catalog.es.md) | Schema por contexto y catálogo de eventos de dominio | Aislar los datos por contexto | ADR Core | Sí |
 | [ADR 0032: Matriz de Selección de Protocolos](./core/0032-api-protocol-decision-matrix-rest-grpc-graphql.es.md) | Matriz de decisión REST vs gRPC vs GraphQL | Elegir protocolos consistentemente | ADR Core | Sí |
 | [ADR 0033: Transactional Outbox](./core/0033-transactional-outbox-pattern.es.md) | Patrón transactional outbox | Garantizar mensajería confiable | ADR Core | Sí |
@@ -52,7 +52,7 @@ Decisiones aplicables a cualquier producto construido sobre el framework, sin im
 | [ADR 0041: Evaluación de Políticas Dual-Engine](./core/0041-dual-engine-policy-evaluation.es.md) | Evaluación de Políticas Dual-Engine (Nativo + OPA) | Estandarizar la evaluación de políticas | ADR Core | Sí |
 | [ADR 0044: Estrategia de Persistencia de Seguridad Configurable](./core/0044-configurable-security-persistence-strategy.es.md) | Estrategia configurable de persistencia de seguridad | Adaptar el almacenamiento de seguridad | ADR Core | Sí |
 | [ADR 0045: Criterios de Preparación para Extracción de Microservicios](./core/0045-microservice-extraction-readiness-criteria.es.md) | Criterios de preparación antes de extraer microservicios | Custodiar la descomposición | ADR Core | Sí |
-| [ADR 0046: Adopción de Dapr y Observabilidad Unificada](./core/0046-dapr-unified-observability.es.md) | Adopción de Dapr con observabilidad unificada | Estandarizar los sidecars de runtime | ADR Core | Sí |
+| [ADR 0046: Adopción de Dapr y Observabilidad Unificada](./core/0046-unified-observability-tracecontext.es.md) | Adopción de Dapr con observabilidad unificada | Estandarizar los sidecars de runtime | ADR Core | Sí |
 | [ADR 0047: Monolito vs SOA vs Microservicios](./core/0047-architectural-patterns-monolith-soa-microservices.es.md) | Framework de selección entre patrones arquitectónicos | Elegir el patrón correcto | ADR Core | Sí |
 | [ADR 0048: Taxonomía Empresarial y Layout de Referencia](./core/0048-enterprise-taxonomy-reference-layout.es.md) | Taxonomía empresarial y layout de referencia | Estandarizar el layout del repositorio | ADR Core | Sí |
 | [ADR 0049: Semántica de Nombres y Política de Clean Code](./core/0049-naming-semantics-clean-code-policy.es.md) | Semántica de nombres y política de código limpio | Mantener el código legible | ADR Core | Sí |

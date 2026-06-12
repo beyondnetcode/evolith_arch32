@@ -27,7 +27,7 @@ Standardize authentication login gateways to yield lightweight, pre-digested **H
 - Demands rigorous Redis cache invalidation logic explicitly bound to any permissions management write-events.
 
 ## References
-- [ADR-0014: Redis Cache](../../adrs/core/0014-distributed-caching-strategy-redis.md)
+- [ADR-0014: Redis Cache](../../adrs/core/0014-multi-layer-distributed-caching-strategy.md)
 - [ADR-0022: Contextual Authorization](../../adrs/nodejs/0022-contextual-auth-and-pluggable-projections.md)
 
 
@@ -51,7 +51,7 @@ Unknown (historical record; evaluated against general architectural principles o
 
 ## Related Decisions and Standards
 
-- [ADR-0014: Redis Cache](../../adrs/core/0014-distributed-caching-strategy-redis.md)
+- [ADR-0014: Redis Cache](../../adrs/core/0014-multi-layer-distributed-caching-strategy.md)
 - [ADR-0022: Contextual Authorization](../../adrs/nodejs/0022-contextual-auth-and-pluggable-projections.md)
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)

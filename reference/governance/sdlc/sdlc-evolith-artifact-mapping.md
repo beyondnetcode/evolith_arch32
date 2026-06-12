@@ -153,7 +153,7 @@ flowchart LR
 | **Engineering Manifesto** | [engineering-manifesto.md](../standards/engineering/engineering-manifesto.md) | Governs SOLID, DRY, KISS, YAGNI, anti-patterns, and PR discipline. |
 | **Construction-Focused SDLC Framework — §3 and §4** | [construction-focused-sdlc-framework.md](./02-engineering/construction-focused-sdlc-framework.md) | Defines construction loop, threshold metrics, and DoD checklist. |
 | **SDLC Quality Gates** | [quality-gates.md](./quality-gates.md) | Defines the canonical release-blocking threshold baseline: coverage >= 80%, complexity <= 15, zero high/critical CVEs, tech debt < 5%. |
-| **ADR-0005 — CI/CD Pipeline** | [ADR-0005](../../architecture/adrs/core/0005-ci-cd-quality-codeql.md) | No merge is authorized without passing CI, linting, testing, and security scanning. |
+| **ADR-0005 — CI/CD Pipeline** | [ADR-0005](../../architecture/adrs/core/0005-automated-sast-quality-gates.md) | No merge is authorized without passing CI, linting, testing, and security scanning. |
 | **ADR-0018 — Testing Pyramid Quality Gates** | [ADR-0018](../../architecture/adrs/core/0018-testing-pyramid-quality-gates.md) | Defines target test distribution: 70% unit / 20% integration / 10% E2E. Coverage blocking threshold is governed by SDLC Quality Gates. |
 | **ADR-0049 — Naming Semantics and Clean Code** | [ADR-0049](../../architecture/adrs/core/0049-naming-semantics-clean-code-policy.md) | Naming discipline is validated from the first commit. |
 | **ADR-0050 — GitFlow Branching Strategy** | [ADR-0050](../../architecture/adrs/core/0050-gitflow-branching-strategy.md) | Branch naming, merge policies, and release tagging are contractual. Alternatives require explicit ADR exception. |
@@ -216,7 +216,7 @@ flowchart LR
 | **Release Notes Template** | [release-notes-template.md](./04-artifact-templates/release-notes-template.md) | Captures release scope, deployment steps, rollback procedure, observability checklist, and links to RC evidence. |
 | **ADR-0007 — OTel and Loki Observability** | [ADR-0007](../../architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md) | Distributed tracing and structured logging are mandatory in every production deployment. |
 | **ADR-0013 — Cloud Topology and DR** | [ADR-0013](../../architecture/adrs/core/0013-cloud-infrastructure-topology-dr.md) | Defines target deployment topology and disaster recovery runbook. |
-| **ADR-0005 — CI/CD Pipeline** | [ADR-0005](../../architecture/adrs/core/0005-ci-cd-quality-codeql.md) | Deployment pipeline must enforce the same quality gates in the delivery path. |
+| **ADR-0005 — CI/CD Pipeline** | [ADR-0005](../../architecture/adrs/core/0005-automated-sast-quality-gates.md) | Deployment pipeline must enforce the same quality gates in the delivery path. |
 | **Operations Hub** | [Operations Hub](../../operations/README.md) | Observability deployment specification and runbooks. |
 | **Infrastructure Hub** | [Infrastructure Hub](../../infrastructure/README.md) | Infrastructure provisioning specifications. |
 | **SDLC Documentation Best Practices** | [sdlc-documentation-best-practices.md](./03-documentation/sdlc-documentation-best-practices.md) | Release notes and deployment runbooks must be versioned with the release. |
@@ -228,7 +228,7 @@ flowchart LR
 | ADR-0011 — Resiliency Patterns | [ADR-0011](../../architecture/adrs/core/0011-fault-tolerance-resiliency-patterns.md) | When production includes circuit breakers, bulkheads, retry policies, or fallback strategies. |
 | ADR-0017 — Feature Flagging Strategy | [ADR-0017](../../architecture/adrs/core/0017-feature-flagging-strategy.md) | When using gradual rollout, dark launches, or runtime-controlled exposure. |
 | ADR-0028 — Self-Hosted OSS Infrastructure | [ADR-0028](../../architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md) | When deploying on-premise or hybrid cloud. |
-| ADR-0046 — Dapr Unified Observability | [ADR-0046](../../architecture/adrs/core/0046-dapr-unified-observability.md) | When Dapr is active and sidecar observability must be unified. |
+| ADR-0046 — Dapr Unified Observability | [ADR-0046](../../architecture/adrs/core/0046-unified-observability-tracecontext.md) | When Dapr is active and sidecar observability must be unified. |
 | Multi-Cloud Deployment Scenarios | [multi-cloud-deployment-scenarios.md](../../architecture/blueprints/multi-cloud-deployment-scenarios.md) | When the production target spans multiple cloud providers. |
 | Observability Architecture Flow | [observability-architecture-flow.md](../../architecture/blueprints/observability-architecture-flow.md) | When building or validating Grafana, Loki, Tempo, and OTel Collector pipelines. |
 

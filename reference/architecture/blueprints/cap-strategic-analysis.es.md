@@ -35,7 +35,7 @@ Nuestra arquitectura no elige ciegamente un solo lado. En su lugar, segmenta el 
 * **Perfil Tecnológico**: Caché distribuida + bróker de mensajería durable + caché CDN/cliente.
 * **Comportamiento ante Partición**: Si el Nodo A no puede hablar con el Nodo B, ambos continuarán sirviendo datos desde su caché o cola local, incluso si los datos están ligeramente desactualizados (Consistencia Eventual).
 * **Referencias ADR**:
- * [ADR-0014: Caché Distribuida de 4 Niveles](../adrs/core/0014-distributed-caching-strategy-redis.es.md)
+ * [ADR-0014: Caché Distribuida de 4 Niveles](../adrs/core/0014-multi-layer-distributed-caching-strategy.es.md)
  * [ADR-0036: Control de Flujo del Bus de Mensajes](../adrs/core/0036-message-bus-delivery-strategy-fifo-dlq.es.md)
  * [ADR-0004: Resiliencia Offline del Frontend](../adrs/nodejs/0004-frontend-offline-resilience.es.md)
 * **Pros**: Latencia extremadamente baja, operacional durante la degradación parcial de la red.

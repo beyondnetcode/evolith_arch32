@@ -1,13 +1,13 @@
 # Index of core
 
-* [0001-monorepo-orchestration-nx](./0001-monorepo-orchestration-nx.md)
-* [0005-ci-cd-quality-codeql](./0005-ci-cd-quality-codeql.md)
-* [0006-future-microservices-transition-dapr](./0006-future-microservices-transition-dapr.md)
+* [0001-monorepo-orchestration-principle](./0001-monorepo-orchestration-principle.md)
+* [0005-automated-sast-quality-gates](./0005-automated-sast-quality-gates.md)
+* [0006-microservices-transition-sidecar-pattern](./0006-microservices-transition-sidecar-pattern.md)
 * [0009-strict-dependency-pinning-vulnerability-management](./0009-strict-dependency-pinning-vulnerability-management.md)
 * [0010-multi-tenancy-architecture-strategy](./0010-multi-tenancy-architecture-strategy.md)
 * [0011-fault-tolerance-resiliency-patterns](./0011-fault-tolerance-resiliency-patterns.md)
 * [0013-cloud-infrastructure-topology-dr](./0013-cloud-infrastructure-topology-dr.md)
-* [0014-distributed-caching-strategy-redis](./0014-distributed-caching-strategy-redis.md)
+* [0014-multi-layer-distributed-caching-strategy](./0014-multi-layer-distributed-caching-strategy.md)
 * [0015-event-driven-architecture-intra-domain](./0015-event-driven-architecture-intra-domain.md)
 * [0016-immutable-business-audit-trail](./0016-immutable-business-audit-trail.md)
 * [0017-feature-flagging-strategy](./0017-feature-flagging-strategy.md)
@@ -17,7 +17,7 @@
 * [0024-configuration-feature-management-platform](./0024-configuration-feature-management-platform.md)
 * [0025-feature-flag-provider-abstraction](./0025-feature-flag-provider-abstraction.md)
 * [0028-self-hosted-hybrid-infrastructure-on-premise](./0028-self-hosted-hybrid-infrastructure-on-premise.md)
-* [0030-api-gateway-kong-vs-nestjs](./0030-api-gateway-kong-vs-nestjs.md)
+* [0030-two-tier-distributed-gateway-model](./0030-two-tier-distributed-gateway-model.md)
 * [0031-schema-per-context-domain-event-catalog](./0031-schema-per-context-domain-event-catalog.md)
 * [0032-api-protocol-decision-matrix-rest-grpc-graphql](./0032-api-protocol-decision-matrix-rest-grpc-graphql.md)
 * [0033-transactional-outbox-pattern](./0033-transactional-outbox-pattern.md)
@@ -29,7 +29,7 @@
 * [0040-multi-runtime-selection-contracts](./0040-multi-runtime-selection-contracts.md)
 * [0044-configurable-security-persistence-strategy](./0044-configurable-security-persistence-strategy.md)
 * [0045-microservice-extraction-readiness-criteria](./0045-microservice-extraction-readiness-criteria.md)
-* [0046-dapr-unified-observability](./0046-dapr-unified-observability.md)
+* [0046-unified-observability-tracecontext](./0046-unified-observability-tracecontext.md)
 * [0047-architectural-patterns-monolith-soa-microservices](./0047-architectural-patterns-monolith-soa-microservices.md)
 * [0048-enterprise-taxonomy-reference-layout](./0048-enterprise-taxonomy-reference-layout.md)
 * [0049-naming-semantics-clean-code-policy](./0049-naming-semantics-clean-code-policy.md)
@@ -44,7 +44,7 @@
 * [0058-ai-consumable-architecture-knowledge](./0058-ai-consumable-architecture-knowledge.md)
 * [0067-modular-monolith-schema-per-domain](./0067-modular-monolith-schema-per-domain.md)
 * [0068-documentation-release-gitflow](./0068-documentation-release-gitflow.md) — **Documentation release GitFlow with bilingual quality gates**
-* [0069-mcp-server-protocol-implementation](./0069-mcp-server-protocol-implementation.md) — **MCP server protocol for AI agent governance integration**
+* [0069-ai-agent-context-protocol-integration](./0069-ai-agent-context-protocol-integration.md) — **MCP server protocol for AI agent governance integration**
 * [0070-lean-root-repository-taxonomy](./0070-lean-root-repository-taxonomy.md) — **Lean root: src/ vs docs/ binary dichotomy for satellite repositories**
 * [0071-domain-layer-base-class-inheritance-strategy](./0071-domain-layer-base-class-inheritance-strategy.md) — **Domain layer inheritance trade-off: shell base classes vs. Domain.Abstractions**
 * [0072-utc-dates-timezone-language-resolution](./0072-utc-dates-timezone-language-resolution.md) — **UTC storage, browser timezone detection, and language priority chain**

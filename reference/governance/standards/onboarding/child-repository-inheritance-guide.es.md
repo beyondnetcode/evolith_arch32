@@ -157,7 +157,7 @@ La cola dead-letter `payments.dlq` recibe todos los mensajes no reconocidos desp
 
 > **Estado:** Aceptado
 > **Fecha:** 2026-05-22
-> **Overrides:** [ADR-0030 — API Gateway: Kong vs NestJS](https://github.com/beyondnetcode/evolith_arch32/reference/architecture/adrs/core/0030-api-gateway-kong-vs-nestjs.md)
+> **Overrides:** [ADR-0030 — API Gateway: Kong vs NestJS](https://github.com/beyondnetcode/evolith_arch32/reference/architecture/adrs/core/0030-two-tier-distributed-gateway-model.md)
 
 ## Justificación de Divergencia
 

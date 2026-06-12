@@ -10,7 +10,7 @@
 
 ## 2. Context
 
-.NET APIs built on this framework process Personally Identifiable Information (PII): email addresses, identity references, passwords, tokens, and national IDs. The parent framework mandates structured logging ([ADR-0007](../nodejs/0007-observability-telemetry-loki-opentelemetry.md), [ADR-0046](../core/0046-dapr-unified-observability.md)), but unguarded Serilog usage creates PII leakage at three levels:
+.NET APIs built on this framework process Personally Identifiable Information (PII): email addresses, identity references, passwords, tokens, and national IDs. The parent framework mandates structured logging ([ADR-0007](../nodejs/0007-observability-telemetry-loki-opentelemetry.md), [ADR-0046](../core/0046-unified-observability-tracecontext.md)), but unguarded Serilog usage creates PII leakage at three levels:
 
 | Risk Level | Mechanism | Example |
 |-----------|-----------|---------|

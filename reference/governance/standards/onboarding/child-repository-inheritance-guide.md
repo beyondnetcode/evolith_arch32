@@ -157,7 +157,7 @@ Dead-letter queue `payments.dlq` receives all unacknowledged messages after 3 re
 
 > **Status:** Accepted
 > **Date:** 2026-05-22
-> **Overrides:** [ADR-0030 — API Gateway: Kong vs NestJS](https://github.com/beyondnetcode/evolith_arch32/reference/architecture/adrs/core/0030-api-gateway-kong-vs-nestjs.md)
+> **Overrides:** [ADR-0030 — API Gateway: Kong vs NestJS](https://github.com/beyondnetcode/evolith_arch32/reference/architecture/adrs/core/0030-two-tier-distributed-gateway-model.md)
 
 ## Divergence Justification
 

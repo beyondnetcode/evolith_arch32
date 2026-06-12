@@ -334,7 +334,7 @@ These are the Evolith ADRs most heavily tested by UMS — organized by the archi
 ### Architecture Foundation
 | ADR | Decision | UMS Evidence |
 |---|---|---|
-| [ADR-0001](../../architecture/adrs/core/0001-monorepo-orchestration-nx.md) | Nx Monorepo Orchestration | Monorepo with strict lib boundaries and domain isolation |
+| [ADR-0001](../../architecture/adrs/core/0001-monorepo-orchestration-principle.md) | Nx Monorepo Orchestration | Monorepo with strict lib boundaries and domain isolation |
 | [ADR-0002](../../architecture/adrs/nodejs/0002-clean-architecture-nestjs.md) | Hexagonal Architecture | Ports + Adapters across all 8 bounded contexts |
 | [ADR-0047](../../architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.md) | Modular Monolith Selection | UMS is a Phase 1 modular monolith — extraction-ready but not extracted |
 

@@ -28,7 +28,7 @@ Commit to a standard software testing hierarchy and mechanical deployment blocki
 - Requires active orchestration (testcontainers) to maintain local speed optimization.
 
 ## References
-- [ADR-0005: Security Gates](../../adrs/core/0005-ci-cd-quality-codeql.md)
+- [ADR-0005: Security Gates](../../adrs/core/0005-automated-sast-quality-gates.md)
 
 
 
@@ -49,7 +49,7 @@ Unknown (historical record; evaluated against general architectural principles o
 
 ## Related Decisions and Standards
 
-- [ADR-0005: Security Gates](../../adrs/core/0005-ci-cd-quality-codeql.md)
+- [ADR-0005: Security Gates](../../adrs/core/0005-automated-sast-quality-gates.md)
 
 ---
 [Back to Index](./README.md)

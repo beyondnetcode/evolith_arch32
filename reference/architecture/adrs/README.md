@@ -22,14 +22,14 @@ Decisions applicable to any product built on top of the framework, regardless of
 
 | Document | Description | Goal / Objective | Type | Mandatory |
 |---|---|---|---|---|
-| [ADR 0001: Monorepo Orchestration (Nx)](./core/0001-monorepo-orchestration-nx.md) | Monorepo orchestration decision based on Nx | Standardize build orchestration | Core ADR | Yes |
-| [ADR 0005: CI/CD Quality (CodeQL)](./core/0005-ci-cd-quality-codeql.md) | CI/CD quality gates with static analysis | Enforce pipeline quality | Core ADR | Yes |
-| [ADR 0006: Future Microservices (Dapr)](./core/0006-future-microservices-transition-dapr.md) | Transition path toward microservices using Dapr | Prepare controlled decomposition | Core ADR | Yes |
+| [ADR 0001: Monorepo Orchestration (Nx)](./core/0001-monorepo-orchestration-principle.md) | Monorepo orchestration decision based on Nx | Standardize build orchestration | Core ADR | Yes |
+| [ADR 0005: CI/CD Quality (CodeQL)](./core/0005-automated-sast-quality-gates.md) | CI/CD quality gates with static analysis | Enforce pipeline quality | Core ADR | Yes |
+| [ADR 0006: Future Microservices (Dapr)](./core/0006-microservices-transition-sidecar-pattern.md) | Transition path toward microservices using Dapr | Prepare controlled decomposition | Core ADR | Yes |
 | [ADR 0009: Strict Dependency Pinning](./core/0009-strict-dependency-pinning-vulnerability-management.md) | Dependency pinning and vulnerability management | Control the supply chain | Core ADR | Yes |
 | [ADR 0010: Multi-Tenancy Dual-Layer Strategy](./core/0010-multi-tenancy-architecture-strategy.md) | Multi-tenancy architecture strategy | Isolate tenants safely | Core ADR | Yes |
 | [ADR 0011: Resiliency Patterns](./core/0011-fault-tolerance-resiliency-patterns.md) | Fault-tolerance and resiliency patterns | Survive partial failures | Core ADR | Yes |
 | [ADR 0013: Cloud Topology & DR](./core/0013-cloud-infrastructure-topology-dr.md) | Cloud infrastructure topology and disaster recovery | Plan resilient infrastructure | Core ADR | Yes |
-| [ADR 0014: Distributed Caching (Redis)](./core/0014-distributed-caching-strategy-redis.md) | Distributed caching strategy | Standardize caching decisions | Core ADR | Yes |
+| [ADR 0014: Distributed Caching (Redis)](./core/0014-multi-layer-distributed-caching-strategy.md) | Distributed caching strategy | Standardize caching decisions | Core ADR | Yes |
 | [ADR 0015: Injectable Event Bus](./core/0015-event-driven-architecture-intra-domain.md) | Event-driven architecture within domains | Decouple domain communication | Core ADR | Yes |
 | [ADR 0016: Immutable Audit Trail](./core/0016-immutable-business-audit-trail.md) | Immutable business audit trail | Guarantee auditability | Core ADR | Yes |
 | [ADR 0017: Feature Flagging Strategy](./core/0017-feature-flagging-strategy.md) | Feature flagging strategy | Control rollout risk | Core ADR | Yes |
@@ -39,7 +39,7 @@ Decisions applicable to any product built on top of the framework, regardless of
 | [ADR 0024: Config & Feature Platform](./core/0024-configuration-feature-management-platform.md) | Configuration and feature management platform | Centralize configuration | Core ADR | Yes |
 | [ADR 0025: Feature Flag Provider Abstraction](./core/0025-feature-flag-provider-abstraction.md) | Feature flag provider abstraction | Keep flag vendors replaceable | Core ADR | Yes |
 | [ADR 0028: Self-Hosted OSS Infrastructure](./core/0028-self-hosted-hybrid-infrastructure-on-premise.md) | Self-hosted hybrid on-premise infrastructure | Stay vendor-neutral at runtime | Core ADR | Yes |
-| [ADR 0030: API Gateway (Kong vs Nest)](./core/0030-api-gateway-kong-vs-nestjs.md) | API gateway selection trade-off | Standardize the edge | Core ADR | Yes |
+| [ADR 0030: API Gateway (Kong vs Nest)](./core/0030-two-tier-distributed-gateway-model.md) | API gateway selection trade-off | Standardize the edge | Core ADR | Yes |
 | [ADR 0031: Isolated Schema Per Context](./core/0031-schema-per-context-domain-event-catalog.md) | Schema per context and domain event catalog | Isolate context data | Core ADR | Yes |
 | [ADR 0032: Protocol Selection Matrix](./core/0032-api-protocol-decision-matrix-rest-grpc-graphql.md) | REST vs gRPC vs GraphQL decision matrix | Pick protocols consistently | Core ADR | Yes |
 | [ADR 0033: Transactional Outbox](./core/0033-transactional-outbox-pattern.md) | Transactional outbox pattern | Guarantee reliable messaging | Core ADR | Yes |
@@ -52,7 +52,7 @@ Decisions applicable to any product built on top of the framework, regardless of
 | [ADR 0041: Dual-Engine Policy Evaluation](./core/0041-dual-engine-policy-evaluation.md) | Dual-Engine Policy Evaluation (Native + OPA) | Standardize policy evaluation | Core ADR | Yes |
 | [ADR 0044: Configurable Security Persistence Strategy](./core/0044-configurable-security-persistence-strategy.md) | Configurable security persistence strategy | Adapt security storage | Core ADR | Yes |
 | [ADR 0045: Microservice Extraction Readiness Criteria](./core/0045-microservice-extraction-readiness-criteria.md) | Readiness criteria before extracting microservices | Gate decomposition | Core ADR | Yes |
-| [ADR 0046: Dapr Adoption & Unified Observability](./core/0046-dapr-unified-observability.md) | Dapr adoption with unified observability | Standardize runtime sidecars | Core ADR | Yes |
+| [ADR 0046: Dapr Adoption & Unified Observability](./core/0046-unified-observability-tracecontext.md) | Dapr adoption with unified observability | Standardize runtime sidecars | Core ADR | Yes |
 | [ADR 0047: Monolith vs SOA vs Microservices](./core/0047-architectural-patterns-monolith-soa-microservices.md) | Selection framework across architectural patterns | Choose the right pattern | Core ADR | Yes |
 | [ADR 0048: Enterprise Taxonomy and Reference Layout](./core/0048-enterprise-taxonomy-reference-layout.md) | Enterprise taxonomy and reference layout | Standardize repository layout | Core ADR | Yes |
 | [ADR 0049: Naming Semantics & Clean Code Policy](./core/0049-naming-semantics-clean-code-policy.md) | Naming semantics and clean code policy | Keep code readable | Core ADR | Yes |

@@ -31,7 +31,7 @@ The application core is completely insulated from vendor lock-in thanks to stric
 * **Mitigation Strategy**: If licensing costs become prohibitive, the infrastructure adapter must be swapped to **Keycloak** (100% Open Source and free). However, this shifts the financial cost from licensing to DevOps maintenance (Kubernetes scaling, database management).
 
 ### Medium Licensing Risk: Redis Distributed Caching
-* **Context**: [ADR-0014](../../../architecture/adrs/core/0014-distributed-caching-strategy-redis.md) mandates Redis for caching.
+* **Context**: [ADR-0014](../../../architecture/adrs/core/0014-multi-layer-distributed-caching-strategy.md) mandates Redis for caching.
 * **The Risk**: Redis Inc. recently changed its licensing from BSD to RSALv2 (Source Available, not strictly OSI Open Source). While free for internal usage, it poses legal concerns for managed service hosting.
 * **Mitigation Strategy**: In case of strict open-source compliance requirements or self-hosted deployment ([ADR-0028](../../../architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md)), the operations team is authorized to use **Valkey** (the Linux Foundation Open Source fork of Redis) as a drop-in replacement.
 

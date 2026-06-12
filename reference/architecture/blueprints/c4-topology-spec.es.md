@@ -127,20 +127,20 @@ graph TD
 Según lo validado por el Arquitecto Principal, estas decisiones fundacionales están **oficialmente Aprobadas** y son obligatorias para la implementación del sistema.
 
 ### Grupo A: Fundamentos y Estándares Core
-1. **[ADR 0001: Orquestación de Monorepo](../adrs/core/0001-monorepo-orchestration-nx.es.md)**: Nx y espacios de trabajo npm para un CI/CD lineal y centralizado.
+1. **[ADR 0001: Orquestación de Monorepo](../adrs/core/0001-monorepo-orchestration-principle.es.md)**: Nx y espacios de trabajo npm para un CI/CD lineal y centralizado.
 2. **[ADR 0002: Arquitectura Hexagonal Limpia](../adrs/nodejs/0002-clean-architecture-nestjs.es.md)**: Separación de la lógica core del código del framework.
 3. **[ADR 0003: Estándares Estrictos de TypeScript](../adrs/nodejs/0003-strict-typescript-standards.es.md)**: Tipado absoluto, sin `any`, reglas de ESLint obligatorias.
-4. **[ADR 0005: Seguridad Cero-Costo CodeQL](../adrs/core/0005-ci-cd-quality-codeql.es.md)**: Detección automatizada de vulnerabilidades dentro de la pipeline.
+4. **[ADR 0005: Seguridad Cero-Costo CodeQL](../adrs/core/0005-automated-sast-quality-gates.es.md)**: Detección automatizada de vulnerabilidades dentro de la pipeline.
 5. **[ADR 0009: Fijación Estricta de Dependencias](../adrs/core/0009-strict-dependency-pinning-vulnerability-management.es.md)**: Bloqueo de actualizaciones dinámicas para prevenir brechas en la cadena de suministro.
 
 ### Grupo B: SaaS, Escalabilidad y Distribución
-6. **[ADR 0006: Transición futura a Microservicios vía Dapr](../adrs/core/0006-future-microservices-transition-dapr.es.md)**: Desacoplamiento de activadores para romper monolitos en redes de nodos de malla.
+6. **[ADR 0006: Transición futura a Microservicios vía Dapr](../adrs/core/0006-microservices-transition-sidecar-pattern.es.md)**: Desacoplamiento de activadores para romper monolitos en redes de nodos de malla.
 7. **[ADR 0007: Observabilidad vía OpenTelemetry](../adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.es.md)**: Trazado distribuido a través de BFF, API y BD.
 8. **[ADR 0008: Patrones BFF](../adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.es.md)**: Integración multi-canal a través de capas de traducción dedicadas.
 9. **[ADR 0010: Estrategia de Arquitectura Multi-Tenancy SaaS](../adrs/core/0010-multi-tenancy-architecture-strategy.es.md)**: Aplicación de aislamiento de doble capa con filtros tenant a nivel de aplicación y failsafes nativos de base de datos según el runtime.
 10. **[ADR 0011: Circuit Breakers de Tolerancia a Fallos](../adrs/core/0011-fault-tolerance-resiliency-patterns.es.md)**: Prevención de degradación en cascada utilizando `opossum`.
 11. **[ADR 0013: Topología de Recuperación ante Desastres](../adrs/core/0013-cloud-infrastructure-topology-dr.es.md)**: Diseño de nodos multi-región.
-12. **[ADR 0014: Caché Distribuida](../adrs/core/0014-distributed-caching-strategy-redis.es.md)**: Aliviar la base de datos a través de Redis centralizado.
+12. **[ADR 0014: Caché Distribuida](../adrs/core/0014-multi-layer-distributed-caching-strategy.es.md)**: Aliviar la base de datos a través de Redis centralizado.
 13. **[ADR 0015: Arquitectura Dirigida por Eventos](../adrs/core/0015-event-driven-architecture-intra-domain.es.md)**: Mensajería asíncrona entre contextos delimitados.
 14. **[ADR 0016: Auditoría de Negocio Inmutable](../adrs/core/0016-immutable-business-audit-trail.es.md)**: Sistema de registro que graba diffs de estado transaccional completos.
 
@@ -149,7 +149,7 @@ Según lo validado por el Arquitecto Principal, estas decisiones fundacionales e
 16. **[ADR 0021: Gráficos de Auth de Alto Rendimiento](../adrs/nodejs/0021-high-performance-auth-and-graph-compilation.es.md)**: Requisitos de latencia por debajo de 5ms.
 17. **[ADR 0026: MFA y Seguridad Adaptativa](../adrs/nodejs/0026-mfa-passwordless-adaptive-authentication.es.md)**: Soporte para WebAuthn y Passkeys.
 18. **[ADR 0027: Protocolos Duales REST y gRPC](../adrs/nodejs/0027-dual-protocol-rest-grpc-api-gateway.es.md)**: Streaming interno de alto rendimiento vía gRPC.
-19. **[ADR 0030: Kong Gateway vs NestJS Gateway](../adrs/core/0030-api-gateway-kong-vs-nestjs.es.md)**: Separación de proxies de infraestructura de la orquestación de negocio.
+19. **[ADR 0030: Kong Gateway vs NestJS Gateway](../adrs/core/0030-two-tier-distributed-gateway-model.es.md)**: Separación de proxies de infraestructura de la orquestación de negocio.
 20. **[ADR 0029: Primitivas DDD Tácticas](../adrs/nodejs/0029-tactical-ddd-primitives-library.es.md)**: Utilización obligatoria de `@nestjslatam/ddd` estandarizado.
 21. **[ADR 0032: Matriz de Decisión de Protocolo de API](../adrs/core/0032-api-protocol-decision-matrix-rest-grpc-graphql.es.md)**: Marco de evaluación que impone REST para exposición pública, gRPC para backbones internos y GraphQL para la agregación optimizada de BFF.
 

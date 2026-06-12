@@ -90,7 +90,7 @@ Evidencia: ambos documentos de diseño fuente; estado de código verificado el 2
 
 ## Decisiones y Estándares Relacionados
 
-- [ADR 0069: Implementación del Protocolo de Servidor MCP](./0069-mcp-server-protocol-implementation.es.md) — transporte sobre el que viaja este contrato
+- [ADR 0069: Implementación del Protocolo de Servidor MCP](./0069-ai-agent-context-protocol-integration.es.md) — transporte sobre el que viaja este contrato
 - [ADR 0032: Matriz de Decisión de Protocolos API](./0032-api-protocol-decision-matrix-rest-grpc-graphql.es.md) — principios de selección de protocolo
 - [Estándar de Autoría de ADRs](../adr-authoring-standard.es.md) — estructura de este ADR
 - Ítems de gap: [GT-01](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-01) (esta decisión), GT-02/GT-03/GT-06 (implementación), GT-12 (completar `--dry-run`), GT-18 (publicación npm bajo el alias `evolith`)

@@ -7,7 +7,7 @@ Approved
 2026-05-12
 
 ## Context
-[ADR 0006](../core/0006-future-microservices-transition-dapr.md) outlines the evolution milestones from a Modular Monolith toward Microservices, and [ADR-0047](../core/0047-architectural-patterns-monolith-soa-microservices.md) provides the overarching macro selection framework. However, specific quantitative triggers were needed to physically activate a service extraction. Without these explicit rules, partition decisions run the risk of being driven by intuition or pressure, which often result in migration failures and premature operational burden.
+[ADR 0006](../core/0006-microservices-transition-sidecar-pattern.md) outlines the evolution milestones from a Modular Monolith toward Microservices, and [ADR-0047](../core/0047-architectural-patterns-monolith-soa-microservices.md) provides the overarching macro selection framework. However, specific quantitative triggers were needed to physically activate a service extraction. Without these explicit rules, partition decisions run the risk of being driven by intuition or pressure, which often result in migration failures and premature operational burden.
 
 ## Decision
 Formalize the **"2 out of 4" rule** as the mandatory quantitative trigger for extracting a Bounded Context into an independent service.
@@ -37,7 +37,7 @@ A domain module MUST be deemed a valid candidate for the extraction phase (Miles
 - Mandates fully operational observability ([ADR-0007](../nodejs/0007-observability-telemetry-loki-opentelemetry.md)) to accurately capture per-module P95 health indicators.
 
 ## References
-- [ADR 0006: Future Microservices Transition](../core/0006-future-microservices-transition-dapr.md)
+- [ADR 0006: Future Microservices Transition](../core/0006-microservices-transition-sidecar-pattern.md)
 - [ADR 0047: Selection Framework: Monolith vs SOA vs Microservices](../core/0047-architectural-patterns-monolith-soa-microservices.md)
 - Sam Newman - *Building Microservices* (2nd Ed. 2021)
 
@@ -55,7 +55,7 @@ Historical backfill: Address the architectural tension where [ADR 0006](, establ
 
 ## Related Decisions and Standards
 
-- [ADR 0006: Future Microservices Transition](../core/0006-future-microservices-transition-dapr.md)
+- [ADR 0006: Future Microservices Transition](../core/0006-microservices-transition-sidecar-pattern.md)
 - [ADR 0047: Selection Framework: Monolith vs SOA vs Microservices](../core/0047-architectural-patterns-monolith-soa-microservices.md)
 - Sam Newman - *Building Microservices* (2nd Ed. 2021)
 

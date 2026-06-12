@@ -8,7 +8,7 @@ Satellite repositories need a common branching model that keeps production stabl
 
 Gitflow remains the standard, extended with explicit `qa` and `uat` promotion branches. These branches represent deployable environment states, not parallel development lanes. Feature work still integrates through `develop`; promotion to `qa`, `uat`, and `main` is gated by evidence.
 
-This ADR aligns with [ADR-0005 CI/CD Quality CodeQL](./0005-ci-cd-quality-codeql.md), [ADR-0018 Testing Pyramid Quality Gates](./0018-testing-pyramid-quality-gates.md), and the machine-readable ruleset at [`rulesets/adr/adr-0050-gitflow-branching.rules.json`](../../../../rulesets/adr/adr-0050-gitflow-branching.rules.json).
+This ADR aligns with [ADR-0005 CI/CD Quality CodeQL](./0005-automated-sast-quality-gates.md), [ADR-0018 Testing Pyramid Quality Gates](./0018-testing-pyramid-quality-gates.md), and the machine-readable ruleset at [`rulesets/adr/adr-0050-gitflow-branching.rules.json`](../../../../rulesets/adr/adr-0050-gitflow-branching.rules.json).
 
 ## Decision
 Adopt Gitflow as the mandatory branching strategy for satellite systems using this progressive architecture reference and the Evolith toolset. The required long-lived branches are `main`, `develop`, `qa`, and `uat`. Short-lived branches are `feature/*`, individual branches derived from a feature branch, `release/*`, and `hotfix/*` when applicable.

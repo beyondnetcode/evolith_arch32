@@ -35,7 +35,7 @@ Our architecture does not blindly choose a single side. Instead, it segments the
 * **Technology Profile**: Distributed cache + durable message broker + CDN/client cache.
 * **Behavior on Partition**: If Node A cannot talk to Node B, they will both continue serving data from their local cache or queue, even if the data is slightly stale (Eventual Consistency).
 * **ADR References**:
- * [ADR-0014: 4-Tier Distributed Cache](../adrs/core/0014-distributed-caching-strategy-redis.md)
+ * [ADR-0014: 4-Tier Distributed Cache](../adrs/core/0014-multi-layer-distributed-caching-strategy.md)
  * [ADR-0036: Message Bus Flow Control](../adrs/core/0036-message-bus-delivery-strategy-fifo-dlq.md)
  * [ADR-0004: Frontend Offline Resilience](../adrs/nodejs/0004-frontend-offline-resilience.md)
 * **Pros**: Extremely low latency, operational during partial network degradation.

@@ -45,7 +45,7 @@ Todas las reglas se imponen en CI - los PRs con errores de TypeScript se bloquea
 - Las librerías de terceros con definiciones de TypeScript pobres requieren un envoltorio de tipado cuidadoso.
 
 ## Referencias
-- [ADR-0001: Orquestación de Monorepo](../../adrs/core/0001-monorepo-orchestration-nx.es.md)
+- [ADR-0001: Orquestación de Monorepo](../../adrs/core/0001-monorepo-orchestration-principle.es.md)
 - [ADR-0002: Arquitectura Hexagonal Limpia](../../adrs/nodejs/0002-clean-architecture-nestjs.es.md)
 
 
@@ -69,7 +69,7 @@ Desconocido (registro histórico; evaluado contra principios generales de arquit
 
 ## Decisiones y Estándares Relacionados
 
-- [ADR-0001: Orquestación de Monorepo](../../adrs/core/0001-monorepo-orchestration-nx.es.md)
+- [ADR-0001: Orquestación de Monorepo](../../adrs/core/0001-monorepo-orchestration-principle.es.md)
 - [ADR-0002: Arquitectura Hexagonal Limpia](../../adrs/nodejs/0002-clean-architecture-nestjs.es.md)
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)

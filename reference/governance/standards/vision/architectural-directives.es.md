@@ -31,7 +31,7 @@ Ninguna etapa se omite. Ninguna etapa es obligatoria más allá de lo que el neg
 ### 2.2 Preparación para Alta Concurrencia
 El sistema DEBE soportar ráfagas repentinas y no uniformes de carga de usuarios. Esto se logra mediante:
 - Topología de contenedores con auto-escalado ([ADR-0028](../../../architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.es.md))
-- Estrategias de caché de 4 niveles ([ADR-0014](../../../architecture/adrs/core/0014-distributed-caching-strategy-redis.es.md))
+- Estrategias de caché de 4 niveles ([ADR-0014](../../../architecture/adrs/core/0014-multi-layer-distributed-caching-strategy.es.md))
 - Abstracción de Bus de Eventos no bloqueante ([ADR-0015](../../../architecture/adrs/core/0015-event-driven-architecture-intra-domain.es.md))
 
 ### 2.3 Integridad Transaccional

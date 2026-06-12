@@ -35,13 +35,13 @@ The organization promotes a deliberate polyglot architecture where runtimes are 
 ### 1.3 Mandatory Quality Attributes
 | Quality Attribute | Source ADR | Target |
 | :--- | :--- | :--- |
-| **Progressive Evolution** | [ADR-0006](../adrs/core/0006-future-microservices-transition-dapr.md), [ADR-0008](../adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.md) | Zero-refactoring path to microservices via Dapr |
+| **Progressive Evolution** | [ADR-0006](../adrs/core/0006-microservices-transition-sidecar-pattern.md), [ADR-0008](../adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.md) | Zero-refactoring path to microservices via Dapr |
 | **SaaS Multi-Tenancy** | [ADR-0010](../adrs/core/0010-multi-tenancy-architecture-strategy.md) | Dual-Layer Isolation (Application Filters + Native DB Failsafe) |
 | **Strict Decoupling** | [ADR-0002](../adrs/nodejs/0002-clean-architecture-nestjs.md), [ADR-0003](../adrs/nodejs/0003-strict-typescript-standards.md) | ESLint boundary enforcement |
 | **Resilience** | [ADR-0011](../adrs/core/0011-fault-tolerance-resiliency-patterns.md) | Distributed Circuit Breakers (Redis + Kong) |
-| **Security** | [ADR-0005](../adrs/core/0005-ci-cd-quality-codeql.md), [ADR-0012](../adrs/nodejs/0012-advanced-authorization-rbac-abac.md), [ADR-0020](../adrs/core/0020-identity-provider-abstraction-strategy.md), [ADR-0026](../adrs/nodejs/0026-mfa-passwordless-adaptive-authentication.md) | Zero-trust perimeter + RBAC/ABAC |
-| **Internal API Latency** | [ADR-0014](../adrs/core/0014-distributed-caching-strategy-redis.md), [ADR-0021](../adrs/nodejs/0021-high-performance-auth-and-graph-compilation.md) | 4-Tier Cache (Client + CDN + BFF + Core) |
-| **Observability** | [ADR-0007](../adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md), [ADR-0046](../adrs/core/0046-dapr-unified-observability.md) | OTel + Loki + distributed tracing |
+| **Security** | [ADR-0005](../adrs/core/0005-automated-sast-quality-gates.md), [ADR-0012](../adrs/nodejs/0012-advanced-authorization-rbac-abac.md), [ADR-0020](../adrs/core/0020-identity-provider-abstraction-strategy.md), [ADR-0026](../adrs/nodejs/0026-mfa-passwordless-adaptive-authentication.md) | Zero-trust perimeter + RBAC/ABAC |
+| **Internal API Latency** | [ADR-0014](../adrs/core/0014-multi-layer-distributed-caching-strategy.md), [ADR-0021](../adrs/nodejs/0021-high-performance-auth-and-graph-compilation.md) | 4-Tier Cache (Client + CDN + BFF + Core) |
+| **Observability** | [ADR-0007](../adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md), [ADR-0046](../adrs/core/0046-unified-observability-tracecontext.md) | OTel + Loki + distributed tracing |
 | **Immutable Auditing** | [ADR-0016](../adrs/core/0016-immutable-business-audit-trail.md) | Append-only audit ledger |
 | **Tech Sovereignty** | [ADR-0002](../adrs/nodejs/0002-clean-architecture-nestjs.md), [ADR-0028](../adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md) | 100% Swappable Infra/AOP without logic impact |
 | **UI Modularization** | [ADR-0055](../adrs/core/0055-microfrontends-architecture-strategy.md) | Microfrontends (Module Federation) for Phase 3+ |
@@ -59,7 +59,7 @@ To deeply understand the mathematical and risk posture of this architecture, con
 
 Any system based on this blueprint must adhere to the following non-negotiable pillars:
 
-* **Stack Governance ([ADR-0001](../adrs/core/0001-monorepo-orchestration-nx.md))**: Nx Monorepo + npm Workspaces for centralized dependency governance.
+* **Stack Governance ([ADR-0001](../adrs/core/0001-monorepo-orchestration-principle.md))**: Nx Monorepo + npm Workspaces for centralized dependency governance.
 * **Engineering Mandate ([ADR-0002](../adrs/nodejs/0002-clean-architecture-nestjs.md), [ADR-0003](../adrs/nodejs/0003-strict-typescript-standards.md))**: SOLID, Clean Code, Hexagonal Architecture (mandatory simple Ports/Adapters), strict TypeScript.
 * **Dependency Safety ([ADR-0009](../adrs/core/0009-strict-dependency-pinning-vulnerability-management.md))**: All dependency versions pinned. No `^` or `~` ranges. Automated vulnerability scanning in CI.
 * **Quality Gates ([ADR-0018](../adrs/core/0018-testing-pyramid-quality-gates.md))**: Automated testing pyramid. Minimum 70% coverage enforced in CI.
@@ -72,7 +72,7 @@ Any system based on this blueprint must adhere to the following non-negotiable p
 ### 3.1 General Context Pattern - Full Stack with Gateway Tiers and Injectable Event Bus
 
 This diagram captures the complete system context. It reflects:
-- **[ADR-0030](../adrs/core/0030-api-gateway-kong-vs-nestjs.md)**: Two-Tier Gateway (Kong Edge + NestJS BFF)
+- **[ADR-0030](../adrs/core/0030-two-tier-distributed-gateway-model.md)**: Two-Tier Gateway (Kong Edge + NestJS BFF)
 - **[ADR-0008](../adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.md)**: Progressive Multi-Module evolution with dedicated BFF per client channel
 - **[ADR-0015](../adrs/core/0015-event-driven-architecture-intra-domain.md)**: Injectable `IEventBusPort` abstraction (In-Memory -> RabbitMQ -> Kafka)
 - **[ADR-0020](../adrs/core/0020-identity-provider-abstraction-strategy.md)**: Pluggable Identity Provider via Strategy Pattern
@@ -152,7 +152,7 @@ All business logic in the Domain and Application layers has **zero runtime depen
 ### 4.2 SaaS Multi-Tenancy Strategy ([ADR-0010](../adrs/core/0010-multi-tenancy-architecture-strategy.md))
 Employs **Dual-Layer Isolation Defense**. (Layer 1) Persistence adapters automatically append `tenant_id` filtering to generic queries. (Layer 2) The selected database engine may enforce native row-level containment as a secondary failsafe, such as PostgreSQL RLS or SQL Server RLS backed by session context.
 
-### 4.3 Two-Tier Gateway Pattern ([ADR-0030](../adrs/core/0030-api-gateway-kong-vs-nestjs.md))
+### 4.3 Two-Tier Gateway Pattern ([ADR-0030](../adrs/core/0030-two-tier-distributed-gateway-model.md))
 | Tier | Technology | Responsibility |
 | :--- | :--- | :--- |
 | **Tier 1 - Edge** | Kong OSS (NGINX/OpenResty) | Rate Limiting, JWT validation, SSL termination, Routing |
@@ -161,7 +161,7 @@ Employs **Dual-Layer Isolation Defense**. (Layer 1) Persistence adapters automat
 ### 4.4 Injectable Event Bus ([ADR-0015](../adrs/core/0015-event-driven-architecture-intra-domain.md))
 The domain never imports a concrete message broker. All async communication is routed through `IEventBusPort`. The concrete implementation (In-Memory / RabbitMQ / Kafka) is injected by the NestJS DI container at startup, controlled by an environment variable.
 
-### 4.5 Progressive Evolution Route ([ADR-0006](../adrs/core/0006-future-microservices-transition-dapr.md))
+### 4.5 Progressive Evolution Route ([ADR-0006](../adrs/core/0006-microservices-transition-sidecar-pattern.md))
 1. **Milestone 1 - Modular Monolith**: Single process, logically isolated domain modules.
 2. **Milestone 2 - Service Extraction**: Critical domains extracted as Nx micro-projects with isolated DBs, consumed via gRPC/Dapr.
 3. **Milestone 3 - Full Microservices Mesh**: Dapr Sidecars, Service Mesh, Kong as unified API surface, and **Microfrontend extraction** ([ADR-0055](../adrs/core/0055-microfrontends-architecture-strategy.md)).
@@ -213,7 +213,7 @@ graph TD
 - One NestJS process. One PostgreSQL instance. Docker Compose for local dev.
 - No Kong gateway — direct HTTPS to the app. Add Kong at Phase 2 when a second client channel or external partner is onboarded.
 - In-Memory event bus. Replace with RabbitMQ only when cross-service async delivery is needed ([ADR-0015](../adrs/core/0015-event-driven-architecture-intra-domain.md)).
-- Redis is optional. Add only when a specific latency threshold is breached ([ADR-0014](../adrs/core/0014-distributed-caching-strategy-redis.md)).
+- Redis is optional. Add only when a specific latency threshold is breached ([ADR-0014](../adrs/core/0014-multi-layer-distributed-caching-strategy.md)).
 
 ---
 
@@ -316,7 +316,7 @@ graph TD
 
 ## 6. Runtime View - Request Flow Patterns
 
-### 6.1 Authenticated Request Flow ([ADR-0030](../adrs/core/0030-api-gateway-kong-vs-nestjs.md), [ADR-0008](../adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.md), [ADR-0021](../adrs/nodejs/0021-high-performance-auth-and-graph-compilation.md), [ADR-0014](../adrs/core/0014-distributed-caching-strategy-redis.md))
+### 6.1 Authenticated Request Flow ([ADR-0030](../adrs/core/0030-two-tier-distributed-gateway-model.md), [ADR-0008](../adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.md), [ADR-0021](../adrs/nodejs/0021-high-performance-auth-and-graph-compilation.md), [ADR-0014](../adrs/core/0014-multi-layer-distributed-caching-strategy.md))
 
 ```mermaid
 sequenceDiagram
@@ -450,12 +450,12 @@ graph TD
 
 | Architectural Concern | Implementing ADR(s) | Pattern / Technology | Diagram Section |
 | :--- | :--- | :--- | :--- |
-| **Monorepo Governance** | [ADR-0001](../adrs/core/0001-monorepo-orchestration-nx.md) | Nx + npm workspaces | 2 |
+| **Monorepo Governance** | [ADR-0001](../adrs/core/0001-monorepo-orchestration-principle.md) | Nx + npm workspaces | 2 |
 | **Hexagonal Architecture** | [ADR-0002](../adrs/nodejs/0002-clean-architecture-nestjs.md) | Ports and Adapters | 4.1, 5 |
 | **TypeScript Standards** | [ADR-0003](../adrs/nodejs/0003-strict-typescript-standards.md) | Strict mode + ESLint Boundaries | 2 |
 | **Frontend Resilience** | [ADR-0004](../adrs/nodejs/0004-frontend-offline-resilience.md) | React Query offline cache | 3.1 |
-| **CI/CD Security** | [ADR-0005](../adrs/core/0005-ci-cd-quality-codeql.md) | CodeQL + GitHub Actions | 2 |
-| **Microservices Path** | [ADR-0006](../adrs/core/0006-future-microservices-transition-dapr.md) | Dapr Sidecar migration triggers | 4.5 |
+| **CI/CD Security** | [ADR-0005](../adrs/core/0005-automated-sast-quality-gates.md) | CodeQL + GitHub Actions | 2 |
+| **Microservices Path** | [ADR-0006](../adrs/core/0006-microservices-transition-sidecar-pattern.md) | Dapr Sidecar migration triggers | 4.5 |
 | **Observability** | [ADR-0007](../adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md) | OpenTelemetry + Loki + Jaeger | 3.1, 5, 6 |
 | **BFF Gateway Pattern** | [ADR-0008](../adrs/nodejs/0008-progressive-multimodule-evolution-gateway-bff.md) | NestJS BFF per client channel | 3.1, 4.3, 5 |
 | **Dependency Pinning** | [ADR-0009](../adrs/core/0009-strict-dependency-pinning-vulnerability-management.md) | Exact versions + `npm audit` | 2 |
@@ -463,7 +463,7 @@ graph TD
 | **Circuit Breakers** | [ADR-0011](../adrs/core/0011-fault-tolerance-resiliency-patterns.md) | `opossum` + Exponential Backoff | 5, 6.3 |
 | **RBAC/ABAC Authorization** | [ADR-0012](../adrs/nodejs/0012-advanced-authorization-rbac-abac.md) | JWT Claims + NestJS Guards | 5 |
 | **Cloud DR Topology** | [ADR-0013](../adrs/core/0013-cloud-infrastructure-topology-dr.md) | Multi-AZ + Streaming Replication | 7 |
-| **Distributed Caching** | [ADR-0014](../adrs/core/0014-distributed-caching-strategy-redis.md) | Multi-Layer Tiered Cache behind `ICachePort` | 5, 6.1 |
+| **Distributed Caching** | [ADR-0014](../adrs/core/0014-multi-layer-distributed-caching-strategy.md) | Multi-Layer Tiered Cache behind `ICachePort` | 5, 6.1 |
 | **Event-Driven (Injectable Bus)** | [ADR-0015](../adrs/core/0015-event-driven-architecture-intra-domain.md) | `IEventBusPort` -> In-Mem / RabbitMQ | 3.1, 4.4, 5, 6.2 |
 | **Immutable Audit Trail** | [ADR-0016](../adrs/core/0016-immutable-business-audit-trail.md) | Append-only table + DB trigger | 5, 6.2 |
 | **Feature Flagging** | [ADR-0017](../adrs/core/0017-feature-flagging-strategy.md) | `IFeatureFlagPort` (Unleash/ConfigCat) | 5 |
@@ -479,7 +479,7 @@ graph TD
 | **Dual Protocol REST/gRPC** | [ADR-0027](../adrs/nodejs/0027-dual-protocol-rest-grpc-api-gateway.md) | REST (external) + gRPC (internal) | 3.1 |
 | **Self-Hosted OSS Infra** | [ADR-0028](../adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md) | MinIO + RabbitMQ + Vault OSS | 5, 7 |
 | **Tactical DDD Primitives** | [ADR-0029](../adrs/nodejs/0029-tactical-ddd-primitives-library.md) | `@nestjslatam/ddd` via barrel re-exports | 4.1 |
-| **Two-Tier Gateway** | [ADR-0030](../adrs/core/0030-api-gateway-kong-vs-nestjs.md) | Kong (Edge) + NestJS BFF (Aggregation) | 3.1, 4.3, 5, 6.1 |
+| **Two-Tier Gateway** | [ADR-0030](../adrs/core/0030-two-tier-distributed-gateway-model.md) | Kong (Edge) + NestJS BFF (Aggregation) | 3.1, 4.3, 5, 6.1 |
 | **Domain Event Catalog** | [ADR-0031](../adrs/core/0031-schema-per-context-domain-event-catalog.md) | Multi-schema extraction + Async Contracts | 5, 6.2 |
 | **Protocol Selection** | [ADR-0032](../adrs/core/0032-api-protocol-decision-matrix-rest-grpc-graphql.md) | gRPC (Int) vs REST (Ext) vs GraphQL | 3.1, 5, 6.1 |
 | **Transactional Outbox** | [ADR-0033](../adrs/core/0033-transactional-outbox-pattern.md) | Atomic DB + Event atomic guarantee | 6.2 |
@@ -494,7 +494,7 @@ graph TD
 | **Android Arch Canonical** | [ADR-0042](../adrs/android/0042-canonical-android-mobile-architecture.md) | Native Kotlin / Compose / Offline | 1.2 |
 | **Configurable Security Strategy** | [ADR-0044](../adrs/core/0044-configurable-security-persistence-strategy.md) | APP_FILTER vs INFRA_NATIVE persistence strategy | 4.2 |
 | **Microservice Extraction Criteria** | [ADR-0045](../adrs/core/0045-microservice-extraction-readiness-criteria.md) | Quantitative "2 of 4" extraction triggers | 4.5 |
-| **Dapr Observability Unification** | [ADR-0046](../adrs/core/0046-dapr-unified-observability.md) | W3C TraceContext unification with Dapr sidecar | 3.1, 5 |
+| **Dapr Observability Unification** | [ADR-0046](../adrs/core/0046-unified-observability-tracecontext.md) | W3C TraceContext unification with Dapr sidecar | 3.1, 5 |
 | **Architecture Style Selection** | [ADR-0047](../adrs/core/0047-architectural-patterns-monolith-soa-microservices.md) | Monolith vs SOA vs Microservices decision framework | 4.5 |
 | **Enterprise Taxonomy Layout** | [ADR-0048](../adrs/core/0048-enterprise-taxonomy-reference-layout.md) | Repository structure, root layout, dot-folder tooling | 2 |
 | **Naming Semantics Policy** | [ADR-0049](../adrs/core/0049-naming-semantics-clean-code-policy.md) | Clean Code naming conventions | 2 |
@@ -513,11 +513,11 @@ graph TD
 
 | Metric | Target | Enforcing ADR(s) |
 | :--- | :--- | :--- |
-| **API Latency (P95)** | < 50ms | [ADR-0014](../adrs/core/0014-distributed-caching-strategy-redis.md), [ADR-0021](../adrs/nodejs/0021-high-performance-auth-and-graph-compilation.md) |
+| **API Latency (P95)** | < 50ms | [ADR-0014](../adrs/core/0014-multi-layer-distributed-caching-strategy.md), [ADR-0021](../adrs/nodejs/0021-high-performance-auth-and-graph-compilation.md) |
 | **Auth Graph Resolution** | < 5ms | [ADR-0021](../adrs/nodejs/0021-high-performance-auth-and-graph-compilation.md) |
-| **SAST Vulnerabilities** | 0 High/Critical | [ADR-0005](../adrs/core/0005-ci-cd-quality-codeql.md), [ADR-0009](../adrs/core/0009-strict-dependency-pinning-vulnerability-management.md) |
+| **SAST Vulnerabilities** | 0 High/Critical | [ADR-0005](../adrs/core/0005-automated-sast-quality-gates.md), [ADR-0009](../adrs/core/0009-strict-dependency-pinning-vulnerability-management.md) |
 | **Test Coverage** | 70% | [ADR-0018](../adrs/core/0018-testing-pyramid-quality-gates.md) |
-| **Memory Footprint** | Low idle (microservice density) | [ADR-0002](../adrs/nodejs/0002-clean-architecture-nestjs.md), [ADR-0006](../adrs/core/0006-future-microservices-transition-dapr.md) |
+| **Memory Footprint** | Low idle (microservice density) | [ADR-0002](../adrs/nodejs/0002-clean-architecture-nestjs.md), [ADR-0006](../adrs/core/0006-microservices-transition-sidecar-pattern.md) |
 | **Tenant Data Bleed** | Zero tolerance | [ADR-0010](../adrs/core/0010-multi-tenancy-architecture-strategy.md) (Dual-Layer Isolation) |
 
 ---

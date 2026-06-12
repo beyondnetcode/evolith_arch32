@@ -42,7 +42,7 @@ The assessment scores against the 5 standard TOGAF ACMM levels (1: Initial to 5:
 ### Pillar 1: Security & Compliance — **Level 4 (Managed)**
 * **State:** `Validated`
 * **Evidence:**
-  * Zero-Cost Security Pipeline via CodeQL ([ADR-0005](../../../architecture/adrs/core/0005-ci-cd-quality-codeql.md)).
+  * Zero-Cost Security Pipeline via CodeQL ([ADR-0005](../../../architecture/adrs/core/0005-automated-sast-quality-gates.md)).
   * Strict dependency version pinning (exact lockfiles, no ranges) with automated vulnerability management ([ADR-0009](../../../architecture/adrs/core/0009-strict-dependency-pinning-vulnerability-management.md)).
   * Multi-tenant data isolation via Row-Level Security ([ADR-0010](../../../architecture/adrs/core/0010-multi-tenancy-architecture-strategy.md)).
   * Immutable audit trails via CDC ([ADR-0016](../../../architecture/adrs/core/0016-immutable-business-audit-trail.md)).
@@ -67,7 +67,7 @@ The assessment scores against the 5 standard TOGAF ACMM levels (1: Initial to 5:
 ### Pillar 4: Operational Excellence — **Level 4 (Managed)**
 * **State:** `Validated`
 * **Evidence:**
-  * Deterministic monorepo builds via Nx ([ADR-0001](../../../architecture/adrs/core/0001-monorepo-orchestration-nx.md)).
+  * Deterministic monorepo builds via Nx ([ADR-0001](../../../architecture/adrs/core/0001-monorepo-orchestration-principle.md)).
   * Telemetry via LGTM stack and OpenTelemetry ([ADR-0007](../../../architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md)).
   * Feature flagging decouples deployment from release ([ADR-0017](../../../architecture/adrs/core/0017-feature-flagging-strategy.md)).
   * Quality gates enforce coverage thresholds in CI ([ADR-0018](../../../architecture/adrs/core/0018-testing-pyramid-quality-gates.md)).
@@ -79,7 +79,7 @@ The assessment scores against the 5 standard TOGAF ACMM levels (1: Initial to 5:
   * Hexagonal boundaries decoupling core from infrastructure ([ADR-0002](../../../architecture/adrs/nodejs/0002-clean-architecture-nestjs.md)).
   * Tactical design patterns (Result monad) ([ADR-0019](../../../architecture/adrs/core/0019-tactical-design-patterns-future-proofing.md)).
   * Event-driven decoupling of domain modules ([ADR-0015](../../../architecture/adrs/core/0015-event-driven-architecture-intra-domain.md)).
-* **Path to Level 5:** monolith-to-Dapr transition with zero domain changes ([ADR-0006](../../../architecture/adrs/core/0006-future-microservices-transition-dapr.md)). Note: strict hexagonal enforcement in the CLI itself is still open — see [GT-19](./gap-reference-catalog.md#gt-19).
+* **Path to Level 5:** monolith-to-Dapr transition with zero domain changes ([ADR-0006](../../../architecture/adrs/core/0006-microservices-transition-sidecar-pattern.md)). Note: strict hexagonal enforcement in the CLI itself is still open — see [GT-19](./gap-reference-catalog.md#gt-19).
 
 ---
 

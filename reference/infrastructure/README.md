@@ -21,9 +21,9 @@ This directory contains Docker Compose configuration and gateway declarative con
 | Service | Phase Required | Role |
 | :--- | :--- | :--- |
 | **PostgreSQL** | Phase 1 (mandatory) | Primary relational database |
-| **Redis** | Phase 1 (optional, add when latency demands it) | Distributed cache — [ADR-0014](../architecture/adrs/core/0014-distributed-caching-strategy-redis.md) |
+| **Redis** | Phase 1 (optional, add when latency demands it) | Distributed cache — [ADR-0014](../architecture/adrs/core/0014-multi-layer-distributed-caching-strategy.md) |
 | **RabbitMQ** | Phase 2+ | Async message broker — [ADR-0015](../architecture/adrs/core/0015-event-driven-architecture-intra-domain.md) |
-| **Kong Gateway** | Phase 2+ | Edge API gateway — [ADR-0030](../architecture/adrs/core/0030-api-gateway-kong-vs-nestjs.md) |
+| **Kong Gateway** | Phase 2+ | Edge API gateway — [ADR-0030](../architecture/adrs/core/0030-two-tier-distributed-gateway-model.md) |
 | **HashiCorp Vault** | Phase 2+ | Secrets management — [ADR-0028](../architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md) |
 
 > **Phase 1 rule:** Start with PostgreSQL only. Add Redis when a specific P95 latency threshold is breached. Add Kong and RabbitMQ only when a second client channel or cross-service async delivery is needed.

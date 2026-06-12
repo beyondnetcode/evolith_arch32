@@ -29,7 +29,7 @@ Introduce an authoritative **Configuration & Feature Management Bounded Context*
 
 ## References
 - [ADR-0025: Feature Flag Abstraction Strategy](../../adrs/core/0025-feature-flag-provider-abstraction.md)
-- [ADR-0014: Redis Cache Strategy](../../adrs/core/0014-distributed-caching-strategy-redis.md)
+- [ADR-0014: Redis Cache Strategy](../../adrs/core/0014-multi-layer-distributed-caching-strategy.md)
 
 
 
@@ -51,7 +51,7 @@ Unknown (historical record; evaluated against general architectural principles o
 ## Related Decisions and Standards
 
 - [ADR-0025: Feature Flag Abstraction Strategy](../../adrs/core/0025-feature-flag-provider-abstraction.md)
-- [ADR-0014: Redis Cache Strategy](../../adrs/core/0014-distributed-caching-strategy-redis.md)
+- [ADR-0014: Redis Cache Strategy](../../adrs/core/0014-multi-layer-distributed-caching-strategy.md)
 
 ---
 [Back to Index](./README.md)

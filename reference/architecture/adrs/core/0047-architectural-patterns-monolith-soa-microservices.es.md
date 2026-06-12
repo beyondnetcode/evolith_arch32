@@ -9,7 +9,7 @@
 * **Fecha:** 2026-05-12
 * **Tags:** `Governance`, `Architecture-Patterns`, `Scalability`, `Decision-Framework`
 * **ADRs Relacionados:**
-  * [ADR-0006: Transición Futura a Microservicios con Dapr](./0006-future-microservices-transition-dapr.es.md)
+  * [ADR-0006: Transición Futura a Microservicios con Dapr](./0006-microservices-transition-sidecar-pattern.es.md)
   * [ADR-0032: Matriz de Selección de Protocolos](./0032-api-protocol-decision-matrix-rest-grpc-graphql.es.md)
   * [ADR-0045: Criterios de Extracción de Microservicios](./0045-microservice-extraction-readiness-criteria.es.md)
 

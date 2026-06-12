@@ -8,7 +8,7 @@ Aprobado
 
 ## Contexto
 
-Como el sistema está diseñado como un **Monolito Progresivo** ([ADR-0006](0006-future-microservices-transition-dapr.es.md)) destinado a evolucionar hacia microservicios, existen dos riesgos estructurales que no están cubiertos por la línea base actual de ADR:
+Como el sistema está diseñado como un **Monolito Progresivo** ([ADR-0006](0006-microservices-transition-sidecar-pattern.es.md)) destinado a evolucionar hacia microservicios, existen dos riesgos estructurales que no están cubiertos por la línea base actual de ADR:
 
 1. **Esquema de PostgreSQL Plano**: [ADR-0010](0010-multi-tenancy-architecture-strategy.es.md) define la Seguridad a Nivel de Fila (RLS) para el aislamiento multi-tenant, pero todas las tablas residen en un único esquema plano. Al extraer un contexto delimitado a un microservicio independiente, no hay una frontera de propiedad clara a nivel de base de datos. Los joins entre tablas se convierten en llamadas entre servicios, y los planes de migración se vuelven ambiguos.
 
@@ -158,7 +158,7 @@ class CategoryDeletedEvent {
 - **Disciplina del desarrollador**: Los desarrolladores deben respetar las reglas de propiedad del esquema. Las reglas de límites de ESLint ([ADR-0003](../nodejs/0003-strict-typescript-standards.es.md)) deben configurarse para prevenir importaciones directas a través de los límites de los contextos.
 
 ## Referencias
-- [ADR-0006: Transición Futura a Microservicios con Dapr](../../adrs/core/0006-future-microservices-transition-dapr.es.md)
+- [ADR-0006: Transición Futura a Microservicios con Dapr](../../adrs/core/0006-microservices-transition-sidecar-pattern.es.md)
 - [ADR-0010: Estrategia Multi-Tenancy (RLS)](../../adrs/core/0010-multi-tenancy-architecture-strategy.es.md)
 - [ADR-0015: Arquitectura Dirigida por Eventos (Bus Inyectable)](../../adrs/core/0015-event-driven-architecture-intra-domain.es.md)
 - [Modelo de Referencia Aplicado UMS](../../../knowledge/demo/README.es.md)
@@ -169,7 +169,7 @@ class CategoryDeletedEvent {
 
 ## Objetivo y Alcance
 
-Backfill histórico: Abordar la tensión arquitectónica donde como el sistema está diseñado como un **Monolito Progresivo** ([ADR-0006](0006-future-microservices-transition-dapr, estableciendo un límite estándar.
+Backfill histórico: Abordar la tensión arquitectónica donde como el sistema está diseñado como un **Monolito Progresivo** ([ADR-0006](0006-microservices-transition-sidecar-pattern, estableciendo un límite estándar.
 
 ## Opciones Consideradas
 
@@ -182,7 +182,7 @@ Desconocido (registro histórico; evaluado contra principios generales de arquit
 
 ## Decisiones y Estándares Relacionados
 
-- [ADR-0006: Transición Futura a Microservicios con Dapr](../../adrs/core/0006-future-microservices-transition-dapr.es.md)
+- [ADR-0006: Transición Futura a Microservicios con Dapr](../../adrs/core/0006-microservices-transition-sidecar-pattern.es.md)
 - [ADR-0010: Estrategia Multi-Tenancy (RLS)](../../adrs/core/0010-multi-tenancy-architecture-strategy.es.md)
 - [ADR-0015: Arquitectura Dirigida por Eventos (Bus Inyectable)](../../adrs/core/0015-event-driven-architecture-intra-domain.es.md)
 - [Modelo de Referencia Aplicado UMS](../../../knowledge/demo/README.es.md)

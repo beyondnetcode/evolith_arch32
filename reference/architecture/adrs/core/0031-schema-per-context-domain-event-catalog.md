@@ -8,7 +8,7 @@ Approved
 
 ## Context
 
-As the system is designed as a **Progressive Monolith** ([ADR-0006](0006-future-microservices-transition-dapr.md)) intended to evolve toward microservices, two structural risks exist that are not addressed by the current ADR baseline:
+As the system is designed as a **Progressive Monolith** ([ADR-0006](0006-microservices-transition-sidecar-pattern.md)) intended to evolve toward microservices, two structural risks exist that are not addressed by the current ADR baseline:
 
 1. **Flat PostgreSQL Schema**: [ADR-0010](0010-multi-tenancy-architecture-strategy.md) defines Row-Level Security (RLS) for multi-tenant isolation, but all tables reside in a single flat schema. When extracting a bounded context into an independent microservice, there is no clear ownership boundary at the database level. Cross-table joins become cross-service calls, and migration plans become ambiguous.
 
@@ -158,7 +158,7 @@ class CategoryDeletedEvent {
 - **Developer discipline**: Developers must respect schema ownership rules. ESLint boundary rules ([ADR-0003](../nodejs/0003-strict-typescript-standards.md)) should be configured to prevent direct imports across context boundaries.
 
 ## References
-- [ADR-0006: Future Microservices Transition with Dapr](../../adrs/core/0006-future-microservices-transition-dapr.md)
+- [ADR-0006: Future Microservices Transition with Dapr](../../adrs/core/0006-microservices-transition-sidecar-pattern.md)
 - [ADR-0010: Multi-Tenancy Strategy (RLS)](../../adrs/core/0010-multi-tenancy-architecture-strategy.md)
 - [ADR-0015: Event-Driven Architecture (Injectable Bus)](../../adrs/core/0015-event-driven-architecture-intra-domain.md)
 - [UMS Applied Reference Model](../../../knowledge/demo/README.md)
@@ -169,7 +169,7 @@ class CategoryDeletedEvent {
 
 ## Objective and Scope
 
-Historical backfill: Address the architectural tension where as the system is designed as a **Progressive Monolith** ([ADR-0006](0006-future-microservices-transition-dapr, establishing a standard boundary.
+Historical backfill: Address the architectural tension where as the system is designed as a **Progressive Monolith** ([ADR-0006](0006-microservices-transition-sidecar-pattern, establishing a standard boundary.
 
 ## Options Considered
 
@@ -182,7 +182,7 @@ Unknown (historical record; evaluated against general architectural principles o
 
 ## Related Decisions and Standards
 
-- [ADR-0006: Future Microservices Transition with Dapr](../../adrs/core/0006-future-microservices-transition-dapr.md)
+- [ADR-0006: Future Microservices Transition with Dapr](../../adrs/core/0006-microservices-transition-sidecar-pattern.md)
 - [ADR-0010: Multi-Tenancy Strategy (RLS)](../../adrs/core/0010-multi-tenancy-architecture-strategy.md)
 - [ADR-0015: Event-Driven Architecture (Injectable Bus)](../../adrs/core/0015-event-driven-architecture-intra-domain.md)
 - [UMS Applied Reference Model](../../../knowledge/demo/README.md)

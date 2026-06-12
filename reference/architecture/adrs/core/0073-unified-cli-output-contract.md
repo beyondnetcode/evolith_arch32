@@ -90,7 +90,7 @@ Evidence: both source design documents; verified code state of 2026-06-10 — `-
 
 ## Related Decisions and Standards
 
-- [ADR 0069: MCP Server Protocol Implementation](./0069-mcp-server-protocol-implementation.md) — transport this contract rides on
+- [ADR 0069: MCP Server Protocol Implementation](./0069-ai-agent-context-protocol-integration.md) — transport this contract rides on
 - [ADR 0032: API Protocol Decision Matrix](./0032-api-protocol-decision-matrix-rest-grpc-graphql.md) — protocol selection principles
 - [ADR Authoring Standard](../adr-authoring-standard.md) — this ADR's structure
 - Gap items: [GT-01](../../../governance/standards/vision/gap-reference-catalog.md#gt-01) (this decision), GT-02/GT-03/GT-06 (implementation), GT-12 (`--dry-run` completion), GT-18 (npm publication under the `evolith` alias)

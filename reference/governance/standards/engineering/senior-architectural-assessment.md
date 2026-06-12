@@ -43,7 +43,7 @@ The repository presents a corporate reference architecture with a notable level 
 
 ### CRITICAL - C1: Migration Roadmap Milestones Lacking Activation Triggers
 
-**Finding:** [ADR-0006](../../../architecture/adrs/core/0006-future-microservices-transition-dapr.md) defines 3 milestones (Monolith -> Service Extraction -> Full Mesh) but fails to specify the **quantitative triggers** that activate transitions between phases.
+**Finding:** [ADR-0006](../../../architecture/adrs/core/0006-microservices-transition-sidecar-pattern.md) defines 3 milestones (Monolith -> Service Extraction -> Full Mesh) but fails to specify the **quantitative triggers** that activate transitions between phases.
 
 **Problem:** Without objective criteria, the team will make extraction decisions based on intuition or political pressure, which is the #1 cause of failed microservice migrations (Sam Newman, *Building Microservices*, 2nd Ed. 2021).
 
@@ -131,11 +131,11 @@ Pending .NET ADRs:
 
 ### IMPORTANT - I2: Dapr as Migration Strategy - Over-Engineering Risk
 
-**Finding:** [ADR-0006](../../../architecture/adrs/core/0006-future-microservices-transition-dapr.md) proposes Dapr Sidecars as the transition mechanism.
+**Finding:** [ADR-0006](../../../architecture/adrs/core/0006-microservices-transition-sidecar-pattern.md) proposes Dapr Sidecars as the transition mechanism.
 
 **Critical Assessment:** Dapr introduces significant operational complexity (sidecars, state stores, actor model) which might be premature if the team lacks service mesh expertise. For most orgs, Kubernetes + direct NestJS services via existing `IEventBusPort` suffices.
 
-**Recommendation:** Document an explicit **Decision Gate** in [ADR-0006](../../../architecture/adrs/core/0006-future-microservices-transition-dapr.md):
+**Recommendation:** Document an explicit **Decision Gate** in [ADR-0006](../../../architecture/adrs/core/0006-microservices-transition-sidecar-pattern.md):
 
 ```markdown
 Dapr is activated ONLY when:
@@ -181,7 +181,7 @@ class CreateOrderSaga implements ISaga {
 
 **Problem:** Without dual-routing strategies, the team is prone to high-risk "big bang" extractions.
 
-**Recommendation:** Document in [ADR-0006](../../../architecture/adrs/core/0006-future-microservices-transition-dapr.md) how Kong (already configured as Edge Gateway) facilitates Strangler Fig:
+**Recommendation:** Document in [ADR-0006](../../../architecture/adrs/core/0006-microservices-transition-sidecar-pattern.md) how Kong (already configured as Edge Gateway) facilitates Strangler Fig:
 
 ```yaml
 # Kong routing rule during transition
@@ -286,7 +286,7 @@ app.MapGrpcService<TodoService>();
 | **R-05** | **TypeORM Deprecation** - Reference impl uses TypeORM vs Audit recommendation (Drizzle) | MEDIUM | [ADR-0043](../../../architecture/adrs/nodejs/0043-data-access-orm-strategy.md) defines strategy; ensure clear documented migration path |
 | **R-06** | **Kong DB-less Drift** - Static YAML config can drift from dynamic production states | MEDIUM | GitOps strategy via deck CLI for Kong synchronization |
 | **R-07** | **Protobuf Evolution** - No registry leads to silent breaking contract changes | HIGH | Adopt Buf Registry or Schema Registry |
-| **R-08** | **Redis as SPOF** - Incorrect cluster setup causes data loss during failover | HIGH | Document minimum Redis Sentinel configuration in [ADR-0014](../../../architecture/adrs/core/0014-distributed-caching-strategy-redis.md) |
+| **R-08** | **Redis as SPOF** - Incorrect cluster setup causes data loss during failover | HIGH | Document minimum Redis Sentinel configuration in [ADR-0014](../../../architecture/adrs/core/0014-multi-layer-distributed-caching-strategy.md) |
 
 ---
 
@@ -294,9 +294,9 @@ app.MapGrpcService<TodoService>();
 
 ### Sprint 1 (Immediate)
 - [x] [ADR-0045](../../../architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md) already exists — Microservice Extraction Readiness Criteria
-- [] Enrich [ADR-0006](../../../architecture/adrs/core/0006-future-microservices-transition-dapr.md) with Decision Gate for Dapr
+- [] Enrich [ADR-0006](../../../architecture/adrs/core/0006-microservices-transition-sidecar-pattern.md) with Decision Gate for Dapr
 - [] Add Database Migration Path to [ADR-0031](../../../architecture/adrs/core/0031-schema-per-context-domain-event-catalog.md)
-- [] Document Strangler Fig Pattern with Kong routing in [ADR-0006](../../../architecture/adrs/core/0006-future-microservices-transition-dapr.md)
+- [] Document Strangler Fig Pattern with Kong routing in [ADR-0006](../../../architecture/adrs/core/0006-microservices-transition-sidecar-pattern.md)
 
 ### Sprint 2 (Short Term)
 - [] Review [ADR-0057](../../../architecture/adrs/dotnet/0071-dotnet-data-access-orm-strategy.md) — covers ORM Strategy (EF Core + Dapper); verify whether it closes the identified gap
@@ -308,7 +308,7 @@ app.MapGrpcService<TodoService>();
 ### Sprint 3 (Medium Term)
 - [] Implement Stryker Mutator in Domain CI
 - [] Define Buf Registry ADR for Protobuf governance
-- [] Document Redis Sentinel config in [ADR-0014](../../../architecture/adrs/core/0014-distributed-caching-strategy-redis.md)
+- [] Document Redis Sentinel config in [ADR-0014](../../../architecture/adrs/core/0014-multi-layer-distributed-caching-strategy.md)
 - [] Introduce periodic review lifecycle for ADRs
 
 ---

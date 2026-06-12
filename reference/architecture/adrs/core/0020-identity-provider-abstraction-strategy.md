@@ -38,19 +38,21 @@ Separate credential verification from the business layer via polymorphic **Strat
 
 ## Objective and Scope
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Historical backfill: Address the architectural tension where enterprise authentication needs migrate, shift, and fragment over time, establishing a standard boundary.
 
 ## Options Considered
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- **Selected:** Identity Provider Abstraction Strategy
+- **Others:** Unknown (historical record does not explicitly enumerate rejected alternatives).
 
 ## Evidence and Evaluation Criteria
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Unknown (historical record; evaluated against general architectural principles of maintainability and reliability).
 
 ## Related Decisions and Standards
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- [ADR-0026: MFA and Passwordless](../../adrs/nodejs/0026-mfa-passwordless-adaptive-authentication.md)
+- [ADR-0002: Clean Hexagonal Architecture](../../adrs/nodejs/0002-clean-architecture-nestjs.md)
 
 ---
 [Back to Index](./README.md)

@@ -169,19 +169,23 @@ class CategoryDeletedEvent {
 
 ## Objective and Scope
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Historical backfill: Address the architectural tension where as the system is designed as a **Progressive Monolith** ([ADR-0006](0006-future-microservices-transition-dapr, establishing a standard boundary.
 
 ## Options Considered
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- **Selected:** Schema-per-Bounded-Context and Domain Event Catalog
+- **Others:** Unknown (historical record does not explicitly enumerate rejected alternatives).
 
 ## Evidence and Evaluation Criteria
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Unknown (historical record; evaluated against general architectural principles of maintainability and reliability).
 
 ## Related Decisions and Standards
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- [ADR-0006: Future Microservices Transition with Dapr](../../adrs/core/0006-future-microservices-transition-dapr.md)
+- [ADR-0010: Multi-Tenancy Strategy (RLS)](../../adrs/core/0010-multi-tenancy-architecture-strategy.md)
+- [ADR-0015: Event-Driven Architecture (Injectable Bus)](../../adrs/core/0015-event-driven-architecture-intra-domain.md)
+- [UMS Applied Reference Model](../../../knowledge/demo/README.md)
 
 ---
 [Back to Index](./README.md)

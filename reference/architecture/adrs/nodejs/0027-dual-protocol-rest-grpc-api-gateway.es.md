@@ -38,19 +38,21 @@ Orquestar un **Borde de Tiempo de Ejecución de Protocolo Dual** estricto empare
 
 ## Objetivo y Alcance
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Backfill histórico: Abordar la tensión arquitectónica donde exponer la charla interna entre microservicios vía APIs REST estándar JSON HTTP/1, estableciendo un límite estándar.
 
 ## Opciones Consideradas
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- **Seleccionada:** Estrategia de API de Protocolo Dual (REST y gRPC)
+- **Otras:** Desconocido (el registro histórico no enumera explícitamente alternativas rechazadas).
 
 ## Evidencias y Criterios de Evaluación
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Desconocido (registro histórico; evaluado contra principios generales de arquitectura como mantenibilidad y confiabilidad).
 
 ## Decisiones y Estándares Relacionados
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- [ADR-0002: Arquitectura Limpia](../../adrs/nodejs/0002-clean-architecture-nestjs.es.md)
+- [Sitio Oficial de gRPC](https://grpc.io/)
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
@@ -58,7 +60,7 @@ Orquestar un **Borde de Tiempo de Ejecución de Protocolo Dual** estricto empare
 
 ## Fuentes Actuales
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Desconocido (registro histórico).
 
 ---
 [Volver al Índice](./README.es.md)

@@ -55,19 +55,22 @@ Mandar que TODOS los Casos de Uso de Aplicación y Entidades de Dominio devuelva
 
 ## Objetivo y Alcance
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Backfill histórico: Abordar la tensión arquitectónica donde los bloques JavaScript estándar `try/catch` hacen que los flujos de error sean invisibles para el Sistema de Tipos, estableciendo un límite estándar.
 
 ## Opciones Consideradas
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- **Seleccionada:** Estrategia Empresarial de Manejo de Errores y Patrón Result
+- **Otras:** Desconocido (el registro histórico no enumera explícitamente alternativas rechazadas).
 
 ## Evidencias y Criterios de Evaluación
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Desconocido (registro histórico; evaluado contra principios generales de arquitectura como mantenibilidad y confiabilidad).
 
 ## Decisiones y Estándares Relacionados
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- [Railway Oriented Programming](https://fsharpforfunandprofit.com/rop/)
+- [ADR-0002: Arquitectura Hexagonal Limpia](../../adrs/nodejs/0002-clean-architecture-nestjs.es.md)
+- [ADR-0011: Tolerancia a Fallos](../../adrs/core/0011-fault-tolerance-resiliency-patterns.es.md)
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
@@ -75,7 +78,7 @@ Mandar que TODOS los Casos de Uso de Aplicación y Entidades de Dominio devuelva
 
 ## Fuentes Actuales
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Desconocido (registro histórico).
 
 ---
 [Volver al Índice](./README.es.md)

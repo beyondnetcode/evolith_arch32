@@ -127,15 +127,17 @@ Todas las operaciones que mutan estado deben seguir un patrón unificado:
 
 ## Opciones Consideradas
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- **Seleccionada:** Gestión de Estado en Frontend — Estrategia Dual Zustand + TanStack Query
+- **Otras:** Desconocido (el registro histórico no enumera explícitamente alternativas rechazadas).
 
 ## Evidencias y Criterios de Evaluación
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Desconocido (registro histórico; evaluado contra principios generales de arquitectura como mantenibilidad y confiabilidad).
 
 ## Decisiones y Estándares Relacionados
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- [ADR-0044: Límites de Capas — Arquitectura Limpia en Frontend](./0044-frontend-clean-architecture-layer-boundaries.es.md)
+- [ADR-0047: Contrato de Errores Accionables para el Usuario](./0047-actionable-user-error-contract.es.md)
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
@@ -143,7 +145,7 @@ Todas las operaciones que mutan estado deben seguir un patrón unificado:
 
 ## Fuentes Actuales
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Desconocido (registro histórico).
 
 ---
 [Volver al Índice](./README.es.md)

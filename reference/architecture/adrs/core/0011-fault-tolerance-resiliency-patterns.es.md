@@ -38,19 +38,21 @@ Implementar Patrones de Resiliencia explícitos protegiendo todas las salidas de
 
 ## Objetivo y Alcance
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Backfill histórico: Abordar la tensión arquitectónica donde los despliegues de misión crítica deben integrarse con APIs volátiles de terceros (ej, estableciendo un límite estándar.
 
 ## Opciones Consideradas
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- **Seleccionada:** Patrones de Resiliencia y Tolerancia a Fallos
+- **Otras:** Desconocido (el registro histórico no enumera explícitamente alternativas rechazadas).
 
 ## Evidencias y Criterios de Evaluación
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Desconocido (registro histórico; evaluado contra principios generales de arquitectura como mantenibilidad y confiabilidad).
 
 ## Decisiones y Estándares Relacionados
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- [Martin Fowler sobre Circuit Breakers](https://martinfowler.com/bliki/CircuitBreaker.html)
+- [ADR-0002: Arquitectura Hexagonal Limpia](../../adrs/nodejs/0002-clean-architecture-nestjs.es.md)
 
 ---
 [Volver al Índice](./README.es.md)

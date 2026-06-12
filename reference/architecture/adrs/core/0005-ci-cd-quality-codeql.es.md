@@ -43,19 +43,21 @@ Integrar **GitHub CodeQL** y **npm audit** como puertas de calidad obligatorias 
 
 ## Objetivo y Alcance
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Backfill histórico: Abordar la tensión arquitectónica donde las vulnerabilidades de seguridad introducidas a través del código (inyección SQL, polución de prototipo, deserialización insegura) se pasan por alto frecuentemente en las revisiones manuales de código, estableciendo un límite estándar.
 
 ## Opciones Consideradas
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- **Seleccionada:** Puertas de Calidad de Seguridad CI/CD con CodeQL
+- **Otras:** Desconocido (el registro histórico no enumera explícitamente alternativas rechazadas).
 
 ## Evidencias y Criterios de Evaluación
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Desconocido (registro histórico; evaluado contra principios generales de arquitectura como mantenibilidad y confiabilidad).
 
 ## Decisiones y Estándares Relacionados
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- [Documentación de GitHub CodeQL](https://docs.github.com/en/code-security/code-scanning)
+- [ADR-0009: Fijación Estricta de Dependencias](../../adrs/core/0009-strict-dependency-pinning-vulnerability-management.es.md)
 
 ---
 [Volver al Índice](./README.es.md)

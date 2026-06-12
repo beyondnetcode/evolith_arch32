@@ -353,15 +353,16 @@ export const mcpCommand = new Command('mcp')
 
 ## Options Considered
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- **Selected:** MCP Server Protocol Implementation
+- **Others:** Unknown (historical record does not explicitly enumerate rejected alternatives).
 
 ## Evidence and Evaluation Criteria
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Unknown (historical record; evaluated against general architectural principles of maintainability and reliability).
 
 ## Related Decisions and Standards
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+None explicitly linked.
 
 ---
 

@@ -50,19 +50,21 @@ Adoptar el estándar **OpenTelemetry (OTel)** como el espinazo unificado de obse
 
 ## Objetivo y Alcance
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Backfill histórico: Abordar la tensión arquitectónica donde sin registros estructurados y rastreo distribuido, diagnosticar problemas en producción requiere conjeturas, estableciendo un límite estándar.
 
 ## Opciones Consideradas
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- **Seleccionada:** Observabilidad con OpenTelemetry, Loki y Jaeger
+- **Otras:** Desconocido (el registro histórico no enumera explícitamente alternativas rechazadas).
 
 ## Evidencias y Criterios de Evaluación
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Desconocido (registro histórico; evaluado contra principios generales de arquitectura como mantenibilidad y confiabilidad).
 
 ## Decisiones y Estándares Relacionados
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- [Documentación de OpenTelemetry](https://opentelemetry.io)
+- [ADR-0002: Arquitectura Hexagonal Limpia](../../adrs/nodejs/0002-clean-architecture-nestjs.es.md)
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
@@ -70,7 +72,7 @@ Adoptar el estándar **OpenTelemetry (OTel)** como el espinazo unificado de obse
 
 ## Fuentes Actuales
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Desconocido (registro histórico).
 
 ---
 [Volver al Índice](./README.es.md)

@@ -38,19 +38,21 @@ Separate Identity Validation logic entirely from output composition capabilities
 
 ## Objective and Scope
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Historical backfill: Address the architectural tension where saaS execution planes face heavy integration friction: lightweight microservices need small condensed binary token formats to prevent data bloat, while heavy Frontend clients (Angular/React) demand full recursive JSON tree outputs to dynamically draw navigational menus, establishing a standard boundary.
 
 ## Options Considered
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- **Selected:** Contextual Authentication and Pluggable Output Projections
+- **Others:** Unknown (historical record does not explicitly enumerate rejected alternatives).
 
 ## Evidence and Evaluation Criteria
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Unknown (historical record; evaluated against general architectural principles of maintainability and reliability).
 
 ## Related Decisions and Standards
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- [ADR-0021: High Performance Auth Graph](../../adrs/nodejs/0021-high-performance-auth-and-graph-compilation.md)
+- [ADR-0020: IdP Strategy](../../adrs/core/0020-identity-provider-abstraction-strategy.md)
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
@@ -58,7 +60,7 @@ Separate Identity Validation logic entirely from output composition capabilities
 
 ## Current Sources
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Unknown (historical record).
 
 ---
 [Back to Index](./README.md)

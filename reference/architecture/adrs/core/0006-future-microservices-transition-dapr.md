@@ -73,19 +73,23 @@ With the subsequent introduction of Dapr, explicit observability mandates are en
 
 ## Objective and Scope
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Historical backfill: Address the architectural tension where the system is currently a Modular Monolith (single process, logically isolated bounded contexts), establishing a standard boundary.
 
 ## Options Considered
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- **Selected:** Future Microservices Transition with Dapr Sidecars
+- **Others:** Unknown (historical record does not explicitly enumerate rejected alternatives).
 
 ## Evidence and Evaluation Criteria
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Unknown (historical record; evaluated against general architectural principles of maintainability and reliability).
 
 ## Related Decisions and Standards
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- [ADR-0015: Event-Driven Architecture](../../adrs/core/0015-event-driven-architecture-intra-domain.md)
+- [ADR-0031: Schema-per-Context & Domain Event Catalog](../../adrs/core/0031-schema-per-context-domain-event-catalog.md)
+- [ADR-0046: Dapr Unified Observability](./0046-dapr-unified-observability.md)
+- [Dapr Documentation](https://dapr.io)
 
 ---
 [Back to Index](./README.md)

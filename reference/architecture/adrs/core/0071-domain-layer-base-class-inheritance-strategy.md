@@ -111,11 +111,12 @@ grep -r "using MediatR" src/Domain/ --include="*.cs"
 
 ## Evidence and Evaluation Criteria
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Unknown (historical record; evaluated against general architectural principles of maintainability and reliability).
 
 ## Related Decisions and Standards
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- [ADR-0041: Canonical .NET Backend Architecture](../dotnet/0041-canonical-dotnet-backend-architecture.md)
+- [ADR-0019: Tactical Functional Design Patterns](./0019-tactical-design-patterns-future-proofing.md)
 
 ---
 [Back to Index](./README.md)

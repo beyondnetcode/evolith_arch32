@@ -36,19 +36,21 @@ Tratar el enrutamiento dinámico de características como una **Inyección de In
 
 ## Objetivo y Alcance
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Backfill histórico: Abordar la tensión arquitectónica donde impulsar nuevas expansiones funcionales a producción conlleva un riesgo operativo elevado, estableciendo un límite estándar.
 
 ## Opciones Consideradas
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- **Seleccionada:** Estrategia de Feature Flagging para Entrega Progresiva
+- **Otras:** Desconocido (el registro histórico no enumera explícitamente alternativas rechazadas).
 
 ## Evidencias y Criterios de Evaluación
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Desconocido (registro histórico; evaluado contra principios generales de arquitectura como mantenibilidad y confiabilidad).
 
 ## Decisiones y Estándares Relacionados
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- [ADR-0025: Abstracción de Feature Flags](../../adrs/core/0025-feature-flag-provider-abstraction.es.md)
+- [ADR-0024: Gestión de Configuración](../../adrs/core/0024-configuration-feature-management-platform.es.md)
 
 ---
 [Volver al Índice](./README.es.md)

@@ -63,19 +63,21 @@ We establish a **Strict Protocol Fit Matrix** tailored to specific architectural
 
 ## Objective and Scope
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Historical backfill: Address the architectural tension where as the modular monolith evolves into a multi-module ecosystem with multiple BFFs (Backend For Frontends), mobile apps, and external corporate integrations, selecting the correct communication protocol for each interaction path is critical, establishing a standard boundary.
 
 ## Options Considered
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- **Selected:** API Protocol Selection Matrix (REST vs gRPC vs GraphQL)
+- **Others:** Unknown (historical record does not explicitly enumerate rejected alternatives).
 
 ## Evidence and Evaluation Criteria
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Unknown (historical record; evaluated against general architectural principles of maintainability and reliability).
 
 ## Related Decisions and Standards
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- [ADR-0027: Dual Protocol Strategy](../../adrs/nodejs/0027-dual-protocol-rest-grpc-api-gateway.md)
+- [ADR-0030: Two-Tier Gateway Patterns](../../adrs/core/0030-api-gateway-kong-vs-nestjs.md)
 
 ---
 [Back to Index](./README.md)

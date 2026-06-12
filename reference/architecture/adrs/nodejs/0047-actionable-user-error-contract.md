@@ -134,11 +134,14 @@ User feedback is delivered through the centralized notification mechanism:
 
 ## Evidence and Evaluation Criteria
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Unknown (historical record; evaluated against general architectural principles of maintainability and reliability).
 
 ## Related Decisions and Standards
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- [ADR-0038: Error Handling Result Pattern](./0038-error-handling-result-pattern-strategy.md)
+- [ADR-0045: Zustand + TanStack Query State Management](./0045-zustand-tanstack-query-state-management.md)
+- [ADR-0064 .NET: Request-Scope Observability Context](../dotnet/0064-dotnet-request-scope-observability-context.md)
+- [ADR-0065 .NET: PII-Safe Serilog Pipeline](../dotnet/0065-dotnet-pii-safe-serilog-pipeline.md)
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
@@ -146,7 +149,7 @@ User feedback is delivered through the centralized notification mechanism:
 
 ## Current Sources
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Unknown (historical record).
 
 ---
 [Back to Index](./README.md)

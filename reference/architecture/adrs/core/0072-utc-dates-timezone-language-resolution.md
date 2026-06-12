@@ -135,15 +135,21 @@ All Evolith satellite systems must follow the same standard so that cross-system
 
 ## Options Considered
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- **Selected:** UTC Date Storage, Browser Timezone Detection, and Language Resolution
+- **Others:** Unknown (historical record does not explicitly enumerate rejected alternatives).
 
 ## Evidence and Evaluation Criteria
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Unknown (historical record; evaluated against general architectural principles of maintainability and reliability).
 
 ## Related Decisions and Standards
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- [IANA Time Zone Database](https://www.iana.org/time-zones)
+- [RFC 3339 — Date and Time on the Internet](https://tools.ietf.org/html/rfc3339)
+- [ISO 8601 — Date and time format](https://www.iso.org/iso-8601-date-and-time-format.html)
+- [MDN: Intl.DateTimeFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat)
+- [ADR-0016: Immutable Business Audit Trail](./0016-immutable-business-audit-trail.md)
+- [ADR-0044: Frontend Clean Architecture Layer Boundaries](../nodejs/0044-frontend-clean-architecture-layer-boundaries.md)
 
 ---
 [Back to Index](./README.md)

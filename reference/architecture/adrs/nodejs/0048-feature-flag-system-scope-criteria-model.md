@@ -112,11 +112,14 @@ Feature flag management is a configuration responsibility, not a core business s
 
 ## Options Considered
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- **Selected:** Feature Flag System Scope and Structured Criteria Model
+- **Others:** Unknown (historical record does not explicitly enumerate rejected alternatives).
 
 ## Related Decisions and Standards
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- [ADR-0017: Feature Flagging Strategy](../core/0017-feature-flagging-strategy.md)
+- [ADR-0025: Feature Flag Provider Abstraction](../core/0025-feature-flag-provider-abstraction.md)
+- [ADR-0034: CQRS Applicability Matrix](../core/0034-cqrs-pattern-applicability-matrix.md)
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
@@ -124,7 +127,7 @@ Feature flag management is a configuration responsibility, not a core business s
 
 ## Current Sources
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Unknown (historical record).
 
 ---
 [Back to Index](./README.md)

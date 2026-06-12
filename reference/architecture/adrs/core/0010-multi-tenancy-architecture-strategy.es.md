@@ -49,19 +49,22 @@ Adoptar una **Estrategia Multi-Tenancy Híbrida "Pooled"** utilizando un **Marco
 
 ## Objetivo y Alcance
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Backfill histórico: Abordar la tensión arquitectónica donde a medida que el sistema madura hacia una oferta SaaS, debemos aislar los datos de múltiples inquilinos (tenants) de forma segura sin disparar las facturas de infraestructura cloud, estableciendo un límite estándar.
 
 ## Opciones Consideradas
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- **Seleccionada:** Estrategia de Arquitectura Multi-Tenancy para la Evolución SaaS
+- **Otras:** Desconocido (el registro histórico no enumera explícitamente alternativas rechazadas).
 
 ## Evidencias y Criterios de Evaluación
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Desconocido (registro histórico; evaluado contra principios generales de arquitectura como mantenibilidad y confiabilidad).
 
 ## Decisiones y Estándares Relacionados
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- [Documentación de RLS en PostgreSQL](https://www.postgresql.org/docs/current/ddl-rowsecurity.html)
+- [Row-Level Security de SQL Server](https://learn.microsoft.com/sql/relational-databases/security/row-level-security)
+- [ADR-0031: Estrategia de Esquema por Contexto](../../adrs/core/0031-schema-per-context-domain-event-catalog.es.md)
 
 ---
 [Volver al Índice](./README.es.md)

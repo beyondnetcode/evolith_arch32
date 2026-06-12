@@ -189,11 +189,11 @@ No agregar ramas permanentes mas alla de `main`, `develop`, `qa` y `uat` sin una
 
 ## Objetivo y Alcance
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Backfill histórico: Abordar la tensión arquitectónica donde los repositorios satelite necesitan un modelo comun de ramas que mantenga estable la produccion sin esconder el trabajo en ramas locales de larga vida, estableciendo un límite estándar.
 
 ## Decisiones y Estándares Relacionados
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Ninguna explícitamente enlazada.
 
 ---
 [Volver al Indice](./README.es.md)

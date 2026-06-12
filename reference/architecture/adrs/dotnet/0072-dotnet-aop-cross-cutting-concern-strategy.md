@@ -136,11 +136,14 @@ services.AddAopProxy<IRequestHandler<CreateCommand, Result<Response>>, CreateCom
 
 ## Evidence and Evaluation Criteria
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Unknown (historical record; evaluated against general architectural principles of maintainability and reliability).
 
 ## Related Decisions and Standards
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- [ADR-0041: Canonical .NET Backend Architecture](./0041-canonical-dotnet-backend-architecture.md)
+- [ADR-0064: .NET Request-Scope Observability Context](./0064-dotnet-request-scope-observability-context.md)
+- [ADR-0065: .NET PII-Safe Serilog Pipeline](./0065-dotnet-pii-safe-serilog-pipeline.md)
+- [ADR-0066: .NET Lightweight HTTP Idempotency](./0066-dotnet-lightweight-http-idempotency.md)
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
@@ -148,7 +151,7 @@ services.AddAopProxy<IRequestHandler<CreateCommand, Result<Response>>, CreateCom
 
 ## Current Sources
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Unknown (historical record).
 
 ---
 [Back to Index](./README.md)

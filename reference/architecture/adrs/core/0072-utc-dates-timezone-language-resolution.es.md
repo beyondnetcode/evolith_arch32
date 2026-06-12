@@ -135,15 +135,21 @@ Todos los sistemas satélite de Evolith deben seguir el mismo estándar para que
 
 ## Opciones Consideradas
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- **Seleccionada:** Almacenamiento UTC de Fechas, Detección de Zona Horaria del Navegador y Resolución de Idioma
+- **Otras:** Desconocido (el registro histórico no enumera explícitamente alternativas rechazadas).
 
 ## Evidencias y Criterios de Evaluación
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Desconocido (registro histórico; evaluado contra principios generales de arquitectura como mantenibilidad y confiabilidad).
 
 ## Decisiones y Estándares Relacionados
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- [Base de Datos de Zonas Horarias IANA](https://www.iana.org/time-zones)
+- [RFC 3339 — Fecha y Hora en Internet](https://tools.ietf.org/html/rfc3339)
+- [ISO 8601 — Formato de fecha y hora](https://www.iso.org/iso-8601-date-and-time-format.html)
+- [MDN: Intl.DateTimeFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat)
+- [ADR-0016: Rastro de Auditoría Inmutable de Negocio](./0016-immutable-business-audit-trail.es.md)
+- [ADR-0044: Límites de Capas — Arquitectura Limpia en Frontend](../nodejs/0044-frontend-clean-architecture-layer-boundaries.es.md)
 
 ---
 [Volver al Índice](./README.es.md)

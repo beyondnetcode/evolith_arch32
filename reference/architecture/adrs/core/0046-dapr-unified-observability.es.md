@@ -46,15 +46,18 @@ Establecemos la unificación absoluta de la telemetría de infraestructura y run
 
 ## Objetivo y Alcance
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Backfill histórico: Abordar la tensión arquitectónica donde durante la **Fase 1 (pre-Dapr)** de la evolución arquitectónica, el ecosistema desarrolló un stack de observabilidad corporativo maduro, estableciendo un límite estándar.
 
 ## Evidencias y Criterios de Evaluación
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Desconocido (registro histórico; evaluado contra principios generales de arquitectura como mantenibilidad y confiabilidad).
 
 ## Decisiones y Estándares Relacionados
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- [ADR-0006: Transición Futura a Microservicios con Dapr](../core/0006-future-microservices-transition-dapr.es.md)
+- [ADR-0007: Telemetría de Observabilidad OTel](../../adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.es.md)
+- [Engineering Manifesto - Aislamiento de Infraestructura](../../../governance/standards/engineering/engineering-manifesto.es.md)
+- [Authoritative Tech Stack - Frameworks Aprobados](../../blueprints/authoritative-tech-stack.es.md)
 
 ---
 [Volver al Índice](./README.es.md)

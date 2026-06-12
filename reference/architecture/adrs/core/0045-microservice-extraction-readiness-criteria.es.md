@@ -46,15 +46,18 @@ Un módulo de dominio DEBE considerarse un candidato válido para la fase de ext
 
 ## Objetivo y Alcance
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Backfill histórico: Abordar la tensión arquitectónica donde el [ADR 0006](, estableciendo un límite estándar.
 
 ## Opciones Consideradas
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- **Seleccionada:** Criterios de Aceptación para la Extracción de Microservicios
+- **Otras:** Desconocido (el registro histórico no enumera explícitamente alternativas rechazadas).
 
 ## Decisiones y Estándares Relacionados
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- [ADR 0006: Future Microservices Transition](../core/0006-future-microservices-transition-dapr.es.md)
+- [ADR 0047: Marco de Selección: Monolito vs SOA vs Microservicios](../core/0047-architectural-patterns-monolith-soa-microservices.es.md)
+- Sam Newman - *Building Microservices* (2nd Ed. 2021)
 
 ---
 [Volver al Índice](./README.es.md)

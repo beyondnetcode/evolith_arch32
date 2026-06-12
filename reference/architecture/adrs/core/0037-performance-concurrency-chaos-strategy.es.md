@@ -60,19 +60,23 @@ Producto y Arquitectura requieren pruebas contra los siguientes flujos extremos 
 
 ## Objetivo y Alcance
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Backfill histórico: Abordar la tensión arquitectónica donde las pruebas funcionales estándar (Unit/E2E) verifican que el código se comporta correctamente bajo condiciones ideales y de un solo usuario, estableciendo un límite estándar.
 
 ## Opciones Consideradas
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- **Seleccionada:** Estrategia Empresarial de Verificación de Rendimiento, Concurrencia y Caos
+- **Otras:** Desconocido (el registro histórico no enumera explícitamente alternativas rechazadas).
 
 ## Evidencias y Criterios de Evaluación
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Desconocido (registro histórico; evaluado contra principios generales de arquitectura como mantenibilidad y confiabilidad).
 
 ## Decisiones y Estándares Relacionados
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- [Documentación de Grafana k6](https://k6.io/docs/)
+- [Pact.io - Contratos Dirigidos por el Consumidor](https://docs.pact.io/)
+- [ADR-0011: Circuit Breakers Distribuidos](../../adrs/core/0011-fault-tolerance-resiliency-patterns.es.md)
+- [ADR-0033: Outbox Transaccional](../../adrs/core/0033-transactional-outbox-pattern.es.md)
 
 ---
 [Volver al Índice](./README.es.md)

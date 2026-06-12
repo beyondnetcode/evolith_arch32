@@ -49,19 +49,22 @@ Adopt a **Hybrid "Pooled" Multi-Tenancy Strategy** utilizing a mandatory **"Defe
 
 ## Objective and Scope
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Historical backfill: Address the architectural tension where as the system matures into a SaaS offering, we must isolate data for multiple tenants securely without exploding cloud infrastructure bills, establishing a standard boundary.
 
 ## Options Considered
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- **Selected:** Multi-Tenancy Architecture Strategy for SaaS Evolution
+- **Others:** Unknown (historical record does not explicitly enumerate rejected alternatives).
 
 ## Evidence and Evaluation Criteria
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Unknown (historical record; evaluated against general architectural principles of maintainability and reliability).
 
 ## Related Decisions and Standards
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- [PostgreSQL RLS Documentation](https://www.postgresql.org/docs/current/ddl-rowsecurity.html)
+- [SQL Server Row-Level Security](https://learn.microsoft.com/sql/relational-databases/security/row-level-security)
+- [ADR-0031: Schema-per-Context Strategy](../../adrs/core/0031-schema-per-context-domain-event-catalog.md)
 
 ---
 [Back to Index](./README.md)

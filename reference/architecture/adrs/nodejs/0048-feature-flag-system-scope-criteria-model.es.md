@@ -112,11 +112,14 @@ La gestión de feature flags es una responsabilidad de configuración, no un sub
 
 ## Opciones Consideradas
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- **Seleccionada:** Alcance de Sistema en Feature Flags y Modelo de Criterios Estructurado
+- **Otras:** Desconocido (el registro histórico no enumera explícitamente alternativas rechazadas).
 
 ## Decisiones y Estándares Relacionados
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- [ADR-0017: Estrategia de Feature Flagging](../core/0017-feature-flagging-strategy.es.md)
+- [ADR-0025: Abstracción de Proveedor de Feature Flags](../core/0025-feature-flag-provider-abstraction.es.md)
+- [ADR-0034: Matriz de Aplicabilidad CQRS](../core/0034-cqrs-pattern-applicability-matrix.es.md)
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
@@ -124,7 +127,7 @@ La gestión de feature flags es una responsabilidad de configuración, no un sub
 
 ## Fuentes Actuales
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Desconocido (registro histórico).
 
 ---
 [Volver al Índice](./README.es.md)

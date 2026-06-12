@@ -60,19 +60,23 @@ Product & Architecture require testing against the following hypothetical extrem
 
 ## Objective and Scope
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Historical backfill: Address the architectural tension where standard functional testing (Unit/E2E) verifies that code behaves correctly under ideal, single-user conditions, establishing a standard boundary.
 
 ## Options Considered
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- **Selected:** Enterprise Performance, Concurrency & Chaos Verification Strategy
+- **Others:** Unknown (historical record does not explicitly enumerate rejected alternatives).
 
 ## Evidence and Evaluation Criteria
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Unknown (historical record; evaluated against general architectural principles of maintainability and reliability).
 
 ## Related Decisions and Standards
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- [Grafana k6 Documentation](https://k6.io/docs/)
+- [Pact.io - Consumer Driven Contracts](https://docs.pact.io/)
+- [ADR-0011: Distributed Circuit Breakers](../../adrs/core/0011-fault-tolerance-resiliency-patterns.md)
+- [ADR-0033: Transactional Outbox](../../adrs/core/0033-transactional-outbox-pattern.md)
 
 ---
 [Back to Index](./README.md)

@@ -41,19 +41,21 @@ Key strategies:
 
 ## Objective and Scope
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Historical backfill: Address the architectural tension where web applications that depend entirely on server connectivity provide a poor user experience when network conditions are degraded (mobile connections, slow corporate VPNs), establishing a standard boundary.
 
 ## Options Considered
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- **Selected:** Frontend Offline Resilience
+- **Others:** Unknown (historical record does not explicitly enumerate rejected alternatives).
 
 ## Evidence and Evaluation Criteria
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Unknown (historical record; evaluated against general architectural principles of maintainability and reliability).
 
 ## Related Decisions and Standards
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- [TanStack Query Documentation](https://tanstack.com/query)
+- [ADR-0011: Fault Tolerance & Resiliency Patterns](../../adrs/core/0011-fault-tolerance-resiliency-patterns.md)
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
@@ -61,7 +63,7 @@ Key strategies:
 
 ## Current Sources
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Unknown (historical record).
 
 ---
 [Back to Index](./README.md)

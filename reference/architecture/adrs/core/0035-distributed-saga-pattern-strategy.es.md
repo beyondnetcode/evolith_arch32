@@ -51,19 +51,21 @@ Cualquier implementación de Saga DEBE implementar:
 
 ## Objetivo y Alcance
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Backfill histórico: Abordar la tensión arquitectónica donde a medida que la plataforma evoluciona de un Monolito Modular hacia servicios distribuidos, las transacciones ACID distribuidas tradicionales **2PC (Two-Phase Commit)** se vuelven imposibles o degradan gravemente el rendimiento, estableciendo un límite estándar.
 
 ## Opciones Consideradas
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- **Seleccionada:** Estrategia de Implementación del Patrón Distributed Saga
+- **Otras:** Desconocido (el registro histórico no enumera explícitamente alternativas rechazadas).
 
 ## Evidencias y Criterios de Evaluación
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Desconocido (registro histórico; evaluado contra principios generales de arquitectura como mantenibilidad y confiabilidad).
 
 ## Decisiones y Estándares Relacionados
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- [Patrón de transacciones distribuidas Saga](https://learn.microsoft.com/es-es/azure/architecture/reference-architectures/saga/saga)
+- [ADR-0033: Patrón Transactional Outbox](../../adrs/core/0033-transactional-outbox-pattern.es.md)
 
 ---
 [Volver al Índice](./README.es.md)

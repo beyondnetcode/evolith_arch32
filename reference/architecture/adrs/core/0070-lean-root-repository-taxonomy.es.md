@@ -103,15 +103,17 @@ Los repositorios satélite deben:
 
 ## Opciones Consideradas
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- **Seleccionada:** Taxonomía Lean del Directorio Raíz del Repositorio
+- **Otras:** Desconocido (el registro histórico no enumera explícitamente alternativas rechazadas).
 
 ## Evidencias y Criterios de Evaluación
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Desconocido (registro histórico; evaluado contra principios generales de arquitectura como mantenibilidad y confiabilidad).
 
 ## Decisiones y Estándares Relacionados
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- [ADR-0048: Taxonomía Empresarial y Diseño de Referencia](./0048-enterprise-taxonomy-reference-layout.es.md)
+- [ADR-0049: Semántica de Nomenclatura y Política de Código Limpio](./0049-naming-semantics-clean-code-policy.es.md)
 
 ---
 [Volver al Índice](./README.es.md)

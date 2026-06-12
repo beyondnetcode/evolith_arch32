@@ -39,19 +39,21 @@ Rollout an **Adaptive Risk-Managed MFA Framework** driving the Core authenticati
 
 ## Objective and Scope
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Historical backfill: Address the architectural tension where conventional password validation and raw static SMS MFA is heavily vulnerable to aggressive social engineering and phishing vectors, establishing a standard boundary.
 
 ## Options Considered
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- **Selected:** Adaptive MFA and Passwordless Platform
+- **Others:** Unknown (historical record does not explicitly enumerate rejected alternatives).
 
 ## Evidence and Evaluation Criteria
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Unknown (historical record; evaluated against general architectural principles of maintainability and reliability).
 
 ## Related Decisions and Standards
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- [ADR-0020: IdP Abstraction](../../adrs/core/0020-identity-provider-abstraction-strategy.md)
+- [WebAuthn Official Guide](https://webauthn.guide/)
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
@@ -59,7 +61,7 @@ Rollout an **Adaptive Risk-Managed MFA Framework** driving the Core authenticati
 
 ## Current Sources
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Unknown (historical record).
 
 ---
 [Back to Index](./README.md)

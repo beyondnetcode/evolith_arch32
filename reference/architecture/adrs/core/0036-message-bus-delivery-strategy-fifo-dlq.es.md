@@ -76,19 +76,22 @@ Adoptar el siguiente **Marco de Decisión de Entrega de Eventos** mapeando el co
 
 ## Objetivo y Alcance
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Backfill histórico: Abordar la tensión arquitectónica donde las arquitecturas asíncronas dirigidas por eventos requieren diversas garantías de comunicación dependiendo de la criticidad y naturaleza de la carga útil, estableciendo un límite estándar.
 
 ## Opciones Consideradas
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- **Seleccionada:** Estrategia de Entrega y Control de Flujo del Bus de Mensajes
+- **Otras:** Desconocido (el registro histórico no enumera explícitamente alternativas rechazadas).
 
 ## Evidencias y Criterios de Evaluación
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Desconocido (registro histórico; evaluado contra principios generales de arquitectura como mantenibilidad y confiabilidad).
 
 ## Decisiones y Estándares Relacionados
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- [RabbitMQ Dead Letter Exchanges](https://www.rabbitmq.com/dlx.html)
+- [ADR-0015: Mecanismo de Bus de Eventos Inyectable](./0015-event-driven-architecture-intra-domain.es.md)
+- [ADR-0033: Patrón Transactional Outbox](../../adrs/core/0033-transactional-outbox-pattern.es.md)
 
 ---
 [Volver al Índice](./README.es.md)

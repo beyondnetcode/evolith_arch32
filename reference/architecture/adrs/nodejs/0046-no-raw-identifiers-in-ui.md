@@ -71,15 +71,17 @@ This practice:
 
 ## Options Considered
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- **Selected:** Prohibition of Raw Technical Identifiers in User Interfaces
+- **Others:** Unknown (historical record does not explicitly enumerate rejected alternatives).
 
 ## Evidence and Evaluation Criteria
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Unknown (historical record; evaluated against general architectural principles of maintainability and reliability).
 
 ## Related Decisions and Standards
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- [ADR-0044: Frontend Clean Architecture Layer Boundaries](./0044-frontend-clean-architecture-layer-boundaries.md)
+- [ADR-0049: Naming Semantics and Clean Code Policy](../core/0049-naming-semantics-clean-code-policy.md)
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
@@ -87,7 +89,7 @@ This practice:
 
 ## Current Sources
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Unknown (historical record).
 
 ---
 [Back to Index](./README.md)

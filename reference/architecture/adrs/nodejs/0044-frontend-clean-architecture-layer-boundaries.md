@@ -121,15 +121,17 @@ Each layer exposes a public API through `index.ts` barrel files. Cross-layer imp
 
 ## Options Considered
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- **Selected:** Frontend Clean Architecture Layer Boundaries (React)
+- **Others:** Unknown (historical record does not explicitly enumerate rejected alternatives).
 
 ## Evidence and Evaluation Criteria
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Unknown (historical record; evaluated against general architectural principles of maintainability and reliability).
 
 ## Related Decisions and Standards
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- [ADR-0002: Clean Architecture with NestJS](./0002-clean-architecture-nestjs.md)
+- [ADR-0045: Zustand + TanStack Query State Management](./0045-zustand-tanstack-query-state-management.md)
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
@@ -137,7 +139,7 @@ Each layer exposes a public API through `index.ts` barrel files. Cross-layer imp
 
 ## Current Sources
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Unknown (historical record).
 
 ---
 [Back to Index](./README.md)

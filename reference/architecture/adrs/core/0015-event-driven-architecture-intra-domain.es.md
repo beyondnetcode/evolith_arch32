@@ -66,19 +66,22 @@ Cuando un contexto delimitado sea extraído a un microservicio independiente:
 
 ## Objetivo y Alcance
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Backfill histórico: Abordar la tensión arquitectónica donde a medida que el Monolito Modular crece, permitir que los contextos delimitados se llamen entre sí de forma síncrona crea un acoplamiento estrecho, estableciendo un límite estándar.
 
 ## Opciones Consideradas
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- **Seleccionada:** Arquitectura Dirigida por Eventos (EDA) para la Comunicación Intra-Dominio
+- **Otras:** Desconocido (el registro histórico no enumera explícitamente alternativas rechazadas).
 
 ## Evidencias y Criterios de Evaluación
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Desconocido (registro histórico; evaluado contra principios generales de arquitectura como mantenibilidad y confiabilidad).
 
 ## Decisiones y Estándares Relacionados
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- [ADR-0006: Futuros Microservicios vía Dapr](../../adrs/core/0006-future-microservices-transition-dapr.es.md)
+- [ADR-0007: Observabilidad con OpenTelemetry](../../adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.es.md)
+- [ADR-0031: Esquema por Contexto y Catálogo de Eventos de Dominio](../../adrs/core/0031-schema-per-context-domain-event-catalog.es.md)
 
 ---
 [Volver al Índice](./README.es.md)

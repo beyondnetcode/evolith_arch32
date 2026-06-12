@@ -131,11 +131,14 @@ services.AddAopProxy<IRequestHandler<CreateCommand, Result<Response>>, CreateCom
 
 ## Evidencias y Criterios de Evaluación
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Desconocido (registro histórico; evaluado contra principios generales de arquitectura como mantenibilidad y confiabilidad).
 
 ## Decisiones y Estándares Relacionados
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- [ADR-0041: Arquitectura Canónica de Backend .NET](./0041-canonical-dotnet-backend-architecture.es.md)
+- [ADR-0064: Contexto de Observabilidad de Scope de Solicitud .NET](./0064-dotnet-request-scope-observability-context.es.md)
+- [ADR-0065: Pipeline Serilog Seguro contra PII .NET](./0065-dotnet-pii-safe-serilog-pipeline.es.md)
+- [ADR-0066: Idempotencia HTTP Ligera .NET](./0066-dotnet-lightweight-http-idempotency.es.md)
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
@@ -143,7 +146,7 @@ services.AddAopProxy<IRequestHandler<CreateCommand, Result<Response>>, CreateCom
 
 ## Fuentes Actuales
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Desconocido (registro histórico).
 
 ---
 [Volver al Índice](./README.es.md)

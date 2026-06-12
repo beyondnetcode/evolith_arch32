@@ -189,11 +189,11 @@ Do not add long-lived branches beyond `main`, `develop`, `qa`, and `uat` without
 
 ## Objective and Scope
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Historical backfill: Address the architectural tension where satellite repositories need a common branching model that keeps production stable without hiding work in long-lived local branches, establishing a standard boundary.
 
 ## Related Decisions and Standards
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+None explicitly linked.
 
 ---
 [Back to Index](./README.md)

@@ -76,19 +76,22 @@ Adopt the following **Event Delivery Decision Framework** mapping business conte
 
 ## Objective and Scope
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Historical backfill: Address the architectural tension where event-driven asynchronous architectures require diverse communication guarantees depending on the criticality and nature of the payload, establishing a standard boundary.
 
 ## Options Considered
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- **Selected:** Message Bus Delivery & Flow Control Strategy
+- **Others:** Unknown (historical record does not explicitly enumerate rejected alternatives).
 
 ## Evidence and Evaluation Criteria
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Unknown (historical record; evaluated against general architectural principles of maintainability and reliability).
 
 ## Related Decisions and Standards
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- [RabbitMQ Dead Letter Exchanges](https://www.rabbitmq.com/dlx.html)
+- [ADR-0015: Injectable Event Bus Mechanism](./0015-event-driven-architecture-intra-domain.md)
+- [ADR-0033: Transactional Outbox Pattern](../../adrs/core/0033-transactional-outbox-pattern.md)
 
 ---
 [Back to Index](./README.md)

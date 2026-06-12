@@ -38,19 +38,21 @@ Separar la lógica de Validación de Identidad enteramente de las capacidades de
 
 ## Objetivo y Alcance
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Backfill histórico: Abordar la tensión arquitectónica donde los planos de ejecución SaaS enfrentan una pesada fricción de integración: los microservicios ligeros necesitan formatos de tokens binarios condensados pequeños para prevenir el hinchazón de datos, mientras que los clientes Frontend pesados (Angular/React) demandan salidas completas de árboles JSON recursivos para dibujar dinámicamente los menús de navegación, estableciendo un límite estándar.
 
 ## Opciones Consideradas
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- **Seleccionada:** Autenticación Contextual y Proyecciones de Salida Enchufables
+- **Otras:** Desconocido (el registro histórico no enumera explícitamente alternativas rechazadas).
 
 ## Evidencias y Criterios de Evaluación
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Desconocido (registro histórico; evaluado contra principios generales de arquitectura como mantenibilidad y confiabilidad).
 
 ## Decisiones y Estándares Relacionados
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- [ADR-0021: Grafo Auth de Alto Rendimiento](../../adrs/nodejs/0021-high-performance-auth-and-graph-compilation.es.md)
+- [ADR-0020: Estrategia de IdP](../../adrs/core/0020-identity-provider-abstraction-strategy.es.md)
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
@@ -58,7 +60,7 @@ Separar la lógica de Validación de Identidad enteramente de las capacidades de
 
 ## Fuentes Actuales
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Desconocido (registro histórico).
 
 ---
 [Volver al Índice](./README.es.md)

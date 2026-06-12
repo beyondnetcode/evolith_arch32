@@ -39,19 +39,21 @@ Commit to building and deploying the system as the **Centralized Authorization N
 
 ## Objective and Scope
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Historical backfill: Address the architectural tension where enterprise platform clusters suffer from disjointed identity silos, establishing a standard boundary.
 
 ## Options Considered
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- **Selected:** Centralized Authorization Core Strategy
+- **Others:** Unknown (historical record does not explicitly enumerate rejected alternatives).
 
 ## Evidence and Evaluation Criteria
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Unknown (historical record; evaluated against general architectural principles of maintainability and reliability).
 
 ## Related Decisions and Standards
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- [ADR-0021: High Performance Authorization Graph](../../adrs/nodejs/0021-high-performance-auth-and-graph-compilation.md)
+- [ADR-0022: Contextual Auth and Projections](../../adrs/nodejs/0022-contextual-auth-and-pluggable-projections.md)
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
@@ -59,7 +61,7 @@ Commit to building and deploying the system as the **Centralized Authorization N
 
 ## Current Sources
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Unknown (historical record).
 
 ---
 [Back to Index](./README.md)

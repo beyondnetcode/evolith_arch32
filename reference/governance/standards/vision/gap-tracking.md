@@ -12,7 +12,6 @@ This board is the single source of truth for gap priority and status. Select a g
 
 | ID | Gap | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|
-| [`GT-20`](./gap-reference-catalog.md#gt-20) | ADR content backfill to authoring standard | Cross | P1 | L | `PENDING` |
 | [`GT-22`](./gap-reference-catalog.md#gt-22) | ADR ID uniqueness scheme | Cross | P2 | S | `PENDING` |
 | [`GT-26`](./gap-reference-catalog.md#gt-26) | Zero-Downtime Release Playbook | Cross | P2 | S | `PENDING` |
 | [`GT-21`](./gap-reference-catalog.md#gt-21) | Placement review of tool-centric Core ADRs | Cross | P2 | M | `PENDING` |
@@ -45,8 +44,9 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-13`](./gap-reference-catalog.md#gt-13) | `evolith-phase-advance` proposal runner | F4 | P1 | M | `DONE` |
 | [`GT-33`](./gap-reference-catalog.md#gt-33) | Evidence-backed maturity scoring | Product | P1 | M | `DONE` |
 | [`GT-35`](./gap-reference-catalog.md#gt-35) | Automated inventories and tracking validation | Cross | P1 | M | `DONE` |
+| [`GT-20`](./gap-reference-catalog.md#gt-20) | ADR content backfill to authoring standard | Cross | P1 | L | `DONE` |
 
-**Progress:** 24 / 33 done · 0 in progress · 8 pending · 1 deferred
+**Progress:** 25 / 33 done · 0 in progress · 7 pending · 1 deferred
 
 **Ordering:** criticality (`P0` → `P1` → `P2`), active status (`IN-PROGRESS` → `PENDING` → `DEFERRED`), then complexity (`S` → `M` → `L`). Completed gaps follow active work.
 

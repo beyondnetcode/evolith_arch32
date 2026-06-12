@@ -36,19 +36,21 @@ Design infrastructure topology targeting Cloud-Native patterns enforcing high re
 
 ## Objective and Scope
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Historical backfill: Address the architectural tension where the business operations handled by this architecture demand 24/7 continuous execution stability, establishing a standard boundary.
 
 ## Options Considered
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- **Selected:** Cloud Infrastructure Topology and Disaster Recovery (DR)
+- **Others:** Unknown (historical record does not explicitly enumerate rejected alternatives).
 
 ## Evidence and Evaluation Criteria
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Unknown (historical record; evaluated against general architectural principles of maintainability and reliability).
 
 ## Related Decisions and Standards
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- [ADR-0011: Fault Tolerance](../../adrs/core/0011-fault-tolerance-resiliency-patterns.md)
+- [ADR-0028: Self-Hosted Hybrid Strategy](../../adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md)
 
 ---
 [Back to Index](./README.md)

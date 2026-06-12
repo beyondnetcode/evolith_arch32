@@ -46,15 +46,18 @@ A domain module MUST be deemed a valid candidate for the extraction phase (Miles
 
 ## Objective and Scope
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Historical backfill: Address the architectural tension where [ADR 0006](, establishing a standard boundary.
 
 ## Options Considered
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- **Selected:** Microservice Extraction Readiness Criteria
+- **Others:** Unknown (historical record does not explicitly enumerate rejected alternatives).
 
 ## Related Decisions and Standards
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- [ADR 0006: Future Microservices Transition](../core/0006-future-microservices-transition-dapr.md)
+- [ADR 0047: Selection Framework: Monolith vs SOA vs Microservices](../core/0047-architectural-patterns-monolith-soa-microservices.md)
+- Sam Newman - *Building Microservices* (2nd Ed. 2021)
 
 ---
 [Back to Index](./README.md)

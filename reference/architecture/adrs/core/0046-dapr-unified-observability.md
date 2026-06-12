@@ -45,15 +45,18 @@ We hereby mandate the absolute unification of infrastructure and application tel
 
 ## Objective and Scope
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Historical backfill: Address the architectural tension where during **Phase 1 (pre-Dapr)** of architectural evolution, the ecosystem matured a comprehensive corporate observability stack, establishing a standard boundary.
 
 ## Evidence and Evaluation Criteria
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Unknown (historical record; evaluated against general architectural principles of maintainability and reliability).
 
 ## Related Decisions and Standards
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- [ADR-0006: Future Microservices Transition with Dapr](../core/0006-future-microservices-transition-dapr.md)
+- [ADR-0007: Observability Telemetry OTel](../nodejs/0007-observability-telemetry-loki-opentelemetry.md)
+- [Engineering Manifesto - Infrastructure Isolation](../../../governance/standards/engineering/engineering-manifesto.md)
+- [Authoritative Tech Stack - Validated Runtimes](../../blueprints/authoritative-tech-stack.md)
 
 ---
 [Back to Index](./README.md)

@@ -127,15 +127,17 @@ All state-mutating operations should follow a unified pattern:
 
 ## Options Considered
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- **Selected:** Frontend State Management — Zustand + TanStack Query Dual Strategy
+- **Others:** Unknown (historical record does not explicitly enumerate rejected alternatives).
 
 ## Evidence and Evaluation Criteria
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Unknown (historical record; evaluated against general architectural principles of maintainability and reliability).
 
 ## Related Decisions and Standards
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- [ADR-0044: Frontend Clean Architecture Layer Boundaries](./0044-frontend-clean-architecture-layer-boundaries.md)
+- [ADR-0047: Actionable User Error Contract](./0047-actionable-user-error-contract.md)
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
@@ -143,7 +145,7 @@ All state-mutating operations should follow a unified pattern:
 
 ## Current Sources
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Unknown (historical record).
 
 ---
 [Back to Index](./README.md)

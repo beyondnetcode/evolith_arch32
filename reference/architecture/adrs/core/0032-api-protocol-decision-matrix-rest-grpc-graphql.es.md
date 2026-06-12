@@ -63,19 +63,21 @@ Establecemos una **Matriz de Ajuste de Protocolo Estricta** adaptada a niveles a
 
 ## Objetivo y Alcance
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Backfill histórico: Abordar la tensión arquitectónica donde a medida que el monolito modular evoluciona hacia un ecosistema multi-módulo con múltiples BFFs (Backend For Frontends), apps móviles e integraciones corporativas externas, la selección del protocolo de comunicación correcto para cada ruta de interacción es crítica, estableciendo un límite estándar.
 
 ## Opciones Consideradas
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- **Seleccionada:** Matriz de Selección de Protocolo de API (REST vs gRPC vs GraphQL)
+- **Otras:** Desconocido (el registro histórico no enumera explícitamente alternativas rechazadas).
 
 ## Evidencias y Criterios de Evaluación
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Desconocido (registro histórico; evaluado contra principios generales de arquitectura como mantenibilidad y confiabilidad).
 
 ## Decisiones y Estándares Relacionados
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- [ADR-0027: Estrategia de Protocolo Dual](../../adrs/nodejs/0027-dual-protocol-rest-grpc-api-gateway.es.md)
+- [ADR-0030: Patrones de Gateway de Dos Capas](../../adrs/core/0030-api-gateway-kong-vs-nestjs.es.md)
 
 ---
 [Volver al Índice](./README.es.md)

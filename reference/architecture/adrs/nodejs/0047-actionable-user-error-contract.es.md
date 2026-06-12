@@ -133,11 +133,14 @@ El feedback al usuario se entrega a través del mecanismo centralizado de notifi
 
 ## Evidencias y Criterios de Evaluación
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Desconocido (registro histórico; evaluado contra principios generales de arquitectura como mantenibilidad y confiabilidad).
 
 ## Decisiones y Estándares Relacionados
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- [ADR-0038: Patrón Result para Manejo de Errores](./0038-error-handling-result-pattern-strategy.es.md)
+- [ADR-0045: Gestión de Estado Zustand + TanStack Query](./0045-zustand-tanstack-query-state-management.es.md)
+- [ADR-0064 .NET: Contexto de Observabilidad de Scope de Solicitud](../dotnet/0064-dotnet-request-scope-observability-context.es.md)
+- [ADR-0065 .NET: Pipeline Serilog Seguro contra PII](../dotnet/0065-dotnet-pii-safe-serilog-pipeline.es.md)
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
@@ -145,7 +148,7 @@ El feedback al usuario se entrega a través del mecanismo centralizado de notifi
 
 ## Fuentes Actuales
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Desconocido (registro histórico).
 
 ---
 [Volver al Índice](./README.es.md)

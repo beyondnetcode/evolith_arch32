@@ -565,19 +565,23 @@ jobs:
 
 ## Objetivo y Alcance
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Backfill histórico: Abordar la tensión arquitectónica donde evolith Arch32 y UMS ambas producen documentación técnica bilingüe (EN/ES), estableciendo un límite estándar.
 
 ## Opciones Consideradas
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- **Seleccionada:** GitFlow de Lanzamiento de Documentación
+- **Otras:** Desconocido (el registro histórico no enumera explícitamente alternativas rechazadas).
 
 ## Evidencias y Criterios de Evaluación
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Desconocido (registro histórico; evaluado contra principios generales de arquitectura como mantenibilidad y confiabilidad).
 
 ## Decisiones y Estándares Relacionados
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- [ADR-0050: Estrategia de Branching Gitflow](./0050-gitflow-branching-strategy.es.md)
+- [Mejores Prácticas de Documentación SDLC](../../../governance/sdlc/03-documentation/sdlc-documentation-best-practices.es.md)
+- [Guía de Herencia de Repositorios Hijos](../../../governance/standards/onboarding/child-repository-inheritance-guide.es.md)
+- [Glosario de Terminología Bilingüe](../../../../.harness/scripts/bilingual-terminology-glossary.es.md)
 
 ---
 [Volver al Índice](./README.es.md)

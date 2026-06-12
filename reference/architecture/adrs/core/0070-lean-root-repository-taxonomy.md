@@ -103,15 +103,17 @@ Satellite repositories must:
 
 ## Options Considered
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- **Selected:** Lean Root Repository Taxonomy
+- **Others:** Unknown (historical record does not explicitly enumerate rejected alternatives).
 
 ## Evidence and Evaluation Criteria
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Unknown (historical record; evaluated against general architectural principles of maintainability and reliability).
 
 ## Related Decisions and Standards
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- [ADR-0048: Enterprise Taxonomy and Reference Layout](./0048-enterprise-taxonomy-reference-layout.md)
+- [ADR-0049: Naming Semantics and Clean Code Policy](./0049-naming-semantics-clean-code-policy.md)
 
 ---
 [Back to Index](./README.md)

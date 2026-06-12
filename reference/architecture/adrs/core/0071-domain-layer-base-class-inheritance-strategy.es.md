@@ -112,11 +112,12 @@ grep -r "using MediatR" src/Domain/ --include="*.cs"
 
 ## Evidencias y Criterios de Evaluación
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Desconocido (registro histórico; evaluado contra principios generales de arquitectura como mantenibilidad y confiabilidad).
 
 ## Decisiones y Estándares Relacionados
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- [ADR-0041: Arquitectura Canónica de Backend .NET](../dotnet/0041-canonical-dotnet-backend-architecture.es.md)
+- [ADR-0019: Patrones de Diseño Funcional Táctico](./0019-tactical-design-patterns-future-proofing.es.md)
 
 ---
 [Volver al Índice](./README.es.md)

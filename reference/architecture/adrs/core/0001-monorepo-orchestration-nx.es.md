@@ -38,19 +38,21 @@ Adoptar **Nx** como la herramienta de orquestación de monorepo, combinada con *
 
 ## Objetivo y Alcance
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Backfill histórico: Abordar la tensión arquitectónica donde gestionar múltiples aplicaciones relacionadas (API, Web, librerías compartidas) como repositorios aislados causa fricción: configuraciones de CI/CD duplicadas, deriva de versiones entre el código compartido y configuraciones locales complejas, estableciendo un límite estándar.
 
 ## Opciones Consideradas
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- **Seleccionada:** Orquestación de Monorepo con Nx
+- **Otras:** Desconocido (el registro histórico no enumera explícitamente alternativas rechazadas).
 
 ## Evidencias y Criterios de Evaluación
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Desconocido (registro histórico; evaluado contra principios generales de arquitectura como mantenibilidad y confiabilidad).
 
 ## Decisiones y Estándares Relacionados
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+- [Documentación de Nx](https://nx.dev)
+- [ADR-0003: Estándares Estrictos de TypeScript](../../adrs/nodejs/0003-strict-typescript-standards.es.md)
 
 ---
 [Volver al Índice](./README.es.md)

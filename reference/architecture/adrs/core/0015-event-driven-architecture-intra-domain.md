@@ -66,19 +66,22 @@ When a bounded context is extracted into an independent microservice:
 
 ## Objective and Scope
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Historical backfill: Address the architectural tension where as the Modular Monolith grows, allowing bounded contexts to call each other synchronously creates tight coupling, establishing a standard boundary.
 
 ## Options Considered
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- **Selected:** Event-Driven Architecture (EDA) for Intra-Domain Communication
+- **Others:** Unknown (historical record does not explicitly enumerate rejected alternatives).
 
 ## Evidence and Evaluation Criteria
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Unknown (historical record; evaluated against general architectural principles of maintainability and reliability).
 
 ## Related Decisions and Standards
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+- [ADR-0006: Future Microservices via Dapr](../../adrs/core/0006-future-microservices-transition-dapr.md)
+- [ADR-0007: Observability with OpenTelemetry](../../adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md)
+- [ADR-0031: Schema-per-Context and Domain Event Catalog](../../adrs/core/0031-schema-per-context-domain-event-catalog.md)
 
 ---
 [Back to Index](./README.md)

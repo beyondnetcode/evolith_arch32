@@ -141,6 +141,9 @@ jobs:
   publish-npm:
     needs: build-and-test
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -161,7 +164,7 @@ jobs:
 
       - name: Publish to NPM
         working-directory: ${{ env.CLI_DIR }}
-        run: npm publish --access public
+        run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -221,7 +224,7 @@ jobs:
   # GATE 5: Binary Smoke Test
   # ============================================
   smoke-test:
-    needs: package-binaries
+    needs: [package-binaries, release-please]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -259,6 +262,13 @@ jobs:
           echo "test-project" | ./binaries/smart-cli init --runtime nodejs --monorepo none --arch clean || true
           ls -la
           echo "✅ Init command smoke test completed"
+
+      - name: Smoke Test - NPM Package
+        shell: bash
+        run: |
+          npm install -g @evolith/smart-cli@${{ needs.release-please.outputs.version }}
+          smart-cli --help || { echo "❌ NPM binary failed to execute"; exit 1; }
+          echo "✅ NPM package smoke test completed"
 
   # ============================================
   # GATE 6: Upload Release Assets

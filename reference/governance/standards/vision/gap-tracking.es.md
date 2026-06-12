@@ -38,42 +38,40 @@ La cola contiene únicamente trabajo activo o diferido. Sigue la regla de la sec
 
 | # | ID | Gap y propósito de producto | Evidencia o ejemplo actual | Crit. | Compl. | Estado | Refs |
 |:-:|----|----------------------------|----------------------------|:---:|:---:|:---:|------|
-| 1 | [GT-27](#gt-27) | Reparar la integridad del tracking canónico para confiar en la priorización | Existían GT-19 duplicado, estados contradictorios y totales obsoletos | P0 | S | EN-PROGRESO | [Evaluación de Madurez](./maturity-assessment.es.md) |
-| 2 | [GT-28](#gt-28) | Restaurar un baseline de CLI apto para release | `npm run build`, `npm test` y `npm run mcp:smoke` fallan actualmente | P0 | M | EN-PROGRESO | [Smart CLI](../../../../sdk/cli/README.es.md) |
-| 3 | [GT-29](#gt-29) | Garantizar la paridad Native/OPA requerida por R-25 | OPA contiene placeholders y las nuevas reglas F1 no tienen comportamiento Native equivalente probado | P0 | L | EN-PROGRESO | [Reglas Globales](../../../../.harness/rules/global-rules.es.md) |
-| 4 | [GT-32](#gt-32) | Validar la hipótesis de cliente y comprador antes de escalar construcción | La visión declara pendientes entrevistas y experimentos controlados | P0 | M | PENDIENTE | [Visión de Producto](./evolith-product-vision-master.es.md) |
-| 5 | [GT-30](#gt-30) | Implementar el kernel mínimo de gobernanza del Tracker | Tracker tiene especificaciones extensas pero ninguna implementación ejecutable | P0 | L | PENDIENTE | [Diseño de Producto Tracker](../../../products/evolith-tracker/README.es.md) |
-| 6 | [GT-31](#gt-31) | Probar un producto a través de los cinco gates gobernados | No existe una demostración operativa tenant-a-producción del Evidence Graph | P0 | L | PENDIENTE | [Producto Mínimo Comprobable](./evolith-product-vision-master.es.md#10-producto-mínimo-comprobable) |
-| 7 | [GT-07](#gt-07) | Proteger por release la evaluación de gates en stdio y HTTP | El smoke contiene ambas rutas, pero no pasa mientras GT-28 siga abierto | P1 | S | EN-PROGRESO | [Reglas MCP](../../../../rulesets/mcp/README.es.md) |
-| 8 | [GT-08](#gt-08) | Rechazar Design Baselines sin respaldo ADR real | El working tree contiene validación de contenido, pero carece de baseline verde | P1 | S | EN-PROGRESO | [Quality Gates](../../sdlc/quality-gates.es.md) |
-| 9 | [GT-09](#gt-09) | Bloquear Successful Build bajo el umbral de cobertura | Existe parsing de `coverage-summary.json`, pero no está verificado para release | P1 | S | EN-PROGRESO | [Quality Gates](../../sdlc/quality-gates.es.md) |
-| 10 | [GT-12](#gt-12) | Permitir previsualización segura en todos los comandos de escritura | `adr` y `architecture scaffold` incluyen dry-run dentro de la refactorización rota | P1 | S | EN-PROGRESO | [ADR 0073](../../../architecture/adrs/core/0073-unified-cli-output-contract.es.md) |
-| 11 | [GT-14](#gt-14) | Enviar GateEvidence al Tracker u otro consumidor autorizado | Existe adapter webhook en el working tree; la suite completa no está verde | P1 | S | EN-PROGRESO | [Interfaces del Tracker](./sdlc-tracker-technical-interfaces.es.md) |
-| 12 | [GT-05](#gt-05) | Adoptar Streamable HTTP del SDK MCP con sesiones soportadas | Existe wrapper SDK; los tests HTTP están skipped y el build falla | P1 | M | EN-PROGRESO | [Reglas MCP](../../../../rulesets/mcp/README.es.md) |
-| 13 | [GT-10](#gt-10) | Bloquear RC ante evidencia High/Critical ausente o fallida | La lógica actual verifica existencia del archivo, no contenido de vulnerabilidades | P1 | M | EN-PROGRESO | [Quality Gates](../../sdlc/quality-gates.es.md) |
-| 14 | [GT-11](#gt-11) | Bloquear Production Live sin observabilidad y rollback verificados | La lógica actual verifica presencia, no preparación operativa | P1 | M | EN-PROGRESO | [Modelo de Trazabilidad](../../sdlc/traceability-model.es.md) |
-| 15 | [GT-17](#gt-17) | Consolidar DI y aplicar boundaries arquitectónicos estrictos | La refactorización introduce BaseCommand/DI pero rompe resolución de Nest | P1 | M | EN-PROGRESO | [Playbook de Evolución Modular](../../../../.harness/playbooks/modular-monolith-evolution-playbook.es.md) |
-| 16 | [GT-19](#gt-19) | Reducir el god-layer `core/` a composición | `core/` tiene unas 17k líneas TypeScript y ports de dominio aún importan tipos de core | P1 | L | EN-PROGRESO | [Estándar de Autoría ADR](../../../architecture/adrs/adr-authoring-standard.es.md) |
-| 17 | [GT-18](#gt-18) | Hacer instalable el CLI open-core desde npm | Aún no se verifica instalación pública desde un entorno limpio | P1 | S | PENDIENTE | [Smart CLI](../../../../sdk/cli/README.es.md) |
-| 18 | [GT-34](#gt-34) | Repriorizar el roadmap alrededor de la prueba de gobernanza | Las ambiciones multi-cloud/Dapr anteceden a la validación del producto | P1 | S | PENDIENTE | [Roadmap Evolutivo](./evolutionary-strategy-roadmap.es.md) |
-| 19 | [GT-13](#gt-13) | Evaluar una propuesta completa de transición en una llamada | No existe implementación de `evolith-phase-advance` | P1 | M | PENDIENTE | [Interfaces del Tracker](./sdlc-tracker-technical-interfaces.es.md) |
-| 20 | [GT-33](#gt-33) | Medir madurez desde evidencia operativa y no volumen documental | La evaluación declara Managed/Adopted mientras build y tests fallan | P1 | M | PENDIENTE | [Evaluación de Madurez](./maturity-assessment.es.md) |
-| 21 | [GT-35](#gt-35) | Generar automáticamente inventarios y totales del dashboard | Los conteos publicados están detrás de los 47 JSON, 17 schemas y 9 Rego actuales | P1 | M | PENDIENTE | [Hub de Rulesets](../../../../rulesets/README.es.md) |
-| 22 | [GT-20](#gt-20) | Completar evidencia de decisiones ADR sin fabricar historia | 162 archivos ADR contienen aproximadamente 697 marcadores GT-20 | P1 | L | PENDIENTE | [Estándar de Autoría](../../../architecture/adrs/adr-authoring-standard.es.md) |
-| 23 | [GT-22](#gt-22) | Hacer inequívocas las identidades ADR entre runtimes | Core, Node.js y .NET reutilizan varios IDs numéricos | P2 | S | PENDIENTE | [Matriz ADR](../../../architecture/adrs/adr-matrix.es.md) |
-| 24 | [GT-26](#gt-26) | Reemplazar el placeholder de Fase 5 por un playbook operativo | La navegación SDLC aún anuncia un runbook futuro | P2 | S | PENDIENTE | [Centro SDLC](../../sdlc/README.es.md) |
-| 25 | [GT-21](#gt-21) | Separar principios universales de elecciones de herramientas | Nx, Dapr, Redis, Kong, CodeQL y MCP requieren revisión de clasificación | P2 | M | PENDIENTE | [Estándar de Autoría](../../../architecture/adrs/adr-authoring-standard.es.md) |
-| 26 | [GT-24](#gt-24) | Alinear ubicaciones físicas con la taxonomía declarada | Permanecen seis marcadores de migración en documentación de producto y SDK | P2 | M | PENDIENTE | [Taxonomía Documental](../../../documentation-taxonomy.es.md) |
-| 27 | [GT-23](#gt-23) | Reemplazar esqueletos españoles por traducciones utilizables | Permanecen 76 marcadores de esqueleto bajo `reference/` y `rulesets/` | P2 | L | PENDIENTE | [Índice Bilingüe](../../../navigation/BILINGUAL_INDEX.es.md) |
-| 28 | [GT-25](#gt-25) | Poblar las guías de plataforma con perfiles reales | Las categorías contienen hubs/catálogos, pero no perfiles de proveedor | P2 | L | PENDIENTE | [Hub de Plataformas](../../../platforms/README.es.md) |
-| 29 | [GT-36](#gt-36) | Definir autoridad lingüística y cobertura de reglas machine-readable | Existen 27 rulesets EN y solo 3 contrapartes JSON ES | P2 | L | PENDIENTE | [Gobernanza Bilingüe](../../../../.harness/rules/global-rules.es.md) |
-| 30 | [GT-15](#gt-15) | Añadir sesiones conversacionales gobernadas después de existir el estado Tracker | El almacenamiento de chat y la autoridad dependen del kernel Tracker | P2 | L | DIFERIDO | [Diseño de Producto Tracker](../../../products/evolith-tracker/README.es.md) |
+| 1 | [GT-28](#gt-28) | Restaurar un baseline de CLI apto para release | `npm run build`, `npm test` y `npm run mcp:smoke` fallan actualmente | P0 | M | EN-PROGRESO | [Smart CLI](../../../../sdk/cli/README.es.md) |
+| 2 | [GT-29](#gt-29) | Garantizar la paridad Native/OPA requerida por R-25 | OPA contiene placeholders y las nuevas reglas F1 no tienen comportamiento Native equivalente probado | P0 | L | EN-PROGRESO | [Reglas Globales](../../../../.harness/rules/global-rules.es.md) |
+| 3 | [GT-32](#gt-32) | Validar la hipótesis de cliente y comprador antes de escalar construcción | La visión declara pendientes entrevistas y experimentos controlados | P0 | M | PENDIENTE | [Visión de Producto](./evolith-product-vision-master.es.md) |
+| 4 | [GT-30](#gt-30) | Implementar el kernel mínimo de gobernanza del Tracker | Tracker tiene especificaciones extensas pero ninguna implementación ejecutable | P0 | L | PENDIENTE | [Diseño de Producto Tracker](../../../products/evolith-tracker/README.es.md) |
+| 5 | [GT-31](#gt-31) | Probar un producto a través de los cinco gates gobernados | No existe una demostración operativa tenant-a-producción del Evidence Graph | P0 | L | PENDIENTE | [Producto Mínimo Comprobable](./evolith-product-vision-master.es.md#10-producto-mínimo-comprobable) |
+| 6 | [GT-07](#gt-07) | Proteger por release la evaluación de gates en stdio y HTTP | El smoke contiene ambas rutas, pero no pasa mientras GT-28 siga abierto | P1 | S | EN-PROGRESO | [Reglas MCP](../../../../rulesets/mcp/README.es.md) |
+| 7 | [GT-08](#gt-08) | Rechazar Design Baselines sin respaldo ADR real | El working tree contiene validación de contenido, pero carece de baseline verde | P1 | S | EN-PROGRESO | [Quality Gates](../../sdlc/quality-gates.es.md) |
+| 8 | [GT-09](#gt-09) | Bloquear Successful Build bajo el umbral de cobertura | Existe parsing de `coverage-summary.json`, pero no está verificado para release | P1 | S | EN-PROGRESO | [Quality Gates](../../sdlc/quality-gates.es.md) |
+| 9 | [GT-12](#gt-12) | Permitir previsualización segura en todos los comandos de escritura | `adr` y `architecture scaffold` incluyen dry-run dentro de la refactorización rota | P1 | S | EN-PROGRESO | [ADR 0073](../../../architecture/adrs/core/0073-unified-cli-output-contract.es.md) |
+| 10 | [GT-14](#gt-14) | Enviar GateEvidence al Tracker u otro consumidor autorizado | Existe adapter webhook en el working tree; la suite completa no está verde | P1 | S | EN-PROGRESO | [Interfaces del Tracker](./sdlc-tracker-technical-interfaces.es.md) |
+| 11 | [GT-05](#gt-05) | Adoptar Streamable HTTP del SDK MCP con sesiones soportadas | Existe wrapper SDK; los tests HTTP están skipped y el build falla | P1 | M | EN-PROGRESO | [Reglas MCP](../../../../rulesets/mcp/README.es.md) |
+| 12 | [GT-10](#gt-10) | Bloquear RC ante evidencia High/Critical ausente o fallida | La lógica actual verifica existencia del archivo, no contenido de vulnerabilidades | P1 | M | EN-PROGRESO | [Quality Gates](../../sdlc/quality-gates.es.md) |
+| 13 | [GT-11](#gt-11) | Bloquear Production Live sin observabilidad y rollback verificados | La lógica actual verifica presencia, no preparación operativa | P1 | M | EN-PROGRESO | [Modelo de Trazabilidad](../../sdlc/traceability-model.es.md) |
+| 14 | [GT-17](#gt-17) | Consolidar DI y aplicar boundaries arquitectónicos estrictos | La refactorización introduce BaseCommand/DI pero rompe resolución de Nest | P1 | M | EN-PROGRESO | [Playbook de Evolución Modular](../../../../.harness/playbooks/modular-monolith-evolution-playbook.es.md) |
+| 15 | [GT-19](#gt-19) | Reducir el god-layer `core/` a composición | `core/` tiene unas 17k líneas TypeScript y ports de dominio aún importan tipos de core | P1 | L | EN-PROGRESO | [Estándar de Autoría ADR](../../../architecture/adrs/adr-authoring-standard.es.md) |
+| 16 | [GT-18](#gt-18) | Hacer instalable el CLI open-core desde npm | Aún no se verifica instalación pública desde un entorno limpio | P1 | S | PENDIENTE | [Smart CLI](../../../../sdk/cli/README.es.md) |
+| 17 | [GT-34](#gt-34) | Repriorizar el roadmap alrededor de la prueba de gobernanza | Las ambiciones multi-cloud/Dapr anteceden a la validación del producto | P1 | S | PENDIENTE | [Roadmap Evolutivo](./evolutionary-strategy-roadmap.es.md) |
+| 18 | [GT-13](#gt-13) | Evaluar una propuesta completa de transición en una llamada | No existe implementación de `evolith-phase-advance` | P1 | M | PENDIENTE | [Interfaces del Tracker](./sdlc-tracker-technical-interfaces.es.md) |
+| 19 | [GT-33](#gt-33) | Medir madurez desde evidencia operativa y no volumen documental | La evaluación declara Managed/Adopted mientras build y tests fallan | P1 | M | PENDIENTE | [Evaluación de Madurez](./maturity-assessment.es.md) |
+| 20 | [GT-35](#gt-35) | Generar automáticamente inventarios y totales del dashboard | Los conteos publicados están detrás de los 47 JSON, 17 schemas y 9 Rego actuales | P1 | M | PENDIENTE | [Hub de Rulesets](../../../../rulesets/README.es.md) |
+| 21 | [GT-20](#gt-20) | Completar evidencia de decisiones ADR sin fabricar historia | 162 archivos ADR contienen aproximadamente 697 marcadores GT-20 | P1 | L | PENDIENTE | [Estándar de Autoría](../../../architecture/adrs/adr-authoring-standard.es.md) |
+| 22 | [GT-22](#gt-22) | Hacer inequívocas las identidades ADR entre runtimes | Core, Node.js y .NET reutilizan varios IDs numéricos | P2 | S | PENDIENTE | [Matriz ADR](../../../architecture/adrs/adr-matrix.es.md) |
+| 23 | [GT-26](#gt-26) | Reemplazar el placeholder de Fase 5 por un playbook operativo | La navegación SDLC aún anuncia un runbook futuro | P2 | S | PENDIENTE | [Centro SDLC](../../sdlc/README.es.md) |
+| 24 | [GT-21](#gt-21) | Separar principios universales de elecciones de herramientas | Nx, Dapr, Redis, Kong, CodeQL y MCP requieren revisión de clasificación | P2 | M | PENDIENTE | [Estándar de Autoría](../../../architecture/adrs/adr-authoring-standard.es.md) |
+| 25 | [GT-24](#gt-24) | Alinear ubicaciones físicas con la taxonomía declarada | Permanecen seis marcadores de migración en documentación de producto y SDK | P2 | M | PENDIENTE | [Taxonomía Documental](../../../documentation-taxonomy.es.md) |
+| 26 | [GT-23](#gt-23) | Reemplazar esqueletos españoles por traducciones utilizables | Permanecen 76 marcadores de esqueleto bajo `reference/` y `rulesets/` | P2 | L | PENDIENTE | [Índice Bilingüe](../../../navigation/BILINGUAL_INDEX.es.md) |
+| 27 | [GT-25](#gt-25) | Poblar las guías de plataforma con perfiles reales | Las categorías contienen hubs/catálogos, pero no perfiles de proveedor | P2 | L | PENDIENTE | [Hub de Plataformas](../../../platforms/README.es.md) |
+| 28 | [GT-36](#gt-36) | Definir autoridad lingüística y cobertura de reglas machine-readable | Existen 27 rulesets EN y solo 3 contrapartes JSON ES | P2 | L | PENDIENTE | [Gobernanza Bilingüe](../../../../.harness/rules/global-rules.es.md) |
+| 29 | [GT-15](#gt-15) | Añadir sesiones conversacionales gobernadas después de existir el estado Tracker | El almacenamiento de chat y la autoridad dependen del kernel Tracker | P2 | L | DIFERIDO | [Diseño de Producto Tracker](../../../products/evolith-tracker/README.es.md) |
 
 ### 2.2 Dashboard Completo
 
 | ID | Gap | Fase | Criticidad | Complejidad | Estado |
 |----|-----|:---:|:---:|:---:|:---:|
-| [GT-27](#gt-27) | Consistencia semántica del tracking canónico | Transversal | P0 | S | EN-PROGRESO |
 | [GT-28](#gt-28) | Restaurar baseline de build, tests y smoke del CLI | F0 | P0 | M | EN-PROGRESO |
 | [GT-29](#gt-29) | Paridad de ejecución de reglas Native/OPA | F1 | P0 | L | EN-PROGRESO |
 | [GT-32](#gt-32) | Validación de hipótesis de cliente y comprador | Producto | P0 | M | PENDIENTE |
@@ -109,8 +107,9 @@ La cola contiene únicamente trabajo activo o diferido. Sigue la regla de la sec
 | [GT-06](#gt-06) | Tool MCP `evolith-gate-evaluate` + contexto de fase en tools existentes | F2 | P0 | M | COMPLETADO |
 | [GT-04](#gt-04) | Eliminar service locator del dominio · reubicar telemetría | F1 | P1 | S | COMPLETADO |
 | [GT-16](#gt-16) | Consolidación documental (fuente única de verdad) | F5 | P2 | S | COMPLETADO |
+| [GT-27](#gt-27) | Consistencia semántica del tracking canónico | Transversal | P0 | S | COMPLETADO |
 
-**Progreso:** 6 / 36 completados · 13 en progreso · 16 pendientes · 1 diferido
+**Progreso:** 7 / 36 completados · 12 en progreso · 16 pendientes · 1 diferido
 
 ---
 
@@ -347,11 +346,11 @@ La cola contiene únicamente trabajo activo o diferido. Sigue la regla de la sec
 <a name="gt-27"></a>
 #### GT-27 · Consistencia semántica del tracking canónico
 
-- **Criticidad:** P0 · **Complejidad:** S · **Estado:** EN-PROGRESO
+- **Criticidad:** P0 · **Complejidad:** S · **Estado:** COMPLETADO (2026-06-12)
 - **Gap:** El tablero canónico contenía un GT-19 duplicado, trabajo completado en la cola activa, estados EN/ES contradictorios y totales que ya no coincidían con los registros detallados.
 - **Propósito:** Hacer que la priorización, el reporting y las decisiones de inversión dependan de una única superficie confiable de gobernanza de producto.
-- **Evidencia actual / ejemplo:** Esta revisión normaliza IDs únicos, estados activos, orden y totales. La consistencia semántica seguirá manteniéndose manualmente hasta implementar GT-35.
-- **Cierre cuando:** cada GT tiene exactamente una fila de dashboard y un registro detallado; criticidad, complejidad y estado coinciden entre EN/ES; los completados quedan fuera de la cola activa; los totales se derivan o validan automáticamente.
+- **Evidencia de cierre:** El commit `a6e4915` normalizó IDs únicos, estados activos, orden, metadata EN/ES y totales. La validación documental pasó para 745 archivos Markdown, la paridad estructural bilingüe pasó y una auditoría semántica confirmó 36 filas únicas de dashboard y 36 fichas correspondientes en cada idioma.
+- **Alcance cerrado:** El tablero canónico es internamente consistente y los completados quedan fuera de la cola activa. La prevención de reincidencias, los totales generados y la automatización de inventarios del repositorio pertenecen explícitamente a GT-35.
 - **Referencias:** [Evaluación de Madurez](./maturity-assessment.es.md) · [Taxonomía Documental](../../../documentation-taxonomy.es.md)
 
 <a name="gt-35"></a>

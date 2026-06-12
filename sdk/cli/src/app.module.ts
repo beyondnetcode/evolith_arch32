@@ -8,7 +8,7 @@ import { McpServeCommand } from './commands/mcp/mcp-serve.command';
 import { ConfigService } from './core/config/config.service';
 import { FileManagerService } from './core/filesystem/file-manager.service';
 import { SyncService } from './core/sync/sync.service';
-import { WatcherService } from './core/mcp/watcher.service';
+import { WatcherService } from './infrastructure/mcp/watcher.service';
 import { SdlcCommand } from './commands/sdlc/sdlc.command';
 import { HandoffCommand } from './commands/sdlc/handoff.command';
 import { GenerateDomainCommand } from './commands/sdlc/generate-domain.command';

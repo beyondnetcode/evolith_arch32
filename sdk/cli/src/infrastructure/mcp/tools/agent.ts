@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { getFileSystem } from './tool-utils';
-import { IFileSystem, IConfigParser } from '../../abstractions';
+import { IFileSystem, IConfigParser } from '../../../core/abstractions';
 
 interface AgentInfo {
   name: string;

@@ -2,7 +2,7 @@ import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { Inject } from '@nestjs/common';
 import { ADRService, CreateADRInput, ADR, ADCMatrix } from '../../domain/services/adr.service';
-import { logger, OperationTimer } from '../../core/observability';
+import { logger, OperationTimer } from '../../infrastructure/observability';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 
 interface ADRCommandOptions {

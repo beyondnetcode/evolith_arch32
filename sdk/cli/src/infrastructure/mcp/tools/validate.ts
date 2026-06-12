@@ -1,5 +1,5 @@
-import { IFileSystem, IConfigParser } from '../../abstractions';
-import { RulesetValidatorService } from '../../validators/ruleset-validator.service';
+import { IFileSystem, IConfigParser } from '../../../core/abstractions';
+import { RulesetValidatorService } from '../../../core/validators/ruleset-validator.service';
 
 import { IMcpToolHandler } from '../mcp-tool.registry';
 

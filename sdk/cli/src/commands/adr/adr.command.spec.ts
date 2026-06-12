@@ -46,7 +46,7 @@ jest.mock('../../core/di/container', () => ({
   })),
 }));
 
-jest.mock('../../core/observability', () => ({
+jest.mock('../../infrastructure/observability', () => ({
   logger: {
     info: jest.fn(),
     error: jest.fn(),

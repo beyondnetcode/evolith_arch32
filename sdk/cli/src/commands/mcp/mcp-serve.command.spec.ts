@@ -1,6 +1,6 @@
 import { McpServeCommand } from './mcp-serve.command';
 
-jest.mock('../../core/mcp/server', () => ({
+jest.mock('../../infrastructure/mcp/server', () => ({
   startMcpServer: jest.fn().mockResolvedValue(undefined),
 }));
 

@@ -34,7 +34,7 @@ jest.mock('../../infrastructure/cli/providers', () => ({
   nxProvider:     { isAvailable: jest.fn().mockResolvedValue(true) },
 }));
 
-jest.mock('../../core/observability', () => ({
+jest.mock('../../infrastructure/observability', () => ({
   logger:         { info: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn() },
   Timed:          () => (_t: any, _k: any, desc: PropertyDescriptor) => desc,
   commandWatcher: { trackStart: jest.fn(), trackEnd: jest.fn() },

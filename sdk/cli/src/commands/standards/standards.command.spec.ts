@@ -50,7 +50,7 @@ jest.mock('../../domain/services/standards.service', () => ({
   StandardCategory: {},
 }));
 
-jest.mock('../../core/observability', () => ({
+jest.mock('../../infrastructure/observability', () => ({
   logger: {
     info: jest.fn(),
     error: jest.fn(),
@@ -61,7 +61,7 @@ jest.mock('../../core/observability', () => ({
 import * as p from '@clack/prompts';
 import { StandardsService } from '../../domain/services/standards.service';
 import { getContainer } from '../../core/di/container';
-import { logger } from '../../core/observability';
+import { logger } from '../../infrastructure/observability';
 
 const mockInitialize = jest.fn();
 const mockList = jest.fn();

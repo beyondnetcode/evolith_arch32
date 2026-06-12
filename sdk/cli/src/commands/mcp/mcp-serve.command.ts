@@ -1,6 +1,6 @@
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
-import { startMcpServer, McpTransport } from '../../core/mcp/server';
+import { startMcpServer, McpTransport } from '../../infrastructure/mcp/server';
 import { RulesetValidatorService } from '../../core/validators/ruleset-validator.service';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 

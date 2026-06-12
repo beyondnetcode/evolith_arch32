@@ -1,5 +1,5 @@
 import { logger, LogLevel } from './structured-logger';
-import { EvolithError, isEvolithError, getErrorContext, getErrorCode } from '../errors';
+import { EvolithError, isEvolithError, getErrorContext, getErrorCode } from '../../core/errors';
 
 export interface ErrorReport {
   id: string;

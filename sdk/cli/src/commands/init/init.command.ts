@@ -2,7 +2,7 @@ import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { Inject } from '@nestjs/common';
 import { InitializeProjectUseCase, InitProjectInput } from '../../application/services';
-import { logger, errorReporter, OperationTimer } from '../../core/observability';
+import { logger, errorReporter, OperationTimer } from '../../infrastructure/observability';
 import { Injectable } from '@nestjs/common';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { CatalogLoader } from '../../infrastructure/catalog/catalog-loader';

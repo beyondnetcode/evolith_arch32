@@ -28,7 +28,7 @@ jest.mock('../../infrastructure/prompts/prompt.service', () => ({
   })),
 }));
 
-jest.mock('../../core/observability', () => ({
+jest.mock('../../infrastructure/observability', () => ({
   logger: {
     info: jest.fn(),
     error: jest.fn(),
@@ -46,7 +46,7 @@ import { ValidateSatelliteUseCase } from '../../application/use-cases/validate-s
 import { RulesetValidatorService } from '../../core/validators/ruleset-validator.service';
 import { OutputFormatterService } from '../../infrastructure/formatters/output-formatter.service';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
-import { logger } from '../../core/observability';
+import { logger } from '../../infrastructure/observability';
 
 const mockExecute = jest.fn();
 const mockValidateArchitecture = jest.fn();

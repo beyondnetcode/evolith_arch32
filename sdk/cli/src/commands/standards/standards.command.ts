@@ -2,7 +2,7 @@ import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { Inject } from '@nestjs/common';
 import { StandardsService, StandardCategory } from '../../domain/services/standards.service';
-import { logger } from '../../core/observability';
+import { logger } from '../../infrastructure/observability';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 
 interface StandardsCommandOptions {

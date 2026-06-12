@@ -1,5 +1,5 @@
-import { IConfigParser } from '../../abstractions';
-import { IFileSystem } from '../../abstractions';
+import { IConfigParser } from '../../../core/abstractions';
+import { IFileSystem } from '../../../core/abstractions';
 import { MoscowPrioritizationService, MoscowItem, MoscowAnalysis } from '../../../infrastructure/adapters/moscow-prioritization.service';
 
 import { IMcpToolHandler } from '../mcp-tool.registry';

@@ -3,7 +3,7 @@ import { ICatalogLoader } from '../../domain/interfaces';
 import { IPlatformProviders } from '../ports/platform-detection.port';
 import { IWebhookNotifier } from '../ports/webhook-notifier.port';
 import { PlatformNotFoundError, ValidationError } from '../../core/errors';
-import { logger, Timed, commandWatcher } from '../../core/observability';
+
 import { PhaseGateValidatorService, GateValidationResult } from '../../core/validators/phase-gate-validator.service';
 
 export interface InitProjectInput {
@@ -37,7 +37,7 @@ export class InitializeProjectUseCase {
     this.phaseService = new PhaseService();
   }
 
-  @Timed('InitializeProjectUseCase.execute')
+
   async execute(input: InitProjectInput, cwd: string): Promise<InitProjectResult> {
     const warnings: string[] = [];
     const errors: string[] = [];
@@ -321,9 +321,9 @@ export class PhaseTransitionUseCase {
     this.gateValidator = new PhaseGateValidatorService(corePath);
   }
 
-  @Timed('PhaseTransitionUseCase.execute')
+
   async execute(from: string, to: string, tools: string[], cwd: string): Promise<PhaseTransitionResult> {
-    logger.info('Phase transition initiated', { from, to, toolCount: tools.length });
+    // Phase transition initiated
 
     const warnings: string[] = [];
     const errors: string[] = [];
@@ -398,7 +398,7 @@ export class PhaseTransitionUseCase {
       return gates;
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);
-      logger.warn(`Gate validator failed, falling back to legacy validation: ${message}`);
+      console.warn(`Gate validator failed, falling back to legacy validation: ${message}`);
       return this.validateGatesLegacy(this.phaseService.getAllPhases()[phaseNumber]?.value || 'phase-0', cwd);
     }
   }

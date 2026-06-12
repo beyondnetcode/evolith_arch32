@@ -100,7 +100,7 @@
       "category": "adr-naming",
       "title": "ADR files named with zero-padded ID",
       "description": "ADR files use format: NNNN-descriptive-name.md where NNNN is zero-padded 4-digit number. Example: 0002-clean-architecture-nestjs.md, 0069-dotnet-grpc-service.md.",
-      "rationale": "ADR-0048: Canonical numbering enables sorting and referencing.",
+      "rationale": "core/ADR-0048: Canonical numbering enables sorting and referencing.",
       "validationQuery": "ADR filenames match pattern: ^[0-9]{4}-[a-z-]+\\.md$",
       "blocking": true,
       "examples": [

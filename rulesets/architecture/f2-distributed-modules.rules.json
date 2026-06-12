@@ -23,7 +23,7 @@
       "category": "contract-stability",
       "title": "Inter-Module Contracts are Explicit and Versioned",
       "description": "All inter-module communication MUST use explicit contract definitions (Protobuf, JSON Schema, or OpenAPI). Contracts are versioned and backward-compatible.",
-      "rationale": "Without explicit contracts, module evolution breaks dependent modules. ADR-0032 mandates gRPC for internal inter-op.",
+      "rationale": "Without explicit contracts, module evolution breaks dependent modules. core/ADR-0032 mandates gRPC for internal inter-op.",
       "validationQuery": "Contract definitions in shared Contracts library. Breaking changes require new major version. CI validates backward compatibility.",
       "blocking": true
     },
@@ -72,7 +72,7 @@
       "severity": "MUST",
       "category": "resiliency",
       "title": "Circuit Breaker for Inter-Module Calls",
-      "description": "All synchronous inter-module calls MUST implement circuit breaker pattern (ADR-0011). A module failure MUST NOT cascade to caller failure.",
+      "description": "All synchronous inter-module calls MUST implement circuit breaker pattern (core/ADR-0011). A module failure MUST NOT cascade to caller failure.",
       "rationale": "Circuit breakers prevent cascade failures across module boundaries. Without them, one module failure causes system-wide outage.",
       "validationQuery": "Circuit breaker is present in all inter-module HTTP/gRPC calls. Fallback behavior is defined for each call.",
       "blocking": false
@@ -82,7 +82,7 @@
       "severity": "MUST",
       "category": "extraction-readiness",
       "title": "Maintain F2 Extraction Score",
-      "description": "Satellite MUST track extraction readiness per ADR-0045 with F3-specific criteria. Score MUST be >= 80% to pass Phase 2 Design gate when F3 is planned.",
+      "description": "Satellite MUST track extraction readiness per core/ADR-0045 with F3-specific criteria. Score MUST be >= 80% to pass Phase 2 Design gate when F3 is planned.",
       "rationale": "F3 extraction requires higher maturity: independent deployability, circuit breakers, distributed tracing, and explicit contracts must all be in place.",
       "validationQuery": "F3 extraction readiness score documented and >= 80%. All F2 rules green.",
       "blocking": false
@@ -102,7 +102,7 @@
   "exitGate": {
     "description": "F2 exits when F3 extraction readiness score >= 80% AND architecture board approves F3 transition.",
     "requiredArtifacts": [
-      "ADR-0045 F3 readiness assessment (>= 80%)",
+      "core/ADR-0045 F3 readiness assessment (>= 80%)",
       "Contract registry with version history",
       "Circuit breaker documentation per module",
       "Independent deployment evidence"

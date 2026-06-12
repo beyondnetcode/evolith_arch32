@@ -138,15 +138,15 @@
     },
     {
       "id": "SVC-03",
-      "title": "F1 phase satellites must reference ADR-0047 in spec.compliance.adrRegistry",
-      "enforcement": "Satellites in F1 phase must include ADR-0047 confirming modular monolith starting point.",
-      "description": "Satellites in F1 phase must include ADR-0047 confirming modular monolith starting point."
+      "title": "F1 phase satellites must reference core/ADR-0047 in spec.compliance.adrRegistry",
+      "enforcement": "Satellites in F1 phase must include core/ADR-0047 confirming modular monolith starting point.",
+      "description": "Satellites in F1 phase must include core/ADR-0047 confirming modular monolith starting point."
     },
     {
       "id": "SVC-04",
       "title": "Satellites in F2 or F3 must have extraction readiness score documented",
-      "enforcement": "Satellites with phase F2 or F3 must have ADR-0045 assessment with score >= 70% (F2) or >= 80% (F3).",
-      "description": "Satellites with phase F2 or F3 must have ADR-0045 assessment with score >= 70% (F2) or >= 80% (F3)."
+      "enforcement": "Satellites with phase F2 or F3 must have core/ADR-0045 assessment with score >= 70% (F2) or >= 80% (F3).",
+      "description": "Satellites with phase F2 or F3 must have core/ADR-0045 assessment with score >= 70% (F2) or >= 80% (F3)."
     },
     {
       "id": "SVC-05",

@@ -46,7 +46,7 @@ violations[{"id": "F1-R06", "severity": "MUST", "title": "Async Events Use Domai
 }
 
 violations[{"id": "F1-R07", "severity": "MUST", "title": "Maintain Extraction Readiness Score", "blocking": false, "msg": msg}] {
-	# Logic would verify ADR-0045 score documentation
+	# Logic would verify core/ADR-0045 score documentation
 	# We skip full doc check in Rego, Native does it better, but for parity:
 	not input.satellite.hasExtractionReadiness
 	msg := "No extraction-readiness.md found in docs/ (F1-R07)."

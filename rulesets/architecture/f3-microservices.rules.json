@@ -23,7 +23,7 @@
       "category": "service-mesh",
       "title": "Service Mesh Readiness",
       "description": "All services MUST be deployed behind a service mesh (Istio, Linkerd, or equivalent) or equivalent sidecar infrastructure. mTLS MUST be enforced for all in-cluster communication.",
-      "rationale": "Service mesh provides observability, traffic management, and security at the infrastructure level. ADR-0013 covers cloud topology and DR.",
+      "rationale": "Service mesh provides observability, traffic management, and security at the infrastructure level. core/ADR-0013 covers cloud topology and DR.",
       "validationQuery": "Service-to-service communication uses mTLS. Service mesh provides routing, retries, and circuit breaking.",
       "blocking": true
     },

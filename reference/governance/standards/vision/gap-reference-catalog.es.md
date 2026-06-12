@@ -313,16 +313,6 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Cierre cuando:** el slice completa un flujo real de entrega gobernada; cada decisión enlaza evidencia fuente y versión de política; al menos un proveedor puede reemplazarse mediante su port; se miden tiempo transcurrido, cantidad de intervenciones y calidad de decisión.
 - **Referencias:** [Producto Mínimo Comprobable](./evolith-product-vision-master.es.md#10-producto-mínimo-comprobable) · [Framework de Validación Estratégica y Composición](./evolith-strategic-validation-and-composition-framework.es.md)
 
-#### GT-32
-
-**Título:** Validación de hipótesis de cliente y comprador
-
-- **Gap:** El cliente objetivo, el dolor operativo, el comprador y la disposición a adoptar siguen siendo hipótesis narrativas sin entrevistas registradas, pilotos controlados ni evidencia de compra.
-- **Propósito:** Evitar construir una plataforma internamente coherente cuyo modelo de gobernanza, costo de integración o proceso de compra no resuelva un problema de cliente suficientemente valioso.
-- **Evidencia actual / ejemplo:** La visión identifica líderes de producto e ingeniería como usuarios y compradores probables, pero el repositorio no contiene un paquete de evidencia que relacione supuestos con frecuencia observada del problema, costo actual, bloqueadores de adopción y autoridad de compra.
-- **Cierre cuando:** al menos ocho entrevistas estructuradas cubren tres roles relevantes; un piloto controlado ejercita el flujo gobernado; un registro de supuestos documenta evidencia y confianza; el Architecture Board toma una decisión explícita de continuar, revisar o detener.
-- **Referencias:** [Hipótesis de Cliente](./evolith-product-vision-master.es.md#13-problema-objetivo-e-hipótesis-de-cliente) · [Workflow de Validación Estratégica con IA](./evolith-strategic-validation-and-composition-framework.es.md)
-
 #### GT-33
 
 **Título:** Scoring de madurez respaldado por evidencia

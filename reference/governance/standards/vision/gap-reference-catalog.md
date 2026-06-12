@@ -313,16 +313,6 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Done when:** the slice completes a real governed delivery flow; every decision links to source evidence and policy version; at least one provider can be replaced through its port; elapsed time, intervention count, and decision quality are measured.
 - **References:** [Minimum Provable Product](./evolith-product-vision-master.md#10-minimum-provable-product) · [Strategic Validation and Composition Framework](./evolith-strategic-validation-and-composition-framework.md)
 
-#### GT-32
-
-**Title:** Customer and buyer hypothesis validation
-
-- **Gap:** The target customer, operational pain, buyer, and willingness-to-adopt remain narrative hypotheses without recorded interviews, controlled pilots, or purchasing evidence.
-- **Purpose:** Avoid building an internally coherent platform whose governance model, integration cost, or buying motion does not solve a sufficiently valuable customer problem.
-- **Current evidence / example:** The vision names product and engineering leaders as likely users and buyers, but the repository contains no evidence pack linking assumptions to observed problem frequency, current cost, adoption blockers, and buying authority.
-- **Done when:** at least eight structured interviews span three relevant roles; one controlled pilot exercises the governed workflow; an assumption register records evidence and confidence; the Architecture Board makes an explicit continue, revise, or stop decision.
-- **References:** [Customer Hypothesis](./evolith-product-vision-master.md#13-target-problem-and-customer-hypothesis) · [AI-Driven Strategic Validation Workflow](./evolith-strategic-validation-and-composition-framework.md)
-
 #### GT-33
 
 **Title:** Evidence-backed maturity scoring

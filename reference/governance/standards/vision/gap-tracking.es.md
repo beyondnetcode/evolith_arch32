@@ -14,8 +14,8 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 |---|---|:---:|:---:|:---:|:---:|
 | [`GT-29`](./gap-reference-catalog.es.md#gt-29) | Paridad de ejecución de reglas Native/OPA | F1 | P0 | L | `COMPLETADO` |
 | [`GT-07`](./gap-reference-catalog.es.md#gt-07) | Smoke de release para evaluación de gates MCP | F2 | P1 | S | `COMPLETADO` |
-| [`GT-08`](./gap-reference-catalog.es.md#gt-08) | Validación real del registro ADR en Fase 2 | F3 | P1 | S | `EN-PROGRESO` |
-| [`GT-09`](./gap-reference-catalog.es.md#gt-09) | Enforcement real de coverage en Fase 3 | F3 | P1 | S | `EN-PROGRESO` |
+| [`GT-08`](./gap-reference-catalog.es.md#gt-08) | Validación real del registro ADR en Fase 2 | F3 | P1 | S | `COMPLETADO` |
+| [`GT-09`](./gap-reference-catalog.es.md#gt-09) | Enforcement real de coverage en Fase 3 | F3 | P1 | S | `COMPLETADO` |
 | [`GT-12`](./gap-reference-catalog.es.md#gt-12) | `--dry-run` en todas las operaciones de escritura | F3 | P1 | S | `EN-PROGRESO` |
 | [`GT-14`](./gap-reference-catalog.es.md#gt-14) | Webhook saliente al completar un gate | F4 | P1 | S | `EN-PROGRESO` |
 | [`GT-05`](./gap-reference-catalog.es.md#gt-05) | Transporte Streamable HTTP del SDK MCP | F2 | P1 | M | `EN-PROGRESO` |

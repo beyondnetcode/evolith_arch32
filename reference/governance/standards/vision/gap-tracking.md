@@ -5,7 +5,7 @@
 **Status:** Active Tracking
 **Owner:** Evolith Architecture Board
 **Created:** 2026-06-10
-**Last Updated:** 2026-06-11
+**Last Updated:** 2026-06-12
 **References:** [Product Vision Master](./evolith-product-vision-master.md) · [SDLC Tracker Technical Interfaces](./sdlc-tracker-technical-interfaces.md) · [Maturity Assessment](./maturity-assessment.md) · [ADR Authoring Standard](../../../architecture/adrs/adr-authoring-standard.md)
 
 ---
@@ -16,15 +16,17 @@ This board is the **single source of truth for gap tracking** in Evolith Core. I
 
 It supersedes and absorbs (2026-06-10): `gap-analysis-core.md` (narrative gap analysis — its closed G-01…G-27 series is archived in [section 5](#5-legacy-archive-g-series-closed)) and the root scratchpad `cli-core-parity-tracking.md`. **No other gap or tracking document may be created**; new gaps get a `GT-xx` ID here.
 
-**How to update:** when a gap changes state, update its row in the dashboard, its `Status` field in the detail section, and the `Last Updated` date above. Reference the closing commit/PR in the detail section.
+**How to update:** every gap must declare a clear problem, product purpose, current evidence or example, closure criteria, and references. When a gap changes state, update its row in the dashboard, its `Status` field in the detail section, the progress totals, and the `Last Updated` date. A gap is `DONE` only when its closure evidence is committed and the applicable build, test, smoke, documentation, or product-validation gates pass.
 
 ### Legend
 
 | Field | Values |
 |---|---|
-| **Criticality** | `P0` blocks the Tracker / vision-critical · `P1` important, next in line · `P2` deferred / opportunistic |
+| **Criticality** | `P0` blocks the governance kernel, release baseline, or product proof · `P1` materially limits adoption or integrity · `P2` deferred / opportunistic |
 | **Complexity** | `S` ≤ 1 session · `M` 1–3 sessions · `L` multi-session / incremental |
 | **Status** | `PENDING` · `IN-PROGRESS` · `DONE` · `DEFERRED` |
+
+**Ordering rule:** criticality (`P0` → `P1` → `P2`), active status (`IN-PROGRESS` → `PENDING` → `DEFERRED`), then complexity (`S` → `M` → `L`). Completed gaps are listed after active work for traceability.
 
 ---
 
@@ -32,54 +34,74 @@ It supersedes and absorbs (2026-06-10): `gap-analysis-core.md` (narrative gap an
 
 ### 2.1 Recommended Execution Order (pending work queue)
 
-Ordering criteria: criticality first (`P1` before `P2`), then quick wins (`S` before `M` before `L`) within the active phase plan (F2 → F3 → F4 → F5 → Cross), respecting dependencies (GT-22 decides ADR identity before GT-21 relocates files; GT-19 and GT-20 advance incrementally alongside everything else).
+The queue contains only active or deferred work. It is ordered by the rule in section 1 and may be further constrained by dependencies, especially GT-28 before release-oriented work, GT-30 before GT-31, and GT-22 before GT-21.
 
-| # | ID | Activity | Goal (what success looks like) | Crit. | Compl. | Refs |
-|:-:|----|----------|--------------------------------|:---:|:---:|------|
-| 1 | [GT-05](#gt-05) | Replace hand-rolled HTTP transport with MCP SDK Streamable HTTP | Spec-compliant MCP server with session handling | P1 | M | [MCP rules](../../../../rulesets/mcp/README.md) |
-| 2 | [GT-08](#gt-08) | Phase 2 gate: real ADR registry check | Design without ADR backing fails the gate | P1 | S | [Quality Gates](../../sdlc/quality-gates.md) |
-| 3 | [GT-09](#gt-09) | Phase 3 gate: real coverage check | Coverage <80% blocks Successful Build | P1 | S | [Quality Gates](../../sdlc/quality-gates.md) |
-| 4 | [GT-12](#gt-12) | `--dry-run` on `architecture scaffold` and `adr` | Every write command previews safely | P1 | S | [ADR 0073](../../../architecture/adrs/core/0073-unified-cli-output-contract.md) |
-| 5 | [GT-10](#gt-10) | Phase 4 gate: security scan evidence | High/Critical CVEs block the RC | P1 | M | [Quality Gates](../../sdlc/quality-gates.md) |
-| 6 | [GT-11](#gt-11) | Phase 5 gate: observability + rollback evidence | No rollback plan, no Production Live | P1 | M | [Traceability Model](../../sdlc/traceability-model.md) |
-| 7 | [GT-14](#gt-14) | Outbound webhook on gate completion | Tracker receives `GateEvidence` push | P1 | S | [Tracker Interfaces](./sdlc-tracker-technical-interfaces.md) |
-| 8 | [GT-13](#gt-13) | `evolith-phase-advance` autonomous gate runner | One call evaluates a full phase transition | P1 | M | [Tracker Interfaces](./sdlc-tracker-technical-interfaces.md) |
-| 9 | [GT-18](#gt-18) | Publish `@evolith/smart-cli` to npm | `npm i -g` works from the public registry | P1 | S | [Smart CLI Hub](../../../../sdk/cli/README.md) |
-| 10 | [GT-20](#gt-20) | ADR content backfill (164 files with stub sections) | No ADR carries a GT-20 marker | P1 | L | [Authoring Standard](../../../architecture/adrs/adr-authoring-standard.md) |
-| 11 | [GT-19](#gt-19) | Hexagonal migration of `core/` god-layer (opportunistic) | `core/` = composition root only | P1 | L | [ADR Registry](../../../architecture/adrs/README.md) |
-| 12 | [GT-07](#gt-07) | `mcp:smoke` covers gate evaluation over HTTP | Contract regressions fail the release smoke | P2 | S | [MCP rules](../../../../rulesets/mcp/README.md) |
-| 13 | [GT-22](#gt-22) | ADR ID uniqueness scheme | Unambiguous citation for colliding IDs | P2 | S | [ADR Matrix](../../../architecture/adrs/adr-matrix.md) |
-| 14 | [GT-26](#gt-26) | Zero-Downtime Release Playbook | Phase 5 "Coming Soon" replaced by a real runbook | P2 | S | [SDLC Center](../../sdlc/README.md) |
-| 15 | [GT-17](#gt-17) | DI consolidation + ESLint boundary hardening | One DI mechanism, strict layer boundaries | P2 | M | [Smart CLI Hub](../../../../sdk/cli/README.md) |
-| 16 | [GT-21](#gt-21) | Relocate tool-centric Core ADRs (after GT-22) | Every Core ADR passes the litmus test | P2 | M | [Authoring Standard](../../../architecture/adrs/adr-authoring-standard.md) |
-| 17 | [GT-24](#gt-24) | Execute declared documentation migrations | Zero "migration pending" markers | P2 | M | [Product Suite Hub](../../../product-suite/README.md) |
-| 18 | [GT-23](#gt-23) | Spanish translation backfill (73 skeleton files) | No skeleton markers under `reference/` | P2 | L | [Bilingual Index](../../../navigation/BILINGUAL_INDEX.md) |
-| 19 | [GT-25](#gt-25) | First provider profiles for platform categories | Each category holds ≥1 real profile | P2 | L | [Platforms Hub](../../../platforms/README.md) |
+| # | ID | Gap and product purpose | Current evidence / example | Crit. | Compl. | Status | Refs |
+|:-:|----|-------------------------|----------------------------|:---:|:---:|:---:|------|
+| 1 | [GT-27](#gt-27) | Repair canonical tracking integrity so prioritization can be trusted | Duplicate GT-19, contradictory statuses, and stale totals were present | P0 | S | IN-PROGRESS | [Maturity Assessment](./maturity-assessment.md) |
+| 2 | [GT-28](#gt-28) | Restore a release-capable CLI baseline | `npm run build`, `npm test`, and `npm run mcp:smoke` currently fail | P0 | M | IN-PROGRESS | [Smart CLI](../../../../sdk/cli/README.md) |
+| 3 | [GT-29](#gt-29) | Guarantee Native/OPA rule parity required by R-25 | OPA contains placeholders; new F1 rules lack equivalent proven Native behavior | P0 | L | IN-PROGRESS | [Global Rules](../../../../.harness/rules/global-rules.md) |
+| 4 | [GT-32](#gt-32) | Validate the customer and buying hypothesis before scaling construction | Vision explicitly says interviews and controlled experiments are still required | P0 | M | PENDING | [Product Vision](./evolith-product-vision-master.md) |
+| 5 | [GT-30](#gt-30) | Implement the minimum Tracker governance kernel | Tracker has extensive specifications but no executable source implementation | P0 | L | PENDING | [Tracker Product Design](../../../products/evolith-tracker/README.md) |
+| 6 | [GT-31](#gt-31) | Prove one product through all five governed gates | No operational tenant-to-production Evidence Graph demonstration exists | P0 | L | PENDING | [Minimum Provable Product](./evolith-product-vision-master.md#10-minimum-provable-product) |
+| 7 | [GT-07](#gt-07) | Release-gate gate evaluation over stdio and HTTP | Smoke code includes both paths but cannot pass while GT-28 remains open | P1 | S | IN-PROGRESS | [MCP rules](../../../../rulesets/mcp/README.md) |
+| 8 | [GT-08](#gt-08) | Reject Design Baselines without real ADR backing | Content check exists in the working tree but lacks a green release baseline | P1 | S | IN-PROGRESS | [Quality Gates](../../sdlc/quality-gates.md) |
+| 9 | [GT-09](#gt-09) | Block Successful Build below the coverage threshold | `coverage-summary.json` parsing exists but is not release-verified | P1 | S | IN-PROGRESS | [Quality Gates](../../sdlc/quality-gates.md) |
+| 10 | [GT-12](#gt-12) | Make every write command safely previewable | `adr` and `architecture scaffold` include dry-run changes in the broken refactor | P1 | S | IN-PROGRESS | [ADR 0073](../../../architecture/adrs/core/0073-unified-cli-output-contract.md) |
+| 11 | [GT-14](#gt-14) | Push GateEvidence to Tracker or another authorized consumer | Webhook adapter exists in the working tree; full tests are not green | P1 | S | IN-PROGRESS | [Tracker Interfaces](./sdlc-tracker-technical-interfaces.md) |
+| 12 | [GT-05](#gt-05) | Adopt MCP SDK Streamable HTTP with supported sessions | SDK wrapper exists; HTTP tests are skipped and the build fails | P1 | M | IN-PROGRESS | [MCP rules](../../../../rulesets/mcp/README.md) |
+| 13 | [GT-10](#gt-10) | Block RC on missing or failing High/Critical security evidence | Current logic checks file presence, not vulnerability content | P1 | M | IN-PROGRESS | [Quality Gates](../../sdlc/quality-gates.md) |
+| 14 | [GT-11](#gt-11) | Block Production Live without verified observability and rollback | Current logic checks artifact presence, not operational readiness content | P1 | M | IN-PROGRESS | [Traceability Model](../../sdlc/traceability-model.md) |
+| 15 | [GT-17](#gt-17) | Consolidate DI and enforce strict architecture boundaries | Refactor introduces BaseCommand/DI changes but currently breaks Nest resolution | P1 | M | IN-PROGRESS | [Modular Evolution Playbook](../../../../.harness/playbooks/modular-monolith-evolution-playbook.md) |
+| 16 | [GT-19](#gt-19) | Reduce the `core/` god-layer to composition only | `core/` is about 17k TypeScript lines and domain ports still import core types | P1 | L | IN-PROGRESS | [ADR Authoring Standard](../../../architecture/adrs/adr-authoring-standard.md) |
+| 17 | [GT-18](#gt-18) | Make the open-core CLI installable from npm | Public installation is not yet verified from a clean environment | P1 | S | PENDING | [Smart CLI](../../../../sdk/cli/README.md) |
+| 18 | [GT-34](#gt-34) | Reprioritize the roadmap around governance proof | Multi-cloud/Dapr ambitions currently outrun product validation | P1 | S | PENDING | [Evolutionary Roadmap](./evolutionary-strategy-roadmap.md) |
+| 19 | [GT-13](#gt-13) | Evaluate a complete phase-transition proposal in one call | No `evolith-phase-advance` implementation exists | P1 | M | PENDING | [Tracker Interfaces](./sdlc-tracker-technical-interfaces.md) |
+| 20 | [GT-33](#gt-33) | Score maturity from operational evidence, not documentation volume | Assessment reports Managed/Adopted while current build and tests fail | P1 | M | PENDING | [Maturity Assessment](./maturity-assessment.md) |
+| 21 | [GT-35](#gt-35) | Generate repository inventories and dashboard totals automatically | Published counts lag the current 47 JSON, 17 schemas, and 9 Rego files | P1 | M | PENDING | [Rulesets Hub](../../../../rulesets/README.md) |
+| 22 | [GT-20](#gt-20) | Complete ADR decision evidence without fabricating history | 162 ADR files contain approximately 697 GT-20 markers | P1 | L | PENDING | [ADR Authoring Standard](../../../architecture/adrs/adr-authoring-standard.md) |
+| 23 | [GT-22](#gt-22) | Make ADR identities unambiguous across runtime categories | Core, Node.js, and .NET reuse several numeric IDs | P2 | S | PENDING | [ADR Matrix](../../../architecture/adrs/adr-matrix.md) |
+| 24 | [GT-26](#gt-26) | Replace the Phase 5 placeholder with an operational release playbook | SDLC navigation still announces a future runbook | P2 | S | PENDING | [SDLC Center](../../sdlc/README.md) |
+| 25 | [GT-21](#gt-21) | Separate universal principles from tool-specific ADR choices | Nx, Dapr, Redis, Kong, CodeQL, and MCP decisions need classification review | P2 | M | PENDING | [ADR Authoring Standard](../../../architecture/adrs/adr-authoring-standard.md) |
+| 26 | [GT-24](#gt-24) | Align physical documentation locations with the declared taxonomy | Six migration markers remain across product and SDK documentation | P2 | M | PENDING | [Documentation Taxonomy](../../../documentation-taxonomy.md) |
+| 27 | [GT-23](#gt-23) | Replace Spanish skeletons with usable translations | 76 skeleton markers remain under `reference/` and `rulesets/` | P2 | L | PENDING | [Bilingual Index](../../../navigation/BILINGUAL_INDEX.md) |
+| 28 | [GT-25](#gt-25) | Populate provider guidance with real profiles | Platform categories currently contain hubs/catalogs but no provider profiles | P2 | L | PENDING | [Platforms Hub](../../../platforms/README.md) |
+| 29 | [GT-36](#gt-36) | Define language authority and coverage for machine-readable rules | 27 EN rulesets exist while only 3 ES JSON counterparts are present | P2 | L | PENDING | [Bilingual Governance](../../../../.harness/rules/global-rules.md) |
+| 30 | [GT-15](#gt-15) | Add governed conversational sessions after Tracker state exists | Chat storage and authority depend on the Tracker kernel | P2 | L | DEFERRED | [Tracker Product Design](../../../products/evolith-tracker/README.md) |
 
-### 2.2 Full Dashboard (status → criticality → complexity)
+### 2.2 Full Dashboard
 
 | ID | Gap | Phase | Criticality | Complexity | Status |
 |----|-----|:---:|:---:|:---:|:---:|
-| [GT-05](#gt-05) | Replace `MinimalHttpTransport` with MCP SDK Streamable HTTP | F2 | P1 | M | DONE |
-| [GT-08](#gt-08) | Phase 2 gate: real ADR registry check | F3 | P1 | S | DONE |
-| [GT-09](#gt-09) | Phase 3 gate: real coverage check from CI report | F3 | P1 | S | DONE |
-| [GT-12](#gt-12) | `--dry-run` on all write operations | F3 | P1 | S | DONE |
-| [GT-14](#gt-14) | Outbound webhook on gate completion | F4 | P1 | S | DONE |
-| [GT-19](#gt-19) | Schema alignment for standard rulesets | F5 | P1 | S | DONE |
+| [GT-27](#gt-27) | Canonical tracking semantic consistency | Cross | P0 | S | IN-PROGRESS |
+| [GT-28](#gt-28) | Restore CLI build, test, and smoke baseline | F0 | P0 | M | IN-PROGRESS |
+| [GT-29](#gt-29) | Native/OPA rule execution parity | F1 | P0 | L | IN-PROGRESS |
+| [GT-32](#gt-32) | Customer and buyer hypothesis validation | Product | P0 | M | PENDING |
+| [GT-30](#gt-30) | Minimum Tracker governance kernel | Product | P0 | L | PENDING |
+| [GT-31](#gt-31) | Minimum Provable Product vertical slice | Product | P0 | L | PENDING |
+| [GT-07](#gt-07) | MCP gate-evaluation release smoke | F2 | P1 | S | IN-PROGRESS |
+| [GT-08](#gt-08) | Phase 2 real ADR registry validation | F3 | P1 | S | IN-PROGRESS |
+| [GT-09](#gt-09) | Phase 3 real coverage enforcement | F3 | P1 | S | IN-PROGRESS |
+| [GT-12](#gt-12) | `--dry-run` on all write operations | F3 | P1 | S | IN-PROGRESS |
+| [GT-14](#gt-14) | Outbound webhook on gate completion | F4 | P1 | S | IN-PROGRESS |
+| [GT-05](#gt-05) | MCP SDK Streamable HTTP transport | F2 | P1 | M | IN-PROGRESS |
+| [GT-10](#gt-10) | Phase 4 security scan content validation | F3 | P1 | M | IN-PROGRESS |
+| [GT-11](#gt-11) | Phase 5 observability and rollback validation | F3 | P1 | M | IN-PROGRESS |
+| [GT-17](#gt-17) | DI consolidation and strict boundaries | F5 | P1 | M | IN-PROGRESS |
+| [GT-19](#gt-19) | Incremental hexagonal migration of `core/` | Cross | P1 | L | IN-PROGRESS |
 | [GT-18](#gt-18) | Publish `@evolith/smart-cli` to npm | F5 | P1 | S | PENDING |
-| [GT-10](#gt-10) | Phase 4 gate: security scan evidence | F3 | P1 | M | PENDING |
-| [GT-11](#gt-11) | Phase 5 gate: observability + rollback evidence | F3 | P1 | M | PENDING |
-| [GT-13](#gt-13) | `evolith-phase-advance` autonomous gate runner | F4 | P1 | M | PENDING |
-| [GT-19](#gt-19) | Incremental hexagonal migration of `core/` god-layer | Cross | P1 | L | PENDING |
+| [GT-34](#gt-34) | Roadmap reprioritization around governance proof | Product | P1 | S | PENDING |
+| [GT-13](#gt-13) | `evolith-phase-advance` proposal runner | F4 | P1 | M | PENDING |
+| [GT-33](#gt-33) | Evidence-backed maturity scoring | Product | P1 | M | PENDING |
+| [GT-35](#gt-35) | Automated inventories and tracking validation | Cross | P1 | M | PENDING |
 | [GT-20](#gt-20) | ADR content backfill to authoring standard | Cross | P1 | L | PENDING |
-| [GT-07](#gt-07) | Extend `mcp:smoke` to cover gate evaluation over HTTP | F2 | P2 | S | PENDING |
-| [GT-22](#gt-22) | ADR ID uniqueness scheme (cross-category collisions) | Cross | P2 | S | PENDING |
-| [GT-26](#gt-26) | Zero-Downtime Release Playbook for SDLC Phase 5 | Cross | P2 | S | PENDING |
-| [GT-17](#gt-17) | DI consolidation + ESLint boundary hardening | F5 | P2 | M | PENDING |
+| [GT-22](#gt-22) | ADR ID uniqueness scheme | Cross | P2 | S | PENDING |
+| [GT-26](#gt-26) | Zero-Downtime Release Playbook | Cross | P2 | S | PENDING |
 | [GT-21](#gt-21) | Placement review of tool-centric Core ADRs | Cross | P2 | M | PENDING |
 | [GT-24](#gt-24) | Execute declared documentation migrations | Cross | P2 | M | PENDING |
-| [GT-23](#gt-23) | Spanish translation backfill of the reference corpus | Cross | P2 | L | PENDING |
-| [GT-25](#gt-25) | First provider profiles for platform categories | Cross | P2 | L | PENDING |
+| [GT-23](#gt-23) | Spanish translation backfill | Cross | P2 | L | PENDING |
+| [GT-25](#gt-25) | First provider profiles | Cross | P2 | L | PENDING |
+| [GT-36](#gt-36) | Machine-readable rules language coverage | Cross | P2 | L | PENDING |
 | [GT-15](#gt-15) | Session-aware chatbox endpoint | F4 | P2 | L | DEFERRED |
 | [GT-01](#gt-01) | Unified contract ADR (output envelope + GateEvidence + global flags) | F0 | P0 | S | DONE |
 | [GT-02](#gt-02) | `GateEvidence` modeled in the domain layer | F1 | P0 | M | DONE |
@@ -88,7 +110,7 @@ Ordering criteria: criticality first (`P1` before `P2`), then quick wins (`S` be
 | [GT-04](#gt-04) | Remove service locator from domain · relocate telemetry | F1 | P1 | S | DONE |
 | [GT-16](#gt-16) | Documentation consolidation (single source of truth) | F5 | P2 | S | DONE |
 
-**Progress:** 6 / 26 done · 1 deferred · 19 pending
+**Progress:** 6 / 36 done · 13 in progress · 16 pending · 1 deferred
 
 ---
 
@@ -137,8 +159,9 @@ Ordering criteria: criticality first (`P1` before `P2`), then quick wins (`S` be
 <a name="gt-05"></a>
 #### GT-05 · Replace `MinimalHttpTransport` with MCP SDK Streamable HTTP
 
-- **Criticality:** P1 · **Complexity:** M · **Status:** PENDING
+- **Criticality:** P1 · **Complexity:** M · **Status:** IN-PROGRESS
 - **Objective:** Drop the hand-rolled `node:http` transport (~300 lines of `server.ts`) in favor of the official `@modelcontextprotocol/sdk` Streamable HTTP transport, gaining session handling and spec compliance.
+- **Current evidence:** `StreamableHTTPServerTransport` and a wrapper exist in the working tree, but the CLI does not compile and three HTTP-oriented test blocks remain skipped.
 - **Done when:** HTTP/SSE smoke passes against the SDK transport; `server.ts` no longer contains transport plumbing.
 
 <a name="gt-06"></a>
@@ -154,8 +177,9 @@ Ordering criteria: criticality first (`P1` before `P2`), then quick wins (`S` be
 <a name="gt-07"></a>
 #### GT-07 · Extend `mcp:smoke` for gate evaluation over HTTP
 
-- **Criticality:** P2 · **Complexity:** S · **Status:** PENDING
+- **Criticality:** P1 · **Complexity:** S · **Status:** IN-PROGRESS
 - **Objective:** Add `evolith-gate-evaluate` round-trips (stdio + HTTP) to the release smoke suite so the Tracker contract is release-gated.
+- **Current evidence:** the smoke script contains stdio and Streamable HTTP gate calls, but `npm run mcp:smoke` stops at the failing TypeScript build.
 - **Done when:** `npm run mcp:smoke` fails if the gate-evaluate contract regresses.
 
 ### Phase F3 — Complete Gate Evidence (62% → 100%)
@@ -163,36 +187,41 @@ Ordering criteria: criticality first (`P1` before `P2`), then quick wins (`S` be
 <a name="gt-08"></a>
 #### GT-08 · Phase 2 gate: real ADR registry check
 
-- **Criticality:** P1 · **Complexity:** S · **Status:** PENDING
+- **Criticality:** P1 · **Complexity:** S · **Status:** IN-PROGRESS
 - **Objective:** Deepen the current existence-only check (`adr-matrix.json` present) into content validation: design decisions must reference existing ADR registry entries, with violations emitted into `GateEvidence`.
+- **Current evidence:** the working tree parses `adr-matrix.json` and rejects an empty registry, but the change is not closure evidence until build and tests pass.
 - **Done when:** a satellite missing ADR backing fails the Design Baseline gate with an actionable violation.
 
 <a name="gt-09"></a>
 #### GT-09 · Phase 3 gate: real coverage check
 
-- **Criticality:** P1 · **Complexity:** S · **Status:** PENDING
+- **Criticality:** P1 · **Complexity:** S · **Status:** IN-PROGRESS
 - **Objective:** Deepen the current existence-only check (`coverage/` directory present) into threshold enforcement: parse the coverage report and block below the ≥80% defined in `phase-gates.rules.json`.
+- **Current evidence:** `coverage/coverage-summary.json` parsing and the 80% statement threshold exist in the working tree; release verification remains blocked by GT-28.
 - **Done when:** coverage below threshold produces a blocking violation in the Successful Build gate.
 
 <a name="gt-10"></a>
 #### GT-10 · Phase 4 gate: security scan evidence
 
-- **Criticality:** P1 · **Complexity:** M · **Status:** PENDING
+- **Criticality:** P1 · **Complexity:** M · **Status:** IN-PROGRESS
 - **Objective:** Deepen the current existence-only check (`security-scan.json` present) into content validation: parse the SAST report and block on High/Critical CVEs before stamping an RC.
+- **Current evidence:** the validator currently checks only whether `security-scan.json` exists; it does not inspect severity counts, scanner status, or accepted exceptions.
 - **Done when:** missing or failing scan evidence blocks the RC Stamped gate.
 
 <a name="gt-11"></a>
 #### GT-11 · Phase 5 gate: observability + rollback evidence
 
-- **Criticality:** P1 · **Complexity:** M · **Status:** PENDING
+- **Criticality:** P1 · **Complexity:** M · **Status:** IN-PROGRESS
 - **Objective:** Deepen the current existence-only checks (`observability/` directory, Release Notes present) into content validation of observability readiness and a documented rollback procedure.
+- **Current evidence:** current checks accept directory/document presence without validating health indicators, alert ownership, rollback commands, triggers, or rehearsal evidence.
 - **Done when:** absent rollback/observability artifacts block the Production Live gate.
 
 <a name="gt-12"></a>
 #### GT-12 · `--dry-run` on all write operations
 
-- **Criticality:** P1 · **Complexity:** S · **Status:** PENDING
+- **Criticality:** P1 · **Complexity:** S · **Status:** IN-PROGRESS
 - **Objective:** Close the remaining `--dry-run` coverage: `init`, `agents`, `upgrade`, `docs`, and `generate-domain` already support it (verified 2026-06-10); `architecture scaffold` and `adr` do not.
+- **Current evidence:** both remaining commands contain dry-run code and tests in the working tree, but the complete CLI baseline is red.
 - **Done when:** every write command supports `--dry-run` with verified zero filesystem mutations.
 
 ### Phase F4 — Automation & Events
@@ -201,14 +230,17 @@ Ordering criteria: criticality first (`P1` before `P2`), then quick wins (`S` be
 #### GT-13 · `evolith-phase-advance` autonomous gate runner
 
 - **Criticality:** P1 · **Complexity:** M · **Status:** PENDING
-- **Objective:** Compose GT-03 into an agent/tool that evaluates all gates for a phase transition without a human trigger, returning consolidated evidence.
-- **Done when:** one call yields pass/fail for a full phase transition with per-gate evidence.
+- **Objective:** Compose GT-03 into an agent/tool that evaluates a proposed phase transition without a human trigger and returns consolidated evidence.
+- **Authority guardrail:** this tool may recommend `pass` or `fail`, but only Evolith Tracker may mutate the canonical phase state.
+- **Example:** `evolith-phase-advance --from design --to construction` evaluates every Design Baseline criterion and returns a transition proposal plus per-gate evidence.
+- **Done when:** one call yields a schema-valid transition proposal with per-gate evidence and no direct canonical-state mutation.
 
 <a name="gt-14"></a>
 #### GT-14 · Outbound webhook on gate completion
 
-- **Criticality:** P1 · **Complexity:** S · **Status:** PENDING
+- **Criticality:** P1 · **Complexity:** S · **Status:** IN-PROGRESS
 - **Objective:** Infrastructure adapter that POSTs `GateEvidence` to a caller-supplied webhook URL when an evaluation completes. The CLI stays stateless — the URL is always a parameter.
+- **Current evidence:** `WebhookAdapter` and the notifier port exist in the working tree; integration closure depends on a green baseline and a receiving-listener test.
 - **Done when:** integration test receives the evidence payload on a local listener.
 
 <a name="gt-15"></a>
@@ -230,15 +262,17 @@ Ordering criteria: criticality first (`P1` before `P2`), then quick wins (`S` be
 <a name="gt-17"></a>
 #### GT-17 · DI consolidation + ESLint boundary hardening
 
-- **Criticality:** P2 · **Complexity:** M · **Status:** PENDING
+- **Criticality:** P1 · **Complexity:** M · **Status:** IN-PROGRESS
 - **Objective:** Retire the custom `DIContainer` in favor of NestJS DI, then tighten `.eslintrc.js` boundaries: remove `domain → core` and `application → infrastructure` allowances.
+- **Current evidence:** lint passes and the working tree introduces shared command abstractions, but Nest module tests fail dependency resolution and production build has DI/type errors.
 - **Done when:** single DI mechanism; stricter boundaries pass on a clean lint run.
 
 <a name="gt-18"></a>
 #### GT-18 · Publish `@evolith/smart-cli` to npm
 
 - **Criticality:** P1 · **Complexity:** S · **Status:** PENDING
-- **Objective:** Publish the CLI publicly per the open-core strategy (CLI + MCP free tier). Release pipeline is already hardened; requires npm scope, provenance, and README polish.
+- **Objective:** Publish the CLI publicly per the open-core strategy (CLI + MCP free tier) with npm scope ownership, provenance, versioning, clean-install smoke, and release documentation.
+- **Dependency:** GT-28, GT-05, and GT-07 must be closed first.
 - **Done when:** `npm i -g @evolith/smart-cli` works from the public registry.
 
 ### Cross-cutting
@@ -246,15 +280,16 @@ Ordering criteria: criticality first (`P1` before `P2`), then quick wins (`S` be
 <a name="gt-19"></a>
 #### GT-19 · Incremental hexagonal migration of `core/`
 
-- **Criticality:** P1 · **Complexity:** L · **Status:** PENDING
-- **Objective:** Dissolve the ~13.6k-line `core/` god-layer incrementally: pure logic → `domain/`, orchestration → `application/`, adapters (MCP, observability, providers) → `infrastructure/`, leaving `core/` as composition root only. Advances opportunistically with every phase above — never as a big-bang rewrite.
+- **Criticality:** P1 · **Complexity:** L · **Status:** IN-PROGRESS
+- **Objective:** Dissolve the ~17k-line `core/` god-layer incrementally: pure logic → `domain/`, orchestration → `application/`, adapters (MCP, observability, providers) → `infrastructure/`, leaving `core/` as composition root only. Advances opportunistically with every phase above — never as a big-bang rewrite.
+- **Current evidence:** `domain` ports and infrastructure adapters still import `NormalizedRule` from `core/validators`, showing that ownership direction is not yet clean.
 - **Done when:** `core/` contains only DI/bootstrap; ESLint boundaries enforce strict hexagonal rules (see GT-17) with zero exceptions.
 
 <a name="gt-20"></a>
 #### GT-20 · ADR content backfill to authoring standard
 
 - **Criticality:** P1 · **Complexity:** L · **Status:** PENDING
-- **Objective:** Complete the sections added as stubs by the 2026-06-10 ADR standardization (700 sections across 160 files): Objective and Scope, Options Considered, Evidence and Evaluation Criteria, Related Decisions and Standards — plus Technology Watch and Current Sources for platform ADRs — per the [ADR Authoring Standard](../../../architecture/adrs/adr-authoring-standard.md). Backfill must reconstruct honestly (cite what was actually evaluated; mark unknowns as unknown), never fabricate history.
+- **Objective:** Complete the sections added as stubs by the 2026-06-10 ADR standardization (approximately 697 markers across 162 files): Objective and Scope, Options Considered, Evidence and Evaluation Criteria, Related Decisions and Standards — plus Technology Watch and Current Sources for platform ADRs — per the [ADR Authoring Standard](../../../architecture/adrs/adr-authoring-standard.md). Backfill must reconstruct honestly (cite what was actually evaluated; mark unknowns as unknown), never fabricate history.
 - **Done when:** no ADR contains a `GT-20` backfill marker; spot-check confirms content quality on the 10 highest-traffic ADRs.
 
 <a name="gt-21"></a>
@@ -276,7 +311,7 @@ Ordering criteria: criticality first (`P1` before `P2`), then quick wins (`S` be
 
 - **Criticality:** P2 · **Complexity:** L · **Status:** PENDING
 - **Goal:** every document under `reference/` and `rulesets/` is readable in Spanish with no declared skeleton placeholders.
-- **Objective:** Translate the 73 files marked "esqueleto inicial / pendiente de traducción" (inventory 2026-06-11), concentrated in `governance/standards/ai-augmented/*` (~33 files) and `knowledge/architecture-intelligence/patterns` (~10), plus 4 core ADR bodies (including `core/0056`, intentionally skeletal until its EN stabilizes). English remains the deciding source; Spanish mirrors header structure (bilingual parity). The 17 additional skeletons under `.harness/` and `.bmad-core/` are tool-consumed and out of scope.
+- **Objective:** Translate the 76 files currently marked "esqueleto inicial / pendiente de traducción", concentrated in `governance/standards/ai-augmented/*`, `knowledge/architecture-intelligence/patterns`, and selected ADR bodies. English remains the deciding source; Spanish mirrors header structure. Tool-consumed skeletons under `.harness/` and `.bmad-core/` remain out of scope unless promoted into the reference corpus.
 - **Done when:** `grep -rl "pendiente de traducción" reference/ rulesets/` returns zero files and `check-bilingual-parity.mjs` passes.
 - **References:** [Bilingual Index](../../../navigation/BILINGUAL_INDEX.md) · [Terminology Glossary](../../../../.harness/scripts/bilingual-terminology-glossary.md)
 
@@ -307,11 +342,119 @@ Ordering criteria: criticality first (`P1` before `P2`), then quick wins (`S` be
 - **Done when:** the Phase 5 row links the playbook and no "Coming Soon / Próximamente" marker remains in the SDLC center.
 - **References:** [SDLC Governance Center](../../sdlc/README.md) · [Quality Gates](../../sdlc/quality-gates.md)
 
+### Tracking Integrity
+
+<a name="gt-27"></a>
+#### GT-27 · Canonical tracking semantic consistency
+
+- **Criticality:** P0 · **Complexity:** S · **Status:** IN-PROGRESS
+- **Gap:** The canonical board contained a duplicated GT-19, completed work in the active queue, contradictory EN/ES statuses, and totals that no longer matched the detailed records.
+- **Purpose:** Make prioritization, reporting, and investment decisions depend on one trustworthy product-governance surface.
+- **Current evidence / example:** This revision normalizes unique IDs, active statuses, ordering, and totals. Semantic consistency is still maintained manually until GT-35 is implemented.
+- **Done when:** every GT has exactly one dashboard row and one detailed record; EN/ES criticality, complexity, and status agree; completed items are excluded from the active queue; summary totals are derived or automatically validated.
+- **References:** [Maturity Assessment](./maturity-assessment.md) · [Documentation Taxonomy](../../../documentation-taxonomy.md)
+
+<a name="gt-35"></a>
+#### GT-35 · Automated inventories and tracking validation
+
+- **Criticality:** P1 · **Complexity:** M · **Status:** PENDING
+- **Gap:** Repository inventories and product-health totals are manually maintained and become stale. For example, the historical maturity snapshot reports 14 schemas while the current tree contains 17, and it cannot detect duplicate GT IDs or divergent bilingual states.
+- **Purpose:** Generate decision evidence from the repository instead of relying on manually synchronized claims.
+- **Current evidence / example:** Documentation validation checks links, anchors, encoding, and diagrams, but does not validate gap-board semantics or regenerate ruleset, ADR, translation, and implementation inventories.
+- **Done when:** a validation command fails on duplicate IDs, missing detail records, mismatched EN/ES metadata, completed items in the active queue, incorrect totals, or stale inventory counts; its generated summary is referenced by maturity reporting.
+- **References:** [Rulesets Hub](../../../../rulesets/README.md) · [Maturity Assessment](./maturity-assessment.md) · [Gap Tracking](./gap-tracking.md)
+
+### Release Baseline and Policy Execution
+
+<a name="gt-28"></a>
+#### GT-28 · Restore the CLI build, test, and smoke baseline
+
+- **Criticality:** P0 · **Complexity:** M · **Status:** IN-PROGRESS
+- **Gap:** The current CLI refactor passes lint but does not compile, which also prevents the MCP smoke suite from running and leaves unit suites red.
+- **Purpose:** Re-establish an executable release baseline before treating CLI, MCP, or policy-engine capabilities as complete product evidence.
+- **Current evidence / example:** `npm run build` reports TypeScript contract errors across catalog loading, history, MCP tools, prompts, and command infrastructure. `npm test` currently reports 10 failing suites and 58 failing tests; `npm run mcp:smoke` stops at the failed build.
+- **Done when:** from a clean checkout, CLI lint, build, unit tests, and MCP stdio/HTTP smoke all pass; no release-critical path is satisfied only by skipped tests.
+- **References:** [Smart CLI](../../../../sdk/cli/README.md) · [ADR-0073 Unified CLI Output Contract](../../../architecture/adrs/core/0073-unified-cli-output-contract.md) · [Quality Gates](../../sdlc/quality-gates.md)
+
+<a name="gt-29"></a>
+#### GT-29 · Native and OPA policy-engine parity
+
+- **Criticality:** P0 · **Complexity:** L · **Status:** IN-PROGRESS
+- **Gap:** R-25 requires every architectural rule in both evaluators, but the OPA architecture policy still contains placeholder paths and the Native evaluator does not cover all F1 categories. Equivalent inputs therefore cannot yet be trusted to produce equivalent verdicts.
+- **Purpose:** Make the rulesets a real, portable governance contract rather than two partially overlapping implementations.
+- **Current evidence / example:** F1-R09 through F1-R11 have Rego implementations, while dependency-injection, static-analysis, and separation-of-concerns coverage remains incomplete across engines. F1-R10 also declares AST-based enforcement while its current Rego path uses textual matching.
+- **Done when:** a generated coverage matrix maps every active architectural rule to Native and OPA implementations; equivalence tests compare findings and severity for representative compliant and non-compliant fixtures; the packaged OPA/WASM engine passes the same release gate.
+- **References:** [Global Rules R-25](../../../../.harness/rules/global-rules.md) · [F1 Ruleset](../../../../rulesets/architecture/f1-modular-monolith.rules.json) · [OPA Architecture Policy](../../../../rulesets/opa/architecture.rego)
+
+<a name="gt-36"></a>
+#### GT-36 · Machine-readable rules language coverage policy
+
+- **Criticality:** P2 · **Complexity:** L · **Status:** PENDING
+- **Gap:** The repository has 27 English rulesets but only 3 Spanish JSON rulesets, without an explicit decision on whether machine-consumed rules are English-canonical artifacts or require full bilingual counterparts.
+- **Purpose:** Preserve one authoritative policy meaning while making language obligations explicit and enforceable.
+- **Current evidence / example:** Narrative reference documents require bilingual parity, but ruleset localization is partial and its exception boundary is not encoded in validation.
+- **Done when:** governance declares either full bilingual JSON parity or an explicit English-canonical exemption with localized human-readable descriptions; validation enforces the selected model and reports uncovered artifacts.
+- **References:** [Global Rules](../../../../.harness/rules/global-rules.md) · [Rulesets Hub](../../../../rulesets/README.md) · [Terminology Glossary](../../../../.harness/scripts/bilingual-terminology-glossary.md)
+
+### Product Proof
+
+<a name="gt-30"></a>
+#### GT-30 · Minimum Tracker governance kernel
+
+- **Criticality:** P0 · **Complexity:** L · **Status:** PENDING
+- **Gap:** Tracker is a detailed target design but not an executable product; the audited public repository currently contains documentation and no source implementation.
+- **Purpose:** Implement the smallest authoritative runtime that can own process, evidence, gate decisions, approvals, exceptions, and audit state.
+- **Current evidence / example:** The technical interfaces define tenant-aware contracts and aggregate ownership, but there is no service that persists a process, accepts normalized evidence, or records an immutable `GateDecision`.
+- **Done when:** an executable Tracker service authenticates a tenant, persists one product process, evaluates and stores evidence lineage, records an immutable gate decision, and exposes its audit trail through an approved interface.
+- **References:** [Tracker Technical Interfaces](./sdlc-tracker-technical-interfaces.md) · [Governed Composition Target Design](./evolith-governed-composition-target-design.md)
+
+<a name="gt-31"></a>
+#### GT-31 · Minimum Provable Product vertical slice
+
+- **Criticality:** P0 · **Complexity:** L · **Status:** PENDING
+- **Gap:** No end-to-end implementation currently demonstrates the Evolith thesis from tenant and product context through five governed gates to production evidence and learning.
+- **Purpose:** Prove or falsify that Evolith can compose replaceable providers while preserving canonical governance, evidence lineage, and measurable delivery value.
+- **Current evidence / example:** A representative slice should connect one tenant, one product, one work provider, repository and CI, an agent, observability, analytics, and the five gates, with Tracker remaining the only authority for canonical decisions.
+- **Done when:** the slice completes a real governed delivery flow; every decision links to source evidence and policy version; at least one provider can be replaced through its port; elapsed time, intervention count, and decision quality are measured.
+- **References:** [Minimum Provable Product](./evolith-product-vision-master.md#10-minimum-provable-product) · [Strategic Validation and Composition Framework](./evolith-strategic-validation-and-composition-framework.md)
+
+<a name="gt-32"></a>
+#### GT-32 · Customer and buyer hypothesis validation
+
+- **Criticality:** P0 · **Complexity:** M · **Status:** PENDING
+- **Gap:** The target customer, operational pain, buyer, and willingness-to-adopt remain narrative hypotheses without recorded interviews, controlled pilots, or purchasing evidence.
+- **Purpose:** Avoid building an internally coherent platform whose governance model, integration cost, or buying motion does not solve a sufficiently valuable customer problem.
+- **Current evidence / example:** The vision names product and engineering leaders as likely users and buyers, but the repository contains no evidence pack linking assumptions to observed problem frequency, current cost, adoption blockers, and buying authority.
+- **Done when:** at least eight structured interviews span three relevant roles; one controlled pilot exercises the governed workflow; an assumption register records evidence and confidence; the Architecture Board makes an explicit continue, revise, or stop decision.
+- **References:** [Customer Hypothesis](./evolith-product-vision-master.md#13-target-problem-and-customer-hypothesis) · [AI-Driven Strategic Validation Workflow](./evolith-strategic-validation-and-composition-framework.md)
+
+<a name="gt-33"></a>
+#### GT-33 · Evidence-backed maturity scoring
+
+- **Criticality:** P1 · **Complexity:** M · **Status:** PENDING
+- **Gap:** Current maturity scores can conflate a designed capability with an implemented, validated, adopted, or operationally managed capability.
+- **Purpose:** Make maturity reporting useful for investment and release decisions by tying every score to observable evidence.
+- **Current evidence / example:** Tracker has extensive design documentation but no executable implementation, while the historical CLI baseline reports green release gates that are currently failing under GT-28.
+- **Done when:** every scored capability declares a state such as Visioned, Designed, Prototyped, Implemented, Validated, or Scaled; each non-vision state links to qualifying evidence; aggregate scores are recalculated from those states and expose uncertainty.
+- **References:** [Maturity Assessment](./maturity-assessment.md) · [Metrics and Capability Maturity](./evolith-product-vision-master.md#11-metrics-and-capability-maturity)
+
+<a name="gt-34"></a>
+#### GT-34 · Roadmap reprioritization around governance proof
+
+- **Criticality:** P1 · **Complexity:** S · **Status:** PENDING
+- **Gap:** The roadmap advances broad platform concerns such as multi-cloud abstraction, Dapr, and zero-trust architecture before the governance kernel and Minimum Provable Product have produced customer and operational evidence.
+- **Purpose:** Sequence investment around the core thesis and delay expensive optionality until evidence justifies it.
+- **Current evidence / example:** The next planning horizon should prioritize release baseline, Tracker kernel, vertical slice, and pilot learning; distributed-runtime and provider breadth should have explicit evidence triggers.
+- **Done when:** the roadmap orders work as baseline → governance kernel → vertical slice → controlled pilot → scale; deferred technologies name measurable adoption, load, compliance, or provider-pressure triggers; dependencies map to this gap board.
+- **References:** [Evolutionary Strategy Roadmap](./evolutionary-strategy-roadmap.md) · [Minimum Provable Product](./evolith-product-vision-master.md#10-minimum-provable-product) · [Strategic Validation and Composition Framework](./evolith-strategic-validation-and-composition-framework.md)
+
 ---
 
 ## 4. Baseline Snapshot (absorbed from gap-analysis-core, 2026-06-09)
 
 Reference maturity state at the time this board became the single tracking source:
+
+> This snapshot is historical evidence, not current health. The current executable release state is tracked by [GT-28](#gt-28), and inventory drift is tracked by [GT-35](#gt-35).
 
 | Component | Score | Assessment |
 |---|:---:|---|

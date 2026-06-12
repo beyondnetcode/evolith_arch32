@@ -5,7 +5,7 @@
 **Estado:** Seguimiento Activo
 **Responsable:** Evolith Architecture Board
 **Creado:** 2026-06-10
-**Última Actualización:** 2026-06-11
+**Última Actualización:** 2026-06-12
 **Referencias:** [Visión Maestra del Producto](./evolith-product-vision-master.es.md) · [Interfaces Técnicas del SDLC Tracker](./sdlc-tracker-technical-interfaces.es.md) · [Evaluación de Madurez](./maturity-assessment.es.md) · [Estándar de Autoría de ADRs](../../../architecture/adrs/adr-authoring-standard.es.md)
 
 ---
@@ -16,15 +16,17 @@ Este tablero es la **única fuente de verdad para el seguimiento de gaps** en Ev
 
 Reemplaza y absorbe (2026-06-10): `gap-analysis-core.es.md` (análisis narrativo de gaps — su serie cerrada G-01…G-27 queda archivada en la [sección 5](#5-archivo-legado-serie-g-cerrada)) y el scratchpad raíz `cli-core-parity-tracking.md`. **No debe crearse ningún otro documento de gaps o seguimiento**; todo gap nuevo recibe un ID `GT-xx` aquí.
 
-**Cómo actualizar:** cuando un gap cambie de estado, actualiza su fila en el dashboard, su campo `Estado` en la sección de detalle y la fecha de `Última Actualización`. Referencia el commit/PR de cierre en la sección de detalle.
+**Cómo actualizar:** todo gap debe declarar un problema claro, propósito de producto, evidencia o ejemplo actual, criterios de cierre y referencias. Cuando un gap cambie de estado, actualiza su fila en el dashboard, su campo `Estado` en la sección de detalle, los totales de progreso y la fecha de `Última Actualización`. Un gap solo queda `COMPLETADO` cuando su evidencia de cierre está comiteada y pasan los gates aplicables de build, tests, smoke, documentación o validación de producto.
 
 ### Leyenda
 
 | Campo | Valores |
 |---|---|
-| **Criticidad** | `P0` bloquea el Tracker / crítico para la visión · `P1` importante, siguiente en la fila · `P2` diferido / oportunista |
+| **Criticidad** | `P0` bloquea el kernel de gobernanza, el baseline de release o la prueba de producto · `P1` limita materialmente adopción o integridad · `P2` diferido / oportunista |
 | **Complejidad** | `S` ≤ 1 sesión · `M` 1–3 sesiones · `L` multi-sesión / incremental |
 | **Estado** | `PENDIENTE` · `EN-PROGRESO` · `COMPLETADO` · `DIFERIDO` |
+
+**Regla de ordenamiento:** criticidad (`P0` → `P1` → `P2`), estado activo (`EN-PROGRESO` → `PENDIENTE` → `DIFERIDO`) y luego complejidad (`S` → `M` → `L`). Los gaps completados se listan después del trabajo activo para conservar trazabilidad.
 
 ---
 
@@ -32,54 +34,74 @@ Reemplaza y absorbe (2026-06-10): `gap-analysis-core.es.md` (análisis narrativo
 
 ### 2.1 Orden de Ejecución Recomendado (cola de trabajo pendiente)
 
-Criterios de ordenamiento: primero la criticidad (`P1` antes que `P2`), luego victorias rápidas (`S` antes que `M` antes que `L`) dentro del plan de fases activo (F2 → F3 → F4 → F5 → Transversal), respetando dependencias (GT-22 decide la identidad de los ADRs antes de que GT-21 reubique archivos; GT-19 y GT-20 avanzan incrementalmente junto a todo lo demás).
+La cola contiene únicamente trabajo activo o diferido. Sigue la regla de la sección 1 y respeta dependencias adicionales, especialmente GT-28 antes del trabajo orientado a release, GT-30 antes de GT-31 y GT-22 antes de GT-21.
 
-| # | ID | Actividad | Meta (cómo se ve el éxito) | Crit. | Compl. | Refs |
-|:-:|----|----------|----------------------------|:---:|:---:|------|
-| 1 | [GT-05](#gt-05) | Reemplazar el transporte HTTP artesanal por Streamable HTTP del SDK MCP | Servidor MCP conforme al spec con manejo de sesiones | P1 | M | [Reglas MCP](../../../../rulesets/mcp/README.es.md) |
-| 2 | [GT-08](#gt-08) | Gate Fase 2: chequeo real del registro de ADRs | Un diseño sin respaldo ADR falla el gate | P1 | S | [Quality Gates](../../sdlc/quality-gates.es.md) |
-| 3 | [GT-09](#gt-09) | Gate Fase 3: chequeo real de coverage | Cobertura <80% bloquea el Build Exitoso | P1 | S | [Quality Gates](../../sdlc/quality-gates.es.md) |
-| 4 | [GT-12](#gt-12) | `--dry-run` en `architecture scaffold` y `adr` | Todo comando de escritura previsualiza con seguridad | P1 | S | [ADR 0073](../../../architecture/adrs/core/0073-unified-cli-output-contract.es.md) |
-| 5 | [GT-10](#gt-10) | Gate Fase 4: evidencia de security scan | CVEs High/Critical bloquean el RC | P1 | M | [Quality Gates](../../sdlc/quality-gates.es.md) |
-| 6 | [GT-11](#gt-11) | Gate Fase 5: evidencia de observabilidad + rollback | Sin plan de rollback no hay Producción Activa | P1 | M | [Modelo de Trazabilidad](../../sdlc/traceability-model.es.md) |
-| 7 | [GT-14](#gt-14) | Webhook saliente al completar un gate | El Tracker recibe `GateEvidence` por push | P1 | S | [Interfaces del Tracker](./sdlc-tracker-technical-interfaces.es.md) |
-| 8 | [GT-13](#gt-13) | Ejecutor autónomo de gates `evolith-phase-advance` | Una llamada evalúa una transición de fase completa | P1 | M | [Interfaces del Tracker](./sdlc-tracker-technical-interfaces.es.md) |
-| 9 | [GT-18](#gt-18) | Publicar `@evolith/smart-cli` en npm | `npm i -g` funciona desde el registry público | P1 | S | [Hub del Smart CLI](../../../../sdk/cli/README.es.md) |
-| 10 | [GT-20](#gt-20) | Backfill de contenido de ADRs (164 archivos con secciones stub) | Ningún ADR conserva un marcador GT-20 | P1 | L | [Estándar de Autoría](../../../architecture/adrs/adr-authoring-standard.es.md) |
-| 11 | [GT-19](#gt-19) | Migración hexagonal del god-layer `core/` (oportunista) | `core/` = solo composition root | P1 | L | [Registro ADR](../../../architecture/adrs/README.es.md) |
-| 12 | [GT-07](#gt-07) | `mcp:smoke` cubre evaluación de gates por HTTP | Las regresiones del contrato fallan el smoke de release | P2 | S | [Reglas MCP](../../../../rulesets/mcp/README.es.md) |
-| 13 | [GT-22](#gt-22) | Esquema de unicidad de IDs de ADR | Citación inequívoca para los IDs en colisión | P2 | S | [Matriz ADR](../../../architecture/adrs/adr-matrix.es.md) |
-| 14 | [GT-26](#gt-26) | Playbook de Zero-Downtime Release | El "Próximamente" de la Fase 5 se vuelve un runbook real | P2 | S | [Centro SDLC](../../sdlc/README.es.md) |
-| 15 | [GT-17](#gt-17) | Consolidación de DI + endurecimiento de boundaries ESLint | Un solo mecanismo de DI, fronteras de capas estrictas | P2 | M | [Hub del Smart CLI](../../../../sdk/cli/README.es.md) |
-| 16 | [GT-21](#gt-21) | Reubicar ADRs Core tool-céntricos (después de GT-22) | Todo ADR Core pasa la prueba de fuego | P2 | M | [Estándar de Autoría](../../../architecture/adrs/adr-authoring-standard.es.md) |
-| 17 | [GT-24](#gt-24) | Ejecutar las migraciones documentales declaradas | Cero marcadores de "migración pendiente" | P2 | M | [Hub de Product Suite](../../../product-suite/README.es.md) |
-| 18 | [GT-23](#gt-23) | Backfill de traducciones al español (73 esqueletos) | Sin marcadores de esqueleto bajo `reference/` | P2 | L | [Índice Bilingüe](../../../navigation/BILINGUAL_INDEX.es.md) |
-| 19 | [GT-25](#gt-25) | Primeros perfiles de proveedor para las categorías de plataforma | Cada categoría tiene ≥1 perfil real | P2 | L | [Hub de Plataformas](../../../platforms/README.es.md) |
+| # | ID | Gap y propósito de producto | Evidencia o ejemplo actual | Crit. | Compl. | Estado | Refs |
+|:-:|----|----------------------------|----------------------------|:---:|:---:|:---:|------|
+| 1 | [GT-27](#gt-27) | Reparar la integridad del tracking canónico para confiar en la priorización | Existían GT-19 duplicado, estados contradictorios y totales obsoletos | P0 | S | EN-PROGRESO | [Evaluación de Madurez](./maturity-assessment.es.md) |
+| 2 | [GT-28](#gt-28) | Restaurar un baseline de CLI apto para release | `npm run build`, `npm test` y `npm run mcp:smoke` fallan actualmente | P0 | M | EN-PROGRESO | [Smart CLI](../../../../sdk/cli/README.es.md) |
+| 3 | [GT-29](#gt-29) | Garantizar la paridad Native/OPA requerida por R-25 | OPA contiene placeholders y las nuevas reglas F1 no tienen comportamiento Native equivalente probado | P0 | L | EN-PROGRESO | [Reglas Globales](../../../../.harness/rules/global-rules.es.md) |
+| 4 | [GT-32](#gt-32) | Validar la hipótesis de cliente y comprador antes de escalar construcción | La visión declara pendientes entrevistas y experimentos controlados | P0 | M | PENDIENTE | [Visión de Producto](./evolith-product-vision-master.es.md) |
+| 5 | [GT-30](#gt-30) | Implementar el kernel mínimo de gobernanza del Tracker | Tracker tiene especificaciones extensas pero ninguna implementación ejecutable | P0 | L | PENDIENTE | [Diseño de Producto Tracker](../../../products/evolith-tracker/README.es.md) |
+| 6 | [GT-31](#gt-31) | Probar un producto a través de los cinco gates gobernados | No existe una demostración operativa tenant-a-producción del Evidence Graph | P0 | L | PENDIENTE | [Producto Mínimo Comprobable](./evolith-product-vision-master.es.md#10-producto-mínimo-comprobable) |
+| 7 | [GT-07](#gt-07) | Proteger por release la evaluación de gates en stdio y HTTP | El smoke contiene ambas rutas, pero no pasa mientras GT-28 siga abierto | P1 | S | EN-PROGRESO | [Reglas MCP](../../../../rulesets/mcp/README.es.md) |
+| 8 | [GT-08](#gt-08) | Rechazar Design Baselines sin respaldo ADR real | El working tree contiene validación de contenido, pero carece de baseline verde | P1 | S | EN-PROGRESO | [Quality Gates](../../sdlc/quality-gates.es.md) |
+| 9 | [GT-09](#gt-09) | Bloquear Successful Build bajo el umbral de cobertura | Existe parsing de `coverage-summary.json`, pero no está verificado para release | P1 | S | EN-PROGRESO | [Quality Gates](../../sdlc/quality-gates.es.md) |
+| 10 | [GT-12](#gt-12) | Permitir previsualización segura en todos los comandos de escritura | `adr` y `architecture scaffold` incluyen dry-run dentro de la refactorización rota | P1 | S | EN-PROGRESO | [ADR 0073](../../../architecture/adrs/core/0073-unified-cli-output-contract.es.md) |
+| 11 | [GT-14](#gt-14) | Enviar GateEvidence al Tracker u otro consumidor autorizado | Existe adapter webhook en el working tree; la suite completa no está verde | P1 | S | EN-PROGRESO | [Interfaces del Tracker](./sdlc-tracker-technical-interfaces.es.md) |
+| 12 | [GT-05](#gt-05) | Adoptar Streamable HTTP del SDK MCP con sesiones soportadas | Existe wrapper SDK; los tests HTTP están skipped y el build falla | P1 | M | EN-PROGRESO | [Reglas MCP](../../../../rulesets/mcp/README.es.md) |
+| 13 | [GT-10](#gt-10) | Bloquear RC ante evidencia High/Critical ausente o fallida | La lógica actual verifica existencia del archivo, no contenido de vulnerabilidades | P1 | M | EN-PROGRESO | [Quality Gates](../../sdlc/quality-gates.es.md) |
+| 14 | [GT-11](#gt-11) | Bloquear Production Live sin observabilidad y rollback verificados | La lógica actual verifica presencia, no preparación operativa | P1 | M | EN-PROGRESO | [Modelo de Trazabilidad](../../sdlc/traceability-model.es.md) |
+| 15 | [GT-17](#gt-17) | Consolidar DI y aplicar boundaries arquitectónicos estrictos | La refactorización introduce BaseCommand/DI pero rompe resolución de Nest | P1 | M | EN-PROGRESO | [Playbook de Evolución Modular](../../../../.harness/playbooks/modular-monolith-evolution-playbook.es.md) |
+| 16 | [GT-19](#gt-19) | Reducir el god-layer `core/` a composición | `core/` tiene unas 17k líneas TypeScript y ports de dominio aún importan tipos de core | P1 | L | EN-PROGRESO | [Estándar de Autoría ADR](../../../architecture/adrs/adr-authoring-standard.es.md) |
+| 17 | [GT-18](#gt-18) | Hacer instalable el CLI open-core desde npm | Aún no se verifica instalación pública desde un entorno limpio | P1 | S | PENDIENTE | [Smart CLI](../../../../sdk/cli/README.es.md) |
+| 18 | [GT-34](#gt-34) | Repriorizar el roadmap alrededor de la prueba de gobernanza | Las ambiciones multi-cloud/Dapr anteceden a la validación del producto | P1 | S | PENDIENTE | [Roadmap Evolutivo](./evolutionary-strategy-roadmap.es.md) |
+| 19 | [GT-13](#gt-13) | Evaluar una propuesta completa de transición en una llamada | No existe implementación de `evolith-phase-advance` | P1 | M | PENDIENTE | [Interfaces del Tracker](./sdlc-tracker-technical-interfaces.es.md) |
+| 20 | [GT-33](#gt-33) | Medir madurez desde evidencia operativa y no volumen documental | La evaluación declara Managed/Adopted mientras build y tests fallan | P1 | M | PENDIENTE | [Evaluación de Madurez](./maturity-assessment.es.md) |
+| 21 | [GT-35](#gt-35) | Generar automáticamente inventarios y totales del dashboard | Los conteos publicados están detrás de los 47 JSON, 17 schemas y 9 Rego actuales | P1 | M | PENDIENTE | [Hub de Rulesets](../../../../rulesets/README.es.md) |
+| 22 | [GT-20](#gt-20) | Completar evidencia de decisiones ADR sin fabricar historia | 162 archivos ADR contienen aproximadamente 697 marcadores GT-20 | P1 | L | PENDIENTE | [Estándar de Autoría](../../../architecture/adrs/adr-authoring-standard.es.md) |
+| 23 | [GT-22](#gt-22) | Hacer inequívocas las identidades ADR entre runtimes | Core, Node.js y .NET reutilizan varios IDs numéricos | P2 | S | PENDIENTE | [Matriz ADR](../../../architecture/adrs/adr-matrix.es.md) |
+| 24 | [GT-26](#gt-26) | Reemplazar el placeholder de Fase 5 por un playbook operativo | La navegación SDLC aún anuncia un runbook futuro | P2 | S | PENDIENTE | [Centro SDLC](../../sdlc/README.es.md) |
+| 25 | [GT-21](#gt-21) | Separar principios universales de elecciones de herramientas | Nx, Dapr, Redis, Kong, CodeQL y MCP requieren revisión de clasificación | P2 | M | PENDIENTE | [Estándar de Autoría](../../../architecture/adrs/adr-authoring-standard.es.md) |
+| 26 | [GT-24](#gt-24) | Alinear ubicaciones físicas con la taxonomía declarada | Permanecen seis marcadores de migración en documentación de producto y SDK | P2 | M | PENDIENTE | [Taxonomía Documental](../../../documentation-taxonomy.es.md) |
+| 27 | [GT-23](#gt-23) | Reemplazar esqueletos españoles por traducciones utilizables | Permanecen 76 marcadores de esqueleto bajo `reference/` y `rulesets/` | P2 | L | PENDIENTE | [Índice Bilingüe](../../../navigation/BILINGUAL_INDEX.es.md) |
+| 28 | [GT-25](#gt-25) | Poblar las guías de plataforma con perfiles reales | Las categorías contienen hubs/catálogos, pero no perfiles de proveedor | P2 | L | PENDIENTE | [Hub de Plataformas](../../../platforms/README.es.md) |
+| 29 | [GT-36](#gt-36) | Definir autoridad lingüística y cobertura de reglas machine-readable | Existen 27 rulesets EN y solo 3 contrapartes JSON ES | P2 | L | PENDIENTE | [Gobernanza Bilingüe](../../../../.harness/rules/global-rules.es.md) |
+| 30 | [GT-15](#gt-15) | Añadir sesiones conversacionales gobernadas después de existir el estado Tracker | El almacenamiento de chat y la autoridad dependen del kernel Tracker | P2 | L | DIFERIDO | [Diseño de Producto Tracker](../../../products/evolith-tracker/README.es.md) |
 
-### 2.2 Dashboard Completo (estado → criticidad → complejidad)
+### 2.2 Dashboard Completo
 
 | ID | Gap | Fase | Criticidad | Complejidad | Estado |
 |----|-----|:---:|:---:|:---:|:---:|
-| [GT-05](#gt-05) | Reemplazar `MinimalHttpTransport` por Streamable HTTP del SDK MCP | F2 | P1 | M | COMPLETADO |
-| [GT-08](#gt-08) | Gate Fase 2: chequeo real del registro de ADRs | F3 | P1 | S | PENDIENTE |
-| [GT-09](#gt-09) | Gate Fase 3: chequeo real de coverage desde reporte de CI | F3 | P1 | S | COMPLETADO |
-| [GT-12](#gt-12) | `--dry-run` en todas las operaciones de escritura | F3 | P1 | S | COMPLETADO |
-| [GT-14](#gt-14) | Webhook saliente al completar un gate | F4 | P1 | S | COMPLETADO |
-| [GT-19](#gt-19) | Alineación de esquemas para rulesets estándar | F5 | P1 | S | COMPLETADO |
+| [GT-27](#gt-27) | Consistencia semántica del tracking canónico | Transversal | P0 | S | EN-PROGRESO |
+| [GT-28](#gt-28) | Restaurar baseline de build, tests y smoke del CLI | F0 | P0 | M | EN-PROGRESO |
+| [GT-29](#gt-29) | Paridad de ejecución de reglas Native/OPA | F1 | P0 | L | EN-PROGRESO |
+| [GT-32](#gt-32) | Validación de hipótesis de cliente y comprador | Producto | P0 | M | PENDIENTE |
+| [GT-30](#gt-30) | Kernel mínimo de gobernanza Tracker | Producto | P0 | L | PENDIENTE |
+| [GT-31](#gt-31) | Vertical slice del Producto Mínimo Comprobable | Producto | P0 | L | PENDIENTE |
+| [GT-07](#gt-07) | Smoke de release para evaluación de gates MCP | F2 | P1 | S | EN-PROGRESO |
+| [GT-08](#gt-08) | Validación real del registro ADR en Fase 2 | F3 | P1 | S | EN-PROGRESO |
+| [GT-09](#gt-09) | Enforcement real de coverage en Fase 3 | F3 | P1 | S | EN-PROGRESO |
+| [GT-12](#gt-12) | `--dry-run` en todas las operaciones de escritura | F3 | P1 | S | EN-PROGRESO |
+| [GT-14](#gt-14) | Webhook saliente al completar un gate | F4 | P1 | S | EN-PROGRESO |
+| [GT-05](#gt-05) | Transporte Streamable HTTP del SDK MCP | F2 | P1 | M | EN-PROGRESO |
+| [GT-10](#gt-10) | Validación de contenido del security scan en Fase 4 | F3 | P1 | M | EN-PROGRESO |
+| [GT-11](#gt-11) | Validación de observabilidad y rollback en Fase 5 | F3 | P1 | M | EN-PROGRESO |
+| [GT-17](#gt-17) | Consolidación DI y boundaries estrictos | F5 | P1 | M | EN-PROGRESO |
+| [GT-19](#gt-19) | Migración hexagonal incremental de `core/` | Transversal | P1 | L | EN-PROGRESO |
 | [GT-18](#gt-18) | Publicar `@evolith/smart-cli` en npm | F5 | P1 | S | PENDIENTE |
-| [GT-10](#gt-10) | Gate Fase 4: evidencia de security scan | F3 | P1 | M | PENDIENTE |
-| [GT-11](#gt-11) | Gate Fase 5: evidencia de observabilidad + rollback | F3 | P1 | M | PENDIENTE |
-| [GT-13](#gt-13) | Ejecutor autónomo de gates `evolith-phase-advance` | F4 | P1 | M | PENDIENTE |
-| [GT-19](#gt-19) | Migración hexagonal incremental del god-layer `core/` | Transversal | P1 | L | PENDIENTE |
-| [GT-20](#gt-20) | Backfill de contenido de ADRs al estándar de autoría | Transversal | P1 | L | PENDIENTE |
-| [GT-07](#gt-07) | Extender `mcp:smoke` para cubrir evaluación de gates por HTTP | F2 | P2 | S | PENDIENTE |
-| [GT-22](#gt-22) | Esquema de unicidad de IDs de ADR (colisiones entre categorías) | Transversal | P2 | S | PENDIENTE |
-| [GT-26](#gt-26) | Playbook de Zero-Downtime Release para la Fase 5 del SDLC | Transversal | P2 | S | PENDIENTE |
-| [GT-17](#gt-17) | Consolidación de DI + endurecimiento de boundaries ESLint | F5 | P2 | M | PENDIENTE |
-| [GT-21](#gt-21) | Revisión de ubicación de ADRs Core centrados en herramientas | Transversal | P2 | M | PENDIENTE |
-| [GT-24](#gt-24) | Ejecutar las migraciones documentales declaradas | Transversal | P2 | M | PENDIENTE |
-| [GT-23](#gt-23) | Backfill de traducciones al español del corpus de referencia | Transversal | P2 | L | PENDIENTE |
-| [GT-25](#gt-25) | Primeros perfiles de proveedor para las categorías de plataforma | Transversal | P2 | L | PENDIENTE |
+| [GT-34](#gt-34) | Repriorización del roadmap alrededor de la prueba de gobernanza | Producto | P1 | S | PENDIENTE |
+| [GT-13](#gt-13) | Ejecutor de propuestas `evolith-phase-advance` | F4 | P1 | M | PENDIENTE |
+| [GT-33](#gt-33) | Scoring de madurez basado en evidencia | Producto | P1 | M | PENDIENTE |
+| [GT-35](#gt-35) | Inventarios automáticos y validación del tracking | Transversal | P1 | M | PENDIENTE |
+| [GT-20](#gt-20) | Backfill de ADRs al estándar de autoría | Transversal | P1 | L | PENDIENTE |
+| [GT-22](#gt-22) | Esquema de unicidad de IDs ADR | Transversal | P2 | S | PENDIENTE |
+| [GT-26](#gt-26) | Playbook de Zero-Downtime Release | Transversal | P2 | S | PENDIENTE |
+| [GT-21](#gt-21) | Revisión de ubicación de ADRs Core tool-céntricos | Transversal | P2 | M | PENDIENTE |
+| [GT-24](#gt-24) | Ejecutar migraciones documentales declaradas | Transversal | P2 | M | PENDIENTE |
+| [GT-23](#gt-23) | Backfill de traducciones españolas | Transversal | P2 | L | PENDIENTE |
+| [GT-25](#gt-25) | Primeros perfiles de proveedor | Transversal | P2 | L | PENDIENTE |
+| [GT-36](#gt-36) | Cobertura lingüística de reglas machine-readable | Transversal | P2 | L | PENDIENTE |
 | [GT-15](#gt-15) | Endpoint de chatbox con sesión | F4 | P2 | L | DIFERIDO |
 | [GT-01](#gt-01) | ADR de contrato unificado (envelope de salida + GateEvidence + flags globales) | F0 | P0 | S | COMPLETADO |
 | [GT-02](#gt-02) | `GateEvidence` modelado en la capa de dominio | F1 | P0 | M | COMPLETADO |
@@ -88,7 +110,7 @@ Criterios de ordenamiento: primero la criticidad (`P1` antes que `P2`), luego vi
 | [GT-04](#gt-04) | Eliminar service locator del dominio · reubicar telemetría | F1 | P1 | S | COMPLETADO |
 | [GT-16](#gt-16) | Consolidación documental (fuente única de verdad) | F5 | P2 | S | COMPLETADO |
 
-**Progreso:** 6 / 26 completados · 1 diferido · 19 pendientes
+**Progreso:** 6 / 36 completados · 13 en progreso · 16 pendientes · 1 diferido
 
 ---
 
@@ -137,8 +159,9 @@ Criterios de ordenamiento: primero la criticidad (`P1` antes que `P2`), luego vi
 <a name="gt-05"></a>
 #### GT-05 · Reemplazar `MinimalHttpTransport` por Streamable HTTP del SDK MCP
 
-- **Criticidad:** P1 · **Complejidad:** M · **Estado:** PENDIENTE
+- **Criticidad:** P1 · **Complejidad:** M · **Estado:** EN-PROGRESO
 - **Objetivo:** Retirar el transporte `node:http` artesanal (~300 líneas de `server.ts`) en favor del transporte Streamable HTTP oficial de `@modelcontextprotocol/sdk`, ganando manejo de sesiones y cumplimiento de spec.
+- **Evidencia actual:** `StreamableHTTPServerTransport` y un wrapper existen en el working tree, pero el CLI no compila y tres bloques de tests orientados a HTTP permanecen skipped.
 - **Cierre cuando:** el smoke HTTP/SSE pasa contra el transporte del SDK; `server.ts` ya no contiene plomería de transporte.
 
 <a name="gt-06"></a>
@@ -154,8 +177,9 @@ Criterios de ordenamiento: primero la criticidad (`P1` antes que `P2`), luego vi
 <a name="gt-07"></a>
 #### GT-07 · Extender `mcp:smoke` para evaluación de gates por HTTP
 
-- **Criticidad:** P2 · **Complejidad:** S · **Estado:** PENDIENTE
+- **Criticidad:** P1 · **Complejidad:** S · **Estado:** EN-PROGRESO
 - **Objetivo:** Añadir round-trips de `evolith-gate-evaluate` (stdio + HTTP) a la suite de smoke de release para que el contrato del Tracker quede protegido por el gate de release.
+- **Evidencia actual:** el script smoke contiene llamadas de gate por stdio y Streamable HTTP, pero `npm run mcp:smoke` se detiene en el build TypeScript fallido.
 - **Cierre cuando:** `npm run mcp:smoke` falla si el contrato de gate-evaluate regresiona.
 
 ### Fase F3 — Completar Evidencia de Gates (62% → 100%)
@@ -163,36 +187,41 @@ Criterios de ordenamiento: primero la criticidad (`P1` antes que `P2`), luego vi
 <a name="gt-08"></a>
 #### GT-08 · Gate Fase 2: chequeo real del registro de ADRs
 
-- **Criticidad:** P1 · **Complejidad:** S · **Estado:** PENDIENTE
+- **Criticidad:** P1 · **Complejidad:** S · **Estado:** EN-PROGRESO
 - **Objetivo:** Profundizar el chequeo actual de solo-existencia (`adr-matrix.json` presente) a validación de contenido: las decisiones de diseño deben referenciar entradas existentes del registro de ADRs, emitiendo violaciones en `GateEvidence`.
+- **Evidencia actual:** el working tree parsea `adr-matrix.json` y rechaza un registro vacío, pero el cambio no constituye evidencia de cierre hasta que build y tests pasen.
 - **Cierre cuando:** un satélite sin respaldo de ADR falla el gate Design Baseline con una violación accionable.
 
 <a name="gt-09"></a>
 #### GT-09 · Gate Fase 3: chequeo real de coverage
 
-- **Criticidad:** P1 · **Complejidad:** S · **Estado:** PENDIENTE
+- **Criticidad:** P1 · **Complejidad:** S · **Estado:** EN-PROGRESO
 - **Objetivo:** Profundizar el chequeo actual de solo-existencia (directorio `coverage/` presente) a enforcement de umbral: parsear el reporte de coverage y bloquear bajo el ≥80% definido en `phase-gates.rules.json`.
+- **Evidencia actual:** el parsing de `coverage/coverage-summary.json` y el umbral de 80% statements existen en el working tree; la verificación de release sigue bloqueada por GT-28.
 - **Cierre cuando:** coverage bajo el umbral produce una violación bloqueante en el gate Successful Build.
 
 <a name="gt-10"></a>
 #### GT-10 · Gate Fase 4: evidencia de security scan
 
-- **Criticidad:** P1 · **Complejidad:** M · **Estado:** PENDIENTE
+- **Criticidad:** P1 · **Complejidad:** M · **Estado:** EN-PROGRESO
 - **Objetivo:** Profundizar el chequeo actual de solo-existencia (`security-scan.json` presente) a validación de contenido: parsear el reporte SAST y bloquear ante CVEs High/Critical antes de estampar un RC.
+- **Evidencia actual:** el validador solo comprueba si existe `security-scan.json`; no inspecciona severidades, estado del scanner ni excepciones aceptadas.
 - **Cierre cuando:** evidencia de scan ausente o fallida bloquea el gate RC Stamped.
 
 <a name="gt-11"></a>
 #### GT-11 · Gate Fase 5: evidencia de observabilidad + rollback
 
-- **Criticidad:** P1 · **Complejidad:** M · **Estado:** PENDIENTE
+- **Criticidad:** P1 · **Complejidad:** M · **Estado:** EN-PROGRESO
 - **Objetivo:** Profundizar los chequeos actuales de solo-existencia (directorio `observability/`, Release Notes presentes) a validación de contenido de preparación de observabilidad y procedimiento de rollback documentado.
+- **Evidencia actual:** los checks aceptan presencia de directorio/documento sin validar indicadores de salud, ownership de alertas, comandos y triggers de rollback ni evidencia de ensayo.
 - **Cierre cuando:** artefactos de rollback/observabilidad ausentes bloquean el gate Production Live.
 
 <a name="gt-12"></a>
 #### GT-12 · `--dry-run` en todas las operaciones de escritura
 
-- **Criticidad:** P1 · **Complejidad:** S · **Estado:** PENDIENTE
+- **Criticidad:** P1 · **Complejidad:** S · **Estado:** EN-PROGRESO
 - **Objetivo:** Cerrar la cobertura restante de `--dry-run`: `init`, `agents`, `upgrade`, `docs` y `generate-domain` ya lo soportan (verificado 2026-06-10); `architecture scaffold` y `adr` no.
+- **Evidencia actual:** ambos comandos restantes contienen código y tests de dry-run en el working tree, pero el baseline completo del CLI está rojo.
 - **Cierre cuando:** todo comando de escritura soporta `--dry-run` con cero mutaciones de filesystem verificadas.
 
 ### Fase F4 — Automatización y Eventos
@@ -201,14 +230,17 @@ Criterios de ordenamiento: primero la criticidad (`P1` antes que `P2`), luego vi
 #### GT-13 · Ejecutor autónomo de gates `evolith-phase-advance`
 
 - **Criticidad:** P1 · **Complejidad:** M · **Estado:** PENDIENTE
-- **Objetivo:** Componer GT-03 en un agente/tool que evalúe todos los gates de una transición de fase sin disparo humano, devolviendo evidencia consolidada.
-- **Cierre cuando:** una sola llamada produce pass/fail para una transición de fase completa con evidencia por gate.
+- **Objetivo:** Componer GT-03 en un agente/tool que evalúe una transición de fase propuesta sin disparo humano y devuelva evidencia consolidada.
+- **Guardrail de autoridad:** esta tool puede recomendar `pass` o `fail`, pero solo Evolith Tracker puede mutar el estado canónico de fase.
+- **Ejemplo:** `evolith-phase-advance --from design --to construction` evalúa cada criterio de Design Baseline y retorna una propuesta de transición más evidencia por gate.
+- **Cierre cuando:** una sola llamada produce una propuesta conforme al schema con evidencia por gate y sin mutación directa del estado canónico.
 
 <a name="gt-14"></a>
 #### GT-14 · Webhook saliente al completar un gate
 
-- **Criticidad:** P1 · **Complejidad:** S · **Estado:** PENDIENTE
+- **Criticidad:** P1 · **Complejidad:** S · **Estado:** EN-PROGRESO
 - **Objetivo:** Adapter de infraestructura que hace POST de `GateEvidence` a una URL de webhook provista por el caller al completarse una evaluación. El CLI permanece stateless — la URL siempre es un parámetro.
+- **Evidencia actual:** `WebhookAdapter` y el port notifier existen en el working tree; el cierre de integración depende del baseline verde y un test con listener receptor.
 - **Cierre cuando:** un test de integración recibe el payload de evidencia en un listener local.
 
 <a name="gt-15"></a>
@@ -230,15 +262,17 @@ Criterios de ordenamiento: primero la criticidad (`P1` antes que `P2`), luego vi
 <a name="gt-17"></a>
 #### GT-17 · Consolidación de DI + endurecimiento de boundaries ESLint
 
-- **Criticidad:** P2 · **Complejidad:** M · **Estado:** PENDIENTE
+- **Criticidad:** P1 · **Complejidad:** M · **Estado:** EN-PROGRESO
 - **Objetivo:** Retirar el `DIContainer` custom en favor del DI de NestJS, y luego endurecer los boundaries de `.eslintrc.js`: eliminar las concesiones `domain → core` y `application → infrastructure`.
+- **Evidencia actual:** lint pasa y el working tree introduce abstracciones compartidas de comandos, pero los tests del módulo Nest fallan resolución de dependencias y el build productivo tiene errores de DI/tipos.
 - **Cierre cuando:** un único mecanismo de DI; los boundaries estrictos pasan en un lint limpio.
 
 <a name="gt-18"></a>
 #### GT-18 · Publicar `@evolith/smart-cli` en npm
 
 - **Criticidad:** P1 · **Complejidad:** S · **Estado:** PENDIENTE
-- **Objetivo:** Publicar el CLI públicamente según la estrategia open-core (tier gratuito CLI + MCP). El pipeline de release ya está endurecido; requiere scope de npm, provenance y pulido del README.
+- **Objetivo:** Publicar el CLI públicamente según la estrategia open-core (tier gratuito CLI + MCP) con ownership del scope npm, provenance, versionado, smoke de instalación limpia y documentación de release.
+- **Dependencia:** GT-28, GT-05 y GT-07 deben cerrarse primero.
 - **Cierre cuando:** `npm i -g @evolith/smart-cli` funciona desde el registro público.
 
 ### Transversal
@@ -246,15 +280,16 @@ Criterios de ordenamiento: primero la criticidad (`P1` antes que `P2`), luego vi
 <a name="gt-19"></a>
 #### GT-19 · Migración hexagonal incremental de `core/`
 
-- **Criticidad:** P1 · **Complejidad:** L · **Estado:** PENDIENTE
-- **Objetivo:** Disolver el god-layer `core/` (~13.6k líneas) incrementalmente: lógica pura → `domain/`, orquestación → `application/`, adapters (MCP, observabilidad, providers) → `infrastructure/`, dejando `core/` solo como composition root. Avanza oportunistamente con cada fase anterior — nunca como reescritura big-bang.
+- **Criticidad:** P1 · **Complejidad:** L · **Estado:** EN-PROGRESO
+- **Objetivo:** Disolver el god-layer `core/` (~17k líneas) incrementalmente: lógica pura → `domain/`, orquestación → `application/`, adapters (MCP, observabilidad, providers) → `infrastructure/`, dejando `core/` solo como composition root. Avanza oportunistamente con cada fase anterior — nunca como reescritura big-bang.
+- **Evidencia actual:** ports de `domain` y adapters de infraestructura aún importan `NormalizedRule` desde `core/validators`, señal de ownership invertido.
 - **Cierre cuando:** `core/` contiene solo DI/bootstrap; los boundaries de ESLint aplican reglas hexagonales estrictas (ver GT-17) sin excepciones.
 
 <a name="gt-20"></a>
 #### GT-20 · Backfill de contenido de ADRs al estándar de autoría
 
 - **Criticidad:** P1 · **Complejidad:** L · **Estado:** PENDIENTE
-- **Objetivo:** Completar las secciones añadidas como stubs por la estandarización de ADRs del 2026-06-10 (700 secciones en 160 archivos): Objetivo y Alcance, Opciones Consideradas, Evidencias y Criterios de Evaluación, Decisiones y Estándares Relacionados — más Vigilancia Tecnológica y Fuentes Actuales para ADRs de plataforma — según el [Estándar de Autoría de ADRs](../../../architecture/adrs/adr-authoring-standard.es.md). El backfill debe reconstruir con honestidad (citar lo que realmente se evaluó; marcar lo desconocido como desconocido), nunca fabricar historia.
+- **Objetivo:** Completar las secciones añadidas como stubs por la estandarización de ADRs del 2026-06-10 (aproximadamente 697 marcadores en 162 archivos): Objetivo y Alcance, Opciones Consideradas, Evidencias y Criterios de Evaluación, Decisiones y Estándares Relacionados — más Vigilancia Tecnológica y Fuentes Actuales para ADRs de plataforma — según el [Estándar de Autoría de ADRs](../../../architecture/adrs/adr-authoring-standard.es.md). El backfill debe reconstruir con honestidad, nunca fabricar historia.
 - **Cierre cuando:** ningún ADR contiene marcador de backfill `GT-20`; spot-check confirma calidad de contenido en los 10 ADRs de mayor tráfico.
 
 <a name="gt-21"></a>
@@ -276,7 +311,7 @@ Criterios de ordenamiento: primero la criticidad (`P1` antes que `P2`), luego vi
 
 - **Criticidad:** P2 · **Complejidad:** L · **Estado:** PENDIENTE
 - **Meta:** que todo documento bajo `reference/` y `rulesets/` sea legible en español sin marcadores de esqueleto declarados.
-- **Objetivo:** Traducir los 73 archivos marcados como "esqueleto inicial / pendiente de traducción" (inventario del 2026-06-11), concentrados en `governance/standards/ai-augmented/*` (~33 archivos) y `knowledge/architecture-intelligence/patterns` (~10), más 4 cuerpos de ADRs core (incluido `core/0056`, esqueleto a propósito hasta que su EN se estabilice). El inglés sigue siendo la fuente que decide; el español espeja la estructura de encabezados (paridad bilingüe). Los 17 esqueletos adicionales bajo `.harness/` y `.bmad-core/` son de consumo por herramientas y quedan fuera de alcance.
+- **Objetivo:** Traducir los 76 archivos actualmente marcados como "esqueleto inicial / pendiente de traducción", concentrados en `governance/standards/ai-augmented/*`, `knowledge/architecture-intelligence/patterns` y cuerpos ADR seleccionados. El inglés sigue siendo la fuente que decide; el español espeja la estructura. Los esqueletos consumidos por herramientas bajo `.harness/` y `.bmad-core/` quedan fuera de alcance salvo promoción al corpus de referencia.
 - **Cierre cuando:** `grep -rl "pendiente de traducción" reference/ rulesets/` devuelve cero archivos y `check-bilingual-parity.mjs` pasa.
 - **Referencias:** [Índice Bilingüe](../../../navigation/BILINGUAL_INDEX.es.md) · [Glosario de Terminología](../../../../.harness/scripts/bilingual-terminology-glossary.es.md)
 
@@ -307,11 +342,119 @@ Criterios de ordenamiento: primero la criticidad (`P1` antes que `P2`), luego vi
 - **Cierre cuando:** la fila de la Fase 5 enlaza el playbook y no queda ningún marcador "Coming Soon / Próximamente" en el centro SDLC.
 - **Referencias:** [Centro de Gobernanza SDLC](../../sdlc/README.es.md) · [Quality Gates](../../sdlc/quality-gates.es.md)
 
+### Integridad del Tracking
+
+<a name="gt-27"></a>
+#### GT-27 · Consistencia semántica del tracking canónico
+
+- **Criticidad:** P0 · **Complejidad:** S · **Estado:** EN-PROGRESO
+- **Gap:** El tablero canónico contenía un GT-19 duplicado, trabajo completado en la cola activa, estados EN/ES contradictorios y totales que ya no coincidían con los registros detallados.
+- **Propósito:** Hacer que la priorización, el reporting y las decisiones de inversión dependan de una única superficie confiable de gobernanza de producto.
+- **Evidencia actual / ejemplo:** Esta revisión normaliza IDs únicos, estados activos, orden y totales. La consistencia semántica seguirá manteniéndose manualmente hasta implementar GT-35.
+- **Cierre cuando:** cada GT tiene exactamente una fila de dashboard y un registro detallado; criticidad, complejidad y estado coinciden entre EN/ES; los completados quedan fuera de la cola activa; los totales se derivan o validan automáticamente.
+- **Referencias:** [Evaluación de Madurez](./maturity-assessment.es.md) · [Taxonomía Documental](../../../documentation-taxonomy.es.md)
+
+<a name="gt-35"></a>
+#### GT-35 · Inventarios automatizados y validación del tracking
+
+- **Criticidad:** P1 · **Complejidad:** M · **Estado:** PENDIENTE
+- **Gap:** Los inventarios del repositorio y los totales de salud de producto se mantienen manualmente y quedan obsoletos. Por ejemplo, el snapshot histórico reporta 14 schemas mientras el árbol actual contiene 17, y no puede detectar IDs GT duplicados ni estados bilingües divergentes.
+- **Propósito:** Generar evidencia de decisión desde el repositorio en vez de depender de afirmaciones sincronizadas manualmente.
+- **Evidencia actual / ejemplo:** La validación documental comprueba enlaces, anchors, encoding y diagramas, pero no valida la semántica del tablero ni regenera inventarios de rulesets, ADRs, traducciones e implementación.
+- **Cierre cuando:** un comando de validación falla ante IDs duplicados, fichas faltantes, metadata EN/ES diferente, completados en la cola activa, totales incorrectos o inventarios obsoletos; su resumen generado se referencia desde el reporte de madurez.
+- **Referencias:** [Hub de Rulesets](../../../../rulesets/README.es.md) · [Evaluación de Madurez](./maturity-assessment.es.md) · [Tracking de Gaps](./gap-tracking.es.md)
+
+### Línea Base de Release y Ejecución de Políticas
+
+<a name="gt-28"></a>
+#### GT-28 · Restaurar la línea base de build, tests y smoke del CLI
+
+- **Criticidad:** P0 · **Complejidad:** M · **Estado:** EN-PROGRESO
+- **Gap:** El refactor actual del CLI pasa lint pero no compila, lo que también impide ejecutar el smoke MCP y deja suites unitarias en rojo.
+- **Propósito:** Restablecer una línea base ejecutable de release antes de tratar capacidades de CLI, MCP o policy engine como evidencia de producto completado.
+- **Evidencia actual / ejemplo:** `npm run build` reporta errores de contratos TypeScript en carga de catálogo, history, tools MCP, prompts e infraestructura de comandos. `npm test` reporta actualmente 10 suites fallidas y 58 tests fallidos; `npm run mcp:smoke` se detiene en el build fallido.
+- **Cierre cuando:** desde un checkout limpio pasan lint, build, tests unitarios y smoke MCP stdio/HTTP; ninguna ruta crítica de release se satisface solo con tests omitidos.
+- **Referencias:** [Smart CLI](../../../../sdk/cli/README.es.md) · [ADR-0073 Contrato Unificado de Salida del CLI](../../../architecture/adrs/core/0073-unified-cli-output-contract.es.md) · [Quality Gates](../../sdlc/quality-gates.es.md)
+
+<a name="gt-29"></a>
+#### GT-29 · Paridad de policy engines Native y OPA
+
+- **Criticidad:** P0 · **Complejidad:** L · **Estado:** EN-PROGRESO
+- **Gap:** R-25 exige cada regla arquitectónica en ambos evaluadores, pero la política de arquitectura OPA aún contiene rutas placeholder y el evaluador Native no cubre todas las categorías F1. Por ello todavía no se puede confiar en que inputs equivalentes produzcan veredictos equivalentes.
+- **Propósito:** Convertir los rulesets en un contrato de gobernanza real y portable, no en dos implementaciones parcialmente superpuestas.
+- **Evidencia actual / ejemplo:** F1-R09 a F1-R11 tienen implementaciones Rego, mientras la cobertura de dependency injection, static analysis y separation of concerns sigue incompleta entre engines. F1-R10 también declara enforcement basado en AST mientras su ruta Rego actual usa coincidencia textual.
+- **Cierre cuando:** una matriz de cobertura generada mapea cada regla arquitectónica activa a implementaciones Native y OPA; tests de equivalencia comparan findings y severidad para fixtures conformes y no conformes; el engine OPA/WASM empaquetado pasa el mismo gate de release.
+- **Referencias:** [Reglas Globales R-25](../../../../.harness/rules/global-rules.es.md) · [Ruleset F1](../../../../rulesets/architecture/f1-modular-monolith.rules.json) · [Política de Arquitectura OPA](../../../../rulesets/opa/architecture.rego)
+
+<a name="gt-36"></a>
+#### GT-36 · Política de cobertura lingüística para reglas machine-readable
+
+- **Criticidad:** P2 · **Complejidad:** L · **Estado:** PENDIENTE
+- **Gap:** El repositorio tiene 27 rulesets en inglés pero solo 3 rulesets JSON en español, sin una decisión explícita sobre si las reglas consumidas por máquinas son artefactos canónicos en inglés o requieren contrapartes bilingües completas.
+- **Propósito:** Preservar un único significado autoritativo de las políticas y hacer explícitas y exigibles sus obligaciones lingüísticas.
+- **Evidencia actual / ejemplo:** Los documentos narrativos de referencia exigen paridad bilingüe, pero la localización de rulesets es parcial y su frontera de excepción no está codificada en la validación.
+- **Cierre cuando:** la gobernanza declara paridad JSON bilingüe completa o una exención explícita de canon inglés con descripciones legibles localizadas; la validación exige el modelo seleccionado y reporta artefactos no cubiertos.
+- **Referencias:** [Reglas Globales](../../../../.harness/rules/global-rules.es.md) · [Hub de Rulesets](../../../../rulesets/README.es.md) · [Glosario de Terminología](../../../../.harness/scripts/bilingual-terminology-glossary.es.md)
+
+### Prueba de Producto
+
+<a name="gt-30"></a>
+#### GT-30 · Kernel mínimo de gobernanza del Tracker
+
+- **Criticidad:** P0 · **Complejidad:** L · **Estado:** PENDIENTE
+- **Gap:** Tracker es un target design detallado, pero no un producto ejecutable; el repositorio público auditado contiene actualmente documentación y ningún código fuente de implementación.
+- **Propósito:** Implementar el runtime autoritativo más pequeño capaz de poseer proceso, evidencia, decisiones de gate, aprobaciones, excepciones y estado de auditoría.
+- **Evidencia actual / ejemplo:** Las interfaces técnicas definen contratos tenant-aware y ownership de agregados, pero no existe un servicio que persista un proceso, acepte evidencia normalizada o registre un `GateDecision` inmutable.
+- **Cierre cuando:** un servicio Tracker ejecutable autentica un tenant, persiste un proceso de producto, evalúa y almacena el linaje de evidencia, registra una decisión de gate inmutable y expone su audit trail mediante una interfaz aprobada.
+- **Referencias:** [Interfaces Técnicas del Tracker](./sdlc-tracker-technical-interfaces.es.md) · [Target Design de Composición Gobernada](./evolith-governed-composition-target-design.es.md)
+
+<a name="gt-31"></a>
+#### GT-31 · Vertical slice del Producto Mínimo Comprobable
+
+- **Criticidad:** P0 · **Complejidad:** L · **Estado:** PENDIENTE
+- **Gap:** Ninguna implementación end-to-end demuestra actualmente la tesis de Evolith desde el contexto de tenant y producto, a través de cinco gates gobernados, hasta evidencia de producción y aprendizaje.
+- **Propósito:** Probar o refutar que Evolith puede componer proveedores reemplazables preservando gobernanza canónica, linaje de evidencia y valor de entrega medible.
+- **Evidencia actual / ejemplo:** Un slice representativo debe conectar un tenant, un producto, un proveedor de trabajo, repositorio y CI, un agente, observabilidad, analytics y los cinco gates, manteniendo al Tracker como única autoridad para decisiones canónicas.
+- **Cierre cuando:** el slice completa un flujo real de entrega gobernada; cada decisión enlaza evidencia fuente y versión de política; al menos un proveedor puede reemplazarse mediante su port; se miden tiempo transcurrido, cantidad de intervenciones y calidad de decisión.
+- **Referencias:** [Producto Mínimo Comprobable](./evolith-product-vision-master.es.md#10-producto-mínimo-comprobable) · [Framework de Validación Estratégica y Composición](./evolith-strategic-validation-and-composition-framework.es.md)
+
+<a name="gt-32"></a>
+#### GT-32 · Validación de hipótesis de cliente y comprador
+
+- **Criticidad:** P0 · **Complejidad:** M · **Estado:** PENDIENTE
+- **Gap:** El cliente objetivo, el dolor operativo, el comprador y la disposición a adoptar siguen siendo hipótesis narrativas sin entrevistas registradas, pilotos controlados ni evidencia de compra.
+- **Propósito:** Evitar construir una plataforma internamente coherente cuyo modelo de gobernanza, costo de integración o proceso de compra no resuelva un problema de cliente suficientemente valioso.
+- **Evidencia actual / ejemplo:** La visión identifica líderes de producto e ingeniería como usuarios y compradores probables, pero el repositorio no contiene un paquete de evidencia que relacione supuestos con frecuencia observada del problema, costo actual, bloqueadores de adopción y autoridad de compra.
+- **Cierre cuando:** al menos ocho entrevistas estructuradas cubren tres roles relevantes; un piloto controlado ejercita el flujo gobernado; un registro de supuestos documenta evidencia y confianza; el Architecture Board toma una decisión explícita de continuar, revisar o detener.
+- **Referencias:** [Hipótesis de Cliente](./evolith-product-vision-master.es.md#13-problema-objetivo-e-hipótesis-de-cliente) · [Workflow de Validación Estratégica con IA](./evolith-strategic-validation-and-composition-framework.es.md)
+
+<a name="gt-33"></a>
+#### GT-33 · Scoring de madurez respaldado por evidencia
+
+- **Criticidad:** P1 · **Complejidad:** M · **Estado:** PENDIENTE
+- **Gap:** Los scores actuales de madurez pueden confundir una capacidad diseñada con una capacidad implementada, validada, adoptada o gestionada operacionalmente.
+- **Propósito:** Hacer que el reporte de madurez sirva para decisiones de inversión y release vinculando cada score con evidencia observable.
+- **Evidencia actual / ejemplo:** Tracker tiene documentación extensa de diseño pero ninguna implementación ejecutable, mientras la línea base histórica del CLI reporta gates de release verdes que actualmente fallan bajo GT-28.
+- **Cierre cuando:** cada capacidad puntuada declara un estado como Visionada, Diseñada, Prototipada, Implementada, Validada o Escalada; cada estado no visionario enlaza evidencia calificadora; los scores agregados se recalculan desde esos estados y exponen incertidumbre.
+- **Referencias:** [Evaluación de Madurez](./maturity-assessment.es.md) · [Métricas y Madurez de Capacidades](./evolith-product-vision-master.es.md#11-métricas-y-madurez-de-capacidades)
+
+<a name="gt-34"></a>
+#### GT-34 · Repriorización del roadmap alrededor de la prueba de gobernanza
+
+- **Criticidad:** P1 · **Complejidad:** S · **Estado:** PENDIENTE
+- **Gap:** El roadmap adelanta preocupaciones amplias de plataforma como abstracción multi-cloud, Dapr y arquitectura zero-trust antes de que el kernel de gobernanza y el Producto Mínimo Comprobable produzcan evidencia de cliente y operación.
+- **Propósito:** Secuenciar la inversión alrededor de la tesis central y postergar opcionalidad costosa hasta que la evidencia la justifique.
+- **Evidencia actual / ejemplo:** El próximo horizonte de planificación debe priorizar línea base de release, kernel del Tracker, vertical slice y aprendizaje del piloto; el runtime distribuido y la amplitud de proveedores deben tener disparadores explícitos de evidencia.
+- **Cierre cuando:** el roadmap ordena el trabajo como línea base → kernel de gobernanza → vertical slice → piloto controlado → escala; las tecnologías diferidas nombran disparadores medibles de adopción, carga, compliance o presión de proveedores; las dependencias mapean a este tablero.
+- **Referencias:** [Roadmap de Estrategia Evolutiva](./evolutionary-strategy-roadmap.es.md) · [Producto Mínimo Comprobable](./evolith-product-vision-master.es.md#10-producto-mínimo-comprobable) · [Framework de Validación Estratégica y Composición](./evolith-strategic-validation-and-composition-framework.es.md)
+
 ---
 
 ## 4. Snapshot de Línea Base (absorbido de gap-analysis-core, 2026-06-09)
 
 Estado de madurez de referencia al momento en que este tablero se convirtió en la fuente única de tracking:
+
+> Este snapshot es evidencia histórica, no salud actual. El estado ejecutable vigente del release se registra en [GT-28](#gt-28), y el drift de inventarios en [GT-35](#gt-35).
 
 | Componente | Score | Evaluación |
 |---|:---:|---|

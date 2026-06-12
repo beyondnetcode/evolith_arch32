@@ -25,6 +25,7 @@ import { EvaluateGateUseCase } from './application/use-cases/evaluate-gate.use-c
 import { RulesetValidatorService } from './core/validators/ruleset-validator.service';
 import { PromptService } from './infrastructure/prompts/prompt.service';
 import { CatalogLoader } from './infrastructure/catalog/catalog-loader';
+import { WebhookAdapter } from './infrastructure/adapters/webhook.adapter';
 
 @Module({
   imports: [],
@@ -54,6 +55,10 @@ import { CatalogLoader } from './infrastructure/catalog/catalog-loader';
     RulesetValidatorService,
     PromptService,
     CatalogLoader,
+    {
+      provide: 'WEBHOOK_NOTIFIER',
+      useClass: WebhookAdapter,
+    },
   ],
 })
 export class AppModule {}

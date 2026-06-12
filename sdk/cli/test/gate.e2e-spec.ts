@@ -6,6 +6,7 @@ import addFormats from 'ajv-formats';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as os from 'os';
+import * as http from 'http';
 
 // CommandTestFactory.run() returns void. Guard against process.exit so the
 // test runner survives commands that exit non-zero (failed gates exit 1).
@@ -128,5 +129,48 @@ describe('Gate Command (e2e) — ADR-0073 contract', () => {
     const envelope = capturedJson();
     expect(validateEnvelope(envelope)).toBe(true);
     expect((envelope as { error: { code: string } }).error.code).toBe('VALIDATION_FAILED');
+  });
+
+  it('posts GateEvidence to the provided webhook URL', async () => {
+    let capturedBody = '';
+    const server = http.createServer((req, res) => {
+      let body = '';
+      req.on('data', chunk => {
+        body += chunk.toString();
+      });
+      req.on('end', () => {
+        capturedBody = body;
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ status: 'received' }));
+      });
+    });
+
+    await new Promise<void>((resolve) => {
+      server.listen(0, '127.0.0.1', () => {
+        resolve();
+      });
+    });
+
+    const address = server.address() as any;
+    const port = address.port;
+    const webhookUrl = `http://127.0.0.1:${port}/webhook`;
+
+    await runCommand(commandInstance, [
+      'gate', 'evaluate',
+      '--phase', 'design',
+      '--project', projectPath,
+      '--core', REPO_ROOT,
+      '--webhook-url', webhookUrl,
+    ]);
+
+    server.close();
+
+    // Verify webhook payload
+    expect(capturedBody).toBeTruthy();
+    const payload = JSON.parse(capturedBody);
+    expect(payload.phase).toBe('design');
+    expect(payload.verdict).toBe('failed');
+    expect(payload.rulesetRef).toBe('rulesets/sdlc/phase-gates.rules.json');
+    expect(payload.gateId).toBeTruthy();
   });
 });

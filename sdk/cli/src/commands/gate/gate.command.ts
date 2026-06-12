@@ -23,6 +23,7 @@ interface GateCommandOptions {
   evaluatedBy?: string;
   initiative?: string;
   tenant?: string;
+  webhookUrl?: string;
 }
 
 /**
@@ -92,6 +93,7 @@ export class GateCommand extends BaseEvolithCommand {
         projectPath: options?.project ?? process.cwd(),
         corePath: options?.core,
         evaluatedBy,
+        webhookUrl: options?.webhookUrl,
       });
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);
@@ -156,6 +158,11 @@ export class GateCommand extends BaseEvolithCommand {
 
   @Option({ flags: '--tenant [id]', description: 'Opaque tenant context, echoed in meta.context' })
   parseTenant(val: string): string {
+    return val;
+  }
+
+  @Option({ flags: '--webhook-url <url>', description: 'URL to POST the gate evidence upon completion' })
+  parseWebhookUrl(val: string): string {
     return val;
   }
 }

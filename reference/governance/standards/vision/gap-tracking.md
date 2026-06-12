@@ -17,7 +17,7 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-08`](./gap-reference-catalog.md#gt-08) | Phase 2 real ADR registry validation | F3 | P1 | S | `DONE` |
 | [`GT-09`](./gap-reference-catalog.md#gt-09) | Phase 3 real coverage enforcement | F3 | P1 | S | `DONE` |
 | [`GT-12`](./gap-reference-catalog.md#gt-12) | `--dry-run` on all write operations | F3 | P1 | S | `DONE` |
-| [`GT-14`](./gap-reference-catalog.md#gt-14) | Outbound webhook on gate completion | F4 | P1 | S | `IN-PROGRESS` |
+| [`GT-14`](./gap-reference-catalog.md#gt-14) | Outbound webhook on gate completion | F4 | P1 | S | `DONE` |
 | [`GT-05`](./gap-reference-catalog.md#gt-05) | MCP SDK Streamable HTTP transport | F2 | P1 | M | `IN-PROGRESS` |
 | [`GT-10`](./gap-reference-catalog.md#gt-10) | Phase 4 security scan content validation | F3 | P1 | M | `IN-PROGRESS` |
 | [`GT-11`](./gap-reference-catalog.md#gt-11) | Phase 5 observability and rollback validation | F3 | P1 | M | `IN-PROGRESS` |
@@ -46,7 +46,7 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-16`](./gap-reference-catalog.md#gt-16) | Documentation consolidation | F5 | P2 | S | `DONE` |
 | [`GT-27`](./gap-reference-catalog.md#gt-27) | Canonical tracking semantic consistency | Cross | P0 | S | `DONE` |
 
-**Progress:** 13 / 33 done · 6 in progress · 13 pending · 1 deferred
+**Progress:** 14 / 33 done · 5 in progress · 13 pending · 1 deferred
 
 **Ordering:** criticality (`P0` → `P1` → `P2`), active status (`IN-PROGRESS` → `PENDING` → `DEFERRED`), then complexity (`S` → `M` → `L`). Completed gaps follow active work.
 

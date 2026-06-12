@@ -26,6 +26,9 @@ import { RulesetValidatorService } from './core/validators/ruleset-validator.ser
 import { PromptService } from './infrastructure/prompts/prompt.service';
 import { CatalogLoader } from './infrastructure/catalog/catalog-loader';
 import { WebhookAdapter } from './infrastructure/adapters/webhook.adapter';
+import { NodeFileSystemProvider } from './core/abstractions/providers/node-filesystem.provider';
+import { NestLoggerProvider } from './core/abstractions/providers/logger.provider';
+import { YamlConfigParserProvider } from './core/abstractions/providers/config-parser.provider';
 
 @Module({
   imports: [],
@@ -55,6 +58,18 @@ import { WebhookAdapter } from './infrastructure/adapters/webhook.adapter';
     RulesetValidatorService,
     PromptService,
     CatalogLoader,
+    {
+      provide: 'IFileSystem',
+      useFactory: () => new NodeFileSystemProvider().createFileSystem(),
+    },
+    {
+      provide: 'ILogger',
+      useFactory: () => new NestLoggerProvider().createLogger('AppModule'),
+    },
+    {
+      provide: 'IConfigParser',
+      useFactory: () => new YamlConfigParserProvider().createConfigParser('yaml'),
+    },
     {
       provide: 'WEBHOOK_NOTIFIER',
       useClass: WebhookAdapter,

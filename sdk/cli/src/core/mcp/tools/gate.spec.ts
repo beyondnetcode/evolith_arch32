@@ -14,7 +14,7 @@ describe('handleGateEvaluateTool', () => {
       execute: mockExecute
     }));
 
-    const tools = getGateTools();
+    const tools = getGateTools({} as any, {} as any);
     const handler = tools.find(t => t.schema.name === 'evolith-gate-evaluate');
     executeHandler = handler!.execute;
   });

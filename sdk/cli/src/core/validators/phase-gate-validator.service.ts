@@ -1,5 +1,8 @@
 import * as path from 'path';
-import { getContainer, IFileSystem, ILogger } from '../abstractions';
+import { IFileSystem, ILogger } from '../abstractions';
+import { NodeFileSystemProvider } from '../abstractions/providers/node-filesystem.provider';
+import { NestLoggerProvider } from '../abstractions/providers/logger.provider';
+import { YamlConfigParserProvider } from '../abstractions/providers/config-parser.provider';
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 
@@ -67,9 +70,8 @@ export class PhaseGateValidatorService {
   private schemaValidator: any;
 
   constructor(corePath?: string) {
-    const container = getContainer();
-    this.fs = container.createFileSystem();
-    this.logger = container.createLogger('PhaseGateValidatorService');
+    this.fs = new NodeFileSystemProvider().createFileSystem();
+    this.logger = new NestLoggerProvider().createLogger('PhaseGateValidatorService');
 
     const resolvedCorePath = corePath || this.findCorePath(process.cwd());
     this.rulesetPath = path.join(resolvedCorePath, 'rulesets', 'sdlc', 'phase-gates.rules.json');

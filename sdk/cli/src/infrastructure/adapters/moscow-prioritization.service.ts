@@ -1,6 +1,6 @@
 import * as path from 'path';
-import { getContainer } from '../../core/abstractions';
 import { IFileSystem } from '../../core/abstractions';
+import { NodeFileSystemProvider } from '../../core/abstractions/providers/node-filesystem.provider';
 
 export type MoscowPriority = 'MUST' | 'SHOULD' | 'COULD' | 'WONT';
 
@@ -32,8 +32,7 @@ export class MoscowPrioritizationService {
   private readonly fs: IFileSystem;
 
   constructor() {
-    const container = getContainer();
-    this.fs = container.createFileSystem();
+    this.fs = new NodeFileSystemProvider().createFileSystem();
   }
 
   async createAnalysis(repoPath: string, phase: string, items: Omit<MoscowItem, 'id'>[]): Promise<MoscowAnalysis> {

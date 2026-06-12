@@ -16,7 +16,7 @@ const mockFileSystem = {
   writeJson: jest.fn(),
 };
 
-jest.mock("../../../domain/services/moscow-prioritization.service", () => ({
+jest.mock("../../../infrastructure/adapters/moscow-prioritization.service", () => ({
   MoscowPrioritizationService: jest.fn().mockImplementation(() => ({
     createAnalysis: jest.fn(),
     loadAnalysis: jest.fn(),
@@ -28,10 +28,10 @@ jest.mock("../../../domain/services/moscow-prioritization.service", () => ({
   })),
 }));
 
-import { MoscowPrioritizationService } from "../../../domain/services/moscow-prioritization.service";
+import { MoscowPrioritizationService } from "../../../infrastructure/adapters/moscow-prioritization.service";
 
 const handleMoscowTools = async (toolName: string, args: any, deps?: any) => {
-  const tools = getMoscowTools();
+  const tools = getMoscowTools({} as any, {} as any);
   const tool = tools.find((t: any) => t.schema.name === toolName);
   if (!tool) throw new Error(`Unknown ${toolName} tool`);
 

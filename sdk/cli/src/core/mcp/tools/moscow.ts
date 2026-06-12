@@ -1,10 +1,10 @@
-import { getFileSystem, getContainer } from './tool-utils';
+import { IConfigParser } from '../../abstractions';
 import { IFileSystem } from '../../abstractions';
 import { MoscowPrioritizationService, MoscowItem, MoscowAnalysis } from '../../../infrastructure/adapters/moscow-prioritization.service';
 
 import { IMcpToolHandler } from '../mcp-tool.registry';
 
-export function getMoscowTools(): IMcpToolHandler[] {
+export function getMoscowTools(fs: IFileSystem, configParser: IConfigParser): IMcpToolHandler[] {
   return [
     {
       schema: {

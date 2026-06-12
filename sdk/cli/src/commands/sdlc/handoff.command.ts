@@ -1,6 +1,6 @@
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
-import { getContainer } from '../../core/di/container';
+import { Inject } from '@nestjs/common';
 import { CatalogLoader } from '../../infrastructure/catalog/catalog-loader';
 import { PhaseService, ToolSelectionService } from '../../domain/services';
 import { PhaseTransitionUseCase } from '../../application/services';
@@ -22,7 +22,10 @@ export class HandoffCommand extends BaseEvolithCommand {
   private readonly phaseService: PhaseService;
   private readonly toolSelectionService: ToolSelectionService;
 
-  constructor(private readonly catalogLoader: CatalogLoader) {
+  constructor(
+    private readonly catalogLoader: CatalogLoader,
+    @Inject('IFileSystem') private readonly fileSystem: any
+  ) {
     super('HandoffCommand');
     this.phaseService = new PhaseService();
     this.toolSelectionService = new ToolSelectionService();
@@ -32,7 +35,7 @@ export class HandoffCommand extends BaseEvolithCommand {
     passedParam: string[],
     options?: HandoffOptions,
   ): Promise<void> {
-    const fs = getContainer().createFileSystem() as any;
+    const fs = this.fileSystem;
 
     if (options?.from && options?.to) {
       const useCase = new PhaseTransitionUseCase(fs);

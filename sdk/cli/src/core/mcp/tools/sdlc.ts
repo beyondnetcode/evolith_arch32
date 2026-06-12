@@ -1,5 +1,4 @@
 import * as path from 'path';
-import { getFileSystem, getContainer } from './tool-utils';
 import { IFileSystem, IConfigParser } from '../../abstractions';
 
 const PHASES = ['phase-0', 'phase-1', 'phase-2', 'phase-3', 'phase-4'];
@@ -58,7 +57,7 @@ const PHASE_REQUIREMENTS: PhaseRequirement[] = [
 
 import { IMcpToolHandler } from '../mcp-tool.registry';
 
-export function getSdlcTools(): IMcpToolHandler[] {
+export function getSdlcTools(fs: IFileSystem, configParser: IConfigParser): IMcpToolHandler[] {
   return [
     {
       schema: {
@@ -73,8 +72,8 @@ export function getSdlcTools(): IMcpToolHandler[] {
         },
       },
       execute: async (args) => {
-        const fs = getFileSystem();
-        const configParser = getContainer().createConfigParser('yaml');
+        /* fs injected */
+        /* configParser injected */
         const repoPath = args.path as string;
         if (!repoPath) return { error: true, message: 'path is required' };
         return sdlcStatus(repoPath, fs, configParser);
@@ -95,8 +94,8 @@ export function getSdlcTools(): IMcpToolHandler[] {
         },
       },
       execute: async (args) => {
-        const fs = getFileSystem();
-        const configParser = getContainer().createConfigParser('yaml');
+        /* fs injected */
+        /* configParser injected */
         const repoPath = args.path as string;
         if (!repoPath) return { error: true, message: 'path is required' };
         const fromPhase = args.fromPhase as string;

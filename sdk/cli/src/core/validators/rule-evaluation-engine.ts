@@ -1,5 +1,8 @@
 import * as path from 'path';
-import { getContainer, IFileSystem, ILogger } from '../abstractions';
+import { IFileSystem, ILogger } from '../abstractions';
+import { NodeFileSystemProvider } from '../abstractions/providers/node-filesystem.provider';
+import { NestLoggerProvider } from '../abstractions/providers/logger.provider';
+import { YamlConfigParserProvider } from '../abstractions/providers/config-parser.provider';
 import { ValidationIssue } from './ruleset-validator.service';
 import { IRuleEvaluatorStrategy, EvaluationContext, RuleEvaluationResult } from './evaluators/evaluator.interface';
 import { NativeEvaluator } from './evaluators/native-evaluator';
@@ -26,9 +29,8 @@ export class RuleEvaluationEngine {
   private readonly rulesetRepo: IRulesetRepository;
 
   constructor(options?: { fileSystem?: IFileSystem; logger?: ILogger, strategy?: IRuleEvaluatorStrategy, rulesetRepo?: IRulesetRepository }) {
-    const container = getContainer();
-    const fs = options?.fileSystem ?? container.createFileSystem();
-    this.logger = options?.logger ?? container.createLogger('RuleEvaluationEngine');
+    const fs = options?.fileSystem ?? new NodeFileSystemProvider().createFileSystem();
+    this.logger = options?.logger ?? new NestLoggerProvider().createLogger('RuleEvaluationEngine');
     this.strategy = options?.strategy ?? new NativeEvaluator(fs, this.logger);
     this.rulesetRepo = options?.rulesetRepo ?? new DiskRulesetRepository(fs, this.logger);
   }

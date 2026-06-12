@@ -1,6 +1,6 @@
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
-import { getContainer } from '../../core/di/container';
+import { Inject } from '@nestjs/common';
 import { PhaseTransitionUseCase } from '../../application/services';
 import { PhaseGateValidatorService } from '../../core/validators/phase-gate-validator.service';
 import { readGitLog, isGitRepo } from '../../core/metrics/git-log-reader';
@@ -22,7 +22,7 @@ function ratingBadge(rating: DoraRating): string {
   description: 'Display current SDLC phase gate validation status and DORA metrics',
 })
 export class GateStatusCommand extends BaseEvolithCommand {
-  constructor() {
+  constructor(@Inject('IFileSystem') private readonly fileSystem: any) {
     super('GateStatusCommand');
   }
 
@@ -30,7 +30,7 @@ export class GateStatusCommand extends BaseEvolithCommand {
     _passedParam: string[],
     options?: Record<string, any>,
   ): Promise<void> {
-    const fs = getContainer().createFileSystem() as any;
+    const fs = this.fileSystem;
     const useCase = new PhaseTransitionUseCase(fs);
     const cwd = process.cwd();
     const sinceDays: number = options?.since ?? 90;

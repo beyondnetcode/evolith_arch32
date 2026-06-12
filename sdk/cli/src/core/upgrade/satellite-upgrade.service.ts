@@ -1,5 +1,7 @@
 import * as path from 'path';
-import { getContainer, IFileSystem, ILogger } from '../abstractions';
+import { IFileSystem, ILogger } from '../abstractions';
+import { NodeFileSystemProvider } from '../abstractions/providers/node-filesystem.provider';
+import { NestLoggerProvider } from '../abstractions/providers/logger.provider';
 
 export interface UpgradePlan {
   currentVersion: string;
@@ -40,10 +42,9 @@ export class SatelliteUpgradeService {
   private readonly fs: IFileSystem;
   private readonly logger: ILogger;
 
-  constructor() {
-    const container = getContainer();
-    this.fs = container.createFileSystem();
-    this.logger = container.createLogger('SatelliteUpgradeService');
+  constructor(options?: { fileSystem?: any; logger?: any }) {
+    this.fs = options?.fileSystem ?? new NodeFileSystemProvider().createFileSystem();
+    this.logger = options?.logger ?? new NestLoggerProvider().createLogger('SatelliteUpgradeService');
   }
 
   async planUpgrade(options: UpgradeOptions): Promise<UpgradePlan> {

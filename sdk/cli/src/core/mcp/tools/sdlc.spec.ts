@@ -21,7 +21,7 @@ const mockConfigParser = {
 };
 
 const handleSdlcTools = async (toolName: string, args: any, deps?: any) => {
-  const tools = getSdlcTools();
+  const tools = getSdlcTools({} as any, {} as any);
   const tool = tools.find((t: any) => t.schema.name === toolName);
   if (!tool) throw new Error(`Unknown ${toolName} tool`);
 

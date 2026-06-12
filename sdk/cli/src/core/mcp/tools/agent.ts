@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { getFileSystem } from './tool-utils';
-import { IFileSystem } from '../../abstractions';
+import { IFileSystem, IConfigParser } from '../../abstractions';
 
 interface AgentInfo {
   name: string;
@@ -12,7 +12,7 @@ interface AgentInfo {
 
 import { IMcpToolHandler } from '../mcp-tool.registry';
 
-export function getAgentTools(): IMcpToolHandler[] {
+export function getAgentTools(fs: IFileSystem, configParser: IConfigParser): IMcpToolHandler[] {
   return [
     {
       schema: {
@@ -29,7 +29,7 @@ export function getAgentTools(): IMcpToolHandler[] {
         },
       },
       execute: async (args) => {
-        const fs = getFileSystem();
+        /* fs injected */
         const dir = (args.dir as string) || process.cwd();
         return agentInstall(args.name as string, (args.template as string) || 'standard', dir, fs);
       }
@@ -46,7 +46,7 @@ export function getAgentTools(): IMcpToolHandler[] {
         },
       },
       execute: async (args) => {
-        const fs = getFileSystem();
+        /* fs injected */
         const dir = (args.dir as string) || process.cwd();
         return agentList(dir, fs);
       }
@@ -65,7 +65,7 @@ export function getAgentTools(): IMcpToolHandler[] {
         },
       },
       execute: async (args) => {
-        const fs = getFileSystem();
+        /* fs injected */
         const dir = (args.dir as string) || process.cwd();
         return agentValidate(args.name as string, dir, fs);
       }
@@ -84,7 +84,7 @@ export function getAgentTools(): IMcpToolHandler[] {
         },
       },
       execute: async (args) => {
-        const fs = getFileSystem();
+        /* fs injected */
         const dir = (args.dir as string) || process.cwd();
         return agentUpgrade(args.name as string, dir, fs);
       }
@@ -103,7 +103,7 @@ export function getAgentTools(): IMcpToolHandler[] {
         },
       },
       execute: async (args) => {
-        const fs = getFileSystem();
+        /* fs injected */
         const dir = (args.dir as string) || process.cwd();
         return agentRemove(args.name as string, dir, fs);
       }

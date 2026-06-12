@@ -1,6 +1,6 @@
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
-import { getContainer } from '../../core/di/container';
+import { Inject } from '@nestjs/common';
 import { ADRService, CreateADRInput, ADR, ADCMatrix } from '../../domain/services/adr.service';
 import { logger, OperationTimer } from '../../core/observability';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
@@ -23,7 +23,7 @@ interface ADRCommandOptions {
 export class ADRCommand extends BaseEvolithCommand {
   private readonly timer = new OperationTimer();
 
-  constructor() {
+  constructor(@Inject('IFileSystem') private readonly fileSystem: any) {
     super('ADRCommand');
   }
 
@@ -32,7 +32,7 @@ export class ADRCommand extends BaseEvolithCommand {
     options?: ADRCommandOptions,
   ): Promise<void> {
     this.timer.start('ADRCommand.executeCommand');
-    const fs = getContainer().createFileSystem() as any;
+    const fs = this.fileSystem;
 
     if (options?.create) {
       await this.createADR(fs, options.dryRun);

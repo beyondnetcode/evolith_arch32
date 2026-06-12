@@ -3,13 +3,15 @@ import { IFileSystem, IConfigParser } from '../../../abstractions';
 import { NormalizedRule } from '../../../../domain/models/normalized-rule';
 import { EvaluationContext, RuleEvaluationResult } from '../evaluator.interface';
 import { INativeRuleHandler } from './rule-handler.interface';
-import { getContainer } from '../../../abstractions';
+import { NodeFileSystemProvider } from '../../../abstractions/providers/node-filesystem.provider';
+import { NestLoggerProvider } from '../../../abstractions/providers/logger.provider';
+import { YamlConfigParserProvider } from '../../../abstractions/providers/config-parser.provider';
 
 export class GovernanceRuleHandler implements INativeRuleHandler {
   private configParser: IConfigParser;
 
   constructor(private readonly fs: IFileSystem) {
-    this.configParser = getContainer().createConfigParser('yaml');
+    this.configParser = new YamlConfigParserProvider().createConfigParser('yaml');
   }
 
   canHandle(rule: NormalizedRule): boolean {

@@ -1,8 +1,9 @@
+import { IFileSystem, IConfigParser } from '../../abstractions';
 import { RulesetValidatorService } from '../../validators/ruleset-validator.service';
 
 import { IMcpToolHandler } from '../mcp-tool.registry';
 
-export function getValidateTools(): IMcpToolHandler[] {
+export function getValidateTools(fs: IFileSystem, configParser: IConfigParser): IMcpToolHandler[] {
   return [
     {
       schema: {

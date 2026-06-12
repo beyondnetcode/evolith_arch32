@@ -17,6 +17,8 @@ import {
 export type McpTransport = 'stdio' | 'http';
 
 export interface McpServerOptions {
+  fileSystem?: any;
+  configParser?: any;
   rulesetValidator?: RulesetValidatorService;
   metricsService?: McpMetricsService;
   apiKey?: string;
@@ -47,6 +49,8 @@ export class EvolithMcpServer {
     metricsService?: McpMetricsService,
     stdin?: import('node:stream').Readable,
     stdout?: import('node:stream').Writable,
+    private readonly fileSystem?: any,
+    private readonly configParser?: any,
   ) {
     this.transportType = transportType;
     this.port = port;
@@ -334,6 +338,8 @@ export async function startMcpServer(options: McpServerOptions = {}) {
     options.metricsService,
     options.stdin,
     options.stdout,
+    options.fileSystem,
+    options.configParser,
   );
   await server.start();
   return server; // Actually returning the EvolithMcpServer instance, but we can return it.

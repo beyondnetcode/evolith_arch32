@@ -1,6 +1,6 @@
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
-import { getContainer } from '../../core/di/container';
+import { Inject } from '@nestjs/common';
 import { InitializeProjectUseCase, InitProjectInput } from '../../application/services';
 import { logger, errorReporter, OperationTimer } from '../../core/observability';
 import { Injectable } from '@nestjs/common';
@@ -24,7 +24,10 @@ interface InitCommandOptions {
 export class InitCommand extends BaseEvolithCommand {
   private readonly operationTimer = new OperationTimer();
 
-  constructor(private readonly catalogLoader: CatalogLoader) {
+  constructor(
+    private readonly catalogLoader: CatalogLoader,
+    @Inject('IFileSystem') private readonly fileSystem: any
+  ) {
     super('InitCommand');
   }
 
@@ -36,7 +39,7 @@ export class InitCommand extends BaseEvolithCommand {
 
     logger.info('Starting project initialization', { options });
 
-    const fs = getContainer().createFileSystem() as any;
+    const fs = this.fileSystem;
     const useCase = new InitializeProjectUseCase(fs, this.catalogLoader);
 
     console.clear();

@@ -1,6 +1,9 @@
 import { Injectable, Optional, Inject } from '@nestjs/common';
 import * as path from 'path';
-import { getContainer, ILogger, IFileSystem, IConfigParser } from '../abstractions';
+import { ILogger, IFileSystem, IConfigParser } from '../abstractions';
+import { NodeFileSystemProvider } from '../abstractions/providers/node-filesystem.provider';
+import { NestLoggerProvider } from '../abstractions/providers/logger.provider';
+import { YamlConfigParserProvider } from '../abstractions/providers/config-parser.provider';
 import { RuleEvaluationEngine } from './rule-evaluation-engine';
 import { NativeEvaluator } from './evaluators/native-evaluator';
 import { OpaEvaluator } from './evaluators/opa-evaluator';
@@ -60,11 +63,9 @@ export class RulesetValidatorService {
   private readonly engine: RuleEvaluationEngine;
 
   constructor(@Optional() @Inject(RULESET_VALIDATOR_OPTIONS) options?: RulesetValidatorOptions) {
-    const container = getContainer();
-
-    this.logger = options?.logger ?? container.createLogger('RulesetValidatorService');
-    this.fs = options?.fileSystem ?? container.createFileSystem();
-    this.configParser = options?.configParser ?? container.createConfigParser('yaml');
+    this.logger = options?.logger ?? new NestLoggerProvider().createLogger('RulesetValidatorService');
+    this.fs = options?.fileSystem ?? new NodeFileSystemProvider().createFileSystem();
+    this.configParser = options?.configParser ?? new YamlConfigParserProvider().createConfigParser('yaml');
     
     const strategy = options?.engineType === 'opa' 
       ? new OpaEvaluator(this.fs, this.logger) 

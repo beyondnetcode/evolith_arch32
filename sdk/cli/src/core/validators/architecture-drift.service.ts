@@ -1,5 +1,8 @@
 import * as path from 'path';
-import { getContainer, IFileSystem, ILogger } from '../abstractions';
+import { IFileSystem, ILogger } from '../abstractions';
+import { NodeFileSystemProvider } from '../abstractions/providers/node-filesystem.provider';
+import { NestLoggerProvider } from '../abstractions/providers/logger.provider';
+import { YamlConfigParserProvider } from '../abstractions/providers/config-parser.provider';
 import { RulesetValidatorService, ArchitectureValidationResult, ValidationIssue } from './ruleset-validator.service';
 
 export interface DriftReport {
@@ -51,9 +54,8 @@ export class ArchitectureDriftService {
   private readonly validator: RulesetValidatorService;
 
   constructor(corePath?: string) {
-    const container = getContainer();
-    this.fs = container.createFileSystem();
-    this.logger = container.createLogger('ArchitectureDriftService');
+    this.fs = new NodeFileSystemProvider().createFileSystem();
+    this.logger = new NestLoggerProvider().createLogger('ArchitectureDriftService');
     this.validator = new RulesetValidatorService();
   }
 

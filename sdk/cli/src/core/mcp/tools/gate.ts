@@ -1,3 +1,4 @@
+import { IFileSystem, IConfigParser } from '../../abstractions';
 import { randomUUID } from 'crypto';
 // eslint-disable-next-line boundaries/element-types
 import { EvaluateGateUseCase, EvaluateGateInput } from '../../../application/use-cases/evaluate-gate.use-case';
@@ -13,7 +14,7 @@ import { WebhookAdapter } from '../../../infrastructure/adapters/webhook.adapter
 
 import { IMcpToolHandler } from '../mcp-tool.registry';
 
-export function getGateTools(): IMcpToolHandler[] {
+export function getGateTools(fs: IFileSystem, configParser: IConfigParser): IMcpToolHandler[] {
   return [
     {
       schema: {

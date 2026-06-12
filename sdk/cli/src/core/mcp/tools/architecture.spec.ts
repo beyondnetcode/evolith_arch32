@@ -1,11 +1,6 @@
 import { getArchitectureTools } from './architecture';
 
-jest.mock('./tool-utils', () => ({
-  getFileSystem: jest.fn(),
-  getContainer: jest.fn(),
-}));
 
-import { getFileSystem, getContainer } from './tool-utils';
 
 const mockFileSystem = {
   exists: jest.fn(),
@@ -30,7 +25,7 @@ describe('MCP Tools - architecture', () => {
       createConfigParser: jest.fn().mockReturnValue(mockConfigParser),
     });
 
-    const tools = getArchitectureTools();
+    const tools = getArchitectureTools({} as any, {} as any);
     const handler = tools.find(t => t.schema.name === 'evolith-architecture-validate');
     executeHandler = handler!.execute;
   });

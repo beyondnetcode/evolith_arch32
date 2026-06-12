@@ -1,11 +1,10 @@
 import * as path from 'path';
-import { getFileSystem, getContainer } from './tool-utils';
 import { IFileSystem, IConfigParser } from '../../abstractions';
 import { DeepArchitectureAnalyzer } from '../../validators/deep-architecture-analyzer';
 
 import { IMcpToolHandler } from '../mcp-tool.registry';
 
-export function getArchitectureTools(): IMcpToolHandler[] {
+export function getArchitectureTools(fs: IFileSystem, configParser: IConfigParser): IMcpToolHandler[] {
   return [
     {
       schema: {
@@ -22,8 +21,8 @@ export function getArchitectureTools(): IMcpToolHandler[] {
         },
       },
       execute: async (args) => {
-        const fs = getFileSystem();
-        const configParser = getContainer().createConfigParser('yaml');
+        /* fs injected */
+        /* configParser injected */
         const repoPath = args.path as string;
         const level = (args.level as string) || 'F1';
         const deep = (args.deep as boolean) || false;

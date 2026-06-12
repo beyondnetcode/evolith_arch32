@@ -1,6 +1,6 @@
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
-import { getContainer } from '../../core/di/container';
+import { Inject } from '@nestjs/common';
 import { StandardsService, StandardCategory } from '../../domain/services/standards.service';
 import { logger } from '../../core/observability';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
@@ -20,7 +20,7 @@ interface StandardsCommandOptions {
   description: 'Gestión de estándares Evolith (arquitectura, gobernanza, operaciones)',
 })
 export class StandardsCommand extends BaseEvolithCommand {
-  constructor() {
+  constructor(@Inject('IFileSystem') private readonly fileSystem: any) {
     super('StandardsCommand');
   }
 
@@ -28,7 +28,7 @@ export class StandardsCommand extends BaseEvolithCommand {
     passedParam: string[],
     options?: StandardsCommandOptions,
   ): Promise<void> {
-    const fs = getContainer().createFileSystem() as any;
+    const fs = this.fileSystem;
 
     if (options?.init) {
       await this.initializeStandards(fs);

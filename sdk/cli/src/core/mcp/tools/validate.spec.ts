@@ -11,7 +11,7 @@ import { RulesetValidatorService } from '../../validators/ruleset-validator.serv
 
 
 const handleValidateTool = async (args: any, deps?: any) => {
-  const tools = getValidateTools();
+  const tools = getValidateTools({} as any, {} as any);
   const tool = tools.find((t: any) => t.schema.name === 'evolith-validate');
   if (!tool) throw new Error('Unknown tool');
   let toolDeps = deps;

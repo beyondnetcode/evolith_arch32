@@ -10,7 +10,11 @@ const REGISTRY = path.join(VISION_DIR, 'gap-closure-evidence.json');
 const CLI_PACKAGE = path.join(ROOT, 'sdk/cli/package.json');
 const RUNTIME_EVIDENCE = path.join(VISION_DIR, 'maturity-evidence.json');
 const OUTPUT = path.join(VISION_DIR, 'maturity-reconciliation.json');
-const EVIDENCE_STATUSES = new Set(['PASS', 'BLOCKED']);
+// PASS: green observed run. BLOCKED: failing/unmet, must map to an active gap.
+// RESOLVED: the blocking gap is closed in code (cites its closure commit) and the
+// only residual is a runtime re-run; it maps to a closed gap and does not require a
+// workflow-run URL, because that run is what is still pending.
+const EVIDENCE_STATUSES = new Set(['PASS', 'BLOCKED', 'RESOLVED']);
 const REQUIRED_CHECKS = new Set(['cli-baseline', 'coverage', 'documentation', 'release']);
 
 function countFiles(directory, pattern, excludePattern) {
@@ -56,6 +60,10 @@ export function validateRuntimeEvidence(evidence, board, root = ROOT, now = new 
     [...board.content.matchAll(/^\| \[`(GT-\d+)`]\([^)]*\) .*\| `(PENDING|DEFERRED|IN-PROGRESS)` \|$/gm)]
       .map((match) => match[1]),
   );
+  const closedGaps = new Set(
+    [...board.content.matchAll(/^\| \[`(GT-\d+)`]\([^)]*\) .*\| `DONE` \|$/gm)]
+      .map((match) => match[1]),
+  );
   const ids = new Set();
 
   if (evidence?.schemaVersion !== '1.0.0') errors.push('Unsupported maturity evidence schemaVersion');
@@ -74,12 +82,16 @@ export function validateRuntimeEvidence(evidence, board, root = ROOT, now = new 
     if (!/^[0-9a-f]{7,40}$/i.test(check?.commit || '') || !commitExists(root, check.commit)) {
       errors.push(`${check?.id} references an unavailable commit`);
     }
-    if (!/^https:\/\/github\.com\/[^/]+\/[^/]+\/actions\/runs\/\d+$/.test(check?.source || '')) {
+    if (check?.status !== 'RESOLVED'
+      && !/^https:\/\/github\.com\/[^/]+\/[^/]+\/actions\/runs\/\d+$/.test(check?.source || '')) {
       errors.push(`${check?.id} has an invalid workflow source`);
     }
     if (typeof check?.summary !== 'string' || !check.summary.trim()) errors.push(`${check?.id} lacks a summary`);
     if (check?.status === 'BLOCKED' && (!check.gap || !activeGaps.has(check.gap))) {
       errors.push(`${check?.id} must map BLOCKED evidence to an active gap`);
+    }
+    if (check?.status === 'RESOLVED' && (!check.gap || !closedGaps.has(check.gap))) {
+      errors.push(`${check?.id} must map RESOLVED evidence to a closed gap`);
     }
     if (check?.status === 'PASS' && check?.gap) errors.push(`${check.id} PASS evidence cannot declare a blocking gap`);
   }

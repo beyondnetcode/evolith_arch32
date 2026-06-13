@@ -4,13 +4,13 @@
   "asOf": "2026-06-13",
   "gaps": {
     "total": 46,
-    "done": 37,
-    "pending": 9,
+    "done": 38,
+    "pending": 8,
     "inProgress": 0,
     "deferred": 0
   },
   "evidence": {
-    "closureRecords": 37,
+    "closureRecords": 38,
     "cliPackage": "@evolith/smart-cli@1.1.0",
     "adrCount": 84,
     "rulesetCount": 27,
@@ -44,12 +44,11 @@
     },
     {
       "id": "release",
-      "status": "BLOCKED",
+      "status": "RESOLVED",
       "observedAt": "2026-06-13",
-      "commit": "ac2b66f",
-      "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/27469575672",
+      "commit": "26f6a1809b6258880173a934357d53beb37fcb7b",
       "gap": "GT-44",
-      "summary": "Release-only version and package integrity behavior remains non-deterministic on ordinary main pushes."
+      "summary": "Release pipeline defects resolved in code (GT-44, commit 26f6a18): event-correct version checks that skip ordinary main pushes, package.json-derived package and binary identity, pinned pkg with deterministic per-target binaries uploaded/downloaded/executed/attached, blocking init and version smoke, and a safely degrading failure notifier. The definitive green release-pipeline run is pending the next release-triggering push."
     }
   ],
   "externalProducts": [

@@ -307,6 +307,14 @@
       "validationCommands": ["npm run build --workspace sdk/cli", "npm run lint --workspace sdk/cli", "npm run mcp:smoke --workspace sdk/cli", "node .harness/scripts/validate-docs.mjs"],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "Tracker-owned chat and session behavior was removed; Core exposes governed capabilities through CLI and MCP only."
+    },
+    {
+      "id": "GT-44",
+      "closedAt": "2026-06-13",
+      "closureCommit": "26f6a1809b6258880173a934357d53beb37fcb7b",
+      "evidence": [".github/workflows/sdk-cli-release.yml", ".github/workflows/sdk-cli-ci.yml", ".harness/scripts/verify-git-tag.mjs", ".harness/scripts/verify-version-log.mjs", "reference/governance/standards/vision/gap-reference-catalog.md"],
+      "validationCommands": ["GITHUB_REF_NAME=main GITHUB_EVENT_NAME=push node .harness/scripts/verify-git-tag.mjs", "GITHUB_REF_NAME=main GITHUB_EVENT_NAME=push node .harness/scripts/verify-version-log.mjs", "node .harness/scripts/validate-tracking.mjs", "node .harness/scripts/reconcile-maturity.mjs --check"],
+      "dependencyDisposition": "none"
     }
   ]
 }

@@ -271,6 +271,23 @@
       "evidence": [".harness/scripts/validate-tracking.mjs", ".harness/scripts/validate-tracking.test.mjs", "reference/governance/standards/vision/gap-closure-evidence-standard.md", "reference/governance/standards/vision/gap-closure-evidence.json"],
       "validationCommands": ["node --test .harness/scripts/validate-tracking.test.mjs", "node .harness/scripts/validate-tracking.mjs", "node .harness/scripts/validate-docs.mjs", "node .harness/scripts/check-bilingual-parity.mjs"],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-41",
+      "closedAt": "2026-06-13",
+      "closureCommit": "154aadf",
+      "evidence": [".harness/scripts/reconcile-maturity.mjs", ".harness/scripts/reconcile-maturity.test.mjs", "reference/governance/standards/vision/maturity-reconciliation.json", "reference/governance/standards/vision/maturity-assessment.md"],
+      "validationCommands": ["node --test .harness/scripts/reconcile-maturity.test.mjs", "node .harness/scripts/reconcile-maturity.mjs --check", "node .harness/scripts/validate-tracking.mjs"],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-42",
+      "closedAt": "2026-06-13",
+      "closureCommit": "154aadf",
+      "evidence": [".harness/scripts/validate-contract-conformance.mjs", ".harness/scripts/validate-contract-conformance.test.mjs", "rulesets/contracts/evolith-machine-contracts.json", "rulesets/contracts/README.md", ".github/workflows/docs.yml"],
+      "validationCommands": ["node --test .harness/scripts/validate-contract-conformance.test.mjs", "node .harness/scripts/validate-contract-conformance.mjs", "node .harness/scripts/validate-contract-conformance.mjs --consumer ../evolith_tracker/contracts/evolith-core-contracts.json"],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "Evolith Tracker main commit 4256e7b pins contract 1.0.0 and executes the Core conformance validator in CI."
     }
   ]
 }

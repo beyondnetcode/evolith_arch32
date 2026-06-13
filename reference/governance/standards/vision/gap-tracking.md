@@ -4,7 +4,7 @@
 
 **Status:** Active Tracking
 **Owner:** Evolith Architecture Board
-**Last Updated:** 2026-06-12
+**Last Updated:** 2026-06-13
 **Gap Details:** [Gap Reference Catalog](./gap-reference-catalog.md)
 
 This board is the single source of truth for gap priority and status. Select a gap ID to open its problem statement, purpose, evidence, closure criteria, and references.
@@ -12,8 +12,8 @@ This board is the single source of truth for gap priority and status. Select a g
 
 | ID | Gap | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|
-| [`GT-41`](./gap-reference-catalog.md#gt-41) | Automated maturity reconciliation | Cross | P1 | M | `PENDING` |
-| [`GT-42`](./gap-reference-catalog.md#gt-42) | Cross-repository contract conformance | Cross | P1 | M | `PENDING` |
+| [`GT-41`](./gap-reference-catalog.md#gt-41) | Automated maturity reconciliation | Cross | P1 | M | `DONE` |
+| [`GT-42`](./gap-reference-catalog.md#gt-42) | Cross-repository contract conformance | Cross | P1 | M | `DONE` |
 | [`GT-01`](./gap-reference-catalog.md#gt-01) | Unified contract ADR | F0 | P0 | S | `DONE` |
 | [`GT-27`](./gap-reference-catalog.md#gt-27) | Canonical tracking semantic consistency | Cross | P0 | S | `DONE` |
 | [`GT-02`](./gap-reference-catalog.md#gt-02) | `GateEvidence` modeled in the domain layer | F1 | P0 | M | `DONE` |
@@ -48,7 +48,7 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-23`](./gap-reference-catalog.md#gt-23) | Spanish translation backfill | Cross | P2 | L | `DONE` |
 | [`GT-36`](./gap-reference-catalog.md#gt-36) | Machine-readable rules language coverage | Cross | P2 | L | `DONE` |
 
-**Progress:** 33 / 35 done · 0 in progress · 2 pending · 0 deferred
+**Progress:** 35 / 35 done · 0 in progress · 0 pending · 0 deferred
 
 **Ordering:** criticality (`P0` → `P1` → `P2`), active status (`IN-PROGRESS` → `PENDING` → `DEFERRED`), then complexity (`S` → `M` → `L`). Completed gaps follow active work.
 

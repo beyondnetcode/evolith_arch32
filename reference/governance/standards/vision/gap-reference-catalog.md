@@ -325,7 +325,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Current evidence / example:** The maturity assessment still references superseded open gaps and historical counts while the board reports their completion, creating contradictory views of readiness.
 - **Ownership boundary:** Core reconciles only evidence it owns. Tracker and Product Suite maturity remain external inputs and must never inflate the Core score.
 - **Done when:** a generated or reconciled report consumes the canonical Core board, inventories, and test and release evidence; it exposes freshness timestamps, separates Core from external product maturity, and fails on stale status, counts, or evidence links.
-- **References:** [Maturity Assessment](./maturity-assessment.md) · [Inventory Summary](./inventory-summary.md) · [GT-35 Automated Inventories](#gt-35)
+- **Closure evidence:** Core commit `154aadf` added a generated machine-readable reconciliation, regression tests, pre-commit and CI drift checks, and removed manually maintained current totals from the narrative assessment. External product maturity is explicitly excluded.
+- **References:** [Maturity Assessment](./maturity-assessment.md) · [Maturity Reconciliation](./maturity-reconciliation.json) · [Inventory Summary](./inventory-summary.md) · [Reconciliation Validator](../../../../.harness/scripts/reconcile-maturity.mjs)
 
 #### GT-42
 
@@ -335,7 +336,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Purpose:** Ensure technical evaluations remain consumable by the authoritative Tracker throughout independent repository releases.
 - **Current evidence / example:** Contract ADRs and JSON schemas exist, but there is no cross-repository compatibility matrix or CI suite that exercises supported producer and consumer versions together.
 - **Done when:** shared versioned schemas or pinned contract references define compatibility policy; producer and consumer contract tests run across Core, CLI, and Tracker; CI verifies the latest supported version matrix and blocks incompatible changes.
-- **References:** [ADR-0073 Unified CLI Output Contract](../../../architecture/adrs/core/0073-unified-cli-output-contract.md) · [Gate Evidence Schema](../../../../rulesets/schema/gate-evidence.schema.json) · [Tracker Technical Interfaces](../../../products/evolith-tracker/sdlc-tracker-technical-interfaces.md)
+- **Closure evidence:** Core commit `154aadf` added the versioned manifest, immutable schema digests, fixtures, conformance tests, and CI enforcement. Tracker commit `4256e7b` pinned the supported contract and added its consumer workflow against Core.
+- **References:** [ADR-0073 Unified CLI Output Contract](../../../architecture/adrs/core/0073-unified-cli-output-contract.md) · [Contract Manifest](../../../../rulesets/contracts/evolith-machine-contracts.json) · [Conformance Policy](../../../../rulesets/contracts/README.md) · [Conformance Validator](../../../../.harness/scripts/validate-contract-conformance.mjs)
 
 ---
 

@@ -11,4 +11,4 @@ Este es el conteo automatizado del inventario de la arquitectura de referencia c
 | **Rulesets Legibles por Máquina** | 27 | `rulesets/` (en 11 categorías) |
 | **Schemas de Phase-Gates** | 17 | `rulesets/schema/` |
 
-*Última Actualización: 2026-06-12*
+*Última Actualización: 2026-06-13*

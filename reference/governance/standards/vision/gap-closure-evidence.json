@@ -272,6 +272,23 @@
       "validationCommands": ["node --test .harness/scripts/validate-contract-conformance.test.mjs", "node .harness/scripts/validate-contract-conformance.mjs", "node .harness/scripts/validate-contract-conformance.mjs --consumer ../evolith_tracker/contracts/evolith-core-contracts.json"],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "Evolith Tracker main commit 4256e7b pins contract 1.0.0 and executes the Core conformance validator in CI."
+    },
+    {
+      "id": "GT-45",
+      "closedAt": "2026-06-13",
+      "closureCommit": "b07460d",
+      "evidence": ["sdk/cli/src/infrastructure/mcp/mcp-conformance.spec.ts", "sdk/cli/src/infrastructure/mcp/server.ts", "sdk/cli/src/infrastructure/mcp/tools/agent.spec.ts", "sdk/cli/src/infrastructure/mcp/tools/architecture.spec.ts", "sdk/cli/src/infrastructure/mcp/tools/sdlc.spec.ts", "sdk/cli/test/e2e/mcp-e2e.test.ts"],
+      "validationCommands": ["npm run lint --workspace sdk/cli", "npm run test:unit --workspace sdk/cli -- --runInBand", "npm run test:e2e --workspace sdk/cli -- --runTestsByPath test/e2e/mcp-e2e.test.ts", "npm run mcp:smoke --workspace sdk/cli"],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-46",
+      "closedAt": "2026-06-13",
+      "closureCommit": "b07460d",
+      "evidence": ["sdk/cli/src/app.module.ts", "sdk/cli/src/infrastructure/mcp/server.ts", "reference/governance/standards/vision/gap-reference-catalog.md"],
+      "validationCommands": ["npm run build --workspace sdk/cli", "npm run lint --workspace sdk/cli", "npm run mcp:smoke --workspace sdk/cli", "node .harness/scripts/validate-docs.mjs"],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "Tracker-owned chat and session behavior was removed; Core exposes governed capabilities through CLI and MCP only."
     }
   ]
 }

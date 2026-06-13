@@ -358,6 +358,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Gap:** Streamable HTTP smoke is active, but HTTP, API-key, message-routing, and multiple MCP tool suites remain disabled with `describe.skip`; some still target the removed minimal transport.
 - **Purpose:** Prove consistent Core exposure over stdio and Streamable HTTP, including authentication, errors, resources, prompts, and registered tools.
 - **Done when:** obsolete tests are removed or rewritten; no release-relevant MCP suite is skipped; protocol-negative cases run in CI; runtime tools and schemas match the generated inventory.
+- **Closure evidence:** Commit `b07460d` removed 547 lines of obsolete minimal-transport tests, activated 47 agent/architecture/SDLC tool tests, added a no-skipped-suite and runtime-schema conformance gate, fixed runtime filesystem/config-parser injection, and validated 29 MCP E2E cases plus stdio/Streamable HTTP smoke for 21 tools, 7 resources, and 7 prompts.
 - **References:** [MCP Server](../../../../sdk/cli/src/infrastructure/mcp/server.ts) · [MCP E2E Tests](../../../../sdk/cli/test/e2e/mcp-e2e.test.ts)
 
 #### GT-46
@@ -367,6 +368,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Gap:** `smart-cli api` exposes an in-memory “Evolith Tracker Assistant” mock with unrestricted CORS and no governed Core contract, although this repository should contain only services that expose Core.
 - **Purpose:** Prevent Tracker product behavior from leaking into the Core distribution while preserving a valid stateless Core API if that surface is retained.
 - **Done when:** an explicit decision removes the mock API or replaces it with a documented, authenticated, stateless Core exposure contract; CORS is configurable and retained endpoints have schemas and tests.
+- **Closure evidence:** Commit `b07460d` removed the `api` command, Tracker Assistant mock, in-memory chat sessions, controller, module, repository, and domain interfaces. The retained network service is the authenticated, contract-tested MCP Streamable HTTP exposure of Evolith Core.
 - **References:** [CLI Composition Root](../../../../sdk/cli/src/app.module.ts) · [MCP HTTP Service](../../../../sdk/cli/src/infrastructure/mcp/server.ts)
 
 #### GT-47

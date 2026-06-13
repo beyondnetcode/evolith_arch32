@@ -13,13 +13,13 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | ID | Gap | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|
 | [`GT-47`](./gap-reference-catalog.es.md#gt-47) | Sincronización de documentación de producto y release | Transversal | P1 | S | `PENDIENTE` |
-| [`GT-49`](./gap-reference-catalog.es.md#gt-49) | Activar el modo estricto de TypeScript y puertos de filesystem tipados | Transversal | P1 | M | `PENDIENTE` |
 | [`GT-51`](./gap-reference-catalog.es.md#gt-51) | Validación de evidencia de gate Build-versus-Compose | F3 | P1 | M | `PENDIENTE` |
 | [`GT-50`](./gap-reference-catalog.es.md#gt-50) | Aplicar umbrales de cobertura en la configuración de Jest | F0 | P2 | S | `PENDIENTE` |
 | [`GT-52`](./gap-reference-catalog.es.md#gt-52) | Eliminar los stubs muertos del contenedor de inyección de dependencias | Transversal | P2 | S | `PENDIENTE` |
 | [`GT-53`](./gap-reference-catalog.es.md#gt-53) | Reparar las referencias migradas a la visión de producto | Transversal | P2 | S | `PENDIENTE` |
 | [`GT-54`](./gap-reference-catalog.es.md#gt-54) | Completar la aplicación estricta de fronteras hexagonales | Transversal | P2 | L | `PENDIENTE` |
 | [`GT-48`](./gap-reference-catalog.es.md#gt-48) | Restaurar el umbral normativo de cobertura del CLI | F0 | P0 | L | `COMPLETADO` |
+| [`GT-49`](./gap-reference-catalog.es.md#gt-49) | Activar el modo estricto de TypeScript y puertos de filesystem tipados | Transversal | P1 | M | `COMPLETADO` |
 | [`GT-44`](./gap-reference-catalog.es.md#gt-44) | Integridad determinista del pipeline de release | F5 | P0 | M | `COMPLETADO` |
 | [`GT-42`](./gap-reference-catalog.es.md#gt-42) | Conformidad contractual entre repositorios | Transversal | P1 | M | `COMPLETADO` |
 | [`GT-45`](./gap-reference-catalog.es.md#gt-45) | Suite de conformidad de transporte y tools MCP | F2 | P1 | M | `COMPLETADO` |
@@ -59,7 +59,7 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-23`](./gap-reference-catalog.es.md#gt-23) | Backfill de traducciones españolas | Transversal | P2 | L | `COMPLETADO` |
 | [`GT-36`](./gap-reference-catalog.es.md#gt-36) | Cobertura lingüística de reglas machine-readable | Transversal | P2 | L | `COMPLETADO` |
 
-**Progreso:** 39 / 46 completados · 0 en progreso · 7 pendientes · 0 diferidos
+**Progreso:** 40 / 46 completados · 0 en progreso · 6 pendientes · 0 diferidos
 
 **Ordenamiento:** criticidad (`P0` → `P1` → `P2`), estado activo (`EN-PROGRESO` → `PENDIENTE` → `DIFERIDO`) y complejidad (`S` → `M` → `L`). Los gaps completados aparecen después del trabajo activo.
 

@@ -309,6 +309,25 @@
       "dependencyRationale": "Tracker-owned chat and session behavior was removed; Core exposes governed capabilities through CLI and MCP only."
     },
     {
+      "id": "GT-49",
+      "closedAt": "2026-06-13",
+      "closureCommit": "398729dff32735cac56069bb7c84a9fa44a2bff6",
+      "evidence": [
+        "sdk/cli/tsconfig.json",
+        "sdk/cli/.eslintrc.js",
+        "sdk/cli/src/commands/adr/adr.command.ts",
+        "sdk/cli/src/commands/standards/standards.command.ts",
+        "sdk/cli/src/application/services/index.ts",
+        "sdk/cli/src/domain/interfaces.ts"
+      ],
+      "validationCommands": [
+        "npx tsc --noEmit --project sdk/cli/tsconfig.json",
+        "npm run build --workspace sdk/cli",
+        "npm test --workspace sdk/cli -- --runInBand"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-48",
       "closedAt": "2026-06-13",
       "closureCommit": "48e1d909992f29cd2cd49993101eb36ec730ae3a",

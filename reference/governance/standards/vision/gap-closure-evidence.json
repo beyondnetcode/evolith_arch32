@@ -263,6 +263,14 @@
       "evidence": ["reference/governance/adr/adr-0090-rule-language-policy.md"],
       "validationCommands": ["node .harness/scripts/validate-docs.mjs", "node .harness/scripts/check-orphan-bilingual.mjs"],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-37",
+      "closedAt": "2026-06-13",
+      "closureCommit": "f3c8520",
+      "evidence": [".harness/scripts/validate-tracking.mjs", ".harness/scripts/validate-tracking.test.mjs", "reference/governance/standards/vision/gap-closure-evidence-standard.md", "reference/governance/standards/vision/gap-closure-evidence.json"],
+      "validationCommands": ["node --test .harness/scripts/validate-tracking.test.mjs", "node .harness/scripts/validate-tracking.mjs", "node .harness/scripts/validate-docs.mjs", "node .harness/scripts/check-bilingual-parity.mjs"],
+      "dependencyDisposition": "none"
     }
   ]
 }

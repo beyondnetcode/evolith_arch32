@@ -351,8 +351,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 - **Gap:** Structural tracking validation can report every gap as complete even when closure criteria remain unchecked, evidence is stale or contradictory, or a dependency is only mocked.
 - **Purpose:** Make `DONE` a defensible semantic claim backed by current, reproducible evidence rather than a table value that is internally consistent.
-- **Current evidence / example:** The semantic validator, canonical closure registry, and regression tests are being introduced. GT-01 and GT-06 criteria have been resolved explicitly, while GT-15 has been restored to `DEFERRED` because its in-memory mock is not Tracker-authoritative evidence.
+- **Current evidence / example:** The semantic validator, canonical closure registry, and regression tests are active. GT-01 and GT-06 criteria were resolved explicitly, while GT-15 was restored to `DEFERRED` because its in-memory mock is not Tracker-authoritative evidence.
 - **Done when:** validation rejects `DONE` without completed closure criteria, dated closure evidence, dependency disposition, reproducible validation commands, and a commit or release reference; documented exceptions are explicit, owned, and time-bounded.
+- **Closure evidence:** Commit `f3c8520` introduced R-26, the bilingual closure standard, 32 historical closure records, commit and artifact resolution, dependency disposition checks, unchecked-criterion rejection, and four regression tests. The same change corrected the false-positive GT-15 status.
 - **References:** [Gap Closure Evidence Standard](./gap-closure-evidence-standard.md) · [Closure Registry](./gap-closure-evidence.json) · [Tracking Validator](../../../../.harness/scripts/validate-tracking.mjs) · [Gap Tracking](./gap-tracking.md)
 
 #### GT-38

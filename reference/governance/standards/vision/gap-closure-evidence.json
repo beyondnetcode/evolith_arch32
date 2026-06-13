@@ -217,6 +217,15 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-28",
+      "closedAt": "2026-06-13",
+      "closureCommit": "84ec879",
+      "evidence": [".github/workflows/sdk-cli-ci.yml", ".github/workflows/ci-cd.yml", ".github/workflows/sdk-cli-release.yml", "sdk/cli/package.json"],
+      "validationCommands": ["npm ci", "npm run lint --workspace @evolith/smart-cli", "npm run build --workspace @evolith/smart-cli", "npm run test:unit --workspace @evolith/smart-cli -- --runInBand", "npm run test:e2e --workspace @evolith/smart-cli", "npm run mcp:smoke --workspace @evolith/smart-cli"],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "GT-28 restores clean-checkout installation and the executable lint, build, test, and MCP smoke baseline. The independently measured coverage regression remains blocking and is tracked as GT-48."
+    },
+    {
       "id": "GT-29",
       "closedAt": "2026-06-11",
       "closureCommit": "769651c",

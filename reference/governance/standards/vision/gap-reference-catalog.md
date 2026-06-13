@@ -261,8 +261,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Purpose:** Re-establish an executable release baseline before treating CLI, MCP, or policy-engine capabilities as complete product evidence.
 - **Current evidence / example:** Closed on 2026-06-12. `npm run lint` and `npm run build` pass; 70 unit suites pass with 1,237 tests; 12 E2E suites pass with 110 tests; `npm run mcp:smoke` passes `initialize`, discovery, metrics, and gate evaluation over both stdio and Streamable HTTP.
 - **Reopened evidence (2026-06-13):** Current `main` CI fails before tests because workspace `npm ci` triggers the root Husky prepare script without the root dependency installed. CI cache configuration also points to a missing `sdk/cli/package-lock.json`; the local green workspace is not reproducible from a clean checkout.
-- **Post-push verification (2026-06-13):** Runs [SDK CLI CI 27467157131](https://github.com/beyondnetcode/evolith_arch32/actions/runs/27467157131) and [CI/CD 27467157129](https://github.com/beyondnetcode/evolith_arch32/actions/runs/27467157129) confirm both blockers before suites execute: the cache cannot resolve `sdk/cli/package-lock.json`, and the root `prepare` fails with `husky: not found`. Status: `PENDING`.
+- **Reopening verification (2026-06-13):** Runs [SDK CLI CI 27467157131](https://github.com/beyondnetcode/evolith_arch32/actions/runs/27467157131) and [CI/CD 27467157129](https://github.com/beyondnetcode/evolith_arch32/actions/runs/27467157129) confirmed both blockers before suites executed: the cache could not resolve `sdk/cli/package-lock.json`, and the root `prepare` failed with `husky: not found`.
 - **Done when:** from a clean checkout, CLI lint, build, unit tests, and MCP stdio/HTTP smoke all pass; no release-critical path is satisfied only by skipped tests.
+- **Closure evidence:** Commit `84ec879` moved workspace installation and npm caching to the canonical root lockfile, restored the `test:cov` command, and made MCP smoke blocking in CI. A no-hardlink clone of that commit passed root `npm ci`, lint, build, 64 unit suites with 1,087 passing tests, 14 E2E suites with 121 passing tests, and MCP smoke over stdio and Streamable HTTP. The separate 80% coverage regression discovered after installation was unblocked is tracked by GT-48.
 - **References:** [Smart CLI](../../../../sdk/cli/README.md) · [ADR-0073 Unified CLI Output Contract](../../../architecture/adrs/core/0073-unified-cli-output-contract.md) · [Quality Gates](../../sdlc/quality-gates.md)
 
 #### GT-29
@@ -384,6 +385,16 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Purpose:** Keep the public product narrative synchronized with the installable Core/CLI/MCP surfaces.
 - **Done when:** a generated inventory supplies package version, commands, tools, resources, prompts, transports, schemas, and test evidence to EN/ES product docs and maturity reporting; CI rejects drift and placeholder product pages.
 - **References:** [Smart CLI Product](../../../products/smart-cli/README.md) · [MCP Services Product](../../../products/mcp-services/README.md)
+
+#### GT-48
+
+**Title:** Restore the normative CLI coverage threshold
+
+- **Gap:** Once clean workspace installation was restored, the blocking coverage gate exposed 66.14% statement coverage against the normative 80% threshold. Historical maturity evidence still claims 88.70%, so the executable result and product narrative diverge.
+- **Purpose:** Recover meaningful regression protection without lowering the accepted quality threshold or excluding production code merely to improve the metric.
+- **Current evidence / example:** `npm run test:cov --workspace @evolith/smart-cli -- --coverageReporters=json-summary` passes 1,087 tests but reports 4,083 of 6,173 statements covered. The CI gate now reads `.total.statements.pct`, matching the phase-gate contract.
+- **Done when:** statement coverage is at least 80% from a clean checkout; new tests prioritize release-critical validators, policy handlers, CLI commands, MCP runtime paths, and filesystem providers; CI blocks regressions and maturity evidence is regenerated from the current report.
+- **References:** [CLI CI Workflow](../../../../.github/workflows/sdk-cli-ci.yml) · [Jest Configuration](../../../../sdk/cli/jest.config.js) · [Testing Strategy](../../../products/smart-cli/docs/planning/testing-strategy.md)
 
 ---
 

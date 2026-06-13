@@ -217,14 +217,6 @@
       "dependencyDisposition": "none"
     },
     {
-      "id": "GT-28",
-      "closedAt": "2026-06-11",
-      "closureCommit": "ac4da78",
-      "evidence": ["sdk/cli/package.json", ".harness/scripts/mcp-smoke.mjs"],
-      "validationCommands": ["npm run lint --workspace sdk/cli", "npm run build --workspace sdk/cli", "npm test --workspace sdk/cli -- --runInBand", "npm run test:e2e --workspace sdk/cli", "npm run mcp:smoke --workspace sdk/cli"],
-      "dependencyDisposition": "none"
-    },
-    {
       "id": "GT-29",
       "closedAt": "2026-06-11",
       "closureCommit": "769651c",
@@ -270,14 +262,6 @@
       "closureCommit": "f3c8520",
       "evidence": [".harness/scripts/validate-tracking.mjs", ".harness/scripts/validate-tracking.test.mjs", "reference/governance/standards/vision/gap-closure-evidence-standard.md", "reference/governance/standards/vision/gap-closure-evidence.json"],
       "validationCommands": ["node --test .harness/scripts/validate-tracking.test.mjs", "node .harness/scripts/validate-tracking.mjs", "node .harness/scripts/validate-docs.mjs", "node .harness/scripts/check-bilingual-parity.mjs"],
-      "dependencyDisposition": "none"
-    },
-    {
-      "id": "GT-41",
-      "closedAt": "2026-06-13",
-      "closureCommit": "154aadf",
-      "evidence": [".harness/scripts/reconcile-maturity.mjs", ".harness/scripts/reconcile-maturity.test.mjs", "reference/governance/standards/vision/maturity-reconciliation.json", "reference/governance/standards/vision/maturity-assessment.md"],
-      "validationCommands": ["node --test .harness/scripts/reconcile-maturity.test.mjs", "node .harness/scripts/reconcile-maturity.mjs --check", "node .harness/scripts/validate-tracking.mjs"],
       "dependencyDisposition": "none"
     },
     {

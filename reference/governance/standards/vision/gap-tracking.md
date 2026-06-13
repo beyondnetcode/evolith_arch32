@@ -12,14 +12,18 @@ This board is the single source of truth for gap priority and status. Select a g
 
 | ID | Gap | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|
-| [`GT-41`](./gap-reference-catalog.md#gt-41) | Automated maturity reconciliation | Cross | P1 | M | `DONE` |
+| [`GT-28`](./gap-reference-catalog.md#gt-28) | Restore CLI build, test, and smoke baseline | F0 | P0 | M | `PENDING` |
+| [`GT-41`](./gap-reference-catalog.md#gt-41) | Automated maturity reconciliation | Cross | P0 | M | `PENDING` |
+| [`GT-44`](./gap-reference-catalog.md#gt-44) | Deterministic release pipeline integrity | F5 | P0 | M | `PENDING` |
+| [`GT-47`](./gap-reference-catalog.md#gt-47) | Product documentation and release synchronization | Cross | P1 | S | `PENDING` |
+| [`GT-45`](./gap-reference-catalog.md#gt-45) | MCP transport and tool conformance suite | F2 | P1 | M | `PENDING` |
+| [`GT-46`](./gap-reference-catalog.md#gt-46) | Core HTTP service ownership boundary | F2 | P1 | M | `PENDING` |
 | [`GT-42`](./gap-reference-catalog.md#gt-42) | Cross-repository contract conformance | Cross | P1 | M | `DONE` |
 | [`GT-01`](./gap-reference-catalog.md#gt-01) | Unified contract ADR | F0 | P0 | S | `DONE` |
 | [`GT-27`](./gap-reference-catalog.md#gt-27) | Canonical tracking semantic consistency | Cross | P0 | S | `DONE` |
 | [`GT-02`](./gap-reference-catalog.md#gt-02) | `GateEvidence` modeled in the domain layer | F1 | P0 | M | `DONE` |
 | [`GT-03`](./gap-reference-catalog.md#gt-03) | `EvaluateGateUseCase` and `gate evaluate` command | F1 | P0 | M | `DONE` |
 | [`GT-06`](./gap-reference-catalog.md#gt-06) | MCP tool `evolith-gate-evaluate` | F2 | P0 | M | `DONE` |
-| [`GT-28`](./gap-reference-catalog.md#gt-28) | Restore CLI build, test, and smoke baseline | F0 | P0 | M | `DONE` |
 | [`GT-37`](./gap-reference-catalog.md#gt-37) | Evidence-gated semantic gap closure | Cross | P0 | M | `DONE` |
 | [`GT-29`](./gap-reference-catalog.md#gt-29) | Native/OPA rule execution parity | F1 | P0 | L | `DONE` |
 | [`GT-04`](./gap-reference-catalog.md#gt-04) | Remove service locator from domain | F1 | P1 | S | `DONE` |
@@ -48,7 +52,7 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-23`](./gap-reference-catalog.md#gt-23) | Spanish translation backfill | Cross | P2 | L | `DONE` |
 | [`GT-36`](./gap-reference-catalog.md#gt-36) | Machine-readable rules language coverage | Cross | P2 | L | `DONE` |
 
-**Progress:** 35 / 35 done · 0 in progress · 0 pending · 0 deferred
+**Progress:** 33 / 39 done · 0 in progress · 6 pending · 0 deferred
 
 **Ordering:** criticality (`P0` → `P1` → `P2`), active status (`IN-PROGRESS` → `PENDING` → `DEFERRED`), then complexity (`S` → `M` → `L`). Completed gaps follow active work.
 

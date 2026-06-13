@@ -260,6 +260,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Gap:** The CLI refactor had broken its executable release baseline: lint passed, but compilation, unit suites, and MCP smoke did not.
 - **Purpose:** Re-establish an executable release baseline before treating CLI, MCP, or policy-engine capabilities as complete product evidence.
 - **Current evidence / example:** Closed on 2026-06-12. `npm run lint` and `npm run build` pass; 70 unit suites pass with 1,237 tests; 12 E2E suites pass with 110 tests; `npm run mcp:smoke` passes `initialize`, discovery, metrics, and gate evaluation over both stdio and Streamable HTTP.
+- **Reopened evidence (2026-06-13):** Current `main` CI fails before tests because workspace `npm ci` triggers the root Husky prepare script without the root dependency installed. CI cache configuration also points to a missing `sdk/cli/package-lock.json`; the local green workspace is not reproducible from a clean checkout.
 - **Done when:** from a clean checkout, CLI lint, build, unit tests, and MCP stdio/HTTP smoke all pass; no release-critical path is satisfied only by skipped tests.
 - **References:** [Smart CLI](../../../../sdk/cli/README.md) · [ADR-0073 Unified CLI Output Contract](../../../architecture/adrs/core/0073-unified-cli-output-contract.md) · [Quality Gates](../../sdlc/quality-gates.md)
 
@@ -326,6 +327,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Ownership boundary:** Core reconciles only evidence it owns. Tracker and Product Suite maturity remain external inputs and must never inflate the Core score.
 - **Done when:** a generated or reconciled report consumes the canonical Core board, inventories, and test and release evidence; it exposes freshness timestamps, separates Core from external product maturity, and fails on stale status, counts, or evidence links.
 - **Closure evidence:** Core commit `154aadf` added a generated machine-readable reconciliation, regression tests, pre-commit and CI drift checks, and removed manually maintained current totals from the narrative assessment. External product maturity is explicitly excluded.
+- **Reopened evidence (2026-06-13):** The generated snapshot reports every gap complete while four workflows on the same `main` commit are red. It records command names, not test, release, npm, skipped-suite, or CI outcomes, and the narrative assessment retains superseded capability states.
 - **References:** [Maturity Assessment](./maturity-assessment.md) · [Maturity Reconciliation](./maturity-reconciliation.json) · [Inventory Summary](./inventory-summary.md) · [Reconciliation Validator](../../../../.harness/scripts/reconcile-maturity.mjs)
 
 #### GT-42
@@ -338,6 +340,43 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Done when:** shared versioned schemas or pinned contract references define compatibility policy; producer and consumer contract tests run across Core, CLI, and Tracker; CI verifies the latest supported version matrix and blocks incompatible changes.
 - **Closure evidence:** Core commit `154aadf` added the versioned manifest, immutable schema digests, fixtures, conformance tests, and CI enforcement. Tracker commit `4256e7b` pinned the supported contract and added its consumer workflow against Core.
 - **References:** [ADR-0073 Unified CLI Output Contract](../../../architecture/adrs/core/0073-unified-cli-output-contract.md) · [Contract Manifest](../../../../rulesets/contracts/evolith-machine-contracts.json) · [Conformance Policy](../../../../rulesets/contracts/README.md) · [Conformance Validator](../../../../.harness/scripts/validate-contract-conformance.mjs)
+
+#### GT-44
+
+**Title:** Deterministic release pipeline integrity
+
+- **Gap:** Release workflows apply release-only version checks to ordinary merges, reference `pkg.bin.evolith` while the package exposes `smart-cli`, download binary artifacts that are never uploaded, and mask an init smoke failure with `|| true`.
+- **Purpose:** Make npm and binary releases reproducible, blocking, and trustworthy.
+- **Current evidence / example:** GitHub Actions run [27451600153](https://github.com/beyondnetcode/evolith_arch32/actions/runs/27451600153) failed on `4a30a85`; npm confirms `@evolith/smart-cli@1.1.0` exists, but the current release path is unhealthy.
+- **Done when:** release checks are event-correct; package and binary identity comes from `package.json`; every target is uploaded, downloaded, executed, and attached; smoke failures cannot be ignored; failure notification has valid permissions or degrades safely.
+- **References:** [CLI Release Workflow](../../../../.github/workflows/sdk-cli-release.yml) · [General CI/CD](../../../../.github/workflows/ci-cd.yml)
+
+#### GT-45
+
+**Title:** MCP transport and tool conformance suite
+
+- **Gap:** Streamable HTTP smoke is active, but HTTP, API-key, message-routing, and multiple MCP tool suites remain disabled with `describe.skip`; some still target the removed minimal transport.
+- **Purpose:** Prove consistent Core exposure over stdio and Streamable HTTP, including authentication, errors, resources, prompts, and registered tools.
+- **Done when:** obsolete tests are removed or rewritten; no release-relevant MCP suite is skipped; protocol-negative cases run in CI; runtime tools and schemas match the generated inventory.
+- **References:** [MCP Server](../../../../sdk/cli/src/infrastructure/mcp/server.ts) · [MCP E2E Tests](../../../../sdk/cli/test/e2e/mcp-e2e.test.ts)
+
+#### GT-46
+
+**Title:** Core HTTP service ownership boundary
+
+- **Gap:** `smart-cli api` exposes an in-memory “Evolith Tracker Assistant” mock with unrestricted CORS and no governed Core contract, although this repository should contain only services that expose Core.
+- **Purpose:** Prevent Tracker product behavior from leaking into the Core distribution while preserving a valid stateless Core API if that surface is retained.
+- **Done when:** an explicit decision removes the mock API or replaces it with a documented, authenticated, stateless Core exposure contract; CORS is configurable and retained endpoints have schemas and tests.
+- **References:** [API Command](../../../../sdk/cli/src/commands/api/api-serve.command.ts) · [Chatbox Service](../../../../sdk/cli/src/application/services/chatbox-session.service.ts)
+
+#### GT-47
+
+**Title:** Product documentation and release synchronization
+
+- **Gap:** Smart CLI docs advertise `0.0.3-beta`, MCP Services is a content placeholder, and maturity reporting says completed transport, contract, gate, and publication work is still missing.
+- **Purpose:** Keep the public product narrative synchronized with the installable Core/CLI/MCP surfaces.
+- **Done when:** a generated inventory supplies package version, commands, tools, resources, prompts, transports, schemas, and test evidence to EN/ES product docs and maturity reporting; CI rejects drift and placeholder product pages.
+- **References:** [Smart CLI Product](../../../products/smart-cli/README.md) · [MCP Services Product](../../../products/mcp-services/README.md)
 
 ---
 

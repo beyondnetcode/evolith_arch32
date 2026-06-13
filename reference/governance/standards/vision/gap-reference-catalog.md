@@ -291,6 +291,36 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 ### Product Proof
 
+#### GT-30
+
+**Title:** Minimum Tracker governance kernel
+
+- **Gap:** Tracker is still primarily a documented design. The official product boundary defines the canonical process, gate, evidence, approval, exception, and audit responsibilities, but no deployable kernel currently exercises that authority.
+- **Purpose:** Establish the smallest executable Tracker capability that owns governance decisions instead of leaving product authority in the CLI, MCP tools, or documents.
+- **Current evidence / example:** Tracker documentation defines interfaces and lifecycle semantics, while the product remains pre-construction and the Core repository intentionally contains no Tracker runtime implementation.
+- **Done when:** one deployable service persists tenant, product, process, phase, `GateDecision`, `PhaseTransition`, approval, exception, and audit records; CLI and MCP remain technical evaluators; integration tests prove that only Tracker authorizes canonical transitions.
+- **References:** [Tracker Product Boundary](../../../products/evolith-tracker/README.md) · [Tracker Technical Interfaces](../../../products/evolith-tracker/sdlc-tracker-technical-interfaces.md) · [Product Vision](../../../product-suite/vision/evolith-product-vision-master.md)
+
+#### GT-31
+
+**Title:** Minimum Provable Product vertical slice
+
+- **Gap:** No tenant and product have completed the five canonical gates through one Tracker-authoritative process with a connected Evidence Graph.
+- **Purpose:** Prove the end-to-end product thesis before expanding provider breadth, distributed runtime concerns, or enterprise surface area.
+- **Current evidence / example:** UMS is the official executable architecture reference, but it is not yet documented as a complete five-gate Tracker run that connects work, repository, CI, agent, observability, and analytics evidence.
+- **Done when:** one tenant and product traverse all five gates using one work provider, repository and CI provider, agent path, observability source, and analytics path; the run produces five canonical decisions, an audit export, and measured decision lead time.
+- **References:** [Minimum Provable Product](../../../product-suite/vision/evolith-product-vision-master.md#10-minimum-provable-product) · [Governed Composition Target Design](../../../product-suite/architecture/evolith-governed-composition-target-design.md) · [UMS Applied Reference](../../../knowledge/demo/README.md)
+
+#### GT-32
+
+**Title:** Customer and buyer hypothesis validation
+
+- **Gap:** The product vision identifies governance pain and target actors, but the customer, buyer, urgency, and willingness-to-pay hypotheses remain unvalidated by representative external evidence.
+- **Purpose:** Prevent a technically coherent platform from advancing without proof that the selected users and economic buyers experience the problem strongly enough to adopt and fund it.
+- **Current evidence / example:** The vision explicitly calls for interviews and falsifiable experiments, but the reference corpus contains no interview repository, buyer map, ranked pain evidence, procurement constraints, or pricing signal.
+- **Done when:** representative interviews cover user, champion, security/compliance, and economic-buyer roles; results rank pains and alternatives, record procurement and pricing signals, and produce an explicit proceed, revise, or stop decision.
+- **References:** [Customer Hypothesis](../../../product-suite/vision/evolith-product-vision-master.md#13-target-problem-and-customer-hypothesis) · [Strategic Validation and Composition Framework](./evolith-strategic-validation-and-composition-framework.md) · [AI-Assisted Validation Workflow](./evolith-ai-assisted-validation-workflow.md)
+
 #### GT-33
 
 **Title:** Evidence-backed maturity scoring
@@ -310,6 +340,76 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Current evidence / example:** The next planning horizon should prioritize release baseline, Tracker kernel, vertical slice, and pilot learning; distributed-runtime and provider breadth should have explicit evidence triggers.
 - **Done when:** the roadmap orders work as baseline → governance kernel → vertical slice → controlled pilot → scale; deferred technologies name measurable adoption, load, compliance, or provider-pressure triggers; dependencies map to this gap board.
 - **References:** [Evolutionary Strategy Roadmap](./evolutionary-strategy-roadmap.md) · [Minimum Provable Product](../../../product-suite/vision/evolith-product-vision-master.md#10-minimum-provable-product) · [Strategic Validation and Composition Framework](./evolith-strategic-validation-and-composition-framework.md)
+
+#### GT-37
+
+**Title:** Evidence-gated semantic gap closure
+
+- **Gap:** Structural tracking validation can report every gap as complete even when closure criteria remain unchecked, evidence is stale or contradictory, or a dependency is only mocked.
+- **Purpose:** Make `DONE` a defensible semantic claim backed by current, reproducible evidence rather than a table value that is internally consistent.
+- **Current evidence / example:** GT-01 and GT-06 retain unchecked criteria in their historical records, GT-15 is closed around an in-memory mock despite its Tracker dependency, and the maturity assessment still describes obsolete open-gap states.
+- **Done when:** validation rejects `DONE` without completed closure criteria, dated closure evidence, dependency disposition, reproducible validation commands, and a commit or release reference; documented exceptions are explicit, owned, and time-bounded.
+- **References:** [Tracking Validator](../../../../.harness/scripts/validate-tracking.mjs) · [Gap Tracking](./gap-tracking.md) · [Maturity Assessment](./maturity-assessment.md)
+
+#### GT-38
+
+**Title:** Tenant-safe canonical Evidence Graph
+
+- **Gap:** The canonical Evidence Graph is designed but not implemented with durable integrity, lineage, retention, authorization, and tenant isolation.
+- **Purpose:** Create the defensible audit chain and decision substrate required for trustworthy automated gates and enterprise governance.
+- **Current evidence / example:** Tracker interfaces describe evidence objects, but there is no persistent implementation proving hashes, source and actor lineage, retention behavior, tamper detection, or cross-tenant denial.
+- **Done when:** immutable evidence storage records tenant, source, actor, policy, lineage, and integrity hashes; application-layer isolation is primary and database-native enforcement is a secondary failsafe; tests prove tamper detection and deny cross-tenant access.
+- **References:** [Tracker Technical Interfaces](../../../products/evolith-tracker/sdlc-tracker-technical-interfaces.md) · [Governed Composition Target Design](../../../product-suite/architecture/evolith-governed-composition-target-design.md) · [Multi-Tenancy Architecture Strategy](../../../architecture/adrs/core/0010-multi-tenancy-architecture-strategy.md)
+
+#### GT-39
+
+**Title:** Controlled satellite pilot
+
+- **Gap:** No representative satellite team has adopted the full governance workflow under controlled conditions and produced comparable before-and-after evidence.
+- **Purpose:** Validate usability, operational fit, support cost, exception handling, and adoption friction outside the reference corpus itself.
+- **Current evidence / example:** UMS demonstrates applied architecture and migration lessons, but it is not yet evidence of a Tracker-authoritative governance pilot with product and team outcomes.
+- **Done when:** one pilot team and product complete at least one full governed cycle; baseline and post-pilot metrics, support issues, exceptions, usability findings, and adoption decisions are captured; reusable lessons are promoted or explicitly rejected.
+- **References:** [Evolutionary Strategy Roadmap](./evolutionary-strategy-roadmap.md) · [UMS Applied Reference](../../../knowledge/demo/README.md) · [Adoption Cases](../../../knowledge/adoption-cases.md)
+
+#### GT-40
+
+**Title:** Provider replaceability proof
+
+- **Gap:** Provider-neutral contracts are documented, but the same governed workflow has not been demonstrated against two interchangeable providers without changing the canonical domain.
+- **Purpose:** Validate provider replaceability as an actual product differentiator rather than architectural optionality maintained only on paper.
+- **Current evidence / example:** Platform profiles and composition boundaries exist, but there is no conformance fixture, replacement runbook, or measured provider swap.
+- **Done when:** one provider category is replaced end to end without canonical domain changes; both implementations pass the same contract tests; the migration runbook records effort, data movement, rollback, and a predeclared replacement-cost threshold.
+- **References:** [Governed Composition Target Design](../../../product-suite/architecture/evolith-governed-composition-target-design.md) · [Platform Profiles](../../../platforms/README.md) · [Strategic Validation and Composition Framework](./evolith-strategic-validation-and-composition-framework.md)
+
+#### GT-41
+
+**Title:** Automated maturity reconciliation
+
+- **Gap:** Maturity reports, inventories, and the live gap board can diverge because their states and totals are maintained as separate narrative claims.
+- **Purpose:** Keep prioritization and investment decisions aligned with current repository, release, and product evidence.
+- **Current evidence / example:** The maturity assessment still references superseded open gaps and historical counts while the board reports their completion, creating contradictory views of readiness.
+- **Done when:** a generated or reconciled report consumes the canonical board, inventories, test and release evidence, and Tracker evidence; it exposes freshness timestamps, separates Core from suite maturity, and fails on stale status, counts, or evidence links.
+- **References:** [Maturity Assessment](./maturity-assessment.md) · [Inventory Summary](./inventory-summary.md) · [GT-35 Automated Inventories](#gt-35)
+
+#### GT-42
+
+**Title:** Cross-repository contract conformance
+
+- **Gap:** Core, CLI, and Tracker can evolve their evidence and decision contracts independently without proving producer and consumer compatibility.
+- **Purpose:** Ensure technical evaluations remain consumable by the authoritative Tracker throughout independent repository releases.
+- **Current evidence / example:** Contract ADRs and JSON schemas exist, but there is no cross-repository compatibility matrix or CI suite that exercises supported producer and consumer versions together.
+- **Done when:** shared versioned schemas or pinned contract references define compatibility policy; producer and consumer contract tests run across Core, CLI, and Tracker; CI verifies the latest supported version matrix and blocks incompatible changes.
+- **References:** [ADR-0073 Unified CLI Output Contract](../../../architecture/adrs/core/0073-unified-cli-output-contract.md) · [Gate Evidence Schema](../../../../rulesets/schema/gate-evidence.schema.json) · [Tracker Technical Interfaces](../../../products/evolith-tracker/sdlc-tracker-technical-interfaces.md)
+
+#### GT-43
+
+**Title:** Operational product-value metrics
+
+- **Gap:** Technical outputs and maturity claims do not yet quantify whether Evolith reduces decision delay, audit effort, rework, adoption friction, or provider lock-in.
+- **Purpose:** Measure the product outcomes that distinguish governed composition from a documentation framework or validation CLI.
+- **Current evidence / example:** The product vision names capability metrics, but no operational dataset, dashboard, owner, baseline, or review cadence demonstrates realized value.
+- **Done when:** instrumentation and baselines exist for Evidence Completeness, Gate Automation, Traceability Coverage, Decision Lead Time, Audit Preparation Time, Provider Replacement Cost, Rework Avoided, Governance Adoption, and Composed Value; each metric has an owner and review cadence.
+- **References:** [Metrics and Capability Maturity](../../../product-suite/vision/evolith-product-vision-master.md#11-metrics-and-capability-maturity) · [Evolutionary Strategy Roadmap](./evolutionary-strategy-roadmap.md) · [Maturity Assessment](./maturity-assessment.md)
 
 ---
 

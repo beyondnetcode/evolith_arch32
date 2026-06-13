@@ -17,6 +17,7 @@
     "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "node --max-old-space-size=8192 node_modules/.bin/jest",
     "test:watch": "jest --watch",
+    "test:cov": "node --max-old-space-size=4096 node_modules/.bin/jest --coverage --runInBand",
     "test:cov:unit": "node --max-old-space-size=4096 node_modules/.bin/jest --coverage --runInBand",
     "test:cov:e2e": "node --max-old-space-size=4096 node_modules/.bin/jest --config ./test/jest-e2e.json --coverage --runInBand --no-bail",
     "test:e2e": "node --max-old-space-size=4096 node_modules/.bin/jest --config ./test/jest-e2e.json --runInBand --no-bail",

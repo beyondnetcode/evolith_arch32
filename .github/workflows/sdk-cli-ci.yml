@@ -70,7 +70,6 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Install Dependencies
-        working-directory: ${{ env.CLI_DIR }}
         run: npm ci
 
       - name: Security Vulnerability Audit
@@ -92,10 +91,9 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-          cache-dependency-path: ${{ env.CLI_DIR }}/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Install Dependencies
-        working-directory: ${{ env.CLI_DIR }}
         run: npm ci
 
       - name: Architecture Boundary Lint (eslint-plugin-boundaries)
@@ -121,10 +119,9 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-          cache-dependency-path: ${{ env.CLI_DIR }}/package-lock.json
+          cache-dependency-path: package-lock.json
 
       - name: Install Dependencies
-        working-directory: ${{ env.CLI_DIR }}
         run: npm ci
 
       - name: Run Unit Tests
@@ -139,13 +136,13 @@ jobs:
 
       - name: Check Coverage Threshold
         run: |
-          COVERAGE=$(cat ${{ env.CLI_DIR }}/coverage/coverage-summary.json | jq -r '.total.lines.pct')
+          COVERAGE=$(jq -r '.total.statements.pct' ${{ env.CLI_DIR }}/coverage/coverage-summary.json)
           THRESHOLD=80
           if (( $(echo "$COVERAGE < $THRESHOLD" | bc -l) )); then
-            echo "Coverage $COVERAGE% is below threshold $THRESHOLD%"
+            echo "Statement coverage $COVERAGE% is below threshold $THRESHOLD%"
             exit 1
           fi
-          echo "Coverage: $COVERAGE% ✓"
+          echo "Statement coverage: $COVERAGE%"
 
   # ============================================
   # JOB 5: Architecture Validation
@@ -192,7 +189,6 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Install Dependencies
-        working-directory: ${{ env.CLI_DIR }}
         run: npm ci
 
       - name: Build Package
@@ -248,7 +244,6 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Install Dependencies
-        working-directory: ${{ env.CLI_DIR }}
         run: npm ci
 
       - name: Build
@@ -258,6 +253,10 @@ jobs:
       - name: Run E2E Tests
         working-directory: ${{ env.CLI_DIR }}
         run: npm run test:e2e
+
+      - name: Run MCP Stdio and HTTP Smoke
+        working-directory: ${{ env.CLI_DIR }}
+        run: npm run mcp:smoke
 
   # ============================================
   # Gate: All Jobs Must Pass

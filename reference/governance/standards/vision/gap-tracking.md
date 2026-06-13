@@ -12,7 +12,6 @@ This board is the single source of truth for gap priority and status. Select a g
 
 | ID | Gap | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|
-| [`GT-31`](./gap-reference-catalog.md#gt-31) | Minimum Provable Product vertical slice | Product | P0 | L | `PENDING` |
 | [`GT-38`](./gap-reference-catalog.md#gt-38) | Tenant-safe canonical Evidence Graph | Product | P0 | L | `PENDING` |
 | [`GT-32`](./gap-reference-catalog.md#gt-32) | Customer and buyer hypothesis validation | Product | P0 | M | `DEFERRED` |
 | [`GT-40`](./gap-reference-catalog.md#gt-40) | Provider replaceability proof | Product | P1 | M | `PENDING` |
@@ -55,7 +54,7 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-23`](./gap-reference-catalog.md#gt-23) | Spanish translation backfill | Cross | P2 | L | `DONE` |
 | [`GT-36`](./gap-reference-catalog.md#gt-36) | Machine-readable rules language coverage | Cross | P2 | L | `DONE` |
 
-**Progress:** 33 / 42 done · 0 in progress · 7 pending · 2 deferred
+**Progress:** 33 / 41 done · 0 in progress · 6 pending · 2 deferred
 
 **Ordering:** criticality (`P0` → `P1` → `P2`), active status (`IN-PROGRESS` → `PENDING` → `DEFERRED`), then complexity (`S` → `M` → `L`). Completed gaps follow active work.
 

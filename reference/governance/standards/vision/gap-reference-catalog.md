@@ -293,16 +293,6 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 ### Product Proof
 
-#### GT-31
-
-**Title:** Minimum Provable Product vertical slice
-
-- **Gap:** No tenant and product have completed the five canonical gates through one Tracker-authoritative process with a connected Evidence Graph.
-- **Purpose:** Prove the end-to-end product thesis before expanding provider breadth, distributed runtime concerns, or enterprise surface area.
-- **Current evidence / example:** UMS is the official executable architecture reference, but it is not yet documented as a complete five-gate Tracker run that connects work, repository, CI, agent, observability, and analytics evidence.
-- **Done when:** one tenant and product traverse all five gates using one work provider, repository and CI provider, agent path, observability source, and analytics path; the run produces five canonical decisions, an audit export, and measured decision lead time.
-- **References:** [Minimum Provable Product](../../../product-suite/vision/evolith-product-vision-master.md#10-minimum-provable-product) · [Governed Composition Target Design](../../../product-suite/architecture/evolith-governed-composition-target-design.md) · [UMS Applied Reference](../../../knowledge/demo/README.md)
-
 #### GT-32
 
 **Title:** Customer and buyer hypothesis validation

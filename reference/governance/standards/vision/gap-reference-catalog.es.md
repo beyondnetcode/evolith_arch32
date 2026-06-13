@@ -293,16 +293,6 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 ### Prueba de Producto
 
-#### GT-31
-
-**Título:** Vertical slice del Producto Mínimo Comprobable
-
-- **Gap:** Ningún tenant y producto ha completado los cinco gates canónicos mediante un proceso autoritativo de Tracker con un Evidence Graph conectado.
-- **Propósito:** Comprobar la tesis de producto de extremo a extremo antes de ampliar proveedores, runtime distribuido o superficie enterprise.
-- **Evidencia actual / ejemplo:** UMS es la referencia arquitectónica ejecutable oficial, pero aún no está documentado como una ejecución completa de cinco gates en Tracker que conecte evidencia de trabajo, repositorio, CI, agente, observabilidad y analítica.
-- **Cierre cuando:** un tenant y producto atraviesan los cinco gates usando un proveedor de trabajo, un proveedor de repositorio y CI, una ruta de agente, una fuente de observabilidad y una ruta analítica; la ejecución produce cinco decisiones canónicas, una exportación de auditoría y el lead time de decisión medido.
-- **Referencias:** [Producto Mínimo Comprobable](../../../product-suite/vision/evolith-product-vision-master.es.md#10-producto-mínimo-comprobable) · [Diseño Objetivo de Composición Gobernada](../../../product-suite/architecture/evolith-governed-composition-target-design.es.md) · [Referencia Aplicada UMS](../../../knowledge/demo/README.es.md)
-
 #### GT-32
 
 **Título:** Validación de hipótesis de cliente y comprador

@@ -12,7 +12,6 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 
 | ID | Gap | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|
-| [`GT-31`](./gap-reference-catalog.es.md#gt-31) | Vertical slice del Producto Mínimo Comprobable | Producto | P0 | L | `PENDIENTE` |
 | [`GT-38`](./gap-reference-catalog.es.md#gt-38) | Evidence Graph canónico y seguro por tenant | Producto | P0 | L | `PENDIENTE` |
 | [`GT-32`](./gap-reference-catalog.es.md#gt-32) | Validación de hipótesis de cliente y comprador | Producto | P0 | M | `DIFERIDO` |
 | [`GT-40`](./gap-reference-catalog.es.md#gt-40) | Prueba de reemplazabilidad de proveedores | Producto | P1 | M | `PENDIENTE` |
@@ -55,7 +54,7 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-23`](./gap-reference-catalog.es.md#gt-23) | Backfill de traducciones españolas | Transversal | P2 | L | `COMPLETADO` |
 | [`GT-36`](./gap-reference-catalog.es.md#gt-36) | Cobertura lingüística de reglas machine-readable | Transversal | P2 | L | `COMPLETADO` |
 
-**Progreso:** 33 / 42 completados · 0 en progreso · 7 pendientes · 2 diferidos
+**Progreso:** 33 / 41 completados · 0 en progreso · 6 pendientes · 2 diferidos
 
 **Ordenamiento:** criticidad (`P0` → `P1` → `P2`), estado activo (`EN-PROGRESO` → `PENDIENTE` → `DIFERIDO`) y complejidad (`S` → `M` → `L`). Los gaps completados aparecen después del trabajo activo.
 

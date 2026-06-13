@@ -139,14 +139,6 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia actual:** `WebhookAdapter` y el port notifier existen en el working tree; el cierre de integración depende del baseline verde y un test con listener receptor.
 - **Cierre cuando:** un test de integración recibe el payload de evidencia en un listener local.
 
-#### GT-15
-
-**Título:** Endpoint de chatbox con sesión
-
-- **Objetivo:** Endpoint HTTP conversacional (`POST /chat`) con manejo de sesión, según el diseño de interfaces del Tracker.
-- **Evidencia actual:** Core contiene un repositorio de sesiones en memoria y un endpoint de respuesta mock, pero estos no satisfacen almacenamiento autoritativo de Tracker, ejecución gobernada de agentes ni auditoría durable.
-- **Diferido porque:** depende del almacenamiento de sesiones (`ChatboxSession`) y del kernel de gobernanza de Tracker. El prototipo actual de Core es explícitamente evidencia insuficiente para cierre. Revisar cuando el MVP del Tracker consuma GT-06.
-
 ### Fase F5 — Higiene y Publicación
 
 #### GT-16
@@ -293,18 +285,6 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 ### Prueba de Producto
 
-#### GT-32
-
-**Título:** Validación de hipótesis de cliente y comprador
-
-- **Gap:** La visión de producto identifica dolor de gobernanza y actores objetivo, pero las hipótesis de cliente, comprador, urgencia y disposición de pago siguen sin validarse con evidencia externa representativa.
-- **Propósito:** Evitar que una plataforma técnicamente coherente avance sin comprobar que los usuarios y compradores económicos seleccionados experimentan el problema con suficiente intensidad para adoptarla y financiarla.
-- **Evidencia actual / ejemplo:** La visión exige explícitamente entrevistas y experimentos falsables, pero el corpus de referencia no contiene repositorio de entrevistas, mapa de compradores, evidencia priorizada de dolores, restricciones de compra ni señales de precio. El 12 de junio de 2026, el propietario canceló explícitamente este trabajo de recolección de evidencia.
-- **Decisión y riesgo aceptado:** Diferido por decisión del propietario. Evolith puede continuar como referencia técnica y de gobernanza, pero las afirmaciones sobre product-market fit, comprador, urgencia, adquisición y disposición de pago deben permanecer etiquetadas como no validadas y no pueden presentarse como madurez demostrada.
-- **Reactivar cuando:** la comercialización externa, pricing, adquisición enterprise o afirmaciones de product-market fit se conviertan en dependencia de release o inversión.
-- **Cierre cuando:** entrevistas representativas cubren roles de usuario, champion, seguridad/compliance y comprador económico; los resultados priorizan dolores y alternativas, registran señales de compra y precio, y producen una decisión explícita de continuar, revisar o detener.
-- **Referencias:** [Hipótesis de Cliente](../../../product-suite/vision/evolith-product-vision-master.es.md#13-problema-objetivo-e-hipótesis-de-cliente) · [Framework de Validación Estratégica y Composición](./evolith-strategic-validation-and-composition-framework.es.md) · [Workflow de Validación Asistida por IA](./evolith-ai-assisted-validation-workflow.es.md)
-
 #### GT-33
 
 **Título:** Scoring de madurez respaldado por evidencia
@@ -336,26 +316,6 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia de cierre:** El commit `f3c8520` incorporó R-26, el estándar bilingüe de cierre, 32 registros históricos, resolución de commits y artefactos, chequeos de disposición de dependencias, rechazo de criterios sin marcar y cuatro tests de regresión. El mismo cambio corrigió el falso positivo de GT-15.
 - **Referencias:** [Estándar de Evidencia para Cierre de Gaps](./gap-closure-evidence-standard.es.md) · [Registro de Cierres](./gap-closure-evidence.json) · [Validador de Tracking](../../../../.harness/scripts/validate-tracking.mjs) · [Tracking de Gaps](./gap-tracking.es.md)
 
-#### GT-39
-
-**Título:** Piloto controlado con producto satélite
-
-- **Gap:** Ningún equipo satélite representativo ha adoptado el workflow completo de gobernanza bajo condiciones controladas y producido evidencia comparable antes y después.
-- **Propósito:** Validar usabilidad, encaje operacional, costo de soporte, gestión de excepciones y fricción de adopción fuera del propio corpus de referencia.
-- **Evidencia actual / ejemplo:** UMS demuestra arquitectura aplicada y lecciones de migración, pero todavía no es evidencia de un piloto de gobernanza autoritativo en Tracker con resultados de producto y equipo.
-- **Cierre cuando:** un equipo y producto piloto completan al menos un ciclo gobernado; se capturan métricas base y posteriores, problemas de soporte, excepciones, hallazgos de usabilidad y decisiones de adopción; las lecciones reutilizables se promueven o rechazan explícitamente.
-- **Referencias:** [Roadmap de Estrategia Evolutiva](./evolutionary-strategy-roadmap.es.md) · [Referencia Aplicada UMS](../../../knowledge/demo/README.es.md) · [Casos de Adopción](../../../knowledge/adoption-cases.es.md)
-
-#### GT-40
-
-**Título:** Prueba de reemplazabilidad de proveedores
-
-- **Gap:** Los contratos neutrales a proveedor están documentados, pero el mismo workflow gobernado no se ha demostrado con dos proveedores intercambiables sin cambiar el dominio canónico.
-- **Propósito:** Validar la reemplazabilidad de proveedores como diferenciador real del producto y no como opcionalidad arquitectónica mantenida solo en papel.
-- **Evidencia actual / ejemplo:** Existen perfiles de plataforma y límites de composición, pero no hay fixture de conformidad, runbook de reemplazo ni un cambio de proveedor medido.
-- **Cierre cuando:** una categoría de proveedor se reemplaza de extremo a extremo sin cambios al dominio canónico; ambas implementaciones pasan los mismos contract tests; el runbook de migración registra esfuerzo, movimiento de datos, rollback y un umbral predeclarado de costo de reemplazo.
-- **Referencias:** [Diseño Objetivo de Composición Gobernada](../../../product-suite/architecture/evolith-governed-composition-target-design.es.md) · [Perfiles de Plataforma](../../../platforms/README.es.md) · [Framework de Validación Estratégica y Composición](./evolith-strategic-validation-and-composition-framework.es.md)
-
 #### GT-41
 
 **Título:** Reconciliación automática de madurez
@@ -363,7 +323,8 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Gap:** Los reportes de madurez, inventarios y el tablero vivo de gaps pueden divergir porque sus estados y totales se mantienen como afirmaciones narrativas separadas.
 - **Propósito:** Mantener decisiones de prioridad e inversión alineadas con evidencia actual del repositorio, releases y producto.
 - **Evidencia actual / ejemplo:** La evaluación de madurez aún referencia gaps abiertos y conteos reemplazados mientras el tablero reporta su cierre, creando visiones contradictorias de readiness.
-- **Cierre cuando:** un reporte generado o reconciliado consume el tablero canónico, inventarios, evidencia de tests y releases, y evidencia de Tracker; expone timestamps de vigencia, separa madurez de Core y de la suite, y falla ante estados, conteos o enlaces de evidencia obsoletos.
+- **Límite de ownership:** Core reconcilia únicamente la evidencia que posee. La madurez de Tracker y Product Suite permanece como input externo y nunca debe inflar el score de Core.
+- **Cierre cuando:** un reporte generado o reconciliado consume el tablero canónico de Core, inventarios y evidencia de tests y releases; expone timestamps de vigencia, separa Core de la madurez externa de productos y falla ante estados, conteos o enlaces de evidencia obsoletos.
 - **Referencias:** [Evaluación de Madurez](./maturity-assessment.es.md) · [Resumen de Inventario](./inventory-summary.es.md) · [GT-35 Inventarios Automatizados](#gt-35)
 
 #### GT-42
@@ -375,16 +336,6 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia actual / ejemplo:** Existen ADRs contractuales y schemas JSON, pero no una matriz de compatibilidad entre repositorios ni una suite CI que ejecute juntas las versiones soportadas de productores y consumidores.
 - **Cierre cuando:** schemas versionados compartidos o referencias contractuales fijadas definen la política de compatibilidad; contract tests de productor y consumidor se ejecutan entre Core, CLI y Tracker; CI verifica la matriz de últimas versiones soportadas y bloquea cambios incompatibles.
 - **Referencias:** [ADR-0073 Contrato Unificado de Salida del CLI](../../../architecture/adrs/core/0073-unified-cli-output-contract.es.md) · [Schema de Evidencia de Gate](../../../../rulesets/schema/gate-evidence.schema.json) · [Interfaces Técnicas de Tracker](../../../products/evolith-tracker/sdlc-tracker-technical-interfaces.es.md)
-
-#### GT-43
-
-**Título:** Métricas operacionales de valor de producto
-
-- **Gap:** Los outputs técnicos y afirmaciones de madurez aún no cuantifican si Evolith reduce demora de decisiones, esfuerzo de auditoría, retrabajo, fricción de adopción o dependencia de proveedores.
-- **Propósito:** Medir los resultados de producto que distinguen la composición gobernada de un framework documental o un CLI de validación.
-- **Evidencia actual / ejemplo:** La visión de producto nombra métricas de capacidad, pero ningún dataset operacional, dashboard, responsable, baseline o cadencia de revisión demuestra valor realizado.
-- **Cierre cuando:** existen instrumentación y baselines para Evidence Completeness, Gate Automation, Traceability Coverage, Decision Lead Time, Audit Preparation Time, Provider Replacement Cost, Rework Avoided, Governance Adoption y Composed Value; cada métrica tiene responsable y cadencia de revisión.
-- **Referencias:** [Métricas y Madurez de Capacidades](../../../product-suite/vision/evolith-product-vision-master.es.md#11-métricas-y-madurez-de-capacidades) · [Roadmap de Estrategia Evolutiva](./evolutionary-strategy-roadmap.es.md) · [Evaluación de Madurez](./maturity-assessment.es.md)
 
 ---
 

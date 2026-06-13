@@ -12,13 +12,8 @@ This board is the single source of truth for gap priority and status. Select a g
 
 | ID | Gap | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|
-| [`GT-32`](./gap-reference-catalog.md#gt-32) | Customer and buyer hypothesis validation | Product | P0 | M | `DEFERRED` |
-| [`GT-40`](./gap-reference-catalog.md#gt-40) | Provider replaceability proof | Product | P1 | M | `PENDING` |
 | [`GT-41`](./gap-reference-catalog.md#gt-41) | Automated maturity reconciliation | Cross | P1 | M | `PENDING` |
 | [`GT-42`](./gap-reference-catalog.md#gt-42) | Cross-repository contract conformance | Cross | P1 | M | `PENDING` |
-| [`GT-43`](./gap-reference-catalog.md#gt-43) | Operational product-value metrics | Product | P1 | M | `PENDING` |
-| [`GT-39`](./gap-reference-catalog.md#gt-39) | Controlled satellite pilot | Product | P1 | L | `PENDING` |
-| [`GT-15`](./gap-reference-catalog.md#gt-15) | Session-aware chatbox endpoint | F4 | P2 | L | `DEFERRED` |
 | [`GT-01`](./gap-reference-catalog.md#gt-01) | Unified contract ADR | F0 | P0 | S | `DONE` |
 | [`GT-27`](./gap-reference-catalog.md#gt-27) | Canonical tracking semantic consistency | Cross | P0 | S | `DONE` |
 | [`GT-02`](./gap-reference-catalog.md#gt-02) | `GateEvidence` modeled in the domain layer | F1 | P0 | M | `DONE` |
@@ -53,7 +48,7 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-23`](./gap-reference-catalog.md#gt-23) | Spanish translation backfill | Cross | P2 | L | `DONE` |
 | [`GT-36`](./gap-reference-catalog.md#gt-36) | Machine-readable rules language coverage | Cross | P2 | L | `DONE` |
 
-**Progress:** 33 / 40 done · 0 in progress · 5 pending · 2 deferred
+**Progress:** 33 / 35 done · 0 in progress · 2 pending · 0 deferred
 
 **Ordering:** criticality (`P0` → `P1` → `P2`), active status (`IN-PROGRESS` → `PENDING` → `DEFERRED`), then complexity (`S` → `M` → `L`). Completed gaps follow active work.
 

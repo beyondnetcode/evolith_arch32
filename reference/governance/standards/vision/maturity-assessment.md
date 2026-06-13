@@ -90,10 +90,10 @@ The assessment scores against the 5 standard TOGAF ACMM levels (1: Initial to 5:
 * **Evidence:** JSON-RPC 2.0 over stdio and official MCP SDK Streamable HTTP; API-key authentication; 29 MCP E2E cases; smoke verifies initialize, discovery, metrics, and gate evaluation over both transports. See the generated [maturity reconciliation](./maturity-reconciliation.json).
 * **Path to Level 5:** automated protocol conformance against supported MCP specification versions.
 
-### Dimension 2: Test Coverage & Quality Gates — **Level 3 (Defined)**
-* **State:** `Implemented` (Coverage gate blocked)
-* **Evidence:** 1,087 unit and 121 E2E tests pass from a clean checkout, while current statement coverage is 66.14% against the normative 80% threshold ([GT-48](./gap-reference-catalog.md#gt-48)). The generated [maturity reconciliation](./maturity-reconciliation.json) records the executable outcome and source run.
-* **Path to Level 4:** restore statement coverage to at least 80% and keep the blocking CI gate green.
+### Dimension 2: Test Coverage & Quality Gates — **Level 4 (Managed)**
+* **State:** `Validated`
+* **Evidence:** 1,206 unit and 121 E2E tests pass from a clean checkout, and statement coverage is 80.65% (4,979/6,173) against the normative 80% threshold, restored under [GT-48](./gap-reference-catalog.md#gt-48) by testing native rule handlers, validators, and filesystem providers. The generated [maturity reconciliation](./maturity-reconciliation.json) records the executable outcome and source.
+* **Path to Level 5:** durable per-run coverage thresholds in the Jest configuration ([GT-50](./gap-reference-catalog.md#gt-50)) and mutation testing.
 
 ### Dimension 3: Governance Exposure Completeness — **Level 4 (Managed)**
 * **State:** `Validated`

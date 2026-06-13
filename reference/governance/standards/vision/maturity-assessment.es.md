@@ -90,10 +90,10 @@ La evaluación usa los 5 niveles estándar del ACMM (1: Inicial a 5: Optimizante
 * **Evidencia:** JSON-RPC 2.0 por stdio y Streamable HTTP oficial del SDK MCP; autenticación por API key; 29 casos E2E MCP; el smoke verifica initialize, discovery, métricas y evaluación de gates en ambos transportes. Ver la [reconciliación de madurez](./maturity-reconciliation.json) generada.
 * **Camino al Nivel 5:** conformidad de protocolo automatizada contra las versiones soportadas de la especificación MCP.
 
-### Dimensión 2: Cobertura de Tests y Quality Gates — **Nivel 3 (Definido)**
-* **Estado:** `Implementado` (Gate de cobertura bloqueado)
-* **Evidencia:** 1,087 tests unitarios y 121 E2E pasan desde un checkout limpio, mientras la cobertura actual de statements es 66.14% frente al umbral normativo de 80% ([GT-48](./gap-reference-catalog.es.md#gt-48)). La [reconciliación de madurez](./maturity-reconciliation.json) generada registra el resultado ejecutable y su run de origen.
-* **Camino al Nivel 4:** restaurar la cobertura de statements a al menos 80% y mantener verde el gate bloqueante de CI.
+### Dimensión 2: Cobertura de Tests y Quality Gates — **Nivel 4 (Gestionado)**
+* **Estado:** `Validado`
+* **Evidencia:** 1,206 tests unitarios y 121 E2E pasan desde un checkout limpio, y la cobertura de statements es 80,65% (4.979/6.173) frente al umbral normativo de 80%, restaurada bajo [GT-48](./gap-reference-catalog.es.md#gt-48) testeando los native rule handlers, validators y filesystem providers. La [reconciliación de madurez](./maturity-reconciliation.json) generada registra el resultado ejecutable y su origen.
+* **Camino al Nivel 5:** umbrales de cobertura durables por-run en la configuración de Jest ([GT-50](./gap-reference-catalog.es.md#gt-50)) y mutation testing.
 
 ### Dimensión 3: Completitud de Exposición de Gobernanza — **Nivel 4 (Gestionado)**
 * **Estado:** `Validado`

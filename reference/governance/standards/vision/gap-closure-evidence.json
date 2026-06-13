@@ -309,6 +309,26 @@
       "dependencyRationale": "Tracker-owned chat and session behavior was removed; Core exposes governed capabilities through CLI and MCP only."
     },
     {
+      "id": "GT-48",
+      "closedAt": "2026-06-13",
+      "closureCommit": "48e1d909992f29cd2cd49993101eb36ec730ae3a",
+      "evidence": [
+        "sdk/cli/src/infrastructure/adapters/moscow-prioritization.service.spec.ts",
+        "sdk/cli/src/application/validators/architecture-drift.service.spec.ts",
+        "sdk/cli/src/application/validators/evaluators/handlers/architecture-rule.handler.spec.ts",
+        "sdk/cli/src/application/validators/evaluators/handlers/governance-rule.handler.spec.ts",
+        "sdk/cli/src/application/validators/evaluators/opa-input-builder.spec.ts",
+        "sdk/cli/src/infrastructure/providers/node-filesystem.provider.spec.ts",
+        "sdk/cli/src/infrastructure/adapters/disk-ruleset.repository.spec.ts"
+      ],
+      "validationCommands": [
+        "npm run test:cov --workspace @evolith/smart-cli -- --coverageReporters=json-summary",
+        "node -e \"process.exit(require('./sdk/cli/coverage/coverage-summary.json').total.statements.pct >= 80 ? 0 : 1)\""
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "GT-04 removed the service locator; the revived suites now inject collaborators through the constructor."
+    },
+    {
       "id": "GT-44",
       "closedAt": "2026-06-13",
       "closureCommit": "26f6a1809b6258880173a934357d53beb37fcb7b",

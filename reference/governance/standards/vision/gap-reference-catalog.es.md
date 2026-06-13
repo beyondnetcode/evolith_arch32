@@ -336,16 +336,6 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia de cierre:** El commit `f3c8520` incorporó R-26, el estándar bilingüe de cierre, 32 registros históricos, resolución de commits y artefactos, chequeos de disposición de dependencias, rechazo de criterios sin marcar y cuatro tests de regresión. El mismo cambio corrigió el falso positivo de GT-15.
 - **Referencias:** [Estándar de Evidencia para Cierre de Gaps](./gap-closure-evidence-standard.es.md) · [Registro de Cierres](./gap-closure-evidence.json) · [Validador de Tracking](../../../../.harness/scripts/validate-tracking.mjs) · [Tracking de Gaps](./gap-tracking.es.md)
 
-#### GT-38
-
-**Título:** Evidence Graph canónico y seguro por tenant
-
-- **Gap:** El Evidence Graph canónico está diseñado pero no implementado con integridad durable, lineage, retención, autorización y aislamiento por tenant.
-- **Propósito:** Crear la cadena de auditoría defendible y el sustrato de decisión requeridos por gates automatizados confiables y gobernanza enterprise.
-- **Evidencia actual / ejemplo:** Las interfaces de Tracker describen objetos de evidencia, pero no existe una implementación persistente que pruebe hashes, lineage de fuente y actor, retención, detección de alteraciones o denegación entre tenants.
-- **Cierre cuando:** el almacenamiento inmutable de evidencia registra tenant, fuente, actor, política, lineage y hashes de integridad; el aislamiento en aplicación es primario y el enforcement nativo de base de datos es un failsafe secundario; los tests prueban detección de alteraciones y deniegan acceso entre tenants.
-- **Referencias:** [Interfaces Técnicas de Tracker](../../../products/evolith-tracker/sdlc-tracker-technical-interfaces.es.md) · [Diseño Objetivo de Composición Gobernada](../../../product-suite/architecture/evolith-governed-composition-target-design.es.md) · [Estrategia de Arquitectura Multi-Tenancy](../../../architecture/adrs/core/0010-multi-tenancy-architecture-strategy.es.md)
-
 #### GT-39
 
 **Título:** Piloto controlado con producto satélite

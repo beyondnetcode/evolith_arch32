@@ -336,16 +336,6 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Closure evidence:** Commit `f3c8520` introduced R-26, the bilingual closure standard, 32 historical closure records, commit and artifact resolution, dependency disposition checks, unchecked-criterion rejection, and four regression tests. The same change corrected the false-positive GT-15 status.
 - **References:** [Gap Closure Evidence Standard](./gap-closure-evidence-standard.md) · [Closure Registry](./gap-closure-evidence.json) · [Tracking Validator](../../../../.harness/scripts/validate-tracking.mjs) · [Gap Tracking](./gap-tracking.md)
 
-#### GT-38
-
-**Title:** Tenant-safe canonical Evidence Graph
-
-- **Gap:** The canonical Evidence Graph is designed but not implemented with durable integrity, lineage, retention, authorization, and tenant isolation.
-- **Purpose:** Create the defensible audit chain and decision substrate required for trustworthy automated gates and enterprise governance.
-- **Current evidence / example:** Tracker interfaces describe evidence objects, but there is no persistent implementation proving hashes, source and actor lineage, retention behavior, tamper detection, or cross-tenant denial.
-- **Done when:** immutable evidence storage records tenant, source, actor, policy, lineage, and integrity hashes; application-layer isolation is primary and database-native enforcement is a secondary failsafe; tests prove tamper detection and deny cross-tenant access.
-- **References:** [Tracker Technical Interfaces](../../../products/evolith-tracker/sdlc-tracker-technical-interfaces.md) · [Governed Composition Target Design](../../../product-suite/architecture/evolith-governed-composition-target-design.md) · [Multi-Tenancy Architecture Strategy](../../../architecture/adrs/core/0010-multi-tenancy-architecture-strategy.md)
-
 #### GT-39
 
 **Title:** Controlled satellite pilot

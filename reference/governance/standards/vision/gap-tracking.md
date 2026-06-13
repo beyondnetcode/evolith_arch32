@@ -12,7 +12,7 @@ This board is the single source of truth for gap priority and status. Select a g
 
 | ID | Gap | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|
-| [`GT-37`](./gap-reference-catalog.md#gt-37) | Evidence-gated semantic gap closure | Cross | P0 | M | `PENDING` |
+| [`GT-37`](./gap-reference-catalog.md#gt-37) | Evidence-gated semantic gap closure | Cross | P0 | M | `IN-PROGRESS` |
 | [`GT-30`](./gap-reference-catalog.md#gt-30) | Minimum Tracker governance kernel | Product | P0 | L | `PENDING` |
 | [`GT-31`](./gap-reference-catalog.md#gt-31) | Minimum Provable Product vertical slice | Product | P0 | L | `PENDING` |
 | [`GT-38`](./gap-reference-catalog.md#gt-38) | Tenant-safe canonical Evidence Graph | Product | P0 | L | `PENDING` |
@@ -22,6 +22,7 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-42`](./gap-reference-catalog.md#gt-42) | Cross-repository contract conformance | Cross | P1 | M | `PENDING` |
 | [`GT-43`](./gap-reference-catalog.md#gt-43) | Operational product-value metrics | Product | P1 | M | `PENDING` |
 | [`GT-39`](./gap-reference-catalog.md#gt-39) | Controlled satellite pilot | Product | P1 | L | `PENDING` |
+| [`GT-15`](./gap-reference-catalog.md#gt-15) | Session-aware chatbox endpoint | F4 | P2 | L | `DEFERRED` |
 | [`GT-01`](./gap-reference-catalog.md#gt-01) | Unified contract ADR | F0 | P0 | S | `DONE` |
 | [`GT-27`](./gap-reference-catalog.md#gt-27) | Canonical tracking semantic consistency | Cross | P0 | S | `DONE` |
 | [`GT-02`](./gap-reference-catalog.md#gt-02) | `GateEvidence` modeled in the domain layer | F1 | P0 | M | `DONE` |
@@ -52,11 +53,10 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-21`](./gap-reference-catalog.md#gt-21) | Placement review of tool-centric Core ADRs | Cross | P2 | M | `DONE` |
 | [`GT-24`](./gap-reference-catalog.md#gt-24) | Execute declared documentation migrations | Cross | P2 | M | `DONE` |
 | [`GT-25`](./gap-reference-catalog.md#gt-25) | First provider profiles | Cross | P2 | L | `DONE` |
-| [`GT-15`](./gap-reference-catalog.md#gt-15) | Session-aware chatbox endpoint | F4 | P2 | L | `DONE` |
 | [`GT-23`](./gap-reference-catalog.md#gt-23) | Spanish translation backfill | Cross | P2 | L | `DONE` |
 | [`GT-36`](./gap-reference-catalog.md#gt-36) | Machine-readable rules language coverage | Cross | P2 | L | `DONE` |
 
-**Progress:** 33 / 43 done · 0 in progress · 9 pending · 1 deferred
+**Progress:** 32 / 43 done · 1 in progress · 8 pending · 2 deferred
 
 **Ordering:** criticality (`P0` → `P1` → `P2`), active status (`IN-PROGRESS` → `PENDING` → `DEFERRED`), then complexity (`S` → `M` → `L`). Completed gaps follow active work.
 

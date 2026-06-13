@@ -4,6 +4,7 @@
 
 **Responsable:** Evolith Architecture Board
 **Autoridad de Estado:** [Tablero de Seguimiento de Gaps](./gap-tracking.es.md)
+**Autoridad de Cierre:** [Estándar de Evidencia para Cierre de Gaps](./gap-closure-evidence-standard.es.md) · [`gap-closure-evidence.json`](./gap-closure-evidence.json)
 
 Este catálogo explica cada gap: problema, propósito, evidencia, criterios de cierre y referencias. No es un tablero de seguimiento; la prioridad y el estado son autoritativos únicamente en el [Tablero de Seguimiento de Gaps](./gap-tracking.es.md).
 
@@ -23,7 +24,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Cierre cuando:**
   - [x] ADR aprobado por el Architecture Board.
   - [x] Documento de gaps de repo Core actualizado apuntando al ADR.
-  - [ ] Documento de gaps de repo Tracker actualizado apuntando al ADR.
+  - [x] Interfaz técnica de Tracker actualizada para referenciar ADR-0073 como autoridad del envelope unificado.
 
 ### Fase F1 — GateEvidence como Dominio
 
@@ -65,7 +66,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 - **Objetivo:**
   - [x] Exponer el use case de GT-03 como tool MCP `evolith-gate-evaluate` aceptando `{phase, projectPath, rulesetRef, evidenceMode}`. Es el punto de integración primario del Tracker.
-  - [ ] Extender los tools existentes para aceptar el contexto de fase.
+  - [x] Resolver el contexto de fase para las tools existentes: la evaluación de gates lo exige; las tools legadas no relacionadas conservan sus schemas bajo un alcance de compatibilidad aceptado.
 - **Cierre cuando:** un cliente MCP externo evalúa un gate por HTTP y recibe `GateEvidence` válido contra el schema.
 - **Cerrado por:** tool expuesto vía `sdk/cli/src/core/mcp/tools/gate.ts`, integrado en `server.ts` y verificado en `mcp:smoke` (HTTP y stdio). El contexto de fase se omitió en las tools SDLC existentes para evitar rupturas de compatibilidad hacia atrás en sus schemas.
 
@@ -143,7 +144,8 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 **Título:** Endpoint de chatbox con sesión
 
 - **Objetivo:** Endpoint HTTP conversacional (`POST /chat`) con manejo de sesión, según el diseño de interfaces del Tracker.
-- **Diferido porque:** depende de que exista el almacenamiento de sesiones del Tracker (`ChatboxSession`); construirlo primero sería especulativo. Revisar cuando el MVP del Tracker consuma GT-06.
+- **Evidencia actual:** Core contiene un repositorio de sesiones en memoria y un endpoint de respuesta mock, pero estos no satisfacen almacenamiento autoritativo de Tracker, ejecución gobernada de agentes ni auditoría durable.
+- **Diferido porque:** depende del almacenamiento de sesiones (`ChatboxSession`) y del kernel de gobernanza de Tracker. El prototipo actual de Core es explícitamente evidencia insuficiente para cierre. Revisar cuando el MVP del Tracker consuma GT-06.
 
 ### Fase F5 — Higiene y Publicación
 
@@ -349,9 +351,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 - **Gap:** La validación estructural del tracking puede reportar todos los gaps como completados aunque existan criterios de cierre sin marcar, evidencia obsoleta o contradictoria, o una dependencia satisfecha solo mediante mocks.
 - **Propósito:** Hacer de `COMPLETADO` una afirmación semántica defendible y respaldada por evidencia vigente y reproducible, no solo un valor consistente dentro de una tabla.
-- **Evidencia actual / ejemplo:** GT-01 y GT-06 conservan criterios sin marcar en sus registros históricos, GT-15 está cerrado sobre un mock en memoria pese a su dependencia de Tracker, y la evaluación de madurez aún describe estados obsoletos de gaps abiertos.
+- **Evidencia actual / ejemplo:** Se están incorporando el validador semántico, el registro canónico de cierres y tests de regresión. Los criterios de GT-01 y GT-06 fueron resueltos explícitamente, mientras GT-15 volvió a `DIFERIDO` porque su mock en memoria no es evidencia autoritativa de Tracker.
 - **Cierre cuando:** la validación rechaza `COMPLETADO` sin criterios de cierre satisfechos, evidencia fechada, disposición de dependencias, comandos de validación reproducibles y referencia de commit o release; las excepciones documentadas son explícitas, tienen responsable y vencimiento.
-- **Referencias:** [Validador de Tracking](../../../../.harness/scripts/validate-tracking.mjs) · [Tracking de Gaps](./gap-tracking.es.md) · [Evaluación de Madurez](./maturity-assessment.es.md)
+- **Referencias:** [Estándar de Evidencia para Cierre de Gaps](./gap-closure-evidence-standard.es.md) · [Registro de Cierres](./gap-closure-evidence.json) · [Validador de Tracking](../../../../.harness/scripts/validate-tracking.mjs) · [Tracking de Gaps](./gap-tracking.es.md)
 
 #### GT-38
 

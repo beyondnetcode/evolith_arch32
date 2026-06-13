@@ -12,7 +12,7 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 
 | ID | Gap | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|
-| [`GT-37`](./gap-reference-catalog.es.md#gt-37) | Cierre semántico de gaps condicionado por evidencia | Transversal | P0 | M | `PENDIENTE` |
+| [`GT-37`](./gap-reference-catalog.es.md#gt-37) | Cierre semántico de gaps condicionado por evidencia | Transversal | P0 | M | `EN-PROGRESO` |
 | [`GT-30`](./gap-reference-catalog.es.md#gt-30) | Kernel mínimo de gobernanza Tracker | Producto | P0 | L | `PENDIENTE` |
 | [`GT-31`](./gap-reference-catalog.es.md#gt-31) | Vertical slice del Producto Mínimo Comprobable | Producto | P0 | L | `PENDIENTE` |
 | [`GT-38`](./gap-reference-catalog.es.md#gt-38) | Evidence Graph canónico y seguro por tenant | Producto | P0 | L | `PENDIENTE` |
@@ -22,6 +22,7 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-42`](./gap-reference-catalog.es.md#gt-42) | Conformidad contractual entre repositorios | Transversal | P1 | M | `PENDIENTE` |
 | [`GT-43`](./gap-reference-catalog.es.md#gt-43) | Métricas operacionales de valor de producto | Producto | P1 | M | `PENDIENTE` |
 | [`GT-39`](./gap-reference-catalog.es.md#gt-39) | Piloto controlado con producto satélite | Producto | P1 | L | `PENDIENTE` |
+| [`GT-15`](./gap-reference-catalog.es.md#gt-15) | Endpoint de chatbox con sesión | F4 | P2 | L | `DIFERIDO` |
 | [`GT-01`](./gap-reference-catalog.es.md#gt-01) | ADR de contrato unificado | F0 | P0 | S | `COMPLETADO` |
 | [`GT-27`](./gap-reference-catalog.es.md#gt-27) | Consistencia semántica del tracking canónico | Transversal | P0 | S | `COMPLETADO` |
 | [`GT-02`](./gap-reference-catalog.es.md#gt-02) | `GateEvidence` modelado en la capa de dominio | F1 | P0 | M | `COMPLETADO` |
@@ -52,11 +53,10 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-21`](./gap-reference-catalog.es.md#gt-21) | Revisión de ubicación de ADRs Core tool-céntricos | Transversal | P2 | M | `COMPLETADO` |
 | [`GT-24`](./gap-reference-catalog.es.md#gt-24) | Ejecutar migraciones documentales declaradas | Transversal | P2 | M | `COMPLETADO` |
 | [`GT-25`](./gap-reference-catalog.es.md#gt-25) | Primeros perfiles de proveedor | Transversal | P2 | L | `COMPLETADO` |
-| [`GT-15`](./gap-reference-catalog.es.md#gt-15) | Endpoint de chatbox con sesión | F4 | P2 | L | `COMPLETADO` |
 | [`GT-23`](./gap-reference-catalog.es.md#gt-23) | Backfill de traducciones españolas | Transversal | P2 | L | `COMPLETADO` |
 | [`GT-36`](./gap-reference-catalog.es.md#gt-36) | Cobertura lingüística de reglas machine-readable | Transversal | P2 | L | `COMPLETADO` |
 
-**Progreso:** 33 / 43 completados · 0 en progreso · 9 pendientes · 1 diferido
+**Progreso:** 32 / 43 completados · 1 en progreso · 8 pendientes · 2 diferidos
 
 **Ordenamiento:** criticidad (`P0` → `P1` → `P2`), estado activo (`EN-PROGRESO` → `PENDIENTE` → `DIFERIDO`) y complejidad (`S` → `M` → `L`). Los gaps completados aparecen después del trabajo activo.
 

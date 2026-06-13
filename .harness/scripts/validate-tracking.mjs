@@ -1,156 +1,282 @@
 import fs from 'fs';
 import path from 'path';
+import { execFileSync } from 'child_process';
+import { fileURLToPath, pathToFileURL } from 'url';
 
-const EN_FILE = path.resolve('reference/governance/standards/vision/gap-tracking.md');
-const ES_FILE = path.resolve('reference/governance/standards/vision/gap-tracking.es.md');
-const EN_CATALOG = path.resolve('reference/governance/standards/vision/gap-reference-catalog.md');
-const ES_CATALOG = path.resolve('reference/governance/standards/vision/gap-reference-catalog.es.md');
+const ROOT = path.resolve(process.env.EVOLITH_TRACKING_ROOT || '.');
+const EN_FILE = path.join(ROOT, 'reference/governance/standards/vision/gap-tracking.md');
+const ES_FILE = path.join(ROOT, 'reference/governance/standards/vision/gap-tracking.es.md');
+const EN_CATALOG = path.join(ROOT, 'reference/governance/standards/vision/gap-reference-catalog.md');
+const ES_CATALOG = path.join(ROOT, 'reference/governance/standards/vision/gap-reference-catalog.es.md');
+const CLOSURE_REGISTRY = path.join(
+  ROOT,
+  'reference/governance/standards/vision/gap-closure-evidence.json',
+);
 
-let hasErrors = false;
+const STATUS_MAP = new Map([
+  ['DONE', 'done'],
+  ['COMPLETADO', 'done'],
+  ['PENDING', 'pending'],
+  ['PENDIENTE', 'pending'],
+  ['DEFERRED', 'deferred'],
+  ['DIFERIDO', 'deferred'],
+  ['IN-PROGRESS', 'in-progress'],
+  ['EN-PROGRESO', 'in-progress'],
+  ['EN PROGRESO', 'in-progress'],
+]);
 
-function reportError(msg) {
-  console.error(`❌ [ERROR] ${msg}`);
-  hasErrors = true;
-}
+const DEPENDENCY_DISPOSITIONS = new Set([
+  'none',
+  'satisfied',
+  'accepted-scope',
+  'deferred',
+]);
 
 function parseTableRows(filePath) {
-  const content = fs.readFileSync(filePath, 'utf-8');
-  const lines = content.split('\n');
+  const content = fs.readFileSync(filePath, 'utf8');
   const rows = [];
   let inTable = false;
-  
-  for (const line of lines) {
-    if (line.startsWith('| ID |') || line.startsWith('|---|') || line.startsWith('| ID | Gap | Fase |')) {
+
+  for (const line of content.split('\n')) {
+    if (line.startsWith('| ID |')) {
       inTable = true;
       continue;
     }
-    if (inTable) {
-      if (!line.trim().startsWith('|')) {
-        inTable = false;
-        continue;
-      }
-      const cols = line.split('|').map(c => c.trim()).filter(c => c);
-      if (cols.length >= 6) {
-        // ID format: [`GT-35`](./gap-reference-catalog.md#gt-35)
-        const idMatch = cols[0].match(/`GT-(\d+)`/);
-        if (idMatch) {
-          rows.push({
-            id: `GT-${idMatch[1]}`,
-            status: cols[5].replace(/`/g, '')
-          });
-        }
-      }
+    if (!inTable) continue;
+    if (line.startsWith('|---|')) continue;
+    if (!line.trim().startsWith('|')) break;
+
+    const cols = line.split('|').map((column) => column.trim()).filter(Boolean);
+    const idMatch = cols[0]?.match(/`(GT-\d+)`/);
+    if (idMatch && cols.length >= 6) {
+      rows.push({
+        id: idMatch[1],
+        status: cols[5].replaceAll('`', '').toUpperCase(),
+      });
     }
   }
+
   return { rows, content };
 }
 
-function parseCatalogIds(filePath) {
-  const content = fs.readFileSync(filePath, 'utf-8');
-  const lines = content.split('\n');
-  const ids = new Set();
-  
-  for (const line of lines) {
-    const match = line.match(/^#### (GT-\d+)/);
-    if (match) {
-      ids.add(match[1]);
-    }
+function parseCatalogSections(filePath) {
+  const content = fs.readFileSync(filePath, 'utf8');
+  const sections = new Map();
+  const matches = [...content.matchAll(/^#### (GT-\d+)\s*$/gm)];
+
+  for (let index = 0; index < matches.length; index += 1) {
+    const current = matches[index];
+    const next = matches[index + 1];
+    sections.set(
+      current[1],
+      content.slice(current.index, next?.index ?? content.length),
+    );
   }
-  return ids;
+
+  return sections;
 }
 
-function validateFile(trackingFile, catalogFile, isEs) {
-  console.log(`\nValidating ${path.basename(trackingFile)}...`);
-  const { rows, content } = parseTableRows(trackingFile);
-  const catalogIds = parseCatalogIds(catalogFile);
-  
-  const idCounts = {};
-  let pendingCount = 0;
-  let deferredCount = 0;
-  let doneCount = 0;
+function parseProgress(content, isEs) {
+  const pattern = isEs
+    ? /\*\*Progreso:\*\* (\d+) \/ (\d+) completados · (\d+) en progreso · (\d+) pendientes · (\d+) diferidos?/
+    : /\*\*Progress:\*\* (\d+) \/ (\d+) done · (\d+) in progress · (\d+) pending · (\d+) deferred/;
+  const match = content.match(pattern);
+  if (!match) return null;
 
-  for (const row of rows) {
-    idCounts[row.id] = (idCounts[row.id] || 0) + 1;
-    
-    // Check duplicates
-    if (idCounts[row.id] > 1) {
-      reportError(`Duplicate ID found: ${row.id}`);
-    }
-    
-    // Check catalog reference
-    if (!catalogIds.has(row.id)) {
-      reportError(`ID ${row.id} exists in tracking board but is missing a '#### ${row.id}' section in ${path.basename(catalogFile)}`);
-    }
-
-    // Count statuses
-    const status = row.status.toUpperCase();
-    if (status === 'PENDING' || status === 'PENDIENTE') pendingCount++;
-    else if (status === 'DEFERRED' || status === 'DIFERIDO') deferredCount++;
-    else if (status === 'DONE' || status === 'COMPLETADO') doneCount++;
-    else if (status === 'IN-PROGRESS' || status === 'EN-PROGRESO') pendingCount++; // Treating in-progress separately below or merging. 
-    // Wait, the text says "Progress: 16 / 33 done · 3 in progress · 13 pending · 1 deferred"
-  }
-  
-  // Recount properly for in-progress
-  let inProgressCount = 0;
-  pendingCount = 0;
-  for (const row of rows) {
-    const status = row.status.toUpperCase();
-    if (status === 'IN-PROGRESS' || status === 'EN-PROGRESO' || status === 'EN PROGRESO') inProgressCount++;
-    else if (status === 'PENDING' || status === 'PENDIENTE') pendingCount++;
-  }
-
-  const total = doneCount + pendingCount + deferredCount + inProgressCount;
-  
-  // Find the progress line
-  const progressMatchEn = content.match(/\*\*Progress:\*\* (\d+) \/ \d+ done · (\d+) in progress · (\d+) pending · (\d+) deferred/);
-  const progressMatchEs = content.match(/\*\*Progreso:\*\* (\d+) \/ \d+ completados · (\d+) en progreso · (\d+) pendientes · (\d+) diferido/);
-  
-  const progressMatch = isEs ? progressMatchEs : progressMatchEn;
-  
-  if (progressMatch) {
-    const pDone = parseInt(progressMatch[1], 10);
-    const pInProg = parseInt(progressMatch[2], 10);
-    const pPend = parseInt(progressMatch[3], 10);
-    const pDef = parseInt(progressMatch[4], 10);
-    
-    if (pDone !== doneCount) reportError(`DONE count mismatch. Text says ${pDone}, table has ${doneCount}`);
-    if (pInProg !== inProgressCount) reportError(`IN-PROGRESS count mismatch. Text says ${pInProg}, table has ${inProgressCount}`);
-    if (pPend !== pendingCount) reportError(`PENDING count mismatch. Text says ${pPend}, table has ${pendingCount}`);
-    if (pDef !== deferredCount) reportError(`DEFERRED count mismatch. Text says ${pDef}, table has ${deferredCount}`);
-  } else {
-    reportError(`Could not find the Progress text line or it does not match the expected format.`);
-  }
-
-  return { rows, total };
+  return {
+    done: Number(match[1]),
+    total: Number(match[2]),
+    inProgress: Number(match[3]),
+    pending: Number(match[4]),
+    deferred: Number(match[5]),
+  };
 }
 
-function run() {
-  if (!fs.existsSync(EN_FILE) || !fs.existsSync(ES_FILE)) {
-    reportError("Gap tracking files not found.");
-    process.exit(1);
+function canonicalStatus(status) {
+  return STATUS_MAP.get(status);
+}
+
+function commitExists(commit) {
+  try {
+    execFileSync('git', ['cat-file', '-e', `${commit}^{commit}`], {
+      cwd: ROOT,
+      stdio: 'ignore',
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function validateClosureRecord(record, knownIds, errors) {
+  const prefix = record?.id || '<missing-id>';
+
+  if (!/^GT-\d+$/.test(record?.id || '')) {
+    errors.push(`Closure record has invalid ID: ${prefix}`);
+    return;
+  }
+  if (!knownIds.has(record.id)) {
+    errors.push(`${prefix} closure record does not match a board gap`);
   }
 
-  const enResult = validateFile(EN_FILE, EN_CATALOG, false);
-  const esResult = validateFile(ES_FILE, ES_CATALOG, true);
+  const date = new Date(`${record.closedAt}T00:00:00Z`);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(record.closedAt || '') || Number.isNaN(date.valueOf())) {
+    errors.push(`${prefix} has an invalid closedAt date`);
+  } else if (date > new Date()) {
+    errors.push(`${prefix} has a future closedAt date`);
+  }
 
-  if (enResult.total !== esResult.total) {
-    reportError(`Mismatched row counts between EN (${enResult.total}) and ES (${esResult.total})`);
+  if (!/^[0-9a-f]{7,40}$/i.test(record.closureCommit || '')) {
+    errors.push(`${prefix} has an invalid closureCommit`);
+  } else if (!commitExists(record.closureCommit)) {
+    errors.push(`${prefix} closureCommit does not exist: ${record.closureCommit}`);
+  }
+
+  if (!Array.isArray(record.evidence) || record.evidence.length === 0) {
+    errors.push(`${prefix} must declare at least one evidence artifact`);
   } else {
-    // Check bilingual parity
-    for (let i = 0; i < enResult.rows.length; i++) {
-      if (enResult.rows[i].id !== esResult.rows[i].id) {
-        reportError(`Row ${i+1} ID mismatch: EN has ${enResult.rows[i].id}, ES has ${esResult.rows[i].id}`);
+    for (const evidence of record.evidence) {
+      const relativePath = String(evidence).split('#')[0];
+      const resolved = path.resolve(ROOT, relativePath);
+      if (!resolved.startsWith(`${ROOT}${path.sep}`) || !fs.existsSync(resolved)) {
+        errors.push(`${prefix} evidence does not resolve: ${evidence}`);
       }
     }
   }
 
-  if (hasErrors) {
-    console.error(`\n❌ Tracking validation failed.`);
-    process.exit(1);
-  } else {
-    console.log(`\n✅ Tracking validation passed.`);
+  if (
+    !Array.isArray(record.validationCommands)
+    || record.validationCommands.length === 0
+    || record.validationCommands.some((command) => typeof command !== 'string' || !command.trim())
+  ) {
+    errors.push(`${prefix} must declare reproducible validationCommands`);
+  }
+
+  if (!DEPENDENCY_DISPOSITIONS.has(record.dependencyDisposition)) {
+    errors.push(`${prefix} has unsupported dependencyDisposition`);
+  }
+  if (
+    record.dependencyDisposition !== 'none'
+    && (typeof record.dependencyRationale !== 'string' || !record.dependencyRationale.trim())
+  ) {
+    errors.push(`${prefix} requires dependencyRationale`);
   }
 }
 
-run();
+export function validateTrackingState({
+  enRows,
+  esRows,
+  enContent,
+  esContent,
+  enSections,
+  esSections,
+  registry,
+}) {
+  const errors = [];
+  const seen = new Set();
+
+  for (const row of enRows) {
+    if (seen.has(row.id)) errors.push(`Duplicate ID found: ${row.id}`);
+    seen.add(row.id);
+    if (!enSections.has(row.id)) errors.push(`${row.id} is missing from the English catalog`);
+  }
+
+  if (enRows.length !== esRows.length) {
+    errors.push(`Mismatched row counts between EN (${enRows.length}) and ES (${esRows.length})`);
+  }
+
+  enRows.forEach((row, index) => {
+    const esRow = esRows[index];
+    if (!esRow) return;
+    if (row.id !== esRow.id) {
+      errors.push(`Row ${index + 1} ID mismatch: EN has ${row.id}, ES has ${esRow.id}`);
+    }
+    if (canonicalStatus(row.status) !== canonicalStatus(esRow.status)) {
+      errors.push(`${row.id} status mismatch: EN=${row.status}, ES=${esRow.status}`);
+    }
+    if (!canonicalStatus(row.status)) errors.push(`${row.id} has unsupported EN status: ${row.status}`);
+    if (!canonicalStatus(esRow.status)) errors.push(`${row.id} has unsupported ES status: ${esRow.status}`);
+    if (!esSections.has(row.id)) errors.push(`${row.id} is missing from the Spanish catalog`);
+  });
+
+  const counts = { done: 0, pending: 0, deferred: 0, 'in-progress': 0 };
+  for (const row of enRows) {
+    const status = canonicalStatus(row.status);
+    if (status) counts[status] += 1;
+  }
+
+  for (const [content, isEs] of [[enContent, false], [esContent, true]]) {
+    const progress = parseProgress(content, isEs);
+    if (!progress) {
+      errors.push(`Could not parse ${isEs ? 'Spanish' : 'English'} progress line`);
+      continue;
+    }
+    if (progress.total !== enRows.length) errors.push(`${isEs ? 'ES' : 'EN'} total mismatch`);
+    if (progress.done !== counts.done) errors.push(`${isEs ? 'ES' : 'EN'} DONE count mismatch`);
+    if (progress.inProgress !== counts['in-progress']) {
+      errors.push(`${isEs ? 'ES' : 'EN'} IN-PROGRESS count mismatch`);
+    }
+    if (progress.pending !== counts.pending) errors.push(`${isEs ? 'ES' : 'EN'} PENDING count mismatch`);
+    if (progress.deferred !== counts.deferred) errors.push(`${isEs ? 'ES' : 'EN'} DEFERRED count mismatch`);
+  }
+
+  const records = Array.isArray(registry?.closures) ? registry.closures : [];
+  const recordsById = new Map();
+  for (const record of records) {
+    if (recordsById.has(record.id)) errors.push(`Duplicate closure record: ${record.id}`);
+    recordsById.set(record.id, record);
+    validateClosureRecord(record, seen, errors);
+  }
+
+  for (const row of enRows) {
+    const status = canonicalStatus(row.status);
+    const record = recordsById.get(row.id);
+    if (status === 'done') {
+      if (!record) errors.push(`${row.id} is DONE without a closure evidence record`);
+      for (const [language, sections] of [['EN', enSections], ['ES', esSections]]) {
+        if (/- \[ \]/.test(sections.get(row.id) || '')) {
+          errors.push(`${row.id} is DONE with unchecked closure criteria in ${language}`);
+        }
+      }
+    } else if (record) {
+      errors.push(`${row.id} has closure evidence but status is ${status}`);
+    }
+  }
+
+  return errors;
+}
+
+function run() {
+  const requiredFiles = [EN_FILE, ES_FILE, EN_CATALOG, ES_CATALOG, CLOSURE_REGISTRY];
+  const missing = requiredFiles.filter((file) => !fs.existsSync(file));
+  if (missing.length) {
+    console.error(`❌ [ERROR] Missing tracking artifacts:\n${missing.join('\n')}`);
+    process.exit(1);
+  }
+
+  console.log('\nValidating semantic gap closure...');
+  const en = parseTableRows(EN_FILE);
+  const es = parseTableRows(ES_FILE);
+  const registry = JSON.parse(fs.readFileSync(CLOSURE_REGISTRY, 'utf8'));
+  const errors = validateTrackingState({
+    enRows: en.rows,
+    esRows: es.rows,
+    enContent: en.content,
+    esContent: es.content,
+    enSections: parseCatalogSections(EN_CATALOG),
+    esSections: parseCatalogSections(ES_CATALOG),
+    registry,
+  });
+
+  if (errors.length) {
+    for (const error of errors) console.error(`❌ [ERROR] ${error}`);
+    console.error('\n❌ Tracking validation failed.');
+    process.exit(1);
+  }
+
+  console.log(`Validated ${en.rows.length} gaps and ${registry.closures.length} closure records.`);
+  console.log('\n✅ Tracking validation passed.');
+}
+
+const entryPoint = process.argv[1] ? pathToFileURL(path.resolve(process.argv[1])).href : '';
+if (import.meta.url === entryPoint) run();

@@ -4,6 +4,7 @@
 
 **Owner:** Evolith Architecture Board
 **Status Authority:** [Gap Tracking Board](./gap-tracking.md)
+**Closure Authority:** [Gap Closure Evidence Standard](./gap-closure-evidence-standard.md) · [`gap-closure-evidence.json`](./gap-closure-evidence.json)
 
 This catalog explains each gap: problem, purpose, evidence, closure criteria, and references. It is not a tracking board; priority and status are authoritative only in the [Gap Tracking Board](./gap-tracking.md).
 
@@ -23,7 +24,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Done when:**
   - [x] ADR approved by the Architecture Board.
   - [x] Core gap document updated pointing to it.
-  - [ ] Tracker gap document updated pointing to it.
+  - [x] Tracker technical interface updated to reference ADR-0073 as the unified envelope authority.
 
 ### Phase F1 — GateEvidence as Domain
 
@@ -65,7 +66,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 - **Objective:**
   - [x] Expose the GT-03 use case as the MCP tool `evolith-gate-evaluate` accepting `{phase, projectPath, rulesetRef, evidenceMode}`. This is the Tracker's primary integration point.
-  - [ ] Extend existing tools to accept the phase context.
+  - [x] Resolve phase context for existing tools: gate evaluation requires it; unrelated legacy tools retain their schemas under an accepted compatibility scope.
 - **Done when:** an external MCP client evaluates a gate over HTTP and receives schema-valid `GateEvidence`.
 - **Closed by:** tool exposed via `sdk/cli/src/core/mcp/tools/gate.ts`, integrated in `server.ts` and verified in `mcp:smoke` (HTTP and stdio). Phase context omitted from existing SDLC tools to avoid backwards compatibility breaks in their schemas.
 
@@ -143,7 +144,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Title:** Session-aware chatbox endpoint
 
 - **Objective:** Conversational HTTP endpoint (`POST /chat`) with session awareness, per the Tracker interface design.
-- **Deferred because:** depends on Tracker session storage (`ChatboxSession`) existing; building it first would be speculative. Revisit once the Tracker MVP consumes GT-06.
+- **Current evidence:** Core contains an in-memory session repository and mock response endpoint, but these do not satisfy Tracker-authoritative storage, governed agent execution, or durable audit requirements.
+- **Deferred because:** depends on Tracker session storage (`ChatboxSession`) and the governance kernel existing. The current Core prototype is explicitly non-closing evidence. Revisit once the Tracker MVP consumes GT-06.
 
 ### Phase F5 — Hygiene & Publication
 
@@ -349,9 +351,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 - **Gap:** Structural tracking validation can report every gap as complete even when closure criteria remain unchecked, evidence is stale or contradictory, or a dependency is only mocked.
 - **Purpose:** Make `DONE` a defensible semantic claim backed by current, reproducible evidence rather than a table value that is internally consistent.
-- **Current evidence / example:** GT-01 and GT-06 retain unchecked criteria in their historical records, GT-15 is closed around an in-memory mock despite its Tracker dependency, and the maturity assessment still describes obsolete open-gap states.
+- **Current evidence / example:** The semantic validator, canonical closure registry, and regression tests are being introduced. GT-01 and GT-06 criteria have been resolved explicitly, while GT-15 has been restored to `DEFERRED` because its in-memory mock is not Tracker-authoritative evidence.
 - **Done when:** validation rejects `DONE` without completed closure criteria, dated closure evidence, dependency disposition, reproducible validation commands, and a commit or release reference; documented exceptions are explicit, owned, and time-bounded.
-- **References:** [Tracking Validator](../../../../.harness/scripts/validate-tracking.mjs) · [Gap Tracking](./gap-tracking.md) · [Maturity Assessment](./maturity-assessment.md)
+- **References:** [Gap Closure Evidence Standard](./gap-closure-evidence-standard.md) · [Closure Registry](./gap-closure-evidence.json) · [Tracking Validator](../../../../.harness/scripts/validate-tracking.mjs) · [Gap Tracking](./gap-tracking.md)
 
 #### GT-38
 

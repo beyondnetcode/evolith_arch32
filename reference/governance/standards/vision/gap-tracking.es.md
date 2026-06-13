@@ -12,11 +12,11 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 
 | ID | Gap | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|
-| [`GT-32`](./gap-reference-catalog.es.md#gt-32) | Validación de hipótesis de cliente y comprador | Producto | P0 | M | `PENDIENTE` |
 | [`GT-37`](./gap-reference-catalog.es.md#gt-37) | Cierre semántico de gaps condicionado por evidencia | Transversal | P0 | M | `PENDIENTE` |
 | [`GT-30`](./gap-reference-catalog.es.md#gt-30) | Kernel mínimo de gobernanza Tracker | Producto | P0 | L | `PENDIENTE` |
 | [`GT-31`](./gap-reference-catalog.es.md#gt-31) | Vertical slice del Producto Mínimo Comprobable | Producto | P0 | L | `PENDIENTE` |
 | [`GT-38`](./gap-reference-catalog.es.md#gt-38) | Evidence Graph canónico y seguro por tenant | Producto | P0 | L | `PENDIENTE` |
+| [`GT-32`](./gap-reference-catalog.es.md#gt-32) | Validación de hipótesis de cliente y comprador | Producto | P0 | M | `DIFERIDO` |
 | [`GT-40`](./gap-reference-catalog.es.md#gt-40) | Prueba de reemplazabilidad de proveedores | Producto | P1 | M | `PENDIENTE` |
 | [`GT-41`](./gap-reference-catalog.es.md#gt-41) | Reconciliación automática de madurez | Transversal | P1 | M | `PENDIENTE` |
 | [`GT-42`](./gap-reference-catalog.es.md#gt-42) | Conformidad contractual entre repositorios | Transversal | P1 | M | `PENDIENTE` |
@@ -56,7 +56,7 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-23`](./gap-reference-catalog.es.md#gt-23) | Backfill de traducciones españolas | Transversal | P2 | L | `COMPLETADO` |
 | [`GT-36`](./gap-reference-catalog.es.md#gt-36) | Cobertura lingüística de reglas machine-readable | Transversal | P2 | L | `COMPLETADO` |
 
-**Progreso:** 33 / 43 completados · 0 en progreso · 10 pendientes · 0 diferidos
+**Progreso:** 33 / 43 completados · 0 en progreso · 9 pendientes · 1 diferido
 
 **Ordenamiento:** criticidad (`P0` → `P1` → `P2`), estado activo (`EN-PROGRESO` → `PENDIENTE` → `DIFERIDO`) y complejidad (`S` → `M` → `L`). Los gaps completados aparecen después del trabajo activo.
 

@@ -317,7 +317,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 - **Gap:** The product vision identifies governance pain and target actors, but the customer, buyer, urgency, and willingness-to-pay hypotheses remain unvalidated by representative external evidence.
 - **Purpose:** Prevent a technically coherent platform from advancing without proof that the selected users and economic buyers experience the problem strongly enough to adopt and fund it.
-- **Current evidence / example:** The vision explicitly calls for interviews and falsifiable experiments, but the reference corpus contains no interview repository, buyer map, ranked pain evidence, procurement constraints, or pricing signal.
+- **Current evidence / example:** The vision explicitly calls for interviews and falsifiable experiments, but the reference corpus contains no interview repository, buyer map, ranked pain evidence, procurement constraints, or pricing signal. On 2026-06-12, the owner explicitly canceled this evidence-gathering work.
+- **Decision and accepted risk:** Deferred by owner decision. Evolith may continue as a technical and governance reference, but product-market, buyer, urgency, procurement, and willingness-to-pay claims must remain labeled as unvalidated and must not be presented as proven maturity.
+- **Reactivate when:** external commercialization, pricing, enterprise procurement, or product-market-fit claims become a release or investment dependency.
 - **Done when:** representative interviews cover user, champion, security/compliance, and economic-buyer roles; results rank pains and alternatives, record procurement and pricing signals, and produce an explicit proceed, revise, or stop decision.
 - **References:** [Customer Hypothesis](../../../product-suite/vision/evolith-product-vision-master.md#13-target-problem-and-customer-hypothesis) · [Strategic Validation and Composition Framework](./evolith-strategic-validation-and-composition-framework.md) · [AI-Assisted Validation Workflow](./evolith-ai-assisted-validation-workflow.md)
 

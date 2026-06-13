@@ -5,7 +5,7 @@
 **Estado:** Evaluación Activa
 **Responsable:** Evolith Architecture Board
 **Creado:** 2026-06-10 (consolida los antiguos `maturity-matrix.es.md` y `maturity-evaluation.es.md`)
-**Última Actualización:** 2026-06-10
+**Última Actualización:** 2026-06-13
 **Documento compañero:** [Tablero de Seguimiento de Gaps](./gap-tracking.es.md) — la única superficie de tracking para todo gap referenciado aquí.
 
 ---
@@ -175,13 +175,11 @@ Match pilar por pilar contra la [Visión Maestra del Producto](./evolith-product
 
 El sistema está en transición de completamente documentado (Nivel 3) a gobernado automáticamente (Nivel 4). Al forzar el respaldo por evidencia estricta, el puntaje incorpora formalmente una **penalidad de incertidumbre** para los elementos que están `Diseñados` o `Implementados` pero carecen de validación automatizada completa.
 
-### Gaps Abiertos
+### Reconciliación Actual
 
-Todos los gaps abiertos viven exclusivamente en el **[Tablero de Seguimiento de Gaps](./gap-tracking.es.md)** — estado actual: 16 pendientes, 1 diferido, 6 completados de 23 ítems `GT`, más el archivo legado cerrado `G-01…G-27`. El subconjunto relevante para madurez:
+Los totales vigentes no se mantienen como texto narrativo. La [Reconciliación de Madurez](./maturity-reconciliation.json), legible por máquina, se genera desde el tablero canónico de Core, el registro de cierres, los inventarios y la metadata de release del CLI. `node .harness/scripts/reconcile-maturity.mjs --check` falla cuando ese snapshot presenta drift.
 
-* **Profundidad de evidencia de gates (P1):** [GT-08](./gap-reference-catalog.es.md#gt-08), [GT-09](./gap-reference-catalog.es.md#gt-09), [GT-10](./gap-reference-catalog.es.md#gt-10), [GT-11](./gap-reference-catalog.es.md#gt-11)
-* **Integridad de arquitectura (P1):** [GT-04](./gap-reference-catalog.es.md#gt-04), [GT-17](./gap-reference-catalog.es.md#gt-17), [GT-19](./gap-reference-catalog.es.md#gt-19)
-* **Exposición y distribución (P1):** [GT-05](./gap-reference-catalog.es.md#gt-05), [GT-12](./gap-reference-catalog.es.md#gt-12), [GT-14](./gap-reference-catalog.es.md#gt-14), [GT-18](./gap-reference-catalog.es.md#gt-18)
+La madurez de Tracker y Product Suite se excluye explícitamente del score de Core porque tienen ownership y ciclos de evidencia independientes. Su estado de producto no puede inflar esta evaluación.
 
 ---
 

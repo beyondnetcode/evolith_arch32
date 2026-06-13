@@ -30,6 +30,15 @@ jobs:
       - name: Check bilingual parity
         run: node .harness/scripts/check-bilingual-parity.mjs
 
+      - name: Validate semantic tracking
+        run: node .harness/scripts/validate-tracking.mjs
+
+      - name: Reconcile maturity evidence
+        run: node .harness/scripts/reconcile-maturity.mjs --check
+
+      - name: Validate machine contracts
+        run: node .harness/scripts/validate-contract-conformance.mjs
+
       - name: Generate coverage dashboard
         run: node .harness/scripts/coverage-dashboard.mjs
 

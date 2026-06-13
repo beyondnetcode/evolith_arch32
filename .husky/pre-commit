@@ -24,3 +24,11 @@ node .harness/scripts/generate-inventories.mjs
 echo ""
 echo "Validating tracking boards..."
 node .harness/scripts/validate-tracking.mjs
+
+echo ""
+echo "Reconciling maturity evidence..."
+node .harness/scripts/reconcile-maturity.mjs --check
+
+echo ""
+echo "Validating machine contract conformance..."
+node .harness/scripts/validate-contract-conformance.mjs

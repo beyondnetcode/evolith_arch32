@@ -5,7 +5,7 @@
 **Status:** Active Assessment
 **Owner:** Evolith Architecture Board
 **Created:** 2026-06-10 (consolidates the former `maturity-matrix.md` and `maturity-evaluation.md`)
-**Last Updated:** 2026-06-10
+**Last Updated:** 2026-06-13
 **Companion document:** [Gap Tracking Board](./gap-tracking.md) — the single tracking surface for every open gap referenced here.
 
 ---
@@ -175,13 +175,11 @@ Pillar-by-pillar match against the [Product Vision Master](./evolith-product-vis
 
 The system is transitioning from fully documented (Level 3) to automatically governed (Level 4). By enforcing strict evidence backing, the score formally incorporates an **uncertainty penalty** for items that are `Designed` or `Implemented` but lack full automated validation.
 
-### Open Gaps
+### Current Reconciliation
 
-All open gaps live exclusively on the **[Gap Tracking Board](./gap-tracking.md)** — current state: 16 pending, 1 deferred, 6 done out of 23 `GT` items, plus the closed legacy `G-01…G-27` archive. The maturity-relevant subset:
+Current totals are not maintained as narrative text. The machine-readable [Maturity Reconciliation](./maturity-reconciliation.json) is generated from the canonical Core board, closure registry, inventories, and CLI release metadata. `node .harness/scripts/reconcile-maturity.mjs --check` fails when that snapshot drifts.
 
-* **Gate evidence depth (P1):** [GT-08](./gap-reference-catalog.md#gt-08), [GT-09](./gap-reference-catalog.md#gt-09), [GT-10](./gap-reference-catalog.md#gt-10), [GT-11](./gap-reference-catalog.md#gt-11)
-* **Architecture integrity (P1):** [GT-04](./gap-reference-catalog.md#gt-04), [GT-17](./gap-reference-catalog.md#gt-17), [GT-19](./gap-reference-catalog.md#gt-19)
-* **Exposure & distribution (P1):** [GT-05](./gap-reference-catalog.md#gt-05), [GT-12](./gap-reference-catalog.md#gt-12), [GT-14](./gap-reference-catalog.md#gt-14), [GT-18](./gap-reference-catalog.md#gt-18)
+Tracker and Product Suite maturity are explicitly excluded from the Core score because they have independent ownership and evidence lifecycles. Their product state cannot inflate this assessment.
 
 ---
 

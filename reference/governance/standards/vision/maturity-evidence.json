@@ -21,12 +21,11 @@
     },
     {
       "id": "documentation",
-      "status": "BLOCKED",
+      "status": "PASS",
       "observedAt": "2026-06-13",
-      "commit": "ac2b66f",
-      "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/27469575667",
-      "gap": "GT-41",
-      "summary": "Documentation and bilingual checks pass, but semantic tracking cannot resolve closure commits from a shallow checkout."
+      "commit": "e4fa0e3",
+      "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/27470122212",
+      "summary": "Documentation, bilingual parity, semantic tracking, maturity reconciliation, and machine-contract validation pass with full commit history."
     },
     {
       "id": "release",

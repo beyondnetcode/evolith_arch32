@@ -274,6 +274,15 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-41",
+      "closedAt": "2026-06-13",
+      "closureCommit": "e4fa0e3",
+      "evidence": [".github/workflows/docs.yml", ".harness/scripts/reconcile-maturity.mjs", ".harness/scripts/reconcile-maturity.test.mjs", "reference/governance/standards/vision/maturity-evidence.json", "reference/governance/standards/vision/maturity-reconciliation.json"],
+      "validationCommands": ["node --test .harness/scripts/reconcile-maturity.test.mjs", "node .harness/scripts/validate-tracking.mjs", "node .harness/scripts/reconcile-maturity.mjs --check", "node .harness/scripts/validate-docs.mjs"],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "Documentation Validation run 27470122212 passed with full Git history and validated the runtime evidence-backed reconciliation."
+    },
+    {
       "id": "GT-42",
       "closedAt": "2026-06-13",
       "closureCommit": "154aadf",

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { execSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -25,8 +26,38 @@ if (!version && branch !== "main") {
   process.exit(0);
 }
 
+// Event-correctness (GT-44): the version-log requirement is release-only.
+// An ordinary merge to main must not be forced to carry a docs-v* log entry.
+// Only enforce when HEAD actually is a docs release, detected by the merge-commit
+// message or an existing docs-v* tag at HEAD.
+function isDocsReleaseHead() {
+  try {
+    const message = execSync("git log -1 --format=%B HEAD", {
+      encoding: "utf8",
+      cwd: root
+    });
+    if (/release\/docs-v\d+\.\d+\.\d+/.test(message)) return true;
+  } catch {
+    // Fall through to the tag probe below.
+  }
+  try {
+    const tags = execSync("git tag --points-at HEAD --format '%(refname:short)'", {
+      encoding: "utf8",
+      cwd: root
+    }).trim().split("\n");
+    return tags.some(tag => tag.startsWith("docs-v"));
+  } catch {
+    return false;
+  }
+}
+
 if (branch === "main" && event === "push") {
-  console.log("Checking if main merge was from a release/hotfix branch...");
+  if (!isDocsReleaseHead()) {
+    console.log("Ordinary merge to main (no docs release detected), skipping version log check");
+    process.exit(0);
+  }
+
+  console.log("Docs release detected on main, verifying version log...");
 
   const versionLogContent = fs.readFileSync(versionLogPath, "utf8");
 

@@ -128,10 +128,14 @@ jobs:
           echo "Verifying package..."
           node -e "
             const pkg = require('./${{ env.CLI_DIR }}/package.json');
+            const binTargets = typeof pkg.bin === 'string' ? [pkg.bin] : Object.values(pkg.bin);
             console.log('Name:', pkg.name);
             console.log('Version:', pkg.version);
             console.log('Main:', pkg.main);
-            console.log('Bin:', pkg.bin['smart-cli']);
+            console.log('Bin:', binTargets);
+            if (!pkg.name || !pkg.version || !pkg.main || binTargets.length === 0) {
+              throw new Error('package.json is missing required identity fields');
+            }
           "
 
   # ============================================
@@ -207,56 +211,95 @@ jobs:
       - name: Package Binary
         id: pkg
         working-directory: ${{ env.CLI_DIR }}
-        run: npx pkg@latest . --targets ${{ matrix.target }} --output-dir ./binaries
+        run: npx pkg@5.8.1 . --targets ${{ matrix.target }} --output-dir ./binaries
 
       - name: Rename Binary
         shell: bash
         run: |
-          if [ "${{ matrix.ext }}" != "" ]; then
-            mv ${{ env.CLI_DIR }}/binaries/smart-cli ${{ env.CLI_DIR }}/binaries/smart-cli${{ matrix.ext }}
+          cd ${{ env.CLI_DIR }}/binaries
+          produced=$(ls | head -1)
+          if [ -z "$produced" ]; then
+            echo "❌ pkg produced no binary for target ${{ matrix.target }}"
+            exit 1
           fi
-          ls -la ${{ env.CLI_DIR }}/binaries/
+          mv "$produced" "smart-cli-${{ matrix.target }}${{ matrix.ext }}"
+          ls -la
+
+      - name: Upload Binary Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: binaries-${{ matrix.target }}
+          path: ${{ env.CLI_DIR }}/binaries/smart-cli-${{ matrix.target }}${{ matrix.ext }}
+          if-no-files-found: error
+          retention-days: 7
 
   # ============================================
   # GATE 5: Binary Smoke Test
   # ============================================
   smoke-test:
     needs: [package-binaries, release-please]
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: node20-linux-x64
+            bin: smart-cli-node20-linux-x64
+          - os: macos-latest
+            target: node20-macos-x64
+            bin: smart-cli-node20-macos-x64
+          - os: windows-latest
+            target: node20-win-x64
+            bin: smart-cli-node20-win-x64.exe
+    runs-on: ${{ matrix.os }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
       - name: Download Binary
         uses: actions/download-artifact@v4
         with:
-          name: binaries
+          name: binaries-${{ matrix.target }}
           path: ./binaries
 
-      - name: Setup Binary
+      - name: Setup Binary (non-Windows)
+        if: runner.os != 'Windows'
         shell: bash
-        run: |
-          chmod +x ./binaries/smart-cli
-          echo "Binary prepared for smoke test"
+        run: chmod +x ./binaries/${{ matrix.bin }}
 
       - name: Smoke Test - Help Command
         shell: bash
         run: |
-          ./binaries/smart-cli --help || { echo "❌ Binary failed to execute"; exit 1; }
-          echo "✅ Binary executable works"
+          ./binaries/${{ matrix.bin }} --help || { echo "❌ Binary failed to execute on ${{ matrix.os }}"; exit 1; }
+          echo "✅ Binary executable works on ${{ matrix.os }}"
 
       - name: Smoke Test - Version
         shell: bash
         run: |
-          VERSION=$(./binaries/smart-cli --version 2>/dev/null || echo "unknown")
+          VERSION=$(./binaries/${{ matrix.bin }} --version) || { echo "❌ Binary --version failed on ${{ matrix.os }}"; exit 1; }
           echo "Binary version: $VERSION"
+
+  # ============================================
+  # GATE 5b: Functional + NPM Smoke (Linux)
+  # ============================================
+  smoke-test-functional:
+    needs: [package-binaries, release-please]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Binary
+        uses: actions/download-artifact@v4
+        with:
+          name: binaries-node20-linux-x64
+          path: ./binaries
+
+      - name: Setup Binary
+        shell: bash
+        run: chmod +x ./binaries/smart-cli-node20-linux-x64
 
       - name: Smoke Test - Init Command
         shell: bash
         run: |
           mkdir -p /tmp/evolith-test
           cd /tmp/evolith-test
-          echo "test-project" | ./binaries/smart-cli init --runtime nodejs --monorepo none --arch clean || true
+          echo "test-project" | "$GITHUB_WORKSPACE/binaries/smart-cli-node20-linux-x64" init --runtime nodejs --monorepo none --arch clean \
+            || { echo "❌ Init command smoke test failed"; exit 1; }
           ls -la
           echo "✅ Init command smoke test completed"
 
@@ -271,7 +314,7 @@ jobs:
   # GATE 6: Upload Release Assets
   # ============================================
   upload-assets:
-    needs: [package-binaries, smoke-test]
+    needs: [package-binaries, smoke-test, smoke-test-functional]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -280,12 +323,19 @@ jobs:
       - name: Download All Binaries
         uses: actions/download-artifact@v4
         with:
-          pattern: binaries
+          pattern: binaries-*
           path: ./release-assets
           merge-multiple: true
 
       - name: List Assets
-        run: ls -la ./release-assets/
+        run: |
+          ls -la ./release-assets/
+          count=$(find ./release-assets -type f | wc -l)
+          if [ "$count" -lt 3 ]; then
+            echo "❌ Expected 3 platform binaries, found $count"
+            exit 1
+          fi
+          echo "✅ All $count platform binaries present"
 
       - name: Upload to Release
         uses: softprops/action-gh-release@v1
@@ -309,9 +359,9 @@ jobs:
             ### 📦 Assets
             | Platform | Architecture | Download |
             |----------|--------------|----------|
-            | Linux | x64 | [smart-cli](release-assets/smart-cli) |
-            | macOS | x64 | [smart-cli](release-assets/smart-cli) |
-            | Windows | x64 | [smart-cli.exe](release-assets/smart-cli.exe) |
+            | Linux | x64 | `smart-cli-node20-linux-x64` |
+            | macOS | x64 | `smart-cli-node20-macos-x64` |
+            | Windows | x64 | `smart-cli-node20-win-x64.exe` |
 
             ### 🚀 Installation
 
@@ -334,9 +384,12 @@ jobs:
   # Cleanup on Failure
   # ============================================
   failure-notification:
-    needs: [publish-npm, package-binaries, upload-assets]
+    needs: [publish-npm, package-binaries, smoke-test, smoke-test-functional, upload-assets]
     if: failure()
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
     steps:
       - name: Notify Failure
         run: |
@@ -349,14 +402,20 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            github.rest.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: '❌ Release Pipeline Failed',
-              body: `Release pipeline failed for tag ${{ needs.release-please.outputs.tag_name || 'unknown' }}
+            try {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: '❌ Release Pipeline Failed',
+                body: `Release pipeline failed for tag ${{ needs.release-please.outputs.tag_name || 'unknown' }}
 
-              Please check the workflow logs and fix the issue.
-              
-              @beyondnetcode/evolith-team`,
-              labels: ['bug', 'release']
-            })
+                Please check the workflow logs and fix the issue.
+
+                @beyondnetcode/evolith-team`,
+                labels: ['bug', 'release']
+              });
+              core.info('Failure issue created');
+            } catch (error) {
+              // Degrade safely: a missing permission must not fail the notifier itself.
+              core.warning(`Could not create failure issue: ${error.message}`);
+            }

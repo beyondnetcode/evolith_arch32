@@ -214,9 +214,11 @@ jobs:
             const mainExists = fs.existsSync(path.join('${{ env.CLI_DIR }}', pkg.main));
             console.log('Main exists:', mainExists);
             
-            // Check bin entry
-            const binPath = path.join('${{ env.CLI_DIR }}', pkg.bin.evolith);
-            const binExists = fs.existsSync(binPath);
+            // Check bin entry (identity comes from package.json, not a hardcoded name)
+            const binTargets = typeof pkg.bin === 'string' ? [pkg.bin] : Object.values(pkg.bin);
+            const binExists = binTargets.length > 0 &&
+              binTargets.every((target) => fs.existsSync(path.join('${{ env.CLI_DIR }}', target)));
+            console.log('Bin targets:', binTargets);
             console.log('Bin exists:', binExists);
             
             // Check exports

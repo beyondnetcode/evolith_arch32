@@ -14,9 +14,39 @@ const hotfixMatch = branch.match(/^hotfix\/docs-(v\d+\.\d+\.\d+)$/);
 
 const version = releaseMatch?.[1] || hotfixMatch?.[1];
 
+// Event-correctness (GT-44): the docs version-alignment check is release-only.
+// An ordinary merge to main is not a docs release and must not be required to
+// carry a docs-v* tag. Only enforce the tag when HEAD actually is a docs release,
+// detected by the merge-commit message or an existing docs-v* tag at HEAD.
+function isDocsReleaseHead() {
+  try {
+    const message = execSync("git log -1 --format=%B HEAD", {
+      encoding: "utf8",
+      cwd: root
+    });
+    if (/release\/docs-v\d+\.\d+\.\d+/.test(message)) return true;
+  } catch {
+    // Fall through to the tag probe below.
+  }
+  try {
+    const tags = execSync("git tag --points-at HEAD --format '%(refname:short)'", {
+      encoding: "utf8",
+      cwd: root
+    }).trim().split("\n");
+    return tags.some(tag => tag.startsWith("docs-v"));
+  } catch {
+    return false;
+  }
+}
+
 if (!version) {
   if (branch === "main" && event === "push") {
-    console.log("Checking git tag exists for main merge...");
+    if (!isDocsReleaseHead()) {
+      console.log("Ordinary merge to main (no docs release detected), skipping git tag check");
+      process.exit(0);
+    }
+
+    console.log("Docs release detected on main, verifying git tag...");
     try {
       const tags = execSync("git tag --points-at HEAD --format '%(refname:short)'", {
         encoding: "utf8",
@@ -30,7 +60,7 @@ if (!version) {
         console.log("Git tag verification passed");
         process.exit(0);
       } else {
-        console.error("Error: No docs-v* tag found at HEAD");
+        console.error("Error: docs release merged to main but no docs-v* tag found at HEAD");
         console.error("Tags at HEAD:", tags.join(", ") || "none");
         process.exit(1);
       }

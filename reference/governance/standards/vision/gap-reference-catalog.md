@@ -293,16 +293,6 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 ### Product Proof
 
-#### GT-30
-
-**Title:** Minimum Tracker governance kernel
-
-- **Gap:** Tracker is still primarily a documented design. The official product boundary defines the canonical process, gate, evidence, approval, exception, and audit responsibilities, but no deployable kernel currently exercises that authority.
-- **Purpose:** Establish the smallest executable Tracker capability that owns governance decisions instead of leaving product authority in the CLI, MCP tools, or documents.
-- **Current evidence / example:** Tracker documentation defines interfaces and lifecycle semantics, while the product remains pre-construction and the Core repository intentionally contains no Tracker runtime implementation.
-- **Done when:** one deployable service persists tenant, product, process, phase, `GateDecision`, `PhaseTransition`, approval, exception, and audit records; CLI and MCP remain technical evaluators; integration tests prove that only Tracker authorizes canonical transitions.
-- **References:** [Tracker Product Boundary](../../../products/evolith-tracker/README.md) · [Tracker Technical Interfaces](../../../products/evolith-tracker/sdlc-tracker-technical-interfaces.md) · [Product Vision](../../../product-suite/vision/evolith-product-vision-master.md)
-
 #### GT-31
 
 **Title:** Minimum Provable Product vertical slice

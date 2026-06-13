@@ -293,16 +293,6 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 ### Prueba de Producto
 
-#### GT-30
-
-**Título:** Kernel mínimo de gobernanza Tracker
-
-- **Gap:** Tracker sigue siendo principalmente un diseño documentado. El límite oficial del producto define responsabilidades canónicas de proceso, gate, evidencia, aprobación, excepción y auditoría, pero ningún kernel desplegable ejerce actualmente esa autoridad.
-- **Propósito:** Establecer la capacidad ejecutable mínima de Tracker que sea dueña de las decisiones de gobernanza, sin dejar la autoridad de producto en el CLI, las tools MCP o los documentos.
-- **Evidencia actual / ejemplo:** La documentación de Tracker define interfaces y semántica de ciclo de vida, mientras el producto permanece previo a construcción y el repositorio Core intencionalmente no contiene implementación runtime de Tracker.
-- **Cierre cuando:** un servicio desplegable persiste tenant, producto, proceso, fase, `GateDecision`, `PhaseTransition`, aprobación, excepción y auditoría; CLI y MCP permanecen como evaluadores técnicos; tests de integración prueban que solo Tracker autoriza transiciones canónicas.
-- **Referencias:** [Límite de Producto Tracker](../../../products/evolith-tracker/README.es.md) · [Interfaces Técnicas de Tracker](../../../products/evolith-tracker/sdlc-tracker-technical-interfaces.es.md) · [Visión de Producto](../../../product-suite/vision/evolith-product-vision-master.es.md)
-
 #### GT-31
 
 **Título:** Vertical slice del Producto Mínimo Comprobable

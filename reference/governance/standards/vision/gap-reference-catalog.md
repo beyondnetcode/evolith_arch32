@@ -261,6 +261,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Purpose:** Re-establish an executable release baseline before treating CLI, MCP, or policy-engine capabilities as complete product evidence.
 - **Current evidence / example:** Closed on 2026-06-12. `npm run lint` and `npm run build` pass; 70 unit suites pass with 1,237 tests; 12 E2E suites pass with 110 tests; `npm run mcp:smoke` passes `initialize`, discovery, metrics, and gate evaluation over both stdio and Streamable HTTP.
 - **Reopened evidence (2026-06-13):** Current `main` CI fails before tests because workspace `npm ci` triggers the root Husky prepare script without the root dependency installed. CI cache configuration also points to a missing `sdk/cli/package-lock.json`; the local green workspace is not reproducible from a clean checkout.
+- **Post-push verification (2026-06-13):** Runs [SDK CLI CI 27467157131](https://github.com/beyondnetcode/evolith_arch32/actions/runs/27467157131) and [CI/CD 27467157129](https://github.com/beyondnetcode/evolith_arch32/actions/runs/27467157129) confirm both blockers before suites execute: the cache cannot resolve `sdk/cli/package-lock.json`, and the root `prepare` fails with `husky: not found`. Status: `PENDING`.
 - **Done when:** from a clean checkout, CLI lint, build, unit tests, and MCP stdio/HTTP smoke all pass; no release-critical path is satisfied only by skipped tests.
 - **References:** [Smart CLI](../../../../sdk/cli/README.md) · [ADR-0073 Unified CLI Output Contract](../../../architecture/adrs/core/0073-unified-cli-output-contract.md) · [Quality Gates](../../sdlc/quality-gates.md)
 
@@ -328,6 +329,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Done when:** a generated or reconciled report consumes the canonical Core board, inventories, and test and release evidence; it exposes freshness timestamps, separates Core from external product maturity, and fails on stale status, counts, or evidence links.
 - **Closure evidence:** Core commit `154aadf` added a generated machine-readable reconciliation, regression tests, pre-commit and CI drift checks, and removed manually maintained current totals from the narrative assessment. External product maturity is explicitly excluded.
 - **Reopened evidence (2026-06-13):** The generated snapshot reports every gap complete while four workflows on the same `main` commit are red. It records command names, not test, release, npm, skipped-suite, or CI outcomes, and the narrative assessment retains superseded capability states.
+- **Post-push verification (2026-06-13):** Run [Documentation Validation 27467157149](https://github.com/beyondnetcode/evolith_arch32/actions/runs/27467157149) validates 823 documents and bilingual parity, but semantic reconciliation fails because the shallow checkout does not contain the registered closure commits. Reconciliation still does not model the availability or outcome of that evidence in CI. Status: `PENDING`.
 - **References:** [Maturity Assessment](./maturity-assessment.md) · [Maturity Reconciliation](./maturity-reconciliation.json) · [Inventory Summary](./inventory-summary.md) · [Reconciliation Validator](../../../../.harness/scripts/reconcile-maturity.mjs)
 
 #### GT-42
@@ -348,6 +350,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Gap:** Release workflows apply release-only version checks to ordinary merges, reference `pkg.bin.evolith` while the package exposes `smart-cli`, download binary artifacts that are never uploaded, and mask an init smoke failure with `|| true`.
 - **Purpose:** Make npm and binary releases reproducible, blocking, and trustworthy.
 - **Current evidence / example:** GitHub Actions run [27451600153](https://github.com/beyondnetcode/evolith_arch32/actions/runs/27451600153) failed on `4a30a85`; npm confirms `@evolith/smart-cli@1.1.0` exists, but the current release path is unhealthy.
+- **Post-push verification (2026-06-13):** Run [Release Pipeline 27467157147](https://github.com/beyondnetcode/evolith_arch32/actions/runs/27467157147) fails again on `main`; its notification also attempts to create an issue without `issues: write` permission and ends with HTTP 403. Status: `PENDING`.
 - **Done when:** release checks are event-correct; package and binary identity comes from `package.json`; every target is uploaded, downloaded, executed, and attached; smoke failures cannot be ignored; failure notification has valid permissions or degrades safely.
 - **References:** [CLI Release Workflow](../../../../.github/workflows/sdk-cli-release.yml) · [General CI/CD](../../../../.github/workflows/ci-cd.yml)
 
@@ -359,6 +362,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Purpose:** Prove consistent Core exposure over stdio and Streamable HTTP, including authentication, errors, resources, prompts, and registered tools.
 - **Done when:** obsolete tests are removed or rewritten; no release-relevant MCP suite is skipped; protocol-negative cases run in CI; runtime tools and schemas match the generated inventory.
 - **Closure evidence:** Commit `b07460d` removed 547 lines of obsolete minimal-transport tests, activated 47 agent/architecture/SDLC tool tests, added a no-skipped-suite and runtime-schema conformance gate, fixed runtime filesystem/config-parser injection, and validated 29 MCP E2E cases plus stdio/Streamable HTTP smoke for 21 tools, 7 resources, and 7 prompts.
+- **Post-push verification (2026-06-13):** Red workflows for the closure commit fail during checkout, cache, or installation, before MCP conformance executes. No evidence contradicts the local closure suites; reproducibility and release blockers remain assigned to GT-28, GT-41, and GT-44. Status: `DONE`.
 - **References:** [MCP Server](../../../../sdk/cli/src/infrastructure/mcp/server.ts) · [MCP E2E Tests](../../../../sdk/cli/test/e2e/mcp-e2e.test.ts)
 
 #### GT-46
@@ -369,6 +373,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Purpose:** Prevent Tracker product behavior from leaking into the Core distribution while preserving a valid stateless Core API if that surface is retained.
 - **Done when:** an explicit decision removes the mock API or replaces it with a documented, authenticated, stateless Core exposure contract; CORS is configurable and retained endpoints have schemas and tests.
 - **Closure evidence:** Commit `b07460d` removed the `api` command, Tracker Assistant mock, in-memory chat sessions, controller, module, repository, and domain interfaces. The retained network service is the authenticated, contract-tested MCP Streamable HTTP exposure of Evolith Core.
+- **Post-push verification (2026-06-13):** Review of the CI failures identifies no regression or reintroduction of Tracker surfaces into Core; every failure occurs before functional validation. The implemented ownership boundary remains in force. Status: `DONE`.
 - **References:** [CLI Composition Root](../../../../sdk/cli/src/app.module.ts) · [MCP HTTP Service](../../../../sdk/cli/src/infrastructure/mcp/server.ts)
 
 #### GT-47

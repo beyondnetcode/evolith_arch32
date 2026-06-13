@@ -12,11 +12,11 @@
     },
     {
       "id": "coverage",
-      "status": "RESOLVED",
+      "status": "PASS",
       "observedAt": "2026-06-13",
-      "commit": "48e1d909992f29cd2cd49993101eb36ec730ae3a",
-      "gap": "GT-48",
-      "summary": "Statement coverage restored to 80.65% (4,979/6,173) in code (GT-48, commit 48e1d90) by testing native rule handlers, validators, and filesystem providers; 1,206 unit tests pass locally. The blocking CI gate green run is pending the next push."
+      "commit": "84df867aac79d366bf6d945dc4772a8f8502d915",
+      "source": "https://github.com/beyondnetcode/evolith_arch32/actions/runs/27479301558",
+      "summary": "The Unit Tests job runs green with 1,206 passing tests and the blocking coverage gate reports 80.65% statement coverage (>= 80% threshold), restored under GT-48 by testing native rule handlers, validators, and filesystem providers."
     },
     {
       "id": "documentation",

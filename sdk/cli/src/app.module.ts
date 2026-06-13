@@ -1,4 +1,3 @@
-import { ApiServeCommand } from "./commands/api/api-serve.command";
 import { Module } from '@nestjs/common';
 import { InitCommand } from './commands/init/init.command';
 import { AgentsCommand } from './commands/init/agents.command';
@@ -57,7 +56,6 @@ import { YamlConfigParserProvider } from './infrastructure/providers/config-pars
     DriftCommand,
     GateCommand,
     PhaseAdvanceCommand,
-    ApiServeCommand,
     ValidateSatelliteUseCase,
     EvaluateGateUseCase,
     ProposePhaseAdvanceUseCase,

@@ -1,12 +1,5 @@
 import { getAgentTools } from "./agent";
 
-jest.mock("./tool-utils", () => ({
-  getFileSystem: jest.fn(),
-  getContainer: jest.fn(),
-}));
-
-import { getFileSystem } from "./tool-utils";
-
 const mockFileSystem = {
   exists: jest.fn(),
   readdirNames: jest.fn(),
@@ -19,7 +12,7 @@ const mockFileSystem = {
 };
 
 const handleAgentTools = async (toolName: string, args: any, deps?: any) => {
-  const tools = getAgentTools({} as any, {} as any);
+  const tools = getAgentTools(mockFileSystem as any, {} as any);
   const tool = tools.find((t: any) => t.schema.name === toolName);
   if (!tool) throw new Error(`Unknown ${toolName} tool`);
 
@@ -47,10 +40,9 @@ const handleAgentTools = async (toolName: string, args: any, deps?: any) => {
   return tool.execute(args, toolDeps);
 };
 
-describe.skip("MCP Tools - agent", () => {
+describe("MCP Tools - agent", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    (getFileSystem as jest.Mock).mockReturnValue(mockFileSystem);
   });
 
   describe("evolith-agent-install", () => {

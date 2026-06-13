@@ -1,12 +1,5 @@
 import { getSdlcTools } from "./sdlc";
 
-jest.mock("./tool-utils", () => ({
-  getFileSystem: jest.fn(),
-  getContainer: jest.fn(),
-}));
-
-import { getFileSystem, getContainer } from "./tool-utils";
-
 const mockFileSystem = {
   exists: jest.fn(),
   readFile: jest.fn(),
@@ -21,7 +14,7 @@ const mockConfigParser = {
 };
 
 const handleSdlcTools = async (toolName: string, args: any, deps?: any) => {
-  const tools = getSdlcTools({} as any, {} as any);
+  const tools = getSdlcTools(mockFileSystem as any, mockConfigParser as any);
   const tool = tools.find((t: any) => t.schema.name === toolName);
   if (!tool) throw new Error(`Unknown ${toolName} tool`);
 
@@ -49,13 +42,9 @@ const handleSdlcTools = async (toolName: string, args: any, deps?: any) => {
   return tool.execute(args, toolDeps);
 };
 
-describe.skip("MCP Tools - sdlc", () => {
+describe("MCP Tools - sdlc", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    (getFileSystem as jest.Mock).mockReturnValue(mockFileSystem);
-    (getContainer as jest.Mock).mockReturnValue({
-      createConfigParser: jest.fn().mockReturnValue(mockConfigParser),
-    });
   });
 
   describe("evolith-sdlc-status", () => {

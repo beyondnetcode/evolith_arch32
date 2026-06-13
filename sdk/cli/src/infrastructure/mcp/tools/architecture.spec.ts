@@ -15,17 +15,12 @@ const mockConfigParser = {
   parse: jest.fn(),
 };
 
-describe.skip('MCP Tools - architecture', () => {
+describe('MCP Tools - architecture', () => {
   let executeHandler: (args: any) => Promise<any>;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    (getFileSystem as jest.Mock).mockReturnValue(mockFileSystem);
-    (getContainer as jest.Mock).mockReturnValue({
-      createConfigParser: jest.fn().mockReturnValue(mockConfigParser),
-    });
-
-    const tools = getArchitectureTools({} as any, {} as any);
+    const tools = getArchitectureTools(mockFileSystem as any, mockConfigParser as any);
     const handler = tools.find(t => t.schema.name === 'evolith-architecture-validate');
     executeHandler = handler!.execute;
   });

@@ -367,7 +367,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Gap:** `smart-cli api` exposes an in-memory “Evolith Tracker Assistant” mock with unrestricted CORS and no governed Core contract, although this repository should contain only services that expose Core.
 - **Purpose:** Prevent Tracker product behavior from leaking into the Core distribution while preserving a valid stateless Core API if that surface is retained.
 - **Done when:** an explicit decision removes the mock API or replaces it with a documented, authenticated, stateless Core exposure contract; CORS is configurable and retained endpoints have schemas and tests.
-- **References:** [API Command](../../../../sdk/cli/src/commands/api/api-serve.command.ts) · [Chatbox Service](../../../../sdk/cli/src/application/services/chatbox-session.service.ts)
+- **References:** [CLI Composition Root](../../../../sdk/cli/src/app.module.ts) · [MCP HTTP Service](../../../../sdk/cli/src/infrastructure/mcp/server.ts)
 
 #### GT-47
 

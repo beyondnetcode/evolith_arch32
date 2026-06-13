@@ -417,75 +417,7 @@ describe('MCP E2E Tests - stdio transport', () => {
   });
 });
 
-describe.skip('MCP E2E Tests - HTTP transport', () => {
-  let serverProcess: ChildProcess;
-  const testPort = 52000 + Math.floor(Math.random() * 1000);
-
-  beforeAll(async () => {
-    serverProcess = spawn('node', [CLI_PATH, 'mcp', 'serve', '--transport', 'http', '--port', String(testPort)], {
-      stdio: ['pipe', 'pipe', 'pipe'],
-    });
-
-    await new Promise(resolve => setTimeout(resolve, 1000));
-  });
-
-  afterAll(() => {
-    serverProcess.kill();
-  });
-
-  describe('health endpoint', () => {
-    it('should return health status', async () => {
-      const response = await httpGet(`http://127.0.0.1:${testPort}/health`);
-
-      expect(response.statusCode).toBe(200);
-      const body = JSON.parse(response.body);
-      expect(body.status).toBe('ok');
-      expect(body.transport).toBe('http');
-      expect(body.protocol).toBe('mcp');
-    });
-  });
-
-  describe('SSE endpoint', () => {
-    it('should establish SSE connection', async () => {
-      const response = await new Promise<string>((resolve, reject) => {
-        http.get(`http://127.0.0.1:${testPort}/sse`, (res) => {
-          let data = '';
-          res.on('data', (chunk) => { data += chunk; });
-          setTimeout(() => resolve(data), 200);
-        }).on('error', reject);
-      });
-
-      expect(response).toContain(': connected');
-    });
-  });
-
-  describe('message endpoint', () => {
-    it('should accept JSON-RPC messages via POST', async () => {
-      const message = JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list' });
-      const response = await httpPost(`http://127.0.0.1:${testPort}/message`, message);
-
-      expect(response.statusCode).toBe(202);
-      const body = JSON.parse(response.body);
-      expect(body.status).toBe('accepted');
-    });
-
-    it('should reject invalid JSON', async () => {
-      const response = await httpPost(`http://127.0.0.1:${testPort}/message`, 'not valid json');
-
-      expect(response.statusCode).toBe(400);
-    });
-  });
-
-  describe('404 handling', () => {
-    it('should return 404 for unknown routes', async () => {
-      const response = await httpGet(`http://127.0.0.1:${testPort}/unknown`);
-
-      expect(response.statusCode).toBe(404);
-    });
-  });
-});
-
-describe.skip('MCP E2E Tests - API key authentication', () => {
+describe('MCP E2E Tests - API key authentication', () => {
   let serverProcess: ChildProcess;
   const testPort = 53000 + Math.floor(Math.random() * 1000);
   const apiKey = 'test-secret-key-123';

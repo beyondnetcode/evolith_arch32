@@ -1,6 +1,8 @@
 import { Logger } from '@nestjs/common';
 import * as http from 'node:http';
 import { RulesetValidatorService } from '../../application/validators/ruleset-validator.service';
+import { NodeFileSystemProvider } from '../providers/node-filesystem.provider';
+import { YamlConfigParserProvider } from '../providers/config-parser.provider';
 import { McpMetricsService } from './metrics.service';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
@@ -80,7 +82,9 @@ export class EvolithMcpServer {
     const { getAllTools } = require('./tools');
     const registry = new McpToolRegistry();
 
-    const tools = getAllTools();
+    const fileSystem = this.fileSystem || new NodeFileSystemProvider().createFileSystem();
+    const configParser = this.configParser || new YamlConfigParserProvider().createConfigParser('yaml');
+    const tools = getAllTools(fileSystem, configParser);
     for (const tool of tools) {
       registry.register(tool);
     }

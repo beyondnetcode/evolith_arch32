@@ -397,6 +397,62 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Cierre cuando:** la cobertura de statements alcanza al menos 80% desde un checkout limpio; los nuevos tests priorizan validators críticos de release, handlers de políticas, comandos CLI, rutas runtime MCP y providers de filesystem; CI bloquea regresiones y la evidencia de madurez se regenera desde el reporte vigente.
 - **Referencias:** [Workflow CI del CLI](../../../../.github/workflows/sdk-cli-ci.yml) · [Configuración Jest](../../../../sdk/cli/jest.config.js) · [Estrategia de Testing](../../../products/smart-cli/docs/planning/testing-strategy.md)
 
+#### GT-49
+
+**Título:** Activar el modo estricto de TypeScript y puertos de filesystem tipados
+
+- **Gap:** El CLI compila con `strictNullChecks`, `noImplicitAny` y `strictBindCallApply` deshabilitados (`sdk/cli/tsconfig.json`), y quedan 78 anotaciones `: any` en `src`. Dieciséis son parámetros `fs: any` aunque ya existe un puerto `IFileSystem` consumido en otros módulos, por lo que la frontera tipada se evade en la capa de comandos.
+- **Propósito:** Hacer que el compilador imponga la disciplina de null-safety y de puertos tipados que el pilar de Mantenibilidad ya declara como `Validated`, eliminando una clase de defectos latentes que la configuración actual oculta.
+- **Evidencia actual / ejemplo:** `adr.command.ts` y `standards.command.ts` declaran handlers privados como `fs: any`; `tsconfig.json:19-21` apaga los chequeos de null estricto e implicit-any; ESLint no habilita `@typescript-eslint/no-explicit-any`.
+- **Cierre cuando:** el modo estricto está activado (de forma incremental si es necesario), los parámetros `fs: any` están tipados contra `IFileSystem`, los `: any` restantes están tipados o justificados con una supresión en línea, y el build permanece verde bajo la configuración endurecida.
+- **Referencias:** [tsconfig del CLI](../../../../sdk/cli/tsconfig.json) · [Configuración ESLint](../../../../sdk/cli/.eslintrc.js) · [ADR-0019 Patrones de Diseño Táctico](../../../architecture/adrs/core/0019-tactical-design-patterns-future-proofing.md)
+
+#### GT-50
+
+**Título:** Aplicar umbrales de cobertura en la configuración de Jest
+
+- **Gap:** El umbral normativo de 80% de statements se impone únicamente con un paso Bash en CI (`sdk-cli-ci.yml`), mientras que `jest.config.js` no declara ningún `coverageThreshold`. Por lo tanto, un `npm test` local nunca falla por cobertura y las regresiones aparecen solo después del push.
+- **Propósito:** Hacer que el contrato de cobertura sea exigible en el punto de cambio y no exclusivamente en CI, cerrando el "split-brain" entre el runner y el pipeline.
+- **Cierre cuando:** `jest.config.js` declara un `coverageThreshold` alineado con el objetivo normativo (idealmente ratchets por directorio que impidan regresiones silenciosas), el chequeo de CI y la configuración de Jest coinciden en el umbral, y el comando de cobertura local falla ante una regresión. Coordinar el número absoluto con [GT-48](#gt-48).
+- **Referencias:** [Configuración Jest](../../../../sdk/cli/jest.config.js) · [Workflow CI del CLI](../../../../.github/workflows/sdk-cli-ci.yml) · [GT-48](#gt-48)
+
+#### GT-51
+
+**Título:** Validación de evidencia de gate Build-versus-Compose
+
+- **Gap:** La Visión de Producto hace obligatorio el análisis Build-versus-Compose como evidencia del gate de Business Sign-Off (visión §5.3), pero la evaluación de gates de Core no tiene ningún tipo de evidencia ni validator para ello. Los chequeos de gate siguen siendo más estrechos de lo que exige la visión.
+- **Propósito:** Alinear la evidencia de gate ejecutable de Core con el requisito de Discovery no negociable de la visión, para que una disposición gobernada (Adopt/Embed/Integrate/Extend/Build/Reject) sea auditable y no implícita.
+- **Evidencia actual / ejemplo:** la visión §5.3 enumera alternativas, disposición, costo a tres años, licenciamiento, aislamiento de tenant y reemplazabilidad de proveedor como evidencia requerida; ningún esquema `GateEvidence` ni validator de phase-gate los modela actualmente.
+- **Cierre cuando:** existe un esquema de evidencia Build-versus-Compose, el validator de phase-gate verifica su presencia y contenido para el gate de Business Sign-Off, y las superficies CLI/MCP exponen el resultado con el envelope de ADR-0073.
+- **Referencias:** [Visión de Producto Maestra §5.3](../../../product-suite/vision/evolith-product-vision-master.es.md) · [Validator de Phase Gate](../../../../sdk/cli/src/application/validators/phase-gate-validator.service.ts) · [GT-08](#gt-08)
+
+#### GT-52
+
+**Título:** Eliminar los stubs muertos del contenedor de inyección de dependencias
+
+- **Gap:** `src/infrastructure/di/container.ts` todavía exporta `getContainer = () => ({})` y `resetContainer = () => {}` como stubs no-op que quedaron tras la eliminación del service locator ([GT-04](#gt-04)) y la consolidación de DI ([GT-17](#gt-17)).
+- **Propósito:** Eliminar una costura fantasma que tergiversa el modelo de wiring, para que el composition root en `app.module.ts` sea la única fuente de construcción.
+- **Cierre cuando:** los stubs se eliminan (o se reemplazan por una abstracción real y usada), ningún código productivo depende de ellos, y el build y los tests pasan.
+- **Referencias:** [Contenedor DI](../../../../sdk/cli/src/infrastructure/di/container.ts) · [Composition Root](../../../../sdk/cli/src/app.module.ts) · [GT-17](#gt-17)
+
+#### GT-53
+
+**Título:** Reparar las referencias migradas a la visión de producto
+
+- **Gap:** La Evaluación de Madurez enlaza a `./evolith-product-vision-master.md`, que ahora es solo un stub de migración; el documento canónico se movió a `reference/product-suite/vision/`. La única superficie de madurez apunta a un placeholder de redirección.
+- **Propósito:** Mantener las superficies canónicas de madurez y visión apuntando a contenido vivo, para que la navegación y la validación reflejen el grafo documental real.
+- **Cierre cuando:** la evaluación de madurez (EN/ES) y cualquier otra referencia de Core resuelven a la ruta canónica de la visión, y la validación de enlaces pasa sin stubs de redirección en el grafo referenciado.
+- **Referencias:** [Evaluación de Madurez](./maturity-assessment.es.md) · [Visión Maestra Canónica](../../../product-suite/vision/evolith-product-vision-master.es.md)
+
+#### GT-54
+
+**Título:** Completar la aplicación estricta de fronteras hexagonales
+
+- **Gap:** Quedan dos costuras residuales tras la migración de `core/` ([GT-19](#gt-19)): ESLint todavía permite imports `application → infrastructure` como una "concesión pragmática del CLI" documentada (`.eslintrc.js`), y algunos use cases grandes mantienen responsabilidades mezcladas — `InitializeProjectUseCase` (~280 líneas) en el barrel `services/index.ts` y el `phase-gate-validator.service.ts` de 500 líneas.
+- **Propósito:** Cerrar la última milla hacia fronteras hexagonales estrictas, de modo que la capa de aplicación dependa solo de puertos y los use cases sobredimensionados se descompongan por responsabilidad.
+- **Cierre cuando:** se elimina la concesión `application → infrastructure` (la aplicación depende solo de puertos/dominio), los use cases sobredimensionados se descomponen en unidades enfocadas, y las fronteras de ESLint más la suite completa de tests pasan.
+- **Referencias:** [Configuración ESLint](../../../../sdk/cli/.eslintrc.js) · [Barrel de servicios de aplicación](../../../../sdk/cli/src/application/services/index.ts) · [GT-19](#gt-19) · [GT-17](#gt-17)
+
 ---
 
 ## 2. Snapshot Histórico de Línea Base

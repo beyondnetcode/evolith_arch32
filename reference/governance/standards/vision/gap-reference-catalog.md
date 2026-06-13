@@ -397,6 +397,62 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Done when:** statement coverage is at least 80% from a clean checkout; new tests prioritize release-critical validators, policy handlers, CLI commands, MCP runtime paths, and filesystem providers; CI blocks regressions and maturity evidence is regenerated from the current report.
 - **References:** [CLI CI Workflow](../../../../.github/workflows/sdk-cli-ci.yml) · [Jest Configuration](../../../../sdk/cli/jest.config.js) · [Testing Strategy](../../../products/smart-cli/docs/planning/testing-strategy.md)
 
+#### GT-49
+
+**Title:** Enforce TypeScript strict mode and typed filesystem ports
+
+- **Gap:** The CLI compiles with `strictNullChecks`, `noImplicitAny`, and `strictBindCallApply` disabled (`sdk/cli/tsconfig.json`), and 78 `: any` annotations remain in `src`. Sixteen are `fs: any` parameters even though an `IFileSystem` port already exists and is consumed elsewhere, so the typed boundary is bypassed at the command layer.
+- **Purpose:** Make the compiler enforce the null-safety and typed-port discipline that the Maintainability pillar already claims as `Validated`, removing a class of latent defects the current configuration hides.
+- **Current evidence / example:** `adr.command.ts` and `standards.command.ts` declare private handlers as `fs: any`; `tsconfig.json:19-21` turns off strict null and implicit-any checks; ESLint does not enable `@typescript-eslint/no-explicit-any`.
+- **Done when:** strict mode is enabled (incrementally if required), `fs: any` parameters are typed against `IFileSystem`, the remaining `: any` usages are typed or justified with an inline suppression, and the build stays green under the tightened configuration.
+- **References:** [CLI tsconfig](../../../../sdk/cli/tsconfig.json) · [ESLint configuration](../../../../sdk/cli/.eslintrc.js) · [ADR-0019 Tactical Design Patterns](../../../architecture/adrs/core/0019-tactical-design-patterns-future-proofing.md)
+
+#### GT-50
+
+**Title:** Enforce coverage thresholds in Jest configuration
+
+- **Gap:** The normative 80% statement threshold is enforced only by a Bash step in CI (`sdk-cli-ci.yml`), while `jest.config.js` declares no `coverageThreshold`. A local `npm test` therefore never fails on coverage, so regressions surface only after push.
+- **Purpose:** Make the coverage contract enforceable at the point of change rather than exclusively in CI, closing the split-brain between the runner and the pipeline.
+- **Done when:** `jest.config.js` declares a `coverageThreshold` aligned with the normative target (ideally per-directory ratchets that prevent silent regressions), the CI check and the Jest configuration agree on the threshold, and the local coverage command fails on regression. Coordinate the absolute number with [GT-48](#gt-48).
+- **References:** [Jest Configuration](../../../../sdk/cli/jest.config.js) · [CLI CI Workflow](../../../../.github/workflows/sdk-cli-ci.yml) · [GT-48](#gt-48)
+
+#### GT-51
+
+**Title:** Build-versus-Compose gate evidence validation
+
+- **Gap:** The Product Vision makes Build-versus-Compose analysis mandatory Business Sign-Off gate evidence (vision §5.3), but Core's gate evaluation has no evidence type or validator for it. Gate checks remain narrower than the vision requires.
+- **Purpose:** Align Core's executable gate evidence with the vision's non-negotiable Discovery requirement so a governed disposition (Adopt/Embed/Integrate/Extend/Build/Reject) is auditable rather than implicit.
+- **Current evidence / example:** vision §5.3 enumerates alternatives, disposition, three-year cost, licensing, tenant isolation, and provider replaceability as required evidence; no `GateEvidence` schema or phase-gate validator currently models them.
+- **Done when:** a Build-versus-Compose evidence schema exists, the phase-gate validator checks its presence and content for the Business Sign-Off gate, and CLI/MCP surfaces expose the result with the ADR-0073 envelope.
+- **References:** [Product Vision Master §5.3](../../../product-suite/vision/evolith-product-vision-master.md) · [Phase Gate Validator](../../../../sdk/cli/src/application/validators/phase-gate-validator.service.ts) · [GT-08](#gt-08)
+
+#### GT-52
+
+**Title:** Remove dead dependency-injection container stubs
+
+- **Gap:** `src/infrastructure/di/container.ts` still exports `getContainer = () => ({})` and `resetContainer = () => {}` as no-op stubs left behind after the service-locator removal ([GT-04](#gt-04)) and DI consolidation ([GT-17](#gt-17)).
+- **Purpose:** Eliminate a phantom seam that misrepresents the wiring model, so the composition root in `app.module.ts` is the single source of construction.
+- **Done when:** the stubs are removed (or replaced by a real, used abstraction), no production code depends on them, and the build and tests pass.
+- **References:** [DI Container](../../../../sdk/cli/src/infrastructure/di/container.ts) · [Composition Root](../../../../sdk/cli/src/app.module.ts) · [GT-17](#gt-17)
+
+#### GT-53
+
+**Title:** Repair migrated product-vision references
+
+- **Gap:** The Maturity Assessment links to `./evolith-product-vision-master.md`, which is now only a migration stub; the canonical document moved to `reference/product-suite/vision/`. The single maturity surface points to a redirect placeholder.
+- **Purpose:** Keep the canonical maturity and vision surfaces pointing at live content so navigation and validation reflect the real document graph.
+- **Done when:** the maturity assessment (EN/ES) and any other Core references resolve to the canonical vision path, and link validation passes with no redirect stubs in the referenced graph.
+- **References:** [Maturity Assessment](./maturity-assessment.md) · [Canonical Vision Master](../../../product-suite/vision/evolith-product-vision-master.md)
+
+#### GT-54
+
+**Title:** Complete strict hexagonal boundary enforcement
+
+- **Gap:** Two residual seams remain after the `core/` migration ([GT-19](#gt-19)): ESLint still permits `application → infrastructure` imports as a documented "pragmatic CLI allowance" (`.eslintrc.js`), and large use cases retain mixed responsibilities — `InitializeProjectUseCase` (~280 lines) in the `services/index.ts` barrel and the 500-line `phase-gate-validator.service.ts`.
+- **Purpose:** Close the last mile to strict hexagonal boundaries so the application layer depends only on ports, and oversized use cases are decomposed by responsibility.
+- **Done when:** the `application → infrastructure` allowance is removed (application depends only on ports/domain), the oversized use cases are decomposed into focused units, and ESLint boundaries plus the full test suite pass.
+- **References:** [ESLint configuration](../../../../sdk/cli/.eslintrc.js) · [Application services barrel](../../../../sdk/cli/src/application/services/index.ts) · [GT-19](#gt-19) · [GT-17](#gt-17)
+
 ---
 
 ## 2. Historical Baseline Snapshot

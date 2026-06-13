@@ -1,22 +1,7 @@
 {
   "schemaVersion": "1.0.0",
-  "scope": "evolith-core",
   "asOf": "2026-06-13",
-  "gaps": {
-    "total": 40,
-    "done": 36,
-    "pending": 4,
-    "inProgress": 0,
-    "deferred": 0
-  },
-  "evidence": {
-    "closureRecords": 36,
-    "cliPackage": "@evolith/smart-cli@1.1.0",
-    "adrCount": 84,
-    "rulesetCount": 27,
-    "schemaCount": 17
-  },
-  "readiness": [
+  "checks": [
     {
       "id": "cli-baseline",
       "status": "PASS",
@@ -52,29 +37,5 @@
       "gap": "GT-44",
       "summary": "Release-only version and package integrity behavior remains non-deterministic on ordinary main pushes."
     }
-  ],
-  "externalProducts": [
-    {
-      "name": "Evolith Tracker",
-      "maturityIncluded": false,
-      "reason": "Independent product repository and evidence lifecycle"
-    },
-    {
-      "name": "Evolith Product Suite",
-      "maturityIncluded": false,
-      "reason": "Product strategy scope is not Core implementation evidence"
-    }
-  ],
-  "sources": [
-    "reference/governance/standards/vision/gap-tracking.md",
-    "reference/governance/standards/vision/gap-closure-evidence.json",
-    "reference/governance/standards/vision/maturity-evidence.json",
-    "reference/governance/standards/vision/inventory-summary.md",
-    "sdk/cli/package.json"
-  ],
-  "validationCommands": [
-    "node .harness/scripts/reconcile-maturity.mjs --check",
-    "node .harness/scripts/validate-tracking.mjs",
-    "npm test --workspace sdk/cli -- --runInBand"
   ]
 }

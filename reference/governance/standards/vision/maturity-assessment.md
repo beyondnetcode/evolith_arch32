@@ -86,24 +86,24 @@ The assessment scores against the 5 standard TOGAF ACMM levels (1: Initial to 5:
 ## 4. Technological Exposure Assessment (CLI + MCP)
 
 ### Dimension 1: MCP Protocol Conformance & Transport — **Level 4 (Managed)**
-* **State:** `Implemented` (Needs Streamable HTTP)
-* **Evidence:** JSON-RPC 2.0 stdio transport; minimal HTTP/SSE transport with `/health`, `/message`, `/sse` and Bearer/X-API-Key auth; hardened error recovery; `mcp:smoke` verifies initialize, discovery, and tool calls on every release.
-* **Path to Level 5:** adopt the official MCP SDK Streamable HTTP transport ([GT-05](./gap-reference-catalog.md#gt-05)); automated protocol conformance against the MCP spec changelog.
-
-### Dimension 2: Test Coverage & Quality Gates — **Level 4 (Managed)**
 * **State:** `Validated`
-* **Evidence:** ~1 369 tests (unit + E2E) green; 88.70% statements · 89.80% lines · 76.93% branches (target ≥75%) · 83.58% functions; clean teardown without `--forceExit`.
-* **Path to Level 5:** blocking coverage gates in CI; branch coverage ≥80%.
+* **Evidence:** JSON-RPC 2.0 over stdio and official MCP SDK Streamable HTTP; API-key authentication; 29 MCP E2E cases; smoke verifies initialize, discovery, metrics, and gate evaluation over both transports. See the generated [maturity reconciliation](./maturity-reconciliation.json).
+* **Path to Level 5:** automated protocol conformance against supported MCP specification versions.
+
+### Dimension 2: Test Coverage & Quality Gates — **Level 3 (Defined)**
+* **State:** `Implemented` (Coverage gate blocked)
+* **Evidence:** 1,087 unit and 121 E2E tests pass from a clean checkout, while current statement coverage is 66.14% against the normative 80% threshold ([GT-48](./gap-reference-catalog.md#gt-48)). The generated [maturity reconciliation](./maturity-reconciliation.json) records the executable outcome and source run.
+* **Path to Level 4:** restore statement coverage to at least 80% and keep the blocking CI gate green.
 
 ### Dimension 3: Governance Exposure Completeness — **Level 4 (Managed)**
-* **State:** `Implemented` (Missing Tracker integration)
-* **Evidence:** 17+ MCP tools, 8 resources, 7 prompts covering validation, agents, architecture, SDLC, and prioritization; all covered by routing tests.
-* **Path to Level 5:** gate evaluation exposed as a structured-evidence tool ([GT-06](./gap-reference-catalog.md#gt-06)); hot-reload of rulesets.
+* **State:** `Validated`
+* **Evidence:** 21 MCP tools, 7 resources, and 7 prompts cover validation, agents, architecture, SDLC, prioritization, metrics, and gate evaluation with runtime-schema conformance checks.
+* **Path to Level 5:** hot-reload of rulesets and measured adoption across satellite repositories.
 
 ### Dimension 4: CLI Developer Experience — **Level 3 (Defined)**
 * **State:** `Validated`
-* **Evidence:** 13 commands; shell completion (bash/zsh/fish); 100% EN/ES documentation parity; `mcp:smoke` under 5 seconds; DORA metrics computed from real git history in `gate-status`.
-* **Path to Level 4:** unified output envelope and global flags ([GT-01](./gap-reference-catalog.md#gt-01)); complete `--dry-run` coverage ([GT-12](./gap-reference-catalog.md#gt-12)); npm publication ([GT-18](./gap-reference-catalog.md#gt-18)).
+* **Evidence:** the `@evolith/smart-cli@1.1.0` package installs from the canonical workspace lockfile; lint, build, E2E, and MCP smoke pass from a clean checkout; shell completion and bilingual documentation are available.
+* **Path to Level 4:** synchronize public product documentation and release facts from generated inventory ([GT-47](./gap-reference-catalog.md#gt-47)).
 
 ### Dimension 5: Federated Governance Runtime Enforcement — **Level 3 (Defined)**
 * **State:** `Designed` (Rules exist, content validation missing)

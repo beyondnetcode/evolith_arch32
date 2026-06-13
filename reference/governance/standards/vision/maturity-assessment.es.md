@@ -86,24 +86,24 @@ La evaluación usa los 5 niveles estándar del ACMM (1: Inicial a 5: Optimizante
 ## 4. Evaluación de la Exposición Tecnológica (CLI + MCP)
 
 ### Dimensión 1: Conformidad de Protocolo MCP y Transporte — **Nivel 4 (Gestionado)**
-* **Estado:** `Implementado` (Requiere Streamable HTTP)
-* **Evidencia:** transporte stdio JSON-RPC 2.0; transporte HTTP/SSE mínimo con `/health`, `/message`, `/sse` y auth Bearer/X-API-Key; recuperación de errores endurecida; `mcp:smoke` verifica initialize, discovery y tool calls en cada release.
-* **Camino al Nivel 5:** adoptar el transporte Streamable HTTP oficial del SDK MCP ([GT-05](./gap-reference-catalog.es.md#gt-05)); conformidad de protocolo automatizada contra el changelog de la spec MCP.
-
-### Dimensión 2: Cobertura de Tests y Quality Gates — **Nivel 4 (Gestionado)**
 * **Estado:** `Validado`
-* **Evidencia:** ~1 369 tests (unit + E2E) verdes; 88.70% statements · 89.80% lines · 76.93% branches (meta ≥75%) · 83.58% functions; teardown limpio sin `--forceExit`.
-* **Camino al Nivel 5:** gates de coverage bloqueantes en CI; coverage de branches ≥80%.
+* **Evidencia:** JSON-RPC 2.0 por stdio y Streamable HTTP oficial del SDK MCP; autenticación por API key; 29 casos E2E MCP; el smoke verifica initialize, discovery, métricas y evaluación de gates en ambos transportes. Ver la [reconciliación de madurez](./maturity-reconciliation.json) generada.
+* **Camino al Nivel 5:** conformidad de protocolo automatizada contra las versiones soportadas de la especificación MCP.
+
+### Dimensión 2: Cobertura de Tests y Quality Gates — **Nivel 3 (Definido)**
+* **Estado:** `Implementado` (Gate de cobertura bloqueado)
+* **Evidencia:** 1,087 tests unitarios y 121 E2E pasan desde un checkout limpio, mientras la cobertura actual de statements es 66.14% frente al umbral normativo de 80% ([GT-48](./gap-reference-catalog.es.md#gt-48)). La [reconciliación de madurez](./maturity-reconciliation.json) generada registra el resultado ejecutable y su run de origen.
+* **Camino al Nivel 4:** restaurar la cobertura de statements a al menos 80% y mantener verde el gate bloqueante de CI.
 
 ### Dimensión 3: Completitud de Exposición de Gobernanza — **Nivel 4 (Gestionado)**
-* **Estado:** `Implementado` (Falta integración Tracker)
-* **Evidencia:** 17+ tools MCP, 8 resources, 7 prompts cubriendo validación, agentes, arquitectura, SDLC y priorización; todo cubierto por tests de routing.
-* **Camino al Nivel 5:** evaluación de gates expuesta como tool de evidencia estructurada ([GT-06](./gap-reference-catalog.es.md#gt-06)); hot-reload de rulesets.
+* **Estado:** `Validado`
+* **Evidencia:** 21 tools MCP, 7 resources y 7 prompts cubren validación, agentes, arquitectura, SDLC, priorización, métricas y evaluación de gates con checks de conformidad de schemas runtime.
+* **Camino al Nivel 5:** hot-reload de rulesets y adopción medida en repositorios satélite.
 
 ### Dimensión 4: Experiencia de Desarrollador CLI — **Nivel 3 (Definido)**
 * **Estado:** `Validado`
-* **Evidencia:** 13 comandos; shell completion (bash/zsh/fish); paridad documental EN/ES 100%; `mcp:smoke` bajo 5 segundos; métricas DORA calculadas desde historia git real en `gate-status`.
-* **Camino al Nivel 4:** envelope de salida unificado y flags globales ([GT-01](./gap-reference-catalog.es.md#gt-01)); cobertura completa de `--dry-run` ([GT-12](./gap-reference-catalog.es.md#gt-12)); publicación en npm ([GT-18](./gap-reference-catalog.es.md#gt-18)).
+* **Evidencia:** el paquete `@evolith/smart-cli@1.1.0` se instala desde el lockfile canónico del workspace; lint, build, E2E y smoke MCP pasan desde un checkout limpio; shell completion y documentación bilingüe están disponibles.
+* **Camino al Nivel 4:** sincronizar documentación pública de producto y hechos de release desde inventario generado ([GT-47](./gap-reference-catalog.es.md#gt-47)).
 
 ### Dimensión 5: Enforcement Runtime de Gobernanza Federada — **Nivel 3 (Definido)**
 * **Estado:** `Diseñado` (Existen reglas, falta validación de contenido)

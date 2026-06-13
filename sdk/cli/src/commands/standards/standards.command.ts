@@ -2,6 +2,7 @@ import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { Inject } from '@nestjs/common';
 import { StandardsService, StandardCategory } from '../../domain/services/standards.service';
+import { IFileSystem } from '../../domain/interfaces';
 import { logger } from '../../infrastructure/observability';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 
@@ -45,7 +46,7 @@ export class StandardsCommand extends BaseEvolithCommand {
     }
   }
 
-  private async interactiveMode(fs: any): Promise<void> {
+  private async interactiveMode(fs: IFileSystem): Promise<void> {
     console.clear();
     this.promptService.showIntro('Evolith Standards - Corporate Standards Management');
 
@@ -89,7 +90,7 @@ export class StandardsCommand extends BaseEvolithCommand {
     }
   }
 
-  private async initializeStandards(fs: any): Promise<void> {
+  private async initializeStandards(fs: IFileSystem): Promise<void> {
     logger.info('Initializing standards directory structure');
 
     const service = new StandardsService(fs, process.cwd());
@@ -109,7 +110,7 @@ export class StandardsCommand extends BaseEvolithCommand {
     }
   }
 
-  private async listStandards(fs: any, category?: string): Promise<void> {
+  private async listStandards(fs: IFileSystem, category?: string): Promise<void> {
     logger.info('Listing standards', { category });
 
     const service = new StandardsService(fs, process.cwd());
@@ -135,7 +136,7 @@ export class StandardsCommand extends BaseEvolithCommand {
     console.table(table);
   }
 
-  private async getStandard(fs: any, id: string): Promise<void> {
+  private async getStandard(fs: IFileSystem, id: string): Promise<void> {
     logger.info('Getting standard', { id });
 
     const service = new StandardsService(fs, process.cwd());
@@ -163,7 +164,7 @@ export class StandardsCommand extends BaseEvolithCommand {
     }
   }
 
-  private async validateStandards(fs: any, code: string): Promise<void> {
+  private async validateStandards(fs: IFileSystem, code: string): Promise<void> {
     if (!code) {
       this.promptService.showError('Código requerido para validación');
       return;
@@ -191,7 +192,7 @@ export class StandardsCommand extends BaseEvolithCommand {
     }
   }
 
-  private async exportStandard(fs: any, id: string, format?: string): Promise<void> {
+  private async exportStandard(fs: IFileSystem, id: string, format?: string): Promise<void> {
     logger.info('Exporting standard', { id, format });
 
     const service = new StandardsService(fs, process.cwd());

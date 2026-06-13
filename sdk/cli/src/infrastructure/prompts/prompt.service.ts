@@ -84,7 +84,7 @@ export class PromptService {
     const result = await p.text({
       ...options,
       validate: options.validate
-        ? (value) => options.validate!(value)
+        ? (value) => options.validate!(value ?? '')
         : undefined,
     });
     if (this.isCancelled(result)) {
@@ -202,7 +202,7 @@ export class PromptService {
               label: db.name,
               hint: db.orm || db.type || "",
             })),
-            initialValue: catalog.getDefaultDatabase(results.runtime),
+            initialValue: catalog.getDefaultDatabase(results.runtime ?? ''),
           });
         },
 

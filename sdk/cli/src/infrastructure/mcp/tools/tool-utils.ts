@@ -6,7 +6,7 @@ export function getFileSystem(): IFileSystem {
   if (!cachedFs) {
     cachedFs = require('../../providers/node-filesystem.provider').NodeFileSystemProvider.prototype.createFileSystem();
   }
-  return cachedFs;
+  return cachedFs!;
 }
 
 export function clearFileSystemCache(): void {

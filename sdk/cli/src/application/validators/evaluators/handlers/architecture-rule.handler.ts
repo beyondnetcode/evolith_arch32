@@ -8,7 +8,7 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
   constructor(private readonly fs: IFileSystem) {}
 
   canHandle(rule: NormalizedRule): boolean {
-    return rule.category && [
+    return Boolean(rule.category) && [
       'topology', 'bounded-contexts', 'hexagonal-architecture', 
       'communication', 'persistence', 'async-boundaries', 
       'extraction-readiness', 'observability', 'module-autonomy', 

@@ -54,6 +54,14 @@ module.exports = {
 
   rules: {
     /**
+     * Surface explicit `any` so new code is steered toward typed boundaries.
+     * Enabled as a warning (GT-49): strict null/implicit-any enforcement now lives
+     * in the compiler; the remaining explicit `: any` sit at genuine dynamic
+     * boundaries (logger varargs, OPA/JSON payloads, catalog data).
+     */
+    '@typescript-eslint/no-explicit-any': 'warn',
+
+    /**
      * Boundary rules for Hexagonal Architecture enforcement.
      *
      * Default is 'disallow' — every allowed import must be explicit.

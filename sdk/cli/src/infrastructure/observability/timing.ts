@@ -15,7 +15,7 @@ export function Timed(operationName?: string) {
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (...args: unknown[]): Promise<unknown> {
-      const opName = operationName || `${target.constructor.name}.${String(propertyKey)}`;
+      const opName = operationName || `${(target as { constructor: { name: string } }).constructor.name}.${String(propertyKey)}`;
       const startTime = performance.now();
 
       logger.startOperation(opName);
@@ -54,7 +54,7 @@ export function TimedSync(operationName?: string) {
     const originalMethod = descriptor.value;
 
     descriptor.value = function (...args: unknown[]): unknown {
-      const opName = operationName || `${target.constructor.name}.${String(propertyKey)}`;
+      const opName = operationName || `${(target as { constructor: { name: string } }).constructor.name}.${String(propertyKey)}`;
       const startTime = performance.now();
 
       logger.startOperation(opName);

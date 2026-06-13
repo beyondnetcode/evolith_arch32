@@ -2,6 +2,7 @@ import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { Inject } from '@nestjs/common';
 import { ADRService, CreateADRInput, ADR, ADCMatrix } from '../../domain/services/adr.service';
+import { IFileSystem } from '../../domain/interfaces';
 import { logger, OperationTimer } from '../../infrastructure/observability';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 
@@ -51,7 +52,7 @@ export class ADRCommand extends BaseEvolithCommand {
     this.timer.end();
   }
 
-  private async interactiveMode(fs: any, dryRun = false): Promise<void> {
+  private async interactiveMode(fs: IFileSystem, dryRun = false): Promise<void> {
     console.clear();
     this.promptService.showIntro('Evolith ADR - Architecture Decision Records');
 
@@ -97,7 +98,7 @@ export class ADRCommand extends BaseEvolithCommand {
     }
   }
 
-  private async createADR(fs: any, dryRun = false): Promise<void> {
+  private async createADR(fs: IFileSystem, dryRun = false): Promise<void> {
     logger.info('Creating new ADR', { dryRun });
 
     const title = await this.promptService.text({
@@ -166,7 +167,7 @@ export class ADRCommand extends BaseEvolithCommand {
     }
   }
 
-  private async listADRs(fs: any): Promise<void> {
+  private async listADRs(fs: IFileSystem): Promise<void> {
     logger.info('Listing ADRs');
 
     const service = new ADRService(fs, process.cwd());
@@ -189,7 +190,7 @@ export class ADRCommand extends BaseEvolithCommand {
     console.table(table);
   }
 
-  private async getADR(fs: any, id: string): Promise<void> {
+  private async getADR(fs: IFileSystem, id: string): Promise<void> {
     logger.info('Getting ADR', { id });
 
     const service = new ADRService(fs, process.cwd());
@@ -214,7 +215,7 @@ export class ADRCommand extends BaseEvolithCommand {
     }
   }
 
-  private async updateADR(fs: any, id: string, status: string, reason?: string, dryRun = false): Promise<void> {
+  private async updateADR(fs: IFileSystem, id: string, status?: string, reason?: string, dryRun = false): Promise<void> {
     logger.info('Updating ADR status', { id, status, dryRun });
 
     if (!status) {
@@ -245,7 +246,7 @@ export class ADRCommand extends BaseEvolithCommand {
     }
   }
 
-  private async showMatrix(fs: any): Promise<void> {
+  private async showMatrix(fs: IFileSystem): Promise<void> {
     logger.info('Showing ADR Matrix');
 
     const service = new ADRService(fs, process.cwd());

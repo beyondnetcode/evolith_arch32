@@ -327,12 +327,12 @@ export interface FileExistsOptions {
 }
 
 export interface FileReadOptions {
-  encoding?: BufferEncoding | null;
+  encoding?: BufferEncoding;
   flag?: string;
 }
 
 export interface FileWriteOptions {
-  encoding?: BufferEncoding | null;
+  encoding?: BufferEncoding;
   mode?: number;
   flag?: string;
 }

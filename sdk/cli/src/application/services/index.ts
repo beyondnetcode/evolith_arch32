@@ -1,5 +1,5 @@
 import { PhaseService } from '../../domain/services';
-import { ICatalogLoader } from '../../domain/interfaces';
+import { ICatalogLoader, IFileSystem } from '../../domain/interfaces';
 import { IPlatformProviders } from '../ports/platform-detection.port';
 import { IWebhookNotifier } from '../ports/webhook-notifier.port';
 import { PlatformNotFoundError, ValidationError } from '../../domain/errors';
@@ -27,11 +27,11 @@ export interface InitProjectResult {
 }
 
 export class InitializeProjectUseCase {
-  private readonly fs: any;
+  private readonly fs: IFileSystem;
   private readonly catalogLoader: ICatalogLoader;
   private readonly phaseService: PhaseService;
 
-  constructor(fs: any, catalogLoader: ICatalogLoader, private readonly platformProviders?: IPlatformProviders) {
+  constructor(fs: IFileSystem, catalogLoader: ICatalogLoader, private readonly platformProviders?: IPlatformProviders) {
     this.fs = fs;
     this.catalogLoader = catalogLoader;
     this.phaseService = new PhaseService();
@@ -311,11 +311,11 @@ evolith sdlc gate-status
 }
 
 export class PhaseTransitionUseCase {
-  private readonly fs: any;
+  private readonly fs: IFileSystem;
   private readonly phaseService: PhaseService;
   private readonly gateValidator: PhaseGateValidatorService;
 
-  constructor(fs: any, corePath?: string, private readonly webhookNotifier?: IWebhookNotifier) {
+  constructor(fs: IFileSystem, corePath?: string, private readonly webhookNotifier?: IWebhookNotifier) {
     this.fs = fs;
     this.phaseService = new PhaseService();
     this.gateValidator = new PhaseGateValidatorService(corePath);

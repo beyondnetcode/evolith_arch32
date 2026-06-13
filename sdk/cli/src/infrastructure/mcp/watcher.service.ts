@@ -4,7 +4,7 @@ import * as chokidar from 'chokidar';
 @Injectable()
 export class WatcherService implements OnModuleDestroy {
   private readonly logger = new Logger(WatcherService.name);
-  private watcher: chokidar.FSWatcher;
+  private watcher?: chokidar.FSWatcher;
 
   startWatching(cwd: string = process.cwd()): void {
     this.logger.log(`Iniciando Evolith Watcher en: ${cwd}`);

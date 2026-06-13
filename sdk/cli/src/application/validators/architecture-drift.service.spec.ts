@@ -1,366 +1,164 @@
-import { ArchitectureDriftService, DriftReport, DriftViolation, DriftHistoryEntry } from './architecture-drift.service';
-import { getContainer, resetContainer, IFileSystemProvider, IFileSystem } from '../../domain/interfaces';
-import { RulesetValidatorService, ArchitectureValidationResult } from './ruleset-validator.service';
+import { ArchitectureDriftService } from './architecture-drift.service';
+import { ArchitectureValidationResult, ValidationIssue } from './ruleset-validator.service';
 
-const createMockFileSystem = (overrides?: Partial<IFileSystem>): IFileSystem => {
-  const mock = {
+function createMockFs(overrides: Record<string, unknown> = {}) {
+  return {
     exists: jest.fn().mockResolvedValue(false),
     existsSync: jest.fn().mockReturnValue(false),
     readFile: jest.fn().mockResolvedValue(''),
-    readJson: jest.fn().mockResolvedValue({}),
-    readdirNames: jest.fn().mockResolvedValue([]),
-    writeFile: jest.fn().mockResolvedValue(undefined),
     writeJson: jest.fn().mockResolvedValue(undefined),
     ensureDir: jest.fn().mockResolvedValue(undefined),
-    remove: jest.fn().mockResolvedValue(undefined),
-    stat: jest.fn().mockResolvedValue({ isDirectory: () => true, isFile: () => false }),
     ...overrides,
   };
-  return mock as unknown as IFileSystem;
-};
+}
 
-const mockArchitectureResult: ArchitectureValidationResult = {
-  status: 'passed',
-  levels: ['F1'],
-  rulesChecked: 8,
-  issues: [],
-  timestamp: new Date().toISOString(),
-};
+const mockLogger = { info: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn() };
 
-jest.mock('./ruleset-validator.service', () => {
+function issue(over: Partial<ValidationIssue> = {}): ValidationIssue {
   return {
-    RulesetValidatorService: jest.fn().mockImplementation(() => ({
-      validateArchitecture: jest.fn().mockResolvedValue(mockArchitectureResult),
-    })),
-  };
-});
+    ruleId: 'ARCH-001',
+    severity: 'MUST',
+    category: 'architecture',
+    title: 'Hexagonal boundary',
+    description: 'desc',
+    blocking: true,
+    ...over,
+  } as ValidationIssue;
+}
 
-describe.skip('ArchitectureDriftService', () => {
-  let service: ArchitectureDriftService;
-  let mockFs: IFileSystem;
+function result(over: Partial<ArchitectureValidationResult> = {}): ArchitectureValidationResult {
+  return { status: 'passed', rulesChecked: 8, issues: [], ...over } as ArchitectureValidationResult;
+}
 
-  beforeEach(() => {
-    resetContainer();
-    jest.clearAllMocks();
+function makeService(opts: { fs?: any; validatorResult?: ArchitectureValidationResult } = {}) {
+  const fs = opts.fs ?? createMockFs();
+  const validator = { validateArchitecture: jest.fn().mockResolvedValue(opts.validatorResult ?? result()) };
+  const service = new ArchitectureDriftService(undefined, { fileSystem: fs, logger: mockLogger, validator });
+  return { service, fs, validator };
+}
 
-    mockFs = createMockFileSystem();
-    const mockProvider: IFileSystemProvider = {
-      createFileSystem: () => mockFs,
-    };
-    getContainer().setFileSystemProvider(mockProvider);
-
-    service = new ArchitectureDriftService('/core');
-  });
-
-  afterEach(() => {
-    resetContainer();
-  });
+describe('ArchitectureDriftService', () => {
+  beforeEach(() => jest.clearAllMocks());
 
   describe('detectDrift', () => {
-    it('should return a drift report with all required fields', async () => {
-      const report = await service.detectDrift({
-        projectPath: '/project',
-        declaredLevel: 'F1',
-        storeHistory: false,
-      });
-
-      expect(report).toHaveProperty('projectId');
-      expect(report).toHaveProperty('declaredLevel');
-      expect(report).toHaveProperty('detectedLevel');
-      expect(report).toHaveProperty('driftDetected');
-      expect(report).toHaveProperty('driftSeverity');
-      expect(report).toHaveProperty('newViolations');
-      expect(report).toHaveProperty('resolvedViolations');
-      expect(report).toHaveProperty('persistentViolations');
-      expect(report).toHaveProperty('overallScore');
-      expect(report).toHaveProperty('timestamp');
-      expect(report).toHaveProperty('historyPath');
-    });
-
-    it('should detect no drift when validation passes', async () => {
-      const report = await service.detectDrift({
-        projectPath: '/project',
-        declaredLevel: 'F1',
-        storeHistory: false,
-      });
+    it('reports no drift for a clean validation', async () => {
+      const { service } = makeService();
+      const report = await service.detectDrift({ projectPath: '/p/app', declaredLevel: 'F1', storeHistory: false });
 
       expect(report.driftDetected).toBe(false);
       expect(report.driftSeverity).toBe('none');
       expect(report.overallScore).toBe(100);
+      expect(report.projectId).toBe('app');
     });
 
-    it('should detect drift when validation fails', async () => {
-      (RulesetValidatorService as jest.Mock).mockImplementation(() => ({
-        validateArchitecture: jest.fn().mockResolvedValue({
-          status: 'failed',
-          levels: ['F1'],
-          rulesChecked: 8,
-          issues: [{
-            ruleId: 'F1-R01',
-            severity: 'MUST' as const,
-            category: 'topology',
-            title: 'Single Deployment Unit',
-            description: 'Multiple deployment units detected',
-            file: 'src/',
-            blocking: true,
-          }],
-          timestamp: new Date().toISOString(),
-        }),
-      }));
-
-      const driftService = new ArchitectureDriftService('/core');
-      const report = await driftService.detectDrift({
-        projectPath: '/project',
-        declaredLevel: 'F1',
-        storeHistory: false,
+    it('flags critical drift on a new blocking violation', async () => {
+      const { service } = makeService({
+        validatorResult: result({ status: 'failed', issues: [issue({ ruleId: 'ARCH-NEW', blocking: true })] }),
       });
+      const report = await service.detectDrift({ projectPath: '/p/app', declaredLevel: 'F1', storeHistory: false });
 
       expect(report.driftDetected).toBe(true);
-      expect(report.newViolations.length).toBeGreaterThan(0);
+      expect(report.driftSeverity).toBe('critical');
+      expect(report.newViolations).toHaveLength(1);
+      expect(report.overallScore).toBeLessThan(100);
     });
 
-    it('should calculate correct overall score', async () => {
-      (RulesetValidatorService as jest.Mock).mockImplementation(() => ({
-        validateArchitecture: jest.fn().mockResolvedValue({
-          status: 'passed',
-          levels: ['F1'],
-          rulesChecked: 8,
-          issues: [
-            { ruleId: 'F1-R01', severity: 'MUST' as const, category: 'topology', title: 'Issue 1', description: 'desc', blocking: true },
-            { ruleId: 'F1-R02', severity: 'SHOULD' as const, category: 'bounded-contexts', title: 'Issue 2', description: 'desc', blocking: false },
-          ],
-          timestamp: new Date().toISOString(),
-        }),
-      }));
-      (mockFs.existsSync as jest.Mock).mockReturnValue(false);
+    it('persists history when storeHistory is enabled', async () => {
+      const fs = createMockFs();
+      const { service } = makeService({ fs });
+      await service.detectDrift({ projectPath: '/p/app', declaredLevel: 'F1', storeHistory: true });
 
-      const driftService = new ArchitectureDriftService('/core');
-      const report = await driftService.detectDrift({
-        projectPath: '/project',
-        declaredLevel: 'F1',
-        storeHistory: false,
-      });
-
-      expect(report.overallScore).toBe(80);
+      expect(fs.ensureDir).toHaveBeenCalled();
+      expect(fs.writeJson).toHaveBeenCalledWith(expect.stringContaining('drift-history.json'), expect.any(Array));
     });
 
-    it('should store history when storeHistory is true', async () => {
-      (mockFs.exists as jest.Mock).mockResolvedValue(false);
-
-      const report = await service.detectDrift({
-        projectPath: '/project',
-        declaredLevel: 'F1',
-        storeHistory: true,
+    it('classifies persistent (non-new) violations from prior history', async () => {
+      const prior = [{
+        timestamp: 't', declaredLevel: 'F1', detectedLevel: 'F1', violationsCount: 1,
+        blockingViolationsCount: 1, overallScore: 85,
+        violations: [{ ruleId: 'ARCH-001', severity: 'MUST', category: 'architecture', title: 't', description: 'd', blocking: true, firstDetected: 't', status: 'persistent' }],
+      }];
+      const fs = createMockFs({
+        exists: jest.fn().mockResolvedValue(true),
+        readFile: jest.fn().mockResolvedValue(JSON.stringify(prior)),
       });
+      const { service } = makeService({ fs, validatorResult: result({ status: 'failed', issues: [issue({ ruleId: 'ARCH-001' })] }) });
+      const report = await service.detectDrift({ projectPath: '/p/app', declaredLevel: 'F1', storeHistory: true });
 
-      expect(mockFs.writeJson).toHaveBeenCalled();
-    });
-
-    it('should not store history when storeHistory is false', async () => {
-      await service.detectDrift({
-        projectPath: '/project',
-        declaredLevel: 'F1',
-        storeHistory: false,
-      });
-
-      expect(mockFs.writeJson).not.toHaveBeenCalled();
+      expect(report.newViolations).toHaveLength(0);
+      expect(report.persistentViolations).toHaveLength(1);
     });
   });
 
-  describe('detectLevelDrift', () => {
-    it('should return level comparison', async () => {
-      const result = await service.detectLevelDrift('/project');
-
-      expect(result).toHaveProperty('declared');
-      expect(result).toHaveProperty('detected');
-      expect(result).toHaveProperty('drifted');
+  describe('detectActualLevel via detectLevelDrift', () => {
+    it('detects F3 when Dockerfile, contracts, and events exist', async () => {
+      const fs = createMockFs({ existsSync: jest.fn().mockReturnValue(true) });
+      const { service } = makeService({ fs });
+      const res = await service.detectLevelDrift('/p/app', '/core');
+      expect(res.detected).toBe('F3');
     });
 
-    it('should detect drift when declared differs from detected', async () => {
-      (mockFs.exists as jest.Mock).mockImplementation((p: string) => {
-        if (p.includes('evolith.yaml')) return Promise.resolve(true);
-        return Promise.resolve(false);
+    it('detects F1 and flags drift against a declared F2', async () => {
+      const fs = createMockFs({
+        existsSync: jest.fn().mockReturnValue(false),
+        exists: jest.fn().mockResolvedValue(true),
+        readFile: jest.fn().mockResolvedValue(JSON.stringify({ product: { architecture: 'F2' } })),
       });
-      (mockFs.readFile as jest.Mock).mockResolvedValue(JSON.stringify({ product: { architecture: 'F2' } }));
-
-      const result = await service.detectLevelDrift('/project');
-
-      expect(result.drifted).toBe(result.declared !== result.detected);
+      const { service } = makeService({ fs });
+      const res = await service.detectLevelDrift('/p/app', '/core');
+      expect(res.declared).toBe('F2');
+      expect(res.detected).toBe('F1');
+      expect(res.drifted).toBe(true);
     });
   });
 
   describe('getDriftHistory', () => {
-    it('should return empty array when no history exists', async () => {
-      (mockFs.exists as jest.Mock).mockResolvedValue(false);
-
-      const history = await service.getDriftHistory('/project');
-
-      expect(history).toEqual([]);
+    it('returns an empty array when no history file exists', async () => {
+      const { service } = makeService();
+      expect(await service.getDriftHistory('/p/app')).toEqual([]);
     });
 
-    it('should return history entries when file exists', async () => {
-      const mockHistory: DriftHistoryEntry[] = [
-        {
-          timestamp: '2026-01-01T00:00:00.000Z',
-          declaredLevel: 'F1',
-          detectedLevel: 'F1',
-          violationsCount: 0,
-          blockingViolationsCount: 0,
-          overallScore: 100,
-          violations: [],
-        },
-      ];
-      (mockFs.exists as jest.Mock).mockResolvedValue(true);
-      (mockFs.readFile as jest.Mock).mockResolvedValue(JSON.stringify(mockHistory));
-
-      const history = await service.getDriftHistory('/project');
-
-      expect(history).toHaveLength(1);
-      expect(history[0].overallScore).toBe(100);
+    it('returns [] when the history file is corrupt', async () => {
+      const fs = createMockFs({
+        exists: jest.fn().mockResolvedValue(true),
+        readFile: jest.fn().mockResolvedValue('not-json'),
+      });
+      const { service } = makeService({ fs });
+      expect(await service.getDriftHistory('/p/app')).toEqual([]);
     });
   });
 
   describe('getDriftTrend', () => {
-    it('should return stable trend with insufficient history', async () => {
-      (mockFs.exists as jest.Mock).mockResolvedValue(false);
-
-      const { trend, entries } = await service.getDriftTrend('/project');
-
-      expect(trend).toBe('stable');
-      expect(entries).toEqual([]);
+    const entry = (score: number): any => ({
+      timestamp: 't', declaredLevel: 'F1', detectedLevel: 'F1',
+      violationsCount: 0, blockingViolationsCount: 0, overallScore: score, violations: [],
     });
 
-    it('should detect improving trend', async () => {
-      const mockHistory: DriftHistoryEntry[] = [
-        { timestamp: '2026-01-01', declaredLevel: 'F1', detectedLevel: 'F1', violationsCount: 5, blockingViolationsCount: 1, overallScore: 60, violations: [] },
-        { timestamp: '2026-01-02', declaredLevel: 'F1', detectedLevel: 'F1', violationsCount: 3, blockingViolationsCount: 0, overallScore: 80, violations: [] },
-        { timestamp: '2026-01-03', declaredLevel: 'F1', detectedLevel: 'F1', violationsCount: 1, blockingViolationsCount: 0, overallScore: 95, violations: [] },
-      ];
-      (mockFs.exists as jest.Mock).mockResolvedValue(true);
-      (mockFs.readFile as jest.Mock).mockResolvedValue(JSON.stringify(mockHistory));
-
-      const { trend } = await service.getDriftTrend('/project');
-
-      expect(trend).toBe('improving');
-    });
-
-    it('should detect degrading trend', async () => {
-      const mockHistory: DriftHistoryEntry[] = [
-        { timestamp: '2026-01-01', declaredLevel: 'F1', detectedLevel: 'F1', violationsCount: 0, blockingViolationsCount: 0, overallScore: 100, violations: [] },
-        { timestamp: '2026-01-02', declaredLevel: 'F1', detectedLevel: 'F1', violationsCount: 3, blockingViolationsCount: 1, overallScore: 70, violations: [] },
-        { timestamp: '2026-01-03', declaredLevel: 'F1', detectedLevel: 'F1', violationsCount: 5, blockingViolationsCount: 2, overallScore: 50, violations: [] },
-      ];
-      (mockFs.exists as jest.Mock).mockResolvedValue(true);
-      (mockFs.readFile as jest.Mock).mockResolvedValue(JSON.stringify(mockHistory));
-
-      const { trend } = await service.getDriftTrend('/project');
-
-      expect(trend).toBe('degrading');
-    });
-  });
-
-  describe('calculateDriftSeverity', () => {
-    it('should return critical for new blocking violations', async () => {
-      (RulesetValidatorService as jest.Mock).mockImplementation(() => ({
-        validateArchitecture: jest.fn().mockResolvedValue({
-          status: 'failed',
-          levels: ['F1'],
-          rulesChecked: 8,
-          issues: [{ ruleId: 'F1-R01', severity: 'MUST' as const, category: 'topology', title: 'Blocking', description: 'desc', blocking: true }],
-          timestamp: new Date().toISOString(),
-        }),
-      }));
-
-      const driftService = new ArchitectureDriftService('/core');
-      const report = await driftService.detectDrift({
-        projectPath: '/project',
-        declaredLevel: 'F1',
-        storeHistory: false,
+    it('returns stable with fewer than two entries', async () => {
+      const fs = createMockFs({
+        exists: jest.fn().mockResolvedValue(true),
+        readFile: jest.fn().mockResolvedValue(JSON.stringify([entry(80)])),
       });
-
-      expect(report.driftSeverity).toBe('critical');
+      const { service } = makeService({ fs });
+      expect((await service.getDriftTrend('/p/app')).trend).toBe('stable');
     });
 
-    it('should calculate drift severity based on violations', async () => {
-      const report = await service.detectDrift({
-        projectPath: '/project',
-        declaredLevel: 'F1',
-        storeHistory: false,
+    it('detects an improving trend', async () => {
+      const fs = createMockFs({
+        exists: jest.fn().mockResolvedValue(true),
+        readFile: jest.fn().mockResolvedValue(JSON.stringify([entry(70), entry(90)])),
       });
-
-      expect(report).toHaveProperty('driftSeverity');
-      expect(['critical', 'high', 'medium', 'low', 'none']).toContain(report.driftSeverity);
+      const { service } = makeService({ fs });
+      expect((await service.getDriftTrend('/p/app')).trend).toBe('improving');
     });
-  });
 
-  describe('findNewViolations', () => {
-    it('should identify new violations not in previous list', async () => {
-      (RulesetValidatorService as jest.Mock).mockImplementation(() => ({
-        validateArchitecture: jest.fn().mockResolvedValue({
-          status: 'failed',
-          levels: ['F1'],
-          rulesChecked: 8,
-          issues: [{ ruleId: 'F1-R01', severity: 'MUST' as const, category: 'topology', title: 'New', description: 'desc', blocking: true }],
-          timestamp: new Date().toISOString(),
-        }),
-      }));
-
-      (mockFs.exists as jest.Mock).mockResolvedValue(true);
-      (mockFs.readFile as jest.Mock).mockResolvedValue(JSON.stringify([
-        { timestamp: '2026-01-01', declaredLevel: 'F1', detectedLevel: 'F1', violationsCount: 0, blockingViolationsCount: 0, overallScore: 100, violations: [] },
-      ]));
-
-      const driftService = new ArchitectureDriftService('/core');
-      const report = await driftService.detectDrift({
-        projectPath: '/project',
-        declaredLevel: 'F1',
-        storeHistory: true,
+    it('detects a degrading trend', async () => {
+      const fs = createMockFs({
+        exists: jest.fn().mockResolvedValue(true),
+        readFile: jest.fn().mockResolvedValue(JSON.stringify([entry(90), entry(70)])),
       });
-
-      expect(report.newViolations.length).toBeGreaterThan(0);
-      expect(report.newViolations[0].status).toBe('new');
-    });
-  });
-
-  describe('findResolvedViolations', () => {
-    it('should identify resolved violations no longer present', async () => {
-      (RulesetValidatorService as jest.Mock).mockImplementation(() => ({
-        validateArchitecture: jest.fn().mockResolvedValue({
-          status: 'passed',
-          levels: ['F1'],
-          rulesChecked: 8,
-          issues: [],
-          timestamp: new Date().toISOString(),
-        }),
-      }));
-      (mockFs.existsSync as jest.Mock).mockReturnValue(false);
-      (mockFs.exists as jest.Mock).mockResolvedValue(true);
-      (mockFs.readFile as jest.Mock).mockImplementation((p: string) => {
-        if (p.includes('drift-history')) {
-          return Promise.resolve(JSON.stringify([
-            {
-              timestamp: '2026-01-01',
-              declaredLevel: 'F1',
-              detectedLevel: 'F1',
-              violationsCount: 1,
-              blockingViolationsCount: 0,
-              overallScore: 95,
-              violations: [{ ruleId: 'F1-R01', severity: 'SHOULD' as const, category: 'topology', title: 'Old', description: 'desc', blocking: false, firstDetected: '2026-01-01', status: 'persistent' }],
-            },
-          ]));
-        }
-        return Promise.resolve(JSON.stringify({ product: { architecture: 'F1' } }));
-      });
-
-      const driftService = new ArchitectureDriftService('/core');
-      const report = await driftService.detectDrift({
-        projectPath: '/project',
-        declaredLevel: 'F1',
-        storeHistory: true,
-      });
-
-      expect(report.resolvedViolations.length).toBeGreaterThan(0);
-      expect(report.resolvedViolations[0].status).toBe('resolved');
+      const { service } = makeService({ fs });
+      expect((await service.getDriftTrend('/p/app')).trend).toBe('degrading');
     });
   });
 });

@@ -1,0 +1,111 @@
+import * as path from 'path';
+import { OpaInputBuilder } from './opa-input-builder';
+
+const SAT = '/sat';
+const CORE = '/core';
+const ctx = { satellitePath: SAT, corePath: CORE };
+
+function fsMock(cfg: { existing?: string[]; dirs?: Record<string, string[]>; directories?: string[]; json?: Record<string, unknown>; files?: Record<string, string> } = {}) {
+  const existing = new Set(cfg.existing ?? []);
+  const directories = new Set(cfg.directories ?? []);
+  return {
+    exists: jest.fn(async (p: string) => existing.has(p)),
+    readJson: jest.fn(async (p: string) => {
+      if (cfg.json && p in cfg.json) return cfg.json[p];
+      throw new Error(`no json: ${p}`);
+    }),
+    readFile: jest.fn(async (p: string) => {
+      if (cfg.files && p in cfg.files) return cfg.files[p];
+      throw new Error(`no file: ${p}`);
+    }),
+    readdirNames: jest.fn(async (p: string) => cfg.dirs?.[p] ?? []),
+    stat: jest.fn(async (p: string) => ({ isDirectory: () => directories.has(p), isFile: () => !directories.has(p) })),
+  } as any;
+}
+
+describe('OpaInputBuilder', () => {
+  it('builds a minimal input when nothing exists', async () => {
+    const input = await new OpaInputBuilder(fsMock()).build(ctx);
+
+    expect(input.satellitePath).toBe(SAT);
+    expect(input.corePath).toBe(CORE);
+    expect(input.satellite.packageJson).toBeNull();
+    expect(input.satellite.hasPackageLock).toBe(false);
+    expect(input.satellite.directories).toEqual([]);
+    expect(input.satellite.workflows).toEqual({});
+    expect(input.satellite.sourceFiles).toEqual([]);
+    expect(input.core.adrs).toEqual([]);
+    expect(input.core.cli.hasMainJs).toBe(false);
+    expect(input.core.cli.mcpServerSource).toBeNull();
+  });
+
+  it('builds a populated input across satellite and core surfaces', async () => {
+    const satPkg = path.join(SAT, 'package.json');
+    const satLock = path.join(SAT, 'package-lock.json');
+    const wfDir = path.join(SAT, '.github', 'workflows');
+    const wfFile = path.join(wfDir, 'ci.yml');
+    const contracts = path.join(SAT, 'contracts');
+    const srcDir = path.join(SAT, 'src');
+    const srcFile = path.join(srcDir, 'main.ts');
+    const specFile = path.join(srcDir, 'main.spec.ts');
+
+    const coreEvDir = path.join(CORE, '.harness', 'evidence');
+    const coreEvFile = path.join(coreEvDir, 'gate.json');
+    const adrDir = path.join(CORE, 'reference', 'architecture', 'adrs');
+    const adrFile = path.join(adrDir, '0001-foo.md');
+    const mcpServer = path.join(CORE, 'sdk', 'cli', 'src', 'core', 'mcp', 'server.ts');
+    const distDir = path.join(CORE, 'sdk', 'cli', 'dist');
+    const distSpec = path.join(distDir, 'x.spec.js');
+    const wsBase = path.join(SAT, 'packages');
+    const wsPkg = path.join(wsBase, 'a', 'package.json');
+
+    const fs = fsMock({
+      existing: [
+        SAT, CORE, satPkg, satLock, wfDir, wfFile, contracts, srcDir, srcFile, specFile,
+        coreEvDir, coreEvFile, adrDir, adrFile, mcpServer, distDir, distSpec, wsBase, wsPkg,
+      ],
+      directories: [SAT, CORE, wfDir, contracts, srcDir, coreEvDir, adrDir, distDir, wsBase],
+      dirs: {
+        [SAT]: ['src', 'contracts', 'package.json'],
+        [wfDir]: ['ci.yml'],
+        [srcDir]: ['main.ts', 'main.spec.ts'],
+        [coreEvDir]: ['gate.json'],
+        [adrDir]: ['0001-foo.md'],
+        [distDir]: ['x.spec.js'],
+        [wsBase]: ['a'],
+      },
+      json: {
+        [satPkg]: { name: 'sat', workspaces: ['packages/*'] },
+        [wsPkg]: { name: 'sat-a' },
+        [coreEvFile]: { id: 'gate', status: 'passed' },
+      },
+      files: {
+        [wfFile]: 'jobs:\n  build:\n    steps: [npm ci]',
+        [srcFile]: `import { intro } from '@clack/prompts';\nclass FooService {}\nconst s = new FooService();\nconst m = 'x'.match(/y/);`,
+        [specFile]: `describe('x', () => {});`,
+        [mcpServer]: 'const apiKey = 1;',
+      },
+    });
+
+    const input = await new OpaInputBuilder(fs).build(ctx);
+
+    expect(input.satellite.packageJson).toEqual({ name: 'sat', workspaces: ['packages/*'] });
+    expect(input.satellite.hasPackageLock).toBe(true);
+    expect(input.satellite.hasContracts).toBe(true);
+    expect(input.satellite.directories.sort()).toEqual(['contracts', 'src']);
+    expect(Object.keys(input.satellite.workflows)).toEqual(['ci.yml']);
+    expect(input.satellite.workspacePackageJsons[0].content.name).toBe('sat');
+    expect(input.satellite.workspacePackageJsons.some((p: any) => p.content.name === 'sat-a')).toBe(true);
+
+    const mainInfo = input.satellite.sourceFiles.find((f: any) => f.path.endsWith('main.ts'));
+    expect(mainInfo.hasUiImport).toBe(true);
+    expect(mainInfo.hasManualInstantiation).toBe(true);
+    expect(mainInfo.usesRegexForCode).toBe(true);
+
+    expect(input.core.adrs).toContain(adrFile);
+    expect(input.core.evidence['gate.json']).toEqual({ id: 'gate', status: 'passed' });
+    expect(input.core.cli.hasMainJs).toBe(false);
+    expect(input.core.cli.hasTests).toBe(true);
+    expect(input.core.cli.mcpServerSource).toContain('apiKey');
+  });
+});

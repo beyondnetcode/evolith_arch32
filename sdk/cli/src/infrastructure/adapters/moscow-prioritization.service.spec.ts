@@ -1,349 +1,186 @@
-import { MoscowPrioritizationService, MoscowItem, MoscowAnalysis } from './moscow-prioritization.service';
+import { MoscowPrioritizationService, MoscowAnalysis } from './moscow-prioritization.service';
 
-jest.mock('../../domain/interfaces', () => ({
-  getContainer: jest.fn(),
-}));
+function createMockFs() {
+  const store = new Map<string, string>();
+  return {
+    store,
+    exists: jest.fn(async (p: string) => store.has(p)),
+    readFile: jest.fn(async (p: string) => {
+      if (!store.has(p)) throw new Error(`ENOENT: ${p}`);
+      return store.get(p) as string;
+    }),
+    readdirNames: jest.fn(async () => [] as string[]),
+    stat: jest.fn(async () => ({ isDirectory: () => false, isFile: () => true })),
+    ensureDir: jest.fn(async () => undefined),
+    writeJson: jest.fn(async (p: string, data: unknown) => {
+      store.set(p, JSON.stringify(data));
+    }),
+  };
+}
 
-import { getContainer } from '../../domain/interfaces';
-
-const mockFileSystem = {
-  exists: jest.fn(),
-  readFile: jest.fn(),
-  readdirNames: jest.fn(),
-  stat: jest.fn(),
-  ensureDir: jest.fn(),
-  writeJson: jest.fn(),
-};
-
-const mockContainer = {
-  createFileSystem: jest.fn().mockReturnValue(mockFileSystem),
-  createConfigParser: jest.fn(),
-};
-
-describe.skip('MoscowPrioritizationService', () => {
+describe('MoscowPrioritizationService', () => {
+  let mockFs: ReturnType<typeof createMockFs>;
   let service: MoscowPrioritizationService;
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    (getContainer as jest.Mock).mockReturnValue(mockContainer);
-    service = new MoscowPrioritizationService();
+    mockFs = createMockFs();
+    service = new MoscowPrioritizationService({ fileSystem: mockFs });
   });
 
-  describe.skip('createAnalysis', () => {
-    it('should create a new MoSCoW analysis', async () => {
-      const items = [
-        { description: 'Setup repository', priority: 'MUST' as const, category: 'Foundation', rationale: 'Required for all projects', phase: 'phase-0' },
-        { description: 'Add documentation', priority: 'SHOULD' as const, category: 'Documentation', rationale: 'Important but not critical', phase: 'phase-0' },
-      ];
+  const sampleItems = [
+    { description: 'Setup repository', priority: 'MUST' as const, category: 'Foundation', rationale: 'Required', phase: 'phase-0' },
+    { description: 'Add documentation', priority: 'SHOULD' as const, category: 'Docs', rationale: 'Important', phase: 'phase-0' },
+    { description: 'Nice to have', priority: 'COULD' as const, category: 'Extra', rationale: 'Optional', phase: 'phase-0' },
+    { description: 'Skip for now', priority: 'WONT' as const, category: 'Future', rationale: 'Deferred', phase: 'phase-0' },
+  ];
 
-      const result = await service.createAnalysis('/test/repo', 'phase-0', items);
+  describe('createAnalysis', () => {
+    it('creates an analysis with sequential ids and a correct summary', async () => {
+      const result = await service.createAnalysis('/repo', 'phase-0', sampleItems);
 
-      expect(result.repository).toBe('/test/repo');
+      expect(result.repository).toBe('/repo');
       expect(result.phase).toBe('phase-0');
-      expect(result.items).toHaveLength(2);
+      expect(result.items).toHaveLength(4);
       expect(result.items[0].id).toBe('PHASE-0-001');
-      expect(result.items[1].id).toBe('PHASE-0-002');
-      expect(result.summary.must).toBe(1);
-      expect(result.summary.should).toBe(1);
-      expect(result.summary.total).toBe(2);
+      expect(result.items[3].id).toBe('PHASE-0-004');
+      expect(result.summary).toMatchObject({ must: 1, should: 1, could: 1, wont: 1, total: 4 });
     });
 
-    it('should save analysis to disk', async () => {
-      const items = [
-        { description: 'Test item', priority: 'MUST' as const, category: 'Test', rationale: 'Testing', phase: 'phase-0' },
-      ];
-
-      await service.createAnalysis('/test/repo', 'phase-0', items);
-
-      expect(mockFileSystem.ensureDir).toHaveBeenCalled();
-      expect(mockFileSystem.writeJson).toHaveBeenCalled();
+    it('persists the analysis to disk', async () => {
+      await service.createAnalysis('/repo', 'phase-0', sampleItems);
+      expect(mockFs.ensureDir).toHaveBeenCalled();
+      expect(mockFs.writeJson).toHaveBeenCalledWith(
+        expect.stringContaining('moscow'),
+        expect.objectContaining({ phase: 'phase-0' }),
+      );
     });
   });
 
   describe('loadAnalysis', () => {
-    it('should return null when analysis not found', async () => {
-      mockFileSystem.exists.mockResolvedValue(false);
-
-      const result = await service.loadAnalysis('/test/repo', 'phase-0');
-
-      expect(result).toBeNull();
+    it('returns null when no analysis exists', async () => {
+      expect(await service.loadAnalysis('/repo', 'phase-9')).toBeNull();
     });
 
-    it('should load analysis from disk', async () => {
-      const mockAnalysis = {
-        repository: '/test/repo',
-        phase: 'phase-0',
-        items: [],
-        summary: { must: 0, should: 0, could: 0, wont: 0, total: 0 },
-        createdAt: '2026-01-01',
-        updatedAt: '2026-01-01',
-      };
-
-      mockFileSystem.exists.mockResolvedValue(true);
-      mockFileSystem.readFile.mockResolvedValue(JSON.stringify(mockAnalysis));
-
-      const result = await service.loadAnalysis('/test/repo', 'phase-0');
-
-      expect(result).toEqual(mockAnalysis);
+    it('returns the persisted analysis', async () => {
+      const created = await service.createAnalysis('/repo', 'phase-0', sampleItems);
+      const loaded = await service.loadAnalysis('/repo', 'phase-0');
+      expect(loaded?.items).toHaveLength(created.items.length);
     });
   });
 
   describe('updateItem', () => {
-    it('should return null when analysis not found', async () => {
-      mockFileSystem.exists.mockResolvedValue(false);
-
-      const result = await service.updateItem('/test/repo', 'phase-0', 'PHASE-0-001', { priority: 'SHOULD' });
-
-      expect(result).toBeNull();
+    it('returns null when the analysis is missing', async () => {
+      expect(await service.updateItem('/repo', 'missing', 'X-001', { priority: 'MUST' })).toBeNull();
     });
 
-    it('should return null when item not found', async () => {
-      const mockAnalysis = {
-        repository: '/test/repo',
-        phase: 'phase-0',
-        items: [{ id: 'PHASE-0-001', description: 'Test', priority: 'MUST', category: 'Test', rationale: 'Test', phase: 'phase-0' }],
-        summary: { must: 1, should: 0, could: 0, wont: 0, total: 1 },
-        createdAt: '2026-01-01',
-        updatedAt: '2026-01-01',
-      };
-
-      mockFileSystem.exists.mockResolvedValue(true);
-      mockFileSystem.readFile.mockResolvedValue(JSON.stringify(mockAnalysis));
-
-      const result = await service.updateItem('/test/repo', 'phase-0', 'PHASE-0-999', { priority: 'SHOULD' });
-
-      expect(result).toBeNull();
+    it('returns null when the item id is unknown', async () => {
+      await service.createAnalysis('/repo', 'phase-0', sampleItems);
+      expect(await service.updateItem('/repo', 'phase-0', 'UNKNOWN', { priority: 'MUST' })).toBeNull();
     });
 
-    it('should update item and recalculate summary', async () => {
-      const mockAnalysis = {
-        repository: '/test/repo',
-        phase: 'phase-0',
-        items: [{ id: 'PHASE-0-001', description: 'Test', priority: 'MUST', category: 'Test', rationale: 'Test', phase: 'phase-0' }],
-        summary: { must: 1, should: 0, could: 0, wont: 0, total: 1 },
-        createdAt: '2026-01-01',
-        updatedAt: '2026-01-01',
-      };
-
-      mockFileSystem.exists.mockResolvedValue(true);
-      mockFileSystem.readFile.mockResolvedValue(JSON.stringify(mockAnalysis));
-
-      const result = await service.updateItem('/test/repo', 'phase-0', 'PHASE-0-001', { priority: 'SHOULD' });
-
-      expect(result).not.toBeNull();
-      expect(result?.summary.must).toBe(0);
-      expect(result?.summary.should).toBe(1);
+    it('updates an item and recomputes the summary', async () => {
+      await service.createAnalysis('/repo', 'phase-0', sampleItems);
+      const updated = await service.updateItem('/repo', 'phase-0', 'PHASE-0-002', { priority: 'MUST' });
+      expect(updated?.summary.must).toBe(2);
+      expect(updated?.summary.should).toBe(0);
     });
   });
 
   describe('removeItem', () => {
-    it('should return null when analysis not found', async () => {
-      mockFileSystem.exists.mockResolvedValue(false);
-
-      const result = await service.removeItem('/test/repo', 'phase-0', 'PHASE-0-001');
-
-      expect(result).toBeNull();
+    it('returns null when the analysis is missing', async () => {
+      expect(await service.removeItem('/repo', 'missing', 'X-001')).toBeNull();
     });
 
-    it('should remove item and recalculate summary', async () => {
-      const mockAnalysis = {
-        repository: '/test/repo',
-        phase: 'phase-0',
-        items: [
-          { id: 'PHASE-0-001', description: 'Test 1', priority: 'MUST', category: 'Test', rationale: 'Test', phase: 'phase-0' },
-          { id: 'PHASE-0-002', description: 'Test 2', priority: 'SHOULD', category: 'Test', rationale: 'Test', phase: 'phase-0' },
-        ],
-        summary: { must: 1, should: 1, could: 0, wont: 0, total: 2 },
-        createdAt: '2026-01-01',
-        updatedAt: '2026-01-01',
-      };
-
-      mockFileSystem.exists.mockResolvedValue(true);
-      mockFileSystem.readFile.mockResolvedValue(JSON.stringify(mockAnalysis));
-
-      const result = await service.removeItem('/test/repo', 'phase-0', 'PHASE-0-001');
-
-      expect(result).not.toBeNull();
-      expect(result?.items).toHaveLength(1);
-      expect(result?.summary.total).toBe(1);
-      expect(result?.summary.must).toBe(0);
+    it('removes an item and recomputes totals', async () => {
+      await service.createAnalysis('/repo', 'phase-0', sampleItems);
+      const result = await service.removeItem('/repo', 'phase-0', 'PHASE-0-004');
+      expect(result?.items).toHaveLength(3);
+      expect(result?.summary.total).toBe(3);
+      expect(result?.summary.wont).toBe(0);
     });
   });
 
   describe('listAnalyses', () => {
-    it('should return empty list when moscow directory not found', async () => {
-      mockFileSystem.exists.mockResolvedValue(false);
-
-      const result = await service.listAnalyses('/test/repo');
-
-      expect(result).toEqual([]);
+    it('returns an empty list when no moscow directory exists', async () => {
+      mockFs.exists.mockResolvedValue(false);
+      expect(await service.listAnalyses('/repo')).toEqual([]);
     });
 
-    it('should list all analysis files', async () => {
-      mockFileSystem.exists.mockResolvedValue(true);
-      mockFileSystem.readdirNames.mockResolvedValue(['phase-0.json', 'phase-1.json']);
-      mockFileSystem.stat.mockResolvedValue({ mtime: new Date('2026-01-01') });
-
-      const result = await service.listAnalyses('/test/repo');
-
-      expect(result).toHaveLength(2);
-      expect(result[0].phase).toBe('phase-0');
-      expect(result[1].phase).toBe('phase-1');
+    it('lists json analyses only', async () => {
+      mockFs.exists.mockResolvedValue(true);
+      mockFs.readdirNames.mockResolvedValue(['phase-0.json', 'phase-1.json', 'README.md']);
+      const result = await service.listAnalyses('/repo');
+      expect(result.map(r => r.phase).sort()).toEqual(['phase-0', 'phase-1']);
     });
   });
 
   describe('validateAnalysis', () => {
-    it('should detect empty analysis', () => {
-      const analysis: MoscowAnalysis = {
-        repository: '/test',
-        phase: 'phase-0',
-        items: [],
-        summary: { must: 0, should: 0, could: 0, wont: 0, total: 0 },
-        createdAt: '2026-01-01',
-        updatedAt: '2026-01-01',
-      };
+    const baseAnalysis = (items: MoscowAnalysis['items']): MoscowAnalysis => ({
+      repository: '/repo',
+      phase: 'phase-0',
+      items,
+      summary: { must: 0, should: 0, could: 0, wont: 0, total: items.length },
+      createdAt: 'now',
+      updatedAt: 'now',
+    });
 
-      const result = service.validateAnalysis(analysis);
-
+    it('flags an empty analysis and a missing MUST', () => {
+      const result = service.validateAnalysis(baseAnalysis([]));
       expect(result.valid).toBe(false);
       expect(result.issues).toContain('No items in analysis');
+      expect(result.issues.some(i => i.includes('No MUST'))).toBe(true);
     });
 
-    it('should detect missing MUST items', () => {
-      const analysis: MoscowAnalysis = {
-        repository: '/test',
-        phase: 'phase-0',
-        items: [
-          { id: 'P-001', description: 'Test', priority: 'SHOULD', category: 'Test', rationale: 'Test', phase: 'phase-0' },
-        ],
-        summary: { must: 0, should: 1, could: 0, wont: 0, total: 1 },
-        createdAt: '2026-01-01',
-        updatedAt: '2026-01-01',
-      };
-
-      const result = service.validateAnalysis(analysis);
-
-      expect(result.valid).toBe(false);
-      expect(result.issues).toContain('No MUST items defined - at least one is required');
+    it('flags too many MUST items', () => {
+      const items = [
+        { id: 'A', description: 'a', priority: 'MUST' as const, category: 'c', rationale: 'r', phase: 'p' },
+        { id: 'B', description: 'b', priority: 'MUST' as const, category: 'c', rationale: 'r', phase: 'p' },
+        { id: 'C', description: 'c', priority: 'SHOULD' as const, category: 'c', rationale: 'r', phase: 'p' },
+      ];
+      const result = service.validateAnalysis(baseAnalysis(items));
+      expect(result.issues.some(i => i.includes('Too many MUST'))).toBe(true);
     });
 
-    it('should detect too many MUST items', () => {
-      const analysis: MoscowAnalysis = {
-        repository: '/test',
-        phase: 'phase-0',
-        items: [
-          { id: 'P-001', description: 'Test 1', priority: 'MUST', category: 'Test', rationale: 'Test', phase: 'phase-0' },
-          { id: 'P-002', description: 'Test 2', priority: 'MUST', category: 'Test', rationale: 'Test', phase: 'phase-0' },
-          { id: 'P-003', description: 'Test 3', priority: 'MUST', category: 'Test', rationale: 'Test', phase: 'phase-0' },
-        ],
-        summary: { must: 3, should: 0, could: 0, wont: 0, total: 3 },
-        createdAt: '2026-01-01',
-        updatedAt: '2026-01-01',
-      };
-
-      const result = service.validateAnalysis(analysis);
-
-      expect(result.valid).toBe(false);
-      expect(result.issues.some(i => i.includes('Too many MUST items'))).toBe(true);
+    it('flags duplicate ids', () => {
+      const items = [
+        { id: 'DUP', description: 'a', priority: 'MUST' as const, category: 'c', rationale: 'r', phase: 'p' },
+        { id: 'DUP', description: 'b', priority: 'SHOULD' as const, category: 'c', rationale: 'r', phase: 'p' },
+      ];
+      const result = service.validateAnalysis(baseAnalysis(items));
+      expect(result.issues.some(i => i.includes('Duplicate IDs'))).toBe(true);
     });
 
-    it('should detect invalid priorities', () => {
-      const analysis: MoscowAnalysis = {
-        repository: '/test',
-        phase: 'phase-0',
-        items: [
-          { id: 'P-001', description: 'Test', priority: 'INVALID' as any, category: 'Test', rationale: 'Test', phase: 'phase-0' },
-        ],
-        summary: { must: 0, should: 0, could: 0, wont: 0, total: 1 },
-        createdAt: '2026-01-01',
-        updatedAt: '2026-01-01',
-      };
-
-      const result = service.validateAnalysis(analysis);
-
-      expect(result.valid).toBe(false);
-      expect(result.issues.some(i => i.includes('Invalid priorities found'))).toBe(true);
-    });
-
-    it('should detect duplicate IDs', () => {
-      const analysis: MoscowAnalysis = {
-        repository: '/test',
-        phase: 'phase-0',
-        items: [
-          { id: 'P-001', description: 'Test 1', priority: 'MUST', category: 'Test', rationale: 'Test', phase: 'phase-0' },
-          { id: 'P-001', description: 'Test 2', priority: 'SHOULD', category: 'Test', rationale: 'Test', phase: 'phase-0' },
-        ],
-        summary: { must: 1, should: 1, could: 0, wont: 0, total: 2 },
-        createdAt: '2026-01-01',
-        updatedAt: '2026-01-01',
-      };
-
-      const result = service.validateAnalysis(analysis);
-
-      expect(result.valid).toBe(false);
-      expect(result.issues.some(i => i.includes('Duplicate IDs found'))).toBe(true);
-    });
-
-    it('should return valid for correct analysis', () => {
-      const analysis: MoscowAnalysis = {
-        repository: '/test',
-        phase: 'phase-0',
-        items: [
-          { id: 'P-001', description: 'Test 1', priority: 'MUST', category: 'Test', rationale: 'Test', phase: 'phase-0' },
-          { id: 'P-002', description: 'Test 2', priority: 'SHOULD', category: 'Test', rationale: 'Test', phase: 'phase-0' },
-          { id: 'P-003', description: 'Test 3', priority: 'COULD', category: 'Test', rationale: 'Test', phase: 'phase-0' },
-        ],
-        summary: { must: 1, should: 1, could: 1, wont: 0, total: 3 },
-        createdAt: '2026-01-01',
-        updatedAt: '2026-01-01',
-      };
-
-      const result = service.validateAnalysis(analysis);
-
-      expect(result.valid).toBe(true);
-      expect(result.issues).toEqual([]);
+    it('accepts a well-formed analysis', () => {
+      const items = [
+        { id: 'A', description: 'a', priority: 'MUST' as const, category: 'c', rationale: 'r', phase: 'p' },
+        { id: 'B', description: 'b', priority: 'SHOULD' as const, category: 'c', rationale: 'r', phase: 'p' },
+        { id: 'C', description: 'c', priority: 'COULD' as const, category: 'c', rationale: 'r', phase: 'p' },
+      ];
+      expect(service.validateAnalysis(baseAnalysis(items)).valid).toBe(true);
     });
   });
 
   describe('generateReport', () => {
-    it('should generate markdown report', () => {
-      const analysis: MoscowAnalysis = {
-        repository: '/test/repo',
-        phase: 'phase-0',
-        items: [
-          { id: 'P-001', description: 'Setup repository', priority: 'MUST', category: 'Foundation', rationale: 'Required', phase: 'phase-0' },
-          { id: 'P-002', description: 'Add docs', priority: 'SHOULD', category: 'Documentation', rationale: 'Important', phase: 'phase-0' },
-        ],
-        summary: { must: 1, should: 1, could: 0, wont: 0, total: 2 },
-        createdAt: '2026-01-01',
-        updatedAt: '2026-01-01',
-      };
-
+    it('renders a markdown report with the summary table and items', async () => {
+      const analysis = await service.createAnalysis('/repo', 'phase-0', sampleItems);
       const report = service.generateReport(analysis);
-
       expect(report).toContain('# MoSCoW Prioritization Report');
-      expect(report).toContain('/test/repo');
-      expect(report).toContain('phase-0');
-      expect(report).toContain('| MUST | 1 | 50% |');
-      expect(report).toContain('| SHOULD | 1 | 50% |');
-      expect(report).toContain('Setup repository');
-      expect(report).toContain('Add docs');
+      expect(report).toContain('**Repository:** /repo');
+      expect(report).toContain('### MUST');
+      expect(report).toContain('PHASE-0-001');
     });
 
-    it('should include validation issues in report', () => {
+    it('renders validation issues when the analysis is invalid', () => {
       const analysis: MoscowAnalysis = {
-        repository: '/test',
+        repository: '/repo',
         phase: 'phase-0',
         items: [],
         summary: { must: 0, should: 0, could: 0, wont: 0, total: 0 },
-        createdAt: '2026-01-01',
-        updatedAt: '2026-01-01',
+        createdAt: 'now',
+        updatedAt: 'now',
       };
-
       const report = service.generateReport(analysis);
-
       expect(report).toContain('## Validation Issues');
-      expect(report).toContain('No items in analysis');
     });
   });
 });

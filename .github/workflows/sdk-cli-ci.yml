@@ -126,7 +126,10 @@ jobs:
 
       - name: Run Unit Tests
         working-directory: ${{ env.CLI_DIR }}
-        run: npm run test:cov -- --coverage-reporters=text-summary
+        # Emit json-summary (consumed by the coverage gate below) alongside the
+        # console summary. A single --coverage-reporters override would drop the
+        # json file and break the threshold check.
+        run: npm run test:cov -- --coverageReporters=text-summary --coverageReporters=json-summary
 
       - name: Upload Coverage
         uses: actions/upload-artifact@v4

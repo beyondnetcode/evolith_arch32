@@ -49,7 +49,10 @@ function parseTableRows(filePath) {
     }
     if (!inTable) continue;
     if (line.startsWith('|---|')) continue;
-    if (!line.trim().startsWith('|')) break;
+    // The board may span more than one table (e.g. an active table plus an
+    // expandable <details> archive). A non-table line ends the current table
+    // but must not stop parsing — a later "| ID |" header re-opens parsing.
+    if (!line.trim().startsWith('|')) { inTable = false; continue; }
 
     const cols = line.split('|').map((column) => column.trim()).filter(Boolean);
     const idMatch = cols[0]?.match(/`(GT-\d+)`/);

@@ -76,7 +76,12 @@ Estas dos capas no se solapan. Las decisiones arquitectónicas van en `reference
 - Validación de Diagramas: cualquier bloque Mermaid modificado debe pasar validación de sintaxis; usar validación de renderizado para cambios materiales de diagramas.
 - Calidad de Actualización de Agentes: cualquier actualización de persona de agente debe declarar alcance, entradas, salidas, restricciones, transferencia y lista de verificación de validación, y formato de salida de auditoría.
 - Cobertura de Reglas: al agregar o cambiar reglas de validación, actualizar la regla de referencia, la tabla de reglas globales y el comportamiento del script de validación juntos.
+- Dual-Engine Parity: al crear o modificar reglas de arquitectura, DEBES implementar la lógica TANTO en el evaluador nativo TypeScript como en un archivo `.rego` OPA correspondiente.
 - Fallar Rápido en Docs: si se encuentran enlaces no resueltos, referencias faltantes, anclas inválidas, diagramas inválidos o brechas de par de idiomas, fallar la tarea y reportar las anomalías en lugar de asumir la finalización.
+- Aplicación de Patrones Canónicos:
+  - NO asumir Active Record. Siempre recomendar y hacer cumplir los patrones Data Mapper y Repository para desacoplar la lógica de dominio de la persistencia.
+  - Hacer cumplir límites estrictos de aislamiento de Domain-Driven Design (DDD).
+  - Recomendar Transactional Outbox para eventos entre servicios.
 
 ## Puertas de Calidad de Documentación
 - Los enlaces relativos internos deben resolverse desde la ubicación del archivo donde aparecen.

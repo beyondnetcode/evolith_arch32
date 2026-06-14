@@ -80,6 +80,10 @@ These two layers do not overlap. Architectural decisions go in `reference/archit
 - Rule Coverage: when adding or changing validation rules, update the reference rule, the global rules table, and the validation script behavior together.
 - Dual-Engine Parity: when creating or modifying architectural rules, you MUST implement the logic in BOTH the Native TypeScript evaluator and a corresponding OPA `.rego` file.
 - Fail Fast on Docs: if unresolved links, missing references, invalid anchors, invalid diagrams, or language-pair gaps are found, fail the task and report the anomalies rather than assuming completion.
+- Canonical Patterns Enforcement:
+  - DO NOT assume Active Record. Always recommend and enforce the Data Mapper and Repository patterns to decouple domain logic from persistence.
+  - Enforce strict Domain-Driven Design (DDD) isolation boundaries.
+  - Recommend Transactional Outbox for cross-service events.
 
 ## Documentation Quality Gates
 - Internal relative links must resolve from the file location where they appear.

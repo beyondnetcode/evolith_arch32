@@ -14,7 +14,9 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
       'communication', 'persistence', 'async-boundaries', 
       'extraction-readiness', 'observability', 'module-autonomy', 
       'contract-stability', 'data-ownership', 'async-communication', 
-      'distributed-tracing', 'containerization', 'service-boundaries'
+      'distributed-tracing', 'containerization', 'service-boundaries',
+      'separation-of-concerns', 'dependency-injection', 'static-analysis',
+      'domain-purity'
     ].includes(rule.category);
   }
 
@@ -358,6 +360,46 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
               if (!hasAstImport && usesRegexForCode) {
                 result = 'failed';
                 message = `${rule.description} - Analyzer file appears to use Regex without an AST parser like typescript: ${file}`;
+                break;
+              }
+            }
+          }
+        }
+        break;
+
+      case 'domain-purity':
+        if (rule.id === 'F1-R12') {
+          const srcPath = path.join(satellitePath, 'src');
+          if (await this.fs.exists(srcPath)) {
+            const files = await this.getAllFilesRecursive(srcPath);
+            const domainFiles = files.filter(f => f.includes('/domain/') && f.endsWith('.ts') && !f.endsWith('.spec.ts'));
+            
+            for (const file of domainFiles) {
+              const content = await this.fs.readFile(file);
+              const ts = require('typescript');
+              const sourceFile = ts.createSourceFile(
+                file,
+                content,
+                ts.ScriptTarget.Latest,
+                true
+              );
+
+              let hasPersistenceImport = false;
+              const checkNode = (node: any) => {
+                if (ts.isImportDeclaration(node)) {
+                  const importPath = node.moduleSpecifier.getText().replace(/['"]/g, '');
+                  if (importPath.includes('typeorm') || importPath.includes('mongoose') || importPath.includes('sequelize') || importPath.includes('prisma')) {
+                    hasPersistenceImport = true;
+                  }
+                }
+                ts.forEachChild(node, checkNode);
+              };
+              checkNode(sourceFile);
+
+              if (hasPersistenceImport) {
+                // Return failed so the runner logs it, but it's configured as non-blocking in OPA
+                result = 'failed';
+                message = `[RECOMMENDATION] ${rule.description} - Domain persistence import detected in: ${file}. Consider using Data Mapper.`;
                 break;
               }
             }

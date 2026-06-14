@@ -118,3 +118,17 @@ is_logic_layer(path) {
 is_logic_layer(path) {
 	contains(path, "/use-cases/")
 }
+
+# F1-R12: Pure Domain Model (Data Mapper Enforcement) - Recommendation
+violations[{"id": "F1-R12", "severity": "SHOULD", "title": "Pure Domain Model (Data Mapper Enforcement)", "blocking": false, "msg": msg}] {
+	some i
+	file := input.satellite.sourceFiles[i]
+	
+	contains(file.path, "/domain/")
+	not contains(file.path, ".spec.ts")
+	not contains(file.path, ".test.ts")
+	
+	file.hasPersistenceImport == true
+	
+	msg := sprintf("[RECOMMENDATION] Persistence import detected in domain file %s. Consider using Data Mapper (F1-R12).", [file.path])
+}

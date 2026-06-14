@@ -654,10 +654,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Gap:** El endpoint `/health` retorna solo `{ status: 'ok' }`. Sin métricas Prometheus. Kubernetes no puede distinguir entre probes de liveness y readiness.
 - **Propósito:** Implementar health checks diferenciados (`/health/live` y `/health/ready`) usando `@nestjs/terminus`, y exponer métricas de negocio via Prometheus en `/metrics`.
 - **Criterio de cierre:**
-  - [ ] `GET /health/live` retorna 200 (proceso vivo) o 503
-  - [ ] `GET /health/ready` verifica dependencias externas
-  - [ ] `GET /metrics` expone formato Prometheus con al menos 3 métricas de negocio
-  - [ ] `evolith_gate_evaluations_total{status}` y `evolith_gate_evaluation_duration_seconds` exportados
+  - [x] `GET /health/live` retorna 200 (proceso vivo) o 503
+  - [x] `GET /health/ready` verifica dependencias externas
+  - [x] `GET /metrics` expone formato Prometheus con al menos 3 métricas de negocio
+  - [x] `evolith_gate_evaluations_total{status}` y `evolith_gate_evaluation_duration_seconds` exportados
 - **Referencias:** [@nestjs/terminus](https://docs.nestjs.com/recipes/terminus) · [prom-client](https://github.com/siimon/prom-client)
 
 #### GT-66

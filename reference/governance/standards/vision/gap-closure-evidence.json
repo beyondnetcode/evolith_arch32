@@ -960,6 +960,20 @@
         "npm test --workspace apps/core-api -- --no-coverage"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-65",
+      "closedAt": "2026-06-13",
+      "closureCommit": "5304ea0",
+      "evidence": [
+        "apps/core-api/src/infrastructure/metrics/",
+        "apps/core-api/src/presentation/controllers/health.controller.ts",
+        "apps/core-api/src/presentation/controllers/metrics.controller.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace apps/core-api -- --no-coverage"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

@@ -10,6 +10,7 @@ import { GatesController } from './presentation/controllers/gates.controller';
 import { ProjectsController } from './presentation/controllers/projects.controller';
 import { ArchitectureController } from './presentation/controllers/architecture.controller';
 import { PhasesController } from './presentation/controllers/phases.controller';
+import { MetricsController } from './presentation/controllers/metrics.controller';
 import { CoreDomainModule } from './core-domain.module';
 import { CorrelationIdMiddleware } from './infrastructure/middleware/correlation-id.middleware';
 import { ApiKeyAuthGuard } from './infrastructure/auth/api-key.guard';
@@ -17,6 +18,7 @@ import { ApiKeyStrategy } from './infrastructure/auth/api-key.strategy';
 import { ApiKeyService } from './infrastructure/auth/api-key.service';
 import { validateEnv } from './infrastructure/config/env.validation';
 import { AuditThrottlerGuard } from './infrastructure/guards/audit-throttler.guard';
+import { MetricsService } from './infrastructure/metrics/metrics.service';
 
 @Module({
   imports: [
@@ -42,12 +44,14 @@ import { AuditThrottlerGuard } from './infrastructure/guards/audit-throttler.gua
     GatesController,
     ProjectsController,
     ArchitectureController,
-    PhasesController
+    PhasesController,
+    MetricsController
   ],
   providers: [
     HealthService,
     ApiKeyService,
     ApiKeyStrategy,
+    MetricsService,
     {
       provide: APP_GUARD,
       useClass: AuditThrottlerGuard,

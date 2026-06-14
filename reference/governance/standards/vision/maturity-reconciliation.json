@@ -3,11 +3,11 @@
   "scope": "evolith-core",
   "asOf": "2026-06-14",
   "gaps": {
-    "total": 74,
+    "total": 88,
     "done": 70,
-    "pending": 4,
+    "pending": 17,
     "inProgress": 0,
-    "deferred": 0
+    "deferred": 1
   },
   "evidence": {
     "closureRecords": 70,

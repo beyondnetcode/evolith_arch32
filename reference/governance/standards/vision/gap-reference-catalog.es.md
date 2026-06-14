@@ -874,3 +874,160 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [ ] no queda ningún `describe.skip` en la suite de tests del CLI, o el skip restante está justificado en el archivo
   - [ ] la cobertura refleja la decisión y el gate permanece verde
 - **Referencias:** [spec de gate-status](../../../../sdk/cli/src/commands/sdlc/gate-status.command.spec.ts) · [GT-48](#gt-48)
+
+### Componente Tracker — Consolidado desde la Auditoría del Tracker
+
+> Estos ítems se fusionaron desde la auditoría de gaps y oportunidades de Evolith Tracker (`docs/audit/tracker-gaps-opportunities-tracking.md`, repo `evolith_tracker`) en este único centro formal de seguimiento, tipificado por el componente `Tracker`. Sus 93 hallazgos ya resueltos (series COH/GAP/OPP) permanecen archivados en ese documento de auditoría; solo los ítems abiertos o diferidos se traen aquí como `GT-xx`.
+
+#### GT-83
+
+**Título:** Desbloquear dependencias upstream del Tracker
+
+- **Gap:** Tres capacidades upstream de las que depende el Tracker aún no están disponibles: el contrato del Core API, UMS JWKS y el UMS Auth Graph. Bloquean la implementación de la Fase 1 (originalmente `GAP-004`, CRITICAL/BLOCKED).
+- **Propósito:** Resolver o contractualizar formalmente las dependencias upstream para desbloquear la Fase 1 del Tracker.
+- **Criterio de cierre:**
+  - [ ] cada dependencia upstream se entrega o se stubbea contra un contrato acordado
+  - [ ] las stories de Fase 1 del Tracker que dependen de ellas quedan desbloqueadas
+- **Referencias:** Auditoría de Evolith Tracker `docs/audit/tracker-gaps-opportunities-tracking.md` (`GAP-004`) · [GT-42](#gt-42)
+
+#### GT-84
+
+**Título:** Extraer AuditTrail como shared kernel
+
+- **Gap:** Cinco o más bounded contexts implementan historial de auditoría inmutable de forma independiente; la duplicación debería elevarse a un shared kernel (originalmente `OPP-002`, diferido a Fase 8 / hardening).
+- **Propósito:** Eliminar la lógica duplicada de auditoría inmutable extrayendo un único AuditTrail de shared kernel consumido por cada contexto.
+- **Criterio de cierre:**
+  - [ ] existe una abstracción AuditTrail de shared kernel y las implementaciones duplicadas se migran a ella
+- **Referencias:** Auditoría de Evolith Tracker `docs/audit/tracker-gaps-opportunities-tracking.md` (`OPP-002`)
+
+#### GT-85
+
+**Título:** Arquitectura de plugins para el workflow engine del Tracker
+
+- **Gap:** El workflow engine de SDLC está hard-codeado; los tenants no pueden personalizar fases, transiciones y reglas sin forkear (originalmente `OPP-009`).
+- **Propósito:** Construir `@evolith/workflow-engine` como un core pluggable donde fases, transiciones y reglas del SDLC se contribuyen vía plugins para que los tenants personalicen sin forkear.
+- **Criterio de cierre:**
+  - [ ] fases/transiciones/reglas se contribuyen mediante un contrato de plugin
+  - [ ] un tenant puede registrar un workflow custom sin modificar el código del engine
+- **Referencias:** Auditoría de Evolith Tracker `docs/audit/tracker-gaps-opportunities-tracking.md` (`OPP-009`)
+
+#### GT-86
+
+**Título:** Aggregate roots con event sourcing
+
+- **Gap:** Los aggregates clave (Project, Sprint, Release) persisten solo el estado actual, perdiendo historia temporal y replay (originalmente `OPP-010`).
+- **Propósito:** Adoptar event sourcing para los aggregates clave y habilitar consultas temporales, audit trails y replay "what-if".
+- **Criterio de cierre:**
+  - [ ] los aggregates seleccionados persisten un stream de eventos y reconstruyen el estado desde él
+  - [ ] se demuestran consultas temporales y replay
+- **Referencias:** Auditoría de Evolith Tracker `docs/audit/tracker-gaps-opportunities-tracking.md` (`OPP-010`)
+
+#### GT-87
+
+**Título:** Federación GraphQL sobre REST
+
+- **Gap:** Los clientes hacen over-fetch desde REST; los dashboards dinámicos necesitan consultar exactamente lo que requieren a través de servicios (originalmente `OPP-011`).
+- **Propósito:** Exponer un esquema GraphQL federado vía BFF, con los servicios downstream publicando subgrafos.
+- **Criterio de cierre:**
+  - [ ] el BFF expone un esquema GraphQL federado
+  - [ ] al menos un subgrafo downstream se compone y consulta
+- **Referencias:** Auditoría de Evolith Tracker `docs/audit/tracker-gaps-opportunities-tracking.md` (`OPP-011`)
+
+#### GT-88
+
+**Título:** Feature flags como objetos de dominio de primera clase
+
+- **Gap:** Los feature flags viven en configuración en vez del dominio, por lo que las transiciones de workflow no pueden gate-ar según el estado del flag (originalmente `OPP-012`).
+- **Propósito:** Modelar los flags en el dominio y adjuntarlos a `RequirementChecklist` para que las transiciones de workflow gate-en según el estado del flag.
+- **Criterio de cierre:**
+  - [ ] los flags son objetos de dominio con ciclo de vida y auditoría
+  - [ ] una transición de workflow gate-a según el estado del flag
+- **Referencias:** Auditoría de Evolith Tracker `docs/audit/tracker-gaps-opportunities-tracking.md` (`OPP-012`)
+
+#### GT-89
+
+**Título:** Motor dinámico de formularios/esquemas
+
+- **Gap:** Los campos custom, formularios de workflow y reportes no son data-driven (originalmente `OPP-013`).
+- **Propósito:** Potenciar campos/formularios/reportes custom vía JSON Schema + UI Schema, con esquemas por-tenant en `@evolith/tenant-config`.
+- **Criterio de cierre:**
+  - [ ] los formularios se renderizan desde JSON Schema + UI Schema por-tenant
+  - [ ] los esquemas se versionan por tenant
+- **Referencias:** Auditoría de Evolith Tracker `docs/audit/tracker-gaps-opportunities-tracking.md` (`OPP-013`)
+
+#### GT-90
+
+**Título:** CQRS con proyecciones de read-model
+
+- **Gap:** Dashboards y reportes leen directamente de los aggregates de escritura, acoplando lectura y escritura (originalmente `OPP-014`).
+- **Propósito:** Separar los modelos de escritura de las proyecciones de read-model que pueden reconstruirse ante cambios de esquema sin downtime.
+- **Criterio de cierre:**
+  - [ ] los read models se proyectan desde eventos de dominio
+  - [ ] una proyección puede reconstruirse sin downtime
+- **Referencias:** Auditoría de Evolith Tracker `docs/audit/tracker-gaps-opportunities-tracking.md` (`OPP-014`)
+
+#### GT-91
+
+**Título:** Contract testing con Pact (BFF↔Core)
+
+- **Gap:** El límite satélite→upstream (BFF↔Core) no tiene contract tests forzados, por lo que cambios rompedores pueden colarse (originalmente `OPP-015`).
+- **Propósito:** Forzar los contratos BFF↔Core con Pact, ejecutados en CI en cada PR.
+- **Criterio de cierre:**
+  - [ ] tests Pact consumer/provider cubren el límite BFF↔Core
+  - [ ] la verificación de contrato corre en CI y bloquea ante ruptura
+- **Referencias:** Auditoría de Evolith Tracker `docs/audit/tracker-gaps-opportunities-tracking.md` (`OPP-015`) · [GT-42](#gt-42)
+
+#### GT-92
+
+**Título:** ADRs como código con CLI de cumplimiento
+
+- **Gap:** Las decisiones de arquitectura no son verificables por máquina; el cumplimiento (p.ej. "sin llamadas directas a Core") no se fuerza (originalmente `OPP-016`).
+- **Propósito:** Almacenar ADRs en `docs/adr/` con una CLI que valida el cumplimiento y auto-genera la tabla `DECISIONS.md`.
+- **Criterio de cierre:**
+  - [ ] una CLI valida al menos una regla de cumplimiento de ADR
+  - [ ] `DECISIONS.md` se genera desde el conjunto de ADRs
+- **Referencias:** Auditoría de Evolith Tracker `docs/audit/tracker-gaps-opportunities-tracking.md` (`OPP-016`)
+
+#### GT-93
+
+**Título:** Observabilidad incorporada
+
+- **Gap:** Los traces no abarcan BFF→Core→integraciones, y las transiciones de workflow no se correlacionan con métricas de negocio (originalmente `OPP-017`).
+- **Propósito:** Hacer que los traces de OpenTelemetry abarquen el camino completo y correlacionar las transiciones de workflow con cycle time y lead time.
+- **Criterio de cierre:**
+  - [ ] un único trace abarca BFF→Core→integración
+  - [ ] las transiciones de workflow se correlacionan con métricas de negocio
+- **Referencias:** Auditoría de Evolith Tracker `docs/audit/tracker-gaps-opportunities-tracking.md` (`OPP-017`)
+
+#### GT-94
+
+**Título:** DSL de workflow / editor visual
+
+- **Gap:** Los product owners no pueden definir workflows de SDLC sin ingeniería; no hay formato de definición versionable y testeable (originalmente `OPP-018`).
+- **Propósito:** Permitir que los product owners definan workflows de SDLC visualmente (tipo BPMN), compilados al formato de reglas del engine, versionados y testeables.
+- **Criterio de cierre:**
+  - [ ] una definición de workflow autorada visualmente compila al formato del engine
+  - [ ] la definición es versionable y testeable
+- **Referencias:** Auditoría de Evolith Tracker `docs/audit/tracker-gaps-opportunities-tracking.md` (`OPP-018`) · [GT-85](#gt-85)
+
+#### GT-95
+
+**Título:** Aislamiento multi-tenant con shared kernel
+
+- **Gap:** La estrategia de aislamiento de tenant para core compartido vs extensiones de tenant no está formalizada (originalmente `OPP-019`).
+- **Propósito:** Usar row-level security de PostgreSQL más schema-por-tenant para extensiones, manteniendo el esquema core compartido y las extensiones de tenant aisladas.
+- **Criterio de cierre:**
+  - [ ] RLS fuerza el aislamiento de tenant sobre el esquema core compartido
+  - [ ] las extensiones de tenant quedan aisladas por esquema
+- **Referencias:** Auditoría de Evolith Tracker `docs/audit/tracker-gaps-opportunities-tracking.md` (`OPP-019`)
+
+#### GT-96
+
+**Título:** Sincronización en tiempo real vía WebSockets/SSE
+
+- **Gap:** Los cambios de aggregate no se empujan a los clientes, bloqueando el grooming colaborativo de backlog y la planificación de sprint (originalmente `OPP-020`).
+- **Propósito:** Empujar los cambios de aggregate a los clientes al instante vía WebSockets/SSE.
+- **Criterio de cierre:**
+  - [ ] los cambios de aggregate se propagan a los clientes suscritos en tiempo real
+  - [ ] un flujo colaborativo (grooming o planificación) consume el stream
+- **Referencias:** Auditoría de Evolith Tracker `docs/audit/tracker-gaps-opportunities-tracking.md` (`OPP-020`)

@@ -16,6 +16,20 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-80`](./gap-reference-catalog.md#gt-80) | Type-check the CLI test suite | `CLI` | Cross | P1 | M | `PENDING` |
 | [`GT-82`](./gap-reference-catalog.md#gt-82) | Revive or remove the dead gate-status spec | `CLI` | Cross | P2 | S | `PENDING` |
 | [`GT-81`](./gap-reference-catalog.md#gt-81) | Raise CLI branch coverage to the statement floor | `CLI` | F0 | P2 | M | `PENDING` |
+| [`GT-83`](./gap-reference-catalog.md#gt-83) | Unblock Tracker upstream dependencies (Core API, UMS JWKS, UMS Auth Graph) | `Tracker` | Cross | P0 | L | `PENDING` |
+| [`GT-85`](./gap-reference-catalog.md#gt-85) | Plugin architecture for the Tracker workflow engine | `Tracker` | Cross | P1 | L | `PENDING` |
+| [`GT-86`](./gap-reference-catalog.md#gt-86) | Event-sourced aggregate roots | `Tracker` | Cross | P1 | L | `PENDING` |
+| [`GT-90`](./gap-reference-catalog.md#gt-90) | CQRS with read-model projections | `Tracker` | Cross | P1 | L | `PENDING` |
+| [`GT-94`](./gap-reference-catalog.md#gt-94) | Workflow DSL / visual editor | `Tracker` | Cross | P1 | L | `PENDING` |
+| [`GT-95`](./gap-reference-catalog.md#gt-95) | Multi-tenant isolation with shared kernel (PostgreSQL RLS) | `Tracker` | Cross | P1 | L | `PENDING` |
+| [`GT-91`](./gap-reference-catalog.md#gt-91) | Contract testing with Pact (BFF↔Core) | `Tracker` | Cross | P2 | S | `PENDING` |
+| [`GT-92`](./gap-reference-catalog.md#gt-92) | ADRs as code with a compliance CLI | `Tracker` | Cross | P2 | S | `PENDING` |
+| [`GT-87`](./gap-reference-catalog.md#gt-87) | GraphQL federation over REST | `Tracker` | Cross | P2 | M | `PENDING` |
+| [`GT-88`](./gap-reference-catalog.md#gt-88) | Feature flags as first-class domain objects | `Tracker` | Cross | P2 | M | `PENDING` |
+| [`GT-89`](./gap-reference-catalog.md#gt-89) | Dynamic form/schema engine | `Tracker` | Cross | P2 | M | `PENDING` |
+| [`GT-93`](./gap-reference-catalog.md#gt-93) | Built-in observability (OTel BFF→Core→integrations) | `Tracker` | Cross | P2 | M | `PENDING` |
+| [`GT-96`](./gap-reference-catalog.md#gt-96) | Real-time sync via WebSockets/SSE | `Tracker` | Cross | P2 | M | `PENDING` |
+| [`GT-84`](./gap-reference-catalog.md#gt-84) | Extract AuditTrail as a shared kernel | `Tracker` | Cross | P1 | L | `DEFERRED` |
 | [`GT-59`](./gap-reference-catalog.md#gt-59) | Hardening HTTP — Helmet + CORS + Rate Limiting (OWASP API4/8) | `BFF API` | Cross | P0 | S | `DONE` |
 | [`GT-27`](./gap-reference-catalog.md#gt-27) | Canonical tracking semantic consistency | `Governance` | Cross | P0 | S | `DONE` |
 | [`GT-01`](./gap-reference-catalog.md#gt-01) | Unified contract ADR | `Governance` | F0 | P0 | S | `DONE` |
@@ -87,7 +101,7 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-25`](./gap-reference-catalog.md#gt-25) | First provider profiles | `Governance` | Cross | P2 | L | `DONE` |
 | [`GT-23`](./gap-reference-catalog.md#gt-23) | Spanish translation backfill | `Governance` | Cross | P2 | L | `DONE` |
 
-**Progress:** 70 / 74 done · 0 in progress · 4 pending · 0 deferred
+**Progress:** 70 / 88 done · 0 in progress · 17 pending · 1 deferred
 
 **Ordering:** criticality (`P0` → `P1` → `P2`), active status (`IN-PROGRESS` → `DONE` → `DEFERRED`), then complexity (`S` → `M` → `L`). Completed gaps follow pending.
 

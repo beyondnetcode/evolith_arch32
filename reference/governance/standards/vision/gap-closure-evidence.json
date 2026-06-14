@@ -702,6 +702,24 @@
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "No dependencies. Technical debt placeholders replaced with valid implementation patterns."
+    },
+    {
+      "id": "GT-57",
+      "closedAt": "2026-06-13",
+      "closureCommit": "c73c209228dc18beeb296837eda5b1e70df4667d",
+      "evidence": [
+        "sdk/cli/src/infrastructure/mcp/resources/index.ts",
+        "sdk/cli/src/infrastructure/mcp/prompts/index.ts",
+        "sdk/cli/src/infrastructure/mcp/tools/architecture.ts",
+        "sdk/cli/src/infrastructure/mcp/tools/sdlc.ts",
+        "reference/products/smart-cli/docs/planning/sdk-cli-mcp-implementation-roadmap.md"
+      ],
+      "validationCommands": [
+        "npm run lint --workspace sdk/cli",
+        "npm test --workspace sdk/cli"
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "All MCP roadmap TODO items have been implemented and F1/F2/F3 architecture validation now correctly delegates to the OPA RulesetValidatorService."
     }
   ]
 }

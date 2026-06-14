@@ -567,3 +567,258 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Criterio de cierre:** El generador produce implementaciones dummy completas y limpias, o maneja abstracciones sin dejar `TODO`s en línea para el usuario.
 - **Referencias:** [hexagonal-scaffolder.ts](../../../../packages/core-domain/src/application/generators/hexagonal-scaffolder.ts)
 
+---
+
+### Fase Transversal — Madurez y Excelencia del Core API
+
+#### GT-59
+
+**Título:** Hardening HTTP — Helmet + CORS + Rate Limiting (OWASP API4/8)
+
+- **Gap:** El `main.ts` de `apps/core-api` inicia el servidor sin headers de seguridad, política CORS ni rate limiting, exponiéndolo a OWASP API4 (Consumo sin Restricción de Recursos) y API8 (Configuración de Seguridad Incorrecta).
+- **Propósito:** Aplicar una línea base mínima de seguridad HTTP al Core API: headers de seguridad via Helmet, política CORS explícita por variable de entorno, y rate limiting global via `@nestjs/throttler`.
+- **Criterio de cierre:**
+  - [ ] `helmet()` aplicado globalmente en `main.ts`
+  - [ ] CORS configurado desde la variable de entorno `ALLOWED_ORIGINS`
+  - [ ] `ThrottlerGuard` registrado como `APP_GUARD` global
+  - [ ] Test de integración valida headers de seguridad (X-Frame-Options, X-Content-Type-Options, etc.)
+- **Referencias:** [OWASP API4:2023](https://owasp.org/API-Security/editions/2023/en/0xa4-unrestricted-resource-consumption/) · [OWASP API8:2023](https://owasp.org/API-Security/editions/2023/en/0xa8-security-misconfiguration/) · [apps/core-api/src/main.ts](../../../../apps/core-api/src/main.ts)
+
+#### GT-60
+
+**Título:** Validación Global de Inputs con DTOs y class-validator (OWASP API3)
+
+- **Gap:** Los controllers aceptan `@Body() body: any` sin validación, exponiendo la API a OWASP API3:2023 (Autorización Rota a Nivel de Propiedad / Mass Assignment) e inyecciones.
+- **Propósito:** Imponer un contrato estricto de entrada en cada endpoint mediante DTOs con `class-validator` y un `ValidationPipe` global con `whitelist: true, forbidNonWhitelisted: true`.
+- **Criterio de cierre:**
+  - [ ] `ValidationPipe` global habilitado con `whitelist: true, forbidNonWhitelisted: true, transform: true`
+  - [ ] DTOs creados para cada endpoint con decorators de `class-validator`
+  - [ ] DTOs de respuesta creados (los tipos de dominio nunca se retornan directamente)
+- **Referencias:** [OWASP API3:2023](https://owasp.org/API-Security/editions/2023/en/0xa3-broken-object-property-level-authorization/) · [apps/core-api/src/app.module.ts](../../../../apps/core-api/src/app.module.ts)
+
+#### GT-61
+
+**Título:** Respuestas de Error Estructuradas — Filtro RFC 9457 Problem Details
+
+- **Gap:** No existe filtro global de excepciones. Los errores no manejados exponen stack traces y retornan formas de respuesta inconsistentes. RFC 9457 (`application/problem+json`) no está implementado.
+- **Propósito:** Implementar un `ProblemDetailsFilter` global que intercepte todas las excepciones y retorne respuestas RFC 9457 conformes en `application/problem+json` sin filtrar detalles internos.
+- **Criterio de cierre:**
+  - [ ] `ProblemDetailsFilter` global registrado en `main.ts`
+  - [ ] `Content-Type: application/problem+json` en todas las respuestas de error
+  - [ ] Stack traces nunca expuestos cuando `NODE_ENV === 'production'`
+  - [ ] Correlation ID (`x-trace-id`) propagado en respuestas de error
+- **Referencias:** [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) · [apps/core-api/src/main.ts](../../../../apps/core-api/src/main.ts)
+
+#### GT-62
+
+**Título:** Autenticación y Autorización — API Key + JWT (OWASP API1/2/5)
+
+- **Gap:** El Core API está completamente abierto sin ningún mecanismo de autenticación. Cualquier cliente puede invocar evaluación de gates, inicialización de proyectos y detección de drift sin credenciales.
+- **Propósito:** Implementar autenticación por API Key para comunicación M2M (Tracker → Core API) y documentar la ruta hacia JWT Bearer tokens para acceso futuro. Aplicar mitigaciones de OWASP API1, API2 y API5.
+- **Criterio de cierre:**
+  - [ ] Middleware de API Key valida el header `x-api-key` contra un almacén con hash
+  - [ ] Decorator `@Public()` disponible para endpoints de health/métricas
+  - [ ] Estrategia documentada en `ADR-0075-core-api-auth-strategy.md`
+  - [ ] Todos los endpoints sensibles retornan 401 sin credenciales válidas
+- **Referencias:** [OWASP API1:2023](https://owasp.org/API-Security/editions/2023/en/0xa1-broken-object-level-authorization/) · [OWASP API2:2023](https://owasp.org/API-Security/editions/2023/en/0xa2-broken-authentication/)
+
+#### GT-63
+
+**Título:** Logging de Auditoría de Seguridad (OWASP API9)
+
+- **Gap:** No existe registro estructurado de eventos de seguridad: accesos denegados, validaciones fallidas, límite de rate alcanzado. OWASP API9:2023 (Gestión de Inventario Inadecuada) exige visibilidad completa del uso de la API.
+- **Propósito:** Implementar un `SecurityAuditInterceptor` que registre: IP, método, path, identificador de usuario y resultado (permitido/denegado) para cada request. Sin PII ni tokens en los logs.
+- **Criterio de cierre:**
+  - [ ] `SecurityAuditInterceptor` registrado globalmente
+  - [ ] Eventos de throttling logueados a nivel WARN
+  - [ ] Todos los logs en formato JSON estructurado
+  - [ ] Sin passwords, tokens ni PII en ningún log
+- **Referencias:** [OWASP API9:2023](https://owasp.org/API-Security/editions/2023/en/0xa9-improper-inventory-management/)
+
+#### GT-64
+
+**Título:** Logging Estructurado con Correlation ID (Pino)
+
+- **Gap:** El logger por defecto de NestJS emite texto plano. Sin propagación de `x-correlation-id` entre requests. Imposible correlacionar logs en producción.
+- **Propósito:** Reemplazar el logger de NestJS por Pino para logging JSON estructurado. Implementar `CorrelationIdMiddleware` usando `AsyncLocalStorage` para propagar un correlation ID a través de todos los límites asíncronos.
+- **Criterio de cierre:**
+  - [ ] Todos los logs son JSON con campos: `timestamp`, `level`, `context`, `correlationId`
+  - [ ] `x-correlation-id` extraído del request entrante o generado via UUID
+  - [ ] Correlation ID propagado en todos los responses y objetos de error
+- **Referencias:** [nestjs-pino](https://github.com/iamolegga/nestjs-pino) · [apps/core-api/src/main.ts](../../../../apps/core-api/src/main.ts)
+
+#### GT-65
+
+**Título:** Métricas Prometheus y Health Checks Avanzados (Liveness/Readiness)
+
+- **Gap:** El endpoint `/health` retorna solo `{ status: 'ok' }`. Sin métricas Prometheus. Kubernetes no puede distinguir entre probes de liveness y readiness.
+- **Propósito:** Implementar health checks diferenciados (`/health/live` y `/health/ready`) usando `@nestjs/terminus`, y exponer métricas de negocio via Prometheus en `/metrics`.
+- **Criterio de cierre:**
+  - [ ] `GET /health/live` retorna 200 (proceso vivo) o 503
+  - [ ] `GET /health/ready` verifica dependencias externas
+  - [ ] `GET /metrics` expone formato Prometheus con al menos 3 métricas de negocio
+  - [ ] `evolith_gate_evaluations_total{status}` y `evolith_gate_evaluation_duration_seconds` exportados
+- **Referencias:** [@nestjs/terminus](https://docs.nestjs.com/recipes/terminus) · [prom-client](https://github.com/siimon/prom-client)
+
+#### GT-66
+
+**Título:** Trazado Distribuido con OpenTelemetry
+
+- **Gap:** No existe trazado distribuido. Cuando Evolith Tracker llama al Core API, no hay visibilidad de la cadena de llamadas. Las latencias y errores en producción son imposibles de depurar.
+- **Propósito:** Inicializar el SDK de OpenTelemetry Node.js antes del bootstrap de NestJS, habilitando instrumentación automática de HTTP y operaciones de filesystem. Exportar spans a un backend OTLP.
+- **Criterio de cierre:**
+  - [ ] `tracing.ts` inicializado antes del bootstrap de NestJS en producción
+  - [ ] `trace_id` y `span_id` incluidos en todas las entradas de log
+  - [ ] Spans personalizados en `EvaluateGateUseCase` y `validateArchitecture`
+  - [ ] Exportación OTLP configurada via variable de entorno
+- **Referencias:** [OpenTelemetry NestJS](https://opentelemetry.io/docs/zero-code/js/nestjs/) · [apps/core-api/src/main.ts](../../../../apps/core-api/src/main.ts)
+
+#### GT-67
+
+**Título:** Especificación OpenAPI 3.1 Completa
+
+- **Gap:** No existe especificación OpenAPI. El Evolith Tracker no puede generar un SDK de cliente tipado. Los contratos entre servicios son implícitos y frágiles.
+- **Propósito:** Implementar `@nestjs/swagger` con cobertura completa de decorators en todos los controllers y DTOs. Generar y versionar `openapi.json` como parte del build.
+- **Criterio de cierre:**
+  - [ ] `@nestjs/swagger` instalado y configurado en `main.ts`
+  - [ ] Todos los endpoints documentados con `@ApiOperation`, `@ApiResponse`, `@ApiBody`
+  - [ ] Todos los DTOs anotados con `@ApiProperty`
+  - [ ] `GET /api/docs` sirve Swagger UI
+  - [ ] `openapi.json` generado en el build y versionado en el repositorio
+- **Referencias:** [@nestjs/swagger](https://docs.nestjs.com/openapi/introduction) · [apps/core-api](../../../../apps/core-api)
+
+#### GT-68
+
+**Título:** Versionado de API con Estrategia URI
+
+- **Gap:** Los endpoints no están versionados (`/gates/...` en lugar de `/api/v1/gates/...`). Los cambios de ruptura romperán integraciones sin una estrategia de versionado.
+- **Propósito:** Habilitar versionado URI (`/api/v1/`) en todos los endpoints del Core API y documentar una política de deprecación (mínimo 2 versiones coexistentes).
+- **Criterio de cierre:**
+  - [ ] Todos los endpoints bajo `/api/v1/`
+  - [ ] `CHANGELOG.md` documenta cambios de versión
+  - [ ] Política de deprecación documentada en ADR
+- **Referencias:** [NestJS Versioning](https://docs.nestjs.com/techniques/versioning) · [apps/core-api](../../../../apps/core-api)
+
+#### GT-69
+
+**Título:** Richardson Nivel 2 — Verbos HTTP y Códigos de Estado Correctos
+
+- **Gap:** Algunos controllers usan `POST` para operaciones de lectura. Los códigos de estado HTTP no son semánticamente correctos para escenarios de error de dominio (siempre 200/201).
+- **Propósito:** Alinear todos los endpoints con el Nivel 2 del Modelo de Madurez de Richardson: verbos HTTP correctos, códigos de estado semánticamente significativos para cada resultado de dominio.
+- **Criterio de cierre:**
+  - [ ] Todos los endpoints usan métodos HTTP semánticamente correctos
+  - [ ] 422 Unprocessable Entity retornado para fallos de validación de dominio
+  - [ ] 404 retornado cuando los recursos no se encuentran
+  - [ ] `@HttpCode()` explícito en controllers donde el default es incorrecto
+- **Referencias:** [Modelo de Madurez de Richardson](https://martinfowler.com/articles/richardsonMaturityModel.html)
+
+#### GT-70
+
+**Título:** Apagado Graceful y Manejo de Señales del OS
+
+- **Gap:** El servidor no maneja señales del OS (`SIGTERM`, `SIGINT`). En Kubernetes, los requests en vuelo se interrumpen abruptamente cuando un pod es terminado.
+- **Propósito:** Habilitar los shutdown hooks de NestJS e implementar `OnModuleDestroy` en servicios con recursos externos. Drenar requests en vuelo antes de la salida del proceso.
+- **Criterio de cierre:**
+  - [ ] `app.enableShutdownHooks()` habilitado
+  - [ ] `OnModuleDestroy` implementado en servicios con recursos externos
+  - [ ] Test de integración verifica que los requests en vuelo se completan antes del shutdown
+- **Referencias:** [NestJS Lifecycle Events](https://docs.nestjs.com/fundamentals/lifecycle-events) · [apps/core-api/src/main.ts](../../../../apps/core-api/src/main.ts)
+
+#### GT-71
+
+**Título:** Circuit Breaker para Llamadas a Servicios Externos
+
+- **Gap:** Si el filesystem (`IFileSystem`) o el proceso OPA WASM fallan, los errores se propagan sin degradación graceful. No existe lógica de retry ni fallback.
+- **Propósito:** Envolver llamadas externas críticas en un circuit breaker (opossum) para prevenir fallos en cascada y proveer respuestas de fallback cuando las dependencias no están disponibles.
+- **Criterio de cierre:**
+  - [ ] Circuit breaker envuelve llamadas a `IFileSystem` en operaciones críticas
+  - [ ] Fallback retorna respuesta degradada con `503 Service Unavailable`
+  - [ ] Estado del circuit breaker expuesto en métricas de `/metrics`
+- **Referencias:** [opossum](https://github.com/nodeshift/opossum) · [packages/core-domain/src/domain/interfaces.ts](../../../../packages/core-domain/src/domain/interfaces.ts)
+
+#### GT-72
+
+**Título:** Eliminar `@ts-nocheck` de la Capa de Aplicación
+
+- **Gap:** 12 archivos en `packages/core-domain/src/application/` y 9 en `sdk/cli` tienen `// @ts-nocheck` agregado durante la migración para desbloquear el build. Esto oculta errores reales de tipos y viola los principios de TypeScript strict.
+- **Propósito:** Eliminar todos los pragmas `@ts-nocheck`, corregir los errores de tipos subyacentes con interfaces tipadas adecuadas, y re-habilitar `strict: true` en el tsconfig de core-domain.
+- **Criterio de cierre:**
+  - [ ] Cero archivos con `@ts-nocheck` en `packages/core-domain`
+  - [ ] `packages/core-domain/tsconfig.json` tiene `strict: true`
+  - [ ] `noImplicitAny: true` en todos los tsconfigs del workspace
+- **Referencias:** [packages/core-domain/src/application](../../../../packages/core-domain/src/application) · [GT-49](#gt-49)
+
+#### GT-73
+
+**Título:** Suite de Pruebas del Core API — Unit, Integration y E2E
+
+- **Gap:** `apps/core-api` tiene cero pruebas significativas. El `health.controller.spec.ts` generado por el scaffolding probablemente falla con el nuevo setup de DI.
+- **Propósito:** Establecer una pirámide de tests para el Core API: pruebas unitarias para controllers (use cases mockeados), pruebas de integración para el wiring del módulo, y E2E para caminos críticos.
+- **Criterio de cierre:**
+  - [ ] `jest --coverage` reporta >80% de cobertura de líneas en `src/`
+  - [ ] CI ejecuta pruebas en cada PR
+  - [ ] Caminos de error (fallo de auth, input inválido, error de dominio) todos cubiertos
+  - [ ] Al menos 5 flujos E2E probados via supertest
+- **Referencias:** [apps/core-api/src](../../../../apps/core-api/src) · [@nestjs/testing](https://docs.nestjs.com/fundamentals/testing)
+
+#### GT-74
+
+**Título:** Módulo de Configuración con Validación de Variables de Entorno (Zod)
+
+- **Gap:** `main.ts` usa `process.env.PORT` directamente sin validación. Sin módulo de configuración tipado. Valores hardcodeados dispersos en el código.
+- **Propósito:** Implementar `@nestjs/config` con validación de schema Zod para fallar rápido ante variables de entorno requeridas faltantes y proveer configuración type-safe en toda la aplicación.
+- **Criterio de cierre:**
+  - [ ] Todas las variables de entorno validadas al inicio con schema Zod
+  - [ ] El proceso falla con mensaje claro si falta una variable requerida
+  - [ ] `README.md` documenta todas las variables de entorno
+  - [ ] `.env.example` con valores seguros por defecto commiteado al repositorio
+- **Referencias:** [@nestjs/config](https://docs.nestjs.com/techniques/configuration) · [apps/core-api](../../../../apps/core-api)
+
+#### GT-75
+
+**Título:** Paquete Compartido `@evolith/infra-providers`
+
+- **Gap:** Los providers de infraestructura (`NodeFileSystemProvider`, `NestLoggerProvider`, `YamlConfigParserProvider`) están duplicados en `apps/core-api/src/infrastructure/providers/` y `sdk/cli/src/infrastructure/providers/`, violando DRY.
+- **Propósito:** Extraer los providers de infraestructura a un paquete compartido `packages/infra-providers` (`@evolith/infra-providers`) consumido tanto por `apps/core-api` como por `sdk/cli`.
+- **Criterio de cierre:**
+  - [ ] Paquete `packages/infra-providers` creado con su propio `package.json`
+  - [ ] Providers duplicados eliminados de `apps/core-api` y `sdk/cli`
+  - [ ] `@evolith/infra-providers` agregado como dependencia en ambos consumidores
+- **Referencias:** [apps/core-api/src/infrastructure/providers](../../../../apps/core-api/src/infrastructure/providers) · [sdk/cli/src/infrastructure/providers](../../../../sdk/cli/src/infrastructure/providers)
+
+#### GT-76
+
+**Título:** Exponer `PhaseTransitionUseCase` en el Core API
+
+- **Gap:** `PhaseTransitionUseCase` existe en `core-domain` pero no está expuesto via la interfaz REST del Core API. El Tracker no puede consultar ni disparar transiciones de fase a través del servicio.
+- **Propósito:** Crear un `PhasesController` con endpoints `POST /api/v1/phases/transition` y `GET /api/v1/phases/:projectId` respaldados por `PhaseTransitionUseCase`.
+- **Criterio de cierre:**
+  - [ ] `PhasesController` creado con endpoints de transición y estado
+  - [ ] `PhaseTransitionUseCase` inyectado via `CoreDomainProviders`
+  - [ ] `TransitionPhaseDto` con decorators de class-validator
+  - [ ] Pruebas unitarias para el controller
+- **Referencias:** [packages/core-domain/src/application/use-cases/phase-transition.use-case.ts](../../../../packages/core-domain/src/application/use-cases/phase-transition.use-case.ts) · [apps/core-api/src/app.module.ts](../../../../apps/core-api/src/app.module.ts)
+
+#### GT-77
+
+**Título:** Extraer `CoreDomainModule` de `AppModule`
+
+- **Gap:** `CoreDomainProviders` están declarados como un array inline dentro de `AppModule`, dificultando el testeo en aislamiento y violando la Responsabilidad Única del módulo.
+- **Propósito:** Extraer todo el wiring de providers del Core Domain en un `CoreDomainModule` dedicado que `AppModule` importe, habilitando el testeo aislado de la composición DI del dominio.
+- **Criterio de cierre:**
+  - [ ] `CoreDomainModule` extraído como módulo NestJS independiente
+  - [ ] `AppModule` importa `CoreDomainModule` en lugar de declarar providers directamente
+  - [ ] `CoreDomainModule` puede importarse en pruebas de integración de forma aislada
+- **Referencias:** [apps/core-api/src/app.module.ts](../../../../apps/core-api/src/app.module.ts)
+
+#### GT-78
+
+**Título:** Eliminar Scripts de Depuración de la Raíz del Repositorio
+
+- **Gap:** Los archivos `fix-arch.js`, `fix-ts.js`, `fix-types.js` y `refactor.js` existen en la raíz como artefactos de depuración temporales. Están listados como excepciones en `validate-root-cleanliness.mjs`.
+- **Propósito:** Eliminar todos los scripts de depuración temporales de la raíz y limpiar las entradas de excepción correspondientes en el validador de limpieza de la raíz.
+- **Criterio de cierre:**
+  - [ ] `fix-arch.js`, `fix-ts.js`, `fix-types.js`, `refactor.js` eliminados de la raíz
+  - [ ] Entradas de excepción eliminadas de `.harness/scripts/validate-root-cleanliness.mjs`
+  - [ ] `validate-root-cleanliness.mjs` pasa sin las entradas de excepción en la allowlist
+- **Referencias:** [.harness/scripts/validate-root-cleanliness.mjs](../../../../.harness/scripts/validate-root-cleanliness.mjs)

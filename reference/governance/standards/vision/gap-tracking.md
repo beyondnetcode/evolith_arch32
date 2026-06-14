@@ -4,7 +4,7 @@
 
 **Status:** Active Tracking
 **Owner:** Evolith Architecture Board
-**Last Updated:** 2026-06-13
+**Last Updated:** 2026-06-14
 **Gap Details:** [Gap Reference Catalog](./gap-reference-catalog.md)
 
 This board is the single source of truth for gap priority and status. Select a gap ID to open its problem statement, purpose, evidence, closure criteria, and references.
@@ -12,6 +12,26 @@ This board is the single source of truth for gap priority and status. Select a g
 
 | ID | Gap | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|
+| [`GT-78`](./gap-reference-catalog.md#gt-78) | Eliminar scripts de debug de la raíz del repositorio | Cross | P2 | S | `PENDING` |
+| [`GT-77`](./gap-reference-catalog.md#gt-77) | CoreDomainModule extraído de AppModule | Cross | P2 | S | `PENDING` |
+| [`GT-76`](./gap-reference-catalog.md#gt-76) | PhaseTransitionUseCase expuesto en Core API | F1 | P1 | M | `PENDING` |
+| [`GT-75`](./gap-reference-catalog.md#gt-75) | Paquete @evolith/infra-providers compartido | Cross | P2 | M | `PENDING` |
+| [`GT-74`](./gap-reference-catalog.md#gt-74) | ConfigModule con validación de env vars (Zod) | Cross | P1 | S | `PENDING` |
+| [`GT-73`](./gap-reference-catalog.md#gt-73) | Tests Unit + Integration + E2E del Core API | Cross | P0 | L | `PENDING` |
+| [`GT-72`](./gap-reference-catalog.md#gt-72) | Eliminar @ts-nocheck del application layer | Cross | P0 | L | `PENDING` |
+| [`GT-71`](./gap-reference-catalog.md#gt-71) | Circuit Breaker para llamadas a servicios externos | F3 | P2 | M | `PENDING` |
+| [`GT-70`](./gap-reference-catalog.md#gt-70) | Graceful Shutdown y manejo de señales OS | Cross | P1 | S | `PENDING` |
+| [`GT-69`](./gap-reference-catalog.md#gt-69) | Richardson Level 2 — HTTP Verbs y Status Codes | Cross | P1 | S | `PENDING` |
+| [`GT-68`](./gap-reference-catalog.md#gt-68) | Versionado de API con estrategia URI | F3 | P2 | S | `PENDING` |
+| [`GT-67`](./gap-reference-catalog.md#gt-67) | Especificación OpenAPI 3.1 completa | F2 | P1 | M | `PENDING` |
+| [`GT-66`](./gap-reference-catalog.md#gt-66) | Distributed Tracing con OpenTelemetry | F3 | P1 | L | `PENDING` |
+| [`GT-65`](./gap-reference-catalog.md#gt-65) | Prometheus Metrics + Health checks liveness/readiness | F2 | P1 | M | `PENDING` |
+| [`GT-64`](./gap-reference-catalog.md#gt-64) | Structured Logging con Correlation ID | Cross | P0 | M | `PENDING` |
+| [`GT-63`](./gap-reference-catalog.md#gt-63) | Auditoría y logging de seguridad (OWASP API9) | Cross | P1 | S | `PENDING` |
+| [`GT-62`](./gap-reference-catalog.md#gt-62) | Autenticación API Key + JWT (OWASP API1/2/5) | F2 | P0 | L | `PENDING` |
+| [`GT-61`](./gap-reference-catalog.md#gt-61) | Manejo de errores RFC 9457 Problem Details | Cross | P1 | S | `PENDING` |
+| [`GT-60`](./gap-reference-catalog.md#gt-60) | Validación Global DTOs con class-validator (OWASP API3) | Cross | P0 | M | `PENDING` |
+| [`GT-59`](./gap-reference-catalog.md#gt-59) | Hardening HTTP — Helmet + CORS + Rate Limiting (OWASP API4/8) | Cross | P0 | S | `PENDING` |
 | [`GT-58`](./gap-reference-catalog.md#gt-58) | Clean up TODO stubs injected by Hexagonal Scaffolder | Cross | P2 | S | `DONE` |
 | [`GT-57`](./gap-reference-catalog.md#gt-57) | Incomplete MCP tooling and validation implementation | F2 | P1 | L | `DONE` |
 | [`GT-56`](./gap-reference-catalog.md#gt-56) | Silent failures and missing mocks in CLI E2E tests | Cross | P1 | M | `DONE` |
@@ -63,7 +83,7 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-02`](./gap-reference-catalog.md#gt-02) | `GateEvidence` modeled in the domain layer | F1 | P0 | M | `DONE` |
 | [`GT-01`](./gap-reference-catalog.md#gt-01) | Unified contract ADR | F0 | P0 | S | `DONE` |
 
-**Progress:** 50 / 50 done · 0 in progress · 0 pending · 0 deferred
+**Progress:** 50 / 70 done · 0 in progress · 20 pending · 0 deferred
 
 **Ordering:** criticality (`P0` → `P1` → `P2`), active status (`IN-PROGRESS` → `DONE` → `DEFERRED`), then complexity (`S` → `M` → `L`). Completed gaps follow active work.
 

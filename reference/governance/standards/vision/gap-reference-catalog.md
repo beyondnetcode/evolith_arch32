@@ -642,9 +642,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Gap:** NestJS default logger outputs plain text strings. No `x-correlation-id` propagation between requests. Impossible to correlate logs in production or distributed environments.
 - **Purpose:** Replace the default NestJS logger with Pino for structured JSON logging. Implement a `CorrelationIdMiddleware` using `AsyncLocalStorage` to propagate a correlation ID through all async boundaries.
 - **Done when:**
-  - [ ] All logs are JSON with fields: `timestamp`, `level`, `context`, `correlationId`
-  - [ ] `x-correlation-id` extracted from incoming requests or generated via UUID
-  - [ ] Correlation ID propagated in all responses and error objects
+  - [x] All logs are JSON with fields: `timestamp`, `level`, `context`, `correlationId`
+  - [x] `x-correlation-id` extracted from incoming requests or generated via UUID
+  - [x] Correlation ID propagated in all responses and error objects
 - **References:** [nestjs-pino](https://github.com/iamolegga/nestjs-pino) · [apps/core-api/src/main.ts](../../../../apps/core-api/src/main.ts)
 
 #### GT-65

@@ -1,12 +1,14 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { LoggerModule } from 'nestjs-pino';
 import { HealthController } from './presentation/controllers/health.controller';
 import { HealthService } from './application/services/health.service';
 import { GatesController } from './presentation/controllers/gates.controller';
 import { ProjectsController } from './presentation/controllers/projects.controller';
 import { ArchitectureController } from './presentation/controllers/architecture.controller';
 import { CoreDomainModule } from './core-domain.module';
+import { CorrelationIdMiddleware } from './infrastructure/middleware/correlation-id.middleware';
 
 @Module({
   imports: [
@@ -15,6 +17,12 @@ import { CoreDomainModule } from './core-domain.module';
       ttl: 60000,
       limit: 100,
     }]),
+    LoggerModule.forRoot({
+      pinoHttp: {
+        autoLogging: false,
+        quietReqLogger: true,
+      },
+    }),
   ],
   controllers: [
     HealthController,
@@ -30,4 +38,8 @@ import { CoreDomainModule } from './core-domain.module';
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(CorrelationIdMiddleware).forRoutes('*');
+  }
+}

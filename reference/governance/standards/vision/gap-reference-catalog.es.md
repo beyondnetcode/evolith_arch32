@@ -642,9 +642,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Gap:** El logger por defecto de NestJS emite texto plano. Sin propagación de `x-correlation-id` entre requests. Imposible correlacionar logs en producción.
 - **Propósito:** Reemplazar el logger de NestJS por Pino para logging JSON estructurado. Implementar `CorrelationIdMiddleware` usando `AsyncLocalStorage` para propagar un correlation ID a través de todos los límites asíncronos.
 - **Criterio de cierre:**
-  - [ ] Todos los logs son JSON con campos: `timestamp`, `level`, `context`, `correlationId`
-  - [ ] `x-correlation-id` extraído del request entrante o generado via UUID
-  - [ ] Correlation ID propagado en todos los responses y objetos de error
+  - [x] Todos los logs son JSON con campos: `timestamp`, `level`, `context`, `correlationId`
+  - [x] `x-correlation-id` extraído del request entrante o generado via UUID
+  - [x] Correlation ID propagado en todos los responses y objetos de error
 - **Referencias:** [nestjs-pino](https://github.com/iamolegga/nestjs-pino) · [apps/core-api/src/main.ts](../../../../apps/core-api/src/main.ts)
 
 #### GT-65

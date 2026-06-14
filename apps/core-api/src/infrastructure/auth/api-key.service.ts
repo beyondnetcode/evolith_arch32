@@ -1,16 +1,19 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { createHash, timingSafeEqual } from 'crypto';
+import { EnvConfig } from '../config/env.validation';
 
 @Injectable()
 export class ApiKeyService {
   private readonly keyStore: Map<string, string> = new Map();
 
-  constructor() {
+  constructor(private readonly config: ConfigService<EnvConfig>) {
     this.loadKeys();
   }
 
   private loadKeys(): void {
-    const keys = process.env.API_KEYS?.split(',') ?? [];
+    const apiKeys = this.config.get('API_KEYS', '');
+    const keys = apiKeys.split(',');
     for (const key of keys) {
       const trimmed = key.trim();
       if (trimmed) {

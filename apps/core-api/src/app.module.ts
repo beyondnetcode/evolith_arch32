@@ -1,5 +1,6 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
+import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { LoggerModule } from 'nestjs-pino';
 import { PassportModule } from '@nestjs/passport';
@@ -13,9 +14,14 @@ import { CorrelationIdMiddleware } from './infrastructure/middleware/correlation
 import { ApiKeyAuthGuard } from './infrastructure/auth/api-key.guard';
 import { ApiKeyStrategy } from './infrastructure/auth/api-key.strategy';
 import { ApiKeyService } from './infrastructure/auth/api-key.service';
+import { validateEnv } from './infrastructure/config/env.validation';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      validate: validateEnv,
+    }),
     CoreDomainModule,
     ThrottlerModule.forRoot([{
       ttl: 60000,

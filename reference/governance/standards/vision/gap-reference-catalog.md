@@ -768,10 +768,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Gap:** `main.ts` uses `process.env.PORT` directly without validation. No typed configuration module. Hardcoded values scattered in the code.
 - **Purpose:** Implement `@nestjs/config` with Zod schema validation to fail fast on missing required environment variables and provide type-safe configuration throughout the application.
 - **Done when:**
-  - [ ] All environment variables validated at startup with Zod schema
-  - [ ] Process fails with clear message if a required variable is missing
-  - [ ] `README.md` documents all environment variables
-  - [ ] `.env.example` with safe default values committed to repository
+  - [x] All environment variables validated at startup with Zod schema
+  - [x] Process fails with clear message if a required variable is missing
+  - [x] `README.md` documents all environment variables
+  - [x] `.env.example` with safe default values committed to repository
 - **References:** [@nestjs/config](https://docs.nestjs.com/techniques/configuration) · [apps/core-api](../../../../apps/core-api)
 
 #### GT-75

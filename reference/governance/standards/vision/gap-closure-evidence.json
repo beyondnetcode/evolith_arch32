@@ -865,6 +865,21 @@
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "API Key auth implemented for M2M. JWT Bearer tokens deferred to future iteration per ADR-0075."
+    },
+    {
+      "id": "GT-74",
+      "closedAt": "2026-06-13",
+      "closureCommit": "28e177c",
+      "evidence": [
+        "apps/core-api/src/infrastructure/config/env.validation.ts",
+        "apps/core-api/.env.example",
+        "apps/core-api/src/main.ts",
+        "apps/core-api/src/app.module.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace apps/core-api -- --no-coverage"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

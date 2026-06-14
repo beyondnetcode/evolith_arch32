@@ -1,3 +1,4 @@
+process.env.API_KEYS = 'test-key';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from './app.module';
 

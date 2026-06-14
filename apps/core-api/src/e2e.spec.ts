@@ -1,7 +1,9 @@
+process.env.API_KEYS = 'test-api-key-123';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
-import request from 'supertest';
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const request = require('supertest');
 import helmet from 'helmet';
 import { correlationIdMiddleware } from './infrastructure/middleware/correlation-id.middleware';
 

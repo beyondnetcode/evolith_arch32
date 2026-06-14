@@ -2,6 +2,7 @@ import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { LoggerModule } from 'nestjs-pino';
+import { PassportModule } from '@nestjs/passport';
 import { HealthController } from './presentation/controllers/health.controller';
 import { HealthService } from './application/services/health.service';
 import { GatesController } from './presentation/controllers/gates.controller';
@@ -9,6 +10,9 @@ import { ProjectsController } from './presentation/controllers/projects.controll
 import { ArchitectureController } from './presentation/controllers/architecture.controller';
 import { CoreDomainModule } from './core-domain.module';
 import { CorrelationIdMiddleware } from './infrastructure/middleware/correlation-id.middleware';
+import { ApiKeyAuthGuard } from './infrastructure/auth/api-key.guard';
+import { ApiKeyStrategy } from './infrastructure/auth/api-key.strategy';
+import { ApiKeyService } from './infrastructure/auth/api-key.service';
 
 @Module({
   imports: [
@@ -23,6 +27,7 @@ import { CorrelationIdMiddleware } from './infrastructure/middleware/correlation
         quietReqLogger: true,
       },
     }),
+    PassportModule,
   ],
   controllers: [
     HealthController,
@@ -32,9 +37,15 @@ import { CorrelationIdMiddleware } from './infrastructure/middleware/correlation
   ],
   providers: [
     HealthService,
+    ApiKeyService,
+    ApiKeyStrategy,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ApiKeyAuthGuard,
     },
   ],
 })

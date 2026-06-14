@@ -616,10 +616,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Gap:** El Core API está completamente abierto sin ningún mecanismo de autenticación. Cualquier cliente puede invocar evaluación de gates, inicialización de proyectos y detección de drift sin credenciales.
 - **Propósito:** Implementar autenticación por API Key para comunicación M2M (Tracker → Core API) y documentar la ruta hacia JWT Bearer tokens para acceso futuro. Aplicar mitigaciones de OWASP API1, API2 y API5.
 - **Criterio de cierre:**
-  - [ ] Middleware de API Key valida el header `x-api-key` contra un almacén con hash
-  - [ ] Decorator `@Public()` disponible para endpoints de health/métricas
-  - [ ] Estrategia documentada en `ADR-0075-core-api-auth-strategy.md`
-  - [ ] Todos los endpoints sensibles retornan 401 sin credenciales válidas
+  - [x] Middleware de API Key valida el header `x-api-key` contra un almacén con hash
+  - [x] Decorator `@Public()` disponible para endpoints de health/métricas
+  - [x] Estrategia documentada en `ADR-0075-core-api-auth-strategy.md`
+  - [x] Todos los endpoints sensibles retornan 401 sin credenciales válidas
 - **Referencias:** [OWASP API1:2023](https://owasp.org/API-Security/editions/2023/en/0xa1-broken-object-level-authorization/) · [OWASP API2:2023](https://owasp.org/API-Security/editions/2023/en/0xa2-broken-authentication/)
 
 #### GT-63

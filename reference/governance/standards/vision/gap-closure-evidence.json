@@ -850,6 +850,21 @@
         "npm run test:cov --workspace apps/core-api -- --coverageReporters=text-summary"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-62",
+      "closedAt": "2026-06-13",
+      "closureCommit": "ee57f82",
+      "evidence": [
+        "apps/core-api/src/infrastructure/auth/",
+        "apps/core-api/src/presentation/controllers/health.controller.ts",
+        "reference/architecture/adrs/core/0075-core-api-auth-strategy.md"
+      ],
+      "validationCommands": [
+        "npm test --workspace apps/core-api -- --no-coverage"
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "API Key auth implemented for M2M. JWT Bearer tokens deferred to future iteration per ADR-0075."
     }
   ]
 }

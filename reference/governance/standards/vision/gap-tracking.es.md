@@ -12,7 +12,7 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 
 | ID | Gap | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|
-| [`GT-54`](./gap-reference-catalog.es.md#gt-54) | Completar la aplicación estricta de fronteras hexagonales | Transversal | P2 | L | `PENDIENTE` |
+| [`GT-54`](./gap-reference-catalog.es.md#gt-54) | Completar la aplicación estricta de fronteras hexagonales | Transversal | P2 | L | `COMPLETADO` |
 | [`GT-48`](./gap-reference-catalog.es.md#gt-48) | Restaurar el umbral normativo de cobertura del CLI | F0 | P0 | L | `COMPLETADO` |
 | [`GT-49`](./gap-reference-catalog.es.md#gt-49) | Activar el modo estricto de TypeScript y puertos de filesystem tipados | Transversal | P1 | M | `COMPLETADO` |
 | [`GT-44`](./gap-reference-catalog.es.md#gt-44) | Integridad determinista del pipeline de release | F5 | P0 | M | `COMPLETADO` |
@@ -59,9 +59,9 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-23`](./gap-reference-catalog.es.md#gt-23) | Backfill de traducciones españolas | Transversal | P2 | L | `COMPLETADO` |
 | [`GT-36`](./gap-reference-catalog.es.md#gt-36) | Cobertura lingüística de reglas machine-readable | Transversal | P2 | L | `COMPLETADO` |
 
-**Progreso:** 45 / 46 completados · 0 en progreso · 1 pendientes · 0 diferidos
+**Progreso:** 46 / 46 completados · 0 en progreso · 0 pendientes · 0 diferidos
 
-**Ordenamiento:** criticidad (`P0` → `P1` → `P2`), estado activo (`EN-PROGRESO` → `PENDIENTE` → `DIFERIDO`) y complejidad (`S` → `M` → `L`). Los gaps completados aparecen después del trabajo activo.
+**Ordenamiento:** criticidad (`P0` → `P1` → `P2`), estado activo (`EN-PROGRESO` → `COMPLETADO` → `DIFERIDO`) y complejidad (`S` → `M` → `L`). Los gaps completados aparecen después del trabajo activo.
 
 ---
 [Volver al Índice de Visión](./README.es.md)

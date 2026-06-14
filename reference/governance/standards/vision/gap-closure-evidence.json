@@ -6,8 +6,13 @@
       "id": "GT-01",
       "closedAt": "2026-06-10",
       "closureCommit": "ae21c92",
-      "evidence": ["reference/architecture/adrs/core/0073-unified-cli-output-contract.md", "reference/products/evolith-tracker/sdlc-tracker-technical-interfaces.md"],
-      "validationCommands": ["node .harness/scripts/validate-docs.mjs"],
+      "evidence": [
+        "reference/architecture/adrs/core/0073-unified-cli-output-contract.md",
+        "reference/products/evolith-tracker/sdlc-tracker-technical-interfaces.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/validate-docs.mjs"
+      ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "The Tracker technical interface references ADR-0073 as the unified output-envelope authority."
     },
@@ -15,16 +20,26 @@
       "id": "GT-02",
       "closedAt": "2026-06-10",
       "closureCommit": "8b4f673",
-      "evidence": ["sdk/cli/src/domain/gate-evidence.ts", "rulesets/schema/gate-evidence.schema.json"],
-      "validationCommands": ["npm test --workspace sdk/cli -- --runInBand"],
+      "evidence": [
+        "sdk/cli/src/domain/gate-evidence.ts",
+        "rulesets/schema/gate-evidence.schema.json"
+      ],
+      "validationCommands": [
+        "npm test --workspace sdk/cli -- --runInBand"
+      ],
       "dependencyDisposition": "none"
     },
     {
       "id": "GT-03",
       "closedAt": "2026-06-10",
       "closureCommit": "b151e2f",
-      "evidence": ["sdk/cli/src/application/use-cases/evaluate-gate.use-case.ts", "sdk/cli/test/gate.e2e-spec.ts"],
-      "validationCommands": ["npm test --workspace sdk/cli -- --runInBand"],
+      "evidence": [
+        "sdk/cli/src/application/use-cases/evaluate-gate.use-case.ts",
+        "sdk/cli/test/gate.e2e-spec.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace sdk/cli -- --runInBand"
+      ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "GT-02 supplied the domain contract consumed by the use case."
     },
@@ -32,24 +47,38 @@
       "id": "GT-04",
       "closedAt": "2026-06-10",
       "closureCommit": "6f7a3e8",
-      "evidence": ["sdk/cli/src/domain/gate-evidence.ts", "sdk/cli/.eslintrc.js"],
-      "validationCommands": ["npm run lint --workspace sdk/cli"],
+      "evidence": [
+        "sdk/cli/src/domain/gate-evidence.ts",
+        "sdk/cli/.eslintrc.js"
+      ],
+      "validationCommands": [
+        "npm run lint --workspace sdk/cli"
+      ],
       "dependencyDisposition": "none"
     },
     {
       "id": "GT-05",
       "closedAt": "2026-06-11",
       "closureCommit": "cb9474e",
-      "evidence": ["sdk/cli/src/infrastructure/mcp/server.ts"],
-      "validationCommands": ["npm run mcp:smoke --workspace sdk/cli"],
+      "evidence": [
+        "sdk/cli/src/infrastructure/mcp/server.ts"
+      ],
+      "validationCommands": [
+        "npm run mcp:smoke --workspace sdk/cli"
+      ],
       "dependencyDisposition": "none"
     },
     {
       "id": "GT-06",
       "closedAt": "2026-06-10",
       "closureCommit": "acbd2a8",
-      "evidence": ["sdk/cli/src/infrastructure/mcp/tools/gate.ts", ".harness/scripts/mcp-smoke.mjs"],
-      "validationCommands": ["npm run mcp:smoke --workspace sdk/cli"],
+      "evidence": [
+        "sdk/cli/src/infrastructure/mcp/tools/gate.ts",
+        ".harness/scripts/mcp-smoke.mjs"
+      ],
+      "validationCommands": [
+        "npm run mcp:smoke --workspace sdk/cli"
+      ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "Phase context is required on gate evaluation; retrofitting unrelated legacy tools was explicitly excluded to preserve their public schemas."
     },
@@ -57,8 +86,12 @@
       "id": "GT-07",
       "closedAt": "2026-06-11",
       "closureCommit": "732920c",
-      "evidence": [".harness/scripts/mcp-smoke.mjs"],
-      "validationCommands": ["npm run mcp:smoke --workspace sdk/cli"],
+      "evidence": [
+        ".harness/scripts/mcp-smoke.mjs"
+      ],
+      "validationCommands": [
+        "npm run mcp:smoke --workspace sdk/cli"
+      ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "GT-05 and GT-06 provide the transport and gate tool exercised by the smoke."
     },
@@ -66,48 +99,77 @@
       "id": "GT-08",
       "closedAt": "2026-06-11",
       "closureCommit": "fb9a07b",
-      "evidence": ["sdk/cli/src/application/validators/phase-gate-validator.service.ts", "sdk/cli/src/application/validators/phase-gate-validator.service.spec.ts"],
-      "validationCommands": ["npm test --workspace sdk/cli -- --runInBand"],
+      "evidence": [
+        "sdk/cli/src/application/validators/phase-gate-validator.service.ts",
+        "sdk/cli/src/application/validators/phase-gate-validator.service.spec.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace sdk/cli -- --runInBand"
+      ],
       "dependencyDisposition": "none"
     },
     {
       "id": "GT-09",
       "closedAt": "2026-06-11",
       "closureCommit": "fbdf401",
-      "evidence": ["sdk/cli/src/application/validators/phase-gate-validator.service.ts", "sdk/cli/src/application/validators/phase-gate-validator.service.spec.ts"],
-      "validationCommands": ["npm test --workspace sdk/cli -- --runInBand"],
+      "evidence": [
+        "sdk/cli/src/application/validators/phase-gate-validator.service.ts",
+        "sdk/cli/src/application/validators/phase-gate-validator.service.spec.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace sdk/cli -- --runInBand"
+      ],
       "dependencyDisposition": "none"
     },
     {
       "id": "GT-10",
       "closedAt": "2026-06-11",
       "closureCommit": "d2c0a3d",
-      "evidence": ["sdk/cli/src/application/validators/phase-gate-validator.service.ts", "sdk/cli/src/application/validators/phase-gate-validator.service.spec.ts"],
-      "validationCommands": ["npm test --workspace sdk/cli -- --runInBand"],
+      "evidence": [
+        "sdk/cli/src/application/validators/phase-gate-validator.service.ts",
+        "sdk/cli/src/application/validators/phase-gate-validator.service.spec.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace sdk/cli -- --runInBand"
+      ],
       "dependencyDisposition": "none"
     },
     {
       "id": "GT-11",
       "closedAt": "2026-06-11",
       "closureCommit": "d2c0a3d",
-      "evidence": ["sdk/cli/src/application/validators/phase-gate-validator.service.ts", "sdk/cli/src/application/validators/phase-gate-validator.service.spec.ts"],
-      "validationCommands": ["npm test --workspace sdk/cli -- --runInBand"],
+      "evidence": [
+        "sdk/cli/src/application/validators/phase-gate-validator.service.ts",
+        "sdk/cli/src/application/validators/phase-gate-validator.service.spec.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace sdk/cli -- --runInBand"
+      ],
       "dependencyDisposition": "none"
     },
     {
       "id": "GT-12",
       "closedAt": "2026-06-11",
       "closureCommit": "a30f7b0",
-      "evidence": ["sdk/cli/test"],
-      "validationCommands": ["npm run test:e2e --workspace sdk/cli"],
+      "evidence": [
+        "sdk/cli/test"
+      ],
+      "validationCommands": [
+        "npm run test:e2e --workspace sdk/cli"
+      ],
       "dependencyDisposition": "none"
     },
     {
       "id": "GT-13",
       "closedAt": "2026-06-12",
       "closureCommit": "1ab485e",
-      "evidence": ["sdk/cli/src/application/use-cases/propose-phase-advance.use-case.ts", "sdk/cli/src/application/use-cases/propose-phase-advance.use-case.spec.ts"],
-      "validationCommands": ["npm test --workspace sdk/cli -- --runInBand"],
+      "evidence": [
+        "sdk/cli/src/application/use-cases/propose-phase-advance.use-case.ts",
+        "sdk/cli/src/application/use-cases/propose-phase-advance.use-case.spec.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace sdk/cli -- --runInBand"
+      ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "GT-03 supplies the technical gate evaluation composed by the proposal runner."
     },
@@ -115,32 +177,53 @@
       "id": "GT-14",
       "closedAt": "2026-06-11",
       "closureCommit": "b544411",
-      "evidence": ["sdk/cli/src/infrastructure/adapters/webhook.adapter.ts", "sdk/cli/src/infrastructure/adapters/webhook.adapter.spec.ts"],
-      "validationCommands": ["npm test --workspace sdk/cli -- --runInBand"],
+      "evidence": [
+        "sdk/cli/src/infrastructure/adapters/webhook.adapter.ts",
+        "sdk/cli/src/infrastructure/adapters/webhook.adapter.spec.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace sdk/cli -- --runInBand"
+      ],
       "dependencyDisposition": "none"
     },
     {
       "id": "GT-16",
       "closedAt": "2026-06-10",
       "closureCommit": "225d3de",
-      "evidence": ["reference/governance/standards/vision/gap-tracking.md", "reference/governance/standards/vision/gap-reference-catalog.md"],
-      "validationCommands": ["node .harness/scripts/validate-docs.mjs"],
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md",
+        "reference/governance/standards/vision/gap-reference-catalog.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/validate-docs.mjs"
+      ],
       "dependencyDisposition": "none"
     },
     {
       "id": "GT-17",
       "closedAt": "2026-06-12",
       "closureCommit": "000bf3b",
-      "evidence": ["sdk/cli/.eslintrc.js", "sdk/cli/src"],
-      "validationCommands": ["npm run lint --workspace sdk/cli", "npm run build --workspace sdk/cli"],
+      "evidence": [
+        "sdk/cli/.eslintrc.js",
+        "sdk/cli/src"
+      ],
+      "validationCommands": [
+        "npm run lint --workspace sdk/cli",
+        "npm run build --workspace sdk/cli"
+      ],
       "dependencyDisposition": "none"
     },
     {
       "id": "GT-18",
       "closedAt": "2026-06-12",
       "closureCommit": "206867c",
-      "evidence": [".github/workflows/sdk-cli-release.yml", "sdk/cli/package.json"],
-      "validationCommands": ["npm view @evolith/smart-cli"],
+      "evidence": [
+        ".github/workflows/sdk-cli-release.yml",
+        "sdk/cli/package.json"
+      ],
+      "validationCommands": [
+        "npm view @evolith/smart-cli"
+      ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "GT-28, GT-05, and GT-07 were closed before the public release workflow was accepted."
     },
@@ -148,80 +231,143 @@
       "id": "GT-19",
       "closedAt": "2026-06-12",
       "closureCommit": "3492321",
-      "evidence": ["sdk/cli/src/domain", "sdk/cli/src/application", "sdk/cli/src/infrastructure", "sdk/cli/.eslintrc.js"],
-      "validationCommands": ["npm run lint --workspace sdk/cli", "npm run build --workspace sdk/cli"],
+      "evidence": [
+        "sdk/cli/src/domain",
+        "sdk/cli/src/application",
+        "sdk/cli/src/infrastructure",
+        "sdk/cli/.eslintrc.js"
+      ],
+      "validationCommands": [
+        "npm run lint --workspace sdk/cli",
+        "npm run build --workspace sdk/cli"
+      ],
       "dependencyDisposition": "none"
     },
     {
       "id": "GT-20",
       "closedAt": "2026-06-12",
       "closureCommit": "2ae729d",
-      "evidence": ["reference/architecture/adrs/adr-authoring-standard.md"],
-      "validationCommands": ["node .harness/scripts/validate-docs.mjs"],
+      "evidence": [
+        "reference/architecture/adrs/adr-authoring-standard.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/validate-docs.mjs"
+      ],
       "dependencyDisposition": "none"
     },
     {
       "id": "GT-21",
       "closedAt": "2026-06-12",
       "closureCommit": "617241d",
-      "evidence": ["reference/architecture/adrs/core/0001-monorepo-orchestration-principle.md", "reference/architecture/adrs/adr-authoring-standard.md"],
-      "validationCommands": ["node .harness/scripts/validate-docs.mjs"],
+      "evidence": [
+        "reference/architecture/adrs/core/0001-monorepo-orchestration-principle.md",
+        "reference/architecture/adrs/adr-authoring-standard.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/validate-docs.mjs"
+      ],
       "dependencyDisposition": "none"
     },
     {
       "id": "GT-22",
       "closedAt": "2026-06-12",
       "closureCommit": "d424bfd",
-      "evidence": ["reference/architecture/adrs/adr-authoring-standard.md", "reference/architecture/adrs/adr-matrix.md"],
-      "validationCommands": ["node .harness/scripts/validate-docs.mjs"],
+      "evidence": [
+        "reference/architecture/adrs/adr-authoring-standard.md",
+        "reference/architecture/adrs/adr-matrix.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/validate-docs.mjs"
+      ],
       "dependencyDisposition": "none"
     },
     {
       "id": "GT-23",
       "closedAt": "2026-06-12",
       "closureCommit": "c9137a0",
-      "evidence": ["reference/governance/BILINGUAL_INDEX.md", "reference/governance/BILINGUAL_INDEX.es.md"],
-      "validationCommands": ["node .harness/scripts/bilingual-coverage.mjs", "node .harness/scripts/check-bilingual-parity.mjs"],
+      "evidence": [
+        "reference/governance/BILINGUAL_INDEX.md",
+        "reference/governance/BILINGUAL_INDEX.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/bilingual-coverage.mjs",
+        "node .harness/scripts/check-bilingual-parity.mjs"
+      ],
       "dependencyDisposition": "none"
     },
     {
       "id": "GT-24",
       "closedAt": "2026-06-12",
       "closureCommit": "e7bb4c2",
-      "evidence": ["reference/documentation-taxonomy.md", "reference/product-suite/README.md", "reference/products/README.md"],
-      "validationCommands": ["node .harness/scripts/validate-docs.mjs"],
+      "evidence": [
+        "reference/documentation-taxonomy.md",
+        "reference/product-suite/README.md",
+        "reference/products/README.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/validate-docs.mjs"
+      ],
       "dependencyDisposition": "none"
     },
     {
       "id": "GT-25",
       "closedAt": "2026-06-12",
       "closureCommit": "40c6846",
-      "evidence": ["reference/platforms/README.md", "reference/platforms/scm/github-profile.md", "reference/platforms/ci-cd/github-actions-profile.md", "reference/platforms/observability/otel-stack-profile.md", "reference/platforms/security/codeql-trivy-profile.md"],
-      "validationCommands": ["node .harness/scripts/validate-docs.mjs"],
+      "evidence": [
+        "reference/platforms/README.md",
+        "reference/platforms/scm/github-profile.md",
+        "reference/platforms/ci-cd/github-actions-profile.md",
+        "reference/platforms/observability/otel-stack-profile.md",
+        "reference/platforms/security/codeql-trivy-profile.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/validate-docs.mjs"
+      ],
       "dependencyDisposition": "none"
     },
     {
       "id": "GT-26",
       "closedAt": "2026-06-12",
       "closureCommit": "c315597",
-      "evidence": ["reference/governance/sdlc/01-playbooks/zero-downtime-release.md"],
-      "validationCommands": ["node .harness/scripts/validate-docs.mjs"],
+      "evidence": [
+        "reference/governance/sdlc/01-playbooks/zero-downtime-release.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/validate-docs.mjs"
+      ],
       "dependencyDisposition": "none"
     },
     {
       "id": "GT-27",
       "closedAt": "2026-06-11",
       "closureCommit": "4fb2321",
-      "evidence": ["reference/governance/standards/vision/gap-tracking.md", "reference/governance/standards/vision/gap-reference-catalog.md"],
-      "validationCommands": ["node .harness/scripts/validate-tracking.mjs"],
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md",
+        "reference/governance/standards/vision/gap-reference-catalog.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/validate-tracking.mjs"
+      ],
       "dependencyDisposition": "none"
     },
     {
       "id": "GT-28",
       "closedAt": "2026-06-13",
       "closureCommit": "84ec879",
-      "evidence": [".github/workflows/sdk-cli-ci.yml", ".github/workflows/ci-cd.yml", ".github/workflows/sdk-cli-release.yml", "sdk/cli/package.json"],
-      "validationCommands": ["npm ci", "npm run lint --workspace @evolith/smart-cli", "npm run build --workspace @evolith/smart-cli", "npm run test:unit --workspace @evolith/smart-cli -- --runInBand", "npm run test:e2e --workspace @evolith/smart-cli", "npm run mcp:smoke --workspace @evolith/smart-cli"],
+      "evidence": [
+        ".github/workflows/sdk-cli-ci.yml",
+        ".github/workflows/ci-cd.yml",
+        ".github/workflows/sdk-cli-release.yml",
+        "sdk/cli/package.json"
+      ],
+      "validationCommands": [
+        "npm ci",
+        "npm run lint --workspace @evolith/smart-cli",
+        "npm run build --workspace @evolith/smart-cli",
+        "npm run test:unit --workspace @evolith/smart-cli -- --runInBand",
+        "npm run test:e2e --workspace @evolith/smart-cli",
+        "npm run mcp:smoke --workspace @evolith/smart-cli"
+      ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "GT-28 restores clean-checkout installation and the executable lint, build, test, and MCP smoke baseline. The independently measured coverage regression remains blocking and is tracked as GT-48."
     },
@@ -229,56 +375,102 @@
       "id": "GT-29",
       "closedAt": "2026-06-11",
       "closureCommit": "769651c",
-      "evidence": ["rulesets/opa/architecture.rego", "sdk/cli/src"],
-      "validationCommands": ["npm test --workspace sdk/cli -- --runInBand"],
+      "evidence": [
+        "rulesets/opa/architecture.rego",
+        "sdk/cli/src"
+      ],
+      "validationCommands": [
+        "npm test --workspace sdk/cli -- --runInBand"
+      ],
       "dependencyDisposition": "none"
     },
     {
       "id": "GT-33",
       "closedAt": "2026-06-12",
       "closureCommit": "990af1a",
-      "evidence": ["reference/governance/standards/vision/maturity-assessment.md"],
-      "validationCommands": ["node .harness/scripts/validate-docs.mjs"],
+      "evidence": [
+        "reference/governance/standards/vision/maturity-assessment.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/validate-docs.mjs"
+      ],
       "dependencyDisposition": "none"
     },
     {
       "id": "GT-34",
       "closedAt": "2026-06-12",
       "closureCommit": "82f2d0f",
-      "evidence": ["reference/product-suite/strategy/evolutionary-strategy-roadmap.md"],
-      "validationCommands": ["node .harness/scripts/validate-docs.mjs"],
+      "evidence": [
+        "reference/product-suite/strategy/evolutionary-strategy-roadmap.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/validate-docs.mjs"
+      ],
       "dependencyDisposition": "none"
     },
     {
       "id": "GT-35",
       "closedAt": "2026-06-12",
       "closureCommit": "0fe0696",
-      "evidence": [".harness/scripts/validate-tracking.mjs", ".harness/scripts/generate-inventories.mjs", "reference/governance/standards/vision/inventory-summary.md"],
-      "validationCommands": ["node .harness/scripts/validate-tracking.mjs", "node .harness/scripts/generate-inventories.mjs"],
+      "evidence": [
+        ".harness/scripts/validate-tracking.mjs",
+        ".harness/scripts/generate-inventories.mjs",
+        "reference/governance/standards/vision/inventory-summary.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/validate-tracking.mjs",
+        "node .harness/scripts/generate-inventories.mjs"
+      ],
       "dependencyDisposition": "none"
     },
     {
       "id": "GT-36",
       "closedAt": "2026-06-12",
       "closureCommit": "2a831b1",
-      "evidence": ["reference/governance/adr/adr-0090-rule-language-policy.md"],
-      "validationCommands": ["node .harness/scripts/validate-docs.mjs", "node .harness/scripts/check-orphan-bilingual.mjs"],
+      "evidence": [
+        "reference/governance/adr/adr-0090-rule-language-policy.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/validate-docs.mjs",
+        "node .harness/scripts/check-orphan-bilingual.mjs"
+      ],
       "dependencyDisposition": "none"
     },
     {
       "id": "GT-37",
       "closedAt": "2026-06-13",
       "closureCommit": "f3c8520",
-      "evidence": [".harness/scripts/validate-tracking.mjs", ".harness/scripts/validate-tracking.test.mjs", "reference/governance/standards/vision/gap-closure-evidence-standard.md", "reference/governance/standards/vision/gap-closure-evidence.json"],
-      "validationCommands": ["node --test .harness/scripts/validate-tracking.test.mjs", "node .harness/scripts/validate-tracking.mjs", "node .harness/scripts/validate-docs.mjs", "node .harness/scripts/check-bilingual-parity.mjs"],
+      "evidence": [
+        ".harness/scripts/validate-tracking.mjs",
+        ".harness/scripts/validate-tracking.test.mjs",
+        "reference/governance/standards/vision/gap-closure-evidence-standard.md",
+        "reference/governance/standards/vision/gap-closure-evidence.json"
+      ],
+      "validationCommands": [
+        "node --test .harness/scripts/validate-tracking.test.mjs",
+        "node .harness/scripts/validate-tracking.mjs",
+        "node .harness/scripts/validate-docs.mjs",
+        "node .harness/scripts/check-bilingual-parity.mjs"
+      ],
       "dependencyDisposition": "none"
     },
     {
       "id": "GT-41",
       "closedAt": "2026-06-13",
       "closureCommit": "e4fa0e3",
-      "evidence": [".github/workflows/docs.yml", ".harness/scripts/reconcile-maturity.mjs", ".harness/scripts/reconcile-maturity.test.mjs", "reference/governance/standards/vision/maturity-evidence.json", "reference/governance/standards/vision/maturity-reconciliation.json"],
-      "validationCommands": ["node --test .harness/scripts/reconcile-maturity.test.mjs", "node .harness/scripts/validate-tracking.mjs", "node .harness/scripts/reconcile-maturity.mjs --check", "node .harness/scripts/validate-docs.mjs"],
+      "evidence": [
+        ".github/workflows/docs.yml",
+        ".harness/scripts/reconcile-maturity.mjs",
+        ".harness/scripts/reconcile-maturity.test.mjs",
+        "reference/governance/standards/vision/maturity-evidence.json",
+        "reference/governance/standards/vision/maturity-reconciliation.json"
+      ],
+      "validationCommands": [
+        "node --test .harness/scripts/reconcile-maturity.test.mjs",
+        "node .harness/scripts/validate-tracking.mjs",
+        "node .harness/scripts/reconcile-maturity.mjs --check",
+        "node .harness/scripts/validate-docs.mjs"
+      ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "Documentation Validation run 27470122212 passed with full Git history and validated the runtime evidence-backed reconciliation."
     },
@@ -286,8 +478,18 @@
       "id": "GT-42",
       "closedAt": "2026-06-13",
       "closureCommit": "154aadf",
-      "evidence": [".harness/scripts/validate-contract-conformance.mjs", ".harness/scripts/validate-contract-conformance.test.mjs", "rulesets/contracts/evolith-machine-contracts.json", "rulesets/contracts/README.md", ".github/workflows/docs.yml"],
-      "validationCommands": ["node --test .harness/scripts/validate-contract-conformance.test.mjs", "node .harness/scripts/validate-contract-conformance.mjs", "node .harness/scripts/validate-contract-conformance.mjs --consumer ../evolith_tracker/contracts/evolith-core-contracts.json"],
+      "evidence": [
+        ".harness/scripts/validate-contract-conformance.mjs",
+        ".harness/scripts/validate-contract-conformance.test.mjs",
+        "rulesets/contracts/evolith-machine-contracts.json",
+        "rulesets/contracts/README.md",
+        ".github/workflows/docs.yml"
+      ],
+      "validationCommands": [
+        "node --test .harness/scripts/validate-contract-conformance.test.mjs",
+        "node .harness/scripts/validate-contract-conformance.mjs",
+        "node .harness/scripts/validate-contract-conformance.mjs --consumer ../evolith_tracker/contracts/evolith-core-contracts.json"
+      ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "Evolith Tracker main commit 4256e7b pins contract 1.0.0 and executes the Core conformance validator in CI."
     },
@@ -295,16 +497,37 @@
       "id": "GT-45",
       "closedAt": "2026-06-13",
       "closureCommit": "b07460d",
-      "evidence": ["sdk/cli/src/infrastructure/mcp/mcp-conformance.spec.ts", "sdk/cli/src/infrastructure/mcp/server.ts", "sdk/cli/src/infrastructure/mcp/tools/agent.spec.ts", "sdk/cli/src/infrastructure/mcp/tools/architecture.spec.ts", "sdk/cli/src/infrastructure/mcp/tools/sdlc.spec.ts", "sdk/cli/test/e2e/mcp-e2e.test.ts"],
-      "validationCommands": ["npm run lint --workspace sdk/cli", "npm run test:unit --workspace sdk/cli -- --runInBand", "npm run test:e2e --workspace sdk/cli -- --runTestsByPath test/e2e/mcp-e2e.test.ts", "npm run mcp:smoke --workspace sdk/cli"],
+      "evidence": [
+        "sdk/cli/src/infrastructure/mcp/mcp-conformance.spec.ts",
+        "sdk/cli/src/infrastructure/mcp/server.ts",
+        "sdk/cli/src/infrastructure/mcp/tools/agent.spec.ts",
+        "sdk/cli/src/infrastructure/mcp/tools/architecture.spec.ts",
+        "sdk/cli/src/infrastructure/mcp/tools/sdlc.spec.ts",
+        "sdk/cli/test/e2e/mcp-e2e.test.ts"
+      ],
+      "validationCommands": [
+        "npm run lint --workspace sdk/cli",
+        "npm run test:unit --workspace sdk/cli -- --runInBand",
+        "npm run test:e2e --workspace sdk/cli -- --runTestsByPath test/e2e/mcp-e2e.test.ts",
+        "npm run mcp:smoke --workspace sdk/cli"
+      ],
       "dependencyDisposition": "none"
     },
     {
       "id": "GT-46",
       "closedAt": "2026-06-13",
       "closureCommit": "b07460d",
-      "evidence": ["sdk/cli/src/app.module.ts", "sdk/cli/src/infrastructure/mcp/server.ts", "reference/governance/standards/vision/gap-reference-catalog.md"],
-      "validationCommands": ["npm run build --workspace sdk/cli", "npm run lint --workspace sdk/cli", "npm run mcp:smoke --workspace sdk/cli", "node .harness/scripts/validate-docs.mjs"],
+      "evidence": [
+        "sdk/cli/src/app.module.ts",
+        "sdk/cli/src/infrastructure/mcp/server.ts",
+        "reference/governance/standards/vision/gap-reference-catalog.md"
+      ],
+      "validationCommands": [
+        "npm run build --workspace sdk/cli",
+        "npm run lint --workspace sdk/cli",
+        "npm run mcp:smoke --workspace sdk/cli",
+        "node .harness/scripts/validate-docs.mjs"
+      ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "Tracker-owned chat and session behavior was removed; Core exposes governed capabilities through CLI and MCP only."
     },
@@ -433,9 +656,38 @@
       "id": "GT-44",
       "closedAt": "2026-06-13",
       "closureCommit": "26f6a1809b6258880173a934357d53beb37fcb7b",
-      "evidence": [".github/workflows/sdk-cli-release.yml", ".github/workflows/sdk-cli-ci.yml", ".harness/scripts/verify-git-tag.mjs", ".harness/scripts/verify-version-log.mjs", "reference/governance/standards/vision/gap-reference-catalog.md"],
-      "validationCommands": ["GITHUB_REF_NAME=main GITHUB_EVENT_NAME=push node .harness/scripts/verify-git-tag.mjs", "GITHUB_REF_NAME=main GITHUB_EVENT_NAME=push node .harness/scripts/verify-version-log.mjs", "node .harness/scripts/validate-tracking.mjs", "node .harness/scripts/reconcile-maturity.mjs --check"],
+      "evidence": [
+        ".github/workflows/sdk-cli-release.yml",
+        ".github/workflows/sdk-cli-ci.yml",
+        ".harness/scripts/verify-git-tag.mjs",
+        ".harness/scripts/verify-version-log.mjs",
+        "reference/governance/standards/vision/gap-reference-catalog.md"
+      ],
+      "validationCommands": [
+        "GITHUB_REF_NAME=main GITHUB_EVENT_NAME=push node .harness/scripts/verify-git-tag.mjs",
+        "GITHUB_REF_NAME=main GITHUB_EVENT_NAME=push node .harness/scripts/verify-version-log.mjs",
+        "node .harness/scripts/validate-tracking.mjs",
+        "node .harness/scripts/reconcile-maturity.mjs --check"
+      ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-54",
+      "closedAt": "2026-06-13",
+      "closureCommit": "5c576867419b18096f39f58391e92cd69727e451",
+      "evidence": [
+        "sdk/cli/.eslintrc.js",
+        "sdk/cli/src/application/services/project-scaffolder.service.ts",
+        "sdk/cli/src/application/use-cases/initialize-project.use-case.ts",
+        "sdk/cli/src/application/validators/phase-gate-validator.service.ts"
+      ],
+      "validationCommands": [
+        "npm run lint --workspace sdk/cli",
+        "npm test --workspace sdk/cli -- --runInBand",
+        "npm run test:e2e --workspace sdk/cli"
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "GT-19 deferred this gap; it is now closed by removing the direct instantiations."
     }
   ]
 }

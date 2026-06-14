@@ -12,7 +12,7 @@ This board is the single source of truth for gap priority and status. Select a g
 
 | ID | Gap | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|
-| [`GT-54`](./gap-reference-catalog.md#gt-54) | Complete strict hexagonal boundary enforcement | Cross | P2 | L | `PENDING` |
+| [`GT-54`](./gap-reference-catalog.md#gt-54) | Complete strict hexagonal boundary enforcement | Cross | P2 | L | `DONE` |
 | [`GT-48`](./gap-reference-catalog.md#gt-48) | Restore the normative CLI coverage threshold | F0 | P0 | L | `DONE` |
 | [`GT-49`](./gap-reference-catalog.md#gt-49) | Enforce TypeScript strict mode and typed filesystem ports | Cross | P1 | M | `DONE` |
 | [`GT-44`](./gap-reference-catalog.md#gt-44) | Deterministic release pipeline integrity | F5 | P0 | M | `DONE` |
@@ -59,9 +59,9 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-23`](./gap-reference-catalog.md#gt-23) | Spanish translation backfill | Cross | P2 | L | `DONE` |
 | [`GT-36`](./gap-reference-catalog.md#gt-36) | Machine-readable rules language coverage | Cross | P2 | L | `DONE` |
 
-**Progress:** 45 / 46 done · 0 in progress · 1 pending · 0 deferred
+**Progress:** 46 / 46 done · 0 in progress · 0 pending · 0 deferred
 
-**Ordering:** criticality (`P0` → `P1` → `P2`), active status (`IN-PROGRESS` → `PENDING` → `DEFERRED`), then complexity (`S` → `M` → `L`). Completed gaps follow active work.
+**Ordering:** criticality (`P0` → `P1` → `P2`), active status (`IN-PROGRESS` → `DONE` → `DEFERRED`), then complexity (`S` → `M` → `L`). Completed gaps follow active work.
 
 ---
 [Back to Vision Index](./README.md)

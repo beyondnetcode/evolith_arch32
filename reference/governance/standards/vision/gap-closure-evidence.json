@@ -898,7 +898,7 @@
     {
       "id": "GT-69",
       "closedAt": "2026-06-13",
-      "closureCommit": "2a0d84e",
+      "closureCommit": "1f1b023",
       "evidence": [
         "apps/core-api/src/presentation/controllers/",
         "apps/core-api/src/infrastructure/filters/",

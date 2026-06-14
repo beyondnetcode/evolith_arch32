@@ -8,7 +8,7 @@ import { UserCancelledError } from '../../domain/errors';
 
 @Injectable()
 export class PromptService {
-  private spinner?: any;
+  private spinner?: ReturnType<typeof p.spinner>;
 
   showIntro(message: string): void {
     if (typeof p.intro === "function") {

@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common';
 import * as http from 'node:http';
+import type { IFileSystem, IConfigParser } from '../../domain/interfaces';
 import { RulesetValidatorService } from '../../application/validators/ruleset-validator.service';
 import { NodeFileSystemProvider } from '../providers/node-filesystem.provider';
 import { YamlConfigParserProvider } from '../providers/config-parser.provider';
@@ -19,8 +20,8 @@ import {
 export type McpTransport = 'stdio' | 'http';
 
 export interface McpServerOptions {
-  fileSystem?: any;
-  configParser?: any;
+  fileSystem?: IFileSystem;
+  configParser?: IConfigParser;
   rulesetValidator?: RulesetValidatorService;
   metricsService?: McpMetricsService;
   apiKey?: string;
@@ -51,8 +52,8 @@ export class EvolithMcpServer {
     metricsService?: McpMetricsService,
     stdin?: import('node:stream').Readable,
     stdout?: import('node:stream').Writable,
-    private readonly fileSystem?: any,
-    private readonly configParser?: any,
+    private readonly fileSystem?: IFileSystem,
+    private readonly configParser?: IConfigParser,
   ) {
     this.transportType = transportType;
     this.port = port;
@@ -186,25 +187,25 @@ export class EvolithMcpServer {
 
     this.server.setRequestHandler(ListResourcesRequestSchema, async () => {
       const { listResources } = await import('./resources');
-      const result = await listResources() as any;
+      const result = await listResources() as unknown;
       return result;
     });
 
     this.server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
       const { readResource } = await import('./resources');
-      const result = await readResource(request.params) as any;
+      const result = await readResource(request.params) as unknown;
       return result;
     });
 
     this.server.setRequestHandler(ListPromptsRequestSchema, async () => {
       const { listPrompts } = await import('./prompts');
-      const result = await listPrompts() as any;
+      const result = await listPrompts() as unknown;
       return result;
     });
 
     this.server.setRequestHandler(GetPromptRequestSchema, async (request) => {
       const { getPrompt } = await import('./prompts');
-      const result = await getPrompt(request.params) as any;
+      const result = await getPrompt(request.params) as unknown;
       return result;
     });
   }
@@ -291,7 +292,7 @@ export class EvolithMcpServer {
           return;
         }
 
-        transport.handleRequest(req as any, res).catch((err) => {
+        transport.handleRequest(req as Parameters<typeof transport.handleRequest>[0], res).catch((err) => {
            this.logger.error(`MCP Transport error: ${err.message}`);
         });
       });

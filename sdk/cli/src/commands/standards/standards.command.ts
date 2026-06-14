@@ -21,7 +21,7 @@ interface StandardsCommandOptions {
   description: 'Gestión de estándares Evolith (arquitectura, gobernanza, operaciones)',
 })
 export class StandardsCommand extends BaseEvolithCommand {
-  constructor(@Inject('IFileSystem') private readonly fileSystem: any) {
+  constructor(@Inject('IFileSystem') private readonly fileSystem: IFileSystem) {
     super('StandardsCommand');
   }
 

@@ -40,7 +40,7 @@ export class NodeFileSystemProvider implements IFileSystemProvider, IFileSystem 
     return fs.readFile(resolved);
   }
 
-  async readJson<T = any>(filePath: string, options?: FileReadOptions): Promise<T> {
+  async readJson<T = unknown>(filePath: string, options?: FileReadOptions): Promise<T> {
     const content = await this.readFile(filePath, options);
     return JSON.parse(content);
   }

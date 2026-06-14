@@ -159,7 +159,7 @@ export class DeepArchitectureAnalyzer {
         true
       );
 
-      const visit = (node: any) => {
+      const visit = (node: unknown) => {
         if (ts.isImportDeclaration(node)) {
           if (node.moduleSpecifier && ts.isStringLiteral(node.moduleSpecifier)) {
             const importPath = node.moduleSpecifier.text;

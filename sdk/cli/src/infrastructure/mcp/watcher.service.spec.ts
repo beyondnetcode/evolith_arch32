@@ -14,7 +14,7 @@ jest.mock('chokidar', () => {
 
 describe('WatcherService', () => {
   let service: WatcherService;
-  let watchMock: any;
+  let watchMock: unknown;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -114,7 +114,7 @@ describe('WatcherService', () => {
       service.startWatching('/test/cwd');
 
       const changeHandler = watchMock.on.mock.calls.find(
-        (call: any[]) => call[0] === 'change'
+        (call: unknown[]) => call[0] === 'change'
       )?.[1];
 
       expect(changeHandler).toBeDefined();
@@ -127,7 +127,7 @@ describe('WatcherService', () => {
       service.startWatching('/test/cwd');
 
       const changeHandler = watchMock.on.mock.calls.find(
-        (call: any[]) => call[0] === 'change'
+        (call: unknown[]) => call[0] === 'change'
       )?.[1];
 
       changeHandler('architecture/pattern.md');
@@ -145,7 +145,7 @@ describe('WatcherService', () => {
       service.startWatching('/test/cwd');
 
       const changeHandler = watchMock.on.mock.calls.find(
-        (call: any[]) => call[0] === 'change'
+        (call: unknown[]) => call[0] === 'change'
       )?.[1];
 
       changeHandler('docs/guide.md');
@@ -163,13 +163,13 @@ describe('WatcherService', () => {
       service.startWatching('/test/cwd');
 
       const changeHandler = watchMock.on.mock.calls.find(
-        (call: any[]) => call[0] === 'change'
+        (call: unknown[]) => call[0] === 'change'
       )?.[1];
 
       changeHandler('src/index.ts');
 
       const notifyCalls = logSpy.mock.calls.filter(
-        (call: any[]) => call[0]?.includes?.('[IDE NOTIFY]')
+        (call: unknown[]) => call[0]?.includes?.('[IDE NOTIFY]')
       );
       expect(notifyCalls).toHaveLength(0);
 

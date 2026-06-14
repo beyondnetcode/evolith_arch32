@@ -30,7 +30,7 @@ function result(over: Partial<ArchitectureValidationResult> = {}): ArchitectureV
   return { status: 'passed', rulesChecked: 8, issues: [], ...over } as ArchitectureValidationResult;
 }
 
-function makeService(opts: { fs?: any; validatorResult?: ArchitectureValidationResult } = {}) {
+function makeService(opts: { fs?: unknown; validatorResult?: ArchitectureValidationResult } = {}) {
   const fs = opts.fs ?? createMockFs();
   const validator = { validateArchitecture: jest.fn().mockResolvedValue(opts.validatorResult ?? result()) };
   const service = new ArchitectureDriftService(undefined, { fileSystem: fs, logger: mockLogger, validator });
@@ -129,7 +129,7 @@ describe('ArchitectureDriftService', () => {
   });
 
   describe('getDriftTrend', () => {
-    const entry = (score: number): any => ({
+    const entry = (score: number): unknown => ({
       timestamp: 't', declaredLevel: 'F1', detectedLevel: 'F1',
       violationsCount: 0, blockingViolationsCount: 0, overallScore: score, violations: [],
     });

@@ -13,7 +13,7 @@ function fsMock(cfg: { existing?: string[]; files?: Record<string, string>; json
     readFile: jest.fn(async (p: string) => cfg.files?.[p] ?? ''),
     readJson: jest.fn(async (p: string) => cfg.json?.[p] ?? {}),
     readdirNames: jest.fn(async (p: string) => cfg.dirs?.[p] ?? []),
-  } as any;
+  } as unknown;
 }
 
 function rule(id: string): NormalizedRule {

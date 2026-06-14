@@ -59,7 +59,7 @@ module.exports = {
      * in the compiler; the remaining explicit `: any` sit at genuine dynamic
      * boundaries (logger varargs, OPA/JSON payloads, catalog data).
      */
-    '@typescript-eslint/no-explicit-any': 'warn',
+    '@typescript-eslint/no-explicit-any': 'error',
 
     /**
      * Boundary rules for Hexagonal Architecture enforcement.

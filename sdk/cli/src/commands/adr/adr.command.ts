@@ -26,7 +26,7 @@ export class ADRCommand extends BaseEvolithCommand {
   private readonly timer = new OperationTimer();
 
   constructor(
-    @Inject('IFileSystem') private readonly fileSystem: any,
+    @Inject('IFileSystem') private readonly fileSystem: IFileSystem,
     promptService: PromptService
   ) {
     super('ADRCommand', promptService);
@@ -231,7 +231,7 @@ export class ADRCommand extends BaseEvolithCommand {
     this.promptService.startSpinner(`Actualizando ADR ${id}...`);
 
     try {
-      const updated = await service.updateStatus(id, status as any, reason, dryRun);
+      const updated = await service.updateStatus(id, status as 'Accepted' | 'Deprecated' | 'Superseded' | 'Amended', reason, dryRun);
       this.promptService.stopSpinner();
 
       if (updated) {

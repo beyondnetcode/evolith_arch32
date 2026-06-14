@@ -77,7 +77,7 @@ import { YamlConfigParserProvider } from './infrastructure/providers/config-pars
     },
     {
       provide: 'VALIDATOR_FACTORY',
-      useFactory: (fs: any, logger: any) => {
+      useFactory: (fs: unknown, logger: unknown) => {
         return (corePath?: string) => new PhaseGateValidatorService(corePath, { fileSystem: fs, logger });
       },
       inject: ['IFileSystem', 'ILogger'],

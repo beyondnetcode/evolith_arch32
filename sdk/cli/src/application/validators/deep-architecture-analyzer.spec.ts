@@ -3,7 +3,7 @@ import * as fs from 'fs-extra';
 
 jest.mock('fs-extra');
 
-const mockFs = fs as any;
+const mockFs = fs as unknown;
 
 const isDir = (file: string) => !file.endsWith('.ts') && !file.endsWith('.tsx') && !file.endsWith('.js') && !file.endsWith('.jsx');
 
@@ -48,7 +48,7 @@ describe('DeepArchitectureAnalyzer', () => {
       const result = await analyzer.analyze();
 
       const diIssues = result.dependencyInversionIssues;
-      expect(diIssues.some((i: any) => i.ruleId === 'ARCH-DI-01')).toBe(true);
+      expect(diIssues.some((i: unknown) => i.ruleId === 'ARCH-DI-01')).toBe(true);
     });
 
     it('should detect NestJS imports in domain layer', async () => {
@@ -67,7 +67,7 @@ describe('DeepArchitectureAnalyzer', () => {
       const result = await analyzer.analyze();
 
       const diIssues = result.dependencyInversionIssues;
-      expect(diIssues.some((i: any) => i.ruleId === 'ARCH-DI-03')).toBe(true);
+      expect(diIssues.some((i: unknown) => i.ruleId === 'ARCH-DI-03')).toBe(true);
     });
 
     it('should detect web framework imports in domain layer', async () => {
@@ -86,7 +86,7 @@ describe('DeepArchitectureAnalyzer', () => {
       const result = await analyzer.analyze();
 
       const diIssues = result.dependencyInversionIssues;
-      expect(diIssues.some((i: any) => i.ruleId === 'ARCH-DI-02')).toBe(true);
+      expect(diIssues.some((i: unknown) => i.ruleId === 'ARCH-DI-02')).toBe(true);
     });
 
     it('should handle files with no imports', async () => {

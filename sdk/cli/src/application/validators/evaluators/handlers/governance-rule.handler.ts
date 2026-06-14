@@ -50,7 +50,7 @@ export class GovernanceRuleHandler implements INativeRuleHandler {
       const evolithYamlPath = path.join(ctx.satellitePath, 'evolith.yaml');
       if (await this.fs.exists(evolithYamlPath)) {
         const content = await this.fs.readFile(evolithYamlPath);
-        const yaml = this.configParser.parse(content) as any;
+        const yaml = this.configParser.parse(content) as unknown;
         if (!yaml?.governance?.version) {
           return { rule, result: 'failed', message: 'evolith.yaml should specify governance.version for change tracking' };
         }
@@ -62,7 +62,7 @@ export class GovernanceRuleHandler implements INativeRuleHandler {
       const evolithYamlPath = path.join(ctx.satellitePath, 'evolith.yaml');
       if (await this.fs.exists(evolithYamlPath)) {
         const content = await this.fs.readFile(evolithYamlPath);
-        const yaml = this.configParser.parse(content) as any;
+        const yaml = this.configParser.parse(content) as unknown;
         const version = yaml?.coreRef?.version;
         if (!version) {
           return { rule, result: 'failed', message: 'evolith.yaml must specify coreRef.version (semver). Unpinned references are prohibited.' };

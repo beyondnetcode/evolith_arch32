@@ -18,7 +18,7 @@ export class SdlcCommand extends BaseEvolithCommand {
 
   async executeCommand(
     passedParam: string[],
-    options?: Record<string, any>,
+    options?: Record<string, unknown>,
   ): Promise<void> {
     this.promptService.showIntro('Evolith SDLC CLI');
     this.promptService.showInfo(chalk.bold('Available subcommands:'));

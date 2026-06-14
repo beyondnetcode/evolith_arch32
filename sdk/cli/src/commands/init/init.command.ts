@@ -7,6 +7,7 @@ import { logger, errorReporter, OperationTimer } from '../../infrastructure/obse
 import { Injectable } from '@nestjs/common';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { CatalogLoader } from '../../infrastructure/catalog/catalog-loader';
+import { IFileSystem } from '../../domain/interfaces';
 
 interface InitCommandOptions {
   dryRun?: boolean;
@@ -27,7 +28,7 @@ export class InitCommand extends BaseEvolithCommand {
 
   constructor(
     private readonly catalogLoader: CatalogLoader,
-    @Inject('IFileSystem') private readonly fileSystem: any,
+    @Inject('IFileSystem') private readonly fileSystem: IFileSystem,
     promptService: PromptService
   ) {
     super('InitCommand', promptService);
@@ -58,7 +59,7 @@ export class InitCommand extends BaseEvolithCommand {
 
     const input: InitProjectInput = {
       ...inputData,
-      name: (inputData as any).name || (inputData as any).projectName,
+      name: inputData.name || (inputData as Record<string, string>).projectName,
     } as InitProjectInput;
 
     const result = await useCase.execute(input, process.cwd());

@@ -55,7 +55,7 @@ export function getArchitectureTools(fs: IFileSystem, configParser: IConfigParse
         if (validator) {
            const corePath = path.join(repoPath, '..', 'evolith');
            const opaResult = await validator.validate(repoPath, corePath);
-           const opaArchIssues = opaResult.issues.filter((i: any) => i.ruleId.startsWith('F1') || i.ruleId.startsWith('F2') || i.ruleId.startsWith('F3'));
+           const opaArchIssues = opaResult.issues.filter((i: unknown) => i.ruleId.startsWith('F1') || i.ruleId.startsWith('F2') || i.ruleId.startsWith('F3'));
            for (const issue of opaArchIssues) {
              issues.push({
                ruleId: issue.ruleId,

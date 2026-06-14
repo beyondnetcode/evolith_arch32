@@ -42,7 +42,7 @@ describe('MCP Resources', () => {
     it('should include rulesets resource', async () => {
       const result = await listResources();
 
-      const rulesetsResource = result.resources.find((r: any) => r.uri === 'evolith://rulesets');
+      const rulesetsResource = result.resources.find((r: unknown) => r.uri === 'evolith://rulesets');
       expect(rulesetsResource).toBeDefined();
       expect(rulesetsResource?.name).toBe('Rulesets');
     });
@@ -50,35 +50,35 @@ describe('MCP Resources', () => {
     it('should include phase-gates resource', async () => {
       const result = await listResources();
 
-      const phaseGatesResource = result.resources.find((r: any) => r.uri === 'evolith://phase-gates');
+      const phaseGatesResource = result.resources.find((r: unknown) => r.uri === 'evolith://phase-gates');
       expect(phaseGatesResource).toBeDefined();
     });
 
     it('should include agents resource', async () => {
       const result = await listResources();
 
-      const agentsResource = result.resources.find((r: any) => r.uri === 'evolith://agents');
+      const agentsResource = result.resources.find((r: unknown) => r.uri === 'evolith://agents');
       expect(agentsResource).toBeDefined();
     });
 
     it('should include governance version resource', async () => {
       const result = await listResources();
 
-      const versionResource = result.resources.find((r: any) => r.uri === 'evolith://governance/version');
+      const versionResource = result.resources.find((r: unknown) => r.uri === 'evolith://governance/version');
       expect(versionResource).toBeDefined();
     });
 
     it('should include core version resource', async () => {
       const result = await listResources();
 
-      const coreVersionResource = result.resources.find((r: any) => r.uri === 'evolith://core/version');
+      const coreVersionResource = result.resources.find((r: unknown) => r.uri === 'evolith://core/version');
       expect(coreVersionResource).toBeDefined();
     });
 
     it('should include repository config resource', async () => {
       const result = await listResources();
 
-      const configResource = result.resources.find((r: any) => r.uri === 'evolith://repository/config');
+      const configResource = result.resources.find((r: unknown) => r.uri === 'evolith://repository/config');
       expect(configResource).toBeDefined();
     });
   });
@@ -90,8 +90,8 @@ describe('MCP Resources', () => {
 
         const result = await readResource({ uri: 'evolith://rulesets' });
 
-        expect((result as any).error).toBeDefined();
-        expect((result as any).rulesets).toEqual([]);
+        expect((result as unknown).error).toBeDefined();
+        expect((result as unknown).rulesets).toEqual([]);
       });
 
       it('should return list of rulesets when directory exists', async () => {
@@ -106,8 +106,8 @@ describe('MCP Resources', () => {
 
         const result = await readResource({ uri: 'evolith://rulesets' });
 
-        expect((result as any).rulesets.length).toBeGreaterThan(0);
-        expect((result as any).count).toBe((result as any).rulesets.length);
+        expect((result as unknown).rulesets.length).toBeGreaterThan(0);
+        expect((result as unknown).count).toBe((result as unknown).rulesets.length);
       });
     });
 
@@ -115,16 +115,16 @@ describe('MCP Resources', () => {
       it('should return phase gate definitions', async () => {
         const result = await readResource({ uri: 'evolith://phase-gates' });
 
-        expect((result as any).phaseGates).toBeDefined();
-        expect((result as any).phaseGates.length).toBe(5);
-        expect((result as any).phaseGates[0].phase).toBe('phase-0');
-        expect((result as any).phaseGates[0].name).toBe('Foundation');
+        expect((result as unknown).phaseGates).toBeDefined();
+        expect((result as unknown).phaseGates.length).toBe(5);
+        expect((result as unknown).phaseGates[0].phase).toBe('phase-0');
+        expect((result as unknown).phaseGates[0].name).toBe('Foundation');
       });
 
       it('should include all 5 phases', async () => {
         const result = await readResource({ uri: 'evolith://phase-gates' });
 
-        const phases = (result as any).phaseGates.map((g: any) => g.phase);
+        const phases = (result as unknown).phaseGates.map((g: unknown) => g.phase);
         expect(phases).toContain('phase-0');
         expect(phases).toContain('phase-1');
         expect(phases).toContain('phase-2');
@@ -139,7 +139,7 @@ describe('MCP Resources', () => {
 
         const result = await readResource({ uri: 'evolith://agents' });
 
-        expect((result as any).agents).toEqual([]);
+        expect((result as unknown).agents).toEqual([]);
       });
 
       it('should return list of agents when directory exists', async () => {
@@ -148,8 +148,8 @@ describe('MCP Resources', () => {
 
         const result = await readResource({ uri: 'evolith://agents' });
 
-        expect((result as any).agents).toEqual(['agent-1', 'agent-2']);
-        expect((result as any).count).toBe(2);
+        expect((result as unknown).agents).toEqual(['agent-1', 'agent-2']);
+        expect((result as unknown).count).toBe(2);
       });
     });
 
@@ -157,8 +157,8 @@ describe('MCP Resources', () => {
       it('should return governance version', async () => {
         const result = await readResource({ uri: 'evolith://governance/version' });
 
-        expect((result as any).version).toBe('1.0.0');
-        expect((result as any).schema).toBe('governance');
+        expect((result as unknown).version).toBe('1.0.0');
+        expect((result as unknown).schema).toBe('governance');
       });
     });
 
@@ -166,8 +166,8 @@ describe('MCP Resources', () => {
       it('should return core version', async () => {
         const result = await readResource({ uri: 'evolith://core/version' });
 
-        expect((result as any).version).toBe('1.0.0');
-        expect((result as any).schema).toBe('core');
+        expect((result as unknown).version).toBe('1.0.0');
+        expect((result as unknown).schema).toBe('core');
       });
     });
 
@@ -177,7 +177,7 @@ describe('MCP Resources', () => {
 
         const result = await readResource({ uri: 'evolith://repository/config' });
 
-        expect((result as any).error).toBe('evolith.yaml not found');
+        expect((result as unknown).error).toBe('evolith.yaml not found');
       });
 
       it('should return parsed config when evolith.yaml exists', async () => {
@@ -187,8 +187,8 @@ describe('MCP Resources', () => {
 
         const result = await readResource({ uri: 'evolith://repository/config' });
 
-        expect((result as any).name).toBe('test');
-        expect((result as any).coreRef).toBe('1.0.0');
+        expect((result as unknown).name).toBe('test');
+        expect((result as unknown).coreRef).toBe('1.0.0');
       });
     });
 
@@ -199,7 +199,7 @@ describe('MCP Resources', () => {
 
         const result = await readResource({ uri: 'evolith://ruleset/governance/open-core-boundary' });
 
-        expect((result as any).rules).toBeDefined();
+        expect((result as unknown).rules).toBeDefined();
       });
 
       it('should return error when ruleset not found', async () => {
@@ -208,7 +208,7 @@ describe('MCP Resources', () => {
 
         const result = await readResource({ uri: 'evolith://ruleset/nonexistent' });
 
-        expect((result as any).error).toBe('Ruleset not found: nonexistent');
+        expect((result as unknown).error).toBe('Ruleset not found: nonexistent');
       });
     });
 
@@ -219,7 +219,7 @@ describe('MCP Resources', () => {
 
         const result = await readResource({ uri: 'evolith://agent/test-agent' });
 
-        expect((result as any).agent.name).toBe('test-agent');
+        expect((result as unknown).agent.name).toBe('test-agent');
       });
 
       it('should return error when agent not found', async () => {
@@ -227,7 +227,7 @@ describe('MCP Resources', () => {
 
         const result = await readResource({ uri: 'evolith://agent/nonexistent' });
 
-        expect((result as any).error).toBe('Agent not found: nonexistent');
+        expect((result as unknown).error).toBe('Agent not found: nonexistent');
       });
     });
 
@@ -238,7 +238,7 @@ describe('MCP Resources', () => {
 
         const result = await readResource({ uri: 'evolith://open-core/artifacts' });
 
-        expect((result as any).rules).toBeDefined();
+        expect((result as unknown).rules).toBeDefined();
       });
 
       it('should return error when rules not found', async () => {
@@ -246,7 +246,7 @@ describe('MCP Resources', () => {
 
         const result = await readResource({ uri: 'evolith://open-core/artifacts' });
 
-        expect((result as any).error).toBe('Open-Core Boundary rules not found');
+        expect((result as unknown).error).toBe('Open-Core Boundary rules not found');
       });
     });
 
@@ -257,7 +257,7 @@ describe('MCP Resources', () => {
 
         const result = await readResource({ uri: 'evolith://acl/rules' });
 
-        expect((result as any).rules).toBeDefined();
+        expect((result as unknown).rules).toBeDefined();
       });
 
       it('should return error when ACL rules not found', async () => {
@@ -265,7 +265,7 @@ describe('MCP Resources', () => {
 
         const result = await readResource({ uri: 'evolith://acl/rules' });
 
-        expect((result as any).error).toBe('ACL rules not found');
+        expect((result as unknown).error).toBe('ACL rules not found');
       });
     });
 

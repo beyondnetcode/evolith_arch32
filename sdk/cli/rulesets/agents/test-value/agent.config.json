@@ -1,0 +1,16 @@
+{
+  "name": "test-value",
+  "version": "1.0.0",
+  "template": "test-value",
+  "description": "test-value",
+  "adrs": [
+    "discovery"
+  ],
+  "rulesets": [
+    "discovery"
+  ],
+  "rulesetFiles": [
+    "agent.rules.json"
+  ],
+  "installedAt": "2026-06-14T02:51:05.942Z"
+}

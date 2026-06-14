@@ -13,44 +13,44 @@ describe('MCP Prompts', () => {
     it('should include validate-repository prompt', async () => {
       const result = await listPrompts();
 
-      const prompt = result.prompts.find((p: any) => p.name === 'evolith/validate-repository');
+      const prompt = result.prompts.find((p: unknown) => p.name === 'evolith/validate-repository');
       expect(prompt).toBeDefined();
-      expect(prompt?.arguments.some((a: any) => a.name === 'path')).toBe(true);
+      expect(prompt?.arguments.some((a: unknown) => a.name === 'path')).toBe(true);
     });
 
     it('should include agent-onboarding prompt', async () => {
       const result = await listPrompts();
 
-      const prompt = result.prompts.find((p: any) => p.name === 'evolith/agent-onboarding');
+      const prompt = result.prompts.find((p: unknown) => p.name === 'evolith/agent-onboarding');
       expect(prompt).toBeDefined();
     });
 
     it('should include review-architecture prompt', async () => {
       const result = await listPrompts();
 
-      const prompt = result.prompts.find((p: any) => p.name === 'evolith/review-architecture');
+      const prompt = result.prompts.find((p: unknown) => p.name === 'evolith/review-architecture');
       expect(prompt).toBeDefined();
     });
 
     it('should include phase-gate-check prompt', async () => {
       const result = await listPrompts();
 
-      const prompt = result.prompts.find((p: any) => p.name === 'evolith/phase-gate-check');
+      const prompt = result.prompts.find((p: unknown) => p.name === 'evolith/phase-gate-check');
       expect(prompt).toBeDefined();
     });
 
     it('should include sdlc-handoff prompt', async () => {
       const result = await listPrompts();
 
-      const prompt = result.prompts.find((p: any) => p.name === 'evolith/sdlc-handoff');
+      const prompt = result.prompts.find((p: unknown) => p.name === 'evolith/sdlc-handoff');
       expect(prompt).toBeDefined();
-      expect(prompt?.arguments.some((a: any) => a.name === 'fromPhase')).toBe(true);
+      expect(prompt?.arguments.some((a: unknown) => a.name === 'fromPhase')).toBe(true);
     });
 
     it('should include ruleset-analysis prompt', async () => {
       const result = await listPrompts();
 
-      const prompt = result.prompts.find((p: any) => p.name === 'evolith/ruleset-analysis');
+      const prompt = result.prompts.find((p: unknown) => p.name === 'evolith/ruleset-analysis');
       expect(prompt).toBeDefined();
     });
   });

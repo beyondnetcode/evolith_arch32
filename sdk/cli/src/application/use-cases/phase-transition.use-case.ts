@@ -13,7 +13,7 @@ export class PhaseTransitionUseCase {
     fs: IFileSystem,
     corePath?: string,
     private readonly webhookNotifier?: IWebhookNotifier,
-    logger?: any
+    logger?: unknown
   ) {
     this.fs = fs;
     this.phaseService = new PhaseService();

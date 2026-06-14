@@ -43,7 +43,7 @@ export class SatelliteUpgradeService {
   private readonly fs: IFileSystem;
   private readonly logger: ILogger;
 
-  constructor(options?: { fileSystem?: any; logger?: any }) {
+  constructor(options?: { fileSystem?: unknown; logger?: unknown }) {
     this.fs = options?.fileSystem ?? new NodeFileSystemProvider().createFileSystem();
     this.logger = options?.logger ?? new NestLoggerProvider().createLogger('SatelliteUpgradeService');
   }

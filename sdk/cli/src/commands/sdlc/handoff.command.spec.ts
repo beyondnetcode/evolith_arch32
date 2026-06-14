@@ -42,7 +42,7 @@ const mockOutro = p.outro as jest.Mock;
 const mockGroup = p.group as jest.Mock;
 const mockNote = p.note as jest.Mock;
 const mockCancel = p.cancel as jest.Mock;
-const mockLog = p.log as jest.Mocked<any>;
+const mockLog = p.log as jest.Mocked<unknown>;
 
 const mockSpinnerInstance = {
   start: jest.fn(),
@@ -179,7 +179,7 @@ describe("HandoffCommand", () => {
 
   describe("run - interactive mode", () => {
     it("should run interactive handoff flow", async () => {
-      mockGroup.mockImplementation(async (callbacks: any) => {
+      mockGroup.mockImplementation(async (callbacks: unknown) => {
         const results: Record<string, any> = {};
         results.fromPhase = await callbacks.fromPhase();
         results.toPhase = await callbacks.toPhase({ results });
@@ -212,7 +212,7 @@ describe("HandoffCommand", () => {
     });
 
     it("should display completion message on success", async () => {
-      mockGroup.mockImplementation(async (callbacks: any) => {
+      mockGroup.mockImplementation(async (callbacks: unknown) => {
         const results: Record<string, any> = {};
         results.fromPhase = await callbacks.fromPhase();
         results.toPhase = await callbacks.toPhase({ results });
@@ -253,7 +253,7 @@ describe("HandoffCommand", () => {
         errors: ["Transition failed"],
       });
 
-      mockGroup.mockImplementation(async (callbacks: any) => {
+      mockGroup.mockImplementation(async (callbacks: unknown) => {
         const results: Record<string, any> = {};
         results.fromPhase = await callbacks.fromPhase();
         results.toPhase = await callbacks.toPhase({ results });
@@ -278,7 +278,7 @@ describe("HandoffCommand", () => {
     });
 
     it("should skip tool selection when selectTools is false", async () => {
-      mockGroup.mockImplementation(async (callbacks: any) => {
+      mockGroup.mockImplementation(async (callbacks: unknown) => {
         const results: Record<string, any> = {};
         results.fromPhase = await callbacks.fromPhase();
         results.toPhase = await callbacks.toPhase({ results });
@@ -306,7 +306,7 @@ describe("HandoffCommand", () => {
 
     it("should show next steps on successful handoff", async () => {
       const logSpy = jest.spyOn(console, "log").mockImplementation(() => {});
-      mockGroup.mockImplementation(async (callbacks: any) => {
+      mockGroup.mockImplementation(async (callbacks: unknown) => {
         const results: Record<string, any> = {};
         results.fromPhase = await callbacks.fromPhase();
         results.toPhase = await callbacks.toPhase({ results });
@@ -359,7 +359,7 @@ describe("HandoffCommand", () => {
         errors: [],
       });
 
-      mockGroup.mockImplementation(async (callbacks: any) => {
+      mockGroup.mockImplementation(async (callbacks: unknown) => {
         const results: Record<string, any> = {};
         results.fromPhase = await callbacks.fromPhase();
         results.toPhase = await callbacks.toPhase({ results });
@@ -390,14 +390,14 @@ describe("HandoffCommand", () => {
 
   describe("getToolGroupsForPhase", () => {
     it("should return tool groups for valid phase", () => {
-      const command_any = command as any;
+      const command_any = command as unknown;
       const result = command_any.getToolGroupsForPhase("phase-1");
 
       expect(result).toHaveProperty("linting");
     });
 
     it("should return empty object for invalid phase", () => {
-      const command_any = command as any;
+      const command_any = command as unknown;
       const result = command_any.getToolGroupsForPhase("invalid-phase");
 
       expect(result).toEqual({});
@@ -406,42 +406,42 @@ describe("HandoffCommand", () => {
 
   describe("getNextSteps", () => {
     it("should return next steps for phase-1", () => {
-      const command_any = command as any;
+      const command_any = command as unknown;
       const result = command_any.getNextSteps("phase-1");
 
       expect(result).toContain("evolith validate");
     });
 
     it("should return next steps for phase-2", () => {
-      const command_any = command as any;
+      const command_any = command as unknown;
       const result = command_any.getNextSteps("phase-2");
 
       expect(result).toContain("rulesets");
     });
 
     it("should return next steps for phase-3", () => {
-      const command_any = command as any;
+      const command_any = command as unknown;
       const result = command_any.getNextSteps("phase-3");
 
       expect(result).toContain("ADRs");
     });
 
     it("should return next steps for phase-4", () => {
-      const command_any = command as any;
+      const command_any = command as unknown;
       const result = command_any.getNextSteps("phase-4");
 
       expect(result).toContain("CI/CD");
     });
 
     it("should return next steps for phase-5", () => {
-      const command_any = command as any;
+      const command_any = command as unknown;
       const result = command_any.getNextSteps("phase-5");
 
       expect(result).toContain("DORA");
     });
 
     it("should return empty string for unknown phase", () => {
-      const command_any = command as any;
+      const command_any = command as unknown;
       const result = command_any.getNextSteps("unknown");
 
       expect(result).toBe("");

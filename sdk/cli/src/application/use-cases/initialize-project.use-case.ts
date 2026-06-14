@@ -21,21 +21,21 @@ export class InitializeProjectUseCase {
 
     try {
       const runtimes = this.catalogLoader.loadRuntimeCatalog();
-      const runtime = runtimes.find((r: any) => r.id === input.runtime);
+      const runtime = runtimes.find((r: unknown) => r.id === input.runtime);
       if (!runtime) {
         errors.push(`Runtime ${input.runtime} not found`);
         return { success: false, artifacts, warnings, errors };
       }
 
       const monorepos = this.catalogLoader.getMonorepoOptions();
-      const monorepo = monorepos.find((m: any) => m.id === input.monorepo);
+      const monorepo = monorepos.find((m: unknown) => m.id === input.monorepo);
       if (!monorepo) {
         errors.push(`Monorepo ${input.monorepo} not found`);
         return { success: false, artifacts, warnings, errors };
       }
 
       const architectures = this.catalogLoader.getArchitecturePatterns();
-      const architecture = architectures.find((a: any) => a.id === input.architecture);
+      const architecture = architectures.find((a: unknown) => a.id === input.architecture);
       if (!architecture) {
         errors.push(`Architecture ${input.architecture} not found`);
         return { success: false, artifacts, warnings, errors };

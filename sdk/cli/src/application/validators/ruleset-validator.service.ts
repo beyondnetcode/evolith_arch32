@@ -265,7 +265,7 @@ export class RulesetValidatorService {
       const ctx = { satellitePath, corePath: resolvedCorePath };
       // Manually map rules to NormalizedRule and evaluate through strategy
       for (const rule of rules) {
-        const normalized: any = {
+        const normalized: unknown = {
           ...rule,
           sourceFile: rulesetPath
         };

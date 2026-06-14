@@ -120,7 +120,7 @@ export function createErrorEnvelope(
 }
 
 /**
- * Derives the verdict mandated by the contract: any 'error' violation fails
+ * Derives the verdict mandated by the contract: unknown 'error' violation fails
  * the gate; warnings alone do not block it.
  */
 export function deriveVerdict(violations: readonly GateViolation[]): Exclude<GateVerdict, 'skipped'> {

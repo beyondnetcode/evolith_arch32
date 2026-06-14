@@ -5,6 +5,7 @@ import { CatalogLoader } from '../../infrastructure/catalog/catalog-loader';
 import { PhaseService, ToolSelectionService } from '../../domain/services';
 import { PhaseTransitionUseCase } from '../../application/services';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
+import { IFileSystem, ToolGroup } from '../../domain/interfaces';
 
 interface HandoffOptions {
   from?: string;
@@ -24,7 +25,7 @@ export class HandoffCommand extends BaseEvolithCommand {
 
   constructor(
     private readonly catalogLoader: CatalogLoader,
-    @Inject('IFileSystem') private readonly fileSystem: any
+    @Inject('IFileSystem') private readonly fileSystem: IFileSystem
   ) {
     super('HandoffCommand');
     this.phaseService = new PhaseService();
@@ -99,13 +100,13 @@ export class HandoffCommand extends BaseEvolithCommand {
         if (!useDefault && group.options) {
           const selected = await this.promptService.multiselect({
             message: `Select ${groupKey} tools:`,
-            options: group.options.map((o: any) => ({
+            options: group.options.map((o: NonNullable<ToolGroup['options']>[number]) => ({
               value: o.value,
               label: o.label,
               hint: o.hint
             })),
           });
-          if (Array.isArray(selected) && selected.every((s: any) => typeof s === 'string')) {
+          if (Array.isArray(selected) && selected.every((s: unknown) => typeof s === 'string')) {
             tools.push(...selected as string[]);
           }
         } else {
@@ -159,7 +160,7 @@ export class HandoffCommand extends BaseEvolithCommand {
     this.promptService.showOutro(result.success ? chalk.green('Completed') : chalk.red('Failed'));
   }
 
-  private getToolGroupsForPhase(phase: string): Record<string, { question: string; defaultOption: string; options?: any[]; tools: string[] }> {
+  private getToolGroupsForPhase(phase: string): Record<string, ToolGroup> {
     const toolCatalog = this.catalogLoader.loadToolCatalog();
     const phaseDef = toolCatalog.phases[phase];
 

@@ -18,7 +18,7 @@ describe('ADRService', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    service = new ADRService(mockFileSystem as any, '/test');
+    service = new ADRService(mockFileSystem as unknown, '/test');
   });
 
   describe('create', () => {

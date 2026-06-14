@@ -27,7 +27,7 @@ const configParser = {
 
 describe('MCP runtime conformance', () => {
   it('publishes unique, actionable schemas for every Core tool', () => {
-    const tools = getAllTools(fileSystem as any, configParser);
+    const tools = getAllTools(fileSystem as unknown, configParser);
     const names = tools.map((tool) => tool.schema.name);
 
     expect(tools.length).toBeGreaterThanOrEqual(15);

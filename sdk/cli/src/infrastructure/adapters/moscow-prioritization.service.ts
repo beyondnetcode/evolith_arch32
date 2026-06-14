@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { IFileSystem } from '../../domain/interfaces';
+import { IFileSystem, ILogger } from '../../domain/interfaces';
 import { NodeFileSystemProvider } from '../../infrastructure/providers/node-filesystem.provider';
 
 export type MoscowPriority = 'MUST' | 'SHOULD' | 'COULD' | 'WONT';
@@ -31,7 +31,7 @@ export interface MoscowAnalysis {
 export class MoscowPrioritizationService {
   private readonly fs: IFileSystem;
 
-  constructor(options?: { fileSystem?: any; logger?: any }) {
+  constructor(options?: { fileSystem?: IFileSystem; logger?: ILogger }) {
     this.fs = options?.fileSystem ?? new NodeFileSystemProvider().createFileSystem();
   }
 

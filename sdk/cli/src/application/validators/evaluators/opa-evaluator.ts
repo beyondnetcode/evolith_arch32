@@ -6,7 +6,7 @@ import { loadPolicy } from '@open-policy-agent/opa-wasm';
 import { OpaInputBuilder } from './opa-input-builder';
 
 export class OpaEvaluator implements IRuleEvaluatorStrategy {
-  private policyCache: any = null;
+  private policyCache: unknown = null;
   private inputBuilder: OpaInputBuilder;
 
   constructor(
@@ -45,12 +45,12 @@ export class OpaEvaluator implements IRuleEvaluatorStrategy {
       const violations = resultSet && resultSet.length > 0 && resultSet[0].result ? resultSet[0].result : [];
       
       return rules.map(rule => {
-        const ruleViolations = violations.filter((v: any) => v.id === rule.id);
+        const ruleViolations = violations.filter((v: unknown) => v.id === rule.id);
         if (ruleViolations.length > 0) {
           return {
             rule,
             result: 'failed',
-            message: ruleViolations.map((v: any) => v.message).join('; '),
+            message: ruleViolations.map((v: unknown) => v.message).join('; '),
           };
         }
         return {

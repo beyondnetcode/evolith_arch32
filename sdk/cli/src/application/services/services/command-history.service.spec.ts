@@ -25,10 +25,10 @@ function makeService() {
 
 beforeEach(() => {
   jest.clearAllMocks();
-  mockFs.ensureDir.mockResolvedValue(undefined as any);
-  mockFs.pathExists.mockResolvedValue(false as any);
-  mockFs.appendFile.mockResolvedValue(undefined as any);
-  mockFs.remove.mockResolvedValue(undefined as any);
+  mockFs.ensureDir.mockResolvedValue(undefined as unknown);
+  mockFs.pathExists.mockResolvedValue(false as unknown);
+  mockFs.appendFile.mockResolvedValue(undefined as unknown);
+  mockFs.remove.mockResolvedValue(undefined as unknown);
 });
 
 // ── initialize ────────────────────────────────────────────────────────────────
@@ -50,7 +50,7 @@ describe('initialize', () => {
 
   it('parses existing JSONL history file', async () => {
     const entry = makeEntry();
-    mockFs.pathExists.mockResolvedValue(true as any);
+    mockFs.pathExists.mockResolvedValue(true as unknown);
     (mockFs.readFile as jest.Mock).mockResolvedValue(JSON.stringify(entry) + '\n');
     const svc = makeService();
     await svc.initialize();
@@ -60,7 +60,7 @@ describe('initialize', () => {
   });
 
   it('skips malformed lines in history file', async () => {
-    mockFs.pathExists.mockResolvedValue(true as any);
+    mockFs.pathExists.mockResolvedValue(true as unknown);
     (mockFs.readFile as jest.Mock).mockResolvedValue('bad json\n' + JSON.stringify(makeEntry()) + '\n');
     const svc = makeService();
     await svc.initialize();
@@ -71,7 +71,7 @@ describe('initialize', () => {
     const lines = Array.from({ length: 1100 }, (_, i) =>
       JSON.stringify(makeEntry({ id: `h-${String(i + 1).padStart(6, '0')}` })),
     ).join('\n');
-    mockFs.pathExists.mockResolvedValue(true as any);
+    mockFs.pathExists.mockResolvedValue(true as unknown);
     (mockFs.readFile as jest.Mock).mockResolvedValue(lines);
     const svc = makeService();
     await svc.initialize();
@@ -80,7 +80,7 @@ describe('initialize', () => {
 
   it('is idempotent — calling twice does not double entries', async () => {
     const entry = makeEntry();
-    mockFs.pathExists.mockResolvedValue(true as any);
+    mockFs.pathExists.mockResolvedValue(true as unknown);
     (mockFs.readFile as jest.Mock).mockResolvedValue(JSON.stringify(entry) + '\n');
     const svc = makeService();
     await svc.initialize();
@@ -213,13 +213,13 @@ describe('clear', () => {
   });
 
   it('removes the history file when it exists', async () => {
-    mockFs.pathExists.mockResolvedValue(true as any);
+    mockFs.pathExists.mockResolvedValue(true as unknown);
     await makeService().clear();
     expect(mockFs.remove).toHaveBeenCalled();
   });
 
   it('does not call remove when file does not exist', async () => {
-    mockFs.pathExists.mockResolvedValue(false as any);
+    mockFs.pathExists.mockResolvedValue(false as unknown);
     await makeService().clear();
     expect(mockFs.remove).not.toHaveBeenCalled();
   });

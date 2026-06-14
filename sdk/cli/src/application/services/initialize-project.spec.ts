@@ -36,7 +36,7 @@ jest.mock('../../infrastructure/cli/providers', () => ({
 
 jest.mock('../../infrastructure/observability', () => ({
   logger:         { info: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn() },
-  Timed:          () => (_t: any, _k: any, desc: PropertyDescriptor) => desc,
+  Timed:          () => (_t: unknown, _k: unknown, desc: PropertyDescriptor) => desc,
   commandWatcher: { trackStart: jest.fn(), trackEnd: jest.fn() },
   errorReporter:  { report: jest.fn(), printSummary: jest.fn() },
   OperationTimer: jest.fn(() => ({ start: jest.fn(), end: jest.fn().mockReturnValue(0) })),
@@ -92,21 +92,21 @@ describe('InitializeProjectUseCase', () => {
     it('writes package.json for nodejs', async () => {
       const fs = makeFs();
       await new InitializeProjectUseCase(fs, new (require("../../infrastructure/catalog/catalog-loader").CatalogLoader)()).execute(makeInput({ runtime: 'nodejs' }), '/tmp');
-      const writeJsonCalls = fs.writeJson.mock.calls.map((c: any[]) => c[0]);
+      const writeJsonCalls = fs.writeJson.mock.calls.map((c: unknown[]) => c[0]);
       expect(writeJsonCalls.some((p: string) => p.endsWith('package.json'))).toBe(true);
     });
 
     it('writes tsconfig.json for typescript', async () => {
       const fs = makeFs();
       await new InitializeProjectUseCase(fs, new (require("../../infrastructure/catalog/catalog-loader").CatalogLoader)()).execute(makeInput({ runtime: 'typescript' }), '/tmp');
-      const writeJsonCalls = fs.writeJson.mock.calls.map((c: any[]) => c[0]);
+      const writeJsonCalls = fs.writeJson.mock.calls.map((c: unknown[]) => c[0]);
       expect(writeJsonCalls.some((p: string) => p.endsWith('tsconfig.json'))).toBe(true);
     });
 
     it('does NOT write tsconfig.json for plain nodejs', async () => {
       const fs = makeFs();
       await new InitializeProjectUseCase(fs, new (require("../../infrastructure/catalog/catalog-loader").CatalogLoader)()).execute(makeInput({ runtime: 'nodejs' }), '/tmp');
-      const writeJsonCalls = fs.writeJson.mock.calls.map((c: any[]) => c[0]);
+      const writeJsonCalls = fs.writeJson.mock.calls.map((c: unknown[]) => c[0]);
       expect(writeJsonCalls.some((p: string) => p.endsWith('tsconfig.json'))).toBe(false);
     });
   });
@@ -123,7 +123,7 @@ describe('InitializeProjectUseCase', () => {
     it('writes a .csproj file', async () => {
       const fs = makeFs();
       await new InitializeProjectUseCase(fs, new (require("../../infrastructure/catalog/catalog-loader").CatalogLoader)()).execute(makeInput({ runtime: 'dotnet' }), '/tmp');
-      const writeFileCalls = fs.writeFile.mock.calls.map((c: any[]) => c[0]);
+      const writeFileCalls = fs.writeFile.mock.calls.map((c: unknown[]) => c[0]);
       expect(writeFileCalls.some((p: string) => p.endsWith('.csproj'))).toBe(true);
     });
   });
@@ -140,14 +140,14 @@ describe('InitializeProjectUseCase', () => {
     it('writes requirements.txt', async () => {
       const fs = makeFs();
       await new InitializeProjectUseCase(fs, new (require("../../infrastructure/catalog/catalog-loader").CatalogLoader)()).execute(makeInput({ runtime: 'python' }), '/tmp');
-      const writeFileCalls = fs.writeFile.mock.calls.map((c: any[]) => c[0]);
+      const writeFileCalls = fs.writeFile.mock.calls.map((c: unknown[]) => c[0]);
       expect(writeFileCalls.some((p: string) => p.endsWith('requirements.txt'))).toBe(true);
     });
 
     it('writes pyproject.toml', async () => {
       const fs = makeFs();
       await new InitializeProjectUseCase(fs, new (require("../../infrastructure/catalog/catalog-loader").CatalogLoader)()).execute(makeInput({ runtime: 'python' }), '/tmp');
-      const writeJsonCalls = fs.writeJson.mock.calls.map((c: any[]) => c[0]);
+      const writeJsonCalls = fs.writeJson.mock.calls.map((c: unknown[]) => c[0]);
       expect(writeJsonCalls.some((p: string) => p.endsWith('pyproject.toml'))).toBe(true);
     });
   });
@@ -167,7 +167,7 @@ describe('InitializeProjectUseCase', () => {
     it('creates src/ directory', async () => {
       const fs = makeFs();
       await new InitializeProjectUseCase(fs, new (require("../../infrastructure/catalog/catalog-loader").CatalogLoader)()).execute(makeInput({ runtime: 'java' }), '/tmp');
-      const ensureDirCalls = fs.ensureDir.mock.calls.map((c: any[]) => c[0]);
+      const ensureDirCalls = fs.ensureDir.mock.calls.map((c: unknown[]) => c[0]);
       expect(ensureDirCalls.some((p: string) => p.endsWith('/src'))).toBe(true);
     });
 
@@ -215,7 +215,7 @@ describe('InitializeProjectUseCase', () => {
       await new InitializeProjectUseCase(fs, new (require("../../infrastructure/catalog/catalog-loader").CatalogLoader)()).execute(
         makeInput({ features: ['adr'] }), '/tmp',
       );
-      const writeJsonCalls = fs.writeJson.mock.calls.map((c: any[]) => c[0]);
+      const writeJsonCalls = fs.writeJson.mock.calls.map((c: unknown[]) => c[0]);
       expect(writeJsonCalls.some((p: string) => p.includes('adr-matrix'))).toBe(true);
     });
 
@@ -224,7 +224,7 @@ describe('InitializeProjectUseCase', () => {
       await new InitializeProjectUseCase(fs, new (require("../../infrastructure/catalog/catalog-loader").CatalogLoader)()).execute(
         makeInput({ features: ['hooks'] }), '/tmp',
       );
-      const writeFileCalls = fs.writeFile.mock.calls.map((c: any[]) => c[0]);
+      const writeFileCalls = fs.writeFile.mock.calls.map((c: unknown[]) => c[0]);
       expect(writeFileCalls.some((p: string) => p.includes('pre-commit'))).toBe(true);
     });
 
@@ -233,7 +233,7 @@ describe('InitializeProjectUseCase', () => {
       await new InitializeProjectUseCase(fs, new (require("../../infrastructure/catalog/catalog-loader").CatalogLoader)()).execute(
         makeInput({ features: ['acl'] }), '/tmp',
       );
-      const writeJsonCalls = fs.writeJson.mock.calls.map((c: any[]) => c[0]);
+      const writeJsonCalls = fs.writeJson.mock.calls.map((c: unknown[]) => c[0]);
       expect(writeJsonCalls.some((p: string) => p.includes('anti-corruption-layer'))).toBe(true);
     });
   });

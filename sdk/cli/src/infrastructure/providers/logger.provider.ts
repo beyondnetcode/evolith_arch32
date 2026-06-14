@@ -14,19 +14,19 @@ class NestLogger implements ILogger {
     this.logger = new Logger(context);
   }
 
-  debug(message: string, context?: any): void {
+  debug(message: string, context?: unknown): void {
     this.logger.debug(message, context);
   }
 
-  info(message: string, context?: any): void {
+  info(message: string, context?: unknown): void {
     this.logger.log(message, context);
   }
 
-  warn(message: string, context?: any): void {
+  warn(message: string, context?: unknown): void {
     this.logger.warn(message, context);
   }
 
-  error(message: string, context?: any): void {
+  error(message: string, context?: unknown): void {
     this.logger.error(message, context);
   }
 }
@@ -40,19 +40,19 @@ export class NoOpLoggerProvider implements ILoggerProvider {
 class NoOpLogger implements ILogger {
   private logs: LogEntry[] = [];
 
-  debug(message: string, _context?: any): void {
+  debug(message: string, _context?: unknown): void {
     this.logs.push({ level: 'debug', message, timestamp: new Date().toISOString() });
   }
 
-  info(message: string, _context?: any): void {
+  info(message: string, _context?: unknown): void {
     this.logs.push({ level: 'info', message, timestamp: new Date().toISOString() });
   }
 
-  warn(message: string, _context?: any): void {
+  warn(message: string, _context?: unknown): void {
     this.logs.push({ level: 'warn', message, timestamp: new Date().toISOString() });
   }
 
-  error(message: string, _context?: any): void {
+  error(message: string, _context?: unknown): void {
     this.logs.push({ level: 'error', message, timestamp: new Date().toISOString() });
   }
 
@@ -83,19 +83,19 @@ class ConsoleLogger implements ILogger {
     return `[${timestamp}] [${level.toUpperCase()}] [${this.context}] ${message}`;
   }
 
-  debug(message: string, _context?: any): void {
+  debug(message: string, _context?: unknown): void {
     console.debug(this.format('debug', message));
   }
 
-  info(message: string, _context?: any): void {
+  info(message: string, _context?: unknown): void {
     console.info(this.format('info', message));
   }
 
-  warn(message: string, _context?: any): void {
+  warn(message: string, _context?: unknown): void {
     console.warn(this.format('warn', message));
   }
 
-  error(message: string, _context?: any): void {
+  error(message: string, _context?: unknown): void {
     console.error(this.format('error', message));
   }
 }

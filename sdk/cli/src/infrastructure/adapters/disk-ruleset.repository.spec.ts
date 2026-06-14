@@ -19,14 +19,14 @@ function fsMock(cfg: { existing?: string[]; dirs?: Record<string, string[]>; dir
     }),
     readdirNames: jest.fn(async (p: string) => cfg.dirs?.[p] ?? []),
     stat: jest.fn(async (p: string) => ({ isDirectory: () => directories.has(p), isFile: () => !directories.has(p) })),
-  } as any;
+  } as unknown;
 }
 
-const logger = { info: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn() } as any;
+const logger = { info: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn() } as unknown;
 
 describe('DiskRulesetRepository', () => {
   it('returns [] when the rulesets directory is absent', async () => {
-    const fs = { exists: jest.fn(async () => false) } as any;
+    const fs = { exists: jest.fn(async () => false) } as unknown;
     const repo = new DiskRulesetRepository(fs, logger);
     expect(await repo.loadAllRulesets(CORE)).toEqual([]);
   });

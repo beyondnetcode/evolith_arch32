@@ -283,7 +283,7 @@ describe('UpgradeCommand', () => {
         breakingChanges: [],
       };
 
-      (command as any).printUpgradePlan(plan);
+      (command as unknown).printUpgradePlan(plan);
 
       expect(logSpy).toHaveBeenCalledWith(
         expect.stringContaining('Upgrade Plan')
@@ -308,7 +308,7 @@ describe('UpgradeCommand', () => {
         breakingChanges: [],
       };
 
-      (command as any).printUpgradePlan(plan);
+      (command as unknown).printUpgradePlan(plan);
 
       expect(logSpy).toHaveBeenCalledWith(
         expect.stringContaining('HIGH')
@@ -324,7 +324,7 @@ describe('UpgradeCommand', () => {
         breakingChanges: [],
       };
 
-      (command as any).printUpgradePlan(plan);
+      (command as unknown).printUpgradePlan(plan);
 
       expect(logSpy).toHaveBeenCalledWith(
         expect.stringContaining('MEDIUM')
@@ -340,7 +340,7 @@ describe('UpgradeCommand', () => {
         breakingChanges: [{ type: 'modify', sourcePath: '/s', targetPath: '/t', description: 'breaking', breaking: true }],
       };
 
-      (command as any).printUpgradePlan(plan);
+      (command as unknown).printUpgradePlan(plan);
 
       expect(logSpy).toHaveBeenCalledWith(
         expect.stringContaining('Breaking Changes:')
@@ -356,7 +356,7 @@ describe('UpgradeCommand', () => {
         breakingChanges: [{ type: 'add', sourcePath: '/s', targetPath: '/t', description: 'breaking change', breaking: true }],
       };
 
-      (command as any).printUpgradePlan(plan);
+      (command as unknown).printUpgradePlan(plan);
 
       expect(logSpy).toHaveBeenCalledWith(
         expect.stringContaining('[BREAKING]')
@@ -366,47 +366,47 @@ describe('UpgradeCommand', () => {
 
   describe('getChangeIcon', () => {
     it('should return + for add', () => {
-      expect((command as any).getChangeIcon('add')).toBe('+');
+      expect((command as unknown).getChangeIcon('add')).toBe('+');
     });
 
     it('should return ~ for modify', () => {
-      expect((command as any).getChangeIcon('modify')).toBe('~');
+      expect((command as unknown).getChangeIcon('modify')).toBe('~');
     });
 
     it('should return - for remove', () => {
-      expect((command as any).getChangeIcon('remove')).toBe('-');
+      expect((command as unknown).getChangeIcon('remove')).toBe('-');
     });
 
     it('should return » for migrate', () => {
-      expect((command as any).getChangeIcon('migrate')).toBe('»');
+      expect((command as unknown).getChangeIcon('migrate')).toBe('»');
     });
 
     it('should return ? for unknown type', () => {
-      expect((command as any).getChangeIcon('unknown')).toBe('?');
+      expect((command as unknown).getChangeIcon('unknown')).toBe('?');
     });
   });
 
   describe('getRiskColor', () => {
     it('should return high for high risk', () => {
-      expect((command as any).getRiskColor('high')).toBe('high');
+      expect((command as unknown).getRiskColor('high')).toBe('high');
     });
 
     it('should return medium for medium risk', () => {
-      expect((command as any).getRiskColor('medium')).toBe('medium');
+      expect((command as unknown).getRiskColor('medium')).toBe('medium');
     });
 
     it('should return low for unknown risk', () => {
-      expect((command as any).getRiskColor('unknown')).toBe('low');
+      expect((command as unknown).getRiskColor('unknown')).toBe('low');
     });
 
     it('should return low for empty string', () => {
-      expect((command as any).getRiskColor('')).toBe('low');
+      expect((command as unknown).getRiskColor('')).toBe('low');
     });
   });
 
   describe('findCorePath', () => {
     it('should return satellite path', () => {
-      expect((command as any).findCorePath('/some/path')).toBe('/some/path');
+      expect((command as unknown).findCorePath('/some/path')).toBe('/some/path');
     });
   });
 

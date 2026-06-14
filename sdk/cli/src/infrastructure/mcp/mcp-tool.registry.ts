@@ -3,14 +3,14 @@ export interface McpToolSchema {
   description: string;
   inputSchema: {
     type: string;
-    properties: Record<string, any>;
+    properties: Record<string, unknown>;
     required?: string[];
   };
 }
 
 export interface IMcpToolHandler {
   schema: McpToolSchema;
-  execute(args: Record<string, unknown>, deps?: any): Promise<unknown>;
+  execute(args: Record<string, unknown>, deps?: unknown): Promise<unknown>;
 }
 
 export class McpToolRegistry {

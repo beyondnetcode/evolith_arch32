@@ -18,7 +18,7 @@ describe('AgentRegistryService', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    service = new AgentRegistryService(mockFileSystem as any);
+    service = new AgentRegistryService(mockFileSystem as unknown);
   });
 
   describe('discover', () => {

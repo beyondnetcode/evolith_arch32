@@ -255,7 +255,7 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
                 );
 
                 let hasUiImport = false;
-                const checkNode = (node: any) => {
+                const checkNode = (node: unknown) => {
                   if (ts.isImportDeclaration(node)) {
                     const importPath = node.moduleSpecifier.getText().replace(/['"]/g, '');
                     if (['@clack/prompts', 'inquirer', 'commander', 'express'].includes(importPath)) {
@@ -295,7 +295,7 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
               );
 
               let hasManualInstantiation = false;
-              const checkNode = (node: any) => {
+              const checkNode = (node: unknown) => {
                 if (ts.isNewExpression(node)) {
                   const className = node.expression.getText();
                   if (/(Service|UseCase|Repository|Adapter)$/.test(className)) {
@@ -336,7 +336,7 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
               let hasAstImport = false;
               let usesRegexForCode = false;
 
-              const checkNode = (node: any) => {
+              const checkNode = (node: unknown) => {
                 if (ts.isImportDeclaration(node)) {
                   const importPath = node.moduleSpecifier.getText().replace(/['"]/g, '');
                   if (importPath === 'typescript' || importPath === '@babel/parser') {

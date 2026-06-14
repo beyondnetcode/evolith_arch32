@@ -7,7 +7,7 @@ import { PhaseGatesRuleset } from './phase-gate-validator.service';
 export class RulesetLoader {
   private cachedRuleset: PhaseGatesRuleset | null = null;
   private readonly ajv: Ajv;
-  private schemaValidator: any;
+  private schemaValidator: unknown;
 
   constructor(
     private readonly fs: IFileSystem,

@@ -162,7 +162,7 @@ describe.skip('GateStatusCommand', () => {
         criterion: 'No open CVEs',
         triggered: true,
         action: 'Fix before proceeding',
-      } as any];
+      } as unknown];
       mockGetGateStatus.mockResolvedValue({
         currentPhase: 1,
         gatesPassed: 0,

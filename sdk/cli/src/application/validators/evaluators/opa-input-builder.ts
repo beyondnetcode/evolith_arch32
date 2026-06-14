@@ -5,12 +5,12 @@ import { EvaluationContext } from './evaluator.interface';
 export class OpaInputBuilder {
   constructor(private readonly fs: IFileSystem) {}
 
-  public async build(ctx: EvaluationContext): Promise<any> {
+  public async build(ctx: EvaluationContext): Promise<unknown> {
     const satelliteWorkflows = await this.readWorkflows(ctx.satellitePath);
     const coreEvidence = await this.readEvidence(ctx.corePath);
     const mcpServerContent = await this.safeReadFile(path.join(ctx.corePath, 'sdk', 'cli', 'src', 'core', 'mcp', 'server.ts'));
 
-    const input: any = {
+    const input: unknown = {
       satellitePath: ctx.satellitePath,
       corePath: ctx.corePath,
       satellite: {
@@ -48,7 +48,7 @@ export class OpaInputBuilder {
     return input;
   }
 
-  private async safeReadJson(filePath: string): Promise<any> {
+  private async safeReadJson(filePath: string): Promise<unknown> {
     if (await this.fs.exists(filePath)) {
       try {
         return await this.fs.readJson(filePath);
@@ -96,9 +96,9 @@ export class OpaInputBuilder {
     return result;
   }
 
-  private async readEvidence(root: string): Promise<Record<string, any>> {
+  private async readEvidence(root: string): Promise<Record<string, unknown>> {
     const evidenceDir = path.join(root, '.harness', 'evidence');
-    const result: Record<string, any> = {};
+    const result: Record<string, unknown> = {};
     if (!await this.fs.exists(evidenceDir)) return result;
     const entries = await this.fs.readdirNames(evidenceDir);
     for (const entry of entries) {
@@ -141,9 +141,9 @@ export class OpaInputBuilder {
     return files.some(f => f.includes('.spec.') || f.includes('.test.'));
   }
 
-  private async readWorkspacePackageJsons(rootPath: string): Promise<any[]> {
+  private async readWorkspacePackageJsons(rootPath: string): Promise<unknown[]> {
     const rootPkgPath = path.join(rootPath, 'package.json');
-    const files: any[] = [];
+    const files: unknown[] = [];
     const rootPkg = await this.safeReadJson(rootPkgPath);
     if (!rootPkg) return files;
     
@@ -170,16 +170,16 @@ export class OpaInputBuilder {
     return files;
   }
 
-  private async analyzeSourceFiles(rootPath: string): Promise<any[]> {
+  private async analyzeSourceFiles(rootPath: string): Promise<unknown[]> {
     const srcPath = path.join(rootPath, 'src');
     if (!await this.fs.exists(srcPath)) return [];
     
     const allFiles = await this.listFilesRecursive(srcPath);
     const tsFiles = allFiles.filter(f => f.endsWith('.ts'));
-    const sourceFilesInfo: any[] = [];
+    const sourceFilesInfo: unknown[] = [];
     
     // We import typescript here to avoid tying it strictly if the plugin doesn't need it
-    let ts: any;
+    let ts: unknown;
     try {
       ts = require('typescript');
     } catch {
@@ -193,7 +193,7 @@ export class OpaInputBuilder {
 
     for (const file of tsFiles) {
       const content = await this.safeReadFile(file) || '';
-      const info: any = {
+      const info: unknown = {
         path: file.replace(rootPath, ''),
         content: content,
         hasAstImport: false,
@@ -210,7 +210,7 @@ export class OpaInputBuilder {
           true
         );
 
-        const checkNode = (node: any) => {
+        const checkNode = (node: unknown) => {
           if (ts.isImportDeclaration(node)) {
             const importPath = node.moduleSpecifier.getText().replace(/['"]/g, '');
             if (importPath === 'typescript' || importPath === '@babel/parser') {

@@ -76,7 +76,7 @@ export class MockFileSystem implements IFileSystem {
     return [];
   }
 
-  async stat(path: string): Promise<any> {
+  async stat(path: string): Promise<unknown> {
     return {
       isDirectory: () => this.directories.has(path),
       isFile: () => this.files.has(path)

@@ -130,7 +130,7 @@ export function getSdlcTools(fs: IFileSystem, configParser: IConfigParser): IMcp
 
           const commits = await readGitLog({ cwd: repoPath, sinceDays: days });
           const totalCommits = commits.length;
-          const merges = commits.filter((c: any) => c.isMerge).length;
+          const merges = commits.filter((c: unknown) => c.isMerge).length;
 
           // Simple approximations
           const deploymentFrequency = totalCommits > 0 ? totalCommits / days : 0;

@@ -6,7 +6,7 @@ jest.mock('../../../application/use-cases/evaluate-gate.use-case');
 
 describe('handleGateEvaluateTool', () => {
   let mockExecute: jest.Mock;
-  let executeHandler: (args: any) => Promise<any>;
+  let executeHandler: (args: unknown) => Promise<unknown>;
 
   beforeEach(() => {
     mockExecute = jest.fn();
@@ -14,7 +14,7 @@ describe('handleGateEvaluateTool', () => {
       execute: mockExecute
     }));
 
-    const tools = getGateTools({} as any, {} as any);
+    const tools = getGateTools({} as unknown, {} as unknown);
     const handler = tools.find(t => t.schema.name === 'evolith-gate-evaluate');
     executeHandler = handler!.execute;
   });
@@ -92,7 +92,7 @@ describe('handleGateEvaluateTool', () => {
 
     expect(result.success).toBe(true);
     if (result.success) {
-      const data = result.data as any;
+      const data = result.data as unknown;
       expect(data.violations).toEqual([]);
       expect(data.summary).toEqual({ errors: 2, warnings: 1 });
     }

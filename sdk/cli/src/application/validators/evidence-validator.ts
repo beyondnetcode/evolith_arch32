@@ -103,7 +103,7 @@ export class EvidenceValidator {
       const valid = validate(artifact);
 
       if (!valid && validate.errors) {
-        const summary = validate.errors.slice(0, 3).map((e: any) => `${e.instancePath} ${e.message}`).join('; ');
+        const summary = validate.errors.slice(0, 3).map((e: unknown) => `${e.instancePath} ${e.message}`).join('; ');
         this.logger.warn(`Schema validation failed for ${artifactPath}: ${summary}`);
       }
 

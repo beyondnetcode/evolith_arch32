@@ -10,9 +10,9 @@ jest.mock('../../../application/validators/ruleset-validator.service', () => ({
 import { RulesetValidatorService } from '../../../application/validators/ruleset-validator.service';
 
 
-const handleValidateTool = async (args: any, deps?: any) => {
-  const tools = getValidateTools({} as any, {} as any);
-  const tool = tools.find((t: any) => t.schema.name === 'evolith-validate');
+const handleValidateTool = async (args: unknown, deps?: unknown) => {
+  const tools = getValidateTools({} as unknown, {} as unknown);
+  const tool = tools.find((t: unknown) => t.schema.name === 'evolith-validate');
   if (!tool) throw new Error('Unknown tool');
   let toolDeps = deps;
   if (deps && !deps.validator) {
@@ -42,7 +42,7 @@ describe('MCP Tools - validate', () => {
         status: 'passed',
         rulesChecked: 10,
         issues: [],
-      } as any);
+      } as unknown);
 
       const result = await handleValidateTool({ path: '/test/repo' }, mockValidator);
 
@@ -55,7 +55,7 @@ describe('MCP Tools - validate', () => {
         status: 'passed',
         rulesChecked: 5,
         issues: [],
-      } as any);
+      } as unknown);
 
       await handleValidateTool({ path: '/test/repo', corePath: '/core' }, mockValidator);
 
@@ -67,7 +67,7 @@ describe('MCP Tools - validate', () => {
         status: 'passed',
         rulesChecked: 10,
         issues: [],
-      } as any);
+      } as unknown);
 
       const result = await handleValidateTool({ path: '/test/repo', format: 'summary' }, mockValidator);
 
@@ -82,7 +82,7 @@ describe('MCP Tools - validate', () => {
         issues: [
           { ruleId: 'GOV-01', severity: 'MUST', title: 'Missing evolith.yaml', blocking: true, category: 'Governance' },
         ],
-      } as any);
+      } as unknown);
 
       const result = await handleValidateTool({ path: '/test/repo', format: 'table' }, mockValidator);
 
@@ -96,7 +96,7 @@ describe('MCP Tools - validate', () => {
         status: 'passed',
         rulesChecked: 10,
         issues: [],
-      } as any);
+      } as unknown);
 
       const result = await handleValidateTool({ path: '/test/repo' }, mockValidator);
 
@@ -105,7 +105,7 @@ describe('MCP Tools - validate', () => {
     });
 
     it('should load ruleset by ID when ruleset parameter provided', async () => {
-      mockValidator.loadRulesetById.mockResolvedValue([{ id: 'R-01' }] as any);
+      mockValidator.loadRulesetById.mockResolvedValue([{ id: 'R-01' }] as unknown);
 
       const result = await handleValidateTool({
         path: '/test/repo',
@@ -119,7 +119,7 @@ describe('MCP Tools - validate', () => {
     });
 
     it('should find core path automatically when not provided', async () => {
-      mockValidator.loadRulesetById.mockResolvedValue([] as any);
+      mockValidator.loadRulesetById.mockResolvedValue([] as unknown);
 
       const result = await handleValidateTool({
         path: '/test/repo',
@@ -131,7 +131,7 @@ describe('MCP Tools - validate', () => {
     });
 
     it('should include timestamp in ruleset response', async () => {
-      mockValidator.loadRulesetById.mockResolvedValue([] as any);
+      mockValidator.loadRulesetById.mockResolvedValue([] as unknown);
 
       const result = await handleValidateTool({
         path: '/test/repo',
@@ -149,7 +149,7 @@ describe('MCP Tools - validate', () => {
           { ruleId: 'GOV-01', severity: 'MUST', title: 'Issue 1', blocking: true },
           { ruleId: 'GOV-02', severity: 'SHOULD', title: 'Issue 2', blocking: false },
         ],
-      } as any);
+      } as unknown);
 
       const result = await handleValidateTool({ path: '/test/repo', format: 'summary' }, mockValidator);
 
@@ -164,7 +164,7 @@ describe('MCP Tools - validate', () => {
           { ruleId: 'GOV-01', severity: 'MUST', title: 'Blocking issue', blocking: true, category: 'Governance' },
           { ruleId: 'GOV-02', severity: 'SHOULD', title: 'Non-blocking', blocking: false, category: 'Governance' },
         ],
-      } as any);
+      } as unknown);
 
       const result = await handleValidateTool({ path: '/test/repo', format: 'table' }, mockValidator);
 

@@ -67,7 +67,7 @@ export class MockFileSystemProvider implements IFileSystem {
     return Buffer.from(content);
   }
 
-  async readJson<T = any>(filePath: string): Promise<T> {
+  async readJson<T = unknown>(filePath: string): Promise<T> {
     const normalized = this.normalize(filePath);
     const entry = this.files.get(normalized);
     if (!entry) {

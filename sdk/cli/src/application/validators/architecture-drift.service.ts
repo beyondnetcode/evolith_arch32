@@ -54,7 +54,7 @@ export class ArchitectureDriftService {
   private readonly logger: ILogger;
   private readonly validator: RulesetValidatorService;
 
-  constructor(corePath?: string, options?: { fileSystem?: any; logger?: any; validator?: any }) {
+  constructor(corePath?: string, options?: { fileSystem?: unknown; logger?: unknown; validator?: unknown }) {
     this.fs = options?.fileSystem ?? new NodeFileSystemProvider().createFileSystem();
     this.logger = options?.logger ?? new NestLoggerProvider().createLogger('ArchitectureDriftService');
     this.validator = options?.validator ?? new RulesetValidatorService();

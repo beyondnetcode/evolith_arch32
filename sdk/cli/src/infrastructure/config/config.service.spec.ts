@@ -3,7 +3,7 @@ import { ConfigService } from './config.service';
 
 jest.mock('conf', () => {
   return jest.fn().mockImplementation(() => {
-    let store: any = {
+    let store: unknown = {
       version: '1.0.0',
       telemetryEnabled: true,
       knownSatellites: [],

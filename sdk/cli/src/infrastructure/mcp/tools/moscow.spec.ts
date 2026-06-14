@@ -30,9 +30,9 @@ jest.mock("../../../infrastructure/adapters/moscow-prioritization.service", () =
 
 import { MoscowPrioritizationService } from "../../../infrastructure/adapters/moscow-prioritization.service";
 
-const handleMoscowTools = async (toolName: string, args: any, deps?: any) => {
-  const tools = getMoscowTools({} as any, {} as any);
-  const tool = tools.find((t: any) => t.schema.name === toolName);
+const handleMoscowTools = async (toolName: string, args: unknown, deps?: unknown) => {
+  const tools = getMoscowTools({} as unknown, {} as unknown);
+  const tool = tools.find((t: unknown) => t.schema.name === toolName);
   if (!tool) throw new Error(`Unknown ${toolName} tool`);
 
   // Create deps object if mockDep is a service (from old code)

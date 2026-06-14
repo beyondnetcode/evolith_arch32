@@ -16,11 +16,11 @@ const mockConfigParser = {
 };
 
 describe('MCP Tools - architecture', () => {
-  let executeHandler: (args: any) => Promise<any>;
+  let executeHandler: (args: unknown) => Promise<unknown>;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    const tools = getArchitectureTools(mockFileSystem as any, mockConfigParser as any);
+    const tools = getArchitectureTools(mockFileSystem as unknown, mockConfigParser as unknown);
     const handler = tools.find(t => t.schema.name === 'evolith-architecture-validate');
     executeHandler = handler!.execute;
   });
@@ -59,7 +59,7 @@ describe('MCP Tools - architecture', () => {
 
       const result = await executeHandler({ path: '/test/repo', level: 'F1' });
 
-      const workspaceIssue = result.issues.find((i: any) => i.ruleId === 'F1-01');
+      const workspaceIssue = result.issues.find((i: unknown) => i.ruleId === 'F1-01');
       expect(workspaceIssue).toBeDefined();
     });
 
@@ -70,7 +70,7 @@ describe('MCP Tools - architecture', () => {
 
       const result = await executeHandler({ path: '/test/repo', level: 'F1' });
 
-      const singleModuleIssue = result.issues.find((i: any) => i.ruleId === 'F1-02');
+      const singleModuleIssue = result.issues.find((i: unknown) => i.ruleId === 'F1-02');
       expect(singleModuleIssue).toBeDefined();
     });
 
@@ -107,8 +107,8 @@ describe('MCP Tools - architecture', () => {
 
       const result = await executeHandler({ path: '/test/repo', level: 'F2' });
 
-      const f1Issues = result.issues.filter((i: any) => i.level === 'F1');
-      const f2Issues = result.issues.filter((i: any) => i.level === 'F2');
+      const f1Issues = result.issues.filter((i: unknown) => i.level === 'F1');
+      const f2Issues = result.issues.filter((i: unknown) => i.level === 'F2');
 
       expect(f1Issues.length).toBeGreaterThan(0);
       expect(f2Issues.length).toBe(0);
@@ -130,9 +130,9 @@ describe('MCP Tools - architecture', () => {
 
       const result = await executeHandler({ path: '/test/repo', level: 'F3' });
 
-      const f1Issues = result.issues.filter((i: any) => i.level === 'F1');
-      const f2Issues = result.issues.filter((i: any) => i.level === 'F2');
-      const f3Issues = result.issues.filter((i: any) => i.level === 'F3');
+      const f1Issues = result.issues.filter((i: unknown) => i.level === 'F1');
+      const f2Issues = result.issues.filter((i: unknown) => i.level === 'F2');
+      const f3Issues = result.issues.filter((i: unknown) => i.level === 'F3');
 
       expect(f1Issues.length).toBeGreaterThan(0);
       expect(f2Issues.length).toBe(0);

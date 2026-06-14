@@ -46,7 +46,7 @@ describe('Architecture Engine Equivalence', () => {
       corePath: '/core'
     };
 
-    const nativeResult = await handler.evaluate(rule as any, ctx as any);
+    const nativeResult = await handler.evaluate(rule as unknown, ctx as unknown);
     expect(nativeResult.result).toBe('passed');
   });
 
@@ -61,7 +61,7 @@ describe('Architecture Engine Equivalence', () => {
     (fs.stat as jest.Mock).mockResolvedValueOnce({ isDirectory: () => false, isFile: () => true });
     (fs.readFile as jest.Mock).mockResolvedValueOnce('const a = new SomeService();');
 
-    const nativeResult = await handler.evaluate(rule as any, ctx as any);
+    const nativeResult = await handler.evaluate(rule as unknown, ctx as unknown);
     expect(nativeResult).toBeDefined();
     expect(nativeResult.result).toBe('failed');
   });

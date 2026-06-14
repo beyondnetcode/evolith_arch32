@@ -14,7 +14,7 @@ export class ScaffoldCommand extends BaseEvolithCommand {
     super('ScaffoldCommand');
   }
 
-  async executeCommand(passedParam: string[], options?: Record<string, any>): Promise<void> {
+  async executeCommand(passedParam: string[], options?: Record<string, unknown>): Promise<void> {
     const dryRun = options?.dryRun || false;
     if (this.strategy.setDryRun) {
       this.strategy.setDryRun(dryRun);

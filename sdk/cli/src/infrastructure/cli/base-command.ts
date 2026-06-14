@@ -13,7 +13,7 @@ export abstract class BaseEvolithCommand extends CommandRunner {
     this.promptService = promptService || new PromptService();
   }
 
-  async run(inputs: string[], options?: Record<string, any>): Promise<void> {
+  async run(inputs: string[], options?: Record<string, unknown>): Promise<void> {
     try {
       await this.executeCommand(inputs, options);
     } catch (error: unknown) {
@@ -25,7 +25,7 @@ export abstract class BaseEvolithCommand extends CommandRunner {
     }
   }
 
-  abstract executeCommand(inputs: string[], options?: Record<string, any>): Promise<void>;
+  abstract executeCommand(inputs: string[], options?: Record<string, unknown>): Promise<void>;
 
   protected handleError(error: unknown): never {
     const message = error instanceof Error ? error.message : String(error);

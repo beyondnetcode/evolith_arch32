@@ -55,10 +55,10 @@ export class ErrorReporter {
       errorInfo = {
         name: (error as Error).name,
         message: (error as Error).message,
-        code: (error as any).code,
+        code: (error as EvolithError).code,
         stack: (error as Error).stack,
       };
-      suggestion = this.getSuggestionForCode((error as any).code);
+      suggestion = this.getSuggestionForCode((error as EvolithError).code);
     } else if (error instanceof Error) {
       errorInfo = {
         name: (error as Error).name,

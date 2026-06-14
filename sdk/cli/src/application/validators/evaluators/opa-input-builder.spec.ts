@@ -20,7 +20,7 @@ function fsMock(cfg: { existing?: string[]; dirs?: Record<string, string[]>; dir
     }),
     readdirNames: jest.fn(async (p: string) => cfg.dirs?.[p] ?? []),
     stat: jest.fn(async (p: string) => ({ isDirectory: () => directories.has(p), isFile: () => !directories.has(p) })),
-  } as any;
+  } as unknown;
 }
 
 describe('OpaInputBuilder', () => {
@@ -95,9 +95,9 @@ describe('OpaInputBuilder', () => {
     expect(input.satellite.directories.sort()).toEqual(['contracts', 'src']);
     expect(Object.keys(input.satellite.workflows)).toEqual(['ci.yml']);
     expect(input.satellite.workspacePackageJsons[0].content.name).toBe('sat');
-    expect(input.satellite.workspacePackageJsons.some((p: any) => p.content.name === 'sat-a')).toBe(true);
+    expect(input.satellite.workspacePackageJsons.some((p: unknown) => p.content.name === 'sat-a')).toBe(true);
 
-    const mainInfo = input.satellite.sourceFiles.find((f: any) => f.path.endsWith('main.ts'));
+    const mainInfo = input.satellite.sourceFiles.find((f: unknown) => f.path.endsWith('main.ts'));
     expect(mainInfo.hasUiImport).toBe(true);
     expect(mainInfo.hasManualInstantiation).toBe(true);
     expect(mainInfo.usesRegexForCode).toBe(true);

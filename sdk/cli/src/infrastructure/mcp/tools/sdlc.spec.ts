@@ -13,9 +13,9 @@ const mockConfigParser = {
   parse: jest.fn(),
 };
 
-const handleSdlcTools = async (toolName: string, args: any, deps?: any) => {
-  const tools = getSdlcTools(mockFileSystem as any, mockConfigParser as any);
-  const tool = tools.find((t: any) => t.schema.name === toolName);
+const handleSdlcTools = async (toolName: string, args: unknown, deps?: unknown) => {
+  const tools = getSdlcTools(mockFileSystem as unknown, mockConfigParser as unknown);
+  const tool = tools.find((t: unknown) => t.schema.name === toolName);
   if (!tool) throw new Error(`Unknown ${toolName} tool`);
 
   // Create deps object if mockDep is a service (from old code)
@@ -77,7 +77,7 @@ describe("MCP Tools - sdlc", () => {
         path: "/test/repo",
       });
 
-      expect((result as any).currentPhase).toBe("phase-2");
+      expect((result as unknown).currentPhase).toBe("phase-2");
     });
 
     it("should include phase status in status", async () => {
@@ -93,7 +93,7 @@ describe("MCP Tools - sdlc", () => {
       });
 
       expect(result).toHaveProperty("phaseStatus");
-      expect((result as any).phaseStatus.length).toBe(5);
+      expect((result as unknown).phaseStatus.length).toBe(5);
     });
 
     it("should include timestamp", async () => {
@@ -168,8 +168,8 @@ describe("MCP Tools - sdlc", () => {
         toPhase: "phase-1",
       });
 
-      expect((result as any).handoff.fromPhase).toBe("phase-0");
-      expect((result as any).handoff.toPhase).toBe("phase-1");
+      expect((result as unknown).handoff.fromPhase).toBe("phase-0");
+      expect((result as unknown).handoff.toPhase).toBe("phase-1");
       expect(result).toHaveProperty("artifacts");
     });
 
@@ -185,8 +185,8 @@ describe("MCP Tools - sdlc", () => {
         toPhase: "phase-1",
       });
 
-      expect((result as any).artifacts).toBeDefined();
-      expect(Array.isArray((result as any).artifacts)).toBe(true);
+      expect((result as unknown).artifacts).toBeDefined();
+      expect(Array.isArray((result as unknown).artifacts)).toBe(true);
     });
 
     it("should handle phase-1 to phase-2 transition", async () => {
@@ -201,8 +201,8 @@ describe("MCP Tools - sdlc", () => {
         toPhase: "phase-2",
       });
 
-      expect((result as any).handoff.fromPhase).toBe("phase-1");
-      expect((result as any).handoff.toPhase).toBe("phase-2");
+      expect((result as unknown).handoff.fromPhase).toBe("phase-1");
+      expect((result as unknown).handoff.toPhase).toBe("phase-2");
     });
 
     it("should handle phase-2 to phase-3 transition", async () => {
@@ -217,8 +217,8 @@ describe("MCP Tools - sdlc", () => {
         toPhase: "phase-3",
       });
 
-      expect((result as any).handoff.fromPhase).toBe("phase-2");
-      expect((result as any).handoff.toPhase).toBe("phase-3");
+      expect((result as unknown).handoff.fromPhase).toBe("phase-2");
+      expect((result as unknown).handoff.toPhase).toBe("phase-3");
     });
 
     it("should handle phase-3 to phase-4 transition", async () => {
@@ -233,8 +233,8 @@ describe("MCP Tools - sdlc", () => {
         toPhase: "phase-4",
       });
 
-      expect((result as any).handoff.fromPhase).toBe("phase-3");
-      expect((result as any).handoff.toPhase).toBe("phase-4");
+      expect((result as unknown).handoff.fromPhase).toBe("phase-3");
+      expect((result as unknown).handoff.toPhase).toBe("phase-4");
     });
   });
 

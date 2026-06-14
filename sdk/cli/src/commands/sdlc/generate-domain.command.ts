@@ -17,7 +17,7 @@ export class GenerateDomainCommand extends BaseEvolithCommand {
 
   async executeCommand(
     passedParam: string[],
-    options?: Record<string, any>,
+    options?: Record<string, unknown>,
   ): Promise<void> {
     const target = passedParam[0];
     const fromFile: string | undefined = options?.from;

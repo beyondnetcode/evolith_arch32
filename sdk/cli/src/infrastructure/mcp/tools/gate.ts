@@ -85,13 +85,13 @@ export function getGateTools(fs: IFileSystem, configParser: IConfigParser): IMcp
             const warningCount = evidence.violations.filter(v => v.severity === 'warning').length;
             data = {
               ...evidence,
-              violations: [] as any,
+              violations: [] as unknown,
               summary: { errors: errorCount, warnings: warningCount }
-            } as any;
+            } as unknown;
           }
 
           return createSuccessEnvelope(data, getMeta());
-        } catch (error: any) {
+        } catch (error: unknown) {
           let code: 'INTERNAL_ERROR' | 'RULESET_NOT_FOUND' = 'INTERNAL_ERROR';
           if (error?.message?.includes('not found') || error?.message?.includes('ENOENT')) {
             code = 'RULESET_NOT_FOUND';

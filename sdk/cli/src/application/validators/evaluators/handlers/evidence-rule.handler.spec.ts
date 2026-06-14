@@ -12,7 +12,7 @@ function fsMock(cfg: { existing?: string[]; dirs?: Record<string, string[]>; fil
     exists: jest.fn(async (p: string) => existing.has(p)),
     readdirNames: jest.fn(async (p: string) => cfg.dirs?.[p] ?? []),
     readFile: jest.fn(async (p: string) => cfg.files?.[p] ?? ''),
-  } as any;
+  } as unknown;
 }
 
 function rule(id: string): NormalizedRule {

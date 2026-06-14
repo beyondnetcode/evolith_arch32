@@ -44,7 +44,7 @@ export class McpServeCommand extends BaseEvolithCommand {
         transport,
         port,
         apiKey,
-      } as any);
+      });
 
       return;
     } else if (action === 'version') {

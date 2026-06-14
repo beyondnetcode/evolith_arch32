@@ -11,9 +11,9 @@ const mockFileSystem = {
   existsSync: jest.fn(),
 };
 
-const handleAgentTools = async (toolName: string, args: any, deps?: any) => {
-  const tools = getAgentTools(mockFileSystem as any, {} as any);
-  const tool = tools.find((t: any) => t.schema.name === toolName);
+const handleAgentTools = async (toolName: string, args: unknown, deps?: unknown) => {
+  const tools = getAgentTools(mockFileSystem as unknown, {} as unknown);
+  const tool = tools.find((t: unknown) => t.schema.name === toolName);
   if (!tool) throw new Error(`Unknown ${toolName} tool`);
 
   // Create deps object if mockDep is a service (from old code)
@@ -95,7 +95,7 @@ describe("MCP Tools - agent", () => {
       });
 
       expect(result).toHaveProperty("agents");
-      expect((result as any).agents).toEqual([]);
+      expect((result as unknown).agents).toEqual([]);
     });
 
     it("should return list of agents", async () => {
@@ -110,7 +110,7 @@ describe("MCP Tools - agent", () => {
         dir: "/test",
       });
 
-      expect((result as any).agents.length).toBeGreaterThan(0);
+      expect((result as unknown).agents.length).toBeGreaterThan(0);
       expect(result).toHaveProperty("count");
     });
 
@@ -124,7 +124,7 @@ describe("MCP Tools - agent", () => {
         dir: "/test",
       });
 
-      expect((result as any).agents[0].version).toBe("1.0.0");
+      expect((result as unknown).agents[0].version).toBe("1.0.0");
     });
   });
 
@@ -171,7 +171,7 @@ describe("MCP Tools - agent", () => {
       });
 
       expect(
-        (result as any).issues.some((i: any) => i.field === "agent.name"),
+        (result as unknown).issues.some((i: unknown) => i.field === "agent.name"),
       ).toBe(true);
     });
 
@@ -189,7 +189,7 @@ describe("MCP Tools - agent", () => {
       });
 
       expect(
-        (result as any).issues.some((i: any) => i.field === "ruleset.version"),
+        (result as unknown).issues.some((i: unknown) => i.field === "ruleset.version"),
       ).toBe(true);
     });
 
@@ -206,7 +206,7 @@ describe("MCP Tools - agent", () => {
       });
 
       expect(
-        (result as any).issues.some((i: any) => i.field === "principles"),
+        (result as unknown).issues.some((i: unknown) => i.field === "principles"),
       ).toBe(true);
     });
   });

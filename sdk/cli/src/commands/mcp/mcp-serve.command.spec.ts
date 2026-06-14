@@ -18,7 +18,7 @@ describe('McpServeCommand', () => {
 
   beforeEach(() => {
     command = new McpServeCommand();
-    (command as any).promptService = promptService;
+    (command as unknown).promptService = promptService;
     jest.clearAllMocks();
   });
 

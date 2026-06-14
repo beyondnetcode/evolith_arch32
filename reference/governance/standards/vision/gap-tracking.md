@@ -14,8 +14,8 @@ This board is the single source of truth for gap priority and status. Select a g
 |---|---|:---:|:---:|:---:|:---:|
 | [`GT-58`](./gap-reference-catalog.md#gt-58) | Clean up TODO stubs injected by Hexagonal Scaffolder | Cross | P2 | S | `DONE` |
 | [`GT-57`](./gap-reference-catalog.md#gt-57) | Incomplete MCP tooling and validation implementation | F2 | P1 | L | `DONE` |
-| [`GT-56`](./gap-reference-catalog.md#gt-56) | Silent failures and missing mocks in CLI E2E tests | Cross | P1 | M | `PENDING` |
-| [`GT-55`](./gap-reference-catalog.md#gt-55) | TypeScript strictness and implicit any elimination | Cross | P1 | M | `PENDING` |
+| [`GT-56`](./gap-reference-catalog.md#gt-56) | Silent failures and missing mocks in CLI E2E tests | Cross | P1 | M | `DONE` |
+| [`GT-55`](./gap-reference-catalog.md#gt-55) | TypeScript strictness and implicit any elimination | Cross | P1 | M | `DONE` |
 | [`GT-54`](./gap-reference-catalog.md#gt-54) | Complete strict hexagonal boundary enforcement | Cross | P2 | L | `DONE` |
 | [`GT-53`](./gap-reference-catalog.md#gt-53) | Repair migrated product-vision references | Cross | P2 | S | `DONE` |
 | [`GT-52`](./gap-reference-catalog.md#gt-52) | Remove dead dependency-injection container stubs | Cross | P2 | S | `DONE` |
@@ -63,7 +63,7 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-02`](./gap-reference-catalog.md#gt-02) | `GateEvidence` modeled in the domain layer | F1 | P0 | M | `DONE` |
 | [`GT-01`](./gap-reference-catalog.md#gt-01) | Unified contract ADR | F0 | P0 | S | `DONE` |
 
-**Progress:** 48 / 50 done · 0 in progress · 2 pending · 0 deferred
+**Progress:** 50 / 50 done · 0 in progress · 0 pending · 0 deferred
 
 **Ordering:** criticality (`P0` → `P1` → `P2`), active status (`IN-PROGRESS` → `DONE` → `DEFERRED`), then complexity (`S` → `M` → `L`). Completed gaps follow active work.
 

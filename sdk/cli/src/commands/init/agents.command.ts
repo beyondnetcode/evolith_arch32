@@ -218,7 +218,12 @@ export class AgentsCommand extends BaseEvolithCommand {
       return;
     }
 
-    const ruleset = await fs.readJson(rulesetPath) as any;
+    interface AgentRuleset {
+      agent?: { name?: string; version?: string };
+      ruleset?: { version?: string };
+      principles?: Array<{ id?: string; principle?: string; severity?: string }>;
+    }
+    const ruleset = await fs.readJson(rulesetPath) as AgentRuleset;
     const issues: Array<{ field: string; message: string }> = [];
 
     if (!ruleset.agent?.name) issues.push({ field: 'agent.name', message: 'Agent name is required' });
@@ -297,7 +302,7 @@ export class AgentsCommand extends BaseEvolithCommand {
       return;
     }
 
-    const ruleset = await fs.readJson(rulesetPath) as any;
+    const ruleset = await fs.readJson(rulesetPath) as { agent?: { name?: string; version?: string }; ruleset?: { version?: string }; principles?: Array<{ id?: string; principle?: string; severity?: string }> };
     
     const parts = agent.version.split('.').map(Number);
     parts[2]++;

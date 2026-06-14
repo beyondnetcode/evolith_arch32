@@ -105,8 +105,8 @@ export class BlockingCriteriaValidator {
         const content = await this.fs.readFile(securityPath);
         const scan = JSON.parse(content) as {
           status?: string;
-          vulnerabilities?: any;
-          exceptions?: any[];
+          vulnerabilities?: unknown;
+          exceptions?: unknown[];
         };
 
         if (scan.status === 'failed' || scan.status === 'error') return true;
@@ -117,8 +117,8 @@ export class BlockingCriteriaValidator {
 
         if (scan.vulnerabilities && typeof scan.vulnerabilities === 'object') {
           if (Array.isArray(scan.vulnerabilities)) {
-            critical = scan.vulnerabilities.filter((v: any) => v.severity === 'critical' || v.severity === 'CRITICAL').length;
-            high = scan.vulnerabilities.filter((v: any) => v.severity === 'high' || v.severity === 'HIGH').length;
+            critical = scan.vulnerabilities.filter((v: unknown) => v.severity === 'critical' || v.severity === 'CRITICAL').length;
+            high = scan.vulnerabilities.filter((v: unknown) => v.severity === 'high' || v.severity === 'HIGH').length;
           } else {
             critical = scan.vulnerabilities.critical || 0;
             high = scan.vulnerabilities.high || 0;

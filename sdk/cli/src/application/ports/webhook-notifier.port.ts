@@ -1,3 +1,3 @@
 export interface IWebhookNotifier {
-  notify(url: string, evidence: any): Promise<void>;
+  notify(url: string, evidence: unknown): Promise<void>;
 }

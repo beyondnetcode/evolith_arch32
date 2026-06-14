@@ -4,10 +4,11 @@ import { NormalizedRule } from '../../domain/models/normalized-rule';
 import { IRulesetRepository } from '../../domain/ports/ruleset-repository.port';
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
+import { ValidateFunction } from 'ajv';
 
 export class DiskRulesetRepository implements IRulesetRepository {
   private readonly ajv: Ajv;
-  private validateSchema: any;
+  private validateSchema?: ValidateFunction;
 
   constructor(
     private readonly fs: IFileSystem,

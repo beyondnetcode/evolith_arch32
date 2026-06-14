@@ -19,7 +19,7 @@ describe('ValidateSatelliteUseCase', () => {
     mockValidator = {
       validate: jest.fn().mockResolvedValue(mockResult),
       loadRulesetById: jest.fn().mockResolvedValue([]),
-    } as any;
+    } as unknown;
 
     useCase = new ValidateSatelliteUseCase(mockValidator);
   });

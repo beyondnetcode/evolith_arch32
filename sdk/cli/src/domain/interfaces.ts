@@ -245,15 +245,15 @@ export interface IFileSystem {
   writeFile(path: string, content: string): Promise<void>;
   exists(path: string): Promise<boolean>;
   existsSync(path: string): boolean;
-  readJson<T = any>(path: string): Promise<T>;
-  writeJson(path: string, content: any): Promise<void>;
+  readJson<T = unknown>(path: string): Promise<T>;
+  writeJson(path: string, content: unknown): Promise<void>;
   mkdir(path: string): Promise<void>;
-  readdir(path: string): Promise<any[]>;
+  readdir(path: string): Promise<unknown[]>;
   readdirNames(path: string): Promise<string[]>;
   copy(src: string, dest: string): Promise<void>;
   ensureDir(path: string): Promise<void>;
   ensureFile(path: string): Promise<void>;
-  stat(path: string): Promise<any>;
+  stat(path: string): Promise<unknown>;
   remove(path: string): Promise<void>;
 }
 
@@ -263,10 +263,10 @@ export interface IConfigParser {
 }
 
 export interface ILogger {
-  info(message: string, context?: any): void;
-  warn(message: string, context?: any): void;
-  error(message: string, context?: any): void;
-  debug(message: string, context?: any): void;
+  info(message: string, context?: unknown): void;
+  warn(message: string, context?: unknown): void;
+  error(message: string, context?: unknown): void;
+  debug(message: string, context?: unknown): void;
 }
 
 export interface IProjectInitializer {

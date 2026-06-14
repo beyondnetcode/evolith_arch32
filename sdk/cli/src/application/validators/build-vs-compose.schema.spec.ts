@@ -88,13 +88,13 @@ describe('Build-versus-Compose gate evidence (GT-51)', () => {
           if (p.endsWith('build-vs-compose.schema.json')) return JSON.stringify(SCHEMA);
           throw new Error(`unexpected read: ${p}`);
         }),
-      } as any;
+      } as unknown;
       return new PhaseGateValidatorService('/core', { fileSystem: fsMock, logger: { warn: jest.fn(), error: jest.fn(), log: jest.fn(), info: jest.fn(), debug: jest.fn() } });
     }
 
     it('passes the evidence content check for a valid artifact', async () => {
       const service = makeService(validArtifact);
-      const result = await (service as any).evidenceValidator.validateSingleEvidence(
+      const result = await (service as unknown).evidenceValidator.validateSingleEvidence(
         { artifact: 'Build-versus-Compose Analysis', schemaRef: '../schema/build-vs-compose.schema.json' },
         '/project',
       );
@@ -107,7 +107,7 @@ describe('Build-versus-Compose gate evidence (GT-51)', () => {
       const { disposition, ...invalid } = validArtifact;
       void disposition;
       const service = makeService(invalid);
-      const result = await (service as any).evidenceValidator.validateSingleEvidence(
+      const result = await (service as unknown).evidenceValidator.validateSingleEvidence(
         { artifact: 'Build-versus-Compose Analysis', schemaRef: '../schema/build-vs-compose.schema.json' },
         '/project',
       );
@@ -118,7 +118,7 @@ describe('Build-versus-Compose gate evidence (GT-51)', () => {
 
     it('fails when the artifact is absent', async () => {
       const service = makeService(null);
-      const result = await (service as any).evidenceValidator.validateSingleEvidence(
+      const result = await (service as unknown).evidenceValidator.validateSingleEvidence(
         { artifact: 'Build-versus-Compose Analysis', schemaRef: '../schema/build-vs-compose.schema.json' },
         '/project',
       );

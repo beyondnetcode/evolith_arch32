@@ -18,17 +18,17 @@ describe('StandardsService', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    service = new StandardsService(mockFileSystem as any, '/test');
+    service = new StandardsService(mockFileSystem as unknown, '/test');
   });
 
   describe('constructor', () => {
     it('should use default standards directory', () => {
-      const svc = new StandardsService(mockFileSystem as any, '/base');
+      const svc = new StandardsService(mockFileSystem as unknown, '/base');
       expect(svc).toBeDefined();
     });
 
     it('should use custom standards directory when provided', () => {
-      const svc = new StandardsService(mockFileSystem as any, '/base', '/custom/standards');
+      const svc = new StandardsService(mockFileSystem as unknown, '/base', '/custom/standards');
       expect(svc).toBeDefined();
     });
   });
@@ -697,7 +697,7 @@ describe('StandardsService', () => {
       await service.register(standard);
 
       const writeCalls = mockFileSystem.writeJson.mock.calls.filter(
-        (call: any[]) => call[0].includes('standards-index.json'),
+        (call: unknown[]) => call[0].includes('standards-index.json'),
       );
       expect(writeCalls.length).toBeGreaterThan(0);
     });
@@ -735,7 +735,7 @@ describe('StandardsService', () => {
       await service.register(standard2);
 
       const indexWriteCall = mockFileSystem.writeJson.mock.calls.find(
-        (call: any[]) => call[0].includes('standards-index.json'),
+        (call: unknown[]) => call[0].includes('standards-index.json'),
       );
       expect(indexWriteCall).toBeDefined();
       expect(indexWriteCall[1].standards).toHaveLength(1);

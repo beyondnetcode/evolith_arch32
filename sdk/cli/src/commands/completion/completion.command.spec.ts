@@ -30,7 +30,7 @@ describe('CompletionCommand', () => {
   beforeEach(() => {
     command = new CompletionCommand();
     logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
-    (command as any).promptService = {
+    (command as unknown).promptService = {
       showIntro: (message: string) => console.log(message),
       showOutro: (message: string) => console.log(message),
       showInfo: (message: string) => console.log(message),
@@ -99,7 +99,7 @@ describe('CompletionCommand', () => {
       process.env.SHELL = '/bin/zsh';
 
       const cmd = new CompletionCommand();
-      const result = (cmd as any).detectShell();
+      const result = (cmd as unknown).detectShell();
 
       expect(result).toBe('zsh');
       process.env.SHELL = originalShell;
@@ -110,7 +110,7 @@ describe('CompletionCommand', () => {
       process.env.SHELL = '/bin/bash';
 
       const cmd = new CompletionCommand();
-      const result = (cmd as any).detectShell();
+      const result = (cmd as unknown).detectShell();
 
       expect(result).toBe('bash');
       process.env.SHELL = originalShell;
@@ -121,7 +121,7 @@ describe('CompletionCommand', () => {
       process.env.SHELL = '/usr/bin/fish';
 
       const cmd = new CompletionCommand();
-      const result = (cmd as any).detectShell();
+      const result = (cmd as unknown).detectShell();
 
       expect(result).toBe('fish');
       process.env.SHELL = originalShell;
@@ -132,7 +132,7 @@ describe('CompletionCommand', () => {
       process.env.SHELL = '';
 
       const cmd = new CompletionCommand();
-      const result = (cmd as any).detectShell();
+      const result = (cmd as unknown).detectShell();
 
       expect(result).toBe('bash');
       process.env.SHELL = originalShell;
@@ -143,7 +143,7 @@ describe('CompletionCommand', () => {
       delete process.env.SHELL;
 
       const cmd = new CompletionCommand();
-      const result = (cmd as any).detectShell();
+      const result = (cmd as unknown).detectShell();
 
       expect(result).toBe('bash');
       process.env.SHELL = originalShell;
@@ -154,7 +154,7 @@ describe('CompletionCommand', () => {
     it('should report script not found', async () => {
       (fs.pathExists as unknown as jest.Mock).mockResolvedValue(false);
 
-      await (command as any).installBash('/some/dir');
+      await (command as unknown).installBash('/some/dir');
 
       expect(logSpy).toHaveBeenCalledWith(
         expect.stringContaining('Bash completion script not found')
@@ -165,7 +165,7 @@ describe('CompletionCommand', () => {
       (fs.pathExists as unknown as jest.Mock).mockResolvedValue(true);
       (fs.readFile as unknown as jest.Mock).mockResolvedValue('# Evolith CLI completion\nsource "..."');
 
-      await (command as any).installBash('/some/dir');
+      await (command as unknown).installBash('/some/dir');
 
       expect(logSpy).toHaveBeenCalledWith(
         expect.stringContaining('Bash completion already installed')
@@ -176,7 +176,7 @@ describe('CompletionCommand', () => {
       (fs.pathExists as unknown as jest.Mock).mockResolvedValueOnce(true);
       (fs.pathExists as unknown as jest.Mock).mockResolvedValueOnce(false);
 
-      await (command as any).installBash('/some/dir');
+      await (command as unknown).installBash('/some/dir');
 
       expect(fs.appendFile).toHaveBeenCalled();
       expect(logSpy).toHaveBeenCalledWith(
@@ -188,7 +188,7 @@ describe('CompletionCommand', () => {
       (fs.pathExists as unknown as jest.Mock).mockResolvedValueOnce(true);
       (fs.pathExists as unknown as jest.Mock).mockResolvedValueOnce(false);
 
-      await (command as any).installBash('/some/dir');
+      await (command as unknown).installBash('/some/dir');
 
       expect(fs.appendFile).toHaveBeenCalled();
     });
@@ -198,7 +198,7 @@ describe('CompletionCommand', () => {
     it('should report script not found', async () => {
       (fs.pathExists as unknown as jest.Mock).mockResolvedValue(false);
 
-      await (command as any).installZsh('/some/dir');
+      await (command as unknown).installZsh('/some/dir');
 
       expect(logSpy).toHaveBeenCalledWith(
         expect.stringContaining('Zsh completion script not found')
@@ -209,7 +209,7 @@ describe('CompletionCommand', () => {
       (fs.pathExists as unknown as jest.Mock).mockResolvedValue(true);
       (fs.readFile as unknown as jest.Mock).mockResolvedValue('# Evolith CLI completion\nsource "..."');
 
-      await (command as any).installZsh('/some/dir');
+      await (command as unknown).installZsh('/some/dir');
 
       expect(logSpy).toHaveBeenCalledWith(
         expect.stringContaining('Zsh completion already installed')
@@ -220,7 +220,7 @@ describe('CompletionCommand', () => {
       (fs.pathExists as unknown as jest.Mock).mockResolvedValueOnce(true);
       (fs.pathExists as unknown as jest.Mock).mockResolvedValueOnce(false);
 
-      await (command as any).installZsh('/some/dir');
+      await (command as unknown).installZsh('/some/dir');
 
       expect(fs.appendFile).toHaveBeenCalled();
       expect(logSpy).toHaveBeenCalledWith(
@@ -233,7 +233,7 @@ describe('CompletionCommand', () => {
     it('should report script not found', async () => {
       (fs.pathExists as unknown as jest.Mock).mockResolvedValue(false);
 
-      await (command as any).installFish('/some/dir');
+      await (command as unknown).installFish('/some/dir');
 
       expect(logSpy).toHaveBeenCalledWith(
         expect.stringContaining('Fish completion script not found')
@@ -243,7 +243,7 @@ describe('CompletionCommand', () => {
     it('should install fish completion', async () => {
       (fs.pathExists as unknown as jest.Mock).mockResolvedValue(true);
 
-      await (command as any).installFish('/some/dir');
+      await (command as unknown).installFish('/some/dir');
 
       expect(fs.ensureDir).toHaveBeenCalled();
       expect(fs.copy).toHaveBeenCalled();
@@ -257,7 +257,7 @@ describe('CompletionCommand', () => {
     it('should report completion scripts not found', async () => {
       (fs.pathExists as unknown as jest.Mock).mockResolvedValue(false);
 
-      await (command as any).installCompletion('bash');
+      await (command as unknown).installCompletion('bash');
 
       expect(logSpy).toHaveBeenCalledWith(
         expect.stringContaining('Completion scripts not found')
@@ -267,7 +267,7 @@ describe('CompletionCommand', () => {
 
   describe('showCompletionHelp', () => {
     it('should display usage information', async () => {
-      await (command as any).showCompletionHelp('bash');
+      await (command as unknown).showCompletionHelp('bash');
 
       expect(logSpy).toHaveBeenCalledWith(
         expect.stringContaining('Usage:')
@@ -275,7 +275,7 @@ describe('CompletionCommand', () => {
     });
 
     it('should display supported shells', async () => {
-      await (command as any).showCompletionHelp('zsh');
+      await (command as unknown).showCompletionHelp('zsh');
 
       expect(logSpy).toHaveBeenCalledWith(
         expect.stringContaining('Supported shells:')
@@ -283,7 +283,7 @@ describe('CompletionCommand', () => {
     });
 
     it('should display examples', async () => {
-      await (command as any).showCompletionHelp('fish');
+      await (command as unknown).showCompletionHelp('fish');
 
       expect(logSpy).toHaveBeenCalledWith(
         expect.stringContaining('Examples:')
@@ -291,7 +291,7 @@ describe('CompletionCommand', () => {
     });
 
     it('should show detected shell', async () => {
-      await (command as any).showCompletionHelp('bash');
+      await (command as unknown).showCompletionHelp('bash');
 
       expect(logSpy).toHaveBeenCalledWith(
         expect.stringContaining('Detected shell: bash')
@@ -301,7 +301,7 @@ describe('CompletionCommand', () => {
 
   describe('findCliPath', () => {
     it('should return process.argv[1]', async () => {
-      const result = await (command as any).findCliPath();
+      const result = await (command as unknown).findCliPath();
       expect(result).toBe(process.argv[1]);
     });
   });

@@ -1,0 +1,30 @@
+{
+  "agent": {
+    "name": "test-value",
+    "template": "test-value",
+    "version": "1.0.0",
+    "installedAt": "2026-06-14T02:51:05.942Z"
+  },
+  "ruleset": {
+    "version": "1.0",
+    "type": "agent",
+    "scope": "governance"
+  },
+  "principles": [
+    {
+      "id": "AGT-01",
+      "principle": "Agent Identity",
+      "statement": "Agent test-value enforces Evolith governance standards",
+      "severity": "MUST",
+      "blocking": true
+    }
+  ],
+  "metadata": {
+    "adrs": [
+      "discovery"
+    ],
+    "rulesets": [
+      "discovery"
+    ]
+  }
+}

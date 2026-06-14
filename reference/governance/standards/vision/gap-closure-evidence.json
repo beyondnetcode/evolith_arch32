@@ -720,6 +720,40 @@
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "All MCP roadmap TODO items have been implemented and F1/F2/F3 architecture validation now correctly delegates to the OPA RulesetValidatorService."
+    },
+    {
+      "id": "GT-56",
+      "closedAt": "2026-06-14",
+      "closureCommit": "da470d460c8fc99e4322b1ec5f5980006b3b7968",
+      "evidence": [
+        "sdk/cli/test/agents.e2e-spec.ts",
+        "sdk/cli/test/mock-prompt.service.ts",
+        "sdk/cli/src/commands/init/init.command.ts",
+        "sdk/cli/src/commands/init/agents.command.ts",
+        "sdk/cli/src/commands/adr/adr.command.ts"
+      ],
+      "validationCommands": [
+        "npm run test:e2e --workspace sdk/cli"
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "All interactive prompts are safely mocked."
+    },
+    {
+      "id": "GT-55",
+      "closedAt": "2026-06-14",
+      "closureCommit": "6772c5b",
+      "evidence": [
+        "sdk/cli/.eslintrc.js",
+        "sdk/cli/src/domain/interfaces.ts",
+        "sdk/cli/src/infrastructure/cli/base-command.ts",
+        "sdk/cli/src/infrastructure/prompts/prompt.service.ts"
+      ],
+      "validationCommands": [
+        "npm run lint --workspace sdk/cli",
+        "npm run test:unit --workspace sdk/cli",
+        "npm run test:e2e --workspace sdk/cli"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

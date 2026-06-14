@@ -15,7 +15,7 @@ jest.mock('child_process', () => {
   // Attach promisify.custom so promisify(exec) === execAsync
   const { promisify: prom } = require('util');
   const exec = jest.fn();
-  (exec as any)[prom.custom] = execAsync;
+  (exec as unknown)[prom.custom] = execAsync;
   return { exec };
 });
 

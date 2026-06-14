@@ -84,7 +84,7 @@ export function getPhaseAdvanceTools(fs: IFileSystem, configParser: IConfigParse
           const proposal = await useCase.execute(input);
 
           return createSuccessEnvelope(proposal, getMeta());
-        } catch (error: any) {
+        } catch (error: unknown) {
           let code: 'INTERNAL_ERROR' | 'RULESET_NOT_FOUND' = 'INTERNAL_ERROR';
           if (error?.message?.includes('not found') || error?.message?.includes('ENOENT')) {
             code = 'RULESET_NOT_FOUND';

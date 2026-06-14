@@ -13,14 +13,14 @@ const mockExec = execSync as jest.Mock;
 /** Collect all `npx nx` commands that were executed. */
 function nxCalls(): string[] {
   return mockExec.mock.calls
-    .map((c: any[]) => String(c[0]))
+    .map((c: unknown[]) => String(c[0]))
     .filter(cmd => cmd.includes('npx nx'));
 }
 
 /** Collect all `npm` commands. */
 function npmCalls(): string[] {
   return mockExec.mock.calls
-    .map((c: any[]) => String(c[0]))
+    .map((c: unknown[]) => String(c[0]))
     .filter(cmd => cmd.startsWith('npm '));
 }
 

@@ -964,7 +964,7 @@
     {
       "id": "GT-65",
       "closedAt": "2026-06-13",
-      "closureCommit": "5304ea0",
+      "closureCommit": "3418a1d",
       "evidence": [
         "apps/core-api/src/infrastructure/metrics/",
         "apps/core-api/src/presentation/controllers/health.controller.ts",

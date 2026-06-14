@@ -62,6 +62,9 @@ When you already know which artifact you need, skip the descent and open the [Gl
 | [Product Vision](./reference/product-suite/vision/evolith-product-vision-master.md) | Strategic direction, roadmap, and maturity model | Align teams to long-term goals | Vision and strategy |
 | [SDLC Governance Center](./reference/governance/sdlc/README.md) | Authoritative lifecycle phases, gates, artifacts, and traceability model | Govern the full development lifecycle | Governance hub |
 | [Global Master Index](./reference/navigation/MASTER_INDEX.md) | Complete repository navigation when you already know what artifact you need | Locate any artifact quickly | Navigation index |
+| [Integration & Messaging Hub](./reference/architecture/INTEGRATION_HUB.md) | Async messaging strategies, integration topologies, and pattern governance | Standardize messaging patterns | Architecture hub |
+| [Application Architecture Hub](./reference/architecture/APPLICATION_ARCHITECTURE_HUB.md) | Core application patterns (PoEAA) for decoupling data and logic | Standardize app structures | Architecture hub |
+| [Domain-Driven Design Hub](./reference/architecture/DOMAIN_DESIGN_HUB.md) | Strategic and tactical DDD patterns for microservices and bounded contexts | Align software with business domains | Architecture hub |
 
 </details>
 

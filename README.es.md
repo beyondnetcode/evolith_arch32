@@ -62,6 +62,9 @@ Cuando ya sabes qué artefacto necesitas, sáltate el descenso y abre el [Índic
 | [Vision del Producto](./reference/product-suite/vision/evolith-product-vision-master.es.md) | Dirección estratégica, hoja de ruta y modelo de madurez | Alinear equipos a objetivos a largo plazo | Visión y estrategia |
 | [Centro de Gobernanza SDLC](./reference/governance/sdlc/README.es.md) | Fases, gates, artefactos y modelo de trazabilidad autoritativos | Gobernar el ciclo de vida completo | Hub de gobernanza |
 | [Indice Maestro Global](./reference/navigation/MASTER_INDEX.es.md) | Navegación completa del repositorio cuando ya sabes qué artefacto necesitas | Localizar cualquier artefacto rápidamente | Índice de navegación |
+| [Integration & Messaging Hub](./reference/architecture/INTEGRATION_HUB.es.md) | Estrategias de mensajería asíncrona, topologías de integración y gobernanza de patrones | Estandarizar mensajería de microservicios | Hub de arquitectura |
+| [Application Architecture Hub](./reference/architecture/APPLICATION_ARCHITECTURE_HUB.es.md) | Patrones de aplicación core (PoEAA) para desacoplar datos y lógica | Estandarizar estructuras de apps | Hub de arquitectura |
+| [Domain-Driven Design Hub](./reference/architecture/DOMAIN_DESIGN_HUB.es.md) | Patrones DDD estratégicos y tácticos para microservicios y contextos delimitados | Alinear software con dominios de negocio | Hub de arquitectura |
 
 </details>
 

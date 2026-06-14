@@ -9,6 +9,7 @@ import { HealthService } from './application/services/health.service';
 import { GatesController } from './presentation/controllers/gates.controller';
 import { ProjectsController } from './presentation/controllers/projects.controller';
 import { ArchitectureController } from './presentation/controllers/architecture.controller';
+import { PhasesController } from './presentation/controllers/phases.controller';
 import { CoreDomainModule } from './core-domain.module';
 import { CorrelationIdMiddleware } from './infrastructure/middleware/correlation-id.middleware';
 import { ApiKeyAuthGuard } from './infrastructure/auth/api-key.guard';
@@ -40,7 +41,8 @@ import { AuditThrottlerGuard } from './infrastructure/guards/audit-throttler.gua
     HealthController,
     GatesController,
     ProjectsController,
-    ArchitectureController
+    ArchitectureController,
+    PhasesController
   ],
   providers: [
     HealthService,

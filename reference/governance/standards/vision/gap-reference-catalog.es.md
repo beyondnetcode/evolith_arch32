@@ -793,10 +793,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Gap:** `PhaseTransitionUseCase` existe en `core-domain` pero no está expuesto via la interfaz REST del Core API. El Tracker no puede consultar ni disparar transiciones de fase a través del servicio.
 - **Propósito:** Crear un `PhasesController` con endpoints `POST /api/v1/phases/transition` y `GET /api/v1/phases/:projectId` respaldados por `PhaseTransitionUseCase`.
 - **Criterio de cierre:**
-  - [ ] `PhasesController` creado con endpoints de transición y estado
-  - [ ] `PhaseTransitionUseCase` inyectado via `CoreDomainProviders`
-  - [ ] `TransitionPhaseDto` con decorators de class-validator
-  - [ ] Pruebas unitarias para el controller
+  - [x] `PhasesController` creado con endpoints de transición y estado
+  - [x] `PhaseTransitionUseCase` inyectado via `CoreDomainProviders`
+  - [x] `TransitionPhaseDto` con decorators de class-validator
+  - [x] Pruebas unitarias para el controller
 - **Referencias:** [packages/core-domain/src/application/use-cases/phase-transition.use-case.ts](../../../../packages/core-domain/src/application/use-cases/phase-transition.use-case.ts) · [apps/core-api/src/app.module.ts](../../../../apps/core-api/src/app.module.ts)
 
 #### GT-77

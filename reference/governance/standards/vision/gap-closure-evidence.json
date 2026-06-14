@@ -933,6 +933,19 @@
         "npm test --workspace apps/core-api -- --testPathPatterns=\"e2e\" --no-coverage"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-76",
+      "closedAt": "2026-06-13",
+      "closureCommit": "4f7c1ae",
+      "evidence": [
+        "apps/core-api/src/presentation/controllers/phases.controller.ts",
+        "apps/core-api/src/core-domain.module.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace apps/core-api -- --testPathPatterns=\"phases\" --no-coverage"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

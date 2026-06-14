@@ -793,10 +793,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Gap:** `PhaseTransitionUseCase` exists in `core-domain` but is not exposed via the Core API REST interface. The Tracker cannot query or trigger phase transitions through the service.
 - **Purpose:** Create a `PhasesController` with `POST /api/v1/phases/transition` and `GET /api/v1/phases/:projectId` endpoints backed by `PhaseTransitionUseCase`.
 - **Done when:**
-  - [ ] `PhasesController` created with transition and status endpoints
-  - [ ] `PhaseTransitionUseCase` injected via `CoreDomainProviders`
-  - [ ] `TransitionPhaseDto` with class-validator decorators
-  - [ ] Unit tests for the controller
+  - [x] `PhasesController` created with transition and status endpoints
+  - [x] `PhaseTransitionUseCase` injected via `CoreDomainProviders`
+  - [x] `TransitionPhaseDto` with class-validator decorators
+  - [x] Unit tests for the controller
 - **References:** [packages/core-domain/src/application/use-cases/phase-transition.use-case.ts](../../../../packages/core-domain/src/application/use-cases/phase-transition.use-case.ts) · [apps/core-api/src/app.module.ts](../../../../apps/core-api/src/app.module.ts)
 
 #### GT-77

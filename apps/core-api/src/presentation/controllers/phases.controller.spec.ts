@@ -1,0 +1,34 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import { PhasesController } from './phases.controller';
+import { PhaseTransitionUseCase } from '@evolith/core-domain/application/use-cases';
+
+describe('PhasesController', () => {
+  let controller: PhasesController;
+  let useCase: { execute: jest.Mock };
+
+  beforeEach(async () => {
+    useCase = { execute: jest.fn().mockResolvedValue({ success: true, from: 'phase-0', to: 'phase-1' }) };
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [PhasesController],
+      providers: [{ provide: PhaseTransitionUseCase, useValue: useCase }],
+    }).compile();
+    controller = module.get<PhasesController>(PhasesController);
+  });
+
+  it('should execute a phase transition', async () => {
+    await controller.transition({
+      from: 'phase-0',
+      to: 'phase-1',
+      tools: ['lint', 'test'],
+      cwd: '/project',
+    });
+    expect(useCase.execute).toHaveBeenCalledWith('phase-0', 'phase-1', ['lint', 'test'], '/project');
+  });
+
+  it('should propagate use case errors', async () => {
+    useCase.execute.mockRejectedValue(new Error('Invalid phase transition'));
+    await expect(
+      controller.transition({ from: 'phase-0', to: 'phase-99', tools: [], cwd: '/test' })
+    ).rejects.toThrow('Invalid phase transition');
+  });
+});

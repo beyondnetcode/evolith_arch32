@@ -7,7 +7,8 @@ import {
   EvaluateGateUseCase,
   InitializeProjectUseCase,
   ProposePhaseAdvanceUseCase,
-  ValidateSatelliteUseCase
+  ValidateSatelliteUseCase,
+  PhaseTransitionUseCase
 } from '@evolith/core-domain/application/use-cases';
 import {
   PhaseGateValidatorService,
@@ -83,6 +84,13 @@ const CoreDomainProviders = [
       return new ValidateSatelliteUseCase(fs, logger, validator);
     },
     inject: ['IFileSystem', 'ILogger', RulesetValidatorService],
+  },
+  {
+    provide: PhaseTransitionUseCase,
+    useFactory: (fs: IFileSystem, logger: ILogger, phaseGateValidator: PhaseGateValidatorService) => {
+      return new PhaseTransitionUseCase(fs, undefined, undefined, logger);
+    },
+    inject: ['IFileSystem', 'ILogger', PhaseGateValidatorService],
   }
 ];
 

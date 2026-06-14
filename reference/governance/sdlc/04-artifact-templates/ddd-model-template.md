@@ -30,3 +30,16 @@
 
 ## 3. Tactical Design
 [PLACEHOLDER: Explain design decisions, Small Aggregates pattern, boundaries, and context mapping]
+
+## 4. Service Topology — Domain-Oriented Microservice Architecture (DOMA)
+
+> **Applies at Phase 3 (F3 microservices).** Products in F1/F2 remain a modular monolith; this section documents how the model decomposes **when** the extraction-readiness criteria are met. Governed by [ADR-0076](../../../architecture/adrs/core/0076-domain-oriented-microservice-architecture.md).
+
+State, for each bounded context above, how it maps to a service topology under DOMA:
+
+- **Domain grouping:** which bounded context(s) form each business domain (the unit of autonomy). One service belongs to exactly one domain.
+- **Domain gateway contract:** the stable, versioned contract each domain exposes; intra-domain calls may be direct, cross-domain interaction is asynchronous (events).
+- **Data ownership:** confirm no cross-domain joins or shared schemas (schema-per-context).
+- **Decomposition guard:** confirm no proposed service boundary splits a bounded context.
+
+[PLACEHOLDER: per-domain table — domain · bounded contexts · gateway contract · owned schema · async events consumed/published]

@@ -34,6 +34,7 @@ La confianza manual, la aprobación verbal o el acuerdo informal no pueden reemp
 | Distribución de pirámide de testing | Objetivo 70% unitarias / 20% integración / 10% E2E | Diseño, Validación | Requiere explicación cuando la distribución del release se desvía materialmente |
 | Delta documental | Requerido cuando cambia comportamiento, arquitectura, API u operación | Construcción, Entrega | Bloquea merge o Producción Activa cuando falta |
 | Evidencia de observabilidad | Requerida para rutas productivas | Entrega | Bloquea Producción Activa cuando telemetría o logs no son verificables |
+| Topología de servicios alineada al dominio (DOMA) | Cada servicio F3 mapea a exactamente un bounded context | Diseño, Construcción | Bloquea Design Baseline o Successful Build cuando un servicio parte o cruza un bounded context — solo microservicios F3 ([ADR-0076](../../architecture/adrs/core/0076-domain-oriented-microservice-architecture.es.md)) |
 
 ---
 

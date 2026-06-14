@@ -30,3 +30,16 @@
 
 ## 3. Diseño Táctico
 [PLACEHOLDER: Explicar decisiones de diseño, patrón Small Aggregates, fronteras y Context Mapping]
+
+## 4. Topología de Servicios — Arquitectura de Microservicios Orientada a Dominios (DOMA)
+
+> **Aplica en Fase 3 (microservicios F3).** Los productos en F1/F2 permanecen como monolito modular; esta sección documenta cómo se descompone el modelo **cuando** se cumplen los criterios de extraction-readiness. Gobernado por [ADR-0076](../../../architecture/adrs/core/0076-domain-oriented-microservice-architecture.es.md).
+
+Indica, para cada bounded context anterior, cómo mapea a una topología de servicios bajo DOMA:
+
+- **Agrupación por dominio:** qué bounded context(s) forman cada dominio de negocio (la unidad de autonomía). Un servicio pertenece a exactamente un dominio.
+- **Contrato de gateway de dominio:** el contrato estable y versionado que cada dominio expone; las llamadas intra-dominio pueden ser directas, la interacción cross-dominio es asíncrona (eventos).
+- **Propiedad de datos:** confirmar que no hay joins cross-dominio ni esquemas compartidos (schema-per-context).
+- **Guardia de descomposición:** confirmar que ninguna frontera de servicio propuesta parte un bounded context.
+
+[PLACEHOLDER: tabla por dominio — dominio · bounded contexts · contrato de gateway · esquema propio · eventos asíncronos consumidos/publicados]

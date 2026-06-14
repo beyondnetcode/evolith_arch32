@@ -12,7 +12,7 @@
   "evidence": {
     "closureRecords": 70,
     "cliPackage": "@evolith/smart-cli@1.1.0",
-    "adrCount": 86,
+    "adrCount": 87,
     "rulesetCount": 27,
     "schemaCount": 18
   },

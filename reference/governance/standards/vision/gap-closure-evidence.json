@@ -1017,7 +1017,7 @@
     {
       "id": "GT-66",
       "closedAt": "2026-06-13",
-      "closureCommit": "8db913a",
+      "closureCommit": "535959b",
       "evidence": [
         "apps/core-api/src/tracing.ts",
         "apps/core-api/src/main.ts"

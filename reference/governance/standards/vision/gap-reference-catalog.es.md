@@ -444,7 +444,8 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Gap:** `src/infrastructure/di/container.ts` todavía exporta `getContainer = () => ({})` y `resetContainer = () => {}` como stubs no-op que quedaron tras la eliminación del service locator ([GT-04](#gt-04)) y la consolidación de DI ([GT-17](#gt-17)).
 - **Propósito:** Eliminar una costura fantasma que tergiversa el modelo de wiring, para que el composition root en `app.module.ts` sea la única fuente de construcción.
 - **Cierre cuando:** los stubs se eliminan (o se reemplazan por una abstracción real y usada), ningún código productivo depende de ellos, y el build y los tests pasan.
-- **Referencias:** [Contenedor DI](../../../../sdk/cli/src/infrastructure/di/container.ts) · [Composition Root](../../../../sdk/cli/src/app.module.ts) · [GT-17](#gt-17)
+- **Evidencia de cierre:** El commit elimina `sdk/cli/src/infrastructure/di/container.ts` (los stubs no-op `getContainer`/`resetContainer` que quedaron tras [GT-04](#gt-04) y [GT-17](#gt-17)); ningún código productivo los importaba. Los bloques `jest.mock('.../di/container', …)` muertos y los imports sin uso se eliminaron del app-module, los specs de comandos init/adr/standards y el spec de gate-status. El composition root en `app.module.ts` es la única fuente de construcción; el build, 1.206 tests unitarios y 121 E2E pasan con cobertura en 80,70%.
+- **Referencias:** [Composition Root](../../../../sdk/cli/src/app.module.ts) · [GT-17](#gt-17)
 
 #### GT-53
 
@@ -453,6 +454,8 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Gap:** La Evaluación de Madurez enlaza a `./evolith-product-vision-master.md`, que ahora es solo un stub de migración; el documento canónico se movió a `reference/product-suite/vision/`. La única superficie de madurez apunta a un placeholder de redirección.
 - **Propósito:** Mantener las superficies canónicas de madurez y visión apuntando a contenido vivo, para que la navegación y la validación reflejen el grafo documental real.
 - **Cierre cuando:** la evaluación de madurez (EN/ES) y cualquier otra referencia de Core resuelven a la ruta canónica de la visión, y la validación de enlaces pasa sin stubs de redirección en el grafo referenciado.
+- **Evidencia de cierre:** Los stubs de redirección de migración en `reference/governance/standards/vision/evolith-product-vision-master.md` (+`.es.md`) se eliminan, y toda referencia de Core resuelve ahora a la ruta canónica `reference/product-suite/vision/`: la Evaluación de Madurez (EN/ES), los READMEs de vision y de product-suite/vision (este último enlazaba de vuelta al stub), el README raíz y `rulesets/acl/README` (EN/ES). Borrar los stubs destapó estos enlaces migrados ocultos, que `validate-docs.mjs` ahora confirma que resuelven. El índice bilingüe se regeneró.
+- **Verificación local (2026-06-14):** `validate-docs.mjs` pasa para 825 archivos sin enlaces rotos, la paridad bilingüe y el chequeo de huérfanos pasan, y no queda ninguna referencia al stub fuera del ledger histórico de migración. Estado: `COMPLETADO`.
 - **Referencias:** [Evaluación de Madurez](./maturity-assessment.es.md) · [Visión Maestra Canónica](../../../product-suite/vision/evolith-product-vision-master.es.md)
 
 #### GT-54

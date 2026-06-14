@@ -309,6 +309,38 @@
       "dependencyRationale": "Tracker-owned chat and session behavior was removed; Core exposes governed capabilities through CLI and MCP only."
     },
     {
+      "id": "GT-52",
+      "closedAt": "2026-06-14",
+      "closureCommit": "0601eaf9b933d6ff0b43782cac2f62b94ed623d3",
+      "evidence": [
+        "sdk/cli/src/app.module.spec.ts",
+        "sdk/cli/src/commands/adr/adr.command.spec.ts",
+        "sdk/cli/src/commands/standards/standards.command.spec.ts"
+      ],
+      "validationCommands": [
+        "npm run build --workspace sdk/cli",
+        "npm test --workspace sdk/cli -- --runInBand"
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "Completes the service-locator removal (GT-04) and DI consolidation (GT-17) by deleting the leftover no-op stubs."
+    },
+    {
+      "id": "GT-53",
+      "closedAt": "2026-06-14",
+      "closureCommit": "0da71feda4238fe247a0033145e7e4a1008bad29",
+      "evidence": [
+        "reference/governance/standards/vision/maturity-assessment.md",
+        "reference/product-suite/vision/README.md",
+        "rulesets/acl/README.md",
+        "README.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/validate-docs.mjs",
+        "node .harness/scripts/check-bilingual-parity.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-51",
       "closedAt": "2026-06-14",
       "closureCommit": "54386a3485c987f6b9a09d48d369d8efc837312a",

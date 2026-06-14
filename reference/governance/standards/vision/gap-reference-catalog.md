@@ -444,7 +444,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Gap:** `src/infrastructure/di/container.ts` still exports `getContainer = () => ({})` and `resetContainer = () => {}` as no-op stubs left behind after the service-locator removal ([GT-04](#gt-04)) and DI consolidation ([GT-17](#gt-17)).
 - **Purpose:** Eliminate a phantom seam that misrepresents the wiring model, so the composition root in `app.module.ts` is the single source of construction.
 - **Done when:** the stubs are removed (or replaced by a real, used abstraction), no production code depends on them, and the build and tests pass.
-- **References:** [DI Container](../../../../sdk/cli/src/infrastructure/di/container.ts) · [Composition Root](../../../../sdk/cli/src/app.module.ts) · [GT-17](#gt-17)
+- **Closure evidence:** Commit deletes `sdk/cli/src/infrastructure/di/container.ts` (the `getContainer`/`resetContainer` no-op stubs left after [GT-04](#gt-04) and [GT-17](#gt-17)); no production code imported them. The now-dead `jest.mock('.../di/container', …)` blocks and unused imports were removed from the app-module, init/adr/standards command specs, and the gate-status spec. The composition root in `app.module.ts` is the single source of construction; build, 1,206 unit tests, and 121 E2E tests pass with coverage at 80.70%.
+- **References:** [Composition Root](../../../../sdk/cli/src/app.module.ts) · [GT-17](#gt-17)
 
 #### GT-53
 
@@ -453,6 +454,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Gap:** The Maturity Assessment links to `./evolith-product-vision-master.md`, which is now only a migration stub; the canonical document moved to `reference/product-suite/vision/`. The single maturity surface points to a redirect placeholder.
 - **Purpose:** Keep the canonical maturity and vision surfaces pointing at live content so navigation and validation reflect the real document graph.
 - **Done when:** the maturity assessment (EN/ES) and any other Core references resolve to the canonical vision path, and link validation passes with no redirect stubs in the referenced graph.
+- **Closure evidence:** The migration redirect stubs at `reference/governance/standards/vision/evolith-product-vision-master.md` (+`.es.md`) are deleted, and every Core reference now resolves to the canonical `reference/product-suite/vision/` path: the Maturity Assessment (EN/ES), the vision and product-suite/vision READMEs (the latter previously linked back to the stub), the root README, and `rulesets/acl/README` (EN/ES). Deleting the stubs surfaced these otherwise-hidden migrated links, which `validate-docs.mjs` now confirms resolve. The bilingual index was regenerated.
+- **Local verification (2026-06-14):** `validate-docs.mjs` passes for 825 files with no broken links, bilingual parity and orphan checks pass, and no stub references remain outside the historical migration ledger. Status: `DONE`.
 - **References:** [Maturity Assessment](./maturity-assessment.md) · [Canonical Vision Master](../../../product-suite/vision/evolith-product-vision-master.md)
 
 #### GT-54

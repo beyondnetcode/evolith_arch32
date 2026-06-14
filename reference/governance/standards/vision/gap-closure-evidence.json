@@ -925,7 +925,7 @@
     {
       "id": "GT-61",
       "closedAt": "2026-06-13",
-      "closureCommit": "1ea09e3",
+      "closureCommit": "72599da",
       "evidence": [
         "apps/core-api/src/infrastructure/filters/http-exception.filter.ts"
       ],

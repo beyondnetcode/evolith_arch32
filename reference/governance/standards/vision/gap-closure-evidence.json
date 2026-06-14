@@ -578,7 +578,7 @@
         "npm run test:e2e --workspace sdk/cli -- --runTestsByPath test/gate.e2e-spec.ts"
       ],
       "dependencyDisposition": "satisfied",
-      "dependencyRationale": "Builds on the ADR-0073 GateEvidence contract (GT-02/GT-03) and the deepened phase-gate content checks (GT-08\u2026GT-11)."
+      "dependencyRationale": "Builds on the ADR-0073 GateEvidence contract (GT-02/GT-03) and the deepened phase-gate content checks (GT-08…GT-11)."
     },
     {
       "id": "GT-50",
@@ -752,6 +752,18 @@
         "npm run lint --workspace sdk/cli",
         "npm run test:unit --workspace sdk/cli",
         "npm run test:e2e --workspace sdk/cli"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-78",
+      "closedAt": "2026-06-13",
+      "closureCommit": "b55a498",
+      "evidence": [
+        ".harness/scripts/validate-root-cleanliness.mjs"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/validate-root-cleanliness.mjs"
       ],
       "dependencyDisposition": "none"
     }

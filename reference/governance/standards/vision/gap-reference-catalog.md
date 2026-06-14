@@ -818,7 +818,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Gap:** Files `fix-arch.js`, `fix-ts.js`, `fix-types.js`, and `refactor.js` exist in the repository root as temporary debugging artifacts. They are listed as exceptions in `validate-root-cleanliness.mjs`.
 - **Purpose:** Remove all temporary debugging scripts from the root and clean up the corresponding exception entries in the root cleanliness validator.
 - **Done when:**
-  - [ ] `fix-arch.js`, `fix-ts.js`, `fix-types.js`, `refactor.js` deleted from root
-  - [ ] Exception entries removed from `.harness/scripts/validate-root-cleanliness.mjs`
-  - [ ] `validate-root-cleanliness.mjs` passes without the exception allowlist entries
+  - [x] `fix-arch.js`, `fix-ts.js`, `fix-types.js`, `refactor.js` deleted from root
+  - [x] Exception entries removed from `.harness/scripts/validate-root-cleanliness.mjs`
+  - [x] `validate-root-cleanliness.mjs` passes without the exception allowlist entries
 - **References:** [.harness/scripts/validate-root-cleanliness.mjs](../../../../.harness/scripts/validate-root-cleanliness.mjs)

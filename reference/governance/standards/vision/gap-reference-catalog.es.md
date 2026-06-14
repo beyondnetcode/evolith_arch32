@@ -818,7 +818,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Gap:** Los archivos `fix-arch.js`, `fix-ts.js`, `fix-types.js` y `refactor.js` existen en la raíz como artefactos de depuración temporales. Están listados como excepciones en `validate-root-cleanliness.mjs`.
 - **Propósito:** Eliminar todos los scripts de depuración temporales de la raíz y limpiar las entradas de excepción correspondientes en el validador de limpieza de la raíz.
 - **Criterio de cierre:**
-  - [ ] `fix-arch.js`, `fix-ts.js`, `fix-types.js`, `refactor.js` eliminados de la raíz
-  - [ ] Entradas de excepción eliminadas de `.harness/scripts/validate-root-cleanliness.mjs`
-  - [ ] `validate-root-cleanliness.mjs` pasa sin las entradas de excepción en la allowlist
+  - [x] `fix-arch.js`, `fix-ts.js`, `fix-types.js`, `refactor.js` eliminados de la raíz
+  - [x] Entradas de excepción eliminadas de `.harness/scripts/validate-root-cleanliness.mjs`
+  - [x] `validate-root-cleanliness.mjs` pasa sin las entradas de excepción en la allowlist
 - **Referencias:** [.harness/scripts/validate-root-cleanliness.mjs](../../../../.harness/scripts/validate-root-cleanliness.mjs)

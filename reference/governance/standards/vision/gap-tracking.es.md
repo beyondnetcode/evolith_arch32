@@ -12,56 +12,56 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 
 | ID | Gap | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|
-| [`GT-54`](./gap-reference-catalog.es.md#gt-54) | Completar la aplicación estricta de fronteras hexagonales | Transversal | P2 | L | `COMPLETADO` |
-| [`GT-48`](./gap-reference-catalog.es.md#gt-48) | Restaurar el umbral normativo de cobertura del CLI | F0 | P0 | L | `COMPLETADO` |
-| [`GT-49`](./gap-reference-catalog.es.md#gt-49) | Activar el modo estricto de TypeScript y puertos de filesystem tipados | Transversal | P1 | M | `COMPLETADO` |
-| [`GT-44`](./gap-reference-catalog.es.md#gt-44) | Integridad determinista del pipeline de release | F5 | P0 | M | `COMPLETADO` |
-| [`GT-47`](./gap-reference-catalog.es.md#gt-47) | Sincronización de documentación de producto y release | Transversal | P1 | S | `COMPLETADO` |
-| [`GT-51`](./gap-reference-catalog.es.md#gt-51) | Validación de evidencia de gate Build-versus-Compose | F3 | P1 | M | `COMPLETADO` |
-| [`GT-52`](./gap-reference-catalog.es.md#gt-52) | Eliminar los stubs muertos del contenedor de inyección de dependencias | Transversal | P2 | S | `COMPLETADO` |
-| [`GT-53`](./gap-reference-catalog.es.md#gt-53) | Reparar las referencias migradas a la visión de producto | Transversal | P2 | S | `COMPLETADO` |
-| [`GT-50`](./gap-reference-catalog.es.md#gt-50) | Aplicar umbrales de cobertura en la configuración de Jest | F0 | P2 | S | `COMPLETADO` |
-| [`GT-42`](./gap-reference-catalog.es.md#gt-42) | Conformidad contractual entre repositorios | Transversal | P1 | M | `COMPLETADO` |
-| [`GT-45`](./gap-reference-catalog.es.md#gt-45) | Suite de conformidad de transporte y tools MCP | F2 | P1 | M | `COMPLETADO` |
-| [`GT-46`](./gap-reference-catalog.es.md#gt-46) | Límite de ownership del servicio HTTP de Core | F2 | P1 | M | `COMPLETADO` |
-| [`GT-01`](./gap-reference-catalog.es.md#gt-01) | ADR de contrato unificado | F0 | P0 | S | `COMPLETADO` |
-| [`GT-27`](./gap-reference-catalog.es.md#gt-27) | Consistencia semántica del tracking canónico | Transversal | P0 | S | `COMPLETADO` |
-| [`GT-02`](./gap-reference-catalog.es.md#gt-02) | `GateEvidence` modelado en la capa de dominio | F1 | P0 | M | `COMPLETADO` |
-| [`GT-03`](./gap-reference-catalog.es.md#gt-03) | `EvaluateGateUseCase` y comando `gate evaluate` | F1 | P0 | M | `COMPLETADO` |
-| [`GT-06`](./gap-reference-catalog.es.md#gt-06) | Tool MCP `evolith-gate-evaluate` | F2 | P0 | M | `COMPLETADO` |
-| [`GT-37`](./gap-reference-catalog.es.md#gt-37) | Cierre semántico de gaps condicionado por evidencia | Transversal | P0 | M | `COMPLETADO` |
-| [`GT-28`](./gap-reference-catalog.es.md#gt-28) | Restaurar baseline de build, tests y smoke del CLI | F0 | P0 | M | `COMPLETADO` |
-| [`GT-41`](./gap-reference-catalog.es.md#gt-41) | Reconciliación automática de madurez | Transversal | P0 | M | `COMPLETADO` |
-| [`GT-29`](./gap-reference-catalog.es.md#gt-29) | Paridad de ejecución de reglas Native/OPA | F1 | P0 | L | `COMPLETADO` |
-| [`GT-04`](./gap-reference-catalog.es.md#gt-04) | Eliminar service locator del dominio | F1 | P1 | S | `COMPLETADO` |
-| [`GT-07`](./gap-reference-catalog.es.md#gt-07) | Smoke de release para evaluación de gates MCP | F2 | P1 | S | `COMPLETADO` |
-| [`GT-08`](./gap-reference-catalog.es.md#gt-08) | Validación real del registro ADR en Fase 2 | F3 | P1 | S | `COMPLETADO` |
-| [`GT-09`](./gap-reference-catalog.es.md#gt-09) | Enforcement real de coverage en Fase 3 | F3 | P1 | S | `COMPLETADO` |
-| [`GT-12`](./gap-reference-catalog.es.md#gt-12) | `--dry-run` en todas las operaciones de escritura | F3 | P1 | S | `COMPLETADO` |
-| [`GT-14`](./gap-reference-catalog.es.md#gt-14) | Webhook saliente al completar un gate | F4 | P1 | S | `COMPLETADO` |
-| [`GT-18`](./gap-reference-catalog.es.md#gt-18) | Publicar `@evolith/smart-cli` en npm | F5 | P1 | S | `COMPLETADO` |
-| [`GT-34`](./gap-reference-catalog.es.md#gt-34) | Repriorización del roadmap alrededor de la prueba de gobernanza | Producto | P1 | S | `COMPLETADO` |
-| [`GT-05`](./gap-reference-catalog.es.md#gt-05) | Transporte Streamable HTTP del SDK MCP | F2 | P1 | M | `COMPLETADO` |
-| [`GT-10`](./gap-reference-catalog.es.md#gt-10) | Validación de contenido del security scan en Fase 4 | F3 | P1 | M | `COMPLETADO` |
-| [`GT-11`](./gap-reference-catalog.es.md#gt-11) | Validación de observabilidad y rollback en Fase 5 | F3 | P1 | M | `COMPLETADO` |
-| [`GT-13`](./gap-reference-catalog.es.md#gt-13) | Ejecutor de propuestas `evolith-phase-advance` | F4 | P1 | M | `COMPLETADO` |
-| [`GT-17`](./gap-reference-catalog.es.md#gt-17) | Consolidación DI y boundaries estrictos | F5 | P1 | M | `COMPLETADO` |
-| [`GT-33`](./gap-reference-catalog.es.md#gt-33) | Scoring de madurez basado en evidencia | Producto | P1 | M | `COMPLETADO` |
-| [`GT-35`](./gap-reference-catalog.es.md#gt-35) | Inventarios automáticos y validación del tracking | Transversal | P1 | M | `COMPLETADO` |
-| [`GT-19`](./gap-reference-catalog.es.md#gt-19) | Migración hexagonal incremental de `core/` | Transversal | P1 | L | `COMPLETADO` |
-| [`GT-20`](./gap-reference-catalog.es.md#gt-20) | Backfill de ADRs al estándar de autoría | Transversal | P1 | L | `COMPLETADO` |
-| [`GT-16`](./gap-reference-catalog.es.md#gt-16) | Consolidación documental | F5 | P2 | S | `COMPLETADO` |
-| [`GT-22`](./gap-reference-catalog.es.md#gt-22) | Esquema de unicidad de IDs ADR | Transversal | P2 | S | `COMPLETADO` |
-| [`GT-26`](./gap-reference-catalog.es.md#gt-26) | Playbook de Zero-Downtime Release | Transversal | P2 | S | `COMPLETADO` |
-| [`GT-21`](./gap-reference-catalog.es.md#gt-21) | Revisión de ubicación de ADRs Core tool-céntricos | Transversal | P2 | M | `COMPLETADO` |
-| [`GT-24`](./gap-reference-catalog.es.md#gt-24) | Ejecutar migraciones documentales declaradas | Transversal | P2 | M | `COMPLETADO` |
-| [`GT-25`](./gap-reference-catalog.es.md#gt-25) | Primeros perfiles de proveedor | Transversal | P2 | L | `COMPLETADO` |
-| [`GT-23`](./gap-reference-catalog.es.md#gt-23) | Backfill de traducciones españolas | Transversal | P2 | L | `COMPLETADO` |
-| [`GT-36`](./gap-reference-catalog.es.md#gt-36) | Cobertura lingüística de reglas machine-readable | Transversal | P2 | L | `COMPLETADO` |
-| [`GT-55`](./gap-reference-catalog.es.md#gt-55) | Estrictez de TypeScript y eliminación de any implícito | Transversal | P1 | M | `PENDIENTE` |
-| [`GT-56`](./gap-reference-catalog.es.md#gt-56) | Fallos silenciosos y mocks faltantes en pruebas E2E del CLI | Transversal | P1 | M | `PENDIENTE` |
-| [`GT-57`](./gap-reference-catalog.es.md#gt-57) | Implementación incompleta de herramientas y validación MCP | F2 | P1 | L | `PENDIENTE` |
 | [`GT-58`](./gap-reference-catalog.es.md#gt-58) | Limpiar stubs TODO inyectados por Hexagonal Scaffolder | Transversal | P2 | S | `PENDIENTE` |
+| [`GT-57`](./gap-reference-catalog.es.md#gt-57) | Implementación incompleta de herramientas y validación MCP | F2 | P1 | L | `PENDIENTE` |
+| [`GT-56`](./gap-reference-catalog.es.md#gt-56) | Fallos silenciosos y mocks faltantes en pruebas E2E del CLI | Transversal | P1 | M | `PENDIENTE` |
+| [`GT-55`](./gap-reference-catalog.es.md#gt-55) | Estrictez de TypeScript y eliminación de any implícito | Transversal | P1 | M | `PENDIENTE` |
+| [`GT-54`](./gap-reference-catalog.es.md#gt-54) | Completar la aplicación estricta de fronteras hexagonales | Transversal | P2 | L | `COMPLETADO` |
+| [`GT-53`](./gap-reference-catalog.es.md#gt-53) | Reparar las referencias migradas a la visión de producto | Transversal | P2 | S | `COMPLETADO` |
+| [`GT-52`](./gap-reference-catalog.es.md#gt-52) | Eliminar los stubs muertos del contenedor de inyección de dependencias | Transversal | P2 | S | `COMPLETADO` |
+| [`GT-51`](./gap-reference-catalog.es.md#gt-51) | Validación de evidencia de gate Build-versus-Compose | F3 | P1 | M | `COMPLETADO` |
+| [`GT-50`](./gap-reference-catalog.es.md#gt-50) | Aplicar umbrales de cobertura en la configuración de Jest | F0 | P2 | S | `COMPLETADO` |
+| [`GT-49`](./gap-reference-catalog.es.md#gt-49) | Activar el modo estricto de TypeScript y puertos de filesystem tipados | Transversal | P1 | M | `COMPLETADO` |
+| [`GT-48`](./gap-reference-catalog.es.md#gt-48) | Restaurar el umbral normativo de cobertura del CLI | F0 | P0 | L | `COMPLETADO` |
+| [`GT-47`](./gap-reference-catalog.es.md#gt-47) | Sincronización de documentación de producto y release | Transversal | P1 | S | `COMPLETADO` |
+| [`GT-46`](./gap-reference-catalog.es.md#gt-46) | Límite de ownership del servicio HTTP de Core | F2 | P1 | M | `COMPLETADO` |
+| [`GT-45`](./gap-reference-catalog.es.md#gt-45) | Suite de conformidad de transporte y tools MCP | F2 | P1 | M | `COMPLETADO` |
+| [`GT-44`](./gap-reference-catalog.es.md#gt-44) | Integridad determinista del pipeline de release | F5 | P0 | M | `COMPLETADO` |
+| [`GT-42`](./gap-reference-catalog.es.md#gt-42) | Conformidad contractual entre repositorios | Transversal | P1 | M | `COMPLETADO` |
+| [`GT-41`](./gap-reference-catalog.es.md#gt-41) | Reconciliación automática de madurez | Transversal | P0 | M | `COMPLETADO` |
+| [`GT-37`](./gap-reference-catalog.es.md#gt-37) | Cierre semántico de gaps condicionado por evidencia | Transversal | P0 | M | `COMPLETADO` |
+| [`GT-36`](./gap-reference-catalog.es.md#gt-36) | Cobertura lingüística de reglas machine-readable | Transversal | P2 | L | `COMPLETADO` |
+| [`GT-35`](./gap-reference-catalog.es.md#gt-35) | Inventarios automáticos y validación del tracking | Transversal | P1 | M | `COMPLETADO` |
+| [`GT-34`](./gap-reference-catalog.es.md#gt-34) | Repriorización del roadmap alrededor de la prueba de gobernanza | Producto | P1 | S | `COMPLETADO` |
+| [`GT-33`](./gap-reference-catalog.es.md#gt-33) | Scoring de madurez basado en evidencia | Producto | P1 | M | `COMPLETADO` |
+| [`GT-29`](./gap-reference-catalog.es.md#gt-29) | Paridad de ejecución de reglas Native/OPA | F1 | P0 | L | `COMPLETADO` |
+| [`GT-28`](./gap-reference-catalog.es.md#gt-28) | Restaurar baseline de build, tests y smoke del CLI | F0 | P0 | M | `COMPLETADO` |
+| [`GT-27`](./gap-reference-catalog.es.md#gt-27) | Consistencia semántica del tracking canónico | Transversal | P0 | S | `COMPLETADO` |
+| [`GT-26`](./gap-reference-catalog.es.md#gt-26) | Playbook de Zero-Downtime Release | Transversal | P2 | S | `COMPLETADO` |
+| [`GT-25`](./gap-reference-catalog.es.md#gt-25) | Primeros perfiles de proveedor | Transversal | P2 | L | `COMPLETADO` |
+| [`GT-24`](./gap-reference-catalog.es.md#gt-24) | Ejecutar migraciones documentales declaradas | Transversal | P2 | M | `COMPLETADO` |
+| [`GT-23`](./gap-reference-catalog.es.md#gt-23) | Backfill de traducciones españolas | Transversal | P2 | L | `COMPLETADO` |
+| [`GT-22`](./gap-reference-catalog.es.md#gt-22) | Esquema de unicidad de IDs ADR | Transversal | P2 | S | `COMPLETADO` |
+| [`GT-21`](./gap-reference-catalog.es.md#gt-21) | Revisión de ubicación de ADRs Core tool-céntricos | Transversal | P2 | M | `COMPLETADO` |
+| [`GT-20`](./gap-reference-catalog.es.md#gt-20) | Backfill de ADRs al estándar de autoría | Transversal | P1 | L | `COMPLETADO` |
+| [`GT-19`](./gap-reference-catalog.es.md#gt-19) | Migración hexagonal incremental de `core/` | Transversal | P1 | L | `COMPLETADO` |
+| [`GT-18`](./gap-reference-catalog.es.md#gt-18) | Publicar `@evolith/smart-cli` en npm | F5 | P1 | S | `COMPLETADO` |
+| [`GT-17`](./gap-reference-catalog.es.md#gt-17) | Consolidación DI y boundaries estrictos | F5 | P1 | M | `COMPLETADO` |
+| [`GT-16`](./gap-reference-catalog.es.md#gt-16) | Consolidación documental | F5 | P2 | S | `COMPLETADO` |
+| [`GT-14`](./gap-reference-catalog.es.md#gt-14) | Webhook saliente al completar un gate | F4 | P1 | S | `COMPLETADO` |
+| [`GT-13`](./gap-reference-catalog.es.md#gt-13) | Ejecutor de propuestas `evolith-phase-advance` | F4 | P1 | M | `COMPLETADO` |
+| [`GT-12`](./gap-reference-catalog.es.md#gt-12) | `--dry-run` en todas las operaciones de escritura | F3 | P1 | S | `COMPLETADO` |
+| [`GT-11`](./gap-reference-catalog.es.md#gt-11) | Validación de observabilidad y rollback en Fase 5 | F3 | P1 | M | `COMPLETADO` |
+| [`GT-10`](./gap-reference-catalog.es.md#gt-10) | Validación de contenido del security scan en Fase 4 | F3 | P1 | M | `COMPLETADO` |
+| [`GT-09`](./gap-reference-catalog.es.md#gt-09) | Enforcement real de coverage en Fase 3 | F3 | P1 | S | `COMPLETADO` |
+| [`GT-08`](./gap-reference-catalog.es.md#gt-08) | Validación real del registro ADR en Fase 2 | F3 | P1 | S | `COMPLETADO` |
+| [`GT-07`](./gap-reference-catalog.es.md#gt-07) | Smoke de release para evaluación de gates MCP | F2 | P1 | S | `COMPLETADO` |
+| [`GT-06`](./gap-reference-catalog.es.md#gt-06) | Tool MCP `evolith-gate-evaluate` | F2 | P0 | M | `COMPLETADO` |
+| [`GT-05`](./gap-reference-catalog.es.md#gt-05) | Transporte Streamable HTTP del SDK MCP | F2 | P1 | M | `COMPLETADO` |
+| [`GT-04`](./gap-reference-catalog.es.md#gt-04) | Eliminar service locator del dominio | F1 | P1 | S | `COMPLETADO` |
+| [`GT-03`](./gap-reference-catalog.es.md#gt-03) | `EvaluateGateUseCase` y comando `gate evaluate` | F1 | P0 | M | `COMPLETADO` |
+| [`GT-02`](./gap-reference-catalog.es.md#gt-02) | `GateEvidence` modelado en la capa de dominio | F1 | P0 | M | `COMPLETADO` |
+| [`GT-01`](./gap-reference-catalog.es.md#gt-01) | ADR de contrato unificado | F0 | P0 | S | `COMPLETADO` |
 
 **Progreso:** 46 / 50 completados · 0 en progreso · 4 pendientes · 0 diferidos
 

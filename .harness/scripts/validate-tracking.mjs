@@ -35,11 +35,16 @@ const DEPENDENCY_DISPOSITIONS = new Set([
 function parseTableRows(filePath) {
   const content = fs.readFileSync(filePath, 'utf8');
   const rows = [];
+  let statusColIndex = -1;
   let inTable = false;
+  const localePatterns = ['Status', 'State', 'Estado', 'Estat'];
 
   for (const line of content.split('\n')) {
     if (line.startsWith('| ID |')) {
       inTable = true;
+      const headers = line.split('|').map((col) => col.trim()).filter(Boolean);
+      statusColIndex = headers.findIndex((header) => localePatterns.some((pattern) => header.includes(pattern)));
+      if (statusColIndex === -1) statusColIndex = headers.length - 1;
       continue;
     }
     if (!inTable) continue;
@@ -48,10 +53,10 @@ function parseTableRows(filePath) {
 
     const cols = line.split('|').map((column) => column.trim()).filter(Boolean);
     const idMatch = cols[0]?.match(/`(GT-\d+)`/);
-    if (idMatch && cols.length >= 6) {
+    if (idMatch && statusColIndex !== -1 && cols.length > statusColIndex) {
       rows.push({
         id: idMatch[1],
-        status: cols[5].replaceAll('`', '').toUpperCase(),
+        status: cols[statusColIndex].replaceAll('`', '').toUpperCase(),
       });
     }
   }

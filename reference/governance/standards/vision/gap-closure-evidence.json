@@ -309,6 +309,23 @@
       "dependencyRationale": "Tracker-owned chat and session behavior was removed; Core exposes governed capabilities through CLI and MCP only."
     },
     {
+      "id": "GT-51",
+      "closedAt": "2026-06-14",
+      "closureCommit": "54386a3485c987f6b9a09d48d369d8efc837312a",
+      "evidence": [
+        "rulesets/schema/build-vs-compose.schema.json",
+        "rulesets/sdlc/phase-gates.rules.json",
+        "sdk/cli/src/application/validators/phase-gate-validator.service.ts",
+        "sdk/cli/src/application/validators/build-vs-compose.schema.spec.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace sdk/cli -- --runInBand --testPathPattern build-vs-compose",
+        "npm run test:e2e --workspace sdk/cli -- --runTestsByPath test/gate.e2e-spec.ts"
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "Builds on the ADR-0073 GateEvidence contract (GT-02/GT-03) and the deepened phase-gate content checks (GT-08…GT-11)."
+    },
+    {
       "id": "GT-50",
       "closedAt": "2026-06-14",
       "closureCommit": "040ea7f6b4354a87a44c702dd8e4cd37997e5b43",

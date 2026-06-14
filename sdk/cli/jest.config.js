@@ -10,6 +10,18 @@ module.exports = {
   ],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html', 'json-summary'],
+  // Enforce the normative coverage contract at the point of change (GT-50), not
+  // only in the CI bash gate. Statements match the 80% CI threshold; branches
+  // and functions ratchet just below the current floor so regressions fail the
+  // local `npm run test:cov` instead of surfacing only after push.
+  coverageThreshold: {
+    global: {
+      statements: 80,
+      lines: 80,
+      functions: 75,
+      branches: 67,
+    },
+  },
   moduleDirectories: ['node_modules', 'src'],
   transform: {
     '^.+\\.ts$': ['ts-jest', {

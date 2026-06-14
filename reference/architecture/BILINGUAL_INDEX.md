@@ -137,6 +137,8 @@
 | [0046-no-raw-identifiers-in-ui.md](adrs/nodejs/0046-no-raw-identifiers-in-ui.md) | [0046-no-raw-identifiers-in-ui.es.md](adrs/nodejs/0046-no-raw-identifiers-in-ui.es.md) | OK |
 | [0047-actionable-user-error-contract.md](adrs/nodejs/0047-actionable-user-error-contract.md) | [0047-actionable-user-error-contract.es.md](adrs/nodejs/0047-actionable-user-error-contract.es.md) | OK |
 | [0048-feature-flag-system-scope-criteria-model.md](adrs/nodejs/0048-feature-flag-system-scope-criteria-model.md) | [0048-feature-flag-system-scope-criteria-model.es.md](adrs/nodejs/0048-feature-flag-system-scope-criteria-model.es.md) | OK |
+| [0074-monorepo-orchestration-nx.md](adrs/nodejs/0074-monorepo-orchestration-nx.md) | [0074-monorepo-orchestration-nx.es.md](adrs/nodejs/0074-monorepo-orchestration-nx.es.md) | OK |
+| [0075-application-gateway-bff-nestjs.md](adrs/nodejs/0075-application-gateway-bff-nestjs.md) | [0075-application-gateway-bff-nestjs.es.md](adrs/nodejs/0075-application-gateway-bff-nestjs.es.md) | OK |
 | [README.md](adrs/nodejs/README.md) | [README.es.md](adrs/nodejs/README.es.md) | OK |
 
 </details>
@@ -200,6 +202,7 @@
 
 | EN | ES | Status |
 |----|----|--------|
+| [evolith-provider-abstraction-plugin-model.md](principles/evolith-provider-abstraction-plugin-model.md) | [evolith-provider-abstraction-plugin-model.es.md](principles/evolith-provider-abstraction-plugin-model.es.md) | OK |
 | [README.md](principles/README.md) | [README.es.md](principles/README.es.md) | OK |
 
 </details>

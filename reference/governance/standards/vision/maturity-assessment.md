@@ -15,7 +15,7 @@
 This is the **single maturity assessment** for Evolith Core. It measures three things:
 
 1. **Compatibility with international standards** — TOGAF Architecture Capability Maturity Model (ACMM) for enterprise process and governance maturity, plus the Cloud Well-Architected Framework (WAF) pillars for technical maturity (section 3) and the enterprise microservices pattern/anti-pattern catalog (sections 5–6).
-2. **Match with the product vision** — pillar-by-pillar alignment against the [Product Vision Master](./evolith-product-vision-master.md) (section 7).
+2. **Match with the product vision** — pillar-by-pillar alignment against the [Product Vision Master](../../../product-suite/vision/evolith-product-vision-master.md) (section 7).
 3. **Open gaps** — every deviation found here is tracked exclusively as a `GT-xx` item on the [Gap Tracking Board](./gap-tracking.md) (section 8). No gap is tracked in this document.
 
 **How to update:** re-score a section when its underlying evidence changes (ADR merged, gate closed, GT item done), update `Last Updated`, and keep gap registration on the board — never here.
@@ -149,7 +149,7 @@ The architecture deploys explicit "antibodies" against the six highest-risk anti
 
 ## 7. Product Vision Alignment
 
-Pillar-by-pillar match against the [Product Vision Master](./evolith-product-vision-master.md). Detailed component scores live in the [Baseline Snapshot](./gap-reference-catalog.md#2-historical-baseline-snapshot) of the Gap Reference Catalog.
+Pillar-by-pillar match against the [Product Vision Master](../../../product-suite/vision/evolith-product-vision-master.md). Detailed component scores live in the [Baseline Snapshot](./gap-reference-catalog.md#2-historical-baseline-snapshot) of the Gap Reference Catalog.
 
 | Vision Pillar | Vision Requirement | Evidence-Backed State | Notes |
 |---|---|:---:|---|

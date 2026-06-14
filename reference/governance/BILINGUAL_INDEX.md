@@ -14,16 +14,35 @@
 </details>
 
 <details>
+<summary><strong>adr</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [adr-0090-rule-language-policy.md](adr/adr-0090-rule-language-policy.md) | [adr-0090-rule-language-policy.es.md](adr/adr-0090-rule-language-policy.es.md) | OK |
+
+</details>
+
+<details>
 <summary><strong>sdlc</strong></summary>
 
 | EN | ES | Status |
 |----|----|--------|
+| [ai-assisted-flow.md](sdlc/ai-assisted-flow.md) | [ai-assisted-flow.es.md](sdlc/ai-assisted-flow.es.md) | OK |
 | [executive-view.md](sdlc/executive-view.md) | [executive-view.es.md](sdlc/executive-view.es.md) | OK |
 | [quality-gates.md](sdlc/quality-gates.md) | [quality-gates.es.md](sdlc/quality-gates.es.md) | OK |
 | [README.md](sdlc/README.md) | [README.es.md](sdlc/README.es.md) | OK |
 | [responsibility-matrix.md](sdlc/responsibility-matrix.md) | [responsibility-matrix.es.md](sdlc/responsibility-matrix.es.md) | OK |
 | [sdlc-evolith-artifact-mapping.md](sdlc/sdlc-evolith-artifact-mapping.md) | [sdlc-evolith-artifact-mapping.es.md](sdlc/sdlc-evolith-artifact-mapping.es.md) | OK |
 | [traceability-model.md](sdlc/traceability-model.md) | [traceability-model.es.md](sdlc/traceability-model.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>sdlc/01-playbooks</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [zero-downtime-release.md](sdlc/01-playbooks/zero-downtime-release.md) | [zero-downtime-release.es.md](sdlc/01-playbooks/zero-downtime-release.es.md) | OK |
 
 </details>
 
@@ -363,12 +382,14 @@
 | [architectural-directives.md](standards/vision/architectural-directives.md) | [architectural-directives.es.md](standards/vision/architectural-directives.es.md) | OK |
 | [evolith-ai-assisted-validation-workflow.md](standards/vision/evolith-ai-assisted-validation-workflow.md) | [evolith-ai-assisted-validation-workflow.es.md](standards/vision/evolith-ai-assisted-validation-workflow.es.md) | OK |
 | [evolith-governed-composition-target-design.md](standards/vision/evolith-governed-composition-target-design.md) | [evolith-governed-composition-target-design.es.md](standards/vision/evolith-governed-composition-target-design.es.md) | OK |
-| [evolith-product-vision-master.md](standards/vision/evolith-product-vision-master.md) | [evolith-product-vision-master.es.md](standards/vision/evolith-product-vision-master.es.md) | OK |
 | [evolith-provider-abstraction-plugin-model.md](standards/vision/evolith-provider-abstraction-plugin-model.md) | [evolith-provider-abstraction-plugin-model.es.md](standards/vision/evolith-provider-abstraction-plugin-model.es.md) | OK |
 | [evolith-strategic-positioning-comparative-landscape.md](standards/vision/evolith-strategic-positioning-comparative-landscape.md) | [evolith-strategic-positioning-comparative-landscape.es.md](standards/vision/evolith-strategic-positioning-comparative-landscape.es.md) | OK |
 | [evolith-strategic-validation-and-composition-framework.md](standards/vision/evolith-strategic-validation-and-composition-framework.md) | [evolith-strategic-validation-and-composition-framework.es.md](standards/vision/evolith-strategic-validation-and-composition-framework.es.md) | OK |
 | [evolutionary-strategy-roadmap.md](standards/vision/evolutionary-strategy-roadmap.md) | [evolutionary-strategy-roadmap.es.md](standards/vision/evolutionary-strategy-roadmap.es.md) | OK |
+| [gap-closure-evidence-standard.md](standards/vision/gap-closure-evidence-standard.md) | [gap-closure-evidence-standard.es.md](standards/vision/gap-closure-evidence-standard.es.md) | OK |
+| [gap-reference-catalog.md](standards/vision/gap-reference-catalog.md) | [gap-reference-catalog.es.md](standards/vision/gap-reference-catalog.es.md) | OK |
 | [gap-tracking.md](standards/vision/gap-tracking.md) | [gap-tracking.es.md](standards/vision/gap-tracking.es.md) | OK |
+| [inventory-summary.md](standards/vision/inventory-summary.md) | [inventory-summary.es.md](standards/vision/inventory-summary.es.md) | OK |
 | [maturity-assessment.md](standards/vision/maturity-assessment.md) | [maturity-assessment.es.md](standards/vision/maturity-assessment.es.md) | OK |
 | [README.md](standards/vision/README.md) | [README.es.md](standards/vision/README.es.md) | OK |
 | [sdlc-tracker-technical-interfaces.md](standards/vision/sdlc-tracker-technical-interfaces.md) | [sdlc-tracker-technical-interfaces.es.md](standards/vision/sdlc-tracker-technical-interfaces.es.md) | OK |

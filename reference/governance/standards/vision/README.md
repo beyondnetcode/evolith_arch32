@@ -2,7 +2,7 @@
 
 * [architectural-directives](./architectural-directives.md)
 * [evolutionary-strategy-roadmap](./evolutionary-strategy-roadmap.md)
-* [evolith-product-vision-master](./evolith-product-vision-master.md)
+* [evolith-product-vision-master](../../../product-suite/vision/evolith-product-vision-master.md)
 
 ## Strategic Children of the Product Vision
 

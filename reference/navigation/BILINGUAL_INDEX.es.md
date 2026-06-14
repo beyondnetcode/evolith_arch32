@@ -76,6 +76,7 @@
 | [0037-performance-concurrency-chaos-strategy.md](architecture/adrs/core/0037-performance-concurrency-chaos-strategy.md) | [0037-performance-concurrency-chaos-strategy.es.md](architecture/adrs/core/0037-performance-concurrency-chaos-strategy.es.md) | OK |
 | [0039-deployment-topology-abstraction-switcher.md](architecture/adrs/core/0039-deployment-topology-abstraction-switcher.md) | [0039-deployment-topology-abstraction-switcher.es.md](architecture/adrs/core/0039-deployment-topology-abstraction-switcher.es.md) | OK |
 | [0040-multi-runtime-selection-contracts.md](architecture/adrs/core/0040-multi-runtime-selection-contracts.md) | [0040-multi-runtime-selection-contracts.es.md](architecture/adrs/core/0040-multi-runtime-selection-contracts.es.md) | OK |
+| [0041-dual-engine-policy-evaluation.md](architecture/adrs/core/0041-dual-engine-policy-evaluation.md) | [0041-dual-engine-policy-evaluation.es.md](architecture/adrs/core/0041-dual-engine-policy-evaluation.es.md) | OK |
 | [0044-configurable-security-persistence-strategy.md](architecture/adrs/core/0044-configurable-security-persistence-strategy.md) | [0044-configurable-security-persistence-strategy.es.md](architecture/adrs/core/0044-configurable-security-persistence-strategy.es.md) | OK |
 | [0045-microservice-extraction-readiness-criteria.md](architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md) | [0045-microservice-extraction-readiness-criteria.es.md](architecture/adrs/core/0045-microservice-extraction-readiness-criteria.es.md) | OK |
 | [0046-unified-observability-tracecontext.md](architecture/adrs/core/0046-unified-observability-tracecontext.md) | [0046-unified-observability-tracecontext.es.md](architecture/adrs/core/0046-unified-observability-tracecontext.es.md) | OK |
@@ -147,6 +148,8 @@
 | [0046-no-raw-identifiers-in-ui.md](architecture/adrs/nodejs/0046-no-raw-identifiers-in-ui.md) | [0046-no-raw-identifiers-in-ui.es.md](architecture/adrs/nodejs/0046-no-raw-identifiers-in-ui.es.md) | OK |
 | [0047-actionable-user-error-contract.md](architecture/adrs/nodejs/0047-actionable-user-error-contract.md) | [0047-actionable-user-error-contract.es.md](architecture/adrs/nodejs/0047-actionable-user-error-contract.es.md) | OK |
 | [0048-feature-flag-system-scope-criteria-model.md](architecture/adrs/nodejs/0048-feature-flag-system-scope-criteria-model.md) | [0048-feature-flag-system-scope-criteria-model.es.md](architecture/adrs/nodejs/0048-feature-flag-system-scope-criteria-model.es.md) | OK |
+| [0074-monorepo-orchestration-nx.md](architecture/adrs/nodejs/0074-monorepo-orchestration-nx.md) | [0074-monorepo-orchestration-nx.es.md](architecture/adrs/nodejs/0074-monorepo-orchestration-nx.es.md) | OK |
+| [0075-application-gateway-bff-nestjs.md](architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.md) | [0075-application-gateway-bff-nestjs.es.md](architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.es.md) | OK |
 | [README.md](architecture/adrs/nodejs/README.md) | [README.es.md](architecture/adrs/nodejs/README.es.md) | OK |
 
 </details>
@@ -210,6 +213,7 @@
 
 | EN | ES | Status |
 |----|----|--------|
+| [evolith-provider-abstraction-plugin-model.md](architecture/principles/evolith-provider-abstraction-plugin-model.md) | [evolith-provider-abstraction-plugin-model.es.md](architecture/principles/evolith-provider-abstraction-plugin-model.es.md) | OK |
 | [README.md](architecture/principles/README.md) | [README.es.md](architecture/principles/README.es.md) | OK |
 
 </details>
@@ -246,16 +250,35 @@
 </details>
 
 <details>
+<summary><strong>governance/adr</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [adr-0090-rule-language-policy.md](governance/adr/adr-0090-rule-language-policy.md) | [adr-0090-rule-language-policy.es.md](governance/adr/adr-0090-rule-language-policy.es.md) | OK |
+
+</details>
+
+<details>
 <summary><strong>governance/sdlc</strong></summary>
 
 | EN | ES | Status |
 |----|----|--------|
+| [ai-assisted-flow.md](governance/sdlc/ai-assisted-flow.md) | [ai-assisted-flow.es.md](governance/sdlc/ai-assisted-flow.es.md) | OK |
 | [executive-view.md](governance/sdlc/executive-view.md) | [executive-view.es.md](governance/sdlc/executive-view.es.md) | OK |
 | [quality-gates.md](governance/sdlc/quality-gates.md) | [quality-gates.es.md](governance/sdlc/quality-gates.es.md) | OK |
 | [README.md](governance/sdlc/README.md) | [README.es.md](governance/sdlc/README.es.md) | OK |
 | [responsibility-matrix.md](governance/sdlc/responsibility-matrix.md) | [responsibility-matrix.es.md](governance/sdlc/responsibility-matrix.es.md) | OK |
 | [sdlc-evolith-artifact-mapping.md](governance/sdlc/sdlc-evolith-artifact-mapping.md) | [sdlc-evolith-artifact-mapping.es.md](governance/sdlc/sdlc-evolith-artifact-mapping.es.md) | OK |
 | [traceability-model.md](governance/sdlc/traceability-model.md) | [traceability-model.es.md](governance/sdlc/traceability-model.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>governance/sdlc/01-playbooks</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [zero-downtime-release.md](governance/sdlc/01-playbooks/zero-downtime-release.md) | [zero-downtime-release.es.md](governance/sdlc/01-playbooks/zero-downtime-release.es.md) | OK |
 
 </details>
 
@@ -595,12 +618,14 @@
 | [architectural-directives.md](governance/standards/vision/architectural-directives.md) | [architectural-directives.es.md](governance/standards/vision/architectural-directives.es.md) | OK |
 | [evolith-ai-assisted-validation-workflow.md](governance/standards/vision/evolith-ai-assisted-validation-workflow.md) | [evolith-ai-assisted-validation-workflow.es.md](governance/standards/vision/evolith-ai-assisted-validation-workflow.es.md) | OK |
 | [evolith-governed-composition-target-design.md](governance/standards/vision/evolith-governed-composition-target-design.md) | [evolith-governed-composition-target-design.es.md](governance/standards/vision/evolith-governed-composition-target-design.es.md) | OK |
-| [evolith-product-vision-master.md](governance/standards/vision/evolith-product-vision-master.md) | [evolith-product-vision-master.es.md](governance/standards/vision/evolith-product-vision-master.es.md) | OK |
 | [evolith-provider-abstraction-plugin-model.md](governance/standards/vision/evolith-provider-abstraction-plugin-model.md) | [evolith-provider-abstraction-plugin-model.es.md](governance/standards/vision/evolith-provider-abstraction-plugin-model.es.md) | OK |
 | [evolith-strategic-positioning-comparative-landscape.md](governance/standards/vision/evolith-strategic-positioning-comparative-landscape.md) | [evolith-strategic-positioning-comparative-landscape.es.md](governance/standards/vision/evolith-strategic-positioning-comparative-landscape.es.md) | OK |
 | [evolith-strategic-validation-and-composition-framework.md](governance/standards/vision/evolith-strategic-validation-and-composition-framework.md) | [evolith-strategic-validation-and-composition-framework.es.md](governance/standards/vision/evolith-strategic-validation-and-composition-framework.es.md) | OK |
 | [evolutionary-strategy-roadmap.md](governance/standards/vision/evolutionary-strategy-roadmap.md) | [evolutionary-strategy-roadmap.es.md](governance/standards/vision/evolutionary-strategy-roadmap.es.md) | OK |
+| [gap-closure-evidence-standard.md](governance/standards/vision/gap-closure-evidence-standard.md) | [gap-closure-evidence-standard.es.md](governance/standards/vision/gap-closure-evidence-standard.es.md) | OK |
+| [gap-reference-catalog.md](governance/standards/vision/gap-reference-catalog.md) | [gap-reference-catalog.es.md](governance/standards/vision/gap-reference-catalog.es.md) | OK |
 | [gap-tracking.md](governance/standards/vision/gap-tracking.md) | [gap-tracking.es.md](governance/standards/vision/gap-tracking.es.md) | OK |
+| [inventory-summary.md](governance/standards/vision/inventory-summary.md) | [inventory-summary.es.md](governance/standards/vision/inventory-summary.es.md) | OK |
 | [maturity-assessment.md](governance/standards/vision/maturity-assessment.md) | [maturity-assessment.es.md](governance/standards/vision/maturity-assessment.es.md) | OK |
 | [README.md](governance/standards/vision/README.md) | [README.es.md](governance/standards/vision/README.es.md) | OK |
 | [sdlc-tracker-technical-interfaces.md](governance/standards/vision/sdlc-tracker-technical-interfaces.md) | [sdlc-tracker-technical-interfaces.es.md](governance/standards/vision/sdlc-tracker-technical-interfaces.es.md) | OK |
@@ -811,6 +836,42 @@
 </details>
 
 <details>
+<summary><strong>platforms/ci-cd</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [github-actions-profile.md](platforms/ci-cd/github-actions-profile.md) | [github-actions-profile.es.md](platforms/ci-cd/github-actions-profile.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>platforms/observability</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [otel-stack-profile.md](platforms/observability/otel-stack-profile.md) | [otel-stack-profile.es.md](platforms/observability/otel-stack-profile.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>platforms/scm</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [github-profile.md](platforms/scm/github-profile.md) | [github-profile.es.md](platforms/scm/github-profile.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>platforms/security</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [codeql-trivy-profile.md](platforms/security/codeql-trivy-profile.md) | [codeql-trivy-profile.es.md](platforms/security/codeql-trivy-profile.es.md) | OK |
+
+</details>
+
+<details>
 <summary><strong>product-suite</strong></summary>
 
 | EN | ES | Status |
@@ -825,6 +886,8 @@
 
 | EN | ES | Status |
 |----|----|--------|
+| [architectural-directives.md](product-suite/architecture/architectural-directives.md) | [architectural-directives.es.md](product-suite/architecture/architectural-directives.es.md) | OK |
+| [evolith-governed-composition-target-design.md](product-suite/architecture/evolith-governed-composition-target-design.md) | [evolith-governed-composition-target-design.es.md](product-suite/architecture/evolith-governed-composition-target-design.es.md) | OK |
 | [README.md](product-suite/architecture/README.md) | [README.es.md](product-suite/architecture/README.es.md) | OK |
 
 </details>
@@ -843,6 +906,8 @@
 
 | EN | ES | Status |
 |----|----|--------|
+| [evolith-ai-assisted-validation-workflow.md](product-suite/methods/evolith-ai-assisted-validation-workflow.md) | [evolith-ai-assisted-validation-workflow.es.md](product-suite/methods/evolith-ai-assisted-validation-workflow.es.md) | OK |
+| [evolith-strategic-validation-and-composition-framework.md](product-suite/methods/evolith-strategic-validation-and-composition-framework.md) | [evolith-strategic-validation-and-composition-framework.es.md](product-suite/methods/evolith-strategic-validation-and-composition-framework.es.md) | OK |
 | [README.md](product-suite/methods/README.md) | [README.es.md](product-suite/methods/README.es.md) | OK |
 
 </details>
@@ -852,6 +917,7 @@
 
 | EN | ES | Status |
 |----|----|--------|
+| [evolith-strategic-positioning-comparative-landscape.md](product-suite/positioning/evolith-strategic-positioning-comparative-landscape.md) | [evolith-strategic-positioning-comparative-landscape.es.md](product-suite/positioning/evolith-strategic-positioning-comparative-landscape.es.md) | OK |
 | [README.md](product-suite/positioning/README.md) | [README.es.md](product-suite/positioning/README.es.md) | OK |
 
 </details>
@@ -861,6 +927,7 @@
 
 | EN | ES | Status |
 |----|----|--------|
+| [evolutionary-strategy-roadmap.md](product-suite/strategy/evolutionary-strategy-roadmap.md) | [evolutionary-strategy-roadmap.es.md](product-suite/strategy/evolutionary-strategy-roadmap.es.md) | OK |
 | [README.md](product-suite/strategy/README.md) | [README.es.md](product-suite/strategy/README.es.md) | OK |
 
 </details>
@@ -870,6 +937,7 @@
 
 | EN | ES | Status |
 |----|----|--------|
+| [evolith-product-vision-master.md](product-suite/vision/evolith-product-vision-master.md) | [evolith-product-vision-master.es.md](product-suite/vision/evolith-product-vision-master.es.md) | OK |
 | [README.md](product-suite/vision/README.md) | [README.es.md](product-suite/vision/README.es.md) | OK |
 
 </details>
@@ -890,6 +958,7 @@
 | EN | ES | Status |
 |----|----|--------|
 | [README.md](products/evolith-tracker/README.md) | [README.es.md](products/evolith-tracker/README.es.md) | OK |
+| [sdlc-tracker-technical-interfaces.md](products/evolith-tracker/sdlc-tracker-technical-interfaces.md) | [sdlc-tracker-technical-interfaces.es.md](products/evolith-tracker/sdlc-tracker-technical-interfaces.es.md) | OK |
 
 </details>
 
@@ -899,6 +968,58 @@
 | EN | ES | Status |
 |----|----|--------|
 | [README.md](products/evolith-tracker/architecture/README.md) | [README.es.md](products/evolith-tracker/architecture/README.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>products/mcp-services</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [README.md](products/mcp-services/README.md) | [README.es.md](products/mcp-services/README.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>products/smart-cli</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [product-inventory.md](products/smart-cli/product-inventory.md) | [product-inventory.es.md](products/smart-cli/product-inventory.es.md) | OK |
+| [README.md](products/smart-cli/README.md) | [README.es.md](products/smart-cli/README.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>products/smart-cli/docs</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [data-models.md](products/smart-cli/docs/data-models.md) | [data-models.es.md](products/smart-cli/docs/data-models.es.md) | OK |
+| [HANDOFF-PROTOCOL.md](products/smart-cli/docs/HANDOFF-PROTOCOL.md) | [HANDOFF-PROTOCOL.es.md](products/smart-cli/docs/HANDOFF-PROTOCOL.es.md) | OK |
+| [MCP-INTEGRATION.md](products/smart-cli/docs/MCP-INTEGRATION.md) | [MCP-INTEGRATION.es.md](products/smart-cli/docs/MCP-INTEGRATION.es.md) | OK |
+| [SMART-CLI-DEMO.md](products/smart-cli/docs/SMART-CLI-DEMO.md) | [SMART-CLI-DEMO.es.md](products/smart-cli/docs/SMART-CLI-DEMO.es.md) | OK |
+| [VISION.md](products/smart-cli/docs/VISION.md) | [VISION.es.md](products/smart-cli/docs/VISION.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>products/smart-cli/docs/planning</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [CLI-BACKLOG.md](products/smart-cli/docs/planning/CLI-BACKLOG.md) | [CLI-BACKLOG.es.md](products/smart-cli/docs/planning/CLI-BACKLOG.es.md) | OK |
+| [cli-command-catalog.md](products/smart-cli/docs/planning/cli-command-catalog.md) | [cli-command-catalog.es.md](products/smart-cli/docs/planning/cli-command-catalog.es.md) | OK |
+| [cli-mcp-parity-matrix.md](products/smart-cli/docs/planning/cli-mcp-parity-matrix.md) | [cli-mcp-parity-matrix.es.md](products/smart-cli/docs/planning/cli-mcp-parity-matrix.es.md) | OK |
+| [mcp-capability-catalog.md](products/smart-cli/docs/planning/mcp-capability-catalog.md) | [mcp-capability-catalog.es.md](products/smart-cli/docs/planning/mcp-capability-catalog.es.md) | OK |
+| [README.md](products/smart-cli/docs/planning/README.md) | [README.es.md](products/smart-cli/docs/planning/README.es.md) | OK |
+| [release-readiness-checklist.md](products/smart-cli/docs/planning/release-readiness-checklist.md) | [release-readiness-checklist.es.md](products/smart-cli/docs/planning/release-readiness-checklist.es.md) | OK |
+| [sdk-api-capability-catalog.md](products/smart-cli/docs/planning/sdk-api-capability-catalog.md) | [sdk-api-capability-catalog.es.md](products/smart-cli/docs/planning/sdk-api-capability-catalog.es.md) | OK |
+| [sdk-cli-mcp-current-state-assessment.md](products/smart-cli/docs/planning/sdk-cli-mcp-current-state-assessment.md) | [sdk-cli-mcp-current-state-assessment.es.md](products/smart-cli/docs/planning/sdk-cli-mcp-current-state-assessment.es.md) | OK |
+| [sdk-cli-mcp-gap-analysis.md](products/smart-cli/docs/planning/sdk-cli-mcp-gap-analysis.md) | [sdk-cli-mcp-gap-analysis.es.md](products/smart-cli/docs/planning/sdk-cli-mcp-gap-analysis.es.md) | OK |
+| [sdk-cli-mcp-implementation-roadmap.md](products/smart-cli/docs/planning/sdk-cli-mcp-implementation-roadmap.md) | [sdk-cli-mcp-implementation-roadmap.es.md](products/smart-cli/docs/planning/sdk-cli-mcp-implementation-roadmap.es.md) | OK |
+| [sdk-cli-mcp-target-architecture.md](products/smart-cli/docs/planning/sdk-cli-mcp-target-architecture.md) | [sdk-cli-mcp-target-architecture.es.md](products/smart-cli/docs/planning/sdk-cli-mcp-target-architecture.es.md) | OK |
+| [testing-strategy.md](products/smart-cli/docs/planning/testing-strategy.md) | [testing-strategy.es.md](products/smart-cli/docs/planning/testing-strategy.es.md) | OK |
 
 </details>
 

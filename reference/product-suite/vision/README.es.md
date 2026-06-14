@@ -15,7 +15,7 @@ Esta área contiene la visión de portafolio de Evolith Product Suite. Explica q
 
 | Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
 |---|---|---|---|---|
-| [Visión Maestra del Producto Evolith](../../governance/standards/vision/evolith-product-vision-master.es.md) | Dirección estratégica, roadmap y modelo de madurez de la Suite | Alinear equipos a metas de largo plazo | Visión y estrategia | Sí |
+| [Visión Maestra del Producto Evolith](./evolith-product-vision-master.es.md) | Dirección estratégica, roadmap y modelo de madurez de la Suite | Alinear equipos a metas de largo plazo | Visión y estrategia | Sí |
 | [Framework Estratégico de Validación y Composición](../../governance/standards/vision/evolith-strategic-validation-and-composition-framework.es.md) | Framework para validar y componer las apuestas del portafolio | Validar el portafolio estratégicamente | Framework | No |
 | [Diseño Objetivo de Composición Gobernada](../../governance/standards/vision/evolith-governed-composition-target-design.es.md) | Diseño objetivo de la composición gobernada de productos | Diseñar el estado objetivo compuesto | Referencia de diseño | No |
 

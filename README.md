@@ -59,7 +59,7 @@ When you already know which artifact you need, skip the descent and open the [Gl
 |---|---|---|---|
 | [Executive One-Pager](./reference/governance/standards/communication/visuals/v01-executive-one-pager.md) | Five-minute explanation of Evolith, UMS, and the value proposition | Communicate strategic value quickly | Executive summary |
 | [Getting Started by Role](./reference/getting-started/README.md) | Recommended reading paths for executives, architects, engineers, QA, SRE, product, and AI contributors | Accelerate onboarding by role | Onboarding guide |
-| [Product Vision](./reference/governance/standards/vision/evolith-product-vision-master.md) | Strategic direction, roadmap, and maturity model | Align teams to long-term goals | Vision and strategy |
+| [Product Vision](./reference/product-suite/vision/evolith-product-vision-master.md) | Strategic direction, roadmap, and maturity model | Align teams to long-term goals | Vision and strategy |
 | [SDLC Governance Center](./reference/governance/sdlc/README.md) | Authoritative lifecycle phases, gates, artifacts, and traceability model | Govern the full development lifecycle | Governance hub |
 | [Global Master Index](./reference/navigation/MASTER_INDEX.md) | Complete repository navigation when you already know what artifact you need | Locate any artifact quickly | Navigation index |
 
@@ -75,7 +75,7 @@ When you already know which artifact you need, skip the descent and open the [Gl
 | **Architect** | Standards, ADRs, blueprints | [Architecture Hub](./reference/architecture/README.md) | [ADR Matrix](./reference/architecture/adrs/adr-matrix.md) |
 | **Developer** | How to implement following SDLC | [Engineering Standards](./reference/governance/standards/engineering/engineering-manifesto.md) | [UMS Reference Model](./reference/knowledge/demo/ums-reference-model.md) |
 | **QA / SRE** | Gates, quality, metrics, ops | [Operations Hub](./reference/operations/README.md) | [SDLC Quality Gates](./reference/governance/sdlc/quality-gates.md) |
-| **Product / PM** | PRD, traceability, roadmap | [SDLC Governance Center](./reference/governance/sdlc/README.md) | [Product Vision](./reference/governance/standards/vision/evolith-product-vision-master.md) |
+| **Product / PM** | PRD, traceability, roadmap | [SDLC Governance Center](./reference/governance/sdlc/README.md) | [Product Vision](./reference/product-suite/vision/evolith-product-vision-master.md) |
 | **AI Agent (BMAD)**| Rules, skills, assisted flow | [AGENTS.md](./AGENTS.md) — agent rules | [AI-Assisted Flow](./reference/governance/sdlc/ai-assisted-flow.md) |
 
 </details>

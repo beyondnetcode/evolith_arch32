@@ -34,7 +34,7 @@ The Anti-Corruption Layer ruleset governs all integrations with external systems
 
 ## Reference
 
-- [Evolith Product Vision Master — Section 3.2 ACLs](../../reference/governance/standards/vision/evolith-product-vision-master.md)
+- [Evolith Product Vision Master — Section 3.2 ACLs](../../reference/product-suite/vision/evolith-product-vision-master.md)
 - [Evolith Core Inheritance Rules](../governance/inheritance.rules.json)
 
 ---

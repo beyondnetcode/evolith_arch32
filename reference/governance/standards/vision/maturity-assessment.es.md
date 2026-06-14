@@ -15,7 +15,7 @@
 Esta es la **única evaluación de madurez** de Evolith Core. Mide tres cosas:
 
 1. **Compatibilidad con estándares internacionales** — TOGAF Architecture Capability Maturity Model (ACMM) para madurez de proceso y gobernanza enterprise, más los pilares del Cloud Well-Architected Framework (WAF) para madurez técnica (sección 3) y el catálogo enterprise de patrones/anti-patrones de microservicios (secciones 5–6).
-2. **Match con la visión del producto** — alineación pilar por pilar contra la [Visión Maestra del Producto](./evolith-product-vision-master.es.md) (sección 7).
+2. **Match con la visión del producto** — alineación pilar por pilar contra la [Visión Maestra del Producto](../../../product-suite/vision/evolith-product-vision-master.es.md) (sección 7).
 3. **Gaps abiertos** — toda desviación encontrada aquí se registra exclusivamente como ítem `GT-xx` en el [Tablero de Seguimiento de Gaps](./gap-tracking.es.md) (sección 8). Ningún gap se trackea en este documento.
 
 **Cómo actualizar:** re-puntúa una sección cuando cambie su evidencia subyacente (ADR mergeado, gate cerrado, ítem GT completado), actualiza `Última Actualización`, y mantén el registro de gaps en el tablero — nunca aquí.
@@ -149,7 +149,7 @@ La arquitectura despliega "anticuerpos" explícitos contra los seis anti-patrone
 
 ## 7. Alineación con la Visión del Producto
 
-Match pilar por pilar contra la [Visión Maestra del Producto](./evolith-product-vision-master.es.md). Los scores detallados por componente viven en el [Snapshot de Línea Base](./gap-reference-catalog.es.md#2-snapshot-histórico-de-línea-base) del Catálogo de Referencia de Gaps.
+Match pilar por pilar contra la [Visión Maestra del Producto](../../../product-suite/vision/evolith-product-vision-master.es.md). Los scores detallados por componente viven en el [Snapshot de Línea Base](./gap-reference-catalog.es.md#2-snapshot-histórico-de-línea-base) del Catálogo de Referencia de Gaps.
 
 | Pilar de Visión | Requisito de Visión | Estado Basado en Evidencia | Notas |
 |---|---|:---:|---|

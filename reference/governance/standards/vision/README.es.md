@@ -2,7 +2,7 @@
 
 * [architectural-directives](./architectural-directives.es.md)
 * [evolutionary-strategy-roadmap](./evolutionary-strategy-roadmap.es.md)
-* [evolith-product-vision-master](./evolith-product-vision-master.es.md)
+* [evolith-product-vision-master](../../../product-suite/vision/evolith-product-vision-master.es.md)
 
 ## Documentos estratégicos hijos
 

@@ -990,7 +990,7 @@
     {
       "id": "GT-71",
       "closedAt": "2026-06-13",
-      "closureCommit": "3defbe6",
+      "closureCommit": "ec0a54c",
       "evidence": [
         "apps/core-api/src/infrastructure/resilience/circuit-breaker.service.ts"
       ],

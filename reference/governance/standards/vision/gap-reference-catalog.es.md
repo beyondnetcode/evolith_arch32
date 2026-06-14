@@ -629,10 +629,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Gap:** No existe registro estructurado de eventos de seguridad: accesos denegados, validaciones fallidas, límite de rate alcanzado. OWASP API9:2023 (Gestión de Inventario Inadecuada) exige visibilidad completa del uso de la API.
 - **Propósito:** Implementar un `SecurityAuditInterceptor` que registre: IP, método, path, identificador de usuario y resultado (permitido/denegado) para cada request. Sin PII ni tokens en los logs.
 - **Criterio de cierre:**
-  - [ ] `SecurityAuditInterceptor` registrado globalmente
-  - [ ] Eventos de throttling logueados a nivel WARN
-  - [ ] Todos los logs en formato JSON estructurado
-  - [ ] Sin passwords, tokens ni PII en ningún log
+  - [x] `SecurityAuditInterceptor` registrado globalmente
+  - [x] Eventos de throttling logueados a nivel WARN
+  - [x] Todos los logs en formato JSON estructurado
+  - [x] Sin passwords, tokens ni PII en ningún log
 - **Referencias:** [OWASP API9:2023](https://owasp.org/API-Security/editions/2023/en/0xa9-improper-inventory-management/)
 
 #### GT-64

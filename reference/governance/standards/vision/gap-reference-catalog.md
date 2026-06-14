@@ -629,10 +629,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Gap:** No structured logging of security events: denied access, failed validations, rate limit hits. OWASP API9:2023 (Improper Inventory Management) requires complete visibility into API usage.
 - **Purpose:** Implement a `SecurityAuditInterceptor` that logs: IP, method, path, user identifier, and allow/deny outcome for every request. No PII or tokens logged.
 - **Done when:**
-  - [ ] `SecurityAuditInterceptor` registered globally
-  - [ ] Throttling events logged at WARN level
-  - [ ] All logs in JSON structured format
-  - [ ] No passwords, tokens, or PII in any log output
+  - [x] `SecurityAuditInterceptor` registered globally
+  - [x] Throttling events logged at WARN level
+  - [x] All logs in JSON structured format
+  - [x] No passwords, tokens, or PII in any log output
 - **References:** [OWASP API9:2023](https://owasp.org/API-Security/editions/2023/en/0xa9-improper-inventory-management/)
 
 #### GT-64

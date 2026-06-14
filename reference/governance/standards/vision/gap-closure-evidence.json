@@ -908,6 +908,19 @@
         "npm test --workspace apps/core-api -- --no-coverage"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-63",
+      "closedAt": "2026-06-13",
+      "closureCommit": "c798ef5",
+      "evidence": [
+        "apps/core-api/src/infrastructure/interceptors/security-audit.interceptor.ts",
+        "apps/core-api/src/infrastructure/guards/audit-throttler.guard.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace apps/core-api -- --no-coverage"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

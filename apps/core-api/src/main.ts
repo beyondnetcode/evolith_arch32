@@ -5,6 +5,7 @@ import { AppModule } from './app.module';
 import helmet from 'helmet';
 import { EnvConfig } from './infrastructure/config/env.validation';
 import { HttpExceptionFilter } from './infrastructure/filters/http-exception.filter';
+import { SecurityAuditInterceptor } from './infrastructure/interceptors/security-audit.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -20,6 +21,8 @@ async function bootstrap() {
   }));
 
   app.useGlobalFilters(new HttpExceptionFilter());
+
+  app.useGlobalInterceptors(new SecurityAuditInterceptor());
 
   app.use(helmet());
 

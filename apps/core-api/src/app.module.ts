@@ -1,7 +1,7 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
-import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { LoggerModule } from 'nestjs-pino';
 import { PassportModule } from '@nestjs/passport';
 import { HealthController } from './presentation/controllers/health.controller';
@@ -15,6 +15,7 @@ import { ApiKeyAuthGuard } from './infrastructure/auth/api-key.guard';
 import { ApiKeyStrategy } from './infrastructure/auth/api-key.strategy';
 import { ApiKeyService } from './infrastructure/auth/api-key.service';
 import { validateEnv } from './infrastructure/config/env.validation';
+import { AuditThrottlerGuard } from './infrastructure/guards/audit-throttler.guard';
 
 @Module({
   imports: [
@@ -47,7 +48,7 @@ import { validateEnv } from './infrastructure/config/env.validation';
     ApiKeyStrategy,
     {
       provide: APP_GUARD,
-      useClass: ThrottlerGuard,
+      useClass: AuditThrottlerGuard,
     },
     {
       provide: APP_GUARD,

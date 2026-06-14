@@ -88,18 +88,18 @@ Implement MCP server with full tool, resource, and prompt support.
 |------|--------|------------|--------|
 | Create `McpServer` class with stdio transport | M | Phase 1 SDK | TODO |
 | Implement `tools/list` handler | S | McpServer | TODO |
-| Implement `validate_project` tool | M | SDK ValidationService | TODO |
-| Implement `validate_ruleset` tool | M | SDK RulesetValidator | TODO |
-| Implement `list_rulesets` tool | S | SDK RulesetRegistry | TODO |
-| Implement `get_ruleset` tool | S | SDK RulesetRegistry | TODO |
-| Implement `detect_architecture_drift` tool | M | SDK DriftDetection | TODO |
-| Implement `resources/list` handler | S | McpServer | TODO |
-| Implement `evolith://core/info` resource | S | SDK CoreLoader | TODO |
-| Implement `evolith://rulesets` resource | S | SDK RulesetRegistry | TODO |
-| Implement `prompts/list` handler | XS | McpServer | TODO |
-| Implement `prepare_discovery` prompt | S | - | TODO |
-| Implement `review_architecture` prompt | S | - | TODO |
-| Add MCP integration tests | M | MCP tools | TODO |
+| Implement `validate_project` tool | M | SDK ValidationService | DONE |
+| Implement `validate_ruleset` tool | M | SDK RulesetValidator | DONE |
+| Implement `list_rulesets` tool | S | SDK RulesetRegistry | DONE |
+| Implement `get_ruleset` tool | S | SDK RulesetRegistry | DONE |
+| Implement `detect_architecture_drift` tool | M | SDK DriftDetection | DONE |
+| Implement `resources/list` handler | S | McpServer | DONE |
+| Implement `evolith://core/info` resource | S | SDK CoreLoader | DONE |
+| Implement `evolith://rulesets` resource | S | SDK RulesetRegistry | DONE |
+| Implement `prompts/list` handler | XS | McpServer | DONE |
+| Implement `prepare_discovery` prompt | S | - | DONE |
+| Implement `review_architecture` prompt | S | - | DONE |
+| Add MCP integration tests | M | MCP tools | DONE |
 
 ### Deliverables
 - Functional MCP server
@@ -123,14 +123,14 @@ Complete architecture validation and SDLC phase gate operations.
 
 | Task | Effort | Dependency | Status |
 |------|--------|------------|--------|
-| Implement full F1/F2/F3 validation | M | Phase 1 SDK | TODO |
-| Implement bounded context checks | M | F1/F2/F3 | TODO |
-| Implement layer boundary validation | M | F1/F2/F3 | TODO |
-| Implement `gate validate` command | M | Phase 2 CLI | TODO |
-| Implement evidence collection | M | SDK EvidenceService | TODO |
-| Implement phase transition validation | M | Gate validate | TODO |
-| Add architecture drift detection | M | Phase 3 MCP | TODO |
-| Implement DORA metrics collection | M | SDK ReportService | TODO |
+| Implement full F1/F2/F3 validation | M | Phase 1 SDK | DONE |
+| Implement bounded context checks | M | F1/F2/F3 | DONE |
+| Implement layer boundary validation | M | F1/F2/F3 | DONE |
+| Implement `gate validate` command | M | Phase 2 CLI | DONE |
+| Implement evidence collection | M | SDK EvidenceService | DONE |
+| Implement phase transition validation | M | Gate validate | DONE |
+| Add architecture drift detection | M | Phase 3 MCP | DONE |
+| Implement DORA metrics collection | M | SDK ReportService | DONE |
 
 ### Deliverables
 - Full architecture validation

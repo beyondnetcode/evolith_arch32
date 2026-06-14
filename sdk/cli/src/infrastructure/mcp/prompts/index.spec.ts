@@ -7,7 +7,7 @@ describe('MCP Prompts', () => {
 
       expect(result.prompts).toBeDefined();
       expect(Array.isArray(result.prompts)).toBe(true);
-      expect(result.prompts.length).toBe(7);
+      expect(result.prompts.length).toBe(8);
     });
 
     it('should include validate-repository prompt', async () => {
@@ -25,10 +25,10 @@ describe('MCP Prompts', () => {
       expect(prompt).toBeDefined();
     });
 
-    it('should include architecture-review prompt', async () => {
+    it('should include review-architecture prompt', async () => {
       const result = await listPrompts();
 
-      const prompt = result.prompts.find((p: any) => p.name === 'evolith/architecture-review');
+      const prompt = result.prompts.find((p: any) => p.name === 'evolith/review-architecture');
       expect(prompt).toBeDefined();
     });
 
@@ -104,10 +104,10 @@ describe('MCP Prompts', () => {
       });
     });
 
-    describe('evolith/architecture-review', () => {
+    describe('evolith/review-architecture', () => {
       it('should return architecture review prompt template', async () => {
         const result = await getPrompt({
-          name: 'evolith/architecture-review',
+          name: 'evolith/review-architecture',
           arguments: { path: '/test/repo', level: 'F2' },
         });
 
@@ -120,11 +120,24 @@ describe('MCP Prompts', () => {
 
       it('should check all levels when level not specified', async () => {
         const result = await getPrompt({
-          name: 'evolith/architecture-review',
+          name: 'evolith/review-architecture',
           arguments: { path: '/test/repo' },
         });
 
         expect(result.messages[0].content.text).toContain('Check all three levels');
+      });
+    });
+
+    describe('evolith/prepare-discovery', () => {
+      it('should return prepare discovery prompt template', async () => {
+        const result = await getPrompt({
+          name: 'evolith/prepare-discovery',
+          arguments: { path: '/test/repo' },
+        });
+
+        expect(result.messages[0].content.text).toContain('/test/repo');
+        expect(result.messages[0].content.text).toContain('evolith-sdlc-status');
+        expect(result.messages[0].content.text).toContain('evolith-moscow-create');
       });
     });
 

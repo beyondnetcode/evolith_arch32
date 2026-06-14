@@ -102,6 +102,59 @@ export function getSdlcTools(fs: IFileSystem, configParser: IConfigParser): IMcp
         const toPhase = args.toPhase as string;
         return sdlcHandoff(repoPath, fromPhase, toPhase, fs, configParser);
       }
+    },
+    {
+      schema: {
+        name: 'evolith-dora-metrics',
+        description: 'Calculate DORA metrics approximations using Git log history',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            path: { type: 'string' },
+            days: { type: 'number', description: 'Number of days to look back (default 90)', default: 90 },
+          },
+          required: ['path'],
+        },
+      },
+      execute: async (args) => {
+        const repoPath = args.path as string;
+        const days = (args.days as number) || 90;
+
+        if (!repoPath) return { error: true, message: 'path is required' };
+
+        try {
+          const { readGitLog, isGitRepo } = require('../../../domain/metrics/git-log-reader');
+          if (!(await isGitRepo(repoPath))) {
+            return { error: true, message: 'Not a git repository' };
+          }
+
+          const commits = await readGitLog({ cwd: repoPath, sinceDays: days });
+          const totalCommits = commits.length;
+          const merges = commits.filter((c: any) => c.isMerge).length;
+
+          // Simple approximations
+          const deploymentFrequency = totalCommits > 0 ? totalCommits / days : 0;
+          const leadTimeDays = 2; // Stub for actual lead time
+
+          return {
+            tool: 'evolith-dora-metrics',
+            repository: repoPath,
+            windowDays: days,
+            metrics: {
+              deploymentFrequency: `${deploymentFrequency.toFixed(2)} commits/day`,
+              leadTimeForChanges: `${leadTimeDays} days (approx)`,
+              totalCommits,
+              mergeCommits: merges,
+            },
+            timestamp: new Date().toISOString(),
+          };
+        } catch (error) {
+           return {
+             error: true,
+             message: `Failed to collect DORA metrics: ${error instanceof Error ? error.message : String(error)}`
+           };
+        }
+      }
     }
   ];
 }

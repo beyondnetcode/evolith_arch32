@@ -22,11 +22,18 @@ const PROMPTS: Prompt[] = [
     ],
   },
   {
-    name: 'evolith/architecture-review',
+    name: 'evolith/review-architecture',
     description: 'Template for performing F1/F2/F3 architecture validation review',
     arguments: [
       { name: 'path', description: 'Path to the repository', required: true },
       { name: 'level', description: 'Architecture level: F1, F2, or F3', required: false },
+    ],
+  },
+  {
+    name: 'evolith/prepare-discovery',
+    description: 'Template for preparing the discovery phase artifacts',
+    arguments: [
+      { name: 'path', description: 'Path to the repository', required: true },
     ],
   },
   {
@@ -84,8 +91,11 @@ export async function getPrompt(args: unknown) {
     case 'evolith/agent-onboarding':
       template = buildAgentOnboardingPrompt(promptArgs);
       break;
-    case 'evolith/architecture-review':
+    case 'evolith/review-architecture':
       template = buildArchitectureReviewPrompt(promptArgs);
+      break;
+    case 'evolith/prepare-discovery':
+      template = buildPrepareDiscoveryPrompt(promptArgs);
       break;
     case 'evolith/phase-gate-check':
       template = buildPhaseGateCheckPrompt(promptArgs);
@@ -161,6 +171,15 @@ F3 (Extraction Readiness):
 ${args.level ? `Focus on ${args.level} level only.` : 'Check all three levels.'}
 
 Provide a detailed report of any architectural issues found.`;
+}
+
+function buildPrepareDiscoveryPrompt(args: Record<string, string>): string {
+  return `Please prepare the discovery phase artifacts for the repository at "${args.path || '<path>'}".
+
+Use the evolith-sdlc-status tool to check the current readiness.
+Then use evolith-moscow-create to draft a prioritization matrix for phase-0.
+
+Identify missing inputs from the user before proceeding to the design phase.`;
 }
 
 function buildPhaseGateCheckPrompt(args: Record<string, string>): string {

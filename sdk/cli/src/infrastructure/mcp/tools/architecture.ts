@@ -20,7 +20,7 @@ export function getArchitectureTools(fs: IFileSystem, configParser: IConfigParse
           required: ['path'],
         },
       },
-      execute: async (args) => {
+      execute: async (args, deps) => {
         /* fs injected */
         /* configParser injected */
         const repoPath = args.path as string;
@@ -50,6 +50,23 @@ export function getArchitectureTools(fs: IFileSystem, configParser: IConfigParse
           issues.push(...deepResults);
         }
 
+        // Use proper RulesetValidatorService for OPA Parity
+        const validator = deps?.validator;
+        if (validator) {
+           const corePath = path.join(repoPath, '..', 'evolith');
+           const opaResult = await validator.validate(repoPath, corePath);
+           const opaArchIssues = opaResult.issues.filter((i: any) => i.ruleId.startsWith('F1') || i.ruleId.startsWith('F2') || i.ruleId.startsWith('F3'));
+           for (const issue of opaArchIssues) {
+             issues.push({
+               ruleId: issue.ruleId,
+               level: issue.ruleId.substring(0, 2),
+               title: issue.title,
+               severity: issue.severity,
+               blocking: issue.blocking
+             });
+           }
+        }
+
         const blockingCount = issues.filter(i => i.blocking).length;
 
         return {
@@ -62,6 +79,45 @@ export function getArchitectureTools(fs: IFileSystem, configParser: IConfigParse
           issues,
           timestamp: new Date().toISOString(),
         };
+      }
+    },
+    {
+      schema: {
+        name: 'evolith-drift-detect',
+        description: 'Detect architecture drift in a repository',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            path: { type: 'string' },
+            corePath: { type: 'string', description: 'Optional explicit path to the Evolith core repository' },
+          },
+          required: ['path'],
+        },
+      },
+      execute: async (args) => {
+        const repoPath = args.path as string;
+        const corePath = (args.corePath as string) || path.join(repoPath, '..', 'evolith');
+
+        if (!repoPath) {
+          return { error: true, message: 'path is required' };
+        }
+
+        try {
+          const { ArchitectureDriftService } = require('../../../application/validators/architecture-drift.service');
+          const driftService = new ArchitectureDriftService();
+          const result = await driftService.detectDrift(repoPath, corePath);
+          return {
+            tool: 'evolith-drift-detect',
+            repository: repoPath,
+            result,
+            timestamp: new Date().toISOString(),
+          };
+        } catch (error) {
+           return {
+             error: true,
+             message: `Failed to detect drift: ${error instanceof Error ? error.message : String(error)}`
+           };
+        }
       }
     }
   ];

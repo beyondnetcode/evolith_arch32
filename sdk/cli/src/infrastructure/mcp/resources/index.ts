@@ -13,6 +13,7 @@ const RESOURCES: Resource[] = [
   { uri: 'evolith://rulesets', name: 'Rulesets', description: 'List of all available rulesets in Evolith Core' },
   { uri: 'evolith://phase-gates', name: 'Phase Gates', description: 'Phase gate definitions and requirements' },
   { uri: 'evolith://agents', name: 'Agents', description: 'List of installed Evolith agents' },
+  { uri: 'evolith://core/info', name: 'Core Info', description: 'General information about the Evolith Core' },
   { uri: 'evolith://governance/version', name: 'Governance Version', description: 'Current governance schema version' },
   { uri: 'evolith://core/version', name: 'Core Version', description: 'Current Core schema version' },
   { uri: 'evolith://repository/config', name: 'Repository Config', description: 'Repository evolith.yaml content' },
@@ -38,6 +39,8 @@ export async function readResource(args: unknown) {
     return { version: '1.0.0', schema: 'governance' };
   } else if (uri === 'evolith://core/version') {
     return { version: '1.0.0', schema: 'core' };
+  } else if (uri === 'evolith://core/info') {
+    return await getCoreInfo(fs);
   } else if (uri.startsWith('evolith://ruleset/')) {
     const rulesetName = uri.replace('evolith://ruleset/', '');
     return await getRulesetContent(rulesetName, fs);
@@ -58,6 +61,28 @@ export async function readResource(args: unknown) {
   }
 
   throw new Error(`Unknown resource URI: ${uri}`);
+}
+
+async function getCoreInfo(fs: IFileSystem) {
+  const corePath = findCorePath(process.cwd(), fs);
+  const rulesetsPath = path.join(corePath, 'rulesets');
+  let rulesetCount = 0;
+  if (await fs.exists(rulesetsPath)) {
+    const entries = await fs.readdir(rulesetsPath);
+    for (const entry of entries) {
+      if (entry.isDirectory()) {
+        const categoryPath = path.join(rulesetsPath, entry.name);
+        const files = await fs.readdirNames(categoryPath);
+        rulesetCount += files.filter(f => f.endsWith('.rules.json')).length;
+      }
+    }
+  }
+  return {
+    path: corePath,
+    version: '1.0.0',
+    totalRulesets: rulesetCount,
+    capabilities: ['governance', 'architecture', 'sdlc']
+  };
 }
 
 async function getRulesetsList(fs: IFileSystem) {

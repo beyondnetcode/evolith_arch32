@@ -12,7 +12,6 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|
-| [`GT-67`](./gap-reference-catalog.es.md#gt-67) | Especificación OpenAPI 3.1 completa | `BFF API` | F2 | P1 | M | `PENDIENTE` |
 | [`GT-65`](./gap-reference-catalog.es.md#gt-65) | Métricas Prometheus + Health checks liveness/readiness | `BFF API` | F2 | P1 | M | `PENDIENTE` |
 | [`GT-66`](./gap-reference-catalog.es.md#gt-66) | Trazado distribuido con OpenTelemetry | `BFF API` | F3 | P1 | L | `PENDIENTE` |
 | [`GT-68`](./gap-reference-catalog.es.md#gt-68) | Versionado de API con estrategia URI | `BFF API` | F3 | P2 | S | `PENDIENTE` |
@@ -49,6 +48,7 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-08`](./gap-reference-catalog.es.md#gt-08) | Validación real del registro ADR en Fase 2 | `CLI` | F3 | P1 | S | `COMPLETADO` |
 | [`GT-07`](./gap-reference-catalog.es.md#gt-07) | Smoke de release para evaluación de gates MCP | `CLI` | F2 | P1 | S | `COMPLETADO` |
 | [`GT-04`](./gap-reference-catalog.es.md#gt-04) | Eliminar service locator del dominio | `Core Domain` | F1 | P1 | S | `COMPLETADO` |
+| [`GT-67`](./gap-reference-catalog.es.md#gt-67) | Especificación OpenAPI 3.1 completa | `BFF API` | F2 | P1 | M | `COMPLETADO` |
 | [`GT-76`](./gap-reference-catalog.es.md#gt-76) | PhaseTransitionUseCase expuesto en el Core API | `BFF API` | F1 | P1 | M | `COMPLETADO` |
 | [`GT-56`](./gap-reference-catalog.es.md#gt-56) | Fallos silenciosos y mocks faltantes en pruebas E2E del CLI | `CLI` | Transversal | P1 | M | `COMPLETADO` |
 | [`GT-55`](./gap-reference-catalog.es.md#gt-55) | Estrictez de TypeScript y eliminación de any implícito | `CLI` | Transversal | P1 | M | `COMPLETADO` |
@@ -83,7 +83,7 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-25`](./gap-reference-catalog.es.md#gt-25) | Primeros perfiles de proveedor | `Governance` | Transversal | P2 | L | `COMPLETADO` |
 | [`GT-23`](./gap-reference-catalog.es.md#gt-23) | Backfill de traducciones españolas | `Governance` | Transversal | P2 | L | `COMPLETADO` |
 
-**Progreso:** 64 / 70 completados · 0 en progreso · 6 pendientes · 0 diferidos
+**Progreso:** 65 / 70 completados · 0 en progreso · 5 pendientes · 0 diferidos
 
 **Ordenamiento:** criticidad (`P0` → `P1` → `P2`), estado activo (`EN-PROGRESO` → `COMPLETADO` → `DIFERIDO`) y complejidad (`S` → `M` → `L`). Los gaps completados aparecen después del trabajo activo.
 

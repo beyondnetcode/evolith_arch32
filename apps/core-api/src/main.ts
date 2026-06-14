@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import helmet from 'helmet';
 import { EnvConfig } from './infrastructure/config/env.validation';
@@ -13,6 +14,16 @@ async function bootstrap() {
   });
 
   const config = app.get(ConfigService<EnvConfig>);
+
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('Evolith Core API')
+    .setDescription('Core API for gate evaluation, phase transitions, project initialization, and architecture drift detection')
+    .setVersion('1.0.0')
+    .addApiKey({ type: 'apiKey', name: 'x-api-key', in: 'header' }, 'api-key')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup('api/docs', app, document);
 
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,

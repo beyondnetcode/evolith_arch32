@@ -680,11 +680,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Gap:** No OpenAPI specification exists. The Evolith Tracker cannot generate a typed client SDK. Contracts between services are implicit and brittle.
 - **Purpose:** Implement `@nestjs/swagger` with full decorator coverage on all controllers and DTOs. Generate and version `openapi.json` as part of the build.
 - **Done when:**
-  - [ ] `@nestjs/swagger` installed and configured in `main.ts`
-  - [ ] All endpoints documented with `@ApiOperation`, `@ApiResponse`, `@ApiBody`
-  - [ ] All DTOs annotated with `@ApiProperty`
-  - [ ] `GET /api/docs` serves Swagger UI
-  - [ ] `openapi.json` generated in build and versioned in repository
+  - [x] `@nestjs/swagger` installed and configured in `main.ts`
+  - [x] All endpoints documented with `@ApiOperation`, `@ApiResponse`, `@ApiBody`
+  - [x] All DTOs annotated with `@ApiProperty`
+  - [x] `GET /api/docs` serves Swagger UI
+  - [x] `openapi.json` generated in build and versioned in repository
 - **References:** [@nestjs/swagger](https://docs.nestjs.com/openapi/introduction) · [apps/core-api](../../../../apps/core-api)
 
 #### GT-68

@@ -66,6 +66,7 @@
     "typescript-eslint": "^8.20.0"
   },
   "jest": {
+    "setupFiles": ["<rootDir>/../test-setup.js"],
     "moduleFileExtensions": [
       "js",
       "json",

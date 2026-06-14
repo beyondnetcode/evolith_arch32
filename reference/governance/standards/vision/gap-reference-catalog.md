@@ -719,9 +719,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Gap:** The server does not handle OS signals (`SIGTERM`, `SIGINT`). In Kubernetes, in-flight requests are abruptly interrupted when a pod is terminated.
 - **Purpose:** Enable NestJS shutdown hooks and implement `OnModuleDestroy` in services holding external resources. Drain in-flight requests before process exit.
 - **Done when:**
-  - [ ] `app.enableShutdownHooks()` enabled
-  - [ ] `OnModuleDestroy` implemented in services with external resources
-  - [ ] Integration test verifies in-flight requests complete before shutdown
+  - [x] `app.enableShutdownHooks()` enabled
+  - [x] `OnModuleDestroy` implemented in services with external resources
+  - [x] Integration test verifies in-flight requests complete before shutdown
 - **References:** [NestJS Lifecycle Events](https://docs.nestjs.com/fundamentals/lifecycle-events) · [apps/core-api/src/main.ts](../../../../apps/core-api/src/main.ts)
 
 #### GT-71

@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createHash, timingSafeEqual } from 'crypto';
 import { EnvConfig } from '../config/env.validation';
 
 @Injectable()
-export class ApiKeyService {
+export class ApiKeyService implements OnModuleDestroy {
   private readonly keyStore: Map<string, string> = new Map();
 
   constructor(private readonly config: ConfigService<EnvConfig>) {
@@ -36,5 +36,9 @@ export class ApiKeyService {
 
   private hashKey(key: string): string {
     return createHash('sha256').update(key).digest('hex');
+  }
+
+  onModuleDestroy(): void {
+    this.keyStore.clear();
   }
 }

@@ -29,6 +29,8 @@ async function bootstrap() {
 
   app.flushLogs();
 
+  app.enableShutdownHooks();
+
   await app.listen(config.get('PORT', 3000));
 }
 bootstrap().catch((err) => {

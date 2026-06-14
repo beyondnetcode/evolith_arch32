@@ -719,9 +719,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Gap:** El servidor no maneja señales del OS (`SIGTERM`, `SIGINT`). En Kubernetes, los requests en vuelo se interrumpen abruptamente cuando un pod es terminado.
 - **Propósito:** Habilitar los shutdown hooks de NestJS e implementar `OnModuleDestroy` en servicios con recursos externos. Drenar requests en vuelo antes de la salida del proceso.
 - **Criterio de cierre:**
-  - [ ] `app.enableShutdownHooks()` habilitado
-  - [ ] `OnModuleDestroy` implementado en servicios con recursos externos
-  - [ ] Test de integración verifica que los requests en vuelo se completan antes del shutdown
+  - [x] `app.enableShutdownHooks()` habilitado
+  - [x] `OnModuleDestroy` implementado en servicios con recursos externos
+  - [x] Test de integración verifica que los requests en vuelo se completan antes del shutdown
 - **Referencias:** [NestJS Lifecycle Events](https://docs.nestjs.com/fundamentals/lifecycle-events) · [apps/core-api/src/main.ts](../../../../apps/core-api/src/main.ts)
 
 #### GT-71

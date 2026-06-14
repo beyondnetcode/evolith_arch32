@@ -880,6 +880,20 @@
         "npm test --workspace apps/core-api -- --no-coverage"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-70",
+      "closedAt": "2026-06-13",
+      "closureCommit": "cedf3c2",
+      "evidence": [
+        "apps/core-api/src/main.ts",
+        "apps/core-api/src/infrastructure/auth/api-key.service.ts",
+        "apps/core-api/src/graceful-shutdown.spec.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace apps/core-api -- --testPathPatterns=\"graceful\" --no-coverage"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

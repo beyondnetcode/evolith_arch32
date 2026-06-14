@@ -12,11 +12,8 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|
-| [`GT-59`](./gap-reference-catalog.es.md#gt-59) | Hardening HTTP — Helmet + CORS + Rate Limiting (OWASP API4/8) | `BFF API` | Transversal | P0 | S | `COMPLETADO` |
-| [`GT-64`](./gap-reference-catalog.es.md#gt-64) | Logging estructurado con Correlation ID | `BFF API` | Transversal | P0 | M | `COMPLETADO` |
 | [`GT-60`](./gap-reference-catalog.es.md#gt-60) | Validación global de DTOs con class-validator (OWASP API3) | `BFF API` | Transversal | P0 | M | `PENDIENTE` |
 | [`GT-73`](./gap-reference-catalog.es.md#gt-73) | Pruebas Unit + Integration + E2E del Core API | `BFF API` | Transversal | P0 | L | `PENDIENTE` |
-| [`GT-72`](./gap-reference-catalog.es.md#gt-72) | Eliminar @ts-nocheck de la capa de aplicación | `Core Domain` | Transversal | P0 | L | `COMPLETADO` |
 | [`GT-62`](./gap-reference-catalog.es.md#gt-62) | Autenticación API Key + JWT (OWASP API1/2/5) | `BFF API` | F2 | P0 | L | `PENDIENTE` |
 | [`GT-74`](./gap-reference-catalog.es.md#gt-74) | ConfigModule con validación de variables de entorno (Zod) | `BFF API` | Transversal | P1 | S | `PENDIENTE` |
 | [`GT-70`](./gap-reference-catalog.es.md#gt-70) | Apagado graceful y manejo de señales del OS | `BFF API` | Transversal | P1 | S | `PENDIENTE` |
@@ -30,8 +27,10 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-68`](./gap-reference-catalog.es.md#gt-68) | Versionado de API con estrategia URI | `BFF API` | F3 | P2 | S | `PENDIENTE` |
 | [`GT-75`](./gap-reference-catalog.es.md#gt-75) | Paquete @evolith/infra-providers compartido | `Cross` | Transversal | P2 | M | `PENDIENTE` |
 | [`GT-71`](./gap-reference-catalog.es.md#gt-71) | Circuit Breaker para llamadas a servicios externos | `BFF API` | F3 | P2 | M | `PENDIENTE` |
+| [`GT-59`](./gap-reference-catalog.es.md#gt-59) | Hardening HTTP — Helmet + CORS + Rate Limiting (OWASP API4/8) | `BFF API` | Transversal | P0 | S | `COMPLETADO` |
 | [`GT-27`](./gap-reference-catalog.es.md#gt-27) | Consistencia semántica del tracking canónico | `Governance` | Transversal | P0 | S | `COMPLETADO` |
 | [`GT-01`](./gap-reference-catalog.es.md#gt-01) | ADR de contrato unificado | `Governance` | F0 | P0 | S | `COMPLETADO` |
+| [`GT-64`](./gap-reference-catalog.es.md#gt-64) | Logging estructurado con Correlation ID | `BFF API` | Transversal | P0 | M | `COMPLETADO` |
 | [`GT-44`](./gap-reference-catalog.es.md#gt-44) | Integridad determinista del pipeline de release | `CLI` | F5 | P0 | M | `COMPLETADO` |
 | [`GT-41`](./gap-reference-catalog.es.md#gt-41) | Reconciliación automática de madurez | `Governance` | Transversal | P0 | M | `COMPLETADO` |
 | [`GT-37`](./gap-reference-catalog.es.md#gt-37) | Cierre semántico de gaps condicionado por evidencia | `Governance` | Transversal | P0 | M | `COMPLETADO` |
@@ -39,6 +38,7 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-06`](./gap-reference-catalog.es.md#gt-06) | Tool MCP `evolith-gate-evaluate` | `CLI` | F2 | P0 | M | `COMPLETADO` |
 | [`GT-03`](./gap-reference-catalog.es.md#gt-03) | `EvaluateGateUseCase` y comando `gate evaluate` | `Core Domain` | F1 | P0 | M | `COMPLETADO` |
 | [`GT-02`](./gap-reference-catalog.es.md#gt-02) | `GateEvidence` modelado en la capa de dominio | `Core Domain` | F1 | P0 | M | `COMPLETADO` |
+| [`GT-72`](./gap-reference-catalog.es.md#gt-72) | Eliminar @ts-nocheck de la capa de aplicación | `Core Domain` | Transversal | P0 | L | `COMPLETADO` |
 | [`GT-48`](./gap-reference-catalog.es.md#gt-48) | Restaurar el umbral normativo de cobertura del CLI | `CLI` | F0 | P0 | L | `COMPLETADO` |
 | [`GT-29`](./gap-reference-catalog.es.md#gt-29) | Paridad de ejecución de reglas Native/OPA | `Core Domain` | F1 | P0 | L | `COMPLETADO` |
 | [`GT-47`](./gap-reference-catalog.es.md#gt-47) | Sincronización de documentación de producto y release | `Governance` | Transversal | P1 | S | `COMPLETADO` |

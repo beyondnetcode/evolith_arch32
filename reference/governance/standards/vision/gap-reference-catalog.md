@@ -731,9 +731,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Gap:** If the filesystem (`IFileSystem`) or OPA WASM process fails, errors propagate without graceful degradation. No retry or fallback logic exists.
 - **Purpose:** Wrap critical external calls in a circuit breaker (opossum) to prevent cascading failures and provide fallback responses when dependencies are unavailable.
 - **Done when:**
-  - [ ] Circuit breaker wraps `IFileSystem` calls in critical operations
-  - [ ] Fallback returns degraded response with `503 Service Unavailable`
-  - [ ] Circuit breaker state metrics exposed in `/metrics`
+  - [x] Circuit breaker wraps `IFileSystem` calls in critical operations
+  - [x] Fallback returns degraded response with `503 Service Unavailable`
+  - [x] Circuit breaker state metrics exposed in `/metrics`
 - **References:** [opossum](https://github.com/nodeshift/opossum) · [packages/core-domain/src/domain/interfaces.ts](../../../../packages/core-domain/src/domain/interfaces.ts)
 
 #### GT-72

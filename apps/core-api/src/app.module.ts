@@ -19,6 +19,7 @@ import { ApiKeyService } from './infrastructure/auth/api-key.service';
 import { validateEnv } from './infrastructure/config/env.validation';
 import { AuditThrottlerGuard } from './infrastructure/guards/audit-throttler.guard';
 import { MetricsService } from './infrastructure/metrics/metrics.service';
+import { CircuitBreakerService } from './infrastructure/resilience/circuit-breaker.service';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { MetricsService } from './infrastructure/metrics/metrics.service';
     ApiKeyService,
     ApiKeyStrategy,
     MetricsService,
+    CircuitBreakerService,
     {
       provide: APP_GUARD,
       useClass: AuditThrottlerGuard,

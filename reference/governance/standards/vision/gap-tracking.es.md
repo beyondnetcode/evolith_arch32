@@ -14,7 +14,6 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 |---|---|:---:|:---:|:---:|:---:|:---:|
 | [`GT-66`](./gap-reference-catalog.es.md#gt-66) | Trazado distribuido con OpenTelemetry | `BFF API` | F3 | P1 | L | `PENDIENTE` |
 | [`GT-75`](./gap-reference-catalog.es.md#gt-75) | Paquete @evolith/infra-providers compartido | `Cross` | Transversal | P2 | M | `PENDIENTE` |
-| [`GT-71`](./gap-reference-catalog.es.md#gt-71) | Circuit Breaker para llamadas a servicios externos | `BFF API` | F3 | P2 | M | `PENDIENTE` |
 | [`GT-59`](./gap-reference-catalog.es.md#gt-59) | Hardening HTTP — Helmet + CORS + Rate Limiting (OWASP API4/8) | `BFF API` | Transversal | P0 | S | `COMPLETADO` |
 | [`GT-27`](./gap-reference-catalog.es.md#gt-27) | Consistencia semántica del tracking canónico | `Governance` | Transversal | P0 | S | `COMPLETADO` |
 | [`GT-01`](./gap-reference-catalog.es.md#gt-01) | ADR de contrato unificado | `Governance` | F0 | P0 | S | `COMPLETADO` |
@@ -76,6 +75,7 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-26`](./gap-reference-catalog.es.md#gt-26) | Playbook de Zero-Downtime Release | `Governance` | Transversal | P2 | S | `COMPLETADO` |
 | [`GT-22`](./gap-reference-catalog.es.md#gt-22) | Esquema de unicidad de IDs ADR | `Governance` | Transversal | P2 | S | `COMPLETADO` |
 | [`GT-16`](./gap-reference-catalog.es.md#gt-16) | Consolidación documental | `Governance` | F5 | P2 | S | `COMPLETADO` |
+| [`GT-71`](./gap-reference-catalog.es.md#gt-71) | Circuit Breaker para llamadas a servicios externos | `BFF API` | F3 | P2 | M | `COMPLETADO` |
 | [`GT-24`](./gap-reference-catalog.es.md#gt-24) | Ejecutar migraciones documentales declaradas | `Governance` | Transversal | P2 | M | `COMPLETADO` |
 | [`GT-21`](./gap-reference-catalog.es.md#gt-21) | Revisión de ubicación de ADRs Core tool-céntricos | `Governance` | Transversal | P2 | M | `COMPLETADO` |
 | [`GT-54`](./gap-reference-catalog.es.md#gt-54) | Completar la aplicación estricta de fronteras hexagonales | `Cross` | Transversal | P2 | L | `COMPLETADO` |
@@ -83,7 +83,7 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-25`](./gap-reference-catalog.es.md#gt-25) | Primeros perfiles de proveedor | `Governance` | Transversal | P2 | L | `COMPLETADO` |
 | [`GT-23`](./gap-reference-catalog.es.md#gt-23) | Backfill de traducciones españolas | `Governance` | Transversal | P2 | L | `COMPLETADO` |
 
-**Progreso:** 67 / 70 completados · 0 en progreso · 3 pendientes · 0 diferidos
+**Progreso:** 68 / 70 completados · 0 en progreso · 2 pendientes · 0 diferidos
 
 **Ordenamiento:** criticidad (`P0` → `P1` → `P2`), estado activo (`EN-PROGRESO` → `COMPLETADO` → `DIFERIDO`) y complejidad (`S` → `M` → `L`). Los gaps completados aparecen después del trabajo activo.
 

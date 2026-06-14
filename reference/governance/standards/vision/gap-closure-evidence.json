@@ -986,6 +986,18 @@
         "npm test --workspace apps/core-api -- --no-coverage"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-71",
+      "closedAt": "2026-06-13",
+      "closureCommit": "3defbe6",
+      "evidence": [
+        "apps/core-api/src/infrastructure/resilience/circuit-breaker.service.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace apps/core-api -- --testPathPatterns=\"circuit\" --no-coverage"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

@@ -822,3 +822,55 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Entradas de excepción eliminadas de `.harness/scripts/validate-root-cleanliness.mjs`
   - [x] `validate-root-cleanliness.mjs` pasa sin las entradas de excepción en la allowlist
 - **Referencias:** [.harness/scripts/validate-root-cleanliness.mjs](../../../../.harness/scripts/validate-root-cleanliness.mjs)
+
+#### GT-79
+
+**Título:** Restaurar el pipeline de validación de CI del CLI en verde
+
+- **Gap:** El pipeline `sdk-cli-ci.yml` falla en cada run por dos steps de gobernanza. El job Architecture Validation llama `node .harness/scripts/adr-lifecycle.mjs --check-only`, pero el script no tiene ese comando y sale con 1 mostrando `Unknown command: --check-only`. El job Core Validation corre `bilingual-terminology-lint.mjs`, que reporta ~106 inconsistencias, la mayoría en archivos `BILINGUAL_INDEX` auto-generados cuyas tablas de cross-referencia EN/ES el linter malinterpreta como términos sin traducir.
+- **Propósito:** Lograr que el pipeline de CI del CLI llegue a verde para que sus gates tengan peso probatorio real; un pipeline crónicamente rojo socava la afirmación de Operational Excellence y el modelo de gate-evidence.
+- **Evidencia actual / ejemplo:** `node .harness/scripts/adr-lifecycle.mjs --check-only` imprime `Unknown command: --check-only` (el script soporta `status`, `accept`, `supersede`, …); `node .harness/scripts/bilingual-terminology-lint.mjs` sale con 1 con "Found 106 terminology inconsistencies" apuntando a `reference/**/BILINGUAL_INDEX.es.md`.
+- **Criterio de cierre:**
+  - [ ] el step de Architecture Validation invoca un comando que el script soporta (p.ej. `status`) o el script aprende `--check-only`
+  - [ ] `bilingual-terminology-lint.mjs` excluye archivos generados (`<!-- GENERATED FILE -->`) o se reconcilia la terminología señalada
+  - [ ] el pipeline `sdk-cli-ci.yml` corre en verde desde un checkout limpio
+- **Referencias:** [Workflow CI del CLI](../../../../.github/workflows/sdk-cli-ci.yml) · [adr-lifecycle.mjs](../../../../.harness/scripts/adr-lifecycle.mjs) · [bilingual-terminology-lint.mjs](../../../../.harness/scripts/bilingual-terminology-lint.mjs)
+
+#### GT-80
+
+**Título:** Type-check de la suite de tests del CLI
+
+- **Gap:** La suite de tests del CLI nunca se type-checkea: `tsconfig.json` (el build) excluye `*.spec.ts`, y ts-jest corre con `isolatedModules: true` (transpile sin chequeo de tipos cruzado). Por eso los errores de tipo en tests quedan invisibles — imports rotos y casts no sólidos (p.ej. `as unknown` pasado donde se espera `IFileSystem`) sobreviven en silencio.
+- **Propósito:** Dar a la suite de tests la misma red de seguridad de tipos que el código productivo, para que un refactor que rompa los tipos de un spec falle rápido en vez de pudrirse en un test skipped o engañoso.
+- **Evidencia actual / ejemplo:** `npx tsc --noEmit --project sdk/cli/tsconfig.test.json` reporta 10 errores `TS1205` (re-exports de tipos sin `export type`) en `src/infrastructure/observability/index.ts`; ni `npm run build` ni `npm test` los muestran.
+- **Criterio de cierre:**
+  - [ ] un step de CI type-checkea los tests (`tsc --noEmit -p sdk/cli/tsconfig.test.json`) y bloquea ante fallo
+  - [ ] los errores `TS1205` de re-export existentes se resuelven (`export type`)
+  - [ ] el type-check pasa desde un checkout limpio
+- **Referencias:** [tsconfig de tests del CLI](../../../../sdk/cli/tsconfig.test.json) · [Configuración Jest](../../../../sdk/cli/jest.config.js) · [Barrel de observabilidad](../../../../sdk/cli/src/infrastructure/observability/index.ts)
+
+#### GT-81
+
+**Título:** Subir la cobertura de branches del CLI al piso de statements
+
+- **Gap:** La cobertura de statements del CLI es 80,7% pero la de branches es solo ~68,3%, y el `coverageThreshold` de Jest fija branches en 67 ([GT-50](#gt-50)). Las ramas de error y edge están materialmente menos testeadas que los statements, por lo que una clase de regresiones puede aterrizar sin fallar el gate.
+- **Propósito:** Cerrar la brecha entre cobertura de statements y branches para que las rutas condicionales y de error tengan protección real contra regresiones, y luego subir el umbral de branches para fijar la ganancia.
+- **Evidencia actual / ejemplo:** el `coverage-summary.json` generado reporta `branches.pct ≈ 68` frente a `statements.pct ≈ 80,7`.
+- **Criterio de cierre:**
+  - [ ] la cobertura de branches se sube hacia el piso de statements testeando rutas condicionales/de error sin cubrir
+  - [ ] el `coverageThreshold` de branches de Jest se sube al nuevo piso
+  - [ ] `npm run test:cov` pasa con el umbral de branches endurecido
+- **Referencias:** [Configuración Jest](../../../../sdk/cli/jest.config.js) · [GT-48](#gt-48) · [GT-50](#gt-50)
+
+#### GT-82
+
+**Título:** Revivir o eliminar el spec muerto de gate-status
+
+- **Gap:** `gate-status.command.spec.ts` es la última suite `describe.skip` del CLI (26 tests skipped). Fue un candidato de revival de [GT-48](#gt-48) que quedó tras la eliminación del service locator, y `gate-status.command` queda cerca del 12% de cobertura como resultado.
+- **Propósito:** Eliminar una suite skipped engañosa — revivirla para cubrir el comando o eliminarla para que la suite refleje la realidad.
+- **Evidencia actual / ejemplo:** `grep -rl "describe.skip" sdk/cli/src` devuelve solo `src/commands/sdlc/gate-status.command.spec.ts`; la suite reporta 26 tests skipped.
+- **Criterio de cierre:**
+  - [ ] la suite se revive (inyección por constructor, verde) o se elimina
+  - [ ] no queda ningún `describe.skip` en la suite de tests del CLI, o el skip restante está justificado en el archivo
+  - [ ] la cobertura refleja la decisión y el gate permanece verde
+- **Referencias:** [spec de gate-status](../../../../sdk/cli/src/commands/sdlc/gate-status.command.spec.ts) · [GT-48](#gt-48)

@@ -9,9 +9,7 @@
 
 This board is the single source of truth for gap priority and status. Select a gap ID to open its problem statement, purpose, evidence, closure criteria, and references.
 
-
-> GitHub renders Markdown statically: clickable column sorting and a live search box are not available. Rows are ordered by status (active on top) then criticality; the **Component** column categorizes, and GitHub file search (`/`) finds an ID or term. Completed gaps are collapsed in the expandable section.
-
+> One table with every gap. Each ID links to its full detail in the catalog. Order: status (active on top) → criticality → complexity; completed gaps sit at the end grouped by component. GitHub renders Markdown statically (no interactive sorting or search): the **Component** column categorizes and GitHub file search (`/`) finds an ID or term.
 
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|:---:|
@@ -49,12 +47,6 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-93`](./gap-reference-catalog.md#gt-93) | Built-in observability (OTel BFF→Core→integrations) | `Tracker` | Cross | P2 | M | `PENDING` |
 | [`GT-96`](./gap-reference-catalog.md#gt-96) | Real-time sync via WebSockets/SSE | `Tracker` | Cross | P2 | M | `PENDING` |
 | [`GT-84`](./gap-reference-catalog.md#gt-84) | Extract AuditTrail as a shared kernel | `Tracker` | Cross | P1 | L | `DEFERRED` |
-
-<details>
-<summary><strong>Completed (70)</strong> — click to expand</summary>
-
-| ID | Gap | Component | Phase | Criticality | Complexity | Status |
-|---|---|:---:|:---:|:---:|:---:|:---:|
 | [`GT-59`](./gap-reference-catalog.md#gt-59) | Hardening HTTP — Helmet + CORS + Rate Limiting (OWASP API4/8) | `BFF API` | Cross | P0 | S | `DONE` |
 | [`GT-60`](./gap-reference-catalog.md#gt-60) | Validación Global DTOs con class-validator (OWASP API3) | `BFF API` | Cross | P0 | M | `DONE` |
 | [`GT-64`](./gap-reference-catalog.md#gt-64) | Structured Logging con Correlation ID | `BFF API` | Cross | P0 | M | `DONE` |
@@ -126,11 +118,9 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-25`](./gap-reference-catalog.md#gt-25) | First provider profiles | `Governance` | Cross | P2 | L | `DONE` |
 | [`GT-23`](./gap-reference-catalog.md#gt-23) | Spanish translation backfill | `Governance` | Cross | P2 | L | `DONE` |
 
-</details>
-
 **Progress:** 70 / 104 done · 0 in progress · 33 pending · 1 deferred
 
-**Ordering:** the active table lists pending then deferred, ordered by criticality (`P0` → `P1` → `P2`) then complexity (`S` → `M` → `L`); completed gaps are grouped by component inside the expandable section.
+**Ordering:** one table, ordered by status (pending then deferred then completed), then criticality (`P0` → `P1` → `P2`) then complexity (`S` → `M` → `L`); completed gaps are grouped by component. Each ID links to its detail in the [Gap Reference Catalog](./gap-reference-catalog.md).
 
 ---
 [Back to Vision Index](./README.md)

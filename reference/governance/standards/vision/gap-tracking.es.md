@@ -9,9 +9,7 @@
 
 Este tablero es la única fuente de verdad para prioridad y estado de los gaps. Selecciona un ID para abrir la descripción del problema, propósito, evidencia, criterios de cierre y referencias.
 
-
-> GitHub renderiza Markdown de forma estática: el ordenamiento de columnas por clic y un buscador en vivo no están disponibles. Las filas se ordenan por estado (activas arriba) y luego por criticidad; la columna **Componente** categoriza, y la búsqueda de archivo de GitHub (`/`) encuentra un ID o término. Las gaps completadas están plegadas en la sección expandible.
-
+> Una sola tabla con todos los gaps. Cada ID enlaza a su detalle completo en el catálogo. Orden: estado (activos arriba) → criticidad → complejidad; los completados van al final agrupados por componente. GitHub renderiza Markdown de forma estática (sin orden ni búsqueda interactivos): la columna **Componente** categoriza y la búsqueda de archivo de GitHub (`/`) encuentra un ID o término.
 
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|
@@ -49,12 +47,6 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-93`](./gap-reference-catalog.es.md#gt-93) | Observabilidad incorporada (OTel BFF→Core→integraciones) | `Tracker` | Transversal | P2 | M | `PENDIENTE` |
 | [`GT-96`](./gap-reference-catalog.es.md#gt-96) | Sincronización en tiempo real vía WebSockets/SSE | `Tracker` | Transversal | P2 | M | `PENDIENTE` |
 | [`GT-84`](./gap-reference-catalog.es.md#gt-84) | Extraer AuditTrail como shared kernel | `Tracker` | Transversal | P1 | L | `DIFERIDO` |
-
-<details>
-<summary><strong>Completadas (70)</strong> — clic para expandir</summary>
-
-| ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
-|---|---|:---:|:---:|:---:|:---:|:---:|
 | [`GT-59`](./gap-reference-catalog.es.md#gt-59) | Hardening HTTP — Helmet + CORS + Rate Limiting (OWASP API4/8) | `BFF API` | Transversal | P0 | S | `COMPLETADO` |
 | [`GT-60`](./gap-reference-catalog.es.md#gt-60) | Validación global de DTOs con class-validator (OWASP API3) | `BFF API` | Transversal | P0 | M | `COMPLETADO` |
 | [`GT-64`](./gap-reference-catalog.es.md#gt-64) | Logging estructurado con Correlation ID | `BFF API` | Transversal | P0 | M | `COMPLETADO` |
@@ -126,11 +118,9 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-25`](./gap-reference-catalog.es.md#gt-25) | Primeros perfiles de proveedor | `Governance` | Transversal | P2 | L | `COMPLETADO` |
 | [`GT-23`](./gap-reference-catalog.es.md#gt-23) | Backfill de traducciones españolas | `Governance` | Transversal | P2 | L | `COMPLETADO` |
 
-</details>
-
 **Progreso:** 70 / 104 completados · 0 en progreso · 33 pendientes · 1 diferidos
 
-**Ordenamiento:** la tabla activa lista pendientes y luego diferidos, ordenados por criticidad (`P0` → `P1` → `P2`) y luego complejidad (`S` → `M` → `L`); los gaps completados se agrupan por componente dentro de la sección expandible.
+**Ordenamiento:** una sola tabla, ordenada por estado (pendientes, luego diferidos, luego completados), luego criticidad (`P0` → `P1` → `P2`) y luego complejidad (`S` → `M` → `L`); los completados se agrupan por componente. Cada ID enlaza a su detalle en el [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md).
 
 ---
 [Volver al Índice de Visión](./README.es.md)

@@ -688,6 +688,20 @@
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "GT-19 deferred this gap; it is now closed by removing the direct instantiations."
+    },
+    {
+      "id": "GT-58",
+      "closedAt": "2026-06-13",
+      "closureCommit": "b9b638c7b72a223432170922727923946c22b7a3",
+      "evidence": [
+        "sdk/cli/src/application/generators/hexagonal-scaffolder.ts"
+      ],
+      "validationCommands": [
+        "npm run lint --workspace sdk/cli",
+        "npm test --workspace sdk/cli"
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "No dependencies. Technical debt placeholders replaced with valid implementation patterns."
     }
   ]
 }

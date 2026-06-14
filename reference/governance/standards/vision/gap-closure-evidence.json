@@ -766,6 +766,20 @@
         "node .harness/scripts/validate-root-cleanliness.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-77",
+      "closedAt": "2026-06-13",
+      "closureCommit": "685ebd4",
+      "evidence": [
+        "apps/core-api/src/core-domain.module.ts",
+        "apps/core-api/src/app.module.ts",
+        "apps/core-api/src/core-domain.module.spec.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace apps/core-api -- --testPathPatterns=\"core-domain.module\" --no-coverage"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

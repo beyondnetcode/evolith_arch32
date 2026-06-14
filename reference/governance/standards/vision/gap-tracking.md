@@ -13,7 +13,7 @@ This board is the single source of truth for gap priority and status. Select a g
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|:---:|
 | [`GT-78`](./gap-reference-catalog.md#gt-78) | Eliminar scripts de debug de la raíz del repositorio | `Governance` | Cross | P2 | S | `DONE` |
-| [`GT-77`](./gap-reference-catalog.md#gt-77) | CoreDomainModule extraído de AppModule | `BFF API` | Cross | P2 | S | `PENDING` |
+| [`GT-77`](./gap-reference-catalog.md#gt-77) | CoreDomainModule extraído de AppModule | `BFF API` | Cross | P2 | S | `DONE` |
 | [`GT-76`](./gap-reference-catalog.md#gt-76) | PhaseTransitionUseCase expuesto en Core API | `BFF API` | F1 | P1 | M | `PENDING` |
 | [`GT-75`](./gap-reference-catalog.md#gt-75) | Paquete @evolith/infra-providers compartido | `Cross` | Cross | P2 | M | `PENDING` |
 | [`GT-74`](./gap-reference-catalog.md#gt-74) | ConfigModule con validación de env vars (Zod) | `BFF API` | Cross | P1 | S | `PENDING` |
@@ -83,7 +83,7 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-02`](./gap-reference-catalog.md#gt-02) | `GateEvidence` modeled in the domain layer | `Core Domain` | F1 | P0 | M | `DONE` |
 | [`GT-01`](./gap-reference-catalog.md#gt-01) | Unified contract ADR | `Governance` | F0 | P0 | S | `DONE` |
 
-**Progress:** 51 / 70 done · 0 in progress · 19 pending · 0 deferred
+**Progress:** 52 / 70 done · 0 in progress · 18 pending · 0 deferred
 
 **Ordering:** criticality (`P0` → `P1` → `P2`), active status (`IN-PROGRESS` → `DONE` → `DEFERRED`), then complexity (`S` → `M` → `L`). Completed gaps follow active work.
 

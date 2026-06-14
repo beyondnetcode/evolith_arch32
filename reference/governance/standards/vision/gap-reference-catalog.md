@@ -806,9 +806,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Gap:** `CoreDomainProviders` are declared as an inline array inside `AppModule`, making the module hard to test in isolation and violating Single Responsibility.
 - **Purpose:** Extract all Core Domain provider wiring into a dedicated `CoreDomainModule` that `AppModule` imports, enabling isolated testing of domain DI composition.
 - **Done when:**
-  - [ ] `CoreDomainModule` extracted as an independent NestJS module
-  - [ ] `AppModule` imports `CoreDomainModule` instead of declaring providers directly
-  - [ ] `CoreDomainModule` can be imported in integration tests in isolation
+  - [x] `CoreDomainModule` extracted as an independent NestJS module
+  - [x] `AppModule` imports `CoreDomainModule` instead of declaring providers directly
+  - [x] `CoreDomainModule` can be imported in integration tests in isolation
 - **References:** [apps/core-api/src/app.module.ts](../../../../apps/core-api/src/app.module.ts)
 
 #### GT-78

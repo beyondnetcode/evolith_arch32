@@ -148,15 +148,15 @@ export class ErrorReporter {
     logger.info(`Error Summary: ${this.reports.length} error(s)`);
 
     this.reports.forEach((report, index) => {
-      console.log(`\n[${index + 1}] ${report.error.name}: ${report.error.message}`);
+      logger.error(`\n[${index + 1}] ${report.error.name}: ${report.error.message}`);
       if (report.error.code) {
-        console.log(`    Code: ${report.error.code}`);
+        logger.error(`    Code: ${report.error.code}`);
       }
       if (report.operation) {
-        console.log(`    Operation: ${report.operation}`);
+        logger.error(`    Operation: ${report.operation}`);
       }
       if (report.suggestion) {
-        console.log(`    Suggestion: ${report.suggestion}`);
+        logger.error(`    Suggestion: ${report.suggestion}`);
       }
     });
   }

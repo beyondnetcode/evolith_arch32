@@ -1,17 +1,19 @@
 import { Command, Option } from 'nest-commander';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { WorkspaceManagerStrategy } from '../../application/architecture/workspace-manager.strategy';
-import { NxWorkspaceStrategy } from '../../application/architecture/nx-workspace.strategy';
+import { NxWorkspaceStrategy } from '../../infrastructure/architecture/nx-workspace.strategy';
+import { commandExecutor } from '../../infrastructure/cli/command-executor';
 
 @Command({
   name: 'scaffold',
   description: 'Scaffolds the Evolith Monolithic Modular and Microfrontends architecture in the current workspace',
 })
 export class ScaffoldCommand extends BaseEvolithCommand {
-  private strategy: WorkspaceManagerStrategy = new NxWorkspaceStrategy();
+  private strategy: WorkspaceManagerStrategy;
 
   constructor() {
     super('ScaffoldCommand');
+    this.strategy = new NxWorkspaceStrategy(commandExecutor, this.promptService);
   }
 
   async executeCommand(passedParam: string[], options?: Record<string, unknown>): Promise<void> {

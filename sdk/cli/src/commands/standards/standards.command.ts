@@ -123,7 +123,7 @@ export class StandardsCommand extends BaseEvolithCommand {
       return;
     }
 
-    console.log(`\nTotal Standards: ${standards.length}\n`);
+    this.promptService.showInfo(`\nTotal Standards: ${standards.length}\n`);
 
     const table = standards.map(s => ({
       id: s.id,
@@ -147,18 +147,18 @@ export class StandardsCommand extends BaseEvolithCommand {
       return;
     }
 
-    console.log(chalk.bold(`\n${standard.name}`));
-    console.log(`ID: ${standard.id} | Version: ${standard.version} | Category: ${standard.category}`);
-    console.log(`\n${standard.description}\n`);
+    this.promptService.showInfo(chalk.bold(`\n${standard.name}`));
+    this.promptService.showInfo(`ID: ${standard.id} | Version: ${standard.version} | Category: ${standard.category}`);
+    this.promptService.showInfo(`\n${standard.description}\n`);
 
     if (standard.rules.length > 0) {
-      console.log(chalk.bold('Rules:'));
+      this.promptService.showInfo(chalk.bold('Rules:'));
       standard.rules.forEach(rule => {
         const icon = rule.severity === 'error' ? '🔴' : rule.severity === 'warning' ? '🟡' : '🔵';
-        console.log(`  ${icon} [${rule.severity}] ${rule.id}: ${rule.name}`);
-        console.log(`      ${rule.description}`);
+        this.promptService.showInfo(`  ${icon} [${rule.severity}] ${rule.id}: ${rule.name}`);
+        this.promptService.showInfo(`      ${rule.description}`);
         if (rule.remediation) {
-          console.log(`      → ${rule.remediation}`);
+          this.promptService.showInfo(`      → ${rule.remediation}`);
         }
       });
     }
@@ -175,19 +175,19 @@ export class StandardsCommand extends BaseEvolithCommand {
     const service = new StandardsService(fs, process.cwd());
     const result = await service.validate(code);
 
-    console.log(chalk.bold('\nValidation Results'));
-    console.log(`Total Rules: ${result.totalRules}`);
-    console.log(chalk.green(`Passed: ${result.passed}`));
-    console.log(chalk.red(`Failed: ${result.failed}`));
+    this.promptService.showInfo(chalk.bold('\nValidation Results'));
+    this.promptService.showInfo(`Total Rules: ${result.totalRules}`);
+    this.promptService.showInfo(chalk.green(`Passed: ${result.passed}`));
+    this.promptService.showInfo(chalk.red(`Failed: ${result.failed}`));
 
     if (result.failed > 0) {
-      console.log(chalk.bold('\nFailed Rules:'));
+      this.promptService.showInfo(chalk.bold('\nFailed Rules:'));
       result.results
         .filter(r => !r.passed)
         .forEach(r => {
           const icon = r.severity === 'error' ? '🔴' : '🟡';
-          console.log(`  ${icon} ${r.standardId}/${r.ruleId}: ${r.ruleName}`);
-          console.log(`      ${r.message}`);
+          this.promptService.showInfo(`  ${icon} ${r.standardId}/${r.ruleId}: ${r.ruleName}`);
+          this.promptService.showInfo(`      ${r.message}`);
         });
     }
   }
@@ -200,7 +200,7 @@ export class StandardsCommand extends BaseEvolithCommand {
 
     try {
       const output = await service.export(id, fmt);
-      console.log(`\n${output}\n`);
+      this.promptService.showInfo(`\n${output}\n`);
     } catch (error) {
       logger.error('Failed to export standard', { error });
       this.promptService.showError(`Error exportando standard: ${error}`);

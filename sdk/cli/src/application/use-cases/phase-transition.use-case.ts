@@ -8,6 +8,7 @@ export class PhaseTransitionUseCase {
   private readonly fs: IFileSystem;
   private readonly phaseService: PhaseService;
   private readonly gateValidator: PhaseGateValidatorService;
+  private readonly logger: { log: (...args: unknown[]) => void; warn: (...args: unknown[]) => void; error: (...args: unknown[]) => void; info: (...args: unknown[]) => void; debug: (...args: unknown[]) => void; };
 
   constructor(
     fs: IFileSystem,
@@ -17,8 +18,8 @@ export class PhaseTransitionUseCase {
   ) {
     this.fs = fs;
     this.phaseService = new PhaseService();
-    const safeLogger = logger || { log: () => {}, warn: () => {}, error: () => {}, info: () => {}, debug: () => {} };
-    this.gateValidator = new PhaseGateValidatorService(corePath, { fileSystem: fs, logger: safeLogger });
+    this.logger = logger || { log: () => {}, warn: () => {}, error: () => {}, info: () => {}, debug: () => {} };
+    this.gateValidator = new PhaseGateValidatorService(corePath, { fileSystem: fs, logger: this.logger });
   }
 
   async execute(from: string, to: string, tools: string[], cwd: string): Promise<PhaseTransitionResult> {
@@ -89,7 +90,7 @@ export class PhaseTransitionUseCase {
       return gates;
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);
-      console.warn(`Gate validator failed, falling back to legacy validation: ${message}`);
+      this.logger.warn(`Gate validator failed, falling back to legacy validation: ${message}`);
       return this.validateGatesLegacy(this.phaseService.getAllPhases()[phaseNumber]?.value || 'phase-0', cwd);
     }
   }

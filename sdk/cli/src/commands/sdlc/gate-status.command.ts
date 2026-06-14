@@ -105,60 +105,60 @@ export class GateStatusCommand extends BaseEvolithCommand {
       waiverAuthority: string;
     }>;
   }): void {
-    console.log(chalk.bold('\n📋 SDLC Phase Gate Status\n'));
+    this.promptService.showInfo(chalk.bold('\n📋 SDLC Phase Gate Status\n'));
 
-    console.log(chalk.cyan('Summary:'));
-    console.log(`  Current Phase: ${chalk.yellow(`Phase ${status.currentPhase}`)}`);
-    console.log(`  Gates Passed: ${chalk.green(status.gatesPassed)}`);
-    console.log(`  Gates Failed: ${status.gatesFailed > 0 ? chalk.red(status.gatesFailed) : chalk.green(status.gatesFailed)}`);
-    console.log(`  Gates Pending: ${chalk.gray(status.gatesPending)}`);
+    this.promptService.showInfo(chalk.cyan('Summary:'));
+    this.promptService.showInfo(`  Current Phase: ${chalk.yellow(`Phase ${status.currentPhase}`)}`);
+    this.promptService.showInfo(`  Gates Passed: ${chalk.green(status.gatesPassed)}`);
+    this.promptService.showInfo(`  Gates Failed: ${status.gatesFailed > 0 ? chalk.red(status.gatesFailed) : chalk.green(status.gatesFailed)}`);
+    this.promptService.showInfo(`  Gates Pending: ${chalk.gray(status.gatesPending)}`);
 
-    console.log(chalk.cyan('\nGate Details:'));
+    this.promptService.showInfo(chalk.cyan('\nGate Details:'));
 
     for (const gate of status.results) {
       const icon = gate.passed ? chalk.green('✓') : chalk.red('✗');
       const phaseLabel = chalk.bold(`Phase ${gate.phase}: ${gate.name}`);
 
-      console.log(`\n  ${icon} ${phaseLabel}`);
-      console.log(`    Accountable: ${chalk.gray(gate.accountableRole)}`);
+      this.promptService.showInfo(`\n  ${icon} ${phaseLabel}`);
+      this.promptService.showInfo(`    Accountable: ${chalk.gray(gate.accountableRole)}`);
 
       if (!gate.passed) {
-        console.log(`    Waiver Authority: ${chalk.gray(gate.waiverAuthority)}`);
+        this.promptService.showInfo(`    Waiver Authority: ${chalk.gray(gate.waiverAuthority)}`);
       }
 
-      console.log(chalk.gray('    Evidence:'));
+      this.promptService.showInfo(chalk.gray('    Evidence:'));
       for (const evidence of gate.evidenceResults) {
         const eIcon = evidence.passed ? chalk.green('✓') : chalk.red('✗');
         const required = evidence.required ? chalk.red('[REQUIRED]') : chalk.gray('[OPTIONAL]');
-        console.log(`      ${eIcon} ${required} ${evidence.artifact}`);
+        this.promptService.showInfo(`      ${eIcon} ${required} ${evidence.artifact}`);
         if (!evidence.passed) {
-          console.log(`        ${chalk.gray(evidence.validationMessage)}`);
+          this.promptService.showInfo(`        ${chalk.gray(evidence.validationMessage)}`);
         }
       }
 
       const triggeredBlocks = gate.blockingChecks.filter(b => b.triggered);
       if (triggeredBlocks.length > 0) {
-        console.log(chalk.red('    Blocking Criteria:'));
+        this.promptService.showInfo(chalk.red('    Blocking Criteria:'));
         for (const block of triggeredBlocks) {
-          console.log(`      ${chalk.red('⛔')} ${block.criterion}`);
-          console.log(`        ${chalk.gray(block.action)}`);
+          this.promptService.showInfo(`      ${chalk.red('⛔')} ${block.criterion}`);
+          this.promptService.showInfo(`        ${chalk.gray(block.action)}`);
         }
       }
     }
 
-    console.log('');
+    this.promptService.showInfo('');
   }
 
   private printDora(dora: ReturnType<typeof calculateDora>): void {
-    console.log(chalk.bold('\n📊 DORA Metrics\n'));
+    this.promptService.showInfo(chalk.bold('\n📊 DORA Metrics\n'));
 
     if (!dora.available) {
-      console.log(chalk.gray('  No commit history found in the analysis window.'));
-      console.log('');
+      this.promptService.showInfo(chalk.gray('  No commit history found in the analysis window.'));
+      this.promptService.showInfo('');
       return;
     }
 
-    console.log(chalk.dim(`  Based on ${dora.totalCommits} commits over the last ${dora.analyzedDays} days\n`));
+    this.promptService.showInfo(chalk.dim(`  Based on ${dora.totalCommits} commits over the last ${dora.analyzedDays} days\n`));
 
     const rows: Array<{ name: string; metric: DoraMetric }> = [
       { name: 'Deployment Frequency', metric: dora.deploymentFrequency },
@@ -171,16 +171,16 @@ export class GateStatusCommand extends BaseEvolithCommand {
       const badge = ratingBadge(metric.rating);
       const nameCol = name.padEnd(24);
       const valueCol = metric.label.padEnd(18);
-      console.log(`  ${nameCol} ${valueCol} ${badge}`);
+      this.promptService.showInfo(`  ${nameCol} ${valueCol} ${badge}`);
     }
 
-    console.log('');
-    console.log(chalk.dim('  Ratings: ') +
+    this.promptService.showInfo('');
+    this.promptService.showInfo(chalk.dim('  Ratings: ') +
       chalk.blueBright('◆ elite') + chalk.dim('  ') +
       chalk.green('● high') + chalk.dim('  ') +
       chalk.yellow('● medium') + chalk.dim('  ') +
       chalk.red('● low') + chalk.dim('  ') +
       chalk.gray('○ unknown'));
-    console.log('');
+    this.promptService.showInfo('');
   }
 }

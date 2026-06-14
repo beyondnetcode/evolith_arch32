@@ -168,16 +168,6 @@ describe('ErrorReporter', () => {
   });
 
   describe('printSummary', () => {
-    let logSpy: jest.SpyInstance;
-
-    beforeEach(() => {
-      logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
-    });
-
-    afterEach(() => {
-      logSpy.mockRestore();
-    });
-
     it('should print no errors message when empty', () => {
       reporter.printSummary();
 
@@ -199,7 +189,7 @@ describe('ErrorReporter', () => {
 
       reporter.printSummary();
 
-      expect(logSpy).toHaveBeenCalledWith(
+      expect(logger.error).toHaveBeenCalledWith(
         expect.stringContaining('Config error')
       );
     });

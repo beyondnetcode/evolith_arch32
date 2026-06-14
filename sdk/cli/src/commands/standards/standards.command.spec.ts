@@ -163,7 +163,7 @@ describe('StandardsCommand', () => {
       await command.run([], { get: 'STD-001' });
 
       expect(mockGet).toHaveBeenCalledWith('STD-001');
-      expect(logSpy).toHaveBeenCalled();
+      expect(p.log.info).toHaveBeenCalled();
     });
 
     it('should show error when standard is not found', async () => {
@@ -196,7 +196,7 @@ describe('StandardsCommand', () => {
       await command.run([], { validate: 'some-code' });
 
       expect(mockValidate).toHaveBeenCalledWith('some-code');
-      expect(logSpy).toHaveBeenCalled();
+      expect(p.log.info).toHaveBeenCalled();
     });
 
     it('should enter interactive mode when --validate has empty string', async () => {

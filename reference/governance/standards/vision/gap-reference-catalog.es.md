@@ -755,10 +755,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Gap:** `apps/core-api` tiene cero pruebas significativas. El `health.controller.spec.ts` generado por el scaffolding probablemente falla con el nuevo setup de DI.
 - **Propósito:** Establecer una pirámide de tests para el Core API: pruebas unitarias para controllers (use cases mockeados), pruebas de integración para el wiring del módulo, y E2E para caminos críticos.
 - **Criterio de cierre:**
-  - [ ] `jest --coverage` reporta >80% de cobertura de líneas en `src/`
-  - [ ] CI ejecuta pruebas en cada PR
-  - [ ] Caminos de error (fallo de auth, input inválido, error de dominio) todos cubiertos
-  - [ ] Al menos 5 flujos E2E probados via supertest
+  - [x] `jest --coverage` reporta >80% de cobertura de líneas en `src/`
+  - [x] CI ejecuta pruebas en cada PR
+  - [x] Caminos de error (fallo de auth, input inválido, error de dominio) todos cubiertos
+  - [x] Al menos 5 flujos E2E probados via supertest
 - **Referencias:** [apps/core-api/src](../../../../apps/core-api/src) · [@nestjs/testing](https://docs.nestjs.com/fundamentals/testing)
 
 #### GT-74

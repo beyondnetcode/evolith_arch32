@@ -838,6 +838,18 @@
         "npm test --workspace apps/core-api -- --testPathPatterns=\"security-headers\" --no-coverage"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-73",
+      "closedAt": "2026-06-13",
+      "closureCommit": "1ec18af",
+      "evidence": [
+        "apps/core-api/src/"
+      ],
+      "validationCommands": [
+        "npm run test:cov --workspace apps/core-api -- --coverageReporters=text-summary"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

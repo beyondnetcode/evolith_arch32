@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { HealthController } from './presentation/controllers/health.controller';
 import { HealthService } from './application/services/health.service';
 import { GatesController } from './presentation/controllers/gates.controller';
@@ -7,7 +9,13 @@ import { ArchitectureController } from './presentation/controllers/architecture.
 import { CoreDomainModule } from './core-domain.module';
 
 @Module({
-  imports: [CoreDomainModule],
+  imports: [
+    CoreDomainModule,
+    ThrottlerModule.forRoot([{
+      ttl: 60000,
+      limit: 100,
+    }]),
+  ],
   controllers: [
     HealthController,
     GatesController,
@@ -16,6 +24,10 @@ import { CoreDomainModule } from './core-domain.module';
   ],
   providers: [
     HealthService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
   ],
 })
 export class AppModule {}

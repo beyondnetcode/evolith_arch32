@@ -795,6 +795,20 @@
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "Core-domain application layer (12 files) cleared of @ts-nocheck with strict:true. sdk/cli @ts-nocheck removal (19 files) deferred to a follow-up gap as those files have different architectural ownership."
+    },
+    {
+      "id": "GT-59",
+      "closedAt": "2026-06-13",
+      "closureCommit": "b32a985",
+      "evidence": [
+        "apps/core-api/src/main.ts",
+        "apps/core-api/src/app.module.ts",
+        "apps/core-api/src/presentation/controllers/security-headers.spec.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace apps/core-api -- --testPathPatterns=\"security-headers\" --no-coverage"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

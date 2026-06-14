@@ -578,10 +578,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Gap:** El `main.ts` de `apps/core-api` inicia el servidor sin headers de seguridad, política CORS ni rate limiting, exponiéndolo a OWASP API4 (Consumo sin Restricción de Recursos) y API8 (Configuración de Seguridad Incorrecta).
 - **Propósito:** Aplicar una línea base mínima de seguridad HTTP al Core API: headers de seguridad via Helmet, política CORS explícita por variable de entorno, y rate limiting global via `@nestjs/throttler`.
 - **Criterio de cierre:**
-  - [ ] `helmet()` aplicado globalmente en `main.ts`
-  - [ ] CORS configurado desde la variable de entorno `ALLOWED_ORIGINS`
-  - [ ] `ThrottlerGuard` registrado como `APP_GUARD` global
-  - [ ] Test de integración valida headers de seguridad (X-Frame-Options, X-Content-Type-Options, etc.)
+  - [x] `helmet()` aplicado globalmente en `main.ts`
+  - [x] CORS configurado desde la variable de entorno `ALLOWED_ORIGINS`
+  - [x] `ThrottlerGuard` registrado como `APP_GUARD` global
+  - [x] Test de integración valida headers de seguridad (X-Frame-Options, X-Content-Type-Options, etc.)
 - **Referencias:** [OWASP API4:2023](https://owasp.org/API-Security/editions/2023/en/0xa4-unrestricted-resource-consumption/) · [OWASP API8:2023](https://owasp.org/API-Security/editions/2023/en/0xa8-security-misconfiguration/) · [apps/core-api/src/main.ts](../../../../apps/core-api/src/main.ts)
 
 #### GT-60

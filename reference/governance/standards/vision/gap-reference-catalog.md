@@ -1031,3 +1031,171 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [ ] aggregate changes propagate to subscribed clients in real time
   - [ ] a collaborative flow (grooming or planning) consumes the stream
 - **References:** Evolith Tracker audit `docs/audit/tracker-gaps-opportunities-tracking.md` (`OPP-020`)
+
+### Component CLI — Consolidated from the CLI Backlog
+
+> These items were merged from the superseded CLI backlog (`reference/products/smart-cli/docs/planning/CLI-BACKLOG.md`) into this single formal tracking center. Only its open feature gaps are carried here; the closed `GAP-001..003` and `DONE-*` items remain in that historical document.
+
+#### GT-97
+
+**Title:** Multiple CLI profiles
+
+- **Gap:** The CLI cannot hold multiple named configuration profiles (per tenant/environment) with quick switching (originally `GAP-004`).
+- **Purpose:** Let an engineer maintain and switch between named profiles without re-authenticating or rewriting config.
+- **Done when:**
+  - [ ] named profiles can be created, listed, and switched, and commands use the active profile
+- **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-004`)
+
+#### GT-98
+
+**Title:** CLI extension/plugin system
+
+- **Gap:** The CLI has no extension mechanism for third-party or tenant-specific commands (originally `GAP-005`).
+- **Purpose:** Allow commands to be contributed as plugins without forking the CLI.
+- **Done when:**
+  - [ ] a plugin contract lets external packages register commands discovered at runtime
+- **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-005`)
+
+#### GT-99
+
+**Title:** CLI SSO/SAML authentication
+
+- **Gap:** The CLI lacks enterprise single sign-on (SSO/SAML) authentication (originally `GAP-006`).
+- **Purpose:** Authenticate CLI sessions through enterprise identity providers.
+- **Done when:**
+  - [ ] the CLI authenticates via an SSO/SAML flow and stores a short-lived session
+- **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-006`)
+
+#### GT-100
+
+**Title:** CLI API browser/explorer
+
+- **Gap:** There is no interactive way to browse the governed API surface from the CLI (originally `GAP-007`).
+- **Purpose:** Let users explore available operations, resources, and schemas interactively.
+- **Done when:**
+  - [ ] a command lists and inspects the available operations and their schemas
+- **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-007`)
+
+#### GT-101
+
+**Title:** CLI auto-update mechanism
+
+- **Gap:** The CLI cannot detect or apply updates to itself (originally `GAP-008`).
+- **Purpose:** Notify users of new versions and apply updates safely.
+- **Done when:**
+  - [ ] the CLI detects a newer published version and can self-update or guide the upgrade
+- **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-008`)
+
+#### GT-102
+
+**Title:** CLI real-time progress/streaming
+
+- **Gap:** Long-running operations give no streamed progress feedback (originally `GAP-009`).
+- **Purpose:** Stream progress for long operations instead of blocking silently.
+- **Done when:**
+  - [ ] long-running commands stream progress events to the terminal
+- **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-009`)
+
+#### GT-103
+
+**Title:** CLI subcommand depth
+
+- **Gap:** The command tree is shallow; some workflows need deeper nested subcommands (originally `GAP-010`).
+- **Purpose:** Support deeper, well-grouped subcommand hierarchies.
+- **Done when:**
+  - [ ] nested subcommands are supported with consistent help and routing
+- **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-010`)
+
+#### GT-104
+
+**Title:** CLI package-manager distribution
+
+- **Gap:** The CLI is not distributed through OS package managers (originally `GAP-011`).
+- **Purpose:** Make the CLI installable via common package managers beyond npm.
+- **Done when:**
+  - [ ] the CLI is published to at least one additional package manager with an automated release
+- **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-011`)
+
+#### GT-105
+
+**Title:** CLI Docker image
+
+- **Gap:** There is no official container image for the CLI (originally `GAP-012`).
+- **Purpose:** Provide a maintained Docker image for CI and sandboxed use.
+- **Done when:**
+  - [ ] an official CLI image is built and published by the release pipeline
+- **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-012`)
+
+#### GT-106
+
+**Title:** CLI command aliases
+
+- **Gap:** Users cannot define short aliases for frequent commands (originally `GAP-013`).
+- **Purpose:** Allow user-defined aliases for ergonomics.
+- **Done when:**
+  - [ ] aliases can be defined, listed, and resolved at invocation
+- **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-013`)
+
+#### GT-107
+
+**Title:** CLI interactive wizards
+
+- **Gap:** Complex setup flows have no guided interactive mode (originally `GAP-014`).
+- **Purpose:** Guide users through complex flows with interactive prompts.
+- **Done when:**
+  - [ ] at least one complex flow offers a guided interactive wizard
+- **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-014`)
+
+#### GT-108
+
+**Title:** CLI fixtures/test data
+
+- **Gap:** There is no built-in way to seed fixtures or sample data for trials (originally `GAP-015`).
+- **Purpose:** Provide reproducible fixtures/sample data for demos and tests.
+- **Done when:**
+  - [ ] a command seeds reproducible fixtures into a target project
+- **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-015`)
+
+#### GT-109
+
+**Title:** CLI shell integration
+
+- **Gap:** Beyond completion, there is no deeper shell integration (prompts, hooks) (originally `GAP-016`).
+- **Purpose:** Improve shell integration for status, hooks, and context.
+- **Done when:**
+  - [ ] shell integration exposes context/status hooks for supported shells
+- **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-016`)
+
+### Component Platform — Consolidated from the Stack Audit
+
+> These open RED-status alerts were merged from the technology stack audit (`reference/governance/standards/engineering/detailed-stack-audit-2026.md`) into this single tracking center; that audit remains the technology-vigilance source of record.
+
+#### GT-110
+
+**Title:** Migrate ingress off the abandoned Kong OSS
+
+- **Gap:** Kong OSS development halted after v3.9.1 with no active Docker publishing, leaving the ingress vector on an abandoned component (Stack Audit, RED).
+- **Purpose:** Move the ingress/API-gateway vector to a maintained component before the abandonment becomes a security and supply-chain liability.
+- **Done when:**
+  - [ ] the ingress is migrated to Traefik Proxy 3.7+ or NGINX OSS with parity for the current routes/policies
+- **References:** Stack Audit `reference/governance/standards/engineering/detailed-stack-audit-2026.md` (TOP CRITICAL ALERT 1)
+
+#### GT-111
+
+**Title:** Plan the MassTransit v9 commercial pivot
+
+- **Gap:** MassTransit v9 moved to a purely commercial model; v8 is OSS-supported only until EOY 2026 (Stack Audit, RED/Yellow).
+- **Purpose:** Decide and execute a path that keeps the messaging abstraction on a sustainable OSS footing.
+- **Done when:**
+  - [ ] a decision is recorded to remain on v8 within support or migrate to an alternative (e.g. Rebus / direct driver), with a dated plan
+- **References:** Stack Audit `reference/governance/standards/engineering/detailed-stack-audit-2026.md` (TOP CRITICAL ALERT 2)
+
+#### GT-112
+
+**Title:** Replace HashiCorp commercial binaries with OpenTofu + OpenBao
+
+- **Gap:** HashiCorp commercial binaries are under an absolute veto; Terraform/Vault must be replaced (Stack Audit, RED).
+- **Purpose:** Adopt OSS replacements for IaC and secrets management to comply with the licensing veto.
+- **Done when:**
+  - [ ] IaC and secrets are migrated to OpenTofu 1.11+ and OpenBao 2.5+ with no HashiCorp commercial dependency
+- **References:** Stack Audit `reference/governance/standards/engineering/detailed-stack-audit-2026.md` (TOP CRITICAL ALERT 3)

@@ -1031,3 +1031,171 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [ ] los cambios de aggregate se propagan a los clientes suscritos en tiempo real
   - [ ] un flujo colaborativo (grooming o planificación) consume el stream
 - **Referencias:** Auditoría de Evolith Tracker `docs/audit/tracker-gaps-opportunities-tracking.md` (`OPP-020`)
+
+### Componente CLI — Consolidado desde el Backlog del CLI
+
+> Estos ítems se fusionaron desde el backlog del CLI ya superseded (`reference/products/smart-cli/docs/planning/CLI-BACKLOG.md`) en este único centro formal de seguimiento. Solo se traen aquí sus feature gaps abiertos; los `GAP-001..003` cerrados y los `DONE-*` permanecen en ese documento histórico.
+
+#### GT-97
+
+**Título:** Múltiples perfiles del CLI
+
+- **Gap:** El CLI no puede mantener múltiples perfiles de configuración con nombre (por tenant/entorno) con cambio rápido (originalmente `GAP-004`).
+- **Propósito:** Permitir mantener y cambiar entre perfiles con nombre sin re-autenticar ni reescribir configuración.
+- **Criterio de cierre:**
+  - [ ] se pueden crear, listar y cambiar perfiles con nombre, y los comandos usan el perfil activo
+- **Referencias:** Backlog del CLI de Evolith `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-004`)
+
+#### GT-98
+
+**Título:** Sistema de extensiones/plugins del CLI
+
+- **Gap:** El CLI no tiene mecanismo de extensión para comandos de terceros o específicos de tenant (originalmente `GAP-005`).
+- **Propósito:** Permitir contribuir comandos como plugins sin forkear el CLI.
+- **Criterio de cierre:**
+  - [ ] un contrato de plugin permite que paquetes externos registren comandos descubiertos en runtime
+- **Referencias:** Backlog del CLI de Evolith `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-005`)
+
+#### GT-99
+
+**Título:** Autenticación SSO/SAML del CLI
+
+- **Gap:** El CLI carece de single sign-on empresarial (SSO/SAML) (originalmente `GAP-006`).
+- **Propósito:** Autenticar las sesiones del CLI mediante proveedores de identidad empresariales.
+- **Criterio de cierre:**
+  - [ ] el CLI se autentica vía un flujo SSO/SAML y almacena una sesión de corta duración
+- **Referencias:** Backlog del CLI de Evolith `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-006`)
+
+#### GT-100
+
+**Título:** Navegador/explorador de API del CLI
+
+- **Gap:** No hay forma interactiva de explorar la superficie de API gobernada desde el CLI (originalmente `GAP-007`).
+- **Propósito:** Permitir explorar interactivamente operaciones, recursos y esquemas disponibles.
+- **Criterio de cierre:**
+  - [ ] un comando lista e inspecciona las operaciones disponibles y sus esquemas
+- **Referencias:** Backlog del CLI de Evolith `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-007`)
+
+#### GT-101
+
+**Título:** Mecanismo de auto-actualización del CLI
+
+- **Gap:** El CLI no puede detectar ni aplicar actualizaciones de sí mismo (originalmente `GAP-008`).
+- **Propósito:** Notificar nuevas versiones y aplicar actualizaciones de forma segura.
+- **Criterio de cierre:**
+  - [ ] el CLI detecta una versión publicada más nueva y puede auto-actualizarse o guiar la actualización
+- **Referencias:** Backlog del CLI de Evolith `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-008`)
+
+#### GT-102
+
+**Título:** Progreso/streaming en tiempo real del CLI
+
+- **Gap:** Las operaciones largas no dan feedback de progreso en streaming (originalmente `GAP-009`).
+- **Propósito:** Hacer streaming del progreso de operaciones largas en vez de bloquear en silencio.
+- **Criterio de cierre:**
+  - [ ] los comandos de larga duración hacen streaming de eventos de progreso a la terminal
+- **Referencias:** Backlog del CLI de Evolith `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-009`)
+
+#### GT-103
+
+**Título:** Profundidad de subcomandos del CLI
+
+- **Gap:** El árbol de comandos es plano; algunos flujos necesitan subcomandos anidados más profundos (originalmente `GAP-010`).
+- **Propósito:** Soportar jerarquías de subcomandos más profundas y bien agrupadas.
+- **Criterio de cierre:**
+  - [ ] se soportan subcomandos anidados con ayuda y enrutamiento consistentes
+- **Referencias:** Backlog del CLI de Evolith `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-010`)
+
+#### GT-104
+
+**Título:** Distribución por gestor de paquetes del CLI
+
+- **Gap:** El CLI no se distribuye por gestores de paquetes del SO (originalmente `GAP-011`).
+- **Propósito:** Hacer el CLI instalable vía gestores de paquetes comunes además de npm.
+- **Criterio de cierre:**
+  - [ ] el CLI se publica en al menos un gestor de paquetes adicional con release automatizado
+- **Referencias:** Backlog del CLI de Evolith `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-011`)
+
+#### GT-105
+
+**Título:** Imagen Docker del CLI
+
+- **Gap:** No hay imagen de contenedor oficial para el CLI (originalmente `GAP-012`).
+- **Propósito:** Proveer una imagen Docker mantenida para CI y uso en sandbox.
+- **Criterio de cierre:**
+  - [ ] una imagen oficial del CLI se construye y publica por el pipeline de release
+- **Referencias:** Backlog del CLI de Evolith `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-012`)
+
+#### GT-106
+
+**Título:** Alias de comandos del CLI
+
+- **Gap:** Los usuarios no pueden definir alias cortos para comandos frecuentes (originalmente `GAP-013`).
+- **Propósito:** Permitir alias definidos por el usuario para ergonomía.
+- **Criterio de cierre:**
+  - [ ] los alias se pueden definir, listar y resolver en la invocación
+- **Referencias:** Backlog del CLI de Evolith `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-013`)
+
+#### GT-107
+
+**Título:** Asistentes interactivos del CLI
+
+- **Gap:** Los flujos de setup complejos no tienen modo interactivo guiado (originalmente `GAP-014`).
+- **Propósito:** Guiar a los usuarios en flujos complejos con prompts interactivos.
+- **Criterio de cierre:**
+  - [ ] al menos un flujo complejo ofrece un asistente interactivo guiado
+- **Referencias:** Backlog del CLI de Evolith `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-014`)
+
+#### GT-108
+
+**Título:** Fixtures/datos de prueba del CLI
+
+- **Gap:** No hay forma incorporada de sembrar fixtures o datos de ejemplo para pruebas (originalmente `GAP-015`).
+- **Propósito:** Proveer fixtures/datos de ejemplo reproducibles para demos y tests.
+- **Criterio de cierre:**
+  - [ ] un comando siembra fixtures reproducibles en un proyecto objetivo
+- **Referencias:** Backlog del CLI de Evolith `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-015`)
+
+#### GT-109
+
+**Título:** Integración de shell del CLI
+
+- **Gap:** Más allá del autocompletado, no hay integración de shell más profunda (prompts, hooks) (originalmente `GAP-016`).
+- **Propósito:** Mejorar la integración de shell para estado, hooks y contexto.
+- **Criterio de cierre:**
+  - [ ] la integración de shell expone hooks de contexto/estado para los shells soportados
+- **Referencias:** Backlog del CLI de Evolith `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-016`)
+
+### Componente Platform — Consolidado desde el Stack Audit
+
+> Estas alertas abiertas en estado RED se fusionaron desde el audit del stack tecnológico (`reference/governance/standards/engineering/detailed-stack-audit-2026.md`) en este único centro de seguimiento; ese audit sigue siendo la fuente de registro de vigilancia tecnológica.
+
+#### GT-110
+
+**Título:** Migrar el ingress del abandonado Kong OSS
+
+- **Gap:** El desarrollo de Kong OSS se detuvo tras v3.9.1 sin publicación activa de Docker, dejando el vector de ingress sobre un componente abandonado (Stack Audit, RED).
+- **Propósito:** Mover el vector de ingress/API-gateway a un componente mantenido antes de que el abandono se vuelva un pasivo de seguridad y supply-chain.
+- **Criterio de cierre:**
+  - [ ] el ingress se migra a Traefik Proxy 3.7+ o NGINX OSS con paridad de las rutas/políticas actuales
+- **Referencias:** Stack Audit `reference/governance/standards/engineering/detailed-stack-audit-2026.md` (TOP CRITICAL ALERT 1)
+
+#### GT-111
+
+**Título:** Planificar el giro comercial de MassTransit v9
+
+- **Gap:** MassTransit v9 pasó a un modelo puramente comercial; v8 tiene soporte OSS solo hasta fin de 2026 (Stack Audit, RED/Yellow).
+- **Propósito:** Decidir y ejecutar un camino que mantenga la abstracción de mensajería sobre una base OSS sostenible.
+- **Criterio de cierre:**
+  - [ ] se registra una decisión de quedarse en v8 dentro de soporte o migrar a una alternativa (p.ej. Rebus / driver directo), con un plan fechado
+- **Referencias:** Stack Audit `reference/governance/standards/engineering/detailed-stack-audit-2026.md` (TOP CRITICAL ALERT 2)
+
+#### GT-112
+
+**Título:** Reemplazar los binarios comerciales de HashiCorp con OpenTofu + OpenBao
+
+- **Gap:** Los binarios comerciales de HashiCorp están bajo veto absoluto; Terraform/Vault deben reemplazarse (Stack Audit, RED).
+- **Propósito:** Adoptar reemplazos OSS para IaC y gestión de secretos para cumplir el veto de licenciamiento.
+- **Criterio de cierre:**
+  - [ ] IaC y secretos se migran a OpenTofu 1.11+ y OpenBao 2.5+ sin dependencia comercial de HashiCorp
+- **Referencias:** Stack Audit `reference/governance/standards/engineering/detailed-stack-audit-2026.md` (TOP CRITICAL ALERT 3)

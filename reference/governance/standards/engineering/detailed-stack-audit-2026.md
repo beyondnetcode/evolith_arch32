@@ -13,6 +13,8 @@
 2. **MassTransit v9 Commercial Pivot**: The new v9 iteration has transitioned to a purely commercial model. Retaining v8 (OSS supported until EOY 2026) requires migration to Alternative (Rebus) or direct driver injection planning.
 3. **Terraform / Vault Licensing**: Absolute veto on HashiCorp commercial binaries. Mandatory adoption of **OpenTofu 1.11+** and **OpenBao 2.5+** enforced.
 
+> These three RED alerts are tracked for action on the single [Gap Tracking Board](../vision/gap-tracking.md) as `GT-110` (Kong → Traefik/NGINX), `GT-111` (MassTransit v9), and `GT-112` (HashiCorp → OpenTofu/OpenBao). This audit remains the technology-vigilance source of record.
+
 ---
 
 # BLOCK 1 - NODE.JS / TYPESCRIPT

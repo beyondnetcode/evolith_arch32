@@ -1,3 +1,4 @@
+import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { getFileSystem } from '../../infrastructure/mcp/tools/tool-utils';
@@ -52,8 +53,8 @@ const AVAILABLE_RULESETS = [
 export class AgentsCommand extends BaseEvolithCommand {
   private readonly registry: AgentRegistryService;
 
-  constructor() {
-    super('AgentsCommand');
+  constructor(promptService: PromptService) {
+    super('AgentsCommand', promptService);
     this.registry = new AgentRegistryService(getFileSystem());
   }
 

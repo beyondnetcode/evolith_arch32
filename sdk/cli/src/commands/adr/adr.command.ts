@@ -1,3 +1,4 @@
+import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { Inject } from '@nestjs/common';
@@ -24,8 +25,11 @@ interface ADRCommandOptions {
 export class ADRCommand extends BaseEvolithCommand {
   private readonly timer = new OperationTimer();
 
-  constructor(@Inject('IFileSystem') private readonly fileSystem: any) {
-    super('ADRCommand');
+  constructor(
+    @Inject('IFileSystem') private readonly fileSystem: any,
+    promptService: PromptService
+  ) {
+    super('ADRCommand', promptService);
   }
 
   async executeCommand(

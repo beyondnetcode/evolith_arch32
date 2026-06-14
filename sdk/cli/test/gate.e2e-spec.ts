@@ -1,3 +1,5 @@
+import { PromptService } from '../src/infrastructure/prompts/prompt.service';
+import { MockPromptService } from './mock-prompt.service';
 import { TestingModule } from '@nestjs/testing';
 import { CommandTestFactory } from 'nest-commander-testing';
 import { AppModule } from '../src/app.module';
@@ -49,7 +51,7 @@ describe('Gate Command (e2e) — ADR-0073 contract', () => {
   beforeAll(async () => {
     commandInstance = await CommandTestFactory.createTestingCommand({
       imports: [AppModule],
-    }).compile();
+    }).overrideProvider(PromptService).useClass(MockPromptService).compile();
     projectPath = path.join(os.tmpdir(), `evolith-gate-e2e-${process.pid}`);
     await fs.ensureDir(projectPath);
   });

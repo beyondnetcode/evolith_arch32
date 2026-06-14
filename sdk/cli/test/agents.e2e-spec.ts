@@ -1,13 +1,15 @@
+import { MockPromptService } from './mock-prompt.service';
 import { TestingModule } from '@nestjs/testing';
 import { CommandTestFactory } from 'nest-commander-testing';
 import { AppModule } from '../src/app.module';
+
+import { PromptService } from '../src/infrastructure/prompts/prompt.service';
+
 
 async function runCommand(instance: TestingModule, args: string[]): Promise<void> {
   const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
   try {
     await CommandTestFactory.run(instance, args);
-  } catch (_err: unknown) {
-    // swallow — smoke test only
   } finally {
     exitSpy.mockRestore();
   }
@@ -19,7 +21,10 @@ describe('Agents Command (e2e)', () => {
   beforeAll(async () => {
     commandInstance = await CommandTestFactory.createTestingCommand({
       imports: [AppModule],
-    }).compile();
+    })
+      .overrideProvider(PromptService)
+      .useClass(MockPromptService)
+      .compile();
   });
 
   it('should dispatch agents install --dry-run without crashing', async () => {

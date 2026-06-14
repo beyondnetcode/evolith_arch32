@@ -1,3 +1,4 @@
+import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { Inject } from '@nestjs/common';
@@ -26,9 +27,10 @@ export class InitCommand extends BaseEvolithCommand {
 
   constructor(
     private readonly catalogLoader: CatalogLoader,
-    @Inject('IFileSystem') private readonly fileSystem: any
+    @Inject('IFileSystem') private readonly fileSystem: any,
+    promptService: PromptService
   ) {
-    super('InitCommand');
+    super('InitCommand', promptService);
   }
 
   async executeCommand(

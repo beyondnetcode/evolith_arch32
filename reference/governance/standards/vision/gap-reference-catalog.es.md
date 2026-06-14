@@ -706,10 +706,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Gap:** Algunos controllers usan `POST` para operaciones de lectura. Los códigos de estado HTTP no son semánticamente correctos para escenarios de error de dominio (siempre 200/201).
 - **Propósito:** Alinear todos los endpoints con el Nivel 2 del Modelo de Madurez de Richardson: verbos HTTP correctos, códigos de estado semánticamente significativos para cada resultado de dominio.
 - **Criterio de cierre:**
-  - [ ] Todos los endpoints usan métodos HTTP semánticamente correctos
-  - [ ] 422 Unprocessable Entity retornado para fallos de validación de dominio
-  - [ ] 404 retornado cuando los recursos no se encuentran
-  - [ ] `@HttpCode()` explícito en controllers donde el default es incorrecto
+  - [x] Todos los endpoints usan métodos HTTP semánticamente correctos
+  - [x] 422 Unprocessable Entity retornado para fallos de validación de dominio
+  - [x] 404 retornado cuando los recursos no se encuentran
+  - [x] `@HttpCode()` explícito en controllers donde el default es incorrecto
 - **Referencias:** [Modelo de Madurez de Richardson](https://martinfowler.com/articles/richardsonMaturityModel.html)
 
 #### GT-70

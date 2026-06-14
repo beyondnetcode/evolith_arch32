@@ -894,6 +894,20 @@
         "npm test --workspace apps/core-api -- --testPathPatterns=\"graceful\" --no-coverage"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-69",
+      "closedAt": "2026-06-13",
+      "closureCommit": "2a0d84e",
+      "evidence": [
+        "apps/core-api/src/presentation/controllers/",
+        "apps/core-api/src/infrastructure/filters/",
+        "apps/core-api/src/main.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace apps/core-api -- --no-coverage"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import {
   InitializeProjectUseCase,
   ProposePhaseAdvanceUseCase
@@ -13,6 +13,7 @@ export class ProjectsController {
   ) {}
 
   @Post('initialize')
+  @HttpCode(HttpStatus.CREATED)
   async initialize(@Body() body: InitProjectDto) {
     return this.initializeProjectUseCase.execute({
       targetPath: body.targetPath,
@@ -23,6 +24,7 @@ export class ProjectsController {
   }
 
   @Post('propose-advance')
+  @HttpCode(HttpStatus.OK)
   async proposeAdvance(@Body() body: ProposeAdvanceDto) {
     return this.proposePhaseAdvanceUseCase.execute({
       satellitePath: body.satellitePath,

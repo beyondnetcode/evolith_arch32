@@ -706,10 +706,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Gap:** Some controllers use `POST` for read operations. HTTP status codes are not semantically correct for domain error scenarios (always 200/201).
 - **Purpose:** Align all endpoints with Richardson Maturity Level 2: correct HTTP verbs, semantically meaningful status codes for every domain outcome.
 - **Done when:**
-  - [ ] All endpoints use semantically correct HTTP methods
-  - [ ] 422 Unprocessable Entity returned for domain validation failures
-  - [ ] 404 returned when resources are not found
-  - [ ] `@HttpCode()` explicit on controllers where default is wrong
+  - [x] All endpoints use semantically correct HTTP methods
+  - [x] 422 Unprocessable Entity returned for domain validation failures
+  - [x] 404 returned when resources are not found
+  - [x] `@HttpCode()` explicit on controllers where default is wrong
 - **References:** [Richardson Maturity Model](https://martinfowler.com/articles/richardsonMaturityModel.html)
 
 #### GT-70

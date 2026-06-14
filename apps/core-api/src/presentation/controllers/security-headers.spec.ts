@@ -121,4 +121,19 @@ describe('Security & Validation (Integration)', () => {
     const res = await request(app.getHttpServer()).get('/health');
     expect(res.status).toBe(200);
   });
+
+  describe('HTTP Status Codes', () => {
+    it('should return 200 for GET /health', async () => {
+      const res = await request(app.getHttpServer()).get('/health');
+      expect(res.status).toBe(200);
+    });
+
+    it('should return 422 for validation failure on domain error', async () => {
+      const res = await request(app.getHttpServer())
+        .post('/architecture/validate-satellite')
+        .set('x-api-key', 'test-api-key-123')
+        .send({ satellitePath: '' });
+      expect(res.status).toBe(400);
+    });
+  });
 });

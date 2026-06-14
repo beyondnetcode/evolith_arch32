@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { ValidateSatelliteUseCase } from '@evolith/core-domain/application/use-cases';
 import { ArchitectureDriftService } from '@evolith/core-domain/application/validators';
 import { ValidateSatelliteDto, DetectDriftDto } from '../dtos/architecture.dto';
@@ -11,6 +11,7 @@ export class ArchitectureController {
   ) {}
 
   @Post('validate-satellite')
+  @HttpCode(HttpStatus.OK)
   async validateSatellite(@Body() body: ValidateSatelliteDto) {
     return this.validateSatelliteUseCase.execute({
       satellitePath: body.satellitePath,
@@ -19,6 +20,7 @@ export class ArchitectureController {
   }
 
   @Post('detect-drift')
+  @HttpCode(HttpStatus.OK)
   async detectDrift(@Body() body: DetectDriftDto) {
     return this.driftService.detectDrift({
       projectPath: body.projectPath,

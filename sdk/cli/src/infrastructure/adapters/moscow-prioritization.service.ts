@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { IFileSystem, ILogger } from '../../domain/interfaces';
+import { IFileSystem, ILogger } from '@evolith/core-domain/domain/interfaces';
 import { NodeFileSystemProvider } from '../../infrastructure/providers/node-filesystem.provider';
 
 export type MoscowPriority = 'MUST' | 'SHOULD' | 'COULD' | 'WONT';

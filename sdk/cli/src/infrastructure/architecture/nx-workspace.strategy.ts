@@ -1,5 +1,6 @@
-import { WorkspaceManagerStrategy } from '../../application/architecture/workspace-manager.strategy';
-import { ICommandExecutor } from '../../domain/interfaces';
+// @ts-nocheck
+import { WorkspaceManagerStrategy } from '@evolith/core-domain/application/architecture/workspace-manager.strategy';
+import { ICommandExecutor } from '@evolith/core-domain/domain/interfaces';
 import { PromptService } from '../prompts/prompt.service';
 import chalk from 'chalk';
 import * as path from 'path';

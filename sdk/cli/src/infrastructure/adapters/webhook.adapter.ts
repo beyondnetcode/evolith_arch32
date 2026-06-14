@@ -1,5 +1,5 @@
-import { IWebhookNotifier } from '../../application/ports/webhook-notifier.port';
-import { GateEvidence } from '../../domain/gate-evidence';
+import { IWebhookNotifier } from '@evolith/core-domain/application/ports/webhook-notifier.port';
+import { GateEvidence } from '@evolith/core-domain/domain/gate-evidence';
 
 export class WebhookAdapter implements IWebhookNotifier {
   async notify(url: string, evidence: GateEvidence): Promise<void> {

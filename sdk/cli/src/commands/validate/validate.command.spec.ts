@@ -42,8 +42,8 @@ jest.mock('../../infrastructure/formatters/output-formatter.service', () => ({
   })),
 }));
 
-import { ValidateSatelliteUseCase } from '../../application/use-cases/validate-satellite.use-case';
-import { RulesetValidatorService } from '../../application/validators/ruleset-validator.service';
+import { ValidateSatelliteUseCase } from '@evolith/core-domain/application/use-cases/validate-satellite.use-case';
+import { RulesetValidatorService } from '@evolith/core-domain/application/validators/ruleset-validator.service';
 import { OutputFormatterService } from '../../infrastructure/formatters/output-formatter.service';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { logger } from '../../infrastructure/observability';

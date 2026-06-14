@@ -1,0 +1,82 @@
+# [ADR 0074](0074-evolith-core-api-exposure-layer.md): Evolith Core API Native Exposure Layer
+
+> **Bilingual Navigation:** [Versión en Español](./0074-evolith-core-api-exposure-layer.es.md)
+
+## Status
+
+Approved — Evolith Architecture Board, 2026-06-13.
+
+## Date
+
+2026-06-13
+
+## Context and Problem
+
+Evolith Core has been historically distributed primarily as a CLI (`@evolith/smart-cli`). Recent architectural decisions incorporated a Model Context Protocol (MCP) server exposed through the CLI (`evolith mcp start`) to serve governance as real-time context to AI Agents and external orchestrators like the Evolith Tracker.
+
+However, as the Evolith Tracker transitions into an independent SaaS SDLC Orchestrator, depending solely on a CLI-spawned MCP server or embedding the core libraries limits scalability, restricts protocol choices, and misplaces the network boundary. Evolith Tracker needs a robust, scalable, and secure API to query architectural evaluation results, without duplicating the domain logic.
+
+If we force the Tracker to host the domain logic, we violate the fundamental rule that `evolith_arch32` is the single source of truth for Core architecture.
+
+## Objective and Scope
+
+**Objective:** Define an official, scalable network exposure layer for Evolith Core that encapsulates the domain logic and provides standard REST/GraphQL/MCP interfaces to external clients (like Evolith Tracker and AI Agents).
+
+**In scope:**
+- Creation of `apps/core-api` within the Evolith Core monorepo.
+- Technology stack selection (NestJS).
+- Boundary definition between Evolith Core and Evolith Tracker.
+
+**Out of scope:**
+- Implementation details of the Evolith Tracker (which belongs in its own repository).
+- Refactoring the entire CLI codebase away from the shared domain packages.
+
+## Options Considered
+
+1. **Tracker BFF (Backend-For-Frontend) inside Evolith Core:** Build the Tracker's backend in this repository. Rejected: Violates the repository boundary. Evolith Core is an architectural reference, not a product codebase for the Tracker UI.
+2. **Expose Core Domain via npm only:** Force the Tracker to import `@evolith/smart-cli` as a library and build its own API. Rejected: Tracker becomes tightly coupled to Core's execution environment; any API logic wouldn't be reusable for other clients (like executive dashboards).
+3. **Evolith Core API using NestJS (chosen):** Build a dedicated API gateway (`apps/core-api`) inside the `evolith_arch32` monorepo using NestJS. This API wraps the Core Domain and exposes standard network interfaces. The Tracker remains an external consumer.
+
+## Decision and Rationale
+
+Adopt **option 3**. We will construct the **Evolith Core API** as a NestJS application in the `apps/core-api` directory.
+
+**Ratified elements:**
+1. **Network Sovereignty:** Evolith Core is the sole owner of its domain, rulesets, and evaluation logic. It exposes this capability natively via `apps/core-api`.
+2. **Client Agnosticism:** The Evolith Tracker acts strictly as a client to the Core API. Tracker will consume REST/GraphQL interfaces to display phase gates, validation statuses, and manage the SDLC.
+3. **Monorepo Structure:** The root `package.json` will be updated to support npm workspaces targeting `apps/*` and `sdk/*`.
+4. **Technology Stack:** NestJS is selected for the `core-api` to maintain strong typing, enforce hexagonal architecture natively, and seamlessly integrate the existing TypeScript domain logic from the `smart-cli`.
+5. **MCP Integration:** The existing MCP server logic will be integrated into or wrapped by the NestJS application to provide a unified deployment unit that serves both traditional REST/GraphQL consumers and AI Agents over MCP.
+
+**Rationale:** This decision preserves the domain sovereignty of Evolith Core while providing a mature, scalable interface for the Evolith Tracker SaaS. NestJS aligns perfectly with our existing TypeScript ecosystem and strictly enforces the dependency injection and hexagonal boundaries we have standardized.
+
+## Evidence and Evaluation Criteria
+
+Criteria used to judge the options: (a) Clear domain boundaries; (b) Scalability of the Core logic; (c) Reusability of the API for clients other than Tracker.
+
+Evidence: The current CLI implementation has already demonstrated the viability of the domain logic. This ADR simply lifts that logic into a persistent network service.
+
+## Consequences, Risks, and Trade-offs
+
+**Positive:**
+- Centralized governance plane: All evaluations happen in one official API.
+- The Tracker is unblocked to build its UI without reinventing domain evaluations.
+
+**Negative / risks:**
+- Adds maintenance overhead for a new NestJS application within the repository.
+- Requires refactoring the build pipeline to support a monorepo with both a CLI and an API.
+
+**Trade-off accepted:** The operational cost of maintaining a NestJS app is offset by the architectural purity and security of having a strict API boundary for the Core domain.
+
+## References
+
+- [SDLC Tracker — Technical Interface Design](../../../governance/standards/vision/sdlc-tracker-technical-interfaces.md)
+- [Maturity Assessment](../../../governance/standards/vision/maturity-assessment.md)
+
+## Related Decisions and Standards
+
+- [ADR 0073: Unified CLI/MCP Output Contract](./0073-unified-cli-output-contract.md)
+- [ADR 0047: Architectural Patterns](./0047-architectural-patterns-monolith-soa-microservices.md)
+
+---
+[Back to ADR Registry](../README.md)

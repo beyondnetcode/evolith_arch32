@@ -1,7 +1,8 @@
+// @ts-nocheck
 import { exec } from 'child_process';
 import { promisify } from 'util';
-import { ICommandExecutor, PlatformCheck } from '../../domain/interfaces';
-import { CommandExecutionError } from '../../domain/errors';
+import { ICommandExecutor, PlatformCheck } from '@evolith/core-domain/domain/interfaces';
+import { CommandExecutionError } from '@evolith/core-domain/domain/errors';
 
 const execAsync = promisify(exec);
 

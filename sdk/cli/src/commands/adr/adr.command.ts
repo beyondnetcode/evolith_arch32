@@ -2,8 +2,8 @@ import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { Inject } from '@nestjs/common';
-import { ADRService, CreateADRInput, ADR, ADCMatrix } from '../../domain/services/adr.service';
-import { IFileSystem } from '../../domain/interfaces';
+import { ADRService, CreateADRInput, ADR, ADCMatrix } from '@evolith/core-domain/domain/services/adr.service';
+import { IFileSystem } from '@evolith/core-domain/domain/interfaces';
 import { logger, OperationTimer } from '../../infrastructure/observability';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 

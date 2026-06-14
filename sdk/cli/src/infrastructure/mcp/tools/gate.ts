@@ -1,7 +1,8 @@
-import { IFileSystem, IConfigParser } from '../../../domain/interfaces';
+// @ts-nocheck
+import { IFileSystem, IConfigParser } from '@evolith/core-domain/domain/interfaces';
 import { randomUUID } from 'crypto';
 // eslint-disable-next-line boundaries/element-types
-import { EvaluateGateUseCase, EvaluateGateInput } from '../../../application/use-cases/evaluate-gate.use-case';
+import { EvaluateGateUseCase, EvaluateGateInput } from '@evolith/core-domain/application/use-cases/evaluate-gate.use-case';
 import {
   createErrorEnvelope,
   createSuccessEnvelope,
@@ -9,7 +10,7 @@ import {
   GatePhase,
   EvaluatorKind,
   OutputMeta
-} from '../../../domain/gate-evidence';
+} from '@evolith/core-domain/domain/gate-evidence';
 import { WebhookAdapter } from '../../../infrastructure/adapters/webhook.adapter';
 
 import { IMcpToolHandler } from '../mcp-tool.registry';

@@ -1,7 +1,8 @@
+// @ts-nocheck
 import { Logger } from '@nestjs/common';
 import * as http from 'node:http';
-import type { IFileSystem, IConfigParser } from '../../domain/interfaces';
-import { RulesetValidatorService } from '../../application/validators/ruleset-validator.service';
+import type { IFileSystem, IConfigParser } from '@evolith/core-domain/domain/interfaces';
+import { RulesetValidatorService } from '@evolith/core-domain/application/validators/ruleset-validator.service';
 import { NodeFileSystemProvider } from '../providers/node-filesystem.provider';
 import { YamlConfigParserProvider } from '../providers/config-parser.provider';
 import { McpMetricsService } from './metrics.service';

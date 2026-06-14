@@ -1,4 +1,4 @@
-import { IFileSystem, DirEntry } from '../../domain/interfaces';
+import { IFileSystem, DirEntry } from '@evolith/core-domain/domain/interfaces';
 
 export interface MockFileEntry {
   path: string;

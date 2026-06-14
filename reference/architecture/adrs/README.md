@@ -68,6 +68,7 @@ Decisions applicable to any product built on top of the framework, regardless of
 | [ADR 0071: Domain Layer Base Class Strategy](./core/0071-domain-layer-base-class-inheritance-strategy.md) | Domain layer base class and inheritance strategy | Bound inheritance use | Core ADR | Yes |
 | [ADR 0072: UTC Dates, Timezone, and Language Resolution](./core/0072-utc-dates-timezone-language-resolution.md) | UTC storage, browser timezone detection, language resolution | Standardize time and locale | Core ADR | Yes |
 | [ADR 0073: Unified CLI/MCP Output Contract](./core/0073-unified-cli-output-contract.md) | Unified CLI/MCP output contract and gate evidence schema | Unify tool output surfaces | Core ADR | Yes |
+| [ADR 0074: Evolith Core API Native Exposure Layer](./core/0074-evolith-core-api-exposure-layer.md) | Evolith Core API Native Exposure Layer | Official scalable network exposure | Core ADR | Yes |
 
 ---
 

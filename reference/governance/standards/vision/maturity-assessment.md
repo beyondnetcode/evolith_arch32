@@ -154,8 +154,8 @@ Pillar-by-pillar match against the [Product Vision Master](../../../product-suit
 | Vision Pillar | Vision Requirement | Evidence-Backed State | Notes |
 |---|---|:---:|---|
 | **Evolith Core** | Reference Corpus (Constitution): directives, ADRs, standards, rulesets, schemas | `Implemented` | See live [Reference Corpus Inventory](./inventory-summary.md). ACL integration rules defined but not executed (Tracker scope). |
-| **Evolith Tracker** | SaaS SDLC orchestrator | `Visioned` | Separate repository; Core's obligation is the CLI/MCP contract it will consume. |
-| **Technological Exposure** | CLI + MCP serving governance as real-time context | `Implemented` | Functional beta: 13 commands, MCP stdio + HTTP. Remaining: Tracker contract, transport upgrade. |
+| **Evolith Tracker** | SaaS SDLC orchestrator | `Visioned` | Separate repository; Core's obligation is the API/MCP contract it will consume. |
+| **Technological Exposure** | CLI + Core API + MCP serving governance as real-time context | `Implemented` | Core API (NestJS) exposes REST/GraphQL/MCP for external orchestrators. |
 | **5 Phase Gates** | Auditable gates with blocking evidence | `Implemented` | All 5 gates evaluate; blocking criteria are existence-only checks. |
 | **Federated Governance** | Hub-and-spoke inheritance, satellite validation | `Designed` | Inheritance rules + satellite CI composite action shipped; runtime ACLs deferred. |
 | **Open-Core Strategy** | Free CLI+MCP tier publicly available | `Prototyped` | Publication blocked only by release logistics ([GT-18](./gap-reference-catalog.md#gt-18)). |

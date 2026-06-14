@@ -154,8 +154,8 @@ Match pilar por pilar contra la [Visión Maestra del Producto](../../../product-
 | Pilar de Visión | Requisito de Visión | Estado Basado en Evidencia | Notas |
 |---|---|:---:|---|
 | **Evolith Core** | Reference Corpus (Constitución): directivas, ADRs, estándares, rulesets, schemas | `Implementado` | Ver [Inventario del Corpus de Referencia](./inventory-summary.es.md) en vivo. Reglas de integración ACL definidas pero no ejecutadas (alcance Tracker). |
-| **Evolith Tracker** | Orquestador SaaS del SDLC | `Visionado` | Repositorio aparte; la obligación del Core es el contrato CLI/MCP que consumirá. |
-| **Exposición Tecnológica** | CLI + MCP sirviendo gobernanza como contexto en tiempo real | `Implementado` | Beta funcional: 13 comandos, MCP stdio + HTTP. Restante: contrato Tracker, upgrade de transporte. |
+| **Evolith Tracker** | Orquestador SaaS del SDLC | `Visionado` | Repositorio aparte; la obligación del Core es el contrato API/MCP que consumirá. |
+| **Exposición Tecnológica** | CLI + Core API + MCP sirviendo gobernanza como contexto en tiempo real | `Implementado` | Core API (NestJS) expone REST/GraphQL/MCP para orquestadores externos. |
 | **5 Phase Gates** | Gates auditables con evidencia bloqueante | `Implementado` | Los 5 gates evalúan; los criterios bloqueantes son chequeos de solo-existencia. |
 | **Gobernanza Federada** | Herencia hub-and-spoke, validación de satélites | `Diseñado` | Reglas de herencia + composite action de CI para satélites entregadas; ACLs runtime diferidas. |
 | **Estrategia Open-Core** | Tier gratuito CLI+MCP públicamente disponible | `Prototipado` | Publicación bloqueada solo por logística de release ([GT-18](./gap-reference-catalog.es.md#gt-18)). |

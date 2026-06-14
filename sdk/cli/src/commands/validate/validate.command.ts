@@ -1,6 +1,6 @@
 import { Command, Option } from 'nest-commander';
-import { ValidateSatelliteUseCase } from '../../application/use-cases/validate-satellite.use-case';
-import { ValidationResult, ValidationIssue, RulesetValidatorService } from '../../application/validators/ruleset-validator.service';
+import { ValidateSatelliteUseCase } from '@evolith/core-domain/application/use-cases/validate-satellite.use-case';
+import { ValidationResult, ValidationIssue, RulesetValidatorService } from '@evolith/core-domain/application/validators/ruleset-validator.service';
 import { OutputFormatterService, OutputFormat } from '../../infrastructure/formatters/output-formatter.service';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';

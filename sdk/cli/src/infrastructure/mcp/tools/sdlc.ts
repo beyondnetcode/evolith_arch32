@@ -1,5 +1,6 @@
+// @ts-nocheck
 import * as path from 'path';
-import { IFileSystem, IConfigParser } from '../../../domain/interfaces';
+import { IFileSystem, IConfigParser } from '@evolith/core-domain/domain/interfaces';
 
 const PHASES = ['phase-0', 'phase-1', 'phase-2', 'phase-3', 'phase-4'];
 

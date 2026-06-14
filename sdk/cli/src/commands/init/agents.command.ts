@@ -3,8 +3,8 @@ import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { getFileSystem } from '../../infrastructure/mcp/tools/tool-utils';
 import { AgentRegistryService, AgentInfo } from '../../infrastructure/adapters/agent-registry.service';
-import { buildAgentRuleset } from '../../application/agents/agent-ruleset-builder';
-import { RulesetValidatorService } from '../../application/validators/ruleset-validator.service';
+import { buildAgentRuleset } from '@evolith/core-domain/application/agents/agent-ruleset-builder';
+import { RulesetValidatorService } from '@evolith/core-domain/application/validators/ruleset-validator.service';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 
 interface AgentsCommandOptions {

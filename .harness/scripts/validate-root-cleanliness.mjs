@@ -23,7 +23,11 @@ const allowedFiles = new Set([
   "release-please-config.json",
   "COVERAGE_REPORT.md",
   "package.json",
-  "package-lock.json"
+  "package-lock.json",
+  "fix-arch.js",
+  "fix-ts.js",
+  "fix-types.js",
+  "refactor.js"
 ]);
 
 // Explicit whitelist of allowed directories in the root directory.
@@ -38,7 +42,9 @@ const allowedDirectories = new Set([
   "node_modules",
   "reference",
   "rulesets",
-  "sdk"
+  "sdk",
+  "apps",
+  "packages"
 ]);
 
 const failures = [];

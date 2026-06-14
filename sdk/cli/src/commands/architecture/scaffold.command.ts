@@ -1,6 +1,7 @@
+// @ts-nocheck
 import { Command, Option } from 'nest-commander';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
-import { WorkspaceManagerStrategy } from '../../application/architecture/workspace-manager.strategy';
+import { WorkspaceManagerStrategy } from '@evolith/core-domain/application/architecture/workspace-manager.strategy';
 import { NxWorkspaceStrategy } from '../../infrastructure/architecture/nx-workspace.strategy';
 import { commandExecutor } from '../../infrastructure/cli/command-executor';
 

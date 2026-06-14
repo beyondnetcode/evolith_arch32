@@ -1,0 +1,48 @@
+{
+  "name": "@evolith/core-domain",
+  "version": "1.0.0",
+  "description": "Shared Domain and Application logic for Evolith Core",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./application/use-cases": {
+      "types": "./dist/application/use-cases/index.d.ts",
+      "default": "./dist/application/use-cases/index.js"
+    },
+    "./application/validators": {
+      "types": "./dist/application/validators/index.d.ts",
+      "default": "./dist/application/validators/index.js"
+    },
+    "./infrastructure/adapters/*": {
+      "types": "./dist/infrastructure/adapters/*.d.ts",
+      "default": "./dist/infrastructure/adapters/*.js"
+    },
+    "./domain/interfaces": {
+      "types": "./dist/domain/interfaces.d.ts",
+      "default": "./dist/domain/interfaces.js"
+    },
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "default": "./dist/*.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@open-policy-agent/opa-wasm": "^1.10.0",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
+    "yaml": "^2.9.0"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.13.2",
+    "typescript": "^6.0.3"
+  }
+}

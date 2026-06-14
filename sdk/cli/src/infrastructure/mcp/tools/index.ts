@@ -1,4 +1,4 @@
-import { IFileSystem, IConfigParser } from '../../../domain/interfaces';
+import { IFileSystem, IConfigParser } from '@evolith/core-domain/domain/interfaces';
 import { IMcpToolHandler } from '../mcp-tool.registry';
 import { getAgentTools } from './agent';
 import { getArchitectureTools } from './architecture';

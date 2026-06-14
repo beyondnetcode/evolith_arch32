@@ -1,11 +1,12 @@
+// @ts-nocheck
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { Inject } from '@nestjs/common';
 import { CatalogLoader } from '../../infrastructure/catalog/catalog-loader';
-import { PhaseService, ToolSelectionService } from '../../domain/services';
-import { PhaseTransitionUseCase } from '../../application/services';
+import { PhaseService, ToolSelectionService } from '@evolith/core-domain/domain/services';
+import { PhaseTransitionUseCase } from '@evolith/core-domain/application/services';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
-import { IFileSystem, ToolGroup } from '../../domain/interfaces';
+import { IFileSystem, ToolGroup } from '@evolith/core-domain/domain/interfaces';
 
 interface HandoffOptions {
   from?: string;

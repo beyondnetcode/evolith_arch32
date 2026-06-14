@@ -54,7 +54,7 @@ jest.mock('../../domain/services/adr.service', () => ({
 }));
 
 import * as p from '@clack/prompts';
-import { ADRService } from '../../domain/services/adr.service';
+import { ADRService } from '@evolith/core-domain/domain/services/adr.service';
 
 const mockCreate = jest.fn();
 const mockList = jest.fn();

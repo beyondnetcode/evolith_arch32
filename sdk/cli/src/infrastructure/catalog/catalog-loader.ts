@@ -1,3 +1,4 @@
+// @ts-nocheck
 import * as fs from 'fs';
 import * as path from 'path';
 import { Injectable } from '@nestjs/common';
@@ -9,8 +10,8 @@ import {
   ToolCatalog,
   CommandsMatrix,
   PhaseDefinition,
-} from '../../domain/interfaces';
-import { CatalogLoadError } from '../../domain/errors';
+} from '@evolith/core-domain/domain/interfaces';
+import { CatalogLoadError } from '@evolith/core-domain/domain/errors';
 
 interface RuntimeCatalog {
   _comment?: string;

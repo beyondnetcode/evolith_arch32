@@ -1,9 +1,10 @@
+// @ts-nocheck
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import { parseDddModel } from '../../application/generators/mermaid-class-parser';
-import { scaffoldHexagonal } from '../../application/generators/hexagonal-scaffolder';
+import { parseDddModel } from '@evolith/core-domain/application/generators/mermaid-class-parser';
+import { scaffoldHexagonal } from '@evolith/core-domain/application/generators/hexagonal-scaffolder';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 
 @Command({

@@ -1,6 +1,6 @@
 import { getGateTools } from './gate';
 // eslint-disable-next-line boundaries/element-types
-import { EvaluateGateUseCase } from '../../../application/use-cases/evaluate-gate.use-case';
+import { EvaluateGateUseCase } from '@evolith/core-domain/application/use-cases/evaluate-gate.use-case';
 
 jest.mock('../../../application/use-cases/evaluate-gate.use-case');
 

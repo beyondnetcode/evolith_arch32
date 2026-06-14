@@ -32,7 +32,7 @@ jest.mock('../../domain/errors', () => ({
 }));
 
 import { logger } from './structured-logger';
-import * as errors from '../../domain/errors';
+import * as errors from '@evolith/core-domain/domain/errors';
 
 const mockIsEvolithError = errors.isEvolithError as jest.MockedFunction<typeof errors.isEvolithError>;
 

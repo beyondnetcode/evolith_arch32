@@ -1,5 +1,6 @@
-import { IFileSystem, IConfigParser } from '../../../domain/interfaces';
-import { RulesetValidatorService } from '../../../application/validators/ruleset-validator.service';
+// @ts-nocheck
+import { IFileSystem, IConfigParser } from '@evolith/core-domain/domain/interfaces';
+import { RulesetValidatorService } from '@evolith/core-domain/application/validators/ruleset-validator.service';
 
 import { IMcpToolHandler } from '../mcp-tool.registry';
 

@@ -1,6 +1,6 @@
 import { startMcpServer, McpServerOptions } from './server';
 import { McpMetricsService } from './metrics.service';
-import { RulesetValidatorService } from '../../application/validators/ruleset-validator.service';
+import { RulesetValidatorService } from '@evolith/core-domain/application/validators/ruleset-validator.service';
 import { PassThrough } from 'node:stream';
 
 jest.mock('../../application/validators/ruleset-validator.service', () => ({

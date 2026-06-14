@@ -1,4 +1,4 @@
-import { IFileSystem } from '../../../domain/interfaces';
+import { IFileSystem } from '@evolith/core-domain/domain/interfaces';
 
 let cachedFs: IFileSystem | null = null;
 

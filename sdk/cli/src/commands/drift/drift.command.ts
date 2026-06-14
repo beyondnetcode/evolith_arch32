@@ -1,6 +1,6 @@
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
-import { ArchitectureDriftService, DriftReport, DriftViolation } from '../../application/validators/architecture-drift.service';
+import { ArchitectureDriftService, DriftReport, DriftViolation } from '@evolith/core-domain/application/validators/architecture-drift.service';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 

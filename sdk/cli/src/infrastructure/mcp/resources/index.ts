@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { getFileSystem } from '../tools/tool-utils';
-import { IFileSystem } from '../../../domain/interfaces';
+import { IFileSystem } from '@evolith/core-domain/domain/interfaces';
 
 interface Resource {
   uri: string;

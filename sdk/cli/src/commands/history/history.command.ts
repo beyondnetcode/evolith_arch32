@@ -1,6 +1,6 @@
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
-import { CommandHistoryService } from '../../application/services/services/command-history.service';
+import { CommandHistoryService } from '@evolith/core-domain/application/services/services/command-history.service';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 
 interface HistoryCommandOptions {

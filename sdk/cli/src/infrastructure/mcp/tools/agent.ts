@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { getFileSystem } from './tool-utils';
-import { IFileSystem, IConfigParser } from '../../../domain/interfaces';
+import { IFileSystem, IConfigParser } from '@evolith/core-domain/domain/interfaces';
 
 interface AgentInfo {
   name: string;

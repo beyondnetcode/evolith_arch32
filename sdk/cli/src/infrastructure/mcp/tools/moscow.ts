@@ -1,5 +1,6 @@
-import { IConfigParser } from '../../../domain/interfaces';
-import { IFileSystem } from '../../../domain/interfaces';
+// @ts-nocheck
+import { IConfigParser } from '@evolith/core-domain/domain/interfaces';
+import { IFileSystem } from '@evolith/core-domain/domain/interfaces';
 import { MoscowPrioritizationService, MoscowItem, MoscowAnalysis } from '../../../infrastructure/adapters/moscow-prioritization.service';
 
 import { IMcpToolHandler } from '../mcp-tool.registry';

@@ -81,7 +81,7 @@ jest.mock('../../infrastructure/observability', () => ({
 }));
 
 import * as p from '@clack/prompts';
-import { InitializeProjectUseCase } from '../../application/services';
+import { InitializeProjectUseCase } from '@evolith/core-domain/application/services';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 
 const mockExecute = jest.fn();

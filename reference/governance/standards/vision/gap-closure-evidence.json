@@ -21,7 +21,7 @@
       "closedAt": "2026-06-10",
       "closureCommit": "8b4f673",
       "evidence": [
-        "sdk/cli/src/domain/gate-evidence.ts",
+        "packages/core-domain/src/domain/gate-evidence.ts",
         "rulesets/schema/gate-evidence.schema.json"
       ],
       "validationCommands": [
@@ -34,7 +34,7 @@
       "closedAt": "2026-06-10",
       "closureCommit": "b151e2f",
       "evidence": [
-        "sdk/cli/src/application/use-cases/evaluate-gate.use-case.ts",
+        "packages/core-domain/src/application/use-cases/evaluate-gate.use-case.ts",
         "sdk/cli/test/gate.e2e-spec.ts"
       ],
       "validationCommands": [
@@ -48,7 +48,7 @@
       "closedAt": "2026-06-10",
       "closureCommit": "6f7a3e8",
       "evidence": [
-        "sdk/cli/src/domain/gate-evidence.ts",
+        "packages/core-domain/src/domain/gate-evidence.ts",
         "sdk/cli/.eslintrc.js"
       ],
       "validationCommands": [
@@ -100,8 +100,8 @@
       "closedAt": "2026-06-11",
       "closureCommit": "fb9a07b",
       "evidence": [
-        "sdk/cli/src/application/validators/phase-gate-validator.service.ts",
-        "sdk/cli/src/application/validators/phase-gate-validator.service.spec.ts"
+        "packages/core-domain/src/application/validators/phase-gate-validator.service.ts",
+        "packages/core-domain/src/application/validators/phase-gate-validator.service.spec.ts"
       ],
       "validationCommands": [
         "npm test --workspace sdk/cli -- --runInBand"
@@ -113,8 +113,8 @@
       "closedAt": "2026-06-11",
       "closureCommit": "fbdf401",
       "evidence": [
-        "sdk/cli/src/application/validators/phase-gate-validator.service.ts",
-        "sdk/cli/src/application/validators/phase-gate-validator.service.spec.ts"
+        "packages/core-domain/src/application/validators/phase-gate-validator.service.ts",
+        "packages/core-domain/src/application/validators/phase-gate-validator.service.spec.ts"
       ],
       "validationCommands": [
         "npm test --workspace sdk/cli -- --runInBand"
@@ -126,8 +126,8 @@
       "closedAt": "2026-06-11",
       "closureCommit": "d2c0a3d",
       "evidence": [
-        "sdk/cli/src/application/validators/phase-gate-validator.service.ts",
-        "sdk/cli/src/application/validators/phase-gate-validator.service.spec.ts"
+        "packages/core-domain/src/application/validators/phase-gate-validator.service.ts",
+        "packages/core-domain/src/application/validators/phase-gate-validator.service.spec.ts"
       ],
       "validationCommands": [
         "npm test --workspace sdk/cli -- --runInBand"
@@ -139,8 +139,8 @@
       "closedAt": "2026-06-11",
       "closureCommit": "d2c0a3d",
       "evidence": [
-        "sdk/cli/src/application/validators/phase-gate-validator.service.ts",
-        "sdk/cli/src/application/validators/phase-gate-validator.service.spec.ts"
+        "packages/core-domain/src/application/validators/phase-gate-validator.service.ts",
+        "packages/core-domain/src/application/validators/phase-gate-validator.service.spec.ts"
       ],
       "validationCommands": [
         "npm test --workspace sdk/cli -- --runInBand"
@@ -164,8 +164,8 @@
       "closedAt": "2026-06-12",
       "closureCommit": "1ab485e",
       "evidence": [
-        "sdk/cli/src/application/use-cases/propose-phase-advance.use-case.ts",
-        "sdk/cli/src/application/use-cases/propose-phase-advance.use-case.spec.ts"
+        "packages/core-domain/src/application/use-cases/propose-phase-advance.use-case.ts",
+        "packages/core-domain/src/application/use-cases/propose-phase-advance.use-case.spec.ts"
       ],
       "validationCommands": [
         "npm test --workspace sdk/cli -- --runInBand"
@@ -232,7 +232,7 @@
       "closedAt": "2026-06-12",
       "closureCommit": "3492321",
       "evidence": [
-        "sdk/cli/src/domain",
+        "packages/core-domain/src/domain",
         "sdk/cli/src/application",
         "sdk/cli/src/infrastructure",
         "sdk/cli/.eslintrc.js"
@@ -570,15 +570,15 @@
       "evidence": [
         "rulesets/schema/build-vs-compose.schema.json",
         "rulesets/sdlc/phase-gates.rules.json",
-        "sdk/cli/src/application/validators/phase-gate-validator.service.ts",
-        "sdk/cli/src/application/validators/build-vs-compose.schema.spec.ts"
+        "packages/core-domain/src/application/validators/phase-gate-validator.service.ts",
+        "packages/core-domain/src/application/validators/build-vs-compose.schema.spec.ts"
       ],
       "validationCommands": [
         "npm test --workspace sdk/cli -- --runInBand --testPathPattern build-vs-compose",
         "npm run test:e2e --workspace sdk/cli -- --runTestsByPath test/gate.e2e-spec.ts"
       ],
       "dependencyDisposition": "satisfied",
-      "dependencyRationale": "Builds on the ADR-0073 GateEvidence contract (GT-02/GT-03) and the deepened phase-gate content checks (GT-08…GT-11)."
+      "dependencyRationale": "Builds on the ADR-0073 GateEvidence contract (GT-02/GT-03) and the deepened phase-gate content checks (GT-08\u2026GT-11)."
     },
     {
       "id": "GT-50",
@@ -622,8 +622,8 @@
         "sdk/cli/.eslintrc.js",
         "sdk/cli/src/commands/adr/adr.command.ts",
         "sdk/cli/src/commands/standards/standards.command.ts",
-        "sdk/cli/src/application/services/index.ts",
-        "sdk/cli/src/domain/interfaces.ts"
+        "packages/core-domain/src/application/services/index.ts",
+        "packages/core-domain/src/domain/interfaces.ts"
       ],
       "validationCommands": [
         "npx tsc --noEmit --project sdk/cli/tsconfig.json",
@@ -638,10 +638,10 @@
       "closureCommit": "48e1d909992f29cd2cd49993101eb36ec730ae3a",
       "evidence": [
         "sdk/cli/src/infrastructure/adapters/moscow-prioritization.service.spec.ts",
-        "sdk/cli/src/application/validators/architecture-drift.service.spec.ts",
-        "sdk/cli/src/application/validators/evaluators/handlers/architecture-rule.handler.spec.ts",
-        "sdk/cli/src/application/validators/evaluators/handlers/governance-rule.handler.spec.ts",
-        "sdk/cli/src/application/validators/evaluators/opa-input-builder.spec.ts",
+        "packages/core-domain/src/application/validators/architecture-drift.service.spec.ts",
+        "packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.spec.ts",
+        "packages/core-domain/src/application/validators/evaluators/handlers/governance-rule.handler.spec.ts",
+        "packages/core-domain/src/application/validators/evaluators/opa-input-builder.spec.ts",
         "sdk/cli/src/infrastructure/providers/node-filesystem.provider.spec.ts",
         "sdk/cli/src/infrastructure/adapters/disk-ruleset.repository.spec.ts"
       ],
@@ -677,9 +677,9 @@
       "closureCommit": "5c576867419b18096f39f58391e92cd69727e451",
       "evidence": [
         "sdk/cli/.eslintrc.js",
-        "sdk/cli/src/application/services/project-scaffolder.service.ts",
-        "sdk/cli/src/application/use-cases/initialize-project.use-case.ts",
-        "sdk/cli/src/application/validators/phase-gate-validator.service.ts"
+        "packages/core-domain/src/application/services/project-scaffolder.service.ts",
+        "packages/core-domain/src/application/use-cases/initialize-project.use-case.ts",
+        "packages/core-domain/src/application/validators/phase-gate-validator.service.ts"
       ],
       "validationCommands": [
         "npm run lint --workspace sdk/cli",
@@ -694,7 +694,7 @@
       "closedAt": "2026-06-13",
       "closureCommit": "b9b638c7b72a223432170922727923946c22b7a3",
       "evidence": [
-        "sdk/cli/src/application/generators/hexagonal-scaffolder.ts"
+        "packages/core-domain/src/application/generators/hexagonal-scaffolder.ts"
       ],
       "validationCommands": [
         "npm run lint --workspace sdk/cli",
@@ -744,7 +744,7 @@
       "closureCommit": "6772c5b",
       "evidence": [
         "sdk/cli/.eslintrc.js",
-        "sdk/cli/src/domain/interfaces.ts",
+        "packages/core-domain/src/domain/interfaces.ts",
         "sdk/cli/src/infrastructure/cli/base-command.ts",
         "sdk/cli/src/infrastructure/prompts/prompt.service.ts"
       ],

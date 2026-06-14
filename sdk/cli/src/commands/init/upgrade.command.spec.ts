@@ -22,7 +22,7 @@ jest.mock('../../infrastructure/prompts/prompt.service', () => ({
   })),
 }));
 
-import { SatelliteUpgradeService } from '../../application/upgrade/satellite-upgrade.service';
+import { SatelliteUpgradeService } from '@evolith/core-domain/application/upgrade/satellite-upgrade.service';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 
 const mockPlanUpgrade = jest.fn();

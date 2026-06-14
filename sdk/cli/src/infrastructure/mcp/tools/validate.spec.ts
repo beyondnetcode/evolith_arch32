@@ -7,7 +7,7 @@ jest.mock('../../../application/validators/ruleset-validator.service', () => ({
   })),
 }));
 
-import { RulesetValidatorService } from '../../../application/validators/ruleset-validator.service';
+import { RulesetValidatorService } from '@evolith/core-domain/application/validators/ruleset-validator.service';
 
 
 const handleValidateTool = async (args: unknown, deps?: unknown) => {

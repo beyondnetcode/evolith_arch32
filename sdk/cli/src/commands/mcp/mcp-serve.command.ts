@@ -1,7 +1,7 @@
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { startMcpServer, McpTransport } from '../../infrastructure/mcp/server';
-import { RulesetValidatorService } from '../../application/validators/ruleset-validator.service';
+import { RulesetValidatorService } from '@evolith/core-domain/application/validators/ruleset-validator.service';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 
 interface McpServeOptions {

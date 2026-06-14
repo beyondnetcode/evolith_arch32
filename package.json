@@ -8,7 +8,9 @@
     "build:policy": "node ./.harness/scripts/compile-opa-wasm.mjs"
   },
   "workspaces": [
-    "sdk/cli"
+    "sdk/*",
+    "apps/*",
+    "packages/*"
   ],
   "devDependencies": {
     "husky": "^9.1.7"

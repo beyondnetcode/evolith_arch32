@@ -35,7 +35,7 @@ jest.mock('../../application/validators/architecture-drift.service', () => ({
 }));
 
 import * as p from '@clack/prompts';
-import { ArchitectureDriftService } from '../../application/validators/architecture-drift.service';
+import { ArchitectureDriftService } from '@evolith/core-domain/application/validators/architecture-drift.service';
 
 const mockDetectDrift = jest.fn();
 const mockGetDriftHistory = jest.fn();

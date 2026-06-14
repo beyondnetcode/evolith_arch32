@@ -435,7 +435,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Done when:** a Build-versus-Compose evidence schema exists, the phase-gate validator checks its presence and content for the Business Sign-Off gate, and CLI/MCP surfaces expose the result with the ADR-0073 envelope.
 - **Closure evidence:** Commit `54386a3` adds `rulesets/schema/build-vs-compose.schema.json`, modeling every §5.3 field — evaluated alternatives, a governed Adopt/Embed/Integrate/Extend/Build/Reject disposition, three-year cost, licensing, tenant isolation/data ownership, provider replaceability, PoC requirements, and a native justification that is conditionally required when the disposition is `Build`. The Business Sign-Off (Phase 1) gate in `phase-gates.rules.json` now lists it as mandatory evidence, and the phase-gate validator maps it to `.evolith/build-vs-compose.json` and validates presence **and** content via Ajv — surfaced through the existing ADR-0073 gate-evidence envelope on the CLI (`gate evaluate`) and the MCP `evolith-gate-evaluate` tool. The phase-gate schema count rises to 18.
 - **Local verification (2026-06-14):** a new spec asserts schema acceptance/rejection (missing disposition, unknown value, Build-without-justification, missing cost/security) and validator integration (valid passes, invalid fails, absent fails); the `gate.e2e-spec` still returns a schema-valid failing envelope. 1,215 unit tests pass; coverage stays at 80.70%. Status: `DONE`.
-- **References:** [Product Vision Master §5.3](../../../product-suite/vision/evolith-product-vision-master.md) · [Build-versus-Compose Schema](../../../../rulesets/schema/build-vs-compose.schema.json) · [Phase Gate Validator](../../../../sdk/cli/src/application/validators/phase-gate-validator.service.ts) · [GT-08](#gt-08)
+- **References:** [Product Vision Master §5.3](../../../product-suite/vision/evolith-product-vision-master.md) · [Build-versus-Compose Schema](../../../../rulesets/schema/build-vs-compose.schema.json) · [Phase Gate Validator](../../../../packages/core-domain/src/application/validators/phase-gate-validator.service.ts) · [GT-08](#gt-08)
 
 #### GT-52
 
@@ -465,7 +465,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Gap:** Two residual seams remain after the `core/` migration ([GT-19](#gt-19)): ESLint still permits `application → infrastructure` imports as a documented "pragmatic CLI allowance" (`.eslintrc.js`), and large use cases retain mixed responsibilities — `InitializeProjectUseCase` (~280 lines) in the `services/index.ts` barrel and the 500-line `phase-gate-validator.service.ts`.
 - **Purpose:** Close the last mile to strict hexagonal boundaries so the application layer depends only on ports, and oversized use cases are decomposed by responsibility.
 - **Done when:** the `application → infrastructure` allowance is removed (application depends only on ports/domain), the oversized use cases are decomposed into focused units, and ESLint boundaries plus the full test suite pass.
-- **References:** [ESLint configuration](../../../../sdk/cli/.eslintrc.js) · [Application services barrel](../../../../sdk/cli/src/application/services/index.ts) · [GT-19](#gt-19) · [GT-17](#gt-17)
+- **References:** [ESLint configuration](../../../../sdk/cli/.eslintrc.js) · [Application services barrel](../../../../packages/core-domain/src/application/services/index.ts) · [GT-19](#gt-19) · [GT-17](#gt-17)
 
 ---
 
@@ -565,5 +565,5 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Gap:** `hexagonal-scaffolder.ts` injects boilerplate containing technical debt directly into newly created components (e.g. `// TODO: add validation rules`, `// TODO: implement persistence`).
 - **Purpose:** Provide a completely clean and ready-to-use template for new bounded contexts instead of injecting pre-existing technical debt.
 - **Done when:** The generator produces clean, complete dummy implementations or handles abstractions without leaving inline `TODO`s for the user.
-- **References:** [hexagonal-scaffolder.ts](../../../../sdk/cli/src/application/generators/hexagonal-scaffolder.ts)
+- **References:** [hexagonal-scaffolder.ts](../../../../packages/core-domain/src/application/generators/hexagonal-scaffolder.ts)
 

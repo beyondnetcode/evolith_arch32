@@ -1,7 +1,7 @@
 import { GateStatusCommand } from './gate-status.command';
 import * as p from '@clack/prompts';
-import { isGitRepo, readGitLog } from '../../domain/metrics/git-log-reader';
-import { calculateDora } from '../../domain/metrics/dora-calculator';
+import { isGitRepo, readGitLog } from '@evolith/core-domain/domain/metrics/git-log-reader';
+import { calculateDora } from '@evolith/core-domain/domain/metrics/dora-calculator';
 
 // ── mocks ──────────────────────────────────────────────────────────────────────
 

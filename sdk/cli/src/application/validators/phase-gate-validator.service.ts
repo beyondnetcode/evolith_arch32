@@ -251,6 +251,7 @@ export class PhaseGateValidatorService {
       'Business Case ROI': path.join(projectPath, 'reference', 'governance', 'sdlc', '04-artifact-templates', 'business-case-roi-template.md'),
       'Ballpark Estimation': path.join(projectPath, 'reference', 'governance', 'sdlc', '04-artifact-templates', 'ballpark-estimation-template.md'),
       'MoSCoW Prioritization Matrix': path.join(projectPath, '.evolith', 'moscow', 'phase-0.json'),
+      'Build-versus-Compose Analysis': path.join(projectPath, '.evolith', 'build-vs-compose.json'),
       'ADR Registry': path.join(projectPath, 'reference', 'architecture', 'adrs', 'adr-matrix.json'),
       'Functional Stories': path.join(projectPath, 'reference', 'governance', 'sdlc', '04-artifact-templates', 'functional-story-template.md'),
       'Bounded Context Map': path.join(projectPath, 'reference', 'architecture', 'contexts', 'bounded-context-map.md'),

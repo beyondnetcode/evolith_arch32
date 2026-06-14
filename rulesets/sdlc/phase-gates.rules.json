@@ -32,6 +32,11 @@
         {
           "artifact": "MoSCoW Prioritization Matrix",
           "validation": "MoSCoW analysis completed for Phase 0 with at least one MUST item and valid priority distribution"
+        },
+        {
+          "artifact": "Build-versus-Compose Analysis",
+          "schemaRef": "../schema/build-vs-compose.schema.json",
+          "validation": "Discovery evaluated open-source/free-tier/commercial alternatives with a governed Adopt/Embed/Integrate/Extend/Build/Reject disposition, three-year cost, licensing, tenant isolation, provider replaceability, and PoC requirements; native development requires explicit justification (Product Vision §5.3)"
         }
       ],
       "blockingCriteria": [

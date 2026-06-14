@@ -14,7 +14,7 @@
     "cliPackage": "@evolith/smart-cli@1.1.0",
     "adrCount": 84,
     "rulesetCount": 27,
-    "schemaCount": 17
+    "schemaCount": 18
   },
   "readiness": [
     {

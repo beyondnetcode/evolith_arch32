@@ -921,6 +921,18 @@
         "npm test --workspace apps/core-api -- --no-coverage"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-61",
+      "closedAt": "2026-06-13",
+      "closureCommit": "1ea09e3",
+      "evidence": [
+        "apps/core-api/src/infrastructure/filters/http-exception.filter.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace apps/core-api -- --testPathPatterns=\"e2e\" --no-coverage"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

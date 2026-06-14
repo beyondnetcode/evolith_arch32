@@ -603,10 +603,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Gap:** No global exception filter exists. Unhandled errors expose stack traces and return inconsistent response shapes. RFC 9457 (`application/problem+json`) is not implemented.
 - **Purpose:** Implement a global `ProblemDetailsFilter` that intercepts all exceptions and returns RFC 9457-compliant `application/problem+json` responses without leaking internal details.
 - **Done when:**
-  - [ ] Global `ProblemDetailsFilter` registered in `main.ts`
-  - [ ] `Content-Type: application/problem+json` on all error responses
-  - [ ] Stack traces never exposed when `NODE_ENV === 'production'`
-  - [ ] Correlation ID (`x-trace-id`) propagated in error responses
+  - [x] Global `ProblemDetailsFilter` registered in `main.ts`
+  - [x] `Content-Type: application/problem+json` on all error responses
+  - [x] Stack traces never exposed when `NODE_ENV === 'production'`
+  - [x] Correlation ID (`x-trace-id`) propagated in error responses
 - **References:** [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) · [apps/core-api/src/main.ts](../../../../apps/core-api/src/main.ts)
 
 #### GT-62

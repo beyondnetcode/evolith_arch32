@@ -7,6 +7,17 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 
+interface ProblemDetails {
+  type: string;
+  title: string;
+  status: number;
+  detail: string;
+  instance: string;
+  traceId?: string;
+  timestamp: string;
+  errors?: unknown[];
+}
+
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
@@ -15,33 +26,74 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>();
 
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
-    let message = 'Internal server error';
+    let title = 'Internal Server Error';
+    let detail = 'An unexpected error occurred';
+    let errors: unknown[] | undefined;
 
     if (exception instanceof HttpException) {
       status = exception.getStatus();
       const exceptionResponse = exception.getResponse();
-      message = typeof exceptionResponse === 'string'
-        ? exceptionResponse
-        : (exceptionResponse as Record<string, unknown>).message as string || exception.message;
-    } else if (exception instanceof Error) {
-      message = exception.message;
 
-      if (message.includes('not found') || message.includes('does not exist')) {
+      if (typeof exceptionResponse === 'string') {
+        detail = exceptionResponse;
+      } else if (typeof exceptionResponse === 'object') {
+        const res = exceptionResponse as Record<string, unknown>;
+        detail = (res.message as string) || exception.message;
+        if (Array.isArray(res.message)) {
+          errors = res.message as unknown[];
+          detail = 'Validation failed';
+        }
+      }
+
+      switch (status) {
+        case HttpStatus.BAD_REQUEST: title = 'Bad Request'; break;
+        case HttpStatus.UNAUTHORIZED: title = 'Unauthorized'; break;
+        case HttpStatus.FORBIDDEN: title = 'Forbidden'; break;
+        case HttpStatus.NOT_FOUND: title = 'Not Found'; break;
+        case HttpStatus.UNPROCESSABLE_ENTITY: title = 'Unprocessable Entity'; break;
+        case HttpStatus.TOO_MANY_REQUESTS: title = 'Too Many Requests'; break;
+        default: title = exception.message || title;
+      }
+    } else if (exception instanceof Error) {
+      detail = exception.message;
+
+      if (detail.includes('not found') || detail.includes('does not exist')) {
         status = HttpStatus.NOT_FOUND;
-      } else if (
-        message.includes('validation') ||
-        message.includes('invalid') ||
-        message.includes('required')
-      ) {
+        title = 'Not Found';
+      } else if (detail.includes('validation') || detail.includes('invalid') || detail.includes('required')) {
         status = HttpStatus.UNPROCESSABLE_ENTITY;
+        title = 'Unprocessable Entity';
       }
     }
 
-    response.status(status).json({
-      statusCode: status,
-      message,
+    const isProduction = process.env.NODE_ENV === 'production';
+    const correlationId = request.headers['x-correlation-id'] as string;
+
+    const problem: ProblemDetails = {
+      type: this.getTypeUri(status),
+      title,
+      status,
+      detail: isProduction && status >= 500 ? 'An unexpected error occurred' : detail,
+      instance: request.url,
       timestamp: new Date().toISOString(),
-      path: request.url,
-    });
+    };
+
+    if (correlationId) {
+      problem.traceId = correlationId;
+    }
+
+    if (errors) {
+      problem.errors = errors;
+    }
+
+    response
+      .status(status)
+      .setHeader('Content-Type', 'application/problem+json')
+      .json(problem);
+  }
+
+  private getTypeUri(status: number): string {
+    const base = 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/';
+    return `${base}${status}`;
   }
 }

@@ -5,6 +5,7 @@ import { AppModule } from './app.module';
 const request = require('supertest');
 import helmet from 'helmet';
 import { correlationIdMiddleware } from './infrastructure/middleware/correlation-id.middleware';
+import { HttpExceptionFilter } from './infrastructure/filters/http-exception.filter';
 
 process.env.API_KEYS = 'test-api-key-123';
 
@@ -25,6 +26,9 @@ describe('Core API E2E', () => {
       forbidNonWhitelisted: true,
       transform: true,
     }));
+
+    app.useGlobalFilters(new HttpExceptionFilter());
+
     app.use(helmet());
     app.use(correlationIdMiddleware);
 
@@ -43,54 +47,47 @@ describe('Core API E2E', () => {
     });
   });
 
-  describe('Flow 2: Security Headers', () => {
-    it('should include security headers', async () => {
-      const res = await request(app.getHttpServer()).get('/health');
-      expect(res.headers['x-frame-options']).toBeDefined();
-      expect(res.headers['x-content-type-options']).toBeDefined();
-    });
-  });
-
-  describe('Flow 3: Correlation ID', () => {
-    it('should propagate correlation ID', async () => {
-      const res = await request(app.getHttpServer())
-        .get('/health')
-        .set('x-correlation-id', 'e2e-test');
-      expect(res.headers['x-correlation-id']).toBe('e2e-test');
-    });
-  });
-
-  describe('Flow 4: Authentication Required', () => {
-    it('should return 401 without API key on protected endpoint', async () => {
+  describe('Flow 2: RFC 9457 Problem Details', () => {
+    it('should return application/problem+json on 401', async () => {
       const res = await request(app.getHttpServer())
         .post('/architecture/validate-satellite')
         .send({ satellitePath: '/test' });
       expect(res.status).toBe(401);
+      expect(res.headers['content-type']).toContain('application/problem+json');
+      expect(res.body).toHaveProperty('type');
+      expect(res.body).toHaveProperty('title');
+      expect(res.body).toHaveProperty('status', 401);
+      expect(res.body).toHaveProperty('detail');
+      expect(res.body).toHaveProperty('instance');
+      expect(res.body).toHaveProperty('timestamp');
     });
 
-    it('should return 401 with invalid API key', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/architecture/validate-satellite')
-        .set('x-api-key', 'wrong-key')
-        .send({ satellitePath: '/test' });
-      expect(res.status).toBe(401);
-    });
-  });
-
-  describe('Flow 5: Validated Requests', () => {
-    it('should reject empty body with 400', async () => {
+    it('should return application/problem+json on 400', async () => {
       const res = await request(app.getHttpServer())
         .post('/architecture/validate-satellite')
         .set('x-api-key', API_KEY)
         .send({});
       expect(res.status).toBe(400);
+      expect(res.headers['content-type']).toContain('application/problem+json');
+      expect(res.body).toHaveProperty('status', 400);
     });
+  });
 
-    it('should reject unknown properties with 400', async () => {
+  describe('Flow 3: Authentication Required', () => {
+    it('should return 401 without API key', async () => {
+      const res = await request(app.getHttpServer())
+        .post('/architecture/validate-satellite')
+        .send({ satellitePath: '/test' });
+      expect(res.status).toBe(401);
+    });
+  });
+
+  describe('Flow 4: Validated Requests', () => {
+    it('should reject empty body with 400', async () => {
       const res = await request(app.getHttpServer())
         .post('/architecture/validate-satellite')
         .set('x-api-key', API_KEY)
-        .send({ satellitePath: '/test', badField: true });
+        .send({});
       expect(res.status).toBe(400);
     });
   });

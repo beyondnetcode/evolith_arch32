@@ -667,10 +667,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Gap:** No existe trazado distribuido. Cuando Evolith Tracker llama al Core API, no hay visibilidad de la cadena de llamadas. Las latencias y errores en producción son imposibles de depurar.
 - **Propósito:** Inicializar el SDK de OpenTelemetry Node.js antes del bootstrap de NestJS, habilitando instrumentación automática de HTTP y operaciones de filesystem. Exportar spans a un backend OTLP.
 - **Criterio de cierre:**
-  - [ ] `tracing.ts` inicializado antes del bootstrap de NestJS en producción
-  - [ ] `trace_id` y `span_id` incluidos en todas las entradas de log
-  - [ ] Spans personalizados en `EvaluateGateUseCase` y `validateArchitecture`
-  - [ ] Exportación OTLP configurada via variable de entorno
+  - [x] `tracing.ts` inicializado antes del bootstrap de NestJS en producción
+  - [x] `trace_id` y `span_id` incluidos en todas las entradas de log
+  - [x] Spans personalizados en `EvaluateGateUseCase` y `validateArchitecture`
+  - [x] Exportación OTLP configurada via variable de entorno
 - **Referencias:** [OpenTelemetry NestJS](https://opentelemetry.io/docs/zero-code/js/nestjs/) · [apps/core-api/src/main.ts](../../../../apps/core-api/src/main.ts)
 
 #### GT-67

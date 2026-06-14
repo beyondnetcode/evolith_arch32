@@ -1013,6 +1013,19 @@
         "npm run build --workspace packages/infra-providers"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-66",
+      "closedAt": "2026-06-13",
+      "closureCommit": "8db913a",
+      "evidence": [
+        "apps/core-api/src/tracing.ts",
+        "apps/core-api/src/main.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace apps/core-api -- --no-coverage"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

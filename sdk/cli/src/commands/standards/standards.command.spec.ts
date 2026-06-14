@@ -27,18 +27,6 @@ jest.mock('chalk', () => {
   return chalkFn;
 });
 
-jest.mock('../../infrastructure/di/container', () => ({
-  getContainer: jest.fn(() => ({
-    createFileSystem: jest.fn(() => ({
-      ensureDir: jest.fn(),
-      exists: jest.fn(),
-      writeJson: jest.fn(),
-      readJson: jest.fn(),
-    })),
-  })),
-  resetContainer: jest.fn(),
-}));
-
 jest.mock('../../domain/services/standards.service', () => ({
   StandardsService: jest.fn().mockImplementation(() => ({
     initialize: jest.fn(),
@@ -60,7 +48,6 @@ jest.mock('../../infrastructure/observability', () => ({
 
 import * as p from '@clack/prompts';
 import { StandardsService } from '../../domain/services/standards.service';
-import { getContainer } from '../../infrastructure/di/container';
 import { logger } from '../../infrastructure/observability';
 
 const mockInitialize = jest.fn();

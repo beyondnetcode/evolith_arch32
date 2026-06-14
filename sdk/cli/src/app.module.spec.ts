@@ -74,37 +74,6 @@ jest.mock('./infrastructure/mcp/tools/tool-utils', () => ({
   })),
 }));
 
-jest.mock('./infrastructure/di/container', () => ({
-  getContainer: jest.fn(() => ({
-    createFileSystem: jest.fn(() => ({
-      exists: jest.fn(),
-      readFile: jest.fn(),
-      writeFile: jest.fn(),
-      readJson: jest.fn(),
-      writeJson: jest.fn(),
-      ensureDir: jest.fn(),
-      readdirNames: jest.fn(),
-      remove: jest.fn(),
-    })),
-    createLogger: jest.fn(() => ({
-      info: jest.fn(),
-      warn: jest.fn(),
-      error: jest.fn(),
-      debug: jest.fn(),
-    })),
-    createConfigParser: jest.fn(() => ({
-      parse: jest.fn(),
-      stringify: jest.fn(),
-    })),
-    resolve: jest.fn(),
-    registerInstance: jest.fn(),
-    registerSingleton: jest.fn(),
-    registerTransient: jest.fn(),
-  })),
-  resetContainer: jest.fn(),
-  createChildContainer: jest.fn(),
-}));
-
 jest.mock('./infrastructure/catalog/catalog-loader', () => ({
   CatalogLoader: jest.fn().mockImplementation(() => ({
     loadRuntimeCatalog: jest.fn(() => []),

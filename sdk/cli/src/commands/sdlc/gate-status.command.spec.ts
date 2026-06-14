@@ -1,19 +1,11 @@
 import { GateStatusCommand } from './gate-status.command';
 import * as p from '@clack/prompts';
-import { getContainer } from '../../infrastructure/di/container';
 import { isGitRepo, readGitLog } from '../../domain/metrics/git-log-reader';
 import { calculateDora } from '../../domain/metrics/dora-calculator';
 
 // ── mocks ──────────────────────────────────────────────────────────────────────
 
 jest.mock('@clack/prompts');
-jest.mock('../../infrastructure/di/container', () => ({
-  getContainer: () => ({
-    setFileSystemProvider: () => {},
-    createFileSystem: () => mockFs
-  }),
-  resetContainer: () => {}
-}), { virtual: true });
 jest.mock('../../domain/metrics/git-log-reader');
 jest.mock('../../domain/metrics/dora-calculator');
 
@@ -93,7 +85,6 @@ beforeEach(() => {
   // Re-silence every test so inner spies that call mockRestore() don't bleed output.
   jest.spyOn(console, 'log').mockImplementation(() => {});
 
-  (getContainer as jest.Mock).mockReturnValue(mockContainer);
   (p.spinner as jest.Mock).mockReturnValue(mockSpinnerInstance);
 
   mockGetGateStatus.mockResolvedValue({

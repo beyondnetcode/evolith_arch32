@@ -31,21 +31,6 @@ jest.mock('chalk', () => {
   return chalkFn;
 });
 
-jest.mock('../../infrastructure/di/container', () => ({
-  getContainer: jest.fn(() => ({
-    createFileSystem: jest.fn(() => ({
-      exists: jest.fn(),
-      readFile: jest.fn(),
-      writeFile: jest.fn(),
-      readJson: jest.fn(),
-      writeJson: jest.fn(),
-      ensureDir: jest.fn(),
-      readdirNames: jest.fn(),
-      existsSync: jest.fn(),
-    })),
-  })),
-}));
-
 jest.mock('../../infrastructure/observability', () => ({
   logger: {
     info: jest.fn(),

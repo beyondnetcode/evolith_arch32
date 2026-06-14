@@ -978,7 +978,7 @@
     {
       "id": "GT-68",
       "closedAt": "2026-06-13",
-      "closureCommit": "754bc20",
+      "closureCommit": "d705167",
       "evidence": [
         "apps/core-api/src/main.ts"
       ],

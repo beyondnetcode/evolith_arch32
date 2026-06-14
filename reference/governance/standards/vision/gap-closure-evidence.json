@@ -1002,7 +1002,7 @@
     {
       "id": "GT-75",
       "closedAt": "2026-06-13",
-      "closureCommit": "d369cdb",
+      "closureCommit": "9ef03bf",
       "evidence": [
         "packages/infra-providers/",
         "apps/core-api/src/core-domain.module.ts",

@@ -100,10 +100,10 @@ The assessment scores against the 5 standard TOGAF ACMM levels (1: Initial to 5:
 * **Evidence:** 21 MCP tools, 7 resources, and 7 prompts cover validation, agents, architecture, SDLC, prioritization, metrics, and gate evaluation with runtime-schema conformance checks.
 * **Path to Level 5:** hot-reload of rulesets and measured adoption across satellite repositories.
 
-### Dimension 4: CLI Developer Experience — **Level 3 (Defined)**
+### Dimension 4: CLI Developer Experience — **Level 4 (Managed)**
 * **State:** `Validated`
-* **Evidence:** the `@evolith/smart-cli@1.1.0` package installs from the canonical workspace lockfile; lint, build, E2E, and MCP smoke pass from a clean checkout; shell completion and bilingual documentation are available.
-* **Path to Level 4:** synchronize public product documentation and release facts from generated inventory ([GT-47](./gap-reference-catalog.md#gt-47)).
+* **Evidence:** the `@evolith/smart-cli@1.1.0` package installs from the canonical workspace lockfile; lint, build, E2E, and MCP smoke pass from a clean checkout; shell completion and bilingual documentation are available. Public product documentation and release facts are synchronized from a generated [Product Surface Inventory](../../../products/smart-cli/product-inventory.md), with CI rejecting drift and placeholder pages ([GT-47](./gap-reference-catalog.md#gt-47)).
+* **Path to Level 5:** publish the inventory as a discoverable capability manifest consumed by satellite repositories.
 
 ### Dimension 5: Federated Governance Runtime Enforcement — **Level 3 (Defined)**
 * **State:** `Designed` (Rules exist, content validation missing)

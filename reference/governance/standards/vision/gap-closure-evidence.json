@@ -309,6 +309,25 @@
       "dependencyRationale": "Tracker-owned chat and session behavior was removed; Core exposes governed capabilities through CLI and MCP only."
     },
     {
+      "id": "GT-47",
+      "closedAt": "2026-06-14",
+      "closureCommit": "38dfc985fa4f4a09e561678032b0412098f2273b",
+      "evidence": [
+        ".harness/scripts/generate-product-inventory.mjs",
+        ".harness/scripts/validate-product-docs.mjs",
+        "reference/products/smart-cli/product-inventory.md",
+        "reference/products/smart-cli/README.md",
+        "reference/products/mcp-services/README.md",
+        ".github/workflows/docs.yml"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/generate-product-inventory.mjs --check",
+        "node .harness/scripts/validate-product-docs.mjs",
+        "node .harness/scripts/validate-docs.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-49",
       "closedAt": "2026-06-13",
       "closureCommit": "398729dff32735cac56069bb7c84a9fa44a2bff6",

@@ -100,10 +100,10 @@ La evaluación usa los 5 niveles estándar del ACMM (1: Inicial a 5: Optimizante
 * **Evidencia:** 21 tools MCP, 7 resources y 7 prompts cubren validación, agentes, arquitectura, SDLC, priorización, métricas y evaluación de gates con checks de conformidad de schemas runtime.
 * **Camino al Nivel 5:** hot-reload de rulesets y adopción medida en repositorios satélite.
 
-### Dimensión 4: Experiencia de Desarrollador CLI — **Nivel 3 (Definido)**
+### Dimensión 4: Experiencia de Desarrollador CLI — **Nivel 4 (Gestionado)**
 * **Estado:** `Validado`
-* **Evidencia:** el paquete `@evolith/smart-cli@1.1.0` se instala desde el lockfile canónico del workspace; lint, build, E2E y smoke MCP pasan desde un checkout limpio; shell completion y documentación bilingüe están disponibles.
-* **Camino al Nivel 4:** sincronizar documentación pública de producto y hechos de release desde inventario generado ([GT-47](./gap-reference-catalog.es.md#gt-47)).
+* **Evidencia:** el paquete `@evolith/smart-cli@1.1.0` se instala desde el lockfile canónico del workspace; lint, build, E2E y smoke MCP pasan desde un checkout limpio; shell completion y documentación bilingüe están disponibles. La documentación pública de producto y los hechos de release se sincronizan desde un [Inventario de Superficie del Producto](../../../products/smart-cli/product-inventory.es.md) generado, con CI que rechaza drift y páginas placeholder ([GT-47](./gap-reference-catalog.es.md#gt-47)).
+* **Camino al Nivel 5:** publicar el inventario como un manifiesto de capacidades descubrible consumido por repositorios satélite.
 
 ### Dimensión 5: Enforcement Runtime de Gobernanza Federada — **Nivel 3 (Definido)**
 * **Estado:** `Diseñado` (Existen reglas, falta validación de contenido)

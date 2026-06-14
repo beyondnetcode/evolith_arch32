@@ -386,7 +386,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Gap:** Las docs de Smart CLI anuncian `0.0.3-beta`, MCP Services es un placeholder y el reporte de madurez dice que trabajo ya completado de transporte, contratos, gates y publicación continúa faltando.
 - **Propósito:** Mantener la narrativa pública sincronizada con las superficies instalables Core/CLI/MCP.
 - **Cierre cuando:** un inventario generado suministra versión del paquete, comandos, tools, resources, prompts, transportes, schemas y evidencia de tests a docs EN/ES y madurez; CI rechaza drift y páginas placeholder.
-- **Referencias:** [Producto Smart CLI](../../../products/smart-cli/README.es.md) · [Producto MCP Services](../../../products/mcp-services/README.es.md)
+- **Evidencia de cierre:** El commit `38dfc98` añade `generate-product-inventory.mjs`, que deriva la superficie instalable (`@evolith/smart-cli@1.1.0`, bin, 18 comandos, 21 tools MCP, 7 resources, 7 prompts, 2 transportes, 17 schemas, cobertura live) desde las fuentes canónicas del CLI hacia un [Inventario de Superficie del Producto](../../../products/smart-cli/product-inventory.es.md) generado EN/ES. El README de Smart CLI (EN/ES) se actualizó de `0.0.3-beta`/88.7% a `1.1.0` con cobertura vigente, y el placeholder de MCP Services (EN/ES) se reemplazó con la superficie real de tools/resources/prompts/transportes. `validate-product-docs.mjs` rechaza páginas placeholder, drift de versión e inventario obsoleto; corre en el pre-commit hook y el workflow de docs en CI.
+- **Verificación local (2026-06-14):** `generate-product-inventory.mjs --check`, `validate-product-docs.mjs`, `validate-docs.mjs` (827 archivos) y la paridad bilingüe pasan. Estado: `COMPLETADO`.
+- **Referencias:** [Producto Smart CLI](../../../products/smart-cli/README.es.md) · [Producto MCP Services](../../../products/mcp-services/README.es.md) · [Inventario de Superficie del Producto](../../../products/smart-cli/product-inventory.es.md)
 
 #### GT-48
 

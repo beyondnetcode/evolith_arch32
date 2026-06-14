@@ -591,9 +591,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Gap:** Controllers accept `@Body() body: any` without validation, exposing the API to OWASP API3:2023 (Broken Object Property Level Authorization / Mass Assignment) and injection attacks.
 - **Purpose:** Enforce a strict input contract on every endpoint using `class-validator` DTOs and a global `ValidationPipe` with `whitelist: true, forbidNonWhitelisted: true`.
 - **Done when:**
-  - [ ] Global `ValidationPipe` enabled with `whitelist: true, forbidNonWhitelisted: true, transform: true`
-  - [ ] DTOs created for every endpoint using `class-validator` decorators
-  - [ ] Response DTOs created (domain types never returned directly)
+  - [x] Global `ValidationPipe` enabled with `whitelist: true, forbidNonWhitelisted: true, transform: true`
+  - [x] DTOs created for every endpoint using `class-validator` decorators
+  - [x] Response DTOs created (domain types never returned directly)
 - **References:** [OWASP API3:2023](https://owasp.org/API-Security/editions/2023/en/0xa3-broken-object-property-level-authorization/) · [apps/core-api/src/app.module.ts](../../../../apps/core-api/src/app.module.ts)
 
 #### GT-61

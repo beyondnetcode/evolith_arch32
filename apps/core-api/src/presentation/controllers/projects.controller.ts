@@ -1,8 +1,9 @@
 import { Controller, Post, Body } from '@nestjs/common';
-import { 
+import {
   InitializeProjectUseCase,
   ProposePhaseAdvanceUseCase
 } from '@evolith/core-domain/application/use-cases';
+import { InitProjectDto, ProposeAdvanceDto } from '../dtos/projects.dto';
 
 @Controller('projects')
 export class ProjectsController {
@@ -12,26 +13,22 @@ export class ProjectsController {
   ) {}
 
   @Post('initialize')
-  async initialize(@Body() body: { targetPath: string; name: string; type: string; options?: any }) {
-    const result = await this.initializeProjectUseCase.execute({
+  async initialize(@Body() body: InitProjectDto) {
+    return this.initializeProjectUseCase.execute({
       targetPath: body.targetPath,
       name: body.name,
       type: body.type as any,
       options: body.options,
     });
-    
-    return result;
   }
 
   @Post('propose-advance')
-  async proposeAdvance(@Body() body: { satellitePath: string; corePath?: string; targetPhase: string; triggerDeploy?: boolean }) {
-    const result = await this.proposePhaseAdvanceUseCase.execute({
+  async proposeAdvance(@Body() body: ProposeAdvanceDto) {
+    return this.proposePhaseAdvanceUseCase.execute({
       satellitePath: body.satellitePath,
       corePath: body.corePath,
       targetPhase: body.targetPhase as any,
       triggerDeploy: body.triggerDeploy,
     });
-    
-    return result;
   }
 }

@@ -1,5 +1,6 @@
 import { Controller, Post, Body, Param } from '@nestjs/common';
 import { EvaluateGateUseCase } from '@evolith/core-domain/application/use-cases';
+import { EvaluateGateDto } from '../dtos/gates.dto';
 
 @Controller('gates')
 export class GatesController {
@@ -8,14 +9,12 @@ export class GatesController {
   @Post(':gateId/evaluate')
   async evaluateGate(
     @Param('gateId') gateId: string,
-    @Body() body: { satellitePath: string; corePath?: string }
+    @Body() body: EvaluateGateDto
   ) {
-    const result = await this.evaluateGateUseCase.execute({
+    return this.evaluateGateUseCase.execute({
       satellitePath: body.satellitePath,
       gateId,
       corePath: body.corePath,
     });
-    
-    return result;
   }
 }

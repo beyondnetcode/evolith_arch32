@@ -591,9 +591,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Gap:** Los controllers aceptan `@Body() body: any` sin validación, exponiendo la API a OWASP API3:2023 (Autorización Rota a Nivel de Propiedad / Mass Assignment) e inyecciones.
 - **Propósito:** Imponer un contrato estricto de entrada en cada endpoint mediante DTOs con `class-validator` y un `ValidationPipe` global con `whitelist: true, forbidNonWhitelisted: true`.
 - **Criterio de cierre:**
-  - [ ] `ValidationPipe` global habilitado con `whitelist: true, forbidNonWhitelisted: true, transform: true`
-  - [ ] DTOs creados para cada endpoint con decorators de `class-validator`
-  - [ ] DTOs de respuesta creados (los tipos de dominio nunca se retornan directamente)
+  - [x] `ValidationPipe` global habilitado con `whitelist: true, forbidNonWhitelisted: true, transform: true`
+  - [x] DTOs creados para cada endpoint con decorators de `class-validator`
+  - [x] DTOs de respuesta creados (los tipos de dominio nunca se retornan directamente)
 - **Referencias:** [OWASP API3:2023](https://owasp.org/API-Security/editions/2023/en/0xa3-broken-object-property-level-authorization/) · [apps/core-api/src/app.module.ts](../../../../apps/core-api/src/app.module.ts)
 
 #### GT-61

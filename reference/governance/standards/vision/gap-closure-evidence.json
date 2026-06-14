@@ -824,6 +824,20 @@
         "npm test --workspace apps/core-api -- --testPathPatterns=\"security-headers\" --no-coverage"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-60",
+      "closedAt": "2026-06-13",
+      "closureCommit": "19b0738",
+      "evidence": [
+        "apps/core-api/src/main.ts",
+        "apps/core-api/src/presentation/dtos/",
+        "apps/core-api/src/presentation/controllers/"
+      ],
+      "validationCommands": [
+        "npm test --workspace apps/core-api -- --testPathPatterns=\"security-headers\" --no-coverage"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

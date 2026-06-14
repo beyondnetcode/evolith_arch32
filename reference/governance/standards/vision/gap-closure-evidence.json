@@ -950,7 +950,7 @@
     {
       "id": "GT-67",
       "closedAt": "2026-06-13",
-      "closureCommit": "fd48878",
+      "closureCommit": "b006a16",
       "evidence": [
         "apps/core-api/src/main.ts",
         "apps/core-api/src/presentation/dtos/",

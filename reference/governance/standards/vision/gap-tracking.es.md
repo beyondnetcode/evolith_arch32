@@ -14,7 +14,7 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 |---|---|:---:|:---:|:---:|:---:|
 | [`GT-58`](./gap-reference-catalog.es.md#gt-58) | Limpiar stubs TODO inyectados por Hexagonal Scaffolder | Transversal | P2 | S | `COMPLETADO` |
 | [`GT-57`](./gap-reference-catalog.es.md#gt-57) | Implementación incompleta de herramientas y validación MCP | F2 | P1 | L | `COMPLETADO` |
-| [`GT-56`](./gap-reference-catalog.es.md#gt-56) | Fallos silenciosos y mocks faltantes en pruebas E2E del CLI | Transversal | P1 | M | `PENDIENTE` |
+| [`GT-56`](./gap-reference-catalog.es.md#gt-56) | Fallos silenciosos y mocks faltantes en pruebas E2E del CLI | Transversal | P1 | M | `COMPLETADO` |
 | [`GT-55`](./gap-reference-catalog.es.md#gt-55) | Estrictez de TypeScript y eliminación de any implícito | Transversal | P1 | M | `PENDIENTE` |
 | [`GT-54`](./gap-reference-catalog.es.md#gt-54) | Completar la aplicación estricta de fronteras hexagonales | Transversal | P2 | L | `COMPLETADO` |
 | [`GT-53`](./gap-reference-catalog.es.md#gt-53) | Reparar las referencias migradas a la visión de producto | Transversal | P2 | S | `COMPLETADO` |
@@ -63,7 +63,7 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-02`](./gap-reference-catalog.es.md#gt-02) | `GateEvidence` modelado en la capa de dominio | F1 | P0 | M | `COMPLETADO` |
 | [`GT-01`](./gap-reference-catalog.es.md#gt-01) | ADR de contrato unificado | F0 | P0 | S | `COMPLETADO` |
 
-**Progreso:** 48 / 50 completados · 0 en progreso · 2 pendientes · 0 diferidos
+**Progreso:** 49 / 50 completados · 0 en progreso · 1 pendientes · 0 diferidos
 
 **Ordenamiento:** criticidad (`P0` → `P1` → `P2`), estado activo (`EN-PROGRESO` → `COMPLETADO` → `DIFERIDO`) y complejidad (`S` → `M` → `L`). Los gaps completados aparecen después del trabajo activo.
 

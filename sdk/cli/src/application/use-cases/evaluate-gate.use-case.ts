@@ -43,8 +43,7 @@ export interface EvaluateGateInput {
 @Injectable()
 export class EvaluateGateUseCase {
   constructor(
-    @Optional() @Inject('VALIDATOR_FACTORY') private readonly validatorFactory: (corePath?: string) => PhaseGateValidatorService =
-      corePath => new PhaseGateValidatorService(corePath),
+    @Inject('VALIDATOR_FACTORY') private readonly validatorFactory: (corePath?: string) => PhaseGateValidatorService,
     @Optional() @Inject('WEBHOOK_NOTIFIER') private readonly webhookNotifier?: IWebhookNotifier
   ) {}
 

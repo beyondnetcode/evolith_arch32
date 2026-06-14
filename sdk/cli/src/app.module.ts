@@ -23,6 +23,7 @@ import { PhaseAdvanceCommand } from './commands/phase/phase-advance.command';
 
 import { ValidateSatelliteUseCase } from './application/use-cases/validate-satellite.use-case';
 import { EvaluateGateUseCase } from './application/use-cases/evaluate-gate.use-case';
+import { PhaseGateValidatorService } from './application/validators/phase-gate-validator.service';
 import { ProposePhaseAdvanceUseCase } from './application/use-cases/propose-phase-advance.use-case';
 import { RulesetValidatorService } from './application/validators/ruleset-validator.service';
 import { PromptService } from './infrastructure/prompts/prompt.service';
@@ -73,6 +74,13 @@ import { YamlConfigParserProvider } from './infrastructure/providers/config-pars
     {
       provide: 'IConfigParser',
       useFactory: () => new YamlConfigParserProvider().createConfigParser('yaml'),
+    },
+    {
+      provide: 'VALIDATOR_FACTORY',
+      useFactory: (fs: any, logger: any) => {
+        return (corePath?: string) => new PhaseGateValidatorService(corePath, { fileSystem: fs, logger });
+      },
+      inject: ['IFileSystem', 'ILogger'],
     },
     {
       provide: 'WEBHOOK_NOTIFIER',

@@ -134,7 +134,7 @@ describe('PhaseGateValidatorService', () => {
       }),
     });
         
-    service = new PhaseGateValidatorService('/core', { fileSystem: mockFs });
+    service = new PhaseGateValidatorService('/core', { fileSystem: mockFs, logger: { warn: jest.fn(), error: jest.fn(), log: jest.fn(), info: jest.fn(), debug: jest.fn() } });
   });
 
   afterEach(() => {

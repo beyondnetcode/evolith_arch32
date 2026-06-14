@@ -362,7 +362,7 @@ describe('Phase Gate E2E Tests', () => {
     });
 
     it('should have PhaseGateValidatorService imported in application services', () => {
-      const servicesPath = path.join(process.cwd(), 'src', 'application', 'services', 'index.ts');
+      const servicesPath = path.join(process.cwd(), 'src', 'application', 'use-cases', 'phase-transition.use-case.ts');
       const content = fs.readFileSync(servicesPath, 'utf-8');
 
       expect(content).toContain('PhaseGateValidatorService');
@@ -370,7 +370,7 @@ describe('Phase Gate E2E Tests', () => {
     });
 
     it('should have PhaseTransitionUseCase using gate validator', () => {
-      const servicesPath = path.join(process.cwd(), 'src', 'application', 'services', 'index.ts');
+      const servicesPath = path.join(process.cwd(), 'src', 'application', 'use-cases', 'phase-transition.use-case.ts');
       const content = fs.readFileSync(servicesPath, 'utf-8');
 
       expect(content).toContain('gateValidator');

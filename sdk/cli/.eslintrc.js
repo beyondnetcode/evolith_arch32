@@ -105,10 +105,10 @@ module.exports = {
 
           // -----------------------------------------------------------------
           // application: use cases.
-          // Can import domain + core + infrastructure.
-          // Note: direct infra import is a known pragmatic CLI allowance
-          //   (no full port/adapter injection for simple CLI use cases).
-          //   To tighten toward strict hexagonal: remove 'infrastructure'.
+          // Can import domain + core.
+          // Note: direct infra import was a known pragmatic CLI allowance
+          //   (no full port/adapter injection for simple CLI use cases), but
+          //   was removed for strict hexagonal adherence (GT-54).
           // -----------------------------------------------------------------
           {
             from: 'application',

@@ -781,9 +781,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Gap:** Los providers de infraestructura (`NodeFileSystemProvider`, `NestLoggerProvider`, `YamlConfigParserProvider`) están duplicados en `apps/core-api/src/infrastructure/providers/` y `sdk/cli/src/infrastructure/providers/`, violando DRY.
 - **Propósito:** Extraer los providers de infraestructura a un paquete compartido `packages/infra-providers` (`@evolith/infra-providers`) consumido tanto por `apps/core-api` como por `sdk/cli`.
 - **Criterio de cierre:**
-  - [ ] Paquete `packages/infra-providers` creado con su propio `package.json`
-  - [ ] Providers duplicados eliminados de `apps/core-api` y `sdk/cli`
-  - [ ] `@evolith/infra-providers` agregado como dependencia en ambos consumidores
+  - [x] Paquete `packages/infra-providers` creado con su propio `package.json`
+  - [x] Providers duplicados eliminados de `apps/core-api` y `sdk/cli`
+  - [x] `@evolith/infra-providers` agregado como dependencia en ambos consumidores
 - **Referencias:** [apps/core-api/src/infrastructure/providers](../../../../apps/core-api/src/infrastructure/providers) · [sdk/cli/src/infrastructure/providers](../../../../sdk/cli/src/infrastructure/providers)
 
 #### GT-76

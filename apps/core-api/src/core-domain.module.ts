@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { NodeFileSystemProvider } from './infrastructure/providers/node-filesystem.provider';
-import { NestLoggerProvider } from './infrastructure/providers/logger.provider';
-import { YamlConfigParserProvider } from './infrastructure/providers/config-parser.provider';
+import { NodeFileSystemProvider } from '@evolith/infra-providers';
+import { NestLoggerProvider } from '@evolith/infra-providers';
+import { YamlConfigParserProvider } from '@evolith/infra-providers';
 
 import {
   EvaluateGateUseCase,

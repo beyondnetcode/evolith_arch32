@@ -30,9 +30,9 @@ import { RulesetValidatorService } from '@evolith/core-domain/application/valida
 import { PromptService } from './infrastructure/prompts/prompt.service';
 import { CatalogLoader } from './infrastructure/catalog/catalog-loader';
 import { WebhookAdapter } from './infrastructure/adapters/webhook.adapter';
-import { NodeFileSystemProvider } from './infrastructure/providers/node-filesystem.provider';
-import { NestLoggerProvider } from './infrastructure/providers/logger.provider';
-import { YamlConfigParserProvider } from './infrastructure/providers/config-parser.provider';
+import { NodeFileSystemProvider } from '@evolith/infra-providers';
+import { NestLoggerProvider } from '@evolith/infra-providers';
+import { YamlConfigParserProvider } from '@evolith/infra-providers';
 
 @Module({
   imports: [],

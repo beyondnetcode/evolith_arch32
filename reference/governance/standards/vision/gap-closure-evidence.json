@@ -998,6 +998,21 @@
         "npm test --workspace apps/core-api -- --testPathPatterns=\"circuit\" --no-coverage"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-75",
+      "closedAt": "2026-06-13",
+      "closureCommit": "d369cdb",
+      "evidence": [
+        "packages/infra-providers/",
+        "apps/core-api/src/core-domain.module.ts",
+        "sdk/cli/src/app.module.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace apps/core-api -- --no-coverage",
+        "npm run build --workspace packages/infra-providers"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

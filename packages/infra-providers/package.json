@@ -1,0 +1,21 @@
+{
+  "name": "@evolith/infra-providers",
+  "version": "1.0.0",
+  "description": "Shared infrastructure providers for Evolith Core",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@evolith/core-domain": "^1.0.0",
+    "@nestjs/common": "^11.0.1",
+    "fs-extra": "^11.2.0",
+    "yaml": "^2.9.0"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^24.0.0",
+    "typescript": "^5.7.3"
+  }
+}

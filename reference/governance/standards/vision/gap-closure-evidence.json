@@ -309,6 +309,20 @@
       "dependencyRationale": "Tracker-owned chat and session behavior was removed; Core exposes governed capabilities through CLI and MCP only."
     },
     {
+      "id": "GT-50",
+      "closedAt": "2026-06-14",
+      "closureCommit": "040ea7f6b4354a87a44c702dd8e4cd37997e5b43",
+      "evidence": [
+        "sdk/cli/jest.config.js",
+        ".github/workflows/sdk-cli-ci.yml"
+      ],
+      "validationCommands": [
+        "npm run test:cov --workspace @evolith/smart-cli -- --coverageReporters=text-summary"
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "GT-48 restored statement coverage to 80.65%; this threshold pins the recovered floor so regressions fail locally."
+    },
+    {
       "id": "GT-47",
       "closedAt": "2026-06-14",
       "closureCommit": "38dfc985fa4f4a09e561678032b0412098f2273b",

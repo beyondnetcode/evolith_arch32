@@ -13,7 +13,6 @@ This board is the single source of truth for gap priority and status. Select a g
 | ID | Gap | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|
 | [`GT-51`](./gap-reference-catalog.md#gt-51) | Build-versus-Compose gate evidence validation | F3 | P1 | M | `PENDING` |
-| [`GT-50`](./gap-reference-catalog.md#gt-50) | Enforce coverage thresholds in Jest configuration | F0 | P2 | S | `PENDING` |
 | [`GT-52`](./gap-reference-catalog.md#gt-52) | Remove dead dependency-injection container stubs | Cross | P2 | S | `PENDING` |
 | [`GT-53`](./gap-reference-catalog.md#gt-53) | Repair migrated product-vision references | Cross | P2 | S | `PENDING` |
 | [`GT-54`](./gap-reference-catalog.md#gt-54) | Complete strict hexagonal boundary enforcement | Cross | P2 | L | `PENDING` |
@@ -21,6 +20,7 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-49`](./gap-reference-catalog.md#gt-49) | Enforce TypeScript strict mode and typed filesystem ports | Cross | P1 | M | `DONE` |
 | [`GT-44`](./gap-reference-catalog.md#gt-44) | Deterministic release pipeline integrity | F5 | P0 | M | `DONE` |
 | [`GT-47`](./gap-reference-catalog.md#gt-47) | Product documentation and release synchronization | Cross | P1 | S | `DONE` |
+| [`GT-50`](./gap-reference-catalog.md#gt-50) | Enforce coverage thresholds in Jest configuration | F0 | P2 | S | `DONE` |
 | [`GT-42`](./gap-reference-catalog.md#gt-42) | Cross-repository contract conformance | Cross | P1 | M | `DONE` |
 | [`GT-45`](./gap-reference-catalog.md#gt-45) | MCP transport and tool conformance suite | F2 | P1 | M | `DONE` |
 | [`GT-46`](./gap-reference-catalog.md#gt-46) | Core HTTP service ownership boundary | F2 | P1 | M | `DONE` |
@@ -59,7 +59,7 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-23`](./gap-reference-catalog.md#gt-23) | Spanish translation backfill | Cross | P2 | L | `DONE` |
 | [`GT-36`](./gap-reference-catalog.md#gt-36) | Machine-readable rules language coverage | Cross | P2 | L | `DONE` |
 
-**Progress:** 41 / 46 done · 0 in progress · 5 pending · 0 deferred
+**Progress:** 42 / 46 done · 0 in progress · 4 pending · 0 deferred
 
 **Ordering:** criticality (`P0` → `P1` → `P2`), active status (`IN-PROGRESS` → `PENDING` → `DEFERRED`), then complexity (`S` → `M` → `L`). Completed gaps follow active work.
 

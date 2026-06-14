@@ -421,6 +421,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Gap:** The normative 80% statement threshold is enforced only by a Bash step in CI (`sdk-cli-ci.yml`), while `jest.config.js` declares no `coverageThreshold`. A local `npm test` therefore never fails on coverage, so regressions surface only after push.
 - **Purpose:** Make the coverage contract enforceable at the point of change rather than exclusively in CI, closing the split-brain between the runner and the pipeline.
 - **Done when:** `jest.config.js` declares a `coverageThreshold` aligned with the normative target (ideally per-directory ratchets that prevent silent regressions), the CI check and the Jest configuration agree on the threshold, and the local coverage command fails on regression. Coordinate the absolute number with [GT-48](#gt-48).
+- **Closure evidence:** Commit `040ea7f` adds a global `coverageThreshold` to `jest.config.js` — `statements: 80` (identical to the `sdk-cli-ci.yml` bash gate), `lines: 80`, `functions: 75`, `branches: 67` — so `npm run test:cov` now fails locally on regression instead of only after push. The thresholds sit at or just below the floors restored by [GT-48](#gt-48) (80.65% statements, 81.47% lines, 76.36% functions, 68.87% branches).
+- **Local verification (2026-06-14):** `npm run test:cov` passes 1,206 tests and reports coverage above every threshold; Jest exits 0. A drop below any floor now fails the command. Status: `DONE`.
 - **References:** [Jest Configuration](../../../../sdk/cli/jest.config.js) · [CLI CI Workflow](../../../../.github/workflows/sdk-cli-ci.yml) · [GT-48](#gt-48)
 
 #### GT-51

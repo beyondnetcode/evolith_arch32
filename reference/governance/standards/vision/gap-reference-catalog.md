@@ -743,9 +743,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Gap:** 12 files in `packages/core-domain/src/application/` and 9 in `sdk/cli` have `// @ts-nocheck` added during the migration to unblock the build. This hides real type errors and violates TypeScript strict principles.
 - **Purpose:** Remove all `@ts-nocheck` pragmas, fix all underlying type errors with proper typed interfaces, and re-enable `strict: true` in the core-domain tsconfig.
 - **Done when:**
-  - [ ] Zero files with `@ts-nocheck` in `packages/core-domain`
-  - [ ] `packages/core-domain/tsconfig.json` has `strict: true`
-  - [ ] `noImplicitAny: true` across all workspace tsconfigs
+  - [x] Zero files with `@ts-nocheck` in `packages/core-domain`
+  - [x] `packages/core-domain/tsconfig.json` has `strict: true`
+  - [x] `noImplicitAny: true` across all workspace tsconfigs
 - **References:** [packages/core-domain/src/application](../../../../packages/core-domain/src/application) · [GT-49](#gt-49)
 
 #### GT-73

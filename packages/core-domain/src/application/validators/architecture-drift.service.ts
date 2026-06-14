@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* eslint-disable boundaries/element-types */
 import * as path from 'path';
 import { IFileSystem, ILogger } from '../../domain/interfaces';
@@ -57,7 +56,7 @@ export class ArchitectureDriftService {
     if (!options?.logger) throw new Error('ILogger is required');
     this.fs = options.fileSystem;
     this.logger = options.logger;
-    this.validator = options?.validator ?? new RulesetValidatorService(undefined, { fileSystem: this.fs, logger: this.logger });
+    this.validator = options?.validator ?? new RulesetValidatorService({ fileSystem: this.fs, logger: this.logger });
   }
 
   async detectDrift(options: DriftDetectionOptions): Promise<DriftReport> {

@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { IFileSystem } from '../../domain/interfaces';
+import { IFileSystem, ILogger } from '../../domain/interfaces';
 import { PhaseService } from '../../domain/services';
 import { IWebhookNotifier } from '../ports/webhook-notifier.port';
 import { PhaseGateValidatorService } from '../validators/phase-gate-validator.service';
@@ -9,17 +8,17 @@ export class PhaseTransitionUseCase {
   private readonly fs: IFileSystem;
   private readonly phaseService: PhaseService;
   private readonly gateValidator: PhaseGateValidatorService;
-  private readonly logger: { log: (...args: unknown[]) => void; warn: (...args: unknown[]) => void; error: (...args: unknown[]) => void; info: (...args: unknown[]) => void; debug: (...args: unknown[]) => void; };
+  private readonly logger: ILogger;
 
   constructor(
     fs: IFileSystem,
     corePath?: string,
     private readonly webhookNotifier?: IWebhookNotifier,
-    logger?: unknown
+    logger?: ILogger
   ) {
     this.fs = fs;
     this.phaseService = new PhaseService();
-    this.logger = logger || { log: () => {}, warn: () => {}, error: () => {}, info: () => {}, debug: () => {} };
+    this.logger = (logger as ILogger) || { log: () => {}, warn: () => {}, error: () => {}, info: () => {}, debug: () => {} } as ILogger;
     this.gateValidator = new PhaseGateValidatorService(corePath, { fileSystem: fs, logger: this.logger });
   }
 

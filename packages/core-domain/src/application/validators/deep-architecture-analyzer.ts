@@ -1,4 +1,4 @@
-// @ts-nocheck
+const ts: any = require('typescript');
 import * as path from 'path';
 import * as fs from 'fs-extra';
 
@@ -160,7 +160,7 @@ export class DeepArchitectureAnalyzer {
         true
       );
 
-      const visit = (node: unknown) => {
+      const visit = (node: any) => {
         if (ts.isImportDeclaration(node)) {
           if (node.moduleSpecifier && ts.isStringLiteral(node.moduleSpecifier)) {
             const importPath = node.moduleSpecifier.text;

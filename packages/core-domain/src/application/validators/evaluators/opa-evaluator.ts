@@ -1,4 +1,3 @@
-// @ts-nocheck
 import * as path from 'path';
 import { IFileSystem, ILogger } from '../../../domain/interfaces';
 import { NormalizedRule } from '../../../domain/models/normalized-rule';
@@ -7,7 +6,7 @@ import { loadPolicy } from '@open-policy-agent/opa-wasm';
 import { OpaInputBuilder } from './opa-input-builder';
 
 export class OpaEvaluator implements IRuleEvaluatorStrategy {
-  private policyCache: unknown = null;
+  private policyCache: any = null;
   private inputBuilder: OpaInputBuilder;
 
   constructor(
@@ -41,17 +40,17 @@ export class OpaEvaluator implements IRuleEvaluatorStrategy {
       const input = await this.inputBuilder.build(ctx);
       
       // Evaluate against the OPA policy
-      const resultSet = this.policyCache.evaluate(input);
+      const resultSet: any = this.policyCache.evaluate(input);
       
-      const violations = resultSet && resultSet.length > 0 && resultSet[0].result ? resultSet[0].result : [];
+      const violations: Record<string, unknown>[] = (resultSet?.[0]?.result) ? resultSet[0].result as Record<string, unknown>[] : [];
       
       return rules.map(rule => {
-        const ruleViolations = violations.filter((v: unknown) => v.id === rule.id);
+        const ruleViolations = violations.filter((v: Record<string, unknown>) => v.id === rule.id);
         if (ruleViolations.length > 0) {
           return {
             rule,
             result: 'failed',
-            message: ruleViolations.map((v: unknown) => v.message).join('; '),
+            message: ruleViolations.map((v: Record<string, unknown>) => v.message).join('; '),
           };
         }
         return {

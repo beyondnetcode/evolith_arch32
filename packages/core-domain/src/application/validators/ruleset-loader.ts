@@ -1,4 +1,3 @@
-// @ts-nocheck
 import * as path from 'path';
 import { IFileSystem, ILogger } from '../../domain/interfaces';
 import Ajv from 'ajv';
@@ -8,7 +7,7 @@ import { PhaseGatesRuleset } from './phase-gate-validator.service';
 export class RulesetLoader {
   private cachedRuleset: PhaseGatesRuleset | null = null;
   private readonly ajv: Ajv;
-  private schemaValidator: unknown;
+  private schemaValidator: any;
 
   constructor(
     private readonly fs: IFileSystem,
@@ -34,7 +33,7 @@ export class RulesetLoader {
         this.schemaValidator = this.ajv.compile(JSON.parse(schemaContent));
       }
       
-      const valid = this.schemaValidator(parsed);
+      const valid: any = this.schemaValidator(parsed as any);
       if (!valid) {
         throw new Error(`Ruleset validation failed: ${this.ajv.errorsText(this.schemaValidator.errors)}`);
       }

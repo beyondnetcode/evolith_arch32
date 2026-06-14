@@ -1,4 +1,4 @@
-// @ts-nocheck
+const ts: any = require('typescript');
 import * as path from 'path';
 import { IFileSystem } from '../../../../domain/interfaces';
 import { NormalizedRule } from '../../../../domain/models/normalized-rule';
@@ -256,7 +256,7 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
                 );
 
                 let hasUiImport = false;
-                const checkNode = (node: unknown) => {
+                const checkNode = (node: any) => {
                   if (ts.isImportDeclaration(node)) {
                     const importPath = node.moduleSpecifier.getText().replace(/['"]/g, '');
                     if (['@clack/prompts', 'inquirer', 'commander', 'express'].includes(importPath)) {
@@ -296,7 +296,7 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
               );
 
               let hasManualInstantiation = false;
-              const checkNode = (node: unknown) => {
+              const checkNode = (node: any) => {
                 if (ts.isNewExpression(node)) {
                   const className = node.expression.getText();
                   if (/(Service|UseCase|Repository|Adapter)$/.test(className)) {
@@ -337,7 +337,7 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
               let hasAstImport = false;
               let usesRegexForCode = false;
 
-              const checkNode = (node: unknown) => {
+              const checkNode = (node: any) => {
                 if (ts.isImportDeclaration(node)) {
                   const importPath = node.moduleSpecifier.getText().replace(/['"]/g, '');
                   if (importPath === 'typescript' || importPath === '@babel/parser') {

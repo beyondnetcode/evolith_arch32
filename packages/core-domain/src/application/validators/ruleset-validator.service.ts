@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* eslint-disable boundaries/element-types */
 import { Injectable, Optional, Inject } from '@nestjs/common';
 import * as path from 'path';
@@ -8,6 +7,7 @@ import { NativeEvaluator } from './evaluators/native-evaluator';
 import { OpaEvaluator } from './evaluators/opa-evaluator';
 
 import { IRulesetRepository } from '../../domain/ports/ruleset-repository.port';
+import { NormalizedRule } from '../../domain/models/normalized-rule';
 
 export interface ValidationResult {
   status: 'passed' | 'failed' | 'warning';
@@ -273,11 +273,11 @@ export class RulesetValidatorService {
       const ctx = { satellitePath, corePath: resolvedCorePath };
       // Manually map rules to NormalizedRule and evaluate through strategy
       for (const rule of rules) {
-        const normalized: unknown = {
+        const normalized: Record<string, unknown> = {
           ...rule,
           sourceFile: rulesetPath
         };
-        const results = await this.engine['strategy'].evaluateAll([normalized], ctx);
+        const results = await this.engine['strategy'].evaluateAll([normalized as unknown as NormalizedRule], ctx);
         issues.push(...this.engine.toValidationIssues(results));
       }
     }

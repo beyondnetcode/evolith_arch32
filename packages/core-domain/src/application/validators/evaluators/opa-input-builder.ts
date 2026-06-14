@@ -1,4 +1,3 @@
-// @ts-nocheck
 import * as path from 'path';
 import { IFileSystem } from '../../../domain/interfaces';
 import { EvaluationContext } from './evaluator.interface';
@@ -149,8 +148,8 @@ export class OpaInputBuilder {
     if (!rootPkg) return files;
     
     files.push({ path: rootPkgPath, content: rootPkg });
-
-    const workspaces = rootPkg['workspaces'] as string[] | { packages?: string[] } | undefined;
+    
+    const workspaces = (rootPkg as any)["workspaces"] as string[] | { packages?: string[] } | undefined;
     const patterns: string[] = Array.isArray(workspaces)
       ? workspaces
       : (workspaces?.packages ?? []);
@@ -180,7 +179,7 @@ export class OpaInputBuilder {
     const sourceFilesInfo: unknown[] = [];
     
     // We import typescript here to avoid tying it strictly if the plugin doesn't need it
-    let ts: unknown;
+    let ts: any;
     try {
       ts = require('typescript');
     } catch {
@@ -194,7 +193,7 @@ export class OpaInputBuilder {
 
     for (const file of tsFiles) {
       const content = await this.safeReadFile(file) || '';
-      const info: unknown = {
+      const info: Record<string, unknown> = {
         path: file.replace(rootPath, ''),
         content: content,
         hasAstImport: false,
@@ -211,7 +210,7 @@ export class OpaInputBuilder {
           true
         );
 
-        const checkNode = (node: unknown) => {
+        const checkNode = (node: any) => {
           if (ts.isImportDeclaration(node)) {
             const importPath = node.moduleSpecifier.getText().replace(/['"]/g, '');
             if (importPath === 'typescript' || importPath === '@babel/parser') {

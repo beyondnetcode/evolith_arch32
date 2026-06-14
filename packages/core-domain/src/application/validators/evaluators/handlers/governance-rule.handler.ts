@@ -1,4 +1,3 @@
-// @ts-nocheck
 /* eslint-disable boundaries/element-types */
 import * as path from 'path';
 import { IFileSystem, IConfigParser } from '../../../../domain/interfaces';
@@ -45,8 +44,8 @@ export class GovernanceRuleHandler implements INativeRuleHandler {
       const evolithYamlPath = path.join(ctx.satellitePath, 'evolith.yaml');
       if (await this.fs.exists(evolithYamlPath)) {
         const content = await this.fs.readFile(evolithYamlPath);
-        const yaml = this.configParser.parse(content) as unknown;
-        if (!yaml?.governance?.version) {
+        const yaml = this.configParser.parse(content) as Record<string, unknown>;
+        if (!(yaml?.governance as Record<string, unknown>)?.version) {
           return { rule, result: 'failed', message: 'evolith.yaml should specify governance.version for change tracking' };
         }
       }
@@ -57,8 +56,8 @@ export class GovernanceRuleHandler implements INativeRuleHandler {
       const evolithYamlPath = path.join(ctx.satellitePath, 'evolith.yaml');
       if (await this.fs.exists(evolithYamlPath)) {
         const content = await this.fs.readFile(evolithYamlPath);
-        const yaml = this.configParser.parse(content) as unknown;
-        const version = yaml?.coreRef?.version;
+        const yaml = this.configParser.parse(content) as Record<string, unknown>;
+        const version = (yaml?.coreRef as Record<string, unknown>)?.version as string | undefined;
         if (!version) {
           return { rule, result: 'failed', message: 'evolith.yaml must specify coreRef.version (semver). Unpinned references are prohibited.' };
         }

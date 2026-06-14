@@ -1,4 +1,3 @@
-// @ts-nocheck
 import * as path from 'path';
 import { IFileSystem, ILogger } from '../../domain/interfaces';
 import { PhaseGateDefinition, BlockingCriterion, EvidenceValidationResult, BlockingCheckResult } from './phase-gate-validator.service';
@@ -118,11 +117,11 @@ export class BlockingCriteriaValidator {
 
         if (scan.vulnerabilities && typeof scan.vulnerabilities === 'object') {
           if (Array.isArray(scan.vulnerabilities)) {
-            critical = scan.vulnerabilities.filter((v: unknown) => v.severity === 'critical' || v.severity === 'CRITICAL').length;
-            high = scan.vulnerabilities.filter((v: unknown) => v.severity === 'high' || v.severity === 'HIGH').length;
+            critical = scan.vulnerabilities.filter((v: Record<string, unknown>) => (v as Record<string, unknown>).severity === 'critical' || v.severity === 'CRITICAL').length;
+            high = scan.vulnerabilities.filter((v: Record<string, unknown>) => (v as Record<string, unknown>).severity === 'high' || v.severity === 'HIGH').length;
           } else {
-            critical = scan.vulnerabilities.critical || 0;
-            high = scan.vulnerabilities.high || 0;
+            critical = (scan.vulnerabilities as Record<string, unknown>).critical as number || 0;
+              high = (scan.vulnerabilities as Record<string, unknown>).high as number || 0;
           }
         }
 

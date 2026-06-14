@@ -780,6 +780,21 @@
         "npm test --workspace apps/core-api -- --testPathPatterns=\"core-domain.module\" --no-coverage"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-72",
+      "closedAt": "2026-06-13",
+      "closureCommit": "b2dffde",
+      "evidence": [
+        "packages/core-domain/tsconfig.json",
+        "packages/core-domain/src/application/"
+      ],
+      "validationCommands": [
+        "npx tsc --project packages/core-domain/tsconfig.json --noEmit",
+        "npm run build --workspace packages/core-domain"
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "Core-domain application layer (12 files) cleared of @ts-nocheck with strict:true. sdk/cli @ts-nocheck removal (19 files) deferred to a follow-up gap as those files have different architectural ownership."
     }
   ]
 }

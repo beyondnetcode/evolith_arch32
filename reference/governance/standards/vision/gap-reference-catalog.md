@@ -524,3 +524,46 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 ---
 [Back to Gap Tracking Board](./gap-tracking.md) · [Back to Vision Index](./README.md)
+
+#### GT-55
+
+**Title:** TypeScript strictness and implicit any elimination
+
+- **Gap:** The `sdk/cli` workspace produces over 105 `@typescript-eslint/no-explicit-any` warnings during linting. These are predominantly in core boundary classes like `prompt.service.ts` and `base-command.ts`.
+- **Purpose:** Enforce type safety across all system boundaries to prevent runtime regressions and fulfill the static typing guarantees mandated by the Evolith Architecture.
+- **Done when:** The linting rule `@typescript-eslint/no-explicit-any` can be upgraded from `warn` to `error` and passes across all packages without suppressing errors.
+- **References:** [prompt.service.ts](../../../../sdk/cli/src/infrastructure/prompts/prompt.service.ts)
+
+---
+
+#### GT-56
+
+**Title:** Silent failures and missing mocks in CLI E2E tests
+
+- **Gap:** `test/agents.e2e-spec.ts` swallows internal exceptions. Upon deeper inspection, the test triggers a silent `TypeError: p.select is not a function` because `@clack/prompts` is not being correctly mocked via `nest-commander-testing`.
+- **Purpose:** Guarantee that all CLI user flows, specifically interactive prompts, are properly tested and verified in the CI/CD pipeline without silent failures.
+- **Done when:** `@clack/prompts` is correctly mocked in E2E tests, and the `try-catch` swallowing logic in `test/agents.e2e-spec.ts` is replaced with strict assertions.
+- **References:** [agents.e2e-spec.ts](../../../../sdk/cli/test/agents.e2e-spec.ts)
+
+---
+
+#### GT-57
+
+**Title:** Incomplete MCP tooling and validation implementation
+
+- **Gap:** Various MCP features listed in `planning/sdk-cli-mcp-implementation-roadmap.md` remain unimplemented as stubs (`TODO`), including F1/F2/F3 validation, DORA metrics collection, and the `evolith://core/info` resource.
+- **Purpose:** Deliver the full proposed feature-set of the Evolith MCP server to support LLM context augmentation.
+- **Done when:** All `TODO`s in the MCP implementation roadmap are implemented, and their respective MCP tools/resources are tested.
+- **References:** [sdk-cli-mcp-implementation-roadmap.md](../../../products/smart-cli/docs/planning/sdk-cli-mcp-implementation-roadmap.md)
+
+---
+
+#### GT-58
+
+**Title:** Clean up `TODO` stubs injected by Hexagonal Scaffolder
+
+- **Gap:** `hexagonal-scaffolder.ts` injects boilerplate containing technical debt directly into newly created components (e.g. `// TODO: add validation rules`, `// TODO: implement persistence`).
+- **Purpose:** Provide a completely clean and ready-to-use template for new bounded contexts instead of injecting pre-existing technical debt.
+- **Done when:** The generator produces clean, complete dummy implementations or handles abstractions without leaving inline `TODO`s for the user.
+- **References:** [hexagonal-scaffolder.ts](../../../../sdk/cli/src/application/generators/hexagonal-scaffolder.ts)
+

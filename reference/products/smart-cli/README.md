@@ -25,7 +25,7 @@ Download the latest binary from [GitHub Releases](https://github.com/beyondnetco
 
 ```bash
 smart-cli --version
-# smart-cli version 0.0.3-beta
+# smart-cli version 1.1.0
 ```
 
 ## Quickstart
@@ -413,7 +413,7 @@ npm test
 npm run test:cov
 ```
 
-**Coverage (as of v0.0.3-beta):** 88.7% statements · 89.8% lines · 77.0% branches · 83.6% functions · 1 369 tests
+**Coverage (as of v1.1.0):** 80.65% statements · 81.47% lines · 1,206 unit + 121 E2E tests. The installable surface is tracked in the generated [Product Surface Inventory](./product-inventory.md).
 
 ### Project Structure
 

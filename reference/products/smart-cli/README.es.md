@@ -25,7 +25,7 @@ Descarga el binario más reciente desde [GitHub Releases](https://github.com/bey
 
 ```bash
 smart-cli --version
-# smart-cli version 0.0.3-beta
+# smart-cli version 1.1.0
 ```
 
 ## Inicio Rápido
@@ -419,7 +419,7 @@ npm test
 npm run test:cov
 ```
 
-**Cobertura (v0.0.3-beta):** 88.7% statements · 89.8% lines · 77.0% branches · 83.6% functions · 1 369 tests
+**Cobertura (v1.1.0):** 80.65% statements · 81.47% lines · 1.206 tests unitarios + 121 E2E. La superficie instalable se rastrea en el [Inventario de Superficie del Producto](./product-inventory.es.md) generado.
 
 ### Estructura del Proyecto
 

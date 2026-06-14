@@ -32,3 +32,7 @@ node .harness/scripts/reconcile-maturity.mjs --check
 echo ""
 echo "Validating machine contract conformance..."
 node .harness/scripts/validate-contract-conformance.mjs
+
+echo ""
+echo "Validating product documentation synchronization..."
+node .harness/scripts/validate-product-docs.mjs

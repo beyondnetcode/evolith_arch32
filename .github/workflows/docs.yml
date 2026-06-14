@@ -41,6 +41,9 @@ jobs:
       - name: Validate machine contracts
         run: node .harness/scripts/validate-contract-conformance.mjs
 
+      - name: Validate product documentation synchronization
+        run: node .harness/scripts/validate-product-docs.mjs
+
       - name: Generate coverage dashboard
         run: node .harness/scripts/coverage-dashboard.mjs
 

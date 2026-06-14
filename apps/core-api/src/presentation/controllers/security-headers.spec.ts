@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { INestApplication, ValidationPipe, VersioningType } from '@nestjs/common';
 import { AppModule } from '../../app.module';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const request = require('supertest');
@@ -17,6 +17,8 @@ describe('Security & Validation (Integration)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+
+    app.enableVersioning({ type: VersioningType.URI, prefix: "api/v", defaultVersion: '1' });
 
     app.useGlobalPipes(new ValidationPipe({
       whitelist: true,
@@ -80,14 +82,14 @@ describe('Security & Validation (Integration)', () => {
   describe('Auth', () => {
     it('should reject request without API key', async () => {
       const res = await request(app.getHttpServer())
-        .post('/architecture/validate-satellite')
+        .post('/api/v1/architecture/validate-satellite')
         .send({ satellitePath: '/test' });
       expect(res.status).toBe(401);
     });
 
     it('should reject request with invalid API key', async () => {
       const res = await request(app.getHttpServer())
-        .post('/architecture/validate-satellite')
+        .post('/api/v1/architecture/validate-satellite')
         .set('x-api-key', 'invalid-key')
         .send({ satellitePath: '/test' });
       expect(res.status).toBe(401);
@@ -102,7 +104,7 @@ describe('Security & Validation (Integration)', () => {
   describe('DTO Validation', () => {
     it('should reject request with missing required field', async () => {
       const res = await request(app.getHttpServer())
-        .post('/architecture/validate-satellite')
+        .post('/api/v1/architecture/validate-satellite')
         .set('x-api-key', 'test-api-key-123')
         .send({});
       expect(res.status).toBe(400);
@@ -110,7 +112,7 @@ describe('Security & Validation (Integration)', () => {
 
     it('should reject request with unknown properties', async () => {
       const res = await request(app.getHttpServer())
-        .post('/architecture/validate-satellite')
+        .post('/api/v1/architecture/validate-satellite')
         .set('x-api-key', 'test-api-key-123')
         .send({ satellitePath: '/test', injectedField: 'malicious' });
       expect(res.status).toBe(400);
@@ -130,7 +132,7 @@ describe('Security & Validation (Integration)', () => {
 
     it('should return 422 for validation failure on domain error', async () => {
       const res = await request(app.getHttpServer())
-        .post('/architecture/validate-satellite')
+        .post('/api/v1/architecture/validate-satellite')
         .set('x-api-key', 'test-api-key-123')
         .send({ satellitePath: '' });
       expect(res.status).toBe(400);

@@ -694,9 +694,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Gap:** Los endpoints no están versionados (`/gates/...` en lugar de `/api/v1/gates/...`). Los cambios de ruptura romperán integraciones sin una estrategia de versionado.
 - **Propósito:** Habilitar versionado URI (`/api/v1/`) en todos los endpoints del Core API y documentar una política de deprecación (mínimo 2 versiones coexistentes).
 - **Criterio de cierre:**
-  - [ ] Todos los endpoints bajo `/api/v1/`
-  - [ ] `CHANGELOG.md` documenta cambios de versión
-  - [ ] Política de deprecación documentada en ADR
+  - [x] Todos los endpoints bajo `/api/v1/`
+  - [x] `CHANGELOG.md` documenta cambios de versión
+  - [x] Política de deprecación documentada en ADR
 - **Referencias:** [NestJS Versioning](https://docs.nestjs.com/techniques/versioning) · [apps/core-api](../../../../apps/core-api)
 
 #### GT-69

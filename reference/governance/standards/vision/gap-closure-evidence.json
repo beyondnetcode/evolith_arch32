@@ -974,6 +974,18 @@
         "npm test --workspace apps/core-api -- --no-coverage"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-68",
+      "closedAt": "2026-06-13",
+      "closureCommit": "754bc20",
+      "evidence": [
+        "apps/core-api/src/main.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace apps/core-api -- --no-coverage"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

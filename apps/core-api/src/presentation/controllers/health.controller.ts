@@ -1,10 +1,10 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, VERSION_NEUTRAL } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { HealthService } from '../../application/services/health.service';
 import { Public } from '../../infrastructure/auth/api-key.guard';
 import { MetricsService } from '../../infrastructure/metrics/metrics.service';
 
-@Controller('health')
+@Controller({ path: 'health', version: VERSION_NEUTRAL })
 export class HealthController {
   constructor(
     private readonly healthService: HealthService,

@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { INestApplication, ValidationPipe, VersioningType } from '@nestjs/common';
 import { AppModule } from './app.module';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const request = require('supertest');
@@ -20,6 +20,8 @@ describe('Core API E2E', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+
+    app.enableVersioning({ type: VersioningType.URI, prefix: "api/v", defaultVersion: '1' });
 
     app.useGlobalPipes(new ValidationPipe({
       whitelist: true,
@@ -50,7 +52,7 @@ describe('Core API E2E', () => {
   describe('Flow 2: RFC 9457 Problem Details', () => {
     it('should return application/problem+json on 401', async () => {
       const res = await request(app.getHttpServer())
-        .post('/architecture/validate-satellite')
+        .post('/api/v1/architecture/validate-satellite')
         .send({ satellitePath: '/test' });
       expect(res.status).toBe(401);
       expect(res.headers['content-type']).toContain('application/problem+json');
@@ -64,7 +66,7 @@ describe('Core API E2E', () => {
 
     it('should return application/problem+json on 400', async () => {
       const res = await request(app.getHttpServer())
-        .post('/architecture/validate-satellite')
+        .post('/api/v1/architecture/validate-satellite')
         .set('x-api-key', API_KEY)
         .send({});
       expect(res.status).toBe(400);
@@ -76,7 +78,7 @@ describe('Core API E2E', () => {
   describe('Flow 3: Authentication Required', () => {
     it('should return 401 without API key', async () => {
       const res = await request(app.getHttpServer())
-        .post('/architecture/validate-satellite')
+        .post('/api/v1/architecture/validate-satellite')
         .send({ satellitePath: '/test' });
       expect(res.status).toBe(401);
     });
@@ -85,7 +87,7 @@ describe('Core API E2E', () => {
   describe('Flow 4: Validated Requests', () => {
     it('should reject empty body with 400', async () => {
       const res = await request(app.getHttpServer())
-        .post('/architecture/validate-satellite')
+        .post('/api/v1/architecture/validate-satellite')
         .set('x-api-key', API_KEY)
         .send({});
       expect(res.status).toBe(400);

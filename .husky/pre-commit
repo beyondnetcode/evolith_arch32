@@ -2,6 +2,10 @@ echo "Running documentation validation..."
 node .harness/scripts/validate-docs.mjs
 
 echo ""
+echo "Running repository optimization..."
+node .harness/scripts/optimize-repo.mjs
+
+echo ""
 echo "Running root cleanliness validation..."
 node .harness/scripts/validate-root-cleanliness.mjs
 

@@ -24,7 +24,8 @@ const allowedFiles = new Set([
   "release-please-config.json",
   "COVERAGE_REPORT.md",
   "package.json",
-  "package-lock.json"
+  "package-lock.json",
+  ".env"
 ]);
 
 const allowedDirectories = new Set([

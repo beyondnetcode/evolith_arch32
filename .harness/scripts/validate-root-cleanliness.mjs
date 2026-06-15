@@ -24,7 +24,8 @@ const allowedFiles = new Set([
   "release-please-config.json",
   "COVERAGE_REPORT.md",
   "package.json",
-  "package-lock.json"
+  "package-lock.json",
+  ".env"
 ]);
 
 // Explicit whitelist of allowed directories in the root directory.

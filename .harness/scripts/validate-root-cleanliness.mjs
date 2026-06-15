@@ -16,6 +16,7 @@ const allowedFiles = new Set([
   "AGENTS.md",
   "AGENTS.es.md",
   "LICENSE",
+  "CHANGELOG.md",
   ".editorconfig",
   ".gitignore",
   ".markdownlint.json",

@@ -46,6 +46,10 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-89`](./gap-reference-catalog.md#gt-89) | Dynamic form/schema engine | `Tracker` | Cross | P2 | M | `PENDING` |
 | [`GT-93`](./gap-reference-catalog.md#gt-93) | Built-in observability (OTel BFF→Core→integrations) | `Tracker` | Cross | P2 | M | `PENDING` |
 | [`GT-96`](./gap-reference-catalog.md#gt-96) | Real-time sync via WebSockets/SSE | `Tracker` | Cross | P2 | M | `PENDING` |
+| [`GT-113`](./gap-reference-catalog.md#gt-113) | Clean Architecture Purification in core-domain | `Core Domain` | Transversal | P1 | M | `PENDING` |
+| [`GT-114`](./gap-reference-catalog.md#gt-114) | Human-in-the-Loop for Mutative MCP Tools | `CLI` | Transversal | P1 | M | `PENDING` |
+| [`GT-115`](./gap-reference-catalog.md#gt-115) | Auto-fix of Architectural Failures via MCP Tools | `CLI` | Transversal | P2 | L | `PENDING` |
+| [`GT-116`](./gap-reference-catalog.md#gt-116) | Elimination of Blocking I/O Operations in the CLI | `CLI` | Transversal | P2 | M | `PENDING` |
 | [`GT-84`](./gap-reference-catalog.md#gt-84) | Extract AuditTrail as a shared kernel | `Tracker` | Cross | P1 | L | `DEFERRED` |
 | [`GT-59`](./gap-reference-catalog.md#gt-59) | Hardening HTTP — Helmet + CORS + Rate Limiting (OWASP API4/8) | `BFF API` | Cross | P0 | S | `DONE` |
 | [`GT-60`](./gap-reference-catalog.md#gt-60) | Validación Global DTOs con class-validator (OWASP API3) | `BFF API` | Cross | P0 | M | `DONE` |
@@ -118,7 +122,7 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-25`](./gap-reference-catalog.md#gt-25) | First provider profiles | `Governance` | Cross | P2 | L | `DONE` |
 | [`GT-23`](./gap-reference-catalog.md#gt-23) | Spanish translation backfill | `Governance` | Cross | P2 | L | `DONE` |
 
-**Progress:** 70 / 104 done · 0 in progress · 33 pending · 1 deferred
+**Progress:** 70 / 108 done · 0 in progress · 37 pending · 1 deferred
 
 **Ordering:** one table, ordered by status (pending then deferred then completed), then criticality (`P0` → `P1` → `P2`) then complexity (`S` → `M` → `L`); completed gaps are grouped by component. Each ID links to its detail in the [Gap Reference Catalog](./gap-reference-catalog.md).
 

@@ -166,6 +166,36 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 ### Cross-cutting
 
+#### GT-113
+
+**Title:** Clean Architecture Purification in core-domain
+
+- **Goal:** Remove direct framework dependencies (`@nestjs/common` `Injectable`) and Node.js I/O leaks (`fs-extra`, `path`) from the application/domain layer, injecting them via abstractions (`IFileSystem`).
+- **Closed when:** The `core-domain` package has no `fs`, `path`, or `@nestjs/*` imports, and all I/O operations pass through pure dependency injection.
+- **Proposed Solution:** Inject `IFileSystem` and use ports and adapters composition.
+
+#### GT-114
+
+**Title:** Human-in-the-Loop for Mutative MCP Tools
+
+- **Goal:** Protect the local environment when the Smart CLI receives dangerous mutative commands from an AI agent via MCP. Requires implementing an interactive confirmation prompt in stdio (or restrictive configuration) before execution.
+- **Closed when:** MCP tools capable of code/infrastructure mutation prompt for confirmation before actual execution.
+
+#### GT-115
+
+**Title:** Auto-fix of Architectural Failures via MCP Tools
+
+- **Goal:** Extend the set of MCP tools to allow AI agents to apply automatic resolutions (auto-fix) to violations reported by Evolith Core rule evaluators.
+- **Closed when:** New MCP tools exist under the `evolith-auto-fix` schema that accept a `rulesetId` or failure report and apply the required refactorings.
+
+#### GT-116
+
+**Title:** Elimination of Blocking I/O Operations in the CLI
+
+- **Goal:** Migrate chained asynchronous operations or blocking `*Sync` calls in AST validators and file I/O in the CLI and Hooks to avoid blocking the event loop in massive repositories.
+- **Closed when:** Critical validators in CI and CLI paths do not use `.readFileSync` or `.readdirSync` methods, favoring `fs/promises` with concurrency management.
+
+
 #### GT-19
 
 **Title:** Incremental hexagonal migration of `core/`

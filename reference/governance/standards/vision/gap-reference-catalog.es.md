@@ -166,6 +166,36 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 ### Transversal
 
+#### GT-113
+
+**Título:** Purificación de Clean Architecture en core-domain
+
+- **Objetivo:** Remover las dependencias directas del framework (`@nestjs/common` `Injectable`) y las fugas de I/O de Node.js (`fs-extra`, `path`) de la capa de aplicación/dominio, inyectándolas a través de abstracciones (`IFileSystem`).
+- **Cierre cuando:** El paquete `core-domain` no tiene imports de `fs`, `path` ni `@nestjs/*` y todas las operaciones de I/O pasan por inyección de dependencias puras.
+- **Solución Propuesta:** Inyectar `IFileSystem` y usar la composición de puertos y adaptadores.
+
+#### GT-114
+
+**Título:** Human-in-the-Loop para Herramientas Mutativas MCP
+
+- **Objetivo:** Proteger el entorno local cuando el Smart CLI reciba comandos mutativos peligrosos desde un agente de IA vía MCP. Requiere implementar un prompt de confirmación interactiva en stdio (o configuración restrictiva) antes de ejecutar.
+- **Cierre cuando:** Las herramientas MCP con capacidad de mutación de código/infraestructura soliciten confirmación antes de la ejecución real.
+
+#### GT-115
+
+**Título:** Auto-fix de fallas arquitectónicas vía herramientas MCP
+
+- **Objetivo:** Extender el set de herramientas MCP para permitir a los agentes de IA aplicar resoluciones automáticas (auto-fix) a las violaciones reportadas por los evaluadores de reglas de Evolith Core.
+- **Cierre cuando:** Existan nuevas herramientas MCP bajo el esquema `evolith-auto-fix` que acepten un `rulesetId` o un reporte de fallo y apliquen las refactorizaciones requeridas.
+
+#### GT-116
+
+**Título:** Eliminación de operaciones bloqueantes de I/O en la CLI
+
+- **Objetivo:** Migrar operaciones asíncronas encadenadas o llamadas bloqueantes `*Sync` en validadores de AST e I/O de archivos en la CLI y Hooks para evitar bloquear el event loop en repositorios masivos.
+- **Cierre cuando:** Los validadores críticos en rutas de CI y CLI no utilicen métodos `.readFileSync` ni `.readdirSync` en favor de `fs/promises` con manejo de concurrencia.
+
+
 #### GT-19
 
 **Título:** Migración hexagonal incremental de `core/`

@@ -7,7 +7,10 @@
 
 | EN | ES | Status |
 |----|----|--------|
+| [APPLICATION_ARCHITECTURE_HUB.md](APPLICATION_ARCHITECTURE_HUB.md) | [APPLICATION_ARCHITECTURE_HUB.es.md](APPLICATION_ARCHITECTURE_HUB.es.md) | OK |
 | [BILINGUAL_INDEX.md](BILINGUAL_INDEX.md) | [BILINGUAL_INDEX.es.md](BILINGUAL_INDEX.es.md) | OK |
+| [DOMAIN_DESIGN_HUB.md](DOMAIN_DESIGN_HUB.md) | [DOMAIN_DESIGN_HUB.es.md](DOMAIN_DESIGN_HUB.es.md) | OK |
+| [INTEGRATION_HUB.md](INTEGRATION_HUB.md) | [INTEGRATION_HUB.es.md](INTEGRATION_HUB.es.md) | OK |
 | [README.md](README.md) | [README.es.md](README.es.md) | OK |
 
 </details>
@@ -88,6 +91,10 @@
 | [0071-domain-layer-base-class-inheritance-strategy.md](adrs/core/0071-domain-layer-base-class-inheritance-strategy.md) | [0071-domain-layer-base-class-inheritance-strategy.es.md](adrs/core/0071-domain-layer-base-class-inheritance-strategy.es.md) | OK |
 | [0072-utc-dates-timezone-language-resolution.md](adrs/core/0072-utc-dates-timezone-language-resolution.md) | [0072-utc-dates-timezone-language-resolution.es.md](adrs/core/0072-utc-dates-timezone-language-resolution.es.md) | OK |
 | [0073-unified-cli-output-contract.md](adrs/core/0073-unified-cli-output-contract.md) | [0073-unified-cli-output-contract.es.md](adrs/core/0073-unified-cli-output-contract.es.md) | OK |
+| [0074-evolith-core-api-exposure-layer.md](adrs/core/0074-evolith-core-api-exposure-layer.md) | [0074-evolith-core-api-exposure-layer.es.md](adrs/core/0074-evolith-core-api-exposure-layer.es.md) | OK |
+| [0075-core-api-auth-strategy.md](adrs/core/0075-core-api-auth-strategy.md) | [0075-core-api-auth-strategy.es.md](adrs/core/0075-core-api-auth-strategy.es.md) | OK |
+| [0076-domain-oriented-microservice-architecture.md](adrs/core/0076-domain-oriented-microservice-architecture.md) | [0076-domain-oriented-microservice-architecture.es.md](adrs/core/0076-domain-oriented-microservice-architecture.es.md) | OK |
+| [0076-opa-bundle-s3-distribution.md](adrs/core/0076-opa-bundle-s3-distribution.md) | [0076-opa-bundle-s3-distribution.es.md](adrs/core/0076-opa-bundle-s3-distribution.es.md) | OK |
 | [README.md](adrs/core/README.md) | [README.es.md](adrs/core/README.es.md) | OK |
 
 </details>
@@ -155,6 +162,7 @@
 | [authoritative-tech-stack.md](blueprints/authoritative-tech-stack.md) | [authoritative-tech-stack.es.md](blueprints/authoritative-tech-stack.es.md) | OK |
 | [c4-topology-spec.md](blueprints/c4-topology-spec.md) | [c4-topology-spec.es.md](blueprints/c4-topology-spec.es.md) | OK |
 | [cap-strategic-analysis.md](blueprints/cap-strategic-analysis.md) | [cap-strategic-analysis.es.md](blueprints/cap-strategic-analysis.es.md) | OK |
+| [evolith-core-architecture.md](blueprints/evolith-core-architecture.md) | [evolith-core-architecture.es.md](blueprints/evolith-core-architecture.es.md) | OK |
 | [multi-cloud-deployment-scenarios.md](blueprints/multi-cloud-deployment-scenarios.md) | [multi-cloud-deployment-scenarios.es.md](blueprints/multi-cloud-deployment-scenarios.es.md) | OK |
 | [notification-feedback-architecture.md](blueprints/notification-feedback-architecture.md) | [notification-feedback-architecture.es.md](blueprints/notification-feedback-architecture.es.md) | OK |
 | [observability-architecture-flow.md](blueprints/observability-architecture-flow.md) | [observability-architecture-flow.es.md](blueprints/observability-architecture-flow.es.md) | OK |

@@ -208,7 +208,7 @@ function validateBilingualPair(file, content) {
 function validateMermaid(file, content) {
   const fencePattern = /^```mermaid\s*$([\s\S]*?)^```\s*$/gm;
   const openingFencePattern = /^```mermaid\s*$/gm;
-  const validStarts = /^(graph|flowchart|sequenceDiagram|classDiagram|erDiagram|stateDiagram|stateDiagram-v2|journey|gantt|pie|mindmap|timeline|quadrantChart|C4Context|C4Container)\b/;
+  const validStarts = /^(graph|flowchart|sequenceDiagram|classDiagram|erDiagram|stateDiagram|stateDiagram-v2|journey|gantt|pie|mindmap|timeline|quadrantChart|C4Context|C4Container|C4Component|C4Dynamic)\b/;
   const openings = [...content.matchAll(openingFencePattern)];
   const blocks = [...content.matchAll(fencePattern)];
 

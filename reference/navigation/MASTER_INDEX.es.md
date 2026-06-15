@@ -161,6 +161,7 @@ Cada entrada de documento usa los mismos cinco campos: **Documento** (título en
 | Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
 |---|---|---|---|---|
 | [Hub de Product Suite](../product-suite/README.es.md) | Visión del portafolio, estrategia, posicionamiento, métodos, arquitectura de suite y comunicación | Dirigir el ecosistema | Hub de dominio | Sí |
+| [Arquitectura Evolith Core](../architecture/blueprints/evolith-core-architecture.es.md) | Blueprint de Plataforma con Contexto C4, Contenedores, Componentes e Interacciones | Blueprint de Arquitectura de Plataforma | Blueprint de arquitectura | Sí |
 | [Hub de Diseños de Producto](../products/README.es.md) | Diseño funcional y técnico por producto; entrada al hub del Tracker | Contener los internos de producto | Hub de área | Sí |
 | [Hub del Tracker](../products/evolith-tracker/README.es.md) | Arquitectura e interfaces técnicas del producto Tracker | Diseñar el producto de gobernanza | Hub de producto | No |
 | [Hub del Smart CLI](../../sdk/cli/README.es.md) | Documentación, arquitectura, visión y análisis de estado de la CLI | Entender el producto de tooling | Hub de producto | No |

@@ -18,7 +18,10 @@
 
 | EN | ES | Status |
 |----|----|--------|
+| [APPLICATION_ARCHITECTURE_HUB.md](architecture/APPLICATION_ARCHITECTURE_HUB.md) | [APPLICATION_ARCHITECTURE_HUB.es.md](architecture/APPLICATION_ARCHITECTURE_HUB.es.md) | OK |
 | [BILINGUAL_INDEX.md](architecture/BILINGUAL_INDEX.md) | [BILINGUAL_INDEX.es.md](architecture/BILINGUAL_INDEX.es.md) | OK |
+| [DOMAIN_DESIGN_HUB.md](architecture/DOMAIN_DESIGN_HUB.md) | [DOMAIN_DESIGN_HUB.es.md](architecture/DOMAIN_DESIGN_HUB.es.md) | OK |
+| [INTEGRATION_HUB.md](architecture/INTEGRATION_HUB.md) | [INTEGRATION_HUB.es.md](architecture/INTEGRATION_HUB.es.md) | OK |
 | [README.md](architecture/README.md) | [README.es.md](architecture/README.es.md) | OK |
 
 </details>
@@ -99,6 +102,10 @@
 | [0071-domain-layer-base-class-inheritance-strategy.md](architecture/adrs/core/0071-domain-layer-base-class-inheritance-strategy.md) | [0071-domain-layer-base-class-inheritance-strategy.es.md](architecture/adrs/core/0071-domain-layer-base-class-inheritance-strategy.es.md) | OK |
 | [0072-utc-dates-timezone-language-resolution.md](architecture/adrs/core/0072-utc-dates-timezone-language-resolution.md) | [0072-utc-dates-timezone-language-resolution.es.md](architecture/adrs/core/0072-utc-dates-timezone-language-resolution.es.md) | OK |
 | [0073-unified-cli-output-contract.md](architecture/adrs/core/0073-unified-cli-output-contract.md) | [0073-unified-cli-output-contract.es.md](architecture/adrs/core/0073-unified-cli-output-contract.es.md) | OK |
+| [0074-evolith-core-api-exposure-layer.md](architecture/adrs/core/0074-evolith-core-api-exposure-layer.md) | [0074-evolith-core-api-exposure-layer.es.md](architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md) | OK |
+| [0075-core-api-auth-strategy.md](architecture/adrs/core/0075-core-api-auth-strategy.md) | [0075-core-api-auth-strategy.es.md](architecture/adrs/core/0075-core-api-auth-strategy.es.md) | OK |
+| [0076-domain-oriented-microservice-architecture.md](architecture/adrs/core/0076-domain-oriented-microservice-architecture.md) | [0076-domain-oriented-microservice-architecture.es.md](architecture/adrs/core/0076-domain-oriented-microservice-architecture.es.md) | OK |
+| [0076-opa-bundle-s3-distribution.md](architecture/adrs/core/0076-opa-bundle-s3-distribution.md) | [0076-opa-bundle-s3-distribution.es.md](architecture/adrs/core/0076-opa-bundle-s3-distribution.es.md) | OK |
 | [README.md](architecture/adrs/core/README.md) | [README.es.md](architecture/adrs/core/README.es.md) | OK |
 
 </details>
@@ -166,6 +173,7 @@
 | [authoritative-tech-stack.md](architecture/blueprints/authoritative-tech-stack.md) | [authoritative-tech-stack.es.md](architecture/blueprints/authoritative-tech-stack.es.md) | OK |
 | [c4-topology-spec.md](architecture/blueprints/c4-topology-spec.md) | [c4-topology-spec.es.md](architecture/blueprints/c4-topology-spec.es.md) | OK |
 | [cap-strategic-analysis.md](architecture/blueprints/cap-strategic-analysis.md) | [cap-strategic-analysis.es.md](architecture/blueprints/cap-strategic-analysis.es.md) | OK |
+| [evolith-core-architecture.md](architecture/blueprints/evolith-core-architecture.md) | [evolith-core-architecture.es.md](architecture/blueprints/evolith-core-architecture.es.md) | OK |
 | [multi-cloud-deployment-scenarios.md](architecture/blueprints/multi-cloud-deployment-scenarios.md) | [multi-cloud-deployment-scenarios.es.md](architecture/blueprints/multi-cloud-deployment-scenarios.es.md) | OK |
 | [notification-feedback-architecture.md](architecture/blueprints/notification-feedback-architecture.md) | [notification-feedback-architecture.es.md](architecture/blueprints/notification-feedback-architecture.es.md) | OK |
 | [observability-architecture-flow.md](architecture/blueprints/observability-architecture-flow.md) | [observability-architecture-flow.es.md](architecture/blueprints/observability-architecture-flow.es.md) | OK |
@@ -680,6 +688,7 @@
 | [bounded-context-isolation.md](knowledge/architecture-intelligence/patterns/bounded-context-isolation.md) | [bounded-context-isolation.es.md](knowledge/architecture-intelligence/patterns/bounded-context-isolation.es.md) | OK |
 | [contract-first-integration.md](knowledge/architecture-intelligence/patterns/contract-first-integration.md) | [contract-first-integration.es.md](knowledge/architecture-intelligence/patterns/contract-first-integration.es.md) | OK |
 | [data-ownership-per-bounded-context.md](knowledge/architecture-intelligence/patterns/data-ownership-per-bounded-context.md) | [data-ownership-per-bounded-context.es.md](knowledge/architecture-intelligence/patterns/data-ownership-per-bounded-context.es.md) | OK |
+| [domain-oriented-microservice-architecture.md](knowledge/architecture-intelligence/patterns/domain-oriented-microservice-architecture.md) | [domain-oriented-microservice-architecture.es.md](knowledge/architecture-intelligence/patterns/domain-oriented-microservice-architecture.es.md) | OK |
 | [modular-monolith-first.md](knowledge/architecture-intelligence/patterns/modular-monolith-first.md) | [modular-monolith-first.es.md](knowledge/architecture-intelligence/patterns/modular-monolith-first.es.md) | OK |
 | [no-cross-domain-joins.md](knowledge/architecture-intelligence/patterns/no-cross-domain-joins.md) | [no-cross-domain-joins.es.md](knowledge/architecture-intelligence/patterns/no-cross-domain-joins.es.md) | OK |
 | [pattern-card-template.md](knowledge/architecture-intelligence/patterns/pattern-card-template.md) | [pattern-card-template.es.md](knowledge/architecture-intelligence/patterns/pattern-card-template.es.md) | OK |

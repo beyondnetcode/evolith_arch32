@@ -40,6 +40,7 @@
 | [bounded-context-isolation.md](architecture-intelligence/patterns/bounded-context-isolation.md) | [bounded-context-isolation.es.md](architecture-intelligence/patterns/bounded-context-isolation.es.md) | OK |
 | [contract-first-integration.md](architecture-intelligence/patterns/contract-first-integration.md) | [contract-first-integration.es.md](architecture-intelligence/patterns/contract-first-integration.es.md) | OK |
 | [data-ownership-per-bounded-context.md](architecture-intelligence/patterns/data-ownership-per-bounded-context.md) | [data-ownership-per-bounded-context.es.md](architecture-intelligence/patterns/data-ownership-per-bounded-context.es.md) | OK |
+| [domain-oriented-microservice-architecture.md](architecture-intelligence/patterns/domain-oriented-microservice-architecture.md) | [domain-oriented-microservice-architecture.es.md](architecture-intelligence/patterns/domain-oriented-microservice-architecture.es.md) | OK |
 | [modular-monolith-first.md](architecture-intelligence/patterns/modular-monolith-first.md) | [modular-monolith-first.es.md](architecture-intelligence/patterns/modular-monolith-first.es.md) | OK |
 | [no-cross-domain-joins.md](architecture-intelligence/patterns/no-cross-domain-joins.md) | [no-cross-domain-joins.es.md](architecture-intelligence/patterns/no-cross-domain-joins.es.md) | OK |
 | [pattern-card-template.md](architecture-intelligence/patterns/pattern-card-template.md) | [pattern-card-template.es.md](architecture-intelligence/patterns/pattern-card-template.es.md) | OK |

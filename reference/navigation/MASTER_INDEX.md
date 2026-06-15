@@ -161,6 +161,7 @@ Every document entry uses the same five fields: **Document** (linked title), **D
 | Document | Description | Goal / Objective | Type | Mandatory |
 |---|---|---|---|---|
 | [Product Suite Hub](../product-suite/README.md) | Portfolio vision, strategy, positioning, methods, suite architecture, and communication | Direct the ecosystem | Domain hub | Yes |
+| [Evolith Core Architecture](../architecture/blueprints/evolith-core-architecture.md) | Platform C4 Context, Containers, Components, and Interactions | Platform architecture blueprint | Architecture blueprint | Yes |
 | [Product Designs Hub](../products/README.md) | Functional and technical design per product; entry to the Tracker hub | Contain product internals | Area hub | Yes |
 | [Tracker Hub](../products/evolith-tracker/README.md) | Tracker product architecture and technical interfaces | Design the governance product | Product hub | No |
 | [Smart CLI Hub](../../sdk/cli/README.md) | CLI documentation, architecture, vision, and state analysis | Understand the tooling product | Product hub | No |

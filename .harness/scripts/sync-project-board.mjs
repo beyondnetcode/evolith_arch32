@@ -2,6 +2,17 @@ import fs from 'fs';
 import { execSync } from 'child_process';
 import path from 'path';
 
+// Intentar cargar GH_TOKEN desde un archivo oculto .env
+if (fs.existsSync('.env')) {
+  const envContent = fs.readFileSync('.env', 'utf-8');
+  envContent.split('\n').forEach(line => {
+    const match = line.match(/^GH_TOKEN=(.*)/);
+    if (match && match[1]) {
+      process.env.GH_TOKEN = match[1].trim();
+    }
+  });
+}
+
 const TRACKING_FILE_ES = './reference/governance/standards/vision/gap-tracking.es.md';
 const TRACKING_FILE_EN = './reference/governance/standards/vision/gap-tracking.md';
 const PROJECT_NUMBER = '1';

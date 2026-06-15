@@ -19,7 +19,7 @@ Formalizar una topología de gateway rígida para desacoplar correctamente las d
 ## Decisión y Justificación
 Adoptar un **Modelo de Gateway Distribuido de Dos Capas** para separar limpiamente las responsabilidades:
 
-1. **Capa 1 - Edge Gateway**: Barrera de alto rendimiento. Se sitúa literalmente en el perímetro del clúster público. Gestiona solo reglas transversales no funcionales: SSL, estrangulamiento de claves de API, validación de firma de origen JWT simple, reenvío de ruta y reglas WAF. *(Ejemplo: Kong OSS, NGINX)*.
+1. **Capa 1 - Edge Gateway**: Barrera de alto rendimiento. Se sitúa literalmente en el perímetro del clúster público. Gestiona solo reglas transversales no funcionales: SSL, estrangulamiento de claves de API, validación de firma de origen JWT simple, reenvío de ruta y reglas WAF. *(Ejemplo: Traefik OSS, NGINX)*.
 2. **Capa 2 - Gateway de Aplicación (BFF)**: Lógica de dominio personalizada desplegada de forma segura dentro de la zona de seguridad de Capa 1. Responsable de componer respuestas de datos heterogéneos, eliminar PII para formatos de UI genéricos, adaptar las cargas útiles del dispositivo y gestionar la mecánica de cookies del usuario. *(Ejemplo: Node.js BFF)*.
 
 ### Arquitectura Actualizada de Dos Capas

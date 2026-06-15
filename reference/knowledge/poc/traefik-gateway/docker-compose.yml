@@ -1,0 +1,41 @@
+version: '3.9'
+
+services:
+  traefik-gateway:
+    image: traefik:v3.1
+    container_name: traefik-gateway
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:8000"
+    ports:
+      - "8000:8000" # Proxy público (Donde el frontend hace las peticiones)
+      - "8080:8080" # Traefik Dashboard (Para ver el estado interno)
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - nestjs-mock
+    networks:
+      - traefik-net
+
+  # Simulamos nuestro NestJS BFF utilizando un Echo Server
+  # Este servidor simplemente devuelve un JSON con todo lo que recibe,
+  # lo cual es perfecto para ver cómo Traefik enruta la petición.
+  nestjs-mock:
+    image: ealen/echo-server:latest
+    container_name: nestjs-mock
+    environment:
+      - ENABLE_HOST=true
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nestjs-mock.rule=PathPrefix(`/v1`)"
+      - "traefik.http.routers.nestjs-mock.entrypoints=web"
+    ports:
+      - "3000:80" # Puedes entrar directo al localhost:3000 para saltarte Traefik y ver la diferencia
+    networks:
+      - traefik-net
+
+networks:
+  traefik-net:
+    driver: bridge

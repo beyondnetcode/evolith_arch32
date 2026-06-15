@@ -24,7 +24,7 @@ Ordenadas de la referencia aplicada canónica a la investigación exploratoria:
 | [Casos de Adopción](./adoption-cases.es.md) | Éxitos y lecciones documentados de adopción de la plataforma | Mostrar éxito y aprendizaje | Referencia aplicada | No |
 | [Resumen de Reglas](./rules-summary.es.md) | Vista condensada de las reglas que gobiernan | Resumir el corpus de reglas | Referencia | No |
 | [Inteligencia de Arquitectura](./architecture-intelligence/README.es.md) | Catálogo de conocimiento arquitectónico consumible por IA | Hacer el conocimiento consumible por máquinas | Hub de área | No |
-| [Pruebas de Concepto](./poc/README.es.md) | Validaciones experimentales (ej.: Kong Gateway) | Reducir riesgo de decisiones con experimentos | Hub de área | No |
+| [Pruebas de Concepto](./poc/README.es.md) | Validaciones experimentales (ej.: Traefik Gateway) | Reducir riesgo de decisiones con experimentos | Hub de área | No |
 | [Investigación](./research/README.es.md) | Notas de investigación en curso | Explorar direcciones futuras | Hub de área | No |
 
 El estado de emparejamiento EN/ES de cada documento de conocimiento se rastrea en el [Índice Bilingüe](./BILINGUAL_INDEX.es.md).

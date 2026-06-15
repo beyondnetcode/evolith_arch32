@@ -161,25 +161,24 @@ services:
       - ums-network
 
   # ---------------------------------------------------------
-  # 6. Public API Gateway (Kong OSS Gateway)
+  # 6. Public API Gateway (Traefik Proxy)
   # ---------------------------------------------------------
-  kong:
-    image: kong:3.6-alpine
-    container_name: ums-kong
+  traefik:
+    image: traefik:v3.1
+    container_name: ums-traefik
     restart: always
-    environment:
-      KONG_DATABASE: "off"  # Declarative Mode (Zero lock-in)
-      KONG_DECLARATIVE_CONFIG: /usr/local/kong/kong.yml
-      KONG_PROXY_LISTEN: "0.0.0.0:8000, 0.0.0.0:8443 ssl"
-      KONG_ADMIN_LISTEN: "0.0.0.0:8001"
+    command:
+      - "--api.insecure=true"
+      - "--providers.file.directory=/etc/traefik/dynamic"
+      - "--providers.file.watch=true"
+      - "--entrypoints.web.address=:8000"
     ports:
       - "8000:8000"     # Public HTTP Proxy Gateway
-      - "8001:8001"     # Kong Admin API
+      - "8080:8080"     # Traefik Admin Dashboard
     volumes:
-      # Inject inline base declarative routing config
-      - ./kong.yml:/usr/local/kong/kong.yml:ro
+      - ./traefik-dynamic.yml:/etc/traefik/dynamic/traefik-dynamic.yml:ro
     healthcheck:
-      test: ["CMD", "kong", "health"]
+      test: ["CMD", "traefik", "healthcheck", "--ping"]
       interval: 10s
       timeout: 5s
       retries: 3

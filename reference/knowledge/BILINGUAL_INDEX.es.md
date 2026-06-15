@@ -99,11 +99,11 @@
 </details>
 
 <details>
-<summary><strong>poc/kong-gateway</strong></summary>
+<summary><strong>poc/traefik-gateway</strong></summary>
 
 | EN | ES | Status |
 |----|----|--------|
-| [README.md](poc/kong-gateway/README.md) | [README.es.md](poc/kong-gateway/README.es.md) | OK |
+| [README.md](poc/traefik-gateway/README.md) | [README.es.md](poc/traefik-gateway/README.es.md) | OK |
 
 </details>
 

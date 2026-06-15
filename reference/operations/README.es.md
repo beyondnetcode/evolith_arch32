@@ -58,7 +58,7 @@ Para ver trazas distribuidas: abrir Grafana → Explore → seleccionar la fuent
 1. Ejecutar la API y realizar cualquier petición autenticada.
 2. Copiar el `traceId` de la salida de logs JSON estructurado.
 3. Abrir `http://localhost:3001` → Explore → Tempo → pegar el `traceId`.
-4. Aparece el árbol completo de spans (Kong → BFF → CoreAPI → PostgreSQL).
+4. Aparece el árbol completo de spans (Traefik → BFF → CoreAPI → PostgreSQL).
 
 ---
 

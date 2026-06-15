@@ -1,0 +1,13 @@
+http:
+  routers:
+    api-v1-routes:
+      rule: "PathPrefix(`/v1`)"
+      service: ums-api-service
+      entryPoints:
+        - web
+
+  services:
+    ums-api-service:
+      loadBalancer:
+        servers:
+          - url: "http://api:3000"

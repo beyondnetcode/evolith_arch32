@@ -739,11 +739,11 @@
 </details>
 
 <details>
-<summary><strong>knowledge/poc/kong-gateway</strong></summary>
+<summary><strong>knowledge/poc/traefik-gateway</strong></summary>
 
 | EN | ES | Status |
 |----|----|--------|
-| [README.md](knowledge/poc/kong-gateway/README.md) | [README.es.md](knowledge/poc/kong-gateway/README.es.md) | OK |
+| [README.md](knowledge/poc/traefik-gateway/README.md) | [README.es.md](knowledge/poc/traefik-gateway/README.es.md) | OK |
 
 </details>
 

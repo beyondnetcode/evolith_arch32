@@ -58,7 +58,7 @@ To view distributed traces: open Grafana → Explore → select **Tempo** dataso
 1. Run the API and make any authenticated request.
 2. Copy the `traceId` from the structured JSON log output.
 3. Open `http://localhost:3001` → Explore → Tempo → paste the `traceId`.
-4. The full span tree (Kong → BFF → CoreAPI → PostgreSQL) appears.
+4. The full span tree (Traefik → BFF → CoreAPI → PostgreSQL) appears.
 
 ---
 

@@ -23,7 +23,7 @@ Este directorio contiene la configuración de Docker Compose y la configuración
 | **PostgreSQL** | Fase 1 (obligatorio) | Base de datos relacional primaria |
 | **Redis** | Fase 1 (opcional, agregar cuando la latencia lo exija) | Caché distribuida — [ADR-0014](../architecture/adrs/core/0014-multi-layer-distributed-caching-strategy.md) |
 | **RabbitMQ** | Fase 2+ | Bróker de mensajes async — [ADR-0015](../architecture/adrs/core/0015-event-driven-architecture-intra-domain.md) |
-| **Kong Gateway** | Fase 2+ | Gateway de API perimetral — [ADR-0030](../architecture/adrs/core/0030-two-tier-distributed-gateway-model.md) |
+| **Traefik Proxy** | Fase 2+ | Gateway de API perimetral — [ADR-0030](../architecture/adrs/core/0030-two-tier-distributed-gateway-model.md) |
 | **HashiCorp Vault** | Fase 2+ | Gestión de secretos — [ADR-0028](../architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md) |
 
 > **Regla Fase 1:** Comenzar solo con PostgreSQL. Agregar Redis cuando se supere un umbral P95 de latencia específico. Agregar Kong y RabbitMQ solo cuando se necesite un segundo canal de cliente o entrega async entre servicios.
@@ -63,8 +63,8 @@ docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 | Redis | `6379` |
 | RabbitMQ (AMQP) | `5672` |
 | RabbitMQ (UI de Gestión) | `15672` |
-| Kong (Proxy) | `8000` |
-| Kong (API Admin) | `8001` |
+| Traefik (Proxy) | `8000` |
+| Traefik (Dashboard) | `8080` |
 | HashiCorp Vault | `8200` |
 
 ---
@@ -74,7 +74,7 @@ docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 | Archivo | Propósito |
 | :--- | :--- |
 | `docker-compose.yml` | Archivo principal de orquestación |
-| `kong.yml` | Configuración declarativa de Kong Gateway (sin base de datos) |
+| `traefik-dynamic.yml` | Configuración declarativa de Traefik Proxy (sin base de datos) |
 
 ---
 

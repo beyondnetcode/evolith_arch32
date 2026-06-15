@@ -19,7 +19,7 @@ Formalize a rigid gateway topology to correctly decouple infrastructure perimete
 ## Decision and Rationale
 Adopt a **Two-Tier Distributed Gateway Model** to cleanly separate concerns:
 
-1. **Tier 1 - Edge Gateway**: High-throughput barrier. Sits on the literal public cluster perimeter. Manages only non-functional transversal rules: SSL, API key throttling, simple JWT origin signature validation, path forwarding, and WAF rules. *(Example: Kong OSS, NGINX)*.
+1. **Tier 1 - Edge Gateway**: High-throughput barrier. Sits on the literal public cluster perimeter. Manages only non-functional transversal rules: SSL, API key throttling, simple JWT origin signature validation, path forwarding, and WAF rules. *(Example: Traefik OSS, NGINX)*.
 2. **Tier 2 - Application Gateway (BFF)**: Custom domain logic deployed safely within the Tier 1 security zone. Responsible for composing heterogeneous data responses, stripping PII for generic UI formats, tailoring device payloads, and managing user cookie mechanics. *(Example: Node.js BFF)*.
 
 ### Updated Two-Tier Architecture

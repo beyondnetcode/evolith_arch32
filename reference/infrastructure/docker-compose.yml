@@ -171,11 +171,14 @@ services:
       - "--api.insecure=true"
       - "--providers.file.directory=/etc/traefik/dynamic"
       - "--providers.file.watch=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:8000"
     ports:
       - "8000:8000"     # Public HTTP Proxy Gateway
       - "8080:8080"     # Traefik Admin Dashboard
     volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik-dynamic.yml:/etc/traefik/dynamic/traefik-dynamic.yml:ro
     healthcheck:
       test: ["CMD", "traefik", "healthcheck", "--ping"]
@@ -255,6 +258,42 @@ services:
     depends_on:
       - loki
       - tempo
+    networks:
+      - ums-network
+
+  # ---------------------------------------------------------
+  # 13. API Backend-for-Frontend (BFF)
+  # ---------------------------------------------------------
+  bff:
+    build:
+      context: ./docker
+      dockerfile: bff.Dockerfile
+    container_name: ums-bff
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.bff.rule=PathPrefix(`/bff`)"
+      - "traefik.http.routers.bff.entrypoints=web"
+    volumes:
+      - ../../../rulesets:/app/rulesets:ro
+    networks:
+      - ums-network
+
+  # ---------------------------------------------------------
+  # 14. Model Context Protocol Server (MCP)
+  # ---------------------------------------------------------
+  mcp:
+    build:
+      context: ./docker
+      dockerfile: mcp.Dockerfile
+    container_name: ums-mcp
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mcp.rule=PathPrefix(`/mcp`)"
+      - "traefik.http.routers.mcp.entrypoints=web"
+    volumes:
+      - ../../../rulesets:/app/rulesets:ro
     networks:
       - ums-network
 

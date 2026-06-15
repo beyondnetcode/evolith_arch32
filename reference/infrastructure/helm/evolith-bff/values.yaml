@@ -1,0 +1,27 @@
+replicaCount: 2
+
+image:
+  repository: beyondnetcode/evolith-bff
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 3000
+
+ingressRoute:
+  enabled: true
+  entryPoints:
+    - web
+    - websecure
+  host: api.evolith.beyondnetcode.com
+  pathPrefix: /bff
+
+opa:
+  enabled: true
+  image: openpolicyagent/opa:latest
+  bundle:
+    url: "http://ums-minio:9000/opa-bundles/bundle.tar.gz"
+    pollingMinDelaySeconds: 10
+    pollingMaxDelaySeconds: 20

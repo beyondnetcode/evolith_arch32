@@ -26,13 +26,15 @@ flowchart TB
     end
 
     subgraph EDGE[" Capa Edge — ADR-0030"]
-        KONG["Kong API Gateway\nRate limiting · Aplicación de Auth\nTerminación TLS · Enrutamiento"]:::gateway
+        TRAEFIK["Traefik Proxy\nEnrutamiento dinámico · Middleware de Auth\nTerminación TLS · IngressRoute"]:::gateway
     end
 
     subgraph BFF_LAYER[" Capa BFF — ADR-0008"]
         BFF_WEB["NestJS BFF Web\nOrquestación · SSR · Auth"]:::bff
         BFF_MOB["NestJS BFF Mobile\nSync offline · Compresión"]:::bff
         BFF_B2B["NestJS BFF B2B\nValidación de contrato · Rate"]:::bff
+        MCP_SERVER["Servidor MCP\nTransporte SSE"]:::bff
+        OPA["Motor OPA\nSondeo Sidecar Bundle"]:::obs
     end
 
     subgraph SERVICES["️ Servicios Core — ADR-0047"]
@@ -69,9 +71,10 @@ flowchart TB
         OTEL --> LOKI & TEMPO --> GRAFANA
     end
 
-    CLIENTS --> KONG
-    KONG --> BFF_WEB & BFF_MOB & BFF_B2B
-    BFF_WEB & BFF_MOB & BFF_B2B --> SERVICES
+    CLIENTS --> TRAEFIK
+    TRAEFIK --> BFF_WEB & BFF_MOB & BFF_B2B & MCP_SERVER
+    OPA -.->|"sondea bundle.tar.gz"| MINIO
+    BFF_WEB & BFF_MOB & BFF_B2B & MCP_SERVER --> SERVICES
     SERVICES --> DAPR
     DAPR --> RMQ & REDIS & VAULT & MINIO
     SERVICES --> DATA
@@ -182,8 +185,8 @@ flowchart TD
 
     INTERNET([" Internet\n(Zero Trust)"]):::untrusted
 
-    subgraph P1["Capa Perímetro (Kong + WAF)"]
-        KONG2["Kong Gateway\nProtección OWASP Top 10\nRate limiting · mTLS"]:::perimeter
+    subgraph P1["Capa Perimetral (Traefik + WAF)"]
+        TRAEFIK2["Traefik Proxy\nProtección OWASP Top 10\nRate limiting · mTLS"]:::perimeter
     end
 
     subgraph P2["Capa Identidad (Abstracción IdP)"]
@@ -205,8 +208,8 @@ flowchart TD
         VAULT2["HashiCorp Vault\nSecrets rotantes\nCredenciales dinámicas"]:::trusted
     end
 
-    INTERNET --> KONG2
-    KONG2 --> IDP
+    INTERNET --> TRAEFIK2
+    TRAEFIK2 --> IDP
     IDP --> JWT2
     JWT2 --> SVC_A & SVC_B & SVC_C
     SVC_A & SVC_B & SVC_C --> DAPR2

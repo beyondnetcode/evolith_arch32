@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "evolith-mcp.fullname" . }}
+  labels:
+    app: {{ include "evolith-mcp.name" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "evolith-mcp.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "evolith-mcp.name" . }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.targetPort }}
+              protocol: TCP
+        {{- if .Values.opa.enabled }}
+        - name: opa
+          image: {{ .Values.opa.image }}
+          args:
+            - "run"
+            - "--server"
+            - "--set=services.s3.url={{ .Values.opa.bundle.url }}"
+            - "--set=bundles.authz.service=s3"
+            - "--set=bundles.authz.resource=bundle.tar.gz"
+            - "--set=bundles.authz.polling.min_delay_seconds={{ .Values.opa.bundle.pollingMinDelaySeconds }}"
+            - "--set=bundles.authz.polling.max_delay_seconds={{ .Values.opa.bundle.pollingMaxDelaySeconds }}"
+          ports:
+            - name: opa-http
+              containerPort: 8181
+        {{- end }}

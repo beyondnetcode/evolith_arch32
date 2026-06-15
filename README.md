@@ -238,6 +238,7 @@ The two canonical tracking surfaces for the suite — everything pending, audite
 | Link (URL) | Description (brief explanation) | Goal / Objective | Typification (category or type) |
 |---|---|---|---|
 | [Product Suite Hub](./reference/product-suite/README.md) | Single entry point to portfolio vision, strategy and positioning | Ecosystem direction | Product reference |
+| [Evolith Core Architecture](./reference/architecture/blueprints/evolith-core-architecture.md) | Complete C4 ecosystem design and platform conceptual vision | Architecture master blueprint | Architecture blueprint |
 
 </details>
 

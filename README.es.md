@@ -238,6 +238,7 @@ Las dos superficies canónicas de seguimiento de la suite — todo lo pendiente,
 | Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
 |---|---|---|---|
 | [Hub de Product Suite](./reference/product-suite/README.es.md) | Único punto de acceso a la visión, estrategia y posicionamiento del portfolio | Dirección del ecosistema | Referencia de producto |
+| [Arquitectura Evolith Core](./reference/architecture/blueprints/evolith-core-architecture.es.md) | Diseño completo del ecosistema C4 y visión conceptual de la plataforma | Blueprint maestro de arquitectura | Blueprint de arquitectura |
 
 </details>
 

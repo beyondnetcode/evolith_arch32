@@ -76,7 +76,7 @@ function processTrackingFile(filePath, isSpanish) {
   let lines = content.split('\n');
   let fileModified = false;
   
-  let stats = { completados: 0, pendientes: 0, diferidos: 0, total: 0 };
+  let stats = { completados: 0, pendientes: 0, enProgreso: 0, diferidos: 0, total: 0 };
   
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
@@ -130,6 +130,7 @@ function processTrackingFile(filePath, isSpanish) {
           // Tally stats
           if (localStatus === 'COMPLETADO' || localStatus === 'DONE') stats.completados++;
           else if (localStatus === 'DIFERIDO' || localStatus === 'DEFERRED') stats.diferidos++;
+          else if (localStatus === 'EN PROGRESO' || localStatus === 'IN-PROGRESS') stats.enProgreso++;
           else stats.pendientes++;
           stats.total++;
         }
@@ -143,9 +144,9 @@ function processTrackingFile(filePath, isSpanish) {
     const oldTotals = lines[totalsLineIndex];
     let newTotals = '';
     if (isSpanish) {
-      newTotals = `**Progreso:** ${stats.completados} / ${stats.total} completados · 0 en progreso · ${stats.pendientes} pendientes · ${stats.diferidos} diferidos`;
+      newTotals = `**Progreso:** ${stats.completados} / ${stats.total} completados · ${stats.enProgreso} en progreso · ${stats.pendientes} pendientes · ${stats.diferidos} diferidos`;
     } else {
-      newTotals = `**Progress:** ${stats.completados} / ${stats.total} done · 0 in progress · ${stats.pendientes} pending · ${stats.diferidos} deferred`;
+      newTotals = `**Progress:** ${stats.completados} / ${stats.total} done · ${stats.enProgreso} in progress · ${stats.pendientes} pending · ${stats.diferidos} deferred`;
     }
     if (oldTotals !== newTotals) {
       lines[totalsLineIndex] = newTotals;

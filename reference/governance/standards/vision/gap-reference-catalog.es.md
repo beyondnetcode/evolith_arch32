@@ -1207,7 +1207,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Gap:** El desarrollo de Kong OSS se detuvo tras v3.9.1 sin publicación activa de Docker, dejando el vector de ingress sobre un componente abandonado (Stack Audit, RED).
 - **Propósito:** Mover el vector de ingress/API-gateway a un componente mantenido antes de que el abandono se vuelva un pasivo de seguridad y supply-chain.
 - **Criterio de cierre:**
-  - [ ] el ingress se migra a Traefik Proxy 3.7+ o NGINX OSS con paridad de las rutas/políticas actuales
+  - [x] el ingress se migra a Traefik Proxy 3.7+ o NGINX OSS con paridad de las rutas/políticas actuales
 - **Referencias:** Stack Audit `reference/governance/standards/engineering/detailed-stack-audit-2026.md` (TOP CRITICAL ALERT 1)
 
 #### GT-111

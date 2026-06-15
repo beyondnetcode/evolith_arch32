@@ -1207,7 +1207,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Gap:** Kong OSS development halted after v3.9.1 with no active Docker publishing, leaving the ingress vector on an abandoned component (Stack Audit, RED).
 - **Purpose:** Move the ingress/API-gateway vector to a maintained component before the abandonment becomes a security and supply-chain liability.
 - **Done when:**
-  - [ ] the ingress is migrated to Traefik Proxy 3.7+ or NGINX OSS with parity for the current routes/policies
+  - [x] the ingress is migrated to Traefik Proxy 3.7+ or NGINX OSS with parity for the current routes/policies
 - **References:** Stack Audit `reference/governance/standards/engineering/detailed-stack-audit-2026.md` (TOP CRITICAL ALERT 1)
 
 #### GT-111

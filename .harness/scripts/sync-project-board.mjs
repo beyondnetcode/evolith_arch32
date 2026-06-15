@@ -11,6 +11,13 @@ const STATUS_FIELD_ID = 'PVTSSF_lADOD5Ic284BaueGzhVj8qs';
 const OPTION_DONE = '98236657';
 const OPTION_BACKLOG = 'f75ad846';
 
+const SIZE_FIELD_ID = 'PVTSSF_lADOD5Ic284BaueGzhVj82U';
+const SIZE_OPTIONS = {
+  'S': 'f784b110',
+  'M': '7515a9f1',
+  'L': '817d0097'
+};
+
 console.log('--- Evolith Bidirectional Gap Sync ---');
 
 // 1. Determine priority (Local vs GitHub)
@@ -83,6 +90,13 @@ function processTrackingFile(filePath, isSpanish) {
               } else if (!isLocalDone && isGhDone) {
                 console.log(`📤 Pushing ${gapId} to Backlog on GitHub...`);
                 execSync(`gh project item-edit --id ${ghItem.id} --project-id ${PROJECT_NODE_ID} --field-id ${STATUS_FIELD_ID} --single-select-option-id ${OPTION_BACKLOG}`);
+              }
+              
+              // Sync Size
+              const complexity = parts[5].trim();
+              if (SIZE_OPTIONS[complexity]) {
+                console.log(`📤 Pushing ${gapId} Size (${complexity}) to GitHub...`);
+                execSync(`gh project item-edit --id ${ghItem.id} --project-id ${PROJECT_NODE_ID} --field-id ${SIZE_FIELD_ID} --single-select-option-id ${SIZE_OPTIONS[complexity]}`);
               }
             } else {
               // GH wins. Update Local if necessary

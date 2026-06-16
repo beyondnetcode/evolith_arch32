@@ -928,7 +928,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Gap:** The CLI has no extension mechanism for third-party or tenant-specific commands (originally `GAP-005`).
 - **Purpose:** Allow commands to be contributed as plugins without forking the CLI.
 - **Done when:**
-  - [ ] a plugin contract lets external packages register commands discovered at runtime
+  - [x] a plugin contract lets external packages register commands discovered at runtime
 - **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-005`)
 
 #### GT-99

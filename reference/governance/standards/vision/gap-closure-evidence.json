@@ -3,6 +3,20 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-98",
+      "closedAt": "2026-06-16",
+      "closureCommit": "4d71fd3",
+      "evidence": [
+        "sdk/cli/src/infrastructure/plugins/plugin-loader.ts",
+        "sdk/cli/src/infrastructure/plugins/plugin.module.ts",
+        "sdk/cli/src/app.module.ts"
+      ],
+      "validationCommands": [
+        "npx jest src/infrastructure/plugins/plugin-loader.spec.ts"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-110",
       "closedAt": "2026-06-15",
       "closureCommit": "d050b9e",

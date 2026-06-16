@@ -931,16 +931,6 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] a plugin contract lets external packages register commands discovered at runtime
 - **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-005`)
 
-#### GT-99
-
-**Title:** CLI SSO/SAML authentication
-
-- **Gap:** The CLI lacks enterprise single sign-on (SSO/SAML) authentication (originally `GAP-006`).
-- **Purpose:** Authenticate CLI sessions through enterprise identity providers.
-- **Done when:**
-  - [ ] the CLI authenticates via an SSO/SAML flow and stores a short-lived session
-- **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-006`)
-
 #### GT-100
 
 **Title:** CLI API browser/explorer

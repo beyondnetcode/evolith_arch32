@@ -33,10 +33,10 @@
 | ID | Título | Componente | Impacto | Esfuerzo | Size | Estado | GitHub Project |
 |----|--------|------------|---------|----------|------|--------|----------------|
 | ~~**GAP-007**~~ | ~~Remove emoji from documentation~~ | Docs | Quality gate violation | 1h | XS | **DONE** | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-007%5D) |
-| **GAP-008** | Complete tool design principles | Docs | Incomplete standard | 4h | M | Backlog | [DONE] Creado |
-| **GAP-009** | Complete MCP security guidelines | Docs | Security gap | 4h | M | Backlog | [DONE] Creado |
-| **GAP-010** | Audit BFF documentation coherence | BFF | Potential drift | 4h | M | Backlog | [DONE] Creado |
-| **GAP-011** | Fix WizardService implementation drift | CLI | Architecture drift | 3h | S | Backlog | [DONE] Creado |
+| **GAP-008** | Complete tool design principles | Docs | Incomplete standard | 4h | M | Backlog | [`#8`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-008%5D) |
+| **GAP-009** | Complete MCP security guidelines | Docs | Security gap | 4h | M | Backlog | [`#9`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-009%5D) |
+| **GAP-010** | Audit BFF documentation coherence | BFF | Potential drift | 4h | M | Backlog | [`#10`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-010%5D) |
+| **GAP-011** | Fix WizardService implementation drift | CLI | Architecture drift | 3h | S | Backlog | [`#11`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-011%5D) |
 
 **Orden:** P2 primero, luego por esfuerzo ascendente (XS → S → M)
 
@@ -48,13 +48,13 @@
 
 | ID | Título | Componente | Valor | Esfuerzo | Size | GitHub Project |
 |----|--------|------------|-------|----------|------|----------------|
-| **OPP-003** | Eliminate test console noise | CLI | Developer experience | 2h | S | DONE Creado |
-| **OPP-009** | Generate HTML coverage reports | CLI | Better visibility | 2h | S | DONE Creado |
-| **OPP-010** | Add confirmation timeout config | CLI | Better UX | 2h | S | DONE Creado |
-| **OPP-004** | Optimize pre-commit validation | Platform | Developer experience | 4h | M | DONE Creado |
-| **OPP-002** | Add MCP distributed tracing | CLI | Observability | 6h | M | DONE Creado |
-| **OPP-005** | Add MCP metrics dashboard | CLI | Observability | 6h | M | DONE Creado |
-| **OPP-001** | Implement auto-fix domain strategies | CLI | Complete GT-115 vision | 8h | L | DONE Creado |
+| **OPP-003** | Eliminate test console noise | CLI | Developer experience | 2h | S | [`#3`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BOPP-003%5D) |
+| **OPP-009** | Generate HTML coverage reports | CLI | Better visibility | 2h | S | [`#9`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BOPP-009%5D) |
+| **OPP-010** | Add confirmation timeout config | CLI | Better UX | 2h | S | [`#10`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BOPP-010%5D) |
+| **OPP-004** | Optimize pre-commit validation | Platform | Developer experience | 4h | M | [`#4`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BOPP-004%5D) |
+| **OPP-002** | Add MCP distributed tracing | CLI | Observability | 6h | M | [`#2`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BOPP-002%5D) |
+| **OPP-005** | Add MCP metrics dashboard | CLI | Observability | 6h | M | [`#5`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BOPP-005%5D) |
+| **OPP-001** | Implement auto-fix domain strategies | CLI | Complete GT-115 vision | 8h | L | [`#1`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BOPP-001%5D) |
 
 **Orden:** Por esfuerzo ascendente (S → M → L) para facilitar quick wins
 
@@ -62,9 +62,9 @@
 
 | ID | Título | Componente | Valor | Esfuerzo | Size | GitHub Project |
 |----|--------|------------|-------|----------|------|----------------|
-| **OPP-008** | Parallelize test execution | CLI | Faster CI | 4h | M | DONE Creado |
-| **OPP-007** | Add wizard validation steps | CLI | Better UX | 4h | M | DONE Creado |
-| **OPP-006** | Expand auto-fix strategies (6+) | CLI | More automation | 12h | XL | DONE Creado |
+| **OPP-008** | Parallelize test execution | CLI | Faster CI | 4h | M | [`#8`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BOPP-008%5D) |
+| **OPP-007** | Add wizard validation steps | CLI | Better UX | 4h | M | [`#7`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BOPP-007%5D) |
+| **OPP-006** | Expand auto-fix strategies (6+) | CLI | More automation | 12h | XL | [`#6`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BOPP-006%5D) |
 
 **Orden:** Por esfuerzo ascendente (M → XL)
 

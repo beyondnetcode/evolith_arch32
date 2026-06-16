@@ -8,6 +8,7 @@ interface McpServeOptions {
   transport?: McpTransport;
   port?: number;
   apiKey?: string;
+  noConfirm?: boolean;
 }
 
 @Command({
@@ -26,6 +27,7 @@ export class McpServeCommand extends BaseEvolithCommand {
       const transport = options?.transport || 'stdio';
       const port = options?.port || parseInt(process.env.PORT || '3000', 10);
       const apiKey = options?.apiKey || process.env.EVOLITH_API_KEY;
+      const noConfirm = options?.noConfirm ?? false;
 
       if (transport === 'http') {
         this.promptService.showIntro('Evolith SDK - MCP Server (HTTP)');
@@ -33,9 +35,15 @@ export class McpServeCommand extends BaseEvolithCommand {
         if (apiKey) {
           this.promptService.showInfo(chalk.cyan('API key authentication enabled'));
         }
+        if (noConfirm) {
+          this.promptService.showWarning(chalk.yellow('Confirmation prompts disabled (--no-confirm)'));
+        }
       } else {
         this.promptService.showIntro('Evolith SDK - MCP Server (stdio)');
         this.logger.log('Starting MCP server over stdio...');
+        if (noConfirm) {
+          this.promptService.showWarning(chalk.yellow('Confirmation prompts disabled (--no-confirm)'));
+        }
       }
 
       const validator = this.validator;
@@ -44,6 +52,7 @@ export class McpServeCommand extends BaseEvolithCommand {
         transport,
         port,
         apiKey,
+        noConfirm,
       });
 
       return;
@@ -78,5 +87,13 @@ export class McpServeCommand extends BaseEvolithCommand {
   })
   parseApiKey(val: string): string {
     return val;
+  }
+
+  @Option({
+    flags: '--no-confirm',
+    description: 'Skip interactive confirmation prompts for mutative operations (CI/automation mode)',
+  })
+  parseNoConfirm(): boolean {
+    return true;
   }
 }

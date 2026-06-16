@@ -6,6 +6,7 @@ import { RulesetValidatorService } from '@evolith/core-domain/application/valida
 import { NodeFileSystemProvider } from '../providers/node-filesystem.provider';
 import { YamlConfigParserProvider } from '../providers/config-parser.provider';
 import { McpMetricsService } from './metrics.service';
+import { ConfirmationService } from './confirmation.service';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
@@ -30,6 +31,7 @@ export interface McpServerOptions {
   transport?: McpTransport;
   stdin?: import('node:stream').Readable;
   stdout?: import('node:stream').Writable;
+  noConfirm?: boolean;
 }
 
 export class EvolithMcpServer {
@@ -37,6 +39,7 @@ export class EvolithMcpServer {
   private readonly logger = new Logger(EvolithMcpServer.name);
   private rulesetValidator: RulesetValidatorService;
   private metricsService: McpMetricsService;
+  private confirmationService: ConfirmationService;
   private registry: import('./mcp-tool.registry').McpToolRegistry;
   private httpServer: http.Server | null = null;
   private readonly transportType: McpTransport;
@@ -53,6 +56,7 @@ export class EvolithMcpServer {
     metricsService?: McpMetricsService,
     stdin?: import('node:stream').Readable,
     stdout?: import('node:stream').Writable,
+    noConfirm: boolean = false,
     private readonly fileSystem?: IFileSystem,
     private readonly configParser?: IConfigParser,
   ) {
@@ -61,6 +65,11 @@ export class EvolithMcpServer {
     this.apiKey = apiKey;
     this.stdin = stdin;
     this.stdout = stdout;
+    this.confirmationService = new ConfirmationService({
+      skipConfirm: noConfirm,
+      stdin: stdin as NodeJS.ReadStream,
+      stdout: stdout as NodeJS.WriteStream,
+    });
     if (!rulesetValidator) {
       const fs = this.fileSystem || new NodeFileSystemProvider().createFileSystem();
       const cp = this.configParser || new YamlConfigParserProvider().createConfigParser('yaml');
@@ -185,20 +194,26 @@ export class EvolithMcpServer {
         if (tool.mutative) {
           const dir = (args?.dir || args?.path || args?.projectPath) as string | undefined;
           const mutationsAllowed = await this.isMutationAllowed(dir);
-          const confirmed = args?.confirm === true;
-          if (!mutationsAllowed && !confirmed) {
-            return {
-              content: [
-                {
-                  type: 'text',
-                  text: JSON.stringify({
-                    error: true,
-                    status: 'REQUIRES_CONFIRMATION',
-                    message: `La operación '${name}' es mutativa y requiere confirmación. Vuelve a ejecutar especificando 'confirm: true' o configura 'mcp.allowMutations: true' en evolith.yaml.`,
-                  }, null, 2),
-                },
-              ],
-            };
+          const confirmedViaFlag = args?.confirm === true;
+          
+          if (!mutationsAllowed && !confirmedViaFlag) {
+            const targetDescription = dir || 'current project';
+            const interactiveConfirmed = await this.confirmationService.confirmMutation(name, targetDescription);
+            
+            if (!interactiveConfirmed) {
+              return {
+                content: [
+                  {
+                    type: 'text',
+                    text: JSON.stringify({
+                      error: true,
+                      status: 'CONFIRMATION_DENIED',
+                      message: `Operación mutativa '${name}' cancelada por el usuario.`,
+                    }, null, 2),
+                  },
+                ],
+              };
+            }
           }
         }
 
@@ -386,6 +401,7 @@ export class EvolithMcpServer {
 export async function startMcpServer(options: McpServerOptions = {}) {
   const transport = options.transport || 'stdio';
   const port = options.port || 49100;
+  const noConfirm = options.noConfirm ?? false;
 
   const server = new EvolithMcpServer(
     transport,
@@ -395,9 +411,10 @@ export async function startMcpServer(options: McpServerOptions = {}) {
     options.metricsService,
     options.stdin,
     options.stdout,
+    noConfirm,
     options.fileSystem,
     options.configParser,
   );
   await server.start();
-  return server; // Actually returning the EvolithMcpServer instance, but we can return it.
+  return server;
 }

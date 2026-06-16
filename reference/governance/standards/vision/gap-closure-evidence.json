@@ -1293,6 +1293,23 @@
         "npm run build --workspace sdk/cli"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-114",
+      "closedAt": "2026-06-16",
+      "closureCommit": "e3792aa01c5a71d7864703b0430ecf3ccaa0a09a",
+      "evidence": [
+        "sdk/cli/src/infrastructure/mcp/confirmation.service.ts",
+        "sdk/cli/src/infrastructure/mcp/confirmation.service.spec.ts",
+        "sdk/cli/test/mcp-confirmation.e2e-spec.ts",
+        "sdk/cli/src/infrastructure/mcp/server.ts",
+        "sdk/cli/src/commands/mcp/mcp-serve.command.ts"
+      ],
+      "validationCommands": [
+        "npx jest --config sdk/cli/jest.config.js --testPathPatterns=\"confirmation\"",
+        "npx jest --config sdk/cli/test/jest-e2e.json --testPathPatterns=\"mcp-confirmation\""
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

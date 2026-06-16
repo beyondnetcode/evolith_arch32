@@ -180,6 +180,15 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 - **Goal:** Protect the local environment when the Smart CLI receives dangerous mutative commands from an AI agent via MCP. Requires implementing an interactive confirmation prompt in stdio (or restrictive configuration) before execution.
 - **Closed when:** MCP tools capable of code/infrastructure mutation prompt for confirmation before actual execution.
+- **Closed by:** `sdk/cli/src/infrastructure/mcp/confirmation.service.ts`, `sdk/cli/src/infrastructure/mcp/confirmation.service.spec.ts`, `sdk/cli/test/mcp-confirmation.e2e-spec.ts`, `sdk/cli/src/infrastructure/mcp/server.ts`, `sdk/cli/src/commands/mcp/mcp-serve.command.ts`
+- **Closure evidence:**
+  - `closedAt`: 2026-06-16
+  - `closureCommit`: pending
+  - `evidence`: `ConfirmationService` prompts for interactive confirmation before executing mutative MCP tools; `--no-confirm` flag bypasses prompts for CI/automation
+  - `validationCommands`:
+    - `npx jest --config sdk/cli/jest.config.js --testPathPatterns="confirmation"` — unit tests pass
+    - `npx jest --config sdk/cli/test/jest-e2e.json --testPathPatterns="mcp-confirmation"` — E2E tests pass
+  - `dependencyDisposition`: none
 
 #### GT-115
 

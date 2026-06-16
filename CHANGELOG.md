@@ -1,5 +1,49 @@
 # Changelog
 
+## [1.1.0](https://github.com/beyondnetcode/evolith_arch32/compare/v1.0.0...v1.1.0) (2026-06-16)
+
+
+### Features
+
+* **arch:** migrate gateway reference from Kong to Traefik (GT-110) ([d7bde77](https://github.com/beyondnetcode/evolith_arch32/commit/d7bde778c7b72338df2c37392c859fd24e5647ed))
+* **CLI:** GT-100 API browser + GT-101 auto-update ([e3792aa](https://github.com/beyondnetcode/evolith_arch32/commit/e3792aa01c5a71d7864703b0430ecf3ccaa0a09a))
+* **CLI:** GT-102 Real-time progress/streaming ([b4c2dcc](https://github.com/beyondnetcode/evolith_arch32/commit/b4c2dcc95a6f00de53782546ae51ea975a03fce7))
+* **CLI:** GT-104 Package manager distribution ([4084db5](https://github.com/beyondnetcode/evolith_arch32/commit/4084db5e61f5f54e691de61c1ba8a169c0291663))
+* **CLI:** GT-107 Interactive wizards ([973013a](https://github.com/beyondnetcode/evolith_arch32/commit/973013ab210ac2ab6631601caf839ca966706e54))
+* **CLI:** GT-114 Human-in-the-Loop for Mutative MCP Tools ([9430857](https://github.com/beyondnetcode/evolith_arch32/commit/94308575101b1ecd1bd571026003d9b1b276a7e7))
+* **CLI:** GT-115 Auto-fix of Architectural Failures via MCP Tools ([a5bc7f9](https://github.com/beyondnetcode/evolith_arch32/commit/a5bc7f9c7164915a8d375c7186b38ee390e5ef6b))
+* **cli:** implement dynamic plugin and extension system (GT-98) ([4d71fd3](https://github.com/beyondnetcode/evolith_arch32/commit/4d71fd310b116f1c5dd2cf023e856bfc65b8ca79))
+* **cli:** implement GT-108 fixtures command with reproducible test data ([0304f6b](https://github.com/beyondnetcode/evolith_arch32/commit/0304f6b3daa638f5374835b0166268e8e8580289))
+* **cli:** resolve GT-103 nested CLI subcommands and update gap tracking evidence ([2c45e89](https://github.com/beyondnetcode/evolith_arch32/commit/2c45e89340539adf0bc83180a2f50c04144fe779))
+* **core-domain:** fix tests and dependency injection after core-domain extraction (GT-113) ([7629caa](https://github.com/beyondnetcode/evolith_arch32/commit/7629caa0352a2d661f4394e9f216802eaa20a8b0))
+* **GAP-003:** Close - Coverage thresholds met (80.41%/67.35%/79.92%/81.17%) ([5d68902](https://github.com/beyondnetcode/evolith_arch32/commit/5d689023dc24d6c149973b162f7c82c98e8a2b95))
+* **GAP-006:** Close - Document auto-fix in architecture ([6e4d2b9](https://github.com/beyondnetcode/evolith_arch32/commit/6e4d2b98baa0804b2116ed2ec9040fb4f0505ca8))
+* **GAP-008:** Close - Complete tool design principles ([43a822c](https://github.com/beyondnetcode/evolith_arch32/commit/43a822c526a0fc1d31e8ccfc3e22a93a286db2e3))
+* **GAP-009:** Close - Complete MCP security guidelines ([30d80a0](https://github.com/beyondnetcode/evolith_arch32/commit/30d80a01cf57017ce18db584054137222f93b640))
+* **GAP-010:** Close - Audit BFF documentation coherence ([4ab6677](https://github.com/beyondnetcode/evolith_arch32/commit/4ab66772c0ba94f1b5b53d1d00e4db66181f5876))
+* **governance:** implement bidirectional gap tracking sync with GitHub Projects ([2ae96e9](https://github.com/beyondnetcode/evolith_arch32/commit/2ae96e9ba47009d258baaa8b98828b92e7aeb46b))
+* **governance:** map gap complexity to github project size field ([e092820](https://github.com/beyondnetcode/evolith_arch32/commit/e092820934025d4a07abbc492ff8be5077a602ed))
+* **infra:** introduce helm charts, opa bundle architecture, and dual-engine governance rules ([0ed5752](https://github.com/beyondnetcode/evolith_arch32/commit/0ed5752c3cd631a8bddd993b789bb097d3b0585f))
+* **mcp:** implement human-in-the-loop mutative tools confirmation gating (GT-114) ([570520d](https://github.com/beyondnetcode/evolith_arch32/commit/570520d6ef3959bd81e50e478dc2665bd7002655))
+* **OPP-001:** Close - Implement auto-fix domain strategies (6 strategies) ([f456fda](https://github.com/beyondnetcode/evolith_arch32/commit/f456fda5c56420747d03e4894383336199ad53d6))
+* **OPP-003, OPP-009:** Close - Test UX improvements ([b5b1b05](https://github.com/beyondnetcode/evolith_arch32/commit/b5b1b059acaf62ac89da2f4cf28bb01eb00bae73))
+* **OPP-006, OPP-007, OPP-008:** Close - Complete remaining opportunities ([b39a0bf](https://github.com/beyondnetcode/evolith_arch32/commit/b39a0bf38e16fe9d21604bfca689e54b1aece1f4))
+* **OPP-010:** Close - Add confirmation timeout config ([49d59f2](https://github.com/beyondnetcode/evolith_arch32/commit/49d59f2b85ce4d49ebcb728d26c7a173f5d39da7))
+* **workflow:** data-driven workflow definitions with IWorkflowDefinition port (GT-85) ([65a2195](https://github.com/beyondnetcode/evolith_arch32/commit/65a219589abc0b071e48b75d74a76d3cb8ba8ca4))
+
+
+### Bug Fixes
+
+* **adr:** correct ADR-0036 reference in 0077 ([928bd43](https://github.com/beyondnetcode/evolith_arch32/commit/928bd43f9fa310105f0db565bab9acb2e6ba9c4a))
+* allow CHANGELOG.md in root optimization rules ([d7ac95d](https://github.com/beyondnetcode/evolith_arch32/commit/d7ac95d219bc0ac965999469266905ec726ae446))
+* **GAP-001:** Fix 21 failing CLI tests ([50ab8b2](https://github.com/beyondnetcode/evolith_arch32/commit/50ab8b246ffa4b4526541aaef97fe9cf076e79fa))
+* **GAP-003:** Improve test coverage (74.5% → 76.87%) ([bc30e20](https://github.com/beyondnetcode/evolith_arch32/commit/bc30e204df9031f5ed8d2869a19000866600b517))
+* **GAP-007:** Remove emoji from documentation ([13df2f8](https://github.com/beyondnetcode/evolith_arch32/commit/13df2f821d8f4372e36babd24d311adcac31c57f))
+* **GAP-011:** Close - Fix WizardService goBack navigation drift ([6cb7f28](https://github.com/beyondnetcode/evolith_arch32/commit/6cb7f28b33291a9dd705930f652fa9737aa02ba1))
+* **gap:** correct GT-108 closure commit SHA to 0304f6b ([1c86749](https://github.com/beyondnetcode/evolith_arch32/commit/1c867495aa6b970d5915c964981a5f682a77de12))
+* **gap:** correct GT-82 closure commit SHA to e7f4490 ([686bb2f](https://github.com/beyondnetcode/evolith_arch32/commit/686bb2fc416897379f7d90300ccc3196c212ac1d))
+* **harness:** tally In Progress status correctly during gap sync ([b151e34](https://github.com/beyondnetcode/evolith_arch32/commit/b151e344ffc9cac8fcd3ce0642e25c01ebe63785))
+
 ## 1.0.0 (2026-06-15)
 
 

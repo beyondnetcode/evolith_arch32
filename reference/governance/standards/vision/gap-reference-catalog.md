@@ -1021,7 +1021,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] a command seeds reproducible fixtures into a target project — `evolith fixtures <type> [--dir] [--dry-run]`
 - **Closure evidence:**
   - `closedAt`: 2026-06-16
-  - `closureCommit`: working tree (GT-108 implementation)
+  - `closureCommit`: 0304f6b3daa638f5374835b0166268e8e8580289 (GT-108 implementation)
   - `evidence`: `sdk/cli/src/commands/fixtures/fixtures.command.ts` implements `fixtures` command with 5 types: `evolith`, `adr`, `ruleset`, `demo`, `full`
   - `validationCommands`:
     - `npx jest --config sdk/cli/jest.config.js --testPathPatterns="fixtures"` — 15 unit tests pass

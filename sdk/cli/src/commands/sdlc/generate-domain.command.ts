@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { Command, Option } from 'nest-commander';
+import { SubCommand, Option } from 'nest-commander';
 import chalk from 'chalk';
 import * as path from 'path';
 import * as fs from 'fs-extra';
@@ -7,7 +7,7 @@ import { parseDddModel } from '@evolith/core-domain/application/generators/merma
 import { scaffoldHexagonal } from '@evolith/core-domain/application/generators/hexagonal-scaffolder';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 
-@Command({
+@SubCommand({
   name: 'generate',
   description: 'Generates Hexagonal Architecture scaffold from a Mermaid classDiagram in a Markdown DDD model file',
 })

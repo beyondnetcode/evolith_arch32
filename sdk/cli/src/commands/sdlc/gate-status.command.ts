@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { Command, Option } from 'nest-commander';
+import { SubCommand, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { Inject } from '@nestjs/common';
 import { PhaseTransitionUseCase } from '@evolith/core-domain/application/services';
@@ -19,7 +19,7 @@ function ratingBadge(rating: DoraRating): string {
   }
 }
 
-@Command({
+@SubCommand({
   name: 'gate-status',
   description: 'Display current SDLC phase gate validation status and DORA metrics',
 })

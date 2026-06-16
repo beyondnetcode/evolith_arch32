@@ -20,7 +20,6 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-97`](./gap-reference-catalog.md#gt-97) | Multiple CLI profiles | `CLI` | Cross | P1 | M | `DONE` |
 | [`GT-111`](./gap-reference-catalog.md#gt-111) | Plan the MassTransit v9 commercial pivot (stay v8 OSS or move to Rebus) | `Platform` | Cross | P1 | L | `DONE` |
 | [`GT-98`](./gap-reference-catalog.md#gt-98) | CLI extension/plugin system | `CLI` | Cross | P1 | L | `DONE` |
-| [`GT-103`](./gap-reference-catalog.md#gt-103) | CLI subcommand depth | `CLI` | Cross | P2 | S | `PENDING` |
 | [`GT-105`](./gap-reference-catalog.md#gt-105) | CLI Docker image | `CLI` | Cross | P2 | S | `PENDING` |
 | [`GT-106`](./gap-reference-catalog.md#gt-106) | CLI command aliases | `CLI` | Cross | P2 | S | `PENDING` |
 | [`GT-108`](./gap-reference-catalog.md#gt-108) | CLI fixtures/test data | `CLI` | Cross | P2 | S | `PENDING` |
@@ -76,6 +75,7 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-05`](./gap-reference-catalog.md#gt-05) | MCP SDK Streamable HTTP transport | `CLI` | F2 | P1 | M | `DONE` |
 | [`GT-57`](./gap-reference-catalog.md#gt-57) | Incomplete MCP tooling and validation implementation | `CLI` | F2 | P1 | L | `DONE` |
 | [`GT-19`](./gap-reference-catalog.md#gt-19) | Incremental hexagonal migration of `core/` | `CLI` | Cross | P1 | L | `DONE` |
+| [`GT-103`](./gap-reference-catalog.md#gt-103) | CLI subcommand depth | `CLI` | Cross | P2 | S | `DONE` |
 | [`GT-52`](./gap-reference-catalog.md#gt-52) | Remove dead dependency-injection container stubs | `CLI` | Cross | P2 | S | `DONE` |
 | [`GT-50`](./gap-reference-catalog.md#gt-50) | Enforce coverage thresholds in Jest configuration | `CLI` | F0 | P2 | S | `DONE` |
 | [`GT-03`](./gap-reference-catalog.md#gt-03) | `EvaluateGateUseCase` and `gate evaluate` command | `Core Domain` | F1 | P0 | M | `DONE` |
@@ -107,7 +107,7 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-25`](./gap-reference-catalog.md#gt-25) | First provider profiles | `Governance` | Cross | P2 | L | `DONE` |
 | [`GT-23`](./gap-reference-catalog.md#gt-23) | Spanish translation backfill | `Governance` | Cross | P2 | L | `DONE` |
 
-**Progress:** 78 / 93 done · 0 in progress · 15 pending · 0 deferred
+**Progress:** 79 / 93 done · 0 in progress · 14 pending · 0 deferred
 
 **Ordering:** one table, ordered by status (pending then deferred then completed), then criticality (`P0` → `P1` → `P2`) then complexity (`S` → `M` → `L`); completed gaps are grouped by component. Each ID links to its detail in the [Gap Reference Catalog](./gap-reference-catalog.md).
 

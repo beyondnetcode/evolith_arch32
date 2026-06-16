@@ -13,6 +13,7 @@ import { WatcherService } from './infrastructure/mcp/watcher.service';
 import { SdlcCommand } from './commands/sdlc/sdlc.command';
 import { HandoffCommand } from './commands/sdlc/handoff.command';
 import { GenerateDomainCommand } from './commands/sdlc/generate-domain.command';
+import { GateStatusCommand } from './commands/sdlc/gate-status.command';
 import { ScaffoldCommand } from './commands/architecture/scaffold.command';
 import { ADRCommand } from './commands/adr/adr.command';
 import { StandardsCommand } from './commands/standards/standards.command';
@@ -58,6 +59,7 @@ import { PluginModule } from './infrastructure/plugins/plugin.module';
     SdlcCommand,
     HandoffCommand,
     GenerateDomainCommand,
+    GateStatusCommand,
     ScaffoldCommand,
     ADRCommand,
     StandardsCommand,

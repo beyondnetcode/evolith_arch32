@@ -19,6 +19,7 @@ import { StandardsCommand } from './commands/standards/standards.command';
 import { CompletionCommand } from './commands/completion/completion.command';
 import { HistoryCommand } from './commands/history/history.command';
 import { DriftCommand } from './commands/drift/drift.command';
+import { GateStatusCommand } from './commands/sdlc/gate-status.command';
 
 jest.mock('@clack/prompts', () => ({
   intro: jest.fn(),
@@ -327,6 +328,17 @@ describe('AppModule', () => {
     const command = module.get(DriftCommand);
     expect(command).toBeDefined();
     expect(command).toBeInstanceOf(DriftCommand);
+  });
+
+  it('should provide GateStatusCommand', async () => {
+    const module = await Test.createTestingModule({
+      imports: [AppModule],
+      providers: [{ provide: 'IFileSystem', useValue: {} }, { provide: 'ILogger', useValue: {} }, { provide: 'IConfigParser', useValue: {} }]
+    }).compile();
+
+    const command = module.get(GateStatusCommand);
+    expect(command).toBeDefined();
+    expect(command).toBeInstanceOf(GateStatusCommand);
   });
 
   it('should be a valid NestJS module', async () => {

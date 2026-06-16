@@ -968,7 +968,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Gap:** The command tree is shallow; some workflows need deeper nested subcommands (originally `GAP-010`).
 - **Purpose:** Support deeper, well-grouped subcommand hierarchies.
 - **Done when:**
-  - [ ] nested subcommands are supported with consistent help and routing
+  - [x] nested subcommands are supported with consistent help and routing
 - **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-010`)
 
 #### GT-104

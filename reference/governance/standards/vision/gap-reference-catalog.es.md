@@ -967,7 +967,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Gap:** El árbol de comandos es plano; algunos flujos necesitan subcomandos anidados más profundos (originalmente `GAP-010`).
 - **Propósito:** Soportar jerarquías de subcomandos más profundas y bien agrupadas.
 - **Criterio de cierre:**
-  - [ ] se soportan subcomandos anidados con ayuda y enrutamiento consistentes
+  - [x] se soportan subcomandos anidados con ayuda y enrutamiento consistentes
 - **Referencias:** Backlog del CLI de Evolith `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-010`)
 
 #### GT-104

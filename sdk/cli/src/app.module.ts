@@ -34,9 +34,12 @@ import { WebhookAdapter } from './infrastructure/adapters/webhook.adapter';
 import { NodeFileSystemProvider } from '@evolith/infra-providers';
 import { NestLoggerProvider } from '@evolith/infra-providers';
 import { YamlConfigParserProvider } from '@evolith/infra-providers';
+import { PluginModule } from './infrastructure/plugins/plugin.module';
 
 @Module({
-  imports: [],
+  imports: [
+    PluginModule.register(),
+  ],
   providers: [
     InitCommand,
     AgentsCommand,

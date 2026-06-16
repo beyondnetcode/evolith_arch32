@@ -16,6 +16,22 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-106",
+      "closedAt": "2026-06-16",
+      "closureCommit": "2c45e89",
+      "evidence": [
+        "sdk/cli/src/config/alias.service.ts",
+        "sdk/cli/src/commands/alias/alias.command.ts",
+        "sdk/cli/src/main.ts",
+        "sdk/cli/src/app.module.ts"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/validate-docs.mjs",
+        "node .harness/scripts/check-bilingual-parity.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-103",
       "closedAt": "2026-06-16",
       "closureCommit": "e7cdf47",

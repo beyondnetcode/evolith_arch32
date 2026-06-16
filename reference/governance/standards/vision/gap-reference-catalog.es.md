@@ -203,6 +203,21 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 - **Objetivo:** Migrar operaciones asíncronas encadenadas o llamadas bloqueantes `*Sync` en validadores de AST e I/O de archivos en la CLI y Hooks para evitar bloquear el event loop en repositorios masivos.
 - **Cierre cuando:** Los validadores críticos en rutas de CI y CLI no utilicen métodos `.readFileSync` ni `.readdirSync` en favor de `fs/promises` con manejo de concurrencia.
+- **Criterio de cierre:**
+  - [x] La interfaz IFileSystem provee métodos async para todas las operaciones de archivo
+  - [x] Rutas críticas (sdlcStatus, validate) usan métodos async de IFileSystem
+  - [x] validate.ts findCorePath migrado a async fs.promises.access
+  - [x] Código no crítico de inicialización puede mantener llamadas sync por simplicidad
+- **Cerrado por:** `sdk/cli/src/infrastructure/mcp/tools/validate.ts`, `packages/core-domain/src/domain/interfaces.ts`
+- **Evidencia de cierre:**
+  - `closedAt`: 2026-06-16
+  - `closureCommit`: pending
+  - `evidence`: Interfaz IFileSystem provee métodos async (readFile, writeFile, exists, readdir); rutas críticas de validación usan IFileSystem async; findCorePath migrado a fs.promises.access
+  - `validationCommands`:
+    - `npm run build --workspace sdk/cli` — compilación TypeScript pasa
+    - `npm run test --workspace sdk/cli` — tests pasan
+  - `dependencyDisposition`: none
+- **Referencias:** [Interfaz IFileSystem](../../../../packages/core-domain/src/domain/interfaces.ts)
 
 
 #### GT-19

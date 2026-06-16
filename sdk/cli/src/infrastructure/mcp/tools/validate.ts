@@ -43,7 +43,7 @@ export function getValidateTools(fs: IFileSystem, configParser: IConfigParser): 
         })();
 
         if (ruleset) {
-          const coreRepoPath = corePath || findCorePath(path);
+          const coreRepoPath = corePath || await findCorePath(path);
           const issues = await validator.loadRulesetById(coreRepoPath, ruleset);
           return {
             tool: 'evolith-validate',
@@ -82,14 +82,18 @@ function formatTable(result: { status: string; rulesChecked: number; issues: Arr
   return lines.join('\n');
 }
 
-function findCorePath(satellitePath: string): string {
+async function findCorePath(satellitePath: string): Promise<string> {
   const path = require('path');
+  const fs = require('fs/promises');
   const parts = satellitePath.split(path.sep);
   while (parts.length > 0) {
     parts.pop();
     const candidate = path.join(parts.join(path.sep), 'rulesets');
-    if (require('fs').existsSync(candidate)) {
+    try {
+      await fs.access(candidate);
       return parts.join(path.sep);
+    } catch {
+      // Continue searching
     }
   }
   return path.join(satellitePath, '..', 'evolith');

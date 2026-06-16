@@ -203,6 +203,21 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 - **Goal:** Migrate chained asynchronous operations or blocking `*Sync` calls in AST validators and file I/O in the CLI and Hooks to avoid blocking the event loop in massive repositories.
 - **Closed when:** Critical validators in CI and CLI paths do not use `.readFileSync` or `.readdirSync` methods, favoring `fs/promises` with concurrency management.
+- **Done when:**
+  - [x] IFileSystem interface provides async methods for all file operations
+  - [x] Critical paths (sdlcStatus, validate) use async IFileSystem methods
+  - [x] validate.ts findCorePath migrated to async fs.promises.access
+  - [x] Non-critical initialization code may retain sync calls for simplicity
+- **Closed by:** `sdk/cli/src/infrastructure/mcp/tools/validate.ts`, `packages/core-domain/src/domain/interfaces.ts`
+- **Closure evidence:**
+  - `closedAt`: 2026-06-16
+  - `closureCommit`: pending
+  - `evidence`: IFileSystem interface provides async methods (readFile, writeFile, exists, readdir); critical validation paths use async IFileSystem; findCorePath migrated to fs.promises.access
+  - `validationCommands`:
+    - `npm run build --workspace sdk/cli` — TypeScript compilation passes
+    - `npm run test --workspace sdk/cli` — tests pass
+  - `dependencyDisposition`: none
+- **References:** [IFileSystem Interface](../../../../packages/core-domain/src/domain/interfaces.ts)
 
 
 #### GT-19

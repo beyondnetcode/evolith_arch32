@@ -1371,6 +1371,20 @@
         "node .harness/scripts/validate-docs.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-116",
+      "closedAt": "2026-06-16",
+      "closureCommit": "3b41cfe11b84d7d6c9dc04cd5febf698171ad5c5",
+      "evidence": [
+        "sdk/cli/src/infrastructure/mcp/tools/validate.ts",
+        "packages/core-domain/src/domain/interfaces.ts"
+      ],
+      "validationCommands": [
+        "npm run build --workspace sdk/cli",
+        "npm run test --workspace sdk/cli"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

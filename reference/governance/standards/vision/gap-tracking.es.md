@@ -22,7 +22,7 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-111`](./gap-reference-catalog.es.md#gt-111) | Planificar el giro comercial de MassTransit v9 (quedarse en v8 OSS o migrar a Rebus) | `Platform` | Transversal | P1 | L | `COMPLETADO` |
 | [`GT-85`](./gap-reference-catalog.es.md#gt-85) | Arquitectura de plugins para el workflow engine del Tracker | `Tracker` | Transversal | P1 | L | `COMPLETADO` |
 | [`GT-86`](./gap-reference-catalog.es.md#gt-86) | Aggregate roots con event sourcing | `Tracker` | Transversal | P1 | L | `DIFERIDO` |
-| [`GT-90`](./gap-reference-catalog.es.md#gt-90) | CQRS con proyecciones de read-model | `Tracker` | Transversal | P1 | L | `PENDIENTE` |
+| [`GT-90`](./gap-reference-catalog.es.md#gt-90) | CQRS con proyecciones de read-model | `Tracker` | Transversal | P1 | L | `REVISIÓN` |
 | [`GT-94`](./gap-reference-catalog.es.md#gt-94) | DSL de workflow / editor visual | `Tracker` | Transversal | P1 | L | `PENDIENTE` |
 | [`GT-95`](./gap-reference-catalog.es.md#gt-95) | Aislamiento multi-tenant con shared kernel (PostgreSQL RLS) | `Tracker` | Transversal | P1 | L | `PENDIENTE` |
 | [`GT-98`](./gap-reference-catalog.es.md#gt-98) | Sistema de extensiones/plugins del CLI | `CLI` | Transversal | P1 | L | `PENDIENTE` |

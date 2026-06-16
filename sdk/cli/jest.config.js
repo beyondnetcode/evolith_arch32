@@ -47,4 +47,7 @@ module.exports = {
   setupFilesAfterEnv: [],
   testTimeout: 10000,
   verbose: true,
+  // OPP-003: Suppress console noise during tests for cleaner output
+  // Individual tests can still verify logging behavior via mocks
+  silent: true,
 };

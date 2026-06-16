@@ -3,6 +3,22 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-103",
+      "closedAt": "2026-06-16",
+      "closureCommit": "e7cdf47",
+      "evidence": [
+        "sdk/cli/src/commands/sdlc/handoff.command.ts",
+        "sdk/cli/src/commands/sdlc/generate-domain.command.ts",
+        "sdk/cli/src/commands/sdlc/gate-status.command.ts",
+        "sdk/cli/src/app.module.ts"
+      ],
+      "validationCommands": [
+        "npm run build --workspace sdk/cli",
+        "npx jest src/app.module.spec.ts"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-98",
       "closedAt": "2026-06-16",
       "closureCommit": "4d71fd3",

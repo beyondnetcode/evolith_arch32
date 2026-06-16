@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { Command, Option } from 'nest-commander';
+import { SubCommand, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { Inject } from '@nestjs/common';
 import { CatalogLoader } from '../../infrastructure/catalog/catalog-loader';
@@ -16,7 +16,7 @@ interface HandoffOptions {
   force?: boolean;
 }
 
-@Command({
+@SubCommand({
   name: 'handoff',
   description: 'Transitions artifacts between SDLC phases with interactive guided flow',
 })

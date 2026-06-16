@@ -988,7 +988,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Gap:** There is no official container image for the CLI (originally `GAP-012`).
 - **Purpose:** Provide a maintained Docker image for CI and sandboxed use.
 - **Done when:**
-  - [ ] an official CLI image is built and published by the release pipeline
+  - [x] an official CLI image is built and published by the release pipeline
 - **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-012`)
 
 #### GT-106

@@ -196,6 +196,22 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 - **Goal:** Extend the set of MCP tools to allow AI agents to apply automatic resolutions (auto-fix) to violations reported by Evolith Core rule evaluators.
 - **Closed when:** New MCP tools exist under the `evolith-auto-fix` schema that accept a `rulesetId` or failure report and apply the required refactorings.
+- **Done when:**
+  - [x] MCP tools for auto-fix implemented (`evolith-auto-fix`)
+  - [x] Accept `rulesetId` or violations array as input
+  - [x] Apply refactorings for known violation types (domain-purity, hexagonal-boundaries, missing-domain-interface)
+  - [x] Dry-run mode for preview before applying
+  - [x] Summary generation with applied/preview/failed/manual counts
+- **Closed by:** `sdk/cli/src/infrastructure/mcp/tools/auto-fix.ts`, `sdk/cli/src/infrastructure/mcp/tools/auto-fix.spec.ts`, `sdk/cli/test/auto-fix.e2e-spec.ts`, `sdk/cli/src/infrastructure/mcp/tools/index.ts`
+- **Closure evidence:**
+  - `closedAt`: 2026-06-16
+  - `closureCommit`: ea2a3934cfcbebaf3b05e15538e4b5ac721b1b53
+  - `evidence`: `evolith-auto-fix` MCP tool accepts rulesetId and violations array; supports dry-run mode; applies fixes for domain-purity, hexagonal-boundaries, missing-domain-interface rules; generates summary with fix counts
+  - `validationCommands`:
+    - `npx jest --config sdk/cli/jest.config.js --testPathPatterns="auto-fix"` — unit tests pass
+    - `npx jest --config sdk/cli/test/jest-e2e.json --testPathPatterns="auto-fix"` — E2E tests pass
+  - `dependencyDisposition`: none
+- **References:** [MCP Tools Index](../../../../sdk/cli/src/infrastructure/mcp/tools/index.ts)
 
 #### GT-116
 

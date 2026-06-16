@@ -1385,6 +1385,22 @@
         "npm run test --workspace sdk/cli"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-115",
+      "closedAt": "2026-06-16",
+      "closureCommit": "ea2a3934cfcbebaf3b05e15538e4b5ac721b1b53",
+      "evidence": [
+        "sdk/cli/src/infrastructure/mcp/tools/auto-fix.ts",
+        "sdk/cli/src/infrastructure/mcp/tools/auto-fix.spec.ts",
+        "sdk/cli/test/auto-fix.e2e-spec.ts",
+        "sdk/cli/src/infrastructure/mcp/tools/index.ts"
+      ],
+      "validationCommands": [
+        "npx jest --config sdk/cli/jest.config.js --testPathPatterns=\"auto-fix\"",
+        "npx jest --config sdk/cli/test/jest-e2e.json --testPathPatterns=\"auto-fix\""
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

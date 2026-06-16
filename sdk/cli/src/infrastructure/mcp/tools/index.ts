@@ -7,6 +7,7 @@ import { getMoscowTools } from './moscow';
 import { getSdlcTools } from './sdlc';
 import { getValidateTools } from './validate';
 import { getPhaseAdvanceTools } from './phase-advance';
+import { getAutoFixTools } from './auto-fix';
 
 export function getAllTools(fs: IFileSystem, configParser: IConfigParser): IMcpToolHandler[] {
   return [
@@ -17,5 +18,6 @@ export function getAllTools(fs: IFileSystem, configParser: IConfigParser): IMcpT
     ...getSdlcTools(fs, configParser),
     ...getValidateTools(fs, configParser),
     ...getPhaseAdvanceTools(fs, configParser),
+    ...getAutoFixTools(fs, configParser),
   ];
 }

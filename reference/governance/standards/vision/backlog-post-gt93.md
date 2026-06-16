@@ -13,7 +13,7 @@
 | ID | Título | Componente | Impacto | Esfuerzo | Size | GitHub Project |
 |----|--------|------------|---------|----------|------|----------------|
 | ~~**GAP-001**~~ | ~~Fix 21 failing tests~~ | CLI | CI reliability blocked | 4h | M | **DONE** | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-001%5D)(https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-001%5D) |
-| **GAP-002** | Fix ConfirmationService TTY tests | CLI | GT-114 validation at risk | 2h | S | [`#2`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-002%5D) |
+| ~~**GAP-002**~~ | ~~Fix ConfirmationService TTY tests~~ | ~~CLI~~ | ~~GT-114 validation at risk~~ | ~~2h~~ | ~~S~~ | **DONE** | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-002%5D) |
 
 **Orden:** P0 primero, luego por esfuerzo ascendente (S → M)
 
@@ -21,10 +21,10 @@
 
 | ID | Título | Componente | Impacto | Esfuerzo | Size | GitHub Project |
 |----|--------|------------|---------|----------|------|----------------|
-| **GAP-003** | Raise statement coverage to 80% | CLI | Quality gate failure | 8h | L | DONE | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-003%5D) |
-| **GAP-004** | Raise branch coverage to 67% | CLI | Quality gate failure | 6h | M | DONE | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-004%5D) |
-| **GAP-005** | Add tests for zero-coverage files | CLI | Unvalidated code | 2h | S | DONE | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-005%5D) |
-| **GAP-006** | Document auto-fix in architecture | Docs | Missing documentation | 2h | S | DONE | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-006%5D) |
+| ~~**GAP-003**~~ | ~~Raise statement coverage to 80%~~ | ~~CLI~~ | ~~Quality gate failure~~ | ~~8h~~ | ~~L~~ | **DONE** | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-003%5D) |
+| ~~**GAP-004**~~ | ~~Raise branch coverage to 67%~~ | ~~CLI~~ | ~~Quality gate failure~~ | ~~6h~~ | ~~M~~ | **DONE** | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-004%5D) |
+| ~~**GAP-005**~~ | ~~Add tests for zero-coverage files~~ | ~~CLI~~ | ~~Unvalidated code~~ | ~~2h~~ | ~~S~~ | **DONE** | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-005%5D) |
+| ~~**GAP-006**~~ | ~~Document auto-fix in architecture~~ | ~~Docs~~ | ~~Missing documentation~~ | ~~2h~~ | ~~S~~ | **DONE** | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-006%5D) |
 
 **Orden:** P1 primero, luego por esfuerzo ascendente (S → M → L)
 

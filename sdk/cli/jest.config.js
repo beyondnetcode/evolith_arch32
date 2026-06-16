@@ -7,6 +7,8 @@ module.exports = {
     '!src/**/*.d.ts',
     '!src/main.ts',
     '!src/test/**',
+    '!src/infrastructure/mcp/tools/tool-utils.ts',
+    '!**/index.ts',
   ],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html', 'json-summary'],

@@ -900,10 +900,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Eliminate a misleading skipped suite — either revive it to cover the command or remove it so the suite reflects reality.
 - **Current evidence / example:** `grep -rl "describe.skip" sdk/cli/src` returns only `src/commands/sdlc/gate-status.command.spec.ts`; the suite reports 26 skipped tests.
 - **Done when:**
-  - [ ] the suite is revived (constructor-injected, green) or removed
-  - [ ] no `describe.skip` remains in the CLI test suite, or the remaining skip is justified in-file
-  - [ ] coverage reflects the decision and the gate stays green
-- **References:** [gate-status spec](../../../../sdk/cli/src/commands/sdlc/gate-status.command.spec.ts) · [GT-48](#gt-48)
+  - [x] the suite is revived (constructor-injected, green) or removed
+  - [x] no `describe.skip` remains in the CLI test suite, or the remaining skip is justified in-file
+  - [x] coverage reflects the decision and the gate stays green
+- **References:** [GT-48](#gt-48) · [gap-closure-evidence](./gap-closure-evidence.json)
 
 
 

@@ -900,10 +900,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Propósito:** Eliminar una suite skipped engañosa — revivirla para cubrir el comando o eliminarla para que la suite refleje la realidad.
 - **Evidencia actual / ejemplo:** `grep -rl "describe.skip" sdk/cli/src` devuelve solo `src/commands/sdlc/gate-status.command.spec.ts`; la suite reporta 26 tests skipped.
 - **Criterio de cierre:**
-  - [ ] la suite se revive (inyección por constructor, verde) o se elimina
-  - [ ] no queda ningún `describe.skip` en la suite de tests del CLI, o el skip restante está justificado en el archivo
-  - [ ] la cobertura refleja la decisión y el gate permanece verde
-- **Referencias:** [spec de gate-status](../../../../sdk/cli/src/commands/sdlc/gate-status.command.spec.ts) · [GT-48](#gt-48)
+  - [x] la suite se revive (inyección por constructor, verde) o se elimina
+  - [x] no queda ningún `describe.skip` en la suite de tests del CLI, o el skip restante está justificado en el archivo
+  - [x] la cobertura refleja la decisión y el gate permanece verde
+- **Referencias:** [GT-48](#gt-48) · [evidencia-de-cierre](./gap-closure-evidence.json)
 
 
 ### Componente CLI — Consolidado desde el Backlog del CLI

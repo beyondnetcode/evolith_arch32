@@ -1249,6 +1249,21 @@
         "node .harness/scripts/validate-docs.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-82",
+      "closedAt": "2026-06-16",
+      "closureCommit": "94324bd20eff60c5f37c373f49d941ca0bd61dff",
+      "evidence": [
+        "sdk/cli/src/commands/sdlc/",
+        "sdk/cli/test/e2e/sdlc-gate-commands-e2e.test.ts",
+        "sdk/cli/test/e2e/cli-e2e.test.ts"
+      ],
+      "validationCommands": [
+        "grep -rl 'describe.skip' sdk/cli/src || echo 'none'",
+        "npm run build --workspace sdk/cli"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

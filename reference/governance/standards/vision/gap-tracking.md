@@ -22,7 +22,7 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-111`](./gap-reference-catalog.md#gt-111) | Plan the MassTransit v9 commercial pivot (stay v8 OSS or move to Rebus) | `Platform` | Cross | P1 | L | `DONE` |
 | [`GT-85`](./gap-reference-catalog.md#gt-85) | Plugin architecture for the Tracker workflow engine | `Tracker` | Cross | P1 | L | `DONE` |
 | [`GT-86`](./gap-reference-catalog.md#gt-86) | Event-sourced aggregate roots | `Tracker` | Cross | P1 | L | `DEFERRED` |
-| [`GT-90`](./gap-reference-catalog.md#gt-90) | CQRS with read-model projections | `Tracker` | Cross | P1 | L | `PENDING` |
+| [`GT-90`](./gap-reference-catalog.md#gt-90) | CQRS with read-model projections | `Tracker` | Cross | P1 | L | `REVISION` |
 | [`GT-94`](./gap-reference-catalog.md#gt-94) | Workflow DSL / visual editor | `Tracker` | Cross | P1 | L | `PENDING` |
 | [`GT-95`](./gap-reference-catalog.md#gt-95) | Multi-tenant isolation with shared kernel (PostgreSQL RLS) | `Tracker` | Cross | P1 | L | `PENDING` |
 | [`GT-98`](./gap-reference-catalog.md#gt-98) | CLI extension/plugin system | `CLI` | Cross | P1 | L | `PENDING` |

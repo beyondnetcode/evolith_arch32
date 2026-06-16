@@ -997,7 +997,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Gap:** Los usuarios no pueden definir alias cortos para comandos frecuentes (originalmente `GAP-013`).
 - **Propósito:** Permitir alias definidos por el usuario para ergonomía.
 - **Criterio de cierre:**
-  - [ ] los alias se pueden definir, listar y resolver en la invocación
+  - [x] los alias se pueden definir, listar y resolver en la invocación
 - **Referencias:** Backlog del CLI de Evolith `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-013`)
 
 #### GT-107

@@ -3,6 +3,8 @@ import { Module } from '@nestjs/common';
 import { InitCommand } from './commands/init/init.command';
 import { AgentsCommand } from './commands/init/agents.command';
 import { ValidateCommand } from './commands/validate/validate.command';
+import { AliasService } from './config/alias.service';
+import { AliasCommand } from './commands/alias/alias.command';
 import { DocsCommand } from './commands/docs/docs.command';
 import { UpgradeCommand } from './commands/init/upgrade.command';
 import { McpServeCommand } from './commands/mcp/mcp-serve.command';
@@ -69,6 +71,8 @@ import { PluginModule } from './infrastructure/plugins/plugin.module';
     GateCommand,
     PhaseAdvanceCommand,
     ProfileCommand,
+    AliasService,
+    AliasCommand,
     ValidateSatelliteUseCase,
     EvaluateGateUseCase,
     ProposePhaseAdvanceUseCase,

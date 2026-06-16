@@ -998,7 +998,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Gap:** Users cannot define short aliases for frequent commands (originally `GAP-013`).
 - **Purpose:** Allow user-defined aliases for ergonomics.
 - **Done when:**
-  - [ ] aliases can be defined, listed, and resolved at invocation
+  - [x] aliases can be defined, listed, and resolved at invocation
 - **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-013`)
 
 #### GT-107

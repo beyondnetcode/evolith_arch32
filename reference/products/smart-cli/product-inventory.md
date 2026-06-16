@@ -9,7 +9,7 @@ Generated inventory of the installable Smart CLI and MCP surface. Do not edit by
 |---|---|
 | Package | `@evolith/smart-cli@1.1.0` |
 | Binary | `smart-cli` |
-| CLI commands | 19 |
+| CLI commands | 20 |
 | MCP tools | 23 |
 | MCP resources | 8 |
 | MCP prompts | 8 |

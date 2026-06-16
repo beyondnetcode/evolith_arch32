@@ -1,4 +1,4 @@
-# Backlog de Tareas Post-GT93 (ES)
+# Backlog de Tareas Post-GT93
 
 **Creado:** 2026-06-16  
 **Fuente:** Deep Analysis Report (`docs/analysis/deep-analysis-2026-06-16.md`)  
@@ -10,29 +10,35 @@
 
 ### P0 - Crítico (Blocking) - 2 items, 6 horas
 
-| ID | Título | Componente | Impacto | Esfuerzo | Estado | GitHub Project |
-|----|--------|------------|---------|----------|--------|----------------|
-| **GAP-001** | Fix 21 failing tests | CLI | CI reliability blocked | 4h | Backlog | [`#1`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-001%5D) |
-| **GAP-002** | Fix ConfirmationService TTY tests | CLI | GT-114 validation at risk | 2h | Backlog | [`#2`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-002%5D) |
+| ID | Título | Componente | Impacto | Esfuerzo | Size | GitHub Project |
+|----|--------|------------|---------|----------|------|----------------|
+| **GAP-001** | Fix 21 failing tests | CLI | CI reliability blocked | 4h | M | [`#1`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-001%5D) |
+| **GAP-002** | Fix ConfirmationService TTY tests | CLI | GT-114 validation at risk | 2h | S | [`#2`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-002%5D) |
+
+**Orden:** P0 primero, luego por esfuerzo ascendente (S → M → L)
 
 ### P1 - Alto (Quality Gate) - 4 items, 18 horas
 
-| ID | Título | Componente | Impacto | Esfuerzo | Estado | GitHub Project |
-|----|--------|------------|---------|----------|--------|----------------|
-| **GAP-003** | Raise statement coverage to 80% | CLI | Quality gate failure | 8h | Backlog | ✅ Creado |
-| **GAP-004** | Raise branch coverage to 67% | CLI | Quality gate failure | 6h | Backlog | ✅ Creado |
-| **GAP-005** | Add tests for zero-coverage files | CLI | Unvalidated code | 2h | Backlog | ✅ Creado |
-| **GAP-006** | Document auto-fix in architecture | Docs | Missing documentation | 2h | Backlog | ✅ Creado |
+| ID | Título | Componente | Impacto | Esfuerzo | Size | GitHub Project |
+|----|--------|------------|---------|----------|------|----------------|
+| **GAP-003** | Raise statement coverage to 80% | CLI | Quality gate failure | 8h | L | ✅ Creado |
+| **GAP-004** | Raise branch coverage to 67% | CLI | Quality gate failure | 6h | M | ✅ Creado |
+| **GAP-005** | Add tests for zero-coverage files | CLI | Unvalidated code | 2h | S | ✅ Creado |
+| **GAP-006** | Document auto-fix in architecture | Docs | Missing documentation | 2h | S | ✅ Creado |
+
+**Orden:** P1 primero, luego por esfuerzo ascendente (S → M → L)
 
 ### P2 - Medio (Technical Debt) - 5 items, 16 horas
 
-| ID | Título | Componente | Impacto | Esfuerzo | Estado | GitHub Project |
-|----|--------|------------|---------|----------|--------|----------------|
-| **GAP-007** | Remove emoji from documentation | Docs | Quality gate violation | 1h | Backlog | ✅ Creado |
-| **GAP-008** | Complete tool design principles | Docs | Incomplete standard | 4h | Backlog | ✅ Creado |
-| **GAP-009** | Complete MCP security guidelines | Docs | Security gap | 4h | Backlog | ✅ Creado |
-| **GAP-010** | Audit BFF documentation coherence | BFF | Potential drift | 4h | Backlog | ✅ Creado |
-| **GAP-011** | Fix WizardService implementation drift | CLI | Architecture drift | 3h | Backlog | ✅ Creado |
+| ID | Título | Componente | Impacto | Esfuerzo | Size | GitHub Project |
+|----|--------|------------|---------|----------|------|----------------|
+| **GAP-007** | Remove emoji from documentation | Docs | Quality gate violation | 1h | XS | ✅ Creado |
+| **GAP-008** | Complete tool design principles | Docs | Incomplete standard | 4h | M | ✅ Creado |
+| **GAP-009** | Complete MCP security guidelines | Docs | Security gap | 4h | M | ✅ Creado |
+| **GAP-010** | Audit BFF documentation coherence | BFF | Potential drift | 4h | M | ✅ Creado |
+| **GAP-011** | Fix WizardService implementation drift | CLI | Architecture drift | 3h | S | ✅ Creado |
+
+**Orden:** P2 primero, luego por esfuerzo ascendente (XS → S → M)
 
 ---
 
@@ -40,23 +46,50 @@
 
 ### Should-Do (High Value) - 5 items, 26 horas
 
-| ID | Título | Componente | Valor | Esfuerzo | Estado | GitHub Project |
-|----|--------|------------|-------|----------|--------|----------------|
-| **OPP-001** | Implement auto-fix domain strategies | CLI | Complete GT-115 vision | 8h | Backlog | ✅ Creado |
-| **OPP-002** | Add MCP distributed tracing | CLI | Observability | 6h | Backlog | ✅ Creado |
-| **OPP-003** | Eliminate test console noise | CLI | Developer experience | 2h | Backlog | ✅ Creado |
-| **OPP-004** | Optimize pre-commit validation | Platform | Developer experience | 4h | Backlog | ✅ Creado |
-| **OPP-005** | Add MCP metrics dashboard | CLI | Observability | 6h | Backlog | ✅ Creado |
+| ID | Título | Componente | Valor | Esfuerzo | Size | GitHub Project |
+|----|--------|------------|-------|----------|------|----------------|
+| **OPP-003** | Eliminate test console noise | CLI | Developer experience | 2h | S | ✅ Creado |
+| **OPP-009** | Generate HTML coverage reports | CLI | Better visibility | 2h | S | ✅ Creado |
+| **OPP-010** | Add confirmation timeout config | CLI | Better UX | 2h | S | ✅ Creado |
+| **OPP-004** | Optimize pre-commit validation | Platform | Developer experience | 4h | M | ✅ Creado |
+| **OPP-002** | Add MCP distributed tracing | CLI | Observability | 6h | M | ✅ Creado |
+| **OPP-005** | Add MCP metrics dashboard | CLI | Observability | 6h | M | ✅ Creado |
+| **OPP-001** | Implement auto-fix domain strategies | CLI | Complete GT-115 vision | 8h | L | ✅ Creado |
+
+**Orden:** Por esfuerzo ascendente (S → M → L) para facilitar quick wins
 
 ### Could-Do (Medium Value) - 5 items, 24 horas
 
-| ID | Título | Componente | Valor | Esfuerzo | Estado | GitHub Project |
-|----|--------|------------|-------|----------|--------|----------------|
-| **OPP-006** | Expand auto-fix strategies (6+) | CLI | More automation | 12h | Backlog | ✅ Creado |
-| **OPP-007** | Add wizard validation steps | CLI | Better UX | 4h | Backlog | ✅ Creado |
-| **OPP-008** | Parallelize test execution | CLI | Faster CI | 4h | Backlog | ✅ Creado |
-| **OPP-009** | Generate HTML coverage reports | CLI | Better visibility | 2h | Backlog | ✅ Creado |
-| **OPP-010** | Add confirmation timeout config | CLI | Better UX | 2h | Backlog | ✅ Creado |
+| ID | Título | Componente | Valor | Esfuerzo | Size | GitHub Project |
+|----|--------|------------|-------|----------|------|----------------|
+| **OPP-008** | Parallelize test execution | CLI | Faster CI | 4h | M | ✅ Creado |
+| **OPP-007** | Add wizard validation steps | CLI | Better UX | 4h | M | ✅ Creado |
+| **OPP-006** | Expand auto-fix strategies (6+) | CLI | More automation | 12h | XL | ✅ Creado |
+
+**Orden:** Por esfuerzo ascendente (M → XL)
+
+---
+
+## Criterios de Ordenamiento
+
+Los items están ordenados por:
+
+1. **Prioridad** (P0 → P1 → P2 → Should-Do → Could-Do)
+2. **Complejidad/Esfuerzo** ascendente dentro de cada prioridad (XS → S → M → L → XL)
+
+**Size Mapping:**
+- XS: ≤1h
+- S: 2-3h
+- M: 4-6h
+- L: 7-10h
+- XL: ≥11h
+
+**GitHub Project Fields:**
+- ✅ Status: Backlog (todos los items)
+- ✅ Size: Configurado según esfuerzo estimado
+- ⚠️ Priority: Campo existe pero requiere configuración de opciones (P0/P1/P2)
+
+---
 
 ### Won't-Do (Low Priority / Archive) - 3 items
 

@@ -1037,7 +1037,16 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Gap:** Los flujos de setup complejos no tienen modo interactivo guiado (originalmente `GAP-014`).
 - **Propósito:** Guiar a los usuarios en flujos complejos con prompts interactivos.
 - **Criterio de cierre:**
-  - [ ] al menos un flujo complejo ofrece un asistente interactivo guiado
+  - [x] al menos un flujo complejo ofrece un asistente interactivo guiado
+- **Cerrado por:** `sdk/cli/src/infrastructure/prompts/wizard.service.ts`, `sdk/cli/src/infrastructure/prompts/wizard.service.spec.ts`, `sdk/cli/src/commands/init/init.wizard.ts`, `sdk/cli/test/wizard.e2e-spec.ts`, `sdk/cli/src/app.module.ts`
+- **Evidencia de cierre:**
+  - `closedAt`: 2026-06-16
+  - `closureCommit`: pending
+  - `evidence`: `WizardService` proporciona asistentes interactivos multi-paso con navegación (atrás/adelante/cancelar), resumen de revisión y modo `--no-interactive` para CI; comando `init-wizard` demuestra flujo completo
+  - `validationCommands`:
+    - `npx jest --config sdk/cli/jest.config.js --testPathPatterns="wizard"` — tests unitarios pasan
+    - `npx jest --config sdk/cli/test/jest-e2e.json --testPathPatterns="wizard"` — tests E2E pasan
+  - `dependencyDisposition`: none
 - **Referencias:** Backlog del CLI de Evolith `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-014`)
 
 #### GT-108

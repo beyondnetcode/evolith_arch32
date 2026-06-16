@@ -1038,7 +1038,16 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Gap:** Complex setup flows have no guided interactive mode (originally `GAP-014`).
 - **Purpose:** Guide users through complex flows with interactive prompts.
 - **Done when:**
-  - [ ] at least one complex flow offers a guided interactive wizard
+  - [x] at least one complex flow offers a guided interactive wizard
+- **Closed by:** `sdk/cli/src/infrastructure/prompts/wizard.service.ts`, `sdk/cli/src/infrastructure/prompts/wizard.service.spec.ts`, `sdk/cli/src/commands/init/init.wizard.ts`, `sdk/cli/test/wizard.e2e-spec.ts`, `sdk/cli/src/app.module.ts`
+- **Closure evidence:**
+  - `closedAt`: 2026-06-16
+  - `closureCommit`: pending
+  - `evidence`: `WizardService` provides multi-step interactive wizards with navigation (back/next/cancel), summary review, and `--no-interactive` mode for CI; `init-wizard` command demonstrates full wizard flow
+  - `validationCommands`:
+    - `npx jest --config sdk/cli/jest.config.js --testPathPatterns="wizard"` — unit tests pass
+    - `npx jest --config sdk/cli/test/jest-e2e.json --testPathPatterns="wizard"` — E2E tests pass
+  - `dependencyDisposition`: none
 - **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-014`)
 
 #### GT-108

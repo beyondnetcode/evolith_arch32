@@ -35,7 +35,9 @@ import { PhaseGateValidatorService } from '@evolith/core-domain/application/vali
 import { ProposePhaseAdvanceUseCase } from '@evolith/core-domain/application/use-cases/propose-phase-advance.use-case';
 import { RulesetValidatorService } from '@evolith/core-domain/application/validators/ruleset-validator.service';
 import { PromptService } from './infrastructure/prompts/prompt.service';
+import { WizardService } from './infrastructure/prompts/wizard.service';
 import { CatalogLoader } from './infrastructure/catalog/catalog-loader';
+import { InitWizardCommand } from './commands/init/init.wizard';
 import { WebhookAdapter } from './infrastructure/adapters/webhook.adapter';
 import { NodeFileSystemProvider } from '@evolith/infra-providers';
 import { NestLoggerProvider } from '@evolith/infra-providers';
@@ -96,6 +98,8 @@ import { PluginModule } from './infrastructure/plugins/plugin.module';
       inject: ['IFileSystem', 'ILogger', 'IConfigParser'],
     },
     PromptService,
+    WizardService,
+    InitWizardCommand,
     CatalogLoader,
     {
       provide: 'IFileSystem',

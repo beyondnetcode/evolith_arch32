@@ -1341,6 +1341,23 @@
         "yarn info @evolith/smart-cli"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-107",
+      "closedAt": "2026-06-16",
+      "closureCommit": "4084db5e61f5f54e691de61c1ba8a169c0291663",
+      "evidence": [
+        "sdk/cli/src/infrastructure/prompts/wizard.service.ts",
+        "sdk/cli/src/infrastructure/prompts/wizard.service.spec.ts",
+        "sdk/cli/src/commands/init/init.wizard.ts",
+        "sdk/cli/test/wizard.e2e-spec.ts",
+        "sdk/cli/src/app.module.ts"
+      ],
+      "validationCommands": [
+        "npx jest --config sdk/cli/jest.config.js --testPathPatterns=\"wizard\"",
+        "npx jest --config sdk/cli/test/jest-e2e.json --testPathPatterns=\"wizard\""
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

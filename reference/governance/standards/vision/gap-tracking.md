@@ -15,7 +15,7 @@ This board is the single source of truth for gap priority and status. Select a g
 |---|---|:---:|:---:|:---:|:---:|:---:|
 | [`GT-110`](./gap-reference-catalog.md#gt-110) | Migrate ingress off the abandoned Kong OSS to Traefik/NGINX | `Platform` | Cross | P0 | L | `DONE` |
 | [`GT-112`](./gap-reference-catalog.md#gt-112) | Replace HashiCorp commercial binaries with OpenTofu + OpenBao | `Platform` | Cross | P0 | L | `DONE` |
-| [`GT-83`](./gap-reference-catalog.md#gt-83) | Unblock Tracker upstream dependencies (Core API, UMS JWKS, UMS Auth Graph) | `Tracker` | Cross | P0 | L | `PENDING` |
+| [`GT-83`](./gap-reference-catalog.md#gt-83) | Unblock Tracker upstream dependencies (Core API, UMS JWKS, UMS Auth Graph) | `Tracker` | Cross | P0 | L | `REVISION` |
 | [`GT-79`](./gap-reference-catalog.md#gt-79) | Restore the green CLI CI validation pipeline | `Governance` | Cross | P1 | S | `PENDING` |
 | [`GT-80`](./gap-reference-catalog.md#gt-80) | Type-check the CLI test suite | `CLI` | Cross | P1 | M | `PENDING` |
 | [`GT-97`](./gap-reference-catalog.md#gt-97) | Multiple CLI profiles | `CLI` | Cross | P1 | M | `PENDING` |

@@ -21,6 +21,7 @@ const PROJECT_NODE_ID = 'PVT_kwDOD5Ic284BaueG';
 const STATUS_FIELD_ID = 'PVTSSF_lADOD5Ic284BaueGzhVj8qs';
 const OPTION_DONE = '98236657';
 const OPTION_BACKLOG = 'f75ad846';
+const OPTION_REVISION = 'df73e18b'; // "In review"
 
 const SIZE_FIELD_ID = 'PVTSSF_lADOD5Ic284BaueGzhVj82U';
 const SIZE_OPTIONS = {
@@ -90,15 +91,21 @@ function processTrackingFile(filePath, isSpanish) {
           const ghItem = ghMap.get(gapId);
           
           if (ghItem) {
-            const isLocalDone = localStatus === (isSpanish ? 'COMPLETADO' : 'DONE');
+            const statusNorm = localStatus.toUpperCase();
+            const isLocalDone = statusNorm === 'DONE' || statusNorm === 'COMPLETADO';
+            const isLocalRevision = statusNorm === 'REVISION' || statusNorm === 'REVISIÓN';
             const isGhDone = ghItem.status === 'Done';
+            const isGhRevision = ghItem.status === 'In review';
             
             if (isLocalModified) {
               // Local wins. Update GH if necessary
               if (isLocalDone && !isGhDone) {
                 console.log(`📤 Pushing ${gapId} to Done on GitHub...`);
                 execSync(`gh project item-edit --id ${ghItem.id} --project-id ${PROJECT_NODE_ID} --field-id ${STATUS_FIELD_ID} --single-select-option-id ${OPTION_DONE}`);
-              } else if (!isLocalDone && isGhDone) {
+              } else if (isLocalRevision && !isGhRevision) {
+                console.log(`📤 Pushing ${gapId} to In review on GitHub...`);
+                execSync(`gh project item-edit --id ${ghItem.id} --project-id ${PROJECT_NODE_ID} --field-id ${STATUS_FIELD_ID} --single-select-option-id ${OPTION_REVISION}`);
+              } else if (!isLocalDone && !isLocalRevision && isGhDone) {
                 console.log(`📤 Pushing ${gapId} to Backlog on GitHub...`);
                 execSync(`gh project item-edit --id ${ghItem.id} --project-id ${PROJECT_NODE_ID} --field-id ${STATUS_FIELD_ID} --single-select-option-id ${OPTION_BACKLOG}`);
               }
@@ -117,7 +124,13 @@ function processTrackingFile(filePath, isSpanish) {
                 lines[i] = parts.join(' | ').replace(/^ \| /, '| ').replace(/ \| $/, ' |');
                 fileModified = true;
                 localStatus = isSpanish ? 'COMPLETADO' : 'DONE';
-              } else if (!isGhDone && isLocalDone) {
+              } else if (isGhRevision && !isLocalRevision) {
+                console.log(`📥 Pulling ${gapId} state from GitHub (Marking as REVISIÓN/REVISION)`);
+                parts[7] = isSpanish ? '`REVISIÓN`' : '`REVISION`';
+                lines[i] = parts.join(' | ').replace(/^ \| /, '| ').replace(/ \| $/, ' |');
+                fileModified = true;
+                localStatus = isSpanish ? 'REVISIÓN' : 'REVISION';
+              } else if (!isGhDone && !isGhRevision && isLocalDone) {
                 console.log(`📥 Pulling ${gapId} state from GitHub (Marking as PENDIENTE/PENDING)`);
                 parts[7] = isSpanish ? '`PENDIENTE`' : '`PENDING`';
                 lines[i] = parts.join(' | ').replace(/^ \| /, '| ').replace(/ \| $/, ' |');

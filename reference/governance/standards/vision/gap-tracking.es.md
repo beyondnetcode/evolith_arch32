@@ -15,7 +15,7 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 |---|---|:---:|:---:|:---:|:---:|:---:|
 | [`GT-110`](./gap-reference-catalog.es.md#gt-110) | Migrar el ingress del abandonado Kong OSS a Traefik/NGINX | `Platform` | Transversal | P0 | L | `COMPLETADO` |
 | [`GT-112`](./gap-reference-catalog.es.md#gt-112) | Reemplazar los binarios comerciales de HashiCorp con OpenTofu + OpenBao | `Platform` | Transversal | P0 | L | `COMPLETADO` |
-| [`GT-83`](./gap-reference-catalog.es.md#gt-83) | Desbloquear dependencias upstream del Tracker (Core API, UMS JWKS, UMS Auth Graph) | `Tracker` | Transversal | P0 | L | `PENDIENTE` |
+| [`GT-83`](./gap-reference-catalog.es.md#gt-83) | Desbloquear dependencias upstream del Tracker (Core API, UMS JWKS, UMS Auth Graph) | `Tracker` | Transversal | P0 | L | `REVISIÓN` |
 | [`GT-79`](./gap-reference-catalog.es.md#gt-79) | Restaurar el pipeline de validación de CI del CLI en verde | `Governance` | Transversal | P1 | S | `PENDIENTE` |
 | [`GT-80`](./gap-reference-catalog.es.md#gt-80) | Type-check de la suite de tests del CLI | `CLI` | Transversal | P1 | M | `PENDIENTE` |
 | [`GT-97`](./gap-reference-catalog.es.md#gt-97) | Múltiples perfiles del CLI | `CLI` | Transversal | P1 | M | `PENDIENTE` |

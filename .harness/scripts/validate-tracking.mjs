@@ -23,6 +23,8 @@ const STATUS_MAP = new Map([
   ['IN-PROGRESS', 'in-progress'],
   ['EN-PROGRESO', 'in-progress'],
   ['EN PROGRESO', 'in-progress'],
+  ['REVISION', 'pending'],
+  ['REVISIÓN', 'pending'],
 ]);
 
 const DEPENDENCY_DISPOSITIONS = new Set([

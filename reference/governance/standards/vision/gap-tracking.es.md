@@ -15,16 +15,10 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 |---|---|:---:|:---:|:---:|:---:|:---:|
 | [`GT-110`](./gap-reference-catalog.es.md#gt-110) | Migrar el ingress del abandonado Kong OSS a Traefik/NGINX | `Platform` | Transversal | P0 | L | `COMPLETADO` |
 | [`GT-112`](./gap-reference-catalog.es.md#gt-112) | Reemplazar los binarios comerciales de HashiCorp con OpenTofu + OpenBao | `Platform` | Transversal | P0 | L | `COMPLETADO` |
-| [`GT-83`](./gap-reference-catalog.es.md#gt-83) | Desbloquear dependencias upstream del Tracker (Core API, UMS JWKS, UMS Auth Graph) | `Tracker` | Transversal | P0 | L | `REVISIÓN` |
 | [`GT-79`](./gap-reference-catalog.es.md#gt-79) | Restaurar el pipeline de validación de CI del CLI en verde | `Governance` | Transversal | P1 | S | `COMPLETADO` |
 | [`GT-80`](./gap-reference-catalog.es.md#gt-80) | Type-check de la suite de tests del CLI | `CLI` | Transversal | P1 | M | `COMPLETADO` |
 | [`GT-97`](./gap-reference-catalog.es.md#gt-97) | Múltiples perfiles del CLI | `CLI` | Transversal | P1 | M | `COMPLETADO` |
 | [`GT-111`](./gap-reference-catalog.es.md#gt-111) | Planificar el giro comercial de MassTransit v9 (quedarse en v8 OSS o migrar a Rebus) | `Platform` | Transversal | P1 | L | `COMPLETADO` |
-| [`GT-85`](./gap-reference-catalog.es.md#gt-85) | Arquitectura de plugins para el workflow engine del Tracker | `Tracker` | Transversal | P1 | L | `COMPLETADO` |
-| [`GT-86`](./gap-reference-catalog.es.md#gt-86) | Aggregate roots con event sourcing | `Tracker` | Transversal | P1 | L | `DIFERIDO` |
-| [`GT-90`](./gap-reference-catalog.es.md#gt-90) | CQRS con proyecciones de read-model | `Tracker` | Transversal | P1 | L | `REVISIÓN` |
-| [`GT-94`](./gap-reference-catalog.es.md#gt-94) | DSL de workflow / editor visual | `Tracker` | Transversal | P1 | L | `PENDIENTE` |
-| [`GT-95`](./gap-reference-catalog.es.md#gt-95) | Aislamiento multi-tenant con shared kernel (PostgreSQL RLS) | `Tracker` | Transversal | P1 | L | `PENDIENTE` |
 | [`GT-98`](./gap-reference-catalog.es.md#gt-98) | Sistema de extensiones/plugins del CLI | `CLI` | Transversal | P1 | L | `PENDIENTE` |
 | [`GT-99`](./gap-reference-catalog.es.md#gt-99) | Autenticación SSO/SAML del CLI | `CLI` | Transversal | P1 | L | `PENDIENTE` |
 | [`GT-103`](./gap-reference-catalog.es.md#gt-103) | Profundidad de subcomandos del CLI | `CLI` | Transversal | P2 | S | `PENDIENTE` |
@@ -33,24 +27,16 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-108`](./gap-reference-catalog.es.md#gt-108) | Fixtures/datos de prueba del CLI | `CLI` | Transversal | P2 | S | `PENDIENTE` |
 | [`GT-109`](./gap-reference-catalog.es.md#gt-109) | Integración de shell del CLI | `CLI` | Transversal | P2 | S | `PENDIENTE` |
 | [`GT-82`](./gap-reference-catalog.es.md#gt-82) | Revivir o eliminar el spec muerto de gate-status | `CLI` | Transversal | P2 | S | `PENDIENTE` |
-| [`GT-91`](./gap-reference-catalog.es.md#gt-91) | Contract testing con Pact (BFF↔Core) | `Tracker` | Transversal | P2 | S | `PENDIENTE` |
-| [`GT-92`](./gap-reference-catalog.es.md#gt-92) | ADRs como código con CLI de cumplimiento | `Tracker` | Transversal | P2 | S | `PENDIENTE` |
 | [`GT-100`](./gap-reference-catalog.es.md#gt-100) | Navegador/explorador de API del CLI | `CLI` | Transversal | P2 | M | `PENDIENTE` |
 | [`GT-101`](./gap-reference-catalog.es.md#gt-101) | Mecanismo de auto-actualización del CLI | `CLI` | Transversal | P2 | M | `PENDIENTE` |
 | [`GT-102`](./gap-reference-catalog.es.md#gt-102) | Progreso/streaming en tiempo real del CLI | `CLI` | Transversal | P2 | M | `PENDIENTE` |
 | [`GT-104`](./gap-reference-catalog.es.md#gt-104) | Distribución por gestor de paquetes del CLI | `CLI` | Transversal | P2 | M | `PENDIENTE` |
 | [`GT-107`](./gap-reference-catalog.es.md#gt-107) | Asistentes interactivos del CLI | `CLI` | Transversal | P2 | M | `PENDIENTE` |
 | [`GT-81`](./gap-reference-catalog.es.md#gt-81) | Subir la cobertura de branches del CLI al piso de statements | `CLI` | F0 | P2 | M | `PENDIENTE` |
-| [`GT-87`](./gap-reference-catalog.es.md#gt-87) | Federación GraphQL sobre REST | `Tracker` | Transversal | P2 | M | `PENDIENTE` |
-| [`GT-88`](./gap-reference-catalog.es.md#gt-88) | Feature flags como objetos de dominio de primera clase | `Tracker` | Transversal | P2 | M | `PENDIENTE` |
-| [`GT-89`](./gap-reference-catalog.es.md#gt-89) | Motor dinámico de formularios/esquemas | `Tracker` | Transversal | P2 | M | `PENDIENTE` |
-| [`GT-93`](./gap-reference-catalog.es.md#gt-93) | Observabilidad incorporada (OTel BFF→Core→integraciones) | `Tracker` | Transversal | P2 | M | `PENDIENTE` |
-| [`GT-96`](./gap-reference-catalog.es.md#gt-96) | Sincronización en tiempo real vía WebSockets/SSE | `Tracker` | Transversal | P2 | M | `PENDIENTE` |
 | [`GT-113`](./gap-reference-catalog.es.md#gt-113) | Purificación de Clean Architecture en core-domain | `Core Domain` | Transversal | P1 | M | `COMPLETADO` |
 | [`GT-114`](./gap-reference-catalog.es.md#gt-114) | Human-in-the-Loop para Herramientas Mutativas MCP | `CLI` | Transversal | P1 | M | `PENDIENTE` |
 | [`GT-115`](./gap-reference-catalog.es.md#gt-115) | Auto-fix de fallas arquitectónicas vía herramientas MCP | `CLI` | Transversal | P2 | L | `PENDIENTE` |
 | [`GT-116`](./gap-reference-catalog.es.md#gt-116) | Eliminación de operaciones bloqueantes de I/O en la CLI | `CLI` | Transversal | P2 | M | `PENDIENTE` |
-| [`GT-84`](./gap-reference-catalog.es.md#gt-84) | Extraer AuditTrail como shared kernel | `Tracker` | Transversal | P1 | L | `DIFERIDO` |
 | [`GT-59`](./gap-reference-catalog.es.md#gt-59) | Hardening HTTP — Helmet + CORS + Rate Limiting (OWASP API4/8) | `BFF API` | Transversal | P0 | S | `COMPLETADO` |
 | [`GT-60`](./gap-reference-catalog.es.md#gt-60) | Validación global de DTOs con class-validator (OWASP API3) | `BFF API` | Transversal | P0 | M | `COMPLETADO` |
 | [`GT-64`](./gap-reference-catalog.es.md#gt-64) | Logging estructurado con Correlation ID | `BFF API` | Transversal | P0 | M | `COMPLETADO` |
@@ -122,7 +108,7 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-25`](./gap-reference-catalog.es.md#gt-25) | Primeros perfiles de proveedor | `Governance` | Transversal | P2 | L | `COMPLETADO` |
 | [`GT-23`](./gap-reference-catalog.es.md#gt-23) | Backfill de traducciones españolas | `Governance` | Transversal | P2 | L | `COMPLETADO` |
 
-**Progreso:** 78 / 108 completados · 0 en progreso · 28 pendientes · 2 diferidos
+**Progreso:** 77 / 94 completados · 0 en progreso · 17 pendientes · 0 diferidos
 
 **Ordenamiento:** una sola tabla, ordenada por estado (pendientes, luego diferidos, luego completados), luego criticidad (`P0` → `P1` → `P2`) y luego complejidad (`S` → `M` → `L`); los completados se agrupan por componente. Cada ID enlaza a su detalle en el [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md).
 

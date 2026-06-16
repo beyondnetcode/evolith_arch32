@@ -968,7 +968,16 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Gap:** Las operaciones largas no dan feedback de progreso en streaming (originalmente `GAP-009`).
 - **Propósito:** Hacer streaming del progreso de operaciones largas en vez de bloquear en silencio.
 - **Criterio de cierre:**
-  - [ ] los comandos de larga duración hacen streaming de eventos de progreso a la terminal
+  - [x] los comandos de larga duración hacen streaming de eventos de progreso a la terminal
+- **Cerrado por:** `sdk/cli/src/infrastructure/prompts/progress.service.ts`, `sdk/cli/src/infrastructure/prompts/progress.service.spec.ts`, `sdk/cli/test/progress.e2e-spec.ts`
+- **Evidencia de cierre:**
+  - `closedAt`: 2026-06-16
+  - `closureCommit`: pending
+  - `evidence`: `ProgressService` proporciona barras de progreso en tiempo real y streaming para operaciones largas del CLI; soporta modo `--quiet` y entornos CI/non-TTY
+  - `validationCommands`:
+    - `npx jest --config sdk/cli/jest.config.js --testPathPatterns="progress"` — tests unitarios pasan
+    - `npx jest --config sdk/cli/test/jest-e2e.json --testPathPatterns="progress"` — tests E2E pasan
+  - `dependencyDisposition`: none
 - **Referencias:** Backlog del CLI de Evolith `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-009`)
 
 #### GT-103

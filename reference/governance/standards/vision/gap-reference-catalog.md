@@ -969,7 +969,16 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Gap:** Long-running operations give no streamed progress feedback (originally `GAP-009`).
 - **Purpose:** Stream progress for long operations instead of blocking silently.
 - **Done when:**
-  - [ ] long-running commands stream progress events to the terminal
+  - [x] long-running commands stream progress events to the terminal
+- **Closed by:** `sdk/cli/src/infrastructure/prompts/progress.service.ts`, `sdk/cli/src/infrastructure/prompts/progress.service.spec.ts`, `sdk/cli/test/progress.e2e-spec.ts`
+- **Closure evidence:**
+  - `closedAt`: 2026-06-16
+  - `closureCommit`: pending
+  - `evidence`: `ProgressService` provides real-time progress bars and streaming for long-running CLI operations; supports `--quiet` mode and CI/non-TTY environments
+  - `validationCommands`:
+    - `npx jest --config sdk/cli/jest.config.js --testPathPatterns="progress"` — unit tests pass
+    - `npx jest --config sdk/cli/test/jest-e2e.json --testPathPatterns="progress"` — E2E tests pass
+  - `dependencyDisposition`: none
 - **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-009`)
 
 #### GT-103

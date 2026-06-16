@@ -1310,6 +1310,21 @@
         "npx jest --config sdk/cli/test/jest-e2e.json --testPathPatterns=\"mcp-confirmation\""
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-102",
+      "closedAt": "2026-06-16",
+      "closureCommit": "94308575101b1ecd1bd571026003d9b1b276a7e7",
+      "evidence": [
+        "sdk/cli/src/infrastructure/prompts/progress.service.ts",
+        "sdk/cli/src/infrastructure/prompts/progress.service.spec.ts",
+        "sdk/cli/test/progress.e2e-spec.ts"
+      ],
+      "validationCommands": [
+        "npx jest --config sdk/cli/jest.config.js --testPathPatterns=\"progress\"",
+        "npx jest --config sdk/cli/test/jest-e2e.json --testPathPatterns=\"progress\""
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

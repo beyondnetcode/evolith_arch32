@@ -54,7 +54,7 @@ jest.mock('../../infrastructure/catalog/catalog-loader', () => ({
   })),
 }));
 
-jest.mock('../../application/services', () => ({
+jest.mock('@evolith/core-domain/application/services', () => ({
   InitializeProjectUseCase: jest.fn().mockImplementation(() => ({
     execute: jest.fn(),
   })),

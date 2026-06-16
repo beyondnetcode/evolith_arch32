@@ -17,7 +17,7 @@ jest.mock('./structured-logger', () => ({
   },
 }));
 
-jest.mock('../../domain/errors', () => ({
+jest.mock('@evolith/core-domain/domain/errors', () => ({
   isEvolithError: jest.fn(() => false),
   getErrorContext: jest.fn(),
   getErrorCode: jest.fn(),

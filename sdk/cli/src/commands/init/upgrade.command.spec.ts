@@ -1,6 +1,6 @@
 import { UpgradeCommand } from './upgrade.command';
 
-jest.mock('../../application/upgrade/satellite-upgrade.service', () => ({
+jest.mock('@evolith/core-domain/application/upgrade/satellite-upgrade.service', () => ({
   SatelliteUpgradeService: jest.fn().mockImplementation(() => ({
     planUpgrade: jest.fn(),
     executeUpgrade: jest.fn(),

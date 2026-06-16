@@ -61,7 +61,20 @@ export class EvolithMcpServer {
     this.apiKey = apiKey;
     this.stdin = stdin;
     this.stdout = stdout;
-    this.rulesetValidator = rulesetValidator || new RulesetValidatorService();
+    if (!rulesetValidator) {
+      const fs = this.fileSystem || new NodeFileSystemProvider().createFileSystem();
+      const cp = this.configParser || new YamlConfigParserProvider().createConfigParser('yaml');
+      const { DiskRulesetRepository } = require('../adapters/disk-ruleset.repository');
+      const repo = new DiskRulesetRepository(fs, new Logger('DiskRulesetRepository'));
+      this.rulesetValidator = new RulesetValidatorService({
+        fileSystem: fs,
+        configParser: cp,
+        logger: new Logger('RulesetValidatorService'),
+        rulesetRepo: repo,
+      });
+    } else {
+      this.rulesetValidator = rulesetValidator;
+    }
     this.metricsService = metricsService || new McpMetricsService();
 
     this.server = new Server({

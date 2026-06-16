@@ -31,7 +31,16 @@ export function getValidateTools(fs: IFileSystem, configParser: IConfigParser): 
           return { error: true, message: 'path is required' };
         }
 
-        const validator = deps?.validator || new RulesetValidatorService();
+        const validator = deps?.validator || (() => {
+          const { DiskRulesetRepository } = require('../../adapters/disk-ruleset.repository');
+          const repo = new DiskRulesetRepository(fs, { warn: console.warn, log: console.log, info: console.log, debug: console.log });
+          return new RulesetValidatorService({
+            fileSystem: fs,
+            configParser,
+            logger: { warn: console.warn, log: console.log, info: console.log, debug: console.log },
+            rulesetRepo: repo,
+          });
+        })();
 
         if (ruleset) {
           const coreRepoPath = corePath || findCorePath(path);

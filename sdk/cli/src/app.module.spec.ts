@@ -8,7 +8,7 @@ import { UpgradeCommand } from './commands/init/upgrade.command';
 import { McpServeCommand } from './commands/mcp/mcp-serve.command';
 import { ConfigService } from './infrastructure/config/config.service';
 import { FileManagerService } from './infrastructure/filesystem/file-manager.service';
-import { SyncService } from './application/sync/sync.service';
+import { SyncService } from '@evolith/core-domain/application/sync/sync.service';
 import { WatcherService } from './infrastructure/mcp/watcher.service';
 import { SdlcCommand } from './commands/sdlc/sdlc.command';
 import { HandoffCommand } from './commands/sdlc/handoff.command';
@@ -84,7 +84,7 @@ jest.mock('./infrastructure/catalog/catalog-loader', () => ({
   })),
 }));
 
-jest.mock('./application/services', () => ({
+jest.mock('@evolith/core-domain/application/services', () => ({
   InitializeProjectUseCase: jest.fn().mockImplementation(() => ({
     execute: jest.fn(),
   })),

@@ -26,7 +26,7 @@ jest.mock('chalk', () => {
   return chalkFn;
 });
 
-jest.mock('../../application/validators/architecture-drift.service', () => ({
+jest.mock('@evolith/core-domain/application/validators/architecture-drift.service', () => ({
   ArchitectureDriftService: jest.fn().mockImplementation(() => ({
     detectDrift: jest.fn(),
     getDriftHistory: jest.fn(),

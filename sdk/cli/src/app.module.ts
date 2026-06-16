@@ -47,6 +47,10 @@ import { YamlConfigParserProvider } from '@evolith/infra-providers';
     ConfigService,
     FileManagerService,
     SyncService,
+    {
+      provide: 'IConfigService',
+      useExisting: ConfigService,
+    },
     WatcherService,
     SdlcCommand,
     HandoffCommand,
@@ -63,7 +67,19 @@ import { YamlConfigParserProvider } from '@evolith/infra-providers';
     ValidateSatelliteUseCase,
     EvaluateGateUseCase,
     ProposePhaseAdvanceUseCase,
-    RulesetValidatorService,
+    {
+      provide: RulesetValidatorService,
+      useFactory: (fs: any, logger: any, configParser: any) => {
+        const { DiskRulesetRepository } = require('./infrastructure/adapters/disk-ruleset.repository');
+        return new RulesetValidatorService({
+          fileSystem: fs,
+          logger,
+          configParser,
+          rulesetRepo: new DiskRulesetRepository(fs, logger),
+        });
+      },
+      inject: ['IFileSystem', 'ILogger', 'IConfigParser'],
+    },
     PromptService,
     CatalogLoader,
     {

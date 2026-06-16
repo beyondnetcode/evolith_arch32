@@ -1157,6 +1157,24 @@
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "The IWorkflowDefinition port and DefaultWorkflowDefinition allow tenants to inject custom workflows via the same interface — no engine source modification required."
+    },
+    {
+      "id": "GT-113",
+      "closedAt": "2026-06-15",
+      "closureCommit": "4dd76b5",
+      "evidence": [
+        "packages/core-domain/package.json",
+        "packages/core-domain/src/application/sync/sync.service.ts",
+        "packages/core-domain/src/domain/services/default-workflow-definition.ts",
+        "sdk/cli/jest.config.js",
+        "sdk/cli/src/app.module.ts"
+      ],
+      "validationCommands": [
+        "npm run build --workspace packages/core-domain",
+        "npm run build --workspace sdk/cli",
+        "npx jest"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

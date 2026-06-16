@@ -85,6 +85,6 @@ export function loadDefaultWorkflow(): DefaultWorkflowDefinition {
   const fs = require('fs');
   const path = require('path');
   const yaml = require('yaml');
-  const content = fs.readFileSync(path.join(__dirname, '../../../../rulesets/sdlc/default-workflow.yaml'), 'utf-8');
+  const content = fs.readFileSync(path.join(__dirname, '../../../../../rulesets/sdlc/default-workflow.yaml'), 'utf-8');
   return new DefaultWorkflowDefinition(yaml.parse(content));
 }

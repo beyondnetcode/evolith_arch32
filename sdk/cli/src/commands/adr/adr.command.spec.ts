@@ -43,7 +43,7 @@ jest.mock('../../infrastructure/observability', () => ({
   })),
 }));
 
-jest.mock('../../domain/services/adr.service', () => ({
+jest.mock('@evolith/core-domain/domain/services/adr.service', () => ({
   ADRService: jest.fn().mockImplementation(() => ({
     create: jest.fn(),
     list: jest.fn(),

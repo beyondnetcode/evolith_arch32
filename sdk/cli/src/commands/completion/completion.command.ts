@@ -7,11 +7,13 @@ import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 interface CompletionCommandOptions {
   install?: string;
   shell?: string;
+  hooks?: boolean;
+  installHooks?: string;
 }
 
 @Command({
   name: 'completion',
-  description: 'Generate shell completion scripts for evolith CLI',
+  description: 'Generate shell completion scripts and hooks for evolith CLI',
 })
 export class CompletionCommand extends BaseEvolithCommand {
   private readonly completed = chalk.green('✓');
@@ -23,6 +25,16 @@ export class CompletionCommand extends BaseEvolithCommand {
 
   async executeCommand(passedParam: string[], options?: CompletionCommandOptions): Promise<void> {
     const shell = options?.shell || this.detectShell();
+
+    if (options?.installHooks) {
+      await this.installHooks(options.installHooks);
+      return;
+    }
+
+    if (options?.hooks) {
+      await this.showShellHooks(shell);
+      return;
+    }
 
     if (options?.install) {
       await this.installCompletion(options.install);
@@ -137,28 +149,108 @@ export class CompletionCommand extends BaseEvolithCommand {
     this.promptService.showInfo('  Reload shell or run: fish -l');
   }
 
+  private async showShellHooks(shell: string): Promise<void> {
+    const hooksFile = await this.getHooksFilePath(shell);
+    if (!hooksFile) {
+      this.promptService.showError(`${this.error} Unknown shell: ${shell}`);
+      return;
+    }
+    const content = await fs.readFile(hooksFile, 'utf-8');
+    console.log(content);
+  }
+
+  private async installHooks(shell: string): Promise<void> {
+    const hooksFile = await this.getHooksFilePath(shell);
+    if (!hooksFile) {
+      this.promptService.showError(`${this.error} Unknown shell: ${shell}`);
+      this.promptService.showInfo('Supported shells: bash, zsh, fish');
+      return;
+    }
+
+    const marker = '# Evolith CLI hooks';
+
+    switch (shell) {
+      case 'bash': {
+        const targetFile = hooksFile;
+        const bashrc = path.join(process.env.HOME || '/root', '.bashrc');
+        const line = `source "${targetFile}"`;
+        let bashrcContent = await fs.readFile(bashrc, 'utf-8').catch(() => '');
+        if (!bashrcContent.includes(marker)) {
+          await fs.appendFile(bashrc, `\n${marker}\n${line}\n`);
+        }
+        this.promptService.showSuccess(`${this.completed} Bash hooks installed`);
+        this.promptService.showInfo(`  Run: source ${targetFile}`);
+        return;
+      }
+      case 'zsh': {
+        const targetFile = hooksFile;
+        const zshrc = path.join(process.env.HOME || '/root', '.zshrc');
+        const line = `source "${targetFile}"`;
+        let zshrcContent = await fs.readFile(zshrc, 'utf-8').catch(() => '');
+        if (!zshrcContent.includes(marker)) {
+          await fs.appendFile(zshrc, `\n${marker}\n${line}\n`);
+        }
+        this.promptService.showSuccess(`${this.completed} Zsh hooks installed`);
+        this.promptService.showInfo(`  Run: source ${targetFile}`);
+        return;
+      }
+      case 'fish': {
+        const targetDir = path.join(process.env.HOME || '/root', '.config', 'fish', 'functions');
+        await fs.ensureDir(targetDir);
+        const targetFile = path.join(targetDir, 'evolith_hooks.fish');
+        await fs.copy(hooksFile, targetFile);
+        this.promptService.showSuccess(`${this.completed} Fish hooks installed`);
+        this.promptService.showInfo(`  Available functions: evolith_status, evolith_phase, evolith_gate`);
+        return;
+      }
+    }
+  }
+
+  private async getHooksFilePath(shell: string): Promise<string | null> {
+    const cliPath = await this.findCliPath();
+    const shellDir = path.join(path.dirname(cliPath), '..', 'shell');
+
+    switch (shell) {
+      case 'bash':
+        return path.join(shellDir, 'hooks.bash');
+      case 'zsh':
+        return path.join(shellDir, 'hooks.zsh');
+      case 'fish':
+        return path.join(shellDir, 'hooks.fish');
+      default:
+        return null;
+    }
+  }
+
   private async showCompletionHelp(shell: string): Promise<void> {
     this.promptService.showIntro('Evolith CLI - Shell Completion');
-    this.promptService.showInfo('This command generates shell completion scripts for better UX.\n');
+    this.promptService.showInfo('This command generates shell completion scripts and hooks for better UX.\n');
 
     this.promptService.showInfo(chalk.bold('Usage:'));
     this.promptService.showInfo('  evolith completion --install <shell>    Install completion for shell');
-    this.promptService.showInfo('  evolith completion --shell <shell>      Show completion for shell\n');
+    this.promptService.showInfo('  evolith completion --hooks             Generate shell hook functions');
+    this.promptService.showInfo('  evolith completion --install-hooks <shell>   Install hooks for shell\n');
 
     this.promptService.showInfo(chalk.bold('Supported shells:'));
     this.promptService.showInfo('  bash    - Bash (add to ~/.bashrc)');
     this.promptService.showInfo('  zsh     - Zsh (add to ~/.zshrc)');
-    this.promptService.showInfo('  fish    - Fish (copy to completions dir)\n');
+    this.promptService.showInfo('  fish    - Fish (copy to functions dir)\n');
+
+    this.promptService.showInfo(chalk.bold('Hook functions available:'));
+    this.promptService.showInfo('  evolith_status   - Check if in evolith project');
+    this.promptService.showInfo('  evolith_phase    - Get current SDLC phase');
+    this.promptService.showInfo('  evolith_gate     - Get gate status');
+    this.promptService.showInfo('  evolith_validate - Get last validation result');
+    this.promptService.showInfo('  evolith_prompt   - Get prompt segment\n');
 
     this.promptService.showInfo(chalk.bold('Examples:'));
     this.promptService.showInfo('  # Install bash completion');
     this.promptService.showInfo('  evolith completion --install bash');
     this.promptService.showInfo('');
-    this.promptService.showInfo('  # Install zsh completion');
-    this.promptService.showInfo('  evolith completion --install zsh');
-    this.promptService.showInfo('');
-    this.promptService.showInfo('  # Install fish completion');
-    this.promptService.showInfo('  evolith completion --install fish\n');
+    this.promptService.showInfo('  # Generate and install shell hooks');
+    this.promptService.showInfo('  evolith completion --install-hooks bash');
+    this.promptService.showInfo('  # Or just show hooks');
+    this.promptService.showInfo('  evolith completion --hooks\n');
 
     this.promptService.showInfo(chalk.bold(`Detected shell: ${shell}`));
     this.promptService.showInfo('');
@@ -183,6 +275,22 @@ export class CompletionCommand extends BaseEvolithCommand {
     description: 'Generate completion for specified shell',
   })
   parseShell(val: string): string {
+    return val;
+  }
+
+  @Option({
+    flags: '--hooks',
+    description: 'Generate shell hook functions for context/status',
+  })
+  parseHooks(): boolean {
+    return true;
+  }
+
+  @Option({
+    flags: '--install-hooks <shell>',
+    description: 'Install hooks for specified shell (bash, zsh, fish)',
+  })
+  parseInstallHooks(val: string): string {
     return val;
   }
 }

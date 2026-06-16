@@ -1231,6 +1231,24 @@
         "npx jest --config sdk/cli/test/jest-e2e.json --testPathPatterns=fixtures"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-109",
+      "closedAt": "2026-06-16",
+      "closureCommit": "abb39bb8648d06d95c67cd9f65b6e56c568723be",
+      "evidence": [
+        "sdk/cli/src/commands/completion/completion.command.ts",
+        "sdk/cli/shell/hooks.bash",
+        "sdk/cli/shell/hooks.zsh",
+        "sdk/cli/shell/hooks.fish",
+        "sdk/cli/src/commands/completion/completion.command.spec.ts",
+        "sdk/cli/test/completion.e2e-spec.ts"
+      ],
+      "validationCommands": [
+        "npm run build --workspace sdk/cli",
+        "node .harness/scripts/validate-docs.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

@@ -1036,7 +1036,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Gap:** Beyond completion, there is no deeper shell integration (prompts, hooks) (originally `GAP-016`).
 - **Purpose:** Improve shell integration for status, hooks, and context.
 - **Done when:**
-  - [ ] shell integration exposes context/status hooks for supported shells
+  - [x] shell integration exposes context/status hooks for supported shells
 - **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-016`)
 
 ### Component Platform — Consolidated from the Stack Audit

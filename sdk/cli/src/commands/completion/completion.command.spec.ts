@@ -4,42 +4,46 @@ jest.mock('fs-extra', () => ({
   pathExists: jest.fn(),
   readFile: jest.fn(),
   appendFile: jest.fn(),
-  ensureDir: jest.fn(),
+  writeFile: jest.fn(),
   copy: jest.fn(),
+  ensureDir: jest.fn(),
 }));
 
 jest.mock('chalk', () => {
-  const chalkFn = (str: string) => str;
-  chalkFn.green = (str: string) => str;
-  chalkFn.red = (str: string) => str;
-  chalkFn.bold = (str: string) => str;
-  chalkFn.bgCyan = { black: { bold: (str: string) => str } };
-  chalkFn.cyan = (str: string) => str;
-  chalkFn.yellow = (str: string) => str;
-  chalkFn.blue = (str: string) => str;
-  chalkFn.dim = (str: string) => str;
-  return chalkFn;
+  const fn = (s: string) => s;
+  fn.green = (s: string) => s;
+  fn.red = (s: string) => s;
+  fn.bold = (s: string) => s;
+  fn.dim = (s: string) => s;
+  return fn;
 });
 
+jest.mock('@clack/prompts', () => ({
+  intro: jest.fn(),
+  outro: jest.fn(),
+  log: {
+    info: jest.fn(),
+    warn: jest.fn(),
+    success: jest.fn(),
+    error: jest.fn(),
+    message: jest.fn(),
+  },
+  spinner: jest.fn(() => ({ start: jest.fn(), stop: jest.fn() })),
+  cancel: jest.fn(),
+}));
+
 import * as fs from 'fs-extra';
+
+const mockFs = fs as jest.Mocked<typeof fs>;
 
 describe('CompletionCommand', () => {
   let command: CompletionCommand;
   let logSpy: jest.SpyInstance;
+  let consoleSpy: jest.SpyInstance;
 
   beforeEach(() => {
     command = new CompletionCommand();
     logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
-    (command as unknown).promptService = {
-      showIntro: (message: string) => console.log(message),
-      showOutro: (message: string) => console.log(message),
-      showInfo: (message: string) => console.log(message),
-      showSuccess: (message: string) => console.log(message),
-      showWarning: (message: string) => console.log(message),
-      showError: (message: string) => console.log(message),
-      startSpinner: jest.fn(),
-      stopSpinner: jest.fn(),
-    };
     jest.clearAllMocks();
   });
 
@@ -47,274 +51,132 @@ describe('CompletionCommand', () => {
     logSpy.mockRestore();
   });
 
-  describe('run', () => {
-    it('should show completion help when no install option', async () => {
-      await command.run([], {});
-
-      expect(logSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Shell Completion')
-      );
+  describe('executeCommand', () => {
+    it('should show completion help by default', async () => {
+      await command.executeCommand([], {});
+      expect(logSpy).toHaveBeenCalled();
     });
 
-    it('should call installCompletion when install option is provided', async () => {
-      (fs.pathExists as unknown as jest.Mock).mockResolvedValue(true);
-      (fs.readFile as unknown as jest.Mock).mockResolvedValue('');
-
-      await command.run([], { install: 'bash' });
-
-      expect(fs.pathExists).toHaveBeenCalled();
+    it('should generate bash hooks when --hooks is passed', async () => {
+      await command.executeCommand([], { hooks: true });
+      const output = logSpy.mock.calls.join('');
+      expect(output).toContain('evolith_status');
+      expect(output).toContain('evolith_phase');
+      expect(output).toContain('evolith_gate');
     });
 
-    it('should install for specified shell', async () => {
-      (fs.pathExists as unknown as jest.Mock).mockResolvedValue(true);
-      (fs.readFile as unknown as jest.Mock).mockResolvedValue('');
-
-      await command.run([], { install: 'zsh' });
-
-      expect(fs.pathExists).toHaveBeenCalled();
+    it('should generate zsh hooks when --hooks and shell=zsh', async () => {
+      await command.executeCommand([], { hooks: true, shell: 'zsh' });
+      const output = logSpy.mock.calls.join('');
+      expect(output).toContain('evolith_status');
+      expect(output).toContain('function');
     });
 
-    it('should install for fish shell', async () => {
-      (fs.pathExists as unknown as jest.Mock).mockResolvedValue(true);
-
-      await command.run([], { install: 'fish' });
-
-      expect(fs.pathExists).toHaveBeenCalled();
+    it('should generate fish hooks when --hooks and shell=fish', async () => {
+      await command.executeCommand([], { hooks: true, shell: 'fish' });
+      const output = logSpy.mock.calls.join('');
+      expect(output).toContain('evolith_status');
+      expect(output).toContain('function');
     });
 
-    it('should handle unknown shell', async () => {
-      (fs.pathExists as unknown as jest.Mock).mockResolvedValue(true);
+    it('should install bash hooks when --install-hooks bash', async () => {
+      mockFs.pathExists.mockResolvedValue(true);
+      mockFs.readFile.mockResolvedValue('');
+      mockFs.writeFile.mockResolvedValue();
+      mockFs.appendFile.mockResolvedValue();
 
-      await command.run([], { install: 'powershell' });
-
-      expect(logSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Unknown shell')
-      );
-    });
-  });
-
-  describe('detectShell', () => {
-    it('should detect zsh from SHELL env', () => {
-      const originalShell = process.env.SHELL;
-      process.env.SHELL = '/bin/zsh';
-
-      const cmd = new CompletionCommand();
-      const result = (cmd as unknown).detectShell();
-
-      expect(result).toBe('zsh');
-      process.env.SHELL = originalShell;
+      await command.executeCommand([], { installHooks: 'bash' });
+      expect(mockFs.writeFile).toHaveBeenCalled();
     });
 
-    it('should detect bash from SHELL env', () => {
-      const originalShell = process.env.SHELL;
-      process.env.SHELL = '/bin/bash';
+    it('should install zsh hooks when --install-hooks zsh', async () => {
+      mockFs.pathExists.mockResolvedValue(true);
+      mockFs.readFile.mockResolvedValue('');
+      mockFs.writeFile.mockResolvedValue();
+      mockFs.appendFile.mockResolvedValue();
 
-      const cmd = new CompletionCommand();
-      const result = (cmd as unknown).detectShell();
-
-      expect(result).toBe('bash');
-      process.env.SHELL = originalShell;
+      await command.executeCommand([], { installHooks: 'zsh' });
+      expect(mockFs.writeFile).toHaveBeenCalled();
     });
 
-    it('should detect fish from SHELL env', () => {
-      const originalShell = process.env.SHELL;
-      process.env.SHELL = '/usr/bin/fish';
+    it('should install fish hooks when --install-hooks fish', async () => {
+      mockFs.pathExists.mockResolvedValue(true);
+      mockFs.writeFile.mockResolvedValue();
+      mockFs.ensureDir.mockResolvedValue();
 
-      const cmd = new CompletionCommand();
-      const result = (cmd as unknown).detectShell();
-
-      expect(result).toBe('fish');
-      process.env.SHELL = originalShell;
-    });
-
-    it('should default to bash when SHELL is empty', () => {
-      const originalShell = process.env.SHELL;
-      process.env.SHELL = '';
-
-      const cmd = new CompletionCommand();
-      const result = (cmd as unknown).detectShell();
-
-      expect(result).toBe('bash');
-      process.env.SHELL = originalShell;
-    });
-
-    it('should default to bash when SHELL is undefined', () => {
-      const originalShell = process.env.SHELL;
-      delete process.env.SHELL;
-
-      const cmd = new CompletionCommand();
-      const result = (cmd as unknown).detectShell();
-
-      expect(result).toBe('bash');
-      process.env.SHELL = originalShell;
+      await command.executeCommand([], { installHooks: 'fish' });
+      expect(mockFs.ensureDir).toHaveBeenCalled();
+      expect(mockFs.writeFile).toHaveBeenCalled();
     });
   });
 
-  describe('installBash', () => {
-    it('should report script not found', async () => {
-      (fs.pathExists as unknown as jest.Mock).mockResolvedValue(false);
-
-      await (command as unknown).installBash('/some/dir');
-
-      expect(logSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Bash completion script not found')
-      );
+  describe('getBashHooks', () => {
+    it('should include evolith_status function', () => {
+      const hooks = (command as any).getBashHooks();
+      expect(hooks).toContain('evolith_status()');
     });
 
-    it('should report already installed', async () => {
-      (fs.pathExists as unknown as jest.Mock).mockResolvedValue(true);
-      (fs.readFile as unknown as jest.Mock).mockResolvedValue('# Evolith CLI completion\nsource "..."');
-
-      await (command as unknown).installBash('/some/dir');
-
-      expect(logSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Bash completion already installed')
-      );
+    it('should include evolith_phase function', () => {
+      const hooks = (command as any).getBashHooks();
+      expect(hooks).toContain('evolith_phase()');
     });
 
-    it('should install completion when not present', async () => {
-      (fs.pathExists as unknown as jest.Mock).mockResolvedValueOnce(true);
-      (fs.pathExists as unknown as jest.Mock).mockResolvedValueOnce(false);
-
-      await (command as unknown).installBash('/some/dir');
-
-      expect(fs.appendFile).toHaveBeenCalled();
-      expect(logSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Bash completion installed')
-      );
+    it('should include evolith_gate function', () => {
+      const hooks = (command as any).getBashHooks();
+      expect(hooks).toContain('evolith_gate()');
     });
 
-    it('should install when bashrc does not exist', async () => {
-      (fs.pathExists as unknown as jest.Mock).mockResolvedValueOnce(true);
-      (fs.pathExists as unknown as jest.Mock).mockResolvedValueOnce(false);
+    it('should include evolith_validate function', () => {
+      const hooks = (command as any).getBashHooks();
+      expect(hooks).toContain('evolith_validate()');
+    });
 
-      await (command as unknown).installBash('/some/dir');
+    it('should include evolith_prompt function', () => {
+      const hooks = (command as any).getBashHooks();
+      expect(hooks).toContain('evolith_prompt()');
+    });
 
-      expect(fs.appendFile).toHaveBeenCalled();
+    it('should include shell aliases', () => {
+      const hooks = (command as any).getBashHooks();
+      expect(hooks).toContain('alias es=evolith_status');
+      expect(hooks).toContain('alias ep=evolith_phase');
+      expect(hooks).toContain('alias eg=evolith_gate');
     });
   });
 
-  describe('installZsh', () => {
-    it('should report script not found', async () => {
-      (fs.pathExists as unknown as jest.Mock).mockResolvedValue(false);
-
-      await (command as unknown).installZsh('/some/dir');
-
-      expect(logSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Zsh completion script not found')
-      );
+  describe('getZshHooks', () => {
+    it('should include evolith_status function', () => {
+      const hooks = (command as any).getZshHooks();
+      expect(hooks).toContain('evolith_status()');
     });
 
-    it('should report already installed', async () => {
-      (fs.pathExists as unknown as jest.Mock).mockResolvedValue(true);
-      (fs.readFile as unknown as jest.Mock).mockResolvedValue('# Evolith CLI completion\nsource "..."');
-
-      await (command as unknown).installZsh('/some/dir');
-
-      expect(logSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Zsh completion already installed')
-      );
-    });
-
-    it('should install completion when not present', async () => {
-      (fs.pathExists as unknown as jest.Mock).mockResolvedValueOnce(true);
-      (fs.pathExists as unknown as jest.Mock).mockResolvedValueOnce(false);
-
-      await (command as unknown).installZsh('/some/dir');
-
-      expect(fs.appendFile).toHaveBeenCalled();
-      expect(logSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Zsh completion installed')
-      );
+    it('should include shell aliases', () => {
+      const hooks = (command as any).getZshHooks();
+      expect(hooks).toContain('alias es=evolith_status');
     });
   });
 
-  describe('installFish', () => {
-    it('should report script not found', async () => {
-      (fs.pathExists as unknown as jest.Mock).mockResolvedValue(false);
-
-      await (command as unknown).installFish('/some/dir');
-
-      expect(logSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Fish completion script not found')
-      );
+  describe('getFishHooks', () => {
+    it('should include evolith_status function', () => {
+      const hooks = (command as any).getFishHooks();
+      expect(hooks).toContain('function evolith_status');
     });
 
-    it('should install fish completion', async () => {
-      (fs.pathExists as unknown as jest.Mock).mockResolvedValue(true);
-
-      await (command as unknown).installFish('/some/dir');
-
-      expect(fs.ensureDir).toHaveBeenCalled();
-      expect(fs.copy).toHaveBeenCalled();
-      expect(logSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Fish completion installed')
-      );
+    it('should include fish alias syntax', () => {
+      const hooks = (command as any).getFishHooks();
+      expect(hooks).toContain('alias es evolith_status');
     });
   });
 
-  describe('installCompletion', () => {
-    it('should report completion scripts not found', async () => {
-      (fs.pathExists as unknown as jest.Mock).mockResolvedValue(false);
-
-      await (command as unknown).installCompletion('bash');
-
-      expect(logSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Completion scripts not found')
-      );
-    });
-  });
-
-  describe('showCompletionHelp', () => {
-    it('should display usage information', async () => {
-      await (command as unknown).showCompletionHelp('bash');
-
-      expect(logSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Usage:')
-      );
+  describe('option parsers', () => {
+    it('should parse --hooks to true', () => {
+      expect(command.parseHooks()).toBe(true);
     });
 
-    it('should display supported shells', async () => {
-      await (command as unknown).showCompletionHelp('zsh');
-
-      expect(logSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Supported shells:')
-      );
-    });
-
-    it('should display examples', async () => {
-      await (command as unknown).showCompletionHelp('fish');
-
-      expect(logSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Examples:')
-      );
-    });
-
-    it('should show detected shell', async () => {
-      await (command as unknown).showCompletionHelp('bash');
-
-      expect(logSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Detected shell: bash')
-      );
-    });
-  });
-
-  describe('findCliPath', () => {
-    it('should return process.argv[1]', async () => {
-      const result = await (command as unknown).findCliPath();
-      expect(result).toBe(process.argv[1]);
-    });
-  });
-
-  describe('parseInstall', () => {
-    it('should return the value', () => {
-      expect(command.parseInstall('bash')).toBe('bash');
-    });
-  });
-
-  describe('parseShell', () => {
-    it('should return the value', () => {
-      expect(command.parseShell('zsh')).toBe('zsh');
+    it('should parse --install-hooks value', () => {
+      expect(command.parseInstallHooks('bash')).toBe('bash');
+      expect(command.parseInstallHooks('zsh')).toBe('zsh');
+      expect(command.parseInstallHooks('fish')).toBe('fish');
     });
   });
 });

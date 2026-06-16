@@ -1035,7 +1035,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Gap:** Más allá del autocompletado, no hay integración de shell más profunda (prompts, hooks) (originalmente `GAP-016`).
 - **Propósito:** Mejorar la integración de shell para estado, hooks y contexto.
 - **Criterio de cierre:**
-  - [ ] la integración de shell expone hooks de contexto/estado para los shells soportados
+  - [x] la integración de shell expone hooks de contexto/estado para los shells soportados
 - **Referencias:** Backlog del CLI de Evolith `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-016`)
 
 ### Componente Platform — Consolidado desde el Stack Audit

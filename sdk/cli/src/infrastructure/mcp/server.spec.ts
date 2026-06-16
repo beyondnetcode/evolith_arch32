@@ -600,7 +600,7 @@ describe('MCP Server', () => {
       expect(response).toBeDefined();
       const content = (response.result as any).content[0].text;
       const parsed = JSON.parse(content);
-      expect(parsed.status).toBe('REQUIRES_CONFIRMATION');
+      expect(parsed.status).toBe('CONFIRMATION_DENIED');
     });
 
     it('allows mutative tool when confirm: true is passed', async () => {

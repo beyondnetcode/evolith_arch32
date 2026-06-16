@@ -15,16 +15,10 @@ This board is the single source of truth for gap priority and status. Select a g
 |---|---|:---:|:---:|:---:|:---:|:---:|
 | [`GT-110`](./gap-reference-catalog.md#gt-110) | Migrate ingress off the abandoned Kong OSS to Traefik/NGINX | `Platform` | Cross | P0 | L | `DONE` |
 | [`GT-112`](./gap-reference-catalog.md#gt-112) | Replace HashiCorp commercial binaries with OpenTofu + OpenBao | `Platform` | Cross | P0 | L | `DONE` |
-| [`GT-83`](./gap-reference-catalog.md#gt-83) | Unblock Tracker upstream dependencies (Core API, UMS JWKS, UMS Auth Graph) | `Tracker` | Cross | P0 | L | `REVISION` |
 | [`GT-79`](./gap-reference-catalog.md#gt-79) | Restore the green CLI CI validation pipeline | `Governance` | Cross | P1 | S | `DONE` |
 | [`GT-80`](./gap-reference-catalog.md#gt-80) | Type-check the CLI test suite | `CLI` | Cross | P1 | M | `DONE` |
 | [`GT-97`](./gap-reference-catalog.md#gt-97) | Multiple CLI profiles | `CLI` | Cross | P1 | M | `DONE` |
 | [`GT-111`](./gap-reference-catalog.md#gt-111) | Plan the MassTransit v9 commercial pivot (stay v8 OSS or move to Rebus) | `Platform` | Cross | P1 | L | `DONE` |
-| [`GT-85`](./gap-reference-catalog.md#gt-85) | Plugin architecture for the Tracker workflow engine | `Tracker` | Cross | P1 | L | `DONE` |
-| [`GT-86`](./gap-reference-catalog.md#gt-86) | Event-sourced aggregate roots | `Tracker` | Cross | P1 | L | `DEFERRED` |
-| [`GT-90`](./gap-reference-catalog.md#gt-90) | CQRS with read-model projections | `Tracker` | Cross | P1 | L | `REVISION` |
-| [`GT-94`](./gap-reference-catalog.md#gt-94) | Workflow DSL / visual editor | `Tracker` | Cross | P1 | L | `PENDING` |
-| [`GT-95`](./gap-reference-catalog.md#gt-95) | Multi-tenant isolation with shared kernel (PostgreSQL RLS) | `Tracker` | Cross | P1 | L | `PENDING` |
 | [`GT-98`](./gap-reference-catalog.md#gt-98) | CLI extension/plugin system | `CLI` | Cross | P1 | L | `PENDING` |
 | [`GT-99`](./gap-reference-catalog.md#gt-99) | CLI SSO/SAML authentication | `CLI` | Cross | P1 | L | `PENDING` |
 | [`GT-103`](./gap-reference-catalog.md#gt-103) | CLI subcommand depth | `CLI` | Cross | P2 | S | `PENDING` |
@@ -33,24 +27,16 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-108`](./gap-reference-catalog.md#gt-108) | CLI fixtures/test data | `CLI` | Cross | P2 | S | `PENDING` |
 | [`GT-109`](./gap-reference-catalog.md#gt-109) | CLI shell integration | `CLI` | Cross | P2 | S | `PENDING` |
 | [`GT-82`](./gap-reference-catalog.md#gt-82) | Revive or remove the dead gate-status spec | `CLI` | Cross | P2 | S | `PENDING` |
-| [`GT-91`](./gap-reference-catalog.md#gt-91) | Contract testing with Pact (BFF↔Core) | `Tracker` | Cross | P2 | S | `PENDING` |
-| [`GT-92`](./gap-reference-catalog.md#gt-92) | ADRs as code with a compliance CLI | `Tracker` | Cross | P2 | S | `PENDING` |
 | [`GT-100`](./gap-reference-catalog.md#gt-100) | CLI API browser/explorer | `CLI` | Cross | P2 | M | `PENDING` |
 | [`GT-101`](./gap-reference-catalog.md#gt-101) | CLI auto-update mechanism | `CLI` | Cross | P2 | M | `PENDING` |
 | [`GT-102`](./gap-reference-catalog.md#gt-102) | CLI real-time progress/streaming | `CLI` | Cross | P2 | M | `PENDING` |
 | [`GT-104`](./gap-reference-catalog.md#gt-104) | CLI package-manager distribution | `CLI` | Cross | P2 | M | `PENDING` |
 | [`GT-107`](./gap-reference-catalog.md#gt-107) | CLI interactive wizards | `CLI` | Cross | P2 | M | `PENDING` |
 | [`GT-81`](./gap-reference-catalog.md#gt-81) | Raise CLI branch coverage to the statement floor | `CLI` | F0 | P2 | M | `PENDING` |
-| [`GT-87`](./gap-reference-catalog.md#gt-87) | GraphQL federation over REST | `Tracker` | Cross | P2 | M | `PENDING` |
-| [`GT-88`](./gap-reference-catalog.md#gt-88) | Feature flags as first-class domain objects | `Tracker` | Cross | P2 | M | `PENDING` |
-| [`GT-89`](./gap-reference-catalog.md#gt-89) | Dynamic form/schema engine | `Tracker` | Cross | P2 | M | `PENDING` |
-| [`GT-93`](./gap-reference-catalog.md#gt-93) | Built-in observability (OTel BFF→Core→integrations) | `Tracker` | Cross | P2 | M | `PENDING` |
-| [`GT-96`](./gap-reference-catalog.md#gt-96) | Real-time sync via WebSockets/SSE | `Tracker` | Cross | P2 | M | `PENDING` |
 | [`GT-113`](./gap-reference-catalog.md#gt-113) | Clean Architecture Purification in core-domain | `Core Domain` | Transversal | P1 | M | `DONE` |
 | [`GT-114`](./gap-reference-catalog.md#gt-114) | Human-in-the-Loop for Mutative MCP Tools | `CLI` | Transversal | P1 | M | `PENDING` |
 | [`GT-115`](./gap-reference-catalog.md#gt-115) | Auto-fix of Architectural Failures via MCP Tools | `CLI` | Transversal | P2 | L | `PENDING` |
 | [`GT-116`](./gap-reference-catalog.md#gt-116) | Elimination of Blocking I/O Operations in the CLI | `CLI` | Transversal | P2 | M | `PENDING` |
-| [`GT-84`](./gap-reference-catalog.md#gt-84) | Extract AuditTrail as a shared kernel | `Tracker` | Cross | P1 | L | `DEFERRED` |
 | [`GT-59`](./gap-reference-catalog.md#gt-59) | Hardening HTTP — Helmet + CORS + Rate Limiting (OWASP API4/8) | `BFF API` | Cross | P0 | S | `DONE` |
 | [`GT-60`](./gap-reference-catalog.md#gt-60) | Validación Global DTOs con class-validator (OWASP API3) | `BFF API` | Cross | P0 | M | `DONE` |
 | [`GT-64`](./gap-reference-catalog.md#gt-64) | Structured Logging con Correlation ID | `BFF API` | Cross | P0 | M | `DONE` |
@@ -122,7 +108,7 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-25`](./gap-reference-catalog.md#gt-25) | First provider profiles | `Governance` | Cross | P2 | L | `DONE` |
 | [`GT-23`](./gap-reference-catalog.md#gt-23) | Spanish translation backfill | `Governance` | Cross | P2 | L | `DONE` |
 
-**Progress:** 78 / 108 done · 0 in progress · 28 pending · 2 deferred
+**Progress:** 77 / 94 done · 0 in progress · 17 pending · 0 deferred
 
 **Ordering:** one table, ordered by status (pending then deferred then completed), then criticality (`P0` → `P1` → `P2`) then complexity (`S` → `M` → `L`); completed gaps are grouped by component. Each ID links to its detail in the [Gap Reference Catalog](./gap-reference-catalog.md).
 

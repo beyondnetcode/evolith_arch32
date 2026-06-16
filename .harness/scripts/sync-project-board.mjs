@@ -71,6 +71,7 @@ for (const item of ghItems) {
 }
 
 // 3. Process Markdown
+const seenGaps = new Set();
 function processTrackingFile(filePath, isSpanish) {
   if (!fs.existsSync(filePath)) return false;
   let content = fs.readFileSync(filePath, 'utf-8');
@@ -87,6 +88,7 @@ function processTrackingFile(filePath, isSpanish) {
         const idMatch = parts[1].match(/\[\`(GT-\d+)\`\]/);
         if (idMatch) {
           const gapId = idMatch[1];
+          seenGaps.add(gapId);
           let localStatus = parts[7].replace(/`/g, '');
           const ghItem = ghMap.get(gapId);
           
@@ -177,6 +179,19 @@ function processTrackingFile(filePath, isSpanish) {
 
 const modEs = processTrackingFile(TRACKING_FILE_ES, true);
 const modEn = processTrackingFile(TRACKING_FILE_EN, false);
+
+if (isLocalModified) {
+  for (const [gapId, ghItem] of ghMap.entries()) {
+    if (!seenGaps.has(gapId)) {
+      console.log(`🗑️ Deleting ${gapId} from GitHub Project...`);
+      try {
+        execSync(`gh project item-delete ${PROJECT_NUMBER} --owner ${OWNER} --id ${ghItem.id}`);
+      } catch (e) {
+        console.error(`⚠️ Failed to delete ${gapId}:`, e.message);
+      }
+    }
+  }
+}
 
 if (modEs || modEn) {
   console.log('\n❌ Sincronización realizada: Los archivos markdown locales fueron actualizados con el estado de GitHub.');

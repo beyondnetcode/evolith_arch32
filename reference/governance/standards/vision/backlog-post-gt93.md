@@ -35,7 +35,7 @@
 | ~~**GAP-007**~~ | ~~Remove emoji from documentation~~ | Docs | Quality gate violation | 1h | XS | **DONE** | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-007%5D) |
 | ~~**GAP-008**~~ | ~~Complete tool design principles~~ | ~~Docs~~ | ~~Incomplete standard~~ | ~~4h~~ | ~~M~~ | **DONE** | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-008%5D) |
 | ~~**GAP-009**~~ | ~~Complete MCP security guidelines~~ | ~~Docs~~ | ~~Security gap~~ | ~~4h~~ | ~~M~~ | **DONE** | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-009%5D) |
-| **GAP-010** | Audit BFF documentation coherence | BFF | Potential drift | 4h | M | Backlog | [`#10`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-010%5D) |
+| ~~**GAP-010**~~ | ~~Audit BFF documentation coherence~~ | ~~BFF~~ | ~~Potential drift~~ | ~~4h~~ | ~~M~~ | **DONE** | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-010%5D) |
 | ~~**GAP-011**~~ | ~~Fix WizardService implementation drift~~ | ~~CLI~~ | ~~Architecture drift~~ | ~~3h~~ | ~~S~~ | **DONE** | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-011%5D) |
 
 **Orden:** P2 primero, luego por esfuerzo ascendente (XS → S → M)

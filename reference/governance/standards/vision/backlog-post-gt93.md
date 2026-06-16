@@ -21,10 +21,10 @@
 
 | ID | Título | Componente | Impacto | Esfuerzo | Size | GitHub Project |
 |----|--------|------------|---------|----------|------|----------------|
-| **GAP-003** | Raise statement coverage to 80% | CLI | Quality gate failure | 8h | L | DONE Creado |
-| **GAP-004** | Raise branch coverage to 67% | CLI | Quality gate failure | 6h | M | DONE Creado |
-| **GAP-005** | Add tests for zero-coverage files | CLI | Unvalidated code | 2h | S | DONE Creado |
-| **GAP-006** | Document auto-fix in architecture | Docs | Missing documentation | 2h | S | DONE Creado |
+| **GAP-003** | Raise statement coverage to 80% | CLI | Quality gate failure | 8h | L | DONE | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-003%5D) |
+| **GAP-004** | Raise branch coverage to 67% | CLI | Quality gate failure | 6h | M | DONE | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-004%5D) |
+| **GAP-005** | Add tests for zero-coverage files | CLI | Unvalidated code | 2h | S | DONE | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-005%5D) |
+| **GAP-006** | Document auto-fix in architecture | Docs | Missing documentation | 2h | S | DONE | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-006%5D) |
 
 **Orden:** P1 primero, luego por esfuerzo ascendente (S → M → L)
 
@@ -144,7 +144,7 @@ Los items están ordenados por:
 | 2026-06-16 | Sincronizado con GitHub Project | [DONE] 21 items creados | 0 | 21 |
 | 2026-06-16 | **GAP-007 completado** | - | [DONE] GAP-007 | **20** |
 
-**Progreso:** 2/11 GAPs completados (18%) · 10 pendientes
+**Progreso:** 3/11 GAPs completados (27%) · 10 pendientes
 
 **GitHub Project Items:**
 - GAP-001: `PVTI_lADOD5Ic284BaueGzgv7wQM` [DONE] Backlog

@@ -1264,6 +1264,35 @@
         "npm run build --workspace sdk/cli"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-100",
+      "closedAt": "2026-06-16",
+      "closureCommit": "686bb2fc416897379f7d90300ccc3196c212ac1d",
+      "evidence": [
+        "sdk/cli/src/commands/api/api.command.ts",
+        "sdk/cli/src/commands/api/api.command.spec.ts",
+        "sdk/cli/test/api.e2e-spec.ts",
+        "sdk/cli/src/app.module.ts"
+      ],
+      "validationCommands": [
+        "npm run build --workspace sdk/cli",
+        "npm run test -- --testPathPattern=api.command.spec"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-101",
+      "closedAt": "2026-06-16",
+      "closureCommit": "686bb2fc416897379f7d90300ccc3196c212ac1d",
+      "evidence": [
+        "sdk/cli/src/commands/update/update.command.ts",
+        "sdk/cli/src/app.module.ts"
+      ],
+      "validationCommands": [
+        "npm run build --workspace sdk/cli"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

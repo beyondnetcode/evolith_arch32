@@ -26,6 +26,8 @@ import { GateCommand } from './commands/gate/gate.command';
 import { PhaseAdvanceCommand } from './commands/phase/phase-advance.command';
 import { ProfileCommand } from './commands/profile/profile.command';
 import { FixturesCommand } from './commands/fixtures/fixtures.command';
+import { ApiCommand } from './commands/api/api.command';
+import { UpdateCommand } from './commands/update/update.command';
 
 import { ValidateSatelliteUseCase } from '@evolith/core-domain/application/use-cases/validate-satellite.use-case';
 import { EvaluateGateUseCase } from '@evolith/core-domain/application/use-cases/evaluate-gate.use-case';
@@ -73,6 +75,8 @@ import { PluginModule } from './infrastructure/plugins/plugin.module';
     PhaseAdvanceCommand,
     ProfileCommand,
     FixturesCommand,
+    ApiCommand,
+    UpdateCommand,
     AliasService,
     AliasCommand,
     ValidateSatelliteUseCase,

@@ -938,7 +938,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Gap:** There is no interactive way to browse the governed API surface from the CLI (originally `GAP-007`).
 - **Purpose:** Let users explore available operations, resources, and schemas interactively.
 - **Done when:**
-  - [ ] a command lists and inspects the available operations and their schemas
+  - [x] a command lists and inspects the available operations and their schemas
+- **Closed by:** `sdk/cli/src/commands/api/api.command.ts`, `sdk/cli/src/commands/api/api.command.spec.ts`, `sdk/cli/test/api.e2e-spec.ts`, `sdk/cli/src/app.module.ts`
 - **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-007`)
 
 #### GT-101
@@ -948,7 +949,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Gap:** The CLI cannot detect or apply updates to itself (originally `GAP-008`).
 - **Purpose:** Notify users of new versions and apply updates safely.
 - **Done when:**
-  - [ ] the CLI detects a newer published version and can self-update or guide the upgrade
+  - [x] the CLI detects a newer published version and can self-update or guide the upgrade
+- **Closed by:** `sdk/cli/src/commands/update/update.command.ts`, `sdk/cli/src/app.module.ts`
 - **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-008`)
 
 #### GT-102

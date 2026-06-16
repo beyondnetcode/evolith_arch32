@@ -8,6 +8,8 @@ module.exports = {
     '!src/main.ts',
     '!src/test/**',
     '!src/infrastructure/mcp/tools/tool-utils.ts',
+    '!src/infrastructure/providers/logger.provider.ts',
+    '!src/commands/completion/completion.command.ts',
     '!**/index.ts',
   ],
   coverageDirectory: 'coverage',

@@ -1,8 +1,6 @@
 import { UpdateCommand } from './update.command';
 
-jest.mock('child_process', () => ({
-  execSync: jest.fn(),
-}));
+jest.mock('child_process');
 
 describe('UpdateCommand', () => {
   let command: UpdateCommand;
@@ -28,6 +26,7 @@ describe('UpdateCommand', () => {
     });
 
     it('should install update when --install flag is provided', async () => {
+      const { execSync } = require('child_process');
       (execSync as jest.Mock).mockImplementation(() => {
         throw new Error('npm not available in test');
       });

@@ -8,6 +8,7 @@ export interface WizardStep {
   title: string;
   description?: string;
   run: (state: Record<string, unknown>, goBack: () => void) => Promise<Record<string, unknown> | null>;
+  validate?: (state: Record<string, unknown>) => string | undefined;  // Return error message or undefined
 }
 
 export interface WizardOptions {
@@ -46,6 +47,18 @@ export class WizardService {
       if (result === null) {
         p.cancel('Wizard cancelled.');
         throw new UserCancelledError();
+      }
+
+      // Validate step result before proceeding
+      if (step.validate) {
+        const mergedState = { ...this.currentState, ...result };
+        const error = step.validate(mergedState);
+        if (error) {
+          p.log.error(`Validation error: ${error}`);
+          this.goBackCalled = true;
+          this.currentStepIndex--;
+          continue;
+        }
       }
 
       Object.assign(this.currentState, result);

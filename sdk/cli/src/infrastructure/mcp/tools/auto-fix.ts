@@ -120,7 +120,7 @@ function getFixStrategy(ruleId: string): FixStrategy | null {
         const content = await fs.readFile(filePath, 'utf-8');
         const lines = content.split('\n');
         const updatedLines = lines.map(line => {
-          if (line.includes('from \'@nestjs') || line.includes('from \"@nestjs')) {
+          if (line.includes('from \'@nestjs') || line.includes('from "@nestjs')) {
             return `// [AUTO-FIXED] ${line} - Framework import removed, use domain interface instead`;
           }
           return line;
@@ -201,6 +201,34 @@ export interface ${interfaceName} {
         const updated = content.replace(
           /console\.(log|debug|info|warn|error)\([^)]*\)/g,
           '// [AUTO-FIXED] Console side-effect removed - use logger service instead'
+        );
+        await fs.writeFile(filePath, updated, 'utf-8');
+      },
+    },
+    'dependency-injection': {
+      actionName: 'replace-static-with-di',
+      preview: async (fs, filePath, violation) => ({
+        action: `Replace static instantiation with dependency injection in ${filePath}`,
+      }),
+      apply: async (fs, filePath, violation) => {
+        const content = await fs.readFile(filePath, 'utf-8');
+        const updated = content.replace(
+          /const\s+(\w+)\s*=\s*new\s+(\w+)\s*\(\s*\)/g,
+          '// [AUTO-FIXED] Static instantiation replaced\n// Inject $2 via constructor: constructor(private $1: $2)'
+        );
+        await fs.writeFile(filePath, updated, 'utf-8');
+      },
+    },
+    'error-handling': {
+      actionName: 'add-error-boundary',
+      preview: async (fs, filePath, violation) => ({
+        action: `Add proper error handling boundary to ${filePath}`,
+      }),
+      apply: async (fs, filePath, violation) => {
+        const content = await fs.readFile(filePath, 'utf-8');
+        const updated = content.replace(
+          /try\s*\{([^}]*)\}/g,
+          'try {\n$1\n} catch (error) {\n  // [AUTO-FIXED] Added error boundary\n  throw new Error(`Operation failed: ${error instanceof Error ? error.message : String(error)}`);\n}'
         );
         await fs.writeFile(filePath, updated, 'utf-8');
       },

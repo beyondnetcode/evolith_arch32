@@ -1,9 +1,9 @@
 
 # [OK] Bilingual Coverage Dashboard
 
-**Generated:** 2026-06-16T16:47:09.553Z  
+**Generated:** 2026-06-16T20:31:13.431Z  
 **Repository:** evolith_arch32  
-**Total EN files:** 370 | **ES files:** 370 | **Paired:** 370 | **Coverage:** 100.0%
+**Total EN files:** 371 | **ES files:** 371 | **Paired:** 371 | **Coverage:** 100.0%
 
 ---
 
@@ -11,9 +11,9 @@
 
 | Metric | Value |
 |--------|-------|
-| Total EN files | 370 |
-| Total ES files | 370 |
-| Paired files | 370 |
+| Total EN files | 371 |
+| Total ES files | 371 |
+| Paired files | 371 |
 | **Coverage** | **100.0%** |
 
 ### Coverage Bar
@@ -37,7 +37,7 @@
 | documentation-taxonomy.es.md | 0 | 1 | 0 | 0% | [CRIT] |
 | documentation-taxonomy.md | 1 | 0 | 0 | 0% | [CRIT] |
 | getting-started | 2 | 2 | 0 | 0% | [CRIT] |
-| governance | 147 | 147 | 144 | 98% | [OK] |
+| governance | 148 | 148 | 145 | 98% | [OK] |
 | infrastructure | 2 | 2 | 0 | 0% | [CRIT] |
 | knowledge | 28 | 28 | 24 | 86% | [OK] |
 | navigation | 4 | 4 | 0 | 0% | [CRIT] |
@@ -137,7 +137,7 @@
 | glossary.es.md | 0 | 1 | 0 | 0% | [CRIT] |
 | glossary.md | 1 | 0 | 0 | 0% | [CRIT] |
 | sdlc | 45 | 45 | 45 | 100% | [OK] |
-| standards | 98 | 98 | 98 | 100% | [OK] |
+| standards | 99 | 99 | 99 | 100% | [OK] |
 
 ### infrastructure
 

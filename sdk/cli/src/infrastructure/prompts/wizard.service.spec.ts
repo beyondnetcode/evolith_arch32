@@ -285,4 +285,62 @@ describe('WizardService', () => {
       expect(result).toEqual({ step1: 'value', step2: 'value' });
     });
   });
+
+  describe('step validation', () => {
+    it('should accept validate function in step definition', () => {
+      const step: WizardStep = {
+        id: 'test',
+        title: 'Test',
+        run: jest.fn().mockResolvedValue({}),
+        validate: (state) => undefined,
+      };
+      
+      expect(step.validate).toBeDefined();
+      expect(step.validate({})).toBeUndefined();
+    });
+
+    it('should return error message when validation fails', () => {
+      const step: WizardStep = {
+        id: 'test',
+        title: 'Test',
+        run: jest.fn().mockResolvedValue({ name: '' }),
+        validate: (state) => {
+          if (!state.name || (state.name as string).length < 3) {
+            return 'Name too short';
+          }
+          return undefined;
+        },
+      };
+      
+      expect(step.validate({ name: '' })).toBe('Name too short');
+      expect(step.validate({ name: 'valid' })).toBeUndefined();
+    });
+
+    it('should proceed when validation passes', async () => {
+      const mockSteps: WizardStep[] = [
+        {
+          id: 'step1',
+          title: 'Step 1',
+          run: jest.fn().mockResolvedValue({ name: 'valid' }),
+          validate: (state) => undefined,
+        },
+        {
+          id: 'step2',
+          title: 'Step 2',
+          run: jest.fn().mockResolvedValue({ value: 'test' }),
+        },
+      ];
+
+      (p.confirm as jest.Mock).mockResolvedValue(true);
+
+      const result = await service.start({
+        title: 'Test Wizard',
+        steps: mockSteps,
+        noInteractive: true,
+      });
+
+      expect(result).toEqual({ name: 'valid', value: 'test' });
+      expect(mockSteps[0].run).toHaveBeenCalledTimes(1);
+    });
+  });
 });

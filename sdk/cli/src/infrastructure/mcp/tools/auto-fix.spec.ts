@@ -279,7 +279,7 @@ describe('Auto-Fix MCP Tools', () => {
       expect(writtenContent).toContain('Console side-effect removed');
     });
 
-    it('should support all 6 domain strategies', async () => {
+    it('should support all 8 domain strategies', async () => {
       const strategies = [
         'domain-purity',
         'hexagonal-boundaries',
@@ -287,6 +287,8 @@ describe('Auto-Fix MCP Tools', () => {
         'layer-isolation',
         'artifact-coherence',
         'service-purity',
+        'dependency-injection',
+        'error-handling',
       ];
 
       const mockFs = {

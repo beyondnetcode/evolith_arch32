@@ -62,9 +62,9 @@
 
 | ID | Título | Componente | Valor | Esfuerzo | Size | GitHub Project |
 |----|--------|------------|-------|----------|------|----------------|
-| **OPP-008** | Parallelize test execution | CLI | Faster CI | 4h | M | DONE Creado |
-| **OPP-007** | Add wizard validation steps | CLI | Better UX | 4h | M | DONE Creado |
-| **OPP-006** | Expand auto-fix strategies (6+) | CLI | More automation | 12h | XL | DONE Creado |
+| ~~**OPP-008**~~ | ~~Paralelizar ejecución de tests~~ | ~~CLI~~ | ~~Faster CI~~ | ~~4h~~ | ~~M~~ | **DONE** | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BOPP-008%5D) |
+| ~~**OPP-007**~~ | ~~Agregar validación en wizard~~ | ~~CLI~~ | ~~Better UX~~ | ~~4h~~ | ~~M~~ | **DONE** | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BOPP-007%5D) |
+| ~~**OPP-006**~~ | ~~Expandir estrategias auto-fix (8+)~~ | ~~CLI~~ | ~~More automation~~ | ~~12h~~ | ~~XL~~ | **DONE** | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BOPP-006%5D) |
 
 **Orden:** Por esfuerzo ascendente (M → XL)
 

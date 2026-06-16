@@ -207,7 +207,7 @@ Este documento cataloga todas las herramientas MCP proporcionadas por Evolith CL
 
 **Estado de Implementación:**
 
-- DONE Todas las 6 estrategias implementadas con modos preview y apply
+- DONE Todas las 8 estrategias implementadas con modos preview y apply
 - DONE Soporte dry-run para preview seguro antes de aplicar cambios
 - DONE Manejo de errores con mensajes detallados de fallo
 - DONE Generación de resumen con conteos por estado

@@ -50,4 +50,8 @@ module.exports = {
   // OPP-003: Suppress console noise during tests for cleaner output
   // Individual tests can still verify logging behavior via mocks
   silent: true,
+  // OPP-008: Parallelize test execution for faster CI
+  // Uses all available CPU cores (default behavior)
+  maxWorkers: '100%',
+  workerIdleMemoryLimit: '512MB',
 };

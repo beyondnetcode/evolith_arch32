@@ -90,10 +90,12 @@ export function getSdlcTools(fs: IFileSystem, configParser: IConfigParser): IMcp
             path: { type: 'string' },
             fromPhase: { type: 'string' },
             toPhase: { type: 'string' },
+            confirm: { type: 'boolean', description: 'Confirm mutative operation' },
           },
           required: ['path', 'fromPhase', 'toPhase'],
         },
       },
+      mutative: true,
       execute: async (args) => {
         /* fs injected */
         /* configParser injected */

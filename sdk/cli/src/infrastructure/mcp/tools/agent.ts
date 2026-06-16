@@ -24,10 +24,12 @@ export function getAgentTools(fs: IFileSystem, configParser: IConfigParser): IMc
             name: { type: 'string', description: 'Name of the agent to install' },
             template: { type: 'string', description: 'Template: standard, minimal, enterprise', default: 'standard' },
             dir: { type: 'string', description: 'Directory to install into' },
+            confirm: { type: 'boolean', description: 'Confirm mutative operation' },
           },
           required: ['name'],
         },
       },
+      mutative: true,
       execute: async (args) => {
         /* fs injected */
         const dir = (args.dir as string) || process.cwd();
@@ -79,10 +81,12 @@ export function getAgentTools(fs: IFileSystem, configParser: IConfigParser): IMc
           properties: {
             name: { type: 'string' },
             dir: { type: 'string' },
+            confirm: { type: 'boolean', description: 'Confirm mutative operation' },
           },
           required: ['name'],
         },
       },
+      mutative: true,
       execute: async (args) => {
         /* fs injected */
         const dir = (args.dir as string) || process.cwd();
@@ -98,10 +102,12 @@ export function getAgentTools(fs: IFileSystem, configParser: IConfigParser): IMc
           properties: {
             name: { type: 'string' },
             dir: { type: 'string' },
+            confirm: { type: 'boolean', description: 'Confirm mutative operation' },
           },
           required: ['name'],
         },
       },
+      mutative: true,
       execute: async (args) => {
         /* fs injected */
         const dir = (args.dir as string) || process.cwd();

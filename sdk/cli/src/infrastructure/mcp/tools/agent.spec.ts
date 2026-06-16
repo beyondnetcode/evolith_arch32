@@ -46,6 +46,13 @@ describe("MCP Tools - agent", () => {
   });
 
   describe("evolith-agent-install", () => {
+    it("should be marked as mutative and include confirm schema", () => {
+      const tools = getAgentTools(mockFileSystem as unknown, {} as unknown);
+      const tool = tools.find((t: any) => t.schema.name === "evolith-agent-install");
+      expect(tool?.mutative).toBe(true);
+      expect(tool?.schema.inputSchema.properties).toHaveProperty("confirm");
+    });
+
     it("should install agent with standard template by default", async () => {
       const result = await handleAgentTools("evolith-agent-install", {
         name: "test-agent",
@@ -212,6 +219,13 @@ describe("MCP Tools - agent", () => {
   });
 
   describe("evolith-agent-upgrade", () => {
+    it("should be marked as mutative and include confirm schema", () => {
+      const tools = getAgentTools(mockFileSystem as unknown, {} as unknown);
+      const tool = tools.find((t: any) => t.schema.name === "evolith-agent-upgrade");
+      expect(tool?.mutative).toBe(true);
+      expect(tool?.schema.inputSchema.properties).toHaveProperty("confirm");
+    });
+
     it("should throw error when agent not found", async () => {
       mockFileSystem.exists.mockResolvedValue(false);
 
@@ -253,6 +267,13 @@ describe("MCP Tools - agent", () => {
   });
 
   describe("evolith-agent-remove", () => {
+    it("should be marked as mutative and include confirm schema", () => {
+      const tools = getAgentTools(mockFileSystem as unknown, {} as unknown);
+      const tool = tools.find((t: any) => t.schema.name === "evolith-agent-remove");
+      expect(tool?.mutative).toBe(true);
+      expect(tool?.schema.inputSchema.properties).toHaveProperty("confirm");
+    });
+
     it("should throw error when agent not found", async () => {
       mockFileSystem.exists.mockResolvedValue(false);
 

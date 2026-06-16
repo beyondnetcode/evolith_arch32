@@ -108,6 +108,13 @@ describe("MCP Tools - sdlc", () => {
   });
 
   describe("evolith-sdlc-handoff", () => {
+    it("should be marked as mutative and include confirm schema", () => {
+      const tools = getSdlcTools(mockFileSystem as unknown, mockConfigParser as unknown);
+      const tool = tools.find((t: any) => t.schema.name === "evolith-sdlc-handoff");
+      expect(tool?.mutative).toBe(true);
+      expect(tool?.schema.inputSchema.properties).toHaveProperty("confirm");
+    });
+
     it("should return error when path is missing", async () => {
       const result = await handleSdlcTools("evolith-sdlc-handoff", {
         fromPhase: "phase-0",

@@ -1018,7 +1018,15 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Gap:** There is no built-in way to seed fixtures or sample data for trials (originally `GAP-015`).
 - **Purpose:** Provide reproducible fixtures/sample data for demos and tests.
 - **Done when:**
-  - [ ] a command seeds reproducible fixtures into a target project
+  - [x] a command seeds reproducible fixtures into a target project — `evolith fixtures <type> [--dir] [--dry-run]`
+- **Closure evidence:**
+  - `closedAt`: 2026-06-16
+  - `closureCommit`: 0304f6b3daa638f5374835b0166268e8e8580289 (GT-108 implementation)
+  - `evidence`: `sdk/cli/src/commands/fixtures/fixtures.command.ts` implements `fixtures` command with 5 types: `evolith`, `adr`, `ruleset`, `demo`, `full`
+  - `validationCommands`:
+    - `npx jest --config sdk/cli/jest.config.js --testPathPatterns="fixtures"` — 15 unit tests pass
+    - `npx jest --config sdk/cli/test/jest-e2e.json --testPathPatterns="fixtures"` — 6 E2E tests pass
+  - `dependencyDisposition`: none
 - **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-015`)
 
 #### GT-109

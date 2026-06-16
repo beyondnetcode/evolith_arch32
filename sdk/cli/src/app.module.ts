@@ -25,6 +25,7 @@ import { DriftCommand } from './commands/drift/drift.command';
 import { GateCommand } from './commands/gate/gate.command';
 import { PhaseAdvanceCommand } from './commands/phase/phase-advance.command';
 import { ProfileCommand } from './commands/profile/profile.command';
+import { FixturesCommand } from './commands/fixtures/fixtures.command';
 
 import { ValidateSatelliteUseCase } from '@evolith/core-domain/application/use-cases/validate-satellite.use-case';
 import { EvaluateGateUseCase } from '@evolith/core-domain/application/use-cases/evaluate-gate.use-case';
@@ -71,6 +72,7 @@ import { PluginModule } from './infrastructure/plugins/plugin.module';
     GateCommand,
     PhaseAdvanceCommand,
     ProfileCommand,
+    FixturesCommand,
     AliasService,
     AliasCommand,
     ValidateSatelliteUseCase,

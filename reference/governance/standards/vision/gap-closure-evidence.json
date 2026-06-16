@@ -1215,6 +1215,22 @@
         "npx jest"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-108",
+      "closedAt": "2026-06-16",
+      "closureCommit": "39086c4",
+      "evidence": [
+        "sdk/cli/src/commands/fixtures/fixtures.command.ts",
+        "sdk/cli/src/commands/fixtures/fixtures.command.spec.ts",
+        "sdk/cli/test/fixtures.e2e-spec.ts",
+        "sdk/cli/src/app.module.ts"
+      ],
+      "validationCommands": [
+        "npx jest --config sdk/cli/jest.config.js --testPathPatterns=fixtures",
+        "npx jest --config sdk/cli/test/jest-e2e.json --testPathPatterns=fixtures"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

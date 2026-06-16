@@ -4,7 +4,7 @@
 
 **Estado:** Seguimiento Activo
 **Responsable:** Evolith Architecture Board
-**Última Actualización:** 2026-06-14
+**Última Actualización:** 2026-06-16
 **Detalle de Gaps:** [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md)
 
 Este tablero es la única fuente de verdad para prioridad y estado de los gaps. Selecciona un ID para abrir la descripción del problema, propósito, evidencia, criterios de cierre y referencias.
@@ -13,15 +13,7 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|
-| [`GT-110`](./gap-reference-catalog.es.md#gt-110) | Migrar el ingress del abandonado Kong OSS a Traefik/NGINX | `Platform` | Transversal | P0 | L | `COMPLETADO` |
-| [`GT-112`](./gap-reference-catalog.es.md#gt-112) | Reemplazar los binarios comerciales de HashiCorp con OpenTofu + OpenBao | `Platform` | Transversal | P0 | L | `COMPLETADO` |
-| [`GT-79`](./gap-reference-catalog.es.md#gt-79) | Restaurar el pipeline de validación de CI del CLI en verde | `Governance` | Transversal | P1 | S | `COMPLETADO` |
-| [`GT-80`](./gap-reference-catalog.es.md#gt-80) | Type-check de la suite de tests del CLI | `CLI` | Transversal | P1 | M | `COMPLETADO` |
-| [`GT-97`](./gap-reference-catalog.es.md#gt-97) | Múltiples perfiles del CLI | `CLI` | Transversal | P1 | M | `COMPLETADO` |
-| [`GT-111`](./gap-reference-catalog.es.md#gt-111) | Planificar el giro comercial de MassTransit v9 (quedarse en v8 OSS o migrar a Rebus) | `Platform` | Transversal | P1 | L | `COMPLETADO` |
-| [`GT-98`](./gap-reference-catalog.es.md#gt-98) | Sistema de extensiones/plugins del CLI | `CLI` | Transversal | P1 | L | `COMPLETADO` |
-| [`GT-106`](./gap-reference-catalog.es.md#gt-106) | Alias de comandos del CLI | `CLI` | Transversal | P2 | S | `COMPLETADO` |
-| [`GT-108`](./gap-reference-catalog.es.md#gt-108) | Fixtures/datos de prueba del CLI | `CLI` | Transversal | P2 | S | `PENDIENTE` |
+| [`GT-114`](./gap-reference-catalog.es.md#gt-114) | Human-in-the-Loop para Herramientas Mutativas MCP | `CLI` | Transversal | P1 | M | `PENDIENTE` |
 | [`GT-109`](./gap-reference-catalog.es.md#gt-109) | Integración de shell del CLI | `CLI` | Transversal | P2 | S | `PENDIENTE` |
 | [`GT-82`](./gap-reference-catalog.es.md#gt-82) | Revivir o eliminar el spec muerto de gate-status | `CLI` | Transversal | P2 | S | `PENDIENTE` |
 | [`GT-100`](./gap-reference-catalog.es.md#gt-100) | Navegador/explorador de API del CLI | `CLI` | Transversal | P2 | M | `PENDIENTE` |
@@ -30,10 +22,8 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-104`](./gap-reference-catalog.es.md#gt-104) | Distribución por gestor de paquetes del CLI | `CLI` | Transversal | P2 | M | `PENDIENTE` |
 | [`GT-107`](./gap-reference-catalog.es.md#gt-107) | Asistentes interactivos del CLI | `CLI` | Transversal | P2 | M | `PENDIENTE` |
 | [`GT-81`](./gap-reference-catalog.es.md#gt-81) | Subir la cobertura de branches del CLI al piso de statements | `CLI` | F0 | P2 | M | `PENDIENTE` |
-| [`GT-113`](./gap-reference-catalog.es.md#gt-113) | Purificación de Clean Architecture en core-domain | `Core Domain` | Transversal | P1 | M | `COMPLETADO` |
-| [`GT-114`](./gap-reference-catalog.es.md#gt-114) | Human-in-the-Loop para Herramientas Mutativas MCP | `CLI` | Transversal | P1 | M | `PENDIENTE` |
-| [`GT-115`](./gap-reference-catalog.es.md#gt-115) | Auto-fix de fallas arquitectónicas vía herramientas MCP | `CLI` | Transversal | P2 | L | `PENDIENTE` |
 | [`GT-116`](./gap-reference-catalog.es.md#gt-116) | Eliminación de operaciones bloqueantes de I/O en la CLI | `CLI` | Transversal | P2 | M | `PENDIENTE` |
+| [`GT-115`](./gap-reference-catalog.es.md#gt-115) | Auto-fix de fallas arquitectónicas vía herramientas MCP | `CLI` | Transversal | P2 | L | `PENDIENTE` |
 | [`GT-59`](./gap-reference-catalog.es.md#gt-59) | Hardening HTTP — Helmet + CORS + Rate Limiting (OWASP API4/8) | `BFF API` | Transversal | P0 | S | `COMPLETADO` |
 | [`GT-60`](./gap-reference-catalog.es.md#gt-60) | Validación global de DTOs con class-validator (OWASP API3) | `BFF API` | Transversal | P0 | M | `COMPLETADO` |
 | [`GT-64`](./gap-reference-catalog.es.md#gt-64) | Logging estructurado con Correlation ID | `BFF API` | Transversal | P0 | M | `COMPLETADO` |
@@ -55,12 +45,15 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-28`](./gap-reference-catalog.es.md#gt-28) | Restaurar baseline de build, tests y smoke del CLI | `CLI` | F0 | P0 | M | `COMPLETADO` |
 | [`GT-06`](./gap-reference-catalog.es.md#gt-06) | Tool MCP `evolith-gate-evaluate` | `CLI` | F2 | P0 | M | `COMPLETADO` |
 | [`GT-48`](./gap-reference-catalog.es.md#gt-48) | Restaurar el umbral normativo de cobertura del CLI | `CLI` | F0 | P0 | L | `COMPLETADO` |
+| [`GT-79`](./gap-reference-catalog.es.md#gt-79) | Restaurar el pipeline de validación de CI del CLI en verde | `Governance` | Transversal | P1 | S | `COMPLETADO` |
 | [`GT-18`](./gap-reference-catalog.es.md#gt-18) | Publicar `@evolith/smart-cli` en npm | `CLI` | F5 | P1 | S | `COMPLETADO` |
 | [`GT-14`](./gap-reference-catalog.es.md#gt-14) | Webhook saliente al completar un gate | `CLI` | F4 | P1 | S | `COMPLETADO` |
 | [`GT-12`](./gap-reference-catalog.es.md#gt-12) | `--dry-run` en todas las operaciones de escritura | `CLI` | F3 | P1 | S | `COMPLETADO` |
 | [`GT-09`](./gap-reference-catalog.es.md#gt-09) | Enforcement real de coverage en Fase 3 | `CLI` | F3 | P1 | S | `COMPLETADO` |
 | [`GT-08`](./gap-reference-catalog.es.md#gt-08) | Validación real del registro ADR en Fase 2 | `CLI` | F3 | P1 | S | `COMPLETADO` |
 | [`GT-07`](./gap-reference-catalog.es.md#gt-07) | Smoke de release para evaluación de gates MCP | `CLI` | F2 | P1 | S | `COMPLETADO` |
+| [`GT-80`](./gap-reference-catalog.es.md#gt-80) | Type-check de la suite de tests del CLI | `CLI` | Transversal | P1 | M | `COMPLETADO` |
+| [`GT-97`](./gap-reference-catalog.es.md#gt-97) | Múltiples perfiles del CLI | `CLI` | Transversal | P1 | M | `COMPLETADO` |
 | [`GT-56`](./gap-reference-catalog.es.md#gt-56) | Fallos silenciosos y mocks faltantes en pruebas E2E del CLI | `CLI` | Transversal | P1 | M | `COMPLETADO` |
 | [`GT-55`](./gap-reference-catalog.es.md#gt-55) | Estrictez de TypeScript y eliminación de any implícito | `CLI` | Transversal | P1 | M | `COMPLETADO` |
 | [`GT-51`](./gap-reference-catalog.es.md#gt-51) | Validación de evidencia de gate Build-versus-Compose | `CLI` | F3 | P1 | M | `COMPLETADO` |
@@ -72,8 +65,11 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-11`](./gap-reference-catalog.es.md#gt-11) | Validación de observabilidad y rollback en Fase 5 | `CLI` | F3 | P1 | M | `COMPLETADO` |
 | [`GT-10`](./gap-reference-catalog.es.md#gt-10) | Validación de contenido del security scan en Fase 4 | `CLI` | F3 | P1 | M | `COMPLETADO` |
 | [`GT-05`](./gap-reference-catalog.es.md#gt-05) | Transporte Streamable HTTP del SDK MCP | `CLI` | F2 | P1 | M | `COMPLETADO` |
+| [`GT-98`](./gap-reference-catalog.es.md#gt-98) | Sistema de extensiones/plugins del CLI | `CLI` | Transversal | P1 | L | `COMPLETADO` |
 | [`GT-57`](./gap-reference-catalog.es.md#gt-57) | Implementación incompleta de herramientas y validación MCP | `CLI` | F2 | P1 | L | `COMPLETADO` |
 | [`GT-19`](./gap-reference-catalog.es.md#gt-19) | Migración hexagonal incremental de `core/` | `CLI` | Transversal | P1 | L | `COMPLETADO` |
+| [`GT-106`](./gap-reference-catalog.es.md#gt-106) | Alias de comandos del CLI | `CLI` | Transversal | P2 | S | `COMPLETADO` |
+| [`GT-108`](./gap-reference-catalog.es.md#gt-108) | Fixtures/datos de prueba del CLI | `CLI` | Transversal | P2 | S | `COMPLETADO` |
 | [`GT-103`](./gap-reference-catalog.es.md#gt-103) | Profundidad de subcomandos del CLI | `CLI` | Transversal | P2 | S | `COMPLETADO` |
 | [`GT-105`](./gap-reference-catalog.es.md#gt-105) | Imagen Docker del CLI | `CLI` | Transversal | P2 | S | `COMPLETADO` |
 | [`GT-52`](./gap-reference-catalog.es.md#gt-52) | Eliminar los stubs muertos del contenedor de inyección de dependencias | `CLI` | Transversal | P2 | S | `COMPLETADO` |
@@ -82,6 +78,7 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-02`](./gap-reference-catalog.es.md#gt-02) | `GateEvidence` modelado en la capa de dominio | `Core Domain` | F1 | P0 | M | `COMPLETADO` |
 | [`GT-72`](./gap-reference-catalog.es.md#gt-72) | Eliminar @ts-nocheck de la capa de aplicación | `Core Domain` | Transversal | P0 | L | `COMPLETADO` |
 | [`GT-29`](./gap-reference-catalog.es.md#gt-29) | Paridad de ejecución de reglas Native/OPA | `Core Domain` | F1 | P0 | L | `COMPLETADO` |
+| [`GT-113`](./gap-reference-catalog.es.md#gt-113) | Purificación de Clean Architecture en core-domain | `Core Domain` | Transversal | P1 | M | `COMPLETADO` |
 | [`GT-04`](./gap-reference-catalog.es.md#gt-04) | Eliminar service locator del dominio | `Core Domain` | F1 | P1 | S | `COMPLETADO` |
 | [`GT-58`](./gap-reference-catalog.es.md#gt-58) | Limpiar stubs TODO inyectados por Hexagonal Scaffolder | `Core Domain` | Transversal | P2 | S | `COMPLETADO` |
 | [`GT-75`](./gap-reference-catalog.es.md#gt-75) | Paquete @evolith/infra-providers compartido | `Cross` | Transversal | P2 | M | `COMPLETADO` |
@@ -106,8 +103,11 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-36`](./gap-reference-catalog.es.md#gt-36) | Cobertura lingüística de reglas machine-readable | `Governance` | Transversal | P2 | L | `COMPLETADO` |
 | [`GT-25`](./gap-reference-catalog.es.md#gt-25) | Primeros perfiles de proveedor | `Governance` | Transversal | P2 | L | `COMPLETADO` |
 | [`GT-23`](./gap-reference-catalog.es.md#gt-23) | Backfill de traducciones españolas | `Governance` | Transversal | P2 | L | `COMPLETADO` |
+| [`GT-110`](./gap-reference-catalog.es.md#gt-110) | Migrar el ingress del abandonado Kong OSS a Traefik/NGINX | `Platform` | Transversal | P0 | L | `COMPLETADO` |
+| [`GT-112`](./gap-reference-catalog.es.md#gt-112) | Reemplazar los binarios comerciales de HashiCorp con OpenTofu + OpenBao | `Platform` | Transversal | P0 | L | `COMPLETADO` |
+| [`GT-111`](./gap-reference-catalog.es.md#gt-111) | Planificar el giro comercial de MassTransit v9 (quedarse en v8 OSS o migrar a Rebus) | `Platform` | Transversal | P1 | L | `COMPLETADO` |
 
-**Progreso:** 81 / 93 completados · 0 en progreso · 12 pendientes · 0 diferidos
+**Progreso:** 82 / 93 completados · 0 en progreso · 11 pendientes · 0 diferidos
 
 **Ordenamiento:** una sola tabla, ordenada por estado (pendientes, luego diferidos, luego completados), luego criticidad (`P0` → `P1` → `P2`) y luego complejidad (`S` → `M` → `L`); los completados se agrupan por componente. Cada ID enlaza a su detalle en el [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md).
 

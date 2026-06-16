@@ -30,13 +30,13 @@
 
 ### P2 - Medio (Technical Debt) - 5 items, 16 horas
 
-| ID | Título | Componente | Impacto | Esfuerzo | Size | GitHub Project |
-|----|--------|------------|---------|----------|------|----------------|
-| **GAP-007** | Remove emoji from documentation | Docs | Quality gate violation | 1h | XS | DONE Creado |
-| **GAP-008** | Complete tool design principles | Docs | Incomplete standard | 4h | M | DONE Creado |
-| **GAP-009** | Complete MCP security guidelines | Docs | Security gap | 4h | M | DONE Creado |
-| **GAP-010** | Audit BFF documentation coherence | BFF | Potential drift | 4h | M | DONE Creado |
-| **GAP-011** | Fix WizardService implementation drift | CLI | Architecture drift | 3h | S | DONE Creado |
+| ID | Título | Componente | Impacto | Esfuerzo | Size | Estado | GitHub Project |
+|----|--------|------------|---------|----------|------|--------|----------------|
+| ~~**GAP-007**~~ | ~~Eliminar emoji de la documentación~~ | Docs | Quality gate violation | 1h | XS | **DONE** | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-007%5D) |
+| **GAP-008** | Complete tool design principles | Docs | Incomplete standard | 4h | M | Backlog | [DONE] Creado |
+| **GAP-009** | Complete MCP security guidelines | Docs | Security gap | 4h | M | Backlog | [DONE] Creado |
+| **GAP-010** | Audit BFF documentation coherence | BFF | Potential drift | 4h | M | Backlog | [DONE] Creado |
+| **GAP-011** | Fix WizardService implementation drift | CLI | Architecture drift | 3h | S | Backlog | [DONE] Creado |
 
 **Orden:** P2 primero, luego por esfuerzo ascendente (XS → S → M)
 
@@ -112,7 +112,7 @@ Los items están ordenados por:
 - [ ] GAP-003: Raise statement coverage to 80%
 - [ ] GAP-004: Raise branch coverage to 67%
 - [ ] GAP-005: Add tests for zero-coverage files
-- [ ] GAP-007: Remove emoji from documentation
+- [x] **GAP-007: Eliminar emoji de la documentación** [DONE] DONE
 
 ### Mes 1 (Technical Debt)
 - [ ] GAP-008: Complete tool design principles
@@ -138,25 +138,28 @@ Los items están ordenados por:
 
 ## Actualización de Estado
 
-| Fecha | Cambio | Items Added | Items Completed |
-|-------|--------|-------------|-----------------|
-| 2026-06-16 | Creación inicial del backlog | 24 (11 GAPs + 13 OPPs) | 0 |
-| 2026-06-16 | Sincronizado con GitHub Project | DONE 21 items creados | 0 |
+| Fecha | Cambio | Items Added | Items Completed | Backlog |
+|-------|--------|-------------|-----------------|---------|
+| 2026-06-16 | Creación inicial del backlog | 24 (11 GAPs + 13 OPPs) | 0 | 24 |
+| 2026-06-16 | Sincronizado con GitHub Project | [DONE] 21 items creados | 0 | 21 |
+| 2026-06-16 | **GAP-007 completado** | - | [DONE] GAP-007 | **20** |
+
+**Progreso:** 1/11 GAPs completados (9%) · 10 pendientes
 
 **GitHub Project Items:**
-- GAP-001: `PVTI_lADOD5Ic284BaueGzgv7wQM` DONE
-- GAP-002: `PVTI_lADOD5Ic284BaueGzgv7wU8` DONE
-- GAP-003: `PVTI_lADOD5Ic284BaueGzgv7wVo` DONE
-- GAP-004: `PVTI_lADOD5Ic284BaueGzgv7wWs` DONE
-- GAP-005: `PVTI_lADOD5Ic284BaueGzgv7wXU` DONE
-- GAP-006: `PVTI_lADOD5Ic284BaueGzgv7wYE` DONE
-- GAP-007: `PVTI_lADOD5Ic284BaueGzgv7wY4` DONE
-- GAP-008: `PVTI_lADOD5Ic284BaueGzgv7wZ0` DONE
-- GAP-009: `PVTI_lADOD5Ic284BaueGzgv7wa0` DONE
-- GAP-010: `PVTI_lADOD5Ic284BaueGzgv7wbo` DONE
-- GAP-011: `PVTI_lADOD5Ic284BaueGzgv7wc0` DONE
-- OPP-001: `PVTI_lADOD5Ic284BaueGzgv7wjA` DONE
-- OPP-002: `PVTI_lADOD5Ic284BaueGzgv7wkA` DONE
+- GAP-001: `PVTI_lADOD5Ic284BaueGzgv7wQM` [DONE] Backlog
+- GAP-002: `PVTI_lADOD5Ic284BaueGzgv7wU8` [DONE] Backlog
+- GAP-003: `PVTI_lADOD5Ic284BaueGzgv7wVo` [DONE] Backlog
+- GAP-004: `PVTI_lADOD5Ic284BaueGzgv7wWs` [DONE] Backlog
+- GAP-005: `PVTI_lADOD5Ic284BaueGzgv7wXU` [DONE] Backlog
+- GAP-006: `PVTI_lADOD5Ic284BaueGzgv7wYE` [DONE] Backlog
+- GAP-007: `PVTI_lADOD5Ic284BaueGzgv7wY4` [DONE] **DONE** DONE
+- GAP-008: `PVTI_lADOD5Ic284BaueGzgv7wZ0` [DONE] Backlog
+- GAP-009: `PVTI_lADOD5Ic284BaueGzgv7wa0` [DONE] Backlog
+- GAP-010: `PVTI_lADOD5Ic284BaueGzgv7wbo` [DONE] Backlog
+- GAP-011: `PVTI_lADOD5Ic284BaueGzgv7wc0` [DONE] Backlog
+- OPP-001: `PVTI_lADOD5Ic284BaueGzgv7wjA` [DONE] Backlog
+- OPP-002: `PVTI_lADOD5Ic284BaueGzgv7wkA` [DONE] Backlog
 - OPP-003: `PVTI_lADOD5Ic284BaueGzgv7wks` DONE
 - OPP-004: `PVTI_lADOD5Ic284BaueGzgv7wlM` DONE
 - OPP-005: `PVTI_lADOD5Ic284BaueGzgv7wmU` DONE

@@ -199,8 +199,18 @@ Este documento cataloga todas las herramientas MCP proporcionadas por Evolith CL
 | Estrategia | Tipo de Violación | Acción |
 |------------|-------------------|--------|
 | `domain-purity` | Dominio importa framework | Remover imports de framework, reemplazar con referencias a interfaces |
-| `hexagonal-boundaries` | Violaciones de boundary | Enforzar separación puerto/adaptador |
-| `missing-domain-interface` | Interfaces puerto faltantes | Generar archivos skeleton de interface |
+| `hexagonal-boundaries` | Violaciones de boundary | Enforzar separación puerto/adaptador, remover imports cross-layer |
+| `missing-domain-interface` | Interfaces puerto faltantes | Generar archivos skeleton de interface con TODOs |
+| `layer-isolation` | Lógica de negocio en capa incorrecta | Extraer lógica de negocio a capa de dominio apropiada |
+| `artifact-coherence` | Referencias de artefactos deprecated | Actualizar referencias para coincidir con estructura actual |
+| `service-purity` | Efectos secundarios en servicios de dominio | Remover console.log y otros efectos secundarios |
+
+**Estado de Implementación:**
+
+- DONE Todas las 6 estrategias implementadas con modos preview y apply
+- DONE Soporte dry-run para preview seguro antes de aplicar cambios
+- DONE Manejo de errores con mensajes detallados de fallo
+- DONE Generación de resumen con conteos por estado
 
 **Ejemplos de Uso:**
 
@@ -211,8 +221,11 @@ evolith mcp call evolith-auto-fix --rulesetId domain-purity --dryRun
 # Aplicar fixes a violaciones específicas
 evolith mcp call evolith-auto-fix --rulesetId hexagonal-boundaries
 
-# Fixear violaciones de archivo con resumen
+# Fixear múltiples tipos de violación
 evolith mcp call evolith-auto-fix --rulesetId comprehensive --dryRun
+
+# Fixear con directorio personalizado
+evolith mcp call evolith-auto-fix --rulesetId domain-purity --dir /path/to/project
 ```
 
 **Características de Seguridad:**

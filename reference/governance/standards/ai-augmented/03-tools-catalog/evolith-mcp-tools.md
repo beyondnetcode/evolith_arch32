@@ -199,8 +199,18 @@ This document catalogs all MCP tools provided by the Evolith CLI for AI agent au
 | Strategy | Violation Type | Action |
 |----------|---------------|--------|
 | `domain-purity` | Domain layer imports framework | Remove framework imports, replace with interface references |
-| `hexagonal-boundaries` | Boundary violations | Enforce port/adapter separation |
-| `missing-domain-interface` | Missing port interfaces | Generate interface skeleton files |
+| `hexagonal-boundaries` | Boundary violations | Enforce port/adapter separation, remove cross-layer imports |
+| `missing-domain-interface` | Missing port interfaces | Generate interface skeleton files with TODOs |
+| `layer-isolation` | Business logic in wrong layer | Extract business logic to appropriate domain layer |
+| `artifact-coherence` | Deprecated artifact references | Update artifact references to match actual structure |
+| `service-purity` | Side effects in domain services | Remove console.log and other side effects |
+
+**Implementation Status:**
+
+- DONE All 6 strategies implemented with preview and apply modes
+- DONE Dry-run support for safe preview before applying changes
+- DONE Error handling with detailed failure messages
+- DONE Summary generation with counts per status
 
 **Usage Examples:**
 
@@ -211,8 +221,11 @@ evolith mcp call evolith-auto-fix --rulesetId domain-purity --dryRun
 # Apply fixes to specific violations
 evolith mcp call evolith-auto-fix --rulesetId hexagonal-boundaries
 
-# Fix violations from file with summary
+# Fix multiple violation types
 evolith mcp call evolith-auto-fix --rulesetId comprehensive --dryRun
+
+# Fix with custom directory
+evolith mcp call evolith-auto-fix --rulesetId domain-purity --dir /path/to/project
 ```
 
 **Safety Features:**

@@ -17,6 +17,7 @@ Commands:
   deprecate <adr-number>  Mark ADR as Deprecated (requires reason)
   supersede <adr-number] <replacement-number> Mark as Superseded
   retire <adr-number]     Mark ADR as Retired
+  --check-only            Validate ADR structure without modifying (CI gate)
 
 Options:
   --reason <text>    Reason for state change
@@ -27,6 +28,7 @@ Examples:
   node .harness/scripts/adr-lifecycle.mjs status
   node .harness/scripts/adr-lifecycle.mjs accept 0049 --reason "Proven in production"
   node .harness/scripts/adr-lifecycle.mjs supersede 0030 0040 --reason "Consolidated into ADR-0040"
+  node .harness/scripts/adr-lifecycle.mjs --check-only
 `);
   process.exit(0);
 }
@@ -182,6 +184,43 @@ if (command === "status") {
   }
 
   process.exit(0);
+}
+
+if (command === "--check-only") {
+  console.log("\n=== ADR Structure Validation (--check-only) ===\n");
+  const adrsDir = path.join(root, "reference/architecture/adrs");
+  let errors = 0;
+  let checked = 0;
+
+  for (const runtime of fs.existsSync(adrsDir) ? fs.readdirSync(adrsDir) : []) {
+    const runtimePath = path.join(adrsDir, runtime);
+    if (!fs.statSync(runtimePath).isDirectory()) continue;
+
+    for (const file of fs.readdirSync(runtimePath)) {
+      if (!file.endsWith(".md")) continue;
+      checked++;
+      const filePath = path.join(runtimePath, file);
+      const content = fs.readFileSync(filePath, "utf8");
+
+      if (!/\*\*Status\*\*/.test(content)) {
+        console.error(`  ✗ ${runtime}/${file}: missing Status header`);
+        errors++;
+      }
+      if (!/\*\*Date\*\*/.test(content)) {
+        console.error(`  ✗ ${runtime}/${file}: missing Date header`);
+        errors++;
+      }
+    }
+  }
+
+  console.log(`\nChecked ${checked} ADR file(s) across ${fs.existsSync(adrsDir) ? fs.readdirSync(adrsDir).filter(d => fs.statSync(path.join(adrsDir, d)).isDirectory()).length : 0} runtime area(s).`);
+  if (errors === 0) {
+    console.log("✓ All ADRs have valid structure.");
+    process.exit(0);
+  } else {
+    console.error(`\n✗ ${errors} structural issue(s) found.`);
+    process.exit(1);
+  }
 }
 
 const validCommands = ["propose", "accept", "deprecate", "supersede", "retire"];

@@ -1071,6 +1071,23 @@
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "OpenBao is API-compatible with Vault; all existing secrets workflows remain unchanged."
+    },
+    {
+      "id": "GT-79",
+      "closedAt": "2026-06-15",
+      "closureCommit": "db87af3",
+      "evidence": [
+        ".harness/scripts/adr-lifecycle.mjs",
+        ".harness/scripts/bilingual-terminology-lint.mjs",
+        "reference/governance/standards/vision/gap-reference-catalog.md",
+        "reference/governance/standards/vision/gap-reference-catalog.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/adr-lifecycle.mjs --check-only",
+        "node .harness/scripts/bilingual-terminology-lint.mjs"
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "The CI pipeline (sdk-cli-ci.yml) lives in the UMS product repository. The two scripts that caused pipeline failures are fixed in this commit; the pipeline will run green once UMS updates its reference."
     }
   ]
 }

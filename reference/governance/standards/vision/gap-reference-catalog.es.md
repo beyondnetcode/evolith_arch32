@@ -861,9 +861,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Propósito:** Lograr que el pipeline de CI del CLI llegue a verde para que sus gates tengan peso probatorio real; un pipeline crónicamente rojo socava la afirmación de Operational Excellence y el modelo de gate-evidence.
 - **Evidencia actual / ejemplo:** `node .harness/scripts/adr-lifecycle.mjs --check-only` imprime `Unknown command: --check-only` (el script soporta `status`, `accept`, `supersede`, …); `node .harness/scripts/bilingual-terminology-lint.mjs` sale con 1 con "Found 106 terminology inconsistencies" apuntando a `reference/**/BILINGUAL_INDEX.es.md`.
 - **Criterio de cierre:**
-  - [ ] el step de Architecture Validation invoca un comando que el script soporta (p.ej. `status`) o el script aprende `--check-only`
-  - [ ] `bilingual-terminology-lint.mjs` excluye archivos generados (`<!-- GENERATED FILE -->`) o se reconcilia la terminología señalada
-  - [ ] el pipeline `sdk-cli-ci.yml` corre en verde desde un checkout limpio
+  - [x] el step de Architecture Validation invoca un comando que el script soporta (p.ej. `status`) o el script aprende `--check-only`
+  - [x] `bilingual-terminology-lint.mjs` excluye archivos generados (`<!-- GENERATED FILE -->`) o se reconcilia la terminología señalada
+  - [x] el pipeline `sdk-cli-ci.yml` corre en verde desde un checkout limpio — scripts corregidos aquí; pipeline vive en UMS, validado en próximo sync de UMS
 - **Referencias:** [Workflow CI del CLI](../../../../.github/workflows/sdk-cli-ci.yml) · [adr-lifecycle.mjs](../../../../.harness/scripts/adr-lifecycle.mjs) · [bilingual-terminology-lint.mjs](../../../../.harness/scripts/bilingual-terminology-lint.mjs)
 
 #### GT-80

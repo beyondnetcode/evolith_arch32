@@ -115,6 +115,14 @@ for (const file of files) {
   if (!fs.existsSync(enFile)) continue;
 
   const esContent = fs.readFileSync(file, "utf8");
+  const enContent = fs.readFileSync(enFile, "utf8");
+
+  // Skip auto-generated files (BILINGUAL_INDEX cross-references or GENERATED FILE marker)
+  const relPath = path.relative(root, file);
+  if (relPath.includes('BILINGUAL_INDEX') || esContent.includes("<!-- GENERATED FILE -->") || enContent.includes("<!-- GENERATED FILE -->")) {
+    if (verbose) console.log(`  ℹ Skipping generated file: ${relPath}`);
+    continue;
+  }
 
   for (const term of terminology) {
     const enPattern = new RegExp(`\\b${term.en}\\b`, "gi");
@@ -124,7 +132,7 @@ for (const file of files) {
     const esMatches = esContent.match(esPattern) || [];
 
     if (enMatches.length > 0 && esMatches.length === 0) {
-      const enCount = (fs.readFileSync(enFile, "utf8").match(enPattern) || []).length;
+      const enCount = (enContent.match(enPattern) || []).length;
       if (verbose || enCount > 0) {
         issues.push({
           file: path.relative(root, file),

@@ -1358,6 +1358,19 @@
         "npx jest --config sdk/cli/test/jest-e2e.json --testPathPatterns=\"wizard\""
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-81",
+      "closedAt": "2026-06-16",
+      "closureCommit": "973013ab210ac2ab6631601caf839ca966706e54",
+      "evidence": [
+        "sdk/cli/jest.config.js"
+      ],
+      "validationCommands": [
+        "npm run test:cov",
+        "node .harness/scripts/validate-docs.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

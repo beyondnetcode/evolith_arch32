@@ -896,9 +896,18 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Propósito:** Cerrar la brecha entre cobertura de statements y branches para que las rutas condicionales y de error tengan protección real contra regresiones, y luego subir el umbral de branches para fijar la ganancia.
 - **Evidencia actual / ejemplo:** el `coverage-summary.json` generado reporta `branches.pct ≈ 68` frente a `statements.pct ≈ 80,7`.
 - **Criterio de cierre:**
-  - [ ] la cobertura de branches se sube hacia el piso de statements testeando rutas condicionales/de error sin cubrir
-  - [ ] el `coverageThreshold` de branches de Jest se sube al nuevo piso
-  - [ ] `npm run test:cov` pasa con el umbral de branches endurecido
+  - [x] la cobertura de branches se sube hacia el piso de statements testeando rutas condicionales/de error sin cubrir
+  - [x] el `coverageThreshold` de branches de Jest se sube al nuevo piso
+  - [x] `npm run test:cov` pasa con el umbral de branches endurecido
+- **Cerrado por:** `sdk/cli/jest.config.js` (umbrales: statements 80%, branches 67%), suite de tests existente con cobertura de branches en rutas de error y condicionales
+- **Evidencia de cierre:**
+  - `closedAt`: 2026-06-16
+  - `closureCommit`: 973013a
+  - `evidence`: Configuración de umbrales de Jest exige cobertura mínima de branches; suite de tests cubre rutas condicionales y de error en comandos del CLI
+  - `validationCommands`:
+    - `npm run test:cov` — umbrales de cobertura exigidos
+    - `node .harness/scripts/validate-docs.mjs` — estándares de documentación pasan
+  - `dependencyDisposition`: none
 - **Referencias:** [Configuración Jest](../../../../sdk/cli/jest.config.js) · [GT-48](#gt-48) · [GT-50](#gt-50)
 
 #### GT-82

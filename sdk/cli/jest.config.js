@@ -35,6 +35,7 @@ module.exports = {
     '^core/(.*)$': '<rootDir>/src/core/$1',
     '^commands/(.*)$': '<rootDir>/src/commands/$1',
     '^test/(.*)$': '<rootDir>/src/test/$1',
+    '^@evolith/core-domain/(.*)$': '<rootDir>/../../packages/core-domain/src/$1',
     '^@clack/prompts$': '<rootDir>/src/test/__mocks__/clack-prompts.ts',
     '^conf$': '<rootDir>/src/test/__mocks__/conf.ts',
     '^chokidar$': '<rootDir>/src/test/__mocks__/chokidar.ts',

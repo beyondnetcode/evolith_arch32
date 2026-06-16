@@ -13,6 +13,10 @@
       "types": "./dist/application/use-cases/index.d.ts",
       "default": "./dist/application/use-cases/index.js"
     },
+    "./application/services": {
+      "types": "./dist/application/services/index.d.ts",
+      "default": "./dist/application/services/index.js"
+    },
     "./application/validators": {
       "types": "./dist/application/validators/index.d.ts",
       "default": "./dist/application/validators/index.js"
@@ -24,6 +28,14 @@
     "./domain/interfaces": {
       "types": "./dist/domain/interfaces.d.ts",
       "default": "./dist/domain/interfaces.js"
+    },
+    "./domain/errors": {
+      "types": "./dist/domain/errors/index.d.ts",
+      "default": "./dist/domain/errors/index.js"
+    },
+    "./domain/services": {
+      "types": "./dist/domain/services/index.d.ts",
+      "default": "./dist/domain/services/index.js"
     },
     "./*": {
       "types": "./dist/*.d.ts",

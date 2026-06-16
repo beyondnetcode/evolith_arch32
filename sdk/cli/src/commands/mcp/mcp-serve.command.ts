@@ -15,7 +15,7 @@ interface McpServeOptions {
   description: 'Start Evolith MCP server for AI agent integration',
 })
 export class McpServeCommand extends BaseEvolithCommand {
-  constructor() {
+  constructor(private readonly validator: RulesetValidatorService) {
     super('McpServeCommand');
   }
 
@@ -38,7 +38,7 @@ export class McpServeCommand extends BaseEvolithCommand {
         this.logger.log('Starting MCP server over stdio...');
       }
 
-      const validator = new RulesetValidatorService();
+      const validator = this.validator;
       await startMcpServer({
         rulesetValidator: validator,
         transport,

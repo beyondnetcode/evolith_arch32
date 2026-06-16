@@ -6,12 +6,12 @@ import { calculateDora } from '@evolith/core-domain/domain/metrics/dora-calculat
 // ── mocks ──────────────────────────────────────────────────────────────────────
 
 jest.mock('@clack/prompts');
-jest.mock('../../domain/metrics/git-log-reader');
-jest.mock('../../domain/metrics/dora-calculator');
+jest.mock('@evolith/core-domain/domain/metrics/git-log-reader');
+jest.mock('@evolith/core-domain/domain/metrics/dora-calculator');
 
 const mockGetGateStatus = jest.fn();
 
-jest.mock('../../application/services', () => ({
+jest.mock('@evolith/core-domain/application/services', () => ({
   PhaseTransitionUseCase: jest.fn().mockImplementation(() => ({
     getGateStatus: mockGetGateStatus,
   })),

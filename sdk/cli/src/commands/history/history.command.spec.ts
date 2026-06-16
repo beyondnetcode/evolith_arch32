@@ -15,7 +15,7 @@ jest.mock('chalk', () => {
   return chalkFn;
 });
 
-jest.mock('../../application/services/services/command-history.service', () => ({
+jest.mock('@evolith/core-domain/application/services/services/command-history.service', () => ({
   CommandHistoryService: jest.fn().mockImplementation(() => ({
     list: jest.fn(),
     get: jest.fn(),

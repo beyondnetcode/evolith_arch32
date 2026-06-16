@@ -1,12 +1,12 @@
 import { ValidateCommand } from './validate.command';
 
-jest.mock('../../application/use-cases/validate-satellite.use-case', () => ({
+jest.mock('@evolith/core-domain/application/use-cases/validate-satellite.use-case', () => ({
   ValidateSatelliteUseCase: jest.fn().mockImplementation(() => ({
     execute: jest.fn(),
   })),
 }));
 
-jest.mock('../../application/validators/ruleset-validator.service', () => ({
+jest.mock('@evolith/core-domain/application/validators/ruleset-validator.service', () => ({
   RulesetValidatorService: jest.fn().mockImplementation(() => ({
     validate: jest.fn(),
     validateArchitecture: jest.fn(),

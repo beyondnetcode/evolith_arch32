@@ -4,7 +4,7 @@ jest.mock('../../infrastructure/mcp/server', () => ({
   startMcpServer: jest.fn().mockResolvedValue(undefined),
 }));
 
-jest.mock('../../application/validators/ruleset-validator.service', () => ({
+jest.mock('@evolith/core-domain/application/validators/ruleset-validator.service', () => ({
   RulesetValidatorService: jest.fn().mockImplementation(() => ({})),
 }));
 

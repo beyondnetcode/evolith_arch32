@@ -1,5 +1,5 @@
 /* eslint-disable boundaries/element-types */
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger, Inject } from "@nestjs/common";
 import * as fs from "fs-extra";
 import * as path from "path";
 
@@ -11,7 +11,7 @@ export interface IConfigService {
 export class SyncService {
   private readonly logger = new Logger(SyncService.name);
 
-  constructor(private readonly configService: IConfigService) {}
+  constructor(@Inject("IConfigService") private readonly configService: IConfigService) {}
 
   async syncTemplatesFromUpstream(): Promise<void> {
     const syncConfig = this.configService.get("sync");

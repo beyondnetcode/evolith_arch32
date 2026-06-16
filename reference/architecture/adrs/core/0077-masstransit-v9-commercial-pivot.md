@@ -83,6 +83,6 @@ The decision applies to all .NET product repositories in the Evolith ecosystem t
 - Stack Audit: `reference/governance/standards/engineering/detailed-stack-audit-2026.md` (RED Alert 2)
 - Gap tracking: [GT-111](../../../governance/standards/vision/gap-reference-catalog.md#gt-111)
 - ADR-0015: [Event-Driven Architecture (Intra-Domain)](./0015-event-driven-architecture-intra-domain.md)
-- ADR-0036: [Message Delivery and Dead-Letter Strategy](./0036-message-delivery-dead-letter-strategy.md)
+- ADR-0036: [Message Delivery and Dead-Letter Strategy](./0036-message-bus-delivery-strategy-fifo-dlq.md)
 - OpenTransit project: [https://opentransitlab.github.io/OpenTransit/](https://opentransitlab.github.io/OpenTransit/)
 - Rebus project: [https://github.com/rebus-org/Rebus](https://github.com/rebus-org/Rebus)

@@ -10,6 +10,16 @@
  * This module is pure domain: no I/O, no framework, no presentation.
  */
 
+/**
+ * Gate phases aligned to the default SDLC workflow.
+ * These map to workflow phases via the gateMapping in default-workflow.yaml:
+ *   discovery → phase-1, design → phase-2, construction → phase-3,
+ *   qa → phase-4, release → phase-5
+ *
+ * Tenants with a custom workflow definition can provide their own gate-to-phase
+ * mapping. The canonical source of phase definitions is the workflow YAML,
+ * not this constant — kept for backward compatibility.
+ */
 export const GATE_PHASES = ['discovery', 'design', 'construction', 'qa', 'release'] as const;
 export type GatePhase = (typeof GATE_PHASES)[number];
 

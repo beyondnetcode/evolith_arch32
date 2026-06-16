@@ -1,12 +1,13 @@
 import { IFileSystem, ILogger } from '../../domain/interfaces';
-import { PhaseService } from '../../domain/services';
+import { WorkflowEngine } from '../../domain/services';
+import { WorkflowDefinition } from '../../domain/ports/workflow-definition.port';
 import { IWebhookNotifier } from '../ports/webhook-notifier.port';
 import { PhaseGateValidatorService } from '../validators/phase-gate-validator.service';
 import { PhaseTransitionResult, GateResult } from '../services/index';
 
 export class PhaseTransitionUseCase {
   private readonly fs: IFileSystem;
-  private readonly phaseService: PhaseService;
+  private readonly engine: WorkflowEngine;
   private readonly gateValidator: PhaseGateValidatorService;
   private readonly logger: ILogger;
 
@@ -14,11 +15,12 @@ export class PhaseTransitionUseCase {
     fs: IFileSystem,
     corePath?: string,
     private readonly webhookNotifier?: IWebhookNotifier,
-    logger?: ILogger
+    logger?: ILogger,
+    workflow?: WorkflowDefinition,
   ) {
     this.fs = fs;
-    this.phaseService = new PhaseService();
     this.logger = (logger as ILogger) || { log: () => {}, warn: () => {}, error: () => {}, info: () => {}, debug: () => {} } as ILogger;
+    this.engine = workflow ? new WorkflowEngine(workflow) : new (require('../../domain/services').PhaseService)();
     this.gateValidator = new PhaseGateValidatorService(corePath, { fileSystem: fs, logger: this.logger });
   }
 
@@ -26,12 +28,12 @@ export class PhaseTransitionUseCase {
     const warnings: string[] = [];
     const errors: string[] = [];
 
-    if (!this.phaseService.canTransition(from, to)) {
-      errors.push(`Invalid phase transition: ${from} → ${to}. Must be consecutive phases.`);
+    if (!this.engine.canTransition(from, to)) {
+      errors.push(`Invalid phase transition: ${from} → ${to}. Must be a valid transition.`);
       return { success: false, from, to, gateResults: [], executedTools: [], warnings, errors };
     }
 
-    const targetPhaseNumber = this.phaseService.getPhaseIndex(to);
+    const targetPhaseNumber = this.engine.getPhaseIndex(to);
     const gateResults = targetPhaseNumber >= 0
       ? await this.validateGatesWithValidator(targetPhaseNumber, cwd)
       : await this.validateGatesLegacy(from, cwd);
@@ -91,7 +93,7 @@ export class PhaseTransitionUseCase {
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);
       this.logger.warn(`Gate validator failed, falling back to legacy validation: ${message}`);
-      return this.validateGatesLegacy(this.phaseService.getAllPhases()[phaseNumber]?.value || 'phase-0', cwd);
+      return this.validateGatesLegacy(this.engine.getAllPhases()[phaseNumber]?.value || 'phase-0', cwd);
     }
   }
 

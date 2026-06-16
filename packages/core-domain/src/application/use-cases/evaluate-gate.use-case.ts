@@ -22,6 +22,12 @@ import { IWebhookNotifier } from '../ports/webhook-notifier.port';
  *    `RuleEvaluationEngine` behind the `validate` command.
  */
 
+/**
+ * Maps gate-evidence phase names to gate numbers (1-based).
+ * Derived from the default workflow gateMapping. Tenants with a custom
+ * workflow can override this by providing their own gate-to-number mapping
+ * alongside their IWorkflowDefinition.
+ */
 export const PHASE_TO_GATE_NUMBER: Record<GatePhase, number> = {
   discovery: 1,
   design: 2,

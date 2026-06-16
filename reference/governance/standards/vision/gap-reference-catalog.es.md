@@ -937,8 +937,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Gap:** El workflow engine de SDLC está hard-codeado; los tenants no pueden personalizar fases, transiciones y reglas sin forkear (originalmente `OPP-009`).
 - **Propósito:** Construir `@evolith/workflow-engine` como un core pluggable donde fases, transiciones y reglas del SDLC se contribuyen vía plugins para que los tenants personalicen sin forkear.
 - **Criterio de cierre:**
-  - [ ] fases/transiciones/reglas se contribuyen mediante un contrato de plugin
-  - [ ] un tenant puede registrar un workflow custom sin modificar el código del engine
+  - [x] fases/transiciones/reglas se contribuyen mediante un contrato de plugin
+  - [x] un tenant puede registrar un workflow custom sin modificar el código del engine
 - **Referencias:** Auditoría de Evolith Tracker `docs/audit/tracker-gaps-opportunities-tracking.md` (`OPP-009`)
 
 #### GT-86

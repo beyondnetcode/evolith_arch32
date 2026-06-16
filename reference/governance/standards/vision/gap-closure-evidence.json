@@ -1137,6 +1137,26 @@
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "The ADR records a dated decision with a re-evaluation gate, satisfying the closure criterion."
+    },
+    {
+      "id": "GT-85",
+      "closedAt": "2026-06-15",
+      "closureCommit": "928bd43",
+      "evidence": [
+        "packages/core-domain/src/domain/ports/workflow-definition.port.ts",
+        "packages/core-domain/src/domain/services/default-workflow-definition.ts",
+        "packages/core-domain/src/domain/services/index.ts",
+        "packages/core-domain/src/application/use-cases/phase-transition.use-case.ts",
+        "packages/core-domain/src/domain/gate-evidence.ts",
+        "rulesets/sdlc/default-workflow.yaml"
+      ],
+      "validationCommands": [
+        "npm run build --workspace packages/core-domain",
+        "npm run build --workspace sdk/cli",
+        "node .harness/scripts/validate-docs.mjs"
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "The IWorkflowDefinition port and DefaultWorkflowDefinition allow tenants to inject custom workflows via the same interface — no engine source modification required."
     }
   ]
 }

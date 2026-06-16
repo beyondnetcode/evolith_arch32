@@ -1,50 +1,28 @@
 import { Phase, GateResult } from '../entities';
 import { IPhaseGates, GateResult as IGateResult } from '../interfaces';
+import { WorkflowDefinition } from '../ports/workflow-definition.port';
 
-
-export class PhaseService implements IPhaseGates {
-  private readonly phases: Phase[];
-
-  constructor() {
-    this.phases = [
-      new Phase('phase-0', 'Foundation', 'Repository initialized', [], [], 0),
-      new Phase('phase-1', 'Structure', 'Project scaffolded', [], [], 1),
-      new Phase('phase-2', 'Governance', 'Rulesets and ACL configured', [], [], 2),
-      new Phase('phase-3', 'Architecture', 'ADRs and contexts defined', [], [], 3),
-      new Phase('phase-4', 'Production', 'CI/CD and containers', [], [], 4),
-      new Phase('phase-5', 'Observability', 'DORA metrics and dashboards', [], [], 5),
-    ];
-  }
+export class WorkflowEngine implements IPhaseGates {
+  constructor(private readonly workflow: WorkflowDefinition) {}
 
   getPhase(value: string): Phase | undefined {
-    return Phase.fromValue(value, this.phases);
+    return this.workflow.getPhase(value);
   }
 
   getAllPhases(): Phase[] {
-    return [...this.phases];
+    return this.workflow.getAllPhases();
   }
 
   canTransition(from: string, to: string): boolean {
-    const fromPhase = this.getPhase(from);
-    const toPhase = this.getPhase(to);
-
-    if (!fromPhase || !toPhase) {
-      return false;
-    }
-
-    return toPhase.order === fromPhase.order + 1;
+    return this.workflow.canTransition(from, to);
   }
 
   getNextPhase(current: string): Phase | undefined {
-    const phase = this.getPhase(current);
-    if (!phase) return undefined;
-    return this.phases.find(p => p.order === phase.order + 1);
+    return this.workflow.getNextPhase(current);
   }
 
   getPreviousPhase(current: string): Phase | undefined {
-    const phase = this.getPhase(current);
-    if (!phase) return undefined;
-    return this.phases.find(p => p.order === phase.order - 1);
+    return this.workflow.getPreviousPhase(current);
   }
 
   async validate(_phase: string, _cwd: string): Promise<IGateResult[]> {
@@ -52,22 +30,19 @@ export class PhaseService implements IPhaseGates {
   }
 
   getPhaseLabel(phaseValue: string): string {
-    const phase = this.getPhase(phaseValue);
-    return phase?.label || phaseValue;
+    return this.workflow.getPhaseLabel(phaseValue);
   }
 
   getPhaseDescription(phaseValue: string): string {
-    const phase = this.getPhase(phaseValue);
-    return phase?.description || '';
+    return this.workflow.getPhaseDescription(phaseValue);
   }
 
   isValidPhase(value: string): boolean {
-    return this.phases.some(p => p.value === value);
+    return this.workflow.isValidPhase(value);
   }
 
   getPhaseIndex(value: string): number {
-    const phase = this.getPhase(value);
-    return phase?.order ?? -1;
+    return this.workflow.getPhaseIndex(value);
   }
 }
 
@@ -86,11 +61,9 @@ export class ToolSelectionService {
 
   validateSelection(phase: string, tools: string[]): { valid: boolean; errors: string[] } {
     const errors: string[] = [];
-
     if (!this.isValidToolForPhase(phase, tools)) {
       errors.push(`Invalid tool selected for ${phase}`);
     }
-
     return { valid: errors.length === 0, errors };
   }
 
@@ -107,15 +80,20 @@ export class ToolSelectionService {
     if (allTag !== 'all-gov' && allTag !== 'all-arch' && allTag !== 'all-prod' && allTag !== 'all-obs') {
       return [allTag];
     }
-
     const expansions: Record<string, string[]> = {
       'all-gov': ['acl', 'adr', 'hooks', 'bilingual'],
       'all-arch': ['context-map', 'adr-create', 'contract-reg', 'event-schema'],
       'all-prod': ['docker', 'github-actions', 'otel', 'openbao'],
       'all-obs': ['jaeger', 'prometheus', 'loki', 'grafana', 'dora'],
     };
-
     return expansions[allTag] || [allTag];
+  }
+}
+
+export class PhaseService extends WorkflowEngine {
+  constructor() {
+    const { loadDefaultWorkflow } = require('./default-workflow-definition');
+    super(loadDefaultWorkflow());
   }
 }
 
@@ -128,9 +106,7 @@ export class PlatformDetectionService {
 
   async isAvailable(tool: string): Promise<boolean> {
     const checkFn = this.checks.get(tool);
-    if (!checkFn) {
-      return false;
-    }
+    if (!checkFn) return false;
     return checkFn();
   }
 

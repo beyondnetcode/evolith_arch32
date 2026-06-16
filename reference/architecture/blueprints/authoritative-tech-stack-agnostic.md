@@ -87,7 +87,7 @@ Approved centralized primitives serving the polyglot mesh. Concrete Runtime Adap
 * **Enforcement:** Zero Trust networking. Mutual TLS (mTLS) only mandatory upon activating the distributed network mesh (Phase 3+).
 
 ### 4.2 Secret Hygiene
-* **Engine:** HashiCorp Vault (Enterprise or Community Self-hosted).
+* **Engine:** OpenBao (Community, Linux Foundation — API-compatible Vault fork).
 * **Rule:** No plaintext secrets in Helm charts, Git repositories, or K8s ConfigMaps. Sidecar injection is the ONLY approved consumption pattern.
 
 ---
@@ -141,7 +141,7 @@ All base infrastructure choices are audited through the lens of technological so
 | :--- | :--- | :--- | :--- |
 | **Database** | Runtime-specific SQL engine | **Low** | ANSI SQL discipline. Domain layer decoupled via Ports. Engine changes require a product ADR. |
 | **Object Storage** | S3-compatible API | **Low** | S3-compatible port contract. Concrete providers can be swapped by configuration/adapter. |
-| **Secrets**| HashiCorp Vault | **Low** | Resolution abstracted by dynamic injection via native K8s sidecars. |
+| **Secrets**| OpenBao | **Low** | Resolution abstracted by dynamic injection via native K8s sidecars. |
 | **Gateway** | Standards-based API gateway / ingress | **Low** | Gateway behavior must be declarative and replaceable through ingress/API-management configuration. |
 
 ---

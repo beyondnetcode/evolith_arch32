@@ -274,7 +274,7 @@ graph TD
  end
 
  subgraph InfraTier["Infraestructura OSS Autohospedada (ADR-0028)"]
- Vault["HashiCorp Vault\n[Gestión de Secretos]"]
+ OpenBao["OpenBao\n[Gestión de Secretos · fork de Vault]"]
  MinIO["MinIO\n[Almacenamiento de Objetos]"]
  end
 
@@ -427,7 +427,7 @@ graph TD
  subgraph SharedInfra["OSS Autohospedado Compartido (ADR-0028)"]
  Redis[("Clúster Redis")]
  RabbitMQ["Clúster RabbitMQ"]
- Vault["HashiCorp Vault"]
+ OpenBao["OpenBao"]
  MinIO["Almacenamiento MinIO"]
  end
 
@@ -440,8 +440,8 @@ graph TD
  APIB <--> Redis
  APIA --> RabbitMQ
  APIB --> RabbitMQ
- APIA --> Vault
- APIB --> Vault
+APIA --> OpenBao
+APIB --> OpenBao
 ```
 
 ---

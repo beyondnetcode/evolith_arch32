@@ -57,7 +57,7 @@ interface DelegatedCommands {
   docker: string[];
   kubectl: string[];
   helm: string[];
-  vault: string[];
+  openbao: string[];
   rush: string[];
 }
 

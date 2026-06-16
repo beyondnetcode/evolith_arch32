@@ -1227,5 +1227,5 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Gap:** HashiCorp commercial binaries are under an absolute veto; Terraform/Vault must be replaced (Stack Audit, RED).
 - **Purpose:** Adopt OSS replacements for IaC and secrets management to comply with the licensing veto.
 - **Done when:**
-  - [ ] IaC and secrets are migrated to OpenTofu 1.11+ and OpenBao 2.5+ with no HashiCorp commercial dependency
+  - [x] IaC and secrets are migrated to OpenTofu 1.11+ and OpenBao 2.5+ with no HashiCorp commercial dependency
 - **References:** Stack Audit `reference/governance/standards/engineering/detailed-stack-audit-2026.md` (TOP CRITICAL ALERT 3)

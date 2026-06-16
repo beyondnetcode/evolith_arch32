@@ -137,23 +137,21 @@ services:
       - ums-network
 
   # ---------------------------------------------------------
-  # 5. Secrets and Key Management (HashiCorp Vault OSS)
+  # 5. Secrets and Key Management (OpenBao — Vault fork, Linux Foundation)
   # ---------------------------------------------------------
-  vault:
-    image: hashicorp/vault:1.16
-    container_name: ums-vault
+  openbao:
+    image: openbao/openbao:2.5
+    container_name: ums-openbao
     restart: always
     environment:
-      VAULT_DEV_ROOT_TOKEN_ID: ums_vault_root_token
-      VAULT_DEV_LISTEN_ADDRESS: "0.0.0.0:8200"
+      BAO_DEV_ROOT_TOKEN_ID: ums_openbao_root_token
+      BAO_DEV_LISTEN_ADDRESS: "0.0.0.0:8200"
     ports:
-      - "8200:8200"     # Vault HTTP API
-    volumes:
-      - vault_data:/vault/file
+      - "8200:8200"     # OpenBao HTTP API (Vault-compatible)
     cap_add:
       - IPC_LOCK
     healthcheck:
-      test: ["CMD", "vault", "status"]
+      test: ["CMD", "bao", "status"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -307,7 +305,7 @@ volumes:
   redis_data:
   rabbitmq_data:
   minio_data:
-  vault_data:
+  openbao_data:
   tempo_data:
   loki_data:
   grafana_data:

@@ -111,7 +111,7 @@ export class ToolSelectionService {
     const expansions: Record<string, string[]> = {
       'all-gov': ['acl', 'adr', 'hooks', 'bilingual'],
       'all-arch': ['context-map', 'adr-create', 'contract-reg', 'event-schema'],
-      'all-prod': ['docker', 'github-actions', 'otel', 'vault'],
+      'all-prod': ['docker', 'github-actions', 'otel', 'openbao'],
       'all-obs': ['jaeger', 'prometheus', 'loki', 'grafana', 'dora'],
     };
 

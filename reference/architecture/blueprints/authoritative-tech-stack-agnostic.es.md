@@ -87,7 +87,7 @@ Primitivas centralizadas aprobadas que sirven a la red políglota. Los adaptador
 * **Cumplimiento:** Red Zero Trust. Se requiere TLS mutuo (mTLS) obligatorio solo al activar la malla de red distribuida (Fase 3+).
 
 ### 4.2 Higiene de Secretos
-* **Motor:** HashiCorp Vault (Empresarial o Comunitario Autohospedado).
+* **Motor:** OpenBao (Comunitario, Linux Foundation — fork de Vault compatible con API).
 * **Regla:** Prohibidos los secretos en texto plano en charts de Helm, repositorios Git o ConfigMaps de K8s. La inyección vía sidecar es el único patrón de consumo aprobado.
 
 ---
@@ -141,7 +141,7 @@ Todas las decisiones de infraestructura base son auditadas bajo el prisma de sob
 | :--- | :--- | :--- | :--- |
 | **Base de Datos** | Motor SQL específico por runtime | **Bajo** | Disciplina ANSI SQL. Capa de dominio desacoplada mediante puertos. Cambios de motor requieren ADR de producto. |
 | **Almacén de Objetos** | API compatible con S3 | **Bajo** | Contrato de puerto S3-compatible. Proveedores concretos intercambiables por configuración/adaptador. |
-| **Secretos**| HashiCorp Vault | **Bajo** | Resolución abstraída por inyección dinámica de sidecars nativos de K8s. |
+| **Secretos**| OpenBao | **Bajo** | Resolución abstraída por inyección dinámica de sidecars nativos de K8s. |
 | **Gateway** | API gateway / ingress basado en estándares | **Bajo** | El comportamiento del gateway debe ser declarativo y reemplazable por configuración de ingress/API-management. |
 
 ---

@@ -188,7 +188,7 @@ graph TD
  FW["Hardware Firewall (NGFW)"]
  subgraph K8sCluster["Kubernetes Cluster (RKE2)"]
  AppPods["App Pods\n(Dynamic Load)"]
- Vault["HashiCorp Vault (Local Cluster)"]
+ OpenBao["OpenBao (Local Cluster · Vault fork)"]
  end
  subgraph BareMetalData["Physical Persistence"]
  PostgresHAP["PostgreSQL Bare Metal\n(Patroni / Repmgr)"]
@@ -198,18 +198,18 @@ graph TD
  
  CorporateNetwork --> FW
  FW --> AppPods
- AppPods -.-> Vault
+ AppPods -.-> OpenBao
  AppPods --> PostgresHAP
  PostgresHAP --> Backup
 ```
 
 ### 4.2 Security Implementation
-- **Mode:** Generally configured in `APP_AGNOSTIC` injected via **HashiCorp Vault**, permitting high-level cryptographic access auditing before requests hit DB engines that may not support dynamic advanced corporate RLS.
+- **Mode:** Generally configured in `APP_AGNOSTIC` injected via **OpenBao**, permitting high-level cryptographic access auditing before requests hit DB engines that may not support dynamic advanced corporate RLS.
 - **Backups:** Strict local immutable backup strategy with 5-year retention to satisfy financial data auditing laws.
 
-### 4.3 Infrastructure as Code (Terraform for Vault)
+### 4.3 Infrastructure as Code (OpenTofu for OpenBao)
 ```hcl
-# Vault Secret Injection for App Config
+# OpenBao Secret Injection for App Config (Vault-compatible API)
 resource "vault_mount" "kvv2" {
  path = "secret"
  type = "kv"

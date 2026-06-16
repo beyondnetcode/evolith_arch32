@@ -51,7 +51,7 @@ Esta hoja sirve como referencia de herramientas por capa arquitectónica para de
 ### 7. Infraestructura y Despliegue
 * **Motor de Contenedores:** Docker v25 (Imágenes node distroless multi-etapa)
 * **Plataforma Orquestadora:** Kubernetes (K8s v1.28+)
-* **Gestión de Secretos y Claves:** HashiCorp Vault (OSS, Autohospedado)
+* **Gestión de Secretos y Claves:** OpenBao (fork de Vault, Linux Foundation)
 * **Empaquetador de Despliegue:** Charts parametrizados de Helm v3
 
 ### 8. Observabilidad

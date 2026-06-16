@@ -44,7 +44,7 @@ We decree a **Strict Factory-Driven Abstraction** strategy for deployment switch
 ### Positive
 * **Zero-Recode Deployment**: The same Docker image runs in production cloud OR inside a private corporate data center.
 * **Clean Logic**: Business logic remains 100% pure and ignorant of where it resides physically.
-* **Predictable Configuration**: Infrastructure configuration is centralized in Kubernetes ConfigMaps and Vault mounts.
+* **Predictable Configuration**: Infrastructure configuration is centralized in Kubernetes ConfigMaps and OpenBao mounts.
 
 ### Negative / Technical Debt
 * **Increased Configuration Surface**: DevOps teams must explicitly configure Helm Values to drive the boot-time injection logic correctly for both matrices.

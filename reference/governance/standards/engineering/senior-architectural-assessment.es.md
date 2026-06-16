@@ -89,7 +89,7 @@ Phase 3 (Mesh): Each service owns its DB completely; queries cross-service via A
 **Hallazgo:** El stack Node.js tiene 14 ADRs dedicados. El stack .NET/C# tiene exactamente **1 ADR ([ADR-0041](../../../architecture/adrs/dotnet/0041-canonical-dotnet-backend-architecture.es.md))**. La tabla de runtimes del blueprint lo define como "High Compute / Workers / Batch" pero no hay:
 - Patrón de proyecto canónico en C# (estructura de carpetas, configuración de DI)
 - Estrategia de comunicación .NET NestJS (solo se menciona gRPC + Protobuf en general)
-- Gestión de secretos desde Vault en .NET
+- Gestión de secretos desde OpenBao en .NET
 - Observabilidad (OTel) en .NET con configuración específica
 
 **Impacto:** Para un desarrollador C#/TypeScript, esta brecha es significativa. El equipo .NET tendrá que improvisar lo que Node.js tiene documentado como ley.
@@ -101,7 +101,7 @@ Phase 3 (Mesh): Each service owns its DB completely; queries cross-service via A
 /src
  /Domain // Entities, VOs, Domain Events (sin dependencias externas)
  /Application // Use Cases, Commands, Queries (MediatR)
- /Infrastructure // EF Core, gRPC clients, Vault integration
+ /Infrastructure // EF Core, gRPC clients, OpenBao integration
  /Api // Minimal API / Controller layer
 ```
 

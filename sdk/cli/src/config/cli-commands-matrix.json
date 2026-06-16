@@ -250,12 +250,12 @@
 | Generate `.env` | ✅ Native | File generation |
 | Validate `.env` exists | ✅ Native | File check |
 
-### HashiCorp Vault (Delegated)
+### OpenBao (Delegated — Vault fork, Linux Foundation)
 
 | Command | Support | Implementation |
 |---------|---------|----------------|
-| `vault kv get` | ⚠️ Delegated | Requires vault CLI |
-| `vault agent` | ❌ Unsupported | Manual deployment |
+| `bao kv get` | ⚠️ Delegated | Requires bao CLI |
+| `bao agent` | ❌ Unsupported | Manual deployment |
 
 ### AWS Secrets Manager (Delegated)
 
@@ -299,7 +299,7 @@
 | docker | `docker --version` |
 | kubectl | `kubectl version --client` |
 | helm | `helm version` |
-| vault | `vault --version` |
+| openbao | `bao --version` |
 | kaniko | ❌ Not supported |
 
 ### Unsupported
@@ -308,7 +308,7 @@
 |------|--------|
 | Kaniko | Not implemented |
 | Jaeger agent standalone | Use all-in-one |
-| Vault agent | Manual deployment required |
+| OpenBao agent | Manual deployment required |
 | Grafana API provisioning | External management |
 | AWS SSM Parameter Store | External SDK |
 

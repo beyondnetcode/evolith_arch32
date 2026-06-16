@@ -98,7 +98,7 @@ export class CommandExecutor implements ICommandExecutor {
       'docker-compose': 'Install from https://docs.docker.com/compose/install/',
       kubectl: 'Install from https://kubernetes.io/docs/tasks/tools/install-kubectl/',
       helm: 'Install from https://helm.sh/docs/intro/install/',
-      vault: 'Install from https://www.vaultproject.io/downloads',
+      openbao: 'Install from https://openbao.org/downloads',
       rush: 'npm install -g @microsoft/rush',
       aws: 'Install AWS CLI from https://aws.amazon.com/cli/',
       terraform: 'Install from https://www.terraform.io/downloads',

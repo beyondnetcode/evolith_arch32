@@ -147,7 +147,7 @@ To preempt evolutionary decay, the subsequent barriers are implemented globally:
 | Control | AWS / Azure Deployment | On-Premise / Hybrid Solution |
 | :--- | :--- | :--- |
 | **A.8.1.3 (Assets)** | Azure Policy / IAM Region restrictions to satisfy legal data sovereignty. | Rack-level hardening behind air-gapped perimeter NGFWs. |
-| **A.10.1.1 (Crypto)** | Native KMS Encryption backed by Customer Managed Keys (CMK). | HashiCorp Vault clusters integrated with air-gapped offline tape archives. |
+| **A.10.1.1 (Crypto)** | Native KMS Encryption backed by Customer Managed Keys (CMK). | OpenBao clusters integrated with air-gapped offline tape archives. |
 
 ### Operational Rollback Protocol (RLS Activation)
 Upon critical performance regression spikes observed during `INFRA_NATIVE` switchover:

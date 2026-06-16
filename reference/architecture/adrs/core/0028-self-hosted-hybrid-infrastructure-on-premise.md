@@ -15,7 +15,7 @@ Strictly govern internal tooling selection based on the **100% Open-Source, Self
 1. **Infrastructure as a Port**: NO concrete infrastructure SDK/Library from the products listed below may ever cross into Domain/Application layers. They must be strictly encapsulated behind pure TypeScript `Ports`. Swapping MinIO for AWS S3 or RabbitMQ for Kafka requires editing ONLY a single Infrastructure Adapter file.
 2. **MinIO (Object Storage)**: Standardize on the S3-compatible engine. Run in local Kubernetes cluster directly.
 3. **RabbitMQ (Bus)**: Drive asynchronous communication via open source AMQP brokers instead of proprietary queues.
-4. **Vault & KeyCloak**: Handle native local secrets distribution and localized credentials pools using proven CNCF ecosystems.
+4. **OpenBao & KeyCloak**: Handle native local secrets distribution and localized credentials pools using proven CNCF ecosystems.
 5. **Direct PostgreSQL/Redis**: Drive caching and state through native v16+ engines deployed via Helm, bypassing vendor-wrapped managed DB limitations.
 
 ## Consequences

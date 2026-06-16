@@ -44,7 +44,7 @@ Decretamos una estrategia de **Abstracción Estricta Dirigida por Factoría** pa
 ### Positivas
 * **Despliegue Sin Recodificación**: La misma imagen Docker corre en la nube de producción O dentro de un centro de datos corporativo privado.
 * **Lógica Limpia**: La lógica de negocio permanece 100% pura e ignorante de dónde reside físicamente.
-* **Configuración Predecible**: La configuración de infraestructura se centraliza en ConfigMaps de Kubernetes y montajes de Vault.
+* **Configuración Predecible**: La configuración de infraestructura se centraliza en ConfigMaps de Kubernetes y montajes de OpenBao.
 
 ### Negativas / Deuda Técnica
 * **Superficie de Configuración Incrementada**: Los equipos de DevOps deben configurar explícitamente los Valores de Helm para impulsar correctamente la lógica de inyección en el arranque para ambas matrices.

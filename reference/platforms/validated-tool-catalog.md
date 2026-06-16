@@ -143,7 +143,7 @@ Select architecture pattern:
 
 | Tool | Purpose | CLI Action |
 |------|---------|------------|
-| **HashiCorp Vault** | Secrets management | `smart-cli init --secrets=vault` |
+| **OpenBao** | Secrets management (Vault fork) | `smart-cli init --secrets=openbao` |
 | **Trivy** | Vulnerability scanning | `smart-cli init --security=trivy` |
 | **Snyk** | Dependency scanning | `smart-cli init --security=snyk` |
 

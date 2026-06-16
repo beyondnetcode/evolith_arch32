@@ -238,11 +238,11 @@
           "defaultOption": "env",
           "options": [
             { "value": "env", "label": "Environment vars", "description": "Simple, file-based (.env)" },
-            { "value": "vault", "label": "HashiCorp Vault", "description": "Dynamic secrets, rotation" },
+            { "value": "openbao", "label": "OpenBao", "description": "Dynamic secrets, rotation (Vault fork)" },
             { "value": "aws-secrets", "label": "AWS Secrets Manager", "description": "Para AWS deployments" },
             { "value": "azure-keyvault", "label": "Azure Key Vault", "description": "Para Azure deployments" }
           ],
-          "tools": ["secrets-injector", "vault-agent", "aws-secrets-sync"]
+          "tools": ["secrets-injector", "openbao-agent", "aws-secrets-sync"]
         }
       },
 

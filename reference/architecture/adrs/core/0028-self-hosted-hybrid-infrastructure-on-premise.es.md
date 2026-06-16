@@ -15,7 +15,7 @@ Gobernar estrictamente la selección de herramientas internas basándose en el *
 1. **Infraestructura como Puerto**: NINGÚN SDK/Librería de infraestructura concreta de los productos enumerados a continuación puede cruzar jamás a las capas de Dominio/Aplicación. Deben estar estrictamente encapsulados detrás de `Ports` de TypeScript puro. Cambiar MinIO por AWS S3 o RabbitMQ por Kafka requiere editar ÚNICAMENTE un solo archivo de Adaptador de Infraestructura.
 2. **MinIO (Almacenamiento de Objetos)**: Estandarizar en el motor compatible con S3. Ejecutar directamente en el clúster de Kubernetes local.
 3. **RabbitMQ (Bus)**: Impulsar la comunicación asíncrona vía brókers AMQP de código abierto en lugar de colas propietarias.
-4. **Vault y KeyCloak**: Manejar la distribución local nativa de secretos y pools de credenciales localizados usando ecosistemas CNCF probados.
+4. **OpenBao y KeyCloak**: Manejar la distribución local nativa de secretos y pools de credenciales localizados usando ecosistemas CNCF probados.
 5. **PostgreSQL/Redis Directos**: Impulsar el almacenamiento en caché y el estado a través de motores v16+ nativos desplegados vía Helm, saltándose las limitaciones de BD gestionadas envueltas por el proveedor.
 
 ## Consecuencias

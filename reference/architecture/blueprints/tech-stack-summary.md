@@ -51,7 +51,7 @@ This cheat sheet serves as a high-density tool reference by architectural layer 
 ### 7. Infrastructure & Deployment
 * **Container Engine:** Docker v25 (Multi-Stage Distroless node images)
 * **Orchestrator Platform:** Kubernetes (K8s v1.28+)
-* **Secrets & Key Management:** HashiCorp Vault (OSS, Self-hosted)
+* **Secrets & Key Management:** OpenBao (Vault fork, Linux Foundation)
 * **Deployment Packager:** Helm v3 parameterized charts
 
 ### 8. Observability

@@ -147,7 +147,7 @@ Para evitar el caos evolutivo, se establecen las siguientes prohibiciones técni
 | Control | Implementación en AWS / Azure | Solución On-Premise / Híbrida |
 | :--- | :--- | :--- |
 | **A.8.1.3 (Activos)** | Azure Policy / IAM Scopes limitados por región para cumplir soberanía. | Aislamiento físico en rack con Firewall perimetral dedicado. |
-| **A.10.1.1 (Cripto)** | Cifrado nativo KMS con Llaves Gestionadas por el Cliente (CMK). | HashiCorp Vault + Backup Inmutable desconectado. |
+| **A.10.1.1 (Cripto)** | Cifrado nativo KMS con Llaves Gestionadas por el Cliente (CMK). | OpenBao + Backup Inmutable desconectado. |
 
 ### Protocolo de Rollback Operativo (Activación de RLS)
 En caso de degradación de rendimiento masiva al activar el modo `INFRA_NATIVE` en producción:

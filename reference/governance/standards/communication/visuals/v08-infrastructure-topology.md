@@ -51,7 +51,7 @@ flowchart TB
         DAPR["Dapr Sidecar Mesh\nService discovery · Pub/Sub\nState store · Secrets"]:::infra
         RMQ["RabbitMQ\nEvent Bus · FIFO · DLQ\nADR-0015/0036"]:::infra
         REDIS["Redis Cluster\n4-Tier Cache\nADR-0014"]:::infra
-        VAULT["HashiCorp Vault\nSecrets · PKI · Leases"]:::infra
+        OPENBAO["OpenBao\nSecrets · PKI · Leases\n(Vault fork)"]:::infra
         MINIO["MinIO\nS3-compatible storage\nADR-0028"]:::infra
     end
 
@@ -76,7 +76,7 @@ flowchart TB
     OPA -.->|"polls bundle.tar.gz"| MINIO
     BFF_WEB & BFF_MOB & BFF_B2B & MCP_SERVER --> SERVICES
     SERVICES --> DAPR
-    DAPR --> RMQ & REDIS & VAULT & MINIO
+    DAPR --> RMQ & REDIS & OPENBAO & MINIO
     SERVICES --> DATA
     SERVICES -.->|"traces + logs"| OTEL
 ```
@@ -205,7 +205,7 @@ flowchart TD
     subgraph P4["Data Layer (RLS + Encryption)"]
         direction LR
         DB2["SQL Server 2022\nRow-Level Security predicates\nTDE encryption at rest\nADR-0010 / ADR-0044"]:::trusted
-        VAULT2["HashiCorp Vault\nRotating secrets\nDynamic credentials"]:::trusted
+        OPENBAO2["OpenBao\nRotating secrets\nDynamic credentials"]:::trusted
     end
 
     INTERNET --> TRAEFIK2
@@ -213,7 +213,7 @@ flowchart TD
     IDP --> JWT2
     JWT2 --> SVC_A & SVC_B & SVC_C
     SVC_A & SVC_B & SVC_C --> DAPR2
-    DAPR2 --> DB2 & VAULT2
+    DAPR2 --> DB2 & OPENBAO2
 ```
 
 ---

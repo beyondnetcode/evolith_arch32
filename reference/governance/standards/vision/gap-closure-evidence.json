@@ -1253,7 +1253,7 @@
     {
       "id": "GT-82",
       "closedAt": "2026-06-16",
-      "closureCommit": "94324bd20eff60c5f37c373f49d941ca0bd61dff",
+      "closureCommit": "e7f4490",
       "evidence": [
         "sdk/cli/src/commands/sdlc/",
         "sdk/cli/test/e2e/sdlc-gate-commands-e2e.test.ts",

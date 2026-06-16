@@ -1,62 +1,271 @@
-# Evolith Coverage Report
 
-> Last updated: 2026-06-06
+# [OK] Bilingual Coverage Dashboard
 
-## Documentation Coverage
+**Generated:** 2026-06-16T16:47:09.553Z  
+**Repository:** evolith_arch32  
+**Total EN files:** 370 | **ES files:** 370 | **Paired:** 370 | **Coverage:** 100.0%
+
+---
+
+## Overall Status
 
 | Metric | Value |
 |--------|-------|
-| **Total Markdown files** | 636 |
-| **Files passing validation** | 636 |
-| **Validation pass rate** | 100% |
-| **Bilingual coverage (EN/ES pairs)** | 283/283 (100%) |
-| **Rulesets coverage** | 16 rule files, 13 schemas |
-| **Phase Gate schemas** | 12/12 (100%) |
+| Total EN files | 370 |
+| Total ES files | 370 |
+| Paired files | 370 |
+| **Coverage** | **100.0%** |
 
-## Governance Artifacts
+### Coverage Bar
 
-| Artifact Type | Count | Status |
-|---------------|-------|--------|
-| JSON Schemas (rulesets/schema/) | 13 | [PASS] Complete |
-| ADR-encoded rules (rulesets/adr/) | 7 | [PASS] Complete |
-| Architecture phase rules (rulesets/architecture/) | 3 | [PASS] Complete |
-| Cross-cutting rules (rulesets/cross-cutting/) | 4 | [PASS] Complete |
-| ACL rules (rulesets/acl/) | 1 | [PASS] Complete |
-| SDLC rules (rulesets/sdlc/) | 2 | [PASS] Complete |
-| Governance rules (rulesets/governance/) | 5 | [PASS] Complete |
-| **Total ruleset files** | 35 | [PASS] Complete |
-
-## Phase Gate Coverage
-
-| Phase | Artifacts | Schema |
-|-------|-----------|--------|
-| **Phase 1** Discovery | Discovery Canvas, Business Case ROI, Ballpark Estimation, Evolith User Story, Agile Backlog | [PASS] Complete |
-| **Phase 2** Specification | Functional Stories, ADRs | [PASS] Complete |
-| **Phase 3** Construction | Technical Stories, CLI Impact Analysis | [PASS] Complete |
-| **Phase 4** Validation | Test Summary Report, Pyramid Distribution | [PASS] Complete |
-| **Phase 5** Delivery | Release Notes, Observability | [PASS] Complete |
-
-## Quality Metrics
-
-| Metric | Target | Current | Status |
-|--------|--------|---------|--------|
-| Bilingual parity | 100% | 100% | [PASS] |
-| Broken links | 0 | 0 | [PASS] |
-| Mermaid diagram errors | 0 | 0 | [PASS] |
-| UTF-8 encoding issues | 0 | 0 | [PASS] |
-| Architecture Drift Index | < 10% | N/A (Core baseline) | [PASS] |
-
-## Pre-commit Hooks Active
-
-- `validate-docs.mjs` — Links, anchors, Mermaid, UTF-8, bilingual parity
-- `check-bilingual-parity.mjs` — Structural header parity
-- Orphan bilingual file detection
-
-## Notes
-
-- Coverage metric reflects **documentation and governance artifact coverage**, not code test coverage.
-- Code test coverage for `sdk/cli/` and other implementation directories is tracked separately in those directories.
-- Architecture Drift Index (DRIFT-01) is measured per-satellite against Core rulesets.
+```
+████████████████████ 100.0%
+```
 
 ---
-*This report is auto-generated. Run `node .harness/scripts/bilingual-coverage.mjs` to update.*
+
+## Coverage by Area
+
+| Area | EN | ES | Paired | Coverage | Status |
+|------|----|----|--------|----------|--------|
+| README.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| README.md | 1 | 0 | 0 | 0% | [CRIT] |
+| architecture | 126 | 126 | 121 | 96% | [OK] |
+| core | 2 | 2 | 0 | 0% | [CRIT] |
+| documentation-migration-map.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| documentation-migration-map.md | 1 | 0 | 0 | 0% | [CRIT] |
+| documentation-taxonomy.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| documentation-taxonomy.md | 1 | 0 | 0 | 0% | [CRIT] |
+| getting-started | 2 | 2 | 0 | 0% | [CRIT] |
+| governance | 147 | 147 | 144 | 98% | [OK] |
+| infrastructure | 2 | 2 | 0 | 0% | [CRIT] |
+| knowledge | 28 | 28 | 24 | 86% | [OK] |
+| navigation | 4 | 4 | 0 | 0% | [CRIT] |
+| operations | 7 | 7 | 5 | 71% | [WARN] |
+| platforms | 7 | 7 | 4 | 57% | [WARN] |
+| product-suite | 15 | 15 | 13 | 87% | [OK] |
+| products | 25 | 25 | 23 | 92% | [OK] |
+| quick-access | 2 | 2 | 0 | 0% | [CRIT] |
+
+---
+
+## Detailed Breakdown by Sub-Area
+
+### README.es.md
+
+| Sub-Area | EN | ES | Paired | Coverage | Status |
+|----------|----|----|--------|----------|--------|
+| README.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+
+### README.md
+
+| Sub-Area | EN | ES | Paired | Coverage | Status |
+|----------|----|----|--------|----------|--------|
+| README.md | 1 | 0 | 0 | 0% | [CRIT] |
+
+### architecture
+
+| Sub-Area | EN | ES | Paired | Coverage | Status |
+|----------|----|----|--------|----------|--------|
+| APPLICATION_ARCHITECTURE_HUB.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| APPLICATION_ARCHITECTURE_HUB.md | 1 | 0 | 0 | 0% | [CRIT] |
+| BILINGUAL_INDEX.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| BILINGUAL_INDEX.md | 1 | 0 | 0 | 0% | [CRIT] |
+| DOMAIN_DESIGN_HUB.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| DOMAIN_DESIGN_HUB.md | 1 | 0 | 0 | 0% | [CRIT] |
+| INTEGRATION_HUB.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| INTEGRATION_HUB.md | 1 | 0 | 0 | 0% | [CRIT] |
+| README.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| README.md | 1 | 0 | 0 | 0% | [CRIT] |
+| adrs | 96 | 96 | 96 | 100% | [OK] |
+| blueprints | 15 | 15 | 15 | 100% | [OK] |
+| canonical-patterns | 5 | 5 | 5 | 100% | [OK] |
+| evolith-sdk | 3 | 3 | 3 | 100% | [OK] |
+| principles | 2 | 2 | 2 | 100% | [OK] |
+
+### core
+
+| Sub-Area | EN | ES | Paired | Coverage | Status |
+|----------|----|----|--------|----------|--------|
+| BILINGUAL_INDEX.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| BILINGUAL_INDEX.md | 1 | 0 | 0 | 0% | [CRIT] |
+| README.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| README.md | 1 | 0 | 0 | 0% | [CRIT] |
+
+### documentation-migration-map.es.md
+
+| Sub-Area | EN | ES | Paired | Coverage | Status |
+|----------|----|----|--------|----------|--------|
+| documentation-migration-map.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+
+### documentation-migration-map.md
+
+| Sub-Area | EN | ES | Paired | Coverage | Status |
+|----------|----|----|--------|----------|--------|
+| documentation-migration-map.md | 1 | 0 | 0 | 0% | [CRIT] |
+
+### documentation-taxonomy.es.md
+
+| Sub-Area | EN | ES | Paired | Coverage | Status |
+|----------|----|----|--------|----------|--------|
+| documentation-taxonomy.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+
+### documentation-taxonomy.md
+
+| Sub-Area | EN | ES | Paired | Coverage | Status |
+|----------|----|----|--------|----------|--------|
+| documentation-taxonomy.md | 1 | 0 | 0 | 0% | [CRIT] |
+
+### getting-started
+
+| Sub-Area | EN | ES | Paired | Coverage | Status |
+|----------|----|----|--------|----------|--------|
+| BILINGUAL_INDEX.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| BILINGUAL_INDEX.md | 1 | 0 | 0 | 0% | [CRIT] |
+| README.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| README.md | 1 | 0 | 0 | 0% | [CRIT] |
+
+### governance
+
+| Sub-Area | EN | ES | Paired | Coverage | Status |
+|----------|----|----|--------|----------|--------|
+| BILINGUAL_INDEX.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| BILINGUAL_INDEX.md | 1 | 0 | 0 | 0% | [CRIT] |
+| README.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| README.md | 1 | 0 | 0 | 0% | [CRIT] |
+| adr | 1 | 1 | 1 | 100% | [OK] |
+| glossary.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| glossary.md | 1 | 0 | 0 | 0% | [CRIT] |
+| sdlc | 45 | 45 | 45 | 100% | [OK] |
+| standards | 98 | 98 | 98 | 100% | [OK] |
+
+### infrastructure
+
+| Sub-Area | EN | ES | Paired | Coverage | Status |
+|----------|----|----|--------|----------|--------|
+| BILINGUAL_INDEX.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| BILINGUAL_INDEX.md | 1 | 0 | 0 | 0% | [CRIT] |
+| README.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| README.md | 1 | 0 | 0 | 0% | [CRIT] |
+
+### knowledge
+
+| Sub-Area | EN | ES | Paired | Coverage | Status |
+|----------|----|----|--------|----------|--------|
+| BILINGUAL_INDEX.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| BILINGUAL_INDEX.md | 1 | 0 | 0 | 0% | [CRIT] |
+| README.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| README.md | 1 | 0 | 0 | 0% | [CRIT] |
+| adoption-cases.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| adoption-cases.md | 1 | 0 | 0 | 0% | [CRIT] |
+| architecture-intelligence | 15 | 15 | 15 | 100% | [OK] |
+| demo | 5 | 5 | 5 | 100% | [OK] |
+| poc | 2 | 2 | 2 | 100% | [OK] |
+| research | 2 | 2 | 2 | 100% | [OK] |
+| rules-summary.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| rules-summary.md | 1 | 0 | 0 | 0% | [CRIT] |
+
+### navigation
+
+| Sub-Area | EN | ES | Paired | Coverage | Status |
+|----------|----|----|--------|----------|--------|
+| BILINGUAL_INDEX.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| BILINGUAL_INDEX.md | 1 | 0 | 0 | 0% | [CRIT] |
+| DOCUMENTATION_VERSIONS.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| DOCUMENTATION_VERSIONS.md | 1 | 0 | 0 | 0% | [CRIT] |
+| MASTER_INDEX.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| MASTER_INDEX.md | 1 | 0 | 0 | 0% | [CRIT] |
+| README.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| README.md | 1 | 0 | 0 | 0% | [CRIT] |
+
+### operations
+
+| Sub-Area | EN | ES | Paired | Coverage | Status |
+|----------|----|----|--------|----------|--------|
+| BILINGUAL_INDEX.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| BILINGUAL_INDEX.md | 1 | 0 | 0 | 0% | [CRIT] |
+| README.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| README.md | 1 | 0 | 0 | 0% | [CRIT] |
+| grafana | 3 | 3 | 3 | 100% | [OK] |
+| otel | 1 | 1 | 1 | 100% | [OK] |
+| tempo | 1 | 1 | 1 | 100% | [OK] |
+
+### platforms
+
+| Sub-Area | EN | ES | Paired | Coverage | Status |
+|----------|----|----|--------|----------|--------|
+| BILINGUAL_INDEX.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| BILINGUAL_INDEX.md | 1 | 0 | 0 | 0% | [CRIT] |
+| README.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| README.md | 1 | 0 | 0 | 0% | [CRIT] |
+| ci-cd | 1 | 1 | 1 | 100% | [OK] |
+| observability | 1 | 1 | 1 | 100% | [OK] |
+| scm | 1 | 1 | 1 | 100% | [OK] |
+| security | 1 | 1 | 1 | 100% | [OK] |
+| validated-tool-catalog.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| validated-tool-catalog.md | 1 | 0 | 0 | 0% | [CRIT] |
+
+### product-suite
+
+| Sub-Area | EN | ES | Paired | Coverage | Status |
+|----------|----|----|--------|----------|--------|
+| BILINGUAL_INDEX.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| BILINGUAL_INDEX.md | 1 | 0 | 0 | 0% | [CRIT] |
+| README.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| README.md | 1 | 0 | 0 | 0% | [CRIT] |
+| architecture | 3 | 3 | 3 | 100% | [OK] |
+| communication | 1 | 1 | 1 | 100% | [OK] |
+| methods | 3 | 3 | 3 | 100% | [OK] |
+| positioning | 2 | 2 | 2 | 100% | [OK] |
+| strategy | 2 | 2 | 2 | 100% | [OK] |
+| vision | 2 | 2 | 2 | 100% | [OK] |
+
+### products
+
+| Sub-Area | EN | ES | Paired | Coverage | Status |
+|----------|----|----|--------|----------|--------|
+| BILINGUAL_INDEX.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| BILINGUAL_INDEX.md | 1 | 0 | 0 | 0% | [CRIT] |
+| README.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| README.md | 1 | 0 | 0 | 0% | [CRIT] |
+| evolith-tracker | 3 | 3 | 3 | 100% | [OK] |
+| mcp-services | 1 | 1 | 1 | 100% | [OK] |
+| smart-cli | 19 | 19 | 19 | 100% | [OK] |
+
+### quick-access
+
+| Sub-Area | EN | ES | Paired | Coverage | Status |
+|----------|----|----|--------|----------|--------|
+| BILINGUAL_INDEX.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| BILINGUAL_INDEX.md | 1 | 0 | 0 | 0% | [CRIT] |
+| README.es.md | 0 | 1 | 0 | 0% | [CRIT] |
+| README.md | 1 | 0 | 0 | 0% | [CRIT] |
+
+---
+
+## Legend
+
+| Symbol | Coverage Range |
+|--------|----------------|
+| [OK] | 80-100% |
+| [WARN] | 50-79% |
+| [LOW] | 25-49% |
+| [CRIT] | 0-24% |
+
+## How to Improve Coverage
+
+1. Run the skeleton generator for pending files:
+   ```bash
+   node .harness/scripts/generate-es-skeleton.mjs <file.md>
+   ```
+
+2. Check the bilingual coverage report:
+   ```bash
+   node .harness/scripts/bilingual-coverage.mjs
+   ```
+
+3. Prioritize critical areas: architecture/adrs, governance/standards
+
+---
+
+*Report generated by .harness/scripts/coverage-dashboard.mjs*

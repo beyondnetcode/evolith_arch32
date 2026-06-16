@@ -57,10 +57,10 @@ for (const f of esFiles) {
 }
 
 function coverageColor(pct) {
-  if (pct >= 80) return "🟢";
-  if (pct >= 50) return "🟡";
-  if (pct >= 25) return "🟠";
-  return "🔴";
+  if (pct >= 80) return "[OK]";
+  if (pct >= 50) return "[WARN]";
+  if (pct >= 25) return "[LOW]";
+  return "[CRIT]";
 }
 
 function bar(pct, width = 20) {
@@ -84,7 +84,7 @@ for (const f of esFiles) {
 const totalPct = ((totalPaired / totalEn) * 100).toFixed(1);
 
 console.log(`
-# 📊 Bilingual Coverage Dashboard
+# [OK] Bilingual Coverage Dashboard
 
 **Generated:** ${new Date().toISOString()}  
 **Repository:** evolith_arch32  
@@ -159,10 +159,10 @@ console.log(`---
 
 | Symbol | Coverage Range |
 |--------|----------------|
-| 🟢 | 80-100% |
-| 🟡 | 50-79% |
-| 🟠 | 25-49% |
-| 🔴 | 0-24% |
+| [OK] | 80-100% |
+| [WARN] | 50-79% |
+| [LOW] | 25-49% |
+| [CRIT] | 0-24% |
 
 ## How to Improve Coverage
 
@@ -184,7 +184,7 @@ console.log(`---
 `);
 
 fs.writeFileSync(path.join(root, "COVERAGE_REPORT.md"), `
-# 📊 Bilingual Coverage Dashboard
+# [OK] Bilingual Coverage Dashboard
 
 **Generated:** ${new Date().toISOString()}  
 **Repository:** evolith_arch32  
@@ -250,10 +250,10 @@ ${subs.map(sub => {
 
 | Symbol | Coverage Range |
 |--------|----------------|
-| 🟢 | 80-100% |
-| 🟡 | 50-79% |
-| 🟠 | 25-49% |
-| 🔴 | 0-24% |
+| [OK] | 80-100% |
+| [WARN] | 50-79% |
+| [LOW] | 25-49% |
+| [CRIT] | 0-24% |
 
 ## How to Improve Coverage
 

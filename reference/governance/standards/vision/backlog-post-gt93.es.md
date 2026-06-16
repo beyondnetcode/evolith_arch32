@@ -21,10 +21,10 @@
 
 | ID | Título | Componente | Impacto | Esfuerzo | Size | GitHub Project |
 |----|--------|------------|---------|----------|------|----------------|
-| **GAP-003** | Raise statement coverage to 80% | CLI | Quality gate failure | 8h | L | ✅ Creado |
-| **GAP-004** | Raise branch coverage to 67% | CLI | Quality gate failure | 6h | M | ✅ Creado |
-| **GAP-005** | Add tests for zero-coverage files | CLI | Unvalidated code | 2h | S | ✅ Creado |
-| **GAP-006** | Document auto-fix in architecture | Docs | Missing documentation | 2h | S | ✅ Creado |
+| **GAP-003** | Raise statement coverage to 80% | CLI | Quality gate failure | 8h | L | DONE Creado |
+| **GAP-004** | Raise branch coverage to 67% | CLI | Quality gate failure | 6h | M | DONE Creado |
+| **GAP-005** | Add tests for zero-coverage files | CLI | Unvalidated code | 2h | S | DONE Creado |
+| **GAP-006** | Document auto-fix in architecture | Docs | Missing documentation | 2h | S | DONE Creado |
 
 **Orden:** P1 primero, luego por esfuerzo ascendente (S → M → L)
 
@@ -32,11 +32,11 @@
 
 | ID | Título | Componente | Impacto | Esfuerzo | Size | GitHub Project |
 |----|--------|------------|---------|----------|------|----------------|
-| **GAP-007** | Remove emoji from documentation | Docs | Quality gate violation | 1h | XS | ✅ Creado |
-| **GAP-008** | Complete tool design principles | Docs | Incomplete standard | 4h | M | ✅ Creado |
-| **GAP-009** | Complete MCP security guidelines | Docs | Security gap | 4h | M | ✅ Creado |
-| **GAP-010** | Audit BFF documentation coherence | BFF | Potential drift | 4h | M | ✅ Creado |
-| **GAP-011** | Fix WizardService implementation drift | CLI | Architecture drift | 3h | S | ✅ Creado |
+| **GAP-007** | Remove emoji from documentation | Docs | Quality gate violation | 1h | XS | DONE Creado |
+| **GAP-008** | Complete tool design principles | Docs | Incomplete standard | 4h | M | DONE Creado |
+| **GAP-009** | Complete MCP security guidelines | Docs | Security gap | 4h | M | DONE Creado |
+| **GAP-010** | Audit BFF documentation coherence | BFF | Potential drift | 4h | M | DONE Creado |
+| **GAP-011** | Fix WizardService implementation drift | CLI | Architecture drift | 3h | S | DONE Creado |
 
 **Orden:** P2 primero, luego por esfuerzo ascendente (XS → S → M)
 
@@ -48,13 +48,13 @@
 
 | ID | Título | Componente | Valor | Esfuerzo | Size | GitHub Project |
 |----|--------|------------|-------|----------|------|----------------|
-| **OPP-003** | Eliminate test console noise | CLI | Developer experience | 2h | S | ✅ Creado |
-| **OPP-009** | Generate HTML coverage reports | CLI | Better visibility | 2h | S | ✅ Creado |
-| **OPP-010** | Add confirmation timeout config | CLI | Better UX | 2h | S | ✅ Creado |
-| **OPP-004** | Optimize pre-commit validation | Platform | Developer experience | 4h | M | ✅ Creado |
-| **OPP-002** | Add MCP distributed tracing | CLI | Observability | 6h | M | ✅ Creado |
-| **OPP-005** | Add MCP metrics dashboard | CLI | Observability | 6h | M | ✅ Creado |
-| **OPP-001** | Implement auto-fix domain strategies | CLI | Complete GT-115 vision | 8h | L | ✅ Creado |
+| **OPP-003** | Eliminate test console noise | CLI | Developer experience | 2h | S | DONE Creado |
+| **OPP-009** | Generate HTML coverage reports | CLI | Better visibility | 2h | S | DONE Creado |
+| **OPP-010** | Add confirmation timeout config | CLI | Better UX | 2h | S | DONE Creado |
+| **OPP-004** | Optimize pre-commit validation | Platform | Developer experience | 4h | M | DONE Creado |
+| **OPP-002** | Add MCP distributed tracing | CLI | Observability | 6h | M | DONE Creado |
+| **OPP-005** | Add MCP metrics dashboard | CLI | Observability | 6h | M | DONE Creado |
+| **OPP-001** | Implement auto-fix domain strategies | CLI | Complete GT-115 vision | 8h | L | DONE Creado |
 
 **Orden:** Por esfuerzo ascendente (S → M → L) para facilitar quick wins
 
@@ -62,9 +62,9 @@
 
 | ID | Título | Componente | Valor | Esfuerzo | Size | GitHub Project |
 |----|--------|------------|-------|----------|------|----------------|
-| **OPP-008** | Parallelize test execution | CLI | Faster CI | 4h | M | ✅ Creado |
-| **OPP-007** | Add wizard validation steps | CLI | Better UX | 4h | M | ✅ Creado |
-| **OPP-006** | Expand auto-fix strategies (6+) | CLI | More automation | 12h | XL | ✅ Creado |
+| **OPP-008** | Parallelize test execution | CLI | Faster CI | 4h | M | DONE Creado |
+| **OPP-007** | Add wizard validation steps | CLI | Better UX | 4h | M | DONE Creado |
+| **OPP-006** | Expand auto-fix strategies (6+) | CLI | More automation | 12h | XL | DONE Creado |
 
 **Orden:** Por esfuerzo ascendente (M → XL)
 
@@ -85,9 +85,9 @@ Los items están ordenados por:
 - XL: ≥11h
 
 **GitHub Project Fields:**
-- ✅ Status: Backlog (todos los items)
-- ✅ Size: Configurado según esfuerzo estimado
-- ⚠️ Priority: Campo existe pero requiere configuración de opciones (P0/P1/P2)
+- DONE Status: Backlog (todos los items)
+- DONE Size: Configurado según esfuerzo estimado
+- WARN Priority: Campo existe pero requiere configuración de opciones (P0/P1/P2)
 
 ---
 
@@ -141,29 +141,29 @@ Los items están ordenados por:
 | Fecha | Cambio | Items Added | Items Completed |
 |-------|--------|-------------|-----------------|
 | 2026-06-16 | Creación inicial del backlog | 24 (11 GAPs + 13 OPPs) | 0 |
-| 2026-06-16 | Sincronizado con GitHub Project | ✅ 21 items creados | 0 |
+| 2026-06-16 | Sincronizado con GitHub Project | DONE 21 items creados | 0 |
 
 **GitHub Project Items:**
-- GAP-001: `PVTI_lADOD5Ic284BaueGzgv7wQM` ✅
-- GAP-002: `PVTI_lADOD5Ic284BaueGzgv7wU8` ✅
-- GAP-003: `PVTI_lADOD5Ic284BaueGzgv7wVo` ✅
-- GAP-004: `PVTI_lADOD5Ic284BaueGzgv7wWs` ✅
-- GAP-005: `PVTI_lADOD5Ic284BaueGzgv7wXU` ✅
-- GAP-006: `PVTI_lADOD5Ic284BaueGzgv7wYE` ✅
-- GAP-007: `PVTI_lADOD5Ic284BaueGzgv7wY4` ✅
-- GAP-008: `PVTI_lADOD5Ic284BaueGzgv7wZ0` ✅
-- GAP-009: `PVTI_lADOD5Ic284BaueGzgv7wa0` ✅
-- GAP-010: `PVTI_lADOD5Ic284BaueGzgv7wbo` ✅
-- GAP-011: `PVTI_lADOD5Ic284BaueGzgv7wc0` ✅
-- OPP-001: `PVTI_lADOD5Ic284BaueGzgv7wjA` ✅
-- OPP-002: `PVTI_lADOD5Ic284BaueGzgv7wkA` ✅
-- OPP-003: `PVTI_lADOD5Ic284BaueGzgv7wks` ✅
-- OPP-004: `PVTI_lADOD5Ic284BaueGzgv7wlM` ✅
-- OPP-005: `PVTI_lADOD5Ic284BaueGzgv7wmU` ✅
-- OPP-006: `PVTI_lADOD5Ic284BaueGzgv7wnA` ✅
-- OPP-007: `PVTI_lADOD5Ic284BaueGzgv7wnc` ✅
-- OPP-008: `PVTI_lADOD5Ic284BaueGzgv7woQ` ✅
-- OPP-009: `PVTI_lADOD5Ic284BaueGzgv7wpg` ✅
-- OPP-010: `PVTI_lADOD5Ic284BaueGzgv7wqI` ✅
+- GAP-001: `PVTI_lADOD5Ic284BaueGzgv7wQM` DONE
+- GAP-002: `PVTI_lADOD5Ic284BaueGzgv7wU8` DONE
+- GAP-003: `PVTI_lADOD5Ic284BaueGzgv7wVo` DONE
+- GAP-004: `PVTI_lADOD5Ic284BaueGzgv7wWs` DONE
+- GAP-005: `PVTI_lADOD5Ic284BaueGzgv7wXU` DONE
+- GAP-006: `PVTI_lADOD5Ic284BaueGzgv7wYE` DONE
+- GAP-007: `PVTI_lADOD5Ic284BaueGzgv7wY4` DONE
+- GAP-008: `PVTI_lADOD5Ic284BaueGzgv7wZ0` DONE
+- GAP-009: `PVTI_lADOD5Ic284BaueGzgv7wa0` DONE
+- GAP-010: `PVTI_lADOD5Ic284BaueGzgv7wbo` DONE
+- GAP-011: `PVTI_lADOD5Ic284BaueGzgv7wc0` DONE
+- OPP-001: `PVTI_lADOD5Ic284BaueGzgv7wjA` DONE
+- OPP-002: `PVTI_lADOD5Ic284BaueGzgv7wkA` DONE
+- OPP-003: `PVTI_lADOD5Ic284BaueGzgv7wks` DONE
+- OPP-004: `PVTI_lADOD5Ic284BaueGzgv7wlM` DONE
+- OPP-005: `PVTI_lADOD5Ic284BaueGzgv7wmU` DONE
+- OPP-006: `PVTI_lADOD5Ic284BaueGzgv7wnA` DONE
+- OPP-007: `PVTI_lADOD5Ic284BaueGzgv7wnc` DONE
+- OPP-008: `PVTI_lADOD5Ic284BaueGzgv7woQ` DONE
+- OPP-009: `PVTI_lADOD5Ic284BaueGzgv7wpg` DONE
+- OPP-010: `PVTI_lADOD5Ic284BaueGzgv7wqI` DONE
 
 **Status:** Todos los items creados con estado "Backlog"

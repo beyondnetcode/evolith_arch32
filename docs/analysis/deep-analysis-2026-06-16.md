@@ -1,4 +1,4 @@
-# 🔍 Deep Analysis Report: Gaps, Opportunities & Coherence Review
+# [ANALYSIS] Deep Analysis Report: Gaps, Opportunities & Coherence Review
 
 **Generated:** 2026-06-16  
 **Context:** All 93 GT gaps completed (100% closure rate)  
@@ -10,17 +10,17 @@
 
 | Category | Status | Priority | Type | Count |
 |----------|--------|----------|------|-------|
-| Failing Tests | 🔴 21 tests (2.3%) | **P0** | GAP | 6 suites |
-| Test Coverage | ⚠️ 73% statements (target: 80%) | **P1** | GAP | 4 metrics |
-| Zero-Coverage Files | 🔴 3 files | **P1** | GAP | 133 lines |
-| Incomplete Documentation | 🟡 24 files with markers | **P2** | GAP | 6 critical |
-| Diagram Coherence | 🟢 188 diagrams, 0 errors | N/A | Validated | 188 |
-| CLI/MCP Coherence | ⚠️ 1 undocumented command | **P2** | GAP | 1 |
-| BFF Coherence | 🟡 Documentation stale | **P2** | GAP | 1 audit |
-| TODO/FIXME Comments | 🟢 1 found | Low | Opportunity | 1 |
-| MCP Tool Expansion | 🟡 10 tools implemented | Medium | Opportunity | +2 possible |
-| Observability | 🔴 Not implemented | Medium | Opportunity | 1 |
-| Bilingual Parity | 🟢 100% (369/369) | N/A | Compliant | 369 pairs |
+| Failing Tests | CRIT 21 tests (2.3%) | **P0** | GAP | 6 suites |
+| Test Coverage | WARN 73% statements (target: 80%) | **P1** | GAP | 4 metrics |
+| Zero-Coverage Files | CRIT 3 files | **P1** | GAP | 133 lines |
+| Incomplete Documentation | WARN 24 files with markers | **P2** | GAP | 6 critical |
+| Diagram Coherence | OK 188 diagrams, 0 errors | N/A | Validated | 188 |
+| CLI/MCP Coherence | WARN 1 undocumented command | **P2** | GAP | 1 |
+| BFF Coherence | WARN Documentation stale | **P2** | GAP | 1 audit |
+| TODO/FIXME Comments | OK 1 found | Low | Opportunity | 1 |
+| MCP Tool Expansion | WARN 10 tools implemented | Medium | Opportunity | +2 possible |
+| Observability | CRIT Not implemented | Medium | Opportunity | 1 |
+| Bilingual Parity | OK 100% (369/369) | N/A | Compliant | 369 pairs |
 
 **Total GAPs Identified:** 11 (40 hours estimated)  
 **Total Opportunities:** 13 (50 hours estimated)
@@ -32,14 +32,14 @@
 ### 1.1 Mermaid Diagram Validation
 
 **Total Diagrams:** 188  
-**Validation Status:** ✅ 0 syntax errors, 0 invalid diagrams
+**Validation Status:** DONE 0 syntax errors, 0 invalid diagrams
 
 | Diagram Type | Count | Validation |
 |--------------|-------|------------|
-| Flowcharts (`graph TD/LR`) | ~120 | ✅ Valid |
-| Sequence Diagrams (`sequenceDiagram`) | ~35 | ✅ Valid |
-| Class Diagrams (`classDiagram`) | ~20 | ✅ Valid |
-| State Diagrams (`stateDiagram`) | ~13 | ✅ Valid |
+| Flowcharts (`graph TD/LR`) | ~120 | DONE Valid |
+| Sequence Diagrams (`sequenceDiagram`) | ~35 | DONE Valid |
+| Class Diagrams (`classDiagram`) | ~20 | DONE Valid |
+| State Diagrams (`stateDiagram`) | ~13 | DONE Valid |
 
 **Validation Command:**
 ```bash
@@ -50,10 +50,10 @@ node .harness/scripts/validate-docs.mjs --render-mermaid
 
 | Component | Documented | Implemented | Coherence | Issue |
 |-----------|------------|-------------|-----------|-------|
-| CLI Commands | 23 | 24 | ⚠️ 96% | `auto-fix` undocumented |
-| MCP Tools | 10 | 10 | ✅ 100% | Aligned |
-| Core Interfaces | 42 | 42 | ✅ 100% | Aligned |
-| BFF Endpoints | 18 | ? | ⚠️ Unknown | Not audited |
+| CLI Commands | 23 | 24 | WARN 96% | `auto-fix` undocumented |
+| MCP Tools | 10 | 10 | DONE 100% | Aligned |
+| Core Interfaces | 42 | 42 | DONE 100% | Aligned |
+| BFF Endpoints | 18 | ? | WARN Unknown | Not audited |
 
 **Finding:** CLI `auto-fix` command (GT-115) not reflected in architecture diagrams
 
@@ -88,25 +88,25 @@ node .harness/scripts/validate-docs.mjs --render-mermaid
 
 | Tool | Documented | Implemented | Status |
 |------|------------|-------------|--------|
-| `evolith-agent-handoff` | ✅ | ✅ | Aligned |
-| `evolith-architecture-evaluate` | ✅ | ✅ | Aligned |
-| `evolith-gate-status` | ✅ | ✅ | Aligned |
-| `evolith-moscow-prioritize` | ✅ | ✅ | Aligned |
-| `evolith-sdlc-handoff` | ✅ | ✅ | Aligned |
-| `evolith-validate` | ✅ | ✅ | Aligned |
-| `evolith-phase-advance` | ✅ | ✅ | Aligned |
-| `evolith-auto-fix` | ✅ | ✅ | Aligned |
-| `evolith-alias` | ✅ | ✅ | Aligned |
-| `evolith-schema` | ✅ | ✅ | Aligned |
+| `evolith-agent-handoff` | DONE | DONE | Aligned |
+| `evolith-architecture-evaluate` | DONE | DONE | Aligned |
+| `evolith-gate-status` | DONE | DONE | Aligned |
+| `evolith-moscow-prioritize` | DONE | DONE | Aligned |
+| `evolith-sdlc-handoff` | DONE | DONE | Aligned |
+| `evolith-validate` | DONE | DONE | Aligned |
+| `evolith-phase-advance` | DONE | DONE | Aligned |
+| `evolith-auto-fix` | DONE | DONE | Aligned |
+| `evolith-alias` | DONE | DONE | Aligned |
+| `evolith-schema` | DONE | DONE | Aligned |
 
-**Status:** ✅ 10/10 tools aligned
+**Status:** DONE 10/10 tools aligned
 
 ### 2.3 Core Component
 
 **Documentation References:** 182 files mentioning domain/interfaces  
 **Actual Implementation:** 42 interfaces in `packages/core-domain/src`
 
-**Coherence Status:** ✅ Aligned
+**Coherence Status:** DONE Aligned
 
 **Hexagonal Architecture Compliance:**
 - Ports defined: 8
@@ -116,7 +116,7 @@ node .harness/scripts/validate-docs.mjs --render-mermaid
 ### 2.4 BFF Component
 
 **Documentation References:** 326 files  
-**Status:** ⚠️ **Documentation may be stale**
+**Status:** WARN **Documentation may be stale**
 
 **Issues:**
 - BFF API documentation references old endpoint structure
@@ -255,10 +255,10 @@ node .harness/scripts/validate-docs.mjs --render-mermaid
 ### 6.1 Overall Coverage
 
 ```
-Statements: 73.03% (target: 80%) ❌
-Branches:   61.98% (target: 67%) ❌
-Functions:  72.69% (target: 75%) ❌
-Lines:      73.56% (target: 80%) ❌
+Statements: 73.03% (target: 80%) FAIL
+Branches:   61.98% (target: 67%) FAIL
+Functions:  72.69% (target: 75%) FAIL
+Lines:      73.56% (target: 80%) FAIL
 ```
 
 ### 6.2 Zero-Coverage Files
@@ -273,9 +273,9 @@ Lines:      73.56% (target: 80%) ❌
 
 | Milestone | Statements | Branches | Status |
 |-----------|------------|----------|--------|
-| GT-81 Closure | 80% | 67% | ✅ Configured |
-| Current | 73% | 62% | ❌ Regression |
-| Target | 80% | 67% | 🎯 GAP-003, GAP-004 |
+| GT-81 Closure | 80% | 67% | DONE Configured |
+| Current | 73% | 62% | FAIL Regression |
+| Target | 80% | 67% | TARGET GAP-003, GAP-004 |
 
 ---
 

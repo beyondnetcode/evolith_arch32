@@ -49,7 +49,11 @@ export class WizardService {
       }
 
       Object.assign(this.currentState, result);
-      this.currentStepIndex++;
+      
+      if (!this.goBackCalled) {
+        this.currentStepIndex++;
+      }
+      this.goBackCalled = false;
     }
 
     const confirmed = await this.showSummary();
@@ -64,9 +68,12 @@ export class WizardService {
     return this.currentState;
   }
 
+  private goBackCalled = false;
+
   private async runStep(step: WizardStep): Promise<Record<string, unknown> | null> {
     const goBack = () => {
       if (this.currentStepIndex > 0) {
+        this.goBackCalled = true;
         this.currentStepIndex--;
       }
     };

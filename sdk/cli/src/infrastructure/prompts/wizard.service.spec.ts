@@ -209,6 +209,17 @@ describe('WizardService', () => {
   });
 
   describe('goBack functionality', () => {
+    let originalTTY: boolean | undefined;
+    
+    beforeAll(() => {
+      originalTTY = process.stdout.isTTY;
+      Object.defineProperty(process.stdout, 'isTTY', { value: true, configurable: true });
+    });
+    
+    afterAll(() => {
+      Object.defineProperty(process.stdout, 'isTTY', { value: originalTTY, configurable: true });
+    });
+    
     it('should allow step to trigger goBack', async () => {
       let goBackCalled = false;
       
@@ -234,10 +245,44 @@ describe('WizardService', () => {
       await service.start({
         title: 'Test Wizard',
         steps: mockSteps,
-        noInteractive: true,
+        noInteractive: false,
       });
 
       expect(goBackCalled).toBe(true);
+    });
+
+    it('should complete wizard after goBack is called once', async () => {
+      let step2ExecutionCount = 0;
+      
+      const mockSteps: WizardStep[] = [
+        {
+          id: 'step1',
+          title: 'Step 1',
+          run: jest.fn().mockResolvedValue({ step1: 'value' }),
+        },
+        {
+          id: 'step2',
+          title: 'Step 2',
+          run: jest.fn().mockImplementation((state, goBack) => {
+            step2ExecutionCount++;
+            if (step2ExecutionCount === 1) {
+              goBack();
+            }
+            return Promise.resolve({ step2: 'value' });
+          }),
+        },
+      ];
+
+      (p.confirm as jest.Mock).mockResolvedValue(true);
+
+      const result = await service.start({
+        title: 'Test Wizard',
+        steps: mockSteps,
+        noInteractive: false,
+      });
+
+      expect(step2ExecutionCount).toBeGreaterThan(1);
+      expect(result).toEqual({ step1: 'value', step2: 'value' });
     });
   });
 });

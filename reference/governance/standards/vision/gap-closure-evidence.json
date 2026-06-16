@@ -1040,6 +1040,37 @@
         "npm test --workspace apps/core-api -- --no-coverage"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-112",
+      "closedAt": "2026-06-15",
+      "closureCommit": "faa012f",
+      "evidence": [
+        "reference/infrastructure/docker-compose.yml",
+        "reference/infrastructure/README.md",
+        "reference/platforms/validated-tool-catalog.md",
+        "reference/governance/standards/engineering/detailed-stack-audit-2026.md",
+        "reference/architecture/blueprints/authoritative-tech-stack-agnostic.md",
+        "reference/architecture/blueprints/tech-stack-summary.md",
+        "reference/architecture/blueprints/reference-blueprint.md",
+        "reference/architecture/blueprints/multi-cloud-deployment-scenarios.md",
+        "reference/architecture/adrs/core/0028-self-hosted-hybrid-infrastructure-on-premise.md",
+        "reference/architecture/adrs/core/0039-deployment-topology-abstraction-switcher.md",
+        "reference/governance/standards/communication/visuals/v08-infrastructure-topology.md",
+        "reference/governance/standards/engineering/senior-architectural-assessment.md",
+        "reference/product-suite/strategy/evolutionary-strategy-roadmap.md",
+        "sdk/cli/src/config/tool-catalog.json",
+        "sdk/cli/src/config/cli-commands-matrix.json",
+        "sdk/cli/src/infrastructure/catalog/catalog-loader.ts",
+        "sdk/cli/src/infrastructure/cli/command-executor.ts",
+        "packages/core-domain/src/domain/services/index.ts"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/validate-docs.mjs",
+        "node .harness/scripts/validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "OpenBao is API-compatible with Vault; all existing secrets workflows remain unchanged."
     }
   ]
 }

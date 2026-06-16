@@ -1217,7 +1217,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Gap:** MassTransit v9 moved to a purely commercial model; v8 is OSS-supported only until EOY 2026 (Stack Audit, RED/Yellow).
 - **Purpose:** Decide and execute a path that keeps the messaging abstraction on a sustainable OSS footing.
 - **Done when:**
-  - [ ] a decision is recorded to remain on v8 within support or migrate to an alternative (e.g. Rebus / direct driver), with a dated plan
+  - [x] a decision is recorded to remain on v8 within support or migrate to an alternative (e.g. Rebus / direct driver), with a dated plan
 - **References:** Stack Audit `reference/governance/standards/engineering/detailed-stack-audit-2026.md` (TOP CRITICAL ALERT 2)
 
 #### GT-112

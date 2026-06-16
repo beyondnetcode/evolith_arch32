@@ -1123,6 +1123,20 @@
         "npx tsc --noEmit -p tsconfig.test.json"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-111",
+      "closedAt": "2026-06-15",
+      "closureCommit": "189b03d",
+      "evidence": [
+        "reference/architecture/adrs/core/0077-masstransit-v9-commercial-pivot.md",
+        "reference/architecture/adrs/core/0077-masstransit-v9-commercial-pivot.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/validate-docs.mjs"
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "The ADR records a dated decision with a re-evaluation gate, satisfying the closure criterion."
     }
   ]
 }

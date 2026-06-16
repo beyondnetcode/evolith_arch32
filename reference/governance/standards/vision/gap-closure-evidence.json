@@ -1106,7 +1106,7 @@
     {
       "id": "GT-97",
       "closedAt": "2026-06-15",
-      "closureCommit": "d8d600b",
+      "closureCommit": "80bef6f",
       "evidence": [
         "sdk/cli/src/infrastructure/config/config.service.ts",
         "sdk/cli/src/infrastructure/config/config.service.spec.ts",

@@ -12,10 +12,10 @@
 
 | ID | Título | Componente | Impacto | Esfuerzo | Size | GitHub Project |
 |----|--------|------------|---------|----------|------|----------------|
-| **GAP-001** | Fix 21 failing tests | CLI | CI reliability blocked | 4h | M | [`#1`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-001%5D) |
+| ~~**GAP-001**~~ | ~~Fix 21 failing tests~~ | CLI | CI reliability blocked | 4h | M | **DONE** | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-001%5D)(https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-001%5D) |
 | **GAP-002** | Fix ConfirmationService TTY tests | CLI | GT-114 validation at risk | 2h | S | [`#2`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BGAP-002%5D) |
 
-**Orden:** P0 primero, luego por esfuerzo ascendente (S → M → L)
+**Orden:** P0 primero, luego por esfuerzo ascendente (S → M)
 
 ### P1 - Alto (Quality Gate) - 4 items, 18 horas
 
@@ -104,7 +104,7 @@ Los items están ordenados por:
 ## Roadmap Sugerido
 
 ### Semana 1 (Crítico)
-- [ ] GAP-001: Fix 21 failing tests
+- [x] **GAP-001: Fix 21 failing tests** [DONE] DONE
 - [ ] GAP-002: Fix ConfirmationService TTY tests
 - [ ] GAP-006: Document auto-fix in architecture
 
@@ -144,7 +144,7 @@ Los items están ordenados por:
 | 2026-06-16 | Sincronizado con GitHub Project | [DONE] 21 items creados | 0 | 21 |
 | 2026-06-16 | **GAP-007 completado** | - | [DONE] GAP-007 | **20** |
 
-**Progreso:** 1/11 GAPs completados (9%) · 10 pendientes
+**Progreso:** 2/11 GAPs completados (18%) · 10 pendientes
 
 **GitHub Project Items:**
 - GAP-001: `PVTI_lADOD5Ic284BaueGzgv7wQM` [DONE] Backlog

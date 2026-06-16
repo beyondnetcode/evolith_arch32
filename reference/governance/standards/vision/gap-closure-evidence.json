@@ -1092,7 +1092,7 @@
     {
       "id": "GT-80",
       "closedAt": "2026-06-15",
-      "closureCommit": "47b8b66",
+      "closureCommit": "ec17914",
       "evidence": [
         "sdk/cli/src/infrastructure/observability/index.ts",
         ".github/workflows/sdk-cli-ci.yml"

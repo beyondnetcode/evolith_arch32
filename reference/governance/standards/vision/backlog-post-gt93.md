@@ -50,7 +50,7 @@
 |----|--------|------------|-------|----------|------|--------|----------------|
 | ~~**OPP-003**~~ | ~~Eliminate test console noise~~ | ~~CLI~~ | ~~Developer experience~~ | ~~2h~~ | ~~S~~ | **DONE** | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BOPP-003%5D) |
 | ~~**OPP-009**~~ | ~~Generate HTML coverage reports~~ | ~~CLI~~ | ~~Better visibility~~ | ~~2h~~ | ~~S~~ | **DONE** | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BOPP-009%5D) |
-| **OPP-010** | Add confirmation timeout config | CLI | Better UX | 2h | S | Backlog | [`#10`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BOPP-010%5D) |
+| ~~**OPP-010**~~ | ~~Add confirmation timeout config~~ | ~~CLI~~ | ~~Better UX~~ | ~~2h~~ | ~~S~~ | **DONE** | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BOPP-010%5D) |
 | **OPP-004** | Optimize pre-commit validation | Platform | Developer experience | 4h | M | Backlog | [`#4`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BOPP-004%5D) |
 | **OPP-002** | Add MCP distributed tracing | CLI | Observability | 6h | M | Backlog | [`#2`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BOPP-002%5D) |
 | **OPP-005** | Add MCP metrics dashboard | CLI | Observability | 6h | M | Backlog | [`#5`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BOPP-005%5D) |

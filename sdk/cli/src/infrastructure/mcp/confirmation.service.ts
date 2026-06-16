@@ -5,6 +5,7 @@ export interface ConfirmationOptions {
   skipConfirm?: boolean;
   stdin?: NodeJS.ReadStream;
   stdout?: NodeJS.WriteStream;
+  timeoutMs?: number;  // Timeout for confirmation prompt (default: 30000ms)
 }
 
 export class ConfirmationService {
@@ -12,11 +13,13 @@ export class ConfirmationService {
   private readonly skipConfirm: boolean;
   private readonly stdin: NodeJS.ReadStream;
   private readonly stdout: NodeJS.WriteStream;
+  private readonly timeoutMs: number;
 
   constructor(options: ConfirmationOptions = {}) {
     this.skipConfirm = options.skipConfirm ?? false;
     this.stdin = options.stdin ?? process.stdin;
     this.stdout = options.stdout ?? process.stdout;
+    this.timeoutMs = options.timeoutMs ?? 30000;  // Default 30 seconds
   }
 
   async confirmMutation(
@@ -44,15 +47,33 @@ export class ConfirmationService {
         output: this.stdout,
       });
 
-      rl.question(prompt, (answer) => {
-        rl.close();
-        const confirmed = answer.toLowerCase().trim() === 'y';
-        if (confirmed) {
-          this.logger.debug(`Confirmation granted for '${toolName}'`);
-        } else {
-          this.logger.debug(`Confirmation denied for '${toolName}'`);
+      let resolved = false;
+
+      // Timeout handling
+      const timeoutId = setTimeout(() => {
+        if (!resolved) {
+          rl.close();
+          this.logger.warn(
+            `Confirmation timeout for '${toolName}' after ${this.timeoutMs}ms. Denying by default.`,
+          );
+          resolved = true;
+          resolve(false);
         }
-        resolve(confirmed);
+      }, this.timeoutMs);
+
+      rl.question(prompt, (answer) => {
+        if (!resolved) {
+          clearTimeout(timeoutId);
+          rl.close();
+          const confirmed = answer.toLowerCase().trim() === 'y';
+          if (confirmed) {
+            this.logger.debug(`Confirmation granted for '${toolName}'`);
+          } else {
+            this.logger.debug(`Confirmation denied for '${toolName}'`);
+          }
+          resolved = true;
+          resolve(confirmed);
+        }
       });
     });
   }

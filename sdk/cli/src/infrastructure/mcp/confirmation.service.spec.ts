@@ -96,4 +96,47 @@ describe('ConfirmationService', () => {
       expect(result).toBe(false);
     });
   });
+
+  describe('timeout configuration', () => {
+    it('should use default timeout of 30 seconds', () => {
+      const service = new ConfirmationService();
+      expect(service['timeoutMs']).toBe(30000);
+    });
+
+    it('should use custom timeout when provided', () => {
+      const service = new ConfirmationService({ timeoutMs: 60000 });
+      expect(service['timeoutMs']).toBe(60000);
+    });
+
+    it('should timeout and return false when no answer within timeout', async () => {
+      const mockStdin = new PassThrough() as unknown as NodeJS.ReadStream;
+      Object.defineProperty(mockStdin, 'isTTY', { value: true });
+      const mockStdout = new PassThrough() as unknown as NodeJS.WriteStream;
+      
+      const mockRl = {
+        question: jest.fn(),
+        close: jest.fn(),
+      };
+      (readline.createInterface as jest.Mock).mockReturnValue(mockRl);
+
+      const service = new ConfirmationService({
+        stdin: mockStdin,
+        stdout: mockStdout,
+        timeoutMs: 100,  // Very short timeout for testing
+      });
+
+      jest.useFakeTimers();
+
+      const resultPromise = service.confirmMutation('test-tool', 'test-target');
+
+      // Fast-forward time to trigger timeout
+      jest.advanceTimersByTime(100);
+
+      const result = await resultPromise;
+      expect(result).toBe(false);
+      expect(mockRl.close).toHaveBeenCalled();
+
+      jest.useRealTimers();
+    });
+  });
 });

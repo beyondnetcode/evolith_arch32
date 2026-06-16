@@ -26,6 +26,7 @@ Ordenadas de la política general a la evidencia concreta:
 | [Matriz ADR](./adrs/adr-matrix.es.md) | Encuentra los ADRs controladores por preocupación arquitectónica | Acelerar el descubrimiento de decisiones | Índice de decisiones | Sí |
 | [Patrones Canónicos](./canonical-patterns/README.es.md) | Patrones de código gobernados por ADRs específicos de runtime | Estandarizar implementaciones por runtime | Hub de área | No |
 | [Evolith SDK](./evolith-sdk/README.es.md) | Modelo de dominio y diseño técnico del SDK de Evolith | Diseñar el SDK compartido | Referencia de diseño | No |
+| [Catálogo de Herramientas MCP](../governance/standards/ai-augmented/03-tools-catalog/evolith-mcp-tools.es.md) | Catálogo de 11 herramientas MCP para automatización con agentes de IA | Habilitar automatización con agentes de IA | Referencia de herramientas | No |
 | [Modelo de Referencia UMS](../knowledge/demo/ums-reference-model.es.md) | Muestra cómo un producto real adopta o especializa la referencia | Demostrar evidencia aplicada | Referencia aplicada | No |
 
 ## Regla de Lectura

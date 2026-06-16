@@ -26,6 +26,7 @@ Ordered from general policy to concrete evidence:
 | [ADR Matrix](./adrs/adr-matrix.md) | Finds controlling ADRs by architectural concern | Speed up decision discovery | Decision index | Yes |
 | [Canonical Patterns](./canonical-patterns/README.md) | Code patterns governed by runtime-specific ADRs | Standardize runtime implementations | Area hub | No |
 | [Evolith SDK](./evolith-sdk/README.md) | Domain model and technical design of the Evolith SDK | Design the shared SDK | Design reference | No |
+| [MCP Tools Catalog](../governance/standards/ai-augmented/03-tools-catalog/evolith-mcp-tools.md) | Catalog of 11 MCP tools for AI agent automation | Enable AI agent automation | Tool reference | No |
 | [UMS Reference Model](../knowledge/demo/ums-reference-model.md) | Shows how a real product adopts or specializes the reference | Demonstrate applied evidence | Applied reference | No |
 
 ## Reading Rule

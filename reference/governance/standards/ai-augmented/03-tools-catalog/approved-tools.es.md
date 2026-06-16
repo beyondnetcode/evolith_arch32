@@ -17,5 +17,21 @@
 * *Próximamente*: `jira_update_ticket`: para sincronizar el progreso del desarrollo con los tickets administrativos.
 * *Próximamente*: `sentry_fetch_issue`: para enviar registros de errores de producción reales a los agentes de depuración.
 
+## 4. Evolith MCP Tools (Implemented)
+
+Ver [Catálogo de Herramientas MCP de Evolith](./evolith-mcp-tools.es.md) para la lista completa de 11 herramientas:
+
+- `evolith-agent-handoff` - Crear archivos de configuración de agente
+- `evolith-architecture-evaluate` - Evaluar patrones de arquitectura
+- `evolith-gate-status` - Obtener estado de validación de gates
+- `evolith-moscow-analyze` - Ejecutar priorización MoSCoW
+- `evolith-moscow-export` - Exportar resultados MoSCoW
+- `evolith-sdlc-handoff` - Generar artefactos de handoff SDLC
+- `evolith-validate` - Validar artefactos del proyecto
+- `evolith-phase-advance` - Proponer transiciones de fase
+- `evolith-auto-fix` - **Auto-corregir violaciones arquitectónicas** (GT-115)
+- `evolith-alias` - Gestionar aliases de comandos CLI
+- `evolith-schema` - Generar schemas de phase-gate
+
 ---
 [Volver al índice](./README.md)

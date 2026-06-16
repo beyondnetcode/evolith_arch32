@@ -1325,6 +1325,22 @@
         "npx jest --config sdk/cli/test/jest-e2e.json --testPathPatterns=\"progress\""
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-104",
+      "closedAt": "2026-06-16",
+      "closureCommit": "b4c2dcc95a6f00de53782546ae51ea975a03fce7",
+      "evidence": [
+        ".github/workflows/sdk-cli-release.yml",
+        "sdk/cli/README.md",
+        "sdk/cli/README.es.md"
+      ],
+      "validationCommands": [
+        "npm view @evolith/smart-cli versions",
+        "pnpm info @evolith/smart-cli",
+        "yarn info @evolith/smart-cli"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

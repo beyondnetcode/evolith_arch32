@@ -11,13 +11,27 @@ Interfaz de línea de comandos para gobernanza, validación de estándares e int
 
 ## Instalación
 
-### npm (Recomendado)
+El CLI se publica en npm registry y es compatible con todos los gestores de paquetes JavaScript.
+
+### npm
 
 ```bash
 npm install -g @evolith/smart-cli
 ```
 
-### Manual
+### pnpm
+
+```bash
+pnpm add -g @evolith/smart-cli
+```
+
+### yarn
+
+```bash
+yarn global add @evolith/smart-cli
+```
+
+### Binario Manual
 
 Descarga el binario más reciente desde [GitHub Releases](https://github.com/beyondnetcode/evolith_arch32/releases) y agrégalo a tu PATH.
 
@@ -25,7 +39,21 @@ Descarga el binario más reciente desde [GitHub Releases](https://github.com/bey
 
 ```bash
 smart-cli --version
-# smart-cli version 0.0.3-beta
+# smart-cli version 1.1.0
+```
+
+### Solución de Problemas
+
+**Errores de permisos en macOS/Linux:**
+```bash
+# Si obtienes errores EACCES, intenta:
+sudo npm install -g @evolith/smart-cli --unsafe-perm
+```
+
+**Usando nvm (Node Version Manager):**
+```bash
+# Asegúrate de que el path global esté en PATH
+export PATH=$(npm config get prefix)/bin:$PATH
 ```
 
 ## Inicio Rápido

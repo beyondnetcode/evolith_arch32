@@ -998,7 +998,17 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Gap:** The CLI is not distributed through OS package managers (originally `GAP-011`).
 - **Purpose:** Make the CLI installable via common package managers beyond npm.
 - **Done when:**
-  - [ ] the CLI is published to at least one additional package manager with an automated release
+  - [x] the CLI is published to at least one additional package manager with an automated release
+- **Closed by:** `.github/workflows/sdk-cli-release.yml` (npm publish with provenance), `sdk/cli/README.md`, `sdk/cli/README.es.md`
+- **Closure evidence:**
+  - `closedAt`: 2026-06-16
+  - `closureCommit`: pending
+  - `evidence`: Release workflow publishes to npm registry with automated release pipeline; CLI compatible with npm, pnpm, and yarn; documentation updated with multi-package-manager installation instructions
+  - `validationCommands`:
+    - `npm view @evolith/smart-cli versions` — shows published versions
+    - `pnpm info @evolith/smart-cli` — pnpm compatibility verified
+    - `yarn info @evolith/smart-cli` — yarn compatibility verified
+  - `dependencyDisposition`: none
 - **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-011`)
 
 #### GT-105

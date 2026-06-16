@@ -13,7 +13,6 @@ This board is the single source of truth for gap priority and status. Select a g
 
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
 |---|---|---|:---:|:---:|:---:|:---:|
-| [`GT-104`](./gap-reference-catalog.md#gt-104) | CLI package-manager distribution | `CLI` | Cross | P2 | M | `PENDING` |
 | [`GT-107`](./gap-reference-catalog.md#gt-107) | CLI interactive wizards | `CLI` | Cross | P2 | M | `PENDING` |
 | [`GT-81`](./gap-reference-catalog.md#gt-81) | Raise CLI branch coverage to the statement floor | `CLI` | F0 | P2 | M | `PENDING` |
 | [`GT-116`](./gap-reference-catalog.md#gt-116) | Elimination of Blocking I/O Operations in the CLI | `CLI` | Transversal | P2 | M | `PENDING` |
@@ -51,6 +50,7 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-100`](./gap-reference-catalog.md#gt-100) | CLI API browser/explorer | `CLI` | Cross | P2 | M | `DONE` |
 | [`GT-101`](./gap-reference-catalog.md#gt-101) | CLI auto-update mechanism | `CLI` | Cross | P2 | M | `DONE` |
 | [`GT-102`](./gap-reference-catalog.md#gt-102) | CLI real-time progress/streaming | `CLI` | Cross | P2 | M | `DONE` |
+| [`GT-104`](./gap-reference-catalog.md#gt-104) | CLI package-manager distribution | `CLI` | Cross | P2 | M | `DONE` |
 | [`GT-114`](./gap-reference-catalog.md#gt-114) | Human-in-the-Loop for Mutative MCP Tools | `CLI` | Transversal | P1 | M | `DONE` |
 | [`GT-56`](./gap-reference-catalog.md#gt-56) | Silent failures and missing mocks in CLI E2E tests | `CLI` | Cross | P1 | M | `DONE` |
 | [`GT-55`](./gap-reference-catalog.md#gt-55) | TypeScript strictness and implicit any elimination | `CLI` | Cross | P1 | M | `DONE` |
@@ -107,7 +107,7 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-112`](./gap-reference-catalog.md#gt-112) | Replace HashiCorp commercial binaries with OpenTofu + OpenBao | `Platform` | Cross | P0 | L | `DONE` |
 | [`GT-111`](./gap-reference-catalog.md#gt-111) | Plan the MassTransit v9 commercial pivot (stay v8 OSS or move to Rebus) | `Platform` | Cross | P1 | L | `DONE` |
 
-**Progress:** 88 / 93 done · 0 in progress · 5 pending · 0 deferred
+**Progress:** 89 / 93 done · 0 in progress · 4 pending · 0 deferred
 
 **Ordering:** one table, ordered by status (pending then deferred then completed), then criticality (`P0` → `P1` → `P2`) then complexity (`S` → `M` → `L`); completed gaps are grouped by component. Each ID links to its detail in the [Gap Reference Catalog](./gap-reference-catalog.md).
 

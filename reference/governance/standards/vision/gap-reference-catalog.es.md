@@ -927,7 +927,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Gap:** El CLI no tiene mecanismo de extensión para comandos de terceros o específicos de tenant (originalmente `GAP-005`).
 - **Propósito:** Permitir contribuir comandos como plugins sin forkear el CLI.
 - **Criterio de cierre:**
-  - [ ] un contrato de plugin permite que paquetes externos registren comandos descubiertos en runtime
+  - [x] un contrato de plugin permite que paquetes externos registren comandos descubiertos en runtime
 - **Referencias:** Backlog del CLI de Evolith `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-005`)
 
 #### GT-99

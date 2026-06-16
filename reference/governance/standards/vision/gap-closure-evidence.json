@@ -1088,6 +1088,20 @@
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "The CI pipeline (sdk-cli-ci.yml) lives in the UMS product repository. The two scripts that caused pipeline failures are fixed in this commit; the pipeline will run green once UMS updates its reference."
+    },
+    {
+      "id": "GT-80",
+      "closedAt": "2026-06-15",
+      "closureCommit": "47b8b66",
+      "evidence": [
+        "sdk/cli/src/infrastructure/observability/index.ts",
+        ".github/workflows/sdk-cli-ci.yml"
+      ],
+      "validationCommands": [
+        "npx tsc --noEmit -p sdk/cli/tsconfig.test.json",
+        "node .harness/scripts/validate-docs.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

@@ -17,7 +17,7 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-112`](./gap-reference-catalog.es.md#gt-112) | Reemplazar los binarios comerciales de HashiCorp con OpenTofu + OpenBao | `Platform` | Transversal | P0 | L | `COMPLETADO` |
 | [`GT-83`](./gap-reference-catalog.es.md#gt-83) | Desbloquear dependencias upstream del Tracker (Core API, UMS JWKS, UMS Auth Graph) | `Tracker` | Transversal | P0 | L | `REVISIÓN` |
 | [`GT-79`](./gap-reference-catalog.es.md#gt-79) | Restaurar el pipeline de validación de CI del CLI en verde | `Governance` | Transversal | P1 | S | `COMPLETADO` |
-| [`GT-80`](./gap-reference-catalog.es.md#gt-80) | Type-check de la suite de tests del CLI | `CLI` | Transversal | P1 | M | `PENDIENTE` |
+| [`GT-80`](./gap-reference-catalog.es.md#gt-80) | Type-check de la suite de tests del CLI | `CLI` | Transversal | P1 | M | `COMPLETADO` |
 | [`GT-97`](./gap-reference-catalog.es.md#gt-97) | Múltiples perfiles del CLI | `CLI` | Transversal | P1 | M | `PENDIENTE` |
 | [`GT-111`](./gap-reference-catalog.es.md#gt-111) | Planificar el giro comercial de MassTransit v9 (quedarse en v8 OSS o migrar a Rebus) | `Platform` | Transversal | P1 | L | `PENDIENTE` |
 | [`GT-85`](./gap-reference-catalog.es.md#gt-85) | Arquitectura de plugins para el workflow engine del Tracker | `Tracker` | Transversal | P1 | L | `PENDIENTE` |
@@ -122,7 +122,7 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-25`](./gap-reference-catalog.es.md#gt-25) | Primeros perfiles de proveedor | `Governance` | Transversal | P2 | L | `COMPLETADO` |
 | [`GT-23`](./gap-reference-catalog.es.md#gt-23) | Backfill de traducciones españolas | `Governance` | Transversal | P2 | L | `COMPLETADO` |
 
-**Progreso:** 73 / 108 completados · 0 en progreso · 34 pendientes · 1 diferidos
+**Progreso:** 74 / 108 completados · 0 en progreso · 33 pendientes · 1 diferidos
 
 **Ordenamiento:** una sola tabla, ordenada por estado (pendientes, luego diferidos, luego completados), luego criticidad (`P0` → `P1` → `P2`) y luego complejidad (`S` → `M` → `L`); los completados se agrupan por componente. Cada ID enlaza a su detalle en el [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md).
 

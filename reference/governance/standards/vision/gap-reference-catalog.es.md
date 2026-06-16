@@ -874,9 +874,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Propósito:** Dar a la suite de tests la misma red de seguridad de tipos que el código productivo, para que un refactor que rompa los tipos de un spec falle rápido en vez de pudrirse en un test skipped o engañoso.
 - **Evidencia actual / ejemplo:** `npx tsc --noEmit --project sdk/cli/tsconfig.test.json` reporta 10 errores `TS1205` (re-exports de tipos sin `export type`) en `src/infrastructure/observability/index.ts`; ni `npm run build` ni `npm test` los muestran.
 - **Criterio de cierre:**
-  - [ ] un step de CI type-checkea los tests (`tsc --noEmit -p sdk/cli/tsconfig.test.json`) y bloquea ante fallo
-  - [ ] los errores `TS1205` de re-export existentes se resuelven (`export type`)
-  - [ ] el type-check pasa desde un checkout limpio
+  - [x] un step de CI type-checkea los tests (`tsc --noEmit -p sdk/cli/tsconfig.test.json`) y bloquea ante fallo
+  - [x] los errores `TS1205` de re-export existentes se resuelven (`export type`)
+  - [x] el type-check pasa desde un checkout limpio
 - **Referencias:** [tsconfig de tests del CLI](../../../../sdk/cli/tsconfig.test.json) · [Configuración Jest](../../../../sdk/cli/jest.config.js) · [Barrel de observabilidad](../../../../sdk/cli/src/infrastructure/observability/index.ts)
 
 #### GT-81

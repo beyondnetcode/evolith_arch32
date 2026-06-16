@@ -1,4 +1,5 @@
-export { StructuredLogger, logger, LogLevel, LogEntry, LogError, LoggerConfig } from './structured-logger';
+export { StructuredLogger, logger, LogLevel } from './structured-logger';
+export type { LogEntry, LogError, LoggerConfig } from './structured-logger';
 export {
   Timed,
   TimedSync,
@@ -6,25 +7,16 @@ export {
   measureTimeSync,
   OperationTimer,
   profile,
-  TimingResult,
 } from './timing';
+export type { TimingResult } from './timing';
 export {
   ErrorReporter,
   errorReporter,
-  ErrorReport,
-  ErrorContext,
   withErrorReporting,
   OperationContext,
 } from './error-reporter';
-export {
-  CommandWatcher,
-  commandWatcher,
-  CommandTrace,
-  CommandBuilder,
-} from './command-watcher';
-export {
-  ToolUsageTelemetry,
-  ToolUsageEvent,
-  ToolUsageStats,
-  TelemetryReport,
-} from './tool-usage-telemetry.service';
+export type { ErrorReport, ErrorContext } from './error-reporter';
+export { CommandWatcher, commandWatcher, CommandBuilder } from './command-watcher';
+export type { CommandTrace } from './command-watcher';
+export { ToolUsageTelemetry } from './tool-usage-telemetry.service';
+export type { ToolUsageEvent, ToolUsageStats, TelemetryReport } from './tool-usage-telemetry.service';

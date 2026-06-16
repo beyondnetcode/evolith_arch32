@@ -104,6 +104,10 @@ jobs:
         working-directory: ${{ env.CLI_DIR }}
         run: npm run build
 
+      - name: Test Type Check
+        working-directory: ${{ env.CLI_DIR }}
+        run: npx tsc --noEmit -p tsconfig.test.json
+
   # ============================================
   # JOB 4: Unit Tests with Coverage
   # ============================================

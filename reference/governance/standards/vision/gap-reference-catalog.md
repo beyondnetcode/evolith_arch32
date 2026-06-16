@@ -874,9 +874,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Give the test suite the same type-safety net as production code, so a refactor that breaks a spec's types fails fast instead of rotting into a skipped or misleading test.
 - **Current evidence / example:** `npx tsc --noEmit --project sdk/cli/tsconfig.test.json` reports 10 `TS1205` errors (type re-exports without `export type`) in `src/infrastructure/observability/index.ts`; neither `npm run build` nor `npm test` surfaces them.
 - **Done when:**
-  - [ ] a CI step type-checks the tests (`tsc --noEmit -p sdk/cli/tsconfig.test.json`) and blocks on failure
-  - [ ] the existing `TS1205` re-export errors are resolved (`export type`)
-  - [ ] the type-check passes from a clean checkout
+  - [x] a CI step type-checks the tests (`tsc --noEmit -p sdk/cli/tsconfig.test.json`) and blocks on failure
+  - [x] the existing `TS1205` re-export errors are resolved (`export type`)
+  - [x] the type-check passes from a clean checkout
 - **References:** [CLI test tsconfig](../../../../sdk/cli/tsconfig.test.json) · [Jest Configuration](../../../../sdk/cli/jest.config.js) · [Observability barrel](../../../../sdk/cli/src/infrastructure/observability/index.ts)
 
 #### GT-81

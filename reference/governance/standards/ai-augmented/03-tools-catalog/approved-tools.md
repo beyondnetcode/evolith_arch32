@@ -34,5 +34,7 @@ See [Evolith MCP Tools Catalog](./evolith-mcp-tools.md) for the complete list of
 - `evolith-alias` - Manage CLI command aliases
 - `evolith-schema` - Generate phase-gate schemas
 
+All tools follow the [Tool Design Principles](./tool-design-principles.md) for deterministic, agent-consumable behavior.
+
 ---
 [Back to Index](./README.md)

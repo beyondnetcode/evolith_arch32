@@ -2,16 +2,27 @@
 import { CommandRunner } from 'nest-commander';
 import { Logger } from '@nestjs/common';
 import { PromptService } from '../prompts/prompt.service';
+import { ConfigService, ProfileConfig } from '../config/config.service';
 import { UserCancelledError } from '@evolith/core-domain/domain/errors';
 
 export abstract class BaseEvolithCommand extends CommandRunner {
   protected readonly logger: Logger;
   protected readonly promptService: PromptService;
+  protected readonly configService: ConfigService;
 
-  constructor(commandName: string, promptService?: PromptService) {
+  constructor(
+    commandName: string,
+    promptService?: PromptService,
+    configService?: ConfigService,
+  ) {
     super();
     this.logger = new Logger(commandName);
     this.promptService = promptService || new PromptService();
+    this.configService = configService || new ConfigService();
+  }
+
+  get profile(): ProfileConfig {
+    return this.configService.getProfile();
   }
 
   async run(inputs: string[], options?: Record<string, unknown>): Promise<void> {

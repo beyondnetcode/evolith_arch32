@@ -4,6 +4,7 @@ import { ValidationResult, ValidationIssue, RulesetValidatorService } from '@evo
 import { OutputFormatterService, OutputFormat } from '../../infrastructure/formatters/output-formatter.service';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
+import { ConfigService } from '../../infrastructure/config/config.service';
 
 interface ValidateCommandOptions {
   format?: string;
@@ -24,16 +25,17 @@ export class ValidateCommand extends BaseEvolithCommand {
   constructor(
     private readonly useCase: ValidateSatelliteUseCase,
     private readonly validator: RulesetValidatorService,
-    promptService: PromptService
+    promptService: PromptService,
+    configService?: ConfigService,
   ) {
-    super('ValidateCommand', promptService);
+    super('ValidateCommand', promptService, configService);
   }
 
   async executeCommand(passedParam: string[], options?: ValidateCommandOptions): Promise<void> {
     this.promptService.showIntro('Evolith SDK - Validación de Estándares');
 
-    const satellitePath = options?.satellite || process.cwd();
-    const corePath = options?.core || undefined;
+    const satellitePath = options?.satellite || this.profile.satellite || process.cwd();
+    const corePath = options?.core || this.profile.core || undefined;
 
     this.promptService.startSpinner('Analizando repositorio...');
 

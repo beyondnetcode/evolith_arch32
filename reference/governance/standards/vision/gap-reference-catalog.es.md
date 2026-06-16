@@ -1073,7 +1073,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Gap:** El CLI no puede mantener múltiples perfiles de configuración con nombre (por tenant/entorno) con cambio rápido (originalmente `GAP-004`).
 - **Propósito:** Permitir mantener y cambiar entre perfiles con nombre sin re-autenticar ni reescribir configuración.
 - **Criterio de cierre:**
-  - [ ] se pueden crear, listar y cambiar perfiles con nombre, y los comandos usan el perfil activo
+  - [x] se pueden crear, listar y cambiar perfiles con nombre, y los comandos usan el perfil activo
 - **Referencias:** Backlog del CLI de Evolith `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-004`)
 
 #### GT-98

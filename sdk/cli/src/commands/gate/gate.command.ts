@@ -14,6 +14,7 @@ import {
 } from '@evolith/core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
+import { ConfigService } from '../../infrastructure/config/config.service';
 
 interface GateCommandOptions {
   phase?: string;
@@ -39,17 +40,18 @@ interface GateCommandOptions {
 export class GateCommand extends BaseEvolithCommand {
   constructor(
     private readonly useCase: EvaluateGateUseCase,
-    promptService: PromptService
+    promptService: PromptService,
+    configService?: ConfigService,
   ) {
-    super('GateCommand', promptService);
+    super('GateCommand', promptService, configService);
   }
 
   async executeCommand(inputs: string[], options?: GateCommandOptions): Promise<void> {
     const startedAt = Date.now();
     const meta = (command: string): OutputMeta => {
       const context: ExecutionContext = {};
-      if (options?.initiative) (context as { initiative?: string }).initiative = options.initiative;
-      if (options?.tenant) (context as { tenant?: string }).tenant = options.tenant;
+      if (options?.initiative || this.profile.initiative) (context as { initiative?: string }).initiative = options?.initiative || this.profile.initiative;
+      if (options?.tenant || this.profile.tenant) (context as { tenant?: string }).tenant = options?.tenant || this.profile.tenant;
       if (options?.phase) (context as { phase?: string }).phase = options.phase;
       const base: OutputMeta = {
         command,

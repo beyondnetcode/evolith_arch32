@@ -21,6 +21,7 @@ import { HistoryCommand } from './commands/history/history.command';
 import { DriftCommand } from './commands/drift/drift.command';
 import { GateCommand } from './commands/gate/gate.command';
 import { PhaseAdvanceCommand } from './commands/phase/phase-advance.command';
+import { ProfileCommand } from './commands/profile/profile.command';
 
 import { ValidateSatelliteUseCase } from '@evolith/core-domain/application/use-cases/validate-satellite.use-case';
 import { EvaluateGateUseCase } from '@evolith/core-domain/application/use-cases/evaluate-gate.use-case';
@@ -58,6 +59,7 @@ import { YamlConfigParserProvider } from '@evolith/infra-providers';
     DriftCommand,
     GateCommand,
     PhaseAdvanceCommand,
+    ProfileCommand,
     ValidateSatelliteUseCase,
     EvaluateGateUseCase,
     ProposePhaseAdvanceUseCase,

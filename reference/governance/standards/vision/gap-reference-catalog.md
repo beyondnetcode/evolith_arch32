@@ -1073,7 +1073,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Gap:** The CLI cannot hold multiple named configuration profiles (per tenant/environment) with quick switching (originally `GAP-004`).
 - **Purpose:** Let an engineer maintain and switch between named profiles without re-authenticating or rewriting config.
 - **Done when:**
-  - [ ] named profiles can be created, listed, and switched, and commands use the active profile
+  - [x] named profiles can be created, listed, and switched, and commands use the active profile
 - **References:** Evolith CLI Backlog `reference/products/smart-cli/docs/planning/CLI-BACKLOG.md` (`GAP-004`)
 
 #### GT-98

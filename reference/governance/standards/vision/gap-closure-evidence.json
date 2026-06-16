@@ -1102,6 +1102,27 @@
         "node .harness/scripts/validate-docs.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-97",
+      "closedAt": "2026-06-15",
+      "closureCommit": "d8d600b",
+      "evidence": [
+        "sdk/cli/src/infrastructure/config/config.service.ts",
+        "sdk/cli/src/infrastructure/config/config.service.spec.ts",
+        "sdk/cli/src/infrastructure/cli/base-command.ts",
+        "sdk/cli/src/commands/profile/profile.command.ts",
+        "sdk/cli/src/commands/validate/validate.command.ts",
+        "sdk/cli/src/commands/gate/gate.command.ts",
+        "sdk/cli/src/commands/init/upgrade.command.ts",
+        "sdk/cli/src/app.module.ts"
+      ],
+      "validationCommands": [
+        "npm run build --workspace sdk/cli",
+        "npx jest src/infrastructure/config/config.service.spec.ts --no-coverage",
+        "npx tsc --noEmit -p tsconfig.test.json"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

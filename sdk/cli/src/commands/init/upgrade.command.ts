@@ -3,6 +3,7 @@ import chalk from 'chalk';
 import { SatelliteUpgradeService, UpgradePlan } from '@evolith/core-domain/application/upgrade/satellite-upgrade.service';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
+import { ConfigService } from '../../infrastructure/config/config.service';
 
 interface UpgradeCommandOptions {
   dryRun?: boolean;
@@ -16,13 +17,16 @@ interface UpgradeCommandOptions {
   description: 'Actualiza el repositorio satélite cuando el upstream Evolith recibe nuevas reglas',
 })
 export class UpgradeCommand extends BaseEvolithCommand {
-  constructor(promptService: PromptService) {
-    super('UpgradeCommand', promptService);
+  constructor(
+    promptService: PromptService,
+    configService?: ConfigService,
+  ) {
+    super('UpgradeCommand', promptService, configService);
   }
 
   async executeCommand(passedParam: string[], options?: UpgradeCommandOptions): Promise<void> {
     const satellitePath = process.cwd();
-    const corePath = options?.core || this.findCorePath(satellitePath);
+    const corePath = options?.core || this.profile.core || this.findCorePath(satellitePath);
 
     const service = new SatelliteUpgradeService();
 

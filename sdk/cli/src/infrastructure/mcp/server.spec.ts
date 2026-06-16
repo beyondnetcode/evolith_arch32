@@ -2,6 +2,13 @@ import { startMcpServer, McpServerOptions } from './server';
 import { McpMetricsService } from './metrics.service';
 import { RulesetValidatorService } from '@evolith/core-domain/application/validators/ruleset-validator.service';
 import { PassThrough } from 'node:stream';
+import * as fsExtra from 'fs-extra';
+
+jest.mock('fs-extra', () => ({
+  pathExists: jest.fn().mockResolvedValue(true),
+  readFile: jest.fn().mockResolvedValue('mcp:\n  allowMutations: false\n'),
+}));
+
 
 jest.mock('@evolith/core-domain/application/validators/ruleset-validator.service', () => ({
   RulesetValidatorService: jest.fn().mockImplementation(() => ({
@@ -308,16 +315,12 @@ describe('MCP Server', () => {
 
   describe('DirectMcpServer - handleConfigTools', () => {
     it('should throw error when evolith.yaml not found', async () => {
-      jest.doMock('fs-extra', () => ({
-        pathExists: jest.fn().mockResolvedValue(false),
-      }));
+      (fsExtra.pathExists as jest.Mock).mockResolvedValueOnce(false);
 
       const server = await startMcpServer();
 
       expect(server).toBeDefined();
       await server.stop();
-
-      jest.dontMock('fs-extra');
     });
   });
 
@@ -537,4 +540,111 @@ describe('MCP Server', () => {
     });
   });
 
+  describe('DirectMcpServer - mutative tool confirmation gating', () => {
+    let stdinStream: PassThrough;
+    let stdoutStream: PassThrough;
+    let server: { stop: () => Promise<void> };
+
+    beforeEach(async () => {
+      jest.clearAllMocks();
+
+      stdinStream = new PassThrough();
+      stdoutStream = new PassThrough();
+      server = await startMcpServer({
+        transport: 'stdio',
+        stdin: stdinStream,
+        stdout: stdoutStream,
+      });
+    });
+
+    afterEach(async () => {
+      stdinStream.destroy();
+      stdoutStream.destroy();
+      await server.stop();
+      await new Promise(r => setTimeout(r, 20));
+    });
+
+    function nextStdoutMessage(): Promise<Record<string, unknown>> {
+      return new Promise((resolve, reject) => {
+        const timer = setTimeout(() => reject(new Error('stdout timeout')), 1500);
+        let buf = '';
+        const onData = (chunk: Buffer) => {
+          buf += chunk.toString();
+          const nl = buf.indexOf('\n');
+          if (nl !== -1) {
+            clearTimeout(timer);
+            stdoutStream.off('data', onData);
+            resolve(JSON.parse(buf.slice(0, nl).trim()));
+          }
+        };
+        stdoutStream.on('data', onData);
+      });
+    }
+
+    it('gates mutative tool when confirmation is not passed and allowMutations is false', async () => {
+      (fsExtra.pathExists as jest.Mock).mockResolvedValue(true);
+      (fsExtra.readFile as jest.Mock).mockResolvedValue('mcp:\n  allowMutations: false\n');
+
+      const responseP = nextStdoutMessage();
+      stdinStream.write(JSON.stringify({
+        jsonrpc: '2.0',
+        id: 1,
+        method: 'tools/call',
+        params: {
+          name: 'evolith-config-set',
+          arguments: { key: 'foo', value: 'bar' }
+        }
+      }) + '\n');
+
+      const response = await responseP;
+      expect(response).toBeDefined();
+      const content = (response.result as any).content[0].text;
+      const parsed = JSON.parse(content);
+      expect(parsed.status).toBe('REQUIRES_CONFIRMATION');
+    });
+
+    it('allows mutative tool when confirm: true is passed', async () => {
+      (fsExtra.pathExists as jest.Mock).mockResolvedValue(true);
+      (fsExtra.readFile as jest.Mock).mockResolvedValue('mcp:\n  allowMutations: false\n');
+
+      const responseP = nextStdoutMessage();
+      stdinStream.write(JSON.stringify({
+        jsonrpc: '2.0',
+        id: 2,
+        method: 'tools/call',
+        params: {
+          name: 'evolith-config-set',
+          arguments: { key: 'foo', value: 'bar', confirm: true }
+        }
+      }) + '\n');
+
+      const response = await responseP;
+      expect(response).toBeDefined();
+      const content = (response.result as any).content[0].text;
+      expect(content).not.toContain('REQUIRES_CONFIRMATION');
+    });
+
+    it('allows mutative tool when allowMutations: true is set in evolith.yaml', async () => {
+      (fsExtra.pathExists as jest.Mock).mockResolvedValue(true);
+      (fsExtra.readFile as jest.Mock).mockResolvedValue('mcp:\n  allowMutations: true\n');
+
+      const responseP = nextStdoutMessage();
+      stdinStream.write(JSON.stringify({
+        jsonrpc: '2.0',
+        id: 3,
+        method: 'tools/call',
+        params: {
+          name: 'evolith-config-set',
+          arguments: { key: 'foo', value: 'bar' }
+        }
+      }) + '\n');
+
+      const response = await responseP;
+      expect(response).toBeDefined();
+      const content = (response.result as any).content[0].text;
+      expect(content).not.toContain('REQUIRES_CONFIRMATION');
+    });
+  });
+
 });
+

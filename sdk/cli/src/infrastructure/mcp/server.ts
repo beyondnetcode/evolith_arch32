@@ -139,14 +139,32 @@ export class EvolithMcpServer {
             key: { type: 'string' },
             value: { type: 'string' },
             dir: { type: 'string' },
+            confirm: { type: 'boolean', description: 'Confirm mutative operation' },
           },
           required: ['key', 'value'],
         },
       },
+      mutative: true,
       execute: async (args: Record<string, unknown>) => this.handleConfigSet(args),
     });
 
     return registry;
+  }
+
+  private async isMutationAllowed(dir?: string): Promise<boolean> {
+    try {
+      const fs = await import('fs-extra');
+      const path = await import('path');
+      const yaml = await import('yaml');
+      const configPath = path.join(dir || process.cwd(), 'evolith.yaml');
+      if (await fs.pathExists(configPath)) {
+        const config = yaml.parse(await fs.readFile(configPath, 'utf-8'));
+        return !!config?.mcp?.allowMutations;
+      }
+    } catch {
+      // Ignore and return false
+    }
+    return false;
   }
 
   private registerHandlers() {
@@ -162,6 +180,26 @@ export class EvolithMcpServer {
         const tool = this.registry.getTool(name);
         if (!tool) {
           throw new Error(`Unknown tool: ${name}`);
+        }
+
+        if (tool.mutative) {
+          const dir = (args?.dir || args?.path || args?.projectPath) as string | undefined;
+          const mutationsAllowed = await this.isMutationAllowed(dir);
+          const confirmed = args?.confirm === true;
+          if (!mutationsAllowed && !confirmed) {
+            return {
+              content: [
+                {
+                  type: 'text',
+                  text: JSON.stringify({
+                    error: true,
+                    status: 'REQUIRES_CONFIRMATION',
+                    message: `La operación '${name}' es mutativa y requiere confirmación. Vuelve a ejecutar especificando 'confirm: true' o configura 'mcp.allowMutations: true' en evolith.yaml.`,
+                  }, null, 2),
+                },
+              ],
+            };
+          }
         }
 
         const deps = {

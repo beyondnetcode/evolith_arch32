@@ -10,6 +10,7 @@ export interface McpToolSchema {
 
 export interface IMcpToolHandler {
   schema: McpToolSchema;
+  mutative?: boolean;
   execute(args: Record<string, unknown>, deps?: unknown): Promise<unknown>;
 }
 

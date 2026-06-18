@@ -1,4 +1,4 @@
-import { ProgressService } from './progress.service';
+import { ProgressService } from '../src/infrastructure/prompts/progress.service';
 
 describe('ProgressService E2E', () => {
   describe('Real-time progress streaming for long-running operations', () => {

@@ -28,14 +28,14 @@ export class AliasCommand extends BaseEvolithCommand {
         this.aliasService.add(alias.trim(), cmd.trim());
         this.promptService.showSuccess(`Alias \"${alias}\" → \"${cmd}\" added.`);
       } catch (e) {
-        this.promptService.showError(e.message);
+        this.promptService.showError(e instanceof Error ? e.message : String(e));
       }
     } else if (options?.remove) {
       try {
         this.aliasService.remove(options.remove);
         this.promptService.showSuccess(`Alias \"${options.remove}\" removed.`);
       } catch (e) {
-        this.promptService.showError(e.message);
+        this.promptService.showError(e instanceof Error ? e.message : String(e));
       }
     } else if (options?.list) {
       const all = this.aliasService.getAll();

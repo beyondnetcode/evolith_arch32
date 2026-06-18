@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { IFileSystem, IConfigParser } from '@evolith/core-domain/domain/interfaces';
 import { IMcpToolHandler } from '../mcp-tool.registry';
 

@@ -24,6 +24,8 @@ It implements Core and SDLC Governance by owning:
 
 Tracker does not redefine Core rules or SDLC Governance. It executes them.
 
+> **Integration boundary (ADR-0074 + ADR-0075).** Tracker reaches Core strictly as an **external client** of the **Core API Exposure Layer** (`apps/core-api` REST/GraphQL, plus MCP) defined in [ADR-0074](../../architecture/adrs/core/0074-evolith-core-api-exposure-layer.md). The composition/adaptation logic for web and mobile lives in Tracker's **BFF / Application Gateway** ([ADR-0075](../../architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.md), NestJS) **inside the `evolith_tracker` repository** — not in Core. See the [Product Vision — Technical Interface Layer](../../product-suite/vision/evolith-product-vision-master.md) for the layered diagram.
+
 ---
 
 ## 2. Product Design Areas

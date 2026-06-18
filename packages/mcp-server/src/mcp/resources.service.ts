@@ -1,0 +1,155 @@
+import * as path from 'node:path';
+import { Inject, Injectable } from '@nestjs/common';
+import type { IFileSystem, IConfigParser } from '@evolith/core';
+import { FILE_SYSTEM, CONFIG_PARSER } from '../domain/domain.tokens';
+
+interface Resource {
+  uri: string;
+  name: string;
+  description: string;
+  mimeType?: string;
+}
+
+const RESOURCES: Resource[] = [
+  { uri: 'evolith://rulesets', name: 'Rulesets', description: 'List of all available rulesets in Evolith Core' },
+  { uri: 'evolith://phase-gates', name: 'Phase Gates', description: 'Phase gate definitions and requirements' },
+  { uri: 'evolith://agents', name: 'Agents', description: 'List of installed Evolith agents' },
+  { uri: 'evolith://core/info', name: 'Core Info', description: 'General information about the Evolith Core' },
+  { uri: 'evolith://governance/version', name: 'Governance Version', description: 'Current governance schema version' },
+  { uri: 'evolith://core/version', name: 'Core Version', description: 'Current Core schema version' },
+  { uri: 'evolith://repository/config', name: 'Repository Config', description: 'Repository evolith.yaml content' },
+  { uri: 'evolith://moscow/phase-0', name: 'MoSCoW Phase 0', description: 'MoSCoW prioritization matrix for discovery phase' },
+];
+
+/**
+ * Serves MCP resources (`resources/list`, `resources/read`) exposing Evolith
+ * artifacts — rulesets, phase gates, agents, config — read from the filesystem.
+ */
+@Injectable()
+export class ResourcesService {
+  constructor(
+    @Inject(FILE_SYSTEM) private readonly fs: IFileSystem,
+    @Inject(CONFIG_PARSER) private readonly configParser: IConfigParser,
+  ) {}
+
+  list(): { resources: Resource[] } {
+    return { resources: RESOURCES };
+  }
+
+  async read(uri: string): Promise<unknown> {
+    if (uri === 'evolith://rulesets') return this.getRulesetsList();
+    if (uri === 'evolith://phase-gates') return getPhaseGates();
+    if (uri === 'evolith://agents') return this.getAgentsList();
+    if (uri === 'evolith://governance/version') return { version: '1.0.0', schema: 'governance' };
+    if (uri === 'evolith://core/version') return { version: '1.0.0', schema: 'core' };
+    if (uri === 'evolith://core/info') return this.getCoreInfo();
+    if (uri.startsWith('evolith://ruleset/')) return this.getRulesetContent(uri.replace('evolith://ruleset/', ''));
+    if (uri.startsWith('evolith://agent/')) return this.getAgentContent(uri.replace('evolith://agent/', ''));
+    if (uri === 'evolith://repository/config') return this.getRepositoryConfig();
+    if (uri.startsWith('evolith://moscow/')) return this.getMoscowAnalysis(uri.replace('evolith://moscow/', ''));
+    if (uri === 'evolith://open-core/artifacts') return this.getOpenCoreArtifacts();
+    if (uri === 'evolith://acl/rules') return this.getAclRules();
+    throw new Error(`Unknown resource URI: ${uri}`);
+  }
+
+  private findCorePath(): string {
+    const parts = process.cwd().split(path.sep);
+    while (parts.length > 0) {
+      parts.pop();
+      if (this.fs.existsSync(path.join(parts.join(path.sep), 'rulesets'))) {
+        return parts.join(path.sep);
+      }
+    }
+    return path.join(process.cwd(), '..', 'evolith');
+  }
+
+  private async getCoreInfo() {
+    const rulesetsPath = path.join(this.findCorePath(), 'rulesets');
+    let rulesetCount = 0;
+    if (await this.fs.exists(rulesetsPath)) {
+      for (const entry of await this.fs.readdir(rulesetsPath)) {
+        if (entry.isDirectory()) {
+          const files = await this.fs.readdirNames(path.join(rulesetsPath, entry.name));
+          rulesetCount += files.filter((f) => f.endsWith('.rules.json')).length;
+        }
+      }
+    }
+    return { path: this.findCorePath(), version: '1.0.0', totalRulesets: rulesetCount, capabilities: ['governance', 'architecture', 'sdlc'] };
+  }
+
+  private async getRulesetsList() {
+    const rulesetsPath = path.join(this.findCorePath(), 'rulesets');
+    if (!(await this.fs.exists(rulesetsPath))) return { rulesets: [], error: 'Rulesets directory not found' };
+    const rulesets: Array<{ category: string; name: string; path: string }> = [];
+    for (const entry of await this.fs.readdir(rulesetsPath)) {
+      if (entry.isDirectory()) {
+        const files = await this.fs.readdirNames(path.join(rulesetsPath, entry.name));
+        for (const ruleFile of files.filter((f) => f.endsWith('.rules.json'))) {
+          rulesets.push({ category: entry.name, name: ruleFile.replace('.rules.json', ''), path: `rulesets/${entry.name}/${ruleFile}` });
+        }
+      }
+    }
+    return { rulesets, count: rulesets.length };
+  }
+
+  private async getRulesetContent(name: string) {
+    const corePath = this.findCorePath();
+    const rulesetPath = path.join(corePath, 'rulesets', name.replace(/-/g, '/') + '.rules.json');
+    if (await this.fs.exists(rulesetPath)) return this.fs.readJson(rulesetPath);
+    const parts = name.split('/');
+    if (parts.length === 2) {
+      const altPath = path.join(corePath, 'rulesets', parts[0], parts[1] + '.rules.json');
+      if (await this.fs.exists(altPath)) return this.fs.readJson(altPath);
+    }
+    return { error: `Ruleset not found: ${name}` };
+  }
+
+  private async getAgentsList() {
+    const agentsDir = path.join(process.cwd(), 'rulesets', 'agents');
+    if (!(await this.fs.exists(agentsDir))) return { agents: [] };
+    const entries = await this.fs.readdirNames(agentsDir);
+    return { agents: entries, count: entries.length };
+  }
+
+  private async getAgentContent(name: string) {
+    const agentPath = path.join(process.cwd(), 'rulesets', 'agents', name, 'agent.rules.json');
+    if (await this.fs.exists(agentPath)) return this.fs.readJson(agentPath);
+    return { error: `Agent not found: ${name}` };
+  }
+
+  private async getRepositoryConfig() {
+    const configPath = path.join(process.cwd(), 'evolith.yaml');
+    if (await this.fs.exists(configPath)) return this.configParser.parse(await this.fs.readFile(configPath));
+    return { error: 'evolith.yaml not found' };
+  }
+
+  private async getOpenCoreArtifacts() {
+    const ocbPath = path.join(this.findCorePath(), 'rulesets', 'governance', 'open-core-boundary.rules.json');
+    if (await this.fs.exists(ocbPath)) return this.fs.readJson(ocbPath);
+    return { error: 'Open-Core Boundary rules not found' };
+  }
+
+  private async getAclRules() {
+    const aclPath = path.join(this.findCorePath(), 'rulesets', 'acl', 'anti-corruption-layer.rules.json');
+    if (await this.fs.exists(aclPath)) return this.fs.readJson(aclPath);
+    return { error: 'ACL rules not found' };
+  }
+
+  private async getMoscowAnalysis(phase: string) {
+    const moscowPath = path.join(process.cwd(), '.evolith', 'moscow', `${phase}.json`);
+    if (await this.fs.exists(moscowPath)) return this.fs.readJson(moscowPath);
+    return { error: `MoSCoW analysis not found for ${phase}` };
+  }
+}
+
+function getPhaseGates() {
+  return {
+    phaseGates: [
+      { phase: 'phase-0', name: 'Foundation', requirements: ['evolith.yaml', 'coreRef.version pinned'] },
+      { phase: 'phase-1', name: 'Structure', requirements: ['package.json', 'src/ directory', 'bilingual README'] },
+      { phase: 'phase-2', name: 'Governance', requirements: ['rulesets/ directory', 'ACL ruleset', '.harness/ scripts'] },
+      { phase: 'phase-3', name: 'Architecture', requirements: ['ADR collection', 'ADR matrix updated'] },
+      { phase: 'phase-4', name: 'Production', requirements: ['Dockerfile', 'CI/CD pipeline', 'DORA metrics'] },
+    ],
+  };
+}

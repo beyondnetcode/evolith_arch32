@@ -1200,3 +1200,29 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [ ] un endpoint GraphQL expuesto sobre los use-cases de dominio con tests, **o** el ADR-0074 enmendado para descopar GraphQL con justificación
   - [ ] el schema OpenAPI/GraphQL documentado y la lista de exposición de la Visión de Producto consistente
 - **Referencias:** [apps/core-api/src/app.module.ts](../../../../apps/core-api/src/app.module.ts) · [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md)
+
+#### GT-121
+
+**Título:** Retirar el subsistema MCP in-process del Smart CLI (tras la delegación)
+
+- **Gap:** Tras la migración del MCP, `smart-cli mcp` delega en el paquete standalone `@evolith/mcp-server`, dejando la implementación MCP in-process en `sdk/cli/src/infrastructure/mcp/` (server, nueve grupos de tools, resources, prompts, registry — ~2.900 líneas más specs) como código muerto. No está totalmente huérfano: `sdk/cli/src/commands/init/agents.command.ts` aún importa `getFileSystem` desde `infrastructure/mcp/tools/tool-utils`. Según ADR-0074/0075 esto es la Fase 3 (remoción), un cambio de versión mayor.
+- **Propósito:** Eliminar el subsistema MCP duplicado del CLI para que el gateway tenga un único hogar (`@evolith/mcp-server`), reduciendo superficie de mantenimiento y confusión.
+- **Evidencia actual / ejemplo:** `grep -rl "infrastructure/mcp" sdk/cli/src/commands` devuelve solo `agents.command.ts` (importando `getFileSystem`); `mcp-serve.command.ts` ya delega en `@evolith/mcp-server`.
+- **Criterio de cierre:**
+  - [ ] `agents.command.ts` deja de importar de `infrastructure/mcp` (usa un proveedor FS compartido)
+  - [ ] `sdk/cli/src/infrastructure/mcp/` y sus specs eliminados
+  - [ ] el CLI compila y sus tests pasan; el cambio cae en un bump de versión mayor
+- **Referencias:** [sdk/cli/src/commands/mcp/mcp-serve.command.ts](../../../../sdk/cli/src/commands/mcp/mcp-serve.command.ts) · [sdk/cli/src/commands/init/agents.command.ts](../../../../sdk/cli/src/commands/init/agents.command.ts) · [ADR-0075](../../../../reference/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.es.md)
+
+#### GT-122
+
+**Título:** Consolidar adapters de infraestructura duplicados entre sdk/cli, apps/core-api y packages/infra-providers
+
+- **Gap:** Los adapters de infraestructura están copiados entre paquetes en lugar de consumirse desde el compartido `@evolith/infra-providers`. `DiskRulesetRepository` existe en tres árboles de fuente (`sdk/cli`, `apps/core-api`, `packages/infra-providers`); `WebhookAdapter` y `MoscowPrioritizationService` en dos (`sdk/cli`, `packages/infra-providers`); y `apps/core-api` trae sus propios providers `node-filesystem` / `config-parser` / `logger` que duplican los compartidos. La deriva entre copias es un riesgo latente de correctitud.
+- **Propósito:** Hacer de `@evolith/infra-providers` la única fuente de adapters de infraestructura compartidos, que `sdk/cli` y `apps/core-api` lo consuman, y eliminar las copias locales.
+- **Evidencia actual / ejemplo:** `grep -rl "class DiskRulesetRepository" sdk apps packages --include='*.ts'` devuelve tres archivos de fuente; `WebhookAdapter` y `MoscowPrioritizationService` devuelven dos cada uno.
+- **Criterio de cierre:**
+  - [ ] `sdk/cli` y `apps/core-api` importan los adapters desde `@evolith/infra-providers`
+  - [ ] los archivos locales de adapter/provider duplicados eliminados
+  - [ ] todos los paquetes compilan y sus tests pasan
+- **Referencias:** [packages/infra-providers/src/index.ts](../../../../packages/infra-providers/src/index.ts) · [apps/core-api/src/infrastructure/adapters/disk-ruleset.repository.ts](../../../../apps/core-api/src/infrastructure/adapters/disk-ruleset.repository.ts) · [sdk/cli/src/infrastructure/adapters/disk-ruleset.repository.ts](../../../../sdk/cli/src/infrastructure/adapters/disk-ruleset.repository.ts)

@@ -58,7 +58,7 @@ export class EvidenceValidator {
     const artifactPaths: Record<string, string> = {
       'PRD': path.join(projectPath, 'reference', 'governance', 'sdlc', '04-artifact-templates', 'prd-template.md'),
       'Discovery Canvas': path.join(projectPath, 'reference', 'governance', 'sdlc', '04-artifact-templates', 'discovery-canvas-template.md'),
-      'Business Case ROI': path.join(projectPath, 'reference', 'governance', 'sdlc', '04-artifact-templates', 'business-case-roi-template.md'),
+      'Technical Feasibility Canvas': path.join(projectPath, 'reference', 'governance', 'sdlc', '04-artifact-templates', 'technical-feasibility-template.md'),
       'Ballpark Estimation': path.join(projectPath, 'reference', 'governance', 'sdlc', '04-artifact-templates', 'ballpark-estimation-template.md'),
       'MoSCoW Prioritization Matrix': path.join(projectPath, '.evolith', 'moscow', 'phase-0.json'),
       'Build-versus-Compose Analysis': path.join(projectPath, '.evolith', 'build-vs-compose.json'),

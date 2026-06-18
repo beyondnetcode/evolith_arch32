@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import { ConfirmationService } from './confirmation.service';
+import { ConfirmationService } from '../src/infrastructure/mcp/confirmation.service';
 import { PassThrough } from 'node:stream';
 
 describe('ConfirmationService E2E', () => {
@@ -14,9 +14,10 @@ describe('ConfirmationService E2E', () => {
         stdout: mockStdout,
       });
       
-      mockStdin.emit('data', 'n\n');
+      const resultPromise = service.confirmMutation('evolith-write', '/path/to/file.ts');
+      mockStdin.write('n\n');
       
-      const result = await service.confirmMutation('evolith-write', '/path/to/file.ts');
+      const result = await resultPromise;
       expect(result).toBe(false);
     });
 
@@ -30,9 +31,10 @@ describe('ConfirmationService E2E', () => {
         stdout: mockStdout,
       });
       
-      mockStdin.emit('data', 'y\n');
+      const resultPromise = service.confirmMutation('evolith-write', '/path/to/file.ts');
+      mockStdin.write('y\n');
       
-      const result = await service.confirmMutation('evolith-write', '/path/to/file.ts');
+      const result = await resultPromise;
       expect(result).toBe(true);
     });
 

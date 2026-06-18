@@ -103,15 +103,15 @@ export class WizardService {
   }
 
   private async showSummary(): Promise<boolean> {
-    p.log.message('');
-    p.log.message(chalk.bold('Summary:'));
-    p.log.message('');
+    p.log.info('');
+    p.log.info(chalk.bold('Summary:'));
+    p.log.info('');
 
     Object.entries(this.currentState).forEach(([key, value]) => {
       p.log.info(`${chalk.cyan(key)}: ${value}`);
     });
 
-    p.log.message('');
+    p.log.info('');
 
     const confirmed = await p.confirm({
       message: 'Proceed with these settings?',
@@ -131,9 +131,10 @@ export class WizardService {
     for (const step of this.steps) {
       console.log(chalk.dim(`Executing step: ${step.title}`));
       const result = await step.run(this.currentState, () => {});
-      if (result) {
-        Object.assign(this.currentState, result);
+      if (result === null) {
+        throw new UserCancelledError();
       }
+      Object.assign(this.currentState, result);
     }
 
     console.log(chalk.green(`${this.title} completed`));

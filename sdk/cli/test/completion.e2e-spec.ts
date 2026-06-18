@@ -46,13 +46,15 @@ describe('Completion Command - Shell Hooks (e2e)', () => {
     const tempDir = path.join(os.tmpdir(), `evolith-hooks-e2e-${process.pid}`);
     await fs.ensureDir(tempDir);
 
-    const mockArgv = jest.spyOn(process, 'argv', 'get');
-    mockArgv.mockReturnValue([process.execPath, path.join(tempDir, 'evolith')]);
+    const originalArgv = process.argv;
+    (process as any).argv = [process.execPath, path.join(tempDir, 'evolith')];
 
-    await runCommand(commandInstance, ['completion', '--install-hooks', 'fish']);
-
-    mockArgv.mockRestore();
-    await fs.remove(tempDir).catch(() => {});
+    try {
+      await runCommand(commandInstance, ['completion', '--install-hooks', 'fish']);
+    } finally {
+      (process as any).argv = originalArgv;
+      await fs.remove(tempDir).catch(() => {});
+    }
   });
 
   it('should run completion with no args and show help', async () => {

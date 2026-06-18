@@ -153,7 +153,7 @@ Las cinco fases siguientes van de la concepción a las operaciones; cada secció
 | Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) | Requisito |
 |---|---|---|---|---|
 | [Discovery Canvas](./reference/governance/sdlc/04-artifact-templates/discovery-canvas-template.es.md) | Lienzo de descubrimiento | Definir visión y viabilidad | Documentos y plantillas | **Obligatorio** |
-| [Business Case ROI](./reference/governance/sdlc/04-artifact-templates/business-case-roi-template.es.md) | Análisis de ROI | Justificar valor de negocio | Documentos y plantillas | Opcional |
+| [Technical Feasibility Canvas](./reference/governance/sdlc/04-artifact-templates/technical-feasibility-template.es.md) | Factibilidad técnica | Especificar NFRs y restricciones | Documentos y plantillas | Opcional |
 | [Ballpark Estimation](./reference/governance/sdlc/04-artifact-templates/ballpark-estimation-template.es.md) | Estimación a gran escala | Proyectar costos y tiempos | Documentos y plantillas | Opcional |
 | [PRD - Documento de Requerimientos de Producto](./reference/governance/sdlc/04-artifact-templates/prd-template.es.md) | Documento de requerimientos | Especificar necesidades funcionales | Documentos y plantillas | **Obligatorio** |
 | [Evolith User Story](./reference/governance/sdlc/04-artifact-templates/evolith-user-story-template.es.md) | Plantilla de historia de usuario | Estandarizar historias ágiles | Documentos y plantillas | **Obligatorio** |

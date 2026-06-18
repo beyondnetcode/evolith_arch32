@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ApiCommand } from '../src/commands/api/api.command';
 import { PromptService } from '../src/infrastructure/prompts/prompt.service';
+import { ConfigService } from '../src/infrastructure/config/config.service';
 
 describe('ApiCommand (E2E)', () => {
   let command: ApiCommand;
@@ -18,6 +19,12 @@ describe('ApiCommand (E2E)', () => {
             showError: jest.fn(),
             showSuccess: jest.fn(),
             showWarning: jest.fn(),
+          },
+        },
+        {
+          provide: ConfigService,
+          useValue: {
+            getProfile: jest.fn().mockReturnValue({}),
           },
         },
       ],

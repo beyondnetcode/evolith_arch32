@@ -44,7 +44,7 @@ rulesets/
 │   ├── adr.schema.json         # Validación de artefacto ADR
 │   ├── prd.schema.json         # Validación de artefacto PRD
 │   ├── discovery-canvas.schema.json     # Fase 1
-│   ├── business-case-roi.schema.json     # Fase 1
+│   ├── technical-feasibility.schema.json # Fase 1
 │   ├── ballpark-estimation.schema.json   # Fase 1
 │   ├── evolith-user-story.schema.json    # Fase 1
 │   ├── agile-backlog.schema.json          # Fase 1

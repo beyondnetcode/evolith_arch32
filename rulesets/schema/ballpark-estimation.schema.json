@@ -4,12 +4,12 @@
   "title": "Ballpark Estimation",
   "description": "JSON Schema for validating Evolith Ballpark Estimation artifacts. Phase 1 artifact for technical feasibility and team sizing.",
   "type": "object",
-  "required": ["businessCaseId", "team", "estimates", "financials"],
+  "required": ["technicalFeasibilityId", "team", "estimates", "technicalConstraints"],
   "additionalProperties": false,
   "properties": {
-    "businessCaseId": {
+    "technicalFeasibilityId": {
       "type": "string",
-      "description": "Reference to the parent Business Case ROI."
+      "description": "Reference to the parent Technical Feasibility Canvas."
     },
     "team": {
       "type": "array",
@@ -60,24 +60,30 @@
       "minItems": 1,
       "description": "Component-level T-Shirt sizing."
     },
-    "financials": {
+    "technicalConstraints": {
       "type": "object",
-      "required": ["capex", "opex", "currency"],
+      "required": ["cpuCoreLimit", "memoryGbLimit", "storageTbLimit"],
       "additionalProperties": false,
       "properties": {
-        "capex": {
+        "cpuCoreLimit": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum allowed CPU cores."
+        },
+        "memoryGbLimit": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum allowed RAM in gigabytes."
+        },
+        "storageTbLimit": {
           "type": "number",
           "minimum": 0,
-          "description": "Capital expenditure (new infrastructure, licenses)."
+          "description": "Maximum allowed storage in terabytes."
         },
-        "opex": {
-          "type": "number",
-          "minimum": 0,
-          "description": "Operational expenditure (team cost, cloud ops)."
-        },
-        "currency": {
-          "type": "string",
-          "pattern": "^[A-Z]{3}$"
+        "maxMonthlyComputeHours": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum monthly compute hours."
         }
       }
     },

@@ -76,7 +76,7 @@
 | [adr-template.md](sdlc/04-artifact-templates/adr-template.md) | [adr-template.es.md](sdlc/04-artifact-templates/adr-template.es.md) | OK |
 | [agile-backlog-template.md](sdlc/04-artifact-templates/agile-backlog-template.md) | [agile-backlog-template.es.md](sdlc/04-artifact-templates/agile-backlog-template.es.md) | OK |
 | [ballpark-estimation-template.md](sdlc/04-artifact-templates/ballpark-estimation-template.md) | [ballpark-estimation-template.es.md](sdlc/04-artifact-templates/ballpark-estimation-template.es.md) | OK |
-| [business-case-roi-template.md](sdlc/04-artifact-templates/business-case-roi-template.md) | [business-case-roi-template.es.md](sdlc/04-artifact-templates/business-case-roi-template.es.md) | OK |
+| [technical-feasibility-template.md](sdlc/04-artifact-templates/technical-feasibility-template.md) | [technical-feasibility-template.es.md](sdlc/04-artifact-templates/technical-feasibility-template.es.md) | OK |
 | [cli-impact-analysis.md](sdlc/04-artifact-templates/cli-impact-analysis.md) | [cli-impact-analysis.es.md](sdlc/04-artifact-templates/cli-impact-analysis.es.md) | OK |
 | [ddd-model-template.md](sdlc/04-artifact-templates/ddd-model-template.md) | [ddd-model-template.es.md](sdlc/04-artifact-templates/ddd-model-template.es.md) | OK |
 | [discovery-canvas-template.md](sdlc/04-artifact-templates/discovery-canvas-template.md) | [discovery-canvas-template.es.md](sdlc/04-artifact-templates/discovery-canvas-template.es.md) | OK |

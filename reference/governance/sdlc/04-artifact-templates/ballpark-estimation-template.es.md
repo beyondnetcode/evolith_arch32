@@ -1,20 +1,23 @@
 # Ballpark Estimation
 
-> **Propósito:** Proveer una estimación de alto nivel (T-Shirt sizing, orden de magnitud) de esfuerzo técnico, OPEX/CAPEX y tamaño de equipo, para evaluar viabilidad financiera frente al Business Case.
+> **Navegación Bilingüe:** [English Version](./ballpark-estimation-template.md)
+> **Propósito:** Proveer una estimación de alto nivel (T-Shirt sizing, orden de magnitud) de esfuerzo técnico, límites de recursos de infraestructura y tamaño de equipo, para evaluar la factibilidad técnica frente al Canvas de Factibilidad Técnica.
 > 
 > **Fase SDLC:** 01 - Discovery / Ideación
 > 
 > **Responsable:** Arquitecto / Tech Lead
 > 
-> **Quality Gate:** Compuerta de Aprobación de Arquitectura y Financiamiento.
+> **Quality Gate:** Compuerta de Aprobación de Arquitectura.
 
 ## Metadatos del Artefacto
 
 * **URL Upstream Evolith:** `En construcción - Solicitar a Upstream`
-* **Entradas Requeridas:** Business Case ROI.
-* **Salidas Esperadas:** Estimación macro aprobada que viabiliza el inicio de las historias de usuario.
-* **Taxonomía Aplicada:** OPEX, CAPEX, T-Shirt Sizing.
+* **Entradas Requeridas:** Canvas de Factibilidad Técnica.
+* **Salidas Esperadas:** Estimación técnica macro aprobada que viabiliza el inicio de las historias de usuario.
+* **Taxonomía Aplicada:** T-Shirt Sizing, Cloud Quotas, Resource Limits.
 * **Rules Evolith Aplicables:** R-03 (UTF-8 Clean).
+
+---
 
 ## 1. Estructura Documental (Markdown)
 
@@ -33,10 +36,13 @@
 | --- | --- | --- |
 | [Módulo 1] | [Tamaño] | [Detalles] |
 
-## 4. Costos Asociados (CAPEX / OPEX)
-- **CAPEX (Infraestructura nueva / Licencias):** [$ Valor estimado]
-- **OPEX (Costo equipo y operación):** [$ Valor estimado]
+## 4. Restricciones de Recursos de Infraestructura y Cuotas
+- **Límites de Cómputo (CPU/Memoria):** [e.g., max 8 Cores, 16GB RAM]
+- **Límites de Almacenamiento:** [e.g., max 1TB SSD]
+- **Cuotas de Red y Nube:** [e.g., max 10 container instances]
 ```
+
+---
 
 ## 2. Estructura de Datos (JSON / Estructura compatible con CSV/Excel)
 
@@ -48,7 +54,7 @@ Diseñado para ser fácilmente convertido a CSV o consumido por Excel a través 
   "title": "Ballpark Estimation",
   "type": "object",
   "properties": {
-    "businessCaseId": { "type": "string" },
+    "technicalFeasibilityId": { "type": "string" },
     "team": {
       "type": "array",
       "items": {
@@ -71,23 +77,26 @@ Diseñado para ser fácilmente convertido a CSV o consumido por Excel a través 
         }
       }
     },
-    "financials": {
+    "technicalConstraints": {
       "type": "object",
       "properties": {
-        "capex": { "type": "number" },
-        "opex": { "type": "number" },
-        "currency": { "type": "string" }
+        "cpuCoreLimit": { "type": "integer" },
+        "memoryGbLimit": { "type": "integer" },
+        "storageTbLimit": { "type": "number" },
+        "maxMonthlyComputeHours": { "type": "integer" }
       }
     }
   }
 }
 ```
 
+---
+
 ## 3. Ejemplo Mínimo Aplicado
 
 ```json
 {
-  "businessCaseId": "BC-2023-001",
+  "technicalFeasibilityId": "DISC-2023-001",
   "team": [
     { "role": "Tech Lead", "count": 1 },
     { "role": "Backend Engineer", "count": 2 },
@@ -106,13 +115,16 @@ Diseñado para ser fácilmente convertido a CSV o consumido por Excel a través 
       "assumptions": "Uso de componentes UI existentes"
     }
   ],
-  "financials": {
-    "capex": 5000.00,
-    "opex": 45000.00,
-    "currency": "USD"
+  "technicalConstraints": {
+    "cpuCoreLimit": 8,
+    "memoryGbLimit": 16,
+    "storageTbLimit": 1,
+    "maxMonthlyComputeHours": 720
   }
 }
 ```
+
+---
 
 ## 4. Trazabilidad Handoff hacia la Siguiente Fase
 

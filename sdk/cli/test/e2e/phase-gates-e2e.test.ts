@@ -28,7 +28,7 @@ describe('Phase Gate E2E Tests', () => {
           mandatoryEvidence: [
             { artifact: 'PRD', schemaRef: '../schema/prd.schema.json', status: 'Approved', validation: 'PRD status = Approved AND approvalEvidence present AND date filled' },
             { artifact: 'Discovery Canvas', validation: 'Initiative registered with customer pain points and expected value' },
-            { artifact: 'Business Case ROI', validation: 'Financial viability documented with KPIs' },
+            { artifact: 'Technical Feasibility Canvas', validation: 'Technical feasibility and quality attributes documented with NFRs' },
             { artifact: 'Ballpark Estimation', validation: 'T-Shirt sizing completed with team composition' },
           ],
           blockingCriteria: [
@@ -227,12 +227,12 @@ describe('Phase Gate E2E Tests', () => {
 
       fs.writeFileSync(path.join(templatesDir, 'prd-template.md'), '# PRD\n\nApproved');
       fs.writeFileSync(path.join(templatesDir, 'discovery-canvas-template.md'), '# Discovery Canvas');
-      fs.writeFileSync(path.join(templatesDir, 'business-case-roi-template.md'), '# Business Case ROI');
+      fs.writeFileSync(path.join(templatesDir, 'technical-feasibility-template.md'), '# Technical Feasibility Canvas');
       fs.writeFileSync(path.join(templatesDir, 'ballpark-estimation-template.md'), '# Ballpark Estimation');
 
       expect(fs.existsSync(path.join(templatesDir, 'prd-template.md'))).toBe(true);
       expect(fs.existsSync(path.join(templatesDir, 'discovery-canvas-template.md'))).toBe(true);
-      expect(fs.existsSync(path.join(templatesDir, 'business-case-roi-template.md'))).toBe(true);
+      expect(fs.existsSync(path.join(templatesDir, 'technical-feasibility-template.md'))).toBe(true);
       expect(fs.existsSync(path.join(templatesDir, 'ballpark-estimation-template.md'))).toBe(true);
     });
 
@@ -362,7 +362,7 @@ describe('Phase Gate E2E Tests', () => {
     });
 
     it('should have PhaseGateValidatorService imported in application services', () => {
-      const servicesPath = path.join(process.cwd(), 'src', 'application', 'use-cases', 'phase-transition.use-case.ts');
+      const servicesPath = path.join(process.cwd(), '..', '..', 'packages', 'core-domain', 'src', 'application', 'use-cases', 'phase-transition.use-case.ts');
       const content = fs.readFileSync(servicesPath, 'utf-8');
 
       expect(content).toContain('PhaseGateValidatorService');
@@ -370,7 +370,7 @@ describe('Phase Gate E2E Tests', () => {
     });
 
     it('should have PhaseTransitionUseCase using gate validator', () => {
-      const servicesPath = path.join(process.cwd(), 'src', 'application', 'use-cases', 'phase-transition.use-case.ts');
+      const servicesPath = path.join(process.cwd(), '..', '..', 'packages', 'core-domain', 'src', 'application', 'use-cases', 'phase-transition.use-case.ts');
       const content = fs.readFileSync(servicesPath, 'utf-8');
 
       expect(content).toContain('gateValidator');

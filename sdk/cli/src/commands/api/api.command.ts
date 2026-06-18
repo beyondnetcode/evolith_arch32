@@ -1,6 +1,8 @@
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
+import { PromptService } from '../../infrastructure/prompts/prompt.service';
+import { ConfigService } from '../../infrastructure/config/config.service';
 
 interface ApiCommandOptions {
   list?: boolean;
@@ -13,8 +15,11 @@ interface ApiCommandOptions {
   description: 'Browse and inspect the Evolith API surface (MCP tools, resources, schemas)',
 })
 export class ApiCommand extends BaseEvolithCommand {
-  constructor() {
-    super('ApiCommand');
+  constructor(
+    promptService?: PromptService,
+    configService?: ConfigService,
+  ) {
+    super('ApiCommand', promptService, configService);
   }
 
   async executeCommand(passedParam: string[], options?: ApiCommandOptions): Promise<void> {

@@ -79,7 +79,7 @@ flowchart LR
 | Artifact | Location | Why it is required |
 |---|---|---|
 | **Discovery Canvas** | [discovery-canvas-template.md](./04-artifact-templates/discovery-canvas-template.md) | Initiative registration, customer pain point, and expected value. |
-| **Business Case ROI** | [business-case-roi-template.md](./04-artifact-templates/business-case-roi-template.md) | Support for financial viability, Time to Market, and KPIs. |
+| **Technical Feasibility Canvas** | [technical-feasibility-template.md](./04-artifact-templates/technical-feasibility-template.md) | Technical feasibility, cloud quotas, and NFRs. |
 | **Ballpark Estimation** | [ballpark-estimation-template.md](./04-artifact-templates/ballpark-estimation-template.md) | T-Shirt Sizing estimation of effort and team size. |
 | **Evolith User Story** | [evolith-user-story-template.md](./04-artifact-templates/evolith-user-story-template.md) | Atomic definition with BDD criteria and technical separation. |
 | **Agile Backlog** | [agile-backlog-template.md](./04-artifact-templates/agile-backlog-template.md) | Versioned grouping of stories ready for prioritization. |

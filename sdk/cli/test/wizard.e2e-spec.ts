@@ -1,4 +1,5 @@
 import { WizardService } from '../src/infrastructure/prompts/wizard.service';
+import * as p from '@clack/prompts';
 
 describe('WizardService E2E', () => {
   describe('Interactive wizards for complex flows', () => {
@@ -111,6 +112,10 @@ describe('WizardService E2E', () => {
     it('should display summary before confirmation', async () => {
       const service = new WizardService();
       
+      // Force interactive mode for testing by stubbing process.stdout.isTTY
+      const originalIsTTY = process.stdout.isTTY;
+      Object.defineProperty(process.stdout, 'isTTY', { value: true, configurable: true });
+
       const steps = [
         {
           id: 'config',
@@ -120,9 +125,9 @@ describe('WizardService E2E', () => {
       ];
 
       let summaryShown = false;
-      const originalConfirm = jest.fn().mockImplementation(() => {
+      jest.spyOn(p, 'confirm').mockImplementation(() => {
         summaryShown = true;
-        return Promise.resolve(true);
+        return Promise.resolve(true) as any;
       });
 
       await service.start({
@@ -132,6 +137,9 @@ describe('WizardService E2E', () => {
       });
 
       expect(summaryShown).toBe(true);
+
+      // Restore isTTY
+      Object.defineProperty(process.stdout, 'isTTY', { value: originalIsTTY, configurable: true });
     });
   });
 });

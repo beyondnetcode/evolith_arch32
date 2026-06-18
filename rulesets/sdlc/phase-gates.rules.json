@@ -22,8 +22,9 @@
           "validation": "Initiative registered with customer pain points and expected value"
         },
         {
-          "artifact": "Business Case ROI",
-          "validation": "Financial viability documented with KPIs"
+          "artifact": "Technical Feasibility Canvas",
+          "schemaRef": "../schema/technical-feasibility.schema.json",
+          "validation": "Technical feasibility and quality attributes documented with NFRs"
         },
         {
           "artifact": "Ballpark Estimation",
@@ -45,7 +46,7 @@
           "action": "BLOCK — return to Phase 1"
         },
         {
-          "criterion": "Funding outcome is unclear",
+          "criterion": "Technical constraints or cloud quotas are unaligned",
           "action": "BLOCK — return to Phase 1"
         },
         {

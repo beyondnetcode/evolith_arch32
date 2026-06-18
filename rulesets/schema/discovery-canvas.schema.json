@@ -4,7 +4,7 @@
   "title": "Discovery Canvas",
   "description": "JSON Schema for validating Evolith Discovery Canvas artifacts. Phase 1 required artifact for initiative registration.",
   "type": "object",
-  "required": ["initiativeName", "sponsor", "businessContext", "problemStatement", "expectedValue"],
+  "required": ["initiativeName", "sponsor", "businessContext", "problemStatement", "expectedQualityAttributes"],
   "additionalProperties": false,
   "properties": {
     "initiativeName": {
@@ -27,10 +27,16 @@
       "minLength": 20,
       "description": "Description of the problem or opportunity to solve."
     },
-    "expectedValue": {
-      "type": "string",
-      "minLength": 20,
-      "description": "Expected qualitative and quantitative value. Should include measurable outcomes."
+    "expectedQualityAttributes": {
+      "type": "object",
+      "required": ["latencyMs", "concurrencyRequestsSec", "availabilitySla"],
+      "properties": {
+        "latencyMs": { "type": "integer", "minimum": 0 },
+        "concurrencyRequestsSec": { "type": "integer", "minimum": 0 },
+        "availabilitySla": { "type": "string" },
+        "securityCompliance": { "type": "string" }
+      },
+      "description": "Expected technical quality attributes (Latency, Scalability, Security, Availability)."
     },
     "targetAudience": {
       "type": "array",
@@ -53,7 +59,7 @@
     "constraints": {
       "type": "array",
       "items": { "type": "string" },
-      "description": "Known constraints: budget, timeline, regulatory, technical."
+      "description": "Known constraints: timeline, regulatory, technical stack, cloud quotas."
     },
     "successCriteria": {
       "type": "array",

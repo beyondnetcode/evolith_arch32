@@ -153,7 +153,7 @@ The five phases below run from conception to operations; each section lists that
 | Link (URL) | Description (brief explanation) | Goal / Objective | Typification (category or type) | Requirement |
 |---|---|---|---|---|
 | [Discovery Canvas](./reference/governance/sdlc/04-artifact-templates/discovery-canvas-template.md) | Discovery canvas | Define vision and feasibility | Documents and templates | **Mandatory** |
-| [Business Case ROI](./reference/governance/sdlc/04-artifact-templates/business-case-roi-template.md) | ROI analysis | Justify business value | Documents and templates | Optional |
+| [Technical Feasibility Canvas](./reference/governance/sdlc/04-artifact-templates/technical-feasibility-template.md) | Technical feasibility | Specify NFRs and constraints | Documents and templates | Optional |
 | [Ballpark Estimation](./reference/governance/sdlc/04-artifact-templates/ballpark-estimation-template.md) | High-level estimation | Project costs and times | Documents and templates | Optional |
 | [PRD - Product Requirements Document](./reference/governance/sdlc/04-artifact-templates/prd-template.md) | Product requirements | Specify functional needs | Documents and templates | **Mandatory** |
 | [Evolith User Story](./reference/governance/sdlc/04-artifact-templates/evolith-user-story-template.md) | User story template | Standardize agile stories | Documents and templates | **Mandatory** |

@@ -69,6 +69,7 @@ describe('Auto-Fix E2E', () => {
             ruleId: 'missing-domain-interface',
             filePath: testFile,
             message: 'Port interface missing',
+            suggestedFix: 'interface IGeneratedPort',
           },
         ],
         dryRun: false,

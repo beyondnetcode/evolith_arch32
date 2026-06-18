@@ -111,7 +111,7 @@ Every document entry uses the same five fields: **Document** (linked title), **D
 | [PRD — Product Requirements Document](../governance/sdlc/04-artifact-templates/prd-template.md) | Product requirements | Specify functional needs | Template | Yes |
 | [Evolith User Story](../governance/sdlc/04-artifact-templates/evolith-user-story-template.md) | User story template | Standardize agile stories | Template | Yes |
 | [Agile Backlog](../governance/sdlc/04-artifact-templates/agile-backlog-template.md) | Backlog template | Organize deliverables | Template | Yes |
-| [Business Case ROI](../governance/sdlc/04-artifact-templates/business-case-roi-template.md) | ROI analysis | Justify business value | Template | No |
+| [Technical Feasibility Canvas](../governance/sdlc/04-artifact-templates/technical-feasibility-template.md) | Feasibility analysis | Document technical stack constraints and quality attributes (NFRs) | Template | No |
 | [Ballpark Estimation](../governance/sdlc/04-artifact-templates/ballpark-estimation-template.md) | High-level estimation | Project costs and times | Template | No |
 | [CLI Impact Analysis](../governance/sdlc/04-artifact-templates/cli-impact-analysis.md) | CLI impact analysis | Evaluate cross-repo changes | Template | No |
 | [Validation Schemas & Rules](../../rulesets/README.md) | Canvas, PRD, and Backlog schemas plus gate rules | Validate compliance in CI | Rules and schemas | Yes |
@@ -203,5 +203,5 @@ Every document entry uses the same five fields: **Document** (linked title), **D
 ---
 
 <div align="center">
-  <a href="../../README.md">Back to Evolith Main Portal</a>
+  [Back to Evolith Main Portal](../../README.md)
 </div>

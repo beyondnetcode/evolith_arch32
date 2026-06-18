@@ -26,8 +26,14 @@ export class ValidateSatelliteUseCase {
     
     // If validator wasn't provided, we can re-instantiate it if the engine is custom
     let activeValidator = this.validator;
-    if (engine) {
-      activeValidator = new RulesetValidatorService({ engineType: engine });
+    if (engine && this.validator) {
+      activeValidator = new RulesetValidatorService({
+        engineType: engine,
+        fileSystem: (this.validator as any).fs,
+        logger: (this.validator as any).logger,
+        configParser: (this.validator as any).configParser,
+        rulesetRepo: (this.validator as any).engine?.rulesetRepo,
+      });
     }
 
     let result: ValidationResult;

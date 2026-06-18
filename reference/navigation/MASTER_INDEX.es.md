@@ -111,7 +111,7 @@ Cada entrada de documento usa los mismos cinco campos: **Documento** (título en
 | [PRD — Documento de Requisitos de Producto](../governance/sdlc/04-artifact-templates/prd-template.es.md) | Requisitos de producto | Especificar necesidades funcionales | Plantilla | Sí |
 | [Evolith User Story](../governance/sdlc/04-artifact-templates/evolith-user-story-template.es.md) | Plantilla de historia de usuario | Estandarizar historias ágiles | Plantilla | Sí |
 | [Agile Backlog](../governance/sdlc/04-artifact-templates/agile-backlog-template.es.md) | Plantilla de backlog | Organizar entregables | Plantilla | Sí |
-| [Business Case ROI](../governance/sdlc/04-artifact-templates/business-case-roi-template.es.md) | Análisis de ROI | Justificar valor de negocio | Plantilla | No |
+| [Technical Feasibility Canvas](../governance/sdlc/04-artifact-templates/technical-feasibility-template.es.md) | Análisis de viabilidad | Documentar restricciones de stack técnico y atributos de calidad (NFRs) | Plantilla | No |
 | [Ballpark Estimation](../governance/sdlc/04-artifact-templates/ballpark-estimation-template.es.md) | Estimación de alto nivel | Proyectar costos y tiempos | Plantilla | No |
 | [CLI Impact Analysis](../governance/sdlc/04-artifact-templates/cli-impact-analysis.es.md) | Análisis de impacto del CLI | Evaluar cambios cross-repo | Plantilla | No |
 | [Schemas y Reglas de Validación](../../rulesets/README.es.md) | Schemas de Canvas, PRD y Backlog más reglas de gates | Validar cumplimiento en CI | Reglas y schemas | Sí |
@@ -203,5 +203,5 @@ Cada entrada de documento usa los mismos cinco campos: **Documento** (título en
 ---
 
 <div align="center">
-  <a href="../../README.es.md">Volver al Portal Principal de Evolith</a>
+  [Volver al Portal Principal de Evolith](../../README.es.md)
 </div>

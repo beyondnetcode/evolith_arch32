@@ -7,7 +7,7 @@ JSON Schema definitions for validating Evolith SDLC artifacts.
 | [adr.schema.json](./adr.schema.json) | Validate ADR structure and required fields | ADR | All |
 | [prd.schema.json](./prd.schema.json) | Validate PRD structure and required fields | PRD | 1 |
 | [discovery-canvas.schema.json](./discovery-canvas.schema.json) | Validate Discovery Canvas initiative registration | Discovery Canvas | 1 |
-| [business-case-roi.schema.json](./business-case-roi.schema.json) | Validate Business Case ROI and financing | Business Case ROI | 1 |
+| [technical-feasibility.schema.json](./technical-feasibility.schema.json) | Validate Technical Feasibility and quality attributes (NFRs) | Technical Feasibility Canvas | 1 |
 | [ballpark-estimation.schema.json](./ballpark-estimation.schema.json) | Validate T-Shirt sizing and team estimation | Ballpark Estimation | 1 |
 | [evolith-user-story.schema.json](./evolith-user-story.schema.json) | Validate atomic user story with BDD criteria | User Story | 1 |
 | [agile-backlog.schema.json](./agile-backlog.schema.json) | Validate prioritized backlog for Epic/Initiative | Agile Backlog | 1 |
@@ -20,7 +20,7 @@ JSON Schema definitions for validating Evolith SDLC artifacts.
 | [gate-evidence.schema.json](./gate-evidence.schema.json) | Validate structured gate-evaluation evidence (core/ADR-0073) | Gate Evidence | All |
 | [output-envelope.schema.json](./output-envelope.schema.json) | Validate the universal machine output envelope (core/ADR-0073) | CLI/MCP/REST output | All |
 
-**Phase 1 Coverage:** 7 schemas (Discovery Canvas, Business Case ROI, Ballpark Estimation, Evolith User Story, Agile Backlog, CLI Impact Analysis, PRD)
+**Phase 1 Coverage:** 7 schemas (Discovery Canvas, Technical Feasibility Canvas, Ballpark Estimation, Evolith User Story, Agile Backlog, CLI Impact Analysis, PRD)
 
 ---
 

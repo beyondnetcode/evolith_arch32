@@ -58,7 +58,7 @@ Las plantillas garantizan consistencia en todos los repositorios satélite. Los 
 | Fase | Artefacto | Landing Page | Fuente Markdown | Ejemplo Renderizado | Perfiles recomendados |
 |---|---|---|---|---|---|
 | **Fase 1 — Concepción** | Discovery Canvas | [Abrir](./discovery-canvas-template.es.md) | Incluido | Incluido | PM, Solicitante |
-| **Fase 1 — Concepción** | Business Case ROI | [Abrir](./business-case-roi-template.es.md) | Incluido | Incluido | Product Owner |
+| **Fase 1 — Concepción** | Technical Feasibility Canvas | [Abrir](./technical-feasibility-template.es.md) | Incluido | Incluido | Arquitecto, Tech Lead |
 | **Fase 1 — Concepción** | Ballpark Estimation | [Abrir](./ballpark-estimation-template.es.md) | Incluido | Incluido | Arquitecto, Tech Lead |
 | **Fase 1 — Concepción** | Historia de Usuario Evolith | [Abrir](./evolith-user-story-template.es.md) | Incluido | Incluido | Agente AI, PM |
 | **Fase 1 — Concepción** | Agile Backlog | [Abrir](./agile-backlog-template.es.md) | Incluido | Incluido | Product Owner |

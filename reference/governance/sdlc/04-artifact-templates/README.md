@@ -58,7 +58,7 @@ Templates enforce consistency across all satellite repositories. Satellite teams
 | Phase | Artifact | Landing Page | Markdown Source | Rendered Example | Recommended profiles |
 |---|---|---|---|---|---|
 | **Phase 1 — Conception** | Discovery Canvas | [Open](./discovery-canvas-template.md) | Included | Included | PM, Requester |
-| **Phase 1 — Conception** | Business Case ROI | [Open](./business-case-roi-template.md) | Included | Included | Product Owner |
+| **Phase 1 — Conception** | Technical Feasibility Canvas | [Open](./technical-feasibility-template.md) | Included | Included | Architect, Tech Lead |
 | **Phase 1 — Conception** | Ballpark Estimation | [Open](./ballpark-estimation-template.md) | Included | Included | Architect, Tech Lead |
 | **Phase 1 — Conception** | Evolith User Story | [Open](./evolith-user-story-template.md) | Included | Included | AI Agent, PM |
 | **Phase 1 — Conception** | Agile Backlog | [Open](./agile-backlog-template.md) | Included | Included | Product Owner |

@@ -68,7 +68,8 @@ Decisiones aplicables a cualquier producto construido sobre el framework, sin im
 | [ADR 0071: Estrategia de Clases Base en la Capa de Dominio](./core/0071-domain-layer-base-class-inheritance-strategy.es.md) | Estrategia de clases base y herencia en la capa de dominio | Acotar el uso de herencia | ADR Core | Sí |
 | [ADR 0072: Fechas UTC, Zona Horaria y Resolución de Idioma](./core/0072-utc-dates-timezone-language-resolution.es.md) | Almacenamiento UTC, detección de zona horaria del navegador y resolución de idioma | Estandarizar tiempo y locale | ADR Core | Sí |
 | [ADR 0073: Contrato Unificado de Salida CLI/MCP](./core/0073-unified-cli-output-contract.es.md) | Contrato unificado de salida CLI/MCP y schema de evidencia de gates | Unificar las superficies de salida de herramientas | ADR Core | Sí |
-| [ADR 0074: Capa de Exposición Nativa del Evolith Core API](./core/0074-evolith-core-api-exposure-layer.es.md) | Capa de Exposición Nativa del Evolith Core API | Exposición oficial de red escalable | ADR Core | Sí |
+| [ADR 0074: Capa de Exposición Nativa del Evolith Core API](./core/0074-evolith-core-api-exposure-layer.es.md) | Capa de Exposición Nativa del Evolith Core API | Exposición oficial de red scalables | ADR Core | Sí |
+| [ADR 0078: Gobernanza de Separación Financiera de Dominios](./core/0078-domain-financial-separation-governance.es.md) | Gobernanza de separación financiera de dominios | Hacer cumplir la frontera DDD entre Core y Tracker | ADR Core | Sí |
 
 ---
 

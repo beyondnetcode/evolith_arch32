@@ -86,7 +86,7 @@ import { PluginModule } from './infrastructure/plugins/plugin.module';
     ProposePhaseAdvanceUseCase,
     {
       provide: RulesetValidatorService,
-      useFactory: (fs: any, logger: any, configParser: any) => {
+      useFactory: (fs: unknown, logger: unknown, configParser: unknown) => {
         const { DiskRulesetRepository } = require('./infrastructure/adapters/disk-ruleset.repository');
         return new RulesetValidatorService({
           fileSystem: fs,

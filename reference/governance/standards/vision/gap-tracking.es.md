@@ -19,7 +19,8 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-120`](./gap-reference-catalog.es.md#gt-120) | Exposición GraphQL del Core API (alcance del ADR-0074) | `BFF API` | F3 | P2 | M | `PENDIENTE` |
 | [`GT-121`](./gap-reference-catalog.es.md#gt-121) | Retirar el subsistema MCP in-process del Smart CLI (tras la delegación, Fase 3 de ADR-0074/0075) | `CLI` | Transversal | P2 | M | `PENDIENTE` |
 | [`GT-122`](./gap-reference-catalog.es.md#gt-122) | Consolidar adapters de infraestructura duplicados entre sdk/cli, apps/core-api y packages/infra-providers | `Cross` | Transversal | P2 | M | `PENDIENTE` |
-| [`GT-123`](./gap-reference-catalog.es.md#gt-123) | El CLI no compila — errores TypeScript preexistentes bloquean `tsc` (init.wizard, progress.service, alias, auto-fix del MCP viejo) | `CLI` | Transversal | P1 | L | `PENDIENTE` |
+| [`GT-123`](./gap-reference-catalog.es.md#gt-123) | El CLI no compila — errores TypeScript preexistentes bloquean `tsc` (init.wizard, progress.service, alias, auto-fix del MCP viejo) | `CLI` | Transversal | P1 | L | `COMPLETADO` |
+| [`GT-124`](./gap-reference-catalog.es.md#gt-124) | Suite e2e del CLI rota — faltan fixtures (plantillas SDLC, shell hooks) y naming obsoleto del MCP viejo | `CLI` | Transversal | P2 | M | `PENDIENTE` |
 | [`GT-59`](./gap-reference-catalog.es.md#gt-59) | Hardening HTTP — Helmet + CORS + Rate Limiting (OWASP API4/8) | `BFF API` | Transversal | P0 | S | `COMPLETADO` |
 | [`GT-60`](./gap-reference-catalog.es.md#gt-60) | Validación global de DTOs con class-validator (OWASP API3) | `BFF API` | Transversal | P0 | M | `COMPLETADO` |
 | [`GT-64`](./gap-reference-catalog.es.md#gt-64) | Logging estructurado con Correlation ID | `BFF API` | Transversal | P0 | M | `COMPLETADO` |
@@ -114,7 +115,7 @@ Este tablero es la única fuente de verdad para prioridad y estado de los gaps. 
 | [`GT-112`](./gap-reference-catalog.es.md#gt-112) | Reemplazar los binarios comerciales de HashiCorp con OpenTofu + OpenBao | `Platform` | Transversal | P0 | L | `COMPLETADO` |
 | [`GT-111`](./gap-reference-catalog.es.md#gt-111) | Planificar el giro comercial de MassTransit v9 (quedarse en v8 OSS o migrar a Rebus) | `Platform` | Transversal | P1 | L | `COMPLETADO` |
 
-**Progreso:** 93 / 100 completados · 0 en progreso · 7 pendientes · 0 diferidos
+**Progreso:** 94 / 101 completados · 0 en progreso · 7 pendientes · 0 diferidos
 
 **Ordenamiento:** una sola tabla, ordenada por estado (pendientes, luego diferidos, luego completados), luego criticidad (`P0` → `P1` → `P2`) y luego complejidad (`S` → `M` → `L`); los completados se agrupan por componente. Cada ID enlaza a su detalle en el [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md).
 

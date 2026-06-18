@@ -16,16 +16,16 @@ export class ProgressService {
   private total = 0;
   private message = '';
   private quiet = false;
-  private isTTY = true;
+  private ttyEnabled = true;
 
   start(options: ProgressOptions = {}): void {
     this.total = options.total ?? 0;
     this.message = options.message ?? '';
     this.quiet = options.quiet ?? false;
-    this.isTTY = options.isTTY ?? process.stdout.isTTY ?? true;
+    this.ttyEnabled = options.isTTY ?? process.stdout.isTTY ?? true;
     this.current = 0;
 
-    if (this.quiet || !this.isTTY) {
+    if (this.quiet || !this.ttyEnabled) {
       if (this.message) {
         console.log(this.message);
       }
@@ -45,7 +45,7 @@ export class ProgressService {
       this.message = message;
     }
 
-    if (this.quiet || !this.isTTY) {
+    if (this.quiet || !this.ttyEnabled) {
       if (message) {
         console.log(message);
       }
@@ -53,7 +53,7 @@ export class ProgressService {
     }
 
     if (this.spinner) {
-      this.spinner.message = this.formatMessage();
+      this.spinner.message(this.formatMessage());
     }
   }
 
@@ -63,7 +63,7 @@ export class ProgressService {
       this.message = message;
     }
 
-    if (this.quiet || !this.isTTY) {
+    if (this.quiet || !this.ttyEnabled) {
       if (message) {
         console.log(message);
       }
@@ -71,12 +71,12 @@ export class ProgressService {
     }
 
     if (this.spinner) {
-      this.spinner.message = this.formatMessage();
+      this.spinner.message(this.formatMessage());
     }
   }
 
   stop(message?: string): void {
-    if (this.quiet || !this.isTTY) {
+    if (this.quiet || !this.ttyEnabled) {
       if (message) {
         console.log(message);
       }
@@ -94,7 +94,7 @@ export class ProgressService {
   }
 
   succeed(message?: string): void {
-    if (this.quiet || !this.isTTY) {
+    if (this.quiet || !this.ttyEnabled) {
       if (message) {
         console.log(chalk.green(message));
       }
@@ -112,7 +112,7 @@ export class ProgressService {
   }
 
   fail(message?: string): void {
-    if (this.quiet || !this.isTTY) {
+    if (this.quiet || !this.ttyEnabled) {
       if (message) {
         console.log(chalk.red(message));
       }
@@ -160,6 +160,6 @@ export class ProgressService {
   }
 
   isTTY(): boolean {
-    return this.isTTY;
+    return this.ttyEnabled;
   }
 }

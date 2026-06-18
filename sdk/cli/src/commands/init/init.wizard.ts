@@ -20,11 +20,11 @@ interface WizardInitOptions {
 export class InitWizardCommand extends BaseEvolithCommand {
   constructor(
     private readonly wizardService: WizardService,
-    private readonly promptService: PromptService,
+    promptService: PromptService,
     private readonly catalogLoader: CatalogLoader,
     @Inject('IFileSystem') private readonly fileSystem: IFileSystem
   ) {
-    super('InitWizardCommand');
+    super('InitWizardCommand', promptService);
   }
 
   async executeCommand(
@@ -125,7 +125,13 @@ export class InitWizardCommand extends BaseEvolithCommand {
           name: result.projectName as string,
           runtime: result.runtime as string,
           monorepo: result.monorepo as string,
-          arch: result.arch as string,
+          architecture: result.arch as string,
+          database: 'none',
+          apiProtocol: 'rest',
+          ciCd: 'none',
+          observability: 'none',
+          features: [],
+          agents: [],
         }, process.cwd());
 
         this.promptService.stopSpinner();

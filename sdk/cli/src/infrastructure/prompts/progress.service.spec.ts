@@ -5,7 +5,7 @@ jest.mock('@clack/prompts', () => ({
   spinner: jest.fn(() => ({
     start: jest.fn(),
     stop: jest.fn(),
-    message: '',
+    message: jest.fn(),
   })),
 }));
 
@@ -55,23 +55,23 @@ describe('ProgressService', () => {
     });
 
     it('should update spinner message on update', () => {
-      const mockSpinner = { start: jest.fn(), stop: jest.fn(), message: '' };
+      const mockSpinner = { start: jest.fn(), stop: jest.fn(), message: jest.fn() };
       (p.spinner as jest.Mock).mockReturnValue(mockSpinner);
       
       service.start({ isTTY: true, message: 'Initial' });
       service.update(5, 10, 'Updated');
       
-      expect(mockSpinner.message).toContain('Updated');
+      expect(mockSpinner.message).toHaveBeenCalledWith(expect.stringContaining('Updated'));
     });
 
     it('should format progress bar correctly', () => {
-      const mockSpinner = { start: jest.fn(), stop: jest.fn(), message: '' };
+      const mockSpinner = { start: jest.fn(), stop: jest.fn(), message: jest.fn() };
       (p.spinner as jest.Mock).mockReturnValue(mockSpinner);
       
       service.start({ isTTY: true, total: 10, message: 'Processing' });
       service.update(5, 10);
       
-      expect(mockSpinner.message).toContain('50%');
+      expect(mockSpinner.message).toHaveBeenCalledWith(expect.stringContaining('50%'));
     });
   });
 
@@ -88,19 +88,19 @@ describe('ProgressService', () => {
     });
 
     it('should update message if provided', () => {
-      const mockSpinner = { start: jest.fn(), stop: jest.fn(), message: '' };
+      const mockSpinner = { start: jest.fn(), stop: jest.fn(), message: jest.fn() };
       (p.spinner as jest.Mock).mockReturnValue(mockSpinner);
       
       service.start({ isTTY: true, message: 'Initial' });
       service.increment('Step 1');
       
-      expect(mockSpinner.message).toContain('Step 1');
+      expect(mockSpinner.message).toHaveBeenCalledWith(expect.stringContaining('Step 1'));
     });
   });
 
   describe('succeed', () => {
     it('should stop spinner with success message', () => {
-      const mockSpinner = { start: jest.fn(), stop: jest.fn(), message: '' };
+      const mockSpinner = { start: jest.fn(), stop: jest.fn(), message: jest.fn() };
       (p.spinner as jest.Mock).mockReturnValue(mockSpinner);
       
       service.start({ isTTY: true });
@@ -110,7 +110,7 @@ describe('ProgressService', () => {
     });
 
     it('should use default success message', () => {
-      const mockSpinner = { start: jest.fn(), stop: jest.fn(), message: '' };
+      const mockSpinner = { start: jest.fn(), stop: jest.fn(), message: jest.fn() };
       (p.spinner as jest.Mock).mockReturnValue(mockSpinner);
       
       service.start({ isTTY: true });
@@ -122,7 +122,7 @@ describe('ProgressService', () => {
 
   describe('fail', () => {
     it('should stop spinner with failure message', () => {
-      const mockSpinner = { start: jest.fn(), stop: jest.fn(), message: '' };
+      const mockSpinner = { start: jest.fn(), stop: jest.fn(), message: jest.fn() };
       (p.spinner as jest.Mock).mockReturnValue(mockSpinner);
       
       service.start({ isTTY: true });
@@ -132,7 +132,7 @@ describe('ProgressService', () => {
     });
 
     it('should use default failure message', () => {
-      const mockSpinner = { start: jest.fn(), stop: jest.fn(), message: '' };
+      const mockSpinner = { start: jest.fn(), stop: jest.fn(), message: jest.fn() };
       (p.spinner as jest.Mock).mockReturnValue(mockSpinner);
       
       service.start({ isTTY: true });
@@ -148,8 +148,7 @@ describe('ProgressService', () => {
       expect(service.isQuiet()).toBe(true);
     });
 
-    // Skipped: isTTY getter has naming conflict with private property
-    it.skip('should return correct TTY state', () => {
+    it('should return correct TTY state', () => {
       service.start({ isTTY: false });
       expect(service.isTTY()).toBe(false);
     });

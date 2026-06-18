@@ -1401,6 +1401,23 @@
         "npx jest --config sdk/cli/test/jest-e2e.json --testPathPatterns=\"auto-fix\""
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-123",
+      "closedAt": "2026-06-18",
+      "closureCommit": "31f8f079313c58b6b5d551d770ab7dea7653057b",
+      "evidence": [
+        "sdk/cli/src/commands/init/init.wizard.ts",
+        "sdk/cli/src/infrastructure/prompts/progress.service.ts",
+        "sdk/cli/src/infrastructure/prompts/progress.service.spec.ts",
+        "sdk/cli/src/commands/alias/alias.command.ts",
+        "sdk/cli/src/infrastructure/mcp/tools/auto-fix.ts"
+      ],
+      "validationCommands": [
+        "npx tsc -p sdk/cli/tsconfig.json --noEmit",
+        "npx jest --config sdk/cli/jest.config.js --testPathPatterns=\"progress|alias\""
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

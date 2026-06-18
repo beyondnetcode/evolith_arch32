@@ -1,0 +1,68 @@
+{
+  "name": "@evolith/mcp-server",
+  "version": "1.0.0",
+  "description": "Evolith MCP Gateway — NestJS-based Model Context Protocol server for AI agents. Supports stdio and SSE transports.",
+  "main": "dist/main.js",
+  "types": "dist/main.d.ts",
+  "bin": {
+    "evolith-mcp": "./dist/main.js"
+  },
+  "scripts": {
+    "build": "nest build",
+    "build:dev": "nest build --watch",
+    "start": "node dist/main",
+    "start:dev": "nest start --watch",
+    "start:stdio": "TRANSPORT=stdio node dist/main",
+    "start:sse": "TRANSPORT=sse PORT=3000 node dist/main",
+    "test": "jest --passWithNoTests",
+    "test:cov": "jest --coverage --passWithNoTests",
+    "test:e2e": "jest --config ./test/jest-e2e.json --passWithNoTests"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "keywords": [
+    "evolith",
+    "mcp",
+    "model-context-protocol",
+    "nestjs",
+    "ai-agents",
+    "gateway",
+    "governance"
+  ],
+  "files": [
+    "dist/",
+    "README.md"
+  ],
+  "dependencies": {
+    "@evolith/core-domain": "^1.0.0",
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@nestjs/common": "^11.1.24",
+    "@nestjs/core": "^11.1.24",
+    "@nestjs/platform-express": "^11.1.26",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.15.1",
+    "nestjs-pino": "^4.6.1",
+    "pino": "^10.3.1",
+    "pino-pretty": "^13.0.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1",
+    "uuid": "^11.1.0",
+    "yaml": "^2.9.0"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^11.0.0",
+    "@nestjs/schematics": "^11.0.0",
+    "@nestjs/testing": "^11.1.24",
+    "@types/express": "^5.0.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.13.2",
+    "@types/uuid": "^10.0.0",
+    "jest": "^30.4.2",
+    "supertest": "^7.0.0",
+    "ts-jest": "^29.4.11",
+    "ts-loader": "^9.5.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
+  }
+}

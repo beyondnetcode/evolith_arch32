@@ -1151,3 +1151,92 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Done when:**
   - [x] IaC and secrets are migrated to OpenTofu 1.11+ and OpenBao 2.5+ with no HashiCorp commercial dependency
 - **References:** Stack Audit `reference/governance/standards/engineering/detailed-stack-audit-2026.md` (TOP CRITICAL ALERT 3)
+
+#### GT-117
+
+**Title:** Read/query (GET) endpoints on Core API for Tracker BFF composition
+
+- **Gap:** `apps/core-api` exposes only command/evaluation endpoints — every domain route is `@Post` (`/gates/:gateId/evaluate`, `/projects/initialize`, `/projects/propose-advance`, `/phases/transition`, `/architecture/validate-satellite`, `/architecture/detect-drift`); the only `@Get` routes are `/health` and `/metrics`. There are no read endpoints to list rulesets, fetch a ruleset or gate definition, or read phase requirements. The Tracker BFF ([ADR-0075](../../../../reference/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.md)) needs these read models to compose its web/mobile workspaces from the Core API alone instead of falling back to the MCP server.
+- **Purpose:** Add product-neutral read endpoints (e.g. `GET /rulesets`, `GET /rulesets/:id`, `GET /gates/:gateId`, `GET /phases/:phase/requirements`) so the BFF can compose UI state directly from the Core API Exposure Layer.
+- **Current evidence / example:** `grep -rE "@(Get|Post)\(" apps/core-api/src/presentation/controllers` shows every domain endpoint is `@Post`; the only `@Get` routes are `health` and `metrics`.
+- **Done when:**
+  - [ ] read endpoints for rulesets, ruleset content, gate definitions, and phase requirements are exposed and documented in OpenAPI
+  - [ ] endpoints are covered by unit + e2e tests
+  - [ ] at least one Tracker BFF composition path consumes them
+- **References:** [apps/core-api/src/presentation/controllers/gates.controller.ts](../../../../apps/core-api/src/presentation/controllers/gates.controller.ts) · [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md) · [ADR-0075](../../../../reference/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.md)
+
+#### GT-118
+
+**Title:** Remote/SaaS consumption model — decouple Core API from local filesystem paths
+
+- **Gap:** Every Core API command takes a local filesystem path (`satellitePath` / `corePath`) and the use-cases read the satellite repository directly from disk (e.g. `ProjectsController.proposeAdvance` forwards `body.satellitePath`). This assumes the repository is on the API host's filesystem, which does not hold for a hosted SaaS Core API consumed remotely by the Evolith Tracker BFF. How a hosted API accesses a tenant's repository (clone, upload, git remote, ephemeral workspace) is unresolved.
+- **Purpose:** Define and implement a remote-consumption model so the Tracker BFF can call a hosted Core API without passing local paths — e.g. a repository-reference contract (git URL + ref + credentials) with server-side checkout, or an upload/streaming boundary, with tenant isolation.
+- **Current evidence / example:** `apps/core-api/src/presentation/controllers/projects.controller.ts` and `gates.controller.ts` accept `satellitePath`/`corePath` strings resolved against the API process filesystem.
+- **Done when:**
+  - [ ] a remote repository-reference contract (or equivalent) is specified in an ADR
+  - [ ] the Core API resolves satellite content without a caller-supplied local path
+  - [ ] tenant isolation and credential handling are covered by tests
+- **References:** [apps/core-api/src/presentation/controllers/projects.controller.ts](../../../../apps/core-api/src/presentation/controllers/projects.controller.ts) · [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md)
+
+#### GT-119
+
+**Title:** Reconcile ADR-0074 §5 (MCP in NestJS) with the standalone `@evolith/mcp-server`
+
+- **Gap:** [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md) (ratified element 5) states the MCP server logic would be *"integrated into or wrapped by the NestJS application to provide a unified deployment unit"* alongside `core-api`. In practice the MCP server was extracted into a **standalone** NestJS package (`@evolith/mcp-server`) and `smart-cli mcp` now delegates to it; `core-api` does not serve MCP. The decision and the documentation diverge.
+- **Purpose:** Reconcile the architecture: either update/supersede ADR-0074 §5 to record the standalone-package decision, or re-integrate MCP into `core-api` as a unified deployment unit — and align the Product Vision interface layer accordingly.
+- **Current evidence / example:** `grep -riE "mcp|modelcontextprotocol" apps/core-api/src` returns no MCP wiring; the MCP gateway lives in `packages/mcp-server`.
+- **Done when:**
+  - [ ] ADR-0074 §5 is updated or superseded to match the implemented topology, or MCP is integrated into `core-api`
+  - [ ] the Product Vision §2.5 interface layer reflects the reconciled decision
+- **References:** [packages/mcp-server/README.md](../../../../packages/mcp-server/README.md) · [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md)
+
+#### GT-120
+
+**Title:** GraphQL exposure for the Core API (ADR-0074 scope)
+
+- **Gap:** [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md) scopes the Core API Exposure Layer as *"standard REST/GraphQL/MCP interfaces"*, but `apps/core-api` exposes REST only — there is no `@nestjs/graphql` module or schema. Clients that prefer a typed graph/aggregated query surface (a likely Tracker BFF need) cannot use GraphQL.
+- **Purpose:** Add a GraphQL exposure over the same domain use-cases (or formally descope GraphQL from ADR-0074 if REST + MCP suffice), so the Exposure Layer matches its ratified scope.
+- **Current evidence / example:** `grep -riE "graphql|@nestjs/graphql" apps/core-api` returns no GraphQL module; `apps/core-api/package.json` has no GraphQL dependency.
+- **Done when:**
+  - [ ] a GraphQL endpoint is exposed over the domain use-cases with tests, **or** ADR-0074 is amended to descope GraphQL with rationale
+  - [ ] OpenAPI/GraphQL schema is documented and the Product Vision exposure list is consistent
+- **References:** [apps/core-api/src/app.module.ts](../../../../apps/core-api/src/app.module.ts) · [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md)
+
+#### GT-121
+
+**Title:** Decommission the in-process MCP subsystem in the Smart CLI (post-delegation)
+
+- **Gap:** After the MCP migration, `smart-cli mcp` delegates to the standalone `@evolith/mcp-server`, leaving the in-process MCP implementation under `sdk/cli/src/infrastructure/mcp/` (server, nine tool groups, resources, prompts, registry — ~2,900 lines plus specs) as dead code. It is not fully orphaned: `sdk/cli/src/commands/init/agents.command.ts` still imports `getFileSystem` from `infrastructure/mcp/tools/tool-utils`. Per ADR-0074/0075 this is Phase 3 (removal), a major-version concern.
+- **Purpose:** Remove the duplicated MCP subsystem from the CLI so the gateway has a single home (`@evolith/mcp-server`), reducing maintenance surface and confusion.
+- **Current evidence / example:** `grep -rl "infrastructure/mcp" sdk/cli/src/commands` returns only `agents.command.ts` (importing `getFileSystem`); `mcp-serve.command.ts` already delegates to `@evolith/mcp-server`.
+- **Done when:**
+  - [ ] `agents.command.ts` no longer imports from `infrastructure/mcp` (uses a shared FS provider)
+  - [ ] `sdk/cli/src/infrastructure/mcp/` and its specs are removed
+  - [ ] CLI builds and tests pass; the change lands in a major version bump
+- **References:** [sdk/cli/src/commands/mcp/mcp-serve.command.ts](../../../../sdk/cli/src/commands/mcp/mcp-serve.command.ts) · [sdk/cli/src/commands/init/agents.command.ts](../../../../sdk/cli/src/commands/init/agents.command.ts) · [ADR-0075](../../../../reference/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.md)
+
+#### GT-122
+
+**Title:** Consolidate duplicated infrastructure adapters across sdk/cli, apps/core-api and packages/infra-providers
+
+- **Gap:** Infrastructure adapters are copy-pasted across packages instead of consumed from the shared `@evolith/infra-providers`. `DiskRulesetRepository` exists in three source trees (`sdk/cli`, `apps/core-api`, `packages/infra-providers`); `WebhookAdapter` and `MoscowPrioritizationService` in two (`sdk/cli`, `packages/infra-providers`); and `apps/core-api` ships its own `node-filesystem` / `config-parser` / `logger` providers that duplicate the shared ones. Drift between copies is a latent correctness risk.
+- **Purpose:** Make `@evolith/infra-providers` the single source for shared infrastructure adapters, have `sdk/cli` and `apps/core-api` consume it, and delete the local copies.
+- **Current evidence / example:** `grep -rl "class DiskRulesetRepository" sdk apps packages --include='*.ts'` returns three source files; `WebhookAdapter` and `MoscowPrioritizationService` each return two.
+- **Done when:**
+  - [ ] `sdk/cli` and `apps/core-api` import the adapters from `@evolith/infra-providers`
+  - [ ] the duplicated local adapter/provider files are removed
+  - [ ] all packages build and their tests pass
+- **References:** [packages/infra-providers/src/index.ts](../../../../packages/infra-providers/src/index.ts) · [apps/core-api/src/infrastructure/adapters/disk-ruleset.repository.ts](../../../../apps/core-api/src/infrastructure/adapters/disk-ruleset.repository.ts) · [sdk/cli/src/infrastructure/adapters/disk-ruleset.repository.ts](../../../../sdk/cli/src/infrastructure/adapters/disk-ruleset.repository.ts)
+
+#### GT-123
+
+**Title:** CLI does not build — pre-existing TypeScript errors block `tsc`
+
+- **Gap:** `npm run build` (tsc) in `sdk/cli` fails with ~23 pre-existing TypeScript errors, independent of the MCP migration: `infrastructure/mcp/tools/auto-fix.ts` (15 — old MCP, wrong `IFileSystem` arg counts after an interface change; removed by GT-121), `infrastructure/prompts/progress.service.ts` (field/method `isTTY` collision plus type errors), `commands/init/init.wizard.ts` (redeclares `promptService` private over the protected base member, and passes an incomplete `InitProjectInput` — 4 of 10 fields), and `commands/alias/alias.command.ts` (`e.message` on `unknown`). It was never caught because `sdk-cli-ci.yml` only triggers on `sdk/cli/**` changes and recent `main` commits were docs-only; the build is red on `main`.
+- **Purpose:** Restore a green `sdk/cli` build so the CI build/type-check/test jobs carry real evidentiary weight again.
+- **Current evidence / example:** `cd sdk/cli && npm run build` prints ~23 `error TS…` even after building the workspace deps; fixing the surface errors reveals further type errors (e.g. `InitProjectInput` missing required fields), indicating accumulated type rot.
+- **Done when:**
+  - [ ] `sdk/cli` `tsc` build is green (0 errors)
+  - [ ] `npm run test:cov` and `test:e2e` pass in CI (workspace deps are now built first in `sdk-cli-ci.yml`)
+  - [ ] regression guard considered (see GT-80 test type-checking)
+- **References:** [sdk/cli/src/commands/init/init.wizard.ts](../../../../sdk/cli/src/commands/init/init.wizard.ts) · [sdk/cli/src/infrastructure/prompts/progress.service.ts](../../../../sdk/cli/src/infrastructure/prompts/progress.service.ts) · [.github/workflows/sdk-cli-ci.yml](../../../../.github/workflows/sdk-cli-ci.yml)

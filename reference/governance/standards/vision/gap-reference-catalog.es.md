@@ -1150,3 +1150,92 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Criterio de cierre:**
   - [x] IaC y secretos se migran a OpenTofu 1.11+ y OpenBao 2.5+ sin dependencia comercial de HashiCorp
 - **Referencias:** Stack Audit `reference/governance/standards/engineering/detailed-stack-audit-2026.md` (TOP CRITICAL ALERT 3)
+
+#### GT-117
+
+**Título:** Endpoints de lectura (GET) en el Core API para la composición del BFF del Tracker
+
+- **Gap:** `apps/core-api` solo expone endpoints de comando/evaluación — toda ruta de dominio es `@Post` (`/gates/:gateId/evaluate`, `/projects/initialize`, `/projects/propose-advance`, `/phases/transition`, `/architecture/validate-satellite`, `/architecture/detect-drift`); las únicas rutas `@Get` son `/health` y `/metrics`. No hay endpoints de lectura para listar rulesets, obtener un ruleset o la definición de un gate, ni leer requisitos de fase. El BFF del Tracker ([ADR-0075](../../../../reference/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.es.md)) necesita estos modelos de lectura para componer sus workspaces web/móvil desde el Core API en lugar de recurrir al servidor MCP.
+- **Propósito:** Añadir endpoints de lectura neutrales respecto del producto (p. ej. `GET /rulesets`, `GET /rulesets/:id`, `GET /gates/:gateId`, `GET /phases/:phase/requirements`) para que el BFF componga el estado de UI directamente desde la Capa de Exposición del Core.
+- **Evidencia actual / ejemplo:** `grep -rE "@(Get|Post)\(" apps/core-api/src/presentation/controllers` muestra que todo endpoint de dominio es `@Post`; las únicas rutas `@Get` son `health` y `metrics`.
+- **Criterio de cierre:**
+  - [ ] endpoints de lectura para rulesets, contenido de ruleset, definiciones de gate y requisitos de fase, expuestos y documentados en OpenAPI
+  - [ ] endpoints cubiertos por tests unit + e2e
+  - [ ] al menos un flujo de composición del BFF del Tracker los consume
+- **Referencias:** [apps/core-api/src/presentation/controllers/gates.controller.ts](../../../../apps/core-api/src/presentation/controllers/gates.controller.ts) · [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md) · [ADR-0075](../../../../reference/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.es.md)
+
+#### GT-118
+
+**Título:** Modelo de consumo remoto/SaaS — desacoplar el Core API de rutas de filesystem locales
+
+- **Gap:** Todo comando del Core API recibe una ruta de filesystem local (`satellitePath` / `corePath`) y los use-cases leen el repositorio satélite directamente del disco (p. ej. `ProjectsController.proposeAdvance` reenvía `body.satellitePath`). Esto asume que el repositorio está en el filesystem del host de la API, lo cual no se cumple para un Core API hosteado (SaaS) consumido remotamente por el BFF del Tracker. Cómo accede una API hosteada al repositorio del tenant (clonado, upload, git remoto, workspace efímero) está sin resolver.
+- **Propósito:** Definir e implementar un modelo de consumo remoto para que el BFF del Tracker llame a un Core API hosteado sin pasar rutas locales — p. ej. un contrato de referencia a repositorio (URL git + ref + credenciales) con checkout en servidor, o una frontera de upload/streaming, con aislamiento de tenant.
+- **Evidencia actual / ejemplo:** `apps/core-api/src/presentation/controllers/projects.controller.ts` y `gates.controller.ts` aceptan strings `satellitePath`/`corePath` resueltos contra el filesystem del proceso de la API.
+- **Criterio de cierre:**
+  - [ ] un contrato de referencia a repositorio remoto (o equivalente) especificado en un ADR
+  - [ ] el Core API resuelve el contenido del satélite sin una ruta local provista por el caller
+  - [ ] aislamiento de tenant y manejo de credenciales cubiertos por tests
+- **Referencias:** [apps/core-api/src/presentation/controllers/projects.controller.ts](../../../../apps/core-api/src/presentation/controllers/projects.controller.ts) · [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md)
+
+#### GT-119
+
+**Título:** Reconciliar el ADR-0074 §5 (MCP en NestJS) con el paquete standalone `@evolith/mcp-server`
+
+- **Gap:** El [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md) (elemento ratificado 5) indica que la lógica del servidor MCP se *"integraría o envolvería dentro de la app NestJS para proveer una unidad de despliegue unificada"* junto a `core-api`. En la práctica el servidor MCP se extrajo a un paquete NestJS **standalone** (`@evolith/mcp-server`) y `smart-cli mcp` ahora delega en él; `core-api` no sirve MCP. La decisión y la documentación divergen.
+- **Propósito:** Reconciliar la arquitectura: actualizar/superseder el ADR-0074 §5 para registrar la decisión del paquete standalone, o re-integrar MCP en `core-api` como unidad de despliegue unificada — y alinear la capa de interfaces de la Visión de Producto en consecuencia.
+- **Evidencia actual / ejemplo:** `grep -riE "mcp|modelcontextprotocol" apps/core-api/src` no devuelve wiring MCP; el gateway MCP vive en `packages/mcp-server`.
+- **Criterio de cierre:**
+  - [ ] el ADR-0074 §5 se actualiza o supersede para coincidir con la topología implementada, o MCP se integra en `core-api`
+  - [ ] la Visión de Producto §2.5 refleja la decisión reconciliada
+- **Referencias:** [packages/mcp-server/README.es.md](../../../../packages/mcp-server/README.es.md) · [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md)
+
+#### GT-120
+
+**Título:** Exposición GraphQL del Core API (alcance del ADR-0074)
+
+- **Gap:** El [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md) define el alcance de la Capa de Exposición del Core como *"interfaces estándar REST/GraphQL/MCP"*, pero `apps/core-api` solo expone REST — no hay módulo `@nestjs/graphql` ni schema. Los clientes que prefieran una superficie de consulta tipada/agregada (una necesidad probable del BFF del Tracker) no pueden usar GraphQL.
+- **Propósito:** Añadir una exposición GraphQL sobre los mismos use-cases de dominio (o descopar formalmente GraphQL del ADR-0074 si REST + MCP bastan), para que la Capa de Exposición coincida con su alcance ratificado.
+- **Evidencia actual / ejemplo:** `grep -riE "graphql|@nestjs/graphql" apps/core-api` no devuelve módulo GraphQL; `apps/core-api/package.json` no tiene dependencia GraphQL.
+- **Criterio de cierre:**
+  - [ ] un endpoint GraphQL expuesto sobre los use-cases de dominio con tests, **o** el ADR-0074 enmendado para descopar GraphQL con justificación
+  - [ ] el schema OpenAPI/GraphQL documentado y la lista de exposición de la Visión de Producto consistente
+- **Referencias:** [apps/core-api/src/app.module.ts](../../../../apps/core-api/src/app.module.ts) · [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md)
+
+#### GT-121
+
+**Título:** Retirar el subsistema MCP in-process del Smart CLI (tras la delegación)
+
+- **Gap:** Tras la migración del MCP, `smart-cli mcp` delega en el paquete standalone `@evolith/mcp-server`, dejando la implementación MCP in-process en `sdk/cli/src/infrastructure/mcp/` (server, nueve grupos de tools, resources, prompts, registry — ~2.900 líneas más specs) como código muerto. No está totalmente huérfano: `sdk/cli/src/commands/init/agents.command.ts` aún importa `getFileSystem` desde `infrastructure/mcp/tools/tool-utils`. Según ADR-0074/0075 esto es la Fase 3 (remoción), un cambio de versión mayor.
+- **Propósito:** Eliminar el subsistema MCP duplicado del CLI para que el gateway tenga un único hogar (`@evolith/mcp-server`), reduciendo superficie de mantenimiento y confusión.
+- **Evidencia actual / ejemplo:** `grep -rl "infrastructure/mcp" sdk/cli/src/commands` devuelve solo `agents.command.ts` (importando `getFileSystem`); `mcp-serve.command.ts` ya delega en `@evolith/mcp-server`.
+- **Criterio de cierre:**
+  - [ ] `agents.command.ts` deja de importar de `infrastructure/mcp` (usa un proveedor FS compartido)
+  - [ ] `sdk/cli/src/infrastructure/mcp/` y sus specs eliminados
+  - [ ] el CLI compila y sus tests pasan; el cambio cae en un bump de versión mayor
+- **Referencias:** [sdk/cli/src/commands/mcp/mcp-serve.command.ts](../../../../sdk/cli/src/commands/mcp/mcp-serve.command.ts) · [sdk/cli/src/commands/init/agents.command.ts](../../../../sdk/cli/src/commands/init/agents.command.ts) · [ADR-0075](../../../../reference/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.es.md)
+
+#### GT-122
+
+**Título:** Consolidar adapters de infraestructura duplicados entre sdk/cli, apps/core-api y packages/infra-providers
+
+- **Gap:** Los adapters de infraestructura están copiados entre paquetes en lugar de consumirse desde el compartido `@evolith/infra-providers`. `DiskRulesetRepository` existe en tres árboles de fuente (`sdk/cli`, `apps/core-api`, `packages/infra-providers`); `WebhookAdapter` y `MoscowPrioritizationService` en dos (`sdk/cli`, `packages/infra-providers`); y `apps/core-api` trae sus propios providers `node-filesystem` / `config-parser` / `logger` que duplican los compartidos. La deriva entre copias es un riesgo latente de correctitud.
+- **Propósito:** Hacer de `@evolith/infra-providers` la única fuente de adapters de infraestructura compartidos, que `sdk/cli` y `apps/core-api` lo consuman, y eliminar las copias locales.
+- **Evidencia actual / ejemplo:** `grep -rl "class DiskRulesetRepository" sdk apps packages --include='*.ts'` devuelve tres archivos de fuente; `WebhookAdapter` y `MoscowPrioritizationService` devuelven dos cada uno.
+- **Criterio de cierre:**
+  - [ ] `sdk/cli` y `apps/core-api` importan los adapters desde `@evolith/infra-providers`
+  - [ ] los archivos locales de adapter/provider duplicados eliminados
+  - [ ] todos los paquetes compilan y sus tests pasan
+- **Referencias:** [packages/infra-providers/src/index.ts](../../../../packages/infra-providers/src/index.ts) · [apps/core-api/src/infrastructure/adapters/disk-ruleset.repository.ts](../../../../apps/core-api/src/infrastructure/adapters/disk-ruleset.repository.ts) · [sdk/cli/src/infrastructure/adapters/disk-ruleset.repository.ts](../../../../sdk/cli/src/infrastructure/adapters/disk-ruleset.repository.ts)
+
+#### GT-123
+
+**Título:** El CLI no compila — errores TypeScript preexistentes bloquean `tsc`
+
+- **Gap:** `npm run build` (tsc) en `sdk/cli` falla con ~23 errores TypeScript preexistentes, independientes de la migración del MCP: `infrastructure/mcp/tools/auto-fix.ts` (15 — MCP viejo, conteos de argumentos de `IFileSystem` erróneos tras un cambio de interfaz; lo elimina GT-121), `infrastructure/prompts/progress.service.ts` (colisión campo/método `isTTY` más errores de tipo), `commands/init/init.wizard.ts` (redeclara `promptService` como private sobre el miembro protected de la base, y pasa un `InitProjectInput` incompleto — 4 de 10 campos), y `commands/alias/alias.command.ts` (`e.message` sobre `unknown`). No se detectó porque `sdk-cli-ci.yml` solo se dispara al tocar `sdk/cli/**` y los commits recientes de `main` eran solo de docs; el build está rojo en `main`.
+- **Propósito:** Restaurar un build verde de `sdk/cli` para que los jobs de build/type-check/test de CI vuelvan a tener peso probatorio real.
+- **Evidencia actual / ejemplo:** `cd sdk/cli && npm run build` imprime ~23 `error TS…` incluso tras construir los workspace deps; arreglar los errores de superficie destapa más errores de tipo (p. ej. `InitProjectInput` con campos requeridos faltantes), señal de deuda de tipos acumulada.
+- **Criterio de cierre:**
+  - [ ] el build `tsc` de `sdk/cli` en verde (0 errores)
+  - [ ] `npm run test:cov` y `test:e2e` pasan en CI (los workspace deps ahora se construyen primero en `sdk-cli-ci.yml`)
+  - [ ] guarda de regresión considerada (ver GT-80 type-check de tests)
+- **Referencias:** [sdk/cli/src/commands/init/init.wizard.ts](../../../../sdk/cli/src/commands/init/init.wizard.ts) · [sdk/cli/src/infrastructure/prompts/progress.service.ts](../../../../sdk/cli/src/infrastructure/prompts/progress.service.ts) · [.github/workflows/sdk-cli-ci.yml](../../../../.github/workflows/sdk-cli-ci.yml)

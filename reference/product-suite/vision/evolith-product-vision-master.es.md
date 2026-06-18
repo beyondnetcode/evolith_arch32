@@ -4,7 +4,7 @@
 
 **Estado:** Aprobado  
 **Propietario:** Evolith Architecture Board  
-**Última Actualización:** 2026-06-10
+**Última Actualización:** 2026-06-17
 
 ---
 
@@ -113,6 +113,30 @@ El chatbox es un intermediario, no la fuente de autoridad. Los LLMs y agentes se
 
 ### 2.5 Capa de Interfaces Técnicas
 
+> **Exposición en dos capas (ADRs [0074](../../architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md) + [0075](../../architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.es.md)).** Evolith Core **expone** su capacidad a través de una **Capa de Exposición del Core** neutral respecto del producto — `apps/core-api` (REST/GraphQL) más el `mcp-server` (MCP) y el `smart-cli` (CLI). El Evolith Tracker es un **cliente externo**: su **BFF / Application Gateway** (NestJS, ADR-0075, en el repositorio `evolith_tracker`) consume esa exposición y adapta payloads por dispositivo, recorta PII y gestiona sesión/cookies para la PWA. El BFF del Tracker **no** vive en Core — el [ADR-0074](../../architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md) **rechazó** explícitamente esa opción.
+
+```mermaid
+flowchart TB
+  subgraph TRK["repo · evolith_tracker (producto SaaS autónomo)"]
+    PWA["Evolith Tracker · PWA<br/>Web · Mobile"] --> BFF["BFF · Application Gateway<br/>NestJS · ADR-0075<br/>payloads por dispositivo · PII · cookies"]
+  end
+  subgraph CORE["repo · evolith_arch32 (Evolith Core · Constitución)"]
+    subgraph EXP["Capa de Exposición del Core · ADR-0074"]
+      API["apps/core-api<br/>REST / GraphQL"]
+      MCP["mcp-server<br/>MCP · agentes IA"]
+      CLI["smart-cli<br/>CLI · humanos"]
+    end
+    DOM["@evolith/core-domain<br/>rulesets JSON · OPA/WASM · schemas"]
+    API --> DOM
+    MCP --> DOM
+    CLI --> DOM
+  end
+  BFF -->|cliente externo| API
+```
+
+<details>
+<summary>Diagrama de texto legado (mismas interfaces, previo a ADR-0074)</summary>
+
 ```text
                          Evolith Tracker
           ┌──────────────────────────────────────────┐
@@ -129,6 +153,8 @@ El chatbox es un intermediario, no la fuente de autoridad. Los LLMs y agentes se
                     Evolith Core
           rulesets · schemas · ADRs · estándares
 ```
+
+</details>
 
 | Interfaz | Consumidor | Propósito |
 |---|---|---|
@@ -376,7 +402,7 @@ OPEN CORE                                  TRACKER ENTERPRISE
 Constitución Core                          Gobernanza Multi-Tenant
 ADRs, Estándares y Taxonomías              Orquestación Gobernada
 Rulesets, Schemas y Contratos              Evidence Graph y Auditoría
-Exposición CLI y MCP                       Adaptadores Gestionados y Certificados
+Exposición CLI · MCP · REST/GraphQL        Adaptadores Gestionados y Certificados
 SDK Comunitario de Adaptadores             Vistas Ejecutivas y de Compliance
 Implementaciones de Referencia             Soporte Empresarial y SLA
 ```

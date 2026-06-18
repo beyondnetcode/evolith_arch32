@@ -1,11 +1,7 @@
 import { McpServeCommand } from './mcp-serve.command';
 
-jest.mock('../../infrastructure/mcp/server', () => ({
-  startMcpServer: jest.fn().mockResolvedValue(undefined),
-}));
-
-jest.mock('@evolith/core-domain/application/validators/ruleset-validator.service', () => ({
-  RulesetValidatorService: jest.fn().mockImplementation(() => ({})),
+jest.mock('@evolith/mcp-server', () => ({
+  startMcpServer: jest.fn().mockResolvedValue({ app: {}, server: {} }),
 }));
 
 describe('McpServeCommand', () => {

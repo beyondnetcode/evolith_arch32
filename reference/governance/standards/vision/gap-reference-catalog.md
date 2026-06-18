@@ -1227,3 +1227,16 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [ ] the duplicated local adapter/provider files are removed
   - [ ] all packages build and their tests pass
 - **References:** [packages/infra-providers/src/index.ts](../../../../packages/infra-providers/src/index.ts) · [apps/core-api/src/infrastructure/adapters/disk-ruleset.repository.ts](../../../../apps/core-api/src/infrastructure/adapters/disk-ruleset.repository.ts) · [sdk/cli/src/infrastructure/adapters/disk-ruleset.repository.ts](../../../../sdk/cli/src/infrastructure/adapters/disk-ruleset.repository.ts)
+
+#### GT-123
+
+**Title:** CLI does not build — pre-existing TypeScript errors block `tsc`
+
+- **Gap:** `npm run build` (tsc) in `sdk/cli` fails with ~23 pre-existing TypeScript errors, independent of the MCP migration: `infrastructure/mcp/tools/auto-fix.ts` (15 — old MCP, wrong `IFileSystem` arg counts after an interface change; removed by GT-121), `infrastructure/prompts/progress.service.ts` (field/method `isTTY` collision plus type errors), `commands/init/init.wizard.ts` (redeclares `promptService` private over the protected base member, and passes an incomplete `InitProjectInput` — 4 of 10 fields), and `commands/alias/alias.command.ts` (`e.message` on `unknown`). It was never caught because `sdk-cli-ci.yml` only triggers on `sdk/cli/**` changes and recent `main` commits were docs-only; the build is red on `main`.
+- **Purpose:** Restore a green `sdk/cli` build so the CI build/type-check/test jobs carry real evidentiary weight again.
+- **Current evidence / example:** `cd sdk/cli && npm run build` prints ~23 `error TS…` even after building the workspace deps; fixing the surface errors reveals further type errors (e.g. `InitProjectInput` missing required fields), indicating accumulated type rot.
+- **Done when:**
+  - [ ] `sdk/cli` `tsc` build is green (0 errors)
+  - [ ] `npm run test:cov` and `test:e2e` pass in CI (workspace deps are now built first in `sdk-cli-ci.yml`)
+  - [ ] regression guard considered (see GT-80 test type-checking)
+- **References:** [sdk/cli/src/commands/init/init.wizard.ts](../../../../sdk/cli/src/commands/init/init.wizard.ts) · [sdk/cli/src/infrastructure/prompts/progress.service.ts](../../../../sdk/cli/src/infrastructure/prompts/progress.service.ts) · [.github/workflows/sdk-cli-ci.yml](../../../../.github/workflows/sdk-cli-ci.yml)

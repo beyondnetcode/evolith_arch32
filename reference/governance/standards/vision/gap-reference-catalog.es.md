@@ -1226,3 +1226,16 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [ ] los archivos locales de adapter/provider duplicados eliminados
   - [ ] todos los paquetes compilan y sus tests pasan
 - **Referencias:** [packages/infra-providers/src/index.ts](../../../../packages/infra-providers/src/index.ts) · [apps/core-api/src/infrastructure/adapters/disk-ruleset.repository.ts](../../../../apps/core-api/src/infrastructure/adapters/disk-ruleset.repository.ts) · [sdk/cli/src/infrastructure/adapters/disk-ruleset.repository.ts](../../../../sdk/cli/src/infrastructure/adapters/disk-ruleset.repository.ts)
+
+#### GT-123
+
+**Título:** El CLI no compila — errores TypeScript preexistentes bloquean `tsc`
+
+- **Gap:** `npm run build` (tsc) en `sdk/cli` falla con ~23 errores TypeScript preexistentes, independientes de la migración del MCP: `infrastructure/mcp/tools/auto-fix.ts` (15 — MCP viejo, conteos de argumentos de `IFileSystem` erróneos tras un cambio de interfaz; lo elimina GT-121), `infrastructure/prompts/progress.service.ts` (colisión campo/método `isTTY` más errores de tipo), `commands/init/init.wizard.ts` (redeclara `promptService` como private sobre el miembro protected de la base, y pasa un `InitProjectInput` incompleto — 4 de 10 campos), y `commands/alias/alias.command.ts` (`e.message` sobre `unknown`). No se detectó porque `sdk-cli-ci.yml` solo se dispara al tocar `sdk/cli/**` y los commits recientes de `main` eran solo de docs; el build está rojo en `main`.
+- **Propósito:** Restaurar un build verde de `sdk/cli` para que los jobs de build/type-check/test de CI vuelvan a tener peso probatorio real.
+- **Evidencia actual / ejemplo:** `cd sdk/cli && npm run build` imprime ~23 `error TS…` incluso tras construir los workspace deps; arreglar los errores de superficie destapa más errores de tipo (p. ej. `InitProjectInput` con campos requeridos faltantes), señal de deuda de tipos acumulada.
+- **Criterio de cierre:**
+  - [ ] el build `tsc` de `sdk/cli` en verde (0 errores)
+  - [ ] `npm run test:cov` y `test:e2e` pasan en CI (los workspace deps ahora se construyen primero en `sdk-cli-ci.yml`)
+  - [ ] guarda de regresión considerada (ver GT-80 type-check de tests)
+- **Referencias:** [sdk/cli/src/commands/init/init.wizard.ts](../../../../sdk/cli/src/commands/init/init.wizard.ts) · [sdk/cli/src/infrastructure/prompts/progress.service.ts](../../../../sdk/cli/src/infrastructure/prompts/progress.service.ts) · [.github/workflows/sdk-cli-ci.yml](../../../../.github/workflows/sdk-cli-ci.yml)

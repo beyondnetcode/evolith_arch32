@@ -106,8 +106,8 @@ async function applyFix(
 
 interface FixStrategy {
   actionName: string;
-  preview: (fs: IFileSystem, filePath: string, violation: any) => Promise<{ action: string }>;
-  apply: (fs: IFileSystem, filePath: string, violation: any) => Promise<void>;
+  preview: (fs: IFileSystem, filePath: string, violation: unknown) => Promise<{ action: string }>;
+  apply: (fs: IFileSystem, filePath: string, violation: unknown) => Promise<void>;
 }
 
 function getFixStrategy(ruleId: string): FixStrategy | null {

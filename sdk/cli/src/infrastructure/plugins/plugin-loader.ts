@@ -1,14 +1,14 @@
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as yaml from 'yaml';
-import { Logger } from '@nestjs/common';
+import { Logger, Provider, Type } from '@nestjs/common';
 
 export class PluginLoader {
   private static readonly logger = new Logger('PluginLoader');
 
-  static async loadPlugins(workspaceDir: string = process.cwd()): Promise<{ providers: any[]; imports: any[] }> {
-    const providers: any[] = [];
-    const imports: any[] = [];
+  static async loadPlugins(workspaceDir: string = process.cwd()): Promise<{ providers: Provider[]; imports: Type[] }> {
+    const providers: Provider[] = [];
+    const imports: Type[] = [];
 
     // 1. Scan .evolith/plugins/ directory
     const localPluginsDir = path.join(workspaceDir, '.evolith', 'plugins');
@@ -30,8 +30,8 @@ export class PluginLoader {
             await this.loadPluginFromPath(importPath, providers, imports);
           }
         }
-      } catch (err: any) {
-        this.logger.warn(`Failed to scan local plugins directory: ${err.message}`);
+      } catch (err: unknown) {
+        this.logger.warn(`Failed to scan local plugins directory: ${err instanceof Error ? err.message : String(err)}`);
       }
     }
 
@@ -53,15 +53,15 @@ export class PluginLoader {
             }
           }
         }
-      } catch (err: any) {
-        this.logger.warn(`Failed to read evolith.yaml plugins configuration: ${err.message}`);
+      } catch (err: unknown) {
+        this.logger.warn(`Failed to read evolith.yaml plugins configuration: ${err instanceof Error ? err.message : String(err)}`);
       }
     }
 
     return { providers, imports };
   }
 
-  private static async loadPluginFromPath(pluginPath: string, providers: any[], imports: any[]) {
+  private static async loadPluginFromPath(pluginPath: string, providers: Provider[], imports: Type[]) {
     try {
       const plugin = require(pluginPath);
       
@@ -86,12 +86,12 @@ export class PluginLoader {
       }
       
       this.logger.log(`Successfully loaded plugin: ${pluginPath}`);
-    } catch (err: any) {
-      this.logger.warn(`Failed to load plugin from ${pluginPath}: ${err.message}`);
+    } catch (err: unknown) {
+      this.logger.warn(`Failed to load plugin from ${pluginPath}: ${err instanceof Error ? err.message : String(err)}`);
     }
   }
 
-  private static registerPluginContent(content: any, providers: any[], imports: any[]) {
+  private static registerPluginContent(content: unknown, providers: Provider[], imports: Type[]) {
     if (!content) return;
     
     if (Array.isArray(content)) {
@@ -104,12 +104,12 @@ export class PluginLoader {
     if (typeof content === 'function') {
       const isModule = Reflect.getMetadata('imports', content) || Reflect.getMetadata('providers', content);
       if (isModule) {
-        if (!imports.includes(content)) {
-          imports.push(content);
+        if (!imports.includes(content as Type)) {
+          imports.push(content as Type);
         }
       } else {
-        if (!providers.includes(content)) {
-          providers.push(content);
+        if (!providers.includes(content as Provider)) {
+          providers.push(content as Provider);
         }
       }
     }

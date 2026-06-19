@@ -1186,9 +1186,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Reconcile the architecture: either update/supersede ADR-0074 §5 to record the standalone-package decision, or re-integrate MCP into `core-api` as a unified deployment unit — and align the Product Vision interface layer accordingly.
 - **Current evidence / example:** `grep -riE "mcp|modelcontextprotocol" apps/core-api/src` returns no MCP wiring; the MCP gateway lives in `packages/mcp-server`.
 - **Done when:**
-  - [ ] ADR-0074 §5 is updated or superseded to match the implemented topology, or MCP is integrated into `core-api`
-  - [ ] the Product Vision §2.5 interface layer reflects the reconciled decision
-- **References:** [packages/mcp-server/README.md](../../../../packages/mcp-server/README.md) · [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md)
+  - [x] ADR-0074 §5 is updated or superseded to match the implemented topology, or MCP is integrated into `core-api`
+  - [x] the Product Vision §2.5 interface layer reflects the reconciled decision
+- **Closure evidence:** Commit `e93c68a` amends ADR-0074 to record the standalone `@evolith/mcp-server` topology and clarifies that `smart-cli mcp serve` delegates to the standalone package rather than `apps/core-api`. The Product Vision §2.5 technical interface layer already reflects the two-layer exposure model, with the Tracker BFF as an external client of `apps/core-api` plus the `mcp-server` and CLI surfaces. `apps/core-api` contains no MCP wiring, which matches the reconciled decision.
+- **References:** [packages/mcp-server/README.md](../../../../packages/mcp-server/README.md) · [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md) · [Product Vision Master](../../../../reference/product-suite/vision/evolith-product-vision-master.md)
 
 #### GT-120
 
@@ -1224,10 +1225,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Make `@evolith/infra-providers` the single source for shared infrastructure adapters, have `sdk/cli` and `apps/core-api` consume it, and delete the local copies.
 - **Current evidence / example:** `grep -rl "class DiskRulesetRepository" sdk apps packages --include='*.ts'` returns three source files; `WebhookAdapter` and `MoscowPrioritizationService` each return two.
 - **Done when:**
-  - [ ] `sdk/cli` and `apps/core-api` import the adapters from `@evolith/infra-providers`
-  - [ ] the duplicated local adapter/provider files are removed
-  - [ ] all packages build and their tests pass
-- **References:** [packages/infra-providers/src/index.ts](../../../../packages/infra-providers/src/index.ts) · [packages/infra-providers/src/disk-ruleset.repository.ts](../../../../packages/infra-providers/src/disk-ruleset.repository.ts) · [packages/infra-providers/src/webhook.adapter.ts](../../../../packages/infra-providers/src/webhook.adapter.ts) · [packages/infra-providers/src/moscow-prioritization.service.ts](../../../../packages/infra-providers/src/moscow-prioritization.service.ts)
+  - [x] `sdk/cli` and `apps/core-api` import the adapters from `@evolith/infra-providers`
+  - [x] the duplicated local adapter/provider files are removed
+  - [x] all packages build and their tests pass
+- **Closure evidence:** Commit `71263df` moves the shared adapter consumers in `apps/core-api` and `sdk/cli` over to `@evolith/infra-providers`, removes the duplicate local `disk-ruleset`, `webhook`, and `moscow-prioritization` adapter implementations from `sdk/cli` and the duplicate `disk-ruleset` adapter from `apps/core-api`, and keeps the consumer specs pointed at the shared package exports. `packages/infra-providers` builds cleanly; `apps/core-api` builds cleanly; `sdk/cli` builds cleanly; `apps/core-api` tests pass; and the `sdk/cli` unit/e2e run used to validate the refactor passes from the resulting state.
+- **References:** [packages/infra-providers/src/index.ts](../../../../packages/infra-providers/src/index.ts) · [packages/infra-providers/src/disk-ruleset.repository.ts](../../../../packages/infra-providers/src/disk-ruleset.repository.ts) · [packages/infra-providers/src/webhook.adapter.ts](../../../../packages/infra-providers/src/webhook.adapter.ts) · [packages/infra-providers/src/moscow-prioritization.service.ts](../../../../packages/infra-providers/src/moscow-prioritization.service.ts) · [apps/core-api/src/core-domain.module.ts](../../../../apps/core-api/src/core-domain.module.ts) · [sdk/cli/src/app.module.ts](../../../../sdk/cli/src/app.module.ts)
 
 #### GT-123
 

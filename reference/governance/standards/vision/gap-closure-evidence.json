@@ -1455,6 +1455,44 @@
         "node .harness/scripts/validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-119",
+      "closedAt": "2026-06-19",
+      "closureCommit": "e93c68a",
+      "evidence": [
+        "reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md",
+        "reference/product-suite/vision/evolith-product-vision-master.md",
+        "packages/mcp-server/README.md",
+        "apps/core-api/src/core-domain.module.ts"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/validate-docs.mjs",
+        "node .harness/scripts/check-bilingual-parity.mjs",
+        "node .harness/scripts/validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-122",
+      "closedAt": "2026-06-19",
+      "closureCommit": "71263df",
+      "evidence": [
+        "packages/infra-providers/src/index.ts",
+        "packages/infra-providers/src/disk-ruleset.repository.ts",
+        "packages/infra-providers/src/webhook.adapter.ts",
+        "packages/infra-providers/src/moscow-prioritization.service.ts",
+        "apps/core-api/src/core-domain.module.ts",
+        "sdk/cli/src/app.module.ts"
+      ],
+      "validationCommands": [
+        "npm run build --workspace packages/infra-providers",
+        "npm run build --workspace apps/core-api",
+        "npm run build --workspace sdk/cli",
+        "npm test --workspace apps/core-api -- --runInBand",
+        "npm test --workspace sdk/cli -- --runInBand"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

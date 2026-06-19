@@ -2,6 +2,8 @@
 import { SubCommand, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { Inject } from '@nestjs/common';
+import * as path from 'path';
+import * as fs from 'fs';
 import { CatalogLoader } from '../../infrastructure/catalog/catalog-loader';
 import { PhaseService, ToolSelectionService } from '@evolith/core-domain/domain/services';
 import { PhaseTransitionUseCase } from '@evolith/core-domain/application/services';
@@ -38,10 +40,11 @@ export class HandoffCommand extends BaseEvolithCommand {
     options?: HandoffOptions,
   ): Promise<void> {
     const fs = this.fileSystem;
+    const projectRoot = this.findProjectRoot(process.cwd());
 
     if (options?.from && options?.to) {
       const useCase = new PhaseTransitionUseCase(fs);
-      const result = await useCase.execute(options.from, options.to, [], process.cwd());
+      const result = await useCase.execute(options.from, options.to, [], projectRoot);
 
       if (result.success) {
         this.promptService.showSuccess(`✓ Transitioned from ${options.from} to ${options.to}`);
@@ -126,7 +129,7 @@ export class HandoffCommand extends BaseEvolithCommand {
       fromPhase,
       toPhase,
       tools,
-      process.cwd()
+      projectRoot
     );
 
     this.promptService.stopSpinner();
@@ -181,6 +184,25 @@ export class HandoffCommand extends BaseEvolithCommand {
       'phase-5': '1. Monitor DORA metrics\n2. Set up alerting\n3. Project is production-ready',
     };
     return steps[phase] || '';
+  }
+
+  private findProjectRoot(startPath: string): string {
+    let current = path.resolve(startPath);
+
+    while (true) {
+      const templatesDir = path.join(current, 'reference', 'governance', 'sdlc', '04-artifact-templates');
+      const rulesetsDir = path.join(current, 'rulesets');
+
+      if (fs.existsSync(templatesDir) && fs.existsSync(rulesetsDir)) {
+        return current;
+      }
+
+      const parent = path.dirname(current);
+      if (parent === current) {
+        return startPath;
+      }
+      current = parent;
+    }
   }
 
   @Option({

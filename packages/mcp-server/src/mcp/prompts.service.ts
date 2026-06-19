@@ -24,7 +24,7 @@ const PROMPTS: Prompt[] = [
     ],
   },
   {
-    name: 'evolith/review-architecture',
+    name: 'evolith/architecture-review',
     description: 'Template for performing F1/F2/F3 architecture validation review',
     arguments: [
       { name: 'path', description: 'Path to the repository', required: true },
@@ -91,7 +91,7 @@ const BUILDERS: Record<string, (args: Args) => string> = {
     `Please validate the repository at "${args.path || '<path>'}" against Evolith governance rules.\n\nUse the evolith-validate tool to check:\n- GOV-01: evolith.yaml exists\n- GOV-02: governance.version declared\n- INH-02: coreRef.version is pinned\n- ACL-01: ACL directory is not empty\n- OCB-01: No enterprise-only licenses in Core\n\n${args.ruleset ? `Focus specifically on the "${args.ruleset}" ruleset.` : ''}\n\nReport any blocking issues that must be resolved before the repository can be considered compliant.`,
   'evolith/agent-onboarding': (args) =>
     `Please help onboard a new Evolith agent.\n\nAgent name: ${args.name || '<name>'}\nTemplate: ${args.template || 'standard'}\n\nUse the evolith-agent-install tool to create the agent with the appropriate ruleset template.\n\nThen use evolith-agent-validate to verify the agent is properly configured.`,
-  'evolith/review-architecture': (args) =>
+  'evolith/architecture-review': (args) =>
     `Please perform an architecture review for the repository at "${args.path || '<path>'}".\n\nUse the evolith-architecture-validate tool to check F1 (modular independence), F2 (contract boundaries) and F3 (extraction readiness).\n\n${args.level ? `Focus on ${args.level} level only.` : 'Check all three levels.'}`,
   'evolith/prepare-discovery': (args) =>
     `Please prepare the discovery phase artifacts for the repository at "${args.path || '<path>'}".\n\nUse evolith-sdlc-status to check readiness, then evolith-moscow-create to draft a prioritization matrix for phase-0.`,

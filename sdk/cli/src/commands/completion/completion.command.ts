@@ -52,8 +52,7 @@ export class CompletionCommand extends BaseEvolithCommand {
   }
 
   private async installCompletion(shell: string): Promise<void> {
-    const cliPath = await this.findCliPath();
-    const completionDir = path.join(path.dirname(cliPath), '..', 'shell');
+    const completionDir = path.join(this.getPackageRoot(), 'shell');
 
     if (!(await fs.pathExists(completionDir))) {
       this.promptService.showError(`${this.error} Completion scripts not found at ${completionDir}`);
@@ -207,8 +206,7 @@ export class CompletionCommand extends BaseEvolithCommand {
   }
 
   private async getHooksFilePath(shell: string): Promise<string | null> {
-    const cliPath = await this.findCliPath();
-    const shellDir = path.join(path.dirname(cliPath), '..', 'shell');
+    const shellDir = path.join(this.getPackageRoot(), 'shell');
 
     switch (shell) {
       case 'bash':
@@ -258,8 +256,8 @@ export class CompletionCommand extends BaseEvolithCommand {
     this.promptService.showInfo(chalk.dim(`  source /path/to/evolith/shell/completion.${shell}`));
   }
 
-  private async findCliPath(): Promise<string> {
-    return process.argv[1] || 'evolith';
+  private getPackageRoot(): string {
+    return path.resolve(__dirname, '../../..');
   }
 
   @Option({

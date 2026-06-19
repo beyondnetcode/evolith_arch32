@@ -369,7 +369,7 @@ describe('MCP E2E Tests - stdio transport', () => {
       const promptNames = result.prompts.map(p => p.name);
       expect(promptNames).toContain('evolith/validate-repository');
       expect(promptNames).toContain('evolith/agent-onboarding');
-      expect(promptNames).toContain('evolith/review-architecture');
+      expect(promptNames).toContain('evolith/architecture-review');
     });
   });
 

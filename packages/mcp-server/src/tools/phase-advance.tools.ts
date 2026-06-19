@@ -1,20 +1,26 @@
-import { randomUUID } from 'node:crypto';
 import {
   EvaluateGateUseCase,
   ProposePhaseAdvanceUseCase,
+  PhaseGateValidatorService,
   type ProposePhaseAdvanceInput,
-  createErrorEnvelope,
-  createSuccessEnvelope,
   isGatePhase,
   type GatePhase,
   type EvaluatorKind,
-  type OutputMeta,
+  type IFileSystem,
+  type ILogger,
 } from '@evolith/core';
 import type { IWebhookNotifier } from '@evolith/core-domain/application/ports/webhook-notifier.port';
+import { DomainException, ErrorCodes } from '../common/errors';
 import { McpTool } from '../mcp/tool.interface';
 
-/** `evolith-phase-advance` — propose an SDLC phase transition. */
-export function createPhaseAdvanceTools(webhook: IWebhookNotifier): McpTool[] {
+/**
+ * `evolith-phase-advance` — propose an SDLC phase transition.
+ *
+ * Returns the raw proposal payload; the server's `handleCallTool` wraps it in
+ * the ADR-0073 envelope. Validation and not-found conditions throw a
+ * {@link DomainException} so the server maps them to the correct error code.
+ */
+export function createPhaseAdvanceTools(webhook: IWebhookNotifier, fs: IFileSystem, logger: ILogger): McpTool[] {
   return [
     {
       schema: {
@@ -34,7 +40,6 @@ export function createPhaseAdvanceTools(webhook: IWebhookNotifier): McpTool[] {
         },
       },
       execute: async (args) => {
-        const startTime = Date.now();
         const fromPhaseRaw = args.fromPhase as string;
         const toPhaseRaw = args.toPhase as string;
         const projectPath = args.projectPath as string;
@@ -42,45 +47,36 @@ export function createPhaseAdvanceTools(webhook: IWebhookNotifier): McpTool[] {
         const evaluatedBy = (args.evaluatedBy as EvaluatorKind) || 'agent';
         const webhookUrl = args.webhookUrl as string | undefined;
 
-        const context: Record<string, string> = {};
-        if (args.initiative) context.initiative = args.initiative as string;
-        if (args.tenant) context.tenant = args.tenant as string;
-
-        const getMeta = (): OutputMeta => ({
-          command: 'evolith phase advance',
-          executedAt: new Date().toISOString(),
-          durationMs: Date.now() - startTime,
-          correlationId: randomUUID(),
-          ...(Object.keys(context).length > 0 && { context }),
-        });
-
         if (!fromPhaseRaw || !isGatePhase(fromPhaseRaw)) {
-          return createErrorEnvelope('INVALID_PHASE', `Invalid or missing fromPhase: ${fromPhaseRaw}`, getMeta());
+          throw new DomainException(ErrorCodes.PHASE_INVALID, `Invalid or missing fromPhase: ${fromPhaseRaw}`);
         }
         if (!toPhaseRaw || !isGatePhase(toPhaseRaw)) {
-          return createErrorEnvelope('INVALID_PHASE', `Invalid or missing toPhase: ${toPhaseRaw}`, getMeta());
+          throw new DomainException(ErrorCodes.PHASE_INVALID, `Invalid or missing toPhase: ${toPhaseRaw}`);
         }
         if (!projectPath) {
-          return createErrorEnvelope('IO_ERROR', 'projectPath is required', getMeta());
+          throw new DomainException(ErrorCodes.IO_ERROR, 'projectPath is required');
         }
 
+        const validatorFactory = (cp?: string) => new PhaseGateValidatorService(cp, { fileSystem: fs, logger });
+        const evaluateUseCase = new EvaluateGateUseCase(validatorFactory, webhook);
+        const useCase = new ProposePhaseAdvanceUseCase(evaluateUseCase);
+        const input: ProposePhaseAdvanceInput = {
+          fromPhase: fromPhaseRaw as GatePhase,
+          toPhase: toPhaseRaw as GatePhase,
+          projectPath,
+          corePath,
+          evaluatedBy,
+          webhookUrl,
+        };
+
         try {
-          const evaluateUseCase = new EvaluateGateUseCase(undefined, webhook);
-          const useCase = new ProposePhaseAdvanceUseCase(evaluateUseCase);
-          const input: ProposePhaseAdvanceInput = {
-            fromPhase: fromPhaseRaw as GatePhase,
-            toPhase: toPhaseRaw as GatePhase,
-            projectPath,
-            corePath,
-            evaluatedBy,
-            webhookUrl,
-          };
-          const proposal = await useCase.execute(input);
-          return createSuccessEnvelope(proposal, getMeta());
+          return await useCase.execute(input);
         } catch (error: unknown) {
           const message = error instanceof Error ? error.message : String(error);
-          const code = message.includes('not found') || message.includes('ENOENT') ? 'RULESET_NOT_FOUND' : 'INTERNAL_ERROR';
-          return createErrorEnvelope(code, message, getMeta());
+          if (message.includes('not found') || message.includes('ENOENT')) {
+            throw new DomainException(ErrorCodes.RULESET_NOT_FOUND, message);
+          }
+          throw error;
         }
       },
     },

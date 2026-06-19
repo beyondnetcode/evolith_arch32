@@ -211,7 +211,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
     - `npx jest --config sdk/cli/jest.config.js --testPathPatterns="auto-fix"` — unit tests pass
     - `npx jest --config sdk/cli/test/jest-e2e.json --testPathPatterns="auto-fix"` — E2E tests pass
   - `dependencyDisposition`: none
-- **References:** [MCP Tools Index](../../../../sdk/cli/src/infrastructure/mcp/tools/index.ts)
+- **References:** [MCP Tools Module](../../../../packages/mcp-server/src/tools/tools.module.ts)
 
 #### GT-116
 
@@ -436,7 +436,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Done when:** obsolete tests are removed or rewritten; no release-relevant MCP suite is skipped; protocol-negative cases run in CI; runtime tools and schemas match the generated inventory.
 - **Closure evidence:** Commit `b07460d` removed 547 lines of obsolete minimal-transport tests, activated 47 agent/architecture/SDLC tool tests, added a no-skipped-suite and runtime-schema conformance gate, fixed runtime filesystem/config-parser injection, and validated 29 MCP E2E cases plus stdio/Streamable HTTP smoke for 21 tools, 7 resources, and 7 prompts.
 - **Post-push verification (2026-06-13):** Red workflows for the closure commit fail during checkout, cache, or installation, before MCP conformance executes. No evidence contradicts the local closure suites; reproducibility and release blockers remain assigned to GT-28, GT-41, and GT-44. Status: `DONE`.
-- **References:** [MCP Server](../../../../sdk/cli/src/infrastructure/mcp/server.ts) · [MCP E2E Tests](../../../../sdk/cli/test/e2e/mcp-e2e.test.ts)
+- **References:** [MCP Server Entry Point](../../../../packages/mcp-server/src/main.ts) · [MCP E2E Tests](../../../../sdk/cli/test/e2e/mcp-e2e.test.ts)
 
 #### GT-46
 
@@ -447,7 +447,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Done when:** an explicit decision removes the mock API or replaces it with a documented, authenticated, stateless Core exposure contract; CORS is configurable and retained endpoints have schemas and tests.
 - **Closure evidence:** Commit `b07460d` removed the `api` command, Tracker Assistant mock, in-memory chat sessions, controller, module, repository, and domain interfaces. The retained network service is the authenticated, contract-tested MCP Streamable HTTP exposure of Evolith Core.
 - **Post-push verification (2026-06-13):** Review of the CI failures identifies no regression or reintroduction of Tracker surfaces into Core; every failure occurs before functional validation. The implemented ownership boundary remains in force. Status: `DONE`.
-- **References:** [CLI Composition Root](../../../../sdk/cli/src/app.module.ts) · [MCP HTTP Service](../../../../sdk/cli/src/infrastructure/mcp/server.ts)
+- **References:** [CLI Composition Root](../../../../sdk/cli/src/app.module.ts) · [MCP Gateway Entry Point](../../../../packages/mcp-server/src/main.ts)
 
 #### GT-47
 

@@ -211,7 +211,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
     - `npx jest --config sdk/cli/jest.config.js --testPathPatterns="auto-fix"` — tests unitarios pasan
     - `npx jest --config sdk/cli/test/jest-e2e.json --testPathPatterns="auto-fix"` — tests E2E pasan
   - `dependencyDisposition`: none
-- **Referencias:** [Índice de Herramientas MCP](../../../../sdk/cli/src/infrastructure/mcp/tools/index.ts)
+- **Referencias:** [Módulo de Herramientas MCP](../../../../packages/mcp-server/src/tools/tools.module.ts)
 
 #### GT-116
 
@@ -436,7 +436,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Cierre cuando:** tests obsoletos se eliminan o reescriben; ninguna suite MCP relevante para release está omitida; casos negativos de protocolo corren en CI; tools y schemas runtime coinciden con el inventario generado.
 - **Evidencia de cierre:** El commit `b07460d` eliminó 547 líneas de tests obsoletos del transporte mínimo, activó 47 tests de tools de agentes/arquitectura/SDLC, agregó un gate de conformidad de schemas runtime y ausencia de suites omitidas, corrigió la inyección runtime de filesystem/config parser, y validó 29 casos E2E MCP más smoke stdio/Streamable HTTP para 21 tools, 7 resources y 7 prompts.
 - **Verificación post-push (2026-06-13):** Los workflows rojos del commit de cierre fallan durante checkout, cache o instalación, antes de ejecutar la conformidad MCP. No existe evidencia contradictoria con las suites locales de cierre; los bloqueos de reproducibilidad y release permanecen asignados a GT-28, GT-41 y GT-44. Estado: `COMPLETADO`.
-- **Referencias:** [Servidor MCP](../../../../sdk/cli/src/infrastructure/mcp/server.ts) · [Tests E2E MCP](../../../../sdk/cli/test/e2e/mcp-e2e.test.ts)
+- **Referencias:** [Punto de Entrada del Servidor MCP](../../../../packages/mcp-server/src/main.ts) · [Tests E2E MCP](../../../../sdk/cli/test/e2e/mcp-e2e.test.ts)
 
 #### GT-46
 
@@ -447,7 +447,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Cierre cuando:** una decisión explícita elimina la API mock o la reemplaza por un contrato documentado, autenticado y stateless de exposición de Core; CORS es configurable y los endpoints retenidos tienen schemas y tests.
 - **Evidencia de cierre:** El commit `b07460d` eliminó el comando `api`, el mock Tracker Assistant, sesiones chat en memoria, controller, módulo, repositorio e interfaces de dominio. El servicio de red retenido es la exposición MCP Streamable HTTP autenticada y cubierta por contract tests de Evolith Core.
 - **Verificación post-push (2026-06-13):** La revisión de los fallos de CI no identifica regresiones ni una reintroducción de superficies Tracker en Core; todos ocurren antes de la validación funcional. El límite de ownership implementado permanece vigente. Estado: `COMPLETADO`.
-- **Referencias:** [Composition Root del CLI](../../../../sdk/cli/src/app.module.ts) · [Servicio HTTP MCP](../../../../sdk/cli/src/infrastructure/mcp/server.ts)
+- **Referencias:** [Composition Root del CLI](../../../../sdk/cli/src/app.module.ts) · [Punto de Entrada del Gateway MCP](../../../../packages/mcp-server/src/main.ts)
 
 #### GT-47
 

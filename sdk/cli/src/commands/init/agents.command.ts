@@ -1,11 +1,22 @@
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
-import { getFileSystem } from '../../infrastructure/mcp/tools/tool-utils';
+import { NodeFileSystemProvider } from '../../infrastructure/providers/node-filesystem.provider';
+import type { IFileSystem } from '@evolith/core-domain/domain/interfaces';
 import { AgentRegistryService, AgentInfo } from '../../infrastructure/adapters/agent-registry.service';
 import { buildAgentRuleset } from '@evolith/core-domain/application/agents/agent-ruleset-builder';
 import { RulesetValidatorService } from '@evolith/core-domain/application/validators/ruleset-validator.service';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
+
+let cachedFileSystem: IFileSystem | null = null;
+
+/** Lazily build a shared filesystem adapter (replaces the removed in-process MCP `tool-utils`). */
+function getFileSystem(): IFileSystem {
+  if (!cachedFileSystem) {
+    cachedFileSystem = new NodeFileSystemProvider().createFileSystem();
+  }
+  return cachedFileSystem;
+}
 
 interface AgentsCommandOptions {
   install?: string;

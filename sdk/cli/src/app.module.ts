@@ -11,7 +11,6 @@ import { McpServeCommand } from './commands/mcp/mcp-serve.command';
 import { ConfigService } from './infrastructure/config/config.service';
 import { FileManagerService } from './infrastructure/filesystem/file-manager.service';
 import { SyncService } from '@evolith/core-domain/application/sync/sync.service';
-import { WatcherService } from './infrastructure/mcp/watcher.service';
 import { SdlcCommand } from './commands/sdlc/sdlc.command';
 import { HandoffCommand } from './commands/sdlc/handoff.command';
 import { GenerateDomainCommand } from './commands/sdlc/generate-domain.command';
@@ -62,7 +61,6 @@ import { PluginModule } from './infrastructure/plugins/plugin.module';
       provide: 'IConfigService',
       useExisting: ConfigService,
     },
-    WatcherService,
     SdlcCommand,
     HandoffCommand,
     GenerateDomainCommand,

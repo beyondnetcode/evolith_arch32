@@ -204,7 +204,7 @@ async function runStdioSmoke() {
     assert(Array.isArray(gateEval.content), 'tools/call gate-evaluate: content not an array');
     const gateEnvelope = JSON.parse(gateEval.content[0].text);
     assert(gateEnvelope.success !== undefined, 'tools/call gate-evaluate: envelope must have success field');
-    assert(gateEnvelope.meta?.command === 'evolith gate evaluate', 'tools/call gate-evaluate: missing or invalid meta.command');
+    assert(gateEnvelope.meta?.tool === 'evolith-gate-evaluate', 'tools/call gate-evaluate: missing or invalid meta.tool');
     console.log('  tools/call         OK  (evolith-gate-evaluate stdio)');
 
     console.log('Transport 1 PASSED\n');
@@ -286,7 +286,7 @@ async function runHttpSmoke() {
     assert(Array.isArray(gateEvalHttp?.content), 'HTTP tools/call gate-evaluate: content not an array');
     const gateEnvelopeHttp = JSON.parse(gateEvalHttp.content[0].text);
     assert(gateEnvelopeHttp.success !== undefined, 'HTTP tools/call gate-evaluate: envelope must have success field');
-    assert(gateEnvelopeHttp.meta?.command === 'evolith gate evaluate', 'HTTP tools/call gate-evaluate: missing or invalid meta.command');
+    assert(gateEnvelopeHttp.meta?.tool === 'evolith-gate-evaluate', 'HTTP tools/call gate-evaluate: missing or invalid meta.tool');
     console.log('  tools/call         OK  (evolith-gate-evaluate, HTTP)');
 
     await client.close();

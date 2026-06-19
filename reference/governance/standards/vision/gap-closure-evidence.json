@@ -134,7 +134,7 @@
       "closedAt": "2026-06-11",
       "closureCommit": "cb9474e",
       "evidence": [
-        "sdk/cli/src/infrastructure/mcp/server.ts"
+        "packages/mcp-server/src/main.ts"
       ],
       "validationCommands": [
         "npm run mcp:smoke --workspace sdk/cli"
@@ -146,7 +146,7 @@
       "closedAt": "2026-06-10",
       "closureCommit": "acbd2a8",
       "evidence": [
-        "sdk/cli/src/infrastructure/mcp/tools/gate.ts",
+        "packages/mcp-server/src/tools/gate.tools.ts",
         ".harness/scripts/mcp-smoke.mjs"
       ],
       "validationCommands": [
@@ -571,11 +571,11 @@
       "closedAt": "2026-06-13",
       "closureCommit": "b07460d",
       "evidence": [
-        "sdk/cli/src/infrastructure/mcp/mcp-conformance.spec.ts",
-        "sdk/cli/src/infrastructure/mcp/server.ts",
-        "sdk/cli/src/infrastructure/mcp/tools/agent.spec.ts",
-        "sdk/cli/src/infrastructure/mcp/tools/architecture.spec.ts",
-        "sdk/cli/src/infrastructure/mcp/tools/sdlc.spec.ts",
+        "packages/mcp-server/src/main.ts",
+        "packages/mcp-server/src/mcp/tool-registry.service.ts",
+        "packages/mcp-server/src/tools/gate.tools.spec.ts",
+        "packages/mcp-server/src/tools/architecture.tools.spec.ts",
+        "packages/mcp-server/src/tools/sdlc.tools.spec.ts",
         "sdk/cli/test/e2e/mcp-e2e.test.ts"
       ],
       "validationCommands": [
@@ -592,7 +592,7 @@
       "closureCommit": "b07460d",
       "evidence": [
         "sdk/cli/src/app.module.ts",
-        "sdk/cli/src/infrastructure/mcp/server.ts",
+        "packages/mcp-server/src/main.ts",
         "reference/governance/standards/vision/gap-reference-catalog.md"
       ],
       "validationCommands": [
@@ -781,10 +781,10 @@
       "closedAt": "2026-06-13",
       "closureCommit": "c73c209228dc18beeb296837eda5b1e70df4667d",
       "evidence": [
-        "sdk/cli/src/infrastructure/mcp/resources/index.ts",
-        "sdk/cli/src/infrastructure/mcp/prompts/index.ts",
-        "sdk/cli/src/infrastructure/mcp/tools/architecture.ts",
-        "sdk/cli/src/infrastructure/mcp/tools/sdlc.ts",
+        "packages/mcp-server/src/mcp/resources.service.ts",
+        "packages/mcp-server/src/mcp/prompts.service.ts",
+        "packages/mcp-server/src/tools/architecture.tools.ts",
+        "packages/mcp-server/src/tools/sdlc.tools.ts",
         "reference/products/smart-cli/docs/planning/sdk-cli-mcp-implementation-roadmap.md"
       ],
       "validationCommands": [
@@ -1299,11 +1299,11 @@
       "closedAt": "2026-06-16",
       "closureCommit": "e3792aa01c5a71d7864703b0430ecf3ccaa0a09a",
       "evidence": [
-        "sdk/cli/src/infrastructure/mcp/confirmation.service.ts",
-        "sdk/cli/src/infrastructure/mcp/confirmation.service.spec.ts",
-        "sdk/cli/test/mcp-confirmation.e2e-spec.ts",
-        "sdk/cli/src/infrastructure/mcp/server.ts",
-        "sdk/cli/src/commands/mcp/mcp-serve.command.ts"
+        "packages/mcp-server/src/tools/auto-fix.tools.ts",
+        "packages/mcp-server/src/tools/tools.module.ts",
+        "sdk/cli/src/commands/mcp/mcp-serve.command.ts",
+        "sdk/cli/src/commands/init/agents.command.ts",
+        "packages/mcp-server/src/main.ts"
       ],
       "validationCommands": [
         "npx jest --config sdk/cli/jest.config.js --testPathPatterns=\"confirmation\"",
@@ -1377,7 +1377,7 @@
       "closedAt": "2026-06-16",
       "closureCommit": "3b41cfe11b84d7d6c9dc04cd5febf698171ad5c5",
       "evidence": [
-        "sdk/cli/src/infrastructure/mcp/tools/validate.ts",
+        "sdk/cli/src/commands/validate/validate.command.ts",
         "packages/core-domain/src/domain/interfaces.ts"
       ],
       "validationCommands": [
@@ -1391,10 +1391,10 @@
       "closedAt": "2026-06-16",
       "closureCommit": "ea2a3934cfcbebaf3b05e15538e4b5ac721b1b53",
       "evidence": [
-        "sdk/cli/src/infrastructure/mcp/tools/auto-fix.ts",
-        "sdk/cli/src/infrastructure/mcp/tools/auto-fix.spec.ts",
-        "sdk/cli/test/auto-fix.e2e-spec.ts",
-        "sdk/cli/src/infrastructure/mcp/tools/index.ts"
+        "packages/mcp-server/src/tools/auto-fix.tools.ts",
+        "packages/mcp-server/src/tools/auto-fix.tools.spec.ts",
+        "packages/mcp-server/src/tools/tools.module.ts",
+        "sdk/cli/examples/mcp-test.js"
       ],
       "validationCommands": [
         "npx jest --config sdk/cli/jest.config.js --testPathPatterns=\"auto-fix\"",
@@ -1411,7 +1411,7 @@
         "sdk/cli/src/infrastructure/prompts/progress.service.ts",
         "sdk/cli/src/infrastructure/prompts/progress.service.spec.ts",
         "sdk/cli/src/commands/alias/alias.command.ts",
-        "sdk/cli/src/infrastructure/mcp/tools/auto-fix.ts"
+        "sdk/cli/src/app.module.ts"
       ],
       "validationCommands": [
         "npx tsc -p sdk/cli/tsconfig.json --noEmit",

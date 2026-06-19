@@ -9,7 +9,6 @@ import { McpServeCommand } from './commands/mcp/mcp-serve.command';
 import { ConfigService } from './infrastructure/config/config.service';
 import { FileManagerService } from './infrastructure/filesystem/file-manager.service';
 import { SyncService } from '@evolith/core-domain/application/sync/sync.service';
-import { WatcherService } from './infrastructure/mcp/watcher.service';
 import { SdlcCommand } from './commands/sdlc/sdlc.command';
 import { HandoffCommand } from './commands/sdlc/handoff.command';
 import { GenerateDomainCommand } from './commands/sdlc/generate-domain.command';
@@ -58,22 +57,6 @@ jest.mock('chalk', () => {
   chalkFn.gray = (str: string) => str;
   return chalkFn;
 });
-
-jest.mock('./infrastructure/mcp/tools/tool-utils', () => ({
-  getFileSystem: jest.fn(() => ({
-    exists: jest.fn(),
-    readFile: jest.fn(),
-    writeFile: jest.fn(),
-    readJson: jest.fn(),
-    writeJson: jest.fn(),
-    ensureDir: jest.fn(),
-    readdirNames: jest.fn(),
-    remove: jest.fn(),
-  })),
-  getContainer: jest.fn(() => ({
-    createFileSystem: jest.fn(),
-  })),
-}));
 
 jest.mock('./infrastructure/catalog/catalog-loader', () => ({
   CatalogLoader: jest.fn().mockImplementation(() => ({
@@ -218,17 +201,6 @@ describe('AppModule', () => {
     const service = module.get(SyncService);
     expect(service).toBeDefined();
     expect(service).toBeInstanceOf(SyncService);
-  });
-
-  it('should provide WatcherService', async () => {
-    const module = await Test.createTestingModule({
-      imports: [AppModule],
-      providers: [{ provide: 'IFileSystem', useValue: {} }, { provide: 'ILogger', useValue: {} }, { provide: 'IConfigParser', useValue: {} }]
-    }).compile();
-
-    const service = module.get(WatcherService);
-    expect(service).toBeDefined();
-    expect(service).toBeInstanceOf(WatcherService);
   });
 
   it('should provide SdlcCommand', async () => {

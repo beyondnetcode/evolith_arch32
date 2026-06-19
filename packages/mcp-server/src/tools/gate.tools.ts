@@ -1,19 +1,26 @@
-import { randomUUID } from 'node:crypto';
 import {
   EvaluateGateUseCase,
+  PhaseGateValidatorService,
   type EvaluateGateInput,
-  createErrorEnvelope,
-  createSuccessEnvelope,
   isGatePhase,
   type GatePhase,
   type EvaluatorKind,
-  type OutputMeta,
+  type IFileSystem,
+  type ILogger,
 } from '@evolith/core';
 import type { IWebhookNotifier } from '@evolith/core-domain/application/ports/webhook-notifier.port';
+import { DomainException, ErrorCodes } from '../common/errors';
 import { McpTool } from '../mcp/tool.interface';
 
-/** `evolith-gate-evaluate` — evaluate a single SDLC phase gate. */
-export function createGateTools(webhook: IWebhookNotifier): McpTool[] {
+/**
+ * `evolith-gate-evaluate` — evaluate a single SDLC phase gate.
+ *
+ * Returns the raw {@link GateEvidence} payload; the server's `handleCallTool`
+ * is the single authority that wraps it in the ADR-0073 envelope. Validation
+ * and not-found conditions throw a {@link DomainException} so the server maps
+ * them to the correct error code.
+ */
+export function createGateTools(webhook: IWebhookNotifier, fs: IFileSystem, logger: ILogger): McpTool[] {
   return [
     {
       schema: {
@@ -34,7 +41,6 @@ export function createGateTools(webhook: IWebhookNotifier): McpTool[] {
         },
       },
       execute: async (args) => {
-        const startTime = Date.now();
         const phaseRaw = args.phase as string;
         const projectPath = args.projectPath as string;
         const corePath = args.corePath as string | undefined;
@@ -42,48 +48,37 @@ export function createGateTools(webhook: IWebhookNotifier): McpTool[] {
         const evaluatedBy = (args.evaluatedBy as EvaluatorKind) || 'agent';
         const webhookUrl = args.webhookUrl as string | undefined;
 
-        const context: Record<string, string> = {};
-        if (args.initiative) context.initiative = args.initiative as string;
-        if (args.tenant) context.tenant = args.tenant as string;
-        if (phaseRaw) context.phase = phaseRaw;
-
-        const getMeta = (): OutputMeta => ({
-          command: 'evolith gate evaluate',
-          executedAt: new Date().toISOString(),
-          durationMs: Date.now() - startTime,
-          correlationId: randomUUID(),
-          ...(Object.keys(context).length > 0 && { context }),
-        });
-
         if (!phaseRaw || !isGatePhase(phaseRaw)) {
-          return createErrorEnvelope('INVALID_PHASE', `Invalid or missing phase: ${phaseRaw}`, getMeta());
+          throw new DomainException(ErrorCodes.PHASE_INVALID, `Invalid or missing phase: ${phaseRaw}`);
         }
         if (!projectPath) {
-          return createErrorEnvelope('IO_ERROR', 'projectPath is required', getMeta());
+          throw new DomainException(ErrorCodes.IO_ERROR, 'projectPath is required');
         }
 
-        try {
-          const useCase = new EvaluateGateUseCase(undefined, webhook);
-          const input: EvaluateGateInput = {
-            phase: phaseRaw as GatePhase,
-            projectPath,
-            corePath,
-            evaluatedBy,
-            webhookUrl,
-          };
-          const evidence = await useCase.execute(input);
+        const validatorFactory = (cp?: string) => new PhaseGateValidatorService(cp, { fileSystem: fs, logger });
+        const useCase = new EvaluateGateUseCase(validatorFactory, webhook);
+        const input: EvaluateGateInput = {
+          phase: phaseRaw as GatePhase,
+          projectPath,
+          corePath,
+          evaluatedBy,
+          webhookUrl,
+        };
 
-          let data: unknown = evidence;
+        try {
+          const evidence = await useCase.execute(input);
           if (evidenceMode === 'summary') {
             const errors = evidence.violations.filter((v) => v.severity === 'error').length;
             const warnings = evidence.violations.filter((v) => v.severity === 'warning').length;
-            data = { ...evidence, violations: [], summary: { errors, warnings } };
+            return { ...evidence, violations: [], summary: { errors, warnings } };
           }
-          return createSuccessEnvelope(data, getMeta());
+          return evidence;
         } catch (error: unknown) {
           const message = error instanceof Error ? error.message : String(error);
-          const code = message.includes('not found') || message.includes('ENOENT') ? 'RULESET_NOT_FOUND' : 'INTERNAL_ERROR';
-          return createErrorEnvelope(code, message, getMeta());
+          if (message.includes('not found') || message.includes('ENOENT')) {
+            throw new DomainException(ErrorCodes.RULESET_NOT_FOUND, message);
+          }
+          throw error;
         }
       },
     },

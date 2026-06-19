@@ -1200,7 +1200,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Criterio de cierre:**
   - [x] el ADR-0074 se enmienda para descopar GraphQL con justificación y documentar el alcance REST-only
   - [x] la documentación OpenAPI y la lista de exposición de la Visión de Producto son consistentes con la API Core REST-only implementada
-- **Evidencia de cierre:** El commit `REPLACE_ME` elimina las referencias residuales a GraphQL del ADR-0074, la Visión de Producto y el README del Core API para que la exposición documentada coincida con la superficie REST-only implementada. El gateway MCP independiente sigue siendo la ruta separada para agentes de IA.
+- **Evidencia de cierre:** El commit `cb05ffa` elimina las referencias residuales a GraphQL del ADR-0074, la Visión de Producto y el README del Core API para que la exposición documentada coincida con la superficie REST-only implementada. El gateway MCP independiente sigue siendo la ruta separada para agentes de IA.
 - **Referencias:** [apps/core-api/README.md](../../../../apps/core-api/README.md) · [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md) · [Producto Vision Master](../../../../reference/product-suite/vision/evolith-product-vision-master.es.md)
 
 #### GT-121

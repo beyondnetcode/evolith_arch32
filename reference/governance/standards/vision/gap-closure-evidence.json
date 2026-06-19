@@ -1493,6 +1493,23 @@
         "npm test --workspace sdk/cli -- --runInBand"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-120",
+      "closedAt": "2026-06-19",
+      "closureCommit": "cb05ffa",
+      "evidence": [
+        "reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md",
+        "reference/product-suite/vision/evolith-product-vision-master.md",
+        "apps/core-api/README.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/validate-docs.mjs",
+        "node .harness/scripts/check-bilingual-parity.mjs",
+        "node .harness/scripts/validate-tracking.mjs",
+        "node .harness/scripts/reconcile-maturity.mjs --check"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

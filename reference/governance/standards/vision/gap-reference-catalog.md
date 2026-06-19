@@ -1201,7 +1201,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Done when:**
   - [x] ADR-0074 is amended to descope GraphQL with rationale and the REST-only scope is documented
   - [x] OpenAPI documentation and the Product Vision exposure list are consistent with the implemented REST-only Core API
-- **Closure evidence:** Commit `REPLACE_ME` removes the lingering GraphQL references from ADR-0074, the product vision, and the Core API README so the documented exposure matches the implemented REST-only surface. The standalone MCP gateway remains the separate protocol path for AI agents.
+- **Closure evidence:** Commit `cb05ffa` removes the lingering GraphQL references from ADR-0074, the product vision, and the Core API README so the documented exposure matches the implemented REST-only surface. The standalone MCP gateway remains the separate protocol path for AI agents.
 - **References:** [apps/core-api/README.md](../../../../apps/core-api/README.md) · [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md) · [Product Vision Master](../../../../reference/product-suite/vision/evolith-product-vision-master.md)
 
 #### GT-121

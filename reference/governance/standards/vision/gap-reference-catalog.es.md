@@ -136,7 +136,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 **Título:** Webhook saliente al completar un gate
 
 - **Objetivo:** Adapter de infraestructura que hace POST de `GateEvidence` a una URL de webhook provista por el caller al completarse una evaluación. El CLI permanece stateless — la URL siempre es un parámetro.
-- **Evidencia actual:** `WebhookAdapter` y el port notifier existen en el working tree; el cierre de integración depende del baseline verde y un test con listener receptor.
+- **Evidencia actual:** `WebhookAdapter` y el port notifier existen en el working tree bajo `packages/infra-providers`; el cierre de integración depende del baseline verde y un test con listener receptor.
 - **Cierre cuando:** un test de integración recibe el payload de evidencia en un listener local.
 
 ### Fase F5 — Higiene y Publicación
@@ -1226,7 +1226,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [ ] `sdk/cli` y `apps/core-api` importan los adapters desde `@evolith/infra-providers`
   - [ ] los archivos locales de adapter/provider duplicados eliminados
   - [ ] todos los paquetes compilan y sus tests pasan
-- **Referencias:** [packages/infra-providers/src/index.ts](../../../../packages/infra-providers/src/index.ts) · [apps/core-api/src/infrastructure/adapters/disk-ruleset.repository.ts](../../../../apps/core-api/src/infrastructure/adapters/disk-ruleset.repository.ts) · [sdk/cli/src/infrastructure/adapters/disk-ruleset.repository.ts](../../../../sdk/cli/src/infrastructure/adapters/disk-ruleset.repository.ts)
+- **Referencias:** [packages/infra-providers/src/index.ts](../../../../packages/infra-providers/src/index.ts) · [packages/infra-providers/src/disk-ruleset.repository.ts](../../../../packages/infra-providers/src/disk-ruleset.repository.ts) · [packages/infra-providers/src/webhook.adapter.ts](../../../../packages/infra-providers/src/webhook.adapter.ts) · [packages/infra-providers/src/moscow-prioritization.service.ts](../../../../packages/infra-providers/src/moscow-prioritization.service.ts)
 
 #### GT-123
 

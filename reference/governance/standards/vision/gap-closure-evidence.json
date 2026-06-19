@@ -251,7 +251,7 @@
       "closedAt": "2026-06-11",
       "closureCommit": "b544411",
       "evidence": [
-        "sdk/cli/src/infrastructure/adapters/webhook.adapter.ts",
+        "packages/infra-providers/src/webhook.adapter.ts",
         "sdk/cli/src/infrastructure/adapters/webhook.adapter.spec.ts"
       ],
       "validationCommands": [

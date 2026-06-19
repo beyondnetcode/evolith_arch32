@@ -21,9 +21,21 @@ export class GatesController {
     @Body() body: EvaluateGateDto
   ) {
     return this.evaluateGateUseCase.execute({
-      satellitePath: body.satellitePath,
-      gateId,
+      phase: this.mapGateIdToPhase(gateId),
+      projectPath: body.satellitePath,
       corePath: body.corePath,
     });
+  }
+
+  private mapGateIdToPhase(gateId: string) {
+    const match = gateId.match(/(\d+)/);
+    switch (match?.[1]) {
+      case '1': return 'discovery';
+      case '2': return 'design';
+      case '3': return 'construction';
+      case '4': return 'qa';
+      case '5': return 'release';
+      default: return 'discovery';
+    }
   }
 }

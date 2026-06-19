@@ -37,10 +37,13 @@ import { PromptService } from './infrastructure/prompts/prompt.service';
 import { WizardService } from './infrastructure/prompts/wizard.service';
 import { CatalogLoader } from './infrastructure/catalog/catalog-loader';
 import { InitWizardCommand } from './commands/init/init.wizard';
-import { WebhookAdapter } from './infrastructure/adapters/webhook.adapter';
-import { NodeFileSystemProvider } from '@evolith/infra-providers';
-import { NestLoggerProvider } from '@evolith/infra-providers';
-import { YamlConfigParserProvider } from '@evolith/infra-providers';
+import {
+  DiskRulesetRepository,
+  NodeFileSystemProvider,
+  NestLoggerProvider,
+  YamlConfigParserProvider,
+  WebhookAdapter,
+} from '@evolith/infra-providers';
 import { PluginModule } from './infrastructure/plugins/plugin.module';
 
 @Module({
@@ -85,7 +88,6 @@ import { PluginModule } from './infrastructure/plugins/plugin.module';
     {
       provide: RulesetValidatorService,
       useFactory: (fs: unknown, logger: unknown, configParser: unknown) => {
-        const { DiskRulesetRepository } = require('./infrastructure/adapters/disk-ruleset.repository');
         return new RulesetValidatorService({
           fileSystem: fs,
           logger,

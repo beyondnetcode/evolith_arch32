@@ -136,7 +136,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Title:** Outbound webhook on gate completion
 
 - **Objective:** Infrastructure adapter that POSTs `GateEvidence` to a caller-supplied webhook URL when an evaluation completes. The CLI stays stateless — the URL is always a parameter.
-- **Current evidence:** `WebhookAdapter` and the notifier port exist in the working tree; integration closure depends on a green baseline and a receiving-listener test.
+- **Current evidence:** `WebhookAdapter` and the notifier port exist in the working tree under `packages/infra-providers`; integration closure depends on a green baseline and a receiving-listener test.
 - **Done when:** integration test receives the evidence payload on a local listener.
 
 ### Phase F5 — Hygiene & Publication
@@ -1227,7 +1227,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [ ] `sdk/cli` and `apps/core-api` import the adapters from `@evolith/infra-providers`
   - [ ] the duplicated local adapter/provider files are removed
   - [ ] all packages build and their tests pass
-- **References:** [packages/infra-providers/src/index.ts](../../../../packages/infra-providers/src/index.ts) · [apps/core-api/src/infrastructure/adapters/disk-ruleset.repository.ts](../../../../apps/core-api/src/infrastructure/adapters/disk-ruleset.repository.ts) · [sdk/cli/src/infrastructure/adapters/disk-ruleset.repository.ts](../../../../sdk/cli/src/infrastructure/adapters/disk-ruleset.repository.ts)
+- **References:** [packages/infra-providers/src/index.ts](../../../../packages/infra-providers/src/index.ts) · [packages/infra-providers/src/disk-ruleset.repository.ts](../../../../packages/infra-providers/src/disk-ruleset.repository.ts) · [packages/infra-providers/src/webhook.adapter.ts](../../../../packages/infra-providers/src/webhook.adapter.ts) · [packages/infra-providers/src/moscow-prioritization.service.ts](../../../../packages/infra-providers/src/moscow-prioritization.service.ts)
 
 #### GT-123
 

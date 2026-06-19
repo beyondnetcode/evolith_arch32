@@ -1,4 +1,4 @@
-import { DiskRulesetRepository } from './disk-ruleset.repository';
+import { DiskRulesetRepository } from '@evolith/infra-providers';
 import { IFileSystem, ILogger } from '@evolith/core-domain/domain/interfaces';
 
 describe('DiskRulesetRepository', () => {

@@ -1,4 +1,4 @@
-import { WebhookAdapter } from './webhook.adapter';
+import { WebhookAdapter } from '@evolith/infra-providers';
 import { GateEvidence } from '@evolith/core-domain/domain/gate-evidence';
 
 describe('WebhookAdapter', () => {

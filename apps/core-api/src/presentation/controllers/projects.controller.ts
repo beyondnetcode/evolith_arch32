@@ -23,11 +23,17 @@ export class ProjectsController {
   @ApiResponse({ status: 401, description: 'Missing or invalid API key' })
   async initialize(@Body() body: InitProjectDto) {
     return this.initializeProjectUseCase.execute({
-      targetPath: body.targetPath,
       name: body.name,
-      type: body.type as any,
-      options: body.options,
-    });
+      runtime: (body.options?.runtime as string) || body.type || 'nodejs',
+      monorepo: (body.options?.monorepo as string) || 'npm-workspaces',
+      architecture: (body.options?.architecture as string) || 'clean',
+      database: (body.options?.database as string) || 'postgresql',
+      apiProtocol: (body.options?.apiProtocol as string) || 'rest',
+      ciCd: (body.options?.ciCd as string) || 'github-actions',
+      observability: (body.options?.observability as string) || 'opentelemetry',
+      features: Array.isArray(body.options?.features) ? (body.options.features as string[]) : [],
+      agents: Array.isArray(body.options?.agents) ? (body.options.agents as string[]) : [],
+    }, body.targetPath);
   }
 
   @Post('propose-advance')
@@ -39,10 +45,11 @@ export class ProjectsController {
   @ApiResponse({ status: 401, description: 'Missing or invalid API key' })
   async proposeAdvance(@Body() body: ProposeAdvanceDto) {
     return this.proposePhaseAdvanceUseCase.execute({
-      satellitePath: body.satellitePath,
+      fromPhase: body.targetPhase as any,
+      toPhase: body.targetPhase as any,
+      projectPath: body.satellitePath,
       corePath: body.corePath,
-      targetPhase: body.targetPhase as any,
       triggerDeploy: body.triggerDeploy,
-    });
+    } as any);
   }
 }

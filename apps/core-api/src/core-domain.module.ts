@@ -15,8 +15,8 @@ import {
   RulesetValidatorService,
   ArchitectureDriftService
 } from '@evolith/core-domain/application/validators';
-import { IFileSystem, ILogger, IConfigParser } from '@evolith/core-domain/domain/interfaces';
-import { DiskRulesetRepository } from './infrastructure/adapters/disk-ruleset.repository';
+import { IFileSystem, ILogger, IConfigParser, ICatalogLoader } from '@evolith/core-domain/domain/interfaces';
+import { DiskRulesetRepository } from '@evolith/infra-providers';
 
 const CoreDomainProviders = [
   {
@@ -37,6 +37,51 @@ const CoreDomainProviders = [
     inject: ['IFileSystem', 'ILogger'],
   },
   {
+    provide: 'ICatalogLoader',
+    useValue: {
+      loadRuntimeCatalog: () => [
+        {
+          id: 'nodejs',
+          name: 'Node.js',
+          versions: ['20'],
+          defaultVersion: '20',
+          language: 'typescript',
+          typeSystem: 'static',
+          frameworks: [],
+          databases: [],
+          buildTools: [],
+          testFrameworks: [],
+          packageManager: 'npm',
+        },
+      ],
+      loadToolCatalog: () => ({ phases: {}, toolMetadata: {} }),
+      loadCommandsMatrix: () => ({
+        runtimes: {},
+        monorepos: {},
+        container: { delegated: [], unsupported: [] },
+        observability: { scaffold: [], delegated: [] },
+      }),
+      getMonorepoOptions: () => [
+        {
+          id: 'npm-workspaces',
+          name: 'npm workspaces',
+          description: 'Single-repo workspace layout',
+          defaults: { structure: 'workspace', ciStrategy: 'github-actions' },
+        },
+      ],
+      getArchitecturePatterns: () => [
+        {
+          id: 'clean',
+          name: 'Clean Architecture',
+          description: 'Layered architecture baseline',
+          layers: ['domain', 'application', 'infrastructure', 'presentation'],
+        },
+      ],
+      getDefaultDatabase: () => 'postgresql',
+      getApiProtocols: () => [{ id: 'rest', name: 'REST', description: 'REST API' }],
+    } satisfies ICatalogLoader,
+  },
+  {
     provide: RulesetValidatorService,
     useFactory: (fs: IFileSystem, logger: ILogger, configParser: IConfigParser, rulesetRepo: any) => {
       return new RulesetValidatorService({ fileSystem: fs, logger, configParser, rulesetRepo });
@@ -45,10 +90,10 @@ const CoreDomainProviders = [
   },
   {
     provide: PhaseGateValidatorService,
-    useFactory: (fs: IFileSystem, logger: ILogger, rulesetValidator: RulesetValidatorService) => {
-      return new PhaseGateValidatorService(undefined, { fileSystem: fs, logger, rulesetValidator });
+    useFactory: (fs: IFileSystem, logger: ILogger) => {
+      return new PhaseGateValidatorService(undefined, { fileSystem: fs, logger });
     },
-    inject: ['IFileSystem', 'ILogger', RulesetValidatorService],
+    inject: ['IFileSystem', 'ILogger'],
   },
   {
     provide: ArchitectureDriftService,
@@ -59,31 +104,31 @@ const CoreDomainProviders = [
   },
   {
     provide: EvaluateGateUseCase,
-    useFactory: (fs: IFileSystem, logger: ILogger, validator: PhaseGateValidatorService) => {
-      return new EvaluateGateUseCase(fs, logger, validator);
+    useFactory: (validatorFactory: (corePath?: string) => PhaseGateValidatorService) => {
+      return new EvaluateGateUseCase(validatorFactory);
     },
-    inject: ['IFileSystem', 'ILogger', PhaseGateValidatorService],
+    inject: ['VALIDATOR_FACTORY'],
   },
   {
     provide: InitializeProjectUseCase,
-    useFactory: (fs: IFileSystem, logger: ILogger) => {
-      return new InitializeProjectUseCase(undefined, undefined, fs, logger);
+    useFactory: (fs: IFileSystem, catalogLoader: ICatalogLoader) => {
+      return new InitializeProjectUseCase(fs, catalogLoader);
     },
-    inject: ['IFileSystem', 'ILogger'],
+    inject: ['IFileSystem', 'ICatalogLoader'],
   },
   {
     provide: ProposePhaseAdvanceUseCase,
-    useFactory: (fs: IFileSystem, logger: ILogger, phaseGateValidator: PhaseGateValidatorService) => {
-      return new ProposePhaseAdvanceUseCase(fs, logger, undefined, phaseGateValidator);
+    useFactory: (evaluateGateUseCase: EvaluateGateUseCase) => {
+      return new ProposePhaseAdvanceUseCase(evaluateGateUseCase);
     },
-    inject: ['IFileSystem', 'ILogger', PhaseGateValidatorService],
+    inject: [EvaluateGateUseCase],
   },
   {
     provide: ValidateSatelliteUseCase,
-    useFactory: (fs: IFileSystem, logger: ILogger, validator: RulesetValidatorService) => {
-      return new ValidateSatelliteUseCase(fs, logger, validator);
+    useFactory: (validator: RulesetValidatorService) => {
+      return new ValidateSatelliteUseCase(validator);
     },
-    inject: ['IFileSystem', 'ILogger', RulesetValidatorService],
+    inject: [RulesetValidatorService],
   },
   {
     provide: PhaseTransitionUseCase,

@@ -1434,6 +1434,27 @@
         "npm test --workspace sdk/cli -- --runInBand"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-124",
+      "closedAt": "2026-06-19",
+      "closureCommit": "e93c68a",
+      "evidence": [
+        "sdk/cli/src/commands/completion/completion.command.ts",
+        "sdk/cli/src/commands/sdlc/handoff.command.ts",
+        "packages/mcp-server/src/mcp/prompts.service.ts",
+        "sdk/cli/test/e2e/mcp-e2e.test.ts"
+      ],
+      "validationCommands": [
+        "npm run build --workspace packages/mcp-server",
+        "npm test --workspace packages/mcp-server -- --runInBand",
+        "npm run build --workspace sdk/cli",
+        "npm test --workspace sdk/cli -- --runInBand",
+        "node .harness/scripts/validate-docs.mjs",
+        "node .harness/scripts/check-bilingual-parity.mjs",
+        "node .harness/scripts/validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

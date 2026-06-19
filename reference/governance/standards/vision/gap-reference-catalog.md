@@ -1251,7 +1251,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Make the `sdk/cli` e2e suite green so the E2E Tests CI job carries real evidentiary weight.
 - **Current evidence / example:** `cd sdk/cli && npm run test:e2e` reports `Artifact not found: .../sdk/cli/reference/.../prd-template.md`, `ENOENT: .../node_modules/shell/hooks.zsh`, and `expect(promptNames).toContain('evolith/architecture-review')` against a list containing `evolith/review-architecture`.
 - **Done when:**
-  - [ ] e2e fixtures resolve (templates path, shell-completion hooks) from a clean checkout
-  - [ ] the MCP prompt naming mismatch is reconciled (or absorbed by the GT-121 old-MCP removal)
-  - [ ] `npm run test:e2e` passes in CI
+  - [x] e2e fixtures resolve (templates path, shell-completion hooks) from a clean checkout
+  - [x] the MCP prompt naming mismatch is reconciled (or absorbed by the GT-121 old-MCP removal)
+  - [x] `npm run test:e2e` passes in CI
+- **Closure evidence:** Commit `e93c68a` fixes the e2e pathing and naming regressions: `CompletionCommand` now resolves shell hooks from the package root instead of `process.argv[1]`, `HandoffCommand` walks up to the repo root before validating SDLC artifacts, and the MCP prompt name is normalized to `evolith/architecture-review` in both the server prompt registry and the CLI e2e expectation. `npm run build --workspace packages/mcp-server`, `npm test --workspace packages/mcp-server -- --runInBand`, `npm run build --workspace sdk/cli`, and `npm test --workspace sdk/cli -- --runInBand` all pass on the resulting state.
 - **References:** [sdk/cli/test](../../../../sdk/cli/test) · [GT-121](#gt-121)

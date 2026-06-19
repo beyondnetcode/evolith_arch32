@@ -32,6 +32,7 @@ Si estás integrando un nuevo repositorio satélite, lee las categorías en este
 | [Reglas de Evidencia](./evidence/README.es.md) | Manifests de evidencia auditable | Estandarizar la evidencia | Categoría de reglas | Sí |
 | [Reglas MCP](./mcp/README.es.md) | Cumplimiento del protocolo MCP | Validar la exposición MCP | Categoría de reglas | Sí |
 | [Reglas de Observabilidad](./observability/README.es.md) | Evidencia de telemetría para operación | Verificar la evidencia de telemetría | Categoría de reglas | Sí |
+| [Rulesets Topologicos](./topologies/README.es.md) | Reglas ejecutables Native y OPA especificas por topologia | Gobernar la validacion topologica | Categoria de reglas | Si |
 | [Schemas](./schema/README.es.md) | JSON Schema para validación de artefactos Evolith | Validar la estructura de artefactos | Colección de schemas | Sí |
 
 ---
@@ -40,7 +41,7 @@ Si estás integrando un nuevo repositorio satélite, lee las categorías en este
 
 ```
 rulesets/
-├── schema/                     # Definiciones de JSON Schema
+├── schema/                     # Definiciones de JSON Schema (19 schemas)
 │   ├── adr.schema.json         # Validación de artefacto ADR
 │   ├── prd.schema.json         # Validación de artefacto PRD
 │   ├── discovery-canvas.schema.json     # Fase 1
@@ -53,11 +54,14 @@ rulesets/
 │   ├── technical-story.schema.json       # Fase 3
 │   ├── test-summary-report.schema.json   # Fase 4
 │   ├── release-notes.schema.json         # Fase 5
-│   └── evolith-yaml.schema.json  # Gobernanza satélite
+│   ├── evolith-yaml.schema.json          # Gobernanza satelite
+│   └── topology-manifest.schema.json     # Contrato de manifiesto topologico
 ├── architecture/               # Reglas de fase de arquitectura
 │   ├── f1-modular-monolith.rules.json
 │   ├── f2-distributed-modules.rules.json
 │   └── f3-microservices.rules.json
+├── topologies/                 # Reglas ejecutables especificas por topologia
+│   └── README.es.md
 ├── adr/                        # Reglas encoding ADR
 │   ├── adr-0002-hexagonal-architecture.rules.json
 │   ├── adr-0005-cicd-quality-gates.rules.json
@@ -125,7 +129,7 @@ flowchart LR
 |---|---|
 | **Reglas versionadas** | Cada regla tiene versión; satélites hacen pin a versión específica |
 | **Fail-fast validation** | CI debe fallar en violaciones de reglas; sin bypass sin waiver explícito |
-| **Phase-aware** | Las reglas cambian dependiendo de la fase de arquitectura F1/F2/F3 |
+| **Topology-aware** | F1/F2/F3 permanecen como aliases de compatibilidad progressive-axis mientras los manifiestos topologicos gobiernan validacion especifica mas amplia |
 | **Herencia federada** | Satélites heredan de Core; no modifican reglas del Core |
 | **Schema-first** | Todos los artefactos tienen JSON Schema para validación machine |
 

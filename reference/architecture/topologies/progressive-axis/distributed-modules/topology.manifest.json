@@ -1,0 +1,88 @@
+{
+  "apiVersion": "evolith.dev/topology/v1",
+  "kind": "TopologyManifest",
+  "metadata": {
+    "id": "distributed-modules",
+    "name": "Distributed Modules",
+    "dimension": "progressive-axis",
+    "status": "accepted",
+    "version": "1.0.0"
+  },
+  "spec": {
+    "summary": "Controlled extraction topology for independently deployable or scalable modules with explicit contracts, readiness evidence, and operational visibility.",
+    "topologyType": "distributed-modules",
+    "compatibility": {
+      "progressiveAxis": {
+        "phase": "F2",
+        "profile": "distributed-modules"
+      },
+      "composableWith": [
+        "event-driven",
+        "data-mesh",
+        "serverless",
+        "edge-computing",
+        "agentic-ai"
+      ]
+    },
+    "artifacts": {
+      "adrs": [
+        "reference/architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md",
+        "reference/architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.md",
+        "reference/architecture/adrs/core/0079-multi-topology-reference-corpus.md"
+      ],
+      "rulesets": [
+        "rulesets/architecture/f2-distributed-modules.rules.json"
+      ],
+      "opaPolicies": [
+        "rulesets/opa/architecture.rego"
+      ],
+      "aiRulesets": [
+        "reference/architecture/topologies/progressive-axis/distributed-modules/README.md"
+      ],
+      "umsContracts": [
+        "reference/knowledge/demo/ums-reference-model.md"
+      ]
+    },
+    "operationalInterfaces": {
+      "cli": {
+        "validators": [
+          "validate-architecture",
+          "validate-topology"
+        ]
+      },
+      "mcp": {
+        "resources": [
+          "evolith://topologies/distributed-modules/manifest",
+          "evolith://topologies/distributed-modules/rulesets"
+        ],
+        "tools": [
+          "evolith-topology-inspect",
+          "evolith-topology-validate"
+        ],
+        "prompts": [
+          "topology-aware-implementation",
+          "extraction-readiness-review"
+        ]
+      },
+      "coreApi": {
+        "endpoints": [
+          "GET /topologies/{id}",
+          "GET /topologies/{id}/manifest",
+          "POST /topologies/{id}/validate"
+        ]
+      }
+    }
+  },
+  "businessBoundary": {
+    "technicalOnly": true,
+    "trackerOwns": [
+      "timing",
+      "ownership",
+      "prioritization",
+      "roi",
+      "cost",
+      "budget",
+      "funnel-0"
+    ]
+  }
+}

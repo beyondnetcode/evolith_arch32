@@ -23,6 +23,7 @@
 * [gap-tracking](./gap-tracking.es.md) — **Tablero de Seguimiento de Gaps**: tabla única con criticidad, complejidad y estado vivo por gap
 * [gap-reference-catalog](./gap-reference-catalog.es.md) — **Catálogo de Referencia de Gaps**: problema, propósito, evidencia, criterios de cierre y referencias enlazados desde el tablero
 * [maturity-assessment](./maturity-assessment.es.md) — **Evaluación de Madurez**: estándares internacionales (TOGAF ACMM/WAF), alineación con la visión y enlaces a gaps abiertos
+* [plan de implementación del corpus de referencia multi-topología](./multi-topology-reference-corpus-implementation-plan.es.md) — **Tracker de implementación**: plan paso a paso para la transición al Corpus de Referencia Multi-Topología
 
 ---
 [Volver al Nivel Superior](../README.es.md)

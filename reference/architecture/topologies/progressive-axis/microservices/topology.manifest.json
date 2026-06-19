@@ -1,0 +1,89 @@
+{
+  "apiVersion": "evolith.dev/topology/v1",
+  "kind": "TopologyManifest",
+  "metadata": {
+    "id": "microservices",
+    "name": "Microservices",
+    "dimension": "progressive-axis",
+    "status": "accepted",
+    "version": "1.0.0"
+  },
+  "spec": {
+    "summary": "Independently deployable service topology for mature bounded domains with explicit contracts, operational ownership, observability, and extraction readiness evidence.",
+    "topologyType": "microservices",
+    "compatibility": {
+      "progressiveAxis": {
+        "phase": "F3",
+        "profile": "microservices"
+      },
+      "composableWith": [
+        "event-driven",
+        "data-mesh",
+        "edge-computing",
+        "serverless",
+        "agentic-ai"
+      ]
+    },
+    "artifacts": {
+      "adrs": [
+        "reference/architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md",
+        "reference/architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.md",
+        "reference/architecture/adrs/core/0076-domain-oriented-microservice-architecture.md",
+        "reference/architecture/adrs/core/0079-multi-topology-reference-corpus.md"
+      ],
+      "rulesets": [
+        "rulesets/architecture/f3-microservices.rules.json"
+      ],
+      "opaPolicies": [
+        "rulesets/opa/architecture.rego"
+      ],
+      "aiRulesets": [
+        "reference/architecture/topologies/progressive-axis/microservices/README.md"
+      ],
+      "umsContracts": [
+        "reference/knowledge/demo/ums-reference-model.md"
+      ]
+    },
+    "operationalInterfaces": {
+      "cli": {
+        "validators": [
+          "validate-architecture",
+          "validate-topology"
+        ]
+      },
+      "mcp": {
+        "resources": [
+          "evolith://topologies/microservices/manifest",
+          "evolith://topologies/microservices/rulesets"
+        ],
+        "tools": [
+          "evolith-topology-inspect",
+          "evolith-topology-validate"
+        ],
+        "prompts": [
+          "topology-aware-implementation",
+          "extraction-readiness-review"
+        ]
+      },
+      "coreApi": {
+        "endpoints": [
+          "GET /topologies/{id}",
+          "GET /topologies/{id}/manifest",
+          "POST /topologies/{id}/validate"
+        ]
+      }
+    }
+  },
+  "businessBoundary": {
+    "technicalOnly": true,
+    "trackerOwns": [
+      "timing",
+      "ownership",
+      "prioritization",
+      "roi",
+      "cost",
+      "budget",
+      "funnel-0"
+    ]
+  }
+}

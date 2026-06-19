@@ -1,0 +1,91 @@
+{
+  "apiVersion": "evolith.dev/topology/v1",
+  "kind": "TopologyManifest",
+  "metadata": {
+    "id": "agentic-ai",
+    "name": "Agentic AI",
+    "dimension": "ai",
+    "status": "draft",
+    "version": "0.1.0"
+  },
+  "spec": {
+    "summary": "AI-first and agentic workflow topology for MCP-enabled context injection, governed tools, auditable actions, and architecture-aware implementation assistance.",
+    "topologyType": "agentic-ai",
+    "compatibility": {
+      "progressiveAxis": {
+        "phase": "cross",
+        "profile": "cross"
+      },
+      "composableWith": [
+        "modular-monolith",
+        "distributed-modules",
+        "microservices",
+        "serverless",
+        "event-driven",
+        "data-mesh",
+        "edge-computing"
+      ]
+    },
+    "artifacts": {
+      "adrs": [
+        "reference/architecture/adrs/core/0058-ai-consumable-architecture-knowledge.md",
+        "reference/architecture/adrs/core/0079-multi-topology-reference-corpus.md"
+      ],
+      "rulesets": [
+        "rulesets/mcp/protocol-compliance.rules.json"
+      ],
+      "opaPolicies": [
+        "rulesets/opa/architecture.rego"
+      ],
+      "aiRulesets": [
+        "reference/architecture/topologies/ai/agentic-ai/README.md"
+      ],
+      "umsContracts": [
+        "reference/knowledge/demo/ums-reference-model.md"
+      ]
+    },
+    "operationalInterfaces": {
+      "cli": {
+        "validators": [
+          "validate-topology"
+        ]
+      },
+      "mcp": {
+        "resources": [
+          "evolith://topologies/agentic-ai/manifest",
+          "evolith://topologies/agentic-ai/rulesets",
+          "evolith://topologies/agentic-ai/mcp"
+        ],
+        "tools": [
+          "evolith-topology-inspect",
+          "evolith-topology-validate",
+          "evolith-ruleset-explain"
+        ],
+        "prompts": [
+          "topology-aware-implementation",
+          "agentic-ai-governance-review",
+          "adr-impact-analysis"
+        ]
+      },
+      "coreApi": {
+        "endpoints": [
+          "GET /topologies/{id}",
+          "GET /topologies/{id}/manifest",
+          "POST /topologies/{id}/validate"
+        ]
+      }
+    }
+  },
+  "businessBoundary": {
+    "technicalOnly": true,
+    "trackerOwns": [
+      "timing",
+      "ownership",
+      "prioritization",
+      "roi",
+      "cost",
+      "budget",
+      "funnel-0"
+    ]
+  }
+}

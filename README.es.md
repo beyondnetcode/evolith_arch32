@@ -1,6 +1,6 @@
 <div align="center">
 
-# Evolith: Base de Referencia de Arquitectura Progresiva
+# Evolith: Framework de Gobernanza Arquitectónica Ejecutable
 
 > **Navegación Bilingüe:** [English](./README.md)
 
@@ -23,28 +23,89 @@
 
 <br/>
 
-**Evolith es el upstream de arquitectura corporativa para repositorios de productos.**<br/>
-Define estándares de arquitectura reutilizables, reglas de gobernanza, ADRs, patrones<br/>
-y guía operativa que los productos satélite heredan y especializan.
+**Evolith Core no es un corpus de documentación. Es un framework de gobernanza ejecutable** —<br/>
+un estándar técnico agnóstico a topologías y neutral respecto al runtime que dicta **cómo** se construye el software,<br/>
+distribuido mediante interfaces CLI, MCP y Service CORE API, y aplicado por rulesets verificables.
 
-> *Separar conceptualmente antes de separar físicamente.*
+> _Arquitectura Progresiva: la capacidad del framework para escalar sistemas mutando entre topologías según el ciclo de vida del negocio, previniendo el sobre-diseño y garantizando la coherencia arquitectónica mediante ejecución automática._
 
 </div>
 
 ---
 
-## Como Esta Organizado Este Repositorio
+## Visión
 
-La documentación de Evolith fluye de la superficie más general al artefacto más específico. Cada página pertenece a uno de tres dominios — **Evolith Core** (la constitución de arquitectura), **Evolith SDLC** (gobernanza del ciclo de vida) y **Evolith Products** (la suite) — y cada dominio desciende por los mismos niveles:
+Evolith Core existe para convertirse en el sistema operativo definitivo de grado enterprise para la gobernanza de arquitectura de software: global, agnóstico al stack, consciente de topologías y ejecutable por humanos, plataformas de delivery y agentes IA. Define la constitución técnica que todo producto, repositorio satélite y sistema de orquestación puede heredar sin acoplarse a un lenguaje, proveedor cloud, runtime, motor de base de datos o modelo comercial específico de producto.
 
-| Nivel | Superficie | Úsala para |
-|---|---|---|
-| 1. Portal | Este README | Elegir un dominio o una ruta de inicio |
-| 2. Hubs de dominio | [Evolith Core](./reference/core/README.es.md) · [Evolith SDLC](./reference/governance/sdlc/README.es.md) · [Evolith Products](./reference/product-suite/README.es.md) | Entender la meta, los objetivos y los límites de cada dominio |
-| 3. Hubs de área | Arquitectura, ADRs, Estándares, Fases SDLC, Diseños de producto | Localizar la familia de artefactos de una preocupación |
-| 4. Documentos de detalle | ADRs, plantillas, estándares, rulesets, guías | Aplicar un artefacto específico y autoritativo |
+Su misión es convertir la gobernanza arquitectónica en una capacidad operativa. ADRs, rulesets, políticas, contratos, implementaciones de referencia e instrucciones IA no son documentos pasivos; son artefactos técnicos autoritativos expuestos mediante canales obligatorios de ejecución para que los equipos puedan validar, consultar, generar estructuras base y hacer cumplir la arquitectura seleccionada antes de que el código llegue a producción.
+
+## Acerca de Evolith Core
+
+Evolith Core es un **corpus de referencia multi-topología** y un **framework de gobernanza ejecutable** para organizaciones modernas de ingeniería B2B. Ya no gobierna únicamente el camino desde monolitos simples hacia microservicios. Gobierna la mutación deliberada de sistemas entre monolitos modulares, servicios distribuidos, **Cloud-Native Serverless**, **Event-Driven**, **Data Mesh**, **Edge Computing** y **Agentic / AI-First Architectures** cuando la madurez del producto, la complejidad operativa y la economía de plataforma justifican el cambio.
+
+En Evolith, "progresivo" significa la capacidad del framework para escalar sistemas mutando entre topologías según el ciclo de vida del negocio, previniendo el sobre-diseño y preservando la coherencia arquitectónica mediante ejecución automática. El framework define el **Qué** y el **Cómo** técnico; tiempos de negocio, ownership, financiamiento, ROI y priorización permanecen fuera del Core y son gobernados por Evolith Tracker mediante su ACL y Funnel 0.
+
+## Cómo Está Organizado Este Repositorio
+
+Evolith Core gobierna a través de un **corpus de referencia multi-topología**. Cada topología es un contexto delimitado completamente aislado con sus propios ADRs, políticas OPA, rulesets IA y contratos UMS. El repositorio fluye desde la superficie más general hasta el artefacto más específico, a través de tres dominios:
+
+| Nivel                 | Superficie                                                                                                                                                            | Úsala para                                                    |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| 1. Portal             | Este README                                                                                                                                                           | Elegir un dominio o una ruta de inicio                        |
+| 2. Hubs de dominio    | [Evolith Core](./reference/core/README.es.md) · [Evolith SDLC](./reference/governance/sdlc/README.es.md) · [Evolith Products](./reference/product-suite/README.es.md) | Entender la meta, los objetivos y los límites de cada dominio |
+| 3. Hubs de área       | Arquitectura, ADRs, Estándares, Fases SDLC, Diseños de producto, Topologías                                                                                           | Localizar la familia de artefactos de una preocupación        |
+| 4. Documentos detalle | ADRs, plantillas, estándares, rulesets, guías, políticas OPA, contratos UMS                                                                                           | Aplicar un artefacto específico y autoritativo                |
 
 Cuando ya sabes qué artefacto necesitas, sáltate el descenso y abre el [Índice Maestro Global](./reference/navigation/MASTER_INDEX.es.md).
+
+### Topologías Soportadas
+
+Evolith Core gobierna y proporciona artefactos de referencia para las siguientes topologías de arquitectura, cada una residiendo en un subdirectorio `/topologies/` aislado con sus propios ADRs, políticas OPA, rulesets IA y contratos UMS:
+
+| Topología                   | Descripción                                                                                                        |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| **Monolito Modular**        | Topología fundamental para sistemas que comienzan simples y maduran sin distribución prematura                     |
+| **Cloud-Native Serverless** | Arquitecturas event-driven, auto-escalables y de pago-por-ejecución sobre FaaS y servicios gestionados             |
+| **Event-Driven**            | Sistemas async-first con brokers de mensajes, event sourcing y CQRS                                                |
+| **Data Mesh**               | Plataformas de datos orientadas a dominio, autoservicio y con gobernanza federada                                  |
+| **Edge Computing**          | Cómputo distribuido en el borde de la red con restricciones de offline-first y baja latencia                       |
+| **Agentic / AI-First**      | Arquitecturas diseñadas para agentes IA como actores de primera clase con integración MCP (Model Context Protocol) |
+
+### Interfaces Operativas
+
+Evolith Core expone tres canales de acceso obligatorios para que cualquier equipo de ingeniería interactúe programáticamente con el framework de gobernanza:
+
+| Interfaz                         | Propósito                                                                                                                                                                                           |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **CLI**                          | Los desarrolladores validan código localmente contra los rulesets de su topología elegida. `smart-cli validate`, `smart-cli adr create`, etc.                                                       |
+| **MCP (Model Context Protocol)** | La API fundamental para inyectar "Contexto Arquitectónico" directamente en agentes IA (Copilot, Cursor, etc.), permitiendo que el agente entienda las reglas de gobernanza antes de escribir código |
+| **Service CORE API**             | Interfaz programática para que sistemas de orquestación (ej. Evolith Tracker) consulten patrones, contratos UMS y políticas OPA de forma remota                                                     |
+
+### Contextos Delimitados por Topología
+
+El árbol `/topologies/` es el límite modular estricto para la gobernanza arquitectónica ejecutable. Cada topología soportada debe estar aislada como un contexto delimitado completo y debe exponer las mismas familias de artefactos:
+
+```text
+/topologies/
+  /agentic-ai/
+    /adrs/
+    /opa-policies/
+    /ai-rulesets/
+    /ums-contracts/
+  /serverless/
+    /adrs/
+    /opa-policies/
+    /ai-rulesets/
+    /ums-contracts/
+```
+
+Ninguna topología puede filtrar reglas, contratos o supuestos de runtime hacia otra topología. Las preocupaciones compartidas deben promoverse a estándares de nivel Core solo cuando hayan demostrado ser reutilizables entre contextos delimitados.
+
+### Jerarquía Estricta de Artefactos
+
+> **Regla crítica: los artefactos de la Fase 1 (ideación técnica) dentro de Core deben permanecer 100% desacoplados de cualquier dato de negocio — presupuestos, ROI, costos, recursos.** Core expone solo el **Qué** y el **Cómo** (técnico). El Tracker (vía su ACL y Funnel 0) es el único componente autorizado para gestionar el **Cuándo** y el **Quién** (negocio).
+
+---
 
 ## Comienza Aqui
 
@@ -55,16 +116,16 @@ Cuando ya sabes qué artefacto necesitas, sáltate el descenso y abre el [Índic
 <details>
 <summary><strong>Puntos de entrada principales</strong></summary>
 
-| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
-|---|---|---|---|
-| [Resumen Ejecutivo](./reference/governance/standards/communication/visuals/v01-executive-one-pager.es.md) | Explicación de cinco minutos sobre Evolith, UMS y la propuesta de valor | Comunicar valor estratégico rápidamente | Resumen ejecutivo |
-| [Primeros Pasos por Rol](./reference/getting-started/README.es.md) | Rutas de lectura recomendadas para ejecutivos, arquitectos, ingenieros, QA, SRE, producto y contribuidores IA | Acelerar onboarding por rol | Guía de incorporación |
-| [Vision del Producto](./reference/product-suite/vision/evolith-product-vision-master.es.md) | Dirección estratégica, hoja de ruta y modelo de madurez | Alinear equipos a objetivos a largo plazo | Visión y estrategia |
-| [Centro de Gobernanza SDLC](./reference/governance/sdlc/README.es.md) | Fases, gates, artefactos y modelo de trazabilidad autoritativos | Gobernar el ciclo de vida completo | Hub de gobernanza |
-| [Indice Maestro Global](./reference/navigation/MASTER_INDEX.es.md) | Navegación completa del repositorio cuando ya sabes qué artefacto necesitas | Localizar cualquier artefacto rápidamente | Índice de navegación |
-| [Integration & Messaging Hub](./reference/architecture/INTEGRATION_HUB.es.md) | Estrategias de mensajería asíncrona, topologías de integración y gobernanza de patrones | Estandarizar mensajería de microservicios | Hub de arquitectura |
-| [Application Architecture Hub](./reference/architecture/APPLICATION_ARCHITECTURE_HUB.es.md) | Patrones de aplicación core (PoEAA) para desacoplar datos y lógica | Estandarizar estructuras de apps | Hub de arquitectura |
-| [Domain-Driven Design Hub](./reference/architecture/DOMAIN_DESIGN_HUB.es.md) | Patrones DDD estratégicos y tácticos para microservicios y contextos delimitados | Alinear software con dominios de negocio | Hub de arquitectura |
+| Enlace (URL)                                                                                              | Descripción (breve explicación)                                                                               | Meta / Objetivo                           | Tipificación (categoría o tipo) |
+| --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | ----------------------------------------- | ------------------------------- |
+| [Resumen Ejecutivo](./reference/governance/standards/communication/visuals/v01-executive-one-pager.es.md) | Explicación de cinco minutos sobre Evolith, UMS y la propuesta de valor                                       | Comunicar valor estratégico rápidamente   | Resumen ejecutivo               |
+| [Primeros Pasos por Rol](./reference/getting-started/README.es.md)                                        | Rutas de lectura recomendadas para ejecutivos, arquitectos, ingenieros, QA, SRE, producto y contribuidores IA | Acelerar onboarding por rol               | Guía de incorporación           |
+| [Vision del Producto](./reference/product-suite/vision/evolith-product-vision-master.es.md)               | Dirección estratégica, hoja de ruta y modelo de madurez                                                       | Alinear equipos a objetivos a largo plazo | Visión y estrategia             |
+| [Centro de Gobernanza SDLC](./reference/governance/sdlc/README.es.md)                                     | Fases, gates, artefactos y modelo de trazabilidad autoritativos                                               | Gobernar el ciclo de vida completo        | Hub de gobernanza               |
+| [Indice Maestro Global](./reference/navigation/MASTER_INDEX.es.md)                                        | Navegación completa del repositorio cuando ya sabes qué artefacto necesitas                                   | Localizar cualquier artefacto rápidamente | Índice de navegación            |
+| [Integration & Messaging Hub](./reference/architecture/INTEGRATION_HUB.es.md)                             | Estrategias de mensajería asíncrona, topologías de integración y gobernanza de patrones                       | Estandarizar mensajería de microservicios | Hub de arquitectura             |
+| [Application Architecture Hub](./reference/architecture/APPLICATION_ARCHITECTURE_HUB.es.md)               | Patrones de aplicación core (PoEAA) para desacoplar datos y lógica                                            | Estandarizar estructuras de apps          | Hub de arquitectura             |
+| [Domain-Driven Design Hub](./reference/architecture/DOMAIN_DESIGN_HUB.es.md)                              | Patrones DDD estratégicos y tácticos para microservicios y contextos delimitados                              | Alinear software con dominios de negocio  | Hub de arquitectura             |
 
 </details>
 
@@ -73,13 +134,13 @@ Cuando ya sabes qué artefacto necesitas, sáltate el descenso y abre el [Índic
 
 > **Propósito:** Onboarding autoguiado — cada perfil encuentra su primera lectura según su responsabilidad.
 
-| Rol | ¿Qué busca? | Comenzar por | Luego revisar |
-|---|---|---|---|
-| **Arquitecto** | Estándares, ADRs, blueprints | [Hub de Arquitectura](./reference/architecture/README.es.md) | [Matriz de ADRs](./reference/architecture/adrs/adr-matrix.es.md) |
-| **Desarrollador** | Cómo implementar siguiendo el SDLC | [Estándares de Ingeniería](./reference/governance/standards/engineering/engineering-manifesto.es.md) | [Modelo de Referencia UMS](./reference/knowledge/demo/ums-reference-model.es.md) |
-| **QA / SRE** | Gates, calidad, métricas, ops | [Hub Operativo](./reference/operations/README.es.md) | [Quality Gates SDLC](./reference/governance/sdlc/quality-gates.es.md) |
-| **Producto / PM** | PRD, trazabilidad, roadmap | [Centro de Gobernanza SDLC](./reference/governance/sdlc/README.es.md) | [Visión del Producto](./reference/product-suite/vision/evolith-product-vision-master.es.md) |
-| **Agente IA (BMAD)**| Reglas, skills, flujo asistido | [AGENTS.md](./AGENTS.md) — reglas de agentes | [Flujo Asistido IA](./reference/governance/sdlc/ai-assisted-flow.es.md) |
+| Rol                  | ¿Qué busca?                        | Comenzar por                                                                                         | Luego revisar                                                                               |
+| -------------------- | ---------------------------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| **Arquitecto**       | Estándares, ADRs, blueprints       | [Hub de Arquitectura](./reference/architecture/README.es.md)                                         | [Matriz de ADRs](./reference/architecture/adrs/adr-matrix.es.md)                            |
+| **Desarrollador**    | Cómo implementar siguiendo el SDLC | [Estándares de Ingeniería](./reference/governance/standards/engineering/engineering-manifesto.es.md) | [Modelo de Referencia UMS](./reference/knowledge/demo/ums-reference-model.es.md)            |
+| **QA / SRE**         | Gates, calidad, métricas, ops      | [Hub Operativo](./reference/operations/README.es.md)                                                 | [Quality Gates SDLC](./reference/governance/sdlc/quality-gates.es.md)                       |
+| **Producto / PM**    | PRD, trazabilidad, roadmap         | [Centro de Gobernanza SDLC](./reference/governance/sdlc/README.es.md)                                | [Visión del Producto](./reference/product-suite/vision/evolith-product-vision-master.es.md) |
+| **Agente IA (BMAD)** | Reglas, skills, flujo asistido     | [AGENTS.md](./AGENTS.md) — reglas de agentes                                                         | [Flujo Asistido IA](./reference/governance/sdlc/ai-assisted-flow.es.md)                     |
 
 </details>
 
@@ -94,37 +155,37 @@ Cuando ya sabes qué artefacto necesitas, sáltate el descenso y abre el [Índic
 <details>
 <summary><strong>Arquitectura y Blueprints</strong></summary>
 
-| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
-|---|---|---|---|
-| [Directivas Arquitectonicas y Hub](./reference/architecture/README.es.md) | Único punto de acceso a directivas, blueprints, stack base y topologías | Guiar el diseño corporativo | Hub de arquitectura |
+| Enlace (URL)                                                              | Descripción (breve explicación)                                         | Meta / Objetivo             | Tipificación (categoría o tipo) |
+| ------------------------------------------------------------------------- | ----------------------------------------------------------------------- | --------------------------- | ------------------------------- |
+| [Directivas Arquitectonicas y Hub](./reference/architecture/README.es.md) | Único punto de acceso a directivas, blueprints, stack base y topologías | Guiar el diseño corporativo | Hub de arquitectura             |
 
 </details>
 
 <details>
 <summary><strong>Decisiones de Arquitectura (ADRs)</strong></summary>
 
-| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
-|---|---|---|---|
-| [Registro General de ADRs](./reference/architecture/adrs/README.es.md) | Punto central que agrupa la matriz de decisiones y todos los ADRs por ecosistema | Mantener histórico y gobernanza | Hub de decisiones |
+| Enlace (URL)                                                           | Descripción (breve explicación)                                                  | Meta / Objetivo                 | Tipificación (categoría o tipo) |
+| ---------------------------------------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------- | ------------------------------- |
+| [Registro General de ADRs](./reference/architecture/adrs/README.es.md) | Punto central que agrupa la matriz de decisiones y todos los ADRs por ecosistema | Mantener histórico y gobernanza | Hub de decisiones               |
 
 </details>
 
 <details>
 <summary><strong>Estandares y Gobernanza</strong></summary>
 
-| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
-|---|---|---|---|
-| [Centro de Estandares y Gobernanza](./reference/governance/standards/README.es.md) | Directorio principal de manifiestos, taxonomías, directivas técnicas y observabilidad | Alinear equipos a políticas unificadas | Hub de gobernanza |
-| [Hub de Infraestructura y Operaciones](./reference/operations/README.es.md) | Punto de acceso consolidado a despliegues, guías SRE e infraestructura | Normar despliegues y operación | Hub operativo |
+| Enlace (URL)                                                                       | Descripción (breve explicación)                                                       | Meta / Objetivo                        | Tipificación (categoría o tipo) |
+| ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | -------------------------------------- | ------------------------------- |
+| [Centro de Estandares y Gobernanza](./reference/governance/standards/README.es.md) | Directorio principal de manifiestos, taxonomías, directivas técnicas y observabilidad | Alinear equipos a políticas unificadas | Hub de gobernanza               |
+| [Hub de Infraestructura y Operaciones](./reference/operations/README.es.md)        | Punto de acceso consolidado a despliegues, guías SRE e infraestructura                | Normar despliegues y operación         | Hub operativo                   |
 
 </details>
 
 <details>
 <summary><strong>Rulesets y Validacion</strong></summary>
 
-| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
-|---|---|---|---|
-| [Hub General de Rulesets](./rulesets/README.es.md) | Centraliza todas las reglas automatizadas de arquitectura, schemas y CI | Validar cumplimiento automatizado | Hub de reglas |
+| Enlace (URL)                                       | Descripción (breve explicación)                                         | Meta / Objetivo                   | Tipificación (categoría o tipo) |
+| -------------------------------------------------- | ----------------------------------------------------------------------- | --------------------------------- | ------------------------------- |
+| [Hub General de Rulesets](./rulesets/README.es.md) | Centraliza todas las reglas automatizadas de arquitectura, schemas y CI | Validar cumplimiento automatizado | Hub de reglas                   |
 
 </details>
 
@@ -141,73 +202,73 @@ Las cinco fases siguientes van de la concepción a las operaciones; cada secció
 <details>
 <summary><strong>Referencias Generales del SDLC</strong></summary>
 
-| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
-|---|---|---|---|
-| [Mapeo de Artefactos SDLC](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.es.md) | Mapeo de artefactos | Vincular fases y entregables | Estandares y guia |
+| Enlace (URL)                                                                                | Descripción (breve explicación) | Meta / Objetivo              | Tipificación (categoría o tipo) |
+| ------------------------------------------------------------------------------------------- | ------------------------------- | ---------------------------- | ------------------------------- |
+| [Mapeo de Artefactos SDLC](./reference/governance/sdlc/sdlc-evolith-artifact-mapping.es.md) | Mapeo de artefactos             | Vincular fases y entregables | Estandares y guia               |
 
 </details>
 
 <details>
 <summary><strong>Fase 01 - Concepcion y Descubrimiento</strong></summary>
 
-| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) | Requisito |
-|---|---|---|---|---|
-| [Discovery Canvas](./reference/governance/sdlc/04-artifact-templates/discovery-canvas-template.es.md) | Lienzo de descubrimiento | Definir visión y viabilidad | Documentos y plantillas | **Obligatorio** |
-| [Technical Feasibility Canvas](./reference/governance/sdlc/04-artifact-templates/technical-feasibility-template.es.md) | Factibilidad técnica | Especificar NFRs y restricciones | Documentos y plantillas | Opcional |
-| [Ballpark Estimation](./reference/governance/sdlc/04-artifact-templates/ballpark-estimation-template.es.md) | Estimación a gran escala | Proyectar costos y tiempos | Documentos y plantillas | Opcional |
-| [PRD - Documento de Requerimientos de Producto](./reference/governance/sdlc/04-artifact-templates/prd-template.es.md) | Documento de requerimientos | Especificar necesidades funcionales | Documentos y plantillas | **Obligatorio** |
-| [Evolith User Story](./reference/governance/sdlc/04-artifact-templates/evolith-user-story-template.es.md) | Plantilla de historia de usuario | Estandarizar historias ágiles | Documentos y plantillas | **Obligatorio** |
-| [Agile Backlog](./reference/governance/sdlc/04-artifact-templates/agile-backlog-template.es.md) | Plantilla de backlog | Organizar entregables | Documentos y plantillas | **Obligatorio** |
-| [CLI Impact Analysis](./reference/governance/sdlc/04-artifact-templates/cli-impact-analysis.es.md) | Análisis de impacto CLI | Evaluar cambios cross-repo | Documentos y plantillas | Opcional |
-| [Validation Schemas & Rules (Fase 1)](./rulesets/README.es.md) | Schemas de validación para Canvas, PRD, Backlog y reglas de Gates | Validar cumplimiento en CI | Reglas y schemas | **Obligatorio** |
+| Enlace (URL)                                                                                                           | Descripción (breve explicación)                                   | Meta / Objetivo                     | Tipificación (categoría o tipo) | Requisito       |
+| ---------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- | ----------------------------------- | ------------------------------- | --------------- |
+| [Discovery Canvas](./reference/governance/sdlc/04-artifact-templates/discovery-canvas-template.es.md)                  | Lienzo de descubrimiento                                          | Definir visión y viabilidad         | Documentos y plantillas         | **Obligatorio** |
+| [Technical Feasibility Canvas](./reference/governance/sdlc/04-artifact-templates/technical-feasibility-template.es.md) | Factibilidad técnica                                              | Especificar NFRs y restricciones    | Documentos y plantillas         | Opcional        |
+| [Ballpark Estimation](./reference/governance/sdlc/04-artifact-templates/ballpark-estimation-template.es.md)            | Estimación a gran escala                                          | Proyectar costos y tiempos          | Documentos y plantillas         | Opcional        |
+| [PRD - Documento de Requerimientos de Producto](./reference/governance/sdlc/04-artifact-templates/prd-template.es.md)  | Documento de requerimientos                                       | Especificar necesidades funcionales | Documentos y plantillas         | **Obligatorio** |
+| [Evolith User Story](./reference/governance/sdlc/04-artifact-templates/evolith-user-story-template.es.md)              | Plantilla de historia de usuario                                  | Estandarizar historias ágiles       | Documentos y plantillas         | **Obligatorio** |
+| [Agile Backlog](./reference/governance/sdlc/04-artifact-templates/agile-backlog-template.es.md)                        | Plantilla de backlog                                              | Organizar entregables               | Documentos y plantillas         | **Obligatorio** |
+| [CLI Impact Analysis](./reference/governance/sdlc/04-artifact-templates/cli-impact-analysis.es.md)                     | Análisis de impacto CLI                                           | Evaluar cambios cross-repo          | Documentos y plantillas         | Opcional        |
+| [Validation Schemas & Rules (Fase 1)](./rulesets/README.es.md)                                                         | Schemas de validación para Canvas, PRD, Backlog y reglas de Gates | Validar cumplimiento en CI          | Reglas y schemas                | **Obligatorio** |
 
 </details>
 
 <details>
 <summary><strong>Fase 02 - Diseno y Arquitectura</strong></summary>
 
-| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) | Requisito |
-|---|---|---|---|---|
-| [Plantilla ADR](./reference/governance/sdlc/04-artifact-templates/adr-template.es.md) | Plantilla de ADR | Documentar decisiones clave | Documentos y plantillas | Opcional |
-| [Plantilla de Historia Funcional](./reference/governance/sdlc/04-artifact-templates/functional-story-template.es.md) | Plantilla de historia funcional | Detallar comportamiento | Documentos y plantillas | **Obligatorio** |
-| [Plantilla de Modelo DDD](./reference/governance/sdlc/04-artifact-templates/ddd-model-template.es.md) | Plantilla de modelo DDD | Modelar dominios del sistema | Documentos y plantillas | Opcional |
-| [Estandar de Escritura de Historias Funcionales](./reference/governance/sdlc/03-documentation/functional-story-writing-standard.es.md) | Estándar de historias funcionales | Asegurar calidad de specs | Estandares y guia | **Obligatorio** |
-| [Buenas Practicas de Documentacion SDLC](./reference/governance/sdlc/03-documentation/sdlc-documentation-best-practices.es.md) | Prácticas de documentación | Mejorar calidad documental | Estandares y guia | **Obligatorio** |
-| [Validation Schemas & Rules (Fase 2)](./rulesets/README.es.md) | Schemas de validación para ADRs y Funcionales | Validar cumplimiento en CI | Reglas y schemas | **Obligatorio** |
+| Enlace (URL)                                                                                                                           | Descripción (breve explicación)               | Meta / Objetivo              | Tipificación (categoría o tipo) | Requisito       |
+| -------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- | ---------------------------- | ------------------------------- | --------------- |
+| [Plantilla ADR](./reference/governance/sdlc/04-artifact-templates/adr-template.es.md)                                                  | Plantilla de ADR                              | Documentar decisiones clave  | Documentos y plantillas         | Opcional        |
+| [Plantilla de Historia Funcional](./reference/governance/sdlc/04-artifact-templates/functional-story-template.es.md)                   | Plantilla de historia funcional               | Detallar comportamiento      | Documentos y plantillas         | **Obligatorio** |
+| [Plantilla de Modelo DDD](./reference/governance/sdlc/04-artifact-templates/ddd-model-template.es.md)                                  | Plantilla de modelo DDD                       | Modelar dominios del sistema | Documentos y plantillas         | Opcional        |
+| [Estandar de Escritura de Historias Funcionales](./reference/governance/sdlc/03-documentation/functional-story-writing-standard.es.md) | Estándar de historias funcionales             | Asegurar calidad de specs    | Estandares y guia               | **Obligatorio** |
+| [Buenas Practicas de Documentacion SDLC](./reference/governance/sdlc/03-documentation/sdlc-documentation-best-practices.es.md)         | Prácticas de documentación                    | Mejorar calidad documental   | Estandares y guia               | **Obligatorio** |
+| [Validation Schemas & Rules (Fase 2)](./rulesets/README.es.md)                                                                         | Schemas de validación para ADRs y Funcionales | Validar cumplimiento en CI   | Reglas y schemas                | **Obligatorio** |
 
 </details>
 
 <details>
 <summary><strong>Fase 03 - Construccion</strong></summary>
 
-| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) | Requisito |
-|---|---|---|---|---|
-| [Hub de Plantillas de Artefactos](./reference/governance/sdlc/04-artifact-templates/README.es.md) | Hub de plantillas | Centralizar formatos SDLC | Documentos y plantillas | **Obligatorio** |
-| [Plantilla de Historia Tecnica](./reference/governance/sdlc/04-artifact-templates/technical-story-template.es.md) | Plantilla de historia técnica | Estructurar tareas técnicas | Documentos y plantillas | **Obligatorio** |
-| [Framework SDLC Enfocado en Construccion](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.es.md) | Framework de construcción y Definition of Done (DoD) | Normar ejecución técnica | Estandares y guia | **Obligatorio** |
-| [Quality Gates SDLC](./reference/governance/sdlc/quality-gates.es.md) | Gates de calidad | Establecer umbrales de aprobación | Estandares y guia | **Obligatorio** |
-| [Validation Schemas & Rules (Fase 3)](./rulesets/README.es.md) | Schemas para Historias Técnicas, reglas DoD, Thresholds y Dependency Pinning | Validar cumplimiento en CI | Reglas y schemas | **Obligatorio** |
+| Enlace (URL)                                                                                                                    | Descripción (breve explicación)                                              | Meta / Objetivo                   | Tipificación (categoría o tipo) | Requisito       |
+| ------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | --------------------------------- | ------------------------------- | --------------- |
+| [Hub de Plantillas de Artefactos](./reference/governance/sdlc/04-artifact-templates/README.es.md)                               | Hub de plantillas                                                            | Centralizar formatos SDLC         | Documentos y plantillas         | **Obligatorio** |
+| [Plantilla de Historia Tecnica](./reference/governance/sdlc/04-artifact-templates/technical-story-template.es.md)               | Plantilla de historia técnica                                                | Estructurar tareas técnicas       | Documentos y plantillas         | **Obligatorio** |
+| [Framework SDLC Enfocado en Construccion](./reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.es.md) | Framework de construcción y Definition of Done (DoD)                         | Normar ejecución técnica          | Estandares y guia               | **Obligatorio** |
+| [Quality Gates SDLC](./reference/governance/sdlc/quality-gates.es.md)                                                           | Gates de calidad                                                             | Establecer umbrales de aprobación | Estandares y guia               | **Obligatorio** |
+| [Validation Schemas & Rules (Fase 3)](./rulesets/README.es.md)                                                                  | Schemas para Historias Técnicas, reglas DoD, Thresholds y Dependency Pinning | Validar cumplimiento en CI        | Reglas y schemas                | **Obligatorio** |
 
 </details>
 
 <details>
 <summary><strong>Fase 04 - Validacion y QA</strong></summary>
 
-| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) | Requisito |
-|---|---|---|---|---|
-| [Plantilla de Test Summary Report](./reference/governance/sdlc/04-artifact-templates/test-summary-report-template.es.md) | Reporte de pruebas | Consolidar resultados de QA | Documentos y plantillas | **Obligatorio** |
-| [Modelo de Trazabilidad SDLC](./reference/governance/sdlc/traceability-model.es.md) | Modelo de trazabilidad | Vincular requerimientos y pruebas | Estandares y guia | **Obligatorio** |
-| [Validation Schemas & Rules (Fase 4)](./rulesets/README.es.md) | Esquema de validación del Test Summary Report | Validar cumplimiento en CI | Reglas y schemas | **Obligatorio** |
+| Enlace (URL)                                                                                                             | Descripción (breve explicación)               | Meta / Objetivo                   | Tipificación (categoría o tipo) | Requisito       |
+| ------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------- | --------------------------------- | ------------------------------- | --------------- |
+| [Plantilla de Test Summary Report](./reference/governance/sdlc/04-artifact-templates/test-summary-report-template.es.md) | Reporte de pruebas                            | Consolidar resultados de QA       | Documentos y plantillas         | **Obligatorio** |
+| [Modelo de Trazabilidad SDLC](./reference/governance/sdlc/traceability-model.es.md)                                      | Modelo de trazabilidad                        | Vincular requerimientos y pruebas | Estandares y guia               | **Obligatorio** |
+| [Validation Schemas & Rules (Fase 4)](./rulesets/README.es.md)                                                           | Esquema de validación del Test Summary Report | Validar cumplimiento en CI        | Reglas y schemas                | **Obligatorio** |
 
 </details>
 
 <details>
 <summary><strong>Fase 05 - Entrega y Operaciones</strong></summary>
 
-| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) | Requisito |
-|---|---|---|---|---|
-| [Plantilla de Release Notes](./reference/governance/sdlc/04-artifact-templates/release-notes-template.es.md) | Plantilla de notas de versión | Comunicar cambios de release | Documentos y plantillas | **Obligatorio** |
-| [Validation Schemas & Rules (Fase 5)](./rulesets/README.es.md) | Esquema de validación de Release Notes, reglas de CI/CD (ADR-0005) y GitFlow (ADR-0050) | Validar cumplimiento en CI | Reglas y schemas | **Obligatorio** |
+| Enlace (URL)                                                                                                 | Descripción (breve explicación)                                                         | Meta / Objetivo              | Tipificación (categoría o tipo) | Requisito       |
+| ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- | ---------------------------- | ------------------------------- | --------------- |
+| [Plantilla de Release Notes](./reference/governance/sdlc/04-artifact-templates/release-notes-template.es.md) | Plantilla de notas de versión                                                           | Comunicar cambios de release | Documentos y plantillas         | **Obligatorio** |
+| [Validation Schemas & Rules (Fase 5)](./rulesets/README.es.md)                                               | Esquema de validación de Release Notes, reglas de CI/CD (ADR-0005) y GitFlow (ADR-0050) | Validar cumplimiento en CI   | Reglas y schemas                | **Obligatorio** |
 
 </details>
 
@@ -224,39 +285,39 @@ Las cinco fases siguientes van de la concepción a las operaciones; cada secció
 
 Las dos superficies canónicas de seguimiento de la suite — todo lo pendiente, auditado o medido vive en una de estas:
 
-| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
-|---|---|---|---|
-| [Tablero de Gaps](./reference/governance/standards/vision/gap-tracking.es.md) | Tabla compacta única para todos los gaps, ordenada por criticidad, estado y complejidad; cada ID abre su referencia detallada | Ver al instante qué falta y abrir la explicación solo cuando sea necesaria | Tablero de seguimiento |
-| [Evaluación de Madurez](./reference/governance/standards/vision/maturity-assessment.es.md) | Evaluación de madurez única: matriz TOGAF ACMM, revisión WAF, auditoría de patrones/anti-patrones y alineación con la visión | Medir qué tan madura está la suite y dónde invertir | Matriz de madurez y auditoría |
-| [Reporte de Cobertura Documental](./COVERAGE_REPORT.md) | Estado de cobertura de la documentación bilingüe | Auditar la completitud documental | Reporte de cobertura |
+| Enlace (URL)                                                                               | Descripción (breve explicación)                                                                                               | Meta / Objetivo                                                            | Tipificación (categoría o tipo) |
+| ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ------------------------------- |
+| [Tablero de Gaps](./reference/governance/standards/vision/gap-tracking.es.md)              | Tabla compacta única para todos los gaps, ordenada por criticidad, estado y complejidad; cada ID abre su referencia detallada | Ver al instante qué falta y abrir la explicación solo cuando sea necesaria | Tablero de seguimiento          |
+| [Evaluación de Madurez](./reference/governance/standards/vision/maturity-assessment.es.md) | Evaluación de madurez única: matriz TOGAF ACMM, revisión WAF, auditoría de patrones/anti-patrones y alineación con la visión  | Medir qué tan madura está la suite y dónde invertir                        | Matriz de madurez y auditoría   |
+| [Reporte de Cobertura Documental](./COVERAGE_REPORT.md)                                    | Estado de cobertura de la documentación bilingüe                                                                              | Auditar la completitud documental                                          | Reporte de cobertura            |
 
 </details>
 
 <details>
 <summary><strong>Evolith Product Suite</strong></summary>
 
-| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
-|---|---|---|---|
-| [Hub de Product Suite](./reference/product-suite/README.es.md) | Único punto de acceso a la visión, estrategia y posicionamiento del portfolio | Dirección del ecosistema | Referencia de producto |
-| [Arquitectura Evolith Core](./reference/architecture/blueprints/evolith-core-architecture.es.md) | Diseño completo del ecosistema C4 y visión conceptual de la plataforma | Blueprint maestro de arquitectura | Blueprint de arquitectura |
+| Enlace (URL)                                                                                     | Descripción (breve explicación)                                               | Meta / Objetivo                   | Tipificación (categoría o tipo) |
+| ------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------- | --------------------------------- | ------------------------------- |
+| [Hub de Product Suite](./reference/product-suite/README.es.md)                                   | Único punto de acceso a la visión, estrategia y posicionamiento del portfolio | Dirección del ecosistema          | Referencia de producto          |
+| [Arquitectura Evolith Core](./reference/architecture/blueprints/evolith-core-architecture.es.md) | Diseño completo del ecosistema C4 y visión conceptual de la plataforma        | Blueprint maestro de arquitectura | Blueprint de arquitectura       |
 
 </details>
 
 <details>
 <summary><strong>Evolith Tracker</strong></summary>
 
-| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
-|---|---|---|---|
-| [Evolith Tracker Hub](./reference/products/evolith-tracker/README.es.md) | Punto central que agrupa la arquitectura e interfaces técnicas del producto Tracker | Producto de gobernanza | Referencia de producto |
+| Enlace (URL)                                                             | Descripción (breve explicación)                                                     | Meta / Objetivo        | Tipificación (categoría o tipo) |
+| ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- | ---------------------- | ------------------------------- |
+| [Evolith Tracker Hub](./reference/products/evolith-tracker/README.es.md) | Punto central que agrupa la arquitectura e interfaces técnicas del producto Tracker | Producto de gobernanza | Referencia de producto          |
 
 </details>
 
 <details>
 <summary><strong>UMS (Referencia Aplicada)</strong></summary>
 
-| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
-|---|---|---|---|
-| [Hub de Referencia UMS](./reference/knowledge/demo/README.es.md) | Punto de acceso consolidado a modelos, comparativas y portal de arquitectura UMS | Demostrar implementación real | Referencia aplicada |
+| Enlace (URL)                                                     | Descripción (breve explicación)                                                  | Meta / Objetivo               | Tipificación (categoría o tipo) |
+| ---------------------------------------------------------------- | -------------------------------------------------------------------------------- | ----------------------------- | ------------------------------- |
+| [Hub de Referencia UMS](./reference/knowledge/demo/README.es.md) | Punto de acceso consolidado a modelos, comparativas y portal de arquitectura UMS | Demostrar implementación real | Referencia aplicada             |
 
 </details>
 
@@ -280,18 +341,18 @@ smart-cli adr list
 smart-cli mcp serve
 ```
 
-| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
-|---|---|---|---|
-| [Smart CLI Hub](./sdk/cli/README.es.md) | Acceso central a documentación, arquitectura, visión y análisis de estado de la CLI | Entender la herramienta | Referencia de producto |
+| Enlace (URL)                            | Descripción (breve explicación)                                                     | Meta / Objetivo         | Tipificación (categoría o tipo) |
+| --------------------------------------- | ----------------------------------------------------------------------------------- | ----------------------- | ------------------------------- |
+| [Smart CLI Hub](./sdk/cli/README.es.md) | Acceso central a documentación, arquitectura, visión y análisis de estado de la CLI | Entender la herramienta | Referencia de producto          |
 
 </details>
 
 <details>
 <summary><strong>Casos de Adopcion y Herramientas</strong></summary>
 
-| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
-|---|---|---|---|
-| [Casos de Adopcion](./reference/knowledge/adoption-cases.es.md) | Casos de adopción | Mostrar éxito y aprendizaje | Referencia aplicada |
+| Enlace (URL)                                                    | Descripción (breve explicación) | Meta / Objetivo             | Tipificación (categoría o tipo) |
+| --------------------------------------------------------------- | ------------------------------- | --------------------------- | ------------------------------- |
+| [Casos de Adopcion](./reference/knowledge/adoption-cases.es.md) | Casos de adopción               | Mostrar éxito y aprendizaje | Referencia aplicada             |
 
 ### Pre-commit Hooks
 
@@ -309,12 +370,12 @@ smart-cli mcp serve
 >
 > **Objetivos:** mantener el índice maestro como superficie de navegación completa, auditar la paridad EN/ES y registrar los releases documentales.
 
-| Enlace (URL) | Descripción (breve explicación) | Meta / Objetivo | Tipificación (categoría o tipo) |
-|---|---|---|---|
-| [Índice Maestro Global](./reference/navigation/MASTER_INDEX.es.md) | La única superficie de navegación completa: por intención, por rol, por fase SDLC (todos los artefactos de cada fase) y con el Core agnóstico separado de lo específico por plataforma | Localizar cualquier artefacto rápidamente | Índice de navegación |
-| [Índice Bilingüe](./reference/navigation/BILINGUAL_INDEX.es.md) | Estado autogenerado del emparejamiento EN/ES del corpus de referencia | Auditar cobertura bilingüe | Índice de navegación |
-| [Acceso Rápido por Stack](./reference/quick-access/README.es.md) | Camino más corto a los estándares de React, .NET y Node.js | Reducir fricción de navegación | Índice de navegación |
-| [Taxonomía Documental](./reference/documentation-taxonomy.es.md) | Qué tipo de documento pertenece a cada lugar | Mantener el corpus organizado | Referencia de gobernanza |
+| Enlace (URL)                                                       | Descripción (breve explicación)                                                                                                                                                        | Meta / Objetivo                           | Tipificación (categoría o tipo) |
+| ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- | ------------------------------- |
+| [Índice Maestro Global](./reference/navigation/MASTER_INDEX.es.md) | La única superficie de navegación completa: por intención, por rol, por fase SDLC (todos los artefactos de cada fase) y con el Core agnóstico separado de lo específico por plataforma | Localizar cualquier artefacto rápidamente | Índice de navegación            |
+| [Índice Bilingüe](./reference/navigation/BILINGUAL_INDEX.es.md)    | Estado autogenerado del emparejamiento EN/ES del corpus de referencia                                                                                                                  | Auditar cobertura bilingüe                | Índice de navegación            |
+| [Acceso Rápido por Stack](./reference/quick-access/README.es.md)   | Camino más corto a los estándares de React, .NET y Node.js                                                                                                                             | Reducir fricción de navegación            | Índice de navegación            |
+| [Taxonomía Documental](./reference/documentation-taxonomy.es.md)   | Qué tipo de documento pertenece a cada lugar                                                                                                                                           | Mantener el corpus organizado             | Referencia de gobernanza        |
 
 ## Contribucion
 
@@ -331,5 +392,5 @@ Publicado bajo la [Licencia MIT](./LICENSE).
 ---
 
 <div align="center">
-  <sub>Evolith - Plataforma de Arquitectura Empresarial | Corpus de Referencia Progresivo | Spec-driven AI-DD</sub>
+  <sub>Evolith — Framework de Gobernanza Arquitectónica Ejecutable | Corpus de Referencia Multi-Topología | Spec-driven AI-DD</sub>
 </div>

@@ -30,7 +30,7 @@
         "phase": {
           "type": "string",
           "enum": ["F1", "F2", "F3"],
-          "description": "Current architecture phase: F1=Modular Monolith, F2=Distributed Modules, F3=Microservices."
+          "description": "Current progressive-axis compatibility phase: F1=modular-monolith, F2=distributed-modules, F3=microservices. Other topology dimensions are resolved through topology manifests."
         },
         "architectureVersion": {
           "type": "string",

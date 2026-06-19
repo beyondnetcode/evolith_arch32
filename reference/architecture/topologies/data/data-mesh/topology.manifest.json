@@ -1,0 +1,85 @@
+{
+  "apiVersion": "evolith.dev/topology/v1",
+  "kind": "TopologyManifest",
+  "metadata": {
+    "id": "data-mesh",
+    "name": "Data Mesh",
+    "dimension": "data",
+    "status": "draft",
+    "version": "0.1.0"
+  },
+  "spec": {
+    "summary": "Distributed analytical data ownership topology for governed data products, discoverable contracts, quality evidence, and domain-aligned interoperability.",
+    "topologyType": "data-mesh",
+    "compatibility": {
+      "progressiveAxis": {
+        "phase": "cross",
+        "profile": "cross"
+      },
+      "composableWith": [
+        "distributed-modules",
+        "microservices",
+        "event-driven",
+        "serverless",
+        "agentic-ai"
+      ]
+    },
+    "artifacts": {
+      "adrs": [
+        "reference/architecture/adrs/core/0031-schema-per-context-domain-event-catalog.md",
+        "reference/architecture/adrs/core/0079-multi-topology-reference-corpus.md"
+      ],
+      "rulesets": [
+        "rulesets/architecture/f2-distributed-modules.rules.json"
+      ],
+      "opaPolicies": [
+        "rulesets/opa/architecture.rego"
+      ],
+      "aiRulesets": [
+        "reference/architecture/topologies/data/data-mesh/README.md"
+      ],
+      "umsContracts": [
+        "reference/knowledge/demo/ums-reference-model.md"
+      ]
+    },
+    "operationalInterfaces": {
+      "cli": {
+        "validators": [
+          "validate-topology"
+        ]
+      },
+      "mcp": {
+        "resources": [
+          "evolith://topologies/data-mesh/manifest",
+          "evolith://topologies/data-mesh/rulesets"
+        ],
+        "tools": [
+          "evolith-topology-inspect",
+          "evolith-topology-validate"
+        ],
+        "prompts": [
+          "topology-aware-implementation"
+        ]
+      },
+      "coreApi": {
+        "endpoints": [
+          "GET /topologies/{id}",
+          "GET /topologies/{id}/manifest",
+          "POST /topologies/{id}/validate"
+        ]
+      }
+    }
+  },
+  "businessBoundary": {
+    "technicalOnly": true,
+    "trackerOwns": [
+      "timing",
+      "ownership",
+      "prioritization",
+      "roi",
+      "cost",
+      "budget",
+      "funnel-0"
+    ]
+  }
+}

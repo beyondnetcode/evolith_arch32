@@ -32,6 +32,7 @@ If you are onboarding a new satellite repository, read the categories in this or
 | [Evidence Rules](./evidence/README.md) | Auditable evidence manifests | Standardize evidence | Ruleset category | Yes |
 | [MCP Rules](./mcp/README.md) | MCP protocol compliance | Validate MCP exposure | Ruleset category | Yes |
 | [Observability Rules](./observability/README.md) | Telemetry evidence for operations | Verify telemetry evidence | Ruleset category | Yes |
+| [Topology Rulesets](./topologies/README.md) | Executable topology-specific Native and OPA rules | Govern topology validation | Ruleset category | Yes |
 | [Schemas](./schema/README.md) | JSON Schema for validating Evolith artifacts | Validate artifact structure | Schema collection | Yes |
 
 ---
@@ -40,7 +41,7 @@ If you are onboarding a new satellite repository, read the categories in this or
 
 ```
 rulesets/
-├── schema/                     # JSON Schema definitions (13 schemas)
+├── schema/                     # JSON Schema definitions (19 schemas)
 │   ├── adr.schema.json         # ADR artifact validation
 │   ├── prd.schema.json         # PRD artifact validation
 │   ├── discovery-canvas.schema.json     # Phase 1
@@ -53,11 +54,14 @@ rulesets/
 │   ├── technical-story.schema.json       # Phase 3
 │   ├── test-summary-report.schema.json   # Phase 4
 │   ├── release-notes.schema.json         # Phase 5
-│   └── evolith-yaml.schema.json  # Satellite governance
+│   ├── evolith-yaml.schema.json          # Satellite governance
+│   └── topology-manifest.schema.json     # Topology manifest contract
 ├── architecture/               # Architecture phase rules
 │   ├── f1-modular-monolith.rules.json
 │   ├── f2-distributed-modules.rules.json
 │   └── f3-microservices.rules.json
+├── topologies/                 # Topology-specific executable rules
+│   └── README.md
 ├── adr/                        # ADR-encoded rules (7 ADRs)
 │   ├── adr-0002-hexagonal-architecture.rules.json
 │   ├── adr-0005-cicd-quality-gates.rules.json
@@ -125,7 +129,7 @@ flowchart LR
 |---|---|
 | **Versioned rules** | Every rule has a version; satellites pin to a specific version |
 | **Fail-fast validation** | CI must fail on rule violations; no bypass without explicit waiver |
-| **Phase-aware** | Rules change depending on F1/F2/F3 architecture phase |
+| **Topology-aware** | F1/F2/F3 remain progressive-axis compatibility aliases while topology manifests drive broader topology-specific validation |
 | **Federated inheritance** | Satellites inherit from Core; they do not modify Core rules |
 | **Schema-first** | All artifacts have JSON Schema for machine validation |
 

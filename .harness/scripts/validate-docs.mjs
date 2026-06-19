@@ -252,6 +252,19 @@ function validateMermaid(file, content) {
   }
 }
 
+function validateTopologyManifests() {
+  const result = spawnSync(
+    process.execPath,
+    [path.join(root, ".harness/scripts/validate-topology-manifests.mjs")],
+    { cwd: root, encoding: "utf8" },
+  );
+
+  if (result.status !== 0) {
+    const detail = (result.stderr || result.stdout).trim();
+    failures.push(`topology-manifest validation failed: ${detail}`);
+  }
+}
+
 function renderMermaidBlock(block, outputDirectory, index) {
   return new Promise((resolve) => {
     const basename = `${String(index + 1).padStart(3, "0")}-${path
@@ -311,6 +324,8 @@ for (const file of markdownFiles) {
   validateBilingualPair(file, content);
   validateMermaid(file, content);
 }
+
+validateTopologyManifests();
 
 await renderMermaidBlocks();
 

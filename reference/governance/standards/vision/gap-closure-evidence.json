@@ -1418,6 +1418,22 @@
         "npx jest --config sdk/cli/jest.config.js --testPathPatterns=\"progress|alias\""
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-121",
+      "closedAt": "2026-06-19",
+      "closureCommit": "c4835e0db3006d7cc6cb88205537a8086e302066",
+      "evidence": [
+        "sdk/cli/src/commands/init/agents.command.ts",
+        "sdk/cli/src/commands/mcp/mcp-serve.command.ts",
+        "sdk/cli/src/infrastructure/providers/node-filesystem.provider.ts",
+        "packages/mcp-server/src/main.ts"
+      ],
+      "validationCommands": [
+        "npm run build --workspace sdk/cli",
+        "npm test --workspace sdk/cli -- --runInBand"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

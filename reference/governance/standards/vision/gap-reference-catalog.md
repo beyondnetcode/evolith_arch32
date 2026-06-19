@@ -1208,11 +1208,12 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 - **Gap:** After the MCP migration, `smart-cli mcp` delegates to the standalone `@evolith/mcp-server`, leaving the in-process MCP implementation under `sdk/cli/src/infrastructure/mcp/` (server, nine tool groups, resources, prompts, registry — ~2,900 lines plus specs) as dead code. It is not fully orphaned: `sdk/cli/src/commands/init/agents.command.ts` still imports `getFileSystem` from `infrastructure/mcp/tools/tool-utils`. Per ADR-0074/0075 this is Phase 3 (removal), a major-version concern.
 - **Purpose:** Remove the duplicated MCP subsystem from the CLI so the gateway has a single home (`@evolith/mcp-server`), reducing maintenance surface and confusion.
-- **Current evidence / example:** `grep -rl "infrastructure/mcp" sdk/cli/src/commands` returns only `agents.command.ts` (importing `getFileSystem`); `mcp-serve.command.ts` already delegates to `@evolith/mcp-server`.
+- **Current evidence / example:** `grep -rl "infrastructure/mcp" sdk/cli/src/commands` returns nothing; `agents.command.ts` now uses a local filesystem provider instead of importing from the removed in-process MCP tree; `mcp-serve.command.ts` already delegates to `@evolith/mcp-server`.
 - **Done when:**
-  - [ ] `agents.command.ts` no longer imports from `infrastructure/mcp` (uses a shared FS provider)
-  - [ ] `sdk/cli/src/infrastructure/mcp/` and its specs are removed
-  - [ ] CLI builds and tests pass; the change lands in a major version bump
+- [x] `agents.command.ts` no longer imports from `infrastructure/mcp` (uses a shared FS provider)
+- [x] `sdk/cli/src/infrastructure/mcp/` and its specs are removed
+- [x] CLI builds and tests pass; the change lands in a major version bump
+- **Closure evidence:** Commit `c4835e0` removes the in-process MCP subsystem from the Smart CLI, replaces the old filesystem helper with a local `NodeFileSystemProvider`-backed adapter in `agents.command.ts`, and keeps `mcp-serve.command.ts` delegated to the standalone `@evolith/mcp-server` package. The deleted `sdk/cli/src/infrastructure/mcp/**` tree and its e2e fixtures are no longer present; `npm run build --workspace sdk/cli` and `npm test --workspace sdk/cli -- --runInBand` pass on the resulting state.
 - **References:** [sdk/cli/src/commands/mcp/mcp-serve.command.ts](../../../../sdk/cli/src/commands/mcp/mcp-serve.command.ts) · [sdk/cli/src/commands/init/agents.command.ts](../../../../sdk/cli/src/commands/init/agents.command.ts) · [ADR-0075](../../../../reference/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.md)
 
 #### GT-122

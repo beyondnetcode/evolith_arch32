@@ -1,6 +1,6 @@
 # @evolith/core-api — Core API Exposure Layer
 
-> **What this is (ADR-0074).** This NestJS app is the **Evolith Core API Exposure Layer**: the official, product-neutral network boundary that exposes the Core domain (`@evolith/core-domain`) over **REST/GraphQL** (it sits alongside `mcp-server` for MCP and `smart-cli` for the CLI). External clients — including the **Evolith Tracker** — consume it.
+> **What this is (ADR-0074).** This NestJS app is the **Evolith Core API Exposure Layer**: the official, product-neutral network boundary that exposes the Core domain (`@evolith/core-domain`) over **REST** (it sits alongside `mcp-server` for MCP and `smart-cli` for the CLI). External clients — including the **Evolith Tracker** — consume it.
 >
 > **What this is NOT.** This is **not** the Evolith Tracker's BFF. [ADR-0074](../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md) explicitly **rejected** putting the Tracker BFF inside Core. The Tracker's **BFF / Application Gateway** ([ADR-0075](../../reference/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.md) — per-device payloads, PII stripping, session/cookies) lives in the **`evolith_tracker`** repository and consumes this API as an external client. See the [Product Vision — Technical Interface Layer](../../reference/product-suite/vision/evolith-product-vision-master.md).
 

@@ -20,7 +20,7 @@ If we force the Tracker to host the domain logic, we violate the fundamental rul
 
 ## Objective and Scope
 
-**Objective:** Define an official, scalable network exposure layer for Evolith Core that encapsulates the domain logic and provides standard REST/GraphQL/MCP interfaces to external clients (like Evolith Tracker and AI Agents).
+**Objective:** Define an official, scalable network exposure layer for Evolith Core that encapsulates the domain logic and provides standard REST interfaces to external clients (like Evolith Tracker and AI Agents), with MCP served by the standalone gateway.
 
 **In scope:**
 - Creation of `apps/core-api` within the Evolith Core monorepo.
@@ -43,12 +43,12 @@ Adopt **option 3**. We will construct the **Evolith Core API** as a NestJS appli
 
 **Ratified elements:**
 1. **Network Sovereignty:** Evolith Core is the sole owner of its domain, rulesets, and evaluation logic. It exposes this capability natively via `apps/core-api`.
-2. **Client Agnosticism:** The Evolith Tracker acts strictly as a client to the Core API. Tracker will consume REST/GraphQL interfaces to display phase gates, validation statuses, and manage the SDLC.
+2. **Client Agnosticism:** The Evolith Tracker acts strictly as a client to the Core API. Tracker will consume REST interfaces to display phase gates, validation statuses, and manage the SDLC.
 3. **Monorepo Structure:** The root `package.json` will be updated to support npm workspaces targeting `apps/*` and `sdk/*`.
 4. **Technology Stack:** NestJS is selected for the `core-api` to maintain strong typing, enforce hexagonal architecture natively, and seamlessly integrate the existing TypeScript domain logic from the `smart-cli`.
-5. **MCP Exposure (amended 2026-06-19 — see Amendment):** The existing MCP server logic is exposed as a dedicated NestJS interface that serves AI Agents over MCP alongside the REST/GraphQL consumers, sharing the same application-layer use cases as `apps/core-api` and the CLI.
+5. **MCP Exposure (amended 2026-06-19 — see Amendment):** The existing MCP server logic is exposed as a dedicated NestJS interface that serves AI Agents over MCP alongside the REST consumers, sharing the same application-layer use cases as `apps/core-api` and the CLI.
 
-> **Amendment (2026-06-19, GT-119):** Ratified element 5 originally specified the MCP logic as *"integrated into or wrapped by the NestJS application to provide a unified deployment unit."* As implemented under [ADR-0075](../../../architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.md), the MCP gateway was extracted into a **standalone NestJS package** (`@evolith/mcp-server`) rather than fused into `apps/core-api`. `smart-cli mcp serve` delegates to that package, and `apps/core-api` does **not** serve MCP. This preserves the single-domain-logic principle (all surfaces call the same application use cases) while keeping MCP, REST/GraphQL, and CLI as **independent deployment units**, which improves protocol isolation and lets the MCP transport scale separately. The Product Vision §2.5 Technical Interface Layer already reflects this two-layer exposure.
+> **Amendment (2026-06-19, GT-119):** Ratified element 5 originally specified the MCP logic as *"integrated into or wrapped by the NestJS application to provide a unified deployment unit."* As implemented under [ADR-0075](../../../architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.md), the MCP gateway was extracted into a **standalone NestJS package** (`@evolith/mcp-server`) rather than fused into `apps/core-api`. `smart-cli mcp serve` delegates to that package, and `apps/core-api` does **not** serve MCP. This preserves the single-domain-logic principle (all surfaces call the same application use cases) while keeping MCP, REST, and CLI as **independent deployment units**, which improves protocol isolation and lets the MCP transport scale separately. The Product Vision §2.5 Technical Interface Layer already reflects this two-layer exposure.
 
 **Rationale:** This decision preserves the domain sovereignty of Evolith Core while providing a mature, scalable interface for the Evolith Tracker SaaS. NestJS aligns perfectly with our existing TypeScript ecosystem and strictly enforces the dependency injection and hexagonal boundaries we have standardized.
 

@@ -1193,15 +1193,16 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-120
 
-**Title:** GraphQL exposure for the Core API (ADR-0074 scope)
+- **Title:** GraphQL exposure for the Core API (ADR-0074 scope)
 
-- **Gap:** [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md) scopes the Core API Exposure Layer as *"standard REST/GraphQL/MCP interfaces"*, but `apps/core-api` exposes REST only — there is no `@nestjs/graphql` module or schema. Clients that prefer a typed graph/aggregated query surface (a likely Tracker BFF need) cannot use GraphQL.
-- **Purpose:** Add a GraphQL exposure over the same domain use-cases (or formally descope GraphQL from ADR-0074 if REST + MCP suffice), so the Exposure Layer matches its ratified scope.
+- **Gap:** [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md) originally scoped the Core API Exposure Layer as *"standard REST/GraphQL/MCP interfaces"*, but `apps/core-api` exposes REST only — there is no `@nestjs/graphql` module or schema, and the implemented product surfaces now use REST plus the standalone MCP gateway instead of GraphQL.
+- **Purpose:** Formally descope GraphQL from ADR-0074, align the product-facing interface list with the implemented REST-only Core API, and leave GraphQL as a future option only if a new architectural decision reintroduces it.
 - **Current evidence / example:** `grep -riE "graphql|@nestjs/graphql" apps/core-api` returns no GraphQL module; `apps/core-api/package.json` has no GraphQL dependency.
 - **Done when:**
-  - [ ] a GraphQL endpoint is exposed over the domain use-cases with tests, **or** ADR-0074 is amended to descope GraphQL with rationale
-  - [ ] OpenAPI/GraphQL schema is documented and the Product Vision exposure list is consistent
-- **References:** [apps/core-api/src/app.module.ts](../../../../apps/core-api/src/app.module.ts) · [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md)
+  - [x] ADR-0074 is amended to descope GraphQL with rationale and the REST-only scope is documented
+  - [x] OpenAPI documentation and the Product Vision exposure list are consistent with the implemented REST-only Core API
+- **Closure evidence:** Commit `REPLACE_ME` removes the lingering GraphQL references from ADR-0074, the product vision, and the Core API README so the documented exposure matches the implemented REST-only surface. The standalone MCP gateway remains the separate protocol path for AI agents.
+- **References:** [apps/core-api/README.md](../../../../apps/core-api/README.md) · [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md) · [Product Vision Master](../../../../reference/product-suite/vision/evolith-product-vision-master.md)
 
 #### GT-121
 

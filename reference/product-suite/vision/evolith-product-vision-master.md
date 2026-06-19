@@ -113,7 +113,7 @@ The chatbox is an intermediary, not the source of authority. Tenant-selected LLM
 
 ### 2.5 Technical Interface Layer
 
-> **Two-layer exposure (ADRs [0074](../../architecture/adrs/core/0074-evolith-core-api-exposure-layer.md) + [0075](../../architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.md)).** Evolith Core **exposes** its capability through a product-neutral **Core API Exposure Layer** — `apps/core-api` (REST/GraphQL) plus the `mcp-server` (MCP) and the `smart-cli` (CLI). The Evolith Tracker is an **external client**: its **BFF / Application Gateway** (NestJS, ADR-0075, in the `evolith_tracker` repository) consumes that exposure and tailors per-device payloads, strips PII, and manages session/cookies for the PWA. The Tracker BFF does **not** live in Core — [ADR-0074](../../architecture/adrs/core/0074-evolith-core-api-exposure-layer.md) explicitly **rejected** that option.
+> **Two-layer exposure (ADRs [0074](../../architecture/adrs/core/0074-evolith-core-api-exposure-layer.md) + [0075](../../architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.md)).** Evolith Core **exposes** its capability through a product-neutral **Core API Exposure Layer** — `apps/core-api` (REST) plus the `mcp-server` (MCP) and the `smart-cli` (CLI). The Evolith Tracker is an **external client**: its **BFF / Application Gateway** (NestJS, ADR-0075, in the `evolith_tracker` repository) consumes that exposure and tailors per-device payloads, strips PII, and manages session/cookies for the PWA. The Tracker BFF does **not** live in Core — [ADR-0074](../../architecture/adrs/core/0074-evolith-core-api-exposure-layer.md) explicitly **rejected** that option.
 
 ```mermaid
 flowchart TB
@@ -122,7 +122,7 @@ flowchart TB
   end
   subgraph CORE["repo · evolith_arch32 (Evolith Core · Constitution)"]
     subgraph EXP["Core API Exposure Layer · ADR-0074"]
-      API["apps/core-api<br/>REST / GraphQL"]
+      API["apps/core-api<br/>REST"]
       MCP["mcp-server<br/>MCP · AI agents"]
       CLI["smart-cli<br/>CLI · humans"]
     end

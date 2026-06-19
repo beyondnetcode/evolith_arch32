@@ -24,6 +24,7 @@ Ordered from general policy to concrete evidence:
 | [Blueprints Hub](./blueprints/README.md) | Runtime-agnostic principles, topology, and selection criteria | Define the architectural baseline | Area hub | Yes |
 | [ADR Registry](./adrs/README.md) | Records accepted trade-offs and their scope | Preserve decision history | Area hub | Yes |
 | [ADR Matrix](./adrs/adr-matrix.md) | Finds controlling ADRs by architectural concern | Speed up decision discovery | Decision index | Yes |
+| [Topology Hub](./topologies/README.md) | Human-readable Multi-Topology Reference Corpus | Govern topology dimensions and composition | Area hub | Yes |
 | [Canonical Patterns](./canonical-patterns/README.md) | Code patterns governed by runtime-specific ADRs | Standardize runtime implementations | Area hub | No |
 | [Evolith SDK](./evolith-sdk/README.md) | Domain model and technical design of the Evolith SDK | Design the shared SDK | Design reference | No |
 | [MCP Tools Catalog](../governance/standards/ai-augmented/03-tools-catalog/evolith-mcp-tools.md) | Catalog of 11 MCP tools for AI agent automation | Enable AI agent automation | Tool reference | No |

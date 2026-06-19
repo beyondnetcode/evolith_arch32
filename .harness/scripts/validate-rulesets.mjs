@@ -256,6 +256,25 @@ if (evidenceFiles.length === 0) {
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
+// Topology Manifest Contract
+// ──────────────────────────────────────────────────────────────────────────────
+console.log('\n▶ Topology Manifest Contract (topology)');
+
+{
+  try {
+    execSync('node .harness/scripts/validate-topology-manifests.mjs', {
+      cwd: root,
+      stdio: 'pipe',
+      timeout: 60_000,
+    });
+    pass('MT-MAN-01', 'Topology Manifests Must Match Schema');
+  } catch (error) {
+    fail('MT-MAN-01', 'Topology Manifests Must Match Schema',
+      (error.stderr || error.stdout || error.message).toString().trim());
+  }
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
 // MCP Protocol Compliance
 // ──────────────────────────────────────────────────────────────────────────────
 console.log('\n▶ MCP Protocol Compliance (mcp)');

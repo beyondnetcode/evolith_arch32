@@ -18,7 +18,7 @@ Directivas vinculantes. Sin relleno.
 | **R-09** | Legibilidad | Los documentos funcionales usan lenguaje sencillo; sin jerga técnica. |
 | **R-10** | Formato de Auditoría | Las auditorías输出的格式: [Documento, Ubicación, Tipo de Problema, Severidad, Corrección Recomendada]. |
 | **R-11** | Orden | Las tareas duales ejecutan: 1. PO (funcional) -> 2. Arquitecto (técnico). Sin ejecución en paralelo. |
-| **R-12** | Convenciones | Aplique estrictamente prefijos de nomenclatura, taxonomías, enlaces relativos y anclas Markdown antes de merges. |
+| **R-12** | Convenciones | Aplique estrictamente prefijos de nomenclatura, taxonomías, enlaces relativos y anclas Markdown antes de merges; los directorios de contenido en raíz requieren autoridad de ADR aceptado y `/topologies/` está prohibido salvo que un ADR reemplazante cambie la taxonomía de raíz. |
 | **R-13** | Estructura Funcional | Las historias funcionales y artefactos equivalentes deben mantener la narrativa de negocio legible y aislar los detalles técnicos en una sección dedicada `Technical Requirements`. |
 | **R-14** | Autoridad de Runtime | Las referencias técnicas deben citar el perfil de runtime autoritativo y mantenerse alineadas con la pila objetivo real. |
 | **R-15** | Capas de Multi-Tenancy | Los estándares de multi-tenancy deben definir aislamiento en capa de aplicación como primario y ejecución en base de datos nativa como failafe secundario. |

@@ -70,6 +70,7 @@ Decisiones aplicables a cualquier producto construido sobre el framework, sin im
 | [ADR 0073: Contrato Unificado de Salida CLI/MCP](./core/0073-unified-cli-output-contract.es.md) | Contrato unificado de salida CLI/MCP y schema de evidencia de gates | Unificar las superficies de salida de herramientas | ADR Core | Sí |
 | [ADR 0074: Capa de Exposición Nativa del Evolith Core API](./core/0074-evolith-core-api-exposure-layer.es.md) | Capa de Exposición Nativa del Evolith Core API | Exposición oficial de red scalables | ADR Core | Sí |
 | [ADR 0078: Gobernanza de Separación Financiera de Dominios](./core/0078-domain-financial-separation-governance.es.md) | Gobernanza de separación financiera de dominios | Hacer cumplir la frontera DDD entre Core y Tracker | ADR Core | Sí |
+| [ADR 0079: Corpus de Referencia Multi-Topología](./core/0079-multi-topology-reference-corpus.es.md) | Corpus multi-topología y contrato de manifiesto | Gobernar perfiles topológicos y enforcement ejecutable | ADR Core | Sí |
 
 ---
 

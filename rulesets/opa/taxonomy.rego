@@ -18,6 +18,11 @@ violations[{"id": "TAX-06", "message": msg}] {
     msg := sprintf("Satellite missing directories: %v", [concat(", ", missing)])
 }
 
+violations[{"id": "TAX-11", "message": "Root-level topologies/ is prohibited; topology content must stay inside approved corpus and ruleset locations unless a superseding ADR changes root taxonomy"}] {
+    dir := input.core.directories[_]
+    dir == "topologies"
+}
+
 is_valid_adr_name(name) {
     regex.match(`^[0-9]{4}-[a-z0-9-]+\.md$`, name)
 }

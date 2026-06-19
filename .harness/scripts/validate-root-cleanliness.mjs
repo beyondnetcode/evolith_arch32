@@ -45,11 +45,20 @@ const allowedDirectories = new Set([
   "packages"
 ]);
 
+const explicitlyDeniedDirectories = new Map([
+  [
+    "topologies",
+    "Root-level topologies/ is prohibited by ADR-0079. Use taxonomy-approved topology corpus and ruleset locations unless a superseding ADR changes root policy."
+  ]
+]);
+
 const failures = [];
 
 for (const entry of fs.readdirSync(root, { withFileTypes: true })) {
   if (entry.isDirectory()) {
-    if (!allowedDirectories.has(entry.name)) {
+    if (explicitlyDeniedDirectories.has(entry.name)) {
+      failures.push(explicitlyDeniedDirectories.get(entry.name));
+    } else if (!allowedDirectories.has(entry.name)) {
       failures.push(`Unauthorized directory found in root: ${entry.name}/`);
     }
   } else if (entry.isFile()) {

@@ -1,0 +1,86 @@
+{
+  "apiVersion": "evolith.dev/topology/v1",
+  "kind": "TopologyManifest",
+  "metadata": {
+    "id": "serverless",
+    "name": "Serverless",
+    "dimension": "execution",
+    "status": "draft",
+    "version": "0.1.0"
+  },
+  "spec": {
+    "summary": "Managed event-scaled execution topology for isolated capabilities governed by contracts, idempotency, observability, and provider-neutral architecture rules.",
+    "topologyType": "serverless",
+    "compatibility": {
+      "progressiveAxis": {
+        "phase": "cross",
+        "profile": "cross"
+      },
+      "composableWith": [
+        "modular-monolith",
+        "distributed-modules",
+        "microservices",
+        "event-driven",
+        "data-mesh",
+        "agentic-ai"
+      ]
+    },
+    "artifacts": {
+      "adrs": [
+        "reference/architecture/adrs/core/0079-multi-topology-reference-corpus.md"
+      ],
+      "rulesets": [
+        "rulesets/architecture/f1-modular-monolith.rules.json"
+      ],
+      "opaPolicies": [
+        "rulesets/opa/architecture.rego"
+      ],
+      "aiRulesets": [
+        "reference/architecture/topologies/execution/serverless/README.md"
+      ],
+      "umsContracts": [
+        "reference/knowledge/demo/ums-reference-model.md"
+      ]
+    },
+    "operationalInterfaces": {
+      "cli": {
+        "validators": [
+          "validate-topology"
+        ]
+      },
+      "mcp": {
+        "resources": [
+          "evolith://topologies/serverless/manifest",
+          "evolith://topologies/serverless/rulesets"
+        ],
+        "tools": [
+          "evolith-topology-inspect",
+          "evolith-topology-validate"
+        ],
+        "prompts": [
+          "serverless-readiness-review",
+          "topology-aware-implementation"
+        ]
+      },
+      "coreApi": {
+        "endpoints": [
+          "GET /topologies/{id}",
+          "GET /topologies/{id}/manifest",
+          "POST /topologies/{id}/validate"
+        ]
+      }
+    }
+  },
+  "businessBoundary": {
+    "technicalOnly": true,
+    "trackerOwns": [
+      "timing",
+      "ownership",
+      "prioritization",
+      "roi",
+      "cost",
+      "budget",
+      "funnel-0"
+    ]
+  }
+}

@@ -24,6 +24,7 @@ Ordenadas de la política general a la evidencia concreta:
 | [Hub de Blueprints](./blueprints/README.es.md) | Principios agnósticos al runtime, topología y criterios de selección | Definir la línea base arquitectónica | Hub de área | Sí |
 | [Registro ADR](./adrs/README.es.md) | Registra los trade-offs aceptados y su alcance | Preservar el histórico de decisiones | Hub de área | Sí |
 | [Matriz ADR](./adrs/adr-matrix.es.md) | Encuentra los ADRs controladores por preocupación arquitectónica | Acelerar el descubrimiento de decisiones | Índice de decisiones | Sí |
+| [Hub de Topologias](./topologies/README.es.md) | Corpus de Referencia Multi-Topologia legible por humanos | Gobernar dimensiones topologicas y composicion | Hub de area | Si |
 | [Patrones Canónicos](./canonical-patterns/README.es.md) | Patrones de código gobernados por ADRs específicos de runtime | Estandarizar implementaciones por runtime | Hub de área | No |
 | [Evolith SDK](./evolith-sdk/README.es.md) | Modelo de dominio y diseño técnico del SDK de Evolith | Diseñar el SDK compartido | Referencia de diseño | No |
 | [Catálogo de Herramientas MCP](../governance/standards/ai-augmented/03-tools-catalog/evolith-mcp-tools.es.md) | Catálogo de 11 herramientas MCP para automatización con agentes de IA | Habilitar automatización con agentes de IA | Referencia de herramientas | No |

@@ -16,7 +16,7 @@ Binding directives. Zero fluff.
 | **R-09** | Readability | Functional docs use plain language; no technical jargon. |
 | **R-10** | Audit Format | Audits output: [Document, Location, Issue Type, Severity, Recommended Fix]. |
 | **R-11** | Order | Dual tasks execute: 1. PO (functional) -> 2. Architect (technical). No parallel execution. |
-| **R-12** | Conventions | Strictly enforce naming prefixes, taxonomies, relative links, and Markdown anchors before merges. |
+| **R-12** | Conventions | Strictly enforce naming prefixes, taxonomies, relative links, and Markdown anchors before merges; root-level content directories require accepted ADR authority and `/topologies/` is prohibited unless a superseding ADR changes root taxonomy. |
 | **R-13** | Functional Structure | Functional stories and equivalent artifacts must keep business narrative readable and isolate technical detail in a dedicated `Technical Requirements` section. |
 | **R-14** | Runtime Authority | Technical references must cite the authoritative runtime profile and stay aligned with the actual target stack. |
 | **R-15** | Multi-Tenancy Layers | Multi-tenancy standards must define application-layer isolation as primary and database-native enforcement as secondary failsafe. |

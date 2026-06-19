@@ -4,23 +4,33 @@
 
 **Status:** Active Tracking
 **Owner:** Evolith Architecture Board
-**Last Updated:** 2026-06-16
+**Last Updated:** 2026-06-18
 **Gap Details:** [Gap Reference Catalog](./gap-reference-catalog.md)
 
-This board is the single source of truth for gap priority and status. Select a gap ID to open its problem statement, purpose, evidence, closure criteria, and references.
+This board is the single source of truth for technical debt, gaps, opportunities, enablers, priority, and status. Select a gap ID to open its problem statement, purpose, evidence, closure criteria, and references.
 
-> One table with every gap. Each ID links to its full detail in the catalog. Order: status (active on top) → criticality → complexity; completed gaps sit at the end grouped by component. GitHub renders Markdown statically (no interactive sorting or search): the **Component** column categorizes and GitHub file search (`/`) finds an ID or term.
+> One table with every gap and tracked activity. `GT-*` IDs link to their full detail in the catalog; `MT-A*` IDs link to the supporting Multi-Topology implementation plan, but this table remains the canonical status source. Order: status (active on top) → criticality → complexity; completed gaps sit at the end grouped by component. GitHub renders Markdown statically (no interactive sorting or search): the **Component** column categorizes and GitHub file search (`/`) finds an ID or term.
 
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
 |---|---|---|:---:|:---:|:---:|:---:|
 | [`GT-117`](./gap-reference-catalog.md#gt-117) | Read/query (GET) endpoints on Core API for Tracker BFF composition | `BFF API` | F2 | P1 | M | `PENDING` |
 | [`GT-118`](./gap-reference-catalog.md#gt-118) | Remote/SaaS consumption model — decouple Core API from local filesystem paths | `BFF API` | F3 | P1 | L | `PENDING` |
+| [`MT-A23`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Preserve CLI `--arch-level F1/F2/F3` compatibility | `Smart CLI` | Cross | P1 | M | `PENDING` |
+| [`MT-A17`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Move or mirror current F1/F2/F3 rules into topology-aware ruleset discovery | `Core Domain` | Cross | P1 | L | `PENDING` |
+| [`MT-A18`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Add Native + OPA starter rules for serverless | `Rulesets` | Cross | P1 | L | `PENDING` |
+| [`MT-A19`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Add Native + OPA starter rules for event-driven | `Rulesets` | Cross | P1 | L | `PENDING` |
+| [`MT-A20`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Add Native + OPA starter rules for agentic AI | `Rulesets` | Cross | P1 | L | `PENDING` |
+| [`MT-A21`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Add shared topology catalog and manifest resolver in Core Domain | `Core Domain` | Cross | P1 | L | `PENDING` |
+| [`MT-A22`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Add CLI `--topology` support to validation | `Smart CLI` | Cross | P1 | L | `PENDING` |
+| [`MT-A24`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Add MCP topology resources and tools | `MCP Services` | Cross | P1 | L | `PENDING` |
+| [`MT-A25`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Add Service CORE API topology discovery and validation endpoints | `Core API` | Cross | P1 | L | `PENDING` |
 | [`GT-119`](./gap-reference-catalog.md#gt-119) | Reconcile ADR-0074 §5 (MCP in NestJS) with the standalone `@evolith/mcp-server` | `Governance` | Cross | P2 | S | `PENDING` |
 | [`GT-120`](./gap-reference-catalog.md#gt-120) | GraphQL exposure for the Core API (ADR-0074 scope) | `BFF API` | F3 | P2 | M | `PENDING` |
 | [`GT-121`](./gap-reference-catalog.md#gt-121) | Decommission the in-process MCP subsystem in the Smart CLI (post-delegation, ADR-0074/0075 Phase 3) | `CLI` | Cross | P2 | M | `PENDING` |
 | [`GT-122`](./gap-reference-catalog.md#gt-122) | Consolidate duplicated infrastructure adapters across sdk/cli, apps/core-api and packages/infra-providers | `Cross` | Cross | P2 | M | `PENDING` |
-| [`GT-123`](./gap-reference-catalog.md#gt-123) | CLI does not build — pre-existing TypeScript errors block `tsc` (init.wizard, progress.service, alias, old MCP auto-fix) | `CLI` | Cross | P1 | L | `DONE` |
 | [`GT-124`](./gap-reference-catalog.md#gt-124) | CLI e2e suite broken — missing fixtures (SDLC templates, shell hooks) and stale old-MCP prompt naming | `CLI` | Cross | P2 | M | `PENDING` |
+| [`MT-A26`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Update navigation, indexes, validation evidence, and tracker status | `Documentation` | Cross | P2 | M | `PENDING` |
+| [`MT-A09`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create the English and Spanish Topology Hub | `Documentation` | Cross | P1 | S | `DONE` |
 | [`GT-59`](./gap-reference-catalog.md#gt-59) | Hardening HTTP — Helmet + CORS + Rate Limiting (OWASP API4/8) | `BFF API` | Cross | P0 | S | `DONE` |
 | [`GT-60`](./gap-reference-catalog.md#gt-60) | Validación Global DTOs con class-validator (OWASP API3) | `BFF API` | Cross | P0 | M | `DONE` |
 | [`GT-64`](./gap-reference-catalog.md#gt-64) | Structured Logging con Correlation ID | `BFF API` | Cross | P0 | M | `DONE` |
@@ -42,6 +52,7 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-28`](./gap-reference-catalog.md#gt-28) | Restore CLI build, test, and smoke baseline | `CLI` | F0 | P0 | M | `DONE` |
 | [`GT-06`](./gap-reference-catalog.md#gt-06) | MCP tool `evolith-gate-evaluate` | `CLI` | F2 | P0 | M | `DONE` |
 | [`GT-48`](./gap-reference-catalog.md#gt-48) | Restore the normative CLI coverage threshold | `CLI` | F0 | P0 | L | `DONE` |
+| [`GT-123`](./gap-reference-catalog.md#gt-123) | CLI does not build — pre-existing TypeScript errors block `tsc` (init.wizard, progress.service, alias, old MCP auto-fix) | `CLI` | Cross | P1 | L | `DONE` |
 | [`GT-79`](./gap-reference-catalog.md#gt-79) | Restore the green CLI CI validation pipeline | `Governance` | Cross | P1 | S | `DONE` |
 | [`GT-18`](./gap-reference-catalog.md#gt-18) | Publish `@evolith/smart-cli` to npm | `CLI` | F5 | P1 | S | `DONE` |
 | [`GT-14`](./gap-reference-catalog.md#gt-14) | Outbound webhook on gate completion | `CLI` | F4 | P1 | S | `DONE` |
@@ -89,10 +100,21 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-113`](./gap-reference-catalog.md#gt-113) | Clean Architecture Purification in core-domain | `Core Domain` | Transversal | P1 | M | `DONE` |
 | [`GT-04`](./gap-reference-catalog.md#gt-04) | Remove service locator from domain | `Core Domain` | F1 | P1 | S | `DONE` |
 | [`GT-58`](./gap-reference-catalog.md#gt-58) | Clean up TODO stubs injected by Hexagonal Scaffolder | `Core Domain` | Cross | P2 | S | `DONE` |
+| [`MT-A07`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Define the dimensional topology model | `Architecture` | Cross | P0 | M | `DONE` |
+| [`MT-A08`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Preserve F1/F2/F3 as the `progressive-axis` compatibility model | `Architecture` | Cross | P0 | M | `DONE` |
+| [`MT-A11`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create the modular-monolith topology profile | `Architecture` | Cross | P1 | M | `DONE` |
+| [`MT-A12`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create the distributed-modules topology profile | `Architecture` | Cross | P1 | M | `DONE` |
+| [`MT-A13`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create the microservices topology profile | `Architecture` | Cross | P1 | M | `DONE` |
+| [`MT-A14`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create draft profiles for serverless and edge computing | `Architecture` | Cross | P1 | M | `DONE` |
+| [`MT-A15`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create draft profiles for event-driven and data mesh | `Architecture` | Cross | P1 | M | `DONE` |
+| [`MT-A16`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create draft profile for agentic AI | `Architecture` | Cross | P1 | M | `DONE` |
 | [`GT-75`](./gap-reference-catalog.md#gt-75) | Paquete @evolith/infra-providers compartido | `Cross` | Cross | P2 | M | `DONE` |
 | [`GT-54`](./gap-reference-catalog.md#gt-54) | Complete strict hexagonal boundary enforcement | `Cross` | Cross | P2 | L | `DONE` |
 | [`GT-27`](./gap-reference-catalog.md#gt-27) | Canonical tracking semantic consistency | `Governance` | Cross | P0 | S | `DONE` |
 | [`GT-01`](./gap-reference-catalog.md#gt-01) | Unified contract ADR | `Governance` | F0 | P0 | S | `DONE` |
+| [`MT-A01`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Ratify the Multi-Topology Reference Corpus ADR | `Governance` | Cross | P0 | S | `DONE` |
+| [`MT-A02`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Freeze the root-taxonomy decision: no root `/topologies/` without superseding ADR | `Governance` | Cross | P0 | S | `DONE` |
+| [`MT-A06`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Add manifest validation to documentation and ruleset gates | `Harness` | Cross | P0 | M | `DONE` |
 | [`GT-41`](./gap-reference-catalog.md#gt-41) | Automated maturity reconciliation | `Governance` | Cross | P0 | M | `DONE` |
 | [`GT-37`](./gap-reference-catalog.md#gt-37) | Evidence-gated semantic gap closure | `Governance` | Cross | P0 | M | `DONE` |
 | [`GT-47`](./gap-reference-catalog.md#gt-47) | Product documentation and release synchronization | `Governance` | Cross | P1 | S | `DONE` |
@@ -114,10 +136,14 @@ This board is the single source of truth for gap priority and status. Select a g
 | [`GT-110`](./gap-reference-catalog.md#gt-110) | Migrate ingress off the abandoned Kong OSS to Traefik/NGINX | `Platform` | Cross | P0 | L | `DONE` |
 | [`GT-112`](./gap-reference-catalog.md#gt-112) | Replace HashiCorp commercial binaries with OpenTofu + OpenBao | `Platform` | Cross | P0 | L | `DONE` |
 | [`GT-111`](./gap-reference-catalog.md#gt-111) | Plan the MassTransit v9 commercial pivot (stay v8 OSS or move to Rebus) | `Platform` | Cross | P1 | L | `DONE` |
+| [`MT-A04`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Authorize `rulesets/topologies/` as the canonical executable topology rules location | `Rulesets` | Cross | P0 | S | `DONE` |
+| [`MT-A10`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create the English and Spanish Rulesets Topologies Hub | `Rulesets` | Cross | P1 | S | `DONE` |
+| [`MT-A05`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create `topology-manifest.schema.json` | `Schema` | Cross | P0 | M | `DONE` |
+| [`MT-A03`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Authorize `reference/architecture/topologies/` as the canonical human-readable topology corpus | `Taxonomy` | Cross | P0 | S | `DONE` |
 
 **Progress:** 94 / 101 done · 0 in progress · 7 pending · 0 deferred
 
-**Ordering:** one table, ordered by status (pending then deferred then completed), then criticality (`P0` → `P1` → `P2`) then complexity (`S` → `M` → `L`); completed gaps are grouped by component. Each ID links to its detail in the [Gap Reference Catalog](./gap-reference-catalog.md).
+**Ordering:** one table, ordered by status (pending then deferred then completed), then criticality (`P0` → `P1` → `P2`) then complexity (`S` → `M` → `L`); completed gaps are grouped by component. `GT-*` IDs link to the [Gap Reference Catalog](./gap-reference-catalog.md); `MT-A*` IDs link to the supporting [Multi-Topology implementation plan](./multi-topology-reference-corpus-implementation-plan.md).
 
 ---
 [Back to Vision Index](./README.md)

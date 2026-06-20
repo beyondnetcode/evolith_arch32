@@ -42,3 +42,5 @@ Implement a two-tier authentication model:
 - [OWASP API2:2023](https://owasp.org/API-Security/editions/2023/en/0xa2-broken-authentication/)
 - [OWASP API5:2023](https://owasp.org/API-Security/editions/2023/en/0xa5-broken-function-level-authorization/)
 - [apps/core-api/src/infrastructure/auth/](https://github.com/beyondnetcode/evolith_arch32/tree/main/apps/core-api/src/infrastructure/auth)
+
+> **Agent Signature:** Architect Agent

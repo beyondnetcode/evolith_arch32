@@ -87,3 +87,5 @@ Las opciones se juzgaron contra: acoplamiento (llamadas síncronas entre servici
 
 ---
 [Volver al Registro de ADRs](../README.es.md)
+
+> **Agent Signature:** Architect Agent

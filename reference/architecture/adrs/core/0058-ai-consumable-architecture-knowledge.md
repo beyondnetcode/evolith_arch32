@@ -88,3 +88,5 @@ Unknown (historical record; evaluated against general architectural principles o
 
 ---
 [Back to ADR Registry](./README.md)
+
+> **Agent Signature:** Architect Agent

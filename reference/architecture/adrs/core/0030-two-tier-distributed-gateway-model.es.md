@@ -61,3 +61,5 @@ Evaluado contra el principio arquitectónico de separación de preocupaciones. E
 
 ---
 [Volver al Índice](./README.es.md)
+
+> **Agent Signature:** Architect Agent

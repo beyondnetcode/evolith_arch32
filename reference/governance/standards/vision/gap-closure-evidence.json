@@ -14,7 +14,7 @@
       ],
       "validationCommands": [
         "node .harness/scripts/validate-docs.mjs",
-        "node .harness/scripts/validate-tracking.mjs"
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -31,7 +31,7 @@
       ],
       "validationCommands": [
         "node .harness/scripts/validate-docs.mjs",
-        "node .harness/scripts/validate-tracking.mjs"
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -47,7 +47,7 @@
       ],
       "validationCommands": [
         "node .harness/scripts/validate-docs.mjs",
-        "node .harness/scripts/validate-tracking.mjs"
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -63,7 +63,7 @@
       ],
       "validationCommands": [
         "node .harness/scripts/validate-docs.mjs",
-        "node .harness/scripts/validate-tracking.mjs"
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -85,7 +85,7 @@
         "node .harness/scripts/check-bilingual-parity.mjs",
         "node .harness/scripts/validate-docs.mjs --render-mermaid",
         "npm run build --workspace @evolith/core-domain",
-        "node .harness/scripts/validate-tracking.mjs"
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -111,7 +111,7 @@
       ],
       "validationCommands": [
         "node .harness/scripts/validate-docs.mjs",
-        "node .harness/scripts/validate-tracking.mjs"
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -140,7 +140,7 @@
       ],
       "validationCommands": [
         "npm --workspace core-api test",
-        "node .harness/scripts/validate-tracking.mjs"
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -155,7 +155,7 @@
       ],
       "validationCommands": [
         "npm --workspace @evolith/core-api test",
-        "node .harness/scripts/validate-tracking.mjs"
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -170,7 +170,7 @@
         "packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts"
       ],
       "validationCommands": [
-        "node .harness/scripts/validate-tracking.mjs"
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -185,7 +185,7 @@
         "packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts"
       ],
       "validationCommands": [
-        "node .harness/scripts/validate-tracking.mjs"
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -201,7 +201,7 @@
       ],
       "validationCommands": [
         "npm --workspace @evolith/core-domain test -- --runInBand",
-        "node .harness/scripts/validate-tracking.mjs"
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -650,7 +650,7 @@
         "reference/governance/standards/vision/gap-reference-catalog.md"
       ],
       "validationCommands": [
-        "node .harness/scripts/validate-tracking.mjs"
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -717,13 +717,13 @@
       "closedAt": "2026-06-12",
       "closureCommit": "0fe0696",
       "evidence": [
-        ".harness/scripts/validate-tracking.mjs",
-        ".harness/scripts/generate-inventories.mjs",
+        ".harness/scripts/ci/08-validate-tracking.mjs",
+        ".harness/scripts/ci/07-generate-inventories.mjs",
         "reference/governance/standards/vision/inventory-summary.md"
       ],
       "validationCommands": [
-        "node .harness/scripts/validate-tracking.mjs",
-        "node .harness/scripts/generate-inventories.mjs"
+        "node .harness/scripts/ci/08-validate-tracking.mjs",
+        "node .harness/scripts/ci/07-generate-inventories.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -745,14 +745,14 @@
       "closedAt": "2026-06-13",
       "closureCommit": "f3c8520",
       "evidence": [
-        ".harness/scripts/validate-tracking.mjs",
+        ".harness/scripts/ci/08-validate-tracking.mjs",
         ".harness/scripts/validate-tracking.test.mjs",
         "reference/governance/standards/vision/gap-closure-evidence-standard.md",
         "reference/governance/standards/vision/gap-closure-evidence.json"
       ],
       "validationCommands": [
         "node --test .harness/scripts/validate-tracking.test.mjs",
-        "node .harness/scripts/validate-tracking.mjs",
+        "node .harness/scripts/ci/08-validate-tracking.mjs",
         "node .harness/scripts/validate-docs.mjs",
         "node .harness/scripts/check-bilingual-parity.mjs"
       ],
@@ -764,15 +764,15 @@
       "closureCommit": "e4fa0e3",
       "evidence": [
         ".github/workflows/docs.yml",
-        ".harness/scripts/reconcile-maturity.mjs",
+        ".harness/scripts/ci/09-reconcile-maturity.mjs",
         ".harness/scripts/reconcile-maturity.test.mjs",
         "reference/governance/standards/vision/maturity-evidence.json",
         "reference/governance/standards/vision/maturity-reconciliation.json"
       ],
       "validationCommands": [
         "node --test .harness/scripts/reconcile-maturity.test.mjs",
-        "node .harness/scripts/validate-tracking.mjs",
-        "node .harness/scripts/reconcile-maturity.mjs --check",
+        "node .harness/scripts/ci/08-validate-tracking.mjs",
+        "node .harness/scripts/ci/09-reconcile-maturity.mjs --check",
         "node .harness/scripts/validate-docs.mjs"
       ],
       "dependencyDisposition": "satisfied",
@@ -783,7 +783,7 @@
       "closedAt": "2026-06-13",
       "closureCommit": "154aadf",
       "evidence": [
-        ".harness/scripts/validate-contract-conformance.mjs",
+        ".harness/scripts/ci/10-validate-contract-conformance.mjs",
         ".harness/scripts/validate-contract-conformance.test.mjs",
         "rulesets/contracts/evolith-machine-contracts.json",
         "rulesets/contracts/README.md",
@@ -791,8 +791,8 @@
       ],
       "validationCommands": [
         "node --test .harness/scripts/validate-contract-conformance.test.mjs",
-        "node .harness/scripts/validate-contract-conformance.mjs",
-        "node .harness/scripts/validate-contract-conformance.mjs --consumer ../evolith_tracker/contracts/evolith-core-contracts.json"
+        "node .harness/scripts/ci/10-validate-contract-conformance.mjs",
+        "node .harness/scripts/ci/10-validate-contract-conformance.mjs --consumer ../evolith_tracker/contracts/evolith-core-contracts.json"
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "Evolith Tracker main commit 4256e7b pins contract 1.0.0 and executes the Core conformance validator in CI."
@@ -904,7 +904,7 @@
       "closureCommit": "38dfc985fa4f4a09e561678032b0412098f2273b",
       "evidence": [
         ".harness/scripts/generate-product-inventory.mjs",
-        ".harness/scripts/validate-product-docs.mjs",
+        ".harness/scripts/ci/11-validate-product-docs.mjs",
         "reference/products/smart-cli/product-inventory.md",
         "reference/products/smart-cli/README.md",
         "reference/products/mcp-services/README.md",
@@ -912,7 +912,7 @@
       ],
       "validationCommands": [
         "node .harness/scripts/generate-product-inventory.mjs --check",
-        "node .harness/scripts/validate-product-docs.mjs",
+        "node .harness/scripts/ci/11-validate-product-docs.mjs",
         "node .harness/scripts/validate-docs.mjs"
       ],
       "dependencyDisposition": "none"
@@ -970,8 +970,8 @@
       "validationCommands": [
         "GITHUB_REF_NAME=main GITHUB_EVENT_NAME=push node .harness/scripts/verify-git-tag.mjs",
         "GITHUB_REF_NAME=main GITHUB_EVENT_NAME=push node .harness/scripts/verify-version-log.mjs",
-        "node .harness/scripts/validate-tracking.mjs",
-        "node .harness/scripts/reconcile-maturity.mjs --check"
+        "node .harness/scripts/ci/08-validate-tracking.mjs",
+        "node .harness/scripts/ci/09-reconcile-maturity.mjs --check"
       ],
       "dependencyDisposition": "none"
     },
@@ -1064,10 +1064,10 @@
       "closedAt": "2026-06-13",
       "closureCommit": "b55a498",
       "evidence": [
-        ".harness/scripts/validate-root-cleanliness.mjs"
+        ".harness/scripts/ci/03-validate-root-cleanliness.mjs"
       ],
       "validationCommands": [
-        "node .harness/scripts/validate-root-cleanliness.mjs"
+        "node .harness/scripts/ci/03-validate-root-cleanliness.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -1356,7 +1356,7 @@
       ],
       "validationCommands": [
         "node .harness/scripts/validate-docs.mjs",
-        "node .harness/scripts/validate-tracking.mjs"
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "OpenBao is API-compatible with Vault; all existing secrets workflows remain unchanged."
@@ -1681,7 +1681,7 @@
         "npm test --workspace sdk/cli -- --runInBand",
         "node .harness/scripts/validate-docs.mjs",
         "node .harness/scripts/check-bilingual-parity.mjs",
-        "node .harness/scripts/validate-tracking.mjs"
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -1698,7 +1698,7 @@
       "validationCommands": [
         "node .harness/scripts/validate-docs.mjs",
         "node .harness/scripts/check-bilingual-parity.mjs",
-        "node .harness/scripts/validate-tracking.mjs"
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -1735,8 +1735,8 @@
       "validationCommands": [
         "node .harness/scripts/validate-docs.mjs",
         "node .harness/scripts/check-bilingual-parity.mjs",
-        "node .harness/scripts/validate-tracking.mjs",
-        "node .harness/scripts/reconcile-maturity.mjs --check"
+        "node .harness/scripts/ci/08-validate-tracking.mjs",
+        "node .harness/scripts/ci/09-reconcile-maturity.mjs --check"
       ],
       "dependencyDisposition": "none"
     }

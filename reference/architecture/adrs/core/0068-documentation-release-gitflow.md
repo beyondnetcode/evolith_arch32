@@ -333,8 +333,8 @@ PR description must include:
 | GitFlow Branch Model | [CHECKMARK] Same | [CHECKMARK] Same |
 | Version Tag Format | `docs-vX.Y.Z` | `docs-vX.Y.Z` |
 | Version Log File | `DOCUMENTATION_VERSIONS.md` | `DOCUMENTATION_VERSIONS.md` |
-| CI Validation Scripts | `.harness/scripts/validate-docs.mjs` | Inherited via child-repository |
-| Bilingual Parity Check | `.harness/scripts/check-bilingual-parity.mjs` | Inherited |
+| CI Validation Scripts | `.harness/scripts/ci/01-validate-docs.mjs` | Inherited via child-repository |
+| Bilingual Parity Check | `.harness/scripts/ci/04-check-bilingual-parity.mjs` | Inherited |
 | PR Template | `.github/PULL_REQUEST_TEMPLATE/docs-template.md` | Inherited |
 | Required Checks | Same | Same |
 | Approval Requirements | Same | Same |
@@ -480,10 +480,10 @@ jobs:
           node-version: '20'
           
       - name: Validate Documentation
-        run: node .harness/scripts/validate-docs.mjs
+        run: node .harness/scripts/ci/01-validate-docs.mjs
         
       - name: Check Bilingual Parity
-        run: node .harness/scripts/check-bilingual-parity.mjs
+        run: node .harness/scripts/ci/04-check-bilingual-parity.mjs
         
       - name: Bilingual Coverage
         if: github.ref == 'refs/heads/develop'
@@ -585,3 +585,4 @@ Unknown (historical record; evaluated against general architectural principles o
 
 ---
 [Back to Index](./README.md)
+> **Agent Signature:** Architect Agent

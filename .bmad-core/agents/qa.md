@@ -35,7 +35,7 @@ Use these scripts to validate documentation as part of the QA process:
 
 ### validate-docs.mjs
 ```bash
-node .harness/scripts/validate-docs.mjs
+node .harness/scripts/ci/01-validate-docs.mjs
 ```
 Checks:
 - [ ] All internal relative links resolve
@@ -46,7 +46,7 @@ Checks:
 
 ### check-bilingual-parity.mjs
 ```bash
-node .harness/scripts/check-bilingual-parity.mjs
+node .harness/scripts/ci/04-check-bilingual-parity.mjs
 ```
 Checks:
 - [ ] EN and ES files have identical ## header counts
@@ -74,7 +74,7 @@ Checks:
 
 ### Render Mermaid for Visual QA
 ```bash
-node .harness/scripts/validate-docs.mjs --render-mermaid
+node .harness/scripts/ci/01-validate-docs.mjs --render-mermaid
 ```
 Renders Mermaid diagrams to SVG for visual verification.
 

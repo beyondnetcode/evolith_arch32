@@ -28,7 +28,7 @@ Los artefactos de gobernanza machine-readable usan inglés como idioma canónico
 
 ## 3. Enforcement Semántico
 
-`node .harness/scripts/validate-tracking.mjs` falla cuando:
+`node .harness/scripts/ci/08-validate-tracking.mjs` falla cuando:
 
 1. un gap completado no tiene registro de cierre;
 2. un registro apunta a un gap, commit o archivo de evidencia inexistente;

@@ -333,8 +333,8 @@ Descripción del PR debe incluir:
 | Modelo GitFlow | [CHECKMARK] Mismo | [CHECKMARK] Mismo |
 | Formato de Tag de Versión | `docs-vX.Y.Z` | `docs-vX.Y.Z` |
 | Archivo de Log de Versión | `DOCUMENTATION_VERSIONS.md` | `DOCUMENTATION_VERSIONS.md` |
-| Scripts de Validación CI | `.harness/scripts/validate-docs.mjs` | Heredado vía child-repository |
-| Verificación de Paridad Bilingüe | `.harness/scripts/check-bilingual-parity.mjs` | Heredado |
+| Scripts de Validación CI | `.harness/scripts/ci/01-validate-docs.mjs` | Heredado vía child-repository |
+| Verificación de Paridad Bilingüe | `.harness/scripts/ci/04-check-bilingual-parity.mjs` | Heredado |
 | Template de PR | `.github/PULL_REQUEST_TEMPLATE/docs-template.md` | Heredado |
 | Verificaciones Requeridas | Mismo | Mismo |
 | Requisitos de Aprobación | Mismo | Mismo |
@@ -480,10 +480,10 @@ jobs:
           node-version: '20'
           
       - name: Validate Documentation
-        run: node .harness/scripts/validate-docs.mjs
+        run: node .harness/scripts/ci/01-validate-docs.mjs
         
       - name: Check Bilingual Parity
-        run: node .harness/scripts/check-bilingual-parity.mjs
+        run: node .harness/scripts/ci/04-check-bilingual-parity.mjs
         
       - name: Bilingual Coverage
         if: github.ref == 'refs/heads/develop'
@@ -585,3 +585,4 @@ Desconocido (registro histórico; evaluado contra principios generales de arquit
 
 ---
 [Volver al Índice](./README.es.md)
+> **Agent Signature:** Architect Agent

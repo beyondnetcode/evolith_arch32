@@ -40,16 +40,16 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Validate Documentation
-        run: node .harness/scripts/validate-docs.mjs --render-mermaid
+        run: node .harness/scripts/ci/01-validate-docs.mjs --render-mermaid
 
       - name: Check Bilingual Parity
-        run: node .harness/scripts/check-bilingual-parity.mjs
+        run: node .harness/scripts/ci/04-check-bilingual-parity.mjs
 
       - name: Bilingual Terminology Lint
         run: node .harness/scripts/bilingual-terminology-lint.mjs
 
       - name: Verify Root Cleanliness
-        run: node .harness/scripts/validate-root-cleanliness.mjs
+        run: node .harness/scripts/ci/03-validate-root-cleanliness.mjs
 
       - name: Check Bilingual Coverage
         run: node .harness/scripts/bilingual-coverage.mjs

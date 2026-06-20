@@ -24,3 +24,5 @@ To guarantee that AI Agents and the Evolith core remain synchronized, we institu
 ### Negative
 - **Maintenance Overhead**: Dual-Engine Parity requires maintaining validation logic in two distinct languages (TypeScript and Rego) until one engine is completely deprecated in the future.
 - **Learning Curve**: Architecture teams and Agents must understand Rego syntax to contribute new governance rules.
+
+> **Agent Signature:** Architect Agent

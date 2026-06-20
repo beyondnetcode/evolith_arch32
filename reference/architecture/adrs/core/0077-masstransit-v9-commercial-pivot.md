@@ -86,3 +86,5 @@ The decision applies to all .NET product repositories in the Evolith ecosystem t
 - ADR-0036: [Message Delivery and Dead-Letter Strategy](./0036-message-bus-delivery-strategy-fifo-dlq.md)
 - OpenTransit project: [https://opentransitlab.github.io/OpenTransit/](https://opentransitlab.github.io/OpenTransit/)
 - Rebus project: [https://github.com/rebus-org/Rebus](https://github.com/rebus-org/Rebus)
+
+> **Agent Signature:** Architect Agent

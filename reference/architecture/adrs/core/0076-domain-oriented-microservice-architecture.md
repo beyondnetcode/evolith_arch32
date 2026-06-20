@@ -87,3 +87,5 @@ Options were judged against: coupling (cross-service synchronous calls), indepen
 
 ---
 [Back to ADR Registry](../README.md)
+
+> **Agent Signature:** Architect Agent

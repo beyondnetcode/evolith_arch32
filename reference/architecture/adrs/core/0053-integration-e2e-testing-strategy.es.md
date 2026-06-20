@@ -101,3 +101,5 @@ Ninguna explícitamente enlazada.
 
 ---
 [Volver al Índice](../../../../MASTER_INDEX.es.md)
+
+> **Agent Signature:** Architect Agent

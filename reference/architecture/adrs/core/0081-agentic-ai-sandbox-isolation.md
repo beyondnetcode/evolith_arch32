@@ -53,3 +53,5 @@ The selected option is evaluated by whether it prevents a compromised prompt or 
 
 ---
 [Back to Core ADR Index](./README.md)
+
+> **Agent Signature:** Architect Agent

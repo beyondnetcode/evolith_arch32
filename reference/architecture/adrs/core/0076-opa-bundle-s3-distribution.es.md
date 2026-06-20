@@ -28,3 +28,5 @@ Adoptaremos el patrón de la **API de OPA Bundle** utilizando un almacén de obj
 ### Negativas
 - Requiere pasos adicionales en el pipeline de CI/CD para ejecutar `opa build` y subir artefactos a S3.
 - Ligero retraso de propagación entre la fusión de una regla en `main` y su obtención por parte de los pods (basado en la frecuencia de sondeo de OPA).
+
+> **Agent Signature:** Architect Agent

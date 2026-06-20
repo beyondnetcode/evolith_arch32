@@ -69,3 +69,5 @@ Con la introducción de sidecars en fases avanzadas, se formalizan los siguiente
 
 ---
 [Volver al Índice](./README.es.md)
+
+> **Agent Signature:** Architect Agent

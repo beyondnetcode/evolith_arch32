@@ -32,7 +32,7 @@ Every framework adoption document must satisfy these gates before merge:
 | Diagrams | Mermaid fences are syntactically valid and renderable when `--render-mermaid` is used |
 | Languages | English and Spanish variants exist when bilingual navigation is declared |
 | Agent rules | Local additions are separated from upstream framework behavior |
-| Validation | `node .harness/scripts/validate-docs.mjs` passes without warnings treated as success |
+| Validation | `node .harness/scripts/ci/01-validate-docs.mjs` passes without warnings treated as success |
 
 ---
 

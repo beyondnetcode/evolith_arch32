@@ -218,7 +218,7 @@ rm -rf reference/knowledge/demo
 ```bash
 # Copy harness rules (already included from clone)
 # Verify it passes before your first commit
-node .harness/scripts/validate-docs.mjs
+node .harness/scripts/ci/01-validate-docs.mjs
 ```
 
 Add the validation to your CI pipeline:
@@ -226,7 +226,7 @@ Add the validation to your CI pipeline:
 ```yaml
 # .github/workflows/docs-validation.yml
 - name: Validate documentation
-  run: node .harness/scripts/validate-docs.mjs
+  run: node .harness/scripts/ci/01-validate-docs.mjs
 ```
 
 ### Step 5 — Complete the first DECISIONS.md triage

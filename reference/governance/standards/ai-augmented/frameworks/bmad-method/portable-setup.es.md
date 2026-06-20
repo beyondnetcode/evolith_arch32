@@ -10,7 +10,7 @@
 | Aprovechar a los agentes de gobernanza | `.harness/agents/agent-specs.md` | Gobernanza de arquitectura y documentos bajo demanda |
 | Reglas del arnés | `.harness/rules/global-rules.md` | 18 directivas vinculantes aplicadas en todos los agentes |
 | Libros de jugadas | `.harness/playbooks/*.md` | Listas de verificación operativas para tareas recurrentes de gobernanza |
-| Guión de validación | `.harness/scripts/validate-docs.mjs` | Validación automatizada de UTF-8, enlaces y Mermaid |
+| Guión de validación | `.harness/scripts/ci/01-validate-docs.mjs` | Validación automatizada de UTF-8, enlaces y Mermaid |
 | AGENTES.md | `AGENTES.md` | Archivo de nivel superior que activa el marco para herramientas de IA |
 | Flujo de trabajo | `.bmad-core/workflows/development.yaml` | Flujo de trabajo secuencial de desarrollo greenfield |
 
@@ -61,13 +61,13 @@ Cree un archivo por libro de jugadas en `.harness/playbooks/`. Adapte las condic
 
 **`.harness/playbooks/document-governance-playbook.md`**```markdown```
 ## Step 6 — Copy the Validation Script
-Copie `.harness/scripts/validate-docs.mjs` de este repositorio a su directorio `.harness/scripts/`. El script valida:
+Copie `.harness/scripts/ci/01-validate-docs.mjs` de este repositorio a su directorio `.harness/scripts/`. El script valida:
 - Codificación UTF-8 (sin artefactos de codificación en el rango U+2600–U+27BF)
 - Los enlaces relativos se resuelven en archivos existentes.
 - Los bloques de código de sirena tienen marcadores de sintaxis válidos.
 
 Ejecútelo localmente para verificar su documentación:```bash
-node .harness/scripts/validate-docs.mjs
+node .harness/scripts/ci/01-validate-docs.mjs
 ```**Se requiere adaptación:** El script escanea `**/*.md` desde la raíz del repositorio de forma predeterminada. Si su documentación se encuentra en una estructura de directorio diferente, ajuste el patrón global en la sección de configuración del script.
 
 ---
@@ -131,7 +131,7 @@ Si desea adoptar solo la capa de gobernanza sin el flujo de trabajo completo del
 | :--- | :--- |
 | `.harness/agents/agent-specs.md` | Define @po, @architect, @analyst, @devops |
 | `.harness/rules/global-rules.md` | Las 18 normas vinculantes |
-| `.harness/scripts/validate-docs.mjs` | Aplicación automatizada |
+| `.harness/scripts/ci/01-validate-docs.mjs` | Aplicación automatizada |
 | `AGENTES.md` | Activa el marco para herramientas de IA |
 | Paso CI | Hace que R-03 y la validación de enlaces no sean negociables |
 
@@ -145,7 +145,7 @@ Antes de su primera confirmación con el marco activo, verifique:
 - [] R-02 apunta a sus fuentes de contexto autorizadas reales
 - [] R-05 y R-14 apuntan a su pila tecnológica real y a sus documentos de perfil de tiempo de ejecución
 - [] `AGENTS.md` describe su proyecto real, no este repositorio base
-- [] El script de validación pasa a su documentación existente (`node .harness/scripts/validate-docs.mjs`)
+- [] El script de validación pasa a su documentación existente (`node .harness/scripts/ci/01-validate-docs.mjs`)
 - [] El paso CI está configurado y bloqueado.
 
 ---

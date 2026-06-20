@@ -98,3 +98,5 @@ Evidence: both source design documents; verified code state of 2026-06-10 — `-
 
 ---
 [Back to ADR Registry](../README.md)
+
+> **Agent Signature:** Architect Agent

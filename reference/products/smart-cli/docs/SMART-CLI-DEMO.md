@@ -1241,10 +1241,10 @@ evolith validate --format summary --satellite . || exit 1
 node .harness/scripts/bilingual-coverage.mjs
 
 # Check structural parity
-node .harness/scripts/check-bilingual-parity.mjs
+node .harness/scripts/ci/04-check-bilingual-parity.mjs
 
 # Validate all documentation
-node .harness/scripts/validate-docs.mjs
+node .harness/scripts/ci/01-validate-docs.mjs
 ```
 
 ---

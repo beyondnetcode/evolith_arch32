@@ -119,8 +119,8 @@ node .harness/scripts/doc-health-trend.mjs --dashboard
 node .harness/scripts/bilingual-coverage.mjs
 
 # Validate all documentation before release
-node .harness/scripts/validate-docs.mjs
-node .harness/scripts/check-bilingual-parity.mjs
+node .harness/scripts/ci/01-validate-docs.mjs
+node .harness/scripts/ci/04-check-bilingual-parity.mjs
 
 # Update version log for release
 node .harness/scripts/update-version-log.mjs docs-vX.Y.Z --branch release/docs-vX.Y.Z --changes "<sprint features>"

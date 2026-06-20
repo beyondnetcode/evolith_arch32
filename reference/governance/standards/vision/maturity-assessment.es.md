@@ -177,7 +177,7 @@ El sistema está en transición de completamente documentado (Nivel 3) a goberna
 
 ### Reconciliación Actual
 
-Los totales vigentes no se mantienen como texto narrativo. La [Reconciliación de Madurez](./maturity-reconciliation.json), legible por máquina, se genera desde el tablero canónico de Core, el registro de cierres, los inventarios y la metadata de release del CLI. `node .harness/scripts/reconcile-maturity.mjs --check` falla cuando ese snapshot presenta drift.
+Los totales vigentes no se mantienen como texto narrativo. La [Reconciliación de Madurez](./maturity-reconciliation.json), legible por máquina, se genera desde el tablero canónico de Core, el registro de cierres, los inventarios y la metadata de release del CLI. `node .harness/scripts/ci/09-reconcile-maturity.mjs --check` falla cuando ese snapshot presenta drift.
 
 La madurez de Tracker y Product Suite se excluye explícitamente del score de Core porque tienen ownership y ciclos de evidencia independientes. Su estado de producto no puede inflar esta evaluación.
 

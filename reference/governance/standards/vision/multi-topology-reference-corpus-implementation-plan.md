@@ -287,15 +287,15 @@ Use this order. Do not skip ahead to implementation before the ADR and schema ex
 Run these after every documentation or ruleset change:
 
 ```bash
-node .harness/scripts/check-bilingual-parity.mjs
-node .harness/scripts/validate-docs.mjs
+node .harness/scripts/ci/04-check-bilingual-parity.mjs
+node .harness/scripts/ci/01-validate-docs.mjs
 node .harness/scripts/validate-rulesets.mjs
 ```
 
 Run this when Mermaid diagrams change:
 
 ```bash
-node .harness/scripts/validate-docs.mjs --render-mermaid
+node .harness/scripts/ci/01-validate-docs.mjs --render-mermaid
 ```
 
 Run these when CLI, MCP, Core API, or shared domain code changes:

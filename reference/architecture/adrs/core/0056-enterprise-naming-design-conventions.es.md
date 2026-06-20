@@ -1120,3 +1120,5 @@ None explicitly linked.
 ---
 
 [Back to ADR Index](./README.md)
+
+> **Agent Signature:** Architect Agent

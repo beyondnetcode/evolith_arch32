@@ -18,7 +18,7 @@ This guide describes how to set up the same combination used in this repository:
 | Harness Governance Agents | `.harness/agents/agent-specs.md` | On-demand document and architecture governance |
 | Harness Rules | `.harness/rules/global-rules.md` | 18 binding directives enforced across all agents |
 | Playbooks | `.harness/playbooks/*.md` | Operational checklists for recurring governance tasks |
-| Validation Script | `.harness/scripts/validate-docs.mjs` | Automated UTF-8, link, and Mermaid validation |
+| Validation Script | `.harness/scripts/ci/01-validate-docs.mjs` | Automated UTF-8, link, and Mermaid validation |
 | AGENTS.md | `AGENTS.md` | Top-level file that activates the framework for AI tools |
 | Workflow | `.bmad-core/workflows/development.yaml` | Sequential greenfield development workflow |
 
@@ -153,14 +153,14 @@ The API remains maintainable as a modular monolith today and extractable tomorro
 
 ## Step 6 — Copy the Validation Script
 
-Copy `.harness/scripts/validate-docs.mjs` from this repository to your `.harness/scripts/` directory. The script validates:
+Copy `.harness/scripts/ci/01-validate-docs.mjs` from this repository to your `.harness/scripts/` directory. The script validates:
 - UTF-8 encoding (no encoding artifacts in range U+2600–U+27BF)
 - Relative links resolve to existing files
 - Mermaid code blocks have valid syntax markers
 
 Run it locally to verify your documentation:
 ```bash
-node .harness/scripts/validate-docs.mjs
+node .harness/scripts/ci/01-validate-docs.mjs
 ```
 
 **Adaptation required:** The script scans `**/*.md` from the repository root by default. If your documentation lives in a different directory structure, adjust the glob pattern in the script's configuration section.
@@ -243,7 +243,7 @@ jobs:
         with:
           node-version: '20'
       - name: Validate documentation
-        run: node .harness/scripts/validate-docs.mjs
+        run: node .harness/scripts/ci/01-validate-docs.mjs
 ```
 
 **GitLab CI:**
@@ -252,7 +252,7 @@ validate-docs:
   stage: validate
   image: node:20
   script:
-    - node .harness/scripts/validate-docs.mjs
+    - node .harness/scripts/ci/01-validate-docs.mjs
   rules:
     - if: $CI_PIPELINE_SOURCE == "push"
 ```
@@ -315,7 +315,7 @@ If you want to adopt only the governance layer without the full BMAD team workfl
 | :--- | :--- |
 | `.harness/agents/agent-specs.md` | Defines @po, @architect, @analyst, @devops |
 | `.harness/rules/global-rules.md` | The 18 binding rules |
-| `.harness/scripts/validate-docs.mjs` | Automated enforcement |
+| `.harness/scripts/ci/01-validate-docs.mjs` | Automated enforcement |
 | `AGENTS.md` | Activates the framework for AI tools |
 | CI step | Makes R-03 and link validation non-negotiable |
 
@@ -331,7 +331,7 @@ Before your first commit with the framework active, verify:
 - [ ] R-02 points to your actual authoritative context sources
 - [ ] R-05 and R-14 point to your actual tech stack and runtime profile documents
 - [ ] `AGENTS.md` describes your actual project, not this base repository
-- [ ] Validation script passes on your existing documentation (`node .harness/scripts/validate-docs.mjs`)
+- [ ] Validation script passes on your existing documentation (`node .harness/scripts/ci/01-validate-docs.mjs`)
 - [ ] CI step is configured and blocking
 
 ---

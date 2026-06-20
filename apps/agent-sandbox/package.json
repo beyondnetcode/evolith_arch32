@@ -1,0 +1,13 @@
+{
+  "name": "agent-sandbox",
+  "version": "1.0.0",
+  "description": "Agentic AI Topology Reference Sandbox (GT-131)",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  }
+}

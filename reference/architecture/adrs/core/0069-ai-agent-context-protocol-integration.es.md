@@ -48,3 +48,5 @@ Evaluado contra el principio de automatización y estandarización. Utilizar un 
 
 ---
 [Volver al Índice](./README.es.md)
+
+> **Agent Signature:** Architect Agent

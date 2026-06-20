@@ -356,9 +356,9 @@ smart-cli mcp serve
 
 ### Pre-commit Hooks
 
-- [validate-docs.mjs](./.harness/scripts/validate-docs.mjs) - validacion de links, anchors, encoding y Mermaid.
-- [check-bilingual-parity.mjs](./.harness/scripts/check-bilingual-parity.mjs) - validacion de paridad estructural EN/ES.
-- [impact-analysis-synchronizer.mjs](./.harness/scripts/impact-analysis-synchronizer.mjs) - sincronizacion de impacto cross-repo.
+- [validate-docs.mjs](./.harness/scripts/ci/01-validate-docs.mjs) - validacion de links, anchors, encoding y Mermaid.
+- [check-bilingual-parity.mjs](./.harness/scripts/ci/04-check-bilingual-parity.mjs) - validacion de paridad estructural EN/ES.
+- [impact-analysis-synchronizer.mjs](./.harness/scripts/ci/06-impact-analysis-synchronizer.mjs) - sincronizacion de impacto cross-repo.
 
 </details>
 

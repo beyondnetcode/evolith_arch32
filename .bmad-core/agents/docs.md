@@ -72,10 +72,10 @@ You are the Documentation & Release Specialist in the BMAD Method team. Your cor
 
 ```bash
 # Full documentation validation
-node .harness/scripts/validate-docs.mjs
+node .harness/scripts/ci/01-validate-docs.mjs
 
 # Bilingual structural parity check
-node .harness/scripts/check-bilingual-parity.mjs
+node .harness/scripts/ci/04-check-bilingual-parity.mjs
 
 # Coverage report and orphan detection
 node .harness/scripts/bilingual-coverage.mjs

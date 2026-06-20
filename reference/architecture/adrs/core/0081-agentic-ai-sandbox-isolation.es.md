@@ -53,3 +53,5 @@ La opcion seleccionada se evalua por si evita que un prompt o respuesta de herra
 
 ---
 [Volver al Indice de ADRs Core](./README.es.md)
+
+> **Agent Signature:** Architect Agent

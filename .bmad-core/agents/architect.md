@@ -51,7 +51,7 @@ Both files must have identical ## and ### header counts (validated via `check-bi
 ### ADR Submission to Docs Agent
 When proposing a new ADR:
 1. Create both EN and ES versions with matching structure
-2. Run `node .harness/scripts/check-bilingual-parity.mjs` to verify
+2. Run `node .harness/scripts/ci/04-check-bilingual-parity.mjs` to verify
 3. Submit PR with `feature/docs-<adr-number>-<slug>` branch
 4. Include in PR description:
    - Summary of architectural decision

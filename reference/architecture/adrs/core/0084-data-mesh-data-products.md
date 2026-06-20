@@ -24,3 +24,5 @@ All satellites adopting this topology MUST declare `data-mesh.config.json` conta
 - **Positive:** Removes the centralized data team bottleneck. Gives domain teams full autonomy over both operational and analytical planes. Radically improves data quality since the producers (who understand the data best) are responsible for it.
 - **Negative:** Increased cognitive load for domain teams who now must understand data product lifecycles. Requires significant investment in the self-serve data platform to make this feasible.
 - **Compliance:** Governed through `DM-R01`, `DM-R02`, and `DM-R03` in the executable architecture rules.
+
+> **Agent Signature:** Architect Agent

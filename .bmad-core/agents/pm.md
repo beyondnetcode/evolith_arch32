@@ -34,7 +34,7 @@ You are the Product & Strategy Lead in the BMAD Method team. Your core objective
 ### PRD Release Process
 When PRD is approved for implementation:
 1. Create bilingual version (EN + ES) in `reference/governance/sdlc/04-artifact-templates/`
-2. Verify structural parity: `node .harness/scripts/check-bilingual-parity.mjs`
+2. Verify structural parity: `node .harness/scripts/ci/04-check-bilingual-parity.mjs`
 3. Include both versions in PR to `develop`
 4. Update MASTER_INDEX.md with new PRD template reference
 
@@ -56,10 +56,10 @@ When PRD is approved for implementation:
 node .harness/scripts/generate-es-skeleton.mjs <prd-file.md> --dry-run
 
 # Check bilingual parity for PRD
-node .harness/scripts/check-bilingual-parity.mjs <prd-file.md> <prd-file.es.md>
+node .harness/scripts/ci/04-check-bilingual-parity.mjs <prd-file.md> <prd-file.es.md>
 
 # Validate all documentation
-node .harness/scripts/validate-docs.mjs
+node .harness/scripts/ci/01-validate-docs.mjs
 ```
 
 ---

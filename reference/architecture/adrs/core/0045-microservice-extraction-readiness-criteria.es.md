@@ -61,3 +61,5 @@ Backfill histórico: Abordar la tensión arquitectónica donde el [ADR 0006](, e
 
 ---
 [Volver al Índice](./README.es.md)
+
+> **Agent Signature:** Architect Agent

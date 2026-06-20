@@ -287,15 +287,15 @@ Usar este orden. No avanzar a implementación antes de que existan el ADR y el s
 Ejecutar estos comandos después de cada cambio documental o de rulesets:
 
 ```bash
-node .harness/scripts/check-bilingual-parity.mjs
-node .harness/scripts/validate-docs.mjs
+node .harness/scripts/ci/04-check-bilingual-parity.mjs
+node .harness/scripts/ci/01-validate-docs.mjs
 node .harness/scripts/validate-rulesets.mjs
 ```
 
 Ejecutar este comando cuando cambien diagramas Mermaid:
 
 ```bash
-node .harness/scripts/validate-docs.mjs --render-mermaid
+node .harness/scripts/ci/01-validate-docs.mjs --render-mermaid
 ```
 
 Ejecutar estos comandos cuando cambien CLI, MCP, Core API o código compartido de dominio:

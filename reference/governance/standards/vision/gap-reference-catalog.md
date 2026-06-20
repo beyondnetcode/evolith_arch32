@@ -1399,7 +1399,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] ADRs document asynchronous patterns.
 - **Closure evidence:**
   - `closedAt`: 2026-06-20
-  - `closureCommit`: HEAD
+  - `closureCommit`: 8566249bbefe547f87116d90ecb8c8a797e5cc2b
   - `evidence`: Dual-engine rules and documentation implemented
   - `validationCommands`: ["node .harness/scripts/ci/01-validate-docs.mjs"]
 
@@ -1432,7 +1432,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Closed by:** `edge-computing/README.md`, `edge-computing.rules.json`, `edge-computing.rego`, `opa-input-builder.ts`, `architecture-rule.handler.ts`
 - **Closure evidence:**
   - `closedAt`: 2026-06-20
-  - `closureCommit`: pending
+  - `closureCommit`: fcf22ee27a160d1e5b34acab7210186531495a3d
   - `evidence`: Implemented executable contract, dual-engine parity, and documented offline-first persistence patterns.
   - `validationCommands`:
     - `npm test --workspace packages/core-domain`

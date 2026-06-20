@@ -1399,7 +1399,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] ADRs documentan los patrones asíncronos en la topología.
 - **Evidencia de cierre:**
   - `closedAt`: 2026-06-20
-  - `closureCommit`: HEAD
+  - `closureCommit`: 8566249bbefe547f87116d90ecb8c8a797e5cc2b
   - `evidence`: Dual-engine rules and documentation implemented
   - `validationCommands`: ["node .harness/scripts/ci/01-validate-docs.mjs"]
 
@@ -1415,7 +1415,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] El README cubre adecuadamente la estrategia de Data Products.
 - **Evidencia de cierre:**
   - `closedAt`: pending
-  - `closureCommit`: pending
+  - `closureCommit`: fcf22ee27a160d1e5b34acab7210186531495a3d
   - `evidence`: pending
   - `validationCommands`: ["node .harness/scripts/ci/08-validate-tracking.mjs", "node .harness/scripts/ci/01-validate-docs.mjs"]
 

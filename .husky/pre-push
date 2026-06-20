@@ -1,7 +1,7 @@
 
 
 echo "Running repository optimization before push..."
-node .harness/scripts/optimize-repo.mjs
+node .harness/scripts/ci/02-optimize-repo.mjs
 
 echo ""
 echo "Synchronizing Bidirectional Gap Tracking (Markdown <-> GitHub Projects)..."

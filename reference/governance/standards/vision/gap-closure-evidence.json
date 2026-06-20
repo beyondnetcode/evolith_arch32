@@ -1739,6 +1739,31 @@
         "node .harness/scripts/ci/09-reconcile-maturity.mjs --check"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-130",
+      "closedAt": "2026-06-20",
+      "closureCommit": "5d4dc982",
+      "evidence": [
+        ".harness/scripts/ci/12-validate-bmad-signatures.mjs"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-131",
+      "closedAt": "2026-06-20",
+      "closureCommit": "5d4dc982",
+      "evidence": [
+        "apps/agent-sandbox/index.js",
+        "apps/agent-sandbox/package.json"
+      ],
+      "validationCommands": [
+        "node apps/agent-sandbox/index.js"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

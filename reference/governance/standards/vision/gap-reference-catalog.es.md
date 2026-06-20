@@ -1354,4 +1354,21 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - `closedAt`: 2026-06-20
   - `closureCommit`: pending
   - `evidence`: Se implementó el contrato ejecutable, la paridad dual-engine, y se documentaron los patrones de persistencia offline-first.
-  - `validationCommands`: ["npm test --workspace packages/core-domain", "node .harness/scripts/ci/01-validate-docs.mjs"]
+  - `comandosValidacion`:
+    - `npm test --workspace packages/core-domain`
+    - `node .harness/scripts/ci/01-validate-docs.mjs`
+
+#### GT-132
+**Propósito:** Integrar un paso de agente MCP en el pipeline de CI para revisar automáticamente los PRs y verificar el cumplimiento arquitectónico.
+**Evidencia Actual:** Tenemos el runner CI dinámico y el sandbox, pero no hay un agente de revisión de código autónomo en el pipeline.
+**Hecho Cuando:** Un paso de CI utiliza un agente MCP para revisar los diffs de los PRs contra las reglas de Evolith.
+
+#### GT-133
+**Propósito:** Establecer una arquitectura de distribución agnóstica centralizada para el `policy.wasm` compilado (ej. vía un servidor NGINX interno, MinIO, o registro NPM) para que los repositorios satélite puedan obtenerlo dinámicamente sin vendor lock-in de la nube.
+**Evidencia Actual:** `policy.wasm` se compila pero depende de rutas locales o sincronizaciones de NPM.
+**Hecho Cuando:** `policy.wasm` se publica automáticamente en una capa de distribución agnóstica al momento de una release.
+
+#### GT-134
+**Propósito:** Establecer un registro canónico de herramientas MCP reutilizables para Evolith.
+**Evidencia Actual:** Las herramientas MCP están aisladas en `apps/agent-sandbox` sin un registro centralizado.
+**Hecho Cuando:** Exista un `packages/mcp-tools/` dedicado que publique capacidades reutilizables para agentes externos.

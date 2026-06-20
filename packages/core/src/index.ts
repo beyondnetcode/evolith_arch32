@@ -95,6 +95,15 @@ export {
   ArchitectureDriftService,
 } from "@evolith/core-domain/application/validators";
 
+export {
+  TopologyCatalogService,
+} from "@evolith/core-domain/application/services";
+
+export type {
+  TopologyManifest,
+  ProgressivePhase,
+} from "@evolith/core-domain/application/services";
+
 export type { ValidationResult } from "@evolith/core-domain/application/validators/ruleset-validator.service";
 
 // Re-export deep architecture analyzer (used by the architecture MCP tool)

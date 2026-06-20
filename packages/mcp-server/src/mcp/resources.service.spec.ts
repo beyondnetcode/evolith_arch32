@@ -3,6 +3,7 @@ import * as path from 'node:path';
 import * as fsExtra from 'fs-extra';
 import { NodeFileSystemProvider, YamlConfigParserProvider } from '@evolith/infra-providers';
 import { ResourcesService } from './resources.service';
+import { TopologyCatalogService } from '@evolith/core';
 
 const fs = new NodeFileSystemProvider().createFileSystem();
 const configParser = new YamlConfigParserProvider().createConfigParser('yaml');

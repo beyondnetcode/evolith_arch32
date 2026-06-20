@@ -2,6 +2,7 @@ import * as path from 'node:path';
 import { Inject, Injectable } from '@nestjs/common';
 import type { IFileSystem, IConfigParser } from '@evolith/core';
 import { FILE_SYSTEM, CONFIG_PARSER } from '../domain/domain.tokens';
+import { TopologyCatalogService } from '@evolith/core';
 
 interface Resource {
   uri: string;
@@ -19,6 +20,7 @@ const RESOURCES: Resource[] = [
   { uri: 'evolith://core/version', name: 'Core Version', description: 'Current Core schema version' },
   { uri: 'evolith://repository/config', name: 'Repository Config', description: 'Repository evolith.yaml content' },
   { uri: 'evolith://moscow/phase-0', name: 'MoSCoW Phase 0', description: 'MoSCoW prioritization matrix for discovery phase' },
+  { uri: 'evolith://architecture/topologies', name: 'Architecture Topologies', description: 'List of all available architecture topologies' },
 ];
 
 /**
@@ -27,10 +29,14 @@ const RESOURCES: Resource[] = [
  */
 @Injectable()
 export class ResourcesService {
+  private topologyCatalog: TopologyCatalogService;
+
   constructor(
     @Inject(FILE_SYSTEM) private readonly fs: IFileSystem,
     @Inject(CONFIG_PARSER) private readonly configParser: IConfigParser,
-  ) {}
+  ) {
+    this.topologyCatalog = new TopologyCatalogService(fs, console as any);
+  }
 
   list(): { resources: Resource[] } {
     return { resources: RESOURCES };
@@ -49,6 +55,8 @@ export class ResourcesService {
     if (uri.startsWith('evolith://moscow/')) return this.getMoscowAnalysis(uri.replace('evolith://moscow/', ''));
     if (uri === 'evolith://open-core/artifacts') return this.getOpenCoreArtifacts();
     if (uri === 'evolith://acl/rules') return this.getAclRules();
+    if (uri === 'evolith://architecture/topologies') return this.getTopologiesList();
+    if (uri.startsWith('evolith://architecture/topology/')) return this.getTopologyContent(uri.replace('evolith://architecture/topology/', ''));
     throw new Error(`Unknown resource URI: ${uri}`);
   }
 
@@ -140,6 +148,28 @@ export class ResourcesService {
     if (await this.fs.exists(moscowPath)) return this.fs.readJson(moscowPath);
     return { error: `MoSCoW analysis not found for ${phase}` };
   }
+
+  private async getTopologiesList() {
+    try {
+      const corePath = this.findCorePath();
+      const topologies = await this.topologyCatalog.list(corePath);
+      return { topologies, count: topologies.length };
+    } catch (e) {
+      return { error: String(e) };
+    }
+  }
+
+  private async getTopologyContent(id: string) {
+    try {
+      const corePath = this.findCorePath();
+      const topology = await this.topologyCatalog.get(corePath, id);
+      if (!topology) return { error: `Topology not found: ${id}` };
+      return topology;
+    } catch (e) {
+      return { error: String(e) };
+    }
+  }
+
 }
 
 function getPhaseGates() {

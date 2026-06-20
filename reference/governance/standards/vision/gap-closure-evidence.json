@@ -3,6 +3,21 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "MT-A24",
+      "closedAt": "2026-06-20",
+      "closureCommit": "af871fc",
+      "evidence": [
+        "packages/core/src/index.ts",
+        "packages/mcp-server/src/mcp/resources.service.ts",
+        "packages/mcp-server/src/tools/topology.tools.ts"
+      ],
+      "validationCommands": [
+        "npm run build --workspace @evolith/core",
+        "npm --workspace @evolith/mcp-server test"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "MT-A25",
       "closedAt": "2026-06-20",
       "closureCommit": "1ee04e6",

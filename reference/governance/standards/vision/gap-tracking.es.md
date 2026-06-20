@@ -22,7 +22,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`MT-A20`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Agregar reglas iniciales Native + OPA para agentic AI | `Rulesets` | Transversal | P1 | L | `COMPLETADO` |
 | [`MT-A21`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Agregar catálogo topológico compartido y resolver de manifiestos en Core Domain | `Core Domain` | Transversal | P1 | L | `COMPLETADO` |
 | [`MT-A22`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Agregar soporte CLI `--topology` a validación | `Smart CLI` | Transversal | P1 | L | `COMPLETADO` |
-| [`MT-A24`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Agregar recursos y herramientas MCP topológicas | `MCP Services` | Transversal | P1 | L | `PENDIENTE` |
+| [`MT-A24`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Agregar recursos y herramientas MCP topológicas | `MCP Services` | Transversal | P1 | L | `COMPLETADO` |
 | [`MT-A25`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Agregar endpoints de descubrimiento y validación topológica a Service CORE API | `Core API` | Transversal | P1 | L | `COMPLETADO` |
 | [`GT-119`](./gap-reference-catalog.es.md#gt-119) | Reconciliar el ADR-0074 §5 (MCP en NestJS) con el paquete standalone `@evolith/mcp-server` | `Governance` | Transversal | P2 | S | `COMPLETADO` |
 | [`GT-120`](./gap-reference-catalog.es.md#gt-120) | Exposición GraphQL del Core API (alcance del ADR-0074) | `BFF API` | F3 | P2 | M | `COMPLETADO` |
@@ -141,7 +141,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`MT-A05`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Crear `topology-manifest.schema.json` | `Schema` | Transversal | P0 | M | `COMPLETADO` |
 | [`MT-A03`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Autorizar `reference/architecture/topologies/` como corpus topológico canónico legible por humanos | `Taxonomy` | Transversal | P0 | S | `COMPLETADO` |
 
-**Progreso:** 124 / 127 completados · 0 en progreso · 3 pendientes · 0 diferidos
+**Progreso:** 125 / 127 completados · 0 en progreso · 2 pendientes · 0 diferidos
 
 **Ordenamiento:** una sola tabla, ordenada por estado (pendientes, luego diferidos, luego completados), luego criticidad (`P0` → `P1` → `P2`) y luego complejidad (`S` → `M` → `L`); los completados se agrupan por componente. Los IDs `GT-*` enlazan al [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md); los IDs `MT-A*` enlazan al [plan de implementación Multi-Topology](./multi-topology-reference-corpus-implementation-plan.es.md).
 

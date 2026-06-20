@@ -17,6 +17,7 @@ import { createSdlcTools } from './sdlc.tools';
 import { createAutoFixTools } from './auto-fix.tools';
 import { createConfigTools } from './config.tools';
 import { createMetricsTools } from './metrics.tool';
+import { createTopologyTools } from './topology.tools';
 
 /**
  * Aggregates every MCP tool and feeds the full list to the
@@ -51,6 +52,7 @@ import { createMetricsTools } from './metrics.tool';
         ...createAutoFixTools(fs),
         ...createConfigTools(),
         ...createMetricsTools(metrics),
+        ...createTopologyTools(fs, new NestLoggerProvider().createLogger('TopologyTool')),
       ],
       inject: [
         ValidateTool,

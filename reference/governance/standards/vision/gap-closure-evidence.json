@@ -3,6 +3,18 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "MT-A17",
+      "closedAt": "2026-06-20",
+      "closureCommit": "dadcb17",
+      "evidence": [
+        "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts"
+      ],
+      "validationCommands": [
+        "npm run build --workspace @evolith/core-domain"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "MT-A26",
       "closedAt": "2026-06-20",
       "closureCommit": "683c5e1",

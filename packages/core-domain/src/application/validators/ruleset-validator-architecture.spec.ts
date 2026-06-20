@@ -1,5 +1,6 @@
 import { RulesetValidatorService, ArchitectureValidationResult } from './ruleset-validator.service';
-import { IFileSystem } from '../../domain/interfaces';
+import { IFileSystem, ILogger } from '../../domain/interfaces';
+import { TopologyCatalogService } from '../services/topology-catalog.service';
 
 const createMockFileSystem = (overrides?: Partial<IFileSystem>): IFileSystem => {
   const mock = {
@@ -50,23 +51,58 @@ const mockF1Ruleset = {
 describe('RulesetValidatorService - Architecture Validation', () => {
   let service: RulesetValidatorService;
   let mockFs: IFileSystem;
+  let mockTopologyCatalog: jest.Mocked<TopologyCatalogService>;
+  let mockLogger: jest.Mocked<ILogger>;
 
   beforeEach(() => {
-        jest.clearAllMocks();
+    jest.clearAllMocks();
 
     mockFs = createMockFileSystem({
       readFile: jest.fn().mockImplementation((p: string) => {
-        if (p.includes('f1-modular-monolith')) return Promise.resolve(JSON.stringify(mockF1Ruleset));
+        if (p.includes('f1-modular-monolith') || p.includes('modular-monolith.rules.json')) return Promise.resolve(JSON.stringify(mockF1Ruleset));
         if (p.includes('f2-distributed-modules')) return Promise.resolve(JSON.stringify({ rules: [] }));
         if (p.includes('f3-microservices')) return Promise.resolve(JSON.stringify({ rules: [] }));
         return Promise.resolve('');
       }),
     });
-    const mockProvider: IFileSystemProvider = {
-      createFileSystem: () => mockFs,
-    };
     
-    service = new RulesetValidatorService({ fileSystem: mockFs });
+    mockLogger = {
+      info: jest.fn(),
+      warn: jest.fn(),
+      error: jest.fn(),
+      debug: jest.fn(),
+      success: jest.fn(),
+    } as any;
+    
+    mockTopologyCatalog = {
+      list: jest.fn(),
+      get: jest.fn(),
+      resolveProgressivePhase: jest.fn(),
+    } as any;
+    
+    // Default resolveProgressivePhase behavior
+    mockTopologyCatalog.resolveProgressivePhase.mockImplementation(async (corePath, phase) => {
+      const profile = phase === 'F1' ? 'modular-monolith' : phase === 'F2' ? 'distributed-modules' : 'microservices';
+      return {
+        apiVersion: 'evolith.dev/topology/v1',
+        kind: 'TopologyManifest',
+        metadata: { id: profile },
+        spec: {
+          compatibility: { progressiveAxis: { phases: [phase] } },
+          artifacts: {
+            rulesets: [`reference/architecture/topologies/progressive-axis/${profile}/${profile}.rules.json`]
+          }
+        }
+      } as any;
+    });
+
+    service = new RulesetValidatorService({ 
+      fileSystem: mockFs,
+      logger: mockLogger,
+      configParser: { parse: jest.fn() } as any,
+      rulesetRepo: {} as any,
+      topologyCatalog: mockTopologyCatalog
+    });
   });
 
   afterEach(() => {

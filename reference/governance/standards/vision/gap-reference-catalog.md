@@ -124,6 +124,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Done when:**
   - [ ] A reproducible CI evaluator maps declared operational modes, environment flags, and ADR claims to executable adapters or explicit dry-run semantics.
   - [ ] The evaluator fails for false success messages, missing configured adapters, unbounded external payloads, and absent timeout/retry/cost limits where a capability invokes external services.
+  - [ ] Its topology pass evaluates every accepted topology's manifest, corpus, Native ruleset and OPA policy for parity, information richness, orphaned references, redundant/expensive controls, and measurable opportunities to reduce latency, I/O, context, and token consumption.
   - [ ] It emits versioned, machine-readable findings with source locations and creates a concise human summary suitable for the canonical gap triage process.
   - [ ] Fixture tests demonstrate detection of the current RAG false-upsert and unbounded-agentic-diff cases, plus compliant examples to prevent false positives.
 

@@ -125,6 +125,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Hecho cuando:**
   - [ ] Un evaluador CI reproducible mapea modos operativos declarados, flags de entorno y afirmaciones ADR a adaptadores ejecutables o semántica dry-run explícita.
   - [ ] El evaluador falla ante mensajes de éxito falsos, adaptadores configurados ausentes, payloads externos no acotados y límites ausentes de timeout/retry/costo cuando una capacidad invoca servicios externos.
+  - [ ] Su pasada topológica evalúa manifiesto, corpus, ruleset Native y política OPA de cada topología aceptada para detectar paridad, riqueza informativa, referencias huérfanas, controles redundantes/costosos y oportunidades medibles de reducir latencia, I/O, contexto y consumo de tokens.
   - [ ] Emite hallazgos versionados y machine-readable con ubicaciones fuente y crea un resumen humano conciso apto para el proceso canónico de triage de gaps.
   - [ ] Pruebas fixture demuestran detección de los casos actuales de falso upsert RAG y diff agéntico no acotado, además de ejemplos conformes para evitar falsos positivos.
 

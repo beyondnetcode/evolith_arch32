@@ -1263,18 +1263,18 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 **Title:** Maturation of Agentic AI Topology
 
-- **Gap:** La topología de Agentic AI (`ai/agentic-ai`) carece actualmente de reglas robustas y documentación detallada. Solo verifica la existencia de un archivo `agent.yaml`.
+- **Gap:** La topología de Agentic AI (`ai/agentic-ai`) requirió un contrato ejecutable más allá de la existencia de un manifiesto de agente.
 - **Propósito:** Definir reglas ejecutables (JSON/Rego), diagramas de sandboxing, y ADRs de seguridad y separación de lógica-prompting para arquitecturas de agentes de IA.
-- **Evidencia actual / ejemplo:** `agentic-ai.rules.json` es un stub. No existen reglas OPA.
+- **Evidencia actual / ejemplo:** El árbol de trabajo define AAI-R01 a AAI-R07 para identidad y capacidades, ejecución aislada y acotada por recursos, separación prompt/implementación, controles de contexto no confiable, aprobación de herramientas mutativas y acciones responsables. El evaluador Native y `agentic-ai.rego` evalúan el mismo contrato `agent.config.json`; el perfil de topología documenta el límite de interacción y los ADRs rectores.
 - **Hecho cuando:**
-  - [ ] Existen reglas ejecutables para el sandboxing y separación prompt/lógica.
-  - [ ] Se han escrito las políticas OPA para la topología.
-  - [ ] El Topology Hub contiene diagramas de interacción expandidos.
+  - [x] Existen reglas ejecutables para el sandboxing y separación prompt/lógica.
+  - [x] Se han escrito las políticas OPA para la topología.
+  - [x] El Topology Hub contiene diagramas de interacción expandidos.
 - **Evidencia de cierre:**
   - `closedAt`: pending
   - `closureCommit`: pending
-  - `evidence`: pending
-  - `validationCommands`: []
+  - `evidence`: la implementación espera un commit real de cierre y una entrada en el registro bajo R-26
+  - `validationCommands`: [`npm run build --workspace @evolith/core-domain`, `npx jest --rootDir packages/core-domain --runInBand --testRegex '.*(architecture-rule.handler|opa-input-builder)\\.spec\\.ts$' --transform '{"^.+\\\\.ts$":["ts-jest",{"diagnostics":false}]}'`, `node .harness/scripts/validate-docs.mjs --render-mermaid`]
 
 #### GT-126
 

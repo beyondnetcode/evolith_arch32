@@ -1264,18 +1264,18 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 **Title:** Maturation of Agentic AI Topology
 
-- **Gap:** The Agentic AI topology (`ai/agentic-ai`) currently lacks robust rules and documentation. It only checks for the existence of an `agent.yaml` file.
+- **Gap:** The Agentic AI topology (`ai/agentic-ai`) required an executable contract beyond the existence of an agent manifest.
 - **Purpose:** Define executable rules (JSON/Rego), sandboxing diagrams, and ADRs for security and logic-prompting separation for AI agent architectures.
-- **Current evidence / example:** `agentic-ai.rules.json` is a stub. No OPA rules exist.
+- **Current evidence / example:** The working tree defines AAI-R01 through AAI-R07 for identity and capabilities, isolated and resource-bounded execution, prompt/implementation separation, untrusted-context controls, mutative-tool approval, and accountable actions. The same `agent.config.json` contract is evaluated by the Native evaluator and `agentic-ai.rego`; the topology profile documents the interaction boundary and governing ADRs.
 - **Done when:**
-  - [ ] Executable rules exist for sandboxing and prompt/logic separation.
-  - [ ] OPA policies are written for the topology.
-  - [ ] Topology Hub documentation is expanded with interaction diagrams.
+  - [x] Executable rules exist for sandboxing and prompt/logic separation.
+  - [x] OPA policies are written for the topology.
+  - [x] Topology Hub documentation is expanded with interaction diagrams.
 - **Closure evidence:**
   - `closedAt`: pending
   - `closureCommit`: pending
-  - `evidence`: pending
-  - `validationCommands`: []
+  - `evidence`: implementation awaits a real closure commit and registry entry under R-26
+  - `validationCommands`: [`npm run build --workspace @evolith/core-domain`, `npx jest --rootDir packages/core-domain --runInBand --testRegex '.*(architecture-rule.handler|opa-input-builder)\\.spec\\.ts$' --transform '{"^.+\\\\.ts$":["ts-jest",{"diagnostics":false}]}'`, `node .harness/scripts/validate-docs.mjs --render-mermaid`]
 
 #### GT-126
 

@@ -29,10 +29,15 @@
     "artifacts": {
       "adrs": [
         "reference/architecture/adrs/core/0058-ai-consumable-architecture-knowledge.md",
+        "reference/architecture/adrs/core/0081-agentic-ai-sandbox-isolation.md",
+        "reference/architecture/adrs/core/0082-agentic-ai-trust-boundary.md",
+        "reference/architecture/adrs/core/0083-agentic-ai-action-authorization-audit.md",
+        "reference/governance/standards/ai-augmented/06-adrs/adr-ai-001-harness-strategy.md",
+        "reference/governance/standards/ai-augmented/06-adrs/adr-ai-005-human-in-the-loop-policy.md",
         "reference/architecture/adrs/core/0079-multi-topology-reference-corpus.md"
       ],
       "rulesets": [
-        "rulesets/mcp/protocol-compliance.rules.json"
+        "reference/architecture/topologies/ai/agentic-ai/agentic-ai.rules.json"
       ],
       "opaPolicies": [
         "reference/architecture/topologies/ai/agentic-ai/agentic-ai.rego"

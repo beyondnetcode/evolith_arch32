@@ -9,6 +9,7 @@ export class OpaInputBuilder {
     const satelliteWorkflows = await this.readWorkflows(ctx.satellitePath);
     const coreEvidence = await this.readEvidence(ctx.corePath);
     const mcpServerContent = await this.safeReadFile(path.join(ctx.corePath, 'sdk', 'cli', 'src', 'core', 'mcp', 'server.ts'));
+    const agenticAi = await this.readAgenticAiConfiguration(ctx.satellitePath);
 
     const input: unknown = {
       satellitePath: ctx.satellitePath,
@@ -26,7 +27,7 @@ export class OpaInputBuilder {
         hasDockerfile: await this.fs.exists(path.join(ctx.satellitePath, 'Dockerfile')),
         hasServerlessConfig: await this.fs.exists(path.join(ctx.satellitePath, 'serverless.yml')) || await this.fs.exists(path.join(ctx.satellitePath, 'template.yaml')) || await this.fs.exists(path.join(ctx.satellitePath, 'samconfig.toml')),
         hasAsyncApiConfig: await this.fs.exists(path.join(ctx.satellitePath, 'asyncapi.yaml')) || await this.fs.exists(path.join(ctx.satellitePath, 'asyncapi.json')),
-        hasAgentManifest: await this.fs.exists(path.join(ctx.satellitePath, '.agent.yaml')) || await this.fs.exists(path.join(ctx.satellitePath, 'agent.config.json')) || await this.fs.exists(path.join(ctx.satellitePath, 'agents-registry.json')),
+        agenticAi,
         hasOtel: await this.fs.exists(path.join(ctx.satellitePath, 'otel.config.js')) || await this.fs.exists(path.join(ctx.satellitePath, 'opentelemetry.config.js')) || await this.fs.exists(path.join(ctx.satellitePath, 'src', 'instrumentation.ts')),
         workflows: satelliteWorkflows,
         workspacePackageJsons: await this.readWorkspacePackageJsons(ctx.satellitePath),
@@ -72,6 +73,51 @@ export class OpaInputBuilder {
       }
     }
     return null;
+  }
+
+  private async readAgenticAiConfiguration(root: string): Promise<Record<string, boolean>> {
+    const config = await this.safeReadJson(path.join(root, 'agent.config.json')) as Record<string, unknown> | null;
+    const agent = this.asRecord(config?.agent);
+    const sandbox = this.asRecord(config?.sandbox);
+    const toolPolicy = this.asRecord(config?.toolPolicy);
+    const contextPolicy = this.asRecord(config?.contextPolicy);
+    const audit = this.asRecord(config?.audit);
+    const promptSources = this.asStringArray(config?.promptSources);
+    const implementationRoots = this.asStringArray(config?.implementationRoots);
+
+    return {
+      hasIdentity: typeof agent?.id === 'string' && agent.id.length > 0 && this.asStringArray(agent.capabilities).length > 0,
+      hasIsolatedSandbox: sandbox?.mode === 'isolated' && this.isRestrictedAccess(sandbox.network) && this.isRestrictedAccess(sandbox.process),
+      hasSeparatedPromptAndImplementation: promptSources.length > 0 && implementationRoots.length > 0 && !this.pathsOverlap(promptSources, implementationRoots),
+      requiresApprovalForMutativeTools: toolPolicy?.mutative === 'approval-required',
+      hasEphemeralSandboxLimits: sandbox?.ephemeral === true && this.isPositiveNumber(sandbox.maxDurationSeconds) && this.isPositiveNumber(sandbox.maxMemoryMb) && this.isPositiveNumber(sandbox.maxCpuCores),
+      hasTrustedContextPolicy: contextPolicy?.untrustedContent === 'data-only' && contextPolicy?.provenanceRequired === true && contextPolicy?.toolOutputSchemaValidation === true,
+      hasAccountableActions: toolPolicy?.capabilityDelegation === 'scoped-and-expiring' && audit?.appendOnly === true && audit?.correlationId === 'required',
+    };
+  }
+
+  private asRecord(value: unknown): Record<string, unknown> | undefined {
+    return value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : undefined;
+  }
+
+  private asStringArray(value: unknown): string[] {
+    return Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string' && item.length > 0) : [];
+  }
+
+  private isRestrictedAccess(value: unknown): boolean {
+    return value === 'deny' || value === 'allowlist';
+  }
+
+  private isPositiveNumber(value: unknown): boolean {
+    return typeof value === 'number' && Number.isFinite(value) && value > 0;
+  }
+
+  private pathsOverlap(left: string[], right: string[]): boolean {
+    return left.some(leftPath => right.some(rightPath => {
+      const normalizedLeft = leftPath.replace(/\\+|\/+/g, '/').replace(/\/$/, '');
+      const normalizedRight = rightPath.replace(/\\+|\/+/g, '/').replace(/\/$/, '');
+      return normalizedLeft === normalizedRight || normalizedLeft.startsWith(`${normalizedRight}/`) || normalizedRight.startsWith(`${normalizedLeft}/`);
+    }));
   }
 
   private async getTopLevelDirs(dir: string): Promise<string[]> {

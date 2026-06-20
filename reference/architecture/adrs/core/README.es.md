@@ -42,6 +42,9 @@
 * **[0056-enterprise-naming-design-conventions](./0056-enterprise-naming-design-conventions.es.md)** — Multi-language, multi-platform naming & design standard
 * [0068-gitflow-lanzamiento-documentacion](./0068-documentation-release-gitflow.es.md) — **GitFlow de lanzamiento de documentación con quality gates bilingües**
 * [0080-remote-repository-reference-contract](./0080-remote-repository-reference-contract.es.md) — **Contrato de referencia de repositorio para Core API hospedado**
+* [0081-agentic-ai-sandbox-isolation](./0081-agentic-ai-sandbox-isolation.es.md) — **Limite de aislamiento de sandbox para ejecucion de herramientas de agentes**
+* [0082-agentic-ai-trust-boundary](./0082-agentic-ai-trust-boundary.es.md) — **Limite de confianza para prompts, contexto y salida de herramientas**
+* [0083-agentic-ai-action-authorization-audit](./0083-agentic-ai-action-authorization-audit.es.md) — **Autorizacion por capacidad y auditoria append-only de acciones**
 
 ---
 [Volver al Nivel Superior](../README.es.md)

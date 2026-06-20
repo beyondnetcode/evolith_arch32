@@ -42,6 +42,18 @@ describe('ArchitectureRuleHandler', () => {
   });
 
   describe('evaluate — exists-based rules (failed paths)', () => {
+    it('agentic AI rules fail when agent.config.json is absent or incomplete', async () => {
+      const config = path.join(SAT, 'agent.config.json');
+      const h = new ArchitectureRuleHandler(fsMock({ existing: [config], json: { [config]: { agent: { id: 'reviewer' } } } }));
+
+      await expect(h.evaluate(rule({ id: 'AAI-R01', category: 'agent-identity' }), ctx)).resolves.toMatchObject({ result: 'failed' });
+      await expect(h.evaluate(rule({ id: 'AAI-R02', category: 'agent-sandbox' }), ctx)).resolves.toMatchObject({ result: 'failed' });
+      await expect(h.evaluate(rule({ id: 'AAI-R03', category: 'agent-prompt-boundaries' }), ctx)).resolves.toMatchObject({ result: 'failed' });
+      await expect(h.evaluate(rule({ id: 'AAI-R04', category: 'agent-tool-approval' }), ctx)).resolves.toMatchObject({ result: 'failed' });
+      await expect(h.evaluate(rule({ id: 'AAI-R05', category: 'agent-sandbox-limits' }), ctx)).resolves.toMatchObject({ result: 'failed' });
+      await expect(h.evaluate(rule({ id: 'AAI-R06', category: 'agent-context-trust' }), ctx)).resolves.toMatchObject({ result: 'failed' });
+      await expect(h.evaluate(rule({ id: 'AAI-R07', category: 'agent-action-accountability' }), ctx)).resolves.toMatchObject({ result: 'failed' });
+    });
     it('topology MM-R01 fails when a monorepo workspace is declared', async () => {
       const pkg = path.join(SAT, 'package.json');
       const h = new ArchitectureRuleHandler(fsMock({ existing: [pkg], json: { [pkg]: { workspaces: ['a'] } } }));
@@ -151,6 +163,44 @@ describe('ArchitectureRuleHandler', () => {
   });
 
   describe('evaluate — passed and skipped', () => {
+    it('passes all Agentic AI rules for the governed configuration contract', async () => {
+      const config = path.join(SAT, 'agent.config.json');
+      const agentConfig = {
+        agent: { id: 'architecture-reviewer', capabilities: ['read-architecture', 'review-changes'] },
+        sandbox: { mode: 'isolated', network: 'allowlist', process: 'deny', ephemeral: true, maxDurationSeconds: 30, maxMemoryMb: 512, maxCpuCores: 1 },
+        promptSources: ['prompts'],
+        implementationRoots: ['src/agents'],
+        contextPolicy: { untrustedContent: 'data-only', provenanceRequired: true, toolOutputSchemaValidation: true },
+        toolPolicy: { mutative: 'approval-required', capabilityDelegation: 'scoped-and-expiring' },
+        audit: { appendOnly: true, correlationId: 'required' },
+      };
+      const h = new ArchitectureRuleHandler(fsMock({ existing: [config], json: { [config]: agentConfig } }));
+
+      for (const [id, category] of [['AAI-R01', 'agent-identity'], ['AAI-R02', 'agent-sandbox'], ['AAI-R03', 'agent-prompt-boundaries'], ['AAI-R04', 'agent-tool-approval'], ['AAI-R05', 'agent-sandbox-limits'], ['AAI-R06', 'agent-context-trust'], ['AAI-R07', 'agent-action-accountability']] as const) {
+        await expect(h.evaluate(rule({ id, category }), ctx)).resolves.toMatchObject({ result: 'passed' });
+      }
+    });
+
+    it('rejects overlapping prompt and implementation paths', async () => {
+      const config = path.join(SAT, 'agent.config.json');
+      const h = new ArchitectureRuleHandler(fsMock({
+        existing: [config],
+        json: { [config]: { promptSources: ['src/prompts'], implementationRoots: ['src'] } },
+      }));
+
+      await expect(h.evaluate(rule({ id: 'AAI-R03', category: 'agent-prompt-boundaries' }), ctx)).resolves.toMatchObject({ result: 'failed' });
+    });
+
+    it('rejects an accountable-action policy without append-only correlated evidence', async () => {
+      const config = path.join(SAT, 'agent.config.json');
+      const h = new ArchitectureRuleHandler(fsMock({
+        existing: [config],
+        json: { [config]: { toolPolicy: { capabilityDelegation: 'scoped-and-expiring' }, audit: { appendOnly: false } } },
+      }));
+
+      await expect(h.evaluate(rule({ id: 'AAI-R07', category: 'agent-action-accountability' }), ctx)).resolves.toMatchObject({ result: 'failed' });
+    });
+
     it('passes hexagonal-architecture when a ports directory exists', async () => {
       const ports = path.join(SAT, 'src', 'ports');
       const h = new ArchitectureRuleHandler(fsMock({ existing: [ports] }));

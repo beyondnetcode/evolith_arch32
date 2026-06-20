@@ -108,4 +108,32 @@ describe('OpaInputBuilder', () => {
     expect(input.core.cli.hasTests).toBe(true);
     expect(input.core.cli.mcpServerSource).toContain('apiKey');
   });
+
+  it('derives Agentic AI policy inputs from agent.config.json', async () => {
+    const agentConfig = path.join(SAT, 'agent.config.json');
+    const input = await new OpaInputBuilder(fsMock({
+      existing: [agentConfig],
+      json: {
+        [agentConfig]: {
+          agent: { id: 'architecture-reviewer', capabilities: ['read-architecture'] },
+          sandbox: { mode: 'isolated', network: 'allowlist', process: 'deny', ephemeral: true, maxDurationSeconds: 30, maxMemoryMb: 512, maxCpuCores: 1 },
+          promptSources: ['prompts'],
+          implementationRoots: ['src/agents'],
+          contextPolicy: { untrustedContent: 'data-only', provenanceRequired: true, toolOutputSchemaValidation: true },
+          toolPolicy: { mutative: 'approval-required', capabilityDelegation: 'scoped-and-expiring' },
+          audit: { appendOnly: true, correlationId: 'required' },
+        },
+      },
+    })).build(ctx);
+
+    expect(input.satellite.agenticAi).toEqual({
+      hasIdentity: true,
+      hasIsolatedSandbox: true,
+      hasSeparatedPromptAndImplementation: true,
+      requiresApprovalForMutativeTools: true,
+      hasEphemeralSandboxLimits: true,
+      hasTrustedContextPolicy: true,
+      hasAccountableActions: true,
+    });
+  });
 });

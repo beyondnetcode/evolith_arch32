@@ -16,7 +16,9 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
       'contract-stability', 'data-ownership', 'async-communication', 
       'distributed-tracing', 'containerization', 'service-boundaries',
       'separation-of-concerns', 'dependency-injection', 'static-analysis',
-      'domain-purity'
+      'domain-purity', 'agent-identity', 'agent-sandbox',
+      'agent-prompt-boundaries', 'agent-tool-approval', 'agent-sandbox-limits',
+      'agent-context-trust', 'agent-action-accountability'
     ].includes(rule.category);
   }
 
@@ -26,6 +28,78 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
     let result: 'passed' | 'failed' | 'skipped' = 'passed';
 
     switch (rule.category) {
+      case 'agent-identity': {
+        const config = await this.readAgentConfig(satellitePath);
+        const agent = this.asRecord(config?.agent);
+        if (typeof agent?.id !== 'string' || agent.id.length === 0 || this.asStringArray(agent.capabilities).length === 0) {
+          result = 'failed';
+          message = `${rule.description} - Expected agent.config.json with agent.id and one or more capabilities`;
+        }
+        break;
+      }
+
+      case 'agent-sandbox': {
+        const config = await this.readAgentConfig(satellitePath);
+        const sandbox = this.asRecord(config?.sandbox);
+        if (sandbox?.mode !== 'isolated' || !this.isRestrictedAccess(sandbox.network) || !this.isRestrictedAccess(sandbox.process)) {
+          result = 'failed';
+          message = `${rule.description} - Expected sandbox.mode=isolated and deny or allowlist network and process access`;
+        }
+        break;
+      }
+
+      case 'agent-prompt-boundaries': {
+        const config = await this.readAgentConfig(satellitePath);
+        const promptSources = this.asStringArray(config?.promptSources);
+        const implementationRoots = this.asStringArray(config?.implementationRoots);
+        if (promptSources.length === 0 || implementationRoots.length === 0 || this.pathsOverlap(promptSources, implementationRoots)) {
+          result = 'failed';
+          message = `${rule.description} - Expected non-overlapping promptSources and implementationRoots in agent.config.json`;
+        }
+        break;
+      }
+
+      case 'agent-tool-approval': {
+        const config = await this.readAgentConfig(satellitePath);
+        const toolPolicy = this.asRecord(config?.toolPolicy);
+        if (toolPolicy?.mutative !== 'approval-required') {
+          result = 'failed';
+          message = `${rule.description} - Expected toolPolicy.mutative=approval-required in agent.config.json`;
+        }
+        break;
+      }
+
+      case 'agent-sandbox-limits': {
+        const config = await this.readAgentConfig(satellitePath);
+        const sandbox = this.asRecord(config?.sandbox);
+        if (sandbox?.ephemeral !== true || !this.isPositiveNumber(sandbox.maxDurationSeconds) || !this.isPositiveNumber(sandbox.maxMemoryMb) || !this.isPositiveNumber(sandbox.maxCpuCores)) {
+          result = 'failed';
+          message = `${rule.description} - Expected ephemeral sandbox with positive duration, memory, and CPU limits`;
+        }
+        break;
+      }
+
+      case 'agent-context-trust': {
+        const config = await this.readAgentConfig(satellitePath);
+        const contextPolicy = this.asRecord(config?.contextPolicy);
+        if (contextPolicy?.untrustedContent !== 'data-only' || contextPolicy?.provenanceRequired !== true || contextPolicy?.toolOutputSchemaValidation !== true) {
+          result = 'failed';
+          message = `${rule.description} - Expected data-only untrusted context, provenance, and tool-output schema validation`;
+        }
+        break;
+      }
+
+      case 'agent-action-accountability': {
+        const config = await this.readAgentConfig(satellitePath);
+        const toolPolicy = this.asRecord(config?.toolPolicy);
+        const audit = this.asRecord(config?.audit);
+        if (toolPolicy?.capabilityDelegation !== 'scoped-and-expiring' || audit?.appendOnly !== true || audit?.correlationId !== 'required') {
+          result = 'failed';
+          message = `${rule.description} - Expected scoped-and-expiring capabilities plus append-only correlated action evidence`;
+        }
+        break;
+      }
+
       case 'topology':
         if (rule.id === 'MM-R01') {
           const packageJsonPath = path.join(satellitePath, 'package.json');
@@ -429,24 +503,43 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
         }
         break;
 
-      case 'agentic-ai-config':
-        if (rule.id === 'AAI-R01') {
-          const hasConfig = await this.fs.exists(path.join(satellitePath, '.agent.yaml')) || 
-                            await this.fs.exists(path.join(satellitePath, 'agent.config.json')) || 
-                            await this.fs.exists(path.join(satellitePath, 'agents-registry.json'));
-          if (!hasConfig) {
-            result = 'failed';
-            message = `${rule.description} - No Agentic AI configuration found (.agent.yaml, agent.config.json, or agents-registry.json)`;
-          }
-        }
-        break;
-
       default:
         result = 'skipped';
         break;
     }
 
     return { rule, result, message };
+  }
+
+  private async readAgentConfig(satellitePath: string): Promise<Record<string, unknown> | undefined> {
+    const configPath = path.join(satellitePath, 'agent.config.json');
+    if (!await this.fs.exists(configPath)) return undefined;
+    const config = await this.fs.readJson(configPath);
+    return this.asRecord(config);
+  }
+
+  private asRecord(value: unknown): Record<string, unknown> | undefined {
+    return value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : undefined;
+  }
+
+  private asStringArray(value: unknown): string[] {
+    return Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string' && item.length > 0) : [];
+  }
+
+  private isRestrictedAccess(value: unknown): boolean {
+    return value === 'deny' || value === 'allowlist';
+  }
+
+  private isPositiveNumber(value: unknown): boolean {
+    return typeof value === 'number' && Number.isFinite(value) && value > 0;
+  }
+
+  private pathsOverlap(left: string[], right: string[]): boolean {
+    return left.some(leftPath => right.some(rightPath => {
+      const normalizedLeft = leftPath.replace(/\\+|\/+/g, '/').replace(/\/$/, '');
+      const normalizedRight = rightPath.replace(/\\+|\/+/g, '/').replace(/\/$/, '');
+      return normalizedLeft === normalizedRight || normalizedLeft.startsWith(`${normalizedRight}/`) || normalizedRight.startsWith(`${normalizedLeft}/`);
+    }));
   }
 
   private async getAllFilesRecursive(dir: string): Promise<string[]> {

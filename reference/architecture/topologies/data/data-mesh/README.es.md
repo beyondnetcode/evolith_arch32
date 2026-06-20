@@ -25,6 +25,20 @@ Data mesh no debilita el ownership transaccional. Las fronteras de datos de domi
 | Evidencia de calidad | Los productos de datos deben exponer validacion, lineage, frescura y senales de confiabilidad. |
 | Frontera transaccional | La distribucion analitica no debe saltarse ownership transaccional ni invariantes de dominio. |
 
+## Contrato Ejecutable
+
+Todo satélite que adopte este perfil proporcionando o consumiendo productos de datos debe proporcionar `data-mesh.config.json`:
+
+```json
+{
+  "isDataProduct": true,
+  "hasDataContracts": true,
+  "federatedGovernance": true
+}
+```
+
+DM-R01 a DM-R03 exigen ese contrato, forzando la designación explícita de Data Product, la presencia de Data Contracts para interoperabilidad, y el cumplimiento de las políticas de gobernanza federada. El evaluador Native y la [política OPA](./data-mesh.rego) evalúan estos campos.
+
 ## Composicion
 
 `data-mesh` puede combinarse con `distributed-modules`, `microservices`, `event-driven`, `serverless` y `agentic-ai` cuando ownership y contratos son explicitos.

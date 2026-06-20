@@ -12,6 +12,7 @@ export class OpaInputBuilder {
     const agenticAi = await this.readAgenticAiConfiguration(ctx.satellitePath);
     const serverless = await this.readServerlessConfiguration(ctx.satellitePath);
     const eventDriven = await this.readEventDrivenConfiguration(ctx.satellitePath);
+    const dataMesh = await this.readDataMeshConfiguration(ctx.satellitePath);
 
     const input: unknown = {
       satellitePath: ctx.satellitePath,
@@ -29,6 +30,7 @@ export class OpaInputBuilder {
         hasDockerfile: await this.fs.exists(path.join(ctx.satellitePath, 'Dockerfile')),
         serverless,
         eventDriven,
+        dataMesh,
         hasAsyncApiConfig: await this.fs.exists(path.join(ctx.satellitePath, 'asyncapi.yaml')) || await this.fs.exists(path.join(ctx.satellitePath, 'asyncapi.json')),
         agenticAi,
         hasOtel: await this.fs.exists(path.join(ctx.satellitePath, 'otel.config.js')) || await this.fs.exists(path.join(ctx.satellitePath, 'opentelemetry.config.js')) || await this.fs.exists(path.join(ctx.satellitePath, 'src', 'instrumentation.ts')),
@@ -118,6 +120,15 @@ export class OpaInputBuilder {
       hasStrictAsyncApi: config?.strictAsyncApi === true,
       hasOutbox: config?.transactionalOutbox === true,
       hasDlq: config?.deadLetterQueue === true,
+    };
+  }
+
+  private async readDataMeshConfiguration(root: string): Promise<Record<string, boolean>> {
+    const config = await this.safeReadJson(path.join(root, 'data-mesh.config.json')) as Record<string, unknown> | null;
+    return {
+      isDataProduct: config?.isDataProduct === true,
+      hasDataContracts: config?.hasDataContracts === true,
+      federatedGovernance: config?.federatedGovernance === true,
     };
   }
 

@@ -1318,13 +1318,13 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Draft the README, foundational ADRs regarding Data Products, and initial declarative/Rego rules for the data mesh topology.
 - **Current evidence / example:** Only `topology.manifest.json` exists in `data/data-mesh`.
 - **Done when:**
-  - [ ] Baseline `data-mesh.rules.json` and `data-mesh.rego` exist.
-  - [ ] README covers Data Products strategy.
+  - [x] Baseline `data-mesh.rules.json` and `data-mesh.rego` exist.
+  - [x] README covers Data Products strategy.
 - **Closure evidence:**
-  - `closedAt`: pending
-  - `closureCommit`: pending
-  - `evidence`: pending
-  - `validationCommands`: []
+  - `closedAt`: 2026-06-20
+  - `closureCommit`: 8566249bbefe547f87116d90ecb8c8a797e5cc2b
+  - `evidence`: ["reference/architecture/topologies/data/data-mesh/data-mesh.rules.json", "reference/architecture/topologies/data/data-mesh/data-mesh.rego"]
+  - `validationCommands`: ["node .harness/scripts/validate-tracking.mjs", "node .harness/scripts/validate-docs.mjs"]
 
 #### GT-129
 

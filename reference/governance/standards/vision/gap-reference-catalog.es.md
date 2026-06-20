@@ -1317,13 +1317,13 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Propósito:** Redactar el README, los ADRs fundacionales sobre Data Products, y las reglas iniciales JSON/Rego para la topología de malla de datos.
 - **Evidencia actual / ejemplo:** Solo existe `topology.manifest.json` en la carpeta.
 - **Hecho cuando:**
-  - [ ] Existen reglas base en `data-mesh.rules.json` y `data-mesh.rego`.
-  - [ ] El README cubre adecuadamente la estrategia de Data Products.
+  - [x] Existen reglas base en `data-mesh.rules.json` y `data-mesh.rego`.
+  - [x] El README cubre adecuadamente la estrategia de Data Products.
 - **Evidencia de cierre:**
   - `closedAt`: pending
   - `closureCommit`: pending
   - `evidence`: pending
-  - `validationCommands`: []
+  - `validationCommands`: ["node .harness/scripts/validate-tracking.mjs", "node .harness/scripts/validate-docs.mjs"]
 
 #### GT-129
 
@@ -1339,4 +1339,4 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - `closedAt`: pending
   - `closureCommit`: pending
   - `evidence`: pending
-  - `validationCommands`: []
+  - `validationCommands`: ["node .harness/scripts/validate-tracking.mjs", "node .harness/scripts/validate-docs.mjs"]

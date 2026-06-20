@@ -19,7 +19,8 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
       'domain-purity', 'agent-identity', 'agent-sandbox',
       'agent-prompt-boundaries', 'agent-tool-approval', 'agent-sandbox-limits',
       'agent-context-trust', 'agent-action-accountability', 'serverless-config', 'serverless-stateless', 'serverless-package', 'serverless-cold-start',
-      'event-driven-config', 'event-driven-outbox', 'event-driven-dlq'
+      'event-driven-config', 'event-driven-outbox', 'event-driven-dlq',
+      'data-mesh-config', 'data-mesh-contracts', 'data-mesh-governance'
     ].includes(rule.category);
   }
 
@@ -508,6 +509,17 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
         break;
       }
 
+      case 'data-mesh-config':
+      case 'data-mesh-contracts':
+      case 'data-mesh-governance': {
+        const config = await this.readDataMeshConfig(satellitePath);
+        const valid = rule.category === 'data-mesh-config' ? config?.isDataProduct === true
+          : rule.category === 'data-mesh-contracts' ? config?.hasDataContracts === true
+          : config?.federatedGovernance === true;
+        if (!valid) { result = 'failed'; message = `${rule.description} - data-mesh.config.json does not satisfy ${rule.id}`; }
+        break;
+      }
+
       default:
         result = 'skipped';
         break;
@@ -530,6 +542,11 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
 
   private async readEventDrivenConfig(satellitePath: string): Promise<Record<string, unknown> | undefined> {
     const configPath = path.join(satellitePath, 'event-driven.config.json');
+    return await this.fs.exists(configPath) ? this.asRecord(await this.fs.readJson(configPath)) : undefined;
+  }
+
+  private async readDataMeshConfig(satellitePath: string): Promise<Record<string, unknown> | undefined> {
+    const configPath = path.join(satellitePath, 'data-mesh.config.json');
     return await this.fs.exists(configPath) ? this.asRecord(await this.fs.readJson(configPath)) : undefined;
   }
 

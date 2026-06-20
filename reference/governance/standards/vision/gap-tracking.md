@@ -143,10 +143,10 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-125`](./gap-reference-catalog.md#gt-125) | Maturation of Agentic AI Topology — modular-monolith maturity parity | `Architecture` | Cross | P1 | L | `DONE` |
 | [`GT-126`](./gap-reference-catalog.md#gt-126) | Maturation of Serverless Topology | `Architecture` | Cross | P2 | M | `DONE` |
 | [`GT-127`](./gap-reference-catalog.md#gt-127) | Maturation of Event-Driven Topology | `Architecture` | Cross | P2 | M | `DONE` |
-| [`GT-128`](./gap-reference-catalog.md#gt-128) | Baseline Ruleset for Data Mesh | `Architecture` | Cross | P2 | M | `PENDING` |
+| [`GT-128`](./gap-reference-catalog.md#gt-128) | Baseline Ruleset for Data Mesh | `Architecture` | Cross | P2 | M | `DONE` |
 | [`GT-129`](./gap-reference-catalog.md#gt-129) | Baseline Ruleset for Edge Computing | `Architecture` | Cross | P2 | M | `PENDING` |
 
-**Progress:** 130 / 132 done · 0 in progress · 2 pending · 0 deferred
+**Progress:** 131 / 132 done · 0 in progress · 1 pending · 0 deferred
 
 **Ordering:** one table, ordered by status (pending then deferred then completed), then criticality (`P0` → `P1` → `P2`) then complexity (`S` → `M` → `L`); completed gaps are grouped by component. `GT-*` IDs link to the [Gap Reference Catalog](./gap-reference-catalog.md); `MT-A*` IDs link to the supporting [Multi-Topology implementation plan](./multi-topology-reference-corpus-implementation-plan.md).
 

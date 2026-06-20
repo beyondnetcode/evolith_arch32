@@ -3,6 +3,23 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-128",
+      "closedAt": "2026-06-20",
+      "closureCommit": "e72d8c1de0fa10ee0abc853c5c04be36f032830f",
+      "evidence": [
+        "reference/architecture/adrs/core/0084-data-mesh-data-products.md",
+        "reference/architecture/topologies/data/data-mesh/data-mesh.rules.json",
+        "reference/architecture/topologies/data/data-mesh/data-mesh.rego",
+        "packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.ts",
+        "packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/validate-docs.mjs",
+        "node .harness/scripts/validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-126",
       "closedAt": "2026-06-20",
       "closureCommit": "8566249bbefe547f87116d90ecb8c8a797e5cc2b",

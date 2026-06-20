@@ -25,6 +25,20 @@ Data mesh does not weaken transactional ownership. Domain data boundaries remain
 | Quality evidence | Data products must expose validation, lineage, freshness, and reliability signals. |
 | Transactional boundary | Analytical distribution must not bypass transactional ownership or domain invariants. |
 
+## Executable Contract
+
+Every adopting satellite providing or consuming data products must provide `data-mesh.config.json`:
+
+```json
+{
+  "isDataProduct": true,
+  "hasDataContracts": true,
+  "federatedGovernance": true
+}
+```
+
+DM-R01 through DM-R03 require that contract, enforcing explicit Data Product designation, the presence of Data Contracts for interoperability, and adherence to federated governance policies. The Native evaluator and [OPA policy](./data-mesh.rego) evaluate these fields.
+
 ## Composition
 
 `data-mesh` can combine with `distributed-modules`, `microservices`, `event-driven`, `serverless`, and `agentic-ai` when ownership and contract boundaries are explicit.

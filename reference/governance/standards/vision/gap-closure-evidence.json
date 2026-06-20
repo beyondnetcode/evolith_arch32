@@ -1790,6 +1790,19 @@
         "node .harness/scripts/ci-runner.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-133",
+      "closedAt": "2026-06-20",
+      "closureCommit": "dcdad405",
+      "evidence": [
+        "reference/architecture/adrs/core/0085-agnostic-opa-wasm-distribution.md",
+        "reference/architecture/adrs/core/0085-agnostic-opa-wasm-distribution.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

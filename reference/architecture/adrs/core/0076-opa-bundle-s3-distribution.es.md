@@ -1,7 +1,7 @@
 # ADR 0076: Distribución de OPA Bundle vía S3 (MinIO)
 
 ## Estado
-Aceptado
+Reemplazado por [ADR 0085](./0085-agnostic-opa-wasm-distribution.es.md)
 
 ## Contexto
 Según lo definido en el [ADR 0041 (Evaluación de Políticas Dual-Engine)](./0041-dual-engine-policy-evaluation.es.md), Evolith utiliza Open Policy Agent (OPA) para hacer cumplir reglas y restricciones arquitectónicas. Los componentes BFF (Backend-For-Frontend) y MCP (Model Context Protocol) también dependen de estos rulesets de forma dinámica durante el tiempo de ejecución.

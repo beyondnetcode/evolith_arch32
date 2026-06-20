@@ -5,6 +5,7 @@ import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js"
 import { execSync } from "node:child_process";
 import { prepareReviewInput } from "./review-input.mjs";
 import { evaluateProviderResponse } from "./review-result.mjs";
+import { createReviewProvider } from "./review-provider.mjs";
 
 // Hard fail-closed ceiling: never submit a payload larger than this (GT-146).
 const MAX_REVIEW_TOKENS = Number(process.env.EVOLITH_REVIEW_MAX_TOKENS || 25000);
@@ -76,34 +77,41 @@ async function main() {
       console.log("\n⚠️  EVOLITH_AGENTIC_REVIEW flag is not set to 'true'.");
       console.log("   Skipping actual LLM invocation. Architecture connection validated. (Dry-run Success)");
     } else {
-      const apiKey = process.env.EVOLITH_LLM_API_KEY || process.env.GEMINI_API_KEY;
-      if (!apiKey) {
-        throw new Error("EVOLITH_AGENTIC_REVIEW is active but EVOLITH_LLM_API_KEY/GEMINI_API_KEY is missing.");
-      } else {
-        if (prepared.filesIncluded.length === 0) {
-          console.log("\n✅ No policy-relevant changed files to review. (Pass)");
-          return;
+      if (prepared.filesIncluded.length === 0) {
+        console.log("\n✅ No policy-relevant changed files to review. (Pass)");
+        return;
+      }
+      let provider;
+      try {
+        provider = createReviewProvider({
+          provider: process.env.EVOLITH_REVIEW_PROVIDER,
+          model: process.env.EVOLITH_REVIEW_MODEL,
+          apiKey: process.env.EVOLITH_LLM_API_KEY || process.env.GEMINI_API_KEY,
+        });
+      } catch (cfgErr) {
+        console.error(`❌ Review provider unavailable — failing closed: ${cfgErr.message}`);
+        process.exit(1);
+      }
+      console.log(`\n🧠 Submitting sanitized, budgeted review input via provider [${provider.name}]...`);
+      try {
+        const result = await provider.review(buildReviewPrompt(reviewPayload, toolNames));
+        const evaluation = evaluateProviderResponse(result);
+        if (!evaluation.ok) {
+          console.error(`❌ Indeterminate/malformed review result — failing closed:\n   ${(evaluation.errors || []).join("\n   ")}`);
+          process.exit(1);
         }
-        console.log("\n🧠 Submitting sanitized, budgeted review input to Agentic Reviewer...");
-        try {
-          const result = await invokeGemini(apiKey, reviewPayload, toolNames);
-          const evaluation = evaluateProviderResponse(result);
-          if (!evaluation.ok) {
-            console.error(`❌ Indeterminate/malformed review result — failing closed:\n   ${(evaluation.errors || []).join("\n   ")}`);
-            process.exit(1);
+        if (evaluation.passesGate) {
+          console.log("✅ Agentic Review Passed (no violations).");
+        } else {
+          console.error(`❌ Agentic review detected ${evaluation.findings.length} violation(s):`);
+          for (const f of evaluation.findings) {
+            console.error(`   [${f.severity}] ${f.file}${f.line ? ":" + f.line : ""} — ${f.title} (confidence ${f.confidence})`);
           }
-          if (evaluation.passesGate) {
-            console.log("✅ Agentic Review Passed (no violations).");
-          } else {
-            console.error(`❌ Agentic review detected ${evaluation.findings.length} violation(s):`);
-            for (const f of evaluation.findings) {
-              console.error(`   [${f.severity}] ${f.file}${f.line ? ":" + f.line : ""} — ${f.title} (confidence ${f.confidence})`);
-            }
-            process.exit(1);
-          }
-        } catch (apiErr) {
-          throw new Error(`LLM review failed: ${apiErr.message}`);
+          process.exit(1);
         }
+      } catch (apiErr) {
+        console.error(`❌ LLM review failed — failing closed: ${apiErr.message}`);
+        process.exit(1);
       }
     }
   } catch (err) {
@@ -119,14 +127,9 @@ async function main() {
   }
 }
 
-function invokeGemini(apiKey, diff, tools) {
-  return new Promise((resolve, reject) => {
-    // Standard https request using native Node.js to avoid dependencies
-    import("node:https").then((https) => {
-      const payload = JSON.stringify({
-        contents: [{
-          parts: [{
-            text: `You are the Evolith Core architecture reviewer.
+/** Provider-neutral prompt requesting a schema-v1.0 JSON review result. */
+function buildReviewPrompt(diff, tools) {
+  return `You are the Evolith Core architecture reviewer.
 Review the following sanitized, policy-relevant diff against our active MCP architecture tools: [${tools}].
 
 Respond with ONLY a single JSON object conforming to this schema (no prose, no markdown fences):
@@ -149,44 +152,7 @@ Detect structural violations (invalid boundaries, illegal imports, missing signa
 Diff to review:
 \`\`\`diff
 ${diff}
-\`\`\``
-          }]
-        }]
-      });
-
-      const options = {
-        hostname: "generativelanguage.googleapis.com",
-        path: `/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Content-Length": Buffer.byteLength(payload)
-        }
-      };
-
-      const req = https.request(options, (res) => {
-        let body = "";
-        res.on("data", (chunk) => body += chunk);
-        res.on("end", () => {
-          if (res.statusCode >= 400) {
-            reject(new Error(`HTTP ${res.statusCode}: ${body}`));
-            return;
-          }
-          try {
-            const data = JSON.parse(body);
-            const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-            resolve(text.trim());
-          } catch (e) {
-            reject(e);
-          }
-        });
-      });
-
-      req.on("error", (err) => reject(err));
-      req.write(payload);
-      req.end();
-    }).catch(reject);
-  });
+\`\`\``;
 }
 
 main().catch((err) => {

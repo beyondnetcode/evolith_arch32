@@ -1803,6 +1803,19 @@
         "node .harness/scripts/ci-runner.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-135",
+      "closedAt": "2026-06-20",
+      "closureCommit": "d1811b9b",
+      "evidence": [
+        "reference/architecture/adrs/core/0086-agentic-ai-telemetry-cost-control.md",
+        "reference/architecture/adrs/core/0086-agentic-ai-telemetry-cost-control.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

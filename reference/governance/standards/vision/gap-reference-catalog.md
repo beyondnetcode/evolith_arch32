@@ -128,6 +128,42 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
   - [ ] It emits versioned, machine-readable findings with source locations and creates a concise human summary suitable for the canonical gap triage process.
   - [ ] Fixture tests demonstrate detection of the current RAG false-upsert and unbounded-agentic-diff cases, plus compliant examples to prevent false positives.
 
+#### GT-148
+
+**Title:** Topology-Aware Rule Reference and Coverage Migration Repair
+
+- **Purpose:** Restore a trustworthy, topology-aware coverage report and remove obsolete phase-path references so rule discovery, satellite inheritance, and governance reporting use the canonical topology corpus.
+- **Evidence:** Wilson V5 ran `.harness/scripts/generate-rule-coverage.mjs`; it fails before producing a matrix because it reads the deleted `rulesets/architecture/f1-modular-monolith.rules.json` and `rulesets/opa/architecture.rego`. `rulesets/governance/satellite-contracts.rules.json` still declares the same missing F1/F2/F3 files, while the canonical artifacts live beneath `reference/architecture/topologies/progressive-axis/`.
+- **Done when:**
+  - [ ] The coverage generator discovers rules from topology manifests rather than hard-coded legacy paths and emits per-topology Native/OPA coverage with source locations.
+  - [ ] Satellite contracts, documentation, and machine-readable references resolve only to canonical artifacts; an automated reference-resolution test prevents recurrence.
+  - [ ] The report fails on missing, duplicate, orphaned, or unreferenced topology rules and is integrated into the relevant CI validation path with changed-topology scoping.
+  - [ ] Fixtures cover Modular Monolith, Distributed Modules, Microservices, and a negative migrated-path case.
+
+#### GT-149
+
+**Title:** Executable OPA Tests and Native/OPA Semantic Parity Gate
+
+- **Purpose:** Verify behavior—not only file existence—of every topology policy, and ensure Native and OPA engines reach equivalent allow/deny decisions for the same contracts.
+- **Evidence:** Wilson V5 found no OPA test files and the 14-step CI runner does not execute `opa test` or an equivalent pinned evaluator. `validate-topology-manifests.mjs` confirms that declared Native/OPA files exist but does not evaluate policy decisions; the current coverage generator is also broken (GT-148).
+- **Done when:**
+  - [ ] A pinned, reproducible OPA evaluator executes positive, negative, and boundary fixtures for every accepted topology without relying on an undeclared host binary.
+  - [ ] The same canonical inputs run through Native and OPA evaluators; a differential gate fails on verdict, rule-ID, severity, or evidence-location drift.
+  - [ ] Results are machine-readable and include policy/ruleset versions, fixture identity, execution duration, and only aggregate efficiency telemetry.
+  - [ ] CI scopes work to changed policies/manifests where safe, retains a scheduled full parity run, and has fixtures for evaluator failure and malformed policy input.
+
+#### GT-150
+
+**Title:** Mature Remaining Draft Topologies to Accepted Corpus Parity
+
+- **Purpose:** Make every published Evolith topology usable at the Modular Monolith baseline, not merely a discoverable draft with isolated rules.
+- **Evidence:** Wilson V5 manifest inventory reports Data Mesh, Edge Computing, Serverless, and Event-Driven as `draft` with no `spec.corpus`; R-27 is therefore not applied to them. Their earlier baseline-rule gaps may remain historically closed, but they do not provide the accepted-topology corpus, control-plane, and evidence maturity requested for Evolith.
+- **Done when:**
+  - [ ] Data Mesh, Edge Computing, Serverless, and Event-Driven have bilingual adoption, composition, operations, security, observability, resilience, and evolution guidance plus topology-specific accepted ADRs.
+  - [ ] Each manifest declares `spec.corpus`, validated Native/OPA artifacts, shared contract fixtures, positive/negative/differential tests, and CLI, MCP, and Core API control-plane exposure.
+  - [ ] Each topology is promoted from `draft` to `accepted` only after the topology maturity validator, Native/OPA parity gate, documentation validation, and consumer-surface tests pass.
+  - [ ] The catalog records explicit relationships to migration paths and companion topologies so AI and human users can retrieve applicable guidance without reconstructing context.
+
 ### Phase F0 — Contract First
 
 #### GT-01

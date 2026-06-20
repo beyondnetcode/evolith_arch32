@@ -1856,6 +1856,20 @@
         "node .harness/scripts/ci-runner.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-139",
+      "closedAt": "2026-06-20",
+      "closureCommit": "69976156",
+      "evidence": [
+        "reference/architecture/adrs/core/0090-rag-knowledge-governance.md",
+        "reference/architecture/adrs/core/0090-rag-knowledge-governance.es.md",
+        ".harness/scripts/ci/14-rag-index-sync.mjs"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

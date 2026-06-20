@@ -58,6 +58,7 @@ Every document entry uses the same five fields: **Document** (linked title), **D
 |---|---|---|---|---|
 | [Evolith Core Hub](../core/README.md) | Defines what Core is, what it is not, its domains, invariants, and dependency rule | Anchor the provider-neutral constitution | Domain hub | Yes |
 | [Architecture Hub](../architecture/README.md) | Groups directives, canonical patterns, blueprints, and the agnostic tech baseline | Guide corporate design | Area hub | Yes |
+| [Topology Hub](../architecture/topologies/README.md) | Multi-Topology Reference Corpus | Govern topology dimensions and composition | Area hub | Yes |
 | [Agnostic Architecture Baseline](../architecture/blueprints/authoritative-tech-stack-agnostic.md) | Runtime-agnostic architecture constraints for every stack | Constrain all stacks uniformly | Universal baseline | Yes |
 | [Core ADRs (agnostic)](../architecture/adrs/core/README.md) | The 45 runtime-agnostic architecture decisions | Preserve universal decision history | Decision registry | Yes |
 | [ADR Decision Matrix](../architecture/adrs/adr-matrix.md) | Finds the controlling ADR by architectural concern | Speed up decision discovery | Decision index | Yes |

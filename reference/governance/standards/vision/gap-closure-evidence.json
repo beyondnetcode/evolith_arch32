@@ -3,6 +3,20 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "MT-A26",
+      "closedAt": "2026-06-20",
+      "closureCommit": "683c5e1",
+      "evidence": [
+        "reference/navigation/MASTER_INDEX.md",
+        "reference/navigation/MASTER_INDEX.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/validate-docs.mjs",
+        "node .harness/scripts/validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "MT-A24",
       "closedAt": "2026-06-20",
       "closureCommit": "af871fc",

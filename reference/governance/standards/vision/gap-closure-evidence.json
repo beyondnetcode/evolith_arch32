@@ -1764,6 +1764,20 @@
         "node apps/agent-sandbox/index.js"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-134",
+      "closedAt": "2026-06-20",
+      "closureCommit": "f84c3ac4",
+      "evidence": [
+        "packages/mcp-tools/package.json",
+        "packages/mcp-tools/src/registry.js",
+        "packages/mcp-tools/src/tools/read-gap-tracking.js"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

@@ -345,7 +345,7 @@ export class RulesetValidatorService {
 
     // Compatibility only for consumers that have not yet injected the catalog.
     const profile = level === 'F1' ? 'modular-monolith' : level === 'F2' ? 'distributed-modules' : 'microservices';
-    return path.join(corePath, 'rulesets', 'architecture', `f${level.toLowerCase()}-${profile}.rules.json`);
+    return path.join(corePath, 'reference', 'architecture', 'topologies', 'progressive-axis', profile, `${profile}.rules.json`);
   }
 
   private async resolveTopologyRuleset(corePath: string, topologyId: string): Promise<string | undefined> {

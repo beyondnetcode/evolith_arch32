@@ -27,7 +27,7 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
 
     switch (rule.category) {
       case 'topology':
-        if (rule.id === 'F1-R01') {
+        if (rule.id === 'MM-R01') {
           const packageJsonPath = path.join(satellitePath, 'package.json');
           if (await this.fs.exists(packageJsonPath)) {
             const pkg = await this.fs.readJson(packageJsonPath) as { workspaces?: unknown };
@@ -40,7 +40,7 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
         break;
 
       case 'bounded-contexts':
-        if (rule.id === 'F1-R02') {
+        if (rule.id === 'MM-R02') {
           const srcPath = path.join(satellitePath, 'src');
           if (await this.fs.exists(srcPath)) {
             const entries = await this.fs.readdirNames(srcPath);
@@ -54,7 +54,7 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
         break;
 
       case 'hexagonal-architecture':
-        if (rule.id === 'F1-R03') {
+        if (rule.id === 'MM-R03') {
           const srcPath = path.join(satellitePath, 'src');
           const hasPorts = await this.fs.exists(path.join(srcPath, 'ports')) ||
                            await this.fs.exists(path.join(srcPath, 'Ports')) ||
@@ -67,7 +67,7 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
         break;
 
       case 'communication':
-        if (rule.id === 'F1-R04' || rule.id === 'F2-R03') {
+        if (rule.id === 'MM-R04' || rule.id === 'DM-R03') {
           const contractsPath = path.join(satellitePath, 'contracts');
           if (!await this.fs.exists(contractsPath)) {
             result = 'failed';
@@ -77,7 +77,7 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
         break;
 
       case 'persistence':
-        if (rule.id === 'F1-R05') {
+        if (rule.id === 'MM-R05') {
           const aclPath = path.join(satellitePath, 'acl');
           if (!await this.fs.exists(aclPath)) {
             result = 'failed';
@@ -93,7 +93,7 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
         break;
 
       case 'async-boundaries':
-        if (rule.id === 'F1-R06') {
+        if (rule.id === 'MM-R06') {
           const eventsPath = path.join(satellitePath, 'events') ||
                              path.join(satellitePath, 'src', 'events') ||
                              path.join(satellitePath, 'src', 'domain', 'events');
@@ -105,7 +105,7 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
         break;
 
       case 'extraction-readiness':
-        if (rule.id === 'F1-R07') {
+        if (rule.id === 'MM-R07') {
           const extractionReadinessPath = path.join(satellitePath, 'docs', 'extraction-readiness.md');
           if (!await this.fs.exists(extractionReadinessPath)) {
             result = 'failed';
@@ -115,7 +115,7 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
         break;
 
       case 'observability':
-        if (rule.id === 'F1-R08') {
+        if (rule.id === 'MM-R08') {
           if (await this.fs.exists(path.join(satellitePath, 'package.json'))) {
             const otelConfigPath = path.join(satellitePath, 'otel.config.js') ||
                                   path.join(satellitePath, 'opentelemetry.config.js') ||
@@ -133,7 +133,7 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
         break;
 
       case 'module-autonomy':
-        if (rule.id === 'F2-R01') {
+        if (rule.id === 'DM-R01') {
           const srcPath = path.join(satellitePath, 'src');
           if (await this.fs.exists(srcPath)) {
             const entries = await this.fs.readdirNames(srcPath);
@@ -153,7 +153,7 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
         break;
 
       case 'contract-stability':
-        if (rule.id === 'F2-R02') {
+        if (rule.id === 'DM-R02') {
           const contractsPath = path.join(satellitePath, 'contracts');
           if (!await this.fs.exists(contractsPath)) {
             result = 'failed';
@@ -171,7 +171,7 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
         break;
 
       case 'data-ownership':
-        if (rule.id === 'F2-R03') {
+        if (rule.id === 'DM-R03') {
           const aclPath = path.join(satellitePath, 'acl');
           if (!await this.fs.exists(aclPath)) {
             result = 'failed';
@@ -181,7 +181,7 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
         break;
 
       case 'async-communication':
-        if (rule.id === 'F2-R04') {
+        if (rule.id === 'DM-R04') {
           const eventsPath = path.join(satellitePath, 'events') || path.join(satellitePath, 'src', 'events');
           if (await this.fs.exists(eventsPath)) {
             const eventFiles = (await this.fs.readdirNames(eventsPath)).filter(f => f.endsWith('.json') || f.endsWith('.schema.json'));
@@ -209,7 +209,7 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
         break;
 
       case 'containerization':
-        if (rule.id === 'F3-R01') {
+        if (rule.id === 'MS-R01') {
           const dockerfilePath = path.join(satellitePath, 'Dockerfile');
           if (!await this.fs.exists(dockerfilePath)) {
             result = 'failed';
@@ -219,7 +219,7 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
         break;
 
       case 'service-boundaries':
-        if (rule.id === 'F3-R02') {
+        if (rule.id === 'MS-R02') {
           const srcPath = path.join(satellitePath, 'src');
           if (await this.fs.exists(srcPath)) {
             const entries = await this.fs.readdirNames(srcPath);
@@ -240,7 +240,7 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
         break;
 
       case 'separation-of-concerns':
-        if (rule.id === 'F1-R11') {
+        if (rule.id === 'MM-R11') {
           const srcPath = path.join(satellitePath, 'src');
           if (await this.fs.exists(srcPath)) {
             const files = await this.getAllFilesRecursive(srcPath);
@@ -281,7 +281,7 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
         break;
 
       case 'dependency-injection':
-        if (rule.id === 'F1-R09') {
+        if (rule.id === 'MM-R09') {
           const srcPath = path.join(satellitePath, 'src');
           if (await this.fs.exists(srcPath)) {
             const files = await this.getAllFilesRecursive(srcPath);
@@ -320,7 +320,7 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
         break;
 
       case 'static-analysis':
-        if (rule.id === 'F1-R10') {
+        if (rule.id === 'MM-R10') {
           const srcPath = path.join(satellitePath, 'src');
           if (await this.fs.exists(srcPath)) {
             const files = await this.getAllFilesRecursive(srcPath);
@@ -368,7 +368,7 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
         break;
 
       case 'domain-purity':
-        if (rule.id === 'F1-R12') {
+        if (rule.id === 'MM-R12') {
           const srcPath = path.join(satellitePath, 'src');
           if (await this.fs.exists(srcPath)) {
             const files = await this.getAllFilesRecursive(srcPath);

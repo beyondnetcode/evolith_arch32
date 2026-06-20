@@ -35,7 +35,7 @@
         "rulesets/mcp/protocol-compliance.rules.json"
       ],
       "opaPolicies": [
-        "rulesets/opa/architecture.rego"
+        "reference/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rego"
       ],
       "aiRulesets": [
         "reference/architecture/topologies/ai/agentic-ai/README.md"

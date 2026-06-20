@@ -33,7 +33,7 @@ The topology is not an unstructured monolith. It is one deployable system organi
 | [ADR-0047: Progressive Architecture Evolution Framework](../../../adrs/core/0047-architectural-patterns-monolith-soa-microservices.md) | Governs progressive evolution and over-design prevention. |
 | [ADR-0067: Modular Monolith Schema per Domain](../../../adrs/core/0067-modular-monolith-schema-per-domain.md) | Governs data boundary isolation for modular monoliths. |
 | [ADR-0079: Multi-Topology Reference Corpus](../../../adrs/core/0079-multi-topology-reference-corpus.md) | Governs topology manifests and composition. |
-| [F1 Architecture Rules](../../../../../rulesets/architecture/f1-modular-monolith.rules.json) | Existing executable compatibility rules. |
+| [F1 Architecture Rules](./modular-monolith.rules.json) | Existing executable compatibility rules. |
 | [Topology Dimensions Model](../../topology-dimensions.md) | Defines composition and compatibility rules. |
 
 ## Composition

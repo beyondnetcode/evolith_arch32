@@ -23,6 +23,7 @@ export class OpaInputBuilder {
         hasAcl: await this.fs.exists(path.join(ctx.satellitePath, 'acl')),
         hasEvents: await this.fs.exists(path.join(ctx.satellitePath, 'events')) || await this.fs.exists(path.join(ctx.satellitePath, 'src', 'events')),
         hasExtractionReadiness: await this.fs.exists(path.join(ctx.satellitePath, 'docs', 'extraction-readiness.md')),
+        hasDockerfile: await this.fs.exists(path.join(ctx.satellitePath, 'Dockerfile')),
         hasOtel: await this.fs.exists(path.join(ctx.satellitePath, 'otel.config.js')) || await this.fs.exists(path.join(ctx.satellitePath, 'opentelemetry.config.js')) || await this.fs.exists(path.join(ctx.satellitePath, 'src', 'instrumentation.ts')),
         workflows: satelliteWorkflows,
         workspacePackageJsons: await this.readWorkspacePackageJsons(ctx.satellitePath),

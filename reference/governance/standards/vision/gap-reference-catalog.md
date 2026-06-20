@@ -344,7 +344,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Purpose:** Make the rulesets a real, portable governance contract rather than two partially overlapping implementations.
 - **Current evidence / example:** F1-R09 through F1-R11 have Rego implementations, while dependency-injection, static-analysis, and separation-of-concerns coverage remains incomplete across engines. F1-R10 also declares AST-based enforcement while its current Rego path uses textual matching.
 - **Done when:** a generated coverage matrix maps every active architectural rule to Native and OPA implementations; equivalence tests compare findings and severity for representative compliant and non-compliant fixtures; the packaged OPA/WASM engine passes the same release gate.
-- **References:** [Global Rules R-25](../../../../.harness/rules/global-rules.md) · [F1 Ruleset](../../../../rulesets/architecture/f1-modular-monolith.rules.json) · [OPA Architecture Policy](../../../../rulesets/opa/architecture.rego)
+- **References:** [Global Rules R-25](../../../../.harness/rules/global-rules.md) · [F1 Ruleset](../../../architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rules.json) · [OPA Architecture Policy](../../../architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rego)
 
 #### GT-36
 

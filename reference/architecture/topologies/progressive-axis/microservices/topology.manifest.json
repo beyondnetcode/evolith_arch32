@@ -32,10 +32,10 @@
         "reference/architecture/adrs/core/0079-multi-topology-reference-corpus.md"
       ],
       "rulesets": [
-        "rulesets/architecture/f3-microservices.rules.json"
+        "reference/architecture/topologies/progressive-axis/microservices/microservices.rules.json"
       ],
       "opaPolicies": [
-        "rulesets/opa/architecture.rego"
+        "reference/architecture/topologies/progressive-axis/microservices/microservices.rego"
       ],
       "aiRulesets": [
         "reference/architecture/topologies/progressive-axis/microservices/README.md"

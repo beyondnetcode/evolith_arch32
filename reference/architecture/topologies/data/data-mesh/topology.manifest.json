@@ -33,7 +33,7 @@
         "rulesets/architecture/f2-distributed-modules.rules.json"
       ],
       "opaPolicies": [
-        "rulesets/opa/architecture.rego"
+        "reference/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rego"
       ],
       "aiRulesets": [
         "reference/architecture/topologies/data/data-mesh/README.md"

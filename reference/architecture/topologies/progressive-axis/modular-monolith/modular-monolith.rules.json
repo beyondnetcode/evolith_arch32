@@ -1,14 +1,14 @@
 {
   "$schema": "../schema/ruleset-standard.schema.json",
-  "$id": "https://evolith.dev/rulesets/architecture/f1-modular-monolith.rules.json",
-  "title": "F1 — Modular Monolith Architecture Rules",
-  "description": "Rules governing the mandatory starting topology for all Evolith satellites. F1 is the only permitted entry point unless extraction criteria are already satisfied.",
+  "$id": "https://evolith.dev/rulesets/architecture/modular-monolith.rules.json",
+  "title": "Modular Monolith Architecture Rules",
+  "description": "Rules governing the mandatory starting topology for all Evolith satellites. Modular Monolith is the only permitted entry point unless extraction criteria are already satisfied.",
   "version": "1.0.0",
-  "phase": "F1",
+  "phase": "modular-monolith",
   "effectiveDate": "2026-01-01",
   "rules": [
     {
-      "id": "F1-R01",
+      "id": "MM-R01",
       "severity": "MUST",
       "category": "topology",
       "title": "Single Deployment Unit",
@@ -18,7 +18,7 @@
       "blocking": true
     },
     {
-      "id": "F1-R02",
+      "id": "MM-R02",
       "severity": "MUST",
       "category": "bounded-contexts",
       "title": "Explicit Bounded Context Boundaries",
@@ -28,7 +28,7 @@
       "blocking": true
     },
     {
-      "id": "F1-R03",
+      "id": "MM-R03",
       "severity": "MUST",
       "category": "hexagonal-architecture",
       "title": "Ports and Adapters Boundary",
@@ -38,7 +38,7 @@
       "blocking": true
     },
     {
-      "id": "F1-R04",
+      "id": "MM-R04",
       "severity": "MUST",
       "category": "communication",
       "title": "Inter-Context Communication via Ports",
@@ -48,7 +48,7 @@
       "blocking": true
     },
     {
-      "id": "F1-R05",
+      "id": "MM-R05",
       "severity": "MUST",
       "category": "persistence",
       "title": "No Shared Database Across Bounded Contexts",
@@ -58,7 +58,7 @@
       "blocking": true
     },
     {
-      "id": "F1-R06",
+      "id": "MM-R06",
       "severity": "MUST",
       "category": "async-boundaries",
       "title": "Async Events Use Domain Events",
@@ -68,7 +68,7 @@
       "blocking": false
     },
     {
-      "id": "F1-R07",
+      "id": "MM-R07",
       "severity": "MUST",
       "category": "extraction-readiness",
       "title": "Maintain Extraction Readiness Score",
@@ -78,7 +78,7 @@
       "blocking": false
     },
     {
-      "id": "F1-R08",
+      "id": "MM-R08",
       "severity": "MUST",
       "category": "observability",
       "title": "Observability Instrumentation",
@@ -88,7 +88,7 @@
       "blocking": false
     },
     {
-      "id": "F1-R09",
+      "id": "MM-R09",
       "severity": "MUST",
       "category": "dependency-injection",
       "title": "Strict Dependency Inversion Principle (DIP)",
@@ -98,7 +98,7 @@
       "blocking": true
     },
     {
-      "id": "F1-R10",
+      "id": "MM-R10",
       "severity": "MUST",
       "category": "static-analysis",
       "title": "AST-Based Code Analysis Mandatory",
@@ -108,7 +108,7 @@
       "blocking": true
     },
     {
-      "id": "F1-R11",
+      "id": "MM-R11",
       "severity": "MUST",
       "category": "separation-of-concerns",
       "title": "Strict UI and Logic Isolation (SoC)",
@@ -127,7 +127,7 @@
     "reference": "adr/0045-microservice-extraction-readiness-criteria.md"
   },
   "exitGate": {
-    "description": "F1 exits when extraction readiness score >= 70% AND architecture board approves F2 transition.",
+    "description": "Modular Monolith exits when extraction readiness score >= 70% AND architecture board approves F2 transition.",
     "requiredArtifacts": [
       "core/ADR-0045 assessment (current score)",
       "core/ADR-0047 confirmation (topology still valid)",

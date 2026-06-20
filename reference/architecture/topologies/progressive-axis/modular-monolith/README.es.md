@@ -33,7 +33,7 @@ La topologia no es un monolito sin estructura. Es un sistema desplegable organiz
 | [ADR-0047: Framework de Evolucion Arquitectonica Progresiva](../../../adrs/core/0047-architectural-patterns-monolith-soa-microservices.es.md) | Gobierna la evolucion progresiva y la prevencion de sobre-diseno. |
 | [ADR-0067: Monolito Modular con Schema por Dominio](../../../adrs/core/0067-modular-monolith-schema-per-domain.es.md) | Gobierna el aislamiento de fronteras de datos en monolitos modulares. |
 | [ADR-0079: Corpus de Referencia Multi-Topologia](../../../adrs/core/0079-multi-topology-reference-corpus.es.md) | Gobierna manifiestos topologicos y composicion. |
-| [Reglas de Arquitectura F1](../../../../../rulesets/architecture/f1-modular-monolith.rules.json) | Reglas ejecutables existentes de compatibilidad. |
+| [Reglas de Arquitectura F1](./modular-monolith.rules.json) | Reglas ejecutables existentes de compatibilidad. |
 | [Modelo de Dimensiones Topologicas](../../topology-dimensions.es.md) | Define reglas de composicion y compatibilidad. |
 
 ## Composicion

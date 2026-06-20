@@ -31,10 +31,10 @@
         "reference/architecture/adrs/core/0079-multi-topology-reference-corpus.md"
       ],
       "rulesets": [
-        "rulesets/architecture/f2-distributed-modules.rules.json"
+        "reference/architecture/topologies/progressive-axis/distributed-modules/distributed-modules.rules.json"
       ],
       "opaPolicies": [
-        "rulesets/opa/architecture.rego"
+        "reference/architecture/topologies/progressive-axis/distributed-modules/distributed-modules.rego"
       ],
       "aiRulesets": [
         "reference/architecture/topologies/progressive-axis/distributed-modules/README.md"

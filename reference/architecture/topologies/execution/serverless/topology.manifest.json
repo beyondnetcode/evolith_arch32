@@ -33,7 +33,7 @@
         "rulesets/architecture/f1-modular-monolith.rules.json"
       ],
       "opaPolicies": [
-        "rulesets/opa/architecture.rego"
+        "reference/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rego"
       ],
       "aiRulesets": [
         "reference/architecture/topologies/execution/serverless/README.md"

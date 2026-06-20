@@ -33,7 +33,7 @@ This topology is not a halfway distributed monolith. Each distributed module mus
 | [ADR-0045: Microservice Extraction Readiness Criteria](../../../adrs/core/0045-microservice-extraction-readiness-criteria.md) | Defines quantitative readiness for extraction. |
 | [ADR-0047: Progressive Architecture Evolution Framework](../../../adrs/core/0047-architectural-patterns-monolith-soa-microservices.md) | Governs progressive evolution and over-design prevention. |
 | [ADR-0079: Multi-Topology Reference Corpus](../../../adrs/core/0079-multi-topology-reference-corpus.md) | Governs topology manifests and composition. |
-| [F2 Architecture Rules](../../../../../rulesets/architecture/f2-distributed-modules.rules.json) | Existing executable compatibility rules. |
+| [F2 Architecture Rules](./distributed-modules.rules.json) | Existing executable compatibility rules. |
 | [Topology Dimensions Model](../../topology-dimensions.md) | Defines composition and compatibility rules. |
 
 ## Composition

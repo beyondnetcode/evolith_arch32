@@ -34,7 +34,7 @@ Esta topologia no es una recompensa por crecimiento del codigo. Es un modelo ope
 | [ADR-0047: Framework de Evolucion Arquitectonica Progresiva](../../../adrs/core/0047-architectural-patterns-monolith-soa-microservices.es.md) | Gobierna la evolucion progresiva y la prevencion de sobre-diseno. |
 | [ADR-0076: Arquitectura de Microservicios Orientada a Dominio](../../../adrs/core/0076-domain-oriented-microservice-architecture.es.md) | Gobierna agrupacion de servicios F3 por dominios delimitados. |
 | [ADR-0079: Corpus de Referencia Multi-Topologia](../../../adrs/core/0079-multi-topology-reference-corpus.es.md) | Gobierna manifiestos topologicos y composicion. |
-| [Reglas de Arquitectura F3](../../../../../rulesets/architecture/f3-microservices.rules.json) | Reglas ejecutables existentes de compatibilidad. |
+| [Reglas de Arquitectura F3](./microservices.rules.json) | Reglas ejecutables existentes de compatibilidad. |
 | [Modelo de Dimensiones Topologicas](../../topology-dimensions.es.md) | Define reglas de composicion y compatibilidad. |
 
 ## Composicion

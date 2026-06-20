@@ -464,7 +464,7 @@
       "closedAt": "2026-06-11",
       "closureCommit": "769651c",
       "evidence": [
-        "rulesets/opa/architecture.rego",
+        "reference/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rego",
         "sdk/cli/src"
       ],
       "validationCommands": [
@@ -944,7 +944,7 @@
       "closedAt": "2026-06-13",
       "closureCommit": "ee57f82",
       "evidence": [
-        "apps/core-api/src/infrastructure/auth/",
+        "reference/architecture/adrs/core/0075-core-api-auth-strategy.md",
         "apps/core-api/src/presentation/controllers/health.controller.ts",
         "reference/architecture/adrs/core/0075-core-api-auth-strategy.md"
       ],

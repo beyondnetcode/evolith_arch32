@@ -34,7 +34,7 @@ El repositorio ya tiene los bloques principales, pero todavía no se resuelven p
 |---|---|---|
 | Autoridad ADR | [Registro ADR](../../../architecture/adrs/README.es.md) | Los ADRs están agrupados por Core/runtime, no por topología. |
 | Reglas progresivas | [Rulesets de Arquitectura](../../../../rulesets/architecture/README.es.md) | F1/F2/F3 ya codifican reglas de monolito modular, módulos distribuidos y microservicios. |
-| Paridad OPA | [Reglas OPA](../../../../rulesets/opa/architecture.rego) | OPA existe para las reglas de arquitectura actuales, pero no para nuevas familias topológicas. |
+| Paridad OPA | [Reglas OPA](../../../architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rego) | OPA existe para las reglas de arquitectura actuales, pero no para nuevas familias topológicas. |
 | Validación CLI | [Comando Validate](../../../../sdk/cli/src/commands/validate/validate.command.ts) | Soporta `--arch-level F1/F2/F3`, no `--topology`. |
 | Scaffolding CLI | [Comando Scaffold](../../../../sdk/cli/src/commands/architecture/scaffold.command.ts) | Enfocado en monolito modular y microfrontends. |
 | Recursos MCP | [Resources Service](../../../../packages/mcp-server/src/mcp/resources.service.ts) | Expone recursos globales, no recursos direccionados por topología. |

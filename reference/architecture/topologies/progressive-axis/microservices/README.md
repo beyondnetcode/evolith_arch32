@@ -34,7 +34,7 @@ This topology is not a reward for codebase growth. It is a high-governance opera
 | [ADR-0047: Progressive Architecture Evolution Framework](../../../adrs/core/0047-architectural-patterns-monolith-soa-microservices.md) | Governs progressive evolution and over-design prevention. |
 | [ADR-0076: Domain-Oriented Microservice Architecture](../../../adrs/core/0076-domain-oriented-microservice-architecture.md) | Governs F3 service grouping by bounded domains. |
 | [ADR-0079: Multi-Topology Reference Corpus](../../../adrs/core/0079-multi-topology-reference-corpus.md) | Governs topology manifests and composition. |
-| [F3 Architecture Rules](../../../../../rulesets/architecture/f3-microservices.rules.json) | Existing executable compatibility rules. |
+| [F3 Architecture Rules](./microservices.rules.json) | Existing executable compatibility rules. |
 | [Topology Dimensions Model](../../topology-dimensions.md) | Defines composition and compatibility rules. |
 
 ## Composition

@@ -1,14 +1,14 @@
 {
   "$schema": "../schema/ruleset-standard.schema.json",
-  "$id": "https://evolith.dev/rulesets/architecture/f2-distributed-modules.rules.json",
-  "title": "F2 — Distributed Modules Architecture Rules",
+  "$id": "https://evolith.dev/rulesets/architecture/distributed-modules.rules.json",
+  "title": "Distributed Modules Architecture Rules",
   "description": "Rules governing the distributed modules phase. Module boundaries are formalized; inter-module contracts are explicit and versioned.",
   "version": "1.0.0",
-  "phase": "F2",
+  "phase": "distributed-modules",
   "effectiveDate": "2026-01-01",
   "rules": [
     {
-      "id": "F2-R01",
+      "id": "DM-R01",
       "severity": "MUST",
       "category": "module-autonomy",
       "title": "Module Owns Its Lifecycle",
@@ -18,7 +18,7 @@
       "blocking": true
     },
     {
-      "id": "F2-R02",
+      "id": "DM-R02",
       "severity": "MUST",
       "category": "contract-stability",
       "title": "Inter-Module Contracts are Explicit and Versioned",
@@ -28,7 +28,7 @@
       "blocking": true
     },
     {
-      "id": "F2-R03",
+      "id": "DM-R03",
       "severity": "MUST",
       "category": "data-ownership",
       "title": "Module Data Isolation Enforced",
@@ -38,7 +38,7 @@
       "blocking": true
     },
     {
-      "id": "F2-R04",
+      "id": "DM-R04",
       "severity": "MUST",
       "category": "async-communication",
       "title": "Async Events Have Schema-Validated Payloads",
@@ -48,7 +48,7 @@
       "blocking": false
     },
     {
-      "id": "F2-R05",
+      "id": "DM-R05",
       "severity": "MUST",
       "category": "observability",
       "title": "Distributed Tracing Across Modules",
@@ -58,7 +58,7 @@
       "blocking": true
     },
     {
-      "id": "F2-R06",
+      "id": "DM-R06",
       "severity": "MUST",
       "category": "deployment",
       "title": "Modules Deployable Independently",
@@ -68,7 +68,7 @@
       "blocking": true
     },
     {
-      "id": "F2-R07",
+      "id": "DM-R07",
       "severity": "MUST",
       "category": "resiliency",
       "title": "Circuit Breaker for Inter-Module Calls",
@@ -78,29 +78,29 @@
       "blocking": false
     },
     {
-      "id": "F2-R08",
+      "id": "DM-R08",
       "severity": "MUST",
       "category": "extraction-readiness",
       "title": "Maintain F2 Extraction Score",
       "description": "Satellite MUST track extraction readiness per core/ADR-0045 with F3-specific criteria. Score MUST be >= 80% to pass Phase 2 Design gate when F3 is planned.",
       "rationale": "F3 extraction requires higher maturity: independent deployability, circuit breakers, distributed tracing, and explicit contracts must all be in place.",
-      "validationQuery": "F3 extraction readiness score documented and >= 80%. All F2 rules green.",
+      "validationQuery": "F3 extraction readiness score documented and >= 80%. All Distributed Modules rules green.",
       "blocking": false
     }
   ],
   "f3Prerequisites": {
     "minScore": 80,
     "requiredRules": [
-      "F2-R01",
-      "F2-R02",
-      "F2-R03",
-      "F2-R05",
-      "F2-R06"
+      "DM-R01",
+      "DM-R02",
+      "DM-R03",
+      "DM-R05",
+      "DM-R06"
     ],
     "reference": "adr/0045-microservice-extraction-readiness-criteria.md"
   },
   "exitGate": {
-    "description": "F2 exits when F3 extraction readiness score >= 80% AND architecture board approves F3 transition.",
+    "description": "Distributed Modules exits when F3 extraction readiness score >= 80% AND architecture board approves F3 transition.",
     "requiredArtifacts": [
       "core/ADR-0045 F3 readiness assessment (>= 80%)",
       "Contract registry with version history",

@@ -25,20 +25,26 @@ export class CoreReferenceQueryService {
   constructor(@Inject('IFileSystem') private readonly fs: IFileSystem) {}
 
   async listRulesets(corePath: string): Promise<RulesetSummary[]> {
-    const files = await this.findRulesetFiles(path.join(corePath, 'rulesets'));
+    const files = [
+      ...(await this.findRulesetFiles(path.join(corePath, 'rulesets'))),
+      ...(await this.findRulesetFiles(path.join(corePath, 'reference', 'architecture', 'topologies')))
+    ];
     const rulesets = await Promise.all(files.map(async (file) => {
       const content = await this.fs.readFile(file);
       const parsed = JSON.parse(content) as Record<string, unknown>;
-      return this.toSummary(parsed, path.relative(path.join(corePath, 'rulesets'), file));
+      return this.toSummary(parsed, path.relative(corePath, file));
     }));
     return rulesets.sort((left, right) => left.id.localeCompare(right.id));
   }
 
   async getRuleset(corePath: string, rulesetId: string): Promise<Record<string, unknown> | undefined> {
-    const files = await this.findRulesetFiles(path.join(corePath, 'rulesets'));
+    const files = [
+      ...(await this.findRulesetFiles(path.join(corePath, 'rulesets'))),
+      ...(await this.findRulesetFiles(path.join(corePath, 'reference', 'architecture', 'topologies')))
+    ];
     for (const file of files) {
       const parsed = JSON.parse(await this.fs.readFile(file)) as Record<string, unknown>;
-      if (this.toSummary(parsed, path.relative(path.join(corePath, 'rulesets'), file)).id === rulesetId) {
+      if (this.toSummary(parsed, path.relative(corePath, file)).id === rulesetId) {
         return parsed;
       }
     }

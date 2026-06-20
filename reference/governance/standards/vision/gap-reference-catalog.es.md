@@ -1159,9 +1159,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Propósito:** Añadir endpoints de lectura neutrales respecto del producto (p. ej. `GET /rulesets`, `GET /rulesets/:id`, `GET /gates/:gateId`, `GET /phases/:phase/requirements`) para que el BFF componga el estado de UI directamente desde la Capa de Exposición del Core.
 - **Evidencia actual / ejemplo:** `grep -rE "@(Get|Post)\(" apps/core-api/src/presentation/controllers` muestra que todo endpoint de dominio es `@Post`; las únicas rutas `@Get` son `health` y `metrics`.
 - **Criterio de cierre:**
-  - [ ] endpoints de lectura para rulesets, contenido de ruleset, definiciones de gate y requisitos de fase, expuestos y documentados en OpenAPI
-  - [ ] endpoints cubiertos por tests unit + e2e
-  - [ ] al menos un flujo de composición del BFF del Tracker los consume
+  - [x] endpoints de lectura para rulesets, contenido de ruleset, definiciones de gate y requisitos de fase, expuestos y documentados en OpenAPI
+  - [x] endpoints cubiertos por tests unit + e2e
+  - [x] al menos un flujo de composición del BFF del Tracker los consume
 - **Referencias:** [apps/core-api/src/presentation/controllers/gates.controller.ts](../../../../apps/core-api/src/presentation/controllers/gates.controller.ts) · [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md) · [ADR-0075](../../../../reference/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.es.md)
 
 #### GT-118

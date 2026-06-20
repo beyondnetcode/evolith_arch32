@@ -3,6 +3,19 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-117",
+      "closedAt": "2026-06-19",
+      "closureCommit": "1067a41",
+      "evidence": [
+        "apps/core-api/src/application/services/core-reference-query.service.ts",
+        "apps/core-api/src/presentation/controllers/reference.controller.ts"
+      ],
+      "validationCommands": [
+        "npm --workspace apps/core-api test -- --runInBand"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "MT-A21",
       "closedAt": "2026-06-19",
       "closureCommit": "2010ce0",
@@ -1211,7 +1224,6 @@
       "dependencyDisposition": "satisfied",
       "dependencyRationale": "The ADR records a dated decision with a re-evaluation gate, satisfying the closure criterion."
     },
-
     {
       "id": "GT-113",
       "closedAt": "2026-06-15",

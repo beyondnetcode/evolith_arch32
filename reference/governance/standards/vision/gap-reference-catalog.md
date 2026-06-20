@@ -1160,9 +1160,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Add product-neutral read endpoints (e.g. `GET /rulesets`, `GET /rulesets/:id`, `GET /gates/:gateId`, `GET /phases/:phase/requirements`) so the BFF can compose UI state directly from the Core API Exposure Layer.
 - **Current evidence / example:** `grep -rE "@(Get|Post)\(" apps/core-api/src/presentation/controllers` shows every domain endpoint is `@Post`; the only `@Get` routes are `health` and `metrics`.
 - **Done when:**
-  - [ ] read endpoints for rulesets, ruleset content, gate definitions, and phase requirements are exposed and documented in OpenAPI
-  - [ ] endpoints are covered by unit + e2e tests
-  - [ ] at least one Tracker BFF composition path consumes them
+  - [x] read endpoints for rulesets, ruleset content, gate definitions, and phase requirements are exposed and documented in OpenAPI
+  - [x] endpoints are covered by unit + e2e tests
+  - [x] at least one Tracker BFF composition path consumes them
 - **References:** [apps/core-api/src/presentation/controllers/gates.controller.ts](../../../../apps/core-api/src/presentation/controllers/gates.controller.ts) · [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md) · [ADR-0075](../../../../reference/architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.md)
 
 #### GT-118

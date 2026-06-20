@@ -1267,14 +1267,15 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Propósito:** Definir reglas ejecutables (JSON/Rego), diagramas de sandboxing, y ADRs de seguridad y separación de lógica-prompting para arquitecturas de agentes de IA.
 - **Evidencia actual / ejemplo:** El árbol de trabajo define AAI-R01 a AAI-R07 para identidad y capacidades, ejecución aislada y acotada por recursos, separación prompt/implementación, controles de contexto no confiable, aprobación de herramientas mutativas y acciones responsables. El evaluador Native y `agentic-ai.rego` evalúan el mismo contrato `agent.config.json`; el perfil de topología documenta el límite de interacción y los ADRs rectores.
 - **Hecho cuando:**
-  - [x] Existen reglas ejecutables para el sandboxing y separación prompt/lógica.
-  - [x] Se han escrito las políticas OPA para la topología.
-  - [x] El Topology Hub contiene diagramas de interacción expandidos.
+  - [ ] Un corpus de topología bilingüe completo alcanza paridad de madurez con Monolito Modular: guía de adopción, composición, operación, seguridad, observabilidad, resiliencia y evolución.
+  - [ ] ADRs específicos de topología, reglas Native, políticas OPA, fixtures de contrato y pruebas positivas/negativas están completos y enlazados.
+  - [ ] CLI, MCP y Core API exponen y validan la topología con la misma línea base de usabilidad que Monolito Modular.
+  - [ ] El validador de madurez de topologías confirma que el perfil aceptado satisface R-27.
 - **Evidencia de cierre:**
-  - `closedAt`: 2026-06-20
-  - `closureCommit`: `f07a914ad1ec6a1a983da7d3c5eb3d71f9ac4b64`
-  - `evidence`: el [registro de cierres](./gap-closure-evidence.json) registra los ADRs, las reglas de doble motor y las implementaciones de evaluadores
-  - `validationCommands`: [`npm run build --workspace @evolith/core-domain`, `npx jest --rootDir packages/core-domain --runInBand --testRegex '.*(architecture-rule.handler|opa-input-builder)\\.spec\\.ts$' --transform '{"^.+\\\\.ts$":["ts-jest",{"diagnostics":false}]}'`, `.harness/bin/opa check reference/architecture/topologies/ai/agentic-ai/agentic-ai.rego`, `node .harness/scripts/validate-docs.mjs --render-mermaid`, `node .harness/scripts/validate-tracking.mjs`]
+  - `closedAt`: pending
+  - `closureCommit`: pending
+  - `evidence`: la implementación previa permanece disponible pero no demuestra paridad de madurez de corpus
+  - `validationCommands`: []
 
 #### GT-126
 

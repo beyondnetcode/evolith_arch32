@@ -1268,14 +1268,15 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Define executable rules (JSON/Rego), sandboxing diagrams, and ADRs for security and logic-prompting separation for AI agent architectures.
 - **Current evidence / example:** The working tree defines AAI-R01 through AAI-R07 for identity and capabilities, isolated and resource-bounded execution, prompt/implementation separation, untrusted-context controls, mutative-tool approval, and accountable actions. The same `agent.config.json` contract is evaluated by the Native evaluator and `agentic-ai.rego`; the topology profile documents the interaction boundary and governing ADRs.
 - **Done when:**
-  - [x] Executable rules exist for sandboxing and prompt/logic separation.
-  - [x] OPA policies are written for the topology.
-  - [x] Topology Hub documentation is expanded with interaction diagrams.
+  - [ ] A complete bilingual topology corpus reaches Modular Monolith maturity parity: adoption, composition, operational, security, observability, resilience, and evolution guidance.
+  - [ ] Topology-specific ADRs, Native rules, OPA policies, contract fixtures, and positive/negative tests are complete and cross-linked.
+  - [ ] CLI, MCP, and Core API expose and validate the topology with the same usability baseline as Modular Monolith.
+  - [ ] The topology maturity validator confirms the accepted profile satisfies R-27.
 - **Closure evidence:**
-  - `closedAt`: 2026-06-20
-  - `closureCommit`: `f07a914ad1ec6a1a983da7d3c5eb3d71f9ac4b64`
-  - `evidence`: [closure registry](./gap-closure-evidence.json) records the ADRs, dual-engine rules, and evaluator implementations
-  - `validationCommands`: [`npm run build --workspace @evolith/core-domain`, `npx jest --rootDir packages/core-domain --runInBand --testRegex '.*(architecture-rule.handler|opa-input-builder)\\.spec\\.ts$' --transform '{"^.+\\\\.ts$":["ts-jest",{"diagnostics":false}]}'`, `.harness/bin/opa check reference/architecture/topologies/ai/agentic-ai/agentic-ai.rego`, `node .harness/scripts/validate-docs.mjs --render-mermaid`, `node .harness/scripts/validate-tracking.mjs`]
+  - `closedAt`: pending
+  - `closureCommit`: pending
+  - `evidence`: prior implementation remains available but does not demonstrate corpus-level maturity parity
+  - `validationCommands`: []
 
 #### GT-126
 

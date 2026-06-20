@@ -1870,6 +1870,19 @@
         "node .harness/scripts/ci-runner.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-140",
+      "closedAt": "2026-06-20",
+      "closureCommit": "25731436",
+      "evidence": [
+        "reference/architecture/adrs/core/0091-workload-identity-token-rotation.md",
+        "reference/architecture/adrs/core/0091-workload-identity-token-rotation.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

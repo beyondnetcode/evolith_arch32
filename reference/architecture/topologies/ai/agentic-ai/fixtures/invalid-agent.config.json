@@ -1,0 +1,30 @@
+{
+  "agent": {
+    "id": "unsafe-reviewer",
+    "capabilities": ["write-production"]
+  },
+  "sandbox": {
+    "mode": "shared",
+    "network": "allowlist",
+    "process": "allowlist",
+    "ephemeral": false,
+    "maxDurationSeconds": 0,
+    "maxMemoryMb": 0,
+    "maxCpuCores": 0
+  },
+  "promptSources": ["src"],
+  "implementationRoots": ["src/agents"],
+  "contextPolicy": {
+    "untrustedContent": "authority",
+    "provenanceRequired": false,
+    "toolOutputSchemaValidation": false
+  },
+  "toolPolicy": {
+    "mutative": "auto-approve",
+    "capabilityDelegation": "unbounded"
+  },
+  "audit": {
+    "appendOnly": false,
+    "correlationId": "optional"
+  }
+}

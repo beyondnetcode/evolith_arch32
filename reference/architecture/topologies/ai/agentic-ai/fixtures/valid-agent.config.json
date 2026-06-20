@@ -1,0 +1,30 @@
+{
+  "agent": {
+    "id": "architecture-reviewer",
+    "capabilities": ["read-architecture", "review-changes"]
+  },
+  "sandbox": {
+    "mode": "isolated",
+    "network": "allowlist",
+    "process": "deny",
+    "ephemeral": true,
+    "maxDurationSeconds": 30,
+    "maxMemoryMb": 512,
+    "maxCpuCores": 1
+  },
+  "promptSources": ["prompts"],
+  "implementationRoots": ["src/agents"],
+  "contextPolicy": {
+    "untrustedContent": "data-only",
+    "provenanceRequired": true,
+    "toolOutputSchemaValidation": true
+  },
+  "toolPolicy": {
+    "mutative": "approval-required",
+    "capabilityDelegation": "scoped-and-expiring"
+  },
+  "audit": {
+    "appendOnly": true,
+    "correlationId": "required"
+  }
+}

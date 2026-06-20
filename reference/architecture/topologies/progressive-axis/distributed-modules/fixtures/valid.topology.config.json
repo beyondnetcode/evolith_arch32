@@ -1,0 +1,5 @@
+{
+  "topology": "distributed-modules",
+  "modules": ["identity", "billing"],
+  "integrationContract": "versioned-events"
+}

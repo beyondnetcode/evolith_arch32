@@ -44,6 +44,23 @@
         "reference/knowledge/demo/ums-reference-model.md"
       ]
     },
+    "corpus": {
+        "guidance": {
+          "profile": "reference/architecture/topologies/progressive-axis/microservices/README.md",
+          "maturityGuide": "reference/architecture/topologies/progressive-axis/microservices/maturity.md"
+        },
+        "configurationContract": "reference/architecture/topologies/progressive-axis/microservices/topology.config.schema.json",
+        "fixtures": {
+          "valid": "reference/architecture/topologies/progressive-axis/microservices/fixtures/valid.topology.config.json",
+          "invalid": "reference/architecture/topologies/progressive-axis/microservices/fixtures/invalid.topology.config.json"
+        },
+        "nativeEvaluator": "packages/core-domain/src/application/validators/ruleset-validator.service.ts",
+        "tests": {
+          "positive": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts",
+          "negative": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts"
+        },
+        "evidence": "reference/governance/standards/vision/maturity-evidence.json"
+    },
     "operationalInterfaces": {
       "cli": {
         "validators": [

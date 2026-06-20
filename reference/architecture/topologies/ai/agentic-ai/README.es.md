@@ -2,7 +2,7 @@
 
 > **Navegacion bilingue:** [Version en ingles](./README.md)
 
-**Estado:** Borrador
+**Estado:** Aceptada
 **Dimension:** `ai`
 **ID de topologia:** `agentic-ai`
 **Manifiesto:** [topology.manifest.json](./topology.manifest.json)
@@ -95,6 +95,22 @@ El ruleset nativo es [agentic-ai.rules.json](./agentic-ai.rules.json); su politi
 ## Frontera de Negocio
 
 Este perfil es solo tecnico. No define propiedad de negocio, priorizacion, ROI, costo, presupuesto, staffing, calendario de entrega ni Funnel 0. Evolith Tracker posee esas preocupaciones mediante su ACL.
+
+## Navegacion del Corpus
+
+El corpus de IA agentica es la linea base de implementacion obligatoria para esta topologia:
+
+| Area | Guia |
+|---|---|
+| Adopcion | [Guia de adopcion](./adoption.es.md) |
+| Operacion | [Guia de operacion](./operations.es.md) |
+| Seguridad | [Guia de seguridad](./security.es.md) |
+| Resiliencia | [Guia de resiliencia](./resilience.es.md) |
+| Diseno | [Patrones y anti-patrones](./patterns.es.md) |
+| Evolucion | [Guia de evolucion](./evolution.es.md) |
+| Resumen | [Guia de adopcion, operacion y evolucion](./maturity.es.md) |
+
+Este corpus implementa el [Estandar de Corpus de Topologias](../../topology-corpus-standard.es.md) para IA agentica. Un perfil no esta listo para aceptacion hasta que esten presentes y validados todas estas guias, controles ejecutables, fixtures de contrato, pruebas e interfaces de plano de control.
 
 ---
 [Volver al Hub de Topologias](../../README.es.md)

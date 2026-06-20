@@ -2,7 +2,7 @@
 
 > **Bilingual Navigation:** [Version en Espanol](./README.es.md)
 
-**Status:** Draft
+**Status:** Accepted
 **Dimension:** `ai`
 **Topology ID:** `agentic-ai`
 **Manifest:** [topology.manifest.json](./topology.manifest.json)
@@ -95,6 +95,22 @@ The native ruleset is [agentic-ai.rules.json](./agentic-ai.rules.json); its equi
 ## Business Boundary
 
 This profile is technical-only. It does not define business ownership, prioritization, ROI, cost, budget, staffing, delivery timing, or Funnel 0. Evolith Tracker owns those concerns through its ACL.
+
+## Corpus Navigation
+
+The Agentic AI corpus is the required implementation baseline for this topology:
+
+| Area | Guidance |
+|---|---|
+| Adoption | [Adoption guide](./adoption.md) |
+| Operations | [Operations guide](./operations.md) |
+| Security | [Security guide](./security.md) |
+| Resilience | [Resilience guide](./resilience.md) |
+| Design | [Patterns and anti-patterns](./patterns.md) |
+| Evolution | [Evolution guide](./evolution.md) |
+| Summary | [Adoption, operations, and evolution guide](./maturity.md) |
+
+This corpus implements the [Topology Corpus Standard](../../topology-corpus-standard.md) for Agentic AI. A profile is not ready for acceptance until all of these guides, executable controls, contract fixtures, tests, and control-plane interfaces are present and validated.
 
 ---
 [Back to Topology Hub](../../README.md)

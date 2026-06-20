@@ -36,6 +36,48 @@ function relative(file) {
   return path.relative(root, file);
 }
 
+function hasApprovedAdrStatus(adrPath) {
+  const content = fs.readFileSync(path.join(root, adrPath), "utf8");
+  return /(?:^## Status\s*\n+\s*|^\s*(?:[-*]\s+)?\*\*Status:\*\*\s*)(?:Accepted|Approved)\b/im.test(content);
+}
+
+function validateExistingFile(manifestPath, artifact, label) {
+  if (!fs.existsSync(path.join(root, artifact))) {
+    failures.push(`${relative(manifestPath)} violates R-27: missing ${label} ${artifact}`);
+    return false;
+  }
+  return true;
+}
+
+function validateBilingualGuide(manifestPath, guide, label) {
+  if (!validateExistingFile(manifestPath, guide, label)) return;
+  if (!guide.endsWith(".md") || guide.endsWith(".es.md")) return;
+  const spanishGuide = guide.replace(/\.md$/, ".es.md");
+  validateExistingFile(manifestPath, spanishGuide, `Spanish counterpart for ${label}`);
+}
+
+function validateCorpusFixtures(manifestPath, corpus) {
+  const schemaPath = corpus.configurationContract && path.join(root, corpus.configurationContract);
+  const validPath = corpus.fixtures?.valid && path.join(root, corpus.fixtures.valid);
+  const invalidPath = corpus.fixtures?.invalid && path.join(root, corpus.fixtures.invalid);
+  if (!schemaPath || !validPath || !invalidPath || !fs.existsSync(schemaPath) || !fs.existsSync(validPath) || !fs.existsSync(invalidPath)) return;
+
+  try {
+    const configSchema = JSON.parse(fs.readFileSync(schemaPath, "utf8"));
+    const validateConfig = new Ajv({ strict: false, allErrors: true }).compile(configSchema);
+    const validFixture = JSON.parse(fs.readFileSync(validPath, "utf8"));
+    if (!validateConfig(validFixture)) {
+      failures.push(`${relative(manifestPath)} violates R-27: valid fixture does not satisfy configuration contract: ${ajv.errorsText(validateConfig.errors, { separator: "; " })}`);
+    }
+    const invalidFixture = JSON.parse(fs.readFileSync(invalidPath, "utf8"));
+    if (validateConfig(invalidFixture)) {
+      failures.push(`${relative(manifestPath)} violates R-27: invalid fixture satisfies configuration contract`);
+    }
+  } catch (error) {
+    failures.push(`${relative(manifestPath)} violates R-27: corpus configuration contract or fixture is invalid JSON/schema: ${error.message}`);
+  }
+}
+
 if (!fs.existsSync(schemaPath)) {
   failures.push("rulesets/schema/topology-manifest.schema.json is missing");
 } else {
@@ -59,6 +101,53 @@ if (!fs.existsSync(schemaPath)) {
 
     if (!validate(manifest)) {
       failures.push(`${relative(manifestPath)} violates topology manifest schema: ${ajv.errorsText(validate.errors, { separator: "; " })}`);
+    }
+
+    if (manifest.metadata?.status === "accepted") {
+      const artifacts = [
+        ...(manifest.spec?.artifacts?.adrs ?? []),
+        ...(manifest.spec?.artifacts?.rulesets ?? []),
+        ...(manifest.spec?.artifacts?.opaPolicies ?? []),
+        ...(manifest.spec?.artifacts?.aiRulesets ?? []),
+      ];
+      for (const artifact of artifacts) {
+        validateExistingFile(manifestPath, artifact, "accepted topology artifact");
+      }
+
+      const corpus = manifest.spec?.corpus;
+      if (!corpus) {
+        failures.push(`${relative(manifestPath)} violates R-27: accepted topology must declare spec.corpus`);
+        continue;
+      }
+
+      validateBilingualGuide(manifestPath, corpus.guidance?.profile, "topology profile");
+      validateBilingualGuide(manifestPath, corpus.guidance?.maturityGuide, "maturity guide");
+
+      for (const [label, artifact] of Object.entries({
+        "configuration contract": corpus.configurationContract,
+        "valid fixture": corpus.fixtures?.valid,
+        "invalid fixture": corpus.fixtures?.invalid,
+        "Native evaluator": corpus.nativeEvaluator,
+        "positive test": corpus.tests?.positive,
+        "negative test": corpus.tests?.negative,
+        evidence: corpus.evidence,
+      })) {
+        if (typeof artifact === "string") validateExistingFile(manifestPath, artifact, label);
+      }
+      validateCorpusFixtures(manifestPath, corpus);
+
+      for (const adr of manifest.spec?.artifacts?.adrs ?? []) {
+        if (fs.existsSync(path.join(root, adr)) && !hasApprovedAdrStatus(adr)) {
+          failures.push(`${relative(manifestPath)} violates R-27: topology ADR is not Accepted or Approved: ${adr}`);
+        }
+      }
+
+      const interfaces = manifest.spec?.operationalInterfaces;
+      if (!interfaces?.cli?.validators?.length || !interfaces?.mcp?.resources?.length ||
+          !interfaces?.mcp?.tools?.length || !interfaces?.mcp?.prompts?.length ||
+          !interfaces?.coreApi?.endpoints?.length) {
+        failures.push(`${relative(manifestPath)} violates R-27: accepted topology must expose non-empty CLI, MCP, and Core API control-plane interfaces`);
+      }
     }
   }
 }

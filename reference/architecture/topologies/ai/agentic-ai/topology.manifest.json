@@ -5,7 +5,7 @@
     "id": "agentic-ai",
     "name": "Agentic AI",
     "dimension": "ai",
-    "status": "draft",
+    "status": "accepted",
     "version": "0.1.0"
   },
   "spec": {
@@ -32,8 +32,6 @@
         "reference/architecture/adrs/core/0081-agentic-ai-sandbox-isolation.md",
         "reference/architecture/adrs/core/0082-agentic-ai-trust-boundary.md",
         "reference/architecture/adrs/core/0083-agentic-ai-action-authorization-audit.md",
-        "reference/governance/standards/ai-augmented/06-adrs/adr-ai-001-harness-strategy.md",
-        "reference/governance/standards/ai-augmented/06-adrs/adr-ai-005-human-in-the-loop-policy.md",
         "reference/architecture/adrs/core/0079-multi-topology-reference-corpus.md"
       ],
       "rulesets": [
@@ -43,11 +41,35 @@
         "reference/architecture/topologies/ai/agentic-ai/agentic-ai.rego"
       ],
       "aiRulesets": [
-        "reference/architecture/topologies/ai/agentic-ai/README.md"
+        "reference/architecture/topologies/ai/agentic-ai/README.md",
+        "reference/architecture/topologies/ai/agentic-ai/maturity.md",
+        "reference/architecture/topologies/ai/agentic-ai/adoption.md",
+        "reference/architecture/topologies/ai/agentic-ai/operations.md",
+        "reference/architecture/topologies/ai/agentic-ai/security.md",
+        "reference/architecture/topologies/ai/agentic-ai/resilience.md",
+        "reference/architecture/topologies/ai/agentic-ai/patterns.md",
+        "reference/architecture/topologies/ai/agentic-ai/evolution.md"
       ],
       "umsContracts": [
         "reference/knowledge/demo/ums-reference-model.md"
       ]
+    },
+    "corpus": {
+      "guidance": {
+        "profile": "reference/architecture/topologies/ai/agentic-ai/README.md",
+        "maturityGuide": "reference/architecture/topologies/ai/agentic-ai/maturity.md"
+      },
+      "configurationContract": "reference/architecture/topologies/ai/agentic-ai/agent.config.schema.json",
+      "fixtures": {
+        "valid": "reference/architecture/topologies/ai/agentic-ai/fixtures/valid-agent.config.json",
+        "invalid": "reference/architecture/topologies/ai/agentic-ai/fixtures/invalid-agent.config.json"
+      },
+      "nativeEvaluator": "packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.ts",
+      "tests": {
+        "positive": "packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.spec.ts",
+        "negative": "packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.spec.ts"
+      },
+      "evidence": "reference/architecture/topologies/ai/agentic-ai/evidence.md"
     },
     "operationalInterfaces": {
       "cli": {

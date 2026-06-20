@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Distributed Modules Topology Configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["topology", "modules", "integrationContract"],
+  "properties": {
+    "topology": { "const": "distributed-modules" },
+    "modules": { "type": "array", "minItems": 2, "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+    "integrationContract": { "type": "string", "enum": ["versioned-api", "versioned-events"] }
+  }
+}

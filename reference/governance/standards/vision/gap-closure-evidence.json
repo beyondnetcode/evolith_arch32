@@ -1921,6 +1921,19 @@
         "node .harness/scripts/ci-runner.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-143",
+      "closedAt": "2026-06-20",
+      "closureCommit": "8c238ec7",
+      "evidence": [
+        "reference/architecture/adrs/core/0094-multi-agent-handoff.md",
+        "reference/architecture/adrs/core/0094-multi-agent-handoff.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

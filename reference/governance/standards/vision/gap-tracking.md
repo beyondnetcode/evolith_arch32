@@ -13,7 +13,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
 |---|---|---|:---:|:---:|:---:|:---:|
-| [`GT-132`](./gap-reference-catalog.md#gt-132) | Autonomous Agentic Code Reviews in CI | `Governance` | Cross | P1 | M | `PENDING` |
+| [`GT-132`](./gap-reference-catalog.md#gt-132) | Autonomous Agentic Code Reviews in CI | `Governance` | Cross | P1 | M | `DONE` |
 | [`GT-133`](./gap-reference-catalog.md#gt-133) | Centralized Agnostic OPA Wasm Distribution Architecture | `Architecture` | Cross | P2 | L | `PENDING` |
 | [`GT-134`](./gap-reference-catalog.md#gt-134) | Standardized MCP Tools Registry | `Architecture` | Cross | P2 | M | `DONE` |
 | [`GT-130`](./gap-reference-catalog.md#gt-130) | CI pipeline validation for BMAD Agent signatures on ADRs and Technical Specs | `Governance` | Cross | P1 | M | `DONE` |
@@ -151,7 +151,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-128`](./gap-reference-catalog.md#gt-128) | Baseline Ruleset for Data Mesh | `Architecture` | Cross | P2 | M | `DONE` |
 | [`GT-129`](./gap-reference-catalog.md#gt-129) | Baseline Ruleset for Edge Computing | `Architecture` | Cross | P2 | M | `DONE` |
 
-**Progress:** 135 / 137 done · 0 in progress · 2 pending · 0 deferred
+**Progress:** 136 / 137 done · 0 in progress · 1 pending · 0 deferred
 
 **Ordering:** one table, ordered by status (pending then deferred then completed), then criticality (`P0` → `P1` → `P2`) then complexity (`S` → `M` → `L`); completed gaps are grouped by component. `GT-*` IDs link to the [Gap Reference Catalog](./gap-reference-catalog.md); `MT-A*` IDs link to the supporting [Multi-Topology implementation plan](./multi-topology-reference-corpus-implementation-plan.md).
 

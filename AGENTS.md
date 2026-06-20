@@ -19,6 +19,7 @@ This repository defines the architectural baseline, governance standards, harnes
 | `node .harness/scripts/generate-es-skeleton.mjs <file.md>` | Create ES skeleton from EN file (with --dry-run flag) |
 | `python ./.bmad-core/scripts/cleanup_markdown_encoding.py` | Sanitize UTF-8 encoding issues |
 | `node .harness/scripts/validate-docs.mjs --render-mermaid` | Render Mermaid diagrams to SVG for visual validation |
+| `node .harness/scripts/run-wilson-audit.mjs` | Print the prompt to run a deep architectural audit via Wilson (Principal Architect) |
 
 ### Pre-commit Hook
 The pre-commit hook (`.husky/pre-commit`) runs automatically on every commit:

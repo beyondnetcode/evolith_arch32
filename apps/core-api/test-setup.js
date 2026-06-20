@@ -1,1 +1,3 @@
-process.env.API_KEYS = process.env.API_KEYS || 'test-api-key-123';
+const path = require('path');
+
+process.env.CORE_PATH = process.env.CORE_PATH || path.resolve(__dirname, '../..');

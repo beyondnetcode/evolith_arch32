@@ -4,7 +4,8 @@ export const envSchema = z.object({
   PORT: z.string().default('3000').transform(Number),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   ALLOWED_ORIGINS: z.string().default('*'),
-  API_KEYS: z.string().min(1, 'API_KEYS is required for authentication'),
+  CORE_PATH: z.string().default(process.cwd()),
+  WORKSPACE_ROOT: z.string().default('/tmp/evolith-workspaces'),
 });
 
 export type EnvConfig = z.infer<typeof envSchema>;

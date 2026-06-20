@@ -1,12 +1,15 @@
 import { Controller, Post, Body, Param, HttpCode, HttpStatus } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiBody, ApiParam, ApiSecurity } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiBody, ApiParam } from '@nestjs/swagger';
 import { EvaluateGateUseCase } from '@evolith/core-domain/application/use-cases';
 import { EvaluateGateDto } from '../dtos/gates.dto';
+import { WorkspaceReferenceResolverService } from '../../application/services/workspace-reference-resolver.service';
 
-@ApiSecurity('api-key')
 @Controller('gates')
 export class GatesController {
-  constructor(private readonly evaluateGateUseCase: EvaluateGateUseCase) {}
+  constructor(
+    private readonly evaluateGateUseCase: EvaluateGateUseCase,
+    private readonly workspaceResolver: WorkspaceReferenceResolverService,
+  ) {}
 
   @Post(':gateId/evaluate')
   @HttpCode(HttpStatus.OK)
@@ -15,15 +18,14 @@ export class GatesController {
   @ApiBody({ type: EvaluateGateDto })
   @ApiResponse({ status: 200, description: 'Gate evaluation results' })
   @ApiResponse({ status: 400, description: 'Invalid input' })
-  @ApiResponse({ status: 401, description: 'Missing or invalid API key' })
   async evaluateGate(
     @Param('gateId') gateId: string,
     @Body() body: EvaluateGateDto
   ) {
     return this.evaluateGateUseCase.execute({
       phase: this.mapGateIdToPhase(gateId),
-      projectPath: body.satellitePath,
-      corePath: body.corePath,
+      projectPath: this.workspaceResolver.resolve(body.workspaceRef),
+      corePath: this.workspaceResolver.corePath(),
     });
   }
 

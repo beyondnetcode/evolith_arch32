@@ -17,6 +17,7 @@ import {
 } from '@evolith/core-domain/application/validators';
 import { IFileSystem, ILogger, IConfigParser, ICatalogLoader } from '@evolith/core-domain/domain/interfaces';
 import { DiskRulesetRepository } from '@evolith/infra-providers';
+import { TopologyCatalogService } from '@evolith/core-domain/application/services';
 
 const CoreDomainProviders = [
   {
@@ -82,16 +83,31 @@ const CoreDomainProviders = [
     } satisfies ICatalogLoader,
   },
   {
+    provide: TopologyCatalogService,
+    useFactory: (fs: IFileSystem, logger: ILogger) => new TopologyCatalogService(fs, logger),
+    inject: ['IFileSystem', 'ILogger'],
+  },
+  {
     provide: RulesetValidatorService,
-    useFactory: (fs: IFileSystem, logger: ILogger, configParser: IConfigParser, rulesetRepo: any) => {
-      return new RulesetValidatorService({ fileSystem: fs, logger, configParser, rulesetRepo });
+    useFactory: (fs: IFileSystem, logger: ILogger, configParser: IConfigParser, rulesetRepo: any, topologyCatalog: TopologyCatalogService) => {
+      return new RulesetValidatorService({ fileSystem: fs, logger, configParser, rulesetRepo, topologyCatalog });
     },
-    inject: ['IFileSystem', 'ILogger', 'IConfigParser', 'IRulesetRepository'],
+    inject: ['IFileSystem', 'ILogger', 'IConfigParser', 'IRulesetRepository', TopologyCatalogService],
   },
   {
     provide: PhaseGateValidatorService,
     useFactory: (fs: IFileSystem, logger: ILogger) => {
       return new PhaseGateValidatorService(undefined, { fileSystem: fs, logger });
+    },
+    inject: ['IFileSystem', 'ILogger'],
+  },
+  {
+    provide: 'VALIDATOR_FACTORY',
+    useFactory: (fs: IFileSystem, logger: ILogger) => {
+      return (corePath?: string) => new PhaseGateValidatorService(corePath, {
+        fileSystem: fs,
+        logger,
+      });
     },
     inject: ['IFileSystem', 'ILogger'],
   },

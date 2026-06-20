@@ -7,9 +7,6 @@ import helmet from 'helmet';
 import { correlationIdMiddleware } from './infrastructure/middleware/correlation-id.middleware';
 import { HttpExceptionFilter } from './infrastructure/filters/http-exception.filter';
 
-process.env.API_KEYS = 'test-api-key-123';
-
-const API_KEY = 'test-api-key-123';
 
 describe('Core API E2E', () => {
   let app: INestApplication;
@@ -50,24 +47,9 @@ describe('Core API E2E', () => {
   });
 
   describe('Flow 2: RFC 9457 Problem Details', () => {
-    it('should return application/problem+json on 401', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/api/v1/architecture/validate-satellite')
-        .send({ satellitePath: '/test' });
-      expect(res.status).toBe(401);
-      expect(res.headers['content-type']).toContain('application/problem+json');
-      expect(res.body).toHaveProperty('type');
-      expect(res.body).toHaveProperty('title');
-      expect(res.body).toHaveProperty('status', 401);
-      expect(res.body).toHaveProperty('detail');
-      expect(res.body).toHaveProperty('instance');
-      expect(res.body).toHaveProperty('timestamp');
-    });
-
     it('should return application/problem+json on 400', async () => {
       const res = await request(app.getHttpServer())
         .post('/api/v1/architecture/validate-satellite')
-        .set('x-api-key', API_KEY)
         .send({});
       expect(res.status).toBe(400);
       expect(res.headers['content-type']).toContain('application/problem+json');
@@ -75,22 +57,35 @@ describe('Core API E2E', () => {
     });
   });
 
-  describe('Flow 3: Authentication Required', () => {
-    it('should return 401 without API key', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/api/v1/architecture/validate-satellite')
-        .send({ satellitePath: '/test' });
-      expect(res.status).toBe(401);
-    });
-  });
-
-  describe('Flow 4: Validated Requests', () => {
+  describe('Flow 3: Validated Requests', () => {
     it('should reject empty body with 400', async () => {
       const res = await request(app.getHttpServer())
         .post('/api/v1/architecture/validate-satellite')
-        .set('x-api-key', API_KEY)
         .send({});
       expect(res.status).toBe(400);
+    });
+  });
+
+  describe('Flow 4: Core reference reads', () => {
+    it('should expose rulesets and phase requirements as public Core artifacts', async () => {
+      const rulesets = await request(app.getHttpServer()).get('/api/v1/rulesets');
+
+      expect(rulesets.status).toBe(200);
+      expect(rulesets.body.length).toBeGreaterThan(0);
+
+      const ruleset = await request(app.getHttpServer())
+        .get(`/api/v1/rulesets/${encodeURIComponent(rulesets.body[0].id)}`);
+      expect(ruleset.status).toBe(200);
+
+      const gate = await request(app.getHttpServer())
+        .get('/api/v1/gates/PG1');
+      expect(gate.status).toBe(200);
+      expect(gate.body.phase).toBe(1);
+
+      const requirements = await request(app.getHttpServer())
+        .get('/api/v1/phases/1/requirements');
+      expect(requirements.status).toBe(200);
+      expect(requirements.body.mandatoryEvidence.length).toBeGreaterThan(0);
     });
   });
 });

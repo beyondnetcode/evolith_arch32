@@ -1171,10 +1171,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 - **Gap:** Every Core API command takes a local filesystem path (`satellitePath` / `corePath`) and the use-cases read the satellite repository directly from disk (e.g. `ProjectsController.proposeAdvance` forwards `body.satellitePath`). This assumes the repository is on the API host's filesystem, which does not hold for a hosted SaaS Core API consumed remotely by the Evolith Tracker BFF. How a hosted API accesses a tenant's repository (clone, upload, git remote, ephemeral workspace) is unresolved.
 - **Purpose:** Define and implement a remote-consumption model so the Tracker BFF can call a hosted Core API without passing local paths — e.g. a repository-reference contract (git URL + ref + credentials) with server-side checkout, or an upload/streaming boundary, with tenant isolation.
-- **Current evidence / example:** `apps/core-api/src/presentation/controllers/projects.controller.ts` and `gates.controller.ts` accept `satellitePath`/`corePath` strings resolved against the API process filesystem.
+- **Current evidence / example:** `POST /architecture/validate-satellite`, `POST /gates/:gateId/evaluate`, and both `/projects` commands now accept an opaque `workspaceRef` resolved beneath the BFF-managed `WORKSPACE_ROOT`; `POST /architecture/detect-drift` is the remaining local-path command to migrate.
 - **Done when:**
-  - [ ] a remote repository-reference contract (or equivalent) is specified in an ADR
-  - [ ] the Core API resolves satellite content without a caller-supplied local path
+  - [x] a remote repository-reference contract (or equivalent) is specified in an ADR ([ADR-0080](../../../architecture/adrs/core/0080-remote-repository-reference-contract.md))
+  - [x] the Core API resolves satellite content without a caller-supplied local path (`workspaceRef` is resolved only beneath the server-configured `WORKSPACE_ROOT`)
   - [ ] tenant isolation and credential handling are covered by tests
 - **References:** [apps/core-api/src/presentation/controllers/projects.controller.ts](../../../../apps/core-api/src/presentation/controllers/projects.controller.ts) · [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md)
 

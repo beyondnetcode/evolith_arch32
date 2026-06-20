@@ -8,6 +8,7 @@ import { OpaEvaluator } from './evaluators/opa-evaluator';
 
 import { IRulesetRepository } from '../../domain/ports/ruleset-repository.port';
 import { NormalizedRule } from '../../domain/models/normalized-rule';
+import { TopologyCatalogService } from '../services/topology-catalog.service';
 
 export interface ValidationResult {
   status: 'passed' | 'failed' | 'warning';
@@ -53,6 +54,7 @@ export interface RulesetValidatorOptions {
   logger?: ILogger;
   engineType?: 'native' | 'opa';
   rulesetRepo?: IRulesetRepository;
+  topologyCatalog?: TopologyCatalogService;
 }
 
 export const RULESET_VALIDATOR_OPTIONS = 'RULESET_VALIDATOR_OPTIONS';
@@ -63,6 +65,7 @@ export class RulesetValidatorService {
   private readonly fs: IFileSystem;
   private readonly configParser: IConfigParser;
   private readonly engine: RuleEvaluationEngine;
+  private readonly topologyCatalog?: TopologyCatalogService;
 
   constructor(@Optional() @Inject(RULESET_VALIDATOR_OPTIONS) options?: RulesetValidatorOptions) {
     if (!options?.fileSystem) throw new Error('IFileSystem is required');
@@ -73,6 +76,7 @@ export class RulesetValidatorService {
     this.logger = options.logger;
     this.fs = options.fileSystem;
     this.configParser = options.configParser;
+    this.topologyCatalog = options.topologyCatalog;
     
     const strategy = options.engineType === 'opa' 
       ? new OpaEvaluator(this.fs, this.logger) 
@@ -245,12 +249,12 @@ export class RulesetValidatorService {
     const issues: ValidationIssue[] = [];
     let rulesChecked = 0;
 
-    const levels = level === 'ALL' || !level
+    const levels: Array<'F1' | 'F2' | 'F3'> = level === 'ALL' || !level
       ? ['F1', 'F2', 'F3']
       : [level];
 
     for (const lvl of levels) {
-      const rulesetPath = path.join(resolvedCorePath, 'rulesets', 'architecture', `f${lvl.toLowerCase()}-${lvl === 'F1' ? 'modular-monolith' : lvl === 'F2' ? 'distributed-modules' : 'microservices'}.rules.json`);
+      const rulesetPath = await this.resolveArchitectureRuleset(resolvedCorePath, lvl);
 
       if (!await this.fs.exists(rulesetPath)) {
         issues.push({
@@ -291,6 +295,21 @@ export class RulesetValidatorService {
       issues,
       timestamp: new Date().toISOString(),
     };
+  }
+
+  private async resolveArchitectureRuleset(corePath: string, level: 'F1' | 'F2' | 'F3'): Promise<string> {
+    if (this.topologyCatalog) {
+      const manifest = await this.topologyCatalog.resolveProgressivePhase(corePath, level);
+      const manifestRuleset = manifest?.spec.artifacts.rulesets[0];
+      if (!manifestRuleset) {
+        throw new Error(`No topology manifest ruleset is registered for progressive phase ${level}`);
+      }
+      return path.join(corePath, manifestRuleset);
+    }
+
+    // Compatibility only for consumers that have not yet injected the catalog.
+    const profile = level === 'F1' ? 'modular-monolith' : level === 'F2' ? 'distributed-modules' : 'microservices';
+    return path.join(corePath, 'rulesets', 'architecture', `f${level.toLowerCase()}-${profile}.rules.json`);
   }
 }
 

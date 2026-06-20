@@ -28,6 +28,7 @@ export interface InitProjectResult {
 
 export * from '../use-cases/initialize-project.use-case';
 export * from '../use-cases/phase-transition.use-case';
+export * from './topology-catalog.service';
 
 export interface GateResult {
   id: string;

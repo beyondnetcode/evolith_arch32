@@ -27,7 +27,6 @@ async function bootstrap() {
     .setTitle('Evolith Core API')
     .setDescription('Core API for gate evaluation, phase transitions, project initialization, and architecture drift detection')
     .setVersion('1.0.0')
-    .addApiKey({ type: 'apiKey', name: 'x-api-key', in: 'header' }, 'api-key')
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
@@ -48,7 +47,7 @@ async function bootstrap() {
   app.enableCors({
     origin: config.get('ALLOWED_ORIGINS')?.split(',') ?? ['*'],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'x-correlation-id', 'x-api-key'],
+    allowedHeaders: ['Content-Type', 'x-correlation-id'],
     credentials: true,
   });
 

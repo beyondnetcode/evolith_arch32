@@ -1,10 +1,12 @@
 # ADR-0075: Core API Authentication Strategy
 
-- **Status:** Accepted
+- **Status:** Superseded by ADR-0080
 - **Deciders:** Evolith Architecture Board
 - **Date:** 2026-06-14
 
 ## Context
+
+> **Supersession note (2026-06-19):** Evolith Core is an open-source architecture corpus and engine, not an authenticated product boundary. Evolith Tracker's BFF is the only authenticated perimeter; it validates the UMS Bearer token and authorization graph. The API-key and future JWT model below is historical and must not be extended in Core.
 
 The Core API exposes critical operations (gate evaluation, project initialization, architecture drift detection) without any authentication mechanism. This violates OWASP API Security Top 10 requirements: API1 (Broken Object Level Authorization), API2 (Broken Authentication), and API5 (Broken Function Level Authorization).
 

@@ -1,17 +1,18 @@
 import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiBody, ApiSecurity } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import {
   InitializeProjectUseCase,
   ProposePhaseAdvanceUseCase
 } from '@evolith/core-domain/application/use-cases';
 import { InitProjectDto, ProposeAdvanceDto } from '../dtos/projects.dto';
+import { WorkspaceReferenceResolverService } from '../../application/services/workspace-reference-resolver.service';
 
-@ApiSecurity('api-key')
 @Controller('projects')
 export class ProjectsController {
   constructor(
     private readonly initializeProjectUseCase: InitializeProjectUseCase,
-    private readonly proposePhaseAdvanceUseCase: ProposePhaseAdvanceUseCase
+    private readonly proposePhaseAdvanceUseCase: ProposePhaseAdvanceUseCase,
+    private readonly workspaceResolver: WorkspaceReferenceResolverService,
   ) {}
 
   @Post('initialize')
@@ -20,7 +21,6 @@ export class ProjectsController {
   @ApiBody({ type: InitProjectDto })
   @ApiResponse({ status: 201, description: 'Project initialized' })
   @ApiResponse({ status: 400, description: 'Invalid input' })
-  @ApiResponse({ status: 401, description: 'Missing or invalid API key' })
   async initialize(@Body() body: InitProjectDto) {
     return this.initializeProjectUseCase.execute({
       name: body.name,
@@ -33,7 +33,7 @@ export class ProjectsController {
       observability: (body.options?.observability as string) || 'opentelemetry',
       features: Array.isArray(body.options?.features) ? (body.options.features as string[]) : [],
       agents: Array.isArray(body.options?.agents) ? (body.options.agents as string[]) : [],
-    }, body.targetPath);
+    }, this.workspaceResolver.resolve(body.workspaceRef));
   }
 
   @Post('propose-advance')
@@ -42,13 +42,12 @@ export class ProjectsController {
   @ApiBody({ type: ProposeAdvanceDto })
   @ApiResponse({ status: 200, description: 'Advance proposal results' })
   @ApiResponse({ status: 400, description: 'Invalid input' })
-  @ApiResponse({ status: 401, description: 'Missing or invalid API key' })
   async proposeAdvance(@Body() body: ProposeAdvanceDto) {
     return this.proposePhaseAdvanceUseCase.execute({
       fromPhase: body.targetPhase as any,
       toPhase: body.targetPhase as any,
-      projectPath: body.satellitePath,
-      corePath: body.corePath,
+      projectPath: this.workspaceResolver.resolve(body.workspaceRef),
+      corePath: this.workspaceResolver.corePath(),
       triggerDeploy: body.triggerDeploy,
     } as any);
   }

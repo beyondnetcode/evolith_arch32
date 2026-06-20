@@ -2,10 +2,10 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsString, IsOptional, IsBoolean, MinLength } from 'class-validator';
 
 export class InitProjectDto {
-  @ApiProperty({ description: 'Target directory path', example: '/workspace' })
+  @ApiProperty({ description: 'Opaque workspace reference issued by the Tracker BFF', example: 'op_01j7wq8e2n' })
   @IsString()
   @MinLength(1)
-  targetPath!: string;
+  workspaceRef!: string;
 
   @ApiProperty({ description: 'Project name', example: 'my-service' })
   @IsString()
@@ -22,15 +22,10 @@ export class InitProjectDto {
 }
 
 export class ProposeAdvanceDto {
-  @ApiProperty({ description: 'Path to the satellite project', example: '/workspace/my-project' })
+  @ApiProperty({ description: 'Opaque workspace reference issued by the Tracker BFF', example: 'op_01j7wq8e2n' })
   @IsString()
   @MinLength(1)
-  satellitePath!: string;
-
-  @ApiPropertyOptional({ description: 'Path to the Core repository' })
-  @IsOptional()
-  @IsString()
-  corePath?: string;
+  workspaceRef!: string;
 
   @ApiProperty({ description: 'Target phase to advance to', example: 'phase-2' })
   @IsString()

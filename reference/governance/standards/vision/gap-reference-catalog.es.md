@@ -1170,10 +1170,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 - **Gap:** Todo comando del Core API recibe una ruta de filesystem local (`satellitePath` / `corePath`) y los use-cases leen el repositorio satélite directamente del disco (p. ej. `ProjectsController.proposeAdvance` reenvía `body.satellitePath`). Esto asume que el repositorio está en el filesystem del host de la API, lo cual no se cumple para un Core API hosteado (SaaS) consumido remotamente por el BFF del Tracker. Cómo accede una API hosteada al repositorio del tenant (clonado, upload, git remoto, workspace efímero) está sin resolver.
 - **Propósito:** Definir e implementar un modelo de consumo remoto para que el BFF del Tracker llame a un Core API hosteado sin pasar rutas locales — p. ej. un contrato de referencia a repositorio (URL git + ref + credenciales) con checkout en servidor, o una frontera de upload/streaming, con aislamiento de tenant.
-- **Evidencia actual / ejemplo:** `apps/core-api/src/presentation/controllers/projects.controller.ts` y `gates.controller.ts` aceptan strings `satellitePath`/`corePath` resueltos contra el filesystem del proceso de la API.
+- **Evidencia actual / ejemplo:** `POST /architecture/validate-satellite`, `POST /gates/:gateId/evaluate` y ambos comandos `/projects` ahora aceptan una `workspaceRef` opaca resuelta bajo `WORKSPACE_ROOT` gestionado por el BFF; `POST /architecture/detect-drift` es el comando restante con ruta local que debe migrarse.
 - **Criterio de cierre:**
-  - [ ] un contrato de referencia a repositorio remoto (o equivalente) especificado en un ADR
-  - [ ] el Core API resuelve el contenido del satélite sin una ruta local provista por el caller
+  - [x] un contrato de referencia a repositorio remoto (o equivalente) especificado en un ADR ([ADR-0080](../../../architecture/adrs/core/0080-remote-repository-reference-contract.es.md))
+  - [x] el Core API resuelve el contenido del satélite sin una ruta local provista por el caller (`workspaceRef` se resuelve únicamente bajo `WORKSPACE_ROOT` configurado en el servidor)
   - [ ] aislamiento de tenant y manejo de credenciales cubiertos por tests
 - **Referencias:** [apps/core-api/src/presentation/controllers/projects.controller.ts](../../../../apps/core-api/src/presentation/controllers/projects.controller.ts) · [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md)
 

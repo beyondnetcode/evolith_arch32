@@ -1,14 +1,10 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsOptional, MinLength } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsString, MinLength } from 'class-validator';
 
 export class EvaluateGateDto {
-  @ApiProperty({ description: 'Path to the satellite project', example: '/workspace/my-project' })
+  @ApiProperty({ description: 'Opaque workspace reference issued by the Tracker BFF', example: 'op_01j7wq8e2n' })
   @IsString()
   @MinLength(1)
-  satellitePath!: string;
+  workspaceRef!: string;
 
-  @ApiPropertyOptional({ description: 'Path to the Core repository' })
-  @IsOptional()
-  @IsString()
-  corePath?: string;
 }

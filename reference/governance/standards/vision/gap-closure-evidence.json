@@ -960,7 +960,6 @@
       "closureCommit": "cedf3c2",
       "evidence": [
         "apps/core-api/src/main.ts",
-        "apps/core-api/src/infrastructure/auth/api-key.service.ts",
         "apps/core-api/src/graceful-shutdown.spec.ts"
       ],
       "validationCommands": [

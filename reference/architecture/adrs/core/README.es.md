@@ -41,6 +41,7 @@
 * [0055-microfrontends-architecture-strategy](./0055-microfrontends-architecture-strategy.es.md)
 * **[0056-enterprise-naming-design-conventions](./0056-enterprise-naming-design-conventions.es.md)** — Multi-language, multi-platform naming & design standard
 * [0068-gitflow-lanzamiento-documentacion](./0068-documentation-release-gitflow.es.md) — **GitFlow de lanzamiento de documentación con quality gates bilingües**
+* [0080-remote-repository-reference-contract](./0080-remote-repository-reference-contract.es.md) — **Contrato de referencia de repositorio para Core API hospedado**
 
 ---
 [Volver al Nivel Superior](../README.es.md)

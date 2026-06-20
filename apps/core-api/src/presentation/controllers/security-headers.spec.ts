@@ -11,7 +11,6 @@ describe('Security & Validation (Integration)', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
-    process.env.API_KEYS = "test-api-key-123";
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -79,33 +78,10 @@ describe('Security & Validation (Integration)', () => {
     });
   });
 
-  describe('Auth', () => {
-    it('should reject request without API key', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/api/v1/architecture/validate-satellite')
-        .send({ satellitePath: '/test' });
-      expect(res.status).toBe(401);
-    });
-
-    it('should reject request with invalid API key', async () => {
-      const res = await request(app.getHttpServer())
-        .post('/api/v1/architecture/validate-satellite')
-        .set('x-api-key', 'invalid-key')
-        .send({ satellitePath: '/test' });
-      expect(res.status).toBe(401);
-    });
-
-    it('should allow health endpoint without API key', async () => {
-      const res = await request(app.getHttpServer()).get('/health');
-      expect(res.status).toBe(200);
-    });
-  });
-
   describe('DTO Validation', () => {
     it('should reject request with missing required field', async () => {
       const res = await request(app.getHttpServer())
         .post('/api/v1/architecture/validate-satellite')
-        .set('x-api-key', 'test-api-key-123')
         .send({});
       expect(res.status).toBe(400);
     });
@@ -113,7 +89,6 @@ describe('Security & Validation (Integration)', () => {
     it('should reject request with unknown properties', async () => {
       const res = await request(app.getHttpServer())
         .post('/api/v1/architecture/validate-satellite')
-        .set('x-api-key', 'test-api-key-123')
         .send({ satellitePath: '/test', injectedField: 'malicious' });
       expect(res.status).toBe(400);
     });
@@ -133,7 +108,6 @@ describe('Security & Validation (Integration)', () => {
     it('should return 422 for validation failure on domain error', async () => {
       const res = await request(app.getHttpServer())
         .post('/api/v1/architecture/validate-satellite')
-        .set('x-api-key', 'test-api-key-123')
         .send({ satellitePath: '' });
       expect(res.status).toBe(400);
     });

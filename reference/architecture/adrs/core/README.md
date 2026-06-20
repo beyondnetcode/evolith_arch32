@@ -48,6 +48,7 @@
 * [0070-lean-root-repository-taxonomy](./0070-lean-root-repository-taxonomy.md) — **Lean root: src/ vs docs/ binary dichotomy for satellite repositories**
 * [0071-domain-layer-base-class-inheritance-strategy](./0071-domain-layer-base-class-inheritance-strategy.md) — **Domain layer inheritance trade-off: shell base classes vs. Domain.Abstractions**
 * [0072-utc-dates-timezone-language-resolution](./0072-utc-dates-timezone-language-resolution.md) — **UTC storage, browser timezone detection, and language priority chain**
+* [0080-remote-repository-reference-contract](./0080-remote-repository-reference-contract.md) — **Hosted Core API repository-reference contract**
 
 ---
 [Back to Upper Level](../README.md)

@@ -3,7 +3,6 @@ import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { LoggerModule } from 'nestjs-pino';
-import { PassportModule } from '@nestjs/passport';
 import { HealthController } from './presentation/controllers/health.controller';
 import { HealthService } from './application/services/health.service';
 import { GatesController } from './presentation/controllers/gates.controller';
@@ -13,13 +12,13 @@ import { PhasesController } from './presentation/controllers/phases.controller';
 import { MetricsController } from './presentation/controllers/metrics.controller';
 import { CoreDomainModule } from './core-domain.module';
 import { CorrelationIdMiddleware } from './infrastructure/middleware/correlation-id.middleware';
-import { ApiKeyAuthGuard } from './infrastructure/auth/api-key.guard';
-import { ApiKeyStrategy } from './infrastructure/auth/api-key.strategy';
-import { ApiKeyService } from './infrastructure/auth/api-key.service';
 import { validateEnv } from './infrastructure/config/env.validation';
 import { AuditThrottlerGuard } from './infrastructure/guards/audit-throttler.guard';
 import { MetricsService } from './infrastructure/metrics/metrics.service';
 import { CircuitBreakerService } from './infrastructure/resilience/circuit-breaker.service';
+import { CoreReferenceQueryService } from './application/services/core-reference-query.service';
+import { ReferenceController } from './presentation/controllers/reference.controller';
+import { WorkspaceReferenceResolverService } from './application/services/workspace-reference-resolver.service';
 
 @Module({
   imports: [
@@ -38,7 +37,6 @@ import { CircuitBreakerService } from './infrastructure/resilience/circuit-break
         quietReqLogger: true,
       },
     }),
-    PassportModule,
   ],
   controllers: [
     HealthController,
@@ -46,21 +44,18 @@ import { CircuitBreakerService } from './infrastructure/resilience/circuit-break
     ProjectsController,
     ArchitectureController,
     PhasesController,
-    MetricsController
+    MetricsController,
+    ReferenceController,
   ],
   providers: [
     HealthService,
-    ApiKeyService,
-    ApiKeyStrategy,
     MetricsService,
     CircuitBreakerService,
+    CoreReferenceQueryService,
+    WorkspaceReferenceResolverService,
     {
       provide: APP_GUARD,
       useClass: AuditThrottlerGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: ApiKeyAuthGuard,
     },
   ],
 })

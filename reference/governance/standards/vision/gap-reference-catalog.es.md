@@ -12,6 +12,48 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 ## 1. Detalle de Gaps
 
+### Phase 2: Arquitectura Agéntica y Evolución
+
+#### GT-135
+
+**Título:** Estándar de Telemetría y Control de Costos para IA Agéntica
+
+- **Propósito:** Estandarizar los esquemas OpenTelemetry para rastrear el uso de tokens LLM, latencia de ejecución y atribución de costos por ciclo de agente, previniendo presupuestos descontrolados en topologías autónomas.
+- **Evidencia:** Actualmente, las ejecuciones del sandbox de agentes carecen de trazas APM formales para consumo de tokens y costos de API.
+- **Hecho cuando:** Un ADR defina los spans de OpenTelemetry para llamadas LLM Agénticas, y el `ci-runner` valide estos elementos específicos del esquema.
+
+#### GT-136
+
+**Título:** Control de Acceso Consciente del Contexto (ABAC para LLMs)
+
+- **Propósito:** Las políticas OPA `policy.wasm` deben permitir o denegar dinámicamente las ejecuciones de herramientas MCP basándose en el contexto del usuario humano (ej., RBAC/ABAC), asegurando que los agentes no puedan eludir los permisos humanos.
+- **Evidencia:** Los agentes actualmente se ejecutan con permisos amplios de sandbox sin verificar los claims del directorio activo del usuario invocador.
+- **Hecho cuando:** La lógica de validación OPA dual-engine incorpore un esquema de contexto de usuario, y se publique una política ABAC `.rego` de referencia.
+
+#### GT-137
+
+**Título:** Identidad Soberana para IA Agéntica
+
+- **Propósito:** Definir cómo los agentes autónomos suplantan los tokens OAuth 2.0 humanos o mantienen identidades soberanas de cuentas de servicio al atravesar APIs downstream.
+- **Evidencia:** No existe un flujo de intercambio de tokens estandarizado para la topología de IA Agéntica en Evolith.
+- **Hecho cuando:** Un ADR documente el patrón de Intercambio de Tokens OAuth 2.0 (RFC 8693) para la delegación de identidad de agentes.
+
+#### GT-138
+
+**Título:** Flujos de Trabajo Agénticos Orientados a Eventos
+
+- **Propósito:** Establecer patrones para desencadenar flujos de trabajo MCP Agénticos a través de un Bus de Mensajes (ej., MassTransit/RabbitMQ) en lugar de solicitudes HTTP puramente síncronas.
+- **Evidencia:** Las invocaciones de agentes están actualmente fuertemente acopladas a endpoints REST/gRPC síncronos.
+- **Hecho cuando:** El hub de la topología Orientada a Eventos incluya un patrón de referencia para consumir eventos de dominio para desencadenar tareas de agentes en segundo plano.
+
+#### GT-139
+
+**Título:** Estándar de Gobernanza de Conocimiento RAG
+
+- **Propósito:** Estandarizar cómo los archivos markdown arquitectónicos de Evolith (ADRs, rulesets) son fragmentados, incrustados (embedded) y sincronizados en Bases de Datos Vectoriales para asistentes habilitados para RAG.
+- **Evidencia:** La documentación actualmente solo es analizada estáticamente por el pipeline CI; no hay un pipeline para incrustar actualizaciones en un almacén vectorial.
+- **Hecho cuando:** Se cree una especificación para la estrategia de chunking, etiquetado de metadatos y sincronización de vectores para todos los archivos `reference/`.
+
 ### Fase F0 — Contrato Primero
 
 #### GT-01

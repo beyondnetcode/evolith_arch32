@@ -11,6 +11,47 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 ---
 
 ## 1. Gap Details
+### Phase 2: Agentic Architecture & Evolution
+
+#### GT-135
+
+**Title:** Agentic AI Telemetry & Cost Control Standard
+
+- **Purpose:** Standardize OpenTelemetry schemas to track LLM token usage, execution latency, and cost attribution per agent loop, preventing runaway budgets in autonomous topologies.
+- **Evidence:** Currently, agent sandbox executions lack formal APM traces for token consumption and API costs.
+- **Done when:** An ADR defines the OpenTelemetry spans for Agentic LLM calls, and the `ci-runner` validates these specific schema elements.
+
+#### GT-136
+
+**Title:** Context-Aware Access Control (ABAC for LLMs)
+
+- **Purpose:** OPA `policy.wasm` rules must dynamically allow or deny MCP tool executions based on the human user's context (e.g., RBAC/ABAC), ensuring agents cannot bypass human permissions.
+- **Evidence:** Agents currently run with broad sandbox permissions without verifying the invoking user's active directory claims.
+- **Done when:** The dual-engine OPA validation logic incorporates a user-context schema, and a reference ABAC `.rego` policy is published.
+
+#### GT-137
+
+**Title:** Sovereign Identity for Agentic AI
+
+- **Purpose:** Define how autonomous agents impersonate human OAuth 2.0 tokens or maintain sovereign service-account identities when traversing downstream APIs.
+- **Evidence:** No standardized token-exchange flow exists for the Agentic AI topology in Evolith.
+- **Done when:** An ADR documents the OAuth 2.0 Token Exchange (RFC 8693) pattern for agent identity delegation.
+
+#### GT-138
+
+**Title:** Event-Driven Agentic Workflows
+
+- **Purpose:** Establish patterns for triggering Agentic MCP workflows via Message Bus (e.g., MassTransit/RabbitMQ) rather than purely synchronous HTTP requests.
+- **Evidence:** Agent invocations are currently tightly coupled to synchronous REST/gRPC endpoints.
+- **Done when:** The Event-Driven topology hub includes a reference pattern for consuming domain events to trigger background agent tasks.
+
+#### GT-139
+
+**Title:** RAG Knowledge Governance Standard
+
+- **Purpose:** Standardize how Evolith's architectural markdown files (ADRs, rulesets) are chunked, embedded, and synchronized into Vector Databases for RAG-enabled assistants.
+- **Evidence:** Documentation is currently only parsed statically by the CI pipeline; there is no pipeline for embedding updates into a vector store.
+- **Done when:** A specification is created for chunking strategy, metadata tagging, and vector synchronization for all `reference/` files.
 
 ### Phase F0 — Contract First
 

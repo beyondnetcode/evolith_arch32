@@ -92,6 +92,42 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** Los límites de autorización de herramientas actuales (ADR-0087) carecen de mecanismos o reglas para la detección de bucles recursivos.
 - **Hecho cuando:** Una política de arquitectura defina criterios de detección de bucles (máximo de saltos, cabeceras de profundidad) y contratos de circuit breaking para flujos de trabajo de agentes.
 
+#### GT-145
+
+**Título:** Sincronización Veraz y Neutral al Proveedor de Vectores RAG
+
+- **Propósito:** Convertir la ruta de sincronización delta de RAG de ADR-0090 en una capacidad operativa real y neutral al proveedor. Una ejecución live debe generar embeddings y persistir fragmentos, informar un comprobante durable y fallar cuando ningún adaptador configurado pueda completar la operación.
+- **Evidencia:** `.harness/scripts/ci/14-rag-index-sync.mjs` etiqueta `EVOLITH_RAG_SYNC=true` como live e informa cada fragmento como upserted, pero sus llamadas al almacén vectorial y a embeddings son TODOs comentados. Ninguna base vectorial es contactada ni verificada.
+- **Hecho cuando:**
+  - [ ] Un puerto neutral para embeddings/almacén vectorial y un contrato de configuración seleccionan un adaptador real sin vincular el core a un proveedor.
+  - [ ] El modo live hace upsert de metadatos y vectores deterministas, registra un comprobante machine-readable y falla de forma cerrada ante fallo del adaptador, embedding o persistencia.
+  - [ ] El ciclo de vida del índice cubre archivos fuente modificados y eliminados sin vectores huérfanos, con suite de pruebas de adaptador falso y límite de prueba de integración.
+  - [ ] La guía de operaciones documenta credenciales de mínimo privilegio, comportamiento acotado de lotes/reintentos y telemetría de costo/tokens.
+
+#### GT-146
+
+**Título:** Revisión Agéntica de CI Segura, Neutral al Proveedor y Acotada por Tokens
+
+- **Propósito:** Hacer segura, portable y económica la revisión de código con LLM real: minimizar y sanear el contexto enviado, imponer presupuestos explícitos de costo/tiempo y validar hallazgos estructurados antes de que un gate de CI actúe sobre ellos.
+- **Evidencia:** `.harness/scripts/ci/13-agentic-code-review.mjs` fija el endpoint y modelo de Gemini, envía el `git diff` completo y crudo al proveedor, y depende de un marcador textual libre `VIOLATION_DETECTED`. No cuenta con redacción de secretos, tope de diff/tokens, priorización de contexto, puerto de proveedor ni validación de resultado estructurado.
+- **Hecho cuando:**
+  - [ ] Un puerto de revisión neutral al proveedor soporta adaptadores y modelos configurados preservando un contrato de CI de fallo cerrado.
+  - [ ] La entrada de revisión elimina credenciales y patrones sensibles, incluye solo archivos modificados relevantes para políticas y está acotada/fragmentada por presupuestos medibles de bytes, tokens, latencia y costo.
+  - [ ] La respuesta del proveedor cumple un esquema versionado con ubicaciones de evidencia y confianza; resultados malformados o indeterminados no pueden aprobar el gate silenciosamente.
+  - [ ] Pruebas cubren redacción, presupuestos, selección de fragmentos, fallos de adaptador y validación de respuesta; CI usa permisos mínimos e informa telemetría agregada y no sensible de eficiencia.
+
+#### GT-147
+
+**Título:** Auditoría Automatizada de Deriva de Capacidades Operativas y Eficiencia
+
+- **Propósito:** Detectar continuamente divergencias entre capacidades declaradas de CI/operaciones y comportamiento ejecutable, identificando además latencia evitable, uso de tokens y trabajo innecesario antes de que estos gaps lleguen a flujos productivos.
+- **Evidencia:** La revisión Wilson V4 encontró que el script RAG presenta upserts no implementados como sincronización live y que la revisión agéntica no tiene controles de contexto/costo. Estos gaps eran visibles en el código, pero ningún evaluador reutilizable los afirma; por tanto futuras regresiones dependen de inspección manual.
+- **Hecho cuando:**
+  - [ ] Un evaluador CI reproducible mapea modos operativos declarados, flags de entorno y afirmaciones ADR a adaptadores ejecutables o semántica dry-run explícita.
+  - [ ] El evaluador falla ante mensajes de éxito falsos, adaptadores configurados ausentes, payloads externos no acotados y límites ausentes de timeout/retry/costo cuando una capacidad invoca servicios externos.
+  - [ ] Emite hallazgos versionados y machine-readable con ubicaciones fuente y crea un resumen humano conciso apto para el proceso canónico de triage de gaps.
+  - [ ] Pruebas fixture demuestran detección de los casos actuales de falso upsert RAG y diff agéntico no acotado, además de ejemplos conformes para evitar falsos positivos.
+
 ### Fase F0 — Contrato Primero
 
 #### GT-01

@@ -1,9 +1,9 @@
 
 # [OK] Bilingual Coverage Dashboard
 
-**Generated:** 2026-06-16T20:31:13.431Z  
+**Generated:** 2026-06-20T14:07:13.392Z  
 **Repository:** evolith_arch32  
-**Total EN files:** 371 | **ES files:** 371 | **Paired:** 371 | **Coverage:** 100.0%
+**Total EN files:** 404 | **ES files:** 404 | **Paired:** 404 | **Coverage:** 100.0%
 
 ---
 
@@ -11,9 +11,9 @@
 
 | Metric | Value |
 |--------|-------|
-| Total EN files | 371 |
-| Total ES files | 371 |
-| Paired files | 371 |
+| Total EN files | 404 |
+| Total ES files | 404 |
+| Paired files | 404 |
 | **Coverage** | **100.0%** |
 
 ### Coverage Bar
@@ -30,14 +30,14 @@
 |------|----|----|--------|----------|--------|
 | README.es.md | 0 | 1 | 0 | 0% | [CRIT] |
 | README.md | 1 | 0 | 0 | 0% | [CRIT] |
-| architecture | 126 | 126 | 121 | 96% | [OK] |
+| architecture | 155 | 155 | 150 | 97% | [OK] |
 | core | 2 | 2 | 0 | 0% | [CRIT] |
 | documentation-migration-map.es.md | 0 | 1 | 0 | 0% | [CRIT] |
 | documentation-migration-map.md | 1 | 0 | 0 | 0% | [CRIT] |
 | documentation-taxonomy.es.md | 0 | 1 | 0 | 0% | [CRIT] |
 | documentation-taxonomy.md | 1 | 0 | 0 | 0% | [CRIT] |
 | getting-started | 2 | 2 | 0 | 0% | [CRIT] |
-| governance | 148 | 148 | 145 | 98% | [OK] |
+| governance | 152 | 152 | 149 | 98% | [OK] |
 | infrastructure | 2 | 2 | 0 | 0% | [CRIT] |
 | knowledge | 28 | 28 | 24 | 86% | [OK] |
 | navigation | 4 | 4 | 0 | 0% | [CRIT] |
@@ -77,11 +77,12 @@
 | INTEGRATION_HUB.md | 1 | 0 | 0 | 0% | [CRIT] |
 | README.es.md | 0 | 1 | 0 | 0% | [CRIT] |
 | README.md | 1 | 0 | 0 | 0% | [CRIT] |
-| adrs | 96 | 96 | 96 | 100% | [OK] |
+| adrs | 103 | 103 | 103 | 100% | [OK] |
 | blueprints | 15 | 15 | 15 | 100% | [OK] |
 | canonical-patterns | 5 | 5 | 5 | 100% | [OK] |
 | evolith-sdk | 3 | 3 | 3 | 100% | [OK] |
 | principles | 2 | 2 | 2 | 100% | [OK] |
+| topologies | 22 | 22 | 22 | 100% | [OK] |
 
 ### core
 
@@ -137,7 +138,7 @@
 | glossary.es.md | 0 | 1 | 0 | 0% | [CRIT] |
 | glossary.md | 1 | 0 | 0 | 0% | [CRIT] |
 | sdlc | 45 | 45 | 45 | 100% | [OK] |
-| standards | 99 | 99 | 99 | 100% | [OK] |
+| standards | 103 | 103 | 103 | 100% | [OK] |
 
 ### infrastructure
 

@@ -57,7 +57,7 @@ function parseTableRows(filePath) {
     if (!line.trim().startsWith('|')) { inTable = false; continue; }
 
     const cols = line.split('|').map((column) => column.trim()).filter(Boolean);
-    const idMatch = cols[0]?.match(/`(GT-\d+)`/);
+    const idMatch = cols[0]?.match(/`(GT-\d+|MT-A\d+)`/);
     if (idMatch && statusColIndex !== -1 && cols.length > statusColIndex) {
       rows.push({
         id: idMatch[1],
@@ -121,7 +121,7 @@ function commitExists(commit) {
 function validateClosureRecord(record, knownIds, errors) {
   const prefix = record?.id || '<missing-id>';
 
-  if (!/^GT-\d+$/.test(record?.id || '')) {
+  if (!/^(GT-\d+|MT-A\d+)$/.test(record?.id || '')) {
     errors.push(`Closure record has invalid ID: ${prefix}`);
     return;
   }
@@ -188,7 +188,7 @@ export function validateTrackingState({
   for (const row of enRows) {
     if (seen.has(row.id)) errors.push(`Duplicate ID found: ${row.id}`);
     seen.add(row.id);
-    if (!enSections.has(row.id)) errors.push(`${row.id} is missing from the English catalog`);
+    if (row.id.startsWith('GT-') && !enSections.has(row.id)) errors.push(`${row.id} is missing from the English catalog`);
   }
 
   if (enRows.length !== esRows.length) {
@@ -206,7 +206,7 @@ export function validateTrackingState({
     }
     if (!canonicalStatus(row.status)) errors.push(`${row.id} has unsupported EN status: ${row.status}`);
     if (!canonicalStatus(esRow.status)) errors.push(`${row.id} has unsupported ES status: ${esRow.status}`);
-    if (!esSections.has(row.id)) errors.push(`${row.id} is missing from the Spanish catalog`);
+    if (row.id.startsWith('GT-') && !esSections.has(row.id)) errors.push(`${row.id} is missing from the Spanish catalog`);
   });
 
   const counts = { done: 0, pending: 0, deferred: 0, 'in-progress': 0 };
@@ -242,7 +242,7 @@ export function validateTrackingState({
     const status = canonicalStatus(row.status);
     const record = recordsById.get(row.id);
     if (status === 'done') {
-      if (!record) errors.push(`${row.id} is DONE without a closure evidence record`);
+      if (!record && row.id.startsWith('GT-')) errors.push(`${row.id} is DONE without a closure evidence record`);
       for (const [language, sections] of [['EN', enSections], ['ES', esSections]]) {
         if (/- \[ \]/.test(sections.get(row.id) || '')) {
           errors.push(`${row.id} is DONE with unchecked closure criteria in ${language}`);

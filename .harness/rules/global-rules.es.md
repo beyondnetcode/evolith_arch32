@@ -31,7 +31,7 @@ Directivas vinculantes. Sin relleno.
 | **R-23** | Puertas de Dominio Dinámico | Los workflows de tenant dinámicos deben estar asegurados a nivel de dominio via un `RequirementChecklist` interno evaluado antes de transiciones de estado. |
 | **R-24** | Ergonomía de Diagramas | Los modelos complejos de Domain-Driven Design (DDD) no deben ser renderizados como un único diagrama monolítico. Deben dividirse en al menos tres vistas (Business Core, Workflow/Audit, y Cross-Cutting Shells) con una leyenda visual. |
 | **R-25** | Paridad de Dos Motores | Toda adición o modificación de una regla arquitectónica debe implementarse tanto en el Evaluador TypeScript Nativo como en su archivo OPA `.rego` correspondiente. El CLI debe garantizar el cambio transparente entre ambos motores. |
-| **R-26** | Cierre Semántico de Gaps | Un gap solo puede estar `COMPLETADO` cuando todos sus criterios de cierre estén satisfechos y el registro canónico de cierres contenga un commit real, artefactos de evidencia fechados, comandos de validación reproducibles y disposición explícita de dependencias. |
+| **R-26** | Cierre Semántico de Gaps | Un gap `GT-*` solo puede estar `COMPLETADO` cuando todos sus criterios de cierre estén satisfechos y el registro canónico de cierres contenga un commit real, artefactos de evidencia fechados, comandos de validación reproducibles y disposición explícita de dependencias. Los gaps históricos `MT-*` están exentos salvo que se registren explícitamente. |
 
 ## Compuertas de Validación Obligatorias
 

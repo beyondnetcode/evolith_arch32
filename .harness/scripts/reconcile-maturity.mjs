@@ -28,7 +28,7 @@ function countFiles(directory, pattern, excludePattern) {
 
 export function parseBoard(content) {
   const lastUpdated = content.match(/\*\*Last Updated:\*\* (\d{4}-\d{2}-\d{2})/)?.[1];
-  const statuses = [...content.matchAll(/^\| \[`GT-\d+`]\([^)]*\) .*\| `(DONE|PENDING|DEFERRED|IN-PROGRESS)` \|$/gm)]
+  const statuses = [...content.matchAll(/^\| \[`(?:GT-\d+|MT-A\d+)`]\([^)]*\) .*\| `(DONE|PENDING|DEFERRED|IN-PROGRESS)` \|$/gm)]
     .map((match) => match[1]);
   const counts = {
     total: statuses.length,
@@ -57,11 +57,11 @@ export function validateRuntimeEvidence(evidence, board, root = ROOT, now = new 
   const errors = [];
   const checks = Array.isArray(evidence?.checks) ? evidence.checks : [];
   const activeGaps = new Set(
-    [...board.content.matchAll(/^\| \[`(GT-\d+)`]\([^)]*\) .*\| `(PENDING|DEFERRED|IN-PROGRESS)` \|$/gm)]
+    [...board.content.matchAll(/^\| \[`(GT-\d+|MT-A\d+)`]\([^)]*\) .*\| `(PENDING|DEFERRED|IN-PROGRESS)` \|$/gm)]
       .map((match) => match[1]),
   );
   const closedGaps = new Set(
-    [...board.content.matchAll(/^\| \[`(GT-\d+)`]\([^)]*\) .*\| `DONE` \|$/gm)]
+    [...board.content.matchAll(/^\| \[`(GT-\d+|MT-A\d+)`]\([^)]*\) .*\| `DONE` \|$/gm)]
       .map((match) => match[1]),
   );
   const ids = new Set();
@@ -110,8 +110,12 @@ export function buildSnapshot(root = ROOT) {
   const runtimeEvidence = JSON.parse(fs.readFileSync(path.join(root, 'reference/governance/standards/vision/maturity-evidence.json'), 'utf8'));
   const closures = registry.closures || [];
 
-  if (closures.length !== board.counts.done) {
-    throw new Error(`Closure evidence count (${closures.length}) differs from DONE count (${board.counts.done})`);
+  const gtDoneCount = [...board.content.matchAll(/^\| \[`GT-\d+`]\([^)]*\) .*\| `DONE` \|$/gm)].length;
+  const mtClosureCount = closures.filter((c) => c.id && c.id.startsWith('MT-')).length;
+  const expectedClosures = gtDoneCount + mtClosureCount;
+
+  if (closures.length !== expectedClosures) {
+    throw new Error(`Closure evidence count (${closures.length}) differs from required closures (${expectedClosures})`);
   }
   const evidenceErrors = validateRuntimeEvidence(runtimeEvidence, board, root);
   if (evidenceErrors.length) throw new Error(`Invalid runtime maturity evidence:\n- ${evidenceErrors.join('\n- ')}`);

@@ -3,6 +3,21 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "MT-A21",
+      "closedAt": "2026-06-19",
+      "closureCommit": "2010ce0",
+      "evidence": [
+        "packages/core-domain/src/application/services/topology-catalog.service.ts",
+        "apps/core-api/src/core-domain.module.ts"
+      ],
+      "validationCommands": [
+        "npm --workspace @evolith/core-domain run build",
+        "npm --workspace apps/core-api test -- --runInBand",
+        "npm --workspace apps/core-api run build"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-105",
       "closedAt": "2026-06-16",
       "closureCommit": "651ef9b",

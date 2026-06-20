@@ -61,7 +61,7 @@ try {
 // Map GT-ID to GH Item
 const ghMap = new Map();
 for (const item of ghItems) {
-  const idMatch = item.title.match(/\[(GT-\d+)\]/);
+  const idMatch = item.title.match(/\[(GT-\d+|MT-A\d+)\]/);
   if (idMatch) {
     ghMap.set(idMatch[1], {
       id: item.id,
@@ -82,10 +82,10 @@ function processTrackingFile(filePath, isSpanish) {
   
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
-    if (line.startsWith('|') && line.includes('`GT-')) {
+    if (line.startsWith('|') && (line.includes('`GT-') || line.includes('`MT-A'))) {
       const parts = line.split('|').map(s => s.trim());
       if (parts.length >= 8) {
-        const idMatch = parts[1].match(/\[\`(GT-\d+)\`\]/);
+        const idMatch = parts[1].match(/\[\`(GT-\d+|MT-A\d+)\`\]/);
         if (idMatch) {
           const gapId = idMatch[1];
           seenGaps.add(gapId);

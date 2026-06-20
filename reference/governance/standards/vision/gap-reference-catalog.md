@@ -91,6 +91,42 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** The current tool authorization boundaries (ADR-0087) lack mechanism or rules for recursive loop detection.
 - **Done when:** An architecture policy defines loop-detection criteria (max hops, depth headers) and circuit breaking contracts for agent workflows.
 
+#### GT-145
+
+**Title:** Truthful Provider-Neutral RAG Vector Synchronization
+
+- **Purpose:** Turn the ADR-0090 RAG delta-sync path into a real, provider-neutral operational capability. A live run must embed and persist chunks, report a durable receipt, and fail when no configured adapter can complete the operation.
+- **Evidence:** `.harness/scripts/ci/14-rag-index-sync.mjs` labels `EVOLITH_RAG_SYNC=true` as live and reports each chunk as upserted, but its vector-store and embedding calls are commented TODOs. No vector database is contacted or verified.
+- **Done when:**
+  - [ ] A provider-neutral embedding/vector-store port and configuration contract select an actual adapter without binding the core to one vendor.
+  - [ ] Live mode upserts deterministic chunk metadata and vectors, records a machine-readable receipt, and fails closed on adapter, embedding, or persistence failure.
+  - [ ] Index lifecycle covers changed and deleted source files without orphaned vectors, with a fake-adapter test suite and an integration test boundary.
+  - [ ] Operations guidance documents least-privilege credentials, bounded batch/retry behavior, and cost/token telemetry.
+
+#### GT-146
+
+**Title:** Secure, Provider-Neutral, and Token-Bounded Agentic CI Review
+
+- **Purpose:** Make real LLM code review safe, portable, and economical: minimize and sanitize the submitted context, enforce explicit cost/time budgets, and validate structured findings before a CI gate acts on them.
+- **Evidence:** `.harness/scripts/ci/13-agentic-code-review.mjs` hard-codes the Gemini endpoint and model, submits the full raw `git diff` to the provider, and relies on a free-text `VIOLATION_DETECTED` marker. It has no secret redaction, diff/token cap, context prioritization, provider port, or structured-result validation.
+- **Done when:**
+  - [ ] A provider-neutral review port supports configured adapters and models while preserving a fail-closed CI contract.
+  - [ ] The review input removes credentials and sensitive patterns, includes only policy-relevant changed files, and is bounded/chunked by measurable byte, token, latency, and cost budgets.
+  - [ ] The provider response conforms to a versioned schema with evidence locations and confidence; malformed or indeterminate results cannot silently pass the gate.
+  - [ ] Tests cover redaction, budgeting, chunk selection, adapter failures, and response validation; CI uses minimum permissions and reports aggregate, non-sensitive efficiency telemetry.
+
+#### GT-147
+
+**Title:** Automated Operational Capability and Efficiency Drift Audit
+
+- **Purpose:** Continuously detect divergence between declared CI/operations capabilities and executable behavior, while identifying avoidable latency, token use, and unnecessary work before those gaps reach production workflows.
+- **Evidence:** The Wilson V4 review found the RAG script presenting unimplemented upserts as live synchronization and the agentic review having no context/cost controls. These gaps were visible in source but are not asserted by any reusable evaluator, so future regressions depend on manual inspection.
+- **Done when:**
+  - [ ] A reproducible CI evaluator maps declared operational modes, environment flags, and ADR claims to executable adapters or explicit dry-run semantics.
+  - [ ] The evaluator fails for false success messages, missing configured adapters, unbounded external payloads, and absent timeout/retry/cost limits where a capability invokes external services.
+  - [ ] It emits versioned, machine-readable findings with source locations and creates a concise human summary suitable for the canonical gap triage process.
+  - [ ] Fixture tests demonstrate detection of the current RAG false-upsert and unbounded-agentic-diff cases, plus compliant examples to prevent false positives.
+
 ### Phase F0 — Contract First
 
 #### GT-01

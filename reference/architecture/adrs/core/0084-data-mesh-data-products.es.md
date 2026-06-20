@@ -24,3 +24,5 @@ Todos los satélites que adopten esta topología DEBEN declarar un archivo `data
 - **Positivas:** Elimina el cuello de botella del equipo centralizado de datos. Otorga a los equipos de dominio total autonomía sobre los planos operacional y analítico. Mejora radicalmente la calidad de los datos ya que los productores (quienes mejor entienden los datos) son responsables de ellos.
 - **Negativas:** Mayor carga cognitiva para los equipos de dominio que ahora deben comprender los ciclos de vida de los productos de datos. Requiere una inversión significativa en la plataforma de datos de autoservicio para hacerlo factible.
 - **Cumplimiento:** Gobernado a través de `DM-R01`, `DM-R02` y `DM-R03` en las reglas de arquitectura ejecutables.
+
+> **Agent Signature:** Architect Agent

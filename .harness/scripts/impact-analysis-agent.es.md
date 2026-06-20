@@ -14,7 +14,7 @@ El Agente de Análisis de Impacto y Sincronización se ejecuta automáticamente 
 
 **Invocación manual:**
 ```bash
-node .harness/scripts/impact-analysis-synchronizer.mjs [options]
+node .harness/scripts/ci/06-impact-analysis-synchronizer.mjs [options]
 ```
 
 ---

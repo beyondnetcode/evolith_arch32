@@ -72,3 +72,5 @@ Ninguna explícitamente enlazada.
 
 ---
 [Volver al Índice](./README.es.md)
+
+> **Agent Signature:** Architect Agent

@@ -387,7 +387,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Current evidence / example:** The semantic validator, canonical closure registry, and regression tests are active. GT-01 and GT-06 criteria were resolved explicitly, while GT-15 was restored to `DEFERRED` because its in-memory mock is not Tracker-authoritative evidence.
 - **Done when:** validation rejects `DONE` without completed closure criteria, dated closure evidence, dependency disposition, reproducible validation commands, and a commit or release reference; documented exceptions are explicit, owned, and time-bounded.
 - **Closure evidence:** Commit `f3c8520` introduced R-26, the bilingual closure standard, 32 historical closure records, commit and artifact resolution, dependency disposition checks, unchecked-criterion rejection, and four regression tests. The same change corrected the false-positive GT-15 status.
-- **References:** [Gap Closure Evidence Standard](./gap-closure-evidence-standard.md) · [Closure Registry](./gap-closure-evidence.json) · [Tracking Validator](../../../../.harness/scripts/validate-tracking.mjs) · [Gap Tracking](./gap-tracking.md)
+- **References:** [Gap Closure Evidence Standard](./gap-closure-evidence-standard.md) · [Closure Registry](./gap-closure-evidence.json) · [Tracking Validator](../../../../.harness/scripts/ci/08-validate-tracking.mjs) · [Gap Tracking](./gap-tracking.md)
 
 #### GT-41
 
@@ -402,7 +402,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Reopened evidence (2026-06-13):** The generated snapshot reports every gap complete while four workflows on the same `main` commit are red. It records command names, not test, release, npm, skipped-suite, or CI outcomes, and the narrative assessment retains superseded capability states.
 - **Reopening verification (2026-06-13):** Run [Documentation Validation 27467157149](https://github.com/beyondnetcode/evolith_arch32/actions/runs/27467157149) validated the corpus and bilingual parity, but semantic reconciliation failed because the shallow checkout did not contain registered closure commits.
 - **Final closure evidence:** Commit `e4fa0e3` added a freshness-checked runtime evidence registry, explicit `PASS`/`BLOCKED` readiness outcomes, workflow and commit traceability, active-gap ownership for blockers, regression tests, and full-history checkout. Run [Documentation Validation 27470122212](https://github.com/beyondnetcode/evolith_arch32/actions/runs/27470122212) passed documentation, bilingual parity, semantic tracking, maturity reconciliation, and machine-contract validation.
-- **References:** [Maturity Assessment](./maturity-assessment.md) · [Maturity Reconciliation](./maturity-reconciliation.json) · [Inventory Summary](./inventory-summary.md) · [Reconciliation Validator](../../../../.harness/scripts/reconcile-maturity.mjs)
+- **References:** [Maturity Assessment](./maturity-assessment.md) · [Maturity Reconciliation](./maturity-reconciliation.json) · [Inventory Summary](./inventory-summary.md) · [Reconciliation Validator](../../../../.harness/scripts/ci/09-reconcile-maturity.mjs)
 
 #### GT-42
 
@@ -413,7 +413,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Current evidence / example:** Contract ADRs and JSON schemas exist, but there is no cross-repository compatibility matrix or CI suite that exercises supported producer and consumer versions together.
 - **Done when:** shared versioned schemas or pinned contract references define compatibility policy; producer and consumer contract tests run across Core, CLI, and Tracker; CI verifies the latest supported version matrix and blocks incompatible changes.
 - **Closure evidence:** Core commit `154aadf` added the versioned manifest, immutable schema digests, fixtures, conformance tests, and CI enforcement. Tracker commit `4256e7b` pinned the supported contract and added its consumer workflow against Core.
-- **References:** [ADR-0073 Unified CLI Output Contract](../../../architecture/adrs/core/0073-unified-cli-output-contract.md) · [Contract Manifest](../../../../rulesets/contracts/evolith-machine-contracts.json) · [Conformance Policy](../../../../rulesets/contracts/README.md) · [Conformance Validator](../../../../.harness/scripts/validate-contract-conformance.mjs)
+- **References:** [ADR-0073 Unified CLI Output Contract](../../../architecture/adrs/core/0073-unified-cli-output-contract.md) · [Contract Manifest](../../../../rulesets/contracts/evolith-machine-contracts.json) · [Conformance Policy](../../../../rulesets/contracts/README.md) · [Conformance Validator](../../../../.harness/scripts/ci/10-validate-contract-conformance.mjs)
 
 #### GT-44
 
@@ -903,9 +903,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Remove all temporary debugging scripts from the root and clean up the corresponding exception entries in the root cleanliness validator.
 - **Done when:**
   - [x] `fix-arch.js`, `fix-ts.js`, `fix-types.js`, `refactor.js` deleted from root
-  - [x] Exception entries removed from `.harness/scripts/validate-root-cleanliness.mjs`
+  - [x] Exception entries removed from `.harness/scripts/ci/03-validate-root-cleanliness.mjs`
   - [x] `validate-root-cleanliness.mjs` passes without the exception allowlist entries
-- **References:** [.harness/scripts/validate-root-cleanliness.mjs](../../../../.harness/scripts/validate-root-cleanliness.mjs)
+- **References:** [.harness/scripts/ci/03-validate-root-cleanliness.mjs](../../../../.harness/scripts/ci/03-validate-root-cleanliness.mjs)
 
 #### GT-79
 
@@ -951,7 +951,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - `evidence`: Jest coverage threshold configuration enforces minimum branch coverage; test suite covers conditional and error paths across CLI commands
   - `validationCommands`:
     - `npm run test:cov` — coverage thresholds enforced
-    - `node .harness/scripts/validate-docs.mjs` — documentation standards pass
+    - `node .harness/scripts/ci/01-validate-docs.mjs` — documentation standards pass
   - `dependencyDisposition`: none
 - **References:** [Jest Configuration](../../../../sdk/cli/jest.config.js) · [GT-48](#gt-48) · [GT-50](#gt-50)
 
@@ -1290,7 +1290,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - `closedAt`: 2026-06-20
   - `closureCommit`: `0fc716a48dc24ea2bec348a42b3780661de5a0b4`
   - `evidence`: recorded in the [closure registry](./gap-closure-evidence.json)
-  - `validationCommands`: [`node .harness/scripts/validate-topology-manifests.mjs`, `node .harness/scripts/validate-docs.mjs --render-mermaid`, `npm run build --workspace @evolith/core-domain`, `node .harness/scripts/validate-tracking.mjs`]
+  - `validationCommands`: [`node .harness/scripts/validate-topology-manifests.mjs`, `node .harness/scripts/ci/01-validate-docs.mjs --render-mermaid`, `npm run build --workspace @evolith/core-domain`, `node .harness/scripts/ci/08-validate-tracking.mjs`]
 
 #### GT-126
 
@@ -1306,7 +1306,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - `closedAt`: 2026-06-20
   - `closureCommit`: 8566249
   - `evidence`: Dual-engine rules and documentation implemented
-  - `validationCommands`: ["node .harness/scripts/validate-docs.mjs"]
+  - `validationCommands`: ["node .harness/scripts/ci/01-validate-docs.mjs"]
 
 #### GT-127
 
@@ -1322,7 +1322,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - `closedAt`: 2026-06-20
   - `closureCommit`: HEAD
   - `evidence`: Dual-engine rules and documentation implemented
-  - `validationCommands`: ["node .harness/scripts/validate-docs.mjs"]
+  - `validationCommands`: ["node .harness/scripts/ci/01-validate-docs.mjs"]
 
 #### GT-128
 
@@ -1338,7 +1338,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - `closedAt`: 2026-06-20
   - `closureCommit`: 8566249bbefe547f87116d90ecb8c8a797e5cc2b
   - `evidence`: ["reference/architecture/topologies/data/data-mesh/data-mesh.rules.json", "reference/architecture/topologies/data/data-mesh/data-mesh.rego"]
-  - `validationCommands`: ["node .harness/scripts/validate-tracking.mjs", "node .harness/scripts/validate-docs.mjs"]
+  - `validationCommands`: ["node .harness/scripts/ci/08-validate-tracking.mjs", "node .harness/scripts/ci/01-validate-docs.mjs"]
 
 #### GT-129
 
@@ -1357,4 +1357,4 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - `evidence`: Implemented executable contract, dual-engine parity, and documented offline-first persistence patterns.
   - `validationCommands`:
     - `npm test --workspace packages/core-domain`
-    - `node .harness/scripts/validate-docs.mjs`
+    - `node .harness/scripts/ci/01-validate-docs.mjs`

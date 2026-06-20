@@ -8,8 +8,8 @@ Ejecuta estos comandos desde la raiz del repositorio:
 
 ```bash
 node .harness/scripts/validate-topology-manifests.mjs
-node .harness/scripts/check-bilingual-parity.mjs
-node .harness/scripts/validate-docs.mjs
+node .harness/scripts/ci/04-check-bilingual-parity.mjs
+node .harness/scripts/ci/01-validate-docs.mjs
 npm test -- --runInBand architecture-rule.handler.spec.ts
 ```
 

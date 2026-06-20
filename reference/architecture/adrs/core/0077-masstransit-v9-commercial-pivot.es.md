@@ -86,3 +86,5 @@ La decisión aplica a todos los repositorios de productos .NET en el ecosistema 
 - ADR-0036: [Estrategia de Entrega de Mensajes y Cartas Muertas](./0036-message-bus-delivery-strategy-fifo-dlq.md)
 - Proyecto OpenTransit: [https://opentransitlab.github.io/OpenTransit/](https://opentransitlab.github.io/OpenTransit/)
 - Proyecto Rebus: [https://github.com/rebus-org/Rebus](https://github.com/rebus-org/Rebus)
+
+> **Agent Signature:** Architect Agent

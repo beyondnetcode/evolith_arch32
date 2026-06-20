@@ -53,3 +53,5 @@ The decision is evaluated by whether an attacker can cause untrusted text to alt
 
 ---
 [Back to Core ADR Index](./README.md)
+
+> **Agent Signature:** Architect Agent

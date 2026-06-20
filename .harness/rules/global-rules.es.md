@@ -37,8 +37,8 @@ Directivas vinculantes. Sin relleno.
 
 Antes de que cualquier cambio de documentación o regla de agente se considere completo:
 
-1. Ejecute `node .harness/scripts/validate-docs.mjs`.
-2. Ejecute `node .harness/scripts/validate-docs.mjs --render-mermaid` cuando los diagramas Mermaid hayan cambiado.
+1. Ejecute `node .harness/scripts/ci/01-validate-docs.mjs`.
+2. Ejecute `node .harness/scripts/ci/01-validate-docs.mjs --render-mermaid` cuando los diagramas Mermaid hayan cambiado.
 3. Corrija enlaces relativos rotos, anclas Markdown faltantes, bloques Mermaid mal formados, navegación bilingüe inválida, contrapartes de idioma faltantes, y violaciones de UTF-8 o terminaciones de línea antes del merge.
 4. Reporte cualquier anomalía restante explícitamente si no puede ser corregida en el mismo cambio.
 

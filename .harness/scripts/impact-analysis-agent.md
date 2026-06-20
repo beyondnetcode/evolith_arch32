@@ -14,7 +14,7 @@ The Impact Analysis & Synchronization Agent executes automatically after any rel
 
 **Manual invocation:**
 ```bash
-node .harness/scripts/impact-analysis-synchronizer.mjs [options]
+node .harness/scripts/ci/06-impact-analysis-synchronizer.mjs [options]
 ```
 
 ---

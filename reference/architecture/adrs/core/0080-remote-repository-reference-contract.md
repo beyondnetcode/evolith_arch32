@@ -70,3 +70,5 @@ The selected model is evaluated by: no caller filesystem dependency; immutable a
 
 ---
 [Back to ADR Registry](../README.md)
+
+> **Agent Signature:** Architect Agent

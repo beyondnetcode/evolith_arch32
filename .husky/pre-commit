@@ -1,42 +1,5 @@
-echo "Running documentation validation..."
-node .harness/scripts/validate-docs.mjs
+echo "======================================================================"
+echo "  Evolith CI Pre-commit Hook"
+echo "======================================================================"
 
-echo ""
-echo "Running repository optimization..."
-node .harness/scripts/optimize-repo.mjs
-
-echo ""
-echo "Running root cleanliness validation..."
-node .harness/scripts/validate-root-cleanliness.mjs
-
-echo ""
-echo "Running bilingual parity check..."
-node .harness/scripts/check-bilingual-parity.mjs
-
-echo ""
-echo "Checking for orphan bilingual files..."
-node .harness/scripts/check-orphan-bilingual.mjs
-
-echo ""
-echo "Running impact analysis & synchronization..."
-node .harness/scripts/impact-analysis-synchronizer.mjs --staged --verbose --fail-on-risk
-
-echo ""
-echo "Generating documentation inventories..."
-node .harness/scripts/generate-inventories.mjs
-
-echo ""
-echo "Validating tracking boards..."
-node .harness/scripts/validate-tracking.mjs
-
-echo ""
-echo "Reconciling maturity evidence..."
-node .harness/scripts/reconcile-maturity.mjs --check
-
-echo ""
-echo "Validating machine contract conformance..."
-node .harness/scripts/validate-contract-conformance.mjs
-
-echo ""
-echo "Validating product documentation synchronization..."
-node .harness/scripts/validate-product-docs.mjs
+node .harness/scripts/ci-runner.mjs

@@ -67,10 +67,10 @@ Before pushing code, run documentation validation:
 
 ```bash
 # Validate all documentation
-node .harness/scripts/validate-docs.mjs
+node .harness/scripts/ci/01-validate-docs.mjs
 
 # Check bilingual parity
-node .harness/scripts/check-bilingual-parity.mjs
+node .harness/scripts/ci/04-check-bilingual-parity.mjs
 
 # If files need ES translation, generate skeleton
 node .harness/scripts/generate-es-skeleton.mjs <file.md> --dry-run

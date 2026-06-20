@@ -387,7 +387,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia actual / ejemplo:** El validador semántico, el registro canónico de cierres y los tests de regresión están activos. Los criterios de GT-01 y GT-06 fueron resueltos explícitamente, mientras GT-15 volvió a `DIFERIDO` porque su mock en memoria no es evidencia autoritativa de Tracker.
 - **Cierre cuando:** la validación rechaza `COMPLETADO` sin criterios de cierre satisfechos, evidencia fechada, disposición de dependencias, comandos de validación reproducibles y referencia de commit o release; las excepciones documentadas son explícitas, tienen responsable y vencimiento.
 - **Evidencia de cierre:** El commit `f3c8520` incorporó R-26, el estándar bilingüe de cierre, 32 registros históricos, resolución de commits y artefactos, chequeos de disposición de dependencias, rechazo de criterios sin marcar y cuatro tests de regresión. El mismo cambio corrigió el falso positivo de GT-15.
-- **Referencias:** [Estándar de Evidencia para Cierre de Gaps](./gap-closure-evidence-standard.es.md) · [Registro de Cierres](./gap-closure-evidence.json) · [Validador de Tracking](../../../../.harness/scripts/validate-tracking.mjs) · [Tracking de Gaps](./gap-tracking.es.md)
+- **Referencias:** [Estándar de Evidencia para Cierre de Gaps](./gap-closure-evidence-standard.es.md) · [Registro de Cierres](./gap-closure-evidence.json) · [Validador de Tracking](../../../../.harness/scripts/ci/08-validate-tracking.mjs) · [Tracking de Gaps](./gap-tracking.es.md)
 
 #### GT-41
 
@@ -402,7 +402,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia de reapertura (2026-06-13):** El snapshot generado reporta todos los gaps completos mientras cuatro workflows del mismo commit de `main` están rojos. Registra nombres de comandos, no resultados de tests, release, npm, suites omitidas o CI, y la evaluación narrativa conserva estados de capacidad reemplazados.
 - **Verificación de reapertura (2026-06-13):** El run [Documentation Validation 27467157149](https://github.com/beyondnetcode/evolith_arch32/actions/runs/27467157149) validó el corpus y la paridad bilingüe, pero la reconciliación semántica falló porque el checkout superficial no contenía los commits de cierre registrados.
 - **Evidencia final de cierre:** El commit `e4fa0e3` incorporó un registro de evidencia runtime con control de frescura, resultados explícitos `PASS`/`BLOCKED`, trazabilidad a workflow y commit, ownership de bloqueos por gaps activos, tests de regresión y checkout con historia completa. El run [Documentation Validation 27470122212](https://github.com/beyondnetcode/evolith_arch32/actions/runs/27470122212) pasó documentación, paridad bilingüe, tracking semántico, reconciliación de madurez y validación de contratos machine-readable.
-- **Referencias:** [Evaluación de Madurez](./maturity-assessment.es.md) · [Reconciliación de Madurez](./maturity-reconciliation.json) · [Resumen de Inventario](./inventory-summary.es.md) · [Validador de Reconciliación](../../../../.harness/scripts/reconcile-maturity.mjs)
+- **Referencias:** [Evaluación de Madurez](./maturity-assessment.es.md) · [Reconciliación de Madurez](./maturity-reconciliation.json) · [Resumen de Inventario](./inventory-summary.es.md) · [Validador de Reconciliación](../../../../.harness/scripts/ci/09-reconcile-maturity.mjs)
 
 #### GT-42
 
@@ -413,7 +413,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia actual / ejemplo:** Existen ADRs contractuales y schemas JSON, pero no una matriz de compatibilidad entre repositorios ni una suite CI que ejecute juntas las versiones soportadas de productores y consumidores.
 - **Cierre cuando:** schemas versionados compartidos o referencias contractuales fijadas definen la política de compatibilidad; contract tests de productor y consumidor se ejecutan entre Core, CLI y Tracker; CI verifica la matriz de últimas versiones soportadas y bloquea cambios incompatibles.
 - **Evidencia de cierre:** El commit Core `154aadf` incorporó el manifiesto versionado, digests inmutables de schemas, fixtures, tests de conformidad y enforcement en CI. El commit Tracker `4256e7b` fijó el contrato soportado y agregó su workflow consumidor contra Core.
-- **Referencias:** [ADR-0073 Contrato Unificado de Salida del CLI](../../../architecture/adrs/core/0073-unified-cli-output-contract.es.md) · [Manifiesto Contractual](../../../../rulesets/contracts/evolith-machine-contracts.json) · [Política de Conformidad](../../../../rulesets/contracts/README.es.md) · [Validador de Conformidad](../../../../.harness/scripts/validate-contract-conformance.mjs)
+- **Referencias:** [ADR-0073 Contrato Unificado de Salida del CLI](../../../architecture/adrs/core/0073-unified-cli-output-contract.es.md) · [Manifiesto Contractual](../../../../rulesets/contracts/evolith-machine-contracts.json) · [Política de Conformidad](../../../../rulesets/contracts/README.es.md) · [Validador de Conformidad](../../../../.harness/scripts/ci/10-validate-contract-conformance.mjs)
 
 #### GT-44
 
@@ -903,9 +903,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Propósito:** Eliminar todos los scripts de depuración temporales de la raíz y limpiar las entradas de excepción correspondientes en el validador de limpieza de la raíz.
 - **Criterio de cierre:**
   - [x] `fix-arch.js`, `fix-ts.js`, `fix-types.js`, `refactor.js` eliminados de la raíz
-  - [x] Entradas de excepción eliminadas de `.harness/scripts/validate-root-cleanliness.mjs`
+  - [x] Entradas de excepción eliminadas de `.harness/scripts/ci/03-validate-root-cleanliness.mjs`
   - [x] `validate-root-cleanliness.mjs` pasa sin las entradas de excepción en la allowlist
-- **Referencias:** [.harness/scripts/validate-root-cleanliness.mjs](../../../../.harness/scripts/validate-root-cleanliness.mjs)
+- **Referencias:** [.harness/scripts/ci/03-validate-root-cleanliness.mjs](../../../../.harness/scripts/ci/03-validate-root-cleanliness.mjs)
 
 #### GT-79
 
@@ -951,7 +951,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - `evidence`: Configuración de umbrales de Jest exige cobertura mínima de branches; suite de tests cubre rutas condicionales y de error en comandos del CLI
   - `validationCommands`:
     - `npm run test:cov` — umbrales de cobertura exigidos
-    - `node .harness/scripts/validate-docs.mjs` — estándares de documentación pasan
+    - `node .harness/scripts/ci/01-validate-docs.mjs` — estándares de documentación pasan
   - `dependencyDisposition`: none
 - **Referencias:** [Configuración Jest](../../../../sdk/cli/jest.config.js) · [GT-48](#gt-48) · [GT-50](#gt-50)
 
@@ -1289,7 +1289,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - `closedAt`: 2026-06-20
   - `closureCommit`: `0fc716a48dc24ea2bec348a42b3780661de5a0b4`
   - `evidence`: registrado en el [registro de cierres](./gap-closure-evidence.json)
-  - `validationCommands`: [`node .harness/scripts/validate-topology-manifests.mjs`, `node .harness/scripts/validate-docs.mjs --render-mermaid`, `npm run build --workspace @evolith/core-domain`, `node .harness/scripts/validate-tracking.mjs`]
+  - `validationCommands`: [`node .harness/scripts/validate-topology-manifests.mjs`, `node .harness/scripts/ci/01-validate-docs.mjs --render-mermaid`, `npm run build --workspace @evolith/core-domain`, `node .harness/scripts/ci/08-validate-tracking.mjs`]
 
 #### GT-126
 
@@ -1305,7 +1305,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - `closedAt`: 2026-06-20
   - `closureCommit`: 8566249
   - `evidence`: Dual-engine rules and documentation implemented
-  - `validationCommands`: ["node .harness/scripts/validate-docs.mjs"]
+  - `validationCommands`: ["node .harness/scripts/ci/01-validate-docs.mjs"]
 
 #### GT-127
 
@@ -1321,7 +1321,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - `closedAt`: 2026-06-20
   - `closureCommit`: HEAD
   - `evidence`: Dual-engine rules and documentation implemented
-  - `validationCommands`: ["node .harness/scripts/validate-docs.mjs"]
+  - `validationCommands`: ["node .harness/scripts/ci/01-validate-docs.mjs"]
 
 #### GT-128
 
@@ -1337,7 +1337,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - `closedAt`: pending
   - `closureCommit`: pending
   - `evidence`: pending
-  - `validationCommands`: ["node .harness/scripts/validate-tracking.mjs", "node .harness/scripts/validate-docs.mjs"]
+  - `validationCommands`: ["node .harness/scripts/ci/08-validate-tracking.mjs", "node .harness/scripts/ci/01-validate-docs.mjs"]
 
 #### GT-129
 
@@ -1354,4 +1354,4 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - `closedAt`: 2026-06-20
   - `closureCommit`: pending
   - `evidence`: Se implementó el contrato ejecutable, la paridad dual-engine, y se documentaron los patrones de persistencia offline-first.
-  - `validationCommands`: ["npm test --workspace packages/core-domain", "node .harness/scripts/validate-docs.mjs"]
+  - `validationCommands`: ["npm test --workspace packages/core-domain", "node .harness/scripts/ci/01-validate-docs.mjs"]

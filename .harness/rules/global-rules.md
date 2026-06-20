@@ -36,7 +36,7 @@ Binding directives. Zero fluff.
 
 Before any documentation or agent-rule change is considered complete:
 
-1. Run `node .harness/scripts/validate-docs.mjs`.
-2. Run `node .harness/scripts/validate-docs.mjs --render-mermaid` when Mermaid diagrams changed.
+1. Run `node .harness/scripts/ci/01-validate-docs.mjs`.
+2. Run `node .harness/scripts/ci/01-validate-docs.mjs --render-mermaid` when Mermaid diagrams changed.
 3. Correct broken relative links, missing Markdown anchors, malformed Mermaid blocks, invalid bilingual navigation, missing language counterparts, and UTF-8 or line-ending violations before merge.
 4. Report any remaining anomaly explicitly if it cannot be fixed in the same change.

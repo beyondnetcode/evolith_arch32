@@ -1,6 +1,11 @@
 package evolith.topologies.edge_computing
 
 import rego.v1
+import data.evolith.topologies.execution.common as common_exec
+
+deny contains msg if {
+    some msg in common_exec.deny
+}
 
 # EC-R01: Mandatory Synchronization Strategy
 deny contains msg if {

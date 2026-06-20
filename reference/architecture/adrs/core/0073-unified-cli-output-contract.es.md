@@ -98,3 +98,5 @@ Evidencia: ambos documentos de diseño fuente; estado de código verificado el 2
 
 ---
 [Volver al Registro de ADRs](../README.es.md)
+
+> **Agent Signature:** Architect Agent

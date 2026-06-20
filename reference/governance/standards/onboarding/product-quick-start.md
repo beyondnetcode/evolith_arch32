@@ -38,13 +38,13 @@ Use the current [UMS setup instructions](https://github.com/beyondnetcode/ums/bl
 Before contributing changes to this reference corpus, run:
 
 ```bash
-node .harness/scripts/validate-docs.mjs
+node .harness/scripts/ci/01-validate-docs.mjs
 ```
 
 When adding or changing Mermaid diagrams, also run:
 
 ```bash
-node .harness/scripts/validate-docs.mjs --render-mermaid
+node .harness/scripts/ci/01-validate-docs.mjs --render-mermaid
 ```
 
 ## 5. AI Agent Collaboration (BMAD Method)

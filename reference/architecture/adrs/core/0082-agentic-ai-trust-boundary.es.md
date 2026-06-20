@@ -53,3 +53,5 @@ La decision se evalua por si un atacante puede lograr que texto no confiable alt
 
 ---
 [Volver al Indice de ADRs Core](./README.es.md)
+
+> **Agent Signature:** Architect Agent

@@ -219,7 +219,7 @@ rm -rf reference/knowledge/demo
 ```bash
 # Las reglas del harness ya están incluidas desde el clone
 # Verificar que pasan antes del primer commit
-node .harness/scripts/validate-docs.mjs
+node .harness/scripts/ci/01-validate-docs.mjs
 ```
 
 Agregar la validación al pipeline de CI:
@@ -227,7 +227,7 @@ Agregar la validación al pipeline de CI:
 ```yaml
 # .github/workflows/docs-validation.yml
 - name: Validate documentation
-  run: node .harness/scripts/validate-docs.mjs
+  run: node .harness/scripts/ci/01-validate-docs.mjs
 ```
 
 ### Paso 5 — Completar la primera clasificación de DECISIONS.md

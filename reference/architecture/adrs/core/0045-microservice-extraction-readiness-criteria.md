@@ -61,3 +61,5 @@ Historical backfill: Address the architectural tension where [ADR 0006](, establ
 
 ---
 [Back to Index](./README.md)
+
+> **Agent Signature:** Architect Agent

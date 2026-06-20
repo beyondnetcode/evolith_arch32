@@ -69,3 +69,5 @@ With the subsequent introduction of sidecars, explicit observability mandates ar
 
 ---
 [Back to Index](./README.md)
+
+> **Agent Signature:** Architect Agent

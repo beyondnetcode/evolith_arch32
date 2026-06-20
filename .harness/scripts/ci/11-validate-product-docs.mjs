@@ -9,7 +9,7 @@ import path from 'path';
 import { execFileSync } from 'child_process';
 import { fileURLToPath } from 'url';
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 const PRODUCTS = path.join(ROOT, 'reference/products');
 
 // Product domains whose READMEs are public, shipped surfaces (must be drift-free).

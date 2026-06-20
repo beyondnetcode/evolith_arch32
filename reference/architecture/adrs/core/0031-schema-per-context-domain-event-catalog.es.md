@@ -189,3 +189,5 @@ Desconocido (registro histórico; evaluado contra principios generales de arquit
 
 ---
 [Volver al Índice](./README.es.md)
+
+> **Agent Signature:** Architect Agent

@@ -35,13 +35,13 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Validate Documentation Standards
-        run: node .harness/scripts/validate-docs.mjs
+        run: node .harness/scripts/ci/01-validate-docs.mjs
 
       - name: Check Bilingual Parity
-        run: node .harness/scripts/check-bilingual-parity.mjs
+        run: node .harness/scripts/ci/04-check-bilingual-parity.mjs
 
       - name: Verify Root Cleanliness
-        run: node .harness/scripts/validate-root-cleanliness.mjs
+        run: node .harness/scripts/ci/03-validate-root-cleanliness.mjs
 
       - name: Verify Version Alignment
         run: |

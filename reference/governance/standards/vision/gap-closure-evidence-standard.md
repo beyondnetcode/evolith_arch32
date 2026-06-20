@@ -28,7 +28,7 @@ Machine-readable governance artifacts use English as their canonical language un
 
 ## 3. Semantic Enforcement
 
-`node .harness/scripts/validate-tracking.mjs` fails when:
+`node .harness/scripts/ci/08-validate-tracking.mjs` fails when:
 
 1. a completed gap has no closure record;
 2. a closure record points to a missing gap, commit, or evidence file;

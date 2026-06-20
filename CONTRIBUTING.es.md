@@ -34,10 +34,10 @@ Debes validar tu trabajo localmente. Nuestros pre-commit hooks de `.husky` revis
 
 ```bash
 # Valida todos los enlaces Markdown, anclas y diagramas Mermaid
-node .harness/scripts/validate-docs.mjs
+node .harness/scripts/ci/01-validate-docs.mjs
 
 # Verifica la paridad estructural bilingüe
-node .harness/scripts/check-bilingual-parity.mjs
+node .harness/scripts/ci/04-check-bilingual-parity.mjs
 ```
 
 Si estos scripts fallan, el pipeline de CI bloqueará tu PR.

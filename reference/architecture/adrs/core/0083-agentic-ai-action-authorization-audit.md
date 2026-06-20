@@ -54,3 +54,5 @@ The decision is evaluated by whether an auditor can reconstruct who requested an
 
 ---
 [Back to Core ADR Index](./README.md)
+
+> **Agent Signature:** Architect Agent

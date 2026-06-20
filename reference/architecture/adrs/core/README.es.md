@@ -48,3 +48,5 @@
 
 ---
 [Volver al Nivel Superior](../README.es.md)
+
+> **Agent Signature:** Architect Agent

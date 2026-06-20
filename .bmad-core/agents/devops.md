@@ -42,10 +42,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Validate Documentation
-        run: node .harness/scripts/validate-docs.mjs
+        run: node .harness/scripts/ci/01-validate-docs.mjs
       
       - name: Check Bilingual Parity
-        run: node .harness/scripts/check-bilingual-parity.mjs
+        run: node .harness/scripts/ci/04-check-bilingual-parity.mjs
       
       - name: Bilingual Coverage
         if: github.ref == 'refs/heads/develop'
@@ -153,13 +153,13 @@ node .harness/scripts/adr-promotion-push.mjs <adr-file.md> --validate
 
 ```bash
 # Validate all docs in repository
-node .harness/scripts/validate-docs.mjs
+node .harness/scripts/ci/01-validate-docs.mjs
 
 # Render Mermaid diagrams for visual validation
-node .harness/scripts/validate-docs.mjs --render-mermaid
+node .harness/scripts/ci/01-validate-docs.mjs --render-mermaid
 
 # Check bilingual structural parity
-node .harness/scripts/check-bilingual-parity.mjs
+node .harness/scripts/ci/04-check-bilingual-parity.mjs
 
 # Generate coverage report
 node .harness/scripts/bilingual-coverage.mjs

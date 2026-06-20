@@ -58,3 +58,5 @@ Se prohíbe que las especificaciones futuras del Core introduzcan parámetros de
 - [Domain-Driven Design (DDD) - Bounded Contexts](https://martinfowler.com/bliki/BoundedContext.html)
 - [Repositorio de producto Evolith Tracker](https://github.com/beyondnetcode/ums)
 - Seguimiento de gaps: separación de responsabilidades de dominio
+
+> **Agent Signature:** Architect Agent

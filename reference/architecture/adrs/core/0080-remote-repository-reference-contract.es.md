@@ -70,3 +70,5 @@ El modelo seleccionado se evalúa por: ausencia de dependencia del filesystem de
 
 ---
 [Volver al Registro ADR](../README.es.md)
+
+> **Agent Signature:** Architect Agent

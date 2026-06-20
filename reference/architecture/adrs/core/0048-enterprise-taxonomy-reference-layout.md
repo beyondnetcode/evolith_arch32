@@ -51,3 +51,5 @@ None explicitly linked.
 
 ---
 [Back to ADR Registry](./README.md)
+
+> **Agent Signature:** Architect Agent

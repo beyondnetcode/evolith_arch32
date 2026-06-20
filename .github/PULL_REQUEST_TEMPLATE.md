@@ -5,8 +5,8 @@
 <!-- You MUST check these boxes before your PR can be merged -->
 
 - [ ] **Bilingual Parity:** I have updated both the English (`.md`) and Spanish (`.es.md`) versions of the documents I touched.
-- [ ] **Validation Scripts:** I have successfully run `node .harness/scripts/validate-docs.mjs` locally.
-- [ ] **Bilingual Validation:** I have successfully run `node .harness/scripts/check-bilingual-parity.mjs` locally.
+- [ ] **Validation Scripts:** I have successfully run `node .harness/scripts/ci/01-validate-docs.mjs` locally.
+- [ ] **Bilingual Validation:** I have successfully run `node .harness/scripts/ci/04-check-bilingual-parity.mjs` locally.
 - [ ] **Agnosticism:** This PR does not introduce a specific technology dependency (e.g. AWS, Azure, React, Node.js) into the agnostic Core reference unless approved by an ADR.
 
 ## Linked ADRs / Issues

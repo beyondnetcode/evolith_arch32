@@ -47,3 +47,5 @@ Evaluado contra principios generales de arquitectura como mantenibilidad y segur
 
 ---
 [Volver al Índice](./README.es.md)
+
+> **Agent Signature:** Architect Agent

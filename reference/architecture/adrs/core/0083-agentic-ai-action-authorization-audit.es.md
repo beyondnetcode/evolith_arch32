@@ -54,3 +54,5 @@ La decision se evalua por si un auditor puede reconstruir quien solicito y aprob
 
 ---
 [Volver al Indice de ADRs Core](./README.es.md)
+
+> **Agent Signature:** Architect Agent

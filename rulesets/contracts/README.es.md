@@ -13,7 +13,7 @@ El manifiesto de este directorio es el límite canónico de compatibilidad entre
 Ejecutar:
 
 ```bash
-node .harness/scripts/validate-contract-conformance.mjs
-node .harness/scripts/validate-contract-conformance.mjs --consumer /ruta/a/consumer-contracts.json
+node .harness/scripts/ci/10-validate-contract-conformance.mjs
+node .harness/scripts/ci/10-validate-contract-conformance.mjs --consumer /ruta/a/consumer-contracts.json
 ```
 

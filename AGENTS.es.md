@@ -12,13 +12,13 @@ Este repositorio define la línea base arquitectónica, los estándares de gober
 
 | Script | Propósito |
 |--------|-----------|
-| `node .harness/scripts/validate-docs.mjs` | Validación completa de documentación (enlaces, anclas, codificación, Mermaid) |
-| `node .harness/scripts/check-bilingual-parity.mjs` | Verifica que los pares EN/ES tengan conteos idénticos de encabezados ## y ### |
+| `node .harness/scripts/ci/01-validate-docs.mjs` | Validación completa de documentación (enlaces, anclas, codificación, Mermaid) |
+| `node .harness/scripts/ci/04-check-bilingual-parity.mjs` | Verifica que los pares EN/ES tengan conteos idénticos de encabezados ## y ### |
 | `node .harness/scripts/bilingual-coverage.mjs` | Reporte de cobertura bilingüe (qué archivos carecen de contrapartes) |
 | `node .harness/scripts/coverage-dashboard.mjs` | Genera reporte visual HTML/MD de cobertura por área |
 | `node .harness/scripts/generate-es-skeleton.mjs <file.md>` | Crea un esqueleto ES desde un archivo EN (con bandera --dry-run) |
 | `python ./.bmad-core/scripts/cleanup_markdown_encoding.py` | Sanea problemas de codificación UTF-8 |
-| `node .harness/scripts/validate-docs.mjs --render-mermaid` | Renderiza diagramas Mermaid a SVG para validación visual |
+| `node .harness/scripts/ci/01-validate-docs.mjs --render-mermaid` | Renderiza diagramas Mermaid a SVG para validación visual |
 | `node .harness/scripts/run-wilson-audit.mjs` | Imprime el prompt para ejecutar una auditoría arquitectónica profunda vía Wilson (Arquitecto Principal) |
 
 ### Pre-commit Hook

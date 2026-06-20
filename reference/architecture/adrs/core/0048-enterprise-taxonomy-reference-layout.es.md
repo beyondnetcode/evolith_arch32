@@ -59,3 +59,5 @@ Ninguna explícitamente enlazada.
 
 ---
 [Volver al Registro ADR](./README.es.md)
+
+> **Agent Signature:** Architect Agent

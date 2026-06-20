@@ -82,3 +82,5 @@ Evidence: The current CLI implementation has already demonstrated the viability 
 
 ---
 [Back to ADR Registry](../README.md)
+
+> **Agent Signature:** Architect Agent

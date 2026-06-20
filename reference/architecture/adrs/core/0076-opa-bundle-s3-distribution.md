@@ -28,3 +28,5 @@ We will adopt the **OPA Bundle API pattern** using an S3-compatible object store
 ### Negative
 - Requires additional CI/CD pipeline steps to run `opa build` and upload artifacts to S3.
 - Slight propagation delay between merging a rule to `main` and it being pulled by the pods (based on OPA polling frequency).
+
+> **Agent Signature:** Architect Agent

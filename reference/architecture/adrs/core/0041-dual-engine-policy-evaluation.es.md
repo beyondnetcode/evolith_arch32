@@ -24,3 +24,5 @@ Para garantizar que los Agentes de IA y el core de Evolith permanezcan sincroniz
 ### Negativas
 - **Sobrecarga de Mantenimiento**: La Paridad Dual-Engine requiere mantener la lógica de validación en dos lenguajes distintos (TypeScript y Rego) hasta que un motor sea completamente desaprobado en el futuro.
 - **Curva de Aprendizaje**: Los equipos de arquitectura y los Agentes deben comprender la sintaxis de Rego para contribuir con nuevas reglas de gobierno.
+
+> **Agent Signature:** Architect Agent

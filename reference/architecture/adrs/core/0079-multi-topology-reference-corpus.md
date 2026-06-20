@@ -143,3 +143,5 @@ Evidence used:
 
 ---
 [Back to ADR Registry](../README.md)
+
+> **Agent Signature:** Architect Agent

@@ -58,3 +58,5 @@ All future core specifications are prohibited from introducing budget, cost, or 
 - [Domain-Driven Design (DDD) - Bounded Contexts](https://martinfowler.com/bliki/BoundedContext.html)
 - [Evolith Tracker product repository](https://github.com/beyondnetcode/ums)
 - Gap tracking: domain separation of concerns
+
+> **Agent Signature:** Architect Agent

@@ -13,7 +13,7 @@ The manifest in this directory is the canonical compatibility boundary between E
 Run:
 
 ```bash
-node .harness/scripts/validate-contract-conformance.mjs
-node .harness/scripts/validate-contract-conformance.mjs --consumer /path/to/consumer-contracts.json
+node .harness/scripts/ci/10-validate-contract-conformance.mjs
+node .harness/scripts/ci/10-validate-contract-conformance.mjs --consumer /path/to/consumer-contracts.json
 ```
 

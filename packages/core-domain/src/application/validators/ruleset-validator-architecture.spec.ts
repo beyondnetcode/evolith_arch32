@@ -74,7 +74,7 @@ describe('RulesetValidatorService - Architecture Validation', () => {
 
   describe('validateArchitecture', () => {
     it('should validate F1 architecture level', async () => {
-      const result = await service.validateArchitecture('/project', '/core', 'F1');
+      const result = await service.validateArchitecture('/project', '/core', { level: 'F1' });
 
       expect(result).toHaveProperty('status');
       expect(result).toHaveProperty('levels');
@@ -93,25 +93,25 @@ describe('RulesetValidatorService - Architecture Validation', () => {
     });
 
     it('should validate specific level when specified', async () => {
-      const result = await service.validateArchitecture('/project', '/core', 'F2');
+      const result = await service.validateArchitecture('/project', '/core', { level: 'F2' });
 
       expect(result.levels).toEqual(['F2']);
     });
 
     it('should return failed status when blocking issues exist', async () => {
-      const result = await service.validateArchitecture('/project', '/core', 'F1');
+      const result = await service.validateArchitecture('/project', '/core', { level: 'F1' });
 
       expect(result.status).toBe('failed');
     });
 
     it('should return issues array even when validation passes', async () => {
-      const result = await service.validateArchitecture('/project', '/core', 'F1');
+      const result = await service.validateArchitecture('/project', '/core', { level: 'F1' });
 
       expect(Array.isArray(result.issues)).toBe(true);
     });
 
     it('should count rules checked', async () => {
-      const result = await service.validateArchitecture('/project', '/core', 'F1');
+      const result = await service.validateArchitecture('/project', '/core', { level: 'F1' });
 
       expect(result.rulesChecked).toBeGreaterThan(0);
     });
@@ -119,7 +119,7 @@ describe('RulesetValidatorService - Architecture Validation', () => {
     it('should handle missing ruleset gracefully', async () => {
       (mockFs.exists as jest.Mock).mockResolvedValue(false);
 
-      const result = await service.validateArchitecture('/project', '/core', 'F1');
+      const result = await service.validateArchitecture('/project', '/core', { level: 'F1' });
 
       expect(result.issues.some((i: { ruleId: string }) => i.ruleId.includes('MISSING'))).toBe(true);
     });
@@ -143,7 +143,7 @@ describe('RulesetValidatorService - Architecture Validation', () => {
         return Promise.resolve(JSON.stringify({ rules: [] }));
       });
 
-      const result = await service.validateArchitecture('/project', '/core', 'F1');
+      const result = await service.validateArchitecture('/project', '/core', { level: 'F1' });
 
       expect(result.rulesChecked).toBeGreaterThan(0);
     });
@@ -168,7 +168,7 @@ describe('RulesetValidatorService - Architecture Validation', () => {
       });
       (mockFs.readdirNames as jest.Mock).mockResolvedValue(['context-a', 'context-b']);
 
-      const result = await service.validateArchitecture('/project', '/core', 'F1');
+      const result = await service.validateArchitecture('/project', '/core', { level: 'F1' });
 
       expect(result.rulesChecked).toBeGreaterThan(0);
     });
@@ -192,7 +192,7 @@ describe('RulesetValidatorService - Architecture Validation', () => {
         return Promise.resolve(JSON.stringify({ rules: [] }));
       });
 
-      const result = await service.validateArchitecture('/project', '/core', 'F1');
+      const result = await service.validateArchitecture('/project', '/core', { level: 'F1' });
 
       expect(result.rulesChecked).toBeGreaterThan(0);
     });

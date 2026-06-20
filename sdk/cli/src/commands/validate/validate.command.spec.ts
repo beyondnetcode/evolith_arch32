@@ -177,7 +177,47 @@ describe('ValidateCommand', () => {
       expect(mockValidateArchitecture).toHaveBeenCalledWith(
         expect.any(String),
         undefined,
-        'F1'
+        { level: 'F1', topologies: ['modular-monolith'] }
+      );
+    });
+
+    it('should map F2 correctly', async () => {
+      mockExecute.mockResolvedValue({ result: defaultResult });
+      mockValidateArchitecture.mockResolvedValue({ status: 'passed', levels: ['F2'], rulesChecked: 0, issues: [], timestamp: '' });
+      await command.run([], { architecture: true, archLevel: 'F2' });
+      expect(mockValidateArchitecture).toHaveBeenCalledWith(expect.any(String), undefined, { level: 'F2', topologies: ['distributed-modules'] });
+    });
+
+    it('should map F3 correctly', async () => {
+      mockExecute.mockResolvedValue({ result: defaultResult });
+      mockValidateArchitecture.mockResolvedValue({ status: 'passed', levels: ['F3'], rulesChecked: 0, issues: [], timestamp: '' });
+      await command.run([], { architecture: true, archLevel: 'F3' });
+      expect(mockValidateArchitecture).toHaveBeenCalledWith(expect.any(String), undefined, { level: 'F3', topologies: ['microservices'] });
+    });
+
+    it('should handle ALL architecture level correctly', async () => {
+      mockExecute.mockResolvedValue({ result: defaultResult });
+      mockValidateArchitecture.mockResolvedValue({ status: 'passed', levels: ['F1', 'F2', 'F3'], rulesChecked: 0, issues: [], timestamp: '' });
+      await command.run([], { architecture: true, archLevel: 'ALL' });
+      expect(mockValidateArchitecture).toHaveBeenCalledWith(expect.any(String), undefined, { level: 'ALL', topologies: [] });
+    });
+
+    it('should use topologies when --topology is passed', async () => {
+      mockExecute.mockResolvedValue({ result: defaultResult });
+      mockValidateArchitecture.mockResolvedValue({
+        status: 'passed',
+        levels: ['custom-topology'],
+        rulesChecked: 3,
+        issues: [],
+        timestamp: '2024-01-01T00:00:00.000Z',
+      });
+
+      await command.run([], { topology: ['custom-topology'] });
+
+      expect(mockValidateArchitecture).toHaveBeenCalledWith(
+        expect.any(String),
+        undefined,
+        { level: undefined, topologies: ['custom-topology'] }
       );
     });
 
@@ -434,6 +474,15 @@ describe('ValidateCommand', () => {
   describe('parseArchLevel', () => {
     it('should return the value', () => {
       expect(command.parseArchLevel('F1')).toBe('F1');
+    });
+  });
+
+  describe('parseTopology', () => {
+    it('should return the value in an array', () => {
+      expect(command.parseTopology('t1')).toEqual(['t1']);
+    });
+    it('should accumulate values', () => {
+      expect(command.parseTopology('t2', ['t1'])).toEqual(['t1', 't2']);
     });
   });
 });

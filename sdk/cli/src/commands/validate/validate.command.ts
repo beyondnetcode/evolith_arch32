@@ -14,6 +14,7 @@ interface ValidateCommandOptions {
   ruleset?: string;
   architecture?: boolean;
   archLevel?: string;
+  topology?: string[];
   engine?: string;
 }
 
@@ -55,8 +56,16 @@ export class ValidateCommand extends BaseEvolithCommand {
         result = (await this.useCase.execute({ satellitePath, corePath, engine })).result;
       }
 
-      if (options?.architecture) {
-        const archLevel = (options?.archLevel as 'F1' | 'F2' | 'F3' | 'ALL') || 'ALL';
+      if (options?.architecture || options?.topology?.length) {
+        const topologies: string[] = options?.topology || [];
+        const archLevel = options?.archLevel;
+
+        if (archLevel) {
+          this.promptService.showWarning(`⚠️ El parámetro --arch-level está deprecado. Use --topology en su lugar.`);
+          if (archLevel === 'F1') topologies.push('modular-monolith');
+          else if (archLevel === 'F2') topologies.push('distributed-modules');
+          else if (archLevel === 'F3') topologies.push('microservices');
+        }
 
         interface ArchResult {
           status: 'passed' | 'failed' | 'warning';
@@ -66,7 +75,12 @@ export class ValidateCommand extends BaseEvolithCommand {
           timestamp: string;
         }
 
-        const archResult: ArchResult = await this.validator.validateArchitecture(satellitePath, corePath, archLevel);
+        const validatorOptions = {
+          level: archLevel || (topologies.length === 0 ? 'ALL' : undefined),
+          topologies
+        };
+
+        const archResult: ArchResult = await this.validator.validateArchitecture(satellitePath, corePath, validatorOptions);
 
         const allIssues = [...result.issues, ...archResult.issues];
         const blockingCount = allIssues.filter(i => i.blocking).length;
@@ -210,7 +224,7 @@ export class ValidateCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '-a, --arch',
-    description: 'Incluir validación de arquitectura F1/F2/F3',
+    description: 'Incluir validación de arquitectura F1/F2/F3 (Deprecated: use --topology)',
   })
   parseArchitecture(): boolean {
     return true;
@@ -218,10 +232,20 @@ export class ValidateCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '-l, --arch-level [level]',
-    description: 'Nivel de arquitectura: F1, F2, F3, ALL (default: ALL)',
+    description: 'Nivel de arquitectura: F1, F2, F3, ALL (Deprecated: use --topology)',
   })
   parseArchLevel(val: string): string {
     return val;
+  }
+
+  @Option({
+    flags: '-t, --topology [id]',
+    description: 'Topología a validar (se puede usar múltiples veces)',
+  })
+  parseTopology(val: string, acc?: string[]): string[] {
+    const list = acc || [];
+    list.push(val);
+    return list;
   }
 
   @Option({

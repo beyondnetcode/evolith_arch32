@@ -244,25 +244,56 @@ export class RulesetValidatorService {
     }
   }
 
-  async validateArchitecture(satellitePath: string, corePath?: string, level?: 'F1' | 'F2' | 'F3' | 'ALL'): Promise<ArchitectureValidationResult> {
+  async validateArchitecture(
+    satellitePath: string,
+    corePath?: string,
+    options?: { level?: string; topologies?: string[] }
+  ): Promise<ArchitectureValidationResult> {
     const resolvedCorePath = corePath || this.findCorePath(satellitePath);
     const issues: ValidationIssue[] = [];
     let rulesChecked = 0;
 
-    const levels: Array<'F1' | 'F2' | 'F3'> = level === 'ALL' || !level
-      ? ['F1', 'F2', 'F3']
-      : [level];
+    const rulesetPaths: string[] = [];
 
-    for (const lvl of levels) {
-      const rulesetPath = await this.resolveArchitectureRuleset(resolvedCorePath, lvl);
+    // 1. Process progressive levels (legacy / fallback)
+    if (options?.level || (!options?.level && (!options?.topologies || options.topologies.length === 0))) {
+      const lvlOpt = options?.level || 'ALL';
+      const levels = lvlOpt === 'ALL' ? ['F1', 'F2', 'F3'] : [lvlOpt];
+      for (const lvl of levels) {
+        rulesetPaths.push(await this.resolveArchitectureRuleset(resolvedCorePath, lvl as 'F1' | 'F2' | 'F3'));
+      }
+    }
 
+    // 2. Process exact topologies
+    if (options?.topologies && options.topologies.length > 0) {
+      for (const topId of options.topologies) {
+        const p = await this.resolveTopologyRuleset(resolvedCorePath, topId);
+        if (p) {
+          rulesetPaths.push(p);
+        } else {
+          issues.push({
+            ruleId: `ARCH-TOPOLOGY-MISSING`,
+            severity: 'SHOULD',
+            category: 'architecture',
+            title: `Topology ruleset not found`,
+            description: `Could not find ruleset for topology: ${topId}`,
+            blocking: false,
+          });
+        }
+      }
+    }
+
+    // De-duplicate paths
+    const uniquePaths = Array.from(new Set(rulesetPaths));
+
+    for (const rulesetPath of uniquePaths) {
       if (!await this.fs.exists(rulesetPath)) {
         issues.push({
-          ruleId: `ARCH-${lvl}-MISSING`,
+          ruleId: `ARCH-RULESET-MISSING`,
           severity: 'SHOULD',
           category: 'architecture',
-          title: `${lvl} ruleset not found`,
-          description: `Could not find ${lvl} architecture rules at ${rulesetPath}`,
+          title: `Ruleset not found`,
+          description: `Could not find architecture rules at ${rulesetPath}`,
           blocking: false,
         });
         continue;
@@ -288,9 +319,14 @@ export class RulesetValidatorService {
 
     const blockingCount = issues.filter(i => i.blocking).length;
 
+    const reportedLevels = (options?.level && options.level !== 'ALL' ? [options.level] : []);
+    if (options?.level === 'ALL' || (!options?.level && (!options?.topologies || options.topologies.length === 0))) {
+      reportedLevels.push('F1', 'F2', 'F3');
+    }
+
     return {
       status: blockingCount > 0 ? 'failed' : 'passed',
-      levels: levels as string[],
+      levels: Array.from(new Set([...reportedLevels, ...(options?.topologies || [])])),
       rulesChecked,
       issues,
       timestamp: new Date().toISOString(),
@@ -310,6 +346,17 @@ export class RulesetValidatorService {
     // Compatibility only for consumers that have not yet injected the catalog.
     const profile = level === 'F1' ? 'modular-monolith' : level === 'F2' ? 'distributed-modules' : 'microservices';
     return path.join(corePath, 'rulesets', 'architecture', `f${level.toLowerCase()}-${profile}.rules.json`);
+  }
+
+  private async resolveTopologyRuleset(corePath: string, topologyId: string): Promise<string | undefined> {
+    if (!this.topologyCatalog) return undefined;
+    const manifest = await this.topologyCatalog.get(corePath, topologyId);
+    if (!manifest) return undefined;
+    
+    const manifestRuleset = manifest.spec.artifacts?.rulesets?.[0];
+    if (!manifestRuleset) return undefined;
+    
+    return path.join(corePath, manifestRuleset);
   }
 }
 

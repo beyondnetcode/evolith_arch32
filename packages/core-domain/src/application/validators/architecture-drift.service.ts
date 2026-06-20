@@ -68,7 +68,7 @@ export class ArchitectureDriftService {
     const validationResult = await this.validator.validateArchitecture(
       options.projectPath,
       resolvedCorePath,
-      declaredLevel,
+      { level: declaredLevel },
     );
 
     const history = options.storeHistory !== false

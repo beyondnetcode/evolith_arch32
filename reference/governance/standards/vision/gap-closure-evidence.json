@@ -1778,6 +1778,18 @@
         "node .harness/scripts/ci-runner.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-132",
+      "closedAt": "2026-06-20",
+      "closureCommit": "0b6eb03a",
+      "evidence": [
+        ".harness/scripts/ci/13-agentic-code-review.mjs"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Microservices Topology Configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["topology", "services", "dataOwnership"],
+  "properties": {
+    "topology": { "const": "microservices" },
+    "services": { "type": "array", "minItems": 2, "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+    "dataOwnership": { "type": "string", "enum": ["service-owned", "database-per-service"] }
+  }
+}

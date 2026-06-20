@@ -49,6 +49,9 @@
 * [0071-domain-layer-base-class-inheritance-strategy](./0071-domain-layer-base-class-inheritance-strategy.md) — **Domain layer inheritance trade-off: shell base classes vs. Domain.Abstractions**
 * [0072-utc-dates-timezone-language-resolution](./0072-utc-dates-timezone-language-resolution.md) — **UTC storage, browser timezone detection, and language priority chain**
 * [0080-remote-repository-reference-contract](./0080-remote-repository-reference-contract.md) — **Hosted Core API repository-reference contract**
+* [0081-agentic-ai-sandbox-isolation](./0081-agentic-ai-sandbox-isolation.md) — **Sandbox isolation boundary for agent tool execution**
+* [0082-agentic-ai-trust-boundary](./0082-agentic-ai-trust-boundary.md) — **Trust boundary for prompts, context, and tool output**
+* [0083-agentic-ai-action-authorization-audit](./0083-agentic-ai-action-authorization-audit.md) — **Capability-scoped authorization and append-only action audit**
 
 ---
 [Back to Upper Level](../README.md)

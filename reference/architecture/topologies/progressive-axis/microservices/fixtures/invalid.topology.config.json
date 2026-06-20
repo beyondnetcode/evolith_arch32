@@ -1,0 +1,5 @@
+{
+  "topology": "microservices",
+  "services": ["identity"],
+  "dataOwnership": "shared-database"
+}

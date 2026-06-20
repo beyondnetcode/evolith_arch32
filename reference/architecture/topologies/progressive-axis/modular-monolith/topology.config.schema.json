@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Modular Monolith Topology Configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["topology", "boundedContexts", "persistenceIsolation"],
+  "properties": {
+    "topology": { "const": "modular-monolith" },
+    "boundedContexts": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+    "persistenceIsolation": { "type": "string", "enum": ["schema-per-domain", "logical-ownership"] }
+  }
+}

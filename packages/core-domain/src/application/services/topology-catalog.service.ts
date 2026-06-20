@@ -12,6 +12,14 @@ export interface TopologyManifest {
     topologyType: string;
     compatibility: { progressiveAxis: { phase: ProgressivePhase; profile: string }; composableWith: string[] };
     artifacts: { adrs: string[]; rulesets: string[]; opaPolicies: string[]; aiRulesets: string[]; umsContracts: string[] };
+    corpus?: {
+      guidance: { profile: string; maturityGuide: string };
+      configurationContract: string;
+      fixtures: { valid: string; invalid: string };
+      nativeEvaluator: string;
+      tests: { positive: string; negative: string };
+      evidence: string;
+    };
   };
 }
 

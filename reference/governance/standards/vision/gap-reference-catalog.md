@@ -1264,18 +1264,19 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 **Title:** Maturation of Agentic AI Topology
 
-- **Gap:** The Agentic AI topology (`ai/agentic-ai`) currently lacks robust rules and documentation. It only checks for the existence of an `agent.yaml` file.
+- **Gap:** The Agentic AI topology (`ai/agentic-ai`) required an executable contract beyond the existence of an agent manifest.
 - **Purpose:** Define executable rules (JSON/Rego), sandboxing diagrams, and ADRs for security and logic-prompting separation for AI agent architectures.
-- **Current evidence / example:** `agentic-ai.rules.json` is a stub. No OPA rules exist.
+- **Current evidence / example:** The working tree defines AAI-R01 through AAI-R07 for identity and capabilities, isolated and resource-bounded execution, prompt/implementation separation, untrusted-context controls, mutative-tool approval, and accountable actions. The same `agent.config.json` contract is evaluated by the Native evaluator and `agentic-ai.rego`; the topology profile documents the interaction boundary and governing ADRs.
 - **Done when:**
-  - [ ] Executable rules exist for sandboxing and prompt/logic separation.
-  - [ ] OPA policies are written for the topology.
-  - [ ] Topology Hub documentation is expanded with interaction diagrams.
+  - [x] A complete bilingual topology corpus reaches Modular Monolith maturity parity: adoption, composition, operational, security, observability, resilience, and evolution guidance.
+  - [x] Topology-specific ADRs, Native rules, OPA policies, contract fixtures, and positive/negative tests are complete and cross-linked.
+  - [x] CLI, MCP, and Core API expose and validate the topology with the same usability baseline as Modular Monolith.
+  - [x] The topology maturity validator confirms the accepted profile satisfies R-27.
 - **Closure evidence:**
-  - `closedAt`: pending
-  - `closureCommit`: pending
-  - `evidence`: pending
-  - `validationCommands`: []
+  - `closedAt`: 2026-06-20
+  - `closureCommit`: `0fc716a48dc24ea2bec348a42b3780661de5a0b4`
+  - `evidence`: recorded in the [closure registry](./gap-closure-evidence.json)
+  - `validationCommands`: [`node .harness/scripts/validate-topology-manifests.mjs`, `node .harness/scripts/validate-docs.mjs --render-mermaid`, `npm run build --workspace @evolith/core-domain`, `node .harness/scripts/validate-tracking.mjs`]
 
 #### GT-126
 

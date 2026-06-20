@@ -1,0 +1,62 @@
+{
+  "$id": "https://evolith.dev/schemas/agentic-ai/agent.config.schema.json",
+  "title": "Evolith Agentic AI Configuration",
+  "type": "object",
+  "required": ["agent", "sandbox", "promptSources", "implementationRoots", "contextPolicy", "toolPolicy", "audit"],
+  "additionalProperties": false,
+  "properties": {
+    "agent": {
+      "type": "object",
+      "required": ["id", "capabilities"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "capabilities": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 }, "uniqueItems": true }
+      }
+    },
+    "sandbox": {
+      "type": "object",
+      "required": ["mode", "network", "process", "ephemeral", "maxDurationSeconds", "maxMemoryMb", "maxCpuCores"],
+      "additionalProperties": false,
+      "properties": {
+        "mode": { "const": "isolated" },
+        "network": { "enum": ["deny", "allowlist"] },
+        "process": { "enum": ["deny", "allowlist"] },
+        "ephemeral": { "const": true },
+        "maxDurationSeconds": { "type": "integer", "minimum": 1 },
+        "maxMemoryMb": { "type": "integer", "minimum": 1 },
+        "maxCpuCores": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    },
+    "promptSources": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+    "implementationRoots": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+    "contextPolicy": {
+      "type": "object",
+      "required": ["untrustedContent", "provenanceRequired", "toolOutputSchemaValidation"],
+      "additionalProperties": false,
+      "properties": {
+        "untrustedContent": { "const": "data-only" },
+        "provenanceRequired": { "const": true },
+        "toolOutputSchemaValidation": { "const": true }
+      }
+    },
+    "toolPolicy": {
+      "type": "object",
+      "required": ["mutative", "capabilityDelegation"],
+      "additionalProperties": false,
+      "properties": {
+        "mutative": { "const": "approval-required" },
+        "capabilityDelegation": { "const": "scoped-and-expiring" }
+      }
+    },
+    "audit": {
+      "type": "object",
+      "required": ["appendOnly", "correlationId"],
+      "additionalProperties": false,
+      "properties": {
+        "appendOnly": { "const": true },
+        "correlationId": { "const": "required" }
+      }
+    }
+  }
+}

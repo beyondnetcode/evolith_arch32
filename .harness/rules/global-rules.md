@@ -30,6 +30,7 @@ Binding directives. Zero fluff.
 | **R-24** | Diagram Ergonomics | Complex Domain-Driven Design (DDD) models must not be rendered as a single monolithic diagram. They must be split into at least three views (Business Core, Workflow/Audit, and Cross-Cutting Shells) with a visual legend. |
 | **R-25** | Dual-Engine Parity | Any addition or modification to an architectural rule must be implemented in both the Native TypeScript Evaluator and its corresponding OPA `.rego` file. The CLI must guarantee seamless switching between both engines. |
 | **R-26** | Semantic Gap Closure | A `GT-*` gap may be `DONE` only when every closure criterion is satisfied and the canonical closure registry records a real commit, dated evidence artifacts, reproducible validation commands, and explicit dependency disposition. Historical `MT-*` gaps are exempt unless explicitly registered. |
+| **R-27** | Topology Maturity Parity | An `accepted` topology MUST provide bilingual adoption/operations/evolution guidance, accepted ADRs, existing Native ruleset and OPA policy artifacts, shared control-plane exposure, and reproducible tests equivalent in maturity to the Modular Monolith baseline. |
 
 ## Mandatory Validation Gates
 

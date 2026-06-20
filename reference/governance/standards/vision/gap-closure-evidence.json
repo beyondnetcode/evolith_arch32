@@ -1908,6 +1908,19 @@
         "node .harness/scripts/ci-runner.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-141",
+      "closedAt": "2026-06-20",
+      "closureCommit": "3310dc11",
+      "evidence": [
+        "reference/architecture/adrs/core/0093-mcp-concurrency-locking.md",
+        "reference/architecture/adrs/core/0093-mcp-concurrency-locking.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

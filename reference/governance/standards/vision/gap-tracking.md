@@ -16,7 +16,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-135`](./gap-reference-catalog.md#gt-135) | Agentic AI Telemetry & Cost Control Standard | `Architecture` | Cross | P1 | M | `DONE` |
 | [`GT-136`](./gap-reference-catalog.md#gt-136) | Context-Aware Access Control (ABAC for LLMs) | `Governance` | Cross | P1 | L | `DONE` |
 | [`GT-137`](./gap-reference-catalog.md#gt-137) | Sovereign Identity for Agentic AI | `Architecture` | Cross | P2 | M | `DONE` |
-| [`GT-138`](./gap-reference-catalog.md#gt-138) | Event-Driven Agentic Workflows | `Architecture` | Cross | P2 | M | `PENDING` |
+| [`GT-138`](./gap-reference-catalog.md#gt-138) | Event-Driven Agentic Workflows | `Architecture` | Cross | P2 | M | `DONE` |
 | [`GT-139`](./gap-reference-catalog.md#gt-139) | RAG Knowledge Governance Standard | `Governance` | Cross | P2 | L | `PENDING` |
 | [`GT-132`](./gap-reference-catalog.md#gt-132) | Autonomous Agentic Code Reviews in CI | `Governance` | Cross | P1 | M | `DONE` |
 | [`GT-133`](./gap-reference-catalog.md#gt-133) | Centralized Agnostic OPA Wasm Distribution Architecture | `Architecture` | Cross | P2 | L | `DONE` |
@@ -156,7 +156,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-128`](./gap-reference-catalog.md#gt-128) | Baseline Ruleset for Data Mesh | `Architecture` | Cross | P2 | M | `DONE` |
 | [`GT-129`](./gap-reference-catalog.md#gt-129) | Baseline Ruleset for Edge Computing | `Architecture` | Cross | P2 | M | `DONE` |
 
-**Progress:** 140 / 142 done · 0 in progress · 2 pending · 0 deferred
+**Progress:** 141 / 142 done · 0 in progress · 1 pending · 0 deferred
 
 **Ordering:** one table, ordered by status (pending then deferred then completed), then criticality (`P0` → `P1` → `P2`) then complexity (`S` → `M` → `L`); completed gaps are grouped by component. `GT-*` IDs link to the [Gap Reference Catalog](./gap-reference-catalog.md); `MT-A*` IDs link to the supporting [Multi-Topology implementation plan](./multi-topology-reference-corpus-implementation-plan.md).
 

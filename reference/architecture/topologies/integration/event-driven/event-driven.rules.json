@@ -1,16 +1,34 @@
 {
-  "$schema": "../../../../../../rulesets/schema/architecture.schema.json",
-  "$id": "event-driven",
+  "$schema": "../../../../../rulesets/schema/ruleset-standard.schema.json",
+  "$id": "https://evolith.dev/rulesets/topologies/event-driven.rules.json",
   "title": "Event-Driven Topology Rules",
   "description": "Architectural rules for the event-driven integration topology.",
   "version": "1.0.0",
-  "domain": "architecture",
+  "effectiveDate": "2026-06-20",
   "rules": [
     {
       "id": "ED-R01",
+      "severity": "MUST",
       "category": "event-driven-config",
-      "description": "El satélite debe documentar o definir su contrato de eventos mediante AsyncAPI (asyncapi.yaml o asyncapi.json)",
-      "level": "error"
+      "title": "Strict AsyncAPI Contract",
+      "description": "An Event-Driven satellite MUST provide event-driven.config.json and declare strictAsyncApi=true.",
+      "blocking": true
+    },
+    {
+      "id": "ED-R02",
+      "severity": "MUST",
+      "category": "event-driven-outbox",
+      "title": "Transactional Outbox",
+      "description": "event-driven.config.json MUST declare transactionalOutbox=true.",
+      "blocking": true
+    },
+    {
+      "id": "ED-R03",
+      "severity": "MUST",
+      "category": "event-driven-dlq",
+      "title": "Dead Letter Queue",
+      "description": "event-driven.config.json MUST declare deadLetterQueue=true.",
+      "blocking": true
     }
   ]
 }

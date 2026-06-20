@@ -18,7 +18,8 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
       'separation-of-concerns', 'dependency-injection', 'static-analysis',
       'domain-purity', 'agent-identity', 'agent-sandbox',
       'agent-prompt-boundaries', 'agent-tool-approval', 'agent-sandbox-limits',
-      'agent-context-trust', 'agent-action-accountability', 'serverless-config', 'serverless-stateless', 'serverless-package', 'serverless-cold-start'
+      'agent-context-trust', 'agent-action-accountability', 'serverless-config', 'serverless-stateless', 'serverless-package', 'serverless-cold-start',
+      'event-driven-config', 'event-driven-outbox', 'event-driven-dlq'
     ].includes(rule.category);
   }
 
@@ -497,14 +498,15 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
       }
 
       case 'event-driven-config':
-        if (rule.id === 'ED-R01') {
-          const hasConfig = await this.fs.exists(path.join(satellitePath, 'asyncapi.yaml')) || await this.fs.exists(path.join(satellitePath, 'asyncapi.json'));
-          if (!hasConfig) {
-            result = 'failed';
-            message = `${rule.description} - No AsyncAPI configuration found (asyncapi.yaml or asyncapi.json)`;
-          }
-        }
+      case 'event-driven-outbox':
+      case 'event-driven-dlq': {
+        const config = await this.readEventDrivenConfig(satellitePath);
+        const valid = rule.category === 'event-driven-config' ? config?.strictAsyncApi === true
+          : rule.category === 'event-driven-outbox' ? config?.transactionalOutbox === true
+          : config?.deadLetterQueue === true;
+        if (!valid) { result = 'failed'; message = `${rule.description} - event-driven.config.json does not satisfy ${rule.id}`; }
         break;
+      }
 
       default:
         result = 'skipped';
@@ -523,6 +525,11 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
 
   private async readServerlessConfig(satellitePath: string): Promise<Record<string, unknown> | undefined> {
     const configPath = path.join(satellitePath, 'serverless.config.json');
+    return await this.fs.exists(configPath) ? this.asRecord(await this.fs.readJson(configPath)) : undefined;
+  }
+
+  private async readEventDrivenConfig(satellitePath: string): Promise<Record<string, unknown> | undefined> {
+    const configPath = path.join(satellitePath, 'event-driven.config.json');
     return await this.fs.exists(configPath) ? this.asRecord(await this.fs.readJson(configPath)) : undefined;
   }
 

@@ -3,6 +3,38 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-126",
+      "closedAt": "2026-06-20",
+      "closureCommit": "8566249bbefe547f87116d90ecb8c8a797e5cc2b",
+      "evidence": [
+        "reference/architecture/topologies/execution/serverless/serverless.rules.json",
+        "reference/architecture/topologies/execution/serverless/serverless.rego",
+        "packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.ts",
+        "reference/architecture/topologies/execution/serverless/README.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/validate-docs.mjs",
+        "node .harness/scripts/validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-127",
+      "closedAt": "2026-06-20",
+      "closureCommit": "8566249bbefe547f87116d90ecb8c8a797e5cc2b",
+      "evidence": [
+        "reference/architecture/topologies/integration/event-driven/event-driven.rules.json",
+        "reference/architecture/topologies/integration/event-driven/event-driven.rego",
+        "packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.ts",
+        "reference/architecture/topologies/integration/event-driven/README.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/validate-docs.mjs",
+        "node .harness/scripts/validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-125",
       "closedAt": "2026-06-20",
       "closureCommit": "0fc716a48dc24ea2bec348a42b3780661de5a0b4",

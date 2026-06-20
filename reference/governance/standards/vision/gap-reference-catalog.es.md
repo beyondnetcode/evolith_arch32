@@ -1285,13 +1285,13 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Propósito:** Diseñar reglas OPA que restrinjan estados compartidos, evalúen límites de tamaño de paquete, y validen configuraciones de cold-start.
 - **Evidencia actual / ejemplo:** `serverless.rules.json` es un stub.
 - **Hecho cuando:**
-  - [ ] Existen reglas OPA para obligar ejecución stateless y límites de paquete.
-  - [ ] El Topology Hub documenta patrones de cold-start.
+  - [x] Existen reglas OPA para obligar ejecución stateless y límites de paquete.
+  - [x] El Topology Hub documenta patrones de cold-start.
 - **Evidencia de cierre:**
-  - `closedAt`: pending
-  - `closureCommit`: pending
-  - `evidence`: pending
-  - `validationCommands`: []
+  - `closedAt`: 2026-06-20
+  - `closureCommit`: 8566249
+  - `evidence`: Dual-engine rules and documentation implemented
+  - `validationCommands`: ["node .harness/scripts/validate-docs.mjs"]
 
 #### GT-127
 
@@ -1301,13 +1301,13 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Propósito:** Ampliar la topología asíncrona implementando reglas para el patrón "Transactional Outbox", manejo de DLQ y validación estricta de AsyncAPI.
 - **Evidencia actual / ejemplo:** `event-driven.rules.json` es un stub.
 - **Hecho cuando:**
-  - [ ] Existen reglas ejecutables para Transactional Outbox y configuración de DLQ.
-  - [ ] ADRs documentan los patrones asíncronos en la topología.
+  - [x] Existen reglas ejecutables para Transactional Outbox y configuración de DLQ.
+  - [x] ADRs documentan los patrones asíncronos en la topología.
 - **Evidencia de cierre:**
-  - `closedAt`: pending
-  - `closureCommit`: pending
-  - `evidence`: pending
-  - `validationCommands`: []
+  - `closedAt`: 2026-06-20
+  - `closureCommit`: HEAD
+  - `evidence`: Dual-engine rules and documentation implemented
+  - `validationCommands`: ["node .harness/scripts/validate-docs.mjs"]
 
 #### GT-128
 

@@ -25,6 +25,20 @@ La integracion event-driven no autoriza esconder workflows de negocio en infraes
 | Observabilidad | El flujo de eventos debe exponer correlacion, lag, fallos y evidencia de replay. |
 | Ownership | Los productores poseen el significado del evento; los consumidores poseen sus reacciones locales. |
 
+## Contrato Ejecutable
+
+Todo satélite que adopte este perfil proporciona `event-driven.config.json`:
+
+```json
+{
+  "strictAsyncApi": true,
+  "transactionalOutbox": true,
+  "deadLetterQueue": true
+}
+```
+
+ED-R01 a ED-R03 exigen ese contrato, forzando la definición explícita de AsyncAPI, el patrón Transactional Outbox para la confiabilidad, y un Dead Letter Queue (DLQ) para el manejo de mensajes fallidos. El evaluador Native y la [política OPA](./event-driven.rego) evalúan estos campos.
+
 ## Composicion
 
 `event-driven` puede combinarse con cada perfil progressive-axis y con `serverless`, `edge-computing`, `data-mesh` y `agentic-ai` cuando contratos y telemetria son explicitos.

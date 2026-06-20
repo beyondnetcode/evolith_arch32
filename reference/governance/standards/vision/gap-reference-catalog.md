@@ -1286,13 +1286,13 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Design OPA rules restricting shared state, evaluate package limits, and validate cold-start configurations in serverless manifests.
 - **Current evidence / example:** `serverless.rules.json` is a stub. No Rego validation is implemented.
 - **Done when:**
-  - [ ] OPA rules exist for statelessness and package limits.
-  - [ ] Topology Hub documentation includes cold-start patterns.
+  - [x] OPA rules exist for statelessness and package limits.
+  - [x] Topology Hub documentation includes cold-start patterns.
 - **Closure evidence:**
-  - `closedAt`: pending
-  - `closureCommit`: pending
-  - `evidence`: pending
-  - `validationCommands`: []
+  - `closedAt`: 2026-06-20
+  - `closureCommit`: 8566249
+  - `evidence`: Dual-engine rules and documentation implemented
+  - `validationCommands`: ["node .harness/scripts/validate-docs.mjs"]
 
 #### GT-127
 
@@ -1302,13 +1302,13 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Expand the asynchronous integration topology by implementing rules for the "Transactional Outbox" pattern, DLQ handling, and strict AsyncAPI contract validation.
 - **Current evidence / example:** `event-driven.rules.json` is a stub.
 - **Done when:**
-  - [ ] Executable rules exist for Transactional Outbox and DLQ definitions.
-  - [ ] ADRs document asynchronous patterns.
+  - [x] Executable rules exist for Transactional Outbox and DLQ definitions.
+  - [x] ADRs document asynchronous patterns.
 - **Closure evidence:**
-  - `closedAt`: pending
-  - `closureCommit`: pending
-  - `evidence`: pending
-  - `validationCommands`: []
+  - `closedAt`: 2026-06-20
+  - `closureCommit`: HEAD
+  - `evidence`: Dual-engine rules and documentation implemented
+  - `validationCommands`: ["node .harness/scripts/validate-docs.mjs"]
 
 #### GT-128
 

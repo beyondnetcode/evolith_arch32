@@ -48,6 +48,13 @@ describe('ArchitectureRuleHandler', () => {
         await expect(h.evaluate(rule({ id, category }), ctx)).resolves.toMatchObject({ result: 'failed' });
       }
     });
+
+    it('event-driven rules fail without a governed event-driven contract', async () => {
+      const h = new ArchitectureRuleHandler(fsMock());
+      for (const [id, category] of [['ED-R01', 'event-driven-config'], ['ED-R02', 'event-driven-outbox'], ['ED-R03', 'event-driven-dlq']] as const) {
+        await expect(h.evaluate(rule({ id, category }), ctx)).resolves.toMatchObject({ result: 'failed' });
+      }
+    });
     it('agentic AI rules fail when agent.config.json is absent or incomplete', async () => {
       const config = path.join(SAT, 'agent.config.json');
       const h = new ArchitectureRuleHandler(fsMock({ existing: [config], json: { [config]: { agent: { id: 'reviewer' } } } }));
@@ -173,6 +180,14 @@ describe('ArchitectureRuleHandler', () => {
       const config = path.join(SAT, 'serverless.config.json');
       const h = new ArchitectureRuleHandler(fsMock({ existing: [config], json: { [config]: { stateless: true, package: { maxSizeMb: 25 }, coldStart: { maxInitMilliseconds: 500, lazyInitialization: true } } } }));
       for (const [id, category] of [['SV-R01', 'serverless-config'], ['SV-R02', 'serverless-stateless'], ['SV-R03', 'serverless-package'], ['SV-R04', 'serverless-cold-start']] as const) {
+        await expect(h.evaluate(rule({ id, category }), ctx)).resolves.toMatchObject({ result: 'passed' });
+      }
+    });
+
+    it('passes event-driven outbox, DLQ, and strict AsyncAPI controls', async () => {
+      const config = path.join(SAT, 'event-driven.config.json');
+      const h = new ArchitectureRuleHandler(fsMock({ existing: [config], json: { [config]: { strictAsyncApi: true, transactionalOutbox: true, deadLetterQueue: true } } }));
+      for (const [id, category] of [['ED-R01', 'event-driven-config'], ['ED-R02', 'event-driven-outbox'], ['ED-R03', 'event-driven-dlq']] as const) {
         await expect(h.evaluate(rule({ id, category }), ctx)).resolves.toMatchObject({ result: 'passed' });
       }
     });

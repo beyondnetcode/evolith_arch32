@@ -11,6 +11,7 @@ export class OpaInputBuilder {
     const mcpServerContent = await this.safeReadFile(path.join(ctx.corePath, 'sdk', 'cli', 'src', 'core', 'mcp', 'server.ts'));
     const agenticAi = await this.readAgenticAiConfiguration(ctx.satellitePath);
     const serverless = await this.readServerlessConfiguration(ctx.satellitePath);
+    const eventDriven = await this.readEventDrivenConfiguration(ctx.satellitePath);
 
     const input: unknown = {
       satellitePath: ctx.satellitePath,
@@ -27,6 +28,7 @@ export class OpaInputBuilder {
         hasExtractionReadiness: await this.fs.exists(path.join(ctx.satellitePath, 'docs', 'extraction-readiness.md')),
         hasDockerfile: await this.fs.exists(path.join(ctx.satellitePath, 'Dockerfile')),
         serverless,
+        eventDriven,
         hasAsyncApiConfig: await this.fs.exists(path.join(ctx.satellitePath, 'asyncapi.yaml')) || await this.fs.exists(path.join(ctx.satellitePath, 'asyncapi.json')),
         agenticAi,
         hasOtel: await this.fs.exists(path.join(ctx.satellitePath, 'otel.config.js')) || await this.fs.exists(path.join(ctx.satellitePath, 'opentelemetry.config.js')) || await this.fs.exists(path.join(ctx.satellitePath, 'src', 'instrumentation.ts')),
@@ -107,6 +109,15 @@ export class OpaInputBuilder {
       isStateless: config?.stateless === true,
       hasBoundedPackage: typeof maxSizeMb === 'number' && Number.isFinite(maxSizeMb) && maxSizeMb > 0 && maxSizeMb <= 50,
       hasColdStartReadiness: typeof coldStart?.maxInitMilliseconds === 'number' && Number.isFinite(coldStart.maxInitMilliseconds) && coldStart.maxInitMilliseconds > 0 && coldStart?.lazyInitialization === true,
+    };
+  }
+
+  private async readEventDrivenConfiguration(root: string): Promise<Record<string, boolean>> {
+    const config = await this.safeReadJson(path.join(root, 'event-driven.config.json')) as Record<string, unknown> | null;
+    return {
+      hasStrictAsyncApi: config?.strictAsyncApi === true,
+      hasOutbox: config?.transactionalOutbox === true,
+      hasDlq: config?.deadLetterQueue === true,
     };
   }
 

@@ -3,6 +3,11 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { execSync } from "node:child_process";
+import { prepareReviewInput } from "./review-input.mjs";
+
+// Hard fail-closed ceiling: never submit a payload larger than this (GT-146).
+const MAX_REVIEW_TOKENS = Number(process.env.EVOLITH_REVIEW_MAX_TOKENS || 25000);
+const MAX_REVIEW_BYTES = Number(process.env.EVOLITH_REVIEW_MAX_BYTES || 80000);
 
 async function main() {
   console.log("🤖 Initializing Agentic Code Review CI Step (GT-132)...");
@@ -21,7 +26,24 @@ async function main() {
     diffText = "No diff available or git command failed.";
   }
 
-  console.log(`\n📄 Extracted Diff: ${diffText.split("\\n").length} lines of changes.`);
+  // Sanitize, scope and budget the diff BEFORE any provider sees it (GT-146).
+  const prepared = prepareReviewInput(diffText, {
+    maxBytes: MAX_REVIEW_BYTES,
+    maxTokens: MAX_REVIEW_TOKENS,
+  });
+  console.log(
+    `\n📄 Review input prepared: ${prepared.filesIncluded.length} relevant file(s), ` +
+      `${prepared.filesExcluded.length} excluded, ${prepared.redactions} secret(s) redacted, ` +
+      `~${prepared.estTokens} tokens (${prepared.bytes} bytes)${prepared.truncated ? ", truncated" : ""}.`,
+  );
+  // Aggregate, non-sensitive efficiency telemetry only.
+  if (prepared.estTokens > MAX_REVIEW_TOKENS) {
+    console.error(
+      `❌ Prepared review input (~${prepared.estTokens} tokens) exceeds the ${MAX_REVIEW_TOKENS}-token budget. Failing closed.`,
+    );
+    process.exit(1);
+  }
+  const reviewPayload = prepared.chunks.join("\n\n");
 
   // Connect to the Governance MCP Server
   console.log("\n🔌 Connecting to Evolith Governance MCP Sandbox...");
@@ -57,9 +79,13 @@ async function main() {
       if (!apiKey) {
         throw new Error("EVOLITH_AGENTIC_REVIEW is active but EVOLITH_LLM_API_KEY/GEMINI_API_KEY is missing.");
       } else {
-        console.log("\n🧠 Submitting diff to Agentic Reviewer via Gemini API...");
+        if (prepared.filesIncluded.length === 0) {
+          console.log("\n✅ No policy-relevant changed files to review. (Pass)");
+          return;
+        }
+        console.log("\n🧠 Submitting sanitized, budgeted review input to Agentic Reviewer...");
         try {
-          const result = await invokeGemini(apiKey, diffText, toolNames);
+          const result = await invokeGemini(apiKey, reviewPayload, toolNames);
           console.log(`\n🤖 Review Result:\n${result}\n`);
           if (result.includes("VIOLATION_DETECTED")) {
             console.error("❌ Agentic review detected architectural violations!");

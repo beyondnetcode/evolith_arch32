@@ -9,6 +9,9 @@ capabilities:
   - Pre-commit hook management
   - Satellite repository synchronization
   - Documentation artifact management
+  - Distributed deployment orchestration (Serverless/Edge)
+  - Data Mesh governance enforcement (CI/CD)
+  - AI-First CI harnesses
 dependencies:
   - Docs Agent
   - Architect Agent
@@ -29,6 +32,8 @@ Maintain and enhance these workflows:
 | `docs.yml` | Push to main/develop/release/*/hotfix/* | CI validation (validate-docs, check-bilingual-parity) |
 | `docs-release.yml` | Push to main | Release automation (version log, git tag, GitHub Release) |
 | `coverage-impact.yml` | PR opened/updated | Posts coverage impact comment on PRs |
+| `topology-deploy.yml` | Push to main | Distributed deployment for Serverless, Edge, and Data Mesh |
+| `ai-harness.yml` | Push to main | AI-First execution harness and prompt validations |
 
 #### docs.yml Quality Gates
 ```yaml

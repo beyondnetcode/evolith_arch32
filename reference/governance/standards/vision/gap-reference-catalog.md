@@ -1272,10 +1272,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] OPA policies are written for the topology.
   - [x] Topology Hub documentation is expanded with interaction diagrams.
 - **Closure evidence:**
-  - `closedAt`: pending
-  - `closureCommit`: pending
-  - `evidence`: implementation awaits a real closure commit and registry entry under R-26
-  - `validationCommands`: [`npm run build --workspace @evolith/core-domain`, `npx jest --rootDir packages/core-domain --runInBand --testRegex '.*(architecture-rule.handler|opa-input-builder)\\.spec\\.ts$' --transform '{"^.+\\\\.ts$":["ts-jest",{"diagnostics":false}]}'`, `node .harness/scripts/validate-docs.mjs --render-mermaid`]
+  - `closedAt`: 2026-06-20
+  - `closureCommit`: `f07a914ad1ec6a1a983da7d3c5eb3d71f9ac4b64`
+  - `evidence`: [closure registry](./gap-closure-evidence.json) records the ADRs, dual-engine rules, and evaluator implementations
+  - `validationCommands`: [`npm run build --workspace @evolith/core-domain`, `npx jest --rootDir packages/core-domain --runInBand --testRegex '.*(architecture-rule.handler|opa-input-builder)\\.spec\\.ts$' --transform '{"^.+\\\\.ts$":["ts-jest",{"diagnostics":false}]}'`, `.harness/bin/opa check reference/architecture/topologies/ai/agentic-ai/agentic-ai.rego`, `node .harness/scripts/validate-docs.mjs --render-mermaid`, `node .harness/scripts/validate-tracking.mjs`]
 
 #### GT-126
 

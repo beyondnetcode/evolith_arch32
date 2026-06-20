@@ -3,6 +3,28 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-125",
+      "closedAt": "2026-06-20",
+      "closureCommit": "f07a914ad1ec6a1a983da7d3c5eb3d71f9ac4b64",
+      "evidence": [
+        "reference/architecture/adrs/core/0081-agentic-ai-sandbox-isolation.md",
+        "reference/architecture/adrs/core/0082-agentic-ai-trust-boundary.md",
+        "reference/architecture/adrs/core/0083-agentic-ai-action-authorization-audit.md",
+        "reference/architecture/topologies/ai/agentic-ai/agentic-ai.rules.json",
+        "reference/architecture/topologies/ai/agentic-ai/agentic-ai.rego",
+        "packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.ts",
+        "packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts"
+      ],
+      "validationCommands": [
+        "npm run build --workspace @evolith/core-domain",
+        "npx jest --rootDir packages/core-domain --runInBand --testRegex '.*(architecture-rule.handler|opa-input-builder)\\.spec\\.ts$' --transform '{\"^.+\\\\.ts$\":[\"ts-jest\",{\"diagnostics\":false}]}'",
+        ".harness/bin/opa check reference/architecture/topologies/ai/agentic-ai/agentic-ai.rego",
+        "node .harness/scripts/validate-docs.mjs --render-mermaid",
+        "node .harness/scripts/validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "MT-A17",
       "closedAt": "2026-06-20",
       "closureCommit": "dadcb17",

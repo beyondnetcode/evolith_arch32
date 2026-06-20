@@ -10,6 +10,10 @@ export class OpaInputBuilder {
     const coreEvidence = await this.readEvidence(ctx.corePath);
     const mcpServerContent = await this.safeReadFile(path.join(ctx.corePath, 'sdk', 'cli', 'src', 'core', 'mcp', 'server.ts'));
     const agenticAi = await this.readAgenticAiConfiguration(ctx.satellitePath);
+    const serverless = await this.readServerlessConfiguration(ctx.satellitePath);
+    const eventDriven = await this.readEventDrivenConfiguration(ctx.satellitePath);
+    const dataMesh = await this.readDataMeshConfiguration(ctx.satellitePath);
+    const edgeComputing = await this.readEdgeComputingConfiguration(ctx.satellitePath);
 
     const input: unknown = {
       satellitePath: ctx.satellitePath,
@@ -25,7 +29,10 @@ export class OpaInputBuilder {
         hasEvents: await this.fs.exists(path.join(ctx.satellitePath, 'events')) || await this.fs.exists(path.join(ctx.satellitePath, 'src', 'events')),
         hasExtractionReadiness: await this.fs.exists(path.join(ctx.satellitePath, 'docs', 'extraction-readiness.md')),
         hasDockerfile: await this.fs.exists(path.join(ctx.satellitePath, 'Dockerfile')),
-        hasServerlessConfig: await this.fs.exists(path.join(ctx.satellitePath, 'serverless.yml')) || await this.fs.exists(path.join(ctx.satellitePath, 'template.yaml')) || await this.fs.exists(path.join(ctx.satellitePath, 'samconfig.toml')),
+        serverless,
+        eventDriven,
+        dataMesh,
+        edgeComputing,
         hasAsyncApiConfig: await this.fs.exists(path.join(ctx.satellitePath, 'asyncapi.yaml')) || await this.fs.exists(path.join(ctx.satellitePath, 'asyncapi.json')),
         agenticAi,
         hasOtel: await this.fs.exists(path.join(ctx.satellitePath, 'otel.config.js')) || await this.fs.exists(path.join(ctx.satellitePath, 'opentelemetry.config.js')) || await this.fs.exists(path.join(ctx.satellitePath, 'src', 'instrumentation.ts')),
@@ -93,6 +100,46 @@ export class OpaInputBuilder {
       hasEphemeralSandboxLimits: sandbox?.ephemeral === true && this.isPositiveNumber(sandbox.maxDurationSeconds) && this.isPositiveNumber(sandbox.maxMemoryMb) && this.isPositiveNumber(sandbox.maxCpuCores),
       hasTrustedContextPolicy: contextPolicy?.untrustedContent === 'data-only' && contextPolicy?.provenanceRequired === true && contextPolicy?.toolOutputSchemaValidation === true,
       hasAccountableActions: toolPolicy?.capabilityDelegation === 'scoped-and-expiring' && audit?.appendOnly === true && audit?.correlationId === 'required',
+    };
+  }
+
+  private async readServerlessConfiguration(root: string): Promise<Record<string, boolean>> {
+    const config = await this.safeReadJson(path.join(root, 'serverless.config.json')) as Record<string, unknown> | null;
+    const pkg = this.asRecord(config?.package);
+    const coldStart = this.asRecord(config?.coldStart);
+    const maxSizeMb = pkg?.maxSizeMb;
+    return {
+      hasContract: Boolean(config),
+      isStateless: config?.stateless === true,
+      hasBoundedPackage: typeof maxSizeMb === 'number' && Number.isFinite(maxSizeMb) && maxSizeMb > 0 && maxSizeMb <= 50,
+      hasColdStartReadiness: typeof coldStart?.maxInitMilliseconds === 'number' && Number.isFinite(coldStart.maxInitMilliseconds) && coldStart.maxInitMilliseconds > 0 && coldStart?.lazyInitialization === true,
+    };
+  }
+
+  private async readEventDrivenConfiguration(root: string): Promise<Record<string, boolean>> {
+    const config = await this.safeReadJson(path.join(root, 'event-driven.config.json')) as Record<string, unknown> | null;
+    return {
+      hasStrictAsyncApi: config?.strictAsyncApi === true,
+      hasOutbox: config?.transactionalOutbox === true,
+      hasDlq: config?.deadLetterQueue === true,
+    };
+  }
+
+  private async readDataMeshConfiguration(root: string): Promise<Record<string, boolean>> {
+    const config = await this.safeReadJson(path.join(root, 'data-mesh.config.json')) as Record<string, unknown> | null;
+    return {
+      isDataProduct: config?.isDataProduct === true,
+      hasDataContracts: config?.hasDataContracts === true,
+      federatedGovernance: config?.federatedGovernance === true,
+    };
+  }
+
+  private async readEdgeComputingConfiguration(root: string): Promise<Record<string, string | boolean>> {
+    const config = await this.safeReadJson(path.join(root, 'edge-computing.config.json')) as Record<string, unknown> | null;
+    return {
+      syncStrategy: typeof config?.syncStrategy === 'string' ? config.syncStrategy : '',
+      edgeIsolation: config?.edgeIsolation === true,
+      conflictResolution: typeof config?.conflictResolution === 'string' ? config.conflictResolution : '',
     };
   }
 

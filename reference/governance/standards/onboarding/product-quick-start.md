@@ -47,7 +47,18 @@ When adding or changing Mermaid diagrams, also run:
 node .harness/scripts/validate-docs.mjs --render-mermaid
 ```
 
-## Assistance
+## 5. AI Agent Collaboration (BMAD Method)
+
+Evolith Core uses the BMAD Method to orchestrate specialized AI agents. You can invoke them by their specific persona names in your IDE or prompts to assist with different lifecycle tasks:
+
+- **Wilson (Principal Architect):** Invoke for deep architectural audits, repository maturity checks, and automated gap tracking updates.
+- **Architect Agent:** Invoke to design multi-topology structures (Data Mesh, Serverless, Edge), define OPA/Rego contracts, and draft new ADRs.
+- **Developer Agent:** Invoke to implement clean architecture layers, distributed patterns (e.g., Transactional Outbox), and secure UI components.
+- **QA Agent:** Invoke to write automated tests, validate inter-domain event payloads, and enforce OWASP security mitigations.
+- **DevOps Agent:** Invoke to configure GitHub Actions, automate documentation releases, and manage distributed deployments.
+- **Docs Agent:** Invoke to translate files to maintain bilingual parity and validate markdown structures.
+
+## 6. Assistance
 
 - [ADR Registry](../../../architecture/adrs/README.md)
 - [Repository Taxonomy](../repository-taxonomy.md)

@@ -18,7 +18,10 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
       'separation-of-concerns', 'dependency-injection', 'static-analysis',
       'domain-purity', 'agent-identity', 'agent-sandbox',
       'agent-prompt-boundaries', 'agent-tool-approval', 'agent-sandbox-limits',
-      'agent-context-trust', 'agent-action-accountability'
+      'agent-context-trust', 'agent-action-accountability', 'serverless-config', 'serverless-stateless', 'serverless-package', 'serverless-cold-start',
+      'event-driven-config', 'event-driven-outbox', 'event-driven-dlq',
+      'data-mesh-config', 'data-mesh-contracts', 'data-mesh-governance',
+      'edge-computing-sync', 'edge-computing-isolation', 'edge-computing-conflict'
     ].includes(rule.category);
   }
 
@@ -482,26 +485,52 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
         break;
 
       case 'serverless-config':
-        if (rule.id === 'SV-R01') {
-          const hasConfig = await this.fs.exists(path.join(satellitePath, 'serverless.yml')) || 
-                            await this.fs.exists(path.join(satellitePath, 'template.yaml')) || 
-                            await this.fs.exists(path.join(satellitePath, 'samconfig.toml'));
-          if (!hasConfig) {
-            result = 'failed';
-            message = `${rule.description} - No serverless configuration file found (serverless.yml, template.yaml, or samconfig.toml)`;
-          }
-        }
+      case 'serverless-stateless':
+      case 'serverless-package':
+      case 'serverless-cold-start': {
+        const config = await this.readServerlessConfig(satellitePath);
+        const pkg = this.asRecord(config?.package);
+        const coldStart = this.asRecord(config?.coldStart);
+        const valid = rule.category === 'serverless-config' ? Boolean(config)
+          : rule.category === 'serverless-stateless' ? config?.stateless === true
+          : rule.category === 'serverless-package' ? this.isPositiveNumber(pkg?.maxSizeMb) && (pkg?.maxSizeMb as number) <= 50
+          : this.isPositiveNumber(coldStart?.maxInitMilliseconds) && coldStart?.lazyInitialization === true;
+        if (!valid) { result = 'failed'; message = `${rule.description} - serverless.config.json does not satisfy ${rule.id}`; }
         break;
+      }
 
       case 'event-driven-config':
-        if (rule.id === 'ED-R01') {
-          const hasConfig = await this.fs.exists(path.join(satellitePath, 'asyncapi.yaml')) || await this.fs.exists(path.join(satellitePath, 'asyncapi.json'));
-          if (!hasConfig) {
-            result = 'failed';
-            message = `${rule.description} - No AsyncAPI configuration found (asyncapi.yaml or asyncapi.json)`;
-          }
-        }
+      case 'event-driven-outbox':
+      case 'event-driven-dlq': {
+        const config = await this.readEventDrivenConfig(satellitePath);
+        const valid = rule.category === 'event-driven-config' ? config?.strictAsyncApi === true
+          : rule.category === 'event-driven-outbox' ? config?.transactionalOutbox === true
+          : config?.deadLetterQueue === true;
+        if (!valid) { result = 'failed'; message = `${rule.description} - event-driven.config.json does not satisfy ${rule.id}`; }
         break;
+      }
+
+      case 'data-mesh-config':
+      case 'data-mesh-contracts':
+      case 'data-mesh-governance': {
+        const config = await this.readDataMeshConfig(satellitePath);
+        const valid = rule.category === 'data-mesh-config' ? config?.isDataProduct === true
+          : rule.category === 'data-mesh-contracts' ? config?.hasDataContracts === true
+          : config?.federatedGovernance === true;
+        if (!valid) { result = 'failed'; message = `${rule.description} - data-mesh.config.json does not satisfy ${rule.id}`; }
+        break;
+      }
+
+      case 'edge-computing-sync':
+      case 'edge-computing-isolation':
+      case 'edge-computing-conflict': {
+        const config = await this.readEdgeComputingConfig(satellitePath);
+        const valid = rule.category === 'edge-computing-sync' ? ['offline-first', 'eventual', 'real-time-fallback'].includes(config?.syncStrategy as string)
+          : rule.category === 'edge-computing-isolation' ? config?.edgeIsolation === true
+          : ['last-write-wins', 'merge', 'manual'].includes(config?.conflictResolution as string);
+        if (!valid) { result = 'failed'; message = `${rule.description} - edge-computing.config.json does not satisfy ${rule.id}`; }
+        break;
+      }
 
       default:
         result = 'skipped';
@@ -516,6 +545,26 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
     if (!await this.fs.exists(configPath)) return undefined;
     const config = await this.fs.readJson(configPath);
     return this.asRecord(config);
+  }
+
+  private async readServerlessConfig(satellitePath: string): Promise<Record<string, unknown> | undefined> {
+    const configPath = path.join(satellitePath, 'serverless.config.json');
+    return await this.fs.exists(configPath) ? this.asRecord(await this.fs.readJson(configPath)) : undefined;
+  }
+
+  private async readEventDrivenConfig(satellitePath: string): Promise<Record<string, unknown> | undefined> {
+    const configPath = path.join(satellitePath, 'event-driven.config.json');
+    return await this.fs.exists(configPath) ? this.asRecord(await this.fs.readJson(configPath)) : undefined;
+  }
+
+  private async readDataMeshConfig(satellitePath: string): Promise<Record<string, unknown> | undefined> {
+    const configPath = path.join(satellitePath, 'data-mesh.config.json');
+    return await this.fs.exists(configPath) ? this.asRecord(await this.fs.readJson(configPath)) : undefined;
+  }
+
+  private async readEdgeComputingConfig(satellitePath: string): Promise<Record<string, unknown> | undefined> {
+    const configPath = path.join(satellitePath, 'edge-computing.config.json');
+    return await this.fs.exists(configPath) ? this.asRecord(await this.fs.readJson(configPath)) : undefined;
   }
 
   private asRecord(value: unknown): Record<string, unknown> | undefined {

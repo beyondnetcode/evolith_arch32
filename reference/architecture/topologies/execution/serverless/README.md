@@ -25,6 +25,20 @@ Serverless does not replace domain architecture. It composes with `modular-monol
 | Boundary control | Serverless handlers must not bypass domain ownership or persistence boundaries. |
 | Provider neutrality | Core guidance remains provider-neutral; provider choices belong to product or platform profiles. |
 
+## Executable Contract
+
+Every adopting satellite provides `serverless.config.json`:
+
+```json
+{
+  "stateless": true,
+  "package": { "maxSizeMb": 25 },
+  "coldStart": { "maxInitMilliseconds": 500, "lazyInitialization": true }
+}
+```
+
+SV-R01 through SV-R04 require that contract, stateless execution, a package no larger than 50 MB, and bounded lazy initialization. The Native evaluator and [OPA policy](./serverless.rego) evaluate the same fields.
+
 ## Composition
 
 `serverless` can combine with `modular-monolith`, `distributed-modules`, `microservices`, `event-driven`, `data-mesh`, and `agentic-ai` when the execution unit is governed by explicit contracts and telemetry.

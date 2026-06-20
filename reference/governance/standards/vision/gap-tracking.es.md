@@ -13,6 +13,8 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|
+| [`GT-130`](./gap-reference-catalog.es.md#gt-130) | Validación en pipeline CI para firmas de Agentes BMAD en ADRs y Specs Técnicas | `Governance` | Cross | P1 | M | `PENDING` |
+| [`GT-131`](./gap-reference-catalog.es.md#gt-131) | Crear Sandbox/Referencia Aplicada para la Topología Agentic AI con MCP real | `Architecture` | Cross | P2 | L | `PENDING` |
 | [`GT-117`](./gap-reference-catalog.es.md#gt-117) | Endpoints de lectura (GET) en el Core API para la composición del BFF del Tracker | `BFF API` | F2 | P1 | M | `COMPLETADO` |
 | [`GT-118`](./gap-reference-catalog.es.md#gt-118) | Modelo de consumo remoto/SaaS — desacoplar el Core API de rutas de filesystem locales | `BFF API` | F3 | P1 | L | `COMPLETADO` |
 | [`MT-A23`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Preservar compatibilidad CLI `--arch-level F1/F2/F3` | `Smart CLI` | Transversal | P1 | M | `COMPLETADO` |
@@ -141,12 +143,12 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`MT-A05`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Crear `topology-manifest.schema.json` | `Schema` | Transversal | P0 | M | `COMPLETADO` |
 | [`MT-A03`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Autorizar `reference/architecture/topologies/` como corpus topológico canónico legible por humanos | `Taxonomy` | Transversal | P0 | S | `COMPLETADO` |
 | [`GT-125`](./gap-reference-catalog.es.md#gt-125) | Maturation of Agentic AI Topology — paridad de madurez con monolito modular | `Architecture` | Transversal | P1 | L | `COMPLETADO` |
-| [`GT-126`](./gap-reference-catalog.es.md#gt-126) | Maturation of Serverless Topology | `Architecture` | Transversal | P2 | M | `PENDIENTE` |
-| [`GT-127`](./gap-reference-catalog.es.md#gt-127) | Maturation of Event-Driven Topology | `Architecture` | Transversal | P2 | M | `PENDIENTE` |
-| [`GT-128`](./gap-reference-catalog.es.md#gt-128) | Baseline Ruleset for Data Mesh | `Architecture` | Transversal | P2 | M | `PENDIENTE` |
-| [`GT-129`](./gap-reference-catalog.es.md#gt-129) | Baseline Ruleset for Edge Computing | `Architecture` | Transversal | P2 | M | `PENDIENTE` |
+| [`GT-126`](./gap-reference-catalog.es.md#gt-126) | Maturation of Serverless Topology | `Architecture` | Transversal | P2 | M | `COMPLETADO` |
+| [`GT-127`](./gap-reference-catalog.es.md#gt-127) | Maturation of Event-Driven Topology | `Architecture` | Transversal | P2 | M | `COMPLETADO` |
+| [`GT-128`](./gap-reference-catalog.es.md#gt-128) | Baseline Ruleset for Data Mesh | `Architecture` | Transversal | P2 | M | `COMPLETADO` |
+| [`GT-129`](./gap-reference-catalog.es.md#gt-129) | Baseline Ruleset for Edge Computing | `Architecture` | Transversal | P2 | M | `COMPLETADO` |
 
-**Progreso:** 128 / 132 completados · 0 en progreso · 4 pendientes · 0 diferidos
+**Progreso:** 132 / 134 completados · 0 en progreso · 2 pendientes · 0 diferidos
 
 **Ordenamiento:** una sola tabla, ordenada por estado (pendientes, luego diferidos, luego completados), luego criticidad (`P0` → `P1` → `P2`) y luego complejidad (`S` → `M` → `L`); los completados se agrupan por componente. Los IDs `GT-*` enlazan al [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md); los IDs `MT-A*` enlazan al [plan de implementación Multi-Topology](./multi-topology-reference-corpus-implementation-plan.es.md).
 

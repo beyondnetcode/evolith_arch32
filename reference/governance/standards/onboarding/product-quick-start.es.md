@@ -47,7 +47,18 @@ Al agregar o cambiar diagramas Mermaid, ejecuta tambien:
 node .harness/scripts/validate-docs.mjs --render-mermaid
 ```
 
-## Asistencia
+## 5. Colaboración con Agentes de IA (BMAD Method)
+
+Evolith Core utiliza el Método BMAD para orquestar agentes de IA especializados. Puedes invocarlos por su nombre específico en tu IDE o prompts para obtener soporte en diferentes fases del ciclo de vida:
+
+- **Wilson (Arquitecto Principal):** Invócalo para auditorías arquitectónicas profundas, chequeos de madurez del repositorio y actualización del tracking de GAPs.
+- **Agente Arquitecto (Architect):** Invócalo para diseñar estructuras multi-topología (Data Mesh, Serverless, Edge), definir contratos OPA/Rego y redactar ADRs.
+- **Agente Desarrollador (Developer):** Invócalo para implementar capas de Clean Architecture, patrones distribuidos (ej. Transactional Outbox) y componentes seguros.
+- **Agente QA:** Invócalo para escribir tests automatizados, validar payloads de eventos entre dominios y aplicar mitigaciones de seguridad OWASP.
+- **Agente DevOps:** Invócalo para configurar GitHub Actions, automatizar releases de documentación y orquestar despliegues distribuidos.
+- **Agente Docs:** Invócalo para traducir archivos manteniendo la paridad bilingüe y validar estructuras markdown.
+
+## 6. Asistencia
 
 - [Registro ADR](../../../architecture/adrs/README.es.md)
 - [Taxonomia del Repositorio](../repository-taxonomy.es.md)

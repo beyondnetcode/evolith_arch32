@@ -1,0 +1,53 @@
+name: "Architecture Decision Proposal (ADR)"
+description: Propose a new Architecture Decision Record for Evolith Core
+title: "adr: [Short Title]"
+labels: ["architecture", "adr", "pending-review"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template to propose a new Architecture Decision Record (ADR) for Evolith Core.
+        Remember that Evolith is a multi-topology reference. Decisions must be scoped to their correct bounded context.
+
+  - type: input
+    id: topology
+    attributes:
+      label: Target Topology
+      description: Which topology does this ADR apply to? (e.g., Core, Event-Driven, Data Mesh, Serverless, Agentic-AI)
+      placeholder: "e.g., Core, Agentic-AI"
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context and Problem Statement
+      description: What is the architectural problem we are trying to solve?
+    validations:
+      required: true
+
+  - type: textarea
+    id: decision
+    attributes:
+      label: Proposed Decision
+      description: What is the proposed solution or decision?
+    validations:
+      required: true
+
+  - type: textarea
+    id: consequences
+    attributes:
+      label: Consequences
+      description: What becomes easier or more difficult because of this change?
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: compliance
+    attributes:
+      label: Governance Compliance
+      options:
+        - label: I confirm this decision maintains architectural agnosticism where applicable.
+          required: true
+        - label: I will draft this ADR using the official BMAD Method (invoking the Architect Agent).
+          required: true

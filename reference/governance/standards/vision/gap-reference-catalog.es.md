@@ -592,6 +592,20 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 | G-26 | Meta de cobertura de branches vs. real | ACEPTADO — meta revisada a ≥75% |
 | G-27 | Enforcement de gobernanza federada solo-advisory | COMPLETADO — composite action `evolith-validate` |
 
+#### GT-130
+- **Título:** Validación en pipeline CI para firmas de Agentes BMAD en ADRs y Specs Técnicas
+- **Componente:** Governance
+- **Propósito:** Asegurar que toda la documentación arquitectónica sea oficialmente producida o auditada por Agentes IA según la Regla R-11.
+- **Evidencia Actual:** `validate-docs.mjs` revisa paridad, pero ningún CI asegura que los campos `Author` contengan al "Architect Agent" o "Docs Agent".
+- **Hecho Cuando:** Un script `.harness/scripts/validate-bmad-signatures.mjs` exista, corra en CI, y falle si un ADR es escrito manualmente sin evidencia de validación de agente.
+
+#### GT-131
+- **Título:** Crear Sandbox/Referencia Aplicada para la Topología Agentic AI con MCP real
+- **Componente:** Architecture
+- **Propósito:** Proveer un patio de juegos interactivo para la topología Agentic AI para probar Model Context Protocol (MCP) localmente.
+- **Evidencia Actual:** El perfil Agentic AI existe conceptualmente, pero no hay código ejecutable ni servicio demo en `packages/` o `apps/`.
+- **Hecho Cuando:** Una aplicación `apps/agent-sandbox` sea creada con un servidor MCP de prueba conectado al Core API.
+
 ---
 [Volver al Tablero de Seguimiento](./gap-tracking.es.md) · [Volver al Índice de Visión](./README.es.md)
 
@@ -1285,13 +1299,13 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Propósito:** Diseñar reglas OPA que restrinjan estados compartidos, evalúen límites de tamaño de paquete, y validen configuraciones de cold-start.
 - **Evidencia actual / ejemplo:** `serverless.rules.json` es un stub.
 - **Hecho cuando:**
-  - [ ] Existen reglas OPA para obligar ejecución stateless y límites de paquete.
-  - [ ] El Topology Hub documenta patrones de cold-start.
+  - [x] Existen reglas OPA para obligar ejecución stateless y límites de paquete.
+  - [x] El Topology Hub documenta patrones de cold-start.
 - **Evidencia de cierre:**
-  - `closedAt`: pending
-  - `closureCommit`: pending
-  - `evidence`: pending
-  - `validationCommands`: []
+  - `closedAt`: 2026-06-20
+  - `closureCommit`: 8566249
+  - `evidence`: Dual-engine rules and documentation implemented
+  - `validationCommands`: ["node .harness/scripts/validate-docs.mjs"]
 
 #### GT-127
 
@@ -1301,13 +1315,13 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Propósito:** Ampliar la topología asíncrona implementando reglas para el patrón "Transactional Outbox", manejo de DLQ y validación estricta de AsyncAPI.
 - **Evidencia actual / ejemplo:** `event-driven.rules.json` es un stub.
 - **Hecho cuando:**
-  - [ ] Existen reglas ejecutables para Transactional Outbox y configuración de DLQ.
-  - [ ] ADRs documentan los patrones asíncronos en la topología.
+  - [x] Existen reglas ejecutables para Transactional Outbox y configuración de DLQ.
+  - [x] ADRs documentan los patrones asíncronos en la topología.
 - **Evidencia de cierre:**
-  - `closedAt`: pending
-  - `closureCommit`: pending
-  - `evidence`: pending
-  - `validationCommands`: []
+  - `closedAt`: 2026-06-20
+  - `closureCommit`: HEAD
+  - `evidence`: Dual-engine rules and documentation implemented
+  - `validationCommands`: ["node .harness/scripts/validate-docs.mjs"]
 
 #### GT-128
 
@@ -1317,13 +1331,13 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Propósito:** Redactar el README, los ADRs fundacionales sobre Data Products, y las reglas iniciales JSON/Rego para la topología de malla de datos.
 - **Evidencia actual / ejemplo:** Solo existe `topology.manifest.json` en la carpeta.
 - **Hecho cuando:**
-  - [ ] Existen reglas base en `data-mesh.rules.json` y `data-mesh.rego`.
-  - [ ] El README cubre adecuadamente la estrategia de Data Products.
+  - [x] Existen reglas base en `data-mesh.rules.json` y `data-mesh.rego`.
+  - [x] El README cubre adecuadamente la estrategia de Data Products.
 - **Evidencia de cierre:**
   - `closedAt`: pending
   - `closureCommit`: pending
   - `evidence`: pending
-  - `validationCommands`: []
+  - `validationCommands`: ["node .harness/scripts/validate-tracking.mjs", "node .harness/scripts/validate-docs.mjs"]
 
 #### GT-129
 
@@ -1333,10 +1347,11 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Propósito:** Definir el cuerpo documental, los diagramas de persistencia offline-first y los rulesets/OPA iniciales para la ejecución en el Edge.
 - **Evidencia actual / ejemplo:** Solo existe `topology.manifest.json` en la carpeta.
 - **Hecho cuando:**
-  - [ ] Existen reglas base en `edge-computing.rules.json` y `edge-computing.rego`.
-  - [ ] Se han documentado patrones offline-first en el Topology Hub.
+  - [x] Existen reglas base en `edge-computing.rules.json` y `edge-computing.rego`.
+  - [x] Se han documentado patrones offline-first en el Topology Hub.
+- **Cerrado por:** `edge-computing/README.es.md`, `edge-computing.rules.json`, `edge-computing.rego`, `opa-input-builder.ts`, `architecture-rule.handler.ts`
 - **Evidencia de cierre:**
-  - `closedAt`: pending
+  - `closedAt`: 2026-06-20
   - `closureCommit`: pending
-  - `evidence`: pending
-  - `validationCommands`: []
+  - `evidence`: Se implementó el contrato ejecutable, la paridad dual-engine, y se documentaron los patrones de persistencia offline-first.
+  - `validationCommands`: ["npm test --workspace packages/core-domain", "node .harness/scripts/validate-docs.mjs"]

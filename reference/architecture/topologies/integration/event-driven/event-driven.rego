@@ -1,12 +1,5 @@
-package evolith.architecture.eventdriven
+package evolith.topologies.eventdriven
 
-default allow := false
-
-# ED-R01: AsyncAPI configuration
-deny[{"id": "ED-R01", "msg": "El satélite debe documentar o definir su contrato de eventos mediante AsyncAPI (asyncapi.yaml o asyncapi.json)"}] {
-    not input.satellite.hasAsyncApiConfig
-}
-
-allow {
-    count(deny) == 0
-}
+violations[{"id":"ED-R01","blocking":true,"message":"event-driven.config.json must declare strictAsyncApi=true (ED-R01)."}] { not input.satellite.eventDriven.hasStrictAsyncApi }
+violations[{"id":"ED-R02","blocking":true,"message":"event-driven.config.json must declare transactionalOutbox=true (ED-R02)."}] { not input.satellite.eventDriven.hasOutbox }
+violations[{"id":"ED-R03","blocking":true,"message":"event-driven.config.json must declare deadLetterQueue=true (ED-R03)."}] { not input.satellite.eventDriven.hasDlq }

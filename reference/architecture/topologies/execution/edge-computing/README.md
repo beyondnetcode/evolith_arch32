@@ -25,6 +25,18 @@ Edge workloads must remain governed by explicit synchronization, security, obser
 | Observability | Edge workloads must report health, failure, and trace context despite intermittent connectivity. |
 | Domain ownership | Edge logic must not fork domain behavior outside the owning bounded context. |
 
+## Executable Contract
+
+Satellites adopting this topology must declare an `edge-computing.config.json` file in their root. This JSON acts as the executable machine-readable contract evaluated by the Evolith Governance Engine.
+
+### Offline-First Persistence Patterns
+
+A critical aspect of the Edge Computing topology is handling intermittent connectivity. To comply with `EC-R01` (Mandatory Synchronization Strategy) and `EC-R03` (Conflict Resolution), edges must implement offline-first persistence patterns:
+
+1.  **Local-First Reads & Writes:** Use local databases (e.g., SQLite, IndexedDB) as the primary data store for the edge workload. This ensures the application remains fully functional during network partitions (`edgeIsolation: true`).
+2.  **Background Synchronization:** Utilize background workers or service workers to synchronize local changes with the central control plane when connectivity is restored.
+3.  **Conflict Resolution:** Explicitly declare and handle state conflicts resulting from offline modifications (e.g., `last-write-wins`, manual merging).
+
 ## Composition
 
 `edge-computing` can combine with `microservices`, `distributed-modules`, `event-driven`, `serverless`, and `agentic-ai` when locality and synchronization rules are explicit.

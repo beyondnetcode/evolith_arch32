@@ -4,6 +4,7 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { execSync } from "node:child_process";
 import { prepareReviewInput } from "./review-input.mjs";
+import { evaluateProviderResponse } from "./review-result.mjs";
 
 // Hard fail-closed ceiling: never submit a payload larger than this (GT-146).
 const MAX_REVIEW_TOKENS = Number(process.env.EVOLITH_REVIEW_MAX_TOKENS || 25000);
@@ -86,12 +87,19 @@ async function main() {
         console.log("\n🧠 Submitting sanitized, budgeted review input to Agentic Reviewer...");
         try {
           const result = await invokeGemini(apiKey, reviewPayload, toolNames);
-          console.log(`\n🤖 Review Result:\n${result}\n`);
-          if (result.includes("VIOLATION_DETECTED")) {
-            console.error("❌ Agentic review detected architectural violations!");
+          const evaluation = evaluateProviderResponse(result);
+          if (!evaluation.ok) {
+            console.error(`❌ Indeterminate/malformed review result — failing closed:\n   ${(evaluation.errors || []).join("\n   ")}`);
             process.exit(1);
+          }
+          if (evaluation.passesGate) {
+            console.log("✅ Agentic Review Passed (no violations).");
           } else {
-            console.log("✅ Agentic Review Passed (No violations found).");
+            console.error(`❌ Agentic review detected ${evaluation.findings.length} violation(s):`);
+            for (const f of evaluation.findings) {
+              console.error(`   [${f.severity}] ${f.file}${f.line ? ":" + f.line : ""} — ${f.title} (confidence ${f.confidence})`);
+            }
+            process.exit(1);
           }
         } catch (apiErr) {
           throw new Error(`LLM review failed: ${apiErr.message}`);
@@ -118,12 +126,25 @@ function invokeGemini(apiKey, diff, tools) {
       const payload = JSON.stringify({
         contents: [{
           parts: [{
-            text: `You are Wilson, Principal Architect of Evolith Core.
-Review the following git diff against our active MCP architecture tools: [${tools}].
+            text: `You are the Evolith Core architecture reviewer.
+Review the following sanitized, policy-relevant diff against our active MCP architecture tools: [${tools}].
 
-Guidelines:
-- If you find structural violations (e.g. invalid boundaries, illegal imports, missing signatures), start your output with 'VIOLATION_DETECTED' followed by a description of the issue.
-- If everything conforms, output '✅ Review Passed: Clean Architecture Rules Met'.
+Respond with ONLY a single JSON object conforming to this schema (no prose, no markdown fences):
+{
+  "schemaVersion": "1.0",
+  "verdict": "pass" | "fail",                 // "fail" iff there is at least one error-severity violation
+  "findings": [
+    {
+      "ruleId": "<optional rule id>",
+      "severity": "error" | "warning" | "info",
+      "title": "<short description>",
+      "file": "<changed file path — evidence location>",
+      "line": <integer, optional>,
+      "confidence": <number 0..1>
+    }
+  ]
+}
+Detect structural violations (invalid boundaries, illegal imports, missing signatures). If none, return verdict "pass" with an empty findings array.
 
 Diff to review:
 \`\`\`diff

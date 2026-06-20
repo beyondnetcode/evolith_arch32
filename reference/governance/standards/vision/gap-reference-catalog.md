@@ -1358,3 +1358,18 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - `validationCommands`:
     - `npm test --workspace packages/core-domain`
     - `node .harness/scripts/ci/01-validate-docs.mjs`
+
+#### GT-132
+**Purpose:** Integrate an MCP agent step in the CI pipeline to automatically review PRs for architectural adherence.
+**Current Evidence:** We have the dynamic CI runner and the sandbox, but no autonomous code review agent in the pipeline.
+**Done When:** A CI step uses an MCP agent to review PR diffs against Evolith rules.
+
+#### GT-133
+**Purpose:** Establish a centralized, agnostic distribution architecture for the compiled `policy.wasm` (e.g., via an internal NGINX server, MinIO, or NPM registry) so satellite repositories can fetch it dynamically without cloud vendor lock-in.
+**Current Evidence:** `policy.wasm` is compiled but relies on local paths or NPM syncs.
+**Done When:** `policy.wasm` is automatically published to an agnostic distribution layer on release.
+
+#### GT-134
+**Purpose:** Establish a canonical registry of reusable MCP tools for Evolith.
+**Current Evidence:** MCP tools are isolated in `apps/agent-sandbox` without a centralized registry.
+**Done When:** A dedicated `packages/mcp-tools/` exists, publishing reusable capabilities for external agents.

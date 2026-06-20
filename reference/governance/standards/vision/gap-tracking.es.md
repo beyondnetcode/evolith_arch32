@@ -13,8 +13,11 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|
-| [`GT-130`](./gap-reference-catalog.es.md#gt-130) | Validación en pipeline CI para firmas de Agentes BMAD en ADRs y Specs Técnicas | `Governance` | Cross | P1 | M | `PENDING` |
-| [`GT-131`](./gap-reference-catalog.es.md#gt-131) | Crear Sandbox/Referencia Aplicada para la Topología Agentic AI con MCP real | `Architecture` | Cross | P2 | L | `PENDING` |
+| [`GT-132`](./gap-reference-catalog.es.md#gt-132) | Revisiones de Código Autónomas con Agentes MCP en CI | `Governance` | Cross | P1 | M | `PENDING` |
+| [`GT-133`](./gap-reference-catalog.es.md#gt-133) | Arquitectura de Distribución Agnóstica Centralizada de OPA Wasm | `Architecture` | Cross | P2 | L | `PENDING` |
+| [`GT-134`](./gap-reference-catalog.es.md#gt-134) | Registro Estandarizado de Herramientas MCP | `Architecture` | Cross | P2 | M | `PENDING` |
+| [`GT-130`](./gap-reference-catalog.es.md#gt-130) | Validación en pipeline CI para firmas de Agentes BMAD en ADRs y Specs Técnicas | `Governance` | Cross | P1 | M | `DONE` |
+| [`GT-131`](./gap-reference-catalog.es.md#gt-131) | Crear Sandbox/Referencia Aplicada para la Topología Agentic AI con MCP real | `Architecture` | Cross | P2 | L | `DONE` |
 | [`GT-117`](./gap-reference-catalog.es.md#gt-117) | Endpoints de lectura (GET) en el Core API para la composición del BFF del Tracker | `BFF API` | F2 | P1 | M | `COMPLETADO` |
 | [`GT-118`](./gap-reference-catalog.es.md#gt-118) | Modelo de consumo remoto/SaaS — desacoplar el Core API de rutas de filesystem locales | `BFF API` | F3 | P1 | L | `COMPLETADO` |
 | [`MT-A23`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Preservar compatibilidad CLI `--arch-level F1/F2/F3` | `Smart CLI` | Transversal | P1 | M | `COMPLETADO` |
@@ -148,7 +151,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-128`](./gap-reference-catalog.es.md#gt-128) | Baseline Ruleset for Data Mesh | `Architecture` | Transversal | P2 | M | `COMPLETADO` |
 | [`GT-129`](./gap-reference-catalog.es.md#gt-129) | Baseline Ruleset for Edge Computing | `Architecture` | Transversal | P2 | M | `COMPLETADO` |
 
-**Progreso:** 132 / 134 completados · 0 en progreso · 2 pendientes · 0 diferidos
+**Progreso:** 134 / 137 completados · 0 en progreso · 3 pendientes · 0 diferidos
 
 **Ordenamiento:** una sola tabla, ordenada por estado (pendientes, luego diferidos, luego completados), luego criticidad (`P0` → `P1` → `P2`) y luego complejidad (`S` → `M` → `L`); los completados se agrupan por componente. Los IDs `GT-*` enlazan al [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md); los IDs `MT-A*` enlazan al [plan de implementación Multi-Topology](./multi-topology-reference-corpus-implementation-plan.es.md).
 

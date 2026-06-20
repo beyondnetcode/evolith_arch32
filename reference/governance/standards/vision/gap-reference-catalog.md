@@ -43,8 +43,6 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 - **Purpose:** Establish patterns for triggering Agentic MCP workflows via Message Bus (e.g., MassTransit/RabbitMQ) rather than purely synchronous HTTP requests.
 - **Evidence:** Agent invocations are currently tightly coupled to synchronous REST/gRPC endpoints.
-- **Done when:** The Event-Driven topology hub includes a reference pattern for consuming domain events to trigger background agent tasks.
-
 #### GT-139
 
 **Title:** RAG Knowledge Governance Standard
@@ -52,6 +50,46 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Purpose:** Standardize how Evolith's architectural markdown files (ADRs, rulesets) are chunked, embedded, and synchronized into Vector Databases for RAG-enabled assistants.
 - **Evidence:** Documentation is currently only parsed statically by the CI pipeline; there is no pipeline for embedding updates into a vector store.
 - **Done when:** A specification is created for chunking strategy, metadata tagging, and vector synchronization for all `reference/` files.
+
+#### GT-140
+
+**Title:** Workload Identity Token Rotation Standard for Satellite Reference
+
+- **Purpose:** Document guidelines and architectural reference patterns for automatic token refresh, expiry, and key rotation of workload identities in satellite services, keeping Evolith Core credential-free.
+- **Evidence:** Current sovereign identity rules (ADR-0088) do not guide how downstream satellite applications handle key lifecycle and token expiration.
+- **Done when:** An architectural standard is published detailing workload identity token refresh workflows and trust delegation profiles for client applications.
+
+#### GT-141
+
+**Title:** Concurrency Control and Resource Locking Standard for MCP Tools
+
+- **Purpose:** Establish patterns to prevent write collisions and state corruption when multiple autonomous agents run parallel mutations against the same target repository or file using MCP tools.
+- **Evidence:** Multi-agent sandboxes currently lack locking guidelines or concurrency guardrails for concurrent tool execution.
+- **Done when:** A design standard defines the resource locking mechanism and concurrency mitigation strategies for multi-agent workflows.
+
+#### GT-142
+
+**Title:** Real LLM Bridge Pipeline in CI for Agentic Reviews
+
+- **Purpose:** Replace the mock/dry-run review behavior in the agentic CI script with a functional integration that invokes an external LLM using credentials supplied dynamically via runner secrets.
+- **Evidence:** The step `13-agentic-code-review.mjs` validates the MCP connection but relies on a mock LLM review.
+- **Done when:** The CI step can execute a real LLM verification when `EVOLITH_AGENTIC_REVIEW=true` and an API key environment variable is present, fallback-safe.
+
+#### GT-143
+
+**Title:** Multi-Agent Handoff and Task Delegation Standards
+
+- **Purpose:** Define standard messaging contracts, token forwarding rules, and correlation tracing for agents delegating sub-tasks to other specialized agents.
+- **Evidence:** There are no formal patterns or guidelines in the repository for agent-to-agent task delegation.
+- **Done when:** Documented patterns for multi-agent handoffs, identity delegation, and context propagation are published in the agentic patterns folder.
+
+#### GT-144
+
+**Title:** Infinite Loop Prevention and Circuit Breaker Rules for Agents
+
+- **Purpose:** Establish safety guardrails to detect, flag, and break circular dependencies or recursive call loops between agents and MCP tools before consuming excessive budgets.
+- **Evidence:** The current tool authorization boundaries (ADR-0087) lack mechanism or rules for recursive loop detection.
+- **Done when:** An architecture policy defines loop-detection criteria (max hops, depth headers) and circuit breaking contracts for agent workflows.
 
 ### Phase F0 — Contract First
 

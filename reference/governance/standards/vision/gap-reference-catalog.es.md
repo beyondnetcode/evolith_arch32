@@ -592,6 +592,20 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 | G-26 | Meta de cobertura de branches vs. real | ACEPTADO — meta revisada a ≥75% |
 | G-27 | Enforcement de gobernanza federada solo-advisory | COMPLETADO — composite action `evolith-validate` |
 
+#### GT-130
+- **Título:** Validación en pipeline CI para firmas de Agentes BMAD en ADRs y Specs Técnicas
+- **Componente:** Governance
+- **Propósito:** Asegurar que toda la documentación arquitectónica sea oficialmente producida o auditada por Agentes IA según la Regla R-11.
+- **Evidencia Actual:** `validate-docs.mjs` revisa paridad, pero ningún CI asegura que los campos `Author` contengan al "Architect Agent" o "Docs Agent".
+- **Hecho Cuando:** Un script `.harness/scripts/validate-bmad-signatures.mjs` exista, corra en CI, y falle si un ADR es escrito manualmente sin evidencia de validación de agente.
+
+#### GT-131
+- **Título:** Crear Sandbox/Referencia Aplicada para la Topología Agentic AI con MCP real
+- **Componente:** Architecture
+- **Propósito:** Proveer un patio de juegos interactivo para la topología Agentic AI para probar Model Context Protocol (MCP) localmente.
+- **Evidencia Actual:** El perfil Agentic AI existe conceptualmente, pero no hay código ejecutable ni servicio demo en `packages/` o `apps/`.
+- **Hecho Cuando:** Una aplicación `apps/agent-sandbox` sea creada con un servidor MCP de prueba conectado al Core API.
+
 ---
 [Volver al Tablero de Seguimiento](./gap-tracking.es.md) · [Volver al Índice de Visión](./README.es.md)
 

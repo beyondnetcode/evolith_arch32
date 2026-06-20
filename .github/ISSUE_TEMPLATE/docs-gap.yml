@@ -1,0 +1,46 @@
+name: "Documentation Gap / Bug"
+description: Report missing documentation, broken links, or bilingual parity issues
+title: "docs: [Short Description of the Gap]"
+labels: ["documentation", "gap", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template to report issues with Evolith Core's reference documentation, such as missing translations, broken links, or undocumented standards.
+
+  - type: dropdown
+    id: issue_type
+    attributes:
+      label: Type of Gap
+      options:
+        - Broken Link / Anchor
+        - Bilingual Parity (EN/ES mismatch)
+        - Missing Architectural Standard
+        - Typo / Minor Correction
+    validations:
+      required: true
+
+  - type: textarea
+    id: location
+    attributes:
+      label: Affected File(s)
+      description: Provide the exact paths or links to the affected files.
+      placeholder: "e.g., reference/core/README.md"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description of the Issue
+      description: Clearly explain what is missing, broken, or incorrect.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Willing to Contribute?
+      options:
+        - label: Yes, I want to submit a PR for this using the Docs Agent.
+          required: false

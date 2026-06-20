@@ -144,9 +144,9 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-126`](./gap-reference-catalog.es.md#gt-126) | Maturation of Serverless Topology | `Architecture` | Transversal | P2 | M | `COMPLETADO` |
 | [`GT-127`](./gap-reference-catalog.es.md#gt-127) | Maturation of Event-Driven Topology | `Architecture` | Transversal | P2 | M | `COMPLETADO` |
 | [`GT-128`](./gap-reference-catalog.es.md#gt-128) | Baseline Ruleset for Data Mesh | `Architecture` | Transversal | P2 | M | `COMPLETADO` |
-| [`GT-129`](./gap-reference-catalog.es.md#gt-129) | Baseline Ruleset for Edge Computing | `Architecture` | Transversal | P2 | M | `PENDIENTE` |
+| [`GT-129`](./gap-reference-catalog.es.md#gt-129) | Baseline Ruleset for Edge Computing | `Architecture` | Transversal | P2 | M | `COMPLETADO` |
 
-**Progreso:** 131 / 132 completados · 0 en progreso · 1 pendientes · 0 diferidos
+**Progreso:** 132 / 132 completados · 0 en progreso · 0 pendientes · 0 diferidos
 
 **Ordenamiento:** una sola tabla, ordenada por estado (pendientes, luego diferidos, luego completados), luego criticidad (`P0` → `P1` → `P2`) y luego complejidad (`S` → `M` → `L`); los completados se agrupan por componente. Los IDs `GT-*` enlazan al [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md); los IDs `MT-A*` enlazan al [plan de implementación Multi-Topology](./multi-topology-reference-corpus-implementation-plan.es.md).
 

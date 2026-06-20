@@ -1333,10 +1333,11 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Propósito:** Definir el cuerpo documental, los diagramas de persistencia offline-first y los rulesets/OPA iniciales para la ejecución en el Edge.
 - **Evidencia actual / ejemplo:** Solo existe `topology.manifest.json` en la carpeta.
 - **Hecho cuando:**
-  - [ ] Existen reglas base en `edge-computing.rules.json` y `edge-computing.rego`.
-  - [ ] Se han documentado patrones offline-first en el Topology Hub.
+  - [x] Existen reglas base en `edge-computing.rules.json` y `edge-computing.rego`.
+  - [x] Se han documentado patrones offline-first en el Topology Hub.
+- **Cerrado por:** `edge-computing/README.es.md`, `edge-computing.rules.json`, `edge-computing.rego`, `opa-input-builder.ts`, `architecture-rule.handler.ts`
 - **Evidencia de cierre:**
-  - `closedAt`: pending
+  - `closedAt`: 2026-06-20
   - `closureCommit`: pending
-  - `evidence`: pending
-  - `validationCommands`: ["node .harness/scripts/validate-tracking.mjs", "node .harness/scripts/validate-docs.mjs"]
+  - `evidence`: Se implementó el contrato ejecutable, la paridad dual-engine, y se documentaron los patrones de persistencia offline-first.
+  - `validationCommands`: ["npm test --workspace packages/core-domain", "node .harness/scripts/validate-docs.mjs"]

@@ -20,7 +20,8 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
       'agent-prompt-boundaries', 'agent-tool-approval', 'agent-sandbox-limits',
       'agent-context-trust', 'agent-action-accountability', 'serverless-config', 'serverless-stateless', 'serverless-package', 'serverless-cold-start',
       'event-driven-config', 'event-driven-outbox', 'event-driven-dlq',
-      'data-mesh-config', 'data-mesh-contracts', 'data-mesh-governance'
+      'data-mesh-config', 'data-mesh-contracts', 'data-mesh-governance',
+      'edge-computing-sync', 'edge-computing-isolation', 'edge-computing-conflict'
     ].includes(rule.category);
   }
 
@@ -520,6 +521,17 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
         break;
       }
 
+      case 'edge-computing-sync':
+      case 'edge-computing-isolation':
+      case 'edge-computing-conflict': {
+        const config = await this.readEdgeComputingConfig(satellitePath);
+        const valid = rule.category === 'edge-computing-sync' ? ['offline-first', 'eventual', 'real-time-fallback'].includes(config?.syncStrategy as string)
+          : rule.category === 'edge-computing-isolation' ? config?.edgeIsolation === true
+          : ['last-write-wins', 'merge', 'manual'].includes(config?.conflictResolution as string);
+        if (!valid) { result = 'failed'; message = `${rule.description} - edge-computing.config.json does not satisfy ${rule.id}`; }
+        break;
+      }
+
       default:
         result = 'skipped';
         break;
@@ -547,6 +559,11 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
 
   private async readDataMeshConfig(satellitePath: string): Promise<Record<string, unknown> | undefined> {
     const configPath = path.join(satellitePath, 'data-mesh.config.json');
+    return await this.fs.exists(configPath) ? this.asRecord(await this.fs.readJson(configPath)) : undefined;
+  }
+
+  private async readEdgeComputingConfig(satellitePath: string): Promise<Record<string, unknown> | undefined> {
+    const configPath = path.join(satellitePath, 'edge-computing.config.json');
     return await this.fs.exists(configPath) ? this.asRecord(await this.fs.readJson(configPath)) : undefined;
   }
 

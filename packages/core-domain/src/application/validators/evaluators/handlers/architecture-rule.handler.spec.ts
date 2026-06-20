@@ -62,6 +62,13 @@ describe('ArchitectureRuleHandler', () => {
         await expect(h.evaluate(rule({ id, category }), ctx)).resolves.toMatchObject({ result: 'failed' });
       }
     });
+
+    it('edge-computing rules fail without a governed edge-computing contract', async () => {
+      const h = new ArchitectureRuleHandler(fsMock());
+      for (const [id, category] of [['EC-R01', 'edge-computing-sync'], ['EC-R02', 'edge-computing-isolation'], ['EC-R03', 'edge-computing-conflict']] as const) {
+        await expect(h.evaluate(rule({ id, category }), ctx)).resolves.toMatchObject({ result: 'failed' });
+      }
+    });
     it('agentic AI rules fail when agent.config.json is absent or incomplete', async () => {
       const config = path.join(SAT, 'agent.config.json');
       const h = new ArchitectureRuleHandler(fsMock({ existing: [config], json: { [config]: { agent: { id: 'reviewer' } } } }));
@@ -203,6 +210,14 @@ describe('ArchitectureRuleHandler', () => {
       const config = path.join(SAT, 'data-mesh.config.json');
       const h = new ArchitectureRuleHandler(fsMock({ existing: [config], json: { [config]: { isDataProduct: true, hasDataContracts: true, federatedGovernance: true } } }));
       for (const [id, category] of [['DM-R01', 'data-mesh-config'], ['DM-R02', 'data-mesh-contracts'], ['DM-R03', 'data-mesh-governance']] as const) {
+        await expect(h.evaluate(rule({ id, category }), ctx)).resolves.toMatchObject({ result: 'passed' });
+      }
+    });
+
+    it('passes edge-computing sync, isolation, and conflict resolution controls', async () => {
+      const config = path.join(SAT, 'edge-computing.config.json');
+      const h = new ArchitectureRuleHandler(fsMock({ existing: [config], json: { [config]: { syncStrategy: 'offline-first', edgeIsolation: true, conflictResolution: 'last-write-wins' } } }));
+      for (const [id, category] of [['EC-R01', 'edge-computing-sync'], ['EC-R02', 'edge-computing-isolation'], ['EC-R03', 'edge-computing-conflict']] as const) {
         await expect(h.evaluate(rule({ id, category }), ctx)).resolves.toMatchObject({ result: 'passed' });
       }
     });

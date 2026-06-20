@@ -1334,10 +1334,13 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Define the documentary body, offline-first persistence diagrams, and initial rulesets/OPA for execution at the edge.
 - **Current evidence / example:** Only `topology.manifest.json` exists in `execution/edge-computing`.
 - **Done when:**
-  - [ ] Baseline `edge-computing.rules.json` and `edge-computing.rego` exist.
-  - [ ] Offline-first persistence patterns are documented in the Topology Hub.
+  - [x] Baseline `edge-computing.rules.json` and `edge-computing.rego` exist.
+  - [x] Offline-first persistence patterns are documented in the Topology Hub.
+- **Closed by:** `edge-computing/README.md`, `edge-computing.rules.json`, `edge-computing.rego`, `opa-input-builder.ts`, `architecture-rule.handler.ts`
 - **Closure evidence:**
-  - `closedAt`: pending
+  - `closedAt`: 2026-06-20
   - `closureCommit`: pending
-  - `evidence`: pending
-  - `validationCommands`: []
+  - `evidence`: Implemented executable contract, dual-engine parity, and documented offline-first persistence patterns.
+  - `validationCommands`:
+    - `npm test --workspace packages/core-domain`
+    - `node .harness/scripts/validate-docs.mjs`

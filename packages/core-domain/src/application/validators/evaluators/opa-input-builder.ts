@@ -13,6 +13,7 @@ export class OpaInputBuilder {
     const serverless = await this.readServerlessConfiguration(ctx.satellitePath);
     const eventDriven = await this.readEventDrivenConfiguration(ctx.satellitePath);
     const dataMesh = await this.readDataMeshConfiguration(ctx.satellitePath);
+    const edgeComputing = await this.readEdgeComputingConfiguration(ctx.satellitePath);
 
     const input: unknown = {
       satellitePath: ctx.satellitePath,
@@ -31,6 +32,7 @@ export class OpaInputBuilder {
         serverless,
         eventDriven,
         dataMesh,
+        edgeComputing,
         hasAsyncApiConfig: await this.fs.exists(path.join(ctx.satellitePath, 'asyncapi.yaml')) || await this.fs.exists(path.join(ctx.satellitePath, 'asyncapi.json')),
         agenticAi,
         hasOtel: await this.fs.exists(path.join(ctx.satellitePath, 'otel.config.js')) || await this.fs.exists(path.join(ctx.satellitePath, 'opentelemetry.config.js')) || await this.fs.exists(path.join(ctx.satellitePath, 'src', 'instrumentation.ts')),
@@ -129,6 +131,15 @@ export class OpaInputBuilder {
       isDataProduct: config?.isDataProduct === true,
       hasDataContracts: config?.hasDataContracts === true,
       federatedGovernance: config?.federatedGovernance === true,
+    };
+  }
+
+  private async readEdgeComputingConfiguration(root: string): Promise<Record<string, string | boolean>> {
+    const config = await this.safeReadJson(path.join(root, 'edge-computing.config.json')) as Record<string, unknown> | null;
+    return {
+      syncStrategy: typeof config?.syncStrategy === 'string' ? config.syncStrategy : '',
+      edgeIsolation: config?.edgeIsolation === true,
+      conflictResolution: typeof config?.conflictResolution === 'string' ? config.conflictResolution : '',
     };
   }
 

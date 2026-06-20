@@ -2,7 +2,7 @@
 
 > **Bilingual Navigation:** [Version en Espanol](./README.es.md)
 
-This area is the canonical executable ruleset location for Evolith Core topology governance.
+This area defines the canonical topology-ruleset resolution model for Evolith Core governance.
 
 Human-readable topology guidance lives in `reference/architecture/topologies/`. This folder contains the machine-readable rules that CLI, MCP, Service CORE API, CI, and future topology resolvers consume.
 
@@ -11,8 +11,8 @@ Human-readable topology guidance lives in `reference/architecture/topologies/`. 
 | Concern | Canonical Location | Purpose |
 |---|---|---|
 | Manifest schema | `rulesets/schema/topology-manifest.schema.json` | Validate every `topology.manifest.json`. |
-| Native topology rules | `rulesets/topologies/<dimension>/<topology>/native/` | Execute topology-specific checks in the Native evaluator. |
-| OPA topology policies | `rulesets/topologies/<dimension>/<topology>/opa/` | Execute equivalent Rego policies for OPA parity. |
+| Native topology rules | Manifest-declared `spec.artifacts.rulesets[]` | Execute topology-specific checks in the Native evaluator. |
+| OPA topology policies | Manifest-declared `spec.artifacts.opaPolicies[]` | Execute equivalent Rego policies for OPA parity. |
 | Human corpus | `reference/architecture/topologies/` | Explain topology intent, constraints, ADRs, and composition rules. |
 
 ## Governed Dimensions
@@ -28,7 +28,8 @@ Human-readable topology guidance lives in `reference/architecture/topologies/`. 
 ## Enforcement Rules
 
 - Do not create a separate CLI, MCP server, or Core API per topology.
-- Do not place human-readable topology design as the source of executable truth; manifests and rulesets are the executable contract.
+- Do not place human-readable topology design as the source of executable truth; manifests and their declared rulesets are the executable contract.
+- Do not construct legacy F1/F2/F3 file paths. Resolve the compatibility alias through the progressive-axis topology manifest.
 - Every new enforceable topology rule must preserve Dual-Engine Parity when both engines apply.
 - OPA policies must not drift from Native rule semantics.
 - Topology rules must not encode business budget, ROI, cost, staffing, prioritization, timing, or business ownership.

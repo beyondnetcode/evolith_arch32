@@ -176,8 +176,8 @@
   "reference": {
     "evolithYamlSchema": "../schema/evolith-yaml.schema.json",
     "inheritanceRules": "./inheritance.rules.json",
-    "f1Rules": "../architecture/f1-modular-monolith.rules.json",
-    "f2Rules": "../architecture/f2-distributed-modules.rules.json",
-    "f3Rules": "../architecture/f3-microservices.rules.json"
+    "f1Rules": "../../reference/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rules.json",
+    "f2Rules": "../../reference/architecture/topologies/progressive-axis/distributed-modules/distributed-modules.rules.json",
+    "f3Rules": "../../reference/architecture/topologies/progressive-axis/microservices/microservices.rules.json"
   }
 }

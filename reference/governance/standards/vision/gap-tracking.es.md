@@ -17,13 +17,13 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-150`](./gap-reference-catalog.es.md#gt-150) | Madurar las Topologías Draft Restantes a Paridad de Corpus Aceptado | `Architecture` | Cross | P1 | L | `PENDIENTE` |
 | [`GT-145`](./gap-reference-catalog.es.md#gt-145) | Sincronización Veraz y Neutral al Proveedor de Vectores RAG | `Operations` | Cross | P1 | L | `PENDIENTE` |
 | [`GT-149`](./gap-reference-catalog.es.md#gt-149) | Pruebas OPA Ejecutables y Gate de Paridad Semántica Native/OPA | `Rulesets` | Cross | P1 | L | `PENDIENTE` |
-| [`GT-148`](./gap-reference-catalog.es.md#gt-148) | Reparación de Migración de Referencias y Cobertura de Reglas Consciente de Topologías | `Rulesets` | Cross | P1 | M | `PENDIENTE` |
 | [`GT-147`](./gap-reference-catalog.es.md#gt-147) | Auditoría Automatizada de Deriva de Capacidades Operativas y Eficiencia | `Governance` | Cross | P1 | M | `PENDIENTE` |
 | [`GT-140`](./gap-reference-catalog.es.md#gt-140) | Estándar de Rotación de Tokens de Identidad de Workload para Referencia de Satélites | `Architecture` | Cross | P1 | M | `DONE` |
 | [`GT-142`](./gap-reference-catalog.es.md#gt-142) | Pipeline de Enlace de LLM Real en CI para Revisiones Agénticas | `Governance` | Cross | P1 | L | `DONE` |
 | [`GT-144`](./gap-reference-catalog.es.md#gt-144) | Reglas de Prevención de Bucles Infinitos y Circuit Breaker para Agentes | `Governance` | Cross | P1 | M | `DONE` |
 | [`GT-141`](./gap-reference-catalog.es.md#gt-141) | Estándar de Control de Concurrencia y Bloqueo de Recursos para Herramientas MCP | `Architecture` | Cross | P2 | M | `DONE` |
 | [`GT-143`](./gap-reference-catalog.es.md#gt-143) | Estándares de Handoff Multi-Agente y Delegación de Tareas | `Governance` | Cross | P2 | L | `DONE` |
+| [`GT-148`](./gap-reference-catalog.es.md#gt-148) | Reparación de Migración de Referencias y Cobertura de Reglas Consciente de Topologías | `Rulesets` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-135`](./gap-reference-catalog.es.md#gt-135) | Estándar de Telemetría y Control de Costos para IA Agéntica | `Architecture` | Cross | P1 | M | `DONE` |
 | [`GT-136`](./gap-reference-catalog.es.md#gt-136) | Control de Acceso Consciente del Contexto (ABAC para LLMs) | `Governance` | Cross | P1 | L | `DONE` |
 | [`GT-137`](./gap-reference-catalog.es.md#gt-137) | Identidad Soberana para IA Agéntica | `Architecture` | Cross | P2 | M | `DONE` |
@@ -167,7 +167,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-128`](./gap-reference-catalog.es.md#gt-128) | Baseline Ruleset for Data Mesh | `Architecture` | Transversal | P2 | M | `COMPLETADO` |
 | [`GT-129`](./gap-reference-catalog.es.md#gt-129) | Baseline Ruleset for Edge Computing | `Architecture` | Transversal | P2 | M | `COMPLETADO` |
 
-**Progreso:** 147 / 153 completados · 0 en progreso · 6 pendientes · 0 diferidos
+**Progreso:** 148 / 153 completados · 0 en progreso · 5 pendientes · 0 diferidos
 
 **Ordenamiento:** una sola tabla, ordenada por estado (pendientes, luego diferidos, luego completados), luego criticidad (`P0` → `P1` → `P2`) y luego complejidad (`S` → `M` → `L`); los completados se agrupan por componente. Los IDs `GT-*` enlazan al [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md); los IDs `MT-A*` enlazan al [plan de implementación Multi-Topology](./multi-topology-reference-corpus-implementation-plan.es.md).
 

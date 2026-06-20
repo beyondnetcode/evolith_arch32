@@ -3,6 +3,24 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-148",
+      "closedAt": "2026-06-20",
+      "closureCommit": "ec968d190388dc5e22086f870741ea68f59d8dcb",
+      "evidence": [
+        ".harness/scripts/generate-rule-coverage.mjs",
+        ".harness/scripts/generate-rule-coverage.test.mjs",
+        ".harness/scripts/ci/15-validate-topology-rule-coverage.mjs",
+        "rulesets/governance/satellite-contracts.rules.json"
+      ],
+      "validationCommands": [
+        "node --test .harness/scripts/generate-rule-coverage.test.mjs",
+        "node .harness/scripts/ci/15-validate-topology-rule-coverage.mjs",
+        "node .harness/scripts/ci-runner.mjs"
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "GT-149 owns executable OPA semantics; its remaining ID-divergence warnings are intentionally reported without blocking this reference-integrity closure."
+    },
+    {
       "id": "GT-129",
       "closedAt": "2026-06-20",
       "closureCommit": "fcf22ee27a160d1e5b34acab7210186531495a3d",

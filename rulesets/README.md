@@ -56,10 +56,8 @@ rulesets/
 │   ├── release-notes.schema.json         # Phase 5
 │   ├── evolith-yaml.schema.json          # Satellite governance
 │   └── topology-manifest.schema.json     # Topology manifest contract
-├── architecture/               # Architecture phase rules
-│   ├── f1-modular-monolith.rules.json
-│   ├── f2-distributed-modules.rules.json
-│   └── f3-microservices.rules.json
+├── architecture/               # F1/F2/F3 compatibility aliases and migration guidance
+│   └── README.md               # Resolves aliases through topology manifests
 ├── topologies/                 # Topology-specific executable rules
 │   └── README.md
 ├── adr/                        # ADR-encoded rules (7 ADRs)
@@ -98,6 +96,8 @@ rulesets/
 ```
 
 ---
+
+The canonical topology rule artifact is the file declared by each `topology.manifest.json`; the current progressive-axis artifacts live under `reference/architecture/topologies/progressive-axis/`. Consumers must resolve the manifest rather than construct legacy `rulesets/architecture/f*.rules.json` paths.
 
 ## How Rulesets Work
 

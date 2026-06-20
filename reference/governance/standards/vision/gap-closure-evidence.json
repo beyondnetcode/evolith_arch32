@@ -1816,6 +1816,20 @@
         "node .harness/scripts/ci-runner.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-136",
+      "closedAt": "2026-06-20",
+      "closureCommit": "92e80b5c",
+      "evidence": [
+        "reference/architecture/adrs/core/0087-abac-agentic-tool-execution.md",
+        "reference/architecture/adrs/core/0087-abac-agentic-tool-execution.es.md",
+        "rulesets/opa/abac-mcp-tool-access.rego"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

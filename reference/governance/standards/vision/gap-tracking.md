@@ -14,7 +14,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
 |---|---|---|:---:|:---:|:---:|:---:|
 | [`GT-135`](./gap-reference-catalog.md#gt-135) | Agentic AI Telemetry & Cost Control Standard | `Architecture` | Cross | P1 | M | `DONE` |
-| [`GT-136`](./gap-reference-catalog.md#gt-136) | Context-Aware Access Control (ABAC for LLMs) | `Governance` | Cross | P1 | L | `PENDING` |
+| [`GT-136`](./gap-reference-catalog.md#gt-136) | Context-Aware Access Control (ABAC for LLMs) | `Governance` | Cross | P1 | L | `DONE` |
 | [`GT-137`](./gap-reference-catalog.md#gt-137) | Sovereign Identity for Agentic AI | `Architecture` | Cross | P2 | M | `PENDING` |
 | [`GT-138`](./gap-reference-catalog.md#gt-138) | Event-Driven Agentic Workflows | `Architecture` | Cross | P2 | M | `PENDING` |
 | [`GT-139`](./gap-reference-catalog.md#gt-139) | RAG Knowledge Governance Standard | `Governance` | Cross | P2 | L | `PENDING` |
@@ -156,7 +156,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-128`](./gap-reference-catalog.md#gt-128) | Baseline Ruleset for Data Mesh | `Architecture` | Cross | P2 | M | `DONE` |
 | [`GT-129`](./gap-reference-catalog.md#gt-129) | Baseline Ruleset for Edge Computing | `Architecture` | Cross | P2 | M | `DONE` |
 
-**Progress:** 138 / 142 done · 0 in progress · 4 pending · 0 deferred
+**Progress:** 139 / 142 done · 0 in progress · 3 pending · 0 deferred
 
 **Ordering:** one table, ordered by status (pending then deferred then completed), then criticality (`P0` → `P1` → `P2`) then complexity (`S` → `M` → `L`); completed gaps are grouped by component. `GT-*` IDs link to the [Gap Reference Catalog](./gap-reference-catalog.md); `MT-A*` IDs link to the supporting [Multi-Topology implementation plan](./multi-topology-reference-corpus-implementation-plan.md).
 

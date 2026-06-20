@@ -4,13 +4,13 @@
   "asOf": "2026-06-19",
   "gaps": {
     "total": 137,
-    "done": 134,
-    "pending": 3,
+    "done": 135,
+    "pending": 2,
     "inProgress": 0,
     "deferred": 0
   },
   "evidence": {
-    "closureRecords": 116,
+    "closureRecords": 117,
     "cliPackage": "@evolith/smart-cli@1.1.0",
     "adrCount": 96,
     "rulesetCount": 25,

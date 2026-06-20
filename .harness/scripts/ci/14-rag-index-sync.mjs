@@ -24,6 +24,7 @@ const RAG_SYNC_ENABLED = process.env.EVOLITH_RAG_SYNC === 'true';
 const CORPUS_ROOT = resolve(process.cwd(), 'reference');
 const CHUNK_MIN_TOKENS = 100;
 const CHUNK_MAX_TOKENS = 512;
+const CHUNK_MAX_CHARS = CHUNK_MAX_TOKENS * 4;
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -69,17 +70,18 @@ function chunkAtH2(content, filePath, corpusVersion) {
     // Extract ADR ID from filename (e.g. 0086 from 0086-some-adr.md)
     const adrMatch = sourceFile.match(/\/(\d{4})-/);
 
-    chunks.push({
-      chunk_id: chunkId,
-      source_file: sourceFile,
-      section_heading: currentHeading,
-      adr_id: adrMatch ? adrMatch[1] : null,
-      gap_ids: [],
-      language: 'en',
-      corpus_version: corpusVersion,
-      token_estimate: Math.ceil(text.length / 4), // rough 4-chars/token estimate
-      text_preview: text.slice(0, 120).replace(/\n/g, ' '),
-    });
+    const parts = splitLongSection(text);
+    for (const [index, part] of parts.entries()) {
+      chunks.push({
+        chunk_id: createHash('sha256').update(`${chunkId}::${index}`).digest('hex').slice(0, 16),
+        source_file: sourceFile,
+        section_heading: parts.length === 1 ? currentHeading : `${currentHeading} (${index + 1}/${parts.length})`,
+        adr_id: adrMatch ? adrMatch[1] : null,
+        gap_ids: [], language: 'en', corpus_version: corpusVersion,
+        token_estimate: Math.ceil(part.length / 4),
+        text_preview: part.slice(0, 120).replace(/\n/g, ' '),
+      });
+    }
     currentLines = [];
   };
 
@@ -94,6 +96,19 @@ function chunkAtH2(content, filePath, corpusVersion) {
   pushChunk();
 
   return chunks;
+}
+
+function splitLongSection(text) {
+  if (text.length <= CHUNK_MAX_CHARS) return [text];
+  const parts = [];
+  let current = '';
+  for (let block of text.split(/(?=^### )/m)) {
+    if (current && current.length + block.length > CHUNK_MAX_CHARS) { parts.push(current.trim()); current = ''; }
+    while (block.length > CHUNK_MAX_CHARS) { parts.push(block.slice(0, CHUNK_MAX_CHARS)); block = block.slice(CHUNK_MAX_CHARS); }
+    current += block;
+  }
+  if (current.trim()) parts.push(current.trim());
+  return parts;
 }
 
 // ---------------------------------------------------------------------------

@@ -1,9 +1,10 @@
-import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Get, Param, Body, HttpCode, HttpStatus, NotFoundException } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { ValidateSatelliteUseCase } from '@evolith/core-domain/application/use-cases';
 import { ArchitectureDriftService } from '@evolith/core-domain/application/validators';
 import { ValidateSatelliteDto, DetectDriftDto } from '../dtos/architecture.dto';
 import { WorkspaceReferenceResolverService } from '../../application/services/workspace-reference-resolver.service';
+import { TopologyCatalogService } from '@evolith/core-domain/application/services';
 
 @Controller('architecture')
 export class ArchitectureController {
@@ -11,7 +12,28 @@ export class ArchitectureController {
     private readonly driftService: ArchitectureDriftService,
     private readonly validateSatelliteUseCase: ValidateSatelliteUseCase,
     private readonly workspaceResolver: WorkspaceReferenceResolverService,
+    private readonly topologyCatalog: TopologyCatalogService,
   ) {}
+
+
+  @Get('topologies')
+  @ApiOperation({ summary: 'List all available architecture topologies' })
+  @ApiResponse({ status: 200, description: 'List of topology manifests' })
+  async listTopologies() {
+    return this.topologyCatalog.list(this.workspaceResolver.corePath());
+  }
+
+  @Get('topologies/:id')
+  @ApiOperation({ summary: 'Get a specific architecture topology by ID' })
+  @ApiResponse({ status: 200, description: 'Topology manifest details' })
+  @ApiResponse({ status: 404, description: 'Topology not found' })
+  async getTopology(@Param('id') id: string) {
+    const topology = await this.topologyCatalog.get(this.workspaceResolver.corePath(), id);
+    if (!topology) {
+      throw new NotFoundException(`Topology ${id} not found`);
+    }
+    return topology;
+  }
 
   @Post('validate-satellite')
   @HttpCode(HttpStatus.OK)

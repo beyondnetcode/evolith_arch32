@@ -3,6 +3,20 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "MT-A25",
+      "closedAt": "2026-06-20",
+      "closureCommit": "1ee04e6",
+      "evidence": [
+        "apps/core-api/src/presentation/controllers/architecture.controller.ts",
+        "apps/core-api/src/presentation/controllers/architecture.controller.spec.ts"
+      ],
+      "validationCommands": [
+        "npm --workspace core-api test",
+        "node .harness/scripts/validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-118",
       "closedAt": "2026-06-20",
       "closureCommit": "1ee04e6",

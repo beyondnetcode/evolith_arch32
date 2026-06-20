@@ -38,3 +38,21 @@ test('rejects stale satellite rule references', () => {
   write(root, 'rulesets/governance/satellite-contracts.rules.json', JSON.stringify({ reference: { f1Rules: '../architecture/f1-modular-monolith.rules.json' } }));
   assert.match(validateTopologyRuleCoverage(root).errors.join('\n'), /reference\.f1Rules does not resolve/);
 });
+
+test('rejects duplicate and unreferenced artifacts for an accepted topology', () => {
+  const root = fixtureRoot();
+  write(root, 'reference/architecture/topologies/progressive-axis/demo/demo.rules.json', JSON.stringify({ rules: [{ id: 'DEMO-R01' }, { id: 'DEMO-R01' }] }));
+  write(root, 'reference/architecture/topologies/progressive-axis/demo/orphan.rego', 'package demo\n');
+  const errors = validateTopologyRuleCoverage(root).errors.join('\n');
+  assert.match(errors, /Native ruleset has duplicate rule IDs/);
+  assert.match(errors, /Unreferenced topology rule artifact/);
+});
+
+test('covers the canonical F1/F2/F3 topology manifests', () => {
+  const result = validateTopologyRuleCoverage(process.cwd());
+  assert.deepEqual(result.errors, []);
+  assert.deepEqual(
+    result.rows.filter((row) => ['modular-monolith', 'distributed-modules', 'microservices'].includes(row.topology)).map((row) => row.topology).sort(),
+    ['distributed-modules', 'microservices', 'modular-monolith'],
+  );
+});

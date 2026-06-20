@@ -136,10 +136,11 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Propósito:** Restaurar un reporte de cobertura confiable y consciente de topologías y eliminar referencias obsoletas de rutas por fase, para que el descubrimiento de reglas, herencia de satélites y reportes de gobernanza usen el corpus topológico canónico.
 - **Evidencia:** Wilson V5 ejecutó `.harness/scripts/generate-rule-coverage.mjs`; falla antes de producir una matriz porque lee los archivos eliminados `rulesets/architecture/f1-modular-monolith.rules.json` y `rulesets/opa/architecture.rego`. `rulesets/governance/satellite-contracts.rules.json` aún declara los mismos archivos F1/F2/F3 inexistentes, mientras que los artefactos canónicos viven bajo `reference/architecture/topologies/progressive-axis/`.
 - **Hecho cuando:**
-  - [ ] El generador de cobertura descubre reglas desde manifiestos topológicos en vez de rutas legacy hard-coded y emite cobertura Native/OPA por topología con ubicaciones fuente.
-  - [ ] Contratos de satélite, documentación y referencias machine-readable resuelven solo artefactos canónicos; una prueba automática de resolución de referencias evita recurrencia.
-  - [ ] El reporte falla ante reglas topológicas faltantes, duplicadas, huérfanas o sin referencia y se integra en la ruta de validación CI relevante con alcance por topologías modificadas.
-  - [ ] Fixtures cubren Monolito Modular, Módulos Distribuidos, Microservicios y un caso negativo de ruta migrada.
+  - [x] El generador de cobertura descubre reglas desde manifiestos topológicos en vez de rutas legacy hard-coded y emite cobertura Native/OPA por topología con ubicaciones fuente.
+  - [x] Contratos de satélite, documentación y referencias machine-readable resuelven solo artefactos canónicos; una prueba automática de resolución de referencias evita recurrencia.
+  - [x] El reporte falla ante artefactos topológicos faltantes, duplicados o sin referencia y referencias canónicas rotas, informa divergencia de IDs Native/OPA para GT-149 y se integra en la ruta de validación CI relevante con alcance por topologías modificadas.
+  - [x] Fixtures cubren Monolito Modular, Módulos Distribuidos, Microservicios y un caso negativo de ruta migrada.
+- **Evidencia de cierre:** Los commits `7e5493a6` y `ec968d19` reemplazan el generador obsoleto solo-F1 por descubrimiento desde manifiestos, reparan referencias de herencia de satélites, agregan el decimoquinto gate CI y fixtures focalizados, y mantienen visible la divergencia de IDs Native/OPA para GT-149 en vez de ocultarla.
 
 #### GT-149
 

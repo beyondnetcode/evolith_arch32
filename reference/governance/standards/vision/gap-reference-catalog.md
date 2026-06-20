@@ -135,10 +135,11 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Purpose:** Restore a trustworthy, topology-aware coverage report and remove obsolete phase-path references so rule discovery, satellite inheritance, and governance reporting use the canonical topology corpus.
 - **Evidence:** Wilson V5 ran `.harness/scripts/generate-rule-coverage.mjs`; it fails before producing a matrix because it reads the deleted `rulesets/architecture/f1-modular-monolith.rules.json` and `rulesets/opa/architecture.rego`. `rulesets/governance/satellite-contracts.rules.json` still declares the same missing F1/F2/F3 files, while the canonical artifacts live beneath `reference/architecture/topologies/progressive-axis/`.
 - **Done when:**
-  - [ ] The coverage generator discovers rules from topology manifests rather than hard-coded legacy paths and emits per-topology Native/OPA coverage with source locations.
-  - [ ] Satellite contracts, documentation, and machine-readable references resolve only to canonical artifacts; an automated reference-resolution test prevents recurrence.
-  - [ ] The report fails on missing, duplicate, orphaned, or unreferenced topology rules and is integrated into the relevant CI validation path with changed-topology scoping.
-  - [ ] Fixtures cover Modular Monolith, Distributed Modules, Microservices, and a negative migrated-path case.
+  - [x] The coverage generator discovers rules from topology manifests rather than hard-coded legacy paths and emits per-topology Native/OPA coverage with source locations.
+  - [x] Satellite contracts, documentation, and machine-readable references resolve only to canonical artifacts; an automated reference-resolution test prevents recurrence.
+  - [x] The report fails on missing, duplicate, or unreferenced topology artifacts and broken canonical references, reports Native/OPA ID divergence for GT-149, and is integrated into the relevant CI validation path with changed-topology scoping.
+  - [x] Fixtures cover Modular Monolith, Distributed Modules, Microservices, and a negative migrated-path case.
+- **Closure evidence:** Commits `7e5493a6` and `ec968d19` replace the stale F1-only generator with manifest discovery, repair satellite inheritance references, add the fifteenth CI gate and focused fixtures, and keep Native/OPA ID divergence visible for GT-149 rather than masking it.
 
 #### GT-149
 

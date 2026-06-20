@@ -111,7 +111,7 @@ export function validateTopologyRuleCoverage(root = process.cwd()) {
     rows.push({ topology, status: manifest.metadata?.status || 'unknown', native: nativeSet.size, opa: opaSet.size, aligned: missingInOpa.length === 0 && orphanedInOpa.length === 0 });
   }
 
-  for (const artifact of walk(path.join(root, MANIFEST_ROOT), (file) => file.endsWith('.rules.json') || file.endsWith('.rego'))) {
+  for (const artifact of walk(path.join(root, MANIFEST_ROOT), (file) => file.endsWith('.rules.json') || (file.endsWith('.rego') && !file.endsWith('.test.rego')))) {
     const acceptedArtifact = acceptedDirectories.some((directory) => path.resolve(artifact).startsWith(`${path.resolve(directory)}${path.sep}`));
     if (!declaredArtifacts.has(path.resolve(artifact))) {
       (acceptedArtifact ? errors : warnings).push(`Unreferenced topology rule artifact: ${relative(root, artifact)}`);

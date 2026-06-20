@@ -1174,7 +1174,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Criterio de cierre:**
   - [x] un contrato de referencia a repositorio remoto (o equivalente) especificado en un ADR ([ADR-0080](../../../architecture/adrs/core/0080-remote-repository-reference-contract.es.md))
   - [x] el Core API resuelve el contenido del satélite sin una ruta local provista por el caller (`workspaceRef` se resuelve únicamente bajo `WORKSPACE_ROOT` configurado en el servidor)
-  - [ ] aislamiento de tenant y manejo de credenciales cubiertos por tests
+  - [x] aislamiento de tenant y manejo de credenciales cubiertos por tests
 - **Referencias:** [apps/core-api/src/presentation/controllers/projects.controller.ts](../../../../apps/core-api/src/presentation/controllers/projects.controller.ts) · [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md)
 
 #### GT-119

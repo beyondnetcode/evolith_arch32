@@ -3,6 +3,21 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-118",
+      "closedAt": "2026-06-20",
+      "closureCommit": "1ee04e6",
+      "evidence": [
+        "reference/architecture/adrs/core/0080-remote-repository-reference-contract.md",
+        "apps/core-api/src/application/services/workspace-reference-resolver.service.ts",
+        "apps/core-api/src/application/services/workspace-reference-resolver.service.spec.ts"
+      ],
+      "validationCommands": [
+        "npm --workspace @evolith/core-api test",
+        "node .harness/scripts/validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "MT-A20",
       "closedAt": "2026-06-20",
       "closureCommit": "1ee04e6",

@@ -1175,7 +1175,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Done when:**
   - [x] a remote repository-reference contract (or equivalent) is specified in an ADR ([ADR-0080](../../../architecture/adrs/core/0080-remote-repository-reference-contract.md))
   - [x] the Core API resolves satellite content without a caller-supplied local path (`workspaceRef` is resolved only beneath the server-configured `WORKSPACE_ROOT`)
-  - [ ] tenant isolation and credential handling are covered by tests
+  - [x] tenant isolation and credential handling are covered by tests
 - **References:** [apps/core-api/src/presentation/controllers/projects.controller.ts](../../../../apps/core-api/src/presentation/controllers/projects.controller.ts) · [ADR-0074](../../../../reference/architecture/adrs/core/0074-evolith-core-api-exposure-layer.md)
 
 #### GT-119

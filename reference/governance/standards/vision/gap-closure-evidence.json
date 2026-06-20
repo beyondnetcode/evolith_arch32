@@ -1830,6 +1830,19 @@
         "node .harness/scripts/ci-runner.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-137",
+      "closedAt": "2026-06-20",
+      "closureCommit": "1d78117d",
+      "evidence": [
+        "reference/architecture/adrs/core/0088-sovereign-identity-agentic-ai.md",
+        "reference/architecture/adrs/core/0088-sovereign-identity-agentic-ai.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

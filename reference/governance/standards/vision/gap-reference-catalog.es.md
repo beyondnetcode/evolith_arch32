@@ -42,8 +42,6 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 **Título:** Flujos de Trabajo Agénticos Orientados a Eventos
 
-- **Propósito:** Establecer patrones para desencadenar flujos de trabajo MCP Agénticos a través de un Bus de Mensajes (ej., MassTransit/RabbitMQ) en lugar de solicitudes HTTP puramente síncronas.
-- **Evidencia:** Las invocaciones de agentes están actualmente fuertemente acopladas a endpoints REST/gRPC síncronos.
 - **Hecho cuando:** El hub de la topología Orientada a Eventos incluya un patrón de referencia para consumir eventos de dominio para desencadenar tareas de agentes en segundo plano.
 
 #### GT-139
@@ -53,6 +51,46 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Propósito:** Estandarizar cómo los archivos markdown arquitectónicos de Evolith (ADRs, rulesets) son fragmentados, incrustados (embedded) y sincronizados en Bases de Datos Vectoriales para asistentes habilitados para RAG.
 - **Evidencia:** La documentación actualmente solo es analizada estáticamente por el pipeline CI; no hay un pipeline para incrustar actualizaciones en un almacén vectorial.
 - **Hecho cuando:** Se cree una especificación para la estrategia de chunking, etiquetado de metadatos y sincronización de vectores para todos los archivos `reference/`.
+
+#### GT-140
+
+**Título:** Estándar de Rotación de Tokens de Identidad de Workload para Referencia de Satélites
+
+- **Propósito:** Documentar directrices y patrones de referencia arquitectónicos para el refresco automático de tokens, expiración y rotación de claves de identidades de carga de trabajo (workload identities) en servicios satélite, manteniendo a Evolith Core libre de credenciales.
+- **Evidencia:** Las reglas actuales de identidad soberana (ADR-0088) no guían cómo las aplicaciones satélite aguas abajo manejan el ciclo de vida de claves y la expiración de tokens.
+- **Hecho cuando:** Se publique un estándar arquitectónico detallando los flujos de refresco de tokens de identidad de carga de trabajo y perfiles de delegación de confianza para aplicaciones clientes.
+
+#### GT-141
+
+**Título:** Estándar de Control de Concurrencia y Bloqueo de Recursos para Herramientas MCP
+
+- **Propósito:** Establecer patrones para prevenir colisiones de escritura y corrupción de estado cuando múltiples agentes autónomos ejecutan mutaciones paralelas sobre el mismo repositorio o archivo objetivo utilizando herramientas MCP.
+- **Evidencia:** Los sandboxes multi-agente carecen actualmente de pautas de bloqueo o salvaguardas de concurrencia para la ejecución concurrente de herramientas.
+- **Hecho cuando:** Un estándar de diseño defina el mecanismo de bloqueo de recursos y las estrategias de mitigación de concurrencia para flujos de trabajo multi-agente.
+
+#### GT-142
+
+**Título:** Pipeline de Enlace de LLM Real en CI para Revisiones Agénticas
+
+- **Propósito:** Reemplazar el comportamiento de revisión simulado/dry-run en el script de CI agéntico con una integración funcional que invoque a un LLM externo utilizando credenciales provistas dinámicamente a través de secretos del runner.
+- **Evidencia:** El paso `13-agentic-code-review.mjs` valida la conexión MCP pero depende de una revisión simulada del LLM.
+- **Hecho cuando:** El paso de CI pueda ejecutar una verificación real del LLM cuando `EVOLITH_AGENTIC_REVIEW=true` y una variable de entorno de API key esté presente, seguro contra fallos.
+
+#### GT-143
+
+**Título:** Estándares de Handoff Multi-Agente y Delegación de Tareas
+
+- **Propósito:** Definir contratos de mensajería estándar, reglas de reenvío de tokens y seguimiento de correlación para agentes que delegan subtareas a otros agentes especializados.
+- **Evidencia:** No existen patrones formales o directrices en el repositorio para la delegación de tareas de agente a agente.
+- **Hecho cuando:** Se publiquen patrones documentados para handoffs multi-agente, delegación de identidad y propagación de contexto en la carpeta de patrones agénticos.
+
+#### GT-144
+
+**Título:** Reglas de Prevención de Bucles Infinitos y Circuit Breaker para Agentes
+
+- **Propósito:** Establecer salvaguardas de seguridad para detectar, reportar y romper dependencias circulares o bucles de llamadas recursivas entre agentes y herramientas MCP antes de consumir presupuestos excesivos.
+- **Evidencia:** Los límites de autorización de herramientas actuales (ADR-0087) carecen de mecanismos o reglas para la detección de bucles recursivos.
+- **Hecho cuando:** Una política de arquitectura defina criterios de detección de bucles (máximo de saltos, cabeceras de profundidad) y contratos de circuit breaking para flujos de trabajo de agentes.
 
 ### Fase F0 — Contrato Primero
 

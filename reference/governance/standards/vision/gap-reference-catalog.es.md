@@ -1258,3 +1258,84 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] `npm run test:e2e` pasa en CI
 - **Evidencia de cierre:** El commit `e93c68a` corrige las regresiones de ruteo y naming del e2e: `CompletionCommand` ahora resuelve los hooks de shell desde la raíz del paquete en lugar de `process.argv[1]`, `HandoffCommand` sube hasta la raíz del repo antes de validar artefactos SDLC, y el nombre del prompt MCP queda normalizado a `evolith/architecture-review` tanto en el registry del servidor como en la expectativa e2e del CLI. `npm run build --workspace packages/mcp-server`, `npm test --workspace packages/mcp-server -- --runInBand`, `npm run build --workspace sdk/cli`, y `npm test --workspace sdk/cli -- --runInBand` pasan sobre el estado resultante.
 - **Referencias:** [sdk/cli/test](../../../../sdk/cli/test) · [GT-121](#gt-121)
+
+#### GT-125
+
+**Title:** Maturation of Agentic AI Topology
+
+- **Gap:** La topología de Agentic AI (`ai/agentic-ai`) carece actualmente de reglas robustas y documentación detallada. Solo verifica la existencia de un archivo `agent.yaml`.
+- **Propósito:** Definir reglas ejecutables (JSON/Rego), diagramas de sandboxing, y ADRs de seguridad y separación de lógica-prompting para arquitecturas de agentes de IA.
+- **Evidencia actual / ejemplo:** `agentic-ai.rules.json` es un stub. No existen reglas OPA.
+- **Hecho cuando:**
+  - [ ] Existen reglas ejecutables para el sandboxing y separación prompt/lógica.
+  - [ ] Se han escrito las políticas OPA para la topología.
+  - [ ] El Topology Hub contiene diagramas de interacción expandidos.
+- **Evidencia de cierre:**
+  - `closedAt`: pending
+  - `closureCommit`: pending
+  - `evidence`: pending
+  - `validationCommands`: []
+
+#### GT-126
+
+**Title:** Maturation of Serverless Topology
+
+- **Gap:** La topología Serverless (`execution/serverless`) es actualmente un stub que solo busca `serverless.yml`.
+- **Propósito:** Diseñar reglas OPA que restrinjan estados compartidos, evalúen límites de tamaño de paquete, y validen configuraciones de cold-start.
+- **Evidencia actual / ejemplo:** `serverless.rules.json` es un stub.
+- **Hecho cuando:**
+  - [ ] Existen reglas OPA para obligar ejecución stateless y límites de paquete.
+  - [ ] El Topology Hub documenta patrones de cold-start.
+- **Evidencia de cierre:**
+  - `closedAt`: pending
+  - `closureCommit`: pending
+  - `evidence`: pending
+  - `validationCommands`: []
+
+#### GT-127
+
+**Title:** Maturation of Event-Driven Topology
+
+- **Gap:** La topología Event-Driven (`integration/event-driven`) solo comprueba un contrato AsyncAPI.
+- **Propósito:** Ampliar la topología asíncrona implementando reglas para el patrón "Transactional Outbox", manejo de DLQ y validación estricta de AsyncAPI.
+- **Evidencia actual / ejemplo:** `event-driven.rules.json` es un stub.
+- **Hecho cuando:**
+  - [ ] Existen reglas ejecutables para Transactional Outbox y configuración de DLQ.
+  - [ ] ADRs documentan los patrones asíncronos en la topología.
+- **Evidencia de cierre:**
+  - `closedAt`: pending
+  - `closureCommit`: pending
+  - `evidence`: pending
+  - `validationCommands`: []
+
+#### GT-128
+
+**Title:** Baseline Ruleset for Data Mesh
+
+- **Gap:** La topología Data Mesh (`data/data-mesh`) carece por completo de rulesets (`.rules.json` / `.rego`) y blueprints detallados.
+- **Propósito:** Redactar el README, los ADRs fundacionales sobre Data Products, y las reglas iniciales JSON/Rego para la topología de malla de datos.
+- **Evidencia actual / ejemplo:** Solo existe `topology.manifest.json` en la carpeta.
+- **Hecho cuando:**
+  - [ ] Existen reglas base en `data-mesh.rules.json` y `data-mesh.rego`.
+  - [ ] El README cubre adecuadamente la estrategia de Data Products.
+- **Evidencia de cierre:**
+  - `closedAt`: pending
+  - `closureCommit`: pending
+  - `evidence`: pending
+  - `validationCommands`: []
+
+#### GT-129
+
+**Title:** Baseline Ruleset for Edge Computing
+
+- **Gap:** La topología Edge Computing (`execution/edge-computing`) carece por completo de reglas ejecutables y documentación detallada.
+- **Propósito:** Definir el cuerpo documental, los diagramas de persistencia offline-first y los rulesets/OPA iniciales para la ejecución en el Edge.
+- **Evidencia actual / ejemplo:** Solo existe `topology.manifest.json` en la carpeta.
+- **Hecho cuando:**
+  - [ ] Existen reglas base en `edge-computing.rules.json` y `edge-computing.rego`.
+  - [ ] Se han documentado patrones offline-first en el Topology Hub.
+- **Evidencia de cierre:**
+  - `closedAt`: pending
+  - `closureCommit`: pending
+  - `evidence`: pending
+  - `validationCommands`: []

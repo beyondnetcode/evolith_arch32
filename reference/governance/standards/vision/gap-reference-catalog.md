@@ -1259,3 +1259,84 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] `npm run test:e2e` passes in CI
 - **Closure evidence:** Commit `e93c68a` fixes the e2e pathing and naming regressions: `CompletionCommand` now resolves shell hooks from the package root instead of `process.argv[1]`, `HandoffCommand` walks up to the repo root before validating SDLC artifacts, and the MCP prompt name is normalized to `evolith/architecture-review` in both the server prompt registry and the CLI e2e expectation. `npm run build --workspace packages/mcp-server`, `npm test --workspace packages/mcp-server -- --runInBand`, `npm run build --workspace sdk/cli`, and `npm test --workspace sdk/cli -- --runInBand` all pass on the resulting state.
 - **References:** [sdk/cli/test](../../../../sdk/cli/test) · [GT-121](#gt-121)
+
+#### GT-125
+
+**Title:** Maturation of Agentic AI Topology
+
+- **Gap:** The Agentic AI topology (`ai/agentic-ai`) currently lacks robust rules and documentation. It only checks for the existence of an `agent.yaml` file.
+- **Purpose:** Define executable rules (JSON/Rego), sandboxing diagrams, and ADRs for security and logic-prompting separation for AI agent architectures.
+- **Current evidence / example:** `agentic-ai.rules.json` is a stub. No OPA rules exist.
+- **Done when:**
+  - [ ] Executable rules exist for sandboxing and prompt/logic separation.
+  - [ ] OPA policies are written for the topology.
+  - [ ] Topology Hub documentation is expanded with interaction diagrams.
+- **Closure evidence:**
+  - `closedAt`: pending
+  - `closureCommit`: pending
+  - `evidence`: pending
+  - `validationCommands`: []
+
+#### GT-126
+
+**Title:** Maturation of Serverless Topology
+
+- **Gap:** The Serverless topology (`execution/serverless`) is currently a stub checking only for `serverless.yml`.
+- **Purpose:** Design OPA rules restricting shared state, evaluate package limits, and validate cold-start configurations in serverless manifests.
+- **Current evidence / example:** `serverless.rules.json` is a stub. No Rego validation is implemented.
+- **Done when:**
+  - [ ] OPA rules exist for statelessness and package limits.
+  - [ ] Topology Hub documentation includes cold-start patterns.
+- **Closure evidence:**
+  - `closedAt`: pending
+  - `closureCommit`: pending
+  - `evidence`: pending
+  - `validationCommands`: []
+
+#### GT-127
+
+**Title:** Maturation of Event-Driven Topology
+
+- **Gap:** The Event-Driven topology (`integration/event-driven`) only checks for an AsyncAPI contract.
+- **Purpose:** Expand the asynchronous integration topology by implementing rules for the "Transactional Outbox" pattern, DLQ handling, and strict AsyncAPI contract validation.
+- **Current evidence / example:** `event-driven.rules.json` is a stub.
+- **Done when:**
+  - [ ] Executable rules exist for Transactional Outbox and DLQ definitions.
+  - [ ] ADRs document asynchronous patterns.
+- **Closure evidence:**
+  - `closedAt`: pending
+  - `closureCommit`: pending
+  - `evidence`: pending
+  - `validationCommands`: []
+
+#### GT-128
+
+**Title:** Baseline Ruleset for Data Mesh
+
+- **Gap:** The Data Mesh topology (`data/data-mesh`) completely lacks rulesets (`.rules.json` / `.rego`) and detailed blueprints.
+- **Purpose:** Draft the README, foundational ADRs regarding Data Products, and initial declarative/Rego rules for the data mesh topology.
+- **Current evidence / example:** Only `topology.manifest.json` exists in `data/data-mesh`.
+- **Done when:**
+  - [ ] Baseline `data-mesh.rules.json` and `data-mesh.rego` exist.
+  - [ ] README covers Data Products strategy.
+- **Closure evidence:**
+  - `closedAt`: pending
+  - `closureCommit`: pending
+  - `evidence`: pending
+  - `validationCommands`: []
+
+#### GT-129
+
+**Title:** Baseline Ruleset for Edge Computing
+
+- **Gap:** The Edge Computing topology (`execution/edge-computing`) completely lacks executable rules and detailed documentation.
+- **Purpose:** Define the documentary body, offline-first persistence diagrams, and initial rulesets/OPA for execution at the edge.
+- **Current evidence / example:** Only `topology.manifest.json` exists in `execution/edge-computing`.
+- **Done when:**
+  - [ ] Baseline `edge-computing.rules.json` and `edge-computing.rego` exist.
+  - [ ] Offline-first persistence patterns are documented in the Topology Hub.
+- **Closure evidence:**
+  - `closedAt`: pending
+  - `closureCommit`: pending
+  - `evidence`: pending
+  - `validationCommands`: []

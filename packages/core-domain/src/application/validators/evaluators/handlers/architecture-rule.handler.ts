@@ -419,6 +419,28 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
         }
         break;
 
+      case 'event-driven-config':
+        if (rule.id === 'ED-R01') {
+          const hasConfig = await this.fs.exists(path.join(satellitePath, 'asyncapi.yaml')) || await this.fs.exists(path.join(satellitePath, 'asyncapi.json'));
+          if (!hasConfig) {
+            result = 'failed';
+            message = `${rule.description} - No AsyncAPI configuration found (asyncapi.yaml or asyncapi.json)`;
+          }
+        }
+        break;
+
+      case 'agentic-ai-config':
+        if (rule.id === 'AAI-R01') {
+          const hasConfig = await this.fs.exists(path.join(satellitePath, '.agent.yaml')) || 
+                            await this.fs.exists(path.join(satellitePath, 'agent.config.json')) || 
+                            await this.fs.exists(path.join(satellitePath, 'agents-registry.json'));
+          if (!hasConfig) {
+            result = 'failed';
+            message = `${rule.description} - No Agentic AI configuration found (.agent.yaml, agent.config.json, or agents-registry.json)`;
+          }
+        }
+        break;
+
       default:
         result = 'skipped';
         break;

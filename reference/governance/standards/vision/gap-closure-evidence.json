@@ -3,6 +3,36 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "MT-A20",
+      "closedAt": "2026-06-20",
+      "closureCommit": "1ee04e6",
+      "evidence": [
+        "reference/architecture/topologies/ai/agentic-ai/agentic-ai.rules.json",
+        "reference/architecture/topologies/ai/agentic-ai/agentic-ai.rego",
+        "packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.ts",
+        "packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "MT-A19",
+      "closedAt": "2026-06-20",
+      "closureCommit": "1ee04e6",
+      "evidence": [
+        "reference/architecture/topologies/integration/event-driven/event-driven.rules.json",
+        "reference/architecture/topologies/integration/event-driven/event-driven.rego",
+        "packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.ts",
+        "packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "MT-A18",
       "closedAt": "2026-06-20",
       "closureCommit": "6049045",

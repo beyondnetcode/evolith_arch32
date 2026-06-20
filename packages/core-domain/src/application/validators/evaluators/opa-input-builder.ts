@@ -25,6 +25,8 @@ export class OpaInputBuilder {
         hasExtractionReadiness: await this.fs.exists(path.join(ctx.satellitePath, 'docs', 'extraction-readiness.md')),
         hasDockerfile: await this.fs.exists(path.join(ctx.satellitePath, 'Dockerfile')),
         hasServerlessConfig: await this.fs.exists(path.join(ctx.satellitePath, 'serverless.yml')) || await this.fs.exists(path.join(ctx.satellitePath, 'template.yaml')) || await this.fs.exists(path.join(ctx.satellitePath, 'samconfig.toml')),
+        hasAsyncApiConfig: await this.fs.exists(path.join(ctx.satellitePath, 'asyncapi.yaml')) || await this.fs.exists(path.join(ctx.satellitePath, 'asyncapi.json')),
+        hasAgentManifest: await this.fs.exists(path.join(ctx.satellitePath, '.agent.yaml')) || await this.fs.exists(path.join(ctx.satellitePath, 'agent.config.json')) || await this.fs.exists(path.join(ctx.satellitePath, 'agents-registry.json')),
         hasOtel: await this.fs.exists(path.join(ctx.satellitePath, 'otel.config.js')) || await this.fs.exists(path.join(ctx.satellitePath, 'opentelemetry.config.js')) || await this.fs.exists(path.join(ctx.satellitePath, 'src', 'instrumentation.ts')),
         workflows: satelliteWorkflows,
         workspacePackageJsons: await this.readWorkspacePackageJsons(ctx.satellitePath),

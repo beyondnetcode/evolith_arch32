@@ -1,0 +1,16 @@
+{
+  "$schema": "../../../../../../rulesets/schema/architecture.schema.json",
+  "$id": "event-driven",
+  "title": "Event-Driven Topology Rules",
+  "description": "Architectural rules for the event-driven integration topology.",
+  "version": "1.0.0",
+  "domain": "architecture",
+  "rules": [
+    {
+      "id": "ED-R01",
+      "category": "event-driven-config",
+      "description": "El satélite debe documentar o definir su contrato de eventos mediante AsyncAPI (asyncapi.yaml o asyncapi.json)",
+      "level": "error"
+    }
+  ]
+}

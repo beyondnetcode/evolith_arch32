@@ -1,0 +1,16 @@
+{
+  "$schema": "../../../../../../rulesets/schema/architecture.schema.json",
+  "$id": "agentic-ai",
+  "title": "Agentic AI Topology Rules",
+  "description": "Architectural rules for the agentic AI topology.",
+  "version": "1.0.0",
+  "domain": "architecture",
+  "rules": [
+    {
+      "id": "AAI-R01",
+      "category": "agentic-ai-config",
+      "description": "El satélite debe declarar la identidad y capacidades del agente (p. ej. .agent.yaml, agent.config.json o agents-registry.json)",
+      "level": "error"
+    }
+  ]
+}

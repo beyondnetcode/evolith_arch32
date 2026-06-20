@@ -36,7 +36,7 @@
         "rulesets/architecture/f2-distributed-modules.rules.json"
       ],
       "opaPolicies": [
-        "reference/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rego"
+        "reference/architecture/topologies/integration/event-driven/event-driven.rego"
       ],
       "aiRulesets": [
         "reference/architecture/topologies/integration/event-driven/README.md"

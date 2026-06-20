@@ -3,6 +3,28 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-125",
+      "closedAt": "2026-06-20",
+      "closureCommit": "0fc716a48dc24ea2bec348a42b3780661de5a0b4",
+      "evidence": [
+        "reference/architecture/topologies/topology-corpus-standard.md",
+        "reference/architecture/topologies/ai/agentic-ai/topology.manifest.json",
+        "reference/architecture/topologies/ai/agentic-ai/adoption.md",
+        "reference/architecture/topologies/ai/agentic-ai/operations.md",
+        "reference/architecture/topologies/ai/agentic-ai/security.md",
+        "reference/architecture/topologies/ai/agentic-ai/agent.config.schema.json",
+        ".harness/scripts/validate-topology-manifests.mjs"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/validate-topology-manifests.mjs",
+        "node .harness/scripts/check-bilingual-parity.mjs",
+        "node .harness/scripts/validate-docs.mjs --render-mermaid",
+        "npm run build --workspace @evolith/core-domain",
+        "node .harness/scripts/validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "MT-A17",
       "closedAt": "2026-06-20",
       "closureCommit": "dadcb17",

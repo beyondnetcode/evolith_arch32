@@ -1267,15 +1267,15 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Propósito:** Definir reglas ejecutables (JSON/Rego), diagramas de sandboxing, y ADRs de seguridad y separación de lógica-prompting para arquitecturas de agentes de IA.
 - **Evidencia actual / ejemplo:** El árbol de trabajo define AAI-R01 a AAI-R07 para identidad y capacidades, ejecución aislada y acotada por recursos, separación prompt/implementación, controles de contexto no confiable, aprobación de herramientas mutativas y acciones responsables. El evaluador Native y `agentic-ai.rego` evalúan el mismo contrato `agent.config.json`; el perfil de topología documenta el límite de interacción y los ADRs rectores.
 - **Hecho cuando:**
-  - [ ] Un corpus de topología bilingüe completo alcanza paridad de madurez con Monolito Modular: guía de adopción, composición, operación, seguridad, observabilidad, resiliencia y evolución.
-  - [ ] ADRs específicos de topología, reglas Native, políticas OPA, fixtures de contrato y pruebas positivas/negativas están completos y enlazados.
-  - [ ] CLI, MCP y Core API exponen y validan la topología con la misma línea base de usabilidad que Monolito Modular.
-  - [ ] El validador de madurez de topologías confirma que el perfil aceptado satisface R-27.
+  - [x] Un corpus de topología bilingüe completo alcanza paridad de madurez con Monolito Modular: guía de adopción, composición, operación, seguridad, observabilidad, resiliencia y evolución.
+  - [x] ADRs específicos de topología, reglas Native, políticas OPA, fixtures de contrato y pruebas positivas/negativas están completos y enlazados.
+  - [x] CLI, MCP y Core API exponen y validan la topología con la misma línea base de usabilidad que Monolito Modular.
+  - [x] El validador de madurez de topologías confirma que el perfil aceptado satisface R-27.
 - **Evidencia de cierre:**
-  - `closedAt`: pending
-  - `closureCommit`: pending
-  - `evidence`: la implementación previa permanece disponible pero no demuestra paridad de madurez de corpus
-  - `validationCommands`: []
+  - `closedAt`: 2026-06-20
+  - `closureCommit`: `0fc716a48dc24ea2bec348a42b3780661de5a0b4`
+  - `evidence`: registrado en el [registro de cierres](./gap-closure-evidence.json)
+  - `validationCommands`: [`node .harness/scripts/validate-topology-manifests.mjs`, `node .harness/scripts/validate-docs.mjs --render-mermaid`, `npm run build --workspace @evolith/core-domain`, `node .harness/scripts/validate-tracking.mjs`]
 
 #### GT-126
 

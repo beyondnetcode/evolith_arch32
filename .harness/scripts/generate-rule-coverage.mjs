@@ -1,59 +1,142 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+#!/usr/bin/env node
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const rootDir = path.join(__dirname, '..', '..');
+/**
+ * Manifest-driven Native/OPA coverage report.
+ *
+ * This low-cost gate verifies declared topology artifacts and rule-ID coverage.
+ * GT-149 owns executable OPA evaluation and semantic differential testing.
+ */
+import fs from 'node:fs';
+import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 
-const rulesetPath = path.join(rootDir, 'rulesets', 'architecture', 'f1-modular-monolith.rules.json');
-const regoPath = path.join(rootDir, 'rulesets', 'opa', 'architecture.rego');
-const nativeHandlerPath = path.join(rootDir, 'sdk', 'cli', 'src', 'core', 'validators', 'evaluators', 'handlers', 'architecture-rule.handler.ts');
+const MANIFEST_ROOT = path.join('reference', 'architecture', 'topologies');
+const SATELLITE_CONTRACT = path.join('rulesets', 'governance', 'satellite-contracts.rules.json');
 
-const ruleset = JSON.parse(fs.readFileSync(rulesetPath, 'utf8'));
-const regoContent = fs.readFileSync(regoPath, 'utf8');
-const nativeContent = fs.readFileSync(nativeHandlerPath, 'utf8');
+function walk(directory, predicate) {
+  if (!fs.existsSync(directory)) return [];
+  return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    const target = path.join(directory, entry.name);
+    if (entry.isDirectory()) return walk(target, predicate);
+    return entry.isFile() && predicate(target) ? [target] : [];
+  });
+}
 
-console.log('=== F1 Architecture Rule Coverage Matrix ===');
-console.log('| Rule ID | Severity | OPA Coverage | Native Coverage |');
-console.log('|---------|----------|--------------|-----------------|');
+function readJson(filePath, errors) {
+  try { return JSON.parse(fs.readFileSync(filePath, 'utf8')); }
+  catch (error) { errors.push(`${filePath}: invalid JSON (${error.message})`); return undefined; }
+}
 
-let allCovered = true;
+function relative(root, filePath) {
+  return path.relative(root, filePath).split(path.sep).join('/');
+}
 
-for (const rule of ruleset.rules) {
-  const ruleId = rule.id;
-  const severity = rule.severity;
+function opaRuleIds(content) {
+  return [...content.matchAll(/violations\[\{\s*"id"\s*:\s*"([^"]+)"/g)].map((match) => match[1]);
+}
 
-  // Check OPA
-  // A rule is covered in OPA if there is a `violations[{"id": "F1-RXX"` block
-  // and it is NOT just returning false (placeholder)
-  const regoBlockRegex = new RegExp(`violations\\[\\{"id": "${ruleId}"[\\s\\S]*?\\}`);
-  const match = regoContent.match(regoBlockRegex);
-  let opaCoverage = false;
-  if (match) {
-    if (!match[0].includes('false\n\tmsg := "Placeholder"')) {
-      opaCoverage = true;
+function validateSatelliteReferences(root, errors) {
+  const contractPath = path.join(root, SATELLITE_CONTRACT);
+  const contract = readJson(contractPath, errors);
+  if (!contract) return;
+  for (const [name, declared] of Object.entries(contract.reference || {})) {
+    if (typeof declared !== 'string' || /^https?:\/\//.test(declared)) continue;
+    const target = path.resolve(path.dirname(contractPath), declared);
+    if (!target.startsWith(`${root}${path.sep}`) || !fs.existsSync(target)) {
+      errors.push(`${relative(root, contractPath)} reference.${name} does not resolve: ${declared}`);
     }
   }
+}
 
-  // Check Native
-  // A rule is covered in Native if `rule.id === '${ruleId}'` exists
-  let nativeCoverage = nativeContent.includes(`rule.id === '${ruleId}'`);
+export function validateTopologyRuleCoverage(root = process.cwd()) {
+  const errors = [];
+  const warnings = [];
+  const rows = [];
+  const declaredArtifacts = new Set();
+  const acceptedDirectories = [];
+  const globalNativeIds = new Map();
+  const manifests = walk(path.join(root, MANIFEST_ROOT), (file) => path.basename(file) === 'topology.manifest.json').sort();
+  if (manifests.length === 0) errors.push(`No topology manifests found under ${MANIFEST_ROOT}`);
 
-  const opaStatus = opaCoverage ? '✅' : '❌';
-  const nativeStatus = nativeCoverage ? '✅' : '❌';
+  for (const manifestPath of manifests) {
+    const manifest = readJson(manifestPath, errors);
+    if (!manifest) continue;
+    const topology = manifest.metadata?.id || relative(root, manifestPath);
+    const accepted = manifest.metadata?.status === 'accepted';
+    if (accepted) acceptedDirectories.push(path.dirname(manifestPath));
+    const nativePaths = manifest.spec?.artifacts?.rulesets || [];
+    const opaPaths = manifest.spec?.artifacts?.opaPolicies || [];
+    const nativeIds = [];
+    const opaIds = [];
+    const report = (message) => (accepted ? errors : warnings).push(message);
+    if (nativePaths.length === 0) report(`${topology}: manifest has no Native ruleset`);
+    if (opaPaths.length === 0) report(`${topology}: manifest has no OPA policy`);
 
-  console.log(`| ${ruleId} | ${severity} | ${opaStatus} | ${nativeStatus} |`);
+    for (const declared of nativePaths) {
+      const target = path.resolve(root, declared);
+      declaredArtifacts.add(target);
+      if (!target.startsWith(`${root}${path.sep}`) || !fs.existsSync(target)) {
+        report(`${topology}: Native ruleset does not resolve: ${declared}`);
+        continue;
+      }
+      const ruleset = readJson(target, errors);
+      const ids = ruleset?.rules?.map((rule) => rule?.id).filter(Boolean) || [];
+      if (ids.length === 0) report(`${topology}: Native ruleset has no rule IDs: ${declared}`);
+      if (new Set(ids).size !== ids.length) report(`${topology}: Native ruleset has duplicate rule IDs: ${declared}`);
+      for (const id of ids) {
+        nativeIds.push(id);
+        if (globalNativeIds.has(id)) report(`${topology}: duplicate Native rule ID ${id} also declared by ${globalNativeIds.get(id)}`);
+        else globalNativeIds.set(id, topology);
+      }
+    }
 
-  if (!opaCoverage || !nativeCoverage) {
-    allCovered = false;
+    for (const declared of opaPaths) {
+      const target = path.resolve(root, declared);
+      declaredArtifacts.add(target);
+      if (!target.startsWith(`${root}${path.sep}`) || !fs.existsSync(target)) {
+        report(`${topology}: OPA policy does not resolve: ${declared}`);
+        continue;
+      }
+      const ids = opaRuleIds(fs.readFileSync(target, 'utf8'));
+      opaIds.push(...ids);
+      if (new Set(ids).size !== ids.length) report(`${topology}: OPA policy has duplicate rule IDs: ${declared}`);
+    }
+
+    const nativeSet = new Set(nativeIds);
+    const opaSet = new Set(opaIds);
+    const missingInOpa = nativeIds.filter((id) => !opaSet.has(id));
+    const orphanedInOpa = opaIds.filter((id) => !nativeSet.has(id));
+    if (missingInOpa.length) warnings.push(`${topology}: Native rule IDs missing in OPA (GT-149): ${missingInOpa.join(', ')}`);
+    if (orphanedInOpa.length) warnings.push(`${topology}: OPA rule IDs missing in Native ruleset (GT-149): ${orphanedInOpa.join(', ')}`);
+    rows.push({ topology, status: manifest.metadata?.status || 'unknown', native: nativeSet.size, opa: opaSet.size, aligned: missingInOpa.length === 0 && orphanedInOpa.length === 0 });
   }
+
+  for (const artifact of walk(path.join(root, MANIFEST_ROOT), (file) => file.endsWith('.rules.json') || file.endsWith('.rego'))) {
+    const acceptedArtifact = acceptedDirectories.some((directory) => path.resolve(artifact).startsWith(`${path.resolve(directory)}${path.sep}`));
+    if (!declaredArtifacts.has(path.resolve(artifact))) {
+      (acceptedArtifact ? errors : warnings).push(`Unreferenced topology rule artifact: ${relative(root, artifact)}`);
+    }
+  }
+  validateSatelliteReferences(root, errors);
+  return { rows, errors, warnings };
 }
 
-if (!allCovered) {
-  console.error('\nError: Not all rules have full coverage in both evaluators.');
-  process.exit(1);
-} else {
-  console.log('\nSuccess: 100% parity achieved across both evaluators.');
-  process.exit(0);
+export function formatCoverageReport({ rows, errors, warnings = [] }) {
+  const lines = [
+    '=== Topology Native/OPA Rule Coverage Matrix ===',
+    '| Topology | Status | Native IDs | OPA IDs | Coverage |',
+    '|---|---|---:|---:|---|',
+    ...rows.map((row) => `| ${row.topology} | ${row.status} | ${row.native} | ${row.opa} | ${row.aligned ? 'PASS' : 'WARN (GT-149)'} |`),
+  ];
+  if (warnings.length) lines.push('', 'Warnings:', ...warnings.map((warning) => `- ${warning}`));
+  if (errors.length) lines.push('', 'Errors:', ...errors.map((error) => `- ${error}`));
+  return lines.join('\n');
 }
+
+function run() {
+  const result = validateTopologyRuleCoverage();
+  console.log(formatCoverageReport(result));
+  if (result.errors.length) process.exit(1);
+}
+
+if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url) run();

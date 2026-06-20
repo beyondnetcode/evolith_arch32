@@ -56,10 +56,8 @@ rulesets/
 │   ├── release-notes.schema.json         # Fase 5
 │   ├── evolith-yaml.schema.json          # Gobernanza satelite
 │   └── topology-manifest.schema.json     # Contrato de manifiesto topologico
-├── architecture/               # Reglas de fase de arquitectura
-│   ├── f1-modular-monolith.rules.json
-│   ├── f2-distributed-modules.rules.json
-│   └── f3-microservices.rules.json
+├── architecture/               # Alias de compatibilidad F1/F2/F3 y guía de migración
+│   └── README.md               # Resuelve alias mediante manifiestos topológicos
 ├── topologies/                 # Reglas ejecutables especificas por topologia
 │   └── README.es.md
 ├── adr/                        # Reglas encoding ADR
@@ -98,6 +96,8 @@ rulesets/
 ```
 
 ---
+
+El artefacto canónico de reglas topológicas es el archivo declarado por cada `topology.manifest.json`; los artefactos actuales del eje progresivo viven bajo `reference/architecture/topologies/progressive-axis/`. Los consumidores deben resolver el manifiesto en lugar de construir rutas legacy `rulesets/architecture/f*.rules.json`.
 
 ## Cómo Funcionan los Rulesets
 

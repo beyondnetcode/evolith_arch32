@@ -3,6 +3,22 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "MT-A18",
+      "closedAt": "2026-06-20",
+      "closureCommit": "6049045",
+      "evidence": [
+        "reference/architecture/topologies/execution/serverless/serverless.rules.json",
+        "reference/architecture/topologies/execution/serverless/serverless.rego",
+        "packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.ts",
+        "packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts"
+      ],
+      "validationCommands": [
+        "npm --workspace @evolith/core-domain test -- --runInBand",
+        "node .harness/scripts/validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-117",
       "closedAt": "2026-06-19",
       "closureCommit": "1067a41",

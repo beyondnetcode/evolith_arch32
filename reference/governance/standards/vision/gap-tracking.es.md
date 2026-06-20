@@ -17,7 +17,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-118`](./gap-reference-catalog.es.md#gt-118) | Modelo de consumo remoto/SaaS — desacoplar el Core API de rutas de filesystem locales | `BFF API` | F3 | P1 | L | `PENDIENTE` |
 | [`MT-A23`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Preservar compatibilidad CLI `--arch-level F1/F2/F3` | `Smart CLI` | Transversal | P1 | M | `COMPLETADO` |
 | [`MT-A17`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Mover o espejar reglas F1/F2/F3 actuales hacia descubrimiento topológico | `Core Domain` | Transversal | P1 | L | `PENDIENTE` |
-| [`MT-A18`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Agregar reglas iniciales Native + OPA para serverless | `Rulesets` | Transversal | P1 | L | `PENDIENTE` |
+| [`MT-A18`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Agregar reglas iniciales Native + OPA para serverless | `Rulesets` | Transversal | P1 | L | `COMPLETADO` |
 | [`MT-A19`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Agregar reglas iniciales Native + OPA para event-driven | `Rulesets` | Transversal | P1 | L | `PENDIENTE` |
 | [`MT-A20`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Agregar reglas iniciales Native + OPA para agentic AI | `Rulesets` | Transversal | P1 | L | `PENDIENTE` |
 | [`MT-A21`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Agregar catálogo topológico compartido y resolver de manifiestos en Core Domain | `Core Domain` | Transversal | P1 | L | `COMPLETADO` |
@@ -141,7 +141,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`MT-A05`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Crear `topology-manifest.schema.json` | `Schema` | Transversal | P0 | M | `COMPLETADO` |
 | [`MT-A03`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Autorizar `reference/architecture/topologies/` como corpus topológico canónico legible por humanos | `Taxonomy` | Transversal | P0 | S | `COMPLETADO` |
 
-**Progreso:** 119 / 127 completados · 0 en progreso · 8 pendientes · 0 diferidos
+**Progreso:** 120 / 127 completados · 0 en progreso · 7 pendientes · 0 diferidos
 
 **Ordenamiento:** una sola tabla, ordenada por estado (pendientes, luego diferidos, luego completados), luego criticidad (`P0` → `P1` → `P2`) y luego complejidad (`S` → `M` → `L`); los completados se agrupan por componente. Los IDs `GT-*` enlazan al [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md); los IDs `MT-A*` enlazan al [plan de implementación Multi-Topology](./multi-topology-reference-corpus-implementation-plan.es.md).
 

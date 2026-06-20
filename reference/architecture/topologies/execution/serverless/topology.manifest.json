@@ -30,10 +30,10 @@
         "reference/architecture/adrs/core/0079-multi-topology-reference-corpus.md"
       ],
       "rulesets": [
-        "rulesets/architecture/f1-modular-monolith.rules.json"
+        "reference/architecture/topologies/execution/serverless/serverless.rules.json"
       ],
       "opaPolicies": [
-        "reference/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rego"
+        "reference/architecture/topologies/execution/serverless/serverless.rego"
       ],
       "aiRulesets": [
         "reference/architecture/topologies/execution/serverless/README.md"

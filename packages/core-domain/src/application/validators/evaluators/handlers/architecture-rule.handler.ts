@@ -407,6 +407,18 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
         }
         break;
 
+      case 'serverless-config':
+        if (rule.id === 'SV-R01') {
+          const hasConfig = await this.fs.exists(path.join(satellitePath, 'serverless.yml')) || 
+                            await this.fs.exists(path.join(satellitePath, 'template.yaml')) || 
+                            await this.fs.exists(path.join(satellitePath, 'samconfig.toml'));
+          if (!hasConfig) {
+            result = 'failed';
+            message = `${rule.description} - No serverless configuration file found (serverless.yml, template.yaml, or samconfig.toml)`;
+          }
+        }
+        break;
+
       default:
         result = 'skipped';
         break;

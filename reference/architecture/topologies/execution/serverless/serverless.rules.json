@@ -1,0 +1,16 @@
+{
+  "$schema": "../../../../../../rulesets/schema/architecture.schema.json",
+  "$id": "serverless",
+  "title": "Serverless Topology Rules",
+  "description": "Architectural rules for the serverless execution topology.",
+  "version": "1.0.0",
+  "domain": "architecture",
+  "rules": [
+    {
+      "id": "SV-R01",
+      "category": "serverless-config",
+      "description": "El satélite debe declarar explícitamente su manifiesto de ejecución serverless (serverless.yml, template.yaml o samconfig.toml)",
+      "level": "error"
+    }
+  ]
+}

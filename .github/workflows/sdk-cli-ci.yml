@@ -295,12 +295,31 @@ jobs:
         working-directory: ${{ env.CLI_DIR }}
         run: npm run mcp:smoke
 
+  agentic-review:
+    name: Wilson Agentic Review
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.fork == false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Install dependencies
+        run: npm ci
+      - name: Run Wilson review
+        env:
+          EVOLITH_AGENTIC_REVIEW: "true"
+          EVOLITH_LLM_API_KEY: ${{ secrets.EVOLITH_LLM_API_KEY }}
+        run: node .harness/scripts/ci/13-agentic-code-review.mjs
+
   # ============================================
   # Gate: All Jobs Must Pass
   # ============================================
   gate:
     name: CI Gate
-    needs: [core-validation, security-audit, lint-and-types, unit-tests, e2e-tests, architecture-validation, package-integrity]
+    needs: [core-validation, security-audit, lint-and-types, unit-tests, e2e-tests, architecture-validation, package-integrity, agentic-review]
     runs-on: ubuntu-latest
     steps:
       - name: All Checks Passed

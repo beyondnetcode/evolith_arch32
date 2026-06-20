@@ -55,8 +55,7 @@ async function main() {
     } else {
       const apiKey = process.env.EVOLITH_LLM_API_KEY || process.env.GEMINI_API_KEY;
       if (!apiKey) {
-        console.log("\n⚠️  EVOLITH_AGENTIC_REVIEW is active, but no API Key (EVOLITH_LLM_API_KEY/GEMINI_API_KEY) was found.");
-        console.log("   Falling back to dry-run verification. (Stateless Dry-run Success)");
+        throw new Error("EVOLITH_AGENTIC_REVIEW is active but EVOLITH_LLM_API_KEY/GEMINI_API_KEY is missing.");
       } else {
         console.log("\n🧠 Submitting diff to Agentic Reviewer via Gemini API...");
         try {
@@ -69,8 +68,7 @@ async function main() {
             console.log("✅ Agentic Review Passed (No violations found).");
           }
         } catch (apiErr) {
-          console.log(`⚠️  LLM call encountered an API error: ${apiErr.message}`);
-          console.log("   Degrading gracefully to pass CI in offline/restricted environments.");
+          throw new Error(`LLM review failed: ${apiErr.message}`);
         }
       }
     }

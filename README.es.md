@@ -381,6 +381,7 @@ smart-cli mcp serve
 
 Antes de contribuir, lee:
 
+- [Guía de Contribución Open Source](./CONTRIBUTING.es.md) — Cómo contribuir como miembro de la comunidad usando el método BMAD
 - [AGENTS.md](./AGENTS.md) — Reglas y convenciones de agentes
 - [Taxonomia del Repositorio](./reference/governance/standards/repository-taxonomy.es.md) — Que va donde
 - [Guia de Herencia](./reference/governance/standards/onboarding/child-repository-inheritance-guide.es.md) — Como los productos heredan

@@ -1895,6 +1895,19 @@
         "node .harness/scripts/ci-runner.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-144",
+      "closedAt": "2026-06-20",
+      "closureCommit": "10fa4962",
+      "evidence": [
+        "reference/architecture/adrs/core/0092-agent-infinite-loop-prevention.md",
+        "reference/architecture/adrs/core/0092-agent-infinite-loop-prevention.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci-runner.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

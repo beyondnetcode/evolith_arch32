@@ -18,7 +18,7 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
       'separation-of-concerns', 'dependency-injection', 'static-analysis',
       'domain-purity', 'agent-identity', 'agent-sandbox',
       'agent-prompt-boundaries', 'agent-tool-approval', 'agent-sandbox-limits',
-      'agent-context-trust', 'agent-action-accountability'
+      'agent-context-trust', 'agent-action-accountability', 'serverless-config', 'serverless-stateless', 'serverless-package', 'serverless-cold-start'
     ].includes(rule.category);
   }
 
@@ -482,16 +482,19 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
         break;
 
       case 'serverless-config':
-        if (rule.id === 'SV-R01') {
-          const hasConfig = await this.fs.exists(path.join(satellitePath, 'serverless.yml')) || 
-                            await this.fs.exists(path.join(satellitePath, 'template.yaml')) || 
-                            await this.fs.exists(path.join(satellitePath, 'samconfig.toml'));
-          if (!hasConfig) {
-            result = 'failed';
-            message = `${rule.description} - No serverless configuration file found (serverless.yml, template.yaml, or samconfig.toml)`;
-          }
-        }
+      case 'serverless-stateless':
+      case 'serverless-package':
+      case 'serverless-cold-start': {
+        const config = await this.readServerlessConfig(satellitePath);
+        const pkg = this.asRecord(config?.package);
+        const coldStart = this.asRecord(config?.coldStart);
+        const valid = rule.category === 'serverless-config' ? Boolean(config)
+          : rule.category === 'serverless-stateless' ? config?.stateless === true
+          : rule.category === 'serverless-package' ? this.isPositiveNumber(pkg?.maxSizeMb) && (pkg?.maxSizeMb as number) <= 50
+          : this.isPositiveNumber(coldStart?.maxInitMilliseconds) && coldStart?.lazyInitialization === true;
+        if (!valid) { result = 'failed'; message = `${rule.description} - serverless.config.json does not satisfy ${rule.id}`; }
         break;
+      }
 
       case 'event-driven-config':
         if (rule.id === 'ED-R01') {
@@ -516,6 +519,11 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
     if (!await this.fs.exists(configPath)) return undefined;
     const config = await this.fs.readJson(configPath);
     return this.asRecord(config);
+  }
+
+  private async readServerlessConfig(satellitePath: string): Promise<Record<string, unknown> | undefined> {
+    const configPath = path.join(satellitePath, 'serverless.config.json');
+    return await this.fs.exists(configPath) ? this.asRecord(await this.fs.readJson(configPath)) : undefined;
   }
 
   private asRecord(value: unknown): Record<string, unknown> | undefined {

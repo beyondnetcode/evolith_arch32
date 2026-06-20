@@ -42,6 +42,12 @@ describe('ArchitectureRuleHandler', () => {
   });
 
   describe('evaluate — exists-based rules (failed paths)', () => {
+    it('serverless rules fail without a governed serverless contract', async () => {
+      const h = new ArchitectureRuleHandler(fsMock());
+      for (const [id, category] of [['SV-R01', 'serverless-config'], ['SV-R02', 'serverless-stateless'], ['SV-R03', 'serverless-package'], ['SV-R04', 'serverless-cold-start']] as const) {
+        await expect(h.evaluate(rule({ id, category }), ctx)).resolves.toMatchObject({ result: 'failed' });
+      }
+    });
     it('agentic AI rules fail when agent.config.json is absent or incomplete', async () => {
       const config = path.join(SAT, 'agent.config.json');
       const h = new ArchitectureRuleHandler(fsMock({ existing: [config], json: { [config]: { agent: { id: 'reviewer' } } } }));
@@ -163,6 +169,13 @@ describe('ArchitectureRuleHandler', () => {
   });
 
   describe('evaluate — passed and skipped', () => {
+    it('passes serverless statelessness, package, and cold-start controls', async () => {
+      const config = path.join(SAT, 'serverless.config.json');
+      const h = new ArchitectureRuleHandler(fsMock({ existing: [config], json: { [config]: { stateless: true, package: { maxSizeMb: 25 }, coldStart: { maxInitMilliseconds: 500, lazyInitialization: true } } } }));
+      for (const [id, category] of [['SV-R01', 'serverless-config'], ['SV-R02', 'serverless-stateless'], ['SV-R03', 'serverless-package'], ['SV-R04', 'serverless-cold-start']] as const) {
+        await expect(h.evaluate(rule({ id, category }), ctx)).resolves.toMatchObject({ result: 'passed' });
+      }
+    });
     it('passes all Agentic AI rules for the governed configuration contract', async () => {
       const config = path.join(SAT, 'agent.config.json');
       const agentConfig = {

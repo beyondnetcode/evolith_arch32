@@ -25,6 +25,20 @@ Serverless no reemplaza la arquitectura de dominio. Se compone con `modular-mono
 | Control de frontera | Los handlers serverless no deben saltarse ownership de dominio ni fronteras de persistencia. |
 | Neutralidad de proveedor | La guia Core permanece neutral respecto del proveedor; las selecciones de proveedor pertenecen a perfiles de producto o plataforma. |
 
+## Contrato Ejecutable
+
+Todo satelite que adopte este perfil proporciona `serverless.config.json`:
+
+```json
+{
+  "stateless": true,
+  "package": { "maxSizeMb": 25 },
+  "coldStart": { "maxInitMilliseconds": 500, "lazyInitialization": true }
+}
+```
+
+SV-R01 a SV-R04 exigen ese contrato, ejecucion sin estado, un paquete no mayor de 50 MB e inicializacion diferida acotada. El evaluador Native y la [politica OPA](./serverless.rego) evalúan los mismos campos.
+
 ## Composicion
 
 `serverless` puede combinarse con `modular-monolith`, `distributed-modules`, `microservices`, `event-driven`, `data-mesh` y `agentic-ai` cuando la unidad de ejecucion esta gobernada por contratos y telemetria explicitos.

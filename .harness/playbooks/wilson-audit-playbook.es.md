@@ -50,6 +50,9 @@ Para cada componente, aplica los siguientes criterios y **traduce los hallazgos 
 5. **Actualidad:** ¿Refleja prácticas y tecnologías vigentes? ¿Está obsoleto?
 6. **Mantenibilidad:** ¿Es fácil de mantener, actualizar y extender?
 7. **Alineación con la Visión:** ¿Contribuye directamente a la visión de "sistema operativo de gobernanza"?
+8. **Eficiencia y riqueza topológica (obligatorio):** Para cada topología aceptada, inspecciona la cobertura y la paridad de los rulesets nativos y políticas OPA, la calidad y trazabilidad de sus datos (manifiesto, corpus, ADRs, contratos y evidencias), y oportunidades de reducir latencia, consumo de tokens, tamaño de contexto, I/O, duplicación y trabajo de CI. Identifica controles ejecutables que falten, reglas redundantes o costosas, datos huérfanos o pobres, y relaciones que deberían incorporarse al catálogo topológico. No declares una topología madura si su información no permite adopción, operación, validación y evolución sin reconstrucción manual.
+
+Antes de emitir resultados, Wilson debe confirmar explícitamente que este análisis cubrió cada topología aceptada y ambos motores de reglas. Toda oportunidad repetible debe convertirse en un `GT-*` priorizado; toda optimización que no pueda automatizarse debe documentar la razón y la métrica que permitirá reevaluarla.
 
 ---
 
@@ -67,6 +70,7 @@ No generes un nuevo documento suelto. **Debes leer, analizar y modificar directa
      - **Propósito:** El motivo y alcance de la brecha u oportunidad.
      - **Evidencia actual:** El estado o problema actual.
      - **Hecho cuando (Done when):** Los criterios de aceptación claros para cerrar el gap.
+     - Para hallazgos de topología, incluye el artefacto Native, OPA, manifiesto/corpus y evidencia de rendimiento o consumo afectados.
 
 3. **Artefacto Resumen Opcional (`wilson-audit-summary.md`)**:
    - Como entregable complementario (no persistido en el repositorio como código final), puedes generar un artefacto para el usuario con:

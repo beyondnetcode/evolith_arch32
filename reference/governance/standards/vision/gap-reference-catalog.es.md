@@ -129,6 +129,42 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [ ] Emite hallazgos versionados y machine-readable con ubicaciones fuente y crea un resumen humano conciso apto para el proceso canónico de triage de gaps.
   - [ ] Pruebas fixture demuestran detección de los casos actuales de falso upsert RAG y diff agéntico no acotado, además de ejemplos conformes para evitar falsos positivos.
 
+#### GT-148
+
+**Título:** Reparación de Migración de Referencias y Cobertura de Reglas Consciente de Topologías
+
+- **Propósito:** Restaurar un reporte de cobertura confiable y consciente de topologías y eliminar referencias obsoletas de rutas por fase, para que el descubrimiento de reglas, herencia de satélites y reportes de gobernanza usen el corpus topológico canónico.
+- **Evidencia:** Wilson V5 ejecutó `.harness/scripts/generate-rule-coverage.mjs`; falla antes de producir una matriz porque lee los archivos eliminados `rulesets/architecture/f1-modular-monolith.rules.json` y `rulesets/opa/architecture.rego`. `rulesets/governance/satellite-contracts.rules.json` aún declara los mismos archivos F1/F2/F3 inexistentes, mientras que los artefactos canónicos viven bajo `reference/architecture/topologies/progressive-axis/`.
+- **Hecho cuando:**
+  - [ ] El generador de cobertura descubre reglas desde manifiestos topológicos en vez de rutas legacy hard-coded y emite cobertura Native/OPA por topología con ubicaciones fuente.
+  - [ ] Contratos de satélite, documentación y referencias machine-readable resuelven solo artefactos canónicos; una prueba automática de resolución de referencias evita recurrencia.
+  - [ ] El reporte falla ante reglas topológicas faltantes, duplicadas, huérfanas o sin referencia y se integra en la ruta de validación CI relevante con alcance por topologías modificadas.
+  - [ ] Fixtures cubren Monolito Modular, Módulos Distribuidos, Microservicios y un caso negativo de ruta migrada.
+
+#### GT-149
+
+**Título:** Pruebas OPA Ejecutables y Gate de Paridad Semántica Native/OPA
+
+- **Propósito:** Verificar comportamiento —no solo existencia de archivos— de cada política topológica, y asegurar que los motores Native y OPA lleguen a decisiones allow/deny equivalentes para los mismos contratos.
+- **Evidencia:** Wilson V5 no encontró archivos de pruebas OPA y el runner CI de 14 pasos no ejecuta `opa test` ni un evaluador equivalente fijado. `validate-topology-manifests.mjs` confirma que existen archivos Native/OPA declarados, pero no evalúa decisiones de política; el generador de cobertura actual también está roto (GT-148).
+- **Hecho cuando:**
+  - [ ] Un evaluador OPA fijado y reproducible ejecuta fixtures positivos, negativos y de límite para cada topología aceptada sin depender de un binario host no declarado.
+  - [ ] Las mismas entradas canónicas pasan por evaluadores Native y OPA; un gate diferencial falla ante deriva de veredicto, ID de regla, severidad o ubicación de evidencia.
+  - [ ] Los resultados son machine-readable e incluyen versiones de política/ruleset, identidad del fixture, duración de ejecución y solo telemetría agregada de eficiencia.
+  - [ ] CI acota trabajo a políticas/manifiestos modificados cuando sea seguro, conserva una ejecución completa programada de paridad y tiene fixtures para fallo del evaluador y entrada de política malformada.
+
+#### GT-150
+
+**Título:** Madurar las Topologías Draft Restantes a Paridad de Corpus Aceptado
+
+- **Propósito:** Hacer que toda topología Evolith publicada sea utilizable al nivel base de Monolito Modular, no solo un draft descubrible con reglas aisladas.
+- **Evidencia:** El inventario de manifiestos de Wilson V5 informa Data Mesh, Edge Computing, Serverless y Event-Driven como `draft` sin `spec.corpus`; por tanto R-27 no se les aplica. Sus gaps anteriores de reglas base pueden mantenerse históricamente cerrados, pero no entregan la madurez de corpus, control-plane y evidencia de una topología aceptada solicitada para Evolith.
+- **Hecho cuando:**
+  - [ ] Data Mesh, Edge Computing, Serverless y Event-Driven cuentan con guía bilingüe de adopción, composición, operaciones, seguridad, observabilidad, resiliencia y evolución, más ADRs específicos de topología aceptados.
+  - [ ] Cada manifiesto declara `spec.corpus`, artefactos Native/OPA validados, fixtures de contrato compartidos, pruebas positivas/negativas/diferenciales y exposición de control-plane en CLI, MCP y Core API.
+  - [ ] Cada topología asciende de `draft` a `accepted` solo después de aprobar el validador de madurez topológica, gate de paridad Native/OPA, validación documental y pruebas de superficies consumidoras.
+  - [ ] El catálogo registra relaciones explícitas con rutas de migración y topologías complementarias para que usuarios IA y humanos recuperen guía aplicable sin reconstruir contexto.
+
 ### Fase F0 — Contrato Primero
 
 #### GT-01

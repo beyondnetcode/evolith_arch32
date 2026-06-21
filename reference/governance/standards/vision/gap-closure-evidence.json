@@ -1952,6 +1952,22 @@
         "node .harness/scripts/ci-runner.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-146",
+      "closedAt": "2026-06-20",
+      "closureCommit": "3efbb5900405322751edd139e4cf87095ddf82b3",
+      "evidence": [
+        ".harness/scripts/ci/review-input.mjs",
+        ".harness/scripts/ci/review-result.mjs",
+        ".harness/scripts/ci/review-provider.mjs",
+        ".harness/scripts/ci/13-agentic-code-review.mjs",
+        ".github/workflows/sdk-cli-ci.yml"
+      ],
+      "validationCommands": [
+        "node --test .harness/scripts/ci/review-input.test.mjs .harness/scripts/ci/review-result.test.mjs .harness/scripts/ci/review-provider.test.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

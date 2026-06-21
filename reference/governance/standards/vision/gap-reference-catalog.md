@@ -110,10 +110,11 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Purpose:** Make real LLM code review safe, portable, and economical: minimize and sanitize the submitted context, enforce explicit cost/time budgets, and validate structured findings before a CI gate acts on them.
 - **Evidence:** `.harness/scripts/ci/13-agentic-code-review.mjs` hard-codes the Gemini endpoint and model, submits the full raw `git diff` to the provider, and relies on a free-text `VIOLATION_DETECTED` marker. It has no secret redaction, diff/token cap, context prioritization, provider port, or structured-result validation.
 - **Done when:**
-  - [ ] A provider-neutral review port supports configured adapters and models while preserving a fail-closed CI contract.
-  - [ ] The review input removes credentials and sensitive patterns, includes only policy-relevant changed files, and is bounded/chunked by measurable byte, token, latency, and cost budgets.
-  - [ ] The provider response conforms to a versioned schema with evidence locations and confidence; malformed or indeterminate results cannot silently pass the gate.
-  - [ ] Tests cover redaction, budgeting, chunk selection, adapter failures, and response validation; CI uses minimum permissions and reports aggregate, non-sensitive efficiency telemetry.
+  - [x] A provider-neutral review port supports configured adapters and models while preserving a fail-closed CI contract.
+  - [x] The review input removes credentials and sensitive patterns, includes only policy-relevant changed files, and is bounded/chunked by measurable byte, token, latency, and cost budgets.
+  - [x] The provider response conforms to a versioned schema with evidence locations and confidence; malformed or indeterminate results cannot silently pass the gate.
+  - [x] Tests cover redaction, budgeting, chunk selection, adapter failures, and response validation; CI uses minimum permissions and reports aggregate, non-sensitive efficiency telemetry.
+- **Closure evidence:** Commit `3efbb59`. New pure modules under `.harness/scripts/ci/`: `review-provider.mjs` (configurable port + Gemini adapter, API key in header, fail-closed on unknown provider/missing key), `review-input.mjs` (secret redaction, policy-relevant file selection, byte/token budget + chunking; token budget is the cost proxy), `review-result.mjs` (versioned schema v1.0 validation; malformed/indeterminate → fail-closed). `13-agentic-code-review.mjs` rewired to use them with aggregate non-sensitive telemetry; the `agentic-review` job scoped to `contents: read`. 27 `node:test` cases pass. Residual: explicit per-call latency budget (token/byte caps in place) is a minor follow-up.
 
 #### GT-147
 

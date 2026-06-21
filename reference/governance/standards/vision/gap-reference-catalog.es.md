@@ -111,10 +111,11 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Propósito:** Hacer segura, portable y económica la revisión de código con LLM real: minimizar y sanear el contexto enviado, imponer presupuestos explícitos de costo/tiempo y validar hallazgos estructurados antes de que un gate de CI actúe sobre ellos.
 - **Evidencia:** `.harness/scripts/ci/13-agentic-code-review.mjs` fija el endpoint y modelo de Gemini, envía el `git diff` completo y crudo al proveedor, y depende de un marcador textual libre `VIOLATION_DETECTED`. No cuenta con redacción de secretos, tope de diff/tokens, priorización de contexto, puerto de proveedor ni validación de resultado estructurado.
 - **Hecho cuando:**
-  - [ ] Un puerto de revisión neutral al proveedor soporta adaptadores y modelos configurados preservando un contrato de CI de fallo cerrado.
-  - [ ] La entrada de revisión elimina credenciales y patrones sensibles, incluye solo archivos modificados relevantes para políticas y está acotada/fragmentada por presupuestos medibles de bytes, tokens, latencia y costo.
-  - [ ] La respuesta del proveedor cumple un esquema versionado con ubicaciones de evidencia y confianza; resultados malformados o indeterminados no pueden aprobar el gate silenciosamente.
-  - [ ] Pruebas cubren redacción, presupuestos, selección de fragmentos, fallos de adaptador y validación de respuesta; CI usa permisos mínimos e informa telemetría agregada y no sensible de eficiencia.
+  - [x] Un puerto de revisión neutral al proveedor soporta adaptadores y modelos configurados preservando un contrato de CI de fallo cerrado.
+  - [x] La entrada de revisión elimina credenciales y patrones sensibles, incluye solo archivos modificados relevantes para políticas y está acotada/fragmentada por presupuestos medibles de bytes, tokens, latencia y costo.
+  - [x] La respuesta del proveedor cumple un esquema versionado con ubicaciones de evidencia y confianza; resultados malformados o indeterminados no pueden aprobar el gate silenciosamente.
+  - [x] Pruebas cubren redacción, presupuestos, selección de fragmentos, fallos de adaptador y validación de respuesta; CI usa permisos mínimos e informa telemetría agregada y no sensible de eficiencia.
+- **Evidencia de cierre:** Commit `3efbb59`. Nuevos módulos puros en `.harness/scripts/ci/`: `review-provider.mjs` (puerto configurable + adapter Gemini con API key en header, fallo cerrado ante proveedor desconocido/clave ausente), `review-input.mjs` (redacción de secretos, selección de archivos relevantes, presupuesto bytes/tokens + chunking; el presupuesto de tokens es el proxy de costo), `review-result.mjs` (validación de esquema versionado v1.0; malformado/indeterminado → fallo cerrado). `13-agentic-code-review.mjs` recableado con telemetría agregada no sensible; el job `agentic-review` acotado a `contents: read`. 27 casos `node:test` pasan. Residual: presupuesto explícito de latencia por llamada (topes de tokens/bytes ya en sitio) es un follow-up menor.
 
 #### GT-147
 

@@ -29,7 +29,16 @@ The `Wilson Agentic Review` CI job supplies the secret with `EVOLITH_AGENTIC_REV
 
 The RAG job divides changed English reference documents at H2/H3 boundaries and then by a maximum of about 512 tokens. This keeps retrieval focused and prevents large gap catalogs from consuming the whole agent context.
 
-`EVOLITH_RAG_SYNC=true` enables the live-sync branch. The current implementation prepares and reports chunks; connecting a vector-store provider remains an infrastructure adapter task. Do not claim documents are indexed until that adapter confirms successful upserts.
+`EVOLITH_RAG_SYNC=true` enables the live-sync branch, which embeds and upserts chunks through the configured durable adapter and emits a receipt. Dry-run uses the truthful, non-durable in-memory adapter.
+
+## RAG Vector Synchronization Operations (GT-145)
+
+`14-rag-index-sync.mjs` runs a provider-neutral delta sync through the `rag-port.mjs` adapter port.
+
+- **Provider selection:** set `EVOLITH_RAG_PROVIDER` to a registered durable adapter; unset (or `memory`) is a non-durable dry-run stand-in. A live run (`EVOLITH_RAG_SYNC=true`) without a durable adapter fails closed — it never claims documents were indexed.
+- **Least-privilege credentials:** pass vector-store and embedding credentials only as masked CI secrets to the sync job; never place them in the diff or logs. The job needs no repository write permissions.
+- **Bounded batch/retry:** chunks are embedded and upserted in fixed-size batches; any adapter, embedding, or persistence error fails the step closed instead of reporting partial success. Configure retry and backoff inside the durable adapter, bounded by an attempt ceiling.
+- **Cost and token telemetry:** every run emits a machine-readable `RECEIPT {…}` line (and an `EVOLITH_RAG_RECEIPT_PATH` file when set) with aggregate, non-sensitive `counts` and `telemetry` (`embedCalls`, `estTokens`). No chunk text or credentials are logged.
 
 ## Support Checklist
 

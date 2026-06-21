@@ -52,6 +52,8 @@
 * [0081-agentic-ai-sandbox-isolation](./0081-agentic-ai-sandbox-isolation.md) — **Sandbox isolation boundary for agent tool execution**
 * [0082-agentic-ai-trust-boundary](./0082-agentic-ai-trust-boundary.md) — **Trust boundary for prompts, context, and tool output**
 * [0083-agentic-ai-action-authorization-audit](./0083-agentic-ai-action-authorization-audit.md) — **Capability-scoped authorization and append-only action audit**
+* [0090-rag-knowledge-governance](./0090-rag-knowledge-governance.md) — **RAG knowledge governance standard for vector-store synchronization**
+* [0097-knowledge-lifecycle-governance](./0097-knowledge-lifecycle-governance.md) — **Knowledge lifecycle promotion pipeline and Winston custodianship**
 
 ---
 [Back to Upper Level](../README.md)

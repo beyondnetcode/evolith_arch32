@@ -2,13 +2,17 @@
   "$schema": "../schema/ruleset-standard.schema.json",
   "$id": "https://evolith.dev/rulesets/governance/knowledge-intake.rules.json",
   "title": "External Knowledge Intake Rules",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "effectiveDate": "2026-06-20",
   "scope": "evolith-core",
   "category": "knowledge-intake",
   "rules": [
     { "id": "KI-R01", "title": "Provenance and rights are mandatory", "description": "Every candidate declares source class, locator, retrieval date, and rights status.", "severity": "MUST", "blocking": true },
-    { "id": "KI-R02", "title": "Wilson owns review", "description": "Every candidate declares @wilson as review owner and a next review date.", "severity": "MUST", "blocking": true },
-    { "id": "KI-R03", "title": "Promotion requires executable evidence", "description": "Executable promotion requires ADR, Native rule, OPA policy, and fixtures.", "severity": "MUST", "blocking": true }
+    { "id": "KI-R02", "title": "Wilson owns review", "description": "Every candidate declares @wilson as review owner, next review date, and review freshness.", "severity": "MUST", "blocking": true },
+    { "id": "KI-R03", "title": "Promotion requires executable evidence", "description": "Executable promotion requires ADR, Native rule, OPA policy, and fixtures.", "severity": "MUST", "blocking": true },
+    { "id": "KI-R04", "title": "Topology contract completeness", "description": "Every candidate declares maturity, preconditions, anti-patterns, alternatives, and related topologies.", "severity": "MUST", "blocking": true },
+    { "id": "KI-R05", "title": "Source registry linkage", "description": "Every candidate links to a valid SRC-* source registry entry and every SRC-* entry links back to its KI-* candidates.", "severity": "MUST", "blocking": true },
+    { "id": "KI-R06", "title": "Promotion state machine", "description": "Promotion transitions must follow candidate → evaluated → accepted → executable; any status may transition to retired. No skipping stages.", "severity": "MUST", "blocking": true },
+    { "id": "KI-R07", "title": "Promotion evidence and disposition", "description": "Non-candidate statuses require promoted_at and promoted_by. Accepted/executable require a non-null ADR. Retired requires a non-null disposition reason.", "severity": "MUST", "blocking": true }
   ]
 }

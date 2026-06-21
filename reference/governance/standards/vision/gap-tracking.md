@@ -13,9 +13,9 @@ This board is the single source of truth for technical debt, gaps, opportunities
 
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
 |---|---|---|:---:|:---:|:---:|:---:|
-| [`GT-152`](./gap-reference-catalog.md#gt-152) | External Knowledge Contract and Source Registry Schema | `Governance` | Cross | P0 | S | `PENDING` |
-| [`GT-153`](./gap-reference-catalog.md#gt-153) | Knowledge Lifecycle Governance by Winston | `Governance` | Cross | P0 | M | `PENDING` |
-| [`GT-154`](./gap-reference-catalog.md#gt-154) | RAG Projection and Native/OPA Parity for External Knowledge | `Governance` | Cross | P0 | M | `PENDING` |
+| [`GT-152`](./gap-reference-catalog.md#gt-152) | External Knowledge Contract and Source Registry Schema | `Governance` | Cross | P0 | S | `DONE` |
+| [`GT-153`](./gap-reference-catalog.md#gt-153) | Knowledge Lifecycle Governance by Winston | `Governance` | Cross | P0 | M | `DONE` |
+| [`GT-154`](./gap-reference-catalog.md#gt-154) | RAG Projection and Native/OPA Parity for External Knowledge | `Governance` | Cross | P0 | M | `DONE` |
 | [`GT-151`](./gap-reference-catalog.md#gt-151) | Complete Native/OPA Rule-ID Coverage for Accepted Topologies | `Rulesets` | Cross | P0 | M | `DONE` |
 | [`GT-146`](./gap-reference-catalog.md#gt-146) | Secure, Provider-Neutral, and Token-Bounded Agentic CI Review | `Governance` | Cross | P0 | L | `DONE` |
 | [`GT-150`](./gap-reference-catalog.md#gt-150) | Mature Remaining Draft Topologies to Accepted Corpus Parity | `Architecture` | Cross | P1 | L | `DONE` |
@@ -171,7 +171,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-128`](./gap-reference-catalog.md#gt-128) | Baseline Ruleset for Data Mesh | `Architecture` | Cross | P2 | M | `DONE` |
 | [`GT-129`](./gap-reference-catalog.md#gt-129) | Baseline Ruleset for Edge Computing | `Architecture` | Cross | P2 | M | `DONE` |
 
-**Progress:** 154 / 157 done · 0 in progress · 3 pending · 0 deferred
+**Progress:** 157 / 157 done · 0 in progress · 0 pending · 0 deferred
 
 **Ordering:** one table, ordered by status (pending then deferred then completed), then criticality (`P0` → `P1` → `P2`) then complexity (`S` → `M` → `L`); completed gaps are grouped by component. `GT-*` IDs link to the [Gap Reference Catalog](./gap-reference-catalog.md); `MT-A*` IDs link to the supporting [Multi-Topology implementation plan](./multi-topology-reference-corpus-implementation-plan.md).
 

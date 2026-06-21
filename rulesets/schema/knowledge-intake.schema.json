@@ -6,6 +6,7 @@
   "required": ["knowledge_id", "source", "assessment", "promotion", "review", "synthesis"],
   "properties": {
     "knowledge_id": { "type": "string", "pattern": "^KI-[A-Z0-9-]+$" },
+    "source_registry_id": { "type": "string", "pattern": "^SRC-[A-Z0-9-]+$" },
     "source": {
       "type": "object",
       "required": ["class", "author", "work", "locator", "retrieved_at", "rights_status"],
@@ -21,11 +22,16 @@
     },
     "assessment": {
       "type": "object",
-      "required": ["trust_level", "portability", "topologies", "concerns"],
+      "required": ["trust_level", "portability", "topologies", "maturity", "concerns"],
       "properties": {
         "trust_level": { "enum": ["primary", "secondary"] },
         "portability": { "enum": ["high", "medium", "low"] },
-        "topologies": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "topologies": { "type": "array", "minItems": 1, "items": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" } },
+        "maturity": { "enum": ["standard", "emerging", "proven", "speculative"] },
+        "preconditions": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "anti_patterns": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "alternatives": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "related_topologies": { "type": "array", "items": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" } },
         "concerns": { "type": "array", "minItems": 1, "items": { "type": "string" } }
       },
       "additionalProperties": false
@@ -35,19 +41,23 @@
       "required": ["status"],
       "properties": {
         "status": { "enum": ["candidate", "evaluated", "accepted", "executable", "retired"] },
+        "promoted_at": { "type": ["string", "null"], "format": "date" },
+        "promoted_by": { "type": ["string", "null"] },
         "adr": { "type": ["string", "null"] },
         "native_rule": { "type": ["string", "null"] },
         "opa_policy": { "type": ["string", "null"] },
-        "fixtures": { "type": "array", "items": { "type": "string" } }
+        "fixtures": { "type": "array", "items": { "type": "string" } },
+        "disposition": { "type": ["string", "null"] }
       },
       "additionalProperties": false
     },
     "review": {
       "type": "object",
-      "required": ["owner", "next_review_at"],
+      "required": ["owner", "next_review_at", "review_freshness"],
       "properties": {
         "owner": { "const": "@wilson" },
-        "next_review_at": { "type": "string", "format": "date" }
+        "next_review_at": { "type": "string", "format": "date" },
+        "review_freshness": { "type": "string", "format": "date" }
       },
       "additionalProperties": false
     },

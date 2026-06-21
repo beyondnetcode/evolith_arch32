@@ -1,0 +1,40 @@
+{
+  "input": {
+    "knowledge_id": "KI-FIXTURE-VIOLATION-001",
+    "source_registry_id": null,
+    "source": {
+      "class": "book",
+      "author": "Test Author",
+      "work": "Test Work",
+      "locator": "Chapter 1",
+      "retrieved_at": "2026-06-20"
+    },
+    "assessment": {
+      "trust_level": "primary",
+      "portability": "high",
+      "topologies": ["modular-monolith"],
+      "concerns": ["domain-modeling"]
+    },
+    "promotion": {
+      "status": "candidate",
+      "promoted_at": null,
+      "promoted_by": null,
+      "adr": null,
+      "native_rule": null,
+      "opa_policy": null,
+      "fixtures": [],
+      "disposition": null
+    },
+    "review": {
+      "owner": "@wilson",
+      "next_review_at": "2026-12-20"
+    },
+    "synthesis": "This violating fixture is missing multiple required fields."
+  },
+  "expectedNative": [
+    { "ruleId": "KI-R01", "severity": "error", "message": "must have required property 'rights_status'" },
+    { "ruleId": "KI-R02", "severity": "error", "message": "must have required property 'review_freshness'" },
+    { "ruleId": "KI-R04", "severity": "error", "message": "must have required property 'maturity'" },
+    { "ruleId": "KI-R05", "severity": "error", "message": "must have required property 'source_registry_id'" }
+  ]
+}

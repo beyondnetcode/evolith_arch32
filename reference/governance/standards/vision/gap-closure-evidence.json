@@ -2126,6 +2126,83 @@
         "node .harness/scripts/ci/04-check-bilingual-parity.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-152",
+      "closedAt": "2026-06-21",
+      "closureCommit": "176d0897",
+      "evidence": [
+        "rulesets/schema/knowledge-intake.schema.json",
+        "rulesets/schema/source-registry.schema.json",
+        "reference/knowledge/intake/KI-EVANS-AGGREGATE-001.yaml",
+        "reference/knowledge/intake/SRC-EVANS-001.yaml",
+        "rulesets/governance/knowledge-intake.rules.json",
+        "rulesets/opa/knowledge-intake.rego",
+        "rulesets/opa/knowledge-intake.test.rego",
+        ".harness/scripts/ci/17-validate-knowledge-intake.mjs",
+        ".harness/scripts/ci/17-validate-knowledge-intake.test.mjs",
+        "reference/governance/standards/vision/gap-tracking.md",
+        "reference/governance/standards/vision/gap-tracking.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/17-validate-knowledge-intake.mjs",
+        "node --test .harness/scripts/ci/17-validate-knowledge-intake.test.mjs",
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-153",
+      "closedAt": "2026-06-21",
+      "closureCommit": "176d0897",
+      "evidence": [
+        "reference/architecture/adrs/core/0097-knowledge-lifecycle-governance.md",
+        "reference/architecture/adrs/core/0097-knowledge-lifecycle-governance.es.md",
+        "reference/architecture/adrs/core/README.md",
+        "reference/architecture/adrs/core/README.es.md",
+        "rulesets/schema/knowledge-intake.schema.json",
+        "reference/knowledge/intake/KI-EVANS-AGGREGATE-001.yaml",
+        "rulesets/governance/knowledge-intake.rules.json",
+        "rulesets/opa/knowledge-intake.rego",
+        "rulesets/opa/knowledge-intake.test.rego",
+        ".harness/scripts/ci/17-validate-knowledge-intake.mjs",
+        ".harness/scripts/ci/17-validate-knowledge-intake.test.mjs",
+        "reference/governance/standards/vision/gap-tracking.md",
+        "reference/governance/standards/vision/gap-tracking.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/17-validate-knowledge-intake.mjs",
+        "node --test .harness/scripts/ci/17-validate-knowledge-intake.test.mjs",
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-154",
+      "closedAt": "2026-06-21",
+      "closureCommit": "176d0897",
+      "evidence": [
+        "rulesets/schema/knowledge-projection.schema.json",
+        "reference/knowledge/intake/approved-projection.json",
+        "reference/knowledge/intake/parity-fixtures/compliant.json",
+        "reference/knowledge/intake/parity-fixtures/violation.json",
+        ".harness/scripts/ci/18-validate-knowledge-parity.mjs",
+        ".harness/scripts/ci/17-validate-knowledge-intake.mjs",
+        "reference/governance/standards/vision/gap-tracking.md",
+        "reference/governance/standards/vision/gap-tracking.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/18-validate-knowledge-parity.mjs",
+        "node .harness/scripts/ci/17-validate-knowledge-intake.mjs",
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

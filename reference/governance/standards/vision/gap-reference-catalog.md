@@ -20,9 +20,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** Current knowledge intake pilot validates provenance and rights but topology values are free text; lacks formal contract and source registry.
 - **Complexity:** S
 - **Done when:**
-  - [ ] The knowledge contract validates topology IDs against manifests and requires maturity, preconditions, anti-patterns, alternatives, related topologies, and review freshness.
-  - [ ] A versioned `SRC-*` registry records source license, edition or URL, retention mode, content fingerprint, review cadence, and links every `KI-*` candidate to its source.
-  - [ ] Contract and schema are validated by CI (no unreferenced artifacts, no structural violations).
+  - [x] The knowledge contract validates topology IDs against manifests and requires maturity, preconditions, anti-patterns, alternatives, related topologies, and review freshness.
+  - [x] A versioned `SRC-*` registry records source license, edition or URL, retention mode, content fingerprint, review cadence, and links every `KI-*` candidate to its source.
+  - [x] Contract and schema are validated by CI (no unreferenced artifacts, no structural violations).
 
 
 #### GT-153
@@ -33,9 +33,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** Current pilot has no promotion pipeline; knowledge enters RAG directly without architectural review.
 - **Complexity:** M
 - **Done when:**
-  - [ ] Winston (`@wilson`) owns the lifecycle record and an Architecture Board decision promotes `candidate → evaluated → accepted → executable` with dated evidence and an ADR where required.
-  - [ ] Each promotion state is machine-readable, traceable to its source registry entry, and gated by CI validation.
-  - [ ] Rejected and retired candidates are preserved in the registry with a disposition reason.
+  - [x] Winston (`@wilson`) owns the lifecycle record and an Architecture Board decision promotes `candidate → evaluated → accepted → executable` with dated evidence and an ADR where required.
+  - [x] Each promotion state is machine-readable, traceable to its source registry entry, and gated by CI validation.
+  - [x] Rejected and retired candidates are preserved in the registry with a disposition reason.
 
 
 #### GT-154
@@ -46,9 +46,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** RAG currently has no approved-knowledge projection; any ingested candidate is retrievable. No shared fixtures exist for Native/OPA differential testing.
 - **Complexity:** M
 - **Done when:**
-  - [ ] Shared candidate fixtures run through Native and OPA engines; the differential gate fails on verdict, rule-ID, severity, or evidence drift.
-  - [ ] Only an explicit approved-knowledge projection is eligible for RAG; rejected, retired, rights-restricted, and candidate records remain excluded by default.
-  - [ ] CI validates projection integrity: no approved projection contains excluded records, no excluded record leaks into retrievable scope.
+  - [x] Shared candidate fixtures run through Native and OPA engines; the differential gate fails on verdict, rule-ID, severity, or evidence drift.
+  - [x] Only an explicit approved-knowledge projection is eligible for RAG; rejected, retired, rights-restricted, and candidate records remain excluded by default.
+  - [x] CI validates projection integrity: no approved projection contains excluded records, no excluded record leaks into retrievable scope.
 
 
 #### GT-151

@@ -20,9 +20,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** El piloto actual de ingesta de conocimiento valida procedencia y derechos, pero los valores de topología son texto libre; carece de contrato formal y registro de fuentes.
 - **Complejidad:** S
 - **Hecho cuando:**
-  - [ ] El contrato de conocimiento valida IDs de topología contra manifiestos y requiere madurez, precondiciones, anti-patrones, alternativas, topologías relacionadas y frescura de revisión.
-  - [ ] Un registro versionado `SRC-*` almacena licencia de fuente, edición o URL, modo de retención, huella de contenido, cadencia de revisión y enlaza todo candidato `KI-*` con su fuente.
-  - [ ] Contrato y esquema son validados por CI (sin artefactos no referenciados, sin violaciones estructurales).
+  - [x] El contrato de conocimiento valida IDs de topología contra manifiestos y requiere madurez, precondiciones, anti-patrones, alternativas, topologías relacionadas y frescura de revisión.
+  - [x] Un registro versionado `SRC-*` almacena licencia de fuente, edición o URL, modo de retención, huella de contenido, cadencia de revisión y enlaza todo candidato `KI-*` con su fuente.
+  - [x] Contrato y esquema son validados por CI (sin artefactos no referenciados, sin violaciones estructurales).
 
 
 #### GT-153
@@ -33,9 +33,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** El piloto actual no tiene pipeline de promoción; el conocimiento entra a RAG directamente sin revisión arquitectónica.
 - **Complejidad:** M
 - **Hecho cuando:**
-  - [ ] Winston (`@wilson`) posee el registro de ciclo de vida y una decisión del Architecture Board promueve `candidate → evaluated → accepted → executable` con evidencia fechada y ADR cuando aplique.
-  - [ ] Cada estado de promoción es legible por máquina, trazable a su entrada de registro fuente y validado por CI.
-  - [ ] Los candidatos rechazados y retirados se conservan en el registro con un motivo de disposición.
+  - [x] Winston (`@wilson`) posee el registro de ciclo de vida y una decisión del Architecture Board promueve `candidate → evaluated → accepted → executable` con evidencia fechada y ADR cuando aplique.
+  - [x] Cada estado de promoción es legible por máquina, trazable a su entrada de registro fuente y validado por CI.
+  - [x] Los candidatos rechazados y retirados se conservan en el registro con un motivo de disposición.
 
 
 #### GT-154
@@ -46,9 +46,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** RAG actualmente no tiene proyección de conocimiento aprobado; cualquier candidato ingerido es recuperable. No existen fixtures compartidos para pruebas diferenciales Native/OPA.
 - **Complejidad:** M
 - **Hecho cuando:**
-  - [ ] Fixtures compartidos de candidatos se ejecutan en motores Native y OPA; el gate diferencial falla ante deriva de veredicto, ID de regla, severidad o evidencia.
-  - [ ] Solo una proyección explícita de conocimiento aprobado es elegible para RAG; registros rechazados, retirados, restringidos por derechos y candidatos permanecen excluidos por defecto.
-  - [ ] CI valida integridad de la proyección: ninguna proyección aprobada contiene registros excluidos, ningún registro excluido se filtra al ámbito recuperable.
+  - [x] Fixtures compartidos de candidatos se ejecutan en motores Native y OPA; el gate diferencial falla ante deriva de veredicto, ID de regla, severidad o evidencia.
+  - [x] Solo una proyección explícita de conocimiento aprobado es elegible para RAG; registros rechazados, retirados, restringidos por derechos y candidatos permanecen excluidos por defecto.
+  - [x] CI valida integridad de la proyección: ninguna proyección aprobada contiene registros excluidos, ningún registro excluido se filtra al ámbito recuperable.
 
 
 #### GT-151

@@ -1,0 +1,6 @@
+{
+  "topology": "data-mesh",
+  "isDataProduct": true,
+  "hasDataContracts": true,
+  "federatedGovernance": true
+}

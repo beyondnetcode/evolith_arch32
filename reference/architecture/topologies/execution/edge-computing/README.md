@@ -2,9 +2,10 @@
 
 > **Bilingual Navigation:** [Version en Espanol](./README.es.md)
 
-**Status:** Draft  
+**Status:** Accepted  
 **Dimension:** `execution`  
 **Topology ID:** `edge-computing`  
+**Compatibility Alias:** `F2-compatible`  
 **Manifest:** [topology.manifest.json](./topology.manifest.json)
 
 Edge computing is an execution topology for workloads that must run close to users, devices, regions, or constrained network boundaries while remaining governed by the same Evolith Core architecture contracts.
@@ -25,9 +26,28 @@ Edge workloads must remain governed by explicit synchronization, security, obser
 | Observability | Edge workloads must report health, failure, and trace context despite intermittent connectivity. |
 | Domain ownership | Edge logic must not fork domain behavior outside the owning bounded context. |
 
+## Required Authority
+
+| Artifact | Role |
+|---|---|
+| [ADR-0079: Multi-Topology Reference Corpus](../../../adrs/core/0079-multi-topology-reference-corpus.md) | Governs topology manifests and composition. |
+| [ADR-0096: Edge Computing Architecture Governance](../../../adrs/core/0096-edge-computing-architecture-governance.md) | Governs edge-specific architecture constraints. |
+| [Edge Computing Architecture Rules](./edge-computing.rules.json) | Existing executable compatibility rules. |
+| [Topology Dimensions Model](../../topology-dimensions.md) | Defines composition and compatibility rules. |
+
 ## Executable Contract
 
 Satellites adopting this topology must declare an `edge-computing.config.json` file in their root. This JSON acts as the executable machine-readable contract evaluated by the Evolith Governance Engine.
+
+```json
+{
+  "syncStrategy": "offline-first",
+  "edgeIsolation": true,
+  "conflictResolution": "last-write-wins"
+}
+```
+
+EC-R01 through EC-R03 require that contract, enforcing a declared synchronization strategy, edge node isolation for autonomous operation, and an explicit conflict resolution mode. The Native evaluator and [OPA policy](./edge-computing.rego) evaluate these fields.
 
 ### Offline-First Persistence Patterns
 
@@ -39,11 +59,19 @@ A critical aspect of the Edge Computing topology is handling intermittent connec
 
 ## Composition
 
-`edge-computing` can combine with `microservices`, `distributed-modules`, `event-driven`, `serverless`, and `agentic-ai` when locality and synchronization rules are explicit.
+`edge-computing` can combine with:
+
+| Topology | Why It Can Compose |
+|---|---|
+| `microservices` | Places individual service workloads at the edge with governed synchronization. |
+| `distributed-modules` | Extends module boundaries to edge locations with explicit sync contracts. |
+| `event-driven` | Coordinates edge state changes through observable event channels. |
+| `serverless` | Deploys managed execution units at edge locations with bounded initialization. |
+| `agentic-ai` | Runs AI-agent inference at the edge with offline-capable governance. |
 
 ## Business Boundary
 
-This draft profile is technical-only. It does not define ROI, cost model, hardware spend, staffing, delivery timing, prioritization, or Funnel 0. Evolith Tracker owns those business concerns through its ACL.
+This profile is technical-only. It does not define ROI, cost model, hardware spend, staffing, delivery timing, prioritization, or Funnel 0. Evolith Tracker owns those business concerns through its ACL.
 
 ---
 [Back to Topology Hub](../../README.md)

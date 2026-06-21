@@ -1,0 +1,15 @@
+{
+  "input": {
+    "satellite": {
+      "packageJson": {},
+      "directories": ["identity", "access", "ports"],
+      "hasContracts": true,
+      "hasAcl": true,
+      "hasEvents": true,
+      "hasExtractionReadiness": true,
+      "hasOtel": true,
+      "sourceFiles": []
+    }
+  },
+  "expectedNative": []
+}

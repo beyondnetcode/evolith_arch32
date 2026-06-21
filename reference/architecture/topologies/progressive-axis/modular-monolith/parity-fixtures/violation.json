@@ -1,0 +1,17 @@
+{
+  "input": {
+    "satellite": {
+      "packageJson": {},
+      "directories": ["identity", "access"],
+      "hasContracts": true,
+      "hasAcl": true,
+      "hasEvents": true,
+      "hasExtractionReadiness": true,
+      "hasOtel": true,
+      "sourceFiles": []
+    }
+  },
+  "expectedNative": [
+    { "ruleId": "MM-R03", "severity": "MUST", "file": null }
+  ]
+}

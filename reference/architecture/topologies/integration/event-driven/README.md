@@ -2,9 +2,10 @@
 
 > **Bilingual Navigation:** [Version en Espanol](./README.es.md)
 
-**Status:** Draft  
+**Status:** Accepted  
 **Dimension:** `integration`  
 **Topology ID:** `event-driven`  
+**Compatibility Alias:** `F2-compatible`  
 **Manifest:** [topology.manifest.json](./topology.manifest.json)
 
 Event-driven architecture is an integration topology for asynchronous coordination through explicit event contracts, reliable publication, idempotent consumers, and observable message flow.
@@ -25,6 +26,15 @@ Event-driven integration is not permission to hide business workflows in infrast
 | Observability | Event flow must expose correlation, lag, failures, and replay evidence. |
 | Ownership | Event producers own event meaning; consumers own local reactions. |
 
+## Required Authority
+
+| Artifact | Role |
+|---|---|
+| [ADR-0015: Event-Driven Architecture Intra-Domain](../../../adrs/core/0015-event-driven-architecture-intra-domain.md) | Governs event-driven coordination within bounded contexts. |
+| [ADR-0079: Multi-Topology Reference Corpus](../../../adrs/core/0079-multi-topology-reference-corpus.md) | Governs topology manifests and composition. |
+| [Event-Driven Architecture Rules](./event-driven.rules.json) | Existing executable compatibility rules. |
+| [Topology Dimensions Model](../../topology-dimensions.md) | Defines composition and compatibility rules. |
+
 ## Executable Contract
 
 Every adopting satellite provides `event-driven.config.json`:
@@ -41,11 +51,21 @@ ED-R01 through ED-R03 require that contract, enforcing explicit AsyncAPI definit
 
 ## Composition
 
-`event-driven` can combine with every progressive-axis profile and with `serverless`, `edge-computing`, `data-mesh`, and `agentic-ai` when contracts and telemetry are explicit.
+`event-driven` can combine with:
+
+| Topology | Why It Can Compose |
+|---|---|
+| `modular-monolith` | Adds decoupled event-driven integration while preserving one deployable system. |
+| `distributed-modules` | Enables async coordination across module boundaries with explicit contracts. |
+| `microservices` | Provides reliable event-driven communication between independently owned services. |
+| `serverless` | Drives event-triggered serverless execution governed by explicit contracts. |
+| `edge-computing` | Supports async event flow to and from edge-located workloads. |
+| `data-mesh` | Enables event-driven data product updates with governed analytical ownership. |
+| `agentic-ai` | Coordinates AI-agent workflows through observable event channels. |
 
 ## Business Boundary
 
-This draft profile is technical-only. It does not define business prioritization, timing, ROI, cost, budget, staffing, or Funnel 0. Evolith Tracker owns those business concerns through its ACL.
+This profile is technical-only. It does not define business prioritization, timing, ROI, cost, budget, staffing, or Funnel 0. Evolith Tracker owns those business concerns through its ACL.
 
 ---
 [Back to Topology Hub](../../README.md)

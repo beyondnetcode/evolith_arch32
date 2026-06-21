@@ -1,0 +1,6 @@
+{
+  "topology": "edge-computing",
+  "syncStrategy": "offline-first",
+  "edgeIsolation": true,
+  "conflictResolution": "last-write-wins"
+}

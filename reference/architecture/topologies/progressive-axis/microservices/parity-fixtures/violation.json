@@ -1,0 +1,11 @@
+{
+  "input": {
+    "satellite": {
+      "hasDockerfile": false,
+      "directories": ["identity", "orders"]
+    }
+  },
+  "expectedNative": [
+    { "ruleId": "MS-R01", "severity": "MUST", "file": null }
+  ]
+}

@@ -14,10 +14,10 @@ Topology guidance is dimensional, manifest-driven, and executable through the sh
 | [Modular Monolith Profile](./progressive-axis/modular-monolith/README.md) | Canonical F1-compatible starting topology | Yes |
 | [Distributed Modules Profile](./progressive-axis/distributed-modules/README.md) | Canonical F2-compatible controlled extraction topology | Yes |
 | [Microservices Profile](./progressive-axis/microservices/README.md) | Canonical F3-compatible service topology | Yes |
-| [Serverless Profile](./execution/serverless/README.md) | Draft managed execution topology | No |
-| [Edge Computing Profile](./execution/edge-computing/README.md) | Draft locality-driven execution topology | No |
-| [Event-Driven Profile](./integration/event-driven/README.md) | Draft asynchronous integration topology | No |
-| [Data Mesh Profile](./data/data-mesh/README.md) | Draft distributed analytical ownership topology | No |
+| [Serverless Profile](./execution/serverless/README.md) | Accepted managed execution topology | Yes |
+| [Edge Computing Profile](./execution/edge-computing/README.md) | Accepted locality-driven execution topology | Yes |
+| [Event-Driven Profile](./integration/event-driven/README.md) | Accepted asynchronous integration topology | Yes |
+| [Data Mesh Profile](./data/data-mesh/README.md) | Accepted distributed analytical ownership topology | Yes |
 | [Agentic AI Profile](./ai/agentic-ai/README.md) | Draft AI-first and agentic workflow topology | No |
 
 ## Governed Dimensions

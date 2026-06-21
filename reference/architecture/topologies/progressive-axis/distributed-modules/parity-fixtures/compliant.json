@@ -1,0 +1,13 @@
+{
+  "input": {
+    "satellite": {
+      "workspacePackageJsons": ["module-a", "module-b"],
+      "hasContracts": true,
+      "hasAcl": true,
+      "hasEvents": true,
+      "hasOtel": true,
+      "hasExtractionReadiness": true
+    }
+  },
+  "expectedNative": []
+}

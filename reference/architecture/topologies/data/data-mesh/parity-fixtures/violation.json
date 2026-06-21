@@ -1,0 +1,14 @@
+{
+  "input": {
+    "satellite": {
+      "dataMesh": {
+        "isDataProduct": false,
+        "hasDataContracts": true,
+        "federatedGovernance": true
+      }
+    }
+  },
+  "expectedNative": [
+    { "ruleId": "DAM-R01", "severity": "error", "file": null }
+  ]
+}

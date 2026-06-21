@@ -1,0 +1,6 @@
+{
+  "topology": "event-driven",
+  "strictAsyncApi": false,
+  "transactionalOutbox": false,
+  "deadLetterQueue": false
+}

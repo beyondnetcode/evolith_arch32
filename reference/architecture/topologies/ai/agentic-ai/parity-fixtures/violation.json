@@ -1,0 +1,18 @@
+{
+  "input": {
+    "satellite": {
+      "agenticAi": {
+        "hasIdentity": false,
+        "hasIsolatedSandbox": true,
+        "hasSeparatedPromptAndImplementation": true,
+        "requiresApprovalForMutativeTools": true,
+        "hasEphemeralSandboxLimits": true,
+        "hasTrustedContextPolicy": true,
+        "hasAccountableActions": true
+      }
+    }
+  },
+  "expectedNative": [
+    { "ruleId": "AAI-R01", "severity": "MUST", "file": null }
+  ]
+}

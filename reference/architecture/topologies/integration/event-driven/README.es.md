@@ -2,9 +2,10 @@
 
 > **Navegacion Bilingue:** [English Version](./README.md)
 
-**Estado:** Draft  
+**Estado:** Accepted  
 **Dimension:** `integration`  
 **ID de Topologia:** `event-driven`  
+**Alias de Compatibilidad:** `F2-compatible`  
 **Manifiesto:** [topology.manifest.json](./topology.manifest.json)
 
 La arquitectura event-driven es una topologia de integracion para coordinacion asincrona mediante contratos de eventos explicitos, publicacion confiable, consumidores idempotentes y flujo de mensajes observable.
@@ -25,9 +26,18 @@ La integracion event-driven no autoriza esconder workflows de negocio en infraes
 | Observabilidad | El flujo de eventos debe exponer correlacion, lag, fallos y evidencia de replay. |
 | Ownership | Los productores poseen el significado del evento; los consumidores poseen sus reacciones locales. |
 
+## Autoridad Requerida
+
+| Artefacto | Rol |
+|---|---|
+| [ADR-0015: Arquitectura Event-Driven Intra-Dominio](../../../adrs/core/0015-event-driven-architecture-intra-domain.md) | Gobierna la coordinacion event-driven dentro de contextos acotados. |
+| [ADR-0079: Corpus de Referencia Multi-Topologia](../../../adrs/core/0079-multi-topology-reference-corpus.md) | Gobierna los manifiestos de topologia y composicion. |
+| [Reglas de Arquitectura Event-Driven](./event-driven.rules.json) | Reglas de compatibilidad ejecutables existentes. |
+| [Modelo de Dimensiones de Topologia](../../topology-dimensions.md) | Define reglas de composicion y compatibilidad. |
+
 ## Contrato Ejecutable
 
-Todo satélite que adopte este perfil proporciona `event-driven.config.json`:
+Todo satelite que adopte este perfil proporciona `event-driven.config.json`:
 
 ```json
 {
@@ -37,15 +47,25 @@ Todo satélite que adopte este perfil proporciona `event-driven.config.json`:
 }
 ```
 
-ED-R01 a ED-R03 exigen ese contrato, forzando la definición explícita de AsyncAPI, el patrón Transactional Outbox para la confiabilidad, y un Dead Letter Queue (DLQ) para el manejo de mensajes fallidos. El evaluador Native y la [política OPA](./event-driven.rego) evalúan estos campos.
+ED-R01 a ED-R03 exigen ese contrato, forzando la definicion explicita de AsyncAPI, el patron Transactional Outbox para la confiabilidad, y un Dead Letter Queue (DLQ) para el manejo de mensajes fallidos. El evaluador Native y la [politica OPA](./event-driven.rego) evaluan estos campos.
 
 ## Composicion
 
-`event-driven` puede combinarse con cada perfil progressive-axis y con `serverless`, `edge-computing`, `data-mesh` y `agentic-ai` cuando contratos y telemetria son explicitos.
+`event-driven` puede combinarse con:
+
+| Topologia | Por Que Puede Componerse |
+|---|---|
+| `modular-monolith` | Agrega integracion event-driven desacoplada preservando un sistema desplegable. |
+| `distributed-modules` | Habilita coordinacion asincrona entre fronteras de modulo con contratos explicitos. |
+| `microservices` | Proporciona comunicacion event-driven confiable entre servicios con propiedad independiente. |
+| `serverless` | Impulsa ejecucion serverless disparada por eventos gobernada por contratos explicitos. |
+| `edge-computing` | Soporta flujo de eventos asincrono hacia y desde workloads ubicados en el edge. |
+| `data-mesh` | Habilita actualizaciones de productos de datos impulsadas por eventos con propiedad analitica gobernada. |
+| `agentic-ai` | Coordina workflows de agentes IA a traves de canales de eventos observables. |
 
 ## Frontera de Negocio
 
-Este perfil draft es solo tecnico. No define priorizacion de negocio, timing, ROI, costo, presupuesto, staffing ni Funnel 0. Evolith Tracker posee esas preocupaciones de negocio mediante su ACL.
+Este perfil es solo tecnico. No define priorizacion de negocio, timing, ROI, costo, presupuesto, staffing ni Funnel 0. Evolith Tracker posee esas preocupaciones de negocio mediante su ACL.
 
 ---
 [Volver al Hub de Topologias](../../README.es.md)

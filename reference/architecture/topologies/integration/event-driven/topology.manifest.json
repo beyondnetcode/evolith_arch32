@@ -5,8 +5,8 @@
     "id": "event-driven",
     "name": "Event-Driven",
     "dimension": "integration",
-    "status": "draft",
-    "version": "0.1.0"
+    "status": "accepted",
+    "version": "1.0.0"
   },
   "spec": {
     "summary": "Asynchronous integration topology for explicit event contracts, reliable publication, idempotent consumers, and observable cross-boundary message flow.",
@@ -29,11 +29,10 @@
     "artifacts": {
       "adrs": [
         "reference/architecture/adrs/core/0015-event-driven-architecture-intra-domain.md",
-        "reference/architecture/adrs/core/0033-transactional-outbox-pattern.md",
         "reference/architecture/adrs/core/0079-multi-topology-reference-corpus.md"
       ],
       "rulesets": [
-        "rulesets/architecture/f2-distributed-modules.rules.json"
+        "reference/architecture/topologies/integration/event-driven/event-driven.rules.json"
       ],
       "opaPolicies": [
         "reference/architecture/topologies/integration/event-driven/event-driven.rego"
@@ -45,9 +44,27 @@
         "reference/knowledge/demo/ums-reference-model.md"
       ]
     },
+    "corpus": {
+      "guidance": {
+        "profile": "reference/architecture/topologies/integration/event-driven/README.md",
+        "maturityGuide": "reference/architecture/topologies/integration/event-driven/maturity.md"
+      },
+      "configurationContract": "reference/architecture/topologies/integration/event-driven/topology.config.schema.json",
+      "fixtures": {
+        "valid": "reference/architecture/topologies/integration/event-driven/fixtures/valid.topology.config.json",
+        "invalid": "reference/architecture/topologies/integration/event-driven/fixtures/invalid.topology.config.json"
+      },
+      "nativeEvaluator": "packages/core-domain/src/application/validators/ruleset-validator.service.ts",
+      "tests": {
+        "positive": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts",
+        "negative": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts"
+      },
+      "evidence": "reference/governance/standards/vision/maturity-evidence.json"
+    },
     "operationalInterfaces": {
       "cli": {
         "validators": [
+          "validate-architecture",
           "validate-topology"
         ]
       },

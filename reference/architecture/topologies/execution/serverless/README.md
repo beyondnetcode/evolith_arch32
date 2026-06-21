@@ -2,9 +2,10 @@
 
 > **Bilingual Navigation:** [Version en Espanol](./README.es.md)
 
-**Status:** Draft  
+**Status:** Accepted  
 **Dimension:** `execution`  
 **Topology ID:** `serverless`  
+**Compatibility Alias:** `F1-compatible`  
 **Manifest:** [topology.manifest.json](./topology.manifest.json)
 
 Serverless is an execution topology for managed, event-scaled workloads where the platform owns runtime provisioning and Evolith Core governs contracts, observability, security, idempotency, and integration boundaries.
@@ -25,6 +26,15 @@ Serverless does not replace domain architecture. It composes with `modular-monol
 | Boundary control | Serverless handlers must not bypass domain ownership or persistence boundaries. |
 | Provider neutrality | Core guidance remains provider-neutral; provider choices belong to product or platform profiles. |
 
+## Required Authority
+
+| Artifact | Role |
+|---|---|
+| [ADR-0079: Multi-Topology Reference Corpus](../../../adrs/core/0079-multi-topology-reference-corpus.md) | Governs topology manifests and composition. |
+| [ADR-0095: Serverless Architecture Governance](../../../adrs/core/0095-serverless-architecture-governance.md) | Governs serverless-specific architecture constraints. |
+| [Serverless Architecture Rules](./serverless.rules.json) | Existing executable compatibility rules. |
+| [Topology Dimensions Model](../../topology-dimensions.md) | Defines composition and compatibility rules. |
+
 ## Executable Contract
 
 Every adopting satellite provides `serverless.config.json`:
@@ -41,11 +51,20 @@ SV-R01 through SV-R04 require that contract, stateless execution, a package no l
 
 ## Composition
 
-`serverless` can combine with `modular-monolith`, `distributed-modules`, `microservices`, `event-driven`, `data-mesh`, and `agentic-ai` when the execution unit is governed by explicit contracts and telemetry.
+`serverless` can combine with:
+
+| Topology | Why It Can Compose |
+|---|---|
+| `modular-monolith` | Adds managed execution points without forcing full service extraction. |
+| `distributed-modules` | Allows serverless handlers within controlled module boundaries. |
+| `microservices` | Supports individual service functions with event-scaled execution. |
+| `event-driven` | Enables event-triggered serverless handlers governed by contracts. |
+| `data-mesh` | Provides analytical data product execution without transactional coupling. |
+| `agentic-ai` | Hosts AI-agent workflows governed by MCP context and rulesets. |
 
 ## Business Boundary
 
-This draft profile is technical-only. It does not define ROI, cost model, cloud spend, staffing, delivery timing, prioritization, or Funnel 0. Evolith Tracker owns those business concerns through its ACL.
+This profile is technical-only. It does not define ROI, cost model, cloud spend, staffing, delivery timing, prioritization, or Funnel 0. Evolith Tracker owns those business concerns through its ACL.
 
 ---
 [Back to Topology Hub](../../README.md)

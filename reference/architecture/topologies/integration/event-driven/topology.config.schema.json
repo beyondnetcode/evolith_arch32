@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Event-Driven Topology Configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["topology", "strictAsyncApi", "transactionalOutbox", "deadLetterQueue"],
+  "properties": {
+    "topology": { "const": "event-driven" },
+    "strictAsyncApi": { "const": true },
+    "transactionalOutbox": { "const": true },
+    "deadLetterQueue": { "const": true }
+  }
+}

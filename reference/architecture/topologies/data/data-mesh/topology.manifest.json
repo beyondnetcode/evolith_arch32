@@ -5,8 +5,8 @@
     "id": "data-mesh",
     "name": "Data Mesh",
     "dimension": "data",
-    "status": "draft",
-    "version": "0.1.0"
+    "status": "accepted",
+    "version": "1.0.0"
   },
   "spec": {
     "summary": "Distributed analytical data ownership topology for governed data products, discoverable contracts, quality evidence, and domain-aligned interoperability.",
@@ -26,14 +26,14 @@
     },
     "artifacts": {
       "adrs": [
-        "reference/architecture/adrs/core/0031-schema-per-context-domain-event-catalog.md",
+        "reference/architecture/adrs/core/0084-data-mesh-data-products.md",
         "reference/architecture/adrs/core/0079-multi-topology-reference-corpus.md"
       ],
       "rulesets": [
-        "rulesets/architecture/f2-distributed-modules.rules.json"
+        "reference/architecture/topologies/data/data-mesh/data-mesh.rules.json"
       ],
       "opaPolicies": [
-        "reference/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rego"
+        "reference/architecture/topologies/data/data-mesh/data-mesh.rego"
       ],
       "aiRulesets": [
         "reference/architecture/topologies/data/data-mesh/README.md"
@@ -42,9 +42,27 @@
         "reference/knowledge/demo/ums-reference-model.md"
       ]
     },
+    "corpus": {
+      "guidance": {
+        "profile": "reference/architecture/topologies/data/data-mesh/README.md",
+        "maturityGuide": "reference/architecture/topologies/data/data-mesh/maturity.md"
+      },
+      "configurationContract": "reference/architecture/topologies/data/data-mesh/topology.config.schema.json",
+      "fixtures": {
+        "valid": "reference/architecture/topologies/data/data-mesh/fixtures/valid.topology.config.json",
+        "invalid": "reference/architecture/topologies/data/data-mesh/fixtures/invalid.topology.config.json"
+      },
+      "nativeEvaluator": "packages/core-domain/src/application/validators/ruleset-validator.service.ts",
+      "tests": {
+        "positive": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts",
+        "negative": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts"
+      },
+      "evidence": "reference/governance/standards/vision/maturity-evidence.json"
+    },
     "operationalInterfaces": {
       "cli": {
         "validators": [
+          "validate-architecture",
           "validate-topology"
         ]
       },

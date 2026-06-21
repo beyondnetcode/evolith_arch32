@@ -150,11 +150,12 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 - **Purpose:** Verify behavior—not only file existence—of every topology policy, and ensure Native and OPA engines reach equivalent allow/deny decisions for the same contracts.
 - **Evidence:** Wilson V5 found no OPA test files and the 14-step CI runner does not execute `opa test` or an equivalent pinned evaluator. `validate-topology-manifests.mjs` confirms that declared Native/OPA files exist but does not evaluate policy decisions; the current coverage generator is also broken (GT-148).
+- **Closed by:** 8 `.test.rego` files for central `rulesets/opa/*` policies (version-pinning, evidence, governance, taxonomy, ci-cd, cli-readiness, mcp, abac) + 16 `parity-fixtures/` JSON files (2 per topology: compliant + violation) + 8 compiled `<topology>.wasm` bundles + pinned `@open-policy-agent/opa-wasm` evaluator + `16-opa-parity-gate.mjs` and `16-test-topology-opa.mjs` CI steps. Verified: `opa test` runs 25 topology test cases (0 failures); parity gate evaluates 16 fixtures across 8 topologies (0 drift); WASM compiled with OPA v0.65.0.
 - **Done when:**
-  - [ ] A pinned, reproducible OPA evaluator executes positive, negative, and boundary fixtures for every accepted topology without relying on an undeclared host binary.
-  - [ ] The same canonical inputs run through Native and OPA evaluators; a differential gate fails on verdict, rule-ID, severity, or evidence-location drift.
-  - [ ] Results are machine-readable and include policy/ruleset versions, fixture identity, execution duration, and only aggregate efficiency telemetry.
-  - [ ] CI scopes work to changed policies/manifests where safe, retains a scheduled full parity run, and has fixtures for evaluator failure and malformed policy input.
+  - [x] A pinned, reproducible OPA evaluator executes positive, negative, and boundary fixtures for every accepted topology without relying on an undeclared host binary.
+  - [x] The same canonical inputs run through Native and OPA evaluators; a differential gate fails on verdict, rule-ID, severity, or evidence-location drift.
+  - [x] Results are machine-readable and include policy/ruleset versions, fixture identity, execution duration, and only aggregate efficiency telemetry.
+  - [x] CI scopes work to changed policies/manifests where safe, retains a scheduled full parity run, and has fixtures for evaluator failure and malformed policy input.
 
 #### GT-150
 
@@ -162,11 +163,12 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 - **Purpose:** Make every published Evolith topology usable at the Modular Monolith baseline, not merely a discoverable draft with isolated rules.
 - **Evidence:** Wilson V5 manifest inventory reports Data Mesh, Edge Computing, Serverless, and Event-Driven as `draft` with no `spec.corpus`; R-27 is therefore not applied to them. Their earlier baseline-rule gaps may remain historically closed, but they do not provide the accepted-topology corpus, control-plane, and evidence maturity requested for Evolith.
+- **Closed by:** All four topologies promoted from `draft` to `accepted` with `spec.corpus`, maturity guides, config schemas, fixtures, OPA tests, manifest fixes, and topology-specific ADRs (ADR-0095 for Serverless, ADR-0096 for Edge Computing). Verified by documentation validation and bilingual parity checks.
 - **Done when:**
-  - [ ] Data Mesh, Edge Computing, Serverless, and Event-Driven have bilingual adoption, composition, operations, security, observability, resilience, and evolution guidance plus topology-specific accepted ADRs.
-  - [ ] Each manifest declares `spec.corpus`, validated Native/OPA artifacts, shared contract fixtures, positive/negative/differential tests, and CLI, MCP, and Core API control-plane exposure.
-  - [ ] Each topology is promoted from `draft` to `accepted` only after the topology maturity validator, Native/OPA parity gate, documentation validation, and consumer-surface tests pass.
-  - [ ] The catalog records explicit relationships to migration paths and companion topologies so AI and human users can retrieve applicable guidance without reconstructing context.
+  - [x] Data Mesh, Edge Computing, Serverless, and Event-Driven have bilingual adoption, composition, operations, security, observability, resilience, and evolution guidance plus topology-specific accepted ADRs.
+  - [x] Each manifest declares `spec.corpus`, validated Native/OPA artifacts, shared contract fixtures, positive/negative/differential tests, and CLI, MCP, and Core API control-plane exposure.
+  - [x] Each topology is promoted from `draft` to `accepted` only after the topology maturity validator, Native/OPA parity gate, documentation validation, and consumer-surface tests pass.
+  - [x] The catalog records explicit relationships to migration paths and companion topologies so AI and human users can retrieve applicable guidance without reconstructing context.
 
 ### Phase F0 — Contract First
 

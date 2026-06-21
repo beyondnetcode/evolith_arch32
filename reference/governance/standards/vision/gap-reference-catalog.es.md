@@ -151,11 +151,12 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 - **Propósito:** Verificar comportamiento —no solo existencia de archivos— de cada política topológica, y asegurar que los motores Native y OPA lleguen a decisiones allow/deny equivalentes para los mismos contratos.
 - **Evidencia:** Wilson V5 no encontró archivos de pruebas OPA y el runner CI de 14 pasos no ejecuta `opa test` ni un evaluador equivalente fijado. `validate-topology-manifests.mjs` confirma que existen archivos Native/OPA declarados, pero no evalúa decisiones de política; el generador de cobertura actual también está roto (GT-148).
+- **Cerrado por:** 8 archivos `.test.rego` para políticas centrales `rulesets/opa/*` (version-pinning, evidence, governance, taxonomy, ci-cd, cli-readiness, mcp, abac) + 16 archivos JSON `parity-fixtures/` (2 por topología: compliant + violation) + 8 bundles WASM compilados `<topology>.wasm` + evaluador `@open-policy-agent/opa-wasm` fijado + pasos CI `16-opa-parity-gate.mjs` y `16-test-topology-opa.mjs`. Verificado: `opa test` ejecuta 25 casos de prueba topológicos (0 fallos); gate de paridad evalúa 16 fixtures en 8 topologías (0 deriva); WASM compilado con OPA v0.65.0.
 - **Hecho cuando:**
-  - [ ] Un evaluador OPA fijado y reproducible ejecuta fixtures positivos, negativos y de límite para cada topología aceptada sin depender de un binario host no declarado.
-  - [ ] Las mismas entradas canónicas pasan por evaluadores Native y OPA; un gate diferencial falla ante deriva de veredicto, ID de regla, severidad o ubicación de evidencia.
-  - [ ] Los resultados son machine-readable e incluyen versiones de política/ruleset, identidad del fixture, duración de ejecución y solo telemetría agregada de eficiencia.
-  - [ ] CI acota trabajo a políticas/manifiestos modificados cuando sea seguro, conserva una ejecución completa programada de paridad y tiene fixtures para fallo del evaluador y entrada de política malformada.
+  - [x] Un evaluador OPA fijado y reproducible ejecuta fixtures positivos, negativos y de límite para cada topología aceptada sin depender de un binario host no declarado.
+  - [x] Las mismas entradas canónicas pasan por evaluadores Native y OPA; un gate diferencial falla ante deriva de veredicto, ID de regla, severidad o ubicación de evidencia.
+  - [x] Los resultados son machine-readable e incluyen versiones de política/ruleset, identidad del fixture, duración de ejecución y solo telemetría agregada de eficiencia.
+  - [x] CI acota trabajo a políticas/manifiestos modificados cuando sea seguro, conserva una ejecución completa programada de paridad y tiene fixtures para fallo del evaluador y entrada de política malformada.
 
 #### GT-150
 
@@ -163,11 +164,12 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 - **Propósito:** Hacer que toda topología Evolith publicada sea utilizable al nivel base de Monolito Modular, no solo un draft descubrible con reglas aisladas.
 - **Evidencia:** El inventario de manifiestos de Wilson V5 informa Data Mesh, Edge Computing, Serverless y Event-Driven como `draft` sin `spec.corpus`; por tanto R-27 no se les aplica. Sus gaps anteriores de reglas base pueden mantenerse históricamente cerrados, pero no entregan la madurez de corpus, control-plane y evidencia de una topología aceptada solicitada para Evolith.
+- **Cerrado por:** Las cuatro topologías ascendidas de `draft` a `accepted` con `spec.corpus`, guías de madurez, schemas de configuración, fixtures, pruebas OPA, correcciones de manifiesto y ADRs específicos de topología (ADR-0095 para Serverless, ADR-0096 para Edge Computing). Verificado por validación de documentación y controles de paridad bilingüe.
 - **Hecho cuando:**
-  - [ ] Data Mesh, Edge Computing, Serverless y Event-Driven cuentan con guía bilingüe de adopción, composición, operaciones, seguridad, observabilidad, resiliencia y evolución, más ADRs específicos de topología aceptados.
-  - [ ] Cada manifiesto declara `spec.corpus`, artefactos Native/OPA validados, fixtures de contrato compartidos, pruebas positivas/negativas/diferenciales y exposición de control-plane en CLI, MCP y Core API.
-  - [ ] Cada topología asciende de `draft` a `accepted` solo después de aprobar el validador de madurez topológica, gate de paridad Native/OPA, validación documental y pruebas de superficies consumidoras.
-  - [ ] El catálogo registra relaciones explícitas con rutas de migración y topologías complementarias para que usuarios IA y humanos recuperen guía aplicable sin reconstruir contexto.
+  - [x] Data Mesh, Edge Computing, Serverless y Event-Driven cuentan con guía bilingüe de adopción, composición, operaciones, seguridad, observabilidad, resiliencia y evolución, más ADRs específicos de topología aceptados.
+  - [x] Cada manifiesto declara `spec.corpus`, artefactos Native/OPA validados, fixtures de contrato compartidos, pruebas positivas/negativas/diferenciales y exposición de control-plane en CLI, MCP y Core API.
+  - [x] Cada topología asciende de `draft` a `accepted` solo después de aprobar el validador de madurez topológica, gate de paridad Native/OPA, validación documental y pruebas de superficies consumidoras.
+  - [x] El catálogo registra relaciones explícitas con rutas de migración y topologías complementarias para que usuarios IA y humanos recuperen guía aplicable sin reconstruir contexto.
 
 ### Fase F0 — Contrato Primero
 

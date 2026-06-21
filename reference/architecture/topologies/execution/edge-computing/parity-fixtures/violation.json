@@ -1,0 +1,14 @@
+{
+  "input": {
+    "topology": "edge-computing",
+    "config": {
+      "networkSecurity": { "mtlsEnabled": true },
+      "syncStrategy": "",
+      "edgeIsolation": true,
+      "conflictResolution": "last-write-wins"
+    }
+  },
+  "expectedNative": [
+    { "ruleId": null, "severity": "error", "file": null }
+  ]
+}

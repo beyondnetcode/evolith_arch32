@@ -1,0 +1,16 @@
+{
+  "input": {
+    "satellite": {
+      "agenticAi": {
+        "hasIdentity": true,
+        "hasIsolatedSandbox": true,
+        "hasSeparatedPromptAndImplementation": true,
+        "requiresApprovalForMutativeTools": true,
+        "hasEphemeralSandboxLimits": true,
+        "hasTrustedContextPolicy": true,
+        "hasAccountableActions": true
+      }
+    }
+  },
+  "expectedNative": []
+}

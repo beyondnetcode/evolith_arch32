@@ -1,34 +1,28 @@
 /**
  * @file 14-rag-index-sync.mjs
- * @description CI Step: RAG Knowledge Index Synchronization (GT-139 / ADR-0090)
+ * @description CI Step: RAG Knowledge Index Synchronization (ADR-0090 / GT-145)
  *
- * This step implements the delta-sync contract defined in ADR-0090.
- * It is DISABLED by default. Set EVOLITH_RAG_SYNC=true to activate.
+ * Truthful, provider-neutral delta-sync. DISABLED by default; set
+ * EVOLITH_RAG_SYNC=true for live mode.
  *
- * When active, it:
- *   1. Detects modified reference/ files from the last commit (git diff)
- *   2. Chunks each file at H2 section boundaries
- *   3. Emits chunk metadata (chunk_id, source_file, section_heading, language, corpus_version)
- *   4. Upserts chunks into the configured vector store (provider-agnostic contract)
+ *   1. Detects changed AND deleted reference/ files (git diff --name-status).
+ *   2. Chunks each file at H2 boundaries (deterministic chunk ids).
+ *   3. Embeds + upserts changed chunks and prunes stale/deleted ones (no
+ *      orphans) through the configured adapter port (rag-port.mjs).
+ *   4. Emits a machine-readable receipt and fails closed on any error.
  *
- * In dry-run mode (default), it logs what WOULD be synchronized without
- * connecting to a live vector store.
+ * Dry-run uses the truthful, non-durable in-memory adapter. Live, durable
+ * persistence requires a registered `durable: true` adapter selected via
+ * EVOLITH_RAG_PROVIDER — otherwise the run fails closed (it never pretends).
  */
 
-import { execSync } from 'child_process';
-import { readFileSync, existsSync } from 'fs';
-import { resolve, relative } from 'path';
-import { createHash } from 'crypto';
+import { execSync } from 'node:child_process';
+import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { createRagAdapter } from './rag-port.mjs';
+import { syncIndex, chunkIds } from './rag-sync.mjs';
 
 const RAG_SYNC_ENABLED = process.env.EVOLITH_RAG_SYNC === 'true';
-const CORPUS_ROOT = resolve(process.cwd(), 'reference');
-const CHUNK_MIN_TOKENS = 100;
-const CHUNK_MAX_TOKENS = 512;
-const CHUNK_MAX_CHARS = CHUNK_MAX_TOKENS * 4;
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
 
 function getCorpusVersion() {
   try {
@@ -38,135 +32,107 @@ function getCorpusVersion() {
   }
 }
 
-function getChangedReferenceFiles() {
+/** Changed (A/M) and deleted (D) EN reference markdown files since the last commit. */
+function getChangedAndDeleted() {
+  let out = '';
   try {
-    const diff = execSync('git diff --name-only HEAD~1 HEAD', { encoding: 'utf8' });
-    return diff
-      .split('\n')
-      .filter(f => f.startsWith('reference/') && f.endsWith('.md') && !f.endsWith('.es.md'))
-      .map(f => resolve(process.cwd(), f))
-      .filter(existsSync);
+    out = execSync('git diff --name-status HEAD~1 HEAD', { encoding: 'utf8' });
   } catch {
-    // Fallback for initial commit or shallow clone
-    return [];
+    return { changed: [], deleted: [] };
+  }
+  const changed = [];
+  const deleted = [];
+  for (const line of out.split('\n')) {
+    const m = line.match(/^([AMD])\t(reference\/.+\.md)$/);
+    if (!m) continue;
+    const [, status, file] = m;
+    if (file.endsWith('.es.md')) continue; // EN corpus is the indexed source
+    if (status === 'D') deleted.push(file);
+    else changed.push(file);
+  }
+  return { changed, deleted };
+}
+
+/** Content of a file at the parent commit (for pruning stale/deleted chunks). */
+function contentAtParent(file) {
+  try {
+    return execSync(`git show HEAD~1:${file}`, { encoding: 'utf8' });
+  } catch {
+    return null;
   }
 }
 
-function chunkAtH2(content, filePath, corpusVersion) {
-  const lines = content.split('\n');
-  const chunks = [];
-  let currentHeading = '__header__';
-  let currentLines = [];
-  const sourceFile = relative(process.cwd(), filePath);
-
-  const pushChunk = () => {
-    if (currentLines.length === 0) return;
-    const text = currentLines.join('\n').trim();
-    const chunkId = createHash('sha256')
-      .update(`${sourceFile}::${currentHeading}`)
-      .digest('hex')
-      .slice(0, 16);
-
-    // Extract ADR ID from filename (e.g. 0086 from 0086-some-adr.md)
-    const adrMatch = sourceFile.match(/\/(\d{4})-/);
-
-    const parts = splitLongSection(text);
-    for (const [index, part] of parts.entries()) {
-      chunks.push({
-        chunk_id: createHash('sha256').update(`${chunkId}::${index}`).digest('hex').slice(0, 16),
-        source_file: sourceFile,
-        section_heading: parts.length === 1 ? currentHeading : `${currentHeading} (${index + 1}/${parts.length})`,
-        adr_id: adrMatch ? adrMatch[1] : null,
-        gap_ids: [], language: 'en', corpus_version: corpusVersion,
-        token_estimate: Math.ceil(part.length / 4),
-        text_preview: part.slice(0, 120).replace(/\n/g, ' '),
-      });
-    }
-    currentLines = [];
-  };
-
-  for (const line of lines) {
-    if (line.startsWith('## ')) {
-      pushChunk();
-      currentHeading = line.slice(3).trim();
-    } else {
-      currentLines.push(line);
-    }
-  }
-  pushChunk();
-
-  return chunks;
+function failClosed(message) {
+  console.error(`❌ ${message}`);
+  process.exit(1);
 }
-
-function splitLongSection(text) {
-  if (text.length <= CHUNK_MAX_CHARS) return [text];
-  const parts = [];
-  let current = '';
-  for (let block of text.split(/(?=^### )/m)) {
-    if (current && current.length + block.length > CHUNK_MAX_CHARS) { parts.push(current.trim()); current = ''; }
-    while (block.length > CHUNK_MAX_CHARS) { parts.push(block.slice(0, CHUNK_MAX_CHARS)); block = block.slice(CHUNK_MAX_CHARS); }
-    current += block;
-  }
-  if (current.trim()) parts.push(current.trim());
-  return parts;
-}
-
-// ---------------------------------------------------------------------------
-// Main
-// ---------------------------------------------------------------------------
 
 async function main() {
-  console.log('📚 RAG Knowledge Index Sync (ADR-0090)');
+  console.log('📚 RAG Knowledge Index Sync (ADR-0090 / GT-145)');
   console.log(`   Mode: ${RAG_SYNC_ENABLED ? '🔴 LIVE SYNC' : '🟡 DRY-RUN (set EVOLITH_RAG_SYNC=true to activate)'}`);
-  console.log('');
 
   const corpusVersion = getCorpusVersion();
-  const changedFiles = getChangedReferenceFiles();
+  const { changed, deleted } = getChangedAndDeleted();
 
-  if (changedFiles.length === 0) {
-    console.log('   ✅ No reference/ files modified in this commit. Index is up to date.');
+  if (changed.length === 0 && deleted.length === 0) {
+    console.log('   ✅ No reference/ files changed in this commit. Index is up to date.');
     process.exit(0);
   }
 
-  console.log(`   📄 ${changedFiles.length} file(s) to synchronize:`);
-  let totalChunks = 0;
-
-  for (const filePath of changedFiles) {
-    const content = readFileSync(filePath, 'utf8');
-    const chunks = chunkAtH2(content, filePath, corpusVersion);
-    const fileName = relative(process.cwd(), filePath);
-    console.log(`\n   📂 ${fileName} → ${chunks.length} chunk(s)`);
-
-    for (const chunk of chunks) {
-      const tokenInfo = chunk.token_estimate < CHUNK_MIN_TOKENS
-        ? '⚠️  (too small, would merge)'
-        : chunk.token_estimate > CHUNK_MAX_TOKENS
-        ? '⚠️  (too large, would split at H3)'
-        : '✓';
-
-      console.log(`      [${chunk.chunk_id}] §${chunk.section_heading} (~${chunk.token_estimate} tokens) ${tokenInfo}`);
-
-      if (RAG_SYNC_ENABLED) {
-        // TODO: Replace with actual vector store client call
-        // await vectorStore.upsert({ id: chunk.chunk_id, metadata: chunk, vector: await embed(chunk.text) });
-        console.log(`      → Upserted into vector store`);
-      }
-      totalChunks++;
-    }
+  let adapter;
+  try {
+    adapter = createRagAdapter({ provider: process.env.EVOLITH_RAG_PROVIDER });
+  } catch (err) {
+    return failClosed(`RAG adapter unavailable — failing closed: ${err.message}`);
   }
 
-  console.log(`\n   📊 Summary: ${changedFiles.length} file(s), ${totalChunks} chunk(s) ${RAG_SYNC_ENABLED ? 'upserted' : 'identified (dry-run)'}`);
+  // Truthful contract: a live run must use a durable adapter; never pretend.
+  if (RAG_SYNC_ENABLED && !adapter.durable) {
+    return failClosed(
+      `Live sync requested but adapter "${adapter.name}" is not durable. ` +
+        `Configure EVOLITH_RAG_PROVIDER with a durable vector-store adapter. Failing closed.`,
+    );
+  }
+
+  const changedPayloads = changed.map((file) => {
+    const content = readFileSync(resolve(process.cwd(), file), 'utf8');
+    const prior = contentAtParent(file);
+    return { sourceFile: file, content, priorChunkIds: prior ? chunkIds(prior, file, corpusVersion) : undefined };
+  });
+  const deletedPayloads = deleted.map((file) => {
+    const prior = contentAtParent(file);
+    return { sourceFile: file, chunkIds: prior ? chunkIds(prior, file, corpusVersion) : [] };
+  });
+
+  let receipt;
+  try {
+    receipt = await syncIndex({ adapter, changed: changedPayloads, deleted: deletedPayloads, corpusVersion });
+  } catch (err) {
+    return failClosed(`RAG synchronization failed — failing closed: ${err.message}`);
+  }
+
+  console.log(
+    `\n   📊 ${receipt.counts.files} file(s) · ${receipt.counts.upserted} chunk(s) upserted · ` +
+      `${receipt.counts.deleted} pruned · provider [${receipt.provider}] durable=${receipt.durable}`,
+  );
+  console.log(`   📈 Telemetry: ${receipt.telemetry.embedCalls} embed call(s), ~${receipt.telemetry.estTokens} tokens`);
   console.log(`   🔖 Corpus version: ${corpusVersion}`);
+  // Machine-readable receipt (single line, easy to capture in CI).
+  console.log(`RECEIPT ${JSON.stringify(receipt)}`);
+
+  const receiptPath = process.env.EVOLITH_RAG_RECEIPT_PATH;
+  if (receiptPath) {
+    writeFileSync(resolve(process.cwd(), receiptPath), JSON.stringify(receipt, null, 2));
+    console.log(`   💾 Receipt written to ${receiptPath}`);
+  }
 
   if (!RAG_SYNC_ENABLED) {
-    console.log('\n   ℹ️  Dry-run complete. No vector store was contacted.');
-    console.log('      Set EVOLITH_RAG_SYNC=true to activate live synchronization.');
+    console.log('\n   ℹ️  Dry-run via the in-memory adapter (non-durable). Set EVOLITH_RAG_SYNC=true with a durable provider for live sync.');
   }
-
   process.exit(0);
 }
 
-main().catch(err => {
+main().catch((err) => {
   console.error('❌ RAG sync failed:', err.message);
   process.exit(1);
 });

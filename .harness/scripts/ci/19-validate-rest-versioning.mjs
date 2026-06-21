@@ -71,6 +71,32 @@ function check(file) {
     }
   }
 
+  // Deprecation check (GT-159)
+  if (/@Deprecated\s*\(/.test(content)) {
+    const changelogPath = resolve(ROOT, 'reference/products/core-api/changelog.md');
+    let changelogContent = '';
+    try {
+      changelogContent = readFileSync(changelogPath, 'utf8');
+    } catch {
+      return {
+        file,
+        ok: false,
+        reason: 'Changelog file reference/products/core-api/changelog.md not found but @Deprecated decorator is used',
+      };
+    }
+
+    const basename = file.split('/').pop().replace('.controller.ts', '');
+    const hasReference = changelogContent.toLowerCase().includes(basename.toLowerCase()) || 
+                          changelogContent.toLowerCase().includes('deprecation');
+    if (!hasReference) {
+      return {
+        file,
+        ok: false,
+        reason: `@Deprecated decorator is used but no corresponding entry is found in reference/products/core-api/changelog.md`,
+      };
+    }
+  }
+
   return { file, ok: true };
 }
 

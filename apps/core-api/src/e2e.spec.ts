@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ValidationPipe, VersioningType } from '@nestjs/common';
+import { INestApplication, ValidationPipe, VersioningType, Controller, Get } from '@nestjs/common';
 import { AppModule } from './app.module';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const request = require('supertest');
@@ -7,7 +7,16 @@ import helmet from 'helmet';
 import { correlationIdMiddleware } from './infrastructure/middleware/correlation-id.middleware';
 import { HttpExceptionFilter } from './infrastructure/filters/http-exception.filter';
 import { EnvelopeInterceptor } from './infrastructure/interceptors/envelope.interceptor';
+import { Deprecated, DeprecationInterceptor } from './infrastructure/interceptors/deprecation.interceptor';
 
+@Controller({ path: 'deprecated-test', version: '1' })
+class TestDeprecatedController {
+  @Get()
+  @Deprecated({ sunset: '2026-09-21', successor: '/api/v1/successor' })
+  test() {
+    return { ok: true };
+  }
+}
 
 describe('Core API E2E', () => {
   let app: INestApplication;
@@ -15,6 +24,7 @@ describe('Core API E2E', () => {
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
+      controllers: [TestDeprecatedController],
     }).compile();
 
     app = moduleFixture.createNestApplication();
@@ -28,7 +38,7 @@ describe('Core API E2E', () => {
     }));
 
     app.useGlobalFilters(new HttpExceptionFilter());
-    app.useGlobalInterceptors(new EnvelopeInterceptor());
+    app.useGlobalInterceptors(new DeprecationInterceptor(), new EnvelopeInterceptor());
 
     app.use(helmet());
     app.use(correlationIdMiddleware);
@@ -99,6 +109,16 @@ describe('Core API E2E', () => {
         .get('/api/v1/phases/1/requirements');
       expect(requirements.status).toBe(200);
       expect(requirements.body.data.mandatoryEvidence.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Flow 5: Deprecated route headers', () => {
+    it('should inject RFC 8594 and RFC 9745 headers on deprecated routes', async () => {
+      const res = await request(app.getHttpServer()).get('/api/v1/deprecated-test');
+      expect(res.status).toBe(200);
+      expect(res.headers['deprecation']).toBe('true');
+      expect(res.headers['sunset']).toBeDefined();
+      expect(res.headers['link']).toContain('successor-version');
     });
   });
 });

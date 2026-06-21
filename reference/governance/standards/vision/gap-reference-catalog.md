@@ -72,9 +72,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** Controllers in `apps/core-api/src/presentation/controllers/` route under unversioned paths (`/gates/...`, `/projects/...`). No `X-API-Version`, no sunset header, no documented deprecation timeline.
 - **Complexity:** S
 - **Done when:**
-  - [ ] All REST routes carry an explicit URI version segment (or equivalent header strategy ratified in an ADR), with `/api/v1/...` as the baseline.
-  - [ ] A deprecation policy ADR defines minimum notice, headers (`Deprecation`, `Sunset`), and changelog requirements for breaking changes.
-  - [ ] CI fails when a route is added without a version segment.
+  - [x] All REST routes carry an explicit URI version segment (or equivalent header strategy ratified in an ADR), with `/api/v1/...` as the baseline.
+  - [x] A deprecation policy ADR defines minimum notice, headers (`Deprecation`, `Sunset`), and changelog requirements for breaking changes.
+  - [x] CI fails when a route is added without a version segment.
 
 
 #### GT-160

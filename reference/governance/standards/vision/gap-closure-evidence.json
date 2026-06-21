@@ -3,6 +3,29 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-159",
+      "closedAt": "2026-06-21",
+      "closureCommit": "a9297f4e",
+      "evidence": [
+        "reference/architecture/adrs/core/0098-rest-uri-versioning-deprecation-policy.md",
+        "reference/architecture/adrs/core/0098-rest-uri-versioning-deprecation-policy.es.md",
+        "apps/core-api/src/infrastructure/interceptors/deprecation.interceptor.ts",
+        "apps/core-api/src/infrastructure/interceptors/deprecation.interceptor.spec.ts",
+        "apps/core-api/src/main.ts",
+        "apps/core-api/src/e2e.spec.ts",
+        ".harness/scripts/ci/19-validate-rest-versioning.mjs",
+        ".harness/scripts/ci/19-validate-rest-versioning.test.mjs",
+        "reference/products/core-api/changelog.md",
+        "reference/products/core-api/changelog.es.md"
+      ],
+      "validationCommands": [
+        "npm --workspace core-api run test",
+        "node .harness/scripts/ci/19-validate-rest-versioning.mjs"
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "GT-155 is a completed requirement providing response envelope conformance."
+    },
+    {
       "id": "GT-155",
       "closedAt": "2026-06-21",
       "closureCommit": "4d8ad2f52f2243d5e6acbb02d038d21cd069b8ec",

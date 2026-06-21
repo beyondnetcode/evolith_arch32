@@ -72,9 +72,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** Los controladores en `apps/core-api/src/presentation/controllers/` enrutan en paths sin versión (`/gates/...`, `/projects/...`). No hay `X-API-Version`, ni header de sunset, ni cronograma documentado de deprecación.
 - **Complejidad:** S
 - **Hecho cuando:**
-  - [ ] Todas las rutas REST llevan un segmento URI de versión explícito (o estrategia de header ratificada por ADR), con `/api/v1/...` como base.
-  - [ ] Un ADR de política de deprecación define el aviso mínimo, los headers (`Deprecation`, `Sunset`) y los requisitos de changelog para cambios incompatibles.
-  - [ ] CI falla cuando se añade una ruta sin segmento de versión.
+  - [x] Todas las rutas REST llevan un segmento URI de versión explícito (o estrategia de header ratificada por ADR), con `/api/v1/...` como base.
+  - [x] Un ADR de política de deprecación define el aviso mínimo, los headers (`Deprecation`, `Sunset`) y los requisitos de changelog para cambios incompatibles.
+  - [x] CI falla cuando se añade una ruta sin segmento de versión.
 
 
 #### GT-160

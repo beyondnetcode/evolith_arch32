@@ -73,5 +73,9 @@ Un aspecto critico de la topologia Edge Computing es manejar la conectividad int
 
 Este perfil es solo tecnico. No define ROI, modelo de costos, gasto de hardware, staffing, timing de entrega, priorizacion ni Funnel 0. Evolith Tracker posee esas preocupaciones de negocio mediante su ACL.
 
+## Presupuestos Operativos
+
+Esta topología declara envelopes arquitectónicos de latencia, cold-start y costo por ejecución en `spec.operationalBudgets` de [`topology.manifest.json`](./topology.manifest.json). Los operadores verifican los satélites contra estos envelopes siguiendo el [Runbook de Presupuestos Operativos](../operational-budgets-runbook.es.md) compartido.
+
 ---
 [Volver al Hub de Topologias](../../README.es.md)

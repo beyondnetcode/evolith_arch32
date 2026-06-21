@@ -73,5 +73,9 @@ A critical aspect of the Edge Computing topology is handling intermittent connec
 
 This profile is technical-only. It does not define ROI, cost model, hardware spend, staffing, delivery timing, prioritization, or Funnel 0. Evolith Tracker owns those business concerns through its ACL.
 
+## Operational Budgets
+
+This topology declares architectural envelopes for latency, cold-start, and per-execution cost in `spec.operationalBudgets` of [`topology.manifest.json`](./topology.manifest.json). Operators verify satellites against these envelopes following the shared [Operational Budgets Runbook](../operational-budgets-runbook.md).
+
 ---
 [Back to Topology Hub](../../README.md)

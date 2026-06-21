@@ -59,6 +59,11 @@
       },
       "evidence": "reference/governance/standards/vision/maturity-evidence.json"
     },
+    "operationalBudgets": {
+      "latencyBudgetMs": 200,
+      "coldStartCeilingMs": 300,
+      "costEnvelopePerExecutionCents": 1
+    },
     "operationalInterfaces": {
       "cli": {
         "validators": [

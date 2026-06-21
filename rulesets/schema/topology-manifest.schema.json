@@ -187,6 +187,29 @@
             "evidence": { "$ref": "#/definitions/repositoryPath" }
           }
         },
+        "operationalBudgets": {
+          "type": "object",
+          "description": "Architectural envelopes for execution-tier topologies (GT-165 / ADR-0095 / ADR-0096). These are technical ceilings used by operators to verify the topology's viability, not financial plans — Tracker still owns roi/cost/budget decisions per businessBoundary.",
+          "required": ["latencyBudgetMs", "coldStartCeilingMs", "costEnvelopePerExecutionCents"],
+          "additionalProperties": false,
+          "properties": {
+            "latencyBudgetMs": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "p99 end-to-end execution budget in milliseconds. The topology is considered non-viable above this ceiling."
+            },
+            "coldStartCeilingMs": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Maximum acceptable cold-start latency in milliseconds before the topology choice must be revisited."
+            },
+            "costEnvelopePerExecutionCents": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Architectural ceiling for cost per execution in whole cents. Above this envelope the topology's economics fail; financial planning still lives in Tracker."
+            }
+          }
+        },
         "operationalInterfaces": {
           "type": "object",
           "required": ["cli", "mcp", "coreApi"],
@@ -299,6 +322,27 @@
       "then": {
         "properties": {
           "spec": { "required": ["corpus"] }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "metadata": {
+            "properties": { "status": { "const": "accepted" } },
+            "required": ["status"]
+          },
+          "spec": {
+            "properties": {
+              "topologyType": { "enum": ["serverless", "edge-computing"] }
+            },
+            "required": ["topologyType"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "spec": { "required": ["operationalBudgets"] }
         }
       }
     }

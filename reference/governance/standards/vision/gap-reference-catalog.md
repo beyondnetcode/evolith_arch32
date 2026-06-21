@@ -11,6 +11,19 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 ---
 
 ## 1. Gap Details
+
+#### GT-151
+
+**Title:** Complete Native/OPA Rule-ID Coverage for Accepted Topologies
+
+- **Purpose:** Enforce the dual-engine rule contract for every accepted topology, so Native rulesets and OPA policies govern the same rule IDs rather than merely agreeing on a small fixture sample.
+- **Evidence:** `node .harness/scripts/ci/15-validate-topology-rule-coverage.mjs` reports missing OPA IDs for Edge Computing (`EC-R01`–`EC-R03`), Serverless (`SV-R01`–`SV-R04`), Distributed Modules (`DM-R06`–`DM-R07`), and Microservices (`MS-R03`–`MS-R08`), plus OPA-only `MM-R12` in Modular Monolith and the unreferenced `common-execution.rego` policy. `16-opa-parity-gate.mjs` passes because its 16 fixtures cover only a subset of decisions.
+- **Done when:**
+  - [ ] Every accepted topology has an identical canonical rule-ID set across its Native ruleset and declared OPA policies, with shared execution-policy ownership explicit in manifests.
+  - [ ] Every missing or OPA-only rule has positive, negative, and boundary fixtures driving both engines, with semantic parity verified per rule ID.
+  - [ ] The coverage validator fails on all accepted-topology divergence and unreferenced policy artifacts; full CI reports zero coverage warnings.
+  - [ ] Maturity and parity evidence records cite repaired artifacts, reproducible commands, and aggregate execution telemetry.
+
 ### Phase 2: Agentic Architecture & Evolution
 
 #### GT-135

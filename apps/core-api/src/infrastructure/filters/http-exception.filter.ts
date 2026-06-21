@@ -6,6 +6,10 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
+import {
+  buildEnvelopeMeta,
+  ErrorEnvelope,
+} from '../interceptors/envelope.interceptor';
 
 interface ProblemDetails {
   type: string;
@@ -18,12 +22,26 @@ interface ProblemDetails {
   errors?: unknown[];
 }
 
+const STATUS_TO_CODE: Record<number, string> = {
+  [HttpStatus.BAD_REQUEST]: 'BAD_REQUEST',
+  [HttpStatus.UNAUTHORIZED]: 'UNAUTHORIZED',
+  [HttpStatus.FORBIDDEN]: 'FORBIDDEN',
+  [HttpStatus.NOT_FOUND]: 'NOT_FOUND',
+  [HttpStatus.CONFLICT]: 'CONFLICT',
+  [HttpStatus.UNPROCESSABLE_ENTITY]: 'UNPROCESSABLE_ENTITY',
+  [HttpStatus.TOO_MANY_REQUESTS]: 'TOO_MANY_REQUESTS',
+  [HttpStatus.INTERNAL_SERVER_ERROR]: 'INTERNAL_ERROR',
+};
+
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
+    const startedAt =
+      (request as Request & { __envelopeStartedAt?: number }).__envelopeStartedAt ??
+      Date.now();
 
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
     let title = 'Internal Server Error';
@@ -86,10 +104,22 @@ export class HttpExceptionFilter implements ExceptionFilter {
       problem.errors = errors;
     }
 
+    const meta = buildEnvelopeMeta(request, startedAt);
+    const envelope: ErrorEnvelope = {
+      success: false,
+      error: {
+        code: STATUS_TO_CODE[status] ?? 'INTERNAL_ERROR',
+        message: problem.detail,
+        details: problem as unknown as Record<string, unknown>,
+      },
+      meta,
+    };
+
     response
       .status(status)
-      .setHeader('Content-Type', 'application/problem+json')
-      .json(problem);
+      .setHeader('Content-Type', 'application/json')
+      .setHeader('X-Problem-Format', 'rfc9457')
+      .json(envelope);
   }
 
   private getTypeUri(status: number): string {

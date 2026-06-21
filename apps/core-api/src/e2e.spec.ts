@@ -6,6 +6,7 @@ const request = require('supertest');
 import helmet from 'helmet';
 import { correlationIdMiddleware } from './infrastructure/middleware/correlation-id.middleware';
 import { HttpExceptionFilter } from './infrastructure/filters/http-exception.filter';
+import { EnvelopeInterceptor } from './infrastructure/interceptors/envelope.interceptor';
 
 
 describe('Core API E2E', () => {
@@ -27,6 +28,7 @@ describe('Core API E2E', () => {
     }));
 
     app.useGlobalFilters(new HttpExceptionFilter());
+    app.useGlobalInterceptors(new EnvelopeInterceptor());
 
     app.use(helmet());
     app.use(correlationIdMiddleware);
@@ -39,21 +41,28 @@ describe('Core API E2E', () => {
   });
 
   describe('Flow 1: Health Check (Public)', () => {
-    it('should return service health status without auth', async () => {
+    it('should return service health status wrapped in the ADR-0073 envelope', async () => {
       const res = await request(app.getHttpServer()).get('/health');
       expect(res.status).toBe(200);
-      expect(res.body.status).toBe('OK');
+      expect(res.body.success).toBe(true);
+      expect(res.body.data.status).toBe('OK');
+      expect(res.body.meta.command).toContain('http GET');
+      expect(res.body.meta.schemaVersion).toBeDefined();
     });
   });
 
-  describe('Flow 2: RFC 9457 Problem Details', () => {
-    it('should return application/problem+json on 400', async () => {
+  describe('Flow 2: RFC 9457 Problem Details wrapped in error envelope', () => {
+    it('should return a failure envelope whose details carry RFC 9457 fields', async () => {
       const res = await request(app.getHttpServer())
         .post('/api/v1/architecture/validate-satellite')
         .send({});
       expect(res.status).toBe(400);
-      expect(res.headers['content-type']).toContain('application/problem+json');
-      expect(res.body).toHaveProperty('status', 400);
+      expect(res.headers['x-problem-format']).toBe('rfc9457');
+      expect(res.body.success).toBe(false);
+      expect(res.body.error.code).toBe('BAD_REQUEST');
+      expect(res.body.error.details).toHaveProperty('status', 400);
+      expect(res.body.error.details).toHaveProperty('type');
+      expect(res.body.meta.schemaVersion).toBeDefined();
     });
   });
 
@@ -63,6 +72,7 @@ describe('Core API E2E', () => {
         .post('/api/v1/architecture/validate-satellite')
         .send({});
       expect(res.status).toBe(400);
+      expect(res.body.success).toBe(false);
     });
   });
 
@@ -71,21 +81,24 @@ describe('Core API E2E', () => {
       const rulesets = await request(app.getHttpServer()).get('/api/v1/rulesets');
 
       expect(rulesets.status).toBe(200);
-      expect(rulesets.body.length).toBeGreaterThan(0);
+      expect(rulesets.body.success).toBe(true);
+      const rulesetList = rulesets.body.data as Array<{ id: string }>;
+      expect(rulesetList.length).toBeGreaterThan(0);
 
       const ruleset = await request(app.getHttpServer())
-        .get(`/api/v1/rulesets/${encodeURIComponent(rulesets.body[0].id)}`);
+        .get(`/api/v1/rulesets/${encodeURIComponent(rulesetList[0].id)}`);
       expect(ruleset.status).toBe(200);
+      expect(ruleset.body.success).toBe(true);
 
       const gate = await request(app.getHttpServer())
         .get('/api/v1/gates/PG1');
       expect(gate.status).toBe(200);
-      expect(gate.body.phase).toBe(1);
+      expect(gate.body.data.phase).toBe(1);
 
       const requirements = await request(app.getHttpServer())
         .get('/api/v1/phases/1/requirements');
       expect(requirements.status).toBe(200);
-      expect(requirements.body.mandatoryEvidence.length).toBeGreaterThan(0);
+      expect(requirements.body.data.mandatoryEvidence.length).toBeGreaterThan(0);
     });
   });
 });

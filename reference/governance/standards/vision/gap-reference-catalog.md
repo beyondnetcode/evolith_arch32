@@ -98,10 +98,11 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Purpose:** Turn the ADR-0090 RAG delta-sync path into a real, provider-neutral operational capability. A live run must embed and persist chunks, report a durable receipt, and fail when no configured adapter can complete the operation.
 - **Evidence:** `.harness/scripts/ci/14-rag-index-sync.mjs` labels `EVOLITH_RAG_SYNC=true` as live and reports each chunk as upserted, but its vector-store and embedding calls are commented TODOs. No vector database is contacted or verified.
 - **Done when:**
-  - [ ] A provider-neutral embedding/vector-store port and configuration contract select an actual adapter without binding the core to one vendor.
-  - [ ] Live mode upserts deterministic chunk metadata and vectors, records a machine-readable receipt, and fails closed on adapter, embedding, or persistence failure.
-  - [ ] Index lifecycle covers changed and deleted source files without orphaned vectors, with a fake-adapter test suite and an integration test boundary.
-  - [ ] Operations guidance documents least-privilege credentials, bounded batch/retry behavior, and cost/token telemetry.
+  - [x] A provider-neutral embedding/vector-store port and configuration contract select an actual adapter without binding the core to one vendor.
+  - [x] Live mode upserts deterministic chunk metadata and vectors, records a machine-readable receipt, and fails closed on adapter, embedding, or persistence failure.
+  - [x] Index lifecycle covers changed and deleted source files without orphaned vectors, with a fake-adapter test suite and an integration test boundary.
+  - [x] Operations guidance documents least-privilege credentials, bounded batch/retry behavior, and cost/token telemetry.
+- **Closure evidence:** Commit `d41bc3a3`. New pure modules `.harness/scripts/ci/rag-port.mjs` (provider-neutral embedding/vector-store port; truthful non-durable `memory` adapter; fail-closed on unknown/incomplete adapter; `registerRagAdapter` for vendors) and `rag-sync.mjs` (deterministic H2 chunking, batched embed+upsert, stale-chunk pruning and deleted-file removal with no orphans, machine-readable receipt with token telemetry). `14-rag-index-sync.mjs` rewired to the port (changed+deleted detection, fail-closed when a live run lacks a durable adapter). `rag-sync.test.mjs` — 9 `node:test` cases. Ops runbook `reference/operations/agentic-ci-rag-support.md` (+`.es.md`) documents provider selection, least-privilege credentials, bounded batch/retry, and cost/token telemetry. The integration boundary is the registered durable adapter (vendor binding intentionally deferred).
 
 #### GT-146
 

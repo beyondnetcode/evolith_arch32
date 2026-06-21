@@ -99,10 +99,11 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Propósito:** Convertir la ruta de sincronización delta de RAG de ADR-0090 en una capacidad operativa real y neutral al proveedor. Una ejecución live debe generar embeddings y persistir fragmentos, informar un comprobante durable y fallar cuando ningún adaptador configurado pueda completar la operación.
 - **Evidencia:** `.harness/scripts/ci/14-rag-index-sync.mjs` etiqueta `EVOLITH_RAG_SYNC=true` como live e informa cada fragmento como upserted, pero sus llamadas al almacén vectorial y a embeddings son TODOs comentados. Ninguna base vectorial es contactada ni verificada.
 - **Hecho cuando:**
-  - [ ] Un puerto neutral para embeddings/almacén vectorial y un contrato de configuración seleccionan un adaptador real sin vincular el core a un proveedor.
-  - [ ] El modo live hace upsert de metadatos y vectores deterministas, registra un comprobante machine-readable y falla de forma cerrada ante fallo del adaptador, embedding o persistencia.
-  - [ ] El ciclo de vida del índice cubre archivos fuente modificados y eliminados sin vectores huérfanos, con suite de pruebas de adaptador falso y límite de prueba de integración.
-  - [ ] La guía de operaciones documenta credenciales de mínimo privilegio, comportamiento acotado de lotes/reintentos y telemetría de costo/tokens.
+  - [x] Un puerto neutral para embeddings/almacén vectorial y un contrato de configuración seleccionan un adaptador real sin vincular el core a un proveedor.
+  - [x] El modo live hace upsert de metadatos y vectores deterministas, registra un comprobante machine-readable y falla de forma cerrada ante fallo del adaptador, embedding o persistencia.
+  - [x] El ciclo de vida del índice cubre archivos fuente modificados y eliminados sin vectores huérfanos, con suite de pruebas de adaptador falso y límite de prueba de integración.
+  - [x] La guía de operaciones documenta credenciales de mínimo privilegio, comportamiento acotado de lotes/reintentos y telemetría de costo/tokens.
+- **Evidencia de cierre:** Commit `d41bc3a3`. Nuevos módulos puros `.harness/scripts/ci/rag-port.mjs` (puerto neutral de embeddings/almacén vectorial; adapter `memory` veraz no durable; fallo cerrado ante adaptador desconocido/incompleto; `registerRagAdapter` para proveedores) y `rag-sync.mjs` (chunking determinista por H2, embed+upsert por lotes, poda de chunks obsoletos y borrado de archivos eliminados sin huérfanos, recibo machine-readable con telemetría de tokens). `14-rag-index-sync.mjs` recableado al puerto (detección changed+deleted, fallo cerrado si una corrida live no tiene adaptador durable). `rag-sync.test.mjs` — 9 casos `node:test`. Runbook de operaciones `reference/operations/agentic-ci-rag-support.md` (+`.es.md`) documenta selección de proveedor, credenciales de mínimo privilegio, lotes/reintentos acotados y telemetría de costo/tokens. El límite de integración es el adaptador durable registrado (vínculo a proveedor diferido a propósito).
 
 #### GT-146
 

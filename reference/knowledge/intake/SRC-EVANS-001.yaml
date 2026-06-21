@@ -1,0 +1,8 @@
+source_registry_id: SRC-EVANS-001
+source_license: All Rights Reserved
+edition_or_url: "Domain-Driven Design: Tackling Complexity in the Heart of Software, 1st Edition"
+retention_mode: citation
+content_fingerprint: sha256:evans-ddd-aggregate-chapter-2026
+review_cadence: 12-months
+ki_links:
+  - KI-EVANS-AGGREGATE-001

@@ -1,4 +1,5 @@
 knowledge_id: KI-EVANS-AGGREGATE-001
+source_registry_id: SRC-EVANS-001
 source:
   class: book
   author: Eric Evans
@@ -13,18 +14,35 @@ assessment:
     - modular-monolith
     - distributed-modules
     - microservices
+  maturity: proven
+  preconditions:
+    - domain-modeling-established
+    - bounded-contexts-defined
+  anti_patterns:
+    - smart-ui-anti-pattern
+    - anemic-domain-model
+  alternatives:
+    - event-sourcing
+    - cqrs
+  related_topologies:
+    - event-driven
+    - data-mesh
   concerns:
     - domain-modeling
     - consistency
 promotion:
   status: candidate
+  promoted_at: null
+  promoted_by: null
   adr: null
   native_rule: null
   opa_policy: null
   fixtures: []
+  disposition: null
 review:
   owner: '@wilson'
   next_review_at: "2026-12-20"
+  review_freshness: "2026-06-20"
 synthesis: >-
   Model transactional invariants inside deliberately small aggregates and reference
   other aggregates by identity. This candidate supports Evolith small-aggregate

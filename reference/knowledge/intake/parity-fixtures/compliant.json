@@ -1,0 +1,41 @@
+{
+  "input": {
+    "knowledge_id": "KI-FIXTURE-COMPLIANT-001",
+    "source_registry_id": "SRC-FIXTURE-001",
+    "source": {
+      "class": "book",
+      "author": "Test Author",
+      "work": "Test Work",
+      "locator": "Chapter 1",
+      "retrieved_at": "2026-06-20",
+      "rights_status": "citation-and-synthesis-only"
+    },
+    "assessment": {
+      "trust_level": "primary",
+      "portability": "high",
+      "topologies": ["modular-monolith"],
+      "maturity": "proven",
+      "preconditions": ["domain-modeling"],
+      "anti_patterns": ["anemic-domain-model"],
+      "alternatives": ["event-sourcing"],
+      "concerns": ["domain-modeling"]
+    },
+    "promotion": {
+      "status": "candidate",
+      "promoted_at": null,
+      "promoted_by": null,
+      "adr": null,
+      "native_rule": null,
+      "opa_policy": null,
+      "fixtures": [],
+      "disposition": null
+    },
+    "review": {
+      "owner": "@wilson",
+      "next_review_at": "2026-12-20",
+      "review_freshness": "2026-06-20"
+    },
+    "synthesis": "This compliant fixture satisfies all contract requirements for a candidate knowledge intake entry."
+  },
+  "expectedNative": []
+}

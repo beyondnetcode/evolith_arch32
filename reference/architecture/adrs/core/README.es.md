@@ -45,6 +45,8 @@
 * [0081-agentic-ai-sandbox-isolation](./0081-agentic-ai-sandbox-isolation.es.md) — **Limite de aislamiento de sandbox para ejecucion de herramientas de agentes**
 * [0082-agentic-ai-trust-boundary](./0082-agentic-ai-trust-boundary.es.md) — **Limite de confianza para prompts, contexto y salida de herramientas**
 * [0083-agentic-ai-action-authorization-audit](./0083-agentic-ai-action-authorization-audit.es.md) — **Autorizacion por capacidad y auditoria append-only de acciones**
+* [0090-rag-knowledge-governance](./0090-rag-knowledge-governance.es.md) — **Estándar de gobernanza de conocimiento RAG para sincronización de almacén vectorial**
+* [0097-knowledge-lifecycle-governance](./0097-knowledge-lifecycle-governance.es.md) — **Pipeline de promoción del ciclo de vida del conocimiento y custodia por Winston**
 
 ---
 [Volver al Nivel Superior](../README.es.md)

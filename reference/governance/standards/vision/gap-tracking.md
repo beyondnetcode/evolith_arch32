@@ -13,7 +13,6 @@ This board is the single source of truth for technical debt, gaps, opportunities
 
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
 |---|---|---|:---:|:---:|:---:|:---:|
-| [`GT-165`](./gap-reference-catalog.md#gt-165) | Concrete SLO and cost budgets for serverless and edge topologies | `Documentation` | Cross | P1 | S | `IN-PROGRESS` |
 | [`GT-157`](./gap-reference-catalog.md#gt-157) | MCP authentication and authorization parity with REST | `MCP Services` | Cross | P1 | M | `PENDING` |
 | [`GT-158`](./gap-reference-catalog.md#gt-158) | Human-in-the-loop and ABAC scoping for mutative MCP tools | `MCP Services` | Cross | P1 | M | `PENDING` |
 | [`GT-160`](./gap-reference-catalog.md#gt-160) | Cross-surface correlation-ID and request-context propagation | `Cross` | Cross | P1 | M | `PENDING` |
@@ -71,8 +70,9 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-121`](./gap-reference-catalog.md#gt-121) | Decommission the in-process MCP subsystem in the Smart CLI (post-delegation, ADR-0074/0075 Phase 3) | `CLI` | Cross | P2 | M | `DONE` |
 | [`GT-122`](./gap-reference-catalog.md#gt-122) | Consolidate duplicated infrastructure adapters across sdk/cli, apps/core-api and packages/infra-providers | `Cross` | Cross | P2 | M | `DONE` |
 | [`GT-124`](./gap-reference-catalog.md#gt-124) | CLI e2e suite broken — missing fixtures (SDLC templates, shell hooks) and stale old-MCP prompt naming | `CLI` | Cross | P2 | M | `DONE` |
-| [`MT-A26`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Update navigation, indexes, validation evidence, and tracker status | `Documentation` | Cross | P2 | M | `DONE` |
 | [`MT-A09`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create the English and Spanish Topology Hub | `Documentation` | Cross | P1 | S | `DONE` |
+| [`GT-165`](./gap-reference-catalog.md#gt-165) | Concrete SLO and cost budgets for serverless and edge topologies | `Documentation` | Cross | P1 | S | `DONE` |
+| [`MT-A26`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Update navigation, indexes, validation evidence, and tracker status | `Documentation` | Cross | P2 | M | `DONE` |
 | [`GT-59`](./gap-reference-catalog.md#gt-59) | Hardening HTTP — Helmet + CORS + Rate Limiting (OWASP API4/8) | `BFF API` | Cross | P0 | S | `DONE` |
 | [`GT-60`](./gap-reference-catalog.md#gt-60) | Validación Global DTOs con class-validator (OWASP API3) | `BFF API` | Cross | P0 | M | `DONE` |
 | [`GT-64`](./gap-reference-catalog.md#gt-64) | Structured Logging con Correlation ID | `BFF API` | Cross | P0 | M | `DONE` |
@@ -192,7 +192,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-156`](./gap-reference-catalog.md#gt-156) | Core API product hub, API reference, and deployment runbook | `Product` | Cross | P0 | L | `DONE` |
 
 
-**Progress:** 160 / 177 done · 1 in progress · 16 pending · 0 deferred
+**Progress:** 161 / 177 done · 0 in progress · 16 pending · 0 deferred
 
 **Wave 2026-06-21 (Wilson deep audit):** Added 20 new gaps `GT-155`…`GT-174` covering Core API envelope conformance, command-as-a-service surface parity, MCP authn/authz, OPA schemas/aggregator tests, topology manifest validation, SDLC runbooks/templates, Core API and UMS product hubs, agentic-AI operational budgets, OpenTelemetry parity, and envelope schema versioning.
 

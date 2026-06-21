@@ -13,7 +13,6 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|
-| [`GT-165`](./gap-reference-catalog.es.md#gt-165) | SLOs y presupuestos de costo concretos para topologías serverless y edge | `Documentation` | Cross | P1 | S | `EN PROGRESO` |
 | [`GT-157`](./gap-reference-catalog.es.md#gt-157) | Paridad de autenticación y autorización MCP con REST | `MCP Services` | Cross | P1 | M | `PENDIENTE` |
 | [`GT-158`](./gap-reference-catalog.es.md#gt-158) | Human-in-the-loop y ABAC para herramientas MCP mutativas | `MCP Services` | Cross | P1 | M | `PENDIENTE` |
 | [`GT-160`](./gap-reference-catalog.es.md#gt-160) | Propagación de correlation-ID y contexto de solicitud entre superficies | `Cross` | Cross | P1 | M | `PENDIENTE` |
@@ -71,8 +70,9 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-121`](./gap-reference-catalog.es.md#gt-121) | Retirar el subsistema MCP in-process del Smart CLI (tras la delegación, Fase 3 de ADR-0074/0075) | `CLI` | Transversal | P2 | M | `COMPLETADO` |
 | [`GT-122`](./gap-reference-catalog.es.md#gt-122) | Consolidar adapters de infraestructura duplicados entre sdk/cli, apps/core-api y packages/infra-providers | `Cross` | Transversal | P2 | M | `COMPLETADO` |
 | [`GT-124`](./gap-reference-catalog.es.md#gt-124) | Suite e2e del CLI rota — faltan fixtures (plantillas SDLC, shell hooks) y naming obsoleto del MCP viejo | `CLI` | Transversal | P2 | M | `COMPLETADO` |
-| [`MT-A26`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Actualizar navegación, índices, evidencia de validación y estado del tracker | `Documentation` | Transversal | P2 | M | `COMPLETADO` |
 | [`MT-A09`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Crear Topology Hub en inglés y español | `Documentation` | Transversal | P1 | S | `COMPLETADO` |
+| [`GT-165`](./gap-reference-catalog.es.md#gt-165) | SLOs y presupuestos de costo concretos para topologías serverless y edge | `Documentation` | Cross | P1 | S | `COMPLETADO` |
+| [`MT-A26`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Actualizar navegación, índices, evidencia de validación y estado del tracker | `Documentation` | Transversal | P2 | M | `COMPLETADO` |
 | [`GT-59`](./gap-reference-catalog.es.md#gt-59) | Hardening HTTP — Helmet + CORS + Rate Limiting (OWASP API4/8) | `BFF API` | Transversal | P0 | S | `COMPLETADO` |
 | [`GT-60`](./gap-reference-catalog.es.md#gt-60) | Validación global de DTOs con class-validator (OWASP API3) | `BFF API` | Transversal | P0 | M | `COMPLETADO` |
 | [`GT-64`](./gap-reference-catalog.es.md#gt-64) | Logging estructurado con Correlation ID | `BFF API` | Transversal | P0 | M | `COMPLETADO` |
@@ -191,7 +191,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-129`](./gap-reference-catalog.es.md#gt-129) | Baseline Ruleset for Edge Computing | `Architecture` | Transversal | P2 | M | `COMPLETADO` |
 | [`GT-156`](./gap-reference-catalog.es.md#gt-156) | Hub de producto, referencia API y runbook de despliegue del Core API | `Product` | Cross | P0 | L | `COMPLETADO` |
 
-**Progreso:** 160 / 177 completados · 1 en progreso · 16 pendientes · 0 diferidos
+**Progreso:** 161 / 177 completados · 0 en progreso · 16 pendientes · 0 diferidos
 
 **Oleada 2026-06-21 (auditoría profunda de Wilson):** Añadidos 20 gaps nuevos `GT-155`…`GT-174` que cubren conformidad de envelope en Core API REST, paridad de superficies command-as-a-service, autenticación/autorización MCP, esquemas y tests de OPA, validación CI de manifests de topología, runbooks y plantillas SDLC, hubs de producto de Core API y UMS, presupuestos operativos de Agentic AI, paridad OpenTelemetry y versionado del envelope.
 

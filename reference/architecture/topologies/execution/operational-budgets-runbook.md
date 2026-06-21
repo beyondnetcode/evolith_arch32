@@ -12,7 +12,7 @@ This runbook is normative for **serverless** and **edge-computing**; other topol
 |---|---|---|
 | `latencyBudgetMs` | p99 end-to-end execution budget | p99 latency exceeds the budget over a 24h window |
 | `coldStartCeilingMs` | Maximum acceptable cold-start | p95 cold-start exceeds the ceiling over a 7-day window |
-| `costEnvelopePerExecutionCents` | Per-execution architectural ceiling (whole cents) | Average cost per execution exceeds the envelope over the billing period |
+| `costCeilingPerExecutionCents` | Per-execution architectural ceiling (whole cents) | Average cost per execution exceeds the envelope over the billing period |
 
 If any signal fires, the architecture choice must be revisited. The values are not SLOs sold to a customer — they are the line above which the topology stops paying for itself.
 

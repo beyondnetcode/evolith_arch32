@@ -3,6 +3,23 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-165",
+      "closedAt": "2026-06-21",
+      "closureCommit": "956bba24",
+      "evidence": [
+        "rulesets/schema/topology-manifest.schema.json",
+        "reference/architecture/topologies/execution/serverless/topology.manifest.json",
+        "reference/architecture/topologies/execution/edge-computing/topology.manifest.json",
+        "reference/architecture/topologies/execution/operational-budgets-runbook.md",
+        "reference/architecture/topologies/execution/operational-budgets-runbook.es.md",
+        ".harness/scripts/validate-topology-manifests.mjs"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/validate-topology-manifests.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-159",
       "closedAt": "2026-06-21",
       "closureCommit": "a9297f4e",

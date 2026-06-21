@@ -62,7 +62,7 @@
     "operationalBudgets": {
       "latencyBudgetMs": 200,
       "coldStartCeilingMs": 300,
-      "costEnvelopePerExecutionCents": 1
+      "costCeilingPerExecutionCents": 1
     },
     "operationalInterfaces": {
       "cli": {

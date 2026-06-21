@@ -150,9 +150,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** `reference/architecture/topologies/execution/serverless/README.md` and `execution/edge-computing/README.md` mention "latency" and "locality" but provide no quantitative targets, cold-start limits, or cost ceilings.
 - **Complexity:** S
 - **Done when:**
-  - [ ] Each manifest declares SLO/cost budget fields (`latencyBudgetMs`, `coldStartCeilingMs`, `costCeilingPerExecutionCents`).
-  - [ ] A Native rule fails the manifest when budgets are absent or zero.
-  - [ ] Corpus runbooks document how operators measure and report against the budgets.
+  - [x] Each manifest declares SLO/cost budget fields (`latencyBudgetMs`, `coldStartCeilingMs`, `costCeilingPerExecutionCents`).
+  - [x] A Native rule fails the manifest when budgets are absent or zero.
+  - [x] Corpus runbooks document how operators measure and report against the budgets.
 
 
 #### GT-166

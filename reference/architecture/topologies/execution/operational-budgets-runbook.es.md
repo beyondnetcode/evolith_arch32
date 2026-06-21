@@ -12,7 +12,7 @@ Este runbook es normativo para **serverless** y **edge-computing**; otras topolo
 |---|---|---|
 | `latencyBudgetMs` | Presupuesto p99 de ejecución end-to-end | La latencia p99 supera el presupuesto en una ventana de 24h |
 | `coldStartCeilingMs` | Cold-start máximo aceptable | El p95 de cold-start supera el techo en una ventana de 7 días |
-| `costEnvelopePerExecutionCents` | Techo arquitectónico por ejecución (centavos enteros) | El costo medio por ejecución supera el envelope en el período de facturación |
+| `costCeilingPerExecutionCents` | Techo arquitectónico por ejecución (centavos enteros) | El costo medio por ejecución supera el envelope en el período de facturación |
 
 Si alguna señal se enciende, la decisión arquitectónica debe revisarse. Los valores no son SLOs vendidos al cliente — son la línea por encima de la cual la topología deja de pagarse a sí misma.
 

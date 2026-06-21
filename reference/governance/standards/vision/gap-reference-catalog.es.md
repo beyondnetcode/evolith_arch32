@@ -150,9 +150,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** `reference/architecture/topologies/execution/serverless/README.md` y `execution/edge-computing/README.md` mencionan "latencia" y "localidad" pero no fijan objetivos cuantitativos, límites de cold-start ni techos de costo.
 - **Complejidad:** S
 - **Hecho cuando:**
-  - [ ] Cada manifest declara campos de SLO/presupuesto (`latencyBudgetMs`, `coldStartCeilingMs`, `costCeilingPerExecutionCents`).
-  - [ ] Una regla nativa falla el manifest cuando los presupuestos están ausentes o en cero.
-  - [ ] Los runbooks del corpus documentan cómo los operadores miden y reportan contra los presupuestos.
+  - [x] Cada manifest declara campos de SLO/presupuesto (`latencyBudgetMs`, `coldStartCeilingMs`, `costCeilingPerExecutionCents`).
+  - [x] Una regla nativa falla el manifest cuando los presupuestos están ausentes o en cero.
+  - [x] Los runbooks del corpus documentan cómo los operadores miden y reportan contra los presupuestos.
 
 
 #### GT-166

@@ -103,6 +103,25 @@ if (!fs.existsSync(schemaPath)) {
       failures.push(`${relative(manifestPath)} violates topology manifest schema: ${ajv.errorsText(validate.errors, { separator: "; " })}`);
     }
 
+    // Budget check (GT-165)
+    if (manifest.spec?.topologyType === "serverless" || manifest.spec?.topologyType === "edge-computing") {
+      const budgets = manifest.spec?.operationalBudgets;
+      if (!budgets) {
+        failures.push(`${relative(manifestPath)} violates GT-165: execution topology must declare operationalBudgets`);
+      } else {
+        const { latencyBudgetMs, coldStartCeilingMs, costCeilingPerExecutionCents } = budgets;
+        if (latencyBudgetMs === undefined || latencyBudgetMs <= 0) {
+          failures.push(`${relative(manifestPath)} violates GT-165: latencyBudgetMs must be a positive integer`);
+        }
+        if (coldStartCeilingMs === undefined || coldStartCeilingMs <= 0) {
+          failures.push(`${relative(manifestPath)} violates GT-165: coldStartCeilingMs must be a positive integer`);
+        }
+        if (costCeilingPerExecutionCents === undefined || costCeilingPerExecutionCents <= 0) {
+          failures.push(`${relative(manifestPath)} violates GT-165: costCeilingPerExecutionCents must be a positive integer`);
+        }
+      }
+    }
+
     if (manifest.metadata?.status === "accepted") {
       const artifacts = [
         ...(manifest.spec?.artifacts?.adrs ?? []),

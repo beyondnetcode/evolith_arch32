@@ -43,6 +43,7 @@ agente AI los conoce                  razonar sobre cualquier ADR en contexto
 |---|---|
 | [Estrategia del Asistente AI de Arquitectura](./ai-architecture-assistant-strategy.es.md) | Visión completa, estrategia de ingestión, ecosistema de agentes, gobernanza, roadmap |
 | [Taxonomía de Conocimiento para IA](./knowledge-taxonomy.es.md) | Cómo se estructura cada tipo de artefacto (ADR, patrón, estándar) para consumo por IA |
+| [Gobernanza de Ingesta de Conocimiento Externo](./visuals/v12-external-knowledge-intake.es.md) | Controles propuestos de procedencia, licenciamiento y promoción para fuentes arquitectónicas externas |
 | [Evaluación de la Plataforma Harness](./harness-platform-evaluation.es.md) | Evaluación de Harness AI Agent como plataforma principal de orquestación |
 | [Visuales](./visuals/README.es.md) | Diagramas de arquitectura: ecosistema AI, flujo RAG, colaboración entre agentes |
 

@@ -12,6 +12,20 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 ## 1. Detalle de Gaps
 
+#### GT-152
+
+**Título:** Ingesta Multi-Arquitectura de Conocimiento Externo y Custodia de Winston
+
+- **Propósito:** Convertir el piloto inicial de ingesta de conocimiento en una capacidad multi-arquitectura controlada por Winston (`@wilson`), para que el conocimiento externo sea contextual, trazable, seguro legalmente y promovible solo mediante evidencia reproducible.
+- **Evidencia:** El piloto valida procedencia, derechos y estado candidato, pero los valores de topología son texto libre; carece de madurez, precondiciones, anti-patrones, registro de fuentes, evidencia de decisión de promoción y evaluación Native/OPA compartida sobre fixtures reales de candidatos. RAG no tiene una proyección de conocimiento aprobado y por tanto no establece una frontera formal entre registro candidato y autoridad recuperable.
+- **Hecho cuando:**
+  - [ ] El contrato de conocimiento valida IDs de topología contra manifiestos y requiere madurez, precondiciones, anti-patrones, alternativas, topologías relacionadas y frescura de revisión.
+  - [ ] Un registro versionado `SRC-*` almacena licencia de fuente, edición o URL, modo de retención, huella de contenido, cadencia de revisión y enlaza todo candidato `KI-*` con su fuente.
+  - [ ] Winston (`@wilson`) posee el registro de ciclo de vida y una decisión del Architecture Board promueve `candidate → evaluated → accepted → executable` con evidencia fechada y ADR cuando aplique.
+  - [ ] Fixtures compartidos de candidatos se ejecutan en motores Native y OPA; el gate diferencial falla ante deriva de veredicto, ID de regla, severidad o evidencia.
+  - [ ] Solo una proyección explícita de conocimiento aprobado es elegible para RAG; registros rechazados, retirados, restringidos por derechos y candidatos permanecen excluidos por defecto.
+
+
 #### GT-151
 
 **Título:** Completar la Cobertura de IDs de Regla Native/OPA para Topologías Aceptadas

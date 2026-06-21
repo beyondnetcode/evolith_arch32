@@ -20,6 +20,7 @@ JSON Schema definitions for validating Evolith SDLC artifacts.
 | [topology-manifest.schema.json](./topology-manifest.schema.json) | Validate topology.manifest.json files for Multi-Topology corpus resolution | Topology manifest | All |
 | [gate-evidence.schema.json](./gate-evidence.schema.json) | Validate structured gate-evaluation evidence (core/ADR-0073) | Gate Evidence | All |
 | [output-envelope.schema.json](./output-envelope.schema.json) | Validate the universal machine output envelope (core/ADR-0073) | CLI/MCP/REST output | All |
+| [knowledge-intake.schema.json](./knowledge-intake.schema.json) | Validate governed external knowledge candidates | Knowledge intake candidate | All |
 
 **Phase 1 Coverage:** 7 schemas (Discovery Canvas, Technical Feasibility Canvas, Ballpark Estimation, Evolith User Story, Agile Backlog, CLI Impact Analysis, PRD)
 

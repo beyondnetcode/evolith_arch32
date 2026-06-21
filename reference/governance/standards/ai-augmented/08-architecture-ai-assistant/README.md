@@ -42,6 +42,7 @@ knows about them                      reason about any ADR in context
 |---|---|
 | [AI Architecture Assistant Strategy](./ai-architecture-assistant-strategy.md) | Full vision, ingestion strategy, agent ecosystem, governance, roadmap |
 | [Knowledge Taxonomy for AI](./knowledge-taxonomy.md) | How each artifact type (ADR, pattern, standard) is structured for AI consumption |
+| [External Knowledge Intake Governance](./visuals/v12-external-knowledge-intake.md) | Proposed provenance, licensing, and promotion controls for external architectural sources |
 | [Harness Platform Evaluation](./harness-platform-evaluation.md) | Harness AI Agent evaluation as primary orchestration platform |
 | [Visuals](./visuals/README.md) | Architecture diagrams: AI ecosystem, RAG flow, agent collaboration |
 

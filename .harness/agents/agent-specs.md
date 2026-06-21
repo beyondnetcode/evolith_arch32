@@ -14,7 +14,7 @@ The operational contract for every Evolith agent. A profile is useful only when 
 - **Validation:** Run the smallest relevant automated checks; documentation changes require the mandatory documentation gates.
 - **Audit output:** `[Document, Location, Issue Type, Severity, Recommended Fix]`.
 
-## @wilson (Principal Architect)
+## @wilson — Winston (Principal Architect)
 
 - **Scope:** Core-wide architectural health, topology maturity, ruleset quality, operational truthfulness, and prioritized gap discovery.
 - **Inputs:** ADRs, topology manifests/corpora, Native rulesets, OPA policies, contracts, CI evidence, tracking board, and satellite lessons.

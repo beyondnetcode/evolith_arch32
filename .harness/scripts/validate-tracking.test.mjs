@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { validateTrackingState } from './validate-tracking.mjs';
+import { validateTrackingState } from './ci/08-validate-tracking.mjs';
 
 function fixture(overrides = {}) {
   const section = '#### GT-01\n\n- **Done when:** complete\n';

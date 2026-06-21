@@ -5,14 +5,14 @@
   "gaps": {
     "total": 177,
     "done": 157,
-    "pending": 19,
-    "inProgress": 1,
+    "pending": 18,
+    "inProgress": 2,
     "deferred": 0
   },
   "evidence": {
     "closureRecords": 139,
     "cliPackage": "@evolith/smart-cli@1.1.0",
-    "adrCount": 109,
+    "adrCount": 110,
     "rulesetCount": 26,
     "schemaCount": 22
   },

@@ -15,7 +15,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 |---|---|---|:---:|:---:|:---:|:---:|
 | [`GT-155`](./gap-reference-catalog.md#gt-155) | REST Core API envelope conformance with ADR-0073 | `BFF API` | Cross | P0 | M | `IN-PROGRESS` |
 | [`GT-156`](./gap-reference-catalog.md#gt-156) | Core API product hub, API reference, and deployment runbook | `Product` | Cross | P0 | L | `PENDING` |
-| [`GT-159`](./gap-reference-catalog.md#gt-159) | REST API URI versioning and deprecation policy | `BFF API` | Cross | P1 | S | `PENDING` |
+| [`GT-159`](./gap-reference-catalog.md#gt-159) | REST API URI versioning and deprecation policy | `BFF API` | Cross | P1 | S | `IN-PROGRESS` |
 | [`GT-165`](./gap-reference-catalog.md#gt-165) | Concrete SLO and cost budgets for serverless and edge topologies | `Documentation` | Cross | P1 | S | `PENDING` |
 | [`GT-157`](./gap-reference-catalog.md#gt-157) | MCP authentication and authorization parity with REST | `MCP Services` | Cross | P1 | M | `PENDING` |
 | [`GT-158`](./gap-reference-catalog.md#gt-158) | Human-in-the-loop and ABAC scoping for mutative MCP tools | `MCP Services` | Cross | P1 | M | `PENDING` |
@@ -191,7 +191,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-128`](./gap-reference-catalog.md#gt-128) | Baseline Ruleset for Data Mesh | `Architecture` | Cross | P2 | M | `DONE` |
 | [`GT-129`](./gap-reference-catalog.md#gt-129) | Baseline Ruleset for Edge Computing | `Architecture` | Cross | P2 | M | `DONE` |
 
-**Progress:** 157 / 177 done · 1 in progress · 19 pending · 0 deferred
+**Progress:** 157 / 177 done · 2 in progress · 18 pending · 0 deferred
 
 **Wave 2026-06-21 (Wilson deep audit):** Added 20 new gaps `GT-155`…`GT-174` covering Core API envelope conformance, command-as-a-service surface parity, MCP authn/authz, OPA schemas/aggregator tests, topology manifest validation, SDLC runbooks/templates, Core API and UMS product hubs, agentic-AI operational budgets, OpenTelemetry parity, and envelope schema versioning.
 

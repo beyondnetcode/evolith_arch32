@@ -1,8 +1,9 @@
 import { Controller, Post, Body, Param, HttpCode, HttpStatus } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiBody, ApiParam } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiBody } from '@nestjs/swagger';
 import { EvaluateGateUseCase } from '@evolith/core-domain/application/use-cases';
 import { EvaluateGateDto } from '../dtos/gates.dto';
 import { WorkspaceReferenceResolverService } from '../../application/services/workspace-reference-resolver.service';
+import { ApiEnvelopeResponse } from '../decorators/swagger-envelope.decorator';
 
 @Controller({ path: 'gates', version: '1' })
 export class GatesController {
@@ -16,8 +17,7 @@ export class GatesController {
   @ApiOperation({ summary: 'Evaluate a specific phase gate' })
   @ApiParam({ name: 'gateId', description: 'Gate identifier', example: 'PG0-01' })
   @ApiBody({ type: EvaluateGateDto })
-  @ApiResponse({ status: 200, description: 'Gate evaluation results' })
-  @ApiResponse({ status: 400, description: 'Invalid input' })
+  @ApiEnvelopeResponse(undefined, { description: 'Gate evaluation results' })
   async evaluateGate(
     @Param('gateId') gateId: string,
     @Body() body: EvaluateGateDto

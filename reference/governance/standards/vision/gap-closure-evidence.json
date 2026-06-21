@@ -3,6 +3,46 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-155",
+      "closedAt": "2026-06-21",
+      "closureCommit": "4d8ad2f52f2243d5e6acbb02d038d21cd069b8ec",
+      "evidence": [
+        "apps/core-api/src/presentation/decorators/swagger-envelope.decorator.ts",
+        "apps/core-api/src/presentation/controllers/architecture.controller.ts",
+        "apps/core-api/src/presentation/controllers/gates.controller.ts",
+        "apps/core-api/src/presentation/controllers/health.controller.ts",
+        "apps/core-api/src/presentation/controllers/phases.controller.ts",
+        "apps/core-api/src/presentation/controllers/projects.controller.ts",
+        "apps/core-api/src/presentation/controllers/reference.controller.ts",
+        "apps/core-api/src/e2e.spec.ts"
+      ],
+      "validationCommands": [
+        "npm --workspace core-api run test",
+        "node .harness/scripts/ci/10-validate-contract-conformance.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-156",
+      "closedAt": "2026-06-21",
+      "closureCommit": "4d8ad2f52f2243d5e6acbb02d038d21cd069b8ec",
+      "evidence": [
+        "reference/products/core-api/README.md",
+        "reference/products/core-api/README.es.md",
+        "reference/products/core-api/api-reference.md",
+        "reference/products/core-api/api-reference.es.md",
+        "reference/governance/sdlc/01-playbooks/core-api-deployment.md",
+        "reference/governance/sdlc/01-playbooks/core-api-deployment.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/generate-bilingual-index.mjs",
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-148",
       "closedAt": "2026-06-20",
       "closureCommit": "ec968d190388dc5e22086f870741ea68f59d8dcb",

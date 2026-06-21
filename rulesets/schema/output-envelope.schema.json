@@ -47,7 +47,7 @@
     },
     "meta": {
       "type": "object",
-      "required": ["command", "executedAt", "durationMs", "correlationId"],
+      "required": ["command", "executedAt", "durationMs", "correlationId", "schemaVersion"],
       "additionalProperties": false,
       "description": "Execution metadata present on every response.",
       "properties": {
@@ -70,6 +70,11 @@
           "type": "string",
           "minLength": 1,
           "description": "Caller-supplied or generated correlation identifier for tracing."
+        },
+        "schemaVersion": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "Semver pin of this envelope shape on the producing surface. Bumps MUST be reflected in surface-compatibility.json (GT-174)."
         },
         "context": {
           "type": "object",

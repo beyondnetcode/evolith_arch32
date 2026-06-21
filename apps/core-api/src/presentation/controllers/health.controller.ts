@@ -1,7 +1,8 @@
 import { Controller, Get, VERSION_NEUTRAL } from '@nestjs/common';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation } from '@nestjs/swagger';
 import { HealthService } from '../../application/services/health.service';
 import { MetricsService } from '../../infrastructure/metrics/metrics.service';
+import { ApiEnvelopeResponse } from '../decorators/swagger-envelope.decorator';
 
 // version-neutral-justification: liveness/readiness probes are scraped by
 // orchestrators (k8s) that cannot tolerate URI churn between major versions.
@@ -14,22 +15,21 @@ export class HealthController {
 
   @Get()
   @ApiOperation({ summary: 'Service health check' })
-  @ApiResponse({ status: 200, description: 'Service is healthy' })
+  @ApiEnvelopeResponse(undefined, { description: 'Service is healthy' })
   check() {
     return this.healthService.getHealthStatus();
   }
 
   @Get('live')
   @ApiOperation({ summary: 'Liveness probe' })
-  @ApiResponse({ status: 200, description: 'Process is alive' })
+  @ApiEnvelopeResponse(undefined, { description: 'Process is alive' })
   live() {
     return { status: 'UP', timestamp: new Date().toISOString() };
   }
 
   @Get('ready')
   @ApiOperation({ summary: 'Readiness probe' })
-  @ApiResponse({ status: 200, description: 'Service is ready' })
-  @ApiResponse({ status: 503, description: 'Service is not ready' })
+  @ApiEnvelopeResponse(undefined, { description: 'Service is ready' })
   ready() {
     return {
       status: 'UP',

@@ -86,6 +86,13 @@ export interface ExecutionContext {
   readonly phase?: string;
 }
 
+/**
+ * Pinned version of the ADR-0073 envelope shape. Bumped on a breaking
+ * change to the envelope (NOT on payload schema changes). Bumping it
+ * requires a new entry in `surface-compatibility.json` per GT-174.
+ */
+export const OUTPUT_ENVELOPE_SCHEMA_VERSION = '1.0.0';
+
 export interface OutputMeta {
   /** Canonical command identity, e.g. 'evolith gate evaluate'. */
   readonly command: string;
@@ -93,6 +100,8 @@ export interface OutputMeta {
   readonly executedAt: string;
   readonly durationMs: number;
   readonly correlationId: string;
+  /** ADR-0073 envelope shape version. Producers MUST set this. */
+  readonly schemaVersion: string;
   readonly context?: ExecutionContext;
 }
 

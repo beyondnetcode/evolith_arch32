@@ -106,6 +106,28 @@
 | [0075-core-api-auth-strategy.md](architecture/adrs/core/0075-core-api-auth-strategy.md) | [0075-core-api-auth-strategy.es.md](architecture/adrs/core/0075-core-api-auth-strategy.es.md) | OK |
 | [0076-domain-oriented-microservice-architecture.md](architecture/adrs/core/0076-domain-oriented-microservice-architecture.md) | [0076-domain-oriented-microservice-architecture.es.md](architecture/adrs/core/0076-domain-oriented-microservice-architecture.es.md) | OK |
 | [0076-opa-bundle-s3-distribution.md](architecture/adrs/core/0076-opa-bundle-s3-distribution.md) | [0076-opa-bundle-s3-distribution.es.md](architecture/adrs/core/0076-opa-bundle-s3-distribution.es.md) | OK |
+| [0077-masstransit-v9-commercial-pivot.md](architecture/adrs/core/0077-masstransit-v9-commercial-pivot.md) | [0077-masstransit-v9-commercial-pivot.es.md](architecture/adrs/core/0077-masstransit-v9-commercial-pivot.es.md) | OK |
+| [0078-domain-financial-separation-governance.md](architecture/adrs/core/0078-domain-financial-separation-governance.md) | [0078-domain-financial-separation-governance.es.md](architecture/adrs/core/0078-domain-financial-separation-governance.es.md) | OK |
+| [0079-multi-topology-reference-corpus.md](architecture/adrs/core/0079-multi-topology-reference-corpus.md) | [0079-multi-topology-reference-corpus.es.md](architecture/adrs/core/0079-multi-topology-reference-corpus.es.md) | OK |
+| [0080-remote-repository-reference-contract.md](architecture/adrs/core/0080-remote-repository-reference-contract.md) | [0080-remote-repository-reference-contract.es.md](architecture/adrs/core/0080-remote-repository-reference-contract.es.md) | OK |
+| [0081-agentic-ai-sandbox-isolation.md](architecture/adrs/core/0081-agentic-ai-sandbox-isolation.md) | [0081-agentic-ai-sandbox-isolation.es.md](architecture/adrs/core/0081-agentic-ai-sandbox-isolation.es.md) | OK |
+| [0082-agentic-ai-trust-boundary.md](architecture/adrs/core/0082-agentic-ai-trust-boundary.md) | [0082-agentic-ai-trust-boundary.es.md](architecture/adrs/core/0082-agentic-ai-trust-boundary.es.md) | OK |
+| [0083-agentic-ai-action-authorization-audit.md](architecture/adrs/core/0083-agentic-ai-action-authorization-audit.md) | [0083-agentic-ai-action-authorization-audit.es.md](architecture/adrs/core/0083-agentic-ai-action-authorization-audit.es.md) | OK |
+| [0084-data-mesh-data-products.md](architecture/adrs/core/0084-data-mesh-data-products.md) | [0084-data-mesh-data-products.es.md](architecture/adrs/core/0084-data-mesh-data-products.es.md) | OK |
+| [0085-agnostic-opa-wasm-distribution.md](architecture/adrs/core/0085-agnostic-opa-wasm-distribution.md) | [0085-agnostic-opa-wasm-distribution.es.md](architecture/adrs/core/0085-agnostic-opa-wasm-distribution.es.md) | OK |
+| [0086-agentic-ai-telemetry-cost-control.md](architecture/adrs/core/0086-agentic-ai-telemetry-cost-control.md) | [0086-agentic-ai-telemetry-cost-control.es.md](architecture/adrs/core/0086-agentic-ai-telemetry-cost-control.es.md) | OK |
+| [0087-abac-agentic-tool-execution.md](architecture/adrs/core/0087-abac-agentic-tool-execution.md) | [0087-abac-agentic-tool-execution.es.md](architecture/adrs/core/0087-abac-agentic-tool-execution.es.md) | OK |
+| [0088-sovereign-identity-agentic-ai.md](architecture/adrs/core/0088-sovereign-identity-agentic-ai.md) | [0088-sovereign-identity-agentic-ai.es.md](architecture/adrs/core/0088-sovereign-identity-agentic-ai.es.md) | OK |
+| [0089-event-driven-agentic-workflows.md](architecture/adrs/core/0089-event-driven-agentic-workflows.md) | [0089-event-driven-agentic-workflows.es.md](architecture/adrs/core/0089-event-driven-agentic-workflows.es.md) | OK |
+| [0090-rag-knowledge-governance.md](architecture/adrs/core/0090-rag-knowledge-governance.md) | [0090-rag-knowledge-governance.es.md](architecture/adrs/core/0090-rag-knowledge-governance.es.md) | OK |
+| [0091-workload-identity-token-rotation.md](architecture/adrs/core/0091-workload-identity-token-rotation.md) | [0091-workload-identity-token-rotation.es.md](architecture/adrs/core/0091-workload-identity-token-rotation.es.md) | OK |
+| [0092-agent-infinite-loop-prevention.md](architecture/adrs/core/0092-agent-infinite-loop-prevention.md) | [0092-agent-infinite-loop-prevention.es.md](architecture/adrs/core/0092-agent-infinite-loop-prevention.es.md) | OK |
+| [0093-mcp-concurrency-locking.md](architecture/adrs/core/0093-mcp-concurrency-locking.md) | [0093-mcp-concurrency-locking.es.md](architecture/adrs/core/0093-mcp-concurrency-locking.es.md) | OK |
+| [0094-multi-agent-handoff.md](architecture/adrs/core/0094-multi-agent-handoff.md) | [0094-multi-agent-handoff.es.md](architecture/adrs/core/0094-multi-agent-handoff.es.md) | OK |
+| [0095-serverless-architecture-governance.md](architecture/adrs/core/0095-serverless-architecture-governance.md) | [0095-serverless-architecture-governance.es.md](architecture/adrs/core/0095-serverless-architecture-governance.es.md) | OK |
+| [0096-edge-computing-architecture-governance.md](architecture/adrs/core/0096-edge-computing-architecture-governance.md) | [0096-edge-computing-architecture-governance.es.md](architecture/adrs/core/0096-edge-computing-architecture-governance.es.md) | OK |
+| [0097-knowledge-lifecycle-governance.md](architecture/adrs/core/0097-knowledge-lifecycle-governance.md) | [0097-knowledge-lifecycle-governance.es.md](architecture/adrs/core/0097-knowledge-lifecycle-governance.es.md) | OK |
+| [0098-rest-uri-versioning-deprecation-policy.md](architecture/adrs/core/0098-rest-uri-versioning-deprecation-policy.md) | [0098-rest-uri-versioning-deprecation-policy.es.md](architecture/adrs/core/0098-rest-uri-versioning-deprecation-policy.es.md) | OK |
 | [README.md](architecture/adrs/core/README.md) | [README.es.md](architecture/adrs/core/README.es.md) | OK |
 
 </details>
@@ -227,6 +249,113 @@
 </details>
 
 <details>
+<summary><strong>architecture/topologies</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [README.md](architecture/topologies/README.md) | [README.es.md](architecture/topologies/README.es.md) | OK |
+| [topology-corpus-standard.md](architecture/topologies/topology-corpus-standard.md) | [topology-corpus-standard.es.md](architecture/topologies/topology-corpus-standard.es.md) | OK |
+| [topology-dimensions.md](architecture/topologies/topology-dimensions.md) | [topology-dimensions.es.md](architecture/topologies/topology-dimensions.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>architecture/topologies/ai/agentic-ai</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [adoption.md](architecture/topologies/ai/agentic-ai/adoption.md) | [adoption.es.md](architecture/topologies/ai/agentic-ai/adoption.es.md) | OK |
+| [evidence.md](architecture/topologies/ai/agentic-ai/evidence.md) | [evidence.es.md](architecture/topologies/ai/agentic-ai/evidence.es.md) | OK |
+| [evolution.md](architecture/topologies/ai/agentic-ai/evolution.md) | [evolution.es.md](architecture/topologies/ai/agentic-ai/evolution.es.md) | OK |
+| [maturity.md](architecture/topologies/ai/agentic-ai/maturity.md) | [maturity.es.md](architecture/topologies/ai/agentic-ai/maturity.es.md) | OK |
+| [operations.md](architecture/topologies/ai/agentic-ai/operations.md) | [operations.es.md](architecture/topologies/ai/agentic-ai/operations.es.md) | OK |
+| [patterns.md](architecture/topologies/ai/agentic-ai/patterns.md) | [patterns.es.md](architecture/topologies/ai/agentic-ai/patterns.es.md) | OK |
+| [README.md](architecture/topologies/ai/agentic-ai/README.md) | [README.es.md](architecture/topologies/ai/agentic-ai/README.es.md) | OK |
+| [resilience.md](architecture/topologies/ai/agentic-ai/resilience.md) | [resilience.es.md](architecture/topologies/ai/agentic-ai/resilience.es.md) | OK |
+| [security.md](architecture/topologies/ai/agentic-ai/security.md) | [security.es.md](architecture/topologies/ai/agentic-ai/security.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>architecture/topologies/data/data-mesh</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [maturity.md](architecture/topologies/data/data-mesh/maturity.md) | [maturity.es.md](architecture/topologies/data/data-mesh/maturity.es.md) | OK |
+| [README.md](architecture/topologies/data/data-mesh/README.md) | [README.es.md](architecture/topologies/data/data-mesh/README.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>architecture/topologies/execution</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [operational-budgets-runbook.md](architecture/topologies/execution/operational-budgets-runbook.md) | [operational-budgets-runbook.es.md](architecture/topologies/execution/operational-budgets-runbook.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>architecture/topologies/execution/edge-computing</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [maturity.md](architecture/topologies/execution/edge-computing/maturity.md) | [maturity.es.md](architecture/topologies/execution/edge-computing/maturity.es.md) | OK |
+| [README.md](architecture/topologies/execution/edge-computing/README.md) | [README.es.md](architecture/topologies/execution/edge-computing/README.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>architecture/topologies/execution/serverless</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [maturity.md](architecture/topologies/execution/serverless/maturity.md) | [maturity.es.md](architecture/topologies/execution/serverless/maturity.es.md) | OK |
+| [README.md](architecture/topologies/execution/serverless/README.md) | [README.es.md](architecture/topologies/execution/serverless/README.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>architecture/topologies/integration/event-driven</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [maturity.md](architecture/topologies/integration/event-driven/maturity.md) | [maturity.es.md](architecture/topologies/integration/event-driven/maturity.es.md) | OK |
+| [README.md](architecture/topologies/integration/event-driven/README.md) | [README.es.md](architecture/topologies/integration/event-driven/README.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>architecture/topologies/progressive-axis/distributed-modules</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [maturity.md](architecture/topologies/progressive-axis/distributed-modules/maturity.md) | [maturity.es.md](architecture/topologies/progressive-axis/distributed-modules/maturity.es.md) | OK |
+| [README.md](architecture/topologies/progressive-axis/distributed-modules/README.md) | [README.es.md](architecture/topologies/progressive-axis/distributed-modules/README.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>architecture/topologies/progressive-axis/microservices</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [maturity.md](architecture/topologies/progressive-axis/microservices/maturity.md) | [maturity.es.md](architecture/topologies/progressive-axis/microservices/maturity.es.md) | OK |
+| [README.md](architecture/topologies/progressive-axis/microservices/README.md) | [README.es.md](architecture/topologies/progressive-axis/microservices/README.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>architecture/topologies/progressive-axis/modular-monolith</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [maturity.md](architecture/topologies/progressive-axis/modular-monolith/maturity.md) | [maturity.es.md](architecture/topologies/progressive-axis/modular-monolith/maturity.es.md) | OK |
+| [README.md](architecture/topologies/progressive-axis/modular-monolith/README.md) | [README.es.md](architecture/topologies/progressive-axis/modular-monolith/README.es.md) | OK |
+
+</details>
+
+<details>
 <summary><strong>core</strong></summary>
 
 | EN | ES | Status |
@@ -286,6 +415,7 @@
 
 | EN | ES | Status |
 |----|----|--------|
+| [core-api-deployment.md](governance/sdlc/01-playbooks/core-api-deployment.md) | [core-api-deployment.es.md](governance/sdlc/01-playbooks/core-api-deployment.es.md) | OK |
 | [zero-downtime-release.md](governance/sdlc/01-playbooks/zero-downtime-release.md) | [zero-downtime-release.es.md](governance/sdlc/01-playbooks/zero-downtime-release.es.md) | OK |
 
 </details>
@@ -320,7 +450,6 @@
 | [adr-template.md](governance/sdlc/04-artifact-templates/adr-template.md) | [adr-template.es.md](governance/sdlc/04-artifact-templates/adr-template.es.md) | OK |
 | [agile-backlog-template.md](governance/sdlc/04-artifact-templates/agile-backlog-template.md) | [agile-backlog-template.es.md](governance/sdlc/04-artifact-templates/agile-backlog-template.es.md) | OK |
 | [ballpark-estimation-template.md](governance/sdlc/04-artifact-templates/ballpark-estimation-template.md) | [ballpark-estimation-template.es.md](governance/sdlc/04-artifact-templates/ballpark-estimation-template.es.md) | OK |
-| [technical-feasibility-template.md](governance/sdlc/04-artifact-templates/technical-feasibility-template.md) | [technical-feasibility-template.es.md](governance/sdlc/04-artifact-templates/technical-feasibility-template.es.md) | OK |
 | [cli-impact-analysis.md](governance/sdlc/04-artifact-templates/cli-impact-analysis.md) | [cli-impact-analysis.es.md](governance/sdlc/04-artifact-templates/cli-impact-analysis.es.md) | OK |
 | [ddd-model-template.md](governance/sdlc/04-artifact-templates/ddd-model-template.md) | [ddd-model-template.es.md](governance/sdlc/04-artifact-templates/ddd-model-template.es.md) | OK |
 | [discovery-canvas-template.md](governance/sdlc/04-artifact-templates/discovery-canvas-template.md) | [discovery-canvas-template.es.md](governance/sdlc/04-artifact-templates/discovery-canvas-template.es.md) | OK |
@@ -330,6 +459,7 @@
 | [prd-template.md](governance/sdlc/04-artifact-templates/prd-template.md) | [prd-template.es.md](governance/sdlc/04-artifact-templates/prd-template.es.md) | OK |
 | [README.md](governance/sdlc/04-artifact-templates/README.md) | [README.es.md](governance/sdlc/04-artifact-templates/README.es.md) | OK |
 | [release-notes-template.md](governance/sdlc/04-artifact-templates/release-notes-template.md) | [release-notes-template.es.md](governance/sdlc/04-artifact-templates/release-notes-template.es.md) | OK |
+| [technical-feasibility-template.md](governance/sdlc/04-artifact-templates/technical-feasibility-template.md) | [technical-feasibility-template.es.md](governance/sdlc/04-artifact-templates/technical-feasibility-template.es.md) | OK |
 | [technical-story-template.md](governance/sdlc/04-artifact-templates/technical-story-template.md) | [technical-story-template.es.md](governance/sdlc/04-artifact-templates/technical-story-template.es.md) | OK |
 | [test-summary-report-template.md](governance/sdlc/04-artifact-templates/test-summary-report-template.md) | [test-summary-report-template.es.md](governance/sdlc/04-artifact-templates/test-summary-report-template.es.md) | OK |
 
@@ -430,6 +560,7 @@
 | EN | ES | Status |
 |----|----|--------|
 | [approved-tools.md](governance/standards/ai-augmented/03-tools-catalog/approved-tools.md) | [approved-tools.es.md](governance/standards/ai-augmented/03-tools-catalog/approved-tools.es.md) | OK |
+| [evolith-mcp-tools.md](governance/standards/ai-augmented/03-tools-catalog/evolith-mcp-tools.md) | [evolith-mcp-tools.es.md](governance/standards/ai-augmented/03-tools-catalog/evolith-mcp-tools.es.md) | OK |
 | [README.md](governance/standards/ai-augmented/03-tools-catalog/README.md) | [README.es.md](governance/standards/ai-augmented/03-tools-catalog/README.es.md) | OK |
 | [tool-catalog-template.md](governance/standards/ai-augmented/03-tools-catalog/tool-catalog-template.md) | [tool-catalog-template.es.md](governance/standards/ai-augmented/03-tools-catalog/tool-catalog-template.es.md) | OK |
 | [tool-design-principles.md](governance/standards/ai-augmented/03-tools-catalog/tool-design-principles.md) | [tool-design-principles.es.md](governance/standards/ai-augmented/03-tools-catalog/tool-design-principles.es.md) | OK |
@@ -508,6 +639,7 @@
 | [v09-ai-ecosystem.md](governance/standards/ai-augmented/08-architecture-ai-assistant/visuals/v09-ai-ecosystem.md) | [v09-ai-ecosystem.es.md](governance/standards/ai-augmented/08-architecture-ai-assistant/visuals/v09-ai-ecosystem.es.md) | OK |
 | [v10-knowledge-ingestion.md](governance/standards/ai-augmented/08-architecture-ai-assistant/visuals/v10-knowledge-ingestion.md) | [v10-knowledge-ingestion.es.md](governance/standards/ai-augmented/08-architecture-ai-assistant/visuals/v10-knowledge-ingestion.es.md) | OK |
 | [v11-governance-guardrails.md](governance/standards/ai-augmented/08-architecture-ai-assistant/visuals/v11-governance-guardrails.md) | [v11-governance-guardrails.es.md](governance/standards/ai-augmented/08-architecture-ai-assistant/visuals/v11-governance-guardrails.es.md) | OK |
+| [v12-external-knowledge-intake.md](governance/standards/ai-augmented/08-architecture-ai-assistant/visuals/v12-external-knowledge-intake.md) | [v12-external-knowledge-intake.es.md](governance/standards/ai-augmented/08-architecture-ai-assistant/visuals/v12-external-knowledge-intake.es.md) | OK |
 
 </details>
 
@@ -624,6 +756,9 @@
 | EN | ES | Status |
 |----|----|--------|
 | [architectural-directives.md](governance/standards/vision/architectural-directives.md) | [architectural-directives.es.md](governance/standards/vision/architectural-directives.es.md) | OK |
+| [backlog-complete-summary.md](governance/standards/vision/backlog-complete-summary.md) | [backlog-complete-summary.es.md](governance/standards/vision/backlog-complete-summary.es.md) | OK |
+| [backlog-post-gt93.md](governance/standards/vision/backlog-post-gt93.md) | [backlog-post-gt93.es.md](governance/standards/vision/backlog-post-gt93.es.md) | OK |
+| [deep-coherence-analysis-2026-06-16.md](governance/standards/vision/deep-coherence-analysis-2026-06-16.md) | [deep-coherence-analysis-2026-06-16.es.md](governance/standards/vision/deep-coherence-analysis-2026-06-16.es.md) | OK |
 | [evolith-ai-assisted-validation-workflow.md](governance/standards/vision/evolith-ai-assisted-validation-workflow.md) | [evolith-ai-assisted-validation-workflow.es.md](governance/standards/vision/evolith-ai-assisted-validation-workflow.es.md) | OK |
 | [evolith-governed-composition-target-design.md](governance/standards/vision/evolith-governed-composition-target-design.md) | [evolith-governed-composition-target-design.es.md](governance/standards/vision/evolith-governed-composition-target-design.es.md) | OK |
 | [evolith-provider-abstraction-plugin-model.md](governance/standards/vision/evolith-provider-abstraction-plugin-model.md) | [evolith-provider-abstraction-plugin-model.es.md](governance/standards/vision/evolith-provider-abstraction-plugin-model.es.md) | OK |
@@ -633,8 +768,10 @@
 | [gap-closure-evidence-standard.md](governance/standards/vision/gap-closure-evidence-standard.md) | [gap-closure-evidence-standard.es.md](governance/standards/vision/gap-closure-evidence-standard.es.md) | OK |
 | [gap-reference-catalog.md](governance/standards/vision/gap-reference-catalog.md) | [gap-reference-catalog.es.md](governance/standards/vision/gap-reference-catalog.es.md) | OK |
 | [gap-tracking.md](governance/standards/vision/gap-tracking.md) | [gap-tracking.es.md](governance/standards/vision/gap-tracking.es.md) | OK |
+| [github-project-cleanup-guide.md](governance/standards/vision/github-project-cleanup-guide.md) | [github-project-cleanup-guide.es.md](governance/standards/vision/github-project-cleanup-guide.es.md) | OK |
 | [inventory-summary.md](governance/standards/vision/inventory-summary.md) | [inventory-summary.es.md](governance/standards/vision/inventory-summary.es.md) | OK |
 | [maturity-assessment.md](governance/standards/vision/maturity-assessment.md) | [maturity-assessment.es.md](governance/standards/vision/maturity-assessment.es.md) | OK |
+| [multi-topology-reference-corpus-implementation-plan.md](governance/standards/vision/multi-topology-reference-corpus-implementation-plan.md) | [multi-topology-reference-corpus-implementation-plan.es.md](governance/standards/vision/multi-topology-reference-corpus-implementation-plan.es.md) | OK |
 | [README.md](governance/standards/vision/README.md) | [README.es.md](governance/standards/vision/README.es.md) | OK |
 | [sdlc-tracker-technical-interfaces.md](governance/standards/vision/sdlc-tracker-technical-interfaces.md) | [sdlc-tracker-technical-interfaces.es.md](governance/standards/vision/sdlc-tracker-technical-interfaces.es.md) | OK |
 
@@ -783,6 +920,7 @@
 
 | EN | ES | Status |
 |----|----|--------|
+| [agentic-ci-rag-support.md](operations/agentic-ci-rag-support.md) | [agentic-ci-rag-support.es.md](operations/agentic-ci-rag-support.es.md) | OK |
 | [BILINGUAL_INDEX.md](operations/BILINGUAL_INDEX.md) | [BILINGUAL_INDEX.es.md](operations/BILINGUAL_INDEX.es.md) | OK |
 | [README.md](operations/README.md) | [README.es.md](operations/README.es.md) | OK |
 
@@ -958,6 +1096,16 @@
 |----|----|--------|
 | [BILINGUAL_INDEX.md](products/BILINGUAL_INDEX.md) | [BILINGUAL_INDEX.es.md](products/BILINGUAL_INDEX.es.md) | OK |
 | [README.md](products/README.md) | [README.es.md](products/README.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>products/core-api</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [api-reference.md](products/core-api/api-reference.md) | [api-reference.es.md](products/core-api/api-reference.es.md) | OK |
+| [README.md](products/core-api/README.md) | [README.es.md](products/core-api/README.es.md) | OK |
 
 </details>
 

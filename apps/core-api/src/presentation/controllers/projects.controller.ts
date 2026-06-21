@@ -1,11 +1,12 @@
 import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import { ApiOperation, ApiBody } from '@nestjs/swagger';
 import {
   InitializeProjectUseCase,
   ProposePhaseAdvanceUseCase
 } from '@evolith/core-domain/application/use-cases';
 import { InitProjectDto, ProposeAdvanceDto } from '../dtos/projects.dto';
 import { WorkspaceReferenceResolverService } from '../../application/services/workspace-reference-resolver.service';
+import { ApiEnvelopeResponse } from '../decorators/swagger-envelope.decorator';
 
 @Controller({ path: 'projects', version: '1' })
 export class ProjectsController {
@@ -19,8 +20,7 @@ export class ProjectsController {
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Initialize a new project' })
   @ApiBody({ type: InitProjectDto })
-  @ApiResponse({ status: 201, description: 'Project initialized' })
-  @ApiResponse({ status: 400, description: 'Invalid input' })
+  @ApiEnvelopeResponse(undefined, { status: 201, description: 'Project initialized' })
   async initialize(@Body() body: InitProjectDto) {
     return this.initializeProjectUseCase.execute({
       name: body.name,
@@ -40,8 +40,7 @@ export class ProjectsController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Propose a phase advance' })
   @ApiBody({ type: ProposeAdvanceDto })
-  @ApiResponse({ status: 200, description: 'Advance proposal results' })
-  @ApiResponse({ status: 400, description: 'Invalid input' })
+  @ApiEnvelopeResponse(undefined, { description: 'Advance proposal results' })
   async proposeAdvance(@Body() body: ProposeAdvanceDto) {
     return this.proposePhaseAdvanceUseCase.execute({
       fromPhase: body.targetPhase as any,

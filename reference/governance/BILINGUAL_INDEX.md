@@ -42,6 +42,7 @@
 
 | EN | ES | Status |
 |----|----|--------|
+| [core-api-deployment.md](sdlc/01-playbooks/core-api-deployment.md) | [core-api-deployment.es.md](sdlc/01-playbooks/core-api-deployment.es.md) | OK |
 | [zero-downtime-release.md](sdlc/01-playbooks/zero-downtime-release.md) | [zero-downtime-release.es.md](sdlc/01-playbooks/zero-downtime-release.es.md) | OK |
 
 </details>
@@ -76,7 +77,6 @@
 | [adr-template.md](sdlc/04-artifact-templates/adr-template.md) | [adr-template.es.md](sdlc/04-artifact-templates/adr-template.es.md) | OK |
 | [agile-backlog-template.md](sdlc/04-artifact-templates/agile-backlog-template.md) | [agile-backlog-template.es.md](sdlc/04-artifact-templates/agile-backlog-template.es.md) | OK |
 | [ballpark-estimation-template.md](sdlc/04-artifact-templates/ballpark-estimation-template.md) | [ballpark-estimation-template.es.md](sdlc/04-artifact-templates/ballpark-estimation-template.es.md) | OK |
-| [technical-feasibility-template.md](sdlc/04-artifact-templates/technical-feasibility-template.md) | [technical-feasibility-template.es.md](sdlc/04-artifact-templates/technical-feasibility-template.es.md) | OK |
 | [cli-impact-analysis.md](sdlc/04-artifact-templates/cli-impact-analysis.md) | [cli-impact-analysis.es.md](sdlc/04-artifact-templates/cli-impact-analysis.es.md) | OK |
 | [ddd-model-template.md](sdlc/04-artifact-templates/ddd-model-template.md) | [ddd-model-template.es.md](sdlc/04-artifact-templates/ddd-model-template.es.md) | OK |
 | [discovery-canvas-template.md](sdlc/04-artifact-templates/discovery-canvas-template.md) | [discovery-canvas-template.es.md](sdlc/04-artifact-templates/discovery-canvas-template.es.md) | OK |
@@ -86,6 +86,7 @@
 | [prd-template.md](sdlc/04-artifact-templates/prd-template.md) | [prd-template.es.md](sdlc/04-artifact-templates/prd-template.es.md) | OK |
 | [README.md](sdlc/04-artifact-templates/README.md) | [README.es.md](sdlc/04-artifact-templates/README.es.md) | OK |
 | [release-notes-template.md](sdlc/04-artifact-templates/release-notes-template.md) | [release-notes-template.es.md](sdlc/04-artifact-templates/release-notes-template.es.md) | OK |
+| [technical-feasibility-template.md](sdlc/04-artifact-templates/technical-feasibility-template.md) | [technical-feasibility-template.es.md](sdlc/04-artifact-templates/technical-feasibility-template.es.md) | OK |
 | [technical-story-template.md](sdlc/04-artifact-templates/technical-story-template.md) | [technical-story-template.es.md](sdlc/04-artifact-templates/technical-story-template.es.md) | OK |
 | [test-summary-report-template.md](sdlc/04-artifact-templates/test-summary-report-template.md) | [test-summary-report-template.es.md](sdlc/04-artifact-templates/test-summary-report-template.es.md) | OK |
 
@@ -186,6 +187,7 @@
 | EN | ES | Status |
 |----|----|--------|
 | [approved-tools.md](standards/ai-augmented/03-tools-catalog/approved-tools.md) | [approved-tools.es.md](standards/ai-augmented/03-tools-catalog/approved-tools.es.md) | OK |
+| [evolith-mcp-tools.md](standards/ai-augmented/03-tools-catalog/evolith-mcp-tools.md) | [evolith-mcp-tools.es.md](standards/ai-augmented/03-tools-catalog/evolith-mcp-tools.es.md) | OK |
 | [README.md](standards/ai-augmented/03-tools-catalog/README.md) | [README.es.md](standards/ai-augmented/03-tools-catalog/README.es.md) | OK |
 | [tool-catalog-template.md](standards/ai-augmented/03-tools-catalog/tool-catalog-template.md) | [tool-catalog-template.es.md](standards/ai-augmented/03-tools-catalog/tool-catalog-template.es.md) | OK |
 | [tool-design-principles.md](standards/ai-augmented/03-tools-catalog/tool-design-principles.md) | [tool-design-principles.es.md](standards/ai-augmented/03-tools-catalog/tool-design-principles.es.md) | OK |
@@ -264,6 +266,7 @@
 | [v09-ai-ecosystem.md](standards/ai-augmented/08-architecture-ai-assistant/visuals/v09-ai-ecosystem.md) | [v09-ai-ecosystem.es.md](standards/ai-augmented/08-architecture-ai-assistant/visuals/v09-ai-ecosystem.es.md) | OK |
 | [v10-knowledge-ingestion.md](standards/ai-augmented/08-architecture-ai-assistant/visuals/v10-knowledge-ingestion.md) | [v10-knowledge-ingestion.es.md](standards/ai-augmented/08-architecture-ai-assistant/visuals/v10-knowledge-ingestion.es.md) | OK |
 | [v11-governance-guardrails.md](standards/ai-augmented/08-architecture-ai-assistant/visuals/v11-governance-guardrails.md) | [v11-governance-guardrails.es.md](standards/ai-augmented/08-architecture-ai-assistant/visuals/v11-governance-guardrails.es.md) | OK |
+| [v12-external-knowledge-intake.md](standards/ai-augmented/08-architecture-ai-assistant/visuals/v12-external-knowledge-intake.md) | [v12-external-knowledge-intake.es.md](standards/ai-augmented/08-architecture-ai-assistant/visuals/v12-external-knowledge-intake.es.md) | OK |
 
 </details>
 
@@ -380,6 +383,9 @@
 | EN | ES | Status |
 |----|----|--------|
 | [architectural-directives.md](standards/vision/architectural-directives.md) | [architectural-directives.es.md](standards/vision/architectural-directives.es.md) | OK |
+| [backlog-complete-summary.md](standards/vision/backlog-complete-summary.md) | [backlog-complete-summary.es.md](standards/vision/backlog-complete-summary.es.md) | OK |
+| [backlog-post-gt93.md](standards/vision/backlog-post-gt93.md) | [backlog-post-gt93.es.md](standards/vision/backlog-post-gt93.es.md) | OK |
+| [deep-coherence-analysis-2026-06-16.md](standards/vision/deep-coherence-analysis-2026-06-16.md) | [deep-coherence-analysis-2026-06-16.es.md](standards/vision/deep-coherence-analysis-2026-06-16.es.md) | OK |
 | [evolith-ai-assisted-validation-workflow.md](standards/vision/evolith-ai-assisted-validation-workflow.md) | [evolith-ai-assisted-validation-workflow.es.md](standards/vision/evolith-ai-assisted-validation-workflow.es.md) | OK |
 | [evolith-governed-composition-target-design.md](standards/vision/evolith-governed-composition-target-design.md) | [evolith-governed-composition-target-design.es.md](standards/vision/evolith-governed-composition-target-design.es.md) | OK |
 | [evolith-provider-abstraction-plugin-model.md](standards/vision/evolith-provider-abstraction-plugin-model.md) | [evolith-provider-abstraction-plugin-model.es.md](standards/vision/evolith-provider-abstraction-plugin-model.es.md) | OK |
@@ -389,8 +395,10 @@
 | [gap-closure-evidence-standard.md](standards/vision/gap-closure-evidence-standard.md) | [gap-closure-evidence-standard.es.md](standards/vision/gap-closure-evidence-standard.es.md) | OK |
 | [gap-reference-catalog.md](standards/vision/gap-reference-catalog.md) | [gap-reference-catalog.es.md](standards/vision/gap-reference-catalog.es.md) | OK |
 | [gap-tracking.md](standards/vision/gap-tracking.md) | [gap-tracking.es.md](standards/vision/gap-tracking.es.md) | OK |
+| [github-project-cleanup-guide.md](standards/vision/github-project-cleanup-guide.md) | [github-project-cleanup-guide.es.md](standards/vision/github-project-cleanup-guide.es.md) | OK |
 | [inventory-summary.md](standards/vision/inventory-summary.md) | [inventory-summary.es.md](standards/vision/inventory-summary.es.md) | OK |
 | [maturity-assessment.md](standards/vision/maturity-assessment.md) | [maturity-assessment.es.md](standards/vision/maturity-assessment.es.md) | OK |
+| [multi-topology-reference-corpus-implementation-plan.md](standards/vision/multi-topology-reference-corpus-implementation-plan.md) | [multi-topology-reference-corpus-implementation-plan.es.md](standards/vision/multi-topology-reference-corpus-implementation-plan.es.md) | OK |
 | [README.md](standards/vision/README.md) | [README.es.md](standards/vision/README.es.md) | OK |
 | [sdlc-tracker-technical-interfaces.md](standards/vision/sdlc-tracker-technical-interfaces.md) | [sdlc-tracker-technical-interfaces.es.md](standards/vision/sdlc-tracker-technical-interfaces.es.md) | OK |
 

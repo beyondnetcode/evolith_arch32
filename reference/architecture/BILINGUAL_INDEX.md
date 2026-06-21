@@ -95,6 +95,28 @@
 | [0075-core-api-auth-strategy.md](adrs/core/0075-core-api-auth-strategy.md) | [0075-core-api-auth-strategy.es.md](adrs/core/0075-core-api-auth-strategy.es.md) | OK |
 | [0076-domain-oriented-microservice-architecture.md](adrs/core/0076-domain-oriented-microservice-architecture.md) | [0076-domain-oriented-microservice-architecture.es.md](adrs/core/0076-domain-oriented-microservice-architecture.es.md) | OK |
 | [0076-opa-bundle-s3-distribution.md](adrs/core/0076-opa-bundle-s3-distribution.md) | [0076-opa-bundle-s3-distribution.es.md](adrs/core/0076-opa-bundle-s3-distribution.es.md) | OK |
+| [0077-masstransit-v9-commercial-pivot.md](adrs/core/0077-masstransit-v9-commercial-pivot.md) | [0077-masstransit-v9-commercial-pivot.es.md](adrs/core/0077-masstransit-v9-commercial-pivot.es.md) | OK |
+| [0078-domain-financial-separation-governance.md](adrs/core/0078-domain-financial-separation-governance.md) | [0078-domain-financial-separation-governance.es.md](adrs/core/0078-domain-financial-separation-governance.es.md) | OK |
+| [0079-multi-topology-reference-corpus.md](adrs/core/0079-multi-topology-reference-corpus.md) | [0079-multi-topology-reference-corpus.es.md](adrs/core/0079-multi-topology-reference-corpus.es.md) | OK |
+| [0080-remote-repository-reference-contract.md](adrs/core/0080-remote-repository-reference-contract.md) | [0080-remote-repository-reference-contract.es.md](adrs/core/0080-remote-repository-reference-contract.es.md) | OK |
+| [0081-agentic-ai-sandbox-isolation.md](adrs/core/0081-agentic-ai-sandbox-isolation.md) | [0081-agentic-ai-sandbox-isolation.es.md](adrs/core/0081-agentic-ai-sandbox-isolation.es.md) | OK |
+| [0082-agentic-ai-trust-boundary.md](adrs/core/0082-agentic-ai-trust-boundary.md) | [0082-agentic-ai-trust-boundary.es.md](adrs/core/0082-agentic-ai-trust-boundary.es.md) | OK |
+| [0083-agentic-ai-action-authorization-audit.md](adrs/core/0083-agentic-ai-action-authorization-audit.md) | [0083-agentic-ai-action-authorization-audit.es.md](adrs/core/0083-agentic-ai-action-authorization-audit.es.md) | OK |
+| [0084-data-mesh-data-products.md](adrs/core/0084-data-mesh-data-products.md) | [0084-data-mesh-data-products.es.md](adrs/core/0084-data-mesh-data-products.es.md) | OK |
+| [0085-agnostic-opa-wasm-distribution.md](adrs/core/0085-agnostic-opa-wasm-distribution.md) | [0085-agnostic-opa-wasm-distribution.es.md](adrs/core/0085-agnostic-opa-wasm-distribution.es.md) | OK |
+| [0086-agentic-ai-telemetry-cost-control.md](adrs/core/0086-agentic-ai-telemetry-cost-control.md) | [0086-agentic-ai-telemetry-cost-control.es.md](adrs/core/0086-agentic-ai-telemetry-cost-control.es.md) | OK |
+| [0087-abac-agentic-tool-execution.md](adrs/core/0087-abac-agentic-tool-execution.md) | [0087-abac-agentic-tool-execution.es.md](adrs/core/0087-abac-agentic-tool-execution.es.md) | OK |
+| [0088-sovereign-identity-agentic-ai.md](adrs/core/0088-sovereign-identity-agentic-ai.md) | [0088-sovereign-identity-agentic-ai.es.md](adrs/core/0088-sovereign-identity-agentic-ai.es.md) | OK |
+| [0089-event-driven-agentic-workflows.md](adrs/core/0089-event-driven-agentic-workflows.md) | [0089-event-driven-agentic-workflows.es.md](adrs/core/0089-event-driven-agentic-workflows.es.md) | OK |
+| [0090-rag-knowledge-governance.md](adrs/core/0090-rag-knowledge-governance.md) | [0090-rag-knowledge-governance.es.md](adrs/core/0090-rag-knowledge-governance.es.md) | OK |
+| [0091-workload-identity-token-rotation.md](adrs/core/0091-workload-identity-token-rotation.md) | [0091-workload-identity-token-rotation.es.md](adrs/core/0091-workload-identity-token-rotation.es.md) | OK |
+| [0092-agent-infinite-loop-prevention.md](adrs/core/0092-agent-infinite-loop-prevention.md) | [0092-agent-infinite-loop-prevention.es.md](adrs/core/0092-agent-infinite-loop-prevention.es.md) | OK |
+| [0093-mcp-concurrency-locking.md](adrs/core/0093-mcp-concurrency-locking.md) | [0093-mcp-concurrency-locking.es.md](adrs/core/0093-mcp-concurrency-locking.es.md) | OK |
+| [0094-multi-agent-handoff.md](adrs/core/0094-multi-agent-handoff.md) | [0094-multi-agent-handoff.es.md](adrs/core/0094-multi-agent-handoff.es.md) | OK |
+| [0095-serverless-architecture-governance.md](adrs/core/0095-serverless-architecture-governance.md) | [0095-serverless-architecture-governance.es.md](adrs/core/0095-serverless-architecture-governance.es.md) | OK |
+| [0096-edge-computing-architecture-governance.md](adrs/core/0096-edge-computing-architecture-governance.md) | [0096-edge-computing-architecture-governance.es.md](adrs/core/0096-edge-computing-architecture-governance.es.md) | OK |
+| [0097-knowledge-lifecycle-governance.md](adrs/core/0097-knowledge-lifecycle-governance.md) | [0097-knowledge-lifecycle-governance.es.md](adrs/core/0097-knowledge-lifecycle-governance.es.md) | OK |
+| [0098-rest-uri-versioning-deprecation-policy.md](adrs/core/0098-rest-uri-versioning-deprecation-policy.md) | [0098-rest-uri-versioning-deprecation-policy.es.md](adrs/core/0098-rest-uri-versioning-deprecation-policy.es.md) | OK |
 | [README.md](adrs/core/README.md) | [README.es.md](adrs/core/README.es.md) | OK |
 
 </details>
@@ -212,6 +234,113 @@
 |----|----|--------|
 | [evolith-provider-abstraction-plugin-model.md](principles/evolith-provider-abstraction-plugin-model.md) | [evolith-provider-abstraction-plugin-model.es.md](principles/evolith-provider-abstraction-plugin-model.es.md) | OK |
 | [README.md](principles/README.md) | [README.es.md](principles/README.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>topologies</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [README.md](topologies/README.md) | [README.es.md](topologies/README.es.md) | OK |
+| [topology-corpus-standard.md](topologies/topology-corpus-standard.md) | [topology-corpus-standard.es.md](topologies/topology-corpus-standard.es.md) | OK |
+| [topology-dimensions.md](topologies/topology-dimensions.md) | [topology-dimensions.es.md](topologies/topology-dimensions.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>topologies/ai/agentic-ai</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [adoption.md](topologies/ai/agentic-ai/adoption.md) | [adoption.es.md](topologies/ai/agentic-ai/adoption.es.md) | OK |
+| [evidence.md](topologies/ai/agentic-ai/evidence.md) | [evidence.es.md](topologies/ai/agentic-ai/evidence.es.md) | OK |
+| [evolution.md](topologies/ai/agentic-ai/evolution.md) | [evolution.es.md](topologies/ai/agentic-ai/evolution.es.md) | OK |
+| [maturity.md](topologies/ai/agentic-ai/maturity.md) | [maturity.es.md](topologies/ai/agentic-ai/maturity.es.md) | OK |
+| [operations.md](topologies/ai/agentic-ai/operations.md) | [operations.es.md](topologies/ai/agentic-ai/operations.es.md) | OK |
+| [patterns.md](topologies/ai/agentic-ai/patterns.md) | [patterns.es.md](topologies/ai/agentic-ai/patterns.es.md) | OK |
+| [README.md](topologies/ai/agentic-ai/README.md) | [README.es.md](topologies/ai/agentic-ai/README.es.md) | OK |
+| [resilience.md](topologies/ai/agentic-ai/resilience.md) | [resilience.es.md](topologies/ai/agentic-ai/resilience.es.md) | OK |
+| [security.md](topologies/ai/agentic-ai/security.md) | [security.es.md](topologies/ai/agentic-ai/security.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>topologies/data/data-mesh</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [maturity.md](topologies/data/data-mesh/maturity.md) | [maturity.es.md](topologies/data/data-mesh/maturity.es.md) | OK |
+| [README.md](topologies/data/data-mesh/README.md) | [README.es.md](topologies/data/data-mesh/README.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>topologies/execution</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [operational-budgets-runbook.md](topologies/execution/operational-budgets-runbook.md) | [operational-budgets-runbook.es.md](topologies/execution/operational-budgets-runbook.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>topologies/execution/edge-computing</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [maturity.md](topologies/execution/edge-computing/maturity.md) | [maturity.es.md](topologies/execution/edge-computing/maturity.es.md) | OK |
+| [README.md](topologies/execution/edge-computing/README.md) | [README.es.md](topologies/execution/edge-computing/README.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>topologies/execution/serverless</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [maturity.md](topologies/execution/serverless/maturity.md) | [maturity.es.md](topologies/execution/serverless/maturity.es.md) | OK |
+| [README.md](topologies/execution/serverless/README.md) | [README.es.md](topologies/execution/serverless/README.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>topologies/integration/event-driven</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [maturity.md](topologies/integration/event-driven/maturity.md) | [maturity.es.md](topologies/integration/event-driven/maturity.es.md) | OK |
+| [README.md](topologies/integration/event-driven/README.md) | [README.es.md](topologies/integration/event-driven/README.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>topologies/progressive-axis/distributed-modules</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [maturity.md](topologies/progressive-axis/distributed-modules/maturity.md) | [maturity.es.md](topologies/progressive-axis/distributed-modules/maturity.es.md) | OK |
+| [README.md](topologies/progressive-axis/distributed-modules/README.md) | [README.es.md](topologies/progressive-axis/distributed-modules/README.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>topologies/progressive-axis/microservices</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [maturity.md](topologies/progressive-axis/microservices/maturity.md) | [maturity.es.md](topologies/progressive-axis/microservices/maturity.es.md) | OK |
+| [README.md](topologies/progressive-axis/microservices/README.md) | [README.es.md](topologies/progressive-axis/microservices/README.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>topologies/progressive-axis/modular-monolith</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [maturity.md](topologies/progressive-axis/modular-monolith/maturity.md) | [maturity.es.md](topologies/progressive-axis/modular-monolith/maturity.es.md) | OK |
+| [README.md](topologies/progressive-axis/modular-monolith/README.md) | [README.es.md](topologies/progressive-axis/modular-monolith/README.es.md) | OK |
 
 </details>
 

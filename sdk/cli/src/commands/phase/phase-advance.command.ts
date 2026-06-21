@@ -5,6 +5,7 @@ import { ProposePhaseAdvanceUseCase } from '@evolith/core-domain/application/use
 import {
   ExecutionContext,
   OutputMeta,
+  OUTPUT_ENVELOPE_SCHEMA_VERSION,
   createErrorEnvelope,
   createSuccessEnvelope,
   isGatePhase,
@@ -56,6 +57,7 @@ export class PhaseAdvanceCommand extends BaseEvolithCommand {
         executedAt: new Date().toISOString(),
         durationMs: Date.now() - startedAt,
         correlationId: randomUUID(),
+        schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
       };
       return Object.keys(context).length > 0 ? { ...base, context } : base;
     };

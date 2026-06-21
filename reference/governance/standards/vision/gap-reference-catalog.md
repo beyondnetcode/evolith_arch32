@@ -20,9 +20,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** `apps/core-api/src/presentation/controllers/gates.controller.ts`, `architecture.controller.ts`, and `health.controller.ts` return raw domain objects (e.g., `{ passed: true }`, `{ status: 'UP' }`) bypassing the envelope. CLI and MCP already emit the envelope per GT-01/03/05.
 - **Complexity:** M
 - **Done when:**
-  - [ ] A presentation-layer interceptor wraps all REST responses in `{success, data, meta}` (success and error paths) with `meta.context`, `meta.timing`, and `meta.schemaVersion`.
-  - [ ] Contract tests assert envelope shape and ADR-0073 fields for every controller route.
-  - [ ] OpenAPI 3.1 schemas (closing GT-67) describe the envelope, not raw payloads.
+  - [x] A presentation-layer interceptor wraps all REST responses in `{success, data, meta}` (success and error paths) with `meta.context`, `meta.timing`, and `meta.schemaVersion`.
+  - [x] Contract tests assert envelope shape and ADR-0073 fields for every controller route.
+  - [x] OpenAPI 3.1 schemas (closing GT-67) describe the envelope, not raw payloads.
 
 
 #### GT-156
@@ -33,9 +33,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** `reference/products/` has hubs for `smart-cli/`, `mcp-services/`, `evolith-tracker/`, and `ums-reference/`, but no `core-api/` hub despite ADR-0074/0075 ratifying Core API as a canonical product. Phase 5 zero-downtime playbook assumes traditional services and does not cover stateless NestJS Core API rollout, MCP gateway separation, or API URI versioning rollout (related to GT-159).
 - **Complexity:** L
 - **Done when:**
-  - [ ] `reference/products/core-api/README.md` (+`.es.md`) is the canonical product hub with version, surface inventory (controllers, modules, schemas), and consumption examples.
-  - [ ] `reference/products/core-api/api-reference.md` (+`.es.md`) documents every public endpoint with request/response envelopes and links to OpenAPI.
-  - [ ] `reference/governance/sdlc/01-playbooks/core-api-deployment.md` covers zero-downtime, schema migration, and rollback for the Core API specifically.
+  - [x] `reference/products/core-api/README.md` (+`.es.md`) is the canonical product hub with version, surface inventory (controllers, modules, schemas), and consumption examples.
+  - [x] `reference/products/core-api/api-reference.md` (+`.es.md`) documents every public endpoint with request/response envelopes and links to OpenAPI.
+  - [x] `reference/governance/sdlc/01-playbooks/core-api-deployment.md` covers zero-downtime, schema migration, and rollback for the Core API specifically.
 
 
 #### GT-157

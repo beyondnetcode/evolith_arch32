@@ -16,7 +16,7 @@
       "id": "output-envelope",
       "version": "1.0.0",
       "path": "rulesets/schema/output-envelope.schema.json",
-      "sha256": "83a426d58ed87285296a82f40848bfe7336d07642493b44a4736a64b32d367b3"
+      "sha256": "07eaffaae2c33071ea105fbcbdc497c06d149143f6cc9b94555170740707fd0b"
     }
   ],
   "supportedConsumers": [

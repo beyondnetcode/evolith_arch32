@@ -7,6 +7,7 @@
 
 | EN | ES | Status |
 |----|----|--------|
+| [agentic-ci-rag-support.md](agentic-ci-rag-support.md) | [agentic-ci-rag-support.es.md](agentic-ci-rag-support.es.md) | OK |
 | [BILINGUAL_INDEX.md](BILINGUAL_INDEX.md) | [BILINGUAL_INDEX.es.md](BILINGUAL_INDEX.es.md) | OK |
 | [README.md](README.md) | [README.es.md](README.es.md) | OK |
 

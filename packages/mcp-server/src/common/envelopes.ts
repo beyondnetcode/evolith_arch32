@@ -10,11 +10,20 @@ import { ErrorCode, ErrorCodes, DomainException } from './errors';
  * tool's payload shape.
  */
 
+/**
+ * Pinned version of the MCP envelope shape. Bumped on a breaking change
+ * to the envelope (NOT on payload schema changes). A bump requires a new
+ * entry in `surface-compatibility.json` per GT-174.
+ */
+export const MCP_ENVELOPE_SCHEMA_VERSION = '1.0.0';
+
 export interface EnvelopeMeta {
   correlationId: string;
   tool: string;
   durationMs: number;
   timestamp: string;
+  /** ADR-0073 envelope shape version, pinned per surface. */
+  schemaVersion: string;
 }
 
 export interface SuccessEnvelope<T = unknown> {
@@ -54,6 +63,7 @@ function buildMeta(meta: MetaInput): EnvelopeMeta {
     tool: meta.tool,
     durationMs: meta.durationMs,
     timestamp: meta.timestamp ?? new Date().toISOString(),
+    schemaVersion: MCP_ENVELOPE_SCHEMA_VERSION,
   };
 }
 

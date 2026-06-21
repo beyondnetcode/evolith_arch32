@@ -13,6 +13,16 @@
 </details>
 
 <details>
+<summary><strong>core-api</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [api-reference.md](core-api/api-reference.md) | [api-reference.es.md](core-api/api-reference.es.md) | OK |
+| [README.md](core-api/README.md) | [README.es.md](core-api/README.es.md) | OK |
+
+</details>
+
+<details>
 <summary><strong>evolith-tracker</strong></summary>
 
 | EN | ES | Status |

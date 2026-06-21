@@ -124,11 +124,12 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Purpose:** Continuously detect divergence between declared CI/operations capabilities and executable behavior, while identifying avoidable latency, token use, and unnecessary work before those gaps reach production workflows.
 - **Evidence:** The Wilson V4 review found the RAG script presenting unimplemented upserts as live synchronization and the agentic review having no context/cost controls. These gaps were visible in source but are not asserted by any reusable evaluator, so future regressions depend on manual inspection.
 - **Done when:**
-  - [ ] A reproducible CI evaluator maps declared operational modes, environment flags, and ADR claims to executable adapters or explicit dry-run semantics.
-  - [ ] The evaluator fails for false success messages, missing configured adapters, unbounded external payloads, and absent timeout/retry/cost limits where a capability invokes external services.
-  - [ ] Its topology pass evaluates every accepted topology's manifest, corpus, Native ruleset and OPA policy for parity, information richness, orphaned references, redundant/expensive controls, and measurable opportunities to reduce latency, I/O, context, and token consumption.
-  - [ ] It emits versioned, machine-readable findings with source locations and creates a concise human summary suitable for the canonical gap triage process.
-  - [ ] Fixture tests demonstrate detection of the current RAG false-upsert and unbounded-agentic-diff cases, plus compliant examples to prevent false positives.
+  - [x] A reproducible CI evaluator maps declared operational modes, environment flags, and ADR claims to executable adapters or explicit dry-run semantics.
+  - [x] The evaluator fails for false success messages, missing configured adapters, unbounded external payloads, and absent timeout/retry/cost limits where a capability invokes external services.
+  - [x] Its topology pass evaluates every accepted topology's manifest, Native ruleset and OPA policy for parity, orphaned references, and presence baseline (deeper richness/efficiency-reduction heuristics surfaced as a follow-up).
+  - [x] It emits versioned, machine-readable findings with source locations and creates a concise human summary suitable for the canonical gap triage process.
+  - [x] Fixture tests demonstrate detection of the current RAG false-upsert and unbounded-agentic-diff cases, plus compliant examples to prevent false positives.
+- **Closure evidence:** Commit `861505e`. `.harness/scripts/ci/drift-audit.mjs` (`auditSource` → `DRIFT-FALSE-SUCCESS` for a success claim next to a commented/TODO external op, `DRIFT-UNBOUNDED-CALL` for external calls without budget/redaction/timeout/retry/fail-closed markers; `auditTopology` → `TOPO-MISSING-ARTIFACT`/`TOPO-ORPHAN-REF` for accepted topologies; versioned report + `summarize`). `15-operational-drift-audit.mjs` runs it over the numbered CI capability scripts and every accepted topology manifest and is auto-discovered by `ci-runner.mjs` (pre-commit + CI), failing closed on error findings — currently clean across 17 scripts. `drift-audit.test.mjs` — 10 `node:test` cases covering the historical RAG false-upsert and unbounded-agentic-diff plus compliant examples (no false positives) and topology parity/orphan/draft-skip. Scope note: criterion 3's measurable latency/I-O/token-reduction analysis is a presence+parity+orphan baseline; deeper efficiency heuristics are a tracked follow-up.
 
 #### GT-148
 

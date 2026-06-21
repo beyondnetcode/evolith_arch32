@@ -1984,6 +1984,21 @@
         "node --test .harness/scripts/ci/rag-sync.test.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-147",
+      "closedAt": "2026-06-20",
+      "closureCommit": "861505eef043406dcad4d15a030017bb52d2b641",
+      "evidence": [
+        ".harness/scripts/ci/drift-audit.mjs",
+        ".harness/scripts/ci/15-operational-drift-audit.mjs",
+        ".harness/scripts/ci/drift-audit.test.mjs"
+      ],
+      "validationCommands": [
+        "node --test .harness/scripts/ci/drift-audit.test.mjs",
+        "node .harness/scripts/ci/15-operational-drift-audit.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

@@ -299,6 +299,9 @@ jobs:
     name: Wilson Agentic Review
     if: github.event_name == 'push' || github.event.pull_request.head.repo.fork == false
     runs-on: ubuntu-latest
+    # Least privilege: the review only reads the repo to diff changes (GT-146).
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
         with:

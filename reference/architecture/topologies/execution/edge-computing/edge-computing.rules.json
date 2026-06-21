@@ -7,6 +7,22 @@
   "effectiveDate": "2026-06-20",
   "rules": [
     {
+      "id": "EC-SEC-01",
+      "severity": "MUST",
+      "category": "execution-security",
+      "title": "Network Security Profile",
+      "description": "Edge computing components MUST define a 'networkSecurity' profile in their config.",
+      "blocking": true
+    },
+    {
+      "id": "EC-SEC-02",
+      "severity": "MUST",
+      "category": "execution-mtls",
+      "title": "mTLS Enforcement",
+      "description": "mTLS must be enabled for all edge computing network communications.",
+      "blocking": true
+    },
+    {
       "id": "EC-R01",
       "severity": "MUST",
       "category": "edge-computing-sync",

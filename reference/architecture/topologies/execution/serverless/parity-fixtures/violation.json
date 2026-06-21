@@ -10,6 +10,6 @@
     }
   },
   "expectedNative": [
-    { "ruleId": null, "severity": "error", "file": null }
+    { "ruleId": "SV-R01", "severity": "error", "file": null }
   ]
 }

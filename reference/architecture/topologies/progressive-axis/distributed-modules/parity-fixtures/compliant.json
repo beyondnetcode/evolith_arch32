@@ -6,6 +6,8 @@
       "hasAcl": true,
       "hasEvents": true,
       "hasOtel": true,
+      "hasIndependentDeployment": true,
+      "hasCircuitBreaker": true,
       "hasExtractionReadiness": true
     }
   },

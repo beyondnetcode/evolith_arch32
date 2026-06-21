@@ -7,6 +7,22 @@
   "effectiveDate": "2026-06-20",
   "rules": [
     {
+      "id": "SV-SEC-01",
+      "severity": "MUST",
+      "category": "execution-security",
+      "title": "Network Security Profile",
+      "description": "Serverless components MUST define a 'networkSecurity' profile in their config.",
+      "blocking": true
+    },
+    {
+      "id": "SV-SEC-02",
+      "severity": "MUST",
+      "category": "execution-mtls",
+      "title": "mTLS Enforcement",
+      "description": "mTLS must be enabled for all serverless network communications.",
+      "blocking": true
+    },
+    {
       "id": "SV-R01",
       "severity": "MUST", "category": "serverless-config", "title": "Declared Serverless Contract", "description": "A Serverless satellite MUST provide serverless.config.json.", "blocking": true
     },

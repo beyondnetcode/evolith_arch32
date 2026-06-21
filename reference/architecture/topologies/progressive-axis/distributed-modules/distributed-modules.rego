@@ -32,6 +32,16 @@ violations[{"id": "DM-R05", "severity": "MUST", "title": "Distributed Tracing Ac
 	msg := "No distributed tracing setup found (DM-R05)."
 }
 
+violations[{"id": "DM-R06", "severity": "MUST", "title": "Modules Deployable Independently", "blocking": true, "msg": msg}] {
+	not input.satellite.hasIndependentDeployment
+	msg := "No independent deployment pipeline found. Each module MUST deploy independently (DM-R06)."
+}
+
+violations[{"id": "DM-R07", "severity": "MUST", "title": "Circuit Breaker for Inter-Module Calls", "blocking": false, "msg": msg}] {
+	input.satellite.hasCircuitBreaker == false
+	msg := "Circuit breaker not found in inter-module calls (DM-R07)."
+}
+
 violations[{"id": "DM-R08", "severity": "MUST", "title": "Maintain Extraction Readiness Score", "blocking": false, "msg": msg}] {
 	not input.satellite.hasExtractionReadiness
 	msg := "No extraction-readiness.md found in docs/ (DM-R08)."

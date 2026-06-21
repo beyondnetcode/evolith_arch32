@@ -16,3 +16,33 @@ violations[{"id": "MS-R02", "severity": "MUST", "title": "Explicit Service Bound
 	count(input.satellite.directories) < 2
 	msg := "Found less than 2 services in src/ (MS-R02)."
 }
+
+violations[{"id": "MS-R03", "severity": "MUST", "title": "Bulkhead Pattern per Service", "blocking": false, "msg": msg}] {
+	not input.satellite.hasBulkhead
+	msg := "No bulkhead isolation found per upstream dependency (MS-R03)."
+}
+
+violations[{"id": "MS-R04", "severity": "MUST", "title": "Fallback Behavior for All External Calls", "blocking": false, "msg": msg}] {
+	not input.satellite.hasFallback
+	msg := "No fallback behavior defined for external calls (MS-R04)."
+}
+
+violations[{"id": "MS-R05", "severity": "MUST", "title": "Contract Tests for All Inter-Service Contracts", "blocking": true, "msg": msg}] {
+	not input.satellite.hasContractTests
+	msg := "No contract tests found for inter-service contracts (MS-R05)."
+}
+
+violations[{"id": "MS-R06", "severity": "MUST", "title": "Service Owns Its Data — No Shared Persistence", "blocking": true, "msg": msg}] {
+	not input.satellite.hasDataSovereignty
+	msg := "Shared persistence detected. Each service MUST own its data exclusively (MS-R06)."
+}
+
+violations[{"id": "MS-R07", "severity": "MUST", "title": "Service-Level Observability with SLOs", "blocking": false, "msg": msg}] {
+	not input.satellite.hasSloDashboards
+	msg := "No SLO dashboards found per service (MS-R07)."
+}
+
+violations[{"id": "MS-R08", "severity": "MUST", "title": "Service-Level On-Call Ownership", "blocking": false, "msg": msg}] {
+	not input.satellite.hasOnCall
+	msg := "No on-call roster found per service (MS-R08)."
+}

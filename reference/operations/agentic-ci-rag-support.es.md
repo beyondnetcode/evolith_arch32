@@ -29,7 +29,16 @@ El job CI `Wilson Agentic Review` suministra el secreto con `EVOLITH_AGENTIC_REV
 
 El job RAG divide documentos de referencia ingleses modificados en limites H2/H3 y luego por un maximo de aproximadamente 512 tokens. Esto mantiene la recuperacion enfocada y evita que catalogos de gaps grandes consuman todo el contexto del agente.
 
-`EVOLITH_RAG_SYNC=true` habilita la rama de sincronizacion real. La implementacion actual prepara y reporta chunks; conectar un proveedor de vector store sigue siendo una tarea de adaptador de infraestructura. No declares documentos indexados hasta que ese adaptador confirme upserts exitosos.
+`EVOLITH_RAG_SYNC=true` habilita la rama de sincronizacion real, que embebe y hace upsert de chunks a traves del adaptador durable configurado y emite un recibo. El dry-run usa el adaptador en memoria veraz y no durable.
+
+## Operaciones de Sincronizacion de Vectores RAG (GT-145)
+
+`14-rag-index-sync.mjs` ejecuta una delta-sync neutral al proveedor a traves del puerto de adaptadores `rag-port.mjs`.
+
+- **Seleccion de proveedor:** define `EVOLITH_RAG_PROVIDER` con un adaptador durable registrado; sin definir (o `memory`) es un sustituto de dry-run no durable. Una corrida real (`EVOLITH_RAG_SYNC=true`) sin adaptador durable falla cerrado: nunca declara documentos indexados.
+- **Credenciales de minimo privilegio:** pasa las credenciales de vector store y embedding solo como secretos de CI enmascarados al job de sync; nunca las pongas en el diff ni en los logs. El job no necesita permisos de escritura sobre el repositorio.
+- **Batch y retry acotados:** los chunks se embeben y upsertan en lotes de tamano fijo; cualquier error de adaptador, embedding o persistencia falla el paso cerrado en vez de reportar exito parcial. Configura retry y backoff dentro del adaptador durable, acotados por un tope de intentos.
+- **Telemetria de costo y tokens:** cada corrida emite una linea machine-readable `RECEIPT {…}` (y un archivo `EVOLITH_RAG_RECEIPT_PATH` si se define) con `counts` y `telemetry` agregados y no sensibles (`embedCalls`, `estTokens`). No se registran texto de chunks ni credenciales.
 
 ## Lista de Soporte
 

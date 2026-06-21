@@ -1968,6 +1968,22 @@
         "node --test .harness/scripts/ci/review-input.test.mjs .harness/scripts/ci/review-result.test.mjs .harness/scripts/ci/review-provider.test.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-145",
+      "closedAt": "2026-06-20",
+      "closureCommit": "d41bc3a3427cb897d72523a57283c75a27c2815b",
+      "evidence": [
+        ".harness/scripts/ci/rag-port.mjs",
+        ".harness/scripts/ci/rag-sync.mjs",
+        ".harness/scripts/ci/14-rag-index-sync.mjs",
+        "reference/operations/agentic-ci-rag-support.md",
+        "reference/operations/agentic-ci-rag-support.es.md"
+      ],
+      "validationCommands": [
+        "node --test .harness/scripts/ci/rag-sync.test.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

@@ -4,7 +4,7 @@
 
 **Estado:** Seguimiento Activo
 **Responsable:** Evolith Architecture Board
-**Última Actualización:** 2026-06-20
+**Última Actualización:** 2026-06-21
 **Detalle de Gaps:** [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md)
 
 Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunidades, habilitadores, prioridad y estado. Selecciona un ID para abrir la descripción del problema, propósito, evidencia, criterios de cierre y referencias.
@@ -13,6 +13,26 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|
+| [`GT-155`](./gap-reference-catalog.es.md#gt-155) | Conformidad de envelope ADR-0073 en el REST del Core API | `BFF API` | Cross | P0 | M | `EN PROGRESO` |
+| [`GT-156`](./gap-reference-catalog.es.md#gt-156) | Hub de producto, referencia API y runbook de despliegue del Core API | `Product` | Cross | P0 | L | `PENDIENTE` |
+| [`GT-159`](./gap-reference-catalog.es.md#gt-159) | Versionado de URI y política de deprecación de la API REST | `BFF API` | Cross | P1 | S | `PENDIENTE` |
+| [`GT-165`](./gap-reference-catalog.es.md#gt-165) | SLOs y presupuestos de costo concretos para topologías serverless y edge | `Documentation` | Cross | P1 | S | `PENDIENTE` |
+| [`GT-157`](./gap-reference-catalog.es.md#gt-157) | Paridad de autenticación y autorización MCP con REST | `MCP Services` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-158`](./gap-reference-catalog.es.md#gt-158) | Human-in-the-loop y ABAC para herramientas MCP mutativas | `MCP Services` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-160`](./gap-reference-catalog.es.md#gt-160) | Propagación de correlation-ID y contexto de solicitud entre superficies | `Cross` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-161`](./gap-reference-catalog.es.md#gt-161) | Esquemas JSON formales para los inputs de las políticas OPA core | `Schema` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-162`](./gap-reference-catalog.es.md#gt-162) | Tests unitarios del agregador `main.rego` y paridad post GT-149 | `Rulesets` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-163`](./gap-reference-catalog.es.md#gt-163) | Validación CI de artefactos referenciados por el manifest de topología | `Rulesets` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-164`](./gap-reference-catalog.es.md#gt-164) | Riqueza de rulesets event-driven y data-mesh | `Rulesets` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-166`](./gap-reference-catalog.es.md#gt-166) | Runbooks SDLC faltantes para Fases 1, 2 y 4 | `Documentation` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-167`](./gap-reference-catalog.es.md#gt-167) | Plantillas de evidencia y checklists de aceptación para phase-gates | `Documentation` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-170`](./gap-reference-catalog.es.md#gt-170) | Hub de producto de UMS reference | `Product` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-168`](./gap-reference-catalog.es.md#gt-168) | Aplicación de referencia de composición cross-topología | `Architecture` | Cross | P1 | L | `PENDIENTE` |
+| [`GT-169`](./gap-reference-catalog.es.md#gt-169) | Presupuestos operativos, ciclo de credenciales y runbooks de Agentic AI | `Architecture` | Cross | P1 | L | `PENDIENTE` |
+| [`GT-174`](./gap-reference-catalog.es.md#gt-174) | `meta.schemaVersion` y matriz de compatibilidad productor/consumidor | `Cross` | Cross | P2 | S | `PENDIENTE` |
+| [`GT-173`](./gap-reference-catalog.es.md#gt-173) | Paridad de exportación OpenTelemetry en CLI, MCP y REST | `Cross` | Cross | P2 | M | `PENDIENTE` |
+| [`GT-171`](./gap-reference-catalog.es.md#gt-171) | Auditoría de paridad de superficie command-as-a-service (CLI vs MCP vs REST) | `Cross` | Cross | P2 | L | `PENDIENTE` |
+| [`GT-172`](./gap-reference-catalog.es.md#gt-172) | Suite de pruebas de contrato roundtrip entre superficies | `Cross` | Cross | P2 | L | `PENDIENTE` |
 | [`GT-152`](./gap-reference-catalog.es.md#gt-152) | Contrato de Conocimiento Externo y Esquema de Registro Fuente | `Governance` | Cross | P0 | S | `COMPLETADO` |
 | [`GT-153`](./gap-reference-catalog.es.md#gt-153) | Gobierno del Ciclo de Vida del Conocimiento por Winston | `Governance` | Cross | P0 | M | `COMPLETADO` |
 | [`GT-154`](./gap-reference-catalog.es.md#gt-154) | Proyección RAG y Paridad Native/OPA para Conocimiento Externo | `Governance` | Cross | P0 | M | `COMPLETADO` |
@@ -171,7 +191,9 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-128`](./gap-reference-catalog.es.md#gt-128) | Baseline Ruleset for Data Mesh | `Architecture` | Transversal | P2 | M | `COMPLETADO` |
 | [`GT-129`](./gap-reference-catalog.es.md#gt-129) | Baseline Ruleset for Edge Computing | `Architecture` | Transversal | P2 | M | `COMPLETADO` |
 
-**Progreso:** 157 / 157 completados · 0 en progreso · 0 pendientes · 0 diferidos
+**Progreso:** 157 / 177 completados · 1 en progreso · 19 pendientes · 0 diferidos
+
+**Oleada 2026-06-21 (auditoría profunda de Wilson):** Añadidos 20 gaps nuevos `GT-155`…`GT-174` que cubren conformidad de envelope en Core API REST, paridad de superficies command-as-a-service, autenticación/autorización MCP, esquemas y tests de OPA, validación CI de manifests de topología, runbooks y plantillas SDLC, hubs de producto de Core API y UMS, presupuestos operativos de Agentic AI, paridad OpenTelemetry y versionado del envelope.
 
 **Ordenamiento:** una sola tabla, ordenada por estado (pendientes, luego diferidos, luego completados), luego criticidad (`P0` → `P1` → `P2`) y luego complejidad (`S` → `M` → `L`); los completados se agrupan por componente. Los IDs `GT-*` enlazan al [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md); los IDs `MT-A*` enlazan al [plan de implementación Multi-Topology](./multi-topology-reference-corpus-implementation-plan.es.md).
 

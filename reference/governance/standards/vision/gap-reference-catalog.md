@@ -12,6 +12,266 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 ## 1. Gap Details
 
+#### GT-155
+
+**Title:** REST Core API envelope conformance with ADR-0073
+
+- **Purpose:** Bring every REST controller in `apps/core-api` into conformance with the unified `{success, data, meta}` envelope defined by ADR-0073, so REST, CLI, and MCP surfaces expose the same shape and Tracker can rely on a single client.
+- **Evidence:** `apps/core-api/src/presentation/controllers/gates.controller.ts`, `architecture.controller.ts`, and `health.controller.ts` return raw domain objects (e.g., `{ passed: true }`, `{ status: 'UP' }`) bypassing the envelope. CLI and MCP already emit the envelope per GT-01/03/05.
+- **Complexity:** M
+- **Done when:**
+  - [ ] A presentation-layer interceptor wraps all REST responses in `{success, data, meta}` (success and error paths) with `meta.context`, `meta.timing`, and `meta.schemaVersion`.
+  - [ ] Contract tests assert envelope shape and ADR-0073 fields for every controller route.
+  - [ ] OpenAPI 3.1 schemas (closing GT-67) describe the envelope, not raw payloads.
+
+
+#### GT-156
+
+**Title:** Core API product hub, API reference, and deployment runbook
+
+- **Purpose:** Create a first-class product hub for the Core API parallel to Smart CLI and Tracker so external consumers (Tracker, satellites) have a single source for capabilities, endpoint reference, schema registry, deployment, and runbooks.
+- **Evidence:** `reference/products/` has hubs for `smart-cli/`, `mcp-services/`, `evolith-tracker/`, and `ums-reference/`, but no `core-api/` hub despite ADR-0074/0075 ratifying Core API as a canonical product. Phase 5 zero-downtime playbook assumes traditional services and does not cover stateless NestJS Core API rollout, MCP gateway separation, or API URI versioning rollout (related to GT-159).
+- **Complexity:** L
+- **Done when:**
+  - [ ] `reference/products/core-api/README.md` (+`.es.md`) is the canonical product hub with version, surface inventory (controllers, modules, schemas), and consumption examples.
+  - [ ] `reference/products/core-api/api-reference.md` (+`.es.md`) documents every public endpoint with request/response envelopes and links to OpenAPI.
+  - [ ] `reference/governance/sdlc/01-playbooks/core-api-deployment.md` covers zero-downtime, schema migration, and rollback for the Core API specifically.
+
+
+#### GT-157
+
+**Title:** MCP authentication and authorization parity with REST
+
+- **Purpose:** Make the MCP server enforce the same identity, API-key, and JWT controls REST already implements (GT-62, ADR-0075) so agents calling MCP tools carry verifiable identity and tool visibility can be scoped by role.
+- **Evidence:** REST uses `ApiKeyAuthGuard` and JWT; the MCP server checks only a shared environment-variable bearer token in `mcp-server.service.ts` and exposes all tools to any authenticated caller. No role-based tool listing, no per-tool scope.
+- **Complexity:** M
+- **Done when:**
+  - [ ] MCP server accepts the same API-key and JWT mechanisms as the REST API and rejects unauthenticated callers with envelope-shaped errors.
+  - [ ] Tool registration carries declared scopes (`read|write|admin`) and tools/list returns only tools the caller's role permits.
+  - [ ] Conformance tests verify REST and MCP reject the same invalid credentials and emit equivalent error envelopes.
+
+
+#### GT-158
+
+**Title:** Human-in-the-loop and ABAC scoping for mutative MCP tools
+
+- **Purpose:** Close the GT-114 bypass where CLI mutative commands gate behind confirmation prompts but the same operations called via MCP (`auto-fix`, `agent-install`, `sdlc apply`) execute without operator approval.
+- **Evidence:** GT-114 added CLI confirmation, but MCP tool handlers invoke the underlying use cases directly. There is no policy that distinguishes preview/read tools from mutative tools, no proposal/apply split for MCP, and no audit trail of who approved the apply.
+- **Complexity:** M
+- **Done when:**
+  - [ ] Mutative MCP tools require an explicit `apply: true` argument paired with an `approvalToken` issued out-of-band, or surface a `propose → confirm → apply` pair following ADR-0073.
+  - [ ] An ABAC policy in OPA (`abac-mcp-tool-access.rego`) gates mutative tools by caller role/scope, deny by default.
+  - [ ] Audit events record caller identity, scope, approval token, and diff for every mutative tool invocation.
+
+
+#### GT-159
+
+**Title:** REST API URI versioning and deprecation policy
+
+- **Purpose:** Pin every REST endpoint behind an explicit version (URI `/api/v1/...` or header) and publish a deprecation/sunset policy so Tracker integrations have a deterministic migration path when the contract evolves.
+- **Evidence:** Controllers in `apps/core-api/src/presentation/controllers/` route under unversioned paths (`/gates/...`, `/projects/...`). No `X-API-Version`, no sunset header, no documented deprecation timeline.
+- **Complexity:** S
+- **Done when:**
+  - [ ] All REST routes carry an explicit URI version segment (or equivalent header strategy ratified in an ADR), with `/api/v1/...` as the baseline.
+  - [ ] A deprecation policy ADR defines minimum notice, headers (`Deprecation`, `Sunset`), and changelog requirements for breaking changes.
+  - [ ] CI fails when a route is added without a version segment.
+
+
+#### GT-160
+
+**Title:** Cross-surface correlation-ID and request-context propagation
+
+- **Purpose:** Carry a single correlation ID and tenant/initiative context through CLI → MCP → REST → CLI chains so distributed traces stitch together and audit trails are reconstructable.
+- **Evidence:** CLI mints a `correlationId` in `command-watcher.ts`; REST middleware reads `X-Correlation-Id`; MCP tools mint a fresh ID per invocation. `initiative` and `tenant` are accepted by CLI but not echoed in REST or MCP envelopes.
+- **Complexity:** M
+- **Done when:**
+  - [ ] MCP tools accept and propagate `correlationId`, `initiative`, and `tenant` from the caller and echo them in `meta.context`.
+  - [ ] REST controllers and an envelope interceptor echo the same context fields, with header propagation across upstream/downstream calls.
+  - [ ] A round-trip test asserts the correlation ID is preserved across CLI → MCP → REST.
+
+
+#### GT-161
+
+**Title:** Formal JSON input schemas for core OPA policies
+
+- **Purpose:** Publish a versioned JSON Schema for every OPA policy input so producers (CLI, CI, MCP) and consumers (validators) share one machine-readable contract per policy.
+- **Evidence:** Only `abac-mcp-tool-access.rego` documents its input schema explicitly. `governance.rego`, `mcp.rego`, `version-pinning.rego`, `cli-readiness.rego`, `knowledge-intake.rego`, `taxonomy.rego`, `ci-cd.rego`, and `evidence.rego` rely on inline comments.
+- **Complexity:** M
+- **Done when:**
+  - [ ] Each core OPA policy ships an input JSON Schema under `rulesets/opa/schemas/<policy>.input.schema.json`, registered in the schema index.
+  - [ ] CI rejects OPA inputs that fail their schema before evaluation.
+  - [ ] Generated documentation links each policy to its input schema in EN and ES.
+
+
+#### GT-162
+
+**Title:** Aggregator `main.rego` unit tests and parity follow-through to GT-149
+
+- **Purpose:** Cover the OPA aggregator entry point with unit tests so combined violation sets and rule overlap stay verifiable as policies evolve, and confirm semantic Native/OPA parity reaches the aggregator layer (not only individual policies validated under GT-149).
+- **Evidence:** `rulesets/opa/main.rego` aggregates seven violation sets but has no companion `main_test.rego`. GT-149 closed individual policy tests and the differential gate; aggregator-level overlap and precedence are unverified.
+- **Complexity:** M
+- **Done when:**
+  - [ ] `main_test.rego` covers empty, single-source, multi-source, and overlapping inputs with explicit precedence assertions.
+  - [ ] A differential test for the aggregator runs both Native and OPA pipelines on shared fixtures.
+  - [ ] CI fails on aggregator coverage regressions and on differential drift.
+
+
+#### GT-163
+
+**Title:** Topology manifest CI validation for referenced artifacts
+
+- **Purpose:** Ensure every `topology-manifest.json` reference (corpus, nativeEvaluator, evidence, operational interfaces) points to an artifact that exists and conforms to its declared schema so accepted topologies cannot ship with dangling references.
+- **Evidence:** `rulesets/schema/topology-manifest.schema.json` declares the fields but no validator checks that referenced files exist (e.g., a missing `corpus.nativeEvaluator` path is not flagged).
+- **Complexity:** M
+- **Done when:**
+  - [ ] A `validate-topology-manifests.mjs` extension (or new validator) resolves and existence-checks every manifest reference.
+  - [ ] Referenced TypeScript validators must compile and expose the declared symbols; referenced JSON evidence must match its schema.
+  - [ ] CI fails the topology gate on any unresolved or schema-divergent reference.
+
+
+#### GT-164
+
+**Title:** Event-driven and data-mesh ruleset richness
+
+- **Purpose:** Bring event-driven and data-mesh rulesets up to the breadth of progressive-axis topologies with explicit, executable rules for event ordering, idempotency contracts, retention, and analytical data lineage.
+- **Evidence:** `reference/architecture/topologies/integration/event-driven/event-driven.rules.json` and `data/data-mesh/data-mesh.rules.json` each declare only three rules — roughly a quarter of the modular-monolith coverage.
+- **Complexity:** M
+- **Done when:**
+  - [ ] Native rules cover event ordering guarantees, idempotency, schema-evolution discipline (event-driven) and data-product lineage, retention, and consumption contracts (data-mesh).
+  - [ ] OPA counterparts exist with rule-ID parity per GT-151.
+  - [ ] Maturity assessment reflects the increased coverage.
+
+
+#### GT-165
+
+**Title:** Concrete SLO and cost budgets for serverless and edge topologies
+
+- **Purpose:** Document executable SLOs, cold-start budgets, and per-execution cost ceilings for serverless and edge topologies so adopters can validate architecture against real production constraints.
+- **Evidence:** `reference/architecture/topologies/execution/serverless/README.md` and `execution/edge-computing/README.md` mention "latency" and "locality" but provide no quantitative targets, cold-start limits, or cost ceilings.
+- **Complexity:** S
+- **Done when:**
+  - [ ] Each manifest declares SLO/cost budget fields (`latencyBudgetMs`, `coldStartCeilingMs`, `costCeilingPerExecutionCents`).
+  - [ ] A Native rule fails the manifest when budgets are absent or zero.
+  - [ ] Corpus runbooks document how operators measure and report against the budgets.
+
+
+#### GT-166
+
+**Title:** Missing SDLC phase runbooks for Phases 1, 2, and 4
+
+- **Purpose:** Publish operational runbooks for Phases 1 (Conception), 2 (Design), and 4 (Validation) so every quality gate has a procedural counterpart, not just declarative rules.
+- **Evidence:** `reference/governance/sdlc/01-playbooks/` currently contains only `zero-downtime-release.md` (Phase 5). Gates for Business Sign-Off, Design Baseline, and RC Stamp are defined in `phase-gates.rules.json` but have no playbook.
+- **Complexity:** M
+- **Done when:**
+  - [ ] Playbooks for Phases 1, 2, and 4 exist in EN and ES with procedural checklists tied to each gate's mandatory evidence.
+  - [ ] Cross-links from `quality-gates.md` and `phase-gates.rules.json` point to the playbooks.
+  - [ ] Bilingual parity validator and validate-docs pass.
+
+
+#### GT-167
+
+**Title:** Phase-gate evidence templates and acceptance checklists
+
+- **Purpose:** Provide downloadable templates for every gate's mandatory evidence (Observability checklist, Security Incident Report, Test Summary Report, Integration Evidence) so reviewers have a structured surface rather than free-form prose.
+- **Evidence:** `phase-gates.rules.json` mandates Observability Validation, security scans, test reports, and integration evidence, but `04-artifact-templates/` lacks dedicated templates for these specific artifacts.
+- **Complexity:** M
+- **Done when:**
+  - [ ] Template files exist for Observability, Security, Test Summary, and Integration evidence (EN + ES), referenced by `phase-gates.rules.json`.
+  - [ ] Each gate's playbook (GT-166) cites its template.
+  - [ ] A native rule fails when a gate's evidence does not match the template's schema.
+
+
+#### GT-168
+
+**Title:** Cross-topology composition reference application
+
+- **Purpose:** Ship a working reference application demonstrating a composable manifest (e.g., modular-monolith + event-driven) so adopters can verify the composition validator and learn the integration pattern from running code, not from prose.
+- **Evidence:** `topology-dimensions.md` §3 lists five composition examples but no fixture or sample repository exercises them end-to-end.
+- **Complexity:** L
+- **Done when:**
+  - [ ] A reference application (or fixture project) lives under `examples/` (or its equivalent) with a composable manifest exercising at least two topologies.
+  - [ ] CI runs the topology validator on the example and asserts a passing composition.
+  - [ ] Documentation walks the reader through the example in EN and ES.
+
+
+#### GT-169
+
+**Title:** Agentic AI operational budgets, credential lifecycle, and runbooks
+
+- **Purpose:** Make the Agentic AI topology operationally complete by defining concrete prompt/context token budgets, MCP tool concurrency limits, satellite credential rotation/revocation, and incident runbooks for common failure modes (agent hang, token overflow, sandbox escape).
+- **Evidence:** `reference/architecture/topologies/ai/agentic-ai/operations.md` mentions "execution timeout and resource budget per capability" without quantitative limits; `README.md` declares `toolPolicy` without concurrency caps or credential lifecycle; no runbook covers token overflow or sandbox escape.
+- **Complexity:** L
+- **Done when:**
+  - [ ] Manifest fields declare token budgets, context window ceilings, MCP tool concurrency limits, and credential rotation cadence.
+  - [ ] Runbooks cover agent hang, token overflow, unapproved action, and sandbox escape with explicit recovery steps.
+  - [ ] Native and OPA rules fail manifests missing the budget fields.
+
+
+#### GT-170
+
+**Title:** UMS reference product hub
+
+- **Purpose:** Promote the UMS reference materials into a first-class product hub so the reference case has the same product structure as Tracker, Smart CLI, MCP Services, and the Core API hub (GT-156).
+- **Evidence:** UMS materials live across SDLC examples and demo files (`ums-technical-overview.md`, `ums-reference-model.md`) but `reference/products/` has no dedicated hub. Cross-links into UMS are scattered.
+- **Complexity:** M
+- **Done when:**
+  - [ ] `reference/products/ums-reference/` exists with README, overview, and reference-model in EN and ES.
+  - [ ] All existing UMS references in SDLC and demo materials point to the hub.
+  - [ ] Product inventory is regenerated and validated.
+
+
+#### GT-171
+
+**Title:** Command-as-a-service surface parity audit (CLI vs MCP vs REST)
+
+- **Purpose:** Resolve the ADR-0073 §6 promise of surface parity by enumerating every operation, listing where it is exposed today, and deciding for each gap whether to expose it on the remaining surfaces or to document the exemption (e.g., shell-only commands like `completion`).
+- **Evidence:** CLI exposes `alias`, `completion`, `docs`, `drift`, `fixtures`, `history`, `profile`, `standards`, `update` with no MCP or REST equivalents. REST exposes operations not present in MCP and vice versa.
+- **Complexity:** L
+- **Done when:**
+  - [ ] A surface-parity matrix (machine-readable) lists every operation and the surfaces that expose it, with explicit `exempt:<reason>` markers where parity is not desirable.
+  - [ ] A validator fails when a new operation lands on one surface without a parity entry.
+  - [ ] The matrix is the source of truth for the inventory generator.
+
+
+#### GT-172
+
+**Title:** Cross-surface contract roundtrip test suite
+
+- **Purpose:** Add an end-to-end suite that exercises the same operation (starting with `gate evaluate` and `phase advance`) through CLI, MCP, and REST and asserts semantically identical envelopes and evidence payloads.
+- **Evidence:** CLI E2E, MCP smoke, and REST E2E tests each mock or stub the other surfaces. No test verifies the three surfaces return equivalent `GateEvidence` for the same input.
+- **Complexity:** L
+- **Done when:**
+  - [ ] A roundtrip suite under `tests/contract/` invokes the same input via CLI, MCP (Streamable HTTP), and REST, then asserts envelope and evidence equivalence.
+  - [ ] CI runs the suite on PRs that touch any of the three surfaces or shared use cases.
+  - [ ] The suite is documented as the contract regression net for ADR-0073.
+
+
+#### GT-173
+
+**Title:** OpenTelemetry export parity across CLI, MCP, and REST
+
+- **Purpose:** Bring MCP and CLI to OTel parity with the Core API so distributed traces, latency, token usage, and cost can be correlated end-to-end via a single trace ID across all three surfaces.
+- **Evidence:** Core API exports OTLP traces (`tracing.ts`); CLI writes local `CommandTrace` JSON; MCP server has no structured trace or metric export.
+- **Complexity:** M
+- **Done when:**
+  - [ ] MCP server emits OTLP traces using the same trace ID propagated through `correlationId` (GT-160) and exports them via OTLP exporters.
+  - [ ] CLI optionally exports OTLP when configured, preserving its local trace as the default offline mode.
+  - [ ] A shared dashboard demonstrates a single agent-driven workflow stitched across the three surfaces.
+
+
+#### GT-174
+
+**Title:** Envelope `meta.schemaVersion` and producer/consumer compatibility matrix
+
+- **Purpose:** Add an explicit schema version to the ADR-0073 envelope and publish a producer/consumer compatibility matrix so clients can detect drift and CI can block incompatible releases.
+- **Evidence:** Envelope lacks `meta.schemaVersion`. Gap catalog already records (line 356) that no cross-repository compatibility matrix or CI suite exercises producer/consumer versions together.
+- **Complexity:** S
+- **Done when:**
+  - [ ] Envelope schema declares `meta.schemaVersion` as required and pinned per surface.
+  - [ ] A machine-readable compatibility matrix (`reference/governance/standards/vision/surface-compatibility.json` or equivalent) records supported producer/consumer pairs.
+  - [ ] CI rejects a producer change that would break a supported consumer pair without an explicit migration entry.
+
+
 #### GT-152
 
 **Title:** External Knowledge Contract and Source Registry Schema

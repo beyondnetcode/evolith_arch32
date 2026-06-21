@@ -17,7 +17,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-150`](./gap-reference-catalog.md#gt-150) | Mature Remaining Draft Topologies to Accepted Corpus Parity | `Architecture` | Cross | P1 | L | `PENDING` |
 | [`GT-145`](./gap-reference-catalog.md#gt-145) | Truthful Provider-Neutral RAG Vector Synchronization | `Operations` | Cross | P1 | L | `DONE` |
 | [`GT-149`](./gap-reference-catalog.md#gt-149) | Executable OPA Tests and Native/OPA Semantic Parity Gate | `Rulesets` | Cross | P1 | L | `PENDING` |
-| [`GT-147`](./gap-reference-catalog.md#gt-147) | Automated Operational Capability and Efficiency Drift Audit | `Governance` | Cross | P1 | M | `PENDING` |
+| [`GT-147`](./gap-reference-catalog.md#gt-147) | Automated Operational Capability and Efficiency Drift Audit | `Governance` | Cross | P1 | M | `DONE` |
 | [`GT-140`](./gap-reference-catalog.md#gt-140) | Workload Identity Token Rotation Standard for Satellite Reference | `Architecture` | Cross | P1 | M | `DONE` |
 | [`GT-142`](./gap-reference-catalog.md#gt-142) | Real LLM Bridge Pipeline in CI for Agentic Reviews | `Governance` | Cross | P1 | L | `DONE` |
 | [`GT-144`](./gap-reference-catalog.md#gt-144) | Infinite Loop Prevention and Circuit Breaker Rules for Agents | `Governance` | Cross | P1 | M | `DONE` |
@@ -167,7 +167,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-128`](./gap-reference-catalog.md#gt-128) | Baseline Ruleset for Data Mesh | `Architecture` | Cross | P2 | M | `DONE` |
 | [`GT-129`](./gap-reference-catalog.md#gt-129) | Baseline Ruleset for Edge Computing | `Architecture` | Cross | P2 | M | `DONE` |
 
-**Progress:** 150 / 153 done · 0 in progress · 3 pending · 0 deferred
+**Progress:** 151 / 153 done · 0 in progress · 2 pending · 0 deferred
 
 **Ordering:** one table, ordered by status (pending then deferred then completed), then criticality (`P0` → `P1` → `P2`) then complexity (`S` → `M` → `L`); completed gaps are grouped by component. `GT-*` IDs link to the [Gap Reference Catalog](./gap-reference-catalog.md); `MT-A*` IDs link to the supporting [Multi-Topology implementation plan](./multi-topology-reference-corpus-implementation-plan.md).
 

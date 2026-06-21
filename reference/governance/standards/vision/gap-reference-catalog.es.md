@@ -14,16 +14,41 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 #### GT-152
 
-**Título:** Ingesta Multi-Arquitectura de Conocimiento Externo y Custodia de Winston
+**Título:** Contrato de Conocimiento Externo y Esquema de Registro Fuente
 
-- **Propósito:** Convertir el piloto inicial de ingesta de conocimiento en una capacidad multi-arquitectura controlada por Winston (`@wilson`), para que el conocimiento externo sea contextual, trazable, seguro legalmente y promovible solo mediante evidencia reproducible.
-- **Evidencia:** El piloto valida procedencia, derechos y estado candidato, pero los valores de topología son texto libre; carece de madurez, precondiciones, anti-patrones, registro de fuentes, evidencia de decisión de promoción y evaluación Native/OPA compartida sobre fixtures reales de candidatos. RAG no tiene una proyección de conocimiento aprobado y por tanto no establece una frontera formal entre registro candidato y autoridad recuperable.
+- **Propósito:** Definir el contrato formal para la ingesta de conocimiento externo (IDs de topología, madurez, precondiciones, anti-patrones, alternativas, topologías relacionadas, frescura de revisión) y el esquema del registro versionado `SRC-*` (licencia de fuente, edición/URL, modo de retención, huella de contenido, cadencia de revisión, enlaces `KI-*`).
+- **Evidencia:** El piloto actual de ingesta de conocimiento valida procedencia y derechos, pero los valores de topología son texto libre; carece de contrato formal y registro de fuentes.
+- **Complejidad:** S
 - **Hecho cuando:**
   - [ ] El contrato de conocimiento valida IDs de topología contra manifiestos y requiere madurez, precondiciones, anti-patrones, alternativas, topologías relacionadas y frescura de revisión.
   - [ ] Un registro versionado `SRC-*` almacena licencia de fuente, edición o URL, modo de retención, huella de contenido, cadencia de revisión y enlaza todo candidato `KI-*` con su fuente.
+  - [ ] Contrato y esquema son validados por CI (sin artefactos no referenciados, sin violaciones estructurales).
+
+
+#### GT-153
+
+**Título:** Gobierno del Ciclo de Vida del Conocimiento por Winston
+
+- **Propósito:** Formalizar a Winston (`@wilson`) como custodio del ciclo de vida del conocimiento externo, con un pipeline de promoción reproducible: `candidate → evaluated → accepted → executable`. Cada promoción deja evidencia fechada y un ADR cuando aplique.
+- **Evidencia:** El piloto actual no tiene pipeline de promoción; el conocimiento entra a RAG directamente sin revisión arquitectónica.
+- **Complejidad:** M
+- **Hecho cuando:**
   - [ ] Winston (`@wilson`) posee el registro de ciclo de vida y una decisión del Architecture Board promueve `candidate → evaluated → accepted → executable` con evidencia fechada y ADR cuando aplique.
+  - [ ] Cada estado de promoción es legible por máquina, trazable a su entrada de registro fuente y validado por CI.
+  - [ ] Los candidatos rechazados y retirados se conservan en el registro con un motivo de disposición.
+
+
+#### GT-154
+
+**Título:** Proyección RAG y Paridad Native/OPA para Conocimiento Externo
+
+- **Propósito:** Asegurar que solo el conocimiento explícitamente aprobado sea elegible para recuperación RAG, y que los fixtures compartidos de candidatos produzcan veredictos idénticos en los motores Native y OPA.
+- **Evidencia:** RAG actualmente no tiene proyección de conocimiento aprobado; cualquier candidato ingerido es recuperable. No existen fixtures compartidos para pruebas diferenciales Native/OPA.
+- **Complejidad:** M
+- **Hecho cuando:**
   - [ ] Fixtures compartidos de candidatos se ejecutan en motores Native y OPA; el gate diferencial falla ante deriva de veredicto, ID de regla, severidad o evidencia.
   - [ ] Solo una proyección explícita de conocimiento aprobado es elegible para RAG; registros rechazados, retirados, restringidos por derechos y candidatos permanecen excluidos por defecto.
+  - [ ] CI valida integridad de la proyección: ninguna proyección aprobada contiene registros excluidos, ningún registro excluido se filtra al ámbito recuperable.
 
 
 #### GT-151

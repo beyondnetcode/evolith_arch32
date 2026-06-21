@@ -14,16 +14,41 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 #### GT-152
 
-**Title:** Multi-Architecture External Knowledge Intake and Winston Stewardship
+**Title:** External Knowledge Contract and Source Registry Schema
 
-- **Purpose:** Turn the initial knowledge-intake pilot into a controlled multi-architecture capability managed by Winston (`@wilson`), so external knowledge is contextual, traceable, legally safe, and promotable only through reproducible evidence.
-- **Evidence:** The pilot validates provenance, rights, and a candidate state, but topology values are free text; it lacks maturity, preconditions, anti-patterns, source registry, promotion-decision evidence, and a shared Native/OPA evaluation of real candidate fixtures. RAG has no approved-knowledge projection and therefore no formal boundary between a candidate registry and retrievable authority.
+- **Purpose:** Define the formal contract for external knowledge intake (topology IDs, maturity, preconditions, anti-patterns, alternatives, related topologies, review freshness) and the versioned `SRC-*` registry schema (source license, edition/URL, retention mode, content fingerprint, review cadence, `KI-*` links).
+- **Evidence:** Current knowledge intake pilot validates provenance and rights but topology values are free text; lacks formal contract and source registry.
+- **Complexity:** S
 - **Done when:**
   - [ ] The knowledge contract validates topology IDs against manifests and requires maturity, preconditions, anti-patterns, alternatives, related topologies, and review freshness.
   - [ ] A versioned `SRC-*` registry records source license, edition or URL, retention mode, content fingerprint, review cadence, and links every `KI-*` candidate to its source.
+  - [ ] Contract and schema are validated by CI (no unreferenced artifacts, no structural violations).
+
+
+#### GT-153
+
+**Title:** Knowledge Lifecycle Governance by Winston
+
+- **Purpose:** Formalize Winston (`@wilson`) as the lifecycle custodian for external knowledge, with a reproducible promotion pipeline: `candidate → evaluated → accepted → executable`. Each promotion leaves dated evidence and an ADR where required.
+- **Evidence:** Current pilot has no promotion pipeline; knowledge enters RAG directly without architectural review.
+- **Complexity:** M
+- **Done when:**
   - [ ] Winston (`@wilson`) owns the lifecycle record and an Architecture Board decision promotes `candidate → evaluated → accepted → executable` with dated evidence and an ADR where required.
+  - [ ] Each promotion state is machine-readable, traceable to its source registry entry, and gated by CI validation.
+  - [ ] Rejected and retired candidates are preserved in the registry with a disposition reason.
+
+
+#### GT-154
+
+**Title:** RAG Projection and Native/OPA Parity for External Knowledge
+
+- **Purpose:** Ensure only explicitly approved knowledge is eligible for RAG retrieval, and that shared candidate fixtures produce identical verdicts across Native and OPA engines.
+- **Evidence:** RAG currently has no approved-knowledge projection; any ingested candidate is retrievable. No shared fixtures exist for Native/OPA differential testing.
+- **Complexity:** M
+- **Done when:**
   - [ ] Shared candidate fixtures run through Native and OPA engines; the differential gate fails on verdict, rule-ID, severity, or evidence drift.
   - [ ] Only an explicit approved-knowledge projection is eligible for RAG; rejected, retired, rights-restricted, and candidate records remain excluded by default.
+  - [ ] CI validates projection integrity: no approved projection contains excluded records, no excluded record leaks into retrievable scope.
 
 
 #### GT-151

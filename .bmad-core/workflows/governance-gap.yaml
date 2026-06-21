@@ -1,0 +1,75 @@
+name: Governance Gap Closure Workflow
+description: End-to-end lifecycle for GT-* governance gaps — candidate → evaluated → accepted → executable.
+version: 1.0.0
+
+steps:
+  - id: candidate
+    agent: analyst
+    action: >
+      Analyze the gap request, define scope (purpose, evidence, done-when criteria),
+      assess complexity (S/M/L), and write the catalog entry in
+      `reference/governance/standards/vision/gap-reference-catalog.md`.
+      Generate ES skeleton counterpart via `generate-es-skeleton.mjs`.
+    deliverable: "reference/governance/standards/vision/gap-reference-catalog.md (EN + ES entries)"
+
+  - id: evaluated
+    agent: architect
+    action: >
+      Evaluate technical scope: which topology contexts manifest files, which rule IDs need
+      Native/OPA implementation, what parity fixtures are required. Confirm complexity
+      assessment. Document technical approach in gap evidence trail.
+    deliverable: "Technical scope assessment (complexity confirmed, Native/OPA scope defined)"
+    dependsOn: [candidate]
+
+  - id: accepted
+    agent: pm
+    action: >
+      Prioritize the gap (P0/P1/P2), assign to a sprint, update
+      `reference/governance/standards/vision/gap-tracking.md` with new status.
+      Coordinate with Scrum Master for task breakdown.
+    deliverable: "Sprint assignment, gap-tracking.md status update"
+    dependsOn: [evaluated]
+
+  - id: executable
+    agent: sm
+    action: >
+      Break the gap into actionable tasks following the GT task pattern
+      (Native rules, OPA policies, parity fixtures, WASM, tests, closure evidence).
+      Write tasks to `.bmad-core/backlog/tasks.json`.
+    deliverable: ".bmad-core/backlog/tasks.json"
+    dependsOn: [accepted]
+
+  - id: implementation
+    agent: dev
+    action: >
+      Implement artifacts per gap scope: `.rules.json` Native rules, `.rego` OPA policies,
+      `parity-fixtures/` for each rule ID, recompile WASM bundles. Run coverage scanner.
+    deliverable: "Executable contract artifacts (rules, rego, fixtures, wasm)"
+    dependsOn: [executable]
+
+  - id: validation
+    agent: qa
+    action: >
+      Run OPA differential gate (`ci/16-opa-parity-gate.mjs`), assert zero drift
+      between Native and OPA verdicts. Validate all done-when criteria.
+      Run full doc validation and bilingual parity check.
+    deliverable: ".bmad-core/deliverables/gap-validation-report.md"
+    dependsOn: [implementation]
+
+  - id: closure
+    agent: devops
+    action: >
+      Update `gap-tracking.md` status to DONE, record closure in
+      `gap-closure-evidence.json` with commit SHA, dated evidence, and validation commands.
+      Update progress line. Regenerate coverage dashboard.
+    deliverable: "Closure evidence recorded, tracking updated, dashboard regenerated"
+    dependsOn: [validation]
+
+  - id: documentation-release
+    agent: docs
+    action: >
+      Verify bilingual parity on all affected files. Ensure
+      MASTER_INDEX.md updated with any new files. Run version log update
+      if the gap closure warrants a documentation release.
+    deliverable: "Bilingual doc parity confirmed, MASTER_INDEX.md updated"
+    dependsOn: [closure]

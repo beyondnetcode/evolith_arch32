@@ -17,7 +17,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Title:** Complete Native/OPA Rule-ID Coverage for Accepted Topologies
 
 - **Purpose:** Enforce the dual-engine rule contract for every accepted topology, so Native rulesets and OPA policies govern the same rule IDs rather than merely agreeing on a small fixture sample.
-- **Closed by:** Added `DM-R06`, `DM-R07` to distributed-modules OPA; `MS-R03`–`MS-R08` to microservices OPA; `MM-R12` to modular-monolith Native ruleset; `EC-SEC-01`/`EC-SEC-02` and `SV-SEC-01`/`SV-SEC-02` to respective Native rulesets (inlined from deleted `common-execution.rego`). Converted edge-computing and serverless OPA from `deny` to `violations` pattern. Updated coverage scanner to deduplicate valid multi-body rule IDs. All 8 topologies at full Native/OPA parity: `15-validate-topology-rule-coverage.mjs` reports 0 errors, 0 warnings.
+- **Current evidence:** The rule implementations align across all eight accepted topologies: `15-validate-topology-rule-coverage.mjs` reports 0 errors and 0 warnings. The coverage validator now raises either direction of accepted-topology Native/OPA rule-ID divergence as an error, with regression tests for both directions.
 - **Done when:**
   - [x] Every accepted topology has an identical canonical rule-ID set across its Native ruleset and declared OPA policies, with shared execution-policy ownership explicit in manifests.
   - [x] Every missing or OPA-only rule has positive, negative, and boundary fixtures driving both engines, with semantic parity verified per rule ID.

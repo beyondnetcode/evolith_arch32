@@ -1,0 +1,9 @@
+{
+  "input": {
+    "satellite": {
+      "hasDockerfile": true,
+      "directories": ["identity", "orders"]
+    }
+  },
+  "expectedNative": []
+}

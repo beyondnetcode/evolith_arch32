@@ -13,7 +13,7 @@ if (fs.existsSync(adrDir)) {
   for (const adr of adrs) {
     if (adr.toLowerCase().includes("readme")) continue;
     const content = fs.readFileSync(path.join(adrDir, adr), "utf8");
-    if (!content.includes("Agent Signature:") && !content.includes("Author: Architect Agent") && !content.includes("Author: Docs Agent")) {
+    if (!content.includes("Agent Signature:") && !content.includes("Firma del Agente:") && !content.includes("Author: Architect Agent") && !content.includes("Author: Docs Agent")) {
       console.error(`❌ [BMAD Signature Validation] Missing agent signature in ADR: ${adr}`);
       failures++;
     }

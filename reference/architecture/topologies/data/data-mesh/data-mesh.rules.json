@@ -7,7 +7,7 @@
   "effectiveDate": "2026-06-20",
   "rules": [
     {
-      "id": "DM-R01",
+      "id": "DAM-R01",
       "severity": "MUST",
       "category": "data-mesh-config",
       "title": "Data Product Designation",
@@ -15,7 +15,7 @@
       "blocking": true
     },
     {
-      "id": "DM-R02",
+      "id": "DAM-R02",
       "severity": "MUST",
       "category": "data-mesh-contracts",
       "title": "Data Contracts",
@@ -23,7 +23,7 @@
       "blocking": true
     },
     {
-      "id": "DM-R03",
+      "id": "DAM-R03",
       "severity": "MUST",
       "category": "data-mesh-governance",
       "title": "Federated Governance",

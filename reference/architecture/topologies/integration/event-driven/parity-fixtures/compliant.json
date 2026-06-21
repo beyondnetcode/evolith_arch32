@@ -1,0 +1,12 @@
+{
+  "input": {
+    "satellite": {
+      "eventDriven": {
+        "hasStrictAsyncApi": true,
+        "hasOutbox": true,
+        "hasDlq": true
+      }
+    }
+  },
+  "expectedNative": []
+}

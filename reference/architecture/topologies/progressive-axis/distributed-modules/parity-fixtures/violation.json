@@ -1,0 +1,15 @@
+{
+  "input": {
+    "satellite": {
+      "workspacePackageJsons": ["module-a"],
+      "hasContracts": true,
+      "hasAcl": true,
+      "hasEvents": true,
+      "hasOtel": true,
+      "hasExtractionReadiness": true
+    }
+  },
+  "expectedNative": [
+    { "ruleId": "DM-R01", "severity": "MUST", "file": null }
+  ]
+}

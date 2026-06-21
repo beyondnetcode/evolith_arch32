@@ -5,8 +5,8 @@
     "id": "edge-computing",
     "name": "Edge Computing",
     "dimension": "execution",
-    "status": "draft",
-    "version": "0.1.0"
+    "status": "accepted",
+    "version": "1.0.0"
   },
   "spec": {
     "summary": "Execution topology for workloads placed near users, devices, regions, or constrained networks while preserving Evolith domain ownership and governance contracts.",
@@ -26,13 +26,14 @@
     },
     "artifacts": {
       "adrs": [
-        "reference/architecture/adrs/core/0079-multi-topology-reference-corpus.md"
+        "reference/architecture/adrs/core/0079-multi-topology-reference-corpus.md",
+        "reference/architecture/adrs/core/0096-edge-computing-architecture-governance.md"
       ],
       "rulesets": [
-        "rulesets/architecture/f3-microservices.rules.json"
+        "reference/architecture/topologies/execution/edge-computing/edge-computing.rules.json"
       ],
       "opaPolicies": [
-        "reference/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rego"
+        "reference/architecture/topologies/execution/edge-computing/edge-computing.rego"
       ],
       "aiRulesets": [
         "reference/architecture/topologies/execution/edge-computing/README.md"
@@ -41,9 +42,27 @@
         "reference/knowledge/demo/ums-reference-model.md"
       ]
     },
+    "corpus": {
+      "guidance": {
+        "profile": "reference/architecture/topologies/execution/edge-computing/README.md",
+        "maturityGuide": "reference/architecture/topologies/execution/edge-computing/maturity.md"
+      },
+      "configurationContract": "reference/architecture/topologies/execution/edge-computing/topology.config.schema.json",
+      "fixtures": {
+        "valid": "reference/architecture/topologies/execution/edge-computing/fixtures/valid.topology.config.json",
+        "invalid": "reference/architecture/topologies/execution/edge-computing/fixtures/invalid.topology.config.json"
+      },
+      "nativeEvaluator": "packages/core-domain/src/application/validators/ruleset-validator.service.ts",
+      "tests": {
+        "positive": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts",
+        "negative": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts"
+      },
+      "evidence": "reference/governance/standards/vision/maturity-evidence.json"
+    },
     "operationalInterfaces": {
       "cli": {
         "validators": [
+          "validate-architecture",
           "validate-topology"
         ]
       },

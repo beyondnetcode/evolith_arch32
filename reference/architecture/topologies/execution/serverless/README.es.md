@@ -2,9 +2,10 @@
 
 > **Navegacion Bilingue:** [English Version](./README.md)
 
-**Estado:** Draft  
+**Estado:** Accepted  
 **Dimension:** `execution`  
 **ID de Topologia:** `serverless`  
+**Alias de Compatibilidad:** `F1-compatible`  
 **Manifiesto:** [topology.manifest.json](./topology.manifest.json)
 
 Serverless es una topologia de ejecucion para workloads administrados y escalados por eventos donde la plataforma posee el aprovisionamiento runtime y Evolith Core gobierna contratos, observabilidad, seguridad, idempotencia y fronteras de integracion.
@@ -25,6 +26,15 @@ Serverless no reemplaza la arquitectura de dominio. Se compone con `modular-mono
 | Control de frontera | Los handlers serverless no deben saltarse ownership de dominio ni fronteras de persistencia. |
 | Neutralidad de proveedor | La guia Core permanece neutral respecto del proveedor; las selecciones de proveedor pertenecen a perfiles de producto o plataforma. |
 
+## Autoridad Requerida
+
+| Artefacto | Rol |
+|---|---|
+| [ADR-0079: Corpus de Referencia Multi-Topologia](../../../adrs/core/0079-multi-topology-reference-corpus.md) | Gobierna los manifiestos de topologia y composicion. |
+| [ADR-0095: Gobernanza de Arquitectura Serverless](../../../adrs/core/0095-serverless-architecture-governance.md) | Gobierna las restricciones arquitectonicas especificas de serverless. |
+| [Reglas de Arquitectura Serverless](./serverless.rules.json) | Reglas de compatibilidad ejecutables existentes. |
+| [Modelo de Dimensiones de Topologia](../../topology-dimensions.md) | Define reglas de composicion y compatibilidad. |
+
 ## Contrato Ejecutable
 
 Todo satelite que adopte este perfil proporciona `serverless.config.json`:
@@ -41,11 +51,20 @@ SV-R01 a SV-R04 exigen ese contrato, ejecucion sin estado, un paquete no mayor d
 
 ## Composicion
 
-`serverless` puede combinarse con `modular-monolith`, `distributed-modules`, `microservices`, `event-driven`, `data-mesh` y `agentic-ai` cuando la unidad de ejecucion esta gobernada por contratos y telemetria explicitos.
+`serverless` puede combinarse con:
+
+| Topologia | Por Que Puede Componerse |
+|---|---|
+| `modular-monolith` | Agrega puntos de ejecucion administrados sin forzar extraccion completa de servicios. |
+| `distributed-modules` | Permite handlers serverless dentro de fronteras de modulo controladas. |
+| `microservices` | Soporta funciones de servicio individual con ejecucion escalada por eventos. |
+| `event-driven` | Habilita handlers serverless disparados por eventos gobernados por contratos. |
+| `data-mesh` | Proporciona ejecucion de productos de datos analiticos sin acoplamiento transaccional. |
+| `agentic-ai` | Aloja workflows de agentes IA gobernados por contexto MCP y rulesets. |
 
 ## Frontera de Negocio
 
-Este perfil draft es solo tecnico. No define ROI, modelo de costos, gasto cloud, staffing, timing de entrega, priorizacion ni Funnel 0. Evolith Tracker posee esas preocupaciones de negocio mediante su ACL.
+Este perfil es solo tecnico. No define ROI, modelo de costos, gasto cloud, staffing, timing de entrega, priorizacion ni Funnel 0. Evolith Tracker posee esas preocupaciones de negocio mediante su ACL.
 
 ---
 [Volver al Hub de Topologias](../../README.es.md)

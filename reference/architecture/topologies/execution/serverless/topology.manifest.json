@@ -5,8 +5,8 @@
     "id": "serverless",
     "name": "Serverless",
     "dimension": "execution",
-    "status": "draft",
-    "version": "0.1.0"
+    "status": "accepted",
+    "version": "1.0.0"
   },
   "spec": {
     "summary": "Managed event-scaled execution topology for isolated capabilities governed by contracts, idempotency, observability, and provider-neutral architecture rules.",
@@ -27,7 +27,8 @@
     },
     "artifacts": {
       "adrs": [
-        "reference/architecture/adrs/core/0079-multi-topology-reference-corpus.md"
+        "reference/architecture/adrs/core/0079-multi-topology-reference-corpus.md",
+        "reference/architecture/adrs/core/0095-serverless-architecture-governance.md"
       ],
       "rulesets": [
         "reference/architecture/topologies/execution/serverless/serverless.rules.json"
@@ -42,9 +43,27 @@
         "reference/knowledge/demo/ums-reference-model.md"
       ]
     },
+    "corpus": {
+      "guidance": {
+        "profile": "reference/architecture/topologies/execution/serverless/README.md",
+        "maturityGuide": "reference/architecture/topologies/execution/serverless/maturity.md"
+      },
+      "configurationContract": "reference/architecture/topologies/execution/serverless/topology.config.schema.json",
+      "fixtures": {
+        "valid": "reference/architecture/topologies/execution/serverless/fixtures/valid.topology.config.json",
+        "invalid": "reference/architecture/topologies/execution/serverless/fixtures/invalid.topology.config.json"
+      },
+      "nativeEvaluator": "packages/core-domain/src/application/validators/ruleset-validator.service.ts",
+      "tests": {
+        "positive": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts",
+        "negative": "packages/core-domain/src/application/validators/ruleset-validator-architecture.spec.ts"
+      },
+      "evidence": "reference/governance/standards/vision/maturity-evidence.json"
+    },
     "operationalInterfaces": {
       "cli": {
         "validators": [
+          "validate-architecture",
           "validate-topology"
         ]
       },

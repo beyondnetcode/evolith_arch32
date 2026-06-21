@@ -8,6 +8,7 @@ import { AppModule } from './app.module';
 import helmet from 'helmet';
 import { EnvConfig } from './infrastructure/config/env.validation';
 import { HttpExceptionFilter } from './infrastructure/filters/http-exception.filter';
+import { DeprecationInterceptor } from './infrastructure/interceptors/deprecation.interceptor';
 import { EnvelopeInterceptor } from './infrastructure/interceptors/envelope.interceptor';
 import { SecurityAuditInterceptor } from './infrastructure/interceptors/security-audit.interceptor';
 
@@ -41,7 +42,11 @@ async function bootstrap() {
 
   app.useGlobalFilters(new HttpExceptionFilter());
 
-  app.useGlobalInterceptors(new SecurityAuditInterceptor(), new EnvelopeInterceptor());
+  app.useGlobalInterceptors(
+    new SecurityAuditInterceptor(),
+    new DeprecationInterceptor(),
+    new EnvelopeInterceptor(),
+  );
 
   app.use(helmet());
 

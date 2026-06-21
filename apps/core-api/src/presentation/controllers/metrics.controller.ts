@@ -3,6 +3,8 @@ import type { Response } from 'express';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { MetricsService } from '../../infrastructure/metrics/metrics.service';
 
+// version-neutral-justification: Prometheus scrapers expect a stable
+// /metrics path in text exposition format — versioning is not applicable.
 @Controller({ path: 'metrics', version: VERSION_NEUTRAL })
 export class MetricsController {
   constructor(private readonly metricsService: MetricsService) {}

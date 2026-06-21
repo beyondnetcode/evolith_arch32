@@ -6,7 +6,7 @@ import { ValidateSatelliteDto, DetectDriftDto } from '../dtos/architecture.dto';
 import { WorkspaceReferenceResolverService } from '../../application/services/workspace-reference-resolver.service';
 import { TopologyCatalogService } from '@evolith/core-domain/application/services';
 
-@Controller('architecture')
+@Controller({ path: 'architecture', version: '1' })
 export class ArchitectureController {
   constructor(
     private readonly driftService: ArchitectureDriftService,

@@ -7,7 +7,7 @@ import {
 import { InitProjectDto, ProposeAdvanceDto } from '../dtos/projects.dto';
 import { WorkspaceReferenceResolverService } from '../../application/services/workspace-reference-resolver.service';
 
-@Controller('projects')
+@Controller({ path: 'projects', version: '1' })
 export class ProjectsController {
   constructor(
     private readonly initializeProjectUseCase: InitializeProjectUseCase,

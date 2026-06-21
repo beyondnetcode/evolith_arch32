@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { CoreReferenceQueryService } from '../../application/services/core-reference-query.service';
 import { EnvConfig } from '../../infrastructure/config/env.validation';
 
-@Controller()
+@Controller({ path: '', version: '1' })
 export class ReferenceController {
   constructor(
     private readonly queries: CoreReferenceQueryService,

@@ -3,6 +3,8 @@ import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { HealthService } from '../../application/services/health.service';
 import { MetricsService } from '../../infrastructure/metrics/metrics.service';
 
+// version-neutral-justification: liveness/readiness probes are scraped by
+// orchestrators (k8s) that cannot tolerate URI churn between major versions.
 @Controller({ path: 'health', version: VERSION_NEUTRAL })
 export class HealthController {
   constructor(

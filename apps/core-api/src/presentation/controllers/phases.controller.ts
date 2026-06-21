@@ -4,7 +4,7 @@ import { PhaseTransitionUseCase } from '@evolith/core-domain/application/use-cas
 import { TransitionPhaseDto } from '../dtos/phases.dto';
 import { WorkspaceReferenceResolverService } from '../../application/services/workspace-reference-resolver.service';
 
-@Controller('phases')
+@Controller({ path: 'phases', version: '1' })
 export class PhasesController {
   constructor(
     private readonly phaseTransitionUseCase: PhaseTransitionUseCase,

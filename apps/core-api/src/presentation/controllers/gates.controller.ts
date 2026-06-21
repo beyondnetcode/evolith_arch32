@@ -4,7 +4,7 @@ import { EvaluateGateUseCase } from '@evolith/core-domain/application/use-cases'
 import { EvaluateGateDto } from '../dtos/gates.dto';
 import { WorkspaceReferenceResolverService } from '../../application/services/workspace-reference-resolver.service';
 
-@Controller('gates')
+@Controller({ path: 'gates', version: '1' })
 export class GatesController {
   constructor(
     private readonly evaluateGateUseCase: EvaluateGateUseCase,

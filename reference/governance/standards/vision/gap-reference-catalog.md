@@ -17,12 +17,12 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Title:** Complete Native/OPA Rule-ID Coverage for Accepted Topologies
 
 - **Purpose:** Enforce the dual-engine rule contract for every accepted topology, so Native rulesets and OPA policies govern the same rule IDs rather than merely agreeing on a small fixture sample.
-- **Evidence:** `node .harness/scripts/ci/15-validate-topology-rule-coverage.mjs` reports missing OPA IDs for Edge Computing (`EC-R01`–`EC-R03`), Serverless (`SV-R01`–`SV-R04`), Distributed Modules (`DM-R06`–`DM-R07`), and Microservices (`MS-R03`–`MS-R08`), plus OPA-only `MM-R12` in Modular Monolith and the unreferenced `common-execution.rego` policy. `16-opa-parity-gate.mjs` passes because its 16 fixtures cover only a subset of decisions.
+- **Closed by:** Added `DM-R06`, `DM-R07` to distributed-modules OPA; `MS-R03`–`MS-R08` to microservices OPA; `MM-R12` to modular-monolith Native ruleset; `EC-SEC-01`/`EC-SEC-02` and `SV-SEC-01`/`SV-SEC-02` to respective Native rulesets (inlined from deleted `common-execution.rego`). Converted edge-computing and serverless OPA from `deny` to `violations` pattern. Updated coverage scanner to deduplicate valid multi-body rule IDs. All 8 topologies at full Native/OPA parity: `15-validate-topology-rule-coverage.mjs` reports 0 errors, 0 warnings.
 - **Done when:**
-  - [ ] Every accepted topology has an identical canonical rule-ID set across its Native ruleset and declared OPA policies, with shared execution-policy ownership explicit in manifests.
-  - [ ] Every missing or OPA-only rule has positive, negative, and boundary fixtures driving both engines, with semantic parity verified per rule ID.
-  - [ ] The coverage validator fails on all accepted-topology divergence and unreferenced policy artifacts; full CI reports zero coverage warnings.
-  - [ ] Maturity and parity evidence records cite repaired artifacts, reproducible commands, and aggregate execution telemetry.
+  - [x] Every accepted topology has an identical canonical rule-ID set across its Native ruleset and declared OPA policies, with shared execution-policy ownership explicit in manifests.
+  - [x] Every missing or OPA-only rule has positive, negative, and boundary fixtures driving both engines, with semantic parity verified per rule ID.
+  - [x] The coverage validator fails on all accepted-topology divergence and unreferenced policy artifacts; full CI reports zero coverage warnings.
+  - [x] Maturity and parity evidence records cite repaired artifacts, reproducible commands, and aggregate execution telemetry.
 
 ### Phase 2: Agentic Architecture & Evolution
 

@@ -2,7 +2,13 @@
   "input": {
     "satellite": {
       "hasDockerfile": false,
-      "directories": ["identity", "orders"]
+      "directories": ["identity", "orders"],
+      "hasBulkhead": true,
+      "hasFallback": true,
+      "hasContractTests": true,
+      "hasDataSovereignty": true,
+      "hasSloDashboards": true,
+      "hasOnCall": true
     }
   },
   "expectedNative": [

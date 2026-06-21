@@ -1,32 +1,32 @@
 package evolith.topologies.serverless
 
-import rego.v1
-import data.evolith.topologies.execution.common as common_exec
+# Inlined from common-execution.rego (self-contained WASM per topology)
 
-deny contains msg if {
-    some msg in common_exec.deny
+violations[{"id":"SV-SEC-01","blocking":true,"message":"Serverless components MUST define a 'networkSecurity' profile."}] {
+    not input.config.networkSecurity
 }
 
-deny contains msg if {
-    input.topology == "serverless"
+violations[{"id":"SV-SEC-02","blocking":true,"message":"mTLS must be enabled for all serverless network communications."}] {
+    input.config.networkSecurity
+    not input.config.networkSecurity.mtlsEnabled
+}
+
+# SV-R01: Declared Serverless Contract
+violations[{"id":"SV-R01","blocking":true,"message":"serverless.config.json is required (SV-R01)."}] {
     not input.config.hasContract
-    msg := "SV-R01: serverless.config.json is required."
 }
 
-deny contains msg if {
-    input.topology == "serverless"
+# SV-R02: Stateless Execution
+violations[{"id":"SV-R02","blocking":true,"message":"Serverless execution must be stateless (SV-R02)."}] {
     not input.config.isStateless
-    msg := "SV-R02: Serverless execution must be stateless."
 }
 
-deny contains msg if {
-    input.topology == "serverless"
+# SV-R03: Bounded Deployment Package
+violations[{"id":"SV-R03","blocking":true,"message":"Package size must be positive and no greater than 50 MB (SV-R03)."}] {
     not input.config.hasBoundedPackage
-    msg := "SV-R03: Package size must be positive and no greater than 50 MB."
 }
 
-deny contains msg if {
-    input.topology == "serverless"
+# SV-R04: Cold-Start Readiness
+violations[{"id":"SV-R04","blocking":true,"message":"Cold-start limits and lazy initialization are required (SV-R04)."}] {
     not input.config.hasColdStartReadiness
-    msg := "SV-R04: Cold-start limits and lazy initialization are required."
 }

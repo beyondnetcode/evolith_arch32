@@ -116,6 +116,16 @@
       "rationale": "Leaking UI concerns into application logic prevents reusing the same logic across different interfaces (e.g., CLI vs MCP vs HTTP) and makes automated testing difficult.",
       "validationQuery": "Verify Application/Domain layers have zero imports from UI/CLI libraries (e.g., '@clack/prompts', 'inquirer', 'express').",
       "blocking": true
+    },
+    {
+      "id": "MM-R12",
+      "severity": "SHOULD",
+      "category": "domain-purity",
+      "title": "Pure Domain Model (Data Mapper Enforcement)",
+      "description": "Domain entities SHOULD NOT reference persistence frameworks. Use Data Mapper pattern to keep domain model pure and persistence-agnostic.",
+      "rationale": "Persistence annotations in domain entities create coupling to infrastructure and violate hexagonal architecture (core/ADR-0002). Data Mapper preserves domain purity.",
+      "validationQuery": "AST scan for persistence-related annotations (e.g., @Entity, @Table, [Column]) in domain-layer files. Expected 0 occurrences.",
+      "blocking": false
     }
   ],
   "extractionCriteria": {

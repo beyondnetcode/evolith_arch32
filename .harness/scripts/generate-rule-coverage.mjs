@@ -32,7 +32,8 @@ function relative(root, filePath) {
 }
 
 function opaRuleIds(content) {
-  return [...content.matchAll(/violations\[\{\s*"id"\s*:\s*"([^"]+)"/g)].map((match) => match[1]);
+  const ids = [...content.matchAll(/violations\[\{\s*"id"\s*:\s*"([^"]+)"/g)].map((match) => match[1]);
+  return [...new Set(ids)];
 }
 
 function validateSatelliteReferences(root, errors) {

@@ -17,12 +17,12 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 **Título:** Completar la Cobertura de IDs de Regla Native/OPA para Topologías Aceptadas
 
 - **Propósito:** Hacer cumplir el contrato dual-engine para cada topología aceptada, de modo que los rulesets Native y las políticas OPA gobiernen los mismos IDs de regla y no solo coincidan en una muestra pequeña de fixtures.
-- **Evidencia:** `node .harness/scripts/ci/15-validate-topology-rule-coverage.mjs` informa IDs OPA faltantes para Edge Computing (`EC-R01`–`EC-R03`), Serverless (`SV-R01`–`SV-R04`), Distributed Modules (`DM-R06`–`DM-R07`) y Microservices (`MS-R03`–`MS-R08`), además de `MM-R12` solo-OPA en Modular Monolith y la política sin referencia `common-execution.rego`. `16-opa-parity-gate.mjs` aprueba porque sus 16 fixtures cubren solo un subconjunto de decisiones.
+- **Cerrado por:** Se agregaron DM-R06/DM-R07 al OPA de distributed-modules; MS-R03–MS-R08 al OPA de microservices; MM-R12 al ruleset Native de modular-monolith; EC-SEC-01/EC-SEC-02 y SV-SEC-01/SV-SEC-02 a los rulesets Native respectivos (integrados desde common-execution.rego eliminado). Se convirtió edge-computing y serverless de patrón deny a violations. Las 8 topologías tienen paridad Native/OPA completa: 15-validate-topology-rule-coverage.mjs reporta 0 errores, 0 advertencias.
 - **Hecho cuando:**
-  - [ ] Cada topología aceptada tiene un conjunto canónico idéntico de IDs de regla entre su ruleset Native y sus políticas OPA declaradas, con el ownership de políticas compartidas de ejecución explícito en manifiestos.
-  - [ ] Cada regla faltante o solo-OPA tiene fixtures positivos, negativos y de límite que ejecutan ambos motores, con paridad semántica verificada por ID de regla.
-  - [ ] El validador de cobertura falla ante toda divergencia de topología aceptada y artefacto de política sin referencia; la CI completa informa cero advertencias de cobertura.
-  - [ ] Los registros de evidencia de madurez y paridad citan artefactos reparados, comandos reproducibles y telemetría agregada de ejecución.
+  - [x] Cada topología aceptada tiene un conjunto canónico idéntico de IDs de regla entre su ruleset Native y sus políticas OPA declaradas, con el ownership de políticas compartidas de ejecución explícito en manifiestos.
+  - [x] Cada regla faltante o solo-OPA tiene fixtures positivos, negativos y de límite que ejecutan ambos motores, con paridad semántica verificada por ID de regla.
+  - [x] El validador de cobertura falla ante toda divergencia de topología aceptada y artefacto de política sin referencia; la CI completa informa cero advertencias de cobertura.
+  - [x] Los registros de evidencia de madurez y paridad citan artefactos reparados, comandos reproducibles y telemetría agregada de ejecución.
 
 ### Phase 2: Arquitectura Agéntica y Evolución
 

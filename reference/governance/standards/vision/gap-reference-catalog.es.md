@@ -17,7 +17,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 **Título:** Completar la Cobertura de IDs de Regla Native/OPA para Topologías Aceptadas
 
 - **Propósito:** Hacer cumplir el contrato dual-engine para cada topología aceptada, de modo que los rulesets Native y las políticas OPA gobiernen los mismos IDs de regla y no solo coincidan en una muestra pequeña de fixtures.
-- **Evidencia actual:** Las implementaciones de reglas están alineadas en las ocho topologías aceptadas: `15-validate-topology-rule-coverage.mjs` informa 0 errores y 0 advertencias. El validador de cobertura ahora eleva a error ambas direcciones de divergencia de IDs de regla Native/OPA en una topología aceptada, con pruebas de regresión para ambas direcciones.
+- **Cerrado por:** El commit `b443dcd2` hace fallar de forma cerrada ambas direcciones de divergencia de IDs de regla Native/OPA en topologías aceptadas y agrega cobertura de regresión. Las ocho topologías están alineadas: `15-validate-topology-rule-coverage.mjs` informa 0 errores y 0 advertencias.
 - **Hecho cuando:**
   - [x] Cada topología aceptada tiene un conjunto canónico idéntico de IDs de regla entre su ruleset Native y sus políticas OPA declaradas, con el ownership de políticas compartidas de ejecución explícito en manifiestos.
   - [x] Cada regla faltante o solo-OPA tiene fixtures positivos, negativos y de límite que ejecutan ambos motores, con paridad semántica verificada por ID de regla.

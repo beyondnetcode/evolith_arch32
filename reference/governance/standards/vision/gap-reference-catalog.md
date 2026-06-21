@@ -17,7 +17,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Title:** Complete Native/OPA Rule-ID Coverage for Accepted Topologies
 
 - **Purpose:** Enforce the dual-engine rule contract for every accepted topology, so Native rulesets and OPA policies govern the same rule IDs rather than merely agreeing on a small fixture sample.
-- **Current evidence:** The rule implementations align across all eight accepted topologies: `15-validate-topology-rule-coverage.mjs` reports 0 errors and 0 warnings. The coverage validator now raises either direction of accepted-topology Native/OPA rule-ID divergence as an error, with regression tests for both directions.
+- **Closed by:** Commit `b443dcd2` makes accepted-topology Native/OPA rule-ID divergence fail closed in both directions and adds regression coverage. All eight topologies align: `15-validate-topology-rule-coverage.mjs` reports 0 errors and 0 warnings.
 - **Done when:**
   - [x] Every accepted topology has an identical canonical rule-ID set across its Native ruleset and declared OPA policies, with shared execution-policy ownership explicit in manifests.
   - [x] Every missing or OPA-only rule has positive, negative, and boundary fixtures driving both engines, with semantic parity verified per rule ID.

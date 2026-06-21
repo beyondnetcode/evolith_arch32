@@ -2106,6 +2106,26 @@
         "node .harness/scripts/ci/01-validate-docs.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-151",
+      "closedAt": "2026-06-20",
+      "closureCommit": "b443dcd2",
+      "evidence": [
+        ".harness/scripts/generate-rule-coverage.mjs",
+        ".harness/scripts/generate-rule-coverage.test.mjs",
+        "reference/governance/standards/vision/gap-tracking.md",
+        "reference/governance/standards/vision/gap-tracking.es.md"
+      ],
+      "validationCommands": [
+        "node --test .harness/scripts/generate-rule-coverage.test.mjs",
+        "node .harness/scripts/ci/15-validate-topology-rule-coverage.mjs",
+        "node .harness/scripts/ci/16-test-topology-opa.mjs",
+        "EVOLITH_PARITY_FULL=true node .harness/scripts/ci/16-opa-parity-gate.mjs",
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

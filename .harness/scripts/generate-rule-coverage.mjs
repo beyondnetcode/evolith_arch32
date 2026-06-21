@@ -107,8 +107,8 @@ export function validateTopologyRuleCoverage(root = process.cwd()) {
     const opaSet = new Set(opaIds);
     const missingInOpa = nativeIds.filter((id) => !opaSet.has(id));
     const orphanedInOpa = opaIds.filter((id) => !nativeSet.has(id));
-    if (missingInOpa.length) warnings.push(`${topology}: Native rule IDs missing in OPA (GT-149): ${missingInOpa.join(', ')}`);
-    if (orphanedInOpa.length) warnings.push(`${topology}: OPA rule IDs missing in Native ruleset (GT-149): ${orphanedInOpa.join(', ')}`);
+    if (missingInOpa.length) report(`${topology}: Native rule IDs missing in OPA (GT-149): ${missingInOpa.join(', ')}`);
+    if (orphanedInOpa.length) report(`${topology}: OPA rule IDs missing in Native ruleset (GT-149): ${orphanedInOpa.join(', ')}`);
     rows.push({ topology, status: manifest.metadata?.status || 'unknown', native: nativeSet.size, opa: opaSet.size, aligned: missingInOpa.length === 0 && orphanedInOpa.length === 0 });
   }
 

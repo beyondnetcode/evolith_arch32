@@ -2110,26 +2110,15 @@
     {
       "id": "GT-151",
       "closedAt": "2026-06-20",
-      "closureCommit": "5d46b8a6",
+      "closureCommit": "b443dcd2",
       "evidence": [
-        "reference/architecture/topologies/execution/edge-computing/edge-computing.rego",
-        "reference/architecture/topologies/execution/edge-computing/edge-computing.test.rego",
-        "reference/architecture/topologies/execution/edge-computing/edge-computing.rules.json",
-        "reference/architecture/topologies/execution/edge-computing/edge-computing.wasm",
-        "reference/architecture/topologies/execution/serverless/serverless.rego",
-        "reference/architecture/topologies/execution/serverless/serverless.test.rego",
-        "reference/architecture/topologies/execution/serverless/serverless.rules.json",
-        "reference/architecture/topologies/execution/serverless/serverless.wasm",
-        "reference/architecture/topologies/progressive-axis/distributed-modules/distributed-modules.rego",
-        "reference/architecture/topologies/progressive-axis/distributed-modules/distributed-modules.test.rego",
-        "reference/architecture/topologies/progressive-axis/distributed-modules/distributed-modules.wasm",
-        "reference/architecture/topologies/progressive-axis/microservices/microservices.rego",
-        "reference/architecture/topologies/progressive-axis/microservices/microservices.test.rego",
-        "reference/architecture/topologies/progressive-axis/microservices/microservices.wasm",
-        "reference/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.rules.json",
-        ".harness/scripts/generate-rule-coverage.mjs"
+        ".harness/scripts/generate-rule-coverage.mjs",
+        ".harness/scripts/generate-rule-coverage.test.mjs",
+        "reference/governance/standards/vision/gap-tracking.md",
+        "reference/governance/standards/vision/gap-tracking.es.md"
       ],
       "validationCommands": [
+        "node --test .harness/scripts/generate-rule-coverage.test.mjs",
         "node .harness/scripts/ci/15-validate-topology-rule-coverage.mjs",
         "node .harness/scripts/ci/16-test-topology-opa.mjs",
         "EVOLITH_PARITY_FULL=true node .harness/scripts/ci/16-opa-parity-gate.mjs",

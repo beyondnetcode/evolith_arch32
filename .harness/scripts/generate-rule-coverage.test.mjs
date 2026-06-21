@@ -30,7 +30,17 @@ test('reports manifest-declared Native/OPA coverage', () => {
 test('rejects missing OPA rule IDs', () => {
   const root = fixtureRoot();
   write(root, 'reference/architecture/topologies/progressive-axis/demo/demo.rego', 'package demo\n');
-  assert.match(validateTopologyRuleCoverage(root).warnings.join('\n'), /Native rule IDs missing in OPA \(GT-149\): DEMO-R01/);
+  const result = validateTopologyRuleCoverage(root);
+  assert.match(result.errors.join('\n'), /Native rule IDs missing in OPA \(GT-149\): DEMO-R01/);
+  assert.deepEqual(result.warnings, []);
+});
+
+test('rejects OPA-only rule IDs for an accepted topology', () => {
+  const root = fixtureRoot();
+  write(root, 'reference/architecture/topologies/progressive-axis/demo/demo.rego', 'package demo\nviolations[{"id": "DEMO-R02"}] { true }\n');
+  const result = validateTopologyRuleCoverage(root);
+  assert.match(result.errors.join('\n'), /OPA rule IDs missing in Native ruleset \(GT-149\): DEMO-R02/);
+  assert.deepEqual(result.warnings, []);
 });
 
 test('rejects stale satellite rule references', () => {

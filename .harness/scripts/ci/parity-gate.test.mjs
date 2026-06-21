@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync, existsSync } from 'node:fs';
 import { evaluateWasm, normalizeOpaDecisions } from './opa-eval.mjs';
-import { diffDecisions, parityReport, PARITY_SCHEMA_VERSION } from './parity-gate.mjs';
+import { diffDecisions, parityReport, scopeTopologies, contentVersion, PARITY_SCHEMA_VERSION } from './parity-gate.mjs';
 
 // --- Executable OPA evaluator (pinned WASM, no host binary) -----------------
 
@@ -59,4 +59,29 @@ test('verdict drift fails the gate', () => {
 
 test('a malformed policy bundle fails closed (evaluator-failure fixture)', async () => {
   await assert.rejects(() => evaluateWasm(Buffer.from([0, 1, 2, 3, 4])), Error);
+});
+
+// --- CI scoping + versions (criteria 3 & 4) ---------------------------------
+
+const TOPOS = [
+  { dir: 'reference/architecture/topologies/ai/agentic-ai', id: 'agentic-ai' },
+  { dir: 'reference/architecture/topologies/progressive-axis/microservices', id: 'microservices' },
+];
+
+test('scopeTopologies returns all on a full/scheduled run or no change signal', () => {
+  assert.equal(scopeTopologies(TOPOS, ['x'], true).length, 2);
+  assert.equal(scopeTopologies(TOPOS, null, false).length, 2);
+});
+
+test('scopeTopologies limits to topologies with a changed file', () => {
+  const changed = ['reference/architecture/topologies/ai/agentic-ai/agentic-ai.rego'];
+  const scoped = scopeTopologies(TOPOS, changed, false);
+  assert.equal(scoped.length, 1);
+  assert.equal(scoped[0].id, 'agentic-ai');
+});
+
+test('contentVersion is a stable short hash', () => {
+  assert.equal(contentVersion('abc'), contentVersion('abc'));
+  assert.equal(contentVersion('abc').length, 12);
+  assert.notEqual(contentVersion('abc'), contentVersion('abd'));
 });

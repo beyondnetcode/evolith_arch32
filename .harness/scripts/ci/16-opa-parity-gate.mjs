@@ -18,11 +18,27 @@
 
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { execSync } from 'node:child_process';
 import { evaluateWasm, normalizeOpaDecisions } from './opa-eval.mjs';
-import { parityReport } from './parity-gate.mjs';
+import { parityReport, scopeTopologies, contentVersion } from './parity-gate.mjs';
 
 const ROOT = process.cwd();
 const TOPO_ROOT = 'reference/architecture/topologies';
+// Full/scheduled run evaluates all accepted topologies; otherwise scope to changed.
+const FULL_RUN = process.env.EVOLITH_PARITY_FULL === 'true';
+
+function changedPaths() {
+  try {
+    return execSync('git diff --name-only HEAD~1 HEAD', { encoding: 'utf8' }).split('\n').filter(Boolean);
+  } catch {
+    return null; // no diff context — treat as full
+  }
+}
+
+function readIfExists(rel) {
+  const p = resolve(ROOT, rel);
+  return existsSync(p) ? readFileSync(p, 'utf8') : '';
+}
 
 function acceptedTopologies() {
   const out = [];
@@ -48,7 +64,8 @@ function acceptedTopologies() {
 
 async function main() {
   console.log('⚖️  Executable OPA Tests & Native/OPA Parity Gate (GT-149)');
-  const topologies = acceptedTopologies();
+  const topologies = scopeTopologies(acceptedTopologies(), FULL_RUN ? null : changedPaths(), FULL_RUN);
+  console.log(`   Scope: ${FULL_RUN ? 'FULL (scheduled)' : 'changed topologies'} — ${topologies.length} accepted topology(ies).`);
   const reports = [];
   let missingInputs = 0;
   let drifting = 0;
@@ -73,7 +90,11 @@ async function main() {
           fixture: file,
           nativeDecisions: fixture.expectedNative || [],
           opaDecisions: normalizeOpaDecisions(result),
-          versions: { topology: t.version },
+          versions: {
+            topology: t.version,
+            ruleset: contentVersion(readIfExists(`${t.dir}/${t.id}.rules.json`)),
+            policy: contentVersion(readIfExists(`${t.dir}/${t.id}.rego`)),
+          },
           durationMs,
         });
       } catch (e) {

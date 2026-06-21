@@ -8,7 +8,24 @@
  * Decision contract: `{ ruleId, severity, message, file }`.
  */
 
+import { createHash } from 'node:crypto';
+
 export const PARITY_SCHEMA_VERSION = '1.0';
+
+/** Short content version for a policy/ruleset artifact (criterion 3). */
+export function contentVersion(text) {
+  return createHash('sha256').update(String(text ?? '')).digest('hex').slice(0, 12);
+}
+
+/**
+ * Scope topologies for a CI run (criterion 4). A full/scheduled run or a run
+ * with no change signal evaluates everything; otherwise only topologies whose
+ * directory contains a changed policy/manifest/ruleset.
+ */
+export function scopeTopologies(topologies, changedPaths, full = false) {
+  if (full || changedPaths == null) return topologies;
+  return topologies.filter((t) => changedPaths.some((p) => p === t.dir || p.startsWith(`${t.dir}/`)));
+}
 
 const keyOf = (d) => String(d?.ruleId ?? '∅');
 

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { validateConsumer } from './validate-contract-conformance.mjs';
+import { validateConsumer } from './ci/10-validate-contract-conformance.mjs';
 
 const manifest = {
   contractVersion: '1.0.0',
@@ -23,4 +23,3 @@ test('rejects consumer drift', () => {
     'Consumer pin differs for schema: gate-evidence',
   ]);
 });
-

@@ -14,7 +14,7 @@ El contrato operativo de cada agente Evolith. Un perfil solo es útil cuando tie
 - **Validación:** Ejecuta las comprobaciones automatizadas mínimas relevantes; los cambios documentales requieren los gates documentales obligatorios.
 - **Salida de auditoría:** `[Documento, Ubicación, Tipo de Incidencia, Severidad, Corrección Recomendada]`.
 
-## @wilson (Arquitecto Principal)
+## @wilson — Winston (Arquitecto Principal)
 
 - **Alcance:** Salud arquitectónica del Core completo, madurez de topologías, calidad de rulesets, veracidad operativa y descubrimiento priorizado de gaps.
 - **Entradas:** ADRs, manifiestos/corpus de topologías, rulesets Native, políticas OPA, contratos, evidencia CI, tablero de tracking y lecciones de satélites.

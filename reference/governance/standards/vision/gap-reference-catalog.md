@@ -12,6 +12,20 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 ## 1. Gap Details
 
+#### GT-152
+
+**Title:** Multi-Architecture External Knowledge Intake and Winston Stewardship
+
+- **Purpose:** Turn the initial knowledge-intake pilot into a controlled multi-architecture capability managed by Winston (`@wilson`), so external knowledge is contextual, traceable, legally safe, and promotable only through reproducible evidence.
+- **Evidence:** The pilot validates provenance, rights, and a candidate state, but topology values are free text; it lacks maturity, preconditions, anti-patterns, source registry, promotion-decision evidence, and a shared Native/OPA evaluation of real candidate fixtures. RAG has no approved-knowledge projection and therefore no formal boundary between a candidate registry and retrievable authority.
+- **Done when:**
+  - [ ] The knowledge contract validates topology IDs against manifests and requires maturity, preconditions, anti-patterns, alternatives, related topologies, and review freshness.
+  - [ ] A versioned `SRC-*` registry records source license, edition or URL, retention mode, content fingerprint, review cadence, and links every `KI-*` candidate to its source.
+  - [ ] Winston (`@wilson`) owns the lifecycle record and an Architecture Board decision promotes `candidate → evaluated → accepted → executable` with dated evidence and an ADR where required.
+  - [ ] Shared candidate fixtures run through Native and OPA engines; the differential gate fails on verdict, rule-ID, severity, or evidence drift.
+  - [ ] Only an explicit approved-knowledge projection is eligible for RAG; rejected, retired, rights-restricted, and candidate records remain excluded by default.
+
+
 #### GT-151
 
 **Title:** Complete Native/OPA Rule-ID Coverage for Accepted Topologies

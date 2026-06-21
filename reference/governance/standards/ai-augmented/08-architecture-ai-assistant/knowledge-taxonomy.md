@@ -317,4 +317,23 @@ evolith-ai-knowledge/
 
 ---
 
+## 10. External Knowledge Candidate
+
+External material is a candidate input, never an authoritative Evolith rule. It is stored as an original synthesis with provenance and a promotion state; the canonical control design is [V-12 — External Knowledge Intake](./visuals/v12-external-knowledge-intake.md).
+
+```yaml
+knowledge_id: "KI-FOWLER-OUTBOX-001"
+source_class: "public-article" # public-article | book | official-docs
+source_locator: "author, work, edition or URL, section"
+rights_status: "citation-and-synthesis-only"
+trust_level: "primary"
+promotion_status: "candidate" # candidate | evaluated | accepted | executable | retired
+topologies: ["modular-monolith", "microservices"]
+owner: "wilson"
+```
+
+Only `accepted` knowledge may be retrieved as guidance. Only `executable` knowledge may claim an Evolith enforcement mapping, which requires an approved ADR plus Native rule, OPA policy, and fixtures where the pattern is enforceable.
+
+---
+
 *Part of the [AI Architecture Assistant Strategy](./ai-architecture-assistant-strategy.md)*

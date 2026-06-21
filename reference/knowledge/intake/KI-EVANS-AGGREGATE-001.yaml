@@ -1,0 +1,31 @@
+knowledge_id: KI-EVANS-AGGREGATE-001
+source:
+  class: book
+  author: Eric Evans
+  work: Domain-Driven Design
+  locator: Aggregate chapter
+  retrieved_at: "2026-06-20"
+  rights_status: citation-and-synthesis-only
+assessment:
+  trust_level: primary
+  portability: high
+  topologies:
+    - modular-monolith
+    - distributed-modules
+    - microservices
+  concerns:
+    - domain-modeling
+    - consistency
+promotion:
+  status: candidate
+  adr: null
+  native_rule: null
+  opa_policy: null
+  fixtures: []
+review:
+  owner: '@wilson'
+  next_review_at: "2026-12-20"
+synthesis: >-
+  Model transactional invariants inside deliberately small aggregates and reference
+  other aggregates by identity. This candidate supports Evolith small-aggregate
+  guidance but is not an authoritative rule or a replacement for an accepted ADR.

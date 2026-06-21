@@ -1,0 +1,14 @@
+{
+  "$schema": "../schema/ruleset-standard.schema.json",
+  "$id": "https://evolith.dev/rulesets/governance/knowledge-intake.rules.json",
+  "title": "External Knowledge Intake Rules",
+  "version": "0.1.0",
+  "effectiveDate": "2026-06-20",
+  "scope": "evolith-core",
+  "category": "knowledge-intake",
+  "rules": [
+    { "id": "KI-R01", "title": "Provenance and rights are mandatory", "description": "Every candidate declares source class, locator, retrieval date, and rights status.", "severity": "MUST", "blocking": true },
+    { "id": "KI-R02", "title": "Wilson owns review", "description": "Every candidate declares @wilson as review owner and a next review date.", "severity": "MUST", "blocking": true },
+    { "id": "KI-R03", "title": "Promotion requires executable evidence", "description": "Executable promotion requires ADR, Native rule, OPA policy, and fixtures.", "severity": "MUST", "blocking": true }
+  ]
+}

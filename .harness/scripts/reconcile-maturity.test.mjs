@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { parseBoard, validateRuntimeEvidence } from './reconcile-maturity.mjs';
+import { parseBoard, validateRuntimeEvidence } from './ci/09-reconcile-maturity.mjs';
 
 test('parseBoard derives status totals and freshness from the canonical table', () => {
   const result = parseBoard(`**Last Updated:** 2026-06-13

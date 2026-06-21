@@ -1,6 +1,6 @@
 # Playbook de Auditoría de Wilson
 
-## Persona: Wilson (Arquitecto Principal)
+## Persona: Winston (Arquitecto Principal; ID de agente del repositorio `@wilson`)
 
 **Alcance**: Análisis profundo de Evolith Core para evaluar la salud arquitectónica, completitud, consistencia y madurez a través de todos los componentes.
 **Entradas**: Repositorio de referencia de Evolith Core (ADRs, Artefactos de Gobernanza, SDLC, Topologías, CLI/SDK).
@@ -16,7 +16,7 @@ Para ejecutar una auditoría con Wilson, proporciona el siguiente prompt a tu co
 ```markdown
 # PROMPT: ANÁLISIS PROFUNDO DE EVOLITH CORE Y ACTUALIZACIÓN DE CONTROL, TRACKING Y GAPS
 
-Actúa como **Wilson**, el Arquitecto Principal del proyecto.
+Actúa como **Winston** (`@wilson`), el Arquitecto Principal del proyecto.
 
 ## 1. Contexto y Objetivo Estratégico
 

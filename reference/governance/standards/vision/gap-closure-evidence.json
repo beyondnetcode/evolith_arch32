@@ -133,6 +133,32 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-166",
+      "closedAt": "2026-06-21",
+      "closureCommit": "bbe5db91",
+      "evidence": [
+        "reference/governance/sdlc/01-playbooks/phase-1-business-signoff.md",
+        "reference/governance/sdlc/01-playbooks/phase-1-business-signoff.es.md",
+        "reference/governance/sdlc/01-playbooks/phase-2-design-baseline.md",
+        "reference/governance/sdlc/01-playbooks/phase-2-design-baseline.es.md",
+        "reference/governance/sdlc/01-playbooks/phase-4-rc-stamp.md",
+        "reference/governance/sdlc/01-playbooks/phase-4-rc-stamp.es.md",
+        "rulesets/sdlc/phase-gates.rules.json",
+        "rulesets/schema/ruleset-sdlc.schema.json",
+        "reference/governance/sdlc/quality-gates.md",
+        "reference/governance/sdlc/quality-gates.es.md",
+        "reference/governance/sdlc/README.md",
+        "reference/governance/sdlc/README.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
+        "node .harness/scripts/ci/05-check-orphan-bilingual.mjs",
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-165",
       "closedAt": "2026-06-21",
       "closureCommit": "956bba24",

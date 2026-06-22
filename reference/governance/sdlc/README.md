@@ -110,6 +110,7 @@ Scope definition, persona profiling, OKR mapping, and architectural constraint a
 | Document | Description | Goal / Objective | Type | Mandatory |
 |---|---|---|---|---|
 | [PRD — Product Requirements Document](./04-artifact-templates/prd-template.md) | Captures the complete product scope: personas, business OKRs, functional boundaries, constraints, and non-functional requirements | Authorize entry to design | Template | Yes |
+| [Phase 1 — Business Sign-Off Playbook](./01-playbooks/phase-1-business-signoff.md) | Operational runbook for the Business Sign-Off gate: evidence checklist, review procedure, blocking criteria | Operationalise the gate | Playbook | Yes |
 | [Artifact Mapping — Phase 1](./sdlc-evolith-artifact-mapping.md#2-phase-1-conception-and-discovery) | Lists which Evolith artifacts are Required or Optional during Phase 1 | Validate gate completeness | Reference | No |
 
 ---
@@ -128,6 +129,7 @@ Pattern selection, ADR production, bounded context definition, API contracts, an
 | [ADR — Architecture Decision Record](./04-artifact-templates/adr-template.md) | Captures one architectural decision: context, options, choice, trade-offs, consequences | Document boundary-crossing decisions | Template | No |
 | [Functional Story — Business Behavior Specification](./04-artifact-templates/functional-story-template.md) | Describes a user-facing capability in business language: actors, flows, rules, acceptance criteria | Specify behavior verifiably | Template | Yes |
 | [Functional Story Writing Standard](./03-documentation/functional-story-writing-standard.md) | Normative rules for the structure, language, and completeness of Functional Stories | Ensure specification quality | Standard | Yes |
+| [Phase 2 — Design Baseline Approved Playbook](./01-playbooks/phase-2-design-baseline.md) | Operational runbook for the Design Baseline Approved gate: ADR audit, story readiness, blueprint alignment | Operationalise the gate | Playbook | Yes |
 | [Artifact Mapping — Phase 2](./sdlc-evolith-artifact-mapping.md#3-phase-2-design-and-architecture) | Required and Optional artifacts for this phase | Validate gate completeness | Reference | No |
 
 ---
@@ -161,6 +163,7 @@ Regression verification, security scanning, UAT, and Release Candidate stamping.
 |---|---|---|---|---|
 | [Test Summary Report — QA Validation Record](./04-artifact-templates/test-summary-report-template.md) | Aggregates test results across unit, integration, and E2E; confirms gates met or waived before RC stamp | Consolidate QA evidence | Template | Yes |
 | [SDLC Quality Gates](./quality-gates.md) | Threshold baseline used to confirm whether an RC may be stamped or must be blocked | Decide RC stamping objectively | Standard | Yes |
+| [Phase 4 — RC Stamped Playbook](./01-playbooks/phase-4-rc-stamp.md) | Operational runbook for the RC Stamped gate: quality, security, acceptance, pyramid review | Operationalise the gate | Playbook | Yes |
 | [Artifact Mapping — Phase 4](./sdlc-evolith-artifact-mapping.md#5-phase-4-validation-and-qa) | Required QA artifacts for this phase | Validate gate completeness | Reference | No |
 
 ---

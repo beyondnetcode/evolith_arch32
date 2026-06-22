@@ -163,9 +163,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** `reference/governance/sdlc/01-playbooks/` currently contains only `zero-downtime-release.md` (Phase 5). Gates for Business Sign-Off, Design Baseline, and RC Stamp are defined in `phase-gates.rules.json` but have no playbook.
 - **Complexity:** M
 - **Done when:**
-  - [ ] Playbooks for Phases 1, 2, and 4 exist in EN and ES with procedural checklists tied to each gate's mandatory evidence.
-  - [ ] Cross-links from `quality-gates.md` and `phase-gates.rules.json` point to the playbooks.
-  - [ ] Bilingual parity validator and validate-docs pass.
+  - [x] Playbooks for Phases 1, 2, and 4 exist in EN and ES with procedural checklists tied to each gate's mandatory evidence.
+  - [x] Cross-links from `quality-gates.md` and `phase-gates.rules.json` point to the playbooks.
+  - [x] Bilingual parity validator and validate-docs pass.
 
 
 #### GT-167

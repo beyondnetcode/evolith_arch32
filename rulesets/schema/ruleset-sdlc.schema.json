@@ -20,6 +20,7 @@
           "phase": { "type": "integer" },
           "name": { "type": "string" },
           "description": { "type": "string" },
+          "playbookRef": { "type": "string", "description": "Relative path to the operational playbook that procedurally implements this gate." },
           "accountableRole": { "type": "string" },
           "waiverAuthority": { "type": "string" },
           "waiverRequiredFields": {

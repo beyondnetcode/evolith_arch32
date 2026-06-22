@@ -50,13 +50,15 @@ Evolith uses a single release-blocking coverage standard:
 
 ## Phase Gate Summary
 
-| Phase | Gate | Mandatory Evidence | Blocking Criteria |
-|---|---|---|---|
-| Phase 1 — Conception and Discovery | Business Sign-Off | PRD, scope, personas, objectives, constraints | Scope is ambiguous, funding outcome is unclear, architecture constraints are ignored |
-| Phase 2 — Design and Architecture | Design Baseline Approved | ADRs, Functional Stories, blueprint alignment, applicable standards | Significant architecture decisions are undocumented or contradictory |
-| Phase 3 — Construction | Successful Build | Technical Stories, CI run, Definition of Done, documentation delta | CI fails, coverage below threshold, high/critical CVEs, missing review |
-| Phase 4 — Validation and QA | RC Stamped | Test Summary Report, acceptance validation, quality metrics | Any mandatory quality metric fails or acceptance criteria remain unverified |
-| Phase 5 — Delivery and Operations | Production Live | Release Notes, rollback plan, observability checklist, deployment evidence | Monitoring is not nominal, rollback is undefined, release is not traceable to RC |
+| Phase | Gate | Mandatory Evidence | Blocking Criteria | Playbook |
+|---|---|---|---|---|
+| Phase 1 — Conception and Discovery | Business Sign-Off | PRD, scope, personas, objectives, constraints | Scope is ambiguous, funding outcome is unclear, architecture constraints are ignored | [Phase 1 Playbook](./01-playbooks/phase-1-business-signoff.md) |
+| Phase 2 — Design and Architecture | Design Baseline Approved | ADRs, Functional Stories, blueprint alignment, applicable standards | Significant architecture decisions are undocumented or contradictory | [Phase 2 Playbook](./01-playbooks/phase-2-design-baseline.md) |
+| Phase 3 — Construction | Successful Build | Technical Stories, CI run, Definition of Done, documentation delta | CI fails, coverage below threshold, high/critical CVEs, missing review | — |
+| Phase 4 — Validation and QA | RC Stamped | Test Summary Report, acceptance validation, quality metrics | Any mandatory quality metric fails or acceptance criteria remain unverified | [Phase 4 Playbook](./01-playbooks/phase-4-rc-stamp.md) |
+| Phase 5 — Delivery and Operations | Production Live | Release Notes, rollback plan, observability checklist, deployment evidence | Monitoring is not nominal, rollback is undefined, release is not traceable to RC | [Zero-Downtime Release Playbook](./01-playbooks/zero-downtime-release.md) |
+
+Procedural authority: each playbook is the operational counterpart to the declarative gate defined in [`phase-gates.rules.json`](../../../rulesets/sdlc/phase-gates.rules.json) (`playbookRef` field). The gate cannot be exited unless the playbook's checkpoints are completed or formally waived.
 
 ---
 

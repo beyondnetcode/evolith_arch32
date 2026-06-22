@@ -10,6 +10,7 @@
       "phase": 1,
       "name": "Business Sign-Off",
       "description": "Scope frozen; funding authorized; architectural constraints aligned.",
+      "playbookRef": "../../reference/governance/sdlc/01-playbooks/phase-1-business-signoff.md",
       "mandatoryEvidence": [
         {
           "artifact": "PRD",
@@ -69,6 +70,7 @@
       "phase": 2,
       "name": "Design Baseline Approved",
       "description": "Architecture decisions are documented; bounded contexts defined; functional stories written.",
+      "playbookRef": "../../reference/governance/sdlc/01-playbooks/phase-2-design-baseline.md",
       "mandatoryEvidence": [
         {
           "artifact": "ADR Registry",
@@ -178,6 +180,7 @@
       "phase": 4,
       "name": "RC Stamped",
       "description": "All quality thresholds verified; security scans clean; UAT passed; release candidate formally approved.",
+      "playbookRef": "../../reference/governance/sdlc/01-playbooks/phase-4-rc-stamp.md",
       "mandatoryEvidence": [
         {
           "artifact": "Test Summary Report",
@@ -226,6 +229,7 @@
       "phase": 5,
       "name": "Production Live",
       "description": "Deployment executed; observability verified nominal; monitoring active; rollback procedure confirmed.",
+      "playbookRef": "../../reference/governance/sdlc/01-playbooks/zero-downtime-release.md",
       "mandatoryEvidence": [
         {
           "artifact": "Release Notes",

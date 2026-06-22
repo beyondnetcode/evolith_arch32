@@ -13,7 +13,6 @@ This board is the single source of truth for technical debt, gaps, opportunities
 
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
 |---|---|---|:---:|:---:|:---:|:---:|
-| [`GT-177`](./gap-reference-catalog.md#gt-177) | Complete `core/README.md` with missing ADRs 0073-0077 | `Docs` | Cross | P1 | S | `PENDING` |
 | [`GT-180`](./gap-reference-catalog.md#gt-180) | Replace cross-boundary `require()` with DI | `CLI` | Cross | P1 | M | `PENDING` |
 | [`GT-181`](./gap-reference-catalog.md#gt-181) | Split large files into smaller modules | `CLI` | Cross | P1 | M | `PENDING` |
 | [`GT-182`](./gap-reference-catalog.md#gt-182) | Add tests for Core Domain SDK | `SDK` | Cross | P1 | M | `PENDING` |
@@ -200,6 +199,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-22`](./gap-reference-catalog.md#gt-22) | ADR ID uniqueness scheme | `Governance` | Cross | P2 | S | `DONE` |
 | [`GT-175`](./gap-reference-catalog.md#gt-175) | Fix ADR-0076 duplicate (renumber OPA bundle to next free Core ID) | `Docs` | Cross | P1 | S | `DONE` |
 | [`GT-176`](./gap-reference-catalog.md#gt-176) | Remove duplicate `patterns/es/` subdirectory (Pattern A/B mix) | `Docs` | Cross | P1 | S | `DONE` |
+| [`GT-177`](./gap-reference-catalog.md#gt-177) | Complete `core/README.md` with all missing Core ADRs | `Docs` | Cross | P1 | S | `DONE` |
 | [`GT-16`](./gap-reference-catalog.md#gt-16) | Documentation consolidation | `Governance` | F5 | P2 | S | `DONE` |
 | [`GT-24`](./gap-reference-catalog.md#gt-24) | Execute declared documentation migrations | `Governance` | Cross | P2 | M | `DONE` |
 | [`GT-21`](./gap-reference-catalog.md#gt-21) | Placement review of tool-centric Core ADRs | `Governance` | Cross | P2 | M | `DONE` |
@@ -228,7 +228,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-160`](./gap-reference-catalog.md#gt-160) | Cross-surface correlation-ID and request-context propagation | `Cross` | Cross | P1 | M | `DONE` |
 | [`GT-174`](./gap-reference-catalog.md#gt-174) | Envelope `meta.schemaVersion` and producer/consumer compatibility matrix | `Cross` | Cross | P2 | S | `DONE` |
 
-**Progress:** 180 / 214 done · 0 in progress · 34 pending · 0 deferred
+**Progress:** 181 / 214 done · 0 in progress · 33 pending · 0 deferred
 
 **Wave 2026-06-22 (Wilson deep audit):** Added 3 new gaps `GT-209`…`GT-211`: missing agnostic baseline, incomplete SDLC Phase 05, and orphan Spanish-only ADRs without English counterparts.
 

@@ -2614,6 +2614,20 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-177",
+      "closedAt": "2026-06-22",
+      "closureCommit": "a5b6b0a7",
+      "evidence": [
+        "reference/architecture/adrs/core/README.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-176",
       "closedAt": "2026-06-22",
       "closureCommit": "825a668a",

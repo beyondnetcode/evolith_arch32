@@ -2612,6 +2612,23 @@
         "npm run build --workspace sdk/cli"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-209",
+      "closedAt": "2026-06-22",
+      "closureCommit": "2e58fd46",
+      "evidence": [
+        "reference/architecture/agnostic-baseline.md",
+        "reference/architecture/agnostic-baseline.es.md",
+        "reference/architecture/README.md",
+        "reference/architecture/README.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

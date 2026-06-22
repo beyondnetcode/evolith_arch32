@@ -13,7 +13,6 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|
-| [`GT-209`](./gap-reference-catalog.es.md#gt-209) | Crear baseline agnóstico (`agnostic-baseline.md` ausente) | `Architecture` | Cross | P0 | M | `PENDIENTE` |
 | [`GT-175`](./gap-reference-catalog.es.md#gt-175) | Corregir ADR-0076 duplicado (renumerar a ADR-0078) | `Docs` | Cross | P1 | S | `PENDIENTE` |
 | [`GT-176`](./gap-reference-catalog.es.md#gt-176) | Eliminar subdir `patterns/es/` (violación Patrón A/B) | `Docs` | Cross | P1 | S | `PENDIENTE` |
 | [`GT-177`](./gap-reference-catalog.es.md#gt-177) | Completar `core/README.md` con ADRs faltantes | `Docs` | Cross | P1 | S | `PENDIENTE` |
@@ -50,6 +49,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-206`](./gap-reference-catalog.es.md#gt-206) | Formalizar regla de anidación BILINGUAL_INDEX | `Docs` | Cross | P3 | S | `PENDIENTE` |
 | [`GT-207`](./gap-reference-catalog.es.md#gt-207) | Estandarizar formato encabezados ADR | `Docs` | Cross | P3 | S | `PENDIENTE` |
 | [`GT-208`](./gap-reference-catalog.es.md#gt-208) | Programar reevaluación ADR-0077 (MassTransit EOL) | `Docs` | Cross | P3 | S | `PENDIENTE` |
+| [`GT-209`](./gap-reference-catalog.es.md#gt-209) | Crear baseline agnóstico (`agnostic-baseline.md` ausente) | `Architecture` | Cross | P0 | M | `COMPLETADO` |
 | [`GT-169`](./gap-reference-catalog.es.md#gt-169) | Presupuestos operativos, ciclo de credenciales y runbooks de Agentic AI | `Architecture` | Cross | P1 | L | `COMPLETADO` |
 | [`GT-173`](./gap-reference-catalog.es.md#gt-173) | Paridad de exportación OpenTelemetry en CLI, MCP y REST | `Cross` | Cross | P2 | M | `COMPLETADO` |
 | [`GT-171`](./gap-reference-catalog.es.md#gt-171) | Auditoría de paridad de superficie command-as-a-service (CLI vs MCP vs REST) | `Cross` | Cross | P2 | L | `COMPLETADO` |
@@ -228,7 +228,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-160`](./gap-reference-catalog.es.md#gt-160) | Propagación de correlation-ID y contexto de solicitud entre superficies | `Cross` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-174`](./gap-reference-catalog.es.md#gt-174) | `meta.schemaVersion` y matriz de compatibilidad productor/consumidor | `Cross` | Cross | P2 | S | `COMPLETADO` |
 
-**Progreso:** 177 / 214 completados · 0 en progreso · 37 pendientes · 0 diferidos
+**Progreso:** 178 / 214 completados · 0 en progreso · 36 pendientes · 0 diferidos
 
 **Oleada 2026-06-21 (auditoría profunda de Wilson):** Añadidos 20 gaps nuevos `GT-155`…`GT-174` que cubren conformidad de envelope en Core API REST, paridad de superficies command-as-a-service, autenticación/autorización MCP, esquemas y tests de OPA, validación CI de manifests de topología, runbooks y plantillas SDLC, hubs de producto de Core API y UMS, presupuestos operativos de Agentic AI, paridad OpenTelemetry y versionado del envelope.
 

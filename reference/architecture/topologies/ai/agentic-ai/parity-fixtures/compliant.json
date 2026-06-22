@@ -8,7 +8,9 @@
         "requiresApprovalForMutativeTools": true,
         "hasEphemeralSandboxLimits": true,
         "hasTrustedContextPolicy": true,
-        "hasAccountableActions": true
+        "hasAccountableActions": true,
+        "hasOperationalBudgets": true,
+        "hasCredentialLifecycle": true
       }
     }
   },

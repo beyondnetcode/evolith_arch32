@@ -13,7 +13,7 @@ La IA agentica es la topologia para sistemas donde un agente de IA puede inspecc
 
 Usa este perfil cuando un agente tenga acceso a contexto de repositorio, servicio u operacion. El perfil gobierna el limite del agente, no el proveedor del modelo ni el framework de orquestacion.
 
-Todo satelite que lo adopte DEBE proporcionar `agent.config.json`. El evaluador nativo y la politica OPA aplican los mismos cuatro controles:
+Todo satelite que lo adopte DEBE proporcionar `agent.config.json`. El evaluador nativo y la politica OPA aplican los mismos controles:
 
 | Regla | Control requerido |
 |---|---|
@@ -24,6 +24,8 @@ Todo satelite que lo adopte DEBE proporcionar `agent.config.json`. El evaluador 
 | AAI-R05 | Ejecucion efimera con duracion, memoria y CPU acotadas |
 | AAI-R06 | Contexto no confiable tratado como dato con procedencia y validacion de schema |
 | AAI-R07 | Delegacion acotada por capacidad y evidencia de accion correlacionada append-only |
+| AAI-R08 | Limites positivos de tokens y contexto, concurrencia MCP acotada y ruta legible de runbook |
+| AAI-R09 | Delegacion acotada, cadencia de rotacion de credenciales y revocacion ante incidentes |
 
 ## Contrato de Configuracion
 
@@ -58,11 +60,35 @@ Todo satelite que lo adopte DEBE proporcionar `agent.config.json`. El evaluador 
   "audit": {
     "appendOnly": true,
     "correlationId": "required"
+  },
+  "operationalBudgets": {
+    "maxPromptTokens": 16000,
+    "maxCompletionTokens": 4000,
+    "maxContextWindowTokens": 128000,
+    "mcpToolConcurrency": {
+      "maxInFlight": 4,
+      "perToolMaxInFlight": 2
+    },
+    "runbooksPath": "docs/agentic-ai-runbooks.md"
+  },
+  "credentialLifecycle": {
+    "delegationMaxTtlSeconds": 900,
+    "rotationCadenceDays": 30,
+    "revocation": {
+      "onIncident": "immediate",
+      "maxPropagationSeconds": 60
+    }
   }
 }
 ```
 
 Las rutas declaradas de prompts e implementacion NO DEBEN superponerse. Una capacidad no es un permiso: el sandbox y la politica de herramientas son la autoridad de ejecucion. El contexto no confiable sigue siendo dato, nunca autoridad; toda accion lleva una capacidad acotada y evidencia correlacionada append-only.
+
+## Contrato Operativo
+
+`operationalBudgets` declara limites aplicables para una ejecucion. `maxPromptTokens` limita las instrucciones y el contexto suministrado, `maxCompletionTokens` limita la salida generada y `maxContextWindowTokens` limita el contexto combinado del modelo. `mcpToolConcurrency.maxInFlight` limita todas las llamadas concurrentes a herramientas; `perToolMaxInFlight` evita que una sola herramienta consuma todo el presupuesto. Un adoptante DEBE elegir valores adecuados para su modelo aprobado y su capacidad, y DEBE apuntar `runbooksPath` a su guia de incidentes mantenida.
+
+`credentialLifecycle` limita la autoridad delegada a `delegationMaxTtlSeconds`, exige rotacion como minimo cada `rotationCadenceDays` y define la rapidez con que la revocacion por incidente llega a cada ejecutor. `onIncident` DEBERIA ser `immediate`; `scheduled` solo se permite cuando una dependencia operativa documentada impide la revocacion inmediata. Los runbooks de referencia de la topologia estan [disponibles aqui](./runbooks.es.md).
 
 ## Interaccion y Limite de Seguridad
 

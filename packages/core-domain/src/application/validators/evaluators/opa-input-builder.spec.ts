@@ -111,8 +111,9 @@ describe('OpaInputBuilder', () => {
 
   it('derives Agentic AI policy inputs from agent.config.json', async () => {
     const agentConfig = path.join(SAT, 'agent.config.json');
+    const runbooks = path.join(SAT, 'docs', 'agentic-ai-runbooks.md');
     const input = await new OpaInputBuilder(fsMock({
-      existing: [agentConfig],
+      existing: [agentConfig, runbooks],
       json: {
         [agentConfig]: {
           agent: { id: 'architecture-reviewer', capabilities: ['read-architecture'] },
@@ -122,6 +123,18 @@ describe('OpaInputBuilder', () => {
           contextPolicy: { untrustedContent: 'data-only', provenanceRequired: true, toolOutputSchemaValidation: true },
           toolPolicy: { mutative: 'approval-required', capabilityDelegation: 'scoped-and-expiring' },
           audit: { appendOnly: true, correlationId: 'required' },
+          operationalBudgets: {
+            maxPromptTokens: 16000,
+            maxCompletionTokens: 4000,
+            maxContextWindowTokens: 128000,
+            mcpToolConcurrency: { maxInFlight: 4, perToolMaxInFlight: 2 },
+            runbooksPath: 'docs/agentic-ai-runbooks.md',
+          },
+          credentialLifecycle: {
+            delegationMaxTtlSeconds: 900,
+            rotationCadenceDays: 30,
+            revocation: { onIncident: 'immediate', maxPropagationSeconds: 60 },
+          },
         },
       },
     })).build(ctx);
@@ -134,6 +147,8 @@ describe('OpaInputBuilder', () => {
       hasEphemeralSandboxLimits: true,
       hasTrustedContextPolicy: true,
       hasAccountableActions: true,
+      hasOperationalBudgets: true,
+      hasCredentialLifecycle: true,
     });
   });
 });

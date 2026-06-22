@@ -202,9 +202,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** `reference/architecture/topologies/ai/agentic-ai/operations.md` mentions "execution timeout and resource budget per capability" without quantitative limits; `README.md` declares `toolPolicy` without concurrency caps or credential lifecycle; no runbook covers token overflow or sandbox escape.
 - **Complexity:** L
 - **Done when:**
-  - [ ] Manifest fields declare token budgets, context window ceilings, MCP tool concurrency limits, and credential rotation cadence.
-  - [ ] Runbooks cover agent hang, token overflow, unapproved action, and sandbox escape with explicit recovery steps.
-  - [ ] Native and OPA rules fail manifests missing the budget fields.
+  - [x] Manifest fields declare token budgets, context window ceilings, MCP tool concurrency limits, and credential rotation cadence.
+  - [x] Runbooks cover agent hang, token overflow, unapproved action, and sandbox escape with explicit recovery steps.
+  - [x] Native and OPA rules fail manifests missing the budget fields.
 
 
 #### GT-170

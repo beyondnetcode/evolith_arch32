@@ -2516,6 +2516,37 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-169",
+      "closedAt": "2026-06-21",
+      "closureCommit": "19fb0c41",
+      "evidence": [
+        "reference/architecture/topologies/ai/agentic-ai/README.md",
+        "reference/architecture/topologies/ai/agentic-ai/README.es.md",
+        "reference/architecture/topologies/ai/agentic-ai/operations.md",
+        "reference/architecture/topologies/ai/agentic-ai/operations.es.md",
+        "reference/architecture/topologies/ai/agentic-ai/runbooks.md",
+        "reference/architecture/topologies/ai/agentic-ai/runbooks.es.md",
+        "reference/architecture/topologies/ai/agentic-ai/agent.config.schema.json",
+        "reference/architecture/topologies/ai/agentic-ai/agentic-ai.rules.json",
+        "reference/architecture/topologies/ai/agentic-ai/agentic-ai.rego",
+        "reference/architecture/topologies/ai/agentic-ai/agentic-ai.test.rego",
+        "reference/architecture/topologies/ai/agentic-ai/agentic-ai.wasm",
+        "packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.ts",
+        "packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts"
+      ],
+      "validationCommands": [
+        "npx jest --config packages/core-domain/jest.config.js packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.spec.ts packages/core-domain/src/application/validators/evaluators/opa-input-builder.spec.ts --runInBand",
+        "npm run build --workspace packages/core-domain",
+        "node .harness/scripts/ci/16-test-topology-opa.mjs",
+        "EVOLITH_PARITY_FULL=true node .harness/scripts/ci/16-opa-parity-gate.mjs",
+        "node .harness/scripts/ci/15-validate-topology-rule-coverage.mjs",
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-154",
       "closedAt": "2026-06-21",
       "closureCommit": "176d0897",

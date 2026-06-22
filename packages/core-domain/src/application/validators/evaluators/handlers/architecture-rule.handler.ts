@@ -18,7 +18,8 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
       'separation-of-concerns', 'dependency-injection', 'static-analysis',
       'domain-purity', 'agent-identity', 'agent-sandbox',
       'agent-prompt-boundaries', 'agent-tool-approval', 'agent-sandbox-limits',
-      'agent-context-trust', 'agent-action-accountability', 'serverless-config', 'serverless-stateless', 'serverless-package', 'serverless-cold-start',
+      'agent-context-trust', 'agent-action-accountability', 'agent-operational-budgets', 'agent-credential-lifecycle',
+      'serverless-config', 'serverless-stateless', 'serverless-package', 'serverless-cold-start',
       'event-driven-config', 'event-driven-outbox', 'event-driven-dlq',
       'data-mesh-config', 'data-mesh-contracts', 'data-mesh-governance',
       'edge-computing-sync', 'edge-computing-isolation', 'edge-computing-conflict'
@@ -99,6 +100,39 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
         if (toolPolicy?.capabilityDelegation !== 'scoped-and-expiring' || audit?.appendOnly !== true || audit?.correlationId !== 'required') {
           result = 'failed';
           message = `${rule.description} - Expected scoped-and-expiring capabilities plus append-only correlated action evidence`;
+        }
+        break;
+      }
+
+      case 'agent-operational-budgets': {
+        const config = await this.readAgentConfig(satellitePath);
+        const budgets = this.asRecord(config?.operationalBudgets);
+        const concurrency = this.asRecord(budgets?.mcpToolConcurrency);
+        const runbooksPath = typeof budgets?.runbooksPath === 'string' ? budgets.runbooksPath : '';
+        const runbooksAbsolute = runbooksPath.length > 0 ? (path.isAbsolute(runbooksPath) ? runbooksPath : path.join(satellitePath, runbooksPath)) : '';
+        const runbooksExists = runbooksAbsolute.length > 0 && await this.fs.exists(runbooksAbsolute);
+        if (!this.isPositiveNumber(budgets?.maxPromptTokens)
+          || !this.isPositiveNumber(budgets?.maxCompletionTokens)
+          || !this.isPositiveNumber(budgets?.maxContextWindowTokens)
+          || !this.isPositiveNumber(concurrency?.maxInFlight)
+          || !this.isPositiveNumber(concurrency?.perToolMaxInFlight)
+          || !runbooksExists) {
+          result = 'failed';
+          message = `${rule.description} - Expected positive token, context, and MCP concurrency budgets plus a runbooksPath that exists`;
+        }
+        break;
+      }
+
+      case 'agent-credential-lifecycle': {
+        const config = await this.readAgentConfig(satellitePath);
+        const credentials = this.asRecord(config?.credentialLifecycle);
+        const revocation = this.asRecord(credentials?.revocation);
+        if (!this.isPositiveNumber(credentials?.delegationMaxTtlSeconds)
+          || !this.isPositiveNumber(credentials?.rotationCadenceDays)
+          || (revocation?.onIncident !== 'immediate' && revocation?.onIncident !== 'scheduled')
+          || !this.isPositiveNumber(revocation?.maxPropagationSeconds)) {
+          result = 'failed';
+          message = `${rule.description} - Expected positive delegation TTL, rotation cadence, and bounded incident revocation`;
         }
         break;
       }

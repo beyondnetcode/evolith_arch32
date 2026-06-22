@@ -13,6 +13,43 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|
+| [`GT-209`](./gap-reference-catalog.es.md#gt-209) | Crear baseline agnóstico (`agnostic-baseline.md` ausente) | `Architecture` | Cross | P0 | M | `PENDIENTE` |
+| [`GT-175`](./gap-reference-catalog.es.md#gt-175) | Corregir ADR-0076 duplicado (renumerar a ADR-0078) | `Docs` | Cross | P1 | S | `PENDIENTE` |
+| [`GT-176`](./gap-reference-catalog.es.md#gt-176) | Eliminar subdir `patterns/es/` (violación Patrón A/B) | `Docs` | Cross | P1 | S | `PENDIENTE` |
+| [`GT-177`](./gap-reference-catalog.es.md#gt-177) | Completar `core/README.md` con ADRs faltantes | `Docs` | Cross | P1 | S | `PENDIENTE` |
+| [`GT-180`](./gap-reference-catalog.es.md#gt-180) | Reemplazar `require()` entre capas con DI | `CLI` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-181`](./gap-reference-catalog.es.md#gt-181) | Dividir archivos grandes en módulos pequeños | `CLI` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-182`](./gap-reference-catalog.es.md#gt-182) | Agregar tests para Core Domain SDK | `SDK` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-184`](./gap-reference-catalog.es.md#gt-184) | Eliminar `@ts-nocheck` de 19 archivos | `CLI` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-185`](./gap-reference-catalog.es.md#gt-185) | Corregir stubs de herramientas MCP | `MCP Services` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-210`](./gap-reference-catalog.es.md#gt-210) | Completar Fase SDLC 05 (fase faltante) | `SDLC` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-179`](./gap-reference-catalog.es.md#gt-179) | Agregar tests para 5 comandos CLI baja cobertura | `CLI` | Cross | P1 | L | `PENDIENTE` |
+| [`GT-190`](./gap-reference-catalog.es.md#gt-190) | Agregar logging a 9 catch blocks vacíos | `CLI` | Cross | P2 | S | `PENDIENTE` |
+| [`GT-191`](./gap-reference-catalog.es.md#gt-191) | Corregir etiqueta ADR matrix incorrecta | `Docs` | Cross | P2 | S | `PENDIENTE` |
+| [`GT-192`](./gap-reference-catalog.es.md#gt-192) | Corregir enlaces MASTER_INDEX EN (`.es.md`→`.md`) | `Docs` | Cross | P2 | S | `PENDIENTE` |
+| [`GT-193`](./gap-reference-catalog.es.md#gt-193) | Eliminar TODOs de documentación de gobernanza | `Docs` | Cross | P2 | S | `PENDIENTE` |
+| [`GT-195`](./gap-reference-catalog.es.md#gt-195) | Corregir rutas shell solo-Linux (Windows compat) | `CLI` | Cross | P2 | S | `PENDIENTE` |
+| [`GT-211`](./gap-reference-catalog.es.md#gt-211) | Crear EN para 3 ADRs solo-ES huérfanos | `Docs` | Cross | P2 | S | `PENDIENTE` |
+| [`GT-178`](./gap-reference-catalog.es.md#gt-178) | Reconstruir `core/README.es.md` con todos los ADRs | `Docs` | Cross | P2 | M | `PENDIENTE` |
+| [`GT-186`](./gap-reference-catalog.es.md#gt-186) | Eliminar `@ts-nocheck` restante (fase 2) | `CLI` | Cross | P2 | M | `PENDIENTE` |
+| [`GT-187`](./gap-reference-catalog.es.md#gt-187) | Habilitar modo estricto en tsconfig | `CLI` | Cross | P2 | M | `PENDIENTE` |
+| [`GT-189`](./gap-reference-catalog.es.md#gt-189) | Reemplazar `require()` con imports ES | `CLI` | Cross | P2 | M | `PENDIENTE` |
+| [`GT-194`](./gap-reference-catalog.es.md#gt-194) | Eliminar tipos `any` en APIs públicas | `CLI` | Cross | P2 | M | `PENDIENTE` |
+| [`GT-196`](./gap-reference-catalog.es.md#gt-196) | Agregar tests E2E para transporte HTTP MCP | `MCP Services` | Cross | P2 | M | `PENDIENTE` |
+| [`GT-183`](./gap-reference-catalog.es.md#gt-183) | Construir scaffolding BFF mínimo (NestJS) | `Architecture` | Cross | P2 | L | `PENDIENTE` |
+| [`GT-188`](./gap-reference-catalog.es.md#gt-188) | Agregar tests para 15 archivos sin cobertura | `CLI` | Cross | P2 | L | `PENDIENTE` |
+| [`GT-197`](./gap-reference-catalog.es.md#gt-197) | Corregir fallos intermitentes pipeline release | `DevOps` | Cross | P2 | L | `PENDIENTE` |
+| [`GT-198`](./gap-reference-catalog.es.md#gt-198) | Corregir typo "Moscoww" (5 sitios) | `CLI` | Cross | P3 | S | `PENDIENTE` |
+| [`GT-199`](./gap-reference-catalog.es.md#gt-199) | Mover import al inicio del archivo | `CLI` | Cross | P3 | S | `PENDIENTE` |
+| [`GT-200`](./gap-reference-catalog.es.md#gt-200) | Convertir constructor 11-param a objeto options | `CLI` | Cross | P3 | S | `PENDIENTE` |
+| [`GT-201`](./gap-reference-catalog.es.md#gt-201) | Extraer valores hardcodeados a constantes | `CLI` | Cross | P3 | S | `PENDIENTE` |
+| [`GT-202`](./gap-reference-catalog.es.md#gt-202) | Agregar README a directorio `governance/adr/` | `Docs` | Cross | P3 | S | `PENDIENTE` |
+| [`GT-203`](./gap-reference-catalog.es.md#gt-203) | Eliminar o poblar dir vacío `kubernetes/` | `Docs` | Cross | P3 | S | `PENDIENTE` |
+| [`GT-204`](./gap-reference-catalog.es.md#gt-204) | Agregar READMEs a directorios infra | `Docs` | Cross | P3 | S | `PENDIENTE` |
+| [`GT-205`](./gap-reference-catalog.es.md#gt-205) | Agregar README a directorio SDLC playbooks | `Docs` | Cross | P3 | S | `PENDIENTE` |
+| [`GT-206`](./gap-reference-catalog.es.md#gt-206) | Formalizar regla de anidación BILINGUAL_INDEX | `Docs` | Cross | P3 | S | `PENDIENTE` |
+| [`GT-207`](./gap-reference-catalog.es.md#gt-207) | Estandarizar formato encabezados ADR | `Docs` | Cross | P3 | S | `PENDIENTE` |
+| [`GT-208`](./gap-reference-catalog.es.md#gt-208) | Programar reevaluación ADR-0077 (MassTransit EOL) | `Docs` | Cross | P3 | S | `PENDIENTE` |
 | [`GT-169`](./gap-reference-catalog.es.md#gt-169) | Presupuestos operativos, ciclo de credenciales y runbooks de Agentic AI | `Architecture` | Cross | P1 | L | `COMPLETADO` |
 | [`GT-173`](./gap-reference-catalog.es.md#gt-173) | Paridad de exportación OpenTelemetry en CLI, MCP y REST | `Cross` | Cross | P2 | M | `COMPLETADO` |
 | [`GT-171`](./gap-reference-catalog.es.md#gt-171) | Auditoría de paridad de superficie command-as-a-service (CLI vs MCP vs REST) | `Cross` | Cross | P2 | L | `COMPLETADO` |
@@ -190,43 +227,6 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-158`](./gap-reference-catalog.es.md#gt-158) | Human-in-the-loop y ABAC para herramientas MCP mutativas | `MCP Services` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-160`](./gap-reference-catalog.es.md#gt-160) | Propagación de correlation-ID y contexto de solicitud entre superficies | `Cross` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-174`](./gap-reference-catalog.es.md#gt-174) | `meta.schemaVersion` y matriz de compatibilidad productor/consumidor | `Cross` | Cross | P2 | S | `COMPLETADO` |
-| [`GT-175`](./gap-reference-catalog.es.md#gt-175) | Corregir ADR-0076 duplicado (renumerar a ADR-0078) | `Docs` | Cross | P1 | S | `PENDIENTE` |
-| [`GT-176`](./gap-reference-catalog.es.md#gt-176) | Eliminar subdir `patterns/es/` (violación Patrón A/B) | `Docs` | Cross | P1 | S | `PENDIENTE` |
-| [`GT-177`](./gap-reference-catalog.es.md#gt-177) | Completar `core/README.md` con ADRs faltantes | `Docs` | Cross | P1 | S | `PENDIENTE` |
-| [`GT-178`](./gap-reference-catalog.es.md#gt-178) | Reconstruir `core/README.es.md` con todos los ADRs | `Docs` | Cross | P2 | M | `PENDIENTE` |
-| [`GT-179`](./gap-reference-catalog.es.md#gt-179) | Agregar tests para 5 comandos CLI baja cobertura | `CLI` | Cross | P1 | L | `PENDIENTE` |
-| [`GT-180`](./gap-reference-catalog.es.md#gt-180) | Reemplazar `require()` entre capas con DI | `CLI` | Cross | P1 | M | `PENDIENTE` |
-| [`GT-181`](./gap-reference-catalog.es.md#gt-181) | Dividir archivos grandes en módulos pequeños | `CLI` | Cross | P1 | M | `PENDIENTE` |
-| [`GT-182`](./gap-reference-catalog.es.md#gt-182) | Agregar tests para Core Domain SDK | `SDK` | Cross | P1 | M | `PENDIENTE` |
-| [`GT-183`](./gap-reference-catalog.es.md#gt-183) | Construir scaffolding BFF mínimo (NestJS) | `Architecture` | Cross | P2 | L | `PENDIENTE` |
-| [`GT-184`](./gap-reference-catalog.es.md#gt-184) | Eliminar `@ts-nocheck` de 19 archivos | `CLI` | Cross | P1 | M | `PENDIENTE` |
-| [`GT-185`](./gap-reference-catalog.es.md#gt-185) | Corregir stubs de herramientas MCP | `MCP Services` | Cross | P1 | M | `PENDIENTE` |
-| [`GT-186`](./gap-reference-catalog.es.md#gt-186) | Eliminar `@ts-nocheck` restante (fase 2) | `CLI` | Cross | P2 | M | `PENDIENTE` |
-| [`GT-187`](./gap-reference-catalog.es.md#gt-187) | Habilitar modo estricto en tsconfig | `CLI` | Cross | P2 | M | `PENDIENTE` |
-| [`GT-188`](./gap-reference-catalog.es.md#gt-188) | Agregar tests para 15 archivos sin cobertura | `CLI` | Cross | P2 | L | `PENDIENTE` |
-| [`GT-189`](./gap-reference-catalog.es.md#gt-189) | Reemplazar `require()` con imports ES | `CLI` | Cross | P2 | M | `PENDIENTE` |
-| [`GT-190`](./gap-reference-catalog.es.md#gt-190) | Agregar logging a 9 catch blocks vacíos | `CLI` | Cross | P2 | S | `PENDIENTE` |
-| [`GT-191`](./gap-reference-catalog.es.md#gt-191) | Corregir etiqueta ADR matrix incorrecta | `Docs` | Cross | P2 | S | `PENDIENTE` |
-| [`GT-192`](./gap-reference-catalog.es.md#gt-192) | Corregir enlaces MASTER_INDEX EN (`.es.md`→`.md`) | `Docs` | Cross | P2 | S | `PENDIENTE` |
-| [`GT-193`](./gap-reference-catalog.es.md#gt-193) | Eliminar TODOs de documentación de gobernanza | `Docs` | Cross | P2 | S | `PENDIENTE` |
-| [`GT-194`](./gap-reference-catalog.es.md#gt-194) | Eliminar tipos `any` en APIs públicas | `CLI` | Cross | P2 | M | `PENDIENTE` |
-| [`GT-195`](./gap-reference-catalog.es.md#gt-195) | Corregir rutas shell solo-Linux (Windows compat) | `CLI` | Cross | P2 | S | `PENDIENTE` |
-| [`GT-196`](./gap-reference-catalog.es.md#gt-196) | Agregar tests E2E para transporte HTTP MCP | `MCP Services` | Cross | P2 | M | `PENDIENTE` |
-| [`GT-197`](./gap-reference-catalog.es.md#gt-197) | Corregir fallos intermitentes pipeline release | `DevOps` | Cross | P2 | L | `PENDIENTE` |
-| [`GT-198`](./gap-reference-catalog.es.md#gt-198) | Corregir typo "Moscoww" (5 sitios) | `CLI` | Cross | P3 | S | `PENDIENTE` |
-| [`GT-199`](./gap-reference-catalog.es.md#gt-199) | Mover import al inicio del archivo | `CLI` | Cross | P3 | S | `PENDIENTE` |
-| [`GT-200`](./gap-reference-catalog.es.md#gt-200) | Convertir constructor 11-param a objeto options | `CLI` | Cross | P3 | S | `PENDIENTE` |
-| [`GT-201`](./gap-reference-catalog.es.md#gt-201) | Extraer valores hardcodeados a constantes | `CLI` | Cross | P3 | S | `PENDIENTE` |
-| [`GT-202`](./gap-reference-catalog.es.md#gt-202) | Agregar README a directorio `governance/adr/` | `Docs` | Cross | P3 | S | `PENDIENTE` |
-| [`GT-203`](./gap-reference-catalog.es.md#gt-203) | Eliminar o poblar dir vacío `kubernetes/` | `Docs` | Cross | P3 | S | `PENDIENTE` |
-| [`GT-204`](./gap-reference-catalog.es.md#gt-204) | Agregar READMEs a directorios infra | `Docs` | Cross | P3 | S | `PENDIENTE` |
-| [`GT-205`](./gap-reference-catalog.es.md#gt-205) | Agregar README a directorio SDLC playbooks | `Docs` | Cross | P3 | S | `PENDIENTE` |
-| [`GT-206`](./gap-reference-catalog.es.md#gt-206) | Formalizar regla de anidación BILINGUAL_INDEX | `Docs` | Cross | P3 | S | `PENDIENTE` |
-| [`GT-207`](./gap-reference-catalog.es.md#gt-207) | Estandarizar formato encabezados ADR | `Docs` | Cross | P3 | S | `PENDIENTE` |
-| [`GT-208`](./gap-reference-catalog.es.md#gt-208) | Programar reevaluación ADR-0077 (MassTransit EOL) | `Docs` | Cross | P3 | S | `PENDIENTE` |
-| [`GT-209`](./gap-reference-catalog.es.md#gt-209) | Crear baseline agnóstico (`agnostic-baseline.md` ausente) | `Architecture` | Cross | P0 | M | `PENDIENTE` |
-| [`GT-210`](./gap-reference-catalog.es.md#gt-210) | Completar Fase SDLC 05 (fase faltante) | `SDLC` | Cross | P1 | M | `PENDIENTE` |
-| [`GT-211`](./gap-reference-catalog.es.md#gt-211) | Crear EN para 3 ADRs solo-ES huérfanos | `Docs` | Cross | P2 | S | `PENDIENTE` |
 
 **Progreso:** 177 / 214 completados · 0 en progreso · 37 pendientes · 0 diferidos
 

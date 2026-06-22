@@ -18,6 +18,7 @@
 | EN | ES | Status |
 |----|----|--------|
 | [api-reference.md](core-api/api-reference.md) | [api-reference.es.md](core-api/api-reference.es.md) | OK |
+| [changelog.md](core-api/changelog.md) | [changelog.es.md](core-api/changelog.es.md) | OK |
 | [README.md](core-api/README.md) | [README.es.md](core-api/README.es.md) | OK |
 
 </details>
@@ -90,6 +91,17 @@
 | [sdk-cli-mcp-implementation-roadmap.md](smart-cli/docs/planning/sdk-cli-mcp-implementation-roadmap.md) | [sdk-cli-mcp-implementation-roadmap.es.md](smart-cli/docs/planning/sdk-cli-mcp-implementation-roadmap.es.md) | OK |
 | [sdk-cli-mcp-target-architecture.md](smart-cli/docs/planning/sdk-cli-mcp-target-architecture.md) | [sdk-cli-mcp-target-architecture.es.md](smart-cli/docs/planning/sdk-cli-mcp-target-architecture.es.md) | OK |
 | [testing-strategy.md](smart-cli/docs/planning/testing-strategy.md) | [testing-strategy.es.md](smart-cli/docs/planning/testing-strategy.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>ums-reference</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [overview.md](ums-reference/overview.md) | [overview.es.md](ums-reference/overview.es.md) | OK |
+| [README.md](ums-reference/README.md) | [README.es.md](ums-reference/README.es.md) | OK |
+| [reference-model.md](ums-reference/reference-model.md) | [reference-model.es.md](ums-reference/reference-model.es.md) | OK |
 
 </details>
 

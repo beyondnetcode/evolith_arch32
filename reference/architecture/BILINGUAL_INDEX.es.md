@@ -7,6 +7,7 @@
 
 | EN | ES | Status |
 |----|----|--------|
+| [agnostic-baseline.md](agnostic-baseline.md) | [agnostic-baseline.es.md](agnostic-baseline.es.md) | OK |
 | [APPLICATION_ARCHITECTURE_HUB.md](APPLICATION_ARCHITECTURE_HUB.md) | [APPLICATION_ARCHITECTURE_HUB.es.md](APPLICATION_ARCHITECTURE_HUB.es.md) | OK |
 | [BILINGUAL_INDEX.md](BILINGUAL_INDEX.md) | [BILINGUAL_INDEX.es.md](BILINGUAL_INDEX.es.md) | OK |
 | [DOMAIN_DESIGN_HUB.md](DOMAIN_DESIGN_HUB.md) | [DOMAIN_DESIGN_HUB.es.md](DOMAIN_DESIGN_HUB.es.md) | OK |
@@ -261,6 +262,7 @@
 | [patterns.md](topologies/ai/agentic-ai/patterns.md) | [patterns.es.md](topologies/ai/agentic-ai/patterns.es.md) | OK |
 | [README.md](topologies/ai/agentic-ai/README.md) | [README.es.md](topologies/ai/agentic-ai/README.es.md) | OK |
 | [resilience.md](topologies/ai/agentic-ai/resilience.md) | [resilience.es.md](topologies/ai/agentic-ai/resilience.es.md) | OK |
+| [runbooks.md](topologies/ai/agentic-ai/runbooks.md) | [runbooks.es.md](topologies/ai/agentic-ai/runbooks.es.md) | OK |
 | [security.md](topologies/ai/agentic-ai/security.md) | [security.es.md](topologies/ai/agentic-ai/security.es.md) | OK |
 
 </details>

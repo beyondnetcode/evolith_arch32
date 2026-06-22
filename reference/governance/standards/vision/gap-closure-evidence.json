@@ -133,6 +133,23 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-174",
+      "closedAt": "2026-06-21",
+      "closureCommit": "4e8fcad3",
+      "evidence": [
+        "rulesets/schema/output-envelope.schema.json",
+        "reference/governance/standards/vision/surface-compatibility.json",
+        "reference/governance/standards/vision/surface-compatibility.schema.json",
+        ".harness/scripts/ci/20-validate-surface-compatibility.mjs",
+        ".harness/scripts/ci/20-validate-surface-compatibility.test.mjs"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/20-validate-surface-compatibility.mjs",
+        "node --test .harness/scripts/ci/20-validate-surface-compatibility.test.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-168",
       "closedAt": "2026-06-21",
       "closureCommit": "507bb5a4",

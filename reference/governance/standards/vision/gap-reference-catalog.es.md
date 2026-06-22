@@ -267,9 +267,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** El envelope carece de `meta.schemaVersion`. El catálogo de gaps ya registra (línea 356) que no existe matriz de compatibilidad entre repositorios ni suite CI que ejercite versiones productor/consumidor juntas.
 - **Complejidad:** S
 - **Hecho cuando:**
-  - [ ] El esquema del envelope declara `meta.schemaVersion` como obligatorio y fijado por superficie.
-  - [ ] Una matriz de compatibilidad legible por máquina (`reference/governance/standards/vision/surface-compatibility.json` o equivalente) registra pares productor/consumidor soportados.
-  - [ ] CI rechaza un cambio de productor que rompa un par consumidor soportado sin una entrada explícita de migración.
+  - [x] El esquema del envelope declara `meta.schemaVersion` como obligatorio y fijado por superficie.
+  - [x] Una matriz de compatibilidad legible por máquina (`reference/governance/standards/vision/surface-compatibility.json` o equivalente) registra pares productor/consumidor soportados.
+  - [x] CI rechaza un cambio de productor que rompa un par consumidor soportado sin una entrada explícita de migración.
 
 
 #### GT-152

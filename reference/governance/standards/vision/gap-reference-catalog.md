@@ -267,9 +267,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** Envelope lacks `meta.schemaVersion`. Gap catalog already records (line 356) that no cross-repository compatibility matrix or CI suite exercises producer/consumer versions together.
 - **Complexity:** S
 - **Done when:**
-  - [ ] Envelope schema declares `meta.schemaVersion` as required and pinned per surface.
-  - [ ] A machine-readable compatibility matrix (`reference/governance/standards/vision/surface-compatibility.json` or equivalent) records supported producer/consumer pairs.
-  - [ ] CI rejects a producer change that would break a supported consumer pair without an explicit migration entry.
+  - [x] Envelope schema declares `meta.schemaVersion` as required and pinned per surface.
+  - [x] A machine-readable compatibility matrix (`reference/governance/standards/vision/surface-compatibility.json` or equivalent) records supported producer/consumer pairs.
+  - [x] CI rejects a producer change that would break a supported consumer pair without an explicit migration entry.
 
 
 #### GT-152

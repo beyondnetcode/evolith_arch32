@@ -2614,6 +2614,23 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-175",
+      "closedAt": "2026-06-22",
+      "closureCommit": "47e670b7",
+      "evidence": [
+        "reference/architecture/adrs/core/0099-opa-bundle-s3-distribution.md",
+        "reference/architecture/adrs/core/0099-opa-bundle-s3-distribution.es.md",
+        "reference/architecture/adrs/core/0085-agnostic-opa-wasm-distribution.md",
+        "reference/architecture/adrs/core/0085-agnostic-opa-wasm-distribution.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-209",
       "closedAt": "2026-06-22",
       "closureCommit": "2e58fd46",

@@ -13,7 +13,6 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|
-| [`GT-175`](./gap-reference-catalog.es.md#gt-175) | Corregir ADR-0076 duplicado (renumerar a ADR-0078) | `Docs` | Cross | P1 | S | `PENDIENTE` |
 | [`GT-176`](./gap-reference-catalog.es.md#gt-176) | Eliminar subdir `patterns/es/` (violación Patrón A/B) | `Docs` | Cross | P1 | S | `PENDIENTE` |
 | [`GT-177`](./gap-reference-catalog.es.md#gt-177) | Completar `core/README.md` con ADRs faltantes | `Docs` | Cross | P1 | S | `PENDIENTE` |
 | [`GT-180`](./gap-reference-catalog.es.md#gt-180) | Reemplazar `require()` entre capas con DI | `CLI` | Cross | P1 | M | `PENDIENTE` |
@@ -200,6 +199,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-53`](./gap-reference-catalog.es.md#gt-53) | Reparar las referencias migradas a la visión de producto | `Governance` | Transversal | P2 | S | `COMPLETADO` |
 | [`GT-26`](./gap-reference-catalog.es.md#gt-26) | Playbook de Zero-Downtime Release | `Governance` | Transversal | P2 | S | `COMPLETADO` |
 | [`GT-22`](./gap-reference-catalog.es.md#gt-22) | Esquema de unicidad de IDs ADR | `Governance` | Transversal | P2 | S | `COMPLETADO` |
+| [`GT-175`](./gap-reference-catalog.es.md#gt-175) | Corregir duplicado ADR-0076 (renumerar bundle OPA al siguiente Core ID libre) | `Docs` | Cross | P1 | S | `COMPLETADO` |
 | [`GT-16`](./gap-reference-catalog.es.md#gt-16) | Consolidación documental | `Governance` | F5 | P2 | S | `COMPLETADO` |
 | [`GT-24`](./gap-reference-catalog.es.md#gt-24) | Ejecutar migraciones documentales declaradas | `Governance` | Transversal | P2 | M | `COMPLETADO` |
 | [`GT-21`](./gap-reference-catalog.es.md#gt-21) | Revisión de ubicación de ADRs Core tool-céntricos | `Governance` | Transversal | P2 | M | `COMPLETADO` |
@@ -228,7 +228,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-160`](./gap-reference-catalog.es.md#gt-160) | Propagación de correlation-ID y contexto de solicitud entre superficies | `Cross` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-174`](./gap-reference-catalog.es.md#gt-174) | `meta.schemaVersion` y matriz de compatibilidad productor/consumidor | `Cross` | Cross | P2 | S | `COMPLETADO` |
 
-**Progreso:** 178 / 214 completados · 0 en progreso · 36 pendientes · 0 diferidos
+**Progreso:** 179 / 214 completados · 0 en progreso · 35 pendientes · 0 diferidos
 
 **Oleada 2026-06-21 (auditoría profunda de Wilson):** Añadidos 20 gaps nuevos `GT-155`…`GT-174` que cubren conformidad de envelope en Core API REST, paridad de superficies command-as-a-service, autenticación/autorización MCP, esquemas y tests de OPA, validación CI de manifests de topología, runbooks y plantillas SDLC, hubs de producto de Core API y UMS, presupuestos operativos de Agentic AI, paridad OpenTelemetry y versionado del envelope.
 

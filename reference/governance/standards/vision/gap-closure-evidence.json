@@ -3,6 +3,20 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-162",
+      "closedAt": "2026-06-22",
+      "closureCommit": "d958c18c",
+      "evidence": [
+        "rulesets/opa/main_test.rego",
+        "packages/core-domain/src/application/validators/evaluators/aggregator-parity.spec.ts"
+      ],
+      "validationCommands": [
+        "./.harness/bin/opa test rulesets/opa/ --ignore=schemas -v",
+        "npx jest packages/core-domain/src/application/validators/evaluators/aggregator-parity.spec.ts"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-161",
       "closedAt": "2026-06-22",
       "closureCommit": "644f047e",

@@ -9,6 +9,6 @@ Este es el conteo automatizado del inventario de la arquitectura de referencia c
 |---|:---:|---|
 | **Architecture Decision Records (ADR)** | 110 | `reference/architecture/adrs/` |
 | **Rulesets Legibles por Máquina** | 26 | `rulesets/` (en 14 categorías) |
-| **Schemas de Phase-Gates** | 22 | `rulesets/schema/` |
+| **Schemas de Phase-Gates** | 23 | `rulesets/schema/` |
 
 *Última Actualización: 2026-06-22*

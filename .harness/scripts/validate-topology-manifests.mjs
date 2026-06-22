@@ -2,6 +2,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { execSync } from "node:child_process";
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
 
@@ -13,6 +14,80 @@ const manifestRoots = [
 ];
 const failures = [];
 const manifests = [];
+const checkedTsConfigs = new Set();
+
+function toPascalCase(filename) {
+  const base = path.basename(filename, path.extname(filename));
+  return base
+    .split(/[-.]/)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join("");
+}
+
+function findTsConfig(filePath) {
+  let dir = path.dirname(path.join(root, filePath));
+  while (dir !== root && dir !== path.dirname(root)) {
+    const tsconfig = path.join(dir, "tsconfig.json");
+    if (fs.existsSync(tsconfig)) {
+      return tsconfig;
+    }
+    dir = path.dirname(dir);
+  }
+  return null;
+}
+
+function checkTypeScriptCompilation(manifestPath, tsFile) {
+  const tsconfig = findTsConfig(tsFile);
+  if (!tsconfig) {
+    failures.push(`${relative(manifestPath)}: no tsconfig.json found for TypeScript file ${tsFile}`);
+    return;
+  }
+
+  const relTsConfig = path.relative(root, tsconfig);
+  if (checkedTsConfigs.has(relTsConfig)) {
+    return;
+  }
+
+  try {
+    execSync(`npx tsc --project ${tsconfig} --noEmit`, { stdio: "ignore" });
+    checkedTsConfigs.add(relTsConfig);
+  } catch (error) {
+    failures.push(`${relative(manifestPath)}: TypeScript compilation failed for project ${relTsConfig}`);
+  }
+}
+
+function checkTypeScriptExports(manifestPath, tsFile, expectedSymbol) {
+  try {
+    const content = fs.readFileSync(path.join(root, tsFile), "utf8");
+    const classRegex = new RegExp(`export\\s+class\\s+${expectedSymbol}\\b`);
+    const constRegex = new RegExp(`export\\s+const\\s+${expectedSymbol}\\b`);
+    const interfaceRegex = new RegExp(`export\\s+interface\\s+${expectedSymbol}\\b`);
+    const functionRegex = new RegExp(`export\\s+function\\s+${expectedSymbol}\\b`);
+
+    if (!classRegex.test(content) && !constRegex.test(content) && !interfaceRegex.test(content) && !functionRegex.test(content)) {
+      failures.push(`${relative(manifestPath)} violates GT-163: TypeScript file ${tsFile} does not export symbol ${expectedSymbol}`);
+    }
+  } catch (error) {
+    failures.push(`${relative(manifestPath)}: failed to read ${tsFile} for export checks: ${error.message}`);
+  }
+}
+
+function validateJsonSchema(manifestPath, jsonFile, schemaFilePath) {
+  try {
+    const jsonContent = JSON.parse(fs.readFileSync(path.join(root, jsonFile), "utf8"));
+    const schemaContent = JSON.parse(fs.readFileSync(path.join(root, schemaFilePath), "utf8"));
+
+    const ajvInstance = new Ajv({ strict: false, allErrors: true });
+    addFormats(ajvInstance);
+    const validateFn = ajvInstance.compile(schemaContent);
+
+    if (!validateFn(jsonContent)) {
+      failures.push(`${relative(manifestPath)}: referenced JSON evidence ${jsonFile} violates schema ${relative(schemaFilePath)}: ${ajvInstance.errorsText(validateFn.errors, { separator: "; " })}`);
+    }
+  } catch (error) {
+    failures.push(`${relative(manifestPath)}: failed to validate JSON evidence ${jsonFile} against schema: ${error.message}`);
+  }
+}
 
 function walk(directory) {
   if (!fs.existsSync(directory)) {
@@ -151,9 +226,21 @@ if (!fs.existsSync(schemaPath)) {
         "negative test": corpus.tests?.negative,
         evidence: corpus.evidence,
       })) {
-        if (typeof artifact === "string") validateExistingFile(manifestPath, artifact, label);
+        if (typeof artifact === "string") {
+          const exists = validateExistingFile(manifestPath, artifact, label);
+          if (exists && artifact.endsWith(".ts")) {
+            checkTypeScriptCompilation(manifestPath, artifact);
+            if (label === "Native evaluator") {
+              checkTypeScriptExports(manifestPath, artifact, toPascalCase(artifact));
+            }
+          }
+        }
       }
       validateCorpusFixtures(manifestPath, corpus);
+
+      if (corpus.evidence && typeof corpus.evidence === "string" && corpus.evidence.endsWith(".json")) {
+        validateJsonSchema(manifestPath, corpus.evidence, "rulesets/schema/maturity-evidence.schema.json");
+      }
 
       for (const adr of manifest.spec?.artifacts?.adrs ?? []) {
         if (fs.existsSync(path.join(root, adr)) && !hasApprovedAdrStatus(adr)) {

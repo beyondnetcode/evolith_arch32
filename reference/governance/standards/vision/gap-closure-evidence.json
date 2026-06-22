@@ -3,6 +3,19 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-163",
+      "closedAt": "2026-06-22",
+      "closureCommit": "fa3650f8",
+      "evidence": [
+        ".harness/scripts/validate-topology-manifests.mjs",
+        "rulesets/schema/maturity-evidence.schema.json"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/validate-topology-manifests.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-162",
       "closedAt": "2026-06-22",
       "closureCommit": "d958c18c",

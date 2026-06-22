@@ -124,9 +124,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** `rulesets/schema/topology-manifest.schema.json` declares the fields but no validator checks that referenced files exist (e.g., a missing `corpus.nativeEvaluator` path is not flagged).
 - **Complexity:** M
 - **Done when:**
-  - [ ] A `validate-topology-manifests.mjs` extension (or new validator) resolves and existence-checks every manifest reference.
-  - [ ] Referenced TypeScript validators must compile and expose the declared symbols; referenced JSON evidence must match its schema.
-  - [ ] CI fails the topology gate on any unresolved or schema-divergent reference.
+  - [x] A `validate-topology-manifests.mjs` extension (or new validator) resolves and existence-checks every manifest reference.
+  - [x] Referenced TypeScript validators must compile and expose the declared symbols; referenced JSON evidence must match its schema.
+  - [x] CI fails the topology gate on any unresolved or schema-divergent reference.
 
 
 #### GT-164

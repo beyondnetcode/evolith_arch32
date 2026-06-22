@@ -19,6 +19,7 @@ Definiciones de JSON Schema para validar los artefactos SDLC de Evolith.
 | [evolith-yaml.schema.json](./evolith-yaml.schema.json) | Validar el contrato evolith.yaml del satélite | Gobernanza de satélite | Todas |
 | [topology-manifest.schema.json](./topology-manifest.schema.json) | Validar archivos topology.manifest.json para resolución del corpus Multi-Topology | Manifiesto topológico | Todas |
 | [gate-evidence.schema.json](./gate-evidence.schema.json) | Validar la evidencia estructurada de evaluación de gates (core/ADR-0073) | Gate Evidence | Todas |
+| [maturity-evidence.schema.json](./maturity-evidence.schema.json) | Validar registros de evidencia de estado de madurez | Maturity Evidence | Todas |
 | [output-envelope.schema.json](./output-envelope.schema.json) | Validar el envelope universal de salida de máquina (core/ADR-0073) | Salida CLI/MCP/REST | Todas |
 | [knowledge-intake.schema.json](./knowledge-intake.schema.json) | Validar candidatos de conocimiento externo gobernado | Candidato de ingesta de conocimiento | Todas |
 | [governance.input.schema.json](../opa/schemas/governance.input.schema.json) | Validar la estructura de entrada de la política OPA de gobernanza | Entrada de OPA Gobernanza | Todas |

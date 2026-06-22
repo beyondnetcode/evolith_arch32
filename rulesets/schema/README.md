@@ -19,6 +19,7 @@ JSON Schema definitions for validating Evolith SDLC artifacts.
 | [evolith-yaml.schema.json](./evolith-yaml.schema.json) | Validate satellite evolith.yaml contract | Satellite governance | All |
 | [topology-manifest.schema.json](./topology-manifest.schema.json) | Validate topology.manifest.json files for Multi-Topology corpus resolution | Topology manifest | All |
 | [gate-evidence.schema.json](./gate-evidence.schema.json) | Validate structured gate-evaluation evidence (core/ADR-0073) | Gate Evidence | All |
+| [maturity-evidence.schema.json](./maturity-evidence.schema.json) | Validate maturity status evidence logs | Maturity Evidence | All |
 | [output-envelope.schema.json](./output-envelope.schema.json) | Validate the universal machine output envelope (core/ADR-0073) | CLI/MCP/REST output | All |
 | [knowledge-intake.schema.json](./knowledge-intake.schema.json) | Validate governed external knowledge candidates | Knowledge intake candidate | All |
 | [governance.input.schema.json](../opa/schemas/governance.input.schema.json) | Validate governance OPA policy input structure | OPA Governance Input | All |

@@ -13,7 +13,6 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|
-| [`GT-163`](./gap-reference-catalog.es.md#gt-163) | Validación CI de artefactos referenciados por el manifest de topología | `Rulesets` | Cross | P1 | M | `PENDIENTE` |
 | [`GT-164`](./gap-reference-catalog.es.md#gt-164) | Riqueza de rulesets event-driven y data-mesh | `Rulesets` | Cross | P1 | M | `PENDIENTE` |
 | [`GT-166`](./gap-reference-catalog.es.md#gt-166) | Runbooks SDLC faltantes para Fases 1, 2 y 4 | `Documentation` | Cross | P1 | M | `PENDIENTE` |
 | [`GT-167`](./gap-reference-catalog.es.md#gt-167) | Plantillas de evidencia y checklists de aceptación para phase-gates | `Documentation` | Cross | P1 | M | `PENDIENTE` |
@@ -178,6 +177,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`MT-A04`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Autorizar `rulesets/topologies/` como la ubicación canónica de reglas de topología ejecutables | `Rulesets` | Transversal | P0 | S | `COMPLETADO` |
 | [`MT-A10`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Crear Rulesets Topologies Hub en inglés y español | `Rulesets` | Transversal | P1 | S | `COMPLETADO` |
 | [`GT-162`](./gap-reference-catalog.es.md#gt-162) | Tests unitarios del agregador `main.rego` y paridad post GT-149 | `Rulesets` | Cross | P1 | M | `COMPLETADO` |
+| [`GT-163`](./gap-reference-catalog.es.md#gt-163) | Validación CI de artefactos referenciados por el manifest de topología | `Rulesets` | Cross | P1 | M | `COMPLETADO` |
 | [`MT-A05`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Crear `topology-manifest.schema.json` | `Schema` | Transversal | P0 | M | `COMPLETADO` |
 | [`GT-161`](./gap-reference-catalog.es.md#gt-161) | Esquemas JSON formales para los inputs de las políticas OPA core | `Schema` | Cross | P1 | M | `COMPLETADO` |
 | [`MT-A03`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Autorizar `reference/architecture/topologies/` como corpus topológico canónico legible por humanos | `Taxonomy` | Transversal | P0 | S | `COMPLETADO` |
@@ -191,7 +191,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-158`](./gap-reference-catalog.es.md#gt-158) | Human-in-the-loop y ABAC para herramientas MCP mutativas | `MCP Services` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-160`](./gap-reference-catalog.es.md#gt-160) | Propagación de correlation-ID y contexto de solicitud entre superficies | `Cross` | Cross | P1 | M | `COMPLETADO` |
 
-**Progreso:** 166 / 177 completados · 0 en progreso · 11 pendientes · 0 diferidos
+**Progreso:** 167 / 177 completados · 0 en progreso · 10 pendientes · 0 diferidos
 
 **Oleada 2026-06-21 (auditoría profunda de Wilson):** Añadidos 20 gaps nuevos `GT-155`…`GT-174` que cubren conformidad de envelope en Core API REST, paridad de superficies command-as-a-service, autenticación/autorización MCP, esquemas y tests de OPA, validación CI de manifests de topología, runbooks y plantillas SDLC, hubs de producto de Core API y UMS, presupuestos operativos de Agentic AI, paridad OpenTelemetry y versionado del envelope.
 

@@ -1844,9 +1844,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Hecho Cuando:** Exista un `packages/mcp-tools/` dedicado que publique capacidades reutilizables para agentes externos.
 
 #### GT-175
-**Propósito:** Corregir ADR-0076 duplicado (renumerar bundle OPA a ADR-0078).
-**Evidencia Actual:** Dos ADRs comparten el ID 0076.
-**Hecho Cuando:** ADR-0076 renumerado a ADR-0078, todos los enlaces actualizados.
+**Propósito:** Corregir el ID duplicado ADR-0076 renumerando el ADR de bundle OPA al siguiente Core ID libre.
+**Evidencia Actual:** Dos ADRs compartían el ID 0076 (`0076-domain-oriented-microservice-architecture` y `0076-opa-bundle-s3-distribution`). El plan original de "renumerar a 0078" quedó obsoleto porque 0078 fue asignado posteriormente a `domain-financial-separation-governance`.
+**Hecho Cuando:** ADR del bundle OPA renumerado al siguiente Core ID libre (0099) y todos los enlaces actualizados.
 
 #### GT-176
 **Propósito:** Eliminar subdirectorio `patterns/es/` (violación de Patrón A/B).

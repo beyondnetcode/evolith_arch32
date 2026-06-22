@@ -7,7 +7,7 @@ Accepted
 
 ## Context
 Evolith enforces its architectural constraints and access models via Open Policy Agent (OPA), distributing these rules as compiled WebAssembly (`policy.wasm`) bundles. 
-Previously, [ADR 0076](./0076-opa-bundle-s3-distribution.md) prescribed an AWS S3-centric distribution model. However, mandating proprietary cloud object storage violates the Evolith tenet of vendor-agnostic portability, especially for on-premise, edge computing, or air-gapped topologies where S3 is unavailable or undesirable.
+Previously, [ADR 0099](./0099-opa-bundle-s3-distribution.md) (originally numbered 0076, renumbered to resolve a duplicate ID) prescribed an AWS S3-centric distribution model. However, mandating proprietary cloud object storage violates the Evolith tenet of vendor-agnostic portability, especially for on-premise, edge computing, or air-gapped topologies where S3 is unavailable or undesirable.
 
 We require a standardized, non-cloud-locked mechanism to distribute OPA bundles to consuming nodes (e.g., BFFs, Agentic MCP servers, and Sidecars) reliably.
 

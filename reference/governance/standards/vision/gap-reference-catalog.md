@@ -1845,9 +1845,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Done When:** A dedicated `packages/mcp-tools/` exists, publishing reusable capabilities for external agents.
 
 #### GT-175
-**Purpose:** Fix ADR-0076 duplicate (renumber OPA bundle to ADR-0078).
-**Current Evidence:** Two ADRs share ID 0076.
-**Done When:** ADR-0076 renumbered to ADR-0078, all inbound links updated.
+**Purpose:** Fix ADR-0076 duplicate by renumbering the OPA bundle ADR to the next free Core ID.
+**Current Evidence:** Two ADRs shared ID 0076 (`0076-domain-oriented-microservice-architecture` and `0076-opa-bundle-s3-distribution`). The original "renumber to 0078" plan was stale because 0078 was later assigned to `domain-financial-separation-governance`.
+**Done When:** OPA bundle ADR renumbered to the next free Core ID (0099) and all inbound links updated.
 
 #### GT-176
 **Purpose:** Remove `patterns/es/` subdirectory (Pattern A/B mix violation).

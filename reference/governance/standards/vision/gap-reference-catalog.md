@@ -111,9 +111,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** `rulesets/opa/main.rego` aggregates seven violation sets but has no companion `main_test.rego`. GT-149 closed individual policy tests and the differential gate; aggregator-level overlap and precedence are unverified.
 - **Complexity:** M
 - **Done when:**
-  - [ ] `main_test.rego` covers empty, single-source, multi-source, and overlapping inputs with explicit precedence assertions.
-  - [ ] A differential test for the aggregator runs both Native and OPA pipelines on shared fixtures.
-  - [ ] CI fails on aggregator coverage regressions and on differential drift.
+  - [x] `main_test.rego` covers empty, single-source, multi-source, and overlapping inputs with explicit precedence assertions.
+  - [x] A differential test for the aggregator runs both Native and OPA pipelines on shared fixtures.
+  - [x] CI fails on aggregator coverage regressions and on differential drift.
 
 
 #### GT-163

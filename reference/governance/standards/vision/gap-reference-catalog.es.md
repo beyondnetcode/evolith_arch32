@@ -111,9 +111,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** `rulesets/opa/main.rego` agrega siete sets de violaciones pero no tiene un `main_test.rego` complementario. GT-149 cerró los tests de políticas individuales y el gate diferencial; el solapamiento y la precedencia a nivel de agregador siguen sin verificarse.
 - **Complejidad:** M
 - **Hecho cuando:**
-  - [ ] `main_test.rego` cubre inputs vacíos, de fuente única, multi-fuente y solapados, con aserciones explícitas de precedencia.
-  - [ ] Un test diferencial del agregador ejecuta los pipelines Native y OPA sobre fixtures compartidos.
-  - [ ] CI falla ante regresiones de cobertura del agregador y derivas diferenciales.
+  - [x] `main_test.rego` cubre inputs vacíos, de fuente única, multi-fuente y solapados, con aserciones explícitas de precedencia.
+  - [x] Un test diferencial del agregador ejecuta los pipelines Native y OPA sobre fixtures compartidos.
+  - [x] CI falla ante regresiones de cobertura del agregador y derivas diferenciales.
 
 
 #### GT-163

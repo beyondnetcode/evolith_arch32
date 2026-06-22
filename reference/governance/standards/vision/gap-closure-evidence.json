@@ -2614,6 +2614,42 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-181",
+      "closedAt": "2026-06-22",
+      "closureCommit": "ab029f4f",
+      "evidence": [
+        "packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.ts",
+        "packages/core-domain/src/application/validators/evaluators/handlers/architecture/",
+        "packages/mcp-server/src/mcp/mcp-server.service.ts",
+        "packages/mcp-server/src/mcp/mcp-server-auth.ts",
+        "packages/mcp-server/src/mcp/mcp-tool-dispatch.ts",
+        "packages/mcp-server/src/mcp/mcp-user-context.ts",
+        "packages/core-domain/src/application/upgrade/satellite-upgrade.service.ts",
+        "packages/core-domain/src/application/upgrade/satellite-upgrade-fs.ts",
+        "packages/core-domain/src/application/upgrade/satellite-upgrade-diff.ts",
+        "packages/core-domain/src/application/upgrade/satellite-upgrade-apply.ts",
+        "packages/core-domain/src/application/upgrade/satellite-upgrade.types.ts",
+        "packages/core-domain/src/application/validators/deep-architecture-analyzer.ts",
+        "packages/core-domain/src/application/validators/architecture/",
+        "sdk/cli/src/commands/api/api.command.ts",
+        "sdk/cli/src/commands/api/api.catalog.ts",
+        "packages/core-domain/src/application/validators/ruleset-validator.service.ts",
+        "packages/core-domain/src/application/validators/ruleset-validator.types.ts",
+        "packages/core-domain/src/application/validators/ruleset-id-loader.ts",
+        "packages/core-domain/src/application/validators/architecture-validator.ts",
+        "sdk/cli/src/infrastructure/prompts/prompt.service.ts",
+        "sdk/cli/src/infrastructure/prompts/init-prompt-group.ts",
+        "sdk/cli/src/infrastructure/prompts/init-prompt-options.ts"
+      ],
+      "validationCommands": [
+        "npm run test --workspace packages/core-domain",
+        "npm run test --workspace packages/mcp-server",
+        "npm run test --workspace sdk/cli",
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-180",
       "closedAt": "2026-06-22",
       "closureCommit": "3e4c7f71",

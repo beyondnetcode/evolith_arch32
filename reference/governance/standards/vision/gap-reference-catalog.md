@@ -1875,9 +1875,16 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Done When:** All production-code `require()` calls eliminated; the dynamic plugin loader uses `import()` with CJS-default unwrapping; `npm run build` and `npm run test:unit` pass.
 
 #### GT-181
-**Purpose:** Split large files (`server.ts` 420 lines, 5 other files >300 lines) into smaller modules.
-**Current Evidence:** Overly large files reduce maintainability.
-**Done When:** No file exceeds 250 lines of non-comment code in the affected modules.
+**Purpose:** Split large files (7 production sources >300 LOC at baseline) into smaller modules.
+**Current Evidence:** Closed 2026-06-22 (commits `6e4178b2`, `89eac93d`, `9a9b23cb`, `dadb4d9e`, `dd4e8a65`, `c80005b0`, `ab029f4f`). Refactored modules:
+- `architecture-rule.handler.ts` 644 → 37 LOC (split into `architecture/{agent,structural,ast,config}-rules.ts` + `shared.ts`)
+- `mcp-server.service.ts` 467 → 194 LOC (split into `mcp-server-auth.ts`, `mcp-tool-dispatch.ts`, `mcp-user-context.ts`)
+- `satellite-upgrade.service.ts` 416 → 110 LOC (split into `satellite-upgrade-{fs,diff,apply,types}.ts`)
+- `deep-architecture-analyzer.ts` 413 → 47 LOC (split into `architecture/{types,import-graph,detectors}.ts`)
+- `api.command.ts` 369 → 147 LOC (split into `api.catalog.ts`)
+- `ruleset-validator.service.ts` 369 → 132 LOC (split into `ruleset-validator.types.ts`, `ruleset-id-loader.ts`, `architecture-validator.ts`)
+- `prompt.service.ts` 355 → 118 LOC (split into `init-prompt-group.ts`, `init-prompt-options.ts`)
+**Done When:** No file exceeds 250 lines of non-comment code in the affected modules. Largest post-refactor file is 203 LOC (`api.catalog.ts`, data-only).
 
 #### GT-182
 **Purpose:** Add tests for Core Domain SDK (`packages/core-domain/` has zero test coverage).

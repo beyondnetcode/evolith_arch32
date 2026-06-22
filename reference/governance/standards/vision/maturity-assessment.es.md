@@ -5,7 +5,7 @@
 **Estado:** Evaluación Activa
 **Responsable:** Evolith Architecture Board
 **Creado:** 2026-06-10 (consolida los antiguos `maturity-matrix.es.md` y `maturity-evaluation.es.md`)
-**Última Actualización:** 2026-06-19
+**Última Actualización:** 2026-06-22
 **Documento compañero:** [Tablero de Seguimiento de Gaps](./gap-tracking.es.md) — la única superficie de tracking para todo gap referenciado aquí.
 
 ---

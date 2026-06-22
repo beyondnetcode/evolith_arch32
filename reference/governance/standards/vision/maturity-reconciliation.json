@@ -1,16 +1,16 @@
 {
   "schemaVersion": "1.0.0",
   "scope": "evolith-core",
-  "asOf": "2026-06-21",
+  "asOf": "2026-06-22",
   "gaps": {
     "total": 214,
-    "done": 182,
-    "pending": 32,
+    "done": 183,
+    "pending": 31,
     "inProgress": 0,
     "deferred": 0
   },
   "evidence": {
-    "closureRecords": 164,
+    "closureRecords": 165,
     "cliPackage": "@evolith/smart-cli@1.1.0",
     "adrCount": 110,
     "rulesetCount": 26,

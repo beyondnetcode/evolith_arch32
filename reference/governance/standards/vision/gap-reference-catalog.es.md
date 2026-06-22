@@ -1874,9 +1874,16 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Hecho Cuando:** Todas las llamadas `require()` en código de producción eliminadas; el cargador dinámico de plugins usa `import()` con unwrapping del default CJS; `npm run build` y `npm run test:unit` pasan.
 
 #### GT-181
-**Propósito:** Dividir archivos grandes (`server.ts` 420 líneas, otros 5 >300 líneas) en módulos más pequeños.
-**Evidencia Actual:** Archivos excesivamente grandes reducen la mantenibilidad.
-**Hecho Cuando:** Ningún archivo excede 250 líneas de código no-comentario en los módulos afectados.
+**Propósito:** Dividir 7 fuentes de producción >300 LOC en módulos más pequeños.
+**Evidencia Actual:** Cerrado 2026-06-22 (commits `6e4178b2`, `89eac93d`, `9a9b23cb`, `dadb4d9e`, `dd4e8a65`, `c80005b0`, `ab029f4f`). Módulos refactorizados:
+- `architecture-rule.handler.ts` 644 → 37 LOC (dividido en `architecture/{agent,structural,ast,config}-rules.ts` + `shared.ts`)
+- `mcp-server.service.ts` 467 → 194 LOC (dividido en `mcp-server-auth.ts`, `mcp-tool-dispatch.ts`, `mcp-user-context.ts`)
+- `satellite-upgrade.service.ts` 416 → 110 LOC (dividido en `satellite-upgrade-{fs,diff,apply,types}.ts`)
+- `deep-architecture-analyzer.ts` 413 → 47 LOC (dividido en `architecture/{types,import-graph,detectors}.ts`)
+- `api.command.ts` 369 → 147 LOC (dividido en `api.catalog.ts`)
+- `ruleset-validator.service.ts` 369 → 132 LOC (dividido en `ruleset-validator.types.ts`, `ruleset-id-loader.ts`, `architecture-validator.ts`)
+- `prompt.service.ts` 355 → 118 LOC (dividido en `init-prompt-group.ts`, `init-prompt-options.ts`)
+**Hecho Cuando:** Ningún archivo excede 250 líneas de código no-comentario en los módulos afectados. El archivo más grande post-refactor es 203 LOC (`api.catalog.ts`, sólo datos).
 
 #### GT-182
 **Propósito:** Agregar pruebas para Core Domain SDK (`packages/core-domain/` tiene cero cobertura).

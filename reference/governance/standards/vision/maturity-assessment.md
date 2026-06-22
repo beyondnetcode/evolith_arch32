@@ -5,7 +5,7 @@
 **Status:** Active Assessment
 **Owner:** Evolith Architecture Board
 **Created:** 2026-06-10 (consolidates the former `maturity-matrix.md` and `maturity-evaluation.md`)
-**Last Updated:** 2026-06-19
+**Last Updated:** 2026-06-22
 **Companion document:** [Gap Tracking Board](./gap-tracking.md) — the single tracking surface for every open gap referenced here.
 
 ---

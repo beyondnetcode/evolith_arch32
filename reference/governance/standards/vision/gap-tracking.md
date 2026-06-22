@@ -4,7 +4,7 @@
 
 **Status:** Active Tracking
 **Owner:** Evolith Architecture Board
-**Last Updated:** 2026-06-21
+**Last Updated:** 2026-06-22
 **Gap Details:** [Gap Reference Catalog](./gap-reference-catalog.md)
 
 This board is the single source of truth for technical debt, gaps, opportunities, enablers, priority, and status. Select a gap ID to open its problem statement, purpose, evidence, closure criteria, and references.
@@ -13,7 +13,6 @@ This board is the single source of truth for technical debt, gaps, opportunities
 
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
 |---|---|---|:---:|:---:|:---:|:---:|
-| [`GT-181`](./gap-reference-catalog.md#gt-181) | Split large files into smaller modules | `CLI` | Cross | P1 | M | `PENDING` |
 | [`GT-182`](./gap-reference-catalog.md#gt-182) | Add tests for Core Domain SDK | `SDK` | Cross | P1 | M | `PENDING` |
 | [`GT-184`](./gap-reference-catalog.md#gt-184) | Remove `@ts-nocheck` from 19 files | `CLI` | Cross | P1 | M | `PENDING` |
 | [`GT-185`](./gap-reference-catalog.md#gt-185) | Fix MCP tool stubs | `MCP Services` | Cross | P1 | M | `PENDING` |
@@ -145,6 +144,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-51`](./gap-reference-catalog.md#gt-51) | Build-versus-Compose gate evidence validation | `CLI` | F3 | P1 | M | `DONE` |
 | [`GT-49`](./gap-reference-catalog.md#gt-49) | Enforce TypeScript strict mode and typed filesystem ports | `CLI` | Cross | P1 | M | `DONE` |
 | [`GT-180`](./gap-reference-catalog.md#gt-180) | Replace cross-boundary `require()` with ES imports / dynamic `import()` | `CLI` | Cross | P1 | M | `DONE` |
+| [`GT-181`](./gap-reference-catalog.md#gt-181) | Split large files into smaller modules | `CLI` | Cross | P1 | M | `DONE` |
 | [`GT-46`](./gap-reference-catalog.md#gt-46) | Core HTTP service ownership boundary | `CLI` | F2 | P1 | M | `DONE` |
 | [`GT-45`](./gap-reference-catalog.md#gt-45) | MCP transport and tool conformance suite | `CLI` | F2 | P1 | M | `DONE` |
 | [`GT-17`](./gap-reference-catalog.md#gt-17) | DI consolidation and strict boundaries | `CLI` | F5 | P1 | M | `DONE` |
@@ -228,7 +228,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-160`](./gap-reference-catalog.md#gt-160) | Cross-surface correlation-ID and request-context propagation | `Cross` | Cross | P1 | M | `DONE` |
 | [`GT-174`](./gap-reference-catalog.md#gt-174) | Envelope `meta.schemaVersion` and producer/consumer compatibility matrix | `Cross` | Cross | P2 | S | `DONE` |
 
-**Progress:** 182 / 214 done · 0 in progress · 32 pending · 0 deferred
+**Progress:** 183 / 214 done · 0 in progress · 31 pending · 0 deferred
 
 **Wave 2026-06-22 (Wilson deep audit):** Added 3 new gaps `GT-209`…`GT-211`: missing agnostic baseline, incomplete SDLC Phase 05, and orphan Spanish-only ADRs without English counterparts.
 

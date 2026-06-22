@@ -202,9 +202,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** `reference/architecture/topologies/ai/agentic-ai/operations.md` menciona "execution timeout and resource budget per capability" sin límites cuantitativos; `README.md` declara `toolPolicy` sin tope de concurrencia ni ciclo de credenciales; no hay runbook para desbordamiento de tokens ni escape de sandbox.
 - **Complejidad:** L
 - **Hecho cuando:**
-  - [ ] Los campos del manifest declaran presupuestos de tokens, techos de ventana de contexto, límites de concurrencia de herramientas MCP y cadencia de rotación de credenciales.
-  - [ ] Los runbooks cubren agente colgado, desbordamiento de tokens, acción no aprobada y escape de sandbox con pasos de recuperación explícitos.
-  - [ ] Reglas nativas y OPA fallan los manifests que omitan los campos de presupuesto.
+  - [x] Los campos del manifest declaran presupuestos de tokens, techos de ventana de contexto, límites de concurrencia de herramientas MCP y cadencia de rotación de credenciales.
+  - [x] Los runbooks cubren agente colgado, desbordamiento de tokens, acción no aprobada y escape de sandbox con pasos de recuperación explícitos.
+  - [x] Reglas nativas y OPA fallan los manifests que omitan los campos de presupuesto.
 
 
 #### GT-170

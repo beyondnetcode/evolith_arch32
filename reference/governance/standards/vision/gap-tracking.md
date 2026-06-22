@@ -13,7 +13,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
 |---|---|---|:---:|:---:|:---:|:---:|
-| [`GT-169`](./gap-reference-catalog.md#gt-169) | Agentic AI operational budgets, credential lifecycle, and runbooks | `Architecture` | Cross | P1 | L | `PENDING` |
+| [`GT-169`](./gap-reference-catalog.md#gt-169) | Agentic AI operational budgets, credential lifecycle, and runbooks | `Architecture` | Cross | P1 | L | `DONE` |
 | [`GT-173`](./gap-reference-catalog.md#gt-173) | OpenTelemetry export parity across CLI, MCP, and REST | `Cross` | Cross | P2 | M | `PENDING` |
 | [`GT-171`](./gap-reference-catalog.md#gt-171) | Command-as-a-service surface parity audit (CLI vs MCP vs REST) | `Cross` | Cross | P2 | L | `PENDING` |
 | [`GT-172`](./gap-reference-catalog.md#gt-172) | Cross-surface contract roundtrip test suite | `Cross` | Cross | P2 | L | `PENDING` |
@@ -192,7 +192,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-174`](./gap-reference-catalog.md#gt-174) | Envelope `meta.schemaVersion` and producer/consumer compatibility matrix | `Cross` | Cross | P2 | S | `DONE` |
 
 
-**Progress:** 173 / 177 done · 0 in progress · 4 pending · 0 deferred
+**Progress:** 174 / 177 done · 0 in progress · 3 pending · 0 deferred
 
 **Wave 2026-06-21 (Wilson deep audit):** Added 20 new gaps `GT-155`…`GT-174` covering Core API envelope conformance, command-as-a-service surface parity, MCP authn/authz, OPA schemas/aggregator tests, topology manifest validation, SDLC runbooks/templates, Core API and UMS product hubs, agentic-AI operational budgets, OpenTelemetry parity, and envelope schema versioning.
 

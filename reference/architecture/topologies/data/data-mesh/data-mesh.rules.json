@@ -3,8 +3,8 @@
   "$id": "https://evolith.dev/rulesets/topologies/data-mesh.rules.json",
   "title": "Data Mesh Topology Rules",
   "description": "Architectural rules for the Data Mesh topology.",
-  "version": "1.0.0",
-  "effectiveDate": "2026-06-20",
+  "version": "1.1.0",
+  "effectiveDate": "2026-06-22",
   "rules": [
     {
       "id": "DAM-R01",
@@ -12,6 +12,8 @@
       "category": "data-mesh-config",
       "title": "Data Product Designation",
       "description": "A Data Mesh satellite MUST provide data-mesh.config.json and declare isDataProduct=true.",
+      "rationale": "Explicit data product designation enforces domain ownership of analytical data. Without this declaration, analytical datasets remain in an undefined ownership state that prevents federated governance and makes data discoverability impossible.",
+      "validationQuery": "Verify data-mesh.config.json exists and isDataProduct is set to true. Confirm a data product owner is registered in the domain catalog.",
       "blocking": true
     },
     {
@@ -20,6 +22,8 @@
       "category": "data-mesh-contracts",
       "title": "Data Contracts",
       "description": "data-mesh.config.json MUST declare hasDataContracts=true.",
+      "rationale": "Data contracts define the schema, SLOs, and behavioral guarantees a data product offers to consumers. Without them, downstream consumers face silent schema breaks and undefined freshness expectations.",
+      "validationQuery": "Verify data-mesh.config.json declares hasDataContracts=true. Confirm a contract document (e.g., DataContract YAML or JSON) exists and is versioned alongside the data product.",
       "blocking": true
     },
     {
@@ -28,7 +32,69 @@
       "category": "data-mesh-governance",
       "title": "Federated Governance",
       "description": "data-mesh.config.json MUST declare federatedGovernance=true.",
+      "rationale": "Federated computational governance is a foundational Data Mesh principle. Without it, each domain applies inconsistent policies for access, retention, and quality, defeating the purpose of domain-driven data ownership.",
+      "validationQuery": "Verify data-mesh.config.json declares federatedGovernance=true. Confirm the domain subscribes to the global governance platform (e.g., data catalog registration, policy engine enrollment).",
       "blocking": true
+    },
+    {
+      "id": "DAM-R04",
+      "severity": "MUST",
+      "category": "data-lineage",
+      "title": "Data Product Lineage Tracking",
+      "description": "All Data Mesh products MUST declare hasLineageTracking=true and provide end-to-end lineage metadata from source to consumption.",
+      "rationale": "Without lineage, data engineers cannot trace the root cause of data quality issues, regulatory auditors cannot verify data provenance, and consumers cannot assess data trustworthiness. Lineage tracking is foundational for GDPR data impact assessments and incident response.",
+      "validationQuery": "Verify data-mesh.config.json declares hasLineageTracking=true. Confirm lineage metadata is emitted to a central lineage store (e.g., OpenLineage events or Marquez integration) at each transformation step.",
+      "blocking": true
+    },
+    {
+      "id": "DAM-R05",
+      "severity": "MUST",
+      "category": "retention",
+      "title": "Retention Policy on Data Products",
+      "description": "data-mesh.config.json MUST declare hasRetentionPolicy=true with an explicit retention window per dataset.",
+      "rationale": "Unmanaged analytical data accumulates indefinitely, violating GDPR right-to-erasure SLAs and creating unbounded storage costs. Explicit retention policies also define the historical window available for replay and backfill operations.",
+      "validationQuery": "Verify data-mesh.config.json declares hasRetentionPolicy=true. Confirm each dataset partition has an explicit retention duration defined in storage configuration (e.g., S3 lifecycle rules, BigQuery table expiry, or equivalent).",
+      "blocking": true
+    },
+    {
+      "id": "DAM-R06",
+      "severity": "MUST",
+      "category": "consumption-contracts",
+      "title": "Explicit Consumption Contracts",
+      "description": "All data product consumers MUST register explicit consumption contracts (hasConsumptionContracts=true), declaring the fields, freshness SLO, and volume expectations they depend on.",
+      "rationale": "Without registered consumption contracts, producers cannot assess the impact of schema or SLO changes on downstream consumers. Explicit contracts enable impact analysis before breaking changes are deployed and establish clear SLA responsibilities.",
+      "validationQuery": "Verify data-mesh.config.json declares hasConsumptionContracts=true. Confirm consumer contracts are registered in the data catalog and linked to data product versions.",
+      "blocking": true
+    },
+    {
+      "id": "DAM-R07",
+      "severity": "MUST",
+      "category": "observability",
+      "title": "Data Quality SLO Declaration",
+      "description": "Each data product MUST declare measurable data quality SLOs (hasDataQualitySLO=true): completeness, freshness, validity, and uniqueness targets.",
+      "rationale": "Undeclared data quality leaves consumers unable to make trust decisions about a dataset. SLO declarations force domain teams to define observable targets and enable automated quality gate failures when metrics degrade.",
+      "validationQuery": "Verify data-mesh.config.json declares hasDataQualitySLO=true. Confirm quality metrics (completeness %, freshness lag, validity rate, uniqueness rate) are emitted to the observability platform and alerts are configured per SLO threshold.",
+      "blocking": false
+    },
+    {
+      "id": "DAM-R08",
+      "severity": "MUST",
+      "category": "schema-evolution",
+      "title": "Data Contract Backward Compatibility",
+      "description": "All data product schema changes MUST maintain backward compatibility (hasBackwardCompatibleContracts=true). Breaking changes require a new versioned data product.",
+      "rationale": "Consumers of analytical data products evolve on independent deployment cycles. A breaking schema change — renaming a column, changing a type, removing a field — silently breaks downstream pipelines that cannot be updated in lockstep. Backward compatibility enforcement prevents uncoordinated breakage.",
+      "validationQuery": "Verify data-mesh.config.json declares hasBackwardCompatibleContracts=true. Validate that schema changes pass backward-compatibility checks in CI (e.g., schema registry diff, dbt schema change detection, or equivalent).",
+      "blocking": false
+    },
+    {
+      "id": "DAM-R09",
+      "severity": "SHOULD",
+      "category": "discovery",
+      "title": "Data Product Discoverability Registration",
+      "description": "All data products SHOULD register in a central data catalog (hasDiscoveryRegistration=true) with owner, description, schema, SLO, and consumption instructions.",
+      "rationale": "Without central registration, data products are invisible to potential consumers across domains. Discovery is a core Data Mesh principle: the data platform must surface products so teams can self-serve without ad-hoc communication with domain teams.",
+      "validationQuery": "Verify data-mesh.config.json declares hasDiscoveryRegistration=true. Confirm the data product record exists in the central catalog with all mandatory metadata fields populated (owner, schema link, SLO, access instructions).",
+      "blocking": false
     }
   ]
 }

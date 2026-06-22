@@ -4,11 +4,18 @@
       "eventDriven": {
         "hasStrictAsyncApi": false,
         "hasOutbox": true,
-        "hasDlq": true
+        "hasDlq": true,
+        "hasOrderingGuarantee": false,
+        "hasIdempotencyKey": true,
+        "hasBackwardCompatibleSchema": true,
+        "hasRetentionPolicy": true,
+        "hasEventCorrelation": true,
+        "hasConsumerGroupRegistry": true
       }
     }
   },
   "expectedNative": [
-    { "ruleId": "ED-R01", "severity": "error", "file": null }
+    { "ruleId": "ED-R01", "severity": "error", "file": null },
+    { "ruleId": "ED-R04", "severity": "error", "file": null }
   ]
 }

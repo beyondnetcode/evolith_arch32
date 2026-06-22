@@ -137,9 +137,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** `reference/architecture/topologies/integration/event-driven/event-driven.rules.json` and `data/data-mesh/data-mesh.rules.json` each declare only three rules — roughly a quarter of the modular-monolith coverage.
 - **Complexity:** M
 - **Done when:**
-  - [ ] Native rules cover event ordering guarantees, idempotency, schema-evolution discipline (event-driven) and data-product lineage, retention, and consumption contracts (data-mesh).
-  - [ ] OPA counterparts exist with rule-ID parity per GT-151.
-  - [ ] Maturity assessment reflects the increased coverage.
+  - [x] Native rules cover event ordering guarantees, idempotency, schema-evolution discipline (event-driven) and data-product lineage, retention, and consumption contracts (data-mesh).
+  - [x] OPA counterparts exist with rule-ID parity per GT-151.
+  - [x] Maturity assessment reflects the increased coverage.
 
 
 #### GT-165

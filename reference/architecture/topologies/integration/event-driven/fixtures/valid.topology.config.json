@@ -2,5 +2,11 @@
   "topology": "event-driven",
   "strictAsyncApi": true,
   "transactionalOutbox": true,
-  "deadLetterQueue": true
+  "deadLetterQueue": true,
+  "hasOrderingGuarantee": true,
+  "hasIdempotencyKey": true,
+  "hasBackwardCompatibleSchema": true,
+  "hasRetentionPolicy": true,
+  "hasEventCorrelation": true,
+  "hasConsumerGroupRegistry": true
 }

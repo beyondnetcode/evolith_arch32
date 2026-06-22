@@ -137,9 +137,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** `reference/architecture/topologies/integration/event-driven/event-driven.rules.json` y `data/data-mesh/data-mesh.rules.json` declaran solo tres reglas cada uno — aproximadamente un cuarto de la cobertura de modular-monolith.
 - **Complejidad:** M
 - **Hecho cuando:**
-  - [ ] Las reglas nativas cubren orden de eventos, idempotencia y disciplina de evolución de esquemas (event-driven), y linaje, retención y contratos de consumo de data-products (data-mesh).
-  - [ ] Existen contrapartes OPA con paridad de rule-IDs según GT-151.
-  - [ ] La evaluación de madurez refleja la cobertura ampliada.
+  - [x] Las reglas nativas cubren orden de eventos, idempotencia y disciplina de evolución de esquemas (event-driven), y linaje, retención y contratos de consumo de data-products (data-mesh).
+  - [x] Existen contrapartes OPA con paridad de rule-IDs según GT-151.
+  - [x] La evaluación de madurez refleja la cobertura ampliada.
 
 
 #### GT-165

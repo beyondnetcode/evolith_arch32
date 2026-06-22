@@ -3,8 +3,8 @@
   "$id": "https://evolith.dev/rulesets/topologies/event-driven.rules.json",
   "title": "Event-Driven Topology Rules",
   "description": "Architectural rules for the event-driven integration topology.",
-  "version": "1.0.0",
-  "effectiveDate": "2026-06-20",
+  "version": "1.1.0",
+  "effectiveDate": "2026-06-22",
   "rules": [
     {
       "id": "ED-R01",
@@ -12,6 +12,8 @@
       "category": "event-driven-config",
       "title": "Strict AsyncAPI Contract",
       "description": "An Event-Driven satellite MUST provide event-driven.config.json and declare strictAsyncApi=true.",
+      "rationale": "AsyncAPI contracts provide machine-readable event schemas that enable consumer code generation, documentation, and contract testing. Without this declaration, event shape regressions go undetected across producer/consumer boundaries.",
+      "validationQuery": "Verify event-driven.config.json exists and strictAsyncApi is set to true. No event publication allowed without a registered AsyncAPI document.",
       "blocking": true
     },
     {
@@ -20,6 +22,8 @@
       "category": "event-driven-outbox",
       "title": "Transactional Outbox",
       "description": "event-driven.config.json MUST declare transactionalOutbox=true.",
+      "rationale": "Direct broker publication inside a database transaction risks dual-write failures where the DB commits but the message is lost. The Transactional Outbox pattern guarantees at-least-once delivery by staging messages in the same transaction as domain writes.",
+      "validationQuery": "Verify event-driven.config.json declares transactionalOutbox=true. Confirm outbox relay job or CDC mechanism is present in the infrastructure layer.",
       "blocking": true
     },
     {
@@ -28,7 +32,69 @@
       "category": "event-driven-dlq",
       "title": "Dead Letter Queue",
       "description": "event-driven.config.json MUST declare deadLetterQueue=true.",
+      "rationale": "Without a DLQ, poison messages cause unbounded consumer retry loops that starve healthy message processing and degrade system availability. A DLQ enables forensic analysis of failed deliveries and controlled replay.",
+      "validationQuery": "Verify event-driven.config.json declares deadLetterQueue=true. Confirm DLQ topic or queue exists in broker configuration and consumer error handler routes to it.",
       "blocking": true
+    },
+    {
+      "id": "ED-R04",
+      "severity": "MUST",
+      "category": "event-ordering",
+      "title": "Event Ordering Guarantee",
+      "description": "An Event-Driven satellite MUST declare its ordering guarantee (e.g., partition-key ordering or total ordering) in event-driven.config.json via hasOrderingGuarantee=true.",
+      "rationale": "Undeclared ordering assumptions lead to race conditions in downstream consumers that process state transitions out of sequence. Explicit ordering guarantees force architectural decisions (e.g., partition-key selection) to be made deliberately rather than discovered in production.",
+      "validationQuery": "Verify event-driven.config.json declares hasOrderingGuarantee=true and that a partitioning strategy (e.g., aggregateId as partition key) is documented in the event schema.",
+      "blocking": true
+    },
+    {
+      "id": "ED-R05",
+      "severity": "MUST",
+      "category": "idempotency",
+      "title": "Idempotent Consumer Contract",
+      "description": "All event consumers MUST implement idempotency using a deduplicated message key (hasIdempotencyKey=true in event-driven.config.json).",
+      "rationale": "At-least-once delivery guarantees (required by ED-R02) mean duplicate messages are possible. Without idempotent consumers, duplicate processing causes data corruption, double billing, or ghost records. Idempotency keys (e.g., eventId) enable safe re-delivery.",
+      "validationQuery": "Verify event-driven.config.json declares hasIdempotencyKey=true. AST scan consumer handlers for idempotency guard using a deduplication store (Redis, DB unique key, etc.).",
+      "blocking": true
+    },
+    {
+      "id": "ED-R06",
+      "severity": "MUST",
+      "category": "schema-evolution",
+      "title": "Backward-Compatible Schema Evolution",
+      "description": "All event schemas MUST be evolved in a backward-compatible manner (hasBackwardCompatibleSchema=true). Breaking changes require a new event type version.",
+      "rationale": "Consumers evolve independently of producers. A breaking schema change — removing a field, changing a type — silently breaks consumers that cannot be updated in lockstep. Backward compatibility (Avro/JSONSchema additionalProperties, optional fields) allows independent rollout.",
+      "validationQuery": "Verify event-driven.config.json declares hasBackwardCompatibleSchema=true. Validate that event schema changes pass backward-compatibility checks in CI (e.g., Confluent Schema Registry compatibility check or JSON Schema diff tool).",
+      "blocking": true
+    },
+    {
+      "id": "ED-R07",
+      "severity": "MUST",
+      "category": "retention",
+      "title": "Retention Policy Declaration",
+      "description": "event-driven.config.json MUST declare hasRetentionPolicy=true with an explicit retention window per topic.",
+      "rationale": "Unmanaged event retention leads to unbounded storage growth. Explicit retention windows enable capacity planning, regulatory compliance (GDPR deletion within SLA), and replay boundary definition for event sourcing scenarios.",
+      "validationQuery": "Verify event-driven.config.json declares hasRetentionPolicy=true. Confirm each topic has an explicit retention duration documented in broker configuration or Infrastructure-as-Code.",
+      "blocking": false
+    },
+    {
+      "id": "ED-R08",
+      "severity": "MUST",
+      "category": "observability",
+      "title": "Event Observability (Correlation and Trace Propagation)",
+      "description": "All published events MUST carry a CorrelationId and TraceId header (hasEventCorrelation=true), propagated from the originating HTTP/CLI/MCP request context.",
+      "rationale": "Without trace propagation, distributed event flows are invisible in observability tooling. Engineers cannot reconstruct the causal chain from an HTTP request through async processing to its eventual side effects, making incident response and latency debugging extremely difficult.",
+      "validationQuery": "Verify event-driven.config.json declares hasEventCorrelation=true. AST scan event publisher adapters for CorrelationId and TraceId header injection. Verify consumer handlers extract and re-propagate trace context.",
+      "blocking": false
+    },
+    {
+      "id": "ED-R09",
+      "severity": "SHOULD",
+      "category": "consumer-groups",
+      "title": "Explicit Consumer Group Registration",
+      "description": "All event consumers SHOULD register in a named consumer group declared in event-driven.config.json (hasConsumerGroupRegistry=true) to enable per-consumer offset tracking and independent replay.",
+      "rationale": "Anonymous consumer groups prevent selective replay, blue/green consumer deployments, and lag monitoring per service. Explicit registration enables fine-grained operational control over consumer progress and rollback scenarios.",
+      "validationQuery": "Verify event-driven.config.json declares hasConsumerGroupRegistry=true. Confirm all consumer instances are configured with an explicit, deterministic consumer group name (not auto-generated).",
+      "blocking": false
     }
   ]
 }

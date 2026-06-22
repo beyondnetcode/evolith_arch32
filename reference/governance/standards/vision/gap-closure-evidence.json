@@ -3,6 +3,24 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-164",
+      "closedAt": "2026-06-22",
+      "closureCommit": "fcd5d2af",
+      "evidence": [
+        "reference/architecture/topologies/integration/event-driven/event-driven.rules.json",
+        "reference/architecture/topologies/integration/event-driven/event-driven.rego",
+        "reference/architecture/topologies/integration/event-driven/event-driven.test.rego",
+        "reference/architecture/topologies/data/data-mesh/data-mesh.rules.json",
+        "reference/architecture/topologies/data/data-mesh/data-mesh.rego",
+        "reference/architecture/topologies/data/data-mesh/data-mesh.test.rego"
+      ],
+      "validationCommands": [
+        ".harness/bin/opa test reference/architecture/topologies/integration/event-driven/event-driven.rego reference/architecture/topologies/integration/event-driven/event-driven.test.rego -v",
+        ".harness/bin/opa test reference/architecture/topologies/data/data-mesh/data-mesh.rego reference/architecture/topologies/data/data-mesh/data-mesh.test.rego -v"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-163",
       "closedAt": "2026-06-22",
       "closureCommit": "fa3650f8",

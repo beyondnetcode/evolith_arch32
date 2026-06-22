@@ -111,15 +111,15 @@ Analyst → PM → Architect → SM → Dev → QA → DevOps
 
 ---
 
-## 5. Active Gaps (Pending)
+## 5. Active Gaps
 
-| ID | Title | Complexity | Lead Agent |
-|----|-------|------------|------------|
-| GT-152 | External Knowledge Contract and Source Registry Schema | S | Architect |
-| GT-153 | Knowledge Lifecycle Governance by Winston | M | Architect |
-| GT-154 | RAG Projection and Native/OPA Parity for External Knowledge | M | QA + DevOps |
+| ID | Title | Status |
+|----|-------|--------|
+| GT-152 | External Knowledge Contract and Source Registry Schema | `DONE` |
+| GT-153 | Knowledge Lifecycle Governance by Winston | `DONE` |
+| GT-154 | RAG Projection and Native/OPA Parity for External Knowledge | `DONE` |
 
-All three are P0. Implementation order: GT-152 → GT-153 → GT-154.
+All three P0 knowledge gaps are closed. See the [Gap Tracking Board](../reference/governance/standards/vision/gap-tracking.md) for current status of all GT-* gaps.
 
 ---
 

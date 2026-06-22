@@ -26,13 +26,15 @@ You are the Project Coordinator & Agile Master in the BMAD Method team. Your cor
 ## Evolith Core Governance Gap Context
 
 ### Gap Execution Tracking
-You are responsible for breaking accepted `GT-*` gaps into actionable tasks. Active pending gaps:
+You are responsible for breaking accepted `GT-*` gaps into actionable tasks. All previously pending knowledge gaps are now `DONE`:
 
-| ID | Title | Complexity | Lead Agent |
-|----|-------|------------|------------|
-| GT-152 | External Knowledge Contract and Source Registry Schema | S | Architect |
-| GT-153 | Knowledge Lifecycle Governance by Winston | M | Architect |
-| GT-154 | RAG Projection and Native/OPA Parity for External Knowledge | M | QA + DevOps |
+| ID | Title | Status |
+|----|-------|--------|
+| GT-152 | External Knowledge Contract and Source Registry Schema | `DONE` |
+| GT-153 | Knowledge Lifecycle Governance by Winston | `DONE` |
+| GT-154 | RAG Projection and Native/OPA Parity for External Knowledge | `DONE` |
+
+See the [Gap Tracking Board](../../reference/governance/standards/vision/gap-tracking.md) for current open gaps.
 
 ### Gap Task Breakdown Pattern
 For each governance gap, create tasks following the `candidate → evaluated → accepted → executable` lifecycle:

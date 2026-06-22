@@ -653,7 +653,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Closed by:** `sdk/cli/src/infrastructure/mcp/confirmation.service.ts`, `sdk/cli/src/infrastructure/mcp/confirmation.service.spec.ts`, `sdk/cli/test/mcp-confirmation.e2e-spec.ts`, `sdk/cli/src/infrastructure/mcp/server.ts`, `sdk/cli/src/commands/mcp/mcp-serve.command.ts`
 - **Closure evidence:**
   - `closedAt`: 2026-06-16
-  - `closureCommit`: pending
+  - `closureCommit`: 94308575101b1ecd1bd571026003d9b1b276a7e7
   - `evidence`: `ConfirmationService` prompts for interactive confirmation before executing mutative MCP tools; `--no-confirm` flag bypasses prompts for CI/automation
   - `validationCommands`:
     - `npx jest --config sdk/cli/jest.config.js --testPathPatterns="confirmation"` — unit tests pass
@@ -697,7 +697,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Closed by:** `sdk/cli/src/infrastructure/mcp/tools/validate.ts`, `packages/core-domain/src/domain/interfaces.ts`
 - **Closure evidence:**
   - `closedAt`: 2026-06-16
-  - `closureCommit`: pending
+  - `closureCommit`: ea2a3934cfcbebaf3b05e15538e4b5ac721b1b53
   - `evidence`: IFileSystem interface provides async methods (readFile, writeFile, exists, readdir); critical validation paths use async IFileSystem; findCorePath migrated to fs.promises.access
   - `validationCommands`:
     - `npm run build --workspace sdk/cli` — TypeScript compilation passes
@@ -1497,7 +1497,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Closed by:** `sdk/cli/src/infrastructure/prompts/progress.service.ts`, `sdk/cli/src/infrastructure/prompts/progress.service.spec.ts`, `sdk/cli/test/progress.e2e-spec.ts`
 - **Closure evidence:**
   - `closedAt`: 2026-06-16
-  - `closureCommit`: pending
+  - `closureCommit`: b4c2dcc95a6f00de53782546ae51ea975a03fce7
   - `evidence`: `ProgressService` provides real-time progress bars and streaming for long-running CLI operations; supports `--quiet` mode and CI/non-TTY environments
   - `validationCommands`:
     - `npx jest --config sdk/cli/jest.config.js --testPathPatterns="progress"` — unit tests pass
@@ -1526,7 +1526,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Closed by:** `.github/workflows/sdk-cli-release.yml` (npm publish with provenance), `sdk/cli/README.md`, `sdk/cli/README.es.md`
 - **Closure evidence:**
   - `closedAt`: 2026-06-16
-  - `closureCommit`: pending
+  - `closureCommit`: 4084db5e61f5f54e691de61c1ba8a169c0291663
   - `evidence`: Release workflow publishes to npm registry with automated release pipeline; CLI compatible with npm, pnpm, and yarn; documentation updated with multi-package-manager installation instructions
   - `validationCommands`:
     - `npm view @evolith/smart-cli versions` — shows published versions
@@ -1566,7 +1566,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Closed by:** `sdk/cli/src/infrastructure/prompts/wizard.service.ts`, `sdk/cli/src/infrastructure/prompts/wizard.service.spec.ts`, `sdk/cli/src/commands/init/init.wizard.ts`, `sdk/cli/test/wizard.e2e-spec.ts`, `sdk/cli/src/app.module.ts`
 - **Closure evidence:**
   - `closedAt`: 2026-06-16
-  - `closureCommit`: pending
+  - `closureCommit`: 973013ab210ac2ab6631601caf839ca966706e54
   - `evidence`: `WizardService` provides multi-step interactive wizards with navigation (back/next/cancel), summary review, and `--no-interactive` mode for CI; `init-wizard` command demonstrates full wizard flow
   - `validationCommands`:
     - `npx jest --config sdk/cli/jest.config.js --testPathPatterns="wizard"` — unit tests pass
@@ -1843,3 +1843,173 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Establish a canonical registry of reusable MCP tools for Evolith.
 **Current Evidence:** MCP tools are isolated in `apps/agent-sandbox` without a centralized registry.
 **Done When:** A dedicated `packages/mcp-tools/` exists, publishing reusable capabilities for external agents.
+
+#### GT-175
+**Purpose:** Fix ADR-0076 duplicate (renumber OPA bundle to ADR-0078).
+**Current Evidence:** Two ADRs share ID 0076.
+**Done When:** ADR-0076 renumbered to ADR-0078, all inbound links updated.
+
+#### GT-176
+**Purpose:** Remove `patterns/es/` subdirectory (Pattern A/B mix violation).
+**Current Evidence:** `patterns/es/` violates the bilingual naming convention.
+**Done When:** Content migrated to `patterns/README.es.md`, subdirectory removed.
+
+#### GT-177
+**Purpose:** Complete `core/README.md` with missing ADRs 0073-0077.
+**Current Evidence:** `core/README.md` lists only ADRs up to 0072.
+**Done When:** All ADRs 0073-0077 listed with links and summaries.
+
+#### GT-178
+**Purpose:** Rebuild `core/README.es.md` with all ADRs (currently only shows up to ADR-0056).
+**Current Evidence:** ES version is missing ADRs 0057-0077.
+**Done When:** `core/README.es.md` matches EN coverage.
+
+#### GT-179
+**Purpose:** Add tests for 5 low-coverage CLI commands (agents, gate, phase-advance, init.wizard).
+**Current Evidence:** These 5 commands have 12-31% test coverage.
+**Done When:** All 5 commands reach 80%+ unit test coverage.
+
+#### GT-180
+**Purpose:** Replace cross-boundary `require()` calls with Dependency Injection across 4 files.
+**Current Evidence:** 4 files use `require()` to import across architectural boundaries.
+**Done When:** All 4 files migrated to proper DI injection.
+
+#### GT-181
+**Purpose:** Split large files (`server.ts` 420 lines, 5 other files >300 lines) into smaller modules.
+**Current Evidence:** Overly large files reduce maintainability.
+**Done When:** No file exceeds 250 lines of non-comment code in the affected modules.
+
+#### GT-182
+**Purpose:** Add tests for Core Domain SDK (`packages/core-domain/` has zero test coverage).
+**Current Evidence:** `packages/core-domain/` has no test suite.
+**Done When:** Core Domain SDK reaches 60%+ unit test coverage.
+
+#### GT-183
+**Purpose:** Build minimal BFF scaffolding (NestJS) — 4 ADRs reference BFF but no implementation exists.
+**Current Evidence:** BFF referenced in ADRs but no code exists.
+**Done When:** Minimal NestJS BFF scaffolding with health endpoint and basic routing.
+
+#### GT-184
+**Purpose:** Remove `@ts-nocheck` from 19 files.
+**Current Evidence:** 19 files suppress TypeScript checking with `@ts-nocheck`.
+**Done When:** Zero `@ts-nocheck` directives in production code.
+
+#### GT-185
+**Purpose:** Fix MCP tool stubs (phase-advance 19.44% coverage, validate.ts fragile).
+**Current Evidence:** MCP tools have incomplete implementations.
+**Done When:** All MCP tools have 80%+ coverage and pass integration tests.
+
+#### GT-186
+**Purpose:** Remove `@ts-nocheck` from 19 files (phased removal).
+**Current Evidence:** Continuation of GT-184 for remaining files.
+**Done When:** Zero `@ts-nocheck` directives remain.
+
+#### GT-187
+**Purpose:** Enable strict mode in tsconfig (`strictNullChecks`, `noImplicitAny`, `strict`).
+**Current Evidence:** TypeScript config has `strict: false`.
+**Done When:** tsconfig enables strict mode with zero compilation errors.
+
+#### GT-188
+**Purpose:** Add tests for 15 zero-coverage files.
+**Current Evidence:** 15 source files have no tests at all.
+**Done When:** All 15 files reach 60%+ unit test coverage.
+
+#### GT-189
+**Purpose:** Replace 27 `require()` instances with ES imports across 10 files.
+**Current Evidence:** Mixed `require()`/`import` usage in 10 files.
+**Done When:** Zero `require()` calls in source code; all use ES module imports.
+
+#### GT-190
+**Purpose:** Add logging/handling to 9 empty catch blocks.
+**Current Evidence:** 9 catch blocks are empty across `server.ts`, `update.command.ts`, formatter, executor.
+**Done When:** Every catch block either logs, re-throws, or handles the error explicitly.
+
+#### GT-191
+**Purpose:** Fix ADR matrix label — `dotnet/ADR-0057` in `adr-matrix.md:12` points to file 0071 but says 0057.
+**Current Evidence:** Mismatched ADR reference in the ADR matrix.
+**Done When:** `adr-matrix.md` has correct ADR IDs matching file numbers.
+
+#### GT-192
+**Purpose:** Fix MASTER_INDEX EN links (lines 27, 48 link to `.es.md` files instead of `.md`).
+**Current Evidence:** Two MASTER_INDEX links point to Spanish files from English index.
+**Done When:** MASTER_INDEX EN links point to `.md` files.
+
+#### GT-193
+**Purpose:** Remove TODO placeholders from governance docs (mcp-security.md rate limiting/sandbox TODOs).
+**Current Evidence:** Governance documentation contains unresolved TODO markers.
+**Done When:** Zero TODO markers remain in governance documentation under `reference/governance/`.
+
+#### GT-194
+**Purpose:** Eliminate `any` types in public APIs (plugin-loader.ts, app.module.ts, auto-fix.ts).
+**Current Evidence:** Public API surfaces use `any` type.
+**Done When:** Public API surfaces use explicit TypeScript types instead of `any`.
+
+#### GT-195
+**Purpose:** Fix Linux-only shell paths (completion.command.ts, update.command.ts) for Windows compatibility.
+**Current Evidence:** Shell commands use Linux-only paths.
+**Done When:** All shell commands work on Windows, Linux, and macOS.
+
+#### GT-196
+**Purpose:** Add E2E tests for MCP HTTP transport (`mcp-serve.command.spec.ts` exists but HTTP transport untested).
+**Current Evidence:** MCP HTTP transport has no E2E coverage.
+**Done When:** MCP HTTP transport has E2E tests covering request/response lifecycle.
+
+#### GT-197
+**Purpose:** Fix intermittent release pipeline failures (9 automated failure issues closed without root cause fixed).
+**Current Evidence:** Release pipeline has recurring failures without resolved root cause.
+**Done When:** Release pipeline passes consistently for 10 consecutive runs.
+
+#### GT-198
+**Purpose:** Fix `Moscoww` typo (5 sites in prompts/index.ts, resources/index.ts).
+**Current Evidence:** "Moscow" misspelled as "Moscoww" in 5 locations.
+**Done When:** All occurrences of "Moscoww" corrected to "Moscow".
+
+#### GT-199
+**Purpose:** Move import to top of file (output-formatter.service.ts:242).
+**Current Evidence:** Import statement appears mid-file, violating style guidelines.
+**Done When:** All imports are at the top of their respective files.
+
+#### GT-200
+**Purpose:** Convert 11-param constructor to options object (server.ts).
+**Current Evidence:** Constructor with 11 positional parameters is fragile.
+**Done When:** Constructor uses a single options object parameter.
+
+#### GT-201
+**Purpose:** Extract hardcoded values to constants (server.ts: 127.0.0.1, evolith.yaml x4).
+**Current Evidence:** Hardcoded configuration values in source code.
+**Done When:** All hardcoded values extracted to named constants or configuration.
+
+#### GT-202
+**Purpose:** Add README to `governance/adr/` directory.
+**Current Evidence:** `governance/adr/` has no README or BILINGUAL_INDEX.
+**Done When:** README.md and README.es.md exist with directory index.
+
+#### GT-203
+**Purpose:** Remove or populate empty `kubernetes/` directory.
+**Current Evidence:** `reference/infrastructure/kubernetes/` is empty.
+**Done When:** Directory either contains content or is removed.
+
+#### GT-204
+**Purpose:** Add READMEs to `docker/`, `helm/`, `kubernetes/` directories in infrastructure.
+**Current Evidence:** Infrastructure directories lack documentation.
+**Done When:** Each directory has README.md with purpose and usage.
+
+#### GT-205
+**Purpose:** Add README to SDLC 01-playbooks/ directory.
+**Current Evidence:** SDLC playbooks directory lacks index documentation.
+**Done When:** README.md exists with directory listing and purpose.
+
+#### GT-206
+**Purpose:** Formalize BILINGUAL_INDEX nesting rule for deep directories.
+**Current Evidence:** Deep directories lack bilingual index files.
+**Done When:** Standard documented and applied to all deep directories.
+
+#### GT-207
+**Purpose:** Standardize ADR heading format (3 different formats across core ADRs).
+**Current Evidence:** ADRs use inconsistent heading formats.
+**Done When:** All core ADRs follow the standard heading format per ADR authoring standard.
+
+#### GT-208
+**Purpose:** Schedule ADR-0077 re-evaluation reminder (MassTransit v8 EOL end-2026).
+**Current Evidence:** No scheduled review for MassTransit v8 EOL.
+**Done When:** Calendar reminder set and documented in ADR-0077.

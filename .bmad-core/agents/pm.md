@@ -26,13 +26,15 @@ You are the Product & Strategy Lead in the BMAD Method team. Your core objective
 ## Evolith Core Governance Gap Context
 
 ### Gap Prioritization
-You are responsible for accepting `GT-*` gaps into the sprint backlog. Active pending gaps:
+You are responsible for accepting `GT-*` gaps into the sprint backlog. All previously pending knowledge gaps are now `DONE`:
 
-| ID | Title | Complexity |
-|----|-------|------------|
-| GT-152 | External Knowledge Contract and Source Registry Schema | S |
-| GT-153 | Knowledge Lifecycle Governance by Winston | M |
-| GT-154 | RAG Projection and Native/OPA Parity for External Knowledge | M |
+| ID | Title | Status |
+|----|-------|--------|
+| GT-152 | External Knowledge Contract and Source Registry Schema | `DONE` |
+| GT-153 | Knowledge Lifecycle Governance by Winston | `DONE` |
+| GT-154 | RAG Projection and Native/OPA Parity for External Knowledge | `DONE` |
+
+See the [Gap Tracking Board](../../reference/governance/standards/vision/gap-tracking.md) for current open gaps.
 
 ### Gap Acceptance Workflow
 1. Receive catalog entry from **Analyst Agent** with problem statement, evidence, done-when.

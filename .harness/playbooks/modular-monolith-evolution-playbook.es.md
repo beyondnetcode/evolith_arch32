@@ -1,54 +1,161 @@
-# Modular Monolith Evolution Playbook
+# Playbook de Evolución de Monolito Modular
 
-> **Nota:** Este archivo es un esqueleto inicial. Por favor, complete la traducción.
+## Cuándo Usarlo
+
+- Al evaluar límites de bounded contexts
+- Al mover código compartido entre módulos
+- Al diseñar flujos de integración entre contextos
+- Al preparar un módulo para futura extracción de servicio
 
 ---
 
-## Use When
+## 1. Verificaciones Obligatorias de Límites
 
-*Contenido pendiente de traducción.*
+Antes de cualquier cambio estructural en los límites de módulos:
 
-## 1. Mandatory Boundary Checks
+1. Los bounded contexts mantienen ownership claro — un equipo, un esquema, una unidad de despliegue.
+2. El código compartido es verdaderamente transversal (infraestructura genérica, primitivas DDD), no meramente conveniente.
+3. La lógica de dominio permanece pura y sin dependencias de framework — cero imports ORM o NestJS en la capa de dominio.
+4. La colaboración entre contextos usa contratos, ACLs, eventos y patrones outbox — nunca joins directos entre esquemas en DB.
+5. Los cambios mejoran, o al menos preservan, la preparación para extracción futura.
 
-*Contenido pendiente de traducción.*
+---
 
-## 2. Boundary Validation with `eslint-plugin-boundaries`
+## 2. Validación de Límites con `eslint-plugin-boundaries`
 
-*Contenido pendiente de traducción.*
+Las reglas de límites de ESLint aseguran que la capa de dominio no pueda importar desde infraestructura. Verifique violaciones antes y después de cada cambio estructural:
 
-## 3. Extraction Readiness Checklist (Phase 1 → Phase 2)
+```bash
+npx eslint --ext .ts src/libs/domain --rule '{"boundaries/element-types": "error"}'
+```
 
-*Contenido pendiente de traducción.*
+Resultado esperado: **0 violaciones**. Cualquier importación entre capas desde `domain` hacia `infrastructure` es una deuda arquitectónica que debe resolverse antes de fusionar.
 
-## 4. Step-by-Step: First Service Extraction (Strangler Fig)
+**Ejemplo de límite saludable:**
 
-*Contenido pendiente de traducción.*
+```
+libs/
+  domain/task/
+    src/
+      task.aggregate.ts        ← sin NestJS, sin TypeORM
+      task.repository.ts       ← Puerto ITaskRepository (solo interfaz)
+  infrastructure/task/
+    src/
+      typeorm-task.repository.ts ← implementa ITaskRepository, importa TypeORM
+```
 
-### Step 1 — Confirm schema isolation
+**Alerta roja:** Si `task.aggregate.ts` contiene `import { InjectRepository } from '@nestjs/typeorm'`, el límite está violado.
 
-*Contenido pendiente de traducción.*
+---
 
-### Step 2 — Position Kong for Strangler Fig routing
+## 3. Lista de Verificación de Preparación para Extracción (Fase 1 → Fase 2)
 
-*Contenido pendiente de traducción.*
+Según [ADR-0045](../../reference/architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md), un módulo es candidato válido para extracción cuando cumple **2 de 4** criterios sostenidos por 15 días:
 
-### Step 3 — Convert the internal library to a standalone Nx project
+| Criterio | Fuente de Medición | Umbral |
+| :--- | :--- | :--- |
+| Latencia Crítica | Jaeger P95 por módulo | > 200ms |
+| Frecuencia de Release | Registros de CI de depliegue | > 4 deploys/semana |
+| Autonomía del Equipo | Git blame por squad | > 80% commits de un squad |
+| Densidad de Datos | PostgreSQL `pg_stat_user_tables` | Esquema del módulo > 20% de la carga total de BD |
 
-*Contenido pendiente de traducción.*
+Antes de presentar al Architecture Board, el Squad Lead DEBE proporcionar una exportación de telemetría de 15 días que muestre la superación sostenida del umbral.
 
-### Step 4 — Switch Kong routing to the new service
+---
 
-*Contenido pendiente de traducción.*
+## 4. Paso a Paso: Primera Extracción de Servicio (Strangler Fig)
 
-### Step 5 — Migrate the Event Bus from In-Memory to RabbitMQ
+Este procedimiento extrae un bounded context del monolito sin una reescritura Big Bang. Referencia: [ADR-0047 §10](../../reference/architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.md).
 
-*Contenido pendiente de traducción.*
+### Paso 1 — Confirmar aislamiento de esquema
 
-## 5. Extraction Readiness Questions
+Verifique que el contexto objetivo ya usa su propio esquema de PostgreSQL (ej., `tasks`). Si comparte tablas con otro contexto, realice primero el aislamiento a nivel de esquema (sin foreign keys entre esquemas, sin joins SQL entre esquemas).
 
-*Contenido pendiente de traducción.*
+```sql
+-- Verificar que no existan foreign keys entre esquemas
+SELECT conname, conrelid::regclass, confrelid::regclass
+FROM pg_constraint
+WHERE contype = 'f'
+  AND conrelid::regclass::text LIKE 'tasks.%'
+  AND confrelid::regclass::text NOT LIKE 'tasks.%';
+-- Esperado: 0 filas
+```
 
-## 6. Anti-Patterns to Watch
+### Paso 2 — Posicionar Kong para enrutamiento Strangler Fig
 
-*Contenido pendiente de traducción.*
+Agregue una ruta Kong que redirija el prefijo de ruta del módulo al monolito. Esta es la costura de extracción futura — el tráfico se redirigirá posteriormente al nuevo servicio sin cambios en el cliente.
 
+```yaml
+# kong.yml (sin base de datos)
+services:
+  - name: monolith
+    url: http://core-api:3000
+    routes:
+      - name: tasks-route
+        paths: [/v1/tasks]
+      - name: auth-route
+        paths: [/v1/auth]
+```
+
+### Paso 3 — Convertir la librería interna en un proyecto Nx independiente
+
+```bash
+# Crear una nueva aplicación independiente desde la librería existente
+nx g @nx/nest:application task-service
+# Mover código de dominio + infraestructura; mantener la interfaz Port en una lib compartida
+```
+
+El nuevo servicio obtiene su propio `DATABASE_URL` apuntando a la misma instancia de PostgreSQL pero limitado al esquema `tasks`. No se necesita migración de datos.
+
+### Paso 4 — Cambiar el enrutamiento de Kong al nuevo servicio
+
+```yaml
+services:
+  - name: task-service
+    url: http://task-service:3001
+    routes:
+      - name: tasks-route
+        paths: [/v1/tasks]
+  - name: monolith
+    url: http://core-api:3000
+    routes:
+      - name: auth-route
+        paths: [/v1/auth]
+```
+
+Despliegue el nuevo servicio, actualice la configuración de Kong y valide mediante el [Modelo de Referencia Aplicado UMS](../../reference/knowledge/demo/README.md). El monolito ya no maneja tráfico de tasks.
+
+### Paso 5 — Migrar el Bus de Eventos de In-Memory a RabbitMQ
+
+Una vez que el servicio está desplegado independientemente, el bus In-Memory ya no puede entregar eventos entre servicios. Establezca la variable de entorno:
+
+```bash
+EVENT_BUS_IMPL=rabbitmq
+RABBITMQ_URL=amqp://localhost:5672
+```
+
+La implementación de `IEventBusPort` se inyecta al iniciar sin ningún cambio en el código de dominio — según [ADR-0015](../../reference/architecture/adrs/core/0015-event-driven-architecture-intra-domain.md).
+
+---
+
+## 5. Preguntas de Preparación para Extracción
+
+Responda **todas** antes de proponer una extracción al Architecture Board:
+
+- ¿Puede este módulo separarse sin copiar lógica oculta de otro contexto?
+- ¿Son todos los contratos suficientemente explícitos para convertirse en límites gRPC o REST entre servicios?
+- ¿Estamos centralizando accidentalmente reglas de dominio en una capa `libs/` compartida?
+- ¿Tiene el módulo su propio conjunto de pruebas de integración ejecutándose contra Testcontainers?
+- ¿Se ha validado la observabilidad — el módulo produce sus propios traces y logs estructurados?
+- ¿Está el squad listo para mantener un pipeline CI/CD separado para este servicio?
+
+---
+
+## 6. Anti-Patrones a Vigilar
+
+| Anti-Patrón | Señal | Resolución |
+| :--- | :--- | :--- |
+| **Módulo Dios** | Un contexto posee >50% de las entidades de dominio | Reevaluar los límites del bounded context contra el lenguaje ubicuo |
+| **Librería Compartida con Fugas** | `libs/shared` contiene lógica de negocio | Mover la lógica de negocio al contexto propietario; las libs compartidas deben contener solo infraestructura genérica o primitivas DDD |
+| **Acoplamiento Síncrono Oculto** | El Módulo A llama al repositorio del Módulo B directamente | Reemplazar con comunicación basada en eventos vía `IEventBusPort` |
+| **Extracción Prematura** | Extracción propuesta antes de cumplir criterios "2 de 4" | Esperar evidencia de telemetría; modularizar más dentro del monolito primero |

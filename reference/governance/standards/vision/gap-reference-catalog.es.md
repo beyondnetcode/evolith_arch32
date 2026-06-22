@@ -653,7 +653,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Cerrado por:** `sdk/cli/src/infrastructure/mcp/confirmation.service.ts`, `sdk/cli/src/infrastructure/mcp/confirmation.service.spec.ts`, `sdk/cli/test/mcp-confirmation.e2e-spec.ts`, `sdk/cli/src/infrastructure/mcp/server.ts`, `sdk/cli/src/commands/mcp/mcp-serve.command.ts`
 - **Evidencia de cierre:**
   - `closedAt`: 2026-06-16
-  - `closureCommit`: pending
+  - `closureCommit`: 94308575101b1ecd1bd571026003d9b1b276a7e7
   - `evidence`: `ConfirmationService` solicita confirmación interactiva antes de ejecutar herramientas MCP mutativas; flag `--no-confirm` omite prompts para CI/automatización
   - `validationCommands`:
     - `npx jest --config sdk/cli/jest.config.js --testPathPatterns="confirmation"` — tests unitarios pasan
@@ -697,7 +697,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Cerrado por:** `sdk/cli/src/infrastructure/mcp/tools/validate.ts`, `packages/core-domain/src/domain/interfaces.ts`
 - **Evidencia de cierre:**
   - `closedAt`: 2026-06-16
-  - `closureCommit`: pending
+  - `closureCommit`: ea2a3934cfcbebaf3b05e15538e4b5ac721b1b53
   - `evidence`: Interfaz IFileSystem provee métodos async (readFile, writeFile, exists, readdir); rutas críticas de validación usan IFileSystem async; findCorePath migrado a fs.promises.access
   - `validationCommands`:
     - `npm run build --workspace sdk/cli` — compilación TypeScript pasa
@@ -1496,7 +1496,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Cerrado por:** `sdk/cli/src/infrastructure/prompts/progress.service.ts`, `sdk/cli/src/infrastructure/prompts/progress.service.spec.ts`, `sdk/cli/test/progress.e2e-spec.ts`
 - **Evidencia de cierre:**
   - `closedAt`: 2026-06-16
-  - `closureCommit`: pending
+  - `closureCommit`: b4c2dcc95a6f00de53782546ae51ea975a03fce7
   - `evidence`: `ProgressService` proporciona barras de progreso en tiempo real y streaming para operaciones largas del CLI; soporta modo `--quiet` y entornos CI/non-TTY
   - `validationCommands`:
     - `npx jest --config sdk/cli/jest.config.js --testPathPatterns="progress"` — tests unitarios pasan
@@ -1525,7 +1525,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Cerrado por:** `.github/workflows/sdk-cli-release.yml` (npm publish con provenance), `sdk/cli/README.md`, `sdk/cli/README.es.md`
 - **Evidencia de cierre:**
   - `closedAt`: 2026-06-16
-  - `closureCommit`: pending
+  - `closureCommit`: 4084db5e61f5f54e691de61c1ba8a169c0291663
   - `evidence`: Workflow de release publica en npm registry con pipeline automatizado; CLI compatible con npm, pnpm y yarn; documentación actualizada con instrucciones de instalación multi-gestor
   - `validationCommands`:
     - `npm view @evolith/smart-cli versions` — muestra versiones publicadas
@@ -1565,7 +1565,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Cerrado por:** `sdk/cli/src/infrastructure/prompts/wizard.service.ts`, `sdk/cli/src/infrastructure/prompts/wizard.service.spec.ts`, `sdk/cli/src/commands/init/init.wizard.ts`, `sdk/cli/test/wizard.e2e-spec.ts`, `sdk/cli/src/app.module.ts`
 - **Evidencia de cierre:**
   - `closedAt`: 2026-06-16
-  - `closureCommit`: pending
+  - `closureCommit`: 973013ab210ac2ab6631601caf839ca966706e54
   - `evidence`: `WizardService` proporciona asistentes interactivos multi-paso con navegación (atrás/adelante/cancelar), resumen de revisión y modo `--no-interactive` para CI; comando `init-wizard` demuestra flujo completo
   - `validationCommands`:
     - `npx jest --config sdk/cli/jest.config.js --testPathPatterns="wizard"` — tests unitarios pasan
@@ -1804,9 +1804,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Existen reglas base en `data-mesh.rules.json` y `data-mesh.rego`.
   - [x] El README cubre adecuadamente la estrategia de Data Products.
 - **Evidencia de cierre:**
-  - `closedAt`: pending
-  - `closureCommit`: fcf22ee27a160d1e5b34acab7210186531495a3d
-  - `evidence`: pending
+  - `closedAt`: 2026-06-20
+  - `closureCommit`: 8566249bbefe547f87116d90ecb8c8a797e5cc2b
+  - `evidence`: ["reference/architecture/topologies/data/data-mesh/data-mesh.rules.json", "reference/architecture/topologies/data/data-mesh/data-mesh.rego"]
   - `validationCommands`: ["node .harness/scripts/ci/08-validate-tracking.mjs", "node .harness/scripts/ci/01-validate-docs.mjs"]
 
 #### GT-129
@@ -1822,7 +1822,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Cerrado por:** `edge-computing/README.es.md`, `edge-computing.rules.json`, `edge-computing.rego`, `opa-input-builder.ts`, `architecture-rule.handler.ts`
 - **Evidencia de cierre:**
   - `closedAt`: 2026-06-20
-  - `closureCommit`: pending
+  - `closureCommit`: fcf22ee27a160d1e5b34acab7210186531495a3d
   - `evidence`: Se implementó el contrato ejecutable, la paridad dual-engine, y se documentaron los patrones de persistencia offline-first.
   - `comandosValidacion`:
     - `npm test --workspace packages/core-domain`
@@ -1842,3 +1842,173 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Establecer un registro canónico de herramientas MCP reutilizables para Evolith.
 **Evidencia Actual:** Las herramientas MCP están aisladas en `apps/agent-sandbox` sin un registro centralizado.
 **Hecho Cuando:** Exista un `packages/mcp-tools/` dedicado que publique capacidades reutilizables para agentes externos.
+
+#### GT-175
+**Propósito:** Corregir ADR-0076 duplicado (renumerar bundle OPA a ADR-0078).
+**Evidencia Actual:** Dos ADRs comparten el ID 0076.
+**Hecho Cuando:** ADR-0076 renumerado a ADR-0078, todos los enlaces actualizados.
+
+#### GT-176
+**Propósito:** Eliminar subdirectorio `patterns/es/` (violación de Patrón A/B).
+**Evidencia Actual:** `patterns/es/` viola la convención de nomenclatura bilingüe.
+**Hecho Cuando:** Contenido migrado a `patterns/README.es.md`, subdirectorio eliminado.
+
+#### GT-177
+**Propósito:** Completar `core/README.md` con ADRs faltantes 0073-0077.
+**Evidencia Actual:** `core/README.md` solo lista ADRs hasta 0072.
+**Hecho Cuando:** Todos los ADRs 0073-0077 listados con enlaces y resúmenes.
+
+#### GT-178
+**Propósito:** Reconstruir `core/README.es.md` con todos los ADRs (actualmente solo muestra hasta ADR-0056).
+**Evidencia Actual:** La versión ES carece de ADRs 0057-0077.
+**Hecho Cuando:** `core/README.es.md` iguala la cobertura de EN.
+
+#### GT-179
+**Propósito:** Agregar pruebas para 5 comandos CLI de baja cobertura (agents, gate, phase-advance, init.wizard).
+**Evidencia Actual:** Estos 5 comandos tienen 12-31% de cobertura de pruebas.
+**Hecho Cuando:** Los 5 comandos alcanzan 80%+ de cobertura unitaria.
+
+#### GT-180
+**Propósito:** Reemplazar llamadas `require()` entre capas con Inyección de Dependencias en 4 archivos.
+**Evidencia Actual:** 4 archivos usan `require()` para importar entre límites arquitectónicos.
+**Hecho Cuando:** Los 4 archivos migrados a inyección DI adecuada.
+
+#### GT-181
+**Propósito:** Dividir archivos grandes (`server.ts` 420 líneas, otros 5 >300 líneas) en módulos más pequeños.
+**Evidencia Actual:** Archivos excesivamente grandes reducen la mantenibilidad.
+**Hecho Cuando:** Ningún archivo excede 250 líneas de código no-comentario en los módulos afectados.
+
+#### GT-182
+**Propósito:** Agregar pruebas para Core Domain SDK (`packages/core-domain/` tiene cero cobertura).
+**Evidencia Actual:** `packages/core-domain/` no tiene suite de pruebas.
+**Hecho Cuando:** Core Domain SDK alcanza 60%+ de cobertura unitaria.
+
+#### GT-183
+**Propósito:** Construir scaffolding BFF mínimo (NestJS) — 4 ADRs referencian BFF pero no hay implementación.
+**Evidencia Actual:** BFF referenciado en ADRs pero sin código existente.
+**Hecho Cuando:** Scaffolding NestJS BFF mínimo con endpoint health y enrutamiento básico.
+
+#### GT-184
+**Propósito:** Eliminar `@ts-nocheck` de 19 archivos.
+**Evidencia Actual:** 19 archivos suprimen la verificación TypeScript con `@ts-nocheck`.
+**Hecho Cuando:** Cero directivas `@ts-nocheck` en código de producción.
+
+#### GT-185
+**Propósito:** Corregir stubs de herramientas MCP (phase-advance 19.44% cobertura, validate.ts frágil).
+**Evidencia Actual:** Herramientas MCP tienen implementaciones incompletas.
+**Hecho Cuando:** Todas las herramientas MCP tienen 80%+ cobertura y pasan pruebas de integración.
+
+#### GT-186
+**Propósito:** Eliminar `@ts-nocheck` de 19 archivos (eliminación por fases).
+**Evidencia Actual:** Continuación de GT-184 para archivos restantes.
+**Hecho Cuando:** Cero directivas `@ts-nocheck` restantes.
+
+#### GT-187
+**Propósito:** Habilitar modo estricto en tsconfig (`strictNullChecks`, `noImplicitAny`, `strict`).
+**Evidencia Actual:** Configuración TypeScript tiene `strict: false`.
+**Hecho Cuando:** tsconfig habilita modo estricto con cero errores de compilación.
+
+#### GT-188
+**Propósito:** Agregar pruebas para 15 archivos con cobertura cero.
+**Evidencia Actual:** 15 archivos fuente no tienen pruebas.
+**Hecho Cuando:** Los 15 archivos alcanzan 60%+ de cobertura unitaria.
+
+#### GT-189
+**Propósito:** Reemplazar 27 instancias de `require()` con imports ES en 10 archivos.
+**Evidencia Actual:** Uso mixto `require()`/`import` en 10 archivos.
+**Hecho Cuando:** Cero llamadas `require()` en código fuente; todos usan imports ES module.
+
+#### GT-190
+**Propósito:** Agregar logging/manejo a 9 bloques catch vacíos.
+**Evidencia Actual:** 9 bloques catch están vacíos en `server.ts`, `update.command.ts`, formatter, executor.
+**Hecho Cuando:** Cada bloque catch registra, relanza o maneja el error explícitamente.
+
+#### GT-191
+**Propósito:** Corregir etiqueta en matriz ADR — `dotnet/ADR-0057` en `adr-matrix.md:12` apunta al archivo 0071 pero dice 0057.
+**Evidencia Actual:** Referencia ADR incorrecta en la matriz ADR.
+**Hecho Cuando:** `adr-matrix.md` tiene IDs ADR correctos coincidiendo con números de archivo.
+
+#### GT-192
+**Propósito:** Corregir enlaces MASTER_INDEX EN (líneas 27, 48 apuntan a archivos `.es.md` en vez de `.md`).
+**Evidencia Actual:** Dos enlaces de MASTER_INDEX apuntan a archivos españoles desde índice inglés.
+**Hecho Cuando:** Enlaces MASTER_INDEX EN apuntan a archivos `.md`.
+
+#### GT-193
+**Propósito:** Eliminar marcadores TODO de documentos de gobernanza (TODOs de rate limiting/sandbox en mcp-security.md).
+**Evidencia Actual:** Documentación de gobernanza contiene marcadores TODO sin resolver.
+**Hecho Cuando:** Cero marcadores TODO en documentación de gobernanza bajo `reference/governance/`.
+
+#### GT-194
+**Propósito:** Eliminar tipos `any` en APIs públicas (plugin-loader.ts, app.module.ts, auto-fix.ts).
+**Evidencia Actual:** Superficies de API pública usan tipo `any`.
+**Hecho Cuando:** Superficies de API pública usan tipos TypeScript explícitos en vez de `any`.
+
+#### GT-195
+**Propósito:** Corregir rutas shell solo-Linux (completion.command.ts, update.command.ts) para compatibilidad Windows.
+**Evidencia Actual:** Comandos shell usan rutas solo-Linux.
+**Hecho Cuando:** Todos los comandos shell funcionan en Windows, Linux y macOS.
+
+#### GT-196
+**Propósito:** Agregar pruebas E2E para transporte HTTP MCP (`mcp-serve.command.spec.ts` existe pero HTTP no probado).
+**Evidencia Actual:** Transporte HTTP MCP no tiene cobertura E2E.
+**Hecho Cuando:** Transporte HTTP MCP tiene pruebas E2E cubriendo ciclo de vida request/response.
+
+#### GT-197
+**Propósito:** Corregir fallos intermitentes del pipeline de release (9 issues de fallo automatizado cerrados sin corrección de causa raíz).
+**Evidencia Actual:** Pipeline de release tiene fallos recurrentes sin causa raíz resuelta.
+**Hecho Cuando:** Pipeline de release pasa consistentemente por 10 ejecuciones consecutivas.
+
+#### GT-198
+**Propósito:** Corregir typo "Moscoww" (5 sitios en prompts/index.ts, resources/index.ts).
+**Evidencia Actual:** "Moscow" mal escrito como "Moscoww" en 5 ubicaciones.
+**Hecho Cuando:** Todas las ocurrencias de "Moscoww" corregidas a "Moscow".
+
+#### GT-199
+**Propósito:** Mover import al inicio del archivo (output-formatter.service.ts:242).
+**Evidencia Actual:** Sentencia import aparece en medio del archivo, violando guías de estilo.
+**Hecho Cuando:** Todos los imports están al inicio de sus respectivos archivos.
+
+#### GT-200
+**Propósito:** Convertir constructor de 11 parámetros a objeto options (server.ts).
+**Evidencia Actual:** Constructor con 11 parámetros posicionales es frágil.
+**Hecho Cuando:** Constructor usa un solo parámetro objeto options.
+
+#### GT-201
+**Propósito:** Extraer valores hardcodeados a constantes (server.ts: 127.0.0.1, evolith.yaml x4).
+**Evidencia Actual:** Valores de configuración hardcodeados en código fuente.
+**Hecho Cuando:** Todos los valores hardcodeados extraídos a constantes nombradas o configuración.
+
+#### GT-202
+**Propósito:** Agregar README al directorio `governance/adr/`.
+**Evidencia Actual:** `governance/adr/` no tiene README ni BILINGUAL_INDEX.
+**Hecho Cuando:** README.md y README.es.md existen con índice de directorio.
+
+#### GT-203
+**Propósito:** Eliminar o poblar directorio vacío `kubernetes/`.
+**Evidencia Actual:** `reference/infrastructure/kubernetes/` está vacío.
+**Hecho Cuando:** El directorio contiene contenido o es eliminado.
+
+#### GT-204
+**Propósito:** Agregar READMEs a directorios `docker/`, `helm/`, `kubernetes/` en infraestructura.
+**Evidencia Actual:** Directorios de infraestructura carecen de documentación.
+**Hecho Cuando:** Cada directorio tiene README.md con propósito y uso.
+
+#### GT-205
+**Propósito:** Agregar README al directorio SDLC 01-playbooks/.
+**Evidencia Actual:** Directorio de playbooks SDLC carece de documentación de índice.
+**Hecho Cuando:** README.md existe con listado de directorio y propósito.
+
+#### GT-206
+**Propósito:** Formalizar regla de anidación BILINGUAL_INDEX para directorios profundos.
+**Evidencia Actual:** Directorios profundos carecen de archivos de índice bilingües.
+**Hecho Cuando:** Estándar documentado y aplicado a todos los directorios profundos.
+
+#### GT-207
+**Propósito:** Estandarizar formato de encabezados ADR (3 formatos diferentes en ADRs core).
+**Evidencia Actual:** ADRs usan formatos de encabezado inconsistentes.
+**Hecho Cuando:** Todos los ADRs core siguen el formato estándar según el estándar de autoría ADR.
+
+#### GT-208
+**Propósito:** Programar recordatorio de reevaluación de ADR-0077 (MassTransit v8 EOL fin 2026).
+**Evidencia Actual:** No hay revisión programada para EOL de MassTransit v8.
+**Hecho Cuando:** Recordatorio de calendario establecido y documentado en ADR-0077.

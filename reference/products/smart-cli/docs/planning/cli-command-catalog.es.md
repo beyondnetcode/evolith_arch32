@@ -1,298 +1,471 @@
 # CLI Command Catalog
 
-> **Nota:** Este archivo es un esqueleto inicial. Por favor, complete la traducción.
+> **Estado:** Propuesto
+> **Fecha:** 2026-06-06
+> **Referencia:** SDK/CLI/MCP Target Architecture §3
 
 ---
 
-## 1. Command Syntax
+## 1. Sintaxis de Comandos
 
-*Contenido pendiente de traducción.*
+Todos los comandos siguen: `smart-cli <domain> <action> [options]`
 
-### Global Options (all commands)
+### Opciones Globales (todos los comandos)
 
-*Contenido pendiente de traducción.*
+| Opción | Descripción | Por Defecto |
+|--------|-------------|-------------|
+| `--core <path>` | Ruta a Evolith Core | auto-detect |
+| `--satellite <path>` | Ruta al satellite | cwd |
+| `--format <format>` | Formato de salida (json/yaml/text) | text |
+| `--output <path>` | Escribir salida a un archivo | stdout |
+| `--verbose` | Habilitar salida detallada | false |
+| `--quiet` | Suprimir salida no esencial | false |
+| `--dry-run` | Simular sin realizar cambios | false |
+| `--help` | Mostrar ayuda del comando | - |
 
-## 2. General Commands
+---
 
-*Contenido pendiente de traducción.*
+## 2. Comandos Generales
 
 ### `smart-cli version`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Mostrar versión del CLI y compatibilidad con Core
+```bash
+smart-cli version
+# Output: @smart-cli/cli v1.1.0 | Core v1.0.0 | SDK v1.0.0
+```
 
 ### `smart-cli help [command]`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Mostrar ayuda del CLI o de un comando específico
+```bash
+smart-cli help validate
+```
 
 ### `smart-cli doctor`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Verificar salud y configuración del CLI
+```bash
+smart-cli doctor
+# Checks: Node version, Core presence, config validity, network
+```
 
 ### `smart-cli info`
+**Propósito:** Mostrar capacidades del CLI y Core configurado
+```bash
+smart-cli info
+```
 
-*Contenido pendiente de traducción.*
+---
 
-## 3. Core Commands
-
-*Contenido pendiente de traducción.*
+## 3. Comandos Core
 
 ### `smart-cli core info`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Mostrar metadatos de Core
+```bash
+smart-cli core info [--core <path>]
+```
 
 ### `smart-cli core validate`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Validar integridad de Core
+```bash
+smart-cli core validate [--core <path>]
+```
 
 ### `smart-cli core update`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Buscar y aplicar actualizaciones de Core
+```bash
+smart-cli core update [--core <path>] [--force]
+```
 
 ### `smart-cli core search <query>`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Buscar contenido de Core
+```bash
+smart-cli core search "hexagonal architecture"
+```
 
 ### `smart-cli core index`
+**Propósito:** Mostrar índice completo de Core
+```bash
+smart-cli core index [--format json]
+```
 
-*Contenido pendiente de traducción.*
+---
 
-## 4. Ruleset Commands
-
-*Contenido pendiente de traducción.*
+## 4. Comandos de Rulesets
 
 ### `smart-cli ruleset list`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Listar todos los rulesets disponibles
+```bash
+smart-cli ruleset list [--category <category>]
+# Categories: architecture, sdlc, governance, adr, cross-cutting, acl
+```
 
 ### `smart-cli ruleset show <rulesetId>`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Mostrar detalles de un ruleset
+```bash
+smart-cli ruleset show adr-0002
+smart-cli ruleset show inheritance
+```
 
 ### `smart-cli ruleset validate`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Validar satellite contra rulesets
+```bash
+smart-cli ruleset validate [--satellite <path>] [--ruleset <id>]
+```
 
 ### `smart-cli ruleset explain <ruleId>`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Explicar la intención y validación de una regla
+```bash
+smart-cli ruleset explain HXA-01
+```
 
 ### `smart-cli ruleset dependencies <rulesetId>`
+**Propósito:** Mostrar dependencias de un ruleset
+```bash
+smart-cli ruleset dependencies adr-0002
+```
 
-*Contenido pendiente de traducción.*
+---
 
-## 5. Validate Commands
-
-*Contenido pendiente de traducción.*
+## 5. Comandos de Validación
 
 ### `smart-cli validate project`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Validar proyecto satellite completo
+```bash
+smart-cli validate project [--satellite <path>] [--format json]
+```
+**Usa:** Todos los rulesets aplicables
 
 ### `smart-cli validate architecture`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Validar reglas de arquitectura (F1/F2/F3)
+```bash
+smart-cli validate architecture [--satellite <path>]
+```
+**Usa:** f1-modular-monolith, f2-distributed-modules, f3-microservices
 
 ### `smart-cli validate sdlc`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Validar reglas SDLC
+```bash
+smart-cli validate sdlc [--satellite <path>]
+```
+**Usa:** phase-gates, quality-thresholds
 
 ### `smart-cli validate all`
+**Propósito:** Validar contra todos los rulesets
+```bash
+smart-cli validate all [--satellite <path>]
+```
 
-*Contenido pendiente de traducción.*
+---
 
-## 6. Artifact Commands
-
-*Contenido pendiente de traducción.*
+## 6. Comandos de Artefactos
 
 ### `smart-cli artifact list`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Listar plantillas de artefactos disponibles
+```bash
+smart-cli artifact list [--phase <1-5>]
+```
 
 ### `smart-cli artifact show <templateId>`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Mostrar detalles de una plantilla de artefacto
+```bash
+smart-cli artifact show functional-story
+```
 
 ### `smart-cli artifact generate`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Generar artefacto desde plantilla
+```bash
+smart-cli artifact generate <templateId> [--context <json>] [--output <path>]
+```
 
 ### `smart-cli artifact validate <file>`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Validar artefacto contra esquema
+```bash
+smart-cli artifact validate ./docs/user-story.md
+```
 
 ### `smart-cli artifact trace <artifactId>`
+**Propósito:** Mostrar trazabilidad de artefacto
+```bash
+smart-cli artifact trace US-001
+```
 
-*Contenido pendiente de traducción.*
+---
 
-## 7. SDLC Commands
-
-*Contenido pendiente de traducción.*
+## 7. Comandos SDLC
 
 ### `smart-cli sdlc status`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Mostrar estado actual de SDLC
+```bash
+smart-cli sdlc status [--satellite <path>]
+```
 
 ### `smart-cli sdlc next`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Mostrar siguiente acción en SDLC
+```bash
+smart-cli sdlc next [--satellite <path>]
+```
 
 ### `smart-cli sdlc report`
+**Propósito:** Generar reporte SDLC
+```bash
+smart-cli sdlc report [--satellite <path>] [--format json] [--output <path>]
+```
 
-*Contenido pendiente de traducción.*
+---
 
-## 8. Gate Commands
-
-*Contenido pendiente de traducción.*
+## 8. Comandos de Gates
 
 ### `smart-cli gate list`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Listar todos los phase gates
+```bash
+smart-cli gate list [--phase <1-5>]
+```
 
 ### `smart-cli gate status <phase> <gate>`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Mostrar estado de un gate
+```bash
+smart-cli gate status 3 2  # Phase 3, Gate 2 (Successful Build)
+```
 
 ### `smart-cli gate validate <phase> <gate>`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Validar requisitos de un gate
+```bash
+smart-cli gate validate 3 2 [--satellite <path>]
+```
 
 ### `smart-cli gate evidence <phase> <gate>`
+**Propósito:** Mostrar evidencia de un gate
+```bash
+smart-cli gate evidence 3 2 [--satellite <path>]
+```
 
-*Contenido pendiente de traducción.*
+---
 
-## 9. ADR Commands
-
-*Contenido pendiente de traducción.*
+## 9. Comandos ADR
 
 ### `smart-cli adr list`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Listar ADRs
+```bash
+smart-cli adr list [--status <status>] [--runtime <runtime>]
+# Status: proposed, accepted, deprecated, superseded
+# Runtime: core, nodejs, dotnet
+```
 
 ### `smart-cli adr show <adrId>`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Mostrar detalles de un ADR
+```bash
+smart-cli adr show ADR-0002
+```
 
 ### `smart-cli adr search <query>`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Buscar ADRs
+```bash
+smart-cli adr search "hexagonal"
+```
 
 ### `smart-cli adr create`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Crear nuevo ADR (interactivo)
+```bash
+smart-cli adr create [--context <json>]
+```
 
 ### `smart-cli adr validate <file>`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Validar ADR contra esquema
+```bash
+smart-cli adr validate ./docs/adr/my-decision.md
+```
 
 ### `smart-cli adr dependencies <adrId>`
+**Propósito:** Mostrar dependencias de ADR
+```bash
+smart-cli adr dependencies ADR-0018
+```
 
-*Contenido pendiente de traducción.*
+---
 
-## 10. Agent Commands
-
-*Contenido pendiente de traducción.*
+## 10. Comandos de Agentes
 
 ### `smart-cli agent list`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Listar agentes disponibles
+```bash
+smart-cli agent list
+```
 
 ### `smart-cli agent show <agentId>`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Mostrar capacidades de un agente
+```bash
+smart-cli agent show @architect
+```
 
 ### `smart-cli agent install [--agents <names>]`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Instalar agentes en satellite
+```bash
+smart-cli agent install --agents @po,@architect --satellite <path>
+```
 
 ### `smart-cli agent validate`
+**Propósito:** Validar configuración de agentes
+```bash
+smart-cli agent validate [--satellite <path>]
+```
 
-*Contenido pendiente de traducción.*
+---
 
-## 11. Architecture Commands
-
-*Contenido pendiente de traducción.*
+## 11. Comandos de Arquitectura
 
 ### `smart-cli architecture list`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Listar fases de arquitectura
+```bash
+smart-cli architecture list
+```
 
 ### `smart-cli architecture show <phase>`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Mostrar detalles de una fase
+```bash
+smart-cli architecture show F1
+```
 
 ### `smart-cli architecture initialize`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Inicializar arquitectura para satellite
+```bash
+smart-cli architecture initialize F1 [--satellite <path>]
+```
 
 ### `smart-cli architecture validate`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Validar contra reglas de la fase actual
+```bash
+smart-cli architecture validate [--satellite <path>]
+```
 
 ### `smart-cli architecture drift`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Detectar desviación arquitectónica
+```bash
+smart-cli architecture drift [--satellite <path>]
+```
 
 ### `smart-cli architecture report`
+**Propósito:** Generar reporte de arquitectura
+```bash
+smart-cli architecture report [--satellite <path>] [--format json]
+```
 
-*Contenido pendiente de traducción.*
+---
 
-## 12. Scaffold Commands
-
-*Contenido pendiente de traducción.*
+## 12. Comandos de Scaffold
 
 ### `smart-cli scaffold project`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Scaffold de nuevo proyecto satellite
+```bash
+smart-cli scaffold project --name <name> --type <type> [--phase F1|F2|F3]
+```
 
 ### `smart-cli scaffold domain`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Scaffold de nuevo dominio
+```bash
+smart-cli scaffold domain --name <name> --bounded-context <context>
+```
 
 ### `smart-cli scaffold workspace`
+**Propósito:** Scaffold de workspace Nx
+```bash
+smart-cli scaffold workspace --frontend <react|angular> --orm <prisma|typeorm>
+```
 
-*Contenido pendiente de traducción.*
+---
 
-## 13. Evidence Commands
-
-*Contenido pendiente de traducción.*
+## 13. Comandos de Evidence
 
 ### `smart-cli evidence list`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Listar evidencia recolectada
+```bash
+smart-cli evidence list [--scope <scope>]
+```
 
 ### `smart-cli evidence collect`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Recolectar evidencia para cumplimiento
+```bash
+smart-cli evidence collect [--satellite <path>] [--scope <scope>]
+```
 
 ### `smart-cli evidence validate`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Validar completitud de la evidencia
+```bash
+smart-cli evidence validate [--satellite <path>]
+```
 
 ### `smart-cli evidence export`
+**Propósito:** Exportar reporte de evidencia
+```bash
+smart-cli evidence export --format <sarif|json|markdown> --output <path>
+```
 
-*Contenido pendiente de traducción.*
+---
 
-## 14. Report Commands
-
-*Contenido pendiente de traducción.*
+## 14. Comandos de Reportes
 
 ### `smart-cli report compliance`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Generar reporte de cumplimiento
+```bash
+smart-cli report compliance [--satellite <path>] [--format json]
+```
 
 ### `smart-cli report coverage`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Generar reporte de cobertura
+```bash
+smart-cli report coverage [--satellite <path>]
+```
 
 ### `smart-cli report drift`
-
-*Contenido pendiente de traducción.*
+**Propósito:** Generar reporte de desviación
+```bash
+smart-cli report drift [--satellite <path>]
+```
 
 ### `smart-cli report executive`
+**Propósito:** Generar resumen ejecutivo (DORA+SPACE)
+```bash
+smart-cli report executive [--satellite <path>] [--format json]
+```
 
-*Contenido pendiente de traducción.*
+---
 
-## 15. Implementation Status
+## 15. Estado de Implementación
 
-*Contenido pendiente de traducción.*
+| Comando | Estado | Prioridad |
+|---------|--------|-----------|
+| `version` | IMPLEMENTED | - |
+| `help` | IMPLEMENTED | - |
+| `doctor` | NOT_IMPLEMENTED | MEDIUM |
+| `info` | NOT_IMPLEMENTED | LOW |
+| `core info` | IMPLEMENTED | - |
+| `core validate` | IMPLEMENTED | - |
+| `core update` | NOT_IMPLEMENTED | MEDIUM |
+| `core search` | NOT_IMPLEMENTED | LOW |
+| `core index` | NOT_IMPLEMENTED | LOW |
+| `ruleset list` | IMPLEMENTED | - |
+| `ruleset show` | IMPLEMENTED | - |
+| `ruleset validate` | IMPLEMENTED | - |
+| `ruleset explain` | NOT_IMPLEMENTED | HIGH |
+| `validate project` | IMPLEMENTED | - |
+| `validate architecture` | NOT_IMPLEMENTED | HIGH |
+| `validate sdlc` | NOT_IMPLEMENTED | HIGH |
+| `artifact list` | NOT_IMPLEMENTED | MEDIUM |
+| `artifact generate` | NOT_IMPLEMENTED | MEDIUM |
+| `artifact validate` | NOT_IMPLEMENTED | MEDIUM |
+| `sdlc status` | NOT_IMPLEMENTED | MEDIUM |
+| `sdlc next` | NOT_IMPLEMENTED | MEDIUM |
+| `gate list` | NOT_IMPLEMENTED | MEDIUM |
+| `gate status` | NOT_IMPLEMENTED | MEDIUM |
+| `gate validate` | NOT_IMPLEMENTED | HIGH |
+| `adr list` | NOT_IMPLEMENTED | MEDIUM |
+| `adr show` | NOT_IMPLEMENTED | MEDIUM |
+| `adr create` | NOT_IMPLEMENTED | MEDIUM |
+| `agent install` | STUB | HIGH |
+| `architecture initialize` | PARTIALLY_IMPLEMENTED | HIGH |
+| `architecture validate` | NOT_IMPLEMENTED | HIGH |
+| `architecture drift` | NOT_IMPLEMENTED | HIGH |
+| `scaffold project` | PARTIALLY_IMPLEMENTED | HIGH |
+| `evidence collect` | NOT_IMPLEMENTED | MEDIUM |
+| `report compliance` | NOT_IMPLEMENTED | MEDIUM |
 
+---
+[Volver al Índice de Planificación SDK/CLI](./README.md)

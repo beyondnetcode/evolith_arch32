@@ -34,3 +34,13 @@ violations[{"id": "AAI-R07", "severity": "MUST", "title": "Capability-Scoped, Au
     not input.satellite.agenticAi.hasAccountableActions
     message := "agent.config.json must require scoped-and-expiring capabilities and append-only correlated action evidence (AAI-R07)."
 }
+
+violations[{"id": "AAI-R08", "severity": "MUST", "title": "Operational Budgets and Concurrency Limits", "blocking": true, "message": message}] {
+    not input.satellite.agenticAi.hasOperationalBudgets
+    message := "agent.config.json must declare operationalBudgets with positive token, context window, and MCP concurrency limits plus a runbooksPath that exists (AAI-R08)."
+}
+
+violations[{"id": "AAI-R09", "severity": "MUST", "title": "Satellite Credential Lifecycle", "blocking": true, "message": message}] {
+    not input.satellite.agenticAi.hasCredentialLifecycle
+    message := "agent.config.json must declare credentialLifecycle with positive delegation TTL, rotation cadence, and bounded incident revocation (AAI-R09)."
+}

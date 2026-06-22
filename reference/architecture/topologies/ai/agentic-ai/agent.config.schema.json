@@ -2,7 +2,7 @@
   "$id": "https://evolith.dev/schemas/agentic-ai/agent.config.schema.json",
   "title": "Evolith Agentic AI Configuration",
   "type": "object",
-  "required": ["agent", "sandbox", "promptSources", "implementationRoots", "contextPolicy", "toolPolicy", "audit"],
+  "required": ["agent", "sandbox", "promptSources", "implementationRoots", "contextPolicy", "toolPolicy", "audit", "operationalBudgets", "credentialLifecycle"],
   "additionalProperties": false,
   "properties": {
     "agent": {
@@ -56,6 +56,44 @@
       "properties": {
         "appendOnly": { "const": true },
         "correlationId": { "const": "required" }
+      }
+    },
+    "operationalBudgets": {
+      "type": "object",
+      "required": ["maxPromptTokens", "maxCompletionTokens", "maxContextWindowTokens", "mcpToolConcurrency", "runbooksPath"],
+      "additionalProperties": false,
+      "properties": {
+        "maxPromptTokens": { "type": "integer", "minimum": 1 },
+        "maxCompletionTokens": { "type": "integer", "minimum": 1 },
+        "maxContextWindowTokens": { "type": "integer", "minimum": 1 },
+        "mcpToolConcurrency": {
+          "type": "object",
+          "required": ["maxInFlight", "perToolMaxInFlight"],
+          "additionalProperties": false,
+          "properties": {
+            "maxInFlight": { "type": "integer", "minimum": 1 },
+            "perToolMaxInFlight": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "runbooksPath": { "type": "string", "minLength": 1 }
+      }
+    },
+    "credentialLifecycle": {
+      "type": "object",
+      "required": ["delegationMaxTtlSeconds", "rotationCadenceDays", "revocation"],
+      "additionalProperties": false,
+      "properties": {
+        "delegationMaxTtlSeconds": { "type": "integer", "minimum": 1 },
+        "rotationCadenceDays": { "type": "integer", "minimum": 1 },
+        "revocation": {
+          "type": "object",
+          "required": ["onIncident", "maxPropagationSeconds"],
+          "additionalProperties": false,
+          "properties": {
+            "onIncident": { "enum": ["immediate", "scheduled"] },
+            "maxPropagationSeconds": { "type": "integer", "minimum": 1 }
+          }
+        }
       }
     }
   }

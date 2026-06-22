@@ -89,8 +89,15 @@ export class OpaInputBuilder {
     const toolPolicy = this.asRecord(config?.toolPolicy);
     const contextPolicy = this.asRecord(config?.contextPolicy);
     const audit = this.asRecord(config?.audit);
+    const budgets = this.asRecord(config?.operationalBudgets);
+    const concurrency = this.asRecord(budgets?.mcpToolConcurrency);
+    const credentials = this.asRecord(config?.credentialLifecycle);
+    const revocation = this.asRecord(credentials?.revocation);
     const promptSources = this.asStringArray(config?.promptSources);
     const implementationRoots = this.asStringArray(config?.implementationRoots);
+
+    const runbooksPath = typeof budgets?.runbooksPath === 'string' ? budgets.runbooksPath : '';
+    const runbooksExists = runbooksPath.length > 0 && await this.fs.exists(path.isAbsolute(runbooksPath) ? runbooksPath : path.join(root, runbooksPath));
 
     return {
       hasIdentity: typeof agent?.id === 'string' && agent.id.length > 0 && this.asStringArray(agent.capabilities).length > 0,
@@ -100,6 +107,8 @@ export class OpaInputBuilder {
       hasEphemeralSandboxLimits: sandbox?.ephemeral === true && this.isPositiveNumber(sandbox.maxDurationSeconds) && this.isPositiveNumber(sandbox.maxMemoryMb) && this.isPositiveNumber(sandbox.maxCpuCores),
       hasTrustedContextPolicy: contextPolicy?.untrustedContent === 'data-only' && contextPolicy?.provenanceRequired === true && contextPolicy?.toolOutputSchemaValidation === true,
       hasAccountableActions: toolPolicy?.capabilityDelegation === 'scoped-and-expiring' && audit?.appendOnly === true && audit?.correlationId === 'required',
+      hasOperationalBudgets: this.isPositiveNumber(budgets?.maxPromptTokens) && this.isPositiveNumber(budgets?.maxCompletionTokens) && this.isPositiveNumber(budgets?.maxContextWindowTokens) && this.isPositiveNumber(concurrency?.maxInFlight) && this.isPositiveNumber(concurrency?.perToolMaxInFlight) && runbooksExists,
+      hasCredentialLifecycle: this.isPositiveNumber(credentials?.delegationMaxTtlSeconds) && this.isPositiveNumber(credentials?.rotationCadenceDays) && (revocation?.onIncident === 'immediate' || revocation?.onIncident === 'scheduled') && this.isPositiveNumber(revocation?.maxPropagationSeconds),
     };
   }
 

@@ -20,7 +20,13 @@ Disable the affected capability or tool first, preserving the sandbox and eviden
 
 ## Service Objectives
 
-Set an explicit execution timeout and resource budget per capability. Monitor denied actions, approval latency, sandbox exits, tool failures, invalid context, and policy evaluation failures. Alert on unexpected authority requests and repeated denials; they indicate a boundary mismatch rather than an invitation to weaken controls.
+Set an explicit execution timeout and resource budget per capability. Record `maxPromptTokens`, `maxCompletionTokens`, `maxContextWindowTokens`, total MCP calls in flight, and calls in flight per tool in `agent.config.json`. Reject work before model invocation when adding its input would exceed a declared ceiling, and cancel outstanding tool work when either concurrency limit is reached. Monitor denied actions, approval latency, sandbox exits, tool failures, invalid context, policy evaluation failures, budget rejections, and credential rotation age. Alert on unexpected authority requests and repeated denials; they indicate a boundary mismatch rather than an invitation to weaken controls.
+
+Delegated credentials MUST have a bounded TTL, rotate on the declared cadence, and be revoked within the declared propagation window after an incident. Immediate revocation is the default. Retain only correlation evidence and credential identifiers needed to verify rotation and revocation; never write credentials or tokens into evidence.
+
+## Incident Runbooks
+
+Use the [Agentic AI incident runbooks](./runbooks.md) for agent hang, token overflow, unapproved action, and sandbox escape. Each incident starts by stopping new work, preserving correlated evidence, and removing the affected authority before analysis or recovery.
 
 ---
 [Back to Agentic AI Profile](./README.md)

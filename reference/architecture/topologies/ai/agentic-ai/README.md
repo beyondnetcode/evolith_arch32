@@ -13,7 +13,7 @@ Agentic AI is the topology for systems where an AI agent can inspect context, pl
 
 Use this profile when an agent has access to repository, service, or operational context. The profile governs the agent boundary, not the model vendor or orchestration framework.
 
-Every adopting satellite MUST provide `agent.config.json`. The native evaluator and the OPA policy enforce the same four controls:
+Every adopting satellite MUST provide `agent.config.json`. The native evaluator and the OPA policy enforce the same controls:
 
 | Rule | Required control |
 |---|---|
@@ -24,6 +24,8 @@ Every adopting satellite MUST provide `agent.config.json`. The native evaluator 
 | AAI-R05 | Ephemeral execution with bounded duration, memory, and CPU |
 | AAI-R06 | Untrusted context treated as data with provenance and schema validation |
 | AAI-R07 | Capability-scoped delegation and append-only correlated action evidence |
+| AAI-R08 | Positive token and context ceilings, bounded MCP concurrency, and a readable runbook path |
+| AAI-R09 | Bounded delegation, credential rotation cadence, and incident revocation |
 
 ## Configuration Contract
 
@@ -58,11 +60,35 @@ Every adopting satellite MUST provide `agent.config.json`. The native evaluator 
   "audit": {
     "appendOnly": true,
     "correlationId": "required"
+  },
+  "operationalBudgets": {
+    "maxPromptTokens": 16000,
+    "maxCompletionTokens": 4000,
+    "maxContextWindowTokens": 128000,
+    "mcpToolConcurrency": {
+      "maxInFlight": 4,
+      "perToolMaxInFlight": 2
+    },
+    "runbooksPath": "docs/agentic-ai-runbooks.md"
+  },
+  "credentialLifecycle": {
+    "delegationMaxTtlSeconds": 900,
+    "rotationCadenceDays": 30,
+    "revocation": {
+      "onIncident": "immediate",
+      "maxPropagationSeconds": 60
+    }
   }
 }
 ```
 
 The declared prompt and implementation paths MUST not overlap. A capability is not permission: the sandbox and tool policy are the execution authority. Untrusted context remains data, never authority; every action carries a scoped capability and append-only correlated evidence.
+
+## Operational Contract
+
+`operationalBudgets` declares enforceable ceilings for one execution. `maxPromptTokens` limits supplied instructions and context, `maxCompletionTokens` limits generated output, and `maxContextWindowTokens` limits the combined model context. `mcpToolConcurrency.maxInFlight` caps all concurrent tool calls; `perToolMaxInFlight` prevents a single tool from consuming the whole budget. An adopter MUST choose values appropriate to its approved model and capacity, and MUST point `runbooksPath` to its maintained incident guide.
+
+`credentialLifecycle` limits delegated authority to `delegationMaxTtlSeconds`, requires rotation no less frequently than `rotationCadenceDays`, and defines how quickly incident revocation reaches every executor. `onIncident` SHOULD be `immediate`; `scheduled` is permitted only when a documented operational dependency prevents immediate revocation. The topology reference runbooks are [available here](./runbooks.md).
 
 ## Interaction and Security Boundary
 

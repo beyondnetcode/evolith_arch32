@@ -20,7 +20,13 @@ Deshabilita primero la capacidad o herramienta afectada, preservando sandbox y e
 
 ## Objetivos de Servicio
 
-Define un timeout de ejecucion y presupuesto de recursos explicitos por capacidad. Monitorea acciones denegadas, latencia de aprobacion, salidas de sandbox, fallos de herramienta, contexto invalido y fallos de evaluacion de politica. Alerta ante solicitudes de autoridad inesperadas y denegaciones repetidas; indican un desajuste de limite, no una invitacion a debilitar controles.
+Define un timeout de ejecucion y presupuesto de recursos explicitos por capacidad. Registra `maxPromptTokens`, `maxCompletionTokens`, `maxContextWindowTokens`, llamadas MCP totales en vuelo y llamadas en vuelo por herramienta en `agent.config.json`. Rechaza trabajo antes de invocar el modelo cuando agregar su entrada excederia un limite declarado y cancela trabajo pendiente de herramientas cuando se alcance cualquiera de los limites de concurrencia. Monitorea acciones denegadas, latencia de aprobacion, salidas de sandbox, fallos de herramienta, contexto invalido, fallos de evaluacion de politica, rechazos de presupuesto y antiguedad de la rotacion de credenciales. Alerta ante solicitudes de autoridad inesperadas y denegaciones repetidas; indican un desajuste de limite, no una invitacion a debilitar controles.
+
+Las credenciales delegadas DEBEN tener un TTL acotado, rotar segun la cadencia declarada y revocarse dentro de la ventana de propagacion declarada despues de un incidente. La revocacion inmediata es el valor predeterminado. Conserva solo la evidencia de correlacion y los identificadores de credencial necesarios para verificar la rotacion y la revocacion; nunca escribas credenciales o tokens en la evidencia.
+
+## Runbooks de Incidentes
+
+Usa los [runbooks de incidentes de IA agentica](./runbooks.es.md) para bloqueo de agente, desborde de tokens, accion no aprobada y escape del sandbox. Cada incidente empieza deteniendo trabajo nuevo, preservando evidencia correlacionada y eliminando la autoridad afectada antes del analisis o la recuperacion.
 
 ---
 [Volver al Perfil de IA Agentica](./README.es.md)

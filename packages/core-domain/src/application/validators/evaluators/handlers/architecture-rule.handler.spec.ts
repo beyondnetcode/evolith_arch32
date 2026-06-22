@@ -80,6 +80,8 @@ describe('ArchitectureRuleHandler', () => {
       await expect(h.evaluate(rule({ id: 'AAI-R05', category: 'agent-sandbox-limits' }), ctx)).resolves.toMatchObject({ result: 'failed' });
       await expect(h.evaluate(rule({ id: 'AAI-R06', category: 'agent-context-trust' }), ctx)).resolves.toMatchObject({ result: 'failed' });
       await expect(h.evaluate(rule({ id: 'AAI-R07', category: 'agent-action-accountability' }), ctx)).resolves.toMatchObject({ result: 'failed' });
+      await expect(h.evaluate(rule({ id: 'AAI-R08', category: 'agent-operational-budgets' }), ctx)).resolves.toMatchObject({ result: 'failed' });
+      await expect(h.evaluate(rule({ id: 'AAI-R09', category: 'agent-credential-lifecycle' }), ctx)).resolves.toMatchObject({ result: 'failed' });
     });
     it('topology MM-R01 fails when a monorepo workspace is declared', async () => {
       const pkg = path.join(SAT, 'package.json');
@@ -223,6 +225,7 @@ describe('ArchitectureRuleHandler', () => {
     });
     it('passes all Agentic AI rules for the governed configuration contract', async () => {
       const config = path.join(SAT, 'agent.config.json');
+      const runbooks = path.join(SAT, 'docs', 'agentic-ai-runbooks.md');
       const agentConfig = {
         agent: { id: 'architecture-reviewer', capabilities: ['read-architecture', 'review-changes'] },
         sandbox: { mode: 'isolated', network: 'allowlist', process: 'deny', ephemeral: true, maxDurationSeconds: 30, maxMemoryMb: 512, maxCpuCores: 1 },
@@ -231,10 +234,22 @@ describe('ArchitectureRuleHandler', () => {
         contextPolicy: { untrustedContent: 'data-only', provenanceRequired: true, toolOutputSchemaValidation: true },
         toolPolicy: { mutative: 'approval-required', capabilityDelegation: 'scoped-and-expiring' },
         audit: { appendOnly: true, correlationId: 'required' },
+        operationalBudgets: {
+          maxPromptTokens: 16000,
+          maxCompletionTokens: 4000,
+          maxContextWindowTokens: 128000,
+          mcpToolConcurrency: { maxInFlight: 4, perToolMaxInFlight: 2 },
+          runbooksPath: 'docs/agentic-ai-runbooks.md',
+        },
+        credentialLifecycle: {
+          delegationMaxTtlSeconds: 900,
+          rotationCadenceDays: 30,
+          revocation: { onIncident: 'immediate', maxPropagationSeconds: 60 },
+        },
       };
-      const h = new ArchitectureRuleHandler(fsMock({ existing: [config], json: { [config]: agentConfig } }));
+      const h = new ArchitectureRuleHandler(fsMock({ existing: [config, runbooks], json: { [config]: agentConfig } }));
 
-      for (const [id, category] of [['AAI-R01', 'agent-identity'], ['AAI-R02', 'agent-sandbox'], ['AAI-R03', 'agent-prompt-boundaries'], ['AAI-R04', 'agent-tool-approval'], ['AAI-R05', 'agent-sandbox-limits'], ['AAI-R06', 'agent-context-trust'], ['AAI-R07', 'agent-action-accountability']] as const) {
+      for (const [id, category] of [['AAI-R01', 'agent-identity'], ['AAI-R02', 'agent-sandbox'], ['AAI-R03', 'agent-prompt-boundaries'], ['AAI-R04', 'agent-tool-approval'], ['AAI-R05', 'agent-sandbox-limits'], ['AAI-R06', 'agent-context-trust'], ['AAI-R07', 'agent-action-accountability'], ['AAI-R08', 'agent-operational-budgets'], ['AAI-R09', 'agent-credential-lifecycle']] as const) {
         await expect(h.evaluate(rule({ id, category }), ctx)).resolves.toMatchObject({ result: 'passed' });
       }
     });

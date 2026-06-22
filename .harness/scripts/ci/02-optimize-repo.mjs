@@ -44,7 +44,8 @@ const allowedDirectories = new Set([
   "sdk",
   "apps",
   "examples",
-  "packages"
+  "packages",
+  "tests"
 ]);
 
 console.log("🧹 Running repository optimization...");

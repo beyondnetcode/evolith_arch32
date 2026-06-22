@@ -20,3 +20,4 @@ export { CommandWatcher, commandWatcher, CommandBuilder } from './command-watche
 export type { CommandTrace } from './command-watcher';
 export { ToolUsageTelemetry } from './tool-usage-telemetry.service';
 export type { ToolUsageEvent, ToolUsageStats, TelemetryReport } from './tool-usage-telemetry.service';
+export { initCliOtel, shutdownCliOtel, isOtelEnabled, cliTracer } from './otel-tracing';

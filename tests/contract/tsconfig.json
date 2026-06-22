@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES2021",
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strictNullChecks": false,
+    "noImplicitAny": false,
+    "forceConsistentCasingInFileNames": false,
+    "types": ["jest", "node"],
+    "baseUrl": "../..",
+    "paths": {
+      "nest-commander-testing": ["sdk/cli/node_modules/nest-commander-testing"]
+    }
+  },
+  "include": ["./**/*.spec.ts"]
+}

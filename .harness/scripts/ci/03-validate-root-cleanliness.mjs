@@ -45,7 +45,8 @@ const allowedDirectories = new Set([
   "sdk",
   "apps",
   "examples",
-  "packages"
+  "packages",
+  "tests"
 ]);
 
 const explicitlyDeniedDirectories = new Map([

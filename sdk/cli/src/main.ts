@@ -1,7 +1,10 @@
 #!/usr/bin/env node
+import { initCliOtel, shutdownCliOtel } from './infrastructure/observability/otel-tracing';
 import { CommandFactory } from 'nest-commander';
 import { AppModule } from './app.module';
 import { AliasService } from './config/alias.service';
+
+initCliOtel();
 
 async function bootstrap() {
   // Resolve possible alias for the first command argument
@@ -18,4 +21,9 @@ async function bootstrap() {
   await CommandFactory.run(AppModule, ['warn', 'error']);
 }
 
-bootstrap();
+bootstrap()
+  .catch((err) => {
+    console.error(err);
+    process.exit(1);
+  })
+  .finally(() => shutdownCliOtel());

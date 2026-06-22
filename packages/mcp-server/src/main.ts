@@ -1,9 +1,11 @@
 #!/usr/bin/env node
+import './tracing';
 import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { McpServerService, McpTransport } from './mcp/mcp-server.service';
 import { StderrLogger } from './common/stderr-logger';
+import { shutdownOtel } from './tracing';
 
 const VERSION = '1.0.0';
 
@@ -91,6 +93,7 @@ async function bootstrap(): Promise<void> {
   const shutdown = async (): Promise<void> => {
     await server.stop();
     await app.close();
+    await shutdownOtel();
     process.exit(0);
   };
   process.on('SIGINT', shutdown);

@@ -5,7 +5,8 @@
   "description": "Evolith Architecture Reference - Monorepo root",
   "scripts": {
     "prepare": "husky",
-    "build:policy": "node ./.harness/scripts/compile-opa-wasm.mjs"
+    "build:policy": "node ./.harness/scripts/compile-opa-wasm.mjs",
+    "test:contract": "node node_modules/jest/bin/jest.js --config tests/contract/jest.config.js --runInBand --no-bail"
   },
   "workspaces": [
     "sdk/*",
@@ -13,6 +14,7 @@
     "packages/*"
   ],
   "devDependencies": {
-    "husky": "^9.1.7"
+    "husky": "^9.1.7",
+    "jest": "^30.4.2"
   }
 }

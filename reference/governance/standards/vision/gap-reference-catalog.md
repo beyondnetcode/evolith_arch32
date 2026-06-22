@@ -228,9 +228,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** CLI exposes `alias`, `completion`, `docs`, `drift`, `fixtures`, `history`, `profile`, `standards`, `update` with no MCP or REST equivalents. REST exposes operations not present in MCP and vice versa.
 - **Complexity:** L
 - **Done when:**
-  - [ ] A surface-parity matrix (machine-readable) lists every operation and the surfaces that expose it, with explicit `exempt:<reason>` markers where parity is not desirable.
-  - [ ] A validator fails when a new operation lands on one surface without a parity entry.
-  - [ ] The matrix is the source of truth for the inventory generator.
+  - [x] A surface-parity matrix (machine-readable) lists every operation and the surfaces that expose it, with explicit `exempt:<reason>` markers where parity is not desirable.
+  - [x] A validator fails when a new operation lands on one surface without a parity entry.
+  - [x] The matrix is the source of truth for the inventory generator.
 
 
 #### GT-172
@@ -241,9 +241,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** CLI E2E, MCP smoke, and REST E2E tests each mock or stub the other surfaces. No test verifies the three surfaces return equivalent `GateEvidence` for the same input.
 - **Complexity:** L
 - **Done when:**
-  - [ ] A roundtrip suite under `tests/contract/` invokes the same input via CLI, MCP (Streamable HTTP), and REST, then asserts envelope and evidence equivalence.
-  - [ ] CI runs the suite on PRs that touch any of the three surfaces or shared use cases.
-  - [ ] The suite is documented as the contract regression net for ADR-0073.
+  - [x] A roundtrip suite under `tests/contract/` invokes the same input via CLI, MCP (Streamable HTTP), and REST, then asserts envelope and evidence equivalence.
+  - [x] CI runs the suite on PRs that touch any of the three surfaces or shared use cases.
+  - [x] The suite is documented as the contract regression net for ADR-0073.
 
 
 #### GT-173
@@ -254,9 +254,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** Core API exports OTLP traces (`tracing.ts`); CLI writes local `CommandTrace` JSON; MCP server has no structured trace or metric export.
 - **Complexity:** M
 - **Done when:**
-  - [ ] MCP server emits OTLP traces using the same trace ID propagated through `correlationId` (GT-160) and exports them via OTLP exporters.
-  - [ ] CLI optionally exports OTLP when configured, preserving its local trace as the default offline mode.
-  - [ ] A shared dashboard demonstrates a single agent-driven workflow stitched across the three surfaces.
+  - [x] MCP server emits OTLP traces using the same trace ID propagated through `correlationId` (GT-160) and exports them via OTLP exporters.
+  - [x] CLI optionally exports OTLP when configured, preserving its local trace as the default offline mode.
+  - [x] A shared dashboard demonstrates a single agent-driven workflow stitched across the three surfaces.
 
 
 #### GT-174

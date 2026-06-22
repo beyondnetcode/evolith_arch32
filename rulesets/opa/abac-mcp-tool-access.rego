@@ -30,7 +30,9 @@ read_tools := {
   "evolith-echo",
   "evolith-read-gap-tracking",
   "evolith-read-file",
-  "evolith-list-dir"
+  "evolith-list-dir",
+  "evolith-gate-evaluate",
+  "evolith-gate-status"
 }
 
 write_tools := {

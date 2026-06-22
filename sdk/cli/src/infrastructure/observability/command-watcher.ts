@@ -1,6 +1,8 @@
+import { SpanStatusCode } from '@opentelemetry/api';
 import { logger } from './structured-logger';
 import { CommandResult } from '../../infrastructure/cli/command-executor';
 import { commandExecutor } from '../../infrastructure/cli/command-executor';
+import { cliTracer, isOtelEnabled } from './otel-tracing';
 
 export interface CommandTrace {
   id: string;
@@ -38,6 +40,17 @@ export class CommandWatcher {
 
     this.currentTrace = trace;
     this.traces.push(trace);
+
+    const otelEnabled = isOtelEnabled();
+    const span = otelEnabled
+      ? cliTracer.startSpan(`cli.exec.${command.split(' ')[0]}`, {
+          attributes: {
+            'cli.trace_id': trace.id,
+            'cli.command': command,
+            'cli.cwd': cwd ?? '',
+          },
+        })
+      : null;
 
     logger.info(`Executing command: ${command}`, {
       traceId: trace.id,
@@ -77,6 +90,16 @@ export class CommandWatcher {
       trace.stdout = result.stdout;
       trace.stderr = result.stderr;
 
+      if (otelEnabled && span) {
+        span.setAttributes({
+          'cli.duration_ms': durationMs,
+          'cli.exit_code': result.exitCode,
+          'cli.success': result.success,
+        });
+        span.setStatus({ code: SpanStatusCode.OK });
+        span.end();
+      }
+
       if (result.success) {
         logger.info(`Command succeeded: ${command}`, {
           traceId: trace.id,
@@ -102,6 +125,17 @@ export class CommandWatcher {
       trace.durationMs = durationMs;
       trace.success = false;
       trace.stderr = err.message;
+
+      if (otelEnabled && span) {
+        span.setAttributes({
+          'cli.duration_ms': durationMs,
+          'cli.exit_code': -1,
+          'cli.success': false,
+        });
+        span.setStatus({ code: SpanStatusCode.ERROR, message: err.message });
+        span.recordException(err);
+        span.end();
+      }
 
       logger.error(`Command exception: ${command}`, {
         traceId: trace.id,

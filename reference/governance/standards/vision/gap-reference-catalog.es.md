@@ -228,9 +228,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** CLI expone `alias`, `completion`, `docs`, `drift`, `fixtures`, `history`, `profile`, `standards`, `update` sin equivalentes MCP/REST. REST expone operaciones que no están en MCP y viceversa.
 - **Complejidad:** L
 - **Hecho cuando:**
-  - [ ] Una matriz de paridad de superficies (legible por máquina) lista cada operación y las superficies que la exponen, con marcas explícitas `exempt:<razón>` donde la paridad no sea deseable.
-  - [ ] Un validador falla cuando una operación nueva aterriza en una superficie sin entrada de paridad.
-  - [ ] La matriz es la fuente de verdad para el generador de inventarios.
+  - [x] Una matriz de paridad de superficies (legible por máquina) lista cada operación y las superficies que la exponen, con marcas explícitas `exempt:<razón>` donde la paridad no sea deseable.
+  - [x] Un validador falla cuando una operación nueva aterriza en una superficie sin entrada de paridad.
+  - [x] La matriz es la fuente de verdad para el generador de inventarios.
 
 
 #### GT-172
@@ -241,9 +241,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** Los tests E2E de CLI, MCP smoke y E2E de REST mockean o stubean las otras superficies. Ningún test verifica que las tres superficies devuelven el mismo `GateEvidence` para el mismo input.
 - **Complejidad:** L
 - **Hecho cuando:**
-  - [ ] Una suite roundtrip bajo `tests/contract/` invoca el mismo input vía CLI, MCP (Streamable HTTP) y REST y verifica la equivalencia de envelope y evidencia.
-  - [ ] CI ejecuta la suite en PRs que toquen cualquiera de las tres superficies o los use cases compartidos.
-  - [ ] La suite queda documentada como la red de regresión de contrato para ADR-0073.
+  - [x] Una suite roundtrip bajo `tests/contract/` invoca el mismo input vía CLI, MCP (Streamable HTTP) y REST y verifica la equivalencia de envelope y evidencia.
+  - [x] CI ejecuta la suite en PRs que toquen cualquiera de las tres superficies o los use cases compartidos.
+  - [x] La suite queda documentada como la red de regresión de contrato para ADR-0073.
 
 
 #### GT-173
@@ -254,9 +254,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** Core API exporta traces OTLP (`tracing.ts`); CLI escribe `CommandTrace` local en JSON; el servidor MCP no tiene exportación estructurada de traces ni métricas.
 - **Complejidad:** M
 - **Hecho cuando:**
-  - [ ] El servidor MCP emite traces OTLP usando el mismo trace ID propagado vía `correlationId` (GT-160) y los exporta por OTLP.
-  - [ ] CLI exporta OTLP opcionalmente cuando se configura, preservando su trace local como modo offline por defecto.
-  - [ ] Un dashboard compartido demuestra un workflow agéntico hilado en las tres superficies.
+  - [x] El servidor MCP emite traces OTLP usando el mismo trace ID propagado vía `correlationId` (GT-160) y los exporta por OTLP.
+  - [x] CLI exporta OTLP opcionalmente cuando se configura, preservando su trace local como modo offline por defecto.
+  - [x] Un dashboard compartido demuestra un workflow agéntico hilado en las tres superficies.
 
 
 #### GT-174

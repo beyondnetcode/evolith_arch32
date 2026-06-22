@@ -2568,6 +2568,50 @@
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-171",
+      "closedAt": "2026-06-22",
+      "closureCommit": "804411ca",
+      "evidence": [
+        "reference/governance/standards/vision/surface-parity-matrix.json",
+        "reference/governance/standards/vision/surface-parity-matrix.schema.json",
+        ".harness/scripts/ci/05-check-surface-parity.mjs"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/05-check-surface-parity.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-172",
+      "closedAt": "2026-06-22",
+      "closureCommit": "804411ca",
+      "evidence": [
+        "tests/contract/roundtrip-gate-evaluate.mjs",
+        "tests/contract/roundtrip-gate-evaluate.spec.ts",
+        "tests/contract/jest.config.js",
+        "tests/contract/tsconfig.json",
+        "tests/contract/package.json"
+      ],
+      "validationCommands": [
+        "node tests/contract/roundtrip-gate-evaluate.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-173",
+      "closedAt": "2026-06-22",
+      "closureCommit": "804411ca",
+      "evidence": [
+        "packages/mcp-server/src/tracing.ts",
+        "sdk/cli/src/infrastructure/observability/otel-tracing.ts"
+      ],
+      "validationCommands": [
+        "npm run build --workspace packages/mcp-server",
+        "npm run build --workspace sdk/cli"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

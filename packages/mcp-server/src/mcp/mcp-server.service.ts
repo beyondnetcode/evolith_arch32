@@ -14,6 +14,7 @@ import {
   ListPromptsRequestSchema,
   GetPromptRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
+import { context as otelContext, propagation, SpanStatusCode, trace } from '@opentelemetry/api';
 import { ToolRegistryService } from './tool-registry.service';
 import { MetricsService } from './metrics.service';
 import { ResourcesService } from './resources.service';
@@ -52,6 +53,7 @@ export interface ToolCallResult {
 
 const SERVER_NAME = 'evolith-mcp-server';
 const SERVER_VERSION = '1.0.0';
+const tracer = trace.getTracer(SERVER_NAME);
 
 /**
  * Owns the MCP SDK {@link Server}, wires JSON-RPC handlers to the
@@ -197,14 +199,46 @@ export class McpServerService {
       }));
     }
 
+    // OTel: extract remote context from traceparent (if provided in args)
+    const traceparent = args.traceparent as string | undefined;
+    const otelGetter = { get: (c: Record<string, string>, k: string) => c[k], keys: (c: Record<string, string>) => Object.keys(c) };
+    const otelCtx = traceparent
+      ? propagation.extract(otelContext.active(), { traceparent }, otelGetter)
+      : otelContext.active();
+
+    const span = tracer.startSpan(
+      `mcp.tool.${name}`,
+      {
+        attributes: {
+          'correlation.id': correlationId,
+          'tool.name': name,
+          'tool.mutative': !!tool.mutative,
+          ...(initiative ? { 'evolith.initiative': initiative } : {}),
+          ...(tenant ? { 'evolith.tenant': tenant } : {}),
+          ...(phase ? { 'evolith.phase': phase } : {}),
+        },
+      },
+      otelCtx,
+    );
+
     try {
-      const data = await runWithContext({ correlationId, initiative, tenant, phase }, () => tool.execute(args));
+      const data = await otelContext.with(trace.setSpan(otelCtx, span), () =>
+        runWithContext({ correlationId, initiative, tenant, phase }, () => tool.execute(args)),
+      );
       const durationMs = Date.now() - startTime;
+      span.setStatus({ code: SpanStatusCode.OK });
+      span.setAttribute('tool.duration_ms', durationMs);
+      span.end();
       this.metrics.recordToolCall(name, durationMs, true);
       const env = success(data, meta(durationMs));
       return { content: [{ type: 'text', text: JSON.stringify(env, null, 2) }] };
     } catch (err) {
       const durationMs = Date.now() - startTime;
+      const message = err instanceof Error ? err.message : String(err);
+      span.setStatus({ code: SpanStatusCode.ERROR, message });
+      span.setAttribute('tool.duration_ms', durationMs);
+      span.recordException(err instanceof Error ? err : new Error(String(err)));
+      span.end();
       const env = toErrorEnvelope(err, meta(durationMs));
       this.metrics.recordToolCall(name, durationMs, false);
       this.metrics.recordError(env.error.message.substring(0, 80));
@@ -284,6 +318,7 @@ export class McpServerService {
   private async startHttp(port: number): Promise<void> {
     const transport = new StreamableHTTPServerTransport({
       sessionIdGenerator: () => generateCorrelationId(),
+      enableJsonResponse: true,
     });
 
     this.httpServer = http.createServer((req, res) => {

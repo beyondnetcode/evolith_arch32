@@ -1,0 +1,400 @@
+{
+  "$schema": "./surface-parity-matrix.schema.json",
+  "version": "1.0.0",
+  "description": "Machine-readable surface-parity matrix (GT-171). Lists every operation across CLI, MCP, and REST surfaces with explicit exempt markers where parity is not desirable. This matrix is the source of truth for the inventory generator and is validated by CI.",
+  "lastReviewed": "2026-06-21",
+  "operations": [
+    {
+      "id": "gate-evaluate",
+      "name": "Phase gate evaluation",
+      "description": "Evaluate a specific SDLC phase gate (discovery/design/construction/qa/release) and emit GateEvidence",
+      "cli": { "exposed": true, "command": "gate evaluate" },
+      "mcp": { "exposed": true, "tool": "evolith-gate-evaluate" },
+      "rest": { "exposed": true, "endpoint": "POST /api/v1/gates/:gateId/evaluate" }
+    },
+    {
+      "id": "phase-advance",
+      "name": "Phase transition proposal",
+      "description": "Propose an SDLC phase transition by evaluating exit criteria",
+      "cli": { "exposed": true, "command": "phase advance" },
+      "mcp": { "exposed": true, "tool": "evolith-phase-advance" },
+      "rest": { "exposed": true, "endpoint": "POST /api/v1/phases/transition" }
+    },
+    {
+      "id": "validate-satellite",
+      "name": "Validate satellite compliance",
+      "description": "Validate a satellite repository against Evolith governance standards",
+      "cli": { "exposed": true, "command": "validate" },
+      "mcp": { "exposed": true, "tool": "evolith-validate" },
+      "rest": { "exposed": true, "endpoint": "POST /api/v1/architecture/validate-satellite" }
+    },
+    {
+      "id": "architecture-validate",
+      "name": "Architecture rules validation",
+      "description": "Validate repository architecture against F1/F2/F3 rules with optional deep analysis",
+      "cli": { "exposed": true, "command": "validate --arch" },
+      "mcp": { "exposed": true, "tool": "evolith-architecture-validate" },
+      "rest": { "exposed": true, "endpoint": "POST /api/v1/architecture/validate-satellite" }
+    },
+    {
+      "id": "detect-drift",
+      "name": "Architecture drift detection",
+      "description": "Detect architecture drift between declared level and actual codebase",
+      "cli": { "exposed": true, "command": "drift" },
+      "mcp": { "exposed": true, "tool": "evolith-drift-detect" },
+      "rest": { "exposed": true, "endpoint": "POST /api/v1/architecture/detect-drift" }
+    },
+    {
+      "id": "init-project",
+      "name": "Initialize satellite project",
+      "description": "Initialize a new Evolith satellite repository",
+      "cli": { "exposed": true, "command": "init" },
+      "mcp": { "exposed": false, "exempt": "interactive-wizard; MCP tools cannot drive multi-step interactive prompts" },
+      "rest": { "exposed": true, "endpoint": "POST /api/v1/projects/initialize" }
+    },
+    {
+      "id": "propose-advance",
+      "name": "Propose phase advance",
+      "description": "Propose a phase advance for a project",
+      "cli": { "exposed": false, "exempt": "covered by `phase advance` which already returns isRecommended flag" },
+      "mcp": { "exposed": false, "exempt": "covered by `evolith-phase-advance` which already returns isRecommended flag" },
+      "rest": { "exposed": true, "endpoint": "POST /api/v1/projects/propose-advance" }
+    },
+    {
+      "id": "sdlc-status",
+      "name": "SDLC phase status",
+      "description": "Get current SDLC phase status showing which artifacts are present per phase",
+      "cli": { "exposed": true, "command": "sdlc gate-status" },
+      "mcp": { "exposed": true, "tool": "evolith-sdlc-status" },
+      "rest": { "exposed": false, "exempt": "low-value for machine clients; gate status is a byproduct of gate evaluate" }
+    },
+    {
+      "id": "sdlc-handoff",
+      "name": "SDLC phase handoff",
+      "description": "Perform a phase gate handoff with artifact generation",
+      "cli": { "exposed": true, "command": "sdlc handoff" },
+      "mcp": { "exposed": true, "tool": "evolith-sdlc-handoff" },
+      "rest": { "exposed": false, "exempt": "handoff is interactive+filesystem; covered by POST /api/v1/phases/transition" }
+    },
+    {
+      "id": "sdlc-generate",
+      "name": "Generate code from DDD models",
+      "description": "Generate hexagonal architecture scaffold from Mermaid classDiagram in DDD model file",
+      "cli": { "exposed": true, "command": "sdlc generate" },
+      "mcp": { "exposed": false, "exempt": "filesystem-scaffolding only; low value for agentic workflows" },
+      "rest": { "exposed": false, "exempt": "filesystem-scaffolding only; filesystem operation" }
+    },
+    {
+      "id": "dora-metrics",
+      "name": "DORA metrics",
+      "description": "Calculate DORA metrics (deployment frequency, lead time for changes) from Git history",
+      "cli": { "exposed": true, "command": "sdlc gate-status" },
+      "mcp": { "exposed": true, "tool": "evolith-dora-metrics" },
+      "rest": { "exposed": false, "exempt": "low-value via REST; needs git access on server side" }
+    },
+    {
+      "id": "topology-list",
+      "name": "List architecture topologies",
+      "description": "List all available architecture topologies from the Evolith catalog",
+      "cli": { "exposed": false, "exempt": "available via `evolith api` browser; low-value as standalone CLI command" },
+      "mcp": { "exposed": true, "tool": "evolith-topology-list" },
+      "rest": { "exposed": true, "endpoint": "GET /api/v1/architecture/topologies" }
+    },
+    {
+      "id": "topology-get",
+      "name": "Get topology by ID",
+      "description": "Get a specific architecture topology by ID from the catalog",
+      "cli": { "exposed": false, "exempt": "available via `evolith api --inspect`; low-value as standalone CLI command" },
+      "mcp": { "exposed": true, "tool": "evolith-topology-get" },
+      "rest": { "exposed": true, "endpoint": "GET /api/v1/architecture/topologies/:id" }
+    },
+    {
+      "id": "rulesets-list",
+      "name": "List Core rulesets",
+      "description": "List the Core rulesets available to API clients",
+      "cli": { "exposed": false, "exempt": "available via `evolith standards --list`" },
+      "mcp": { "exposed": false, "exempt": "low priority; MCP agents use evolith-validate which loads rulesets internally" },
+      "rest": { "exposed": true, "endpoint": "GET /api/v1/rulesets" }
+    },
+    {
+      "id": "rulesets-get",
+      "name": "Get ruleset by ID",
+      "description": "Fetch one Core ruleset by its canonical identifier",
+      "cli": { "exposed": false, "exempt": "available via `evolith standards --get <id>`" },
+      "mcp": { "exposed": false, "exempt": "low priority; MCP agents use evolith-validate which loads rulesets internally" },
+      "rest": { "exposed": true, "endpoint": "GET /api/v1/rulesets/:id" }
+    },
+    {
+      "id": "gate-definition",
+      "name": "Get gate definition",
+      "description": "Fetch the definition of an SDLC phase gate",
+      "cli": { "exposed": false, "exempt": "available via `evolith api --inspect`; low-value as standalone CLI command" },
+      "mcp": { "exposed": false, "exempt": "gate metadata is embedded in evolith-gate-evaluate response" },
+      "rest": { "exposed": true, "endpoint": "GET /api/v1/gates/:gateId" }
+    },
+    {
+      "id": "phase-requirements",
+      "name": "Get phase requirements",
+      "description": "Fetch the evidence and blocking requirements for an SDLC phase",
+      "cli": { "exposed": false, "exempt": "available via `evolith api --inspect`; low-value as standalone CLI command" },
+      "mcp": { "exposed": false, "exempt": "requirements metadata is embedded in evolith-gate-evaluate response" },
+      "rest": { "exposed": true, "endpoint": "GET /api/v1/phases/:phase/requirements" }
+    },
+    {
+      "id": "health-check",
+      "name": "Service health check",
+      "description": "Service health, liveness, and readiness probes",
+      "cli": { "exposed": false, "exempt": "infra-only; orchestrator-facing endpoints" },
+      "mcp": { "exposed": false, "exempt": "infra-only; orchestrator-facing endpoints" },
+      "rest": { "exposed": true, "endpoint": "GET /health, /health/live, /health/ready" }
+    },
+    {
+      "id": "metrics-prometheus",
+      "name": "Prometheus metrics",
+      "description": "Prometheus metrics endpoint (text exposition format)",
+      "cli": { "exposed": false, "exempt": "infra-only; Prometheus scraper endpoint" },
+      "mcp": { "exposed": true, "tool": "evolith-metrics" },
+      "rest": { "exposed": true, "endpoint": "GET /metrics" }
+    },
+    {
+      "id": "mcp-metrics",
+      "name": "MCP server metrics",
+      "description": "Get MCP server metrics snapshot (per-tool call counts, latency, failures)",
+      "cli": { "exposed": false, "exempt": "internal to MCP server process" },
+      "mcp": { "exposed": true, "tool": "evolith-metrics" },
+      "rest": { "exposed": false, "exempt": "MCP-process-internal metrics; REST has its own /metrics" }
+    },
+    {
+      "id": "agents-install",
+      "name": "Install agent",
+      "description": "Install a new Evolith agent into a satellite repository",
+      "cli": { "exposed": true, "command": "agents install" },
+      "mcp": { "exposed": true, "tool": "evolith-agent-install" },
+      "rest": { "exposed": false, "exempt": "filesystem-local operation; low-value via REST" }
+    },
+    {
+      "id": "agents-list",
+      "name": "List agents",
+      "description": "List all installed Evolith agents in a repository",
+      "cli": { "exposed": true, "command": "agents list" },
+      "mcp": { "exposed": true, "tool": "evolith-agent-list" },
+      "rest": { "exposed": false, "exempt": "filesystem-local operation; low-value via REST" }
+    },
+    {
+      "id": "agents-validate",
+      "name": "Validate agent ruleset",
+      "description": "Validate a specific agent's ruleset structure",
+      "cli": { "exposed": true, "command": "agents validate" },
+      "mcp": { "exposed": true, "tool": "evolith-agent-validate" },
+      "rest": { "exposed": false, "exempt": "filesystem-local operation; low-value via REST" }
+    },
+    {
+      "id": "agents-upgrade",
+      "name": "Upgrade agent",
+      "description": "Upgrade an existing Evolith agent by incrementing patch version",
+      "cli": { "exposed": true, "command": "agents upgrade" },
+      "mcp": { "exposed": true, "tool": "evolith-agent-upgrade" },
+      "rest": { "exposed": false, "exempt": "filesystem-local operation; low-value via REST" }
+    },
+    {
+      "id": "agents-remove",
+      "name": "Remove agent",
+      "description": "Remove an Evolith agent by deleting its ruleset directory",
+      "cli": { "exposed": true, "command": "agents remove" },
+      "mcp": { "exposed": true, "tool": "evolith-agent-remove" },
+      "rest": { "exposed": false, "exempt": "filesystem-local operation; low-value via REST" }
+    },
+    {
+      "id": "moscow-create",
+      "name": "Create MoSCoW analysis",
+      "description": "Create a new MoSCoW prioritization analysis",
+      "cli": { "exposed": false, "exempt": "low priority; CLI users can create via file editing" },
+      "mcp": { "exposed": true, "tool": "evolith-moscow-create" },
+      "rest": { "exposed": false, "exempt": "low priority; not requested by any consumer" }
+    },
+    {
+      "id": "moscow-load",
+      "name": "Load MoSCoW analysis",
+      "description": "Load an existing MoSCoW analysis by phase identifier",
+      "cli": { "exposed": false, "exempt": "low priority; CLI users can read files directly" },
+      "mcp": { "exposed": true, "tool": "evolith-moscow-load" },
+      "rest": { "exposed": false, "exempt": "low priority; not requested by any consumer" }
+    },
+    {
+      "id": "moscow-update",
+      "name": "Update MoSCoW item",
+      "description": "Update a specific item in a MoSCoW analysis",
+      "cli": { "exposed": false, "exempt": "low priority; CLI users can edit files directly" },
+      "mcp": { "exposed": true, "tool": "evolith-moscow-update" },
+      "rest": { "exposed": false, "exempt": "low priority; not requested by any consumer" }
+    },
+    {
+      "id": "moscow-remove",
+      "name": "Remove MoSCoW item",
+      "description": "Remove a specific item from a MoSCoW analysis",
+      "cli": { "exposed": false, "exempt": "low priority; CLI users can edit files directly" },
+      "mcp": { "exposed": true, "tool": "evolith-moscow-remove" },
+      "rest": { "exposed": false, "exempt": "low priority; not requested by any consumer" }
+    },
+    {
+      "id": "moscow-list",
+      "name": "List MoSCoW analyses",
+      "description": "List all MoSCoW analyses in a repository",
+      "cli": { "exposed": false, "exempt": "low priority; CLI users can list files directly" },
+      "mcp": { "exposed": true, "tool": "evolith-moscow-list" },
+      "rest": { "exposed": false, "exempt": "low priority; not requested by any consumer" }
+    },
+    {
+      "id": "moscow-validate",
+      "name": "Validate MoSCoW analysis",
+      "description": "Validate a MoSCoW analysis against rules (60/20/20 split)",
+      "cli": { "exposed": false, "exempt": "low priority; not requested by any consumer" },
+      "mcp": { "exposed": true, "tool": "evolith-moscow-validate" },
+      "rest": { "exposed": false, "exempt": "low priority; not requested by any consumer" }
+    },
+    {
+      "id": "moscow-report",
+      "name": "Generate MoSCoW report",
+      "description": "Generate a markdown report of a MoSCoW analysis",
+      "cli": { "exposed": false, "exempt": "low priority; CLI users can generate manually" },
+      "mcp": { "exposed": true, "tool": "evolith-moscow-report" },
+      "rest": { "exposed": false, "exempt": "low priority; not requested by any consumer" }
+    },
+    {
+      "id": "config-get",
+      "name": "Get evolith config",
+      "description": "Get a configuration value from evolith.yaml by dot-notation key",
+      "cli": { "exposed": false, "exempt": "low priority; CLI users can read evolith.yaml directly" },
+      "mcp": { "exposed": true, "tool": "evolith-config-get" },
+      "rest": { "exposed": false, "exempt": "filesystem-local operation; low-value via REST" }
+    },
+    {
+      "id": "config-set",
+      "name": "Set evolith config",
+      "description": "Set a configuration value in evolith.yaml by dot-notation key",
+      "cli": { "exposed": false, "exempt": "low priority; CLI users can edit evolith.yaml directly" },
+      "mcp": { "exposed": true, "tool": "evolith-config-set" },
+      "rest": { "exposed": false, "exempt": "filesystem-local operation; low-value via REST" }
+    },
+    {
+      "id": "auto-fix",
+      "name": "Auto-fix violations",
+      "description": "Apply automatic fixes to architectural violations",
+      "cli": { "exposed": false, "exempt": "low priority; CLI can use `drift` then manual fix" },
+      "mcp": { "exposed": true, "tool": "evolith-auto-fix" },
+      "rest": { "exposed": false, "exempt": "high-risk mutative operation; agent-only" }
+    },
+    {
+      "id": "adr-crud",
+      "name": "ADR management",
+      "description": "Create, list, get, update, and matrix view for Architecture Decision Records",
+      "cli": { "exposed": true, "command": "adr" },
+      "mcp": { "exposed": false, "exempt": "low priority; not requested by any consumer" },
+      "rest": { "exposed": false, "exempt": "low priority; not requested by any consumer" }
+    },
+    {
+      "id": "standards-crud",
+      "name": "Standards management",
+      "description": "Initialize, list, get, validate, and export corporate standards",
+      "cli": { "exposed": true, "command": "standards" },
+      "mcp": { "exposed": false, "exempt": "standards content is embedded in validate/architecture-validate tool responses" },
+      "rest": { "exposed": false, "exempt": "low priority; not requested by any consumer" }
+    },
+    {
+      "id": "docs-scaffold",
+      "name": "Scaffold documentation",
+      "description": "Create standard Evolith documentation scaffold (README, AGENTS, MASTER_INDEX, evolith.yaml)",
+      "cli": { "exposed": true, "command": "docs" },
+      "mcp": { "exposed": false, "exempt": "filesystem-scaffolding only; low-value for agents" },
+      "rest": { "exposed": false, "exempt": "filesystem-scaffolding only; filesystem operation" }
+    },
+    {
+      "id": "scaffold-architecture",
+      "name": "Scaffold architecture",
+      "description": "Scaffold monolithic modular and microfrontend architecture in workspace",
+      "cli": { "exposed": true, "command": "scaffold" },
+      "mcp": { "exposed": false, "exempt": "filesystem-scaffolding only; low-value for agents" },
+      "rest": { "exposed": false, "exempt": "filesystem-scaffolding only; filesystem operation" }
+    },
+    {
+      "id": "history",
+      "name": "Command history",
+      "description": "View and manage CLI command execution history",
+      "cli": { "exposed": true, "command": "history" },
+      "mcp": { "exposed": false, "exempt": "CLI-process-local; not applicable to MCP" },
+      "rest": { "exposed": false, "exempt": "CLI-process-local; not applicable to REST" }
+    },
+    {
+      "id": "completion",
+      "name": "Shell completion",
+      "description": "Generate shell completion scripts and hooks for CLI",
+      "cli": { "exposed": true, "command": "completion" },
+      "mcp": { "exposed": false, "exempt": "shell-only feature; not applicable to MCP or REST" },
+      "rest": { "exposed": false, "exempt": "shell-only feature; not applicable to REST" }
+    },
+    {
+      "id": "profile",
+      "name": "CLI profile management",
+      "description": "Manage CLI named profiles for environment context",
+      "cli": { "exposed": true, "command": "profile" },
+      "mcp": { "exposed": false, "exempt": "CLI-process-local; MCP uses its own auth context" },
+      "rest": { "exposed": false, "exempt": "CLI-process-local; not applicable to REST" }
+    },
+    {
+      "id": "mcp-serve",
+      "name": "MCP server start",
+      "description": "Start the MCP server for AI agent integration",
+      "cli": { "exposed": true, "command": "mcp serve" },
+      "mcp": { "exposed": false, "exempt": "MCP server IS the surface; cannot serve itself" },
+      "rest": { "exposed": false, "exempt": "MCP server IS the surface; cannot serve itself" }
+    },
+    {
+      "id": "alias",
+      "name": "Command alias management",
+      "description": "Manage user-defined command aliases",
+      "cli": { "exposed": true, "command": "alias" },
+      "mcp": { "exposed": false, "exempt": "CLI-only UX feature; not applicable to MCP or REST" },
+      "rest": { "exposed": false, "exempt": "CLI-only UX feature; not applicable to REST" }
+    },
+    {
+      "id": "fixtures",
+      "name": "Generate fixtures",
+      "description": "Seed reproducible test/demo fixtures (evolith.yaml, ADRs, rulesets)",
+      "cli": { "exposed": true, "command": "fixtures" },
+      "mcp": { "exposed": false, "exempt": "low priority; development-only utility" },
+      "rest": { "exposed": false, "exempt": "low priority; development-only utility" }
+    },
+    {
+      "id": "api-browser",
+      "name": "API surface browser",
+      "description": "Browse and inspect the Evolith API surface across MCP tools, resources, schemas, and CLI commands",
+      "cli": { "exposed": true, "command": "api" },
+      "mcp": { "exposed": false, "exempt": "meta-observation; MCP discovers tools via tools/list inherently" },
+      "rest": { "exposed": false, "exempt": "meta-observation; available via OpenAPI docs at /api/docs" }
+    },
+    {
+      "id": "update-cli",
+      "name": "CLI self-update",
+      "description": "Check for CLI updates and apply them",
+      "cli": { "exposed": true, "command": "update" },
+      "mcp": { "exposed": false, "exempt": "CLI-process-local; not applicable to MCP" },
+      "rest": { "exposed": false, "exempt": "CLI-process-local; not applicable to REST" }
+    },
+    {
+      "id": "init-wizard",
+      "name": "Interactive init wizard",
+      "description": "Guided step-by-step initialization wizard for project setup",
+      "cli": { "exposed": true, "command": "init-wizard" },
+      "mcp": { "exposed": false, "exempt": "interactive-only feature; requires TTY, not applicable to MCP" },
+      "rest": { "exposed": false, "exempt": "interactive-only feature; not applicable to REST" }
+    },
+    {
+      "id": "upgrade-satellite",
+      "name": "Upgrade satellite",
+      "description": "Upgrade satellite repository to match core with version diff and risk assessment",
+      "cli": { "exposed": true, "command": "upgrade" },
+      "mcp": { "exposed": false, "exempt": "low priority; complex interactive operation" },
+      "rest": { "exposed": false, "exempt": "low priority; complex filesystem operation" }
+    }
+  ]
+}

@@ -1855,9 +1855,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Done When:** Content migrated to `patterns/README.es.md`, subdirectory removed.
 
 #### GT-177
-**Purpose:** Complete `core/README.md` with missing ADRs 0073-0077.
-**Current Evidence:** `core/README.md` lists only ADRs up to 0072.
-**Done When:** All ADRs 0073-0077 listed with links and summaries.
+**Purpose:** Complete `core/README.md` with all 21 missing ADRs.
+**Current Evidence:** `core/README.md` lists only 54 of 74 ADRs (missing ADRs 0041, 0073-0079, 0084-0098).
+**Done When:** All 74 ADRs listed in `core/README.md` with links and summaries.
 
 #### GT-178
 **Purpose:** Rebuild `core/README.es.md` with all ADRs (currently only shows up to ADR-0056).
@@ -2013,3 +2013,18 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Schedule ADR-0077 re-evaluation reminder (MassTransit v8 EOL end-2026).
 **Current Evidence:** No scheduled review for MassTransit v8 EOL.
 **Done When:** Calendar reminder set and documented in ADR-0077.
+
+#### GT-209
+**Purpose:** Create `reference/architecture/agnostic-baseline.md` — the agnostic architectural baseline is missing.
+**Current Evidence:** The file `reference/architecture/agnostic-baseline.md` does not exist despite being referenced as a core document.
+**Done When:** `reference/architecture/agnostic-baseline.md` exists with agnostic baseline principles, patterns, and constraints.
+
+#### GT-210
+**Purpose:** Complete SDLC lifecycle with Phase 05 (missing phase).
+**Current Evidence:** Only SDLC phases 01 (Playbooks), 02 (Engineering), 03 (Documentation), and 04 (Artifact Templates) exist. Phase 05 is absent.
+**Done When:** Phase 05 directory and at least README.md exist with phase scope, inputs, outputs, and quality gates.
+
+#### GT-211
+**Purpose:** Create English counterparts for orphan Spanish-only ADRs (0041, 0095, 0096).
+**Current Evidence:** ADR-0041, ADR-0095, and ADR-0096 exist only as `.es.md` files without English originals, violating bilingual parity.
+**Done When:** All three ADRs have English `.md` counterparts with identical structure.

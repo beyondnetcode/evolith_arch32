@@ -224,8 +224,13 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-206`](./gap-reference-catalog.md#gt-206) | Formalize BILINGUAL_INDEX nesting rule | `Docs` | Cross | P3 | S | `PENDING` |
 | [`GT-207`](./gap-reference-catalog.md#gt-207) | Standardize ADR heading format | `Docs` | Cross | P3 | S | `PENDING` |
 | [`GT-208`](./gap-reference-catalog.md#gt-208) | Schedule ADR-0077 re-evaluation reminder | `Docs` | Cross | P3 | S | `PENDING` |
+| [`GT-209`](./gap-reference-catalog.md#gt-209) | Create agnostic baseline (`agnostic-baseline.md` missing) | `Architecture` | Cross | P0 | M | `PENDING` |
+| [`GT-210`](./gap-reference-catalog.md#gt-210) | Complete SDLC Phase 05 (missing phase) | `SDLC` | Cross | P1 | M | `PENDING` |
+| [`GT-211`](./gap-reference-catalog.md#gt-211) | Create EN counterparts for 3 orphan ES-only ADRs | `Docs` | Cross | P2 | S | `PENDING` |
 
-**Progress:** 177 / 211 done · 0 in progress · 34 pending · 0 deferred
+**Progress:** 177 / 214 done · 0 in progress · 37 pending · 0 deferred
+
+**Wave 2026-06-22 (Wilson deep audit):** Added 3 new gaps `GT-209`…`GT-211`: missing agnostic baseline, incomplete SDLC Phase 05, and orphan Spanish-only ADRs without English counterparts.
 
 **Wave 2026-06-21 (Wilson deep audit):** Added 20 new gaps `GT-155`…`GT-174` covering Core API envelope conformance, command-as-a-service surface parity, MCP authn/authz, OPA schemas/aggregator tests, topology manifest validation, SDLC runbooks/templates, Core API and UMS product hubs, agentic-AI operational budgets, OpenTelemetry parity, and envelope schema versioning.
 

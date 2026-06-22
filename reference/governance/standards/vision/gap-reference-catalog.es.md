@@ -1854,9 +1854,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Hecho Cuando:** Contenido migrado a `patterns/README.es.md`, subdirectorio eliminado.
 
 #### GT-177
-**Propósito:** Completar `core/README.md` con ADRs faltantes 0073-0077.
-**Evidencia Actual:** `core/README.md` solo lista ADRs hasta 0072.
-**Hecho Cuando:** Todos los ADRs 0073-0077 listados con enlaces y resúmenes.
+**Propósito:** Completar `core/README.md` con todos los 21 ADRs faltantes.
+**Evidencia Actual:** `core/README.md` lista solo 54 de 74 ADRs (faltan ADRs 0041, 0073-0079, 0084-0098).
+**Hecho Cuando:** Los 74 ADRs listados en `core/README.md` con enlaces y resúmenes.
 
 #### GT-178
 **Propósito:** Reconstruir `core/README.es.md` con todos los ADRs (actualmente solo muestra hasta ADR-0056).
@@ -2012,3 +2012,18 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Programar recordatorio de reevaluación de ADR-0077 (MassTransit v8 EOL fin 2026).
 **Evidencia Actual:** No hay revisión programada para EOL de MassTransit v8.
 **Hecho Cuando:** Recordatorio de calendario establecido y documentado en ADR-0077.
+
+#### GT-209
+**Propósito:** Crear `reference/architecture/agnostic-baseline.md` — el baseline arquitectónico agnóstico está ausente.
+**Evidencia Actual:** El archivo `reference/architecture/agnostic-baseline.md` no existe a pesar de ser referenciado como documento core.
+**Hecho Cuando:** `reference/architecture/agnostic-baseline.md` existe con principios, patrones y restricciones del baseline agnóstico.
+
+#### GT-210
+**Propósito:** Completar SDLC con Fase 05 (fase faltante).
+**Evidencia Actual:** Solo existen fases SDLC 01 (Playbooks), 02 (Ingeniería), 03 (Documentación), y 04 (Plantillas de Artefactos). Fase 05 ausente.
+**Hecho Cuando:** Directorio Fase 05 y al menos README.md existen con alcance, entradas, salidas y quality gates.
+
+#### GT-211
+**Propósito:** Crear contrapartes EN para 3 ADRs solo-ES huérfanos (0041, 0095, 0096).
+**Evidencia Actual:** ADR-0041, ADR-0095, y ADR-0096 existen solo como `.es.md` sin original EN, violando paridad bilingüe.
+**Hecho Cuando:** Los tres ADRs tienen contrapartes `.md` EN con estructura idéntica.

@@ -2614,6 +2614,24 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-176",
+      "closedAt": "2026-06-22",
+      "closureCommit": "825a668a",
+      "evidence": [
+        "reference/knowledge/architecture-intelligence/patterns/modular-monolith-first.md",
+        "reference/knowledge/architecture-intelligence/patterns/modular-monolith-first.es.md",
+        "reference/knowledge/architecture-intelligence/patterns/no-cross-domain-joins.md",
+        "reference/knowledge/architecture-intelligence/patterns/contract-first-integration.md",
+        "reference/knowledge/architecture-intelligence/patterns/data-ownership-per-bounded-context.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-175",
       "closedAt": "2026-06-22",
       "closureCommit": "47e670b7",

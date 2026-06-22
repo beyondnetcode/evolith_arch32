@@ -162,6 +162,8 @@ Verificación de regresión, escaneo de seguridad, UAT y sellado de RC.
 | Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
 |---|---|---|---|---|
 | [Test Summary Report — Registro de Validación QA](./04-artifact-templates/test-summary-report-template.es.md) | Agrega resultados de pruebas unit, integration y E2E; confirma gates cumplidos o waived antes del sello | Consolidar la evidencia de QA | Plantilla | Sí |
+| [Plantilla de Reporte de Escaneo de Seguridad](./04-artifact-templates/security-scan-report-template.es.md) | Hallazgos SAST/DAST/SCA/IaC contra la política productiva de CVEs | Demostrar la postura de seguridad antes del sello | Plantilla | Sí |
+| [Plantilla de Evidencia de Integración](./04-artifact-templates/integration-evidence-template.es.md) | Ejercitar cada contrato declarado entre componentes antes del sello | Demostrar cobertura de integración | Plantilla | Sí |
 | [Gates de Calidad SDLC](./quality-gates.es.md) | Umbrales usados para confirmar si un RC puede sellarse o debe bloquearse | Decidir el sellado del RC objetivamente | Estándar | Sí |
 | [Playbook Fase 4 — RC Estampado](./01-playbooks/phase-4-rc-stamp.es.md) | Runbook operativo del gate RC Stamped: calidad, seguridad, aceptación y pirámide de pruebas | Operacionalizar el gate | Playbook | Sí |
 | [Mapeo SDLC–Artefactos — Fase 4](./sdlc-evolith-artifact-mapping.es.md#5-fase-4-validación-y-qa) | Artefactos de QA requeridos para esta fase | Validar la completitud del gate | Referencia | No |
@@ -179,6 +181,7 @@ Despliegue a producción, validación de observabilidad y nominalidad de monitor
 | Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
 |---|---|---|---|---|
 | [Release Notes — Registro de Despliegue](./04-artifact-templates/release-notes-template.es.md) | Registro formal de despliegue: features, cambios breaking, fixes, rollback y baselines de observabilidad | Comunicar el release | Plantilla | Sí |
+| [Plantilla de Validación de Observabilidad](./04-artifact-templates/observability-validation-template.es.md) | Registra que métricas, logs, trazas y alertas son nominales en el cutover | Demostrar la observabilidad productiva | Plantilla | Sí |
 | [Playbook de Release Zero-Downtime](./01-playbooks/zero-downtime-release.es.md) | Runbook operativo para despliegues blue-green y canary | Desplegar sin downtime | Playbook | No |
 | [Mapeo SDLC–Artefactos — Fase 5](./sdlc-evolith-artifact-mapping.es.md#6-fase-5-entrega-y-operaciones) | Artefactos de delivery requeridos para esta fase | Validar la completitud del gate | Referencia | No |
 

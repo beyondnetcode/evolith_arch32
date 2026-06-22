@@ -57,7 +57,7 @@ The preferred strategy for high-throughput or highly-sensitive endpoints, minimi
 
 ## 3. Observability Checkpoints
 
-Before, during, and after the traffic cutover, the following telemetry must be monitored using the stack mandated by `core/ADR-0046` and `nodejs/ADR-0007`:
+The outcome of these checkpoints is recorded in the [Observability Validation artifact](../04-artifact-templates/observability-validation-template.md) (mandatory evidence for the Production Live gate). Before, during, and after the traffic cutover, the following telemetry must be monitored using the stack mandated by `core/ADR-0046` and `nodejs/ADR-0007`:
 
 - **Error Rates (HTTP 5xx):** Must not spike above the pre-deployment baseline.
 - **Latency (p95 and p99):** Must remain within the agreed-upon Service Level Objectives (SLOs).

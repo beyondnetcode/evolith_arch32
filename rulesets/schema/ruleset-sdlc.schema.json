@@ -35,6 +35,7 @@
               "properties": {
                 "artifact": { "type": "string" },
                 "schemaRef": { "type": "string" },
+                "templateRef": { "type": "string", "description": "Relative path to the canonical Markdown template that authors must use for this artifact." },
                 "status": { "type": "string" },
                 "validation": { "type": "string" }
               }

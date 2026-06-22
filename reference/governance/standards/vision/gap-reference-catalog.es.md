@@ -176,9 +176,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** `phase-gates.rules.json` exige Observability Validation, security scans, test reports e integration evidence, pero `04-artifact-templates/` carece de plantillas dedicadas para estos artefactos.
 - **Complejidad:** M
 - **Hecho cuando:**
-  - [ ] Existen archivos de plantilla para evidencia de Observabilidad, Seguridad, Resumen de Pruebas e Integración (EN + ES), referenciados por `phase-gates.rules.json`.
-  - [ ] El playbook de cada gate (GT-166) cita su plantilla.
-  - [ ] Una regla nativa falla cuando la evidencia de un gate no se ajusta al esquema de la plantilla.
+  - [x] Existen archivos de plantilla para evidencia de Observabilidad, Seguridad, Resumen de Pruebas e Integración (EN + ES), referenciados por `phase-gates.rules.json`.
+  - [x] El playbook de cada gate (GT-166) cita su plantilla.
+  - [x] Una regla nativa falla cuando la evidencia de un gate no se ajusta al esquema de la plantilla.
 
 
 #### GT-168

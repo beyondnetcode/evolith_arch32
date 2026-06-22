@@ -27,8 +27,9 @@ This playbook operationalises the RC Stamped gate. A Release Candidate may only 
 |---|---|---|---|
 | 1 | Test Summary Report | [`test-summary-report-template.md`](../04-artifact-templates/test-summary-report-template.md) · [`test-summary-report.schema.json`](../../../../rulesets/schema/test-summary-report.schema.json) | All quality gates green or explicitly waived; RC stamped by QA Lead and Tech Lead |
 | 2 | Acceptance Validation | UAT log / Product sign-off | Product Owner signs off that acceptance criteria are verified on the RC artefact |
-| 3 | Security Scan Report | SAST/DAST/SCA scanner output | Zero High/Critical CVEs in production-bound artefacts; Mediums tracked with remediation plan |
-| 4 | Pyramid Distribution | Coverage + test inventory | 70% unit / 20% integration / 10% E2E target met or deviation explained (ADR-0018) |
+| 3 | Security Scan Report | [`security-scan-report-template.md`](../04-artifact-templates/security-scan-report-template.md) · [`security-scan-report.schema.json`](../../../../rulesets/schema/security-scan-report.schema.json) | Zero High/Critical CVEs in production-bound artefacts; Mediums tracked with remediation plan; structure conforms to schema |
+| 4 | Integration Evidence | [`integration-evidence-template.md`](../04-artifact-templates/integration-evidence-template.md) · [`integration-evidence.schema.json`](../../../../rulesets/schema/integration-evidence.schema.json) | Every declared inter-component contract exercised with PASS or waiver; structure conforms to schema |
+| 5 | Pyramid Distribution | Coverage + test inventory | 70% unit / 20% integration / 10% E2E target met or deviation explained (ADR-0018) |
 
 The coverage threshold from [`quality-gates.md`](../quality-gates.md) (`>= 80%` business-logic coverage) applies. Pyramid distribution is not a substitute for coverage.
 

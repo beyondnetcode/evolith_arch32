@@ -185,6 +185,7 @@
         {
           "artifact": "Test Summary Report",
           "schemaRef": "../schema/test-summary-report.schema.json",
+          "templateRef": "../../reference/governance/sdlc/04-artifact-templates/test-summary-report-template.md",
           "validation": "All quality gates green or explicitly waived. RC stamped by QA Lead and Tech Lead."
         },
         {
@@ -193,7 +194,15 @@
         },
         {
           "artifact": "Security Scan Report",
-          "validation": "Zero High/Critical CVEs in production-bound artifacts"
+          "schemaRef": "../schema/security-scan-report.schema.json",
+          "templateRef": "../../reference/governance/sdlc/04-artifact-templates/security-scan-report-template.md",
+          "validation": "Zero High/Critical CVEs in production-bound artifacts; structure conforms to security-scan-report.schema.json"
+        },
+        {
+          "artifact": "Integration Evidence",
+          "schemaRef": "../schema/integration-evidence.schema.json",
+          "templateRef": "../../reference/governance/sdlc/04-artifact-templates/integration-evidence-template.md",
+          "validation": "Every declared inter-component contract exercised; no FAIL entries without waiver; structure conforms to integration-evidence.schema.json"
         },
         {
           "artifact": "Pyramid Distribution",
@@ -238,7 +247,9 @@
         },
         {
           "artifact": "Observability Validation",
-          "validation": "Metrics nominal, logs flowing, traces complete for all production paths"
+          "schemaRef": "../schema/observability-validation.schema.json",
+          "templateRef": "../../reference/governance/sdlc/04-artifact-templates/observability-validation-template.md",
+          "validation": "Metrics nominal, logs flowing, traces complete for all production paths; structure conforms to observability-validation.schema.json"
         },
         {
           "artifact": "Rollback Procedure",

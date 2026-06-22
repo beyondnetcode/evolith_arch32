@@ -176,9 +176,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** `phase-gates.rules.json` mandates Observability Validation, security scans, test reports, and integration evidence, but `04-artifact-templates/` lacks dedicated templates for these specific artifacts.
 - **Complexity:** M
 - **Done when:**
-  - [ ] Template files exist for Observability, Security, Test Summary, and Integration evidence (EN + ES), referenced by `phase-gates.rules.json`.
-  - [ ] Each gate's playbook (GT-166) cites its template.
-  - [ ] A native rule fails when a gate's evidence does not match the template's schema.
+  - [x] Template files exist for Observability, Security, Test Summary, and Integration evidence (EN + ES), referenced by `phase-gates.rules.json`.
+  - [x] Each gate's playbook (GT-166) cites its template.
+  - [x] A native rule fails when a gate's evidence does not match the template's schema.
 
 
 #### GT-168

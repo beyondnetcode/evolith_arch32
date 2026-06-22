@@ -133,6 +133,41 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-167",
+      "closedAt": "2026-06-21",
+      "closureCommit": "b6a67a60",
+      "evidence": [
+        "rulesets/schema/observability-validation.schema.json",
+        "rulesets/schema/security-scan-report.schema.json",
+        "rulesets/schema/integration-evidence.schema.json",
+        "rulesets/sdlc/phase-gates.rules.json",
+        "rulesets/schema/ruleset-sdlc.schema.json",
+        "reference/governance/sdlc/04-artifact-templates/observability-validation-template.md",
+        "reference/governance/sdlc/04-artifact-templates/observability-validation-template.es.md",
+        "reference/governance/sdlc/04-artifact-templates/security-scan-report-template.md",
+        "reference/governance/sdlc/04-artifact-templates/security-scan-report-template.es.md",
+        "reference/governance/sdlc/04-artifact-templates/integration-evidence-template.md",
+        "reference/governance/sdlc/04-artifact-templates/integration-evidence-template.es.md",
+        "reference/governance/sdlc/04-artifact-templates/test-summary-report-template.md",
+        "reference/governance/sdlc/04-artifact-templates/test-summary-report-template.es.md",
+        "reference/governance/sdlc/01-playbooks/phase-4-rc-stamp.md",
+        "reference/governance/sdlc/01-playbooks/phase-4-rc-stamp.es.md",
+        "reference/governance/sdlc/01-playbooks/zero-downtime-release.md",
+        "reference/governance/sdlc/01-playbooks/zero-downtime-release.es.md",
+        ".harness/scripts/ci/21-validate-phase-gate-templates.mjs",
+        "reference/governance/sdlc/README.md",
+        "reference/governance/sdlc/README.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/21-validate-phase-gate-templates.mjs",
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "GT-166 playbooks now cite each evidence template."
+    },
+    {
       "id": "GT-166",
       "closedAt": "2026-06-21",
       "closureCommit": "bbe5db91",

@@ -162,6 +162,8 @@ Regression verification, security scanning, UAT, and Release Candidate stamping.
 | Document | Description | Goal / Objective | Type | Mandatory |
 |---|---|---|---|---|
 | [Test Summary Report — QA Validation Record](./04-artifact-templates/test-summary-report-template.md) | Aggregates test results across unit, integration, and E2E; confirms gates met or waived before RC stamp | Consolidate QA evidence | Template | Yes |
+| [Security Scan Report Template](./04-artifact-templates/security-scan-report-template.md) | SAST/DAST/SCA/IaC findings against the production CVE policy | Prove security posture before RC stamp | Template | Yes |
+| [Integration Evidence Template](./04-artifact-templates/integration-evidence-template.md) | Exercise every declared inter-component contract before RC stamp | Prove integration coverage | Template | Yes |
 | [SDLC Quality Gates](./quality-gates.md) | Threshold baseline used to confirm whether an RC may be stamped or must be blocked | Decide RC stamping objectively | Standard | Yes |
 | [Phase 4 — RC Stamped Playbook](./01-playbooks/phase-4-rc-stamp.md) | Operational runbook for the RC Stamped gate: quality, security, acceptance, pyramid review | Operationalise the gate | Playbook | Yes |
 | [Artifact Mapping — Phase 4](./sdlc-evolith-artifact-mapping.md#5-phase-4-validation-and-qa) | Required QA artifacts for this phase | Validate gate completeness | Reference | No |
@@ -179,6 +181,7 @@ Production deployment, observability validation, and monitoring nominality.
 | Document | Description | Goal / Objective | Type | Mandatory |
 |---|---|---|---|---|
 | [Release Notes — Production Deployment Record](./04-artifact-templates/release-notes-template.md) | Formal deployment record: features, breaking changes, fixes, rollback procedures, observability baselines | Communicate the release | Template | Yes |
+| [Observability Validation Template](./04-artifact-templates/observability-validation-template.md) | Records that metrics, logs, traces, and alerts are nominal at cutover | Prove production observability | Template | Yes |
 | [Zero-Downtime Release Playbook](./01-playbooks/zero-downtime-release.md) | Operational runbook for blue-green and canary deployments | Deploy without downtime | Playbook | No |
 | [Artifact Mapping — Phase 5](./sdlc-evolith-artifact-mapping.md#6-phase-5-delivery-and-operations) | Delivery artifacts required for this phase | Validate gate completeness | Reference | No |
 

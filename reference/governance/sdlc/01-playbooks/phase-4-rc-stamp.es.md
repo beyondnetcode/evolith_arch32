@@ -27,8 +27,9 @@ Este playbook operacionaliza la compuerta RC Stamped. Un Release Candidate solo 
 |---|---|---|---|
 | 1 | Test Summary Report | [`test-summary-report-template.es.md`](../04-artifact-templates/test-summary-report-template.es.md) · [`test-summary-report.schema.json`](../../../../rulesets/schema/test-summary-report.schema.json) | Todas las quality gates en verde o con waiver; RC firmado por QA Lead y Tech Lead |
 | 2 | Validación de Aceptación | Bitácora UAT / firma del Product Owner | El Product Owner firma que los criterios de aceptación están verificados sobre el artefacto RC |
-| 3 | Reporte de Escaneo de Seguridad | Salida SAST/DAST/SCA | Cero CVEs High/Critical en artefactos productivos; los Medium llevan plan de remediación |
-| 4 | Distribución de la Pirámide | Cobertura + inventario de pruebas | Meta 70% unit / 20% integration / 10% E2E cumplida o desviación explicada (ADR-0018) |
+| 3 | Reporte de Escaneo de Seguridad | [`security-scan-report-template.es.md`](../04-artifact-templates/security-scan-report-template.es.md) · [`security-scan-report.schema.json`](../../../../rulesets/schema/security-scan-report.schema.json) | Cero CVEs High/Critical en artefactos productivos; los Medium con plan de remediación; estructura conforme al esquema |
+| 4 | Evidencia de Integración | [`integration-evidence-template.es.md`](../04-artifact-templates/integration-evidence-template.es.md) · [`integration-evidence.schema.json`](../../../../rulesets/schema/integration-evidence.schema.json) | Todo contrato declarado entre componentes ejercitado en PASS o con waiver; estructura conforme al esquema |
+| 5 | Distribución de la Pirámide | Cobertura + inventario de pruebas | Meta 70% unit / 20% integration / 10% E2E cumplida o desviación explicada (ADR-0018) |
 
 Aplica el umbral de cobertura de [`quality-gates.es.md`](../quality-gates.es.md) (`>= 80%` en lógica de negocio). La pirámide no sustituye a la cobertura.
 

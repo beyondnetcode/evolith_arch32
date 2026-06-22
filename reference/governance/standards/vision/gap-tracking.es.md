@@ -13,7 +13,6 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|
-| [`GT-180`](./gap-reference-catalog.es.md#gt-180) | Reemplazar `require()` entre capas con DI | `CLI` | Cross | P1 | M | `PENDIENTE` |
 | [`GT-181`](./gap-reference-catalog.es.md#gt-181) | Dividir archivos grandes en módulos pequeños | `CLI` | Cross | P1 | M | `PENDIENTE` |
 | [`GT-182`](./gap-reference-catalog.es.md#gt-182) | Agregar tests para Core Domain SDK | `SDK` | Cross | P1 | M | `PENDIENTE` |
 | [`GT-184`](./gap-reference-catalog.es.md#gt-184) | Eliminar `@ts-nocheck` de 19 archivos | `CLI` | Cross | P1 | M | `PENDIENTE` |
@@ -145,6 +144,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-55`](./gap-reference-catalog.es.md#gt-55) | Estrictez de TypeScript y eliminación de any implícito | `CLI` | Transversal | P1 | M | `COMPLETADO` |
 | [`GT-51`](./gap-reference-catalog.es.md#gt-51) | Validación de evidencia de gate Build-versus-Compose | `CLI` | F3 | P1 | M | `COMPLETADO` |
 | [`GT-49`](./gap-reference-catalog.es.md#gt-49) | Activar el modo estricto de TypeScript y puertos de filesystem tipados | `CLI` | Transversal | P1 | M | `COMPLETADO` |
+| [`GT-180`](./gap-reference-catalog.es.md#gt-180) | Reemplazar `require()` entre capas con imports ES / `import()` dinámico | `CLI` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-46`](./gap-reference-catalog.es.md#gt-46) | Límite de ownership del servicio HTTP de Core | `CLI` | F2 | P1 | M | `COMPLETADO` |
 | [`GT-45`](./gap-reference-catalog.es.md#gt-45) | Suite de conformidad de transporte y tools MCP | `CLI` | F2 | P1 | M | `COMPLETADO` |
 | [`GT-17`](./gap-reference-catalog.es.md#gt-17) | Consolidación DI y boundaries estrictos | `CLI` | F5 | P1 | M | `COMPLETADO` |
@@ -228,7 +228,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-160`](./gap-reference-catalog.es.md#gt-160) | Propagación de correlation-ID y contexto de solicitud entre superficies | `Cross` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-174`](./gap-reference-catalog.es.md#gt-174) | `meta.schemaVersion` y matriz de compatibilidad productor/consumidor | `Cross` | Cross | P2 | S | `COMPLETADO` |
 
-**Progreso:** 181 / 214 completados · 0 en progreso · 33 pendientes · 0 diferidos
+**Progreso:** 182 / 214 completados · 0 en progreso · 32 pendientes · 0 diferidos
 
 **Oleada 2026-06-21 (auditoría profunda de Wilson):** Añadidos 20 gaps nuevos `GT-155`…`GT-174` que cubren conformidad de envelope en Core API REST, paridad de superficies command-as-a-service, autenticación/autorización MCP, esquemas y tests de OPA, validación CI de manifests de topología, runbooks y plantillas SDLC, hubs de producto de Core API y UMS, presupuestos operativos de Agentic AI, paridad OpenTelemetry y versionado del envelope.
 

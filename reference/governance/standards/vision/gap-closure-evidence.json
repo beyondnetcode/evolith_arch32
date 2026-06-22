@@ -2614,6 +2614,22 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-180",
+      "closedAt": "2026-06-22",
+      "closureCommit": "3e4c7f71",
+      "evidence": [
+        "sdk/cli/src/commands/update/update.command.ts",
+        "sdk/cli/src/infrastructure/providers/node-filesystem.provider.ts",
+        "sdk/cli/src/infrastructure/plugins/plugin-loader.ts"
+      ],
+      "validationCommands": [
+        "npm run build --workspace sdk/cli",
+        "npm run test:unit --workspace sdk/cli",
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-177",
       "closedAt": "2026-06-22",
       "closureCommit": "a5b6b0a7",

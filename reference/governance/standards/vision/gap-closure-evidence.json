@@ -3,6 +3,37 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-161",
+      "closedAt": "2026-06-22",
+      "closureCommit": "644f047e",
+      "evidence": [
+        "rulesets/opa/schemas/governance.input.schema.json",
+        "rulesets/opa/schemas/mcp.input.schema.json",
+        "rulesets/opa/schemas/version-pinning.input.schema.json",
+        "rulesets/opa/schemas/cli-readiness.input.schema.json",
+        "rulesets/opa/schemas/knowledge-intake.input.schema.json",
+        "rulesets/opa/schemas/taxonomy.input.schema.json",
+        "rulesets/opa/schemas/ci-cd.input.schema.json",
+        "rulesets/opa/schemas/evidence.input.schema.json",
+        "rulesets/opa/schemas/abac-mcp-tool-access.input.schema.json",
+        "packages/core-domain/src/application/validators/evaluators/opa-evaluator.ts",
+        "packages/core-domain/src/application/validators/evaluators/opa-evaluator.spec.ts",
+        "rulesets/opa/README.md",
+        "rulesets/opa/README.es.md",
+        "rulesets/schema/README.md",
+        "rulesets/schema/README.es.md",
+        "rulesets/README.md",
+        "rulesets/README.es.md"
+      ],
+      "validationCommands": [
+        "npm run build --workspace packages/core-domain",
+        "npx jest packages/core-domain/src/application/validators/evaluators/opa-evaluator.spec.ts",
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-160",
       "closedAt": "2026-06-22",
       "closureCommit": "a8e70ac3",

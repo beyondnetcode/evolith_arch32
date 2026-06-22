@@ -13,7 +13,6 @@ This board is the single source of truth for technical debt, gaps, opportunities
 
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
 |---|---|---|:---:|:---:|:---:|:---:|
-| [`GT-161`](./gap-reference-catalog.md#gt-161) | Formal JSON input schemas for core OPA policies | `Schema` | Cross | P1 | M | `PENDING` |
 | [`GT-162`](./gap-reference-catalog.md#gt-162) | Aggregator `main.rego` unit tests and parity follow-through | `Rulesets` | Cross | P1 | M | `PENDING` |
 | [`GT-163`](./gap-reference-catalog.md#gt-163) | Topology manifest CI validation for referenced artifacts | `Rulesets` | Cross | P1 | M | `PENDING` |
 | [`GT-164`](./gap-reference-catalog.md#gt-164) | Event-driven and data-mesh ruleset richness | `Rulesets` | Cross | P1 | M | `PENDING` |
@@ -180,6 +179,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`MT-A04`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Authorize `rulesets/topologies/` as the canonical executable topology rules location | `Rulesets` | Cross | P0 | S | `DONE` |
 | [`MT-A10`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create the English and Spanish Rulesets Topologies Hub | `Rulesets` | Cross | P1 | S | `DONE` |
 | [`MT-A05`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create `topology-manifest.schema.json` | `Schema` | Cross | P0 | M | `DONE` |
+| [`GT-161`](./gap-reference-catalog.md#gt-161) | Formal JSON input schemas for core OPA policies | `Schema` | Cross | P1 | M | `DONE` |
 | [`MT-A03`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Authorize `reference/architecture/topologies/` as the canonical human-readable topology corpus | `Taxonomy` | Cross | P0 | S | `DONE` |
 | [`GT-125`](./gap-reference-catalog.md#gt-125) | Maturation of Agentic AI Topology — modular-monolith maturity parity | `Architecture` | Cross | P1 | L | `DONE` |
 | [`GT-126`](./gap-reference-catalog.md#gt-126) | Maturation of Serverless Topology | `Architecture` | Cross | P2 | M | `DONE` |
@@ -192,7 +192,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-160`](./gap-reference-catalog.md#gt-160) | Cross-surface correlation-ID and request-context propagation | `Cross` | Cross | P1 | M | `DONE` |
 
 
-**Progress:** 164 / 177 done · 0 in progress · 13 pending · 0 deferred
+**Progress:** 165 / 177 done · 0 in progress · 12 pending · 0 deferred
 
 **Wave 2026-06-21 (Wilson deep audit):** Added 20 new gaps `GT-155`…`GT-174` covering Core API envelope conformance, command-as-a-service surface parity, MCP authn/authz, OPA schemas/aggregator tests, topology manifest validation, SDLC runbooks/templates, Core API and UMS product hubs, agentic-AI operational budgets, OpenTelemetry parity, and envelope schema versioning.
 

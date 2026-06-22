@@ -98,9 +98,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** Solo `abac-mcp-tool-access.rego` documenta su esquema de input explícitamente. `governance.rego`, `mcp.rego`, `version-pinning.rego`, `cli-readiness.rego`, `knowledge-intake.rego`, `taxonomy.rego`, `ci-cd.rego` y `evidence.rego` dependen de comentarios inline.
 - **Complejidad:** M
 - **Hecho cuando:**
-  - [ ] Cada política OPA core publica un JSON Schema de input en `rulesets/opa/schemas/<policy>.input.schema.json`, registrado en el índice de esquemas.
-  - [ ] CI rechaza inputs OPA que no cumplan su esquema antes de la evaluación.
-  - [ ] La documentación generada enlaza cada política a su esquema de input en EN y ES.
+  - [x] Cada política OPA core publica un JSON Schema de input en `rulesets/opa/schemas/<policy>.input.schema.json`, registrado en el índice de esquemas.
+  - [x] CI rechaza inputs OPA que no cumplan su esquema antes de la evaluación.
+  - [x] La documentación generada enlaza cada política a su esquema de input en EN y ES.
 
 
 #### GT-162

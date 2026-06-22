@@ -59,16 +59,42 @@ describe('OpaEvaluator', () => {
     expect(warnLogs[0].message).toMatch(/OPA WebAssembly policy not found/);
   });
 
-  it('should evaluate rules using the loaded Wasm policy if present', async () => {
+  it('should evaluate rules using the loaded Wasm policy if present and schema passes', async () => {
     const wasmPath = path.join('/core', 'rulesets', 'opa', 'policy.wasm');
+    const schemaPath = path.join('/core', 'rulesets', 'opa', 'schemas', 'version-pinning.input.schema.json');
     
-    // Write fake wasm bytes
+    // Write fake wasm bytes and valid schema
     fs.setFile(wasmPath, 'fake-wasm-content');
+    fs.setFile(schemaPath, JSON.stringify({
+      type: 'object',
+      properties: {
+        satellite: { type: 'object' }
+      }
+    }));
     
     const results = await evaluator.evaluateAll([mockRule], ctx);
     
     expect(results).toHaveLength(1);
     expect(results[0].result).toBe('failed');
     expect(results[0].message).toContain('Caret pinning not allowed');
+  });
+
+  it('should fail validation if input schema validation fails', async () => {
+    const wasmPath = path.join('/core', 'rulesets', 'opa', 'policy.wasm');
+    const schemaPath = path.join('/core', 'rulesets', 'opa', 'schemas', 'version-pinning.input.schema.json');
+    
+    fs.setFile(wasmPath, 'fake-wasm-content');
+    // Require a field that doesn't exist on standard input builder output to force failure
+    fs.setFile(schemaPath, JSON.stringify({
+      type: 'object',
+      required: ['nonExistentRequiredField']
+    }));
+    
+    const results = await evaluator.evaluateAll([mockRule], ctx);
+    
+    expect(results).toHaveLength(1);
+    expect(results[0].result).toBe('failed');
+    expect(results[0].message).toContain('OPA Input Schema Validation Failed');
+    expect(results[0].message).toContain('must have required property');
   });
 });

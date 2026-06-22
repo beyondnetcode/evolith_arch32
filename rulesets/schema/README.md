@@ -21,6 +21,15 @@ JSON Schema definitions for validating Evolith SDLC artifacts.
 | [gate-evidence.schema.json](./gate-evidence.schema.json) | Validate structured gate-evaluation evidence (core/ADR-0073) | Gate Evidence | All |
 | [output-envelope.schema.json](./output-envelope.schema.json) | Validate the universal machine output envelope (core/ADR-0073) | CLI/MCP/REST output | All |
 | [knowledge-intake.schema.json](./knowledge-intake.schema.json) | Validate governed external knowledge candidates | Knowledge intake candidate | All |
+| [governance.input.schema.json](../opa/schemas/governance.input.schema.json) | Validate governance OPA policy input structure | OPA Governance Input | All |
+| [mcp.input.schema.json](../opa/schemas/mcp.input.schema.json) | Validate MCP OPA policy input structure | OPA MCP Input | All |
+| [version-pinning.input.schema.json](../opa/schemas/version-pinning.input.schema.json) | Validate version pinning OPA policy input structure | OPA Version Pinning Input | All |
+| [cli-readiness.input.schema.json](../opa/schemas/cli-readiness.input.schema.json) | Validate CLI readiness OPA policy input structure | OPA CLI Readiness Input | All |
+| [knowledge-intake.input.schema.json](../opa/schemas/knowledge-intake.input.schema.json) | Validate knowledge intake OPA policy input structure | OPA Knowledge Intake Input | All |
+| [taxonomy.input.schema.json](../opa/schemas/taxonomy.input.schema.json) | Validate taxonomy OPA policy input structure | OPA Taxonomy Input | All |
+| [ci-cd.input.schema.json](../opa/schemas/ci-cd.input.schema.json) | Validate CI/CD OPA policy input structure | OPA CI/CD Input | All |
+| [evidence.input.schema.json](../opa/schemas/evidence.input.schema.json) | Validate evidence OPA policy input structure | OPA Evidence Input | All |
+| [abac-mcp-tool-access.input.schema.json](../opa/schemas/abac-mcp-tool-access.input.schema.json) | Validate ABAC tool access OPA policy input structure | OPA ABAC Tool Access Input | All |
 
 **Phase 1 Coverage:** 7 schemas (Discovery Canvas, Technical Feasibility Canvas, Ballpark Estimation, Evolith User Story, Agile Backlog, CLI Impact Analysis, PRD)
 

@@ -34,6 +34,7 @@ If you are onboarding a new satellite repository, read the categories in this or
 | [Observability Rules](./observability/README.md) | Telemetry evidence for operations | Verify telemetry evidence | Ruleset category | Yes |
 | [Topology Rulesets](./topologies/README.md) | Executable topology-specific Native and OPA rules | Govern topology validation | Ruleset category | Yes |
 | [Schemas](./schema/README.md) | JSON Schema for validating Evolith artifacts | Validate artifact structure | Schema collection | Yes |
+| [OPA Policies](./opa/README.md) | OPA policies and their input schemas | Validate governance and architectural rules | Policy collection | Yes |
 
 ---
 
@@ -41,6 +42,10 @@ If you are onboarding a new satellite repository, read the categories in this or
 
 ```
 rulesets/
+├── opa/                        # OPA policies and inputs schemas
+│   ├── schemas/                # OPA policy input schemas (9 schemas)
+│   ├── *.rego                  # Rego policy files
+│   └── README.md               # OPA index
 ├── schema/                     # JSON Schema definitions (19 schemas)
 │   ├── adr.schema.json         # ADR artifact validation
 │   ├── prd.schema.json         # PRD artifact validation

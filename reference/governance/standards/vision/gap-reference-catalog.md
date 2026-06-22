@@ -98,9 +98,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** Only `abac-mcp-tool-access.rego` documents its input schema explicitly. `governance.rego`, `mcp.rego`, `version-pinning.rego`, `cli-readiness.rego`, `knowledge-intake.rego`, `taxonomy.rego`, `ci-cd.rego`, and `evidence.rego` rely on inline comments.
 - **Complexity:** M
 - **Done when:**
-  - [ ] Each core OPA policy ships an input JSON Schema under `rulesets/opa/schemas/<policy>.input.schema.json`, registered in the schema index.
-  - [ ] CI rejects OPA inputs that fail their schema before evaluation.
-  - [ ] Generated documentation links each policy to its input schema in EN and ES.
+  - [x] Each core OPA policy ships an input JSON Schema under `rulesets/opa/schemas/<policy>.input.schema.json`, registered in the schema index.
+  - [x] CI rejects OPA inputs that fail their schema before evaluation.
+  - [x] Generated documentation links each policy to its input schema in EN and ES.
 
 
 #### GT-162

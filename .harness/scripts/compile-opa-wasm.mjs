@@ -74,7 +74,7 @@ async function compileWasm() {
   console.log(`Compiling OPA Wasm...`);
   
   try {
-    execSync(`${opaBinPath} build -t wasm ${entrypoints.join(' ')} -o bundle.tar.gz rulesets/opa/`, { stdio: 'inherit', cwd: rootDir });
+    execSync(`${opaBinPath} build -t wasm ${entrypoints.join(' ')} --ignore=schemas -o bundle.tar.gz rulesets/opa/`, { stdio: 'inherit', cwd: rootDir });
   } catch (err) {
     console.error('Failed to compile OPA Wasm policies.');
     process.exit(1);

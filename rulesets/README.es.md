@@ -34,6 +34,7 @@ Si estás integrando un nuevo repositorio satélite, lee las categorías en este
 | [Reglas de Observabilidad](./observability/README.es.md) | Evidencia de telemetría para operación | Verificar la evidencia de telemetría | Categoría de reglas | Sí |
 | [Rulesets Topologicos](./topologies/README.es.md) | Reglas ejecutables Native y OPA especificas por topologia | Gobernar la validacion topologica | Categoria de reglas | Si |
 | [Schemas](./schema/README.es.md) | JSON Schema para validación de artefactos Evolith | Validar la estructura de artefactos | Colección de schemas | Sí |
+| [Políticas OPA](./opa/README.es.md) | Políticas OPA y sus schemas de entrada | Validar gobernanza y reglas de arquitectura | Colección de políticas | Sí |
 
 ---
 
@@ -41,6 +42,10 @@ Si estás integrando un nuevo repositorio satélite, lee las categorías en este
 
 ```
 rulesets/
+├── opa/                        # Políticas OPA y schemas de entrada
+│   ├── schemas/                # Schemas de entrada de políticas OPA (9 schemas)
+│   ├── *.rego                  # Archivos de políticas Rego
+│   └── README.es.md            # Índice OPA
 ├── schema/                     # Definiciones de JSON Schema (19 schemas)
 │   ├── adr.schema.json         # Validación de artefacto ADR
 │   ├── prd.schema.json         # Validación de artefacto PRD

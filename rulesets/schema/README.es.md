@@ -21,6 +21,15 @@ Definiciones de JSON Schema para validar los artefactos SDLC de Evolith.
 | [gate-evidence.schema.json](./gate-evidence.schema.json) | Validar la evidencia estructurada de evaluación de gates (core/ADR-0073) | Gate Evidence | Todas |
 | [output-envelope.schema.json](./output-envelope.schema.json) | Validar el envelope universal de salida de máquina (core/ADR-0073) | Salida CLI/MCP/REST | Todas |
 | [knowledge-intake.schema.json](./knowledge-intake.schema.json) | Validar candidatos de conocimiento externo gobernado | Candidato de ingesta de conocimiento | Todas |
+| [governance.input.schema.json](../opa/schemas/governance.input.schema.json) | Validar la estructura de entrada de la política OPA de gobernanza | Entrada de OPA Gobernanza | Todas |
+| [mcp.input.schema.json](../opa/schemas/mcp.input.schema.json) | Validar la estructura de entrada de la política OPA de MCP | Entrada de OPA MCP | Todas |
+| [version-pinning.input.schema.json](../opa/schemas/version-pinning.input.schema.json) | Validar la estructura de entrada de la política OPA de version-pinning | Entrada de OPA Version Pinning | Todas |
+| [cli-readiness.input.schema.json](../opa/schemas/cli-readiness.input.schema.json) | Validar la estructura de entrada de la política OPA de preparación del CLI | Entrada de OPA CLI Readiness | Todas |
+| [knowledge-intake.input.schema.json](../opa/schemas/knowledge-intake.input.schema.json) | Validar la estructura de entrada de la política OPA de ingesta de conocimiento | Entrada de OPA Knowledge Intake | Todas |
+| [taxonomy.input.schema.json](../opa/schemas/taxonomy.input.schema.json) | Validar la estructura de entrada de la política OPA de taxonomía | Entrada de OPA Taxonomy | Todas |
+| [ci-cd.input.schema.json](../opa/schemas/ci-cd.input.schema.json) | Validar la estructura de entrada de la política OPA de CI/CD | Entrada de OPA CI/CD | Todas |
+| [evidence.input.schema.json](../opa/schemas/evidence.input.schema.json) | Validar la estructura de entrada de la política OPA de evidencia | Entrada de OPA Evidence | Todas |
+| [abac-mcp-tool-access.input.schema.json](../opa/schemas/abac-mcp-tool-access.input.schema.json) | Validar la estructura de entrada de la política OPA de acceso a herramientas ABAC | Entrada de OPA ABAC Tool Access | Todas |
 
 **Cobertura de Fase 1:** 7 schemas (Discovery Canvas, Technical Feasibility Canvas, Ballpark Estimation, Evolith User Story, Agile Backlog, CLI Impact Analysis, PRD)
 

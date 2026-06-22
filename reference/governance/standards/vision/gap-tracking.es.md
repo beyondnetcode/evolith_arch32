@@ -13,7 +13,6 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|
-| [`GT-168`](./gap-reference-catalog.es.md#gt-168) | Aplicación de referencia de composición cross-topología | `Architecture` | Cross | P1 | L | `PENDIENTE` |
 | [`GT-169`](./gap-reference-catalog.es.md#gt-169) | Presupuestos operativos, ciclo de credenciales y runbooks de Agentic AI | `Architecture` | Cross | P1 | L | `PENDIENTE` |
 | [`GT-174`](./gap-reference-catalog.es.md#gt-174) | `meta.schemaVersion` y matriz de compatibilidad productor/consumidor | `Cross` | Cross | P2 | S | `PENDIENTE` |
 | [`GT-173`](./gap-reference-catalog.es.md#gt-173) | Paridad de exportación OpenTelemetry en CLI, MCP y REST | `Cross` | Cross | P2 | M | `PENDIENTE` |
@@ -26,6 +25,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-151`](./gap-reference-catalog.es.md#gt-151) | Completar la Cobertura de IDs de Regla Native/OPA para Topologías Aceptadas | `Rulesets` | Cross | P0 | M | `DONE` |
 | [`GT-146`](./gap-reference-catalog.es.md#gt-146) | Revisión Agéntica de CI Segura, Neutral al Proveedor y Acotada por Tokens | `Governance` | Cross | P0 | L | `COMPLETADO` |
 | [`GT-150`](./gap-reference-catalog.es.md#gt-150) | Madurar las Topologías Draft Restantes a Paridad de Corpus Aceptado | `Architecture` | Cross | P1 | L | `COMPLETADO` |
+| [`GT-168`](./gap-reference-catalog.es.md#gt-168) | Aplicación de referencia de composición cross-topología | `Architecture` | Cross | P1 | L | `COMPLETADO` |
 | [`GT-145`](./gap-reference-catalog.es.md#gt-145) | Sincronización Veraz y Neutral al Proveedor de Vectores RAG | `Operations` | Cross | P1 | L | `COMPLETADO` |
 | [`GT-149`](./gap-reference-catalog.es.md#gt-149) | Pruebas OPA Ejecutables y Gate de Paridad Semántica Native/OPA | `Rulesets` | Cross | P1 | L | `COMPLETADO` |
 | [`GT-147`](./gap-reference-catalog.es.md#gt-147) | Auditoría Automatizada de Deriva de Capacidades Operativas y Eficiencia | `Governance` | Cross | P1 | M | `COMPLETADO` |
@@ -191,7 +191,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-158`](./gap-reference-catalog.es.md#gt-158) | Human-in-the-loop y ABAC para herramientas MCP mutativas | `MCP Services` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-160`](./gap-reference-catalog.es.md#gt-160) | Propagación de correlation-ID y contexto de solicitud entre superficies | `Cross` | Cross | P1 | M | `COMPLETADO` |
 
-**Progreso:** 171 / 177 completados · 0 en progreso · 6 pendientes · 0 diferidos
+**Progreso:** 172 / 177 completados · 0 en progreso · 5 pendientes · 0 diferidos
 
 **Oleada 2026-06-21 (auditoría profunda de Wilson):** Añadidos 20 gaps nuevos `GT-155`…`GT-174` que cubren conformidad de envelope en Core API REST, paridad de superficies command-as-a-service, autenticación/autorización MCP, esquemas y tests de OPA, validación CI de manifests de topología, runbooks y plantillas SDLC, hubs de producto de Core API y UMS, presupuestos operativos de Agentic AI, paridad OpenTelemetry y versionado del envelope.
 

@@ -43,6 +43,7 @@ const allowedDirectories = new Set([
   "rulesets",
   "sdk",
   "apps",
+  "examples",
   "packages"
 ]);
 

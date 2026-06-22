@@ -189,9 +189,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** `topology-dimensions.md` §3 lists five composition examples but no fixture or sample repository exercises them end-to-end.
 - **Complexity:** L
 - **Done when:**
-  - [ ] A reference application (or fixture project) lives under `examples/` (or its equivalent) with a composable manifest exercising at least two topologies.
-  - [ ] CI runs the topology validator on the example and asserts a passing composition.
-  - [ ] Documentation walks the reader through the example in EN and ES.
+  - [x] A reference application (or fixture project) lives under `examples/` (or its equivalent) with a composable manifest exercising at least two topologies.
+  - [x] CI runs the topology validator on the example and asserts a passing composition.
+  - [x] Documentation walks the reader through the example in EN and ES.
 
 
 #### GT-169

@@ -133,6 +133,28 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-168",
+      "closedAt": "2026-06-21",
+      "closureCommit": "507bb5a4",
+      "evidence": [
+        "rulesets/schema/topology-composition.schema.json",
+        "examples/cross-topology-composition/topology.composition.json",
+        "examples/cross-topology-composition/modular-monolith.config.json",
+        "examples/cross-topology-composition/event-driven.config.json",
+        "examples/cross-topology-composition/README.md",
+        "examples/cross-topology-composition/README.es.md",
+        ".harness/scripts/ci/22-validate-topology-composition.mjs",
+        "reference/architecture/topologies/topology-dimensions.md",
+        "reference/architecture/topologies/topology-dimensions.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/22-validate-topology-composition.mjs",
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-170",
       "closedAt": "2026-06-21",
       "closureCommit": "334e5019",

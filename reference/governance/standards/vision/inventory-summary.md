@@ -9,6 +9,6 @@ This is the automated inventory tally of the core reference architecture and gov
 |---|:---:|---|
 | **Architecture Decision Records (ADR)** | 110 | `reference/architecture/adrs/` |
 | **Machine-Readable Rulesets** | 26 | `rulesets/` (across 14 categories) |
-| **Phase-Gate Schemas** | 26 | `rulesets/schema/` |
+| **Phase-Gate Schemas** | 27 | `rulesets/schema/` |
 
 *Last Updated: 2026-06-22*

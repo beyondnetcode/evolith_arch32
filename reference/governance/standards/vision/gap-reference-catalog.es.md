@@ -189,9 +189,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** `topology-dimensions.md` §3 enumera cinco ejemplos de composición pero ningún fixture o repo de muestra los ejecuta end-to-end.
 - **Complejidad:** L
 - **Hecho cuando:**
-  - [ ] Una aplicación de referencia (o proyecto fixture) vive bajo `examples/` (o equivalente) con un manifest componible que ejercita al menos dos topologías.
-  - [ ] CI ejecuta el validador de topologías sobre el ejemplo y verifica una composición aprobada.
-  - [ ] La documentación guía al lector por el ejemplo en EN y ES.
+  - [x] Una aplicación de referencia (o proyecto fixture) vive bajo `examples/` (o equivalente) con un manifest componible que ejercita al menos dos topologías.
+  - [x] CI ejecuta el validador de topologías sobre el ejemplo y verifica una composición aprobada.
+  - [x] La documentación guía al lector por el ejemplo en EN y ES.
 
 
 #### GT-169

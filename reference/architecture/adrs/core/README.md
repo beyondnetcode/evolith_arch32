@@ -27,6 +27,7 @@
 * [0037-performance-concurrency-chaos-strategy](./0037-performance-concurrency-chaos-strategy.md)
 * [0039-deployment-topology-abstraction-switcher](./0039-deployment-topology-abstraction-switcher.md)
 * [0040-multi-runtime-selection-contracts](./0040-multi-runtime-selection-contracts.md)
+* [0041-dual-engine-policy-evaluation](./0041-dual-engine-policy-evaluation.md) — **Dual-Engine Policy Evaluation (Native + OPA)**
 * [0044-configurable-security-persistence-strategy](./0044-configurable-security-persistence-strategy.md)
 * [0045-microservice-extraction-readiness-criteria](./0045-microservice-extraction-readiness-criteria.md)
 * [0046-unified-observability-tracecontext](./0046-unified-observability-tracecontext.md)
@@ -48,12 +49,33 @@
 * [0070-lean-root-repository-taxonomy](./0070-lean-root-repository-taxonomy.md) — **Lean root: src/ vs docs/ binary dichotomy for satellite repositories**
 * [0071-domain-layer-base-class-inheritance-strategy](./0071-domain-layer-base-class-inheritance-strategy.md) — **Domain layer inheritance trade-off: shell base classes vs. Domain.Abstractions**
 * [0072-utc-dates-timezone-language-resolution](./0072-utc-dates-timezone-language-resolution.md) — **UTC storage, browser timezone detection, and language priority chain**
+* [0073-unified-cli-output-contract](./0073-unified-cli-output-contract.md) — **Unified CLI/MCP output contract and gate evidence schema**
+* [0074-evolith-core-api-exposure-layer](./0074-evolith-core-api-exposure-layer.md) — **Evolith Core API native exposure layer**
+* [0075-core-api-auth-strategy](./0075-core-api-auth-strategy.md) — **Core API authentication strategy**
+* [0076-domain-oriented-microservice-architecture](./0076-domain-oriented-microservice-architecture.md) — **Domain-Oriented Microservice Architecture (DOMA)**
+* [0077-masstransit-v9-commercial-pivot](./0077-masstransit-v9-commercial-pivot.md) — **MassTransit v9 commercial pivot — stay on v8, monitor OpenTransit**
+* [0078-domain-financial-separation-governance](./0078-domain-financial-separation-governance.md) — **Domain financial separation governance**
+* [0079-multi-topology-reference-corpus](./0079-multi-topology-reference-corpus.md) — **Multi-Topology Reference Corpus and topology manifest contract**
 * [0080-remote-repository-reference-contract](./0080-remote-repository-reference-contract.md) — **Hosted Core API repository-reference contract**
 * [0081-agentic-ai-sandbox-isolation](./0081-agentic-ai-sandbox-isolation.md) — **Sandbox isolation boundary for agent tool execution**
 * [0082-agentic-ai-trust-boundary](./0082-agentic-ai-trust-boundary.md) — **Trust boundary for prompts, context, and tool output**
 * [0083-agentic-ai-action-authorization-audit](./0083-agentic-ai-action-authorization-audit.md) — **Capability-scoped authorization and append-only action audit**
+* [0084-data-mesh-data-products](./0084-data-mesh-data-products.md) — **Data Mesh and Data as a Product**
+* [0085-agnostic-opa-wasm-distribution](./0085-agnostic-opa-wasm-distribution.md) — **Agnostic OPA Wasm distribution architecture**
+* [0086-agentic-ai-telemetry-cost-control](./0086-agentic-ai-telemetry-cost-control.md) — **Agentic AI telemetry & cost control standard**
+* [0087-abac-agentic-tool-execution](./0087-abac-agentic-tool-execution.md) — **ABAC for agentic tool execution**
+* [0088-sovereign-identity-agentic-ai](./0088-sovereign-identity-agentic-ai.md) — **Sovereign identity for Agentic AI**
+* [0089-event-driven-agentic-workflows](./0089-event-driven-agentic-workflows.md) — **Event-driven agentic workflow pattern**
 * [0090-rag-knowledge-governance](./0090-rag-knowledge-governance.md) — **RAG knowledge governance standard for vector-store synchronization**
+* [0091-workload-identity-token-rotation](./0091-workload-identity-token-rotation.md) — **Workload identity token rotation standard**
+* [0092-agent-infinite-loop-prevention](./0092-agent-infinite-loop-prevention.md) — **Agent infinite-loop prevention and circuit-breaker rules**
+* [0093-mcp-concurrency-locking](./0093-mcp-concurrency-locking.md) — **Concurrency control and resource locking for MCP tools**
+* [0094-multi-agent-handoff](./0094-multi-agent-handoff.md) — **Multi-agent handoff and task delegation standards**
+* [0095-serverless-architecture-governance](./0095-serverless-architecture-governance.md) — **Serverless architecture governance**
+* [0096-edge-computing-architecture-governance](./0096-edge-computing-architecture-governance.md) — **Edge computing architecture governance**
 * [0097-knowledge-lifecycle-governance](./0097-knowledge-lifecycle-governance.md) — **Knowledge lifecycle promotion pipeline and Winston custodianship**
+* [0098-rest-uri-versioning-deprecation-policy](./0098-rest-uri-versioning-deprecation-policy.md) — **REST URI versioning and deprecation policy**
+* [0099-opa-bundle-s3-distribution](./0099-opa-bundle-s3-distribution.md) — **OPA bundle distribution via S3 (MinIO) — superseded by ADR-0085**
 
 ---
 [Back to Upper Level](../README.md)

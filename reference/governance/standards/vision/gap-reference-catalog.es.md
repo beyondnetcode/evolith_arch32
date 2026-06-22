@@ -1854,9 +1854,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Hecho Cuando:** Subdirectorio eliminado; sin referencias entrantes fuera del BILINGUAL_INDEX auto-generado y documentos históricos de auditoría.
 
 #### GT-177
-**Propósito:** Completar `core/README.md` con todos los 21 ADRs faltantes.
-**Evidencia Actual:** `core/README.md` lista solo 54 de 74 ADRs (faltan ADRs 0041, 0073-0079, 0084-0098).
-**Hecho Cuando:** Los 74 ADRs listados en `core/README.md` con enlaces y resúmenes.
+**Propósito:** Completar `core/README.md` con los ADRs Core faltantes.
+**Evidencia Actual:** `core/README.md` listaba solo 54 de 76 ADRs Core (faltaban 0041, 0073–0079, 0084–0089, 0091–0096, 0098, 0099).
+**Hecho Cuando:** Todos los ADRs Core listados en `core/README.md` con enlaces y títulos de una línea. La contraparte ES se rastrea por separado como [GT-178](./gap-reference-catalog.es.md#gt-178).
 
 #### GT-178
 **Propósito:** Reconstruir `core/README.es.md` con todos los ADRs (actualmente solo muestra hasta ADR-0056).

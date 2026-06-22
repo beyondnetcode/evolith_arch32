@@ -215,9 +215,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** UMS materials live across SDLC examples and demo files (`ums-technical-overview.md`, `ums-reference-model.md`) but `reference/products/` has no dedicated hub. Cross-links into UMS are scattered.
 - **Complexity:** M
 - **Done when:**
-  - [ ] `reference/products/ums-reference/` exists with README, overview, and reference-model in EN and ES.
-  - [ ] All existing UMS references in SDLC and demo materials point to the hub.
-  - [ ] Product inventory is regenerated and validated.
+  - [x] `reference/products/ums-reference/` exists with README, overview, and reference-model in EN and ES.
+  - [x] All existing UMS references in SDLC and demo materials point to the hub.
+  - [x] Product inventory is regenerated and validated.
 
 
 #### GT-171

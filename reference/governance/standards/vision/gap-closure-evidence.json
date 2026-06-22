@@ -133,6 +133,30 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-170",
+      "closedAt": "2026-06-21",
+      "closureCommit": "334e5019",
+      "evidence": [
+        "reference/products/ums-reference/README.md",
+        "reference/products/ums-reference/README.es.md",
+        "reference/products/ums-reference/overview.md",
+        "reference/products/ums-reference/overview.es.md",
+        "reference/products/ums-reference/reference-model.md",
+        "reference/products/ums-reference/reference-model.es.md",
+        "reference/products/README.md",
+        "reference/products/README.es.md",
+        "reference/knowledge/demo/README.md",
+        "reference/knowledge/demo/README.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
+        "node .harness/scripts/ci/05-check-orphan-bilingual.mjs",
+        "node .harness/scripts/ci/11-validate-product-docs.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-167",
       "closedAt": "2026-06-21",
       "closureCommit": "b6a67a60",

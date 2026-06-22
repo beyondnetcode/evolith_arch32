@@ -1,6 +1,7 @@
 # UMS as the Official Enterprise Reference Model
 
 > Bilingual navigation: [Versión en Español](./README.es.md)
+> Product hub: [UMS Reference Hub](../../products/ums-reference/README.md) — the first-class product surface for UMS in `reference/products/`.
 
 This portal establishes the corporate architectural relationship between the progressive architecture baseline and its official, executable product reference: the open-source **User Management System (UMS)**.
 

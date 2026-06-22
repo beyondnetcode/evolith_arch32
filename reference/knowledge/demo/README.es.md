@@ -1,6 +1,7 @@
 # UMS como el Modelo de Referencia Empresarial Oficial
 
 > Navegación bilingüe: [English version](./README.md)
+> Hub de producto: [UMS Reference Hub](../../products/ums-reference/README.es.md) — la superficie de producto de primer nivel para UMS en `reference/products/`.
 
 Este portal establece la relación de arquitectura corporativa entre la línea base de arquitectura progresiva y su referencia oficial y ejecutable a nivel de producto: el sistema de código abierto **User Management System (UMS)**.
 

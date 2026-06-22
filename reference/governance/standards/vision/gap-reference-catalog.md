@@ -1870,9 +1870,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Done When:** All 5 commands reach 80%+ unit test coverage.
 
 #### GT-180
-**Purpose:** Replace cross-boundary `require()` calls with Dependency Injection across 4 files.
-**Current Evidence:** 4 files use `require()` to import across architectural boundaries.
-**Done When:** All 4 files migrated to proper DI injection.
+**Purpose:** Replace cross-boundary `require()` calls with proper ES imports / dynamic `import()` in CLI source.
+**Current Evidence:** Production source files used `require()` cross-boundary: `update.command.ts` (3 sites for `child_process` and `package.json`), `node-filesystem.provider.ts` (1 site shadowing the top-level `fs-extra` import), `plugin-loader.ts` (1 site for runtime plugin loading).
+**Done When:** All production-code `require()` calls eliminated; the dynamic plugin loader uses `import()` with CJS-default unwrapping; `npm run build` and `npm run test:unit` pass.
 
 #### GT-181
 **Purpose:** Split large files (`server.ts` 420 lines, 5 other files >300 lines) into smaller modules.

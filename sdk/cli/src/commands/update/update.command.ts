@@ -1,6 +1,8 @@
+import { execSync } from 'child_process';
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
+import packageJson from '../../../package.json';
 
 interface UpdateCommandOptions {
   check?: boolean;
@@ -108,7 +110,6 @@ export class UpdateCommand extends BaseEvolithCommand {
     }
 
     try {
-      const { execSync } = require('child_process');
       this.promptService.stopSpinner();
       this.promptService.showInfo(`Installing @evolith/smart-cli@${latestVersion}...`);
 
@@ -151,17 +152,11 @@ export class UpdateCommand extends BaseEvolithCommand {
   }
 
   private getCurrentVersion(): string {
-    try {
-      const packageJson = require('../../../package.json');
-      return packageJson.version || '1.0.0';
-    } catch {
-      return '1.0.0';
-    }
+    return packageJson.version || '1.0.0';
   }
 
   private async getLatestVersion(): Promise<string | null> {
     try {
-      const { execSync } = require('child_process');
       const result = execSync('npm view @evolith/smart-cli version --json', {
         encoding: 'utf8',
         timeout: 10000,

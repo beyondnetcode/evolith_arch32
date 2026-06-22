@@ -1869,9 +1869,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Hecho Cuando:** Los 5 comandos alcanzan 80%+ de cobertura unitaria.
 
 #### GT-180
-**Propósito:** Reemplazar llamadas `require()` entre capas con Inyección de Dependencias en 4 archivos.
-**Evidencia Actual:** 4 archivos usan `require()` para importar entre límites arquitectónicos.
-**Hecho Cuando:** Los 4 archivos migrados a inyección DI adecuada.
+**Propósito:** Reemplazar las llamadas `require()` entre capas con imports ES adecuados / `import()` dinámico en el código fuente del CLI.
+**Evidencia Actual:** Archivos de código de producción usaban `require()` entre capas: `update.command.ts` (3 sitios para `child_process` y `package.json`), `node-filesystem.provider.ts` (1 sitio sombreando el import top-level de `fs-extra`), `plugin-loader.ts` (1 sitio para carga de plugins en runtime).
+**Hecho Cuando:** Todas las llamadas `require()` en código de producción eliminadas; el cargador dinámico de plugins usa `import()` con unwrapping del default CJS; `npm run build` y `npm run test:unit` pasan.
 
 #### GT-181
 **Propósito:** Dividir archivos grandes (`server.ts` 420 líneas, otros 5 >300 líneas) en módulos más pequeños.

@@ -65,7 +65,8 @@ async function downloadOpa() {
 async function compileWasm() {
   // Using the rulesets folder at the root
   const entrypoints = [
-    '-e', 'evolith/main/violations'
+    '-e', 'evolith/main/violations',
+    '-e', 'evolith/abac/violations'
   ];
   
   const outputPath = join(rootDir, 'bundle.tar.gz');

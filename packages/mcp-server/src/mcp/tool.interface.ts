@@ -19,6 +19,8 @@ export interface McpTool {
   readonly schema: McpToolSchema;
   /** When true, execution requires explicit confirmation (see McpServerService). */
   readonly mutative?: boolean;
+  /** Declared authorization scope required to execute or view this tool. */
+  readonly scope?: 'read' | 'write' | 'admin';
   execute(args: Record<string, unknown>): Promise<unknown>;
 }
 

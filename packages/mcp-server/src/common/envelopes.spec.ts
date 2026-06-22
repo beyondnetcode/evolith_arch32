@@ -23,7 +23,7 @@ describe('envelopes', () => {
       const env = success({ ok: 1 }, META);
       expect(env.success).toBe(true);
       expect(env.data).toEqual({ ok: 1 });
-      expect(env.meta).toEqual(META);
+      expect(env.meta).toEqual({ ...META, schemaVersion: expect.any(String) });
     });
 
     it('defaults the timestamp when not supplied', () => {

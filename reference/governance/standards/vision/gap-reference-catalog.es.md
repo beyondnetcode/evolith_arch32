@@ -46,9 +46,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** REST usa `ApiKeyAuthGuard` y JWT; el servidor MCP solo verifica un bearer token compartido vía variable de entorno en `mcp-server.service.ts` y expone todas las herramientas a cualquier llamante autenticado. No hay listado por rol ni alcance por herramienta.
 - **Complejidad:** M
 - **Hecho cuando:**
-  - [ ] El servidor MCP acepta los mismos mecanismos de API key y JWT que la API REST y rechaza llamantes no autenticados con errores en formato envelope.
-  - [ ] El registro de herramientas declara alcances (`read|write|admin`) y `tools/list` devuelve solo las herramientas permitidas por el rol del llamante.
-  - [ ] Tests de conformidad verifican que REST y MCP rechazan las mismas credenciales inválidas y emiten envelopes de error equivalentes.
+  - [x] El servidor MCP acepta los mismos mecanismos de API key y JWT que la API REST y rechaza llamantes no autenticados con errores en formato envelope.
+  - [x] El registro de herramientas declara alcances (`read|write|admin`) y `tools/list` devuelve solo las herramientas permitidas por el rol del llamante.
+  - [x] Tests de conformidad verifican que REST y MCP rechazan las mismas credenciales inválidas y emiten envelopes de error equivalentes.
 
 
 #### GT-158
@@ -59,9 +59,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** GT-114 añadió confirmación en CLI, pero los handlers MCP invocan los use cases directamente. No hay política que distinga herramientas de previsualización/lectura de las mutativas, no existe un par propuesta/aplicación para MCP y no se registra quién aprobó la aplicación.
 - **Complejidad:** M
 - **Hecho cuando:**
-  - [ ] Las herramientas MCP mutativas requieren un argumento `apply: true` explícito acompañado de un `approvalToken` emitido fuera de banda, o exponen un par `propose → confirm → apply` siguiendo ADR-0073.
-  - [ ] Una política ABAC en OPA (`abac-mcp-tool-access.rego`) gobierna las herramientas mutativas por rol/alcance, deny por defecto.
-  - [ ] Los eventos de auditoría registran identidad del llamante, alcance, approval token y diff por cada invocación mutativa.
+  - [x] Las herramientas MCP mutativas requieren un argumento `apply: true` explícito acompañado de un `approvalToken` emitido fuera de banda, o exponen un par `propose → confirm → apply` siguiendo ADR-0073.
+  - [x] Una política ABAC en OPA (`abac-mcp-tool-access.rego`) gobierna las herramientas mutativas por rol/alcance, deny por defecto.
+  - [x] Los eventos de auditoría registran identidad del llamante, alcance, approval token y diff por cada invocación mutativa.
 
 
 #### GT-159

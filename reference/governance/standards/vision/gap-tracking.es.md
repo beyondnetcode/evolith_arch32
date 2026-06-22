@@ -13,8 +13,6 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|
-| [`GT-157`](./gap-reference-catalog.es.md#gt-157) | Paridad de autenticación y autorización MCP con REST | `MCP Services` | Cross | P1 | M | `PENDIENTE` |
-| [`GT-158`](./gap-reference-catalog.es.md#gt-158) | Human-in-the-loop y ABAC para herramientas MCP mutativas | `MCP Services` | Cross | P1 | M | `PENDIENTE` |
 | [`GT-160`](./gap-reference-catalog.es.md#gt-160) | Propagación de correlation-ID y contexto de solicitud entre superficies | `Cross` | Cross | P1 | M | `PENDIENTE` |
 | [`GT-161`](./gap-reference-catalog.es.md#gt-161) | Esquemas JSON formales para los inputs de las políticas OPA core | `Schema` | Cross | P1 | M | `PENDIENTE` |
 | [`GT-162`](./gap-reference-catalog.es.md#gt-162) | Tests unitarios del agregador `main.rego` y paridad post GT-149 | `Rulesets` | Cross | P1 | M | `PENDIENTE` |
@@ -190,8 +188,10 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-128`](./gap-reference-catalog.es.md#gt-128) | Baseline Ruleset for Data Mesh | `Architecture` | Transversal | P2 | M | `COMPLETADO` |
 | [`GT-129`](./gap-reference-catalog.es.md#gt-129) | Baseline Ruleset for Edge Computing | `Architecture` | Transversal | P2 | M | `COMPLETADO` |
 | [`GT-156`](./gap-reference-catalog.es.md#gt-156) | Hub de producto, referencia API y runbook de despliegue del Core API | `Product` | Cross | P0 | L | `COMPLETADO` |
+| [`GT-157`](./gap-reference-catalog.es.md#gt-157) | Paridad de autenticación y autorización MCP con REST | `MCP Services` | Cross | P1 | M | `COMPLETADO` |
+| [`GT-158`](./gap-reference-catalog.es.md#gt-158) | Human-in-the-loop y ABAC para herramientas MCP mutativas | `MCP Services` | Cross | P1 | M | `COMPLETADO` |
 
-**Progreso:** 161 / 177 completados · 0 en progreso · 16 pendientes · 0 diferidos
+**Progreso:** 163 / 177 completados · 0 en progreso · 14 pendientes · 0 diferidos
 
 **Oleada 2026-06-21 (auditoría profunda de Wilson):** Añadidos 20 gaps nuevos `GT-155`…`GT-174` que cubren conformidad de envelope en Core API REST, paridad de superficies command-as-a-service, autenticación/autorización MCP, esquemas y tests de OPA, validación CI de manifests de topología, runbooks y plantillas SDLC, hubs de producto de Core API y UMS, presupuestos operativos de Agentic AI, paridad OpenTelemetry y versionado del envelope.
 

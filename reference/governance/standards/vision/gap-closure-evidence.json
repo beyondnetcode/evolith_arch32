@@ -3,6 +3,40 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-158",
+      "closedAt": "2026-06-22",
+      "closureCommit": "a8e70ac3",
+      "evidence": [
+        "packages/mcp-server/src/mcp/abac-evaluator.ts",
+        "packages/mcp-server/src/mcp/mcp-server.service.ts",
+        "packages/mcp-server/src/mcp/mcp-server.service.spec.ts",
+        "rulesets/opa/abac-mcp-tool-access.rego",
+        "packages/mcp-server/src/mcp/mcp.module.ts"
+      ],
+      "validationCommands": [
+        "npm run build:policy",
+        "npm run test --workspace packages/mcp-server",
+        "./.harness/bin/opa test rulesets/opa/"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-157",
+      "closedAt": "2026-06-21",
+      "closureCommit": "a8e70ac3",
+      "evidence": [
+        "packages/mcp-server/src/mcp/tool.interface.ts",
+        "packages/mcp-server/src/mcp/mcp-server.service.ts",
+        "packages/mcp-server/src/mcp/mcp-server.service.spec.ts",
+        "packages/mcp-server/src/common/envelopes.spec.ts"
+      ],
+      "validationCommands": [
+        "npm run build --workspace packages/mcp-server",
+        "npm run test --workspace packages/mcp-server"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-165",
       "closedAt": "2026-06-21",
       "closureCommit": "956bba24",

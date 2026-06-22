@@ -46,9 +46,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** REST uses `ApiKeyAuthGuard` and JWT; the MCP server checks only a shared environment-variable bearer token in `mcp-server.service.ts` and exposes all tools to any authenticated caller. No role-based tool listing, no per-tool scope.
 - **Complexity:** M
 - **Done when:**
-  - [ ] MCP server accepts the same API-key and JWT mechanisms as the REST API and rejects unauthenticated callers with envelope-shaped errors.
-  - [ ] Tool registration carries declared scopes (`read|write|admin`) and tools/list returns only tools the caller's role permits.
-  - [ ] Conformance tests verify REST and MCP reject the same invalid credentials and emit equivalent error envelopes.
+  - [x] MCP server accepts the same API-key and JWT mechanisms as the REST API and rejects unauthenticated callers with envelope-shaped errors.
+  - [x] Tool registration carries declared scopes (`read|write|admin`) and tools/list returns only tools the caller's role permits.
+  - [x] Conformance tests verify REST and MCP reject the same invalid credentials and emit equivalent error envelopes.
 
 
 #### GT-158
@@ -59,9 +59,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** GT-114 added CLI confirmation, but MCP tool handlers invoke the underlying use cases directly. There is no policy that distinguishes preview/read tools from mutative tools, no proposal/apply split for MCP, and no audit trail of who approved the apply.
 - **Complexity:** M
 - **Done when:**
-  - [ ] Mutative MCP tools require an explicit `apply: true` argument paired with an `approvalToken` issued out-of-band, or surface a `propose → confirm → apply` pair following ADR-0073.
-  - [ ] An ABAC policy in OPA (`abac-mcp-tool-access.rego`) gates mutative tools by caller role/scope, deny by default.
-  - [ ] Audit events record caller identity, scope, approval token, and diff for every mutative tool invocation.
+  - [x] Mutative MCP tools require an explicit `apply: true` argument paired with an `approvalToken` issued out-of-band, or surface a `propose → confirm → apply` pair following ADR-0073.
+  - [x] An ABAC policy in OPA (`abac-mcp-tool-access.rego`) gates mutative tools by caller role/scope, deny by default.
+  - [x] Audit events record caller identity, scope, approval token, and diff for every mutative tool invocation.
 
 
 #### GT-159

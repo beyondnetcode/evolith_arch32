@@ -63,10 +63,10 @@ allow if {
   count(input.user.roles) > 0
 }
 
-# Allow write tools for developer, operator, and architect roles
+# Allow write tools for operator and architect roles
 allow if {
   write_tools[input.tool_name]
-  user_has_role(developer_roles | operator_roles | architect_roles)
+  user_has_role(operator_roles | architect_roles)
 }
 
 # Allow write tools in non-production environments for developers
@@ -95,9 +95,16 @@ deny if {
 
 violations contains {"id": "ABAC-01", "message": msg} if {
   deny
+  msg := sprintf(
+    "Tool '%v' explicitly denied for user '%v' with roles %v in environment '%v'",
+    [input.tool_name, input.user.id, input.user.roles, input.environment]
+  )
+}
+
+violations contains {"id": "ABAC-01", "message": msg} if {
   not allow
   msg := sprintf(
-    "Tool '%v' denied for user '%v' with roles %v in environment '%v'",
+    "Tool '%v' not allowed for user '%v' with roles %v in environment '%v'",
     [input.tool_name, input.user.id, input.user.roles, input.environment]
   )
 }

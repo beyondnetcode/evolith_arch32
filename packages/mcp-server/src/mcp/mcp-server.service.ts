@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as http from 'node:http';
 import type { Readable, Writable } from 'node:stream';
+import { AsyncLocalStorage } from 'node:async_hooks';
+import * as crypto from 'node:crypto';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
@@ -23,6 +25,18 @@ import {
   success,
   toErrorEnvelope,
 } from '../common/envelopes';
+import { AbacEvaluator, AbacInput, AbacDecision } from './abac-evaluator';
+
+export interface McpUserContext {
+  id: string;
+  role: string;
+  roles: string[];
+  tenant: string;
+  environment: string;
+  scopes: string[];
+}
+
+export const mcpContextStorage = new AsyncLocalStorage<McpUserContext>();
 
 export type McpTransport = 'stdio' | 'http';
 
@@ -60,12 +74,19 @@ export class McpServerService {
   constructor(
     private readonly registry: ToolRegistryService,
     private readonly metrics: MetricsService,
+    private readonly abacEvaluator: AbacEvaluator,
     private readonly resources?: ResourcesService,
     private readonly prompts?: PromptsService,
   ) {}
 
   handleListTools(): { tools: ReturnType<ToolRegistryService['listSchemas']> } {
-    return { tools: this.registry.listSchemas() };
+    const context = mcpContextStorage.getStore();
+    const allowedTools = this.registry.list().filter((tool) => {
+      if (!context) return true;
+      const requiredScope = tool.scope || (tool.mutative ? 'write' : 'read');
+      return context.scopes.includes(requiredScope);
+    });
+    return { tools: allowedTools.map((t) => t.schema) };
   }
 
   async handleCallTool(
@@ -84,19 +105,84 @@ export class McpServerService {
       return { content: [{ type: 'text', text: JSON.stringify(env, null, 2) }], isError: true };
     }
 
+    const context = mcpContextStorage.getStore();
+    const userContext: McpUserContext = context || {
+      id: 'anonymous',
+      role: 'anonymous',
+      roles: [],
+      tenant: 'default',
+      environment: process.env.NODE_ENV || 'development',
+      scopes: [],
+    };
+
+    const requiredScope = tool.scope || (tool.mutative ? 'write' : 'read');
+    if (context && !context.scopes.includes(requiredScope)) {
+      const env = failure(
+        ErrorCodes.FORBIDDEN,
+        `Access denied. Requires '${requiredScope}' scope.`,
+        meta(Date.now() - startTime),
+      );
+      this.metrics.recordToolCall(name, Date.now() - startTime, false);
+      return { content: [{ type: 'text', text: JSON.stringify(env, null, 2) }], isError: true };
+    }
+
+    // Perform ABAC checks (Dual-Engine: Native TS and OPA WASM)
+    const abacInput: AbacInput = {
+      user: {
+        id: userContext.id,
+        roles: userContext.roles,
+        tenant: userContext.tenant,
+      },
+      tool_name: name,
+      resource_domain: 'mcp-server',
+      environment: userContext.environment,
+    };
+
+    let corePath = process.cwd();
+    if (corePath.endsWith('packages/mcp-server')) {
+      corePath = require('node:path').resolve(corePath, '../..');
+    }
+
+    const nativeDecision = this.abacEvaluator.evaluateNative(abacInput);
+    const opaDecision = await this.abacEvaluator.evaluateOpa(abacInput, corePath);
+
+    if (!nativeDecision.allowed || !opaDecision.allowed) {
+      const nativeMsgs = nativeDecision.violations.map(v => `${v.id}: ${v.message}`).join('; ');
+      const opaMsgs = opaDecision.violations.map(v => `${v.id}: ${v.message}`).join('; ');
+      const env = failure(
+        ErrorCodes.FORBIDDEN,
+        `Access denied. ABAC check failed. Native: [${nativeMsgs}]. OPA: [${opaMsgs}].`,
+        meta(Date.now() - startTime),
+      );
+      this.metrics.recordToolCall(name, Date.now() - startTime, false);
+      return { content: [{ type: 'text', text: JSON.stringify(env, null, 2) }], isError: true };
+    }
+
     if (tool.mutative) {
-      const dir = (args.dir ?? args.path ?? args.projectPath) as string | undefined;
-      const confirmedViaFlag = args.confirm === true;
-      const mutationsAllowed = confirmedViaFlag || (await this.isMutationAllowed(dir));
-      if (!mutationsAllowed) {
+      if (args.apply !== true || !args.approvalToken || typeof args.approvalToken !== 'string' || args.approvalToken.trim() === '') {
         const env = failure(
           ErrorCodes.FORBIDDEN,
-          `Mutative operation '${name}' requires confirmation. Pass { "confirm": true } or set mcp.allowMutations in evolith.yaml.`,
+          `Mutative operation '${name}' requires approval. Pass { "apply": true, "approvalToken": "..." }`,
           meta(Date.now() - startTime),
         );
         this.metrics.recordToolCall(name, Date.now() - startTime, false);
         return { content: [{ type: 'text', text: JSON.stringify(env, null, 2) }], isError: true };
       }
+
+      // Log structured audit event
+      this.logger.log(JSON.stringify({
+        event: 'MUTATIVE_TOOL_EXECUTION',
+        user: {
+          id: userContext.id,
+          roles: userContext.roles,
+          tenant: userContext.tenant,
+        },
+        scopes: userContext.scopes,
+        tool: name,
+        approvalToken: args.approvalToken,
+        arguments: args,
+        timestamp: new Date().toISOString(),
+      }));
     }
 
     try {
@@ -189,7 +275,8 @@ export class McpServerService {
     });
 
     this.httpServer = http.createServer((req, res) => {
-      if (!this.validateAuth(req, res)) return;
+      const context = this.validateAuth(req, res);
+      if (!context) return;
 
       const url = new URL(req.url || '/', `http://127.0.0.1:${port}`);
       if (req.method === 'GET' && url.pathname === '/health') {
@@ -198,9 +285,11 @@ export class McpServerService {
         return;
       }
 
-      transport
-        .handleRequest(req as Parameters<typeof transport.handleRequest>[0], res)
-        .catch((err: Error) => this.logger.error(`MCP transport error: ${err.message}`));
+      mcpContextStorage.run(context, () => {
+        transport
+          .handleRequest(req as Parameters<typeof transport.handleRequest>[0], res)
+          .catch((err: Error) => this.logger.error(`MCP transport error: ${err.message}`));
+      });
     });
 
     await new Promise<void>((resolve, reject) => {
@@ -214,19 +303,105 @@ export class McpServerService {
     await this.server!.connect(transport);
   }
 
-  private validateAuth(req: http.IncomingMessage, res: http.ServerResponse): boolean {
-    if (!this.apiKey) return true;
+  private validateAuth(req: http.IncomingMessage, res: http.ServerResponse): McpUserContext | null {
+    if (!this.apiKey) {
+      return {
+        id: 'admin-api-key',
+        role: 'admin',
+        roles: ['admin'],
+        tenant: 'default',
+        environment: process.env.NODE_ENV || 'development',
+        scopes: ['read', 'write', 'admin'],
+      };
+    }
 
     const authHeader = req.headers.authorization || '';
     const bearerToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
     const apiKeyHeader = req.headers['x-api-key'] as string | undefined;
 
-    if (bearerToken !== this.apiKey && apiKeyHeader !== this.apiKey) {
-      res.writeHead(401, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'Unauthorized', message: 'Invalid or missing API key' }));
-      return false;
+    if (bearerToken === this.apiKey || apiKeyHeader === this.apiKey) {
+      return {
+        id: 'admin-api-key',
+        role: 'admin',
+        roles: ['admin'],
+        tenant: 'default',
+        environment: process.env.NODE_ENV || 'development',
+        scopes: ['read', 'write', 'admin'],
+      };
     }
-    return true;
+
+    const jwtSecret = process.env.JWT_SECRET;
+    if (bearerToken && jwtSecret) {
+      const payload = this.verifyJwtToken(bearerToken, jwtSecret);
+      if (payload) {
+        return this.getContextFromPayload(payload);
+      }
+    }
+
+    const correlationId = generateCorrelationId();
+    const env = failure(
+      ErrorCodes.UNAUTHORIZED,
+      'Invalid or missing API key or JWT token',
+      { correlationId, tool: 'auth', durationMs: 0 }
+    );
+    res.writeHead(401, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(env));
+    return null;
+  }
+
+  private verifyJwtToken(token: string, secret: string): any {
+    try {
+      const parts = token.split('.');
+      if (parts.length !== 3) return null;
+      const [headerB64, payloadB64, signatureB64] = parts;
+      
+      const hmac = crypto.createHmac('sha256', secret);
+      hmac.update(`${headerB64}.${payloadB64}`);
+      const expectedSignature = hmac.digest('base64url');
+      if (signatureB64 !== expectedSignature) {
+        return null;
+      }
+      
+      const payloadJson = Buffer.from(payloadB64, 'base64url').toString('utf8');
+      const payload = JSON.parse(payloadJson);
+      
+      if (payload.exp && Date.now() >= payload.exp * 1000) {
+        return null;
+      }
+      
+      return payload;
+    } catch {
+      return null;
+    }
+  }
+
+  private getContextFromPayload(payload: any): McpUserContext {
+    const role = payload.role || 'reader';
+    let roles = payload.roles;
+    if (!roles) {
+      roles = [role];
+    } else if (!Array.isArray(roles)) {
+      roles = [roles];
+    }
+    const id = payload.sub || payload.id || 'unknown';
+    const tenant = payload.tenant || 'default';
+    const environment = payload.environment || process.env.NODE_ENV || 'development';
+
+    let scopes: string[] = [];
+    if (typeof payload.scope === 'string') {
+      scopes = payload.scope.split(' ').map((s: string) => s.trim()).filter(Boolean);
+    } else if (Array.isArray(payload.scopes)) {
+      scopes = payload.scopes;
+    } else {
+      if (role === 'admin') {
+        scopes = ['read', 'write', 'admin'];
+      } else if (role === 'operator' || role === 'write') {
+        scopes = ['read', 'write'];
+      } else {
+        scopes = ['read'];
+      }
+    }
+    return { id, role, roles, tenant, environment, scopes };
   }
 
   /** The actual bound TCP port for the HTTP transport (useful for tests). */

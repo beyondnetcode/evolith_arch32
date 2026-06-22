@@ -65,7 +65,7 @@ export class CommandExecutor implements ICommandExecutor {
         return { name, command: versionCommand, available: true, version };
       }
     } catch {
-      // Fall through to unavailable
+      console.warn(`Tool check failed for "${name}", marking as unavailable`);
     }
 
     this.toolCache.set(name, false);

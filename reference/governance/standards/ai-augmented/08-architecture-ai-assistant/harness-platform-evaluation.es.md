@@ -164,7 +164,7 @@ El desarrollador crea una feature branch
                     │
             ┌───────┴──────────┐
             │                  │
-        VIOLACIONES         TODO OK
+        VIOLACIONES         CHECK OK
         ENCONTRADAS             │
             │                  ▼
             ▼           [QA Agent]

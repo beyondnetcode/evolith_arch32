@@ -1,6 +1,7 @@
 import { Command, Option } from 'nest-commander';
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import * as os from 'os';
 import chalk from 'chalk';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 
@@ -77,7 +78,7 @@ export class CompletionCommand extends BaseEvolithCommand {
   }
 
   private async installBash(completionDir: string): Promise<void> {
-    const bashrc = path.join(process.env.HOME || '/root', '.bashrc');
+    const bashrc = path.join(os.homedir(), '.bashrc');
     const completionScript = path.join(completionDir, 'completion.bash');
 
     if (!(await fs.pathExists(completionScript))) {
@@ -104,7 +105,7 @@ export class CompletionCommand extends BaseEvolithCommand {
   }
 
   private async installZsh(completionDir: string): Promise<void> {
-    const zshrc = path.join(process.env.HOME || '/root', '.zshrc');
+    const zshrc = path.join(os.homedir(), '.zshrc');
     const completionScript = path.join(completionDir, 'completion.zsh');
 
     if (!(await fs.pathExists(completionScript))) {
@@ -131,7 +132,7 @@ export class CompletionCommand extends BaseEvolithCommand {
   }
 
   private async installFish(completionDir: string): Promise<void> {
-    const fishDir = path.join(process.env.HOME || '/root', '.config', 'fish', 'completions');
+    const fishDir = path.join(os.homedir(), '.config', 'fish', 'completions');
     const completionScript = path.join(completionDir, 'completion.fish');
     const targetScript = path.join(fishDir, 'evolith.fish');
 
@@ -171,7 +172,7 @@ export class CompletionCommand extends BaseEvolithCommand {
     switch (shell) {
       case 'bash': {
         const targetFile = hooksFile;
-        const bashrc = path.join(process.env.HOME || '/root', '.bashrc');
+        const bashrc = path.join(os.homedir(), '.bashrc');
         const line = `source "${targetFile}"`;
         let bashrcContent = await fs.readFile(bashrc, 'utf-8').catch(() => '');
         if (!bashrcContent.includes(marker)) {
@@ -183,7 +184,7 @@ export class CompletionCommand extends BaseEvolithCommand {
       }
       case 'zsh': {
         const targetFile = hooksFile;
-        const zshrc = path.join(process.env.HOME || '/root', '.zshrc');
+        const zshrc = path.join(os.homedir(), '.zshrc');
         const line = `source "${targetFile}"`;
         let zshrcContent = await fs.readFile(zshrc, 'utf-8').catch(() => '');
         if (!zshrcContent.includes(marker)) {
@@ -194,7 +195,7 @@ export class CompletionCommand extends BaseEvolithCommand {
         return;
       }
       case 'fish': {
-        const targetDir = path.join(process.env.HOME || '/root', '.config', 'fish', 'functions');
+        const targetDir = path.join(os.homedir(), '.config', 'fish', 'functions');
         await fs.ensureDir(targetDir);
         const targetFile = path.join(targetDir, 'evolith_hooks.fish');
         await fs.copy(hooksFile, targetFile);

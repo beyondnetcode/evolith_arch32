@@ -2730,6 +2730,159 @@
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-179",
+      "closedAt": "2026-06-22",
+      "closureCommit": "f835b5b7",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md",
+        "reference/governance/standards/vision/gap-tracking.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-182",
+      "closedAt": "2026-06-22",
+      "closureCommit": "0d655de8",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md",
+        "reference/governance/standards/vision/gap-tracking.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-184",
+      "closedAt": "2026-06-22",
+      "closureCommit": "41ec1c7f",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md",
+        "reference/governance/standards/vision/gap-tracking.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-185",
+      "closedAt": "2026-06-22",
+      "closureCommit": "7237eedf",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md",
+        "reference/governance/standards/vision/gap-tracking.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-190",
+      "closedAt": "2026-06-23",
+      "closureCommit": "8eb7ce71",
+      "evidence": [
+        "packages/mcp-server/src/mcp/mcp-server.service.ts",
+        "sdk/cli/src/commands/update/update.command.ts",
+        "sdk/cli/src/infrastructure/formatters/output-formatter.service.ts",
+        "sdk/cli/src/infrastructure/cli/command-executor.ts"
+      ],
+      "validationCommands": [
+        "npm run build --workspace packages/mcp-server",
+        "npm run build --workspace sdk/cli",
+        "npm test --workspace packages/mcp-server -- --runInBand",
+        "npm test --workspace sdk/cli -- --runInBand"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-191",
+      "closedAt": "2026-06-23",
+      "closureCommit": "8eb7ce71",
+      "evidence": [
+        "reference/architecture/adrs/adr-matrix.md",
+        "reference/architecture/adrs/adr-matrix.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/01-validate-docs.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-192",
+      "closedAt": "2026-06-23",
+      "closureCommit": "8eb7ce71",
+      "evidence": [
+        "reference/navigation/MASTER_INDEX.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/01-validate-docs.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-193",
+      "closedAt": "2026-06-23",
+      "closureCommit": "8eb7ce71",
+      "evidence": [
+        "reference/governance/standards/ai-augmented/02-mcp-integration/mcp-security.md",
+        "reference/governance/standards/ai-augmented/02-mcp-integration/mcp-security.es.md",
+        "reference/governance/standards/engineering/senior-architectural-assessment.md",
+        "reference/governance/standards/engineering/senior-architectural-assessment.es.md",
+        "reference/governance/standards/ai-augmented/08-architecture-ai-assistant/harness-platform-evaluation.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/01-validate-docs.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-195",
+      "closedAt": "2026-06-23",
+      "closureCommit": "8eb7ce71",
+      "evidence": [
+        "sdk/cli/src/commands/update/update.command.ts",
+        "sdk/cli/src/commands/completion/completion.command.ts"
+      ],
+      "validationCommands": [
+        "npm run build --workspace sdk/cli",
+        "npm test --workspace sdk/cli -- --runInBand"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-210",
+      "closedAt": "2026-06-22",
+      "closureCommit": "a349713d",
+      "evidence": [
+        "reference/governance/standards/vision/gap-tracking.md",
+        "reference/governance/standards/vision/gap-tracking.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-211",
+      "closedAt": "2026-06-23",
+      "closureCommit": "8eb7ce71",
+      "evidence": [
+        "reference/architecture/adrs/core/0041-dual-engine-policy-evaluation.md",
+        "reference/architecture/adrs/core/0095-serverless-architecture-governance.md",
+        "reference/architecture/adrs/core/0096-edge-computing-architecture-governance.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
+        "node .harness/scripts/ci/05-check-orphan-bilingual.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

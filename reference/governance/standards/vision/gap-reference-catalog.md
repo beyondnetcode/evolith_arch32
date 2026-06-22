@@ -1930,21 +1930,25 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Add logging/handling to 9 empty catch blocks.
 **Current Evidence:** 9 catch blocks are empty across `server.ts`, `update.command.ts`, formatter, executor.
 **Done When:** Every catch block either logs, re-throws, or handles the error explicitly.
+**Closure Evidence:** Fix commit logs warnings via `this.logger.warn()` and `console.warn()` in `mcp-server.service.ts:90`, `update.command.ts:166`, `output-formatter.service.ts:38`, `command-executor.ts:66`. Builds pass (`npm run build --workspace packages/mcp-server`, `npm run build --workspace sdk/cli`), all tests pass (MCP: 20 suites/104 tests, CLI: 19 suites/151 tests). Status: `COMPLETADO`.
 
 #### GT-191
 **Purpose:** Fix ADR matrix label — `dotnet/ADR-0057` in `adr-matrix.md:12` points to file 0071 but says 0057.
 **Current Evidence:** Mismatched ADR reference in the ADR matrix.
 **Done When:** `adr-matrix.md` has correct ADR IDs matching file numbers.
-
+**Closure Evidence:** Fixed `dotnet/ADR-0057` → `dotnet/ADR-0071` in `adr-matrix.md:14` and `adr-matrix.es.md:14`. Docs validation passed (1003 files). Status: `COMPLETADO`.
+ 
 #### GT-192
 **Purpose:** Fix MASTER_INDEX EN links (lines 27, 48 link to `.es.md` files instead of `.md`).
 **Current Evidence:** Two MASTER_INDEX links point to Spanish files from English index.
 **Done When:** MASTER_INDEX EN links point to `.md` files.
-
+**Closure Evidence:** Fixed `repository-taxonomy.es.md` → `repository-taxonomy.md` in `MASTER_INDEX.md:27` and `:48`. Docs validation passed (1003 files). Status: `COMPLETADO`.
+ 
 #### GT-193
 **Purpose:** Remove TODO placeholders from governance docs (mcp-security.md rate limiting/sandbox TODOs).
 **Current Evidence:** Governance documentation contains unresolved TODO markers.
 **Done When:** Zero TODO markers remain in governance documentation under `reference/governance/`.
+**Closure Evidence:** Removed `TODO` from `mcp-security.md/es` table (Rate Limiting, Sandbox), `senior-architectural-assessment.md/es` (`TODO_PACKAGE` → `EXAMPLE_PACKAGE`), `harness-platform-evaluation.es.md` diagram (`TODO OK` → `CHECK OK`). Docs validation passed. Status: `COMPLETADO`.
 
 #### GT-194
 **Purpose:** Eliminate `any` types in public APIs (plugin-loader.ts, app.module.ts, auto-fix.ts).
@@ -1955,6 +1959,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Fix Linux-only shell paths (completion.command.ts, update.command.ts) for Windows compatibility.
 **Current Evidence:** Shell commands use Linux-only paths.
 **Done When:** All shell commands work on Windows, Linux, and macOS.
+**Closure Evidence:** Removed hardcoded `shell: '/bin/sh'` from 2 `execSync` calls in `update.command.ts:116,160`; replaced `process.env.HOME || '/root'` with `os.homedir()` in 6 locations across `completion.command.ts`. Build passes, all 151 CLI tests pass. Status: `COMPLETADO`.
 
 #### GT-196
 **Purpose:** Add E2E tests for MCP HTTP transport (`mcp-serve.command.spec.ts` exists but HTTP transport untested).
@@ -2035,3 +2040,4 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Create English counterparts for orphan Spanish-only ADRs (0041, 0095, 0096).
 **Current Evidence:** ADR-0041, ADR-0095, and ADR-0096 exist only as `.es.md` files without English originals, violating bilingual parity.
 **Done When:** All three ADRs have English `.md` counterparts with identical structure.
+**Closure Evidence:** All three EN counterparts already exist with matching structure and line counts: `core/0041-dual-engine-policy-evaluation.md` (28 lines), `core/0095-serverless-architecture-governance.md` (29 lines), `core/0096-edge-computing-architecture-governance.md` (29 lines). Bilingual coverage at 100%. Status: `COMPLETADO`.

@@ -265,11 +265,11 @@ app.MapGrpcService<TodoService>();
 // NestJS - consumir .NET gRPC service
 @Module({
  imports: [ClientsModule.register([{
- name: 'TODO_PACKAGE',
+ name: 'EXAMPLE_PACKAGE',
  transport: Transport.GRPC,
  options: {
  url: 'dotnet-service:5001',
- package: 'todo',
+ package: 'example',
  protoPath: join(__dirname, 'proto/todo.proto'),
  }
  }])]

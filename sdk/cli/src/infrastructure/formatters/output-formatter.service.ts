@@ -36,6 +36,7 @@ export class OutputFormatterService {
     try {
       return this.toYaml(data);
     } catch {
+      console.warn('YAML formatting failed, falling back to JSON');
       return this.formatJson(data, _options);
     }
   }

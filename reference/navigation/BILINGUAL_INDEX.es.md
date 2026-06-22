@@ -841,18 +841,6 @@
 </details>
 
 <details>
-<summary><strong>knowledge/architecture-intelligence/patterns/es</strong></summary>
-
-| EN | ES | Status |
-|----|----|--------|
-| [contract-first-integration.md](knowledge/architecture-intelligence/patterns/es/contract-first-integration.md) | [contract-first-integration.es.md](knowledge/architecture-intelligence/patterns/es/contract-first-integration.es.md) | OK |
-| [data-ownership-per-bounded-context.md](knowledge/architecture-intelligence/patterns/es/data-ownership-per-bounded-context.md) | [data-ownership-per-bounded-context.es.md](knowledge/architecture-intelligence/patterns/es/data-ownership-per-bounded-context.es.md) | OK |
-| [modular-monolith-first.md](knowledge/architecture-intelligence/patterns/es/modular-monolith-first.md) | [modular-monolith-first.es.md](knowledge/architecture-intelligence/patterns/es/modular-monolith-first.es.md) | OK |
-| [no-cross-domain-joins.md](knowledge/architecture-intelligence/patterns/es/no-cross-domain-joins.md) | [no-cross-domain-joins.es.md](knowledge/architecture-intelligence/patterns/es/no-cross-domain-joins.es.md) | OK |
-
-</details>
-
-<details>
 <summary><strong>knowledge/architecture-intelligence/tradeoffs</strong></summary>
 
 | EN | ES | Status |

@@ -1850,9 +1850,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Done When:** OPA bundle ADR renumbered to the next free Core ID (0099) and all inbound links updated.
 
 #### GT-176
-**Purpose:** Remove `patterns/es/` subdirectory (Pattern A/B mix violation).
-**Current Evidence:** `patterns/es/` violates the bilingual naming convention.
-**Done When:** Content migrated to `patterns/README.es.md`, subdirectory removed.
+**Purpose:** Remove `reference/knowledge/architecture-intelligence/patterns/es/` subdirectory (Pattern A/B mix violation).
+**Current Evidence:** The `patterns/es/` subdir duplicated four patterns (`modular-monolith-first`, `no-cross-domain-joins`, `contract-first-integration`, `data-ownership-per-bounded-context`) with incorrect language-by-folder layout, violating the Pattern A bilingual naming convention (`name.md` + `name.es.md` siblings). The canonical EN/ES pairs already existed at the parent `patterns/` directory.
+**Done When:** Subdirectory removed; no inbound references outside auto-generated BILINGUAL_INDEX and historical audit docs.
 
 #### GT-177
 **Purpose:** Complete `core/README.md` with all 21 missing ADRs.

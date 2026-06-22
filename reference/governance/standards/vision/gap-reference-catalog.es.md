@@ -1849,9 +1849,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Hecho Cuando:** ADR del bundle OPA renumerado al siguiente Core ID libre (0099) y todos los enlaces actualizados.
 
 #### GT-176
-**Propósito:** Eliminar subdirectorio `patterns/es/` (violación de Patrón A/B).
-**Evidencia Actual:** `patterns/es/` viola la convención de nomenclatura bilingüe.
-**Hecho Cuando:** Contenido migrado a `patterns/README.es.md`, subdirectorio eliminado.
+**Propósito:** Eliminar el subdirectorio `reference/knowledge/architecture-intelligence/patterns/es/` (violación de Patrón A/B).
+**Evidencia Actual:** El subdir `patterns/es/` duplicaba cuatro patrones (`modular-monolith-first`, `no-cross-domain-joins`, `contract-first-integration`, `data-ownership-per-bounded-context`) con layout incorrecto idioma-por-carpeta, violando la convención bilingüe Patrón A (`name.md` + `name.es.md` hermanos). Los pares canónicos EN/ES ya existían en el directorio padre `patterns/`.
+**Hecho Cuando:** Subdirectorio eliminado; sin referencias entrantes fuera del BILINGUAL_INDEX auto-generado y documentos históricos de auditoría.
 
 #### GT-177
 **Propósito:** Completar `core/README.md` con todos los 21 ADRs faltantes.

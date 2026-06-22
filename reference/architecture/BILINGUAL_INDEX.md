@@ -7,6 +7,7 @@
 
 | EN | ES | Status |
 |----|----|--------|
+| [agnostic-baseline.md](agnostic-baseline.md) | [agnostic-baseline.es.md](agnostic-baseline.es.md) | OK |
 | [APPLICATION_ARCHITECTURE_HUB.md](APPLICATION_ARCHITECTURE_HUB.md) | [APPLICATION_ARCHITECTURE_HUB.es.md](APPLICATION_ARCHITECTURE_HUB.es.md) | OK |
 | [BILINGUAL_INDEX.md](BILINGUAL_INDEX.md) | [BILINGUAL_INDEX.es.md](BILINGUAL_INDEX.es.md) | OK |
 | [DOMAIN_DESIGN_HUB.md](DOMAIN_DESIGN_HUB.md) | [DOMAIN_DESIGN_HUB.es.md](DOMAIN_DESIGN_HUB.es.md) | OK |
@@ -94,7 +95,6 @@
 | [0074-evolith-core-api-exposure-layer.md](adrs/core/0074-evolith-core-api-exposure-layer.md) | [0074-evolith-core-api-exposure-layer.es.md](adrs/core/0074-evolith-core-api-exposure-layer.es.md) | OK |
 | [0075-core-api-auth-strategy.md](adrs/core/0075-core-api-auth-strategy.md) | [0075-core-api-auth-strategy.es.md](adrs/core/0075-core-api-auth-strategy.es.md) | OK |
 | [0076-domain-oriented-microservice-architecture.md](adrs/core/0076-domain-oriented-microservice-architecture.md) | [0076-domain-oriented-microservice-architecture.es.md](adrs/core/0076-domain-oriented-microservice-architecture.es.md) | OK |
-| [0076-opa-bundle-s3-distribution.md](adrs/core/0076-opa-bundle-s3-distribution.md) | [0076-opa-bundle-s3-distribution.es.md](adrs/core/0076-opa-bundle-s3-distribution.es.md) | OK |
 | [0077-masstransit-v9-commercial-pivot.md](adrs/core/0077-masstransit-v9-commercial-pivot.md) | [0077-masstransit-v9-commercial-pivot.es.md](adrs/core/0077-masstransit-v9-commercial-pivot.es.md) | OK |
 | [0078-domain-financial-separation-governance.md](adrs/core/0078-domain-financial-separation-governance.md) | [0078-domain-financial-separation-governance.es.md](adrs/core/0078-domain-financial-separation-governance.es.md) | OK |
 | [0079-multi-topology-reference-corpus.md](adrs/core/0079-multi-topology-reference-corpus.md) | [0079-multi-topology-reference-corpus.es.md](adrs/core/0079-multi-topology-reference-corpus.es.md) | OK |
@@ -117,6 +117,7 @@
 | [0096-edge-computing-architecture-governance.md](adrs/core/0096-edge-computing-architecture-governance.md) | [0096-edge-computing-architecture-governance.es.md](adrs/core/0096-edge-computing-architecture-governance.es.md) | OK |
 | [0097-knowledge-lifecycle-governance.md](adrs/core/0097-knowledge-lifecycle-governance.md) | [0097-knowledge-lifecycle-governance.es.md](adrs/core/0097-knowledge-lifecycle-governance.es.md) | OK |
 | [0098-rest-uri-versioning-deprecation-policy.md](adrs/core/0098-rest-uri-versioning-deprecation-policy.md) | [0098-rest-uri-versioning-deprecation-policy.es.md](adrs/core/0098-rest-uri-versioning-deprecation-policy.es.md) | OK |
+| [0099-opa-bundle-s3-distribution.md](adrs/core/0099-opa-bundle-s3-distribution.md) | [0099-opa-bundle-s3-distribution.es.md](adrs/core/0099-opa-bundle-s3-distribution.es.md) | OK |
 | [README.md](adrs/core/README.md) | [README.es.md](adrs/core/README.es.md) | OK |
 
 </details>
@@ -261,6 +262,7 @@
 | [patterns.md](topologies/ai/agentic-ai/patterns.md) | [patterns.es.md](topologies/ai/agentic-ai/patterns.es.md) | OK |
 | [README.md](topologies/ai/agentic-ai/README.md) | [README.es.md](topologies/ai/agentic-ai/README.es.md) | OK |
 | [resilience.md](topologies/ai/agentic-ai/resilience.md) | [resilience.es.md](topologies/ai/agentic-ai/resilience.es.md) | OK |
+| [runbooks.md](topologies/ai/agentic-ai/runbooks.md) | [runbooks.es.md](topologies/ai/agentic-ai/runbooks.es.md) | OK |
 | [security.md](topologies/ai/agentic-ai/security.md) | [security.es.md](topologies/ai/agentic-ai/security.es.md) | OK |
 
 </details>

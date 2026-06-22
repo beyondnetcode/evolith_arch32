@@ -97,7 +97,6 @@ export class NodeFileSystemProvider implements IFileSystemProvider, IFileSystem 
   }
 
   async ensureFile(path: string): Promise<void> {
-    const fs = require('fs-extra');
     await fs.ensureFile(path);
   }
 }

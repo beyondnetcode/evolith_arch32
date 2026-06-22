@@ -18,6 +18,7 @@
 
 | EN | ES | Status |
 |----|----|--------|
+| [agnostic-baseline.md](architecture/agnostic-baseline.md) | [agnostic-baseline.es.md](architecture/agnostic-baseline.es.md) | OK |
 | [APPLICATION_ARCHITECTURE_HUB.md](architecture/APPLICATION_ARCHITECTURE_HUB.md) | [APPLICATION_ARCHITECTURE_HUB.es.md](architecture/APPLICATION_ARCHITECTURE_HUB.es.md) | OK |
 | [BILINGUAL_INDEX.md](architecture/BILINGUAL_INDEX.md) | [BILINGUAL_INDEX.es.md](architecture/BILINGUAL_INDEX.es.md) | OK |
 | [DOMAIN_DESIGN_HUB.md](architecture/DOMAIN_DESIGN_HUB.md) | [DOMAIN_DESIGN_HUB.es.md](architecture/DOMAIN_DESIGN_HUB.es.md) | OK |
@@ -105,7 +106,6 @@
 | [0074-evolith-core-api-exposure-layer.md](architecture/adrs/core/0074-evolith-core-api-exposure-layer.md) | [0074-evolith-core-api-exposure-layer.es.md](architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md) | OK |
 | [0075-core-api-auth-strategy.md](architecture/adrs/core/0075-core-api-auth-strategy.md) | [0075-core-api-auth-strategy.es.md](architecture/adrs/core/0075-core-api-auth-strategy.es.md) | OK |
 | [0076-domain-oriented-microservice-architecture.md](architecture/adrs/core/0076-domain-oriented-microservice-architecture.md) | [0076-domain-oriented-microservice-architecture.es.md](architecture/adrs/core/0076-domain-oriented-microservice-architecture.es.md) | OK |
-| [0076-opa-bundle-s3-distribution.md](architecture/adrs/core/0076-opa-bundle-s3-distribution.md) | [0076-opa-bundle-s3-distribution.es.md](architecture/adrs/core/0076-opa-bundle-s3-distribution.es.md) | OK |
 | [0077-masstransit-v9-commercial-pivot.md](architecture/adrs/core/0077-masstransit-v9-commercial-pivot.md) | [0077-masstransit-v9-commercial-pivot.es.md](architecture/adrs/core/0077-masstransit-v9-commercial-pivot.es.md) | OK |
 | [0078-domain-financial-separation-governance.md](architecture/adrs/core/0078-domain-financial-separation-governance.md) | [0078-domain-financial-separation-governance.es.md](architecture/adrs/core/0078-domain-financial-separation-governance.es.md) | OK |
 | [0079-multi-topology-reference-corpus.md](architecture/adrs/core/0079-multi-topology-reference-corpus.md) | [0079-multi-topology-reference-corpus.es.md](architecture/adrs/core/0079-multi-topology-reference-corpus.es.md) | OK |
@@ -128,6 +128,7 @@
 | [0096-edge-computing-architecture-governance.md](architecture/adrs/core/0096-edge-computing-architecture-governance.md) | [0096-edge-computing-architecture-governance.es.md](architecture/adrs/core/0096-edge-computing-architecture-governance.es.md) | OK |
 | [0097-knowledge-lifecycle-governance.md](architecture/adrs/core/0097-knowledge-lifecycle-governance.md) | [0097-knowledge-lifecycle-governance.es.md](architecture/adrs/core/0097-knowledge-lifecycle-governance.es.md) | OK |
 | [0098-rest-uri-versioning-deprecation-policy.md](architecture/adrs/core/0098-rest-uri-versioning-deprecation-policy.md) | [0098-rest-uri-versioning-deprecation-policy.es.md](architecture/adrs/core/0098-rest-uri-versioning-deprecation-policy.es.md) | OK |
+| [0099-opa-bundle-s3-distribution.md](architecture/adrs/core/0099-opa-bundle-s3-distribution.md) | [0099-opa-bundle-s3-distribution.es.md](architecture/adrs/core/0099-opa-bundle-s3-distribution.es.md) | OK |
 | [README.md](architecture/adrs/core/README.md) | [README.es.md](architecture/adrs/core/README.es.md) | OK |
 
 </details>
@@ -272,6 +273,7 @@
 | [patterns.md](architecture/topologies/ai/agentic-ai/patterns.md) | [patterns.es.md](architecture/topologies/ai/agentic-ai/patterns.es.md) | OK |
 | [README.md](architecture/topologies/ai/agentic-ai/README.md) | [README.es.md](architecture/topologies/ai/agentic-ai/README.es.md) | OK |
 | [resilience.md](architecture/topologies/ai/agentic-ai/resilience.md) | [resilience.es.md](architecture/topologies/ai/agentic-ai/resilience.es.md) | OK |
+| [runbooks.md](architecture/topologies/ai/agentic-ai/runbooks.md) | [runbooks.es.md](architecture/topologies/ai/agentic-ai/runbooks.es.md) | OK |
 | [security.md](architecture/topologies/ai/agentic-ai/security.md) | [security.es.md](architecture/topologies/ai/agentic-ai/security.es.md) | OK |
 
 </details>
@@ -416,6 +418,9 @@
 | EN | ES | Status |
 |----|----|--------|
 | [core-api-deployment.md](governance/sdlc/01-playbooks/core-api-deployment.md) | [core-api-deployment.es.md](governance/sdlc/01-playbooks/core-api-deployment.es.md) | OK |
+| [phase-1-business-signoff.md](governance/sdlc/01-playbooks/phase-1-business-signoff.md) | [phase-1-business-signoff.es.md](governance/sdlc/01-playbooks/phase-1-business-signoff.es.md) | OK |
+| [phase-2-design-baseline.md](governance/sdlc/01-playbooks/phase-2-design-baseline.md) | [phase-2-design-baseline.es.md](governance/sdlc/01-playbooks/phase-2-design-baseline.es.md) | OK |
+| [phase-4-rc-stamp.md](governance/sdlc/01-playbooks/phase-4-rc-stamp.md) | [phase-4-rc-stamp.es.md](governance/sdlc/01-playbooks/phase-4-rc-stamp.es.md) | OK |
 | [zero-downtime-release.md](governance/sdlc/01-playbooks/zero-downtime-release.md) | [zero-downtime-release.es.md](governance/sdlc/01-playbooks/zero-downtime-release.es.md) | OK |
 
 </details>
@@ -456,9 +461,12 @@
 | [evolith-user-story-template.md](governance/sdlc/04-artifact-templates/evolith-user-story-template.md) | [evolith-user-story-template.es.md](governance/sdlc/04-artifact-templates/evolith-user-story-template.es.md) | OK |
 | [executive-scorecard-template.md](governance/sdlc/04-artifact-templates/executive-scorecard-template.md) | [executive-scorecard-template.es.md](governance/sdlc/04-artifact-templates/executive-scorecard-template.es.md) | OK |
 | [functional-story-template.md](governance/sdlc/04-artifact-templates/functional-story-template.md) | [functional-story-template.es.md](governance/sdlc/04-artifact-templates/functional-story-template.es.md) | OK |
+| [integration-evidence-template.md](governance/sdlc/04-artifact-templates/integration-evidence-template.md) | [integration-evidence-template.es.md](governance/sdlc/04-artifact-templates/integration-evidence-template.es.md) | OK |
+| [observability-validation-template.md](governance/sdlc/04-artifact-templates/observability-validation-template.md) | [observability-validation-template.es.md](governance/sdlc/04-artifact-templates/observability-validation-template.es.md) | OK |
 | [prd-template.md](governance/sdlc/04-artifact-templates/prd-template.md) | [prd-template.es.md](governance/sdlc/04-artifact-templates/prd-template.es.md) | OK |
 | [README.md](governance/sdlc/04-artifact-templates/README.md) | [README.es.md](governance/sdlc/04-artifact-templates/README.es.md) | OK |
 | [release-notes-template.md](governance/sdlc/04-artifact-templates/release-notes-template.md) | [release-notes-template.es.md](governance/sdlc/04-artifact-templates/release-notes-template.es.md) | OK |
+| [security-scan-report-template.md](governance/sdlc/04-artifact-templates/security-scan-report-template.md) | [security-scan-report-template.es.md](governance/sdlc/04-artifact-templates/security-scan-report-template.es.md) | OK |
 | [technical-feasibility-template.md](governance/sdlc/04-artifact-templates/technical-feasibility-template.md) | [technical-feasibility-template.es.md](governance/sdlc/04-artifact-templates/technical-feasibility-template.es.md) | OK |
 | [technical-story-template.md](governance/sdlc/04-artifact-templates/technical-story-template.md) | [technical-story-template.es.md](governance/sdlc/04-artifact-templates/technical-story-template.es.md) | OK |
 | [test-summary-report-template.md](governance/sdlc/04-artifact-templates/test-summary-report-template.md) | [test-summary-report-template.es.md](governance/sdlc/04-artifact-templates/test-summary-report-template.es.md) | OK |
@@ -833,18 +841,6 @@
 </details>
 
 <details>
-<summary><strong>knowledge/architecture-intelligence/patterns/es</strong></summary>
-
-| EN | ES | Status |
-|----|----|--------|
-| [contract-first-integration.md](knowledge/architecture-intelligence/patterns/es/contract-first-integration.md) | [contract-first-integration.es.md](knowledge/architecture-intelligence/patterns/es/contract-first-integration.es.md) | OK |
-| [data-ownership-per-bounded-context.md](knowledge/architecture-intelligence/patterns/es/data-ownership-per-bounded-context.md) | [data-ownership-per-bounded-context.es.md](knowledge/architecture-intelligence/patterns/es/data-ownership-per-bounded-context.es.md) | OK |
-| [modular-monolith-first.md](knowledge/architecture-intelligence/patterns/es/modular-monolith-first.md) | [modular-monolith-first.es.md](knowledge/architecture-intelligence/patterns/es/modular-monolith-first.es.md) | OK |
-| [no-cross-domain-joins.md](knowledge/architecture-intelligence/patterns/es/no-cross-domain-joins.md) | [no-cross-domain-joins.es.md](knowledge/architecture-intelligence/patterns/es/no-cross-domain-joins.es.md) | OK |
-
-</details>
-
-<details>
 <summary><strong>knowledge/architecture-intelligence/tradeoffs</strong></summary>
 
 | EN | ES | Status |
@@ -1105,6 +1101,7 @@
 | EN | ES | Status |
 |----|----|--------|
 | [api-reference.md](products/core-api/api-reference.md) | [api-reference.es.md](products/core-api/api-reference.es.md) | OK |
+| [changelog.md](products/core-api/changelog.md) | [changelog.es.md](products/core-api/changelog.es.md) | OK |
 | [README.md](products/core-api/README.md) | [README.es.md](products/core-api/README.es.md) | OK |
 
 </details>
@@ -1177,6 +1174,17 @@
 | [sdk-cli-mcp-implementation-roadmap.md](products/smart-cli/docs/planning/sdk-cli-mcp-implementation-roadmap.md) | [sdk-cli-mcp-implementation-roadmap.es.md](products/smart-cli/docs/planning/sdk-cli-mcp-implementation-roadmap.es.md) | OK |
 | [sdk-cli-mcp-target-architecture.md](products/smart-cli/docs/planning/sdk-cli-mcp-target-architecture.md) | [sdk-cli-mcp-target-architecture.es.md](products/smart-cli/docs/planning/sdk-cli-mcp-target-architecture.es.md) | OK |
 | [testing-strategy.md](products/smart-cli/docs/planning/testing-strategy.md) | [testing-strategy.es.md](products/smart-cli/docs/planning/testing-strategy.es.md) | OK |
+
+</details>
+
+<details>
+<summary><strong>products/ums-reference</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [overview.md](products/ums-reference/overview.md) | [overview.es.md](products/ums-reference/overview.es.md) | OK |
+| [README.md](products/ums-reference/README.md) | [README.es.md](products/ums-reference/README.es.md) | OK |
+| [reference-model.md](products/ums-reference/reference-model.md) | [reference-model.es.md](products/ums-reference/reference-model.es.md) | OK |
 
 </details>
 

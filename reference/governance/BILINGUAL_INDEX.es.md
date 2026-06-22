@@ -43,6 +43,9 @@
 | EN | ES | Status |
 |----|----|--------|
 | [core-api-deployment.md](sdlc/01-playbooks/core-api-deployment.md) | [core-api-deployment.es.md](sdlc/01-playbooks/core-api-deployment.es.md) | OK |
+| [phase-1-business-signoff.md](sdlc/01-playbooks/phase-1-business-signoff.md) | [phase-1-business-signoff.es.md](sdlc/01-playbooks/phase-1-business-signoff.es.md) | OK |
+| [phase-2-design-baseline.md](sdlc/01-playbooks/phase-2-design-baseline.md) | [phase-2-design-baseline.es.md](sdlc/01-playbooks/phase-2-design-baseline.es.md) | OK |
+| [phase-4-rc-stamp.md](sdlc/01-playbooks/phase-4-rc-stamp.md) | [phase-4-rc-stamp.es.md](sdlc/01-playbooks/phase-4-rc-stamp.es.md) | OK |
 | [zero-downtime-release.md](sdlc/01-playbooks/zero-downtime-release.md) | [zero-downtime-release.es.md](sdlc/01-playbooks/zero-downtime-release.es.md) | OK |
 
 </details>
@@ -83,9 +86,12 @@
 | [evolith-user-story-template.md](sdlc/04-artifact-templates/evolith-user-story-template.md) | [evolith-user-story-template.es.md](sdlc/04-artifact-templates/evolith-user-story-template.es.md) | OK |
 | [executive-scorecard-template.md](sdlc/04-artifact-templates/executive-scorecard-template.md) | [executive-scorecard-template.es.md](sdlc/04-artifact-templates/executive-scorecard-template.es.md) | OK |
 | [functional-story-template.md](sdlc/04-artifact-templates/functional-story-template.md) | [functional-story-template.es.md](sdlc/04-artifact-templates/functional-story-template.es.md) | OK |
+| [integration-evidence-template.md](sdlc/04-artifact-templates/integration-evidence-template.md) | [integration-evidence-template.es.md](sdlc/04-artifact-templates/integration-evidence-template.es.md) | OK |
+| [observability-validation-template.md](sdlc/04-artifact-templates/observability-validation-template.md) | [observability-validation-template.es.md](sdlc/04-artifact-templates/observability-validation-template.es.md) | OK |
 | [prd-template.md](sdlc/04-artifact-templates/prd-template.md) | [prd-template.es.md](sdlc/04-artifact-templates/prd-template.es.md) | OK |
 | [README.md](sdlc/04-artifact-templates/README.md) | [README.es.md](sdlc/04-artifact-templates/README.es.md) | OK |
 | [release-notes-template.md](sdlc/04-artifact-templates/release-notes-template.md) | [release-notes-template.es.md](sdlc/04-artifact-templates/release-notes-template.es.md) | OK |
+| [security-scan-report-template.md](sdlc/04-artifact-templates/security-scan-report-template.md) | [security-scan-report-template.es.md](sdlc/04-artifact-templates/security-scan-report-template.es.md) | OK |
 | [technical-feasibility-template.md](sdlc/04-artifact-templates/technical-feasibility-template.md) | [technical-feasibility-template.es.md](sdlc/04-artifact-templates/technical-feasibility-template.es.md) | OK |
 | [technical-story-template.md](sdlc/04-artifact-templates/technical-story-template.md) | [technical-story-template.es.md](sdlc/04-artifact-templates/technical-story-template.es.md) | OK |
 | [test-summary-report-template.md](sdlc/04-artifact-templates/test-summary-report-template.md) | [test-summary-report-template.es.md](sdlc/04-artifact-templates/test-summary-report-template.es.md) | OK |

@@ -1844,19 +1844,19 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Hecho Cuando:** Exista un `packages/mcp-tools/` dedicado que publique capacidades reutilizables para agentes externos.
 
 #### GT-175
-**Propósito:** Corregir ADR-0076 duplicado (renumerar bundle OPA a ADR-0078).
-**Evidencia Actual:** Dos ADRs comparten el ID 0076.
-**Hecho Cuando:** ADR-0076 renumerado a ADR-0078, todos los enlaces actualizados.
+**Propósito:** Corregir el ID duplicado ADR-0076 renumerando el ADR de bundle OPA al siguiente Core ID libre.
+**Evidencia Actual:** Dos ADRs compartían el ID 0076 (`0076-domain-oriented-microservice-architecture` y `0076-opa-bundle-s3-distribution`). El plan original de "renumerar a 0078" quedó obsoleto porque 0078 fue asignado posteriormente a `domain-financial-separation-governance`.
+**Hecho Cuando:** ADR del bundle OPA renumerado al siguiente Core ID libre (0099) y todos los enlaces actualizados.
 
 #### GT-176
-**Propósito:** Eliminar subdirectorio `patterns/es/` (violación de Patrón A/B).
-**Evidencia Actual:** `patterns/es/` viola la convención de nomenclatura bilingüe.
-**Hecho Cuando:** Contenido migrado a `patterns/README.es.md`, subdirectorio eliminado.
+**Propósito:** Eliminar el subdirectorio `reference/knowledge/architecture-intelligence/patterns/es/` (violación de Patrón A/B).
+**Evidencia Actual:** El subdir `patterns/es/` duplicaba cuatro patrones (`modular-monolith-first`, `no-cross-domain-joins`, `contract-first-integration`, `data-ownership-per-bounded-context`) con layout incorrecto idioma-por-carpeta, violando la convención bilingüe Patrón A (`name.md` + `name.es.md` hermanos). Los pares canónicos EN/ES ya existían en el directorio padre `patterns/`.
+**Hecho Cuando:** Subdirectorio eliminado; sin referencias entrantes fuera del BILINGUAL_INDEX auto-generado y documentos históricos de auditoría.
 
 #### GT-177
-**Propósito:** Completar `core/README.md` con todos los 21 ADRs faltantes.
-**Evidencia Actual:** `core/README.md` lista solo 54 de 74 ADRs (faltan ADRs 0041, 0073-0079, 0084-0098).
-**Hecho Cuando:** Los 74 ADRs listados en `core/README.md` con enlaces y resúmenes.
+**Propósito:** Completar `core/README.md` con los ADRs Core faltantes.
+**Evidencia Actual:** `core/README.md` listaba solo 54 de 76 ADRs Core (faltaban 0041, 0073–0079, 0084–0089, 0091–0096, 0098, 0099).
+**Hecho Cuando:** Todos los ADRs Core listados en `core/README.md` con enlaces y títulos de una línea. La contraparte ES se rastrea por separado como [GT-178](./gap-reference-catalog.es.md#gt-178).
 
 #### GT-178
 **Propósito:** Reconstruir `core/README.es.md` con todos los ADRs (actualmente solo muestra hasta ADR-0056).
@@ -1869,9 +1869,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Hecho Cuando:** Los 5 comandos alcanzan 80%+ de cobertura unitaria.
 
 #### GT-180
-**Propósito:** Reemplazar llamadas `require()` entre capas con Inyección de Dependencias en 4 archivos.
-**Evidencia Actual:** 4 archivos usan `require()` para importar entre límites arquitectónicos.
-**Hecho Cuando:** Los 4 archivos migrados a inyección DI adecuada.
+**Propósito:** Reemplazar las llamadas `require()` entre capas con imports ES adecuados / `import()` dinámico en el código fuente del CLI.
+**Evidencia Actual:** Archivos de código de producción usaban `require()` entre capas: `update.command.ts` (3 sitios para `child_process` y `package.json`), `node-filesystem.provider.ts` (1 sitio sombreando el import top-level de `fs-extra`), `plugin-loader.ts` (1 sitio para carga de plugins en runtime).
+**Hecho Cuando:** Todas las llamadas `require()` en código de producción eliminadas; el cargador dinámico de plugins usa `import()` con unwrapping del default CJS; `npm run build` y `npm run test:unit` pasan.
 
 #### GT-181
 **Propósito:** Dividir archivos grandes (`server.ts` 420 líneas, otros 5 >300 líneas) en módulos más pequeños.

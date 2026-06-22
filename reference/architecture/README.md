@@ -20,6 +20,7 @@ Ordered from general policy to concrete evidence:
 
 | Document | Description | Goal / Objective | Type | Mandatory |
 |---|---|---|---|---|
+| [Agnostic Baseline](./agnostic-baseline.md) | Top-level runtime-agnostic principles, patterns, and non-negotiable constraints | Anchor every product and runtime to one baseline | Baseline policy | Yes |
 | [Principles](./principles/README.md) | Foundational architecture principles | Ground all decisions in shared principles | Area hub | Yes |
 | [Blueprints Hub](./blueprints/README.md) | Runtime-agnostic principles, topology, and selection criteria | Define the architectural baseline | Area hub | Yes |
 | [ADR Registry](./adrs/README.md) | Records accepted trade-offs and their scope | Preserve decision history | Area hub | Yes |

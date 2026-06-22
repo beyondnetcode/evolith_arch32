@@ -2612,6 +2612,88 @@
         "npm run build --workspace sdk/cli"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-180",
+      "closedAt": "2026-06-22",
+      "closureCommit": "3e4c7f71",
+      "evidence": [
+        "sdk/cli/src/commands/update/update.command.ts",
+        "sdk/cli/src/infrastructure/providers/node-filesystem.provider.ts",
+        "sdk/cli/src/infrastructure/plugins/plugin-loader.ts"
+      ],
+      "validationCommands": [
+        "npm run build --workspace sdk/cli",
+        "npm run test:unit --workspace sdk/cli",
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-177",
+      "closedAt": "2026-06-22",
+      "closureCommit": "a5b6b0a7",
+      "evidence": [
+        "reference/architecture/adrs/core/README.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-176",
+      "closedAt": "2026-06-22",
+      "closureCommit": "825a668a",
+      "evidence": [
+        "reference/knowledge/architecture-intelligence/patterns/modular-monolith-first.md",
+        "reference/knowledge/architecture-intelligence/patterns/modular-monolith-first.es.md",
+        "reference/knowledge/architecture-intelligence/patterns/no-cross-domain-joins.md",
+        "reference/knowledge/architecture-intelligence/patterns/contract-first-integration.md",
+        "reference/knowledge/architecture-intelligence/patterns/data-ownership-per-bounded-context.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-175",
+      "closedAt": "2026-06-22",
+      "closureCommit": "47e670b7",
+      "evidence": [
+        "reference/architecture/adrs/core/0099-opa-bundle-s3-distribution.md",
+        "reference/architecture/adrs/core/0099-opa-bundle-s3-distribution.es.md",
+        "reference/architecture/adrs/core/0085-agnostic-opa-wasm-distribution.md",
+        "reference/architecture/adrs/core/0085-agnostic-opa-wasm-distribution.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-209",
+      "closedAt": "2026-06-22",
+      "closureCommit": "2e58fd46",
+      "evidence": [
+        "reference/architecture/agnostic-baseline.md",
+        "reference/architecture/agnostic-baseline.es.md",
+        "reference/architecture/README.md",
+        "reference/architecture/README.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

@@ -1845,19 +1845,19 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Done When:** A dedicated `packages/mcp-tools/` exists, publishing reusable capabilities for external agents.
 
 #### GT-175
-**Purpose:** Fix ADR-0076 duplicate (renumber OPA bundle to ADR-0078).
-**Current Evidence:** Two ADRs share ID 0076.
-**Done When:** ADR-0076 renumbered to ADR-0078, all inbound links updated.
+**Purpose:** Fix ADR-0076 duplicate by renumbering the OPA bundle ADR to the next free Core ID.
+**Current Evidence:** Two ADRs shared ID 0076 (`0076-domain-oriented-microservice-architecture` and `0076-opa-bundle-s3-distribution`). The original "renumber to 0078" plan was stale because 0078 was later assigned to `domain-financial-separation-governance`.
+**Done When:** OPA bundle ADR renumbered to the next free Core ID (0099) and all inbound links updated.
 
 #### GT-176
-**Purpose:** Remove `patterns/es/` subdirectory (Pattern A/B mix violation).
-**Current Evidence:** `patterns/es/` violates the bilingual naming convention.
-**Done When:** Content migrated to `patterns/README.es.md`, subdirectory removed.
+**Purpose:** Remove `reference/knowledge/architecture-intelligence/patterns/es/` subdirectory (Pattern A/B mix violation).
+**Current Evidence:** The `patterns/es/` subdir duplicated four patterns (`modular-monolith-first`, `no-cross-domain-joins`, `contract-first-integration`, `data-ownership-per-bounded-context`) with incorrect language-by-folder layout, violating the Pattern A bilingual naming convention (`name.md` + `name.es.md` siblings). The canonical EN/ES pairs already existed at the parent `patterns/` directory.
+**Done When:** Subdirectory removed; no inbound references outside auto-generated BILINGUAL_INDEX and historical audit docs.
 
 #### GT-177
-**Purpose:** Complete `core/README.md` with all 21 missing ADRs.
-**Current Evidence:** `core/README.md` lists only 54 of 74 ADRs (missing ADRs 0041, 0073-0079, 0084-0098).
-**Done When:** All 74 ADRs listed in `core/README.md` with links and summaries.
+**Purpose:** Complete `core/README.md` with the missing Core ADRs.
+**Current Evidence:** `core/README.md` listed only 54 of 76 Core ADRs (missing 0041, 0073–0079, 0084–0089, 0091–0096, 0098, 0099).
+**Done When:** All Core ADRs listed in `core/README.md` with links and one-line titles. The ES counterpart is tracked separately as [GT-178](./gap-reference-catalog.md#gt-178).
 
 #### GT-178
 **Purpose:** Rebuild `core/README.es.md` with all ADRs (currently only shows up to ADR-0056).
@@ -1870,9 +1870,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Done When:** All 5 commands reach 80%+ unit test coverage.
 
 #### GT-180
-**Purpose:** Replace cross-boundary `require()` calls with Dependency Injection across 4 files.
-**Current Evidence:** 4 files use `require()` to import across architectural boundaries.
-**Done When:** All 4 files migrated to proper DI injection.
+**Purpose:** Replace cross-boundary `require()` calls with proper ES imports / dynamic `import()` in CLI source.
+**Current Evidence:** Production source files used `require()` cross-boundary: `update.command.ts` (3 sites for `child_process` and `package.json`), `node-filesystem.provider.ts` (1 site shadowing the top-level `fs-extra` import), `plugin-loader.ts` (1 site for runtime plugin loading).
+**Done When:** All production-code `require()` calls eliminated; the dynamic plugin loader uses `import()` with CJS-default unwrapping; `npm run build` and `npm run test:unit` pass.
 
 #### GT-181
 **Purpose:** Split large files (`server.ts` 420 lines, 5 other files >300 lines) into smaller modules.

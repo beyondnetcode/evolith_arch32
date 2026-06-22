@@ -63,7 +63,8 @@ export class PluginLoader {
 
   private static async loadPluginFromPath(pluginPath: string, providers: Provider[], imports: Type[]) {
     try {
-      const plugin = require(pluginPath);
+      const mod = await import(pluginPath);
+      const plugin = mod && typeof mod === 'object' && 'default' in mod && mod.default ? mod.default : mod;
       
       if (Array.isArray(plugin)) {
         this.registerPluginContent(plugin, providers, imports);

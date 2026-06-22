@@ -20,6 +20,7 @@ Ordenadas de la política general a la evidencia concreta:
 
 | Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
 |---|---|---|---|---|
+| [Baseline Agnóstica](./agnostic-baseline.es.md) | Principios, patrones y restricciones no negociables agnósticos al runtime de máximo nivel | Anclar cada producto y runtime a una sola baseline | Política de baseline | Sí |
 | [Principios](./principles/README.es.md) | Principios arquitectónicos fundacionales | Fundamentar todas las decisiones en principios compartidos | Hub de área | Sí |
 | [Hub de Blueprints](./blueprints/README.es.md) | Principios agnósticos al runtime, topología y criterios de selección | Definir la línea base arquitectónica | Hub de área | Sí |
 | [Registro ADR](./adrs/README.es.md) | Registra los trade-offs aceptados y su alcance | Preservar el histórico de decisiones | Hub de área | Sí |

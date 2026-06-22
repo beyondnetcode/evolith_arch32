@@ -133,6 +133,130 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-174",
+      "closedAt": "2026-06-21",
+      "closureCommit": "4e8fcad3",
+      "evidence": [
+        "rulesets/schema/output-envelope.schema.json",
+        "reference/governance/standards/vision/surface-compatibility.json",
+        "reference/governance/standards/vision/surface-compatibility.schema.json",
+        ".harness/scripts/ci/20-validate-surface-compatibility.mjs",
+        ".harness/scripts/ci/20-validate-surface-compatibility.test.mjs"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/20-validate-surface-compatibility.mjs",
+        "node --test .harness/scripts/ci/20-validate-surface-compatibility.test.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-168",
+      "closedAt": "2026-06-21",
+      "closureCommit": "507bb5a4",
+      "evidence": [
+        "rulesets/schema/topology-composition.schema.json",
+        "examples/cross-topology-composition/topology.composition.json",
+        "examples/cross-topology-composition/modular-monolith.config.json",
+        "examples/cross-topology-composition/event-driven.config.json",
+        "examples/cross-topology-composition/README.md",
+        "examples/cross-topology-composition/README.es.md",
+        ".harness/scripts/ci/22-validate-topology-composition.mjs",
+        "reference/architecture/topologies/topology-dimensions.md",
+        "reference/architecture/topologies/topology-dimensions.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/22-validate-topology-composition.mjs",
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-170",
+      "closedAt": "2026-06-21",
+      "closureCommit": "334e5019",
+      "evidence": [
+        "reference/products/ums-reference/README.md",
+        "reference/products/ums-reference/README.es.md",
+        "reference/products/ums-reference/overview.md",
+        "reference/products/ums-reference/overview.es.md",
+        "reference/products/ums-reference/reference-model.md",
+        "reference/products/ums-reference/reference-model.es.md",
+        "reference/products/README.md",
+        "reference/products/README.es.md",
+        "reference/knowledge/demo/README.md",
+        "reference/knowledge/demo/README.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
+        "node .harness/scripts/ci/05-check-orphan-bilingual.mjs",
+        "node .harness/scripts/ci/11-validate-product-docs.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-167",
+      "closedAt": "2026-06-21",
+      "closureCommit": "b6a67a60",
+      "evidence": [
+        "rulesets/schema/observability-validation.schema.json",
+        "rulesets/schema/security-scan-report.schema.json",
+        "rulesets/schema/integration-evidence.schema.json",
+        "rulesets/sdlc/phase-gates.rules.json",
+        "rulesets/schema/ruleset-sdlc.schema.json",
+        "reference/governance/sdlc/04-artifact-templates/observability-validation-template.md",
+        "reference/governance/sdlc/04-artifact-templates/observability-validation-template.es.md",
+        "reference/governance/sdlc/04-artifact-templates/security-scan-report-template.md",
+        "reference/governance/sdlc/04-artifact-templates/security-scan-report-template.es.md",
+        "reference/governance/sdlc/04-artifact-templates/integration-evidence-template.md",
+        "reference/governance/sdlc/04-artifact-templates/integration-evidence-template.es.md",
+        "reference/governance/sdlc/04-artifact-templates/test-summary-report-template.md",
+        "reference/governance/sdlc/04-artifact-templates/test-summary-report-template.es.md",
+        "reference/governance/sdlc/01-playbooks/phase-4-rc-stamp.md",
+        "reference/governance/sdlc/01-playbooks/phase-4-rc-stamp.es.md",
+        "reference/governance/sdlc/01-playbooks/zero-downtime-release.md",
+        "reference/governance/sdlc/01-playbooks/zero-downtime-release.es.md",
+        ".harness/scripts/ci/21-validate-phase-gate-templates.mjs",
+        "reference/governance/sdlc/README.md",
+        "reference/governance/sdlc/README.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/21-validate-phase-gate-templates.mjs",
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "GT-166 playbooks now cite each evidence template."
+    },
+    {
+      "id": "GT-166",
+      "closedAt": "2026-06-21",
+      "closureCommit": "bbe5db91",
+      "evidence": [
+        "reference/governance/sdlc/01-playbooks/phase-1-business-signoff.md",
+        "reference/governance/sdlc/01-playbooks/phase-1-business-signoff.es.md",
+        "reference/governance/sdlc/01-playbooks/phase-2-design-baseline.md",
+        "reference/governance/sdlc/01-playbooks/phase-2-design-baseline.es.md",
+        "reference/governance/sdlc/01-playbooks/phase-4-rc-stamp.md",
+        "reference/governance/sdlc/01-playbooks/phase-4-rc-stamp.es.md",
+        "rulesets/sdlc/phase-gates.rules.json",
+        "rulesets/schema/ruleset-sdlc.schema.json",
+        "reference/governance/sdlc/quality-gates.md",
+        "reference/governance/sdlc/quality-gates.es.md",
+        "reference/governance/sdlc/README.md",
+        "reference/governance/sdlc/README.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
+        "node .harness/scripts/ci/05-check-orphan-bilingual.mjs",
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-165",
       "closedAt": "2026-06-21",
       "closureCommit": "956bba24",

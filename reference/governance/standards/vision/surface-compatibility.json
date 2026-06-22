@@ -1,7 +1,7 @@
 {
   "$schema": "./surface-compatibility.schema.json",
-  "version": "1.0.0",
-  "description": "Machine-readable producer/consumer compatibility matrix for the ADR-0073 envelope (GT-174). Each surface declares the envelope schemaVersion(s) it currently produces and the consumer schemaVersion ranges it accepts. CI validates that the schemaVersion constants in source match the producer entries here; bumping a producer requires an explicit migration entry.",
+  "version": "1.1.0",
+  "description": "Machine-readable producer/consumer compatibility matrix for the ADR-0073 envelope (GT-174). Each surface declares the envelope schemaVersion(s) it currently produces and the consumer schemaVersion ranges it accepts. CI validates against surface-compatibility.schema.json, asserts source constants match the producer entries here, and rejects any multi-version produces list missing an explicit migration entry per consecutive transition.",
   "lastReviewed": "2026-06-21",
   "surfaces": {
     "rest": {

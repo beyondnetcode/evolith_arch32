@@ -33,6 +33,8 @@ The dimensional model prevents two failures:
 
 Topology profiles are composable when they belong to different dimensions and their manifests explicitly allow the combination through `spec.compatibility.composableWith`.
 
+> **Worked reference:** [`examples/cross-topology-composition/`](../../../examples/cross-topology-composition/README.md) ships a runnable `modular-monolith + event-driven` composition. CI script `.harness/scripts/ci/22-validate-topology-composition.mjs` validates it on every commit against [`topology-composition.schema.json`](../../../rulesets/schema/topology-composition.schema.json).
+
 Examples:
 
 | Product State | Valid Topology Set | Rationale |

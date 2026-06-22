@@ -13,12 +13,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
 |---|---|---|:---:|:---:|:---:|:---:|
-| [`GT-166`](./gap-reference-catalog.md#gt-166) | Missing SDLC phase runbooks for Phases 1, 2, and 4 | `Documentation` | Cross | P1 | M | `PENDING` |
-| [`GT-167`](./gap-reference-catalog.md#gt-167) | Phase-gate evidence templates and acceptance checklists | `Documentation` | Cross | P1 | M | `PENDING` |
-| [`GT-170`](./gap-reference-catalog.md#gt-170) | UMS reference product hub | `Product` | Cross | P1 | M | `PENDING` |
-| [`GT-168`](./gap-reference-catalog.md#gt-168) | Cross-topology composition reference application | `Architecture` | Cross | P1 | L | `PENDING` |
 | [`GT-169`](./gap-reference-catalog.md#gt-169) | Agentic AI operational budgets, credential lifecycle, and runbooks | `Architecture` | Cross | P1 | L | `PENDING` |
-| [`GT-174`](./gap-reference-catalog.md#gt-174) | Envelope `meta.schemaVersion` and producer/consumer compatibility matrix | `Cross` | Cross | P2 | S | `PENDING` |
 | [`GT-173`](./gap-reference-catalog.md#gt-173) | OpenTelemetry export parity across CLI, MCP, and REST | `Cross` | Cross | P2 | M | `PENDING` |
 | [`GT-171`](./gap-reference-catalog.md#gt-171) | Command-as-a-service surface parity audit (CLI vs MCP vs REST) | `Cross` | Cross | P2 | L | `PENDING` |
 | [`GT-172`](./gap-reference-catalog.md#gt-172) | Cross-surface contract roundtrip test suite | `Cross` | Cross | P2 | L | `PENDING` |
@@ -29,6 +24,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-151`](./gap-reference-catalog.md#gt-151) | Complete Native/OPA Rule-ID Coverage for Accepted Topologies | `Rulesets` | Cross | P0 | M | `DONE` |
 | [`GT-146`](./gap-reference-catalog.md#gt-146) | Secure, Provider-Neutral, and Token-Bounded Agentic CI Review | `Governance` | Cross | P0 | L | `DONE` |
 | [`GT-150`](./gap-reference-catalog.md#gt-150) | Mature Remaining Draft Topologies to Accepted Corpus Parity | `Architecture` | Cross | P1 | L | `DONE` |
+| [`GT-168`](./gap-reference-catalog.md#gt-168) | Cross-topology composition reference application | `Architecture` | Cross | P1 | L | `DONE` |
 | [`GT-145`](./gap-reference-catalog.md#gt-145) | Truthful Provider-Neutral RAG Vector Synchronization | `Operations` | Cross | P1 | L | `DONE` |
 | [`GT-149`](./gap-reference-catalog.md#gt-149) | Executable OPA Tests and Native/OPA Semantic Parity Gate | `Rulesets` | Cross | P1 | L | `DONE` |
 | [`GT-147`](./gap-reference-catalog.md#gt-147) | Automated Operational Capability and Efficiency Drift Audit | `Governance` | Cross | P1 | M | `DONE` |
@@ -66,6 +62,8 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-124`](./gap-reference-catalog.md#gt-124) | CLI e2e suite broken — missing fixtures (SDLC templates, shell hooks) and stale old-MCP prompt naming | `CLI` | Cross | P2 | M | `DONE` |
 | [`MT-A09`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create the English and Spanish Topology Hub | `Documentation` | Cross | P1 | S | `DONE` |
 | [`GT-165`](./gap-reference-catalog.md#gt-165) | Concrete SLO and cost budgets for serverless and edge topologies | `Documentation` | Cross | P1 | S | `DONE` |
+| [`GT-166`](./gap-reference-catalog.md#gt-166) | Missing SDLC phase runbooks for Phases 1, 2, and 4 | `Documentation` | Cross | P1 | M | `DONE` |
+| [`GT-167`](./gap-reference-catalog.md#gt-167) | Phase-gate evidence templates and acceptance checklists | `Documentation` | Cross | P1 | M | `DONE` |
 | [`MT-A26`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Update navigation, indexes, validation evidence, and tracker status | `Documentation` | Cross | P2 | M | `DONE` |
 | [`GT-59`](./gap-reference-catalog.md#gt-59) | Hardening HTTP — Helmet + CORS + Rate Limiting (OWASP API4/8) | `BFF API` | Cross | P0 | S | `DONE` |
 | [`GT-60`](./gap-reference-catalog.md#gt-60) | Validación Global DTOs con class-validator (OWASP API3) | `BFF API` | Cross | P0 | M | `DONE` |
@@ -187,12 +185,14 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-128`](./gap-reference-catalog.md#gt-128) | Baseline Ruleset for Data Mesh | `Architecture` | Cross | P2 | M | `DONE` |
 | [`GT-129`](./gap-reference-catalog.md#gt-129) | Baseline Ruleset for Edge Computing | `Architecture` | Cross | P2 | M | `DONE` |
 | [`GT-156`](./gap-reference-catalog.md#gt-156) | Core API product hub, API reference, and deployment runbook | `Product` | Cross | P0 | L | `DONE` |
+| [`GT-170`](./gap-reference-catalog.md#gt-170) | UMS reference product hub | `Product` | Cross | P1 | M | `DONE` |
 | [`GT-157`](./gap-reference-catalog.md#gt-157) | MCP authentication and authorization parity with REST | `MCP Services` | Cross | P1 | M | `DONE` |
 | [`GT-158`](./gap-reference-catalog.md#gt-158) | Human-in-the-loop and ABAC scoping for mutative MCP tools | `MCP Services` | Cross | P1 | M | `DONE` |
 | [`GT-160`](./gap-reference-catalog.md#gt-160) | Cross-surface correlation-ID and request-context propagation | `Cross` | Cross | P1 | M | `DONE` |
+| [`GT-174`](./gap-reference-catalog.md#gt-174) | Envelope `meta.schemaVersion` and producer/consumer compatibility matrix | `Cross` | Cross | P2 | S | `DONE` |
 
 
-**Progress:** 168 / 177 done · 0 in progress · 9 pending · 0 deferred
+**Progress:** 173 / 177 done · 0 in progress · 4 pending · 0 deferred
 
 **Wave 2026-06-21 (Wilson deep audit):** Added 20 new gaps `GT-155`…`GT-174` covering Core API envelope conformance, command-as-a-service surface parity, MCP authn/authz, OPA schemas/aggregator tests, topology manifest validation, SDLC runbooks/templates, Core API and UMS product hubs, agentic-AI operational budgets, OpenTelemetry parity, and envelope schema versioning.
 

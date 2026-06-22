@@ -1,0 +1,85 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/schema/observability-validation.schema.json",
+  "title": "Observability Validation",
+  "description": "JSON Schema for the Observability Validation artifact required by the Production Live gate (Phase 5). Records that metrics, logs, and traces are nominal for every production-bound path.",
+  "type": "object",
+  "required": ["release", "evaluatedAt", "metrics", "logs", "traces", "alerts", "result"],
+  "additionalProperties": false,
+  "properties": {
+    "release": {
+      "type": "string",
+      "description": "Release or RC identifier the validation belongs to."
+    },
+    "evaluatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "evaluator": {
+      "type": "string",
+      "description": "Owner (SRE/DevOps) who signed the validation."
+    },
+    "metrics": {
+      "type": "object",
+      "required": ["errorRatePercent", "latencyP95Ms", "latencyP99Ms", "withinSlo"],
+      "additionalProperties": false,
+      "properties": {
+        "errorRatePercent": { "type": "number", "minimum": 0 },
+        "latencyP95Ms": { "type": "number", "minimum": 0 },
+        "latencyP99Ms": { "type": "number", "minimum": 0 },
+        "withinSlo": { "type": "boolean" },
+        "sloReference": { "type": "string", "description": "Link or identifier of the SLO baseline used to evaluate this release." }
+      }
+    },
+    "logs": {
+      "type": "object",
+      "required": ["errorVolume", "anomalies", "withinBaseline"],
+      "additionalProperties": false,
+      "properties": {
+        "errorVolume": { "type": "integer", "minimum": 0 },
+        "anomalies": { "type": "integer", "minimum": 0 },
+        "withinBaseline": { "type": "boolean" }
+      }
+    },
+    "traces": {
+      "type": "object",
+      "required": ["completeForCriticalPaths", "missingSpans"],
+      "additionalProperties": false,
+      "properties": {
+        "completeForCriticalPaths": { "type": "boolean" },
+        "missingSpans": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "alerts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "state", "owner"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string" },
+          "state": { "type": "string", "enum": ["nominal", "firing", "silenced"] },
+          "owner": { "type": "string" }
+        }
+      }
+    },
+    "result": {
+      "type": "string",
+      "enum": ["NOMINAL", "DEGRADED", "BLOCK"]
+    },
+    "waivers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["criterion", "justification", "owner", "expirationDate"],
+        "additionalProperties": false,
+        "properties": {
+          "criterion": { "type": "string" },
+          "justification": { "type": "string" },
+          "owner": { "type": "string" },
+          "expirationDate": { "type": "string", "format": "date" }
+        }
+      }
+    }
+  }
+}

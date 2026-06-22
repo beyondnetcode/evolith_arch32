@@ -105,6 +105,65 @@ test('fails when declared module is missing', () => {
   }
 });
 
+test('fails when multi-version produces lacks a migration entry', () => {
+  const root = setup(
+    {
+      surfaces: {
+        rest: {
+          module: 'src/envelope.ts',
+          constant: 'ENVELOPE_SCHEMA_VERSION',
+          produces: ['2.0.0', '1.0.0'],
+          consumes: ['1.x', '2.x'],
+        },
+      },
+      migrations: [],
+    },
+    {
+      'src/envelope.ts': `export const ENVELOPE_SCHEMA_VERSION = '2.0.0';`,
+    },
+  );
+  try {
+    const out = runIn(root);
+    assert.equal(out.status, 1);
+    assert.match(out.stderr, /producer transition 1\.0\.0 → 2\.0\.0 is not documented/);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('passes when each multi-version transition has a migration entry', () => {
+  const root = setup(
+    {
+      surfaces: {
+        rest: {
+          module: 'src/envelope.ts',
+          constant: 'ENVELOPE_SCHEMA_VERSION',
+          produces: ['2.0.0', '1.0.0'],
+          consumes: ['1.x', '2.x'],
+        },
+      },
+      migrations: [
+        {
+          surface: 'rest',
+          from: '1.0.0',
+          to: '2.0.0',
+          summary: 'Renamed meta.context.tenant to meta.context.organization.',
+          compatibility: 'breaking',
+        },
+      ],
+    },
+    {
+      'src/envelope.ts': `export const ENVELOPE_SCHEMA_VERSION = '2.0.0';`,
+    },
+  );
+  try {
+    const out = runIn(root);
+    assert.equal(out.status, 0, out.stdout + out.stderr);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
 test('fails when constant is missing in module', () => {
   const root = setup(
     {

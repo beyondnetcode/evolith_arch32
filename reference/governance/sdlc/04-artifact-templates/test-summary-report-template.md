@@ -3,6 +3,7 @@
 > **Bilingual navigation:** [Versión en Español](./test-summary-report-template.es.md)
 > **Phase:** 4 — Validation and QA
 > **Exit gate:** Release Candidate (RC) Stamped
+> **Schema:** [`test-summary-report.schema.json`](../../../../rulesets/schema/test-summary-report.schema.json)
 > **Parent:** [Artifact Templates](./README.md)
 
 ---

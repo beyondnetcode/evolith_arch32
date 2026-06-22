@@ -50,13 +50,15 @@ Evolith usa un único estándar de cobertura bloqueante para release:
 
 ## Resumen de Gates por Fase
 
-| Fase | Gate | Evidencia obligatoria | Criterios bloqueantes |
-|---|---|---|---|
-| Fase 1 — Concepción y Descubrimiento | Aprobación de Negocio | PRD, alcance, personas, objetivos, restricciones | Alcance ambiguo, resultado de inversión poco claro, restricciones arquitectónicas ignoradas |
-| Fase 2 — Diseño y Arquitectura | Baseline de Diseño Aprobado | ADRs, Historias Funcionales, alineamiento con blueprint, estándares aplicables | Decisiones arquitectónicas significativas no documentadas o contradictorias |
-| Fase 3 — Construcción | Build Exitoso | Historias Técnicas, ejecución CI, Definición de Terminado, delta documental | CI falla, cobertura bajo umbral, CVEs high/critical, revisión faltante |
-| Fase 4 — Validación y QA | RC Sellado | Test Summary Report, validación de aceptación, métricas de calidad | Cualquier métrica obligatoria falla o quedan criterios de aceptación sin verificar |
-| Fase 5 — Entrega y Operaciones | Producción Activa | Release Notes, plan de rollback, checklist de observabilidad, evidencia de despliegue | Monitoreo no nominal, rollback indefinido, release no trazable al RC |
+| Fase | Gate | Evidencia obligatoria | Criterios bloqueantes | Playbook |
+|---|---|---|---|---|
+| Fase 1 — Concepción y Descubrimiento | Aprobación de Negocio | PRD, alcance, personas, objetivos, restricciones | Alcance ambiguo, resultado de inversión poco claro, restricciones arquitectónicas ignoradas | [Playbook Fase 1](./01-playbooks/phase-1-business-signoff.es.md) |
+| Fase 2 — Diseño y Arquitectura | Baseline de Diseño Aprobado | ADRs, Historias Funcionales, alineamiento con blueprint, estándares aplicables | Decisiones arquitectónicas significativas no documentadas o contradictorias | [Playbook Fase 2](./01-playbooks/phase-2-design-baseline.es.md) |
+| Fase 3 — Construcción | Build Exitoso | Historias Técnicas, ejecución CI, Definición de Terminado, delta documental | CI falla, cobertura bajo umbral, CVEs high/critical, revisión faltante | — |
+| Fase 4 — Validación y QA | RC Sellado | Test Summary Report, validación de aceptación, métricas de calidad | Cualquier métrica obligatoria falla o quedan criterios de aceptación sin verificar | [Playbook Fase 4](./01-playbooks/phase-4-rc-stamp.es.md) |
+| Fase 5 — Entrega y Operaciones | Producción Activa | Release Notes, plan de rollback, checklist de observabilidad, evidencia de despliegue | Monitoreo no nominal, rollback indefinido, release no trazable al RC | [Playbook de Release Zero-Downtime](./01-playbooks/zero-downtime-release.es.md) |
+
+Autoridad procedimental: cada playbook es la contraparte operativa de la compuerta declarativa de [`phase-gates.rules.json`](../../../rulesets/sdlc/phase-gates.rules.json) (campo `playbookRef`). La compuerta no puede salirse si los checkpoints del playbook no se completaron o no fueron formalmente waivered.
 
 ---
 

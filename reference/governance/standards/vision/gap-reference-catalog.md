@@ -163,9 +163,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** `reference/governance/sdlc/01-playbooks/` currently contains only `zero-downtime-release.md` (Phase 5). Gates for Business Sign-Off, Design Baseline, and RC Stamp are defined in `phase-gates.rules.json` but have no playbook.
 - **Complexity:** M
 - **Done when:**
-  - [ ] Playbooks for Phases 1, 2, and 4 exist in EN and ES with procedural checklists tied to each gate's mandatory evidence.
-  - [ ] Cross-links from `quality-gates.md` and `phase-gates.rules.json` point to the playbooks.
-  - [ ] Bilingual parity validator and validate-docs pass.
+  - [x] Playbooks for Phases 1, 2, and 4 exist in EN and ES with procedural checklists tied to each gate's mandatory evidence.
+  - [x] Cross-links from `quality-gates.md` and `phase-gates.rules.json` point to the playbooks.
+  - [x] Bilingual parity validator and validate-docs pass.
 
 
 #### GT-167
@@ -176,9 +176,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** `phase-gates.rules.json` mandates Observability Validation, security scans, test reports, and integration evidence, but `04-artifact-templates/` lacks dedicated templates for these specific artifacts.
 - **Complexity:** M
 - **Done when:**
-  - [ ] Template files exist for Observability, Security, Test Summary, and Integration evidence (EN + ES), referenced by `phase-gates.rules.json`.
-  - [ ] Each gate's playbook (GT-166) cites its template.
-  - [ ] A native rule fails when a gate's evidence does not match the template's schema.
+  - [x] Template files exist for Observability, Security, Test Summary, and Integration evidence (EN + ES), referenced by `phase-gates.rules.json`.
+  - [x] Each gate's playbook (GT-166) cites its template.
+  - [x] A native rule fails when a gate's evidence does not match the template's schema.
 
 
 #### GT-168
@@ -189,9 +189,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** `topology-dimensions.md` §3 lists five composition examples but no fixture or sample repository exercises them end-to-end.
 - **Complexity:** L
 - **Done when:**
-  - [ ] A reference application (or fixture project) lives under `examples/` (or its equivalent) with a composable manifest exercising at least two topologies.
-  - [ ] CI runs the topology validator on the example and asserts a passing composition.
-  - [ ] Documentation walks the reader through the example in EN and ES.
+  - [x] A reference application (or fixture project) lives under `examples/` (or its equivalent) with a composable manifest exercising at least two topologies.
+  - [x] CI runs the topology validator on the example and asserts a passing composition.
+  - [x] Documentation walks the reader through the example in EN and ES.
 
 
 #### GT-169
@@ -215,9 +215,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** UMS materials live across SDLC examples and demo files (`ums-technical-overview.md`, `ums-reference-model.md`) but `reference/products/` has no dedicated hub. Cross-links into UMS are scattered.
 - **Complexity:** M
 - **Done when:**
-  - [ ] `reference/products/ums-reference/` exists with README, overview, and reference-model in EN and ES.
-  - [ ] All existing UMS references in SDLC and demo materials point to the hub.
-  - [ ] Product inventory is regenerated and validated.
+  - [x] `reference/products/ums-reference/` exists with README, overview, and reference-model in EN and ES.
+  - [x] All existing UMS references in SDLC and demo materials point to the hub.
+  - [x] Product inventory is regenerated and validated.
 
 
 #### GT-171
@@ -267,9 +267,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** Envelope lacks `meta.schemaVersion`. Gap catalog already records (line 356) that no cross-repository compatibility matrix or CI suite exercises producer/consumer versions together.
 - **Complexity:** S
 - **Done when:**
-  - [ ] Envelope schema declares `meta.schemaVersion` as required and pinned per surface.
-  - [ ] A machine-readable compatibility matrix (`reference/governance/standards/vision/surface-compatibility.json` or equivalent) records supported producer/consumer pairs.
-  - [ ] CI rejects a producer change that would break a supported consumer pair without an explicit migration entry.
+  - [x] Envelope schema declares `meta.schemaVersion` as required and pinned per surface.
+  - [x] A machine-readable compatibility matrix (`reference/governance/standards/vision/surface-compatibility.json` or equivalent) records supported producer/consumer pairs.
+  - [x] CI rejects a producer change that would break a supported consumer pair without an explicit migration entry.
 
 
 #### GT-152

@@ -163,9 +163,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** `reference/governance/sdlc/01-playbooks/` solo contiene actualmente `zero-downtime-release.md` (Fase 5). Los gates de Business Sign-Off, Design Baseline y RC Stamp están definidos en `phase-gates.rules.json` pero carecen de playbook.
 - **Complejidad:** M
 - **Hecho cuando:**
-  - [ ] Existen playbooks para Fases 1, 2 y 4 en EN y ES con checklists procedimentales ligados a la evidencia obligatoria de cada gate.
-  - [ ] Los enlaces cruzados desde `quality-gates.md` y `phase-gates.rules.json` apuntan a los playbooks.
-  - [ ] El validador bilingüe y validate-docs pasan.
+  - [x] Existen playbooks para Fases 1, 2 y 4 en EN y ES con checklists procedimentales ligados a la evidencia obligatoria de cada gate.
+  - [x] Los enlaces cruzados desde `quality-gates.md` y `phase-gates.rules.json` apuntan a los playbooks.
+  - [x] El validador bilingüe y validate-docs pasan.
 
 
 #### GT-167
@@ -176,9 +176,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** `phase-gates.rules.json` exige Observability Validation, security scans, test reports e integration evidence, pero `04-artifact-templates/` carece de plantillas dedicadas para estos artefactos.
 - **Complejidad:** M
 - **Hecho cuando:**
-  - [ ] Existen archivos de plantilla para evidencia de Observabilidad, Seguridad, Resumen de Pruebas e Integración (EN + ES), referenciados por `phase-gates.rules.json`.
-  - [ ] El playbook de cada gate (GT-166) cita su plantilla.
-  - [ ] Una regla nativa falla cuando la evidencia de un gate no se ajusta al esquema de la plantilla.
+  - [x] Existen archivos de plantilla para evidencia de Observabilidad, Seguridad, Resumen de Pruebas e Integración (EN + ES), referenciados por `phase-gates.rules.json`.
+  - [x] El playbook de cada gate (GT-166) cita su plantilla.
+  - [x] Una regla nativa falla cuando la evidencia de un gate no se ajusta al esquema de la plantilla.
 
 
 #### GT-168
@@ -189,9 +189,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** `topology-dimensions.md` §3 enumera cinco ejemplos de composición pero ningún fixture o repo de muestra los ejecuta end-to-end.
 - **Complejidad:** L
 - **Hecho cuando:**
-  - [ ] Una aplicación de referencia (o proyecto fixture) vive bajo `examples/` (o equivalente) con un manifest componible que ejercita al menos dos topologías.
-  - [ ] CI ejecuta el validador de topologías sobre el ejemplo y verifica una composición aprobada.
-  - [ ] La documentación guía al lector por el ejemplo en EN y ES.
+  - [x] Una aplicación de referencia (o proyecto fixture) vive bajo `examples/` (o equivalente) con un manifest componible que ejercita al menos dos topologías.
+  - [x] CI ejecuta el validador de topologías sobre el ejemplo y verifica una composición aprobada.
+  - [x] La documentación guía al lector por el ejemplo en EN y ES.
 
 
 #### GT-169
@@ -215,9 +215,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** Los materiales UMS viven en ejemplos SDLC y archivos demo (`ums-technical-overview.md`, `ums-reference-model.md`) pero `reference/products/` no tiene un hub dedicado. Los enlaces cruzados a UMS están dispersos.
 - **Complejidad:** M
 - **Hecho cuando:**
-  - [ ] `reference/products/ums-reference/` existe con README, overview y modelo de referencia en EN y ES.
-  - [ ] Todas las referencias UMS actuales en SDLC y materiales demo apuntan al hub.
-  - [ ] El inventario de productos se regenera y valida.
+  - [x] `reference/products/ums-reference/` existe con README, overview y modelo de referencia en EN y ES.
+  - [x] Todas las referencias UMS actuales en SDLC y materiales demo apuntan al hub.
+  - [x] El inventario de productos se regenera y valida.
 
 
 #### GT-171
@@ -267,9 +267,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** El envelope carece de `meta.schemaVersion`. El catálogo de gaps ya registra (línea 356) que no existe matriz de compatibilidad entre repositorios ni suite CI que ejercite versiones productor/consumidor juntas.
 - **Complejidad:** S
 - **Hecho cuando:**
-  - [ ] El esquema del envelope declara `meta.schemaVersion` como obligatorio y fijado por superficie.
-  - [ ] Una matriz de compatibilidad legible por máquina (`reference/governance/standards/vision/surface-compatibility.json` o equivalente) registra pares productor/consumidor soportados.
-  - [ ] CI rechaza un cambio de productor que rompa un par consumidor soportado sin una entrada explícita de migración.
+  - [x] El esquema del envelope declara `meta.schemaVersion` como obligatorio y fijado por superficie.
+  - [x] Una matriz de compatibilidad legible por máquina (`reference/governance/standards/vision/surface-compatibility.json` o equivalente) registra pares productor/consumidor soportados.
+  - [x] CI rechaza un cambio de productor que rompa un par consumidor soportado sin una entrada explícita de migración.
 
 
 #### GT-152

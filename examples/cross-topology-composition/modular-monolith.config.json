@@ -1,0 +1,5 @@
+{
+  "topology": "modular-monolith",
+  "boundedContexts": ["identity", "access", "audit"],
+  "persistenceIsolation": "schema-per-domain"
+}

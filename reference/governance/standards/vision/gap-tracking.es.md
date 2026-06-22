@@ -13,12 +13,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|
-| [`GT-166`](./gap-reference-catalog.es.md#gt-166) | Runbooks SDLC faltantes para Fases 1, 2 y 4 | `Documentation` | Cross | P1 | M | `PENDIENTE` |
-| [`GT-167`](./gap-reference-catalog.es.md#gt-167) | Plantillas de evidencia y checklists de aceptación para phase-gates | `Documentation` | Cross | P1 | M | `PENDIENTE` |
-| [`GT-170`](./gap-reference-catalog.es.md#gt-170) | Hub de producto de UMS reference | `Product` | Cross | P1 | M | `PENDIENTE` |
-| [`GT-168`](./gap-reference-catalog.es.md#gt-168) | Aplicación de referencia de composición cross-topología | `Architecture` | Cross | P1 | L | `PENDIENTE` |
 | [`GT-169`](./gap-reference-catalog.es.md#gt-169) | Presupuestos operativos, ciclo de credenciales y runbooks de Agentic AI | `Architecture` | Cross | P1 | L | `PENDIENTE` |
-| [`GT-174`](./gap-reference-catalog.es.md#gt-174) | `meta.schemaVersion` y matriz de compatibilidad productor/consumidor | `Cross` | Cross | P2 | S | `PENDIENTE` |
 | [`GT-173`](./gap-reference-catalog.es.md#gt-173) | Paridad de exportación OpenTelemetry en CLI, MCP y REST | `Cross` | Cross | P2 | M | `PENDIENTE` |
 | [`GT-171`](./gap-reference-catalog.es.md#gt-171) | Auditoría de paridad de superficie command-as-a-service (CLI vs MCP vs REST) | `Cross` | Cross | P2 | L | `PENDIENTE` |
 | [`GT-172`](./gap-reference-catalog.es.md#gt-172) | Suite de pruebas de contrato roundtrip entre superficies | `Cross` | Cross | P2 | L | `PENDIENTE` |
@@ -29,6 +24,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-151`](./gap-reference-catalog.es.md#gt-151) | Completar la Cobertura de IDs de Regla Native/OPA para Topologías Aceptadas | `Rulesets` | Cross | P0 | M | `DONE` |
 | [`GT-146`](./gap-reference-catalog.es.md#gt-146) | Revisión Agéntica de CI Segura, Neutral al Proveedor y Acotada por Tokens | `Governance` | Cross | P0 | L | `COMPLETADO` |
 | [`GT-150`](./gap-reference-catalog.es.md#gt-150) | Madurar las Topologías Draft Restantes a Paridad de Corpus Aceptado | `Architecture` | Cross | P1 | L | `COMPLETADO` |
+| [`GT-168`](./gap-reference-catalog.es.md#gt-168) | Aplicación de referencia de composición cross-topología | `Architecture` | Cross | P1 | L | `COMPLETADO` |
 | [`GT-145`](./gap-reference-catalog.es.md#gt-145) | Sincronización Veraz y Neutral al Proveedor de Vectores RAG | `Operations` | Cross | P1 | L | `COMPLETADO` |
 | [`GT-149`](./gap-reference-catalog.es.md#gt-149) | Pruebas OPA Ejecutables y Gate de Paridad Semántica Native/OPA | `Rulesets` | Cross | P1 | L | `COMPLETADO` |
 | [`GT-147`](./gap-reference-catalog.es.md#gt-147) | Auditoría Automatizada de Deriva de Capacidades Operativas y Eficiencia | `Governance` | Cross | P1 | M | `COMPLETADO` |
@@ -66,6 +62,8 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-124`](./gap-reference-catalog.es.md#gt-124) | Suite e2e del CLI rota — faltan fixtures (plantillas SDLC, shell hooks) y naming obsoleto del MCP viejo | `CLI` | Transversal | P2 | M | `COMPLETADO` |
 | [`MT-A09`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Crear Topology Hub en inglés y español | `Documentation` | Transversal | P1 | S | `COMPLETADO` |
 | [`GT-165`](./gap-reference-catalog.es.md#gt-165) | SLOs y presupuestos de costo concretos para topologías serverless y edge | `Documentation` | Cross | P1 | S | `COMPLETADO` |
+| [`GT-166`](./gap-reference-catalog.es.md#gt-166) | Runbooks SDLC faltantes para Fases 1, 2 y 4 | `Documentation` | Cross | P1 | M | `COMPLETADO` |
+| [`GT-167`](./gap-reference-catalog.es.md#gt-167) | Plantillas de evidencia y checklists de aceptación para phase-gates | `Documentation` | Cross | P1 | M | `COMPLETADO` |
 | [`MT-A26`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Actualizar navegación, índices, evidencia de validación y estado del tracker | `Documentation` | Transversal | P2 | M | `COMPLETADO` |
 | [`GT-59`](./gap-reference-catalog.es.md#gt-59) | Hardening HTTP — Helmet + CORS + Rate Limiting (OWASP API4/8) | `BFF API` | Transversal | P0 | S | `COMPLETADO` |
 | [`GT-60`](./gap-reference-catalog.es.md#gt-60) | Validación global de DTOs con class-validator (OWASP API3) | `BFF API` | Transversal | P0 | M | `COMPLETADO` |
@@ -187,11 +185,13 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-128`](./gap-reference-catalog.es.md#gt-128) | Baseline Ruleset for Data Mesh | `Architecture` | Transversal | P2 | M | `COMPLETADO` |
 | [`GT-129`](./gap-reference-catalog.es.md#gt-129) | Baseline Ruleset for Edge Computing | `Architecture` | Transversal | P2 | M | `COMPLETADO` |
 | [`GT-156`](./gap-reference-catalog.es.md#gt-156) | Hub de producto, referencia API y runbook de despliegue del Core API | `Product` | Cross | P0 | L | `COMPLETADO` |
+| [`GT-170`](./gap-reference-catalog.es.md#gt-170) | Hub de producto de UMS reference | `Product` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-157`](./gap-reference-catalog.es.md#gt-157) | Paridad de autenticación y autorización MCP with REST | `MCP Services` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-158`](./gap-reference-catalog.es.md#gt-158) | Human-in-the-loop y ABAC para herramientas MCP mutativas | `MCP Services` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-160`](./gap-reference-catalog.es.md#gt-160) | Propagación de correlation-ID y contexto de solicitud entre superficies | `Cross` | Cross | P1 | M | `COMPLETADO` |
+| [`GT-174`](./gap-reference-catalog.es.md#gt-174) | `meta.schemaVersion` y matriz de compatibilidad productor/consumidor | `Cross` | Cross | P2 | S | `COMPLETADO` |
 
-**Progreso:** 168 / 177 completados · 0 en progreso · 9 pendientes · 0 diferidos
+**Progreso:** 173 / 177 completados · 0 en progreso · 4 pendientes · 0 diferidos
 
 **Oleada 2026-06-21 (auditoría profunda de Wilson):** Añadidos 20 gaps nuevos `GT-155`…`GT-174` que cubren conformidad de envelope en Core API REST, paridad de superficies command-as-a-service, autenticación/autorización MCP, esquemas y tests de OPA, validación CI de manifests de topología, runbooks y plantillas SDLC, hubs de producto de Core API y UMS, presupuestos operativos de Agentic AI, paridad OpenTelemetry y versionado del envelope.
 

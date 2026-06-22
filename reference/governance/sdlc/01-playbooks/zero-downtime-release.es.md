@@ -57,7 +57,7 @@ La estrategia preferida para alto rendimiento o endpoints altamente sensibles, m
 
 ## 3. Puntos de Control de Observabilidad
 
-Antes, durante y después del cutover de tráfico, la siguiente telemetría debe ser monitoreada utilizando el stack mandatado por `core/ADR-0046` y `nodejs/ADR-0007`:
+El resultado de estos puntos de control se registra en el artefacto de [Validación de Observabilidad](../04-artifact-templates/observability-validation-template.es.md) (evidencia obligatoria de la compuerta Producción Activa). Antes, durante y después del cutover de tráfico, la siguiente telemetría debe ser monitoreada utilizando el stack mandatado por `core/ADR-0046` y `nodejs/ADR-0007`:
 
 - **Tasas de Error (HTTP 5xx):** No deben tener picos por encima de la línea base pre-despliegue.
 - **Latencia (p95 y p99):** Deben permanecer dentro de los Objetivos de Nivel de Servicio (SLOs) acordados.

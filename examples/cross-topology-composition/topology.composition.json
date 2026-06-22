@@ -1,0 +1,15 @@
+{
+  "$schema": "../../rulesets/schema/topology-composition.schema.json",
+  "name": "modular-monolith-event-driven",
+  "description": "Reference cross-topology composition: an F1 modular monolith exposing async boundaries through an event-driven integration topology. Mirrors row 2 of topology-dimensions.md §3.",
+  "topologies": [
+    {
+      "profile": "modular-monolith",
+      "config": "./modular-monolith.config.json"
+    },
+    {
+      "profile": "event-driven",
+      "config": "./event-driven.config.json"
+    }
+  ]
+}

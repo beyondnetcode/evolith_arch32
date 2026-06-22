@@ -110,6 +110,7 @@ Definición de alcance, perfiles de usuario, mapeo de OKRs y alineación de rest
 | Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
 |---|---|---|---|---|
 | [PRD — Documento de Requisitos de Producto](./04-artifact-templates/prd-template.es.md) | Captura el alcance completo del producto: personas, OKRs de negocio, límites funcionales, restricciones y requisitos no funcionales | Autorizar la entrada a diseño | Plantilla | Sí |
+| [Playbook Fase 1 — Aprobación de Negocio](./01-playbooks/phase-1-business-signoff.es.md) | Runbook operativo del gate Business Sign-Off: checklist de evidencia, procedimiento de revisión, criterios de bloqueo | Operacionalizar el gate | Playbook | Sí |
 | [Mapeo SDLC–Artefactos — Fase 1](./sdlc-evolith-artifact-mapping.es.md#2-fase-1-concepción-y-descubrimiento) | Lista qué artefactos Evolith son Requeridos u Opcionales en la Fase 1 | Validar la completitud del gate | Referencia | No |
 
 ---
@@ -128,6 +129,7 @@ Selección de patrones, ADRs, bounded contexts, contratos de API e historias fun
 | [ADR — Registro de Decisión Arquitectónica](./04-artifact-templates/adr-template.es.md) | Captura una decisión arquitectónica: contexto, opciones, elección, trade-offs y consecuencias | Documentar decisiones que cruzan límites | Plantilla | No |
 | [Historia Funcional — Especificación de Comportamiento](./04-artifact-templates/functional-story-template.es.md) | Describe una capacidad orientada al usuario en lenguaje de negocio: actores, flujos, reglas, criterios de aceptación | Especificar comportamiento verificable | Plantilla | Sí |
 | [Estándar de Escritura de Historias Funcionales](./03-documentation/functional-story-writing-standard.es.md) | Reglas normativas para estructura, lenguaje y completitud de Historias Funcionales | Asegurar la calidad de las especificaciones | Estándar | Sí |
+| [Playbook Fase 2 — Línea Base de Diseño Aprobada](./01-playbooks/phase-2-design-baseline.es.md) | Runbook operativo del gate Design Baseline Approved: auditoría de ADRs, readiness de historias, alineación con blueprint | Operacionalizar el gate | Playbook | Sí |
 | [Mapeo SDLC–Artefactos — Fase 2](./sdlc-evolith-artifact-mapping.es.md#3-fase-2-diseño-y-arquitectura) | Artefactos Requeridos y Opcionales para esta fase | Validar la completitud del gate | Referencia | No |
 
 ---
@@ -160,7 +162,10 @@ Verificación de regresión, escaneo de seguridad, UAT y sellado de RC.
 | Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
 |---|---|---|---|---|
 | [Test Summary Report — Registro de Validación QA](./04-artifact-templates/test-summary-report-template.es.md) | Agrega resultados de pruebas unit, integration y E2E; confirma gates cumplidos o waived antes del sello | Consolidar la evidencia de QA | Plantilla | Sí |
+| [Plantilla de Reporte de Escaneo de Seguridad](./04-artifact-templates/security-scan-report-template.es.md) | Hallazgos SAST/DAST/SCA/IaC contra la política productiva de CVEs | Demostrar la postura de seguridad antes del sello | Plantilla | Sí |
+| [Plantilla de Evidencia de Integración](./04-artifact-templates/integration-evidence-template.es.md) | Ejercitar cada contrato declarado entre componentes antes del sello | Demostrar cobertura de integración | Plantilla | Sí |
 | [Gates de Calidad SDLC](./quality-gates.es.md) | Umbrales usados para confirmar si un RC puede sellarse o debe bloquearse | Decidir el sellado del RC objetivamente | Estándar | Sí |
+| [Playbook Fase 4 — RC Estampado](./01-playbooks/phase-4-rc-stamp.es.md) | Runbook operativo del gate RC Stamped: calidad, seguridad, aceptación y pirámide de pruebas | Operacionalizar el gate | Playbook | Sí |
 | [Mapeo SDLC–Artefactos — Fase 4](./sdlc-evolith-artifact-mapping.es.md#5-fase-4-validación-y-qa) | Artefactos de QA requeridos para esta fase | Validar la completitud del gate | Referencia | No |
 
 ---
@@ -176,6 +181,7 @@ Despliegue a producción, validación de observabilidad y nominalidad de monitor
 | Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
 |---|---|---|---|---|
 | [Release Notes — Registro de Despliegue](./04-artifact-templates/release-notes-template.es.md) | Registro formal de despliegue: features, cambios breaking, fixes, rollback y baselines de observabilidad | Comunicar el release | Plantilla | Sí |
+| [Plantilla de Validación de Observabilidad](./04-artifact-templates/observability-validation-template.es.md) | Registra que métricas, logs, trazas y alertas son nominales en el cutover | Demostrar la observabilidad productiva | Plantilla | Sí |
 | [Playbook de Release Zero-Downtime](./01-playbooks/zero-downtime-release.es.md) | Runbook operativo para despliegues blue-green y canary | Desplegar sin downtime | Playbook | No |
 | [Mapeo SDLC–Artefactos — Fase 5](./sdlc-evolith-artifact-mapping.es.md#6-fase-5-entrega-y-operaciones) | Artefactos de delivery requeridos para esta fase | Validar la completitud del gate | Referencia | No |
 

@@ -85,9 +85,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** CLI genera un `correlationId` en `command-watcher.ts`; el middleware REST lee `X-Correlation-Id`; las herramientas MCP generan un ID nuevo por invocación. `initiative` y `tenant` los acepta CLI pero no se eco en envelopes REST ni MCP.
 - **Complejidad:** M
 - **Hecho cuando:**
-  - [ ] Las herramientas MCP aceptan y propagan `correlationId`, `initiative` y `tenant` del llamante y los hacen eco en `meta.context`.
-  - [ ] Los controladores REST y un interceptor de envelope hacen eco de los mismos campos de contexto, con propagación de headers en llamadas upstream/downstream.
-  - [ ] Un test roundtrip verifica que el correlation ID se preserva en CLI → MCP → REST.
+  - [x] Las herramientas MCP aceptan y propagan `correlationId`, `initiative` y `tenant` del llamante y los hacen eco en `meta.context`.
+  - [x] Los controladores REST y un interceptor de envelope hacen eco de los mismos campos de contexto, con propagación de headers en llamadas upstream/downstream.
+  - [x] Un test roundtrip verifica que el correlation ID se preserva en CLI → MCP → REST.
 
 
 #### GT-161

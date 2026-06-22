@@ -85,9 +85,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** CLI mints a `correlationId` in `command-watcher.ts`; REST middleware reads `X-Correlation-Id`; MCP tools mint a fresh ID per invocation. `initiative` and `tenant` are accepted by CLI but not echoed in REST or MCP envelopes.
 - **Complexity:** M
 - **Done when:**
-  - [ ] MCP tools accept and propagate `correlationId`, `initiative`, and `tenant` from the caller and echo them in `meta.context`.
-  - [ ] REST controllers and an envelope interceptor echo the same context fields, with header propagation across upstream/downstream calls.
-  - [ ] A round-trip test asserts the correlation ID is preserved across CLI → MCP → REST.
+  - [x] MCP tools accept and propagate `correlationId`, `initiative`, and `tenant` from the caller and echo them in `meta.context`.
+  - [x] REST controllers and an envelope interceptor echo the same context fields, with header propagation across upstream/downstream calls.
+  - [x] A round-trip test asserts the correlation ID is preserved across CLI → MCP → REST.
 
 
 #### GT-161

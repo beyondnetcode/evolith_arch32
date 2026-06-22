@@ -9,6 +9,8 @@ import { ToolRegistryService } from './tool-registry.service';
 import { McpTool } from './tool.interface';
 import { DomainException, ErrorCodes } from '../common/errors';
 import { AbacEvaluator } from './abac-evaluator';
+import { requestContextStorage } from '@evolith/core-domain/common/request-context';
+import { WebhookAdapter } from '@evolith/infra-providers';
 
 class MockAbacEvaluator extends AbacEvaluator {
   override evaluateNative() {
@@ -419,5 +421,113 @@ describe('ABAC dual-engine evaluation', () => {
       expect(env.error.code).toBe(ErrorCodes.FORBIDDEN);
       expect(env.error.message).toContain('not allowed');
     });
+  });
+
+  describe('context and correlation ID propagation', () => {
+    it('propagates and echoes correlation ID and context passed as top-level arguments', async () => {
+      await mcpContextStorage.run({
+        id: 'dev-1',
+        role: 'developer',
+        roles: ['developer'],
+        tenant: 'default',
+        environment: 'development',
+        scopes: ['read'],
+      }, async () => {
+        const result = await realService.handleCallTool('evolith-ping', {
+          correlationId: 'test-corr-id-789',
+          initiative: 'test-init',
+          tenant: 'test-tenant',
+          phase: 'discovery',
+        });
+        const env = parseEnvelope(result);
+        expect(env.success).toBe(true);
+        expect(env.meta.correlationId).toBe('test-corr-id-789');
+        expect(env.meta.context).toEqual({
+          initiative: 'test-init',
+          tenant: 'test-tenant',
+          phase: 'discovery',
+        });
+      });
+    });
+
+    it('propagates and echoes correlation ID and context passed in structured context object', async () => {
+      await mcpContextStorage.run({
+        id: 'dev-1',
+        role: 'developer',
+        roles: ['developer'],
+        tenant: 'default',
+        environment: 'development',
+        scopes: ['read'],
+      }, async () => {
+        const result = await realService.handleCallTool('evolith-ping', {
+          context: {
+            correlationId: 'test-corr-id-xyz',
+            initiative: 'test-init-nested',
+            tenant: 'test-tenant-nested',
+            phase: 'design',
+          }
+        });
+        const env = parseEnvelope(result);
+        expect(env.success).toBe(true);
+        expect(env.meta.correlationId).toBe('test-corr-id-xyz');
+        expect(env.meta.context).toEqual({
+          initiative: 'test-init-nested',
+          tenant: 'test-tenant-nested',
+          phase: 'design',
+        });
+      });
+    });
+  });
+});
+
+describe('WebhookAdapter propagation', () => {
+  let originalFetch: any;
+
+  beforeAll(() => {
+    originalFetch = global.fetch;
+  });
+
+  afterAll(() => {
+    global.fetch = originalFetch;
+  });
+
+  it('propagates requestContextStorage headers to outgoing fetch request', async () => {
+    const globalFetchSpy = jest.fn().mockResolvedValue({ ok: true });
+    global.fetch = globalFetchSpy as any;
+
+    const adapter = new WebhookAdapter();
+    const mockEvidence = {
+      gateId: 'gate-1',
+      phase: 'discovery',
+      verdict: 'passed',
+      rulesetRef: 'ref',
+      rulesetVersion: '1.0',
+      violations: [],
+      evaluatedAt: 'time',
+      evaluatedBy: 'human',
+    } as any;
+
+    await requestContextStorage.run({
+      correlationId: 'webhook-corr-id',
+      initiative: 'webhook-init',
+      tenant: 'webhook-tenant',
+      phase: 'discovery',
+    }, async () => {
+      await adapter.notify('https://example.com/webhook', mockEvidence);
+    });
+
+    expect(globalFetchSpy).toHaveBeenCalledWith(
+      'https://example.com/webhook',
+      expect.objectContaining({
+        method: 'POST',
+        headers: expect.objectContaining({
+          'Content-Type': 'application/json',
+          'x-correlation-id': 'webhook-corr-id',
+          'x-evolith-initiative': 'webhook-init',
+          'x-evolith-tenant': 'webhook-tenant',
+          'x-evolith-phase': 'discovery',
+        }),
+      })
+    );
   });
 });

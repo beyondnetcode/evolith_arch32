@@ -11,4 +11,4 @@ This is the automated inventory tally of the core reference architecture and gov
 | **Machine-Readable Rulesets** | 26 | `rulesets/` (across 14 categories) |
 | **Phase-Gate Schemas** | 22 | `rulesets/schema/` |
 
-*Last Updated: 2026-06-21*
+*Last Updated: 2026-06-22*

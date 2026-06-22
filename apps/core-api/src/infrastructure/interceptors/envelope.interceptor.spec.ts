@@ -7,6 +7,7 @@ import {
   RawResponse,
   buildEnvelopeMeta,
 } from './envelope.interceptor';
+import { requestContextStorage } from '@evolith/core-domain/common/request-context';
 
 function makeContext(
   req: Record<string, unknown>,
@@ -107,6 +108,29 @@ describe('EnvelopeInterceptor', () => {
       initiative: 'opt-init',
       tenant: 'q-tenant',
       phase: 'q-phase',
+    });
+  });
+
+  it('reads correlation ID and context from shared requestContextStorage', async () => {
+    const ctx = makeContext(baseReq);
+    let env: Envelope | undefined;
+    await requestContextStorage.run({
+      correlationId: 'shared-corr-999',
+      initiative: 'shared-init',
+      tenant: 'shared-tenant',
+      phase: 'construction',
+    }, async () => {
+      env = (await lastValueFrom(
+        interceptor.intercept(ctx, makeHandler({})),
+      )) as Envelope;
+    });
+
+    expect(env).toBeDefined();
+    expect(env!.meta.correlationId).toBe('shared-corr-999');
+    expect(env!.meta.context).toEqual({
+      initiative: 'shared-init',
+      tenant: 'shared-tenant',
+      phase: 'construction',
     });
   });
 

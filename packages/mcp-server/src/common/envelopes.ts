@@ -22,6 +22,11 @@ export interface EnvelopeMeta {
   tool: string;
   durationMs: number;
   timestamp: string;
+  context?: {
+    initiative?: string;
+    tenant?: string;
+    phase?: string;
+  };
   /** ADR-0073 envelope shape version, pinned per surface. */
   schemaVersion: string;
 }
@@ -55,6 +60,11 @@ export interface MetaInput {
   durationMs: number;
   /** Injectable for determinism in tests; defaults to the current time. */
   timestamp?: string;
+  context?: {
+    initiative?: string;
+    tenant?: string;
+    phase?: string;
+  };
 }
 
 function buildMeta(meta: MetaInput): EnvelopeMeta {
@@ -63,6 +73,7 @@ function buildMeta(meta: MetaInput): EnvelopeMeta {
     tool: meta.tool,
     durationMs: meta.durationMs,
     timestamp: meta.timestamp ?? new Date().toISOString(),
+    context: meta.context,
     schemaVersion: MCP_ENVELOPE_SCHEMA_VERSION,
   };
 }

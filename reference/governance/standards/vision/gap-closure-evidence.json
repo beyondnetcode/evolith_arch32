@@ -3,6 +3,26 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-160",
+      "closedAt": "2026-06-22",
+      "closureCommit": "a8e70ac3",
+      "evidence": [
+        "packages/core-domain/src/common/request-context.ts",
+        "packages/mcp-server/src/common/envelopes.ts",
+        "packages/mcp-server/src/mcp/mcp-server.service.ts",
+        "apps/core-api/src/infrastructure/middleware/correlation-id.middleware.ts",
+        "apps/core-api/src/infrastructure/interceptors/envelope.interceptor.ts",
+        "packages/infra-providers/src/webhook.adapter.ts"
+      ],
+      "validationCommands": [
+        "npm run build --workspace packages/core-domain",
+        "npm run test --workspace packages/mcp-server",
+        "npm run test --workspace apps/core-api",
+        "npm run test --workspace sdk/cli"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-158",
       "closedAt": "2026-06-22",
       "closureCommit": "a8e70ac3",

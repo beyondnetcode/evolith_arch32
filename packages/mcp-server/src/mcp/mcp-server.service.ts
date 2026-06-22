@@ -19,13 +19,9 @@ import { MetricsService } from './metrics.service';
 import { ResourcesService } from './resources.service';
 import { PromptsService } from './prompts.service';
 import { ErrorCodes } from '../common/errors';
-import {
-  failure,
-  generateCorrelationId,
-  success,
-  toErrorEnvelope,
-} from '../common/envelopes';
+import { failure, generateCorrelationId, success, toErrorEnvelope } from '../common/envelopes';
 import { AbacEvaluator, AbacInput, AbacDecision } from './abac-evaluator';
+import { runWithContext } from '@evolith/core-domain/common/request-context';
 
 export interface McpUserContext {
   id: string;
@@ -93,9 +89,25 @@ export class McpServerService {
     name: string,
     args: Record<string, unknown> = {},
   ): Promise<ToolCallResult> {
-    const correlationId = generateCorrelationId();
+    const argContext = (args.context as Record<string, unknown> | undefined) || {};
+    const correlationId = (args.correlationId as string) || (argContext.correlationId as string) || generateCorrelationId();
+    const initiative = (args.initiative as string | undefined) ?? (argContext.initiative as string | undefined);
+    const tenant = (args.tenant as string | undefined) ?? (argContext.tenant as string | undefined);
+    const phase = (args.phase as string | undefined) ?? (argContext.phase as string | undefined);
+
+    const contextObj = {
+      ...(initiative ? { initiative } : {}),
+      ...(tenant ? { tenant } : {}),
+      ...(phase ? { phase } : {}),
+    };
+
     const startTime = Date.now();
-    const meta = (durationMs: number) => ({ correlationId, tool: name, durationMs });
+    const meta = (durationMs: number) => ({
+      correlationId,
+      tool: name,
+      durationMs,
+      ...(Object.keys(contextObj).length > 0 ? { context: contextObj } : {}),
+    });
 
     const tool = this.registry.get(name);
     if (!tool) {
@@ -110,7 +122,7 @@ export class McpServerService {
       id: 'anonymous',
       role: 'anonymous',
       roles: [],
-      tenant: 'default',
+      tenant: tenant || 'default',
       environment: process.env.NODE_ENV || 'development',
       scopes: [],
     };
@@ -131,7 +143,7 @@ export class McpServerService {
       user: {
         id: userContext.id,
         roles: userContext.roles,
-        tenant: userContext.tenant,
+        tenant: tenant || userContext.tenant,
       },
       tool_name: name,
       resource_domain: 'mcp-server',
@@ -175,7 +187,7 @@ export class McpServerService {
         user: {
           id: userContext.id,
           roles: userContext.roles,
-          tenant: userContext.tenant,
+          tenant: tenant || userContext.tenant,
         },
         scopes: userContext.scopes,
         tool: name,
@@ -186,7 +198,7 @@ export class McpServerService {
     }
 
     try {
-      const data = await tool.execute(args);
+      const data = await runWithContext({ correlationId, initiative, tenant, phase }, () => tool.execute(args));
       const durationMs = Date.now() - startTime;
       this.metrics.recordToolCall(name, durationMs, true);
       const env = success(data, meta(durationMs));

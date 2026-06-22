@@ -7,6 +7,7 @@ import {
 import { randomUUID } from 'node:crypto';
 import { Observable, map } from 'rxjs';
 import { Request } from 'express';
+import { requestContextStorage } from '@evolith/core-domain/common/request-context';
 
 export interface EnvelopeContext {
   initiative?: string;
@@ -88,15 +89,25 @@ function deriveContext(req: Request): EnvelopeContext {
 }
 
 export function buildEnvelopeMeta(req: Request, startedAt: number): EnvelopeMeta {
+  const sharedCtx = requestContextStorage.getStore();
   const correlationId =
+    sharedCtx?.correlationId ??
     (req.headers['x-correlation-id'] as string | undefined) ??
     `evl-${randomUUID()}`;
+
+  const context: EnvelopeContext = {
+    ...deriveContext(req),
+    ...(sharedCtx?.initiative ? { initiative: sharedCtx.initiative } : {}),
+    ...(sharedCtx?.tenant ? { tenant: sharedCtx.tenant } : {}),
+    ...(sharedCtx?.phase ? { phase: sharedCtx.phase } : {}),
+  };
+
   return {
     command: deriveCommand(req),
     executedAt: new Date(startedAt).toISOString(),
     durationMs: Date.now() - startedAt,
     correlationId,
-    context: deriveContext(req),
+    context,
     schemaVersion: ENVELOPE_SCHEMA_VERSION,
   };
 }

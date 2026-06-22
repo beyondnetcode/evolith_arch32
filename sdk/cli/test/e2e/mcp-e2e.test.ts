@@ -440,7 +440,8 @@ describe('MCP E2E Tests - API key authentication', () => {
 
       expect(response.statusCode).toBe(401);
       const body = JSON.parse(response.body);
-      expect(body.error).toBe('Unauthorized');
+      expect(body.success).toBe(false);
+      expect(body.error.code).toBe('UNAUTHORIZED');
     });
 
     it('should accept requests with valid Bearer token', async () => {

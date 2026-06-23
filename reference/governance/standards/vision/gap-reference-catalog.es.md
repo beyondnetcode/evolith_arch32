@@ -1965,7 +1965,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
  
 #### GT-196
 **Propósito:** Agregar pruebas E2E para transporte HTTP MCP (`mcp-serve.command.spec.ts` existe pero HTTP no probado).
-**Evidencia Actual:** Transporte HTTP MCP no tiene cobertura E2E.
+**Evidencia Actual:** Transporte HTTP MCP tiene cobertura E2E completa incluyendo initialize, tools/list, tools/call, resources/list, resources/read, prompts/list, prompts/get, manejo de errores y gestión de sesiones sobre HTTP.
+**Evidencia de Cierre:** Se agregaron 11 pruebas E2E de protocolo HTTP a `sdk/cli/test/e2e/mcp-e2e.test.ts`. Cobertura: initialize con establecimiento de sesión, tools/list con descripciones/esquemas, tools/call para herramientas válidas y desconocidas, resources/list y read, prompts/list y get, manejo de método inválido y rechazo de sesión faltante. 40 tests E2E pasan (29 + 11 nuevos). 162 pruebas CLI pasan.
 **Hecho Cuando:** Transporte HTTP MCP tiene pruebas E2E cubriendo ciclo de vida request/response.
 
 #### GT-197

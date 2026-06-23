@@ -496,3 +496,220 @@ describe('MCP E2E Tests - API key authentication', () => {
     });
   });
 });
+
+describe('MCP E2E Tests - HTTP transport protocol', () => {
+  let serverProcess: ChildProcess;
+  const testPort = 54000 + Math.floor(Math.random() * 1000);
+  let sessionId: string;
+
+  beforeAll(async () => {
+    serverProcess = spawn('node', [CLI_PATH, 'mcp', 'serve', '--transport', 'http', '--port', String(testPort)], {
+      stdio: ['pipe', 'pipe', 'pipe'],
+    });
+
+    await new Promise(resolve => setTimeout(resolve, 1500));
+  });
+
+  afterAll(() => {
+    serverProcess.kill();
+  });
+
+  async function mcpPost(body: unknown): Promise<{ statusCode: number; body: string; headers: Record<string, string> }> {
+    const bodyStr = JSON.stringify(body);
+    return new Promise((resolve, reject) => {
+      const urlObj = new URL(`http://127.0.0.1:${testPort}/`);
+      const req = http.request({
+        hostname: urlObj.hostname,
+        port: urlObj.port,
+        path: urlObj.pathname,
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json,text/event-stream',
+          ...(sessionId ? { 'Mcp-Session-Id': sessionId } : {}),
+        },
+      }, (res) => {
+        let data = '';
+        res.on('data', (chunk) => { data += chunk; });
+        res.on('end', () => resolve({
+          statusCode: res.statusCode || 0,
+          body: data,
+          headers: res.headers as Record<string, string>,
+        }));
+      });
+      req.on('error', reject);
+      req.write(bodyStr);
+      req.end();
+    });
+  }
+
+  describe('initialize', () => {
+    it('should respond to initialize request over HTTP and establish session', async () => {
+      const response = await mcpPost({
+        jsonrpc: '2.0',
+        id: 1,
+        method: 'initialize',
+        params: {
+          protocolVersion: '2024-11-05',
+          capabilities: {},
+          clientInfo: { name: 'test', version: '1.0.0' },
+        },
+      });
+
+      expect(response.statusCode).toBe(200);
+      const body = JSON.parse(response.body);
+      expect(body.jsonrpc).toBe('2.0');
+      expect(body.id).toBe(1);
+      expect(body.result).toBeDefined();
+      expect(body.result.serverInfo.name).toBe('evolith-mcp-server');
+      sessionId = response.headers['mcp-session-id'] as string;
+      expect(sessionId).toBeDefined();
+      expect(sessionId.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('tools/list over HTTP', () => {
+    it('should return list of available tools with session', async () => {
+      const response = await mcpPost({
+        jsonrpc: '2.0',
+        id: 2,
+        method: 'tools/list',
+      });
+
+      expect(response.statusCode).toBe(200);
+      const body = JSON.parse(response.body);
+      expect(body.result.tools).toBeInstanceOf(Array);
+      expect(body.result.tools.length).toBeGreaterThan(10);
+
+      const toolNames = body.result.tools.map((t: { name: string }) => t.name);
+      expect(toolNames).toContain('evolith-validate');
+      expect(toolNames).toContain('evolith-metrics');
+    });
+
+    it('should include tool descriptions and input schemas', async () => {
+      const response = await mcpPost({
+        jsonrpc: '2.0',
+        id: 3,
+        method: 'tools/list',
+      });
+
+      const body = JSON.parse(response.body);
+      for (const tool of body.result.tools) {
+        expect(tool.description).toBeDefined();
+        expect(tool.description.length).toBeGreaterThan(0);
+        expect(tool.inputSchema).toBeDefined();
+      }
+    });
+  });
+
+  describe('tools/call over HTTP', () => {
+    it('should call evolith-metrics tool over HTTP', async () => {
+      const response = await mcpPost({
+        jsonrpc: '2.0',
+        id: 4,
+        method: 'tools/call',
+        params: { name: 'evolith-metrics', arguments: {} },
+      });
+
+      expect(response.statusCode).toBe(200);
+      const body = JSON.parse(response.body);
+      expect(body.result).toBeDefined();
+      expect(body.result.content).toBeInstanceOf(Array);
+    });
+
+    it('should return error for unknown tool over HTTP', async () => {
+      const response = await mcpPost({
+        jsonrpc: '2.0',
+        id: 5,
+        method: 'tools/call',
+        params: { name: 'unknown-tool', arguments: {} },
+      });
+
+      expect(response.statusCode).toBe(200);
+      const body = JSON.parse(response.body);
+      expect(body.result.isError).toBe(true);
+    });
+  });
+
+  describe('resources over HTTP', () => {
+    it('should list resources over HTTP', async () => {
+      const response = await mcpPost({
+        jsonrpc: '2.0',
+        id: 6,
+        method: 'resources/list',
+      });
+
+      expect(response.statusCode).toBe(200);
+      const body = JSON.parse(response.body);
+      expect(body.result.resources).toBeInstanceOf(Array);
+      expect(body.result.resources.length).toBeGreaterThan(0);
+    });
+
+    it('should read evolith://rulesets resource over HTTP', async () => {
+      const response = await mcpPost({
+        jsonrpc: '2.0',
+        id: 7,
+        method: 'resources/read',
+        params: { uri: 'evolith://rulesets' },
+      });
+
+      expect(response.statusCode).toBe(200);
+      const body = JSON.parse(response.body);
+      expect(body.result).toBeDefined();
+    });
+  });
+
+  describe('prompts over HTTP', () => {
+    it('should list prompts over HTTP', async () => {
+      const response = await mcpPost({
+        jsonrpc: '2.0',
+        id: 8,
+        method: 'prompts/list',
+      });
+
+      expect(response.statusCode).toBe(200);
+      const body = JSON.parse(response.body);
+      expect(body.result.prompts).toBeInstanceOf(Array);
+      expect(body.result.prompts.length).toBeGreaterThan(0);
+    });
+
+    it('should get evolith/validate-repository prompt over HTTP', async () => {
+      const response = await mcpPost({
+        jsonrpc: '2.0',
+        id: 9,
+        method: 'prompts/get',
+        params: { name: 'evolith/validate-repository' },
+      });
+
+      expect(response.statusCode).toBe(200);
+      const body = JSON.parse(response.body);
+      expect(body.result.messages).toBeInstanceOf(Array);
+      expect(body.result.messages.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('error handling over HTTP', () => {
+    it('should handle invalid JSON-RPC method over HTTP', async () => {
+      const response = await mcpPost({
+        jsonrpc: '2.0',
+        id: 10,
+        method: 'unknown/method',
+        params: {},
+      });
+
+      expect(response.statusCode).toBe(200);
+      const body = JSON.parse(response.body);
+      expect(body.error).toBeDefined();
+    });
+
+    it('should reject requests without session ID', async () => {
+      const response = await httpPost(`http://127.0.0.1:${testPort}/`, JSON.stringify({
+        jsonrpc: '2.0', id: 11, method: 'tools/list',
+      }), { 'Content-Type': 'application/json', 'Accept': 'application/json,text/event-stream' });
+
+      expect(response.statusCode).toBe(400);
+      const body = JSON.parse(response.body);
+      expect(body.error).toBeDefined();
+    });
+  });
+});

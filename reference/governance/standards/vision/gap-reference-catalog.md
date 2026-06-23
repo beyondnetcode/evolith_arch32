@@ -1966,7 +1966,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-196
 **Purpose:** Add E2E tests for MCP HTTP transport (`mcp-serve.command.spec.ts` exists but HTTP transport untested).
-**Current Evidence:** MCP HTTP transport has no E2E coverage.
+**Current Evidence:** MCP HTTP transport has full E2E coverage including initialize, tools/list, tools/call, resources/list, resources/read, prompts/list, prompts/get, error handling, and session management over HTTP transport.
+**Closure Evidence:** Added 11 HTTP transport protocol E2E tests to `sdk/cli/test/e2e/mcp-e2e.test.ts`. Tests cover: initialize with session establishment, tools/list with descriptions/schemas, tools/call for valid and unknown tools, resources/list and read, prompts/list and get, invalid JSON-RPC method handling, and missing session ID rejection. All 40 E2E tests pass (29 existing + 11 new). All 162 CLI tests pass.
 **Done When:** MCP HTTP transport has E2E tests covering request/response lifecycle.
 
 #### GT-197

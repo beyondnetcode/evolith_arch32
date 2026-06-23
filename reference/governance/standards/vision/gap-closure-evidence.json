@@ -2880,6 +2880,19 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-196",
+      "closedAt": "2026-06-23",
+      "closureCommit": "31e4e079",
+      "evidence": [
+        "sdk/cli/test/e2e/mcp-e2e.test.ts"
+      ],
+      "validationCommands": [
+        "NODE_OPTIONS=--max-old-space-size=4096 npx jest --config sdk/cli/test/jest-e2e.json --runInBand --no-bail --testPathPatterns='mcp-e2e'"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Added 11 HTTP transport protocol E2E tests covering initialize, tools, resources, prompts, error handling, and session management. 40 E2E tests pass."
+    },
+    {
       "id": "GT-195",
       "closedAt": "2026-06-23",
       "closureCommit": "8eb7ce71",

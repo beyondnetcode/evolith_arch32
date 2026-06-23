@@ -2042,3 +2042,115 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Evidencia Actual:** ADR-0041, ADR-0095, y ADR-0096 existen solo como `.es.md` sin original EN, violando paridad bilingüe.
 **Hecho Cuando:** Los tres ADRs tienen contrapartes `.md` EN con estructura idéntica.
 **Evidencia de Cierre:** Las 3 contrapartes EN ya existen con estructura y líneas coincidentes: `core/0041-dual-engine-policy-evaluation.md` (28 líneas), `core/0095-serverless-architecture-governance.md` (29 líneas), `core/0096-edge-computing-architecture-governance.md` (29 líneas). Cobertura bilingüe al 100%. Estado: `COMPLETADO`.
+
+#### GT-212
+**Propósito:** Resolver el estado ambiguo de ADR-0049 ("Accepted (Proposed)") y alinearlo con ADR-0056, que se declara superseder del alcance de naming de ADR-0049 pero a su vez sigue marcado como `Proposed`.
+**Evidencia Actual:** `reference/architecture/adrs/core/0049-naming-semantics-clean-code-policy.md:7` muestra `**Status:** Accepted (Proposed)` — estado compuesto inválido. `core/0056-enterprise-naming-design-conventions.md` está marcado `Proposed` y declara que supersede el alcance de naming de ADR-0049, pero ADR-0049 no refleja un marcador `Superseded by`. No existe registro de decisión del Architecture Board ni fecha efectiva para ninguno.
+**Hecho Cuando:**
+  - [ ] ADR-0049 cambia su estado a `Superseded by ADR-0056 (effective <fecha>)` con referencia inversa y preservando la fecha original de Accepted.
+  - [ ] ADR-0056 pasa a `Accepted` (o `Rejected`) con la decisión del Architecture Board registrada en la sección Decision.
+  - [ ] Ambos ADRs se enlazan mutuamente en Related ADRs y el índice global de ADRs refleja el nuevo estado.
+
+#### GT-213
+**Propósito:** Añadir campos de metadata de gobernanza (`owner`, `criticality`, `supersedes`, `replaces`) a cada manifest de topología para que la trazabilidad, propiedad y decisiones de ciclo de vida sean legibles por máquina a nivel de topología.
+**Evidencia Actual:** `grep -l '"owner":\|"criticality":\|"replaces":\|"supersedes":' reference/architecture/topologies/*/*/topology.manifest.json` devuelve **0 de 8** manifests. La visión exige trazabilidad de gobernanza por topología; hoy esas decisiones están dispersas en READMEs y ADRs.
+**Hecho Cuando:**
+  - [ ] Los 8 manifests incluyen `owner` (unidad org), `criticality` (P0–P2) y arrays opcionales `supersedes`/`replaces` con IDs de ADR.
+  - [ ] `rulesets/schema/topology-manifest.schema.json` declara esas propiedades (con `required` donde corresponda).
+  - [ ] `.harness/scripts/validate-topology-manifests.mjs` aplica los nuevos campos.
+
+#### GT-214
+**Propósito:** Llevar los controladores REST de `apps/core-api` a paridad de observabilidad con CLI/MCP — emitir logs estructurados y spans OpenTelemetry por cada handler para que auditoría, tracing y cálculos de SLO sean uniformes en todas las superficies (cierra la mitad REST de la paridad OTel establecida por GT-173).
+**Evidencia Actual:** `grep -l "Logger\|logger\." apps/core-api/src/presentation/controllers/*.controller.ts` devuelve **0 de 7** controladores. No hay `@Span`, `tracer.startActiveSpan` ni propagación de correlation-ID en ningún cuerpo de controlador. El middleware que setea `request.context` existe (ver `e2e.spec.ts`) pero los controladores lo ignoran.
+**Hecho Cuando:**
+  - [ ] Cada controlador (gates, projects, phases, architecture, metrics, reference, health) inyecta un `Logger` de NestJS y emite `{level, msg, correlationId, route, durationMs, status}` por request.
+  - [ ] Cada handler está instrumentado con un span OTel que lleva `http.route`, `evolith.surface=rest` y el correlation ID.
+  - [ ] Tests unitarios verifican emisión de log y creación de span para al menos una ruta por controlador.
+
+#### GT-215
+**Propósito:** Documentar cada endpoint REST con decoradores OpenAPI (`@ApiTags`, `@ApiResponse`, `@ApiOperation`) para que la superficie BFF sea descubrible, la matriz de contratos sea auto-derivable y los consumidores (Tracker, satélites) tengan una referencia única y autoritativa.
+**Evidencia Actual:** `grep -l "@ApiTags\|@ApiResponse" apps/core-api/src/presentation/controllers/*.controller.ts` devuelve **1 de 7** controladores. Los 6 restantes exponen endpoints sin anotación OpenAPI, bloqueando que `validate-rest-versioning` y la herramienta de surface-compatibility rendericen un contrato completo.
+**Hecho Cuando:**
+  - [ ] Cada controlador tiene `@ApiTags` y cada handler tiene `@ApiOperation` + `@ApiResponse` cubriendo envelopes 2xx, 4xx y 5xx.
+  - [ ] El módulo Swagger de `core-api` emite un `openapi.json` completo consumido por `validate-surface-compatibility.mjs`.
+  - [ ] Una regla de CI falla la build si un nuevo método de controlador carece de `@ApiOperation`.
+
+#### GT-216
+**Propósito:** Cerrar la brecha de paridad de input-schemas OPA para que cada ruleset nativo que gatea decisiones de gobernanza tenga un contrato OPA equivalente — exigido por la política dual-engine de ADR-0073 y el gate de paridad Native/OPA por topología.
+**Evidencia Actual:** `find rulesets -name '*.rules.json'` devuelve **26 rulesets nativos**; `ls rulesets/opa/schemas/` devuelve **9 input schemas** (`abac-mcp-tool-access`, `ci-cd`, `cli-readiness`, `evidence`, `governance`, `knowledge-intake`, `mcp`, `taxonomy`, `version-pinning`). 17 rulesets nativos (adr-002x/003x/004x/005x, anti-corruption-layer, helm-enforcement, executive-scorecards, etc.) no tienen input schema OPA, impidiendo equivalentes OPA ejecutables.
+**Hecho Cuando:**
+  - [ ] Cada uno de los 17 rulesets nativos sin cobertura recibe un input schema OPA + política `.rego`, o una justificación registrada en ADR para mantenerse native-only se añade al README del ruleset.
+  - [ ] `15-validate-topology-rule-coverage.mjs` se extiende para reportar cobertura native/OPA en rulesets no-topología y fallar cuando un ruleset carece de disposición documentada.
+  - [ ] La suite de parity-fixtures OPA cubre las nuevas políticas.
+
+#### GT-217
+**Propósito:** Completar el corpus de guías operativas para las 7 topologías no-agentic-ai para que cada topología aceptada tenga la misma profundidad humano + máquina-legible (operations, security, resilience, patterns, evolution, evidence, adoption, runbooks) y los consumidores puedan adoptarlas sin hacer ingeniería inversa de las reglas.
+**Evidencia Actual:** `agentic-ai/` contiene 8 archivos narrativos de guía × 2 idiomas (`operations.md`, `security.md`, `resilience.md`, `patterns.md`, `evolution.md`, `evidence.md`, `adoption.md`, `runbooks.md`). Las otras 7 topologías (data-mesh, edge-computing, serverless, event-driven, distributed-modules, microservices, modular-monolith) solo entregan `README.md` + `maturity.md` × 2 idiomas. Asimetría masiva bloquea la paridad de adopción que reclama el hub de topologías.
+**Hecho Cuando:**
+  - [ ] Cada una de las 7 topologías tiene los 7 archivos narrativos md (y sus contrapartes `.es.md`) escritos con la misma fidelidad que agentic-ai.
+  - [ ] `validate-docs.mjs` exige la presencia del set canónico de archivos por topología aceptada.
+  - [ ] Paridad bilingüe pasa en todos los archivos nuevos.
+
+#### GT-218
+**Propósito:** Crear plantillas + schemas dedicados para las dos salidas de Fase 05 que hoy solo existen como "Section in Release Notes" — evidencia de rollback rehearsal y confirmación de on-call handoff — para que el gate Production Live sea reproducible y verificable por máquina.
+**Evidencia Actual:** `reference/governance/sdlc/05-delivery-and-operations/README.md` Outputs table lista "Rollback rehearsal evidence" y "On-call handoff confirmation" con `Section in Release Notes` como única plantilla — sin schema, ejemplo ni punto de entrada de validador. `rulesets/schema/` no tiene `rollback-rehearsal.schema.json` ni `on-call-handoff.schema.json`.
+**Hecho Cuando:**
+  - [ ] `04-artifact-templates/rollback-rehearsal-template.md` (+`.es.md`) existe con ejemplos Blue/Green y Canary, rollback budget y sign-off del testigo.
+  - [ ] `04-artifact-templates/on-call-handoff-template.md` (+`.es.md`) existe con URLs de runbooks, rutas de escalación, propiedad de alertas y aceptación de SLA.
+  - [ ] Ambos tienen JSON Schemas en `rulesets/schema/` y se cablean en `phase-gates.rules.json` como evidencia mandatoria de Fase 05.
+
+#### GT-219
+**Propósito:** Añadir un bloque `operationalBudgets` al manifest de la topología agentic-ai, siguiendo el precedente fijado por serverless y edge-computing, para que los SLOs de token-budget, sandbox-timeout y rotación de credenciales sean legibles por máquina y exigibles.
+**Evidencia Actual:** `grep -l operationalBudgets reference/architecture/topologies/*/*/topology.manifest.json` lo encuentra en `execution/edge-computing/` y `execution/serverless/` pero no en `ai/agentic-ai/topology.manifest.json`, a pesar de que GT-169 cerró el lado de docs/runbooks de esos presupuestos.
+**Hecho Cuando:**
+  - [ ] `agentic-ai/topology.manifest.json` declara `operationalBudgets` con al menos `tokenBudgetPerExecution`, `credentialRotationIntervalHours` y `sandboxTimeoutMs`.
+  - [ ] `topology-manifest.schema.json` deja el bloque opcional con campos tipados; la validación de agentic-ai pasa.
+  - [ ] Un test rego exige la presencia del bloque para topologías AI.
+
+#### GT-220
+**Propósito:** Elevar la cobertura de ramas del CLI a la altura de la madurez de cobertura de statements subiendo `gate-status.command.ts` de 40% ramas a ≥80% y subiendo el umbral global de branches de Jest por encima del piso actual de 67%.
+**Evidencia Actual:** `sdk/cli/coverage/coverage-summary.json` reporta `branches: 78.76%` global vs `statements: 91.42%`; `gate-status.command.ts` está en **40% branches / 60.43% statements** (la mayor brecha individual). El umbral en `jest.config.js` es `branches: 67` — muy por debajo del estado actual.
+**Hecho Cuando:**
+  - [ ] `gate-status.command.ts` cobertura de ramas ≥80% (rutas de error, fallback de DORA, ramas de renderizado de métricas cubiertas por unit tests).
+  - [ ] Umbral global de branches en `jest.config.js` subido a 75 (con un issue de seguimiento para llegar a 80 una vez los siguientes hot-spots estén cubiertos).
+  - [ ] CI `sdk-cli-ci.yml` refleja el nuevo piso.
+
+#### GT-221
+**Propósito:** Añadir audit logging estructurado al transporte HTTP de MCP para que cada llamada tool/resource/prompt emita `{tool, args, context, durationMs, status}` con correlation IDs ligados a spans OTel — alineado con la postura de auditoría prometida por ADR-0073 y exigida para revisión de seguridad/compliance.
+**Evidencia Actual:** `packages/mcp-server/src/mcp/mcp-server.service.ts` (rama HTTP) valida auth vía `mcp-server-auth.ts` pero no emite eventos de audit por llamada. No existe servicio `AuditLogger`; la correlación stderr/OTel está ausente para invocaciones de tools. El transporte stdio también tiene logging mínimo.
+**Hecho Cuando:**
+  - [ ] Un `AuditLogger` (o proveedor NestJS equivalente) emite eventos estructurados por cada llamada tool/resource/prompt en ambos transportes.
+  - [ ] Los correlation IDs se propagan desde headers HTTP/metadata Stdio hasta spans OTel y audit logs.
+  - [ ] Tests de integración verifican emisión de eventos de audit para al menos una ruta de tool, resource y prompt.
+
+#### GT-222
+**Propósito:** Subir la densidad de tests OPA por topología a ≥1 test por regla para que el gate de paridad sea significativo — hoy modular-monolith tiene 2 tests para 12 reglas (17%), distributed-modules 4 para 8 (50%) y agentic-ai 4 para 9 (44%), todos muy por debajo de la densidad 100%+ de data-mesh y event-driven.
+**Evidencia Actual:** Según la salida de `16-test-topology-opa.mjs` (esta auditoría): agentic-ai 4 casos / 9 reglas, distributed-modules 4 / 8, modular-monolith 2 / 12, microservices 8 / 8, edge 6 / 5, serverless 5 / 6, event-driven 10 / 9, data-mesh 10 / 9. Las tres topologías sub-cubiertas tiran el promedio a ~70% de densidad.
+**Hecho Cuando:**
+  - [ ] modular-monolith añade ≥10 nuevos casos de test (uno por regla cubriendo ramas positiva + negativa).
+  - [ ] distributed-modules añade ≥4 nuevos casos; agentic-ai añade ≥5.
+  - [ ] `15-validate-topology-rule-coverage.mjs` se extiende para verificar densidad test/regla y fallar bajo un piso acordado (sugerencia ≥80%).
+
+#### GT-223
+**Propósito:** Añadir tests e2e de paridad cross-surface que ejerciten la misma operación de Core en CLI, MCP y REST y verifiquen equivalencia de envelope/payload — cierra el lado de runtime de la paridad de superficies declarada por GT-171 (la matriz existe; la ejecución contra ella es escasa).
+**Evidencia Actual:** `sdk/cli/test/e2e/` cubre solo `sdlc-status` (3 casos) y `sdlc-handoff` (1 caso). `gate-evaluate`, `phase-advance`, `validate-satellite`, `drift-detect` tienen cero tests e2e cross-surface a pesar de estar declarados expuestos en `surface-parity-matrix.json` para las tres superficies. `mcp-e2e.test.ts` valida descubrimiento de tools, no equivalencia de salida.
+**Hecho Cuando:**
+  - [ ] Un `surface-parity-fixture.ts` compartido invoca la misma operación vía binario CLI, tool MCP y endpoint REST y verifica equivalencia de envelope + datos.
+  - [ ] El fixture cubre al menos 5 operaciones core (`gate-evaluate`, `phase-advance`, `validate-satellite`, `drift-detect`, `sdlc-status`).
+  - [ ] CI corre la suite por push; fallos bloquean merge.
+
+#### GT-224
+**Propósito:** Llevar cada comando CLI que devuelve datos a conformidad con el envelope ADR-0073 añadiendo `--format json` a los comandos que carecen de él (`drift`, `architecture scaffold`, `docs`) para que la salida CLI sea consumible por máquina para el gateway MCP y la integración con Tracker.
+**Evidencia Actual:** `sdk/cli/src/commands/drift/drift.command.ts` declara `json?: boolean` (línea 10–11) pero no registra `@Option('--format')`. `architecture scaffold` y `docs` no tienen ruta de salida JSON. ADR-0073 exige que cada comando de datos emita el envelope `{success, data, meta}` cuando se solicite `--format json`.
+**Hecho Cuando:**
+  - [ ] `drift`, `architecture scaffold` y `docs` registran `@Option('--format json|text')` y emiten el envelope ADR-0073 cuando se selecciona `json`.
+  - [ ] Los tests unitarios CLI existentes verifican forma de envelope para rutas de éxito y error de cada comando.
+  - [ ] La entrada de la matriz de paridad de superficies para cada operación pasa a `cli.formats: ["json"]`.
+
+#### GT-225
+**Propósito:** Resolver los 4 casos `it.skip` en `sdk/cli/src/infrastructure/prompts/wizard.service.spec.ts` — revivirlos con el setup de test apropiado o documentar por qué quedan saltados, eliminando la deuda silenciosa de la suite unitaria.
+**Evidencia Actual:** `grep -rn "describe.skip\|it.skip" sdk/cli` encuentra 4 casos saltados en `wizard.service.spec.ts:51, 69, 92, 132` cubriendo cancelación con null, confirmación de summary, cancelación en summary y fallback de modo no interactivo — todos comportamientos reales del wizard sin otra cobertura de test.
+**Hecho Cuando:**
+  - [ ] Cada uno de los 4 tests saltados se reactiva y pasa, o se reescribe como una unidad enfocada cubriendo el mismo comportamiento.
+  - [ ] Si algún caso es irrecuperable, se elimina y se reemplaza por una nota `// reason:` inline más un issue de seguimiento.
+  - [ ] No queda ningún `it.skip`/`describe.skip` en `sdk/cli/src` tras el cierre.

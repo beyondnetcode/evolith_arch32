@@ -2042,3 +2042,115 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Current Evidence:** ADR-0041, ADR-0095, and ADR-0096 exist only as `.es.md` files without English originals, violating bilingual parity.
 **Done When:** All three ADRs have English `.md` counterparts with identical structure.
 **Closure Evidence:** All three EN counterparts already exist with matching structure and line counts: `core/0041-dual-engine-policy-evaluation.md` (28 lines), `core/0095-serverless-architecture-governance.md` (29 lines), `core/0096-edge-computing-architecture-governance.md` (29 lines). Bilingual coverage at 100%. Status: `COMPLETADO`.
+
+#### GT-212
+**Purpose:** Resolve the ambiguous status of ADR-0049 ("Accepted (Proposed)") and align it with ADR-0056, which declares itself a supersession of the naming scope of ADR-0049 but is itself still marked `Proposed`.
+**Current Evidence:** `reference/architecture/adrs/core/0049-naming-semantics-clean-code-policy.md:7` shows `**Status:** Accepted (Proposed)` — an invalid composite state. `core/0056-enterprise-naming-design-conventions.md` is marked `Proposed` and states it supersedes the naming scope of ADR-0049, yet ADR-0049 does not reflect a `Superseded by` marker. No Architecture Board decision record or effective date exists for either ADR.
+**Done When:**
+  - [ ] ADR-0049 status changes to `Superseded by ADR-0056 (effective <date>)` with a back-reference and the original Accepted date preserved.
+  - [ ] ADR-0056 status moves to `Accepted` (or `Rejected`) with the Architecture Board decision recorded in the ADR's Decision section.
+  - [ ] Both ADRs cross-link in their Related ADRs section and the global ADR index reflects the new state.
+
+#### GT-213
+**Purpose:** Add governance metadata fields (`owner`, `criticality`, `supersedes`, `replaces`) to every topology manifest so traceability, ownership, and lifecycle decisions are machine-readable at the topology level.
+**Current Evidence:** `grep -l '"owner":\|"criticality":\|"replaces":\|"supersedes":' reference/architecture/topologies/*/*/topology.manifest.json` returns **0 of 8** topology manifests. Vision requires governance traceability per topology; today these decisions are scattered across READMEs and ADRs.
+**Done When:**
+  - [ ] All 8 topology manifests include `owner` (org unit), `criticality` (P0–P2), and optional `supersedes`/`replaces` arrays of ADR IDs.
+  - [ ] `rulesets/schema/topology-manifest.schema.json` declares these properties (with `required` where appropriate).
+  - [ ] `.harness/scripts/validate-topology-manifests.mjs` enforces the new fields.
+
+#### GT-214
+**Purpose:** Bring REST controllers in `apps/core-api` into observability parity with CLI/MCP — emit structured logs and OpenTelemetry spans for every handler so audit, tracing, and SLO calculations are uniform across surfaces (closes the REST half of the OTel parity established by GT-173).
+**Current Evidence:** `grep -l "Logger\|logger\." apps/core-api/src/presentation/controllers/*.controller.ts` returns **0 of 7** controllers. No `@Span`, `tracer.startActiveSpan`, or correlation-ID propagation in any controller body. The middleware to set `request.context` exists (see `e2e.spec.ts`) but controllers ignore it.
+**Done When:**
+  - [ ] Every controller (gates, projects, phases, architecture, metrics, reference, health) injects a NestJS `Logger` and emits structured `{level, msg, correlationId, route, durationMs, status}` per request.
+  - [ ] Each handler is instrumented with an OTel span carrying `http.route`, `evolith.surface=rest`, and the correlation ID.
+  - [ ] Unit tests assert log emission and span creation for at least one route per controller.
+
+#### GT-215
+**Purpose:** Document every REST endpoint with OpenAPI decorators (`@ApiTags`, `@ApiResponse`, `@ApiOperation`) so the BFF surface is discoverable, the contract matrix can be auto-derived, and consumers (Tracker, satellites) have a single, authoritative reference.
+**Current Evidence:** `grep -l "@ApiTags\|@ApiResponse" apps/core-api/src/presentation/controllers/*.controller.ts` returns **1 of 7** controllers. The remaining 6 expose endpoints with no OpenAPI annotation, blocking the `validate-rest-versioning` and surface-compatibility tooling from rendering a complete contract.
+**Done When:**
+  - [ ] Every controller has `@ApiTags` and every handler has `@ApiOperation` + `@ApiResponse` covering 2xx, 4xx, and 5xx envelopes.
+  - [ ] `core-api` Swagger module emits a complete `openapi.json` consumed by `validate-surface-compatibility.mjs`.
+  - [ ] A CI rule fails the build if a new controller method lacks `@ApiOperation`.
+
+#### GT-216
+**Purpose:** Close the OPA input-schema parity gap so every native ruleset that gates governance decisions has a corresponding OPA input contract — required by ADR-0073's dual-engine policy and the topology Native/OPA parity gate.
+**Current Evidence:** `find rulesets -name '*.rules.json'` returns **26 native rulesets**; `ls rulesets/opa/schemas/` returns **9 input schemas** (`abac-mcp-tool-access`, `ci-cd`, `cli-readiness`, `evidence`, `governance`, `knowledge-intake`, `mcp`, `taxonomy`, `version-pinning`). 17 native rulesets (adr-002x/003x/004x/005x, anti-corruption-layer, helm-enforcement, executive-scorecards, etc.) have no OPA input schema, preventing executable OPA equivalents.
+**Done When:**
+  - [ ] Each of the 17 uncovered native rulesets either gets an OPA input schema + `.rego` policy, or an ADR-recorded justification for staying native-only is added to the ruleset's README.
+  - [ ] `15-validate-topology-rule-coverage.mjs` is extended to report native/OPA coverage on non-topology rulesets and fail when a ruleset lacks a documented disposition.
+  - [ ] OPA parity-fixture suite covers the new policies.
+
+#### GT-217
+**Purpose:** Backfill the operational guidance corpus for the 7 non-agentic-ai topologies so every accepted topology has the same human + machine-readable depth (operations, security, resilience, patterns, evolution, evidence, adoption, runbooks) and consumers can adopt them without reverse-engineering the rules.
+**Current Evidence:** `agentic-ai/` contains 8 narrative guidance files × 2 languages (`operations.md`, `security.md`, `resilience.md`, `patterns.md`, `evolution.md`, `evidence.md`, `adoption.md`, `runbooks.md`). The other 7 topologies (data-mesh, edge-computing, serverless, event-driven, distributed-modules, microservices, modular-monolith) ship only `README.md` + `maturity.md` × 2 langs. Massive asymmetry blocks adoption parity claimed by the topology hub.
+**Done When:**
+  - [ ] Each of the 7 topologies has the 7 narrative md files (and their `.es.md` counterparts) authored at the same fidelity as agentic-ai.
+  - [ ] `validate-docs.mjs` enforces presence of the canonical file set per accepted topology.
+  - [ ] Bilingual parity check passes on all new files.
+
+#### GT-218
+**Purpose:** Author dedicated templates + schemas for the two Phase 05 outputs that today only exist as "Section in Release Notes" — rollback rehearsal evidence and on-call handoff confirmation — so the Production Live gate is reproducible and machine-checkable.
+**Current Evidence:** `reference/governance/sdlc/05-delivery-and-operations/README.md` Outputs table lists "Rollback rehearsal evidence" and "On-call handoff confirmation" with `Section in Release Notes` as the only template — no schema, no example, no validator entry point. `rulesets/schema/` has no `rollback-rehearsal.schema.json` or `on-call-handoff.schema.json`.
+**Done When:**
+  - [ ] `04-artifact-templates/rollback-rehearsal-template.md` (+`.es.md`) exists with Blue/Green and Canary examples, rollback budget, and witness sign-off.
+  - [ ] `04-artifact-templates/on-call-handoff-template.md` (+`.es.md`) exists with runbook URLs, escalation paths, alert ownership, SLA acknowledgement.
+  - [ ] Both have JSON Schemas in `rulesets/schema/` and are wired into `phase-gates.rules.json` as Phase 05 mandatory evidence.
+
+#### GT-219
+**Purpose:** Add an `operationalBudgets` block to the agentic-ai topology manifest, matching the precedent set by serverless and edge-computing, so token-budget, sandbox-timeout, and credential-rotation SLOs are machine-readable and enforceable.
+**Current Evidence:** `grep -l operationalBudgets reference/architecture/topologies/*/*/topology.manifest.json` finds it in `execution/edge-computing/` and `execution/serverless/` but not in `ai/agentic-ai/topology.manifest.json`, despite GT-169 closing the doc/runbook side of those budgets.
+**Done When:**
+  - [ ] `agentic-ai/topology.manifest.json` declares `operationalBudgets` with at least `tokenBudgetPerExecution`, `credentialRotationIntervalHours`, and `sandboxTimeoutMs`.
+  - [ ] `topology-manifest.schema.json` makes the block optional with typed fields; agentic-ai validation passes.
+  - [ ] A rego test enforces presence of the block for AI topologies.
+
+#### GT-220
+**Purpose:** Raise CLI branch coverage to match the statement-coverage maturity by lifting `gate-status.command.ts` from 40% branches to ≥80% and ratcheting the global Jest branch threshold above the current 67% floor.
+**Current Evidence:** `sdk/cli/coverage/coverage-summary.json` reports overall `branches: 78.76%` vs `statements: 91.42%`; `gate-status.command.ts` is at **40% branches / 60.43% statements** (the largest individual gap). `jest.config.js` threshold is `branches: 67` — far below current.
+**Done When:**
+  - [ ] `gate-status.command.ts` branch coverage ≥80% (error paths, DORA fallback, metric rendering branches covered by unit tests).
+  - [ ] `jest.config.js` global branches threshold raised to 75 (with a follow-up issue to reach 80 once next hot-spots are addressed).
+  - [ ] CI `sdk-cli-ci.yml` reflects the new floor.
+
+#### GT-221
+**Purpose:** Add structured audit logging to the MCP HTTP transport so every tool/resource/prompt call emits `{tool, args, context, durationMs, status}` with correlation IDs wired to OTel spans — matching the audit posture promised by ADR-0073 and required for security/compliance review.
+**Current Evidence:** `packages/mcp-server/src/mcp/mcp-server.service.ts` (HTTP branch) validates auth via `mcp-server-auth.ts` but does not emit per-call audit events. No `AuditLogger` service exists; stderr/OTel correlation is absent for tool invocations. Stdio transport has minimal logging too.
+**Done When:**
+  - [ ] An `AuditLogger` (or equivalent NestJS provider) emits structured events for every tool/resource/prompt call across both transports.
+  - [ ] Correlation IDs propagate from HTTP headers/Stdio metadata into OTel spans and audit logs.
+  - [ ] Integration tests assert audit event emission for at least one tool, resource, and prompt path.
+
+#### GT-222
+**Purpose:** Bring per-topology OPA test density up to ≥1 test per rule so the parity gate is meaningful — today modular-monolith has 2 tests for 12 rules (17%), distributed-modules has 4 for 8 (50%), and agentic-ai has 4 for 9 (44%), all far below the 100%+ density of data-mesh and event-driven.
+**Current Evidence:** Per `16-test-topology-opa.mjs` output (this audit run): agentic-ai 4 cases / 9 rules, distributed-modules 4 / 8, modular-monolith 2 / 12, microservices 8 / 8, edge 6 / 5, serverless 5 / 6, event-driven 10 / 9, data-mesh 10 / 9. The three under-covered topologies regress the average to ~70% test density.
+**Done When:**
+  - [ ] modular-monolith adds ≥10 new test cases (one per rule covering positive + negative branches).
+  - [ ] distributed-modules adds ≥4 new test cases; agentic-ai adds ≥5.
+  - [ ] `15-validate-topology-rule-coverage.mjs` is extended to assert test/rule density and fail below an agreed floor (suggest ≥80%).
+
+#### GT-223
+**Purpose:** Add cross-surface parity e2e tests that exercise the same Core operation on CLI, MCP, and REST and assert envelope/payload equivalence — closes the runtime side of the surface parity declared by GT-171 (the matrix exists; execution against it is sparse).
+**Current Evidence:** `sdk/cli/test/e2e/` covers `sdlc-status` (3 cases) and `sdlc-handoff` (1 case) only. `gate-evaluate`, `phase-advance`, `validate-satellite`, `drift-detect` have zero cross-surface e2e tests despite being declared exposed in `surface-parity-matrix.json` for all three surfaces. `mcp-e2e.test.ts` validates tool discovery, not output equivalence.
+**Done When:**
+  - [ ] A shared `surface-parity-fixture.ts` invokes the same operation via CLI binary, MCP tool, and REST endpoint and asserts envelope + data equivalence.
+  - [ ] Fixture covers at least 5 core operations (`gate-evaluate`, `phase-advance`, `validate-satellite`, `drift-detect`, `sdlc-status`).
+  - [ ] CI runs the suite per push; failures block merge.
+
+#### GT-224
+**Purpose:** Bring every data-returning CLI command into ADR-0073 envelope conformance by adding `--format json` to the commands that lack it (`drift`, `architecture scaffold`, `docs`) so CLI output is machine-consumable for the MCP gateway and Tracker integration.
+**Current Evidence:** `sdk/cli/src/commands/drift/drift.command.ts` declares `json?: boolean` (line 10–11) but no `@Option('--format')` is registered. `architecture scaffold` and `docs` have no JSON output path at all. ADR-0073 requires every data command to emit the `{success, data, meta}` envelope when `--format json` is requested.
+**Done When:**
+  - [ ] `drift`, `architecture scaffold`, and `docs` register `@Option('--format json|text')` and emit the ADR-0073 envelope when `json` is selected.
+  - [ ] Existing CLI unit tests assert envelope shape for each command's success and error paths.
+  - [ ] The surface-parity matrix entry for each operation flips to `cli.formats: ["json"]`.
+
+#### GT-225
+**Purpose:** Resolve the 4 `it.skip` cases in `sdk/cli/src/infrastructure/prompts/wizard.service.spec.ts` — either revive them with the appropriate test setup or document why they remain skipped, removing the silent debt from the unit suite.
+**Current Evidence:** `grep -rn "describe.skip\|it.skip" sdk/cli` finds 4 skipped cases in `wizard.service.spec.ts:51, 69, 92, 132` covering null-cancellation, summary confirmation, summary-cancel, and non-interactive-mode fallbacks — all real wizard behaviors with no other test coverage.
+**Done When:**
+  - [ ] Each of the 4 skipped tests is either re-enabled and passing, or rewritten as a focused unit covering the same behavior.
+  - [ ] If any case is unrevivable, it is removed and replaced by an inline `// reason:` note plus a follow-up issue.
+  - [ ] No `it.skip`/`describe.skip` remains in `sdk/cli/src` after closure.

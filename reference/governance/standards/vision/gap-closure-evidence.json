@@ -2893,6 +2893,23 @@
       "closureNote": "Added 11 HTTP transport protocol E2E tests covering initialize, tools, resources, prompts, error handling, and session management. 40 E2E tests pass."
     },
     {
+      "id": "GT-188",
+      "closedAt": "2026-06-23",
+      "closureCommit": "b9e891db",
+      "evidence": [
+        "sdk/cli/src/infrastructure/providers/config-parser.provider.spec.ts",
+        "sdk/cli/src/infrastructure/prompts/init-prompt-options.spec.ts",
+        "sdk/cli/src/infrastructure/prompts/init-prompt-group.spec.ts",
+        "sdk/cli/src/infrastructure/observability/otel-tracing.spec.ts",
+        "sdk/cli/src/config/alias.service.spec.ts"
+      ],
+      "validationCommands": [
+        "NODE_OPTIONS=--max-old-space-size=8192 npx jest --coverage"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Created 5 spec files covering previously uncovered modules. All files now above 60% statement coverage. 840 tests pass (from 802)."
+    },
+    {
       "id": "GT-195",
       "closedAt": "2026-06-23",
       "closureCommit": "8eb7ce71",

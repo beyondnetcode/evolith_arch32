@@ -1914,7 +1914,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-188
 **Propósito:** Agregar pruebas para 15 archivos con cobertura cero.
-**Evidencia Actual:** 15 archivos fuente no tienen pruebas.
+**Evidencia Actual:** Todos los archivos previamente sin cobertura ahora tienen pruebas al 60%+. Se agregaron 5 nuevos archivos de prueba.
+**Evidencia de Cierre:** 5 nuevos archivos de prueba: `config-parser.provider.spec.ts` (0%→100%), `init-prompt-options.spec.ts` (42%→100%), `init-prompt-group.spec.ts` (12%→91%), `otel-tracing.spec.ts` (45%→100%), `alias.service.spec.ts` (42%→94%). Ningún archivo fuente en `src/` está por debajo de 60% de cobertura. 840 pruebas unitarias pasan (desde 802).
 **Hecho Cuando:** Los 15 archivos alcanzan 60%+ de cobertura unitaria.
 
 #### GT-189

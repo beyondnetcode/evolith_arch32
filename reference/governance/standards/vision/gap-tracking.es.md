@@ -25,7 +25,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-189`](./gap-reference-catalog.es.md#gt-189) | Reemplazar `require()` con imports ES | `CLI` | Cross | P2 | M | `COMPLETADO` |
 | [`GT-194`](./gap-reference-catalog.es.md#gt-194) | Eliminar tipos `any` en APIs públicas | `CLI` | Cross | P2 | M | `COMPLETADO` |
 | [`GT-196`](./gap-reference-catalog.es.md#gt-196) | Agregar tests E2E para transporte HTTP MCP | `MCP Services` | Cross | P2 | M | `COMPLETADO` |
-| [`GT-188`](./gap-reference-catalog.es.md#gt-188) | Agregar tests para 15 archivos sin cobertura | `CLI` | Cross | P2 | L | `PENDIENTE` |
+| [`GT-188`](./gap-reference-catalog.es.md#gt-188) | Agregar tests para 15 archivos sin cobertura | `CLI` | Cross | P2 | L | `COMPLETADO` |
 | [`GT-197`](./gap-reference-catalog.es.md#gt-197) | Corregir fallos intermitentes pipeline release | `DevOps` | Cross | P2 | L | `PENDIENTE` |
 | [`GT-198`](./gap-reference-catalog.es.md#gt-198) | Corregir typo "Moscoww" (5 sitios) | `CLI` | Cross | P3 | S | `COMPLETADO` |
 | [`GT-199`](./gap-reference-catalog.es.md#gt-199) | Mover import al inicio del archivo | `CLI` | Cross | P3 | S | `COMPLETADO` |
@@ -227,7 +227,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-160`](./gap-reference-catalog.es.md#gt-160) | Propagación de correlation-ID y contexto de solicitud entre superficies | `Cross` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-174`](./gap-reference-catalog.es.md#gt-174) | `meta.schemaVersion` y matriz de compatibilidad productor/consumidor | `Cross` | Cross | P2 | S | `COMPLETADO` |
 
-**Progreso:** 211 / 213 completados · 0 en progreso · 2 pendientes · 0 diferidos
+**Progreso:** 212 / 213 completados · 0 en progreso · 1 pendientes · 0 diferidos
 
 **Oleada 2026-06-21 (auditoría profunda de Wilson):** Añadidos 20 gaps nuevos `GT-155`…`GT-174` que cubren conformidad de envelope en Core API REST, paridad de superficies command-as-a-service, autenticación/autorización MCP, esquemas y tests de OPA, validación CI de manifests de topología, runbooks y plantillas SDLC, hubs de producto de Core API y UMS, presupuestos operativos de Agentic AI, paridad OpenTelemetry y versionado del envelope.
 

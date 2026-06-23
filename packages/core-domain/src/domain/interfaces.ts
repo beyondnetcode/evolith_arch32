@@ -247,21 +247,21 @@ export interface IFileSystem {
   writeFile(path: string, content: string): Promise<void>;
   exists(path: string): Promise<boolean>;
   existsSync(path: string): boolean;
-  readJson<T = any>(path: string): Promise<T>;
-  writeJson(path: string, content: any): Promise<void>;
+  readJson<T = unknown>(path: string): Promise<T>;
+  writeJson(path: string, content: unknown): Promise<void>;
   mkdir(path: string): Promise<void>;
-  readdir(path: string): Promise<any[]>;
+  readdir(path: string): Promise<DirEntry[]>;
   readdirNames(path: string): Promise<string[]>;
   copy(src: string, dest: string): Promise<void>;
   ensureDir(path: string): Promise<void>;
   ensureFile(path: string): Promise<void>;
-  stat(path: string): Promise<any>;
+  stat(path: string): Promise<{ isDirectory: () => boolean; isFile: () => boolean }>;
   remove(path: string): Promise<void>;
 }
 
 export interface IConfigParser {
-  parse(content: string): any;
-  stringify(data: any): string;
+  parse<T = unknown>(content: string): T;
+  stringify(data: unknown): string;
 }
 
 export interface ILogger {

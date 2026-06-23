@@ -72,11 +72,11 @@ export class MockFileSystem implements IFileSystem {
     this.directories.delete(path);
   }
 
-  async readdir(path: string): Promise<any[]> {
+  async readdir(path: string): Promise<import('@evolith/core-domain/domain/interfaces').DirEntry[]> {
     return [];
   }
 
-  async stat(path: string): Promise<unknown> {
+  async stat(path: string): Promise<{ isDirectory: () => boolean; isFile: () => boolean }> {
     return {
       isDirectory: () => this.directories.has(path),
       isFile: () => this.files.has(path)

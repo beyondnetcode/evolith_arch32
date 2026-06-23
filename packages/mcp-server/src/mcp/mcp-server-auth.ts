@@ -47,7 +47,7 @@ export function validateAuth(
   return null;
 }
 
-export function verifyJwtToken(token: string, secret: string): any {
+export function verifyJwtToken(token: string, secret: string): Record<string, unknown> | null {
   try {
     const parts = token.split('.');
     if (parts.length !== 3) return null;
@@ -67,21 +67,26 @@ export function verifyJwtToken(token: string, secret: string): any {
   }
 }
 
-export function getContextFromPayload(payload: any): McpUserContext {
-  const role = payload.role || 'reader';
-  let roles = payload.roles;
-  if (!roles) roles = [role];
-  else if (!Array.isArray(roles)) roles = [roles];
+export function getContextFromPayload(payload: Record<string, unknown>): McpUserContext {
+  const role: string = typeof payload.role === 'string' ? payload.role : 'reader';
+  let roles: string[];
+  if (Array.isArray(payload.roles)) {
+    roles = payload.roles.filter((r): r is string => typeof r === 'string');
+  } else {
+    roles = [role];
+  }
 
-  const id = payload.sub || payload.id || 'unknown';
-  const tenant = payload.tenant || 'default';
-  const environment = payload.environment || process.env.NODE_ENV || 'development';
+  const id: string = typeof payload.sub === 'string' ? payload.sub
+    : typeof payload.id === 'string' ? payload.id : 'unknown';
+  const tenant: string = typeof payload.tenant === 'string' ? payload.tenant : 'default';
+  const environment: string = typeof payload.environment === 'string'
+    ? payload.environment : process.env.NODE_ENV || 'development';
 
   let scopes: string[];
   if (typeof payload.scope === 'string') {
-    scopes = payload.scope.split(' ').map((s: string) => s.trim()).filter(Boolean);
+    scopes = payload.scope.split(' ').map(s => s.trim()).filter(Boolean);
   } else if (Array.isArray(payload.scopes)) {
-    scopes = payload.scopes;
+    scopes = payload.scopes.filter((s): s is string => typeof s === 'string');
   } else if (role === 'admin') {
     scopes = ['read', 'write', 'admin'];
   } else if (role === 'operator' || role === 'write') {

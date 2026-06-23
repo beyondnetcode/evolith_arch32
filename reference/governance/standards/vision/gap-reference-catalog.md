@@ -1954,7 +1954,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-194
 **Purpose:** Eliminate `any` types in public APIs (plugin-loader.ts, app.module.ts, auto-fix.ts).
-**Current Evidence:** Public API surfaces use `any` type.
+**Current Evidence:** No exported `any` types remain in public API surfaces. Interface declarations use `unknown`, `Record<string, unknown>`, and specific return types.
+**Closure Evidence:** Updated `IFileSystem` interface: `readJson` default `any→unknown`, `writeJson` `content: any→unknown`, `readdir` `any[]→DirEntry[]`, `stat` `Promise<any>→Promise<{isDirectory; isFile}>`. Updated `IConfigParser`: `parse`/`stringify` use generic `T` and `unknown`. Updated `IConfigService.get` with generic default. Updated `verifyJwtToken` return type to `Record<string, unknown>|null` and `getContextFromPayload` parameter to `Record<string, unknown>`. Updated mock `stat`/`readdir` return types. All packages compile, 151 tests pass.
 **Done When:** Public API surfaces use explicit TypeScript types instead of `any`.
 
 #### GT-195

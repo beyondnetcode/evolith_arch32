@@ -4,7 +4,12 @@ import * as fs from "fs-extra";
 import * as path from "path";
 
 export interface IConfigService {
-  get(key: string): any;
+  get<T = Record<string, unknown>>(key: string): T;
+}
+
+interface SyncConfig {
+  upstreamRoot?: string;
+  files?: string[];
 }
 
 @Injectable()
@@ -14,7 +19,7 @@ export class SyncService {
   constructor(@Inject("IConfigService") private readonly configService: IConfigService) {}
 
   async syncTemplatesFromUpstream(): Promise<void> {
-    const syncConfig = this.configService.get("sync");
+    const syncConfig = this.configService.get<SyncConfig>("sync");
 
     // Si no está configurado, asume que se ejecuta desde la raíz de sdk/cli y el repo de Evolith está 2 niveles arriba.
     const evolithRoot =

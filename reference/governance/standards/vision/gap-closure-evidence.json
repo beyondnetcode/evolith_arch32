@@ -3094,6 +3094,27 @@
       "closureNote": "Replaced 12 require() calls with ES imports across 9 source files. Zero require() in production TS source."
     },
     {
+      "id": "GT-194",
+      "closedAt": "2026-06-23",
+      "closureCommit": "9c8ae9a5",
+      "evidence": [
+        "packages/core-domain/src/domain/interfaces.ts",
+        "packages/core-domain/src/application/sync/sync.service.ts",
+        "packages/mcp-server/src/mcp/mcp-server-auth.ts",
+        "sdk/cli/src/test/mocks/index.ts"
+      ],
+      "validationCommands": [
+        "npx tsc --noEmit --project packages/core-domain/tsconfig.json",
+        "npx tsc --noEmit --project packages/mcp-server/tsconfig.json",
+        "npx tsc --noEmit --project packages/infra-providers/tsconfig.json",
+        "npx tsc --noEmit --project sdk/cli/tsconfig.json",
+        "npx tsc --noEmit --project apps/core-api/tsconfig.json",
+        "npm test"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Removed any from IFileSystem (4 methods), IConfigParser (2 methods), IConfigService, verifyJwtToken, getContextFromPayload, and mock stat/readdir"
+    },
+    {
       "id": "GT-187",
       "closedAt": "2026-06-23",
       "closureCommit": "742be2df",

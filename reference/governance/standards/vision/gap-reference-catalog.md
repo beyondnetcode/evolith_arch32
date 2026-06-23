@@ -1908,7 +1908,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-186
 **Purpose:** Remove `@ts-nocheck` from 19 files (phased removal).
-**Current Evidence:** Continuation of GT-184 for remaining files.
+**Current Evidence:** Zero `@ts-nocheck` directives remain in the codebase. GT-184 resolved all cases — no remaining files to fix.
 **Done When:** Zero `@ts-nocheck` directives remain.
 
 #### GT-187

@@ -3069,6 +3069,20 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-186",
+      "closedAt": "2026-06-23",
+      "closureCommit": "a529ad63",
+      "evidence": [
+        "reference/governance/standards/vision/gap-reference-catalog.md",
+        "reference/governance/standards/vision/gap-reference-catalog.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Resolved by GT-184 — zero @ts-nocheck directives remain in the codebase"
+    },
+    {
       "id": "GT-178",
       "closedAt": "2026-06-23",
       "closureCommit": "e4819615",

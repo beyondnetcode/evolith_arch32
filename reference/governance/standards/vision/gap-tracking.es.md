@@ -20,7 +20,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-195`](./gap-reference-catalog.es.md#gt-195) | Corregir rutas shell solo-Linux (Windows compat) | `CLI` | Cross | P2 | S | `COMPLETADO` |
 | [`GT-211`](./gap-reference-catalog.es.md#gt-211) | Crear EN para 3 ADRs solo-ES huérfanos | `Docs` | Cross | P2 | S | `COMPLETADO` |
 | [`GT-178`](./gap-reference-catalog.es.md#gt-178) | Reconstruir `core/README.es.md` con todos los ADRs | `Docs` | Cross | P2 | M | `COMPLETADO` |
-| [`GT-186`](./gap-reference-catalog.es.md#gt-186) | Eliminar `@ts-nocheck` restante (fase 2) | `CLI` | Cross | P2 | M | `PENDIENTE` |
+| [`GT-186`](./gap-reference-catalog.es.md#gt-186) | Eliminar `@ts-nocheck` restante (fase 2) | `CLI` | Cross | P2 | M | `COMPLETADO` |
 | [`GT-187`](./gap-reference-catalog.es.md#gt-187) | Habilitar modo estricto en tsconfig | `CLI` | Cross | P2 | M | `PENDIENTE` |
 | [`GT-189`](./gap-reference-catalog.es.md#gt-189) | Reemplazar `require()` con imports ES | `CLI` | Cross | P2 | M | `PENDIENTE` |
 | [`GT-194`](./gap-reference-catalog.es.md#gt-194) | Eliminar tipos `any` en APIs públicas | `CLI` | Cross | P2 | M | `PENDIENTE` |
@@ -228,7 +228,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-185`](./gap-reference-catalog.es.md#gt-185) | Corregir stubs de herramientas MCP | `MCP Services` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-210`](./gap-reference-catalog.es.md#gt-210) | Completar Fase SDLC 05 (fase faltante) | `SDLC` | Cross | P1 | M | `COMPLETADO` |
 
-**Progreso:** 206 / 214 completados · 0 en progreso · 8 pendientes · 0 diferidos
+**Progreso:** 207 / 214 completados · 0 en progreso · 7 pendientes · 0 diferidos
 
 **Oleada 2026-06-21 (auditoría profunda de Wilson):** Añadidos 20 gaps nuevos `GT-155`…`GT-174` que cubren conformidad de envelope en Core API REST, paridad de superficies command-as-a-service, autenticación/autorización MCP, esquemas y tests de OPA, validación CI de manifests de topología, runbooks y plantillas SDLC, hubs de producto de Core API y UMS, presupuestos operativos de Agentic AI, paridad OpenTelemetry y versionado del envelope.
 

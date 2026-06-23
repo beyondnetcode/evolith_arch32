@@ -1906,8 +1906,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Hecho Cuando:** Todas las herramientas MCP tienen 80%+ cobertura y pasan pruebas de integración.
 
 #### GT-186
-**Propósito:** Eliminar `@ts-nocheck` de 19 archivos (eliminación por fases).
-**Evidencia Actual:** Continuación de GT-184 para archivos restantes.
+**Propósito:** Eliminar `@ts-nocheck` restante (fase 2).
+**Evidencia Actual:** Cero directivas `@ts-nocheck` en el código. GT-184 resolvió todos los casos — no hay archivos restantes.
 **Hecho Cuando:** Cero directivas `@ts-nocheck` restantes.
 
 #### GT-187

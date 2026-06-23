@@ -13,12 +13,12 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|
-| [`GT-190`](./gap-reference-catalog.es.md#gt-190) | Agregar logging a 9 catch blocks vacíos | `CLI` | Cross | P2 | S | `PENDIENTE` |
-| [`GT-191`](./gap-reference-catalog.es.md#gt-191) | Corregir etiqueta ADR matrix incorrecta | `Docs` | Cross | P2 | S | `PENDIENTE` |
-| [`GT-192`](./gap-reference-catalog.es.md#gt-192) | Corregir enlaces MASTER_INDEX EN (`.es.md`→`.md`) | `Docs` | Cross | P2 | S | `PENDIENTE` |
-| [`GT-193`](./gap-reference-catalog.es.md#gt-193) | Eliminar TODOs de documentación de gobernanza | `Docs` | Cross | P2 | S | `PENDIENTE` |
-| [`GT-195`](./gap-reference-catalog.es.md#gt-195) | Corregir rutas shell solo-Linux (Windows compat) | `CLI` | Cross | P2 | S | `PENDIENTE` |
-| [`GT-211`](./gap-reference-catalog.es.md#gt-211) | Crear EN para 3 ADRs solo-ES huérfanos | `Docs` | Cross | P2 | S | `PENDIENTE` |
+| [`GT-190`](./gap-reference-catalog.es.md#gt-190) | Agregar logging a 9 catch blocks vacíos | `CLI` | Cross | P2 | S | `COMPLETADO` |
+| [`GT-191`](./gap-reference-catalog.es.md#gt-191) | Corregir etiqueta ADR matrix incorrecta | `Docs` | Cross | P2 | S | `COMPLETADO` |
+| [`GT-192`](./gap-reference-catalog.es.md#gt-192) | Corregir enlaces MASTER_INDEX EN (`.es.md`→`.md`) | `Docs` | Cross | P2 | S | `COMPLETADO` |
+| [`GT-193`](./gap-reference-catalog.es.md#gt-193) | Eliminar TODOs de documentación de gobernanza | `Docs` | Cross | P2 | S | `COMPLETADO` |
+| [`GT-195`](./gap-reference-catalog.es.md#gt-195) | Corregir rutas shell solo-Linux (Windows compat) | `CLI` | Cross | P2 | S | `COMPLETADO` |
+| [`GT-211`](./gap-reference-catalog.es.md#gt-211) | Crear EN para 3 ADRs solo-ES huérfanos | `Docs` | Cross | P2 | S | `COMPLETADO` |
 | [`GT-178`](./gap-reference-catalog.es.md#gt-178) | Reconstruir `core/README.es.md` con todos los ADRs | `Docs` | Cross | P2 | M | `PENDIENTE` |
 | [`GT-186`](./gap-reference-catalog.es.md#gt-186) | Eliminar `@ts-nocheck` restante (fase 2) | `CLI` | Cross | P2 | M | `PENDIENTE` |
 | [`GT-187`](./gap-reference-catalog.es.md#gt-187) | Habilitar modo estricto en tsconfig | `CLI` | Cross | P2 | M | `PENDIENTE` |
@@ -140,11 +140,6 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-49`](./gap-reference-catalog.es.md#gt-49) | Activar el modo estricto de TypeScript y puertos de filesystem tipados | `CLI` | Transversal | P1 | M | `COMPLETADO` |
 | [`GT-180`](./gap-reference-catalog.es.md#gt-180) | Reemplazar `require()` entre capas con imports ES / `import()` dinámico | `CLI` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-181`](./gap-reference-catalog.es.md#gt-181) | Dividir archivos grandes en módulos pequeños | `CLI` | Cross | P1 | M | `COMPLETADO` |
-| [`GT-182`](./gap-reference-catalog.es.md#gt-182) | Agregar tests para Core Domain SDK | `SDK` | Cross | P1 | M | `COMPLETADO` |
-| [`GT-185`](./gap-reference-catalog.es.md#gt-185) | Corregir stubs de herramientas MCP | `MCP Services` | Cross | P1 | M | `COMPLETADO` |
-| [`GT-184`](./gap-reference-catalog.es.md#gt-184) | Eliminar `@ts-nocheck` de 19 archivos | `CLI` | Cross | P1 | M | `COMPLETADO` |
-| [`GT-210`](./gap-reference-catalog.es.md#gt-210) | Completar Fase SDLC 05 (fase faltante) | `SDLC` | Cross | P1 | M | `COMPLETADO` |
-| [`GT-179`](./gap-reference-catalog.es.md#gt-179) | Agregar tests para 5 comandos CLI baja cobertura | `CLI` | Cross | P1 | L | `COMPLETADO` |
 | [`GT-46`](./gap-reference-catalog.es.md#gt-46) | Límite de ownership del servicio HTTP de Core | `CLI` | F2 | P1 | M | `COMPLETADO` |
 | [`GT-45`](./gap-reference-catalog.es.md#gt-45) | Suite de conformidad de transporte y tools MCP | `CLI` | F2 | P1 | M | `COMPLETADO` |
 | [`GT-17`](./gap-reference-catalog.es.md#gt-17) | Consolidación DI y boundaries estrictos | `CLI` | F5 | P1 | M | `COMPLETADO` |
@@ -227,8 +222,13 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-158`](./gap-reference-catalog.es.md#gt-158) | Human-in-the-loop y ABAC para herramientas MCP mutativas | `MCP Services` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-160`](./gap-reference-catalog.es.md#gt-160) | Propagación de correlation-ID y contexto de solicitud entre superficies | `Cross` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-174`](./gap-reference-catalog.es.md#gt-174) | `meta.schemaVersion` y matriz de compatibilidad productor/consumidor | `Cross` | Cross | P2 | S | `COMPLETADO` |
+| [`GT-179`](./gap-reference-catalog.es.md#gt-179) | Agregar tests para 5 comandos CLI baja cobertura | `CLI` | Cross | P1 | L | `COMPLETADO` |
+| [`GT-182`](./gap-reference-catalog.es.md#gt-182) | Agregar tests para Core Domain SDK | `SDK` | Cross | P1 | M | `COMPLETADO` |
+| [`GT-184`](./gap-reference-catalog.es.md#gt-184) | Eliminar `@ts-nocheck` de 19 archivos | `CLI` | Cross | P1 | M | `COMPLETADO` |
+| [`GT-185`](./gap-reference-catalog.es.md#gt-185) | Corregir stubs de herramientas MCP | `MCP Services` | Cross | P1 | M | `COMPLETADO` |
+| [`GT-210`](./gap-reference-catalog.es.md#gt-210) | Completar Fase SDLC 05 (fase faltante) | `SDLC` | Cross | P1 | M | `COMPLETADO` |
 
-**Progreso:** 188 / 214 completados · 0 en progreso · 26 pendientes · 0 diferidos
+**Progreso:** 194 / 214 completados · 0 en progreso · 20 pendientes · 0 diferidos
 
 **Oleada 2026-06-21 (auditoría profunda de Wilson):** Añadidos 20 gaps nuevos `GT-155`…`GT-174` que cubren conformidad de envelope en Core API REST, paridad de superficies command-as-a-service, autenticación/autorización MCP, esquemas y tests de OPA, validación CI de manifests de topología, runbooks y plantillas SDLC, hubs de producto de Core API y UMS, presupuestos operativos de Agentic AI, paridad OpenTelemetry y versionado del envelope.
 

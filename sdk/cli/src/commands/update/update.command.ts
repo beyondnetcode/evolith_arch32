@@ -115,7 +115,6 @@ export class UpdateCommand extends BaseEvolithCommand {
 
       execSync(`npm install -g @evolith/smart-cli@${latestVersion}`, {
         stdio: 'inherit',
-        shell: '/bin/sh',
       });
 
       this.promptService.showSuccess(`\n✓ Update installed successfully`);
@@ -160,10 +159,10 @@ export class UpdateCommand extends BaseEvolithCommand {
       const result = execSync('npm view @evolith/smart-cli version --json', {
         encoding: 'utf8',
         timeout: 10000,
-        shell: '/bin/sh',
       });
       return JSON.parse(result.trim());
     } catch {
+      this.logger.warn('Failed to fetch latest version from npm registry');
       return null;
     }
   }

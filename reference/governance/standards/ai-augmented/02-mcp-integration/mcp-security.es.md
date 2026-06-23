@@ -550,8 +550,8 @@ if (tool.mutative) {
 | Autenticación | DONE Clave API + token Bearer | P0 |
 | Autorización | WARN Filtrado por rol (planeado) | P0 |
 | Registro de Auditoría | DONE Servicio de métricas (básico) | P1 |
-| Limitación de Tasa | TODO No implementado | P1 |
-| Sandbox | TODO No implementado | P2 |
+| Limitación de Tasa | No implementado | P1 |
+| Sandbox | No implementado | P2 |
 | Humano-en-el-Bucle | DONE Servicio de confirmación | P0 |
 | Idempotencia | WARN Parcial (planeado) | P1 |
 

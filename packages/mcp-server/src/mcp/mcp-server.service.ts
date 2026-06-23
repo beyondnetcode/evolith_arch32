@@ -88,7 +88,7 @@ export class McpServerService {
         return !!config?.mcp?.allowMutations;
       }
     } catch {
-      // Treat any failure as "not allowed".
+      this.logger.warn('Failed to read evolith.yaml for mutation check, defaulting to not allowed');
     }
     return false;
   }

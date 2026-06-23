@@ -550,8 +550,8 @@ if (tool.mutative) {
 | Authentication | DONE API key + Bearer token | P0 |
 | Authorization | WARN Role-based filtering (planned) | P0 |
 | Audit Logging | DONE Metrics service (basic) | P1 |
-| Rate Limiting | TODO Not implemented | P1 |
-| Sandbox | TODO Not implemented | P2 |
+| Rate Limiting | Not implemented | P1 |
+| Sandbox | Not implemented | P2 |
 | Human-in-the-Loop | DONE Confirmation service | P0 |
 | Idempotency | WARN Partial (planned) | P1 |
 

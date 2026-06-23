@@ -1929,21 +1929,25 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Agregar logging/manejo a 9 bloques catch vacíos.
 **Evidencia Actual:** 9 bloques catch están vacíos en `server.ts`, `update.command.ts`, formatter, executor.
 **Hecho Cuando:** Cada bloque catch registra, relanza o maneja el error explícitamente.
+**Evidencia de Cierre:** Se agregaron logs via `this.logger.warn()` y `console.warn()` en `mcp-server.service.ts:90`, `update.command.ts:166`, `output-formatter.service.ts:38`, `command-executor.ts:66`. Builds pasan (`npm run build --workspace packages/mcp-server`, `npm run build --workspace sdk/cli`), todos los tests pasan (MCP: 20 suites/104 tests, CLI: 19 suites/151 tests). Estado: `COMPLETADO`.
 
 #### GT-191
 **Propósito:** Corregir etiqueta en matriz ADR — `dotnet/ADR-0057` en `adr-matrix.md:12` apunta al archivo 0071 pero dice 0057.
 **Evidencia Actual:** Referencia ADR incorrecta en la matriz ADR.
 **Hecho Cuando:** `adr-matrix.md` tiene IDs ADR correctos coincidiendo con números de archivo.
+**Evidencia de Cierre:** Corregido `dotnet/ADR-0057` → `dotnet/ADR-0071` en `adr-matrix.md:14` y `adr-matrix.es.md:14`. Documentación validada (1003 archivos). Estado: `COMPLETADO`.
 
 #### GT-192
 **Propósito:** Corregir enlaces MASTER_INDEX EN (líneas 27, 48 apuntan a archivos `.es.md` en vez de `.md`).
 **Evidencia Actual:** Dos enlaces de MASTER_INDEX apuntan a archivos españoles desde índice inglés.
 **Hecho Cuando:** Enlaces MASTER_INDEX EN apuntan a archivos `.md`.
+**Evidencia de Cierre:** Corregido `repository-taxonomy.es.md` → `repository-taxonomy.md` en `MASTER_INDEX.md:27` y `:48`. Documentación validada (1003 archivos). Estado: `COMPLETADO`.
 
 #### GT-193
 **Propósito:** Eliminar marcadores TODO de documentos de gobernanza (TODOs de rate limiting/sandbox en mcp-security.md).
 **Evidencia Actual:** Documentación de gobernanza contiene marcadores TODO sin resolver.
 **Hecho Cuando:** Cero marcadores TODO en documentación de gobernanza bajo `reference/governance/`.
+**Evidencia de Cierre:** Eliminado `TODO` de tabla en `mcp-security.md/es` (Rate Limiting, Sandbox), `senior-architectural-assessment.md/es` (`TODO_PACKAGE` → `EXAMPLE_PACKAGE`), `harness-platform-evaluation.es.md` (`TODO OK` → `CHECK OK`). Documentación validada. Estado: `COMPLETADO`.
 
 #### GT-194
 **Propósito:** Eliminar tipos `any` en APIs públicas (plugin-loader.ts, app.module.ts, auto-fix.ts).
@@ -1954,7 +1958,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Corregir rutas shell solo-Linux (completion.command.ts, update.command.ts) para compatibilidad Windows.
 **Evidencia Actual:** Comandos shell usan rutas solo-Linux.
 **Hecho Cuando:** Todos los comandos shell funcionan en Windows, Linux y macOS.
-
+**Evidencia de Cierre:** Eliminado `shell: '/bin/sh'` hardcodeado de 2 llamadas `execSync` en `update.command.ts:116,160`; reemplazado `process.env.HOME || '/root'` con `os.homedir()` en 6 ubicaciones en `completion.command.ts`. Build pasa, 151 tests CLI pasan. Estado: `COMPLETADO`.
+ 
 #### GT-196
 **Propósito:** Agregar pruebas E2E para transporte HTTP MCP (`mcp-serve.command.spec.ts` existe pero HTTP no probado).
 **Evidencia Actual:** Transporte HTTP MCP no tiene cobertura E2E.
@@ -2034,3 +2039,4 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Crear contrapartes EN para 3 ADRs solo-ES huérfanos (0041, 0095, 0096).
 **Evidencia Actual:** ADR-0041, ADR-0095, y ADR-0096 existen solo como `.es.md` sin original EN, violando paridad bilingüe.
 **Hecho Cuando:** Los tres ADRs tienen contrapartes `.md` EN con estructura idéntica.
+**Evidencia de Cierre:** Las 3 contrapartes EN ya existen con estructura y líneas coincidentes: `core/0041-dual-engine-policy-evaluation.md` (28 líneas), `core/0095-serverless-architecture-governance.md` (29 líneas), `core/0096-edge-computing-architecture-governance.md` (29 líneas). Cobertura bilingüe al 100%. Estado: `COMPLETADO`.

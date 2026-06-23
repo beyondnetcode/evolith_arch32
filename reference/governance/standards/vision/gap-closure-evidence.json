@@ -2614,6 +2614,21 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-185",
+      "closedAt": "2026-06-23",
+      "closureCommit": "f824d58e",
+      "evidence": [
+        "packages/mcp-server/src/tools/phase-advance.tools.spec.ts",
+        "packages/mcp-server/src/tools/topology.tools.spec.ts",
+        "packages/mcp-server/src/tools/tools-registration.spec.ts"
+      ],
+      "validationCommands": [
+        "npx jest --config packages/mcp-server/jest.config.js --coverage",
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-182",
       "closedAt": "2026-06-23",
       "closureCommit": "a374d0cb",

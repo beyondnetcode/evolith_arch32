@@ -2614,6 +2614,21 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-210",
+      "closedAt": "2026-06-23",
+      "closureCommit": "6de4b602",
+      "evidence": [
+        "reference/governance/sdlc/05-delivery-and-operations/README.md",
+        "reference/governance/sdlc/05-delivery-and-operations/README.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-184",
       "closedAt": "2026-06-23",
       "closureCommit": "b0c5959f",

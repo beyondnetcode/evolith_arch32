@@ -26,7 +26,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-194`](./gap-reference-catalog.es.md#gt-194) | Eliminar tipos `any` en APIs públicas | `CLI` | Cross | P2 | M | `COMPLETADO` |
 | [`GT-196`](./gap-reference-catalog.es.md#gt-196) | Agregar tests E2E para transporte HTTP MCP | `MCP Services` | Cross | P2 | M | `COMPLETADO` |
 | [`GT-188`](./gap-reference-catalog.es.md#gt-188) | Agregar tests para 15 archivos sin cobertura | `CLI` | Cross | P2 | L | `COMPLETADO` |
-| [`GT-197`](./gap-reference-catalog.es.md#gt-197) | Corregir fallos intermitentes pipeline release | `DevOps` | Cross | P2 | L | `PENDIENTE` |
+| [`GT-197`](./gap-reference-catalog.es.md#gt-197) | Arreglar fallas intermitentes del pipeline de release | `CI` | Cross | P2 | XL | `COMPLETADO` |
 | [`GT-198`](./gap-reference-catalog.es.md#gt-198) | Corregir typo "Moscoww" (5 sitios) | `CLI` | Cross | P3 | S | `COMPLETADO` |
 | [`GT-199`](./gap-reference-catalog.es.md#gt-199) | Mover import al inicio del archivo | `CLI` | Cross | P3 | S | `COMPLETADO` |
 | [`GT-200`](./gap-reference-catalog.es.md#gt-200) | Convertir constructor 11-param a objeto options | `CLI` | Cross | P3 | S | `COMPLETADO` |

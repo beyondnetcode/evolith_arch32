@@ -26,7 +26,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-194`](./gap-reference-catalog.md#gt-194) | Eliminate `any` types in public APIs | `CLI` | Cross | P2 | M | `DONE` |
 | [`GT-196`](./gap-reference-catalog.md#gt-196) | Add E2E tests for MCP HTTP transport | `MCP Services` | Cross | P2 | M | `DONE` |
 | [`GT-188`](./gap-reference-catalog.md#gt-188) | Add tests for 15 zero-coverage files | `CLI` | Cross | P2 | L | `DONE` |
-| [`GT-197`](./gap-reference-catalog.md#gt-197) | Fix intermittent release pipeline failures | `DevOps` | Cross | P2 | L | `PENDING` |
+| [`GT-197`](./gap-reference-catalog.md#gt-197) | Fix intermittent release pipeline failures | `CI` | Cross | P2 | XL | `DONE` |
 | [`GT-198`](./gap-reference-catalog.md#gt-198) | Fix `Moscoww` typo (5 sites) | `CLI` | Cross | P3 | S | `DONE` |
 | [`GT-199`](./gap-reference-catalog.md#gt-199) | Move import to top of file | `CLI` | Cross | P3 | S | `DONE` |
 | [`GT-200`](./gap-reference-catalog.md#gt-200) | Convert 11-param constructor to options object | `CLI` | Cross | P3 | S | `DONE` |

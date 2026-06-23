@@ -11,4 +11,20 @@ module.exports = {
   moduleNameMapper: {
     '\\.\\./\\.\\./\\.\\./test/mocks': '<rootDir>/../../sdk/cli/src/test/mocks/index.ts',
   },
+  collectCoverageFrom: [
+    'src/**/*.ts',
+    '!src/**/*.d.ts',
+    '!src/**/index.ts',
+    '!src/**/*.spec.ts',
+    '!src/**/*.test.ts',
+  ],
+  coverageReporters: ['text', 'text-summary', 'lcov', 'json-summary'],
+  coverageThreshold: {
+    global: {
+      statements: 60,
+      lines: 60,
+      functions: 55,
+      branches: 55,
+    },
+  },
 };

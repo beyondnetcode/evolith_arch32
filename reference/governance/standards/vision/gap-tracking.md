@@ -15,8 +15,6 @@ This board is the single source of truth for technical debt, gaps, opportunities
 |---|---|---|:---:|:---:|:---:|:---:|
 | [`GT-212`](./gap-reference-catalog.md#gt-212) | Resolve ADR-0049/0056 status ambiguity | `Docs` | Cross | P1 | XS | `DONE` |
 | [`GT-213`](./gap-reference-catalog.md#gt-213) | Add governance metadata to topology manifests | `Architecture` | Cross | P1 | S | `DONE` |
-| [`GT-215`](./gap-reference-catalog.md#gt-215) | Add OpenAPI decorators to REST controllers | `BFF API` | Cross | P1 | S | `PENDING` |
-| [`GT-214`](./gap-reference-catalog.md#gt-214) | Add structured logging + OTel spans to REST controllers | `BFF API` | Cross | P1 | M | `PENDING` |
 | [`GT-216`](./gap-reference-catalog.md#gt-216) | Close OPA input-schema parity gap (17 native rulesets uncovered) | `Rulesets` | Cross | P1 | M | `PENDING` |
 | [`GT-217`](./gap-reference-catalog.md#gt-217) | Backfill topology operational guidance corpus (7 topologies) | `Architecture` | Cross | P1 | L | `PENDING` |
 | [`GT-218`](./gap-reference-catalog.md#gt-218) | Author Phase 05 rollback rehearsal + on-call handoff templates | `SDLC` | F5 | P2 | S | `PENDING` |
@@ -34,7 +32,6 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-230`](./gap-reference-catalog.md#gt-230) | Create skills directory and composable skill framework | `Governance` | Cross | P1 | L | `PENDING` |
 | [`GT-231`](./gap-reference-catalog.md#gt-231) | Wire 10 unlinked CI scripts to GitHub Actions workflows | `CI` | Cross | P1 | M | `PENDING` |
 | [`GT-232`](./gap-reference-catalog.md#gt-232) | Create Wilson and PO full personas in .bmad-core/agents | `Governance` | Cross | P1 | S | `PENDING` |
-| [`GT-233`](./gap-reference-catalog.md#gt-233) | Add rate limiting to Core API (@nestjs/throttler) | `BFF API` | Cross | P1 | S | `PENDING` |
 | [`GT-234`](./gap-reference-catalog.md#gt-234) | Fix R-27 bilingual parity gap in global-rules.es.md | `Docs` | Cross | P1 | XS | `PENDING` |
 | [`GT-235`](./gap-reference-catalog.md#gt-235) | Resolve CI script numbering collisions (05/15/16) | `CI` | Cross | P1 | S | `PENDING` |
 | [`GT-236`](./gap-reference-catalog.md#gt-236) | Implement knowledge intake pipeline automation | `Governance` | Cross | P1 | L | `PENDING` |
@@ -264,7 +261,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-160`](./gap-reference-catalog.md#gt-160) | Cross-surface correlation-ID and request-context propagation | `Cross` | Cross | P1 | M | `DONE` |
 | [`GT-174`](./gap-reference-catalog.md#gt-174) | Envelope `meta.schemaVersion` and producer/consumer compatibility matrix | `Cross` | Cross | P2 | S | `DONE` |
 
-**Progress:** 215 / 250 done · 0 in progress · 35 pending · 0 deferred
+**Progress:** 215 / 247 done · 0 in progress · 32 pending · 0 deferred
 
 **Wave 2026-06-23 (Wilson deep audit III):** Added 14 new gaps `GT-212`…`GT-225` from the Wilson Audit Playbook covering: ADR status hygiene (GT-212), topology manifest metadata + operational budgets + guidance corpus (GT-213, GT-217, GT-219), REST controller observability + OpenAPI (GT-214, GT-215), OPA input-schema parity + per-topology test density (GT-216, GT-222), SDLC Phase 05 rollback + on-call templates (GT-218), CLI branch coverage + envelope format coverage + skip-list cleanup (GT-220, GT-224, GT-225), MCP HTTP audit logging (GT-221), and cross-surface parity e2e tests (GT-223).
 

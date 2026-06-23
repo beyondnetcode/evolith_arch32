@@ -15,8 +15,6 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 |---|---|:---:|:---:|:---:|:---:|:---:|
 | [`GT-212`](./gap-reference-catalog.es.md#gt-212) | Resolver ambigüedad de estado en ADR-0049/0056 | `Docs` | Cross | P1 | XS | `COMPLETADO` |
 | [`GT-213`](./gap-reference-catalog.es.md#gt-213) | Añadir metadata de gobernanza a los manifests de topología | `Architecture` | Cross | P1 | S | `COMPLETADO` |
-| [`GT-215`](./gap-reference-catalog.es.md#gt-215) | Añadir decoradores OpenAPI a los controladores REST | `BFF API` | Cross | P1 | S | `PENDIENTE` |
-| [`GT-214`](./gap-reference-catalog.es.md#gt-214) | Añadir logging estructurado + spans OTel a los controladores REST | `BFF API` | Cross | P1 | M | `PENDIENTE` |
 | [`GT-216`](./gap-reference-catalog.es.md#gt-216) | Cerrar brecha de paridad de input schemas OPA (17 rulesets nativos sin cobertura) | `Rulesets` | Cross | P1 | M | `PENDIENTE` |
 | [`GT-217`](./gap-reference-catalog.es.md#gt-217) | Completar el corpus de guías operativas por topología (7 topologías) | `Architecture` | Cross | P1 | L | `PENDIENTE` |
 | [`GT-218`](./gap-reference-catalog.es.md#gt-218) | Crear plantillas de rollback rehearsal y on-call handoff de Fase 05 | `SDLC` | F5 | P2 | S | `PENDIENTE` |
@@ -34,7 +32,6 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-230`](./gap-reference-catalog.es.md#gt-230) | Crear directorio de skills y framework de skills componibles | `Governance` | Cross | P1 | L | `PENDIENTE` |
 | [`GT-231`](./gap-reference-catalog.es.md#gt-231) | Cablear 10 scripts CI sin enlazar a workflows GitHub Actions | `CI` | Cross | P1 | M | `PENDIENTE` |
 | [`GT-232`](./gap-reference-catalog.es.md#gt-232) | Crear personas completas de Wilson y PO en .bmad-core/agents | `Governance` | Cross | P1 | S | `PENDIENTE` |
-| [`GT-233`](./gap-reference-catalog.es.md#gt-233) | Añadir rate limiting al Core API (@nestjs/throttler) | `BFF API` | Cross | P1 | S | `PENDIENTE` |
 | [`GT-234`](./gap-reference-catalog.es.md#gt-234) | Corregir brecha de paridad bilingual R-27 en global-rules.es.md | `Docs` | Cross | P1 | XS | `PENDIENTE` |
 | [`GT-235`](./gap-reference-catalog.es.md#gt-235) | Resolver colisiones de numeración de scripts CI (05/15/16) | `CI` | Cross | P1 | S | `PENDIENTE` |
 | [`GT-236`](./gap-reference-catalog.es.md#gt-236) | Implementar automatización del pipeline de knowledge intake | `Governance` | Cross | P1 | L | `PENDIENTE` |
@@ -264,7 +261,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-160`](./gap-reference-catalog.es.md#gt-160) | Propagación de correlation-ID y contexto de solicitud entre superficies | `Cross` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-174`](./gap-reference-catalog.es.md#gt-174) | `meta.schemaVersion` y matriz de compatibilidad productor/consumidor | `Cross` | Cross | P2 | S | `COMPLETADO` |
 
-**Progreso:** 215 / 250 completados · 0 en progreso · 35 pendientes · 0 diferidos
+**Progreso:** 215 / 247 completados · 0 en progreso · 32 pendientes · 0 diferidos
 
 **Oleada 2026-06-23 (auditoría profunda de Wilson III):** Añadidos 14 gaps nuevos `GT-212`…`GT-225` del Wilson Audit Playbook que cubren: higiene de estado ADR (GT-212), metadata + presupuestos operativos + corpus de guías por topología (GT-213, GT-217, GT-219), observabilidad + OpenAPI en controladores REST (GT-214, GT-215), paridad de input-schemas OPA + densidad de tests por topología (GT-216, GT-222), plantillas de rollback + on-call de Fase 05 (GT-218), cobertura de ramas CLI + paridad de envelope --format + limpieza de skip-list (GT-220, GT-224, GT-225), audit logging HTTP de MCP (GT-221), y tests e2e de paridad cross-surface (GT-223).
 

@@ -1891,11 +1891,6 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Current Evidence:** `packages/core-domain/` has no test suite.
 **Done When:** Core Domain SDK reaches 60%+ unit test coverage.
 
-#### GT-183
-**Purpose:** Build minimal BFF scaffolding (NestJS) — 4 ADRs reference BFF but no implementation exists.
-**Current Evidence:** BFF referenced in ADRs but no code exists.
-**Done When:** Minimal NestJS BFF scaffolding with health endpoint and basic routing.
-
 #### GT-184
 **Purpose:** Remove `@ts-nocheck` from 19 files.
 **Current Evidence:** 19 files suppress TypeScript checking with `@ts-nocheck`.

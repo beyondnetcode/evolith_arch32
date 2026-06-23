@@ -1890,10 +1890,6 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Evidencia Actual:** `packages/core-domain/` no tiene suite de pruebas.
 **Hecho Cuando:** Core Domain SDK alcanza 60%+ de cobertura unitaria.
 
-#### GT-183
-**Propósito:** Construir scaffolding BFF mínimo (NestJS) — 4 ADRs referencian BFF pero no hay implementación.
-**Evidencia Actual:** BFF referenciado en ADRs pero sin código existente.
-**Hecho Cuando:** Scaffolding NestJS BFF mínimo con endpoint health y enrutamiento básico.
 
 #### GT-184
 **Propósito:** Eliminar `@ts-nocheck` de 19 archivos.

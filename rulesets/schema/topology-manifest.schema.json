@@ -19,7 +19,7 @@
     },
     "metadata": {
       "type": "object",
-      "required": ["id", "name", "dimension", "status", "version"],
+      "required": ["id", "name", "dimension", "status", "version", "governance"],
       "additionalProperties": false,
       "properties": {
         "id": {
@@ -46,6 +46,35 @@
           "type": "string",
           "pattern": "^\\d+\\.\\d+\\.\\d+$",
           "description": "Semantic version of the topology manifest contract instance."
+        },
+        "governance": {
+          "type": "object",
+          "required": ["owner", "criticality"],
+          "additionalProperties": false,
+          "properties": {
+            "owner": {
+              "type": "string",
+              "minLength": 3,
+              "description": "Organizational unit accountable for this topology (e.g. Architecture Board, Platform Engineering)."
+            },
+            "criticality": {
+              "type": "string",
+              "enum": ["P0", "P1", "P2"],
+              "description": "Business criticality tier: P0 = critical, P1 = high, P2 = medium."
+            },
+            "supersedes": {
+              "type": "array",
+              "items": { "type": "string", "pattern": "^ADR-\\d{4}$" },
+              "uniqueItems": true,
+              "description": "ADR IDs that this topology supersedes (optional)."
+            },
+            "replaces": {
+              "type": "array",
+              "items": { "type": "string", "pattern": "^ADR-\\d{4}$" },
+              "uniqueItems": true,
+              "description": "ADR IDs replaced by this topology (optional)."
+            }
+          }
         }
       }
     },

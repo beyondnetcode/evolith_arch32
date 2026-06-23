@@ -6,7 +6,11 @@
     "name": "Serverless",
     "dimension": "execution",
     "status": "accepted",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "governance": {
+      "owner": "Platform Engineering",
+      "criticality": "P1"
+    }
   },
   "spec": {
     "summary": "Managed event-scaled execution topology for isolated capabilities governed by contracts, idempotency, observability, and provider-neutral architecture rules.",

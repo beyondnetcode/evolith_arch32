@@ -178,6 +178,25 @@ if (!fs.existsSync(schemaPath)) {
       failures.push(`${relative(manifestPath)} violates topology manifest schema: ${ajv.errorsText(validate.errors, { separator: "; " })}`);
     }
 
+    // Governance metadata check (GT-213)
+    const gov = manifest.metadata?.governance;
+    if (!gov) {
+      failures.push(`${relative(manifestPath)} violates GT-213: metadata.governance is required`);
+    } else {
+      if (!gov.owner || typeof gov.owner !== "string" || gov.owner.length < 3) {
+        failures.push(`${relative(manifestPath)} violates GT-213: governance.owner must be a non-empty string`);
+      }
+      if (!["P0", "P1", "P2"].includes(gov.criticality)) {
+        failures.push(`${relative(manifestPath)} violates GT-213: governance.criticality must be P0, P1, or P2`);
+      }
+      if (gov.supersedes && !Array.isArray(gov.supersedes)) {
+        failures.push(`${relative(manifestPath)} violates GT-213: governance.supersedes must be an array of ADR IDs`);
+      }
+      if (gov.replaces && !Array.isArray(gov.replaces)) {
+        failures.push(`${relative(manifestPath)} violates GT-213: governance.replaces must be an array of ADR IDs`);
+      }
+    }
+
     // Budget check (GT-165)
     if (manifest.spec?.topologyType === "serverless" || manifest.spec?.topologyType === "edge-computing") {
       const budgets = manifest.spec?.operationalBudgets;

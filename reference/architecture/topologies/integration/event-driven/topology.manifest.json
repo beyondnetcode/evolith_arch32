@@ -6,7 +6,11 @@
     "name": "Event-Driven",
     "dimension": "integration",
     "status": "accepted",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "governance": {
+      "owner": "Architecture Board",
+      "criticality": "P0"
+    }
   },
   "spec": {
     "summary": "Asynchronous integration topology for explicit event contracts, reliable publication, idempotent consumers, and observable cross-boundary message flow.",

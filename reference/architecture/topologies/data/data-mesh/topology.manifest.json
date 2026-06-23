@@ -6,7 +6,11 @@
     "name": "Data Mesh",
     "dimension": "data",
     "status": "accepted",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "governance": {
+      "owner": "Data Architecture",
+      "criticality": "P1"
+    }
   },
   "spec": {
     "summary": "Distributed analytical data ownership topology for governed data products, discoverable contracts, quality evidence, and domain-aligned interoperability.",

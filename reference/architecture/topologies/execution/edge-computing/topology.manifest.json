@@ -6,7 +6,11 @@
     "name": "Edge Computing",
     "dimension": "execution",
     "status": "accepted",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "governance": {
+      "owner": "Platform Engineering",
+      "criticality": "P1"
+    }
   },
   "spec": {
     "summary": "Execution topology for workloads placed near users, devices, regions, or constrained networks while preserving Evolith domain ownership and governance contracts.",

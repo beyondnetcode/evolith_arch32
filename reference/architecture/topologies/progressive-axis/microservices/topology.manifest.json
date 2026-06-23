@@ -6,7 +6,11 @@
     "name": "Microservices",
     "dimension": "progressive-axis",
     "status": "accepted",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "governance": {
+      "owner": "Architecture Board",
+      "criticality": "P1"
+    }
   },
   "spec": {
     "summary": "Independently deployable service topology for mature bounded domains with explicit contracts, operational ownership, observability, and extraction readiness evidence.",

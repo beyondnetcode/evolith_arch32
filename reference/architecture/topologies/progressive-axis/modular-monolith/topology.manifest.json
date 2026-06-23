@@ -6,7 +6,11 @@
     "name": "Modular Monolith",
     "dimension": "progressive-axis",
     "status": "accepted",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "governance": {
+      "owner": "Architecture Board",
+      "criticality": "P0"
+    }
   },
   "spec": {
     "summary": "Canonical Evolith starting topology: one deployable system with strict bounded contexts, explicit contracts, persistence isolation, and extraction readiness.",

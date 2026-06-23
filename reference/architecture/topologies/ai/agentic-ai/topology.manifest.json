@@ -6,7 +6,11 @@
     "name": "Agentic AI",
     "dimension": "ai",
     "status": "accepted",
-    "version": "0.1.0"
+    "version": "0.1.0",
+    "governance": {
+      "owner": "AI Architecture",
+      "criticality": "P1"
+    }
   },
   "spec": {
     "summary": "AI-first and agentic workflow topology for MCP-enabled context injection, governed tools, auditable actions, and architecture-aware implementation assistance.",

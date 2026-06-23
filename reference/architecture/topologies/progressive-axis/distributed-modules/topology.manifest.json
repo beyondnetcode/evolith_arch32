@@ -6,7 +6,11 @@
     "name": "Distributed Modules",
     "dimension": "progressive-axis",
     "status": "accepted",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "governance": {
+      "owner": "Architecture Board",
+      "criticality": "P0"
+    }
   },
   "spec": {
     "summary": "Controlled extraction topology for independently deployable or scalable modules with explicit contracts, readiness evidence, and operational visibility.",

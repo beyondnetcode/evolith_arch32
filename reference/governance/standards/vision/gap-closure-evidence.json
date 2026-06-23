@@ -2614,6 +2614,22 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-182",
+      "closedAt": "2026-06-23",
+      "closureCommit": "a374d0cb",
+      "evidence": [
+        "packages/core-domain/jest.config.js",
+        "packages/core-domain/src/application/agents/agent-ruleset-builder.spec.ts",
+        "packages/core-domain/src/domain/metrics/dora-calculator.spec.ts",
+        "packages/core-domain/src/domain/metrics/git-log-reader.spec.ts"
+      ],
+      "validationCommands": [
+        "npx jest --config packages/core-domain/jest.config.js --coverage",
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-181",
       "closedAt": "2026-06-22",
       "closureCommit": "ab029f4f",

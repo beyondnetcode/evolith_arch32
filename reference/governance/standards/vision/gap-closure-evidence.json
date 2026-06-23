@@ -2614,6 +2614,33 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-184",
+      "closedAt": "2026-06-23",
+      "closureCommit": "b0c5959f",
+      "evidence": [
+        "sdk/cli/src/app.module.ts",
+        "sdk/cli/src/commands/architecture/scaffold.command.ts",
+        "sdk/cli/src/commands/sdlc/gate-status.command.ts",
+        "sdk/cli/src/commands/sdlc/generate-domain.command.ts",
+        "sdk/cli/src/commands/sdlc/handoff.command.ts",
+        "sdk/cli/src/commands/init/init.command.ts",
+        "sdk/cli/src/infrastructure/cli/command-executor.ts",
+        "sdk/cli/src/infrastructure/cli/base-command.ts",
+        "sdk/cli/src/infrastructure/catalog/catalog-loader.ts",
+        "sdk/cli/src/infrastructure/prompts/init-prompt-group.ts",
+        "sdk/cli/src/infrastructure/prompts/prompt.service.ts",
+        "sdk/cli/src/infrastructure/architecture/nx-workspace.strategy.ts",
+        "sdk/cli/src/infrastructure/observability/error-reporter.ts",
+        "packages/core-domain/src/domain/interfaces.ts"
+      ],
+      "validationCommands": [
+        "npx tsc --noEmit -p sdk/cli/tsconfig.json",
+        "npm test --workspace sdk/cli",
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-185",
       "closedAt": "2026-06-23",
       "closureCommit": "f824d58e",

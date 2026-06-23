@@ -3,14 +3,14 @@
   "scope": "evolith-core",
   "asOf": "2026-06-23",
   "gaps": {
-    "total": 214,
-    "done": 188,
-    "pending": 26,
+    "total": 213,
+    "done": 213,
+    "pending": 0,
     "inProgress": 0,
     "deferred": 0
   },
   "evidence": {
-    "closureRecords": 170,
+    "closureRecords": 195,
     "cliPackage": "@evolith/smart-cli@1.1.0",
     "adrCount": 110,
     "rulesetCount": 26,

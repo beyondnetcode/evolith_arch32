@@ -2614,6 +2614,22 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-179",
+      "closedAt": "2026-06-23",
+      "closureCommit": "6694314d",
+      "evidence": [
+        "sdk/cli/src/commands/gate/gate.command.spec.ts",
+        "sdk/cli/src/commands/init/agents.command.spec.ts",
+        "sdk/cli/src/commands/init/init.wizard.spec.ts",
+        "sdk/cli/src/commands/phase/phase-advance.command.spec.ts"
+      ],
+      "validationCommands": [
+        "npx jest --config sdk/cli/jest.config.js --coverage",
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-210",
       "closedAt": "2026-06-23",
       "closureCommit": "6de4b602",

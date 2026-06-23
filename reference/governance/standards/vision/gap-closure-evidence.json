@@ -3193,6 +3193,22 @@
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-197",
+      "closedAt": "2026-06-23",
+      "closureCommit": "507382f3",
+      "evidence": [
+        ".github/workflows/sdk-cli-release.yml",
+        ".github/workflows/sdk-cli-ci.yml",
+        ".github/workflows/docs.yml",
+        ".github/workflows/docs-release.yml"
+      ],
+      "validationCommands": [
+        "gh api \"repos/beyondnetcode/evolith_arch32/actions/runs?per_page=20&status=completed\" --jq '.workflow_runs[] | select(.workflow_id == 288813898) | {id: .id, conclusion: .conclusion, event: .event}'"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Root cause: missing npm ci in core-validation jobs. 10 consecutive successful release pipeline runs verified. 20 auto-generated failure issues closed."
     }
   ]
 }

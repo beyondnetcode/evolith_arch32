@@ -227,7 +227,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-160`](./gap-reference-catalog.md#gt-160) | Cross-surface correlation-ID and request-context propagation | `Cross` | Cross | P1 | M | `DONE` |
 | [`GT-174`](./gap-reference-catalog.md#gt-174) | Envelope `meta.schemaVersion` and producer/consumer compatibility matrix | `Cross` | Cross | P2 | S | `DONE` |
 
-**Progress:** 212 / 213 done · 0 in progress · 1 pending · 0 deferred
+**Progress:** 213 / 213 done · 0 in progress · 0 pending · 0 deferred
 
 **Wave 2026-06-22 (Wilson deep audit):** Added 3 new gaps `GT-209`…`GT-211`: missing agnostic baseline, incomplete SDLC Phase 05, and orphan Spanish-only ADRs without English counterparts.
 

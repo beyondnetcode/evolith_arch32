@@ -1968,7 +1968,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-197
 **Propósito:** Corregir fallos intermitentes del pipeline de release (9 issues de fallo automatizado cerrados sin corrección de causa raíz).
-**Evidencia Actual:** Pipeline de release tiene fallos recurrentes sin causa raíz resuelta.
+**Evidencia Actual:** Causa raíz identificada: falta `npm ci` en jobs `core-validation` de workflows CI/CD. `01-validate-docs.mjs` ejecuta `validate-topology-manifests.mjs` que importa `ajv` - dependencia npm no disponible sin instalar.
+**Evidencia de Cierre:** Agregado `npm ci` + cache npm a jobs `core-validation` en 4 workflows: `sdk-cli-release.yml`, `sdk-cli-ci.yml`, `docs.yml`, `docs-release.yml`. 10 ejecuciones consecutivas exitosas del pipeline de release verificadas (1 push-triggered + 9 workflow_dispatch manuales). 20 issues de fallo auto-generados #70-#89 cerrados.
 **Hecho Cuando:** Pipeline de release pasa consistentemente por 10 ejecuciones consecutivas.
 
 #### GT-198

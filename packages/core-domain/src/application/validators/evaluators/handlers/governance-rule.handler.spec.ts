@@ -1,4 +1,5 @@
 import * as path from 'path';
+import * as yamlLib from 'yaml';
 import { GovernanceRuleHandler } from './governance-rule.handler';
 import { NormalizedRule } from '../../../../domain/models/normalized-rule';
 
@@ -16,6 +17,12 @@ function fsMock(cfg: { existing?: string[]; files?: Record<string, string>; json
   } as unknown;
 }
 
+const yamlParser = { parse: (content: string) => yamlLib.parse(content), stringify: (data: unknown) => yamlLib.stringify(data) } as unknown;
+
+function newHandler(fs: unknown) {
+  return new GovernanceRuleHandler(fs as never, yamlParser as never);
+}
+
 function rule(id: string): NormalizedRule {
   return { id, severity: 'MUST', category: 'governance', title: 't', description: 'd', blocking: true, sourceFile: 's' };
 }
@@ -24,62 +31,62 @@ const yaml = path.join(SAT, 'evolith.yaml');
 
 describe('GovernanceRuleHandler', () => {
   it('canHandle matches the governance rule ids', () => {
-    const h = new GovernanceRuleHandler(fsMock());
+    const h = newHandler(fsMock());
     expect(h.canHandle(rule('GOV-01'))).toBe(true);
     expect(h.canHandle(rule('TAX-05'))).toBe(false);
   });
 
   it('INH-01 fails when a satellite ships its own rulesets', async () => {
-    const h = new GovernanceRuleHandler(fsMock({ existing: [path.join(SAT, 'rulesets')] }));
+    const h = newHandler(fsMock({ existing: [path.join(SAT, 'rulesets')] }));
     expect((await h.evaluate(rule('INH-01'), ctx)).result).toBe('failed');
-    const pass = new GovernanceRuleHandler(fsMock());
+    const pass = newHandler(fsMock());
     expect((await pass.evaluate(rule('INH-01'), ctx)).result).toBe('passed');
   });
 
   it('INH-06 requires DECISIONS.md in satellites', async () => {
-    expect((await new GovernanceRuleHandler(fsMock()).evaluate(rule('INH-06'), ctx)).result).toBe('failed');
-    const pass = new GovernanceRuleHandler(fsMock({ existing: [path.join(SAT, 'DECISIONS.md')] }));
+    expect((await newHandler(fsMock()).evaluate(rule('INH-06'), ctx)).result).toBe('failed');
+    const pass = newHandler(fsMock({ existing: [path.join(SAT, 'DECISIONS.md')] }));
     expect((await pass.evaluate(rule('INH-06'), ctx)).result).toBe('passed');
   });
 
   it('GOV-01 requires evolith.yaml', async () => {
-    expect((await new GovernanceRuleHandler(fsMock()).evaluate(rule('GOV-01'), ctx)).result).toBe('failed');
-    expect((await new GovernanceRuleHandler(fsMock({ existing: [yaml] })).evaluate(rule('GOV-01'), ctx)).result).toBe('passed');
+    expect((await newHandler(fsMock()).evaluate(rule('GOV-01'), ctx)).result).toBe('failed');
+    expect((await newHandler(fsMock({ existing: [yaml] })).evaluate(rule('GOV-01'), ctx)).result).toBe('passed');
   });
 
   it('GOV-02 requires governance.version', async () => {
-    const fail = new GovernanceRuleHandler(fsMock({ existing: [yaml], files: { [yaml]: 'governance:\n  owner: team\n' } }));
+    const fail = newHandler(fsMock({ existing: [yaml], files: { [yaml]: 'governance:\n  owner: team\n' } }));
     expect((await fail.evaluate(rule('GOV-02'), ctx)).result).toBe('failed');
-    const pass = new GovernanceRuleHandler(fsMock({ existing: [yaml], files: { [yaml]: 'governance:\n  version: 1.0.0\n' } }));
+    const pass = newHandler(fsMock({ existing: [yaml], files: { [yaml]: 'governance:\n  version: 1.0.0\n' } }));
     expect((await pass.evaluate(rule('GOV-02'), ctx)).result).toBe('passed');
   });
 
   it('INH-02 requires a valid semver coreRef.version', async () => {
-    const missing = new GovernanceRuleHandler(fsMock({ existing: [yaml], files: { [yaml]: 'coreRef:\n  name: core\n' } }));
+    const missing = newHandler(fsMock({ existing: [yaml], files: { [yaml]: 'coreRef:\n  name: core\n' } }));
     expect((await missing.evaluate(rule('INH-02'), ctx)).result).toBe('failed');
-    const bad = new GovernanceRuleHandler(fsMock({ existing: [yaml], files: { [yaml]: 'coreRef:\n  version: notsemver\n' } }));
+    const bad = newHandler(fsMock({ existing: [yaml], files: { [yaml]: 'coreRef:\n  version: notsemver\n' } }));
     expect((await bad.evaluate(rule('INH-02'), ctx)).result).toBe('failed');
-    const ok = new GovernanceRuleHandler(fsMock({ existing: [yaml], files: { [yaml]: 'coreRef:\n  version: 1.2.3\n' } }));
+    const ok = newHandler(fsMock({ existing: [yaml], files: { [yaml]: 'coreRef:\n  version: 1.2.3\n' } }));
     expect((await ok.evaluate(rule('INH-02'), ctx)).result).toBe('passed');
   });
 
   it('OCB-01 rejects enterprise/unlicensed packages', async () => {
     const pkg = path.join(SAT, 'package.json');
-    const fail = new GovernanceRuleHandler(fsMock({ existing: [pkg], json: { [pkg]: { license: 'UNLICENSED' } } }));
+    const fail = newHandler(fsMock({ existing: [pkg], json: { [pkg]: { license: 'UNLICENSED' } } }));
     expect((await fail.evaluate(rule('OCB-01'), ctx)).result).toBe('failed');
-    const pass = new GovernanceRuleHandler(fsMock({ existing: [pkg], json: { [pkg]: { license: 'MIT' } } }));
+    const pass = newHandler(fsMock({ existing: [pkg], json: { [pkg]: { license: 'MIT' } } }));
     expect((await pass.evaluate(rule('OCB-01'), ctx)).result).toBe('passed');
   });
 
   it('ACL-01 fails on an empty acl directory', async () => {
     const acl = path.join(SAT, 'acl');
-    const fail = new GovernanceRuleHandler(fsMock({ existing: [acl], dirs: { [acl]: [] } }));
+    const fail = newHandler(fsMock({ existing: [acl], dirs: { [acl]: [] } }));
     expect((await fail.evaluate(rule('ACL-01'), ctx)).result).toBe('failed');
-    const pass = new GovernanceRuleHandler(fsMock({ existing: [acl], dirs: { [acl]: ['orders'] } }));
+    const pass = newHandler(fsMock({ existing: [acl], dirs: { [acl]: ['orders'] } }));
     expect((await pass.evaluate(rule('ACL-01'), ctx)).result).toBe('passed');
   });
 
   it('skips unhandled governance rules', async () => {
-    expect((await new GovernanceRuleHandler(fsMock()).evaluate(rule('GOV-99'), ctx)).result).toBe('skipped');
+    expect((await newHandler(fsMock()).evaluate(rule('GOV-99'), ctx)).result).toBe('skipped');
   });
 });

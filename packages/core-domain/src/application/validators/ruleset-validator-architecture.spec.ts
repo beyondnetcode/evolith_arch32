@@ -22,7 +22,7 @@ const createMockFileSystem = (overrides?: Partial<IFileSystem>): IFileSystem => 
 const mockF1Ruleset = {
   rules: [
     {
-      id: 'F1-R01',
+      id: 'MM-R01',
       severity: 'MUST',
       category: 'topology',
       title: 'Single Deployment Unit',
@@ -30,7 +30,7 @@ const mockF1Ruleset = {
       blocking: true,
     },
     {
-      id: 'F1-R02',
+      id: 'MM-R02',
       severity: 'MUST',
       category: 'bounded-contexts',
       title: 'Explicit Bounded Context Boundaries',
@@ -38,7 +38,7 @@ const mockF1Ruleset = {
       blocking: true,
     },
     {
-      id: 'F1-R03',
+      id: 'MM-R03',
       severity: 'MUST',
       category: 'hexagonal-architecture',
       title: 'Ports and Adapters Boundary',
@@ -59,9 +59,9 @@ describe('RulesetValidatorService - Architecture Validation', () => {
 
     mockFs = createMockFileSystem({
       readFile: jest.fn().mockImplementation((p: string) => {
-        if (p.includes('f1-modular-monolith') || p.includes('modular-monolith.rules.json')) return Promise.resolve(JSON.stringify(mockF1Ruleset));
-        if (p.includes('f2-distributed-modules')) return Promise.resolve(JSON.stringify({ rules: [] }));
-        if (p.includes('f3-microservices')) return Promise.resolve(JSON.stringify({ rules: [] }));
+        if (p.includes('modular-monolith.rules.json')) return Promise.resolve(JSON.stringify(mockF1Ruleset));
+        if (p.includes('distributed-modules.rules.json')) return Promise.resolve(JSON.stringify({ rules: [] }));
+        if (p.includes('microservices.rules.json')) return Promise.resolve(JSON.stringify({ rules: [] }));
         return Promise.resolve('');
       }),
     });
@@ -164,10 +164,10 @@ describe('RulesetValidatorService - Architecture Validation', () => {
   describe('validateArchitectureRule - topology', () => {
     it('should validate topology rules for F1', async () => {
       (mockFs.readFile as jest.Mock).mockImplementation((p: string) => {
-        if (p.includes('f1-modular-monolith')) {
+        if (p.includes('modular-monolith.rules.json')) {
           return Promise.resolve(JSON.stringify({
             rules: [{
-              id: 'F1-R01',
+              id: 'MM-R01',
               severity: 'MUST',
               category: 'topology',
               title: 'Single Deployment Unit',
@@ -188,10 +188,10 @@ describe('RulesetValidatorService - Architecture Validation', () => {
   describe('validateArchitectureRule - bounded-contexts', () => {
     it('should validate bounded contexts rules', async () => {
       (mockFs.readFile as jest.Mock).mockImplementation((p: string) => {
-        if (p.includes('f1-modular-monolith')) {
+        if (p.includes('modular-monolith.rules.json')) {
           return Promise.resolve(JSON.stringify({
             rules: [{
-              id: 'F1-R02',
+              id: 'MM-R02',
               severity: 'MUST',
               category: 'bounded-contexts',
               title: 'Explicit Bounded Context Boundaries',
@@ -213,10 +213,10 @@ describe('RulesetValidatorService - Architecture Validation', () => {
   describe('validateArchitectureRule - hexagonal-architecture', () => {
     it('should validate hexagonal architecture rules', async () => {
       (mockFs.readFile as jest.Mock).mockImplementation((p: string) => {
-        if (p.includes('f1-modular-monolith')) {
+        if (p.includes('modular-monolith.rules.json')) {
           return Promise.resolve(JSON.stringify({
             rules: [{
-              id: 'F1-R03',
+              id: 'MM-R03',
               severity: 'MUST',
               category: 'hexagonal-architecture',
               title: 'Ports and Adapters Boundary',

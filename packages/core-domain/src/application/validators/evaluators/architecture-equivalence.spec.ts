@@ -31,7 +31,7 @@ describe('Architecture Engine Equivalence', () => {
   });
 
   const rule = {
-    id: 'F1-R09',
+    id: 'MM-R09',
     severity: 'MUST' as const,
     category: 'dependency-injection',
     title: 'Strict DIP',

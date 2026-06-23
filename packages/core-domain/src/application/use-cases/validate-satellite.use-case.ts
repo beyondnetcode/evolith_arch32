@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { RulesetValidatorService, ValidationResult } from '../../application/validators/ruleset-validator.service';
+import * as pathModule from 'path';
+import * as fsExtra from 'fs-extra';
 
 export interface ValidateSatelliteInput {
   satellitePath: string;
@@ -113,15 +115,13 @@ export class ValidateSatelliteUseCase {
   }
 
   private findCoreFromSatellite(satellitePath: string): string {
-    const path = require('path');
-    const parts = satellitePath.split(path.sep);
+    const parts = satellitePath.split(pathModule.sep);
     while (parts.length > 0) {
       parts.pop();
-      const candidate = path.join(parts.join(path.sep), 'rulesets');
+      const candidate = pathModule.join(parts.join(pathModule.sep), 'rulesets');
       try {
-        const fs = require('fs-extra');
-        if (fs.pathExistsSync(candidate)) {
-          return parts.join(path.sep);
+        if (fsExtra.pathExistsSync(candidate)) {
+          return parts.join(pathModule.sep);
         }
       } catch {
         continue;

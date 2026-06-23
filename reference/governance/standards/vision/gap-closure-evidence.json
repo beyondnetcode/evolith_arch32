@@ -3069,6 +3069,31 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-189",
+      "closedAt": "2026-06-23",
+      "closureCommit": "7a3aa44c",
+      "evidence": [
+        "packages/core-domain/src/domain/services/index.ts",
+        "packages/core-domain/src/domain/services/default-workflow-definition.ts",
+        "packages/core-domain/src/application/use-cases/phase-transition.use-case.ts",
+        "packages/core-domain/src/application/use-cases/validate-satellite.use-case.ts",
+        "packages/infra-providers/src/node-filesystem.provider.ts",
+        "apps/core-api/src/infrastructure/providers/node-filesystem.provider.ts",
+        "packages/mcp-server/src/mcp/mcp-tool-dispatch.ts",
+        "packages/core-domain/src/application/validators/evaluators/opa-input-builder.ts",
+        "packages/core-domain/src/application/validators/evaluators/handlers/architecture/ast-rules.ts"
+      ],
+      "validationCommands": [
+        "npx tsc --noEmit --project packages/core-domain/tsconfig.json",
+        "npx tsc --noEmit --project packages/infra-providers/tsconfig.json",
+        "npx tsc --noEmit --project packages/mcp-server/tsconfig.json",
+        "npx tsc --noEmit --project apps/core-api/tsconfig.json",
+        "npm test"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Replaced 12 require() calls with ES imports across 9 source files. Zero require() in production TS source."
+    },
+    {
       "id": "GT-187",
       "closedAt": "2026-06-23",
       "closureCommit": "742be2df",

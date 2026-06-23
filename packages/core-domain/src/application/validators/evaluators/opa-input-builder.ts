@@ -287,7 +287,7 @@ export class OpaInputBuilder {
     // We import typescript here to avoid tying it strictly if the plugin doesn't need it
     let ts: any;
     try {
-      ts = require('typescript');
+      ts = await import('typescript');
     } catch {
       // If typescript is not installed, return minimal file info
       for (const file of tsFiles) {

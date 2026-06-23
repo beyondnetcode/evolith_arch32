@@ -1,5 +1,5 @@
 import * as path from 'path';
-const ts: any = require('typescript');
+import * as ts from 'typescript';
 import { IFileSystem } from '../../../../../domain/interfaces';
 import { NormalizedRule } from '../../../../../domain/models/normalized-rule';
 import { EvaluationContext } from '../../evaluator.interface';

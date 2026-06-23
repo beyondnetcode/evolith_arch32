@@ -1,5 +1,5 @@
 import { IFileSystem, ILogger } from '../../domain/interfaces';
-import { WorkflowEngine } from '../../domain/services';
+import { WorkflowEngine, PhaseService } from '../../domain/services';
 import { WorkflowDefinition } from '../../domain/ports/workflow-definition.port';
 import { IWebhookNotifier } from '../ports/webhook-notifier.port';
 import { PhaseGateValidatorService } from '../validators/phase-gate-validator.service';
@@ -20,7 +20,7 @@ export class PhaseTransitionUseCase {
   ) {
     this.fs = fs;
     this.logger = (logger as ILogger) || { log: () => {}, warn: () => {}, error: () => {}, info: () => {}, debug: () => {} } as ILogger;
-    this.engine = workflow ? new WorkflowEngine(workflow) : new (require('../../domain/services').PhaseService)();
+    this.engine = workflow ? new WorkflowEngine(workflow) : new PhaseService();
     this.gateValidator = new PhaseGateValidatorService(corePath, { fileSystem: fs, logger: this.logger });
   }
 

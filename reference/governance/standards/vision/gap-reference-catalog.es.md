@@ -1923,7 +1923,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-189
 **Propósito:** Reemplazar 27 instancias de `require()` con imports ES en 10 archivos.
-**Evidencia Actual:** Uso mixto `require()`/`import` en 10 archivos.
+**Evidencia Actual:** Cero llamadas `require()` en código TypeScript de producción. Se convirtieron todas las llamadas `require()` estáticas a sentencias ES `import` en 9 archivos fuente.
+**Evidencia de Cierre:** Se reemplazaron 12 llamadas `require()` en 9 archivos fuente con imports ES. `require('typescript')` dinámico en `opa-input-builder.ts` convertido a `await import('typescript')`. Requires estáticos en `index.ts`, `default-workflow-definition.ts`, `phase-transition.use-case.ts`, `validate-satellite.use-case.ts`, ambos archivos `node-filesystem.provider.ts`, `mcp-tool-dispatch.ts`, `ast-rules.ts` convertidos a imports ES de nivel superior. 151 pruebas pasan, todos los paquetes compilan.
 **Hecho Cuando:** Cero llamadas `require()` en código fuente; todos usan imports ES module.
 
 #### GT-190

@@ -22,7 +22,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-178`](./gap-reference-catalog.md#gt-178) | Rebuild `core/README.es.md` with all ADRs | `Docs` | Cross | P2 | M | `DONE` |
 | [`GT-186`](./gap-reference-catalog.md#gt-186) | Remove `@ts-nocheck` from 19 files (phased) | `CLI` | Cross | P2 | M | `DONE` |
 | [`GT-187`](./gap-reference-catalog.md#gt-187) | Enable strict mode in tsconfig | `CLI` | Cross | P2 | M | `DONE` |
-| [`GT-189`](./gap-reference-catalog.md#gt-189) | Replace `require()` with ES imports | `CLI` | Cross | P2 | M | `PENDING` |
+| [`GT-189`](./gap-reference-catalog.md#gt-189) | Replace `require()` with ES imports | `CLI` | Cross | P2 | M | `DONE` |
 | [`GT-194`](./gap-reference-catalog.md#gt-194) | Eliminate `any` types in public APIs | `CLI` | Cross | P2 | M | `PENDING` |
 | [`GT-196`](./gap-reference-catalog.md#gt-196) | Add E2E tests for MCP HTTP transport | `MCP Services` | Cross | P2 | M | `PENDING` |
 | [`GT-183`](./gap-reference-catalog.md#gt-183) | Build minimal BFF scaffolding (NestJS) | `Architecture` | Cross | P2 | L | `PENDING` |
@@ -228,7 +228,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-160`](./gap-reference-catalog.md#gt-160) | Cross-surface correlation-ID and request-context propagation | `Cross` | Cross | P1 | M | `DONE` |
 | [`GT-174`](./gap-reference-catalog.md#gt-174) | Envelope `meta.schemaVersion` and producer/consumer compatibility matrix | `Cross` | Cross | P2 | S | `DONE` |
 
-**Progress:** 208 / 214 done · 0 in progress · 6 pending · 0 deferred
+**Progress:** 209 / 214 done · 0 in progress · 5 pending · 0 deferred
 
 **Wave 2026-06-22 (Wilson deep audit):** Added 3 new gaps `GT-209`…`GT-211`: missing agnostic baseline, incomplete SDLC Phase 05, and orphan Spanish-only ADRs without English counterparts.
 

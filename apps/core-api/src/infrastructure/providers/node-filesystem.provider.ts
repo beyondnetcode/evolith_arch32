@@ -96,8 +96,7 @@ export class NodeFileSystemProvider implements IFileSystemProvider, IFileSystem 
     await fs.promises.copyFile(src, dest);
   }
 
-  async ensureFile(path: string): Promise<void> {
-    const fs = require('fs-extra');
-    await fs.ensureFile(path);
+  async ensureFile(filePath: string): Promise<void> {
+    await fs.ensureFile(filePath);
   }
 }

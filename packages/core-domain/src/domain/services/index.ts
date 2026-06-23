@@ -1,6 +1,7 @@
 import { Phase, GateResult } from '../entities';
 import { IPhaseGates, GateResult as IGateResult } from '../interfaces';
 import { WorkflowDefinition } from '../ports/workflow-definition.port';
+import { loadDefaultWorkflow } from './default-workflow-definition';
 
 export class WorkflowEngine implements IPhaseGates {
   constructor(private readonly workflow: WorkflowDefinition) {}
@@ -92,7 +93,6 @@ export class ToolSelectionService {
 
 export class PhaseService extends WorkflowEngine {
   constructor() {
-    const { loadDefaultWorkflow } = require('./default-workflow-definition');
     super(loadDefaultWorkflow());
   }
 }

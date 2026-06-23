@@ -1924,7 +1924,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-189
 **Purpose:** Replace 27 `require()` instances with ES imports across 10 files.
-**Current Evidence:** Mixed `require()`/`import` usage in 10 files.
+**Current Evidence:** Zero `require()` calls in production TypeScript source code. Converted all static `require()` calls to ES `import` statements across 9 source files.
+**Closure Evidence:** Replaced 12 `require()` calls in 9 source files with ES imports. Dynamic `require('typescript')` in `opa-input-builder.ts` converted to `await import('typescript')`. Static requires in `index.ts`, `default-workflow-definition.ts`, `phase-transition.use-case.ts`, `validate-satellite.use-case.ts`, both `node-filesystem.provider.ts` files, `mcp-tool-dispatch.ts`, `ast-rules.ts` converted to top-level ES imports. 151 tests pass, all packages compile.
 **Done When:** Zero `require()` calls in source code; all use ES module imports.
 
 #### GT-190

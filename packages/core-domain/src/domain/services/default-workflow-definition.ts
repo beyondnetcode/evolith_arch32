@@ -1,5 +1,8 @@
 import { Phase } from '../entities';
 import { WorkflowDefinition, WorkflowTransition } from '../ports/workflow-definition.port';
+import * as fs from 'fs';
+import * as path from 'path';
+import yaml from 'yaml';
 
 type RawPhase = {
   value: string;
@@ -82,9 +85,6 @@ export class DefaultWorkflowDefinition implements WorkflowDefinition {
 }
 
 export function loadDefaultWorkflow(): DefaultWorkflowDefinition {
-  const fs = require('fs');
-  const path = require('path');
-  const yaml = require('yaml');
   const content = fs.readFileSync(path.join(__dirname, '../../../../../rulesets/sdlc/default-workflow.yaml'), 'utf-8');
   return new DefaultWorkflowDefinition(yaml.parse(content));
 }

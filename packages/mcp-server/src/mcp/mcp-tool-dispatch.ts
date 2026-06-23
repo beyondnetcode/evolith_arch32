@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { context as otelContext, propagation, SpanStatusCode, trace } from '@opentelemetry/api';
+import * as path from 'node:path';
 import { ToolRegistryService } from './tool-registry.service';
 import { MetricsService } from './metrics.service';
 import { AbacEvaluator, AbacInput } from './abac-evaluator';
@@ -94,7 +95,7 @@ export async function handleCallTool(
 
   let corePath = process.cwd();
   if (corePath.endsWith('packages/mcp-server')) {
-    corePath = require('node:path').resolve(corePath, '../..');
+    corePath = path.resolve(corePath, '../..');
   }
 
   const nativeDecision = deps.abacEvaluator.evaluateNative(abacInput);

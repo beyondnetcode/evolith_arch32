@@ -3,7 +3,7 @@
 ## 1. Metadata
 * **ADR ID:** 0049
 * **Title:** Naming Semantics and Clean Code Standards (E2E and Global)
-* **Status:** Accepted (Proposed)
+* **Status:** Accepted
 * **Authors:** Enterprise Architecture Office
 * **Reviewers:** Corporate Architecture Board, CTO Office
 * **Date:** 2026-05-13
@@ -11,6 +11,7 @@
 * **Related ADRs:**
   * [ADR-0002: Clean Hexagonal Architecture with NestJS](../nodejs/0002-clean-architecture-nestjs.md)
   * [ADR-0003: Strict TypeScript Standards](../nodejs/0003-strict-typescript-standards.md)
+  * [ADR-0056: Enterprise Naming & Design Conventions](./0056-enterprise-naming-design-conventions.md) (extends this ADR to all layers)
 
 ---
 

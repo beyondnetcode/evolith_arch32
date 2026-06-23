@@ -1912,7 +1912,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-187
 **Propósito:** Habilitar modo estricto en tsconfig (`strictNullChecks`, `noImplicitAny`, `strict`).
-**Evidencia Actual:** Configuración TypeScript tiene `strict: false`.
+**Evidencia Actual:** Los 5 archivos tsconfig habilitan modo estricto con cero errores de compilación en todos los paquetes.
+**Evidencia de Cierre:** Se habilitó `"strict": true` en `sdk/cli/tsconfig.json`, `packages/core/tsconfig.json`, `packages/mcp-server/tsconfig.json`, `apps/core-api/tsconfig.json`. Se corrigieron 2 errores de tipo relacionados con strict (`otel-tracing.ts`, `init-prompt-options.ts`) y se instaló `@types/opossum`. Las 151 pruebas de CLI pasan.
 **Hecho Cuando:** tsconfig habilita modo estricto con cero errores de compilación.
 
 #### GT-188

@@ -1913,7 +1913,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-187
 **Purpose:** Enable strict mode in tsconfig (`strictNullChecks`, `noImplicitAny`, `strict`).
-**Current Evidence:** TypeScript config has `strict: false`.
+**Current Evidence:** All 5 tsconfig files enable strict mode with zero compilation errors across all packages.
+**Closure Evidence:** Enabled `"strict": true` in `sdk/cli/tsconfig.json`, `packages/core/tsconfig.json`, `packages/mcp-server/tsconfig.json`, `apps/core-api/tsconfig.json`. Fixed 2 strict-related type errors (`otel-tracing.ts`, `init-prompt-options.ts`) and installed `@types/opossum` for core-api. All 151 CLI tests pass.
 **Done When:** tsconfig enables strict mode with zero compilation errors.
 
 #### GT-188

@@ -3069,6 +3069,28 @@
       "dependencyDisposition": "none"
     },
     {
+      "id": "GT-187",
+      "closedAt": "2026-06-23",
+      "closureCommit": "742be2df",
+      "evidence": [
+        "sdk/cli/tsconfig.json",
+        "packages/core/tsconfig.json",
+        "packages/mcp-server/tsconfig.json",
+        "apps/core-api/tsconfig.json",
+        "sdk/cli/src/infrastructure/observability/otel-tracing.ts",
+        "sdk/cli/src/infrastructure/prompts/init-prompt-options.ts"
+      ],
+      "validationCommands": [
+        "npx tsc --noEmit --project sdk/cli/tsconfig.json",
+        "npx tsc --noEmit --project packages/core/tsconfig.json",
+        "npx tsc --noEmit --project packages/mcp-server/tsconfig.json",
+        "npx tsc --noEmit --project apps/core-api/tsconfig.json",
+        "npm test"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Enabled strict mode across all 5 packages. Fixed 2 type errors, installed @types/opossum. 151 tests pass."
+    },
+    {
       "id": "GT-186",
       "closedAt": "2026-06-23",
       "closureCommit": "a529ad63",

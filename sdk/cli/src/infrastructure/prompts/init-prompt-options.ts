@@ -33,7 +33,7 @@ export const AGENT_OPTIONS: InitPromptOption[] = [
   { value: 'sdlc', label: 'SDLC' },
 ];
 
-export function validateProjectName(value: string): string | undefined {
+export function validateProjectName(value: string | undefined): string | undefined {
   if (!value) return 'Por favor ingresa un nombre.';
   if (value.includes(' ')) return 'El nombre no debe contener espacios.';
   if (!/^[a-zA-Z][a-zA-Z0-9-_]*$/.test(value)) {

@@ -26,7 +26,7 @@ export async function shutdownCliOtel(): Promise<void> {
 }
 
 export function isOtelEnabled(): boolean {
-  return g.__otelInitialized;
+  return g.__otelInitialized ?? false;
 }
 
 export const cliTracer = trace.getTracer('evolith-cli');

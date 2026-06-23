@@ -1,4 +1,4 @@
-# [ADR 0051](0051-enterprise-database-engine-strategy.md): Enterprise Database Engine Selection Strategy
+# ADR-0051: Enterprise Database Engine Selection Strategy
 
 ## 1. Metadata
 * **ADR ID:** 0051

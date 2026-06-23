@@ -1,4 +1,4 @@
-# [ADR 0016](0016-immutable-business-audit-trail.md): Pista de Auditoría de Negocio Inmutable y Rastreo de Cambios
+# ADR-0016: Pista de Auditoría de Negocio Inmutable y Rastreo de Cambios
 
 ## Estado
 Aprobado

@@ -1,4 +1,4 @@
-# ADR 0071: Estrategia de Clases Base e Herencia en la Capa de Dominio
+# ADR-0071: Estrategia de Clases Base e Herencia en la Capa de Dominio
 
 ## Estado
 

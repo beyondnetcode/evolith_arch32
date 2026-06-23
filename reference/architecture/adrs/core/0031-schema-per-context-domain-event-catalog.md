@@ -1,4 +1,4 @@
-# [ADR 0031](0031-schema-per-context-domain-event-catalog.md): Schema-per-Bounded-Context and Domain Event Catalog
+# ADR-0031: Schema-per-Bounded-Context and Domain Event Catalog
 
 ## Status
 Approved

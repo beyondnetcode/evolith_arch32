@@ -1,4 +1,4 @@
-# [ADR 0074](0074-evolith-core-api-exposure-layer.es.md): Capa de Exposición Nativa del Evolith Core API
+# ADR-0074: Capa de Exposición Nativa del Evolith Core API
 
 > **Navegación Bilingüe:** [English Version](./0074-evolith-core-api-exposure-layer.md)
 

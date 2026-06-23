@@ -1,4 +1,4 @@
-# [ADR 0011](0011-fault-tolerance-resiliency-patterns.md): Patrones de Resiliencia y Tolerancia a Fallos
+# ADR-0011: Patrones de Resiliencia y Tolerancia a Fallos
 
 ## Estado
 Aprobado

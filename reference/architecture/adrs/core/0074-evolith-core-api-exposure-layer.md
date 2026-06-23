@@ -1,4 +1,4 @@
-# [ADR 0074](0074-evolith-core-api-exposure-layer.md): Evolith Core API Native Exposure Layer
+# ADR-0074: Evolith Core API Native Exposure Layer
 
 > **Bilingual Navigation:** [Versión en Español](./0074-evolith-core-api-exposure-layer.es.md)
 

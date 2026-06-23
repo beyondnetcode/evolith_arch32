@@ -1,4 +1,4 @@
-# [ADR 0034](0034-cqrs-pattern-applicability-matrix.md): Matriz de Aplicación del Patrón CQRS
+# ADR-0034: Matriz de Aplicación del Patrón CQRS
 
 ## Estado
 Aprobado

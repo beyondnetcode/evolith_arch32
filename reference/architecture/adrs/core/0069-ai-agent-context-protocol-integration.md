@@ -1,4 +1,4 @@
-# [ADR 0069](0069-ai-agent-context-protocol-integration.md): AI Agent Context Protocol Integration
+# ADR-0069: AI Agent Context Protocol Integration
 
 ## Status
 Approved

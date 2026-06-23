@@ -1,4 +1,4 @@
-# [ADR 0035](0035-distributed-saga-pattern-strategy.md): Estrategia de Implementación del Patrón Distributed Saga
+# ADR-0035: Estrategia de Implementación del Patrón Distributed Saga
 
 ## Estado
 Aprobado

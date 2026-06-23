@@ -2907,6 +2907,166 @@
         "node .harness/scripts/ci/05-check-orphan-bilingual.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-198",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4b54c3c7",
+      "evidence": [
+        "reference/governance/standards/vision/gap-reference-catalog.md",
+        "reference/governance/standards/vision/gap-reference-catalog.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Resolved by file deletion — the files containing the Moscoww typo were removed in commit c4835e0db"
+    },
+    {
+      "id": "GT-199",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4b54c3c7",
+      "evidence": [
+        "sdk/cli/src/infrastructure/formatters/output-formatter.service.ts"
+      ],
+      "validationCommands": [
+        "npm run build --workspace sdk/cli",
+        "npm test --workspace sdk/cli -- --runInBand"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-200",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4b54c3c7",
+      "evidence": [
+        "reference/governance/standards/vision/gap-reference-catalog.md",
+        "reference/governance/standards/vision/gap-reference-catalog.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Resolved by file deletion — server.ts was removed in commit c4835e0db"
+    },
+    {
+      "id": "GT-201",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4b54c3c7",
+      "evidence": [
+        "reference/governance/standards/vision/gap-reference-catalog.md",
+        "reference/governance/standards/vision/gap-reference-catalog.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Resolved by file deletion — server.ts was removed in commit c4835e0db"
+    },
+    {
+      "id": "GT-202",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4b54c3c7",
+      "evidence": [
+        "reference/governance/adr/README.md",
+        "reference/governance/adr/README.es.md",
+        "reference/governance/adr/BILINGUAL_INDEX.md",
+        "reference/governance/adr/BILINGUAL_INDEX.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
+        "node .harness/scripts/ci/01-validate-docs.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-203",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4b54c3c7",
+      "evidence": [
+        "reference/infrastructure/kubernetes/README.md",
+        "reference/infrastructure/kubernetes/README.es.md",
+        "reference/infrastructure/kubernetes/BILINGUAL_INDEX.md",
+        "reference/infrastructure/kubernetes/BILINGUAL_INDEX.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
+        "node .harness/scripts/ci/01-validate-docs.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-204",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4b54c3c7",
+      "evidence": [
+        "reference/infrastructure/docker/README.md",
+        "reference/infrastructure/docker/README.es.md",
+        "reference/infrastructure/helm/README.md",
+        "reference/infrastructure/helm/README.es.md",
+        "reference/infrastructure/kubernetes/README.md",
+        "reference/infrastructure/kubernetes/README.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
+        "node .harness/scripts/ci/01-validate-docs.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-205",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4b54c3c7",
+      "evidence": [
+        "reference/governance/sdlc/01-playbooks/README.md",
+        "reference/governance/sdlc/01-playbooks/README.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
+        "node .harness/scripts/ci/01-validate-docs.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-206",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4b54c3c7",
+      "evidence": [
+        "reference/governance/sdlc/03-documentation/sdlc-documentation-best-practices.md",
+        "reference/governance/sdlc/03-documentation/sdlc-documentation-best-practices.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
+        "node .harness/scripts/ci/01-validate-docs.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-207",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4b54c3c7",
+      "evidence": [
+        "reference/architecture/adrs/core/"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-208",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4b54c3c7",
+      "evidence": [
+        "reference/architecture/adrs/core/0077-masstransit-v9-commercial-pivot.md",
+        "reference/architecture/adrs/core/0077-masstransit-v9-commercial-pivot.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

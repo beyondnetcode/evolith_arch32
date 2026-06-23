@@ -1,4 +1,4 @@
-# ADR 0068: GitFlow de Lanzamiento de Documentación
+# ADR-0068: GitFlow de Lanzamiento de Documentación
 
 ## Estado
 Propuesto

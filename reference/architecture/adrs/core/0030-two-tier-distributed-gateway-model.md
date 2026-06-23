@@ -1,4 +1,4 @@
-# [ADR 0030](0030-two-tier-distributed-gateway-model.md): Two-Tier Distributed Gateway Model
+# ADR-0030: Two-Tier Distributed Gateway Model
 
 ## Status
 Approved

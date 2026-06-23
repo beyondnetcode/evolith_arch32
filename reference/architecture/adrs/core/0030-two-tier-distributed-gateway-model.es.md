@@ -1,4 +1,4 @@
-# [ADR 0030](0030-two-tier-distributed-gateway-model.es.md): Modelo de Gateway Distribuido de Dos Capas
+# ADR-0030: Modelo de Gateway Distribuido de Dos Capas
 
 ## Estado
 Aprobado

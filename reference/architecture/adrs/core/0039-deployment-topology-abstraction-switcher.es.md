@@ -1,4 +1,4 @@
-# [ADR 0039](0039-deployment-topology-abstraction-switcher.md): Abstracción de Topología de Despliegue y Conmutador de Entorno
+# ADR-0039: Abstracción de Topología de Despliegue y Conmutador de Entorno
 
 ## 1. Estado
 **Estado**: Aprobado 

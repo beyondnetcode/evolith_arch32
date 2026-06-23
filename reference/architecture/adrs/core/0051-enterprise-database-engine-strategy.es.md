@@ -1,4 +1,4 @@
-# [ADR 0051](0051-enterprise-database-engine-strategy.md): Estrategia de Selección de Motores de Base de Datos Empresarial
+# ADR-0051: Estrategia de Selección de Motores de Base de Datos Empresarial
 
 ## 1. Metadatos
 * **ADR ID:** 0051

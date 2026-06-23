@@ -1,4 +1,4 @@
-# [ADR 0044](0044-configurable-security-persistence-strategy.md): Estrategia de Persistencia de Seguridad Configurable (Agnosticismo vs. RLS Nativo)
+# ADR-0044: Estrategia de Persistencia de Seguridad Configurable (Agnosticismo vs. RLS Nativo)
 
 ## Estado
 Propuesto

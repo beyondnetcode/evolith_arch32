@@ -1,4 +1,4 @@
-# [ADR 0053](0053-integration-e2e-testing-strategy.md): Estrategia de Pruebas de Integración y E2E
+# ADR-0053: Estrategia de Pruebas de Integración y E2E
 
 ## 1. Metadatos
 * **ADR ID:** 0053

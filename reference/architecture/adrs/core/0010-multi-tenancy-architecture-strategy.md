@@ -1,4 +1,4 @@
-# [ADR 0010](0010-multi-tenancy-architecture-strategy.md): Multi-Tenancy Architecture Strategy for SaaS Evolution
+# ADR-0010: Multi-Tenancy Architecture Strategy for SaaS Evolution
 
 ## Status
 Approved

@@ -1,4 +1,4 @@
-# [ADR 0028](0028-self-hosted-hybrid-infrastructure-on-premise.md): Infraestructura Híbrida de Código Abierto Autohospedada
+# ADR-0028: Infraestructura Híbrida de Código Abierto Autohospedada
 
 ## Estado
 Aprobado

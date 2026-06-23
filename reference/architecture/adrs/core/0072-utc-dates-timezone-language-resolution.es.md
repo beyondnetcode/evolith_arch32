@@ -1,4 +1,4 @@
-# ADR 0072: Almacenamiento UTC de Fechas, Detección de Zona Horaria del Navegador y Resolución de Idioma
+# ADR-0072: Almacenamiento UTC de Fechas, Detección de Zona Horaria del Navegador y Resolución de Idioma
 
 ## Estado
 

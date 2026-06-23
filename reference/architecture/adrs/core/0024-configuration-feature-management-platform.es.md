@@ -1,4 +1,4 @@
-# [ADR 0024](0024-configuration-feature-management-platform.md): Plataforma de Gestión de Características y Configuración
+# ADR-0024: Plataforma de Gestión de Características y Configuración
 
 ## Estado
 Aprobado

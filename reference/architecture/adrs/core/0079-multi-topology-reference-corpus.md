@@ -1,4 +1,4 @@
-# [ADR 0079](0079-multi-topology-reference-corpus.md): Multi-Topology Reference Corpus and Topology Manifest Contract
+# ADR-0079: Multi-Topology Reference Corpus and Topology Manifest Contract
 
 > **Bilingual Navigation:** [Versión en Español](./0079-multi-topology-reference-corpus.es.md)
 

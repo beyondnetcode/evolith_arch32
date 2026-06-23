@@ -42,6 +42,15 @@ Functional requirements must be readable by Product Owners and Business Analysts
 
 ---
 
+### F. Bilingual Index Nesting
+Every directory at depth >= 2 from the repository root that contains bilingual (EN/ES) files MUST have a `BILINGUAL_INDEX.md` / `BILINGUAL_INDEX.es.md` pair documenting the EN/ES pairing status of every file in that directory.
+
+- The index is auto-generated — do not edit manually.
+- A directory's README.md/es pair counts as one bilingual file set.
+- Subdirectories with their own BILINGUAL_INDEX files are listed but the nesting stops at the first BILINGUAL_INDEX entry.
+
+---
+
 ## 3. Feedback & Clean-Up Lifecycle
 
 1. **Continuous Feedback:** Every published page MUST invite corrections via simple ticket creation if details appear ambiguous.

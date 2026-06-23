@@ -1,0 +1,14 @@
+# Bilingual Index: governance/adr
+
+> Auto-generated index of EN/ES pairs. Do not edit manually.
+
+<details>
+<summary><strong>Files</strong></summary>
+
+| EN | ES | Status |
+|----|----|--------|
+| [BILINGUAL_INDEX.md](BILINGUAL_INDEX.md) | [BILINGUAL_INDEX.es.md](BILINGUAL_INDEX.es.md) | OK |
+| [README.md](README.md) | [README.es.md](README.es.md) | OK |
+| [adr-0090-rule-language-policy.md](adr-0090-rule-language-policy.md) | [adr-0090-rule-language-policy.es.md](adr-0090-rule-language-policy.es.md) | OK |
+
+</details>

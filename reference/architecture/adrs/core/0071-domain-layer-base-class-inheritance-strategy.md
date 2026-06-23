@@ -1,4 +1,4 @@
-# ADR 0071: Domain Layer Base Class and Inheritance Strategy
+# ADR-0071: Domain Layer Base Class and Inheritance Strategy
 
 ## Status
 

@@ -1,4 +1,4 @@
-# ADR 0067: Modular Monolith Persistence Boundaries
+# ADR-0067: Modular Monolith Persistence Boundaries
 
 
 ---

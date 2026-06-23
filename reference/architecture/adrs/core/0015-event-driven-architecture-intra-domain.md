@@ -1,4 +1,4 @@
-# [ADR 0015](0015-event-driven-architecture-intra-domain.md): Event-Driven Architecture (EDA) for Intra-Domain Communication
+# ADR-0015: Event-Driven Architecture (EDA) for Intra-Domain Communication
 
 ## Status
 Approved

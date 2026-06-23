@@ -1,4 +1,4 @@
-# [ADR 0020](0020-identity-provider-abstraction-strategy.md): Identity Provider Abstraction Strategy
+# ADR-0020: Identity Provider Abstraction Strategy
 
 ## Status
 Approved

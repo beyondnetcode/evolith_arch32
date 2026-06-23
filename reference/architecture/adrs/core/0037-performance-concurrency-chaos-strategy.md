@@ -1,4 +1,4 @@
-# [ADR 0037](0037-performance-concurrency-chaos-strategy.md): Enterprise Performance, Concurrency & Chaos Verification Strategy
+# ADR-0037: Enterprise Performance, Concurrency & Chaos Verification Strategy
 
 ## Status
 Approved

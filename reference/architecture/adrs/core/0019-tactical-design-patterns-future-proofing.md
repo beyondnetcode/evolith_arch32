@@ -1,4 +1,4 @@
-# [ADR 0019](0019-tactical-design-patterns-future-proofing.md): Tactical Design Patterns for Future-Proofing
+# ADR-0019: Tactical Design Patterns for Future-Proofing
 
 ## Status
 Approved

@@ -1,4 +1,4 @@
-# [ADR 0024](0024-configuration-feature-management-platform.md): Centralized Configuration & Feature Platform
+# ADR-0024: Centralized Configuration & Feature Platform
 
 ## Status
 Approved

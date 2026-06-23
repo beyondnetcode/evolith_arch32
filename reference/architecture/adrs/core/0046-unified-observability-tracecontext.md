@@ -1,4 +1,4 @@
-# [ADR 0046](0046-unified-observability-tracecontext.md): Unified Traceability via W3C TraceContext
+# ADR-0046: Unified Traceability via W3C TraceContext
 
 ## Status
 Approved

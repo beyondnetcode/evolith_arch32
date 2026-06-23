@@ -1,4 +1,4 @@
-# [ADR 0020](0020-identity-provider-abstraction-strategy.md): Estrategia de Abstracción de Proveedor de Identidad
+# ADR-0020: Estrategia de Abstracción de Proveedor de Identidad
 
 ## Estado
 Aprobado

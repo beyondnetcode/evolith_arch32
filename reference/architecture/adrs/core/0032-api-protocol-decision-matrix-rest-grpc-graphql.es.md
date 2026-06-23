@@ -1,4 +1,4 @@
-# [ADR 0032](0032-api-protocol-decision-matrix-rest-grpc-graphql.md): Matriz de Selección de Protocolo de API (REST vs gRPC vs GraphQL)
+# ADR-0032: Matriz de Selección de Protocolo de API (REST vs gRPC vs GraphQL)
 
 ## Estado
 Aprobado

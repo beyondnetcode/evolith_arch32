@@ -28,17 +28,17 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-183`](./gap-reference-catalog.md#gt-183) | Build minimal BFF scaffolding (NestJS) | `Architecture` | Cross | P2 | L | `PENDING` |
 | [`GT-188`](./gap-reference-catalog.md#gt-188) | Add tests for 15 zero-coverage files | `CLI` | Cross | P2 | L | `PENDING` |
 | [`GT-197`](./gap-reference-catalog.md#gt-197) | Fix intermittent release pipeline failures | `DevOps` | Cross | P2 | L | `PENDING` |
-| [`GT-198`](./gap-reference-catalog.md#gt-198) | Fix `Moscoww` typo (5 sites) | `CLI` | Cross | P3 | S | `PENDING` |
-| [`GT-199`](./gap-reference-catalog.md#gt-199) | Move import to top of file | `CLI` | Cross | P3 | S | `PENDING` |
-| [`GT-200`](./gap-reference-catalog.md#gt-200) | Convert 11-param constructor to options object | `CLI` | Cross | P3 | S | `PENDING` |
-| [`GT-201`](./gap-reference-catalog.md#gt-201) | Extract hardcoded values to constants | `CLI` | Cross | P3 | S | `PENDING` |
-| [`GT-202`](./gap-reference-catalog.md#gt-202) | Add README to `governance/adr/` directory | `Docs` | Cross | P3 | S | `PENDING` |
-| [`GT-203`](./gap-reference-catalog.md#gt-203) | Remove or populate empty `kubernetes/` dir | `Docs` | Cross | P3 | S | `PENDING` |
-| [`GT-204`](./gap-reference-catalog.md#gt-204) | Add READMEs to infra directories | `Docs` | Cross | P3 | S | `PENDING` |
-| [`GT-205`](./gap-reference-catalog.md#gt-205) | Add README to SDLC playbooks dir | `Docs` | Cross | P3 | S | `PENDING` |
-| [`GT-206`](./gap-reference-catalog.md#gt-206) | Formalize BILINGUAL_INDEX nesting rule | `Docs` | Cross | P3 | S | `PENDING` |
-| [`GT-207`](./gap-reference-catalog.md#gt-207) | Standardize ADR heading format | `Docs` | Cross | P3 | S | `PENDING` |
-| [`GT-208`](./gap-reference-catalog.md#gt-208) | Schedule ADR-0077 re-evaluation reminder | `Docs` | Cross | P3 | S | `PENDING` |
+| [`GT-198`](./gap-reference-catalog.md#gt-198) | Fix `Moscoww` typo (5 sites) | `CLI` | Cross | P3 | S | `DONE` |
+| [`GT-199`](./gap-reference-catalog.md#gt-199) | Move import to top of file | `CLI` | Cross | P3 | S | `DONE` |
+| [`GT-200`](./gap-reference-catalog.md#gt-200) | Convert 11-param constructor to options object | `CLI` | Cross | P3 | S | `DONE` |
+| [`GT-201`](./gap-reference-catalog.md#gt-201) | Extract hardcoded values to constants | `CLI` | Cross | P3 | S | `DONE` |
+| [`GT-202`](./gap-reference-catalog.md#gt-202) | Add README to `governance/adr/` directory | `Docs` | Cross | P3 | S | `DONE` |
+| [`GT-203`](./gap-reference-catalog.md#gt-203) | Remove or populate empty `kubernetes/` dir | `Docs` | Cross | P3 | S | `DONE` |
+| [`GT-204`](./gap-reference-catalog.md#gt-204) | Add READMEs to infra directories | `Docs` | Cross | P3 | S | `DONE` |
+| [`GT-205`](./gap-reference-catalog.md#gt-205) | Add README to SDLC playbooks dir | `Docs` | Cross | P3 | S | `DONE` |
+| [`GT-206`](./gap-reference-catalog.md#gt-206) | Formalize BILINGUAL_INDEX nesting rule | `Docs` | Cross | P3 | S | `DONE` |
+| [`GT-207`](./gap-reference-catalog.md#gt-207) | Standardize ADR heading format | `Docs` | Cross | P3 | S | `DONE` |
+| [`GT-208`](./gap-reference-catalog.md#gt-208) | Schedule ADR-0077 re-evaluation reminder | `Docs` | Cross | P3 | S | `DONE` |
 | [`GT-209`](./gap-reference-catalog.md#gt-209) | Create agnostic baseline (`agnostic-baseline.md` missing) | `Architecture` | Cross | P0 | M | `DONE` |
 | [`GT-169`](./gap-reference-catalog.md#gt-169) | Agentic AI operational budgets, credential lifecycle, and runbooks | `Architecture` | Cross | P1 | L | `DONE` |
 | [`GT-173`](./gap-reference-catalog.md#gt-173) | OpenTelemetry export parity across CLI, MCP, and REST | `Cross` | Cross | P2 | M | `DONE` |
@@ -228,7 +228,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-185`](./gap-reference-catalog.md#gt-185) | Fix MCP tool stubs | `MCP Services` | Cross | P1 | M | `DONE` |
 | [`GT-210`](./gap-reference-catalog.md#gt-210) | Complete SDLC Phase 05 (missing phase) | `SDLC` | Cross | P1 | M | `DONE` |
 
-**Progress:** 194 / 214 done · 0 in progress · 20 pending · 0 deferred
+**Progress:** 205 / 214 done · 0 in progress · 9 pending · 0 deferred
 
 **Wave 2026-06-22 (Wilson deep audit):** Added 3 new gaps `GT-209`…`GT-211`: missing agnostic baseline, incomplete SDLC Phase 05, and orphan Spanish-only ADRs without English counterparts.
 

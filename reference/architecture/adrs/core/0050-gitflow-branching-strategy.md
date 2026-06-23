@@ -1,4 +1,4 @@
-# ADR 0050: Gitflow Branching Strategy Standardization
+# ADR-0050: Gitflow Branching Strategy Standardization
 
 ## Status
 Accepted

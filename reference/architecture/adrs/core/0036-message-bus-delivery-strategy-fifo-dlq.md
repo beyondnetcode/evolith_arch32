@@ -1,4 +1,4 @@
-# [ADR 0036](0036-message-bus-delivery-strategy-fifo-dlq.md): Message Bus Delivery & Flow Control Strategy
+# ADR-0036: Message Bus Delivery & Flow Control Strategy
 
 ## Status
 Approved

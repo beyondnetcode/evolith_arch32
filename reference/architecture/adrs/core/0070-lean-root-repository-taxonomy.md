@@ -1,4 +1,4 @@
-# ADR 0070: Lean Root Repository Taxonomy
+# ADR-0070: Lean Root Repository Taxonomy
 
 ## Status
 

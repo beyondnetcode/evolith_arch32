@@ -1,4 +1,4 @@
-# [ADR 0001](0001-monorepo-orchestration-principle.es.md): Principio de Orquestación de Monorepo
+# ADR-0001: Principio de Orquestación de Monorepo
 
 ## Estado
 Aprobado

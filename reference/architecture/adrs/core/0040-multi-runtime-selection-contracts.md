@@ -1,4 +1,4 @@
-# [ADR 0040](0040-multi-runtime-selection-contracts.md): Multi-Runtime Selection Matrix & Inter-Runtime Contracts
+# ADR-0040: Multi-Runtime Selection Matrix & Inter-Runtime Contracts
 
 ## 1. Status
 **Status**: Approved 

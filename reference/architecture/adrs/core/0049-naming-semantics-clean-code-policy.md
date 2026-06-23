@@ -1,4 +1,4 @@
-# [ADR 0049](0049-naming-semantics-clean-code-policy.md): Naming Semantics & Clean Code Policy (E2E and Global)
+# ADR-0049: Naming Semantics & Clean Code Policy (E2E and Global)
 
 ## 1. Metadata
 * **ADR ID:** 0049

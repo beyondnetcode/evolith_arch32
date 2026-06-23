@@ -1,4 +1,4 @@
-# ADR 0099: Distribución de OPA Bundle vía S3 (MinIO)
+# ADR-0099: Distribución de OPA Bundle vía S3 (MinIO)
 
 ## Estado
 Reemplazado por [ADR 0085](./0085-agnostic-opa-wasm-distribution.es.md)

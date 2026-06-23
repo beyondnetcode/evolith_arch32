@@ -1,4 +1,4 @@
-# [ADR 0036](0036-message-bus-delivery-strategy-fifo-dlq.md): Estrategia de Entrega y Control de Flujo del Bus de Mensajes
+# ADR-0036: Estrategia de Entrega y Control de Flujo del Bus de Mensajes
 
 ## Estado
 Aprobado

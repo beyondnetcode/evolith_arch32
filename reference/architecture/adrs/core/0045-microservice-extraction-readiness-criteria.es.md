@@ -1,4 +1,4 @@
-# [ADR 0045](0045-microservice-extraction-readiness-criteria.md): Criterios de Aceptación para la Extracción de Microservicios
+# ADR-0045: Criterios de Aceptación para la Extracción de Microservicios
 
 ## Estatus
 Aprobado

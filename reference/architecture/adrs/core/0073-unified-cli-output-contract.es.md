@@ -1,4 +1,4 @@
-# [ADR 0073](0073-unified-cli-output-contract.md): Contrato Unificado de Salida CLI/MCP y Schema de Evidencia de Gates
+# ADR-0073: Contrato Unificado de Salida CLI/MCP y Schema de Evidencia de Gates
 
 > **Navegación Bilingüe:** [English Version](./0073-unified-cli-output-contract.md)
 

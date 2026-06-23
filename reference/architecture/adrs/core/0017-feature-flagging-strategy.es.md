@@ -1,4 +1,4 @@
-# [ADR 0017](0017-feature-flagging-strategy.md): Estrategia de Feature Flagging para Entrega Progresiva
+# ADR-0017: Estrategia de Feature Flagging para Entrega Progresiva
 
 ## Estado
 Aprobado

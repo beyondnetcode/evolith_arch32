@@ -1,4 +1,4 @@
-# [ADR 0016](0016-immutable-business-audit-trail.md): Immutable Business Audit Trail and Change Tracking
+# ADR-0016: Immutable Business Audit Trail and Change Tracking
 
 ## Status
 Approved

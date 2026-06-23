@@ -1,4 +1,4 @@
-# [ADR 0025](0025-feature-flag-provider-abstraction.md): Feature Flag Provider Abstraction Strategy
+# ADR-0025: Feature Flag Provider Abstraction Strategy
 
 ## Status
 Approved

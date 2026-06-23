@@ -28,17 +28,17 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-183`](./gap-reference-catalog.es.md#gt-183) | Construir scaffolding BFF mínimo (NestJS) | `Architecture` | Cross | P2 | L | `PENDIENTE` |
 | [`GT-188`](./gap-reference-catalog.es.md#gt-188) | Agregar tests para 15 archivos sin cobertura | `CLI` | Cross | P2 | L | `PENDIENTE` |
 | [`GT-197`](./gap-reference-catalog.es.md#gt-197) | Corregir fallos intermitentes pipeline release | `DevOps` | Cross | P2 | L | `PENDIENTE` |
-| [`GT-198`](./gap-reference-catalog.es.md#gt-198) | Corregir typo "Moscoww" (5 sitios) | `CLI` | Cross | P3 | S | `PENDIENTE` |
-| [`GT-199`](./gap-reference-catalog.es.md#gt-199) | Mover import al inicio del archivo | `CLI` | Cross | P3 | S | `PENDIENTE` |
-| [`GT-200`](./gap-reference-catalog.es.md#gt-200) | Convertir constructor 11-param a objeto options | `CLI` | Cross | P3 | S | `PENDIENTE` |
-| [`GT-201`](./gap-reference-catalog.es.md#gt-201) | Extraer valores hardcodeados a constantes | `CLI` | Cross | P3 | S | `PENDIENTE` |
-| [`GT-202`](./gap-reference-catalog.es.md#gt-202) | Agregar README a directorio `governance/adr/` | `Docs` | Cross | P3 | S | `PENDIENTE` |
-| [`GT-203`](./gap-reference-catalog.es.md#gt-203) | Eliminar o poblar dir vacío `kubernetes/` | `Docs` | Cross | P3 | S | `PENDIENTE` |
-| [`GT-204`](./gap-reference-catalog.es.md#gt-204) | Agregar READMEs a directorios infra | `Docs` | Cross | P3 | S | `PENDIENTE` |
-| [`GT-205`](./gap-reference-catalog.es.md#gt-205) | Agregar README a directorio SDLC playbooks | `Docs` | Cross | P3 | S | `PENDIENTE` |
-| [`GT-206`](./gap-reference-catalog.es.md#gt-206) | Formalizar regla de anidación BILINGUAL_INDEX | `Docs` | Cross | P3 | S | `PENDIENTE` |
-| [`GT-207`](./gap-reference-catalog.es.md#gt-207) | Estandarizar formato encabezados ADR | `Docs` | Cross | P3 | S | `PENDIENTE` |
-| [`GT-208`](./gap-reference-catalog.es.md#gt-208) | Programar reevaluación ADR-0077 (MassTransit EOL) | `Docs` | Cross | P3 | S | `PENDIENTE` |
+| [`GT-198`](./gap-reference-catalog.es.md#gt-198) | Corregir typo "Moscoww" (5 sitios) | `CLI` | Cross | P3 | S | `COMPLETADO` |
+| [`GT-199`](./gap-reference-catalog.es.md#gt-199) | Mover import al inicio del archivo | `CLI` | Cross | P3 | S | `COMPLETADO` |
+| [`GT-200`](./gap-reference-catalog.es.md#gt-200) | Convertir constructor 11-param a objeto options | `CLI` | Cross | P3 | S | `COMPLETADO` |
+| [`GT-201`](./gap-reference-catalog.es.md#gt-201) | Extraer valores hardcodeados a constantes | `CLI` | Cross | P3 | S | `COMPLETADO` |
+| [`GT-202`](./gap-reference-catalog.es.md#gt-202) | Agregar README a directorio `governance/adr/` | `Docs` | Cross | P3 | S | `COMPLETADO` |
+| [`GT-203`](./gap-reference-catalog.es.md#gt-203) | Eliminar o poblar dir vacío `kubernetes/` | `Docs` | Cross | P3 | S | `COMPLETADO` |
+| [`GT-204`](./gap-reference-catalog.es.md#gt-204) | Agregar READMEs a directorios infra | `Docs` | Cross | P3 | S | `COMPLETADO` |
+| [`GT-205`](./gap-reference-catalog.es.md#gt-205) | Agregar README a directorio SDLC playbooks | `Docs` | Cross | P3 | S | `COMPLETADO` |
+| [`GT-206`](./gap-reference-catalog.es.md#gt-206) | Formalizar regla de anidación BILINGUAL_INDEX | `Docs` | Cross | P3 | S | `COMPLETADO` |
+| [`GT-207`](./gap-reference-catalog.es.md#gt-207) | Estandarizar formato encabezados ADR | `Docs` | Cross | P3 | S | `COMPLETADO` |
+| [`GT-208`](./gap-reference-catalog.es.md#gt-208) | Programar reevaluación ADR-0077 (MassTransit EOL) | `Docs` | Cross | P3 | S | `COMPLETADO` |
 | [`GT-209`](./gap-reference-catalog.es.md#gt-209) | Crear baseline agnóstico (`agnostic-baseline.md` ausente) | `Architecture` | Cross | P0 | M | `COMPLETADO` |
 | [`GT-169`](./gap-reference-catalog.es.md#gt-169) | Presupuestos operativos, ciclo de credenciales y runbooks de Agentic AI | `Architecture` | Cross | P1 | L | `COMPLETADO` |
 | [`GT-173`](./gap-reference-catalog.es.md#gt-173) | Paridad de exportación OpenTelemetry en CLI, MCP y REST | `Cross` | Cross | P2 | M | `COMPLETADO` |
@@ -228,7 +228,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-185`](./gap-reference-catalog.es.md#gt-185) | Corregir stubs de herramientas MCP | `MCP Services` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-210`](./gap-reference-catalog.es.md#gt-210) | Completar Fase SDLC 05 (fase faltante) | `SDLC` | Cross | P1 | M | `COMPLETADO` |
 
-**Progreso:** 194 / 214 completados · 0 en progreso · 20 pendientes · 0 diferidos
+**Progreso:** 205 / 214 completados · 0 en progreso · 9 pendientes · 0 diferidos
 
 **Oleada 2026-06-21 (auditoría profunda de Wilson):** Añadidos 20 gaps nuevos `GT-155`…`GT-174` que cubren conformidad de envelope en Core API REST, paridad de superficies command-as-a-service, autenticación/autorización MCP, esquemas y tests de OPA, validación CI de manifests de topología, runbooks y plantillas SDLC, hubs de producto de Core API y UMS, presupuestos operativos de Agentic AI, paridad OpenTelemetry y versionado del envelope.
 

@@ -1,4 +1,4 @@
-# [ADR 0005](0005-automated-sast-quality-gates.md): Automated SAST Quality Gates in CI/CD
+# ADR-0005: Automated SAST Quality Gates in CI/CD
 
 ## Status
 Approved

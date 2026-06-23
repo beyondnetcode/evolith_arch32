@@ -1,4 +1,4 @@
-# [ADR 0006](0006-microservices-transition-sidecar-pattern.md): Microservices Transition via Sidecar Pattern
+# ADR-0006: Microservices Transition via Sidecar Pattern
 
 ## Status
 Approved - Backlog (Phase 3 Milestone)

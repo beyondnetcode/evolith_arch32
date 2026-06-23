@@ -1,4 +1,4 @@
-# [ADR 0039](0039-deployment-topology-abstraction-switcher.md): Deployment Topology Abstraction & Environment Switcher
+# ADR-0039: Deployment Topology Abstraction & Environment Switcher
 
 ## 1. Status
 **Status**: Approved 

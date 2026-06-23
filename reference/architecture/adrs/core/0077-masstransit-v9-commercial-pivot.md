@@ -1,4 +1,4 @@
-# [ADR 0077](0077-masstransit-v9-commercial-pivot.es.md): MassTransit v9 Commercial Pivot — Stay on v8, Monitor OpenTransit
+# ADR-0077: MassTransit v9 Commercial Pivot — Stay on v8, Monitor OpenTransit
 
 > **Bilingual Navigation:** [Versión en Español](./0077-masstransit-v9-commercial-pivot.es.md)
 
@@ -73,6 +73,16 @@ A re-evaluation gate is set for Q1 2027.
 - The `IEventBusPort` abstraction ([ADR-0015](./0015-event-driven-architecture-intra-domain.md)) already decouples the application from the bus implementation, limiting migration blast radius to the adapter layer.
 - A dated migration plan will be drafted by Q4 2026, triggered by the OpenTransit maturity assessment.
 - Schedule a re-evaluation checkpoint for 2027-01-15 in the Architecture Intelligence Portal.
+
+## Technology Watch
+
+| Item | Schedule | Owner |
+| :--- | :--- | :--- |
+| MassTransit v8 EOL | 2026-12-31 | .NET Platform Team |
+| Re-evaluation checkpoint | 2027-01-15 | Architecture Board |
+| OpenTransit maturity assessment | Q4 2026 | .NET Platform Team |
+
+A calendar reminder for the **2027-01-15 re-evaluation checkpoint** has been registered in the Architecture Intelligence Portal. The .NET Platform Team should begin the OpenTransit maturity assessment by **Q4 2026** to inform the re-evaluation decision.
 
 ## Compliance
 

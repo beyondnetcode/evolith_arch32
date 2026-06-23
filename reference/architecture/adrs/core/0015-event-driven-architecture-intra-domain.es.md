@@ -1,4 +1,4 @@
-# [ADR 0015](0015-event-driven-architecture-intra-domain.md): Arquitectura Dirigida por Eventos (EDA) para la Comunicación Intra-Dominio
+# ADR-0015: Arquitectura Dirigida por Eventos (EDA) para la Comunicación Intra-Dominio
 
 ## Estado
 Aprobado

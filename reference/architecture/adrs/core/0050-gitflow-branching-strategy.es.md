@@ -1,4 +1,4 @@
-# ADR 0050: Estandarizacion de la Estrategia de Ramas Gitflow
+# ADR-0050: Estandarizacion de la Estrategia de Ramas Gitflow
 
 ## Estado
 Aceptado

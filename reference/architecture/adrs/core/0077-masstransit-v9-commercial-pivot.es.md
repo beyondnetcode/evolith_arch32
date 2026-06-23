@@ -1,4 +1,4 @@
-# [ADR 0077](0077-masstransit-v9-commercial-pivot.md): Giro Comercial de MassTransit v9 — Quedarse en v8, Monitorear OpenTransit
+# ADR-0077: Giro Comercial de MassTransit v9 — Quedarse en v8, Monitorear OpenTransit
 
 > **Navegación Bilingüe:** [English Version](./0077-masstransit-v9-commercial-pivot.md)
 
@@ -73,6 +73,16 @@ Se establece un punto de reevaluación para Q1 2027.
 - La abstracción `IEventBusPort` ([ADR-0015](./0015-event-driven-architecture-intra-domain.md)) ya desacopla la aplicación de la implementación del bus, limitando el radio de explosión de la migración a la capa del adaptador.
 - Se redactará un plan de migración fechado para Q4 2026, activado por la evaluación de madurez de OpenTransit.
 - Se programará un punto de control de reevaluación para 2027-01-15 en el Architecture Intelligence Portal.
+
+## Vigilancia Tecnológica
+
+| Ítem | Cronograma | Responsable |
+| :--- | :--- | :--- |
+| MassTransit v8 EOL | 2026-12-31 | Equipo .NET Platform |
+| Punto de control de reevaluación | 2027-01-15 | Comité de Arquitectura |
+| Evaluación de madurez de OpenTransit | Q4 2026 | Equipo .NET Platform |
+
+Se ha registrado un recordatorio de calendario para el **punto de control de reevaluación del 2027-01-15** en el Architecture Intelligence Portal. El equipo .NET Platform debe comenzar la evaluación de madurez de OpenTransit en **Q4 2026** para informar la decisión de reevaluación.
 
 ## Cumplimiento
 

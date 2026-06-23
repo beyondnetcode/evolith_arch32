@@ -1,6 +1,6 @@
 > **Bilingual Navigation:** [View English version](./0085-agnostic-opa-wasm-distribution.md)
 
-# ADR 0085: Arquitectura de Distribución Agnóstica de OPA Wasm
+# ADR-0085: Arquitectura de Distribución Agnóstica de OPA Wasm
 
 ## Estado
 Aceptado

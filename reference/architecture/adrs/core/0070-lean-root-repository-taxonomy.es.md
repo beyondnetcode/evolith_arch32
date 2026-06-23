@@ -1,4 +1,4 @@
-# ADR 0070: Taxonomía Lean del Directorio Raíz del Repositorio
+# ADR-0070: Taxonomía Lean del Directorio Raíz del Repositorio
 
 ## Estado
 

@@ -1,4 +1,4 @@
-# [ADR 0047](0047-architectural-patterns-monolith-soa-microservices.md): Progressive Architecture Evolution Framework: Modular Monolith → Microservices
+# ADR-0047: Progressive Architecture Evolution Framework: Modular Monolith → Microservices
 
 ## 1. Metadata
 * **ADR ID:** 0047

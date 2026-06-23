@@ -1,4 +1,4 @@
-# [ADR 0028](0028-self-hosted-hybrid-infrastructure-on-premise.md): Self-Hosted, Open-Source Hybrid Infrastructure
+# ADR-0028: Self-Hosted, Open-Source Hybrid Infrastructure
 
 ## Status
 Approved

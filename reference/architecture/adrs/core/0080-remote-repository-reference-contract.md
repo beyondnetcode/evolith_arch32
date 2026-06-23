@@ -1,4 +1,4 @@
-# [ADR 0080](0080-remote-repository-reference-contract.md): Remote Repository Reference Contract
+# ADR-0080: Remote Repository Reference Contract
 
 > **Bilingual Navigation:** [Versión en Español](./0080-remote-repository-reference-contract.es.md)
 

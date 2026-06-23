@@ -1,6 +1,6 @@
 > **Bilingual Navigation:** [Ver versión en Español](./0086-agentic-ai-telemetry-cost-control.es.md)
 
-# ADR 0086: Agentic AI Telemetry & Cost Control Standard
+# ADR-0086: Agentic AI Telemetry & Cost Control Standard
 
 ## Status
 Accepted

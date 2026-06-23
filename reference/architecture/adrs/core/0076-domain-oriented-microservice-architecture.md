@@ -1,4 +1,4 @@
-# [ADR 0076](0076-domain-oriented-microservice-architecture.es.md): Domain-Oriented Microservice Architecture (DOMA)
+# ADR-0076: Domain-Oriented Microservice Architecture (DOMA)
 
 > **Bilingual Navigation:** [Versión en Español](./0076-domain-oriented-microservice-architecture.es.md)
 

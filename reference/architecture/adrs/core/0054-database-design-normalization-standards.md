@@ -1,4 +1,4 @@
-# [ADR 0054](0054-database-design-normalization-standards.md): Database Design and Normalization Standards
+# ADR-0054: Database Design and Normalization Standards
 
 ## 1. Metadata
 * **ADR ID:** 0054

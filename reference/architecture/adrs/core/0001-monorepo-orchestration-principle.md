@@ -1,4 +1,4 @@
-# [ADR 0001](0001-monorepo-orchestration-principle.md): Monorepo Orchestration Principle
+# ADR-0001: Monorepo Orchestration Principle
 
 ## Status
 Approved

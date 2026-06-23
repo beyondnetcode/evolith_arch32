@@ -1,4 +1,4 @@
-# [ADR 0013](0013-cloud-infrastructure-topology-dr.md): Cloud Infrastructure Topology and Disaster Recovery (DR)
+# ADR-0013: Cloud Infrastructure Topology and Disaster Recovery (DR)
 
 ## Status
 Approved

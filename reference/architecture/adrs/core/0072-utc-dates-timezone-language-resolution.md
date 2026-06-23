@@ -1,4 +1,4 @@
-# ADR 0072: UTC Date Storage, Browser Timezone Detection, and Language Resolution
+# ADR-0072: UTC Date Storage, Browser Timezone Detection, and Language Resolution
 
 ## Status
 

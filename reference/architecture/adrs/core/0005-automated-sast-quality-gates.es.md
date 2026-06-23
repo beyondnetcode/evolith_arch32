@@ -1,4 +1,4 @@
-# [ADR 0005](0005-automated-sast-quality-gates.es.md): Puertas de Calidad SAST Automatizadas en CI/CD
+# ADR-0005: Puertas de Calidad SAST Automatizadas en CI/CD
 
 ## Estado
 Aprobado

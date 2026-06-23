@@ -42,6 +42,15 @@ Los requisitos funcionales deben ser legibles por Product Owners y Analistas de 
 
 ---
 
+### F. Anidación de Índice Bilingüe
+Todo directorio en profundidad >= 2 desde la raíz del repositorio que contenga archivos bilingües (EN/ES) DEBE tener un par `BILINGUAL_INDEX.md` / `BILINGUAL_INDEX.es.md` que documente el estado de emparejamiento EN/ES de cada archivo en ese directorio.
+
+- El índice se genera automáticamente — no editar manualmente.
+- El par README.md/es de un directorio cuenta como un conjunto de archivos bilingües.
+- Los subdirectorios con sus propios archivos BILINGUAL_INDEX se listan, pero la anidación se detiene en la primera entrada de BILINGUAL_INDEX.
+
+---
+
 ## 3. Ciclo de Retroalimentación y Limpieza
 
 1. **Retroalimentación Continua:** Toda página publicada DEBE invitar a correcciones vía creación de tickets simples si los detalles parecen ambiguos.

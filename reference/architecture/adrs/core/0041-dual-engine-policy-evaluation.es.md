@@ -1,4 +1,4 @@
-# ADR 0041: Evaluación de Políticas Dual-Engine (Nativo + OPA)
+# ADR-0041: Evaluación de Políticas Dual-Engine (Nativo + OPA)
 
 ## Estado
 Aceptado

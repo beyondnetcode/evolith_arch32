@@ -1,4 +1,4 @@
-# [ADR 0035](0035-distributed-saga-pattern-strategy.md): Distributed Saga Pattern Implementation Strategy
+# ADR-0035: Distributed Saga Pattern Implementation Strategy
 
 ## Status
 Approved

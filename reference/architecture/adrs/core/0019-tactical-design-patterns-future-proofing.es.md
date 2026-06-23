@@ -1,4 +1,4 @@
-# [ADR 0019](0019-tactical-design-patterns-future-proofing.md): Patrones de Diseño Táctico para Blindaje a Futuro
+# ADR-0019: Patrones de Diseño Táctico para Blindaje a Futuro
 
 ## Estado
 Aprobado

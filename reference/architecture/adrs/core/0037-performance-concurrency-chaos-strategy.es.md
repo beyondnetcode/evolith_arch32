@@ -1,4 +1,4 @@
-# [ADR 0037](0037-performance-concurrency-chaos-strategy.md): Estrategia Empresarial de Verificación de Rendimiento, Concurrencia y Caos
+# ADR-0037: Estrategia Empresarial de Verificación de Rendimiento, Concurrencia y Caos
 
 ## Estado
 Aprobado

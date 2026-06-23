@@ -1,4 +1,4 @@
-# [ADR 0031](0031-schema-per-context-domain-event-catalog.md): Esquema por Contexto Delimitado y Catálogo de Eventos de Dominio
+# ADR-0031: Esquema por Contexto Delimitado y Catálogo de Eventos de Dominio
 
 ## Estado
 Aprobado

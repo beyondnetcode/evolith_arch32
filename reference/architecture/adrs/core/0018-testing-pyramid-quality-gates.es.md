@@ -1,4 +1,4 @@
-# [ADR 0018](0018-testing-pyramid-quality-gates.md): Pirámide de Pruebas y Puertas de Calidad Automatizadas
+# ADR-0018: Pirámide de Pruebas y Puertas de Calidad Automatizadas
 
 ## Estado
 Aprobado

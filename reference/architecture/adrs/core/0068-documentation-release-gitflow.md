@@ -1,4 +1,4 @@
-# ADR 0068: Documentation Release GitFlow
+# ADR-0068: Documentation Release GitFlow
 
 ## Status
 Proposed

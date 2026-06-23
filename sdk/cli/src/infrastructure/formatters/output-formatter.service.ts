@@ -1,3 +1,5 @@
+import chalk from 'chalk';
+
 export type OutputFormat = 'json' | 'table' | 'yaml' | 'markdown';
 
 export interface TableColumn {
@@ -240,4 +242,3 @@ export class OutputFormatterService {
   }
 }
 
-import chalk from 'chalk';

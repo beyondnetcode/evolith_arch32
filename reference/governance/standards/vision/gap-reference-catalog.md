@@ -1973,57 +1973,57 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-198
 **Purpose:** Fix `Moscoww` typo (5 sites in prompts/index.ts, resources/index.ts).
-**Current Evidence:** "Moscow" misspelled as "Moscoww" in 5 locations.
-**Done When:** All occurrences of "Moscoww" corrected to "Moscow".
+**Current Evidence:** The files containing the typo (`sdk/cli/src/infrastructure/mcp/prompts/index.ts`, `sdk/cli/src/infrastructure/mcp/resources/index.ts`) were removed in commit c4835e0db as part of in-process MCP removal. The typo no longer exists in the codebase.
+**Done When:** All occurrences of "Moscoww" corrected to "Moscow". **Closure Note:** Resolved by file deletion — the files containing the typo were removed.
 
 #### GT-199
 **Purpose:** Move import to top of file (output-formatter.service.ts:242).
-**Current Evidence:** Import statement appears mid-file, violating style guidelines.
+**Current Evidence:** The `import chalk from 'chalk'` statement was at line 243 (end of file). Moved to top of file.
 **Done When:** All imports are at the top of their respective files.
 
 #### GT-200
 **Purpose:** Convert 11-param constructor to options object (server.ts).
-**Current Evidence:** Constructor with 11 positional parameters is fragile.
-**Done When:** Constructor uses a single options object parameter.
+**Current Evidence:** The `sdk/cli/src/infrastructure/mcp/server.ts` file with the constructor was removed in commit c4835e0db as part of in-process MCP removal. The MCP server now lives in `packages/mcp-server/`.
+**Done When:** Constructor uses a single options object parameter. **Closure Note:** Resolved by file deletion.
 
 #### GT-201
 **Purpose:** Extract hardcoded values to constants (server.ts: 127.0.0.1, evolith.yaml x4).
-**Current Evidence:** Hardcoded configuration values in source code.
-**Done When:** All hardcoded values extracted to named constants or configuration.
+**Current Evidence:** The `sdk/cli/src/infrastructure/mcp/server.ts` file containing the hardcoded values was removed in commit c4835e0db.
+**Done When:** All hardcoded values extracted to named constants or configuration. **Closure Note:** Resolved by file deletion.
 
 #### GT-202
 **Purpose:** Add README to `governance/adr/` directory.
-**Current Evidence:** `governance/adr/` has no README or BILINGUAL_INDEX.
+**Current Evidence:** README.md and README.es.md exist in `reference/governance/adr/` with directory index. BILINGUAL_INDEX.md/es also added.
 **Done When:** README.md and README.es.md exist with directory index.
 
 #### GT-203
 **Purpose:** Remove or populate empty `kubernetes/` directory.
-**Current Evidence:** `reference/infrastructure/kubernetes/` is empty.
+**Current Evidence:** `reference/infrastructure/kubernetes/` now has README.md, README.es.md, and BILINGUAL_INDEX.md/es.
 **Done When:** Directory either contains content or is removed.
 
 #### GT-204
 **Purpose:** Add READMEs to `docker/`, `helm/`, `kubernetes/` directories in infrastructure.
-**Current Evidence:** Infrastructure directories lack documentation.
+**Current Evidence:** All three directories now have README.md and README.es.md with purpose and file listings.
 **Done When:** Each directory has README.md with purpose and usage.
 
 #### GT-205
 **Purpose:** Add README to SDLC 01-playbooks/ directory.
-**Current Evidence:** SDLC playbooks directory lacks index documentation.
+**Current Evidence:** `reference/governance/sdlc/01-playbooks/` has README.md and README.es.md with directory listing and purpose.
 **Done When:** README.md exists with directory listing and purpose.
 
 #### GT-206
 **Purpose:** Formalize BILINGUAL_INDEX nesting rule for deep directories.
-**Current Evidence:** Deep directories lack bilingual index files.
+**Current Evidence:** BILINGUAL_INDEX nesting rule documented in SDLC Documentation Best Practices (Section 2.F). Applied to `governance/adr/` and `infrastructure/kubernetes/`.
 **Done When:** Standard documented and applied to all deep directories.
 
 #### GT-207
 **Purpose:** Standardize ADR heading format (3 different formats across core ADRs).
-**Current Evidence:** ADRs use inconsistent heading formats.
+**Current Evidence:** All 106 core ADR files now use the canonical `# ADR-NNNN: Title` heading format per the ADR authoring standard template.
 **Done When:** All core ADRs follow the standard heading format per ADR authoring standard.
 
 #### GT-208
 **Purpose:** Schedule ADR-0077 re-evaluation reminder (MassTransit v8 EOL end-2026).
-**Current Evidence:** No scheduled review for MassTransit v8 EOL.
+**Current Evidence:** Technology Watch section added to ADR-0077 with calendar reminder for 2027-01-15 re-evaluation checkpoint, registered in Architecture Intelligence Portal.
 **Done When:** Calendar reminder set and documented in ADR-0077.
 
 #### GT-209

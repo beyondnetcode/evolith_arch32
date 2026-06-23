@@ -1972,57 +1972,57 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-198
 **Propósito:** Corregir typo "Moscoww" (5 sitios en prompts/index.ts, resources/index.ts).
-**Evidencia Actual:** "Moscow" mal escrito como "Moscoww" en 5 ubicaciones.
-**Hecho Cuando:** Todas las ocurrencias de "Moscoww" corregidas a "Moscow".
+**Evidencia Actual:** Los archivos que contenían el typo (`sdk/cli/src/infrastructure/mcp/prompts/index.ts`, `sdk/cli/src/infrastructure/mcp/resources/index.ts`) fueron eliminados en el commit c4835e0db. El typo ya no existe en el código fuente.
+**Hecho Cuando:** Todas las ocurrencias de "Moscoww" corregidas a "Moscow". **Nota de Cierre:** Resuelto por eliminación de archivos.
 
 #### GT-199
 **Propósito:** Mover import al inicio del archivo (output-formatter.service.ts:242).
-**Evidencia Actual:** Sentencia import aparece en medio del archivo, violando guías de estilo.
+**Evidencia Actual:** `import chalk from 'chalk'` movido de la línea 243 (final del archivo) al inicio.
 **Hecho Cuando:** Todos los imports están al inicio de sus respectivos archivos.
 
 #### GT-200
 **Propósito:** Convertir constructor de 11 parámetros a objeto options (server.ts).
-**Evidencia Actual:** Constructor con 11 parámetros posicionales es frágil.
-**Hecho Cuando:** Constructor usa un solo parámetro objeto options.
+**Evidencia Actual:** El archivo `sdk/cli/src/infrastructure/mcp/server.ts` con el constructor fue eliminado en el commit c4835e0db. El servidor MCP ahora está en `packages/mcp-server/`.
+**Hecho Cuando:** Constructor usa un solo parámetro objeto options. **Nota de Cierre:** Resuelto por eliminación de archivo.
 
 #### GT-201
 **Propósito:** Extraer valores hardcodeados a constantes (server.ts: 127.0.0.1, evolith.yaml x4).
-**Evidencia Actual:** Valores de configuración hardcodeados en código fuente.
-**Hecho Cuando:** Todos los valores hardcodeados extraídos a constantes nombradas o configuración.
+**Evidencia Actual:** El archivo `sdk/cli/src/infrastructure/mcp/server.ts` con los valores hardcodeados fue eliminado en el commit c4835e0db.
+**Hecho Cuando:** Todos los valores hardcodeados extraídos a constantes nombradas o configuración. **Nota de Cierre:** Resuelto por eliminación de archivo.
 
 #### GT-202
 **Propósito:** Agregar README al directorio `governance/adr/`.
-**Evidencia Actual:** `governance/adr/` no tiene README ni BILINGUAL_INDEX.
+**Evidencia Actual:** README.md y README.es.md existen en `reference/governance/adr/` con índice de directorio. BILINGUAL_INDEX.md/es también agregados.
 **Hecho Cuando:** README.md y README.es.md existen con índice de directorio.
 
 #### GT-203
 **Propósito:** Eliminar o poblar directorio vacío `kubernetes/`.
-**Evidencia Actual:** `reference/infrastructure/kubernetes/` está vacío.
+**Evidencia Actual:** `reference/infrastructure/kubernetes/` ahora tiene README.md, README.es.md y BILINGUAL_INDEX.md/es.
 **Hecho Cuando:** El directorio contiene contenido o es eliminado.
 
 #### GT-204
 **Propósito:** Agregar READMEs a directorios `docker/`, `helm/`, `kubernetes/` en infraestructura.
-**Evidencia Actual:** Directorios de infraestructura carecen de documentación.
+**Evidencia Actual:** Los tres directorios ahora tienen README.md y README.es.md con propósito y listados de archivos.
 **Hecho Cuando:** Cada directorio tiene README.md con propósito y uso.
 
 #### GT-205
 **Propósito:** Agregar README al directorio SDLC 01-playbooks/.
-**Evidencia Actual:** Directorio de playbooks SDLC carece de documentación de índice.
+**Evidencia Actual:** `reference/governance/sdlc/01-playbooks/` tiene README.md y README.es.md con listado de directorio y propósito.
 **Hecho Cuando:** README.md existe con listado de directorio y propósito.
 
 #### GT-206
 **Propósito:** Formalizar regla de anidación BILINGUAL_INDEX para directorios profundos.
-**Evidencia Actual:** Directorios profundos carecen de archivos de índice bilingües.
+**Evidencia Actual:** Regla de anidación BILINGUAL_INDEX documentada en SDLC Documentation Best Practices (Sección 2.F). Aplicada a `governance/adr/` e `infrastructure/kubernetes/`.
 **Hecho Cuando:** Estándar documentado y aplicado a todos los directorios profundos.
 
 #### GT-207
 **Propósito:** Estandarizar formato de encabezados ADR (3 formatos diferentes en ADRs core).
-**Evidencia Actual:** ADRs usan formatos de encabezado inconsistentes.
+**Evidencia Actual:** Los 106 archivos ADR core ahora usan el formato canónico `# ADR-NNNN: Title` según la plantilla del estándar de autoría ADR.
 **Hecho Cuando:** Todos los ADRs core siguen el formato estándar según el estándar de autoría ADR.
 
 #### GT-208
 **Propósito:** Programar recordatorio de reevaluación de ADR-0077 (MassTransit v8 EOL fin 2026).
-**Evidencia Actual:** No hay revisión programada para EOL de MassTransit v8.
+**Evidencia Actual:** Sección de Vigilancia Tecnológica agregada a ADR-0077 con recordatorio de calendario para el punto de control de reevaluación del 2027-01-15, registrado en el Architecture Intelligence Portal.
 **Hecho Cuando:** Recordatorio de calendario establecido y documentado en ADR-0077.
 
 #### GT-209

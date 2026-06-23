@@ -1,4 +1,4 @@
-# [ADR 0052](0052-unit-testing-isolation-strategy.md): Estrategia de Aislamiento de Pruebas Unitarias (Mocks vs Stubs)
+# ADR-0052: Estrategia de Aislamiento de Pruebas Unitarias (Mocks vs Stubs)
 
 ## 1. Metadatos
 * **ADR ID:** 0052

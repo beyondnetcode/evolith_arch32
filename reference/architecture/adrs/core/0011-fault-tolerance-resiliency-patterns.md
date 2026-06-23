@@ -1,4 +1,4 @@
-# [ADR 0011](0011-fault-tolerance-resiliency-patterns.md): Fault Tolerance and Resiliency Patterns
+# ADR-0011: Fault Tolerance and Resiliency Patterns
 
 ## Status
 Approved

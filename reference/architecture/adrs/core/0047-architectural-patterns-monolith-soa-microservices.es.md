@@ -1,4 +1,4 @@
-# [ADR 0047](0047-architectural-patterns-monolith-soa-microservices.md): Marco de Evolución Arquitectónica Progresiva: Monolito Modular → Microservicios
+# ADR-0047: Marco de Evolución Arquitectónica Progresiva: Monolito Modular → Microservicios
 
 ## 1. Metadata
 * **ADR ID:** 0047

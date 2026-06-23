@@ -1,4 +1,4 @@
-# [ADR 0033](0033-transactional-outbox-pattern.md): Patrón Transactional Outbox para Mensajería Asíncrona
+# ADR-0033: Patrón Transactional Outbox para Mensajería Asíncrona
 
 ## Estado
 Propuesto (Aprobado vía Roadmap de Madurez)

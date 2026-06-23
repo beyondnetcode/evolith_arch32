@@ -1,4 +1,4 @@
-# [ADR 0052](0052-unit-testing-isolation-strategy.md): Unit Testing Isolation Strategy (Mocks vs Stubs)
+# ADR-0052: Unit Testing Isolation Strategy (Mocks vs Stubs)
 
 ## 1. Metadata
 * **ADR ID:** 0052

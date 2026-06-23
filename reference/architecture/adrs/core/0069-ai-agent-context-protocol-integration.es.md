@@ -1,4 +1,4 @@
-# [ADR 0069](0069-ai-agent-context-protocol-integration.es.md): Integración de Protocolo de Contexto para Agentes IA
+# ADR-0069: Integración de Protocolo de Contexto para Agentes IA
 
 ## Estado
 Aprobado

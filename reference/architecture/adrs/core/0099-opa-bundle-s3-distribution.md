@@ -1,4 +1,4 @@
-# ADR 0099: OPA Bundle Distribution via S3 (MinIO)
+# ADR-0099: OPA Bundle Distribution via S3 (MinIO)
 
 ## Status
 Superseded by [ADR 0085](./0085-agnostic-opa-wasm-distribution.md)

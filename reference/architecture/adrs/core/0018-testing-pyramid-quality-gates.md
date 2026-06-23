@@ -1,4 +1,4 @@
-# [ADR 0018](0018-testing-pyramid-quality-gates.md): Testing Pyramid and Automated Quality Gates
+# ADR-0018: Testing Pyramid and Automated Quality Gates
 
 ## Status
 Approved

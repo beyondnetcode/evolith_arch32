@@ -1,4 +1,4 @@
-# [ADR 0025](0025-feature-flag-provider-abstraction.md): Estrategia de Abstracción de Proveedor de Feature Flags
+# ADR-0025: Estrategia de Abstracción de Proveedor de Feature Flags
 
 ## Estado
 Aprobado

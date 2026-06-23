@@ -1,4 +1,4 @@
-# [ADR 0033](0033-transactional-outbox-pattern.md): Transactional Outbox Pattern for Async Messaging
+# ADR-0033: Transactional Outbox Pattern for Async Messaging
 
 ## Status
 Proposed (Approved via Maturity Roadmap)

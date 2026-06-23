@@ -1861,7 +1861,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-178
 **Purpose:** Rebuild `core/README.es.md` with all ADRs (currently only shows up to ADR-0056).
-**Current Evidence:** ES version is missing ADRs 0057-0077.
+**Current Evidence:** `core/README.es.md` rebuilt to match EN coverage — all 76 ES ADR files now indexed with descriptions, same structure as EN.
 **Done When:** `core/README.es.md` matches EN coverage.
 
 #### GT-179

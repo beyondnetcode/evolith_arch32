@@ -3067,6 +3067,20 @@
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-178",
+      "closedAt": "2026-06-23",
+      "closureCommit": "e4819615",
+      "evidence": [
+        "reference/architecture/adrs/core/README.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

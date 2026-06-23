@@ -19,7 +19,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-193`](./gap-reference-catalog.md#gt-193) | Remove TODO placeholders from governance docs | `Docs` | Cross | P2 | S | `DONE` |
 | [`GT-195`](./gap-reference-catalog.md#gt-195) | Fix Linux-only shell paths for Windows compat | `CLI` | Cross | P2 | S | `DONE` |
 | [`GT-211`](./gap-reference-catalog.md#gt-211) | Create EN counterparts for 3 orphan ES-only ADRs | `Docs` | Cross | P2 | S | `DONE` |
-| [`GT-178`](./gap-reference-catalog.md#gt-178) | Rebuild `core/README.es.md` with all ADRs | `Docs` | Cross | P2 | M | `PENDING` |
+| [`GT-178`](./gap-reference-catalog.md#gt-178) | Rebuild `core/README.es.md` with all ADRs | `Docs` | Cross | P2 | M | `DONE` |
 | [`GT-186`](./gap-reference-catalog.md#gt-186) | Remove `@ts-nocheck` from 19 files (phased) | `CLI` | Cross | P2 | M | `PENDING` |
 | [`GT-187`](./gap-reference-catalog.md#gt-187) | Enable strict mode in tsconfig | `CLI` | Cross | P2 | M | `PENDING` |
 | [`GT-189`](./gap-reference-catalog.md#gt-189) | Replace `require()` with ES imports | `CLI` | Cross | P2 | M | `PENDING` |
@@ -228,7 +228,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-185`](./gap-reference-catalog.md#gt-185) | Fix MCP tool stubs | `MCP Services` | Cross | P1 | M | `DONE` |
 | [`GT-210`](./gap-reference-catalog.md#gt-210) | Complete SDLC Phase 05 (missing phase) | `SDLC` | Cross | P1 | M | `DONE` |
 
-**Progress:** 205 / 214 done · 0 in progress · 9 pending · 0 deferred
+**Progress:** 206 / 214 done · 0 in progress · 8 pending · 0 deferred
 
 **Wave 2026-06-22 (Wilson deep audit):** Added 3 new gaps `GT-209`…`GT-211`: missing agnostic baseline, incomplete SDLC Phase 05, and orphan Spanish-only ADRs without English counterparts.
 

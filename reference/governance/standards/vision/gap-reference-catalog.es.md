@@ -1860,7 +1860,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-178
 **Propósito:** Reconstruir `core/README.es.md` con todos los ADRs (actualmente solo muestra hasta ADR-0056).
-**Evidencia Actual:** La versión ES carece de ADRs 0057-0077.
+**Evidencia Actual:** `core/README.es.md` reconstruido para igualar la cobertura de EN — los 76 archivos ADR ES ahora indexados con descripciones, misma estructura que EN.
 **Hecho Cuando:** `core/README.es.md` iguala la cobertura de EN.
 
 #### GT-179

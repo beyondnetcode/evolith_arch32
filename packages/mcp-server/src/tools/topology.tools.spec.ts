@@ -66,5 +66,55 @@ describe('createTopologyTools', () => {
       const result = await getTool.execute({});
       expect(result.error).toBe(true);
     });
+
+    it('returns a not-found envelope when the topology does not resolve', async () => {
+      fsMock.exists.mockResolvedValue(false);
+      const [, getTool] = createTopologyTools(fsMock, loggerMock);
+      const result = await getTool.execute({ id: 'missing', corePath: '/core' });
+      expect(result).toMatchObject({ error: true, message: expect.stringContaining('missing') });
+    });
+
+    it('returns the topology envelope when found', async () => {
+      const manifest = {
+        apiVersion: 'evolith.dev/topology/v1',
+        kind: 'TopologyManifest',
+        metadata: { id: 'modular-monolith' },
+        spec: { compatibility: { progressiveAxis: { phase: 'F1' } } },
+      };
+      fsMock.exists.mockResolvedValue(true);
+      fsMock.readdir.mockResolvedValue([
+        { name: 'modular-monolith', isDirectory: () => true, isFile: () => false } as never,
+      ]);
+      fsMock.readdir.mockResolvedValueOnce([
+        { name: 'modular-monolith', isDirectory: () => true, isFile: () => false } as never,
+      ]);
+      fsMock.readdir.mockResolvedValueOnce([
+        { name: 'topology.manifest.json', isDirectory: () => false, isFile: () => true } as never,
+      ]);
+      fsMock.readFile.mockResolvedValue(JSON.stringify(manifest));
+      const [, getTool] = createTopologyTools(fsMock, loggerMock);
+      const result = await getTool.execute({ id: 'modular-monolith', corePath: '/core' });
+      expect(result).toMatchObject({
+        tool: 'evolith-topology-get',
+        id: 'modular-monolith',
+        topology: expect.objectContaining({ metadata: { id: 'modular-monolith' } }),
+      });
+    });
+
+    it('wraps unexpected errors into the error envelope', async () => {
+      fsMock.exists.mockRejectedValue(new Error('disk on fire'));
+      const [, getTool] = createTopologyTools(fsMock, loggerMock);
+      const result = await getTool.execute({ id: 'x', corePath: '/core' });
+      expect(result).toMatchObject({ error: true, message: expect.stringContaining('disk on fire') });
+    });
+  });
+
+  describe('evolith-topology-list (error path)', () => {
+    it('wraps catalog failures into the error envelope', async () => {
+      fsMock.exists.mockRejectedValue(new Error('catalog broken'));
+      const [listTool] = createTopologyTools(fsMock, loggerMock);
+      const result = await listTool.execute({ corePath: '/core' });
+      expect(result).toMatchObject({ error: true, message: expect.stringContaining('catalog broken') });
+    });
   });
 });

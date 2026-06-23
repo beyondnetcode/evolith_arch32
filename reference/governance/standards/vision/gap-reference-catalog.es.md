@@ -2154,3 +2154,187 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [ ] Cada uno de los 4 tests saltados se reactiva y pasa, o se reescribe como una unidad enfocada cubriendo el mismo comportamiento.
   - [ ] Si algún caso es irrecuperable, se elimina y se reemplaza por una nota `// reason:` inline más un issue de seguimiento.
   - [ ] No queda ningún `it.skip`/`describe.skip` en `sdk/cli/src` tras el cierre.
+
+#### GT-226
+**Propósito:** Añadir configuración de Dependabot o Renovate para automatizar actualizaciones de dependencias, cerrando la brecha donde ADR-0009 exige bots de dependencias automatizados y la regla OPA DEP-09 valida su presencia, pero no existe ningún archivo de configuración en el repositorio.
+**Evidencia Actual:** No existe `.github/dependabot.yml` ni `.renovaterc.json`. La regla OPA `ci-cd.rego` DEP-09 flagearía esto en repos satélite pero no bloquea el CI del repo core. Las dependencias no se actualizan automáticamente.
+**Hecho Cuando:**
+  - [ ] `.github/dependabot.yml` existe con horarios de actualización npm (semanal) y GitHub Actions (mensual).
+  - [ ] La regla OPA DEP-09 pasa en el repositorio core.
+  - [ ] El primer lote de PRs de actualización de dependencias se genera y es revisable.
+
+#### GT-227
+**Propósito:** Implementar SAST (CodeQL) y SCA/escaneo de contenedores (Trivy) en workflows CI, cerrando la brecha donde ADR-0005 exige CodeQL en cada PR, CICD-01 lo codifica como regla blocking, y el provider profile lo documenta como "Active/Default", pero ningún workflow ejecuta estas herramientas.
+**Evidencia Actual:** El job de auditoría de seguridad en `sdk-cli-ci.yml` solo ejecuta `npm audit --audit-level=high`. No existen pasos de CodeQL ni Trivy en ningún archivo `.github/workflows/*.yml`.
+**Hecho Cuando:**
+  - [ ] Un job `codeql-analysis` corre en `sdk-cli-ci.yml` para JavaScript/TypeScript con queries extendidas.
+  - [ ] Un paso de escaneo Trivy corre sobre el Dockerfile para detección de vulnerabilidades de contenedor.
+  - [ ] Los hallazgos se suben como artefactos SARIF y son visibles en la pestaña Security de GitHub.
+
+#### GT-228
+**Propósito:** Construir un motor de orquestación de agentes que ejecute automáticamente las definiciones de workflow en `.bmad-core/workflows/`, cerrando la brecha donde `development.yaml` y `governance-gap.yaml` definen secuencias multi-agente pero no existe scheduler, persistencia de estado ni mecanismo de handoff automatizado.
+**Evidencia Actual:** Los workflows son archivos YAML que describen secuencias de pasos pero los agentes se invocan manualmente vía LLM context. Los directorios `backlog/`, `deliverables/` y `proposals/` en `.bmad-core/` están vacíos.
+**Hecho Cuando:**
+  - [ ] Un script de ejecución de workflows puede parsear workflow YAML y ejecutar pasos secuencialmente con tracking de estado.
+  - [ ] Los handoffs de agentes pasan artefactos (archivos, schemas) entre pasos programáticamente.
+  - [ ] Al menos un workflow (`governance-gap.yaml`) corre end-to-end con progresión automatizada de pasos.
+
+#### GT-229
+**Propósito:** Implementar el evaluador TypeScript-native que carga y evalúa archivos `.rules.json`, cerrando la brecha donde R-25 (Paridad Dual-Engine) exige que toda regla exista en ambos evaluador TypeScript Y OPA `.rego`, pero solo OPA evalúa reglas realmente hoy.
+**Evidencia Actual:** Existen 26 archivos `.rules.json` en 10 dominios de gobernanza. El script `16-opa-parity-gate.mjs` compara WASM compilado contra fixtures "Native", pero ningún evaluador TypeScript carga o evalúa las reglas `.rules.json`.
+**Hecho Cuando:**
+  - [ ] Un evaluador TypeScript carga reglas `.rules.json` y produce veredictos que coinciden con la salida OPA para las mismas entradas.
+  - [ ] Existen fixtures de paridad para todos los dominios de rulesets con tests de paridad pasando.
+  - [ ] CI ejecuta ambos evaluadores y asume resultados idénticos en fixtures compartidos.
+
+#### GT-230
+**Propósito:** Crear un directorio de skills y un framework de skills componibles para agentes BMAD, cerrando la brecha donde `.bmad-core/README.md` referencia un directorio `tooling/` que no existe, y los agentes no tienen una biblioteca de skills modular y descubrible.
+**Evidencia Actual:** Las specs de agentes en `.harness/agents/agent-specs.md` definen capacidades en prosa pero no hay directorio `skills/`, formato de manifiesto de skills ni mecanismo de descubrimiento.
+**Hecho Cuando:**
+  - [ ] Un directorio `.bmad-core/skills/` existe con un formato de manifiesto (JSON o YAML) para definición de skills.
+  - [ ] Al menos 3 skills están implementadas como ejemplos de referencia.
+  - [ ] Las definiciones de personas de agentes referencian skills por ID en lugar de descripciones de capacidades inline.
+
+#### GT-231
+**Propósito:** Cablear los 10 scripts CI que actualmente solo corren en pre-commit (vía `ci-runner.mjs`) a workflows GitHub Actions, cerrando la brecha donde los scripts 05-orphan, 12, 14, 15-coverage, 16-test, 17, 18, 19, 20, 21, 22 no tienen referencia en ningún workflow YAML.
+**Evidencia Actual:** El hook pre-commit `ci-runner.mjs` ejecuta los 22 scripts numerados secuencialmente, pero solo 12 están referenciados en workflows GitHub Actions. Los 10 restantes solo corren localmente.
+**Hecho Cuando:**
+  - [ ] Un workflow `governance-ci.yml` ejecuta todos los scripts sin enlazar como jobs o steps.
+  - [ ] Cada job produce artefactos de evidencia consumibles por el gap board.
+  - [ ] El workflow corre en PRs a main/develop y en pushes a main.
+
+#### GT-232
+**Propósito:** Crear definiciones completas de persona para Wilson (`@wilson`) y PO (`@po`) en `.bmad-core/agents/`, cerrando la brecha donde estos dos agentes existen solo en `.harness/agents/agent-specs.md` sin el YAML frontmatter completo, referencias de herramientas y mandatos de auto-mejora que tienen los otros 8 agentes.
+**Evidencia Actual:** `.bmad-core/agents/` contiene 8 archivos de agente con YAML frontmatter. Wilson y PO no tienen archivos correspondientes.
+**Hecho Cuando:**
+  - [ ] `.bmad-core/agents/wilson.md` existe con YAML frontmatter coincidente con el formato de otros agentes.
+  - [ ] `.bmad-core/agents/po.md` existe con YAML frontmatter coincidente con el formato de otros agentes.
+  - [ ] Ambos archivos incluyen scope, inputs, skills, constraints, handoff, validation y mandato de auto-mejora.
+
+#### GT-233
+**Propósito:** Añadir middleware de rate limiting al Core API, cerrando la brecha donde la Guía de Seguridad MCP documenta patrones de rate limiting adaptativo pero existen cero implementaciones en código TypeScript.
+**Evidencia Actual:** `apps/core-api/src/main.ts` aplica `helmet()` globalmente pero no tiene middleware de rate limiting. La búsqueda de `rate.?limit` en archivos TypeScript retorna cero resultados.
+**Hecho Cuando:**
+  - [ ] `@nestjs/throttler` está instalado y configurado con un default global (ej. 100 req/min).
+  - [ ] Existen overrides por endpoint para operaciones sensibles (auth, gate-evaluate).
+  - [ ] Los headers de rate limit (`X-RateLimit-*`) se retornan en las respuestas.
+
+#### GT-234
+**Propósito:** Añadir R-27 (Paridad de Madurez Topológica) a `global-rules.es.md`, cerrando la brecha de paridad bilingual donde la versión en inglés tiene 27 reglas pero la versión en español termina en R-26.
+**Evidencia Actual:** `.harness/rules/global-rules.md` contiene reglas R-01 a R-27. `.harness/rules/global-rules.es.md` contiene reglas R-01 a R-26 solamente.
+**Hecho Cuando:**
+  - [ ] `global-rules.es.md` contiene R-27 con traducción al español que coincide con el contenido en inglés.
+  - [ ] La sección de gates de validación mandatoria en ES incluye la verificación de cobertura de reglas topológicas presente en EN.
+  - [ ] `04-check-bilingual-parity.mjs` pasa en ambos archivos.
+
+#### GT-235
+**Propósito:** Resolver las colisiones de numeración de scripts CI donde los prefijos 05, 15 y 16 tienen dos scripts cada uno con el mismo prefijo, generando confusión sobre qué gate corresponde a qué número.
+**Evidencia Actual:** `ci/05-check-orphan-bilingual.mjs` y `ci/05-check-surface-parity.mjs` comparten prefijo 05. Lo mismo con 15 y 16.
+**Hecho Cuando:**
+  - [ ] Cada script CI tiene un prefijo numérico único.
+  - [ ] El orden de ejecución de `ci-runner.mjs` permanece correcto tras la renumeración.
+  - [ ] Todas las referencias de workflows a scripts renombrados están actualizadas.
+
+#### GT-236
+**Propósito:** Automatizar el pipeline de knowledge intake para que nuevos archivos `KI-*.yaml` o `SRC-*.yaml` disparen validación, revisión y promoción automáticamente, cerrando la brecha donde el pipeline existe en diseño pero requiere ejecución manual en cada etapa.
+**Evidencia Actual:** El sistema de knowledge intake tiene 1 fuente y 1 item en status `candidate`. La infraestructura RAG (script 14) existe pero no tiene contenido en vivo.
+**Hecho Cuando:**
+  - [ ] Un PR que añade `KI-*.yaml` o `SRC-*.yaml` dispara validación automatizada schema + OPA.
+  - [ ] La validación exitosa crea o actualiza el status de promoción del item automáticamente.
+  - [ ] El paso de revisión de Wilson puede invocarse vía comando de comment o job programado.
+
+#### GT-237
+**Propósito:** Redactar los 5 ADRs AI-Augmented propuestos (ADR-AI-001 through ADR-AI-005) que están listados en referencias de gobernanza pero nunca se escribieron como documentos reales.
+**Evidencia Actual:** `reference/architecture/adrs/ai-augmented/` es referenciado en secciones de gobernanza listando 5 ADRs propuestos pero ninguno existe en el sistema de archivos.
+**Hecho Cuando:**
+  - [ ] Los 5 documentos ADR existen en `reference/architecture/adrs/ai-augmented/` con estructura propia (Title, Status, Context, Decision, Consequences).
+  - [ ] Cada ADR tiene versiones EN y ES manteniendo paridad bilingual.
+  - [ ] El status del ADR se actualiza de "proposed" a "accepted" o "superseded" según corresponda.
+
+#### GT-238
+**Propósito:** Añadir Prometheus/Mimir al stack de observabilidad para que las métricas RED/USE sean coleccionables y consultables, cerrando la brecha donde el playbook de observabilidad referencia métricas basadas en Mimir pero el docker-compose solo provee Tempo y Loki.
+**Evidencia Actual:** `reference/infrastructure/docker-compose.yml` incluye servicios para OTel Collector, Tempo, Grafana y Loki. No existe servicio Prometheus ni Mimir.
+**Hecho Cuando:**
+  - [ ] Prometheus se añade a docker-compose con configuración de scrape para métricas del Core API.
+  - [ ] Mimir se añade para almacenamiento de métricas a largo plazo.
+  - [ ] Grafana se provee con un datasource de Prometheus junto a Tempo y Loki existentes.
+
+#### GT-239
+**Propósito:** Definir SLOs concretos por servicio e implementar reglas de alerting, cerrando la brecha donde el template de validación observacional referencia baselines de SLO pero no existen documentos SLO ni configuraciones de alerta.
+**Evidencia Actual:** `rulesets/schema/observability-validation.schema.json` define campos para cumplimiento de SLO pero no existen documentos SLO en `reference/operations/`. No existen reglas de alerting de Prometheus ni configuración de notificaciones.
+**Hecho Cuando:**
+  - [ ] Al menos 3 SLOs están definidos (disponibilidad 99.9%, latencia p99 <200ms, tasa de error <0.1%).
+  - [ ] Existen reglas de alerting de Prometheus para: tasa de error >1%, latencia p99 >500ms, reinicios de pod >3.
+  - [ ] La provisión de alertas de Grafana enruta alertas a un canal de notificación configurable.
+
+#### GT-240
+**Propósito:** Ajustar la configuración CORS por environment para que los deployments de producción restrinjan orígenes a dominios conocidos, cerrando la brecha donde los tests muestran `origin: ['*']` — una política excesivamente permisiva.
+**Evidencia Actual:** Los tests de security headers prueban CORS con `origin: ['*']`. No existe configuración CORS por environment.
+**Hecho Cuando:**
+  - [ ] La configuración CORS es aware por environment: dev (`*`), staging (lista específica), production (dominio exacto).
+  - [ ] El spec de security headers prueba la política CORS de cada environment.
+  - [ ] La configuración se drivea por variables de ambiente, no hardcodeada.
+
+#### GT-241
+**Propósito:** Añadir generación SBOM (Software Bill of Materials) al pipeline CI/release usando formato CycloneDX o SPDX, cerrando la brecha donde el template de reporte de scan de seguridad referencia SBOM pero ningún paso CI lo produce.
+**Evidencia Actual:** `rulesets/schema/security-scan-report.schema.json` define SBOM como tipo de scanner. Ningún paso de workflow genera, firma o publica artefactos SBOM.
+**Hecho Cuando:**
+  - [ ] Un paso CI genera un SBOM CycloneDX después de `npm ci` o `npm build`.
+  - [ ] El artefacto SBOM se sube como artefacto de build o se adjunta a releases de GitHub.
+  - [ ] El SBOM es consumible por herramientas downstream (Dependency-Track, Grype, etc.).
+
+#### GT-242
+**Propósito:** Generar políticas OPA `.rego` para los 17 rulesets nativos que actualmente no tienen contraparte OPA, cerrando la brecha de Paridad Dual-Engine (R-25) para los dominios no-core.
+**Evidencia Actual:** Solo 9 de 26 dominios de rulesets nativos tienen archivos `.rego` correspondientes. Los 17 dominios restantes (7 codificados en ADR, 5 transversales, 3 SDLC, 2 especializados) no tienen equivalente OPA.
+**Hecho Cuando:**
+  - [ ] Los 5 rulesets transversales (definition-of-done, engineering-manifesto, compliance-baseline, repository-taxonomy, anti-corruption-layer) tienen archivos `.rego` con tests.
+  - [ ] Existen input schemas en `rulesets/opa/schemas/` para cada nueva política.
+  - [ ] El agregador `main.rego` importa violaciones de las nuevas políticas.
+
+#### GT-243
+**Propósito:** Implementar tests k6 de carga para los 3 escenarios de estrés definidos en ADR-0037, cerrando la brecha donde el ADR exige testing k6 pero no existen scripts de load test.
+**Evidencia Actual:** ADR-0037 define 3 escenarios: (1) baseline de throughput API, (2) conexiones MCP concurrentes, (3) operaciones batch de CLI. No existen archivos de script k6 ni configuraciones de performance testing.
+**Hecho Cuando:**
+  - [ ] Existen 3 scripts k6 cubriendo cada escenario de ADR-0037.
+  - [ ] Los baselines de rendimiento se registran y almacenan como umbrales de referencia.
+  - [ ] Un job CI corre load tests en base programada (no bloqueando PRs inicialmente).
+
+#### GT-244
+**Propósito:** Crear playbooks y plantillas de respuesta a incidentes para el producto core, cerrando la brecha donde existen runbooks para agentic AI pero los procedimientos generales de respuesta (caída de servicio, brecha de datos, rollback de producción) están ausentes.
+**Evidencia Actual:** `reference/architecture/topologies/ai/agentic-ai/runbooks.md` cubre incidentes específicos de agentes. No existen playbooks generales de respuesta a incidentes para el producto core.
+**Hecho Cuando:**
+  - [ ] Existen playbooks para: caída de servicio, brecha de datos, CVE en dependencias, rollback de producción.
+  - [ ] Cada playbook tiene: clasificación de severidad, plantilla de comunicación, pasos de contención, pasos de recuperación, plantilla de post-mortem.
+  - [ ] Los playbooks se almacenan en `reference/operations/` con versiones bilingües.
+
+#### GT-245
+**Propósito:** Añadir DAST (Dynamic Application Security Testing) usando OWASP ZAP o equivalente al pipeline de seguridad, cerrando la brecha donde el template de reporte de scan lista DAST como tipo de scanner pero ninguna herramienta DAST está configurada.
+**Evidencia Actual:** `rulesets/schema/security-scan-report.schema.json` define DAST como tipo de scanner válido. No existe configuración de OWASP ZAP, Burp Suite u otra herramienta DAST.
+**Hecho Cuando:**
+  - [ ] Un scan baseline de OWASP ZAP corre contra el Core API en un job CI.
+  - [ ] Los hallazgos de ZAP se exportan como SARIF y son visibles en la pestaña Security de GitHub.
+  - [ ] Hallazgos High/Medium bloquean el pipeline de release.
+
+#### GT-246
+**Propósito:** Implementar experimentos de ingeniería del caos usando Chaos Mesh o Litmus, cerrando la brecha donde ADR-0037 exige herramientas de chaos engineering pero no existen definiciones de experimentos.
+**Evidencia Actual:** ADR-0037 referencia Chaos Mesh/Litmus para chaos engineering. No existen definiciones de experimentos, configuraciones de fault injection ni escenarios de resilience testing.
+**Hecho Cuando:**
+  - [ ] Al menos 3 experimentos de caos están definidos: partición de red, kill de pod, estrés de CPU.
+  - [ ] Los experimentos son ejecutables contra un entorno local o staging vía docker-compose o manifiestos Kubernetes.
+  - [ ] Los resultados se registran y correlacionan con señales de observabilidad.
+
+#### GT-247
+**Propósito:** Reemplazar credenciales hardcodeadas en docker-compose con inyección de secrets, cerrando la brecha donde el archivo compose de infraestructura contiene passwords en texto plano para PostgreSQL, Redis, RabbitMQ, MongoDB, MinIO y OpenBao.
+**Evidencia Actual:** `reference/infrastructure/docker-compose.yml` contiene passwords hardcodeadas para 6 servicios. No existe mecanismo de inyección de secrets documentado para producción.
+**Hecho Cuando:**
+  - [ ] docker-compose usa referencias `${VARIABLE}` para todas las credenciales.
+  - [ ] Un archivo `.env.example` documenta los secrets requeridos sin valores reales.
+  - [ ] La documentación explica la inyección de secrets para producción (Docker secrets, Vault, etc.).
+
+#### GT-248
+**Propósito:** Crear un script monitor de frescura de ADRs que detecte ADRs obsoletos y genere recordatorios de revisión, cerrando la brecha donde no existe ningún mecanismo automatizado para rastrear la vigencia de ADRs o desencadenar revisiones periódicas.
+**Evidencia Actual:** Existen 48+ ADRs Core con edades variables. Ningún script verifica fechas de modificación, flaggea ADRs obsoletos o genera recordatorios de revisión.
+**Hecho Cuando:**
+  - [ ] Un script escanea todos los ADRs, extrae fechas de última modificación y flaggea los >180 días sin cambios.
+  - [ ] Los ADRs >365 días generan un recordatorio de revisión en el gap board.
+  - [ ] El script corre en base semanal (ej. lunes 09:00 UTC) vía GitHub Actions.

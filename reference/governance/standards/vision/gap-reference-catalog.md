@@ -2154,3 +2154,187 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [ ] Each of the 4 skipped tests is either re-enabled and passing, or rewritten as a focused unit covering the same behavior.
   - [ ] If any case is unrevivable, it is removed and replaced by an inline `// reason:` note plus a follow-up issue.
   - [ ] No `it.skip`/`describe.skip` remains in `sdk/cli/src` after closure.
+
+#### GT-226
+**Purpose:** Add Dependabot or Renovate configuration to automate dependency updates, closing the gap where ADR-0009 mandates automated dependency bots and OPA rule DEP-09 validates their presence, yet no configuration file exists in the repository.
+**Current Evidence:** No `.github/dependabot.yml` or `.renovaterc.json` exists. OPA `ci-cd.rego` rule DEP-09 would flag this on satellite repos but does not block the core repo's own CI. Dependencies are not automatically updated.
+**Done When:**
+  - [ ] `.github/dependabot.yml` exists with npm (weekly) and GitHub Actions (monthly) update schedules.
+  - [ ] OPA rule DEP-09 passes on the core repository.
+  - [ ] First batch of dependency update PRs is generated and reviewable.
+
+#### GT-227
+**Purpose:** Implement SAST (CodeQL) and SCA/container scanning (Trivy) in CI workflows, closing the gap where ADR-0005 mandates CodeQL on every PR, CICD-01 encodes it as a blocking rule, and the provider profile documents it as "Active/Default," yet no workflow actually runs these tools.
+**Current Evidence:** The `sdk-cli-ci.yml` security audit job runs only `npm audit --audit-level=high`. No CodeQL or Trivy workflow steps exist in any `.github/workflows/*.yml` file. The security scan report template references DAST as a scanner type but no DAST tool is configured.
+**Done When:**
+  - [ ] A `codeql-analysis` job runs in `sdk-cli-ci.yml` for JavaScript/TypeScript with extended queries.
+  - [ ] A Trivy scan step runs on the Dockerfile for container vulnerability detection.
+  - [ ] Findings are uploaded as SARIF artifacts and visible in the GitHub Security tab.
+
+#### GT-228
+**Purpose:** Build an agent orchestration engine that executes the workflow definitions in `.bmad-core/workflows/` automatically, closing the gap where `development.yaml` and `governance-gap.yaml` define multi-agent sequences but no scheduler, state persistence, or automated handoff mechanism exists.
+**Current Evidence:** Workflows are YAML files describing step sequences (analyst → pm → architect → etc.) but agents are invoked manually via LLM context. The `backlog/`, `deliverables/`, and `proposals/` directories in `.bmad-core/` are empty — the self-improvement proposal workflow has never been used.
+**Done When:**
+  - [ ] A workflow runner script can parse workflow YAML and execute steps sequentially with state tracking.
+  - [ ] Agent handoffs pass artifacts (files, schemas) between steps programmatically.
+  - [ ] At least one workflow (`governance-gap.yaml`) runs end-to-end with automated step progression.
+
+#### GT-229
+**Purpose:** Implement the TypeScript-native rule evaluator that loads `.rules.json` files and evaluates them, closing the gap where R-25 (Dual-Engine Parity) requires every rule to exist in both TypeScript evaluator AND OPA `.rego`, but only OPA actually evaluates rules today.
+**Current Evidence:** 26 `.rules.json` files exist across 10 governance domains. The `16-opa-parity-gate.mjs` script compares WASM-compiled OPA against "Native" fixtures, but no TypeScript evaluator loads or evaluates the `.rules.json` rules. The parity gate is aspirational rather than operational.
+**Done When:**
+  - [ ] A TypeScript evaluator loads `.rules.json` rules and produces verdicts matching OPA output for the same inputs.
+  - [ ] Parity fixtures exist for all ruleset domains with passing parity tests.
+  - [ ] CI runs both evaluators and asserts identical results on shared fixtures.
+
+#### GT-230
+**Purpose:** Create a skills directory and composable skill framework for BMAD agents, closing the gap where `.bmad-core/README.md` references a `tooling/` directory that does not exist, and agents have no modular, discoverable skill library.
+**Current Evidence:** Agent specs in `.harness/agents/agent-specs.md` define capabilities in prose but there is no `skills/` directory, no skill manifest format, and no discovery mechanism. Skills are hardcoded in agent persona descriptions rather than being composable modules.
+**Done When:**
+  - [ ] A `.bmad-core/skills/` directory exists with a manifest format (JSON or YAML) for skill definition.
+  - [ ] At least 3 skills are implemented as reference examples (e.g., `requirements-traceability-mapper`, `gap-prioritization-engine`, `adr-freshness-monitor`).
+  - [ ] Agent persona definitions reference skills by ID rather than inline capability descriptions.
+
+#### GT-231
+**Purpose:** Wire the 10 CI scripts that currently only run in pre-commit (via `ci-runner.mjs`) into GitHub Actions workflows, closing the gap where scripts 05-orphan, 12, 14, 15-coverage, 16-test, 17, 18, 19, 20, 21, 22 have no workflow YAML reference.
+**Current Evidence:** The `ci-runner.mjs` pre-commit hook executes all 22 numbered scripts sequentially, but only 12 are referenced in GitHub Actions workflows. The remaining 10 run only locally, meaning PRs merged via the GitHub UI bypass these validations.
+**Done When:**
+  - [ ] A `governance-ci.yml` workflow executes all unlinked scripts as jobs or steps.
+  - [ ] Each job produces evidence artifacts consumable by the gap board.
+  - [ ] The workflow runs on PRs to main/develop and on pushes to main.
+
+#### GT-232
+**Purpose:** Create complete persona definitions for Wilson (`@wilson`) and PO (`@po`) in `.bmad-core/agents/`, closing the gap where these two agents exist only in `.harness/agents/agent-specs.md` without the full YAML frontmatter, tool references, and self-improvement mandates that the other 8 agents have.
+**Current Evidence:** `.bmad-core/agents/` contains 8 agent files (analyst, architect, dev, devops, docs, pm, qa, sm) with YAML frontmatter. Wilson and PO have no corresponding files — they are defined only in the harness-level specs.
+**Done When:**
+  - [ ] `.bmad-core/agents/wilson.md` exists with YAML frontmatter matching the format of other agent personas.
+  - [ ] `.bmad-core/agents/po.md` exists with YAML frontmatter matching the format of other agent personas.
+  - [ ] Both files include scope, inputs, skills, constraints, handoff, validation, and self-improvement mandate.
+
+#### GT-233
+**Purpose:** Add rate limiting middleware to the Core API, closing the gap where the MCP Security Guide documents adaptive rate limiting patterns but zero implementations exist in TypeScript code (search for `rate.?limit` returns zero matches).
+**Current Evidence:** `apps/core-api/src/main.ts` applies `helmet()` globally but has no rate limiting middleware. The MCP security guide at `reference/governance/standards/ai-augmented/02-mcp-integration/mcp-security.md` documents rate limiting as required for production.
+**Done When:**
+  - [ ] `@nestjs/throttler` is installed and configured with a global default (e.g., 100 req/min).
+  - [ ] Per-endpoint overrides exist for sensitive operations (auth, gate-evaluate).
+  - [ ] Rate limit headers (`X-RateLimit-*`) are returned in responses.
+
+#### GT-234
+**Purpose:** Add R-27 (Topology Maturity Parity) to `global-rules.es.md`, closing the bilingual parity gap where the English version has 27 rules but the Spanish version stops at R-26.
+**Current Evidence:** `.harness/rules/global-rules.md` contains rules R-01 through R-27. `.harness/rules/global-rules.es.md` contains rules R-01 through R-26 only. R-27 mandates that accepted topologies must provide bilingual guidance, ADRs, rulesets, and tests.
+**Done When:**
+  - [ ] `global-rules.es.md` contains R-27 with Spanish translation matching the English content.
+  - [ ] The mandatory validation gates section in ES includes the topology rule coverage check present in EN.
+  - [ ] `04-check-bilingual-parity.mjs` passes on both files.
+
+#### GT-235
+**Purpose:** Resolve the CI script numbering collisions where prefixes 05, 15, and 16 each have two scripts with the same prefix, causing confusion about which gate corresponds to which number.
+**Current Evidence:** `ci/05-check-orphan-bilingual.mjs` and `ci/05-check-surface-parity.mjs` share prefix 05. `ci/15-operational-drift-audit.mjs` and `ci/15-validate-topology-rule-coverage.mjs` share prefix 15. `ci/16-opa-parity-gate.mjs` and `ci/16-test-topology-opa.mjs` share prefix 16. The `ci-runner.mjs` sorts by filename so both run, but the collision creates ambiguity.
+**Done When:**
+  - [ ] Each CI script has a unique numerical prefix.
+  - [ ] The `ci-runner.mjs` execution order remains correct after renumbering.
+  - [ ] All workflow references to renamed scripts are updated.
+
+#### GT-236
+**Purpose:** Automate the knowledge intake pipeline so new `KI-*.yaml` and `SRC-*.yaml` files trigger validation, review, and promotion automatically, closing the gap where the pipeline exists in design but requires manual execution at every stage.
+**Current Evidence:** The knowledge intake system has 1 source (SRC-EVANS-001) and 1 item (KI-EVANS-AGGREGATE-001) in status `candidate`. The RAG vector sync infrastructure (script 14) exists but has no live content. No automation connects schema validation → OPA evaluation → Wilson review → promotion.
+**Done When:**
+  - [ ] A PR adding `KI-*.yaml` or `SRC-*.yaml` triggers automated schema + OPA validation.
+  - [ ] Validation passing creates or updates the item's promotion status automatically.
+  - [ ] Wilson review step can be triggered via comment command or scheduled job.
+
+#### GT-237
+**Purpose:** Author the 5 proposed AI-Augmented ADRs (ADR-AI-001 through ADR-AI-005) that are listed in governance references but never written as actual documents.
+**Current Evidence:** `reference/architecture/adrs/ai-augmented/` is referenced in governance sections listing 5 proposed ADRs covering harness engineering, MCP integration protocol, model selection governance, AGENTS.md as mandatory artifact, and human-in-the-loop policy. None of these documents exist in the filesystem.
+**Done When:**
+  - [ ] All 5 ADR documents exist in `reference/architecture/adrs/ai-augmented/` with proper structure (Title, Status, Context, Decision, Consequences).
+  - [ ] Each ADR has EN and ES versions maintaining bilingual parity.
+  - [ ] ADR status is updated from "proposed" to "accepted" or "superseded" as appropriate.
+
+#### GT-238
+**Purpose:** Add Prometheus/Mimir to the observability stack so RED/USE metrics are collectible and queryable, closing the gap where the observability playbook references Mimir-based metrics but the docker-compose only provisions Tempo and Loki.
+**Current Evidence:** `reference/infrastructure/docker-compose.yml` includes services for OTel Collector, Tempo, Grafana, and Loki. No Prometheus or Mimir service exists. The OTel collector config routes traces and logs but has no metrics pipeline.
+**Done When:**
+  - [ ] Prometheus is added to docker-compose with scrape config for Core API metrics.
+  - [ ] Mimir is added for long-term metrics storage.
+  - [ ] Grafana is provisioned with a Prometheus datasource alongside existing Tempo and Loki.
+
+#### GT-239
+**Purpose:** Define concrete SLOs per service and implement alerting rules, closing the gap where the observability validation template references SLO baselines but no SLO documents or alert configurations exist.
+**Current Evidence:** `rulesets/schema/observability-validation.schema.json` defines fields for SLO compliance, but no SLO documents exist in `reference/operations/`. No Prometheus alerting rules, Grafana alert provisioning, or notification channel configuration exists.
+**Done When:**
+  - [ ] At least 3 SLOs are defined (availability 99.9%, p99 latency <200ms, error rate <0.1%).
+  - [ ] Prometheus alerting rules exist for: error rate >1%, p99 latency >500ms, pod restarts >3.
+  - [ ] Grafana alert provisioning routes alerts to a configurable notification channel.
+
+#### GT-240
+**Purpose:** Tighten CORS configuration by environment so production deployments restrict origins to known domains, closing the gap where tests show `origin: ['*']` — an overly permissive policy.
+**Current Evidence:** `apps/core-api/src/presentation/controllers/security-headers.spec.ts` tests CORS with `origin: ['*']`. No environment-based CORS configuration exists. Production deployments inherit the permissive default.
+**Done When:**
+  - [ ] CORS configuration is environment-aware: dev (`*`), staging (specific list), production (exact domain).
+  - [ ] The security headers spec tests each environment's CORS policy.
+  - [ ] Configuration is driven by environment variables, not hardcoded.
+
+#### GT-241
+**Purpose:** Add SBOM (Software Bill of Materials) generation to the CI/release pipeline using CycloneDX or SPDX format, closing the gap where the security scan report template references SBOM but no CI step produces it.
+**Current Evidence:** `rulesets/schema/security-scan-report.schema.json` defines SBOM as a scanner type. No CI workflow step generates, signs, or publishes SBOM artifacts.
+**Done When:**
+  - [ ] A CI step generates a CycloneDX SBOM after `npm ci` or `npm build`.
+  - [ ] The SBOM artifact is uploaded as a build artifact or attached to GitHub releases.
+  - [ ] The SBOM is consumable by downstream tools (Dependency-Track, Grype, etc.).
+
+#### GT-242
+**Purpose:** Generate OPA `.rego` policies for the 17 native rulesets that currently have no OPA counterpart, closing the Dual-Engine Parity gap (R-25) for the non-core domains.
+**Current Evidence:** Only 9 of 26 native ruleset domains have corresponding `.rego` files (governance, version-pinning, taxonomy, cli-readiness, ci-cd, evidence, mcp, knowledge-intake, abac). The remaining 17 domains (7 ADR-encoded, 5 cross-cutting, 3 SDLC, 2 specialized) have no OPA equivalent.
+**Done When:**
+  - [ ] The 5 cross-cutting rulesets (definition-of-done, engineering-manifesto, compliance-baseline, repository-taxonomy, anti-corruption-layer) have `.rego` files with tests.
+  - [ ] Input schemas exist in `rulesets/opa/schemas/` for each new policy.
+  - [ ] The `main.rego` aggregator imports violations from the new policies.
+
+#### GT-243
+**Purpose:** Implement k6 load tests for the 3 stress scenarios defined in ADR-0037, closing the gap where the ADR mandates k6 testing but no load test scripts exist.
+**Current Evidence:** ADR-0037 defines 3 stress scenarios: (1) API throughput baseline, (2) concurrent MCP connections, (3) CLI batch operations. No k6 script files, load test configurations, or performance baselines exist in the repository.
+**Done When:**
+  - [ ] 3 k6 scripts exist covering each ADR-0037 scenario.
+  - [ ] Performance baselines are recorded and stored as reference thresholds.
+  - [ ] A CI job runs load tests on a scheduled basis (not blocking PRs initially).
+
+#### GT-244
+**Purpose:** Create incident response playbooks and templates for the core product, closing the gap where agentic AI runbooks exist but general incident response procedures (service outage, data breach, production rollback) are absent.
+**Current Evidence:** `reference/architecture/topologies/ai/agentic-ai/runbooks.md` covers agent-specific incidents (hang, token overflow, unapproved action, sandbox escape). No general incident response playbooks exist for the core product or infrastructure.
+**Done When:**
+  - [ ] Playbooks exist for: service outage, data breach, dependency CVE, production rollback.
+  - [ ] Each playbook has: severity classification, communication template, containment steps, recovery steps, post-mortem template.
+  - [ ] Playbooks are stored in `reference/operations/` with bilingual versions.
+
+#### GT-245
+**Purpose:** Add DAST (Dynamic Application Security Testing) using OWASP ZAP or equivalent to the security pipeline, closing the gap where the security scan report template lists DAST as a scanner type but no DAST tool is configured.
+**Current Evidence:** `rulesets/schema/security-scan-report.schema.json` defines DAST as a valid scanner type. No OWASP ZAP, Burp Suite, or other DAST tool configuration exists anywhere in the repository.
+**Done When:**
+  - [ ] An OWASP ZAP baseline scan runs against the Core API in a CI job.
+  - [ ] ZAP findings are exported as SARIF and visible in GitHub Security tab.
+  - [ ] High/Medium findings block the release pipeline.
+
+#### GT-246
+**Purpose:** Implement chaos engineering experiments using Chaos Mesh or Litmus, closing the gap where ADR-0037 mandates chaos engineering tooling but no experiment definitions exist.
+**Current Evidence:** ADR-0037 references Chaos Mesh/Litmus for chaos engineering. No chaos experiment definitions, fault injection configurations, or resilience test scenarios exist in the repository.
+**Done When:**
+  - [ ] At least 3 chaos experiments are defined: network partition, pod kill, CPU stress.
+  - [ ] Experiments are executable against a local or staging environment via docker-compose or Kubernetes manifests.
+  - [ ] Results are logged and correlated with observability signals.
+
+#### GT-247
+**Purpose:** Replace hardcoded credentials in docker-compose with secrets injection, closing the gap where the infrastructure compose file contains plaintext passwords for PostgreSQL, Redis, RabbitMQ, MongoDB, MinIO, and OpenBao.
+**Current Evidence:** `reference/infrastructure/docker-compose.yml` contains hardcoded passwords for 6 services. While acceptable for local development, there is no documentation or mechanism for secrets injection in production deployments.
+**Done When:**
+  - [ ] docker-compose uses `${VARIABLE}` references for all credentials.
+  - [ ] A `.env.example` file documents required secrets without real values.
+  - [ ] Documentation explains secrets injection for production (Docker secrets, Vault, etc.).
+
+#### GT-248
+**Purpose:** Create an ADR freshness monitor script that detects stale ADRs and generates review reminders, closing the gap where no automated mechanism tracks ADR currency or triggers periodic reviews.
+**Current Evidence:** 48+ Core ADRs exist with varying ages. No script checks modification dates, flags stale ADRs, or generates review reminders. The only freshness mechanism is manual inspection.
+**Done When:**
+  - [ ] A script scans all ADRs, extracts last modification dates, and flags those >180 days old.
+  - [ ] ADRs >365 days old generate a review reminder in the gap board.
+  - [ ] The script runs on a weekly schedule (e.g., Monday 09:00 UTC) via GitHub Actions.

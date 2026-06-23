@@ -14,7 +14,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|
 | [`GT-212`](./gap-reference-catalog.es.md#gt-212) | Resolver ambigüedad de estado en ADR-0049/0056 | `Docs` | Cross | P1 | XS | `COMPLETADO` |
-| [`GT-213`](./gap-reference-catalog.es.md#gt-213) | Añadir metadata de gobernanza a los manifests de topología | `Architecture` | Cross | P1 | S | `PENDIENTE` |
+| [`GT-213`](./gap-reference-catalog.es.md#gt-213) | Añadir metadata de gobernanza a los manifests de topología | `Architecture` | Cross | P1 | S | `COMPLETADO` |
 | [`GT-215`](./gap-reference-catalog.es.md#gt-215) | Añadir decoradores OpenAPI a los controladores REST | `BFF API` | Cross | P1 | S | `PENDIENTE` |
 | [`GT-214`](./gap-reference-catalog.es.md#gt-214) | Añadir logging estructurado + spans OTel a los controladores REST | `BFF API` | Cross | P1 | M | `PENDIENTE` |
 | [`GT-216`](./gap-reference-catalog.es.md#gt-216) | Cerrar brecha de paridad de input schemas OPA (17 rulesets nativos sin cobertura) | `Rulesets` | Cross | P1 | M | `PENDIENTE` |
@@ -264,7 +264,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-160`](./gap-reference-catalog.es.md#gt-160) | Propagación de correlation-ID y contexto de solicitud entre superficies | `Cross` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-174`](./gap-reference-catalog.es.md#gt-174) | `meta.schemaVersion` y matriz de compatibilidad productor/consumidor | `Cross` | Cross | P2 | S | `COMPLETADO` |
 
-**Progreso:** 214 / 250 completados · 0 en progreso · 36 pendientes · 0 diferidos
+**Progreso:** 215 / 250 completados · 0 en progreso · 35 pendientes · 0 diferidos
 
 **Oleada 2026-06-23 (auditoría profunda de Wilson III):** Añadidos 14 gaps nuevos `GT-212`…`GT-225` del Wilson Audit Playbook que cubren: higiene de estado ADR (GT-212), metadata + presupuestos operativos + corpus de guías por topología (GT-213, GT-217, GT-219), observabilidad + OpenAPI en controladores REST (GT-214, GT-215), paridad de input-schemas OPA + densidad de tests por topología (GT-216, GT-222), plantillas de rollback + on-call de Fase 05 (GT-218), cobertura de ramas CLI + paridad de envelope --format + limpieza de skip-list (GT-220, GT-224, GT-225), audit logging HTTP de MCP (GT-221), y tests e2e de paridad cross-surface (GT-223).
 

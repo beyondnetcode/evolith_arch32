@@ -2055,9 +2055,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Añadir campos de metadata de gobernanza (`owner`, `criticality`, `supersedes`, `replaces`) a cada manifest de topología para que la trazabilidad, propiedad y decisiones de ciclo de vida sean legibles por máquina a nivel de topología.
 **Evidencia Actual:** `grep -l '"owner":\|"criticality":\|"replaces":\|"supersedes":' reference/architecture/topologies/*/*/topology.manifest.json` devuelve **0 de 8** manifests. La visión exige trazabilidad de gobernanza por topología; hoy esas decisiones están dispersas en READMEs y ADRs.
 **Hecho Cuando:**
-  - [ ] Los 8 manifests incluyen `owner` (unidad org), `criticality` (P0–P2) y arrays opcionales `supersedes`/`replaces` con IDs de ADR.
-  - [ ] `rulesets/schema/topology-manifest.schema.json` declara esas propiedades (con `required` donde corresponda).
-  - [ ] `.harness/scripts/validate-topology-manifests.mjs` aplica los nuevos campos.
+  - [x] Los 8 manifests incluyen `owner` (unidad org), `criticality` (P0–P2) y arrays opcionales `supersedes`/`replaces` con IDs de ADR.
+  - [x] `rulesets/schema/topology-manifest.schema.json` declara esas propiedades (con `required` donde corresponda).
+  - [x] `.harness/scripts/validate-topology-manifests.mjs` aplica los nuevos campos.
 
 #### GT-214
 **Propósito:** Llevar los controladores REST de `apps/core-api` a paridad de observabilidad con CLI/MCP — emitir logs estructurados y spans OpenTelemetry por cada handler para que auditoría, tracing y cálculos de SLO sean uniformes en todas las superficies (cierra la mitad REST de la paridad OTel establecida por GT-173).

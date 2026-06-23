@@ -3224,6 +3224,28 @@
       ],
       "dependencyDisposition": "none",
       "closureNote": "ADR-0049 status corrected to Accepted. ADR-0056 status corrected to Accepted with 'extends' note (subsumed, not superseded). Cross-references added."
+    },
+    {
+      "id": "GT-213",
+      "closedAt": "2026-06-23",
+      "closureCommit": "67fac2bd",
+      "evidence": [
+        "rulesets/schema/topology-manifest.schema.json",
+        ".harness/scripts/validate-topology-manifests.mjs",
+        "reference/architecture/topologies/progressive-axis/modular-monolith/topology.manifest.json",
+        "reference/architecture/topologies/progressive-axis/distributed-modules/topology.manifest.json",
+        "reference/architecture/topologies/progressive-axis/microservices/topology.manifest.json",
+        "reference/architecture/topologies/execution/serverless/topology.manifest.json",
+        "reference/architecture/topologies/execution/edge-computing/topology.manifest.json",
+        "reference/architecture/topologies/integration/event-driven/topology.manifest.json",
+        "reference/architecture/topologies/data/data-mesh/topology.manifest.json",
+        "reference/architecture/topologies/ai/agentic-ai/topology.manifest.json"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/validate-topology-manifests.mjs"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Added metadata.governance (owner, criticality) to all 8 topology manifests. Schema updated with required governance block. Validation script enforces the new fields."
     }
   ]
 }

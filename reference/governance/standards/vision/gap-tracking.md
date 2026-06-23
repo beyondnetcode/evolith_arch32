@@ -19,8 +19,8 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-193`](./gap-reference-catalog.md#gt-193) | Remove TODO placeholders from governance docs | `Docs` | Cross | P2 | S | `DONE` |
 | [`GT-195`](./gap-reference-catalog.md#gt-195) | Fix Linux-only shell paths for Windows compat | `CLI` | Cross | P2 | S | `DONE` |
 | [`GT-211`](./gap-reference-catalog.md#gt-211) | Create EN counterparts for 3 orphan ES-only ADRs | `Docs` | Cross | P2 | S | `DONE` |
-| [`GT-178`](./gap-reference-catalog.md#gt-178) | Rebuild `core/README.es.md` with all ADRs | `Docs` | Cross | P2 | M | `DONE` |
-| [`GT-186`](./gap-reference-catalog.md#gt-186) | Remove `@ts-nocheck` from 19 files (phased) | `CLI` | Cross | P2 | M | `DONE` |
+| [`GT-178`](./gap-reference-catalog.md#gt-178) | Rebuild `core/README.es.md` with all ADRs | `Docs` | Cross | P2 | M | `PENDING` |
+| [`GT-186`](./gap-reference-catalog.md#gt-186) | Remove `@ts-nocheck` from 19 files (phased) | `CLI` | Cross | P2 | M | `PENDING` |
 | [`GT-187`](./gap-reference-catalog.md#gt-187) | Enable strict mode in tsconfig | `CLI` | Cross | P2 | M | `PENDING` |
 | [`GT-189`](./gap-reference-catalog.md#gt-189) | Replace `require()` with ES imports | `CLI` | Cross | P2 | M | `PENDING` |
 | [`GT-194`](./gap-reference-catalog.md#gt-194) | Eliminate `any` types in public APIs | `CLI` | Cross | P2 | M | `PENDING` |
@@ -28,17 +28,17 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-183`](./gap-reference-catalog.md#gt-183) | Build minimal BFF scaffolding (NestJS) | `Architecture` | Cross | P2 | L | `PENDING` |
 | [`GT-188`](./gap-reference-catalog.md#gt-188) | Add tests for 15 zero-coverage files | `CLI` | Cross | P2 | L | `PENDING` |
 | [`GT-197`](./gap-reference-catalog.md#gt-197) | Fix intermittent release pipeline failures | `DevOps` | Cross | P2 | L | `PENDING` |
-| [`GT-198`](./gap-reference-catalog.md#gt-198) | Fix `Moscoww` typo (5 sites) | `CLI` | Cross | P3 | S | `DONE` |
-| [`GT-199`](./gap-reference-catalog.md#gt-199) | Move import to top of file | `CLI` | Cross | P3 | S | `DONE` |
-| [`GT-200`](./gap-reference-catalog.md#gt-200) | Convert 11-param constructor to options object | `CLI` | Cross | P3 | S | `DONE` |
-| [`GT-201`](./gap-reference-catalog.md#gt-201) | Extract hardcoded values to constants | `CLI` | Cross | P3 | S | `DONE` |
-| [`GT-202`](./gap-reference-catalog.md#gt-202) | Add README to `governance/adr/` directory | `Docs` | Cross | P3 | S | `DONE` |
-| [`GT-203`](./gap-reference-catalog.md#gt-203) | Remove or populate empty `kubernetes/` dir | `Docs` | Cross | P3 | S | `DONE` |
-| [`GT-204`](./gap-reference-catalog.md#gt-204) | Add READMEs to infra directories | `Docs` | Cross | P3 | S | `DONE` |
-| [`GT-205`](./gap-reference-catalog.md#gt-205) | Add README to SDLC playbooks dir | `Docs` | Cross | P3 | S | `DONE` |
-| [`GT-206`](./gap-reference-catalog.md#gt-206) | Formalize BILINGUAL_INDEX nesting rule | `Docs` | Cross | P3 | S | `DONE` |
-| [`GT-207`](./gap-reference-catalog.md#gt-207) | Standardize ADR heading format | `Docs` | Cross | P3 | S | `DONE` |
-| [`GT-208`](./gap-reference-catalog.md#gt-208) | Schedule ADR-0077 re-evaluation reminder | `Docs` | Cross | P3 | S | `DONE` |
+| [`GT-198`](./gap-reference-catalog.md#gt-198) | Fix `Moscoww` typo (5 sites) | `CLI` | Cross | P3 | S | `PENDING` |
+| [`GT-199`](./gap-reference-catalog.md#gt-199) | Move import to top of file | `CLI` | Cross | P3 | S | `PENDING` |
+| [`GT-200`](./gap-reference-catalog.md#gt-200) | Convert 11-param constructor to options object | `CLI` | Cross | P3 | S | `PENDING` |
+| [`GT-201`](./gap-reference-catalog.md#gt-201) | Extract hardcoded values to constants | `CLI` | Cross | P3 | S | `PENDING` |
+| [`GT-202`](./gap-reference-catalog.md#gt-202) | Add README to `governance/adr/` directory | `Docs` | Cross | P3 | S | `PENDING` |
+| [`GT-203`](./gap-reference-catalog.md#gt-203) | Remove or populate empty `kubernetes/` dir | `Docs` | Cross | P3 | S | `PENDING` |
+| [`GT-204`](./gap-reference-catalog.md#gt-204) | Add READMEs to infra directories | `Docs` | Cross | P3 | S | `PENDING` |
+| [`GT-205`](./gap-reference-catalog.md#gt-205) | Add README to SDLC playbooks dir | `Docs` | Cross | P3 | S | `PENDING` |
+| [`GT-206`](./gap-reference-catalog.md#gt-206) | Formalize BILINGUAL_INDEX nesting rule | `Docs` | Cross | P3 | S | `PENDING` |
+| [`GT-207`](./gap-reference-catalog.md#gt-207) | Standardize ADR heading format | `Docs` | Cross | P3 | S | `PENDING` |
+| [`GT-208`](./gap-reference-catalog.md#gt-208) | Schedule ADR-0077 re-evaluation reminder | `Docs` | Cross | P3 | S | `PENDING` |
 | [`GT-209`](./gap-reference-catalog.md#gt-209) | Create agnostic baseline (`agnostic-baseline.md` missing) | `Architecture` | Cross | P0 | M | `DONE` |
 | [`GT-169`](./gap-reference-catalog.md#gt-169) | Agentic AI operational budgets, credential lifecycle, and runbooks | `Architecture` | Cross | P1 | L | `DONE` |
 | [`GT-173`](./gap-reference-catalog.md#gt-173) | OpenTelemetry export parity across CLI, MCP, and REST | `Cross` | Cross | P2 | M | `DONE` |
@@ -140,6 +140,11 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-49`](./gap-reference-catalog.md#gt-49) | Enforce TypeScript strict mode and typed filesystem ports | `CLI` | Cross | P1 | M | `DONE` |
 | [`GT-180`](./gap-reference-catalog.md#gt-180) | Replace cross-boundary `require()` with ES imports / dynamic `import()` | `CLI` | Cross | P1 | M | `DONE` |
 | [`GT-181`](./gap-reference-catalog.md#gt-181) | Split large files into smaller modules | `CLI` | Cross | P1 | M | `DONE` |
+| [`GT-182`](./gap-reference-catalog.md#gt-182) | Add tests for Core Domain SDK | `SDK` | Cross | P1 | M | `DONE` |
+| [`GT-185`](./gap-reference-catalog.md#gt-185) | Fix MCP tool stubs | `MCP Services` | Cross | P1 | M | `DONE` |
+| [`GT-184`](./gap-reference-catalog.md#gt-184) | Remove `@ts-nocheck` from 19 files | `CLI` | Cross | P1 | M | `DONE` |
+| [`GT-210`](./gap-reference-catalog.md#gt-210) | Complete SDLC Phase 05 (missing phase) | `SDLC` | Cross | P1 | M | `DONE` |
+| [`GT-179`](./gap-reference-catalog.md#gt-179) | Add tests for 5 low-coverage CLI commands | `CLI` | Cross | P1 | L | `DONE` |
 | [`GT-46`](./gap-reference-catalog.md#gt-46) | Core HTTP service ownership boundary | `CLI` | F2 | P1 | M | `DONE` |
 | [`GT-45`](./gap-reference-catalog.md#gt-45) | MCP transport and tool conformance suite | `CLI` | F2 | P1 | M | `DONE` |
 | [`GT-17`](./gap-reference-catalog.md#gt-17) | DI consolidation and strict boundaries | `CLI` | F5 | P1 | M | `DONE` |
@@ -222,13 +227,8 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-158`](./gap-reference-catalog.md#gt-158) | Human-in-the-loop and ABAC scoping for mutative MCP tools | `MCP Services` | Cross | P1 | M | `DONE` |
 | [`GT-160`](./gap-reference-catalog.md#gt-160) | Cross-surface correlation-ID and request-context propagation | `Cross` | Cross | P1 | M | `DONE` |
 | [`GT-174`](./gap-reference-catalog.md#gt-174) | Envelope `meta.schemaVersion` and producer/consumer compatibility matrix | `Cross` | Cross | P2 | S | `DONE` |
-| [`GT-179`](./gap-reference-catalog.md#gt-179) | Add tests for 5 low-coverage CLI commands | `CLI` | Cross | P1 | L | `DONE` |
-| [`GT-182`](./gap-reference-catalog.md#gt-182) | Add tests for Core Domain SDK | `SDK` | Cross | P1 | M | `DONE` |
-| [`GT-184`](./gap-reference-catalog.md#gt-184) | Remove `@ts-nocheck` from 19 files | `CLI` | Cross | P1 | M | `DONE` |
-| [`GT-185`](./gap-reference-catalog.md#gt-185) | Fix MCP tool stubs | `MCP Services` | Cross | P1 | M | `DONE` |
-| [`GT-210`](./gap-reference-catalog.md#gt-210) | Complete SDLC Phase 05 (missing phase) | `SDLC` | Cross | P1 | M | `DONE` |
 
-**Progress:** 207 / 214 done · 0 in progress · 7 pending · 0 deferred
+**Progress:** 194 / 214 done · 0 in progress · 20 pending · 0 deferred
 
 **Wave 2026-06-22 (Wilson deep audit):** Added 3 new gaps `GT-209`…`GT-211`: missing agnostic baseline, incomplete SDLC Phase 05, and orphan Spanish-only ADRs without English counterparts.
 

@@ -13,7 +13,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
 |---|---|---|:---:|:---:|:---:|:---:|
-| [`GT-212`](./gap-reference-catalog.md#gt-212) | Resolve ADR-0049/0056 status ambiguity | `Docs` | Cross | P1 | XS | `PENDING` |
+| [`GT-212`](./gap-reference-catalog.md#gt-212) | Resolve ADR-0049/0056 status ambiguity | `Docs` | Cross | P1 | XS | `DONE` |
 | [`GT-213`](./gap-reference-catalog.md#gt-213) | Add governance metadata to topology manifests | `Architecture` | Cross | P1 | S | `PENDING` |
 | [`GT-215`](./gap-reference-catalog.md#gt-215) | Add OpenAPI decorators to REST controllers | `BFF API` | Cross | P1 | S | `PENDING` |
 | [`GT-214`](./gap-reference-catalog.md#gt-214) | Add structured logging + OTel spans to REST controllers | `BFF API` | Cross | P1 | M | `PENDING` |
@@ -264,7 +264,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-160`](./gap-reference-catalog.md#gt-160) | Cross-surface correlation-ID and request-context propagation | `Cross` | Cross | P1 | M | `DONE` |
 | [`GT-174`](./gap-reference-catalog.md#gt-174) | Envelope `meta.schemaVersion` and producer/consumer compatibility matrix | `Cross` | Cross | P2 | S | `DONE` |
 
-**Progress:** 213 / 250 done · 0 in progress · 37 pending · 0 deferred
+**Progress:** 214 / 250 done · 0 in progress · 36 pending · 0 deferred
 
 **Wave 2026-06-23 (Wilson deep audit III):** Added 14 new gaps `GT-212`…`GT-225` from the Wilson Audit Playbook covering: ADR status hygiene (GT-212), topology manifest metadata + operational budgets + guidance corpus (GT-213, GT-217, GT-219), REST controller observability + OpenAPI (GT-214, GT-215), OPA input-schema parity + per-topology test density (GT-216, GT-222), SDLC Phase 05 rollback + on-call templates (GT-218), CLI branch coverage + envelope format coverage + skip-list cleanup (GT-220, GT-224, GT-225), MCP HTTP audit logging (GT-221), and cross-surface parity e2e tests (GT-223).
 

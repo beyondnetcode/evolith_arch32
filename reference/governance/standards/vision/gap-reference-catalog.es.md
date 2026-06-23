@@ -2047,9 +2047,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Resolver el estado ambiguo de ADR-0049 ("Accepted (Proposed)") y alinearlo con ADR-0056, que se declara superseder del alcance de naming de ADR-0049 pero a su vez sigue marcado como `Proposed`.
 **Evidencia Actual:** `reference/architecture/adrs/core/0049-naming-semantics-clean-code-policy.md:7` muestra `**Status:** Accepted (Proposed)` — estado compuesto inválido. `core/0056-enterprise-naming-design-conventions.md` está marcado `Proposed` y declara que supersede el alcance de naming de ADR-0049, pero ADR-0049 no refleja un marcador `Superseded by`. No existe registro de decisión del Architecture Board ni fecha efectiva para ninguno.
 **Hecho Cuando:**
-  - [ ] ADR-0049 cambia su estado a `Superseded by ADR-0056 (effective <fecha>)` con referencia inversa y preservando la fecha original de Accepted.
-  - [ ] ADR-0056 pasa a `Accepted` (o `Rejected`) con la decisión del Architecture Board registrada en la sección Decision.
-  - [ ] Ambos ADRs se enlazan mutuamente en Related ADRs y el índice global de ADRs refleja el nuevo estado.
+  - [x] ADR-0049 cambia su estado a `Superseded by ADR-0056 (effective <fecha>)` con referencia inversa y preservando la fecha original de Accepted.
+  - [x] ADR-0056 pasa a `Accepted` (o `Rejected`) con la decisión del Architecture Board registrada en la sección Decision.
+  - [x] Ambos ADRs se enlazan mutuamente en Related ADRs y el índice global de ADRs refleja el nuevo estado.
 
 #### GT-213
 **Propósito:** Añadir campos de metadata de gobernanza (`owner`, `criticality`, `supersedes`, `replaces`) a cada manifest de topología para que la trazabilidad, propiedad y decisiones de ciclo de vida sean legibles por máquina a nivel de topología.

@@ -2047,9 +2047,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Resolve the ambiguous status of ADR-0049 ("Accepted (Proposed)") and align it with ADR-0056, which declares itself a supersession of the naming scope of ADR-0049 but is itself still marked `Proposed`.
 **Current Evidence:** `reference/architecture/adrs/core/0049-naming-semantics-clean-code-policy.md:7` shows `**Status:** Accepted (Proposed)` — an invalid composite state. `core/0056-enterprise-naming-design-conventions.md` is marked `Proposed` and states it supersedes the naming scope of ADR-0049, yet ADR-0049 does not reflect a `Superseded by` marker. No Architecture Board decision record or effective date exists for either ADR.
 **Done When:**
-  - [ ] ADR-0049 status changes to `Superseded by ADR-0056 (effective <date>)` with a back-reference and the original Accepted date preserved.
-  - [ ] ADR-0056 status moves to `Accepted` (or `Rejected`) with the Architecture Board decision recorded in the ADR's Decision section.
-  - [ ] Both ADRs cross-link in their Related ADRs section and the global ADR index reflects the new state.
+  - [x] ADR-0049 status changes to `Superseded by ADR-0056 (effective <date>)` with a back-reference and the original Accepted date preserved.
+  - [x] ADR-0056 status moves to `Accepted` (or `Rejected`) with the Architecture Board decision recorded in the ADR's Decision section.
+  - [x] Both ADRs cross-link in their Related ADRs section and the global ADR index reflects the new state.
 
 #### GT-213
 **Purpose:** Add governance metadata fields (`owner`, `criticality`, `supersedes`, `replaces`) to every topology manifest so traceability, ownership, and lifecycle decisions are machine-readable at the topology level.

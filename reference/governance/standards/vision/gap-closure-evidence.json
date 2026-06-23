@@ -3209,6 +3209,21 @@
       ],
       "dependencyDisposition": "none",
       "closureNote": "Root cause: missing npm ci in core-validation jobs. 10 consecutive successful release pipeline runs verified. 20 auto-generated failure issues closed."
+    },
+    {
+      "id": "GT-212",
+      "closedAt": "2026-06-23",
+      "closureCommit": "cfb4acb5",
+      "evidence": [
+        "reference/architecture/adrs/core/0049-naming-semantics-clean-code-policy.md",
+        "reference/architecture/adrs/core/0056-enterprise-naming-design-conventions.md"
+      ],
+      "validationCommands": [
+        "grep -A1 'Status:' reference/architecture/adrs/core/0049-naming-semantics-clean-code-policy.md",
+        "grep -A1 'Status' reference/architecture/adrs/core/0056-enterprise-naming-design-conventions.md"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "ADR-0049 status corrected to Accepted. ADR-0056 status corrected to Accepted with 'extends' note (subsumed, not superseded). Cross-references added."
     }
   ]
 }

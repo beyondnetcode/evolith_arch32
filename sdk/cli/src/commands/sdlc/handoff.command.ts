@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { SubCommand, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { Inject } from '@nestjs/common';

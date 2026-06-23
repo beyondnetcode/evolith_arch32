@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';

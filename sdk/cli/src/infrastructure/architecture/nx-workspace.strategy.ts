@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { WorkspaceManagerStrategy } from '@evolith/core-domain/application/architecture/workspace-manager.strategy';
 import { ICommandExecutor } from '@evolith/core-domain/domain/interfaces';
 import { PromptService } from '../prompts/prompt.service';

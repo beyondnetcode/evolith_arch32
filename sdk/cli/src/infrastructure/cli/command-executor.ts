@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import { ICommandExecutor, PlatformCheck } from '@evolith/core-domain/domain/interfaces';

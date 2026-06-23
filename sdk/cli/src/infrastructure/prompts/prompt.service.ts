@@ -1,4 +1,3 @@
-// @ts-nocheck
 import * as p from '@clack/prompts';
 import type { Option } from '@clack/prompts';
 import chalk from 'chalk';

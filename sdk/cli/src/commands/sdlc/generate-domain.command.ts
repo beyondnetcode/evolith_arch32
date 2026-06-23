@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { SubCommand, Option } from 'nest-commander';
 import chalk from 'chalk';
 import * as path from 'path';
@@ -21,7 +20,7 @@ export class GenerateDomainCommand extends BaseEvolithCommand {
     options?: Record<string, unknown>,
   ): Promise<void> {
     const target = passedParam[0];
-    const fromFile: string | undefined = options?.from;
+    const fromFile = options?.from as string | undefined;
 
     if (!target || !fromFile) {
       this.promptService.showError('Both a generation target and a source file must be specified.');
@@ -62,7 +61,7 @@ export class GenerateDomainCommand extends BaseEvolithCommand {
     }
 
     // ── 3. Resolve target directory ─────────────────────────────────────────
-    const targetDir = path.resolve(process.cwd(), options?.output ?? '.');
+    const targetDir = path.resolve(process.cwd(), (options?.output as string | undefined) ?? '.');
     const dryRun: boolean = options?.dryRun === true;
 
     if (dryRun) {

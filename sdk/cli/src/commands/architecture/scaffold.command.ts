@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Command, Option } from 'nest-commander';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { WorkspaceManagerStrategy } from '@evolith/core-domain/application/architecture/workspace-manager.strategy';
@@ -18,7 +17,7 @@ export class ScaffoldCommand extends BaseEvolithCommand {
   }
 
   async executeCommand(passedParam: string[], options?: Record<string, unknown>): Promise<void> {
-    const dryRun = options?.dryRun || false;
+    const dryRun = Boolean(options?.dryRun);
     if (this.strategy.setDryRun) {
       this.strategy.setDryRun(dryRun);
     }
@@ -26,7 +25,7 @@ export class ScaffoldCommand extends BaseEvolithCommand {
     console.log();
     this.promptService.showIntro('Evolith Architecture Scaffolding');
 
-    let frontendFramework = options?.frontend;
+    let frontendFramework = options?.frontend as string | undefined;
     if (!frontendFramework) {
       frontendFramework = await this.promptService.select({
         message: '¿Qué framework de Frontend utilizarás para los Microfrontends?',
@@ -38,7 +37,7 @@ export class ScaffoldCommand extends BaseEvolithCommand {
       });
     }
 
-    let orm = options?.orm;
+    let orm = options?.orm as string | undefined;
     if (!orm) {
       orm = await this.promptService.select({
         message: '¿Qué ORM usarás para la capa de persistencia compartida?',

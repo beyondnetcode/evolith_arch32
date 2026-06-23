@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { CommandRunner } from 'nest-commander';
 import { Logger } from '@nestjs/common';
 import { PromptService } from '../prompts/prompt.service';

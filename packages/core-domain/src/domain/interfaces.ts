@@ -64,6 +64,7 @@ export interface PlatformCheck {
 
 export interface ICommandExecutor {
   execute(command: string, cwd?: string): Promise<CommandResult>;
+  executeOrThrow(command: string, cwd?: string): Promise<string>;
   checkTool(name: string, versionCommand: string): Promise<PlatformCheck>;
 }
 
@@ -183,6 +184,7 @@ export interface PhaseTransition {
 
 export interface ICommandExecutor {
   execute(command: string, cwd?: string): Promise<CommandResult>;
+  executeOrThrow(command: string, cwd?: string): Promise<string>;
   checkTool(name: string, versionCommand: string): Promise<PlatformCheck>;
 }
 

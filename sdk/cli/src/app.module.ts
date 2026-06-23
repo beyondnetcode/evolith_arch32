@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Module } from '@nestjs/common';
 import { InitCommand } from './commands/init/init.command';
 import { AgentsCommand } from './commands/init/agents.command';
@@ -33,6 +32,7 @@ import { EvaluateGateUseCase } from '@evolith/core-domain/application/use-cases/
 import { PhaseGateValidatorService } from '@evolith/core-domain/application/validators/phase-gate-validator.service';
 import { ProposePhaseAdvanceUseCase } from '@evolith/core-domain/application/use-cases/propose-phase-advance.use-case';
 import { RulesetValidatorService } from '@evolith/core-domain/application/validators/ruleset-validator.service';
+import type { IFileSystem, ILogger, IConfigParser } from '@evolith/core-domain/domain/interfaces';
 import { PromptService } from './infrastructure/prompts/prompt.service';
 import { WizardService } from './infrastructure/prompts/wizard.service';
 import { CatalogLoader } from './infrastructure/catalog/catalog-loader';
@@ -87,7 +87,7 @@ import { PluginModule } from './infrastructure/plugins/plugin.module';
     ProposePhaseAdvanceUseCase,
     {
       provide: RulesetValidatorService,
-      useFactory: (fs: unknown, logger: unknown, configParser: unknown) => {
+      useFactory: (fs: IFileSystem, logger: ILogger, configParser: IConfigParser) => {
         return new RulesetValidatorService({
           fileSystem: fs,
           logger,
@@ -115,7 +115,7 @@ import { PluginModule } from './infrastructure/plugins/plugin.module';
     },
     {
       provide: 'VALIDATOR_FACTORY',
-      useFactory: (fs: unknown, logger: unknown) => {
+      useFactory: (fs: IFileSystem, logger: ILogger) => {
         return (corePath?: string) => new PhaseGateValidatorService(corePath, { fileSystem: fs, logger });
       },
       inject: ['IFileSystem', 'ILogger'],

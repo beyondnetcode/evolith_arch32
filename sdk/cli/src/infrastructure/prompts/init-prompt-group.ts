@@ -1,4 +1,3 @@
-// @ts-nocheck
 import * as p from '@clack/prompts';
 import { CatalogLoader } from '../catalog/catalog-loader';
 import { InitProjectInput } from '@evolith/core-domain/application/services';

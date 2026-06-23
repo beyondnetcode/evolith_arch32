@@ -1,9 +1,7 @@
-// @ts-nocheck
 import { SubCommand, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { Inject } from '@nestjs/common';
 import { PhaseTransitionUseCase } from '@evolith/core-domain/application/services';
-import { GateResult } from '@evolith/core-domain/domain/gate-evidence';
 import { IFileSystem } from '@evolith/core-domain/domain/interfaces';
 import { readGitLog, isGitRepo } from '@evolith/core-domain/domain/metrics/git-log-reader';
 import { calculateDora, DoraMetric, DoraRating } from '@evolith/core-domain/domain/metrics/dora-calculator';
@@ -35,7 +33,7 @@ export class GateStatusCommand extends BaseEvolithCommand {
     const fs = this.fileSystem;
     const useCase = new PhaseTransitionUseCase(fs);
     const cwd = process.cwd();
-    const sinceDays: number = options?.since ?? 90;
+    const sinceDays: number = (options?.since as number | undefined) ?? 90;
 
     this.promptService.startSpinner('Validating phase gates…');
 

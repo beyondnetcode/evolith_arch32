@@ -51,13 +51,13 @@ export function validateAuth(
   }
 
   const correlationId = generateCorrelationId();
-  const env = failure(
+  const err = failure(
     ErrorCodes.UNAUTHORIZED,
     'Invalid or missing API key or JWT token',
     { correlationId, tool: 'auth', durationMs: 0 },
   );
   res.writeHead(401, { 'Content-Type': 'application/json' });
-  res.end(JSON.stringify(env));
+  res.end(JSON.stringify(err));
   return null;
 }
 

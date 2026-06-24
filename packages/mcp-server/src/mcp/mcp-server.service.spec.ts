@@ -178,14 +178,14 @@ describe('McpServerService — HTTP transport', () => {
     port: number,
     urlPath: string,
     headers: Record<string, string> = {},
-  ): Promise<{ status: number; body: string }> {
+  ): Promise<{ status: number; body: string; headers: Record<string, string | string[] | undefined> }> {
     return new Promise((resolve, reject) => {
       const req = http.request(
         { host: '127.0.0.1', port, path: urlPath, method: 'GET', headers },
         (res) => {
           let body = '';
           res.on('data', (c) => (body += c));
-          res.on('end', () => resolve({ status: res.statusCode ?? 0, body }));
+          res.on('end', () => resolve({ status: res.statusCode ?? 0, body, headers: res.headers }));
         },
       );
       req.on('error', reject);
@@ -244,6 +244,24 @@ describe('McpServerService — HTTP transport', () => {
     try {
       const ok = await httpGet(port, '/health', { 'authorization': 'Bearer secret' });
       expect(ok.status).toBe(200);
+    } finally {
+      await service.stop();
+    }
+  });
+
+  it('sets security headers on HTTP responses', async () => {
+    const service = new McpServerService(new ToolRegistryService([]), new MetricsService(), new MockAbacEvaluator());
+    await service.start({ transport: 'http', port: 0, allowNoAuth: true });
+    const port = service.boundPort()!;
+
+    try {
+      const res = await httpGet(port, '/health');
+      expect(res.headers['content-security-policy']).toBe("default-src 'none'");
+      expect(res.headers['x-content-type-options']).toBe('nosniff');
+      expect(res.headers['x-frame-options']).toBe('DENY');
+      expect(res.headers['strict-transport-security']).toContain('max-age=');
+      expect(res.headers['referrer-policy']).toBe('no-referrer');
+      expect(res.headers['x-xss-protection']).toBe('0');
     } finally {
       await service.stop();
     }

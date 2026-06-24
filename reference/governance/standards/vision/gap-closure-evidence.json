@@ -3265,6 +3265,21 @@
       ],
       "dependencyDisposition": "none",
       "closureNote": "Created rollback rehearsal template (Blue/Green + Canary examples) and on-call handoff template (escalation paths, SLA acknowledgement). Both have JSON Schemas and are wired into Phase 05 mandatory evidence."
+    },
+    {
+      "id": "GT-219",
+      "closedAt": "2026-06-23",
+      "closureCommit": "7da34b37",
+      "evidence": [
+        "reference/architecture/topologies/ai/agentic-ai/topology.manifest.json",
+        "rulesets/schema/topology-manifest.schema.json",
+        ".harness/scripts/validate-topology-manifests.mjs"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/validate-topology-manifests.mjs"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Added operationalBudgets (tokenBudgetPerExecution, credentialRotationIntervalHours, sandboxTimeoutMs) to agentic-ai manifest. Schema extended with AI-specific fields. Validation enforces presence for agentic-ai topologies."
     }
   ]
 }

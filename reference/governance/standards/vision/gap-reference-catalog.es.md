@@ -2103,9 +2103,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Añadir un bloque `operationalBudgets` al manifest de la topología agentic-ai, siguiendo el precedente fijado por serverless y edge-computing, para que los SLOs de token-budget, sandbox-timeout y rotación de credenciales sean legibles por máquina y exigibles.
 **Evidencia Actual:** `grep -l operationalBudgets reference/architecture/topologies/*/*/topology.manifest.json` lo encuentra en `execution/edge-computing/` y `execution/serverless/` pero no en `ai/agentic-ai/topology.manifest.json`, a pesar de que GT-169 cerró el lado de docs/runbooks de esos presupuestos.
 **Hecho Cuando:**
-  - [ ] `agentic-ai/topology.manifest.json` declara `operationalBudgets` con al menos `tokenBudgetPerExecution`, `credentialRotationIntervalHours` y `sandboxTimeoutMs`.
-  - [ ] `topology-manifest.schema.json` deja el bloque opcional con campos tipados; la validación de agentic-ai pasa.
-  - [ ] Un test rego exige la presencia del bloque para topologías AI.
+  - [x] `agentic-ai/topology.manifest.json` declara `operationalBudgets` con al menos `tokenBudgetPerExecution`, `credentialRotationIntervalHours` y `sandboxTimeoutMs`.
+  - [x] `topology-manifest.schema.json` deja el bloque opcional con campos tipados; la validación de agentic-ai pasa.
+  - [x] Un test rego exige la presencia del bloque para topologías AI.
 
 #### GT-220
 **Propósito:** Elevar la cobertura de ramas del CLI a la altura de la madurez de cobertura de statements subiendo `gate-status.command.ts` de 40% ramas a ≥80% y subiendo el umbral global de branches de Jest por encima del piso actual de 67%.

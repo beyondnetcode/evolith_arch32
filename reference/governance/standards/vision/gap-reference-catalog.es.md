@@ -2486,3 +2486,14 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [ ] `.gitleaks.toml` (o config equivalente) documenta fixtures de test allow-listadas para que el scan mantenga señal alta.
   - [ ] Hallazgos fallan el build con un mensaje claro de remediación.
   - [ ] Hook pre-commit (opcional) replica el check localmente.
+
+#### GT-266
+**Propósito:** Crear un servicio de provisioning de API keys para el transporte HTTP de MCP, de modo que consumidores externos tengan una forma segura y auditable de obtener y rotar llaves — actualmente la única opción es un único secreto compartido configurado vía env var, sin generación, distribución, rotación ni revocación.
+**Evidencia Actual:** No hay endpoint de generación de keys, ni key store, ni mecanismo de rotación. El operador auto-provisionaba cualquier string vía `--api-key` o `EVOLITH_API_KEY` y lo distribuía out of band. No hay keys por cliente, ni persistencia hasheada, ni trail de auditoría. ADR-0088/ADR-0091 prescriben migrar a identidades de corta duración (Token Exchange, Workload Identity), pero esa migración no está programada y el path de key estática carece de higiene básica de provisioning.
+**Hecho Cuando:**
+  - [ ] Formato de API key definido (ej. prefijo `evk_` + entropía) y un comando CLI o endpoint HTTP genera keys on demand.
+  - [ ] Keys almacenadas hasheadas (SHA-256) con metadatos: etiqueta de cliente, fecha de creación, último uso, expiración.
+  - [ ] Rotación de keys soportada sin reinicio del servidor (múltiples keys válidas, versionadas por fecha de creación).
+  - [ ] Endpoint o mecanismo de revocación documentado.
+  - [ ] Log de auditoría para eventos de creación, rotación y revocación de keys.
+  - [ ] Ruta de migración documentada desde el modelo actual de env-var único al servicio de provisioning.

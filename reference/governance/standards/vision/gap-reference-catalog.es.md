@@ -2365,10 +2365,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Eliminar el riesgo de inyección de comandos en `evolith update --install`, donde la cadena de versión retornada por `npm view ... --json` se interpola en un comando shell vía `execSync`, de modo que una respuesta maliciosa o comprometida del registro podría ejecutar código arbitrario en la máquina del operador.
 **Evidencia Actual:** `sdk/cli/src/commands/update/update.command.ts:116` — `execSync(`npm install -g @evolith/smart-cli@${latestVersion}`, { stdio: 'inherit' })`. `latestVersion` proviene de `JSON.parse(result.trim())` en la línea 163 sin validación semver antes de empalmarse en el string de shell.
 **Hecho Cuando:**
-  - [ ] `execSync` (forma string) reemplazado por `execFileSync('npm', ['install', '-g', `@evolith/smart-cli@${latestVersion}`])` para que la versión sea un argumento, no un token shell.
-  - [ ] `latestVersion` se valida contra la regex semver antes de usar; valores inválidos abortan con un error claro.
-  - [ ] El mismo hardening se aplica al camino de lectura (`execFile`/`execFileSync` en vez de `execSync`).
-  - [ ] El spec cubre: versión maliciosa (e.g., `1.0.0; rm -rf /`) es rechazada en el gate de regex.
+  - [x] `execSync` (forma string) reemplazado por `execFileSync('npm', ['install', '-g', `@evolith/smart-cli@${latestVersion}`])` para que la versión sea un argumento, no un token shell.
+  - [x] `latestVersion` se valida contra la regex semver antes de usar; valores inválidos abortan con un error claro.
+  - [x] El mismo hardening se aplica al camino de lectura (`execFile`/`execFileSync` en vez de `execSync`).
+  - [x] El spec cubre: versión maliciosa (e.g., `1.0.0; rm -rf /`) es rechazada en el gate de regex.
 
 #### GT-252
 **Propósito:** Cablear las 19 políticas OPA huérfanas dentro de `main.rego` para que el agregador represente realmente la superficie de políticas de Evolith — hoy el evaluador de gates solo ve 7 de los 26 módulos de política, omitiendo silenciosamente el 73% de las reglas de gobernanza.
@@ -2383,9 +2383,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Fijar `aquasecurity/trivy-action` a un tag de versión específico para eliminar el riesgo de cadena de suministro de una referencia móvil `@master` en CI, que hoy podría cambiar el comportamiento del scanner o ser secuestrada sin que lo notemos.
 **Evidencia Actual:** `.github/workflows/sdk-cli-ci.yml:344` — `uses: aquasecurity/trivy-action@master`. Sin SHA ni tag de versión.
 **Hecho Cuando:**
-  - [ ] `trivy-action@master` reemplazado por un tag fijo (e.g., `@0.24.0`) o un SHA de 40 chars.
-  - [ ] Regla Dependabot/Renovate cubre actualizaciones de `github-actions` para mantener el pin.
-  - [ ] Resto de actions de terceros en `.github/workflows/` auditadas; cualquier referencia `@master`/`@main` se fija en el mismo PR o se registra como follow-up.
+  - [x] `trivy-action@master` reemplazado por un tag fijo (e.g., `@0.24.0`) o un SHA de 40 chars.
+  - [x] Regla Dependabot/Renovate cubre actualizaciones de `github-actions` para mantener el pin.
+  - [x] Resto de actions de terceros en `.github/workflows/` auditadas; cualquier referencia `@master`/`@main` se fija en el mismo PR o se registra como follow-up.
 
 #### GT-254
 **Propósito:** Prevenir ataques de path traversal contra la superficie `resources/read` del MCP — hoy un cliente MCP puede construir URIs estilo `evolith://ruleset/../../etc/passwd` y el resolvedor de recursos hará `path.join` fuera del directorio raíz de rulesets sin oposición.

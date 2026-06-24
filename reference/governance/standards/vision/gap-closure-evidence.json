@@ -3734,6 +3734,33 @@
       ],
       "dependencyDisposition": "none",
       "closureNote": "Fail-closed MCP auth when no API key configured. Production mode rejects; dev allows --allow-no-auth opt-in."
+    },
+    {
+      "id": "GT-251",
+      "closedAt": "2026-06-24",
+      "closureCommit": "bbd2e517",
+      "evidence": [
+        "sdk/cli/src/commands/update/update.command.ts",
+        "sdk/cli/src/commands/update/update.command.spec.ts"
+      ],
+      "validationCommands": [
+        "npx jest sdk/cli/src/commands/update/update.command.spec.ts"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Replaced execSync with execFileSync, added semver validation regex, 2 new tests for malicious version rejection."
+    },
+    {
+      "id": "GT-253",
+      "closedAt": "2026-06-24",
+      "closureCommit": "bbd2e517",
+      "evidence": [
+        ".github/workflows/sdk-cli-ci.yml"
+      ],
+      "validationCommands": [
+        "grep trivy-action .github/workflows/sdk-cli-ci.yml"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Pinned aquasecurity/trivy-action@master to @v0.36.0. Audited all 78 uses: across 11 workflows, no other @master/@main refs."
     }
   ]
 }

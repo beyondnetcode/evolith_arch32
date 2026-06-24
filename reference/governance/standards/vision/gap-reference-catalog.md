@@ -2365,10 +2365,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Remove the command-injection risk in `evolith update --install`, where the version string returned by `npm view ... --json` is interpolated into a shell command via `execSync`, so a malicious or compromised registry response could execute arbitrary code on the operator's machine.
 **Current Evidence:** `sdk/cli/src/commands/update/update.command.ts:116` — `execSync(`npm install -g @evolith/smart-cli@${latestVersion}`, { stdio: 'inherit' })`. `latestVersion` originates from `JSON.parse(result.trim())` at line 163 with no semver validation before being spliced into the shell string.
 **Done When:**
-  - [ ] `execSync` (string form) replaced with `execFileSync('npm', ['install', '-g', `@evolith/smart-cli@${latestVersion}`])` so the version is an argv element, not a shell token.
-  - [ ] `latestVersion` is validated against the semver regex before use; invalid values abort with a clear error.
-  - [ ] Same hardening applied to the read path (`execFile`/`execFileSync` instead of `execSync`).
-  - [ ] Spec covers: malicious version (e.g., `1.0.0; rm -rf /`) is rejected at the regex gate.
+  - [x] `execSync` (string form) replaced with `execFileSync('npm', ['install', '-g', `@evolith/smart-cli@${latestVersion}`])` so the version is an argv element, not a shell token.
+  - [x] `latestVersion` is validated against the semver regex before use; invalid values abort with a clear error.
+  - [x] Same hardening applied to the read path (`execFile`/`execFileSync` instead of `execSync`).
+  - [x] Spec covers: malicious version (e.g., `1.0.0; rm -rf /`) is rejected at the regex gate.
 
 #### GT-252
 **Purpose:** Wire the 19 orphaned OPA policies into `main.rego` so the aggregator actually represents Evolith's policy surface — today the gate evaluator only sees 7 of the 26 policy modules, silently skipping 73% of governance rules.
@@ -2383,9 +2383,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Pin `aquasecurity/trivy-action` to a specific version tag to eliminate the supply-chain risk of a moving `@master` reference in CI, which today could swap scanner behavior or be hijacked without our awareness.
 **Current Evidence:** `.github/workflows/sdk-cli-ci.yml:344` — `uses: aquasecurity/trivy-action@master`. No SHA or version tag.
 **Done When:**
-  - [ ] `trivy-action@master` replaced with a pinned tag (e.g., `@0.24.0`) or a 40-char commit SHA.
-  - [ ] Dependabot/Renovate rule covers `github-actions` updates so the pin is maintained.
-  - [ ] All other third-party actions in `.github/workflows/` audited; any `@master`/`@main` references are pinned in the same PR or recorded as follow-up.
+  - [x] `trivy-action@master` replaced with a pinned tag (e.g., `@0.24.0`) or a 40-char commit SHA.
+  - [x] Dependabot/Renovate rule covers `github-actions` updates so the pin is maintained.
+  - [x] All other third-party actions in `.github/workflows/` audited; any `@master`/`@main` references are pinned in the same PR or recorded as follow-up.
 
 #### GT-254
 **Purpose:** Prevent path-traversal attacks against the MCP `resources/read` surface — today an MCP client can craft `evolith://ruleset/../../etc/passwd` style URIs and the resource resolver will happily `path.join` outside the rulesets root.

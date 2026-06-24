@@ -167,6 +167,7 @@ services:
     restart: always
     command:
       - "--api.insecure=true"
+      - "--ping=true"
       - "--providers.file.directory=/etc/traefik/dynamic"
       - "--providers.file.watch=true"
       - "--providers.docker=true"

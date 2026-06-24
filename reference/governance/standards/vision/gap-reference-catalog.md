@@ -2431,10 +2431,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Replace the brittle commit-message string match that gates the npm publish job with a tag-driven trigger, so releases cannot be accidentally fired by a commit whose body happens to contain "bump version".
 **Current Evidence:** `.github/workflows/ci-cd.yml:42` — `if: github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, 'bump version')`. Any commit landed on main with that substring (including merge commits, reverts, or housekeeping) triggers `npm publish --access public --tag beta`.
 **Done When:**
-  - [ ] `publish-npm` job triggers on `push` events whose `github.ref` matches `refs/tags/v*` (or equivalent semver pattern).
-  - [ ] The current `contains('bump version')` guard is removed.
-  - [ ] Release procedure documented: tag → workflow runs → publishes to npm.
-  - [ ] Backwards compatibility: existing manual `workflow_dispatch` entry preserved if it exists, or added if not.
+  - [x] `publish-npm` job triggers on `push` events whose `github.ref` matches `refs/tags/v*` (or equivalent semver pattern).
+  - [x] The current `contains('bump version')` guard is removed.
+  - [x] Release procedure documented: tag → workflow runs → publishes to npm.
+  - [x] Backwards compatibility: existing manual `workflow_dispatch` entry preserved if it exists, or added if not.
 
 #### GT-260
 **Purpose:** Close the bilingual-parity gap for BMAD agents by providing the Spanish persona file for the PO agent and wiring it through the same workflows as the other 8 agents.

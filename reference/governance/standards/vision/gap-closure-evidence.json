@@ -3832,6 +3832,19 @@
       ],
       "dependencyDisposition": "none",
       "closureNote": "Pinned MongoDB image to 7.0. Added Pinned Versions section to infrastructure README (EN/ES) with upgrade cadence."
+    },
+    {
+      "id": "GT-259",
+      "closedAt": "2026-06-24",
+      "closureCommit": "dae62ce3",
+      "evidence": [
+        ".github/workflows/ci-cd.yml"
+      ],
+      "validationCommands": [
+        "grep 'refs/tags/v' .github/workflows/ci-cd.yml"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Changed publish trigger from commit-message string match to tag-based (refs/tags/v*). Added workflow_dispatch for manual releases."
     }
   ]
 }

@@ -16,6 +16,8 @@ capabilities:
 dependencies:
   - Product Manager Agent
   - Docs Agent
+skills:
+  - adr-freshness-monitor
 ---
 
 # Architect Agent Persona

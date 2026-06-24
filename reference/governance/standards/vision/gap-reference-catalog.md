@@ -2338,3 +2338,15 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] A script scans all ADRs, extracts last modification dates, and flags those >180 days old.
   - [x] ADRs >365 days old generate a review reminder in the gap board.
   - [x] The script runs on a weekly schedule (e.g., Monday 09:00 UTC) via GitHub Actions.
+
+#### GT-249
+**Purpose:** Add a Redis caching layer to the Core API and MCP server to optimize latency and performance for the Tracker consumption pattern, where repeated requests for topology manifests, OPA evaluations, and gate status checks hit the same data.
+**Current Evidence:** The Core API (`apps/core-api/`) has no caching middleware. Every request for topology manifests, gate evaluations, and ruleset lookups hits the filesystem or OPA engine directly. With Tracker as a consumer making frequent queries for the same topology data, this creates unnecessary latency and redundant computation. Rate limiting is also absent (noted in prior gaps).
+**Done When:**
+  - [ ] A Redis instance is added to the `docker-compose.yml` infrastructure stack.
+  - [ ] Core API implements response caching for topology manifest lookups (TTL: 5 minutes).
+  - [ ] OPA policy evaluation results are cached by input hash (TTL: 1 minute) to avoid re-evaluation for identical inputs.
+  - [ ] Rate limiting middleware uses Redis for distributed counters (replacing in-memory).
+  - [ ] MCP server caches tool/resource discovery results (TTL: 10 minutes).
+  - [ ] A cache invalidation strategy is documented for topology manifest updates.
+  - [ ] Cache hit/miss metrics are exposed via the observability stack (Prometheus).

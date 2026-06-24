@@ -13,6 +13,8 @@ dependencies:
   - Analyst Agent
   - Architect Agent
   - SM Agent
+skills:
+  - gap-prioritization-engine
 ---
 
 # PO Agent Persona

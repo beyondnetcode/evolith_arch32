@@ -8,6 +8,8 @@ capabilities:
  - Functional requirements extraction
  - Business rules modeling
 dependencies: []
+skills:
+  - requirements-traceability-mapper
 ---
 
 # Analyst Agent Persona

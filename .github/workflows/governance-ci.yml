@@ -1,0 +1,67 @@
+name: Governance CI - Unlinked Scripts
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  governance-scripts:
+    name: Governance Script Suite
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: "23 - Check Orphan Bilingual"
+        run: node .harness/scripts/ci/23-check-orphan-bilingual.mjs
+
+      - name: "24 - Check Surface Parity"
+        run: node .harness/scripts/ci/24-check-surface-parity.mjs
+
+      - name: "25 - Operational Drift Audit"
+        run: node .harness/scripts/ci/25-operational-drift-audit.mjs
+
+      - name: "26 - Validate Topology Rule Coverage"
+        run: node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs
+
+      - name: "27 - OPA Parity Gate"
+        run: node .harness/scripts/ci/27-opa-parity-gate.mjs
+
+      - name: "28 - Test Topology OPA"
+        run: node .harness/scripts/ci/28-test-topology-opa.mjs
+
+      - name: "17 - Validate Knowledge Intake"
+        run: node .harness/scripts/ci/17-validate-knowledge-intake.mjs
+
+      - name: "18 - Validate Knowledge Parity"
+        run: node .harness/scripts/ci/18-validate-knowledge-parity.mjs
+
+      - name: "19 - Validate REST Versioning"
+        run: node .harness/scripts/ci/19-validate-rest-versioning.mjs
+
+      - name: "20 - Validate Surface Compatibility"
+        run: node .harness/scripts/ci/20-validate-surface-compatibility.mjs
+
+      - name: "21 - Validate Phase Gate Templates"
+        run: node .harness/scripts/ci/21-validate-phase-gate-templates.mjs
+
+      - name: "22 - Validate Topology Composition"
+        run: node .harness/scripts/ci/22-validate-topology-composition.mjs

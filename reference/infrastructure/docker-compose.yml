@@ -278,7 +278,44 @@ services:
       - ums-network
 
   # ---------------------------------------------------------
-  # 14. Model Context Protocol Server (MCP)
+  # 14. Metrics Storage (Prometheus)
+  # ---------------------------------------------------------
+  prometheus:
+    image: prom/prometheus:v2.53.0
+    container_name: ums-prometheus
+    restart: always
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.retention.time=30d'
+      - '--web.enable-lifecycle'
+    volumes:
+      - ../operations/otel/prometheus-config.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - ums-network
+    depends_on:
+      - otel-collector
+
+  # ---------------------------------------------------------
+  # 15. Long-Term Metrics (Mimir)
+  # ---------------------------------------------------------
+  mimir:
+    image: grafana/mimir:2.12.0
+    container_name: ums-mimir
+    restart: always
+    command:
+      - '-config.file=/etc/mimir/config.yaml'
+    volumes:
+      - mimir_data:/tmp/mimir
+    ports:
+      - "8008:8008"
+    networks:
+      - ums-network
+
+  # ---------------------------------------------------------
+  # 16. Model Context Protocol Server (MCP)
   # ---------------------------------------------------------
   mcp:
     build:
@@ -309,6 +346,8 @@ volumes:
   tempo_data:
   loki_data:
   grafana_data:
+  prometheus_data:
+  mimir_data:
 
 # ---------------------------------------------------------
 # Isolated Secure Networks

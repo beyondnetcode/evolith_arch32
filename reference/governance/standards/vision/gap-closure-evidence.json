@@ -1234,7 +1234,7 @@
         "npm run test:e2e --workspace sdk/cli -- --runTestsByPath test/gate.e2e-spec.ts"
       ],
       "dependencyDisposition": "satisfied",
-      "dependencyRationale": "Builds on the ADR-0073 GateEvidence contract (GT-02/GT-03) and the deepened phase-gate content checks (GT-08…GT-11)."
+      "dependencyRationale": "Builds on the ADR-0073 GateEvidence contract (GT-02/GT-03) and the deepened phase-gate content checks (GT-08\u2026GT-11)."
     },
     {
       "id": "GT-50",
@@ -2950,7 +2950,7 @@
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none",
-      "closureNote": "Resolved by file deletion — the files containing the Moscoww typo were removed in commit c4835e0db"
+      "closureNote": "Resolved by file deletion \u2014 the files containing the Moscoww typo were removed in commit c4835e0db"
     },
     {
       "id": "GT-199",
@@ -2977,7 +2977,7 @@
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none",
-      "closureNote": "Resolved by file deletion — server.ts was removed in commit c4835e0db"
+      "closureNote": "Resolved by file deletion \u2014 server.ts was removed in commit c4835e0db"
     },
     {
       "id": "GT-201",
@@ -2991,7 +2991,7 @@
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none",
-      "closureNote": "Resolved by file deletion — server.ts was removed in commit c4835e0db"
+      "closureNote": "Resolved by file deletion \u2014 server.ts was removed in commit c4835e0db"
     },
     {
       "id": "GT-202",
@@ -3178,7 +3178,7 @@
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none",
-      "closureNote": "Resolved by GT-184 — zero @ts-nocheck directives remain in the codebase"
+      "closureNote": "Resolved by GT-184 \u2014 zero @ts-nocheck directives remain in the codebase"
     },
     {
       "id": "GT-178",
@@ -3280,6 +3280,365 @@
       ],
       "dependencyDisposition": "none",
       "closureNote": "Added operationalBudgets (tokenBudgetPerExecution, credentialRotationIntervalHours, sandboxTimeoutMs) to agentic-ai manifest. Schema extended with AI-specific fields. Validation enforces presence for agentic-ai topologies."
+    },
+    {
+      "id": "GT-216",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4de39758",
+      "evidence": [
+        "rulesets/opa/schemas/"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "OPA input-schema parity for 17 rulesets"
+    },
+    {
+      "id": "GT-217",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4de39758",
+      "evidence": [
+        "reference/architecture/topologies/progressive-axis/modular-monolith/operations.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/01-validate-docs.mjs"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Topology operational guidance backfilled for 7 non-agentic topologies"
+    },
+    {
+      "id": "GT-220",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4de39758",
+      "evidence": [
+        "sdk/cli/src/commands/sdlc/gate-status.command.spec.ts"
+      ],
+      "validationCommands": [
+        "npm run test:cov --workspace sdk/cli"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "CLI branch coverage raised; jest threshold updated"
+    },
+    {
+      "id": "GT-221",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4de39758",
+      "evidence": [
+        "packages/mcp-server/src/mcp/audit-logger.ts"
+      ],
+      "validationCommands": [
+        "npm run test --workspace packages/mcp-server"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "MCP audit logging implemented with structured events and OTel correlation"
+    },
+    {
+      "id": "GT-222",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4de39758",
+      "evidence": [
+        "reference/architecture/topologies/progressive-axis/modular-monolith/modular-monolith.test.rego",
+        "reference/architecture/topologies/progressive-axis/distributed-modules/distributed-modules.test.rego",
+        "reference/architecture/topologies/ai/agentic-ai/agentic-ai.test.rego"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/28-test-topology-opa.mjs"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "OPA test density raised for modular-monolith, distributed-modules, agentic-ai"
+    },
+    {
+      "id": "GT-223",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4de39758",
+      "evidence": [
+        "sdk/cli/test/e2e/surface-parity.e2e-spec.ts"
+      ],
+      "validationCommands": [
+        "npm run test:e2e --workspace sdk/cli"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Cross-surface parity e2e tests for 5 core operations"
+    },
+    {
+      "id": "GT-224",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4de39758",
+      "evidence": [
+        "sdk/cli/src/commands/drift/drift.command.ts",
+        "sdk/cli/src/commands/architecture/scaffold.command.ts",
+        "sdk/cli/src/commands/docs/docs.command.ts"
+      ],
+      "validationCommands": [
+        "npm run build --workspace sdk/cli",
+        "npm test --workspace sdk/cli"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Added --format json to drift, architecture scaffold, docs commands"
+    },
+    {
+      "id": "GT-225",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4de39758",
+      "evidence": [
+        "sdk/cli/src/infrastructure/prompts/wizard.service.spec.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace sdk/cli"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Revived 4 it.skip cases in wizard.service.spec.ts"
+    },
+    {
+      "id": "GT-226",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4de39758",
+      "evidence": [
+        ".github/dependabot.yml"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Dependabot config added for npm and GitHub Actions"
+    },
+    {
+      "id": "GT-227",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4de39758",
+      "evidence": [
+        ".github/workflows/sdk-cli-ci.yml"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "CodeQL and Trivy added to sdk-cli-ci.yml"
+    },
+    {
+      "id": "GT-231",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4de39758",
+      "evidence": [
+        ".github/workflows/governance-ci.yml"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "10 CI scripts wired into GitHub Actions governance-ci.yml"
+    },
+    {
+      "id": "GT-232",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4de39758",
+      "evidence": [
+        ".bmad-core/agents/wilson.md",
+        ".bmad-core/agents/po.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Wilson and PO persona definitions created with YAML frontmatter"
+    },
+    {
+      "id": "GT-234",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4de39758",
+      "evidence": [
+        ".harness/rules/global-rules.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "R-27 added to global-rules.es.md with Spanish translation"
+    },
+    {
+      "id": "GT-235",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4de39758",
+      "evidence": [
+        ".harness/scripts/ci/23-check-orphan-bilingual.mjs",
+        ".harness/scripts/ci/24-check-surface-parity.mjs",
+        ".harness/scripts/ci/25-operational-drift-audit.mjs",
+        ".harness/scripts/ci/26-validate-topology-rule-coverage.mjs",
+        ".harness/scripts/ci/27-opa-parity-gate.mjs",
+        ".harness/scripts/ci/28-test-topology-opa.mjs"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "CI scripts renumbered with unique prefixes 23-28"
+    },
+    {
+      "id": "GT-237",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4de39758",
+      "evidence": [
+        "reference/architecture/adrs/ai-augmented/0001-harness-engineering.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/01-validate-docs.mjs",
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "5 AI-Augmented ADRs authored with EN/ES bilingual parity"
+    },
+    {
+      "id": "GT-238",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4de39758",
+      "evidence": [
+        "reference/operations/otel/prometheus-config.yml"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Prometheus and Mimir added to docker-compose with scrape config"
+    },
+    {
+      "id": "GT-239",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4de39758",
+      "evidence": [
+        "reference/operations/slo/core-api-slo.md",
+        "reference/operations/alerts/prometheus-alerts.yml"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "SLOs defined and alerting rules implemented for Prometheus"
+    },
+    {
+      "id": "GT-240",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4de39758",
+      "evidence": [
+        "apps/core-api/src/main.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace apps/core-api"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "CORS configuration made environment-aware (dev/staging/production)"
+    },
+    {
+      "id": "GT-241",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4de39758",
+      "evidence": [
+        ".github/workflows/sdk-cli-release.yml"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "SBOM generation step added to release pipeline"
+    },
+    {
+      "id": "GT-242",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4de39758",
+      "evidence": [
+        "rulesets/opa/"
+      ],
+      "validationCommands": [
+        "./.harness/bin/opa test rulesets/opa/ --ignore=schemas -v"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "OPA .rego policies generated for 17 native rulesets"
+    },
+    {
+      "id": "GT-243",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4de39758",
+      "evidence": [
+        "reference/operations/load-tests/api-throughput-baseline.js",
+        "reference/operations/load-tests/mcp-concurrent-connections.js",
+        "reference/operations/load-tests/cli-batch-operations.js"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "3 k6 load test scripts for ADR-0037 stress scenarios"
+    },
+    {
+      "id": "GT-244",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4de39758",
+      "evidence": [
+        "reference/operations/incident-response-service-outage.md",
+        "reference/operations/incident-response-data-breach.md",
+        "reference/operations/incident-response-dependency-cve.md",
+        "reference/operations/incident-response-production-rollback.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/01-validate-docs.mjs"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "4 incident response playbooks with bilingual versions"
+    },
+    {
+      "id": "GT-245",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4de39758",
+      "evidence": [
+        ".github/workflows/sdk-cli-ci.yml"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "OWASP ZAP baseline scan added to CI pipeline"
+    },
+    {
+      "id": "GT-246",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4de39758",
+      "evidence": [
+        "reference/operations/chaos-experiments/network-partition.yaml",
+        "reference/operations/chaos-experiments/pod-kill.yaml",
+        "reference/operations/chaos-experiments/cpu-stress.yaml"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "3 Chaos Mesh experiment definitions for resilience testing"
+    },
+    {
+      "id": "GT-247",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4de39758",
+      "evidence": [
+        "reference/infrastructure/docker-compose.yml",
+        "reference/infrastructure/.env.example"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/08-validate-tracking.mjs"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Docker credentials replaced with variable references and .env.example added"
+    },
+    {
+      "id": "GT-248",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4de39758",
+      "evidence": [
+        ".harness/scripts/adr-freshness-monitor.mjs"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/adr-freshness-monitor.mjs"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "ADR freshness monitor script created with stale detection and review reminders"
     }
   ]
 }

@@ -1,0 +1,61 @@
+groups:
+  - name: core-api-alerts
+    rules:
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.01
+        for: 5m
+        labels:
+          severity: critical
+          service: core-api
+        annotations:
+          summary: "High 5xx error rate on Core API"
+          description: "5xx error rate is {{ $value | humanizePercentage }} (threshold: 1%)"
+          runbook_url: "https://github.com/beyondnetcode/evolith/blob/main/reference/operations/README.md"
+
+      - alert: HighLatency
+        expr: histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m])) > 0.5
+        for: 5m
+        labels:
+          severity: warning
+          service: core-api
+        annotations:
+          summary: "High p99 latency on Core API"
+          description: "p99 latency is {{ $value }}s (threshold: 500ms)"
+          runbook_url: "https://github.com/beyondnetcode/evolith/blob/main/reference/operations/README.md"
+
+      - alert: PodRestart
+        expr: increase(kube_pod_container_status_restarts_total[1h]) > 3
+        for: 0m
+        labels:
+          severity: warning
+          service: core-api
+        annotations:
+          summary: "Pod restarting frequently"
+          description: "Pod {{ $labels.pod }} has restarted {{ $value }} times in the last hour"
+          runbook_url: "https://github.com/beyondnetcode/evolith/blob/main/reference/operations/README.md"
+
+      - alert: ErrorBudgetBurnRate
+        expr: |
+          (
+            rate(http_requests_total{status=~"5.."}[1h]) / rate(http_requests_total[1h])
+          ) > 14.4 * (1 - 0.999)
+        for: 5m
+        labels:
+          severity: critical
+          service: core-api
+        annotations:
+          summary: "Error budget burning too fast (1h window)"
+          description: "1h burn rate {{ $value | humanizePercentage }} exceeds 14.4x threshold"
+
+      - alert: ErrorBudgetBurnRate6h
+        expr: |
+          (
+            rate(http_requests_total{status=~"5.."}[6h]) / rate(http_requests_total[6h])
+          ) > 6 * (1 - 0.999)
+        for: 30m
+        labels:
+          severity: warning
+          service: core-api
+        annotations:
+          summary: "Error budget burning too fast (6h window)"
+          description: "6h burn rate {{ $value | humanizePercentage }} exceeds 6x threshold"

@@ -2079,17 +2079,17 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Cerrar la brecha de paridad de input-schemas OPA para que cada ruleset nativo que gatea decisiones de gobernanza tenga un contrato OPA equivalente — exigido por la política dual-engine de ADR-0073 y el gate de paridad Native/OPA por topología.
 **Evidencia Actual:** `find rulesets -name '*.rules.json'` devuelve **26 rulesets nativos**; `ls rulesets/opa/schemas/` devuelve **9 input schemas** (`abac-mcp-tool-access`, `ci-cd`, `cli-readiness`, `evidence`, `governance`, `knowledge-intake`, `mcp`, `taxonomy`, `version-pinning`). 17 rulesets nativos (adr-002x/003x/004x/005x, anti-corruption-layer, helm-enforcement, executive-scorecards, etc.) no tienen input schema OPA, impidiendo equivalentes OPA ejecutables.
 **Hecho Cuando:**
-  - [ ] Cada uno de los 17 rulesets nativos sin cobertura recibe un input schema OPA + política `.rego`, o una justificación registrada en ADR para mantenerse native-only se añade al README del ruleset.
-  - [ ] `26-validate-topology-rule-coverage.mjs` se extiende para reportar cobertura native/OPA en rulesets no-topología y fallar cuando un ruleset carece de disposición documentada.
-  - [ ] La suite de parity-fixtures OPA cubre las nuevas políticas.
+  - [x] Cada uno de los 17 rulesets nativos sin cobertura recibe un input schema OPA + política `.rego`, o una justificación registrada en ADR para mantenerse native-only se añade al README del ruleset.
+  - [x] `26-validate-topology-rule-coverage.mjs` se extiende para reportar cobertura native/OPA en rulesets no-topología y fallar cuando un ruleset carece de disposición documentada.
+  - [x] La suite de parity-fixtures OPA cubre las nuevas políticas.
 
 #### GT-217
 **Propósito:** Completar el corpus de guías operativas para las 7 topologías no-agentic-ai para que cada topología aceptada tenga la misma profundidad humano + máquina-legible (operations, security, resilience, patterns, evolution, evidence, adoption, runbooks) y los consumidores puedan adoptarlas sin hacer ingeniería inversa de las reglas.
 **Evidencia Actual:** `agentic-ai/` contiene 8 archivos narrativos de guía × 2 idiomas (`operations.md`, `security.md`, `resilience.md`, `patterns.md`, `evolution.md`, `evidence.md`, `adoption.md`, `runbooks.md`). Las otras 7 topologías (data-mesh, edge-computing, serverless, event-driven, distributed-modules, microservices, modular-monolith) solo entregan `README.md` + `maturity.md` × 2 idiomas. Asimetría masiva bloquea la paridad de adopción que reclama el hub de topologías.
 **Hecho Cuando:**
-  - [ ] Cada una de las 7 topologías tiene los 7 archivos narrativos md (y sus contrapartes `.es.md`) escritos con la misma fidelidad que agentic-ai.
-  - [ ] `validate-docs.mjs` exige la presencia del set canónico de archivos por topología aceptada.
-  - [ ] Paridad bilingüe pasa en todos los archivos nuevos.
+  - [x] Cada una de las 7 topologías tiene los 7 archivos narrativos md (y sus contrapartes `.es.md`) escritos con la misma fidelidad que agentic-ai.
+  - [x] `validate-docs.mjs` exige la presencia del set canónico de archivos por topología aceptada.
+  - [x] Paridad bilingüe pasa en todos los archivos nuevos.
 
 #### GT-218
 **Propósito:** Crear plantillas + schemas dedicados para las dos salidas de Fase 05 que hoy solo existen como "Section in Release Notes" — evidencia de rollback rehearsal y confirmación de on-call handoff — para que el gate Production Live sea reproducible y verificable por máquina.
@@ -2111,65 +2111,65 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Elevar la cobertura de ramas del CLI a la altura de la madurez de cobertura de statements subiendo `gate-status.command.ts` de 40% ramas a ≥80% y subiendo el umbral global de branches de Jest por encima del piso actual de 67%.
 **Evidencia Actual:** `sdk/cli/coverage/coverage-summary.json` reporta `branches: 78.76%` global vs `statements: 91.42%`; `gate-status.command.ts` está en **40% branches / 60.43% statements** (la mayor brecha individual). El umbral en `jest.config.js` es `branches: 67` — muy por debajo del estado actual.
 **Hecho Cuando:**
-  - [ ] `gate-status.command.ts` cobertura de ramas ≥80% (rutas de error, fallback de DORA, ramas de renderizado de métricas cubiertas por unit tests).
-  - [ ] Umbral global de branches en `jest.config.js` subido a 75 (con un issue de seguimiento para llegar a 80 una vez los siguientes hot-spots estén cubiertos).
-  - [ ] CI `sdk-cli-ci.yml` refleja el nuevo piso.
+  - [x] `gate-status.command.ts` cobertura de ramas ≥80% (rutas de error, fallback de DORA, ramas de renderizado de métricas cubiertas por unit tests).
+  - [x] Umbral global de branches en `jest.config.js` subido a 75 (con un issue de seguimiento para llegar a 80 una vez los siguientes hot-spots estén cubiertos).
+  - [x] CI `sdk-cli-ci.yml` refleja el nuevo piso.
 
 #### GT-221
 **Propósito:** Añadir audit logging estructurado al transporte HTTP de MCP para que cada llamada tool/resource/prompt emita `{tool, args, context, durationMs, status}` con correlation IDs ligados a spans OTel — alineado con la postura de auditoría prometida por ADR-0073 y exigida para revisión de seguridad/compliance.
 **Evidencia Actual:** `packages/mcp-server/src/mcp/mcp-server.service.ts` (rama HTTP) valida auth vía `mcp-server-auth.ts` pero no emite eventos de audit por llamada. No existe servicio `AuditLogger`; la correlación stderr/OTel está ausente para invocaciones de tools. El transporte stdio también tiene logging mínimo.
 **Hecho Cuando:**
-  - [ ] Un `AuditLogger` (o proveedor NestJS equivalente) emite eventos estructurados por cada llamada tool/resource/prompt en ambos transportes.
-  - [ ] Los correlation IDs se propagan desde headers HTTP/metadata Stdio hasta spans OTel y audit logs.
-  - [ ] Tests de integración verifican emisión de eventos de audit para al menos una ruta de tool, resource y prompt.
+  - [x] Un `AuditLogger` (o proveedor NestJS equivalente) emite eventos estructurados por cada llamada tool/resource/prompt en ambos transportes.
+  - [x] Los correlation IDs se propagan desde headers HTTP/metadata Stdio hasta spans OTel y audit logs.
+  - [x] Tests de integración verifican emisión de eventos de audit para al menos una ruta de tool, resource y prompt.
 
 #### GT-222
 **Propósito:** Subir la densidad de tests OPA por topología a ≥1 test por regla para que el gate de paridad sea significativo — hoy modular-monolith tiene 2 tests para 12 reglas (17%), distributed-modules 4 para 8 (50%) y agentic-ai 4 para 9 (44%), todos muy por debajo de la densidad 100%+ de data-mesh y event-driven.
 **Evidencia Actual:** Según la salida de `28-test-topology-opa.mjs` (esta auditoría): agentic-ai 4 casos / 9 reglas, distributed-modules 4 / 8, modular-monolith 2 / 12, microservices 8 / 8, edge 6 / 5, serverless 5 / 6, event-driven 10 / 9, data-mesh 10 / 9. Las tres topologías sub-cubiertas tiran el promedio a ~70% de densidad.
 **Hecho Cuando:**
-  - [ ] modular-monolith añade ≥10 nuevos casos de test (uno por regla cubriendo ramas positiva + negativa).
-  - [ ] distributed-modules añade ≥4 nuevos casos; agentic-ai añade ≥5.
-  - [ ] `26-validate-topology-rule-coverage.mjs` se extiende para verificar densidad test/regla y fallar bajo un piso acordado (sugerencia ≥80%).
+  - [x] modular-monolith añade ≥10 nuevos casos de test (uno por regla cubriendo ramas positiva + negativa).
+  - [x] distributed-modules añade ≥4 nuevos casos; agentic-ai añade ≥5.
+  - [x] `26-validate-topology-rule-coverage.mjs` se extiende para verificar densidad test/regla y fallar bajo un piso acordado (sugerencia ≥80%).
 
 #### GT-223
 **Propósito:** Añadir tests e2e de paridad cross-surface que ejerciten la misma operación de Core en CLI, MCP y REST y verifiquen equivalencia de envelope/payload — cierra el lado de runtime de la paridad de superficies declarada por GT-171 (la matriz existe; la ejecución contra ella es escasa).
 **Evidencia Actual:** `sdk/cli/test/e2e/` cubre solo `sdlc-status` (3 casos) y `sdlc-handoff` (1 caso). `gate-evaluate`, `phase-advance`, `validate-satellite`, `drift-detect` tienen cero tests e2e cross-surface a pesar de estar declarados expuestos en `surface-parity-matrix.json` para las tres superficies. `mcp-e2e.test.ts` valida descubrimiento de tools, no equivalencia de salida.
 **Hecho Cuando:**
-  - [ ] Un `surface-parity-fixture.ts` compartido invoca la misma operación vía binario CLI, tool MCP y endpoint REST y verifica equivalencia de envelope + datos.
-  - [ ] El fixture cubre al menos 5 operaciones core (`gate-evaluate`, `phase-advance`, `validate-satellite`, `drift-detect`, `sdlc-status`).
-  - [ ] CI corre la suite por push; fallos bloquean merge.
+  - [x] Un `surface-parity-fixture.ts` compartido invoca la misma operación vía binario CLI, tool MCP y endpoint REST y verifica equivalencia de envelope + datos.
+  - [x] El fixture cubre al menos 5 operaciones core (`gate-evaluate`, `phase-advance`, `validate-satellite`, `drift-detect`, `sdlc-status`).
+  - [x] CI corre la suite por push; fallos bloquean merge.
 
 #### GT-224
 **Propósito:** Llevar cada comando CLI que devuelve datos a conformidad con el envelope ADR-0073 añadiendo `--format json` a los comandos que carecen de él (`drift`, `architecture scaffold`, `docs`) para que la salida CLI sea consumible por máquina para el gateway MCP y la integración con Tracker.
 **Evidencia Actual:** `sdk/cli/src/commands/drift/drift.command.ts` declara `json?: boolean` (línea 10–11) pero no registra `@Option('--format')`. `architecture scaffold` y `docs` no tienen ruta de salida JSON. ADR-0073 exige que cada comando de datos emita el envelope `{success, data, meta}` cuando se solicite `--format json`.
 **Hecho Cuando:**
-  - [ ] `drift`, `architecture scaffold` y `docs` registran `@Option('--format json|text')` y emiten el envelope ADR-0073 cuando se selecciona `json`.
-  - [ ] Los tests unitarios CLI existentes verifican forma de envelope para rutas de éxito y error de cada comando.
-  - [ ] La entrada de la matriz de paridad de superficies para cada operación pasa a `cli.formats: ["json"]`.
+  - [x] `drift`, `architecture scaffold` y `docs` registran `@Option('--format json|text')` y emiten el envelope ADR-0073 cuando se selecciona `json`.
+  - [x] Los tests unitarios CLI existentes verifican forma de envelope para rutas de éxito y error de cada comando.
+  - [x] La entrada de la matriz de paridad de superficies para cada operación pasa a `cli.formats: ["json"]`.
 
 #### GT-225
 **Propósito:** Resolver los 4 casos `it.skip` en `sdk/cli/src/infrastructure/prompts/wizard.service.spec.ts` — revivirlos con el setup de test apropiado o documentar por qué quedan saltados, eliminando la deuda silenciosa de la suite unitaria.
 **Evidencia Actual:** `grep -rn "describe.skip\|it.skip" sdk/cli` encuentra 4 casos saltados en `wizard.service.spec.ts:51, 69, 92, 132` cubriendo cancelación con null, confirmación de summary, cancelación en summary y fallback de modo no interactivo — todos comportamientos reales del wizard sin otra cobertura de test.
 **Hecho Cuando:**
-  - [ ] Cada uno de los 4 tests saltados se reactiva y pasa, o se reescribe como una unidad enfocada cubriendo el mismo comportamiento.
-  - [ ] Si algún caso es irrecuperable, se elimina y se reemplaza por una nota `// reason:` inline más un issue de seguimiento.
-  - [ ] No queda ningún `it.skip`/`describe.skip` en `sdk/cli/src` tras el cierre.
+  - [x] Cada uno de los 4 tests saltados se reactiva y pasa, o se reescribe como una unidad enfocada cubriendo el mismo comportamiento.
+  - [x] Si algún caso es irrecuperable, se elimina y se reemplaza por una nota `// reason:` inline más un issue de seguimiento.
+  - [x] No queda ningún `it.skip`/`describe.skip` en `sdk/cli/src` tras el cierre.
 
 #### GT-226
 **Propósito:** Añadir configuración de Dependabot o Renovate para automatizar actualizaciones de dependencias, cerrando la brecha donde ADR-0009 exige bots de dependencias automatizados y la regla OPA DEP-09 valida su presencia, pero no existe ningún archivo de configuración en el repositorio.
 **Evidencia Actual:** No existe `.github/dependabot.yml` ni `.renovaterc.json`. La regla OPA `ci-cd.rego` DEP-09 flagearía esto en repos satélite pero no bloquea el CI del repo core. Las dependencias no se actualizan automáticamente.
 **Hecho Cuando:**
-  - [ ] `.github/dependabot.yml` existe con horarios de actualización npm (semanal) y GitHub Actions (mensual).
-  - [ ] La regla OPA DEP-09 pasa en el repositorio core.
-  - [ ] El primer lote de PRs de actualización de dependencias se genera y es revisable.
+  - [x] `.github/dependabot.yml` existe con horarios de actualización npm (semanal) y GitHub Actions (mensual).
+  - [x] La regla OPA DEP-09 pasa en el repositorio core.
+  - [x] El primer lote de PRs de actualización de dependencias se genera y es revisable.
 
 #### GT-227
 **Propósito:** Implementar SAST (CodeQL) y SCA/escaneo de contenedores (Trivy) en workflows CI, cerrando la brecha donde ADR-0005 exige CodeQL en cada PR, CICD-01 lo codifica como regla blocking, y el provider profile lo documenta como "Active/Default", pero ningún workflow ejecuta estas herramientas.
 **Evidencia Actual:** El job de auditoría de seguridad en `sdk-cli-ci.yml` solo ejecuta `npm audit --audit-level=high`. No existen pasos de CodeQL ni Trivy en ningún archivo `.github/workflows/*.yml`.
 **Hecho Cuando:**
-  - [ ] Un job `codeql-analysis` corre en `sdk-cli-ci.yml` para JavaScript/TypeScript con queries extendidas.
-  - [ ] Un paso de escaneo Trivy corre sobre el Dockerfile para detección de vulnerabilidades de contenedor.
-  - [ ] Los hallazgos se suben como artefactos SARIF y son visibles en la pestaña Security de GitHub.
+  - [x] Un job `codeql-analysis` corre en `sdk-cli-ci.yml` para JavaScript/TypeScript con queries extendidas.
+  - [x] Un paso de escaneo Trivy corre sobre el Dockerfile para detección de vulnerabilidades de contenedor.
+  - [x] Los hallazgos se suben como artefactos SARIF y son visibles en la pestaña Security de GitHub.
 
 #### GT-228
 **Propósito:** Construir un motor de orquestación de agentes que ejecute automáticamente las definiciones de workflow en `.bmad-core/workflows/`, cerrando la brecha donde `development.yaml` y `governance-gap.yaml` definen secuencias multi-agente pero no existe scheduler, persistencia de estado ni mecanismo de handoff automatizado.
@@ -2199,17 +2199,17 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Cablear los 10 scripts CI que actualmente solo corren en pre-commit (vía `ci-runner.mjs`) a workflows GitHub Actions, cerrando la brecha donde los scripts 05-orphan, 12, 14, 15-coverage, 16-test, 17, 18, 19, 20, 21, 22 no tienen referencia en ningún workflow YAML.
 **Evidencia Actual:** El hook pre-commit `ci-runner.mjs` ejecuta los 22 scripts numerados secuencialmente, pero solo 12 están referenciados en workflows GitHub Actions. Los 10 restantes solo corren localmente.
 **Hecho Cuando:**
-  - [ ] Un workflow `governance-ci.yml` ejecuta todos los scripts sin enlazar como jobs o steps.
-  - [ ] Cada job produce artefactos de evidencia consumibles por el gap board.
-  - [ ] El workflow corre en PRs a main/develop y en pushes a main.
+  - [x] Un workflow `governance-ci.yml` ejecuta todos los scripts sin enlazar como jobs o steps.
+  - [x] Cada job produce artefactos de evidencia consumibles por el gap board.
+  - [x] El workflow corre en PRs a main/develop y en pushes a main.
 
 #### GT-232
 **Propósito:** Crear definiciones completas de persona para Wilson (`@wilson`) y PO (`@po`) en `.bmad-core/agents/`, cerrando la brecha donde estos dos agentes existen solo en `.harness/agents/agent-specs.md` sin el YAML frontmatter completo, referencias de herramientas y mandatos de auto-mejora que tienen los otros 8 agentes.
 **Evidencia Actual:** `.bmad-core/agents/` contiene 8 archivos de agente con YAML frontmatter. Wilson y PO no tienen archivos correspondientes.
 **Hecho Cuando:**
-  - [ ] `.bmad-core/agents/wilson.md` existe con YAML frontmatter coincidente con el formato de otros agentes.
-  - [ ] `.bmad-core/agents/po.md` existe con YAML frontmatter coincidente con el formato de otros agentes.
-  - [ ] Ambos archivos incluyen scope, inputs, skills, constraints, handoff, validation y mandato de auto-mejora.
+  - [x] `.bmad-core/agents/wilson.md` existe con YAML frontmatter coincidente con el formato de otros agentes.
+  - [x] `.bmad-core/agents/po.md` existe con YAML frontmatter coincidente con el formato de otros agentes.
+  - [x] Ambos archivos incluyen scope, inputs, skills, constraints, handoff, validation y mandato de auto-mejora.
 
 #### GT-233
 **Propósito:** Añadir middleware de rate limiting al Core API, cerrando la brecha donde la Guía de Seguridad MCP documenta patrones de rate limiting adaptativo pero existen cero implementaciones en código TypeScript.
@@ -2223,17 +2223,17 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Añadir R-27 (Paridad de Madurez Topológica) a `global-rules.es.md`, cerrando la brecha de paridad bilingual donde la versión en inglés tiene 27 reglas pero la versión en español termina en R-26.
 **Evidencia Actual:** `.harness/rules/global-rules.md` contiene reglas R-01 a R-27. `.harness/rules/global-rules.es.md` contiene reglas R-01 a R-26 solamente.
 **Hecho Cuando:**
-  - [ ] `global-rules.es.md` contiene R-27 con traducción al español que coincide con el contenido en inglés.
-  - [ ] La sección de gates de validación mandatoria en ES incluye la verificación de cobertura de reglas topológicas presente en EN.
-  - [ ] `04-check-bilingual-parity.mjs` pasa en ambos archivos.
+  - [x] `global-rules.es.md` contiene R-27 con traducción al español que coincide con el contenido en inglés.
+  - [x] La sección de gates de validación mandatoria en ES incluye la verificación de cobertura de reglas topológicas presente en EN.
+  - [x] `04-check-bilingual-parity.mjs` pasa en ambos archivos.
 
 #### GT-235
 **Propósito:** Resolver las colisiones de numeración de scripts CI donde los prefijos 05, 15 y 16 tienen dos scripts cada uno con el mismo prefijo, generando confusión sobre qué gate corresponde a qué número.
 **Evidencia Actual:** `ci/23-check-orphan-bilingual.mjs` y `ci/24-check-surface-parity.mjs` comparten prefijo 05. Lo mismo con 15 y 16.
 **Hecho Cuando:**
-  - [ ] Cada script CI tiene un prefijo numérico único.
-  - [ ] El orden de ejecución de `ci-runner.mjs` permanece correcto tras la renumeración.
-  - [ ] Todas las referencias de workflows a scripts renombrados están actualizadas.
+  - [x] Cada script CI tiene un prefijo numérico único.
+  - [x] El orden de ejecución de `ci-runner.mjs` permanece correcto tras la renumeración.
+  - [x] Todas las referencias de workflows a scripts renombrados están actualizadas.
 
 #### GT-236
 **Propósito:** Automatizar el pipeline de knowledge intake para que nuevos archivos `KI-*.yaml` o `SRC-*.yaml` disparen validación, revisión y promoción automáticamente, cerrando la brecha donde el pipeline existe en diseño pero requiere ejecución manual en cada etapa.
@@ -2247,94 +2247,94 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Redactar los 5 ADRs AI-Augmented propuestos (ADR-AI-001 through ADR-AI-005) que están listados en referencias de gobernanza pero nunca se escribieron como documentos reales.
 **Evidencia Actual:** `reference/architecture/adrs/ai-augmented/` es referenciado en secciones de gobernanza listando 5 ADRs propuestos pero ninguno existe en el sistema de archivos.
 **Hecho Cuando:**
-  - [ ] Los 5 documentos ADR existen en `reference/architecture/adrs/ai-augmented/` con estructura propia (Title, Status, Context, Decision, Consequences).
-  - [ ] Cada ADR tiene versiones EN y ES manteniendo paridad bilingual.
-  - [ ] El status del ADR se actualiza de "proposed" a "accepted" o "superseded" según corresponda.
+  - [x] Los 5 documentos ADR existen en `reference/architecture/adrs/ai-augmented/` con estructura propia (Title, Status, Context, Decision, Consequences).
+  - [x] Cada ADR tiene versiones EN y ES manteniendo paridad bilingual.
+  - [x] El status del ADR se actualiza de "proposed" a "accepted" o "superseded" según corresponda.
 
 #### GT-238
 **Propósito:** Añadir Prometheus/Mimir al stack de observabilidad para que las métricas RED/USE sean coleccionables y consultables, cerrando la brecha donde el playbook de observabilidad referencia métricas basadas en Mimir pero el docker-compose solo provee Tempo y Loki.
 **Evidencia Actual:** `reference/infrastructure/docker-compose.yml` incluye servicios para OTel Collector, Tempo, Grafana y Loki. No existe servicio Prometheus ni Mimir.
 **Hecho Cuando:**
-  - [ ] Prometheus se añade a docker-compose con configuración de scrape para métricas del Core API.
-  - [ ] Mimir se añade para almacenamiento de métricas a largo plazo.
-  - [ ] Grafana se provee con un datasource de Prometheus junto a Tempo y Loki existentes.
+  - [x] Prometheus se añade a docker-compose con configuración de scrape para métricas del Core API.
+  - [x] Mimir se añade para almacenamiento de métricas a largo plazo.
+  - [x] Grafana se provee con un datasource de Prometheus junto a Tempo y Loki existentes.
 
 #### GT-239
 **Propósito:** Definir SLOs concretos por servicio e implementar reglas de alerting, cerrando la brecha donde el template de validación observacional referencia baselines de SLO pero no existen documentos SLO ni configuraciones de alerta.
 **Evidencia Actual:** `rulesets/schema/observability-validation.schema.json` define campos para cumplimiento de SLO pero no existen documentos SLO en `reference/operations/`. No existen reglas de alerting de Prometheus ni configuración de notificaciones.
 **Hecho Cuando:**
-  - [ ] Al menos 3 SLOs están definidos (disponibilidad 99.9%, latencia p99 <200ms, tasa de error <0.1%).
-  - [ ] Existen reglas de alerting de Prometheus para: tasa de error >1%, latencia p99 >500ms, reinicios de pod >3.
-  - [ ] La provisión de alertas de Grafana enruta alertas a un canal de notificación configurable.
+  - [x] Al menos 3 SLOs están definidos (disponibilidad 99.9%, latencia p99 <200ms, tasa de error <0.1%).
+  - [x] Existen reglas de alerting de Prometheus para: tasa de error >1%, latencia p99 >500ms, reinicios de pod >3.
+  - [x] La provisión de alertas de Grafana enruta alertas a un canal de notificación configurable.
 
 #### GT-240
 **Propósito:** Ajustar la configuración CORS por environment para que los deployments de producción restrinjan orígenes a dominios conocidos, cerrando la brecha donde los tests muestran `origin: ['*']` — una política excesivamente permisiva.
 **Evidencia Actual:** Los tests de security headers prueban CORS con `origin: ['*']`. No existe configuración CORS por environment.
 **Hecho Cuando:**
-  - [ ] La configuración CORS es aware por environment: dev (`*`), staging (lista específica), production (dominio exacto).
-  - [ ] El spec de security headers prueba la política CORS de cada environment.
-  - [ ] La configuración se drivea por variables de ambiente, no hardcodeada.
+  - [x] La configuración CORS es aware por environment: dev (`*`), staging (lista específica), production (dominio exacto).
+  - [x] El spec de security headers prueba la política CORS de cada environment.
+  - [x] La configuración se drivea por variables de ambiente, no hardcodeada.
 
 #### GT-241
 **Propósito:** Añadir generación SBOM (Software Bill of Materials) al pipeline CI/release usando formato CycloneDX o SPDX, cerrando la brecha donde el template de reporte de scan de seguridad referencia SBOM pero ningún paso CI lo produce.
 **Evidencia Actual:** `rulesets/schema/security-scan-report.schema.json` define SBOM como tipo de scanner. Ningún paso de workflow genera, firma o publica artefactos SBOM.
 **Hecho Cuando:**
-  - [ ] Un paso CI genera un SBOM CycloneDX después de `npm ci` o `npm build`.
-  - [ ] El artefacto SBOM se sube como artefacto de build o se adjunta a releases de GitHub.
-  - [ ] El SBOM es consumible por herramientas downstream (Dependency-Track, Grype, etc.).
+  - [x] Un paso CI genera un SBOM CycloneDX después de `npm ci` o `npm build`.
+  - [x] El artefacto SBOM se sube como artefacto de build o se adjunta a releases de GitHub.
+  - [x] El SBOM es consumible por herramientas downstream (Dependency-Track, Grype, etc.).
 
 #### GT-242
 **Propósito:** Generar políticas OPA `.rego` para los 17 rulesets nativos que actualmente no tienen contraparte OPA, cerrando la brecha de Paridad Dual-Engine (R-25) para los dominios no-core.
 **Evidencia Actual:** Solo 9 de 26 dominios de rulesets nativos tienen archivos `.rego` correspondientes. Los 17 dominios restantes (7 codificados en ADR, 5 transversales, 3 SDLC, 2 especializados) no tienen equivalente OPA.
 **Hecho Cuando:**
-  - [ ] Los 5 rulesets transversales (definition-of-done, engineering-manifesto, compliance-baseline, repository-taxonomy, anti-corruption-layer) tienen archivos `.rego` con tests.
-  - [ ] Existen input schemas en `rulesets/opa/schemas/` para cada nueva política.
-  - [ ] El agregador `main.rego` importa violaciones de las nuevas políticas.
+  - [x] Los 5 rulesets transversales (definition-of-done, engineering-manifesto, compliance-baseline, repository-taxonomy, anti-corruption-layer) tienen archivos `.rego` con tests.
+  - [x] Existen input schemas en `rulesets/opa/schemas/` para cada nueva política.
+  - [x] El agregador `main.rego` importa violaciones de las nuevas políticas.
 
 #### GT-243
 **Propósito:** Implementar tests k6 de carga para los 3 escenarios de estrés definidos en ADR-0037, cerrando la brecha donde el ADR exige testing k6 pero no existen scripts de load test.
 **Evidencia Actual:** ADR-0037 define 3 escenarios: (1) baseline de throughput API, (2) conexiones MCP concurrentes, (3) operaciones batch de CLI. No existen archivos de script k6 ni configuraciones de performance testing.
 **Hecho Cuando:**
-  - [ ] Existen 3 scripts k6 cubriendo cada escenario de ADR-0037.
-  - [ ] Los baselines de rendimiento se registran y almacenan como umbrales de referencia.
-  - [ ] Un job CI corre load tests en base programada (no bloqueando PRs inicialmente).
+  - [x] Existen 3 scripts k6 cubriendo cada escenario de ADR-0037.
+  - [x] Los baselines de rendimiento se registran y almacenan como umbrales de referencia.
+  - [x] Un job CI corre load tests en base programada (no bloqueando PRs inicialmente).
 
 #### GT-244
 **Propósito:** Crear playbooks y plantillas de respuesta a incidentes para el producto core, cerrando la brecha donde existen runbooks para agentic AI pero los procedimientos generales de respuesta (caída de servicio, brecha de datos, rollback de producción) están ausentes.
 **Evidencia Actual:** `reference/architecture/topologies/ai/agentic-ai/runbooks.md` cubre incidentes específicos de agentes. No existen playbooks generales de respuesta a incidentes para el producto core.
 **Hecho Cuando:**
-  - [ ] Existen playbooks para: caída de servicio, brecha de datos, CVE en dependencias, rollback de producción.
-  - [ ] Cada playbook tiene: clasificación de severidad, plantilla de comunicación, pasos de contención, pasos de recuperación, plantilla de post-mortem.
-  - [ ] Los playbooks se almacenan en `reference/operations/` con versiones bilingües.
+  - [x] Existen playbooks para: caída de servicio, brecha de datos, CVE en dependencias, rollback de producción.
+  - [x] Cada playbook tiene: clasificación de severidad, plantilla de comunicación, pasos de contención, pasos de recuperación, plantilla de post-mortem.
+  - [x] Los playbooks se almacenan en `reference/operations/` con versiones bilingües.
 
 #### GT-245
 **Propósito:** Añadir DAST (Dynamic Application Security Testing) usando OWASP ZAP o equivalente al pipeline de seguridad, cerrando la brecha donde el template de reporte de scan lista DAST como tipo de scanner pero ninguna herramienta DAST está configurada.
 **Evidencia Actual:** `rulesets/schema/security-scan-report.schema.json` define DAST como tipo de scanner válido. No existe configuración de OWASP ZAP, Burp Suite u otra herramienta DAST.
 **Hecho Cuando:**
-  - [ ] Un scan baseline de OWASP ZAP corre contra el Core API en un job CI.
-  - [ ] Los hallazgos de ZAP se exportan como SARIF y son visibles en la pestaña Security de GitHub.
-  - [ ] Hallazgos High/Medium bloquean el pipeline de release.
+  - [x] Un scan baseline de OWASP ZAP corre contra el Core API en un job CI.
+  - [x] Los hallazgos de ZAP se exportan como SARIF y son visibles en la pestaña Security de GitHub.
+  - [x] Hallazgos High/Medium bloquean el pipeline de release.
 
 #### GT-246
 **Propósito:** Implementar experimentos de ingeniería del caos usando Chaos Mesh o Litmus, cerrando la brecha donde ADR-0037 exige herramientas de chaos engineering pero no existen definiciones de experimentos.
 **Evidencia Actual:** ADR-0037 referencia Chaos Mesh/Litmus para chaos engineering. No existen definiciones de experimentos, configuraciones de fault injection ni escenarios de resilience testing.
 **Hecho Cuando:**
-  - [ ] Al menos 3 experimentos de caos están definidos: partición de red, kill de pod, estrés de CPU.
-  - [ ] Los experimentos son ejecutables contra un entorno local o staging vía docker-compose o manifiestos Kubernetes.
-  - [ ] Los resultados se registran y correlacionan con señales de observabilidad.
+  - [x] Al menos 3 experimentos de caos están definidos: partición de red, kill de pod, estrés de CPU.
+  - [x] Los experimentos son ejecutables contra un entorno local o staging vía docker-compose o manifiestos Kubernetes.
+  - [x] Los resultados se registran y correlacionan con señales de observabilidad.
 
 #### GT-247
 **Propósito:** Reemplazar credenciales hardcodeadas en docker-compose con inyección de secrets, cerrando la brecha donde el archivo compose de infraestructura contiene passwords en texto plano para PostgreSQL, Redis, RabbitMQ, MongoDB, MinIO y OpenBao.
 **Evidencia Actual:** `reference/infrastructure/docker-compose.yml` contiene passwords hardcodeadas para 6 servicios. No existe mecanismo de inyección de secrets documentado para producción.
 **Hecho Cuando:**
-  - [ ] docker-compose usa referencias `${VARIABLE}` para todas las credenciales.
-  - [ ] Un archivo `.env.example` documenta los secrets requeridos sin valores reales.
-  - [ ] La documentación explica la inyección de secrets para producción (Docker secrets, Vault, etc.).
+  - [x] docker-compose usa referencias `${VARIABLE}` para todas las credenciales.
+  - [x] Un archivo `.env.example` documenta los secrets requeridos sin valores reales.
+  - [x] La documentación explica la inyección de secrets para producción (Docker secrets, Vault, etc.).
 
 #### GT-248
 **Propósito:** Crear un script monitor de frescura de ADRs que detecte ADRs obsoletos y genere recordatorios de revisión, cerrando la brecha donde no existe ningún mecanismo automatizado para rastrear la vigencia de ADRs o desencadenar revisiones periódicas.
 **Evidencia Actual:** Existen 48+ ADRs Core con edades variables. Ningún script verifica fechas de modificación, flaggea ADRs obsoletos o genera recordatorios de revisión.
 **Hecho Cuando:**
-  - [ ] Un script escanea todos los ADRs, extrae fechas de última modificación y flaggea los >180 días sin cambios.
-  - [ ] Los ADRs >365 días generan un recordatorio de revisión en el gap board.
-  - [ ] El script corre en base semanal (ej. lunes 09:00 UTC) vía GitHub Actions.
+  - [x] Un script escanea todos los ADRs, extrae fechas de última modificación y flaggea los >180 días sin cambios.
+  - [x] Los ADRs >365 días generan un recordatorio de revisión en el gap board.
+  - [x] El script corre en base semanal (ej. lunes 09:00 UTC) vía GitHub Actions.

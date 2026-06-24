@@ -300,6 +300,94 @@ jobs:
         working-directory: ${{ env.CLI_DIR }}
         run: npm run mcp:smoke
 
+  # ============================================
+  # JOB 9: CodeQL SAST Analysis (GT-227)
+  # ============================================
+  codeql-analysis:
+    name: CodeQL SAST
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+          queries: security-and-quality
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:javascript-typescript"
+
+  # ============================================
+  # JOB 10: Trivy Container Scan (GT-227)
+  # ============================================
+  trivy-scan:
+    name: Trivy Container Scan
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Run Trivy Vulnerability Scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy SARIF Report
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+          category: 'trivy-scan'
+
+  # ============================================
+  # JOB 11: DAST OWASP ZAP Scan (GT-245)
+  # ============================================
+  dast-scan:
+    name: DAST OWASP ZAP
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.fork == false
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Run OWASP ZAP Full Scan
+        uses: zaproxy/action-full-scan@v0.10.0
+        with:
+          target: 'http://localhost:8000'
+          rules_file_name: '.zap/rules.tsv'
+          cmd_options: >-
+            -a
+            -j
+            -l WARN
+          allow_issue_writing: false
+          artifact_name: 'zap-scan-report'
+          fail_action: false
+
+      - name: Upload ZAP SARIF Report
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'zap_scan_report.sarif'
+          category: 'dast-zap'
+
   agentic-review:
     name: Wilson Agentic Review
     if: github.event_name == 'push' || github.event.pull_request.head.repo.fork == false
@@ -327,7 +415,7 @@ jobs:
   # ============================================
   gate:
     name: CI Gate
-    needs: [core-validation, security-audit, lint-and-types, unit-tests, e2e-tests, architecture-validation, package-integrity, agentic-review]
+    needs: [core-validation, security-audit, lint-and-types, unit-tests, e2e-tests, architecture-validation, package-integrity, agentic-review, codeql-analysis, trivy-scan, dast-scan]
     runs-on: ubuntu-latest
     steps:
       - name: All Checks Passed

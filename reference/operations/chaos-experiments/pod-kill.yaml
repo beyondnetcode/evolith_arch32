@@ -1,0 +1,15 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  name: pod-kill
+  namespace: evolith
+spec:
+  action: pod-kill
+  mode: random
+  selector:
+    namespaces:
+      - evolith
+    labelSelectors:
+      app: core-api
+  duration: "60s"
+  gracePeriod: 0

@@ -14,6 +14,7 @@ interface CliArgs {
   transport: McpTransport;
   port: number;
   apiKey?: string;
+  allowNoAuth: boolean;
 }
 
 /** Parse argv + environment into normalized start options. */
@@ -34,14 +35,17 @@ export function parseArgs(argv: string[], env: NodeJS.ProcessEnv): CliArgs {
     'stdio') as McpTransport;
   const port = parseInt(flag('--port', '-p') ?? env.PORT ?? '3000', 10) || 3000;
   const apiKey = flag('--api-key') ?? env.EVOLITH_API_KEY;
+  const allowNoAuth = flag('--allow-no-auth') !== undefined ? true
+    : env.EVOLITH_MCP_ALLOW_NO_AUTH === 'true';
 
-  return { command, transport, port, apiKey };
+  return { command, transport, port, apiKey, allowNoAuth };
 }
 
 export interface StartMcpServerOptions {
   transport?: McpTransport;
   port?: number;
   apiKey?: string;
+  allowNoAuth?: boolean;
 }
 
 /**
@@ -63,6 +67,7 @@ export async function startMcpServer(options: StartMcpServerOptions = {}): Promi
     transport: options.transport ?? 'stdio',
     port: options.port ?? 3000,
     apiKey: options.apiKey,
+    allowNoAuth: options.allowNoAuth,
   });
 
   return { app, server };
@@ -88,6 +93,7 @@ async function bootstrap(): Promise<void> {
     transport: cli.transport,
     port: cli.port,
     apiKey: cli.apiKey,
+    allowNoAuth: cli.allowNoAuth,
   });
 
   const shutdown = async (): Promise<void> => {

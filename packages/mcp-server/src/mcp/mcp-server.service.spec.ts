@@ -210,14 +210,27 @@ describe('McpServerService — HTTP transport', () => {
     }
   });
 
-  it('allows /health without auth when no API key is configured', async () => {
+  it('allows /health without auth when --allow-no-auth is set', async () => {
     const service = new McpServerService(new ToolRegistryService([]), new MetricsService(), new MockAbacEvaluator());
-    await service.start({ transport: 'http', port: 0 });
+    await service.start({ transport: 'http', port: 0, allowNoAuth: true });
     const port = service.boundPort()!;
 
     try {
       const ok = await httpGet(port, '/health');
       expect(ok.status).toBe(200);
+    } finally {
+      await service.stop();
+    }
+  });
+
+  it('rejects /health without auth when no API key and allowNoAuth is false', async () => {
+    const service = new McpServerService(new ToolRegistryService([]), new MetricsService(), new MockAbacEvaluator());
+    await service.start({ transport: 'http', port: 0 });
+    const port = service.boundPort()!;
+
+    try {
+      const res = await httpGet(port, '/health');
+      expect(res.status).toBe(401);
     } finally {
       await service.stop();
     }

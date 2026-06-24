@@ -34,6 +34,7 @@ export interface McpStartOptions {
   transport?: McpTransport;
   port?: number;
   apiKey?: string;
+  allowNoAuth?: boolean;
   stdin?: Readable;
   stdout?: Writable;
 }
@@ -55,6 +56,7 @@ export class McpServerService {
   private server?: Server;
   private httpServer: http.Server | null = null;
   private apiKey?: string;
+  private allowNoAuth = false;
 
   constructor(
     private readonly registry: ToolRegistryService,
@@ -170,9 +172,13 @@ export class McpServerService {
   async start(options: McpStartOptions = {}): Promise<void> {
     const transport = options.transport ?? 'stdio';
     this.apiKey = options.apiKey;
+    this.allowNoAuth = options.allowNoAuth ?? false;
     this.server = this.buildServer();
 
     if (transport === 'http') {
+      if (!this.apiKey && this.allowNoAuth) {
+        this.logger.warn('MCP HTTP started without API key (--allow-no-auth) — every request gets ADMIN scope');
+      }
       await this.startHttp(options.port ?? 3000);
     } else {
       const stdioTransport = new StdioServerTransport(options.stdin, options.stdout);
@@ -188,7 +194,7 @@ export class McpServerService {
     });
 
     this.httpServer = http.createServer((req, res) => {
-      const context = validateAuth(req, res, this.apiKey);
+      const context = validateAuth(req, res, this.apiKey, this.allowNoAuth);
       if (!context) return;
 
       const url = new URL(req.url || '/', `http://127.0.0.1:${port}`);

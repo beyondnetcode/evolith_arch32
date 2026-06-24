@@ -3,7 +3,7 @@ import { parseArgs } from './main';
 describe('parseArgs', () => {
   it('defaults to serve over stdio on port 3000', () => {
     const cli = parseArgs(['node', 'main'], {});
-    expect(cli).toEqual({ command: 'serve', transport: 'stdio', port: 3000, apiKey: undefined });
+    expect(cli).toEqual({ command: 'serve', transport: 'stdio', port: 3000, apiKey: undefined, allowNoAuth: false });
   });
 
   it('reads the command, flags and api key', () => {
@@ -11,17 +11,27 @@ describe('parseArgs', () => {
       ['node', 'main', 'serve', '--transport', 'http', '--port', '49100', '--api-key', 'k'],
       {},
     );
-    expect(cli).toMatchObject({ command: 'serve', transport: 'http', port: 49100, apiKey: 'k' });
+    expect(cli).toMatchObject({ command: 'serve', transport: 'http', port: 49100, apiKey: 'k', allowNoAuth: false });
   });
 
   it('supports --flag=value syntax', () => {
     const cli = parseArgs(['node', 'main', '--transport=http', '--port=8080'], {});
-    expect(cli).toMatchObject({ transport: 'http', port: 8080 });
+    expect(cli).toMatchObject({ transport: 'http', port: 8080, allowNoAuth: false });
   });
 
   it('falls back to environment variables', () => {
     const cli = parseArgs(['node', 'main'], { TRANSPORT: 'http', PORT: '5000', EVOLITH_API_KEY: 'env-key' });
-    expect(cli).toMatchObject({ transport: 'http', port: 5000, apiKey: 'env-key' });
+    expect(cli).toMatchObject({ transport: 'http', port: 5000, apiKey: 'env-key', allowNoAuth: false });
+  });
+
+  it('parses --allow-no-auth flag', () => {
+    const cli = parseArgs(['node', 'main', '--allow-no-auth'], {});
+    expect(cli.allowNoAuth).toBe(true);
+  });
+
+  it('parses EVOLITH_MCP_ALLOW_NO_AUTH env', () => {
+    const cli = parseArgs(['node', 'main'], { EVOLITH_MCP_ALLOW_NO_AUTH: 'true' });
+    expect(cli.allowNoAuth).toBe(true);
   });
 
   it('recognizes the version command', () => {

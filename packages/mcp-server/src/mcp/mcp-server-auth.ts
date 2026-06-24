@@ -17,9 +17,23 @@ export function validateAuth(
   req: http.IncomingMessage,
   res: http.ServerResponse,
   apiKey: string | undefined,
+  allowNoAuth = false,
 ): McpUserContext | null {
+  const env = process.env.NODE_ENV || 'development';
+
   if (!apiKey) {
-    return { ...ADMIN_CONTEXT, environment: process.env.NODE_ENV || 'development' };
+    if (env === 'production' || !allowNoAuth) {
+      const correlationId = generateCorrelationId();
+      const err = failure(
+        ErrorCodes.UNAUTHORIZED,
+        'MCP server requires an API key. Set EVOLITH_API_KEY or --api-key.',
+        { correlationId, tool: 'auth', durationMs: 0 },
+      );
+      res.writeHead(401, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(err));
+      return null;
+    }
+    return { ...ADMIN_CONTEXT, environment: env };
   }
 
   const authHeader = req.headers.authorization || '';

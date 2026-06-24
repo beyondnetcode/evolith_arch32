@@ -69,6 +69,19 @@ docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 
 ---
 
+## Pinned Versions
+
+| Service | Image Tag | Upgrade Cadence |
+| :--- | :--- | :--- |
+| PostgreSQL | `postgres:16` | LTS tracking |
+| Redis | `redis:7.2` | Minor version tracking |
+| MongoDB | `mongo:7.0` | Minor version tracking |
+| Traefik | `traefik:v3.1` | Minor version tracking |
+
+> **Policy:** All images use pinned tags (no `latest`). Upgrades are reviewed quarterly or when security patches are released.
+
+---
+
 ## Configuration Files
 
 | File | Purpose |

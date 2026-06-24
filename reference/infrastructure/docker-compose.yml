@@ -48,10 +48,10 @@ services:
       - ums-network
 
   # ---------------------------------------------------------
-  # 1.2 Document Database (MongoDB)
+  # 1.2 Document Database (MongoDB 7.0)
   # ---------------------------------------------------------
   mongodb:
-    image: mongo:latest
+    image: mongo:7.0
     container_name: ums-mongodb
     restart: always
     environment:

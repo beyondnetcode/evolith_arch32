@@ -69,6 +69,19 @@ docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 
 ---
 
+## Versiones Fijadas
+
+| Servicio | Tag de Imagen | Cadencia de Actualización |
+| :--- | :--- | :--- |
+| PostgreSQL | `postgres:16` | Seguimiento LTS |
+| Redis | `redis:7.2` | Seguimiento de versión menor |
+| MongoDB | `mongo:7.0` | Seguimiento de versión menor |
+| Traefik | `traefik:v3.1` | Seguimiento de versión menor |
+
+> **Política:** Todas las imágenes usan tags fijos (sin `latest`). Las actualizaciones se revisan trimestralmente o cuando se publican parches de seguridad.
+
+---
+
 ## Archivos de Configuración
 
 | Archivo | Propósito |

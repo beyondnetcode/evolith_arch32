@@ -2423,9 +2423,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Añadir controles `concurrency:` a cada workflow de GitHub Actions para que pushes apilados cancelen runs superados — ahorrando cómputo, acelerando feedback y previniendo race conditions en workflows que mutan releases o cachés.
 **Evidencia Actual:** `grep -L "concurrency:" .github/workflows/*.yml` devuelve los 11 workflows: `ci-cd.yml`, `ci.yml`, `coverage-impact.yml`, `docs-release.yml`, `docs.yml`, `enforce-root-cleanliness.yml`, `governance-ci.yml`, `knowledge-intake.yml`, `opa-parity.yml`, `sdk-cli-ci.yml`, `sdk-cli-release.yml`.
 **Hecho Cuando:**
-  - [ ] Cada workflow declara un bloque `concurrency:` de nivel superior identificado por nombre de workflow + ref.
-  - [ ] Workflows estilo PR fijan `cancel-in-progress: true`; workflows de release/publish fijan `cancel-in-progress: false`.
-  - [ ] Documentado en `.harness/playbooks/` (o guía de CI equivalente) para que los workflows futuros hereden el patrón.
+  - [x] Cada workflow declara un bloque `concurrency:` de nivel superior identificado por nombre de workflow + ref.
+  - [x] Workflows estilo PR fijan `cancel-in-progress: true`; workflows de release/publish fijan `cancel-in-progress: false`.
+  - [x] Documentado en `.harness/playbooks/` (o guía de CI equivalente) para que los workflows futuros hereden el patrón.
 
 #### GT-259
 **Propósito:** Reemplazar el frágil match de string en el mensaje de commit que gatilla el job de publish a npm por un trigger basado en tag, de modo que los releases no puedan dispararse accidentalmente por un commit cuyo cuerpo contenga "bump version".
@@ -2474,18 +2474,18 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Hacer significativo el scan DAST (OWASP ZAP) en CI apuntándolo a una instancia real en ejecución, o eliminarlo — hoy apunta a `http://localhost:8000` sin levantar un servidor, por lo que el scan es silenciosamente un no-op.
 **Evidencia Actual:** `.github/workflows/sdk-cli-ci.yml:372-374` — `uses: zaproxy/action-full-scan@v0.10.0` con `target: 'http://localhost:8000'`. Ningún paso precedente levanta un servicio en ese puerto, por lo que ZAP escanea contra nada y el job o no hace nada o falla silenciosamente.
 **Hecho Cuando:**
-  - [ ] O bien: (a) un paso precedente levanta Core API (o MCP) en el puerto objetivo y espera readiness antes de que ZAP corra; o (b) el paso DAST se elimina y el motivo se registra en un ADR/playbook.
-  - [ ] Si se mantiene: reporte de ZAP subido como artefacto del workflow y umbrales de falla documentados.
-  - [ ] Si se elimina: un gap follow-up captura el plan DAST a largo plazo (e.g., scan programado contra un entorno staging).
+  - [x] O bien: (a) un paso precedente levanta Core API (o MCP) en el puerto objetivo y espera readiness antes de que ZAP corra; o (b) el paso DAST se elimina y el motivo se registra en un ADR/playbook.
+  - [x] Si se mantiene: reporte de ZAP subido como artefacto del workflow y umbrales de falla documentados.
+  - [x] Si se elimina: un gap follow-up captura el plan DAST a largo plazo (e.g., scan programado contra un entorno staging).
 
 #### GT-265
 **Propósito:** Añadir detección de secretos en CI (gitleaks o equivalente) para que commits accidentales de API keys, secretos JWT o credenciales de base de datos sean detectados en tiempo de PR, no después de aterrizar en la historia.
 **Evidencia Actual:** `grep -rln "gitleaks\|truffle\|secretlint" .github/` devuelve nada — ningún scanner de secretos corre en ningún workflow. El repo maneja credenciales en docker-compose (cerrado por GT-247) y secretos JWT (follow-up de GT-250), por lo que el blast radius de un secreto filtrado es real.
 **Hecho Cuando:**
-  - [ ] Un paso gitleaks (o equivalente) corre en cada PR y push, escaneando el diff más el repo completo en una agenda.
-  - [ ] `.gitleaks.toml` (o config equivalente) documenta fixtures de test allow-listadas para que el scan mantenga señal alta.
-  - [ ] Hallazgos fallan el build con un mensaje claro de remediación.
-  - [ ] Hook pre-commit (opcional) replica el check localmente.
+  - [x] Un paso gitleaks (o equivalente) corre en cada PR y push, escaneando el diff más el repo completo en una agenda.
+  - [x] `.gitleaks.toml` (o config equivalente) documenta fixtures de test allow-listadas para que el scan mantenga señal alta.
+  - [x] Hallazgos fallan el build con un mensaje claro de remediación.
+  - [x] Hook pre-commit (opcional) replica el check localmente.
 
 #### GT-266
 **Propósito:** Crear un servicio de provisioning de API keys para el transporte HTTP de MCP, de modo que consumidores externos tengan una forma segura y auditable de obtener y rotar llaves — actualmente la única opción es un único secreto compartido configurado vía env var, sin generación, distribución, rotación ni revocación.

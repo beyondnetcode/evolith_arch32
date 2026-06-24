@@ -1,5 +1,9 @@
 name: Governance CI - Unlinked Scripts
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   pull_request:
     branches: [main, develop]

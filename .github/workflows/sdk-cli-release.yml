@@ -1,5 +1,9 @@
 name: Evolith SDK CLI - Release Pipeline
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 on:
   push:
     branches:

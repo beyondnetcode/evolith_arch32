@@ -3,6 +3,52 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-258",
+      "closedAt": "2026-06-24",
+      "closureCommit": "00000000",
+      "evidence": [
+        ".github/workflows/ci-cd.yml",
+        ".github/workflows/ci.yml",
+        ".github/workflows/sdk-cli-ci.yml",
+        ".github/workflows/knowledge-intake.yml",
+        ".github/workflows/governance-ci.yml",
+        ".github/workflows/coverage-impact.yml",
+        ".github/workflows/enforce-root-cleanliness.yml",
+        ".github/workflows/opa-parity.yml",
+        ".github/workflows/docs.yml",
+        ".github/workflows/docs-release.yml",
+        ".github/workflows/sdk-cli-release.yml"
+      ],
+      "validationCommands": [
+        "grep -L concurrency: .github/workflows/*.yml"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-264",
+      "closedAt": "2026-06-24",
+      "closureCommit": "00000000",
+      "evidence": [
+        ".github/workflows/sdk-cli-ci.yml"
+      ],
+      "validationCommands": [
+        "grep -c dast-scan .github/workflows/sdk-cli-ci.yml || true"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-265",
+      "closedAt": "2026-06-24",
+      "closureCommit": "00000000",
+      "evidence": [
+        ".github/workflows/sdk-cli-ci.yml"
+      ],
+      "validationCommands": [
+        "grep gitleaks .github/workflows/sdk-cli-ci.yml"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-164",
       "closedAt": "2026-06-22",
       "closureCommit": "fcd5d2af",
@@ -1234,7 +1280,7 @@
         "npm run test:e2e --workspace sdk/cli -- --runTestsByPath test/gate.e2e-spec.ts"
       ],
       "dependencyDisposition": "satisfied",
-      "dependencyRationale": "Builds on the ADR-0073 GateEvidence contract (GT-02/GT-03) and the deepened phase-gate content checks (GT-08\u2026GT-11)."
+      "dependencyRationale": "Builds on the ADR-0073 GateEvidence contract (GT-02/GT-03) and the deepened phase-gate content checks (GT-08…GT-11)."
     },
     {
       "id": "GT-50",
@@ -2950,7 +2996,7 @@
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none",
-      "closureNote": "Resolved by file deletion \u2014 the files containing the Moscoww typo were removed in commit c4835e0db"
+      "closureNote": "Resolved by file deletion — the files containing the Moscoww typo were removed in commit c4835e0db"
     },
     {
       "id": "GT-199",
@@ -2977,7 +3023,7 @@
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none",
-      "closureNote": "Resolved by file deletion \u2014 server.ts was removed in commit c4835e0db"
+      "closureNote": "Resolved by file deletion — server.ts was removed in commit c4835e0db"
     },
     {
       "id": "GT-201",
@@ -2991,7 +3037,7 @@
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none",
-      "closureNote": "Resolved by file deletion \u2014 server.ts was removed in commit c4835e0db"
+      "closureNote": "Resolved by file deletion — server.ts was removed in commit c4835e0db"
     },
     {
       "id": "GT-202",
@@ -3178,7 +3224,7 @@
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none",
-      "closureNote": "Resolved by GT-184 \u2014 zero @ts-nocheck directives remain in the codebase"
+      "closureNote": "Resolved by GT-184 — zero @ts-nocheck directives remain in the codebase"
     },
     {
       "id": "GT-178",

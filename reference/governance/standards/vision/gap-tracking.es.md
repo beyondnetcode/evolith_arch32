@@ -14,15 +14,12 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|
 | [`GT-260`](./gap-reference-catalog.es.md#gt-260) | Crear archivo de idioma español para agente PO y añadir a workflows | `BMAD Agents` | Cross | P1 | S | `PENDIENTE` |
-| [`GT-258`](./gap-reference-catalog.es.md#gt-258) | Añadir controles de concurrencia a todos los workflows GitHub Actions | `CI/CD` | Cross | P1 | M | `PENDIENTE` |
 | [`GT-228`](./gap-reference-catalog.es.md#gt-228) | Crear motor de orquestación de agentes para workflows BMAD | `Governance` | Cross | P1 | XL | `PENDIENTE` |
-| [`GT-229`](./gap-reference-catalog.es.md#gt-229) | Completar evaluador TypeScript Dual-Engine (cumplimiento R-25) | `Core Domain` | Cross | P1 | XL | `PENDIENTE` |
+| [`GT-229`](./gap-reference-catalog.es.md#gt-229) | Completar evaluador TypeScript Dual-Engine (cumplimiento R-25) | `Core Domain` | Cross | P1 | XL | `COMPLETADO` |
 | [`GT-261`](./gap-reference-catalog.es.md#gt-261) | Añadir límites de recursos a todos los contenedores Docker | `Infrastructure` | Cross | P2 | S | `PENDIENTE` |
 | [`GT-263`](./gap-reference-catalog.es.md#gt-263) | Añadir alertas Prometheus a nivel de infraestructura | `Observability` | Cross | P2 | S | `PENDIENTE` |
-| [`GT-264`](./gap-reference-catalog.es.md#gt-264) | Corregir scan DAST para apuntar al servidor real o eliminar | `CI/CD` | Cross | P2 | S | `PENDIENTE` |
-| [`GT-265`](./gap-reference-catalog.es.md#gt-265) | Añadir detección de secretos (gitleaks) al pipeline CI | `Security` | Cross | P2 | S | `PENDIENTE` |
 | [`GT-262`](./gap-reference-catalog.es.md#gt-262) | Añadir procedimientos de backup/DR para almacenes de datos | `Infrastructure` | Cross | P2 | M | `PENDIENTE` |
-| [`GT-266`](./gap-reference-catalog.es.md#gt-266) | Crear servicio de provisioning de API keys para MCP HTTP | `Security` | Cross | P2 | M | `PENDIENTE` |
+| [`GT-266`](./gap-reference-catalog.es.md#gt-266) | Crear servicio de provisioning de API keys para MCP HTTP | `Security` | Cross | P2 | M | `COMPLETADO` |
 | [`GT-226`](./gap-reference-catalog.es.md#gt-226) | Configurar Dependabot/Renovate (cumplimiento ADR-0009) | `Governance` | Cross | P0 | S | `COMPLETADO` |
 | [`GT-152`](./gap-reference-catalog.es.md#gt-152) | Contrato de Conocimiento Externo y Esquema de Registro Fuente | `Governance` | Cross | P0 | S | `COMPLETADO` |
 | [`GT-250`](./gap-reference-catalog.es.md#gt-250) | Corregir bypass de autenticación MCP cuando no hay API key configurada | `Security` | Cross | P0 | S | `COMPLETADO` |
@@ -40,7 +37,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-209`](./gap-reference-catalog.es.md#gt-209) | Crear baseline agnóstico (`agnostic-baseline.md` ausente) | `Architecture` | Cross | P0 | M | `COMPLETADO` |
 | [`GT-153`](./gap-reference-catalog.es.md#gt-153) | Gobierno del Ciclo de Vida del Conocimiento por Winston | `Governance` | Cross | P0 | M | `COMPLETADO` |
 | [`GT-154`](./gap-reference-catalog.es.md#gt-154) | Proyección RAG y Paridad Native/OPA para Conocimiento Externo | `Governance` | Cross | P0 | M | `COMPLETADO` |
-| [`GT-151`](./gap-reference-catalog.es.md#gt-151) | Completar la Cobertura de IDs de Regla Native/OPA para Topologías Aceptadas | `Rulesets` | Cross | P0 | M | `DONE` |
+| [`GT-151`](./gap-reference-catalog.es.md#gt-151) | Completar la Cobertura de IDs de Regla Native/OPA para Topologías Aceptadas | `Rulesets` | Cross | P0 | M | `COMPLETADO` |
 | [`GT-60`](./gap-reference-catalog.es.md#gt-60) | Validación global de DTOs con class-validator (OWASP API3) | `BFF API` | Transversal | P0 | M | `COMPLETADO` |
 | [`GT-64`](./gap-reference-catalog.es.md#gt-64) | Logging estructurado con Correlation ID | `BFF API` | Transversal | P0 | M | `COMPLETADO` |
 | [`GT-155`](./gap-reference-catalog.es.md#gt-155) | Conformidad de envelope ADR-0073 en el REST del Core API | `BFF API` | Cross | P0 | M | `COMPLETADO` |
@@ -74,6 +71,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-256`](./gap-reference-catalog.es.md#gt-256) | Corregir healthcheck de Traefik añadiendo --ping=true al comando | `Infrastructure` | Cross | P1 | S | `COMPLETADO` |
 | [`GT-257`](./gap-reference-catalog.es.md#gt-257) | Fijar versión de imagen MongoDB en vez de usar latest | `Infrastructure` | Cross | P1 | S | `COMPLETADO` |
 | [`GT-259`](./gap-reference-catalog.es.md#gt-259) | Corregir trigger de publish en ci-cd.yml a tag-based en vez de string match | `CI/CD` | Cross | P1 | S | `COMPLETADO` |
+| [`GT-258`](./gap-reference-catalog.es.md#gt-258) | Añadir controles de concurrencia a todos los workflows GitHub Actions | `CI/CD` | Cross | P1 | M | `COMPLETADO` |
 | [`MT-A09`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Crear Topology Hub en inglés y español | `Documentation` | Transversal | P1 | S | `COMPLETADO` |
 | [`GT-165`](./gap-reference-catalog.es.md#gt-165) | SLOs y presupuestos de costo concretos para topologías serverless y edge | `Documentation` | Cross | P1 | S | `COMPLETADO` |
 | [`GT-61`](./gap-reference-catalog.es.md#gt-61) | Manejo de errores RFC 9457 Problem Details | `BFF API` | Transversal | P1 | S | `COMPLETADO` |
@@ -102,12 +100,12 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-249`](./gap-reference-catalog.es.md#gt-249) | Añadir capa de caché Redis para Core API, MCP y consumo de Tracker | `Architecture` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-164`](./gap-reference-catalog.es.md#gt-164) | Riqueza de rulesets event-driven y data-mesh | `Rulesets` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-147`](./gap-reference-catalog.es.md#gt-147) | Auditoría Automatizada de Deriva de Capacidades Operativas y Eficiencia | `Governance` | Cross | P1 | M | `COMPLETADO` |
-| [`GT-140`](./gap-reference-catalog.es.md#gt-140) | Estándar de Rotación de Tokens de Identidad de Workload para Referencia de Satélites | `Architecture` | Cross | P1 | M | `DONE` |
-| [`GT-144`](./gap-reference-catalog.es.md#gt-144) | Reglas de Prevención de Bucles Infinitos y Circuit Breaker para Agentes | `Governance` | Cross | P1 | M | `DONE` |
+| [`GT-140`](./gap-reference-catalog.es.md#gt-140) | Estándar de Rotación de Tokens de Identidad de Workload para Referencia de Satélites | `Architecture` | Cross | P1 | M | `COMPLETADO` |
+| [`GT-144`](./gap-reference-catalog.es.md#gt-144) | Reglas de Prevención de Bucles Infinitos y Circuit Breaker para Agentes | `Governance` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-148`](./gap-reference-catalog.es.md#gt-148) | Reparación de Migración de Referencias y Cobertura de Reglas Consciente de Topologías | `Rulesets` | Cross | P1 | M | `COMPLETADO` |
-| [`GT-135`](./gap-reference-catalog.es.md#gt-135) | Estándar de Telemetría y Control de Costos para IA Agéntica | `Architecture` | Cross | P1 | M | `DONE` |
-| [`GT-132`](./gap-reference-catalog.es.md#gt-132) | Revisiones de Código Autónomas con Agentes MCP en CI | `Governance` | Cross | P1 | M | `DONE` |
-| [`GT-130`](./gap-reference-catalog.es.md#gt-130) | Validación en pipeline CI para firmas de Agentes BMAD en ADRs y Specs Técnicas | `Governance` | Cross | P1 | M | `DONE` |
+| [`GT-135`](./gap-reference-catalog.es.md#gt-135) | Estándar de Telemetría y Control de Costos para IA Agéntica | `Architecture` | Cross | P1 | M | `COMPLETADO` |
+| [`GT-132`](./gap-reference-catalog.es.md#gt-132) | Revisiones de Código Autónomas con Agentes MCP en CI | `Governance` | Cross | P1 | M | `COMPLETADO` |
+| [`GT-130`](./gap-reference-catalog.es.md#gt-130) | Validación en pipeline CI para firmas de Agentes BMAD en ADRs y Specs Técnicas | `Governance` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-117`](./gap-reference-catalog.es.md#gt-117) | Endpoints de lectura (GET) en el Core API para la composición del BFF del Tracker | `BFF API` | F2 | P1 | M | `COMPLETADO` |
 | [`MT-A23`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Preservar compatibilidad CLI `--arch-level F1/F2/F3` | `Smart CLI` | Transversal | P1 | M | `COMPLETADO` |
 | [`GT-166`](./gap-reference-catalog.es.md#gt-166) | Runbooks SDLC faltantes para Fases 1, 2 y 4 | `Documentation` | Cross | P1 | M | `COMPLETADO` |
@@ -160,8 +158,8 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-168`](./gap-reference-catalog.es.md#gt-168) | Aplicación de referencia de composición cross-topología | `Architecture` | Cross | P1 | L | `COMPLETADO` |
 | [`GT-145`](./gap-reference-catalog.es.md#gt-145) | Sincronización Veraz y Neutral al Proveedor de Vectores RAG | `Operations` | Cross | P1 | L | `COMPLETADO` |
 | [`GT-149`](./gap-reference-catalog.es.md#gt-149) | Pruebas OPA Ejecutables y Gate de Paridad Semántica Native/OPA | `Rulesets` | Cross | P1 | L | `COMPLETADO` |
-| [`GT-142`](./gap-reference-catalog.es.md#gt-142) | Pipeline de Enlace de LLM Real en CI para Revisiones Agénticas | `Governance` | Cross | P1 | L | `DONE` |
-| [`GT-136`](./gap-reference-catalog.es.md#gt-136) | Control de Acceso Consciente del Contexto (ABAC para LLMs) | `Governance` | Cross | P1 | L | `DONE` |
+| [`GT-142`](./gap-reference-catalog.es.md#gt-142) | Pipeline de Enlace de LLM Real en CI para Revisiones Agénticas | `Governance` | Cross | P1 | L | `COMPLETADO` |
+| [`GT-136`](./gap-reference-catalog.es.md#gt-136) | Control de Acceso Consciente del Contexto (ABAC para LLMs) | `Governance` | Cross | P1 | L | `COMPLETADO` |
 | [`GT-118`](./gap-reference-catalog.es.md#gt-118) | Modelo de consumo remoto/SaaS — desacoplar el Core API de rutas de filesystem locales | `BFF API` | F3 | P1 | L | `COMPLETADO` |
 | [`MT-A17`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Mover o espejar reglas F1/F2/F3 actuales hacia descubrimiento topológico | `Core Domain` | Transversal | P1 | L | `COMPLETADO` |
 | [`MT-A18`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Agregar reglas iniciales Native + OPA para serverless | `Rulesets` | Transversal | P1 | L | `COMPLETADO` |
@@ -223,10 +221,10 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-194`](./gap-reference-catalog.es.md#gt-194) | Eliminar tipos `any` en APIs públicas | `CLI` | Cross | P2 | M | `COMPLETADO` |
 | [`GT-196`](./gap-reference-catalog.es.md#gt-196) | Agregar tests E2E para transporte HTTP MCP | `MCP Services` | Cross | P2 | M | `COMPLETADO` |
 | [`GT-173`](./gap-reference-catalog.es.md#gt-173) | Paridad de exportación OpenTelemetry en CLI, MCP y REST | `Cross` | Cross | P2 | M | `COMPLETADO` |
-| [`GT-141`](./gap-reference-catalog.es.md#gt-141) | Estándar de Control de Concurrencia y Bloqueo de Recursos para Herramientas MCP | `Architecture` | Cross | P2 | M | `DONE` |
-| [`GT-137`](./gap-reference-catalog.es.md#gt-137) | Identidad Soberana para IA Agéntica | `Architecture` | Cross | P2 | M | `DONE` |
-| [`GT-138`](./gap-reference-catalog.es.md#gt-138) | Flujos de Trabajo Agénticos Orientados a Eventos | `Architecture` | Cross | P2 | M | `DONE` |
-| [`GT-134`](./gap-reference-catalog.es.md#gt-134) | Registro Estandarizado de Herramientas MCP | `Architecture` | Cross | P2 | M | `DONE` |
+| [`GT-141`](./gap-reference-catalog.es.md#gt-141) | Estándar de Control de Concurrencia y Bloqueo de Recursos para Herramientas MCP | `Architecture` | Cross | P2 | M | `COMPLETADO` |
+| [`GT-137`](./gap-reference-catalog.es.md#gt-137) | Identidad Soberana para IA Agéntica | `Architecture` | Cross | P2 | M | `COMPLETADO` |
+| [`GT-138`](./gap-reference-catalog.es.md#gt-138) | Flujos de Trabajo Agénticos Orientados a Eventos | `Architecture` | Cross | P2 | M | `COMPLETADO` |
+| [`GT-134`](./gap-reference-catalog.es.md#gt-134) | Registro Estandarizado de Herramientas MCP | `Architecture` | Cross | P2 | M | `COMPLETADO` |
 | [`GT-120`](./gap-reference-catalog.es.md#gt-120) | Exposición GraphQL del Core API (alcance del ADR-0074) | `BFF API` | F3 | P2 | M | `COMPLETADO` |
 | [`GT-121`](./gap-reference-catalog.es.md#gt-121) | Retirar el subsistema MCP in-process del Smart CLI (tras la delegación, Fase 3 de ADR-0074/0075) | `CLI` | Transversal | P2 | M | `COMPLETADO` |
 | [`GT-122`](./gap-reference-catalog.es.md#gt-122) | Consolidar adapters de infraestructura duplicados entre sdk/cli, apps/core-api y packages/infra-providers | `Cross` | Transversal | P2 | M | `COMPLETADO` |
@@ -251,16 +249,18 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-188`](./gap-reference-catalog.es.md#gt-188) | Agregar tests para 15 archivos sin cobertura | `CLI` | Cross | P2 | L | `COMPLETADO` |
 | [`GT-171`](./gap-reference-catalog.es.md#gt-171) | Auditoría de paridad de superficie command-as-a-service (CLI vs MCP vs REST) | `Cross` | Cross | P2 | L | `COMPLETADO` |
 | [`GT-172`](./gap-reference-catalog.es.md#gt-172) | Suite de pruebas de contrato roundtrip entre superficies | `Cross` | Cross | P2 | L | `COMPLETADO` |
-| [`GT-143`](./gap-reference-catalog.es.md#gt-143) | Estándares de Handoff Multi-Agente y Delegación de Tareas | `Governance` | Cross | P2 | L | `DONE` |
-| [`GT-139`](./gap-reference-catalog.es.md#gt-139) | Estándar de Gobernanza de Conocimiento RAG | `Governance` | Cross | P2 | L | `DONE` |
-| [`GT-133`](./gap-reference-catalog.es.md#gt-133) | Arquitectura de Distribución Agnóstica Centralizada de OPA Wasm | `Architecture` | Cross | P2 | L | `DONE` |
-| [`GT-131`](./gap-reference-catalog.es.md#gt-131) | Crear Sandbox/Referencia Aplicada para la Topología Agentic AI con MCP real | `Architecture` | Cross | P2 | L | `DONE` |
+| [`GT-143`](./gap-reference-catalog.es.md#gt-143) | Estándares de Handoff Multi-Agente y Delegación de Tareas | `Governance` | Cross | P2 | L | `COMPLETADO` |
+| [`GT-139`](./gap-reference-catalog.es.md#gt-139) | Estándar de Gobernanza de Conocimiento RAG | `Governance` | Cross | P2 | L | `COMPLETADO` |
+| [`GT-133`](./gap-reference-catalog.es.md#gt-133) | Arquitectura de Distribución Agnóstica Centralizada de OPA Wasm | `Architecture` | Cross | P2 | L | `COMPLETADO` |
+| [`GT-131`](./gap-reference-catalog.es.md#gt-131) | Crear Sandbox/Referencia Aplicada para la Topología Agentic AI con MCP real | `Architecture` | Cross | P2 | L | `COMPLETADO` |
 | [`GT-115`](./gap-reference-catalog.es.md#gt-115) | Auto-fix de fallas arquitectónicas vía herramientas MCP | `CLI` | Transversal | P2 | L | `COMPLETADO` |
 | [`GT-54`](./gap-reference-catalog.es.md#gt-54) | Completar la aplicación estricta de fronteras hexagonales | `Cross` | Transversal | P2 | L | `COMPLETADO` |
 | [`GT-36`](./gap-reference-catalog.es.md#gt-36) | Cobertura lingüística de reglas machine-readable | `Governance` | Transversal | P2 | L | `COMPLETADO` |
 | [`GT-25`](./gap-reference-catalog.es.md#gt-25) | Primeros perfiles de proveedor | `Governance` | Transversal | P2 | L | `COMPLETADO` |
 | [`GT-23`](./gap-reference-catalog.es.md#gt-23) | Backfill de traducciones españolas | `Governance` | Transversal | P2 | L | `COMPLETADO` |
 | [`GT-197`](./gap-reference-catalog.es.md#gt-197) | Arreglar fallas intermitentes del pipeline de release | `CI` | Cross | P2 | XL | `COMPLETADO` |
+| [`GT-264`](./gap-reference-catalog.es.md#gt-264) | Corregir scan DAST para apuntar al servidor real o eliminar | `CI/CD` | Cross | P2 | S | `COMPLETADO` |
+| [`GT-265`](./gap-reference-catalog.es.md#gt-265) | Añadir detección de secretos (gitleaks) al pipeline CI | `Security` | Cross | P2 | S | `COMPLETADO` |
 | [`GT-225`](./gap-reference-catalog.es.md#gt-225) | Revivir o documentar 4 `it.skip` en `wizard.service.spec` | `CLI` | Cross | P3 | XS | `COMPLETADO` |
 | [`GT-224`](./gap-reference-catalog.es.md#gt-224) | Añadir `--format json` a los comandos `drift`/`scaffold`/`docs` (envelope ADR-0073) | `CLI` | Cross | P3 | S | `COMPLETADO` |
 | [`GT-247`](./gap-reference-catalog.es.md#gt-247) | Reemplazar credenciales hardcodeadas en Docker-compose | `Platform` | Cross | P3 | S | `COMPLETADO` |
@@ -279,7 +279,8 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-245`](./gap-reference-catalog.es.md#gt-245) | Añadir DAST (OWASP ZAP) al pipeline de seguridad | `Security` | Cross | P3 | L | `COMPLETADO` |
 | [`GT-246`](./gap-reference-catalog.es.md#gt-246) | Implementar experimentos Chaos Mesh/Litmus | `QA` | Cross | P3 | L | `COMPLETADO` |
 
-**Progreso:** 255 / 265 completados · 0 en progreso · 10 pendientes · 0 diferidos
+
+**Progreso:** 258 / 265 completados · 0 en progreso · 7 pendientes · 0 diferidos
 
 **Oleada 2026-06-23 (auditoría profunda de Wilson III):** Añadidos 14 gaps nuevos `GT-212`…`GT-225` del Wilson Audit Playbook que cubren: higiene de estado ADR (GT-212), metadata + presupuestos operativos + corpus de guías por topología (GT-213, GT-217, GT-219), observabilidad + OpenAPI en controladores REST (GT-214, GT-215), paridad de input-schemas OPA + densidad de tests por topología (GT-216, GT-222), plantillas de rollback + on-call de Fase 05 (GT-218), cobertura de ramas CLI + paridad de envelope --format + limpieza de skip-list (GT-220, GT-224, GT-225), audit logging HTTP de MCP (GT-221), y tests e2e de paridad cross-surface (GT-223).
 

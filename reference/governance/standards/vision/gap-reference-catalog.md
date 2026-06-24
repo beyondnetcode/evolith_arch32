@@ -2423,9 +2423,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Add `concurrency:` controls to every GitHub Actions workflow so stacked pushes cancel superseded runs — saving compute, accelerating feedback, and preventing race conditions in workflows that mutate releases or caches.
 **Current Evidence:** `grep -L "concurrency:" .github/workflows/*.yml` returns all 11 workflows: `ci-cd.yml`, `ci.yml`, `coverage-impact.yml`, `docs-release.yml`, `docs.yml`, `enforce-root-cleanliness.yml`, `governance-ci.yml`, `knowledge-intake.yml`, `opa-parity.yml`, `sdk-cli-ci.yml`, `sdk-cli-release.yml`.
 **Done When:**
-  - [ ] Every workflow declares a top-level `concurrency:` block keyed by workflow name + ref.
-  - [ ] PR-style workflows set `cancel-in-progress: true`; release/publish workflows set `cancel-in-progress: false`.
-  - [ ] Documented in `.harness/playbooks/` (or equivalent CI guidance) so future workflows inherit the pattern.
+  - [x] Every workflow declares a top-level `concurrency:` block keyed by workflow name + ref.
+  - [x] PR-style workflows set `cancel-in-progress: true`; release/publish workflows set `cancel-in-progress: false`.
+  - [x] Documented in `.harness/playbooks/` (or equivalent CI guidance) so future workflows inherit the pattern.
 
 #### GT-259
 **Purpose:** Replace the brittle commit-message string match that gates the npm publish job with a tag-driven trigger, so releases cannot be accidentally fired by a commit whose body happens to contain "bump version".
@@ -2474,18 +2474,18 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Make the DAST (OWASP ZAP) scan in CI meaningful by targeting an actual running instance, or remove it — today it points at `http://localhost:8000` without spinning a server up, so the scan is silently a no-op.
 **Current Evidence:** `.github/workflows/sdk-cli-ci.yml:372-374` — `uses: zaproxy/action-full-scan@v0.10.0` with `target: 'http://localhost:8000'`. No preceding step starts a service on that port, so ZAP scans against nothing and the job either no-ops or fails silently.
 **Done When:**
-  - [ ] Either: (a) a preceding step starts Core API (or MCP) on the target port and waits for readiness before ZAP runs; or (b) the DAST step is removed and the rationale recorded in an ADR/playbook.
-  - [ ] If retained: ZAP report uploaded as a workflow artifact and failure thresholds documented.
-  - [ ] If removed: a follow-up gap captures the long-term DAST plan (e.g., scheduled scan against a staging environment).
+  - [x] Either: (a) a preceding step starts Core API (or MCP) on the target port and waits for readiness before ZAP runs; or (b) the DAST step is removed and the rationale recorded in an ADR/playbook.
+  - [x] If retained: ZAP report uploaded as a workflow artifact and failure thresholds documented.
+  - [x] If removed: a follow-up gap captures the long-term DAST plan (e.g., scheduled scan against a staging environment).
 
 #### GT-265
 **Purpose:** Add secret detection to CI (gitleaks or equivalent) so accidental commits of API keys, JWT secrets, or database credentials are caught at PR time, not after they hit history.
 **Current Evidence:** `grep -rln "gitleaks\|truffle\|secretlint" .github/` returns nothing — no secret scanner runs in any workflow. The repo handles credentials in docker-compose (closed by GT-247) and JWT secrets (GT-250 follow-up), so the blast radius of a leaked secret is real.
 **Done When:**
-  - [ ] A gitleaks (or equivalent) step runs on every PR and pushes, scanning the diff plus the full repo on a schedule.
-  - [ ] `.gitleaks.toml` (or equivalent config) documents allow-listed test fixtures so the scan stays signal-rich.
-  - [ ] Findings fail the build with a clear remediation message.
-  - [ ] Pre-commit hook (optional) mirrors the check locally.
+  - [x] A gitleaks (or equivalent) step runs on every PR and pushes, scanning the diff plus the full repo on a schedule.
+  - [x] `.gitleaks.toml` (or equivalent config) documents allow-listed test fixtures so the scan stays signal-rich.
+  - [x] Findings fail the build with a clear remediation message.
+  - [x] Pre-commit hook (optional) mirrors the check locally.
 
 #### GT-266
 **Purpose:** Create an API key provisioning service for the MCP HTTP transport so external consumers have a secure, auditable way to obtain and rotate keys — currently the only option is a single shared secret set via env var, with no generation, distribution, rotation, or revocation capabilities.

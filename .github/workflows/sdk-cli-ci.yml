@@ -1,5 +1,9 @@
 name: Evolith SDK CLI - CI Pipeline
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   pull_request:
     branches: [main, develop]
@@ -357,36 +361,24 @@ jobs:
           category: 'trivy-scan'
 
   # ============================================
-  # JOB 11: DAST OWASP ZAP Scan (GT-245)
+  # JOB 11: Secret Detection — gitleaks (GT-265)
   # ============================================
-  dast-scan:
-    name: DAST OWASP ZAP
-    if: github.event_name == 'push' || github.event.pull_request.head.repo.fork == false
+  secret-detection:
+    name: Secret Detection (gitleaks)
     runs-on: ubuntu-latest
-    continue-on-error: true
+    permissions:
+      contents: read
+      security-events: write
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-
-      - name: Run OWASP ZAP Full Scan
-        uses: zaproxy/action-full-scan@v0.10.0
         with:
-          target: 'http://localhost:8000'
-          rules_file_name: '.zap/rules.tsv'
-          cmd_options: >-
-            -a
-            -j
-            -l WARN
-          allow_issue_writing: false
-          artifact_name: 'zap-scan-report'
-          fail_action: false
+          fetch-depth: 0
 
-      - name: Upload ZAP SARIF Report
-        uses: github/codeql-action/upload-sarif@v3
-        if: always()
-        with:
-          sarif_file: 'zap_scan_report.sarif'
-          category: 'dast-zap'
+      - name: Run gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   agentic-review:
     name: Winston Agentic Review
@@ -415,7 +407,7 @@ jobs:
   # ============================================
   gate:
     name: CI Gate
-    needs: [core-validation, security-audit, lint-and-types, unit-tests, e2e-tests, architecture-validation, package-integrity, agentic-review, codeql-analysis, trivy-scan, dast-scan]
+    needs: [core-validation, security-audit, lint-and-types, unit-tests, e2e-tests, architecture-validation, package-integrity, agentic-review, codeql-analysis, trivy-scan, secret-detection]
     runs-on: ubuntu-latest
     steps:
       - name: All Checks Passed

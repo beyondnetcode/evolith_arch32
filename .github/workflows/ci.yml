@@ -4,6 +4,10 @@ name: Todo Monorepo CI
 # The current repository uses sdk/cli/ instead
 # This file is kept for reference only and is effectively disabled
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   pull_request:
     branches: [ main, develop ]

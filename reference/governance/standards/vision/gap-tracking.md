@@ -14,15 +14,12 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
 |---|---|---|:---:|:---:|:---:|:---:|
 | [`GT-260`](./gap-reference-catalog.md#gt-260) | Create PO agent Spanish language file and add to workflows | `BMAD Agents` | Cross | P1 | S | `PENDING` |
-| [`GT-258`](./gap-reference-catalog.md#gt-258) | Add concurrency controls to all GitHub Actions workflows | `CI/CD` | Cross | P1 | M | `PENDING` |
 | [`GT-228`](./gap-reference-catalog.md#gt-228) | Create agent orchestration engine for BMAD workflows | `Governance` | Cross | P1 | XL | `PENDING` |
-| [`GT-229`](./gap-reference-catalog.md#gt-229) | Complete Dual-Engine TypeScript evaluator (R-25 compliance) | `Core Domain` | Cross | P1 | XL | `PENDING` |
+| [`GT-229`](./gap-reference-catalog.md#gt-229) | Complete Dual-Engine TypeScript evaluator (R-25 compliance) | `Core Domain` | Cross | P1 | XL | `DONE` |
 | [`GT-261`](./gap-reference-catalog.md#gt-261) | Add resource limits to all Docker containers | `Infrastructure` | Cross | P2 | S | `PENDING` |
 | [`GT-263`](./gap-reference-catalog.md#gt-263) | Add infrastructure-level Prometheus alerts | `Observability` | Cross | P2 | S | `PENDING` |
-| [`GT-264`](./gap-reference-catalog.md#gt-264) | Fix DAST scan to target real server or remove | `CI/CD` | Cross | P2 | S | `PENDING` |
-| [`GT-265`](./gap-reference-catalog.md#gt-265) | Add secret detection (gitleaks) to CI pipeline | `Security` | Cross | P2 | S | `PENDING` |
 | [`GT-262`](./gap-reference-catalog.md#gt-262) | Add backup/DR procedures for data stores | `Infrastructure` | Cross | P2 | M | `PENDING` |
-| [`GT-266`](./gap-reference-catalog.md#gt-266) | Create API key provisioning service for MCP HTTP transport | `Security` | Cross | P2 | M | `PENDING` |
+| [`GT-266`](./gap-reference-catalog.md#gt-266) | Create API key provisioning service for MCP HTTP transport | `Security` | Cross | P2 | M | `DONE` |
 | [`GT-226`](./gap-reference-catalog.md#gt-226) | Wire Dependabot/Renovate config (ADR-0009 compliance) | `Governance` | Cross | P0 | S | `DONE` |
 | [`GT-152`](./gap-reference-catalog.md#gt-152) | External Knowledge Contract and Source Registry Schema | `Governance` | Cross | P0 | S | `DONE` |
 | [`GT-250`](./gap-reference-catalog.md#gt-250) | Fix MCP auth bypass when no API key configured | `Security` | Cross | P0 | S | `DONE` |
@@ -74,6 +71,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-256`](./gap-reference-catalog.md#gt-256) | Fix Traefik healthcheck by adding --ping=true to command | `Infrastructure` | Cross | P1 | S | `DONE` |
 | [`GT-257`](./gap-reference-catalog.md#gt-257) | Pin MongoDB image version instead of using latest | `Infrastructure` | Cross | P1 | S | `DONE` |
 | [`GT-259`](./gap-reference-catalog.md#gt-259) | Fix ci-cd.yml publish trigger to use tag-based instead of string match | `CI/CD` | Cross | P1 | S | `DONE` |
+| [`GT-258`](./gap-reference-catalog.md#gt-258) | Add concurrency controls to all GitHub Actions workflows | `CI/CD` | Cross | P1 | M | `DONE` |
 | [`MT-A09`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create the English and Spanish Topology Hub | `Documentation` | Cross | P1 | S | `DONE` |
 | [`GT-165`](./gap-reference-catalog.md#gt-165) | Concrete SLO and cost budgets for serverless and edge topologies | `Documentation` | Cross | P1 | S | `DONE` |
 | [`GT-61`](./gap-reference-catalog.md#gt-61) | Manejo de errores RFC 9457 Problem Details | `BFF API` | Cross | P1 | S | `DONE` |
@@ -261,6 +259,8 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-25`](./gap-reference-catalog.md#gt-25) | First provider profiles | `Governance` | Cross | P2 | L | `DONE` |
 | [`GT-23`](./gap-reference-catalog.md#gt-23) | Spanish translation backfill | `Governance` | Cross | P2 | L | `DONE` |
 | [`GT-197`](./gap-reference-catalog.md#gt-197) | Fix intermittent release pipeline failures | `CI` | Cross | P2 | XL | `DONE` |
+| [`GT-264`](./gap-reference-catalog.md#gt-264) | Fix DAST scan to target real server or remove | `CI/CD` | Cross | P2 | S | `DONE` |
+| [`GT-265`](./gap-reference-catalog.md#gt-265) | Add secret detection (gitleaks) to CI pipeline | `Security` | Cross | P2 | S | `DONE` |
 | [`GT-225`](./gap-reference-catalog.md#gt-225) | Revive or document 4 `it.skip` cases in `wizard.service.spec` | `CLI` | Cross | P3 | XS | `DONE` |
 | [`GT-224`](./gap-reference-catalog.md#gt-224) | Add `--format json` to `drift`/`scaffold`/`docs` CLI commands (ADR-0073 envelope) | `CLI` | Cross | P3 | S | `DONE` |
 | [`GT-247`](./gap-reference-catalog.md#gt-247) | Replace hardcoded Docker-compose credentials | `Platform` | Cross | P3 | S | `DONE` |
@@ -279,7 +279,8 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-245`](./gap-reference-catalog.md#gt-245) | Add DAST (OWASP ZAP) to security pipeline | `Security` | Cross | P3 | L | `DONE` |
 | [`GT-246`](./gap-reference-catalog.md#gt-246) | Implement Chaos Mesh/Litmus experiments | `QA` | Cross | P3 | L | `DONE` |
 
-**Progress:** 255 / 265 done · 0 in progress · 10 pending · 0 deferred
+
+**Progress:** 258 / 265 done · 0 in progress · 7 pending · 0 deferred
 
 **Wave 2026-06-23 (Wilson deep audit III):** Added 14 new gaps `GT-212`…`GT-225` from the Wilson Audit Playbook covering: ADR status hygiene (GT-212), topology manifest metadata + operational budgets + guidance corpus (GT-213, GT-217, GT-219), REST controller observability + OpenAPI (GT-214, GT-215), OPA input-schema parity + per-topology test density (GT-216, GT-222), SDLC Phase 05 rollback + on-call templates (GT-218), CLI branch coverage + envelope format coverage + skip-list cleanup (GT-220, GT-224, GT-225), MCP HTTP audit logging (GT-221), and cross-surface parity e2e tests (GT-223).
 

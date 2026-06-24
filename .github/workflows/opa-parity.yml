@@ -5,6 +5,10 @@ name: OPA Parity (Scheduled)
 # the full parity gate across every accepted topology. Per-commit scoping runs
 # via the ci-runner; this guarantees a periodic full sweep.
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 on:
   schedule:
     - cron: '0 6 * * *' # daily at 06:00 UTC

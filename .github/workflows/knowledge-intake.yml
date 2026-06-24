@@ -1,0 +1,202 @@
+name: Knowledge Intake CI
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'reference/knowledge/intake/KI-*.yaml'
+      - 'reference/knowledge/intake/KI-*.yml'
+      - 'reference/knowledge/intake/SRC-*.yaml'
+      - 'reference/knowledge/intake/SRC-*.yml'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  validate:
+    name: Validate Knowledge Intake
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Validate Knowledge Intake (Schema + Transitions)
+        id: validate-ki
+        run: |
+          set +e
+          OUTPUT=$(node .harness/scripts/ci/17-validate-knowledge-intake.mjs 2>&1)
+          EXIT_CODE=$?
+          echo "exit_code=$EXIT_CODE" >> "$GITHUB_OUTPUT"
+          {
+            echo "validation_output<<EOF"
+            echo "$OUTPUT"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Validate Knowledge Parity (Dual-Engine)
+        id: validate-parity
+        run: |
+          set +e
+          OUTPUT=$(node .harness/scripts/ci/18-validate-knowledge-parity.mjs 2>&1)
+          EXIT_CODE=$?
+          echo "exit_code=$EXIT_CODE" >> "$GITHUB_OUTPUT"
+          {
+            echo "parity_output<<EOF"
+            echo "$OUTPUT"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Fail on Validation Errors
+        if: steps.validate-ki.outputs.exit_code != '0' || steps.validate-parity.outputs.exit_code != '0'
+        run: |
+          echo "❌ Knowledge intake validation failed."
+          echo "--- Schema + Transition Validation ---"
+          echo "${{ steps.validate-ki.outputs.validation_output }}"
+          echo ""
+          echo "--- Dual-Engine Parity Validation ---"
+          echo "${{ steps.validate-parity.outputs.parity_output }}"
+          exit 1
+
+      - name: Pass Summary
+        if: steps.validate-ki.outputs.exit_code == '0' && steps.validate-parity.outputs.exit_code == '0'
+        run: echo "✅ All knowledge intake validations passed."
+
+  opa-check:
+    name: OPA Policy Evaluation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run OPA Policy Tests
+        id: opa-test
+        run: |
+          set +e
+          OUTPUT=$(node -e "
+            import { ensureOpa } from './.harness/scripts/opa-runtime.mjs';
+            import { execFileSync } from 'node:child_process';
+            const opa = await ensureOpa(process.cwd());
+            try {
+              const out = execFileSync(opa.binary, ['test', '--format=json', 'rulesets/opa/knowledge-intake.rego', 'rulesets/opa/knowledge-intake.test.rego'], { cwd: process.cwd(), encoding: 'utf8' });
+              console.log(out);
+              process.exit(0);
+            } catch (e) {
+              console.error(e.stderr || e.message);
+              process.exit(1);
+            }
+          " 2>&1)
+          EXIT_CODE=$?
+          echo "exit_code=$EXIT_CODE" >> "$GITHUB_OUTPUT"
+          {
+            echo "opa_output<<EOF"
+            echo "$OUTPUT"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Fail on OPA Policy Violations
+        if: steps.opa-test.outputs.exit_code != '0'
+        run: |
+          echo "❌ OPA policy evaluation failed."
+          echo "${{ steps.opa-test.outputs.opa_output }}"
+          exit 1
+
+      - name: OPA Check Passed
+        if: steps.opa-test.outputs.exit_code == '0'
+        run: echo "✅ OPA policy evaluation passed."
+
+  report:
+    name: PR Validation Report
+    needs: [validate, opa-check]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download Validation Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: validation-results
+          path: /tmp/validation
+        continue-on-error: true
+
+      - name: Post PR Comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const validateResult = '${{ needs.validate.result }}';
+            const opaResult = '${{ needs.opa-check.result }}';
+            const allPassed = validateResult === 'success' && opaResult === 'success';
+
+            const statusIcon = (s) => s === 'success' ? '✅' : s === 'failure' ? '❌' : '⏭️';
+            const statusText = (s) => s === 'success' ? 'PASSED' : s === 'failure' ? 'FAILED' : 'SKIPPED';
+
+            const body = `## Knowledge Intake Validation Report
+
+            | Gate | Status |
+            |------|--------|
+            | Schema + Transition Validation | ${statusIcon(validateResult)} ${statusText(validateResult)} |
+            | OPA Policy Evaluation | ${statusIcon(opaResult)} ${statusText(opaResult)} |
+
+            ${allPassed
+              ? '> All knowledge intake validations passed. The KI/SRC files conform to schema, OPA policies, and promotion state machine rules.'
+              : '> ⚠️ One or more validation gates failed. Please review the CI logs and fix the issues before merging.'}
+
+            ---
+            *Automated by Knowledge Intake CI — ${new Date().toISOString().split('T')[0]}*`;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const marker = '## Knowledge Intake Validation Report';
+            const existing = comments.find(c => c.body.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }

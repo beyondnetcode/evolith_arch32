@@ -43,6 +43,43 @@ function loadAcceptedTopologyIds(root, errors) {
   return ids;
 }
 
+function fixKiFile(filePath, root = ROOT) {
+  const intakePath = path.join(root, INTAKE_DIR);
+  const fullPath = path.join(intakePath, filePath);
+  if (!fs.existsSync(fullPath)) return false;
+
+  let content;
+  try { content = yaml.load(fs.readFileSync(fullPath, 'utf8')); }
+  catch { return false; }
+
+  let changed = false;
+  const now = new Date().toISOString().split('T')[0];
+
+  if (!content.review?.review_freshness) {
+    if (!content.review) content.review = {};
+    content.review.review_freshness = now;
+    changed = true;
+  }
+
+  if (content.promotion?.status && content.promotion.status !== 'candidate') {
+    if (!content.promotion.promoted_at) {
+      content.promotion.promoted_at = now;
+      changed = true;
+    }
+    if (!content.promotion.promoted_by) {
+      content.promotion.promoted_by = '17-validate-knowledge-intake.mjs';
+      changed = true;
+    }
+  }
+
+  if (changed) {
+    const updated = yaml.dump(content, { lineWidth: -1, quotingType: '"' });
+    fs.writeFileSync(fullPath, updated, 'utf8');
+  }
+
+  return changed;
+}
+
 export function validateKnowledgeIntake(root = ROOT) {
   const errors = [];
   const intakePath = path.join(root, INTAKE_DIR);
@@ -188,6 +225,29 @@ export function validateKnowledgeIntake(root = ROOT) {
 }
 
 async function run() {
+  const fixMode = process.argv.includes('--fix');
+
+  if (fixMode) {
+    console.log('🔧 Knowledge Intake Auto-Fix Mode');
+    const intakePath = path.join(ROOT, INTAKE_DIR);
+    const kiFiles = fs.existsSync(intakePath)
+      ? fs.readdirSync(intakePath).filter((f) => /^KI-[A-Z0-9-]+\.ya?ml$/.test(f))
+      : [];
+
+    let fixedCount = 0;
+    for (const file of kiFiles) {
+      if (fixKiFile(file, ROOT)) {
+        console.log(`   Fixed: ${INTAKE_DIR}/${file}`);
+        fixedCount++;
+      }
+    }
+    if (fixedCount === 0) {
+      console.log('   No fixable issues found.');
+    } else {
+      console.log(`   Fixed ${fixedCount} file(s). Re-validating...`);
+    }
+  }
+
   const result = validateKnowledgeIntake();
   const opa = await ensureOpa(ROOT);
   try { execFileSync(opa.binary, ['test', '--format=json', OPA_POLICY, OPA_TEST], { cwd: ROOT, encoding: 'utf8' }); }

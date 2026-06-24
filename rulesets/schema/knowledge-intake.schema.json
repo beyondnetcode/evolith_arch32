@@ -55,7 +55,7 @@
       "type": "object",
       "required": ["owner", "next_review_at", "review_freshness"],
       "properties": {
-        "owner": { "const": "@wilson" },
+        "owner": { "const": "@winston" },
         "next_review_at": { "type": "string", "format": "date" },
         "review_freshness": { "type": "string", "format": "date" }
       },

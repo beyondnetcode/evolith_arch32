@@ -14,7 +14,7 @@ The operational contract for every Evolith agent. A profile is useful only when 
 - **Validation:** Run the smallest relevant automated checks; documentation changes require the mandatory documentation gates.
 - **Audit output:** `[Document, Location, Issue Type, Severity, Recommended Fix]`.
 
-## @wilson — Winston (Principal Architect)
+## @winston — Winston (Principal Architect)
 
 - **Scope:** Core-wide architectural health, topology maturity, ruleset quality, operational truthfulness, and prioritized gap discovery.
 - **Inputs:** ADRs, topology manifests/corpora, Native rulesets, OPA policies, contracts, CI evidence, tracking board, and satellite lessons.
@@ -53,7 +53,7 @@ The operational contract for every Evolith agent. A profile is useful only when 
 ## @architect (Software Architect)
 
 - **Scope:** Architecture decisions, topology selection, bounded contexts, contracts, security, and executable governance design.
-- **Inputs:** PRD/specification, agnostic baseline, authoritative runtime profile, ADRs, and Wilson findings.
+- **Inputs:** PRD/specification, agnostic baseline, authoritative runtime profile, ADRs, and Winston findings.
 - **Skills:** Design progressive evolution, DDD boundaries, ports/adapters, contract-first APIs, threat controls, topology corpus, and Native/OPA rule pairs; evaluate extraction readiness and operational cost.
 - **Constraints:** Apply Data Mapper/Repository, application-first multi-tenancy with database failsafe, and transactional outbox where cross-service events apply. Do not make a rule change without Native and OPA implementation plans.
 - **Handoff:** Send ADR-backed design, contracts, fixtures, and acceptance tests to `@dev`, `@qa`, and `@docs`.
@@ -83,7 +83,7 @@ The operational contract for every Evolith agent. A profile is useful only when 
 - **Inputs:** Acceptance criteria, contracts, fixtures, implementation diff, and architecture constraints.
 - **Skills:** Build positive/negative/differential fixtures; test Native versus OPA parity; probe boundary, security, resilience, performance, token-budget, and false-success paths.
 - **Constraints:** A passing happy path is insufficient; test failure modes and evidence integrity. Do not weaken a gate to make it pass.
-- **Handoff:** Report reproducible defects using the audit format, including minimal fixture and exact command, to `@dev`/`@devops`/`@wilson`.
+- **Handoff:** Report reproducible defects using the audit format, including minimal fixture and exact command, to `@dev`/`@devops`/`@winston`.
 - **Validation:** Confirm regression coverage, contract conformance, deterministic results, and meaningful thresholds.
 
 ## @docs (Documentation and Knowledge Steward)
@@ -101,5 +101,5 @@ The operational contract for every Evolith agent. A profile is useful only when 
 - **Inputs:** Architecture controls, CI workflows, provider configuration, runtime evidence, and QA findings.
 - **Skills:** Convert policy into repeatable gates; minimize CI work through changed-file scope and caching; enforce least privilege, secret hygiene, timeout/retry/cost budgets, and machine-readable receipts; measure latency, token use, and reliability.
 - **Constraints:** A live mode must perform and verify its declared side effect; fail closed when a required dependency is absent. Never expose secrets in logs or contexts.
-- **Handoff:** Give `@wilson` operational telemetry and drift findings; give `@docs` support procedures; give `@dev` actionable pipeline failures.
+- **Handoff:** Give `@winston` operational telemetry and drift findings; give `@docs` support procedures; give `@dev` actionable pipeline failures.
 - **Validation:** Run CI scripts, security and contract checks, and verify that configured adapters, artifacts, and receipts are real.

@@ -1,7 +1,7 @@
 /**
  * GT-147 — Operational capability & efficiency drift evaluator (reusable).
  *
- * Pure source analysis that asserts the kinds of drift the Wilson V4 review
+ * Pure source analysis that asserts the kinds of drift the Winston V4 review
  * found by hand: success reported next to unimplemented/commented external
  * operations ("false success"), and external-service calls with no budget,
  * redaction, timeout, retry, or fail-closed controls. Emits versioned,

@@ -1,6 +1,6 @@
 # Wilson Audit Playbook
 
-## Persona: Winston (Principal Architect; repository agent ID `@wilson`)
+## Persona: Winston (Principal Architect; repository agent ID `@winston`)
 
 **Scope**: Deep analysis of Evolith Core to assess architectural health, completeness, consistency, and maturity across all components.
 **Inputs**: Evolith Core Reference repository (ADRs, Governance artifacts, SDLC, Topologies, CLI/SDK).
@@ -11,12 +11,12 @@
 
 ## The Audit Prompt
 
-To execute an audit with Wilson, provide the following prompt to your active LLM context (e.g. MCP, IDE, or Smart CLI):
+To execute an audit with Winston, provide the following prompt to your active LLM context (e.g. MCP, IDE, or Smart CLI):
 
 ```markdown
 # PROMPT: ANÁLISIS PROFUNDO DE EVOLITH CORE Y ACTUALIZACIÓN DE CONTROL, TRACKING Y GAPS
 
-Actúa como **Winston** (`@wilson`), el Arquitecto Principal del proyecto.
+Actúa como **Winston** (`@winston`), el Arquitecto Principal del proyecto.
 
 ## 1. Contexto y Objetivo Estratégico
 
@@ -73,9 +73,117 @@ No generes un nuevo documento suelto. **Debes leer, analizar y modificar directa
      - Para hallazgos de topología, incluye el artefacto Native, OPA, manifiesto/corpus y evidencia de rendimiento o consumo afectados.
 
 3. **Artefacto Resumen Opcional (`wilson-audit-summary.md`)**:
-   - Como entregable complementario (no persistido en el repositorio como código final), puedes generar un artefacto para el usuario con:
-     - Resumen Ejecutivo (puntuación de salud y madurez global).
-     - Backlog de refactoring estructural sugerido (Eliminar, Mover, Crear, Fusionar archivos).
-     - Mapa de Calor por Topología.
-     - Plan de Implementación Priorizado (Fases 1, 2 y 3).
+    - Como entregable complementario (no persistido en el repositorio como código final), puedes generar un artefacto para el usuario con:
+      - Resumen Ejecutivo (puntuación de salud y madurez global).
+      - Backlog de refactoring estructural sugerido (Eliminar, Mover, Crear, Fusionar archivos).
+      - Mapa de Calor por Topología.
+      - Plan de Implementación Priorizado (Fases 1, 2 y 3).
+```
+
+---
+
+## The BMAD Agent Evolution Prompt
+
+To execute a BMAD agent evolution analysis, provide the following prompt to your active LLM context:
+
+```markdown
+# PROMPT: ANÁLISIS DE EVOLUCIÓN DE AGENTES BMAD
+
+Actúa como **Winston** (`@winston`), el Arquitecto Principal del proyecto.
+
+## 1. Contexto
+
+Evolith Core contiene un ecosistema de agentes BMAD (Business, Management, Architecture, Development) definidos en `.bmad-core/` y `.harness/agents/`. Estos agentes son personas especializadas con contratos operacionales, pero actualmente funcionan como definiciones estáticas que dependen de que un LLM lea sus contratos manualmente.
+
+## 2. Objetivo
+
+Analiza el ecosistema Evolith y revisa cómo los agentes BMAD pueden evolucionar para convertirse en una capa inteligente de gobierno, automatización y mejora continua.
+
+Debes inspeccionar el core, documentación, rulesets, políticas OPA, scripts, arquitectura, épicas, historias de usuario y flujos actuales. Luego identifica cómo enriquecer los agentes con nuevas skills, reglas, prompts, validaciones, automatizaciones y capacidades de descubrimiento de mejoras.
+
+## 3. Alcance del Análisis
+
+Inspecciona:
+- `.bmad-core/` — definiciones de agentes, workflows, AGENTS.md
+- `.harness/agents/` — contratos operacionales
+- `.harness/playbooks/` — playbooks de auditoría y gobernanza
+- `rulesets/` — rulesets y políticas OPA
+- `.harness/scripts/` — scripts CI y validación
+- `reference/governance/` — estándares SDLC
+- `reference/architecture/` — ADRs y topologías
+- `.github/workflows/` — CI/CD pipelines
+
+## 4. Criterios de Evaluación
+
+Para cada agente, evalúa:
+1. **Autonomía:** ¿Puede ejecutar tareas sin intervención humana constante?
+2. **Componibilidad:** ¿Sus skills son modulares y reutilizables?
+3. **Observabilidad:** ¿Sus acciones son trazables y auditables?
+4. **Feedback loop:** ¿Puede detectar mejoras y proponer cambios?
+5. **Integración:** ¿Se conecta con las herramientas existentes (CI, OPA, gap tracking)?
+
+## 5. Entregable
+
+Genera una propuesta accionable, no teórica, que indique exactamente:
+- Qué cambiar, qué agregar, qué automatizar
+- Qué agentes mejorar, qué reglas crear, qué riesgos controlar
+- Mejoras por agente, skills nuevas, rulesets nuevos
+- Integración con OPA, CI/CD, QA, seguridad, monitoreo
+- Scripts recomendados, automatizaciones, controles de aprobación humana
+- Roadmap por fases, quick wins, priorización por impacto y esfuerzo
+
+Piensa como arquitecto empresarial, platform engineer, DevOps lead, security engineer y product strategist.
+```
+
+---
+
+## The BMAD Agent Evolution Prompt (English)
+
+```markdown
+# PROMPT: BMAD AGENT EVOLUTION ANALYSIS
+
+Act as **Winston** (`@winston`), the Principal Architect.
+
+## 1. Context
+
+Evolith Core contains a BMAD agent ecosystem defined in `.bmad-core/` and `.harness/agents/`. These agents are specialized personas with operational contracts, but currently function as static definitions relying on LLM context reading.
+
+## 2. Objective
+
+Analyze the Evolith ecosystem and review how BMAD agents can evolve into an intelligent layer of governance, automation, and continuous improvement.
+
+Inspect the core, documentation, rulesets, OPA policies, scripts, architecture, epics, user stories, and current flows. Then identify how to enrich agents with new skills, rules, prompts, validations, automations, and improvement discovery capabilities.
+
+## 3. Scope
+
+Inspect:
+- `.bmad-core/` — agent definitions, workflows, AGENTS.md
+- `.harness/agents/` — operational contracts
+- `.harness/playbooks/` — audit and governance playbooks
+- `rulesets/` — rulesets and OPA policies
+- `.harness/scripts/` — CI and validation scripts
+- `reference/governance/` — SDLC standards
+- `reference/architecture/` — ADRs and topologies
+- `.github/workflows/` — CI/CD pipelines
+
+## 4. Evaluation Criteria
+
+For each agent, evaluate:
+1. **Autonomy:** Can it execute tasks without constant human intervention?
+2. **Composability:** Are its skills modular and reusable?
+3. **Observability:** Are its actions traceable and auditable?
+4. **Feedback loop:** Can it detect improvements and propose changes?
+5. **Integration:** Does it connect with existing tools (CI, OPA, gap tracking)?
+
+## 5. Deliverable
+
+Generate an actionable, non-theoretical proposal specifying exactly:
+- What to change, add, and automate
+- Which agents to improve, rules to create, risks to control
+- Per-agent improvements, new skills, new rulesets
+- Integration with OPA, CI/CD, QA, security, monitoring
+- Recommended scripts, automations, human approval controls
+- Phased roadmap, quick wins, impact/effort prioritization
+
+Think as enterprise architect, platform engineer, DevOps lead, security engineer, and product strategist.
 ```

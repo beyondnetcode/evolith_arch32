@@ -289,11 +289,11 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 **Title:** Knowledge Lifecycle Governance by Winston
 
-- **Purpose:** Formalize Winston (`@wilson`) as the lifecycle custodian for external knowledge, with a reproducible promotion pipeline: `candidate → evaluated → accepted → executable`. Each promotion leaves dated evidence and an ADR where required.
+- **Purpose:** Formalize Winston (`@winston`) as the lifecycle custodian for external knowledge, with a reproducible promotion pipeline: `candidate → evaluated → accepted → executable`. Each promotion leaves dated evidence and an ADR where required.
 - **Evidence:** Current pilot has no promotion pipeline; knowledge enters RAG directly without architectural review.
 - **Complexity:** M
 - **Done when:**
-  - [x] Winston (`@wilson`) owns the lifecycle record and an Architecture Board decision promotes `candidate → evaluated → accepted → executable` with dated evidence and an ADR where required.
+  - [x] Winston (`@winston`) owns the lifecycle record and an Architecture Board decision promotes `candidate → evaluated → accepted → executable` with dated evidence and an ADR where required.
   - [x] Each promotion state is machine-readable, traceable to its source registry entry, and gated by CI validation.
   - [x] Rejected and retired candidates are preserved in the registry with a disposition reason.
 
@@ -2204,7 +2204,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] The workflow runs on PRs to main/develop and on pushes to main.
 
 #### GT-232
-**Purpose:** Create complete persona definitions for Wilson (`@wilson`) and PO (`@po`) in `.bmad-core/agents/`, closing the gap where these two agents exist only in `.harness/agents/agent-specs.md` without the full YAML frontmatter, tool references, and self-improvement mandates that the other 8 agents have.
+**Purpose:** Create complete persona definitions for Wilson (`@winston`) and PO (`@po`) in `.bmad-core/agents/`, closing the gap where these two agents exist only in `.harness/agents/agent-specs.md` without the full YAML frontmatter, tool references, and self-improvement mandates that the other 8 agents have.
 **Current Evidence:** `.bmad-core/agents/` contains 8 agent files (analyst, architect, dev, devops, docs, pm, qa, sm) with YAML frontmatter. Wilson and PO have no corresponding files — they are defined only in the harness-level specs.
 **Done When:**
   - [x] `.bmad-core/agents/wilson.md` exists with YAML frontmatter matching the format of other agent personas.

@@ -16,11 +16,11 @@ violations[{"id": "KI-R01", "message": "Knowledge candidate must declare provena
   not input.source.rights_status
 }
 
-violations[{"id": "KI-R02", "message": "Knowledge candidate must be reviewed by @wilson and have a next review date."}] {
-  input.review.owner != "@wilson"
+violations[{"id": "KI-R02", "message": "Knowledge candidate must be reviewed by @winston and have a next review date."}] {
+  input.review.owner != "@winston"
 }
 
-violations[{"id": "KI-R02", "message": "Knowledge candidate must be reviewed by @wilson and have a next review date."}] {
+violations[{"id": "KI-R02", "message": "Knowledge candidate must be reviewed by @winston and have a next review date."}] {
   not input.review.next_review_at
 }
 

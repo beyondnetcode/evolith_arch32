@@ -8,7 +8,7 @@
   "category": "knowledge-intake",
   "rules": [
     { "id": "KI-R01", "title": "Provenance and rights are mandatory", "description": "Every candidate declares source class, locator, retrieval date, and rights status.", "severity": "MUST", "blocking": true },
-    { "id": "KI-R02", "title": "Wilson owns review", "description": "Every candidate declares @wilson as review owner, next review date, and review freshness.", "severity": "MUST", "blocking": true },
+    { "id": "KI-R02", "title": "Winston owns review", "description": "Every candidate declares @winston as review owner, next review date, and review freshness.", "severity": "MUST", "blocking": true },
     { "id": "KI-R03", "title": "Promotion requires executable evidence", "description": "Executable promotion requires ADR, Native rule, OPA policy, and fixtures.", "severity": "MUST", "blocking": true },
     { "id": "KI-R04", "title": "Topology contract completeness", "description": "Every candidate declares maturity, preconditions, anti-patterns, alternatives, and related topologies.", "severity": "MUST", "blocking": true },
     { "id": "KI-R05", "title": "Source registry linkage", "description": "Every candidate links to a valid SRC-* source registry entry and every SRC-* entry links back to its KI-* candidates.", "severity": "MUST", "blocking": true },

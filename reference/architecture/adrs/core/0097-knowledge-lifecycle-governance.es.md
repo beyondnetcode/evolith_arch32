@@ -19,7 +19,7 @@ El pipeline de ingesta de conocimiento externo (establecido por GT-152) valida l
 Sin una gobernanza explícita del ciclo de vida, la ingesta de conocimiento corre el riesgo de convertirse en un pipeline de solo escritura — los candidatos se acumulan sin revisión arquitectónica, y el conocimiento obsoleto o reemplazado permanece indistinguible de la guía vigente.
 
 ## Decisión
-Establecemos a **Winston (`@wilson`)** como custodio del ciclo de vida para todo el conocimiento externo y definimos un pipeline de promoción de cuatro etapas con evidencia obligatoria en cada transición:
+Establecemos a **Winston (`@winston`)** como custodio del ciclo de vida para todo el conocimiento externo y definimos un pipeline de promoción de cuatro etapas con evidencia obligatoria en cada transición:
 
 `candidate → evaluated → accepted → executable`
 
@@ -32,7 +32,7 @@ Cada promoción requiere una decisión del Architecture Board registrada en un A
 | Etapa | Compuerta de Entrada | Evidencia Requerida | Custodio |
 |---|---|---|---|
 | `candidate` | Archivo YAML en `reference/knowledge/intake/` con esquema KI-* válido | Validación de contrato GT-152 pasa | CI |
-| `evaluated` | Revisión completada por @wilson | Registro de revisión fechado en el registro de promoción; estado `evaluated` | @wilson |
+| `evaluated` | Revisión completada por @winston | Registro de revisión fechado en el registro de promoción; estado `evaluated` | @winston |
 | `accepted` | Decisión del Architecture Board | Referencia ADR-* en el registro de promoción; estado `accepted` | Architecture Board |
 | `executable` | Artefactos de gobernanza dual-engine completos | ADR, regla Native, política OPA y fixtures pasando | Architecture Board |
 
@@ -46,11 +46,11 @@ Cada promoción requiere una decisión del Architecture Board registrada en un A
 
 ### 2. Custodia del Ciclo de Vida por Winston
 
-`@wilson` es el responsable designado para:
+`@winston` es el responsable designado para:
 
 | Responsabilidad | Artefacto |
 |---|---|
-| Revisión inicial y promoción `candidate → evaluated` | `promotion.promoted_by: "@wilson"` |
+| Revisión inicial y promoción `candidate → evaluated` | `promotion.promoted_by: "@winston"` |
 | Seguimiento de frescura de revisión | `review.next_review_at` y `review.review_freshness` |
 | Recomendar candidatos para `accepted` al Architecture Board | Registro de revisión con resumen de evidencia |
 | Decisiones de disposición para candidatos rechazados | Cadena `promotion.disposition` |
@@ -67,7 +67,7 @@ Cada evento de promoción se registra en el candidato KI-* de la siguiente maner
 promotion:
   status: evaluated
   promoted_at: "2026-06-21"
-  promoted_by: "@wilson"
+  promoted_by: "@winston"
   adr: null
   native_rule: null
   opa_policy: null
@@ -81,7 +81,7 @@ Cuando `status` es `retired` o cuando un candidato es rechazado antes de llegar 
 promotion:
   status: retired
   promoted_at: "2026-06-21"
-  promoted_by: "@wilson"
+  promoted_by: "@winston"
   disposition: "Reemplazado por ADR-0100 — guía de agregados actualizada"
 ```
 

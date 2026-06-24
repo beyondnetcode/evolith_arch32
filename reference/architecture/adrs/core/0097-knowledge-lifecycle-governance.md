@@ -19,7 +19,7 @@ The external knowledge intake pipeline (established by GT-152) validates candida
 Without explicit lifecycle governance, knowledge intake risks becoming a write-only pipeline — candidates accumulate without architectural review, and stale or superseded knowledge remains indistinguishable from current guidance.
 
 ## Decision
-We establish **Winston (`@wilson`)** as the lifecycle custodian for all external knowledge and define a four-stage promotion pipeline with mandatory evidence at each transition:
+We establish **Winston (`@winston`)** as the lifecycle custodian for all external knowledge and define a four-stage promotion pipeline with mandatory evidence at each transition:
 
 `candidate → evaluated → accepted → executable`
 
@@ -32,7 +32,7 @@ Each promotion requires an Architecture Board decision recorded in an ADR (for `
 | Stage | Entry Gate | Evidence Required | Custodian |
 |---|---|---|---|
 | `candidate` | YAML file in `reference/knowledge/intake/` with valid KI-* schema | GT-152 contract validation passes | CI |
-| `evaluated` | @wilson review completed | Dated review log in promotion record; `evaluated` status | @wilson |
+| `evaluated` | @winston review completed | Dated review log in promotion record; `evaluated` status | @winston |
 | `accepted` | Architecture Board decision | ADR-* reference in promotion record; `accepted` status | Architecture Board |
 | `executable` | Full dual-engine governance artifacts | ADR, Native rule, OPA policy, and passing fixtures | Architecture Board |
 
@@ -46,11 +46,11 @@ Each promotion requires an Architecture Board decision recorded in an ADR (for `
 
 ### 2. Winston Lifecycle Custodianship
 
-`@wilson` is the accountable owner for:
+`@winston` is the accountable owner for:
 
 | Responsibility | Artifact |
 |---|---|
-| Initial review and `candidate → evaluated` promotion | `promotion.promoted_by: "@wilson"` |
+| Initial review and `candidate → evaluated` promotion | `promotion.promoted_by: "@winston"` |
 | Review freshness tracking | `review.next_review_at` and `review.review_freshness` |
 | Recommending candidates for `accepted` to the Architecture Board | Review log with evidence summary |
 | Disposition decisions for rejected candidates | `promotion.disposition` reason string |
@@ -67,7 +67,7 @@ Every promotion event is recorded in the KI-* candidate as follows:
 promotion:
   status: evaluated
   promoted_at: "2026-06-21"
-  promoted_by: "@wilson"
+  promoted_by: "@winston"
   adr: null
   native_rule: null
   opa_policy: null
@@ -81,7 +81,7 @@ When `status` is `retired` or when a candidate is rejected before reaching `eval
 promotion:
   status: retired
   promoted_at: "2026-06-21"
-  promoted_by: "@wilson"
+  promoted_by: "@winston"
   disposition: "Superseded by ADR-0100 — aggregate guidance updated"
 ```
 

@@ -15,7 +15,7 @@ function write(root, file, content) {
   fs.writeFileSync(target, typeof content === 'string' ? content : JSON.stringify(content, null, 2));
 }
 
-test('rejects a candidate without Wilson review ownership', () => {
+test('rejects a candidate without Winston review ownership', () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'evolith-knowledge-intake-'));
   write(root, 'rulesets/schema/knowledge-intake.schema.json', fs.readFileSync('rulesets/schema/knowledge-intake.schema.json', 'utf8'));
   write(root, 'rulesets/schema/source-registry.schema.json', fs.readFileSync('rulesets/schema/source-registry.schema.json', 'utf8'));
@@ -29,6 +29,6 @@ test('rejects a candidate with unknown topology ID', () => {
   write(root, 'rulesets/schema/knowledge-intake.schema.json', fs.readFileSync('rulesets/schema/knowledge-intake.schema.json', 'utf8'));
   write(root, 'rulesets/schema/source-registry.schema.json', fs.readFileSync('rulesets/schema/source-registry.schema.json', 'utf8'));
   write(root, 'reference/architecture/topologies/progressive-axis/valid-topology/topology.manifest.json', { apiVersion: 'evolith.dev/topology/v1', kind: 'TopologyManifest', metadata: { id: 'valid-topology', status: 'accepted' }, spec: { artifacts: { adrs: [], rulesets: [], opaPolicies: [], aiRulesets: [], umsContracts: [] }, operationalInterfaces: { cli: { validators: [] }, mcp: { resources: [], tools: [], prompts: [] }, coreApi: { endpoints: [] } } }, businessBoundary: { technicalOnly: true, trackerOwns: ['timing', 'ownership', 'prioritization', 'roi', 'cost', 'budget', 'funnel-0'] } });
-  write(root, 'reference/knowledge/intake/KI-TEST-002.yaml', 'knowledge_id: KI-TEST-002\nsource_registry_id: SRC-TEST-002\nsource:\n  class: book\n  author: A\n  work: B\n  locator: C\n  retrieved_at: "2026-06-20"\n  rights_status: citation-and-synthesis-only\nassessment:\n  trust_level: primary\n  portability: high\n  topologies: [nonexistent-topology]\n  maturity: proven\n  preconditions: [x]\n  anti_patterns: [y]\n  alternatives: [z]\n  concerns: [domain-modeling]\npromotion:\n  status: candidate\nreview:\n  owner: "@wilson"\n  next_review_at: "2026-12-20"\n  review_freshness: "2026-06-20"\nsynthesis: This is an original synthesis long enough to satisfy the required contract.\n');
+  write(root, 'reference/knowledge/intake/KI-TEST-002.yaml', 'knowledge_id: KI-TEST-002\nsource_registry_id: SRC-TEST-002\nsource:\n  class: book\n  author: A\n  work: B\n  locator: C\n  retrieved_at: "2026-06-20"\n  rights_status: citation-and-synthesis-only\nassessment:\n  trust_level: primary\n  portability: high\n  topologies: [nonexistent-topology]\n  maturity: proven\n  preconditions: [x]\n  anti_patterns: [y]\n  alternatives: [z]\n  concerns: [domain-modeling]\npromotion:\n  status: candidate\nreview:\n  owner: "@winston"\n  next_review_at: "2026-12-20"\n  review_freshness: "2026-06-20"\nsynthesis: This is an original synthesis long enough to satisfy the required contract.\n');
   assert.match(validateKnowledgeIntake(root).errors.join('\n'), /not a known accepted topology/);
 });

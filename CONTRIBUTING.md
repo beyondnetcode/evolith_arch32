@@ -10,7 +10,7 @@ To ensure everything flows smoothly, please take a moment to review our unique c
 
 We strictly use the **BMAD Method** (Specification-driven AI-Driven Development) for the core repository. This means you do not have to code or write documentation alone. You can (and should) invoke our specialized AI agents in your IDE or prompts to assist you:
 
-- **Wilson (Principal Architect):** Use for architectural audits and to track gaps.
+- **Winston (Principal Architect):** Use for architectural audits and to track gaps.
 - **Architect Agent:** Assists in defining Data Mesh contracts, Event-Driven patterns, and drafting Architecture Decision Records (ADRs).
 - **Developer Agent:** Helps implement secure patterns (OWASP) and progressive architecture patterns.
 - **QA Agent:** Assists in contract testing and Rego policy validation.

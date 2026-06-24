@@ -289,11 +289,11 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 **Título:** Gobierno del Ciclo de Vida del Conocimiento por Winston
 
-- **Propósito:** Formalizar a Winston (`@wilson`) como custodio del ciclo de vida del conocimiento externo, con un pipeline de promoción reproducible: `candidate → evaluated → accepted → executable`. Cada promoción deja evidencia fechada y un ADR cuando aplique.
+- **Propósito:** Formalizar a Winston (`@winston`) como custodio del ciclo de vida del conocimiento externo, con un pipeline de promoción reproducible: `candidate → evaluated → accepted → executable`. Cada promoción deja evidencia fechada y un ADR cuando aplique.
 - **Evidencia:** El piloto actual no tiene pipeline de promoción; el conocimiento entra a RAG directamente sin revisión arquitectónica.
 - **Complejidad:** M
 - **Hecho cuando:**
-  - [x] Winston (`@wilson`) posee el registro de ciclo de vida y una decisión del Architecture Board promueve `candidate → evaluated → accepted → executable` con evidencia fechada y ADR cuando aplique.
+  - [x] Winston (`@winston`) posee el registro de ciclo de vida y una decisión del Architecture Board promueve `candidate → evaluated → accepted → executable` con evidencia fechada y ADR cuando aplique.
   - [x] Cada estado de promoción es legible por máquina, trazable a su entrada de registro fuente y validado por CI.
   - [x] Los candidatos rechazados y retirados se conservan en el registro con un motivo de disposición.
 
@@ -2204,7 +2204,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] El workflow corre en PRs a main/develop y en pushes a main.
 
 #### GT-232
-**Propósito:** Crear definiciones completas de persona para Wilson (`@wilson`) y PO (`@po`) en `.bmad-core/agents/`, cerrando la brecha donde estos dos agentes existen solo en `.harness/agents/agent-specs.md` sin el YAML frontmatter completo, referencias de herramientas y mandatos de auto-mejora que tienen los otros 8 agentes.
+**Propósito:** Crear definiciones completas de persona para Wilson (`@winston`) y PO (`@po`) en `.bmad-core/agents/`, cerrando la brecha donde estos dos agentes existen solo en `.harness/agents/agent-specs.md` sin el YAML frontmatter completo, referencias de herramientas y mandatos de auto-mejora que tienen los otros 8 agentes.
 **Evidencia Actual:** `.bmad-core/agents/` contiene 8 archivos de agente con YAML frontmatter. Wilson y PO no tienen archivos correspondientes.
 **Hecho Cuando:**
   - [x] `.bmad-core/agents/wilson.md` existe con YAML frontmatter coincidente con el formato de otros agentes.

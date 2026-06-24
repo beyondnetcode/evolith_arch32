@@ -1,7 +1,7 @@
 # V-12 — Gobernanza de Ingesta de Conocimiento Externo
 
 > **Navegación bilingüe:** [English](./v12-external-knowledge-intake.md)  
-> **Propietario:** Winston, Arquitecto Principal (ID de agente del repositorio `@wilson`)  
+> **Propietario:** Winston, Arquitecto Principal (ID de agente del repositorio `@winston`)  
 > **Estado:** Diseño propuesto — no normativo ni ejecutable hasta que se acepte un ADR
 
 ## Propósito
@@ -82,7 +82,7 @@ flowchart TD
 ## Reglas de Promoción
 
 - Una fuente es evidencia, no autoridad Evolith. Los ADRs y estándares aceptados siguen siendo el único corpus normativo.
-- Winston (`@wilson`) posee la admisión de candidatos, revisión de procedencia, mapeo topológico y revisión periódica de frescura; el Architecture Board acepta o rechaza la promoción.
+- Winston (`@winston`) posee la admisión de candidatos, revisión de procedencia, mapeo topológico y revisión periódica de frescura; el Architecture Board acepta o rechaza la promoción.
 - Un candidato se excluye de la recuperación por defecto hasta ser aceptado. Contenido rechazado, reemplazado o restringido por derechos no se muestra como consejo arquitectónico.
 - Una promoción aplicable sigue paridad dual-engine: artefactos Native y OPA, fixtures compartidos y pruebas reproducibles son requeridos en el mismo cambio de implementación.
 - Todo registro define fecha de revisión, versión o edición de fuente y disposición explícita de reemplazo o retiro.

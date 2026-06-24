@@ -10,7 +10,7 @@ Para asegurar que todo fluya sin fricciones, por favor toma un momento para revi
 
 En el core utilizamos estrictamente el **Método BMAD** (Desarrollo impulsado por IA y basado en Especificaciones). Esto significa que no tienes que codificar o escribir documentación solo. Puedes (y debes) invocar a nuestros agentes de IA especializados desde tu IDE o prompts para que te asistan:
 
-- **Wilson (Arquitecto Principal):** Úsalo para auditorías arquitectónicas profundas y tracking de GAPs.
+- **Winston (Arquitecto Principal):** Úsalo para auditorías arquitectónicas profundas y tracking de GAPs.
 - **Agente Arquitecto:** Ayuda a definir contratos Data Mesh, patrones Event-Driven, y a redactar ADRs.
 - **Agente Desarrollador:** Ayuda a implementar patrones seguros (OWASP) y código distribuido.
 - **Agente QA:** Asiste en las pruebas de contratos y validación de políticas Rego.

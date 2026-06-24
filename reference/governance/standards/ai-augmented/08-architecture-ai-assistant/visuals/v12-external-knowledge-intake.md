@@ -1,7 +1,7 @@
 # V-12 — External Knowledge Intake Governance
 
 > **Bilingual navigation:** [Español](./v12-external-knowledge-intake.es.md)  
-> **Owner:** Winston, Principal Architect (repository agent ID `@wilson`)  
+> **Owner:** Winston, Principal Architect (repository agent ID `@winston`)  
 > **Status:** Proposed design — not normative or executable until an ADR is accepted
 
 ## Purpose
@@ -82,7 +82,7 @@ flowchart TD
 ## Promotion Rules
 
 - A source is evidence, not an Evolith authority. Accepted ADRs and standards remain the only normative corpus.
-- Winston (`@wilson`) owns candidate admission, provenance review, topology mapping, and periodic freshness review; the Architecture Board accepts or rejects promotion.
+- Winston (`@winston`) owns candidate admission, provenance review, topology mapping, and periodic freshness review; the Architecture Board accepts or rejects promotion.
 - A candidate is excluded from default retrieval until accepted. Rejected, superseded, or rights-restricted content is not surfaced as architectural advice.
 - An enforceable promotion follows dual-engine parity: Native and OPA artifacts, shared fixtures, and reproducible tests are required in the same implementation change.
 - Every record defines a review date, source version or edition, and explicit replacement or retirement disposition.

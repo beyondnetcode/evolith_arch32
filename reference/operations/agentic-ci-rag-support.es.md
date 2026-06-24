@@ -5,17 +5,17 @@
 **Clasificacion:** Operaciones e Infraestructura
 **Estado:** Activo
 **Responsable:** Plataforma y Arquitectura
-**Alcance:** Revision agentica Wilson y preparacion del indice RAG en GitHub Actions.
+**Alcance:** Revision agentica Winston y preparacion del indice RAG en GitHub Actions.
 
 ## Proposito
 
-Operar de forma segura la revision Wilson respaldada por Gemini y el pipeline de particionado RAG. Esta guia cubre procedimientos de soporte; no define las reglas arquitectonicas revisadas por Wilson.
+Operar de forma segura la revision Winston respaldada por Gemini y el pipeline de particionado RAG. Esta guia cubre procedimientos de soporte; no define las reglas arquitectonicas revisadas por Winston.
 
 ## Configuracion Segura de Gemini
 
 Crea una clave de Gemini API en Google AI Studio, restrinjela a Gemini API y guardala solo como secreto Actions del repositorio de GitHub `EVOLITH_LLM_API_KEY`.
 
-El job CI `Wilson Agentic Review` suministra el secreto con `EVOLITH_AGENTIC_REVIEW=true`. El job falla cuando falta el secreto, no se puede contactar Gemini o Wilson reporta una violacion. Nunca coloques la clave en codigo fuente, variables de repositorio, logs, issues o un archivo `.env` versionado. Rota una clave inmediatamente despues de exponerla.
+El job CI `Winston Agentic Review` suministra el secreto con `EVOLITH_AGENTIC_REVIEW=true`. El job falla cuando falta el secreto, no se puede contactar Gemini o Winston reporta una violacion. Nunca coloques la clave en codigo fuente, variables de repositorio, logs, issues o un archivo `.env` versionado. Rota una clave inmediatamente despues de exponerla.
 
 ## Triage de Revision
 
@@ -23,7 +23,7 @@ El job CI `Wilson Agentic Review` suministra el secreto con `EVOLITH_AGENTIC_REV
 |---|---|---|
 | Clave ausente | CI no puede autenticarse ante Gemini | Agrega o rota el secreto del repositorio y vuelve a ejecutar el job. |
 | Fallo de Gemini API | Fallo de proveedor, cuota o red | Revisa cuota y restricciones de clave en AI Studio; reintenta solo despues de resolver la causa. |
-| `VIOLATION_DETECTED` | Wilson encontro un problema de arquitectura gobernada | Tratala como hallazgo bloqueante; corrige codigo o documentacion y vuelve a ejecutar CI. |
+| `VIOLATION_DETECTED` | Winston encontro un problema de arquitectura gobernada | Tratala como hallazgo bloqueante; corrige codigo o documentacion y vuelve a ejecutar CI. |
 
 ## Preparacion del Indice RAG
 
@@ -43,7 +43,7 @@ El job RAG divide documentos de referencia ingleses modificados en limites H2/H3
 ## Lista de Soporte
 
 1. Confirma que el secreto GitHub existe sin intentar imprimir su valor.
-2. Revisa el log del job `Wilson Agentic Review` para el resultado real de Gemini.
+2. Revisa el log del job `Winston Agentic Review` para el resultado real de Gemini.
 3. Inspecciona conteos de chunks RAG y advertencias de tamano despues de cambios documentales.
 4. Rota claves expuestas y vuelve a ejecutar los workflows afectados.
 5. Mantén credenciales de proveedor y configuracion de vector store fuera del corpus de referencia.
@@ -52,7 +52,7 @@ El job RAG divide documentos de referencia ingleses modificados en limites H2/H3
 
 - [Politica de Lenguaje de Reglas ADR-0090](../governance/adr/adr-0090-rule-language-policy.es.md)
 - [Asistente de Arquitectura IA](../governance/standards/ai-augmented/08-architecture-ai-assistant/README.es.md)
-- [Playbook de Auditoria Wilson](../../.harness/playbooks/wilson-audit-playbook.es.md)
+- [Playbook de Auditoria Winston](../../.harness/playbooks/wilson-audit-playbook.es.md)
 
 ---
 [Volver a Operaciones](./README.es.md)

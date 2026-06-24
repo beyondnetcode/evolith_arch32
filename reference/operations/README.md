@@ -50,7 +50,7 @@ To view distributed traces: open Grafana → Explore → select **Tempo** dataso
 | [otel-collector-config.yaml](./otel/otel-collector-config.yaml) | OTel Collector pipeline: receivers, processors, exporters | Route telemetry to backends | Configuration file | Yes |
 | [tempo.yaml](./tempo/tempo.yaml) | Tempo backend configuration | Configure the tracing backend | Configuration file | Yes |
 | [datasources.yml](./grafana/provisioning/datasources/datasources.yml) | Auto-provisioned Grafana datasources (Tempo, Loki) | Provision dashboards automatically | Configuration file | Yes |
-| [Agentic CI and RAG Support](./agentic-ci-rag-support.md) | Gemini/Wilson review and RAG index support runbook | Operate AI-assisted CI safely | Support runbook | Yes |
+| [Agentic CI and RAG Support](./agentic-ci-rag-support.md) | Gemini/Winston review and RAG index support runbook | Operate AI-assisted CI safely | Support runbook | Yes |
 
 ---
 

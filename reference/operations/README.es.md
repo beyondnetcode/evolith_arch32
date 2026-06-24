@@ -50,7 +50,7 @@ Para ver trazas distribuidas: abrir Grafana → Explore → seleccionar la fuent
 | [otel-collector-config.yaml](./otel/otel-collector-config.yaml) | Pipeline del Collector OTel: receivers, processors, exporters | Enrutar telemetría a los backends | Archivo de configuración | Sí |
 | [tempo.yaml](./tempo/tempo.yaml) | Configuración del backend Tempo | Configurar el backend de trazado | Archivo de configuración | Sí |
 | [datasources.yml](./grafana/provisioning/datasources/datasources.yml) | Datasources de Grafana aprovisionados automáticamente (Tempo, Loki) | Aprovisionar dashboards automáticamente | Archivo de configuración | Sí |
-| [Soporte de CI Agentico y RAG](./agentic-ci-rag-support.es.md) | Runbook de soporte para revision Gemini/Wilson e indice RAG | Operar CI asistido por IA de forma segura | Runbook de soporte | Sí |
+| [Soporte de CI Agentico y RAG](./agentic-ci-rag-support.es.md) | Runbook de soporte para revision Gemini/Winston e indice RAG | Operar CI asistido por IA de forma segura | Runbook de soporte | Sí |
 
 ---
 

@@ -3246,6 +3246,25 @@
       ],
       "dependencyDisposition": "none",
       "closureNote": "Added metadata.governance (owner, criticality) to all 8 topology manifests. Schema updated with required governance block. Validation script enforces the new fields."
+    },
+    {
+      "id": "GT-218",
+      "closedAt": "2026-06-23",
+      "closureCommit": "bb007730",
+      "evidence": [
+        "reference/governance/sdlc/04-artifact-templates/rollback-rehearsal-template.md",
+        "reference/governance/sdlc/04-artifact-templates/rollback-rehearsal-template.es.md",
+        "reference/governance/sdlc/04-artifact-templates/on-call-handoff-template.md",
+        "reference/governance/sdlc/04-artifact-templates/on-call-handoff-template.es.md",
+        "rulesets/schema/rollback-rehearsal.schema.json",
+        "rulesets/schema/on-call-handoff.schema.json",
+        "rulesets/sdlc/phase-gates.rules.json"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/21-validate-phase-gate-templates.mjs"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Created rollback rehearsal template (Blue/Green + Canary examples) and on-call handoff template (escalation paths, SLA acknowledgement). Both have JSON Schemas and are wired into Phase 05 mandatory evidence."
     }
   ]
 }

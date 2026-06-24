@@ -2095,9 +2095,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Crear plantillas + schemas dedicados para las dos salidas de Fase 05 que hoy solo existen como "Section in Release Notes" — evidencia de rollback rehearsal y confirmación de on-call handoff — para que el gate Production Live sea reproducible y verificable por máquina.
 **Evidencia Actual:** `reference/governance/sdlc/05-delivery-and-operations/README.md` Outputs table lista "Rollback rehearsal evidence" y "On-call handoff confirmation" con `Section in Release Notes` como única plantilla — sin schema, ejemplo ni punto de entrada de validador. `rulesets/schema/` no tiene `rollback-rehearsal.schema.json` ni `on-call-handoff.schema.json`.
 **Hecho Cuando:**
-  - [ ] `04-artifact-templates/rollback-rehearsal-template.md` (+`.es.md`) existe con ejemplos Blue/Green y Canary, rollback budget y sign-off del testigo.
-  - [ ] `04-artifact-templates/on-call-handoff-template.md` (+`.es.md`) existe con URLs de runbooks, rutas de escalación, propiedad de alertas y aceptación de SLA.
-  - [ ] Ambos tienen JSON Schemas en `rulesets/schema/` y se cablean en `phase-gates.rules.json` como evidencia mandatoria de Fase 05.
+  - [x] `04-artifact-templates/rollback-rehearsal-template.md` (+`.es.md`) existe con ejemplos Blue/Green y Canary, rollback budget y sign-off del testigo.
+  - [x] `04-artifact-templates/on-call-handoff-template.md` (+`.es.md`) existe con URLs de runbooks, rutas de escalación, propiedad de alertas y aceptación de SLA.
+  - [x] Ambos tienen JSON Schemas en `rulesets/schema/` y se cablean en `phase-gates.rules.json` como evidencia mandatoria de Fase 05.
 
 #### GT-219
 **Propósito:** Añadir un bloque `operationalBudgets` al manifest de la topología agentic-ai, siguiendo el precedente fijado por serverless y edge-computing, para que los SLOs de token-budget, sandbox-timeout y rotación de credenciales sean legibles por máquina y exigibles.

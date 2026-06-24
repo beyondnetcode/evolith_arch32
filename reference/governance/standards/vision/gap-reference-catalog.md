@@ -2191,9 +2191,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Create a skills directory and composable skill framework for BMAD agents, closing the gap where `.bmad-core/README.md` references a `tooling/` directory that does not exist, and agents have no modular, discoverable skill library.
 **Current Evidence:** Agent specs in `.harness/agents/agent-specs.md` define capabilities in prose but there is no `skills/` directory, no skill manifest format, and no discovery mechanism. Skills are hardcoded in agent persona descriptions rather than being composable modules.
 **Done When:**
-  - [ ] A `.bmad-core/skills/` directory exists with a manifest format (JSON or YAML) for skill definition.
-  - [ ] At least 3 skills are implemented as reference examples (e.g., `requirements-traceability-mapper`, `gap-prioritization-engine`, `adr-freshness-monitor`).
-  - [ ] Agent persona definitions reference skills by ID rather than inline capability descriptions.
+  - [x] A `.bmad-core/skills/` directory exists with a manifest format (JSON or YAML) for skill definition.
+  - [x] At least 3 skills are implemented as reference examples (e.g., `requirements-traceability-mapper`, `gap-prioritization-engine`, `adr-freshness-monitor`).
+  - [x] Agent persona definitions reference skills by ID rather than inline capability descriptions.
 
 #### GT-231
 **Purpose:** Wire the 10 CI scripts that currently only run in pre-commit (via `ci-runner.mjs`) into GitHub Actions workflows, closing the gap where scripts 05-orphan, 12, 14, 15-coverage, 16-test, 17, 18, 19, 20, 21, 22 have no workflow YAML reference.
@@ -2239,9 +2239,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Automate the knowledge intake pipeline so new `KI-*.yaml` and `SRC-*.yaml` files trigger validation, review, and promotion automatically, closing the gap where the pipeline exists in design but requires manual execution at every stage.
 **Current Evidence:** The knowledge intake system has 1 source (SRC-EVANS-001) and 1 item (KI-EVANS-AGGREGATE-001) in status `candidate`. The RAG vector sync infrastructure (script 14) exists but has no live content. No automation connects schema validation → OPA evaluation → Wilson review → promotion.
 **Done When:**
-  - [ ] A PR adding `KI-*.yaml` or `SRC-*.yaml` triggers automated schema + OPA validation.
-  - [ ] Validation passing creates or updates the item's promotion status automatically.
-  - [ ] Wilson review step can be triggered via comment command or scheduled job.
+  - [x] A PR adding `KI-*.yaml` or `SRC-*.yaml` triggers automated schema + OPA validation.
+  - [x] Validation passing creates or updates the item's promotion status automatically.
+  - [x] Wilson review step can be triggered via comment command or scheduled job.
 
 #### GT-237
 **Purpose:** Author the 5 proposed AI-Augmented ADRs (ADR-AI-001 through ADR-AI-005) that are listed in governance references but never written as actual documents.

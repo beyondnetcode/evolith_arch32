@@ -7,6 +7,10 @@ export const envSchema = z.object({
   CORS_ORIGINS: z.string().optional(),
   CORE_PATH: z.string().default(process.cwd()),
   WORKSPACE_ROOT: z.string().default('/tmp/evolith-workspaces'),
+  REDIS_URL: z.string().optional(),
+  REDIS_HOST: z.string().default('localhost'),
+  REDIS_PORT: z.coerce.number().default(6379),
+  REDIS_PASSWORD: z.string().optional(),
 });
 
 export type EnvConfig = z.infer<typeof envSchema>;

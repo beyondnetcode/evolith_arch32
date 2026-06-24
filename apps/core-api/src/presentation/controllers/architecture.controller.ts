@@ -1,4 +1,6 @@
-import { Controller, Post, Get, Param, Body, HttpCode, HttpStatus, NotFoundException } from '@nestjs/common';
+import { Controller, Post, Get, Param, Body, HttpCode, HttpStatus, NotFoundException, UseInterceptors, CacheInterceptor, CacheTTL, Inject } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 import { ApiOperation, ApiBody } from '@nestjs/swagger';
 import { ValidateSatelliteUseCase } from '@evolith/core-domain/application/use-cases';
 import { ArchitectureDriftService } from '@evolith/core-domain/application/validators';
@@ -6,6 +8,7 @@ import { ValidateSatelliteDto, DetectDriftDto } from '../dtos/architecture.dto';
 import { WorkspaceReferenceResolverService } from '../../application/services/workspace-reference-resolver.service';
 import { TopologyCatalogService } from '@evolith/core-domain/application/services';
 import { ApiEnvelopeResponse } from '../decorators/swagger-envelope.decorator';
+import { CacheKeys, CacheTTL as TTL } from '../../infrastructure/cache/cache-keys';
 
 @Controller({ path: 'architecture', version: '1' })
 export class ArchitectureController {
@@ -14,10 +17,13 @@ export class ArchitectureController {
     private readonly validateSatelliteUseCase: ValidateSatelliteUseCase,
     private readonly workspaceResolver: WorkspaceReferenceResolverService,
     private readonly topologyCatalog: TopologyCatalogService,
+    @Inject(CACHE_MANAGER) private readonly cache: Cache,
   ) {}
 
 
   @Get('topologies')
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(TTL.topology)
   @ApiOperation({ summary: 'List all available architecture topologies' })
   @ApiEnvelopeResponse(undefined, { isArray: true, description: 'List of topology manifests' })
   async listTopologies() {
@@ -25,6 +31,8 @@ export class ArchitectureController {
   }
 
   @Get('topologies/:id')
+  @UseInterceptors(CacheInterceptor)
+  @CacheTTL(TTL.topology)
   @ApiOperation({ summary: 'Get a specific architecture topology by ID' })
   @ApiEnvelopeResponse(undefined, { description: 'Topology manifest details' })
   async getTopology(@Param('id') id: string) {
@@ -58,5 +66,14 @@ export class ArchitectureController {
       corePath: this.workspaceResolver.corePath(),
       declaredLevel: body.declaredLevel as any,
     });
+  }
+
+  @Post('cache/invalidate')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Invalidate topology cache' })
+  @ApiEnvelopeResponse(undefined, { description: 'Cache invalidation result' })
+  async invalidateCache() {
+    await this.cache.del(CacheKeys.topology.list);
+    return { invalidated: true, keys: [CacheKeys.topology.list] };
   }
 }

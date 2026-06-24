@@ -1,8 +1,9 @@
 import * as path from 'node:path';
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Optional } from '@nestjs/common';
 import type { IFileSystem, IConfigParser } from '@evolith/core';
 import { FILE_SYSTEM, CONFIG_PARSER } from '../domain/domain.tokens';
 import { TopologyCatalogService } from '@evolith/core';
+import { McpCacheService } from './mcp-cache.service';
 
 interface Resource {
   uri: string;
@@ -34,12 +35,21 @@ export class ResourcesService {
   constructor(
     @Inject(FILE_SYSTEM) private readonly fs: IFileSystem,
     @Inject(CONFIG_PARSER) private readonly configParser: IConfigParser,
+    @Optional() private readonly cache?: McpCacheService,
   ) {
     this.topologyCatalog = new TopologyCatalogService(fs, console as any);
   }
 
-  list(): { resources: Resource[] } {
-    return { resources: RESOURCES };
+  async list(): Promise<{ resources: Resource[] }> {
+    if (this.cache) {
+      const cached = await this.cache.getResourcesList();
+      if (cached) return cached as { resources: Resource[] };
+    }
+    const result = { resources: RESOURCES };
+    if (this.cache) {
+      await this.cache.setResourcesList(result);
+    }
+    return result;
   }
 
   async read(uri: string): Promise<unknown> {

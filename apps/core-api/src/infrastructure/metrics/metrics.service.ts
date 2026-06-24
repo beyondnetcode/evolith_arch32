@@ -1,5 +1,5 @@
 import { Injectable, OnModuleDestroy } from '@nestjs/common';
-import { Counter, Histogram, Registry } from 'prom-client';
+import { Counter, CounterConfiguration, Histogram, HistogramConfiguration, Registry } from 'prom-client';
 
 @Injectable()
 export class MetricsService implements OnModuleDestroy {
@@ -32,6 +32,14 @@ export class MetricsService implements OnModuleDestroy {
       labelNames: ['method', 'path', 'status'],
       registers: [this.registry],
     });
+  }
+
+  createCounter(config: CounterConfiguration<string>): Counter {
+    return new Counter({ ...config, registers: [this.registry] });
+  }
+
+  createHistogram(config: HistogramConfiguration<string>): Histogram {
+    return new Histogram({ ...config, registers: [this.registry] });
   }
 
   async getMetrics(): Promise<string> {

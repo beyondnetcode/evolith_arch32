@@ -29,12 +29,12 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-227`](./gap-reference-catalog.es.md#gt-227) | Añadir CodeQL + Trivy SAST/SCA a workflows CI | `Security` | Cross | P0 | M | `COMPLETADO` |
 | [`GT-228`](./gap-reference-catalog.es.md#gt-228) | Crear motor de orquestación de agentes para workflows BMAD | `Governance` | Cross | P1 | XL | `PENDIENTE` |
 | [`GT-229`](./gap-reference-catalog.es.md#gt-229) | Completar evaluador TypeScript Dual-Engine (cumplimiento R-25) | `Core Domain` | Cross | P1 | XL | `PENDIENTE` |
-| [`GT-230`](./gap-reference-catalog.es.md#gt-230) | Crear directorio de skills y framework de skills componibles | `Governance` | Cross | P1 | L | `PENDIENTE` |
+| [`GT-230`](./gap-reference-catalog.es.md#gt-230) | Crear directorio de skills y framework de skills componibles | `Governance` | Cross | P1 | L | `COMPLETADO` |
 | [`GT-231`](./gap-reference-catalog.es.md#gt-231) | Cablear 10 scripts CI sin enlazar a workflows GitHub Actions | `CI` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-232`](./gap-reference-catalog.es.md#gt-232) | Crear personas completas de Wilson y PO en .bmad-core/agents | `Governance` | Cross | P1 | S | `COMPLETADO` |
 | [`GT-234`](./gap-reference-catalog.es.md#gt-234) | Corregir brecha de paridad bilingual R-27 en global-rules.es.md | `Docs` | Cross | P1 | XS | `COMPLETADO` |
 | [`GT-235`](./gap-reference-catalog.es.md#gt-235) | Resolver colisiones de numeración de scripts CI (05/15/16) | `CI` | Cross | P1 | S | `COMPLETADO` |
-| [`GT-236`](./gap-reference-catalog.es.md#gt-236) | Implementar automatización del pipeline de knowledge intake | `Governance` | Cross | P1 | L | `PENDIENTE` |
+| [`GT-236`](./gap-reference-catalog.es.md#gt-236) | Implementar automatización del pipeline de knowledge intake | `Governance` | Cross | P1 | L | `COMPLETADO` |
 | [`GT-237`](./gap-reference-catalog.es.md#gt-237) | Redactar 5 ADRs AI propuestos (ADR-AI-001 through 005) | `Architecture` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-238`](./gap-reference-catalog.es.md#gt-238) | Añadir métricas Prometheus/Mimir al stack de observabilidad | `Operations` | Cross | P2 | M | `COMPLETADO` |
 | [`GT-239`](./gap-reference-catalog.es.md#gt-239) | Definir SLOs por servicio con reglas de alerting | `Operations` | Cross | P2 | M | `COMPLETADO` |
@@ -262,7 +262,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-160`](./gap-reference-catalog.es.md#gt-160) | Propagación de correlation-ID y contexto de solicitud entre superficies | `Cross` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-174`](./gap-reference-catalog.es.md#gt-174) | `meta.schemaVersion` y matriz de compatibilidad productor/consumidor | `Cross` | Cross | P2 | S | `COMPLETADO` |
 
-**Progreso:** 243 / 248 completados · 0 en progreso · 5 pendientes · 0 diferidos
+**Progreso:** 245 / 248 completados · 0 en progreso · 3 pendientes · 0 diferidos
 
 **Oleada 2026-06-23 (auditoría profunda de Wilson III):** Añadidos 14 gaps nuevos `GT-212`…`GT-225` del Wilson Audit Playbook que cubren: higiene de estado ADR (GT-212), metadata + presupuestos operativos + corpus de guías por topología (GT-213, GT-217, GT-219), observabilidad + OpenAPI en controladores REST (GT-214, GT-215), paridad de input-schemas OPA + densidad de tests por topología (GT-216, GT-222), plantillas de rollback + on-call de Fase 05 (GT-218), cobertura de ramas CLI + paridad de envelope --format + limpieza de skip-list (GT-220, GT-224, GT-225), audit logging HTTP de MCP (GT-221), y tests e2e de paridad cross-surface (GT-223).
 

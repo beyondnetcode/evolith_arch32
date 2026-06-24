@@ -29,12 +29,12 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-227`](./gap-reference-catalog.md#gt-227) | Add CodeQL + Trivy SAST/SCA to CI workflows | `Security` | Cross | P0 | M | `DONE` |
 | [`GT-228`](./gap-reference-catalog.md#gt-228) | Create agent orchestration engine for BMAD workflows | `Governance` | Cross | P1 | XL | `PENDING` |
 | [`GT-229`](./gap-reference-catalog.md#gt-229) | Complete Dual-Engine TypeScript evaluator (R-25 compliance) | `Core Domain` | Cross | P1 | XL | `PENDING` |
-| [`GT-230`](./gap-reference-catalog.md#gt-230) | Create skills directory and composable skill framework | `Governance` | Cross | P1 | L | `PENDING` |
+| [`GT-230`](./gap-reference-catalog.md#gt-230) | Create skills directory and composable skill framework | `Governance` | Cross | P1 | L | `DONE` |
 | [`GT-231`](./gap-reference-catalog.md#gt-231) | Wire 10 unlinked CI scripts to GitHub Actions workflows | `CI` | Cross | P1 | M | `DONE` |
 | [`GT-232`](./gap-reference-catalog.md#gt-232) | Create Wilson and PO full personas in .bmad-core/agents | `Governance` | Cross | P1 | S | `DONE` |
 | [`GT-234`](./gap-reference-catalog.md#gt-234) | Fix R-27 bilingual parity gap in global-rules.es.md | `Docs` | Cross | P1 | XS | `DONE` |
 | [`GT-235`](./gap-reference-catalog.md#gt-235) | Resolve CI script numbering collisions (05/15/16) | `CI` | Cross | P1 | S | `DONE` |
-| [`GT-236`](./gap-reference-catalog.md#gt-236) | Implement knowledge intake pipeline automation | `Governance` | Cross | P1 | L | `PENDING` |
+| [`GT-236`](./gap-reference-catalog.md#gt-236) | Implement knowledge intake pipeline automation | `Governance` | Cross | P1 | L | `DONE` |
 | [`GT-237`](./gap-reference-catalog.md#gt-237) | Author 5 proposed AI ADRs (ADR-AI-001 through 005) | `Architecture` | Cross | P1 | M | `DONE` |
 | [`GT-238`](./gap-reference-catalog.md#gt-238) | Add Prometheus/Mimir metrics to observability stack | `Operations` | Cross | P2 | M | `DONE` |
 | [`GT-239`](./gap-reference-catalog.md#gt-239) | Define SLOs per service with alerting rules | `Operations` | Cross | P2 | M | `DONE` |
@@ -262,7 +262,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-160`](./gap-reference-catalog.md#gt-160) | Cross-surface correlation-ID and request-context propagation | `Cross` | Cross | P1 | M | `DONE` |
 | [`GT-174`](./gap-reference-catalog.md#gt-174) | Envelope `meta.schemaVersion` and producer/consumer compatibility matrix | `Cross` | Cross | P2 | S | `DONE` |
 
-**Progress:** 243 / 248 done · 0 in progress · 5 pending · 0 deferred
+**Progress:** 245 / 248 done · 0 in progress · 3 pending · 0 deferred
 
 **Wave 2026-06-23 (Wilson deep audit III):** Added 14 new gaps `GT-212`…`GT-225` from the Wilson Audit Playbook covering: ADR status hygiene (GT-212), topology manifest metadata + operational budgets + guidance corpus (GT-213, GT-217, GT-219), REST controller observability + OpenAPI (GT-214, GT-215), OPA input-schema parity + per-topology test density (GT-216, GT-222), SDLC Phase 05 rollback + on-call templates (GT-218), CLI branch coverage + envelope format coverage + skip-list cleanup (GT-220, GT-224, GT-225), MCP HTTP audit logging (GT-221), and cross-surface parity e2e tests (GT-223).
 

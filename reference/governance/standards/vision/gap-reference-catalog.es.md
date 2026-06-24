@@ -2191,9 +2191,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Crear un directorio de skills y un framework de skills componibles para agentes BMAD, cerrando la brecha donde `.bmad-core/README.md` referencia un directorio `tooling/` que no existe, y los agentes no tienen una biblioteca de skills modular y descubrible.
 **Evidencia Actual:** Las specs de agentes en `.harness/agents/agent-specs.md` definen capacidades en prosa pero no hay directorio `skills/`, formato de manifiesto de skills ni mecanismo de descubrimiento.
 **Hecho Cuando:**
-  - [ ] Un directorio `.bmad-core/skills/` existe con un formato de manifiesto (JSON o YAML) para definición de skills.
-  - [ ] Al menos 3 skills están implementadas como ejemplos de referencia.
-  - [ ] Las definiciones de personas de agentes referencian skills por ID en lugar de descripciones de capacidades inline.
+  - [x] Un directorio `.bmad-core/skills/` existe con un formato de manifiesto (JSON o YAML) para definición de skills.
+  - [x] Al menos 3 skills están implementadas como ejemplos de referencia.
+  - [x] Las definiciones de personas de agentes referencian skills por ID en lugar de descripciones de capacidades inline.
 
 #### GT-231
 **Propósito:** Cablear los 10 scripts CI que actualmente solo corren en pre-commit (vía `ci-runner.mjs`) a workflows GitHub Actions, cerrando la brecha donde los scripts 05-orphan, 12, 14, 15-coverage, 16-test, 17, 18, 19, 20, 21, 22 no tienen referencia en ningún workflow YAML.
@@ -2239,9 +2239,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Automatizar el pipeline de knowledge intake para que nuevos archivos `KI-*.yaml` o `SRC-*.yaml` disparen validación, revisión y promoción automáticamente, cerrando la brecha donde el pipeline existe en diseño pero requiere ejecución manual en cada etapa.
 **Evidencia Actual:** El sistema de knowledge intake tiene 1 fuente y 1 item en status `candidate`. La infraestructura RAG (script 14) existe pero no tiene contenido en vivo.
 **Hecho Cuando:**
-  - [ ] Un PR que añade `KI-*.yaml` o `SRC-*.yaml` dispara validación automatizada schema + OPA.
-  - [ ] La validación exitosa crea o actualiza el status de promoción del item automáticamente.
-  - [ ] El paso de revisión de Wilson puede invocarse vía comando de comment o job programado.
+  - [x] Un PR que añade `KI-*.yaml` o `SRC-*.yaml` dispara validación automatizada schema + OPA.
+  - [x] La validación exitosa crea o actualiza el status de promoción del item automáticamente.
+  - [x] El paso de revisión de Wilson puede invocarse vía comando de comment o job programado.
 
 #### GT-237
 **Propósito:** Redactar los 5 ADRs AI-Augmented propuestos (ADR-AI-001 through ADR-AI-005) que están listados en referencias de gobernanza pero nunca se escribieron como documentos reales.

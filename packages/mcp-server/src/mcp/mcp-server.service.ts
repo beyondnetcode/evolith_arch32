@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Optional } from '@nestjs/common';
 import * as http from 'node:http';
 import type { Readable, Writable } from 'node:stream';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
@@ -23,6 +23,7 @@ import { AbacEvaluator } from './abac-evaluator';
 import { mcpContextStorage, McpUserContext } from './mcp-user-context';
 import { validateAuth } from './mcp-server-auth';
 import { handleCallTool, handleListTools, ToolCallResult } from './mcp-tool-dispatch';
+import { McpCacheService } from './mcp-cache.service';
 
 export { McpUserContext, mcpContextStorage } from './mcp-user-context';
 export { ToolCallResult } from './mcp-tool-dispatch';
@@ -62,10 +63,19 @@ export class McpServerService {
     private readonly auditLogger?: AuditLogger,
     private readonly resources?: ResourcesService,
     private readonly prompts?: PromptsService,
+    @Optional() private readonly cache?: McpCacheService,
   ) {}
 
-  handleListTools(): { tools: ReturnType<ToolRegistryService['listSchemas']> } {
-    return handleListTools({ registry: this.registry });
+  async handleListTools(): Promise<{ tools: ReturnType<ToolRegistryService['listSchemas']> }> {
+    if (this.cache) {
+      const cached = await this.cache.getToolsList();
+      if (cached) return cached as { tools: ReturnType<ToolRegistryService['listSchemas']> };
+    }
+    const result = handleListTools({ registry: this.registry });
+    if (this.cache) {
+      await this.cache.setToolsList(result);
+    }
+    return result;
   }
 
   async handleCallTool(name: string, args: Record<string, unknown> = {}): Promise<ToolCallResult> {

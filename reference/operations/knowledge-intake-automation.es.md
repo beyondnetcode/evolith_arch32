@@ -210,5 +210,40 @@ Despues de corregir, el script re-valida para confirmar que todos los problemas 
 - [Esquema de Ingesta de Conocimiento](../../rulesets/schema/knowledge-intake.schema.json)
 - [Politica OPA de Ingesta de Conocimiento](../../rulesets/opa/knowledge-intake.rego)
 
+## Invalidación de Caché para Ingesta de Conocimiento
+
+Cuando los archivos de ingesta de conocimiento se promueven o actualizan, la capa de caché Redis puede servir datos obsoletos. Siga este procedimiento para asegurar la consistencia de la caché.
+
+### Cuándo Invalidar
+
+| Evento | Clave de Caché | Acción |
+|-------|-----------|--------|
+| KI promovido a `executable` | `topology:list` | Llamar al endpoint de invalidación |
+| Política OPA actualizada | `opa:result:*` | Esperar expiración del TTL (60s) o llamar invalidación |
+| Nuevo ruleset agregado | `topology:list` | Llamar al endpoint de invalidación |
+
+### Pasos de Invalidación
+
+1. **Promover el archivo KI** usando el pipeline estándar:
+   ```bash
+   node .harness/scripts/knowledge-promote.mjs reference/knowledge/intake/KI-*.yaml executable
+   ```
+
+2. **Invalidar la caché de topología** (si los manifiestos de topología cambiaron):
+   ```bash
+   curl -X POST http://localhost:3000/api/v1/architecture/cache/invalidate
+   ```
+
+3. **Verificar** que la caché fue invalidada revisando métricas:
+   ```bash
+   curl -s http://localhost:3000/metrics | grep evolith_cache
+   ```
+
+### Notas
+
+- Las cachés de resultados OPA usan un TTL de 60 segundos y se auto-invalidan sin intervención manual.
+- La caché de descubrimiento de herramientas/recursos del servidor MCP usa un TTL de 10 minutos y es segura de dejar obsoleta durante operaciones de ingesta de conocimiento.
+- Si Redis no está disponible, toda la caché degradan gracefulmente a en memoria — no se requiere intervención manual.
+
 ---
 [Volver a Operaciones](./README.es.md)

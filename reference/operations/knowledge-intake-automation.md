@@ -210,5 +210,40 @@ After fixing, the script re-validates to confirm all issues are resolved.
 - [Knowledge Intake Schema](../../rulesets/schema/knowledge-intake.schema.json)
 - [Knowledge Intake OPA Policy](../../rulesets/opa/knowledge-intake.rego)
 
+## Cache Invalidation for Knowledge Intake
+
+When knowledge intake files are promoted or updated, the Redis caching layer may serve stale data. Follow this procedure to ensure cache consistency.
+
+### When to Invalidate
+
+| Event | Cache Key | Action |
+|-------|-----------|--------|
+| KI promoted to `executable` | `topology:list` | Call invalidation endpoint |
+| OPA policy updated | `opa:result:*` | Wait for TTL expiry (60s) or call invalidation |
+| New ruleset added | `topology:list` | Call invalidation endpoint |
+
+### Invalidation Steps
+
+1. **Promote the KI file** using the standard pipeline:
+   ```bash
+   node .harness/scripts/knowledge-promote.mjs reference/knowledge/intake/KI-*.yaml executable
+   ```
+
+2. **Invalidate the topology cache** (if topology manifests changed):
+   ```bash
+   curl -X POST http://localhost:3000/api/v1/architecture/cache/invalidate
+   ```
+
+3. **Verify** the cache is invalidated by checking metrics:
+   ```bash
+   curl -s http://localhost:3000/metrics | grep evolith_cache
+   ```
+
+### Notes
+
+- OPA result caches use a 60-second TTL and self-invalidate without manual intervention.
+- The MCP server's tool/resource discovery cache uses a 10-minute TTL and is safe to leave stale during knowledge intake operations.
+- If Redis is unavailable, all caching degrades gracefully to in-memory — no manual intervention required.
+
 ---
 [Back to Operations](./README.md)

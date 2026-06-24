@@ -19,6 +19,8 @@ import { CircuitBreakerService } from './infrastructure/resilience/circuit-break
 import { CoreReferenceQueryService } from './application/services/core-reference-query.service';
 import { ReferenceController } from './presentation/controllers/reference.controller';
 import { WorkspaceReferenceResolverService } from './application/services/workspace-reference-resolver.service';
+import { RedisCacheModule } from './infrastructure/cache/redis-cache.module';
+import { CacheMetricsService } from './infrastructure/cache/cache-metrics.service';
 
 @Module({
   imports: [
@@ -37,6 +39,7 @@ import { WorkspaceReferenceResolverService } from './application/services/worksp
         quietReqLogger: true,
       },
     }),
+    RedisCacheModule,
   ],
   controllers: [
     HealthController,
@@ -50,6 +53,7 @@ import { WorkspaceReferenceResolverService } from './application/services/worksp
   providers: [
     HealthService,
     MetricsService,
+    CacheMetricsService,
     CircuitBreakerService,
     CoreReferenceQueryService,
     WorkspaceReferenceResolverService,

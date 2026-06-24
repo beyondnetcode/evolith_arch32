@@ -3914,7 +3914,7 @@
     {
       "id": "GT-266",
       "closedAt": "2026-06-24",
-      "closureCommit": "6ba915c1",
+      "closureCommit": "c760bcfd",
       "evidence": [
         "packages/mcp-server/src/mcp/api-key-provisioning.service.ts",
         "packages/mcp-server/src/mcp/api-key-provisioning.service.spec.ts",

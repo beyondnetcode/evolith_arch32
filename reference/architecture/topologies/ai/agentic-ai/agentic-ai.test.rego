@@ -36,3 +36,33 @@ test_missing_credential_lifecycle_is_rejected {
   violations := agentic_ai.violations with input as i
   violations[_].id == "AAI-R09"
 }
+
+test_missing_isolated_sandbox_is_rejected {
+  i := json.patch(compliant_input, [{"op": "replace", "path": "/satellite/agenticAi/hasIsolatedSandbox", "value": false}])
+  violations := agentic_ai.violations with input as i
+  violations[_].id == "AAI-R02"
+}
+
+test_missing_prompt_separation_is_rejected {
+  i := json.patch(compliant_input, [{"op": "replace", "path": "/satellite/agenticAi/hasSeparatedPromptAndImplementation", "value": false}])
+  violations := agentic_ai.violations with input as i
+  violations[_].id == "AAI-R03"
+}
+
+test_missing_mutative_approval_is_rejected {
+  i := json.patch(compliant_input, [{"op": "replace", "path": "/satellite/agenticAi/requiresApprovalForMutativeTools", "value": false}])
+  violations := agentic_ai.violations with input as i
+  violations[_].id == "AAI-R04"
+}
+
+test_missing_ephemeral_limits_is_rejected {
+  i := json.patch(compliant_input, [{"op": "replace", "path": "/satellite/agenticAi/hasEphemeralSandboxLimits", "value": false}])
+  violations := agentic_ai.violations with input as i
+  violations[_].id == "AAI-R05"
+}
+
+test_missing_trusted_context_policy_is_rejected {
+  i := json.patch(compliant_input, [{"op": "replace", "path": "/satellite/agenticAi/hasTrustedContextPolicy", "value": false}])
+  violations := agentic_ai.violations with input as i
+  violations[_].id == "AAI-R06"
+}

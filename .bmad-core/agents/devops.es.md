@@ -160,9 +160,9 @@ jobs:
       - name: Paridad Bilingüe
         run: node .harness/scripts/ci/04-check-bilingual-parity.mjs
       - name: Cobertura de Reglas de Topología
-        run: node .harness/scripts/ci/15-validate-topology-rule-coverage.mjs
+        run: node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs
       - name: Gate de Paridad OPA
-        run: node .harness/scripts/ci/16-opa-parity-gate.mjs
+        run: node .harness/scripts/ci/27-opa-parity-gate.mjs
       - name: Panel de Cobertura
         run: node .harness/scripts/coverage-dashboard.mjs
 ```

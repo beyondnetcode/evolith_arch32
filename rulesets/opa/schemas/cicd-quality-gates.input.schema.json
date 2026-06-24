@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/schema/opa/cicd-quality-gates.input.schema.json",
+  "title": "CI/CD Quality Gates OPA Policy Input Schema",
+  "type": "object",
+  "required": ["satellite"],
+  "properties": {
+    "satellite": {
+      "type": "object",
+      "required": ["ci", "findings"],
+      "properties": {
+        "ci": {
+          "type": "object",
+          "required": ["hasCodeql", "hasDependencyAudit", "hasSecretDetection", "gatesRequiredBeforeMerge"],
+          "properties": {
+            "hasCodeql": { "type": "boolean" },
+            "hasDependencyAudit": { "type": "boolean" },
+            "hasSecretDetection": { "type": "boolean" },
+            "gatesRequiredBeforeMerge": { "type": "boolean" }
+          }
+        },
+        "findings": {
+          "type": "object",
+          "required": ["criticalAgeHours", "highAgeHours"],
+          "properties": {
+            "criticalAgeHours": { "type": "number" },
+            "highAgeHours": { "type": "number" }
+          }
+        }
+      }
+    }
+  }
+}

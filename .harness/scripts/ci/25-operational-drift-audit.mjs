@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @file 15-operational-drift-audit.mjs
+ * @file 25-operational-drift-audit.mjs
  * @description CI Step: Operational Capability & Efficiency Drift Audit (GT-147)
  *
  * Runs the reusable {@link drift-audit.mjs} evaluator over the numbered CI step

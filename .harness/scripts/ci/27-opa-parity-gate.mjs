@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @file 16-opa-parity-gate.mjs
+ * @file 27-opa-parity-gate.mjs
  * @description CI Step: Executable OPA tests + Native/OPA semantic parity (GT-149)
  *
  * For each accepted topology with a compiled `<id>.wasm` bundle and a

@@ -190,7 +190,7 @@
       "validationCommands": [
         "node .harness/scripts/ci/01-validate-docs.mjs",
         "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
-        "node .harness/scripts/ci/05-check-orphan-bilingual.mjs",
+        "node .harness/scripts/ci/23-check-orphan-bilingual.mjs",
         "node .harness/scripts/ci/11-validate-product-docs.mjs"
       ],
       "dependencyDisposition": "none"
@@ -251,7 +251,7 @@
       "validationCommands": [
         "node .harness/scripts/ci/01-validate-docs.mjs",
         "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
-        "node .harness/scripts/ci/05-check-orphan-bilingual.mjs",
+        "node .harness/scripts/ci/23-check-orphan-bilingual.mjs",
         "node .harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "dependencyDisposition": "none"
@@ -343,12 +343,12 @@
       "evidence": [
         ".harness/scripts/generate-rule-coverage.mjs",
         ".harness/scripts/generate-rule-coverage.test.mjs",
-        ".harness/scripts/ci/15-validate-topology-rule-coverage.mjs",
+        ".harness/scripts/ci/26-validate-topology-rule-coverage.mjs",
         "rulesets/governance/satellite-contracts.rules.json"
       ],
       "validationCommands": [
         "node --test .harness/scripts/generate-rule-coverage.test.mjs",
-        "node .harness/scripts/ci/15-validate-topology-rule-coverage.mjs",
+        "node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs",
         "node .harness/scripts/ci-runner.mjs"
       ],
       "dependencyDisposition": "satisfied",
@@ -2325,12 +2325,12 @@
       "closureCommit": "861505eef043406dcad4d15a030017bb52d2b641",
       "evidence": [
         ".harness/scripts/ci/drift-audit.mjs",
-        ".harness/scripts/ci/15-operational-drift-audit.mjs",
+        ".harness/scripts/ci/25-operational-drift-audit.mjs",
         ".harness/scripts/ci/drift-audit.test.mjs"
       ],
       "validationCommands": [
         "node --test .harness/scripts/ci/drift-audit.test.mjs",
-        "node .harness/scripts/ci/15-operational-drift-audit.mjs"
+        "node .harness/scripts/ci/25-operational-drift-audit.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -2427,15 +2427,15 @@
         "reference/architecture/topologies/ai/agentic-ai/parity-fixtures/compliant.json",
         "reference/architecture/topologies/ai/agentic-ai/parity-fixtures/violation.json",
         "reference/architecture/topologies/ai/agentic-ai/agentic-ai.wasm",
-        ".harness/scripts/ci/16-opa-parity-gate.mjs",
-        ".harness/scripts/ci/16-test-topology-opa.mjs",
+        ".harness/scripts/ci/27-opa-parity-gate.mjs",
+        ".harness/scripts/ci/28-test-topology-opa.mjs",
         ".harness/scripts/ci/opa-eval.mjs",
         ".harness/scripts/ci/parity-gate.mjs",
         ".harness/scripts/ci/parity-gate.test.mjs"
       ],
       "validationCommands": [
-        "node .harness/scripts/ci/16-test-topology-opa.mjs",
-        "EVOLITH_PARITY_FULL=true node .harness/scripts/ci/16-opa-parity-gate.mjs",
+        "node .harness/scripts/ci/28-test-topology-opa.mjs",
+        "EVOLITH_PARITY_FULL=true node .harness/scripts/ci/27-opa-parity-gate.mjs",
         "node .harness/scripts/compile-opa-wasm.mjs",
         "node .harness/scripts/ci/01-validate-docs.mjs"
       ],
@@ -2453,9 +2453,9 @@
       ],
       "validationCommands": [
         "node --test .harness/scripts/generate-rule-coverage.test.mjs",
-        "node .harness/scripts/ci/15-validate-topology-rule-coverage.mjs",
-        "node .harness/scripts/ci/16-test-topology-opa.mjs",
-        "EVOLITH_PARITY_FULL=true node .harness/scripts/ci/16-opa-parity-gate.mjs",
+        "node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs",
+        "node .harness/scripts/ci/28-test-topology-opa.mjs",
+        "EVOLITH_PARITY_FULL=true node .harness/scripts/ci/27-opa-parity-gate.mjs",
         "node .harness/scripts/ci/01-validate-docs.mjs",
         "node .harness/scripts/ci/04-check-bilingual-parity.mjs"
       ],
@@ -2537,9 +2537,9 @@
       "validationCommands": [
         "npx jest --config packages/core-domain/jest.config.js packages/core-domain/src/application/validators/evaluators/handlers/architecture-rule.handler.spec.ts packages/core-domain/src/application/validators/evaluators/opa-input-builder.spec.ts --runInBand",
         "npm run build --workspace packages/core-domain",
-        "node .harness/scripts/ci/16-test-topology-opa.mjs",
-        "EVOLITH_PARITY_FULL=true node .harness/scripts/ci/16-opa-parity-gate.mjs",
-        "node .harness/scripts/ci/15-validate-topology-rule-coverage.mjs",
+        "node .harness/scripts/ci/28-test-topology-opa.mjs",
+        "EVOLITH_PARITY_FULL=true node .harness/scripts/ci/27-opa-parity-gate.mjs",
+        "node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs",
         "node .harness/scripts/ci/01-validate-docs.mjs",
         "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
         "node .harness/scripts/ci/08-validate-tracking.mjs"
@@ -2576,10 +2576,10 @@
       "evidence": [
         "reference/governance/standards/vision/surface-parity-matrix.json",
         "reference/governance/standards/vision/surface-parity-matrix.schema.json",
-        ".harness/scripts/ci/05-check-surface-parity.mjs"
+        ".harness/scripts/ci/24-check-surface-parity.mjs"
       ],
       "validationCommands": [
-        "node .harness/scripts/ci/05-check-surface-parity.mjs"
+        "node .harness/scripts/ci/24-check-surface-parity.mjs"
       ],
       "dependencyDisposition": "none"
     },
@@ -2934,7 +2934,7 @@
       ],
       "validationCommands": [
         "node .harness/scripts/ci/04-check-bilingual-parity.mjs",
-        "node .harness/scripts/ci/05-check-orphan-bilingual.mjs"
+        "node .harness/scripts/ci/23-check-orphan-bilingual.mjs"
       ],
       "dependencyDisposition": "none"
     },

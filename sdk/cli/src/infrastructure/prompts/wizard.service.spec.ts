@@ -48,7 +48,7 @@ describe('WizardService', () => {
       expect(mockSteps[1].run).toHaveBeenCalled();
     });
 
-    it.skip('should handle step returning null as cancellation', async () => {
+    it('should handle step returning null as cancellation', async () => {
       const mockSteps: WizardStep[] = [
         {
           id: 'step1',
@@ -66,7 +66,10 @@ describe('WizardService', () => {
       ).rejects.toThrow();
     });
 
-    it.skip('should show summary and ask for confirmation', async () => {
+    it('should show summary and ask for confirmation', async () => {
+      const originalTTY = process.stdout.isTTY;
+      Object.defineProperty(process.stdout, 'isTTY', { value: true, configurable: true });
+
       const mockSteps: WizardStep[] = [
         {
           id: 'step1',
@@ -87,9 +90,14 @@ describe('WizardService', () => {
         message: 'Proceed with these settings?',
         initialValue: true,
       });
+
+      Object.defineProperty(process.stdout, 'isTTY', { value: originalTTY, configurable: true });
     });
 
-    it.skip('should throw UserCancelledError when user cancels at summary', async () => {
+    it('should throw UserCancelledError when user cancels at summary', async () => {
+      const originalTTY = process.stdout.isTTY;
+      Object.defineProperty(process.stdout, 'isTTY', { value: true, configurable: true });
+
       const mockSteps: WizardStep[] = [
         {
           id: 'step1',
@@ -107,6 +115,8 @@ describe('WizardService', () => {
           noInteractive: false,
         })
       ).rejects.toThrow();
+
+      Object.defineProperty(process.stdout, 'isTTY', { value: originalTTY, configurable: true });
     });
   });
 
@@ -129,7 +139,7 @@ describe('WizardService', () => {
       expect(p.confirm).not.toHaveBeenCalled();
     });
 
-    it.skip('should run in non-interactive mode when TTY is not available', async () => {
+    it('should run in non-interactive mode when TTY is not available', async () => {
       const originalTTY = process.stdout.isTTY;
       Object.defineProperty(process.stdout, 'isTTY', { value: false });
 

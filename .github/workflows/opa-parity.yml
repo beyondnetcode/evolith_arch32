@@ -31,4 +31,4 @@ jobs:
       - name: Run full Native/OPA parity gate
         env:
           EVOLITH_PARITY_FULL: 'true'
-        run: node .harness/scripts/ci/16-opa-parity-gate.mjs
+        run: node .harness/scripts/ci/27-opa-parity-gate.mjs

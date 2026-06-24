@@ -50,11 +50,16 @@ async function bootstrap() {
 
   app.use(helmet());
 
+  const nodeEnv = config.get('NODE_ENV');
+  const corsOrigin = nodeEnv === 'development'
+    ? '*'
+    : (config.get('CORS_ORIGINS')?.split(',') ?? []);
+
   app.enableCors({
-    origin: config.get('ALLOWED_ORIGINS')?.split(',') ?? ['*'],
+    origin: corsOrigin,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     allowedHeaders: ['Content-Type', 'x-correlation-id'],
-    credentials: true,
+    credentials: nodeEnv !== 'development',
   });
 
   app.flushLogs();

@@ -1,12 +1,15 @@
 import { Command, Option } from 'nest-commander';
+import { randomUUID } from 'node:crypto';
 import chalk from 'chalk';
 import { ArchitectureDriftService, DriftReport, DriftViolation } from '@evolith/core-domain/application/validators/architecture-drift.service';
+import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@evolith/core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 
 interface DriftOptions {
   path?: string;
   level?: string;
+  format?: string;
   json?: boolean;
   history?: boolean;
   trend?: boolean;
@@ -27,16 +30,54 @@ export class DriftCommand extends BaseEvolithCommand {
   ): Promise<void> {
     const projectPath = options?.path || process.cwd();
     const declaredLevel = options?.level as 'F1' | 'F2' | 'F3' | undefined;
+    const json = options?.format === 'json' || options?.json === true;
+    const commandId = 'evolith drift detect';
+    const startedAt = Date.now();
+    const meta = {
+      command: commandId,
+      executedAt: new Date().toISOString(),
+      durationMs: 0,
+      correlationId: randomUUID(),
+      schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
+    };
 
     const service = new ArchitectureDriftService();
 
     if (options?.trend) {
-      await this.showTrend(service, projectPath);
+      try {
+        const result = await service.getDriftTrend(projectPath);
+        if (json) {
+          console.log(JSON.stringify(createSuccessEnvelope(result, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        } else {
+          await this.showTrend(service, projectPath);
+        }
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : String(error);
+        if (json) {
+          console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        } else {
+          throw error;
+        }
+      }
       return;
     }
 
     if (options?.history) {
-      await this.showHistory(service, projectPath);
+      try {
+        const history = await service.getDriftHistory(projectPath);
+        if (json) {
+          console.log(JSON.stringify(createSuccessEnvelope(history, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        } else {
+          await this.showHistory(service, projectPath);
+        }
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : String(error);
+        if (json) {
+          console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        } else {
+          throw error;
+        }
+      }
       return;
     }
 
@@ -51,15 +92,20 @@ export class DriftCommand extends BaseEvolithCommand {
 
       this.promptService.stopSpinner();
 
-      if (options?.json) {
-        console.log(JSON.stringify(report, null, 2));
+      if (json) {
+        console.log(JSON.stringify(createSuccessEnvelope(report, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
         return;
       }
 
       this.printDriftReport(report);
     } catch (error: unknown) {
       this.promptService.stopSpinner();
-      throw error;
+      if (json) {
+        const message = error instanceof Error ? error.message : String(error);
+        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+      } else {
+        throw error;
+      }
     }
   }
 
@@ -212,5 +258,13 @@ export class DriftCommand extends BaseEvolithCommand {
   })
   parseTrend(): boolean {
     return true;
+  }
+
+  @Option({
+    flags: '-f, --format [string]',
+    description: 'Output format: json (ADR-0073 envelope) or human (default)',
+  })
+  parseFormat(val: string): string {
+    return val;
   }
 }

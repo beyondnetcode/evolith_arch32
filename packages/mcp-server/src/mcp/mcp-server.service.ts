@@ -12,9 +12,10 @@ import {
   ListPromptsRequestSchema,
   GetPromptRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
-import { trace } from '@opentelemetry/api';
+import { context as otelContext, propagation, trace } from '@opentelemetry/api';
 import { ToolRegistryService } from './tool-registry.service';
 import { MetricsService } from './metrics.service';
+import { AuditLogger } from './audit-logger';
 import { ResourcesService } from './resources.service';
 import { PromptsService } from './prompts.service';
 import { generateCorrelationId } from '../common/envelopes';
@@ -58,6 +59,7 @@ export class McpServerService {
     private readonly registry: ToolRegistryService,
     private readonly metrics: MetricsService,
     private readonly abacEvaluator: AbacEvaluator,
+    private readonly auditLogger?: AuditLogger,
     private readonly resources?: ResourcesService,
     private readonly prompts?: PromptsService,
   ) {}
@@ -67,13 +69,39 @@ export class McpServerService {
   }
 
   async handleCallTool(name: string, args: Record<string, unknown> = {}): Promise<ToolCallResult> {
-    return handleCallTool(name, args, {
+    const correlationId = (args.correlationId as string) || generateCorrelationId();
+    const startTime = Date.now();
+
+    const result = await handleCallTool(name, args, {
       registry: this.registry,
       metrics: this.metrics,
       abacEvaluator: this.abacEvaluator,
       logger: this.logger,
       tracer,
     });
+
+    if (this.auditLogger) {
+      const durationMs = Date.now() - startTime;
+      const context = mcpContextStorage.getStore();
+      const status = result.isError ? 'error' : 'success';
+      this.auditLogger.logToolCall({
+        tool: name,
+        args,
+        context: {
+          initiative: (args.initiative as string) || undefined,
+          tenant: (args.tenant as string) || context?.tenant,
+          phase: (args.phase as string) || undefined,
+          userId: context?.id,
+          role: context?.role,
+        },
+        durationMs,
+        status,
+        correlationId,
+        errorMessage: result.isError ? JSON.parse(result.content[0].text).error?.message : undefined,
+      });
+    }
+
+    return result;
   }
 
   /** Whether mutations are pre-authorized via `mcp.allowMutations` in evolith.yaml. */
@@ -160,10 +188,35 @@ export class McpServerService {
         return;
       }
 
+      const headerCorrelationId = (req.headers['x-correlation-id'] as string) || generateCorrelationId();
+
+      const span = tracer.startSpan('mcp.http.request', {
+        attributes: {
+          'http.method': req.method || 'UNKNOWN',
+          'http.url': url.pathname,
+          'correlation.id': headerCorrelationId,
+        },
+      });
+
       mcpContextStorage.run(context as McpUserContext, () => {
-        transport
-          .handleRequest(req as Parameters<typeof transport.handleRequest>[0], res)
-          .catch((err: Error) => this.logger.error(`MCP transport error: ${err.message}`));
+        const otelGetter = {
+          get: (c: Record<string, string>, k: string) => c[k],
+          keys: (c: Record<string, string>) => Object.keys(c),
+        };
+        const extractedCtx = propagation.extract(otelContext.active(), req.headers as Record<string, string>, otelGetter);
+        const spanCtx = trace.setSpan(extractedCtx, span);
+
+        otelContext.with(spanCtx, () => {
+          transport
+            .handleRequest(req as Parameters<typeof transport.handleRequest>[0], res)
+            .catch((err: Error) => {
+              span.setStatus({ code: trace.SpanStatusCode.ERROR, message: err.message });
+              this.logger.error(`MCP transport error: ${err.message}`);
+            })
+            .finally(() => {
+              span.end();
+            });
+        });
       });
     });
 

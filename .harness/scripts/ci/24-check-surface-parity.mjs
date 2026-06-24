@@ -11,7 +11,7 @@
  * 5. Operation IDs are unique and kebab-case
  *
  * Usage:
- *   node .harness/scripts/ci/05-check-surface-parity.mjs
+ *   node .harness/scripts/ci/24-check-surface-parity.mjs
  *
  * Exit codes:
  *   0 - all checks pass

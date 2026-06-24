@@ -1,13 +1,16 @@
 import { Command, Option } from 'nest-commander';
+import { randomUUID } from 'node:crypto';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import chalk from 'chalk';
+import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@evolith/core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 
 interface DocsCommandOptions {
   dryRun?: boolean;
   force?: boolean;
   template?: string;
+  format?: string;
 }
 
 interface DocTemplate {
@@ -102,8 +105,16 @@ export class DocsCommand extends BaseEvolithCommand {
   async executeCommand(passedParam: string[], options?: DocsCommandOptions): Promise<void> {
     const dryRun = options?.dryRun || false;
     const force = options?.force || false;
-
-    this.promptService.showIntro('Evolith SDK - Document Scaffold');
+    const json = options?.format === 'json';
+    const commandId = 'evolith docs scaffold';
+    const startedAt = Date.now();
+    const meta = {
+      command: commandId,
+      executedAt: new Date().toISOString(),
+      durationMs: 0,
+      correlationId: randomUUID(),
+      schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
+    };
 
     const targetDir = process.cwd();
     const templates = this.getTemplates(options?.template);
@@ -125,10 +136,47 @@ export class DocsCommand extends BaseEvolithCommand {
     }
 
     if (filesToCreate.length === 0 && filesToUpdate.length === 0) {
+      if (json) {
+        console.log(JSON.stringify(createSuccessEnvelope({
+          created: 0,
+          updated: 0,
+          skipped: filesSkipped.length,
+          files: filesSkipped.map(t => t.filename),
+        }, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        return;
+      }
       this.promptService.showInfo('All documentation files already exist. Use --force to overwrite.');
       this.promptService.showOutro(chalk.yellow('No changes made.'));
       return;
     }
+
+    if (json) {
+      let created = 0;
+      let updated = 0;
+
+      for (const template of filesToCreate) {
+        const filePath = path.join(targetDir, template.filename);
+        await fs.ensureDir(path.dirname(filePath));
+        await fs.writeFile(filePath, template.content, 'utf-8');
+        created++;
+      }
+
+      for (const template of filesToUpdate) {
+        const filePath = path.join(targetDir, template.filename);
+        await fs.writeFile(filePath, template.content, 'utf-8');
+        updated++;
+      }
+
+      console.log(JSON.stringify(createSuccessEnvelope({
+        created,
+        updated,
+        skipped: filesSkipped.length,
+        files: [...filesToCreate, ...filesToUpdate].map(t => t.filename),
+      }, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+      return;
+    }
+
+    this.promptService.showIntro('Evolith SDK - Document Scaffold');
 
     this.promptService.showInfo(`Files to create: ${filesToCreate.length}`);
     this.promptService.showInfo(`Files to update: ${filesToUpdate.length}`);
@@ -192,6 +240,14 @@ export class DocsCommand extends BaseEvolithCommand {
     description: 'Template type to use (default, minimal)',
   })
   parseTemplate(val: string): string {
+    return val;
+  }
+
+  @Option({
+    flags: '-f, --format [string]',
+    description: 'Output format: json (ADR-0073 envelope) or human (default)',
+  })
+  parseFormat(val: string): string {
     return val;
   }
 }

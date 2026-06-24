@@ -6,6 +6,7 @@ import * as crypto from 'node:crypto';
 import { McpServerService, ToolCallResult, mcpContextStorage } from './mcp-server.service';
 import { MetricsService } from './metrics.service';
 import { ToolRegistryService } from './tool-registry.service';
+import { AuditLogger } from './audit-logger';
 import { McpTool } from './tool.interface';
 import { DomainException, ErrorCodes } from '../common/errors';
 import { AbacEvaluator } from './abac-evaluator';
@@ -529,5 +530,160 @@ describe('WebhookAdapter propagation', () => {
         }),
       })
     );
+  });
+});
+
+describe('AuditLogger', () => {
+  let auditLogger: AuditLogger;
+
+  beforeEach(() => {
+    auditLogger = new AuditLogger();
+  });
+
+  it('should record audit events with structured fields', () => {
+    auditLogger.logToolCall({
+      tool: 'evolith-validate',
+      args: { path: '/test' },
+      context: { initiative: 'test', tenant: 'default', phase: 'discovery', userId: 'user-1', role: 'developer' },
+      durationMs: 42,
+      status: 'success',
+      correlationId: 'evl-test-123',
+    });
+
+    const events = auditLogger.getRecentEvents();
+    expect(events).toHaveLength(1);
+    expect(events[0]).toMatchObject({
+      tool: 'evolith-validate',
+      args: { path: '/test' },
+      context: { initiative: 'test', tenant: 'default', phase: 'discovery', userId: 'user-1', role: 'developer' },
+      durationMs: 42,
+      status: 'success',
+      correlationId: 'evl-test-123',
+    });
+    expect(events[0].timestamp).toBeDefined();
+  });
+
+  it('should record error events with errorMessage', () => {
+    auditLogger.logToolCall({
+      tool: 'evolith-deploy',
+      args: {},
+      context: {},
+      durationMs: 100,
+      status: 'error',
+      correlationId: 'evl-err-1',
+      errorMessage: 'Deployment failed',
+    });
+
+    const events = auditLogger.getRecentEvents();
+    expect(events[0].status).toBe('error');
+    expect(events[0].errorMessage).toBe('Deployment failed');
+  });
+
+  it('should record denied events', () => {
+    auditLogger.logToolCall({
+      tool: 'evolith-write-file',
+      args: {},
+      context: {},
+      durationMs: 5,
+      status: 'denied',
+      correlationId: 'evl-deny-1',
+    });
+
+    expect(auditLogger.getRecentEvents()[0].status).toBe('denied');
+  });
+
+  it('should cap event buffer at 1000', () => {
+    for (let i = 0; i < 1100; i++) {
+      auditLogger.logToolCall({
+        tool: `tool-${i}`,
+        args: {},
+        context: {},
+        durationMs: 1,
+        status: 'success',
+        correlationId: `evl-${i}`,
+      });
+    }
+
+    expect(auditLogger.getEventCount()).toBe(1000);
+    expect(auditLogger.getRecentEvents()[0].tool).toBe('tool-1099');
+  });
+
+  it('should log resource access events', () => {
+    auditLogger.logResourceAccess({
+      tool: 'read-resource',
+      args: { uri: 'file:///test' },
+      context: {},
+      durationMs: 10,
+      status: 'success',
+      correlationId: 'evl-res-1',
+    });
+
+    const events = auditLogger.getRecentEvents();
+    expect(events).toHaveLength(1);
+    expect(events[0].tool).toBe('read-resource');
+  });
+
+  it('should log prompt access events', () => {
+    auditLogger.logPromptAccess({
+      tool: 'get-prompt',
+      args: { name: 'test-prompt' },
+      context: {},
+      durationMs: 5,
+      status: 'success',
+      correlationId: 'evl-prom-1',
+    });
+
+    const events = auditLogger.getRecentEvents();
+    expect(events).toHaveLength(1);
+    expect(events[0].tool).toBe('get-prompt');
+  });
+});
+
+describe('McpServerService — Audit integration', () => {
+  it('logs audit events when AuditLogger is provided', async () => {
+    const metrics = new MetricsService();
+    const registry = new ToolRegistryService([
+      tool('evolith-ping', async () => ({ status: 'pong' })),
+    ]);
+    const auditLogger = new AuditLogger();
+    const service = new McpServerService(registry, metrics, new MockAbacEvaluator(), auditLogger);
+
+    await service.handleCallTool('evolith-ping', { correlationId: 'audit-test-1' });
+
+    const events = auditLogger.getRecentEvents();
+    expect(events).toHaveLength(1);
+    expect(events[0].tool).toBe('evolith-ping');
+    expect(events[0].status).toBe('success');
+    expect(events[0].correlationId).toBe('audit-test-1');
+    expect(events[0].durationMs).toBeGreaterThanOrEqual(0);
+  });
+
+  it('logs error audit events on tool failure', async () => {
+    const metrics = new MetricsService();
+    const registry = new ToolRegistryService([
+      tool('boom', async () => { throw new Error('kaboom'); }),
+    ]);
+    const auditLogger = new AuditLogger();
+    const service = new McpServerService(registry, metrics, new MockAbacEvaluator(), auditLogger);
+
+    await service.handleCallTool('boom', { correlationId: 'audit-test-err' });
+
+    const events = auditLogger.getRecentEvents();
+    expect(events).toHaveLength(1);
+    expect(events[0].tool).toBe('boom');
+    expect(events[0].status).toBe('error');
+    expect(events[0].errorMessage).toBe('kaboom');
+  });
+
+  it('does not crash when AuditLogger is not provided', async () => {
+    const metrics = new MetricsService();
+    const registry = new ToolRegistryService([
+      tool('evolith-ping', async () => ({ status: 'pong' })),
+    ]);
+    const service = new McpServerService(registry, metrics, new MockAbacEvaluator());
+
+    const result = await service.handleCallTool('evolith-ping');
+    const env = parseEnvelope(result);
+    expect(env.success).toBe(true);
   });
 });

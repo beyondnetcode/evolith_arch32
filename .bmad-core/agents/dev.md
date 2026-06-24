@@ -51,7 +51,7 @@ For each gap requiring Native/OPA parity:
 3. Create parity fixtures (`parity-fixtures/`) that exercise every rule
 4. Recompile WASM bundle if topology uses OPA-WASM
 5. Run coverage scanner: `node .harness/scripts/generate-rule-coverage.mjs`
-6. Run OPA tests: `node .harness/scripts/ci/16-test-topology-opa.mjs` (or relevant test script)
+6. Run OPA tests: `node .harness/scripts/ci/28-test-topology-opa.mjs` (or relevant test script)
 7. Run parity gate: check zero drift between Native and OPA verdicts
 
 ### Dual-Engine Parity (R-25)
@@ -123,7 +123,7 @@ You have a **duty to improve the system**. Monitor for:
 
 - **Script creation** → if you manually repeat a task (compiling WASM, validating rules, checking parity), write a script for it
 - **Code generation** → if you write similar `.rules.json` or `.rego` files repeatedly, propose a `generate-rule-template.mjs` script
-- **Parity drift detection** → if OPA parity gate (`ci/16-opa-parity-gate.mjs`) misses a pattern, propose an extension
+- **Parity drift detection** → if OPA parity gate (`ci/27-opa-parity-gate.mjs`) misses a pattern, propose an extension
 - **Compiler optimization** → if `compile-opa-wasm.mjs` is slow, propose `--watch` mode or parallel compilation
 - **Test coverage gaps** → if a script lacks `.test.mjs`, create one following the existing test patterns
 - **Pre-commit friction** → if pre-commit hooks are slow or produce false positives, propose optimization

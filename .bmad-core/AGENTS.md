@@ -135,7 +135,7 @@ All scripts live under `.harness/scripts/`. Every agent must know the full inven
 | `ci/02-optimize-repo.mjs` | Cleanup — deletes unauthorized root files | Root-level whitelist enforcement |
 | `ci/03-validate-root-cleanliness.mjs` | Root directory whitelist gate | Only whitelisted files at root; denies `topologies/` |
 | `ci/04-check-bilingual-parity.mjs` | Structural parity EN/ES pairs | Every `.es.md` has same `##`/`###` count as `.md` |
-| `ci/05-check-orphan-bilingual.mjs` | EN files without ES counterparts | Every `.md` under `reference/` must have `.es.md` sibling |
+| `ci/23-check-orphan-bilingual.mjs` | EN files without ES counterparts | Every `.md` under `reference/` must have `.es.md` sibling |
 | `ci/06-impact-analysis-synchronizer.mjs` | Change detection + cross-zone sync | Classifies files into 8 categories; syncs impacted zones |
 | `ci/07-generate-inventories.mjs` | Generates `inventory-summary.md` EN/ES | ADR/ruleset/schema counts |
 | `ci/08-validate-tracking.mjs` | Validates gap-tracking tables, statuses, closure evidence | EN/ES row consistency; DONE gaps must have closure records |
@@ -145,10 +145,10 @@ All scripts live under `.harness/scripts/`. Every agent must know the full inven
 | `ci/12-validate-bmad-signatures.mjs` | Validates BMAD agent signatures in core ADRs | Every ADR must have Agent Signature |
 | `ci/13-agentic-code-review.mjs` | Agentic code review via MCP | Redacts diff, invokes LLM, validates structured result |
 | `ci/14-rag-index-sync.mjs` | RAG knowledge index delta-sync | Detects changed `.md` files, chunks at H2, embeds + upserts |
-| `ci/15-operational-drift-audit.mjs` | Scans CI scripts and topology manifests for false success, unbounded calls | DRIFT-FALSE-SUCCESS, DRIFT-UNBOUNDED-CALL detection |
-| `ci/15-validate-topology-rule-coverage.mjs` | Thin gate for Native/OPA rule coverage | Delegates to `generate-rule-coverage.mjs` |
-| `ci/16-opa-parity-gate.mjs` | Full Native/OPA semantic parity gate with WASM | Evaluates WASM vs Native fixtures; fails on drift |
-| `ci/16-test-topology-opa.mjs` | Runs OPA `.test.rego` for each accepted topology | Every topology must have `.test.rego`; suite not empty |
+| `ci/25-operational-drift-audit.mjs` | Scans CI scripts and topology manifests for false success, unbounded calls | DRIFT-FALSE-SUCCESS, DRIFT-UNBOUNDED-CALL detection |
+| `ci/26-validate-topology-rule-coverage.mjs` | Thin gate for Native/OPA rule coverage | Delegates to `generate-rule-coverage.mjs` |
+| `ci/27-opa-parity-gate.mjs` | Full Native/OPA semantic parity gate with WASM | Evaluates WASM vs Native fixtures; fails on drift |
+| `ci/28-test-topology-opa.mjs` | Runs OPA `.test.rego` for each accepted topology | Every topology must have `.test.rego`; suite not empty |
 | `ci/17-validate-knowledge-intake.mjs` | Validates KI-*.yaml intake candidates | YAML parsing, JSON Schema, OPA policy execution |
 
 ### 6.2 CI Shared Modules (`ci/` — reusable by all scripts)
@@ -203,10 +203,10 @@ All scripts live under `.harness/scripts/`. Every agent must know the full inven
 |-------|----------------|
 | Analyst | `generate-es-skeleton.mjs`, `ci/01-validate-docs.mjs` |
 | PM | `ci/04-check-bilingual-parity.mjs`, `bilingual-coverage.mjs`, `generate-es-skeleton.mjs` |
-| Architect | `adr-lifecycle.mjs`, `generate-rule-coverage.mjs`, `ci/15-validate-topology-rule-coverage.mjs`, `validate-topology-manifests.mjs` |
+| Architect | `adr-lifecycle.mjs`, `generate-rule-coverage.mjs`, `ci/26-validate-topology-rule-coverage.mjs`, `validate-topology-manifests.mjs` |
 | SM | `doc-health-trend.mjs`, `update-version-log.mjs`, `bilingual-coverage.mjs`, `ci/08-validate-tracking.mjs` |
 | Dev | `ci/01-validate-docs.mjs`, `generate-es-skeleton.mjs`, `ci/04-check-bilingual-parity.mjs`, `compile-opa-wasm.mjs`, `generate-rule-coverage.mjs` |
-| QA | `ci/04-check-bilingual-parity.mjs`, `ci/01-validate-docs.mjs --render-mermaid`, `bilingual-cross-ref.mjs`, `ci/16-opa-parity-gate.mjs`, `ci/16-test-topology-opa.mjs`, `bilingual-terminology-lint.mjs`, `bilingual-reciprocity.mjs` |
+| QA | `ci/04-check-bilingual-parity.mjs`, `ci/01-validate-docs.mjs --render-mermaid`, `bilingual-cross-ref.mjs`, `ci/27-opa-parity-gate.mjs`, `ci/28-test-topology-opa.mjs`, `bilingual-terminology-lint.mjs`, `bilingual-reciprocity.mjs` |
 | DevOps | `satellite-sync.mjs`, `coverage-dashboard.mjs`, `verify-version-log.mjs`, `verify-git-tag.mjs`, `adr-promotion-push.mjs`, `ci-runner.mjs`, `ci/02-optimize-repo.mjs`, `ci/03-validate-root-cleanliness.mjs`, `sync-project-board.mjs`, `compile-opa-wasm.mjs` |
 | Docs | `adr-lifecycle.mjs`, `update-version-log.mjs`, `doc-health-trend.mjs`, `bilingual-cross-ref.mjs`, `ci/07-generate-inventories.mjs`, `md-table-formatter.mjs`, `generate-bilingual-index.mjs`, `doc-complexity-score.mjs`, `validate-rulesets.mjs` |
 
@@ -227,13 +227,13 @@ node .harness/scripts/ci/04-check-bilingual-parity.mjs
 node .harness/scripts/bilingual-coverage.mjs
 
 # 4. Topology rule coverage (when topology artifacts change)
-node .harness/scripts/ci/15-validate-topology-rule-coverage.mjs
+node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs
 
 # 5. UTF-8 encoding cleanup (when encoding issues found)
 python .bmad-core/scripts/cleanup_markdown_encoding.py
 
 # 6. OPA parity gate (when Native/OPA artifacts change)
-node .harness/scripts/ci/16-opa-parity-gate.mjs
+node .harness/scripts/ci/27-opa-parity-gate.mjs
 
 # 7. Gap tracking validation (when gap status changes)
 node .harness/scripts/ci/08-validate-tracking.mjs

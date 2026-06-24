@@ -5,11 +5,12 @@ import { McpServerService } from './mcp-server.service';
 import { ResourcesService } from './resources.service';
 import { PromptsService } from './prompts.service';
 import { AbacEvaluator } from './abac-evaluator';
+import { AuditLogger } from './audit-logger';
 
 /** Transport + dispatch layer of the MCP Gateway (tools, resources, prompts). */
 @Module({
   imports: [DomainModule, ToolsModule],
-  providers: [McpServerService, ResourcesService, PromptsService, AbacEvaluator],
-  exports: [McpServerService],
+  providers: [McpServerService, ResourcesService, PromptsService, AbacEvaluator, AuditLogger],
+  exports: [McpServerService, AuditLogger],
 })
 export class McpModule {}

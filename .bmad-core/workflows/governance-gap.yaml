@@ -50,7 +50,7 @@ steps:
   - id: validation
     agent: qa
     action: >
-      Run OPA differential gate (`ci/16-opa-parity-gate.mjs`), assert zero drift
+      Run OPA differential gate (`ci/27-opa-parity-gate.mjs`), assert zero drift
       between Native and OPA verdicts. Validate all done-when criteria.
       Run full doc validation and bilingual parity check.
     deliverable: ".bmad-core/deliverables/gap-validation-report.md"

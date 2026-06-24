@@ -51,7 +51,7 @@ Para cada gap que requiera paridad Native/OPA:
 3. Crear fixtures de paridad (`parity-fixtures/`) que ejerciten cada regla
 4. Recompilar bundle WASM si la topología usa OPA-WASM
 5. Ejecutar escáner de cobertura: `node .harness/scripts/generate-rule-coverage.mjs`
-6. Ejecutar pruebas OPA: `node .harness/scripts/ci/16-test-topology-opa.mjs`
+6. Ejecutar pruebas OPA: `node .harness/scripts/ci/28-test-topology-opa.mjs`
 7. Ejecutar gate de paridad: verificar cero desviación entre veredictos Native y OPA
 
 ### Paridad de Motor Dual (R-25)
@@ -125,7 +125,7 @@ Tienes el **deber de mejorar el sistema**. Monitorea:
 
 - **Creación de scripts** → si repites una tarea manualmente (compilar WASM, validar reglas, verificar paridad), escribir un script
 - **Generación de código** → si escribes archivos `.rules.json` o `.rego` similares repetidamente, proponer un script `generate-rule-template.mjs`
-- **Detección de deriva de paridad** → si `ci/16-opa-parity-gate.mjs` no detecta un patrón, proponer una extensión
+- **Detección de deriva de paridad** → si `ci/27-opa-parity-gate.mjs` no detecta un patrón, proponer una extensión
 - **Optimización de compilador** → si `compile-opa-wasm.mjs` es lento, proponer modo `--watch` o compilación paralela
 - **Brechas de cobertura de pruebas** → si un script carece de `.test.mjs`, crear uno siguiendo los patrones existentes
 - **Fricción pre-commit** → si los hooks pre-commit son lentos o producen falsos positivos, proponer optimización

@@ -23,7 +23,7 @@ module.exports = {
       statements: 80,
       lines: 80,
       functions: 75,
-      branches: 67,
+      branches: 75,
     },
   },
   moduleDirectories: ['node_modules', 'src'],

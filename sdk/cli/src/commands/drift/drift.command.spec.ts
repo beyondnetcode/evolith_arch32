@@ -362,6 +362,10 @@ describe('DriftCommand', () => {
     it('should parse trend option', () => {
       expect(command.parseTrend()).toBe(true);
     });
+
+    it('should parse format option', () => {
+      expect(command.parseFormat('json')).toBe('json');
+    });
   });
 
   describe('printDriftReport helper methods', () => {
@@ -371,6 +375,96 @@ describe('DriftCommand', () => {
       expect(logSpy).toHaveBeenCalledWith(
         expect.stringContaining('History stored at')
       );
+    });
+  });
+
+  describe('--format json (ADR-0073 envelope)', () => {
+    it('should emit success envelope with drift report on --format json', async () => {
+      await command.run([], { format: 'json' });
+
+      const jsonCall = logSpy.mock.calls.find((c: any[]) => {
+        try { return JSON.parse(c[0]).success === true; } catch { return false; }
+      });
+      expect(jsonCall).toBeDefined();
+      const envelope = JSON.parse(jsonCall![0]);
+      expect(envelope.success).toBe(true);
+      expect(envelope.data).toEqual(expect.objectContaining({ declaredLevel: 'F1' }));
+      expect(envelope.meta.command).toBe('evolith drift detect');
+      expect(envelope.meta.correlationId).toBeDefined();
+      expect(envelope.meta.schemaVersion).toBe('1.0.0');
+    });
+
+    it('should emit error envelope when drift detection fails on --format json', async () => {
+      mockDetectDrift.mockRejectedValue(new Error('Detection failed'));
+
+      await command.run([], { format: 'json' });
+
+      const errorCall = logSpy.mock.calls.find((c: any[]) => {
+        try { return JSON.parse(c[0]).success === false; } catch { return false; }
+      });
+      expect(errorCall).toBeDefined();
+      const envelope = JSON.parse(errorCall![0]);
+      expect(envelope.success).toBe(false);
+      expect(envelope.error.code).toBe('INTERNAL_ERROR');
+      expect(envelope.error.message).toBe('Detection failed');
+    });
+
+    it('should emit success envelope for history on --format json --history', async () => {
+      mockGetDriftHistory.mockResolvedValue([{ timestamp: '2024-01-01' }]);
+
+      await command.run([], { format: 'json', history: true });
+
+      const envelope = JSON.parse(logSpy.mock.calls.find((c: any[]) => {
+        try { return JSON.parse(c[0]).success === true; } catch { return false; }
+      })![0]);
+      expect(envelope.success).toBe(true);
+      expect(Array.isArray(envelope.data)).toBe(true);
+    });
+
+    it('should emit error envelope for history failure on --format json --history', async () => {
+      mockGetDriftHistory.mockRejectedValue(new Error('History read failed'));
+
+      await command.run([], { format: 'json', history: true });
+
+      const envelope = JSON.parse(logSpy.mock.calls.find((c: any[]) => {
+        try { return JSON.parse(c[0]).success === false; } catch { return false; }
+      })![0]);
+      expect(envelope.success).toBe(false);
+      expect(envelope.error.code).toBe('INTERNAL_ERROR');
+    });
+
+    it('should emit success envelope for trend on --format json --trend', async () => {
+      mockGetDriftTrend.mockResolvedValue({ trend: 'stable', entries: [] });
+
+      await command.run([], { format: 'json', trend: true });
+
+      const envelope = JSON.parse(logSpy.mock.calls.find((c: any[]) => {
+        try { return JSON.parse(c[0]).success === true; } catch { return false; }
+      })![0]);
+      expect(envelope.success).toBe(true);
+      expect(envelope.data).toEqual({ trend: 'stable', entries: [] });
+    });
+
+    it('should emit error envelope for trend failure on --format json --trend', async () => {
+      mockGetDriftTrend.mockRejectedValue(new Error('Trend failed'));
+
+      await command.run([], { format: 'json', trend: true });
+
+      const envelope = JSON.parse(logSpy.mock.calls.find((c: any[]) => {
+        try { return JSON.parse(c[0]).success === false; } catch { return false; }
+      })![0]);
+      expect(envelope.success).toBe(false);
+      expect(envelope.error.code).toBe('INTERNAL_ERROR');
+    });
+
+    it('should support legacy --json flag', async () => {
+      await command.run([], { json: true });
+
+      const envelope = JSON.parse(logSpy.mock.calls.find((c: any[]) => {
+        try { return JSON.parse(c[0]).success === true; } catch { return false; }
+      })![0]);
+      expect(envelope.success).toBe(true);
+      expect(envelope.meta.command).toBe('evolith drift detect');
     });
   });
 });

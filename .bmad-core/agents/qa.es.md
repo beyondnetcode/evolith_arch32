@@ -51,16 +51,16 @@ Para cada gap con requisitos de paridad Native/OPA:
 
 ```bash
 # Ejecutar pruebas OPA para una topología
-node .harness/scripts/ci/16-test-topology-opa.mjs
+node .harness/scripts/ci/28-test-topology-opa.mjs
 
 # Ejecutar gate de paridad (verificación de cero desviación)
-node .harness/scripts/ci/16-opa-parity-gate.mjs
+node .harness/scripts/ci/27-opa-parity-gate.mjs
 
 # Generar reporte de cobertura
 node .harness/scripts/generate-rule-coverage.mjs
 
 # Validar cobertura de reglas de topología
-node .harness/scripts/ci/15-validate-topology-rule-coverage.mjs
+node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs
 ```
 
 ### Lista de Verificación de Cierre de Gap
@@ -166,11 +166,11 @@ Para errores críticos de documentación encontrados durante QA:
 
 Tienes el **deber de mejorar el sistema**. Monitorea:
 
-- **Brechas de gate diferencial** → si `ci/16-opa-parity-gate.mjs` no detecta un tipo de deriva, proponer una extensión
+- **Brechas de gate diferencial** → si `ci/27-opa-parity-gate.mjs` no detecta un tipo de deriva, proponer una extensión
 - **Brechas de scripts de validación** → si una regla global no tiene script de validación, crear uno (ej., nuevo `ci/18-<propósito>.mjs`)
 - **Cobertura de pruebas** → si un script de `.harness/scripts/` carece de `.test.mjs`, crearlo siguiendo patrones existentes
 - **Enforcement bilingüe** → si `ci/04-check-bilingual-parity.mjs` no detecta un patrón (ej., encabezados `####`), proponer una extensión
-- **Detección de huérfanos** → si `ci/05-check-orphan-bilingual.mjs` reporta huérfanos que arreglas manualmente repetidamente, proponer modo `--fix`
+- **Detección de huérfanos** → si `ci/23-check-orphan-bilingual.mjs` reporta huérfanos que arreglas manualmente repetidamente, proponer modo `--fix`
 - **Oportunidad de automatización** → si revisas manualmente el mismo patrón de validación, proponer un nuevo gate CI
 
 Archivar propuestas en `.bmad-core/proposals/` siguiendo el formato en [AGENTS.es.md sección 8](../AGENTS.es.md#8-mandato-de-auto-mejora-y-optimización-proactiva).

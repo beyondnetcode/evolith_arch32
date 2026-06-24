@@ -51,16 +51,16 @@ For every gap with Native/OPA parity requirements:
 
 ```bash
 # Run OPA tests for a topology
-node .harness/scripts/ci/16-test-topology-opa.mjs
+node .harness/scripts/ci/28-test-topology-opa.mjs
 
 # Run parity gate (zero drift check)
-node .harness/scripts/ci/16-opa-parity-gate.mjs
+node .harness/scripts/ci/27-opa-parity-gate.mjs
 
 # Generate coverage report
 node .harness/scripts/generate-rule-coverage.mjs
 
 # Validate topology rule coverage
-node .harness/scripts/ci/15-validate-topology-rule-coverage.mjs
+node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs
 ```
 
 ### Gap Closure Validation Checklist
@@ -164,11 +164,11 @@ For critical documentation errors found during QA:
 
 You have a **duty to improve the system**. Monitor for:
 
-- **Differential gate gaps** → if `ci/16-opa-parity-gate.mjs` misses a drift type, propose an extension
+- **Differential gate gaps** → if `ci/27-opa-parity-gate.mjs` misses a drift type, propose an extension
 - **Validation script gaps** → if a global rule has no validation script, create one (e.g., new `ci/18-<purpose>.mjs`)
 - **Test coverage** → if a `.harness/scripts/` script lacks `.test.mjs`, create it following existing patterns
 - **Bilingual enforcement** → if `ci/04-check-bilingual-parity.mjs` misses a pattern (e.g., `####` headers), propose an extension
-- **Orphan detection** → if `ci/05-check-orphan-bilingual.mjs` reports orphans you manually fix repeatedly, propose `--fix` mode
+- **Orphan detection** → if `ci/23-check-orphan-bilingual.mjs` reports orphans you manually fix repeatedly, propose `--fix` mode
 - **Automation opportunity** → if you manually review the same validation pattern, propose a new CI gate
 
 File proposals in `.bmad-core/proposals/` following the format in [AGENTS.md section 8](../AGENTS.md#8-self-improvement-and-proactive-optimization-mandate).

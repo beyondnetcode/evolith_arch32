@@ -1,8 +1,10 @@
 import { Command, Option } from 'nest-commander';
+import { randomUUID } from 'node:crypto';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { WorkspaceManagerStrategy } from '@evolith/core-domain/application/architecture/workspace-manager.strategy';
 import { NxWorkspaceStrategy } from '../../infrastructure/architecture/nx-workspace.strategy';
 import { commandExecutor } from '../../infrastructure/cli/command-executor';
+import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@evolith/core-domain/domain/gate-evidence';
 
 @Command({
   name: 'scaffold',
@@ -18,8 +20,78 @@ export class ScaffoldCommand extends BaseEvolithCommand {
 
   async executeCommand(passedParam: string[], options?: Record<string, unknown>): Promise<void> {
     const dryRun = Boolean(options?.dryRun);
+    const json = options?.format === 'json';
+    const commandId = 'evolith architecture scaffold';
+    const startedAt = Date.now();
+    const meta = {
+      command: commandId,
+      executedAt: new Date().toISOString(),
+      durationMs: 0,
+      correlationId: randomUUID(),
+      schemaVersion: OUTPUT_ENVELOPE_SCHEMA_VERSION,
+    };
+
     if (this.strategy.setDryRun) {
       this.strategy.setDryRun(dryRun);
+    }
+
+    if (json) {
+      try {
+        const frontendFramework = options?.frontend as string;
+        const orm = options?.orm as string;
+        const phase = options?.phase as string;
+        const apiName = (options?.apiName as string) || 'tracker-api';
+
+        if (!frontendFramework || !orm || !phase) {
+          console.log(JSON.stringify(createErrorEnvelope(
+            'VALIDATION_FAILED',
+            'In --format json mode, --frontend, --orm, and --phase are required.',
+            { ...meta, durationMs: Date.now() - startedAt },
+          ), null, 2));
+          process.exit(1);
+        }
+
+        await this.strategy.installDependencies(frontendFramework, orm);
+        await this.strategy.generateApiApp(apiName);
+
+        if (phase === '1') {
+          const webAppName = (options?.webAppName as string) || 'tracker-web';
+          await this.strategy.generateStandardWebApp(webAppName, frontendFramework);
+        } else {
+          const hostName = (options?.hostName as string) || 'tracker-host';
+          const remotesInput = (options?.remotes as string) || '';
+          const remotes = remotesInput.split(',').map((r: string) => r.trim()).filter((r: string) => r.length > 0);
+          await this.strategy.generateHostApp(hostName, remotes, frontendFramework);
+        }
+
+        await this.strategy.generateLibrary('workflow-engine', 'shell');
+        await this.strategy.generateLibrary('integration-fabric', 'shell');
+        await this.strategy.generateLibrary('tenant-config', 'shell');
+
+        const domains = options?.domains as string[] | undefined;
+        if (domains) {
+          for (const domain of domains) {
+            await this.strategy.generateLibrary(domain, 'domain');
+          }
+        }
+
+        await this.strategy.generateLibrary('db-schema', 'shared');
+        await this.strategy.generateLibrary('mocks', 'shared');
+
+        console.log(JSON.stringify(createSuccessEnvelope({
+          status: dryRun ? 'dry-run' : 'scaffolded',
+          frontendFramework,
+          orm,
+          phase,
+          apiName,
+          domains: domains || [],
+        }, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : String(error);
+        console.log(JSON.stringify(createErrorEnvelope('INTERNAL_ERROR', message, { ...meta, durationMs: Date.now() - startedAt }), null, 2));
+        process.exit(1);
+      }
+      return;
     }
 
     console.log();
@@ -169,5 +241,61 @@ export class ScaffoldCommand extends BaseEvolithCommand {
   })
   parseDryRun(): boolean {
     return true;
+  }
+
+  @Option({
+    flags: '-f, --format [string]',
+    description: 'Output format: json (ADR-0073 envelope) or human (default)',
+  })
+  parseFormat(val: string): string {
+    return val;
+  }
+
+  @Option({
+    flags: '--phase [phase]',
+    description: 'Architecture phase (1, 2, 3) — required with --format json',
+  })
+  parsePhase(val: string): string {
+    return val;
+  }
+
+  @Option({
+    flags: '--api-name [name]',
+    description: 'Backend API name (default: tracker-api)',
+  })
+  parseApiName(val: string): string {
+    return val;
+  }
+
+  @Option({
+    flags: '--web-app-name [name]',
+    description: 'Web app name for phase 1 (default: tracker-web)',
+  })
+  parseWebAppName(val: string): string {
+    return val;
+  }
+
+  @Option({
+    flags: '--host-name [name]',
+    description: 'Host app name for phase 2/3 (default: tracker-host)',
+  })
+  parseHostName(val: string): string {
+    return val;
+  }
+
+  @Option({
+    flags: '--remotes [remotes]',
+    description: 'Comma-separated remote names for phase 2/3',
+  })
+  parseRemotes(val: string): string {
+    return val;
+  }
+
+  @Option({
+    flags: '--domains [domains]',
+    description: 'Comma-separated domain names to generate',
+  })
+  parseDomains(val: string): string[] {
+    return val.split(',').map((d: string) => d.trim()).filter((d: string) => d.length > 0);
   }
 }

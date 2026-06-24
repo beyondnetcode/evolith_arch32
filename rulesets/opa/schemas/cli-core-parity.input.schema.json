@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/schema/opa/cli-core-parity.input.schema.json",
+  "title": "CLI Core Parity OPA Policy Input Schema",
+  "type": "object",
+  "required": ["satellite"],
+  "properties": {
+    "satellite": {
+      "type": "object",
+      "required": ["coreParity"],
+      "properties": {
+        "coreParity": {
+          "type": "object",
+          "required": [
+            "ruleWithoutParityRecord",
+            "divergentValidationLogic",
+            "inconsistentResults",
+            "undocumentedParityGap"
+          ],
+          "properties": {
+            "ruleWithoutParityRecord": { "type": "boolean" },
+            "divergentValidationLogic": { "type": "boolean" },
+            "inconsistentResults": { "type": "boolean" },
+            "undocumentedParityGap": { "type": "boolean" }
+          }
+        }
+      }
+    }
+  }
+}

@@ -212,4 +212,87 @@ describe('ScaffoldCommand', () => {
       expect(command.parseOrm('typeorm')).toBe('typeorm');
     });
   });
+
+  describe('parseFormat', () => {
+    it('should return the provided value', () => {
+      expect(command.parseFormat('json')).toBe('json');
+      expect(command.parseFormat('human')).toBe('human');
+    });
+  });
+
+  describe('parsePhase', () => {
+    it('should return the provided value', () => {
+      expect(command.parsePhase('1')).toBe('1');
+      expect(command.parsePhase('3')).toBe('3');
+    });
+  });
+
+  describe('--format json (ADR-0073 envelope)', () => {
+    let logSpy: jest.SpyInstance;
+    let exitSpy: jest.SpyInstance;
+
+    beforeEach(() => {
+      logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+      exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
+    });
+
+    afterEach(() => {
+      logSpy.mockRestore();
+      exitSpy.mockRestore();
+    });
+
+    it('should emit success envelope with scaffold config', async () => {
+      await command.run([], {
+        format: 'json',
+        frontend: 'react',
+        orm: 'prisma',
+        phase: '1',
+        apiName: 'my-api',
+        webAppName: 'my-web',
+        domains: ['discovery'],
+      });
+
+      const envelope = JSON.parse(logSpy.mock.calls.find((c: any[]) => {
+        try { return JSON.parse(c[0]).success === true; } catch { return false; }
+      })![0]);
+      expect(envelope.success).toBe(true);
+      expect(envelope.data).toEqual(expect.objectContaining({
+        frontendFramework: 'react',
+        orm: 'prisma',
+        phase: '1',
+        apiName: 'my-api',
+      }));
+      expect(envelope.meta.command).toBe('evolith architecture scaffold');
+      expect(envelope.meta.schemaVersion).toBe('1.0.0');
+    });
+
+    it('should emit error envelope when required options are missing', async () => {
+      await command.run([], { format: 'json' });
+
+      const envelope = JSON.parse(logSpy.mock.calls.find((c: any[]) => {
+        try { return JSON.parse(c[0]).success === false; } catch { return false; }
+      })![0]);
+      expect(envelope.success).toBe(false);
+      expect(envelope.error.code).toBe('VALIDATION_FAILED');
+      expect(envelope.error.message).toContain('--frontend');
+    });
+
+    it('should emit error envelope on strategy failure', async () => {
+      mockStrategy.installDependencies.mockRejectedValueOnce(new Error('npm failed'));
+
+      await command.run([], {
+        format: 'json',
+        frontend: 'angular',
+        orm: 'typeorm',
+        phase: '1',
+      });
+
+      const envelope = JSON.parse(logSpy.mock.calls.find((c: any[]) => {
+        try { return JSON.parse(c[0]).success === false; } catch { return false; }
+      })![0]);
+      expect(envelope.success).toBe(false);
+      expect(envelope.error.code).toBe('INTERNAL_ERROR');
+      expect(envelope.error.message).toBe('npm failed');
+    });
+  });
 });

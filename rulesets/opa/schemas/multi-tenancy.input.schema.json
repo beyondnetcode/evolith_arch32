@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/schema/opa/multi-tenancy.input.schema.json",
+  "title": "Multi-Tenancy OPA Policy Input Schema",
+  "type": "object",
+  "required": ["satellite"],
+  "properties": {
+    "satellite": {
+      "type": "object",
+      "required": ["multiTenancy"],
+      "properties": {
+        "multiTenancy": {
+          "type": "object",
+          "required": ["applicationFiltering", "databaseEnforcement", "tenantContextPropagation", "crossTenantAccess", "schemaStrategyDefined", "apiTenantValidation"],
+          "properties": {
+            "applicationFiltering": { "type": "boolean" },
+            "databaseEnforcement": { "type": "boolean" },
+            "tenantContextPropagation": { "type": "boolean" },
+            "crossTenantAccess": { "type": "boolean" },
+            "schemaStrategyDefined": { "type": "boolean" },
+            "apiTenantValidation": { "type": "boolean" }
+          }
+        }
+      }
+    }
+  }
+}

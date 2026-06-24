@@ -316,7 +316,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Title:** Complete Native/OPA Rule-ID Coverage for Accepted Topologies
 
 - **Purpose:** Enforce the dual-engine rule contract for every accepted topology, so Native rulesets and OPA policies govern the same rule IDs rather than merely agreeing on a small fixture sample.
-- **Closed by:** Commit `b443dcd2` makes accepted-topology Native/OPA rule-ID divergence fail closed in both directions and adds regression coverage. All eight topologies align: `15-validate-topology-rule-coverage.mjs` reports 0 errors and 0 warnings.
+- **Closed by:** Commit `b443dcd2` makes accepted-topology Native/OPA rule-ID divergence fail closed in both directions and adds regression coverage. All eight topologies align: `26-validate-topology-rule-coverage.mjs` reports 0 errors and 0 warnings.
 - **Done when:**
   - [x] Every accepted topology has an identical canonical rule-ID set across its Native ruleset and declared OPA policies, with shared execution-policy ownership explicit in manifests.
   - [x] Every missing or OPA-only rule has positive, negative, and boundary fixtures driving both engines, with semantic parity verified per rule ID.
@@ -441,7 +441,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
   - [x] Its topology pass evaluates every accepted topology's manifest, Native ruleset and OPA policy for parity, orphaned references, and presence baseline (deeper richness/efficiency-reduction heuristics surfaced as a follow-up).
   - [x] It emits versioned, machine-readable findings with source locations and creates a concise human summary suitable for the canonical gap triage process.
   - [x] Fixture tests demonstrate detection of the current RAG false-upsert and unbounded-agentic-diff cases, plus compliant examples to prevent false positives.
-- **Closure evidence:** Commit `861505e`. `.harness/scripts/ci/drift-audit.mjs` (`auditSource` → `DRIFT-FALSE-SUCCESS` for a success claim next to a commented/TODO external op, `DRIFT-UNBOUNDED-CALL` for external calls without budget/redaction/timeout/retry/fail-closed markers; `auditTopology` → `TOPO-MISSING-ARTIFACT`/`TOPO-ORPHAN-REF` for accepted topologies; versioned report + `summarize`). `15-operational-drift-audit.mjs` runs it over the numbered CI capability scripts and every accepted topology manifest and is auto-discovered by `ci-runner.mjs` (pre-commit + CI), failing closed on error findings — currently clean across 17 scripts. `drift-audit.test.mjs` — 10 `node:test` cases covering the historical RAG false-upsert and unbounded-agentic-diff plus compliant examples (no false positives) and topology parity/orphan/draft-skip. Scope note: criterion 3's measurable latency/I-O/token-reduction analysis is a presence+parity+orphan baseline; deeper efficiency heuristics are a tracked follow-up.
+- **Closure evidence:** Commit `861505e`. `.harness/scripts/ci/drift-audit.mjs` (`auditSource` → `DRIFT-FALSE-SUCCESS` for a success claim next to a commented/TODO external op, `DRIFT-UNBOUNDED-CALL` for external calls without budget/redaction/timeout/retry/fail-closed markers; `auditTopology` → `TOPO-MISSING-ARTIFACT`/`TOPO-ORPHAN-REF` for accepted topologies; versioned report + `summarize`). `25-operational-drift-audit.mjs` runs it over the numbered CI capability scripts and every accepted topology manifest and is auto-discovered by `ci-runner.mjs` (pre-commit + CI), failing closed on error findings — currently clean across 17 scripts. `drift-audit.test.mjs` — 10 `node:test` cases covering the historical RAG false-upsert and unbounded-agentic-diff plus compliant examples (no false positives) and topology parity/orphan/draft-skip. Scope note: criterion 3's measurable latency/I-O/token-reduction analysis is a presence+parity+orphan baseline; deeper efficiency heuristics are a tracked follow-up.
 
 #### GT-148
 
@@ -462,7 +462,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 - **Purpose:** Verify behavior—not only file existence—of every topology policy, and ensure Native and OPA engines reach equivalent allow/deny decisions for the same contracts.
 - **Evidence:** Wilson V5 found no OPA test files and the 14-step CI runner does not execute `opa test` or an equivalent pinned evaluator. `validate-topology-manifests.mjs` confirms that declared Native/OPA files exist but does not evaluate policy decisions; the current coverage generator is also broken (GT-148).
-- **Closed by:** 8 `.test.rego` files for central `rulesets/opa/*` policies (version-pinning, evidence, governance, taxonomy, ci-cd, cli-readiness, mcp, abac) + 16 `parity-fixtures/` JSON files (2 per topology: compliant + violation) + 8 compiled `<topology>.wasm` bundles + pinned `@open-policy-agent/opa-wasm` evaluator + `16-opa-parity-gate.mjs` and `16-test-topology-opa.mjs` CI steps. Verified: `opa test` runs 25 topology test cases (0 failures); parity gate evaluates 16 fixtures across 8 topologies (0 drift); WASM compiled with OPA v0.65.0.
+- **Closed by:** 8 `.test.rego` files for central `rulesets/opa/*` policies (version-pinning, evidence, governance, taxonomy, ci-cd, cli-readiness, mcp, abac) + 16 `parity-fixtures/` JSON files (2 per topology: compliant + violation) + 8 compiled `<topology>.wasm` bundles + pinned `@open-policy-agent/opa-wasm` evaluator + `27-opa-parity-gate.mjs` and `28-test-topology-opa.mjs` CI steps. Verified: `opa test` runs 25 topology test cases (0 failures); parity gate evaluates 16 fixtures across 8 topologies (0 drift); WASM compiled with OPA v0.65.0.
 - **Done when:**
   - [x] A pinned, reproducible OPA evaluator executes positive, negative, and boundary fixtures for every accepted topology without relying on an undeclared host binary.
   - [x] The same canonical inputs run through Native and OPA evaluators; a differential gate fails on verdict, rule-ID, severity, or evidence-location drift.
@@ -2080,7 +2080,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Current Evidence:** `find rulesets -name '*.rules.json'` returns **26 native rulesets**; `ls rulesets/opa/schemas/` returns **9 input schemas** (`abac-mcp-tool-access`, `ci-cd`, `cli-readiness`, `evidence`, `governance`, `knowledge-intake`, `mcp`, `taxonomy`, `version-pinning`). 17 native rulesets (adr-002x/003x/004x/005x, anti-corruption-layer, helm-enforcement, executive-scorecards, etc.) have no OPA input schema, preventing executable OPA equivalents.
 **Done When:**
   - [ ] Each of the 17 uncovered native rulesets either gets an OPA input schema + `.rego` policy, or an ADR-recorded justification for staying native-only is added to the ruleset's README.
-  - [ ] `15-validate-topology-rule-coverage.mjs` is extended to report native/OPA coverage on non-topology rulesets and fail when a ruleset lacks a documented disposition.
+  - [ ] `26-validate-topology-rule-coverage.mjs` is extended to report native/OPA coverage on non-topology rulesets and fail when a ruleset lacks a documented disposition.
   - [ ] OPA parity-fixture suite covers the new policies.
 
 #### GT-217
@@ -2125,11 +2125,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-222
 **Purpose:** Bring per-topology OPA test density up to ≥1 test per rule so the parity gate is meaningful — today modular-monolith has 2 tests for 12 rules (17%), distributed-modules has 4 for 8 (50%), and agentic-ai has 4 for 9 (44%), all far below the 100%+ density of data-mesh and event-driven.
-**Current Evidence:** Per `16-test-topology-opa.mjs` output (this audit run): agentic-ai 4 cases / 9 rules, distributed-modules 4 / 8, modular-monolith 2 / 12, microservices 8 / 8, edge 6 / 5, serverless 5 / 6, event-driven 10 / 9, data-mesh 10 / 9. The three under-covered topologies regress the average to ~70% test density.
+**Current Evidence:** Per `28-test-topology-opa.mjs` output (this audit run): agentic-ai 4 cases / 9 rules, distributed-modules 4 / 8, modular-monolith 2 / 12, microservices 8 / 8, edge 6 / 5, serverless 5 / 6, event-driven 10 / 9, data-mesh 10 / 9. The three under-covered topologies regress the average to ~70% test density.
 **Done When:**
   - [ ] modular-monolith adds ≥10 new test cases (one per rule covering positive + negative branches).
   - [ ] distributed-modules adds ≥4 new test cases; agentic-ai adds ≥5.
-  - [ ] `15-validate-topology-rule-coverage.mjs` is extended to assert test/rule density and fail below an agreed floor (suggest ≥80%).
+  - [ ] `26-validate-topology-rule-coverage.mjs` is extended to assert test/rule density and fail below an agreed floor (suggest ≥80%).
 
 #### GT-223
 **Purpose:** Add cross-surface parity e2e tests that exercise the same Core operation on CLI, MCP, and REST and assert envelope/payload equivalence — closes the runtime side of the surface parity declared by GT-171 (the matrix exists; execution against it is sparse).
@@ -2181,7 +2181,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-229
 **Purpose:** Implement the TypeScript-native rule evaluator that loads `.rules.json` files and evaluates them, closing the gap where R-25 (Dual-Engine Parity) requires every rule to exist in both TypeScript evaluator AND OPA `.rego`, but only OPA actually evaluates rules today.
-**Current Evidence:** 26 `.rules.json` files exist across 10 governance domains. The `16-opa-parity-gate.mjs` script compares WASM-compiled OPA against "Native" fixtures, but no TypeScript evaluator loads or evaluates the `.rules.json` rules. The parity gate is aspirational rather than operational.
+**Current Evidence:** 26 `.rules.json` files exist across 10 governance domains. The `27-opa-parity-gate.mjs` script compares WASM-compiled OPA against "Native" fixtures, but no TypeScript evaluator loads or evaluates the `.rules.json` rules. The parity gate is aspirational rather than operational.
 **Done When:**
   - [ ] A TypeScript evaluator loads `.rules.json` rules and produces verdicts matching OPA output for the same inputs.
   - [ ] Parity fixtures exist for all ruleset domains with passing parity tests.
@@ -2229,7 +2229,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-235
 **Purpose:** Resolve the CI script numbering collisions where prefixes 05, 15, and 16 each have two scripts with the same prefix, causing confusion about which gate corresponds to which number.
-**Current Evidence:** `ci/05-check-orphan-bilingual.mjs` and `ci/05-check-surface-parity.mjs` share prefix 05. `ci/15-operational-drift-audit.mjs` and `ci/15-validate-topology-rule-coverage.mjs` share prefix 15. `ci/16-opa-parity-gate.mjs` and `ci/16-test-topology-opa.mjs` share prefix 16. The `ci-runner.mjs` sorts by filename so both run, but the collision creates ambiguity.
+**Current Evidence:** `ci/23-check-orphan-bilingual.mjs` and `ci/24-check-surface-parity.mjs` share prefix 05. `ci/25-operational-drift-audit.mjs` and `ci/26-validate-topology-rule-coverage.mjs` share prefix 15. `ci/27-opa-parity-gate.mjs` and `ci/28-test-topology-opa.mjs` share prefix 16. The `ci-runner.mjs` sorts by filename so both run, but the collision creates ambiguity.
 **Done When:**
   - [ ] Each CI script has a unique numerical prefix.
   - [ ] The `ci-runner.mjs` execution order remains correct after renumbering.

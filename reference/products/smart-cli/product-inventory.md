@@ -15,4 +15,4 @@ Generated inventory of the installable Smart CLI and MCP surface. Do not edit by
 | MCP prompts | 0 |
 | MCP transports | `stdio (JSON-RPC 2.0)`, `Streamable HTTP (official MCP SDK)` |
 | Phase-gate schemas | 29 |
-| Statement coverage | 91.42% statements · 91.86% lines |
+| Statement coverage | 100% statements · 100% lines |

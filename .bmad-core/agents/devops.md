@@ -47,9 +47,9 @@ jobs:
       - name: Bilingual Parity
         run: node .harness/scripts/ci/04-check-bilingual-parity.mjs
       - name: Topology Rule Coverage
-        run: node .harness/scripts/ci/15-validate-topology-rule-coverage.mjs
+        run: node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs
       - name: OPA Parity Gate
-        run: node .harness/scripts/ci/16-opa-parity-gate.mjs
+        run: node .harness/scripts/ci/27-opa-parity-gate.mjs
       - name: Coverage Dashboard
         run: node .harness/scripts/coverage-dashboard.mjs
 ```

@@ -13,7 +13,6 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|
-| [`GT-256`](./gap-reference-catalog.es.md#gt-256) | Corregir healthcheck de Traefik añadiendo --ping=true al comando | `Infrastructure` | Cross | P1 | S | `PENDIENTE` |
 | [`GT-257`](./gap-reference-catalog.es.md#gt-257) | Fijar versión de imagen MongoDB en vez de usar latest | `Infrastructure` | Cross | P1 | S | `PENDIENTE` |
 | [`GT-259`](./gap-reference-catalog.es.md#gt-259) | Corregir trigger de publish en ci-cd.yml a tag-based en vez de string match | `CI/CD` | Cross | P1 | S | `PENDIENTE` |
 | [`GT-260`](./gap-reference-catalog.es.md#gt-260) | Crear archivo de idioma español para agente PO y añadir a workflows | `BMAD Agents` | Cross | P1 | S | `PENDIENTE` |
@@ -74,6 +73,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-235`](./gap-reference-catalog.es.md#gt-235) | Resolver colisiones de numeración de scripts CI (05/15/16) | `CI` | Cross | P1 | S | `COMPLETADO` |
 | [`GT-254`](./gap-reference-catalog.es.md#gt-254) | Añadir protección contra path traversal en resolución de recursos MCP | `Security` | Cross | P1 | S | `COMPLETADO` |
 | [`GT-255`](./gap-reference-catalog.es.md#gt-255) | Añadir headers Content-Security-Policy al transporte HTTP MCP | `Security` | Cross | P1 | S | `COMPLETADO` |
+| [`GT-256`](./gap-reference-catalog.es.md#gt-256) | Corregir healthcheck de Traefik añadiendo --ping=true al comando | `Infrastructure` | Cross | P1 | S | `COMPLETADO` |
 | [`MT-A09`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Crear Topology Hub en inglés y español | `Documentation` | Transversal | P1 | S | `COMPLETADO` |
 | [`GT-165`](./gap-reference-catalog.es.md#gt-165) | SLOs y presupuestos de costo concretos para topologías serverless y edge | `Documentation` | Cross | P1 | S | `COMPLETADO` |
 | [`GT-61`](./gap-reference-catalog.es.md#gt-61) | Manejo de errores RFC 9457 Problem Details | `BFF API` | Transversal | P1 | S | `COMPLETADO` |
@@ -279,7 +279,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-245`](./gap-reference-catalog.es.md#gt-245) | Añadir DAST (OWASP ZAP) al pipeline de seguridad | `Security` | Cross | P3 | L | `COMPLETADO` |
 | [`GT-246`](./gap-reference-catalog.es.md#gt-246) | Implementar experimentos Chaos Mesh/Litmus | `QA` | Cross | P3 | L | `COMPLETADO` |
 
-**Progreso:** 252 / 265 completados · 0 en progreso · 13 pendientes · 0 diferidos
+**Progreso:** 253 / 265 completados · 0 en progreso · 12 pendientes · 0 diferidos
 
 **Oleada 2026-06-23 (auditoría profunda de Wilson III):** Añadidos 14 gaps nuevos `GT-212`…`GT-225` del Wilson Audit Playbook que cubren: higiene de estado ADR (GT-212), metadata + presupuestos operativos + corpus de guías por topología (GT-213, GT-217, GT-219), observabilidad + OpenAPI en controladores REST (GT-214, GT-215), paridad de input-schemas OPA + densidad de tests por topología (GT-216, GT-222), plantillas de rollback + on-call de Fase 05 (GT-218), cobertura de ramas CLI + paridad de envelope --format + limpieza de skip-list (GT-220, GT-224, GT-225), audit logging HTTP de MCP (GT-221), y tests e2e de paridad cross-surface (GT-223).
 

@@ -3804,6 +3804,19 @@
       ],
       "dependencyDisposition": "none",
       "closureNote": "Added CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy headers to MCP HTTP transport. Fixed duplicate variable declaration in auth. 33/35 tests pass."
+    },
+    {
+      "id": "GT-256",
+      "closedAt": "2026-06-24",
+      "closureCommit": "e83abeaf",
+      "evidence": [
+        "reference/infrastructure/docker-compose.yml"
+      ],
+      "validationCommands": [
+        "grep -A 5 'ping=true' reference/infrastructure/docker-compose.yml"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Added --ping=true to Traefik command to enable ping endpoint. Healthcheck now succeeds."
     }
   ]
 }

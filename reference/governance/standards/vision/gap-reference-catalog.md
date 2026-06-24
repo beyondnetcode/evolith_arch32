@@ -2407,9 +2407,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Repair the Traefik healthcheck in `docker-compose.yml`, which today queries `/ping` while Traefik is started without `--ping=true`, guaranteeing the container is marked unhealthy in every environment that relies on this stack.
 **Current Evidence:** `reference/infrastructure/docker-compose.yml:164-182` — Traefik is started with `--providers.file.directory=/etc/traefik/dynamic` only. The healthcheck on line 182 runs `traefik healthcheck --ping`, which calls the internal ping endpoint; without `--ping=true` (or `--ping.entrypoint=...`) in the server startup, that endpoint is disabled and the check fails.
 **Done When:**
-  - [ ] Traefik command list includes `--ping=true` (and an explicit entrypoint if required).
-  - [ ] `traefik healthcheck --ping` succeeds against a running container.
-  - [ ] Optional: ping endpoint bound to the internal/admin entrypoint, not the public one.
+  - [x] Traefik command list includes `--ping=true` (and an explicit entrypoint if required).
+  - [x] `traefik healthcheck --ping` succeeds against a running container.
+  - [x] Optional: ping endpoint bound to the internal/admin entrypoint, not the public one.
 
 #### GT-257
 **Purpose:** Pin the MongoDB image to a specific minor version so the infrastructure stack is reproducible and protected against silent upgrades that could break compatibility or introduce unreviewed changes.

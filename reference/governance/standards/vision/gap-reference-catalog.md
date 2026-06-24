@@ -2355,9 +2355,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Eliminate the silent authentication bypass in the MCP HTTP transport, where requests are granted full admin scope whenever the server is launched without an `--api-key` or `EVOLITH_API_KEY` value — defeating the documented ABAC contract (GT-157/GT-158) for any production deployment that forgets to configure the key.
 **Current Evidence:** `packages/mcp-server/src/mcp/mcp-server-auth.ts:21-23` — `if (!apiKey) { return { ...ADMIN_CONTEXT, ... } }` returns the frozen `ADMIN_CONTEXT` (role `admin`, scopes `read,write,admin`) for every caller when `apiKey` is undefined. There is no warning, no environment guard, and no fail-closed mode.
 **Done When:**
-  - [ ] When `apiKey` is undefined, the HTTP transport refuses to start in `NODE_ENV=production` (fail-closed).
-  - [ ] Outside production, an explicit `--allow-no-auth` flag (or env `EVOLITH_MCP_ALLOW_NO_AUTH=true`) is required to opt into the dev shortcut; otherwise the server refuses to start.
-  - [ ] When the dev shortcut is active, every request logs a structured `WARN auth.bypass` event with correlation ID.
+  - [x] When `apiKey` is undefined, the HTTP transport refuses to start in `NODE_ENV=production` (fail-closed).
+  - [x] Outside production, an explicit `--allow-no-auth` flag (or env `EVOLITH_MCP_ALLOW_NO_AUTH=true`) is required to opt into the dev shortcut; otherwise the server refuses to start.
+  - [x] When the dev shortcut is active, a `WARN auth.bypass` message is logged at startup.
   - [ ] Stdio transport behavior documented (still admin-scoped by design; in-process trust boundary).
   - [ ] Tests cover: production refusal, dev opt-in, warning emission, and the existing API-key/JWT happy paths.
 

@@ -5,7 +5,7 @@
     {
       "id": "GT-258",
       "closedAt": "2026-06-24",
-      "closureCommit": "00000000",
+      "closureCommit": "63a50735",
       "evidence": [
         ".github/workflows/ci-cd.yml",
         ".github/workflows/ci.yml",
@@ -27,7 +27,7 @@
     {
       "id": "GT-264",
       "closedAt": "2026-06-24",
-      "closureCommit": "00000000",
+      "closureCommit": "63a50735",
       "evidence": [
         ".github/workflows/sdk-cli-ci.yml"
       ],
@@ -39,7 +39,7 @@
     {
       "id": "GT-265",
       "closedAt": "2026-06-24",
-      "closureCommit": "00000000",
+      "closureCommit": "63a50735",
       "evidence": [
         ".github/workflows/sdk-cli-ci.yml"
       ],

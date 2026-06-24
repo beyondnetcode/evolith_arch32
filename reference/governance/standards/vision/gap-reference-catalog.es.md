@@ -2183,9 +2183,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Implementar el evaluador TypeScript-native que carga y evalúa archivos `.rules.json`, cerrando la brecha donde R-25 (Paridad Dual-Engine) exige que toda regla exista en ambos evaluador TypeScript Y OPA `.rego`, pero solo OPA evalúa reglas realmente hoy.
 **Evidencia Actual:** Existen 26 archivos `.rules.json` en 10 dominios de gobernanza. El script `27-opa-parity-gate.mjs` compara WASM compilado contra fixtures "Native", pero ningún evaluador TypeScript carga o evalúa las reglas `.rules.json`.
 **Hecho Cuando:**
-  - [ ] Un evaluador TypeScript carga reglas `.rules.json` y produce veredictos que coinciden con la salida OPA para las mismas entradas.
-  - [ ] Existen fixtures de paridad para todos los dominios de rulesets con tests de paridad pasando.
-  - [ ] CI ejecuta ambos evaluadores y asume resultados idénticos en fixtures compartidos.
+  - [x] Un evaluador TypeScript carga reglas `.rules.json` y produce veredictos que coinciden con la salida OPA para las mismas entradas.
+  - [x] Existen fixtures de paridad para todos los dominios de rulesets con tests de paridad pasando.
+  - [x] CI ejecuta ambos evaluadores y asume resultados idénticos en fixtures compartidos.
 
 #### GT-230
 **Propósito:** Crear un directorio de skills y un framework de skills componibles para agentes BMAD, cerrando la brecha donde `.bmad-core/README.md` referencia un directorio `tooling/` que no existe, y los agentes no tienen una biblioteca de skills modular y descubrible.
@@ -2491,9 +2491,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Crear un servicio de provisioning de API keys para el transporte HTTP de MCP, de modo que consumidores externos tengan una forma segura y auditable de obtener y rotar llaves — actualmente la única opción es un único secreto compartido configurado vía env var, sin generación, distribución, rotación ni revocación.
 **Evidencia Actual:** No hay endpoint de generación de keys, ni key store, ni mecanismo de rotación. El operador auto-provisionaba cualquier string vía `--api-key` o `EVOLITH_API_KEY` y lo distribuía out of band. No hay keys por cliente, ni persistencia hasheada, ni trail de auditoría. ADR-0088/ADR-0091 prescriben migrar a identidades de corta duración (Token Exchange, Workload Identity), pero esa migración no está programada y el path de key estática carece de higiene básica de provisioning.
 **Hecho Cuando:**
-  - [ ] Formato de API key definido (ej. prefijo `evk_` + entropía) y un comando CLI o endpoint HTTP genera keys on demand.
-  - [ ] Keys almacenadas hasheadas (SHA-256) con metadatos: etiqueta de cliente, fecha de creación, último uso, expiración.
-  - [ ] Rotación de keys soportada sin reinicio del servidor (múltiples keys válidas, versionadas por fecha de creación).
-  - [ ] Endpoint o mecanismo de revocación documentado.
-  - [ ] Log de auditoría para eventos de creación, rotación y revocación de keys.
-  - [ ] Ruta de migración documentada desde el modelo actual de env-var único al servicio de provisioning.
+  - [x] Formato de API key definido (ej. prefijo `evk_` + entropía) y un comando CLI o endpoint HTTP genera keys on demand.
+  - [x] Keys almacenadas hasheadas (SHA-256) con metadatos: etiqueta de cliente, fecha de creación, último uso, expiración.
+  - [x] Rotación de keys soportada sin reinicio del servidor (múltiples keys válidas, versionadas por fecha de creación).
+  - [x] Endpoint o mecanismo de revocación documentado.
+  - [x] Log de auditoría para eventos de creación, rotación y revocación de keys.
+  - [x] Ruta de migración documentada desde el modelo actual de env-var único al servicio de provisioning.

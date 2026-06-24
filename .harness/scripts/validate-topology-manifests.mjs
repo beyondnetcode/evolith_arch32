@@ -216,6 +216,25 @@ if (!fs.existsSync(schemaPath)) {
       }
     }
 
+    // AI budget check (GT-219)
+    if (manifest.spec?.topologyType === "agentic-ai") {
+      const budgets = manifest.spec?.operationalBudgets;
+      if (!budgets) {
+        failures.push(`${relative(manifestPath)} violates GT-219: agentic-ai topology must declare operationalBudgets`);
+      } else {
+        const { tokenBudgetPerExecution, credentialRotationIntervalHours, sandboxTimeoutMs } = budgets;
+        if (tokenBudgetPerExecution === undefined || tokenBudgetPerExecution <= 0) {
+          failures.push(`${relative(manifestPath)} violates GT-219: tokenBudgetPerExecution must be a positive integer`);
+        }
+        if (credentialRotationIntervalHours === undefined || credentialRotationIntervalHours <= 0) {
+          failures.push(`${relative(manifestPath)} violates GT-219: credentialRotationIntervalHours must be a positive integer`);
+        }
+        if (sandboxTimeoutMs === undefined || sandboxTimeoutMs <= 0) {
+          failures.push(`${relative(manifestPath)} violates GT-219: sandboxTimeoutMs must be a positive integer`);
+        }
+      }
+    }
+
     if (manifest.metadata?.status === "accepted") {
       const artifacts = [
         ...(manifest.spec?.artifacts?.adrs ?? []),

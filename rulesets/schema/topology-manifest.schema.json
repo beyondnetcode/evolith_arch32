@@ -218,8 +218,7 @@
         },
         "operationalBudgets": {
           "type": "object",
-          "description": "Architectural envelopes for execution-tier topologies (GT-165 / ADR-0095 / ADR-0096). These are technical ceilings used by operators to verify the topology's viability, not financial plans — Tracker still owns roi/cost/budget decisions per businessBoundary.",
-          "required": ["latencyBudgetMs", "coldStartCeilingMs", "costCeilingPerExecutionCents"],
+          "description": "Architectural envelopes for execution-tier and AI-tier topologies (GT-165 / GT-219 / ADR-0095 / ADR-0096). These are technical ceilings used by operators to verify the topology's viability, not financial plans — Tracker still owns roi/cost/budget decisions per businessBoundary.",
           "additionalProperties": false,
           "properties": {
             "latencyBudgetMs": {
@@ -236,6 +235,21 @@
               "type": "integer",
               "minimum": 1,
               "description": "Architectural ceiling for cost per execution in whole cents. Above this envelope the topology's economics fail; financial planning still lives in Tracker."
+            },
+            "tokenBudgetPerExecution": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Maximum tokens consumed per AI execution. Above this ceiling the agentic topology is non-viable."
+            },
+            "credentialRotationIntervalHours": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Maximum hours between credential rotations for agentic AI topologies."
+            },
+            "sandboxTimeoutMs": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Maximum milliseconds an agentic sandbox execution may run before forced termination."
             }
           }
         },
@@ -372,6 +386,34 @@
       "then": {
         "properties": {
           "spec": { "required": ["operationalBudgets"] }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "metadata": {
+            "properties": { "status": { "const": "accepted" } },
+            "required": ["status"]
+          },
+          "spec": {
+            "properties": {
+              "topologyType": { "const": "agentic-ai" }
+            },
+            "required": ["topologyType"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "spec": {
+            "required": ["operationalBudgets"],
+            "properties": {
+              "operationalBudgets": {
+                "required": ["tokenBudgetPerExecution", "credentialRotationIntervalHours", "sandboxTimeoutMs"]
+              }
+            }
+          }
         }
       }
     }

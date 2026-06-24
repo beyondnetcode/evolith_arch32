@@ -31,6 +31,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-264`](./gap-reference-catalog.es.md#gt-264) | Corregir scan DAST para apuntar al servidor real o eliminar | `CI/CD` | Cross | P2 | S | `PENDIENTE` |
 | [`GT-265`](./gap-reference-catalog.es.md#gt-265) | Añadir detección de secretos (gitleaks) al pipeline CI | `Security` | Cross | P2 | S | `PENDIENTE` |
 | [`GT-262`](./gap-reference-catalog.es.md#gt-262) | Añadir procedimientos de backup/DR para almacenes de datos | `Infrastructure` | Cross | P2 | M | `PENDIENTE` |
+| [`GT-266`](./gap-reference-catalog.es.md#gt-266) | Crear servicio de provisioning de API keys para MCP HTTP | `Security` | Cross | P2 | M | `PENDIENTE` |
 | [`GT-226`](./gap-reference-catalog.es.md#gt-226) | Configurar Dependabot/Renovate (cumplimiento ADR-0009) | `Governance` | Cross | P0 | S | `COMPLETADO` |
 | [`GT-152`](./gap-reference-catalog.es.md#gt-152) | Contrato de Conocimiento Externo y Esquema de Registro Fuente | `Governance` | Cross | P0 | S | `COMPLETADO` |
 | [`GT-59`](./gap-reference-catalog.es.md#gt-59) | Hardening HTTP — Helmet + CORS + Rate Limiting (OWASP API4/8) | `BFF API` | Transversal | P0 | S | `COMPLETADO` |
@@ -278,7 +279,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-245`](./gap-reference-catalog.es.md#gt-245) | Añadir DAST (OWASP ZAP) al pipeline de seguridad | `Security` | Cross | P3 | L | `COMPLETADO` |
 | [`GT-246`](./gap-reference-catalog.es.md#gt-246) | Implementar experimentos Chaos Mesh/Litmus | `QA` | Cross | P3 | L | `COMPLETADO` |
 
-**Progreso:** 246 / 264 completados · 0 en progreso · 18 pendientes · 0 diferidos
+**Progreso:** 246 / 265 completados · 0 en progreso · 19 pendientes · 0 diferidos
 
 **Oleada 2026-06-23 (auditoría profunda de Wilson III):** Añadidos 14 gaps nuevos `GT-212`…`GT-225` del Wilson Audit Playbook que cubren: higiene de estado ADR (GT-212), metadata + presupuestos operativos + corpus de guías por topología (GT-213, GT-217, GT-219), observabilidad + OpenAPI en controladores REST (GT-214, GT-215), paridad de input-schemas OPA + densidad de tests por topología (GT-216, GT-222), plantillas de rollback + on-call de Fase 05 (GT-218), cobertura de ramas CLI + paridad de envelope --format + limpieza de skip-list (GT-220, GT-224, GT-225), audit logging HTTP de MCP (GT-221), y tests e2e de paridad cross-surface (GT-223).
 
@@ -289,6 +290,8 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 **Oleada 2026-06-22 (integración backlog NXT):** Añadidos 34 gaps nuevos `GT-175`…`GT-208` del Deep Coherence Analysis que cubren calidad de código CLI, completitud de documentación, cobertura de pruebas, READMEs de infraestructura y estandarización ADR.
 
 **Oleada 2026-06-23 (auditoría arquitectónica profunda):** Añadidos 16 gaps nuevos `GT-250`…`GT-265` que cubren: bypass de auth MCP (GT-250), inyección de comandos (GT-251), 19 políticas OPA huérfanas (GT-252), fijación de versión trivy (GT-253), path traversal (GT-254), headers CSP (GT-255), healthcheck Traefik (GT-256), fijación de versión MongoDB (GT-257), concurrencia GH Actions (GT-258), trigger de publish (GT-259), archivo ES del agente PO (GT-260), límites de recursos Docker (GT-261), backup/DR (GT-262), alertas Prometheus (GT-263), corrección de target DAST (GT-264) y detección de secretos (GT-265). Los 16 verificados contra código por auditoría profunda Winston 2026-06-24.
+
+**Oleada 2026-06-24 (descubrimiento arquitectónico):** Añadido `GT-266` — servicio de provisioning de API keys para MCP HTTP, descubierto al analizar requisitos de consumo externo de GT-250.
 
 **Ordenamiento:** una sola tabla, ordenada por estado (pendientes luego completados), luego criticidad (`P0` → `P1` → `P2` → `P3`), luego complejidad (`XS` → `S` → `M` → `L` → `XL`). Los IDs `GT-*` enlazan al [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md); los IDs `MT-A*` enlazan al [plan de implementación Multi-Topology](./multi-topology-reference-corpus-implementation-plan.es.md).
 

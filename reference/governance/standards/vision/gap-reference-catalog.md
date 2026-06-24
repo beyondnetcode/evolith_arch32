@@ -2391,9 +2391,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Prevent path-traversal attacks against the MCP `resources/read` surface — today an MCP client can craft `evolith://ruleset/../../etc/passwd` style URIs and the resource resolver will happily `path.join` outside the rulesets root.
 **Current Evidence:** `packages/mcp-server/src/mcp/resources.service.ts:115` — `path.join(corePath, 'rulesets', name.replace(/-/g, '/') + '.rules.json')` with no normalization or containment check. Same shape at lines 119 (alt path), 134 (`getAgentContent`), 157 (`getMoscowAnalysis`), and 172-176 (`getTopologyContent`). Each accepts a user-supplied string and joins it against a trusted base without verifying the resolved path stays within the base.
 **Done When:**
-  - [ ] Each resource resolver normalizes the candidate path (`path.resolve`) and refuses any result whose normalized form does not start with the resolved base directory.
-  - [ ] Names containing `..`, absolute paths, or path separators that escape the expected shape are rejected with a `BAD_REQUEST` failure envelope before any filesystem call.
-  - [ ] Specs cover positive cases (legitimate ruleset/agent/topology lookups) and negative cases (`../../etc/passwd`, absolute paths, URL-encoded traversal).
+  - [x] Each resource resolver normalizes the candidate path (`path.resolve`) and refuses any result whose normalized form does not start with the resolved base directory.
+  - [x] Names containing `..`, absolute paths, or path separators that escape the expected shape are rejected with a `BAD_REQUEST` failure envelope before any filesystem call.
+  - [x] Specs cover positive cases (legitimate ruleset/agent/topology lookups) and negative cases (`../../etc/passwd`, absolute paths, URL-encoded traversal).
 
 #### GT-255
 **Purpose:** Close the CSP/security-headers gap on the MCP HTTP transport so MCP and Core API present the same defensive surface — `apps/core-api` already wires `helmet`, but `packages/mcp-server` does not, leaving its HTTP responses without CSP, HSTS, X-Frame-Options, or X-Content-Type-Options.

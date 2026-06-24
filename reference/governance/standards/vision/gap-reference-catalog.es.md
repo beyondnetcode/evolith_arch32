@@ -2391,9 +2391,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Prevenir ataques de path traversal contra la superficie `resources/read` del MCP — hoy un cliente MCP puede construir URIs estilo `evolith://ruleset/../../etc/passwd` y el resolvedor de recursos hará `path.join` fuera del directorio raíz de rulesets sin oposición.
 **Evidencia Actual:** `packages/mcp-server/src/mcp/resources.service.ts:115` — `path.join(corePath, 'rulesets', name.replace(/-/g, '/') + '.rules.json')` sin normalización ni chequeo de contención. Misma forma en líneas 119 (path alterno), 134 (`getAgentContent`), 157 (`getMoscowAnalysis`) y 172-176 (`getTopologyContent`). Cada uno acepta un string suministrado por el usuario y lo une contra una base de confianza sin verificar que la ruta resuelta permanezca dentro de la base.
 **Hecho Cuando:**
-  - [ ] Cada resolvedor normaliza la ruta candidata (`path.resolve`) y rechaza cualquier resultado cuya forma normalizada no comience con el directorio base resuelto.
-  - [ ] Nombres con `..`, rutas absolutas, o separadores de ruta que escapen de la forma esperada son rechazados con un envelope `BAD_REQUEST` antes de cualquier llamada al sistema de archivos.
-  - [ ] Los specs cubren casos positivos (búsquedas legítimas de ruleset/agent/topology) y negativos (`../../etc/passwd`, rutas absolutas, traversal URL-encoded).
+  - [x] Cada resolvedor normaliza la ruta candidata (`path.resolve`) y rechaza cualquier resultado cuya forma normalizada no comience con el directorio base resuelto.
+  - [x] Nombres con `..`, rutas absolutas, o separadores de ruta que escapen de la forma esperada son rechazados con un envelope `BAD_REQUEST` antes de cualquier llamada al sistema de archivos.
+  - [x] Los specs cubren casos positivos (búsquedas legítimas de ruleset/agent/topology) y negativos (`../../etc/passwd`, rutas absolutas, traversal URL-encoded).
 
 #### GT-255
 **Propósito:** Cerrar la brecha de CSP / headers de seguridad en el transporte HTTP del MCP para que MCP y Core API presenten la misma superficie defensiva — `apps/core-api` ya cablea `helmet`, pero `packages/mcp-server` no, dejando sus respuestas HTTP sin CSP, HSTS, X-Frame-Options ni X-Content-Type-Options.

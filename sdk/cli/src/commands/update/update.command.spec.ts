@@ -26,8 +26,8 @@ describe('UpdateCommand', () => {
     });
 
     it('should install update when --install flag is provided', async () => {
-      const { execSync } = require('child_process');
-      (execSync as jest.Mock).mockImplementation(() => {
+      const { execFileSync } = require('child_process');
+      (execFileSync as jest.Mock).mockImplementation(() => {
         throw new Error('npm not available in test');
       });
       await expect(command.executeCommand([], { install: true })).resolves.not.toThrow();
@@ -47,24 +47,41 @@ describe('UpdateCommand', () => {
 
   describe('getLatestVersion', () => {
     it('should return latest version from npm', async () => {
-      const { execSync } = require('child_process');
-      (execSync as jest.Mock).mockReturnValue('"1.2.0"');
-      
+      const { execFileSync } = require('child_process');
+      (execFileSync as jest.Mock).mockReturnValue('"1.2.0"');
+
       const result = await (command as any).getLatestVersion();
-      
-      expect(execSync).toHaveBeenCalledWith(
-        'npm view @evolith/smart-cli version --json',
+
+      expect(execFileSync).toHaveBeenCalledWith(
+        'npm',
+        ['view', '@evolith/smart-cli', 'version', '--json'],
         expect.objectContaining({ timeout: 10000 })
       );
       expect(result).toBe('1.2.0');
     });
 
     it('should return null when npm command fails', async () => {
-      const { execSync } = require('child_process');
-      (execSync as jest.Mock).mockImplementation(() => {
+      const { execFileSync } = require('child_process');
+      (execFileSync as jest.Mock).mockImplementation(() => {
         throw new Error('Network error');
       });
-      
+
+      const result = await (command as any).getLatestVersion();
+      expect(result).toBeNull();
+    });
+
+    it('should reject malicious version strings', async () => {
+      const { execFileSync } = require('child_process');
+      (execFileSync as jest.Mock).mockReturnValue('"1.0.0; rm -rf /"');
+
+      const result = await (command as any).getLatestVersion();
+      expect(result).toBeNull();
+    });
+
+    it('should reject non-semver strings', async () => {
+      const { execFileSync } = require('child_process');
+      (execFileSync as jest.Mock).mockReturnValue('"not-a-version"');
+
       const result = await (command as any).getLatestVersion();
       expect(result).toBeNull();
     });

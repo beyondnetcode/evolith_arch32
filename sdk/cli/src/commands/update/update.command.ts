@@ -1,8 +1,10 @@
-import { execSync } from 'child_process';
+import { execFileSync } from 'child_process';
 import { Command, Option } from 'nest-commander';
 import chalk from 'chalk';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import packageJson from '../../../package.json';
+
+const SEMVER_REGEX = /^\d+\.\d+\.\d+(-[\w.]+)?(\+[\w.]+)?$/;
 
 interface UpdateCommandOptions {
   check?: boolean;
@@ -113,7 +115,7 @@ export class UpdateCommand extends BaseEvolithCommand {
       this.promptService.stopSpinner();
       this.promptService.showInfo(`Installing @evolith/smart-cli@${latestVersion}...`);
 
-      execSync(`npm install -g @evolith/smart-cli@${latestVersion}`, {
+      execFileSync('npm', ['install', '-g', `@evolith/smart-cli@${latestVersion}`], {
         stdio: 'inherit',
       });
 
@@ -156,11 +158,16 @@ export class UpdateCommand extends BaseEvolithCommand {
 
   private async getLatestVersion(): Promise<string | null> {
     try {
-      const result = execSync('npm view @evolith/smart-cli version --json', {
+      const result = execFileSync('npm', ['view', '@evolith/smart-cli', 'version', '--json'], {
         encoding: 'utf8',
         timeout: 10000,
       });
-      return JSON.parse(result.trim());
+      const version = JSON.parse(result.trim());
+      if (typeof version !== 'string' || !SEMVER_REGEX.test(version)) {
+        this.logger.warn(`Invalid version format from registry: ${version}`);
+        return null;
+      }
+      return version;
     } catch {
       this.logger.warn('Failed to fetch latest version from npm registry');
       return null;

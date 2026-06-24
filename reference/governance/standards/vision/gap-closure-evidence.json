@@ -3716,6 +3716,24 @@
       ],
       "dependencyDisposition": "none",
       "closureNote": "Implemented Redis caching for Core API and MCP with cache interceptors, metrics, and documentation."
+    },
+    {
+      "id": "GT-250",
+      "closedAt": "2026-06-24",
+      "closureCommit": "866bbe8d",
+      "evidence": [
+        "packages/mcp-server/src/mcp/mcp-server-auth.ts",
+        "packages/mcp-server/src/mcp/mcp-server.service.ts",
+        "packages/mcp-server/src/main.ts",
+        "packages/mcp-server/src/main.spec.ts",
+        "packages/mcp-server/src/mcp/mcp-server.service.spec.ts"
+      ],
+      "validationCommands": [
+        "npx jest packages/mcp-server/src/main.spec.ts",
+        "npx jest packages/mcp-server/src/mcp/mcp-server.service.spec.ts"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Fail-closed MCP auth when no API key configured. Production mode rejects; dev allows --allow-no-auth opt-in."
     }
   ]
 }

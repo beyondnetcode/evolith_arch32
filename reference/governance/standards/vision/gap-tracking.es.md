@@ -48,6 +48,22 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-247`](./gap-reference-catalog.es.md#gt-247) | Reemplazar credenciales hardcodeadas en Docker-compose | `Platform` | Cross | P3 | S | `COMPLETADO` |
 | [`GT-248`](./gap-reference-catalog.es.md#gt-248) | Crear monitor de frescura de ADRs y script de revisión semanal | `Governance` | Cross | P3 | S | `COMPLETADO` |
 | [`GT-249`](./gap-reference-catalog.es.md#gt-249) | Añadir capa de caché Redis para Core API, MCP y consumo de Tracker | `Architecture` | Cross | P1 | M | `COMPLETADO` |
+| [`GT-250`](./gap-reference-catalog.es.md#gt-250) | Corregir bypass de autenticación MCP cuando no hay API key configurada | `Security` | Cross | P0 | S | `PENDIENTE` |
+| [`GT-251`](./gap-reference-catalog.es.md#gt-251) | Corregir inyección de comandos en update vía execSync | `Security` | Cross | P0 | S | `PENDIENTE` |
+| [`GT-252`](./gap-reference-catalog.es.md#gt-252) | Cablear las 20 políticas OPA huérfanas al agregador main.rego | `Rulesets` | Cross | P0 | M | `PENDIENTE` |
+| [`GT-253`](./gap-reference-catalog.es.md#gt-253) | Fijar trivy-action a tag de versión específico en vez de branch master | `CI/CD` | Cross | P0 | S | `PENDIENTE` |
+| [`GT-254`](./gap-reference-catalog.es.md#gt-254) | Añadir protección contra path traversal en resolución de recursos MCP | `Security` | Cross | P1 | S | `PENDIENTE` |
+| [`GT-255`](./gap-reference-catalog.es.md#gt-255) | Añadir headers Content-Security-Policy al transporte HTTP MCP | `Security` | Cross | P1 | S | `PENDIENTE` |
+| [`GT-256`](./gap-reference-catalog.es.md#gt-256) | Corregir healthcheck de Traefik añadiendo --ping=true al comando | `Infrastructure` | Cross | P1 | S | `PENDIENTE` |
+| [`GT-257`](./gap-reference-catalog.es.md#gt-257) | Fijar versión de imagen MongoDB en vez de usar latest | `Infrastructure` | Cross | P1 | S | `PENDIENTE` |
+| [`GT-258`](./gap-reference-catalog.es.md#gt-258) | Añadir controles de concurrencia a todos los workflows GitHub Actions | `CI/CD` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-259`](./gap-reference-catalog.es.md#gt-259) | Corregir trigger de publish en ci-cd.yml a tag-based en vez de string match | `CI/CD` | Cross | P1 | S | `PENDIENTE` |
+| [`GT-260`](./gap-reference-catalog.es.md#gt-260) | Crear archivo de idioma español para agente PO y añadir a workflows | `BMAD Agents` | Cross | P1 | S | `PENDIENTE` |
+| [`GT-261`](./gap-reference-catalog.es.md#gt-261) | Añadir límites de recursos a todos los contenedores Docker | `Infrastructure` | Cross | P2 | S | `PENDIENTE` |
+| [`GT-262`](./gap-reference-catalog.es.md#gt-262) | Añadir procedimientos de backup/DR para almacenes de datos | `Infrastructure` | Cross | P2 | M | `PENDIENTE` |
+| [`GT-263`](./gap-reference-catalog.es.md#gt-263) | Añadir alertas Prometheus a nivel de infraestructura | `Observability` | Cross | P2 | S | `PENDIENTE` |
+| [`GT-264`](./gap-reference-catalog.es.md#gt-264) | Corregir scan DAST para apuntar al servidor real o eliminar | `CI/CD` | Cross | P2 | S | `PENDIENTE` |
+| [`GT-265`](./gap-reference-catalog.es.md#gt-265) | Añadir detección de secretos (gitleaks) al pipeline CI | `Security` | Cross | P2 | S | `PENDIENTE` |
 | [`GT-190`](./gap-reference-catalog.es.md#gt-190) | Agregar logging a 9 catch blocks vacíos | `CLI` | Cross | P2 | S | `COMPLETADO` |
 | [`GT-191`](./gap-reference-catalog.es.md#gt-191) | Corregir etiqueta ADR matrix incorrecta | `Docs` | Cross | P2 | S | `COMPLETADO` |
 | [`GT-192`](./gap-reference-catalog.es.md#gt-192) | Corregir enlaces MASTER_INDEX EN (`.es.md`→`.md`) | `Docs` | Cross | P2 | S | `COMPLETADO` |
@@ -262,7 +278,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-160`](./gap-reference-catalog.es.md#gt-160) | Propagación de correlation-ID y contexto de solicitud entre superficies | `Cross` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-174`](./gap-reference-catalog.es.md#gt-174) | `meta.schemaVersion` y matriz de compatibilidad productor/consumidor | `Cross` | Cross | P2 | S | `COMPLETADO` |
 
-**Progreso:** 246 / 248 completados · 0 en progreso · 2 pendientes · 0 diferidos
+**Progreso:** 246 / 264 completados · 0 en progreso · 18 pendientes · 0 diferidos
 
 **Oleada 2026-06-23 (auditoría profunda de Wilson III):** Añadidos 14 gaps nuevos `GT-212`…`GT-225` del Wilson Audit Playbook que cubren: higiene de estado ADR (GT-212), metadata + presupuestos operativos + corpus de guías por topología (GT-213, GT-217, GT-219), observabilidad + OpenAPI en controladores REST (GT-214, GT-215), paridad de input-schemas OPA + densidad de tests por topología (GT-216, GT-222), plantillas de rollback + on-call de Fase 05 (GT-218), cobertura de ramas CLI + paridad de envelope --format + limpieza de skip-list (GT-220, GT-224, GT-225), audit logging HTTP de MCP (GT-221), y tests e2e de paridad cross-surface (GT-223).
 
@@ -271,6 +287,8 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 **Oleada 2026-06-21 (auditoría profunda de Wilson):** Añadidos 20 gaps nuevos `GT-155`…`GT-174` que cubren conformidad de envelope en Core API REST, paridad de superficies command-as-a-service, autenticación/autorización MCP, esquemas y tests de OPA, validación CI de manifests de topología, runbooks y plantillas SDLC, hubs de producto de Core API y UMS, presupuestos operativos de Agentic AI, paridad OpenTelemetry y versionado del envelope.
 
 **Oleada 2026-06-22 (integración backlog NXT):** Añadidos 34 gaps nuevos `GT-175`…`GT-208` del Deep Coherence Analysis que cubren calidad de código CLI, completitud de documentación, cobertura de pruebas, READMEs de infraestructura y estandarización ADR.
+
+**Oleada 2026-06-23 (auditoría arquitectónica profunda):** Añadidos 16 gaps nuevos `GT-250`…`GT-265` que cubren: bypass de auth MCP (GT-250), inyección de comandos (GT-251), 19 políticas OPA huérfanas (GT-252), fijación de versión trivy (GT-253), path traversal (GT-254), headers CSP (GT-255), healthcheck Traefik (GT-256), fijación de versión MongoDB (GT-257), concurrencia GH Actions (GT-258), trigger de publish (GT-259), archivo ES del agente PO (GT-260), límites de recursos Docker (GT-261), backup/DR (GT-262), alertas Prometheus (GT-263), corrección de target DAST (GT-264) y detección de secretos (GT-265). Los 16 verificados contra código por auditoría profunda Winston 2026-06-24.
 
 **Ordenamiento:** una sola tabla, ordenada por estado (pendientes, luego diferidos, luego completados), luego criticidad (`P0` → `P1` → `P2`) y luego complejidad (`S` → `M` → `L`); los completados se agrupan por componente. Los IDs `GT-*` enlazan al [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md); los IDs `MT-A*` enlazan al [plan de implementación Multi-Topology](./multi-topology-reference-corpus-implementation-plan.es.md).
 

@@ -4,7 +4,7 @@
 
 **Status:** Active Tracking
 **Owner:** Evolith Architecture Board
-**Last Updated:** 2026-06-23 (Wave Wilson 4 — 23 new gaps)
+**Last Updated:** 2026-06-23 (Deep architectural audit — 16 new gaps)
 **Gap Details:** [Gap Reference Catalog](./gap-reference-catalog.md)
 
 This board is the single source of truth for technical debt, gaps, opportunities, enablers, priority, and status. Select a gap ID to open its problem statement, purpose, evidence, closure criteria, and references.
@@ -48,6 +48,22 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-247`](./gap-reference-catalog.md#gt-247) | Replace hardcoded Docker-compose credentials | `Platform` | Cross | P3 | S | `DONE` |
 | [`GT-248`](./gap-reference-catalog.md#gt-248) | Create ADR freshness monitor and weekly review script | `Governance` | Cross | P3 | S | `DONE` |
 | [`GT-249`](./gap-reference-catalog.md#gt-249) | Add Redis caching layer for Core API, MCP, and Tracker consumption | `Architecture` | Cross | P1 | M | `DONE` |
+| [`GT-250`](./gap-reference-catalog.md#gt-250) | Fix MCP auth bypass when no API key configured | `Security` | Cross | P0 | S | `PENDING` |
+| [`GT-251`](./gap-reference-catalog.md#gt-251) | Fix command injection in update command via execSync | `Security` | Cross | P0 | S | `PENDING` |
+| [`GT-252`](./gap-reference-catalog.md#gt-252) | Wire all 19 orphaned OPA policies into main.rego aggregator | `Rulesets` | Cross | P0 | M | `PENDING` |
+| [`GT-253`](./gap-reference-catalog.md#gt-253) | Pin trivy-action to specific version tag instead of master branch | `CI/CD` | Cross | P0 | S | `PENDING` |
+| [`GT-254`](./gap-reference-catalog.md#gt-254) | Add path traversal protection to MCP resource resolution | `Security` | Cross | P1 | S | `PENDING` |
+| [`GT-255`](./gap-reference-catalog.md#gt-255) | Add Content-Security-Policy headers to MCP HTTP transport | `Security` | Cross | P1 | S | `PENDING` |
+| [`GT-256`](./gap-reference-catalog.md#gt-256) | Fix Traefik healthcheck by adding --ping=true to command | `Infrastructure` | Cross | P1 | S | `PENDING` |
+| [`GT-257`](./gap-reference-catalog.md#gt-257) | Pin MongoDB image version instead of using latest | `Infrastructure` | Cross | P1 | S | `PENDING` |
+| [`GT-258`](./gap-reference-catalog.md#gt-258) | Add concurrency controls to all GitHub Actions workflows | `CI/CD` | Cross | P1 | M | `PENDING` |
+| [`GT-259`](./gap-reference-catalog.md#gt-259) | Fix ci-cd.yml publish trigger to use tag-based instead of string match | `CI/CD` | Cross | P1 | S | `PENDING` |
+| [`GT-260`](./gap-reference-catalog.md#gt-260) | Create PO agent Spanish language file and add to workflows | `BMAD Agents` | Cross | P1 | S | `PENDING` |
+| [`GT-261`](./gap-reference-catalog.md#gt-261) | Add resource limits to all Docker containers | `Infrastructure` | Cross | P2 | S | `PENDING` |
+| [`GT-262`](./gap-reference-catalog.md#gt-262) | Add backup/DR procedures for data stores | `Infrastructure` | Cross | P2 | M | `PENDING` |
+| [`GT-263`](./gap-reference-catalog.md#gt-263) | Add infrastructure-level Prometheus alerts | `Observability` | Cross | P2 | S | `PENDING` |
+| [`GT-264`](./gap-reference-catalog.md#gt-264) | Fix DAST scan to target real server or remove | `CI/CD` | Cross | P2 | S | `PENDING` |
+| [`GT-265`](./gap-reference-catalog.md#gt-265) | Add secret detection (gitleaks) to CI pipeline | `Security` | Cross | P2 | S | `PENDING` |
 | [`GT-190`](./gap-reference-catalog.md#gt-190) | Add logging to 9 empty catch blocks | `CLI` | Cross | P2 | S | `DONE` |
 | [`GT-191`](./gap-reference-catalog.md#gt-191) | Fix ADR matrix label mismatch | `Docs` | Cross | P2 | S | `DONE` |
 | [`GT-192`](./gap-reference-catalog.md#gt-192) | Fix MASTER_INDEX EN links `.es.md` → `.md` | `Docs` | Cross | P2 | S | `DONE` |
@@ -262,7 +278,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-160`](./gap-reference-catalog.md#gt-160) | Cross-surface correlation-ID and request-context propagation | `Cross` | Cross | P1 | M | `DONE` |
 | [`GT-174`](./gap-reference-catalog.md#gt-174) | Envelope `meta.schemaVersion` and producer/consumer compatibility matrix | `Cross` | Cross | P2 | S | `DONE` |
 
-**Progress:** 246 / 248 done · 0 in progress · 2 pending · 0 deferred
+**Progress:** 246 / 264 done · 0 in progress · 18 pending · 0 deferred
 
 **Wave 2026-06-23 (Wilson deep audit III):** Added 14 new gaps `GT-212`…`GT-225` from the Wilson Audit Playbook covering: ADR status hygiene (GT-212), topology manifest metadata + operational budgets + guidance corpus (GT-213, GT-217, GT-219), REST controller observability + OpenAPI (GT-214, GT-215), OPA input-schema parity + per-topology test density (GT-216, GT-222), SDLC Phase 05 rollback + on-call templates (GT-218), CLI branch coverage + envelope format coverage + skip-list cleanup (GT-220, GT-224, GT-225), MCP HTTP audit logging (GT-221), and cross-surface parity e2e tests (GT-223).
 
@@ -273,6 +289,8 @@ This board is the single source of truth for technical debt, gaps, opportunities
 **Wave 2026-06-21 (Wilson deep audit):** Added 20 new gaps `GT-155`…`GT-174` covering Core API envelope conformance, command-as-a-service surface parity, MCP authn/authz, OPA schemas/aggregator tests, topology manifest validation, SDLC runbooks/templates, Core API and UMS product hubs, agentic-AI operational budgets, OpenTelemetry parity, and envelope schema versioning.
 
 **Wave 2026-06-22 (NXT backlog integration):** Added 34 new gaps `GT-175`…`GT-208` from the Deep Coherence Analysis covering CLI code quality, documentation completeness, test coverage, infrastructure READMEs, and ADR standardization.
+
+**Wave 2026-06-23 (deep architectural audit):** Added 16 new gaps `GT-250`…`GT-265` covering: MCP auth bypass (GT-250), command injection (GT-251), 19 orphaned OPA policies (GT-252), trivy version pinning (GT-253), path traversal (GT-254), CSP headers (GT-255), Traefik healthcheck (GT-256), MongoDB version pinning (GT-257), GH Actions concurrency (GT-258), publish trigger (GT-259), PO agent ES file (GT-260), Docker resource limits (GT-261), backup/DR (GT-262), Prometheus alerts (GT-263), DAST target fix (GT-264), and secret detection (GT-265). All 16 code-verified by Winston deep audit 2026-06-24.
 
 **Ordering:** one table, ordered by status (pending then deferred then completed), then criticality (`P0` → `P1` → `P2`) then complexity (`S` → `M` → `L`); completed gaps are grouped by component. `GT-*` IDs link to the [Gap Reference Catalog](./gap-reference-catalog.md); `MT-A*` IDs link to the supporting [Multi-Topology implementation plan](./multi-topology-reference-corpus-implementation-plan.md).
 

@@ -889,7 +889,7 @@
       "closureCommit": "3492321",
       "evidence": [
         "packages/core-domain/src/domain",
-        "sdk/cli/src/application",
+        "packages/core-domain/src/application",
         "sdk/cli/src/infrastructure",
         "sdk/cli/.eslintrc.js"
       ],

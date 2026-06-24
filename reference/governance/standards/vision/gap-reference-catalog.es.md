@@ -2350,3 +2350,139 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] MCP server cachea resultados de descubrimiento de tools/resources (TTL: 10 minutos).
   - [x] Se documenta una estrategia de invalidación de caché para actualizaciones de manifiestos de topología.
   - [x] Métricas de hit/miss de caché se exponen vía el stack de observabilidad (Prometheus).
+
+#### GT-250
+**Propósito:** Eliminar el bypass silencioso de autenticación en el transporte HTTP del MCP, donde las peticiones obtienen scope completo de admin si el servidor se levanta sin `--api-key` ni `EVOLITH_API_KEY` — derrotando el contrato ABAC documentado (GT-157/GT-158) para cualquier despliegue de producción que olvide configurar la clave.
+**Evidencia Actual:** `packages/mcp-server/src/mcp/mcp-server-auth.ts:21-23` — `if (!apiKey) { return { ...ADMIN_CONTEXT, ... } }` retorna el `ADMIN_CONTEXT` congelado (rol `admin`, scopes `read,write,admin`) para todo llamador cuando `apiKey` es `undefined`. No hay warning, ni guard por entorno, ni modo fail-closed.
+**Hecho Cuando:**
+  - [ ] Si `apiKey` está indefinida, el transporte HTTP rehúsa arrancar en `NODE_ENV=production` (fail-closed).
+  - [ ] Fuera de producción, un flag explícito `--allow-no-auth` (o env `EVOLITH_MCP_ALLOW_NO_AUTH=true`) es requerido para optar por el atajo de desarrollo; en otro caso el servidor rehúsa arrancar.
+  - [ ] Cuando el atajo de desarrollo está activo, cada petición emite un evento estructurado `WARN auth.bypass` con correlation ID.
+  - [ ] Comportamiento del transporte stdio documentado (sigue siendo admin-scoped por diseño; trust boundary in-process).
+  - [ ] Tests cubren: rechazo en producción, opt-in en dev, emisión de warning, y los caminos felices existentes de API-key/JWT.
+
+#### GT-251
+**Propósito:** Eliminar el riesgo de inyección de comandos en `evolith update --install`, donde la cadena de versión retornada por `npm view ... --json` se interpola en un comando shell vía `execSync`, de modo que una respuesta maliciosa o comprometida del registro podría ejecutar código arbitrario en la máquina del operador.
+**Evidencia Actual:** `sdk/cli/src/commands/update/update.command.ts:116` — `execSync(`npm install -g @evolith/smart-cli@${latestVersion}`, { stdio: 'inherit' })`. `latestVersion` proviene de `JSON.parse(result.trim())` en la línea 163 sin validación semver antes de empalmarse en el string de shell.
+**Hecho Cuando:**
+  - [ ] `execSync` (forma string) reemplazado por `execFileSync('npm', ['install', '-g', `@evolith/smart-cli@${latestVersion}`])` para que la versión sea un argumento, no un token shell.
+  - [ ] `latestVersion` se valida contra la regex semver antes de usar; valores inválidos abortan con un error claro.
+  - [ ] El mismo hardening se aplica al camino de lectura (`execFile`/`execFileSync` en vez de `execSync`).
+  - [ ] El spec cubre: versión maliciosa (e.g., `1.0.0; rm -rf /`) es rechazada en el gate de regex.
+
+#### GT-252
+**Propósito:** Cablear las 19 políticas OPA huérfanas dentro de `main.rego` para que el agregador represente realmente la superficie de políticas de Evolith — hoy el evaluador de gates solo ve 7 de los 26 módulos de política, omitiendo silenciosamente el 73% de las reglas de gobernanza.
+**Evidencia Actual:** `rulesets/opa/main.rego` solo importa `version_pinning`, `taxonomy`, `cli_readiness`, `evidence`, `mcp`, `ci_cd`, `governance`. Contando `ls rulesets/opa/*.rego | grep -v test.rego` se obtienen 27 archivos; restando `main.rego` quedan 26 políticas. 26 − 7 = **19 huérfanas**: `abac-mcp-tool-access`, `anti-corruption-layer`, `cicd-quality-gates`, `cli-core-parity`, `cli-release-readiness`, `compliance-baseline`, `dod`, `engineering-manifesto`, `executive-scorecards`, `gitflow-branching`, `hexagonal-architecture`, `knowledge-intake`, `multi-runtime`, `multi-tenancy`, `open-core-boundary`, `protocol-selection`, `repository-taxonomy`, `satellite-contracts`, `testing-pyramid`.
+**Hecho Cuando:**
+  - [ ] `main.rego` importa los 19 paquetes faltantes y agrega sus `violations` a la regla unión.
+  - [ ] `main_test.rego` añade al menos un fixture por paquete recién cableado que ejercita una violación conocida.
+  - [ ] El evaluador OPA detecta los nuevos paquetes sin configuración adicional (verificado vía smoke `opa eval`).
+  - [ ] Si alguna política está intencionalmente excluida (e.g., experimental), se documenta en `rulesets/opa/README.md` con el motivo.
+
+#### GT-253
+**Propósito:** Fijar `aquasecurity/trivy-action` a un tag de versión específico para eliminar el riesgo de cadena de suministro de una referencia móvil `@master` en CI, que hoy podría cambiar el comportamiento del scanner o ser secuestrada sin que lo notemos.
+**Evidencia Actual:** `.github/workflows/sdk-cli-ci.yml:344` — `uses: aquasecurity/trivy-action@master`. Sin SHA ni tag de versión.
+**Hecho Cuando:**
+  - [ ] `trivy-action@master` reemplazado por un tag fijo (e.g., `@0.24.0`) o un SHA de 40 chars.
+  - [ ] Regla Dependabot/Renovate cubre actualizaciones de `github-actions` para mantener el pin.
+  - [ ] Resto de actions de terceros en `.github/workflows/` auditadas; cualquier referencia `@master`/`@main` se fija en el mismo PR o se registra como follow-up.
+
+#### GT-254
+**Propósito:** Prevenir ataques de path traversal contra la superficie `resources/read` del MCP — hoy un cliente MCP puede construir URIs estilo `evolith://ruleset/../../etc/passwd` y el resolvedor de recursos hará `path.join` fuera del directorio raíz de rulesets sin oposición.
+**Evidencia Actual:** `packages/mcp-server/src/mcp/resources.service.ts:115` — `path.join(corePath, 'rulesets', name.replace(/-/g, '/') + '.rules.json')` sin normalización ni chequeo de contención. Misma forma en líneas 119 (path alterno), 134 (`getAgentContent`), 157 (`getMoscowAnalysis`) y 172-176 (`getTopologyContent`). Cada uno acepta un string suministrado por el usuario y lo une contra una base de confianza sin verificar que la ruta resuelta permanezca dentro de la base.
+**Hecho Cuando:**
+  - [ ] Cada resolvedor normaliza la ruta candidata (`path.resolve`) y rechaza cualquier resultado cuya forma normalizada no comience con el directorio base resuelto.
+  - [ ] Nombres con `..`, rutas absolutas, o separadores de ruta que escapen de la forma esperada son rechazados con un envelope `BAD_REQUEST` antes de cualquier llamada al sistema de archivos.
+  - [ ] Los specs cubren casos positivos (búsquedas legítimas de ruleset/agent/topology) y negativos (`../../etc/passwd`, rutas absolutas, traversal URL-encoded).
+
+#### GT-255
+**Propósito:** Cerrar la brecha de CSP / headers de seguridad en el transporte HTTP del MCP para que MCP y Core API presenten la misma superficie defensiva — `apps/core-api` ya cablea `helmet`, pero `packages/mcp-server` no, dejando sus respuestas HTTP sin CSP, HSTS, X-Frame-Options ni X-Content-Type-Options.
+**Evidencia Actual:** `apps/core-api/src/main.ts:8,51` importa y aplica `helmet()`. Un grep por `helmet` / `Content-Security-Policy` en `packages/mcp-server/src/` solo devuelve una definición de tipo de node_modules — sin uso en producción. `mcp-server.service.ts` construye un `http.createServer` sin aplicar middleware de headers.
+**Hecho Cuando:**
+  - [ ] El transporte HTTP del MCP configura, como mínimo: `Content-Security-Policy: default-src 'none'`, `X-Content-Type-Options: nosniff`, `Strict-Transport-Security`, `X-Frame-Options: DENY`, `Referrer-Policy: no-referrer`.
+  - [ ] La implementación reutiliza `helmet` (preferido) o una utilidad de headers explícita compartida con Core API.
+  - [ ] Spec verifica que los headers estén presentes en una respuesta representativa (e.g., `resources/list`).
+
+#### GT-256
+**Propósito:** Reparar el healthcheck de Traefik en `docker-compose.yml`, que hoy consulta `/ping` mientras Traefik se levanta sin `--ping=true`, garantizando que el contenedor sea marcado unhealthy en cualquier entorno que dependa de este stack.
+**Evidencia Actual:** `reference/infrastructure/docker-compose.yml:164-182` — Traefik arranca solo con `--providers.file.directory=/etc/traefik/dynamic`. El healthcheck en la línea 182 corre `traefik healthcheck --ping`, que llama al endpoint ping interno; sin `--ping=true` (o `--ping.entrypoint=...`) en la línea de arranque, ese endpoint está deshabilitado y el check falla.
+**Hecho Cuando:**
+  - [ ] La lista de comandos de Traefik incluye `--ping=true` (y un entrypoint explícito si es necesario).
+  - [ ] `traefik healthcheck --ping` tiene éxito contra un contenedor en ejecución.
+  - [ ] Opcional: endpoint de ping enlazado al entrypoint interno/admin, no al público.
+
+#### GT-257
+**Propósito:** Fijar la imagen de MongoDB a una versión menor específica para que el stack de infraestructura sea reproducible y esté protegido frente a upgrades silenciosos que puedan romper compatibilidad o introducir cambios no revisados.
+**Evidencia Actual:** `reference/infrastructure/docker-compose.yml:54` — `image: mongo:latest`. Otros servicios (PostgreSQL, Redis, Traefik) ya están fijados; MongoDB es el caso aislado.
+**Hecho Cuando:**
+  - [ ] `mongo:latest` reemplazado por un tag fijo coincidente con la versión que Evolith soporta (e.g., `mongo:7.0`).
+  - [ ] Decisión de tag documentada en el README de infraestructura junto con la cadencia de actualización.
+  - [ ] Regla Dependabot/Renovate cubre actualizaciones de imágenes `docker` para mantener el pin.
+
+#### GT-258
+**Propósito:** Añadir controles `concurrency:` a cada workflow de GitHub Actions para que pushes apilados cancelen runs superados — ahorrando cómputo, acelerando feedback y previniendo race conditions en workflows que mutan releases o cachés.
+**Evidencia Actual:** `grep -L "concurrency:" .github/workflows/*.yml` devuelve los 11 workflows: `ci-cd.yml`, `ci.yml`, `coverage-impact.yml`, `docs-release.yml`, `docs.yml`, `enforce-root-cleanliness.yml`, `governance-ci.yml`, `knowledge-intake.yml`, `opa-parity.yml`, `sdk-cli-ci.yml`, `sdk-cli-release.yml`.
+**Hecho Cuando:**
+  - [ ] Cada workflow declara un bloque `concurrency:` de nivel superior identificado por nombre de workflow + ref.
+  - [ ] Workflows estilo PR fijan `cancel-in-progress: true`; workflows de release/publish fijan `cancel-in-progress: false`.
+  - [ ] Documentado en `.harness/playbooks/` (o guía de CI equivalente) para que los workflows futuros hereden el patrón.
+
+#### GT-259
+**Propósito:** Reemplazar el frágil match de string en el mensaje de commit que gatilla el job de publish a npm por un trigger basado en tag, de modo que los releases no puedan dispararse accidentalmente por un commit cuyo cuerpo contenga "bump version".
+**Evidencia Actual:** `.github/workflows/ci-cd.yml:42` — `if: github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, 'bump version')`. Cualquier commit aterrizado en main con esa subcadena (incluyendo merge commits, reverts o housekeeping) gatilla `npm publish --access public --tag beta`.
+**Hecho Cuando:**
+  - [ ] El job `publish-npm` se dispara con eventos `push` cuyo `github.ref` coincide con `refs/tags/v*` (o patrón semver equivalente).
+  - [ ] El guard actual `contains('bump version')` se elimina.
+  - [ ] Procedimiento de release documentado: tag → workflow corre → publica en npm.
+  - [ ] Compatibilidad hacia atrás: entrada `workflow_dispatch` manual existente preservada si existe, o añadida si no.
+
+#### GT-260
+**Propósito:** Cerrar la brecha de paridad bilingüe para agentes BMAD proveyendo el archivo de persona en español del agente PO y cableándolo en los mismos workflows que los otros 8 agentes.
+**Evidencia Actual:** `.bmad-core/agents/` contiene pares `.md` + `.es.md` para `analyst`, `architect`, `dev`, `devops`, `docs`, `pm`, `qa`, `sm`. El agente PO solo tiene `po.md`; `po.es.md` no existe. (Wilson es monolingüe por diseño.)
+**Hecho Cuando:**
+  - [ ] `.bmad-core/agents/po.es.md` creado con una traducción fiel de la persona, responsabilidades y outputs de `po.md`.
+  - [ ] Cualquier script/workflow de carga de agentes que enumere pares `*.es.md` incluye el nuevo archivo.
+  - [ ] `check-bilingual-parity.mjs` pasa tras la adición.
+
+#### GT-261
+**Propósito:** Acotar la huella de recursos de cada contenedor del stack de infraestructura para que un servicio descontrolado no pueda asfixiar a sus vecinos en el mismo host, y para que la planificación de capacidad mapee limpiamente al dimensionamiento en producción.
+**Evidencia Actual:** `grep -nE "mem_limit|cpus|deploy:|resources:" reference/infrastructure/docker-compose.yml` devuelve nada — ningún servicio declara `mem_limit`, `cpus` ni un bloque `deploy.resources`.
+**Hecho Cuando:**
+  - [ ] Cada servicio en `docker-compose.yml` declara límites de memoria y CPU apropiados a su rol (PostgreSQL, MongoDB, Redis, RabbitMQ, MinIO, OpenBao, Traefik, Core API, MCP server).
+  - [ ] Límites documentados en el README de infraestructura con el razonamiento (carga habitual + headroom).
+  - [ ] Validado localmente que el stack arranca dentro de los límites declarados y los healthchecks siguen pasando.
+
+#### GT-262
+**Propósito:** Codificar procedimientos de backup y disaster-recovery para los data stores stateful (PostgreSQL, MongoDB, MinIO, OpenBao) para que la plataforma pueda recuperarse de pérdida de datos sin arqueología ad-hoc.
+**Evidencia Actual:** Una búsqueda en el repo por scripts de backup (`find . -name "backup*.sh" -o -name "*-backup*"`) y planes de restore estilo Terraform devuelve nada bajo `reference/infrastructure/`, `apps/` ni `.harness/`. No existe runbook de DR.
+**Hecho Cuando:**
+  - [ ] Existen scripts de backup (o procedimientos operativos documentados) para cada servicio stateful: PostgreSQL (`pg_dump`/PITR), MongoDB (`mongodump`), MinIO (replicación de objetos o `mc mirror`), OpenBao (snapshot).
+  - [ ] Cada servicio tiene un objetivo RPO/RTO documentado.
+  - [ ] Un runbook de restore guía a través de un ejercicio completo de DR; commiteado en `reference/infrastructure/runbooks/`.
+  - [ ] Lint de CI verifica que el runbook existe; referencia cruzada con SDLC Phase 05 rollback (GT-218).
+
+#### GT-263
+**Propósito:** Añadir alertas Prometheus a nivel de infraestructura para que los problemas de plataforma (servicio caído, presión de disco, pico de error rate) paguen on-call antes de llegar a usuarios, cerrando una brecha dejada abierta por la adopción del stack de observabilidad.
+**Evidencia Actual:** Una búsqueda en el repo por `*.rules.yaml`, `*alerts*` o `prometheus*` devuelve nada. Los ADRs de observabilidad describen lo que debería existir, pero no hay reglas de alerta commiteadas.
+**Hecho Cuando:**
+  - [ ] Un archivo de reglas de alerta (e.g., `reference/infrastructure/observability/alerts.rules.yaml`) define como mínimo: service-down, alta tasa de error (5xx), latencia P99 alta, disk-free bajo umbral, profundidad de cola RabbitMQ, fallos de evaluación OPA.
+  - [ ] Alertas cableadas en la configuración Prometheus que viaja con el stack docker-compose.
+  - [ ] Cada alerta tiene un link a runbook y un label de severidad.
+  - [ ] Smoke test: disparar una alerta en un entorno dev y verificar que se enciende.
+
+#### GT-264
+**Propósito:** Hacer significativo el scan DAST (OWASP ZAP) en CI apuntándolo a una instancia real en ejecución, o eliminarlo — hoy apunta a `http://localhost:8000` sin levantar un servidor, por lo que el scan es silenciosamente un no-op.
+**Evidencia Actual:** `.github/workflows/sdk-cli-ci.yml:372-374` — `uses: zaproxy/action-full-scan@v0.10.0` con `target: 'http://localhost:8000'`. Ningún paso precedente levanta un servicio en ese puerto, por lo que ZAP escanea contra nada y el job o no hace nada o falla silenciosamente.
+**Hecho Cuando:**
+  - [ ] O bien: (a) un paso precedente levanta Core API (o MCP) en el puerto objetivo y espera readiness antes de que ZAP corra; o (b) el paso DAST se elimina y el motivo se registra en un ADR/playbook.
+  - [ ] Si se mantiene: reporte de ZAP subido como artefacto del workflow y umbrales de falla documentados.
+  - [ ] Si se elimina: un gap follow-up captura el plan DAST a largo plazo (e.g., scan programado contra un entorno staging).
+
+#### GT-265
+**Propósito:** Añadir detección de secretos en CI (gitleaks o equivalente) para que commits accidentales de API keys, secretos JWT o credenciales de base de datos sean detectados en tiempo de PR, no después de aterrizar en la historia.
+**Evidencia Actual:** `grep -rln "gitleaks\|truffle\|secretlint" .github/` devuelve nada — ningún scanner de secretos corre en ningún workflow. El repo maneja credenciales en docker-compose (cerrado por GT-247) y secretos JWT (follow-up de GT-250), por lo que el blast radius de un secreto filtrado es real.
+**Hecho Cuando:**
+  - [ ] Un paso gitleaks (o equivalente) corre en cada PR y push, escaneando el diff más el repo completo en una agenda.
+  - [ ] `.gitleaks.toml` (o config equivalente) documenta fixtures de test allow-listadas para que el scan mantenga señal alta.
+  - [ ] Hallazgos fallan el build con un mensaje claro de remediación.
+  - [ ] Hook pre-commit (opcional) replica el check localmente.

@@ -2215,9 +2215,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Add rate limiting middleware to the Core API, closing the gap where the MCP Security Guide documents adaptive rate limiting patterns but zero implementations exist in TypeScript code (search for `rate.?limit` returns zero matches).
 **Current Evidence:** `apps/core-api/src/main.ts` applies `helmet()` globally but has no rate limiting middleware. The MCP security guide at `reference/governance/standards/ai-augmented/02-mcp-integration/mcp-security.md` documents rate limiting as required for production.
 **Done When:**
-  - [ ] `@nestjs/throttler` is installed and configured with a global default (e.g., 100 req/min).
-  - [ ] Per-endpoint overrides exist for sensitive operations (auth, gate-evaluate).
-  - [ ] Rate limit headers (`X-RateLimit-*`) are returned in responses.
+  - [x] `@nestjs/throttler` is installed and configured with a global default (e.g., 100 req/min).
+  - [x] Per-endpoint overrides exist for sensitive operations (auth, gate-evaluate).
+  - [x] Rate limit headers (`X-RateLimit-*`) are returned in responses.
 
 #### GT-234
 **Purpose:** Add R-27 (Topology Maturity Parity) to `global-rules.es.md`, closing the bilingual parity gap where the English version has 27 rules but the Spanish version stops at R-26.
@@ -2440,35 +2440,35 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Close the bilingual-parity gap for BMAD agents by providing the Spanish persona file for the PO agent and wiring it through the same workflows as the other 8 agents.
 **Current Evidence:** `.bmad-core/agents/` contains `.md` + `.es.md` pairs for `analyst`, `architect`, `dev`, `devops`, `docs`, `pm`, `qa`, `sm`. The PO agent has only `po.md`; `po.es.md` does not exist. (Wilson is single-language by design.)
 **Done When:**
-  - [ ] `.bmad-core/agents/po.es.md` created with a faithful translation of `po.md`'s persona, responsibilities, and outputs.
-  - [ ] Any agent-loading scripts/workflows that enumerate `*.es.md` pairs include the new file.
-  - [ ] `check-bilingual-parity.mjs` passes after the addition.
+  - [x] `.bmad-core/agents/po.es.md` created with a faithful translation of `po.md`'s persona, responsibilities, and outputs.
+  - [x] Any agent-loading scripts/workflows that enumerate `*.es.md` pairs include the new file.
+  - [x] `check-bilingual-parity.mjs` passes after the addition.
 
 #### GT-261
 **Purpose:** Bound the resource footprint of every container in the infrastructure stack so a runaway service cannot starve its neighbors on the same host, and so capacity planning maps cleanly to production sizing.
 **Current Evidence:** `grep -nE "mem_limit|cpus|deploy:|resources:" reference/infrastructure/docker-compose.yml` returns nothing — none of the services declare `mem_limit`, `cpus`, or a `deploy.resources` block.
 **Done When:**
-  - [ ] Each service in `docker-compose.yml` declares memory and CPU limits appropriate to its role (PostgreSQL, MongoDB, Redis, RabbitMQ, MinIO, OpenBao, Traefik, Core API, MCP server).
-  - [ ] Limits documented in the infrastructure README with the rationale (typical workload + headroom).
-  - [ ] Validated locally that the stack starts within the declared limits and that healthchecks still pass.
+  - [x] Each service in `docker-compose.yml` declares memory and CPU limits appropriate to its role (PostgreSQL, MongoDB, Redis, RabbitMQ, MinIO, OpenBao, Traefik, Core API, MCP server).
+  - [x] Limits documented in the infrastructure README with the rationale (typical workload + headroom).
+  - [x] Validated locally that the stack starts within the declared limits and that healthchecks still pass.
 
 #### GT-262
 **Purpose:** Codify backup and disaster-recovery procedures for the stateful data stores (PostgreSQL, MongoDB, MinIO, OpenBao) so the platform can recover from data loss without ad-hoc archeology.
 **Current Evidence:** A repo-wide search for backup scripts (`find . -name "backup*.sh" -o -name "*-backup*"`) and Terraform-style restore plans returns nothing under `reference/infrastructure/`, `apps/`, or `.harness/`. There is no DR runbook.
 **Done When:**
-  - [ ] Backup scripts (or documented operator procedures) exist for each stateful service: PostgreSQL (`pg_dump`/PITR), MongoDB (`mongodump`), MinIO (object replication or `mc mirror`), OpenBao (snapshot).
-  - [ ] Each service has a documented RPO/RTO target.
-  - [ ] A restore runbook walks through a full DR exercise; checked into `reference/infrastructure/runbooks/`.
-  - [ ] CI lint verifies the runbook exists; cross-references SDLC Phase 05 rollback (GT-218).
+  - [x] Backup scripts (or documented operator procedures) exist for each stateful service: PostgreSQL (`pg_dump`/PITR), MongoDB (`mongodump`), MinIO (object replication or `mc mirror`), OpenBao (snapshot).
+  - [x] Each service has a documented RPO/RTO target.
+  - [x] A restore runbook walks through a full DR exercise; checked into `reference/infrastructure/runbooks/`.
+  - [x] CI lint verifies the runbook exists; cross-references SDLC Phase 05 rollback (GT-218).
 
 #### GT-263
 **Purpose:** Add infrastructure-level Prometheus alerts so platform problems (down service, disk pressure, error-rate spike) page on-call before they reach users, closing a gap left open by the observability stack adoption.
 **Current Evidence:** A repo-wide search for `*.rules.yaml`, `*alerts*`, or `prometheus*` files returns nothing. The observability ADRs describe what should exist, but no alert rules are checked in.
 **Done When:**
-  - [ ] An alert-rules file (e.g., `reference/infrastructure/observability/alerts.rules.yaml`) defines at minimum: service-down, high error rate (5xx), high latency P99, disk-free below threshold, RabbitMQ queue depth, OPA evaluation failures.
-  - [ ] Alerts wired into the Prometheus configuration shipped with the docker-compose stack.
-  - [ ] Each alert has a runbook link and severity label.
-  - [ ] Smoke test: trigger one alert in a dev environment and verify it fires.
+  - [x] An alert-rules file (e.g., `reference/infrastructure/observability/alerts.rules.yaml`) defines at minimum: service-down, high error rate (5xx), high latency P99, disk-free below threshold, RabbitMQ queue depth, OPA evaluation failures.
+  - [x] Alerts wired into the Prometheus configuration shipped with the docker-compose stack.
+  - [x] Each alert has a runbook link and severity label.
+  - [x] Smoke test: trigger one alert in a dev environment and verify it fires.
 
 #### GT-264
 **Purpose:** Make the DAST (OWASP ZAP) scan in CI meaningful by targeting an actual running instance, or remove it — today it points at `http://localhost:8000` without spinning a server up, so the scan is silently a no-op.

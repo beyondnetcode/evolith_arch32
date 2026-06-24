@@ -15,11 +15,11 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 |---|---|:---:|:---:|:---:|:---:|:---:|
 | [`GT-260`](./gap-reference-catalog.es.md#gt-260) | Crear archivo de idioma español para agente PO y añadir a workflows | `BMAD Agents` | Cross | P1 | S | `PENDIENTE` |
 | [`GT-228`](./gap-reference-catalog.es.md#gt-228) | Crear motor de orquestación de agentes para workflows BMAD | `Governance` | Cross | P1 | XL | `PENDIENTE` |
-| [`GT-229`](./gap-reference-catalog.es.md#gt-229) | Completar evaluador TypeScript Dual-Engine (cumplimiento R-25) | `Core Domain` | Cross | P1 | XL | `PENDIENTE` |
+| [`GT-229`](./gap-reference-catalog.es.md#gt-229) | Completar evaluador TypeScript Dual-Engine (cumplimiento R-25) | `Core Domain` | Cross | P1 | XL | `COMPLETADO` |
 | [`GT-261`](./gap-reference-catalog.es.md#gt-261) | Añadir límites de recursos a todos los contenedores Docker | `Infrastructure` | Cross | P2 | S | `PENDIENTE` |
 | [`GT-263`](./gap-reference-catalog.es.md#gt-263) | Añadir alertas Prometheus a nivel de infraestructura | `Observability` | Cross | P2 | S | `PENDIENTE` |
 | [`GT-262`](./gap-reference-catalog.es.md#gt-262) | Añadir procedimientos de backup/DR para almacenes de datos | `Infrastructure` | Cross | P2 | M | `PENDIENTE` |
-| [`GT-266`](./gap-reference-catalog.es.md#gt-266) | Crear servicio de provisioning de API keys para MCP HTTP | `Security` | Cross | P2 | M | `PENDIENTE` |
+| [`GT-266`](./gap-reference-catalog.es.md#gt-266) | Crear servicio de provisioning de API keys para MCP HTTP | `Security` | Cross | P2 | M | `COMPLETADO` |
 | [`GT-226`](./gap-reference-catalog.es.md#gt-226) | Configurar Dependabot/Renovate (cumplimiento ADR-0009) | `Governance` | Cross | P0 | S | `COMPLETADO` |
 | [`GT-152`](./gap-reference-catalog.es.md#gt-152) | Contrato de Conocimiento Externo y Esquema de Registro Fuente | `Governance` | Cross | P0 | S | `COMPLETADO` |
 | [`GT-250`](./gap-reference-catalog.es.md#gt-250) | Corregir bypass de autenticación MCP cuando no hay API key configurada | `Security` | Cross | P0 | S | `COMPLETADO` |
@@ -280,7 +280,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-246`](./gap-reference-catalog.es.md#gt-246) | Implementar experimentos Chaos Mesh/Litmus | `QA` | Cross | P3 | L | `COMPLETADO` |
 
 
-**Progreso:** 258 / 265 completados · 0 en progreso · 7 pendientes · 0 diferidos
+**Progreso:** 260 / 265 completados · 0 en progreso · 5 pendientes · 0 diferidos
 
 **Oleada 2026-06-23 (auditoría profunda de Wilson III):** Añadidos 14 gaps nuevos `GT-212`…`GT-225` del Wilson Audit Playbook que cubren: higiene de estado ADR (GT-212), metadata + presupuestos operativos + corpus de guías por topología (GT-213, GT-217, GT-219), observabilidad + OpenAPI en controladores REST (GT-214, GT-215), paridad de input-schemas OPA + densidad de tests por topología (GT-216, GT-222), plantillas de rollback + on-call de Fase 05 (GT-218), cobertura de ramas CLI + paridad de envelope --format + limpieza de skip-list (GT-220, GT-224, GT-225), audit logging HTTP de MCP (GT-221), y tests e2e de paridad cross-surface (GT-223).
 

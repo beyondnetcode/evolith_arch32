@@ -51,6 +51,8 @@ Para ver trazas distribuidas: abrir Grafana → Explore → seleccionar la fuent
 | [tempo.yaml](./tempo/tempo.yaml) | Configuración del backend Tempo | Configurar el backend de trazado | Archivo de configuración | Sí |
 | [datasources.yml](./grafana/provisioning/datasources/datasources.yml) | Datasources de Grafana aprovisionados automáticamente (Tempo, Loki) | Aprovisionar dashboards automáticamente | Archivo de configuración | Sí |
 | [Soporte de CI Agentico y RAG](./agentic-ci-rag-support.es.md) | Runbook de soporte para revision Gemini/Winston e indice RAG | Operar CI asistido por IA de forma segura | Runbook de soporte | Sí |
+| [Backup y DR de Almacenes de Datos](./data-store-backup-dr.es.md) | Procedimientos de backup y recuperación ante desastres para PostgreSQL, MongoDB, MinIO, OpenBao | Recuperarse de pérdida de datos sin arqueología ad-hoc | Runbook DR | Sí |
+| [Reglas de Alerta Prometheus](./alerts/prometheus-alerts.yml) | Reglas de alerta a nivel de infraestructura (servicio-caído, CPU, disco, tasa de error) | Notificar on-call antes de que los problemas lleguen a usuarios | Reglas de alerta | Sí |
 
 ---
 

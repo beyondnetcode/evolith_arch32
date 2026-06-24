@@ -82,6 +82,33 @@ docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 
 ---
 
+## Resource Limits
+
+Every service in `docker-compose.yml` declares `deploy.resources.limits` to prevent a runaway container from starving neighbors on the same host and to make capacity planning map cleanly to production sizing.
+
+| Service | Memory | CPU | Rationale |
+| :--- | :--- | :--- | :--- |
+| PostgreSQL | 512M | 0.5 | Typical dev workload with moderate connection pool |
+| SQL Server | 2G | 2 | MSSQL base footprint is high; headroom for query processing |
+| MongoDB | 1G | 1 | Document store with working set in memory |
+| Redis | 256M | 0.25 | In-memory cache; bounded by `maxmemory` policy |
+| RabbitMQ | 512M | 0.5 | Broker with management UI; queue depth headroom |
+| MinIO | 512M | 0.5 | S3-compatible object storage; I/O bound |
+| OpenBao | 256M | 0.25 | Secrets engine; low CPU, minimal memory |
+| Traefik | 128M | 0.25 | Reverse proxy; lightweight per-request forwarding |
+| OTel Collector | 256M | 0.5 | Telemetry pipeline; burst on log ingestion |
+| Tempo | 512M | 0.5 | Distributed tracing storage |
+| Loki | 256M | 0.5 | Log aggregation index |
+| Grafana | 256M | 0.5 | Dashboard UI; minimal compute |
+| BFF | 512M | 0.5 | NestJS API server; Node.js heap |
+| Prometheus | 512M | 0.5 | TSDB with 30d retention |
+| Mimir | 512M | 0.5 | Long-term metrics storage |
+| MCP | 512M | 0.5 | MCP server; Node.js heap |
+
+> **Tuning guidance:** These limits suit a local development host with 16 GB RAM. For production, scale limits proportionally to expected workload. SQL Server (2 GB) is the most memory-hungry service; exclude it from Phase 1 to keep the minimal stack under 1 GB total.
+
+---
+
 ## Configuration Files
 
 | File | Purpose |

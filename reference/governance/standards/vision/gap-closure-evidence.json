@@ -3891,6 +3891,40 @@
       ],
       "dependencyDisposition": "none",
       "closureNote": "Changed publish trigger from commit-message string match to tag-based (refs/tags/v*). Added workflow_dispatch for manual releases."
+    },
+    {
+      "id": "GT-229",
+      "closedAt": "2026-06-24",
+      "closureCommit": "6ba915c1",
+      "evidence": [
+        "packages/core-domain/src/application/validators/evaluators/native-evaluator.ts",
+        "packages/core-domain/src/application/validators/evaluators/native-opa-parity.spec.ts",
+        "packages/core-domain/src/application/validators/evaluators/aggregator-parity.spec.ts",
+        "packages/core-domain/test/parity-fixtures/",
+        ".harness/scripts/ci/28-native-evaluator-parity.mjs"
+      ],
+      "validationCommands": [
+        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --testPathPatterns='native-opa-parity' --no-coverage",
+        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --testPathPatterns='aggregator-parity' --no-coverage",
+        "node .harness/scripts/ci/28-native-evaluator-parity.mjs"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "NativeEvaluator with 12 domain handlers, 17 parity fixtures, 65 passing tests, CI parity gate passing."
+    },
+    {
+      "id": "GT-266",
+      "closedAt": "2026-06-24",
+      "closureCommit": "6ba915c1",
+      "evidence": [
+        "packages/mcp-server/src/mcp/api-key-provisioning.service.ts",
+        "packages/mcp-server/src/mcp/api-key-provisioning.service.spec.ts",
+        "packages/mcp-server/src/mcp/mcp.module.ts"
+      ],
+      "validationCommands": [
+        "npx jest --config packages/mcp-server/jest.config.js --rootDir packages/mcp-server --testPathPatterns='api-key-provisioning' --no-coverage"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "ApiKeyProvisioningService with evk_ prefix, SHA-256 hashed storage, rotation, revocation, audit logging, and legacy migration. 27 tests passing."
     }
   ]
 }

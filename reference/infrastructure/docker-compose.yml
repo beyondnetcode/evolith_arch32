@@ -21,6 +21,11 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
     networks:
       - ums-network
 
@@ -44,6 +49,11 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: "2"
     networks:
       - ums-network
 
@@ -66,6 +76,11 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: "1"
     networks:
       - ums-network
 
@@ -86,6 +101,11 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.25"
     networks:
       - ums-network
 
@@ -109,6 +129,11 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
     networks:
       - ums-network
 
@@ -133,6 +158,11 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
     networks:
       - ums-network
 
@@ -155,6 +185,11 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.25"
     networks:
       - ums-network
 
@@ -184,6 +219,11 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: "0.25"
     networks:
       - ums-network
 
@@ -201,6 +241,11 @@ services:
     ports:
       - "4317:4317"     # OTLP gRPC
       - "4318:4318"     # OTLP HTTP
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.5"
     networks:
       - ums-network
     depends_on:
@@ -220,6 +265,11 @@ services:
       - tempo_data:/var/tempo
     ports:
       - "3200:3200"     # Tempo query port
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
     networks:
       - ums-network
 
@@ -235,6 +285,11 @@ services:
       - loki_data:/loki
     ports:
       - "3100:3100"     # Loki HTTP
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.5"
     networks:
       - ums-network
 
@@ -254,6 +309,11 @@ services:
       - ../operations/grafana/provisioning:/etc/grafana/provisioning:ro
     ports:
       - "3001:3000"     # Grafana UI
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.5"
     depends_on:
       - loki
       - tempo
@@ -275,6 +335,11 @@ services:
       - "traefik.http.routers.bff.entrypoints=web"
     volumes:
       - ../../../rulesets:/app/rulesets:ro
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
     networks:
       - ums-network
 
@@ -291,9 +356,15 @@ services:
       - '--web.enable-lifecycle'
     volumes:
       - ../operations/otel/prometheus-config.yml:/etc/prometheus/prometheus.yml:ro
+      - ../operations/alerts/prometheus-alerts.yml:/etc/prometheus/alerts/prometheus-alerts.yml:ro
       - prometheus_data:/prometheus
     ports:
       - "9090:9090"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
     networks:
       - ums-network
     depends_on:
@@ -312,6 +383,11 @@ services:
       - mimir_data:/tmp/mimir
     ports:
       - "8008:8008"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
     networks:
       - ums-network
 
@@ -330,6 +406,11 @@ services:
       - "traefik.http.routers.mcp.entrypoints=web"
     volumes:
       - ../../../rulesets:/app/rulesets:ro
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.5"
     networks:
       - ums-network
 

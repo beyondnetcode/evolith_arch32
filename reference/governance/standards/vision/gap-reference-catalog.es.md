@@ -2215,9 +2215,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Añadir middleware de rate limiting al Core API, cerrando la brecha donde la Guía de Seguridad MCP documenta patrones de rate limiting adaptativo pero existen cero implementaciones en código TypeScript.
 **Evidencia Actual:** `apps/core-api/src/main.ts` aplica `helmet()` globalmente pero no tiene middleware de rate limiting. La búsqueda de `rate.?limit` en archivos TypeScript retorna cero resultados.
 **Hecho Cuando:**
-  - [ ] `@nestjs/throttler` está instalado y configurado con un default global (ej. 100 req/min).
-  - [ ] Existen overrides por endpoint para operaciones sensibles (auth, gate-evaluate).
-  - [ ] Los headers de rate limit (`X-RateLimit-*`) se retornan en las respuestas.
+  - [x] `@nestjs/throttler` está instalado y configurado con un default global (ej. 100 req/min).
+  - [x] Existen overrides por endpoint para operaciones sensibles (auth, gate-evaluate).
+  - [x] Los headers de rate limit (`X-RateLimit-*`) se retornan en las respuestas.
 
 #### GT-234
 **Propósito:** Añadir R-27 (Paridad de Madurez Topológica) a `global-rules.es.md`, cerrando la brecha de paridad bilingual donde la versión en inglés tiene 27 reglas pero la versión en español termina en R-26.
@@ -2440,35 +2440,35 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Cerrar la brecha de paridad bilingüe para agentes BMAD proveyendo el archivo de persona en español del agente PO y cableándolo en los mismos workflows que los otros 8 agentes.
 **Evidencia Actual:** `.bmad-core/agents/` contiene pares `.md` + `.es.md` para `analyst`, `architect`, `dev`, `devops`, `docs`, `pm`, `qa`, `sm`. El agente PO solo tiene `po.md`; `po.es.md` no existe. (Wilson es monolingüe por diseño.)
 **Hecho Cuando:**
-  - [ ] `.bmad-core/agents/po.es.md` creado con una traducción fiel de la persona, responsabilidades y outputs de `po.md`.
-  - [ ] Cualquier script/workflow de carga de agentes que enumere pares `*.es.md` incluye el nuevo archivo.
-  - [ ] `check-bilingual-parity.mjs` pasa tras la adición.
+  - [x] `.bmad-core/agents/po.es.md` creado con una traducción fiel de la persona, responsabilidades y outputs de `po.md`.
+  - [x] Cualquier script/workflow de carga de agentes que enumere pares `*.es.md` incluye el nuevo archivo.
+  - [x] `check-bilingual-parity.mjs` pasa tras la adición.
 
 #### GT-261
 **Propósito:** Acotar la huella de recursos de cada contenedor del stack de infraestructura para que un servicio descontrolado no pueda asfixiar a sus vecinos en el mismo host, y para que la planificación de capacidad mapee limpiamente al dimensionamiento en producción.
 **Evidencia Actual:** `grep -nE "mem_limit|cpus|deploy:|resources:" reference/infrastructure/docker-compose.yml` devuelve nada — ningún servicio declara `mem_limit`, `cpus` ni un bloque `deploy.resources`.
 **Hecho Cuando:**
-  - [ ] Cada servicio en `docker-compose.yml` declara límites de memoria y CPU apropiados a su rol (PostgreSQL, MongoDB, Redis, RabbitMQ, MinIO, OpenBao, Traefik, Core API, MCP server).
-  - [ ] Límites documentados en el README de infraestructura con el razonamiento (carga habitual + headroom).
-  - [ ] Validado localmente que el stack arranca dentro de los límites declarados y los healthchecks siguen pasando.
+  - [x] Cada servicio en `docker-compose.yml` declara límites de memoria y CPU apropiados a su rol (PostgreSQL, MongoDB, Redis, RabbitMQ, MinIO, OpenBao, Traefik, Core API, MCP server).
+  - [x] Límites documentados en el README de infraestructura con el razonamiento (carga habitual + headroom).
+  - [x] Validado localmente que el stack arranca dentro de los límites declarados y los healthchecks siguen pasando.
 
 #### GT-262
 **Propósito:** Codificar procedimientos de backup y disaster-recovery para los data stores stateful (PostgreSQL, MongoDB, MinIO, OpenBao) para que la plataforma pueda recuperarse de pérdida de datos sin arqueología ad-hoc.
 **Evidencia Actual:** Una búsqueda en el repo por scripts de backup (`find . -name "backup*.sh" -o -name "*-backup*"`) y planes de restore estilo Terraform devuelve nada bajo `reference/infrastructure/`, `apps/` ni `.harness/`. No existe runbook de DR.
 **Hecho Cuando:**
-  - [ ] Existen scripts de backup (o procedimientos operativos documentados) para cada servicio stateful: PostgreSQL (`pg_dump`/PITR), MongoDB (`mongodump`), MinIO (replicación de objetos o `mc mirror`), OpenBao (snapshot).
-  - [ ] Cada servicio tiene un objetivo RPO/RTO documentado.
-  - [ ] Un runbook de restore guía a través de un ejercicio completo de DR; commiteado en `reference/infrastructure/runbooks/`.
-  - [ ] Lint de CI verifica que el runbook existe; referencia cruzada con SDLC Phase 05 rollback (GT-218).
+  - [x] Existen scripts de backup (o procedimientos operativos documentados) para cada servicio stateful: PostgreSQL (`pg_dump`/PITR), MongoDB (`mongodump`), MinIO (replicación de objetos o `mc mirror`), OpenBao (snapshot).
+  - [x] Cada servicio tiene un objetivo RPO/RTO documentado.
+  - [x] Un runbook de restore guía a través de un ejercicio completo de DR; commiteado en `reference/infrastructure/runbooks/`.
+  - [x] Lint de CI verifica que el runbook existe; referencia cruzada con SDLC Phase 05 rollback (GT-218).
 
 #### GT-263
 **Propósito:** Añadir alertas Prometheus a nivel de infraestructura para que los problemas de plataforma (servicio caído, presión de disco, pico de error rate) paguen on-call antes de llegar a usuarios, cerrando una brecha dejada abierta por la adopción del stack de observabilidad.
 **Evidencia Actual:** Una búsqueda en el repo por `*.rules.yaml`, `*alerts*` o `prometheus*` devuelve nada. Los ADRs de observabilidad describen lo que debería existir, pero no hay reglas de alerta commiteadas.
 **Hecho Cuando:**
-  - [ ] Un archivo de reglas de alerta (e.g., `reference/infrastructure/observability/alerts.rules.yaml`) define como mínimo: service-down, alta tasa de error (5xx), latencia P99 alta, disk-free bajo umbral, profundidad de cola RabbitMQ, fallos de evaluación OPA.
-  - [ ] Alertas cableadas en la configuración Prometheus que viaja con el stack docker-compose.
-  - [ ] Cada alerta tiene un link a runbook y un label de severidad.
-  - [ ] Smoke test: disparar una alerta en un entorno dev y verificar que se enciende.
+  - [x] Un archivo de reglas de alerta (e.g., `reference/infrastructure/observability/alerts.rules.yaml`) define como mínimo: service-down, alta tasa de error (5xx), latencia P99 alta, disk-free bajo umbral, profundidad de cola RabbitMQ, fallos de evaluación OPA.
+  - [x] Alertas cableadas en la configuración Prometheus que viaja con el stack docker-compose.
+  - [x] Cada alerta tiene un link a runbook y un label de severidad.
+  - [x] Smoke test: disparar una alerta en un entorno dev y verificar que se enciende.
 
 #### GT-264
 **Propósito:** Hacer significativo el scan DAST (OWASP ZAP) en CI apuntándolo a una instancia real en ejecución, o eliminarlo — hoy apunta a `http://localhost:8000` sin levantar un servidor, por lo que el scan es silenciosamente un no-op.

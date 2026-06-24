@@ -2374,10 +2374,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Cablear las 19 políticas OPA huérfanas dentro de `main.rego` para que el agregador represente realmente la superficie de políticas de Evolith — hoy el evaluador de gates solo ve 7 de los 26 módulos de política, omitiendo silenciosamente el 73% de las reglas de gobernanza.
 **Evidencia Actual:** `rulesets/opa/main.rego` solo importa `version_pinning`, `taxonomy`, `cli_readiness`, `evidence`, `mcp`, `ci_cd`, `governance`. Contando `ls rulesets/opa/*.rego | grep -v test.rego` se obtienen 27 archivos; restando `main.rego` quedan 26 políticas. 26 − 7 = **19 huérfanas**: `abac-mcp-tool-access`, `anti-corruption-layer`, `cicd-quality-gates`, `cli-core-parity`, `cli-release-readiness`, `compliance-baseline`, `dod`, `engineering-manifesto`, `executive-scorecards`, `gitflow-branching`, `hexagonal-architecture`, `knowledge-intake`, `multi-runtime`, `multi-tenancy`, `open-core-boundary`, `protocol-selection`, `repository-taxonomy`, `satellite-contracts`, `testing-pyramid`.
 **Hecho Cuando:**
-  - [ ] `main.rego` importa los 19 paquetes faltantes y agrega sus `violations` a la regla unión.
-  - [ ] `main_test.rego` añade al menos un fixture por paquete recién cableado que ejercita una violación conocida.
-  - [ ] El evaluador OPA detecta los nuevos paquetes sin configuración adicional (verificado vía smoke `opa eval`).
-  - [ ] Si alguna política está intencionalmente excluida (e.g., experimental), se documenta en `rulesets/opa/README.md` con el motivo.
+  - [x] `main.rego` importa los 19 paquetes faltantes y agrega sus `violations` a la regla unión.
+  - [x] `main_test.rego` añade al menos un fixture por paquete recién cableado que ejercita una violación conocida.
+  - [x] El evaluador OPA detecta los nuevos paquetes sin configuración adicional (verificado vía smoke `opa eval`).
+  - [x] Si alguna política está intencionalmente excluida (e.g., experimental), se documenta en `rulesets/opa/README.md` con el motivo.
 
 #### GT-253
 **Propósito:** Fijar `aquasecurity/trivy-action` a un tag de versión específico para eliminar el riesgo de cadena de suministro de una referencia móvil `@master` en CI, que hoy podría cambiar el comportamiento del scanner o ser secuestrada sin que lo notemos.

@@ -13,7 +13,6 @@ This board is the single source of truth for technical debt, gaps, opportunities
 
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
 |---|---|---|:---:|:---:|:---:|:---:|
-| [`GT-252`](./gap-reference-catalog.md#gt-252) | Wire all 19 orphaned OPA policies into main.rego aggregator | `Rulesets` | Cross | P0 | M | `PENDING` |
 | [`GT-254`](./gap-reference-catalog.md#gt-254) | Add path traversal protection to MCP resource resolution | `Security` | Cross | P1 | S | `PENDING` |
 | [`GT-255`](./gap-reference-catalog.md#gt-255) | Add Content-Security-Policy headers to MCP HTTP transport | `Security` | Cross | P1 | S | `PENDING` |
 | [`GT-256`](./gap-reference-catalog.md#gt-256) | Fix Traefik healthcheck by adding --ping=true to command | `Infrastructure` | Cross | P1 | S | `PENDING` |
@@ -42,6 +41,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`MT-A04`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Authorize `rulesets/topologies/` as the canonical executable topology rules location | `Rulesets` | Cross | P0 | S | `DONE` |
 | [`MT-A03`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Authorize `reference/architecture/topologies/` as the canonical human-readable topology corpus | `Taxonomy` | Cross | P0 | S | `DONE` |
 | [`GT-227`](./gap-reference-catalog.md#gt-227) | Add CodeQL + Trivy SAST/SCA to CI workflows | `Security` | Cross | P0 | M | `DONE` |
+| [`GT-252`](./gap-reference-catalog.md#gt-252) | Wire all 19 orphaned OPA policies into main.rego aggregator | `Rulesets` | Cross | P0 | M | `DONE` |
 | [`GT-209`](./gap-reference-catalog.md#gt-209) | Create agnostic baseline (`agnostic-baseline.md` missing) | `Architecture` | Cross | P0 | M | `DONE` |
 | [`GT-153`](./gap-reference-catalog.md#gt-153) | Knowledge Lifecycle Governance by Winston | `Governance` | Cross | P0 | M | `DONE` |
 | [`GT-154`](./gap-reference-catalog.md#gt-154) | RAG Projection and Native/OPA Parity for External Knowledge | `Governance` | Cross | P0 | M | `DONE` |
@@ -279,7 +279,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-245`](./gap-reference-catalog.md#gt-245) | Add DAST (OWASP ZAP) to security pipeline | `Security` | Cross | P3 | L | `DONE` |
 | [`GT-246`](./gap-reference-catalog.md#gt-246) | Implement Chaos Mesh/Litmus experiments | `QA` | Cross | P3 | L | `DONE` |
 
-**Progress:** 249 / 265 done · 0 in progress · 16 pending · 0 deferred
+**Progress:** 250 / 265 done · 0 in progress · 15 pending · 0 deferred
 
 **Wave 2026-06-23 (Wilson deep audit III):** Added 14 new gaps `GT-212`…`GT-225` from the Wilson Audit Playbook covering: ADR status hygiene (GT-212), topology manifest metadata + operational budgets + guidance corpus (GT-213, GT-217, GT-219), REST controller observability + OpenAPI (GT-214, GT-215), OPA input-schema parity + per-topology test density (GT-216, GT-222), SDLC Phase 05 rollback + on-call templates (GT-218), CLI branch coverage + envelope format coverage + skip-list cleanup (GT-220, GT-224, GT-225), MCP HTTP audit logging (GT-221), and cross-surface parity e2e tests (GT-223).
 

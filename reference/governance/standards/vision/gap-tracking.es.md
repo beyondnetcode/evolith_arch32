@@ -13,7 +13,6 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|
-| [`GT-252`](./gap-reference-catalog.es.md#gt-252) | Cablear las 20 políticas OPA huérfanas al agregador main.rego | `Rulesets` | Cross | P0 | M | `PENDIENTE` |
 | [`GT-254`](./gap-reference-catalog.es.md#gt-254) | Añadir protección contra path traversal en resolución de recursos MCP | `Security` | Cross | P1 | S | `PENDIENTE` |
 | [`GT-255`](./gap-reference-catalog.es.md#gt-255) | Añadir headers Content-Security-Policy al transporte HTTP MCP | `Security` | Cross | P1 | S | `PENDIENTE` |
 | [`GT-256`](./gap-reference-catalog.es.md#gt-256) | Corregir healthcheck de Traefik añadiendo --ping=true al comando | `Infrastructure` | Cross | P1 | S | `PENDIENTE` |
@@ -42,6 +41,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`MT-A04`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Autorizar `rulesets/topologies/` como la ubicación canónica de reglas de topología ejecutables | `Rulesets` | Transversal | P0 | S | `COMPLETADO` |
 | [`MT-A03`](./multi-topology-reference-corpus-implementation-plan.es.md#6-autoridad-de-tracking) | Autorizar `reference/architecture/topologies/` como corpus topológico canónico legible por humanos | `Taxonomy` | Transversal | P0 | S | `COMPLETADO` |
 | [`GT-227`](./gap-reference-catalog.es.md#gt-227) | Añadir CodeQL + Trivy SAST/SCA a workflows CI | `Security` | Cross | P0 | M | `COMPLETADO` |
+| [`GT-252`](./gap-reference-catalog.es.md#gt-252) | Cablear las 19 políticas OPA huérfanas al agregador main.rego | `Rulesets` | Cross | P0 | M | `COMPLETADO` |
 | [`GT-209`](./gap-reference-catalog.es.md#gt-209) | Crear baseline agnóstico (`agnostic-baseline.md` ausente) | `Architecture` | Cross | P0 | M | `COMPLETADO` |
 | [`GT-153`](./gap-reference-catalog.es.md#gt-153) | Gobierno del Ciclo de Vida del Conocimiento por Winston | `Governance` | Cross | P0 | M | `COMPLETADO` |
 | [`GT-154`](./gap-reference-catalog.es.md#gt-154) | Proyección RAG y Paridad Native/OPA para Conocimiento Externo | `Governance` | Cross | P0 | M | `COMPLETADO` |
@@ -279,7 +279,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-245`](./gap-reference-catalog.es.md#gt-245) | Añadir DAST (OWASP ZAP) al pipeline de seguridad | `Security` | Cross | P3 | L | `COMPLETADO` |
 | [`GT-246`](./gap-reference-catalog.es.md#gt-246) | Implementar experimentos Chaos Mesh/Litmus | `QA` | Cross | P3 | L | `COMPLETADO` |
 
-**Progreso:** 249 / 265 completados · 0 en progreso · 16 pendientes · 0 diferidos
+**Progreso:** 250 / 265 completados · 0 en progreso · 15 pendientes · 0 diferidos
 
 **Oleada 2026-06-23 (auditoría profunda de Wilson III):** Añadidos 14 gaps nuevos `GT-212`…`GT-225` del Wilson Audit Playbook que cubren: higiene de estado ADR (GT-212), metadata + presupuestos operativos + corpus de guías por topología (GT-213, GT-217, GT-219), observabilidad + OpenAPI en controladores REST (GT-214, GT-215), paridad de input-schemas OPA + densidad de tests por topología (GT-216, GT-222), plantillas de rollback + on-call de Fase 05 (GT-218), cobertura de ramas CLI + paridad de envelope --format + limpieza de skip-list (GT-220, GT-224, GT-225), audit logging HTTP de MCP (GT-221), y tests e2e de paridad cross-surface (GT-223).
 

@@ -2374,10 +2374,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Wire the 19 orphaned OPA policies into `main.rego` so the aggregator actually represents Evolith's policy surface — today the gate evaluator only sees 7 of the 26 policy modules, silently skipping 73% of governance rules.
 **Current Evidence:** `rulesets/opa/main.rego` imports only `version_pinning`, `taxonomy`, `cli_readiness`, `evidence`, `mcp`, `ci_cd`, `governance`. Counting `ls rulesets/opa/*.rego | grep -v test.rego` returns 27 files; subtracting `main.rego` leaves 26 policies. 26 − 7 = **19 orphaned**: `abac-mcp-tool-access`, `anti-corruption-layer`, `cicd-quality-gates`, `cli-core-parity`, `cli-release-readiness`, `compliance-baseline`, `dod`, `engineering-manifesto`, `executive-scorecards`, `gitflow-branching`, `hexagonal-architecture`, `knowledge-intake`, `multi-runtime`, `multi-tenancy`, `open-core-boundary`, `protocol-selection`, `repository-taxonomy`, `satellite-contracts`, `testing-pyramid`.
 **Done When:**
-  - [ ] `main.rego` imports the 19 missing packages and appends their `violations` to the union rule.
-  - [ ] `main_test.rego` adds at least one fixture per newly wired package that exercises a known violation.
-  - [ ] OPA evaluator picks up the new packages with no additional configuration (verified via `opa eval` smoke).
-  - [ ] If any policy is intentionally excluded (e.g., experimental), it is documented in `rulesets/opa/README.md` with the rationale.
+  - [x] `main.rego` imports the 19 missing packages and appends their `violations` to the union rule.
+  - [x] `main_test.rego` adds at least one fixture per newly wired package that exercises a known violation.
+  - [x] OPA evaluator picks up the new packages with no additional configuration (verified via `opa eval` smoke).
+  - [x] If any policy is intentionally excluded (e.g., experimental), it is documented in `rulesets/opa/README.md` with the rationale.
 
 #### GT-253
 **Purpose:** Pin `aquasecurity/trivy-action` to a specific version tag to eliminate the supply-chain risk of a moving `@master` reference in CI, which today could swap scanner behavior or be hijacked without our awareness.

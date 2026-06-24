@@ -12,6 +12,22 @@ interface Resource {
   mimeType?: string;
 }
 
+const SAFE_NAME_REGEX = /^[a-zA-Z0-9_\-\/\.]+$/;
+
+function sanitizePathInput(input: string, baseDir: string): string {
+  if (input.includes('..') || path.isAbsolute(input)) {
+    throw new Error('Path traversal detected');
+  }
+  if (!SAFE_NAME_REGEX.test(input)) {
+    throw new Error('Invalid path characters');
+  }
+  const resolved = path.resolve(baseDir, input);
+  if (!resolved.startsWith(baseDir)) {
+    throw new Error('Path escapes base directory');
+  }
+  return resolved;
+}
+
 const RESOURCES: Resource[] = [
   { uri: 'evolith://rulesets', name: 'Rulesets', description: 'List of all available rulesets in Evolith Core' },
   { uri: 'evolith://phase-gates', name: 'Phase Gates', description: 'Phase gate definitions and requirements' },
@@ -112,11 +128,13 @@ export class ResourcesService {
 
   private async getRulesetContent(name: string) {
     const corePath = this.findCorePath();
-    const rulesetPath = path.join(corePath, 'rulesets', name.replace(/-/g, '/') + '.rules.json');
+    const rulesetsBase = path.join(corePath, 'rulesets');
+    const normalizedName = name.replace(/-/g, '/');
+    const rulesetPath = sanitizePathInput(normalizedName + '.rules.json', rulesetsBase);
     if (await this.fs.exists(rulesetPath)) return this.fs.readJson(rulesetPath);
     const parts = name.split('/');
     if (parts.length === 2) {
-      const altPath = path.join(corePath, 'rulesets', parts[0], parts[1] + '.rules.json');
+      const altPath = sanitizePathInput(parts[0] + '/' + parts[1] + '.rules.json', rulesetsBase);
       if (await this.fs.exists(altPath)) return this.fs.readJson(altPath);
     }
     return { error: `Ruleset not found: ${name}` };
@@ -130,7 +148,9 @@ export class ResourcesService {
   }
 
   private async getAgentContent(name: string) {
-    const agentPath = path.join(process.cwd(), 'rulesets', 'agents', name, 'agent.rules.json');
+    const agentsBase = path.join(process.cwd(), 'rulesets', 'agents');
+    const agentDir = sanitizePathInput(name, agentsBase);
+    const agentPath = path.join(agentDir, 'agent.rules.json');
     if (await this.fs.exists(agentPath)) return this.fs.readJson(agentPath);
     return { error: `Agent not found: ${name}` };
   }
@@ -154,7 +174,8 @@ export class ResourcesService {
   }
 
   private async getMoscowAnalysis(phase: string) {
-    const moscowPath = path.join(process.cwd(), '.evolith', 'moscow', `${phase}.json`);
+    const moscowBase = path.join(process.cwd(), '.evolith', 'moscow');
+    const moscowPath = sanitizePathInput(phase + '.json', moscowBase);
     if (await this.fs.exists(moscowPath)) return this.fs.readJson(moscowPath);
     return { error: `MoSCoW analysis not found for ${phase}` };
   }
@@ -172,6 +193,8 @@ export class ResourcesService {
   private async getTopologyContent(id: string) {
     try {
       const corePath = this.findCorePath();
+      const topologiesBase = path.join(corePath, 'reference', 'architecture', 'topologies');
+      sanitizePathInput(id, topologiesBase);
       const topology = await this.topologyCatalog.get(corePath, id);
       if (!topology) return { error: `Topology not found: ${id}` };
       return topology;

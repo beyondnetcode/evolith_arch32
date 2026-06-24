@@ -29,8 +29,9 @@ describe('ResourcesService', () => {
     await fsExtra.remove(root);
   });
 
-  it('lists the static resource catalog', () => {
-    expect(service.list().resources.length).toBeGreaterThanOrEqual(8);
+  it('lists the static resource catalog', async () => {
+    const result = await service.list();
+    expect(result.resources.length).toBeGreaterThanOrEqual(8);
   });
 
   it('returns static version and phase-gate resources', async () => {
@@ -75,5 +76,28 @@ describe('ResourcesService', () => {
 
   it('throws for an unknown URI', async () => {
     await expect(service.read('evolith://unknown')).rejects.toThrow('Unknown resource URI');
+  });
+
+  it('rejects path traversal in ruleset name', async () => {
+    await expect(service.read('evolith://ruleset/../../etc/passwd')).rejects.toThrow();
+    await expect(service.read('evolith://ruleset/governance/../../etc/passwd')).rejects.toThrow();
+  });
+
+  it('rejects path traversal in agent name', async () => {
+    await expect(service.read('evolith://agent/../../etc/passwd')).rejects.toThrow();
+    await expect(service.read('evolith://agent/guardian/../../etc/passwd')).rejects.toThrow();
+  });
+
+  it('rejects path traversal in moscow phase', async () => {
+    await expect(service.read('evolith://moscow/../../etc/passwd')).rejects.toThrow();
+  });
+
+  it('rejects absolute paths', async () => {
+    await expect(service.read('evolith://ruleset//etc/passwd')).rejects.toThrow();
+    await expect(service.read('evolith://agent//etc/passwd')).rejects.toThrow();
+  });
+
+  it('rejects encoded traversal sequences', async () => {
+    await expect(service.read('evolith://ruleset/governance-a%2F..%2F..%2Fetc%2Fpasswd')).rejects.toThrow();
   });
 });

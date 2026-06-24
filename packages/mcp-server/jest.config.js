@@ -35,6 +35,10 @@ module.exports = {
       "/Users/beyondnet/Source/evolith/node_modules/@modelcontextprotocol/sdk/dist/cjs/server/stdio.js",
     "^@modelcontextprotocol/sdk/server/streamableHttp\\.js$":
       "/Users/beyondnet/Source/evolith/node_modules/@modelcontextprotocol/sdk/dist/cjs/server/streamableHttp.js",
+    "^@nestjs/cache-manager$":
+      "/Users/beyondnet/Source/evolith/packages/mcp-server/src/__mocks__/@nestjs/cache-manager.ts",
+    "^cache-manager$":
+      "/Users/beyondnet/Source/evolith/packages/mcp-server/src/__mocks__/cache-manager.ts",
   },
   collectCoverageFrom: [
     "**/*.ts",

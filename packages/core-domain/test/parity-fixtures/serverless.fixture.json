@@ -1,0 +1,35 @@
+{
+  "domain": "serverless",
+  "description": "Serverless architecture rule evaluator parity — SV-R rules",
+  "rules": [
+    { "id": "SV-R01", "severity": "MUST", "category": "serverless-config", "title": "Serverless Config Exists", "description": "serverless.config.json must exist", "blocking": true, "sourceFile": "serverless.rules.json" },
+    { "id": "SV-R02", "severity": "MUST", "category": "serverless-stateless", "title": "Serverless Stateless", "description": "serverless must be stateless", "blocking": true, "sourceFile": "serverless.rules.json" },
+    { "id": "SV-R03", "severity": "MUST", "category": "serverless-package", "title": "Serverless Package Size", "description": "Package maxSizeMb must be <= 50", "blocking": true, "sourceFile": "serverless.rules.json" },
+    { "id": "SV-R04", "severity": "MUST", "category": "serverless-cold-start", "title": "Serverless Cold Start", "description": "Cold start must have lazyInitialization", "blocking": true, "sourceFile": "serverless.rules.json" }
+  ],
+  "scenarios": {
+    "compliant": {
+      "filesystem": {
+        "existing": ["/sat/serverless.config.json"],
+        "json": { "/sat/serverless.config.json": { "stateless": true, "package": { "maxSizeMb": 25 }, "coldStart": { "maxInitMilliseconds": 500, "lazyInitialization": true } } }
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "SV-R01", "result": "passed" },
+        { "ruleId": "SV-R02", "result": "passed" },
+        { "ruleId": "SV-R03", "result": "passed" },
+        { "ruleId": "SV-R04", "result": "passed" }
+      ]
+    },
+    "missing-config": {
+      "filesystem": { "existing": [], "json": {} },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "SV-R01", "result": "failed" },
+        { "ruleId": "SV-R02", "result": "failed" },
+        { "ruleId": "SV-R03", "result": "failed" },
+        { "ruleId": "SV-R04", "result": "failed" }
+      ]
+    }
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "domain": "evidence",
+  "description": "Evidence manifest rule evaluator parity — EVD rules",
+  "rules": [
+    { "id": "EVD-01", "severity": "MUST", "category": "evidence", "title": "Evidence Has Stable Identity", "description": "Every evidence item must include id, source, generatedAt, producer, and related rule or gate", "blocking": true, "sourceFile": "evidence-manifest.rules.json" },
+    { "id": "EVD-02", "severity": "MUST", "category": "evidence", "title": "Evidence Links to Source Artifact", "description": "Every evidence item must link to sourceRef", "blocking": true, "sourceFile": "evidence-manifest.rules.json" },
+    { "id": "EVD-03", "severity": "MUST", "category": "evidence", "title": "Evidence Captures Validation Outcome", "description": "Every evidence item must capture status, evaluated rules, blocking failures", "blocking": true, "sourceFile": "evidence-manifest.rules.json" },
+    { "id": "EVD-04", "severity": "SHOULD", "category": "evidence", "title": "Evidence Declares Retention Expectation", "description": "Evidence should declare retentionPeriod and owner", "blocking": false, "sourceFile": "evidence-manifest.rules.json" }
+  ],
+  "scenarios": {
+    "compliant": {
+      "filesystem": {
+        "existing": ["/core/.harness/evidence"],
+        "dirs": { "/core/.harness/evidence": ["gate-evidence.json"] },
+        "files": {
+          "/core/.harness/evidence/gate-evidence.json": "{\"id\":\"ev-001\",\"source\":\"cli\",\"generatedAt\":\"2026-01-01T00:00:00Z\",\"producer\":\"evolith-cli\",\"relatedGateId\":\"gate-1\",\"sourceRef\":\"run-123\",\"status\":\"passed\",\"evaluatedRules\":5,\"blockingFailures\":1,\"retentionPeriod\":\"90d\",\"owner\":\"platform-team\"}"
+        }
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "EVD-01", "result": "passed" },
+        { "ruleId": "EVD-02", "result": "passed" },
+        { "ruleId": "EVD-03", "result": "passed" },
+        { "ruleId": "EVD-04", "result": "passed" }
+      ]
+    },
+    "missing-evidence-directory": {
+      "filesystem": { "existing": [], "dirs": {}, "files": {} },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "EVD-01", "result": "failed" },
+        { "ruleId": "EVD-02", "result": "failed" },
+        { "ruleId": "EVD-03", "result": "failed" },
+        { "ruleId": "EVD-04", "result": "failed" }
+      ]
+    },
+    "missing-evd01-fields": {
+      "filesystem": {
+        "existing": ["/core/.harness/evidence"],
+        "dirs": { "/core/.harness/evidence": ["gate-evidence.json"] },
+        "files": {
+          "/core/.harness/evidence/gate-evidence.json": "{\"id\":\"ev-001\",\"source\":\"cli\"}"
+        }
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "EVD-01", "result": "failed" },
+        { "ruleId": "EVD-02", "result": "failed" },
+        { "ruleId": "EVD-03", "result": "failed" },
+        { "ruleId": "EVD-04", "result": "failed" }
+      ]
+    },
+    "missing-source-ref": {
+      "filesystem": {
+        "existing": ["/core/.harness/evidence"],
+        "dirs": { "/core/.harness/evidence": ["evidence.json"] },
+        "files": {
+          "/core/.harness/evidence/evidence.json": "{\"id\":\"ev-001\",\"source\":\"cli\",\"generatedAt\":\"2026-01-01T00:00:00Z\",\"producer\":\"evolith-cli\",\"relatedGateId\":\"gate-1\",\"status\":\"passed\",\"evaluatedRules\":5,\"blockingFailures\":1}"
+        }
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "EVD-01", "result": "passed" },
+        { "ruleId": "EVD-02", "result": "failed" },
+        { "ruleId": "EVD-03", "result": "passed" },
+        { "ruleId": "EVD-04", "result": "failed" }
+      ]
+    },
+    "missing-retention": {
+      "filesystem": {
+        "existing": ["/core/.harness/evidence"],
+        "dirs": { "/core/.harness/evidence": ["evidence.json"] },
+        "files": {
+          "/core/.harness/evidence/evidence.json": "{\"id\":\"ev-001\",\"source\":\"cli\",\"generatedAt\":\"2026-01-01T00:00:00Z\",\"producer\":\"evolith-cli\",\"relatedGateId\":\"gate-1\",\"sourceRef\":\"run-123\",\"status\":\"passed\",\"evaluatedRules\":5,\"blockingFailures\":1}"
+        }
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "EVD-01", "result": "passed" },
+        { "ruleId": "EVD-02", "result": "passed" },
+        { "ruleId": "EVD-03", "result": "passed" },
+        { "ruleId": "EVD-04", "result": "failed" }
+      ]
+    }
+  }
+}

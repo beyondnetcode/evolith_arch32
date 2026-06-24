@@ -9,6 +9,11 @@ import { DependencyRuleHandler } from './handlers/dependency-rule.handler';
 import { TaxonomyRuleHandler } from './handlers/taxonomy-rule.handler';
 import { GovernanceRuleHandler } from './handlers/governance-rule.handler';
 import { ArchitectureRuleHandler } from './handlers/architecture-rule.handler';
+import { SdlcRuleHandler } from './handlers/sdlc-rule.handler';
+import { CrossCuttingRuleHandler } from './handlers/cross-cutting-rule.handler';
+import { ExecutiveScorecardRuleHandler } from './handlers/executive-scorecard-rule.handler';
+import { SatelliteContractRuleHandler } from './handlers/satellite-contract-rule.handler';
+import { AclRuleHandler } from './handlers/acl-rule.handler';
 
 export class NativeEvaluator implements IRuleEvaluatorStrategy {
   private readonly handlers: INativeRuleHandler[];
@@ -26,6 +31,11 @@ export class NativeEvaluator implements IRuleEvaluatorStrategy {
       new TaxonomyRuleHandler(fs),
       new GovernanceRuleHandler(fs, configParser),
       new ArchitectureRuleHandler(fs),
+      new SdlcRuleHandler(fs),
+      new CrossCuttingRuleHandler(fs),
+      new ExecutiveScorecardRuleHandler(fs),
+      new SatelliteContractRuleHandler(fs, configParser),
+      new AclRuleHandler(fs),
     ];
   }
 

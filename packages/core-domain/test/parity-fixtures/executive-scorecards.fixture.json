@@ -1,0 +1,98 @@
+{
+  "domain": "executive-scorecards",
+  "description": "Executive scorecard rule evaluator parity — DORA, SPACE, DRIFT rules",
+  "rules": [
+    { "id": "DORA-01", "severity": "MUST", "category": "executive-metrics", "title": "Deployment Frequency", "description": "Satellite products must measure deployment frequency", "blocking": false, "sourceFile": "executive-scorecards.rules.json" },
+    { "id": "DORA-02", "severity": "MUST", "category": "executive-metrics", "title": "Lead Time for Changes", "description": "Satellite products must measure lead time from commit to production", "blocking": false, "sourceFile": "executive-scorecards.rules.json" },
+    { "id": "DORA-03", "severity": "MUST", "category": "executive-metrics", "title": "Change Failure Rate", "description": "Satellite products must measure change failure rate", "blocking": false, "sourceFile": "executive-scorecards.rules.json" },
+    { "id": "DORA-04", "severity": "MUST", "category": "executive-metrics", "title": "Time to Restore", "description": "Satellite products must measure MTTR", "blocking": false, "sourceFile": "executive-scorecards.rules.json" },
+    { "id": "SPACE-01", "severity": "MUST", "category": "executive-metrics", "title": "Reliability (Observability)", "description": "Satellite products must have observability infrastructure", "blocking": true, "sourceFile": "executive-scorecards.rules.json" },
+    { "id": "SPACE-02", "severity": "SHOULD", "category": "executive-metrics", "title": "Culture (Team Health)", "description": "Satellite products should measure team health quarterly", "blocking": false, "sourceFile": "executive-scorecards.rules.json" },
+    { "id": "SPACE-03", "severity": "SHOULD", "category": "executive-metrics", "title": "Execution (Throughput)", "description": "Satellite products must measure sprint throughput", "blocking": false, "sourceFile": "executive-scorecards.rules.json" },
+    { "id": "SPACE-04", "severity": "SHOULD", "category": "executive-metrics", "title": "Communication (Visibility)", "description": "SDLC state must be visible to all stakeholders", "blocking": false, "sourceFile": "executive-scorecards.rules.json" },
+    { "id": "SPACE-05", "severity": "MUST", "category": "executive-metrics", "title": "Sponsorship (Leadership)", "description": "Satellite products must have executive sponsor assigned", "blocking": false, "sourceFile": "executive-scorecards.rules.json" },
+    { "id": "DRIFT-01", "severity": "MUST", "category": "executive-metrics", "title": "Architecture Drift Index", "description": "Satellite products must measure Architecture Drift Index", "blocking": false, "sourceFile": "executive-scorecards.rules.json" }
+  ],
+  "scenarios": {
+    "compliant": {
+      "filesystem": {
+        "existing": [
+          "/sat/.github/workflows",
+          "/sat/.github/workflows/ci.yml",
+          "/sat/otel.config.js",
+          "/sat/evolith.yaml",
+          "/core/.harness/evidence"
+        ],
+        "dirs": {
+          "/sat/.github/workflows": ["ci.yml"],
+          "/core/.harness/evidence": ["gate-evidence.json"]
+        },
+        "files": {
+          "/sat/.github/workflows/ci.yml": "name: CI\non: pull_request\njobs:\n  deploy:\n    runs-on: ubuntu-latest",
+          "/sat/evolith.yaml": "metadata:\n  phase: F1\nspec:\n  sdlc:\n    currentPhase: 1\ngovernance:\n  executiveSponsor: cto@evolith.dev",
+          "/sat/otel.config.js": "module.exports = { serviceName: 'sat' }"
+        }
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "DORA-01", "result": "passed" },
+        { "ruleId": "DORA-02", "result": "skipped" },
+        { "ruleId": "DORA-03", "result": "skipped" },
+        { "ruleId": "DORA-04", "result": "skipped" },
+        { "ruleId": "SPACE-01", "result": "passed" },
+        { "ruleId": "SPACE-02", "result": "skipped" },
+        { "ruleId": "SPACE-03", "result": "skipped" },
+        { "ruleId": "SPACE-04", "result": "passed" },
+        { "ruleId": "SPACE-05", "result": "passed" },
+        { "ruleId": "DRIFT-01", "result": "passed" }
+      ]
+    },
+    "no-ci-no-observability": {
+      "filesystem": {
+        "existing": [],
+        "dirs": {},
+        "files": {}
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "DORA-01", "result": "skipped" },
+        { "ruleId": "DORA-02", "result": "skipped" },
+        { "ruleId": "DORA-03", "result": "skipped" },
+        { "ruleId": "DORA-04", "result": "skipped" },
+        { "ruleId": "SPACE-01", "result": "skipped" },
+        { "ruleId": "SPACE-02", "result": "skipped" },
+        { "ruleId": "SPACE-03", "result": "skipped" },
+        { "ruleId": "SPACE-04", "result": "skipped" },
+        { "ruleId": "SPACE-05", "result": "skipped" },
+        { "ruleId": "DRIFT-01", "result": "skipped" }
+      ]
+    },
+    "ci-but-no-observability": {
+      "filesystem": {
+        "existing": [
+          "/sat/.github/workflows",
+          "/sat/.github/workflows/deploy.yml"
+        ],
+        "dirs": {
+          "/sat/.github/workflows": ["deploy.yml"]
+        },
+        "files": {
+          "/sat/.github/workflows/deploy.yml": "name: Deploy\non: push\njobs:\n  deploy:\n    runs-on: ubuntu-latest"
+        }
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "DORA-01", "result": "passed" },
+        { "ruleId": "DORA-02", "result": "skipped" },
+        { "ruleId": "DORA-03", "result": "skipped" },
+        { "ruleId": "DORA-04", "result": "skipped" },
+        { "ruleId": "SPACE-01", "result": "skipped" },
+        { "ruleId": "SPACE-02", "result": "skipped" },
+        { "ruleId": "SPACE-03", "result": "skipped" },
+        { "ruleId": "SPACE-04", "result": "skipped" },
+        { "ruleId": "SPACE-05", "result": "skipped" },
+        { "ruleId": "DRIFT-01", "result": "skipped" }
+      ]
+    }
+  }
+}

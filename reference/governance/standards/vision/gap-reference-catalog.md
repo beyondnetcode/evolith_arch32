@@ -2343,10 +2343,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Add a Redis caching layer to the Core API and MCP server to optimize latency and performance for the Tracker consumption pattern, where repeated requests for topology manifests, OPA evaluations, and gate status checks hit the same data.
 **Current Evidence:** The Core API (`apps/core-api/`) has no caching middleware. Every request for topology manifests, gate evaluations, and ruleset lookups hits the filesystem or OPA engine directly. With Tracker as a consumer making frequent queries for the same topology data, this creates unnecessary latency and redundant computation. Rate limiting is also absent (noted in prior gaps).
 **Done When:**
-  - [ ] A Redis instance is added to the `docker-compose.yml` infrastructure stack.
-  - [ ] Core API implements response caching for topology manifest lookups (TTL: 5 minutes).
-  - [ ] OPA policy evaluation results are cached by input hash (TTL: 1 minute) to avoid re-evaluation for identical inputs.
-  - [ ] Rate limiting middleware uses Redis for distributed counters (replacing in-memory).
-  - [ ] MCP server caches tool/resource discovery results (TTL: 10 minutes).
-  - [ ] A cache invalidation strategy is documented for topology manifest updates.
-  - [ ] Cache hit/miss metrics are exposed via the observability stack (Prometheus).
+  - [x] A Redis instance is added to the `docker-compose.yml` infrastructure stack.
+  - [x] Core API implements response caching for topology manifest lookups (TTL: 5 minutes).
+  - [x] OPA policy evaluation results are cached by input hash (TTL: 1 minute) to avoid re-evaluation for identical inputs.
+  - [x] Rate limiting middleware uses Redis for distributed counters (replacing in-memory).
+  - [x] MCP server caches tool/resource discovery results (TTL: 10 minutes).
+  - [x] A cache invalidation strategy is documented for topology manifest updates.
+  - [x] Cache hit/miss metrics are exposed via the observability stack (Prometheus).

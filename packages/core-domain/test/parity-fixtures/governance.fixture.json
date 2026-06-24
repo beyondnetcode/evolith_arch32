@@ -1,0 +1,152 @@
+{
+  "domain": "governance",
+  "description": "Governance rule evaluator parity — INH, GOV, OCB, ACL rules",
+  "rules": [
+    { "id": "INH-01", "severity": "MUST", "category": "governance", "title": "Core Immutability", "description": "Satellites cannot own rulesets/ directories", "blocking": true, "sourceFile": "inheritance.rules.json" },
+    { "id": "INH-02", "severity": "MUST", "category": "governance", "title": "Version Pinning", "description": "Satellites must pin coreRef.version in evolith.yaml", "blocking": true, "sourceFile": "inheritance.rules.json" },
+    { "id": "INH-06", "severity": "MUST", "category": "governance", "title": "Mandatory Architecture Tracker", "description": "Satellite must have DECISIONS.md", "blocking": true, "sourceFile": "inheritance.rules.json" },
+    { "id": "GOV-01", "severity": "MUST", "category": "governance", "title": "Satellite Config Required", "description": "Satellite must have evolith.yaml", "blocking": true, "sourceFile": "satellite-contracts.rules.json" },
+    { "id": "GOV-02", "severity": "MUST", "category": "governance", "title": "Governance Version Tracked", "description": "evolith.yaml must specify governance.version", "blocking": true, "sourceFile": "satellite-contracts.rules.json" },
+    { "id": "OCB-01", "severity": "MUST", "category": "governance", "title": "License Agnostic Core", "description": "Core cannot reference commercial licenses", "blocking": true, "sourceFile": "open-core-boundary.rules.json" },
+    { "id": "ACL-01", "severity": "MUST", "category": "governance", "title": "Schema Validation Before Ingestion", "description": "ACL directory must not be empty", "blocking": true, "sourceFile": "anti-corruption-layer.rules.json" }
+  ],
+  "scenarios": {
+    "compliant": {
+      "filesystem": {
+        "existing": ["/sat/evolith.yaml", "/sat/DECISIONS.md", "/sat/package.json", "/sat/acl"],
+        "files": {
+          "/sat/evolith.yaml": "governance:\n  version: 1.0.0\ncoreRef:\n  version: 1.2.3\n",
+          "/sat/package.json": "{\"license\": \"MIT\"}"
+        },
+        "dirs": { "/sat/acl": ["orders", "inventory"] }
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "INH-01", "result": "passed" },
+        { "ruleId": "INH-02", "result": "passed" },
+        { "ruleId": "INH-06", "result": "passed" },
+        { "ruleId": "GOV-01", "result": "passed" },
+        { "ruleId": "GOV-02", "result": "passed" },
+        { "ruleId": "OCB-01", "result": "passed" },
+        { "ruleId": "ACL-01", "result": "passed" }
+      ]
+    },
+    "satellite-with-rulesets": {
+      "filesystem": {
+        "existing": ["/sat/evolith.yaml", "/sat/DECISIONS.md", "/sat/rulesets", "/sat/package.json"],
+        "files": {
+          "/sat/evolith.yaml": "governance:\n  version: 1.0.0\ncoreRef:\n  version: 1.2.3\n",
+          "/sat/package.json": "{\"license\": \"MIT\"}"
+        },
+        "dirs": {}
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "INH-01", "result": "failed" },
+        { "ruleId": "INH-02", "result": "passed" },
+        { "ruleId": "INH-06", "result": "passed" },
+        { "ruleId": "GOV-01", "result": "passed" },
+        { "ruleId": "GOV-02", "result": "passed" },
+        { "ruleId": "OCB-01", "result": "passed" },
+        { "ruleId": "ACL-01", "result": "passed" }
+      ]
+    },
+    "missing-evolith-yaml": {
+      "filesystem": {
+        "existing": ["/sat/DECISIONS.md"],
+        "files": {},
+        "dirs": {}
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "INH-01", "result": "passed" },
+        { "ruleId": "INH-02", "result": "passed" },
+        { "ruleId": "INH-06", "result": "passed" },
+        { "ruleId": "GOV-01", "result": "failed" },
+        { "ruleId": "GOV-02", "result": "passed" },
+        { "ruleId": "OCB-01", "result": "passed" },
+        { "ruleId": "ACL-01", "result": "passed" }
+      ]
+    },
+    "unlicensed-package": {
+      "filesystem": {
+        "existing": ["/sat/evolith.yaml", "/sat/DECISIONS.md", "/sat/package.json"],
+        "files": {
+          "/sat/evolith.yaml": "governance:\n  version: 1.0.0\ncoreRef:\n  version: 1.2.3\n"
+        },
+        "json": { "/sat/package.json": { "license": "UNLICENSED" } },
+        "dirs": {}
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "INH-01", "result": "passed" },
+        { "ruleId": "INH-02", "result": "passed" },
+        { "ruleId": "INH-06", "result": "passed" },
+        { "ruleId": "GOV-01", "result": "passed" },
+        { "ruleId": "GOV-02", "result": "passed" },
+        { "ruleId": "OCB-01", "result": "failed" },
+        { "ruleId": "ACL-01", "result": "passed" }
+      ]
+    },
+    "empty-acl-directory": {
+      "filesystem": {
+        "existing": ["/sat/evolith.yaml", "/sat/DECISIONS.md", "/sat/acl", "/sat/package.json"],
+        "files": {
+          "/sat/evolith.yaml": "governance:\n  version: 1.0.0\ncoreRef:\n  version: 1.2.3\n",
+          "/sat/package.json": "{\"license\": \"MIT\"}"
+        },
+        "dirs": { "/sat/acl": [] }
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "INH-01", "result": "passed" },
+        { "ruleId": "INH-02", "result": "passed" },
+        { "ruleId": "INH-06", "result": "passed" },
+        { "ruleId": "GOV-01", "result": "passed" },
+        { "ruleId": "GOV-02", "result": "passed" },
+        { "ruleId": "OCB-01", "result": "passed" },
+        { "ruleId": "ACL-01", "result": "failed" }
+      ]
+    },
+    "missing-decisions-md": {
+      "filesystem": {
+        "existing": ["/sat/evolith.yaml", "/sat/package.json"],
+        "files": {
+          "/sat/evolith.yaml": "governance:\n  version: 1.0.0\ncoreRef:\n  version: 1.2.3\n",
+          "/sat/package.json": "{\"license\": \"MIT\"}"
+        },
+        "dirs": {}
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "INH-01", "result": "passed" },
+        { "ruleId": "INH-02", "result": "passed" },
+        { "ruleId": "INH-06", "result": "failed" },
+        { "ruleId": "GOV-01", "result": "passed" },
+        { "ruleId": "GOV-02", "result": "passed" },
+        { "ruleId": "OCB-01", "result": "passed" },
+        { "ruleId": "ACL-01", "result": "passed" }
+      ]
+    },
+    "invalid-semver": {
+      "filesystem": {
+        "existing": ["/sat/evolith.yaml", "/sat/DECISIONS.md", "/sat/package.json"],
+        "files": {
+          "/sat/evolith.yaml": "governance:\n  version: 1.0.0\ncoreRef:\n  version: notsemver\n",
+          "/sat/package.json": "{\"license\": \"MIT\"}"
+        },
+        "dirs": {}
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "INH-01", "result": "passed" },
+        { "ruleId": "INH-02", "result": "failed" },
+        { "ruleId": "INH-06", "result": "passed" },
+        { "ruleId": "GOV-01", "result": "passed" },
+        { "ruleId": "GOV-02", "result": "passed" },
+        { "ruleId": "OCB-01", "result": "passed" },
+        { "ruleId": "ACL-01", "result": "passed" }
+      ]
+    }
+  }
+}

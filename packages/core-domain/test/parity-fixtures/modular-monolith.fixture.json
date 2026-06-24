@@ -1,0 +1,107 @@
+{
+  "domain": "modular-monolith",
+  "description": "Modular monolith architecture rule evaluator parity — MM-R rules",
+  "rules": [
+    { "id": "MM-R01", "severity": "MUST", "category": "topology", "title": "Single Deployment Unit", "description": "All bounded contexts deployed as single artifact", "blocking": true, "sourceFile": "modular-monolith.rules.json" },
+    { "id": "MM-R02", "severity": "MUST", "category": "bounded-contexts", "title": "Explicit Bounded Context Boundaries", "description": "Each bounded context must be a separated module", "blocking": true, "sourceFile": "modular-monolith.rules.json" },
+    { "id": "MM-R03", "severity": "MUST", "category": "hexagonal-architecture", "title": "Ports and Adapters Boundary", "description": "Domain layer must have zero external dependencies", "blocking": true, "sourceFile": "modular-monolith.rules.json" },
+    { "id": "MM-R04", "severity": "MUST", "category": "communication", "title": "Inter-Context Communication via Ports", "description": "Cross-context communication must use port interfaces", "blocking": true, "sourceFile": "modular-monolith.rules.json" },
+    { "id": "MM-R05", "severity": "MUST", "category": "persistence", "title": "No Shared Database", "description": "Each bounded context must have own schema", "blocking": true, "sourceFile": "modular-monolith.rules.json" },
+    { "id": "MM-R06", "severity": "MUST", "category": "async-boundaries", "title": "Async Events Use Domain Events", "description": "Event-driven reactions subscribe to domain event types", "blocking": false, "sourceFile": "modular-monolith.rules.json" },
+    { "id": "MM-R07", "severity": "MUST", "category": "extraction-readiness", "title": "Maintain Extraction Readiness Score", "description": "Extraction readiness assessment must exist", "blocking": false, "sourceFile": "modular-monolith.rules.json" },
+    { "id": "MM-R08", "severity": "MUST", "category": "observability", "title": "Observability Instrumentation", "description": "All bounded contexts must emit OTel traces", "blocking": false, "sourceFile": "modular-monolith.rules.json" },
+    { "id": "MM-R09", "severity": "MUST", "category": "dependency-injection", "title": "Strict DIP", "description": "No manual new Service instantiation", "blocking": true, "sourceFile": "modular-monolith.rules.json" },
+    { "id": "MM-R10", "severity": "MUST", "category": "static-analysis", "title": "AST-Based Analysis Mandatory", "description": "Static analysis must use AST not regex", "blocking": true, "sourceFile": "modular-monolith.rules.json" },
+    { "id": "MM-R11", "severity": "MUST", "category": "separation-of-concerns", "title": "Strict UI and Logic Isolation", "description": "UI must not leak into Application/Domain logic", "blocking": true, "sourceFile": "modular-monolith.rules.json" },
+    { "id": "MM-R12", "severity": "SHOULD", "category": "domain-purity", "title": "Pure Domain Model", "description": "Domain entities should not reference persistence frameworks", "blocking": false, "sourceFile": "modular-monolith.rules.json" }
+  ],
+  "scenarios": {
+    "compliant-minimal": {
+      "filesystem": {
+        "existing": ["/sat/src", "/sat/src/domain", "/sat/src/application", "/sat/src/ports", "/sat/contracts", "/sat/acl", "/sat/events", "/sat/docs/extraction-readiness.md", "/sat/src/tracing.ts"],
+        "dirs": { "/sat/src": ["domain", "application", "ports", "infrastructure"], "/sat/acl": ["orders", "inventory"] },
+        "json": { "/sat/package.json": {} },
+        "existing_files": ["/sat/src", "/sat/src/domain", "/sat/src/application", "/sat/src/ports"]
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "MM-R01", "result": "passed" },
+        { "ruleId": "MM-R02", "result": "passed" },
+        { "ruleId": "MM-R03", "result": "passed" },
+        { "ruleId": "MM-R04", "result": "passed" },
+        { "ruleId": "MM-R05", "result": "passed" },
+        { "ruleId": "MM-R06", "result": "passed" },
+        { "ruleId": "MM-R07", "result": "passed" },
+        { "ruleId": "MM-R08", "result": "passed" },
+        { "ruleId": "MM-R09", "result": "passed" },
+        { "ruleId": "MM-R10", "result": "passed" },
+        { "ruleId": "MM-R11", "result": "passed" },
+        { "ruleId": "MM-R12", "result": "passed" }
+      ]
+    },
+    "monorepo-workspace-fails-r01": {
+      "filesystem": {
+        "existing": ["/sat/src", "/sat/package.json"],
+        "dirs": { "/sat/src": ["domain", "application"] },
+        "json": { "/sat/package.json": { "workspaces": ["packages/*"] } }
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "MM-R01", "result": "failed" },
+        { "ruleId": "MM-R02", "result": "passed" },
+        { "ruleId": "MM-R03", "result": "failed" },
+        { "ruleId": "MM-R04", "result": "failed" },
+        { "ruleId": "MM-R05", "result": "failed" },
+        { "ruleId": "MM-R06", "result": "failed" },
+        { "ruleId": "MM-R07", "result": "failed" },
+        { "ruleId": "MM-R08", "result": "failed" },
+        { "ruleId": "MM-R09", "result": "passed" },
+        { "ruleId": "MM-R10", "result": "passed" },
+        { "ruleId": "MM-R11", "result": "passed" },
+        { "ruleId": "MM-R12", "result": "passed" }
+      ]
+    },
+    "missing-ports-fails-r03": {
+      "filesystem": {
+        "existing": ["/sat/src"],
+        "dirs": { "/sat/src": ["domain", "application"] }
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "MM-R01", "result": "passed" },
+        { "ruleId": "MM-R02", "result": "passed" },
+        { "ruleId": "MM-R03", "result": "failed" },
+        { "ruleId": "MM-R04", "result": "failed" },
+        { "ruleId": "MM-R05", "result": "failed" },
+        { "ruleId": "MM-R06", "result": "failed" },
+        { "ruleId": "MM-R07", "result": "failed" },
+        { "ruleId": "MM-R08", "result": "passed" },
+        { "ruleId": "MM-R09", "result": "passed" },
+        { "ruleId": "MM-R10", "result": "passed" },
+        { "ruleId": "MM-R11", "result": "passed" },
+        { "ruleId": "MM-R12", "result": "passed" }
+      ]
+    },
+    "empty-project": {
+      "filesystem": {
+        "existing": [],
+        "dirs": {}
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "MM-R01", "result": "passed" },
+        { "ruleId": "MM-R02", "result": "passed" },
+        { "ruleId": "MM-R03", "result": "failed" },
+        { "ruleId": "MM-R04", "result": "failed" },
+        { "ruleId": "MM-R05", "result": "failed" },
+        { "ruleId": "MM-R06", "result": "failed" },
+        { "ruleId": "MM-R07", "result": "failed" },
+        { "ruleId": "MM-R08", "result": "passed" },
+        { "ruleId": "MM-R09", "result": "passed" },
+        { "ruleId": "MM-R10", "result": "passed" },
+        { "ruleId": "MM-R11", "result": "passed" },
+        { "ruleId": "MM-R12", "result": "passed" }
+      ]
+    }
+  }
+}

@@ -3700,6 +3700,22 @@
       ],
       "dependencyDisposition": "none",
       "closureNote": "Created governance CI workflow running 12 unlinked scripts."
+    },
+    {
+      "id": "GT-249",
+      "closedAt": "2026-06-23",
+      "closureCommit": "4a876d5a",
+      "evidence": [
+        "apps/core-api/src/infrastructure/cache/redis-cache.module.ts",
+        "apps/core-api/src/infrastructure/cache/cache-keys.ts",
+        "packages/mcp-server/src/mcp/mcp-cache.module.ts",
+        "reference/operations/redis-caching-layer.md"
+      ],
+      "validationCommands": [
+        "grep -c Redis apps/core-api/src/app.module.ts"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Implemented Redis caching for Core API and MCP with cache interceptors, metrics, and documentation."
     }
   ]
 }

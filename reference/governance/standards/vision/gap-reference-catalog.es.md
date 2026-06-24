@@ -2343,10 +2343,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Añadir una capa de caché Redis al Core API y MCP server para optimizar latencia y rendimiento en el patrón de consumo del Tracker, donde peticiones repetidas de manifiestos de topología, evaluaciones OPA y verificaciones de estado de gate golpean los mismos datos.
 **Evidencia Actual:** El Core API (`apps/core-api/`) no tiene middleware de caché. Cada petición de manifiestos de topología, evaluaciones de gates y búsquedas de rulesets golpea directamente el sistema de archivos o el motor OPA. Con Tracker como consumidor haciendo consultas frecuentes para los mismos datos de topología, esto crea latencia innecesaria y computación redundante. El rate limiting también está ausente.
 **Hecho Cuando:**
-  - [ ] Una instancia Redis se añade al stack de infraestructura en `docker-compose.yml`.
-  - [ ] Core API implementa caché de respuestas para búsquedas de manifiestos de topología (TTL: 5 minutos).
-  - [ ] Los resultados de evaluación de políticas OPA se cachean por hash de input (TTL: 1 minuto) para evitar re-evaluación con inputs idénticos.
-  - [ ] El middleware de rate limiting usa Redis para contadores distribuidos (reemplazando in-memory).
-  - [ ] MCP server cachea resultados de descubrimiento de tools/resources (TTL: 10 minutos).
-  - [ ] Se documenta una estrategia de invalidación de caché para actualizaciones de manifiestos de topología.
-  - [ ] Métricas de hit/miss de caché se exponen vía el stack de observabilidad (Prometheus).
+  - [x] Una instancia Redis se añade al stack de infraestructura en `docker-compose.yml`.
+  - [x] Core API implementa caché de respuestas para búsquedas de manifiestos de topología (TTL: 5 minutos).
+  - [x] Los resultados de evaluación de políticas OPA se cachean por hash de input (TTL: 1 minuto) para evitar re-evaluación con inputs idénticos.
+  - [x] El middleware de rate limiting usa Redis para contadores distribuidos (reemplazando in-memory).
+  - [x] MCP server cachea resultados de descubrimiento de tools/resources (TTL: 10 minutos).
+  - [x] Se documenta una estrategia de invalidación de caché para actualizaciones de manifiestos de topología.
+  - [x] Métricas de hit/miss de caché se exponen vía el stack de observabilidad (Prometheus).

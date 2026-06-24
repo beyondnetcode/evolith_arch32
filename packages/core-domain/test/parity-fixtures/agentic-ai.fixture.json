@@ -1,0 +1,92 @@
+{
+  "domain": "agentic-ai",
+  "description": "Agentic AI architecture rule evaluator parity — AAI-R rules",
+  "rules": [
+    { "id": "AAI-R01", "severity": "MUST", "category": "agent-identity", "title": "Agent Identity", "description": "agent.config.json must have agent.id and capabilities", "blocking": true, "sourceFile": "agentic-ai.rules.json" },
+    { "id": "AAI-R02", "severity": "MUST", "category": "agent-sandbox", "title": "Agent Sandbox", "description": "sandbox must be isolated with deny/allowlist", "blocking": true, "sourceFile": "agentic-ai.rules.json" },
+    { "id": "AAI-R03", "severity": "MUST", "category": "agent-prompt-boundaries", "title": "Prompt Boundaries", "description": "promptSources and implementationRoots must not overlap", "blocking": true, "sourceFile": "agentic-ai.rules.json" },
+    { "id": "AAI-R04", "severity": "MUST", "category": "agent-tool-approval", "title": "Tool Approval", "description": "toolPolicy.mutative must be approval-required", "blocking": true, "sourceFile": "agentic-ai.rules.json" },
+    { "id": "AAI-R05", "severity": "MUST", "category": "agent-sandbox-limits", "title": "Sandbox Limits", "description": "Must have ephemeral sandbox with positive limits", "blocking": true, "sourceFile": "agentic-ai.rules.json" },
+    { "id": "AAI-R06", "severity": "MUST", "category": "agent-context-trust", "title": "Context Trust", "description": "Must have data-only untrusted context", "blocking": true, "sourceFile": "agentic-ai.rules.json" },
+    { "id": "AAI-R07", "severity": "MUST", "category": "agent-action-accountability", "title": "Action Accountability", "description": "Must have scoped-and-expiring capabilities plus append-only audit", "blocking": true, "sourceFile": "agentic-ai.rules.json" },
+    { "id": "AAI-R08", "severity": "MUST", "category": "agent-operational-budgets", "title": "Operational Budgets", "description": "Must have positive token budgets and runbooks", "blocking": true, "sourceFile": "agentic-ai.rules.json" },
+    { "id": "AAI-R09", "severity": "MUST", "category": "agent-credential-lifecycle", "title": "Credential Lifecycle", "description": "Must have positive TTL, rotation cadence, and revocation", "blocking": true, "sourceFile": "agentic-ai.rules.json" }
+  ],
+  "scenarios": {
+    "compliant": {
+      "filesystem": {
+        "existing": ["/sat/agent.config.json", "/sat/docs/agentic-ai-runbooks.md"],
+        "json": {
+          "/sat/agent.config.json": {
+            "agent": { "id": "reviewer", "capabilities": ["read", "review"] },
+            "sandbox": { "mode": "isolated", "network": "allowlist", "process": "deny", "ephemeral": true, "maxDurationSeconds": 30, "maxMemoryMb": 512, "maxCpuCores": 1 },
+            "promptSources": ["prompts"],
+            "implementationRoots": ["src/agents"],
+            "contextPolicy": { "untrustedContent": "data-only", "provenanceRequired": true, "toolOutputSchemaValidation": true },
+            "toolPolicy": { "mutative": "approval-required", "capabilityDelegation": "scoped-and-expiring" },
+            "audit": { "appendOnly": true, "correlationId": "required" },
+            "operationalBudgets": { "maxPromptTokens": 16000, "maxCompletionTokens": 4000, "maxContextWindowTokens": 128000, "mcpToolConcurrency": { "maxInFlight": 4, "perToolMaxInFlight": 2 }, "runbooksPath": "docs/agentic-ai-runbooks.md" },
+            "credentialLifecycle": { "delegationMaxTtlSeconds": 900, "rotationCadenceDays": 30, "revocation": { "onIncident": "immediate", "maxPropagationSeconds": 60 } }
+          }
+        }
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "AAI-R01", "result": "passed" },
+        { "ruleId": "AAI-R02", "result": "passed" },
+        { "ruleId": "AAI-R03", "result": "passed" },
+        { "ruleId": "AAI-R04", "result": "passed" },
+        { "ruleId": "AAI-R05", "result": "passed" },
+        { "ruleId": "AAI-R06", "result": "passed" },
+        { "ruleId": "AAI-R07", "result": "passed" },
+        { "ruleId": "AAI-R08", "result": "passed" },
+        { "ruleId": "AAI-R09", "result": "passed" }
+      ]
+    },
+    "missing-config": {
+      "filesystem": { "existing": [], "json": {} },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "AAI-R01", "result": "failed" },
+        { "ruleId": "AAI-R02", "result": "failed" },
+        { "ruleId": "AAI-R03", "result": "failed" },
+        { "ruleId": "AAI-R04", "result": "failed" },
+        { "ruleId": "AAI-R05", "result": "failed" },
+        { "ruleId": "AAI-R06", "result": "failed" },
+        { "ruleId": "AAI-R07", "result": "failed" },
+        { "ruleId": "AAI-R08", "result": "failed" },
+        { "ruleId": "AAI-R09", "result": "failed" }
+      ]
+    },
+    "overlapping-prompt-implementation": {
+      "filesystem": {
+        "existing": ["/sat/agent.config.json", "/sat/docs/agentic-ai-runbooks.md"],
+        "json": {
+          "/sat/agent.config.json": {
+            "agent": { "id": "reviewer", "capabilities": ["read"] },
+            "sandbox": { "mode": "isolated", "network": "deny", "process": "deny", "ephemeral": true, "maxDurationSeconds": 30, "maxMemoryMb": 256, "maxCpuCores": 1 },
+            "promptSources": ["src/prompts"],
+            "implementationRoots": ["src"],
+            "contextPolicy": { "untrustedContent": "data-only", "provenanceRequired": true, "toolOutputSchemaValidation": true },
+            "toolPolicy": { "mutative": "approval-required", "capabilityDelegation": "scoped-and-expiring" },
+            "audit": { "appendOnly": true, "correlationId": "required" },
+            "operationalBudgets": { "maxPromptTokens": 8000, "maxCompletionTokens": 2000, "maxContextWindowTokens": 64000, "mcpToolConcurrency": { "maxInFlight": 2, "perToolMaxInFlight": 1 }, "runbooksPath": "docs/agentic-ai-runbooks.md" },
+            "credentialLifecycle": { "delegationMaxTtlSeconds": 300, "rotationCadenceDays": 14, "revocation": { "onIncident": "immediate", "maxPropagationSeconds": 120 } }
+          }
+        }
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "AAI-R01", "result": "passed" },
+        { "ruleId": "AAI-R02", "result": "passed" },
+        { "ruleId": "AAI-R03", "result": "failed" },
+        { "ruleId": "AAI-R04", "result": "passed" },
+        { "ruleId": "AAI-R05", "result": "passed" },
+        { "ruleId": "AAI-R06", "result": "passed" },
+        { "ruleId": "AAI-R07", "result": "passed" },
+        { "ruleId": "AAI-R08", "result": "passed" },
+        { "ruleId": "AAI-R09", "result": "passed" }
+      ]
+    }
+  }
+}

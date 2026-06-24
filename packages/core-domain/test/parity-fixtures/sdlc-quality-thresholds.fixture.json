@@ -1,0 +1,110 @@
+{
+  "domain": "sdlc-quality-thresholds",
+  "description": "SDLC quality threshold rule evaluator parity — QT rules",
+  "rules": [
+    { "id": "QT-01", "severity": "MUST", "category": "testing", "title": "Code Coverage", "description": "Coverage below 80% on business logic blocks merge", "blocking": true, "sourceFile": "quality-thresholds.rules.json" },
+    { "id": "QT-02", "severity": "MUST", "category": "code-quality", "title": "Cyclomatic Complexity", "description": "Methods exceeding cyclomatic complexity of 15 block merge", "blocking": true, "sourceFile": "quality-thresholds.rules.json" },
+    { "id": "QT-03", "severity": "MUST", "category": "security", "title": "Security Vulnerabilities", "description": "Any High or Critical CVE blocks merge", "blocking": true, "sourceFile": "quality-thresholds.rules.json" },
+    { "id": "QT-04", "severity": "MUST", "category": "code-quality", "title": "Technical Debt Ratio", "description": "Technical debt ratio > 5% blocks RC stamp", "blocking": true, "sourceFile": "quality-thresholds.rules.json" },
+    { "id": "QT-05", "severity": "MUST", "category": "testing", "title": "Testing Pyramid Distribution", "description": "Skewed distribution requires written explanation", "blocking": true, "sourceFile": "quality-thresholds.rules.json" },
+    { "id": "QT-06", "severity": "MUST", "category": "documentation", "title": "Documentation Delta", "description": "Code changes without documentation block merge", "blocking": true, "sourceFile": "quality-thresholds.rules.json" },
+    { "id": "QT-07", "severity": "MUST", "category": "operations", "title": "Observability Evidence", "description": "API paths without traces block Production Live", "blocking": true, "sourceFile": "quality-thresholds.rules.json" },
+    { "id": "QT-08", "severity": "MUST", "category": "contract", "title": "API Contract Compatibility", "description": "Breaking contract changes block merge", "blocking": true, "sourceFile": "quality-thresholds.rules.json" }
+  ],
+  "scenarios": {
+    "compliant": {
+      "filesystem": {
+        "existing": [
+          "/sat/coverage",
+          "/sat/complexity-report.json",
+          "/sat/security-scan.json",
+          "/sat/debt-report.json",
+          "/sat/docs",
+          "/sat/otel.config.js",
+          "/sat/contracts"
+        ],
+        "dirs": {
+          "/sat/coverage": ["lcov.info"],
+          "/sat/docs": ["api.md"],
+          "/sat/contracts": ["service.proto"]
+        },
+        "files": {}
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "QT-01", "result": "passed" },
+        { "ruleId": "QT-02", "result": "passed" },
+        { "ruleId": "QT-03", "result": "passed" },
+        { "ruleId": "QT-04", "result": "passed" },
+        { "ruleId": "QT-05", "result": "passed" },
+        { "ruleId": "QT-06", "result": "passed" },
+        { "ruleId": "QT-07", "result": "passed" },
+        { "ruleId": "QT-08", "result": "passed" }
+      ]
+    },
+    "no-evidence": {
+      "filesystem": {
+        "existing": [],
+        "dirs": {},
+        "files": {}
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "QT-01", "result": "skipped" },
+        { "ruleId": "QT-02", "result": "skipped" },
+        { "ruleId": "QT-03", "result": "skipped" },
+        { "ruleId": "QT-04", "result": "skipped" },
+        { "ruleId": "QT-05", "result": "passed" },
+        { "ruleId": "QT-06", "result": "skipped" },
+        { "ruleId": "QT-07", "result": "skipped" },
+        { "ruleId": "QT-08", "result": "skipped" }
+      ]
+    },
+    "evidence-at-core": {
+      "filesystem": {
+        "existing": [
+          "/core/coverage",
+          "/core/complexity-report.json",
+          "/core/security-scan.json",
+          "/core/debt-report.json",
+          "/core/otel.config.js",
+          "/core/contracts"
+        ],
+        "dirs": {
+          "/core/coverage": ["lcov.info"],
+          "/core/contracts": ["service.proto"]
+        },
+        "files": {}
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "QT-01", "result": "passed" },
+        { "ruleId": "QT-02", "result": "passed" },
+        { "ruleId": "QT-03", "result": "passed" },
+        { "ruleId": "QT-04", "result": "passed" },
+        { "ruleId": "QT-05", "result": "passed" },
+        { "ruleId": "QT-06", "result": "skipped" },
+        { "ruleId": "QT-07", "result": "passed" },
+        { "ruleId": "QT-08", "result": "passed" }
+      ]
+    },
+    "satellite-has-readme": {
+      "filesystem": {
+        "existing": ["/sat/README.md"],
+        "dirs": {},
+        "files": {}
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "QT-01", "result": "skipped" },
+        { "ruleId": "QT-02", "result": "skipped" },
+        { "ruleId": "QT-03", "result": "skipped" },
+        { "ruleId": "QT-04", "result": "skipped" },
+        { "ruleId": "QT-05", "result": "passed" },
+        { "ruleId": "QT-06", "result": "passed" },
+        { "ruleId": "QT-07", "result": "skipped" },
+        { "ruleId": "QT-08", "result": "skipped" }
+      ]
+    }
+  }
+}

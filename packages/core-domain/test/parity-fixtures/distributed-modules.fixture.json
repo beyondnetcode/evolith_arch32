@@ -1,0 +1,43 @@
+{
+  "domain": "distributed-modules",
+  "description": "Distributed modules architecture rule evaluator parity — DM-R, MS-R rules",
+  "rules": [
+    { "id": "DM-R01", "severity": "MUST", "category": "module-autonomy", "title": "Module Autonomy", "description": "Independent modules must have package.json", "blocking": true, "sourceFile": "distributed-modules.rules.json" },
+    { "id": "DM-R02", "severity": "MUST", "category": "contract-stability", "title": "Contract Stability", "description": "Must have contract definition files", "blocking": true, "sourceFile": "distributed-modules.rules.json" },
+    { "id": "DM-R03", "severity": "MUST", "category": "data-ownership", "title": "Data Ownership", "description": "Must have ACL directory", "blocking": true, "sourceFile": "distributed-modules.rules.json" },
+    { "id": "DM-R04", "severity": "MUST", "category": "async-communication", "title": "Async Communication", "description": "Events must have schema files", "blocking": true, "sourceFile": "distributed-modules.rules.json" },
+    { "id": "MS-R01", "severity": "MUST", "category": "containerization", "title": "Containerization", "description": "Must have a Dockerfile", "blocking": true, "sourceFile": "microservices.rules.json" },
+    { "id": "MS-R02", "severity": "MUST", "category": "service-boundaries", "title": "Service Boundaries", "description": "Must have multiple services in src/", "blocking": true, "sourceFile": "microservices.rules.json" }
+  ],
+  "scenarios": {
+    "compliant": {
+      "filesystem": {
+        "existing": ["/sat/src", "/sat/src/orders", "/sat/src/orders/package.json", "/sat/src/inventory", "/sat/src/inventory/package.json", "/sat/contracts", "/sat/acl", "/sat/events", "/sat/Dockerfile"],
+        "dirs": { "/sat/src": ["orders", "inventory"], "/sat/acl": ["orders", "inventory"], "/sat/events": ["order-created.schema.json"], "/sat/contracts": ["orders.proto"] },
+        "directories": ["/sat/src/orders", "/sat/src/inventory"],
+        "json": { "/sat/src/orders/package.json": {}, "/sat/src/inventory/package.json": {} }
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "DM-R01", "result": "passed" },
+        { "ruleId": "DM-R02", "result": "passed" },
+        { "ruleId": "DM-R03", "result": "passed" },
+        { "ruleId": "DM-R04", "result": "passed" },
+        { "ruleId": "MS-R01", "result": "passed" },
+        { "ruleId": "MS-R02", "result": "passed" }
+      ]
+    },
+    "missing-everything": {
+      "filesystem": { "existing": [], "dirs": {} },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "DM-R01", "result": "passed" },
+        { "ruleId": "DM-R02", "result": "failed" },
+        { "ruleId": "DM-R03", "result": "failed" },
+        { "ruleId": "DM-R04", "result": "passed" },
+        { "ruleId": "MS-R01", "result": "failed" },
+        { "ruleId": "MS-R02", "result": "passed" }
+      ]
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "domain": "edge-computing",
+  "description": "Edge computing architecture rule evaluator parity — EC-R rules",
+  "rules": [
+    { "id": "EC-R01", "severity": "MUST", "category": "edge-computing-sync", "title": "Edge Sync Strategy", "description": "Must declare a valid sync strategy", "blocking": true, "sourceFile": "edge-computing.rules.json" },
+    { "id": "EC-R02", "severity": "MUST", "category": "edge-computing-isolation", "title": "Edge Isolation", "description": "Must have edgeIsolation enabled", "blocking": true, "sourceFile": "edge-computing.rules.json" },
+    { "id": "EC-R03", "severity": "MUST", "category": "edge-computing-conflict", "title": "Conflict Resolution", "description": "Must have valid conflict resolution strategy", "blocking": true, "sourceFile": "edge-computing.rules.json" }
+  ],
+  "scenarios": {
+    "compliant": {
+      "filesystem": {
+        "existing": ["/sat/edge-computing.config.json"],
+        "json": { "/sat/edge-computing.config.json": { "syncStrategy": "offline-first", "edgeIsolation": true, "conflictResolution": "last-write-wins" } }
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "EC-R01", "result": "passed" },
+        { "ruleId": "EC-R02", "result": "passed" },
+        { "ruleId": "EC-R03", "result": "passed" }
+      ]
+    },
+    "missing-config": {
+      "filesystem": { "existing": [], "json": {} },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "EC-R01", "result": "failed" },
+        { "ruleId": "EC-R02", "result": "failed" },
+        { "ruleId": "EC-R03", "result": "failed" }
+      ]
+    }
+  }
+}

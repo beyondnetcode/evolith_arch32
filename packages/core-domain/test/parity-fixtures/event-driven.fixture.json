@@ -1,0 +1,32 @@
+{
+  "domain": "event-driven",
+  "description": "Event-driven architecture rule evaluator parity — ED-R rules",
+  "rules": [
+    { "id": "ED-R01", "severity": "MUST", "category": "event-driven-config", "title": "Event-Driven Config Exists", "description": "event-driven.config.json must have strictAsyncApi", "blocking": true, "sourceFile": "event-driven.rules.json" },
+    { "id": "ED-R02", "severity": "MUST", "category": "event-driven-outbox", "title": "Transactional Outbox", "description": "Must use transactional outbox pattern", "blocking": true, "sourceFile": "event-driven.rules.json" },
+    { "id": "ED-R03", "severity": "MUST", "category": "event-driven-dlq", "title": "Dead Letter Queue", "description": "Must have dead letter queue configured", "blocking": true, "sourceFile": "event-driven.rules.json" }
+  ],
+  "scenarios": {
+    "compliant": {
+      "filesystem": {
+        "existing": ["/sat/event-driven.config.json"],
+        "json": { "/sat/event-driven.config.json": { "strictAsyncApi": true, "transactionalOutbox": true, "deadLetterQueue": true } }
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "ED-R01", "result": "passed" },
+        { "ruleId": "ED-R02", "result": "passed" },
+        { "ruleId": "ED-R03", "result": "passed" }
+      ]
+    },
+    "missing-config": {
+      "filesystem": { "existing": [], "json": {} },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "ED-R01", "result": "failed" },
+        { "ruleId": "ED-R02", "result": "failed" },
+        { "ruleId": "ED-R03", "result": "failed" }
+      ]
+    }
+  }
+}

@@ -47,7 +47,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-246`](./gap-reference-catalog.md#gt-246) | Implement Chaos Mesh/Litmus experiments | `QA` | Cross | P3 | L | `DONE` |
 | [`GT-247`](./gap-reference-catalog.md#gt-247) | Replace hardcoded Docker-compose credentials | `Platform` | Cross | P3 | S | `DONE` |
 | [`GT-248`](./gap-reference-catalog.md#gt-248) | Create ADR freshness monitor and weekly review script | `Governance` | Cross | P3 | S | `DONE` |
-| [`GT-249`](./gap-reference-catalog.md#gt-249) | Add Redis caching layer for Core API, MCP, and Tracker consumption | `Architecture` | Cross | P1 | M | `PENDING` |
+| [`GT-249`](./gap-reference-catalog.md#gt-249) | Add Redis caching layer for Core API, MCP, and Tracker consumption | `Architecture` | Cross | P1 | M | `DONE` |
 | [`GT-190`](./gap-reference-catalog.md#gt-190) | Add logging to 9 empty catch blocks | `CLI` | Cross | P2 | S | `DONE` |
 | [`GT-191`](./gap-reference-catalog.md#gt-191) | Fix ADR matrix label mismatch | `Docs` | Cross | P2 | S | `DONE` |
 | [`GT-192`](./gap-reference-catalog.md#gt-192) | Fix MASTER_INDEX EN links `.es.md` → `.md` | `Docs` | Cross | P2 | S | `DONE` |
@@ -262,7 +262,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-160`](./gap-reference-catalog.md#gt-160) | Cross-surface correlation-ID and request-context propagation | `Cross` | Cross | P1 | M | `DONE` |
 | [`GT-174`](./gap-reference-catalog.md#gt-174) | Envelope `meta.schemaVersion` and producer/consumer compatibility matrix | `Cross` | Cross | P2 | S | `DONE` |
 
-**Progress:** 245 / 248 done · 0 in progress · 3 pending · 0 deferred
+**Progress:** 246 / 248 done · 0 in progress · 2 pending · 0 deferred
 
 **Wave 2026-06-23 (Wilson deep audit III):** Added 14 new gaps `GT-212`…`GT-225` from the Wilson Audit Playbook covering: ADR status hygiene (GT-212), topology manifest metadata + operational budgets + guidance corpus (GT-213, GT-217, GT-219), REST controller observability + OpenAPI (GT-214, GT-215), OPA input-schema parity + per-topology test density (GT-216, GT-222), SDLC Phase 05 rollback + on-call templates (GT-218), CLI branch coverage + envelope format coverage + skip-list cleanup (GT-220, GT-224, GT-225), MCP HTTP audit logging (GT-221), and cross-surface parity e2e tests (GT-223).
 

@@ -1,0 +1,60 @@
+{
+  "domain": "cli-release-readiness",
+  "description": "CLI release readiness rule evaluator parity — CLI-RR rules",
+  "rules": [
+    { "id": "CLI-RR-01", "severity": "MUST", "category": "cli-release", "title": "TypeScript Build Must Pass", "description": "CLI package must compile with npm run build", "blocking": true, "sourceFile": "release-readiness.rules.json" },
+    { "id": "CLI-RR-02", "severity": "MUST", "category": "cli-release", "title": "Tests Must Pass", "description": "CLI test runner must start successfully", "blocking": true, "sourceFile": "release-readiness.rules.json" },
+    { "id": "CLI-RR-03", "severity": "MUST", "category": "cli-release", "title": "Dependency Lock Required", "description": "CLI must have a committed package-lock.json", "blocking": true, "sourceFile": "release-readiness.rules.json" },
+    { "id": "CLI-RR-04", "severity": "MUST", "category": "cli-release", "title": "MCP Smoke Test Must Pass", "description": "MCP server must respond to initialize and tools/list", "blocking": true, "sourceFile": "release-readiness.rules.json" },
+    { "id": "CLI-RR-05", "severity": "SHOULD", "category": "cli-release", "title": "Release Documentation Must Match", "description": "CLI README or architecture docs should exist", "blocking": false, "sourceFile": "release-readiness.rules.json" }
+  ],
+  "scenarios": {
+    "compliant": {
+      "filesystem": {
+        "existing": ["/core/sdk/cli/dist", "/core/sdk/cli/dist/main.js", "/core/sdk/cli/package-lock.json", "/core/.harness/evidence", "/core/sdk/cli/README.md"],
+        "dirs": { "/core/.harness/evidence": ["mcp-smoke.json"], "/core/sdk/cli/dist": ["main.js", "x.spec.js"] },
+        "files": {
+          "/core/.harness/evidence/mcp-smoke.json": "{\"status\":\"passed\",\"results\":{\"initialize\":{},\"tools/list\":{}}}"
+        }
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "CLI-RR-01", "result": "passed" },
+        { "ruleId": "CLI-RR-02", "result": "passed" },
+        { "ruleId": "CLI-RR-03", "result": "passed" },
+        { "ruleId": "CLI-RR-04", "result": "passed" },
+        { "ruleId": "CLI-RR-05", "result": "passed" }
+      ]
+    },
+    "no-build-artifacts": {
+      "filesystem": {
+        "existing": [],
+        "dirs": {},
+        "files": {}
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "CLI-RR-01", "result": "failed" },
+        { "ruleId": "CLI-RR-02", "result": "failed" },
+        { "ruleId": "CLI-RR-03", "result": "failed" },
+        { "ruleId": "CLI-RR-04", "result": "failed" },
+        { "ruleId": "CLI-RR-05", "result": "failed" }
+      ]
+    },
+    "no-lock-file": {
+      "filesystem": {
+        "existing": ["/core/sdk/cli/dist", "/core/sdk/cli/dist/main.js", "/core/sdk/cli/README.md"],
+        "dirs": { "/core/sdk/cli/dist": ["main.js", "x.spec.js"] },
+        "files": {}
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "CLI-RR-01", "result": "passed" },
+        { "ruleId": "CLI-RR-02", "result": "passed" },
+        { "ruleId": "CLI-RR-03", "result": "failed" },
+        { "ruleId": "CLI-RR-04", "result": "failed" },
+        { "ruleId": "CLI-RR-05", "result": "passed" }
+      ]
+    }
+  }
+}

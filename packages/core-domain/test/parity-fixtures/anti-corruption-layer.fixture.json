@@ -1,0 +1,132 @@
+{
+  "domain": "anti-corruption-layer",
+  "description": "Anti-corruption layer rule evaluator parity — ACL-02 through ACL-06",
+  "rules": [
+    { "id": "ACL-02", "severity": "MUST", "category": "anti-corruption", "title": "Transformation Traceability", "description": "Every transformation preserves traceability to the original external source", "blocking": true, "sourceFile": "anti-corruption-layer.rules.json" },
+    { "id": "ACL-03", "severity": "MUST", "category": "anti-corruption", "title": "Reject Non-Compliant Data", "description": "Non-compliant data must be rejected, not silently adapted", "blocking": true, "sourceFile": "anti-corruption-layer.rules.json" },
+    { "id": "ACL-04", "severity": "MUST", "category": "anti-corruption", "title": "ACL Version Synchronization", "description": "ACL implementations must be versioned alongside Core evolution", "blocking": true, "sourceFile": "anti-corruption-layer.rules.json" },
+    { "id": "ACL-05", "severity": "SHOULD", "category": "anti-corruption", "title": "Explicit Contract Required", "description": "Integration with external systems must use explicit contracts", "blocking": false, "sourceFile": "anti-corruption-layer.rules.json" },
+    { "id": "ACL-06", "severity": "MUST", "category": "anti-corruption", "title": "Isolate External Dependencies", "description": "ACL implementations must be isolated from domain logic", "blocking": true, "sourceFile": "anti-corruption-layer.rules.json" }
+  ],
+  "scenarios": {
+    "compliant": {
+      "filesystem": {
+        "existing": [
+          "/sat/acl",
+          "/sat/evolith.yaml",
+          "/sat/src",
+          "/sat/src/domain",
+          "/sat/src/domain/order.ts",
+          "/sat/src/domain/inventory.ts"
+        ],
+        "dirs": {
+          "/sat/acl": ["jira-sync.json"],
+          "/sat/src": ["domain"],
+          "/sat/src/domain": ["order.ts", "inventory.ts"]
+        },
+        "files": {
+          "/sat/acl/jira-sync.json": "{\"transformationLogs\":[{\"externalSourceId\":\"JIRA-123\"}],\"auditTrail\":[]}",
+          "/sat/evolith.yaml": "governance:\n  version: 1.0.0\n",
+          "/sat/src/domain/order.ts": "export class Order { id: string; }",
+          "/sat/src/domain/inventory.ts": "export class Inventory { items: string[]; }"
+        },
+        "json": {}
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "ACL-02", "result": "passed" },
+        { "ruleId": "ACL-03", "result": "passed" },
+        { "ruleId": "ACL-04", "result": "passed" },
+        { "ruleId": "ACL-05", "result": "passed" },
+        { "ruleId": "ACL-06", "result": "passed" }
+      ]
+    },
+    "no-acl-directory": {
+      "filesystem": {
+        "existing": [],
+        "dirs": {},
+        "files": {}
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "ACL-02", "result": "skipped" },
+        { "ruleId": "ACL-03", "result": "skipped" },
+        { "ruleId": "ACL-04", "result": "skipped" },
+        { "ruleId": "ACL-05", "result": "skipped" },
+        { "ruleId": "ACL-06", "result": "skipped" }
+      ]
+    },
+    "acl-without-traceability": {
+      "filesystem": {
+        "existing": [
+          "/sat/acl",
+          "/sat/acl/jira-sync.json"
+        ],
+        "dirs": { "/sat/acl": ["jira-sync.json"] },
+        "files": {
+          "/sat/acl/jira-sync.json": "{\"status\":\"ok\",\"count\":5}"
+        },
+        "json": {}
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "ACL-02", "result": "skipped" },
+        { "ruleId": "ACL-03", "result": "passed" },
+        { "ruleId": "ACL-04", "result": "skipped" },
+        { "ruleId": "ACL-05", "result": "passed" },
+        { "ruleId": "ACL-06", "result": "skipped" }
+      ]
+    },
+    "domain-imports-external-sdk": {
+      "filesystem": {
+        "existing": [
+          "/sat/acl",
+          "/sat/evolith.yaml",
+          "/sat/src",
+          "/sat/src/domain",
+          "/sat/src/domain/order.ts"
+        ],
+        "dirs": {
+          "/sat/acl": ["jira-sync.json"],
+          "/sat/src": ["domain"],
+          "/sat/src/domain": ["order.ts"]
+        },
+        "files": {
+          "/sat/acl/jira-sync.json": "{\"transformationLogs\":[]}",
+          "/sat/evolith.yaml": "governance:\n  version: 1.0.0\n",
+          "/sat/src/domain/order.ts": "import { JiraClient } from 'jira';\nexport class Order {}"
+        },
+        "json": {}
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "ACL-02", "result": "passed" },
+        { "ruleId": "ACL-03", "result": "passed" },
+        { "ruleId": "ACL-04", "result": "passed" },
+        { "ruleId": "ACL-05", "result": "passed" },
+        { "ruleId": "ACL-06", "result": "failed" }
+      ]
+    },
+    "acl-without-evolith-yaml": {
+      "filesystem": {
+        "existing": [
+          "/sat/acl",
+          "/sat/acl/jira-sync.json"
+        ],
+        "dirs": { "/sat/acl": ["jira-sync.json"] },
+        "files": {
+          "/sat/acl/jira-sync.json": "{\"transformationLogs\":[]}"
+        },
+        "json": {}
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "ACL-02", "result": "passed" },
+        { "ruleId": "ACL-03", "result": "passed" },
+        { "ruleId": "ACL-04", "result": "skipped" },
+        { "ruleId": "ACL-05", "result": "passed" },
+        { "ruleId": "ACL-06", "result": "skipped" }
+      ]
+    }
+  }
+}

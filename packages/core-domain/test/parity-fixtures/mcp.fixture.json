@@ -1,0 +1,76 @@
+{
+  "domain": "mcp",
+  "description": "MCP protocol compliance rule evaluator parity — MCP rules",
+  "rules": [
+    { "id": "MCP-01", "severity": "MUST", "category": "mcp", "title": "Initialize Request Must Return Capabilities", "description": "The MCP server must respond to initialize with protocolVersion, capabilities, and serverInfo", "blocking": true, "sourceFile": "protocol-compliance.rules.json" },
+    { "id": "MCP-02", "severity": "MUST", "category": "mcp", "title": "Tools List Must Be Complete and Stable", "description": "tools/list must expose every supported tool with name, description, and inputSchema", "blocking": true, "sourceFile": "protocol-compliance.rules.json" },
+    { "id": "MCP-03", "severity": "MUST", "category": "mcp", "title": "Resources Must Preserve Core Traceability", "description": "resources/read responses must identify the Core artifact source", "blocking": true, "sourceFile": "protocol-compliance.rules.json" },
+    { "id": "MCP-04", "severity": "MUST", "category": "mcp", "title": "HTTP Transport Requires Explicit Authentication", "description": "HTTP transport must have API key or local-only mode", "blocking": true, "sourceFile": "protocol-compliance.rules.json" }
+  ],
+  "scenarios": {
+    "compliant": {
+      "filesystem": {
+        "existing": ["/core/.harness/evidence", "/core/sdk/cli/src/core/mcp/server.ts"],
+        "dirs": { "/core/.harness/evidence": ["mcp-smoke.json"] },
+        "files": {
+          "/core/.harness/evidence/mcp-smoke.json": "{\"status\":\"passed\",\"results\":{\"initialize\":{},\"tools/list\":{},\"resources/list\":{}}}",
+          "/core/sdk/cli/src/core/mcp/server.ts": "const apiKey = process.env.MCP_API_KEY;"
+        }
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "MCP-01", "result": "passed" },
+        { "ruleId": "MCP-02", "result": "passed" },
+        { "ruleId": "MCP-03", "result": "passed" },
+        { "ruleId": "MCP-04", "result": "passed" }
+      ]
+    },
+    "no-smoke-evidence": {
+      "filesystem": {
+        "existing": ["/core/.harness/evidence"],
+        "dirs": { "/core/.harness/evidence": ["other.json"] },
+        "files": {}
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "MCP-01", "result": "skipped" },
+        { "ruleId": "MCP-02", "result": "skipped" },
+        { "ruleId": "MCP-03", "result": "skipped" },
+        { "ruleId": "MCP-04", "result": "skipped" }
+      ]
+    },
+    "missing-initialize": {
+      "filesystem": {
+        "existing": ["/core/.harness/evidence"],
+        "dirs": { "/core/.harness/evidence": ["mcp-smoke.json"] },
+        "files": {
+          "/core/.harness/evidence/mcp-smoke.json": "{\"status\":\"passed\",\"results\":{\"tools/list\":{},\"resources/list\":{}}}"
+        }
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "MCP-01", "result": "failed" },
+        { "ruleId": "MCP-02", "result": "passed" },
+        { "ruleId": "MCP-03", "result": "passed" },
+        { "ruleId": "MCP-04", "result": "skipped" }
+      ]
+    },
+    "no-auth-on-server": {
+      "filesystem": {
+        "existing": ["/core/.harness/evidence", "/core/sdk/cli/src/core/mcp/server.ts"],
+        "dirs": { "/core/.harness/evidence": ["mcp-smoke.json"] },
+        "files": {
+          "/core/.harness/evidence/mcp-smoke.json": "{\"status\":\"passed\",\"results\":{\"initialize\":{},\"tools/list\":{},\"resources/list\":{}}}",
+          "/core/sdk/cli/src/core/mcp/server.ts": "const open = true;"
+        }
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "MCP-01", "result": "passed" },
+        { "ruleId": "MCP-02", "result": "passed" },
+        { "ruleId": "MCP-03", "result": "passed" },
+        { "ruleId": "MCP-04", "result": "failed" }
+      ]
+    }
+  }
+}

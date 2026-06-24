@@ -1,0 +1,96 @@
+{
+  "domain": "satellite-contracts",
+  "description": "Satellite contract rule evaluator parity — SVC-01 through SVC-05",
+  "rules": [
+    { "id": "SVC-01", "severity": "MUST", "category": "satellite-contract", "title": "Single evolith.yaml", "description": "Satellite must have exactly one evolith.yaml in repository root", "blocking": true, "sourceFile": "satellite-contracts.rules.json" },
+    { "id": "SVC-02", "severity": "MUST", "category": "satellite-contract", "title": "Satellite Name Uniqueness", "description": "Satellite name must be unique across all Evolith satellites", "blocking": true, "sourceFile": "satellite-contracts.rules.json" },
+    { "id": "SVC-03", "severity": "MUST", "category": "satellite-contract", "title": "F1 ADR Registry", "description": "F1 phase satellites must reference ADR-0047 in spec.compliance.adrRegistry", "blocking": true, "sourceFile": "satellite-contracts.rules.json" },
+    { "id": "SVC-04", "severity": "MUST", "category": "satellite-contract", "title": "Extraction Readiness", "description": "F2/F3 phase satellites must have extraction readiness score documented", "blocking": true, "sourceFile": "satellite-contracts.rules.json" },
+    { "id": "SVC-05", "severity": "MUST", "category": "satellite-contract", "title": "Core Version Exists", "description": "Core version referenced must exist in Evolith Core registry", "blocking": true, "sourceFile": "satellite-contracts.rules.json" }
+  ],
+  "scenarios": {
+    "compliant-f1": {
+      "filesystem": {
+        "existing": ["/sat/evolith.yaml"],
+        "dirs": {},
+        "files": {
+          "/sat/evolith.yaml": "metadata:\n  phase: F1\nspec:\n  compliance:\n    adrRegistry:\n      - ADR-0047\n  coreRef:\n    version: 1.2.3"
+        }
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "SVC-01", "result": "passed" },
+        { "ruleId": "SVC-02", "result": "skipped" },
+        { "ruleId": "SVC-03", "result": "passed" },
+        { "ruleId": "SVC-04", "result": "passed" },
+        { "ruleId": "SVC-05", "result": "skipped" }
+      ]
+    },
+    "compliant-f2": {
+      "filesystem": {
+        "existing": ["/sat/evolith.yaml", "/sat/docs/extraction-readiness.md"],
+        "dirs": { "/sat/docs": ["extraction-readiness.md"] },
+        "files": {
+          "/sat/evolith.yaml": "metadata:\n  phase: F2\nspec:\n  coreRef:\n    version: 1.2.3"
+        }
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "SVC-01", "result": "passed" },
+        { "ruleId": "SVC-02", "result": "skipped" },
+        { "ruleId": "SVC-03", "result": "passed" },
+        { "ruleId": "SVC-04", "result": "passed" },
+        { "ruleId": "SVC-05", "result": "skipped" }
+      ]
+    },
+    "no-evolith-yaml": {
+      "filesystem": {
+        "existing": [],
+        "dirs": {},
+        "files": {}
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "SVC-01", "result": "failed" },
+        { "ruleId": "SVC-02", "result": "skipped" },
+        { "ruleId": "SVC-03", "result": "skipped" },
+        { "ruleId": "SVC-04", "result": "skipped" },
+        { "ruleId": "SVC-05", "result": "skipped" }
+      ]
+    },
+    "f1-missing-adr-registry": {
+      "filesystem": {
+        "existing": ["/sat/evolith.yaml"],
+        "dirs": {},
+        "files": {
+          "/sat/evolith.yaml": "metadata:\n  phase: F1\nspec:\n  compliance:\n    adrRegistry: []\n  coreRef:\n    version: 1.2.3"
+        }
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "SVC-01", "result": "passed" },
+        { "ruleId": "SVC-02", "result": "skipped" },
+        { "ruleId": "SVC-03", "result": "failed" },
+        { "ruleId": "SVC-04", "result": "passed" },
+        { "ruleId": "SVC-05", "result": "skipped" }
+      ]
+    },
+    "f3-missing-extraction-readiness": {
+      "filesystem": {
+        "existing": ["/sat/evolith.yaml"],
+        "dirs": {},
+        "files": {
+          "/sat/evolith.yaml": "metadata:\n  phase: F3\nspec:\n  coreRef:\n    version: 1.2.3"
+        }
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "SVC-01", "result": "passed" },
+        { "ruleId": "SVC-02", "result": "skipped" },
+        { "ruleId": "SVC-03", "result": "passed" },
+        { "ruleId": "SVC-04", "result": "failed" },
+        { "ruleId": "SVC-05", "result": "skipped" }
+      ]
+    }
+  }
+}

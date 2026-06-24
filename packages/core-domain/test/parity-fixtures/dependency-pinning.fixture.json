@@ -1,0 +1,82 @@
+{
+  "domain": "dependency-pinning",
+  "description": "Dependency pinning rule evaluator parity — DEP rules",
+  "rules": [
+    { "id": "DEP-01", "severity": "MUST NOT", "category": "version-pinning", "title": "No caret ranges", "description": "No caret (^) range specifiers in package.json", "blocking": true, "sourceFile": "dependency-pinning.rules.json" },
+    { "id": "DEP-02", "severity": "MUST NOT", "category": "version-pinning", "title": "No tilde ranges", "description": "No tilde (~) range specifiers in package.json", "blocking": true, "sourceFile": "dependency-pinning.rules.json" },
+    { "id": "DEP-03", "severity": "MUST NOT", "category": "version-pinning", "title": "No wildcards", "description": "No wildcard or latest-tag version specifiers", "blocking": true, "sourceFile": "dependency-pinning.rules.json" },
+    { "id": "DEP-04", "severity": "MUST", "category": "lock-file", "title": "Lock file committed", "description": "package-lock.json must be committed", "blocking": true, "sourceFile": "dependency-pinning.rules.json" },
+    { "id": "DEP-05", "severity": "MUST", "category": "ci-installation", "title": "CI uses npm ci", "description": "CI must use npm ci not npm install", "blocking": true, "sourceFile": "dependency-pinning.rules.json" },
+    { "id": "DEP-09", "severity": "SHOULD", "category": "bot-policy", "title": "Dependency bot configured", "description": "Dependabot or Renovate should be configured", "blocking": false, "sourceFile": "dependency-pinning.rules.json" }
+  ],
+  "scenarios": {
+    "compliant": {
+      "filesystem": {
+        "existing": ["/sat/package.json", "/sat/package-lock.json", "/sat/.github/dependabot.yml", "/sat/.github/workflows"],
+        "dirs": { "/sat/.github/workflows": ["ci.yml"] },
+        "files": { "/sat/.github/workflows/ci.yml": "run: npm ci" },
+        "json": { "/sat/package.json": { "dependencies": { "lodash": "4.17.21" }, "devDependencies": { "jest": "29.0.0" } } }
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "DEP-01", "result": "passed" },
+        { "ruleId": "DEP-02", "result": "passed" },
+        { "ruleId": "DEP-03", "result": "passed" },
+        { "ruleId": "DEP-04", "result": "passed" },
+        { "ruleId": "DEP-05", "result": "passed" },
+        { "ruleId": "DEP-09", "result": "passed" }
+      ]
+    },
+    "caret-and-tilde-ranges": {
+      "filesystem": {
+        "existing": ["/sat/package.json", "/sat/package-lock.json", "/sat/.github/dependabot.yml", "/sat/.github/workflows"],
+        "dirs": { "/sat/.github/workflows": ["ci.yml"] },
+        "files": { "/sat/.github/workflows/ci.yml": "run: npm ci" },
+        "json": { "/sat/package.json": { "dependencies": { "lodash": "^4.17.21", "express": "~4.18.0" } } }
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "DEP-01", "result": "failed" },
+        { "ruleId": "DEP-02", "result": "failed" },
+        { "ruleId": "DEP-03", "result": "passed" },
+        { "ruleId": "DEP-04", "result": "passed" },
+        { "ruleId": "DEP-05", "result": "passed" },
+        { "ruleId": "DEP-09", "result": "passed" }
+      ]
+    },
+    "wildcard-versions": {
+      "filesystem": {
+        "existing": ["/sat/package.json", "/sat/package-lock.json"],
+        "dirs": {},
+        "files": {},
+        "json": { "/sat/package.json": { "dependencies": { "lodash": "latest" }, "devDependencies": { "jest": "*" } } }
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "DEP-01", "result": "passed" },
+        { "ruleId": "DEP-02", "result": "passed" },
+        { "ruleId": "DEP-03", "result": "failed" },
+        { "ruleId": "DEP-04", "result": "passed" },
+        { "ruleId": "DEP-05", "result": "skipped" },
+        { "ruleId": "DEP-09", "result": "failed" }
+      ]
+    },
+    "no-lock-no-ci": {
+      "filesystem": {
+        "existing": ["/sat/package.json"],
+        "dirs": {},
+        "files": {},
+        "json": { "/sat/package.json": { "dependencies": { "lodash": "4.17.21" } } }
+      },
+      "context": { "satellitePath": "/sat", "corePath": "/core" },
+      "expectedResults": [
+        { "ruleId": "DEP-01", "result": "passed" },
+        { "ruleId": "DEP-02", "result": "passed" },
+        { "ruleId": "DEP-03", "result": "passed" },
+        { "ruleId": "DEP-04", "result": "failed" },
+        { "ruleId": "DEP-05", "result": "skipped" },
+        { "ruleId": "DEP-09", "result": "failed" }
+      ]
+    }
+  }
+}

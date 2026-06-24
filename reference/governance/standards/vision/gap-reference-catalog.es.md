@@ -2415,9 +2415,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Fijar la imagen de MongoDB a una versión menor específica para que el stack de infraestructura sea reproducible y esté protegido frente a upgrades silenciosos que puedan romper compatibilidad o introducir cambios no revisados.
 **Evidencia Actual:** `reference/infrastructure/docker-compose.yml:54` — `image: mongo:latest`. Otros servicios (PostgreSQL, Redis, Traefik) ya están fijados; MongoDB es el caso aislado.
 **Hecho Cuando:**
-  - [ ] `mongo:latest` reemplazado por un tag fijo coincidente con la versión que Evolith soporta (e.g., `mongo:7.0`).
-  - [ ] Decisión de tag documentada en el README de infraestructura junto con la cadencia de actualización.
-  - [ ] Regla Dependabot/Renovate cubre actualizaciones de imágenes `docker` para mantener el pin.
+  - [x] `mongo:latest` reemplazado por un tag fijo coincidente con la versión que Evolith soporta (e.g., `mongo:7.0`).
+  - [x] Decisión de tag documentada en el README de infraestructura junto con la cadencia de actualización.
+  - [x] Regla Dependabot/Renovate cubre actualizaciones de imágenes `docker` para mantener el pin.
 
 #### GT-258
 **Propósito:** Añadir controles `concurrency:` a cada workflow de GitHub Actions para que pushes apilados cancelen runs superados — ahorrando cómputo, acelerando feedback y previniendo race conditions en workflows que mutan releases o cachés.

@@ -2415,9 +2415,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Pin the MongoDB image to a specific minor version so the infrastructure stack is reproducible and protected against silent upgrades that could break compatibility or introduce unreviewed changes.
 **Current Evidence:** `reference/infrastructure/docker-compose.yml:54` — `image: mongo:latest`. Other services (PostgreSQL, Redis, Traefik) are already pinned; MongoDB is the outlier.
 **Done When:**
-  - [ ] `mongo:latest` replaced with a pinned tag matching the version Evolith targets (e.g., `mongo:7.0`).
-  - [ ] Tag choice documented in the infrastructure README with the upgrade cadence.
-  - [ ] Dependabot/Renovate rule covers `docker` image updates so the pin is maintained.
+  - [x] `mongo:latest` replaced with a pinned tag matching the version Evolith targets (e.g., `mongo:7.0`).
+  - [x] Tag choice documented in the infrastructure README with the upgrade cadence.
+  - [x] Dependabot/Renovate rule covers `docker` image updates so the pin is maintained.
 
 #### GT-258
 **Purpose:** Add `concurrency:` controls to every GitHub Actions workflow so stacked pushes cancel superseded runs — saving compute, accelerating feedback, and preventing race conditions in workflows that mutate releases or caches.

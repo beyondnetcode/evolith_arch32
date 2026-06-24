@@ -3817,6 +3817,21 @@
       ],
       "dependencyDisposition": "none",
       "closureNote": "Added --ping=true to Traefik command to enable ping endpoint. Healthcheck now succeeds."
+    },
+    {
+      "id": "GT-257",
+      "closedAt": "2026-06-24",
+      "closureCommit": "6fb9be1b",
+      "evidence": [
+        "reference/infrastructure/docker-compose.yml",
+        "reference/infrastructure/README.md",
+        "reference/infrastructure/README.es.md"
+      ],
+      "validationCommands": [
+        "grep 'mongo:7.0' reference/infrastructure/docker-compose.yml"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Pinned MongoDB image to 7.0. Added Pinned Versions section to infrastructure README (EN/ES) with upgrade cadence."
     }
   ]
 }

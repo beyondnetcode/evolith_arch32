@@ -2399,9 +2399,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Cerrar la brecha de CSP / headers de seguridad en el transporte HTTP del MCP para que MCP y Core API presenten la misma superficie defensiva — `apps/core-api` ya cablea `helmet`, pero `packages/mcp-server` no, dejando sus respuestas HTTP sin CSP, HSTS, X-Frame-Options ni X-Content-Type-Options.
 **Evidencia Actual:** `apps/core-api/src/main.ts:8,51` importa y aplica `helmet()`. Un grep por `helmet` / `Content-Security-Policy` en `packages/mcp-server/src/` solo devuelve una definición de tipo de node_modules — sin uso en producción. `mcp-server.service.ts` construye un `http.createServer` sin aplicar middleware de headers.
 **Hecho Cuando:**
-  - [ ] El transporte HTTP del MCP configura, como mínimo: `Content-Security-Policy: default-src 'none'`, `X-Content-Type-Options: nosniff`, `Strict-Transport-Security`, `X-Frame-Options: DENY`, `Referrer-Policy: no-referrer`.
-  - [ ] La implementación reutiliza `helmet` (preferido) o una utilidad de headers explícita compartida con Core API.
-  - [ ] Spec verifica que los headers estén presentes en una respuesta representativa (e.g., `resources/list`).
+  - [x] El transporte HTTP del MCP configura, como mínimo: `Content-Security-Policy: default-src 'none'`, `X-Content-Type-Options: nosniff`, `Strict-Transport-Security`, `X-Frame-Options: DENY`, `Referrer-Policy: no-referrer`.
+  - [x] La implementación reutiliza `helmet` (preferido) o una utilidad de headers explícita compartida con Core API.
+  - [x] Spec verifica que los headers estén presentes en una respuesta representativa (e.g., `resources/list`).
 
 #### GT-256
 **Propósito:** Reparar el healthcheck de Traefik en `docker-compose.yml`, que hoy consulta `/ping` mientras Traefik se levanta sin `--ping=true`, garantizando que el contenedor sea marcado unhealthy en cualquier entorno que dependa de este stack.

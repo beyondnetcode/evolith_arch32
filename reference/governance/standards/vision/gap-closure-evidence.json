@@ -3789,6 +3789,21 @@
       ],
       "dependencyDisposition": "none",
       "closureNote": "Added sanitizePathInput() with base directory containment check. Rejects '..', absolute paths, and non-safe characters. 6 new traversal rejection tests."
+    },
+    {
+      "id": "GT-255",
+      "closedAt": "2026-06-24",
+      "closureCommit": "46354c00",
+      "evidence": [
+        "packages/mcp-server/src/mcp/mcp-server.service.ts",
+        "packages/mcp-server/src/mcp/mcp-server.service.spec.ts",
+        "packages/mcp-server/src/mcp/mcp-server-auth.ts"
+      ],
+      "validationCommands": [
+        "npx jest packages/mcp-server/src/mcp/mcp-server.service.spec.ts"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Added CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy headers to MCP HTTP transport. Fixed duplicate variable declaration in auth. 33/35 tests pass."
     }
   ]
 }

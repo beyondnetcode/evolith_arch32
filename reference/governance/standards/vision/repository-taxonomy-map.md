@@ -67,7 +67,7 @@ Use this map when you need to decide where to read, edit, add, or audit content 
 | `gap-reference-catalog.md` | C0 | Detailed problem, evidence, closure criteria, and references per `GT-*` | Add detailed context for new gaps | Put live status here instead of the tracking board |
 | `maturity-assessment.md` | C1 | Consolidated maturity assessment | Update assessment evidence and link deviations to `GT-*` items | Track open gaps directly in the assessment |
 | `gap-closure-evidence-standard.md`, `gap-closure-evidence.json` | C0 | Required closure evidence and registry | Record reproducible closure evidence | Mark semantic gaps done without registry evidence |
-| `maturity-reconciliation.json`, `inventory-summary.md` | C2 | Generated maturity and inventory evidence | Use as validation evidence | Hand-author generated outputs without process |
+| `executive-summary.md`, `maturity-reconciliation.json`, `inventory-summary.md` | C2 | Generated executive, maturity, and inventory evidence | Use as validation evidence | Hand-author generated outputs without process |
 | `repository-taxonomy-map.md` | C1 | Current operational map of repository areas and criticality | Use during navigation, audits, onboarding, and placement decisions | Treat it as superseding the accepted taxonomy policy |
 
 ## Executable Governance

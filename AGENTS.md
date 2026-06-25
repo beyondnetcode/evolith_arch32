@@ -16,6 +16,8 @@ This repository defines the architectural baseline, governance standards, harnes
 | `node .harness/scripts/ci/04-check-bilingual-parity.mjs` | Verify EN/ES pairs have identical ## and ### header counts |
 | `node .harness/scripts/bilingual-coverage.mjs` | Report bilingual coverage (which files lack counterparts) |
 | `node .harness/scripts/coverage-dashboard.mjs` | Generate visual HTML/MD coverage report by area |
+| `node .harness/scripts/generate-executive-summary.mjs` | Generate the bilingual executive governance summary from the canonical gap and maturity evidence |
+| `node .harness/scripts/generate-executive-summary.mjs --check` | Verify the executive governance summary is current |
 | `node .harness/scripts/generate-es-skeleton.mjs <file.md>` | Create ES skeleton from EN file (with --dry-run flag) |
 | `python ./.bmad-core/scripts/cleanup_markdown_encoding.py` | Sanitize UTF-8 encoding issues |
 | `node .harness/scripts/ci/01-validate-docs.mjs --render-mermaid` | Render Mermaid diagrams to SVG for visual validation |
@@ -23,10 +25,15 @@ This repository defines the architectural baseline, governance standards, harnes
 
 ### Pre-commit Hook
 The pre-commit hook (`.husky/pre-commit`) runs automatically on every commit:
-1. `lint-staged` - staged file linting
-2. `validate-docs.mjs` - full documentation validation
-3. `check-bilingual-parity.mjs` - bilingual structural validation
-4. Orphan bilingual file detection - EN without ES or vice versa
+1. `generate-executive-summary.mjs` - refreshes the EN/ES executive governance summary
+2. `git add` for the generated executive summary pair
+3. `ci-runner.mjs` - runs numbered CI validation scripts, including documentation validation, bilingual parity, and stale-summary checks
+
+### Pre-push Hook
+The pre-push hook (`.husky/pre-push`) runs automatically before pushing:
+1. `02-optimize-repo.mjs` - repository optimization
+2. `sync-project-board.mjs` - bidirectional gap tracking synchronization
+3. `generate-executive-summary.mjs` - refreshes the executive governance summary and blocks the push if it changed outside the current commit
 
 ### Terminology Glossary
 See `.harness/scripts/bilingual-terminology-glossary.md` for standardized EN/ES translations of technical terms. When adding new terms, update both versions together.

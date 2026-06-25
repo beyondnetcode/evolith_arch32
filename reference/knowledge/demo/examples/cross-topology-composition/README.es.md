@@ -2,7 +2,7 @@
 
 > **Navegación bilingüe:** [English Version](./README.md)
 > **Composición:** `modular-monolith + event-driven`
-> **Esquema:** [`topology-composition.schema.json`](../../rulesets/schema/topology-composition.schema.json)
+> **Esquema:** [`topology-composition.schema.json`](../../../../../rulesets/schema/topology-composition.schema.json)
 > **Validador:** `.harness/scripts/ci/22-validate-topology-composition.mjs`
 
 Este directorio publica la primera referencia ejecutable de la regla de composición multi-topología (`topology-dimensions.md §3`). Demuestra cómo un monolito modular F1 expone fronteras asíncronas mediante una topología de integración event-driven — la segunda fila de la tabla de ejemplos de composición — y se ejecuta extremo a extremo en el validador en cada commit.
@@ -69,6 +69,6 @@ Si dos perfiles no pueden componer, el validador debe rechazar el ejemplo. Agreg
 
 | Documento | Propósito |
 |---|---|
-| [Topology Dimensions §3 — Regla de Composición](../../reference/architecture/topologies/topology-dimensions.es.md#3-regla-de-composicion) | Regla de composición autoritativa. |
-| [Esquema de Manifiesto de Topología](../../rulesets/schema/topology-manifest.schema.json) | Define `spec.compatibility.composableWith`. |
-| [Esquema de Composición de Topologías](../../rulesets/schema/topology-composition.schema.json) | Define la forma del manifiesto usado por este ejemplo. |
+| [Topology Dimensions §3 — Regla de Composición](../../../../../reference/architecture/topologies/topology-dimensions.es.md#3-regla-de-composicion) | Regla de composición autoritativa. |
+| [Esquema de Manifiesto de Topología](../../../../../rulesets/schema/topology-manifest.schema.json) | Define `spec.compatibility.composableWith`. |
+| [Esquema de Composición de Topologías](../../../../../rulesets/schema/topology-composition.schema.json) | Define la forma del manifiesto usado por este ejemplo. |

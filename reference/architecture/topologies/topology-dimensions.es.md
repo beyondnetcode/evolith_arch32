@@ -33,7 +33,7 @@ El modelo dimensional previene dos fallas:
 
 Los perfiles topologicos son componibles cuando pertenecen a dimensiones distintas y sus manifiestos permiten explicitamente la combinacion mediante `spec.compatibility.composableWith`.
 
-> **Referencia ejecutable:** [`examples/cross-topology-composition/`](../../../examples/cross-topology-composition/README.es.md) publica una composición ejecutable `modular-monolith + event-driven`. El script CI `.harness/scripts/ci/22-validate-topology-composition.mjs` la valida en cada commit contra [`topology-composition.schema.json`](../../../rulesets/schema/topology-composition.schema.json).
+> **Referencia ejecutable:** [`examples/cross-topology-composition/`](../../knowledge/demo/examples/cross-topology-composition/README.es.md) publica una composición ejecutable `modular-monolith + event-driven`. El script CI `.harness/scripts/ci/22-validate-topology-composition.mjs` la valida en cada commit contra [`topology-composition.schema.json`](../../../rulesets/schema/topology-composition.schema.json).
 
 Ejemplos:
 

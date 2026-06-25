@@ -1,0 +1,22 @@
+{
+  "version": "1.0.0",
+  "project": {
+    "id": "evolith-core",
+    "name": "Evolith Core",
+    "description": "Architecture governance reference repository"
+  },
+  "agent": {
+    "persona": "winston",
+    "role": "Principal Architect",
+    "language": "es"
+  },
+  "hooks": {
+    "pre-commit": true,
+    "post-commit": true
+  },
+  "validation": {
+    "docs": true,
+    "bilingual-parity": true,
+    "tracking": true
+  }
+}

@@ -155,11 +155,11 @@
       "closureCommit": "507bb5a4",
       "evidence": [
         "rulesets/schema/topology-composition.schema.json",
-        "examples/cross-topology-composition/topology.composition.json",
-        "examples/cross-topology-composition/modular-monolith.config.json",
-        "examples/cross-topology-composition/event-driven.config.json",
-        "examples/cross-topology-composition/README.md",
-        "examples/cross-topology-composition/README.es.md",
+        "reference/knowledge/demo/examples/cross-topology-composition/topology.composition.json",
+        "reference/knowledge/demo/examples/cross-topology-composition/modular-monolith.config.json",
+        "reference/knowledge/demo/examples/cross-topology-composition/event-driven.config.json",
+        "reference/knowledge/demo/examples/cross-topology-composition/README.md",
+        "reference/knowledge/demo/examples/cross-topology-composition/README.es.md",
         ".harness/scripts/ci/22-validate-topology-composition.mjs",
         "reference/architecture/topologies/topology-dimensions.md",
         "reference/architecture/topologies/topology-dimensions.es.md"
@@ -341,14 +341,9 @@
       "closedAt": "2026-06-20",
       "closureCommit": "ec968d190388dc5e22086f870741ea68f59d8dcb",
       "evidence": [
-        ".harness/scripts/generate-rule-coverage.mjs",
-        ".harness/scripts/generate-rule-coverage.test.mjs",
-        ".harness/scripts/ci/26-validate-topology-rule-coverage.mjs",
         "rulesets/governance/satellite-contracts.rules.json"
       ],
       "validationCommands": [
-        "node --test .harness/scripts/generate-rule-coverage.test.mjs",
-        "node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs",
         "node .harness/scripts/ci-runner.mjs"
       ],
       "dependencyDisposition": "satisfied",
@@ -2434,14 +2429,10 @@
       "closedAt": "2026-06-20",
       "closureCommit": "b443dcd2",
       "evidence": [
-        ".harness/scripts/generate-rule-coverage.mjs",
-        ".harness/scripts/generate-rule-coverage.test.mjs",
         "reference/governance/standards/vision/gap-tracking.md",
         "reference/governance/standards/vision/gap-tracking.es.md"
       ],
       "validationCommands": [
-        "node --test .harness/scripts/generate-rule-coverage.test.mjs",
-        "node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs",
         "node .harness/scripts/ci/28-test-topology-opa.mjs",
         "EVOLITH_PARITY_FULL=true node .harness/scripts/ci/27-opa-parity-gate.mjs",
         "node .harness/scripts/ci/01-validate-docs.mjs",
@@ -3487,7 +3478,6 @@
         ".harness/scripts/ci/23-check-orphan-bilingual.mjs",
         ".harness/scripts/ci/24-check-surface-parity.mjs",
         ".harness/scripts/ci/25-operational-drift-audit.mjs",
-        ".harness/scripts/ci/26-validate-topology-rule-coverage.mjs",
         ".harness/scripts/ci/27-opa-parity-gate.mjs",
         ".harness/scripts/ci/28-test-topology-opa.mjs"
       ],

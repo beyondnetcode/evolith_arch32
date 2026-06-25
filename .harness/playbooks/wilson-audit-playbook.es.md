@@ -56,7 +56,27 @@ Antes de emitir resultados, Wilson debe confirmar explícitamente que este anál
 
 ---
 
-## 4. Instrucción OBLIGATORIA de Ejecución y Salida
+## 4. Pre-Audit: Limpieza Automática de Archivos Temporales
+
+**ANTES de iniciar el análisis, ejecuta la limpieza automática:**
+
+```bash
+node .harness/scripts/cleanup-temp-files.mjs
+```
+
+Este script elimina automáticamente:
+- Archivos `.tsbuildinfo` (compilación TypeScript)
+- Coverage reports (reportes de cobertura de código)
+- Reportes generados en `.harness/reports/` y `.harness/evidence/`
+- Archivos temporales en `.harness/tmp/`
+- Archivos `.log`, `.tmp`, `.cache`, `.swp`, `.bak`, `.orig`, `.rej`
+- Directorios `.nyc_output`, `.cache`
+
+**Nota:** Estos archivos son generados automáticamente y se regeneran al ejecutar build/pruebas. No afectan código fuente, documentación, rulesets ni políticas OPA.
+
+---
+
+## 5. Instrucción OBLIGATORIA de Ejecución y Salida
 
 No generes un nuevo documento suelto. **Debes leer, analizar y modificar directamente los siguientes archivos:**
 
@@ -120,7 +140,7 @@ Para cada agente, evalúa:
 4. **Feedback loop:** ¿Puede detectar mejoras y proponer cambios?
 5. **Integración:** ¿Se conecta con las herramientas existentes (CI, OPA, gap tracking)?
 
-## 5. Entregable
+## 6. Entregable
 
 Genera una propuesta accionable, no teórica, que indique exactamente:
 - Qué cambiar, qué agregar, qué automatizar

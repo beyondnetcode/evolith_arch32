@@ -8,27 +8,34 @@ Este documento establece la taxonomia oficial y los limites de autoridad de este
 
 ```text
 / (raiz del repositorio)
- README.md                     # Portal publico y navegacion inicial
- MASTER_INDEX.md               # Ruteo exhaustivo por rol e intencion
- .bmad-core/                   # Implementacion opcional del metodo spec-driven AI-DD
- .github/                      # Workflows CI y plantillas de colaboracion
- .harness/                     # Reglas de validacion documental y de agentes
- sdk/                          # Tooling de acceso ejecutable, CLI y MCP
- rulesets/                     # Reglas arquitectonicas legibles por maquina
-   topologies/                 # Rulesets ejecutables especificos por topologia
- reference/                    # Corpus de referencia arquitectonica
-   getting-started/            # Rutas cortas de lectura
-   architecture/               # Autoridad arquitectonica y guia de implementacion
-     README.es.md              # Hub de arquitectura y orden de lectura
-     blueprints/            # Baselines, topologia y perfiles de stack
-     adrs/                  # Registros de decision y matriz de decisiones
-     canonical-patterns/    # Patrones por runtime mapeados a ADRs
-     topologies/            # Corpus multi-topologia legible por humanos
-   governance/                 # Politicas, SDLC, terminologia y onboarding
-   knowledge/                  # Evidencia aplicada, investigacion y aprendizaje
-     demo/                     # Limite de referencia UMS y registro de migracion
-   operations/                 # Guia operativa y activos de observabilidad
-   infrastructure/             # Activos de referencia de plataforma e infraestructura
+  README.md                     # Portal publico y navegacion inicial
+  MASTER_INDEX.md               # Ruteo exhaustivo por rol e intencion
+  .bmad-core/                   # Implementacion opcional del metodo spec-driven AI-DD
+  .claude/                      # Configuracion de Claude Code (requiere raiz)
+  .github/                      # Workflows CI y plantillas de colaboracion
+  .harness/                     # Reglas de validacion documental y de agentes
+  .husky/                       # Git hooks (requiere raiz)
+  .mimocode/                    # Configuracion de MiMoCode (requiere raiz)
+  .vscode/                      # Configuracion de VS Code (requiere raiz)
+  sdk/                          # Tooling de acceso ejecutable, CLI y MCP
+  rulesets/                     # Reglas arquitectonicas legibles por maquina
+    topologies/                 # Rulesets ejecutables especificos por topologia
+  reference/                    # Corpus de referencia arquitectonica
+    getting-started/            # Rutas cortas de lectura
+    architecture/               # Autoridad arquitectonica y guia de implementacion
+      README.es.md              # Hub de arquitectura y orden de lectura
+      blueprints/            # Baselines, topologia y perfiles de stack
+      adrs/                  # Registros de decision y matriz de decisiones
+      canonical-patterns/    # Patrones por runtime mapeados a ADRs
+      topologies/            # Corpus multi-topologia legible por humanos
+    governance/                 # Politicas, SDLC, terminologia y onboarding
+    knowledge/                  # Evidencia aplicada, investigacion y aprendizaje
+      demo/                     # Limite de referencia UMS, registro de migracion y ejemplos
+    operations/                 # Guia operativa y activos de observabilidad
+    infrastructure/             # Activos de referencia de plataforma e infraestructura
+  apps/                         # Workspaces de aplicaciones (core-api, agent-sandbox)
+  packages/                     # Workspaces de paquetes compartidos (core-domain, mcp-server)
+  tests/                        # Tests de contrato e integracion
 ```
 
 El repositorio contiene artefactos arquitectonicos, no una aplicacion local de producto. La evidencia ejecutable de producto se mantiene externamente en [UMS](https://github.com/beyondnetcode/ums).
@@ -79,7 +86,8 @@ Este repositorio es propietario de la linea base arquitectonica y el mecanismo d
 La raiz debe mantenerse pequena y navegable. Las categorias permitidas son:
 
 - Archivos publicos de navegacion y legales: `README.md`, `README.es.md`, `MASTER_INDEX.md`, `MASTER_INDEX.es.md`, `DOCUMENTATION_VERSIONS.md`, `DOCUMENTATION_VERSIONS.es.md`, `AGENTS.md`, `AGENTS.es.md` y `LICENSE`.
-- Dot-folders de tooling y plataforma: `.github/`, `.harness/`, `.husky/`, `.vscode/`, `.bmad-core/` y configuracion de editores o automatizacion (`.editorconfig`, `.gitignore`, `.markdownlint.json`).
+- Dot-folders de tooling y plataforma: `.github/`, `.harness/`, `.husky/`, `.vscode/`, `.bmad-core/`, `.mimocode/`, `.claude/`, y configuracion de editores o automatizacion (`.editorconfig`, `.gitignore`, `.markdownlint.json`).
+- **Convencion de carpetas de herramientas:** Cada herramienta de IA/IDE obtiene su propia carpeta con punto en la raiz del repositorio (`.claude/`, `.mimocode/`, `.vscode/`). No se pueden anidar dentro de una carpeta padre porque cada runtime espera su configuracion en la raiz del workspace. NO crear carpetas de agrupacion como `.setup/` o similares — los contratos de las herramientas requieren ubicacion en la raiz.
 - `reference/` para el corpus documental y arquitectonico.
 - `sdk/` para tooling de acceso ejecutable, CLI y MCP.
 - `rulesets/` para reglas de gobernanza legibles por maquina, incluyendo `rulesets/topologies/` para reglas ejecutables especificas por topologia.

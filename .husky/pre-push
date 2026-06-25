@@ -1,10 +1,15 @@
 set -e
 
 TARGET=""
+MERGE_METHOD="merge"
+
 if [ -f .git/EVOLITH_PUSH_TARGET ]; then
   TARGET=$(cat .git/EVOLITH_PUSH_TARGET)
 fi
-rm -f .git/EVOLITH_PUSH_TARGET .git/EVOLITH_CI_MODE
+if [ -f .git/EVOLITH_MERGE_METHOD ]; then
+  MERGE_METHOD=$(cat .git/EVOLITH_MERGE_METHOD)
+fi
+rm -f .git/EVOLITH_PUSH_TARGET .git/EVOLITH_CI_MODE .git/EVOLITH_MERGE_METHOD
 
 if [ "$TARGET" = "none" ] || [ "$TARGET" = "" ]; then
   echo "No push requested. Commit only."
@@ -23,36 +28,69 @@ echo ""
 echo "Refreshing executive governance summary..."
 node .harness/scripts/generate-executive-summary.mjs
 
+# ---------------------------------------------------------------------------
+# Merge dispatch
+# ---------------------------------------------------------------------------
+merge_into() {
+  local from=$1 to=$2 msg=$3
+  git checkout "$to"
+  git merge --no-ff "$from" -m "$msg"
+}
+
+squash_into() {
+  local from=$1 to=$2 msg=$3
+  git checkout "$to"
+  git merge --squash "$from"
+  git commit -m "$msg"
+}
+
+rebase_into() {
+  local from=$1 to=$2 msg=$3
+  git checkout "$to"
+  git merge --ff-only "$from" -m "$msg"
+}
+
+dispatch_merge() {
+  local from=$1 to=$2 msg=$3
+  case "$MERGE_METHOD" in
+    squash) squash_into "$from" "$to" "$msg" ;;
+    rebase) rebase_into "$from" "$to" "$msg" ;;
+    merge)  merge_into "$from" "$to" "$msg" ;;
+    *)      merge_into "$from" "$to" "$msg" ;;
+  esac
+}
+
+# ---------------------------------------------------------------------------
+# Push by target
+# ---------------------------------------------------------------------------
 if [ "$TARGET" = "develop" ]; then
   echo ""
   echo "=== PUSH TO DEVELOP ==="
   git push origin develop
-  echo "✅ Pushed to develop."
+  echo "Pushed to develop."
 
 elif [ "$TARGET" = "main" ]; then
   echo ""
-  echo "=== PUSH TO MAIN (develop → main) ==="
-  git checkout main
-  git merge --no-ff develop -m "Merge develop into main"
+  echo "=== PUSH TO MAIN (develop -> main) ==="
+  dispatch_merge develop main "Merge develop into main"
   git push origin main
   echo ""
   echo "=== Sync main back to develop ==="
   git checkout develop
   git merge --no-ff main -m "Merge main back into develop"
   git push origin develop
-  echo "✅ Pushed to main and synced develop."
+  echo "Pushed to main and synced develop."
 
 elif [ "$TARGET" = "sync" ]; then
   echo ""
-  echo "=== SYNC DEVELOP ↔ MAIN ==="
-  echo "--- Phase 1: develop → main ---"
-  git checkout main
-  git merge --no-ff develop -m "Sync: develop → main"
+  echo "=== SYNC DEVELOP <-> MAIN ==="
+  echo "--- Phase 1: develop -> main ---"
+  dispatch_merge develop main "Sync: develop -> main"
   git push origin main
-  echo "--- Phase 2: main → develop ---"
+  echo "--- Phase 2: main -> develop ---"
   git checkout develop
-  git merge --no-ff main -m "Sync: main → develop"
+  git merge --no-ff main -m "Sync: main -> develop"
   git push origin develop
-  echo "✅ Develop and Main are now synchronized."
+  echo "Develop and Main are now synchronized."
 
 fi

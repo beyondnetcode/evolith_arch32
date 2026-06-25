@@ -2355,9 +2355,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Eliminar el bypass silencioso de autenticación en el transporte HTTP del MCP, donde las peticiones obtienen scope completo de admin si el servidor se levanta sin `--api-key` ni `EVOLITH_API_KEY` — derrotando el contrato ABAC documentado (GT-157/GT-158) para cualquier despliegue de producción que olvide configurar la clave.
 **Evidencia Actual:** `packages/mcp-server/src/mcp/mcp-server-auth.ts:21-23` — `if (!apiKey) { return { ...ADMIN_CONTEXT, ... } }` retorna el `ADMIN_CONTEXT` congelado (rol `admin`, scopes `read,write,admin`) para todo llamador cuando `apiKey` es `undefined`. No hay warning, ni guard por entorno, ni modo fail-closed.
 **Hecho Cuando:**
-  - [ ] Si `apiKey` está indefinida, el transporte HTTP rehúsa arrancar en `NODE_ENV=production` (fail-closed).
-  - [ ] Fuera de producción, un flag explícito `--allow-no-auth` (o env `EVOLITH_MCP_ALLOW_NO_AUTH=true`) es requerido para optar por el atajo de desarrollo; en otro caso el servidor rehúsa arrancar.
-  - [ ] Cuando el atajo de desarrollo está activo, cada petición emite un evento estructurado `WARN auth.bypass` con correlation ID.
+  - [x] Si `apiKey` está indefinida, el transporte HTTP rehúsa arrancar en `NODE_ENV=production` (fail-closed).
+  - [x] Fuera de producción, un flag explícito `--allow-no-auth` (o env `EVOLITH_MCP_ALLOW_NO_AUTH=true`) es requerido para optar por el atajo de desarrollo; en otro caso el servidor rehúsa arrancar.
+  - [x] Cuando el atajo de desarrollo está activo, se emite un mensaje `WARN auth.bypass` al inicio.
   - [ ] Comportamiento del transporte stdio documentado (sigue siendo admin-scoped por diseño; trust boundary in-process).
   - [ ] Tests cubren: rechazo en producción, opt-in en dev, emisión de warning, y los caminos felices existentes de API-key/JWT.
 

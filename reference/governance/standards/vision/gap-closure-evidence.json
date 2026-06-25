@@ -900,18 +900,6 @@
       "dependencyDisposition": "none"
     },
     {
-      "id": "GT-20",
-      "closedAt": "2026-06-12",
-      "closureCommit": "2ae729d",
-      "evidence": [
-        "reference/architecture/adrs/adr-authoring-standard.md"
-      ],
-      "validationCommands": [
-        "node .harness/scripts/validate-docs.mjs"
-      ],
-      "dependencyDisposition": "none"
-    },
-    {
       "id": "GT-21",
       "closedAt": "2026-06-12",
       "closureCommit": "617241d",

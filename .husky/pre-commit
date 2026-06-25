@@ -1,5 +1,12 @@
+set -e
+
 echo "======================================================================"
 echo "  Evolith CI Pre-commit Hook"
 echo "======================================================================"
+
+echo ""
+echo "Generating executive governance summary..."
+node .harness/scripts/generate-executive-summary.mjs
+git add reference/governance/standards/vision/executive-summary.md reference/governance/standards/vision/executive-summary.es.md
 
 node .harness/scripts/ci-runner.mjs

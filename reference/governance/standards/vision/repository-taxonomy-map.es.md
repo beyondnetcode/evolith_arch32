@@ -67,7 +67,7 @@ Usa este mapa cuando necesites decidir dónde leer, editar, agregar o auditar co
 | `gap-reference-catalog.es.md` | C0 | Problema, evidencia, criterios de cierre y referencias detalladas por `GT-*` | Agregar contexto detallado para nuevos gaps | Poner estado vivo aquí en vez del tablero |
 | `maturity-assessment.es.md` | C1 | Evaluación consolidada de madurez | Actualizar evidencia de evaluación y enlazar desviaciones a ítems `GT-*` | Trackear gaps abiertos directamente en la evaluación |
 | `gap-closure-evidence-standard.es.md`, `gap-closure-evidence.json` | C0 | Evidencia requerida de cierre y registro | Registrar evidencia de cierre reproducible | Marcar gaps semánticos como done sin evidencia en registro |
-| `maturity-reconciliation.json`, `inventory-summary.es.md` | C2 | Evidencia generada de madurez e inventario | Usar como evidencia de validación | Editar a mano salidas generadas sin proceso |
+| `executive-summary.es.md`, `maturity-reconciliation.json`, `inventory-summary.es.md` | C2 | Evidencia ejecutiva, de madurez e inventario generada | Usar como evidencia de validación | Editar a mano salidas generadas sin proceso |
 | `repository-taxonomy-map.es.md` | C1 | Mapa operativo actual de áreas del repositorio y criticidad | Usar durante navegación, auditorías, onboarding y decisiones de ubicación | Tratarlo como reemplazo de la política taxonómica aceptada |
 
 ## Gobernanza Ejecutable

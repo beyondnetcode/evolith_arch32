@@ -10,17 +10,19 @@ Usa esta secuencia durante la revisión rutinaria de gobernanza:
 
 | Paso | Documento | Propósito |
 |---|---|---|
-| 1 | [Tablero de Seguimiento de Gaps](./gap-tracking.es.md) | Abrir el backlog ordenado de gaps y oportunidades; estado y prioridad son autoritativos solo aquí. |
-| 2 | [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md) | Leer el problema, evidencia, criterios de cierre y referencias detalladas de cada ítem `GT-*`. |
-| 3 | [Evaluación de Madurez](./maturity-assessment.es.md) | Revisar la evaluación consolidada TOGAF ACMM, WAF, patrones, anti-patrones y alineación con la visión. |
-| 4 | [Estándar de Evidencia de Cierre de Gaps](./gap-closure-evidence-standard.es.md) | Confirmar la evidencia requerida antes de mover cualquier gap a estado cerrado. |
-| 5 | [Reporte de Cobertura Documental](../../../../.harness/reports/COVERAGE_REPORT.md) | Revisar la salida de cobertura bilingüe y documental generada por el harness. |
-| 6 | [Mapa Actual de Taxonomía del Repositorio](./repository-taxonomy-map.es.md) | Confirmar dónde pertenece cada familia de artefactos y qué tan crítica es cada área del repositorio. |
+| 1 | [Resumen Ejecutivo de Gobernanza](./executive-summary.es.md) | Empezar con la señal estratégica generada: dónde atacar, mayor problema actual y bloqueadores. |
+| 2 | [Tablero de Seguimiento de Gaps](./gap-tracking.es.md) | Abrir el backlog ordenado de gaps y oportunidades; estado y prioridad son autoritativos solo aquí. |
+| 3 | [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md) | Leer el problema, evidencia, criterios de cierre y referencias detalladas de cada ítem `GT-*`. |
+| 4 | [Evaluación de Madurez](./maturity-assessment.es.md) | Revisar la evaluación consolidada TOGAF ACMM, WAF, patrones, anti-patrones y alineación con la visión. |
+| 5 | [Estándar de Evidencia de Cierre de Gaps](./gap-closure-evidence-standard.es.md) | Confirmar la evidencia requerida antes de mover cualquier gap a estado cerrado. |
+| 6 | [Reporte de Cobertura Documental](../../../../.harness/reports/COVERAGE_REPORT.md) | Revisar la salida de cobertura bilingüe y documental generada por el harness. |
+| 7 | [Mapa Actual de Taxonomía del Repositorio](./repository-taxonomy-map.es.md) | Confirmar dónde pertenece cada familia de artefactos y qué tan crítica es cada área del repositorio. |
 
 ## Superficies Actuales de Reporte
 
 | Reporte | Alcance | Úsalo para |
 |---|---|---|
+| [Resumen Ejecutivo de Gobernanza](./executive-summary.es.md) | Radar estratégico de gobernanza generado | Decisión rápida, orden de ataque, mayor riesgo actual y señal de mejora commit a commit. |
 | [Tablero de Seguimiento de Gaps](./gap-tracking.es.md) | Cola de ejecución transversal de la suite | Triage inmediato, orden P0/P1 y revisión de estado. |
 | [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md) | Catálogo detallado de gaps y oportunidades | Evidencia, reglas de cierre y contexto profundo por gap. |
 | [Evaluación de Madurez](./maturity-assessment.es.md) | Madurez a nivel de suite | Madurez arquitectónica, alineación WAF y dirección de inversión. |

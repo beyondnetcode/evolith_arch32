@@ -1,4 +1,6 @@
 
+set -e
+
 
 echo "Running repository optimization before push..."
 node .harness/scripts/ci/02-optimize-repo.mjs
@@ -6,3 +8,11 @@ node .harness/scripts/ci/02-optimize-repo.mjs
 echo ""
 echo "Synchronizing Bidirectional Gap Tracking (Markdown <-> GitHub Projects)..."
 node .harness/scripts/sync-project-board.mjs
+
+echo ""
+echo "Refreshing executive governance summary before push..."
+node .harness/scripts/generate-executive-summary.mjs
+if [ -n "$(git status --porcelain -- reference/governance/standards/vision/executive-summary.md reference/governance/standards/vision/executive-summary.es.md)" ]; then
+  echo "Executive governance summary changed during pre-push. Commit the generated summary before pushing."
+  exit 1
+fi

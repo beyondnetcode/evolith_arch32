@@ -16,6 +16,8 @@ Este repositorio define la línea base arquitectónica, los estándares de gober
 | `node .harness/scripts/ci/04-check-bilingual-parity.mjs` | Verifica que los pares EN/ES tengan conteos idénticos de encabezados ## y ### |
 | `node .harness/scripts/bilingual-coverage.mjs` | Reporte de cobertura bilingüe (qué archivos carecen de contrapartes) |
 | `node .harness/scripts/coverage-dashboard.mjs` | Genera reporte visual HTML/MD de cobertura por área |
+| `node .harness/scripts/generate-executive-summary.mjs` | Genera el resumen ejecutivo bilingüe de gobernanza desde la evidencia canónica de gaps y madurez |
+| `node .harness/scripts/generate-executive-summary.mjs --check` | Verifica que el resumen ejecutivo de gobernanza esté vigente |
 | `node .harness/scripts/generate-es-skeleton.mjs <file.md>` | Crea un esqueleto ES desde un archivo EN (con bandera --dry-run) |
 | `python ./.bmad-core/scripts/cleanup_markdown_encoding.py` | Sanea problemas de codificación UTF-8 |
 | `node .harness/scripts/ci/01-validate-docs.mjs --render-mermaid` | Renderiza diagramas Mermaid a SVG para validación visual |
@@ -23,10 +25,15 @@ Este repositorio define la línea base arquitectónica, los estándares de gober
 
 ### Pre-commit Hook
 El hook pre-commit (`.husky/pre-commit`) se ejecuta automáticamente en cada commit:
-1. `lint-staged` - linting de archivos staged
-2. `validate-docs.mjs` - validación completa de documentación
-3. `check-bilingual-parity.mjs` - validación estructural bilingüe
-4. Detección de archivos bilingües huérfanos - EN sin ES o viceversa
+1. `generate-executive-summary.mjs` - refresca el resumen ejecutivo de gobernanza EN/ES
+2. `git add` para el par generado del resumen ejecutivo
+3. `ci-runner.mjs` - ejecuta scripts numerados de validación CI, incluyendo validación documental, paridad bilingüe y checks de resumen obsoleto
+
+### Pre-push Hook
+El hook pre-push (`.husky/pre-push`) se ejecuta automáticamente antes del push:
+1. `02-optimize-repo.mjs` - optimización del repositorio
+2. `sync-project-board.mjs` - sincronización bidireccional del seguimiento de gaps
+3. `generate-executive-summary.mjs` - refresca el resumen ejecutivo de gobernanza y bloquea el push si cambió fuera del commit actual
 
 ### Glosario de Terminología
 Ver `.harness/scripts/bilingual-terminology-glossary.md` para traducciones EN/ES estandarizadas de términos técnicos. Cuando añadas nuevos términos, actualiza ambas versiones juntas.

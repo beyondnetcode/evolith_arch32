@@ -8,7 +8,7 @@
 [![Method](https://img.shields.io/badge/Method-Spec--driven_AI--DD-blueviolet?style=for-the-badge)]()
 [![License](https://img.shields.io/badge/License-MIT-informational?style=for-the-badge)]()
 [![CI](https://img.shields.io/github/actions/workflow/status/beyondnetcode/evolith_arch32/docs.yml?style=for-the-badge&label=CI)](https://github.com/beyondnetcode/evolith_arch32/actions)
-[![Coverage](https://img.shields.io/badge/Docs-100%25-brightgreen?style=for-the-badge)](./COVERAGE_REPORT.md)
+[![Coverage](https://img.shields.io/badge/Docs-100%25-brightgreen?style=for-the-badge)](.harness/reports/COVERAGE_REPORT.md)
 
 <br/>
 
@@ -289,7 +289,7 @@ Las dos superficies canónicas de seguimiento de la suite — todo lo pendiente,
 | ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ------------------------------- |
 | [Tablero de Gaps](./reference/governance/standards/vision/gap-tracking.es.md)              | Tabla compacta única para todos los gaps, ordenada por criticidad, estado y complejidad; cada ID abre su referencia detallada | Ver al instante qué falta y abrir la explicación solo cuando sea necesaria | Tablero de seguimiento          |
 | [Evaluación de Madurez](./reference/governance/standards/vision/maturity-assessment.es.md) | Evaluación de madurez única: matriz TOGAF ACMM, revisión WAF, auditoría de patrones/anti-patrones y alineación con la visión  | Medir qué tan madura está la suite y dónde invertir                        | Matriz de madurez y auditoría   |
-| [Reporte de Cobertura Documental](./COVERAGE_REPORT.md)                                    | Estado de cobertura de la documentación bilingüe                                                                              | Auditar la completitud documental                                          | Reporte de cobertura            |
+| [Reporte de Cobertura Documental](.harness/reports/COVERAGE_REPORT.md)                                    | Estado de cobertura de la documentación bilingüe                                                                              | Auditar la completitud documental                                          | Reporte de cobertura            |
 
 </details>
 

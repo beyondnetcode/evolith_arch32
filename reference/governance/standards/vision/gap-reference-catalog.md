@@ -189,7 +189,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** `topology-dimensions.md` §3 lists five composition examples but no fixture or sample repository exercises them end-to-end.
 - **Complexity:** L
 - **Done when:**
-  - [x] A reference application (or fixture project) lives under `examples/` (or its equivalent) with a composable manifest exercising at least two topologies.
+  - [x] A reference application (or fixture project) lives under `reference/knowledge/demo/examples/` (or its equivalent) with a composable manifest exercising at least two topologies.
   - [x] CI runs the topology validator on the example and asserts a passing composition.
   - [x] Documentation walks the reader through the example in EN and ES.
 
@@ -316,7 +316,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Title:** Complete Native/OPA Rule-ID Coverage for Accepted Topologies
 
 - **Purpose:** Enforce the dual-engine rule contract for every accepted topology, so Native rulesets and OPA policies govern the same rule IDs rather than merely agreeing on a small fixture sample.
-- **Closed by:** Commit `b443dcd2` makes accepted-topology Native/OPA rule-ID divergence fail closed in both directions and adds regression coverage. All eight topologies align: `26-validate-topology-rule-coverage.mjs` reports 0 errors and 0 warnings.
+- **Closed by:** Commit `b443dcd2` makes accepted-topology Native/OPA rule-ID divergence fail closed in both directions and adds regression coverage. All eight topologies align with 0 errors and 0 warnings.
 - **Done when:**
   - [x] Every accepted topology has an identical canonical rule-ID set across its Native ruleset and declared OPA policies, with shared execution-policy ownership explicit in manifests.
   - [x] Every missing or OPA-only rule has positive, negative, and boundary fixtures driving both engines, with semantic parity verified per rule ID.
@@ -448,7 +448,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Title:** Topology-Aware Rule Reference and Coverage Migration Repair
 
 - **Purpose:** Restore a trustworthy, topology-aware coverage report and remove obsolete phase-path references so rule discovery, satellite inheritance, and governance reporting use the canonical topology corpus.
-- **Evidence:** Wilson V5 ran `.harness/scripts/generate-rule-coverage.mjs`; it fails before producing a matrix because it reads the deleted `rulesets/architecture/f1-modular-monolith.rules.json` and `rulesets/opa/architecture.rego`. `rulesets/governance/satellite-contracts.rules.json` still declares the same missing F1/F2/F3 files, while the canonical artifacts live beneath `reference/architecture/topologies/progressive-axis/`.
+- **Evidence:** Wilson V5 ran the coverage generator; it fails before producing a matrix because it reads the deleted `rulesets/architecture/f1-modular-monolith.rules.json` and `rulesets/opa/architecture.rego`. `rulesets/governance/satellite-contracts.rules.json` still declares the same missing F1/F2/F3 files, while the canonical artifacts live beneath `reference/architecture/topologies/progressive-axis/`.
 - **Done when:**
   - [x] The coverage generator discovers rules from topology manifests rather than hard-coded legacy paths and emits per-topology Native/OPA coverage with source locations.
   - [x] Satellite contracts, documentation, and machine-readable references resolve only to canonical artifacts; an automated reference-resolution test prevents recurrence.
@@ -2229,7 +2229,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-235
 **Purpose:** Resolve the CI script numbering collisions where prefixes 05, 15, and 16 each have two scripts with the same prefix, causing confusion about which gate corresponds to which number.
-**Current Evidence:** `ci/23-check-orphan-bilingual.mjs` and `ci/24-check-surface-parity.mjs` share prefix 05. `ci/25-operational-drift-audit.mjs` and `ci/26-validate-topology-rule-coverage.mjs` share prefix 15. `ci/27-opa-parity-gate.mjs` and `ci/28-test-topology-opa.mjs` share prefix 16. The `ci-runner.mjs` sorts by filename so both run, but the collision creates ambiguity.
+**Current Evidence:** CI script numbering had collisions where prefixes 05, 15, and 16 each had two scripts with the same prefix. The `ci-runner.mjs` sorts by filename so both run, but the collision creates ambiguity.
 **Done When:**
   - [x] Each CI script has a unique numerical prefix.
   - [x] The `ci-runner.mjs` execution order remains correct after renumbering.

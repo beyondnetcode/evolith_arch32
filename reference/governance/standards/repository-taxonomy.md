@@ -11,8 +11,12 @@ This document establishes the official taxonomy and authority limits for this ar
   README.md                     # Public portal and initial navigation
   MASTER_INDEX.md               # Exhaustive routing by role and intent
   .bmad-core/                   # Optional spec-driven AI-DD method implementation
+  .claude/                      # Claude Code configuration (root required)
   .github/                      # CI workflows and collaboration templates
   .harness/                     # Document and agent validation rules
+  .husky/                       # Git hooks (root required)
+  .mimocode/                    # MiMoCode configuration (root required)
+  .vscode/                      # VS Code configuration (root required)
   sdk/                          # CLI, MCP, and executable access tooling
   rulesets/                     # Machine-readable architecture rules
     topologies/                 # Executable topology-specific rulesets
@@ -26,9 +30,12 @@ This document establishes the official taxonomy and authority limits for this ar
       topologies/           # Human-readable multi-topology reference corpus
     governance/                 # Policies, SDLC, terminology, and onboarding
     knowledge/                  # Applied evidence, research, and learning
-      demo/                     # UMS reference boundary and migration record
+      demo/                     # UMS reference boundary, migration record, and examples
     operations/                 # Operational guide and observability assets
     infrastructure/             # Platform and infrastructure reference assets
+  apps/                         # Application workspaces (core-api, agent-sandbox)
+  packages/                     # Shared package workspaces (core-domain, mcp-server)
+  tests/                        # Contract and integration tests
 ```
 
 The repository contains architectural artifacts, not a local product application. Product executable evidence is maintained externally in [UMS](https://github.com/beyondnetcode/ums).
@@ -79,7 +86,8 @@ This repository owns the architectural baseline and promotion mechanism. A produ
 The root should be kept small and navigable. Permitted categories are:
 
 - Public navigation and legal files: `README.md`, `README.es.md`, `MASTER_INDEX.md`, `MASTER_INDEX.es.md`, `DOCUMENTATION_VERSIONS.md`, `DOCUMENTATION_VERSIONS.es.md`, `AGENTS.md`, `AGENTS.es.md` and `LICENSE`.
-- Tooling and platform dot-folders: `.github/`, `.harness/`, `.husky/`, `.vscode/`, `.bmad-core/`, and editor or automation configuration (`.editorconfig`, `.gitignore`, `.markdownlint.json`).
+- Tooling and platform dot-folders: `.github/`, `.harness/`, `.husky/`, `.vscode/`, `.bmad-core/`, `.mimocode/`, `.claude/`, and editor or automation configuration (`.editorconfig`, `.gitignore`, `.markdownlint.json`).
+- **Tool folder convention:** Each AI/IDE tool gets its own dot-folder at repository root (`.claude/`, `.mimocode/`, `.vscode/`). These cannot be nested inside a parent folder because each tool's runtime expects its configuration at the workspace root. Do NOT create `.setup/` or similar grouping folders — tool contracts require root-level placement.
 - `reference/` for the documentary and architectural corpus.
 - `sdk/` for CLI, MCP, and executable access tooling.
 - `rulesets/` for machine-readable governance rules, including `rulesets/topologies/` for topology-specific executable rules.

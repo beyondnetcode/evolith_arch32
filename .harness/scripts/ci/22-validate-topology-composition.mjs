@@ -20,7 +20,7 @@ import addFormats from "ajv-formats";
 const root = process.cwd();
 const compositionSchemaPath = path.join(root, "rulesets/schema/topology-composition.schema.json");
 const topologyManifestRoot = path.join(root, "reference/architecture/topologies");
-const examplesRoot = path.join(root, "examples");
+const examplesRoot = path.join(root, "reference/knowledge/demo/examples");
 
 const failures = [];
 

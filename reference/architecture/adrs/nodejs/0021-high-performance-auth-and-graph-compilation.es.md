@@ -56,11 +56,12 @@ Desconocido (registro histórico; evaluado contra principios generales de arquit
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+La compilación de grafos de autenticación es un patrón especializado dentro del dominio maduro de autenticación. Los patrones JWT y sesiones están bien establecidos. El enfoque de compilación para grafos de autorización es emergente con evidencia limitada fuera de despliegues a gran escala. Vigencia esperada: modelo token/sesión 5+ años; compilación de grafos depende de validación continua.
 
 ## Fuentes Actuales
 
-Desconocido (registro histórico).
+- Especificaciones OAuth 2.0 y OIDC — https://oauth.net/2, consultado 2026-06-20.
+- JWT RFC 7519 — https://datatracker.ietf.org/doc/html/rfc7519, consultado 2026-06-20.
 
 ---
 [Volver al Índice](./README.es.md)

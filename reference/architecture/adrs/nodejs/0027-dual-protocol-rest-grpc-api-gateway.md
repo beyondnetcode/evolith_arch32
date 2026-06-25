@@ -56,11 +56,13 @@ Unknown (historical record; evaluated against general architectural principles o
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Both REST and gRPC protocols are mature and widely adopted. gRPC (CNCF graduated) is in the growth stage for inter-service communication with strong performance advantages. REST remains dominant for public-facing APIs. The dual-protocol strategy is a recognized pattern in microservice architectures, with API gateways providing protocol translation. The pattern is well-demonstrated by major adopters (Netflix, Google, Lyft). Expected vigencia: REST and gRPC each 5+ years; the dual-protocol pattern is a durable architectural approach.
 
 ## Current Sources
 
-Unknown (historical record).
+- gRPC documentation — https://grpc.io, consulted 2026-06-20.
+- REST API guidelines (Microsoft) — https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design, consulted 2026-06-20.
+- Google Cloud API design guide — https://cloud.google.com/apis/design, consulted 2026-06-20.
 
 ---
 [Back to Index](./README.md)

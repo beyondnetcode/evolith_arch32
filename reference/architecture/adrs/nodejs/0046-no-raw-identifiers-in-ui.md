@@ -85,11 +85,12 @@ Unknown (historical record; evaluated against general architectural principles o
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+The principle of avoiding raw technical identifiers in UIs is a mature UX and security pattern. It follows well-established practices in information hiding, data obfuscation, and API security. While the principle itself is stable and permanent, implementation approaches evolve with frontend frameworks. The pattern is universally accepted in security-conscious applications. Expected vigencia: permanent principle; specific encoding/obfuscation approaches 3-5 years.
 
 ## Current Sources
 
-Unknown (historical record).
+- OWASP information disclosure guidelines — https://owasp.org/www-project-top-ten, consulted 2026-06-20.
+- Microsoft security engineering guidelines — https://learn.microsoft.com/en-us/security/engineering, consulted 2026-06-20.
 
 ---
 [Back to Index](./README.md)

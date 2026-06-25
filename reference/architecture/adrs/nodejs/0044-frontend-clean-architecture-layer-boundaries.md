@@ -135,11 +135,13 @@ Unknown (historical record; evaluated against general architectural principles o
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Clean architecture patterns in frontend applications (React) are in the growth adoption stage. The approach follows established principles from Robert C. Martin and is demonstrated by large-scale React applications. React itself (maintained by Meta) is a mature framework in the mainstream stage with strong backwards compatibility and a large ecosystem. The layer boundary pattern is well-documented but requires team discipline. Expected vigencia: 5+ years for clean architecture principles; specific React version patterns evolve more rapidly (2-3 years).
 
 ## Current Sources
 
-Unknown (historical record).
+- React documentation — https://react.dev, consulted 2026-06-20.
+- Clean Architecture by Robert C. Martin (2017), consulted 2026-06-20 via reference.
+- Alex Bespoyasov's Clean Architecture in React — https://bespoyasov.me/blog/clean-architecture-on-frontend, consulted 2026-06-20.
 
 ---
 [Back to Index](./README.md)

@@ -57,11 +57,13 @@ Unknown (historical record; evaluated against general architectural principles o
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+MFA, passwordless, and adaptive authentication are in the growth-to-mainstream adoption stage with strong industry momentum. FIDO2/WebAuthn standards have mature browser support and are increasingly mandated by enterprise security policies. The market includes major vendors (Microsoft, Okta, Auth0) and open-source solutions. Regulatory pressure (PSD2, GDPR, SOX) drives continued adoption. Expected vigencia: 3-5 years for specific implementations; the MFA/passwordless pattern is a permanent security requirement.
 
 ## Current Sources
 
-Unknown (historical record).
+- FIDO2/WebAuthn specification — https://webauthn.io, consulted 2026-06-20.
+- OWASP authentication guidelines — https://cheatsheetseries.owasp.org, consulted 2026-06-20.
+- Microsoft passwordless authentication documentation — https://www.microsoft.com/en-us/security/business/identity-access-management/passwordless, consulted 2026-06-20.
 
 ---
 [Back to Index](./README.md)

@@ -147,11 +147,13 @@ Unknown (historical record; evaluated against general architectural principles o
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+AOP via DispatchProxy in .NET is a mature but specialized pattern. DispatchProxy (part of System.Reflection.DispatchProxy since .NET Core) provides lightweight, performant AOP without external dependencies. The pipeline behavior pattern (similar to MediatR behaviors) is more widely adopted in mainstream .NET applications. Both approaches are well-established. Expected vigencia: 3-5 years; the AOP cross-cutting concern pattern is permanent, but specific implementation approaches may evolve.
 
 ## Current Sources
 
-Unknown (historical record).
+- DispatchProxy documentation — https://learn.microsoft.com/en-us/dotnet/api/system.reflection.dispatchproxy, consulted 2026-06-20.
+- MediatR documentation — https://github.com/jbogard/MediatR, consulted 2026-06-20.
+- .NET AOP patterns — https://learn.microsoft.com/en-us/dotnet/core, consulted 2026-06-20.
 
 ---
 [Back to Index](./README.md)

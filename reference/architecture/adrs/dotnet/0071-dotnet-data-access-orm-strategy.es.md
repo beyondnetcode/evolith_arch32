@@ -451,8 +451,10 @@ Ninguna explícitamente enlazada.
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+EF Core y Dapper son tecnologías maduras y mainstream en .NET. EF Core (Microsoft) es el ORM principal con alineación LTS. Dapper (comunidad, origen Stack Overflow) proporciona acceso a datos ligero y de alto rendimiento. La estrategia dual es un patrón bien documentado. Vigencia esperada: 5+ años.
 
 ## Fuentes Actuales
 
-Desconocido (registro histórico).
+- Documentación de EF Core — https://learn.microsoft.com/es-es/ef/core, consultado 2026-06-20.
+- Repositorio GitHub de Dapper — https://github.com/DapperLib/Dapper, consultado 2026-06-20.
+- Estadísticas NuGet — https://www.nuget.org/packages/Microsoft.EntityFrameworkCore, consultado 2026-06-20.

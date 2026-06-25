@@ -3971,6 +3971,78 @@
       ],
       "dependencyDisposition": "none",
       "closureNote": "All 3 missing CI scripts recovered from git history (deleted in 79af9929). bilingual-coverage reports 100% coverage, coverage-dashboard generates COVERAGE_REPORT.md, topology-rule-coverage validates all 8 topologies with 0 errors."
+    },
+    {
+      "id": "GT-270",
+      "closedAt": "2026-06-25",
+      "closureCommit": "pending",
+      "evidence": [
+        "reference/infrastructure/helm/evolith-bff/values.yaml",
+        "reference/infrastructure/helm/evolith-mcp/values.yaml",
+        "reference/infrastructure/docker-compose.yml"
+      ],
+      "validationCommands": [
+        "grep tag: reference/infrastructure/helm/evolith-bff/values.yaml",
+        "grep opa: reference/infrastructure/helm/evolith-bff/values.yaml"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Helm app images pinned to 1.1.0, OPA sidecar pinned to 0.65.0. Traefik --api.insecure=true removed. Grafana anonymous auth disabled."
+    },
+    {
+      "id": "GT-264",
+      "closedAt": "2026-06-25",
+      "closureCommit": "bbd2e517",
+      "evidence": [],
+      "validationCommands": [],
+      "dependencyDisposition": "none",
+      "closureNote": "DAST (OWASP ZAP) scan removed from sdk-cli-ci.yml. The step scanned against localhost:8000 without a server running, producing a silent no-op. Replaced by gitleaks secret detection (GT-265) and Trivy container scanning (GT-227) as higher-signal security controls. Long-term DAST plan tracked as GT-273."
+    },
+    {
+      "id": "GT-229",
+      "closedAt": "2026-06-24",
+      "closureCommit": "6ba915c1",
+      "evidence": [
+        "packages/core-domain/src/application/validators/evaluators/native-evaluator.ts",
+        "packages/core-domain/src/application/validators/evaluators/native-opa-parity.spec.ts",
+        "packages/core-domain/src/application/validators/evaluators/aggregator-parity.spec.ts",
+        "packages/core-domain/test/parity-fixtures/",
+        ".harness/scripts/ci/28-native-evaluator-parity.mjs"
+      ],
+      "validationCommands": [
+        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --testPathPatterns='native-opa-parity' --no-coverage",
+        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --testPathPatterns='aggregator-parity' --no-coverage",
+        "node .harness/scripts/ci/28-native-evaluator-parity.mjs"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "NativeEvaluator with 12 domain handlers, 17 parity fixtures, 65 passing tests, CI parity gate passing."
+    },
+    {
+      "id": "GT-266",
+      "closedAt": "2026-06-24",
+      "closureCommit": "6ba915c1",
+      "evidence": [
+        "packages/mcp-server/src/mcp/api-key-provisioning.service.ts",
+        "packages/mcp-server/src/mcp/api-key-provisioning.service.spec.ts",
+        "packages/mcp-server/src/mcp/mcp.module.ts"
+      ],
+      "validationCommands": [
+        "npx jest --config packages/mcp-server/jest.config.js --rootDir packages/mcp-server --testPathPatterns='api-key-provisioning' --no-coverage"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "ApiKeyProvisioningService with evk_ prefix, SHA-256 hashed storage, rotation, revocation, audit logging, and legacy migration. 27 tests passing."
+    },
+    {
+      "id": "GT-273",
+      "closedAt": "2026-06-25",
+      "closureCommit": "426db1d9",
+      "evidence": [
+        ".github/workflows/sdk-cli-ci.yml"
+      ],
+      "validationCommands": [
+        "ZAP scan runs as Job 12 (dast-scan) in sdk-cli-ci.yml, building MCP server ephemerally on port 3001 and scanning http://localhost:3001"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "DAST scan restored via ephemeral MCP server in CI. Job 12 in sdk-cli-ci.yml spins up MCP on port 3001, runs zaproxy/action-full-scan@v0.10.0, uploads report.html/report.md as artifacts. continue-on-error: true so CI gate is not blocked."
     }
   ]
 }

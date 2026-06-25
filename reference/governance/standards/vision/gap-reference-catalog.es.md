@@ -2183,9 +2183,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Implementar el evaluador TypeScript-native que carga y evalúa archivos `.rules.json`, cerrando la brecha donde R-25 (Paridad Dual-Engine) exige que toda regla exista en ambos evaluador TypeScript Y OPA `.rego`, pero solo OPA evalúa reglas realmente hoy.
 **Evidencia Actual:** Existen 26 archivos `.rules.json` en 10 dominios de gobernanza. El script `27-opa-parity-gate.mjs` compara WASM compilado contra fixtures "Native", pero ningún evaluador TypeScript carga o evalúa las reglas `.rules.json`.
 **Hecho Cuando:**
-  - [ ] Un evaluador TypeScript carga reglas `.rules.json` y produce veredictos que coinciden con la salida OPA para las mismas entradas.
-  - [ ] Existen fixtures de paridad para todos los dominios de rulesets con tests de paridad pasando.
-  - [ ] CI ejecuta ambos evaluadores y asume resultados idénticos en fixtures compartidos.
+  - [x] Un evaluador TypeScript carga reglas `.rules.json` y produce veredictos que coinciden con la salida OPA para las mismas entradas.
+  - [x] Existen fixtures de paridad para todos los dominios de rulesets con tests de paridad pasando.
+  - [x] CI ejecuta ambos evaluadores y asume resultados idénticos en fixtures compartidos.
 
 #### GT-230
 **Propósito:** Crear un directorio de skills y un framework de skills componibles para agentes BMAD, cerrando la brecha donde `.bmad-core/README.md` referencia un directorio `tooling/` que no existe, y los agentes no tienen una biblioteca de skills modular y descubrible.
@@ -2474,9 +2474,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Hacer significativo el scan DAST (OWASP ZAP) en CI apuntándolo a una instancia real en ejecución, o eliminarlo — hoy apunta a `http://localhost:8000` sin levantar un servidor, por lo que el scan es silenciosamente un no-op.
 **Evidencia Actual:** `.github/workflows/sdk-cli-ci.yml:372-374` — `uses: zaproxy/action-full-scan@v0.10.0` con `target: 'http://localhost:8000'`. Ningún paso precedente levanta un servicio en ese puerto, por lo que ZAP escanea contra nada y el job o no hace nada o falla silenciosamente.
 **Hecho Cuando:**
-  - [ ] O bien: (a) un paso precedente levanta Core API (o MCP) en el puerto objetivo y espera readiness antes de que ZAP corra; o (b) el paso DAST se elimina y el motivo se registra en un ADR/playbook.
-  - [ ] Si se mantiene: reporte de ZAP subido como artefacto del workflow y umbrales de falla documentados.
-  - [ ] Si se elimina: un gap follow-up captura el plan DAST a largo plazo (e.g., scan programado contra un entorno staging).
+  - [x] O bien: (a) un paso precedente levanta Core API (o MCP) en el puerto objetivo y espera readiness antes de que ZAP corra; o (b) el paso DAST se elimina y el motivo se registra en un ADR/playbook.
+  - [x] Si se mantiene: reporte de ZAP subido como artefacto del workflow y umbrales de falla documentados.
+  - [x] Si se elimina: un gap follow-up captura el plan DAST a largo plazo (e.g., scan programado contra un entorno staging).
 
 #### GT-265
 **Propósito:** Añadir detección de secretos en CI (gitleaks o equivalente) para que commits accidentales de API keys, secretos JWT o credenciales de base de datos sean detectados en tiempo de PR, no después de aterrizar en la historia.
@@ -2503,10 +2503,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Desbloquear el baseline de release del monorepo después de que la capa de caché introdujo imports runtime y deriva TypeScript que impiden compilar o testear Core API, MCP Server y el CLI dependiente. Es bloqueante productivo porque la optimización de caché no puede promoverse mientras las superficies ejecutables fallan.
 **Evidencia Actual:** Auditoría Wilson del 2026-06-25: `npm -ws run build --if-present` falla en `apps/core-api` porque `@nestjs/cache-manager` y `cache-manager` no están instalados y `CacheInterceptor`/`CacheTTL` se importan desde `@nestjs/common`; `packages/mcp-server` falla por las mismas dependencias de caché ausentes, `trace.SpanStatusCode` y errores de deprecación TypeScript 6. `npm --workspace apps/core-api test -- --runInBand`, `npm --workspace packages/mcp-server test -- --runInBand` y `npm --workspace sdk/cli run test:unit -- --runInBand` también están rojos.
 **Hecho Cuando:**
-  - [ ] Core API declara e instala las dependencias de caché que usa (`@nestjs/cache-manager`, `cache-manager`, store Redis como `@keyv/redis` si se conserva) e importa decorators/interceptors de caché desde el paquete que realmente los exporta para Nest 11.
-  - [ ] MCP Server declara sus dependencias de caché, corrige el import de estado OpenTelemetry (`SpanStatusCode` desde `@opentelemetry/api`) y migra o silencia intencionalmente las deprecaciones TypeScript 6.
-  - [ ] CLI deja de resolver artefactos MCP compilados rotos durante los tests unitarios.
-  - [ ] `npm -ws run build --if-present`, `npm --workspace apps/core-api test -- --runInBand`, `npm --workspace packages/mcp-server test -- --runInBand` y `npm --workspace sdk/cli run test:unit -- --runInBand` pasan desde un checkout limpio.
+  - [x] Core API declara e instala las dependencias de caché que usa (`@nestjs/cache-manager`, `cache-manager`, store Redis como `@keyv/redis` si se conserva) e importa decorators/interceptors de caché desde el paquete que realmente los exporta para Nest 11.
+  - [x] MCP Server declara sus dependencias de caché, corrige el import de estado OpenTelemetry (`SpanStatusCode` desde `@opentelemetry/api`) y migra o silencia intencionalmente las deprecaciones TypeScript 6.
+  - [x] CLI deja de resolver artefactos MCP compilados rotos durante los tests unitarios.
+  - [x] `npm -ws run build --if-present`, `npm --workspace apps/core-api test -- --runInBand`, `npm --workspace packages/mcp-server test -- --runInBand` y `npm --workspace sdk/cli run test:unit -- --runInBand` pasan desde un checkout limpio.
 
 #### GT-268
 **Título:** Restaurar scripts validadores CI ausentes referenciados por workflows y reglas
@@ -2533,27 +2533,39 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Hacer reproducible la infraestructura de referencia y evitar que defaults de desarrollo se copien a despliegues tipo producción. Esto optimiza costo y seguridad reduciendo upgrades no planeados, superficies admin públicas accidentales y fricción de triage de incidentes.
 **Evidencia Actual:** `reference/infrastructure/README.md` declara "sin latest", pero los values de Helm usan `tag: "latest"` para BFF y MCP y `openpolicyagent/opa:latest`; los Dockerfiles usan `node:22-alpine` mutable; Docker Compose usa `mcr.microsoft.com/mssql/server:2022-latest`; Traefik arranca con `--api.insecure=true` y expone dashboard; OpenBao usa `BAO_DEV_ROOT_TOKEN_ID` y escucha en `0.0.0.0:8200`; el socket Docker se monta en Traefik.
 **Hecho Cuando:**
-  - [ ] Helm, Compose y Dockerfiles usan tags inmutables revisados o digests para imágenes de aplicación, OPA, Node, SQL Server y gateway.
-  - [ ] Settings solo-desarrollo (`--api.insecure=true`, token/listen dev de OpenBao, exposición amplia de puertos host) quedan detrás de perfiles locales explícitos y ausentes de ejemplos productivos.
-  - [ ] README de infraestructura y contraparte ES documentan perfiles dev vs producción y cadencia de actualización de imágenes.
-  - [ ] Lint CI rechaza nuevos `latest`, `*-latest` o defaults inseguros de gateway/secrets fuera de ejemplos explícitamente dev-only.
+  - [x] Helm, Compose y Dockerfiles usan tags inmutables revisados o digests para imágenes de aplicación, OPA, Node, SQL Server y gateway.
+  - [x] Settings solo-desarrollo (`--api.insecure=true`, token/listen dev de OpenBao, exposición amplia de puertos host) quedan detrás de perfiles locales explícitos y ausentes de ejemplos productivos.
+  - [x] README de infraestructura y contraparte ES documentan perfiles dev vs producción y cadencia de actualización de imágenes.
+  - [x] Lint CI rechaza nuevos `latest`, `*-latest` o defaults inseguros de gateway/secrets fuera de ejemplos explícitamente dev-only.
 
 #### GT-271
 **Título:** Añadir hardening Kubernetes de workloads a Helm charts
 **Propósito:** Elevar los Helm charts al mismo estándar de preparación productiva que las normas arquitectónicas haciendo ejecutables seguridad de pod, probes, recursos y seguridad de rollout en vez de dejarlos implícitos en prosa.
 **Evidencia Actual:** `reference/infrastructure/helm/evolith-bff/templates/deployment.yaml` y `evolith-mcp/templates/deployment.yaml` definen solo contenedores y puertos. Un grep no encuentra `resources`, `securityContext`, `readinessProbe`, `livenessProbe`, `startupProbe`, `runAsNonRoot`, `readOnlyRootFilesystem`, `allowPrivilegeEscalation`, `PodDisruptionBudget`, `HorizontalPodAutoscaler` ni `NetworkPolicy`.
 **Hecho Cuando:**
-  - [ ] Los charts Helm de BFF y MCP definen `resources.requests/limits`, probes de liveness/readiness/startup y defaults seguros de rollout.
-  - [ ] Los security contexts de pod/contenedor exigen ejecución non-root, capabilities eliminadas, filesystem raíz read-only donde sea factible y `allowPrivilegeEscalation: false`.
-  - [ ] NetworkPolicy, PodDisruptionBudget y values opcionales de HPA existen con defaults conservadores.
-  - [ ] Render de Helm más lint de políticas (kubeconform/conftest o validadores open source equivalentes) corre en CI.
+  - [x] Los charts Helm de BFF y MCP definen `resources.requests/limits`, probes de liveness/readiness/startup y defaults seguros de rollout.
+  - [x] Los security contexts de pod/contenedor exigen ejecución non-root, capabilities eliminadas, filesystem raíz read-only donde sea factible y `allowPrivilegeEscalation: false`.
+  - [x] NetworkPolicy, PodDisruptionBudget y values opcionales de HPA existen con defaults conservadores.
+  - [x] Render de Helm más lint de políticas (kubeconform/conftest o validadores open source equivalentes) corre en CI.
 
 #### GT-272
 **Título:** Asegurar distribución y verificación de bundles OPA sidecar
 **Propósito:** Proteger el camino de gobernanza ejecutable contra manipulación de policy bundles asegurando cómo los sidecars OPA obtienen y confían en bundles. Esto mantiene significativa la paridad Native/OPA después del despliegue, no solo en tests del repositorio.
 **Evidencia Actual:** Los values de Helm configuran sidecars OPA para descargar `http://ums-minio:9000/opa-bundles/bundle.tar.gz` sin TLS, autenticación, digest fijo, firma ni gate de readiness fail-closed. GT-133 cubre la arquitectura central de distribución, pero la referencia desplegada del sidecar no verifica integridad ni procedencia del bundle.
 **Hecho Cuando:**
-  - [ ] La URL del bundle OPA usa TLS o endpoint privado autenticado dentro del clúster, con credenciales originadas desde Kubernetes secrets o workload identity.
-  - [ ] La verificación de digest y firma del artefacto bundle queda documentada y automatizada (por ejemplo, Sigstore/cosign u otro flujo open source de firma).
-  - [ ] La readiness del sidecar OPA falla cerrado si el bundle requerido no puede descargarse o verificarse.
-  - [ ] CI renderiza el chart Helm y valida la configuración del bundle OPA con checks Native y OPA.
+  - [x] La URL del bundle OPA usa TLS o endpoint privado autenticado dentro del clúster, con credenciales originadas desde Kubernetes secrets o workload identity.
+  - [x] La verificación de digest y firma del artefacto bundle queda documentada y automatizada (por ejemplo, Sigstore/cosign u otro flujo open source de firma).
+  - [x] La readiness del sidecar OPA falla cerrado si el bundle requerido no puede descargarse o verificarse.
+  - [x] CI renderiza el chart Helm y valida la configuración del bundle OPA con checks Native y OPA.
+
+#### GT-273
+
+**Título:** Restaurar scan DAST contra entorno staging o efímero
+**Propósito:** Restablecer las pruebas dinámicas de seguridad (DAST) como parte del programa de aseguramiento, apuntando a una instancia real en ejecución en lugar del no-op localhost:8000 eliminado en GT-264.
+**Evidencia Actual:** sdk-cli-ci.yml eliminó el paso ZAP full-scan en bbd2e517 (ola GT-265/GT-264). No corre ningún scan DAST en CI. El análisis estático (CodeQL, Trivy, gitleaks) cubre SAST, contenedores y detección de secretos, pero ningún scan en runtime ejercita la superficie de API desplegada.
+**Hecho Cuando:**
+  - [x] Un scan DAST (ZAP o equivalente) corre contra un entorno staging programado o un despliegue efímero en CI.
+  - [x] El scan apunta a un endpoint HTTP real, no a un puerto placeholder.
+  - [x] Los resultados se suben como artifact del workflow; las fallas se gatean o triagean.
+
+**Evidencia de Cierre (2026-06-25):** Abordado al introducir Job 12 (`dast-scan`) en `.github/workflows/sdk-cli-ci.yml`. El job DAST compila el servidor MCP, lo inicia efímeramente en modo HTTP en el puerto 3001, espera `/health`, ejecuta `zaproxy/action-full-scan@v0.10.0` contra `http://localhost:3001`, y sube `report.html`/`report.md` como artifacts. Usa `continue-on-error: true` para no bloquear el gate de CI; los hallazgos se triagean asincrónicamente. Commit `426db1d9`.

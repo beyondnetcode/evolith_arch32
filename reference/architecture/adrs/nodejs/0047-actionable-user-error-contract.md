@@ -145,11 +145,13 @@ Unknown (historical record; evaluated against general architectural principles o
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Structured, actionable error contracts are a mature pattern in API design gaining adoption in frontend development. The pattern follows Domain-Driven Design principles (ubiquitous language for errors) and is demonstrated by major API platforms (Stripe API errors, Google API errors). The approach is in growth stage for frontend-specific implementations. Expected vigencia: 5+ years as a design pattern for error contracts.
 
 ## Current Sources
 
-Unknown (historical record).
+- Stripe API error handling documentation — https://stripe.com/docs/api/errors, consulted 2026-06-20.
+- Google API error model — https://cloud.google.com/apis/design/errors, consulted 2026-06-20.
+- Microsoft REST API guidelines — https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design, consulted 2026-06-20.
 
 ---
 [Back to Index](./README.md)

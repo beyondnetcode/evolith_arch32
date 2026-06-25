@@ -82,11 +82,12 @@ Ninguna explícitamente enlazada.
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+El middleware de idempotencia para integraciones B2B en ASP.NET Core es un patrón maduro. El pipeline de middleware de ASP.NET Core proporciona soporte nativo para preocupaciones transversales como idempotencia. Ampliamente adoptado en sistemas financieros y transaccionales. Vigencia esperada: 5+ años.
 
 ## Fuentes Actuales
 
-Desconocido (registro histórico).
+- Documentación de middleware ASP.NET Core — https://learn.microsoft.com/es-es/aspnet/core/fundamentals/middleware, consultado 2026-06-20.
+- Patrones de idempotencia REST — https://learn.microsoft.com/es-es/azure/architecture/best-practices/api-design, consultado 2026-06-20.
 
 ---
 [Volver al Índice](./README.es.md)

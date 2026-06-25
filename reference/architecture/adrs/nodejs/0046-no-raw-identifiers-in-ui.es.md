@@ -85,11 +85,12 @@ Desconocido (registro histórico; evaluado contra principios generales de arquit
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+El principio de evitar identificadores técnicos en IU es un patrón maduro de UX y seguridad. Sigue prácticas establecidas de ocultación de información y seguridad de APIs. El principio es permanente; los enfoques de implementación evolucionan con los frameworks. Vigencia esperada: principio permanente; enfoques específicos 3-5 años.
 
 ## Fuentes Actuales
 
-Desconocido (registro histórico).
+- OWASP información a usuarios — https://owasp.org/www-project-top-ten, consultado 2026-06-20.
+- Guías de ingeniería de seguridad de Microsoft — https://learn.microsoft.com/es-es/security/engineering, consultado 2026-06-20.
 
 ---
 [Volver al Índice](./README.es.md)

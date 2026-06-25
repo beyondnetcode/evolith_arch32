@@ -215,8 +215,10 @@ None explicitly linked.
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Structured logging with Serilog is a mature, mainstream pattern in .NET. Serilog has dominant market share as the structured logging library (growth-to-mainstream stage) with extensive community adoption, regular maintenance, and broad sink ecosystem. PII-safe logging is a permanent security and compliance requirement (GDPR, CCPA, SOX). The log pipeline approach for sanitization is well-documented. Expected vigencia: Serilog 3-5 years as a logging library; structured logging and PII-safe patterns 5+ years.
 
 ## Current Sources
 
-Unknown (historical record).
+- Serilog documentation — https://serilog.net, consulted 2026-06-20.
+- GDPR data protection guidelines — https://gdpr.eu, consulted 2026-06-20.
+- OWASP logging cheat sheet — https://cheatsheetseries.owasp.org, consulted 2026-06-20.

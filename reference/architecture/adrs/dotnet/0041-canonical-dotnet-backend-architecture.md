@@ -68,11 +68,13 @@ None explicitly linked.
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+.NET is a mature, mainstream platform with strong Microsoft backing and long-term support guarantees (LTS releases every 2 years, 3+ years of support per LTS). ASP.NET Core has dominant market share in enterprise .NET web development. The platform shows steady growth in cross-platform adoption since .NET Core, with strong community signals (GitHub stars, NuGet downloads). Expected vigencia: 5+ years as a primary enterprise backend platform.
 
 ## Current Sources
 
-Unknown (historical record).
+- .NET documentation and release policy — https://learn.microsoft.com/en-us/dotnet, consulted 2026-06-20.
+- NuGet download statistics — https://www.nuget.org, consulted 2026-06-20.
+- Stack Overflow Developer Survey on .NET adoption — https://survey.stackoverflow.co, consulted 2026-06-20.
 
 ---
 [Back to Index](./README.md)

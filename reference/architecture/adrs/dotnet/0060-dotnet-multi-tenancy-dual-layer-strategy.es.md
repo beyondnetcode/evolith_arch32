@@ -86,11 +86,12 @@ Ninguna explícitamente enlazada.
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Los patrones de multi-tenencia en .NET con EF Core y SQL Server son maduros y bien documentados. EF Core (Microsoft) está en adopción mainstream. SQL Server sigue siendo un RDBMS maduro y dominante en despliegues .NET empresariales. Vigencia esperada: 5+ años.
 
 ## Fuentes Actuales
 
-Desconocido (registro histórico).
+- Documentación de EF Core — https://learn.microsoft.com/es-es/ef/core, consultado 2026-06-20.
+- Patrones SaaS multi-tenencia de Microsoft — https://learn.microsoft.com/es-es/azure/architecture/patterns/multi-tenant-saas, consultado 2026-06-20.
 
 ---
 [Volver al Índice](./README.es.md)

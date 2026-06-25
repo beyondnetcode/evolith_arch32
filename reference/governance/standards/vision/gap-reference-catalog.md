@@ -2183,9 +2183,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Implement the TypeScript-native rule evaluator that loads `.rules.json` files and evaluates them, closing the gap where R-25 (Dual-Engine Parity) requires every rule to exist in both TypeScript evaluator AND OPA `.rego`, but only OPA actually evaluates rules today.
 **Current Evidence:** 26 `.rules.json` files exist across 10 governance domains. The `27-opa-parity-gate.mjs` script compares WASM-compiled OPA against "Native" fixtures, but no TypeScript evaluator loads or evaluates the `.rules.json` rules. The parity gate is aspirational rather than operational.
 **Done When:**
-  - [ ] A TypeScript evaluator loads `.rules.json` rules and produces verdicts matching OPA output for the same inputs.
-  - [ ] Parity fixtures exist for all ruleset domains with passing parity tests.
-  - [ ] CI runs both evaluators and asserts identical results on shared fixtures.
+  - [x] A TypeScript evaluator loads `.rules.json` rules and produces verdicts matching OPA output for the same inputs.
+  - [x] Parity fixtures exist for all ruleset domains with passing parity tests.
+  - [x] CI runs both evaluators and asserts identical results on shared fixtures.
 
 #### GT-230
 **Purpose:** Create a skills directory and composable skill framework for BMAD agents, closing the gap where `.bmad-core/README.md` references a `tooling/` directory that does not exist, and agents have no modular, discoverable skill library.
@@ -2474,9 +2474,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Make the DAST (OWASP ZAP) scan in CI meaningful by targeting an actual running instance, or remove it — today it points at `http://localhost:8000` without spinning a server up, so the scan is silently a no-op.
 **Current Evidence:** `.github/workflows/sdk-cli-ci.yml:372-374` — `uses: zaproxy/action-full-scan@v0.10.0` with `target: 'http://localhost:8000'`. No preceding step starts a service on that port, so ZAP scans against nothing and the job either no-ops or fails silently.
 **Done When:**
-  - [ ] Either: (a) a preceding step starts Core API (or MCP) on the target port and waits for readiness before ZAP runs; or (b) the DAST step is removed and the rationale recorded in an ADR/playbook.
-  - [ ] If retained: ZAP report uploaded as a workflow artifact and failure thresholds documented.
-  - [ ] If removed: a follow-up gap captures the long-term DAST plan (e.g., scheduled scan against a staging environment).
+  - [x] Either: (a) a preceding step starts Core API (or MCP) on the target port and waits for readiness before ZAP runs; or (b) the DAST step is removed and the rationale recorded in an ADR/playbook.
+  - [x] If retained: ZAP report uploaded as a workflow artifact and failure thresholds documented.
+  - [x] If removed: a follow-up gap captures the long-term DAST plan (e.g., scheduled scan against a staging environment).
 
 #### GT-265
 **Purpose:** Add secret detection to CI (gitleaks or equivalent) so accidental commits of API keys, JWT secrets, or database credentials are caught at PR time, not after they hit history.
@@ -2503,10 +2503,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Unblock the monorepo release baseline after the cache layer introduced runtime imports and TypeScript drift that Core API, MCP Server, and the dependent CLI cannot build or test through. This is a production blocker because the cache optimization cannot be promoted while the executable surfaces fail.
 **Current Evidence:** Wilson audit on 2026-06-25: `npm -ws run build --if-present` fails in `apps/core-api` because `@nestjs/cache-manager` and `cache-manager` are not installed and `CacheInterceptor`/`CacheTTL` are imported from `@nestjs/common`; `packages/mcp-server` fails on the same missing cache dependencies, `trace.SpanStatusCode`, and TypeScript 6 deprecation errors. `npm --workspace apps/core-api test -- --runInBand`, `npm --workspace packages/mcp-server test -- --runInBand`, and `npm --workspace sdk/cli run test:unit -- --runInBand` are also red.
 **Done When:**
-  - [ ] Core API declares and installs the cache dependencies it uses (`@nestjs/cache-manager`, `cache-manager`, Redis store package such as `@keyv/redis` if retained) and imports Nest cache decorators/interceptors from the package that actually exports them for Nest 11.
-  - [ ] MCP Server declares its cache dependencies, fixes the OpenTelemetry status import (`SpanStatusCode` from `@opentelemetry/api`), and either migrates or silences TypeScript 6 deprecations intentionally.
-  - [ ] CLI no longer resolves broken MCP compiled artifacts during unit tests.
-  - [ ] `npm -ws run build --if-present`, `npm --workspace apps/core-api test -- --runInBand`, `npm --workspace packages/mcp-server test -- --runInBand`, and `npm --workspace sdk/cli run test:unit -- --runInBand` pass from a clean checkout.
+  - [x] Core API declares and installs the cache dependencies it uses (`@nestjs/cache-manager`, `cache-manager`, Redis store package such as `@keyv/redis` if retained) and imports Nest cache decorators/interceptors from the package that actually exports them for Nest 11.
+  - [x] MCP Server declares its cache dependencies, fixes the OpenTelemetry status import (`SpanStatusCode` from `@opentelemetry/api`), and either migrates or silences TypeScript 6 deprecations intentionally.
+  - [x] CLI no longer resolves broken MCP compiled artifacts during unit tests.
+  - [x] `npm -ws run build --if-present`, `npm --workspace apps/core-api test -- --runInBand`, `npm --workspace packages/mcp-server test -- --runInBand`, and `npm --workspace sdk/cli run test:unit -- --runInBand` pass from a clean checkout.
 
 #### GT-268
 **Title:** Restore missing CI validator scripts referenced by workflows and rules
@@ -2533,27 +2533,39 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Make the reference infrastructure reproducible and prevent development-only defaults from being copied into production-like deployments. This optimizes cost and safety by reducing unplanned upgrades, accidental public admin surfaces, and incident triage churn.
 **Current Evidence:** `reference/infrastructure/README.md` states "no latest", but Helm values use `tag: "latest"` for both BFF and MCP and `openpolicyagent/opa:latest`; Dockerfiles use mutable `node:22-alpine`; Docker Compose uses `mcr.microsoft.com/mssql/server:2022-latest`; Traefik starts with `--api.insecure=true` and exposes the dashboard; OpenBao uses `BAO_DEV_ROOT_TOKEN_ID` and listens on `0.0.0.0:8200`; the Docker socket is mounted into Traefik.
 **Done When:**
-  - [ ] Helm, Compose, and Dockerfiles use reviewed immutable tags or digests for application, OPA, Node, SQL Server, and gateway images.
-  - [ ] Development-only settings (`--api.insecure=true`, OpenBao dev token/listen mode, broad host port exposure) are gated behind explicit local profiles and absent from production examples.
-  - [ ] Infrastructure README and ES counterpart document dev vs production profiles and the image upgrade cadence.
-  - [ ] CI lint rejects new `latest`, `*-latest`, or insecure gateway/secrets defaults outside explicitly named dev-only examples.
+  - [x] Helm, Compose, and Dockerfiles use reviewed immutable tags or digests for application, OPA, Node, SQL Server, and gateway images.
+  - [x] Development-only settings (`--api.insecure=true`, OpenBao dev token/listen mode, broad host port exposure) are gated behind explicit local profiles and absent from production examples.
+  - [x] Infrastructure README and ES counterpart document dev vs production profiles and the image upgrade cadence.
+  - [x] CI lint rejects new `latest`, `*-latest`, or insecure gateway/secrets defaults outside explicitly named dev-only examples.
 
 #### GT-271
 **Title:** Add Kubernetes workload hardening to Helm charts
 **Purpose:** Bring Helm charts to the same production-readiness bar as the architecture standards by making pod security, probes, resources, and rollout safety executable rather than implied by prose.
 **Current Evidence:** `reference/infrastructure/helm/evolith-bff/templates/deployment.yaml` and `evolith-mcp/templates/deployment.yaml` define containers and ports only. A grep finds no `resources`, `securityContext`, `readinessProbe`, `livenessProbe`, `startupProbe`, `runAsNonRoot`, `readOnlyRootFilesystem`, `allowPrivilegeEscalation`, `PodDisruptionBudget`, `HorizontalPodAutoscaler`, or `NetworkPolicy`.
 **Done When:**
-  - [ ] BFF and MCP Helm charts define container `resources.requests/limits`, liveness/readiness/startup probes, and rollout-safe defaults.
-  - [ ] Pod/container security contexts enforce non-root execution, dropped capabilities, read-only root filesystem where feasible, and `allowPrivilegeEscalation: false`.
-  - [ ] NetworkPolicy, PodDisruptionBudget, and optional HPA values are present with conservative defaults.
-  - [ ] Helm rendering plus policy lint (kubeconform/conftest or equivalent open-source validators) runs in CI.
+  - [x] BFF and MCP Helm charts define container `resources.requests/limits`, liveness/readiness/startup probes, and rollout-safe defaults.
+  - [x] Pod/container security contexts enforce non-root execution, dropped capabilities, read-only root filesystem where feasible, and `allowPrivilegeEscalation: false`.
+  - [x] NetworkPolicy, PodDisruptionBudget, and optional HPA values are present with conservative defaults.
+  - [x] Helm rendering plus policy lint (kubeconform/conftest or equivalent open-source validators) runs in CI.
 
 #### GT-272
 **Title:** Secure OPA sidecar bundle distribution and verification
 **Purpose:** Protect the executable governance path from policy-bundle tampering by securing how OPA sidecars fetch and trust bundles. This keeps Native/OPA parity meaningful after deployment, not only in repository tests.
 **Current Evidence:** Helm values configure OPA sidecars to fetch `http://ums-minio:9000/opa-bundles/bundle.tar.gz` with no TLS, authentication, digest pin, signature, or fail-closed readiness gate. GT-133 covers central distribution architecture, but the deployed sidecar reference does not verify bundle integrity or provenance.
 **Done When:**
-  - [ ] OPA bundle URL uses TLS or a private in-cluster authenticated endpoint, with credentials sourced from Kubernetes secrets or workload identity.
-  - [ ] Bundle artifact digest and signature verification are documented and automated (for example, Sigstore/cosign or another open-source signing flow).
-  - [ ] OPA sidecar readiness fails closed if the required bundle cannot be fetched or verified.
-  - [ ] CI renders the Helm chart and validates the OPA bundle settings with both Native and OPA checks.
+  - [x] OPA bundle URL uses TLS or a private in-cluster authenticated endpoint, with credentials sourced from Kubernetes secrets or workload identity.
+  - [x] Bundle artifact digest and signature verification are documented and automated (for example, Sigstore/cosign or another open-source signing flow).
+  - [x] OPA sidecar readiness fails closed if the required bundle cannot be fetched or verified.
+  - [x] CI renders the Helm chart and validates the OPA bundle settings with both Native and OPA checks.
+
+#### GT-273
+
+**Title:** Restore DAST scan against a staging or ephemeral environment
+**Purpose:** Re-establish dynamic application security testing (DAST) as part of the security assurance program, targeting a real running instance rather than the no-op localhost:8000 that was removed in GT-264.
+**Current Evidence:** sdk-cli-ci.yml removed the ZAP full-scan step in bbd2e517 (GT-265/GT-264 wave). No DAST scan runs anywhere in CI. Static analysis (CodeQL, Trivy, gitleaks) covers SAST, container, and secret detection, but no runtime scan exercises the deployed API surface.
+**Done When:**
+  - [x] A DAST scan (ZAP or equivalent) runs against either a scheduled staging environment or an ephemeral deployment spun up in CI.
+  - [x] The scan targets a real HTTP endpoint, not a placeholder port.
+  - [x] Results are uploaded as a workflow artifact; failures are gated or triaged.
+
+**Closure Evidence (2026-06-25):** Addressed by introducing Job 12 (`dast-scan`) in `.github/workflows/sdk-cli-ci.yml`. The DAST job builds the MCP server, starts it ephemerally in HTTP mode on port 3001, waits for `/health`, runs `zaproxy/action-full-scan@v0.10.0` against `http://localhost:3001`, and uploads `report.html`/`report.md` as artifacts. The job uses `continue-on-error: true` so it does not block the CI gate; findings are triaged asynchronously. See commit `426db1d9`.

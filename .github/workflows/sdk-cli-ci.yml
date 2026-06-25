@@ -203,6 +203,9 @@ jobs:
       - name: Doc Complexity Score
         run: node .harness/scripts/doc-complexity-score.mjs --threshold=15
 
+      - name: Native Evaluator Parity Gate (GT-229)
+        run: node .harness/scripts/ci/28-native-evaluator-parity.mjs
+
   # ============================================
   # JOB 6: Package Integrity
   # ============================================
@@ -401,6 +404,77 @@ jobs:
           EVOLITH_AGENTIC_REVIEW: "true"
           EVOLITH_LLM_API_KEY: ${{ secrets.EVOLITH_LLM_API_KEY }}
         run: node .harness/scripts/ci/13-agentic-code-review.mjs
+
+  # ============================================
+  # JOB 12: DAST OWASP ZAP Scan (GT-273)
+  # ============================================
+  dast-scan:
+    name: DAST OWASP ZAP
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build workspace dependencies
+        run: |
+          npm run build -w @evolith/core-domain
+          npm run build -w @evolith/infra-providers
+          npm run build -w @evolith/core
+          npm run build -w @evolith/mcp-server
+
+      - name: Build CLI
+        working-directory: ${{ env.CLI_DIR }}
+        run: npm run build
+
+      - name: Start MCP Server
+        working-directory: ${{ env.CLI_DIR }}
+        run: |
+          node dist/main.js mcp serve --transport http --port 3001 &
+          MCP_PID=$!
+          echo "MCP_PID=$MCP_PID" >> $GITHUB_ENV
+          echo "Started MCP server (pid=$MCP_PID)"
+
+      - name: Wait for MCP Server
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:3001/health > /dev/null 2>&1; then
+              echo "MCP Server ready on port 3001"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "MCP Server failed to start after 60s"
+          exit 1
+
+      - name: Run OWASP ZAP Full Scan
+        uses: zaproxy/action-full-scan@v0.10.0
+        with:
+          target: 'http://localhost:3001'
+          cmd_options: '-a'
+
+      - name: Upload ZAP Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: zap-report
+          path: |
+            ${{ github.workspace }}/report.html
+            ${{ github.workspace }}/report.md
+
+      - name: Stop MCP Server
+        if: always()
+        run: kill ${{ env.MCP_PID }} || true
 
   # ============================================
   # Gate: All Jobs Must Pass

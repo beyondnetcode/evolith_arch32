@@ -57,11 +57,13 @@ Unknown (historical record; evaluated against general architectural principles o
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Centralized User Management Systems (UMS) and identity providers are a mature market with well-established vendors (Auth0, Okta, Keycloak, Azure AD). The centralized-vs-decentralized access debate is well-understood in enterprise architecture, with most organizations converging on centralized identity with delegated authorization. The Pattern is mature and extensively documented. Expected vigencia: 5+ years for the architectural pattern; specific vendor choices may change.
 
 ## Current Sources
 
-Unknown (historical record).
+- Keycloak documentation — https://www.keycloak.org, consulted 2026-06-20.
+- Auth0 architecture documentation — https://auth0.com/docs, consulted 2026-06-20.
+- OAuth 2.0 and OIDC specifications — https://oauth.net/2, consulted 2026-06-20.
 
 ---
 [Back to Index](./README.md)

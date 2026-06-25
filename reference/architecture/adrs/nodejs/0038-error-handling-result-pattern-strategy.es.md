@@ -74,11 +74,12 @@ Desconocido (registro histórico; evaluado contra principios generales de arquit
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+El patrón Result (Railway Oriented Programming) para manejo de errores es un patrón funcional maduro con adopción creciente en TypeScript/Node.js. Bibliotecas como neverthrow demuestran adopción comunitaria. Vigencia esperada: 3-5 años como patrón.
 
 ## Fuentes Actuales
 
-Desconocido (registro histórico).
+- Documentación de neverthrow — https://neverthrow.dev, consultado 2026-06-20.
+- Railway Oriented Programming de Scott Wlaschin — https://fsharpforfunandprofit.com/rop, consultado 2026-06-20.
 
 ---
 [Volver al Índice](./README.es.md)

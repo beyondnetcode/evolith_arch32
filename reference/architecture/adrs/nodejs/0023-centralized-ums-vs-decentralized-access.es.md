@@ -57,11 +57,13 @@ Desconocido (registro histórico; evaluado contra principios generales de arquit
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Los sistemas de gestión de usuarios centralizados (UMS) y proveedores de identidad son un mercado maduro con proveedores establecidos (Auth0, Okta, Keycloak, Azure AD). El debate centralizado vs descentralizado está bien documentado en arquitectura empresarial. Vigencia esperada: 5+ años para el patrón arquitectónico.
 
 ## Fuentes Actuales
 
-Desconocido (registro histórico).
+- Documentación de Keycloak — https://www.keycloak.org, consultado 2026-06-20.
+- Documentación de Auth0 — https://auth0.com/docs, consultado 2026-06-20.
+- Especificaciones OAuth 2.0 y OIDC — https://oauth.net/2, consultado 2026-06-20.
 
 ---
 [Volver al Índice](./README.es.md)

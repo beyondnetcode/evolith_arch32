@@ -56,11 +56,13 @@ Unknown (historical record; evaluated against general architectural principles o
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+RBAC/ABAC authorization patterns are mature and widely adopted in enterprise software. The ecosystem includes multiple mature libraries (Casbin, OPA, Auth0) with OPA emerging as the cloud-native standard for policy-as-code. The authorization pattern itself is stable and well-understood, with ongoing innovation in attribute-based and relationship-based access control (ReBAC). Expected vigencia: 5+ years for the RBAC/ABAC pattern itself; specific tooling may evolve.
 
 ## Current Sources
 
-Unknown (historical record).
+- OPA documentation and community — https://www.openpolicyagent.org, consulted 2026-06-20.
+- NIST RBAC standard — https://csrc.nist.gov/projects/role-based-access-control, consulted 2026-06-20.
+- Casbin documentation — https://casbin.org, consulted 2026-06-20.
 
 ---
 [Back to Index](./README.md)

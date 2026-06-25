@@ -68,11 +68,13 @@ Ninguna explícitamente enlazada.
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+.NET es una plataforma madura y mainstream con fuerte respaldo de Microsoft y garantías de soporte a largo plazo (LTS cada 2 años, 3+ años de soporte). ASP.NET Core tiene participación dominante en desarrollo web empresarial .NET. Crecimiento constante en adopción multiplataforma desde .NET Core. Vigencia esperada: 5+ años.
 
 ## Fuentes Actuales
 
-Desconocido (registro histórico).
+- Documentación de .NET — https://learn.microsoft.com/es-es/dotnet, consultado 2026-06-20.
+- Estadísticas de descargas NuGet — https://www.nuget.org, consultado 2026-06-20.
+- Stack Overflow Developer Survey — https://survey.stackoverflow.co, consultado 2026-06-20.
 
 ---
 [Volver al Índice](./README.es.md)

@@ -74,11 +74,13 @@ Unknown (historical record; evaluated against general architectural principles o
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+The Result pattern (Railway Oriented Programming) for error handling is a mature functional programming pattern that has seen growing adoption in TypeScript/Node.js ecosystems. Libraries like neverthrow and fp-ts demonstrate community adoption. The pattern is well-established in Rust and functional languages, with demonstrated production viability in TypeScript. Expected vigencia: 3-5 years as a pattern; specific library choices may evolve as the ecosystem matures.
 
 ## Current Sources
 
-Unknown (historical record).
+- neverthrow documentation — https://neverthrow.dev, consulted 2026-06-20.
+- Scott Wlaschin's Railway Oriented Programming — https://fsharpforfunandprofit.com/rop, consulted 2026-06-20.
+- TypeScript error handling best practices — https://www.typescriptlang.org, consulted 2026-06-20.
 
 ---
 [Back to Index](./README.md)

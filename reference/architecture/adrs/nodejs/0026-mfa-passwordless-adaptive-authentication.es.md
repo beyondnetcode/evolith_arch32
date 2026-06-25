@@ -57,11 +57,12 @@ Desconocido (registro histórico; evaluado contra principios generales de arquit
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+MFA, passwordless y autenticación adaptativa están en etapa de crecimiento hacia adopción mainstream. FIDO2/WebAuthn tienen soporte maduro en navegadores y son cada vez más exigidos por políticas de seguridad empresarial. Presión regulatoria (PSD2, GDPR) impulsa la adopción continua. Vigencia esperada: el patrón MFA/passwordless es un requisito de seguridad permanente.
 
 ## Fuentes Actuales
 
-Desconocido (registro histórico).
+- Especificación FIDO2/WebAuthn — https://webauthn.io, consultado 2026-06-20.
+- Guías de autenticación OWASP — https://cheatsheetseries.owasp.org, consultado 2026-06-20.
 
 ---
 [Volver al Índice](./README.es.md)

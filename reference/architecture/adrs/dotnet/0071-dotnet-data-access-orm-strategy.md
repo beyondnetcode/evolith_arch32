@@ -451,8 +451,10 @@ None explicitly linked.
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+EF Core and Dapper are both mature, mainstream data access technologies in .NET. EF Core (Microsoft-maintained) is the primary ORM with strong LTS alignment and ecosystem integration. Dapper (community-maintained, Stack Overflow origin) provides lightweight, high-performance data access for optimized reads. The dual-strategy (EF Core + Dapper) is a well-documented pattern in the .NET community. Expected vigencia: 5+ years for both libraries; the dual-strategy pattern is durable.
 
 ## Current Sources
 
-Unknown (historical record).
+- EF Core documentation — https://learn.microsoft.com/en-us/ef/core, consulted 2026-06-20.
+- Dapper GitHub repository — https://github.com/DapperLib/Dapper, consulted 2026-06-20.
+- NuGet download statistics — https://www.nuget.org/packages/Microsoft.EntityFrameworkCore, consulted 2026-06-20.

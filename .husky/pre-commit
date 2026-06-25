@@ -4,14 +4,68 @@ echo "======================================================================"
 echo "  Evolith CI Pre-commit Hook"
 echo "======================================================================"
 
-# Default to skip if no TTY
-if [ ! -t 0 ]; then
-  echo "No TTY detected, defaulting to skip mode."
-  echo "skip" > .git/EVOLITH_CI_MODE
-  echo "develop" > .git/EVOLITH_PUSH_TARGET
-  exit 0
+# ---------------------------------------------------------------------------
+# Owner detection
+# ---------------------------------------------------------------------------
+IS_OWNER=false
+OWNER_CONFIG=$(git config --global evolith.owner 2>/dev/null || echo "")
+GIT_USER_EMAIL=$(git config user.email 2>/dev/null || echo "")
+
+if [ "$OWNER_CONFIG" = "true" ] || [ "$OWNER_CONFIG" = "$GIT_USER_EMAIL" ]; then
+  IS_OWNER=true
 fi
 
+# ---------------------------------------------------------------------------
+# CI mode, push target, merge method detection
+# ---------------------------------------------------------------------------
+MODE=""
+TARGET=""
+MERGE_METHOD=""
+
+resolve_from_env() {
+  MODE="${EVOLITH_CI_MODE:-skip}"
+  TARGET="${EVOLITH_PUSH_TARGET:-develop}"
+  MERGE_METHOD="${EVOLITH_MERGE_METHOD:-merge}"
+}
+
+TTY_AVAILABLE=false
+if exec < /dev/tty 2>/dev/null; then
+  TTY_AVAILABLE=true
+fi
+
+if [ "$TTY_AVAILABLE" = false ]; then
+  if [ "$IS_OWNER" = true ]; then
+    resolve_from_env
+    echo "$MODE" > .git/EVOLITH_CI_MODE
+    echo "$TARGET" > .git/EVOLITH_PUSH_TARGET
+    echo "$MERGE_METHOD" > .git/EVOLITH_MERGE_METHOD
+    echo "No TTY available — owner mode: using env defaults or skip."
+    exit 0
+  fi
+
+  if [ -n "$EVOLITH_CI_MODE" ] || [ -n "$EVOLITH_PUSH_TARGET" ] || [ -n "$EVOLITH_MERGE_METHOD" ]; then
+    resolve_from_env
+    echo "$MODE" > .git/EVOLITH_CI_MODE
+    echo "$TARGET" > .git/EVOLITH_PUSH_TARGET
+    echo "$MERGE_METHOD" > .git/EVOLITH_MERGE_METHOD
+    echo "Non-TTY: using EVOLITH_CI_MODE, EVOLITH_PUSH_TARGET, EVOLITH_MERGE_METHOD."
+    exit 0
+  fi
+
+  echo ""
+  echo "ERROR: No TTY available and not an owner."
+  echo "Set these env vars or run interactively:"
+  echo "  EVOLITH_CI_MODE       (skip|fast|governance|auto|full)"
+  echo "  EVOLITH_PUSH_TARGET   (develop|main|sync|none)"
+  echo "  EVOLITH_MERGE_METHOD  (merge|squash|rebase)"
+  echo ""
+  echo "Or mark yourself as owner: git config --global evolith.owner <email>"
+  exit 1
+fi
+
+# ---------------------------------------------------------------------------
+# Interactive prompt
+# ---------------------------------------------------------------------------
 echo ""
 echo "  CI Mode:"
 echo "  1) ⚡ Skip       — commit without validation (~0s)"
@@ -21,10 +75,15 @@ echo "  4) 🔍 Auto       — detect changed files (~1-3s)"
 echo "  5) 🔬 Full       — all 30 CI scripts (~6-8s)"
 echo ""
 echo "  Branch:"
-echo "  d) develop     — push to develop (default)"
-echo "  m) main        — merge to main + push"
-echo "  s) sync        — sync develop ↔ main (both directions)"
-echo "  n) none        — commit only, don't push"
+echo "  d) develop      — push to develop (default)"
+echo "  m) main         — merge to main + push"
+echo "  s) sync         — sync develop <-> main (both directions)"
+echo "  n) none         — commit only, don't push"
+echo ""
+echo "  Merge Method (for main/sync only):"
+echo "  m) merge commit — git merge --no-ff (default)"
+echo "  s) squash       — git merge --squash (single commit)"
+echo "  r) rebase       — git rebase + fast-forward (linear)"
 echo ""
 
 read -p "  CI Mode [1-5, default: 1]: " CHOICE
@@ -46,12 +105,24 @@ case "${BRANCH_CHOICE:-d}" in
   *) TARGET="develop" ;;
 esac
 
+MERGE_METHOD="merge"
+if [ "$TARGET" = "main" ] || [ "$TARGET" = "sync" ]; then
+  read -p "  Merge Method [m/s/r, default: m]: " MERGE_CHOICE
+  case "${MERGE_CHOICE:-m}" in
+    m) MERGE_METHOD="merge" ;;
+    s) MERGE_METHOD="squash" ;;
+    r) MERGE_METHOD="rebase" ;;
+    *) MERGE_METHOD="merge" ;;
+  esac
+fi
+
 echo "$MODE" > .git/EVOLITH_CI_MODE
 echo "$TARGET" > .git/EVOLITH_PUSH_TARGET
+echo "$MERGE_METHOD" > .git/EVOLITH_MERGE_METHOD
 
 if [ "$MODE" = "skip" ]; then
   echo ""
-  echo "✅ Skipping CI validation."
+  echo "Skipping CI validation."
   exit 0
 fi
 
@@ -62,4 +133,4 @@ git add reference/governance/standards/vision/executive-summary.md reference/gov
 
 echo ""
 echo "Running CI in $MODE mode..."
-node .harness/scripts/ci-runner.mjs $MODE
+node .harness/scripts/ci-runner.mjs "$MODE"

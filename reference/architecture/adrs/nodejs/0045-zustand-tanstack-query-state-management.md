@@ -141,11 +141,13 @@ Unknown (historical record; evaluated against general architectural principles o
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Zustand and TanStack Query represent the modern dual-strategy approach to frontend state management in the growth-to-mainstream stage. Zustand provides lightweight client state management (growth stage, strong community adoption). TanStack Query (formerly React Query) has become the de facto standard for server state management in React applications (mainstream adoption). Both libraries are actively maintained by their authors with responsive communities. Expected vigencia: Zustand and TanStack Query 3-5 years each; the server/client state separation pattern is a durable architectural insight.
 
 ## Current Sources
 
-Unknown (historical record).
+- Zustand documentation — https://github.com/pmndrs/zustand, consulted 2026-06-20.
+- TanStack Query documentation — https://tanstack.com/query, consulted 2026-06-20.
+- Kent C. Dodds: state management resources — https://kentcdodds.com, consulted 2026-06-20.
 
 ---
 [Back to Index](./README.md)

@@ -56,11 +56,12 @@ Unknown (historical record; evaluated against general architectural principles o
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Contextual authentication with pluggable projections is an architectural pattern for multi-channel authentication in the growth stage. The composable authentication middleware approach follows established patterns in Node.js (Passport.js-style strategies) and is well-demonstrated in production. Expected vigencia: 3-5 years as a pattern; specific projection implementations may evolve with protocol changes.
 
 ## Current Sources
 
-Unknown (historical record).
+- Passport.js documentation — https://www.passportjs.org, consulted 2026-06-20.
+- OAuth 2.0 framework — https://oauth.net/2, consulted 2026-06-20.
 
 ---
 [Back to Index](./README.md)

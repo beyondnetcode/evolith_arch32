@@ -142,11 +142,12 @@ Desconocido (registro histórico; evaluado contra principios generales de arquit
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+AOP via DispatchProxy en .NET es un patrón maduro pero especializado. DispatchProxy (parte de System.Reflection.DispatchProxy desde .NET Core) proporciona AOP ligero sin dependencias externas. El patrón pipeline behavior (MediatR) es más adoptado. Vigencia esperada: 3-5 años; el patrón AOP es permanente.
 
 ## Fuentes Actuales
 
-Desconocido (registro histórico).
+- Documentación de DispatchProxy — https://learn.microsoft.com/es-es/dotnet/api/system.reflection.dispatchproxy, consultado 2026-06-20.
+- Documentación de MediatR — https://github.com/jbogard/MediatR, consultado 2026-06-20.
 
 ---
 [Volver al Índice](./README.es.md)

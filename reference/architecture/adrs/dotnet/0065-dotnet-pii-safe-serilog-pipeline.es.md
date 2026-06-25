@@ -138,8 +138,10 @@ Ninguna explícitamente enlazada.
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+El logging estructurado con Serilog es un patrón maduro y mainstream en .NET. Serilog tiene participación de mercado dominante como librería de logging estructurado (crecimiento hacia mainstream). El logging PII-safe es un requisito permanente de seguridad y cumplimiento (GDPR, CCPA). Vigencia esperada: Serilog 3-5 años; logging estructurado 5+ años.
 
 ## Fuentes Actuales
 
-Desconocido (registro histórico).
+- Documentación de Serilog — https://serilog.net, consultado 2026-06-20.
+- Guías de protección de datos GDPR — https://gdpr.eu, consultado 2026-06-20.
+- OWASP logging cheat sheet — https://cheatsheetseries.owasp.org, consultado 2026-06-20.

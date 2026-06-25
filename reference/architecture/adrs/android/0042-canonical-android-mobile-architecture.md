@@ -72,11 +72,13 @@ None explicitly linked.
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Kotlin and Android Jetpack are in the mainstream adoption stage for Android development. Kotlin (supported by JetBrains and Google) has been Google's preferred language for Android since 2019 with strong ecosystem adoption. Jetpack Compose is in growth-to-mainstream stage as the modern UI toolkit, progressively replacing XML layouts. Android architecture patterns (MVVM, MVI, Clean Architecture) are mature and well-documented. Expected vigencia: Kotlin 5+ years as primary Android language; Jetpack libraries 3-5 years following Google's lifecycle support policy.
 
 ## Current Sources
 
-Unknown (historical record).
+- Android developer documentation — https://developer.android.com, consulted 2026-06-20.
+- Kotlin language documentation — https://kotlinlang.org, consulted 2026-06-20.
+- Google I/O Android architecture guidance — https://developer.android.com/topic/architecture, consulted 2026-06-20.
 
 ---
 [Back to Index](./README.md)

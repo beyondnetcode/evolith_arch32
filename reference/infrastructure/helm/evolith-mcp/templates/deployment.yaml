@@ -14,6 +14,22 @@ spec:
       labels:
         app: {{ include "evolith-mcp.name" . }}
     spec:
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -22,6 +38,47 @@ spec:
             - name: http
               containerPort: {{ .Values.service.targetPort }}
               protocol: TCP
+          {{- with .Values.containerSecurityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- if .Values.probes.liveness.enabled }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.probes.liveness.path }}
+              port: {{ .Values.probes.liveness.port }}
+            initialDelaySeconds: {{ .Values.probes.liveness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probes.liveness.periodSeconds }}
+            timeoutSeconds: {{ .Values.probes.liveness.timeoutSeconds }}
+            failureThreshold: {{ .Values.probes.liveness.failureThreshold }}
+            successThreshold: {{ .Values.probes.liveness.successThreshold }}
+          {{- end }}
+          {{- if .Values.probes.readiness.enabled }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.probes.readiness.path }}
+              port: {{ .Values.probes.readiness.port }}
+            initialDelaySeconds: {{ .Values.probes.readiness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probes.readiness.periodSeconds }}
+            timeoutSeconds: {{ .Values.probes.readiness.timeoutSeconds }}
+            failureThreshold: {{ .Values.probes.readiness.failureThreshold }}
+            successThreshold: {{ .Values.probes.readiness.successThreshold }}
+          {{- end }}
+          {{- if .Values.probes.startup.enabled }}
+          startupProbe:
+            httpGet:
+              path: {{ .Values.probes.startup.path }}
+              port: {{ .Values.probes.startup.port }}
+            initialDelaySeconds: {{ .Values.probes.startup.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probes.startup.periodSeconds }}
+            timeoutSeconds: {{ .Values.probes.startup.timeoutSeconds }}
+            failureThreshold: {{ .Values.probes.startup.failureThreshold }}
+            successThreshold: {{ .Values.probes.startup.successThreshold }}
+          {{- end }}
         {{- if .Values.opa.enabled }}
         - name: opa
           image: {{ .Values.opa.image }}
@@ -33,7 +90,67 @@ spec:
             - "--set=bundles.authz.resource=bundle.tar.gz"
             - "--set=bundles.authz.polling.min_delay_seconds={{ .Values.opa.bundle.pollingMinDelaySeconds }}"
             - "--set=bundles.authz.polling.max_delay_seconds={{ .Values.opa.bundle.pollingMaxDelaySeconds }}"
+            {{- if .Values.opa.bundle.signing.enabled }}
+            - "--set=bundles.authz.signing.keyid={{ .Values.opa.bundle.signing.algorithm }}-key"
+            - "--set=keys.{{ .Values.opa.bundle.signing.algorithm }}-key.algorithm={{ .Values.opa.bundle.signing.algorithm }}"
+            - "--set-file=keys.{{ .Values.opa.bundle.signing.algorithm }}-key.key=/var/run/opa/signing/key"
+            {{- end }}
+          {{- if .Values.opa.bundle.credentials.existingSecretName }}
+          env:
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.opa.bundle.credentials.existingSecretName }}
+                  key: {{ .Values.opa.bundle.credentials.accessKeyKey }}
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.opa.bundle.credentials.existingSecretName }}
+                  key: {{ .Values.opa.bundle.credentials.secretKeyKey }}
+          {{- end }}
           ports:
             - name: opa-http
               containerPort: 8181
+              protocol: TCP
+          {{- if .Values.opa.bundle.readinessFailClosed }}
+          readinessProbe:
+            httpGet:
+              path: /health?bundles
+              port: 8181
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+          {{- end }}
+          {{- if or .Values.opa.bundle.signing.enabled .Values.opa.bundle.tls.caCertSecretName }}
+          volumeMounts:
+            {{- if .Values.opa.bundle.signing.enabled }}
+            - name: opa-signing-key
+              mountPath: /var/run/opa/signing
+              readOnly: true
+            {{- end }}
+            {{- if .Values.opa.bundle.tls.caCertSecretName }}
+            - name: opa-ca-cert
+              mountPath: /var/run/opa/ca
+              readOnly: true
+            {{- end }}
+          {{- end }}
+      {{- if or .Values.opa.bundle.signing.enabled .Values.opa.bundle.tls.caCertSecretName }}
+      volumes:
+        {{- if .Values.opa.bundle.signing.enabled }}
+        - name: opa-signing-key
+          secret:
+            secretName: {{ .Values.opa.bundle.signing.existingSecretName }}
+            items:
+              - key: {{ .Values.opa.bundle.signing.keySecretKey }}
+                path: key
         {{- end }}
+        {{- if .Values.opa.bundle.tls.caCertSecretName }}
+        - name: opa-ca-cert
+          secret:
+            secretName: {{ .Values.opa.bundle.tls.caCertSecretName }}
+            items:
+              - key: {{ .Values.opa.bundle.tls.caCertKey }}
+                path: ca.crt
+        {{- end }}
+      {{- end }}
+{{- end }}

@@ -88,11 +88,13 @@ Backfill histórico: Abordar la tensión arquitectónica donde la plataforma de 
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+El ecosistema ORM de Node.js es maduro pero fragmentado. Prisma ha emergido como la opción líder (crecimiento), seguido de Drizzle ORM (crecimiento temprano). TypeORM (maduro/declive) y Sequelize (maduro) representan alternativas establecidas. Vigencia esperada: ORMs específicos 2-4 años; patrón de capa de datos 5+ años.
 
 ## Fuentes Actuales
 
-Desconocido (registro histórico).
+- Documentación de Prisma — https://www.prisma.io, consultado 2026-06-20.
+- Documentación de Drizzle ORM — https://orm.drizzle.team, consultado 2026-06-20.
+- Tendencias npm para paquetes ORM — https://npmtrends.com, consultado 2026-06-20.
 
 ---
 [Volver al Índice](./README.es.md)

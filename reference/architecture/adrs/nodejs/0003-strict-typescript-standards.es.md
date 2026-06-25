@@ -74,11 +74,13 @@ Desconocido (registro histórico; evaluado contra principios generales de arquit
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+TypeScript es un lenguaje maduro en etapa de adopción mainstream con posición dominante en el desarrollo empresarial JavaScript. Microsoft proporciona soporte a largo plazo con releases trimestrales y fuertes garantías de retrocompatibilidad. Adopción casi universal en frontend y backend. Vigencia esperada: 5+ años.
 
 ## Fuentes Actuales
 
-Desconocido (registro histórico).
+- Notas de lanzamiento de TypeScript — https://devblogs.microsoft.com/typescript, consultado 2026-06-20.
+- Descargas npm de typescript — https://www.npmjs.com/package/typescript, consultado 2026-06-20.
+- Encuestas State of JS sobre adopción de TypeScript — https://stateofjs.com, consultado 2026-06-20.
 
 ---
 [Volver al Índice](./README.es.md)

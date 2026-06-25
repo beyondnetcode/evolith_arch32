@@ -56,11 +56,12 @@ Unknown (historical record; evaluated against general architectural principles o
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Authentication graph compilation is a specialized pattern within the mature authentication domain. JWT-based token patterns and session management are well-established in the growth/mainstream stage. The compilation approach for pre-computing authorization graphs is an emerging optimization pattern with limited production evidence outside large-scale deployments. Expected vigencia: the token/session model 5+ years; the graph compilation pattern depends on continued validation.
 
 ## Current Sources
 
-Unknown (historical record).
+- OAuth 2.0 and OIDC specifications — https://oauth.net/2, consulted 2026-06-20.
+- JWT RFC 7519 — https://datatracker.ietf.org/doc/html/rfc7519, consulted 2026-06-20.
 
 ---
 [Back to Index](./README.md)

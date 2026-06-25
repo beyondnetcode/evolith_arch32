@@ -59,11 +59,12 @@ Desconocido (registro histórico; evaluado contra principios generales de arquit
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Los Service Workers y tecnologías PWA son maduros con soporte generalizado en navegadores modernos. El patrón offline-first está en etapa de crecimiento hacia adopción mainstream impulsado por aplicaciones web progresivas. Google y W3C proporcionan soporte continuo de estandarización. Vigencia esperada: 5+ años.
 
 ## Fuentes Actuales
 
-Desconocido (registro histórico).
+- Especificación W3C de Service Workers — https://www.w3.org/TR/service-workers, consultado 2026-06-20.
+- MDN Web Docs: Service Worker API — https://developer.mozilla.org/es/docs/Web/API/Service_Worker_API, consultado 2026-06-20.
 
 ---
 [Volver al Índice](./README.es.md)

@@ -201,7 +201,6 @@ services:
     container_name: ums-traefik
     restart: always
     command:
-      - "--api.insecure=true"
       - "--ping=true"
       - "--providers.file.directory=/etc/traefik/dynamic"
       - "--providers.file.watch=true"
@@ -210,7 +209,6 @@ services:
       - "--entrypoints.web.address=:8000"
     ports:
       - "8000:8000"     # Public HTTP Proxy Gateway
-      - "8080:8080"     # Traefik Admin Dashboard
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik-dynamic.yml:/etc/traefik/dynamic/traefik-dynamic.yml:ro
@@ -301,8 +299,8 @@ services:
     container_name: ums-grafana
     restart: always
     environment:
-      - GF_AUTH_ANONYMOUS_ENABLED=true
-      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_ANONYMOUS_ENABLED=false
+      - GF_SECURITY_ADMIN_PASSWORD=changeme
       - GF_AUTH_DISABLE_LOGIN_FORM=true
     volumes:
       - grafana_data:/var/lib/grafana

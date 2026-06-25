@@ -28,7 +28,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-259`](./gap-reference-catalog.es.md#gt-259) | Corregir trigger de publish en ci-cd.yml a tag-based en vez de string match | `CI/CD` | Cross | P1 | S | `COMPLETADO` |
 | [`GT-260`](./gap-reference-catalog.es.md#gt-260) | Crear archivo de idioma español para agente PO y añadir a workflows | `BMAD Agents` | Cross | P1 | S | `COMPLETADO` |
 | [`GT-258`](./gap-reference-catalog.es.md#gt-258) | Añadir controles de concurrencia a todos los workflows GitHub Actions | `CI/CD` | Cross | P1 | M | `COMPLETADO` |
-| [`GT-270`](./gap-reference-catalog.es.md#gt-270) | Fijar imágenes de infraestructura mutables y deshabilitar defaults dev expuestos | `Infrastructure` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-270`](./gap-reference-catalog.es.md#gt-270) | Fijar imágenes de infraestructura mutables y deshabilitar defaults dev expuestos | `Infrastructure` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-271`](./gap-reference-catalog.es.md#gt-271) | Añadir hardening Kubernetes de workloads a Helm charts | `Infrastructure` | Cross | P1 | M | `PENDIENTE` |
 | [`GT-272`](./gap-reference-catalog.es.md#gt-272) | Asegurar distribución y verificación de bundles OPA sidecar | `Rulesets` | Cross | P1 | M | `PENDIENTE` |
 | [`GT-20`](./gap-reference-catalog.es.md#gt-20) | Backfill de ADRs al estándar de autoría | `Governance` | Cross | P1 | L | `PENDIENTE` |
@@ -287,7 +287,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-246`](./gap-reference-catalog.es.md#gt-246) | Implementar experimentos Chaos Mesh/Litmus | `QA` | Cross | P3 | L | `COMPLETADO` |
 
 
-**Progreso:** 265 / 272 completados · 0 en progreso · 7 pendientes · 0 diferidos
+**Progreso:** 268 / 272 completados · 0 en progreso · 4 pendientes · 0 diferidos
 
 **Oleada 2026-06-23 (auditoría profunda de Wilson III):** Añadidos 14 gaps nuevos `GT-212`…`GT-225` del Wilson Audit Playbook que cubren: higiene de estado ADR (GT-212), metadata + presupuestos operativos + corpus de guías por topología (GT-213, GT-217, GT-219), observabilidad + OpenAPI en controladores REST (GT-214, GT-215), paridad de input-schemas OPA + densidad de tests por topología (GT-216, GT-222), plantillas de rollback + on-call de Fase 05 (GT-218), cobertura de ramas CLI + paridad de envelope --format + limpieza de skip-list (GT-220, GT-224, GT-225), audit logging HTTP de MCP (GT-221), y tests e2e de paridad cross-surface (GT-223).
 

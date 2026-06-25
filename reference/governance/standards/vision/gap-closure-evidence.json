@@ -3971,6 +3971,22 @@
       ],
       "dependencyDisposition": "none",
       "closureNote": "All 3 missing CI scripts recovered from git history (deleted in 79af9929). bilingual-coverage reports 100% coverage, coverage-dashboard generates COVERAGE_REPORT.md, topology-rule-coverage validates all 8 topologies with 0 errors."
+    },
+    {
+      "id": "GT-270",
+      "closedAt": "2026-06-25",
+      "closureCommit": "pending",
+      "evidence": [
+        "reference/infrastructure/helm/evolith-bff/values.yaml",
+        "reference/infrastructure/helm/evolith-mcp/values.yaml",
+        "reference/infrastructure/docker-compose.yml"
+      ],
+      "validationCommands": [
+        "grep tag: reference/infrastructure/helm/evolith-bff/values.yaml",
+        "grep opa: reference/infrastructure/helm/evolith-bff/values.yaml"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Helm app images pinned to 1.1.0, OPA sidecar pinned to 0.65.0. Traefik --api.insecure=true removed. Grafana anonymous auth disabled."
     }
   ]
 }

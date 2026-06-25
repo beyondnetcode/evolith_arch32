@@ -14,32 +14,32 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|
 | [`GT-250`](./gap-reference-catalog.md#gt-250) | Corregir bypass de autenticacion MCP cuando no hay API key configurada | `Seguridad` | Transversal | P0 | S | `COMPLETADO` |
-| [`GT-251`](./gap-reference-catalog.es.md#gt-251) | Corregir inyección de comandos en update vía execSync | `Security` | Cross | P0 | S | `PENDIENTE` |
-| [`GT-253`](./gap-reference-catalog.es.md#gt-253) | Fijar trivy-action a tag de versión específico en vez de branch master | `CI/CD` | Cross | P0 | S | `PENDIENTE` |
+| [`GT-251`](./gap-reference-catalog.es.md#gt-251) | Corregir inyección de comandos en update vía execSync | `Security` | Cross | P0 | S | `COMPLETADO` |
+| [`GT-253`](./gap-reference-catalog.es.md#gt-253) | Fijar trivy-action a tag de versión específico en vez de branch master | `CI/CD` | Cross | P0 | S | `COMPLETADO` |
 | [`GT-268`](./gap-reference-catalog.es.md#gt-268) | Restaurar scripts validadores CI ausentes referenciados por workflows y reglas | `Governance CI` | Cross | P0 | S | `PENDIENTE` |
-| [`GT-252`](./gap-reference-catalog.es.md#gt-252) | Cablear las 19 políticas OPA huérfanas al agregador main.rego | `Rulesets` | Cross | P0 | M | `PENDIENTE` |
+| [`GT-252`](./gap-reference-catalog.es.md#gt-252) | Cablear las 19 políticas OPA huérfanas al agregador main.rego | `Rulesets` | Cross | P0 | M | `COMPLETADO` |
 | [`GT-267`](./gap-reference-catalog.es.md#gt-267) | Restaurar build/test del workspace tras integración de caché Redis | `Core API/MCP` | Cross | P0 | M | `PENDIENTE` |
-| [`GT-269`](./gap-reference-catalog.es.md#gt-269) | Restaurar reproducibilidad del contrato roundtrip ADR-0073 | `Contracts` | Cross | P0 | M | `PENDIENTE` |
-| [`GT-233`](./gap-reference-catalog.es.md#gt-233) | Añadir middleware de rate limiting al Core API | `Security` | Cross | P1 | S | `PENDIENTE` |
-| [`GT-254`](./gap-reference-catalog.es.md#gt-254) | Añadir protección contra path traversal en resolución de recursos MCP | `Security` | Cross | P1 | S | `PENDIENTE` |
-| [`GT-255`](./gap-reference-catalog.es.md#gt-255) | Añadir headers Content-Security-Policy al transporte HTTP MCP | `Security` | Cross | P1 | S | `PENDIENTE` |
-| [`GT-256`](./gap-reference-catalog.es.md#gt-256) | Corregir healthcheck de Traefik añadiendo --ping=true al comando | `Infrastructure` | Cross | P1 | S | `PENDIENTE` |
-| [`GT-257`](./gap-reference-catalog.es.md#gt-257) | Fijar versión de imagen MongoDB en vez de usar latest | `Infrastructure` | Cross | P1 | S | `PENDIENTE` |
-| [`GT-259`](./gap-reference-catalog.es.md#gt-259) | Corregir trigger de publish en ci-cd.yml a tag-based en vez de string match | `CI/CD` | Cross | P1 | S | `PENDIENTE` |
-| [`GT-260`](./gap-reference-catalog.es.md#gt-260) | Crear archivo de idioma español para agente PO y añadir a workflows | `BMAD Agents` | Cross | P1 | S | `PENDIENTE` |
-| [`GT-258`](./gap-reference-catalog.es.md#gt-258) | Añadir controles de concurrencia a todos los workflows GitHub Actions | `CI/CD` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-269`](./gap-reference-catalog.es.md#gt-269) | Restaurar reproducibilidad del contrato roundtrip ADR-0073 | `Contracts` | Cross | P0 | M | `COMPLETADO` |
+| [`GT-233`](./gap-reference-catalog.es.md#gt-233) | Añadir middleware de rate limiting al Core API | `Security` | Cross | P1 | S | `COMPLETADO` |
+| [`GT-254`](./gap-reference-catalog.es.md#gt-254) | Añadir protección contra path traversal en resolución de recursos MCP | `Security` | Cross | P1 | S | `COMPLETADO` |
+| [`GT-255`](./gap-reference-catalog.es.md#gt-255) | Añadir headers Content-Security-Policy al transporte HTTP MCP | `Security` | Cross | P1 | S | `COMPLETADO` |
+| [`GT-256`](./gap-reference-catalog.es.md#gt-256) | Corregir healthcheck de Traefik añadiendo --ping=true al comando | `Infrastructure` | Cross | P1 | S | `COMPLETADO` |
+| [`GT-257`](./gap-reference-catalog.es.md#gt-257) | Fijar versión de imagen MongoDB en vez de usar latest | `Infrastructure` | Cross | P1 | S | `COMPLETADO` |
+| [`GT-259`](./gap-reference-catalog.es.md#gt-259) | Corregir trigger de publish en ci-cd.yml a tag-based en vez de string match | `CI/CD` | Cross | P1 | S | `COMPLETADO` |
+| [`GT-260`](./gap-reference-catalog.es.md#gt-260) | Crear archivo de idioma español para agente PO y añadir a workflows | `BMAD Agents` | Cross | P1 | S | `COMPLETADO` |
+| [`GT-258`](./gap-reference-catalog.es.md#gt-258) | Añadir controles de concurrencia a todos los workflows GitHub Actions | `CI/CD` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-270`](./gap-reference-catalog.es.md#gt-270) | Fijar imágenes de infraestructura mutables y deshabilitar defaults dev expuestos | `Infrastructure` | Cross | P1 | M | `PENDIENTE` |
 | [`GT-271`](./gap-reference-catalog.es.md#gt-271) | Añadir hardening Kubernetes de workloads a Helm charts | `Infrastructure` | Cross | P1 | M | `PENDIENTE` |
 | [`GT-272`](./gap-reference-catalog.es.md#gt-272) | Asegurar distribución y verificación de bundles OPA sidecar | `Rulesets` | Cross | P1 | M | `PENDIENTE` |
 | [`GT-20`](./gap-reference-catalog.es.md#gt-20) | Backfill de ADRs al estándar de autoría | `Governance` | Cross | P1 | L | `PENDIENTE` |
-| [`GT-228`](./gap-reference-catalog.es.md#gt-228) | Crear motor de orquestación de agentes para workflows BMAD | `Governance` | Cross | P1 | XL | `PENDIENTE` |
+| [`GT-228`](./gap-reference-catalog.es.md#gt-228) | Crear motor de orquestación de agentes para workflows BMAD | `Governance` | Cross | P1 | XL | `COMPLETADO` |
 | [`GT-229`](./gap-reference-catalog.es.md#gt-229) | Completar evaluador TypeScript Dual-Engine (cumplimiento R-25) | `Core Domain` | Cross | P1 | XL | `PENDIENTE` |
-| [`GT-261`](./gap-reference-catalog.es.md#gt-261) | Añadir límites de recursos a todos los contenedores Docker | `Infrastructure` | Cross | P2 | S | `PENDIENTE` |
-| [`GT-263`](./gap-reference-catalog.es.md#gt-263) | Añadir alertas Prometheus a nivel de infraestructura | `Observability` | Cross | P2 | S | `PENDIENTE` |
+| [`GT-261`](./gap-reference-catalog.es.md#gt-261) | Añadir límites de recursos a todos los contenedores Docker | `Infrastructure` | Cross | P2 | S | `COMPLETADO` |
+| [`GT-263`](./gap-reference-catalog.es.md#gt-263) | Añadir alertas Prometheus a nivel de infraestructura | `Observability` | Cross | P2 | S | `COMPLETADO` |
 | [`GT-264`](./gap-reference-catalog.es.md#gt-264) | Corregir scan DAST para apuntar al servidor real o eliminar | `CI/CD` | Cross | P2 | S | `PENDIENTE` |
-| [`GT-265`](./gap-reference-catalog.es.md#gt-265) | Añadir detección de secretos (gitleaks) al pipeline CI | `Security` | Cross | P2 | S | `PENDIENTE` |
-| [`GT-262`](./gap-reference-catalog.es.md#gt-262) | Añadir procedimientos de backup/DR para almacenes de datos | `Infrastructure` | Cross | P2 | M | `PENDIENTE` |
-| [`GT-266`](./gap-reference-catalog.es.md#gt-266) | Crear servicio de provisioning de API keys para MCP HTTP | `Security` | Cross | P2 | M | `PENDIENTE` |
+| [`GT-265`](./gap-reference-catalog.es.md#gt-265) | Añadir detección de secretos (gitleaks) al pipeline CI | `Security` | Cross | P2 | S | `COMPLETADO` |
+| [`GT-262`](./gap-reference-catalog.es.md#gt-262) | Añadir procedimientos de backup/DR para almacenes de datos | `Infrastructure` | Cross | P2 | M | `COMPLETADO` |
+| [`GT-266`](./gap-reference-catalog.es.md#gt-266) | Crear servicio de provisioning de API keys para MCP HTTP | `Security` | Cross | P2 | M | `COMPLETADO` |
 | [`GT-226`](./gap-reference-catalog.es.md#gt-226) | Configurar Dependabot/Renovate (cumplimiento ADR-0009) | `Governance` | Cross | P0 | S | `COMPLETADO` |
 | [`GT-152`](./gap-reference-catalog.es.md#gt-152) | Contrato de Conocimiento Externo y Esquema de Registro Fuente | `Governance` | Cross | P0 | S | `COMPLETADO` |
 | [`GT-59`](./gap-reference-catalog.es.md#gt-59) | Hardening HTTP — Helmet + CORS + Rate Limiting (OWASP API4/8) | `BFF API` | Transversal | P0 | S | `COMPLETADO` |
@@ -287,7 +287,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-246`](./gap-reference-catalog.es.md#gt-246) | Implementar experimentos Chaos Mesh/Litmus | `QA` | Cross | P3 | L | `COMPLETADO` |
 
 
-**Progreso:** 246 / 272 completados · 0 en progreso · 26 pendientes · 0 diferidos
+**Progreso:** 264 / 272 completados · 0 en progreso · 8 pendientes · 0 diferidos
 
 **Oleada 2026-06-23 (auditoría profunda de Wilson III):** Añadidos 14 gaps nuevos `GT-212`…`GT-225` del Wilson Audit Playbook que cubren: higiene de estado ADR (GT-212), metadata + presupuestos operativos + corpus de guías por topología (GT-213, GT-217, GT-219), observabilidad + OpenAPI en controladores REST (GT-214, GT-215), paridad de input-schemas OPA + densidad de tests por topología (GT-216, GT-222), plantillas de rollback + on-call de Fase 05 (GT-218), cobertura de ramas CLI + paridad de envelope --format + limpieza de skip-list (GT-220, GT-224, GT-225), audit logging HTTP de MCP (GT-221), y tests e2e de paridad cross-surface (GT-223).
 

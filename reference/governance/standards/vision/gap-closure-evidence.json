@@ -3713,6 +3713,245 @@
       ],
       "dependencyDisposition": "none",
       "closureNote": "Fail-closed MCP auth: production refuses startup without API key; dev requires explicit --allow-no-auth flag; WARN logged when dev shortcut active. Tests exist but blocked by GT-267 (CacheModule). Stdio transport documented as admin-scoped by design (in-process trust boundary)."
+    },
+    {
+      "id": "GT-251",
+      "closedAt": "2026-06-24",
+      "closureCommit": "866bbe8d",
+      "evidence": [
+        "sdk/cli/src/commands/update/update.command.ts"
+      ],
+      "validationCommands": [
+        "grep execFileSync sdk/cli/src/commands/update/update.command.ts"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "execSync replaced with execFileSync; SEMVER_REGEX validates version before use. Malicious version strings rejected."
+    },
+    {
+      "id": "GT-253",
+      "closedAt": "2026-06-24",
+      "closureCommit": "866bbe8d",
+      "evidence": [
+        ".github/workflows/sdk-cli-ci.yml"
+      ],
+      "validationCommands": [
+        "grep trivy-action .github/workflows/sdk-cli-ci.yml"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "trivy-action pinned to @v0.36.0 instead of @master."
+    },
+    {
+      "id": "GT-252",
+      "closedAt": "2026-06-24",
+      "closureCommit": "08c883b6",
+      "evidence": [
+        "rulesets/opa/main.rego"
+      ],
+      "validationCommands": [
+        "grep import rulesets/opa/main.rego | wc -l"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "All 26 OPA policy packages imported into main.rego aggregator. 19 previously orphaned policies now wired."
+    },
+    {
+      "id": "GT-269",
+      "closedAt": "2026-06-24",
+      "closureCommit": "fb97c4c3",
+      "evidence": [
+        "packages/core-domain/src/domain/gate-evidence.ts"
+      ],
+      "validationCommands": [
+        "grep createSuccessEnvelope packages/core-domain/src/domain/gate-evidence.ts"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "ADR-0073 contract types (SuccessEnvelope, ErrorEnvelope, OutputEnvelope) fully implemented."
+    },
+    {
+      "id": "GT-233",
+      "closedAt": "2026-06-21",
+      "closureCommit": "b443dcd2",
+      "evidence": [
+        "apps/core-api/src/app.module.ts",
+        "apps/core-api/src/infrastructure/guards/audit-throttler.guard.ts"
+      ],
+      "validationCommands": [
+        "grep ThrottlerModule apps/core-api/src/app.module.ts"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "ThrottlerModule configured with ttl:60000, limit:100. AuditThrottlerGuard registered globally."
+    },
+    {
+      "id": "GT-254",
+      "closedAt": "2026-06-24",
+      "closureCommit": "6d392741",
+      "evidence": [
+        "packages/mcp-server/src/mcp/resources.service.ts"
+      ],
+      "validationCommands": [
+        "grep sanitizePathInput packages/mcp-server/src/mcp/resources.service.ts"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "sanitizePathInput validates against path traversal, absolute paths, regex-unsafe chars. Applied to all resource resolution methods."
+    },
+    {
+      "id": "GT-255",
+      "closedAt": "2026-06-24",
+      "closureCommit": "46354c00",
+      "evidence": [
+        "packages/mcp-server/src/mcp/mcp-server.service.ts"
+      ],
+      "validationCommands": [
+        "grep Content-Security-Policy packages/mcp-server/src/mcp/mcp-server.service.ts"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "CSP header plus X-Content-Type-Options, X-Frame-Options, HSTS, Referrer-Policy, X-XSS-Protection set on HTTP transport."
+    },
+    {
+      "id": "GT-256",
+      "closedAt": "2026-06-24",
+      "closureCommit": "e83abeaf",
+      "evidence": [
+        "reference/infrastructure/docker-compose.yml"
+      ],
+      "validationCommands": [
+        "grep ping reference/infrastructure/docker-compose.yml"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Traefik command includes --ping=true; healthcheck uses traefik healthcheck --ping."
+    },
+    {
+      "id": "GT-257",
+      "closedAt": "2026-06-24",
+      "closureCommit": "6fb9be1b",
+      "evidence": [
+        "reference/infrastructure/docker-compose.yml"
+      ],
+      "validationCommands": [
+        "grep mongo reference/infrastructure/docker-compose.yml"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "MongoDB image pinned to mongo:7.0. All infrastructure images now pinned."
+    },
+    {
+      "id": "GT-259",
+      "closedAt": "2026-06-24",
+      "closureCommit": "dae62ce3",
+      "evidence": [
+        ".github/workflows/sdk-cli-ci.yml",
+        ".github/workflows/ci-cd.yml"
+      ],
+      "validationCommands": [
+        "grep refs/tags .github/workflows/ci-cd.yml"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Publish trigger changed from string match to startsWith(github.ref, refs/tags/v). Tags [v*] added to push triggers."
+    },
+    {
+      "id": "GT-260",
+      "closedAt": "2026-06-24",
+      "closureCommit": "8ba7b746",
+      "evidence": [
+        ".bmad-core/agents/po.es.md"
+      ],
+      "validationCommands": [
+        "ls .bmad-core/agents/po.es.md"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "PO agent Spanish language file created with full persona definition."
+    },
+    {
+      "id": "GT-258",
+      "closedAt": "2026-06-24",
+      "closureCommit": "dae62ce3",
+      "evidence": [
+        ".github/workflows/sdk-cli-ci.yml",
+        ".github/workflows/governance-ci.yml"
+      ],
+      "validationCommands": [
+        "grep concurrency .github/workflows/sdk-cli-ci.yml"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "All 11 GitHub Actions workflows have concurrency blocks."
+    },
+    {
+      "id": "GT-228",
+      "closedAt": "2026-06-24",
+      "closureCommit": "593f5a6e",
+      "evidence": [
+        ".bmad-core/engine/index.mjs",
+        ".bmad-core/engine/orchestrate.mjs"
+      ],
+      "validationCommands": [
+        "ls .bmad-core/engine/"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Full orchestration engine: parser, state machine, step executor, artifact registry, handoff enforcer. CLI wrapper added."
+    },
+    {
+      "id": "GT-261",
+      "closedAt": "2026-06-24",
+      "closureCommit": "6fb9be1b",
+      "evidence": [
+        "reference/infrastructure/docker-compose.yml"
+      ],
+      "validationCommands": [
+        "grep deploy.resources reference/infrastructure/docker-compose.yml | wc -l"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "All Docker containers have deploy.resources.limits with memory and cpus."
+    },
+    {
+      "id": "GT-263",
+      "closedAt": "2026-06-24",
+      "closureCommit": "6fb9be1b",
+      "evidence": [
+        "reference/operations/alerts/prometheus-alerts.yml"
+      ],
+      "validationCommands": [
+        "wc -l reference/operations/alerts/prometheus-alerts.yml"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "12 Prometheus alert rules across infrastructure and core-api groups."
+    },
+    {
+      "id": "GT-265",
+      "closedAt": "2026-06-24",
+      "closureCommit": "866bbe8d",
+      "evidence": [
+        ".github/workflows/sdk-cli-ci.yml"
+      ],
+      "validationCommands": [
+        "grep gitleaks .github/workflows/sdk-cli-ci.yml"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "gitleaks/gitleaks-action@v2 with full history scanning (fetch-depth: 0) in CI."
+    },
+    {
+      "id": "GT-262",
+      "closedAt": "2026-06-24",
+      "closureCommit": "6fb9be1b",
+      "evidence": [
+        "reference/operations/data-store-backup-dr.md",
+        "reference/operations/data-store-backup-dr.es.md"
+      ],
+      "validationCommands": [
+        "ls reference/operations/data-store-backup-dr.md"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Comprehensive backup/DR procedures for PostgreSQL, MongoDB, MinIO, OpenBao with RPO/RTO targets."
+    },
+    {
+      "id": "GT-266",
+      "closedAt": "2026-06-24",
+      "closureCommit": "c760bcfd",
+      "evidence": [
+        "packages/mcp-server/src/mcp/api-key-provisioning.service.ts"
+      ],
+      "validationCommands": [
+        "grep evk_ packages/mcp-server/src/mcp/api-key-provisioning.service.ts"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "Complete API key provisioning: generation (evk_ prefix), SHA-256 validation, rotation, revocation, tenant isolation."
     }
   ]
 }

@@ -4032,6 +4032,22 @@
       "closureNote": "ApiKeyProvisioningService with evk_ prefix, SHA-256 hashed storage, rotation, revocation, audit logging, and legacy migration. 27 tests passing."
     },
     {
+      "id": "GT-274",
+      "closedAt": "2026-06-25",
+      "closureCommit": "60221b30",
+      "evidence": [
+        ".harness/scripts/cleanup-temp-files.mjs",
+        ".harness/scripts/cleanup-temp-files.test.mjs",
+        ".harness/playbooks/wilson-audit-playbook.md",
+        ".harness/playbooks/wilson-audit-playbook.es.md"
+      ],
+      "validationCommands": [
+        "node --test .harness/scripts/cleanup-temp-files.test.mjs"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "isInTempDir uses path-segment matching; isTrackedFile guard added to TEMP_DIRS_SPECIFIC loop; both functions accept injectable root for testability; main() guarded with import.meta.url; 8/8 regression tests pass proving bilingual-coverage.mjs, coverage-dashboard.mjs, and 26-validate-topology-rule-coverage.mjs are never deleted; Wilson playbook updated with BLOQUEANTE warning."
+    },
+    {
       "id": "GT-273",
       "closedAt": "2026-06-25",
       "closureCommit": "426db1d9",

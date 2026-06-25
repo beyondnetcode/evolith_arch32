@@ -148,3 +148,15 @@ vite.config.ts.timestamp-*
 .git/EVOLITH_CI_MODE
 .git/EVOLITH_PUSH_TARGET
 .mimocode/plans/
+
+# CI control files
+.git/EVOLITH_*
+.mimocode/plans/
+
+# CI control files
+.git/EVOLITH_*
+.mimocode/plans/
+
+# CI control files
+.git/EVOLITH_*
+.mimocode/plans/

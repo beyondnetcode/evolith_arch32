@@ -156,7 +156,7 @@ Cada entrada de documento usa los mismos cinco campos: **Documento** (título en
 <details>
 <summary><strong>6. Evolith Products — Suite, Diseños y Referencia Aplicada</strong></summary>
 
-> **Meta:** navegar desde la estrategia del portafolio hasta los internos de cada producto y la evidencia aplicada que los valida. Empieza por el [Hub de Product Suite](../product-suite/README.es.md). El seguimiento de la suite (tablero de gaps y evaluación de madurez) está visible en el [README raíz](../../README.es.md).
+> **Meta:** navegar desde la estrategia del portafolio hasta los internos de cada producto y la evidencia aplicada que los valida. Empieza por el [Hub de Product Suite](../product-suite/README.es.md). El seguimiento y los reportes de salud de la suite están ordenados en el [Hub de Madurez y Gaps](../governance/standards/vision/README.es.md).
 
 | Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
 |---|---|---|---|---|
@@ -165,6 +165,7 @@ Cada entrada de documento usa los mismos cinco campos: **Documento** (título en
 | [Hub de Diseños de Producto](../products/README.es.md) | Diseño funcional y técnico por producto; entrada al hub del Tracker | Contener los internos de producto | Hub de área | Sí |
 | [Hub del Tracker](../products/evolith-tracker/README.es.md) | Arquitectura e interfaces técnicas del producto Tracker | Diseñar el producto de gobernanza | Hub de producto | No |
 | [Hub del Smart CLI](../../sdk/cli/README.es.md) | Documentación, arquitectura, visión y análisis de estado de la CLI | Entender el producto de tooling | Hub de producto | No |
+| [Hub de Madurez y Gaps](../governance/standards/vision/README.es.md) | Hub ordenado de reportes de madurez, auditorías, gaps, oportunidades y evidencia | Iniciar revisión de salud de la suite | Hub de reportes | Sí |
 | [Tablero de Gaps](../governance/standards/vision/gap-tracking.es.md) | Cola de ejecución y dashboard de todos los gaps abiertos de la suite | Ver qué falta y en qué orden | Tablero de seguimiento | Sí |
 | [Evaluación de Madurez](../governance/standards/vision/maturity-assessment.es.md) | Matriz TOGAF ACMM, revisión WAF y auditoría de patrones | Medir la madurez de la suite | Matriz de madurez y auditoría | Sí |
 | [Hub de Referencia UMS](../knowledge/demo/README.es.md) | Muestra la adopción de las directivas Evolith en un entorno práctico demostrativo (UMS) | Demostrar implementación real | Referencia aplicada | No |

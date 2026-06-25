@@ -2497,3 +2497,63 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [ ] Revocation endpoint or mechanism documented.
   - [ ] Audit log for key creation, rotation, and revocation events.
   - [ ] Migration path documented from the current single-env-var model to the provisioning service.
+
+#### GT-267
+**Title:** Restore workspace build/test after Redis cache integration
+**Purpose:** Unblock the monorepo release baseline after the cache layer introduced runtime imports and TypeScript drift that Core API, MCP Server, and the dependent CLI cannot build or test through. This is a production blocker because the cache optimization cannot be promoted while the executable surfaces fail.
+**Current Evidence:** Wilson audit on 2026-06-25: `npm -ws run build --if-present` fails in `apps/core-api` because `@nestjs/cache-manager` and `cache-manager` are not installed and `CacheInterceptor`/`CacheTTL` are imported from `@nestjs/common`; `packages/mcp-server` fails on the same missing cache dependencies, `trace.SpanStatusCode`, and TypeScript 6 deprecation errors. `npm --workspace apps/core-api test -- --runInBand`, `npm --workspace packages/mcp-server test -- --runInBand`, and `npm --workspace sdk/cli run test:unit -- --runInBand` are also red.
+**Done When:**
+  - [ ] Core API declares and installs the cache dependencies it uses (`@nestjs/cache-manager`, `cache-manager`, Redis store package such as `@keyv/redis` if retained) and imports Nest cache decorators/interceptors from the package that actually exports them for Nest 11.
+  - [ ] MCP Server declares its cache dependencies, fixes the OpenTelemetry status import (`SpanStatusCode` from `@opentelemetry/api`), and either migrates or silences TypeScript 6 deprecations intentionally.
+  - [ ] CLI no longer resolves broken MCP compiled artifacts during unit tests.
+  - [ ] `npm -ws run build --if-present`, `npm --workspace apps/core-api test -- --runInBand`, `npm --workspace packages/mcp-server test -- --runInBand`, and `npm --workspace sdk/cli run test:unit -- --runInBand` pass from a clean checkout.
+
+#### GT-268
+**Title:** Restore missing CI validator scripts referenced by workflows and rules
+**Purpose:** Reconcile the governance harness so every documented and workflow-referenced validation command exists. Missing validator entry points create false confidence in docs and guaranteed CI failures on the workflows that invoke them.
+**Current Evidence:** `AGENTS.md` and `AGENTS.es.md` list `.harness/scripts/bilingual-coverage.mjs` and `.harness/scripts/coverage-dashboard.mjs`; `.github/workflows/docs.yml` invokes both; `.github/workflows/sdk-cli-ci.yml` invokes `bilingual-coverage.mjs`; `.github/workflows/governance-ci.yml` and global rules invoke `.harness/scripts/ci/26-validate-topology-rule-coverage.mjs`. All three files are absent in the audited checkout.
+**Done When:**
+  - [ ] `.harness/scripts/bilingual-coverage.mjs` exists, reports EN/ES coverage, and exits non-zero on configured coverage regressions.
+  - [ ] `.harness/scripts/coverage-dashboard.mjs` exists, generates the expected Markdown/HTML coverage output, and its output path matches the docs workflow artifact step.
+  - [ ] `.harness/scripts/ci/26-validate-topology-rule-coverage.mjs` exists or the workflow/global-rule references are replaced with the current canonical validator; the chosen command reports Native/OPA rule coverage for accepted topologies.
+  - [ ] `node .harness/scripts/bilingual-coverage.mjs`, `node .harness/scripts/coverage-dashboard.mjs`, and `node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs` pass locally or documented replacement commands are wired everywhere.
+
+#### GT-269
+**Title:** Restore ADR-0073 contract roundtrip reproducibility
+**Purpose:** Reopen the contract-regression safety net promised by GT-172/GT-223 so CLI, MCP, and REST can again prove semantic equivalence for `gate evaluate`. A contract suite that exists but cannot execute is not valid release evidence.
+**Current Evidence:** `npm run test:contract` fails 34/34 tests. TypeScript cannot resolve package subpaths from `sdk/cli/src/app.module.ts` under `tests/contract/tsconfig.json` (`moduleResolution: node`), even though Node can resolve the compiled package exports. Jest also reports duplicate manual mocks from ignored `packages/mcp-server/dist/__mocks__` and `packages/mcp-server/src/__mocks__`, so generated artifacts contaminate the contract test graph after local builds.
+**Done When:**
+  - [ ] Contract test TypeScript resolution is aligned with workspace package exports (`node16`/`nodenext`/`bundler` or explicit test-only `paths`) without bypassing public package boundaries.
+  - [ ] Jest ignores generated `dist/**` mocks or the cleanup/build workflow removes them before contract tests run.
+  - [ ] `npm run test:contract` passes from a clean checkout and after a local workspace build.
+  - [ ] The closure evidence for GT-172/GT-223 is reconciled so it no longer claims green contract parity without a current passing command.
+
+#### GT-270
+**Title:** Pin mutable infrastructure images and disable dev-only exposed defaults
+**Purpose:** Make the reference infrastructure reproducible and prevent development-only defaults from being copied into production-like deployments. This optimizes cost and safety by reducing unplanned upgrades, accidental public admin surfaces, and incident triage churn.
+**Current Evidence:** `reference/infrastructure/README.md` states "no latest", but Helm values use `tag: "latest"` for both BFF and MCP and `openpolicyagent/opa:latest`; Dockerfiles use mutable `node:22-alpine`; Docker Compose uses `mcr.microsoft.com/mssql/server:2022-latest`; Traefik starts with `--api.insecure=true` and exposes the dashboard; OpenBao uses `BAO_DEV_ROOT_TOKEN_ID` and listens on `0.0.0.0:8200`; the Docker socket is mounted into Traefik.
+**Done When:**
+  - [ ] Helm, Compose, and Dockerfiles use reviewed immutable tags or digests for application, OPA, Node, SQL Server, and gateway images.
+  - [ ] Development-only settings (`--api.insecure=true`, OpenBao dev token/listen mode, broad host port exposure) are gated behind explicit local profiles and absent from production examples.
+  - [ ] Infrastructure README and ES counterpart document dev vs production profiles and the image upgrade cadence.
+  - [ ] CI lint rejects new `latest`, `*-latest`, or insecure gateway/secrets defaults outside explicitly named dev-only examples.
+
+#### GT-271
+**Title:** Add Kubernetes workload hardening to Helm charts
+**Purpose:** Bring Helm charts to the same production-readiness bar as the architecture standards by making pod security, probes, resources, and rollout safety executable rather than implied by prose.
+**Current Evidence:** `reference/infrastructure/helm/evolith-bff/templates/deployment.yaml` and `evolith-mcp/templates/deployment.yaml` define containers and ports only. A grep finds no `resources`, `securityContext`, `readinessProbe`, `livenessProbe`, `startupProbe`, `runAsNonRoot`, `readOnlyRootFilesystem`, `allowPrivilegeEscalation`, `PodDisruptionBudget`, `HorizontalPodAutoscaler`, or `NetworkPolicy`.
+**Done When:**
+  - [ ] BFF and MCP Helm charts define container `resources.requests/limits`, liveness/readiness/startup probes, and rollout-safe defaults.
+  - [ ] Pod/container security contexts enforce non-root execution, dropped capabilities, read-only root filesystem where feasible, and `allowPrivilegeEscalation: false`.
+  - [ ] NetworkPolicy, PodDisruptionBudget, and optional HPA values are present with conservative defaults.
+  - [ ] Helm rendering plus policy lint (kubeconform/conftest or equivalent open-source validators) runs in CI.
+
+#### GT-272
+**Title:** Secure OPA sidecar bundle distribution and verification
+**Purpose:** Protect the executable governance path from policy-bundle tampering by securing how OPA sidecars fetch and trust bundles. This keeps Native/OPA parity meaningful after deployment, not only in repository tests.
+**Current Evidence:** Helm values configure OPA sidecars to fetch `http://ums-minio:9000/opa-bundles/bundle.tar.gz` with no TLS, authentication, digest pin, signature, or fail-closed readiness gate. GT-133 covers central distribution architecture, but the deployed sidecar reference does not verify bundle integrity or provenance.
+**Done When:**
+  - [ ] OPA bundle URL uses TLS or a private in-cluster authenticated endpoint, with credentials sourced from Kubernetes secrets or workload identity.
+  - [ ] Bundle artifact digest and signature verification are documented and automated (for example, Sigstore/cosign or another open-source signing flow).
+  - [ ] OPA sidecar readiness fails closed if the required bundle cannot be fetched or verified.
+  - [ ] CI renders the Helm chart and validates the OPA bundle settings with both Native and OPA checks.

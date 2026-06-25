@@ -157,7 +157,7 @@ Every document entry uses the same five fields: **Document** (linked title), **D
 <details>
 <summary><strong>6. Evolith Products — Suite, Designs, and Applied Reference</strong></summary>
 
-> **Goal:** navigate from portfolio strategy down to each product's internals and the applied evidence that validates them. Start at the [Product Suite Hub](../product-suite/README.md). Suite tracking (gap board and maturity assessment) is surfaced in the [root README](../../README.md).
+> **Goal:** navigate from portfolio strategy down to each product's internals and the applied evidence that validates them. Start at the [Product Suite Hub](../product-suite/README.md). Suite tracking and health reports are ordered in the [Maturity and Gaps Hub](../governance/standards/vision/README.md).
 
 | Document | Description | Goal / Objective | Type | Mandatory |
 |---|---|---|---|---|
@@ -166,6 +166,7 @@ Every document entry uses the same five fields: **Document** (linked title), **D
 | [Product Designs Hub](../products/README.md) | Functional and technical design per product; entry to the Tracker hub | Contain product internals | Area hub | Yes |
 | [Tracker Hub](../products/evolith-tracker/README.md) | Tracker product architecture and technical interfaces | Design the governance product | Product hub | No |
 | [Smart CLI Hub](../../sdk/cli/README.md) | CLI documentation, architecture, vision, and state analysis | Understand the tooling product | Product hub | No |
+| [Maturity and Gaps Hub](../governance/standards/vision/README.md) | Ordered hub for maturity reports, audits, gaps, opportunities, and evidence | Start suite health review | Reporting hub | Yes |
 | [Gap Tracking Board](../governance/standards/vision/gap-tracking.md) | Execution queue and dashboard of every open gap in the suite | See what remains and in which order | Tracking board | Yes |
 | [Maturity Assessment](../governance/standards/vision/maturity-assessment.md) | TOGAF ACMM matrix, WAF review, and patterns audit | Measure suite maturity | Maturity matrix and audit | Yes |
 | [UMS Reference Hub](../knowledge/demo/README.md) | Showcases the adoption of Evolith directives in a practical demonstrative environment (UMS) | Demonstrate real implementation | Applied reference | No |

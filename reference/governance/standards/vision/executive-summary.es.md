@@ -13,7 +13,7 @@ Instantánea estratégica generada desde el tablero canónico de gaps y la recon
 
 **Mayor problema ahora:** `Core API/MCP` concentra el mayor riesgo abierto ponderado (1 pendientes, 1 P0). Ataca esa concentración junto con los P0 transversales antes de ampliar alcance de roadmap.
 
-**Dónde atacar primero:** [GT-268](./gap-reference-catalog.es.md#gt-268), [GT-267](./gap-reference-catalog.es.md#gt-267).
+**Dónde atacar primero:** [GT-267](./gap-reference-catalog.es.md#gt-267).
 
 ## Diagnóstico Estratégico
 
@@ -25,9 +25,9 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 
 | Orden | Foco | Motivo | IDs |
 |---:|---|---|---|
-| 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | [GT-268](./gap-reference-catalog.es.md#gt-268), [GT-267](./gap-reference-catalog.es.md#gt-267) |
+| 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | [GT-267](./gap-reference-catalog.es.md#gt-267) |
 | 2 | Área de mayor riesgo | `Core API/MCP` tiene la mayor carga ponderada abierta. | [GT-267](./gap-reference-catalog.es.md#gt-267) |
-| 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | [GT-268](./gap-reference-catalog.es.md#gt-268) |
+| 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | - |
 | 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-270](./gap-reference-catalog.es.md#gt-270), [GT-271](./gap-reference-catalog.es.md#gt-271), [GT-272](./gap-reference-catalog.es.md#gt-272), [GT-20](./gap-reference-catalog.es.md#gt-20), [GT-229](./gap-reference-catalog.es.md#gt-229) |
 | 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-264](./gap-reference-catalog.es.md#gt-264) |
 
@@ -35,7 +35,6 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 
 | ID | Ataque | Componente | Esfuerzo |
 |---|---|---|---|
-| [GT-268](./gap-reference-catalog.es.md#gt-268) | Restaurar scripts validadores CI ausentes referenciados por workflows y reglas | `Governance CI` | P0/S |
 | [GT-267](./gap-reference-catalog.es.md#gt-267) | Restaurar build/test del workspace tras integración de caché Redis | `Core API/MCP` | P0/M |
 
 ## Métricas
@@ -44,22 +43,22 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 |---|---:|
 | Fecha canónica del tablero | 2026-06-25 |
 | Gaps totales | 272 |
-| Gaps cerrados | 264 |
-| Gaps pendientes | 8 |
-| P0 abiertos | 2 |
+| Gaps cerrados | 265 |
+| Gaps pendientes | 7 |
+| P0 abiertos | 1 |
 | P1 abiertos | 5 |
 | P2 abiertos | 1 |
-| Cierre total | 97.1% |
-| Registros de evidencia de cierre | 246 |
+| Cierre total | 97.4% |
+| Registros de evidencia de cierre | 247 |
 | Readiness registrado | 3 PASS, 1 RESOLVED |
 
 | Área | Pendientes | P0 | P1 | Primeros IDs |
 |---|---:|---:|---:|---|
 | `Core API/MCP` | 1 | 1 | 0 | [GT-267](./gap-reference-catalog.es.md#gt-267) |
-| `Governance CI` | 1 | 1 | 0 | [GT-268](./gap-reference-catalog.es.md#gt-268) |
 | `Infrastructure` | 2 | 0 | 2 | [GT-270](./gap-reference-catalog.es.md#gt-270), [GT-271](./gap-reference-catalog.es.md#gt-271) |
 | `Core Domain` | 1 | 0 | 1 | [GT-229](./gap-reference-catalog.es.md#gt-229) |
 | `Governance` | 1 | 0 | 1 | [GT-20](./gap-reference-catalog.es.md#gt-20) |
+| `Rulesets` | 1 | 0 | 1 | [GT-272](./gap-reference-catalog.es.md#gt-272) |
 
 ## Fuente y Regla de Actualización
 

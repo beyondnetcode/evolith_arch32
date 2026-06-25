@@ -2513,10 +2513,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Reconcile the governance harness so every documented and workflow-referenced validation command exists. Missing validator entry points create false confidence in docs and guaranteed CI failures on the workflows that invoke them.
 **Current Evidence:** `AGENTS.md` and `AGENTS.es.md` list `.harness/scripts/bilingual-coverage.mjs` and `.harness/scripts/coverage-dashboard.mjs`; `.github/workflows/docs.yml` invokes both; `.github/workflows/sdk-cli-ci.yml` invokes `bilingual-coverage.mjs`; `.github/workflows/governance-ci.yml` and global rules invoke `.harness/scripts/ci/26-validate-topology-rule-coverage.mjs`. All three files are absent in the audited checkout.
 **Done When:**
-  - [ ] `.harness/scripts/bilingual-coverage.mjs` exists, reports EN/ES coverage, and exits non-zero on configured coverage regressions.
-  - [ ] `.harness/scripts/coverage-dashboard.mjs` exists, generates the expected Markdown/HTML coverage output, and its output path matches the docs workflow artifact step.
-  - [ ] `.harness/scripts/ci/26-validate-topology-rule-coverage.mjs` exists or the workflow/global-rule references are replaced with the current canonical validator; the chosen command reports Native/OPA rule coverage for accepted topologies.
-  - [ ] `node .harness/scripts/bilingual-coverage.mjs`, `node .harness/scripts/coverage-dashboard.mjs`, and `node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs` pass locally or documented replacement commands are wired everywhere.
+  - [x] `.harness/scripts/bilingual-coverage.mjs` exists, reports EN/ES coverage, and exits non-zero on configured coverage regressions.
+  - [x] `.harness/scripts/coverage-dashboard.mjs` exists, generates the expected Markdown/HTML coverage output, and its output path matches the docs workflow artifact step.
+  - [x] `.harness/scripts/ci/26-validate-topology-rule-coverage.mjs` exists or the workflow/global-rule references are replaced with the current canonical validator; the chosen command reports Native/OPA rule coverage for accepted topologies.
+  - [x] `node .harness/scripts/bilingual-coverage.mjs`, `node .harness/scripts/coverage-dashboard.mjs`, and `node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs` pass locally or documented replacement commands are wired everywhere.
 
 #### GT-269
 **Title:** Restore ADR-0073 contract roundtrip reproducibility

@@ -3952,6 +3952,25 @@
       ],
       "dependencyDisposition": "none",
       "closureNote": "Complete API key provisioning: generation (evk_ prefix), SHA-256 validation, rotation, revocation, tenant isolation."
+    },
+    {
+      "id": "GT-268",
+      "closedAt": "2026-06-25",
+      "closureCommit": "98d60390",
+      "evidence": [
+        ".harness/scripts/bilingual-coverage.mjs",
+        ".harness/scripts/coverage-dashboard.mjs",
+        ".harness/scripts/ci/26-validate-topology-rule-coverage.mjs",
+        ".harness/scripts/generate-rule-coverage.mjs",
+        ".harness/scripts/generate-rule-coverage.test.mjs"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/bilingual-coverage.mjs",
+        "node .harness/scripts/coverage-dashboard.mjs",
+        "node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "All 3 missing CI scripts recovered from git history (deleted in 79af9929). bilingual-coverage reports 100% coverage, coverage-dashboard generates COVERAGE_REPORT.md, topology-rule-coverage validates all 8 topologies with 0 errors."
     }
   ]
 }

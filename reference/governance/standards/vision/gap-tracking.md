@@ -16,7 +16,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-250`](./gap-reference-catalog.md#gt-250) | Fix MCP auth bypass when no API key configured | `Security` | Cross | P0 | S | `DONE` |
 | [`GT-251`](./gap-reference-catalog.md#gt-251) | Fix command injection in update command via execSync | `Security` | Cross | P0 | S | `DONE` |
 | [`GT-253`](./gap-reference-catalog.md#gt-253) | Pin trivy-action to specific version tag instead of master branch | `CI/CD` | Cross | P0 | S | `DONE` |
-| [`GT-268`](./gap-reference-catalog.md#gt-268) | Restore missing CI validator scripts referenced by workflows and rules | `Governance CI` | Cross | P0 | S | `PENDING` |
+| [`GT-268`](./gap-reference-catalog.md#gt-268) | Restore missing CI validator scripts referenced by workflows and rules | `Governance CI` | Cross | P0 | S | `DONE` |
 | [`GT-252`](./gap-reference-catalog.md#gt-252) | Wire all 19 orphaned OPA policies into main.rego aggregator | `Rulesets` | Cross | P0 | M | `DONE` |
 | [`GT-267`](./gap-reference-catalog.md#gt-267) | Restore workspace build/test after Redis cache integration | `Core API/MCP` | Cross | P0 | M | `PENDING` |
 | [`GT-269`](./gap-reference-catalog.md#gt-269) | Restore ADR-0073 contract roundtrip reproducibility | `Contracts` | Cross | P0 | M | `DONE` |
@@ -287,7 +287,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-246`](./gap-reference-catalog.md#gt-246) | Implement Chaos Mesh/Litmus experiments | `QA` | Cross | P3 | L | `DONE` |
 
 
-**Progress:** 264 / 272 done · 0 in progress · 8 pending · 0 deferred
+**Progress:** 265 / 272 done · 0 in progress · 7 pending · 0 deferred
 
 **Wave 2026-06-23 (Wilson deep audit III):** Added 14 new gaps `GT-212`…`GT-225` from the Wilson Audit Playbook covering: ADR status hygiene (GT-212), topology manifest metadata + operational budgets + guidance corpus (GT-213, GT-217, GT-219), REST controller observability + OpenAPI (GT-214, GT-215), OPA input-schema parity + per-topology test density (GT-216, GT-222), SDLC Phase 05 rollback + on-call templates (GT-218), CLI branch coverage + envelope format coverage + skip-list cleanup (GT-220, GT-224, GT-225), MCP HTTP audit logging (GT-221), and cross-surface parity e2e tests (GT-223).
 

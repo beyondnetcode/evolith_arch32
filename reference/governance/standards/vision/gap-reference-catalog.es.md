@@ -2513,10 +2513,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Reconciliar el harness de gobernanza para que exista todo comando de validación documentado y referenciado por workflows. Entrypoints validadores ausentes crean falsa confianza documental y fallos garantizados en los workflows que los invocan.
 **Evidencia Actual:** `AGENTS.md` y `AGENTS.es.md` listan `.harness/scripts/bilingual-coverage.mjs` y `.harness/scripts/coverage-dashboard.mjs`; `.github/workflows/docs.yml` invoca ambos; `.github/workflows/sdk-cli-ci.yml` invoca `bilingual-coverage.mjs`; `.github/workflows/governance-ci.yml` y las reglas globales invocan `.harness/scripts/ci/26-validate-topology-rule-coverage.mjs`. Los tres archivos están ausentes en el checkout auditado.
 **Hecho Cuando:**
-  - [ ] `.harness/scripts/bilingual-coverage.mjs` existe, reporta cobertura EN/ES y termina con código distinto de cero ante regresiones configuradas de cobertura.
-  - [ ] `.harness/scripts/coverage-dashboard.mjs` existe, genera la salida Markdown/HTML esperada y su ruta coincide con el paso de artefacto del workflow de docs.
-  - [ ] `.harness/scripts/ci/26-validate-topology-rule-coverage.mjs` existe o las referencias de workflow/regla global se reemplazan por el validador canónico vigente; el comando elegido reporta cobertura Native/OPA para topologías aceptadas.
-  - [ ] `node .harness/scripts/bilingual-coverage.mjs`, `node .harness/scripts/coverage-dashboard.mjs` y `node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs` pasan localmente o sus comandos reemplazantes quedan cableados en todas partes.
+  - [x] `.harness/scripts/bilingual-coverage.mjs` existe, reporta cobertura EN/ES y termina con código distinto de cero ante regresiones configuradas de cobertura.
+  - [x] `.harness/scripts/coverage-dashboard.mjs` existe, genera la salida Markdown/HTML esperada y su ruta coincide con el paso de artefacto del workflow de docs.
+  - [x] `.harness/scripts/ci/26-validate-topology-rule-coverage.mjs` existe o las referencias de workflow/regla global se reemplazan por el validador canónico vigente; el comando elegido reporta cobertura Native/OPA para topologías aceptadas.
+  - [x] `node .harness/scripts/bilingual-coverage.mjs`, `node .harness/scripts/coverage-dashboard.mjs` y `node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs` pasan localmente o sus comandos reemplazantes quedan cableados en todas partes.
 
 #### GT-269
 **Título:** Restaurar reproducibilidad del contrato roundtrip ADR-0073

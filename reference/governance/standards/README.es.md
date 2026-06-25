@@ -24,6 +24,7 @@ Principios no negociables de crecimiento, diagnósticos de consistencia y modelo
 
 | Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
 |---|---|---|---|---|
+| [Hub de Visión, Madurez y Gaps](./vision/README.es.md) | Hub canónico para reportes de madurez, auditorías, seguimiento de gaps, oportunidades y evidencia | Iniciar revisiones de salud de gobernanza | Hub de reportes | Sí |
 | [Directivas Arquitectónicas y Evolución](./vision/architectural-directives.es.md) | Principios no negociables de crecimiento arquitectónico | Fijar la dirección estratégica | Directiva | Sí |
 | [Estrategia Evolutiva y Tablero de Control](./vision/evolutionary-strategy-roadmap.es.md) | Visión global, roadmap estratégico y tablero de control | Alinear equipos al roadmap | Visión y estrategia | Sí |
 | [Evaluación de Madurez](./vision/maturity-assessment.es.md) | Evaluación de madurez consolidada (TOGAF ACMM, WAF, patrones) | Medir la madurez arquitectónica | Evaluación | Sí |

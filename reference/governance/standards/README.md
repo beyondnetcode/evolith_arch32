@@ -24,6 +24,7 @@ Non-negotiable principles of growth, consistency diagnostics, and self-assessmen
 
 | Document | Description | Goal / Objective | Type | Mandatory |
 |---|---|---|---|---|
+| [Vision, Maturity, and Gaps Hub](./vision/README.md) | Canonical hub for maturity reports, audits, gap tracking, opportunities, and evidence | Start governance health reviews | Reporting hub | Yes |
 | [Architectural Directives and Evolution](./vision/architectural-directives.md) | Non-negotiable architecture growth principles | Set the strategic direction | Directive | Yes |
 | [Evolutionary Strategy and Dashboard](./vision/evolutionary-strategy-roadmap.md) | Global vision, strategy roadmap, and control dashboard | Align teams to the roadmap | Vision and strategy | Yes |
 | [Maturity Assessment](./vision/maturity-assessment.md) | Consolidated maturity evaluation (TOGAF ACMM, WAF, patterns) | Measure architectural maturity | Assessment | Yes |

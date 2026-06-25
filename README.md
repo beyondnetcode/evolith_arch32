@@ -121,6 +121,7 @@ No topology may leak rules, contracts, or runtime assumptions into another topol
 | [Executive One-Pager](./reference/governance/standards/communication/visuals/v01-executive-one-pager.md) | Five-minute explanation of Evolith, UMS, and the value proposition                                     | Communicate strategic value quickly   | Executive summary               |
 | [Getting Started by Role](./reference/getting-started/README.md)                                         | Recommended reading paths for executives, architects, engineers, QA, SRE, product, and AI contributors | Accelerate onboarding by role         | Onboarding guide                |
 | [Product Vision](./reference/product-suite/vision/evolith-product-vision-master.md)                      | Strategic direction, roadmap, and maturity model                                                       | Align teams to long-term goals        | Vision and strategy             |
+| [Maturity and Gaps Hub](./reference/governance/standards/vision/README.md)                              | Ordered hub for maturity reports, audits, gaps, opportunities, and evidence                            | Review suite health and next actions  | Reporting hub                   |
 | [SDLC Governance Center](./reference/governance/sdlc/README.md)                                          | Authoritative lifecycle phases, gates, artifacts, and traceability model                               | Govern the full development lifecycle | Governance hub                  |
 | [Global Master Index](./reference/navigation/MASTER_INDEX.md)                                            | Complete repository navigation when you already know what artifact you need                            | Locate any artifact quickly           | Navigation index                |
 | [Integration & Messaging Hub](./reference/architecture/INTEGRATION_HUB.md)                               | Async messaging strategies, integration topologies, and pattern governance                             | Standardize messaging patterns        | Architecture hub                |
@@ -283,13 +284,11 @@ The five phases below run from conception to operations; each section lists that
 <details open>
 <summary><strong>Suite Tracking — pending work, audit, and maturity</strong></summary>
 
-The two canonical tracking surfaces for the suite — everything pending, audited, or measured lives in one of these:
+All maturity, audit, gap, opportunity, and evidence reports are ordered in one hub:
 
-| Link (URL)                                                                            | Description (brief explanation)                                                                                          | Goal / Objective                                                     | Typification (category or type) |
-| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------- | ------------------------------- |
-| [Gap Tracking Board](./reference/governance/standards/vision/gap-tracking.md)         | Single compact table for every gap, ordered by criticality, status, and complexity; each ID opens its detailed reference | See instantly what remains and open the explanation only when needed | Tracking board                  |
-| [Maturity Assessment](./reference/governance/standards/vision/maturity-assessment.md) | Single maturity evaluation: TOGAF ACMM matrix, WAF review, patterns/anti-patterns audit, and vision alignment            | Measure how mature the suite is and where to invest                  | Maturity matrix and audit       |
-| [Documentation Coverage Report](.harness/reports/COVERAGE_REPORT.md)                                 | Bilingual documentation coverage status                                                                                  | Audit documentation completeness                                     | Coverage report                 |
+| Link (URL)                                                       | Description (brief explanation)                                                               | Goal / Objective                                                    | Typification (category or type) |
+| ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- | ------------------------------- |
+| [Maturity and Gaps Hub](./reference/governance/standards/vision/README.md) | Ordered hub for maturity assessment, gap board, gap catalog, coverage, audits, and evidence | Start every suite health review from one canonical reporting surface | Reporting hub                   |
 
 </details>
 

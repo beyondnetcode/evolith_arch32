@@ -9,11 +9,11 @@ Strategic snapshot generated from the canonical gap board and maturity reconcili
 
 ## Executive Signal
 
-**Current decision:** NO-GO for production expansion or a major release: active P0 blockers remain.
+**Current decision:** Operational GO: keep monitoring and attack P2/P3 debt by cost of change.
 
-**Biggest problem now:** `Core API/MCP` carries the highest weighted open risk (1 open, 1 P0). Attack that concentration together with the cross-cutting P0 blockers before expanding roadmap scope.
+**Biggest problem now:** `-` carries the highest weighted open risk (0 open, 0 P0). Attack that concentration together with the cross-cutting P0 blockers before expanding roadmap scope.
 
-**Where to attack first:** [GT-267](./gap-reference-catalog.md#gt-267).
+**Where to attack first:** -.
 
 ## Strategic Diagnosis
 
@@ -25,40 +25,34 @@ Use this summary with a simple rule: if you need context, open only the linked I
 
 | Order | Focus | Reason | IDs |
 |---:|---|---|---|
-| 1 | P0 blockers | They prevent production-readiness or major-release confidence. | [GT-267](./gap-reference-catalog.md#gt-267) |
-| 2 | Highest-risk area | `Core API/MCP` has the largest weighted open load. | [GT-267](./gap-reference-catalog.md#gt-267) |
+| 1 | P0 blockers | They prevent production-readiness or major-release confidence. | - |
+| 2 | Highest-risk area | `-` has the largest weighted open load. | - |
 | 3 | Quick wins | High criticality with XS/S complexity. | - |
-| 4 | P1 wave | Next hardening after P0 is cleared. | [GT-270](./gap-reference-catalog.md#gt-270), [GT-271](./gap-reference-catalog.md#gt-271), [GT-272](./gap-reference-catalog.md#gt-272), [GT-20](./gap-reference-catalog.md#gt-20), [GT-229](./gap-reference-catalog.md#gt-229) |
-| 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-264](./gap-reference-catalog.md#gt-264) |
+| 4 | P1 wave | Next hardening after P0 is cleared. | - |
+| 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | - |
 
 ## Current Blockers
 
 | ID | Attack | Component | Effort |
 |---|---|---|---|
-| [GT-267](./gap-reference-catalog.md#gt-267) | Restore workspace build/test after Redis cache integration | `Core API/MCP` | P0/M |
 
 ## Metrics
 
 | Indicator | Value |
 |---|---:|
 | Canonical board date | 2026-06-25 |
-| Total gaps | 272 |
-| Closed gaps | 265 |
-| Open gaps | 7 |
-| Open P0 | 1 |
-| Open P1 | 5 |
-| Open P2 | 1 |
-| Total closure | 97.4% |
+| Total gaps | 273 |
+| Closed gaps | 273 |
+| Open gaps | 0 |
+| Open P0 | 0 |
+| Open P1 | 0 |
+| Open P2 | 0 |
+| Total closure | 100% |
 | Closure evidence records | 247 |
 | Recorded readiness | 3 PASS, 1 RESOLVED |
 
 | Area | Open | P0 | P1 | First IDs |
 |---|---:|---:|---:|---|
-| `Core API/MCP` | 1 | 1 | 0 | [GT-267](./gap-reference-catalog.md#gt-267) |
-| `Infrastructure` | 2 | 0 | 2 | [GT-270](./gap-reference-catalog.md#gt-270), [GT-271](./gap-reference-catalog.md#gt-271) |
-| `Core Domain` | 1 | 0 | 1 | [GT-229](./gap-reference-catalog.md#gt-229) |
-| `Governance` | 1 | 0 | 1 | [GT-20](./gap-reference-catalog.md#gt-20) |
-| `Rulesets` | 1 | 0 | 1 | [GT-272](./gap-reference-catalog.md#gt-272) |
 
 ## Source and Refresh Rule
 

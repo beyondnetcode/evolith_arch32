@@ -123,11 +123,13 @@ La gestión de feature flags es una responsabilidad de configuración, no un sub
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Los sistemas de feature flags están en etapa de adopción mainstream con ofertas comerciales maduras (LaunchDarkly, Split.io) y open-source (Unleash, Flagsmith). El patrón está bien establecido en prácticas de entrega continua. Vigencia esperada: 5+ años para el patrón; plataformas específicas pueden evolucionar.
 
 ## Fuentes Actuales
 
-Desconocido (registro histórico).
+- Documentación de LaunchDarkly — https://docs.launchdarkly.com, consultado 2026-06-20.
+- Documentación de Unleash — https://docs.getunleash.io, consultado 2026-06-20.
+- Artículo de Martin Fowler sobre feature flags — https://martinfowler.com/articles/feature-flags.html, consultado 2026-06-20.
 
 ---
 [Volver al Índice](./README.es.md)

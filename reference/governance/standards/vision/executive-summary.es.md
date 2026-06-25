@@ -9,11 +9,11 @@ Instantánea estratégica generada desde el tablero canónico de gaps y la recon
 
 ## Señal Ejecutiva
 
-**Decisión actual:** NO-GO para expansión productiva o release mayor: existen bloqueadores P0 activos.
+**Decisión actual:** GO operativo: mantener vigilancia y atacar deuda P2/P3 por costo de cambio.
 
-**Mayor problema ahora:** `Core API/MCP` concentra el mayor riesgo abierto ponderado (1 pendientes, 1 P0). Ataca esa concentración junto con los P0 transversales antes de ampliar alcance de roadmap.
+**Mayor problema ahora:** `-` concentra el mayor riesgo abierto ponderado (0 pendientes, 0 P0). Ataca esa concentración junto con los P0 transversales antes de ampliar alcance de roadmap.
 
-**Dónde atacar primero:** [GT-267](./gap-reference-catalog.es.md#gt-267).
+**Dónde atacar primero:** -.
 
 ## Diagnóstico Estratégico
 
@@ -25,40 +25,34 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 
 | Orden | Foco | Motivo | IDs |
 |---:|---|---|---|
-| 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | [GT-267](./gap-reference-catalog.es.md#gt-267) |
-| 2 | Área de mayor riesgo | `Core API/MCP` tiene la mayor carga ponderada abierta. | [GT-267](./gap-reference-catalog.es.md#gt-267) |
+| 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | - |
+| 2 | Área de mayor riesgo | `-` tiene la mayor carga ponderada abierta. | - |
 | 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | - |
-| 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-270](./gap-reference-catalog.es.md#gt-270), [GT-271](./gap-reference-catalog.es.md#gt-271), [GT-272](./gap-reference-catalog.es.md#gt-272), [GT-20](./gap-reference-catalog.es.md#gt-20), [GT-229](./gap-reference-catalog.es.md#gt-229) |
-| 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-264](./gap-reference-catalog.es.md#gt-264) |
+| 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | - |
+| 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | - |
 
 ## Bloqueadores Actuales
 
 | ID | Ataque | Componente | Esfuerzo |
 |---|---|---|---|
-| [GT-267](./gap-reference-catalog.es.md#gt-267) | Restaurar build/test del workspace tras integración de caché Redis | `Core API/MCP` | P0/M |
 
 ## Métricas
 
 | Indicador | Valor |
 |---|---:|
 | Fecha canónica del tablero | 2026-06-25 |
-| Gaps totales | 272 |
-| Gaps cerrados | 265 |
-| Gaps pendientes | 7 |
-| P0 abiertos | 1 |
-| P1 abiertos | 5 |
-| P2 abiertos | 1 |
-| Cierre total | 97.4% |
+| Gaps totales | 273 |
+| Gaps cerrados | 273 |
+| Gaps pendientes | 0 |
+| P0 abiertos | 0 |
+| P1 abiertos | 0 |
+| P2 abiertos | 0 |
+| Cierre total | 100% |
 | Registros de evidencia de cierre | 247 |
 | Readiness registrado | 3 PASS, 1 RESOLVED |
 
 | Área | Pendientes | P0 | P1 | Primeros IDs |
 |---|---:|---:|---:|---|
-| `Core API/MCP` | 1 | 1 | 0 | [GT-267](./gap-reference-catalog.es.md#gt-267) |
-| `Infrastructure` | 2 | 0 | 2 | [GT-270](./gap-reference-catalog.es.md#gt-270), [GT-271](./gap-reference-catalog.es.md#gt-271) |
-| `Core Domain` | 1 | 0 | 1 | [GT-229](./gap-reference-catalog.es.md#gt-229) |
-| `Governance` | 1 | 0 | 1 | [GT-20](./gap-reference-catalog.es.md#gt-20) |
-| `Rulesets` | 1 | 0 | 1 | [GT-272](./gap-reference-catalog.es.md#gt-272) |
 
 ## Fuente y Regla de Actualización
 

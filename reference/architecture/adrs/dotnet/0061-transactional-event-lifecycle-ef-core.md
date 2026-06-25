@@ -83,11 +83,12 @@ None explicitly linked.
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Transactional event lifecycle management with EF Core is a mature pattern for maintaining data consistency in .NET applications. The outbox pattern has gained mainstream adoption for reliable event publishing. EF Core's transaction and interception capabilities are well-established and production-proven. Expected vigencia: 5+ years for the transactional outbox pattern; specific implementation details evolve with EF Core versions.
 
 ## Current Sources
 
-Unknown (historical record).
+- EF Core transaction documentation — https://learn.microsoft.com/en-us/ef/core/saving/transactions, consulted 2026-06-20.
+- Microsoft outbox pattern guidance — https://learn.microsoft.com/en-us/azure/architecture/patterns/outbox, consulted 2026-06-20.
 
 ---
 [Back to Index](./README.md)

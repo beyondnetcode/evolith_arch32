@@ -68,11 +68,13 @@ Desconocido (registro histórico; evaluado contra principios generales de arquit
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+NestJS se encuentra en etapa de crecimiento con adopción empresarial sólida. El framework mantiene lanzamientos regulares con soporte activo del equipo principal y la comunidad. Amplia comunidad en GitHub (60k+ estrellas), adopción extensa en ecosistemas Node.js empresariales. Vigencia esperada: 3-5 años.
 
 ## Fuentes Actuales
 
-Desconocido (registro histórico).
+- Documentación oficial de NestJS — https://docs.nestjs.com, consultado 2026-06-20.
+- Descargas npm y releases en GitHub — https://www.npmjs.com/package/@nestjs/core, consultado 2026-06-20.
+- Encuestas State of Node.js sobre adopción de frameworks — https://stateofjs.com, consultado 2026-06-20.
 
 ---
 [Volver al Índice](./README.es.md)

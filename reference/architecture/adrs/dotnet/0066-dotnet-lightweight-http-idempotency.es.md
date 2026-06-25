@@ -196,8 +196,9 @@ Ninguna explícitamente enlazada.
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+La idempotencia HTTP ligera usando abstracciones de caché .NET (IMemoryCache/IDistributedCache) es un patrón maduro y pragmático. Las abstracciones de caché están bien establecidas y probadas en producción. Vigencia esperada: 5+ años; las abstracciones de caché son APIs estables en .NET.
 
 ## Fuentes Actuales
 
-Desconocido (registro histórico).
+- Documentación de caché .NET — https://learn.microsoft.com/es-es/dotnet/core/extensions/caching, consultado 2026-06-20.
+- Patrón de clave de idempotencia REST — https://learn.microsoft.com/es-es/azure/architecture/best-practices/api-design, consultado 2026-06-20.

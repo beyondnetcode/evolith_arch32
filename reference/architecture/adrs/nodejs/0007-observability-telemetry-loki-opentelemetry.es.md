@@ -68,11 +68,13 @@ Desconocido (registro histórico; evaluado contra principios generales de arquit
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+OpenTelemetry es el estándar emergente para instrumentación de observabilidad, graduado de CNCF. Loki (crecimiento) ofrece agregación de logs como alternativa rentable a Elasticsearch. Jaeger (CNCF graduado) proporciona trazado distribuido. Grafana Labs mantiene Loki con soporte comercial. Vigencia esperada: OpenTelemetry 5+ años; Loki 3-5 años.
 
 ## Fuentes Actuales
 
-Desconocido (registro histórico).
+- Proyecto CNCF OpenTelemetry — https://landscape.cncf.io, consultado 2026-06-20.
+- Documentación de Grafana Loki — https://grafana.com/oss/loki, consultado 2026-06-20.
+- Documentación de Jaeger — https://www.jaegertracing.io, consultado 2026-06-20.
 
 ---
 [Volver al Índice](./README.es.md)

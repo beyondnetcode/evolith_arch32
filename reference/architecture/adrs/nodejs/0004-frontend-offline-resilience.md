@@ -59,11 +59,13 @@ Unknown (historical record; evaluated against general architectural principles o
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Service Workers and PWA technologies are mature and widely supported across modern browsers. The offline-first pattern is in the growth-to-mainstream adoption phase driven by progressive web applications and improved browser API standardization (Cache API, IndexedDB). Google and W3C provide ongoing standardization support. Many large-scale applications (e.g., Google Docs, Slack, Twitter) demonstrate production viability. Expected vigencia: 5+ years as the established pattern for web offline resilience.
 
 ## Current Sources
 
-Unknown (historical record).
+- W3C Service Workers specification — https://www.w3.org/TR/service-workers, consulted 2026-06-20.
+- MDN Web Docs: Service Worker API — https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API, consulted 2026-06-20.
+- Chrome Developers: offline UX patterns — https://developer.chrome.com/docs/workbox, consulted 2026-06-20.
 
 ---
 [Back to Index](./README.md)

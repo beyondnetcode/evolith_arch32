@@ -68,11 +68,13 @@ Unknown (historical record; evaluated against general architectural principles o
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+OpenTelemetry is the emerging industry standard for observability instrumentation, having reached CNCF graduation maturity. Loki provides log aggregation at growth stage with increasing enterprise adoption as a cost-effective alternative to Elasticsearch. Jaeger (CNCF graduated) provides distributed tracing but faces competition from Grafana Tempo. Grafana Labs actively maintains Loki with commercial support options. Expected vigencia: OpenTelemetry 5+ years as instrumentation standard; Loki 3-5 years as log storage choice subject to alternative evaluation.
 
 ## Current Sources
 
-Unknown (historical record).
+- CNCF OpenTelemetry project maturity — https://landscape.cncf.io, consulted 2026-06-20.
+- Grafana Loki documentation and release notes — https://grafana.com/oss/loki, consulted 2026-06-20.
+- Jaeger documentation — https://www.jaegertracing.io, consulted 2026-06-20.
 
 ---
 [Back to Index](./README.md)

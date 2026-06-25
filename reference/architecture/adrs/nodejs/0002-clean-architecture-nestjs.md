@@ -68,11 +68,13 @@ Unknown (historical record; evaluated against general architectural principles o
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+NestJS is a mature Node.js framework in the growth stage with strong enterprise adoption. The framework maintains regular releases following Angular-style versioning with active support from the NestJS core team and community. Large GitHub community (60k+ stars), extensive adoption in enterprise Node.js ecosystems. Expected vigencia: 3-5 years as primary choice for structured Node.js backends.
 
 ## Current Sources
 
-Unknown (historical record).
+- NestJS official documentation and release notes — https://docs.nestjs.com, consulted 2026-06-20.
+- npm downloads and GitHub release history — https://www.npmjs.com/package/@nestjs/core, consulted 2026-06-20.
+- State of Node.js surveys on framework adoption trends — https://stateofjs.com, consulted 2026-06-20.
 
 ---
 [Back to Index](./README.md)

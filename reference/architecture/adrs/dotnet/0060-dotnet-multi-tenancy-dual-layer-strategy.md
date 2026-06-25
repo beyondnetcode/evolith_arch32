@@ -86,11 +86,13 @@ None explicitly linked.
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Multi-tenancy patterns in .NET with EF Core and SQL Server are mature and well-documented. EF Core (maintained by Microsoft) is in mainstream adoption with regular releases aligned with .NET LTS cycles. The dual-layer (application + database) isolation pattern follows established SaaS multi-tenancy best practices. SQL Server remains a mature, dominant RDBMS in enterprise .NET deployments. Expected vigencia: 5+ years for the described pattern; EF Core and SQL Server are stable long-term choices.
 
 ## Current Sources
 
-Unknown (historical record).
+- EF Core documentation — https://learn.microsoft.com/en-us/ef/core, consulted 2026-06-20.
+- Microsoft SaaS multi-tenancy patterns — https://learn.microsoft.com/en-us/azure/architecture/patterns/multi-tenant-saas, consulted 2026-06-20.
+- SQL Server documentation — https://learn.microsoft.com/en-us/sql, consulted 2026-06-20.
 
 ---
 [Back to Index](./README.md)

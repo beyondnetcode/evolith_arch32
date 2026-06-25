@@ -144,11 +144,12 @@ Desconocido (registro histórico; evaluado contra principios generales de arquit
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Los contratos de error estructurados y procesables son un patrón maduro en diseño de APIs con adopción creciente en frontend. Sigue principios de Domain-Driven Design. Demostrado por APIs de Stripe y Google. Vigencia esperada: 5+ años como patrón de diseño.
 
 ## Fuentes Actuales
 
-Desconocido (registro histórico).
+- Manejo de errores de Stripe API — https://stripe.com/docs/api/errors, consultado 2026-06-20.
+- Modelo de errores de Google API — https://cloud.google.com/apis/design/errors, consultado 2026-06-20.
 
 ---
 [Volver al Índice](./README.es.md)

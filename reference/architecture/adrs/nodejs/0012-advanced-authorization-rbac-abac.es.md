@@ -56,11 +56,13 @@ Desconocido (registro histórico; evaluado contra principios generales de arquit
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Los patrones RBAC/ABAC son maduros y ampliamente adoptados en software empresarial. OPA emerge como estándar cloud-native para policy-as-code. El patrón de autorización es estable y bien comprendido, con innovación continua en control de acceso basado en atributos y relaciones (ReBAC). Vigencia esperada: 5+ años.
 
 ## Fuentes Actuales
 
-Desconocido (registro histórico).
+- Documentación de OPA — https://www.openpolicyagent.org, consultado 2026-06-20.
+- Estándar NIST RBAC — https://csrc.nist.gov/projects/role-based-access-control, consultado 2026-06-20.
+- Documentación de Casbin — https://casbin.org, consultado 2026-06-20.
 
 ---
 [Volver al Índice](./README.es.md)

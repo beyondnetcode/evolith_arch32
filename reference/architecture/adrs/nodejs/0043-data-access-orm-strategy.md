@@ -89,11 +89,13 @@ Historical backfill: Address the architectural tension where the reference platf
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+The Node.js ORM ecosystem is mature but fragmented. Prisma has emerged as the leading choice with strong adoption in new projects (growth stage), followed by Drizzle ORM (early growth). TypeORM (mature/declining) and Sequelize (mature) represent established alternatives. The ecosystem shows continued innovation in type-safe query builders and schema-first approaches. Expected vigencia: any specific ORM 2-4 years; the data access layer abstraction pattern 5+ years.
 
 ## Current Sources
 
-Unknown (historical record).
+- Prisma ORM documentation — https://www.prisma.io, consulted 2026-06-20.
+- Drizzle ORM documentation — https://orm.drizzle.team, consulted 2026-06-20.
+- npm trends for ORM packages — https://npmtrends.com, consulted 2026-06-20.
 
 ---
 [Back to Index](./README.md)

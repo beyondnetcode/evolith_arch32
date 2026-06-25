@@ -141,11 +141,12 @@ Desconocido (registro histórico; evaluado contra principios generales de arquit
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Zustand y TanStack Query representan el enfoque moderno de gestión de estado en frontend (crecimiento hacia mainstream). Zustand (crecimiento) para estado de cliente. TanStack Query es el estándar de facto para estado de servidor en React (mainstream). Vigencia esperada: 3-5 años cada uno; el patrón de separación cliente/servidor es duradero.
 
 ## Fuentes Actuales
 
-Desconocido (registro histórico).
+- Documentación de Zustand — https://github.com/pmndrs/zustand, consultado 2026-06-20.
+- Documentación de TanStack Query — https://tanstack.com/query, consultado 2026-06-20.
 
 ---
 [Volver al Índice](./README.es.md)

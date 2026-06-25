@@ -123,11 +123,13 @@ Feature flag management is a configuration responsibility, not a core business s
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Feature flag systems are in the mainstream adoption stage with mature commercial (LaunchDarkly, Split.io) and open-source (Unleash, Flagsmith) offerings. The pattern for structured feature flag management is well-established in continuous delivery practices. The market is consolidating around best practices for flag governance, stale flag removal, and targeting rules. Expected vigencia: 5+ years for the feature flag pattern; specific platform choices may evolve as the market matures.
 
 ## Current Sources
 
-Unknown (historical record).
+- LaunchDarkly documentation — https://docs.launchdarkly.com, consulted 2026-06-20.
+- Unleash documentation — https://docs.getunleash.io, consulted 2026-06-20.
+- Martin Fowler's feature flags article — https://martinfowler.com/articles/feature-flags.html, consulted 2026-06-20.
 
 ---
 [Back to Index](./README.md)

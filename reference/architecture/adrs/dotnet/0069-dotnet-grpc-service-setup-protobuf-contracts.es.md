@@ -273,8 +273,10 @@ Ninguna explícitamente enlazada.
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+gRPC con Protobuf es una tecnología madura (CNCF graduado) en adopción mainstream para comunicación entre servicios. .NET proporciona soporte nativo para gRPC via Grpc.AspNetCore con fuerte inversión de Microsoft. Vigencia esperada: 5+ años.
 
 ## Fuentes Actuales
 
-Desconocido (registro histórico).
+- Documentación de gRPC .NET — https://learn.microsoft.com/es-es/aspnet/core/grpc, consultado 2026-06-20.
+- Documentación oficial de gRPC — https://grpc.io, consultado 2026-06-20.
+- Guía de lenguaje Protobuf — https://protobuf.dev, consultado 2026-06-20.

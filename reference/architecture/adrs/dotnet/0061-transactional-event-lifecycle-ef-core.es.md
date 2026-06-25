@@ -83,11 +83,12 @@ Ninguna explícitamente enlazada.
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+El lifecycle de eventos transaccionales con EF Core es un patrón maduro para consistencia de datos. El patrón outbox ha ganado adopción mainstream para publicación confiable de eventos. Las capacidades de transacción e intercepción de EF Core están bien establecidas. Vigencia esperada: 5+ años.
 
 ## Fuentes Actuales
 
-Desconocido (registro histórico).
+- Documentación de transacciones EF Core — https://learn.microsoft.com/es-es/ef/core/saving/transactions, consultado 2026-06-20.
+- Patrón outbox de Microsoft — https://learn.microsoft.com/es-es/azure/architecture/patterns/outbox, consultado 2026-06-20.
 
 ---
 [Volver al Índice](./README.es.md)

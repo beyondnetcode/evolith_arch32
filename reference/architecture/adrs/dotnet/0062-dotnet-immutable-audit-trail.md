@@ -83,11 +83,12 @@ None explicitly linked.
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Immutable audit trail patterns using DDL triggers and delta capture are mature and extensively documented in enterprise data architecture. SQL Server provides mature change tracking and temporal table features that support immutable audit requirements. The pattern addresses SOX, GDPR, and other compliance requirements that mandate immutable audit logs. Expected vigencia: 5+ years; the immutable audit requirement is permanent while specific implementation technology evolves.
 
 ## Current Sources
 
-Unknown (historical record).
+- SQL Server temporal tables documentation — https://learn.microsoft.com/en-us/sql/relational-databases/tables/temporal-tables, consulted 2026-06-20.
+- OWASP audit logging guidelines — https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html, consulted 2026-06-20.
 
 ---
 [Back to Index](./README.md)

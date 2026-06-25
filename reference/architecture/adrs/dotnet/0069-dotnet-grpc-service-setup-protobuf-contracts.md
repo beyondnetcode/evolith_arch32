@@ -273,8 +273,10 @@ None explicitly linked.
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+gRPC with Protobuf is a mature, CNCF-graduated technology in mainstream adoption for inter-service communication. .NET provides first-class gRPC support via Grpc.AspNetCore with strong Microsoft investment. Protobuf as an interface definition language is widely adopted beyond gRPC. Expected vigencia: 5+ years for gRPC and Protobuf; both are well-established with strong community and corporate backing.
 
 ## Current Sources
 
-Unknown (historical record).
+- gRPC .NET documentation — https://learn.microsoft.com/en-us/aspnet/core/grpc, consulted 2026-06-20.
+- gRPC official documentation — https://grpc.io, consulted 2026-06-20.
+- Protobuf language guide — https://protobuf.dev, consulted 2026-06-20.

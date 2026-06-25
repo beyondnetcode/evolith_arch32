@@ -56,11 +56,12 @@ Desconocido (registro histórico; evaluado contra principios generales de arquit
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+La autenticación contextual con proyecciones plugables es un patrón arquitectónico multicanal en etapa de crecimiento. El enfoque de middleware de autenticación componible sigue patrones establecidos en Node.js (Passport.js). Vigencia esperada: 3-5 años como patrón.
 
 ## Fuentes Actuales
 
-Desconocido (registro histórico).
+- Documentación de Passport.js — https://www.passportjs.org, consultado 2026-06-20.
+- Framework OAuth 2.0 — https://oauth.net/2, consultado 2026-06-20.
 
 ---
 [Volver al Índice](./README.es.md)

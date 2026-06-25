@@ -83,11 +83,12 @@ Ninguna explícitamente enlazada.
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Los patrones de auditoría inmutable con triggers DDL y captura delta son maduros en arquitectura de datos empresarial. SQL Server ofrece change tracking y tablas temporales que soportan requisitos de auditoría inmutable. El patrón aborda requisitos SOX, GDPR y otros. Vigencia esperada: 5+ años.
 
 ## Fuentes Actuales
 
-Desconocido (registro histórico).
+- Documentación de tablas temporales SQL Server — https://learn.microsoft.com/es-es/sql/relational-databases/tables/temporal-tables, consultado 2026-06-20.
+- Guías de logging OWASP — https://cheatsheetseries.owasp.org, consultado 2026-06-20.
 
 ---
 [Volver al Índice](./README.es.md)

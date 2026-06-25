@@ -56,11 +56,12 @@ Desconocido (registro histórico; evaluado contra principios generales de arquit
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+REST y gRPC son protocolos maduros y ampliamente adoptados. gRPC (CNCF graduado) está en etapa de crecimiento para comunicación entre servicios. REST sigue siendo dominante para APIs públicas. La estrategia de doble protocolo es un patrón reconocido en arquitecturas de microservicios. Vigencia esperada: ambos 5+ años.
 
 ## Fuentes Actuales
 
-Desconocido (registro histórico).
+- Documentación de gRPC — https://grpc.io, consultado 2026-06-20.
+- Guías de diseño de APIs REST (Microsoft) — https://learn.microsoft.com/es-es/azure/architecture/best-practices/api-design, consultado 2026-06-20.
 
 ---
 [Volver al Índice](./README.es.md)

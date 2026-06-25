@@ -29,14 +29,15 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-260`](./gap-reference-catalog.es.md#gt-260) | Crear archivo de idioma español para agente PO y añadir a workflows | `BMAD Agents` | Cross | P1 | S | `COMPLETADO` |
 | [`GT-258`](./gap-reference-catalog.es.md#gt-258) | Añadir controles de concurrencia a todos los workflows GitHub Actions | `CI/CD` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-270`](./gap-reference-catalog.es.md#gt-270) | Fijar imágenes de infraestructura mutables y deshabilitar defaults dev expuestos | `Infrastructure` | Cross | P1 | M | `COMPLETADO` |
-| [`GT-271`](./gap-reference-catalog.es.md#gt-271) | Añadir hardening Kubernetes de workloads a Helm charts | `Infrastructure` | Cross | P1 | M | `PENDIENTE` |
-| [`GT-272`](./gap-reference-catalog.es.md#gt-272) | Asegurar distribución y verificación de bundles OPA sidecar | `Rulesets` | Cross | P1 | M | `PENDIENTE` |
-| [`GT-20`](./gap-reference-catalog.es.md#gt-20) | Backfill de ADRs al estándar de autoría | `Governance` | Cross | P1 | L | `PENDIENTE` |
+| [`GT-271`](./gap-reference-catalog.es.md#gt-271) | Añadir hardening Kubernetes de workloads a Helm charts | `Infrastructure` | Cross | P1 | M | `DONE` |
+| [`GT-272`](./gap-reference-catalog.es.md#gt-272) | Asegurar distribución y verificación de bundles OPA sidecar | `Rulesets` | Cross | P1 | M | `DONE` |
+| [`GT-20`](./gap-reference-catalog.es.md#gt-20) | Backfill de ADRs al estándar de autoría | `Governance` | Cross | P1 | L | `DONE` |
 | [`GT-228`](./gap-reference-catalog.es.md#gt-228) | Crear motor de orquestación de agentes para workflows BMAD | `Governance` | Cross | P1 | XL | `COMPLETADO` |
-| [`GT-229`](./gap-reference-catalog.es.md#gt-229) | Completar evaluador TypeScript Dual-Engine (cumplimiento R-25) | `Core Domain` | Cross | P1 | XL | `PENDIENTE` |
+| [`GT-229`](./gap-reference-catalog.es.md#gt-229) | Completar evaluador TypeScript Dual-Engine (cumplimiento R-25) | `Core Domain` | Cross | P1 | XL | `COMPLETADO` |
 | [`GT-261`](./gap-reference-catalog.es.md#gt-261) | Añadir límites de recursos a todos los contenedores Docker | `Infrastructure` | Cross | P2 | S | `COMPLETADO` |
 | [`GT-263`](./gap-reference-catalog.es.md#gt-263) | Añadir alertas Prometheus a nivel de infraestructura | `Observability` | Cross | P2 | S | `COMPLETADO` |
-| [`GT-264`](./gap-reference-catalog.es.md#gt-264) | Corregir scan DAST para apuntar al servidor real o eliminar | `CI/CD` | Cross | P2 | S | `PENDIENTE` |
+| [`GT-264`](./gap-reference-catalog.es.md#gt-264) | Corregir scan DAST para apuntar al servidor real o eliminar | `CI/CD` | Cross | P2 | S | `DONE` |
+| [`GT-273`](./gap-reference-catalog.es.md#gt-273) | Restore DAST scan against staging or ephemeral environment | `CI/CD` | Cross | P3 | S | `COMPLETADO` |
 | [`GT-265`](./gap-reference-catalog.es.md#gt-265) | Añadir detección de secretos (gitleaks) al pipeline CI | `Security` | Cross | P2 | S | `COMPLETADO` |
 | [`GT-262`](./gap-reference-catalog.es.md#gt-262) | Añadir procedimientos de backup/DR para almacenes de datos | `Infrastructure` | Cross | P2 | M | `COMPLETADO` |
 | [`GT-266`](./gap-reference-catalog.es.md#gt-266) | Crear servicio de provisioning de API keys para MCP HTTP | `Security` | Cross | P2 | M | `COMPLETADO` |

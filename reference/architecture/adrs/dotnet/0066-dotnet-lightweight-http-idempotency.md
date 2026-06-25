@@ -199,8 +199,9 @@ None explicitly linked.
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Lightweight HTTP idempotency using .NET caching abstractions (IMemoryCache/IDistributedCache) is a mature, pragmatic pattern. .NET's caching abstractions are well-established and production-proven across thousands of applications. The pattern follows documented REST API idempotency best practices and is suitable for scenarios where full outbox implementation is over-engineered. Expected vigencia: 5+ years; the caching abstractions are stable APIs in .NET.
 
 ## Current Sources
 
-Unknown (historical record).
+- .NET caching documentation — https://learn.microsoft.com/en-us/dotnet/core/extensions/caching, consulted 2026-06-20.
+- REST API idempotency key pattern — https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design, consulted 2026-06-20.

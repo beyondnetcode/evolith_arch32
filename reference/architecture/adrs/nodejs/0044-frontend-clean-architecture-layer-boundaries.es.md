@@ -135,11 +135,13 @@ Desconocido (registro histórico; evaluado contra principios generales de arquit
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+Los patrones de arquitectura limpia en frontend (React) están en etapa de crecimiento. React (mantenido por Meta) es un framework maduro con fuerte retrocompatibilidad. El patrón de capas está bien documentado pero requiere disciplina de equipo. Vigencia esperada: principios de arquitectura limpia 5+ años; versiones específicas de React evolucionan más rápido (2-3 años).
 
 ## Fuentes Actuales
 
-Desconocido (registro histórico).
+- Documentación de React — https://react.dev, consultado 2026-06-20.
+- Clean Architecture de Robert C. Martin (2017), consultado 2026-06-20.
+- Clean Architecture en React de Alex Bespoyasov — https://bespoyasov.me/blog/clean-architecture-on-frontend, consultado 2026-06-20.
 
 ---
 [Volver al Índice](./README.es.md)

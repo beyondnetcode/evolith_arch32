@@ -178,8 +178,9 @@ Ninguna explícitamente enlazada.
 
 ## Vigilancia Tecnológica (Tendencias, Madurez, Adopción, Soporte)
 
-> Backfill pendiente — trazado como [GT-20](../../../governance/standards/vision/gap-reference-catalog.es.md#gt-20) (estandarización de ADRs 2026-06-10).
+La propagación de contexto de observabilidad por ámbito de petición en .NET está en crecimiento hacia mainstream con OpenTelemetry como API de instrumentación estándar. Las APIs DiagnosticSource y Activity de .NET proporcionan soporte maduro de primera parte. Vigencia esperada: 3-5 años.
 
 ## Fuentes Actuales
 
-Desconocido (registro histórico).
+- Documentación de observabilidad .NET — https://learn.microsoft.com/es-es/dotnet/core/diagnostics, consultado 2026-06-20.
+- OpenTelemetry .NET SDK — https://opentelemetry.io/docs/instrumentation/net, consultado 2026-06-20.

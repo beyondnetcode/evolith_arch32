@@ -82,11 +82,12 @@ None explicitly linked.
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Idempotency middleware for B2B integrations in ASP.NET Core is a mature pattern following well-established REST API design principles. ASP.NET Core's middleware pipeline provides first-class support for cross-cutting concerns like idempotency. The pattern is widely adopted in financial and transactional systems. Expected vigencia: 5+ years for the idempotency pattern; specific middleware implementation evolves with ASP.NET Core versions.
 
 ## Current Sources
 
-Unknown (historical record).
+- ASP.NET Core middleware documentation — https://learn.microsoft.com/en-us/aspnet/core/fundamentals/middleware, consulted 2026-06-20.
+- REST API idempotency patterns — https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design, consulted 2026-06-20.
 
 ---
 [Back to Index](./README.md)

@@ -209,8 +209,9 @@ None explicitly linked.
 
 ## Technology Watch (Trends, Maturity, Adoption, Support)
 
-> Backfill pending — tracked as [GT-20](../../../governance/standards/vision/gap-reference-catalog.md#gt-20) (ADR standardization 2026-06-10).
+Request-scope observability context propagation in .NET is in growth-to-mainstream stage with OpenTelemetry becoming the standard instrumentation API. .NET's DiagnosticSource and Activity APIs provide mature first-party support for distributed context propagation. The ecosystem is converging on OpenTelemetry as the unified observability standard. Expected vigencia: 3-5 years for the distributed context propagation pattern; OpenTelemetry is the clear industry direction.
 
 ## Current Sources
 
-Unknown (historical record).
+- .NET observability documentation — https://learn.microsoft.com/en-us/dotnet/core/diagnostics, consulted 2026-06-20.
+- OpenTelemetry .NET SDK — https://opentelemetry.io/docs/instrumentation/net, consulted 2026-06-20.

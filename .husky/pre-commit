@@ -28,20 +28,26 @@ resolve_from_env() {
   MERGE_METHOD="${EVOLITH_MERGE_METHOD:-merge}"
 }
 
-if [ ! -t 0 ]; then
+TTY_AVAILABLE=false
+if exec < /dev/tty 2>/dev/null; then
+  TTY_AVAILABLE=true
+fi
+
+if [ "$TTY_AVAILABLE" = false ]; then
   if [ "$IS_OWNER" = true ]; then
     resolve_from_env
     echo "$MODE" > .git/EVOLITH_CI_MODE
     echo "$TARGET" > .git/EVOLITH_PUSH_TARGET
     echo "$MERGE_METHOD" > .git/EVOLITH_MERGE_METHOD
-    echo "No TTY detected — owner mode: using env defaults or skip."
+    echo "No TTY available — owner mode: using env defaults or skip."
     exit 0
   fi
 
-  if [ -n "$EVOLITH_CI_MODE" ] && [ -n "$EVOLITH_PUSH_TARGET" ] && [ -n "$EVOLITH_MERGE_METHOD" ]; then
-    echo "$EVOLITH_CI_MODE" > .git/EVOLITH_CI_MODE
-    echo "$EVOLITH_PUSH_TARGET" > .git/EVOLITH_PUSH_TARGET
-    echo "$EVOLITH_MERGE_METHOD" > .git/EVOLITH_MERGE_METHOD
+  if [ -n "$EVOLITH_CI_MODE" ] || [ -n "$EVOLITH_PUSH_TARGET" ] || [ -n "$EVOLITH_MERGE_METHOD" ]; then
+    resolve_from_env
+    echo "$MODE" > .git/EVOLITH_CI_MODE
+    echo "$TARGET" > .git/EVOLITH_PUSH_TARGET
+    echo "$MERGE_METHOD" > .git/EVOLITH_MERGE_METHOD
     echo "Non-TTY: using EVOLITH_CI_MODE, EVOLITH_PUSH_TARGET, EVOLITH_MERGE_METHOD."
     exit 0
   fi

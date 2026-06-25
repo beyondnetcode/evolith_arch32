@@ -11,9 +11,9 @@ Strategic snapshot generated from the canonical gap board and maturity reconcili
 
 **Current decision:** NO-GO for production expansion or a major release: active P0 blockers remain.
 
-**Biggest problem now:** `Security` carries the highest weighted open risk (7 open, 2 P0). Attack that concentration together with the cross-cutting P0 blockers before expanding roadmap scope.
+**Biggest problem now:** `Security` carries the highest weighted open risk (6 open, 1 P0). Attack that concentration together with the cross-cutting P0 blockers before expanding roadmap scope.
 
-**Where to attack first:** [GT-250](./gap-reference-catalog.md#gt-250), [GT-251](./gap-reference-catalog.md#gt-251), [GT-253](./gap-reference-catalog.md#gt-253), [GT-268](./gap-reference-catalog.md#gt-268), [GT-252](./gap-reference-catalog.md#gt-252), [GT-267](./gap-reference-catalog.md#gt-267), [GT-269](./gap-reference-catalog.md#gt-269).
+**Where to attack first:** [GT-251](./gap-reference-catalog.md#gt-251), [GT-253](./gap-reference-catalog.md#gt-253), [GT-268](./gap-reference-catalog.md#gt-268), [GT-252](./gap-reference-catalog.md#gt-252), [GT-267](./gap-reference-catalog.md#gt-267), [GT-269](./gap-reference-catalog.md#gt-269).
 
 ## Strategic Diagnosis
 
@@ -25,9 +25,9 @@ Use this summary with a simple rule: if you need context, open only the linked I
 
 | Order | Focus | Reason | IDs |
 |---:|---|---|---|
-| 1 | P0 blockers | They prevent production-readiness or major-release confidence. | [GT-250](./gap-reference-catalog.md#gt-250), [GT-251](./gap-reference-catalog.md#gt-251), [GT-253](./gap-reference-catalog.md#gt-253), [GT-268](./gap-reference-catalog.md#gt-268), [GT-252](./gap-reference-catalog.md#gt-252), [GT-267](./gap-reference-catalog.md#gt-267), [GT-269](./gap-reference-catalog.md#gt-269) |
-| 2 | Highest-risk area | `Security` has the largest weighted open load. | [GT-250](./gap-reference-catalog.md#gt-250), [GT-251](./gap-reference-catalog.md#gt-251), [GT-233](./gap-reference-catalog.md#gt-233), [GT-254](./gap-reference-catalog.md#gt-254), [GT-255](./gap-reference-catalog.md#gt-255), [GT-265](./gap-reference-catalog.md#gt-265), +1 |
-| 3 | Quick wins | High criticality with XS/S complexity. | [GT-250](./gap-reference-catalog.md#gt-250), [GT-251](./gap-reference-catalog.md#gt-251), [GT-253](./gap-reference-catalog.md#gt-253), [GT-268](./gap-reference-catalog.md#gt-268), [GT-233](./gap-reference-catalog.md#gt-233), [GT-254](./gap-reference-catalog.md#gt-254), [GT-255](./gap-reference-catalog.md#gt-255), [GT-256](./gap-reference-catalog.md#gt-256) |
+| 1 | P0 blockers | They prevent production-readiness or major-release confidence. | [GT-251](./gap-reference-catalog.md#gt-251), [GT-253](./gap-reference-catalog.md#gt-253), [GT-268](./gap-reference-catalog.md#gt-268), [GT-252](./gap-reference-catalog.md#gt-252), [GT-267](./gap-reference-catalog.md#gt-267), [GT-269](./gap-reference-catalog.md#gt-269) |
+| 2 | Highest-risk area | `Security` has the largest weighted open load. | [GT-251](./gap-reference-catalog.md#gt-251), [GT-233](./gap-reference-catalog.md#gt-233), [GT-254](./gap-reference-catalog.md#gt-254), [GT-255](./gap-reference-catalog.md#gt-255), [GT-265](./gap-reference-catalog.md#gt-265), [GT-266](./gap-reference-catalog.md#gt-266) |
+| 3 | Quick wins | High criticality with XS/S complexity. | [GT-251](./gap-reference-catalog.md#gt-251), [GT-253](./gap-reference-catalog.md#gt-253), [GT-268](./gap-reference-catalog.md#gt-268), [GT-233](./gap-reference-catalog.md#gt-233), [GT-254](./gap-reference-catalog.md#gt-254), [GT-255](./gap-reference-catalog.md#gt-255), [GT-256](./gap-reference-catalog.md#gt-256), [GT-257](./gap-reference-catalog.md#gt-257) |
 | 4 | P1 wave | Next hardening after P0 is cleared. | [GT-233](./gap-reference-catalog.md#gt-233), [GT-254](./gap-reference-catalog.md#gt-254), [GT-255](./gap-reference-catalog.md#gt-255), [GT-256](./gap-reference-catalog.md#gt-256), [GT-257](./gap-reference-catalog.md#gt-257), [GT-259](./gap-reference-catalog.md#gt-259), [GT-260](./gap-reference-catalog.md#gt-260), [GT-258](./gap-reference-catalog.md#gt-258), +6 |
 | 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-261](./gap-reference-catalog.md#gt-261), [GT-263](./gap-reference-catalog.md#gt-263), [GT-264](./gap-reference-catalog.md#gt-264), [GT-265](./gap-reference-catalog.md#gt-265), [GT-262](./gap-reference-catalog.md#gt-262), [GT-266](./gap-reference-catalog.md#gt-266) |
 
@@ -35,7 +35,6 @@ Use this summary with a simple rule: if you need context, open only the linked I
 
 | ID | Attack | Component | Effort |
 |---|---|---|---|
-| [GT-250](./gap-reference-catalog.md#gt-250) | Fix MCP auth bypass when no API key configured | `Security` | P0/S |
 | [GT-251](./gap-reference-catalog.md#gt-251) | Fix command injection in update command via execSync | `Security` | P0/S |
 | [GT-253](./gap-reference-catalog.md#gt-253) | Pin trivy-action to specific version tag instead of master branch | `CI/CD` | P0/S |
 | [GT-268](./gap-reference-catalog.md#gt-268) | Restore missing CI validator scripts referenced by workflows and rules | `Governance CI` | P0/S |
@@ -49,18 +48,18 @@ Use this summary with a simple rule: if you need context, open only the linked I
 |---|---:|
 | Canonical board date | 2026-06-25 |
 | Total gaps | 272 |
-| Closed gaps | 245 |
-| Open gaps | 27 |
-| Open P0 | 7 |
+| Closed gaps | 246 |
+| Open gaps | 26 |
+| Open P0 | 6 |
 | Open P1 | 14 |
 | Open P2 | 6 |
-| Total closure | 90.1% |
-| Closure evidence records | 227 |
+| Total closure | 90.4% |
+| Closure evidence records | 228 |
 | Recorded readiness | 3 PASS, 1 RESOLVED |
 
 | Area | Open | P0 | P1 | First IDs |
 |---|---:|---:|---:|---|
-| `Security` | 7 | 2 | 3 | [GT-250](./gap-reference-catalog.md#gt-250), [GT-251](./gap-reference-catalog.md#gt-251), [GT-233](./gap-reference-catalog.md#gt-233), [GT-254](./gap-reference-catalog.md#gt-254), +3 |
+| `Security` | 6 | 1 | 3 | [GT-251](./gap-reference-catalog.md#gt-251), [GT-233](./gap-reference-catalog.md#gt-233), [GT-254](./gap-reference-catalog.md#gt-254), [GT-255](./gap-reference-catalog.md#gt-255), +2 |
 | `CI/CD` | 4 | 1 | 2 | [GT-253](./gap-reference-catalog.md#gt-253), [GT-259](./gap-reference-catalog.md#gt-259), [GT-258](./gap-reference-catalog.md#gt-258), [GT-264](./gap-reference-catalog.md#gt-264) |
 | `Infrastructure` | 6 | 0 | 4 | [GT-256](./gap-reference-catalog.md#gt-256), [GT-257](./gap-reference-catalog.md#gt-257), [GT-270](./gap-reference-catalog.md#gt-270), [GT-271](./gap-reference-catalog.md#gt-271), +2 |
 | `Rulesets` | 2 | 1 | 1 | [GT-252](./gap-reference-catalog.md#gt-252), [GT-272](./gap-reference-catalog.md#gt-272) |

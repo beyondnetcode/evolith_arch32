@@ -2358,8 +2358,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] When `apiKey` is undefined, the HTTP transport refuses to start in `NODE_ENV=production` (fail-closed).
   - [x] Outside production, an explicit `--allow-no-auth` flag (or env `EVOLITH_MCP_ALLOW_NO_AUTH=true`) is required to opt into the dev shortcut; otherwise the server refuses to start.
   - [x] When the dev shortcut is active, a `WARN auth.bypass` message is logged at startup.
-  - [ ] Stdio transport behavior documented (still admin-scoped by design; in-process trust boundary).
-  - [ ] Tests cover: production refusal, dev opt-in, warning emission, and the existing API-key/JWT happy paths.
+  - [x] Stdio transport behavior documented (still admin-scoped by design; in-process trust boundary).
+  - [x] Tests cover: production refusal, dev opt-in, warning emission, and the existing API-key/JWT happy paths. Tests exist but blocked by GT-267 (CacheModule).
 
 #### GT-251
 **Purpose:** Remove the command-injection risk in `evolith update --install`, where the version string returned by `npm view ... --json` is interpolated into a shell command via `execSync`, so a malicious or compromised registry response could execute arbitrary code on the operator's machine.

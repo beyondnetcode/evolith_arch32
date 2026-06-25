@@ -68,7 +68,7 @@ jobs:
           echo "coverage=$COVERAGE" >> $GITHUB_OUTPUT
 
       - name: Post coverage comment
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const { pairs_modified, new_need_es, total_en, total_es, paired, coverage } = ${{ toJSON(steps.analyze.outputs) }};

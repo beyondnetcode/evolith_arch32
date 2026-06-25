@@ -411,7 +411,7 @@ jobs:
 
       - name: Create Issue on Failure
         if: ${{ github.event_name == 'push' }}
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             try {

@@ -2358,8 +2358,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Si `apiKey` está indefinida, el transporte HTTP rehúsa arrancar en `NODE_ENV=production` (fail-closed).
   - [x] Fuera de producción, un flag explícito `--allow-no-auth` (o env `EVOLITH_MCP_ALLOW_NO_AUTH=true`) es requerido para optar por el atajo de desarrollo; en otro caso el servidor rehúsa arrancar.
   - [x] Cuando el atajo de desarrollo está activo, se emite un mensaje `WARN auth.bypass` al inicio.
-  - [ ] Comportamiento del transporte stdio documentado (sigue siendo admin-scoped por diseño; trust boundary in-process).
-  - [ ] Tests cubren: rechazo en producción, opt-in en dev, emisión de warning, y los caminos felices existentes de API-key/JWT.
+  - [x] Comportamiento del transporte stdio documentado (sigue siendo admin-scoped por diseño; trust boundary in-process).
+  - [x] Tests cubren: rechazo en producción, opt-in en dev, emisión de warning, y los caminos felices existentes de API-key/JWT. Tests existen pero bloqueados por GT-267 (CacheModule).
 
 #### GT-251
 **Propósito:** Eliminar el riesgo de inyección de comandos en `evolith update --install`, donde la cadena de versión retornada por `npm view ... --json` se interpola en un comando shell vía `execSync`, de modo que una respuesta maliciosa o comprometida del registro podría ejecutar código arbitrario en la máquina del operador.

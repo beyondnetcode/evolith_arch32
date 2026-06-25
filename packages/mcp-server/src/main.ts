@@ -30,13 +30,21 @@ export function parseArgs(argv: string[], env: NodeJS.ProcessEnv): CliArgs {
     return undefined;
   };
 
+  const hasFlag = (long: string, short?: string): boolean => {
+    for (let i = 0; i < args.length; i++) {
+      if (args[i] === long || (short && args[i] === short)) return true;
+      if (args[i].startsWith(`${long}=`)) return true;
+    }
+    return false;
+  };
+
   const transport = (flag('--transport', '-t') ??
     env.TRANSPORT ??
     'stdio') as McpTransport;
   const port = parseInt(flag('--port', '-p') ?? env.PORT ?? '3000', 10) || 3000;
   const apiKey = flag('--api-key') ?? env.EVOLITH_API_KEY;
-  const allowNoAuth = flag('--allow-no-auth') !== undefined ? true
-    : env.EVOLITH_MCP_ALLOW_NO_AUTH === 'true';
+  const allowNoAuth = hasFlag('--allow-no-auth')
+    || env.EVOLITH_MCP_ALLOW_NO_AUTH === 'true';
 
   return { command, transport, port, apiKey, allowNoAuth };
 }

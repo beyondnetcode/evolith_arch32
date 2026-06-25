@@ -9,4 +9,29 @@ echo "Generating executive governance summary..."
 node .harness/scripts/generate-executive-summary.mjs
 git add reference/governance/standards/vision/executive-summary.md reference/governance/standards/vision/executive-summary.es.md
 
-node .harness/scripts/ci-runner.mjs
+echo ""
+echo "Select CI mode:"
+echo "  1) Fast        — docs + tracking (~2s)"
+echo "  2) Governance  — docs + tracking + maturity + contracts (~3s)"
+echo "  3) Auto        — detect changed files, run relevant scripts (~1-3s)"
+echo "  4) Full        — all 30 CI scripts (~6-8s)"
+echo ""
+
+# Default to fast if no TTY (e.g. CI, scripted commits)
+if [ ! -t 0 ]; then
+  echo "No TTY detected, defaulting to fast mode."
+  MODE="fast"
+else
+  read -p "Enter choice [1-4, default: 1]: " CHOICE
+  case "${CHOICE:-1}" in
+    1) MODE="fast" ;;
+    2) MODE="governance" ;;
+    3) MODE="auto" ;;
+    4) MODE="full" ;;
+    *) MODE="fast" ;;
+  esac
+fi
+
+echo ""
+echo "Running CI in $MODE mode..."
+node .harness/scripts/ci-runner.mjs $MODE

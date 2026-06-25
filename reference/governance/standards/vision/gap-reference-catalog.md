@@ -2175,9 +2175,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Build an agent orchestration engine that executes the workflow definitions in `.bmad-core/workflows/` automatically, closing the gap where `development.yaml` and `governance-gap.yaml` define multi-agent sequences but no scheduler, state persistence, or automated handoff mechanism exists.
 **Current Evidence:** Workflows are YAML files describing step sequences (analyst → pm → architect → etc.) but agents are invoked manually via LLM context. The `backlog/`, `deliverables/`, and `proposals/` directories in `.bmad-core/` are empty — the self-improvement proposal workflow has never been used.
 **Done When:**
-  - [ ] A workflow runner script can parse workflow YAML and execute steps sequentially with state tracking.
-  - [ ] Agent handoffs pass artifacts (files, schemas) between steps programmatically.
-  - [ ] At least one workflow (`governance-gap.yaml`) runs end-to-end with automated step progression.
+  - [x] A workflow runner script can parse workflow YAML and execute steps sequentially with state tracking.
+  - [x] Agent handoffs pass artifacts (files, schemas) between steps programmatically.
+  - [x] At least one workflow (`governance-gap.yaml`) runs end-to-end with automated step progression.
 
 #### GT-229
 **Purpose:** Implement the TypeScript-native rule evaluator that loads `.rules.json` files and evaluates them, closing the gap where R-25 (Dual-Engine Parity) requires every rule to exist in both TypeScript evaluator AND OPA `.rego`, but only OPA actually evaluates rules today.
@@ -2215,9 +2215,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Add rate limiting middleware to the Core API, closing the gap where the MCP Security Guide documents adaptive rate limiting patterns but zero implementations exist in TypeScript code (search for `rate.?limit` returns zero matches).
 **Current Evidence:** `apps/core-api/src/main.ts` applies `helmet()` globally but has no rate limiting middleware. The MCP security guide at `reference/governance/standards/ai-augmented/02-mcp-integration/mcp-security.md` documents rate limiting as required for production.
 **Done When:**
-  - [ ] `@nestjs/throttler` is installed and configured with a global default (e.g., 100 req/min).
-  - [ ] Per-endpoint overrides exist for sensitive operations (auth, gate-evaluate).
-  - [ ] Rate limit headers (`X-RateLimit-*`) are returned in responses.
+  - [x] `@nestjs/throttler` is installed and configured with a global default (e.g., 100 req/min).
+  - [x] Per-endpoint overrides exist for sensitive operations (auth, gate-evaluate).
+  - [x] Rate limit headers (`X-RateLimit-*`) are returned in responses.
 
 #### GT-234
 **Purpose:** Add R-27 (Topology Maturity Parity) to `global-rules.es.md`, closing the bilingual parity gap where the English version has 27 rules but the Spanish version stops at R-26.
@@ -2365,110 +2365,110 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Remove the command-injection risk in `evolith update --install`, where the version string returned by `npm view ... --json` is interpolated into a shell command via `execSync`, so a malicious or compromised registry response could execute arbitrary code on the operator's machine.
 **Current Evidence:** `sdk/cli/src/commands/update/update.command.ts:116` — `execSync(`npm install -g @evolith/smart-cli@${latestVersion}`, { stdio: 'inherit' })`. `latestVersion` originates from `JSON.parse(result.trim())` at line 163 with no semver validation before being spliced into the shell string.
 **Done When:**
-  - [ ] `execSync` (string form) replaced with `execFileSync('npm', ['install', '-g', `@evolith/smart-cli@${latestVersion}`])` so the version is an argv element, not a shell token.
-  - [ ] `latestVersion` is validated against the semver regex before use; invalid values abort with a clear error.
-  - [ ] Same hardening applied to the read path (`execFile`/`execFileSync` instead of `execSync`).
-  - [ ] Spec covers: malicious version (e.g., `1.0.0; rm -rf /`) is rejected at the regex gate.
+  - [x] `execSync` (string form) replaced with `execFileSync('npm', ['install', '-g', `@evolith/smart-cli@${latestVersion}`])` so the version is an argv element, not a shell token.
+  - [x] `latestVersion` is validated against the semver regex before use; invalid values abort with a clear error.
+  - [x] Same hardening applied to the read path (`execFile`/`execFileSync` instead of `execSync`).
+  - [x] Spec covers: malicious version (e.g., `1.0.0; rm -rf /`) is rejected at the regex gate.
 
 #### GT-252
 **Purpose:** Wire the 19 orphaned OPA policies into `main.rego` so the aggregator actually represents Evolith's policy surface — today the gate evaluator only sees 7 of the 26 policy modules, silently skipping 73% of governance rules.
 **Current Evidence:** `rulesets/opa/main.rego` imports only `version_pinning`, `taxonomy`, `cli_readiness`, `evidence`, `mcp`, `ci_cd`, `governance`. Counting `ls rulesets/opa/*.rego | grep -v test.rego` returns 27 files; subtracting `main.rego` leaves 26 policies. 26 − 7 = **19 orphaned**: `abac-mcp-tool-access`, `anti-corruption-layer`, `cicd-quality-gates`, `cli-core-parity`, `cli-release-readiness`, `compliance-baseline`, `dod`, `engineering-manifesto`, `executive-scorecards`, `gitflow-branching`, `hexagonal-architecture`, `knowledge-intake`, `multi-runtime`, `multi-tenancy`, `open-core-boundary`, `protocol-selection`, `repository-taxonomy`, `satellite-contracts`, `testing-pyramid`.
 **Done When:**
-  - [ ] `main.rego` imports the 19 missing packages and appends their `violations` to the union rule.
-  - [ ] `main_test.rego` adds at least one fixture per newly wired package that exercises a known violation.
-  - [ ] OPA evaluator picks up the new packages with no additional configuration (verified via `opa eval` smoke).
-  - [ ] If any policy is intentionally excluded (e.g., experimental), it is documented in `rulesets/opa/README.md` with the rationale.
+  - [x] `main.rego` imports the 19 missing packages and appends their `violations` to the union rule.
+  - [x] `main_test.rego` adds at least one fixture per newly wired package that exercises a known violation.
+  - [x] OPA evaluator picks up the new packages with no additional configuration (verified via `opa eval` smoke).
+  - [x] If any policy is intentionally excluded (e.g., experimental), it is documented in `rulesets/opa/README.md` with the rationale.
 
 #### GT-253
 **Purpose:** Pin `aquasecurity/trivy-action` to a specific version tag to eliminate the supply-chain risk of a moving `@master` reference in CI, which today could swap scanner behavior or be hijacked without our awareness.
 **Current Evidence:** `.github/workflows/sdk-cli-ci.yml:344` — `uses: aquasecurity/trivy-action@master`. No SHA or version tag.
 **Done When:**
-  - [ ] `trivy-action@master` replaced with a pinned tag (e.g., `@0.24.0`) or a 40-char commit SHA.
-  - [ ] Dependabot/Renovate rule covers `github-actions` updates so the pin is maintained.
-  - [ ] All other third-party actions in `.github/workflows/` audited; any `@master`/`@main` references are pinned in the same PR or recorded as follow-up.
+  - [x] `trivy-action@master` replaced with a pinned tag (e.g., `@0.24.0`) or a 40-char commit SHA.
+  - [x] Dependabot/Renovate rule covers `github-actions` updates so the pin is maintained.
+  - [x] All other third-party actions in `.github/workflows/` audited; any `@master`/`@main` references are pinned in the same PR or recorded as follow-up.
 
 #### GT-254
 **Purpose:** Prevent path-traversal attacks against the MCP `resources/read` surface — today an MCP client can craft `evolith://ruleset/../../etc/passwd` style URIs and the resource resolver will happily `path.join` outside the rulesets root.
 **Current Evidence:** `packages/mcp-server/src/mcp/resources.service.ts:115` — `path.join(corePath, 'rulesets', name.replace(/-/g, '/') + '.rules.json')` with no normalization or containment check. Same shape at lines 119 (alt path), 134 (`getAgentContent`), 157 (`getMoscowAnalysis`), and 172-176 (`getTopologyContent`). Each accepts a user-supplied string and joins it against a trusted base without verifying the resolved path stays within the base.
 **Done When:**
-  - [ ] Each resource resolver normalizes the candidate path (`path.resolve`) and refuses any result whose normalized form does not start with the resolved base directory.
-  - [ ] Names containing `..`, absolute paths, or path separators that escape the expected shape are rejected with a `BAD_REQUEST` failure envelope before any filesystem call.
-  - [ ] Specs cover positive cases (legitimate ruleset/agent/topology lookups) and negative cases (`../../etc/passwd`, absolute paths, URL-encoded traversal).
+  - [x] Each resource resolver normalizes the candidate path (`path.resolve`) and refuses any result whose normalized form does not start with the resolved base directory.
+  - [x] Names containing `..`, absolute paths, or path separators that escape the expected shape are rejected with a `BAD_REQUEST` failure envelope before any filesystem call.
+  - [x] Specs cover positive cases (legitimate ruleset/agent/topology lookups) and negative cases (`../../etc/passwd`, absolute paths, URL-encoded traversal).
 
 #### GT-255
 **Purpose:** Close the CSP/security-headers gap on the MCP HTTP transport so MCP and Core API present the same defensive surface — `apps/core-api` already wires `helmet`, but `packages/mcp-server` does not, leaving its HTTP responses without CSP, HSTS, X-Frame-Options, or X-Content-Type-Options.
 **Current Evidence:** `apps/core-api/src/main.ts:8,51` imports and applies `helmet()`. A grep for `helmet` / `Content-Security-Policy` across `packages/mcp-server/src/` returns only a node_modules type definition — no production usage. `mcp-server.service.ts` constructs an `http.createServer` without applying any header middleware.
 **Done When:**
-  - [ ] MCP HTTP transport sets, at minimum: `Content-Security-Policy: default-src 'none'`, `X-Content-Type-Options: nosniff`, `Strict-Transport-Security`, `X-Frame-Options: DENY`, `Referrer-Policy: no-referrer`.
-  - [ ] Implementation reuses `helmet` (preferred) or an explicit header utility shared with Core API.
-  - [ ] Spec asserts the headers are present on a representative response (e.g., `resources/list`).
+  - [x] MCP HTTP transport sets, at minimum: `Content-Security-Policy: default-src 'none'`, `X-Content-Type-Options: nosniff`, `Strict-Transport-Security`, `X-Frame-Options: DENY`, `Referrer-Policy: no-referrer`.
+  - [x] Implementation reuses `helmet` (preferred) or an explicit header utility shared with Core API.
+  - [x] Spec asserts the headers are present on a representative response (e.g., `resources/list`).
 
 #### GT-256
 **Purpose:** Repair the Traefik healthcheck in `docker-compose.yml`, which today queries `/ping` while Traefik is started without `--ping=true`, guaranteeing the container is marked unhealthy in every environment that relies on this stack.
 **Current Evidence:** `reference/infrastructure/docker-compose.yml:164-182` — Traefik is started with `--providers.file.directory=/etc/traefik/dynamic` only. The healthcheck on line 182 runs `traefik healthcheck --ping`, which calls the internal ping endpoint; without `--ping=true` (or `--ping.entrypoint=...`) in the server startup, that endpoint is disabled and the check fails.
 **Done When:**
-  - [ ] Traefik command list includes `--ping=true` (and an explicit entrypoint if required).
-  - [ ] `traefik healthcheck --ping` succeeds against a running container.
-  - [ ] Optional: ping endpoint bound to the internal/admin entrypoint, not the public one.
+  - [x] Traefik command list includes `--ping=true` (and an explicit entrypoint if required).
+  - [x] `traefik healthcheck --ping` succeeds against a running container.
+  - [x] Optional: ping endpoint bound to the internal/admin entrypoint, not the public one.
 
 #### GT-257
 **Purpose:** Pin the MongoDB image to a specific minor version so the infrastructure stack is reproducible and protected against silent upgrades that could break compatibility or introduce unreviewed changes.
 **Current Evidence:** `reference/infrastructure/docker-compose.yml:54` — `image: mongo:latest`. Other services (PostgreSQL, Redis, Traefik) are already pinned; MongoDB is the outlier.
 **Done When:**
-  - [ ] `mongo:latest` replaced with a pinned tag matching the version Evolith targets (e.g., `mongo:7.0`).
-  - [ ] Tag choice documented in the infrastructure README with the upgrade cadence.
-  - [ ] Dependabot/Renovate rule covers `docker` image updates so the pin is maintained.
+  - [x] `mongo:latest` replaced with a pinned tag matching the version Evolith targets (e.g., `mongo:7.0`).
+  - [x] Tag choice documented in the infrastructure README with the upgrade cadence.
+  - [x] Dependabot/Renovate rule covers `docker` image updates so the pin is maintained.
 
 #### GT-258
 **Purpose:** Add `concurrency:` controls to every GitHub Actions workflow so stacked pushes cancel superseded runs — saving compute, accelerating feedback, and preventing race conditions in workflows that mutate releases or caches.
 **Current Evidence:** `grep -L "concurrency:" .github/workflows/*.yml` returns all 11 workflows: `ci-cd.yml`, `ci.yml`, `coverage-impact.yml`, `docs-release.yml`, `docs.yml`, `enforce-root-cleanliness.yml`, `governance-ci.yml`, `knowledge-intake.yml`, `opa-parity.yml`, `sdk-cli-ci.yml`, `sdk-cli-release.yml`.
 **Done When:**
-  - [ ] Every workflow declares a top-level `concurrency:` block keyed by workflow name + ref.
-  - [ ] PR-style workflows set `cancel-in-progress: true`; release/publish workflows set `cancel-in-progress: false`.
-  - [ ] Documented in `.harness/playbooks/` (or equivalent CI guidance) so future workflows inherit the pattern.
+  - [x] Every workflow declares a top-level `concurrency:` block keyed by workflow name + ref.
+  - [x] PR-style workflows set `cancel-in-progress: true`; release/publish workflows set `cancel-in-progress: false`.
+  - [x] Documented in `.harness/playbooks/` (or equivalent CI guidance) so future workflows inherit the pattern.
 
 #### GT-259
 **Purpose:** Replace the brittle commit-message string match that gates the npm publish job with a tag-driven trigger, so releases cannot be accidentally fired by a commit whose body happens to contain "bump version".
 **Current Evidence:** `.github/workflows/ci-cd.yml:42` — `if: github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, 'bump version')`. Any commit landed on main with that substring (including merge commits, reverts, or housekeeping) triggers `npm publish --access public --tag beta`.
 **Done When:**
-  - [ ] `publish-npm` job triggers on `push` events whose `github.ref` matches `refs/tags/v*` (or equivalent semver pattern).
-  - [ ] The current `contains('bump version')` guard is removed.
-  - [ ] Release procedure documented: tag → workflow runs → publishes to npm.
-  - [ ] Backwards compatibility: existing manual `workflow_dispatch` entry preserved if it exists, or added if not.
+  - [x] `publish-npm` job triggers on `push` events whose `github.ref` matches `refs/tags/v*` (or equivalent semver pattern).
+  - [x] The current `contains('bump version')` guard is removed.
+  - [x] Release procedure documented: tag → workflow runs → publishes to npm.
+  - [x] Backwards compatibility: existing manual `workflow_dispatch` entry preserved if it exists, or added if not.
 
 #### GT-260
 **Purpose:** Close the bilingual-parity gap for BMAD agents by providing the Spanish persona file for the PO agent and wiring it through the same workflows as the other 8 agents.
 **Current Evidence:** `.bmad-core/agents/` contains `.md` + `.es.md` pairs for `analyst`, `architect`, `dev`, `devops`, `docs`, `pm`, `qa`, `sm`. The PO agent has only `po.md`; `po.es.md` does not exist. (Wilson is single-language by design.)
 **Done When:**
-  - [ ] `.bmad-core/agents/po.es.md` created with a faithful translation of `po.md`'s persona, responsibilities, and outputs.
-  - [ ] Any agent-loading scripts/workflows that enumerate `*.es.md` pairs include the new file.
-  - [ ] `check-bilingual-parity.mjs` passes after the addition.
+  - [x] `.bmad-core/agents/po.es.md` created with a faithful translation of `po.md`'s persona, responsibilities, and outputs.
+  - [x] Any agent-loading scripts/workflows that enumerate `*.es.md` pairs include the new file.
+  - [x] `check-bilingual-parity.mjs` passes after the addition.
 
 #### GT-261
 **Purpose:** Bound the resource footprint of every container in the infrastructure stack so a runaway service cannot starve its neighbors on the same host, and so capacity planning maps cleanly to production sizing.
 **Current Evidence:** `grep -nE "mem_limit|cpus|deploy:|resources:" reference/infrastructure/docker-compose.yml` returns nothing — none of the services declare `mem_limit`, `cpus`, or a `deploy.resources` block.
 **Done When:**
-  - [ ] Each service in `docker-compose.yml` declares memory and CPU limits appropriate to its role (PostgreSQL, MongoDB, Redis, RabbitMQ, MinIO, OpenBao, Traefik, Core API, MCP server).
-  - [ ] Limits documented in the infrastructure README with the rationale (typical workload + headroom).
-  - [ ] Validated locally that the stack starts within the declared limits and that healthchecks still pass.
+  - [x] Each service in `docker-compose.yml` declares memory and CPU limits appropriate to its role (PostgreSQL, MongoDB, Redis, RabbitMQ, MinIO, OpenBao, Traefik, Core API, MCP server).
+  - [x] Limits documented in the infrastructure README with the rationale (typical workload + headroom).
+  - [x] Validated locally that the stack starts within the declared limits and that healthchecks still pass.
 
 #### GT-262
 **Purpose:** Codify backup and disaster-recovery procedures for the stateful data stores (PostgreSQL, MongoDB, MinIO, OpenBao) so the platform can recover from data loss without ad-hoc archeology.
 **Current Evidence:** A repo-wide search for backup scripts (`find . -name "backup*.sh" -o -name "*-backup*"`) and Terraform-style restore plans returns nothing under `reference/infrastructure/`, `apps/`, or `.harness/`. There is no DR runbook.
 **Done When:**
-  - [ ] Backup scripts (or documented operator procedures) exist for each stateful service: PostgreSQL (`pg_dump`/PITR), MongoDB (`mongodump`), MinIO (object replication or `mc mirror`), OpenBao (snapshot).
-  - [ ] Each service has a documented RPO/RTO target.
-  - [ ] A restore runbook walks through a full DR exercise; checked into `reference/infrastructure/runbooks/`.
-  - [ ] CI lint verifies the runbook exists; cross-references SDLC Phase 05 rollback (GT-218).
+  - [x] Backup scripts (or documented operator procedures) exist for each stateful service: PostgreSQL (`pg_dump`/PITR), MongoDB (`mongodump`), MinIO (object replication or `mc mirror`), OpenBao (snapshot).
+  - [x] Each service has a documented RPO/RTO target.
+  - [x] A restore runbook walks through a full DR exercise; checked into `reference/infrastructure/runbooks/`.
+  - [x] CI lint verifies the runbook exists; cross-references SDLC Phase 05 rollback (GT-218).
 
 #### GT-263
 **Purpose:** Add infrastructure-level Prometheus alerts so platform problems (down service, disk pressure, error-rate spike) page on-call before they reach users, closing a gap left open by the observability stack adoption.
 **Current Evidence:** A repo-wide search for `*.rules.yaml`, `*alerts*`, or `prometheus*` files returns nothing. The observability ADRs describe what should exist, but no alert rules are checked in.
 **Done When:**
-  - [ ] An alert-rules file (e.g., `reference/infrastructure/observability/alerts.rules.yaml`) defines at minimum: service-down, high error rate (5xx), high latency P99, disk-free below threshold, RabbitMQ queue depth, OPA evaluation failures.
-  - [ ] Alerts wired into the Prometheus configuration shipped with the docker-compose stack.
-  - [ ] Each alert has a runbook link and severity label.
-  - [ ] Smoke test: trigger one alert in a dev environment and verify it fires.
+  - [x] An alert-rules file (e.g., `reference/infrastructure/observability/alerts.rules.yaml`) defines at minimum: service-down, high error rate (5xx), high latency P99, disk-free below threshold, RabbitMQ queue depth, OPA evaluation failures.
+  - [x] Alerts wired into the Prometheus configuration shipped with the docker-compose stack.
+  - [x] Each alert has a runbook link and severity label.
+  - [x] Smoke test: trigger one alert in a dev environment and verify it fires.
 
 #### GT-264
 **Purpose:** Make the DAST (OWASP ZAP) scan in CI meaningful by targeting an actual running instance, or remove it — today it points at `http://localhost:8000` without spinning a server up, so the scan is silently a no-op.
@@ -2482,21 +2482,21 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Add secret detection to CI (gitleaks or equivalent) so accidental commits of API keys, JWT secrets, or database credentials are caught at PR time, not after they hit history.
 **Current Evidence:** `grep -rln "gitleaks\|truffle\|secretlint" .github/` returns nothing — no secret scanner runs in any workflow. The repo handles credentials in docker-compose (closed by GT-247) and JWT secrets (GT-250 follow-up), so the blast radius of a leaked secret is real.
 **Done When:**
-  - [ ] A gitleaks (or equivalent) step runs on every PR and pushes, scanning the diff plus the full repo on a schedule.
-  - [ ] `.gitleaks.toml` (or equivalent config) documents allow-listed test fixtures so the scan stays signal-rich.
-  - [ ] Findings fail the build with a clear remediation message.
-  - [ ] Pre-commit hook (optional) mirrors the check locally.
+  - [x] A gitleaks (or equivalent) step runs on every PR and pushes, scanning the diff plus the full repo on a schedule.
+  - [x] `.gitleaks.toml` (or equivalent config) documents allow-listed test fixtures so the scan stays signal-rich.
+  - [x] Findings fail the build with a clear remediation message.
+  - [x] Pre-commit hook (optional) mirrors the check locally.
 
 #### GT-266
 **Purpose:** Create an API key provisioning service for the MCP HTTP transport so external consumers have a secure, auditable way to obtain and rotate keys — currently the only option is a single shared secret set via env var, with no generation, distribution, rotation, or revocation capabilities.
 **Current Evidence:** No key generation endpoint, no key store, no rotation mechanism. The operator self-provisioned any string via `--api-key` or `EVOLITH_API_KEY` and distributes it out of band. No per-client keys, no hash persistence, no audit trail. ADR-0088/ADR-0091 prescribe migrating to short-lived identities (Token Exchange, Workload Identity), but that migration is not scheduled and the static-key path lacks basic provisioning hygiene.
 **Done When:**
-  - [ ] API key format defined (e.g. `evk_` prefix + entropy) and a CLI command or HTTP endpoint generates keys on demand.
-  - [ ] Keys stored hashed (SHA-256) with metadata: client label, creation date, last used, expiry.
-  - [ ] Key rotation supported without service restart (multiple valid keys, versioned by creation date).
-  - [ ] Revocation endpoint or mechanism documented.
-  - [ ] Audit log for key creation, rotation, and revocation events.
-  - [ ] Migration path documented from the current single-env-var model to the provisioning service.
+  - [x] API key format defined (e.g. `evk_` prefix + entropy) and a CLI command or HTTP endpoint generates keys on demand.
+  - [x] Keys stored hashed (SHA-256) with metadata: client label, creation date, last used, expiry.
+  - [x] Key rotation supported without service restart (multiple valid keys, versioned by creation date).
+  - [x] Revocation endpoint or mechanism documented.
+  - [x] Audit log for key creation, rotation, and revocation events.
+  - [x] Migration path documented from the current single-env-var model to the provisioning service.
 
 #### GT-267
 **Title:** Restore workspace build/test after Redis cache integration
@@ -2513,20 +2513,20 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Reconcile the governance harness so every documented and workflow-referenced validation command exists. Missing validator entry points create false confidence in docs and guaranteed CI failures on the workflows that invoke them.
 **Current Evidence:** `AGENTS.md` and `AGENTS.es.md` list `.harness/scripts/bilingual-coverage.mjs` and `.harness/scripts/coverage-dashboard.mjs`; `.github/workflows/docs.yml` invokes both; `.github/workflows/sdk-cli-ci.yml` invokes `bilingual-coverage.mjs`; `.github/workflows/governance-ci.yml` and global rules invoke `.harness/scripts/ci/26-validate-topology-rule-coverage.mjs`. All three files are absent in the audited checkout.
 **Done When:**
-  - [ ] `.harness/scripts/bilingual-coverage.mjs` exists, reports EN/ES coverage, and exits non-zero on configured coverage regressions.
-  - [ ] `.harness/scripts/coverage-dashboard.mjs` exists, generates the expected Markdown/HTML coverage output, and its output path matches the docs workflow artifact step.
-  - [ ] `.harness/scripts/ci/26-validate-topology-rule-coverage.mjs` exists or the workflow/global-rule references are replaced with the current canonical validator; the chosen command reports Native/OPA rule coverage for accepted topologies.
-  - [ ] `node .harness/scripts/bilingual-coverage.mjs`, `node .harness/scripts/coverage-dashboard.mjs`, and `node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs` pass locally or documented replacement commands are wired everywhere.
+  - [x] `.harness/scripts/bilingual-coverage.mjs` exists, reports EN/ES coverage, and exits non-zero on configured coverage regressions.
+  - [x] `.harness/scripts/coverage-dashboard.mjs` exists, generates the expected Markdown/HTML coverage output, and its output path matches the docs workflow artifact step.
+  - [x] `.harness/scripts/ci/26-validate-topology-rule-coverage.mjs` exists or the workflow/global-rule references are replaced with the current canonical validator; the chosen command reports Native/OPA rule coverage for accepted topologies.
+  - [x] `node .harness/scripts/bilingual-coverage.mjs`, `node .harness/scripts/coverage-dashboard.mjs`, and `node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs` pass locally or documented replacement commands are wired everywhere.
 
 #### GT-269
 **Title:** Restore ADR-0073 contract roundtrip reproducibility
 **Purpose:** Reopen the contract-regression safety net promised by GT-172/GT-223 so CLI, MCP, and REST can again prove semantic equivalence for `gate evaluate`. A contract suite that exists but cannot execute is not valid release evidence.
 **Current Evidence:** `npm run test:contract` fails 34/34 tests. TypeScript cannot resolve package subpaths from `sdk/cli/src/app.module.ts` under `tests/contract/tsconfig.json` (`moduleResolution: node`), even though Node can resolve the compiled package exports. Jest also reports duplicate manual mocks from ignored `packages/mcp-server/dist/__mocks__` and `packages/mcp-server/src/__mocks__`, so generated artifacts contaminate the contract test graph after local builds.
 **Done When:**
-  - [ ] Contract test TypeScript resolution is aligned with workspace package exports (`node16`/`nodenext`/`bundler` or explicit test-only `paths`) without bypassing public package boundaries.
-  - [ ] Jest ignores generated `dist/**` mocks or the cleanup/build workflow removes them before contract tests run.
-  - [ ] `npm run test:contract` passes from a clean checkout and after a local workspace build.
-  - [ ] The closure evidence for GT-172/GT-223 is reconciled so it no longer claims green contract parity without a current passing command.
+  - [x] Contract test TypeScript resolution is aligned with workspace package exports (`node16`/`nodenext`/`bundler` or explicit test-only `paths`) without bypassing public package boundaries.
+  - [x] Jest ignores generated `dist/**` mocks or the cleanup/build workflow removes them before contract tests run.
+  - [x] `npm run test:contract` passes from a clean checkout and after a local workspace build.
+  - [x] The closure evidence for GT-172/GT-223 is reconciled so it no longer claims green contract parity without a current passing command.
 
 #### GT-270
 **Title:** Pin mutable infrastructure images and disable dev-only exposed defaults

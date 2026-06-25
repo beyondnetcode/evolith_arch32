@@ -15,7 +15,7 @@ Usa esta secuencia durante la revisión rutinaria de gobernanza:
 | 3 | [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md) | Leer el problema, evidencia, criterios de cierre y referencias detalladas de cada ítem `GT-*`. |
 | 4 | [Evaluación de Madurez](./maturity-assessment.es.md) | Revisar la evaluación consolidada TOGAF ACMM, WAF, patrones, anti-patrones y alineación con la visión. |
 | 5 | [Estándar de Evidencia de Cierre de Gaps](./gap-closure-evidence-standard.es.md) | Confirmar la evidencia requerida antes de mover cualquier gap a estado cerrado. |
-| 6 | [Reporte de Cobertura Documental](../../../../.harness/reports/COVERAGE_REPORT.md) | Revisar la salida de cobertura bilingüe y documental generada por el harness. |
+| 6 | [Reporte de Cobertura Documental](../../../../COVERAGE_REPORT.md) | Revisar la salida de cobertura bilingüe y documental generada por el harness. |
 | 7 | [Mapa Actual de Taxonomía del Repositorio](./repository-taxonomy-map.es.md) | Confirmar dónde pertenece cada familia de artefactos y qué tan crítica es cada área del repositorio. |
 
 ## Superficies Actuales de Reporte

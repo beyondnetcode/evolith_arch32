@@ -62,9 +62,9 @@ describe('McpServerService — dispatch', () => {
     service = new McpServerService(registry, metrics, new MockAbacEvaluator());
   }
 
-  it('lists registered tool schemas', () => {
+  it('lists registered tool schemas', async () => {
     build([tool('evolith-validate', async () => ({}))]);
-    expect(service.handleListTools().tools).toEqual([
+    expect((await service.handleListTools()).tools).toEqual([
       expect.objectContaining({ name: 'evolith-validate' }),
     ]);
   });
@@ -342,7 +342,7 @@ describe('McpServerService — HTTP transport', () => {
       environment: 'development',
       scopes: ['read'],
     }, async () => {
-      const list = service.handleListTools();
+      const list = await service.handleListTools();
       expect(list.tools.map(t => t.name)).toEqual(['read-tool']);
 
       const readResult = await service.handleCallTool('read-tool');
@@ -362,7 +362,7 @@ describe('McpServerService — HTTP transport', () => {
       environment: 'development',
       scopes: ['read', 'write'],
     }, async () => {
-      const list = service.handleListTools();
+      const list = await service.handleListTools();
       expect(list.tools.map(t => t.name)).toEqual(['read-tool', 'write-tool']);
 
       const writeResult = await service.handleCallTool('write-tool');

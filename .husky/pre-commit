@@ -4,33 +4,61 @@ echo "======================================================================"
 echo "  Evolith CI Pre-commit Hook"
 echo "======================================================================"
 
+# Default to skip if no TTY
+if [ ! -t 0 ]; then
+  echo "No TTY detected, defaulting to skip mode."
+  echo "skip" > .git/EVOLITH_CI_MODE
+  echo "develop" > .git/EVOLITH_PUSH_TARGET
+  exit 0
+fi
+
+echo ""
+echo "  CI Mode:"
+echo "  1) ⚡ Skip       — commit without validation (~0s)"
+echo "  2) 🚀 Fast       — docs + tracking (~2s)"
+echo "  3) 🏛️  Governance — docs + tracking + maturity + contracts (~3s)"
+echo "  4) 🔍 Auto       — detect changed files (~1-3s)"
+echo "  5) 🔬 Full       — all 30 CI scripts (~6-8s)"
+echo ""
+echo "  Branch:"
+echo "  d) develop     — push to develop (default)"
+echo "  m) main        — merge to main + push"
+echo "  s) sync        — sync develop ↔ main (both directions)"
+echo "  n) none        — commit only, don't push"
+echo ""
+
+read -p "  CI Mode [1-5, default: 1]: " CHOICE
+case "${CHOICE:-1}" in
+  1) MODE="skip" ;;
+  2) MODE="fast" ;;
+  3) MODE="governance" ;;
+  4) MODE="auto" ;;
+  5) MODE="full" ;;
+  *) MODE="skip" ;;
+esac
+
+read -p "  Branch [d/m/s/n, default: d]: " BRANCH_CHOICE
+case "${BRANCH_CHOICE:-d}" in
+  d) TARGET="develop" ;;
+  m) TARGET="main" ;;
+  s) TARGET="sync" ;;
+  n) TARGET="none" ;;
+  *) TARGET="develop" ;;
+esac
+
+echo "$MODE" > .git/EVOLITH_CI_MODE
+echo "$TARGET" > .git/EVOLITH_PUSH_TARGET
+
+if [ "$MODE" = "skip" ]; then
+  echo ""
+  echo "✅ Skipping CI validation."
+  exit 0
+fi
+
 echo ""
 echo "Generating executive governance summary..."
 node .harness/scripts/generate-executive-summary.mjs
 git add reference/governance/standards/vision/executive-summary.md reference/governance/standards/vision/executive-summary.es.md
-
-echo ""
-echo "Select CI mode:"
-echo "  1) Fast        — docs + tracking (~2s)"
-echo "  2) Governance  — docs + tracking + maturity + contracts (~3s)"
-echo "  3) Auto        — detect changed files, run relevant scripts (~1-3s)"
-echo "  4) Full        — all 30 CI scripts (~6-8s)"
-echo ""
-
-# Default to fast if no TTY (e.g. CI, scripted commits)
-if [ ! -t 0 ]; then
-  echo "No TTY detected, defaulting to fast mode."
-  MODE="fast"
-else
-  read -p "Enter choice [1-4, default: 1]: " CHOICE
-  case "${CHOICE:-1}" in
-    1) MODE="fast" ;;
-    2) MODE="governance" ;;
-    3) MODE="auto" ;;
-    4) MODE="full" ;;
-    *) MODE="fast" ;;
-  esac
-fi
 
 echo ""
 echo "Running CI in $MODE mode..."

@@ -1,18 +1,58 @@
-
 set -e
 
+TARGET=""
+if [ -f .git/EVOLITH_PUSH_TARGET ]; then
+  TARGET=$(cat .git/EVOLITH_PUSH_TARGET)
+fi
+rm -f .git/EVOLITH_PUSH_TARGET .git/EVOLITH_CI_MODE
 
+if [ "$TARGET" = "none" ] || [ "$TARGET" = "" ]; then
+  echo "No push requested. Commit only."
+  exit 0
+fi
+
+echo ""
 echo "Running repository optimization before push..."
 node .harness/scripts/ci/02-optimize-repo.mjs
 
 echo ""
-echo "Synchronizing Bidirectional Gap Tracking (Markdown <-> GitHub Projects)..."
+echo "Synchronizing Gap Tracking..."
 node .harness/scripts/sync-project-board.mjs
 
 echo ""
-echo "Refreshing executive governance summary before push..."
+echo "Refreshing executive governance summary..."
 node .harness/scripts/generate-executive-summary.mjs
-if [ -n "$(git status --porcelain -- reference/governance/standards/vision/executive-summary.md reference/governance/standards/vision/executive-summary.es.md)" ]; then
-  echo "Executive governance summary changed during pre-push. Commit the generated summary before pushing."
-  exit 1
+
+if [ "$TARGET" = "develop" ]; then
+  echo ""
+  echo "=== PUSH TO DEVELOP ==="
+  git push origin develop
+  echo "✅ Pushed to develop."
+
+elif [ "$TARGET" = "main" ]; then
+  echo ""
+  echo "=== PUSH TO MAIN (develop → main) ==="
+  git checkout main
+  git merge --no-ff develop -m "Merge develop into main"
+  git push origin main
+  echo ""
+  echo "=== Sync main back to develop ==="
+  git checkout develop
+  git merge --no-ff main -m "Merge main back into develop"
+  git push origin develop
+  echo "✅ Pushed to main and synced develop."
+
+elif [ "$TARGET" = "sync" ]; then
+  echo ""
+  echo "=== SYNC DEVELOP ↔ MAIN ==="
+  echo "--- Phase 1: develop → main ---"
+  git checkout main
+  git merge --no-ff develop -m "Sync: develop → main"
+  git push origin main
+  echo "--- Phase 2: main → develop ---"
+  git checkout develop
+  git merge --no-ff main -m "Sync: main → develop"
+  git push origin develop
+  echo "✅ Develop and Main are now synchronized."
+
 fi

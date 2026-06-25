@@ -65,14 +65,16 @@ node .harness/scripts/cleanup-temp-files.mjs
 ```
 
 Este script elimina automáticamente:
-- Archivos `.tsbuildinfo` (compilación TypeScript)
-- Coverage reports (reportes de cobertura de código)
-- Reportes generados en `.harness/reports/` y `.harness/evidence/`
-- Archivos temporales en `.harness/tmp/`
-- Archivos `.log`, `.tmp`, `.cache`, `.swp`, `.bak`, `.orig`, `.rej`
-- Directorios `.nyc_output`, `.cache`
 
-**Nota:** Estos archivos son generados automáticamente y se regeneran al ejecutar build/pruebas. No afectan código fuente, documentación, rulesets ni políticas OPA.
+* Archivos `.tsbuildinfo` (compilación TypeScript)
+* Directorios de cobertura (`coverage/`, `.nyc_output/`) generados por herramientas de test
+* Reportes generados en `.harness/reports/` y `.harness/evidence/`
+* Archivos temporales en `.harness/tmp/`
+* Archivos `.log`, `.tmp`, `.cache`, `.swp`, `.bak`, `.orig`, `.rej`
+
+**Comportamiento seguro:** El script detecta directorios temporales por segmento de path exacto (no por subcadena), y omite todos los archivos rastreados por `git ls-files` aunque su nombre contenga palabras como `coverage`. Scripts como `bilingual-coverage.mjs`, `coverage-dashboard.mjs` o `26-validate-topology-rule-coverage.mjs` **nunca** serán eliminados porque son archivos rastreados.
+
+> **BLOQUEANTE:** Si el script elimina un archivo rastreado por Git, la auditoría debe detenerse de inmediato. Restaura los archivos con `git checkout -- <path>` e investiga la causa antes de continuar.
 
 ---
 

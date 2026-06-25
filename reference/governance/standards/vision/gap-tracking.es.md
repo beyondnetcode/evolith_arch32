@@ -4,7 +4,7 @@
 
 **Estado:** Seguimiento Activo
 **Responsable:** Evolith Architecture Board
-**Última Actualización:** 2026-06-25 (Auditoría Wilson de preparación productiva — 6 gaps nuevos)
+**Última Actualización:** 2026-06-25 (Auditoría Wilson de plano de control — 3 gaps nuevos)
 **Detalle de Gaps:** [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md)
 
 Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunidades, habilitadores, prioridad y estado. Selecciona un ID para abrir la descripción del problema, propósito, evidencia, criterios de cierre y referencias.
@@ -13,12 +13,16 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|
-| [`GT-250`](./gap-reference-catalog.md#gt-250) | Corregir bypass de autenticacion MCP cuando no hay API key configurada | `Seguridad` | Transversal | P0 | S | `COMPLETADO` |
+| [`GT-274`](./gap-reference-catalog.es.md#gt-274) | Blindar cleanup-temp-files contra eliminación de archivos versionados | `Harness` | Cross | P0 | S | `COMPLETADO` |
+| [`GT-267`](./gap-reference-catalog.es.md#gt-267) | Restaurar build/test del workspace tras integración de caché Redis | `Core API/MCP` | Cross | P0 | M | `PENDIENTE` |
+| [`GT-275`](./gap-reference-catalog.es.md#gt-275) | Reconciliar el registro de evidencia de cierre con la semántica canónica de tracking | `Governance` | Cross | P0 | M | `PENDIENTE` |
+| [`GT-272`](./gap-reference-catalog.es.md#gt-272) | Asegurar distribución y verificación de bundles OPA sidecar | `Rulesets` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-276`](./gap-reference-catalog.es.md#gt-276) | Corregir la lógica de emparejamiento por área del dashboard bilingüe | `Governance CI` | Cross | P2 | S | `PENDIENTE` |
+| [`GT-250`](./gap-reference-catalog.es.md#gt-250) | Corregir bypass de autenticacion MCP cuando no hay API key configurada | `Seguridad` | Transversal | P0 | S | `COMPLETADO` |
 | [`GT-251`](./gap-reference-catalog.es.md#gt-251) | Corregir inyección de comandos en update vía execSync | `Security` | Cross | P0 | S | `COMPLETADO` |
 | [`GT-253`](./gap-reference-catalog.es.md#gt-253) | Fijar trivy-action a tag de versión específico en vez de branch master | `CI/CD` | Cross | P0 | S | `COMPLETADO` |
 | [`GT-268`](./gap-reference-catalog.es.md#gt-268) | Restaurar scripts validadores CI ausentes referenciados por workflows y reglas | `Governance CI` | Cross | P0 | S | `COMPLETADO` |
 | [`GT-252`](./gap-reference-catalog.es.md#gt-252) | Cablear las 19 políticas OPA huérfanas al agregador main.rego | `Rulesets` | Cross | P0 | M | `COMPLETADO` |
-| [`GT-267`](./gap-reference-catalog.es.md#gt-267) | Restaurar build/test del workspace tras integración de caché Redis | `Core API/MCP` | Cross | P0 | M | `PENDIENTE` |
 | [`GT-269`](./gap-reference-catalog.es.md#gt-269) | Restaurar reproducibilidad del contrato roundtrip ADR-0073 | `Contracts` | Cross | P0 | M | `COMPLETADO` |
 | [`GT-233`](./gap-reference-catalog.es.md#gt-233) | Añadir middleware de rate limiting al Core API | `Security` | Cross | P1 | S | `COMPLETADO` |
 | [`GT-254`](./gap-reference-catalog.es.md#gt-254) | Añadir protección contra path traversal en resolución de recursos MCP | `Security` | Cross | P1 | S | `COMPLETADO` |
@@ -30,7 +34,6 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-258`](./gap-reference-catalog.es.md#gt-258) | Añadir controles de concurrencia a todos los workflows GitHub Actions | `CI/CD` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-270`](./gap-reference-catalog.es.md#gt-270) | Fijar imágenes de infraestructura mutables y deshabilitar defaults dev expuestos | `Infrastructure` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-271`](./gap-reference-catalog.es.md#gt-271) | Añadir hardening Kubernetes de workloads a Helm charts | `Infrastructure` | Cross | P1 | M | `DONE` |
-| [`GT-272`](./gap-reference-catalog.es.md#gt-272) | Asegurar distribución y verificación de bundles OPA sidecar | `Rulesets` | Cross | P1 | M | `DONE` |
 | [`GT-20`](./gap-reference-catalog.es.md#gt-20) | Backfill de ADRs al estándar de autoría | `Governance` | Cross | P1 | L | `DONE` |
 | [`GT-228`](./gap-reference-catalog.es.md#gt-228) | Crear motor de orquestación de agentes para workflows BMAD | `Governance` | Cross | P1 | XL | `COMPLETADO` |
 | [`GT-229`](./gap-reference-catalog.es.md#gt-229) | Completar evaluador TypeScript Dual-Engine (cumplimiento R-25) | `Core Domain` | Cross | P1 | XL | `COMPLETADO` |
@@ -288,7 +291,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-246`](./gap-reference-catalog.es.md#gt-246) | Implementar experimentos Chaos Mesh/Litmus | `QA` | Cross | P3 | L | `COMPLETADO` |
 
 
-**Progreso:** 272 / 273 completados · 0 en progreso · 1 pendientes · 0 diferidos
+**Progreso:** 271 / 276 completados · 0 en progreso · 5 pendientes · 0 diferidos
 
 **Oleada 2026-06-23 (auditoría profunda de Wilson III):** Añadidos 14 gaps nuevos `GT-212`…`GT-225` del Wilson Audit Playbook que cubren: higiene de estado ADR (GT-212), metadata + presupuestos operativos + corpus de guías por topología (GT-213, GT-217, GT-219), observabilidad + OpenAPI en controladores REST (GT-214, GT-215), paridad de input-schemas OPA + densidad de tests por topología (GT-216, GT-222), plantillas de rollback + on-call de Fase 05 (GT-218), cobertura de ramas CLI + paridad de envelope --format + limpieza de skip-list (GT-220, GT-224, GT-225), audit logging HTTP de MCP (GT-221), y tests e2e de paridad cross-surface (GT-223).
 
@@ -303,6 +306,8 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 **Oleada 2026-06-24 (descubrimiento arquitectónico):** Añadido `GT-266` — servicio de provisioning de API keys para MCP HTTP, descubierto al analizar requisitos de consumo externo de GT-250.
 
 **Oleada 2026-06-25 (auditoría Wilson de preparación productiva):** Añadidos 6 gaps nuevos `GT-267`…`GT-272` que cubren build/test rojo del workspace tras la integración de caché Redis (GT-267), scripts validadores CI ausentes referenciados por workflows/reglas (GT-268), fallo del contrato roundtrip ADR-0073 (GT-269), defaults de infraestructura mutables/inseguros (GT-270), hardening de workloads Helm (GT-271) e integridad de bundles OPA para sidecars (GT-272).
+
+**Oleada 2026-06-25 (auditoría Wilson de plano de control):** Añadidos 3 gaps nuevos `GT-274`…`GT-276`, reabierto `GT-267` porque los tests actuales de Core API/MCP/CLI siguen fallando y reabierto `GT-272` porque los defaults Helm aún descargan bundles OPA por HTTP sin firma. La auditoría cubrió explícitamente todas las topologías aceptadas (`modular-monolith`, `distributed-modules`, `microservices`, `serverless`, `event-driven`, `data-mesh`, `edge-computing`, `agentic-ai`) y ambos motores de reglas: manifiestos topológicos pasaron, cobertura Native/OPA pasó, tests OPA topológicos pasaron y `EVOLITH_PARITY_FULL=true node .harness/scripts/ci/27-opa-parity-gate.mjs` evaluó 16 fixtures con 0 drift.
 
 **Ordenamiento:** una sola tabla, ordenada por estado (pendientes luego completados), luego criticidad (`P0` → `P1` → `P2` → `P3`), luego complejidad (`XS` → `S` → `M` → `L` → `XL`). Los IDs `GT-*` enlazan al [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md); los IDs `MT-A*` enlazan al [plan de implementación Multi-Topology](./multi-topology-reference-corpus-implementation-plan.es.md).
 

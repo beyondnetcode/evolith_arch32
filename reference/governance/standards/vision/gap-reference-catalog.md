@@ -2503,10 +2503,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Unblock the monorepo release baseline after the cache layer introduced runtime imports and TypeScript drift that Core API, MCP Server, and the dependent CLI cannot build or test through. This is a production blocker because the cache optimization cannot be promoted while the executable surfaces fail.
 **Current Evidence:** Wilson audit on 2026-06-25: `npm -ws run build --if-present` fails in `apps/core-api` because `@nestjs/cache-manager` and `cache-manager` are not installed and `CacheInterceptor`/`CacheTTL` are imported from `@nestjs/common`; `packages/mcp-server` fails on the same missing cache dependencies, `trace.SpanStatusCode`, and TypeScript 6 deprecation errors. `npm --workspace apps/core-api test -- --runInBand`, `npm --workspace packages/mcp-server test -- --runInBand`, and `npm --workspace sdk/cli run test:unit -- --runInBand` are also red.
 **Done When:**
-  - [x] Core API declares and installs the cache dependencies it uses (`@nestjs/cache-manager`, `cache-manager`, Redis store package such as `@keyv/redis` if retained) and imports Nest cache decorators/interceptors from the package that actually exports them for Nest 11.
-  - [x] MCP Server declares its cache dependencies, fixes the OpenTelemetry status import (`SpanStatusCode` from `@opentelemetry/api`), and either migrates or silences TypeScript 6 deprecations intentionally.
-  - [x] CLI no longer resolves broken MCP compiled artifacts during unit tests.
-  - [x] `npm -ws run build --if-present`, `npm --workspace apps/core-api test -- --runInBand`, `npm --workspace packages/mcp-server test -- --runInBand`, and `npm --workspace sdk/cli run test:unit -- --runInBand` pass from a clean checkout.
+  - [ ] Core API declares and installs the cache dependencies it uses (`@nestjs/cache-manager`, `cache-manager`, Redis store package such as `@keyv/redis` if retained) and imports Nest cache decorators/interceptors from the package that actually exports them for Nest 11.
+  - [ ] MCP Server declares its cache dependencies, fixes the OpenTelemetry status import (`SpanStatusCode` from `@opentelemetry/api`), and either migrates or silences TypeScript 6 deprecations intentionally.
+  - [ ] CLI no longer resolves broken MCP compiled artifacts during unit tests.
+  - [ ] `npm -ws run build --if-present`, `npm --workspace apps/core-api test -- --runInBand`, `npm --workspace packages/mcp-server test -- --runInBand`, and `npm --workspace sdk/cli run test:unit -- --runInBand` pass from a clean checkout.
 
 #### GT-268
 **Title:** Restore missing CI validator scripts referenced by workflows and rules
@@ -2553,10 +2553,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Protect the executable governance path from policy-bundle tampering by securing how OPA sidecars fetch and trust bundles. This keeps Native/OPA parity meaningful after deployment, not only in repository tests.
 **Current Evidence:** Helm values configure OPA sidecars to fetch `http://ums-minio:9000/opa-bundles/bundle.tar.gz` with no TLS, authentication, digest pin, signature, or fail-closed readiness gate. GT-133 covers central distribution architecture, but the deployed sidecar reference does not verify bundle integrity or provenance.
 **Done When:**
-  - [x] OPA bundle URL uses TLS or a private in-cluster authenticated endpoint, with credentials sourced from Kubernetes secrets or workload identity.
-  - [x] Bundle artifact digest and signature verification are documented and automated (for example, Sigstore/cosign or another open-source signing flow).
-  - [x] OPA sidecar readiness fails closed if the required bundle cannot be fetched or verified.
-  - [x] CI renders the Helm chart and validates the OPA bundle settings with both Native and OPA checks.
+  - [ ] OPA bundle URL uses TLS or a private in-cluster authenticated endpoint, with credentials sourced from Kubernetes secrets or workload identity.
+  - [ ] Bundle artifact digest and signature verification are documented and automated (for example, Sigstore/cosign or another open-source signing flow).
+  - [ ] OPA sidecar readiness fails closed if the required bundle cannot be fetched or verified.
+  - [ ] CI renders the Helm chart and validates the OPA bundle settings with both Native and OPA checks.
 
 #### GT-273
 
@@ -2569,3 +2569,36 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] Results are uploaded as a workflow artifact; failures are gated or triaged.
 
 **Closure Evidence (2026-06-25):** Addressed by introducing Job 12 (`dast-scan`) in `.github/workflows/sdk-cli-ci.yml`. The DAST job builds the MCP server, starts it ephemerally in HTTP mode on port 3001, waits for `/health`, runs `zaproxy/action-full-scan@v0.10.0` against `http://localhost:3001`, and uploads `report.html`/`report.md` as artifacts. The job uses `continue-on-error: true` so it does not block the CI gate; findings are triaged asynchronously. See commit `426db1d9`.
+
+#### GT-274
+
+**Title:** Harden cleanup-temp-files against tracked-file deletion
+**Purpose:** Make the mandatory Wilson pre-audit cleanup safe for a versioned governance repository. A cleanup helper must never delete tracked scripts, rules, policies, or documentation just because their path contains a temporary-word substring.
+**Current Evidence:** Running `node .harness/scripts/cleanup-temp-files.mjs` during the 2026-06-25 Wilson control-plane audit deleted tracked scripts whose paths contained `coverage`: `.harness/scripts/bilingual-coverage.mjs`, `.harness/scripts/coverage-dashboard.mjs`, `.harness/scripts/generate-rule-coverage.mjs`, `.harness/scripts/generate-rule-coverage.test.mjs`, and `.harness/scripts/ci/26-validate-topology-rule-coverage.mjs`. Root cause: `isInTempDir(filePath)` used substring matching (`filePath.includes("coverage")`) rather than path-segment matching and did not skip `git ls-files` tracked content. The files were restored immediately from Git.
+**Done When:**
+  - [x] `cleanup-temp-files.mjs` matches temp directories by path segment, not arbitrary substring.
+  - [x] The cleanup script skips all tracked files from `git ls-files`, even if they match a temp filename or directory pattern.
+  - [x] A regression test fixture proves files named `bilingual-coverage.mjs`, `coverage-dashboard.mjs`, and `26-validate-topology-rule-coverage.mjs` are not deleted.
+  - [x] The Wilson audit playbook references the safe cleanup behavior and warns that any deleted tracked file is a blocker.
+
+#### GT-275
+
+**Title:** Reconcile closure evidence registry with canonical tracking semantics
+**Purpose:** Restore the executable trust chain for gap closure. A `DONE` board row must have exactly one valid closure record with a real commit, resolving evidence artifacts, reproducible validation commands, and a supported dependency disposition.
+**Current Evidence:** `node .harness/scripts/ci/08-validate-tracking.mjs` fails after the control-plane audit. The remaining registry issues include `GT-270` with `closureCommit: "pending"`, `GT-264` with empty evidence and validation commands, a duplicate `GT-266` closure record, and missing closure records for `GT-271` and `GT-20`. `node .harness/scripts/ci/09-reconcile-maturity.mjs` also fails because closure evidence counts do not match required closures. `GT-267` and `GT-272` were reopened during this audit because current validation does not support `DONE`.
+**Done When:**
+  - [ ] `gap-closure-evidence.json` has one valid record per `DONE` `GT-*` row and no records for pending/deferred/in-progress gaps.
+  - [ ] `GT-270`, `GT-264`, `GT-266`, `GT-271`, and `GT-20` have either valid closure records or are reopened consistently in EN/ES tracking and catalogs.
+  - [ ] `node .harness/scripts/ci/08-validate-tracking.mjs` passes.
+  - [ ] `node .harness/scripts/ci/09-reconcile-maturity.mjs` passes and regenerates `maturity-reconciliation.json` only when canonical evidence changes.
+
+#### GT-276
+
+**Title:** Correct bilingual coverage dashboard area pairing logic
+**Purpose:** Make the executive bilingual coverage dashboard agree with the canonical pairing calculation so it highlights real language gaps instead of false critical areas.
+**Current Evidence:** `node .harness/scripts/bilingual-coverage.mjs` reports 518 EN files, 518 ES files, 518 paired files, and 100.0% coverage. The dashboard generated by `node .harness/scripts/coverage-dashboard.mjs` also reports 100.0% globally, but marks root-level and index-like paired files as separate `[CRIT]` areas/subareas (for example `README.md` and `README.es.md`) because area/subarea bucketing counts filenames independently rather than normalizing `.es.md` to the English counterpart path.
+**Done When:**
+  - [ ] `coverage-dashboard.mjs` reuses the same normalized EN/ES pairing logic as `bilingual-coverage.mjs`.
+  - [ ] Root-level, index, README, and bilingual-navigation files are grouped by canonical counterpart path rather than split into separate EN and ES pseudo-areas.
+  - [ ] Dashboard tests cover root files, nested files, Pattern A `.es.md` files, and Pattern B `-es/` grouped content.
+  - [ ] The dashboard exits non-zero only for real unpaired files or configured thresholds, not for false area bucketing artifacts.

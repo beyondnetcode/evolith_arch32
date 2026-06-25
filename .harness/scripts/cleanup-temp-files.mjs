@@ -1,5 +1,6 @@
 import { promises as fs } from 'fs';
 import path from 'path';
+import { spawnSync } from 'child_process';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -75,35 +76,44 @@ function isTempFile(filePath) {
   return TEMP_PATTERNS.some(pattern => pattern.test(filePath));
 }
 
-function isInTempDir(filePath) {
-  return TEMP_DIRS.some(dir => filePath.includes(dir));
+function isInTempDir(filePath, root = rootDir) {
+  const relativePath = path.relative(root, filePath);
+  return relativePath.split(path.sep).some(segment => TEMP_DIRS.includes(segment));
 }
 
-async function findTempFiles() {
-  const allFiles = await getAllFiles(rootDir);
-  const tempFiles = [];
-  const tempDirFiles = [];
+function loadTrackedFiles() {
+  const result = spawnSync('git', ['ls-files'], {
+    cwd: rootDir,
+    encoding: 'utf8',
+  });
 
-  for (const { path: filePath, stat } of allFiles) {
-    if (isTempFile(filePath)) {
-      tempFiles.push({ path: filePath, size: stat.size });
-    } else if (isInTempDir(filePath)) {
-      tempDirFiles.push({ path: filePath, size: stat.size });
-    }
-  }
+  if (result.status !== 0) return new Set();
+  return new Set(result.stdout.split('\n').filter(Boolean));
+}
 
-  // Add specific temp files
+function isTrackedFile(filePath, trackedFiles, root = rootDir) {
+  const relativePath = path.relative(root, filePath).split(path.sep).join('/');
+  return trackedFiles.has(relativePath);
+}
+
+async function collectSpecificFiles(trackedFiles) {
+  const result = [];
   for (const file of TEMP_FILES_SPECIFIC) {
     const fullPath = path.join(rootDir, file);
     try {
       const stat = await fs.stat(fullPath);
-      tempFiles.push({ path: fullPath, size: stat.size });
-    } catch (error) {
+      if (!isTrackedFile(fullPath, trackedFiles)) {
+        result.push({ path: fullPath, size: stat.size });
+      }
+    } catch {
       // File doesn't exist
     }
   }
+  return result;
+}
 
-  // Add specific temp dirs
+async function collectSpecificDirFiles(trackedFiles) {
+  const result = [];
   for (const dir of TEMP_DIRS_SPECIFIC) {
     const fullPath = path.join(rootDir, dir);
     try {
@@ -111,15 +121,37 @@ async function findTempFiles() {
       if (stat.isDirectory()) {
         const files = await getAllFiles(fullPath);
         for (const { path: filePath, stat: fileStat } of files) {
-          tempDirFiles.push({ path: filePath, size: fileStat.size });
+          if (!isTrackedFile(filePath, trackedFiles)) {
+            result.push({ path: filePath, size: fileStat.size });
+          }
         }
-      } else {
-        tempDirFiles.push({ path: fullPath, size: stat.size });
+      } else if (!isTrackedFile(fullPath, trackedFiles)) {
+        result.push({ path: fullPath, size: stat.size });
       }
-    } catch (error) {
+    } catch {
       // File/directory doesn't exist
     }
   }
+  return result;
+}
+
+async function findTempFiles() {
+  const allFiles = await getAllFiles(rootDir);
+  const trackedFiles = loadTrackedFiles();
+  const tempFiles = [];
+  const tempDirFiles = [];
+
+  for (const { path: filePath, stat } of allFiles) {
+    if (isTrackedFile(filePath, trackedFiles)) continue;
+    if (isTempFile(filePath)) {
+      tempFiles.push({ path: filePath, size: stat.size });
+    } else if (isInTempDir(filePath)) {
+      tempDirFiles.push({ path: filePath, size: stat.size });
+    }
+  }
+
+  tempFiles.push(...(await collectSpecificFiles(trackedFiles)));
+  tempDirFiles.push(...(await collectSpecificDirFiles(trackedFiles)));
 
   return { tempFiles, tempDirFiles };
 }
@@ -185,4 +217,8 @@ async function main() {
   console.log('\n=== LIMPIEZA COMPLETADA ===');
 }
 
-main().catch(console.error);
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  await main();
+}
+
+export { TEMP_DIRS, TEMP_PATTERNS, isTempFile, isInTempDir, isTrackedFile };

@@ -2503,10 +2503,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Desbloquear el baseline de release del monorepo después de que la capa de caché introdujo imports runtime y deriva TypeScript que impiden compilar o testear Core API, MCP Server y el CLI dependiente. Es bloqueante productivo porque la optimización de caché no puede promoverse mientras las superficies ejecutables fallan.
 **Evidencia Actual:** Auditoría Wilson del 2026-06-25: `npm -ws run build --if-present` falla en `apps/core-api` porque `@nestjs/cache-manager` y `cache-manager` no están instalados y `CacheInterceptor`/`CacheTTL` se importan desde `@nestjs/common`; `packages/mcp-server` falla por las mismas dependencias de caché ausentes, `trace.SpanStatusCode` y errores de deprecación TypeScript 6. `npm --workspace apps/core-api test -- --runInBand`, `npm --workspace packages/mcp-server test -- --runInBand` y `npm --workspace sdk/cli run test:unit -- --runInBand` también están rojos.
 **Hecho Cuando:**
-  - [x] Core API declara e instala las dependencias de caché que usa (`@nestjs/cache-manager`, `cache-manager`, store Redis como `@keyv/redis` si se conserva) e importa decorators/interceptors de caché desde el paquete que realmente los exporta para Nest 11.
-  - [x] MCP Server declara sus dependencias de caché, corrige el import de estado OpenTelemetry (`SpanStatusCode` desde `@opentelemetry/api`) y migra o silencia intencionalmente las deprecaciones TypeScript 6.
-  - [x] CLI deja de resolver artefactos MCP compilados rotos durante los tests unitarios.
-  - [x] `npm -ws run build --if-present`, `npm --workspace apps/core-api test -- --runInBand`, `npm --workspace packages/mcp-server test -- --runInBand` y `npm --workspace sdk/cli run test:unit -- --runInBand` pasan desde un checkout limpio.
+  - [ ] Core API declara e instala las dependencias de caché que usa (`@nestjs/cache-manager`, `cache-manager`, store Redis como `@keyv/redis` si se conserva) e importa decorators/interceptors de caché desde el paquete que realmente los exporta para Nest 11.
+  - [ ] MCP Server declara sus dependencias de caché, corrige el import de estado OpenTelemetry (`SpanStatusCode` desde `@opentelemetry/api`) y migra o silencia intencionalmente las deprecaciones TypeScript 6.
+  - [ ] CLI deja de resolver artefactos MCP compilados rotos durante los tests unitarios.
+  - [ ] `npm -ws run build --if-present`, `npm --workspace apps/core-api test -- --runInBand`, `npm --workspace packages/mcp-server test -- --runInBand` y `npm --workspace sdk/cli run test:unit -- --runInBand` pasan desde un checkout limpio.
 
 #### GT-268
 **Título:** Restaurar scripts validadores CI ausentes referenciados por workflows y reglas
@@ -2553,10 +2553,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Proteger el camino de gobernanza ejecutable contra manipulación de policy bundles asegurando cómo los sidecars OPA obtienen y confían en bundles. Esto mantiene significativa la paridad Native/OPA después del despliegue, no solo en tests del repositorio.
 **Evidencia Actual:** Los values de Helm configuran sidecars OPA para descargar `http://ums-minio:9000/opa-bundles/bundle.tar.gz` sin TLS, autenticación, digest fijo, firma ni gate de readiness fail-closed. GT-133 cubre la arquitectura central de distribución, pero la referencia desplegada del sidecar no verifica integridad ni procedencia del bundle.
 **Hecho Cuando:**
-  - [x] La URL del bundle OPA usa TLS o endpoint privado autenticado dentro del clúster, con credenciales originadas desde Kubernetes secrets o workload identity.
-  - [x] La verificación de digest y firma del artefacto bundle queda documentada y automatizada (por ejemplo, Sigstore/cosign u otro flujo open source de firma).
-  - [x] La readiness del sidecar OPA falla cerrado si el bundle requerido no puede descargarse o verificarse.
-  - [x] CI renderiza el chart Helm y valida la configuración del bundle OPA con checks Native y OPA.
+  - [ ] La URL del bundle OPA usa TLS o endpoint privado autenticado dentro del clúster, con credenciales originadas desde Kubernetes secrets o workload identity.
+  - [ ] La verificación de digest y firma del artefacto bundle queda documentada y automatizada (por ejemplo, Sigstore/cosign u otro flujo open source de firma).
+  - [ ] La readiness del sidecar OPA falla cerrado si el bundle requerido no puede descargarse o verificarse.
+  - [ ] CI renderiza el chart Helm y valida la configuración del bundle OPA con checks Native y OPA.
 
 #### GT-273
 
@@ -2569,3 +2569,36 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Los resultados se suben como artifact del workflow; las fallas se gatean o triagean.
 
 **Evidencia de Cierre (2026-06-25):** Abordado al introducir Job 12 (`dast-scan`) en `.github/workflows/sdk-cli-ci.yml`. El job DAST compila el servidor MCP, lo inicia efímeramente en modo HTTP en el puerto 3001, espera `/health`, ejecuta `zaproxy/action-full-scan@v0.10.0` contra `http://localhost:3001`, y sube `report.html`/`report.md` como artifacts. Usa `continue-on-error: true` para no bloquear el gate de CI; los hallazgos se triagean asincrónicamente. Commit `426db1d9`.
+
+#### GT-274
+
+**Título:** Blindar cleanup-temp-files contra eliminación de archivos versionados
+**Propósito:** Hacer segura la limpieza obligatoria pre-auditoría de Wilson para un repositorio de gobernanza versionado. Un helper de limpieza nunca debe borrar scripts, reglas, políticas o documentación versionada solo porque la ruta contiene una palabra asociada a temporales.
+**Evidencia Actual:** Al ejecutar `node .harness/scripts/cleanup-temp-files.mjs` durante la auditoría Wilson de plano de control del 2026-06-25, el script eliminó archivos versionados cuyas rutas contenían `coverage`: `.harness/scripts/bilingual-coverage.mjs`, `.harness/scripts/coverage-dashboard.mjs`, `.harness/scripts/generate-rule-coverage.mjs`, `.harness/scripts/generate-rule-coverage.test.mjs` y `.harness/scripts/ci/26-validate-topology-rule-coverage.mjs`. La causa raíz fue que `isInTempDir(filePath)` usaba coincidencia por substring (`filePath.includes("coverage")`) en vez de segmentos de ruta y no excluía contenido rastreado por `git ls-files`. Los archivos se restauraron inmediatamente desde Git.
+**Hecho Cuando:**
+  - [x] `cleanup-temp-files.mjs` detecta directorios temporales por segmento de ruta, no por substring arbitrario.
+  - [x] El script de limpieza omite todos los archivos rastreados por `git ls-files`, aunque coincidan con un patrón de archivo o directorio temporal.
+  - [x] Un fixture de regresión demuestra que archivos llamados `bilingual-coverage.mjs`, `coverage-dashboard.mjs` y `26-validate-topology-rule-coverage.mjs` no se eliminan.
+  - [x] El playbook de auditoría Wilson referencia el comportamiento seguro de limpieza y advierte que cualquier archivo versionado eliminado es bloqueante.
+
+#### GT-275
+
+**Título:** Reconciliar el registro de evidencia de cierre con la semántica canónica de tracking
+**Propósito:** Restaurar la cadena ejecutable de confianza para el cierre de gaps. Una fila `DONE`/`COMPLETADO` debe tener exactamente un registro de cierre válido con commit real, artefactos de evidencia resolubles, comandos reproducibles de validación y disposición de dependencias soportada.
+**Evidencia Actual:** `node .harness/scripts/ci/08-validate-tracking.mjs` falla después de la auditoría de plano de control. Los problemas restantes del registro incluyen `GT-270` con `closureCommit: "pending"`, `GT-264` con evidencia y comandos de validación vacíos, un registro duplicado de cierre para `GT-266`, y registros faltantes para `GT-271` y `GT-20`. `node .harness/scripts/ci/09-reconcile-maturity.mjs` también falla porque el conteo de evidencias de cierre no coincide con los cierres requeridos. `GT-267` y `GT-272` se reabrieron durante esta auditoría porque la validación actual no soporta `DONE`.
+**Hecho Cuando:**
+  - [ ] `gap-closure-evidence.json` tiene un registro válido por cada fila `GT-*` en `DONE`/`COMPLETADO` y ningún registro para gaps pendientes/diferidos/en progreso.
+  - [ ] `GT-270`, `GT-264`, `GT-266`, `GT-271` y `GT-20` tienen registros de cierre válidos o se reabren de forma consistente en tracking y catálogos EN/ES.
+  - [ ] `node .harness/scripts/ci/08-validate-tracking.mjs` pasa.
+  - [ ] `node .harness/scripts/ci/09-reconcile-maturity.mjs` pasa y regenera `maturity-reconciliation.json` solo cuando cambia la evidencia canónica.
+
+#### GT-276
+
+**Título:** Corregir la lógica de emparejamiento por área del dashboard bilingüe
+**Propósito:** Hacer que el dashboard ejecutivo de cobertura bilingüe coincida con el cálculo canónico de pares para resaltar brechas reales de idioma en lugar de áreas críticas falsas.
+**Evidencia Actual:** `node .harness/scripts/bilingual-coverage.mjs` reporta 518 archivos EN, 518 archivos ES, 518 pares y 100.0% de cobertura. El dashboard generado por `node .harness/scripts/coverage-dashboard.mjs` también reporta 100.0% global, pero marca archivos raíz e índices emparejados como áreas/subáreas `[CRIT]` separadas (por ejemplo `README.md` y `README.es.md`) porque el bucketing por área/subárea cuenta nombres de archivo de forma independiente en vez de normalizar `.es.md` hacia la ruta canónica EN.
+**Hecho Cuando:**
+  - [ ] `coverage-dashboard.mjs` reutiliza la misma lógica normalizada de emparejamiento EN/ES que `bilingual-coverage.mjs`.
+  - [ ] Archivos raíz, índices, README y navegación bilingüe se agrupan por ruta canónica de contraparte en vez de dividirse en pseudo-áreas EN y ES.
+  - [ ] Los tests del dashboard cubren archivos raíz, archivos anidados, archivos Patrón A `.es.md` y contenido agrupado Patrón B `-es/`.
+  - [ ] El dashboard sale con código distinto de cero solo ante archivos realmente sin pareja o umbrales configurados, no por artefactos falsos de bucketing por área.

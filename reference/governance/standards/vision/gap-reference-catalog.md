@@ -2780,8 +2780,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Evidence:** Path `rulesets/quality-thresholds` does not exist.
 - **Complexity:** S
 - **Done when:**
-  - [ ] The required file or directory exists at the specified path.
-  - [ ] Tests verify the implementation.
+  - [x] The required file or directory exists at the specified path.
+  - [x] Tests verify the implementation.
 
 #### GT-292
 

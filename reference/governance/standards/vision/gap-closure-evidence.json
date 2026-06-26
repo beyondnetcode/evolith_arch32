@@ -4351,6 +4351,27 @@
         ".harness/bin/opa test rulesets/opa/cicd-quality-gates.rego rulesets/opa/cicd-quality-gates.test.rego -v"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-291",
+      "closedAt": "2026-06-26",
+      "closureCommit": "46beae26",
+      "evidence": [
+        "rulesets/quality-thresholds/quality-thresholds.rules.json",
+        "rulesets/quality-thresholds/README.md",
+        "rulesets/quality-thresholds/README.es.md",
+        ".harness/scripts/run-evolith-intelligent-data-audit.test.mjs",
+        "packages/core-domain/src/application/validators/modes/ruleset-validation.mode.ts",
+        "packages/core-domain/src/application/validators/modes/ruleset-validation.mode.spec.ts",
+        "rulesets/README.md",
+        "rulesets/README.es.md"
+      ],
+      "validationCommands": [
+        "node --test .harness/scripts/run-evolith-intelligent-data-audit.test.mjs",
+        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --testPathPatterns='ruleset-validation.mode' --no-coverage",
+        ".harness/bin/opa test rulesets/opa/testing-pyramid.rego rulesets/opa/testing-pyramid.test.rego -v"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

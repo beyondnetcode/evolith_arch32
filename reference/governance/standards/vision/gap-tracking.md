@@ -19,7 +19,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-288`](./gap-reference-catalog.md#gt-288) | engineering-manifesto ruleset exists — rulesets/engineering-manifesto | `Rulesets` | Cross | P0 | S | `DONE` |
 | [`GT-289`](./gap-reference-catalog.md#gt-289) | repository-taxonomy ruleset exists — rulesets/repository-taxonomy | `Rulesets` | Cross | P0 | S | `DONE` |
 | [`GT-290`](./gap-reference-catalog.md#gt-290) | phase-gates ruleset exists — rulesets/phase-gates | `Rulesets` | Cross | P0 | S | `DONE` |
-| [`GT-291`](./gap-reference-catalog.md#gt-291) | quality-thresholds ruleset exists — rulesets/quality-thresholds | `Rulesets` | Cross | P0 | S | `OPEN` |
+| [`GT-291`](./gap-reference-catalog.md#gt-291) | quality-thresholds ruleset exists — rulesets/quality-thresholds | `Rulesets` | Cross | P0 | S | `DONE` |
 | [`GT-292`](./gap-reference-catalog.md#gt-292) | satellite-contracts ruleset exists — rulesets/satellite-contracts | `Rulesets` | Cross | P0 | S | `OPEN` |
 | [`GT-293`](./gap-reference-catalog.md#gt-293) | executive-scorecards ruleset exists — rulesets/executive-scorecards | `Rulesets` | Cross | P0 | S | `OPEN` |
 | [`GT-294`](./gap-reference-catalog.md#gt-294) | OPA policies for architecture — rulesets/architecture/opa | `Architecture` | Cross | P0 | S | `OPEN` |
@@ -327,7 +327,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-246`](./gap-reference-catalog.md#gt-246) | Implement Chaos Mesh/Litmus experiments | `QA` | Cross | P3 | L | `DONE` |
 
 
-**Progress:** 288 / 312 done · 0 in progress · 24 pending · 0 deferred
+**Progress:** 289 / 312 done · 0 in progress · 23 pending · 0 deferred
 
 **Wave 2026-06-23 (Wilson deep audit III):** Added 14 new gaps `GT-212`…`GT-225` from the Wilson Audit Playbook covering: ADR status hygiene (GT-212), topology manifest metadata + operational budgets + guidance corpus (GT-213, GT-217, GT-219), REST controller observability + OpenAPI (GT-214, GT-215), OPA input-schema parity + per-topology test density (GT-216, GT-222), SDLC Phase 05 rollback + on-call templates (GT-218), CLI branch coverage + envelope format coverage + skip-list cleanup (GT-220, GT-224, GT-225), MCP HTTP audit logging (GT-221), and cross-surface parity e2e tests (GT-223).
 

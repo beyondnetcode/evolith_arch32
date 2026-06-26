@@ -2645,6 +2645,54 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] La auditoría de cumplimiento reporta `COMPLETO` para CLI en cada topología.
 - **Evidencia de Cierre:** Commit `7bed54d0` (main). 16 archivos CLI (8 EN + 8 ES) creados. Score global: **168/168 (100%)**.
 
+#### GT-280
+
+**Título:** Fases SDLC como datos consultables (JSON/YAML) — mapeo gate → artefactos → reglas Rego
+
+- **Propósito:** Las 5 fases SDLC existen solo como documentación markdown. Sin un modelo de datos consultable, el motor de evaluación no puede determinar qué gate aplica en qué fase, qué artefactos requiere ni qué regla Rego ejecutar. Transformar las fases en datos estructurados habilita la ejecución programática del SDLC.
+- **Evidencia Actual:** `node .harness/scripts/run-evolith-deep.mjs` — Dimensión "MODELO SDLC EJECUTABLE": **SÓLIDO**.
+- **Complejidad:** M
+- **Hecho Cuando:**
+  - [x] Cada fase tiene un archivo `phase-f*.json` en `reference/governance/sdlc/phases/` con campos: `id`, `name`, `description`, `order`, `gates[]`.
+  - [x] Cada gate en `reference/governance/sdlc/gates/` declara `requiredArtifacts[]` y `rules[]` con referencias a archivos `.rego`.
+  - [x] Existe un validador (`.harness/playbooks/sdlc-phase-gate-validator.mjs`) que verifica reglas Rego y artefactos requeridos.
+  - [x] `run-evolith-deep.mjs` reporta `SÓLIDO` para la dimensión "MODELO SDLC EJECUTABLE".
+- **Evidencia de Cierre:** Commit `661a8846` crea 5 phase files, 5 gate files, los schemas SDLC, el validador de phase/gate y reglas Rego SDLC. El audit profundo detecta datos estructurados y reporta `SÓLIDO`.
+
+#### GT-281
+
+**Título:** Pipeline de evaluación end-to-end: cliente → topología → reglas → veredicto
+
+- **Propósito:** Exponer un servicio que reciba input de un cliente externo, resuelva la topología del manifiesto, cargue y ejecute reglas Rego correspondientes, y emita un veredicto estructurado.
+- **Evidencia Actual:** `node .harness/scripts/run-evolith-deep.mjs` — Dimensión "MOTOR DE EVALUACIÓN": **SÓLIDO**.
+- **Complejidad:** XL
+- **Hecho Cuando:**
+  - [x] Existe `SatelliteEvaluationPipeline` con manifest, topología, gates GT-280, reglas Rego y veredicto estructurado.
+  - [x] `ValidateSatelliteUseCase` acepta `manifest?: SatelliteManifest` y delega en el pipeline cuando se provee.
+  - [x] CLI `evolith validate` expone `--manifest` y `--phase`.
+  - [x] MCP `evolith-validate` expone parámetros `manifest`, `topology`, `phase`.
+  - [x] `SatelliteManifest` está definido en `packages/core-domain/src/domain/satellite-manifest.ts`.
+  - [x] `SdlcDataLoaderService` carga los datos GT-280 en runtime.
+  - [x] Existe test end-to-end (`satellite-evaluation-pipeline.spec.ts`) que envía manifest y verifica veredicto.
+  - [x] `run-evolith-deep.mjs` reporta `SÓLIDO` para la dimensión "MOTOR DE EVALUACIÓN".
+- **Evidencia de Cierre:** Commit `661a8846` crea `SatelliteEvaluationPipeline`, `SdlcDataLoaderService`, `SatelliteManifest`, wiring CLI/MCP y tests end-to-end.
+
+#### GT-282
+
+**Título:** Reporte accionable con evidencia detallada (qué regla falló, qué artefacto falta, por qué)
+
+- **Propósito:** El output de evaluación debe decir qué regla falló, qué artefacto falta y por qué, para guiar correcciones accionables.
+- **Evidencia Actual:** `node .harness/scripts/run-evolith-deep.mjs` — Dimensión "REPORTE ACCIONABLE": **SÓLIDO**.
+- **Complejidad:** M
+- **Hecho Cuando:**
+  - [x] `RuleEvaluation` incluye `severity`, `remediation`, `gateRef`.
+  - [x] `EvaluationVerdict` incluye `outputEnvelope` con shape ADR-0073.
+  - [x] Pipeline produce remediation text, severity derivada de blocking criteria y cross-reference al gate.
+  - [x] CLI `evolith validate` despliega severity, remediation y gateRef.
+  - [x] MCP `evolith-validate` incluye severity, remediation y gateRef en output pipeline.
+  - [x] Tests verifican campos de evidencia detallada.
+  - [x] `run-evolith-deep.mjs` reporta `SÓLIDO` para la dimensión "REPORTE ACCIONABLE".
+- **Evidencia de Cierre:** Commit `661a8846` mejora `RuleEvaluation`, `EvaluationVerdict`, pipeline, CLI, MCP y tests para reportes accionables.
 
 #### GT-312
 
@@ -2654,19 +2702,19 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** El comando actual `evolith validate` (`sdk/cli/src/commands/validate/validate.command.ts:74-76`) ejecuta un caso de uso genérico sin especificar qué validar cuando no se pasan parámetros. Los usuarios pueden querer validar arquitectura técnica sin entrar al flujo SDLC, validar rulesets específicos sin contexto de arquitectura, o ejecutar validación ad-hoc en componentes individuales.
 - **Complejidad:** XL
 - **Hecho Cuando:**
-  - [ ] **Modo SDLC**: Pipeline completo disponible cuando se provee o detecta contexto de fase/gate.
-  - [ ] **Modo Arquitectura**: Validar topología, límites hexagonales, aislamiento de dominio, multi-tenancy sin contexto SDLC.
-  - [ ] **Modo Ruleset**: Validar rulesets específicos (compliance-baseline, definition-of-done, etc.) independientemente.
-  - [ ] **Modo ADR**: Validar contra reglas ADR específicas (arquitectura hexagonal, multi-tenancy, testing pyramid, etc.).
-  - [ ] **Modo Ad-hoc**: Validar componentes, artifacts o archivos individuales bajo demanda.
-  - [ ] **Composable**: El usuario puede combinar cualquier punto de entrada (ej: arquitectura + ruleset específico, o fase SDLC + reglas ADR).
-  - [ ] **Config Opcional**: `evolith.config.json` provee defaults pero NO es requerido — el usuario puede sobreescribir todo vía flags CLI.
-  - [ ] **Resolución Inteligente**: El sistema infiere el alcance de validación desde input mínimo (ej: `--topology modular-monolith` implica reglas de arquitectura para esa topología).
-  - [ ] Las tres interfaces (CLI, MCP, REST) soportan todos los modos de validación (un motor, tres fachadas).
-  - [ ] Las evaluaciones OPA se ejecutan en paralelo donde sea posible para rendimiento.
-  - [ ] El veredicto de validación incluye: pass/fail por regla, evidencia, estado blocking y guía de remediación.
-  - [ ] Rendimiento: validación completa se completa en <2s para proyectos estándar.
-  - [ ] Los tests verifican todos los modos de validación y combinaciones.
+  - [x] **Modo SDLC**: Pipeline completo disponible cuando se provee o detecta contexto de fase/gate.
+  - [x] **Modo Arquitectura**: Validar topología, límites hexagonales, aislamiento de dominio, multi-tenancy sin contexto SDLC.
+  - [x] **Modo Ruleset**: Validar rulesets específicos (compliance-baseline, definition-of-done, etc.) independientemente.
+  - [x] **Modo ADR**: Validar contra reglas ADR específicas (arquitectura hexagonal, multi-tenancy, testing pyramid, etc.).
+  - [x] **Modo Ad-hoc**: Validar componentes, artifacts o archivos individuales bajo demanda.
+  - [x] **Composable**: El usuario puede combinar cualquier punto de entrada (ej: arquitectura + ruleset específico, o fase SDLC + reglas ADR).
+  - [x] **Config Opcional**: `evolith.config.json` provee defaults pero NO es requerido — el usuario puede sobreescribir todo vía flags CLI.
+  - [x] **Resolución Inteligente**: El sistema infiere el alcance de validación desde input mínimo (ej: `--topology modular-monolith` implica reglas de arquitectura para esa topología).
+  - [x] Las tres interfaces (CLI, MCP, REST) soportan todos los modos de validación (un motor, tres fachadas).
+  - [x] Las evaluaciones OPA se ejecutan en paralelo donde sea posible para rendimiento.
+  - [x] El veredicto de validación incluye: pass/fail por regla, evidencia, estado blocking y guía de remediación.
+  - [x] Rendimiento: validación completa se completa en <2s para proyectos estándar.
+  - [x] Los tests verifican todos los modos de validación y combinaciones.
 
 #### GT-286
 
@@ -2676,8 +2724,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** La ruta `rulesets/compliance-baseline` no existe.
 - **Complejidad:** S
 - **Hecho Cuando:**
-  - [ ] El archivo o directorio requerido existe en la ruta especificada.
-  - [ ] Los tests verifican la implementación.
+  - [x] El archivo o directorio requerido existe en la ruta especificada.
+  - [x] Los tests verifican la implementación.
 
 #### GT-287
 
@@ -2687,8 +2735,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** La ruta `rulesets/definition-of-done` no existe.
 - **Complejidad:** S
 - **Hecho Cuando:**
-  - [ ] El archivo o directorio requerido existe en la ruta especificada.
-  - [ ] Los tests verifican la implementación.
+  - [x] El archivo o directorio requerido existe en la ruta especificada.
+  - [x] Los tests verifican la implementación.
 
 #### GT-288
 
@@ -2698,8 +2746,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** La ruta `rulesets/engineering-manifesto` no existe.
 - **Complejidad:** S
 - **Hecho Cuando:**
-  - [ ] El archivo o directorio requerido existe en la ruta especificada.
-  - [ ] Los tests verifican la implementación.
+  - [x] El archivo o directorio requerido existe en la ruta especificada.
+  - [x] Los tests verifican la implementación.
 
 #### GT-289
 
@@ -2709,8 +2757,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** La ruta `rulesets/repository-taxonomy` no existe.
 - **Complejidad:** S
 - **Hecho Cuando:**
-  - [ ] El archivo o directorio requerido existe en la ruta especificada.
-  - [ ] Los tests verifican la implementación.
+  - [x] El archivo o directorio requerido existe en la ruta especificada.
+  - [x] Los tests verifican la implementación.
 
 #### GT-290
 
@@ -2720,8 +2768,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** La ruta `rulesets/phase-gates` no existe.
 - **Complejidad:** S
 - **Hecho Cuando:**
-  - [ ] El archivo o directorio requerido existe en la ruta especificada.
-  - [ ] Los tests verifican la implementación.
+  - [x] El archivo o directorio requerido existe en la ruta especificada.
+  - [x] Los tests verifican la implementación.
 
 #### GT-291
 
@@ -2731,8 +2779,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** La ruta `rulesets/quality-thresholds` no existe.
 - **Complejidad:** S
 - **Hecho Cuando:**
-  - [ ] El archivo o directorio requerido existe en la ruta especificada.
-  - [ ] Los tests verifican la implementación.
+  - [x] El archivo o directorio requerido existe en la ruta especificada.
+  - [x] Los tests verifican la implementación.
 
 #### GT-292
 
@@ -2742,8 +2790,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** La ruta `rulesets/satellite-contracts` no existe.
 - **Complejidad:** S
 - **Hecho Cuando:**
-  - [ ] El archivo o directorio requerido existe en la ruta especificada.
-  - [ ] Los tests verifican la implementación.
+  - [x] El archivo o directorio requerido existe en la ruta especificada.
+  - [x] Los tests verifican la implementación.
 
 #### GT-293
 

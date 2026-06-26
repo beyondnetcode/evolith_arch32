@@ -42,6 +42,20 @@ If you are onboarding a new satellite repository, read the categories in this or
 
 ```
 rulesets/
+├── compliance-baseline/        # WS1 executable compliance baseline entrypoint
+│   └── compliance-baseline.rules.json
+├── definition-of-done/         # WS1 executable Definition of Done entrypoint
+│   └── definition-of-done.rules.json
+├── engineering-manifesto/      # WS1 executable Engineering Manifesto entrypoint
+│   └── engineering-manifesto.rules.json
+├── repository-taxonomy/        # WS1 executable Repository Taxonomy entrypoint
+│   └── repository-taxonomy.rules.json
+├── phase-gates/                # WS1 executable SDLC phase-gates entrypoint
+│   └── phase-gates.rules.json
+├── quality-thresholds/         # WS1 executable quality-thresholds entrypoint
+│   └── quality-thresholds.rules.json
+├── satellite-contracts/        # WS1 executable Satellite Contracts entrypoint
+│   └── satellite-contracts.rules.json
 ├── opa/                        # OPA policies and inputs schemas
 │   ├── schemas/                # OPA policy input schemas (9 schemas)
 │   ├── *.rego                  # Rego policy files

@@ -34,6 +34,9 @@ export class ArchitectureValidationMode implements ValidationMode {
           mode: 'architecture',
           status: 'failed',
           rulesChecked: 0,
+          metadata: {
+            topology: topologyId,
+          },
           issues: [{
             ruleId: 'TOPOLOGY_NOT_FOUND',
             status: 'fail',

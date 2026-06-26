@@ -42,6 +42,20 @@ Si estás integrando un nuevo repositorio satélite, lee las categorías en este
 
 ```
 rulesets/
+├── compliance-baseline/        # Punto de entrada WS1 del baseline de cumplimiento
+│   └── compliance-baseline.rules.json
+├── definition-of-done/         # Punto de entrada WS1 de Definition of Done
+│   └── definition-of-done.rules.json
+├── engineering-manifesto/      # Punto de entrada WS1 del Manifiesto de Ingeniería
+│   └── engineering-manifesto.rules.json
+├── repository-taxonomy/        # Punto de entrada WS1 de Taxonomía del Repositorio
+│   └── repository-taxonomy.rules.json
+├── phase-gates/                # Punto de entrada WS1 de gates de fase SDLC
+│   └── phase-gates.rules.json
+├── quality-thresholds/         # Punto de entrada WS1 de umbrales de calidad
+│   └── quality-thresholds.rules.json
+├── satellite-contracts/        # Punto de entrada WS1 de Satellite Contracts
+│   └── satellite-contracts.rules.json
 ├── opa/                        # Políticas OPA y schemas de entrada
 │   ├── schemas/                # Schemas de entrada de políticas OPA (9 schemas)
 │   ├── *.rego                  # Archivos de políticas Rego

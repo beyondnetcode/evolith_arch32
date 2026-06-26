@@ -45,12 +45,34 @@ graph TD
 The Core API exposes its functionality via NestJS Controllers:
 
 - [ArchitectureController](../../../apps/core-api/src/presentation/controllers/architecture.controller.ts): Topologies, drift detection, and satellite verification.
+- [ComposableValidateController](../../../apps/core-api/src/presentation/controllers/composable-validate.controller.ts): GT-312 composable validation engine with 5 modes (SDLC, Architecture, Ruleset, ADR, Ad-hoc).
 - [GatesController](../../../apps/core-api/src/presentation/controllers/gates.controller.ts): SDLC phase gate evaluation.
 - [PhasesController](../../../apps/core-api/src/presentation/controllers/phases.controller.ts): Phase advance and transitions.
 - [ProjectsController](../../../apps/core-api/src/presentation/controllers/projects.controller.ts): Project initialization and phase-advance proposals.
 - [ReferenceController](../../../apps/core-api/src/presentation/controllers/reference.controller.ts): Public query endpoints for active rulesets, gates, and requirements.
 - [HealthController](../../../apps/core-api/src/presentation/controllers/health.controller.ts): Liveness and readiness health checks.
 - [MetricsController](../../../apps/core-api/src/presentation/controllers/metrics.controller.ts): Prometheus metrics exporter.
+
+### GT-312: Composable Validation Endpoint
+
+The `POST /v1/validate/composable` endpoint exposes the composable validation engine:
+
+```bash
+# Architecture validation only
+curl -X POST http://localhost:3000/v1/validate/composable \
+  -H "Content-Type: application/json" \
+  -d '{"path": "/path/to/satellite", "topology": "modular-monolith"}'
+
+# Combined: Architecture + Ruleset + ADR
+curl -X POST http://localhost:3000/v1/validate/composable \
+  -H "Content-Type: application/json" \
+  -d '{
+    "path": "/path/to/satellite",
+    "topology": "modular-monolith",
+    "ruleset": "compliance-baseline",
+    "adr": "adr-0002"
+  }'
+```
 
 ---
 

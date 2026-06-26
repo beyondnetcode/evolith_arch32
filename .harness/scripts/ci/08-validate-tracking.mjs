@@ -16,6 +16,8 @@ const CLOSURE_REGISTRY = path.join(
 const STATUS_MAP = new Map([
   ['DONE', 'done'],
   ['COMPLETADO', 'done'],
+  ['OPEN', 'pending'],
+  ['ABIERTO', 'pending'],
   ['PENDING', 'pending'],
   ['PENDIENTE', 'pending'],
   ['DEFERRED', 'deferred'],

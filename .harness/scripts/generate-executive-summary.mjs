@@ -14,7 +14,7 @@ const MATURITY = path.join(VISION_DIR, 'maturity-reconciliation.json');
 const EN_OUT = path.join(VISION_DIR, 'executive-summary.md');
 const ES_OUT = path.join(VISION_DIR, 'executive-summary.es.md');
 
-const OPEN_STATUSES = new Set(['PENDING', 'IN-PROGRESS', 'DEFERRED']);
+const OPEN_STATUSES = new Set(['OPEN', 'PENDING', 'IN-PROGRESS', 'DEFERRED']);
 const CRITICALITY_WEIGHT = { P0: 100, P1: 40, P2: 15, P3: 5 };
 const COMPLEXITY_WEIGHT = { XS: 1, S: 2, M: 3, L: 5, XL: 8 };
 
@@ -68,6 +68,11 @@ function sortByPriority(a, b) {
   return a.id.localeCompare(b.id, undefined, { numeric: true });
 }
 
+function canonicalStatus(status) {
+  if (status === 'OPEN') return 'PENDING';
+  return status;
+}
+
 function summarizeComponents(openGaps) {
   const byComponent = new Map();
   for (const gap of openGaps) {
@@ -95,8 +100,9 @@ function buildSummary(root = ROOT) {
   const board = parseBoard(read(path.join(root, 'reference/governance/standards/vision/gap-tracking.md')));
   const esBoard = parseBoard(read(path.join(root, 'reference/governance/standards/vision/gap-tracking.es.md')));
   const maturity = JSON.parse(read(path.join(root, 'reference/governance/standards/vision/maturity-reconciliation.json')) || '{}');
-  const open = board.rows.filter((gap) => OPEN_STATUSES.has(gap.status)).sort(sortByPriority);
-  const done = board.rows.filter((gap) => gap.status === 'DONE');
+  const rows = board.rows.map((gap) => ({ ...gap, status: canonicalStatus(gap.status) }));
+  const open = rows.filter((gap) => OPEN_STATUSES.has(gap.status)).sort(sortByPriority);
+  const done = rows.filter((gap) => gap.status === 'DONE');
   const byCriticality = countBy(open, 'criticality');
   const components = summarizeComponents(open);
   const p0 = open.filter((gap) => gap.criticality === 'P0');
@@ -108,7 +114,7 @@ function buildSummary(root = ROOT) {
 
   if (maturity.gaps) {
     const expected = {
-      total: board.rows.length,
+      total: rows.length,
       done: done.length,
       pending: open.filter((gap) => gap.status === 'PENDING').length,
       inProgress: open.filter((gap) => gap.status === 'IN-PROGRESS').length,
@@ -123,7 +129,7 @@ function buildSummary(root = ROOT) {
 
   return {
     asOf: board.lastUpdated,
-    total: board.rows.length,
+    total: rows.length,
     done: done.length,
     open,
     p0,

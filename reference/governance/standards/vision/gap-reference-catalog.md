@@ -2692,7 +2692,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] MCP `evolith-validate` incluye severity, remediation, gateRef en output pipeline.
   - [x] Tests verifican los campos de evidencia detallada (severity, remediation, gateRef, outputEnvelope).
   - [x] `run-evolith-deep.mjs` reporta `SÓLIDO` para la dimensión "REPORTE ACCIONABLE".
-- **Closure Evidence:** `RuleEvaluation` en `satellite-manifest.ts` ahora tiene `severity: EvaluationSeverity`, `remediation: string`, `gateRef: string`. `EvaluationVerdict` tiene `outputEnvelope?: SuccessEnvelope<...>` con ADR-0073 meta. Pipeline genera remediation como "Create ADR at docs/adrs/..." para artefactos conocidos y deriveSeverity desde blockingCriteria. CLI muestra iconos 🔴🟡 por severity + remedio truncado a 72 chars. MCP expone campos flatteneados. 5 tests GT-282 agregan cobertura. Deep audit ahora SÓLIDO. Score global: 75% (6/8).
+- **Closure Evidence:** `RuleEvaluation` en `satellite-manifest.ts` ahora tiene `severity: EvaluationSeverity`, `remediation: string`, `gateRef: string`. `EvaluationVerdict` tiene `outputEnvelope?: SuccessEnvelope<...>` con ADR-0073 meta. Pipeline genera remediation como "Create ADR at docs/adrs/..." para artefactos conocidos y deriveSeverity desde blockingCriteria. CLI muestra marcadores de severidad rojo/amarillo + remedio truncado a 72 chars. MCP expone campos flatteneados. 5 tests GT-282 agregan cobertura. Deep audit ahora SÓLIDO. Score global: 75% (6/8).
 
 
 #### GT-312
@@ -2703,19 +2703,19 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Evidence:** Current `evolith validate` command (`sdk/cli/src/commands/validate/validate.command.ts:74-76`) executes a generic use case without specifying what to validate when no parameters are passed. Users may want to validate technical architecture without entering SDLC flow, validate specific rulesets without architecture context, or run ad-hoc validation on individual components.
 - **Complexity:** XL
 - **Done when:**
-  - [ ] **SDLC Mode**: Full pipeline available when phase/gate context is provided or detected.
-  - [ ] **Architecture Mode**: Validate topology, hexagonal limits, domain isolation, multi-tenancy without SDLC context.
-  - [ ] **Ruleset Mode**: Validate specific rulesets (compliance-baseline, definition-of-done, etc.) independently.
-  - [ ] **ADR Mode**: Validate against specific ADR rules (hexagonal architecture, multi-tenancy, testing pyramid, etc.).
-  - [ ] **Ad-hoc Mode**: Validate individual components, artifacts, or files on demand.
-  - [ ] **Composable**: User can combine any entry points (e.g., architecture + specific ruleset, or SDLC phase + ADR rules).
-  - [ ] **Project Config Optional**: `evolith.config.json` provides defaults but is NOT required — user can override everything via CLI flags.
-  - [ ] **Intelligent Resolution**: System infers validation scope from minimal input (e.g., `--topology modular-monolith` implies architecture rules for that topology).
-  - [ ] All three interfaces (CLI, MCP, REST) support all validation modes (one engine, three facades).
-  - [ ] OPA evaluations execute in parallel where possible for performance.
-  - [ ] Validation verdict includes: pass/fail per rule, evidence, blocking status, and remediation guidance.
-  - [ ] Performance: full validation completes in <2s for standard projects.
-  - [ ] Tests verify all validation modes and combinations.
+  - [x] **SDLC Mode**: Full pipeline available when phase/gate context is provided or detected.
+  - [x] **Architecture Mode**: Validate topology, hexagonal limits, domain isolation, multi-tenancy without SDLC context.
+  - [x] **Ruleset Mode**: Validate specific rulesets (compliance-baseline, definition-of-done, etc.) independently.
+  - [x] **ADR Mode**: Validate against specific ADR rules (hexagonal architecture, multi-tenancy, testing pyramid, etc.).
+  - [x] **Ad-hoc Mode**: Validate individual components, artifacts, or files on demand.
+  - [x] **Composable**: User can combine any entry points (e.g., architecture + specific ruleset, or SDLC phase + ADR rules).
+  - [x] **Project Config Optional**: `evolith.config.json` provides defaults but is NOT required — user can override everything via CLI flags.
+  - [x] **Intelligent Resolution**: System infers validation scope from minimal input (e.g., `--topology modular-monolith` implies architecture rules for that topology).
+  - [x] All three interfaces (CLI, MCP, REST) support all validation modes (one engine, three facades).
+  - [x] OPA evaluations execute in parallel where possible for performance.
+  - [x] Validation verdict includes: pass/fail per rule, evidence, blocking status, and remediation guidance.
+  - [x] Performance: full validation completes in <2s for standard projects.
+  - [x] Tests verify all validation modes and combinations.
 
 #### GT-286
 
@@ -2725,8 +2725,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Evidence:** Path `rulesets/compliance-baseline` does not exist.
 - **Complexity:** S
 - **Done when:**
-  - [ ] The required file or directory exists at the specified path.
-  - [ ] Tests verify the implementation.
+  - [x] The required file or directory exists at the specified path.
+  - [x] Tests verify the implementation.
 
 #### GT-287
 
@@ -2736,8 +2736,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Evidence:** Path `rulesets/definition-of-done` does not exist.
 - **Complexity:** S
 - **Done when:**
-  - [ ] The required file or directory exists at the specified path.
-  - [ ] Tests verify the implementation.
+  - [x] The required file or directory exists at the specified path.
+  - [x] Tests verify the implementation.
 
 #### GT-288
 
@@ -2747,8 +2747,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Evidence:** Path `rulesets/engineering-manifesto` does not exist.
 - **Complexity:** S
 - **Done when:**
-  - [ ] The required file or directory exists at the specified path.
-  - [ ] Tests verify the implementation.
+  - [x] The required file or directory exists at the specified path.
+  - [x] Tests verify the implementation.
 
 #### GT-289
 
@@ -2758,8 +2758,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Evidence:** Path `rulesets/repository-taxonomy` does not exist.
 - **Complexity:** S
 - **Done when:**
-  - [ ] The required file or directory exists at the specified path.
-  - [ ] Tests verify the implementation.
+  - [x] The required file or directory exists at the specified path.
+  - [x] Tests verify the implementation.
 
 #### GT-290
 
@@ -2769,8 +2769,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Evidence:** Path `rulesets/phase-gates` does not exist.
 - **Complexity:** S
 - **Done when:**
-  - [ ] The required file or directory exists at the specified path.
-  - [ ] Tests verify the implementation.
+  - [x] The required file or directory exists at the specified path.
+  - [x] Tests verify the implementation.
 
 #### GT-291
 
@@ -2780,8 +2780,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Evidence:** Path `rulesets/quality-thresholds` does not exist.
 - **Complexity:** S
 - **Done when:**
-  - [ ] The required file or directory exists at the specified path.
-  - [ ] Tests verify the implementation.
+  - [x] The required file or directory exists at the specified path.
+  - [x] Tests verify the implementation.
 
 #### GT-292
 
@@ -2791,8 +2791,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Evidence:** Path `rulesets/satellite-contracts` does not exist.
 - **Complexity:** S
 - **Done when:**
-  - [ ] The required file or directory exists at the specified path.
-  - [ ] Tests verify the implementation.
+  - [x] The required file or directory exists at the specified path.
+  - [x] Tests verify the implementation.
 
 #### GT-293
 

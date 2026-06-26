@@ -28,8 +28,8 @@ function countFiles(directory, pattern, excludePattern) {
 
 export function parseBoard(content) {
   const lastUpdated = content.match(/\*\*Last Updated:\*\* (\d{4}-\d{2}-\d{2})/)?.[1];
-  const statuses = [...content.matchAll(/^\| \[`(?:GT-\d+|MT-A\d+)`]\([^)]*\) .*\| `(DONE|PENDING|DEFERRED|IN-PROGRESS)` \|$/gm)]
-    .map((match) => match[1]);
+  const statuses = [...content.matchAll(/^\| \[`(?:GT-\d+|MT-A\d+)`]\([^)]*\) .*\| `(DONE|OPEN|PENDING|DEFERRED|IN-PROGRESS)` \|$/gm)]
+    .map((match) => (match[1] === 'OPEN' ? 'PENDING' : match[1]));
   const counts = {
     total: statuses.length,
     done: statuses.filter((status) => status === 'DONE').length,
@@ -57,7 +57,7 @@ export function validateRuntimeEvidence(evidence, board, root = ROOT, now = new 
   const errors = [];
   const checks = Array.isArray(evidence?.checks) ? evidence.checks : [];
   const activeGaps = new Set(
-    [...board.content.matchAll(/^\| \[`(GT-\d+|MT-A\d+)`]\([^)]*\) .*\| `(PENDING|DEFERRED|IN-PROGRESS)` \|$/gm)]
+    [...board.content.matchAll(/^\| \[`(GT-\d+|MT-A\d+)`]\([^)]*\) .*\| `(OPEN|PENDING|DEFERRED|IN-PROGRESS)` \|$/gm)]
       .map((match) => match[1]),
   );
   const closedGaps = new Set(

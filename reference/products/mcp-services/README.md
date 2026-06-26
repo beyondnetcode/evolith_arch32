@@ -14,9 +14,23 @@ The exact, installable surface is generated from the CLI sources and must not be
 
 | Capability | Count | Examples |
 |---|:---:|---|
-| **Tools** | 21 | `evolith-validate`, `evolith-gate-evaluate`, `evolith-architecture-validate`, `evolith-phase-advance`, `evolith-metrics` |
+| **Tools** | 22 | `evolith-validate`, `evolith-composable-validate`, `evolith-gate-evaluate`, `evolith-architecture-validate`, `evolith-phase-advance`, `evolith-metrics` |
 | **Resources** | 7 | `evolith://rulesets`, `evolith://phase-gates`, `evolith://agents`, `evolith://core/version` |
 | **Prompts** | 7 | `evolith/validate-repository`, `evolith/architecture-review`, `evolith/sdlc-handoff`, `evolith/moscow-prioritization` |
+
+### GT-312: Composable Validation Engine
+
+The `evolith-composable-validate` tool exposes the composable validation engine (GT-312) with 5 validation modes:
+
+| Mode | Description | Example |
+|---|---|---|
+| **SDLC** | Validates phases, gates, artifacts, blocking criteria | `evolith-composable-validate --phase f1` |
+| **Architecture** | Validates topology, hexagonal limits, domain isolation | `evolith-composable-validate --topology modular-monolith` |
+| **Ruleset** | Validates specific rulesets independently | `evolith-composable-validate --ruleset compliance-baseline` |
+| **ADR** | Validates against ADR-specific rules | `evolith-composable-validate --adr adr-0002` |
+| **Ad-hoc** | Validates individual files on demand | `evolith-composable-validate --file src/domain/user.ts` |
+
+The system is **intelligent and flexible** — users can combine any entry points without forcing a specific flow.
 
 ## Transports
 

@@ -4,6 +4,7 @@
 
 import { RulesetValidationMode } from './ruleset-validation.mode';
 import { ValidationContext } from './validation-mode.interface';
+import path from 'path';
 
 describe('RulesetValidationMode', () => {
   let mode: RulesetValidationMode;
@@ -32,17 +33,36 @@ describe('RulesetValidationMode', () => {
   });
 
   describe('validate', () => {
-    it('should validate ruleset when rulesetId is provided', async () => {
+    it.each([
+      ['compliance-baseline', 7],
+      ['definition-of-done', 10],
+      ['engineering-manifesto', 10],
+      ['repository-taxonomy', 11],
+      ['phase-gates', 0],
+      ['quality-thresholds', 8],
+    ])('should validate %s ruleset when rulesetId is provided', async (rulesetId, expectedRuleCount) => {
+      const repoRoot = path.resolve(__dirname, '../../../../../..');
       const context: ValidationContext = {
-        satellitePath: '/test',
+        satellitePath: repoRoot,
+        corePath: repoRoot,
         engine: 'native',
-        rulesetId: 'compliance-baseline',
+        rulesetId,
       };
 
       const result = await mode.validate(context);
 
       expect(result.mode).toBe('ruleset');
-      expect(result.metadata).toEqual({ rulesetId: 'compliance-baseline' });
+      expect(result.status).toBe('passed');
+      expect(result.rulesChecked).toBe(expectedRuleCount);
+      expect(result.issues).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            ruleId: 'RULESET-LOADED',
+            status: 'pass',
+          }),
+        ]),
+      );
+      expect(result.metadata).toEqual({ rulesetId });
     });
   });
 });

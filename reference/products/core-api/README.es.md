@@ -45,12 +45,34 @@ graph TD
 El Core API expone sus funcionalidades a través de controladores de NestJS:
 
 - [ArchitectureController](../../../apps/core-api/src/presentation/controllers/architecture.controller.ts): Topologías, detección de deriva y verificación de satélites.
+- [ComposableValidateController](../../../apps/core-api/src/presentation/controllers/composable-validate.controller.ts): Motor de validación composable GT-312 con 5 modos (SDLC, Arquitectura, Ruleset, ADR, Ad-hoc).
 - [GatesController](../../../apps/core-api/src/presentation/controllers/gates.controller.ts): Evaluación de gates de fases del SDLC.
 - [PhasesController](../../../apps/core-api/src/presentation/controllers/phases.controller.ts): Avance y transiciones de fases.
 - [ProjectsController](../../../apps/core-api/src/presentation/controllers/projects.controller.ts): Inicialización de proyectos y propuestas de avance de fase.
 - [ReferenceController](../../../apps/core-api/src/presentation/controllers/reference.controller.ts): Endpoints de consulta pública para rulesets activos, gates y requisitos.
 - [HealthController](../../../apps/core-api/src/presentation/controllers/health.controller.ts): Health checks de liveness y readiness.
 - [MetricsController](../../../apps/core-api/src/presentation/controllers/metrics.controller.ts): Exportador de métricas Prometheus.
+
+### Endpoint de Validación Composable GT-312
+
+El endpoint `POST /v1/validate/composable` expone el motor de validación composable:
+
+```bash
+# Solo validación de arquitectura
+curl -X POST http://localhost:3000/v1/validate/composable \
+  -H "Content-Type: application/json" \
+  -d '{"path": "/ruta/al/satellite", "topology": "modular-monolith"}'
+
+# Combinado: Arquitectura + Ruleset + ADR
+curl -X POST http://localhost:3000/v1/validate/composable \
+  -H "Content-Type: application/json" \
+  -d '{
+    "path": "/ruta/al/satellite",
+    "topology": "modular-monolith",
+    "ruleset": "compliance-baseline",
+    "adr": "adr-0002"
+  }'
+```
 
 ---
 

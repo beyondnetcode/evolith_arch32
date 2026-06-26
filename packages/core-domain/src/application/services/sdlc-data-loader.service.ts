@@ -63,7 +63,7 @@ export class SdlcDataLoaderService {
       return [];
     }
     const files = (await this.fs.readdir(dir))
-      .filter(e => e.isFile && e.name.endsWith('.json'))
+      .filter(e => e.isFile() && e.name.endsWith('.json'))
       .sort((a, b) => a.name.localeCompare(b.name));
 
     const phases: StructuredPhase[] = [];

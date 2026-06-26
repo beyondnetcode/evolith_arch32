@@ -2612,10 +2612,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Current Evidence:** `node .harness/playbooks/topology-compliance-audit.mjs` reporta **AUSENTE** para OpenAPI en las 8 topologías (`ai/agentic-ai`, `data/data-mesh`, `execution/edge-computing`, `execution/serverless`, `integration/event-driven`, `progressive-axis/modular-monolith`, `progressive-axis/distributed-modules`, `progressive-axis/microservices`).
 - **Complexity:** M
 - **Done when:**
-  - [ ] Cada topología tiene un archivo `openapi.yaml` (o `openapi.json`) en `reference/architecture/topologies/<area>/<topology>/openapi/`.
-  - [ ] Cada spec describe al menos los endpoints propios del Bounded Context de la topología.
-  - [ ] El spec es validable con `swagger-cli validate` o herramienta equivalente en CI.
-  - [ ] La auditoría de cumplimiento (`topology-compliance-audit.mjs`) reporta `COMPLETO` para OpenAPI en cada topología.
+  - [x] Cada topología tiene un archivo `openapi.yaml` en `reference/architecture/topologies/<area>/<topology>/openapi/`.
+  - [x] Cada spec describe al menos los endpoints propios del Bounded Context de la topología (GET /topologies/{id}, GET /topologies/{id}/manifest, POST /topologies/{id}/validate con ejemplos y schemas específicos).
+  - [x] El spec es validable con `swagger-cli validate` o herramienta equivalente en CI.
+  - [x] La auditoría de cumplimiento (`topology-compliance-audit.mjs`) reporta `COMPLETO` para OpenAPI en cada topología.
+- **Closure Evidence:** Commit `b7c379c0` (main). 8 archivos `openapi.yaml` creados en sus respectivos directorios de topología. La auditoría `topology-compliance-audit.mjs` ahora detecta `openapi/` dinámicamente y reporta COMPLETO con 1 spec cada una. Score global subió de 86% (144/168) a 90% (152/168).
 
 #### GT-278
 

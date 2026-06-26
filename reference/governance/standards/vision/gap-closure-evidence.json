@@ -4180,6 +4180,26 @@
         "node .harness/scripts/coverage-dashboard.test.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-277",
+      "closedAt": "2026-06-26",
+      "closureCommit": "b7c379c0",
+      "evidence": [
+        "reference/architecture/topologies/ai/agentic-ai/openapi/openapi.yaml",
+        "reference/architecture/topologies/data/data-mesh/openapi/openapi.yaml",
+        "reference/architecture/topologies/execution/edge-computing/openapi/openapi.yaml",
+        "reference/architecture/topologies/execution/serverless/openapi/openapi.yaml",
+        "reference/architecture/topologies/integration/event-driven/openapi/openapi.yaml",
+        "reference/architecture/topologies/progressive-axis/modular-monolith/openapi/openapi.yaml",
+        "reference/architecture/topologies/progressive-axis/distributed-modules/openapi/openapi.yaml",
+        "reference/architecture/topologies/progressive-axis/microservices/openapi/openapi.yaml",
+        ".harness/playbooks/topology-compliance-audit.mjs"
+      ],
+      "validationCommands": [
+        "node .harness/playbooks/topology-compliance-audit.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

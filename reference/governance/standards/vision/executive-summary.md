@@ -11,7 +11,7 @@ Strategic snapshot generated from the canonical gap board and maturity reconcili
 
 **Current decision:** Conditional GO: proceed only with P1 hardening and automated evidence.
 
-**Biggest problem now:** `Architecture` carries the highest weighted open risk (3 open, 0 P0). Attack that concentration before expanding scope.
+**Biggest problem now:** `Architecture` carries the highest weighted open risk (2 open, 0 P0). Attack that concentration before expanding scope.
 
 **Where to attack first:** -.
 
@@ -26,16 +26,15 @@ Use this summary with a simple rule: if you need context, open only the linked I
 | Order | Focus | Reason | IDs |
 |---:|---|---|---|
 | 1 | P0 blockers | They prevent production-readiness or major-release confidence. | - |
-| 2 | Highest-risk area | `Architecture` has the largest weighted open load. | [GT-277](./gap-reference-catalog.md#gt-277), [GT-278](./gap-reference-catalog.md#gt-278), [GT-279](./gap-reference-catalog.md#gt-279) |
+| 2 | Highest-risk area | `Architecture` has the largest weighted open load. | [GT-278](./gap-reference-catalog.md#gt-278), [GT-279](./gap-reference-catalog.md#gt-279) |
 | 3 | Quick wins | High criticality with XS/S complexity. | - |
-| 4 | P1 wave | Next hardening after P0 is cleared. | [GT-277](./gap-reference-catalog.md#gt-277), [GT-278](./gap-reference-catalog.md#gt-278), [GT-279](./gap-reference-catalog.md#gt-279) |
+| 4 | P1 wave | Next hardening after P0 is cleared. | [GT-278](./gap-reference-catalog.md#gt-278), [GT-279](./gap-reference-catalog.md#gt-279) |
 | 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | - |
 
 ## Current Blockers
 
 | ID | Attack | Component | Effort |
 |---|---|---|---|
-| [GT-277](./gap-reference-catalog.md#gt-277) | Topology OpenAPI specs — framework interfaces ausentes en las 8 topologías | `Architecture` | P1/M |
 | [GT-278](./gap-reference-catalog.md#gt-278) | Topology MCP manifests — framework interfaces ausentes en las 8 topologías | `Architecture` | P1/M |
 | [GT-279](./gap-reference-catalog.md#gt-279) | Topology CLI flows — framework interfaces ausentes en las 8 topologías | `Architecture` | P1/M |
 
@@ -45,18 +44,18 @@ Use this summary with a simple rule: if you need context, open only the linked I
 |---|---:|
 | Canonical board date | 2026-06-26 |
 | Total gaps | 279 |
-| Closed gaps | 276 |
-| Open gaps | 3 |
+| Closed gaps | 277 |
+| Open gaps | 2 |
 | Open P0 | 0 |
-| Open P1 | 3 |
+| Open P1 | 2 |
 | Open P2 | 0 |
-| Total closure | 98.9% |
-| Closure evidence records | 258 |
+| Total closure | 99.3% |
+| Closure evidence records | 259 |
 | Recorded readiness | 3 PASS, 1 RESOLVED |
 
 | Area | Open | P0 | P1 | First IDs |
 |---|---:|---:|---:|---|
-| `Architecture` | 3 | 0 | 3 | [GT-277](./gap-reference-catalog.md#gt-277), [GT-278](./gap-reference-catalog.md#gt-278), [GT-279](./gap-reference-catalog.md#gt-279) |
+| `Architecture` | 2 | 0 | 2 | [GT-278](./gap-reference-catalog.md#gt-278), [GT-279](./gap-reference-catalog.md#gt-279) |
 
 ## Source and Refresh Rule
 

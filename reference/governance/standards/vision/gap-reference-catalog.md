@@ -2626,10 +2626,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Current Evidence:** `node .harness/playbooks/topology-compliance-audit.mjs` reporta **AUSENTE** para MCP manifests en las 8 topologías.
 - **Complexity:** M
 - **Done when:**
-  - [ ] Cada topología tiene un `mcp-manifest.json` en `reference/architecture/topologies/<area>/<topology>/mcp/`.
-  - [ ] Cada manifest declara al menos una tool específica del dominio de la topología.
-  - [ ] El manifest es validable contra el esquema canónico MCP.
-  - [ ] La auditoría de cumplimiento reporta `COMPLETO` para MCP en cada topología.
+  - [x] Cada topología tiene un `mcp-manifest.json` en `reference/architecture/topologies/<area>/<topology>/mcp/`.
+  - [x] Cada manifest declara al menos una tool específica del dominio de la topología (agentic-ai: 3 tools; resto: 2 tools cada una).
+  - [x] El manifest es validable contra el esquema canónico MCP (`McpToolSchema` de `tool.interface.ts` con `name`, `description`, `inputSchema`).
+  - [x] La auditoría de cumplimiento reporta `COMPLETO` para MCP en cada topología.
+- **Closure Evidence:** Commit `8f14459b` (main). 8 archivos `mcp-manifest.json` creados con protocolo MCP 2025-03-26, tools, resources y prompts específicos por topología. Agentic-ai incluye `evolith-ruleset-explain` como tool exclusiva. Score global: 95% (160/168).
 
 #### GT-279
 

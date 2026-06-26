@@ -14,7 +14,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
 | [`GT-277`](./gap-reference-catalog.md#gt-277) | Topology OpenAPI specs — framework interfaces ausentes en las 8 topologías | `Architecture` | Cross | P1 | M | `DONE` |
-| [`GT-278`](./gap-reference-catalog.md#gt-278) | Topology MCP manifests — framework interfaces ausentes en las 8 topologías | `Architecture` | Cross | P1 | M | `PENDING` |
+| [`GT-278`](./gap-reference-catalog.md#gt-278) | Topology MCP manifests — framework interfaces ausentes en las 8 topologías | `Architecture` | Cross | P1 | M | `DONE` |
 | [`GT-279`](./gap-reference-catalog.md#gt-279) | Topology CLI flows — framework interfaces ausentes en las 8 topologías | `Architecture` | Cross | P1 | M | `PENDING` |
 | [`GT-274`](./gap-reference-catalog.md#gt-274) | Harden cleanup-temp-files against tracked-file deletion | `Harness` | Cross | P0 | S | `DONE` |
 | [`GT-267`](./gap-reference-catalog.md#gt-267) | Restore workspace build/test after Redis cache integration | `Core API/MCP` | Cross | P0 | M | `DONE` |
@@ -294,7 +294,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-246`](./gap-reference-catalog.md#gt-246) | Implement Chaos Mesh/Litmus experiments | `QA` | Cross | P3 | L | `DONE` |
 
 
-**Progress:** 277 / 279 done · 0 in progress · 2 pending · 0 deferred
+**Progress:** 278 / 279 done · 0 in progress · 1 pending · 0 deferred
 
 **Wave 2026-06-23 (Wilson deep audit III):** Added 14 new gaps `GT-212`…`GT-225` from the Wilson Audit Playbook covering: ADR status hygiene (GT-212), topology manifest metadata + operational budgets + guidance corpus (GT-213, GT-217, GT-219), REST controller observability + OpenAPI (GT-214, GT-215), OPA input-schema parity + per-topology test density (GT-216, GT-222), SDLC Phase 05 rollback + on-call templates (GT-218), CLI branch coverage + envelope format coverage + skip-list cleanup (GT-220, GT-224, GT-225), MCP HTTP audit logging (GT-221), and cross-surface parity e2e tests (GT-223).
 

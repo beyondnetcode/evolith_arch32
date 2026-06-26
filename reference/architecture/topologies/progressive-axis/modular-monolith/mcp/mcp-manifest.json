@@ -1,0 +1,72 @@
+{
+  "protocolVersion": "2025-03-26",
+  "topologyId": "modular-monolith",
+  "description": "MCP interface for the Modular Monolith topology. Provides tools for inspecting and validating modular monolith configurations, resources for manifest and ruleset access, and prompts for monolith-governed implementation and extraction-readiness guidance.",
+  "capabilities": {
+    "tools": {},
+    "resources": {},
+    "prompts": {}
+  },
+  "tools": [
+    {
+      "name": "evolith-topology-inspect",
+      "description": "Inspect a Modular Monolith topology configuration and return its parsed manifest, module boundaries, and corpus artifact references.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "configPath": {
+            "type": "string",
+            "description": "Path to the Modular Monolith configuration file"
+          },
+          "includeModules": {
+            "type": "boolean",
+            "description": "Include module boundary and ownership metadata"
+          }
+        },
+        "required": ["configPath"]
+      }
+    },
+    {
+      "name": "evolith-topology-validate",
+      "description": "Validate a Modular Monolith configuration against the topology ruleset and OPA policies, returning pass/fail per gate.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "configPath": {
+            "type": "string",
+            "description": "Path to the Modular Monolith configuration to validate"
+          },
+          "strictMode": {
+            "type": "boolean",
+            "description": "Fail on warnings, not just errors"
+          }
+        },
+        "required": ["configPath"]
+      }
+    }
+  ],
+  "resources": [
+    {
+      "uri": "evolith://topologies/modular-monolith/manifest",
+      "name": "Modular Monolith Topology Manifest",
+      "description": "Full topology manifest for Modular Monolith, including metadata, artifact references, and corpus configuration.",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "evolith://topologies/modular-monolith/rulesets",
+      "name": "Modular Monolith Rulesets",
+      "description": "All ruleset files for Modular Monolith: native rules JSON, OPA Rego policies, and WASM bundle.",
+      "mimeType": "application/json"
+    }
+  ],
+  "prompts": [
+    {
+      "name": "topology-aware-implementation",
+      "description": "Guides AI-assisted implementation to respect Modular Monolith topology constraints, bounded context isolation, and shared kernel rules."
+    },
+    {
+      "name": "extraction-readiness-review",
+      "description": "Evaluates whether a modular monolith module is ready for extraction into a distributed service, checking coupling, ownership, and contract boundaries."
+    }
+  ]
+}

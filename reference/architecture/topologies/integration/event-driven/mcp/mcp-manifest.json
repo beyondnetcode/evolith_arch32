@@ -1,0 +1,68 @@
+{
+  "protocolVersion": "2025-03-26",
+  "topologyId": "event-driven",
+  "description": "MCP interface for the Event-Driven topology. Provides tools for inspecting and validating event-driven configurations, resources for manifest and ruleset access, and prompts for event-governed implementation guidance.",
+  "capabilities": {
+    "tools": {},
+    "resources": {},
+    "prompts": {}
+  },
+  "tools": [
+    {
+      "name": "evolith-topology-inspect",
+      "description": "Inspect an Event-Driven topology configuration and return its parsed manifest, event channels, and corpus artifact references.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "configPath": {
+            "type": "string",
+            "description": "Path to the Event-Driven configuration file"
+          },
+          "includeChannels": {
+            "type": "boolean",
+            "description": "Include event channel and subscription metadata"
+          }
+        },
+        "required": ["configPath"]
+      }
+    },
+    {
+      "name": "evolith-topology-validate",
+      "description": "Validate an Event-Driven configuration against the topology ruleset and OPA policies, returning pass/fail per gate.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "configPath": {
+            "type": "string",
+            "description": "Path to the Event-Driven configuration to validate"
+          },
+          "strictMode": {
+            "type": "boolean",
+            "description": "Fail on warnings, not just errors"
+          }
+        },
+        "required": ["configPath"]
+      }
+    }
+  ],
+  "resources": [
+    {
+      "uri": "evolith://topologies/event-driven/manifest",
+      "name": "Event-Driven Topology Manifest",
+      "description": "Full topology manifest for Event-Driven, including metadata, artifact references, and corpus configuration.",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "evolith://topologies/event-driven/rulesets",
+      "name": "Event-Driven Rulesets",
+      "description": "All ruleset files for Event-Driven: native rules JSON, OPA Rego policies, and WASM bundle.",
+      "mimeType": "application/json"
+    }
+  ],
+  "prompts": [
+    {
+      "name": "topology-aware-implementation",
+      "description": "Guides AI-assisted implementation to respect Event-Driven topology constraints, message ordering, idempotency, and eventual consistency."
+    }
+  ]
+}

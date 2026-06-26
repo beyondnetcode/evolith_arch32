@@ -1,0 +1,72 @@
+{
+  "protocolVersion": "2025-03-26",
+  "topologyId": "distributed-modules",
+  "description": "MCP interface for the Distributed Modules topology. Provides tools for inspecting and validating distributed module configurations, resources for manifest and ruleset access, and prompts for distributed-governed implementation and extraction-readiness guidance.",
+  "capabilities": {
+    "tools": {},
+    "resources": {},
+    "prompts": {}
+  },
+  "tools": [
+    {
+      "name": "evolith-topology-inspect",
+      "description": "Inspect a Distributed Modules topology configuration and return its parsed manifest, service boundaries, and corpus artifact references.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "configPath": {
+            "type": "string",
+            "description": "Path to the Distributed Modules configuration file"
+          },
+          "includeServices": {
+            "type": "boolean",
+            "description": "Include service boundary and communication metadata"
+          }
+        },
+        "required": ["configPath"]
+      }
+    },
+    {
+      "name": "evolith-topology-validate",
+      "description": "Validate a Distributed Modules configuration against the topology ruleset and OPA policies, returning pass/fail per gate.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "configPath": {
+            "type": "string",
+            "description": "Path to the Distributed Modules configuration to validate"
+          },
+          "strictMode": {
+            "type": "boolean",
+            "description": "Fail on warnings, not just errors"
+          }
+        },
+        "required": ["configPath"]
+      }
+    }
+  ],
+  "resources": [
+    {
+      "uri": "evolith://topologies/distributed-modules/manifest",
+      "name": "Distributed Modules Topology Manifest",
+      "description": "Full topology manifest for Distributed Modules, including metadata, artifact references, and corpus configuration.",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "evolith://topologies/distributed-modules/rulesets",
+      "name": "Distributed Modules Rulesets",
+      "description": "All ruleset files for Distributed Modules: native rules JSON, OPA Rego policies, and WASM bundle.",
+      "mimeType": "application/json"
+    }
+  ],
+  "prompts": [
+    {
+      "name": "topology-aware-implementation",
+      "description": "Guides AI-assisted implementation to respect Distributed Modules topology constraints, network boundaries, and inter-service contracts."
+    },
+    {
+      "name": "extraction-readiness-review",
+      "description": "Evaluates whether a module is ready for extraction into a distributed deployment, checking coupling, ownership, and contract boundaries."
+    }
+  ]
+}

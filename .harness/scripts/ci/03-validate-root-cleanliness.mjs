@@ -17,6 +17,7 @@ const allowedFiles = new Set([
   "AGENTS.es.md",
   "CONTRIBUTING.md",
   "CONTRIBUTING.es.md",
+  "SECURITY.md",
   "LICENSE",
   "CHANGELOG.md",
   ".editorconfig",

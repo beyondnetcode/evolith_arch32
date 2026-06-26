@@ -180,6 +180,10 @@ businessTriggerId → knowledgeBriefId → capabilityId → epicCandidateId → 
 
 Selección de patrones, ADRs, bounded contexts, contratos de API e historias funcionales.
 
+**Contexto de topología:** La Fase 2 corresponde a la topología progresiva `distributed-modules` (F2). Declara `metadata.phase: F2` en `evolith.yaml` para activar las reglas de topología F2. Ejecuta `evolith validate --topology distributed-modules` para verificar las 8 reglas DM obligatorias antes de la revisión del gate. Ver [manifiesto de topología distributed-modules](../../architecture/topologies/progressive-axis/distributed-modules/topology.manifest.json) y [ADR-0045](../../architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md) para el requisito de Extraction Readiness Score (≥70%).
+
+Si se aplicó Fase 1.1 (KDD Nivel 2+), los Story Seeds y la Matriz de Candidatos a Épica se alimentan directamente en la escritura de Historias Funcionales de Fase 2. Refinar las semillas en Historias Funcionales aquí — no omitir este paso de refinamiento.
+
 | Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
 |---|---|---|---|---|
 | [Framework SDLC Orientado a Construcción](./02-engineering/construction-focused-sdlc-framework.es.md) | Estándar normativo que gobierna el progreso de fases, umbrales de calidad, inner build loop y Definition of Done | Normar la ejecución técnica | Estándar | Sí |

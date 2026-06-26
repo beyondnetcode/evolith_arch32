@@ -66,13 +66,17 @@ Templates enforce consistency across all satellite repositories. Satellite teams
 | **Phase 2 — Design** | Agile Backlog | [Open](./agile-backlog-template.md) | Included | Included | Product Owner |
 | **Phase 2 — Design** | CLI Impact Analysis | [Open](./cli-impact-analysis.md) | Included | Included | Platform Architect |
 | **Phase 1 — Conception** | PRD — Product Requirements Document | [Open](./prd-template.md) | [Source](./source/prd-template-source.md) | [Example](./examples/prd-example-ums.md) | Product Owner, Executive Sponsor |
-| **Phase 2 — Design** | DDD Model | [Open](./ddd-model-template.md) | Included | N/A | Architect, Tech Lead |
+| **Phase 2 — Design** | DDD Model (Bounded Context Map) | [Open](./ddd-model-template.md) | Included | N/A | Architect, Tech Lead |
 | **Phase 2 — Design** | ADR — Architecture Decision Record | [Open](./adr-template.md) | [Source](./source/adr-template-source.md) | [Example](./examples/adr-example-ums.md) | Software Architect, Principal Engineer |
 | **Phase 2 — Design** | Functional Story | [Open](./functional-story-template.md) | [Source](./source/functional-story-template-source.md) | [Example](./examples/functional-story-example-ums.md) | Product Owner, Business Analyst |
 | **Phase 3 — Construction** | Technical Story | [Open](./technical-story-template.md) | [Source](./source/technical-story-template-source.md) | [Example](./examples/technical-story-example-ums.md) | Backend Developer, Frontend Developer, Tech Lead |
 | **Phase 4 — Validation** | Test Summary Report | [Open](./test-summary-report-template.md) | [Source](./source/test-summary-report-template-source.md) | [Example](./examples/test-summary-report-example-ums.md) | QA / SDET, Tech Lead, Security Engineer |
 | **Phase 5 — Delivery** | Release Notes | [Open](./release-notes-template.md) | [Source](./source/release-notes-template-source.md) | [Example](./examples/release-notes-example-ums.md) | DevOps / SRE, Tech Lead |
 | **Cross-phase / Release Governance** | SDLC Executive Scorecard | [Open](./executive-scorecard-template.md) | [Source](./source/executive-scorecard-template-source.md) | [Example](./examples/executive-scorecard-example-ums.md) | Director, Tech Lead |
+
+> **Phase 2 Notes:**
+> - **DDD Model** — Produces the Bounded Context Map required by Gate F2.
+> - **Functional Story** — Authoring format for "Functional Stories" (Gate F2 evidence). Refine Story Seeds from Phase 1.1 KDD here.
 
 ---
 

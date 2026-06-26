@@ -42,6 +42,17 @@ export class BlockingCriteriaValidator {
       return !prdEvidence?.found || (moscowEvidence !== undefined && !moscowEvidence.found);
     }
 
+    if (criterionText.includes('technical constraints') || criterionText.includes('cloud quotas')) {
+      const tfcResult = evidenceResults.find(e => e.artifact === 'Technical Feasibility Canvas');
+      return !tfcResult?.found;
+    }
+
+    if (criterionText.includes('architecture constraints are ignored')) {
+      const prdResult = evidenceResults.find(e => e.artifact === 'PRD');
+      const canvasResult = evidenceResults.find(e => e.artifact === 'Discovery Canvas');
+      return !prdResult?.found && !canvasResult?.found;
+    }
+
     if (criterionText.includes('architecture decisions are undocumented')) {
       const adrEvidence = evidenceResults.find(e => e.artifact === 'ADR Registry');
       if (!adrEvidence?.found) return true;

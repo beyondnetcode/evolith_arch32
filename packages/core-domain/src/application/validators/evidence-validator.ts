@@ -56,6 +56,9 @@ export class EvidenceValidator {
 
   resolveArtifactPath(artifact: string, projectPath: string): string {
     const artifactPaths: Record<string, string> = {
+      // Template-existence check: validates the reference template exists in core.
+      // Actual satellite-produced PRD location should be declared in evolith.yaml
+      // (tracked as tech debt — see phase-gate-validator redesign backlog).
       'PRD': path.join(projectPath, 'reference', 'governance', 'sdlc', '04-artifact-templates', 'prd-template.md'),
       'Discovery Canvas': path.join(projectPath, 'reference', 'governance', 'sdlc', '04-artifact-templates', 'discovery-canvas-template.md'),
       'Technical Feasibility Canvas': path.join(projectPath, 'reference', 'governance', 'sdlc', '04-artifact-templates', 'technical-feasibility-template.md'),
@@ -65,6 +68,8 @@ export class EvidenceValidator {
       'ADR Registry': path.join(projectPath, 'reference', 'architecture', 'adrs', 'adr-matrix.json'),
       'Functional Stories': path.join(projectPath, 'reference', 'governance', 'sdlc', '04-artifact-templates', 'functional-story-template.md'),
       'Bounded Context Map': path.join(projectPath, 'reference', 'architecture', 'contexts', 'bounded-context-map.md'),
+      'Reference Blueprint Alignment': path.join(projectPath, 'reference', 'architecture', 'blueprints', 'reference-blueprint.md'),
+      'Simplicity Checklist Phase 1': path.join(projectPath, 'reference', 'architecture', 'blueprints', 'simplicity-checklist-phase-01.md'),
       'Technical Stories': path.join(projectPath, 'reference', 'governance', 'sdlc', '04-artifact-templates', 'technical-story-template.md'),
       'Test Summary Report': path.join(projectPath, 'reference', 'governance', 'sdlc', '04-artifact-templates', 'test-summary-report-template.md'),
       'Release Notes': path.join(projectPath, 'reference', 'governance', 'sdlc', '04-artifact-templates', 'release-notes-template.md'),

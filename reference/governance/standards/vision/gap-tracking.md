@@ -4,7 +4,7 @@
 
 **Status:** Active Tracking
 **Owner:** Evolith Architecture Board
-**Last Updated:** 2026-06-26 (GT-276 bilingual dashboard area pairing)
+**Last Updated:** 2026-06-26 (GT-277…GT-279 topology framework interface gaps)
 **Gap Details:** [Gap Reference Catalog](./gap-reference-catalog.md)
 
 This board is the single source of truth for technical debt, gaps, opportunities, enablers, priority, and status. Select a gap ID to open its problem statement, purpose, evidence, closure criteria, and references.
@@ -12,7 +12,10 @@ This board is the single source of truth for technical debt, gaps, opportunities
 > One table with every gap and tracked activity. `GT-*` IDs link to their full detail in the catalog; `MT-A*` IDs link to the supporting Multi-Topology implementation plan, but this table remains the canonical status source. Order: pending first (by criticality P0→P3, then complexity XS→XL), then completed (same criteria). GitHub renders Markdown statically (no interactive sorting or search): the **Component** column categorizes and GitHub file search (`/`) finds an ID or term.
 
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
-|---|---|---|:---:|:---:|:---:|:---:|
+|---|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| [`GT-277`](./gap-reference-catalog.md#gt-277) | Topology OpenAPI specs — framework interfaces ausentes en las 8 topologías | `Architecture` | Cross | P1 | M | `PENDING` |
+| [`GT-278`](./gap-reference-catalog.md#gt-278) | Topology MCP manifests — framework interfaces ausentes en las 8 topologías | `Architecture` | Cross | P1 | M | `PENDING` |
+| [`GT-279`](./gap-reference-catalog.md#gt-279) | Topology CLI flows — framework interfaces ausentes en las 8 topologías | `Architecture` | Cross | P1 | M | `PENDING` |
 | [`GT-274`](./gap-reference-catalog.md#gt-274) | Harden cleanup-temp-files against tracked-file deletion | `Harness` | Cross | P0 | S | `DONE` |
 | [`GT-267`](./gap-reference-catalog.md#gt-267) | Restore workspace build/test after Redis cache integration | `Core API/MCP` | Cross | P0 | M | `DONE` |
 | [`GT-275`](./gap-reference-catalog.md#gt-275) | Reconcile closure evidence registry with canonical tracking semantics | `Governance` | Cross | P0 | M | `DONE` |
@@ -291,7 +294,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-246`](./gap-reference-catalog.md#gt-246) | Implement Chaos Mesh/Litmus experiments | `QA` | Cross | P3 | L | `DONE` |
 
 
-**Progress:** 276 / 276 done · 0 in progress · 0 pending · 0 deferred
+**Progress:** 276 / 279 done · 0 in progress · 3 pending · 0 deferred
 
 **Wave 2026-06-23 (Wilson deep audit III):** Added 14 new gaps `GT-212`…`GT-225` from the Wilson Audit Playbook covering: ADR status hygiene (GT-212), topology manifest metadata + operational budgets + guidance corpus (GT-213, GT-217, GT-219), REST controller observability + OpenAPI (GT-214, GT-215), OPA input-schema parity + per-topology test density (GT-216, GT-222), SDLC Phase 05 rollback + on-call templates (GT-218), CLI branch coverage + envelope format coverage + skip-list cleanup (GT-220, GT-224, GT-225), MCP HTTP audit logging (GT-221), and cross-surface parity e2e tests (GT-223).
 
@@ -308,6 +311,8 @@ This board is the single source of truth for technical debt, gaps, opportunities
 **Wave 2026-06-24 (architectural discovery):** Added `GT-266` — API key provisioning service for MCP HTTP transport, discovered while analyzing GT-250 external-consumption requirements.
 
 **Wave 2026-06-25 (Wilson production-readiness audit):** Added 6 new gaps `GT-267`…`GT-272` covering red workspace build/test after Redis cache integration (GT-267), missing CI validator scripts referenced by workflows/rules (GT-268), ADR-0073 contract roundtrip failure (GT-269), mutable/insecure infrastructure defaults (GT-270), Helm workload hardening (GT-271), and OPA bundle integrity for sidecars (GT-272).
+
+**Wave 2026-06-25 (Topology compliance audit):** Added 3 new gaps `GT-277`…`GT-279` from the automated topology compliance audit playbook (`.harness/playbooks/topology-compliance-audit.mjs`). All 8 accepted topologies scored 18/21 (86%) — missing the 3 mandatory framework interfaces: OpenAPI specs, MCP tool manifests, and CLI flow files. The audit script is now executable standalone and registered as a Wilson-executable tool via `run-wilson-audit.mjs --topology`.
 
 **Wave 2026-06-25 (Wilson control-plane audit):** Added 3 new gaps `GT-274`…`GT-276`, reopened `GT-267` because current Core API/MCP/CLI tests still fail, and reopened `GT-272` because the Helm defaults still fetch unsigned HTTP OPA bundles. The audit explicitly covered all accepted topologies (`modular-monolith`, `distributed-modules`, `microservices`, `serverless`, `event-driven`, `data-mesh`, `edge-computing`, `agentic-ai`) and both rule engines: topology manifests passed, Native/OPA rule coverage passed, topology OPA tests passed, and `EVOLITH_PARITY_FULL=true node .harness/scripts/ci/27-opa-parity-gate.mjs` evaluated 16 fixtures with 0 drift.
 

@@ -157,6 +157,26 @@ Piensa como arquitecto empresarial, platform engineer, DevOps lead, security eng
 
 ---
 
+## La Auditoría de Cumplimiento de Topologías
+
+Un script ejecutable que Winston puede ejecutar a demanda para evaluar el cumplimiento de las 8 topologías aceptadas contra la estructura canónica del corpus:
+
+```bash
+# Informe Markdown (legible para humanos)
+node .harness/playbooks/topology-compliance-audit.mjs --markdown
+
+# Informe JSON (para máquinas)
+node .harness/playbooks/topology-compliance-audit.mjs
+```
+
+La auditoría evalúa cada topología en 21 puntos de control (docs EN/ES, OPA Rego, reglas, WASM, schema, manifiesto, fixtures, parity fixtures, OpenAPI, MCP, CLI) y produce una puntuación global. Usa la bandera `--topology` con `run-wilson-audit.mjs`:
+
+```bash
+node .harness/scripts/run-wilson-audit.mjs --topology
+```
+
+---
+
 ## The BMAD Agent Evolution Prompt (English)
 
 ```markdown

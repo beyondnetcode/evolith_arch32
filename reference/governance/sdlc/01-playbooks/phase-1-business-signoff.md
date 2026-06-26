@@ -20,6 +20,7 @@ Before opening the gate, confirm:
 - The initiative is registered in the portfolio backlog with a unique identifier.
 - An Executive Sponsor and a Product Owner are nominated and acknowledged.
 - The applicable Evolith Reference Blueprint and topology baseline are identified.
+- Phase 1.1 (Knowledge-First Discovery) adoption level has been declared. If Level ≥ 1 was selected, the Discovery Readiness Gate outcome (PASS or CONDITIONAL) must be on file. A FAIL result blocks this gate. See [Phase 1.1 Playbook](./phase-1.1-knowledge-first-discovery.md).
 
 If any pre-condition is missing, **do not start the gate**. Returning later avoids re-work.
 
@@ -32,10 +33,10 @@ Each row below maps to a `mandatoryEvidence` entry in the Phase 1 gate. Use the 
 | # | Mandatory Evidence | Template / Schema | Acceptance Criterion |
 |---|---|---|---|
 | 1 | PRD — Product Requirements Document | [`prd-template.md`](../04-artifact-templates/prd-template.md) · [`prd.schema.json`](../../../../rulesets/schema/prd.schema.json) | `status = Approved`, `approvalEvidence` populated, `approvalDate` filled |
-| 2 | Discovery Canvas | Initiative registry entry | Customer pains, expected value, and target persona documented |
+| 2 | Discovery Canvas | Initiative registry entry | Customer pains, expected value, and target persona documented. If Phase 1.1 Level ≥ 1 was applied, this artifact must reflect the Discovery Knowledge Brief. |
 | 3 | Technical Feasibility Canvas | [`technical-feasibility.schema.json`](../../../../rulesets/schema/technical-feasibility.schema.json) | Quality attributes and NFRs recorded with measurable thresholds |
-| 4 | Ballpark Estimation | T-Shirt sizing log | Team composition and sizing assumptions stated |
-| 5 | MoSCoW Prioritization Matrix | MoSCoW worksheet | At least one MUST item, valid Must/Should/Could/Won't distribution |
+| 4 | Ballpark Estimation | T-Shirt sizing log | Team composition and sizing assumptions stated. If Phase 1.1 Level ≥ 2 was applied, Story Seed Bank sizing must be incorporated. |
+| 5 | MoSCoW Prioritization Matrix | MoSCoW worksheet | At least one MUST item, valid Must/Should/Could/Won't distribution. If Phase 1.1 Level ≥ 2 was applied, the Epic Candidate Matrix serves as this artifact — no standalone MoSCoW worksheet required. |
 | 6 | Build-versus-Compose Analysis | [`build-vs-compose.schema.json`](../../../../rulesets/schema/build-vs-compose.schema.json) | Adopt / Embed / Integrate / Extend / Build / Reject disposition with three-year cost, licensing, tenant isolation, replaceability, and PoC requirements (Product Vision §5.3) |
 
 ---

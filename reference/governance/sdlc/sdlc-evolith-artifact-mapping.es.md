@@ -78,18 +78,14 @@ flowchart LR
 
 | Artefacto | Ubicación | Por qué es requerido |
 |---|---|---|
-| **Discovery Canvas** | [discovery-canvas-template.es.md](./04-artifact-templates/discovery-canvas-template.es.md) | Registro de iniciativa, dolor del cliente y valor esperado. |
+| **Discovery Canvas** | [discovery-canvas-template.es.md](./04-artifact-templates/discovery-canvas-template.es.md) | Registro de iniciativa, dolor del cliente y valor esperado. En KDD Nivel 1+, informar este artefacto desde el Discovery Knowledge Brief. |
 | **Technical Feasibility Canvas** | [technical-feasibility-template.es.md](./04-artifact-templates/technical-feasibility-template.es.md) | Factibilidad técnica, cuotas de cloud y NFRs. |
-| **Ballpark Estimation** | [ballpark-estimation-template.es.md](./04-artifact-templates/ballpark-estimation-template.es.md) | Estimación T-Shirt Sizing de esfuerzo y equipo. |
-| **Historia de Usuario Evolith** | [evolith-user-story-template.es.md](./04-artifact-templates/evolith-user-story-template.es.md) | Definición atómica con criterios BDD y separación técnica. |
-| **Agile Backlog** | [agile-backlog-template.es.md](./04-artifact-templates/agile-backlog-template.es.md) | Agrupación versionada de historias listas para priorización. |
-| **Análisis de Impacto CLI** | [cli-impact-analysis.es.md](./04-artifact-templates/cli-impact-analysis.es.md) | Capacidades requeridas por el CLI para scaffolding y handoff. |
+| **Ballpark Estimation** | [ballpark-estimation-template.es.md](./04-artifact-templates/ballpark-estimation-template.es.md) | Estimación T-Shirt Sizing de esfuerzo y equipo. En KDD Nivel 2+, incorporar sizing del Story Seed Bank. |
 | **PRD — Documento de Requisitos de Producto** | [prd-template.es.md](./04-artifact-templates/prd-template.es.md) | Captura alcance, personas, objetivos, restricciones, no-objetivos y evidencia de aprobación. |
-| **Directivas Arquitectónicas** | [architectural-directives.md](../standards/vision/architectural-directives.md) | Establece restricciones no negociables que acotan todo el alcance del producto. |
-| **Taxonomía de Repositorio** | [repository-taxonomy.md](../standards/repository-taxonomy.md) | Define estructura de repositorio, prefijos de nombres y clasificación de artefactos antes de crear archivos o módulos. |
-| **Baseline Agnóstica** | [authoritative-tech-stack-agnostic.md](../../architecture/blueprints/authoritative-tech-stack-agnostic.md) | Define la baseline neutral a tecnología que todo producto debe cumplir. |
-| **ADR-0047 — Selección de Monolito Modular** | [ADR-0047](../../architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.es.md) | Confirma la topología inicial obligatoria salvo que criterios de extracción aprobados ya estén satisfechos. |
-| **Manifiesto de Ingeniería** | [engineering-manifesto.md](../standards/engineering/engineering-manifesto.md) | Define expectativas de ingeniería del equipo antes de redactar contratos de desarrollo. |
+| **Matriz de Priorización MoSCoW** | [plantilla MoSCoW](./04-artifact-templates/ballpark-estimation-template.es.md) | Análisis MoSCoW con al menos un ítem MUST. En KDD Nivel 2+, derivado de la Matriz de Candidatos a Épica. |
+| **Análisis Build-versus-Compose** | [build-vs-compose.schema.json](../../../rulesets/schema/build-vs-compose.schema.json) | Disposición Adopt/Embed/Integrate/Extend/Build/Reject según Product Vision §5.3. |
+
+> **Baseline de Cumplimiento Evolith (§7):** Directivas Arquitectónicas, Taxonomía de Repositorio, Baseline Agnóstica, ADR-0047 y Manifiesto de Ingeniería son estándares transversales gobernados por la Compliance Baseline. Consúltese durante la Fase 1 pero no se producen aquí — ya están gobernados.
 
 ### Artefactos Opcionales
 
@@ -136,6 +132,9 @@ flowchart LR
 | **Estándar de Escritura de Historias Funcionales** | [functional-story-writing-standard.es.md](./03-documentation/functional-story-writing-standard.es.md) | Asegura historias legibles por negocio y separación de detalles de implementación. |
 | **Buenas Prácticas de Documentación SDLC** | [sdlc-documentation-best-practices.es.md](./03-documentation/sdlc-documentation-best-practices.es.md) | Gobierna cómo se producen, versionan y revisan los artefactos de diseño. |
 | **Checklist de Simplicidad Fase 1** | [simplicity-checklist-phase-01.md](../../architecture/blueprints/simplicity-checklist-phase-01.md) | Bloquea sobre-ingeniería antes de aprobar la Baseline de Diseño. |
+| **Historia de Usuario Evolith** | [evolith-user-story-template.es.md](./04-artifact-templates/evolith-user-story-template.es.md) | Definición atómica de historia con criterios BDD. Se produce después de definir las Historias Funcionales. |
+| **Agile Backlog** | [agile-backlog-template.es.md](./04-artifact-templates/agile-backlog-template.es.md) | Backlog refinado producido a partir de Historias Funcionales. |
+| **Análisis de Impacto CLI** | [cli-impact-analysis.es.md](./04-artifact-templates/cli-impact-analysis.es.md) | Capacidades CLI requeridas una vez que el diseño está baselined. |
 
 ### Artefactos Opcionales o Condicionales
 
@@ -267,11 +266,19 @@ La siguiente matriz ofrece una vista de una página de la densidad de artefactos
 | Artefacto | F1 | F2 | F3 | F4 | F5 |
 |---|:---:|:---:|:---:|:---:|:---:|
 | PRD | **R** | — | — | — | — |
-| Directivas Arquitectónicas | **R** | — | — | — | — |
-| Baseline Agnóstica | **R** | **R** | **R** | **R** | **R** |
-| Taxonomía de Repositorio | **R** | **R** | **R** | **R** | **R** |
-| ADR-0047 — Monolito Modular | **R** | O | — | — | — |
-| Manifiesto de Ingeniería | **R** | **R** | **R** | **R** | **R** |
+| Discovery Canvas | **R** | — | — | — | — |
+| Technical Feasibility Canvas | **R** | — | — | — | — |
+| Ballpark Estimation | **R** | — | — | — | — |
+| Matriz de Priorización MoSCoW | **R** | — | — | — | — |
+| Análisis Build-versus-Compose | **R** | — | — | — | — |
+| Historia de Usuario Evolith | — | **R** | — | — | — |
+| Agile Backlog | — | **R** | — | — | — |
+| Análisis de Impacto CLI | — | **R** | — | — | — |
+| Directivas Arquitectónicas | — | — | — | — | — |
+| Baseline Agnóstica | — | — | — | — | — |
+| Taxonomía de Repositorio | — | — | — | — | — |
+| ADR-0047 — Monolito Modular | — | O | — | — | — |
+| Manifiesto de Ingeniería | — | — | — | — | — |
 | Plantilla / Estándar de Historia Funcional | O | **R** | — | — | — |
 | Blueprint de Referencia | — | **R** | **R** | — | — |
 | Tech Stack Autoritativo | — | **R** | **R** | — | — |

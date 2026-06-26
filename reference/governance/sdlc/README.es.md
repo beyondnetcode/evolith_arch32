@@ -131,16 +131,20 @@ Definición de alcance, perfiles de usuario, mapeo de OKRs y alineación de rest
 
 **Flujo:**
 
-```
-Idea / Disparador de Negocio
-  → 01.1 Knowledge-First Discovery (Niveles 1-4)
-    → Mapa de Capacidades
-      → Matriz de Candidatos a Épica
-        → Banco de Semillas de Historia
-          → Estimación Ballpark
-            → Agile Backlog
-              → Diseño / Arquitectura
-                → Construcción
+```mermaid
+flowchart TD
+    T[Idea / Disparador de Negocio] --> R[Registrar iniciativa\nNominar Sponsor y PO]
+    R --> K{Declarar Nivel\nde Adopción KDD}
+    K -->|Nivel 0\nomitir| D[Preparar artefactos Gate F1\ndirectamente]
+    K -->|Nivel 1+| L1[Discovery Knowledge Brief\nLog de Supuestos · Context Pack]
+    L1 -->|Nivel 2+| L2[Mapa de Capacidades\nMatriz de Candidatos a Épica\nBanco de Semillas de Historia]
+    L2 -->|Nivel 3+| L3[Restricciones arquitectónicas\nGate de Preparación de Discovery]
+    L3 -->|FAIL| L1
+    L3 -->|PASS / CONDITIONAL| D
+    L1 -->|Solo Nivel 1| D
+    D --> G1[PRD · Discovery Canvas\nFactibilidad Técnica · Ballpark\nMoSCoW · Build-vs-Compose]
+    G1 --> GATE([Gate F1: Aprobación de Negocio])
+    GATE --> P2[Fase 2 — Diseño]
 ```
 
 **Artefactos Clave:**

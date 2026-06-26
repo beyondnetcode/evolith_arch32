@@ -188,7 +188,7 @@ export class ArchitectureDriftService {
   }
 
   private detectActualLevel(projectPath: string, corePath: string): string {
-    const srcPath = path.join(projectPath, 'src');
+    const _srcPath = path.join(projectPath, 'src');
     const hasDockerfile = this.fs.existsSync(path.join(projectPath, 'Dockerfile'));
     const hasContracts = this.fs.existsSync(path.join(projectPath, 'contracts'));
     const hasEvents = this.fs.existsSync(path.join(projectPath, 'events')) ||

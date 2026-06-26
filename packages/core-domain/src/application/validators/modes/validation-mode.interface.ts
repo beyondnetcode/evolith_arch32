@@ -3,8 +3,6 @@
  * Validation mode interface for multi-entry-point validation.
  */
 
-import { RuleEvaluation, EvaluationVerdict } from '../../../domain/satellite-manifest';
-
 export type ValidationModeName = 'sdlc' | 'architecture' | 'ruleset' | 'adr' | 'adhoc';
 
 export interface ValidationContext {

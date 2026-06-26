@@ -46,7 +46,7 @@ export class UpgradeCommand extends BaseEvolithCommand {
       this.printUpgradePlan(plan);
 
       if (options?.dryRun) {
-        const result = await service.executeUpgrade({
+        const _result = await service.executeUpgrade({
           satellitePath,
           corePath,
           dryRun: true,

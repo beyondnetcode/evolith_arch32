@@ -1,5 +1,5 @@
-import { logger, LogLevel } from './structured-logger';
-import { EvolithError, isEvolithError, getErrorContext, getErrorCode } from '@evolith/core-domain/domain/errors';
+import { logger } from './structured-logger';
+import { EvolithError, isEvolithError } from '@evolith/core-domain/domain/errors';
 
 export interface ErrorReport {
   id: string;

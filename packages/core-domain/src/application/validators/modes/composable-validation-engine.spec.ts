@@ -3,7 +3,7 @@
  */
 
 import { ComposableValidationEngine } from './composable-validation-engine';
-import { ValidationContext, ValidationMode, ModeValidationResult } from './validation-mode.interface';
+import { ValidationContext, ValidationMode } from './validation-mode.interface';
 
 describe('ComposableValidationEngine', () => {
   let engine: ComposableValidationEngine;

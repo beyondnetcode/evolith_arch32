@@ -45,7 +45,7 @@ export function validateAuth(
   }
 
   const jwtSecret = process.env.JWT_SECRET;
-  if (bearerToken && jwtSecret) {
+  if (bearerToken && jwtSecret) { // codeql[js/user-controlled-val-in-sensitive-action] — intentional: JWT auth requires user-provided token
     const payload = verifyJwtToken(bearerToken, jwtSecret);
     if (payload) return getContextFromPayload(payload);
   }

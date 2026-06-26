@@ -123,7 +123,7 @@ export class MoscowPrioritizationService {
         if (entry.endsWith('.json')) {
           const phase = entry.replace('.json', '');
           const analysisPath = path.join(moscoDir, entry);
-          const stat = await this.fs.stat(analysisPath);
+          const _stat = await this.fs.stat(analysisPath);
           analyses.push({
             phase,
             path: analysisPath,

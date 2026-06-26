@@ -31,7 +31,7 @@ describe('Validate Command (e2e)', () => {
 
     satellitePath = path.join(os.tmpdir(), `evolith-validate-e2e-${process.pid}`);
     await fs.ensureDir(satellitePath);
-    await fs.writeFile(path.join(satellitePath, 'evolith.yaml'), [
+    await fs.writeFile(path.join(satellitePath, 'evolith.yaml'), [ // codeql[js/insecure-temporary-file] — intentional: e2e test fixture in temp dir
       'coreRef:',
       '  version: "1.0.0"',
       'governance:',

@@ -1,4 +1,4 @@
-import { Command, Option } from 'nest-commander';
+import { Command } from 'nest-commander';
 import chalk from 'chalk';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 

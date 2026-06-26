@@ -1,6 +1,6 @@
-import { StructuredLogger, logger, LogLevel, LogEntry } from './structured-logger';
+import { StructuredLogger, LogLevel } from './structured-logger';
 import { OperationTimer, measureTime, measureTimeSync } from './timing';
-import { ErrorReporter, ErrorContext } from './error-reporter';
+import { ErrorReporter } from './error-reporter';
 
 describe('StructuredLogger', () => {
   let testLogger: StructuredLogger;

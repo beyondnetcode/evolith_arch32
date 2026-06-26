@@ -32,7 +32,7 @@ export class CommandExecutor implements ICommandExecutor {
         ? { cwd, env: { ...process.env }, timeout: 120000 }
         : { env: { ...process.env }, timeout: 120000 };
 
-      const { stdout, stderr } = await execAsync(command, options);
+      const { stdout, stderr: _stderr } = await execAsync(command, options);
       return CommandResult.ok(stdout);
     } catch (error: unknown) {
       const err = error as { code?: number; message?: string; stderr?: string };

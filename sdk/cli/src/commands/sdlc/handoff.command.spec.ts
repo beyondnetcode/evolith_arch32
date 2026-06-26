@@ -40,9 +40,6 @@ const mockSpinner = p.spinner as jest.Mock;
 const mockIntro = p.intro as jest.Mock;
 const mockOutro = p.outro as jest.Mock;
 const mockGroup = p.group as jest.Mock;
-const mockNote = p.note as jest.Mock;
-const mockCancel = p.cancel as jest.Mock;
-const mockLog = p.log as jest.Mocked<unknown>;
 
 const mockSpinnerInstance = {
   start: jest.fn(),
@@ -57,18 +54,6 @@ const mockFs = {
   ensureDir: jest.fn(),
   writeFile: jest.fn(),
   readFile: jest.fn(),
-};
-
-const mockContainer = {
-  createFileSystem: jest.fn().mockReturnValue(mockFs),
-  createLogger: jest
-    .fn()
-    .mockReturnValue({
-      info: jest.fn(),
-      warn: jest.fn(),
-      error: jest.fn(),
-      debug: jest.fn(),
-    }),
 };
 
 const mockToolCatalog = {

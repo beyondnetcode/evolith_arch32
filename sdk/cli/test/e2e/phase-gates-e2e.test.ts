@@ -1,7 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
-import { execSync } from 'child_process';
 
 describe('Phase Gate E2E Tests', () => {
   let tempDir: string;

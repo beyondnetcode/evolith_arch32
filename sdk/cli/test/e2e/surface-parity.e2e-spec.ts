@@ -52,24 +52,6 @@ function parseJsonEnvelope(output: string): Record<string, unknown> | null {
   }
 }
 
-function assertSuccessEnvelopeShape(envelope: Record<string, unknown>, command: string): void {
-  expect(envelope).toHaveProperty('success');
-  expect(envelope).toHaveProperty('data');
-  expect(envelope).toHaveProperty('meta');
-  expect(envelope.success).toBe(true);
-
-  const meta = envelope.meta as Record<string, unknown>;
-  expect(meta).toHaveProperty('command');
-  expect(meta).toHaveProperty('executedAt');
-  expect(meta).toHaveProperty('durationMs');
-  expect(meta).toHaveProperty('correlationId');
-  expect(meta).toHaveProperty('schemaVersion');
-  expect(meta.command).toBe(command);
-  expect(typeof meta.durationMs).toBe('number');
-  expect(typeof meta.correlationId).toBe('string');
-  expect(meta.schemaVersion).toBe('1.0.0');
-}
-
 function assertErrorEnvelopeShape(envelope: Record<string, unknown>): void {
   expect(envelope).toHaveProperty('success');
   expect(envelope).toHaveProperty('error');
@@ -91,8 +73,6 @@ interface OperationFixture {
   setup?: (dir: string) => Promise<void>;
   teardown?: (dir: string) => Promise<void>;
 }
-
-const CORE_FIXTURE_PATH = path.join(__dirname, '../fixtures/core-repo');
 
 const OPERATIONS: OperationFixture[] = [
   {

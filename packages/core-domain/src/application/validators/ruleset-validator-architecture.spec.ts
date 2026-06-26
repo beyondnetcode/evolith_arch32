@@ -1,4 +1,4 @@
-import { RulesetValidatorService, ArchitectureValidationResult } from './ruleset-validator.service';
+import { RulesetValidatorService } from './ruleset-validator.service';
 import { IFileSystem, ILogger } from '../../domain/interfaces';
 import { TopologyCatalogService } from '../services/topology-catalog.service';
 

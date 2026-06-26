@@ -1,6 +1,5 @@
 import { spawn, ChildProcess } from 'child_process';
 import * as path from 'path';
-import * as fs from 'fs-extra';
 import * as http from 'http';
 
 const CLI_PATH = path.join(__dirname, '../../dist/main.js');

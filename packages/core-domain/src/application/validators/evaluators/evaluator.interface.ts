@@ -1,5 +1,4 @@
 import { NormalizedRule } from '../../../domain/models/normalized-rule';
-import { ValidationIssue } from '../ruleset-validator.service';
 
 export interface EvaluationContext {
   satellitePath: string;

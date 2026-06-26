@@ -46,7 +46,6 @@ import { ValidateSatelliteUseCase } from '@evolith/core-domain/application/use-c
 import { RulesetValidatorService } from '@evolith/core-domain/application/validators/ruleset-validator.service';
 import { OutputFormatterService } from '../../infrastructure/formatters/output-formatter.service';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
-import { logger } from '../../infrastructure/observability';
 
 const mockExecute = jest.fn();
 const mockValidateArchitecture = jest.fn();

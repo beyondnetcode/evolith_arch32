@@ -56,33 +56,6 @@ function httpGet(url) {
   });
 }
 
-/** POST JSON to url. Returns { status }. */
-function httpPost(url, payload) {
-  return new Promise((resolve, reject) => {
-    const body = JSON.stringify(payload);
-    const opts = new URL(url);
-    const req = http.request(
-      {
-        hostname: opts.hostname,
-        port: Number(opts.port),
-        path: opts.pathname,
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Content-Length': Buffer.byteLength(body),
-        },
-      },
-      (res) => {
-        res.resume(); // drain
-        resolve({ status: res.statusCode });
-      },
-    );
-    req.on('error', reject);
-    req.write(body);
-    req.end();
-  });
-}
-
 /**
  * Retry GET /health until HTTP 200 or timeout (ms).
  */

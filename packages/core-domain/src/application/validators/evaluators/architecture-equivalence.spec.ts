@@ -1,8 +1,5 @@
-import { RuleEvaluationEngine } from '../rule-evaluation-engine';
-import { OpaEvaluator } from './opa-evaluator';
 import { ArchitectureRuleHandler } from './handlers/architecture-rule.handler';
 import { IFileSystem } from '../../../domain/interfaces';
-import * as path from 'path';
 
 const createMockFileSystem = (overrides?: Partial<IFileSystem>): IFileSystem => {
   const mock = {

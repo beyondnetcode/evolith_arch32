@@ -1,11 +1,3 @@
-import { PhaseService } from '../../domain/services';
-import { ICatalogLoader, IFileSystem } from '../../domain/interfaces';
-import { IPlatformProviders } from '../ports/platform-detection.port';
-import { IWebhookNotifier } from '../ports/webhook-notifier.port';
-import { PlatformNotFoundError, ValidationError } from '../../domain/errors';
-
-import { PhaseGateValidatorService, GateValidationResult } from '../../application/validators/phase-gate-validator.service';
-
 export interface InitProjectInput {
   name: string;
   runtime: string;

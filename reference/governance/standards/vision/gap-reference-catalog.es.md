@@ -2698,8 +2698,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** La ruta `rulesets/engineering-manifesto` no existe.
 - **Complejidad:** S
 - **Hecho Cuando:**
-  - [ ] El archivo o directorio requerido existe en la ruta especificada.
-  - [ ] Los tests verifican la implementación.
+  - [x] El archivo o directorio requerido existe en la ruta especificada.
+  - [x] Los tests verifican la implementación.
 
 #### GT-289
 

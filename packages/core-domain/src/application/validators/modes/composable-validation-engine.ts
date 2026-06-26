@@ -7,6 +7,7 @@
  */
 
 import { ValidationContext, ValidationMode, ModeValidationResult } from './validation-mode.interface';
+import { EvolithConfigService, EvolithConfig } from '../../services/evolith-config.service';
 
 export interface ComposableValidationResult {
   status: 'passed' | 'failed' | 'warning';
@@ -16,10 +17,16 @@ export interface ComposableValidationResult {
   passedRules: number;
   failedRules: number;
   performanceMs: number;
+  config?: EvolithConfig;
 }
 
 export class ComposableValidationEngine {
   private modes: ValidationMode[] = [];
+  private configService: EvolithConfigService;
+
+  constructor() {
+    this.configService = new EvolithConfigService();
+  }
 
   registerMode(mode: ValidationMode): void {
     this.modes.push(mode);
@@ -43,27 +50,76 @@ export class ComposableValidationEngine {
 
   async execute(context: ValidationContext): Promise<ComposableValidationResult> {
     const startTime = Date.now();
-    const modesToRun = this.resolveModes(context);
+
+    let config: EvolithConfig | undefined;
+    try {
+      config = await this.configService.loadConfig(context.satellitePath);
+    } catch {
+      // Config is optional, continue without it
+    }
+
+    const mergedContext: ValidationContext = {
+      ...context,
+      topology: context.topology || config?.topology,
+      phase: context.phase || config?.phase,
+      rulesetId: context.rulesetId || config?.rulesets?.[0],
+      adrId: context.adrId || config?.adrRules?.[0],
+      engine: context.engine || config?.engine || 'native',
+    };
+
+    const modesToRun = this.resolveModes(mergedContext);
     const modeResults: ModeValidationResult[] = [];
 
-    const modePromises = modesToRun.map(mode => mode.validate(context));
-    const results = await Promise.allSettled(modePromises);
+    const shouldParallel = config?.validation?.parallel !== false;
+    const timeout = config?.validation?.timeout || 2000;
 
-    for (const result of results) {
-      if (result.status === 'fulfilled') {
-        modeResults.push(result.value);
-      } else {
-        modeResults.push({
-          mode: 'adhoc',
-          status: 'failed',
-          rulesChecked: 0,
-          issues: [{
-            ruleId: 'MODE_EXECUTION_ERROR',
-            status: 'fail',
-            message: result.reason?.message || 'Mode execution failed',
-            severity: 'error',
-          }],
-        });
+    if (shouldParallel) {
+      const modePromises = modesToRun.map(mode =>
+        Promise.race([
+          mode.validate(mergedContext),
+          new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error(`Mode ${mode.name} timed out after ${timeout}ms`)), timeout),
+          ),
+        ]),
+      );
+
+      const results = await Promise.allSettled(modePromises);
+
+      for (const result of results) {
+        if (result.status === 'fulfilled') {
+          modeResults.push(result.value);
+        } else {
+          modeResults.push({
+            mode: 'adhoc',
+            status: 'failed',
+            rulesChecked: 0,
+            issues: [{
+              ruleId: 'MODE_EXECUTION_ERROR',
+              status: 'fail',
+              message: result.reason?.message || 'Mode execution failed',
+              severity: 'error',
+            }],
+          });
+        }
+      }
+    } else {
+      for (const mode of modesToRun) {
+        try {
+          const result = await mode.validate(mergedContext);
+          modeResults.push(result);
+        } catch (error) {
+          modeResults.push({
+            mode: mode.name,
+            status: 'failed',
+            rulesChecked: 0,
+            issues: [{
+              ruleId: 'MODE_EXECUTION_ERROR',
+              status: 'fail',
+              message: (error as Error).message || 'Mode execution failed',
+              severity: 'error',
+            }],
+          });
+        }
       }
     }
 
@@ -86,6 +142,7 @@ export class ComposableValidationEngine {
       passedRules,
       failedRules,
       performanceMs: Date.now() - startTime,
+      config,
     };
   }
 }

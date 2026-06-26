@@ -1,0 +1,22 @@
+{
+  "$schema": "./evolith.config.schema.json",
+  "topology": "modular-monolith",
+  "phase": "f1",
+  "rulesets": [
+    "compliance-baseline",
+    "definition-of-done",
+    "engineering-manifesto",
+    "repository-taxonomy"
+  ],
+  "adrRules": [
+    "adr-0002",
+    "adr-0010",
+    "adr-0018"
+  ],
+  "engine": "native",
+  "validation": {
+    "modes": ["architecture", "ruleset", "adr"],
+    "parallel": true,
+    "timeout": 2000
+  }
+}

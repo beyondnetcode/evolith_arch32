@@ -8,6 +8,7 @@ import { ToolRegistryService } from '../mcp/tool-registry.service';
 import { MetricsService } from '../mcp/metrics.service';
 import { McpTool, MCP_TOOLS } from '../mcp/tool.interface';
 import { ValidateTool } from './validate.tool';
+import { ComposableValidateTool } from './composable-validate.tool';
 import { createAgentTools } from './agent.tools';
 import { createArchitectureTools } from './architecture.tools';
 import { createGateTools } from './gate.tools';
@@ -30,11 +31,13 @@ import { createTopologyTools } from './topology.tools';
   imports: [DomainModule],
   providers: [
     ValidateTool,
+    ComposableValidateTool,
     MetricsService,
     {
       provide: MCP_TOOLS,
       useFactory: (
         validate: ValidateTool,
+        composableValidate: ComposableValidateTool,
         fs: IFileSystem,
         configParser: IConfigParser,
         validator: RulesetValidatorService,
@@ -43,6 +46,7 @@ import { createTopologyTools } from './topology.tools';
         metrics: MetricsService,
       ): McpTool[] => [
         validate,
+        composableValidate,
         ...createAgentTools(fs),
         ...createArchitectureTools(fs, configParser, validator),
         ...createGateTools(webhook, fs, new NestLoggerProvider().createLogger('GateTool')),
@@ -56,6 +60,7 @@ import { createTopologyTools } from './topology.tools';
       ],
       inject: [
         ValidateTool,
+        ComposableValidateTool,
         FILE_SYSTEM,
         CONFIG_PARSER,
         RulesetValidatorService,

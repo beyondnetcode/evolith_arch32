@@ -48,6 +48,8 @@ rulesets/
 │   └── definition-of-done.rules.json
 ├── engineering-manifesto/      # Punto de entrada WS1 del Manifiesto de Ingeniería
 │   └── engineering-manifesto.rules.json
+├── repository-taxonomy/        # Punto de entrada WS1 de Taxonomía del Repositorio
+│   └── repository-taxonomy.rules.json
 ├── opa/                        # Políticas OPA y schemas de entrada
 │   ├── schemas/                # Schemas de entrada de políticas OPA (9 schemas)
 │   ├── *.rego                  # Archivos de políticas Rego

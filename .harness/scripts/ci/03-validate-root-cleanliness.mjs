@@ -22,8 +22,6 @@ const allowedFiles = new Set([
   ".editorconfig",
   ".gitignore",
   ".markdownlint.json",
-  ".release-please-manifest.json",
-  "release-please-config.json",
   "COVERAGE_REPORT.md",
   "package.json",
   "package-lock.json",
@@ -47,7 +45,8 @@ const allowedDirectories = new Set([
   "apps",
   "examples",
   "packages",
-  "tests"
+  "tests",
+  "wiki"
 ]);
 
 const explicitlyDeniedDirectories = new Map([

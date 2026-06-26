@@ -4309,6 +4309,27 @@
         ".harness/bin/opa test rulesets/opa/engineering-manifesto.rego rulesets/opa/engineering-manifesto.test.rego -v"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-289",
+      "closedAt": "2026-06-26",
+      "closureCommit": "c41e7d77",
+      "evidence": [
+        "rulesets/repository-taxonomy/repository-taxonomy.rules.json",
+        "rulesets/repository-taxonomy/README.md",
+        "rulesets/repository-taxonomy/README.es.md",
+        ".harness/scripts/run-evolith-intelligent-data-audit.test.mjs",
+        "packages/core-domain/src/application/validators/modes/ruleset-validation.mode.ts",
+        "packages/core-domain/src/application/validators/modes/ruleset-validation.mode.spec.ts",
+        "rulesets/README.md",
+        "rulesets/README.es.md"
+      ],
+      "validationCommands": [
+        "node --test .harness/scripts/run-evolith-intelligent-data-audit.test.mjs",
+        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --testPathPatterns='ruleset-validation.mode' --no-coverage",
+        ".harness/bin/opa test rulesets/opa/repository-taxonomy.rego rulesets/opa/repository-taxonomy.test.rego -v"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

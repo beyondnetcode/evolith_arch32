@@ -42,6 +42,8 @@ Si estás integrando un nuevo repositorio satélite, lee las categorías en este
 
 ```
 rulesets/
+├── compliance-baseline/        # Punto de entrada WS1 del baseline de cumplimiento
+│   └── compliance-baseline.rules.json
 ├── opa/                        # Políticas OPA y schemas de entrada
 │   ├── schemas/                # Schemas de entrada de políticas OPA (9 schemas)
 │   ├── *.rego                  # Archivos de políticas Rego

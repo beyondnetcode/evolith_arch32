@@ -4,6 +4,7 @@
 
 import { RulesetValidationMode } from './ruleset-validation.mode';
 import { ValidationContext } from './validation-mode.interface';
+import path from 'path';
 
 describe('RulesetValidationMode', () => {
   let mode: RulesetValidationMode;
@@ -33,8 +34,10 @@ describe('RulesetValidationMode', () => {
 
   describe('validate', () => {
     it('should validate ruleset when rulesetId is provided', async () => {
+      const repoRoot = path.resolve(__dirname, '../../../../../..');
       const context: ValidationContext = {
-        satellitePath: '/test',
+        satellitePath: repoRoot,
+        corePath: repoRoot,
         engine: 'native',
         rulesetId: 'compliance-baseline',
       };
@@ -42,6 +45,16 @@ describe('RulesetValidationMode', () => {
       const result = await mode.validate(context);
 
       expect(result.mode).toBe('ruleset');
+      expect(result.status).toBe('passed');
+      expect(result.rulesChecked).toBe(7);
+      expect(result.issues).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            ruleId: 'RULESET-LOADED',
+            status: 'pass',
+          }),
+        ]),
+      );
       expect(result.metadata).toEqual({ rulesetId: 'compliance-baseline' });
     });
   });

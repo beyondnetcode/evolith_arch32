@@ -16,7 +16,7 @@ const RULESET_ID_MAP: Record<string, string> = {
   'evidence': 'rulesets/evidence/evidence-manifest.rules.json',
   'mcp': 'rulesets/mcp/protocol-compliance.rules.json',
   'observability': 'rulesets/observability/telemetry-evidence.rules.json',
-  'compliance-baseline': 'rulesets/cross-cutting/compliance-baseline.rules.json',
+  'compliance-baseline': 'rulesets/compliance-baseline/compliance-baseline.rules.json',
   'definition-of-done': 'rulesets/cross-cutting/definition-of-done.rules.json',
   'engineering-manifesto': 'rulesets/cross-cutting/engineering-manifesto.rules.json',
   'repository-taxonomy': 'rulesets/cross-cutting/repository-taxonomy.rules.json',

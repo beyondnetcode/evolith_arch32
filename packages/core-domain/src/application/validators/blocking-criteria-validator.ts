@@ -3,12 +3,40 @@ import { IFileSystem, ILogger } from '../../domain/interfaces';
 import { PhaseGateDefinition, BlockingCriterion, EvidenceValidationResult, BlockingCheckResult } from './phase-gate-validator.service';
 import { EvidenceValidator } from './evidence-validator';
 
+type CriterionHandler = (projectPath: string, evidenceResults: EvidenceValidationResult[]) => Promise<boolean>;
+
+interface CriterionEntry {
+  keywords: string[];
+  handler: CriterionHandler;
+}
+
 export class BlockingCriteriaValidator {
+  private readonly criterionHandlers: CriterionEntry[];
+
   constructor(
     private readonly fs: IFileSystem,
     private readonly logger: ILogger,
     private readonly evidenceValidator: EvidenceValidator
-  ) {}
+  ) {
+    this.criterionHandlers = [
+      { keywords: ['mandatory quality metric'],           handler: (p) => this.checkMandatoryQualityMetric(p) },
+      { keywords: ['acceptance criteria remain'],         handler: (_, ev) => this.checkAcceptanceCriteria(ev) },
+      { keywords: ['technical debt'],                     handler: (p) => this.checkTechnicalDebt(p) },
+      { keywords: ['scope is ambiguous', 'funding'],      handler: (_, ev) => this.checkScopeAmbiguity(ev) },
+      { keywords: ['technical constraints', 'cloud quotas'], handler: (_, ev) => this.checkTechnicalConstraints(ev) },
+      { keywords: ['architecture constraints are ignored'], handler: (_, ev) => this.checkArchitectureConstraints(ev) },
+      { keywords: ['architecture decisions are undocumented'], handler: (p, ev) => this.checkArchitectureDecisions(p, ev) },
+      { keywords: ['bounded context'],                    handler: (_, ev) => this.checkBoundedContext(ev) },
+      { keywords: ['functional stories lack'],            handler: (_, ev) => this.checkFunctionalStories(ev) },
+      { keywords: ['code review approval'],               handler: (p, ev) => this.checkCodeReviewApproval(p, ev) },
+      { keywords: ['ci fails'],                           handler: (p) => this.checkCiFailure(p) },
+      { keywords: ['coverage below'],                     handler: (p) => this.checkCoverageBelow(p) },
+      { keywords: ['cve'],                                handler: (p) => this.checkCveVulnerabilities(p) },
+      { keywords: ['monitoring'],                         handler: (p) => this.checkMonitoring(p) },
+      { keywords: ['rollback'],                           handler: (p, ev) => this.checkRollback(p, ev) },
+      { keywords: ['traceable'],                          handler: (_, ev) => this.checkTraceability(ev) },
+    ];
+  }
 
   async checkBlockingCriteria(
     gate: PhaseGateDefinition,
@@ -16,16 +44,10 @@ export class BlockingCriteriaValidator {
     evidenceResults: EvidenceValidationResult[],
   ): Promise<BlockingCheckResult[]> {
     const results: BlockingCheckResult[] = [];
-
     for (const criterion of gate.blockingCriteria) {
       const triggered = await this.isCriterionTriggered(criterion, projectPath, evidenceResults);
-      results.push({
-        criterion: criterion.criterion,
-        triggered,
-        action: criterion.action,
-      });
+      results.push({ criterion: criterion.criterion, triggered, action: criterion.action });
     }
-
     return results;
   }
 
@@ -34,203 +56,187 @@ export class BlockingCriteriaValidator {
     projectPath: string,
     evidenceResults: EvidenceValidationResult[],
   ): Promise<boolean> {
-    const criterionText = criterion.criterion.toLowerCase();
+    const text = criterion.criterion.toLowerCase();
+    const entry = this.criterionHandlers.find(e => e.keywords.some(kw => text.includes(kw)));
+    return entry ? entry.handler(projectPath, evidenceResults) : false;
+  }
 
-    if (criterionText.includes('mandatory quality metric')) {
-      const summaryPath = path.join(projectPath, 'coverage', 'coverage-summary.json');
-      if (!await this.fs.exists(summaryPath)) return true;
-      try {
-        const content = await this.fs.readFile(summaryPath);
-        const summary = JSON.parse(content) as { total?: { statements?: { pct?: number } } };
-        const pct = summary.total?.statements?.pct;
-        return typeof pct !== 'number' || pct < 80;
-      } catch {
-        return true;
-      }
+  private async checkMandatoryQualityMetric(projectPath: string): Promise<boolean> {
+    const summaryPath = path.join(projectPath, 'coverage', 'coverage-summary.json');
+    if (!await this.fs.exists(summaryPath)) return true;
+    try {
+      const content = await this.fs.readFile(summaryPath);
+      const summary = JSON.parse(content) as { total?: { statements?: { pct?: number } } };
+      const pct = summary.total?.statements?.pct;
+      return typeof pct !== 'number' || pct < 80;
+    } catch {
+      return true;
     }
+  }
 
-    if (criterionText.includes('acceptance criteria remain unverified')) {
-      const acceptanceEvidence = evidenceResults.find(e => e.artifact === 'Acceptance Validation');
-      return !acceptanceEvidence?.found;
-    }
+  private async checkAcceptanceCriteria(evidenceResults: EvidenceValidationResult[]): Promise<boolean> {
+    return !evidenceResults.find(e => e.artifact === 'Acceptance Validation')?.found;
+  }
 
-    if (criterionText.includes('technical debt')) {
-      const debtPath = path.join(projectPath, '.evolith', 'tech-debt-report.json');
-      if (!await this.fs.exists(debtPath)) return false;
-      try {
-        const content = await this.fs.readFile(debtPath);
-        const report = JSON.parse(content) as { debtRatioPct?: number };
-        return typeof report.debtRatioPct === 'number' && report.debtRatioPct > 5;
-      } catch {
-        return false;
-      }
-    }
-
-    if (criterionText.includes('scope is ambiguous') || criterionText.includes('funding')) {
-      const prdEvidence = evidenceResults.find(e => e.artifact === 'PRD');
-      const moscowEvidence = evidenceResults.find(e => e.artifact === 'MoSCoW Prioritization Matrix');
-      return !prdEvidence?.found || (moscowEvidence !== undefined && !moscowEvidence.found);
-    }
-
-    if (criterionText.includes('technical constraints') || criterionText.includes('cloud quotas')) {
-      const tfcResult = evidenceResults.find(e => e.artifact === 'Technical Feasibility Canvas');
-      return !tfcResult?.found;
-    }
-
-    if (criterionText.includes('architecture constraints are ignored')) {
-      const prdResult = evidenceResults.find(e => e.artifact === 'PRD');
-      const canvasResult = evidenceResults.find(e => e.artifact === 'Discovery Canvas');
-      return !prdResult?.found && !canvasResult?.found;
-    }
-
-    if (criterionText.includes('architecture decisions are undocumented')) {
-      const adrEvidence = evidenceResults.find(e => e.artifact === 'ADR Registry');
-      if (!adrEvidence?.found) return true;
-
-      try {
-        const adrPath = path.join(projectPath, 'reference', 'architecture', 'adrs', 'adr-matrix.json');
-        if (await this.fs.exists(adrPath)) {
-          const content = await this.fs.readFile(adrPath);
-          const matrix = JSON.parse(content) as { adrs?: unknown[] };
-          if (!matrix.adrs || matrix.adrs.length === 0) {
-            return true;
-          }
-        }
-      } catch (err: unknown) {
-        this.logger.warn(`Failed to validate ADR registry content: ${err instanceof Error ? err.message : String(err)}`);
-        return true;
-      }
-
+  private async checkTechnicalDebt(projectPath: string): Promise<boolean> {
+    const debtPath = path.join(projectPath, '.evolith', 'tech-debt-report.json');
+    if (!await this.fs.exists(debtPath)) return false;
+    try {
+      const content = await this.fs.readFile(debtPath);
+      const report = JSON.parse(content) as { debtRatioPct?: number };
+      return typeof report.debtRatioPct === 'number' && report.debtRatioPct > 5;
+    } catch {
       return false;
     }
+  }
 
-    if (criterionText.includes('bounded context')) {
-      const contextEvidence = evidenceResults.find(e => e.artifact === 'Bounded Context Map');
-      return !contextEvidence?.found;
-    }
+  private async checkScopeAmbiguity(evidenceResults: EvidenceValidationResult[]): Promise<boolean> {
+    const prd = evidenceResults.find(e => e.artifact === 'PRD');
+    const moscow = evidenceResults.find(e => e.artifact === 'MoSCoW Prioritization Matrix');
+    return !prd?.found || (moscow !== undefined && !moscow.found);
+  }
 
-    if (criterionText.includes('functional stories lack acceptance criteria')) {
-      const storyEvidence = evidenceResults.find(e => e.artifact === 'Functional Stories');
-      return !storyEvidence?.found;
-    }
+  private async checkTechnicalConstraints(evidenceResults: EvidenceValidationResult[]): Promise<boolean> {
+    return !evidenceResults.find(e => e.artifact === 'Technical Feasibility Canvas')?.found;
+  }
 
-    if (criterionText.includes('ci fails')) {
-      const ciPath = path.join(projectPath, '.github', 'workflows');
-      return !await this.fs.exists(ciPath);
-    }
+  private async checkArchitectureConstraints(evidenceResults: EvidenceValidationResult[]): Promise<boolean> {
+    const prd = evidenceResults.find(e => e.artifact === 'PRD');
+    const canvas = evidenceResults.find(e => e.artifact === 'Discovery Canvas');
+    return !prd?.found && !canvas?.found;
+  }
 
-    if (criterionText.includes('coverage below')) {
-      const summaryPath = path.join(projectPath, 'coverage', 'coverage-summary.json');
-      if (!await this.fs.exists(summaryPath)) {
-        return true;
+  private async checkArchitectureDecisions(projectPath: string, evidenceResults: EvidenceValidationResult[]): Promise<boolean> {
+    const adrEvidence = evidenceResults.find(e => e.artifact === 'ADR Registry');
+    if (!adrEvidence?.found) return true;
+    try {
+      const adrPath = path.join(projectPath, 'reference', 'architecture', 'adrs', 'adr-matrix.json');
+      if (await this.fs.exists(adrPath)) {
+        const content = await this.fs.readFile(adrPath);
+        const matrix = JSON.parse(content) as { adrs?: unknown[] };
+        if (!matrix.adrs || matrix.adrs.length === 0) return true;
       }
-      try {
-        const content = await this.fs.readFile(summaryPath);
-        const summary = JSON.parse(content) as { total?: { statements?: { pct?: number } } };
-        const pct = summary.total?.statements?.pct;
-        if (typeof pct !== 'number' || pct < 80) {
-          return true;
-        }
-      } catch (err: unknown) {
-        this.logger.warn(`Failed to parse coverage-summary.json: ${err instanceof Error ? err.message : String(err)}`);
-        return true;
-      }
-      return false;
+    } catch (err: unknown) {
+      this.logger.warn(`Failed to validate ADR registry: ${err instanceof Error ? err.message : String(err)}`);
+      return true;
     }
-
-    if (criterionText.includes('cve')) {
-      const securityPath = path.join(projectPath, 'security-scan.json');
-      if (!await this.fs.exists(securityPath)) return true;
-
-      try {
-        const content = await this.fs.readFile(securityPath);
-        const scan = JSON.parse(content) as {
-          status?: string;
-          vulnerabilities?: unknown;
-          exceptions?: unknown[];
-        };
-
-        if (scan.status === 'failed' || scan.status === 'error') return true;
-
-        let critical = 0;
-        let high = 0;
-        let exceptions = 0;
-
-        if (scan.vulnerabilities && typeof scan.vulnerabilities === 'object') {
-          if (Array.isArray(scan.vulnerabilities)) {
-            critical = scan.vulnerabilities.filter((v: Record<string, unknown>) => (v as Record<string, unknown>).severity === 'critical' || v.severity === 'CRITICAL').length;
-            high = scan.vulnerabilities.filter((v: Record<string, unknown>) => (v as Record<string, unknown>).severity === 'high' || v.severity === 'HIGH').length;
-          } else {
-            critical = (scan.vulnerabilities as Record<string, unknown>).critical as number || 0;
-              high = (scan.vulnerabilities as Record<string, unknown>).high as number || 0;
-          }
-        }
-
-        if (Array.isArray(scan.exceptions)) {
-          exceptions = scan.exceptions.length;
-        }
-
-        if (critical + high > exceptions) return true;
-      } catch (err: unknown) {
-        this.logger.warn(`Failed to parse security-scan.json: ${err instanceof Error ? err.message : String(err)}`);
-        return true;
-      }
-      return false;
-    }
-
-    if (criterionText.includes('monitoring')) {
-      const observabilityPath = path.join(projectPath, 'observability');
-      if (!await this.fs.exists(observabilityPath)) return true;
-
-      let hasReadiness = false;
-      try {
-        const files = await this.fs.readdir(observabilityPath);
-        const contentChecks = await Promise.all(files.map(async file => {
-          if (file.name.endsWith('.md') || file.name.endsWith('.json') || file.name.endsWith('.yml') || file.name.endsWith('.yaml')) {
-            const content = await this.fs.readFile(path.join(observabilityPath, file.name));
-            const lower = content.toLowerCase();
-            return (lower.includes('health') || lower.includes('indicator') || lower.includes('slo') || lower.includes('sli')) && 
-                   (lower.includes('alert') || lower.includes('owner') || lower.includes('pager'));
-          }
-          return false;
-        }));
-        hasReadiness = contentChecks.some(Boolean);
-      } catch (err) {
-        this.logger.warn(`Failed to read observability directory: ${err instanceof Error ? err.message : String(err)}`);
-      }
-      return !hasReadiness;
-    }
-
-    if (criterionText.includes('rollback')) {
-      const releaseEvidence = evidenceResults.find(e => e.artifact === 'Release Notes');
-      if (!releaseEvidence?.found) return true;
-
-      try {
-        const releasePath = this.evidenceValidator.resolveArtifactPath(releaseEvidence.artifact, projectPath);
-        if (await this.fs.exists(releasePath)) {
-          const content = await this.fs.readFile(releasePath);
-          const lower = content.toLowerCase();
-          
-          const hasRollbackData = lower.includes('rollback action') && !lower.includes('[action]');
-          const hasRehearsal = lower.includes('rehearsal') || lower.includes('trigger');
-          const hasRollbackSection = lower.includes('rollback plan') && content.length > 200;
-          
-          if (!hasRollbackData && !hasRehearsal && !hasRollbackSection) {
-            return true;
-          }
-        }
-      } catch (err) {
-        this.logger.warn(`Failed to read Release Notes: ${err instanceof Error ? err.message : String(err)}`);
-        return true;
-      }
-      return false;
-    }
-
-    if (criterionText.includes('traceable')) {
-      const releaseEvidence = evidenceResults.find(e => e.artifact === 'Release Notes');
-      return !releaseEvidence?.found;
-    }
-
     return false;
+  }
+
+  private async checkBoundedContext(evidenceResults: EvidenceValidationResult[]): Promise<boolean> {
+    return !evidenceResults.find(e => e.artifact === 'Bounded Context Map')?.found;
+  }
+
+  private async checkFunctionalStories(evidenceResults: EvidenceValidationResult[]): Promise<boolean> {
+    return !evidenceResults.find(e => e.artifact === 'Functional Stories')?.found;
+  }
+
+  private async checkCodeReviewApproval(projectPath: string, _evidenceResults: EvidenceValidationResult[]): Promise<boolean> {
+    const reviewEvidencePath = path.join(projectPath, '.evolith', 'review-evidence.json');
+    if (await this.fs.exists(reviewEvidencePath)) {
+      try {
+        const content = await this.fs.readFile(reviewEvidencePath);
+        const evidence = JSON.parse(content) as { approved?: boolean; approvers?: unknown[] };
+        if (evidence.approved === true || (Array.isArray(evidence.approvers) && evidence.approvers.length > 0)) {
+          return false;
+        }
+      } catch {
+        return true;
+      }
+    }
+    return !await this.fs.exists(path.join(projectPath, '.github', 'CODEOWNERS'));
+  }
+
+  private async checkCiFailure(projectPath: string): Promise<boolean> {
+    return !await this.fs.exists(path.join(projectPath, '.github', 'workflows'));
+  }
+
+  private async checkCoverageBelow(projectPath: string): Promise<boolean> {
+    const summaryPath = path.join(projectPath, 'coverage', 'coverage-summary.json');
+    if (!await this.fs.exists(summaryPath)) return true;
+    try {
+      const content = await this.fs.readFile(summaryPath);
+      const summary = JSON.parse(content) as { total?: { statements?: { pct?: number } } };
+      const pct = summary.total?.statements?.pct;
+      return typeof pct !== 'number' || pct < 80;
+    } catch (err: unknown) {
+      this.logger.warn(`Failed to parse coverage-summary.json: ${err instanceof Error ? err.message : String(err)}`);
+      return true;
+    }
+  }
+
+  private async checkCveVulnerabilities(projectPath: string): Promise<boolean> {
+    const securityPath = path.join(projectPath, 'security-scan.json');
+    if (!await this.fs.exists(securityPath)) return true;
+    try {
+      const content = await this.fs.readFile(securityPath);
+      const scan = JSON.parse(content) as { status?: string; vulnerabilities?: unknown; exceptions?: unknown[] };
+      if (scan.status === 'failed' || scan.status === 'error') return true;
+      const { critical, high } = this.countVulnerabilities(scan.vulnerabilities);
+      const exceptions = Array.isArray(scan.exceptions) ? scan.exceptions.length : 0;
+      return critical + high > exceptions;
+    } catch (err: unknown) {
+      this.logger.warn(`Failed to parse security-scan.json: ${err instanceof Error ? err.message : String(err)}`);
+      return true;
+    }
+  }
+
+  private countVulnerabilities(vulnerabilities: unknown): { critical: number; high: number } {
+    if (!vulnerabilities || typeof vulnerabilities !== 'object') return { critical: 0, high: 0 };
+    if (Array.isArray(vulnerabilities)) {
+      const vuln = vulnerabilities as Record<string, unknown>[];
+      return {
+        critical: vuln.filter(v => v.severity === 'critical' || v.severity === 'CRITICAL').length,
+        high: vuln.filter(v => v.severity === 'high' || v.severity === 'HIGH').length,
+      };
+    }
+    const obj = vulnerabilities as Record<string, unknown>;
+    return { critical: (obj.critical as number) || 0, high: (obj.high as number) || 0 };
+  }
+
+  private async checkMonitoring(projectPath: string): Promise<boolean> {
+    const observabilityPath = path.join(projectPath, 'observability');
+    if (!await this.fs.exists(observabilityPath)) return true;
+    try {
+      const files = await this.fs.readdir(observabilityPath);
+      const checks = await Promise.all(
+        files
+          .filter(f => /\.(md|json|ya?ml)$/.test(f.name))
+          .map(async f => {
+            const lower = (await this.fs.readFile(path.join(observabilityPath, f.name))).toLowerCase();
+            const hasMetrics = lower.includes('health') || lower.includes('indicator') || lower.includes('slo') || lower.includes('sli');
+            const hasOwner = lower.includes('alert') || lower.includes('owner') || lower.includes('pager');
+            return hasMetrics && hasOwner;
+          }),
+      );
+      return !checks.some(Boolean);
+    } catch (err: unknown) {
+      this.logger.warn(`Failed to read observability directory: ${err instanceof Error ? err.message : String(err)}`);
+      return true;
+    }
+  }
+
+  private async checkRollback(projectPath: string, evidenceResults: EvidenceValidationResult[]): Promise<boolean> {
+    const releaseEvidence = evidenceResults.find(e => e.artifact === 'Release Notes');
+    if (!releaseEvidence?.found) return true;
+    try {
+      const releasePath = this.evidenceValidator.resolveArtifactPath(releaseEvidence.artifact, projectPath);
+      if (await this.fs.exists(releasePath)) {
+        const content = await this.fs.readFile(releasePath);
+        const lower = content.toLowerCase();
+        const hasRollbackData = lower.includes('rollback action') && !lower.includes('[action]');
+        const hasRehearsal = lower.includes('rehearsal') || lower.includes('trigger');
+        const hasRollbackSection = lower.includes('rollback plan') && content.length > 200;
+        return !hasRollbackData && !hasRehearsal && !hasRollbackSection;
+      }
+    } catch (err: unknown) {
+      this.logger.warn(`Failed to read Release Notes: ${err instanceof Error ? err.message : String(err)}`);
+      return true;
+    }
+    return false;
+  }
+
+  private async checkTraceability(evidenceResults: EvidenceValidationResult[]): Promise<boolean> {
+    return !evidenceResults.find(e => e.artifact === 'Release Notes')?.found;
   }
 }

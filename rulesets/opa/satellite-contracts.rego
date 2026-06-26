@@ -23,6 +23,15 @@ violations[{"id": "SVC-05", "message": "Core version referenced does not exist i
     not input.satellite.contracts.coreVersionExists
 }
 
+violations[{"id": "SVC-02", "message": "Satellite name must be unique across all registered Evolith satellites — name conflict detected in registry"}] {
+    not input.satellite.contracts.nameIsUnique
+}
+
+violations[{"id": "MIG-01", "message": "No documented upgrade path for satellite governance version — run 'evolith upgrade --target <version>' to document the upgrade procedure"}] {
+    input.satellite.contracts.needsGovernanceUpgrade
+    not input.satellite.contracts.upgradePathDocumented
+}
+
 violations[{"id": "MIG-02", "message": "Phase transition attempted without Architecture Board approval artifact"}] {
     input.satellite.contracts.phaseTransitionWithoutApproval
 }

@@ -51,3 +51,11 @@ violations[{"id": "MCP-04", "message": "MCP transport config missing apiKey or l
     not contains(src, "local-only")
     not contains(src, "localhost")
 }
+
+violations[{"id": "MCP-05", "message": "MCP tool calls SHOULD emit latency, success, failure, and error class metrics — no metrics instrumentation detected in MCP server source"}] {
+    src := input.core.cli.mcpServerSource
+    not contains(src, "latency")
+    not contains(src, "metrics")
+    not contains(src, "histogram")
+    not contains(src, "counter")
+}

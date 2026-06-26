@@ -24,6 +24,10 @@ violations[{"id": "HXA-05", "message": "AOP concerns found in Core/Application l
     input.satellite.layers.application.hasAopDecorators
 }
 
+violations[{"id": "HXA-06", "message": "AOP concerns (interceptors, decorators) must be implemented exclusively in Infrastructure layer — not in Core or Application"}] {
+    input.satellite.layers.infrastructure.aopNotInInfrastructure
+}
+
 violations[{"id": "HXA-07", "message": "Core domain tests require framework bootstrap — must run without framework"}] {
     input.satellite.layers.core.domainTestsRequireBootstrap
 }

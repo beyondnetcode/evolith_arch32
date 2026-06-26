@@ -26,6 +26,9 @@ import data.evolith.protocol_selection.violations as prot_violations
 import data.evolith.repository_taxonomy.violations as repo_tax_violations
 import data.evolith.satellite_contracts.violations as svc_violations
 import data.evolith.testing_pyramid.violations as tpy_violations
+import data.evolith.telemetry_evidence.violations as telemetry_violations
+import data.evolith.infrastructure.helm.violations as helm_violations
+import data.evolith.infrastructure.opa_sidecar.violations as opa_sidecar_violations
 
 violations[v] {
 	v := vp_violations[_]
@@ -129,4 +132,16 @@ violations[v] {
 
 violations[v] {
 	v := tpy_violations[_]
+}
+
+violations[v] {
+	v := telemetry_violations[_]
+}
+
+violations[v] {
+	v := helm_violations[_]
+}
+
+violations[v] {
+	v := opa_sidecar_violations[_]
 }

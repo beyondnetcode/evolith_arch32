@@ -87,11 +87,11 @@ rulesets/
 │   ├── adr-0040-multi-runtime.rules.json
 │   ├── adr-0050-gitflow-branching.rules.json
 │   └── adr-0010-multi-tenancy.rules.json
-├── cross-cutting/              # Compliance baseline rules
-│   ├── compliance-baseline.rules.json    # 5 pillars
-│   ├── definition-of-done.rules.json     # DoD checklist
-│   ├── engineering-manifesto.rules.json  # SOLID, DRY, KISS, YAGNI
-│   └── repository-taxonomy.rules.json    # Naming, structure
+├── cross-cutting/              # Aliases only — canonical files are in domain-specific dirs above
+│   ├── compliance-baseline.rules.json    # alias → compliance-baseline/compliance-baseline.rules.json
+│   ├── definition-of-done.rules.json     # alias → definition-of-done/definition-of-done.rules.json
+│   ├── engineering-manifesto.rules.json  # alias → engineering-manifesto/engineering-manifesto.rules.json
+│   └── repository-taxonomy.rules.json    # alias → repository-taxonomy/repository-taxonomy.rules.json
 ├── acl/                        # Anti-Corruption Layer rules (NEW)
 │   ├── anti-corruption-layer.rules.json  # ACL enforcement
 │   └── anti-corruption-layer.rules.es.json

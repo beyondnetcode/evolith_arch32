@@ -36,6 +36,14 @@ violations[{"id": "TPY-06", "message": "API/BFF coverage below 70% threshold"}] 
     input.satellite.testing.apiCoverage < 70
 }
 
+violations[{"id": "TPY-03", "message": "Integration tests must use ephemeral containers (Docker/Testcontainers) — no shared persistent test databases allowed"}] {
+    not input.satellite.testing.integrationUsesEphemeralContainers
+}
+
+violations[{"id": "TPY-04", "message": "E2E tests must cover full HTTP routes — no E2E tests found against HTTP endpoints"}] {
+    not input.satellite.testing.e2eCoversHttpRoutes
+}
+
 violations[{"id": "TPY-07", "message": "Unit tests execute IO operations — must not use file system, network, or database"}] {
     input.satellite.testing.unitTestsHaveIoOperations
 }

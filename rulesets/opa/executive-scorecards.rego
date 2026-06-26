@@ -20,6 +20,18 @@ violations[{"id": "SPACE-01", "message": "Observability infrastructure (traces, 
     not input.satellite.scorecards.observabilityOperational
 }
 
+violations[{"id": "SPACE-02", "message": "Satellite performance (P95 latency) not measured or dashboard not linked in scorecards"}] {
+    not input.satellite.scorecards.performanceDashboardLinked
+}
+
+violations[{"id": "SPACE-03", "message": "Team cognitive load survey not completed or score not recorded in satellite scorecards"}] {
+    not input.satellite.scorecards.cognitivLoadSurveyCompleted
+}
+
+violations[{"id": "SPACE-04", "message": "Collaboration index (cross-team PRs and shared ADRs) not computed — required for SPACE executive review"}] {
+    not input.satellite.scorecards.collaborationIndexComputed
+}
+
 violations[{"id": "SPACE-05", "message": "Executive sponsor not assigned or quarterly review not documented"}] {
     not input.satellite.scorecards.executiveSponsorAssigned
 }

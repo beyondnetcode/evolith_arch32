@@ -33,6 +33,7 @@ Binding directives. Zero fluff.
 | **R-27** | Topology Maturity Parity | An `accepted` topology MUST provide bilingual adoption/operations/evolution guidance, accepted ADRs, existing Native ruleset and OPA policy artifacts, shared control-plane exposure, and reproducible tests equivalent in maturity to the Modular Monolith baseline. |
 | **R-28** | OPA Bundle Integrity | OPA sidecars MUST fetch bundles through TLS or private authenticated in-cluster endpoints, verify signed bundles with secret-backed keys, pin expected SHA-256 digest metadata, and fail closed until bundle activation succeeds. |
 | **R-29** | Audit Gap Registration | All audit scripts MUST register findings (gaps, opportunities, improvements) as GT-* entries in the canonical gap-tracking.md. Each finding must include: ID, description, component, phase, criticality, complexity, and status. Audit scripts must output results in a format compatible with gap-tracking registration. |
+| **R-30** | SDLC Gate Code Completeness | The `sdlc.tools.ts` MCP tool MUST declare all active SDLC phases (phase-0 through phase-5) in its `PHASES` array and `PHASE_REQUIREMENTS` map. The `evidence-validator.ts` MUST contain a file-path mapping for every artifact name referenced in phase gate definitions. Missing entries cause gates to permanently fail regardless of actual evidence presence. |
 
 ## Mandatory Validation Gates
 

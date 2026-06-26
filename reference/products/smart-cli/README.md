@@ -79,14 +79,27 @@ Options:
   --manifest <path>     Use topology manifest for validation
 ```
 
-**SDLC Orchestration (GT-312):**
-When run without parameters, `evolith validate` reads the project's `evolith.config.json` and orchestrates the complete validation pipeline:
+**Composable Validation Engine (GT-312):**
+The validation system is intelligent and flexible — NOT rigid. You can validate from any entry point without forcing a specific flow.
 
-```
-Project Config → Phase → Gate → Artifacts → Schemas → Rulesets → Topology → ADRs → OPA → Blocking Criteria
-```
+**Validation Modes:**
 
-**Example `evolith.config.json`:**
+| Mode | Command | What it validates |
+|---|---|---|
+| **SDLC** | `evolith validate --phase f1` | Phase → Gate → Artifacts → Schemas → Rulesets → ADRs → OPA → Blocking |
+| **Architecture** | `evolith validate --topology modular-monolith` | Topology rules, hexagonal limits, domain isolation, multi-tenancy |
+| **Ruleset** | `evolith validate --ruleset compliance-baseline` | Specific ruleset execution via OPA |
+| **ADR** | `evolith validate --adr hexagonal-architecture` | ADR-specific architectural rules |
+| **Ad-hoc** | `evolith validate --file src/domain/user.ts` | Individual file/component validation |
+| **Composable** | `evolith validate --topology modular-monolith --ruleset compliance-baseline` | Multiple entry points combined |
+
+**Intelligent Resolution:**
+- `evolith validate` (no params) → reads `evolith.config.json` for defaults
+- `evolith validate --topology modular-monolith` → infers architecture rules for that topology
+- `evolith validate --phase f1` → resolves gate-f1 and its required artifacts
+- System combines all provided inputs into optimal validation scope
+
+**Example `evolith.config.json` (optional defaults):**
 ```json
 {
   "topology": "modular-monolith",
@@ -96,8 +109,8 @@ Project Config → Phase → Gate → Artifacts → Schemas → Rulesets → Top
 }
 ```
 
-**Validation Flow:**
-1. Resolves current phase and gate from config
+**Validation Flow (SDLC Mode):**
+1. Resolves current phase and gate from config or flags
 2. Validates required artifacts against schemas
 3. Applies topology-specific rulesets
 4. Enforces ADR-based architectural rules

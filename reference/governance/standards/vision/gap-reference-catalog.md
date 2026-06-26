@@ -2697,20 +2697,25 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-312
 
-**Title:** SDLC validation orchestration: phase → gate → artifacts → schemas → rulesets → topology → ADRs → OPA → blocking criteria
+**Title:** Composable validation engine: multi-entry-point orchestration (SDLC, Architecture, Ruleset, Ad-hoc)
 
-- **Purpose:** Implement a unified validation engine that orchestrates the complete SDLC validation pipeline across all interfaces (CLI, MCP, REST). The engine must resolve the full validation context from project configuration and execute all validations in optimal order against OPA and rulesets with scalable performance.
-- **Evidence:** Current `evolith validate` command (`sdk/cli/src/commands/validate/validate.command.ts:74-76`) executes a generic use case without specifying what to validate when no parameters are passed. The SDLC phases (F1-F5), gates (gate-f1 to gate-f5), required artifacts, schemas, rulesets, topology manifests, ADR rules, and OPA policies exist as isolated components but are not orchestrated together.
+- **Purpose:** Implement a unified, composable validation engine that supports multiple entry points and validation modes. The system is NOT rigid — interfaces are intelligent and allow users to validate from any context without forcing a specific flow. The engine must resolve validation scope dynamically based on what the user provides, not force them into a single pipeline.
+- **Evidence:** Current `evolith validate` command (`sdk/cli/src/commands/validate/validate.command.ts:74-76`) executes a generic use case without specifying what to validate when no parameters are passed. Users may want to validate technical architecture without entering SDLC flow, validate specific rulesets without architecture context, or run ad-hoc validation on individual components.
 - **Complexity:** XL
 - **Done when:**
-  - [ ] Project-level configuration (`evolith.config.json`) declares: topology, phase, enabled rulesets, and engine preference.
-  - [ ] `evolith validate` (no parameters) reads project config and resolves full validation context.
-  - [ ] Validation pipeline resolves: phase → gate → required artifacts → artifact schemas → applicable rulesets → topology rules → ADR rules → OPA policies → blocking criteria.
-  - [ ] All three interfaces (CLI, MCP, REST) route to the same orchestration engine (one engine, three facades).
+  - [ ] **SDLC Mode**: Full pipeline available when phase/gate context is provided or detected.
+  - [ ] **Architecture Mode**: Validate topology, hexagonal limits, domain isolation, multi-tenancy without SDLC context.
+  - [ ] **Ruleset Mode**: Validate specific rulesets (compliance-baseline, definition-of-done, etc.) independently.
+  - [ ] **ADR Mode**: Validate against specific ADR rules (hexagonal architecture, multi-tenancy, testing pyramid, etc.).
+  - [ ] **Ad-hoc Mode**: Validate individual components, artifacts, or files on demand.
+  - [ ] **Composable**: User can combine any entry points (e.g., architecture + specific ruleset, or SDLC phase + ADR rules).
+  - [ ] **Project Config Optional**: `evolith.config.json` provides defaults but is NOT required — user can override everything via CLI flags.
+  - [ ] **Intelligent Resolution**: System infers validation scope from minimal input (e.g., `--topology modular-monolith` implies architecture rules for that topology).
+  - [ ] All three interfaces (CLI, MCP, REST) support all validation modes (one engine, three facades).
   - [ ] OPA evaluations execute in parallel where possible for performance.
   - [ ] Validation verdict includes: pass/fail per rule, evidence, blocking status, and remediation guidance.
   - [ ] Performance: full validation completes in <2s for standard projects.
-  - [ ] Tests verify orchestration across all phases, gates, and topologies.
+  - [ ] Tests verify all validation modes and combinations.
 
 #### GT-286
 

@@ -79,14 +79,27 @@ Opciones:
   --manifest <ruta>     Usar manifest de topología para validación
 ```
 
-**Orquestación SDLC (GT-312):**
-Cuando se ejecuta sin parámetros, `evolith validate` lee el `evolith.config.json` del proyecto y orquesta el pipeline completo de validación:
+**Motor de Validación Composable (GT-312):**
+El sistema de validación es inteligente y flexible — NO rígido. Puedes validar desde cualquier punto de entrada sin forzar un flujo específico.
 
-```
-Config Proyecto → Fase → Gate → Artifacts → Schemas → Rulesets → Topología → ADRs → OPA → Blocking Criteria
-```
+**Modos de Validación:**
 
-**Ejemplo `evolith.config.json`:**
+| Modo | Comando | Qué valida |
+|---|---|---|
+| **SDLC** | `evolith validate --phase f1` | Fase → Gate → Artifacts → Schemas → Rulesets → ADRs → OPA → Blocking |
+| **Arquitectura** | `evolith validate --topology modular-monolith` | Reglas de topología, límites hexagonales, aislamiento de dominio, multi-tenancy |
+| **Ruleset** | `evolith validate --ruleset compliance-baseline` | Ejecución de ruleset específico vía OPA |
+| **ADR** | `evolith validate --adr hexagonal-architecture` | Reglas arquitectónicas específicas de ADR |
+| **Ad-hoc** | `evolith validate --file src/domain/user.ts` | Validación de archivo/componente individual |
+| **Composable** | `evolith validate --topology modular-monolith --ruleset compliance-baseline` | Múltiples puntos de entrada combinados |
+
+**Resolución Inteligente:**
+- `evolith validate` (sin params) → lee `evolith.config.json` para defaults
+- `evolith validate --topology modular-monolith` → infiere reglas de arquitectura para esa topología
+- `evolith validate --phase f1` → resuelve gate-f1 y sus artifacts requeridos
+- El sistema combina todos los inputs proporcionados en el alcance óptimo de validación
+
+**Ejemplo `evolith.config.json` (defaults opcionales):**
 ```json
 {
   "topology": "modular-monolith",
@@ -96,8 +109,8 @@ Config Proyecto → Fase → Gate → Artifacts → Schemas → Rulesets → Top
 }
 ```
 
-**Flujo de Validación:**
-1. Resuelve la fase y gate actuales desde la config
+**Flujo de Validación (Modo SDLC):**
+1. Resuelve la fase y gate actuales desde config o flags
 2. Valida artifacts requeridos contra schemas
 3. Aplica rulesets específicos de la topología
 4. Aplica reglas arquitectónicas basadas en ADRs

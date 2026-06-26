@@ -2648,20 +2648,25 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-312
 
-**Título:** Orquestación de validación SDLC: fase → gate → artifacts → schemas → rulesets → topología → ADRs → OPA → blocking criteria
+**Título:** Motor de validación composable: orquestación multi-punto de entrada (SDLC, Arquitectura, Ruleset, Ad-hoc)
 
-- **Propósito:** Implementar un motor de validación unificado que orqueste el pipeline completo de validación SDLC en todas las interfaces (CLI, MCP, REST). El motor debe resolver el contexto completo de validación desde la configuración del proyecto y ejecutar todas las validaciones en orden óptimo contra OPA y rulesets con rendimiento escalable.
-- **Evidencia:** El comando actual `evolith validate` (`sdk/cli/src/commands/validate/validate.command.ts:74-76`) ejecuta un caso de uso genérico sin especificar qué validar cuando no se pasan parámetros. Las fases SDLC (F1-F5), gates (gate-f1 a gate-f5), artifacts requeridos, schemas, rulesets, topology manifests, reglas ADR y políticas OPA existen como componentes aislados pero no están orquestados juntos.
+- **Propósito:** Implementar un motor de validación unificado y composable que soporte múltiples puntos de entrada y modos de validación. El sistema NO es rígido — las interfaces son inteligentes y permiten al usuario validar desde cualquier contexto sin forzar un flujo específico. El motor debe resolver el alcance de validación dinámicamente basándose en lo que el usuario provee, no forzarlos a un pipeline único.
+- **Evidencia:** El comando actual `evolith validate` (`sdk/cli/src/commands/validate/validate.command.ts:74-76`) ejecuta un caso de uso genérico sin especificar qué validar cuando no se pasan parámetros. Los usuarios pueden querer validar arquitectura técnica sin entrar al flujo SDLC, validar rulesets específicos sin contexto de arquitectura, o ejecutar validación ad-hoc en componentes individuales.
 - **Complejidad:** XL
 - **Hecho Cuando:**
-  - [ ] La configuración a nivel de proyecto (`evolith.config.json`) declara: topología, fase, rulesets habilitados y preferencia de motor.
-  - [ ] `evolith validate` (sin parámetros) lee la config del proyecto y resuelve el contexto completo de validación.
-  - [ ] El pipeline de validación resuelve: fase → gate → artifacts requeridos → schemas de artifacts → rulesets aplicables → rulesets de topología → reglas ADR → políticas OPA → blocking criteria.
-  - [ ] Las tres interfaces (CLI, MCP, REST) enrutan al mismo motor de orquestación (un motor, tres fachadas).
+  - [ ] **Modo SDLC**: Pipeline completo disponible cuando se provee o detecta contexto de fase/gate.
+  - [ ] **Modo Arquitectura**: Validar topología, límites hexagonales, aislamiento de dominio, multi-tenancy sin contexto SDLC.
+  - [ ] **Modo Ruleset**: Validar rulesets específicos (compliance-baseline, definition-of-done, etc.) independientemente.
+  - [ ] **Modo ADR**: Validar contra reglas ADR específicas (arquitectura hexagonal, multi-tenancy, testing pyramid, etc.).
+  - [ ] **Modo Ad-hoc**: Validar componentes, artifacts o archivos individuales bajo demanda.
+  - [ ] **Composable**: El usuario puede combinar cualquier punto de entrada (ej: arquitectura + ruleset específico, o fase SDLC + reglas ADR).
+  - [ ] **Config Opcional**: `evolith.config.json` provee defaults pero NO es requerido — el usuario puede sobreescribir todo vía flags CLI.
+  - [ ] **Resolución Inteligente**: El sistema infiere el alcance de validación desde input mínimo (ej: `--topology modular-monolith` implica reglas de arquitectura para esa topología).
+  - [ ] Las tres interfaces (CLI, MCP, REST) soportan todos los modos de validación (un motor, tres fachadas).
   - [ ] Las evaluaciones OPA se ejecutan en paralelo donde sea posible para rendimiento.
   - [ ] El veredicto de validación incluye: pass/fail por regla, evidencia, estado blocking y guía de remediación.
   - [ ] Rendimiento: validación completa se completa en <2s para proyectos estándar.
-  - [ ] Los tests verifican la orquestación en todas las fases, gates y topologías.
+  - [ ] Los tests verifican todos los modos de validación y combinaciones.
 
 #### GT-286
 

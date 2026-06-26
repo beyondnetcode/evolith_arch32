@@ -62,7 +62,7 @@ smart-cli agents install
 
 ### validate
 
-Valida el cumplimiento del repositorio contra los estándares de Evolith.
+Valida el cumplimiento del repositorio contra los estándares de Evolith con orquestación SDLC completa.
 
 ```bash
 smart-cli validate [opciones]
@@ -72,9 +72,40 @@ Opciones:
   --core <ruta>         Ruta a Evolith Core
   --format <formato>    Formato de salida: json, table, yaml, markdown
   --output <archivo>    Escribir salida a archivo
+  --topology <nombre>   Validar contra topología específica (modular-monolith, distributed-modules, microservices)
   --ruleset <id>        Validar ruleset específico (acl, open-core, inheritance)
   --engine <engine>     Motor de evaluación de políticas: native u opa (por defecto: native)
+  --phase <id>          Validar contra fase SDLC específica (f1-f5)
+  --manifest <ruta>     Usar manifest de topología para validación
 ```
+
+**Orquestación SDLC (GT-312):**
+Cuando se ejecuta sin parámetros, `evolith validate` lee el `evolith.config.json` del proyecto y orquesta el pipeline completo de validación:
+
+```
+Config Proyecto → Fase → Gate → Artifacts → Schemas → Rulesets → Topología → ADRs → OPA → Blocking Criteria
+```
+
+**Ejemplo `evolith.config.json`:**
+```json
+{
+  "topology": "modular-monolith",
+  "phase": "f1",
+  "rulesets": ["compliance-baseline", "definition-of-done"],
+  "engine": "opa"
+}
+```
+
+**Flujo de Validación:**
+1. Resuelve la fase y gate actuales desde la config
+2. Valida artifacts requeridos contra schemas
+3. Aplica rulesets específicos de la topología
+4. Aplica reglas arquitectónicas basadas en ADRs
+5. Ejecuta políticas OPA en paralelo para rendimiento
+6. Evalúa blocking criteria
+7. Retorna veredicto con pass/fail por regla, evidencia, estado blocking y guía de remediación
+
+**Rendimiento:** La validación completa se completa en <2s para proyectos estándar.
 
 **Evaluación de Políticas Dual-Engine:**
 La CLI soporta la evaluación de políticas utilizando el motor integrado en TypeScript (`native`) o módulos WebAssembly de Open Policy Agent (`opa`). Ver [Core ADR-0041](../../architecture/adrs/core/0041-dual-engine-policy-evaluation.es.md) para más detalles.

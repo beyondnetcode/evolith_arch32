@@ -50,6 +50,8 @@ rulesets/
 │   └── engineering-manifesto.rules.json
 ├── repository-taxonomy/        # WS1 executable Repository Taxonomy entrypoint
 │   └── repository-taxonomy.rules.json
+├── phase-gates/                # WS1 executable SDLC phase-gates entrypoint
+│   └── phase-gates.rules.json
 ├── opa/                        # OPA policies and inputs schemas
 │   ├── schemas/                # OPA policy input schemas (9 schemas)
 │   ├── *.rego                  # Rego policy files

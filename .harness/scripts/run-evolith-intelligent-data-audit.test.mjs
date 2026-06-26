@@ -56,3 +56,12 @@ test('GT-289 marks repository-taxonomy WS1 path as implemented', () => {
   assert.equal(check?.exists, true);
   assert.equal(check?.status, 'PASS');
 });
+
+test('GT-290 marks phase-gates WS1 path as implemented', () => {
+  const report = runReport();
+  const ws1 = report.workstreams.find((workstream) => workstream.id === 'WS1');
+  const check = ws1?.results.find((item) => item.path === 'rulesets/phase-gates');
+
+  assert.equal(check?.exists, true);
+  assert.equal(check?.status, 'PASS');
+});

@@ -238,7 +238,7 @@ jobs:
           ls -la
 
       - name: Upload Binary Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: binaries-${{ matrix.target }}
           path: ${{ env.CLI_DIR }}/binaries/smart-cli-${{ matrix.target }}${{ matrix.ext }}

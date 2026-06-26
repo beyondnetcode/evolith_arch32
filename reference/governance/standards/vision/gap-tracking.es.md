@@ -4,7 +4,7 @@
 
 **Estado:** Seguimiento Activo
 **Responsable:** Evolith Architecture Board
-**Última Actualización:** 2026-06-26 (cierre de GT-267 y reconciliación de evidencia de cierre)
+**Última Actualización:** 2026-06-26 (cierre de GT-272 para bundles OPA sidecar)
 **Detalle de Gaps:** [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md)
 
 Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunidades, habilitadores, prioridad y estado. Selecciona un ID para abrir la descripción del problema, propósito, evidencia, criterios de cierre y referencias.
@@ -16,7 +16,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-274`](./gap-reference-catalog.es.md#gt-274) | Blindar cleanup-temp-files contra eliminación de archivos versionados | `Harness` | Cross | P0 | S | `COMPLETADO` |
 | [`GT-267`](./gap-reference-catalog.es.md#gt-267) | Restaurar build/test del workspace tras integración de caché Redis | `Core API/MCP` | Cross | P0 | M | `COMPLETADO` |
 | [`GT-275`](./gap-reference-catalog.es.md#gt-275) | Reconciliar el registro de evidencia de cierre con la semántica canónica de tracking | `Governance` | Cross | P0 | M | `COMPLETADO` |
-| [`GT-272`](./gap-reference-catalog.es.md#gt-272) | Asegurar distribución y verificación de bundles OPA sidecar | `Rulesets` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-272`](./gap-reference-catalog.es.md#gt-272) | Asegurar distribución y verificación de bundles OPA sidecar | `Rulesets` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-276`](./gap-reference-catalog.es.md#gt-276) | Corregir la lógica de emparejamiento por área del dashboard bilingüe | `Governance CI` | Cross | P2 | S | `PENDIENTE` |
 | [`GT-250`](./gap-reference-catalog.es.md#gt-250) | Corregir bypass de autenticacion MCP cuando no hay API key configurada | `Seguridad` | Transversal | P0 | S | `COMPLETADO` |
 | [`GT-251`](./gap-reference-catalog.es.md#gt-251) | Corregir inyección de comandos en update vía execSync | `Security` | Cross | P0 | S | `COMPLETADO` |
@@ -291,7 +291,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-246`](./gap-reference-catalog.es.md#gt-246) | Implementar experimentos Chaos Mesh/Litmus | `QA` | Cross | P3 | L | `COMPLETADO` |
 
 
-**Progreso:** 274 / 276 completados · 0 en progreso · 2 pendientes · 0 diferidos
+**Progreso:** 275 / 276 completados · 0 en progreso · 1 pendientes · 0 diferidos
 
 **Oleada 2026-06-23 (auditoría profunda de Wilson III):** Añadidos 14 gaps nuevos `GT-212`…`GT-225` del Wilson Audit Playbook que cubren: higiene de estado ADR (GT-212), metadata + presupuestos operativos + corpus de guías por topología (GT-213, GT-217, GT-219), observabilidad + OpenAPI en controladores REST (GT-214, GT-215), paridad de input-schemas OPA + densidad de tests por topología (GT-216, GT-222), plantillas de rollback + on-call de Fase 05 (GT-218), cobertura de ramas CLI + paridad de envelope --format + limpieza de skip-list (GT-220, GT-224, GT-225), audit logging HTTP de MCP (GT-221), y tests e2e de paridad cross-surface (GT-223).
 

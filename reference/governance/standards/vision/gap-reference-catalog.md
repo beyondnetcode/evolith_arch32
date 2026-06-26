@@ -2553,10 +2553,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Protect the executable governance path from policy-bundle tampering by securing how OPA sidecars fetch and trust bundles. This keeps Native/OPA parity meaningful after deployment, not only in repository tests.
 **Current Evidence:** Helm values configure OPA sidecars to fetch `http://ums-minio:9000/opa-bundles/bundle.tar.gz` with no TLS, authentication, digest pin, signature, or fail-closed readiness gate. GT-133 covers central distribution architecture, but the deployed sidecar reference does not verify bundle integrity or provenance.
 **Done When:**
-  - [ ] OPA bundle URL uses TLS or a private in-cluster authenticated endpoint, with credentials sourced from Kubernetes secrets or workload identity.
-  - [ ] Bundle artifact digest and signature verification are documented and automated (for example, Sigstore/cosign or another open-source signing flow).
-  - [ ] OPA sidecar readiness fails closed if the required bundle cannot be fetched or verified.
-  - [ ] CI renders the Helm chart and validates the OPA bundle settings with both Native and OPA checks.
+  - [x] OPA bundle URL uses TLS or a private in-cluster authenticated endpoint, with credentials sourced from Kubernetes secrets or workload identity.
+  - [x] Bundle artifact digest and signature verification are documented and automated (for example, Sigstore/cosign or another open-source signing flow).
+  - [x] OPA sidecar readiness fails closed if the required bundle cannot be fetched or verified.
+  - [x] CI renders the Helm chart and validates the OPA bundle settings with both Native and OPA checks.
 
 #### GT-273
 

@@ -2553,10 +2553,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Proteger el camino de gobernanza ejecutable contra manipulación de policy bundles asegurando cómo los sidecars OPA obtienen y confían en bundles. Esto mantiene significativa la paridad Native/OPA después del despliegue, no solo en tests del repositorio.
 **Evidencia Actual:** Los values de Helm configuran sidecars OPA para descargar `http://ums-minio:9000/opa-bundles/bundle.tar.gz` sin TLS, autenticación, digest fijo, firma ni gate de readiness fail-closed. GT-133 cubre la arquitectura central de distribución, pero la referencia desplegada del sidecar no verifica integridad ni procedencia del bundle.
 **Hecho Cuando:**
-  - [ ] La URL del bundle OPA usa TLS o endpoint privado autenticado dentro del clúster, con credenciales originadas desde Kubernetes secrets o workload identity.
-  - [ ] La verificación de digest y firma del artefacto bundle queda documentada y automatizada (por ejemplo, Sigstore/cosign u otro flujo open source de firma).
-  - [ ] La readiness del sidecar OPA falla cerrado si el bundle requerido no puede descargarse o verificarse.
-  - [ ] CI renderiza el chart Helm y valida la configuración del bundle OPA con checks Native y OPA.
+  - [x] La URL del bundle OPA usa TLS o endpoint privado autenticado dentro del clúster, con credenciales originadas desde Kubernetes secrets o workload identity.
+  - [x] La verificación de digest y firma del artefacto bundle queda documentada y automatizada (por ejemplo, Sigstore/cosign u otro flujo open source de firma).
+  - [x] La readiness del sidecar OPA falla cerrado si el bundle requerido no puede descargarse o verificarse.
+  - [x] CI renderiza el chart Helm y valida la configuración del bundle OPA con checks Native y OPA.
 
 #### GT-273
 

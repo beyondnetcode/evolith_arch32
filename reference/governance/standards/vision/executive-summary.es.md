@@ -9,9 +9,9 @@ Instantánea estratégica generada desde el tablero canónico de gaps y la recon
 
 ## Señal Ejecutiva
 
-**Decisión actual:** GO condicionado: avanzar solo con hardening P1 y evidencia automatizada.
+**Decisión actual:** GO operativo: mantener vigilancia y atacar deuda P2/P3 por costo de cambio.
 
-**Mayor problema ahora:** `Rulesets` concentra el mayor riesgo abierto ponderado (1 pendientes, 0 P0). Ataca esa concentración antes de ampliar alcance.
+**Mayor problema ahora:** `Governance CI` concentra el mayor riesgo abierto ponderado (1 pendientes, 0 P0). Ataca esa concentración antes de ampliar alcance.
 
 **Dónde atacar primero:** -.
 
@@ -26,16 +26,15 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 | Orden | Foco | Motivo | IDs |
 |---:|---|---|---|
 | 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | - |
-| 2 | Área de mayor riesgo | `Rulesets` tiene la mayor carga ponderada abierta. | [GT-272](./gap-reference-catalog.es.md#gt-272) |
+| 2 | Área de mayor riesgo | `Governance CI` tiene la mayor carga ponderada abierta. | [GT-276](./gap-reference-catalog.es.md#gt-276) |
 | 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | - |
-| 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-272](./gap-reference-catalog.es.md#gt-272) |
+| 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | - |
 | 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-276](./gap-reference-catalog.es.md#gt-276) |
 
 ## Bloqueadores Actuales
 
 | ID | Ataque | Componente | Esfuerzo |
 |---|---|---|---|
-| [GT-272](./gap-reference-catalog.es.md#gt-272) | Asegurar distribución y verificación de bundles OPA sidecar | `Rulesets` | P1/M |
 | [GT-276](./gap-reference-catalog.es.md#gt-276) | Corregir la lógica de emparejamiento por área del dashboard bilingüe | `Governance CI` | P2/S |
 
 ## Métricas
@@ -44,18 +43,17 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 |---|---:|
 | Fecha canónica del tablero | 2026-06-26 |
 | Gaps totales | 276 |
-| Gaps cerrados | 274 |
-| Gaps pendientes | 2 |
+| Gaps cerrados | 275 |
+| Gaps pendientes | 1 |
 | P0 abiertos | 0 |
-| P1 abiertos | 1 |
+| P1 abiertos | 0 |
 | P2 abiertos | 1 |
-| Cierre total | 99.3% |
-| Registros de evidencia de cierre | 256 |
+| Cierre total | 99.6% |
+| Registros de evidencia de cierre | 257 |
 | Readiness registrado | 3 PASS, 1 RESOLVED |
 
 | Área | Pendientes | P0 | P1 | Primeros IDs |
 |---|---:|---:|---:|---|
-| `Rulesets` | 1 | 0 | 1 | [GT-272](./gap-reference-catalog.es.md#gt-272) |
 | `Governance CI` | 1 | 0 | 0 | [GT-276](./gap-reference-catalog.es.md#gt-276) |
 
 ## Fuente y Regla de Actualización

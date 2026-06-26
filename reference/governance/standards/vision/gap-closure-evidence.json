@@ -4118,6 +4118,36 @@
       "closureNote": "DAST scan restored via ephemeral MCP server in CI. Job 12 in sdk-cli-ci.yml spins up MCP on port 3001, runs zaproxy/action-full-scan@v0.10.0, uploads report.html/report.md as artifacts. continue-on-error: true so CI gate is not blocked."
     },
     {
+      "id": "GT-272",
+      "closedAt": "2026-06-26",
+      "closureCommit": "e26aa2eb",
+      "evidence": [
+        "reference/infrastructure/helm/evolith-bff/values.yaml",
+        "reference/infrastructure/helm/evolith-bff/templates/deployment.yaml",
+        "reference/infrastructure/helm/evolith-bff/templates/opa-configmap.yaml",
+        "reference/infrastructure/helm/evolith-mcp/values.yaml",
+        "reference/infrastructure/helm/evolith-mcp/templates/deployment.yaml",
+        "reference/infrastructure/helm/evolith-mcp/templates/opa-configmap.yaml",
+        "reference/infrastructure/helm/README.md",
+        "reference/infrastructure/helm/README.es.md",
+        "rulesets/infrastructure/opa-sidecar-bundle.rules.json",
+        "rulesets/infrastructure/opa/opa-sidecar-bundle.rego",
+        "rulesets/infrastructure/opa/opa-sidecar-bundle.test.rego",
+        ".harness/scripts/ci/29-validate-opa-sidecar-bundles.mjs",
+        ".github/workflows/governance-ci.yml",
+        ".harness/rules/global-rules.md",
+        ".harness/rules/global-rules.es.md"
+      ],
+      "validationCommands": [
+        "helm template gt272-bff reference/infrastructure/helm/evolith-bff",
+        "helm template gt272-mcp reference/infrastructure/helm/evolith-mcp",
+        ".harness/bin/opa test rulesets/infrastructure/opa/opa-sidecar-bundle.rego rulesets/infrastructure/opa/opa-sidecar-bundle.test.rego -v",
+        "node .harness/scripts/ci/29-validate-opa-sidecar-bundles.mjs"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "OPA sidecar bundle defaults now use HTTPS in-cluster MinIO, secret-backed S3 credentials, RS256 bundle signature verification, expected SHA-256 digest metadata, /health?bundles fail-closed readiness, and a CI gate that validates rendered Helm values with both Native Node.js checks and OPA policy."
+    },
+    {
       "id": "GT-275",
       "closedAt": "2026-06-26",
       "closureCommit": "aa18b8ce",

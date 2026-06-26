@@ -223,6 +223,19 @@ Las cinco fases siguientes van de la concepción a las operaciones; cada secció
 | [CLI Impact Analysis](./reference/governance/sdlc/04-artifact-templates/cli-impact-analysis.es.md)                     | Análisis de impacto CLI                                           | Evaluar cambios cross-repo          | Documentos y plantillas         | Opcional        |
 | [Validation Schemas & Rules (Fase 1)](./rulesets/README.es.md)                                                         | Schemas de validación para Canvas, PRD, Backlog y reglas de Gates | Validar cumplimiento en CI          | Reglas y schemas                | **Obligatorio** |
 
+**Subfase 01.1 — Knowledge-First Discovery / KDD Readiness** *(Opcional, Progresiva)*
+
+| Enlace (URL)                                                                                                           | Descripción                                              | Meta / Objetivo              | Nivel |
+| ---------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- | ---------------------------- | ----- |
+| [Discovery Knowledge Brief](./reference/governance/sdlc/04-artifact-templates/discovery-knowledge-brief-template.es.md) | Base de conocimiento: problema, valor, actores, contexto | Semilla de conocimiento antes de épicas | 1+    |
+| [Log de Supuestos y Preguntas](./reference/governance/sdlc/04-artifact-templates/assumptions-questions-log-template.es.md) | Rastrear preguntas abiertas y supuestos no validados     | Visibilidad de desconocidos  | 1+    |
+| [Discovery Context Pack](./reference/governance/sdlc/04-artifact-templates/discovery-context-pack-template.es.md)       | Contexto exportable para agentes IA y repos satélite     | Conocimiento consumible por agentes | 1+    |
+| [Mapa de Capacidades](./reference/governance/sdlc/04-artifact-templates/capability-map-template.es.md)                 | Capacidades del dominio antes de descomposición en épicas | Puente conocimiento → delivery | 2+    |
+| [Matriz de Candidatos a Épica](./reference/governance/sdlc/04-artifact-templates/epic-candidate-matrix-template.es.md) | Rastrear capacidades a candidatos de épica con prioridad | Planificación estructurada de épicas | 2+    |
+| [Banco de Semillas de Historia](./reference/governance/sdlc/04-artifact-templates/story-seed-bank-template.es.md)       | Semillas mínimas de historia antes del refinamiento del backlog | Conocimiento → historias | 2+    |
+| [Gate de Preparación de Discovery](./reference/governance/sdlc/04-artifact-templates/discovery-readiness-gate-template.es.md) | Gate formal que valida suficiencia del conocimiento | Gate antes de backlog/diseño  | 3+    |
+| [Playbook Knowledge-First Discovery](./reference/governance/sdlc/01-playbooks/phase-1.1-knowledge-first-discovery.es.md) | Procedimiento del gate, niveles de adopción, checklist   | Operacionalizar el gate      | 1+    |
+
 </details>
 
 <details>

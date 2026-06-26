@@ -223,6 +223,19 @@ The five phases below run from conception to operations; each section lists that
 | [CLI Impact Analysis](./reference/governance/sdlc/04-artifact-templates/cli-impact-analysis.md)                     | CLI impact analysis                                        | Evaluate cross-repo changes   | Documents and templates         | Optional      |
 | [Validation Schemas & Rules (Phase 1)](./rulesets/README.md)                                                        | Validation schemas for Canvas, PRD, Backlog and Gate rules | Validate compliance in CI     | Rules and schemas               | **Mandatory** |
 
+**Subphase 01.1 — Knowledge-First Discovery / KDD Readiness** *(Optional, Progressive)*
+
+| Link (URL)                                                                                                          | Description                                              | Goal / Objective              | Level |
+| ------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- | ----------------------------- | ----- |
+| [Discovery Knowledge Brief](./reference/governance/sdlc/04-artifact-templates/discovery-knowledge-brief-template.md) | Knowledge foundation: problem, value, actors, context    | Seed knowledge before epics   | 1+    |
+| [Assumptions & Questions Log](./reference/governance/sdlc/04-artifact-templates/assumptions-questions-log-template.md) | Track open questions and unvalidated assumptions          | Visibility of unknowns        | 1+    |
+| [Discovery Context Pack](./reference/governance/sdlc/04-artifact-templates/discovery-context-pack-template.md)       | Exportable context for AI agents and satellite repos     | Agent-consumable knowledge    | 1+    |
+| [Capability Map](./reference/governance/sdlc/04-artifact-templates/capability-map-template.md)                       | Domain capabilities before epic decomposition            | Knowledge → delivery bridge   | 2+    |
+| [Epic Candidate Matrix](./reference/governance/sdlc/04-artifact-templates/epic-candidate-matrix-template.md)         | Trace capabilities to epic candidates with priority      | Structured epic planning      | 2+    |
+| [Story Seed Bank](./reference/governance/sdlc/04-artifact-templates/story-seed-bank-template.md)                     | Minimal story seeds before backlog refinement            | Knowledge → stories           | 2+    |
+| [Discovery Readiness Gate](./reference/governance/sdlc/04-artifact-templates/discovery-readiness-gate-template.md)   | Formal gate validating knowledge sufficiency             | Gate before backlog/design    | 3+    |
+| [Knowledge-First Discovery Playbook](./reference/governance/sdlc/01-playbooks/phase-1.1-knowledge-first-discovery.md) | Gate procedure, adoption levels, quality checklist        | Operationalise the gate       | 1+    |
+
 </details>
 
 <details>

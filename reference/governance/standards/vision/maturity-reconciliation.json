@@ -4,12 +4,12 @@
   "asOf": "2026-06-26",
   "gaps": {
     "total": 312,
-    "done": 282,
+    "done": 283,
     "pending": 0,
     "inProgress": 0,
     "deferred": 0,
-    "open": 30,
-    "closed": 282,
+    "open": 29,
+    "closed": 283,
     "in_progress": 0
   },
   "evidence": {

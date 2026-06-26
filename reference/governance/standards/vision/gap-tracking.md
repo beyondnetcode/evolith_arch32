@@ -13,7 +13,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| [`GT-312`](./gap-reference-catalog.md#gt-312) | SDLC validation orchestration: phase → gate → artifacts → schemas → rulesets → topology → ADRs → OPA → blocking criteria | `Core Domain` | Cross | P0 | XL | `OPEN` |
+| [`GT-312`](./gap-reference-catalog.md#gt-312) | SDLC validation orchestration: phase → gate → artifacts → schemas → rulesets → topology → ADRs → OPA → blocking criteria | `Core Domain` | Cross | P0 | XL | `DONE` |
 | [`GT-286`](./gap-reference-catalog.md#gt-286) | compliance-baseline ruleset exists — rulesets/compliance-baseline | `Rulesets` | Cross | P0 | S | `OPEN` |
 | [`GT-287`](./gap-reference-catalog.md#gt-287) | definition-of-done ruleset exists — rulesets/definition-of-done | `Rulesets` | Cross | P0 | S | `OPEN` |
 | [`GT-288`](./gap-reference-catalog.md#gt-288) | engineering-manifesto ruleset exists — rulesets/engineering-manifesto | `Rulesets` | Cross | P0 | S | `OPEN` |

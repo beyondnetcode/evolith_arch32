@@ -29,6 +29,7 @@ export class EvolithConfigService {
       path.join(projectPath, 'evolith.config.json'),
       path.join(projectPath, '.evolith', 'config.json'),
       path.join(projectPath, 'evolith.yaml'),
+      path.join(projectPath, 'reference', 'config', 'evolith.config.json'),
     ];
 
     for (const configPath of possiblePaths) {

@@ -18,7 +18,7 @@ const RULESET_ID_MAP: Record<string, string> = {
   'observability': 'rulesets/observability/telemetry-evidence.rules.json',
   'compliance-baseline': 'rulesets/compliance-baseline/compliance-baseline.rules.json',
   'definition-of-done': 'rulesets/definition-of-done/definition-of-done.rules.json',
-  'engineering-manifesto': 'rulesets/cross-cutting/engineering-manifesto.rules.json',
+  'engineering-manifesto': 'rulesets/engineering-manifesto/engineering-manifesto.rules.json',
   'repository-taxonomy': 'rulesets/cross-cutting/repository-taxonomy.rules.json',
   'phase-gates': 'rulesets/sdlc/phase-gates.rules.json',
   'quality-thresholds': 'rulesets/sdlc/quality-thresholds.rules.json',

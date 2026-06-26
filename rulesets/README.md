@@ -46,6 +46,8 @@ rulesets/
 │   └── compliance-baseline.rules.json
 ├── definition-of-done/         # WS1 executable Definition of Done entrypoint
 │   └── definition-of-done.rules.json
+├── engineering-manifesto/      # WS1 executable Engineering Manifesto entrypoint
+│   └── engineering-manifesto.rules.json
 ├── opa/                        # OPA policies and inputs schemas
 │   ├── schemas/                # OPA policy input schemas (9 schemas)
 │   ├── *.rego                  # Rego policy files

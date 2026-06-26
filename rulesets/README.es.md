@@ -46,6 +46,8 @@ rulesets/
 │   └── compliance-baseline.rules.json
 ├── definition-of-done/         # Punto de entrada WS1 de Definition of Done
 │   └── definition-of-done.rules.json
+├── engineering-manifesto/      # Punto de entrada WS1 del Manifiesto de Ingeniería
+│   └── engineering-manifesto.rules.json
 ├── opa/                        # Políticas OPA y schemas de entrada
 │   ├── schemas/                # Schemas de entrada de políticas OPA (9 schemas)
 │   ├── *.rego                  # Archivos de políticas Rego

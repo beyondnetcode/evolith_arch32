@@ -2598,7 +2598,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Hacer que el dashboard ejecutivo de cobertura bilingüe coincida con el cálculo canónico de pares para resaltar brechas reales de idioma en lugar de áreas críticas falsas.
 **Evidencia Actual:** `node .harness/scripts/bilingual-coverage.mjs` reporta 518 archivos EN, 518 archivos ES, 518 pares y 100.0% de cobertura. El dashboard generado por `node .harness/scripts/coverage-dashboard.mjs` también reporta 100.0% global, pero marca archivos raíz e índices emparejados como áreas/subáreas `[CRIT]` separadas (por ejemplo `README.md` y `README.es.md`) porque el bucketing por área/subárea cuenta nombres de archivo de forma independiente en vez de normalizar `.es.md` hacia la ruta canónica EN.
 **Hecho Cuando:**
-  - [ ] `coverage-dashboard.mjs` reutiliza la misma lógica normalizada de emparejamiento EN/ES que `bilingual-coverage.mjs`.
-  - [ ] Archivos raíz, índices, README y navegación bilingüe se agrupan por ruta canónica de contraparte en vez de dividirse en pseudo-áreas EN y ES.
-  - [ ] Los tests del dashboard cubren archivos raíz, archivos anidados, archivos Patrón A `.es.md` y contenido agrupado Patrón B `-es/`.
-  - [ ] El dashboard sale con código distinto de cero solo ante archivos realmente sin pareja o umbrales configurados, no por artefactos falsos de bucketing por área.
+  - [x] `coverage-dashboard.mjs` reutiliza la misma lógica normalizada de emparejamiento EN/ES que `bilingual-coverage.mjs`.
+  - [x] Archivos raíz, índices, README y navegación bilingüe se agrupan por ruta canónica de contraparte en vez de dividirse en pseudo-áreas EN y ES.
+  - [x] Los tests del dashboard cubren archivos raíz, archivos anidados, archivos Patrón A `.es.md` y contenido agrupado Patrón B `-es/`.
+  - [x] El dashboard sale con código distinto de cero solo ante archivos realmente sin pareja o umbrales configurados, no por artefactos falsos de bucketing por área.
+**Evidencia de Cierre:** Commit `ee54a14d`. `coverage-dashboard.mjs` ahora normaliza `.es.md` a `.md` (Patrón A) y `-es/` a `/` (Patrón B) antes del bucketing por área mediante `normalizeKey()`. Código de salida distinto de cero cuando hay archivos reales sin pareja. 7 casos de prueba cubren archivos raíz, anidados, Patrón A, Patrón B y códigos de salida para archivos sin pareja.

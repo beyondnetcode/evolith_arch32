@@ -4166,6 +4166,20 @@
       ],
       "dependencyDisposition": "none",
       "closureNote": "Closure registry reconciled: GT-270 commit fixed, GT-264 evidence restored, duplicate GT-266 removed, GT-271 and GT-20 records added, GT-267 closure recorded, and maturity reconciliation regenerated."
+    },
+    {
+      "id": "GT-276",
+      "closedAt": "2026-06-26",
+      "closureCommit": "ee54a14d",
+      "evidence": [
+        ".harness/scripts/coverage-dashboard.mjs",
+        ".harness/scripts/coverage-dashboard.test.mjs"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/coverage-dashboard.mjs",
+        "node .harness/scripts/coverage-dashboard.test.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

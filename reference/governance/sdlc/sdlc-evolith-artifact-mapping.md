@@ -220,7 +220,7 @@ Phase 2 implies a specific progressive topology. The following actions are requi
 
 | Artifact | Location | Why Required |
 |---|---|---|
-| **Technical Story Template** | [technical-story-template.md](./04-artifact-templates/technical-story-template.md) | Breaks Functional Stories into implementation units with technical acceptance criteria and DoD evidence. |
+| **Technical Stories** | [technical-story-template.md](./04-artifact-templates/technical-story-template.md) | Breaks Functional Stories into implementation units with technical acceptance criteria and DoD evidence. Each must carry a `functionalStoryRef` linking to a Phase 2 Functional Story. |
 | **Engineering Manifesto** | [engineering-manifesto.md](../standards/engineering/engineering-manifesto.md) | Governs SOLID, DRY, KISS, YAGNI, anti-patterns, and PR discipline. |
 | **Construction-Focused SDLC Framework — §3 and §4** | [construction-focused-sdlc-framework.md](./02-engineering/construction-focused-sdlc-framework.md) | Defines construction loop, threshold metrics, and DoD checklist. |
 | **SDLC Quality Gates** | [quality-gates.md](./quality-gates.md) | Defines the canonical release-blocking threshold baseline: coverage >= 80%, complexity <= 15, zero high/critical CVEs, tech debt < 5%. |

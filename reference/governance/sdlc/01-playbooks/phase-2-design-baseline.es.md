@@ -95,7 +95,7 @@ Los waivers no pueden saltar decisiones sin documentar en subsistemas regulados 
 - Snapshot bloqueado del Registro de ADRs.
 - Functional Stories listas para descomposición técnica.
 - Bounded Context Map y declaración topológica alineada.
-- Autorización para entrar a la [Fase 3 — Construcción](../README.es.md#fase-03-construcción).
+- Autorización para entrar a la [Fase 3 — Construcción](./phase-3-construction-baseline.es.md).
 
 ---
 

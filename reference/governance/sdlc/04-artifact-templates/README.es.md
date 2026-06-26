@@ -77,6 +77,9 @@ Las plantillas garantizan consistencia en todos los repositorios satélite. Los 
 > **Notas Fase 2:**
 > - **DDD Model** — Produce el Mapa de Bounded Contexts requerido por el Gate F2.
 > - **Historia Funcional** — Formato de autoría para "Historias Funcionales" (evidencia Gate F2). Refinar Story Seeds de Fase 1.1 KDD aquí.
+>
+> **Notas Fase 3:**
+> - **Historia Técnica** — Cada una debe llevar `functionalStoryRef` vinculando a una Historia Funcional de Fase 2. Sigue el Construction-Focused SDLC Framework DoD.
 
 ---
 

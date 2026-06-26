@@ -92,7 +92,7 @@ Waivers cannot bypass undocumented decisions on regulated subsystems (authentica
 - Locked ADR Registry snapshot.
 - Functional Stories ready for technical decomposition.
 - Bounded Context Map and aligned topology declaration.
-- Authorisation to enter [Phase 3 — Construction](../README.md#phase-03-construction).
+- Authorisation to enter [Phase 3 — Construction](./phase-3-construction-baseline.md).
 
 ---
 

@@ -14,7 +14,7 @@ Este directorio contiene playbooks para cada compuerta de fase del SDLC.
 | [`phase-3-construction-baseline.es.md`](./phase-3-construction-baseline.es.md) | Compuerta Fase 3 — Bucle interno de construcción y Build Exitoso |
 | [`phase-4-rc-stamp.es.md`](./phase-4-rc-stamp.es.md) | Compuerta Fase 4 — Sello de candidato a liberación |
 | [`core-api-deployment.es.md`](./core-api-deployment.es.md) | Runbook de despliegue de Core API |
-| [`zero-downtime-release.es.md`](./zero-downtime-release.es.md) | Procedimiento de liberación sin tiempo de inactividad |
+| [`zero-downtime-release.es.md`](./zero-downtime-release.es.md) | Compuerta Fase 5 — Production Live: despliegue, observabilidad, rollback |
 
 ---
 

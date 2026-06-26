@@ -1,6 +1,5 @@
 import { Command, Option } from "nest-commander";
 import chalk from "chalk";
-import { startMcpServer } from "@evolith/mcp-server";
 import { BaseEvolithCommand } from "../../infrastructure/cli/base-command";
 
 type McpTransport = "stdio" | "http";
@@ -65,7 +64,8 @@ export class McpServeCommand extends BaseEvolithCommand {
         }
       }
 
-      // Delegate to the standalone @evolith/mcp-server NestJS gateway.
+      // Load lazily so CLI unit tests and builds do not require generated MCP artifacts.
+      const { startMcpServer } = await import("@evolith/mcp-server");
       await startMcpServer({ transport, port, apiKey });
 
       return;

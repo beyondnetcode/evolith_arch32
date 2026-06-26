@@ -1,6 +1,6 @@
-import { Controller, Post, Get, Param, Body, HttpCode, HttpStatus, NotFoundException, UseInterceptors, CacheInterceptor, CacheTTL, Inject } from '@nestjs/common';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Cache } from 'cache-manager';
+import { Controller, Post, Get, Param, Body, HttpCode, HttpStatus, NotFoundException, UseInterceptors, Inject } from '@nestjs/common';
+import { CACHE_MANAGER, CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
+import type { Cache } from 'cache-manager';
 import { ApiOperation, ApiBody } from '@nestjs/swagger';
 import { ValidateSatelliteUseCase } from '@evolith/core-domain/application/use-cases';
 import { ArchitectureDriftService } from '@evolith/core-domain/application/validators';

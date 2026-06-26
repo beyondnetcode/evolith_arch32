@@ -12,7 +12,7 @@ import {
   ListPromptsRequestSchema,
   GetPromptRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
-import { context as otelContext, propagation, trace } from '@opentelemetry/api';
+import { context as otelContext, propagation, SpanStatusCode, trace } from '@opentelemetry/api';
 import { ToolRegistryService } from './tool-registry.service';
 import { MetricsService } from './metrics.service';
 import { AuditLogger } from './audit-logger';
@@ -233,7 +233,7 @@ export class McpServerService {
           transport
             .handleRequest(req as Parameters<typeof transport.handleRequest>[0], res)
             .catch((err: Error) => {
-              span.setStatus({ code: trace.SpanStatusCode.ERROR, message: err.message });
+              span.setStatus({ code: SpanStatusCode.ERROR, message: err.message });
               this.logger.error(`MCP transport error: ${err.message}`);
             })
             .finally(() => {

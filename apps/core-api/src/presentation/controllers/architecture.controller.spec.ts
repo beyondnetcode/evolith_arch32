@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { CacheModule } from '@nestjs/cache-manager';
 import { ArchitectureController } from './architecture.controller';
 import { ValidateSatelliteUseCase } from '@evolith/core-domain/application/use-cases';
 import { ArchitectureDriftService } from '@evolith/core-domain/application/validators';
@@ -18,6 +19,7 @@ describe('ArchitectureController', () => {
     workspaceResolver = { resolve: jest.fn().mockReturnValue('/workspaces/op_01'), corePath: jest.fn().mockReturnValue('/core') } as any;
     topologyCatalog = { list: jest.fn().mockResolvedValue([{ metadata: { id: 'test-topology' } }]), get: jest.fn().mockResolvedValue({ metadata: { id: 'test-topology' } }) };
     const module: TestingModule = await Test.createTestingModule({
+      imports: [CacheModule.register()],
       controllers: [ArchitectureController],
       providers: [
         { provide: ValidateSatelliteUseCase, useValue: validateUseCase },

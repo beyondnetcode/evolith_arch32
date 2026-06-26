@@ -4246,6 +4246,27 @@
         "node .harness/playbooks/topology-compliance-audit.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-286",
+      "closedAt": "2026-06-26",
+      "closureCommit": "2396bc77",
+      "evidence": [
+        "rulesets/compliance-baseline/compliance-baseline.rules.json",
+        "rulesets/compliance-baseline/README.md",
+        "rulesets/compliance-baseline/README.es.md",
+        ".harness/scripts/run-evolith-intelligent-data-audit.test.mjs",
+        "packages/core-domain/src/application/validators/modes/ruleset-validation.mode.ts",
+        "packages/core-domain/src/application/validators/modes/ruleset-validation.mode.spec.ts",
+        "rulesets/README.md",
+        "rulesets/README.es.md"
+      ],
+      "validationCommands": [
+        "node --test .harness/scripts/run-evolith-intelligent-data-audit.test.mjs",
+        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --testPathPatterns='ruleset-validation.mode' --no-coverage",
+        ".harness/bin/opa test rulesets/opa/compliance-baseline.rego rulesets/opa/compliance-baseline.test.rego -v"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

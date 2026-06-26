@@ -9,15 +9,15 @@ Strategic snapshot generated from the canonical gap board and maturity reconcili
 
 ## Executive Signal
 
-**Current decision:** Full GO: 283/312 gaps closed, keep monitoring.
+**Current decision:** NO-GO for production expansion or a major release: active P0 blockers remain.
 
-**Biggest problem now:** No weighted open risk — all gaps are closed.
+**Biggest problem now:** `Rulesets` carries the highest weighted open risk (10 open, 10 P0). Attack that concentration before expanding scope.
 
-**Where to attack first:** -.
+**Where to attack first:** [GT-287](./gap-reference-catalog.md#gt-287), [GT-288](./gap-reference-catalog.md#gt-288), [GT-289](./gap-reference-catalog.md#gt-289), [GT-290](./gap-reference-catalog.md#gt-290), [GT-291](./gap-reference-catalog.md#gt-291), [GT-292](./gap-reference-catalog.md#gt-292), [GT-293](./gap-reference-catalog.md#gt-293), [GT-294](./gap-reference-catalog.md#gt-294), [GT-283](./gap-reference-catalog.md#gt-283), [GT-284](./gap-reference-catalog.md#gt-284), +5.
 
 ## Strategic Diagnosis
 
-The system has all gaps closed. The priority is to keep monitoring, watch for regressions, and prevent new technical debt from accumulating on the gap board.
+The system is close to a governed baseline, but it should not be treated as ready for production expansion while active P0 items remain. The priority is not to read more documentation; it is to close the blockers that compromise security, CI reproducibility, rule parity, and executable contracts.
 
 Use this summary with a simple rule: if you need context, open only the linked ID; if you need to choose work, follow this page's attack order.
 
@@ -25,14 +25,31 @@ Use this summary with a simple rule: if you need context, open only the linked I
 
 | Order | Focus | Reason | IDs |
 |---:|---|---|---|
-| 1 | No open gaps | All 283 gaps are closed. | - |
+| 1 | P0 blockers | They prevent production-readiness or major-release confidence. | [GT-287](./gap-reference-catalog.md#gt-287), [GT-288](./gap-reference-catalog.md#gt-288), [GT-289](./gap-reference-catalog.md#gt-289), [GT-290](./gap-reference-catalog.md#gt-290), [GT-291](./gap-reference-catalog.md#gt-291), [GT-292](./gap-reference-catalog.md#gt-292), [GT-293](./gap-reference-catalog.md#gt-293), [GT-294](./gap-reference-catalog.md#gt-294), [GT-283](./gap-reference-catalog.md#gt-283), [GT-284](./gap-reference-catalog.md#gt-284), +5 |
+| 2 | Highest-risk area | `Rulesets` has the largest weighted open load. | [GT-287](./gap-reference-catalog.md#gt-287), [GT-288](./gap-reference-catalog.md#gt-288), [GT-289](./gap-reference-catalog.md#gt-289), [GT-290](./gap-reference-catalog.md#gt-290), [GT-291](./gap-reference-catalog.md#gt-291), [GT-292](./gap-reference-catalog.md#gt-292), +4 |
+| 3 | Quick wins | High criticality with XS/S complexity. | [GT-287](./gap-reference-catalog.md#gt-287), [GT-288](./gap-reference-catalog.md#gt-288), [GT-289](./gap-reference-catalog.md#gt-289), [GT-290](./gap-reference-catalog.md#gt-290), [GT-291](./gap-reference-catalog.md#gt-291), [GT-292](./gap-reference-catalog.md#gt-292), [GT-293](./gap-reference-catalog.md#gt-293), [GT-294](./gap-reference-catalog.md#gt-294) |
+| 4 | P1 wave | Next hardening after P0 is cleared. | [GT-299](./gap-reference-catalog.md#gt-299), [GT-300](./gap-reference-catalog.md#gt-300), [GT-301](./gap-reference-catalog.md#gt-301), [GT-303](./gap-reference-catalog.md#gt-303), [GT-304](./gap-reference-catalog.md#gt-304), [GT-305](./gap-reference-catalog.md#gt-305), [GT-306](./gap-reference-catalog.md#gt-306), [GT-307](./gap-reference-catalog.md#gt-307), +3 |
+| 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-308](./gap-reference-catalog.md#gt-308), [GT-309](./gap-reference-catalog.md#gt-309) |
 
 ## Current Blockers
 
-No active blockers — all gaps are closed.
-
 | ID | Attack | Component | Effort |
 |---|---|---|---|
+| [GT-287](./gap-reference-catalog.md#gt-287) | definition-of-done ruleset exists — rulesets/definition-of-done | `Rulesets` | P0/S |
+| [GT-288](./gap-reference-catalog.md#gt-288) | engineering-manifesto ruleset exists — rulesets/engineering-manifesto | `Rulesets` | P0/S |
+| [GT-289](./gap-reference-catalog.md#gt-289) | repository-taxonomy ruleset exists — rulesets/repository-taxonomy | `Rulesets` | P0/S |
+| [GT-290](./gap-reference-catalog.md#gt-290) | phase-gates ruleset exists — rulesets/phase-gates | `Rulesets` | P0/S |
+| [GT-291](./gap-reference-catalog.md#gt-291) | quality-thresholds ruleset exists — rulesets/quality-thresholds | `Rulesets` | P0/S |
+| [GT-292](./gap-reference-catalog.md#gt-292) | satellite-contracts ruleset exists — rulesets/satellite-contracts | `Rulesets` | P0/S |
+| [GT-293](./gap-reference-catalog.md#gt-293) | executive-scorecards ruleset exists — rulesets/executive-scorecards | `Rulesets` | P0/S |
+| [GT-294](./gap-reference-catalog.md#gt-294) | OPA policies for architecture — rulesets/architecture/opa | `Architecture` | P0/S |
+| [GT-283](./gap-reference-catalog.md#gt-283) | f1-modular-monolith ruleset exists — rulesets/topologies/progressive-axis/modular-monolith | `Rulesets` | P0/M |
+| [GT-284](./gap-reference-catalog.md#gt-284) | f2-distributed-modules ruleset exists — rulesets/topologies/progressive-axis/distributed-modules | `Rulesets` | P0/M |
+| [GT-285](./gap-reference-catalog.md#gt-285) | f3-microservices ruleset exists — rulesets/topologies/progressive-axis/microservices | `Rulesets` | P0/M |
+| [GT-295](./gap-reference-catalog.md#gt-295) | Gate evaluation logic exists — packages/core-domain/src/gates | `Core Domain` | P0/M |
+| [GT-296](./gap-reference-catalog.md#gt-296) | Phase transition logic exists — packages/core-domain/src/phases | `Core Domain` | P0/M |
+| [GT-297](./gap-reference-catalog.md#gt-297) | MCP resources for corpus — packages/mcp-server/src/resources | `MCP` | P0/M |
+| [GT-298](./gap-reference-catalog.md#gt-298) | WatcherService integration — packages/mcp-server/src/watcher | `MCP` | P0/M |
 
 ## Metrics
 
@@ -40,17 +57,22 @@ No active blockers — all gaps are closed.
 |---|---:|
 | Canonical board date | 2026-06-26 |
 | Total gaps | 312 |
-| Closed gaps | 283 |
-| Open gaps | 0 |
-| Open P0 | 0 |
-| Open P1 | 0 |
-| Open P2 | 0 |
-| Total closure | 90.7% |
-| Closure evidence records | 261 |
+| Closed gaps | 284 |
+| Open gaps | 28 |
+| Open P0 | 15 |
+| Open P1 | 11 |
+| Open P2 | 2 |
+| Total closure | 91% |
+| Closure evidence records | 262 |
 | Recorded readiness | 3 PASS, 1 RESOLVED |
 
 | Area | Open | P0 | P1 | First IDs |
 |---|---:|---:|---:|---|
+| `Rulesets` | 10 | 10 | 0 | [GT-287](./gap-reference-catalog.md#gt-287), [GT-288](./gap-reference-catalog.md#gt-288), [GT-289](./gap-reference-catalog.md#gt-289), [GT-290](./gap-reference-catalog.md#gt-290), +6 |
+| `Core Domain` | 7 | 2 | 5 | [GT-295](./gap-reference-catalog.md#gt-295), [GT-296](./gap-reference-catalog.md#gt-296), [GT-303](./gap-reference-catalog.md#gt-303), [GT-304](./gap-reference-catalog.md#gt-304), +3 |
+| `MCP` | 2 | 2 | 0 | [GT-297](./gap-reference-catalog.md#gt-297), [GT-298](./gap-reference-catalog.md#gt-298) |
+| `CLI` | 5 | 0 | 3 | [GT-300](./gap-reference-catalog.md#gt-300), [GT-301](./gap-reference-catalog.md#gt-301), [GT-302](./gap-reference-catalog.md#gt-302), [GT-308](./gap-reference-catalog.md#gt-308), +1 |
+| `Architecture` | 1 | 1 | 0 | [GT-294](./gap-reference-catalog.md#gt-294) |
 
 ## Source and Refresh Rule
 

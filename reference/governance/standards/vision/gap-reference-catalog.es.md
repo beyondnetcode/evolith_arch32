@@ -2644,3 +2644,328 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Los flujos documentados usan comandos reales del Smart CLI con argumentos existentes.
   - [x] La auditoría de cumplimiento reporta `COMPLETO` para CLI en cada topología.
 - **Evidencia de Cierre:** Commit `7bed54d0` (main). 16 archivos CLI (8 EN + 8 ES) creados. Score global: **168/168 (100%)**.
+
+
+#### GT-286
+
+**Título:** Ruleset compliance-baseline existe — rulesets/compliance-baseline
+
+- **Propósito:** Implementar el ruleset compliance-baseline como parte del workstream WS1 (Evaluación de Fortaleza como Data Inteligente).
+- **Evidencia:** La ruta `rulesets/compliance-baseline` no existe.
+- **Complejidad:** S
+- **Hecho Cuando:**
+  - [ ] El archivo o directorio requerido existe en la ruta especificada.
+  - [ ] Los tests verifican la implementación.
+
+#### GT-287
+
+**Título:** Ruleset definition-of-done existe — rulesets/definition-of-done
+
+- **Propósito:** Implementar el ruleset definition-of-done como parte del workstream WS1 (Evaluación de Fortaleza como Data Inteligente).
+- **Evidencia:** La ruta `rulesets/definition-of-done` no existe.
+- **Complejidad:** S
+- **Hecho Cuando:**
+  - [ ] El archivo o directorio requerido existe en la ruta especificada.
+  - [ ] Los tests verifican la implementación.
+
+#### GT-288
+
+**Título:** Ruleset engineering-manifesto existe — rulesets/engineering-manifesto
+
+- **Propósito:** Implementar el ruleset engineering-manifesto como parte del workstream WS1 (Evaluación de Fortaleza como Data Inteligente).
+- **Evidencia:** La ruta `rulesets/engineering-manifesto` no existe.
+- **Complejidad:** S
+- **Hecho Cuando:**
+  - [ ] El archivo o directorio requerido existe en la ruta especificada.
+  - [ ] Los tests verifican la implementación.
+
+#### GT-289
+
+**Título:** Ruleset repository-taxonomy existe — rulesets/repository-taxonomy
+
+- **Propósito:** Implementar el ruleset repository-taxonomy como parte del workstream WS1 (Evaluación de Fortaleza como Data Inteligente).
+- **Evidencia:** La ruta `rulesets/repository-taxonomy` no existe.
+- **Complejidad:** S
+- **Hecho Cuando:**
+  - [ ] El archivo o directorio requerido existe en la ruta especificada.
+  - [ ] Los tests verifican la implementación.
+
+#### GT-290
+
+**Título:** Ruleset phase-gates existe — rulesets/phase-gates
+
+- **Propósito:** Implementar el ruleset phase-gates como parte del workstream WS1 (Evaluación de Fortaleza como Data Inteligente).
+- **Evidencia:** La ruta `rulesets/phase-gates` no existe.
+- **Complejidad:** S
+- **Hecho Cuando:**
+  - [ ] El archivo o directorio requerido existe en la ruta especificada.
+  - [ ] Los tests verifican la implementación.
+
+#### GT-291
+
+**Título:** Ruleset quality-thresholds existe — rulesets/quality-thresholds
+
+- **Propósito:** Implementar el ruleset quality-thresholds como parte del workstream WS1 (Evaluación de Fortaleza como Data Inteligente).
+- **Evidencia:** La ruta `rulesets/quality-thresholds` no existe.
+- **Complejidad:** S
+- **Hecho Cuando:**
+  - [ ] El archivo o directorio requerido existe en la ruta especificada.
+  - [ ] Los tests verifican la implementación.
+
+#### GT-292
+
+**Título:** Ruleset satellite-contracts existe — rulesets/satellite-contracts
+
+- **Propósito:** Implementar el ruleset satellite-contracts como parte del workstream WS1 (Evaluación de Fortaleza como Data Inteligente).
+- **Evidencia:** La ruta `rulesets/satellite-contracts` no existe.
+- **Complejidad:** S
+- **Hecho Cuando:**
+  - [ ] El archivo o directorio requerido existe en la ruta especificada.
+  - [ ] Los tests verifican la implementación.
+
+#### GT-293
+
+**Título:** Ruleset executive-scorecards existe — rulesets/executive-scorecards
+
+- **Propósito:** Implementar el ruleset executive-scorecards como parte del workstream WS1 (Evaluación de Fortaleza como Data Inteligente).
+- **Evidencia:** La ruta `rulesets/executive-scorecards` no existe.
+- **Complejidad:** S
+- **Hecho Cuando:**
+  - [ ] El archivo o directorio requerido existe en la ruta especificada.
+  - [ ] Los tests verifican la implementación.
+
+#### GT-294
+
+**Título:** Políticas OPA para arquitectura — rulesets/architecture/opa
+
+- **Propósito:** Implementar políticas OPA para validación de arquitectura como parte del workstream WS2 (Evaluación de Fortaleza como Data Inteligente).
+- **Evidencia:** La ruta `rulesets/architecture/opa` no existe.
+- **Complejidad:** S
+- **Hecho Cuando:**
+  - [ ] El archivo o directorio requerido existe en la ruta especificada.
+  - [ ] Los tests verifican la implementación.
+
+#### GT-283
+
+**Título:** Ruleset f1-modular-monolith existe — rulesets/topologies/progressive-axis/modular-monolith
+
+- **Propósito:** Implementar el ruleset f1-modular-monolith como parte del workstream WS1 (Evaluación de Fortaleza como Data Inteligente).
+- **Evidencia:** La ruta `rulesets/topologies/progressive-axis/modular-monolith` no existe.
+- **Complejidad:** M
+- **Hecho Cuando:**
+  - [ ] El archivo o directorio requerido existe en la ruta especificada.
+  - [ ] Los tests verifican la implementación.
+
+#### GT-284
+
+**Título:** Ruleset f2-distributed-modules existe — rulesets/topologies/progressive-axis/distributed-modules
+
+- **Propósito:** Implementar el ruleset f2-distributed-modules como parte del workstream WS1 (Evaluación de Fortaleza como Data Inteligente).
+- **Evidencia:** La ruta `rulesets/topologies/progressive-axis/distributed-modules` no existe.
+- **Complejidad:** M
+- **Hecho Cuando:**
+  - [ ] El archivo o directorio requerido existe en la ruta especificada.
+  - [ ] Los tests verifican la implementación.
+
+#### GT-285
+
+**Título:** Ruleset f3-microservices existe — rulesets/topologies/progressive-axis/microservices
+
+- **Propósito:** Implementar el ruleset f3-microservices como parte del workstream WS1 (Evaluación de Fortaleza como Data Inteligente).
+- **Evidencia:** La ruta `rulesets/topologies/progressive-axis/microservices` no existe.
+- **Complejidad:** M
+- **Hecho Cuando:**
+  - [ ] El archivo o directorio requerido existe en la ruta especificada.
+  - [ ] Los tests verifican la implementación.
+
+#### GT-295
+
+**Título:** Lógica de evaluación de gates existe — packages/core-domain/src/gates
+
+- **Propósito:** Implementar la lógica de evaluación de gates como parte del workstream WS3 (Evaluación de Fortaleza como Data Inteligente).
+- **Evidencia:** La ruta `packages/core-domain/src/gates` no existe.
+- **Complejidad:** M
+- **Hecho Cuando:**
+  - [ ] El archivo o directorio requerido existe en la ruta especificada.
+  - [ ] Los tests verifican la implementación.
+
+#### GT-296
+
+**Título:** Lógica de transición de fases existe — packages/core-domain/src/phases
+
+- **Propósito:** Implementar la lógica de transición de fases como parte del workstream WS3 (Evaluación de Fortaleza como Data Inteligente).
+- **Evidencia:** La ruta `packages/core-domain/src/phases` no existe.
+- **Complejidad:** M
+- **Hecho Cuando:**
+  - [ ] El archivo o directorio requerido existe en la ruta especificada.
+  - [ ] Los tests verifican la implementación.
+
+#### GT-297
+
+**Título:** Recursos MCP para corpus — packages/mcp-server/src/resources
+
+- **Propósito:** Implementar recursos MCP para recuperación del corpus como parte del workstream WS4 (Evaluación de Fortaleza como Data Inteligente).
+- **Evidencia:** La ruta `packages/mcp-server/src/resources` no existe.
+- **Complejidad:** M
+- **Hecho Cuando:**
+  - [ ] El archivo o directorio requerido existe en la ruta especificada.
+  - [ ] Los tests verifican la implementación.
+
+#### GT-298
+
+**Título:** Integración WatcherService — packages/mcp-server/src/watcher
+
+- **Propósito:** Implementar la integración WatcherService para notificación de drift MCP como parte del workstream WS4 (Evaluación de Fortaleza como Data Inteligente).
+- **Evidencia:** La ruta `packages/mcp-server/src/watcher` no existe.
+- **Complejidad:** M
+- **Hecho Cuando:**
+  - [ ] El archivo o directorio requerido existe en la ruta especificada.
+  - [ ] Los tests verifican la implementación.
+
+#### GT-299
+
+**Título:** Especificación OpenAPI — apps/core-api/src/openapi
+
+- **Propósito:** Implementar la especificación OpenAPI para core-api como parte del workstream WS5 (Evaluación de Fortaleza como Data Inteligente).
+- **Evidencia:** La ruta `apps/core-api/src/openapi` no existe.
+- **Complejidad:** M
+- **Hecho Cuando:**
+  - [ ] El archivo o directorio requerido existe en la ruta especificada.
+  - [ ] Los tests verifican la implementación.
+
+#### GT-300
+
+**Título:** Comando agents existe — sdk/cli/src/commands/agents
+
+- **Propósito:** Implementar el comando agents para instalación/onboarding de agentes como parte del workstream WS6 (Evaluación de Fortaleza como Data Inteligente).
+- **Evidencia:** La ruta `sdk/cli/src/commands/agents` no existe.
+- **Complejidad:** M
+- **Hecho Cuando:**
+  - [ ] El archivo o directorio requerido existe en la ruta especificada.
+  - [ ] Los tests verifican la implementación.
+
+#### GT-301
+
+**Título:** Comando upgrade existe — sdk/cli/src/commands/upgrade
+
+- **Propósito:** Implementar el comando upgrade para actualizaciones seguras de satélites como parte del workstream WS6 (Evaluación de Fortaleza como Data Inteligente).
+- **Evidencia:** La ruta `sdk/cli/src/commands/upgrade` no existe.
+- **Complejidad:** M
+- **Hecho Cuando:**
+  - [ ] El archivo o directorio requerido existe en la ruta especificada.
+  - [ ] Los tests verifican la implementación.
+
+#### GT-303
+
+**Título:** Implementación Evidence Graph — packages/core-domain/src/evidence
+
+- **Propósito:** Implementar Evidence Graph como parte del workstream WS7 (Evaluación de Fortaleza como Data Inteligente). Requiere ADR antes de la implementación.
+- **Evidencia:** La ruta `packages/core-domain/src/evidence` no existe.
+- **Complejidad:** M
+- **Hecho Cuando:**
+  - [ ] El ADR para Evidence Graph es aceptado.
+  - [ ] El archivo o directorio requerido existe en la ruta especificada.
+  - [ ] Los tests verifican la implementación.
+
+#### GT-304
+
+**Título:** Modelo Gate Decision — packages/core-domain/src/gates/decision
+
+- **Propósito:** Implementar el modelo Gate Decision como parte del workstream WS7 (Evaluación de Fortaleza como Data Inteligente). Requiere ADR antes de la implementación.
+- **Evidencia:** La ruta `packages/core-domain/src/gates/decision` no existe.
+- **Complejidad:** M
+- **Hecho Cuando:**
+  - [ ] El ADR para Gate Decision es aceptado.
+  - [ ] El archivo o directorio requerido existe en la ruta especificada.
+  - [ ] Los tests verifican la implementación.
+
+#### GT-305
+
+**Título:** Modelo Phase Transition — packages/core-domain/src/phases/transition
+
+- **Propósito:** Implementar el modelo Phase Transition como parte del workstream WS7 (Evaluación de Fortaleza como Data Inteligente). Requiere ADR antes de la implementación.
+- **Evidencia:** La ruta `packages/core-domain/src/phases/transition` no existe.
+- **Complejidad:** M
+- **Hecho Cuando:**
+  - [ ] El ADR para Phase Transition es aceptado.
+  - [ ] El archivo o directorio requerido existe en la ruta especificada.
+  - [ ] Los tests verifican la implementación.
+
+#### GT-306
+
+**Título:** Modelo Provider ports — packages/core-domain/src/providers
+
+- **Propósito:** Implementar el modelo Provider ports (sistema de plugins) como parte del workstream WS7 (Evaluación de Fortaleza como Data Inteligente). Requiere ADR antes de la implementación.
+- **Evidencia:** La ruta `packages/core-domain/src/providers` no existe.
+- **Complejidad:** M
+- **Hecho Cuando:**
+  - [ ] El ADR para Provider ports es aceptado.
+  - [ ] El archivo o directorio requerido existe en la ruta especificada.
+  - [ ] Los tests verifican la implementación.
+
+#### GT-307
+
+**Título:** Modelo Tenant authority — packages/core-domain/src/tenancy
+
+- **Propósito:** Implementar el modelo Tenant authority como parte del workstream WS7 (Evaluación de Fortaleza como Data Inteligente). Requiere ADR antes de la implementación.
+- **Evidencia:** La ruta `packages/core-domain/src/tenancy` no existe.
+- **Complejidad:** M
+- **Hecho Cuando:**
+  - [ ] El ADR para Tenant authority es aceptado.
+  - [ ] El archivo o directorio requerido existe en la ruta especificada.
+  - [ ] Los tests verifican la implementación.
+
+#### GT-310
+
+**Título:** Suite de tests existe — sdk/cli/src/__tests__
+
+- **Propósito:** Implementar la suite de tests completa como parte del workstream WS9 (Evaluación de Fortaleza como Data Inteligente).
+- **Evidencia:** La ruta `sdk/cli/src/__tests__` no existe.
+- **Complejidad:** M
+- **Hecho Cuando:**
+  - [ ] El archivo o directorio requerido existe en la ruta especificada.
+  - [ ] Los tests verifican la implementación.
+
+#### GT-311
+
+**Título:** Tests E2E existen — sdk/cli/src/__tests__/e2e
+
+- **Propósito:** Implementar tests E2E como parte del workstream WS9 (Evaluación de Fortaleza como Data Inteligente).
+- **Evidencia:** La ruta `sdk/cli/src/__tests__/e2e` no existe.
+- **Complejidad:** M
+- **Hecho Cuando:**
+  - [ ] El archivo o directorio requerido existe en la ruta especificada.
+  - [ ] Los tests verifican la implementación.
+
+#### GT-302
+
+**Título:** Comando scaffold existe — sdk/cli/src/commands/architecture/scaffold
+
+- **Propósito:** Implementar el comando scaffold (ejecución real, no mock) como parte del workstream WS6 (Evaluación de Fortaleza como Data Inteligente).
+- **Evidencia:** La ruta `sdk/cli/src/commands/architecture/scaffold` no existe.
+- **Complejidad:** L
+- **Hecho Cuando:**
+  - [ ] El archivo o directorio requerido existe en la ruta especificada.
+  - [ ] Los tests verifican la implementación.
+
+#### GT-308
+
+**Título:** Sistema de plugins para comandos — sdk/cli/src/plugins
+
+- **Propósito:** Implementar el sistema de plugins para comandos como parte del workstream WS8 (Evaluación de Fortaleza como Data Inteligente).
+- **Evidencia:** La ruta `sdk/cli/src/plugins` no existe.
+- **Complejidad:** M
+- **Hecho Cuando:**
+  - [ ] El archivo o directorio requerido existe en la ruta especificada.
+  - [ ] Los tests verifican la implementación.
+
+#### GT-309
+
+**Título:** Validación de contribuciones — sdk/cli/src/contributions
+
+- **Propósito:** Implementar la validación de contribuciones para colaboradores externos como parte del workstream WS8 (Evaluación de Fortaleza como Data Inteligente).
+- **Evidencia:** La ruta `sdk/cli/src/contributions` no existe.
+- **Complejidad:** M
+- **Hecho Cuando:**
+  - [ ] El archivo o directorio requerido existe en la ruta especificada.
+  - [ ] Los tests verifican la implementación.

@@ -3,14 +3,68 @@
 > **Navegación Bilingüe:** [English Version](./zero-downtime-release.md)
 
 **Fase:** [05 — Delivery and Operations](../README.es.md#fase-05-entrega-y-operaciones)
-**Audiencia Principal:** DevOps, SRE, Tech Leads
+**Gate de Salida:** Production Live (ver [`gate-f5.json`](../../../../reference/governance/sdlc/gates/gate-f5.json))
+**Audiencia Principal:** DevOps Lead, SRE, Tech Lead
+**Rol Responsable:** DevOps Lead
+**Autoridad de Waiver:** Technology Director
 **Estado:** Aprobado
 
 Este playbook define los procedimientos operativos obligatorios para desplegar release candidates (RCs) en entornos de producción con cero tiempo de inactividad percibido por los usuarios finales. Todos los satélites de Evolith deben adherirse a estas prácticas durante la Fase 5 del SDLC.
 
 ---
 
-## 1. Restricciones de Zero-Downtime
+## 0. Condiciones Previas
+
+Antes de abrir la compuerta Production Live:
+
+- El gate RC Stamp de Fase 4 está registrado y el artefacto RC está taggeado de forma inmutable.
+- La validación en entorno de prueba completada; sin issues High/Critical abiertos.
+- El objetivo de despliegue (Blue-Green o Canary) está provisionado y smoke-testeado.
+- El equipo de on-call está informado del alcance del release.
+
+---
+
+## 1. Checklist de Recolección de Evidencia (Gate F5)
+
+| # | Evidencia Obligatoria | Archivo / Sistema | Criterio de Aceptación |
+|---|---|---|---|
+| 1 | **Release Notes** | `reference/governance/sdlc/04-artifact-templates/release-notes-template.es.md` · `release-notes.schema.json` | Alcance, pasos, rollback, checklist de observabilidad presentes y completos |
+| 2 | **Observability Validation** | `reference/governance/sdlc/04-artifact-templates/observability-validation-template.es.md` · `observability-validation.schema.json` | Métricas nominales, logs fluyendo, traces completos para todas las rutas productivas |
+| 3 | **Rollback Procedure** | `reference/governance/sdlc/04-artifact-templates/rollback-rehearsal-template.es.md` · `rollback-rehearsal.schema.json` | Pasos documentados, ensayados y cronometrados. Última versión buena identificada |
+| 4 | **On-Call Handoff** | `reference/governance/sdlc/04-artifact-templates/on-call-handoff-template.es.md` · `on-call-handoff.schema.json` | Equipo on-call informado: refs de runbook, rutas de escalación, ownership de alertas, SLA |
+| 5 | **Deployment Evidence** | `.evolith/deployment-evidence.json` | Artefactos de despliegue (imágenes, configs) trazables al RC sellado |
+
+---
+
+## 2. Criterios de Bloqueo
+
+| Criterio | Verificación | Acción |
+|----------|-------------|--------|
+| Monitoreo no nominal | Directorio `observability/` con contenido health/SLO/alert | BLOCK — investigar antes de desplegar |
+| Procedimiento de rollback indefinido | Release Notes contiene acción de rollback documentada y evidencia de ensayo | BLOCK — documentar rollback primero |
+| Release no trazable a RC | Artefacto Release Notes encontrado con trazabilidad RC | BLOCK — asegurar cadena RC → Release |
+
+---
+
+## 3. Procedimiento de Revisión del Gate
+
+1. **Check pre-despliegue (DevOps Lead).** Verificar los 5 artefactos de evidencia.
+2. **Baseline de observabilidad (SRE).** Confirmar métricas, logs y traces nominales pre-deploy.
+3. **Revisión de ensayo de rollback (Tech Lead).** Confirmar procedimiento documentado y ensayado.
+4. **Handoff on-call (DevOps Lead).** Confirmar equipo informado y SLA acknowledado.
+5. **Ejecución del despliegue.** Proceder con estrategia Blue-Green o Canary por §5–§6.
+6. **Validación post-deploy.** Ejecutar checkpoints de observabilidad (§7). Confirmar Production Live.
+
+---
+
+## 4. Flujo de Waivers
+
+Technology Director autoriza waivers. Campos requeridos:
+`criterion · justification · risk · owner · expirationDate · mitigationPlan`
+
+---
+
+## 5. Restricciones de Zero-Downtime
 
 Un release solo se considera "zero-downtime" si no se descartan peticiones de usuarios, no ocurren timeouts, ni se sirven códigos de error inesperados durante la transición.
 
@@ -33,7 +87,7 @@ Las aplicaciones deben manejar elegantemente las señales `SIGTERM` desde la pla
 
 ---
 
-## 2. Estrategias de Despliegue
+## 6. Estrategias de Despliegue
 
 Evolith exige una de dos estrategias de despliegue para operaciones zero-downtime: Blue-Green o Canary.
 
@@ -55,7 +109,7 @@ La estrategia preferida para alto rendimiento o endpoints altamente sensibles, m
 
 ---
 
-## 3. Puntos de Control de Observabilidad
+## 7. Puntos de Control de Observabilidad
 
 El resultado de estos puntos de control se registra en el artefacto de [Validación de Observabilidad](../04-artifact-templates/observability-validation-template.es.md) (evidencia obligatoria de la compuerta Producción Activa). Antes, durante y después del cutover de tráfico, la siguiente telemetría debe ser monitoreada utilizando el stack mandatado por `core/ADR-0046` y `nodejs/ADR-0007`:
 
@@ -66,7 +120,7 @@ El resultado de estos puntos de control se registra en el artefacto de [Validaci
 
 ---
 
-## 4. Triggers de Rollback
+## 8. Triggers de Rollback
 
 Los rollbacks deben ser instantáneos y no destructivos. Si cualquiera de los siguientes triggers se cumple durante la ventana de observación, el release debe ser abortado inmediatamente, y el tráfico devuelto a las instancias antiguas.
 

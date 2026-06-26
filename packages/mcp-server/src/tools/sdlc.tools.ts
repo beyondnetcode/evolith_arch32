@@ -3,7 +3,7 @@ import type { IFileSystem, IConfigParser } from '@evolith/core';
 import { readGitLog, isGitRepo } from '@evolith/core';
 import { McpTool } from '../mcp/tool.interface';
 
-const PHASES = ['phase-0', 'phase-1', 'phase-2', 'phase-3', 'phase-4'];
+const PHASES = ['phase-0', 'phase-1', 'phase-2', 'phase-3', 'phase-4', 'phase-5'];
 
 interface PhaseRequirement {
   phase: string;
@@ -16,6 +16,7 @@ const PHASE_REQUIREMENTS: PhaseRequirement[] = [
   { phase: 'phase-2', artifacts: ['ADR Registry', 'Functional Stories', 'Reference Blueprint Alignment', 'Simplicity Checklist Phase 1', 'Bounded Context Map'] },
   { phase: 'phase-3', artifacts: ['Technical Stories', 'CI Pipeline', 'Definition of Done Checklist', 'Documentation Delta', 'Coverage Report'] },
   { phase: 'phase-4', artifacts: ['Test Summary Report', 'Acceptance Validation', 'Security Scan Report', 'Integration Evidence', 'Pyramid Distribution'] },
+  { phase: 'phase-5', artifacts: ['Release Notes', 'Observability Validation', 'Rollback Procedure', 'On-Call Handoff', 'Deployment Evidence'] },
 ];
 
 const ARTIFACT_PATHS: Record<string, string> = {
@@ -43,6 +44,11 @@ const ARTIFACT_PATHS: Record<string, string> = {
   'Security Scan Report': 'reference/governance/sdlc/04-artifact-templates/security-scan-report-template.md',
   'Integration Evidence': 'reference/governance/sdlc/04-artifact-templates/integration-evidence-template.md',
   'Pyramid Distribution': 'coverage/coverage-summary.json',
+  'Release Notes': 'reference/governance/sdlc/04-artifact-templates/release-notes-template.md',
+  'Observability Validation': 'reference/governance/sdlc/04-artifact-templates/observability-validation-template.md',
+  'Rollback Procedure': 'reference/governance/sdlc/04-artifact-templates/rollback-rehearsal-template.md',
+  'On-Call Handoff': 'reference/governance/sdlc/04-artifact-templates/on-call-handoff-template.md',
+  'Deployment Evidence': '.evolith/deployment-evidence.json',
 };
 
 /** SDLC tools: phase status, phase handoff (mutative), and DORA metrics. */

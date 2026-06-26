@@ -14,7 +14,7 @@ This directory contains playbooks for each SDLC phase gate.
 | [`phase-3-construction-baseline.md`](./phase-3-construction-baseline.md) | Phase 3 gate — Construction inner loop and Successful Build |
 | [`phase-4-rc-stamp.md`](./phase-4-rc-stamp.md) | Phase 4 gate — Release candidate stamp |
 | [`core-api-deployment.md`](./core-api-deployment.md) | Core API deployment runbook |
-| [`zero-downtime-release.md`](./zero-downtime-release.md) | Zero-downtime release procedure |
+| [`zero-downtime-release.md`](./zero-downtime-release.md) | Phase 5 gate — Production Live: deployment, observability, rollback |
 
 ---
 

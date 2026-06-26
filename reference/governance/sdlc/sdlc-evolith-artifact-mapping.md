@@ -298,11 +298,20 @@ Phase 4 applies all 8 rules from `quality-thresholds.rules.json`. The OPA rulese
 
 **Exit gate:** Production Live — Monitoring Nominal
 
-### Required Artifacts
+### Gate Evidence (block the Production Live gate)
 
-| Artifact | Location | Why Required |
+| Artifact | File / System | Validation |
 |---|---|---|
-| **Release Notes Template** | [release-notes-template.md](./04-artifact-templates/release-notes-template.md) | Captures release scope, deployment steps, rollback procedure, observability checklist, and links to RC evidence. |
+| Release Notes | [release-notes-template.md](./04-artifact-templates/release-notes-template.md) | Scope, deployment steps, rollback, observability checklist — release-notes.schema.json |
+| Observability Validation | [observability-validation-template.md](./04-artifact-templates/observability-validation-template.md) | Metrics nominal, logs flowing, traces complete — observability-validation.schema.json |
+| Rollback Procedure | [rollback-rehearsal-template.md](./04-artifact-templates/rollback-rehearsal-template.md) | Steps documented and rehearsed — rollback-rehearsal.schema.json |
+| On-Call Handoff | [on-call-handoff-template.md](./04-artifact-templates/on-call-handoff-template.md) | Team briefed, runbooks, escalation, SLA — on-call-handoff.schema.json |
+| Deployment Evidence | `.evolith/deployment-evidence.json` | Images, configs traceable to stamped RC |
+
+### Framework Documents (consult and follow)
+
+| Artifact | Location | Why Consulted |
+|---|---|---|
 | **ADR-0007 — OTel and Loki Observability** | [ADR-0007](../../architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md) | Distributed tracing and structured logging are mandatory in every production deployment. |
 | **ADR-0013 — Cloud Topology and DR** | [ADR-0013](../../architecture/adrs/core/0013-cloud-infrastructure-topology-dr.md) | Defines target deployment topology and disaster recovery runbook. |
 | **ADR-0005 — CI/CD Pipeline** | [ADR-0005](../../architecture/adrs/core/0005-automated-sast-quality-gates.md) | Deployment pipeline must enforce the same quality gates in the delivery path. |

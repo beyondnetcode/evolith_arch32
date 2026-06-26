@@ -3,14 +3,68 @@
 > **Bilingual Navigation:** [Versión en Español](./zero-downtime-release.es.md)
 
 **Phase:** [05 — Delivery and Operations](../README.md#phase-05-delivery-and-operations)
-**Primary Audience:** DevOps, SRE, Tech Leads
+**Phase Exit Gate:** Production Live (see [`gate-f5.json`](../../../../reference/governance/sdlc/gates/gate-f5.json))
+**Primary Audience:** DevOps Lead, SRE, Tech Lead
+**Accountable Role:** DevOps Lead
+**Waiver Authority:** Technology Director
 **Status:** Approved
 
 This playbook defines the mandatory operational procedures for deploying release candidates (RCs) into production environments with zero perceived downtime for end-users. All Evolith satellites must adhere to these practices during SDLC Phase 5.
 
 ---
 
-## 1. Zero-Downtime Constraints
+## 0. Pre-Conditions
+
+Before opening the Production Live gate:
+
+- Phase 4 RC Stamp gate is recorded and the RC artefact is immutable-tagged.
+- Test environment validation completed; no open High/Critical issues.
+- Deployment target (Blue-Green or Canary) is provisioned and smoke-tested.
+- On-call team is briefed on the release scope.
+
+---
+
+## 1. Evidence Collection Checklist (Gate F5)
+
+| # | Mandatory Evidence | File / System | Acceptance Criterion |
+|---|---|---|---|
+| 1 | **Release Notes** | `reference/governance/sdlc/04-artifact-templates/release-notes-template.md` · `release-notes.schema.json` | Release scope, deployment steps, rollback procedure, observability checklist present and complete |
+| 2 | **Observability Validation** | `reference/governance/sdlc/04-artifact-templates/observability-validation-template.md` · `observability-validation.schema.json` | Metrics nominal, logs flowing, traces complete for all production paths |
+| 3 | **Rollback Procedure** | `reference/governance/sdlc/04-artifact-templates/rollback-rehearsal-template.md` · `rollback-rehearsal.schema.json` | Rollback steps documented, rehearsed, and timed. Last good version identified |
+| 4 | **On-Call Handoff** | `reference/governance/sdlc/04-artifact-templates/on-call-handoff-template.md` · `on-call-handoff.schema.json` | On-call team briefed: runbook refs, escalation paths, alert ownership, SLA acknowledgement |
+| 5 | **Deployment Evidence** | `.evolith/deployment-evidence.json` | Deployment artefacts (images, configs) traceable to stamped RC |
+
+---
+
+## 2. Blocking Criteria
+
+| Criterion | Check | Action |
+|-----------|-------|--------|
+| Monitoring is not nominal | `observability/` directory with health/SLO/alert content | BLOCK — investigate before deploy |
+| Rollback procedure is undefined | Release Notes contains documented rollback action and rehearsal evidence | BLOCK — document rollback first |
+| Release is not traceable to RC | Release Notes artifact found with RC traceability | BLOCK — ensure RC → Release chain |
+
+---
+
+## 3. Gate Review Procedure
+
+1. **Pre-deployment check (DevOps Lead).** Verify all 5 evidence artifacts present.
+2. **Observability baseline (SRE).** Confirm metrics, logs, and traces nominal pre-deploy.
+3. **Rollback rehearsal review (Tech Lead).** Confirm rollback procedure documented and rehearsed.
+4. **On-call handoff (DevOps Lead).** Confirm on-call team briefed and SLA acknowledged.
+5. **Deployment execution.** Proceed with Blue-Green or Canary strategy per §5–§6 below.
+6. **Post-deploy validation.** Run observability checkpoints (§7). Confirm Production Live gate.
+
+---
+
+## 4. Waiver Workflow
+
+Technology Director authorises waivers. Required fields:
+`criterion · justification · risk · owner · expirationDate · mitigationPlan`
+
+---
+
+## 5. Zero-Downtime Constraints
 
 A release is only considered "zero-downtime" if no end-user requests are dropped, timed out, or served with unexpected error codes during the transition.
 
@@ -33,7 +87,7 @@ Applications must gracefully handle `SIGTERM` signals from the orchestration pla
 
 ---
 
-## 2. Deployment Strategies
+## 6. Deployment Strategies
 
 Evolith mandates one of two deployment strategies for zero-downtime operations: Blue-Green or Canary.
 
@@ -55,7 +109,7 @@ The preferred strategy for high-throughput or highly-sensitive endpoints, minimi
 
 ---
 
-## 3. Observability Checkpoints
+## 7. Observability Checkpoints
 
 The outcome of these checkpoints is recorded in the [Observability Validation artifact](../04-artifact-templates/observability-validation-template.md) (mandatory evidence for the Production Live gate). Before, during, and after the traffic cutover, the following telemetry must be monitored using the stack mandated by `core/ADR-0046` and `nodejs/ADR-0007`:
 
@@ -66,7 +120,7 @@ The outcome of these checkpoints is recorded in the [Observability Validation ar
 
 ---
 
-## 4. Rollback Triggers
+## 8. Rollback Triggers
 
 Rollbacks must be instantaneous and non-destructive. If any of the following triggers are met during the observation window, the release must be immediately aborted, and traffic routed back to the old instances.
 

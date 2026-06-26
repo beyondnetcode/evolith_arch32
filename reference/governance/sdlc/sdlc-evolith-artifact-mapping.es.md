@@ -298,11 +298,20 @@ La Fase 4 aplica las 8 reglas de `quality-thresholds.rules.json`. Los rulesets O
 
 **Gate de salida:** Producción Activa — Monitoreo Nominal
 
-### Artefactos Requeridos
+### Evidencia de Gate (bloquea la compuerta Production Live)
 
-| Artefacto | Ubicación | Por qué es requerido |
+| Artefacto | Archivo / Sistema | Validación |
 |---|---|---|
-| **Plantilla de Release Notes** | [release-notes-template.es.md](./04-artifact-templates/release-notes-template.es.md) | Captura alcance de release, pasos de despliegue, rollback, checklist de observabilidad y enlaces a evidencia RC. |
+| Release Notes | [release-notes-template.es.md](./04-artifact-templates/release-notes-template.es.md) | Alcance, pasos de despliegue, rollback, checklist de observabilidad — release-notes.schema.json |
+| Observability Validation | [observability-validation-template.es.md](./04-artifact-templates/observability-validation-template.es.md) | Métricas nominales, logs fluyendo, traces completos — observability-validation.schema.json |
+| Rollback Procedure | [rollback-rehearsal-template.es.md](./04-artifact-templates/rollback-rehearsal-template.es.md) | Pasos documentados y ensayados — rollback-rehearsal.schema.json |
+| On-Call Handoff | [on-call-handoff-template.es.md](./04-artifact-templates/on-call-handoff-template.es.md) | Equipo informado, runbooks, escalación, SLA — on-call-handoff.schema.json |
+| Deployment Evidence | `.evolith/deployment-evidence.json` | Imágenes, configs trazables al RC sellado |
+
+### Documentos de Marco (consultar y seguir)
+
+| Artefacto | Ubicación | Por qué se consulta |
+|---|---|---|
 | **ADR-0007 — OTel y Loki Observability** | [ADR-0007](../../architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.es.md) | Tracing distribuido y logging estructurado son obligatorios en todo despliegue productivo. |
 | **ADR-0013 — Cloud Topology y DR** | [ADR-0013](../../architecture/adrs/core/0013-cloud-infrastructure-topology-dr.es.md) | Define topología objetivo de despliegue y runbook de disaster recovery. |
 | **ADR-0005 — Pipeline CI/CD** | [ADR-0005](../../architecture/adrs/core/0005-automated-sast-quality-gates.es.md) | El pipeline de despliegue debe aplicar los mismos gates de calidad que la ruta de construcción. |

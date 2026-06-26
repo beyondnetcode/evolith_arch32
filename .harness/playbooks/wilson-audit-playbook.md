@@ -159,6 +159,26 @@ Piensa como arquitecto empresarial, platform engineer, DevOps lead, security eng
 
 ---
 
+## The Topology Compliance Audit
+
+An executable script that Wilson can run on demand to evaluate compliance of all 8 accepted topologies against the canonical corpus structure:
+
+```bash
+# Human-readable Markdown report
+node .harness/playbooks/topology-compliance-audit.mjs --markdown
+
+# Machine-readable JSON report
+node .harness/playbooks/topology-compliance-audit.mjs
+```
+
+The audit evaluates each topology across 21 checkpoints (docs EN/ES, OPA Rego, rules, WASM, schema, manifest, fixtures, parity fixtures, OpenAPI, MCP, CLI) and produces a global score. Use the `--topology` flag with `run-wilson-audit.mjs`:
+
+```bash
+node .harness/scripts/run-wilson-audit.mjs --topology
+```
+
+---
+
 ## The BMAD Agent Evolution Prompt (English)
 
 ```markdown

@@ -2603,3 +2603,41 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Los tests del dashboard cubren archivos raíz, archivos anidados, archivos Patrón A `.es.md` y contenido agrupado Patrón B `-es/`.
   - [x] El dashboard sale con código distinto de cero solo ante archivos realmente sin pareja o umbrales configurados, no por artefactos falsos de bucketing por área.
 **Evidencia de Cierre:** Commit `ee54a14d`. `coverage-dashboard.mjs` ahora normaliza `.es.md` a `.md` (Patrón A) y `-es/` a `/` (Patrón B) antes del bucketing por área mediante `normalizeKey()`. Código de salida distinto de cero cuando hay archivos reales sin pareja. 7 casos de prueba cubren archivos raíz, anidados, Patrón A, Patrón B y códigos de salida para archivos sin pareja.
+
+#### GT-277
+
+**Título:** Especificaciones OpenAPI de topologías — interfaces framework ausentes en las 8 topologías
+
+- **Propósito:** Cada topología aceptada debe exponer un contrato OpenAPI 3.1 que describa su superficie REST específica, habilitando validación CI automática, generación de cliente y documentación de consumo.
+- **Evidencia Actual:** `node .harness/playbooks/topology-compliance-audit.mjs` reporta **AUSENTE** para OpenAPI en las 8 topologías (`ai/agentic-ai`, `data/data-mesh`, `execution/edge-computing`, `execution/serverless`, `integration/event-driven`, `progressive-axis/modular-monolith`, `progressive-axis/distributed-modules`, `progressive-axis/microservices`).
+- **Complejidad:** M
+- **Hecho Cuando:**
+  - [ ] Cada topología tiene un archivo `openapi.yaml` en `reference/architecture/topologies/<area>/<topology>/openapi/`.
+  - [ ] Cada spec describe al menos los endpoints propios del Bounded Context de la topología.
+  - [ ] El spec es validable con `swagger-cli validate` o herramienta equivalente en CI.
+  - [ ] La auditoría de cumplimiento (`topology-compliance-audit.mjs`) reporta `COMPLETO` para OpenAPI en cada topología.
+
+#### GT-278
+
+**Título:** Manifiestos MCP de topologías — interfaces framework ausentes en las 8 topologías
+
+- **Propósito:** Cada topología aceptada debe exponer un manifest MCP (`mcp-manifest.json`) que declare las tools, resources y prompts propios de su Bounded Context, habilitando el descubrimiento automático por parte del MCP Gateway.
+- **Evidencia Actual:** `node .harness/playbooks/topology-compliance-audit.mjs` reporta **AUSENTE** para MCP manifests en las 8 topologías.
+- **Complejidad:** M
+- **Hecho Cuando:**
+  - [ ] Cada topología tiene un `mcp-manifest.json` en `reference/architecture/topologies/<area>/<topology>/mcp/`.
+  - [ ] Cada manifest declara al menos una tool específica del dominio de la topología.
+  - [ ] El manifest es validable contra el esquema canónico MCP.
+  - [ ] La auditoría de cumplimiento reporta `COMPLETO` para MCP en cada topología.
+
+#### GT-279
+
+**Título:** Flujos CLI de topologías — interfaces framework ausentes en las 8 topologías
+
+- **Propósito:** Cada topología aceptada debe definir flujos CLI específicos que permitan interactuar con los comandos propios del Bounded Context, ya sea como documentación de uso o como especificación para la generación de comandos `evolith topology <name> <command>`.
+- **Evidencia Actual:** `node .harness/playbooks/topology-compliance-audit.mjs` reporta **AUSENTE** para CLI flows en las 8 topologías.
+- **Complejidad:** M
+- **Hecho Cuando:**
+  - [ ] Cada topología tiene un archivo `cli-flows.md` en `reference/architecture/topologies/<area>/<topology>/cli/` que documenta los comandos disponibles.
+  - [ ] Los flujos documentados son ejecutables conceptualmente contra el Smart CLI existente.
+  - [ ] La auditoría de cumplimiento reporta `COMPLETO` para CLI en cada topología.

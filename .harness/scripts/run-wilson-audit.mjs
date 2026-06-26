@@ -1,3 +1,4 @@
+import { spawnSync } from 'child_process';
 import { promises as fs } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -9,7 +10,15 @@ const rootDir = path.resolve(__dirname, '../../');
 async function main() {
   const args = process.argv.slice(2);
   const language = args.includes('--es') ? 'es' : 'en';
-  const mode = args.includes('--bmad') ? 'bmad' : args.includes('--all') ? 'all' : 'architectural';
+  const mode = args.includes('--topology') ? 'topology' : args.includes('--bmad') ? 'bmad' : args.includes('--all') ? 'all' : 'architectural';
+
+  // Direct executable modes
+  if (mode === 'topology') {
+    const topologyScript = path.join(rootDir, '.harness/playbooks/topology-compliance-audit.mjs');
+    const extraArgs = args.filter(a => a !== '--topology');
+    const result = spawnSync('node', [topologyScript, ...extraArgs], { stdio: 'inherit', cwd: rootDir });
+    process.exit(result.status ?? 1);
+  }
 
   const playbookFile = language === 'es' ? 'wilson-audit-playbook.es.md' : 'wilson-audit-playbook.md';
   const playbookPath = path.join(rootDir, '.harness', 'playbooks', playbookFile);
@@ -41,11 +50,13 @@ async function main() {
       console.log('(e.g., Cursor, GitHub Copilot, Evolith Smart CLI, or MCP interface) to start');
       console.log('the analysis.\n');
       console.log('Usage:');
-      console.log('  node .harness/scripts/run-wilson-audit.mjs              # Architectural audit (EN)');
-      console.log('  node .harness/scripts/run-wilson-audit.mjs --es         # Auditoría arquitectónica (ES)');
-      console.log('  node .harness/scripts/run-wilson-audit.mjs --bmad       # BMAD Agent Evolution (EN)');
-      console.log('  node .harness/scripts/run-wilson-audit.mjs --bmad --es  # Evolución BMAD (ES)');
-      console.log('  node .harness/scripts/run-wilson-audit.mjs --all        # Both prompts combined');
+      console.log('  node .harness/scripts/run-wilson-audit.mjs                      # Architectural audit (EN)');
+      console.log('  node .harness/scripts/run-wilson-audit.mjs --es                 # Auditoría arquitectónica (ES)');
+      console.log('  node .harness/scripts/run-wilson-audit.mjs --bmad               # BMAD Agent Evolution (EN)');
+      console.log('  node .harness/scripts/run-wilson-audit.mjs --bmad --es          # Evolución BMAD (ES)');
+      console.log('  node .harness/scripts/run-wilson-audit.mjs --all                # Both prompts combined');
+      console.log('  node .harness/scripts/run-wilson-audit.mjs --topology           # Topology compliance audit (Markdown)');
+      console.log('  node .harness/scripts/run-wilson-audit.mjs --topology --markdown# Topology compliance audit (JSON)');
       console.log('\n------------------------------------------------------------------------\n');
       console.log(prompt);
       console.log('\n------------------------------------------------------------------------');

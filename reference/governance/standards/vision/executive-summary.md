@@ -9,15 +9,15 @@ Strategic snapshot generated from the canonical gap board and maturity reconcili
 
 ## Executive Signal
 
-**Current decision:** Full GO: 276/276 gaps closed, keep monitoring.
+**Current decision:** Conditional GO: proceed only with P1 hardening and automated evidence.
 
-**Biggest problem now:** No weighted open risk — all gaps are closed.
+**Biggest problem now:** `Architecture` carries the highest weighted open risk (3 open, 0 P0). Attack that concentration before expanding scope.
 
 **Where to attack first:** -.
 
 ## Strategic Diagnosis
 
-The system has all gaps closed. The priority is to keep monitoring, watch for regressions, and prevent new technical debt from accumulating on the gap board.
+The system is close to a governed baseline, but it should not be treated as ready for production expansion while active P0 items remain. The priority is not to read more documentation; it is to close the blockers that compromise security, CI reproducibility, rule parity, and executable contracts.
 
 Use this summary with a simple rule: if you need context, open only the linked ID; if you need to choose work, follow this page's attack order.
 
@@ -25,32 +25,38 @@ Use this summary with a simple rule: if you need context, open only the linked I
 
 | Order | Focus | Reason | IDs |
 |---:|---|---|---|
-| 1 | No open gaps | All 276 gaps are closed. | - |
+| 1 | P0 blockers | They prevent production-readiness or major-release confidence. | - |
+| 2 | Highest-risk area | `Architecture` has the largest weighted open load. | [GT-277](./gap-reference-catalog.md#gt-277), [GT-278](./gap-reference-catalog.md#gt-278), [GT-279](./gap-reference-catalog.md#gt-279) |
+| 3 | Quick wins | High criticality with XS/S complexity. | - |
+| 4 | P1 wave | Next hardening after P0 is cleared. | [GT-277](./gap-reference-catalog.md#gt-277), [GT-278](./gap-reference-catalog.md#gt-278), [GT-279](./gap-reference-catalog.md#gt-279) |
+| 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | - |
 
 ## Current Blockers
 
-No active blockers — all gaps are closed.
-
 | ID | Attack | Component | Effort |
 |---|---|---|---|
+| [GT-277](./gap-reference-catalog.md#gt-277) | Topology OpenAPI specs — framework interfaces ausentes en las 8 topologías | `Architecture` | P1/M |
+| [GT-278](./gap-reference-catalog.md#gt-278) | Topology MCP manifests — framework interfaces ausentes en las 8 topologías | `Architecture` | P1/M |
+| [GT-279](./gap-reference-catalog.md#gt-279) | Topology CLI flows — framework interfaces ausentes en las 8 topologías | `Architecture` | P1/M |
 
 ## Metrics
 
 | Indicator | Value |
 |---|---:|
 | Canonical board date | 2026-06-26 |
-| Total gaps | 276 |
+| Total gaps | 279 |
 | Closed gaps | 276 |
-| Open gaps | 0 |
+| Open gaps | 3 |
 | Open P0 | 0 |
-| Open P1 | 0 |
+| Open P1 | 3 |
 | Open P2 | 0 |
-| Total closure | 100% |
-| Closure evidence records | 257 |
+| Total closure | 98.9% |
+| Closure evidence records | 258 |
 | Recorded readiness | 3 PASS, 1 RESOLVED |
 
 | Area | Open | P0 | P1 | First IDs |
 |---|---:|---:|---:|---|
+| `Architecture` | 3 | 0 | 3 | [GT-277](./gap-reference-catalog.md#gt-277), [GT-278](./gap-reference-catalog.md#gt-278), [GT-279](./gap-reference-catalog.md#gt-279) |
 
 ## Source and Refresh Rule
 

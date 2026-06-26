@@ -53,7 +53,7 @@ When a governance gap is closed, ensure:
 - [ ] MASTER_INDEX.md updated with any new files
 - [ ] Coverage dashboard regenerated
 
-### 5. Quality Gates (Blocking Merge If Failed)
+### 6. Quality Gates (Blocking Merge If Failed)
 - [ ] validate-docs.mjs — no broken links, valid Mermaid, proper UTF-8
 - [ ] check-bilingual-parity.mjs — EN and ES header count match
 - [ ] bilingual-coverage.mjs — coverage not below threshold

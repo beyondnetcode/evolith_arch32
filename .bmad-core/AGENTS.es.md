@@ -111,15 +111,15 @@ Analyst → PM → Architect → SM → Dev → QA → DevOps
 
 ---
 
-## 5. Gaps Activos (Pendientes)
+## 5. Gaps Activos
 
-| ID | Título | Complejidad | Agente Líder |
-|----|--------|-------------|--------------|
-| GT-152 | Contrato de Conocimiento Externo y Esquema de Registro Fuente | S | Architect |
-| GT-153 | Gobierno del Ciclo de Vida del Conocimiento por Winston | M | Architect |
-| GT-154 | Proyección RAG y Paridad Native/OPA para Conocimiento Externo | M | QA + DevOps |
+| ID | Título | Estado |
+|----|-------|--------|
+| GT-152 | Contrato de Conocimiento Externo y Esquema de Registro Fuente | `COMPLETADO` |
+| GT-153 | Gobierno del Ciclo de Vida del Conocimiento por Winston | `COMPLETADO` |
+| GT-154 | Proyección RAG y Paridad Native/OPA para Conocimiento Externo | `COMPLETADO` |
 
-Los tres son P0. Orden de implementación: GT-152 → GT-153 → GT-154.
+Los tres gaps P0 de conocimiento están cerrados. Consulte el [Tablero de Seguimiento de Gaps](../reference/governance/standards/vision/gap-tracking.es.md) para el estado actual de todos los gaps GT-*.
 
 ---
 

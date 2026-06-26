@@ -168,7 +168,7 @@
   "references": [
     "reference/architecture/adrs/core/0009-strict-dependency-pinning-vulnerability-management.md",
     "rulesets/sdlc/quality-thresholds.rules.json",
-    "rulesets/cross-cutting/definition-of-done.rules.json",
+    "rulesets/definition-of-done/definition-of-done.rules.json",
     "reference/architecture/adrs/core/0005-ci-cd-quality-codeql.md"
   ],
   "exitCriteria": {

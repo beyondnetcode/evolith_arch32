@@ -27,6 +27,10 @@ violations[{"id": "ACL-04", "message": "Adapter coreCompatibilityVersion must be
     count(val) == 0
 }
 
+violations[{"id": "ACL-05", "message": "Adapter must not expose raw external domain objects to Core — all external types must be mapped to Core domain types before crossing the boundary"}] {
+    input.adapter.exposesRawExternalTypes
+}
+
 violations[{"id": "ACL-06", "message": "ACL adapter must be located in 'adapter' or 'infrastructure' path, not domain"}] {
     loc := lower(input.adapter.location)
     not contains(loc, "/adapter")

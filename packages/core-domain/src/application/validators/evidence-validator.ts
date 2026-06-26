@@ -1,4 +1,4 @@
-import * as path from 'path';
+import * as path from 'node:path';
 import { IFileSystem, ILogger } from '../../domain/interfaces';
 import { PhaseGateDefinition, EvidenceRequirement, EvidenceValidationResult } from './phase-gate-validator.service';
 
@@ -77,6 +77,10 @@ export class EvidenceValidator {
       'SDLC Quality Gates': path.join(projectPath, 'reference', 'governance', 'sdlc', 'quality-gates.md'),
       'Canonical Patterns': path.join(projectPath, 'reference', 'architecture', 'canonical-patterns'),
       'Construction-Focused SDLC Framework': path.join(projectPath, 'reference', 'governance', 'sdlc', '02-engineering', 'construction-focused-sdlc-framework.md'),
+      'CI Pipeline': path.join(projectPath, '.github', 'workflows'),
+      'Definition of Done Checklist': path.join(projectPath, 'reference', 'governance', 'sdlc', '02-engineering', 'construction-focused-sdlc-framework.md'),
+      'Documentation Delta': path.join(projectPath, 'reference', 'governance', 'sdlc', '03-documentation'),
+      'Coverage Report': path.join(projectPath, 'coverage', 'coverage-summary.json'),
       'Security Scan Report': path.join(projectPath, 'reference', 'governance', 'sdlc', '04-artifact-templates', 'security-scan-report-template.md'),
       'Integration Evidence': path.join(projectPath, 'reference', 'governance', 'sdlc', '04-artifact-templates', 'integration-evidence-template.md'),
       'Acceptance Validation': path.join(projectPath, '.evolith', 'acceptance-validation.json'),

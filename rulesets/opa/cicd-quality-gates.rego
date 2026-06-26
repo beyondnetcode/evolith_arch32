@@ -16,6 +16,10 @@ violations[{"id": "CICD-04", "message": "Not all quality gates are required befo
     not input.satellite.ci.gatesRequiredBeforeMerge
 }
 
+violations[{"id": "CICD-05", "message": "Security findings without documented justification or accepted risk — all findings must have a linked justification or resolution ticket"}] {
+    input.satellite.findings.hasUnjustifiedSecurityFindings
+}
+
 violations[{"id": "CICD-06", "message": "Critical findings SLA (24h) not tracked in issue tracker"}] {
     input.satellite.findings.criticalAgeHours > 24
 }

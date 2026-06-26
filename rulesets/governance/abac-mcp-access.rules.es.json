@@ -1,0 +1,41 @@
+{
+  "$schema": "../schema/ruleset-standard.schema.json",
+  "$id": "https://evolith.dev/rulesets/governance/abac-mcp-access.rules.json",
+  "title": "Reglas de Control de Acceso ABAC para Herramientas MCP",
+  "description": "Reglas de Control de Acceso Basado en Atributos para ejecución de herramientas MCP agénticas. Contraparte nativa TypeScript de abac-mcp-tool-access.rego. Implementa ADR-0087 Paridad Dual-Engine (R-25).",
+  "version": "1.0.0",
+  "effectiveDate": "2026-06-26",
+  "scope": "satellite",
+  "category": "security",
+  "adrRef": "reference/architecture/adrs/core/0087-abac-agentic-tool-execution.md",
+  "opaRef": "rulesets/opa/abac-mcp-tool-access.rego",
+  "rules": [
+    {
+      "id": "ABAC-01",
+      "severity": "MUST",
+      "category": "control-de-acceso",
+      "title": "El Acceso a Herramientas Requiere Autorización",
+      "description": "Las llamadas a herramientas MCP DEBEN estar autorizadas. Una llamada es denegada cuando: (a) una regla explícita de denegación se activa (herramienta de deploy en producción para no-arquitecto), o (b) ninguna regla de permiso aplica (el usuario carece del rol requerido para la clasificación de la herramienta). Jerarquía de roles: read_only (viewer, auditor) → developer/qa → operator/sre → architect/admin.",
+      "validationQuery": "Verificar que la política ABAC otorga allow y ningún deny se activa para la llamada, dados user.roles y environment.",
+      "blocking": true
+    },
+    {
+      "id": "ABAC-02",
+      "severity": "MUST",
+      "category": "control-de-acceso",
+      "title": "El Contexto de Usuario Debe Contener Roles",
+      "description": "El contexto de ejecución de herramientas MCP DEBE incluir al menos un rol en el array user.roles. Un array de roles vacío provoca que todas las llamadas sean denegadas — no existe estado de usuario autenticado sin rol.",
+      "validationQuery": "Verificar que el array user.roles no está vacío antes de permitir cualquier ejecución de herramienta.",
+      "blocking": true
+    },
+    {
+      "id": "ABAC-03",
+      "severity": "MUST",
+      "category": "control-de-acceso",
+      "title": "La Herramienta Debe Estar Clasificada en el Registro",
+      "description": "La herramienta solicitada DEBE aparecer en uno de los tres conjuntos de clasificación: read_tools, write_tools o deploy_tools. Las herramientas no clasificadas son denegadas. La clasificación de herramientas se mantiene en el registro de política ABAC y se actualiza mediante revisión del Architecture Board.",
+      "validationQuery": "Verificar que tool_name existe en el registro de clasificación read_tools, write_tools o deploy_tools.",
+      "blocking": true
+    }
+  ]
+}

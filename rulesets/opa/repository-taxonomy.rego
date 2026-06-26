@@ -1,5 +1,56 @@
 package evolith.repository_taxonomy
 
+# ---------------------------------------------------------------------------
+# TAX-01..04: Naming conventions (checked via source file analysis)
+# TAX-05..08, TAX-11: Structural checks (already implemented below)
+# TAX-09..10: Artifact placement checks
+# ---------------------------------------------------------------------------
+
+violations[{"id": "TAX-01", "message": msg}] {
+    file := input.repository.files[_]
+    name := split(file, "/")[count(split(file, "/")) - 1]
+    not endswith(name, ".md")
+    not endswith(name, ".json")
+    not endswith(name, ".yaml")
+    not endswith(name, ".yml")
+    not endswith(name, ".rego")
+    not endswith(name, ".ts")
+    not endswith(name, ".mjs")
+    not endswith(name, ".js")
+    regex.match(`[A-Z_\s]`, name)
+    msg := sprintf("File name does not use kebab-case: %v", [name])
+}
+
+violations[{"id": "TAX-02", "message": msg}] {
+    input.repository.naming.pascalCaseViolations > 0
+    msg := sprintf("Class/type names violate PascalCase convention (%d violations)", [input.repository.naming.pascalCaseViolations])
+}
+
+violations[{"id": "TAX-03", "message": msg}] {
+    input.repository.naming.camelCaseViolations > 0
+    msg := sprintf("Variable/function names violate camelCase convention (%d violations)", [input.repository.naming.camelCaseViolations])
+}
+
+violations[{"id": "TAX-04", "message": msg}] {
+    input.repository.naming.constantCaseViolations > 0
+    msg := sprintf("Constant names violate UPPER_SNAKE_CASE convention (%d violations)", [input.repository.naming.constantCaseViolations])
+}
+
+violations[{"id": "TAX-09", "message": msg}] {
+    input.repository.type == "core"
+    file := input.repository.files[_]
+    contains(file, "product-specific")
+    not startswith(file, "reference/knowledge/demo")
+    msg := sprintf("Product-specific artifact found in Core reference/: %v", [file])
+}
+
+violations[{"id": "TAX-10", "message": msg}] {
+    file := input.repository.files[_]
+    startswith(file, "reference/")
+    input.repository.productArtifacts[file]
+    msg := sprintf("Product-specific artifact must not be in reference/: %v (use docs/ or satellite repo)", [file])
+}
+
 violations[{"id": "TAX-05", "message": msg}] {
     input.repository.type == "core"
     expected := {"reference", "sdk", "rulesets"}

@@ -90,3 +90,10 @@ violations[{"id": "DEP-10", "message": msg}] {
     startswith(version, "~")
     msg := sprintf("%v#devDependencies.%v=%v", [ws.path, pkg, version])
 }
+
+violations[{"id": "DEP-08", "message": msg}] {
+    overrides := input.satellite.packageJson.overrides
+    count(overrides) > 0
+    not input.satellite.overridesRationaleDocumented
+    msg := sprintf("package.json 'overrides' section has %d entries without a companion overrides-rationale.json — each override must document the CVE or compatibility reason", [count(overrides)])
+}

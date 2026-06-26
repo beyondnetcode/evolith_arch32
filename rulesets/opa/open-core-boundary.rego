@@ -24,6 +24,10 @@ violations[{"id": "OCB-06", "message": "Core reference corpus contains tiered ac
     input.satellite.openCore.tieredAccessInCore
 }
 
+violations[{"id": "OCB-07", "message": "Enterprise feature promoted to Core without Architecture Board approval — promotion requires formal review and accepted ADR before Core inclusion"}] {
+    input.satellite.openCore.hasEnterprisePromotionWithoutApproval
+}
+
 violations[{"id": "OCB-08", "message": "Core rules require enterprise features to function — Core must be independently viable"}] {
     input.satellite.openCore.coreRequiresEnterprise
 }

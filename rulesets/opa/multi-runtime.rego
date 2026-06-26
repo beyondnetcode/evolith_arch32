@@ -20,6 +20,14 @@ violations[{"id": "RUNT-06", "message": "Synchronous inter-runtime communication
     input.satellite.runtime.syncInteropNotGrpc
 }
 
+violations[{"id": "RUNT-04", "message": "Mobile workloads with hardware access (camera, GPS, sensors) must use Android/Kotlin — not cross-platform web wrappers"}] {
+    input.satellite.runtime.mobileHardwareNotKotlin
+}
+
+violations[{"id": "RUNT-07", "message": "Asynchronous inter-runtime communication must use a message broker (Kafka, RabbitMQ, NATS) — direct async calls between runtimes are prohibited"}] {
+    input.satellite.runtime.asyncInteropNotMessageBroker
+}
+
 violations[{"id": "RUNT-08", "message": "Inter-runtime contracts not centrally stored and versioned"}] {
     not input.satellite.runtime.contractsCentralized
 }

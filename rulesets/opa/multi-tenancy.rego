@@ -20,6 +20,14 @@ violations[{"id": "MTN-05", "message": "Multi-tenant schema strategy not defined
     not input.satellite.multiTenancy.schemaStrategyDefined
 }
 
+violations[{"id": "MTN-06", "message": "Tenant-scoped audit trail not maintained — all tenant data mutations must be logged with tenant context and actor"}] {
+    not input.satellite.multiTenancy.tenantAuditTrailEnabled
+}
+
+violations[{"id": "MTN-07", "message": "Tenant migration path not defined — schema changes affecting tenant isolation must have a documented migration path"}] {
+    not input.satellite.multiTenancy.tenantMigrationPathDefined
+}
+
 violations[{"id": "MTN-08", "message": "External APIs do not validate tenant context on every request"}] {
     not input.satellite.multiTenancy.apiTenantValidation
 }

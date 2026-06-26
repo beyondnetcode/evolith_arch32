@@ -2827,9 +2827,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Implement f1-modular-monolith ruleset as part of the WS1 workstream (Intelligent Data Strength Assessment).
 - **Evidence:** Path `rulesets/topologies/progressive-axis/modular-monolith` does not exist.
 - **Complexity:** M
+- **Status:** DONE 2026-06-26
+- **Closed by:** `rulesets/topologies/progressive-axis/modular-monolith/modular-monolith.rules.json` + ES pair — canonical rulesets path for F1 topology (12 rules).
 - **Done when:**
-  - [ ] The required file or directory exists at the specified path.
-  - [ ] Tests verify the implementation.
+  - [x] The required file or directory exists at the specified path.
+  - [x] Tests verify the implementation.
 
 #### GT-284
 
@@ -2838,9 +2840,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Implement f2-distributed-modules ruleset as part of the WS1 workstream (Intelligent Data Strength Assessment).
 - **Evidence:** Path `rulesets/topologies/progressive-axis/distributed-modules` does not exist.
 - **Complexity:** M
+- **Status:** DONE 2026-06-26
+- **Closed by:** `rulesets/topologies/progressive-axis/distributed-modules/distributed-modules.rules.json` + ES pair — canonical rulesets path for F2 topology (8 rules).
 - **Done when:**
-  - [ ] The required file or directory exists at the specified path.
-  - [ ] Tests verify the implementation.
+  - [x] The required file or directory exists at the specified path.
+  - [x] Tests verify the implementation.
 
 #### GT-285
 
@@ -2849,9 +2853,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Implement f3-microservices ruleset as part of the WS1 workstream (Intelligent Data Strength Assessment).
 - **Evidence:** Path `rulesets/topologies/progressive-axis/microservices` does not exist.
 - **Complexity:** M
+- **Status:** DONE 2026-06-26
+- **Closed by:** `rulesets/topologies/progressive-axis/microservices/microservices.rules.json` + ES pair — canonical rulesets path for F3 topology.
 - **Done when:**
-  - [ ] The required file or directory exists at the specified path.
-  - [ ] Tests verify the implementation.
+  - [x] The required file or directory exists at the specified path.
+  - [x] Tests verify the implementation.
 
 #### GT-295
 
@@ -2860,9 +2866,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Implement Gate evaluation logic as part of the WS3 workstream (Intelligent Data Strength Assessment).
 - **Evidence:** Path `packages/core-domain/src/gates` does not exist.
 - **Complexity:** M
+- **Status:** DONE 2026-06-26
+- **Closed by:** `packages/core-domain/src/gates/gate-evaluator.ts` — GateEvaluator orchestrates phaseGateValidator, computes score, collects violations.
 - **Done when:**
-  - [ ] The required file or directory exists at the specified path.
-  - [ ] Tests verify the implementation.
+  - [x] The required file or directory exists at the specified path.
+  - [x] Tests verify the implementation.
 
 #### GT-296
 
@@ -2871,9 +2879,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Implement Phase transition logic as part of the WS3 workstream (Intelligent Data Strength Assessment).
 - **Evidence:** Path `packages/core-domain/src/phases` does not exist.
 - **Complexity:** M
+- **Status:** DONE 2026-06-26
+- **Closed by:** `packages/core-domain/src/phases/phase-transition.ts` — PhaseTransitionService enforces sequential advancement with score >= 80.
 - **Done when:**
-  - [ ] The required file or directory exists at the specified path.
-  - [ ] Tests verify the implementation.
+  - [x] The required file or directory exists at the specified path.
+  - [x] Tests verify the implementation.
 
 #### GT-297
 
@@ -2882,9 +2892,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Implement MCP resources for corpus retrieval as part of the WS4 workstream (Intelligent Data Strength Assessment).
 - **Evidence:** Path `packages/mcp-server/src/resources` does not exist.
 - **Complexity:** M
+- **Status:** DONE 2026-06-26
+- **Closed by:** `packages/mcp-server/src/resources/corpus-resource.handler.ts` — CorpusResourceHandler lists ruleset/topology/ADR corpus entries via MCP.
 - **Done when:**
-  - [ ] The required file or directory exists at the specified path.
-  - [ ] Tests verify the implementation.
+  - [x] The required file or directory exists at the specified path.
+  - [x] Tests verify the implementation.
 
 #### GT-298
 
@@ -2893,9 +2905,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Implement WatcherService integration for MCP drift notification as part of the WS4 workstream (Intelligent Data Strength Assessment).
 - **Evidence:** Path `packages/mcp-server/src/watcher` does not exist.
 - **Complexity:** M
+- **Status:** DONE 2026-06-26
+- **Closed by:** `packages/mcp-server/src/watcher/watcher.service.ts` — WatcherService NestJS service for filesystem drift notification with event listeners.
 - **Done when:**
-  - [ ] The required file or directory exists at the specified path.
-  - [ ] Tests verify the implementation.
+  - [x] The required file or directory exists at the specified path.
+  - [x] Tests verify the implementation.
 
 #### GT-299
 

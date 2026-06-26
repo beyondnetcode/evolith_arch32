@@ -23,13 +23,13 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-292`](./gap-reference-catalog.md#gt-292) | satellite-contracts ruleset exists — rulesets/satellite-contracts | `Rulesets` | Cross | P0 | S | `DONE` |
 | [`GT-293`](./gap-reference-catalog.md#gt-293) | executive-scorecards ruleset exists — rulesets/executive-scorecards | `Rulesets` | Cross | P0 | S | `DONE` |
 | [`GT-294`](./gap-reference-catalog.md#gt-294) | OPA policies for architecture — rulesets/architecture/opa | `Architecture` | Cross | P0 | S | `DONE` |
-| [`GT-283`](./gap-reference-catalog.md#gt-283) | f1-modular-monolith ruleset exists — rulesets/topologies/progressive-axis/modular-monolith | `Rulesets` | Cross | P0 | M | `OPEN` |
-| [`GT-284`](./gap-reference-catalog.md#gt-284) | f2-distributed-modules ruleset exists — rulesets/topologies/progressive-axis/distributed-modules | `Rulesets` | Cross | P0 | M | `OPEN` |
-| [`GT-285`](./gap-reference-catalog.md#gt-285) | f3-microservices ruleset exists — rulesets/topologies/progressive-axis/microservices | `Rulesets` | Cross | P0 | M | `OPEN` |
-| [`GT-295`](./gap-reference-catalog.md#gt-295) | Gate evaluation logic exists — packages/core-domain/src/gates | `Core Domain` | Cross | P0 | M | `OPEN` |
-| [`GT-296`](./gap-reference-catalog.md#gt-296) | Phase transition logic exists — packages/core-domain/src/phases | `Core Domain` | Cross | P0 | M | `OPEN` |
-| [`GT-297`](./gap-reference-catalog.md#gt-297) | MCP resources for corpus — packages/mcp-server/src/resources | `MCP` | Cross | P0 | M | `OPEN` |
-| [`GT-298`](./gap-reference-catalog.md#gt-298) | WatcherService integration — packages/mcp-server/src/watcher | `MCP` | Cross | P0 | M | `OPEN` |
+| [`GT-283`](./gap-reference-catalog.md#gt-283) | f1-modular-monolith ruleset exists — rulesets/topologies/progressive-axis/modular-monolith | `Rulesets` | Cross | P0 | M | `DONE` |
+| [`GT-284`](./gap-reference-catalog.md#gt-284) | f2-distributed-modules ruleset exists — rulesets/topologies/progressive-axis/distributed-modules | `Rulesets` | Cross | P0 | M | `DONE` |
+| [`GT-285`](./gap-reference-catalog.md#gt-285) | f3-microservices ruleset exists — rulesets/topologies/progressive-axis/microservices | `Rulesets` | Cross | P0 | M | `DONE` |
+| [`GT-295`](./gap-reference-catalog.md#gt-295) | Gate evaluation logic exists — packages/core-domain/src/gates | `Core Domain` | Cross | P0 | M | `DONE` |
+| [`GT-296`](./gap-reference-catalog.md#gt-296) | Phase transition logic exists — packages/core-domain/src/phases | `Core Domain` | Cross | P0 | M | `DONE` |
+| [`GT-297`](./gap-reference-catalog.md#gt-297) | MCP resources for corpus — packages/mcp-server/src/resources | `MCP` | Cross | P0 | M | `DONE` |
+| [`GT-298`](./gap-reference-catalog.md#gt-298) | WatcherService integration — packages/mcp-server/src/watcher | `MCP` | Cross | P0 | M | `DONE` |
 | [`GT-299`](./gap-reference-catalog.md#gt-299) | OpenAPI specification — apps/core-api/src/openapi | `BFF API` | Cross | P1 | M | `OPEN` |
 | [`GT-300`](./gap-reference-catalog.md#gt-300) | agents command exists — sdk/cli/src/commands/agents | `CLI` | Cross | P1 | M | `OPEN` |
 | [`GT-301`](./gap-reference-catalog.md#gt-301) | upgrade command exists — sdk/cli/src/commands/upgrade | `CLI` | Cross | P1 | M | `OPEN` |
@@ -327,7 +327,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-246`](./gap-reference-catalog.md#gt-246) | Implement Chaos Mesh/Litmus experiments | `QA` | Cross | P3 | L | `DONE` |
 
 
-**Progress:** 292 / 312 done · 0 in progress · 20 pending · 0 deferred
+**Progress:** 299 / 312 done · 0 in progress · 13 pending · 0 deferred
 
 **Wave 2026-06-23 (Wilson deep audit III):** Added 14 new gaps `GT-212`…`GT-225` from the Wilson Audit Playbook covering: ADR status hygiene (GT-212), topology manifest metadata + operational budgets + guidance corpus (GT-213, GT-217, GT-219), REST controller observability + OpenAPI (GT-214, GT-215), OPA input-schema parity + per-topology test density (GT-216, GT-222), SDLC Phase 05 rollback + on-call templates (GT-218), CLI branch coverage + envelope format coverage + skip-list cleanup (GT-220, GT-224, GT-225), MCP HTTP audit logging (GT-221), and cross-surface parity e2e tests (GT-223).
 

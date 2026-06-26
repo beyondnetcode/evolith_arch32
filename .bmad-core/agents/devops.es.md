@@ -32,8 +32,7 @@ Mantener y mejorar estos flujos de trabajo:
 | `docs.yml` | Push a main/develop/release/*/hotfix/* | Validación CI (validate-docs, check-bilingual-parity) |
 | `docs-release.yml` | Push a main | Automatización de release (registro de versión, tag git, GitHub Release) |
 | `coverage-impact.yml` | PR abierto/actualizado | Publica comentario de impacto de cobertura en PRs |
-| `topology-deploy.yml` | Push a main | Despliegue distribuido para Serverless, Edge y Data Mesh |
-| `ai-harness.yml` | Push a main | Harness de ejecución AI-First y validaciones de prompt |
+| `governance-ci.yml` | Push a main | Pipeline CI de validación de gaps de gobernanza |
 
 #### docs.yml Quality Gates
 ```yaml

@@ -72,8 +72,7 @@ Maintain and enhance these workflows:
 | `docs.yml` | Push to main/develop/release/*/hotfix/* | CI validation (validate-docs, check-bilingual-parity) |
 | `docs-release.yml` | Push to main | Release automation (version log, git tag, GitHub Release) |
 | `coverage-impact.yml` | PR opened/updated | Posts coverage impact comment on PRs |
-| `topology-deploy.yml` | Push to main | Distributed deployment for Serverless, Edge, and Data Mesh |
-| `ai-harness.yml` | Push to main | AI-First execution harness and prompt validations |
+| `governance-ci.yml` | Push to main | Governance gap CI validation pipeline |
 
 #### docs.yml Quality Gates
 ```yaml

@@ -79,7 +79,7 @@ for (const dim of dimensions) {
     const files = walk(rel);
     const allAbs = files.map((f) => `reference/architecture/topologies/${rel}/${f}`);
 
-    const docFiles = files.filter((f) => f.endsWith(".md"));
+    const docFiles = files.filter((f) => f.endsWith(".md") && !f.includes("/cli/") && !f.includes("/mcp/") && !f.includes("/openapi/"));
     const enDoc = docFiles.filter((f) => !f.endsWith(".es.md"));
     const esDoc = docFiles.filter((f) => f.endsWith(".es.md"));
     const regoFiles = files.filter((f) => f.endsWith(".rego"));

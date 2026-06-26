@@ -52,6 +52,8 @@ rulesets/
 │   └── repository-taxonomy.rules.json
 ├── phase-gates/                # WS1 executable SDLC phase-gates entrypoint
 │   └── phase-gates.rules.json
+├── quality-thresholds/         # WS1 executable quality-thresholds entrypoint
+│   └── quality-thresholds.rules.json
 ├── opa/                        # OPA policies and inputs schemas
 │   ├── schemas/                # OPA policy input schemas (9 schemas)
 │   ├── *.rego                  # Rego policy files

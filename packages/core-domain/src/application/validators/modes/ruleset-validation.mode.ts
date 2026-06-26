@@ -21,7 +21,7 @@ const RULESET_ID_MAP: Record<string, string> = {
   'engineering-manifesto': 'rulesets/engineering-manifesto/engineering-manifesto.rules.json',
   'repository-taxonomy': 'rulesets/repository-taxonomy/repository-taxonomy.rules.json',
   'phase-gates': 'rulesets/phase-gates/phase-gates.rules.json',
-  'quality-thresholds': 'rulesets/sdlc/quality-thresholds.rules.json',
+  'quality-thresholds': 'rulesets/quality-thresholds/quality-thresholds.rules.json',
   'dependency-pinning': 'rulesets/sdlc/dependency-pinning.rules.json',
 };
 

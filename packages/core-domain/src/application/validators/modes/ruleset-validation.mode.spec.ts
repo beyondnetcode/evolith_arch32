@@ -39,6 +39,7 @@ describe('RulesetValidationMode', () => {
       ['engineering-manifesto', 10],
       ['repository-taxonomy', 11],
       ['phase-gates', 0],
+      ['quality-thresholds', 8],
     ])('should validate %s ruleset when rulesetId is provided', async (rulesetId, expectedRuleCount) => {
       const repoRoot = path.resolve(__dirname, '../../../../../..');
       const context: ValidationContext = {

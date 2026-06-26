@@ -2646,6 +2646,23 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia de Cierre:** Commit `7bed54d0` (main). 16 archivos CLI (8 EN + 8 ES) creados. Score global: **168/168 (100%)**.
 
 
+#### GT-312
+
+**Título:** Orquestación de validación SDLC: fase → gate → artifacts → schemas → rulesets → topología → ADRs → OPA → blocking criteria
+
+- **Propósito:** Implementar un motor de validación unificado que orqueste el pipeline completo de validación SDLC en todas las interfaces (CLI, MCP, REST). El motor debe resolver el contexto completo de validación desde la configuración del proyecto y ejecutar todas las validaciones en orden óptimo contra OPA y rulesets con rendimiento escalable.
+- **Evidencia:** El comando actual `evolith validate` (`sdk/cli/src/commands/validate/validate.command.ts:74-76`) ejecuta un caso de uso genérico sin especificar qué validar cuando no se pasan parámetros. Las fases SDLC (F1-F5), gates (gate-f1 a gate-f5), artifacts requeridos, schemas, rulesets, topology manifests, reglas ADR y políticas OPA existen como componentes aislados pero no están orquestados juntos.
+- **Complejidad:** XL
+- **Hecho Cuando:**
+  - [ ] La configuración a nivel de proyecto (`evolith.config.json`) declara: topología, fase, rulesets habilitados y preferencia de motor.
+  - [ ] `evolith validate` (sin parámetros) lee la config del proyecto y resuelve el contexto completo de validación.
+  - [ ] El pipeline de validación resuelve: fase → gate → artifacts requeridos → schemas de artifacts → rulesets aplicables → rulesets de topología → reglas ADR → políticas OPA → blocking criteria.
+  - [ ] Las tres interfaces (CLI, MCP, REST) enrutan al mismo motor de orquestación (un motor, tres fachadas).
+  - [ ] Las evaluaciones OPA se ejecutan en paralelo donde sea posible para rendimiento.
+  - [ ] El veredicto de validación incluye: pass/fail por regla, evidencia, estado blocking y guía de remediación.
+  - [ ] Rendimiento: validación completa se completa en <2s para proyectos estándar.
+  - [ ] Los tests verifican la orquestación en todas las fases, gates y topologías.
+
 #### GT-286
 
 **Título:** Ruleset compliance-baseline existe — rulesets/compliance-baseline

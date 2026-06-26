@@ -13,6 +13,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| [`GT-312`](./gap-reference-catalog.es.md#gt-312) | Orquestación de validación SDLC: fase → gate → artifacts → schemas → rulesets → topología → ADRs → OPA → blocking criteria | `Core Domain` | Cross | P0 | XL | `ABIERTO` |
 | [`GT-286`](./gap-reference-catalog.es.md#gt-286) | Ruleset compliance-baseline existe — rulesets/compliance-baseline | `Rulesets` | Cross | P0 | S | `ABIERTO` |
 | [`GT-287`](./gap-reference-catalog.es.md#gt-287) | Ruleset definition-of-done existe — rulesets/definition-of-done | `Rulesets` | Cross | P0 | S | `ABIERTO` |
 | [`GT-288`](./gap-reference-catalog.es.md#gt-288) | Ruleset engineering-manifesto existe — rulesets/engineering-manifesto | `Rulesets` | Cross | P0 | S | `ABIERTO` |

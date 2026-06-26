@@ -2695,6 +2695,23 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Closure Evidence:** `RuleEvaluation` en `satellite-manifest.ts` ahora tiene `severity: EvaluationSeverity`, `remediation: string`, `gateRef: string`. `EvaluationVerdict` tiene `outputEnvelope?: SuccessEnvelope<...>` con ADR-0073 meta. Pipeline genera remediation como "Create ADR at docs/adrs/..." para artefactos conocidos y deriveSeverity desde blockingCriteria. CLI muestra iconos 🔴🟡 por severity + remedio truncado a 72 chars. MCP expone campos flatteneados. 5 tests GT-282 agregan cobertura. Deep audit ahora SÓLIDO. Score global: 75% (6/8).
 
 
+#### GT-312
+
+**Title:** SDLC validation orchestration: phase → gate → artifacts → schemas → rulesets → topology → ADRs → OPA → blocking criteria
+
+- **Purpose:** Implement a unified validation engine that orchestrates the complete SDLC validation pipeline across all interfaces (CLI, MCP, REST). The engine must resolve the full validation context from project configuration and execute all validations in optimal order against OPA and rulesets with scalable performance.
+- **Evidence:** Current `evolith validate` command (`sdk/cli/src/commands/validate/validate.command.ts:74-76`) executes a generic use case without specifying what to validate when no parameters are passed. The SDLC phases (F1-F5), gates (gate-f1 to gate-f5), required artifacts, schemas, rulesets, topology manifests, ADR rules, and OPA policies exist as isolated components but are not orchestrated together.
+- **Complexity:** XL
+- **Done when:**
+  - [ ] Project-level configuration (`evolith.config.json`) declares: topology, phase, enabled rulesets, and engine preference.
+  - [ ] `evolith validate` (no parameters) reads project config and resolves full validation context.
+  - [ ] Validation pipeline resolves: phase → gate → required artifacts → artifact schemas → applicable rulesets → topology rules → ADR rules → OPA policies → blocking criteria.
+  - [ ] All three interfaces (CLI, MCP, REST) route to the same orchestration engine (one engine, three facades).
+  - [ ] OPA evaluations execute in parallel where possible for performance.
+  - [ ] Validation verdict includes: pass/fail per rule, evidence, blocking status, and remediation guidance.
+  - [ ] Performance: full validation completes in <2s for standard projects.
+  - [ ] Tests verify orchestration across all phases, gates, and topologies.
+
 #### GT-286
 
 **Title:** compliance-baseline ruleset exists — rulesets/compliance-baseline

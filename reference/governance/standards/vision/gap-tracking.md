@@ -41,8 +41,8 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-310`](./gap-reference-catalog.md#gt-310) | Test suite exists — sdk/cli/src/__tests__ | `Governance` | Cross | P1 | M | `DONE` |
 | [`GT-311`](./gap-reference-catalog.md#gt-311) | E2E tests exist — sdk/cli/src/__tests__/e2e | `Governance` | Cross | P1 | M | `DONE` |
 | [`GT-302`](./gap-reference-catalog.md#gt-302) | scaffold command exists — sdk/cli/src/commands/architecture/scaffold | `CLI` | Cross | P1 | L | `DONE` |
-| [`GT-308`](./gap-reference-catalog.md#gt-308) | Plugin system for commands — sdk/cli/src/plugins | `CLI` | Cross | P2 | M | `OPEN` |
-| [`GT-309`](./gap-reference-catalog.md#gt-309) | Contribution validation — sdk/cli/src/contributions | `CLI` | Cross | P2 | M | `OPEN` |
+| [`GT-308`](./gap-reference-catalog.md#gt-308) | Plugin system for commands — sdk/cli/src/plugins | `CLI` | Cross | P2 | M | `DONE` |
+| [`GT-309`](./gap-reference-catalog.md#gt-309) | Contribution validation — sdk/cli/src/contributions | `CLI` | Cross | P2 | M | `DONE` |
 | [`GT-280`](./gap-reference-catalog.md#gt-280) | SDLC phases como datos consultables (JSON/YAML) — mapeo gate → artefactos → reglas Rego | `Governance` | Cross | P0 | M | `DONE` |
 | [`GT-281`](./gap-reference-catalog.md#gt-281) | Pipeline de evaluación end-to-end: cliente → topología → reglas → veredicto | `Core Domain` | Cross | P0 | XL | `DONE` |
 | [`GT-282`](./gap-reference-catalog.md#gt-282) | Reporte accionable con evidencia detallada (qué regla falló, qué artefacto falta, por qué) | `Core Domain` | Cross | P1 | M | `DONE` |
@@ -327,7 +327,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-246`](./gap-reference-catalog.md#gt-246) | Implement Chaos Mesh/Litmus experiments | `QA` | Cross | P3 | L | `DONE` |
 
 
-**Progress:** 310 / 312 done · 0 in progress · 2 pending · 0 deferred
+**Progress:** 312 / 312 done · 0 in progress · 0 pending · 0 deferred
 
 **Wave 2026-06-23 (Wilson deep audit III):** Added 14 new gaps `GT-212`…`GT-225` from the Wilson Audit Playbook covering: ADR status hygiene (GT-212), topology manifest metadata + operational budgets + guidance corpus (GT-213, GT-217, GT-219), REST controller observability + OpenAPI (GT-214, GT-215), OPA input-schema parity + per-topology test density (GT-216, GT-222), SDLC Phase 05 rollback + on-call templates (GT-218), CLI branch coverage + envelope format coverage + skip-list cleanup (GT-220, GT-224, GT-225), MCP HTTP audit logging (GT-221), and cross-surface parity e2e tests (GT-223).
 

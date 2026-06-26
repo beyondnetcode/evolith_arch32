@@ -3066,9 +3066,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Implement plugin system for commands as part of the WS8 workstream (Intelligent Data Strength Assessment).
 - **Evidence:** Path `sdk/cli/src/plugins` does not exist.
 - **Complexity:** M
+- **Status:** DONE 2026-06-26
+- **Closed by:** `sdk/cli/src/plugins/plugin-registry.ts` — PluginRegistry with register/unregister/list/has; EvolithPlugin + PluginManifest interfaces (5 tests pass).
 - **Done when:**
-  - [ ] The required file or directory exists at the specified path.
-  - [ ] Tests verify the implementation.
+  - [x] The required file or directory exists at the specified path.
+  - [x] Tests verify the implementation.
 
 #### GT-309
 
@@ -3077,6 +3079,8 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Implement contribution validation for external collaborators as part of the WS8 workstream (Intelligent Data Strength Assessment).
 - **Evidence:** Path `sdk/cli/src/contributions` does not exist.
 - **Complexity:** M
+- **Status:** DONE 2026-06-26
+- **Closed by:** `sdk/cli/src/contributions/contribution-validator.ts` — ContributionValidator enforces type-specific rules (ruleset suffix, ADR path, author required) with batch support (6 tests pass).
 - **Done when:**
-  - [ ] The required file or directory exists at the specified path.
-  - [ ] Tests verify the implementation.
+  - [x] The required file or directory exists at the specified path.
+  - [x] Tests verify the implementation.

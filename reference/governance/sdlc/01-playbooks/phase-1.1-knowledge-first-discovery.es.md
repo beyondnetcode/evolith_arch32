@@ -29,6 +29,24 @@ Este playbook operacionaliza el gate de Knowledge-First Discovery dentro de la F
 
 ---
 
+## Agentes de Discovery
+
+Cada paso del procedimiento del gate está soportado por un agente IA especializado definido en [`AGENTS.es.md §Agentes de Discovery`](../../../../AGENTS.es.md#agentes-de-discovery-subfase-011). Los agentes se invocan en esta secuencia; la salida de cada agente es la entrada del siguiente:
+
+| Agente | Artefacto Producido | Nivel |
+|---|---|:---:|
+| Business Discovery Agent | Discovery Knowledge Brief (borrador) | 1+ |
+| Product Framing Agent | Knowledge Brief (validado), Context Pack | 1+ |
+| Capability Modeling Agent | Mapa de Capacidades | 2+ |
+| Epic Discovery Agent | Matriz de Candidatos a Épica (con MoSCoW) | 2+ |
+| Story Slicing Agent + Acceptance Criteria Agent | Banco de Semillas de Historia | 2+ |
+| Architecture Discovery Agent | Restricciones arquitectónicas, Candidatos a Decisión | 3+ |
+| Discovery Gate Agent | Gate de Preparación de Discovery (PASS/CONDITIONAL/FAIL) | 3+ |
+
+La ejecución humana es válida en todos los niveles; los agentes son aceleradores opcionales.
+
+---
+
 ## Procedimiento del Gate
 
 ### Paso 1: Determinar Nivel de Adopción
@@ -113,6 +131,21 @@ Discovery Context Pack ──→ Diseño / Arquitectura ──→ Construcción
 - [ ] Ningún supuesto bloqueante queda sin validar (Nivel 3+)
 - [ ] El conocimiento es suficiente para la siguiente fase (Ballpark o Backlog)
 - [ ] El Discovery Context Pack está actualizado y es exportable
+
+---
+
+## Handoff hacia Gate F1
+
+Después de un resultado **PASS** o **CONDITIONAL**, los siguientes artefactos del gate F1 deben reflejar las salidas del KDD:
+
+| Artefacto Gate F1 | Fuente KDD | Condición |
+|---|---|---|
+| Discovery Canvas | Discovery Knowledge Brief | Nivel 1+ |
+| Ballpark Estimation | Sizing del Story Seed Bank | Nivel 2+ |
+| Matriz de Priorización MoSCoW | Matriz de Candidatos a Épica (columnas MoSCoW) | Nivel 2+ — la matriz ES el artefacto MoSCoW; no se requiere MoSCoW independiente |
+| Technical Feasibility Canvas | Salida del Architecture Discovery Agent | Nivel 3+ |
+
+Un resultado **FAIL** en este gate **bloquea** la apertura del gate de Aprobación de Negocio de la Fase 1. Documentar el gap y re-ejecutar después de la resolución.
 
 ---
 

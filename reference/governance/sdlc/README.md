@@ -131,16 +131,20 @@ Scope definition, persona profiling, OKR mapping, and architectural constraint a
 
 **Flow:**
 
-```
-Idea / Business Trigger
-  → 01.1 Knowledge-First Discovery (Levels 1-4)
-    → Capability Map
-      → Epic Candidate Matrix
-        → Story Seed Bank
-          → Ballpark Estimation
-            → Agile Backlog
-              → Design / Architecture
-                → Construction
+```mermaid
+flowchart TD
+    T[Idea / Business Trigger] --> R[Register initiative\nNominate Sponsor & PO]
+    R --> K{Declare KDD\nAdoption Level}
+    K -->|Level 0\nskip| D[Prepare Gate F1 artifacts\ndirectly]
+    K -->|Level 1+| L1[Discovery Knowledge Brief\nAssumptions Log · Context Pack]
+    L1 -->|Level 2+| L2[Capability Map\nEpic Candidate Matrix\nStory Seed Bank]
+    L2 -->|Level 3+| L3[Architecture constraints\nDiscovery Readiness Gate]
+    L3 -->|FAIL| L1
+    L3 -->|PASS / CONDITIONAL| D
+    L1 -->|Level 1 only| D
+    D --> G1[PRD · Discovery Canvas\nTechnical Feasibility · Ballpark\nMoSCoW · Build-vs-Compose]
+    G1 --> GATE([Gate F1: Business Sign-Off])
+    GATE --> P2[Phase 2 — Design]
 ```
 
 **Key Artifacts:**

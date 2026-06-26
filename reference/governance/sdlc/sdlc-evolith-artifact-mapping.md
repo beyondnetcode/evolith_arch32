@@ -78,18 +78,14 @@ flowchart LR
 
 | Artifact | Location | Why it is required |
 |---|---|---|
-| **Discovery Canvas** | [discovery-canvas-template.md](./04-artifact-templates/discovery-canvas-template.md) | Initiative registration, customer pain point, and expected value. |
+| **Discovery Canvas** | [discovery-canvas-template.md](./04-artifact-templates/discovery-canvas-template.md) | Initiative registration, customer pain point, and expected value. At KDD Level 1+, inform this artifact from the Discovery Knowledge Brief. |
 | **Technical Feasibility Canvas** | [technical-feasibility-template.md](./04-artifact-templates/technical-feasibility-template.md) | Technical feasibility, cloud quotas, and NFRs. |
-| **Ballpark Estimation** | [ballpark-estimation-template.md](./04-artifact-templates/ballpark-estimation-template.md) | T-Shirt Sizing estimation of effort and team size. |
-| **Evolith User Story** | [evolith-user-story-template.md](./04-artifact-templates/evolith-user-story-template.md) | Atomic definition with BDD criteria and technical separation. |
-| **Agile Backlog** | [agile-backlog-template.md](./04-artifact-templates/agile-backlog-template.md) | Versioned grouping of stories ready for prioritization. |
-| **CLI Impact Analysis** | [cli-impact-analysis.md](./04-artifact-templates/cli-impact-analysis.md) | Required CLI capabilities for scaffolding and handoff. |
+| **Ballpark Estimation** | [ballpark-estimation-template.md](./04-artifact-templates/ballpark-estimation-template.md) | T-Shirt Sizing estimation of effort and team size. At KDD Level 2+, incorporate Story Seed Bank sizing. |
 | **PRD — Product Requirements Document** | [prd-template.md](./04-artifact-templates/prd-template.md) | Captures scope, personas, goals, constraints, non-goals, and approval evidence. |
-| **Architectural Directives** | [architectural-directives.md](../standards/vision/architectural-directives.md) | Establishes non-negotiable constraints that bound the entire product scope. |
-| **Repository Taxonomy** | [repository-taxonomy.md](../standards/repository-taxonomy.md) | Defines repository structure, naming prefixes, and artifact classification before files or modules are created. |
-| **Agnostic Baseline** | [authoritative-tech-stack-agnostic.md](../../architecture/blueprints/authoritative-tech-stack-agnostic.md) | Defines the technology-neutral baseline that every product must conform to. |
-| **ADR-0047 — Modular Monolith Selection** | [ADR-0047](../../architecture/adrs/core/0047-architectural-patterns-monolith-soa-microservices.md) | Confirms the mandated starting topology unless approved extraction criteria are already satisfied. |
-| **Engineering Manifesto** | [engineering-manifesto.md](../standards/engineering/engineering-manifesto.md) | Sets team engineering expectations before development contracts are written. |
+| **MoSCoW Prioritization Matrix** | [moSCoW template](./04-artifact-templates/ballpark-estimation-template.md) | MoSCoW analysis with at least one MUST item. At KDD Level 2+, derived from Epic Candidate Matrix. |
+| **Build-versus-Compose Analysis** | [build-vs-compose.schema.json](../../../rulesets/schema/build-vs-compose.schema.json) | Adopt/Embed/Integrate/Extend/Build/Reject disposition per Product Vision §5.3. |
+
+> **Evolith Compliance Baseline (§7):** Architectural Directives, Repository Taxonomy, Agnostic Baseline, ADR-0047, and Engineering Manifesto are cross-cutting standards governed by the Compliance Baseline. Consult them during Phase 1 but do not produce them here — they are already governed.
 
 ### Optional Artifacts
 
@@ -136,6 +132,9 @@ flowchart LR
 | **Functional Story Writing Standard** | [functional-story-writing-standard.md](./03-documentation/functional-story-writing-standard.md) | Ensures business-readable stories and separation from implementation details. |
 | **SDLC Documentation Best Practices** | [sdlc-documentation-best-practices.md](./03-documentation/sdlc-documentation-best-practices.md) | Governs how design artifacts are produced, versioned, and reviewed. |
 | **Simplicity Checklist Phase 1** | [simplicity-checklist-phase-01.md](../../architecture/blueprints/simplicity-checklist-phase-01.md) | Gates against over-engineering before Design Baseline approval. |
+| **Evolith User Story** | [evolith-user-story-template.md](./04-artifact-templates/evolith-user-story-template.md) | Atomic story definition with BDD criteria. Produced after Functional Stories are defined. |
+| **Agile Backlog** | [agile-backlog-template.md](./04-artifact-templates/agile-backlog-template.md) | Refined backlog produced from Functional Stories. |
+| **CLI Impact Analysis** | [cli-impact-analysis.md](./04-artifact-templates/cli-impact-analysis.md) | Required CLI capabilities once design is baselined. |
 
 ### Optional or Conditional Artifacts
 
@@ -267,11 +266,19 @@ The following matrix provides a one-page view of artifact density per phase. An 
 | Artifact | Ph 1 | Ph 2 | Ph 3 | Ph 4 | Ph 5 |
 |---|:---:|:---:|:---:|:---:|:---:|
 | PRD | **R** | — | — | — | — |
-| Architectural Directives | **R** | — | — | — | — |
-| Agnostic Baseline | **R** | **R** | **R** | **R** | **R** |
-| Repository Taxonomy | **R** | **R** | **R** | **R** | **R** |
-| ADR-0047 — Modular Monolith | **R** | O | — | — | — |
-| Engineering Manifesto | **R** | **R** | **R** | **R** | **R** |
+| Discovery Canvas | **R** | — | — | — | — |
+| Technical Feasibility Canvas | **R** | — | — | — | — |
+| Ballpark Estimation | **R** | — | — | — | — |
+| MoSCoW Prioritization Matrix | **R** | — | — | — | — |
+| Build-versus-Compose Analysis | **R** | — | — | — | — |
+| Evolith User Story | — | **R** | — | — | — |
+| Agile Backlog | — | **R** | — | — | — |
+| CLI Impact Analysis | — | **R** | — | — | — |
+| Architectural Directives | — | — | — | — | — |
+| Agnostic Baseline | — | — | — | — | — |
+| Repository Taxonomy | — | — | — | — | — |
+| ADR-0047 — Modular Monolith | — | O | — | — | — |
+| Engineering Manifesto | — | — | — | — | — |
 | Functional Story Template / Standard | O | **R** | — | — | — |
 | Reference Blueprint | — | **R** | **R** | — | — |
 | Authoritative Tech Stack | — | **R** | **R** | — | — |

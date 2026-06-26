@@ -29,6 +29,24 @@ This playbook operationalises the Knowledge-First Discovery gate within Phase 01
 
 ---
 
+## Discovery Agents
+
+Each step in the gate procedure is supported by a specialized AI agent defined in [`AGENTS.md §Discovery Agents`](../../../../AGENTS.md#discovery-agents-subphase-011). Invoke agents in this sequence; each agent's output is the next agent's input:
+
+| Agent | Artifact Produced | Level |
+|---|---|:---:|
+| Business Discovery Agent | Discovery Knowledge Brief (draft) | 1+ |
+| Product Framing Agent | Knowledge Brief (validated), Context Pack | 1+ |
+| Capability Modeling Agent | Capability Map | 2+ |
+| Epic Discovery Agent | Epic Candidate Matrix (with MoSCoW) | 2+ |
+| Story Slicing Agent + Acceptance Criteria Agent | Story Seed Bank | 2+ |
+| Architecture Discovery Agent | Architecture constraints, Decision Candidates | 3+ |
+| Discovery Gate Agent | Discovery Readiness Gate (PASS/CONDITIONAL/FAIL) | 3+ |
+
+Human execution is valid at all levels; agents are optional accelerators.
+
+---
+
 ## Gate Procedure
 
 ### Step 1: Determine Adoption Level
@@ -113,6 +131,21 @@ Discovery Context Pack ──→ Design / Architecture ──→ Construction
 - [ ] No blocking assumptions remain unvalidated (Level 3+)
 - [ ] Knowledge sufficient for the next phase (Ballpark or Backlog)
 - [ ] Discovery Context Pack is current and exportable
+
+---
+
+## Handoff to Gate F1
+
+After a **PASS** or **CONDITIONAL** outcome, the following gate-F1 artifacts must reflect KDD outputs:
+
+| Gate F1 Artifact | KDD Source | Condition |
+|---|---|---|
+| Discovery Canvas | Discovery Knowledge Brief | Level 1+ |
+| Ballpark Estimation | Story Seed Bank sizing | Level 2+ |
+| MoSCoW Prioritization Matrix | Epic Candidate Matrix (MoSCoW columns) | Level 2+ — the matrix IS the MoSCoW artifact; no standalone required |
+| Technical Feasibility Canvas | Architecture Discovery Agent output | Level 3+ |
+
+A **FAIL** outcome on this gate **blocks** the opening of the Phase 1 Business Sign-Off gate. Document the gap and re-run after resolution.
 
 ---
 

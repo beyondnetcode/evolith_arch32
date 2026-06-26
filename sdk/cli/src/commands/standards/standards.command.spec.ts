@@ -48,7 +48,6 @@ jest.mock('../../infrastructure/observability', () => ({
 
 import * as p from '@clack/prompts';
 import { StandardsService } from '@evolith/core-domain/domain/services/standards.service';
-import { logger } from '../../infrastructure/observability';
 
 const mockInitialize = jest.fn();
 const mockList = jest.fn();

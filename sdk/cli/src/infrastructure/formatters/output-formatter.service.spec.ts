@@ -1,4 +1,4 @@
-import { OutputFormatterService, FormatterOptions } from './output-formatter.service';
+import { OutputFormatterService } from './output-formatter.service';
 
 describe('OutputFormatterService', () => {
   let formatter: OutputFormatterService;

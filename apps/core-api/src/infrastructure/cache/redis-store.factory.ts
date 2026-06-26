@@ -10,7 +10,6 @@ export interface RedisStoreConfig {
 
 export function createRedisStore(config: RedisStoreConfig | string) {
   try {
-    const { Keyv } = require('keyv');
     const { KeyvRedis } = require('@keyv/redis');
 
     let redisUrl: string;

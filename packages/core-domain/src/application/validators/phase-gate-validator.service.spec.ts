@@ -1,4 +1,4 @@
-import { PhaseGateValidatorService, PhaseGatesRuleset, GateValidationResult } from './phase-gate-validator.service';
+import { PhaseGateValidatorService, PhaseGatesRuleset } from './phase-gate-validator.service';
 import { IFileSystem } from '../../domain/interfaces';
 
 const createMockFileSystem = (overrides?: Partial<IFileSystem>): IFileSystem => {

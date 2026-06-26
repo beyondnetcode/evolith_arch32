@@ -1,4 +1,4 @@
-import { Command, Option } from 'nest-commander';
+import { Option } from 'nest-commander';
 import { ValidateSatelliteUseCase } from '@evolith/core-domain/application/use-cases/validate-satellite.use-case';
 import { ValidationResult, ValidationIssue, RulesetValidatorService } from '@evolith/core-domain/application/validators/ruleset-validator.service';
 import { OutputFormatterService, OutputFormat } from '../../infrastructure/formatters/output-formatter.service';
@@ -246,7 +246,9 @@ export class ValidateCommand extends BaseEvolithCommand {
       const output = JSON.stringify(result, null, 2);
       if (options?.output) {
         const fs = await import('fs-extra');
-        await fs.writeFile(options.output, output, 'utf-8');
+        const path = await import('path');
+        const resolvedOutput = path.resolve(options.output);
+        await fs.writeFile(resolvedOutput, output, 'utf-8');
         this.promptService.showSuccess(`Reporte guardado en ${options.output}`);
       } else {
         console.log(output);
@@ -268,7 +270,9 @@ export class ValidateCommand extends BaseEvolithCommand {
       const output = formatter.format(tableData, { format, colors: true });
       if (options?.output) {
         const fs = await import('fs-extra');
-        await fs.writeFile(options.output, output, 'utf-8');
+        const path = await import('path');
+        const resolvedOutput = path.resolve(options.output);
+        await fs.writeFile(resolvedOutput, output, 'utf-8');
         this.promptService.showSuccess(`Reporte guardado en ${options.output}`);
       } else {
         console.log(output);

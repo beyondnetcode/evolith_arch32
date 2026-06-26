@@ -3,8 +3,7 @@ import { SatelliteManifest, EvaluationVerdict, GateEvaluationResult, RuleEvaluat
 import { TopologyCatalogService, TopologyManifest } from './topology-catalog.service';
 import { SdlcDataLoaderService, StructuredGate } from './sdlc-data-loader.service';
 import { RulesetValidatorService } from '../validators/ruleset-validator.service';
-import { OpaEvaluator } from '../validators/evaluators/opa-evaluator';
-import { createSuccessEnvelope, createErrorEnvelope } from '../../domain/gate-evidence';
+import { createSuccessEnvelope } from '../../domain/gate-evidence';
 import * as path from 'path';
 
 /**

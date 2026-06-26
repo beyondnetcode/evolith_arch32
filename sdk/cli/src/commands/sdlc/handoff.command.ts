@@ -88,8 +88,8 @@ export class HandoffCommand extends BaseEvolithCommand {
       });
     }
 
-    const validateGates = await this.promptService.confirm('Validate phase gate requirements before handoff?', true);
-    const uploadEvidence = await this.promptService.confirm('Generate/upload mandatory evidence artifacts?', true);
+    await this.promptService.confirm('Validate phase gate requirements before handoff?', true);
+    await this.promptService.confirm('Generate/upload mandatory evidence artifacts?', true);
     const selectTools = await this.promptService.confirm('Configure tools for target phase?', true);
 
     const tools: string[] = [];
@@ -119,7 +119,7 @@ export class HandoffCommand extends BaseEvolithCommand {
       }
     }
 
-    const forceHandoff = await this.promptService.confirm('Force handoff even if some checks fail? (Requires waiver)', false);
+    await this.promptService.confirm('Force handoff even if some checks fail? (Requires waiver)', false);
 
     this.promptService.startSpinner(`Processing handoff from ${fromPhase} to ${toPhase}...`);
 

@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import chalk from 'chalk';
-import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@evolith/core-domain/domain/gate-evidence';
+import { createSuccessEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@evolith/core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 
 interface DocsCommandOptions {

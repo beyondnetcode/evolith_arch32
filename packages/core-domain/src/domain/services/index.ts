@@ -1,4 +1,4 @@
-import { Phase, GateResult } from '../entities';
+import { Phase } from '../entities';
 import { IPhaseGates, GateResult as IGateResult } from '../interfaces';
 import { WorkflowDefinition } from '../ports/workflow-definition.port';
 import { loadDefaultWorkflow } from './default-workflow-definition';

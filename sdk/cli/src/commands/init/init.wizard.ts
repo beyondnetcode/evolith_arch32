@@ -6,7 +6,6 @@ import { CatalogLoader } from '../../infrastructure/catalog/catalog-loader';
 import { Inject } from '@nestjs/common';
 import { IFileSystem } from '@evolith/core-domain/domain/interfaces';
 import { InitializeProjectUseCase } from '@evolith/core-domain/application/services';
-import chalk from 'chalk';
 
 interface WizardInitOptions {
   wizard?: boolean;

@@ -45,7 +45,6 @@ import { CommandResult } from '../command-executor';
 // ── helpers ───────────────────────────────────────────────────────────────────
 
 function ok(stdout = 'ok') { return CommandResult.ok(stdout); }
-function fail()            { return CommandResult.err('error', 1); }
 
 beforeEach(() => {
   jest.clearAllMocks();

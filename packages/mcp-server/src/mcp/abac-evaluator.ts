@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import * as crypto from 'node:crypto';
-import { ErrorCodes } from '../common/errors';
 
 export interface AbacUserInput {
   id: string;
@@ -20,7 +18,6 @@ export interface AbacDecision {
   violations: Array<{ id: string; message: string }>;
 }
 
-const READ_ONLY_ROLES = new Set(['viewer', 'auditor']);
 const DEVELOPER_ROLES = new Set(['developer', 'qa']);
 const OPERATOR_ROLES = new Set(['operator', 'sre']);
 const ARCHITECT_ROLES = new Set(['architect', 'admin']);

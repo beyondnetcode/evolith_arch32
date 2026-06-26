@@ -1,5 +1,4 @@
 /* eslint-disable boundaries/element-types */
-import * as path from 'path';
 import { IFileSystem, ILogger, IConfigParser } from '../../domain/interfaces';
 import { ValidationIssue } from './ruleset-validator.service';
 import { IRuleEvaluatorStrategy, EvaluationContext, RuleEvaluationResult } from './evaluators/evaluator.interface';

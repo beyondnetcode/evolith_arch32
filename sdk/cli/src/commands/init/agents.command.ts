@@ -5,7 +5,6 @@ import { NodeFileSystemProvider } from '../../infrastructure/providers/node-file
 import type { IFileSystem } from '@evolith/core-domain/domain/interfaces';
 import { AgentRegistryService, AgentInfo } from '../../infrastructure/adapters/agent-registry.service';
 import { buildAgentRuleset } from '@evolith/core-domain/application/agents/agent-ruleset-builder';
-import { RulesetValidatorService } from '@evolith/core-domain/application/validators/ruleset-validator.service';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 
 let cachedFileSystem: IFileSystem | null = null;
@@ -194,7 +193,7 @@ export class AgentsCommand extends BaseEvolithCommand {
     this.promptService.showInfo(`Found ${agents.length} installed agent(s):\n`);
 
     for (const agent of agents) {
-      const principlesCount = 0; // We can't read principles count without loading the ruleset JSON directly, skip for simplicity.
+      const _principlesCount = 0;
       this.promptService.showInfo(chalk.cyan(`  • ${agent.name}`));
       this.promptService.showInfo(chalk.gray(`    Version: ${agent.version} | Template: ${agent.template}`));
     }

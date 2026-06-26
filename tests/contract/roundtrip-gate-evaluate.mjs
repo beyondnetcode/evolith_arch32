@@ -19,7 +19,7 @@
 
 import { spawn, spawnSync } from 'node:child_process';
 import { request as httpRequest } from 'node:http';
-import { mkdirSync, mkdtempSync, writeFileSync, existsSync, rmSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, existsSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';

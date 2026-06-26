@@ -1,5 +1,4 @@
 import { PluginModule } from './plugin.module';
-import { PluginLoader } from './plugin-loader';
 
 jest.mock('./plugin-loader', () => ({
   PluginLoader: {

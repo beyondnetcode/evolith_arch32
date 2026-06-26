@@ -35,7 +35,7 @@ describe('ValidateSatelliteUseCase', () => {
     });
 
     it('should validate with custom core path', async () => {
-      const { result } = await useCase.execute({
+      const { result: _result } = await useCase.execute({
         satellitePath: '/satellite',
         corePath: '/custom-core',
       });

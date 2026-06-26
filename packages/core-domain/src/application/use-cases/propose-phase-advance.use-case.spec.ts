@@ -1,6 +1,6 @@
 import { ProposePhaseAdvanceUseCase } from './propose-phase-advance.use-case';
 import { EvaluateGateUseCase } from './evaluate-gate.use-case';
-import { GateEvidence, GatePhase } from '../../domain/gate-evidence';
+import { GateEvidence } from '../../domain/gate-evidence';
 
 describe('ProposePhaseAdvanceUseCase', () => {
   let evaluateGateUseCaseMock: jest.Mocked<EvaluateGateUseCase>;

@@ -9,7 +9,7 @@ describe('AliasService', () => {
 
   beforeEach(() => {
     evolithDir = fs.mkdtempSync(path.join(os.tmpdir(), 'evolith-alias-test-'));
-    const home = process.env.HOME;
+    const _home = process.env.HOME;
     process.env.HOME = evolithDir;
     service = new AliasService();
   });

@@ -1,6 +1,5 @@
 import { SpanStatusCode } from '@opentelemetry/api';
 import { logger } from './structured-logger';
-import { CommandResult } from '../../infrastructure/cli/command-executor';
 import { commandExecutor } from '../../infrastructure/cli/command-executor';
 import { cliTracer, isOtelEnabled } from './otel-tracing';
 

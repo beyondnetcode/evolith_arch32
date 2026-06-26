@@ -30,7 +30,6 @@ jest.mock('@clack/prompts', () => ({
   confirm: jest.fn(),
 }));
 
-import chalk from 'chalk';
 import { CommandHistoryService } from '@evolith/core-domain/application/services/services/command-history.service';
 import * as p from '@clack/prompts';
 

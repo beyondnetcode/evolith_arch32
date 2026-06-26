@@ -9,7 +9,7 @@ Instantánea estratégica generada desde el tablero canónico de gaps y la recon
 
 ## Señal Ejecutiva
 
-**Decisión actual:** GO completo: 282/312 gaps cerrados, mantener vigilancia.
+**Decisión actual:** GO completo: 283/312 gaps cerrados, mantener vigilancia.
 
 **Mayor problema ahora:** No hay riesgo abierto ponderado — todos los gaps están cerrados.
 
@@ -25,7 +25,7 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 
 | Orden | Foco | Motivo | IDs |
 |---:|---|---|---|
-| 1 | Sin gaps abiertos | Todos los 282 gaps están cerrados. | - |
+| 1 | Sin gaps abiertos | Todos los 283 gaps están cerrados. | - |
 
 ## Bloqueadores Actuales
 
@@ -40,12 +40,12 @@ Sin bloqueadores activos — todos los gaps están cerrados.
 |---|---:|
 | Fecha canónica del tablero | 2026-06-26 |
 | Gaps totales | 312 |
-| Gaps cerrados | 282 |
+| Gaps cerrados | 283 |
 | Gaps pendientes | 0 |
 | P0 abiertos | 0 |
 | P1 abiertos | 0 |
 | P2 abiertos | 0 |
-| Cierre total | 90.4% |
+| Cierre total | 90.7% |
 | Registros de evidencia de cierre | 261 |
 | Readiness registrado | 3 PASS, 1 RESOLVED |
 

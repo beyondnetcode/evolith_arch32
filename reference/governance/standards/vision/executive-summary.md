@@ -9,7 +9,7 @@ Strategic snapshot generated from the canonical gap board and maturity reconcili
 
 ## Executive Signal
 
-**Current decision:** Full GO: 282/312 gaps closed, keep monitoring.
+**Current decision:** Full GO: 283/312 gaps closed, keep monitoring.
 
 **Biggest problem now:** No weighted open risk — all gaps are closed.
 
@@ -25,7 +25,7 @@ Use this summary with a simple rule: if you need context, open only the linked I
 
 | Order | Focus | Reason | IDs |
 |---:|---|---|---|
-| 1 | No open gaps | All 282 gaps are closed. | - |
+| 1 | No open gaps | All 283 gaps are closed. | - |
 
 ## Current Blockers
 
@@ -40,12 +40,12 @@ No active blockers — all gaps are closed.
 |---|---:|
 | Canonical board date | 2026-06-26 |
 | Total gaps | 312 |
-| Closed gaps | 282 |
+| Closed gaps | 283 |
 | Open gaps | 0 |
 | Open P0 | 0 |
 | Open P1 | 0 |
 | Open P2 | 0 |
-| Total closure | 90.4% |
+| Total closure | 90.7% |
 | Closure evidence records | 261 |
 | Recorded readiness | 3 PASS, 1 RESOLVED |
 

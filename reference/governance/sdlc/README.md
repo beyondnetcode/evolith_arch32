@@ -180,6 +180,10 @@ businessTriggerId → knowledgeBriefId → capabilityId → epicCandidateId → 
 
 Pattern selection, ADR production, bounded context definition, API contracts, and functional story writing.
 
+**Topology context:** Phase 2 corresponds to the `distributed-modules` (F2) progressive topology. Declare `metadata.phase: F2` in `evolith.yaml` to activate F2 topology rules. Run `evolith validate --topology distributed-modules` to verify the 8 mandatory DM rules before the gate review. See [distributed-modules topology manifest](../../architecture/topologies/progressive-axis/distributed-modules/topology.manifest.json) and [ADR-0045](../../architecture/adrs/core/0045-microservice-extraction-readiness-criteria.md) for the Extraction Readiness Score requirement (≥70%).
+
+If Phase 1.1 (KDD Level 2+) was applied, Story Seeds and Epic Candidate Matrix feed directly into Phase 2 Functional Story writing. Refine seeds into Functional Stories here — do not skip this refinement step.
+
 | Document | Description | Goal / Objective | Type | Mandatory |
 |---|---|---|---|---|
 | [Construction-Focused SDLC Framework](./02-engineering/construction-focused-sdlc-framework.md) | Normative standard governing phase progression, quality thresholds, inner build loop, and the Definition of Done | Regulate technical execution | Standard | Yes |

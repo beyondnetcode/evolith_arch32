@@ -66,13 +66,17 @@ Las plantillas garantizan consistencia en todos los repositorios satélite. Los 
 | **Fase 2 — Diseño** | Agile Backlog | [Abrir](./agile-backlog-template.es.md) | Incluido | Incluido | Product Owner |
 | **Fase 2 — Diseño** | Análisis de Impacto CLI | [Abrir](./cli-impact-analysis.es.md) | Incluido | Incluido | Arquitecto de Plataforma |
 | **Fase 1 — Concepción** | PRD — Documento de Requisitos de Producto | [Abrir](./prd-template.es.md) | [Fuente](./source/prd-template-source.es.md) | [Ejemplo](./examples/prd-example-ums.es.md) | Product Owner, Sponsor Ejecutivo |
-| **Fase 2 — Diseño** | DDD Model (Modelo de Dominio) | [Abrir](./ddd-model-template.es.md) | Incluido | N/A | Arquitecto, Tech Lead |
+| **Fase 2 — Diseño** | DDD Model (Bounded Context Map) | [Abrir](./ddd-model-template.es.md) | Incluido | N/A | Arquitecto, Tech Lead |
 | **Fase 2 — Diseño** | ADR — Registro de Decisión Arquitectónica | [Abrir](./adr-template.es.md) | [Fuente](./source/adr-template-source.es.md) | [Ejemplo](./examples/adr-example-ums.es.md) | Arquitecto, Principal Engineer |
-| **Fase 2 — Diseño** | Historia Funcional | [Abrir](./functional-story-template.es.md) | [Fuente](./source/functional-story-template-source.es.md) | [Ejemplo](./examples/functional-story-example-ums.es.md) | Product Owner, Business Analyst |
+| **Fase 2 — Diseño** | Historia Funcional | [Abrir](./functional-story-template.es.md) | [Fuente](./source/functional-story-template-source.es.md) | [Ejemplo](./examples/functional-story-example-ums.es.md) | Product Owner, Business Analyst | Si existen Story Seeds de Fase 1.1 KDD Nivel 2+, refinarlas aquí en Historias Funcionales |
 | **Fase 3 — Construcción** | Historia Técnica | [Abrir](./technical-story-template.es.md) | [Fuente](./source/technical-story-template-source.es.md) | [Ejemplo](./examples/technical-story-example-ums.es.md) | Desarrollador Backend/Frontend, Tech Lead |
 | **Fase 4 — Validación** | Test Summary Report | [Abrir](./test-summary-report-template.es.md) | [Fuente](./source/test-summary-report-template-source.es.md) | [Ejemplo](./examples/test-summary-report-example-ums.es.md) | QA / SDET, Tech Lead, Security Engineer |
 | **Fase 5 — Entrega** | Release Notes | [Abrir](./release-notes-template.es.md) | [Fuente](./source/release-notes-template-source.es.md) | [Ejemplo](./examples/release-notes-example-ums.es.md) | DevOps / SRE, Tech Lead |
 | **Transversal / Gobernanza de Release** | Scorecard Ejecutivo SDLC | [Abrir](./executive-scorecard-template.es.md) | [Fuente](./source/executive-scorecard-template-source.es.md) | [Ejemplo](./examples/executive-scorecard-example-ums.es.md) | Director, Tech Lead |
+
+> **Notas Fase 2:**
+> - **DDD Model** — Produce el Mapa de Bounded Contexts requerido por el Gate F2.
+> - **Historia Funcional** — Formato de autoría para "Historias Funcionales" (evidencia Gate F2). Refinar Story Seeds de Fase 1.1 KDD aquí.
 
 ---
 

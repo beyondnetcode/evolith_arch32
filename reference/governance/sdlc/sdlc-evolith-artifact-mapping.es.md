@@ -120,33 +120,93 @@ flowchart LR
 
 | Artefacto | Ubicación | Por qué es requerido |
 |---|---|---|
-| **Blueprint de Referencia** | [reference-blueprint.md](../../architecture/blueprints/reference-blueprint.md) | Modelo C4 canónico. Los diagramas de arquitectura del producto deben ser trazables a él. |
-| **Tech Stack Autoritativo** | [authoritative-tech-stack.md](../../architecture/blueprints/authoritative-tech-stack.md) | Solo pueden introducirse tecnologías aprobadas salvo que se apruebe un nuevo ADR. |
-| **Matriz de Decisión ADR** | [adr-matrix.md](../../architecture/adrs/adr-matrix.md) | Previene decisiones arquitectónicas duplicadas o contradictorias. |
+| **Blueprint de Referencia** | [reference-blueprint.md](../../architecture/blueprints/reference-blueprint.md) | Consultar — no es un artefacto que produces. El Gate F2 verifica que tus diagramas de arquitectura sean trazables a él; las desviaciones requieren ADRs. |
 | **ADR-0002 — Arquitectura Hexagonal** | [ADR-0002](../../architecture/adrs/nodejs/0002-clean-architecture-nestjs.es.md) | Límite obligatorio de Ports and Adapters. |
-| **ADR-0018 — Pirámide de Testing** | [ADR-0018](../../architecture/adrs/core/0018-testing-pyramid-quality-gates.es.md) | La arquitectura de pruebas y la distribución por tipo de prueba deben diseñarse antes de validación. |
+| **ADR-0018 — Pirámide de Testing** | [ADR-0018](../../architecture/adrs/core/0018-testing-pyramid-quality-gates.es.md) | La arquitectura de pruebas y la distribución por tipo deben diseñarse antes de validación. |
 | **ADR-0031 — Schema-per-Context** | [ADR-0031](../../architecture/adrs/core/0031-schema-per-context-domain-event-catalog.es.md) | Los límites de esquema por bounded context deben decidirse antes de construcción. |
 | **ADR-0032 — Matriz de Selección de Protocolo** | [ADR-0032](../../architecture/adrs/core/0032-api-protocol-decision-matrix-rest-grpc-graphql.es.md) | El uso de REST, gRPC y GraphQL debe resolverse antes de producir contratos API. |
 | **ADR-0056 — Convenciones de Naming y Diseño** | [ADR-0056](../../architecture/adrs/core/0056-enterprise-naming-design-conventions.es.md) | El lenguaje ubicuo y las reglas de naming deben establecerse antes de nombrar entidades y endpoints. |
-| **Plantilla de Historia Funcional** | [functional-story-template.es.md](./04-artifact-templates/functional-story-template.es.md) | Estructura requerida para especificaciones de comportamiento de negocio. |
-| **Estándar de Escritura de Historias Funcionales** | [functional-story-writing-standard.es.md](./03-documentation/functional-story-writing-standard.es.md) | Asegura historias legibles por negocio y separación de detalles de implementación. |
-| **Buenas Prácticas de Documentación SDLC** | [sdlc-documentation-best-practices.es.md](./03-documentation/sdlc-documentation-best-practices.es.md) | Gobierna cómo se producen, versionan y revisan los artefactos de diseño. |
-| **Checklist de Simplicidad Fase 1** | [simplicity-checklist-phase-01.md](../../architecture/blueprints/simplicity-checklist-phase-01.md) | Bloquea sobre-ingeniería antes de aprobar la Baseline de Diseño. |
+| **ADR-0045 — Criterios de Readiness para Extracción** | [ADR-0045](../../architecture/adrs/core/0045-microservice-extraction-readiness-criteria.es.md) | Requerido — los satélites que declaran F2 deben documentar su Extraction Readiness Score (≥70%). Enforcido por la regla de contrato satélite SVC-04. |
+| **Historias Funcionales** | [functional-story-template.es.md](./04-artifact-templates/functional-story-template.es.md) | Historias listas para BDD en estado Ready, trazables al PRD. Usar Plantilla de Historia Funcional como formato y Estándar de Escritura como guía. Si existen Story Seeds de Fase 1.1 KDD Nivel 2+, refinarlas en Historias Funcionales aquí. |
+| **Checklist de Simplicidad Fase 1** | [simplicity-checklist-phase-01.md](../../architecture/blueprints/simplicity-checklist-phase-01.md) | A pesar del nombre 'Fase 1', este checklist se ejecuta en Fase 2. Su propósito: verificar que no entre sobre-ingeniería prematura en la baseline de diseño. El identificador del artefacto está registrado en el validador de máquina — no renombrar. |
 | **Historia de Usuario Evolith** | [evolith-user-story-template.es.md](./04-artifact-templates/evolith-user-story-template.es.md) | Definición atómica de historia con criterios BDD. Se produce después de definir las Historias Funcionales. |
 | **Agile Backlog** | [agile-backlog-template.es.md](./04-artifact-templates/agile-backlog-template.es.md) | Backlog refinado producido a partir de Historias Funcionales. |
 | **Análisis de Impacto CLI** | [cli-impact-analysis.es.md](./04-artifact-templates/cli-impact-analysis.es.md) | Capacidades CLI requeridas una vez que el diseño está baselined. |
+
+### Declaración y Validación de Topología
+
+La Fase 2 implica una topología progresiva específica. Las siguientes acciones son requeridas antes de que la compuerta Design Baseline pueda ser evaluada:
+
+| Acción | Mecanismo | Dónde se Declara |
+|--------|-----------|------------------|
+| Declarar fase de topología | Establecer `metadata.phase: F2` en `evolith.yaml` | Raíz del repositorio satélite |
+| Validar reglas de topología | `evolith validate --topology distributed-modules` | CLI |
+| Documentar elección de topología | ADR que referencie ADR-0047 y ADR-0045 | Registro ADR |
+
+**F2 Topología — Módulos Distribuidos (8 reglas obligatorias):**
+
+| ID Regla | Categoría | Requisito |
+|----------|-----------|----------|
+| DM-R01 | module-autonomy | Cada módulo posee su ciclo de vida CI/CD independientemente |
+| DM-R02 | contract-stability | Los contratos entre módulos son explícitos y versionados |
+| DM-R03 | data-ownership | Cada módulo posee sus datos — sin esquema compartido |
+| DM-R04 | async-communication | Los eventos async carry payloads validados por esquema |
+| DM-R05 | observability | El tracing distribuido sigue W3C TraceContext entre módulos |
+| DM-R06 | deployment | Los módulos son desplegables independientemente |
+| DM-R07 | resiliency | Circuit breaker gobierna todas las llamadas entre módulos |
+| DM-R08 | extraction-readiness | Extraction Readiness Score mantenido (≥80% para avanzar a F3) |
+
+**Dimensiones componibles (opcionales, declarar en evolith.yaml):** `event-driven` · `data-mesh` · `serverless` · `edge-computing` · `agentic-ai`
+
+### Artefactos de Soporte (consultar o seguir — no evidencia de gate)
+
+| Artefacto | Ubicación | Por qué se consulta |
+|---|---|---|
+| **Estándar de Escritura de Historias Funcionales** | [functional-story-writing-standard.es.md](./03-documentation/functional-story-writing-standard.es.md) | Guía de calidad para Historias Funcionales — no se produce como evidencia de gate. |
+| **Buenas Prácticas de Documentación SDLC** | [sdlc-documentation-best-practices.es.md](./03-documentation/sdlc-documentation-best-practices.es.md) | Gobierna cómo se producen, versionan y revisan los artefactos de diseño. |
+| **Tech Stack Autoritativo** | [authoritative-tech-stack.md](../../architecture/blueprints/authoritative-tech-stack.md) | Solo pueden introducirse tecnologías aprobadas salvo que se apruebe un nuevo ADR. |
+| **Matriz de Decisión ADR** | [adr-matrix.md](../../architecture/adrs/adr-matrix.md) | Previene decisiones arquitectónicas duplicadas o contradictorias. |
 
 ### Artefactos Opcionales o Condicionales
 
 | Artefacto | Ubicación | Cuándo usarlo |
 |---|---|---|
 | ADR-0010 — Multi-Tenancy | [ADR-0010](../../architecture/adrs/core/0010-multi-tenancy-architecture-strategy.es.md) | Condicional: requerido cuando el producto sirve múltiples tenants. |
-| ADR-0045 — Criterios de Readiness para Extracción | [ADR-0045](../../architecture/adrs/core/0045-microservice-extraction-readiness-criteria.es.md) | Cuando el roadmap incluye posible extracción a microservicios. |
+| ADR-0076 — DOMA | [ADR-0076](../../architecture/adrs/core/0076-domain-oriented-microservice-architecture.es.md) | Condicional: requerido cuando la topología F3 está en alcance. Cada servicio debe mapear a exactamente un bounded context. |
 | C4 Topology Spec | [c4-topology-spec.md](../../architecture/blueprints/c4-topology-spec.md) | Cuando se producen diagramas C4 formales. |
 | Análisis Estratégico CAP | [cap-strategic-analysis.md](../../architecture/blueprints/cap-strategic-analysis.md) | Cuando se hacen tradeoffs explícitos entre consistencia y disponibilidad. |
 | Flujo de Arquitectura de Observabilidad | [observability-architecture-flow.md](../../architecture/blueprints/observability-architecture-flow.md) | Al diseñar tracing distribuido y agregación de logs. |
 | Patrones Canónicos | [canonical-patterns](../../architecture/canonical-patterns/README.es.md) | Cuando se adoptan implementaciones de referencia runtime-specific. |
 | UMS Technical Overview | [ums-technical-overview.md](../../knowledge/demo/ums-technical-overview.md) | Cuando patrones de identidad o autorización de UMS son directamente aplicables. |
+
+### Orden de Consulta ADR Recomendado
+
+| Paso | ADR | Por qué primero |
+|------|-----|------------------|
+| 1 | ADR-0056 — Convenciones de Naming y Diseño | Establece lenguaje ubicuo para todos los artefactos |
+| 2 | ADR-0047 — Selección de Monolito Modular | Confirma que la progresión F1→F2 está justificada |
+| 2 | ADR-0045 — Criterios de Readiness para Extracción | Cuantifica el score de readiness (≥70% para F2) |
+| 3 | ADR-0002 — Arquitectura Hexagonal | FUNDAMENTAL port/adapter boundary |
+| 4 | ADR-0031 — Schema-per-Context | Gobierna aislamiento de datos por módulo (DM-R03) |
+| 4 | ADR-0032 — Matriz de Selección de Protocolo | Gobierna contratos entre módulos (DM-R02) |
+| 5 | ADR-0018 — Pirámide de Testing | Define estrategia de pruebas antes de marcar historias como Ready |
+| C | ADR-0010 — Multi-Tenancy | Requerido si multi-tenant |
+| C | ADR-0076 — DOMA | Requerido si topología F3 en roadmap |
+
+### Orden de Ejecución Recomendado dentro de Fase 2
+
+| Paso | Actividad | Salida |
+|------|-----------|--------|
+| 0 | Verificar gate Fase 1 APPROVED; confirmar evolith.yaml `metadata.phase: F2` | Condiciones previas |
+| 1 | Consultar ADR-0056; establecer lenguaje ubicuo; inicializar Registro ADR | Registro ADR iniciado |
+| 2 | Evaluar Extraction Readiness (ADR-0045 ≥70%); confirmar progresión ADR-0047 justificada | Score documentado |
+| 3 | Confirmar ADR-0002; ejecutar Checklist de Simplicidad Fase 1 | Baseline de arquitectura |
+| 4 | Producir Mapa de Bounded Contexts (Plantilla DDD); aplicar ADR-0031 + ADR-0032 | Mapa de Bounded Contexts |
+| 5 | Refinar Story Seeds → Historias Funcionales (KDD L2+) o escribir desde cero; descomponer → Historias de Usuario; organizar Agile Backlog | Historias Funcionales, Backlog |
+| 6 | Documentar decisiones de límites como ADRs; completar Análisis de Impacto CLI; consultar ADR-0018; verificar Alineación con Blueprint | Registro ADR (completo) |
+| 7 | Ejecutar `evolith validate --topology distributed-modules` — las 8 reglas DM deben pasar | Validación de topología |
+| 8 | (Condicional) Validar DOMA si topología F3 en roadmap (ADR-0076) | Cumplimiento DOMA |
+| 9 | Revisión Gate F2: completitud ADR, readiness de historias, alineación con blueprint, simplicidad, reglas de topología | APPROVED / BLOCKED / WAIVED |
 
 ---
 
@@ -285,7 +345,10 @@ La siguiente matriz ofrece una vista de una página de la densidad de artefactos
 | Matriz de Decisión ADR | — | **R** | **R** | — | — |
 | ADR-0002 — Arquitectura Hexagonal | — | **R** | **R** | — | — |
 | ADR-0010 — Multi-Tenancy | — | C | C | C | — |
+| ADR-0045 — Extraction Readiness | — | **R** | — | — | — |
+| ADR-0076 — DOMA | — | C | — | — | — |
 | ADR-0018 — Pirámide de Testing | — | **R** | **R** | **R** | — |
+| Declaración F2 de Topología (evolith.yaml) | — | **R** | — | — | — |
 | Gates de Calidad SDLC | — | — | **R** | **R** | **R** |
 | Plantilla de Historia Técnica | — | — | **R** | — | — |
 | ADR-0005 — Pipeline CI/CD | — | — | **R** | **R** | **R** |

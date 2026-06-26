@@ -4451,6 +4451,24 @@
         "npx tsc -p packages/core-domain/tsconfig.json --noEmit"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-292",
+      "closedAt": "2026-06-26",
+      "closureCommit": "cd40dd8b",
+      "evidence": [
+        "rulesets/satellite-contracts/satellite-contracts.rules.json",
+        "rulesets/satellite-contracts/README.md",
+        "rulesets/satellite-contracts/README.es.md",
+        "packages/core-domain/src/application/validators/modes/ruleset-validation.mode.ts",
+        "rulesets/README.md",
+        "rulesets/README.es.md"
+      ],
+      "validationCommands": [
+        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --testPathPatterns='ruleset-validation.mode' --no-coverage",
+        ".harness/bin/opa test rulesets/opa/satellite-contracts.rego rulesets/opa/satellite-contracts.test.rego -v"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

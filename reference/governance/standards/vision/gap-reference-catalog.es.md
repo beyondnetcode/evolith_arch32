@@ -2640,6 +2640,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia Actual:** `node .harness/playbooks/topology-compliance-audit.mjs` reporta **AUSENTE** para CLI flows en las 8 topologías.
 - **Complejidad:** M
 - **Hecho Cuando:**
-  - [ ] Cada topología tiene un archivo `cli-flows.md` en `reference/architecture/topologies/<area>/<topology>/cli/` que documenta los comandos disponibles.
-  - [ ] Los flujos documentados son ejecutables conceptualmente contra el Smart CLI existente.
-  - [ ] La auditoría de cumplimiento reporta `COMPLETO` para CLI en cada topología.
+  - [x] Cada topología tiene un archivo `cli-flows.md` (y `cli-flows.es.md` para paridad bilingüe) en su directorio `cli/`.
+  - [x] Los flujos documentados usan comandos reales del Smart CLI con argumentos existentes.
+  - [x] La auditoría de cumplimiento reporta `COMPLETO` para CLI en cada topología.
+- **Evidencia de Cierre:** Commit `7bed54d0` (main). 16 archivos CLI (8 EN + 8 ES) creados. Score global: **168/168 (100%)**.

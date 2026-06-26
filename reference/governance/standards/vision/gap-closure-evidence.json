@@ -4219,6 +4219,33 @@
         "node .harness/playbooks/topology-compliance-audit.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-279",
+      "closedAt": "2026-06-26",
+      "closureCommit": "7bed54d0",
+      "evidence": [
+        "reference/architecture/topologies/ai/agentic-ai/cli/cli-flows.md",
+        "reference/architecture/topologies/data/data-mesh/cli/cli-flows.md",
+        "reference/architecture/topologies/execution/edge-computing/cli/cli-flows.md",
+        "reference/architecture/topologies/execution/serverless/cli/cli-flows.md",
+        "reference/architecture/topologies/integration/event-driven/cli/cli-flows.md",
+        "reference/architecture/topologies/progressive-axis/modular-monolith/cli/cli-flows.md",
+        "reference/architecture/topologies/progressive-axis/distributed-modules/cli/cli-flows.md",
+        "reference/architecture/topologies/progressive-axis/microservices/cli/cli-flows.md",
+        "reference/architecture/topologies/ai/agentic-ai/cli/cli-flows.es.md",
+        "reference/architecture/topologies/data/data-mesh/cli/cli-flows.es.md",
+        "reference/architecture/topologies/execution/edge-computing/cli/cli-flows.es.md",
+        "reference/architecture/topologies/execution/serverless/cli/cli-flows.es.md",
+        "reference/architecture/topologies/integration/event-driven/cli/cli-flows.es.md",
+        "reference/architecture/topologies/progressive-axis/modular-monolith/cli/cli-flows.es.md",
+        "reference/architecture/topologies/progressive-axis/distributed-modules/cli/cli-flows.es.md",
+        "reference/architecture/topologies/progressive-axis/microservices/cli/cli-flows.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/playbooks/topology-compliance-audit.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

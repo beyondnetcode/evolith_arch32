@@ -2640,6 +2640,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Current Evidence:** `node .harness/playbooks/topology-compliance-audit.mjs` reporta **AUSENTE** para CLI flows en las 8 topologías.
 - **Complexity:** M
 - **Done when:**
-  - [ ] Cada topología tiene un archivo `cli-flows.md` en `reference/architecture/topologies/<area>/<topology>/cli/` que documenta los comandos disponibles.
-  - [ ] Los flujos documentados son ejecutables conceptualmente contra el Smart CLI existente.
-  - [ ] La auditoría de cumplimiento reporta `COMPLETO` para CLI en cada topología.
+  - [x] Cada topología tiene un archivo `cli-flows.md` (y `cli-flows.es.md` para paridad bilingüe) en `reference/architecture/topologies/<area>/<topology>/cli/`.
+  - [x] Los flujos documentados usan comandos reales del Smart CLI (`evolith validate --topology`, `evolith drift detect`, `evolith gate evaluate`, `evolith architecture scaffold`, `evolith sdlc handoff`) con argumentos existentes (`--arch-level`, `--format json`, `--dry-run`, `--phase`).
+  - [x] La auditoría de cumplimiento reporta `COMPLETO` para CLI en cada topología.
+- **Closure Evidence:** Commit `7bed54d0` (main). 8 archivos `cli/cli-flows.md` + 8 `cli/cli-flows.es.md` creados. La auditoría ahora excluye `cli/`, `mcp/`, `openapi/` del conteo de documentos. Score global: **168/168 (100%)**.

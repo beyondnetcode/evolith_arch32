@@ -7,14 +7,14 @@
   "required": ["id", "name", "shortName", "order", "description", "gates"],
   "properties": {
     "$schema": { "type": "string" },
-    "id": { "type": "string", "pattern": "^f[0-4]$" },
+    "id": { "type": "string", "pattern": "^f[1-5]$" },
     "name": { "type": "string" },
     "shortName": { "type": "string" },
-    "order": { "type": "integer", "minimum": 0, "maximum": 4 },
+    "order": { "type": "integer", "minimum": 1, "maximum": 5 },
     "description": { "type": "string" },
     "gates": {
       "type": "array",
-      "items": { "type": "string", "pattern": "^gate-f[0-4]$" },
+      "items": { "type": "string", "pattern": "^gate-f[1-5]$" },
       "minItems": 1
     }
   }

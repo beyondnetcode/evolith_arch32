@@ -100,6 +100,18 @@ flowchart LR
 | Architecture Communication Strategy | [architecture-communication-strategy.md](../standards/communication/architecture-communication-strategy.md) | When preparing stakeholder or executive architecture briefings. |
 | UMS Reference Model | [ums-reference-model.md](../../knowledge/demo/ums-reference-model.md) | When the product operates in identity, access management, or multi-tenant authorization. |
 
+### Subphase 01.1 — Knowledge-First Discovery (Optional)
+
+| Artifact | Location | Level | When to Use |
+|---|---|---|---|
+| Discovery Knowledge Brief | [discovery-knowledge-brief-template.md](./04-artifact-templates/discovery-knowledge-brief-template.md) | 1+ | Any initiative where knowledge gaps could cause rework |
+| Assumptions & Questions Log | [assumptions-questions-log-template.md](./04-artifact-templates/assumptions-questions-log-template.md) | 1+ | When assumptions need tracking and validation |
+| Discovery Context Pack | [discovery-context-pack-template.md](./04-artifact-templates/discovery-context-pack-template.md) | 1+ | When AI agents or satellite repos need exportable context |
+| Capability Map | [capability-map-template.md](./04-artifact-templates/capability-map-template.md) | 2+ | When domain decomposition is needed before epic planning |
+| Epic Candidate Matrix | [epic-candidate-matrix-template.md](./04-artifact-templates/epic-candidate-matrix-template.md) | 2+ | When capabilities must be traced to epic candidates |
+| Story Seed Bank | [story-seed-bank-template.md](./04-artifact-templates/story-seed-bank-template.md) | 2+ | When minimal story seeds are needed before backlog refinement |
+| Discovery Readiness Gate | [discovery-readiness-gate-template.md](./04-artifact-templates/discovery-readiness-gate-template.md) | 3+ | When formal gate validation of knowledge sufficiency is required |
+
 ---
 
 ## 3. Phase 2 — Design and Architecture

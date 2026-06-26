@@ -113,6 +113,59 @@ Definición de alcance, perfiles de usuario, mapeo de OKRs y alineación de rest
 | [Playbook Fase 1 — Aprobación de Negocio](./01-playbooks/phase-1-business-signoff.es.md) | Runbook operativo del gate Business Sign-Off: checklist de evidencia, procedimiento de revisión, criterios de bloqueo | Operacionalizar el gate | Playbook | Sí |
 | [Mapeo SDLC–Artefactos — Fase 1](./sdlc-evolith-artifact-mapping.es.md#2-fase-1-concepción-y-descubrimiento) | Lista qué artefactos Evolith son Requeridos u Opcionales en la Fase 1 | Validar la completitud del gate | Referencia | No |
 
+### Subfase 01.1 — Knowledge-First Discovery / KDD Readiness
+
+> **Opcional, progresiva, nativa de Evolith.** Captura el conocimiento mínimo suficiente antes de crear épicas, historias o backlog. Inspirada en principios de Knowledge Driven Development (KDD) pero sin dependencia de herramientas externas.
+> **Cuándo aplicar:** Productos nuevos (Nivel 2-3), sistemas regulados (Nivel 3-4), modernización de legacy (Nivel 3), o cualquier iniciativa donde las brechas de conocimiento causan retrabajo.
+> **Cuándo omitir:** Correcciones pequeñas, cambios triviales, o iniciativas con dominio bien entendido (Nivel 0).
+
+**Niveles de Adopción:**
+
+| Nivel | Nombre | Artefactos Requeridos | Gate |
+|-------|--------|----------------------|------|
+| **0** | No Aplicado | Ninguno — Discovery tradicional | Ninguno |
+| **1** | Ligero | Discovery Knowledge Brief, Log de Supuestos y Preguntas, Discovery Context Pack | Revisión informal |
+| **2** | Estándar | + Mapa de Capacidades, Matriz de Candidatos a Épica, Banco de Semillas de Historia | Checklist de preparación |
+| **3** | Gobernado | + Gate de Preparación de Discovery, trazabilidad completa, ownership de riesgos, restricciones arquitectónicas | Gate formal |
+| **4** | Enterprise / Regulado | + Validación OPA/rulesets, evidencia CLI/MCP, auditoría, detección de drift | Gate automatizado |
+
+**Flujo:**
+
+```
+Idea / Disparador de Negocio
+  → 01.1 Knowledge-First Discovery (Niveles 1-4)
+    → Mapa de Capacidades
+      → Matriz de Candidatos a Épica
+        → Banco de Semillas de Historia
+          → Estimación Ballpark
+            → Agile Backlog
+              → Diseño / Arquitectura
+                → Construcción
+```
+
+**Artefactos Clave:**
+
+| Artefacto | Propósito | Nivel |
+|-----------|-----------|-------|
+| [Discovery Knowledge Brief](./04-artifact-templates/discovery-knowledge-brief-template.es.md) | Problema, valor, actores, contexto — la base del conocimiento | 1+ |
+| [Log de Supuestos y Preguntas](./04-artifact-templates/assumptions-questions-log-template.es.md) | Rastrear preguntas abiertas y supuestos no validados | 1+ |
+| [Discovery Context Pack](./04-artifact-templates/discovery-context-pack-template.es.md) | Contexto exportable para agentes IA y repos satélite | 1+ |
+| [Mapa de Capacidades](./04-artifact-templates/capability-map-template.es.md) | Capacidades del dominio antes de la descomposición en épicas | 2+ |
+| [Matriz de Candidatos a Épica](./04-artifact-templates/epic-candidate-matrix-template.es.md) | Rastrear capacidades a candidatos de épica con prioridad | 2+ |
+| [Banco de Semillas de Historia](./04-artifact-templates/story-seed-bank-template.es.md) | Semillas mínimas de historia antes del refinamiento del backlog | 2+ |
+| [Gate de Preparación de Discovery](./04-artifact-templates/discovery-readiness-gate-template.es.md) | Gate formal que valida la suficiencia del conocimiento | 3+ |
+
+**Modelo de Trazabilidad:**
+
+```
+businessTriggerId → knowledgeBriefId → capabilityId → epicCandidateId → storySeedId → backlogItemId
+                    assumptionId ─────────────────────────────────────┘
+                    riskId ───────────────────────────────────────────┘
+                    decisionCandidateId ──────────────────────────────┘
+```
+
+**Playbook:** [Fase 1.1 — Gate de Knowledge-First Discovery](./01-playbooks/phase-1.1-knowledge-first-discovery.es.md)
+
 ---
 
 ## Fase 02 — Diseño y Arquitectura

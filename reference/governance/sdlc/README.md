@@ -113,6 +113,59 @@ Scope definition, persona profiling, OKR mapping, and architectural constraint a
 | [Phase 1 — Business Sign-Off Playbook](./01-playbooks/phase-1-business-signoff.md) | Operational runbook for the Business Sign-Off gate: evidence checklist, review procedure, blocking criteria | Operationalise the gate | Playbook | Yes |
 | [Artifact Mapping — Phase 1](./sdlc-evolith-artifact-mapping.md#2-phase-1-conception-and-discovery) | Lists which Evolith artifacts are Required or Optional during Phase 1 | Validate gate completeness | Reference | No |
 
+### Subphase 01.1 — Knowledge-First Discovery / KDD Readiness
+
+> **Optional, progressive, Evolith-native.** Captures minimum sufficient knowledge before epic, story, or backlog creation. Inspired by Knowledge Driven Development (KDD) principles but not dependent on any external toolkit.
+> **When to apply:** New products (Level 2-3), regulated systems (Level 3-4), legacy modernization (Level 3), or any initiative where knowledge gaps cause rework.
+> **When to skip:** Small fixes, trivial changes, or initiatives with well-understood domain (Level 0).
+
+**Adoption Levels:**
+
+| Level | Name | Required Artifacts | Gate |
+|-------|------|-------------------|------|
+| **0** | Not Applied | None — traditional Discovery | None |
+| **1** | Light | Discovery Knowledge Brief, Assumptions & Questions Log, Discovery Context Pack | Informal review |
+| **2** | Standard | + Capability Map, Epic Candidate Matrix, Story Seed Bank | Readiness checklist |
+| **3** | Governed | + Discovery Readiness Gate, full traceability, risk ownership, architecture constraints | Formal gate |
+| **4** | Enterprise / Regulated | + OPA/ruleset validation, CLI/MCP evidence, audit trail, drift detection | Automated gate |
+
+**Flow:**
+
+```
+Idea / Business Trigger
+  → 01.1 Knowledge-First Discovery (Levels 1-4)
+    → Capability Map
+      → Epic Candidate Matrix
+        → Story Seed Bank
+          → Ballpark Estimation
+            → Agile Backlog
+              → Design / Architecture
+                → Construction
+```
+
+**Key Artifacts:**
+
+| Artifact | Purpose | Level |
+|----------|---------|-------|
+| [Discovery Knowledge Brief](./04-artifact-templates/discovery-knowledge-brief-template.md) | Problem, value, actors, context — the knowledge foundation | 1+ |
+| [Assumptions & Questions Log](./04-artifact-templates/assumptions-questions-log-template.md) | Track open questions and unvalidated assumptions | 1+ |
+| [Discovery Context Pack](./04-artifact-templates/discovery-context-pack-template.md) | Exportable context for AI agents and satellite repos | 1+ |
+| [Capability Map](./04-artifact-templates/capability-map-template.md) | Domain capabilities before epic decomposition | 2+ |
+| [Epic Candidate Matrix](./04-artifact-templates/epic-candidate-matrix-template.md) | Trace capabilities to epic candidates with priority | 2+ |
+| [Story Seed Bank](./04-artifact-templates/story-seed-bank-template.md) | Minimal story seeds before full backlog refinement | 2+ |
+| [Discovery Readiness Gate](./04-artifact-templates/discovery-readiness-gate-template.md) | Formal gate validating knowledge sufficiency | 3+ |
+
+**Traceability Model:**
+
+```
+businessTriggerId → knowledgeBriefId → capabilityId → epicCandidateId → storySeedId → backlogItemId
+                    assumptionId ─────────────────────────────────────┘
+                    riskId ───────────────────────────────────────────┘
+                    decisionCandidateId ──────────────────────────────┘
+```
+
+**Playbook:** [Phase 1.1 — Knowledge-First Discovery Gate](./01-playbooks/phase-1.1-knowledge-first-discovery.md)
+
 ---
 
 ## Phase 02 — Design and Architecture

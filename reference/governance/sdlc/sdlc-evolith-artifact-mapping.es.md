@@ -100,6 +100,18 @@ flowchart LR
 | Estrategia de Comunicación Arquitectónica | [architecture-communication-strategy.md](../standards/communication/architecture-communication-strategy.md) | Al preparar briefings de arquitectura para stakeholders o ejecutivos. |
 | Modelo de Referencia UMS | [ums-reference-model.md](../../knowledge/demo/ums-reference-model.md) | Cuando el producto opera en identidad, access management o autorización multi-tenant. |
 
+### Subfase 01.1 — Knowledge-First Discovery (Opcional)
+
+| Artefacto | Ubicación | Nivel | Cuándo usarlo |
+|---|---|---|---|
+| Discovery Knowledge Brief | [discovery-knowledge-brief-template.es.md](./04-artifact-templates/discovery-knowledge-brief-template.es.md) | 1+ | Cualquier iniciativa donde brechas de conocimiento puedan causar retrabajo |
+| Log de Supuestos y Preguntas | [assumptions-questions-log-template.es.md](./04-artifact-templates/assumptions-questions-log-template.es.md) | 1+ | Cuando los supuestos necesitan seguimiento y validación |
+| Discovery Context Pack | [discovery-context-pack-template.es.md](./04-artifact-templates/discovery-context-pack-template.es.md) | 1+ | Cuando agentes IA o repos satélite necesitan contexto exportable |
+| Mapa de Capacidades | [capability-map-template.es.md](./04-artifact-templates/capability-map-template.es.md) | 2+ | Cuando se necesita descomposición del dominio antes de planificación de épicas |
+| Matriz de Candidatos a Épica | [epic-candidate-matrix-template.es.md](./04-artifact-templates/epic-candidate-matrix-template.es.md) | 2+ | Cuando las capacidades deben rastrearse a candidatos de épica |
+| Banco de Semillas de Historia | [story-seed-bank-template.es.md](./04-artifact-templates/story-seed-bank-template.es.md) | 2+ | Cuando se necesitan semillas mínimas de historia antes del refinamiento del backlog |
+| Gate de Preparación de Discovery | [discovery-readiness-gate-template.es.md](./04-artifact-templates/discovery-readiness-gate-template.es.md) | 3+ | Cuando se requiere validación formal de suficiencia del conocimiento |
+
 ---
 
 ## 3. Fase 2 — Diseño y Arquitectura

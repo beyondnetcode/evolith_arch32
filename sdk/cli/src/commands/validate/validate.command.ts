@@ -16,6 +16,8 @@ interface ValidateCommandOptions {
   archLevel?: string;
   topology?: string[];
   engine?: string;
+  manifest?: string;
+  phase?: string;
 }
 
 @Command({
@@ -41,11 +43,28 @@ export class ValidateCommand extends BaseEvolithCommand {
     this.promptService.startSpinner('Analizando repositorio...');
 
     let result: ValidationResult;
+    let evaluationVerdict: any;
 
     try {
       const engine = options?.engine === 'opa' ? 'opa' : 'native';
 
-      if (options?.ruleset) {
+      // If manifest or phase is provided, run the end-to-end pipeline
+      const useManifest = options?.manifest || options?.phase || options?.topology?.length;
+      if (useManifest) {
+        const out = await this.useCase.execute({
+          satellitePath,
+          corePath,
+          engine,
+          manifest: {
+            satellitePath,
+            corePath,
+            topology: options?.topology?.[0],
+            phase: options?.phase,
+          },
+        });
+        result = out.result;
+        evaluationVerdict = out.evaluationVerdict;
+      } else if (options?.ruleset) {
         result = (await this.useCase.execute({
           satellitePath,
           corePath,
@@ -136,6 +155,35 @@ export class ValidateCommand extends BaseEvolithCommand {
       }
     } else {
       this.printHumanReport(result);
+    }
+
+    if (evaluationVerdict) {
+      const maxRemediationWidth = 72;
+      const truncate = (s: string) => s.length > maxRemediationWidth ? s.slice(0, maxRemediationWidth) + '…' : s;
+
+      this.promptService.showInfo(`\nPipeline de evaluación — ${evaluationVerdict.passed ? '✅ PASÓ' : '❌ FALLÓ'}`);
+      this.promptService.showInfo(`Topología: ${evaluationVerdict.resolvedTopology || 'no detectada'}`);
+      this.promptService.showInfo(`Gates: ${evaluationVerdict.summary.passedGates}✓ / ${evaluationVerdict.summary.failedGates}✗ / ${evaluationVerdict.summary.totalGates} total`);
+      this.promptService.showInfo(`Reglas: ${evaluationVerdict.summary.totalRules} verificadas, ${evaluationVerdict.summary.failedRules} fallaron`);
+      for (const gate of evaluationVerdict.gates) {
+        const failedEvals = gate.artifactEvaluations.filter(e => !e.passed);
+        if (failedEvals.length > 0) {
+          this.promptService.showWarning(`  Gate ${gate.gateName} (${gate.gateId}): ${failedEvals.length} fallos`);
+          for (const ev of failedEvals) {
+            const icon = ev.severity === 'error' ? '🔴' : ev.severity === 'warning' ? '🟡' : '🔵';
+            this.promptService.showWarning(`    ${icon} [${ev.ruleId}] ${ev.artifact}`);
+            this.promptService.showWarning(`       Mensaje: ${ev.message}`);
+            if (ev.remediation) {
+              this.promptService.showInfo(`       Remedio:  ${truncate(ev.remediation)}`);
+            }
+            this.promptService.showInfo(`       Severidad: ${ev.severity} | Gate: ${ev.gateRef} | Regla: ${ev.rulePath}`);
+          }
+        }
+        const passedEvals = gate.artifactEvaluations.filter(e => e.passed);
+        if (passedEvals.length > 0 && format !== 'json') {
+          this.promptService.showInfo(`  Gate ${gate.gateName}: ${passedEvals.length} artifactos OK`);
+        }
+      }
     }
 
     if (result.status === 'failed') {
@@ -253,6 +301,22 @@ export class ValidateCommand extends BaseEvolithCommand {
     description: 'Motor de validación a utilizar: native (por defecto) u opa',
   })
   parseEngine(val: string): string {
+    return val;
+  }
+
+  @Option({
+    flags: '-m, --manifest [path]',
+    description: 'Ruta al SatelliteManifest JSON para evaluación end-to-end (activa pipeline GT-281)',
+  })
+  parseManifest(val: string): string {
+    return val;
+  }
+
+  @Option({
+    flags: '-p, --phase [phase]',
+    description: 'Fase SDLC a evaluar (f1, f2, f3, f4, f5). Activa pipeline GT-281',
+  })
+  parsePhase(val: string): string {
     return val;
   }
 }

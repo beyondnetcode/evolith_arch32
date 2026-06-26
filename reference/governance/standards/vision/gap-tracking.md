@@ -4,7 +4,7 @@
 
 **Status:** Active Tracking
 **Owner:** Evolith Architecture Board
-**Last Updated:** 2026-06-26 (GT-277…GT-279 topology framework interface gaps)
+**Last Updated:** 2026-06-26 (GT-280, GT-281, GT-282 closed)
 **Gap Details:** [Gap Reference Catalog](./gap-reference-catalog.md)
 
 This board is the single source of truth for technical debt, gaps, opportunities, enablers, priority, and status. Select a gap ID to open its problem statement, purpose, evidence, closure criteria, and references.
@@ -13,6 +13,9 @@ This board is the single source of truth for technical debt, gaps, opportunities
 
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| [`GT-280`](./gap-reference-catalog.md#gt-280) | SDLC phases como datos consultables (JSON/YAML) — mapeo gate → artefactos → reglas Rego | `Governance` | Cross | P0 | M | `DONE` |
+| [`GT-281`](./gap-reference-catalog.md#gt-281) | Pipeline de evaluación end-to-end: cliente → topología → reglas → veredicto | `Core Domain` | Cross | P0 | XL | `DONE` |
+| [`GT-282`](./gap-reference-catalog.md#gt-282) | Reporte accionable con evidencia detallada (qué regla falló, qué artefacto falta, por qué) | `Core Domain` | Cross | P1 | M | `DONE` |
 | [`GT-277`](./gap-reference-catalog.md#gt-277) | Topology OpenAPI specs — framework interfaces ausentes en las 8 topologías | `Architecture` | Cross | P1 | M | `DONE` |
 | [`GT-278`](./gap-reference-catalog.md#gt-278) | Topology MCP manifests — framework interfaces ausentes en las 8 topologías | `Architecture` | Cross | P1 | M | `DONE` |
 | [`GT-279`](./gap-reference-catalog.md#gt-279) | Topology CLI flows — framework interfaces ausentes en las 8 topologías | `Architecture` | Cross | P1 | M | `DONE` |
@@ -294,7 +297,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-246`](./gap-reference-catalog.md#gt-246) | Implement Chaos Mesh/Litmus experiments | `QA` | Cross | P3 | L | `DONE` |
 
 
-**Progress:** 279 / 279 done · 0 in progress · 0 pending · 0 deferred
+**Progress:** 282 / 282 done · 0 in progress · 0 pending · 0 deferred
 
 **Wave 2026-06-23 (Wilson deep audit III):** Added 14 new gaps `GT-212`…`GT-225` from the Wilson Audit Playbook covering: ADR status hygiene (GT-212), topology manifest metadata + operational budgets + guidance corpus (GT-213, GT-217, GT-219), REST controller observability + OpenAPI (GT-214, GT-215), OPA input-schema parity + per-topology test density (GT-216, GT-222), SDLC Phase 05 rollback + on-call templates (GT-218), CLI branch coverage + envelope format coverage + skip-list cleanup (GT-220, GT-224, GT-225), MCP HTTP audit logging (GT-221), and cross-surface parity e2e tests (GT-223).
 
@@ -311,6 +314,14 @@ This board is the single source of truth for technical debt, gaps, opportunities
 **Wave 2026-06-24 (architectural discovery):** Added `GT-266` — API key provisioning service for MCP HTTP transport, discovered while analyzing GT-250 external-consumption requirements.
 
 **Wave 2026-06-25 (Wilson production-readiness audit):** Added 6 new gaps `GT-267`…`GT-272` covering red workspace build/test after Redis cache integration (GT-267), missing CI validator scripts referenced by workflows/rules (GT-268), ADR-0073 contract roundtrip failure (GT-269), mutable/insecure infrastructure defaults (GT-270), Helm workload hardening (GT-271), and OPA bundle integrity for sidecars (GT-272).
+
+**Wave 2026-06-25 (SDLC Deep Audit):** Added 3 new gaps `GT-280`…`GT-282` from the SDLC Deep Audit playbook (`.harness/playbooks/sdlc-deep-audit.mjs`) — registered as `run-evolith-deep.mjs`. Evaluated Evolith Core against the 8-dimensional executable SDLC vision (Corpus, SDLC Modelo, Motor OPA, Ingesta Cliente, Tres Interfaces, Reporte, Gobernanza, Verificaciones). Score: 3/8 SÓLIDO, 2 PARCIAL, 3 AUSENTE. The 3 AUSENTE dimensions became GT-280 (SDLC phases as data), GT-281 (end-to-end evaluation pipeline), and GT-282 (actionable evaluation reports).
+
+**Wave 2026-06-25 (GT-280 closure):** Created `reference/governance/sdlc/phases/phase-f1.json`…`phase-f5.json` with structured phase data, `reference/governance/sdlc/gates/gate-f1.json`…`gate-f5.json` with `requiredArtifacts[]` and `rules[]` referencing 26 Rego files, `.harness/playbooks/sdlc-phase-gate-validator.mjs` cross-reference checker, and Rego rules `rulesets/opa/sdlc/coverage.rego` + `rulesets/opa/sdlc/pyramid-distribution.rego`. Updated `sdlc-deep-audit.mjs` to detect structured data. Score evolved from 3/8→4/8 SÓLIDO. GT-280 closed.
+
+**Wave 2026-06-25 (GT-281 closure):** Created `SatelliteEvaluationPipeline` (`packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts`) — composite service that orchestrates manifest → topology resolution → GT-280 gate loading → Rego rule execution → structured verdict. Created `SdlcDataLoaderService` for GT-280 runtime data loading. Created `SatelliteManifest` type (`domain/satellite-manifest.ts`). Updated `ValidateSatelliteUseCase` to accept `manifest?: SatelliteManifest`. Wired CLI `evolith validate --manifest/--phase`, MCP `evolith-validate` manifest/topology/phase params. Added end-to-end test (`satellite-evaluation-pipeline.spec.ts`) with 3 cases. Updated `sdlc-deep-audit.mjs` to detect pipeline and report SÓLIDO. Score evolved from 4/8→5/8 SÓLIDO. GT-281 closed.
+
+**Wave 2026-06-25 (GT-282 closure):** Enhanced `RuleEvaluation` type with `severity`, `remediation`, `gateRef` for actionable output. Added ADR-0073 `outputEnvelope` to `EvaluationVerdict`. Updated `SatelliteEvaluationPipeline` to produce detailed evidence (remediation text for missing artifacts, severity derived from blocking criteria, gate cross-reference). Updated CLI to display `severity`, `remediation`, and `gateRef` per evaluation. Updated MCP `evolith-validate` to include `severity`, `remediation`, `gateRef` in pipeline output. Added 5 test cases for GT-282 (severity/remediation/gateRef in failures, severity derivation, passing evaluation fields, outputEnvelope, remediation content). Fixed `auditActionableReports` in deep audit to use direct file checks instead of broken `globFiles`. Score evolved from 5/8→6/8 SÓLIDO. GT-282 closed.
 
 **Wave 2026-06-25 (Topology compliance audit):** Added 3 new gaps `GT-277`…`GT-279` from the automated topology compliance audit playbook (`.harness/playbooks/topology-compliance-audit.mjs`). All 8 accepted topologies scored 18/21 (86%) — missing the 3 mandatory framework interfaces: OpenAPI specs, MCP tool manifests, and CLI flow files. The audit script is now executable standalone and registered as a Wilson-executable tool via `run-wilson-audit.mjs --topology`.
 

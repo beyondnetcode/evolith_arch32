@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/sdlc/sdlc-phase.schema.json",
+  "title": "SDLC Phase",
+  "description": "Schema for an Evolith SDLC phase data file",
+  "type": "object",
+  "required": ["id", "name", "shortName", "order", "description", "gates"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "id": { "type": "string", "pattern": "^f[0-4]$" },
+    "name": { "type": "string" },
+    "shortName": { "type": "string" },
+    "order": { "type": "integer", "minimum": 0, "maximum": 4 },
+    "description": { "type": "string" },
+    "gates": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^gate-f[0-4]$" },
+      "minItems": 1
+    }
+  }
+}

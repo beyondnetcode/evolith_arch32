@@ -11,7 +11,7 @@ Strategic snapshot generated from the canonical gap board and maturity reconcili
 
 **Current decision:** Conditional GO: proceed only with P1 hardening and automated evidence.
 
-**Biggest problem now:** `Architecture` carries the highest weighted open risk (2 open, 0 P0). Attack that concentration before expanding scope.
+**Biggest problem now:** `Architecture` carries the highest weighted open risk (1 open, 0 P0). Attack that concentration before expanding scope.
 
 **Where to attack first:** -.
 
@@ -26,16 +26,15 @@ Use this summary with a simple rule: if you need context, open only the linked I
 | Order | Focus | Reason | IDs |
 |---:|---|---|---|
 | 1 | P0 blockers | They prevent production-readiness or major-release confidence. | - |
-| 2 | Highest-risk area | `Architecture` has the largest weighted open load. | [GT-278](./gap-reference-catalog.md#gt-278), [GT-279](./gap-reference-catalog.md#gt-279) |
+| 2 | Highest-risk area | `Architecture` has the largest weighted open load. | [GT-279](./gap-reference-catalog.md#gt-279) |
 | 3 | Quick wins | High criticality with XS/S complexity. | - |
-| 4 | P1 wave | Next hardening after P0 is cleared. | [GT-278](./gap-reference-catalog.md#gt-278), [GT-279](./gap-reference-catalog.md#gt-279) |
+| 4 | P1 wave | Next hardening after P0 is cleared. | [GT-279](./gap-reference-catalog.md#gt-279) |
 | 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | - |
 
 ## Current Blockers
 
 | ID | Attack | Component | Effort |
 |---|---|---|---|
-| [GT-278](./gap-reference-catalog.md#gt-278) | Topology MCP manifests — framework interfaces ausentes en las 8 topologías | `Architecture` | P1/M |
 | [GT-279](./gap-reference-catalog.md#gt-279) | Topology CLI flows — framework interfaces ausentes en las 8 topologías | `Architecture` | P1/M |
 
 ## Metrics
@@ -44,18 +43,18 @@ Use this summary with a simple rule: if you need context, open only the linked I
 |---|---:|
 | Canonical board date | 2026-06-26 |
 | Total gaps | 279 |
-| Closed gaps | 277 |
-| Open gaps | 2 |
+| Closed gaps | 278 |
+| Open gaps | 1 |
 | Open P0 | 0 |
-| Open P1 | 2 |
+| Open P1 | 1 |
 | Open P2 | 0 |
-| Total closure | 99.3% |
-| Closure evidence records | 259 |
+| Total closure | 99.6% |
+| Closure evidence records | 260 |
 | Recorded readiness | 3 PASS, 1 RESOLVED |
 
 | Area | Open | P0 | P1 | First IDs |
 |---|---:|---:|---:|---|
-| `Architecture` | 2 | 0 | 2 | [GT-278](./gap-reference-catalog.md#gt-278), [GT-279](./gap-reference-catalog.md#gt-279) |
+| `Architecture` | 1 | 0 | 1 | [GT-279](./gap-reference-catalog.md#gt-279) |
 
 ## Source and Refresh Rule
 

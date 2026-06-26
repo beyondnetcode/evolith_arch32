@@ -2626,10 +2626,11 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia Actual:** `node .harness/playbooks/topology-compliance-audit.mjs` reporta **AUSENTE** para MCP manifests en las 8 topologías.
 - **Complejidad:** M
 - **Hecho Cuando:**
-  - [ ] Cada topología tiene un `mcp-manifest.json` en `reference/architecture/topologies/<area>/<topology>/mcp/`.
-  - [ ] Cada manifest declara al menos una tool específica del dominio de la topología.
-  - [ ] El manifest es validable contra el esquema canónico MCP.
-  - [ ] La auditoría de cumplimiento reporta `COMPLETO` para MCP en cada topología.
+  - [x] Cada topología tiene un `mcp-manifest.json` en `reference/architecture/topologies/<area>/<topology>/mcp/`.
+  - [x] Cada manifest declara al menos una tool específica del dominio de la topología.
+  - [x] El manifest es validable contra el esquema canónico MCP.
+  - [x] La auditoría de cumplimiento reporta `COMPLETO` para MCP en cada topología.
+- **Evidencia de Cierre:** Commit `8f14459b` (main). 8 archivos `mcp-manifest.json` creados con protocolo MCP 2025-03-26. Score global: 95% (160/168).
 
 #### GT-279
 

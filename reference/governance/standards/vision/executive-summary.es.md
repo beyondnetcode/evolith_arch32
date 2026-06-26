@@ -11,7 +11,7 @@ Instantánea estratégica generada desde el tablero canónico de gaps y la recon
 
 **Decisión actual:** GO condicionado: avanzar solo con hardening P1 y evidencia automatizada.
 
-**Mayor problema ahora:** `Architecture` concentra el mayor riesgo abierto ponderado (2 pendientes, 0 P0). Ataca esa concentración antes de ampliar alcance.
+**Mayor problema ahora:** `Architecture` concentra el mayor riesgo abierto ponderado (1 pendientes, 0 P0). Ataca esa concentración antes de ampliar alcance.
 
 **Dónde atacar primero:** -.
 
@@ -26,16 +26,15 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 | Orden | Foco | Motivo | IDs |
 |---:|---|---|---|
 | 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | - |
-| 2 | Área de mayor riesgo | `Architecture` tiene la mayor carga ponderada abierta. | [GT-278](./gap-reference-catalog.es.md#gt-278), [GT-279](./gap-reference-catalog.es.md#gt-279) |
+| 2 | Área de mayor riesgo | `Architecture` tiene la mayor carga ponderada abierta. | [GT-279](./gap-reference-catalog.es.md#gt-279) |
 | 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | - |
-| 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-278](./gap-reference-catalog.es.md#gt-278), [GT-279](./gap-reference-catalog.es.md#gt-279) |
+| 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-279](./gap-reference-catalog.es.md#gt-279) |
 | 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | - |
 
 ## Bloqueadores Actuales
 
 | ID | Ataque | Componente | Esfuerzo |
 |---|---|---|---|
-| [GT-278](./gap-reference-catalog.es.md#gt-278) | Manifiestos MCP de topologías — interfaces framework ausentes en las 8 topologías | `Architecture` | P1/M |
 | [GT-279](./gap-reference-catalog.es.md#gt-279) | Flujos CLI de topologías — interfaces framework ausentes en las 8 topologías | `Architecture` | P1/M |
 
 ## Métricas
@@ -44,18 +43,18 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 |---|---:|
 | Fecha canónica del tablero | 2026-06-26 |
 | Gaps totales | 279 |
-| Gaps cerrados | 277 |
-| Gaps pendientes | 2 |
+| Gaps cerrados | 278 |
+| Gaps pendientes | 1 |
 | P0 abiertos | 0 |
-| P1 abiertos | 2 |
+| P1 abiertos | 1 |
 | P2 abiertos | 0 |
-| Cierre total | 99.3% |
-| Registros de evidencia de cierre | 259 |
+| Cierre total | 99.6% |
+| Registros de evidencia de cierre | 260 |
 | Readiness registrado | 3 PASS, 1 RESOLVED |
 
 | Área | Pendientes | P0 | P1 | Primeros IDs |
 |---|---:|---:|---:|---|
-| `Architecture` | 2 | 0 | 2 | [GT-278](./gap-reference-catalog.es.md#gt-278), [GT-279](./gap-reference-catalog.es.md#gt-279) |
+| `Architecture` | 1 | 0 | 1 | [GT-279](./gap-reference-catalog.es.md#gt-279) |
 
 ## Fuente y Regla de Actualización
 

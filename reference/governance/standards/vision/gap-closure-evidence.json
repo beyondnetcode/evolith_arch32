@@ -4200,6 +4200,25 @@
         "node .harness/playbooks/topology-compliance-audit.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-278",
+      "closedAt": "2026-06-26",
+      "closureCommit": "8f14459b",
+      "evidence": [
+        "reference/architecture/topologies/ai/agentic-ai/mcp/mcp-manifest.json",
+        "reference/architecture/topologies/data/data-mesh/mcp/mcp-manifest.json",
+        "reference/architecture/topologies/execution/edge-computing/mcp/mcp-manifest.json",
+        "reference/architecture/topologies/execution/serverless/mcp/mcp-manifest.json",
+        "reference/architecture/topologies/integration/event-driven/mcp/mcp-manifest.json",
+        "reference/architecture/topologies/progressive-axis/modular-monolith/mcp/mcp-manifest.json",
+        "reference/architecture/topologies/progressive-axis/distributed-modules/mcp/mcp-manifest.json",
+        "reference/architecture/topologies/progressive-axis/microservices/mcp/mcp-manifest.json"
+      ],
+      "validationCommands": [
+        "node .harness/playbooks/topology-compliance-audit.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

@@ -32,6 +32,7 @@ Binding directives. Zero fluff.
 | **R-26** | Semantic Gap Closure | A `GT-*` gap may be `DONE` only when every closure criterion is satisfied and the canonical closure registry records a real commit, dated evidence artifacts, reproducible validation commands, and explicit dependency disposition. Historical `MT-*` gaps are exempt unless explicitly registered. |
 | **R-27** | Topology Maturity Parity | An `accepted` topology MUST provide bilingual adoption/operations/evolution guidance, accepted ADRs, existing Native ruleset and OPA policy artifacts, shared control-plane exposure, and reproducible tests equivalent in maturity to the Modular Monolith baseline. |
 | **R-28** | OPA Bundle Integrity | OPA sidecars MUST fetch bundles through TLS or private authenticated in-cluster endpoints, verify signed bundles with secret-backed keys, pin expected SHA-256 digest metadata, and fail closed until bundle activation succeeds. |
+| **R-29** | Audit Gap Registration | All audit scripts MUST register findings (gaps, opportunities, improvements) as GT-* entries in the canonical gap-tracking.md. Each finding must include: ID, description, component, phase, criticality, complexity, and status. Audit scripts must output results in a format compatible with gap-tracking registration. |
 
 ## Mandatory Validation Gates
 

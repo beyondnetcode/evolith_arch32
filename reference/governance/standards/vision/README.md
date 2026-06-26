@@ -30,6 +30,7 @@ Use this sequence during routine governance review:
 | [Inventory Summary](./inventory-summary.md) | Corpus inventory snapshot | Fast check of corpus size and generated inventory state. |
 | [Current Repository Taxonomy Map](./repository-taxonomy-map.md) | Repository area map with criticality, usage guidance, and placement rules | Decide where to read, add, edit, or audit content. |
 | [Multi-Topology Reference Corpus Plan](./multi-topology-reference-corpus-implementation-plan.md) | Multi-topology transition plan | Implementation sequence for topology-aware governance. |
+| [Intelligent Data Strength Assessment](./evolith-core-intelligent-data-strength-assessment.md) | Core interface implementation plan | Workstreams to bring smart-cli, MCP, and core-api to 100% executable state. |
 | [Deep Coherence Analysis 2026-06-16](./deep-coherence-analysis-2026-06-16.md) | Historical architecture coherence review | Background context for prior audit findings. |
 | [Backlog Complete Summary](./backlog-complete-summary.md) | Historical completion snapshot | Review previously completed backlog consolidation. |
 | [Backlog Post GT-93](./backlog-post-gt93.md) | Historical post-GT-93 backlog state | Understand older backlog migration context. |
@@ -75,6 +76,7 @@ Use this sequence during routine governance review:
 * [governed-composition-target-design](./evolith-governed-composition-target-design.md) — **Target architecture**: Core defines, providers execute, CLI/MCP evaluate, Tracker decides and audits
 * [provider-abstraction-plugin-model](./evolith-provider-abstraction-plugin-model.md) — **Foundational product premise**: every tool is adaptable, interchangeable, replaceable, and installable through plugins, add-ins, adapters, or connectors
 * [sdlc-tracker-technical-interfaces](./sdlc-tracker-technical-interfaces.md) — **Technical interface baseline**: Evidence Graph, Gate Decision, Phase Transition, provider ports, REST, MCP, agents, and tenant authority
+* [intelligent-data-strength-assessment](./evolith-core-intelligent-data-strength-assessment.md) — **Implementation workstreams**: WS1-WS9 to bring smart-cli, MCP, and core-api to 100% executable with OPA/Rego validation
 
 > The design package authorizes documentation and architecture review only. No source-code implementation is authorized until the Architecture Board approves the target designs and required ADRs.
 

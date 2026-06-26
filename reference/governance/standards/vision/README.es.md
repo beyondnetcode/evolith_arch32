@@ -30,6 +30,7 @@ Usa esta secuencia durante la revisión rutinaria de gobernanza:
 | [Resumen de Inventario](./inventory-summary.es.md) | Snapshot del inventario del corpus | Chequeo rápido del tamaño del corpus y estado del inventario generado. |
 | [Mapa Actual de Taxonomía del Repositorio](./repository-taxonomy-map.es.md) | Mapa de áreas del repositorio con criticidad, guía de uso y reglas de ubicación | Decidir dónde leer, agregar, editar o auditar contenido. |
 | [Plan del Corpus de Referencia Multi-Topología](./multi-topology-reference-corpus-implementation-plan.es.md) | Plan de transición multi-topología | Secuencia de implementación para gobernanza consciente de topologías. |
+| [Evaluación de Fortaleza como Data Inteligente](./evolith-core-intelligent-data-strength-assessment.es.md) | Plan de implementación de interfaces del core | Flujos de trabajo para llevar smart-cli, MCP y core-api al 100% ejecutable. |
 | [Análisis Profundo de Coherencia 2026-06-16](./deep-coherence-analysis-2026-06-16.es.md) | Revisión histórica de coherencia arquitectónica | Contexto de fondo para hallazgos de auditoría previos. |
 | [Resumen de Backlog Completo](./backlog-complete-summary.es.md) | Snapshot histórico de cierre | Revisar consolidación de backlog completada previamente. |
 | [Backlog Post GT-93](./backlog-post-gt93.es.md) | Estado histórico del backlog posterior a GT-93 | Entender contexto antiguo de migración del backlog. |
@@ -75,6 +76,7 @@ Usa esta secuencia durante la revisión rutinaria de gobernanza:
 * [diseño objetivo de composición gobernada](./evolith-governed-composition-target-design.es.md) — **Arquitectura objetivo**: Core define, los proveedores ejecutan, CLI/MCP evalúan y Tracker decide y audita
 * [modelo de abstracción de proveedores y plugins](./evolith-provider-abstraction-plugin-model.es.md) — **Premisa fundacional del producto**: toda herramienta es adaptable, intercambiable, reemplazable e instalable mediante plugins, add-ins, adaptadores o conectores
 * [diseño de interfaces técnicas del Tracker](./sdlc-tracker-technical-interfaces.es.md) — **Baseline técnica**: Evidence Graph, Gate Decision, Phase Transition, provider ports, REST, MCP, agentes y autoridad por tenant
+* [evaluación de fortaleza como data inteligente](./evolith-core-intelligent-data-strength-assessment.es.md) — **Flujos de implementación**: WS1-WS9 para llevar smart-cli, MCP y core-api al 100% ejecutable con validación OPA/Rego
 
 > Este paquete autoriza únicamente revisión documental y arquitectónica. No se autoriza implementación de código hasta que el Architecture Board apruebe los diseños objetivo y los ADRs requeridos.
 

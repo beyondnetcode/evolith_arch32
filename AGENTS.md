@@ -26,6 +26,10 @@ This repository defines the architectural baseline, governance standards, harnes
 | `node .harness/scripts/run-evolith-topology.mjs` | Run topology compliance audit (structural parity across all topologies) |
 | `node .harness/scripts/run-evolith-deep.mjs` | Run SDLC Deep Audit — 8-dimensional executable SDLC evaluation (JSON) |
 | `node .harness/scripts/run-evolith-deep.mjs --markdown` | SDLC Deep Audit with human-readable Markdown report |
+| `node .harness/scripts/run-evolith-intelligent-data-audit.mjs` | Wilson intelligent data strength audit — evaluates WS1-WS9 workstream coverage |
+| `node .harness/scripts/run-evolith-intelligent-data-audit.mjs --es` | Intelligent data strength audit in Spanish |
+| `node .harness/scripts/run-evolith-intelligent-data-audit.mjs --ws1` | Check only specific workstream (WS1-WS9) |
+| `node .harness/scripts/run-evolith-intelligent-data-audit.mjs --report` | Output JSON report only |
 
 > **Full taxonomy:** See [`reference/harness/scripts-taxonomy.md`](./reference/harness/scripts-taxonomy.md) for the complete script classification, playbook details, CI hooks, and design rules.
 >

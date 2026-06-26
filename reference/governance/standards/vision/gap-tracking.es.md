@@ -13,7 +13,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| [`GT-277`](./gap-reference-catalog.es.md#gt-277) | Especificaciones OpenAPI de topologías — interfaces framework ausentes en las 8 topologías | `Architecture` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-277`](./gap-reference-catalog.es.md#gt-277) | Especificaciones OpenAPI de topologías — interfaces framework ausentes en las 8 topologías | `Architecture` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-278`](./gap-reference-catalog.es.md#gt-278) | Manifiestos MCP de topologías — interfaces framework ausentes en las 8 topologías | `Architecture` | Cross | P1 | M | `PENDIENTE` |
 | [`GT-279`](./gap-reference-catalog.es.md#gt-279) | Flujos CLI de topologías — interfaces framework ausentes en las 8 topologías | `Architecture` | Cross | P1 | M | `PENDIENTE` |
 | [`GT-274`](./gap-reference-catalog.es.md#gt-274) | Blindar cleanup-temp-files contra eliminación de archivos versionados | `Harness` | Cross | P0 | S | `COMPLETADO` |
@@ -294,7 +294,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-246`](./gap-reference-catalog.es.md#gt-246) | Implementar experimentos Chaos Mesh/Litmus | `QA` | Cross | P3 | L | `COMPLETADO` |
 
 
-**Progreso:** 276 / 279 completados · 0 en progreso · 3 pendientes · 0 diferidos
+**Progreso:** 277 / 279 completados · 0 en progreso · 2 pendientes · 0 diferidos
 
 **Oleada 2026-06-23 (auditoría profunda de Wilson III):** Añadidos 14 gaps nuevos `GT-212`…`GT-225` del Wilson Audit Playbook que cubren: higiene de estado ADR (GT-212), metadata + presupuestos operativos + corpus de guías por topología (GT-213, GT-217, GT-219), observabilidad + OpenAPI en controladores REST (GT-214, GT-215), paridad de input-schemas OPA + densidad de tests por topología (GT-216, GT-222), plantillas de rollback + on-call de Fase 05 (GT-218), cobertura de ramas CLI + paridad de envelope --format + limpieza de skip-list (GT-220, GT-224, GT-225), audit logging HTTP de MCP (GT-221), y tests e2e de paridad cross-surface (GT-223).
 

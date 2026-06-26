@@ -1,0 +1,186 @@
+openapi: "3.1.0"
+info:
+  title: "Data Mesh Topology — Core API Surface"
+  version: "0.1.0"
+  description: >
+    REST API surface specific to the Data Mesh topology.
+    Describes endpoints exposed by the Core API for querying,
+    inspecting, and validating Data Mesh topology instances.
+servers:
+  - url: "https://api.evolith.dev/v1"
+    description: "Evolith Core API (production)"
+paths:
+  /topologies/{id}:
+    get:
+      tags: [Topologies]
+      summary: "Retrieve Data Mesh topology information"
+      description: >
+        Returns the full topology record for Data Mesh, including
+        dimension, status, version, governance metadata, and corpus
+        artifact references (rulesets, OPA policies, ADRs, guidance).
+      operationId: "getDataMeshTopology"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: "^data-mesh$"
+            example: "data-mesh"
+      responses:
+        "200":
+          description: "Successful response with Data Mesh topology data"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EnvelopeTopology"
+        "404":
+          description: "Topology not found"
+  /topologies/{id}/manifest:
+    get:
+      tags: [Topologies]
+      summary: "Get Data Mesh topology manifest"
+      description: >
+        Returns the full topology manifest for Data Mesh, with
+        artifact references, corpus configuration, and business
+        boundary declaration.
+      operationId: "getDataMeshManifest"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: "^data-mesh$"
+      responses:
+        "200":
+          description: "Successful response with Data Mesh manifest"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EnvelopeManifest"
+  /topologies/{id}/validate:
+    post:
+      tags: [Topologies]
+      summary: "Validate Data Mesh topology rules"
+      description: >
+        Executes all applicable rulesets and OPA policies for Data Mesh
+        against a submitted configuration, returning pass/fail per gate.
+      operationId: "validateDataMeshTopology"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: "^data-mesh$"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ValidationRequest"
+      responses:
+        "200":
+          description: "Validation results"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EnvelopeValidation"
+components:
+  schemas:
+    Envelope:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data: {}
+        meta:
+          type: object
+          properties:
+            context:
+              type: string
+            timing:
+              type: number
+            schemaVersion:
+              type: string
+              pattern: "^\\d+\\.\\d+\\.\\d+$"
+          required: [context, timing, schemaVersion]
+      required: [success, data, meta]
+    EnvelopeTopology:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/TopologyRecord"
+    EnvelopeManifest:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/TopologyManifest"
+    EnvelopeValidation:
+      allOf:
+        - $ref: "#/components/schemas/Envelope"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/ValidationResult"
+    TopologyRecord:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "data-mesh"
+        name:
+          type: string
+          example: "Data Mesh"
+        dimension:
+          type: string
+          example: "data"
+        status:
+          type: string
+          enum: [accepted, draft, deprecated]
+        version:
+          type: string
+          example: "0.1.0"
+    TopologyManifest:
+      type: object
+      properties:
+        apiVersion:
+          type: string
+          example: "evolith.dev/topology/v1"
+        kind:
+          type: string
+          example: "TopologyManifest"
+        metadata:
+          type: object
+        spec:
+          type: object
+    ValidationRequest:
+      type: object
+      properties:
+        config:
+          type: object
+          description: "Configuration to validate against topology rules"
+      required: [config]
+    ValidationResult:
+      type: object
+      properties:
+        passed:
+          type: boolean
+        gates:
+          type: array
+          items:
+            type: object
+            properties:
+              gate:
+                type: string
+              passed:
+                type: boolean
+              evidence:
+                type: array
+                items:
+                  type: string

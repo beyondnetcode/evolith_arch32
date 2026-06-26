@@ -2612,10 +2612,11 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia Actual:** `node .harness/playbooks/topology-compliance-audit.mjs` reporta **AUSENTE** para OpenAPI en las 8 topologías (`ai/agentic-ai`, `data/data-mesh`, `execution/edge-computing`, `execution/serverless`, `integration/event-driven`, `progressive-axis/modular-monolith`, `progressive-axis/distributed-modules`, `progressive-axis/microservices`).
 - **Complejidad:** M
 - **Hecho Cuando:**
-  - [ ] Cada topología tiene un archivo `openapi.yaml` en `reference/architecture/topologies/<area>/<topology>/openapi/`.
-  - [ ] Cada spec describe al menos los endpoints propios del Bounded Context de la topología.
-  - [ ] El spec es validable con `swagger-cli validate` o herramienta equivalente en CI.
-  - [ ] La auditoría de cumplimiento (`topology-compliance-audit.mjs`) reporta `COMPLETO` para OpenAPI en cada topología.
+  - [x] Cada topología tiene un archivo `openapi.yaml` en `reference/architecture/topologies/<area>/<topology>/openapi/`.
+  - [x] Cada spec describe al menos los endpoints propios del Bounded Context de la topología.
+  - [x] El spec es validable con `swagger-cli validate` o herramienta equivalente en CI.
+  - [x] La auditoría de cumplimiento (`topology-compliance-audit.mjs`) reporta `COMPLETO` para OpenAPI en cada topología.
+- **Evidencia de Cierre:** Commit `b7c379c0` (main). 8 archivos `openapi.yaml` creados en los directorios de topología. La auditoría ahora detecta `openapi/` dinámicamente. Score global: 90% (152/168).
 
 #### GT-278
 

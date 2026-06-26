@@ -129,6 +129,21 @@ for (const dim of dimensions) {
       ? `COMPLETO (${parityFixtureFiles.length})`
       : "AUSENTE";
 
+    const openapiFiles = files.filter((f) => f.includes("openapi/"));
+    const openapiStatus = openapiFiles.length >= 1
+      ? `COMPLETO (${openapiFiles.length})`
+      : "AUSENTE";
+
+    const mcpManifestFiles = files.filter((f) => f.includes("mcp/"));
+    const mcpManifestStatus = mcpManifestFiles.length >= 1
+      ? `COMPLETO (${mcpManifestFiles.length})`
+      : "AUSENTE";
+
+    const cliFlowFiles = files.filter((f) => f.includes("cli/"));
+    const cliFlowStatus = cliFlowFiles.length >= 1
+      ? `COMPLETO (${cliFlowFiles.length})`
+      : "AUSENTE";
+
     topologies.push({
       name: sub,
       dimension: dim,
@@ -149,10 +164,10 @@ for (const dim of dimensions) {
         : enDoc.length === requiredDocSet.length
           ? "PARCIAL (falta ES)"
           : "AUSENTE",
-      // Framework interface gaps (same for all — AUSENTE)
-      openapiSpecs: "AUSENTE",
-      mcpManifests: "AUSENTE",
-      cliFlows: "AUSENTE",
+      // Framework interface gaps
+      openapiSpecs: openapiStatus,
+      mcpManifests: mcpManifestStatus,
+      cliFlows: cliFlowStatus,
       // File paths for evidence
       evidence: {
         allFiles: allAbs,
@@ -384,13 +399,16 @@ reference/architecture/topologies/
   console.log(`- \`scaffold\` command exists: \`${scaffoldCmdExists}\``);
   console.log();
 
-  // Gaps  
+  // Gaps
+  const allOpenapiOk = topologies.every((t) => t.openapiSpecs !== "AUSENTE");
+  const allMcpOk = topologies.every((t) => t.mcpManifests !== "AUSENTE");
+  const allCliOk = topologies.every((t) => t.cliFlows !== "AUSENTE");
   console.log("## 6. Framework Interface Gaps (all topologies)\n");
   console.log("| Gap | Status |");
   console.log("|-----|--------|");
-  console.log("| OpenAPI specs per topology | ❌ AUSENTE en todas |");
-  console.log("| MCP tool manifests per topology | ❌ AUSENTE en todas |");
-  console.log("| CLI flow files per topology | ❌ AUSENTE en todas |");
+  console.log(`| OpenAPI specs per topology | ${allOpenapiOk ? "✅ COMPLETO" : "❌ AUSENTE en todas"} |`);
+  console.log(`| MCP tool manifests per topology | ${allMcpOk ? "✅ COMPLETO" : "❌ AUSENTE en todas"} |`);
+  console.log(`| CLI flow files per topology | ${allCliOk ? "✅ COMPLETO" : "❌ AUSENTE en todas"} |`);
   console.log();
 
   // Detailed gaps per topology

@@ -4372,6 +4372,85 @@
         ".harness/bin/opa test rulesets/opa/testing-pyramid.rego rulesets/opa/testing-pyramid.test.rego -v"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-280",
+      "closedAt": "2026-06-25",
+      "closureCommit": "661a8846",
+      "evidence": [
+        "reference/governance/sdlc/phases/phase-f1.json",
+        "reference/governance/sdlc/phases/phase-f5.json",
+        "reference/governance/sdlc/gates/gate-f1.json",
+        "reference/governance/sdlc/gates/gate-f5.json",
+        "reference/governance/sdlc/sdlc-phase.schema.json",
+        "reference/governance/sdlc/sdlc-gate.schema.json",
+        ".harness/playbooks/sdlc-phase-gate-validator.mjs",
+        "rulesets/opa/sdlc/coverage.rego",
+        "rulesets/opa/sdlc/pyramid-distribution.rego"
+      ],
+      "validationCommands": [
+        "node .harness/playbooks/sdlc-phase-gate-validator.mjs",
+        "node .harness/scripts/run-evolith-deep.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-281",
+      "closedAt": "2026-06-25",
+      "closureCommit": "661a8846",
+      "evidence": [
+        "packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts",
+        "packages/core-domain/src/application/services/sdlc-data-loader.service.ts",
+        "packages/core-domain/src/application/services/satellite-evaluation-pipeline.spec.ts",
+        "packages/core-domain/src/application/use-cases/validate-satellite.use-case.ts",
+        "packages/core-domain/src/domain/satellite-manifest.ts",
+        "packages/mcp-server/src/tools/validate.tool.ts",
+        "sdk/cli/src/commands/validate/validate.command.ts"
+      ],
+      "validationCommands": [
+        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --testPathPatterns='satellite-evaluation-pipeline' --no-coverage",
+        "node .harness/scripts/run-evolith-deep.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-282",
+      "closedAt": "2026-06-25",
+      "closureCommit": "661a8846",
+      "evidence": [
+        "packages/core-domain/src/domain/satellite-manifest.ts",
+        "packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts",
+        "packages/core-domain/src/application/services/satellite-evaluation-pipeline.spec.ts",
+        "packages/mcp-server/src/tools/validate.tool.ts",
+        "sdk/cli/src/commands/validate/validate.command.ts",
+        ".harness/playbooks/sdlc-deep-audit.mjs"
+      ],
+      "validationCommands": [
+        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --testPathPatterns='satellite-evaluation-pipeline' --no-coverage",
+        "node .harness/scripts/run-evolith-deep.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-312",
+      "closedAt": "2026-06-26",
+      "closureCommit": "00bb08d5",
+      "evidence": [
+        "packages/core-domain/src/application/validators/modes/composable-validation-engine.ts",
+        "packages/core-domain/src/application/validators/modes/composable-validation-engine.spec.ts",
+        "packages/core-domain/src/application/validators/modes/sdlc-validation.mode.spec.ts",
+        "packages/core-domain/src/application/validators/modes/architecture-validation.mode.spec.ts",
+        "packages/core-domain/src/application/validators/modes/ruleset-validation.mode.spec.ts",
+        "packages/core-domain/src/application/validators/modes/adr-validation.mode.spec.ts",
+        "packages/core-domain/src/application/validators/modes/adhoc-validation.mode.spec.ts",
+        "packages/mcp-server/src/tools/composable-validate.tool.ts",
+        "apps/core-api/src/presentation/controllers/composable-validate.controller.ts"
+      ],
+      "validationCommands": [
+        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --testPathPatterns='composable-validation-engine|sdlc-validation.mode|architecture-validation.mode|ruleset-validation.mode|adr-validation.mode|adhoc-validation.mode' --no-coverage",
+        "npx tsc -p packages/core-domain/tsconfig.json --noEmit"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

@@ -7,16 +7,13 @@
     "done": 289,
     "pending": 23,
     "inProgress": 0,
-    "deferred": 0,
-    "open": 23,
-    "closed": 289,
-    "in_progress": 0
+    "deferred": 0
   },
   "evidence": {
-    "closureRecords": 267,
+    "closureRecords": 271,
     "cliPackage": "@evolith/smart-cli@1.1.0",
     "adrCount": 115,
-    "rulesetCount": 32,
+    "rulesetCount": 33,
     "schemaCount": 29
   },
   "readiness": [
@@ -76,6 +73,5 @@
     "node .harness/scripts/reconcile-maturity.mjs --check",
     "node .harness/scripts/validate-tracking.mjs",
     "npm test --workspace sdk/cli -- --runInBand"
-  ],
-  "lastUpdated": "2026-06-26T03:17:04.585Z"
+  ]
 }

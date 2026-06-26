@@ -43,6 +43,9 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-302`](./gap-reference-catalog.es.md#gt-302) | Comando scaffold existe — sdk/cli/src/commands/architecture/scaffold | `CLI` | Cross | P1 | L | `ABIERTO` |
 | [`GT-308`](./gap-reference-catalog.es.md#gt-308) | Sistema de plugins para comandos — sdk/cli/src/plugins | `CLI` | Cross | P2 | M | `ABIERTO` |
 | [`GT-309`](./gap-reference-catalog.es.md#gt-309) | Validación de contribuciones — sdk/cli/src/contributions | `CLI` | Cross | P2 | M | `ABIERTO` |
+| [`GT-280`](./gap-reference-catalog.es.md#gt-280) | Fases SDLC como datos consultables (JSON/YAML) — mapeo gate → artefactos → reglas Rego | `Governance` | Cross | P0 | M | `COMPLETADO` |
+| [`GT-281`](./gap-reference-catalog.es.md#gt-281) | Pipeline de evaluación end-to-end: cliente → topología → reglas → veredicto | `Core Domain` | Cross | P0 | XL | `COMPLETADO` |
+| [`GT-282`](./gap-reference-catalog.es.md#gt-282) | Reporte accionable con evidencia detallada (qué regla falló, qué artefacto falta, por qué) | `Core Domain` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-277`](./gap-reference-catalog.es.md#gt-277) | Especificaciones OpenAPI de topologías — interfaces framework ausentes en las 8 topologías | `Architecture` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-278`](./gap-reference-catalog.es.md#gt-278) | Manifiestos MCP de topologías — interfaces framework ausentes en las 8 topologías | `Architecture` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-279`](./gap-reference-catalog.es.md#gt-279) | Flujos CLI de topologías — interfaces framework ausentes en las 8 topologías | `Architecture` | Cross | P1 | M | `COMPLETADO` |
@@ -324,7 +327,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-246`](./gap-reference-catalog.es.md#gt-246) | Implementar experimentos Chaos Mesh/Litmus | `QA` | Cross | P3 | L | `COMPLETADO` |
 
 
-**Progreso:** 286 / 309 completados · 0 en progreso · 23 pendientes · 0 diferidos
+**Progreso:** 289 / 312 completados · 0 en progreso · 23 pendientes · 0 diferidos
 
 **Oleada 2026-06-23 (auditoría profunda de Wilson III):** Añadidos 14 gaps nuevos `GT-212`…`GT-225` del Wilson Audit Playbook que cubren: higiene de estado ADR (GT-212), metadata + presupuestos operativos + corpus de guías por topología (GT-213, GT-217, GT-219), observabilidad + OpenAPI en controladores REST (GT-214, GT-215), paridad de input-schemas OPA + densidad de tests por topología (GT-216, GT-222), plantillas de rollback + on-call de Fase 05 (GT-218), cobertura de ramas CLI + paridad de envelope --format + limpieza de skip-list (GT-220, GT-224, GT-225), audit logging HTTP de MCP (GT-221), y tests e2e de paridad cross-surface (GT-223).
 

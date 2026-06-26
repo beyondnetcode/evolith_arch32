@@ -47,6 +47,9 @@ export class AdrValidationMode implements ValidationMode {
           mode: 'adr',
           status: 'failed',
           rulesChecked: 0,
+          metadata: {
+            adrId,
+          },
           issues: [{
             ruleId: 'ADR_UNKNOWN',
             status: 'fail',
@@ -70,6 +73,9 @@ export class AdrValidationMode implements ValidationMode {
           mode: 'adr',
           status: 'failed',
           rulesChecked: 0,
+          metadata: {
+            adrId,
+          },
           issues: [{
             ruleId: 'ADR_RULESET_NOT_FOUND',
             status: 'fail',

@@ -33,7 +33,7 @@ This repository defines the architectural baseline, governance standards, harnes
 
 > **Full taxonomy:** See [`reference/harness/scripts-taxonomy.md`](./reference/harness/scripts-taxonomy.md) for the complete script classification, playbook details, CI hooks, and design rules.
 >
-> ⚠️ `run-wilson-audit.mjs` is **deprecated** — it still works as a compatibility alias but emits a warning. Use the `run-evolith-*` equivalents.
+> Warning: `run-wilson-audit.mjs` is **deprecated** — it still works as a compatibility alias but emits a warning. Use the `run-evolith-*` equivalents.
 
 ### Pre-commit Hook
 The pre-commit hook (`.husky/pre-commit`) runs automatically on every commit:

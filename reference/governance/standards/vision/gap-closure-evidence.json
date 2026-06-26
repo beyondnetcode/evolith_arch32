@@ -4267,6 +4267,27 @@
         ".harness/bin/opa test rulesets/opa/compliance-baseline.rego rulesets/opa/compliance-baseline.test.rego -v"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-287",
+      "closedAt": "2026-06-26",
+      "closureCommit": "c001e602",
+      "evidence": [
+        "rulesets/definition-of-done/definition-of-done.rules.json",
+        "rulesets/definition-of-done/README.md",
+        "rulesets/definition-of-done/README.es.md",
+        ".harness/scripts/run-evolith-intelligent-data-audit.test.mjs",
+        "packages/core-domain/src/application/validators/modes/ruleset-validation.mode.ts",
+        "packages/core-domain/src/application/validators/modes/ruleset-validation.mode.spec.ts",
+        "rulesets/README.md",
+        "rulesets/README.es.md"
+      ],
+      "validationCommands": [
+        "node --test .harness/scripts/run-evolith-intelligent-data-audit.test.mjs",
+        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --testPathPatterns='ruleset-validation.mode' --no-coverage",
+        ".harness/bin/opa test rulesets/opa/dod.rego rulesets/opa/dod.test.rego -v"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

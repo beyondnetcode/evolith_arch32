@@ -11,9 +11,9 @@ Instantánea estratégica generada desde el tablero canónico de gaps y la recon
 
 **Decisión actual:** NO-GO para expansión productiva o release mayor: existen bloqueadores P0 activos.
 
-**Mayor problema ahora:** `Rulesets` concentra el mayor riesgo abierto ponderado (10 pendientes, 10 P0). Ataca esa concentración antes de ampliar alcance.
+**Mayor problema ahora:** `Rulesets` concentra el mayor riesgo abierto ponderado (9 pendientes, 9 P0). Ataca esa concentración antes de ampliar alcance.
 
-**Dónde atacar primero:** [GT-287](./gap-reference-catalog.es.md#gt-287), [GT-288](./gap-reference-catalog.es.md#gt-288), [GT-289](./gap-reference-catalog.es.md#gt-289), [GT-290](./gap-reference-catalog.es.md#gt-290), [GT-291](./gap-reference-catalog.es.md#gt-291), [GT-292](./gap-reference-catalog.es.md#gt-292), [GT-293](./gap-reference-catalog.es.md#gt-293), [GT-294](./gap-reference-catalog.es.md#gt-294), [GT-283](./gap-reference-catalog.es.md#gt-283), [GT-284](./gap-reference-catalog.es.md#gt-284), +5.
+**Dónde atacar primero:** [GT-288](./gap-reference-catalog.es.md#gt-288), [GT-289](./gap-reference-catalog.es.md#gt-289), [GT-290](./gap-reference-catalog.es.md#gt-290), [GT-291](./gap-reference-catalog.es.md#gt-291), [GT-292](./gap-reference-catalog.es.md#gt-292), [GT-293](./gap-reference-catalog.es.md#gt-293), [GT-294](./gap-reference-catalog.es.md#gt-294), [GT-283](./gap-reference-catalog.es.md#gt-283), [GT-284](./gap-reference-catalog.es.md#gt-284), [GT-285](./gap-reference-catalog.es.md#gt-285), +4.
 
 ## Diagnóstico Estratégico
 
@@ -25,9 +25,9 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 
 | Orden | Foco | Motivo | IDs |
 |---:|---|---|---|
-| 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | [GT-287](./gap-reference-catalog.es.md#gt-287), [GT-288](./gap-reference-catalog.es.md#gt-288), [GT-289](./gap-reference-catalog.es.md#gt-289), [GT-290](./gap-reference-catalog.es.md#gt-290), [GT-291](./gap-reference-catalog.es.md#gt-291), [GT-292](./gap-reference-catalog.es.md#gt-292), [GT-293](./gap-reference-catalog.es.md#gt-293), [GT-294](./gap-reference-catalog.es.md#gt-294), [GT-283](./gap-reference-catalog.es.md#gt-283), [GT-284](./gap-reference-catalog.es.md#gt-284), +5 |
-| 2 | Área de mayor riesgo | `Rulesets` tiene la mayor carga ponderada abierta. | [GT-287](./gap-reference-catalog.es.md#gt-287), [GT-288](./gap-reference-catalog.es.md#gt-288), [GT-289](./gap-reference-catalog.es.md#gt-289), [GT-290](./gap-reference-catalog.es.md#gt-290), [GT-291](./gap-reference-catalog.es.md#gt-291), [GT-292](./gap-reference-catalog.es.md#gt-292), +4 |
-| 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | [GT-287](./gap-reference-catalog.es.md#gt-287), [GT-288](./gap-reference-catalog.es.md#gt-288), [GT-289](./gap-reference-catalog.es.md#gt-289), [GT-290](./gap-reference-catalog.es.md#gt-290), [GT-291](./gap-reference-catalog.es.md#gt-291), [GT-292](./gap-reference-catalog.es.md#gt-292), [GT-293](./gap-reference-catalog.es.md#gt-293), [GT-294](./gap-reference-catalog.es.md#gt-294) |
+| 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | [GT-288](./gap-reference-catalog.es.md#gt-288), [GT-289](./gap-reference-catalog.es.md#gt-289), [GT-290](./gap-reference-catalog.es.md#gt-290), [GT-291](./gap-reference-catalog.es.md#gt-291), [GT-292](./gap-reference-catalog.es.md#gt-292), [GT-293](./gap-reference-catalog.es.md#gt-293), [GT-294](./gap-reference-catalog.es.md#gt-294), [GT-283](./gap-reference-catalog.es.md#gt-283), [GT-284](./gap-reference-catalog.es.md#gt-284), [GT-285](./gap-reference-catalog.es.md#gt-285), +4 |
+| 2 | Área de mayor riesgo | `Rulesets` tiene la mayor carga ponderada abierta. | [GT-288](./gap-reference-catalog.es.md#gt-288), [GT-289](./gap-reference-catalog.es.md#gt-289), [GT-290](./gap-reference-catalog.es.md#gt-290), [GT-291](./gap-reference-catalog.es.md#gt-291), [GT-292](./gap-reference-catalog.es.md#gt-292), [GT-293](./gap-reference-catalog.es.md#gt-293), +3 |
+| 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | [GT-288](./gap-reference-catalog.es.md#gt-288), [GT-289](./gap-reference-catalog.es.md#gt-289), [GT-290](./gap-reference-catalog.es.md#gt-290), [GT-291](./gap-reference-catalog.es.md#gt-291), [GT-292](./gap-reference-catalog.es.md#gt-292), [GT-293](./gap-reference-catalog.es.md#gt-293), [GT-294](./gap-reference-catalog.es.md#gt-294) |
 | 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-299](./gap-reference-catalog.es.md#gt-299), [GT-300](./gap-reference-catalog.es.md#gt-300), [GT-301](./gap-reference-catalog.es.md#gt-301), [GT-303](./gap-reference-catalog.es.md#gt-303), [GT-304](./gap-reference-catalog.es.md#gt-304), [GT-305](./gap-reference-catalog.es.md#gt-305), [GT-306](./gap-reference-catalog.es.md#gt-306), [GT-307](./gap-reference-catalog.es.md#gt-307), +3 |
 | 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-308](./gap-reference-catalog.es.md#gt-308), [GT-309](./gap-reference-catalog.es.md#gt-309) |
 
@@ -35,7 +35,6 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 
 | ID | Ataque | Componente | Esfuerzo |
 |---|---|---|---|
-| [GT-287](./gap-reference-catalog.es.md#gt-287) | Ruleset definition-of-done existe — rulesets/definition-of-done | `Rulesets` | P0/S |
 | [GT-288](./gap-reference-catalog.es.md#gt-288) | Ruleset engineering-manifesto existe — rulesets/engineering-manifesto | `Rulesets` | P0/S |
 | [GT-289](./gap-reference-catalog.es.md#gt-289) | Ruleset repository-taxonomy existe — rulesets/repository-taxonomy | `Rulesets` | P0/S |
 | [GT-290](./gap-reference-catalog.es.md#gt-290) | Ruleset phase-gates existe — rulesets/phase-gates | `Rulesets` | P0/S |
@@ -57,18 +56,18 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 |---|---:|
 | Fecha canónica del tablero | 2026-06-26 |
 | Gaps totales | 312 |
-| Gaps cerrados | 284 |
-| Gaps pendientes | 28 |
-| P0 abiertos | 15 |
+| Gaps cerrados | 285 |
+| Gaps pendientes | 27 |
+| P0 abiertos | 14 |
 | P1 abiertos | 11 |
 | P2 abiertos | 2 |
-| Cierre total | 91% |
-| Registros de evidencia de cierre | 262 |
+| Cierre total | 91.3% |
+| Registros de evidencia de cierre | 263 |
 | Readiness registrado | 3 PASS, 1 RESOLVED |
 
 | Área | Pendientes | P0 | P1 | Primeros IDs |
 |---|---:|---:|---:|---|
-| `Rulesets` | 10 | 10 | 0 | [GT-287](./gap-reference-catalog.es.md#gt-287), [GT-288](./gap-reference-catalog.es.md#gt-288), [GT-289](./gap-reference-catalog.es.md#gt-289), [GT-290](./gap-reference-catalog.es.md#gt-290), +6 |
+| `Rulesets` | 9 | 9 | 0 | [GT-288](./gap-reference-catalog.es.md#gt-288), [GT-289](./gap-reference-catalog.es.md#gt-289), [GT-290](./gap-reference-catalog.es.md#gt-290), [GT-291](./gap-reference-catalog.es.md#gt-291), +5 |
 | `Core Domain` | 7 | 2 | 5 | [GT-295](./gap-reference-catalog.es.md#gt-295), [GT-296](./gap-reference-catalog.es.md#gt-296), [GT-303](./gap-reference-catalog.es.md#gt-303), [GT-304](./gap-reference-catalog.es.md#gt-304), +3 |
 | `MCP` | 2 | 2 | 0 | [GT-297](./gap-reference-catalog.es.md#gt-297), [GT-298](./gap-reference-catalog.es.md#gt-298) |
 | `CLI` | 5 | 0 | 3 | [GT-300](./gap-reference-catalog.es.md#gt-300), [GT-301](./gap-reference-catalog.es.md#gt-301), [GT-302](./gap-reference-catalog.es.md#gt-302), [GT-308](./gap-reference-catalog.es.md#gt-308), +1 |

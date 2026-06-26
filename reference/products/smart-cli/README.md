@@ -73,7 +73,7 @@ Options:
   --format <format>     Output format: json, table, yaml, markdown
   --output <file>       Write output to file
   --topology <name>     Validate against specific topology (modular-monolith, distributed-modules, microservices)
-  --ruleset <id>        Validate specific ruleset (acl, open-core, inheritance)
+  --ruleset <id>        Validate specific ruleset (acl, open-core, inheritance, satellite-contracts)
   --engine <engine>     Policy evaluation engine: native or opa (default: native)
   --phase <id>          Validate against specific SDLC phase (f1-f5)
   --manifest <path>     Use topology manifest for validation
@@ -86,17 +86,17 @@ The validation system is intelligent and flexible — NOT rigid. You can validat
 
 | Mode | Command | What it validates |
 |---|---|---|
-| **SDLC** | `evolith validate --phase f1` | Phase → Gate → Artifacts → Schemas → Rulesets → ADRs → OPA → Blocking |
-| **Architecture** | `evolith validate --topology modular-monolith` | Topology rules, hexagonal limits, domain isolation, multi-tenancy |
-| **Ruleset** | `evolith validate --ruleset compliance-baseline` | Specific ruleset execution via OPA |
-| **ADR** | `evolith validate --adr hexagonal-architecture` | ADR-specific architectural rules |
-| **Ad-hoc** | `evolith validate --file src/domain/user.ts` | Individual file/component validation |
-| **Composable** | `evolith validate --topology modular-monolith --ruleset compliance-baseline` | Multiple entry points combined |
+| **SDLC** | `smart-cli validate --phase f1` | Phase → Gate → Artifacts → Schemas → Rulesets → ADRs → OPA → Blocking |
+| **Architecture** | `smart-cli validate --topology modular-monolith` | Topology rules, hexagonal limits, domain isolation, multi-tenancy |
+| **Ruleset** | `smart-cli validate --ruleset compliance-baseline` | Specific ruleset execution via OPA |
+| **ADR** | `smart-cli validate --adr hexagonal-architecture` | ADR-specific architectural rules |
+| **Ad-hoc** | `smart-cli validate --file src/domain/user.ts` | Individual file/component validation |
+| **Composable** | `smart-cli validate --topology modular-monolith --ruleset compliance-baseline` | Multiple entry points combined |
 
 **Intelligent Resolution:**
-- `evolith validate` (no params) → reads `evolith.config.json` for defaults
-- `evolith validate --topology modular-monolith` → infers architecture rules for that topology
-- `evolith validate --phase f1` → resolves gate-f1 and its required artifacts
+- `smart-cli validate` (no params) → reads `evolith.config.json` for defaults
+- `smart-cli validate --topology modular-monolith` → infers architecture rules for that topology
+- `smart-cli validate --phase f1` → resolves gate-f1 and its required artifacts
 - System combines all provided inputs into optimal validation scope
 
 **Example `evolith.config.json` (optional defaults):**
@@ -310,6 +310,11 @@ The smoke verifies `initialize`, `tools/list`, `resources/list`, `prompts/list`,
 | `evolith-moscow-list` | List all MoSCoW analyses for a repository |
 | `evolith-moscow-validate` | Validate a MoSCoW analysis for correctness |
 | `evolith-moscow-report` | Generate a markdown report from a MoSCoW analysis |
+| `evolith-auto-fix` | Auto-fix architectural failures via MCP |
+| `evolith-drift-detect` | Detect architecture drift from declared topology |
+| `evolith-dora-metrics` | Get DORA engineering metrics |
+| `evolith-gate-evaluate` | Evaluate SDLC phase gate criteria |
+| `evolith-phase-advance` | Advance to next SDLC phase |
 
 ### Cursor AI Configuration
 
@@ -412,7 +417,7 @@ smart-cli validate --format markdown
 
 ### Command not found
 
-If `evolith` is not found after installation, ensure npm's global bin is in your PATH:
+If `smart-cli` is not found after installation, ensure npm's global bin is in your PATH:
 
 ```bash
 # Add to ~/.bashrc or ~/.zshrc

@@ -14,7 +14,7 @@ The exact, installable surface is generated from the CLI sources and must not be
 
 | Capability | Count | Examples |
 |---|:---:|---|
-| **Tools** | 22 | `evolith-validate`, `evolith-composable-validate`, `evolith-gate-evaluate`, `evolith-architecture-validate`, `evolith-phase-advance`, `evolith-metrics` |
+| **Tools** | 25 | `evolith-validate`, `evolith-composable-validate`, `evolith-gate-evaluate`, `evolith-architecture-validate`, `evolith-phase-advance`, `evolith-auto-fix`, `evolith-drift-detect`, `evolith-dora-metrics`, `evolith-metrics` |
 | **Resources** | 7 | `evolith://rulesets`, `evolith://phase-gates`, `evolith://agents`, `evolith://core/version` |
 | **Prompts** | 7 | `evolith/validate-repository`, `evolith/architecture-review`, `evolith/sdlc-handoff`, `evolith/moscow-prioritization` |
 

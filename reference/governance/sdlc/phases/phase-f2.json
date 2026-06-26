@@ -1,0 +1,9 @@
+{
+  "$schema": "../sdlc-phase.schema.json",
+  "id": "f2",
+  "name": "Design & Architecture",
+  "shortName": "Architecture",
+  "order": 1,
+  "description": "Architecture decisions documented; bounded contexts defined; functional stories written.",
+  "gates": ["gate-f2"]
+}

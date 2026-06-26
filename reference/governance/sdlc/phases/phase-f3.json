@@ -1,0 +1,9 @@
+{
+  "$schema": "../sdlc-phase.schema.json",
+  "id": "f3",
+  "name": "Construction",
+  "shortName": "Build",
+  "order": 2,
+  "description": "All code merged to main; CI passes; quality gates green; definition of done satisfied.",
+  "gates": ["gate-f3"]
+}

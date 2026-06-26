@@ -3,11 +3,14 @@
   "scope": "evolith-core",
   "asOf": "2026-06-26",
   "gaps": {
-    "total": 279,
-    "done": 279,
+    "total": 282,
+    "done": 282,
     "pending": 0,
     "inProgress": 0,
-    "deferred": 0
+    "deferred": 0,
+    "open": 0,
+    "closed": 282,
+    "in_progress": 0
   },
   "evidence": {
     "closureRecords": 261,
@@ -73,5 +76,6 @@
     "node .harness/scripts/reconcile-maturity.mjs --check",
     "node .harness/scripts/validate-tracking.mjs",
     "npm test --workspace sdk/cli -- --runInBand"
-  ]
+  ],
+  "lastUpdated": "2026-06-26T03:17:04.585Z"
 }

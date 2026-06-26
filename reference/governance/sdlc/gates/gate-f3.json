@@ -1,0 +1,44 @@
+{
+  "$schema": "../sdlc-gate.schema.json",
+  "id": "gate-f3",
+  "name": "Successful Build",
+  "phase": "f3",
+  "description": "All code merged to main; CI passes; quality gates green; definition of done satisfied.",
+  "playbookRef": "# no dedicated playbook — CI/CD pipeline is the gate keeper",
+  "accountableRole": "Tech Lead",
+  "waiverAuthority": "Architecture Board (with exception for CVEs: Executive Risk Acceptance)",
+  "requiredArtifacts": [
+    {
+      "artifact": "Technical Stories",
+      "schemaRef": "../../../rulesets/schema/technical-story.schema.json",
+      "validation": "All technical stories Done; traceable to Functional Stories",
+      "rules": ["rulesets/opa/dod.rego"]
+    },
+    {
+      "artifact": "CI Pipeline",
+      "validation": "CI run green on main branch. No failing tests, no lint errors, no security scan failures",
+      "rules": ["rulesets/opa/cli-readiness.rego"]
+    },
+    {
+      "artifact": "Definition of Done Checklist",
+      "validation": "All DoD items checked per Technical Story",
+      "rules": ["rulesets/opa/dod.rego"]
+    },
+    {
+      "artifact": "Documentation Delta",
+      "validation": "Updated ADRs, inline documentation, README changes included in merge",
+      "rules": ["rulesets/opa/governance.rego"]
+    },
+    {
+      "artifact": "Coverage Report",
+      "validation": "Business logic coverage >= 80% per Quality Thresholds rules",
+      "rules": ["rulesets/opa/sdlc/coverage.rego"]
+    }
+  ],
+  "blockingCriteria": [
+    { "criterion": "CI fails on main branch", "action": "BLOCK merge — fix CI before merge" },
+    { "criterion": "Coverage below threshold (< 80%)", "action": "BLOCK merge — add tests or request waiver" },
+    { "criterion": "High or Critical CVEs detected", "action": "BLOCK merge — remediate CVEs or request security waiver" },
+    { "criterion": "Missing code review approval", "action": "BLOCK merge — require review" }
+  ]
+}

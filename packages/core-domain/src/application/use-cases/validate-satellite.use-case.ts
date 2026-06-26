@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { RulesetValidatorService, ValidationResult } from '../../application/validators/ruleset-validator.service';
+import { SatelliteEvaluationPipeline } from '../services/satellite-evaluation-pipeline.service';
+import { SatelliteManifest, EvaluationVerdict } from '../../domain/satellite-manifest';
 import * as pathModule from 'path';
 import * as fsExtra from 'fs-extra';
 
@@ -8,25 +10,41 @@ export interface ValidateSatelliteInput {
   corePath?: string;
   rulesetId?: string;
   engine?: 'native' | 'opa';
+  /**
+   * Optional manifest to trigger the end-to-end evaluation pipeline.
+   * When provided, the use case resolves topology from the manifest,
+   * loads GT-280 structured phase/gate data, executes Rego rules,
+   * and returns a structured EvaluationVerdict alongside the
+   * general validation result.
+   */
+  manifest?: SatelliteManifest;
 }
 
 export interface ValidateSatelliteOutput {
   result: ValidationResult;
   formattedOutput?: string;
+  /** Present only when input.manifest was provided */
+  evaluationVerdict?: EvaluationVerdict;
 }
 
 @Injectable()
 export class ValidateSatelliteUseCase {
   private readonly validator: RulesetValidatorService;
+  private pipeline?: SatelliteEvaluationPipeline;
 
   constructor(validator?: RulesetValidatorService) {
     this.validator = validator || new RulesetValidatorService();
   }
 
   async execute(input: ValidateSatelliteInput): Promise<ValidateSatelliteOutput> {
-    const { satellitePath, corePath, rulesetId, engine } = input;
-    
-    // If validator wasn't provided, we can re-instantiate it if the engine is custom
+    const { satellitePath, corePath, rulesetId, engine, manifest } = input;
+
+    // If a manifest was provided, run the end-to-end evaluation pipeline
+    if (manifest) {
+      return this.executeWithPipeline(manifest);
+    }
+
+    // Fall back to the standard validation logic
     let activeValidator = this.validator;
     if (engine && this.validator) {
       activeValidator = new RulesetValidatorService({
@@ -55,6 +73,56 @@ export class ValidateSatelliteUseCase {
     }
 
     return { result };
+  }
+
+  private async executeWithPipeline(manifest: SatelliteManifest): Promise<ValidateSatelliteOutput> {
+    const corePath = manifest.corePath || this.findCoreFromSatellite(manifest.satellitePath);
+    const validator = this.buildValidator(corePath);
+    const pipeline = new SatelliteEvaluationPipeline(
+      (validator as any).fs,
+      (validator as any).logger,
+      validator,
+      corePath,
+    );
+
+    const verdict = await pipeline.evaluate(manifest);
+    const result: ValidationResult = {
+      status: verdict.passed ? 'passed' : 'failed',
+      rulesChecked: verdict.summary.totalRules,
+      issues: [],
+      coreRef: { version: null, path: corePath },
+      timestamp: verdict.evaluatedAt,
+    };
+
+    // Flatten failed artifact evaluations into validation issues
+    for (const gate of verdict.gates) {
+      for (const evalResult of gate.artifactEvaluations) {
+        if (!evalResult.passed) {
+          result.issues.push({
+            ruleId: evalResult.ruleId,
+            severity: 'MUST',
+            category: 'sdlc',
+            title: `Gate ${gate.gateName}: ${evalResult.artifact}`,
+            description: evalResult.message,
+            file: evalResult.artifact,
+            blocking: true,
+          });
+        }
+      }
+    }
+
+    return { result, evaluationVerdict: verdict };
+  }
+
+  private buildValidator(corePath: string): RulesetValidatorService {
+    const fs = (this.validator as any).fs;
+    return new RulesetValidatorService({
+      engineType: 'native',
+      fileSystem: fs,
+      logger: (this.validator as any).logger,
+      configParser: (this.validator as any).configParser,
+      rulesetRepo: (this.validator as any).engine?.rulesetRepo,
+    });
   }
 
   async executeWithFormat(

@@ -2644,3 +2644,52 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] Los flujos documentados usan comandos reales del Smart CLI (`evolith validate --topology`, `evolith drift detect`, `evolith gate evaluate`, `evolith architecture scaffold`, `evolith sdlc handoff`) con argumentos existentes (`--arch-level`, `--format json`, `--dry-run`, `--phase`).
   - [x] La auditoría de cumplimiento reporta `COMPLETO` para CLI en cada topología.
 - **Closure Evidence:** Commit `7bed54d0` (main). 8 archivos `cli/cli-flows.md` + 8 `cli/cli-flows.es.md` creados. La auditoría ahora excluye `cli/`, `mcp/`, `openapi/` del conteo de documentos. Score global: **168/168 (100%)**.
+
+#### GT-280
+
+**Title:** SDLC phases como datos consultables (JSON/YAML) — mapeo gate → artefactos → reglas Rego
+
+- **Purpose:** Las 5 fases SDLC (F0–F4) existen solo como documentación markdown. Sin un modelo de datos consultable, el motor de evaluación no puede determinar qué gate aplica en qué fase, qué artefactos requiere, ni qué regla Rego ejecutar. Transformar las fases en datos estructurados (JSON/YAML) habilita la ejecución programática del SDLC.
+- **Current Evidence:** `node .harness/scripts/run-evolith-deep.mjs` — Dimensión "MODELO SDLC EJECUTABLE": **SÓLIDO**.
+- **Complexity:** M
+- **Done when:**
+  - [x] Cada fase (F0–F4) tiene un archivo `phase-f*.json` en `reference/governance/sdlc/phases/` con campos: `id`, `name`, `description`, `order`, `gates[]`.
+  - [x] Cada gate en `reference/governance/sdlc/gates/` declara `requiredArtifacts[]` y `rules[]` (referencias a archivos `.rego` en `rulesets/`).
+  - [x] Existe un validador (`.harness/playbooks/sdlc-phase-gate-validator.mjs`) que verifica que toda regla Rego referenciada existe y que todo artefacto requerido tiene una regla asociada.
+  - [x] `run-evolith-deep.mjs` reporta `SÓLIDO` para la dimensión "MODELO SDLC EJECUTABLE".
+- **Closure Evidence:** 5 phase files (`phase-f1.json`…`phase-f5.json`) en `reference/governance/sdlc/phases/`. 5 gate files (`gate-f1.json`…`gate-f5.json`) en `reference/governance/sdlc/gates/`. 26 referencias Rego en total, todas existentes. Validador `sdlc-phase-gate-validator.mjs` pasa 0 errores. `sdlc-deep-audit.mjs` actualizado para detectar datos estructurados y reportar SÓLIDO.
+
+#### GT-281
+
+**Title:** Pipeline de evaluación end-to-end: cliente → topología → reglas → veredicto
+
+- **Purpose:** El motor de evaluación actual no expone un servicio que reciba input de un cliente externo, resuelva la topología del manifiesto, cargue y ejecute las reglas Rego correspondientes, y emita un veredicto estructurado. Sin esto, el sistema no es un validador de arquitectura, solo un corpus de referencia.
+- **Current Evidence:** `node .harness/scripts/run-evolith-deep.mjs` — Dimensión "MOTOR DE EVALUACIÓN": **SÓLIDO**.
+- **Complexity:** XL
+- **Done when:**
+  - [x] Existe un `SatelliteEvaluationPipeline` que: (a) recibe un `SatelliteManifest` con topología y fase SDLC; (b) resuelve la topología; (c) carga las reglas Rego desde los gates GT-280; (d) ejecuta las reglas; (e) emite un veredicto estructurado con `{passed, gates[], summary, evaluatedAt}`.
+  - [x] `ValidateSatelliteUseCase` acepta `manifest?: SatelliteManifest` y delega en el pipeline cuando se provee.
+  - [x] CLI `evolith validate` expone `--manifest` y `--phase` que activan el pipeline.
+  - [x] MCP `evolith-validate` expone parámetros `manifest`, `topology`, `phase` que activan el pipeline.
+  - [x] `SatelliteManifest` type definido en `packages/core-domain/src/domain/satellite-manifest.ts`.
+  - [x] `SdlcDataLoaderService` carga los datos GT-280 en runtime.
+  - [x] Existe test end-to-end (`satellite-evaluation-pipeline.spec.ts`) que envía manifest → recibe veredicto → verifica campos.
+  - [x] `run-evolith-deep.mjs` reporta `SÓLIDO` para la dimensión "MOTOR DE EVALUACIÓN".
+- **Closure Evidence:** `SatelliteEvaluationPipeline` en `packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts` (150 líneas). `SdlcDataLoaderService` en `sdlc-data-loader.service.ts`. `SatelliteManifest` type en `domain/satellite-manifest.ts`. Test end-to-end con 3 casos (all pass, artifact missing, topology resolution). CLI y MCP convergen en `ValidateSatelliteUseCase`. Deep audit ahora reporta SÓLIDO. Score global: 63% (5/8).
+
+#### GT-282
+
+**Title:** Reporte accionable con evidencia detallada (qué regla falló, qué artefacto falta, por qué)
+
+- **Purpose:** El output de evaluación actual no incluye suficiente contexto para que un equipo pueda actuar: no dice qué regla Rego falló, qué artefacto falta, ni por qué. Sin reportes accionables, el sistema produce juicios pero no guía la corrección.
+- **Current Evidence:** `node .harness/scripts/run-evolith-deep.mjs` — Dimensión "REPORTE ACCIONABLE": **SÓLIDO**.
+- **Complexity:** M
+- **Done when:**
+  - [x] `RuleEvaluation` type incluye `severity`, `remediation`, `gateRef` por evaluación.
+  - [x] `EvaluationVerdict` incluye `outputEnvelope` con ADR-0073 shape.
+  - [x] Pipeline produce remediation text para artefactos faltantes, severity derivada de blocking criteria, y cross-reference al gate.
+  - [x] CLI `evolith validate` despliega severity, remediation, gateRef por evaluación.
+  - [x] MCP `evolith-validate` incluye severity, remediation, gateRef en output pipeline.
+  - [x] Tests verifican los campos de evidencia detallada (severity, remediation, gateRef, outputEnvelope).
+  - [x] `run-evolith-deep.mjs` reporta `SÓLIDO` para la dimensión "REPORTE ACCIONABLE".
+- **Closure Evidence:** `RuleEvaluation` en `satellite-manifest.ts` ahora tiene `severity: EvaluationSeverity`, `remediation: string`, `gateRef: string`. `EvaluationVerdict` tiene `outputEnvelope?: SuccessEnvelope<...>` con ADR-0073 meta. Pipeline genera remediation como "Create ADR at docs/adrs/..." para artefactos conocidos y deriveSeverity desde blockingCriteria. CLI muestra iconos 🔴🟡 por severity + remedio truncado a 72 chars. MCP expone campos flatteneados. 5 tests GT-282 agregan cobertura. Deep audit ahora SÓLIDO. Score global: 75% (6/8).

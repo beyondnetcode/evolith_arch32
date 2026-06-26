@@ -1,0 +1,9 @@
+{
+  "$schema": "../sdlc-phase.schema.json",
+  "id": "f4",
+  "name": "Validation & QA",
+  "shortName": "Validation",
+  "order": 3,
+  "description": "All quality thresholds verified; security scans clean; UAT passed; release candidate formally approved.",
+  "gates": ["gate-f4"]
+}

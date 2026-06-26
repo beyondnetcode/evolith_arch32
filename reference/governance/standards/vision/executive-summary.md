@@ -9,15 +9,15 @@ Strategic snapshot generated from the canonical gap board and maturity reconcili
 
 ## Executive Signal
 
-**Current decision:** Full GO: 273/273 gaps closed, keep monitoring.
+**Current decision:** Conditional GO: proceed only with P1 hardening and automated evidence.
 
-**Biggest problem now:** No weighted open risk — all gaps are closed.
+**Biggest problem now:** `Rulesets` carries the highest weighted open risk (1 open, 0 P0). Attack that concentration before expanding scope.
 
 **Where to attack first:** -.
 
 ## Strategic Diagnosis
 
-The system has all gaps closed. The priority is to keep monitoring, watch for regressions, and prevent new technical debt from accumulating on the gap board.
+The system is close to a governed baseline, but it should not be treated as ready for production expansion while active P0 items remain. The priority is not to read more documentation; it is to close the blockers that compromise security, CI reproducibility, rule parity, and executable contracts.
 
 Use this summary with a simple rule: if you need context, open only the linked ID; if you need to choose work, follow this page's attack order.
 
@@ -25,32 +25,38 @@ Use this summary with a simple rule: if you need context, open only the linked I
 
 | Order | Focus | Reason | IDs |
 |---:|---|---|---|
-| 1 | No open gaps | All 273 gaps are closed. | - |
+| 1 | P0 blockers | They prevent production-readiness or major-release confidence. | - |
+| 2 | Highest-risk area | `Rulesets` has the largest weighted open load. | [GT-272](./gap-reference-catalog.md#gt-272) |
+| 3 | Quick wins | High criticality with XS/S complexity. | - |
+| 4 | P1 wave | Next hardening after P0 is cleared. | [GT-272](./gap-reference-catalog.md#gt-272) |
+| 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-276](./gap-reference-catalog.md#gt-276) |
 
 ## Current Blockers
 
-No active blockers — all gaps are closed.
-
 | ID | Attack | Component | Effort |
 |---|---|---|---|
+| [GT-272](./gap-reference-catalog.md#gt-272) | Secure OPA sidecar bundle distribution and verification | `Rulesets` | P1/M |
+| [GT-276](./gap-reference-catalog.md#gt-276) | Correct bilingual coverage dashboard area pairing logic | `Governance CI` | P2/S |
 
 ## Metrics
 
 | Indicator | Value |
 |---|---:|
-| Canonical board date | 2026-06-25 |
-| Total gaps | 273 |
-| Closed gaps | 273 |
-| Open gaps | 0 |
+| Canonical board date | 2026-06-26 |
+| Total gaps | 276 |
+| Closed gaps | 274 |
+| Open gaps | 2 |
 | Open P0 | 0 |
-| Open P1 | 0 |
-| Open P2 | 0 |
-| Total closure | 100% |
-| Closure evidence records | 247 |
+| Open P1 | 1 |
+| Open P2 | 1 |
+| Total closure | 99.3% |
+| Closure evidence records | 256 |
 | Recorded readiness | 3 PASS, 1 RESOLVED |
 
 | Area | Open | P0 | P1 | First IDs |
 |---|---:|---:|---:|---|
+| `Rulesets` | 1 | 0 | 1 | [GT-272](./gap-reference-catalog.md#gt-272) |
+| `Governance CI` | 1 | 0 | 0 | [GT-276](./gap-reference-catalog.md#gt-276) |
 
 ## Source and Refresh Rule
 

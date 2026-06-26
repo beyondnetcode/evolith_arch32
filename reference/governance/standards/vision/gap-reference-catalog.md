@@ -2587,10 +2587,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Purpose:** Restore the executable trust chain for gap closure. A `DONE` board row must have exactly one valid closure record with a real commit, resolving evidence artifacts, reproducible validation commands, and a supported dependency disposition.
 **Current Evidence:** `node .harness/scripts/ci/08-validate-tracking.mjs` fails after the control-plane audit. The remaining registry issues include `GT-270` with `closureCommit: "pending"`, `GT-264` with empty evidence and validation commands, a duplicate `GT-266` closure record, and missing closure records for `GT-271` and `GT-20`. `node .harness/scripts/ci/09-reconcile-maturity.mjs` also fails because closure evidence counts do not match required closures. `GT-267` and `GT-272` were reopened during this audit because current validation does not support `DONE`.
 **Done When:**
-  - [ ] `gap-closure-evidence.json` has one valid record per `DONE` `GT-*` row and no records for pending/deferred/in-progress gaps.
-  - [ ] `GT-270`, `GT-264`, `GT-266`, `GT-271`, and `GT-20` have either valid closure records or are reopened consistently in EN/ES tracking and catalogs.
-  - [ ] `node .harness/scripts/ci/08-validate-tracking.mjs` passes.
-  - [ ] `node .harness/scripts/ci/09-reconcile-maturity.mjs` passes and regenerates `maturity-reconciliation.json` only when canonical evidence changes.
+  - [x] `gap-closure-evidence.json` has one valid record per `DONE` `GT-*` row and no records for pending/deferred/in-progress gaps.
+  - [x] `GT-270`, `GT-264`, `GT-266`, `GT-271`, and `GT-20` have either valid closure records or are reopened consistently in EN/ES tracking and catalogs.
+  - [x] `node .harness/scripts/ci/08-validate-tracking.mjs` passes.
+  - [x] `node .harness/scripts/ci/09-reconcile-maturity.mjs` passes and regenerates `maturity-reconciliation.json` only when canonical evidence changes.
 
 #### GT-276
 

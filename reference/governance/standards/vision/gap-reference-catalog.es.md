@@ -2587,10 +2587,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Propósito:** Restaurar la cadena ejecutable de confianza para el cierre de gaps. Una fila `DONE`/`COMPLETADO` debe tener exactamente un registro de cierre válido con commit real, artefactos de evidencia resolubles, comandos reproducibles de validación y disposición de dependencias soportada.
 **Evidencia Actual:** `node .harness/scripts/ci/08-validate-tracking.mjs` falla después de la auditoría de plano de control. Los problemas restantes del registro incluyen `GT-270` con `closureCommit: "pending"`, `GT-264` con evidencia y comandos de validación vacíos, un registro duplicado de cierre para `GT-266`, y registros faltantes para `GT-271` y `GT-20`. `node .harness/scripts/ci/09-reconcile-maturity.mjs` también falla porque el conteo de evidencias de cierre no coincide con los cierres requeridos. `GT-267` y `GT-272` se reabrieron durante esta auditoría porque la validación actual no soporta `DONE`.
 **Hecho Cuando:**
-  - [ ] `gap-closure-evidence.json` tiene un registro válido por cada fila `GT-*` en `DONE`/`COMPLETADO` y ningún registro para gaps pendientes/diferidos/en progreso.
-  - [ ] `GT-270`, `GT-264`, `GT-266`, `GT-271` y `GT-20` tienen registros de cierre válidos o se reabren de forma consistente en tracking y catálogos EN/ES.
-  - [ ] `node .harness/scripts/ci/08-validate-tracking.mjs` pasa.
-  - [ ] `node .harness/scripts/ci/09-reconcile-maturity.mjs` pasa y regenera `maturity-reconciliation.json` solo cuando cambia la evidencia canónica.
+  - [x] `gap-closure-evidence.json` tiene un registro válido por cada fila `GT-*` en `DONE`/`COMPLETADO` y ningún registro para gaps pendientes/diferidos/en progreso.
+  - [x] `GT-270`, `GT-264`, `GT-266`, `GT-271` y `GT-20` tienen registros de cierre válidos o se reabren de forma consistente en tracking y catálogos EN/ES.
+  - [x] `node .harness/scripts/ci/08-validate-tracking.mjs` pasa.
+  - [x] `node .harness/scripts/ci/09-reconcile-maturity.mjs` pasa y regenera `maturity-reconciliation.json` solo cuando cambia la evidencia canónica.
 
 #### GT-276
 

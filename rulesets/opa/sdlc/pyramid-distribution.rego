@@ -4,27 +4,28 @@ package evolith.sdlc.pyramid
 # Target: 70% unit / 20% integration / 10% E2E
 # Acceptable deviation: +/- 10 percentage points per tier
 
-default valid = false
+target_unit = 70
+target_integration = 20
+target_e2e = 10
+tolerance = 10
 
-target_unit := 70
-target_integration := 20
-target_e2e := 10
-tolerance := 10
-
-valid if {
-	abs(input.unit_pct - target_unit) <= tolerance
-	abs(input.integration_pct - target_integration) <= tolerance
-	abs(input.e2e_pct - target_e2e) <= tolerance
+violations[msg] {
+	abs(input.unit_pct - target_unit) > tolerance
+	msg := sprintf("Unit distribution off by %dpp (got %d%%, target %d%%)", [abs(input.unit_pct - target_unit), input.unit_pct, target_unit])
 }
 
-reason[msg] if {
-	not valid
-	parts := []
-	parts := array.concat(parts, ["Unit distribution off by ", sprintf("%d", [abs(input.unit_pct - target_unit)]), "pp"]) if abs(input.unit_pct - target_unit) > tolerance
-	msg := sprintf("Pyramid distribution out of tolerance: %s", [concat(", ", parts)])
+violations[msg] {
+	abs(input.integration_pct - target_integration) > tolerance
+	msg := sprintf("Integration distribution off by %dpp (got %d%%, target %d%%)", [abs(input.integration_pct - target_integration), input.integration_pct, target_integration])
 }
 
-evidence[msg] if {
-	valid
-	msg := sprintf("Pyramid distribution within tolerance: unit=%d%%, integration=%d%%, e2e=%d%%", [input.unit_pct, input.integration_pct, input.e2e_pct])
+violations[msg] {
+	abs(input.e2e_pct - target_e2e) > tolerance
+	msg := sprintf("E2E distribution off by %dpp (got %d%%, target %d%%)", [abs(input.e2e_pct - target_e2e), input.e2e_pct, target_e2e])
+}
+
+default allow = false
+
+allow {
+	count(violations) == 0
 }

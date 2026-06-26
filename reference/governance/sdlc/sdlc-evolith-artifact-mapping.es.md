@@ -220,7 +220,7 @@ La Fase 2 implica una topología progresiva específica. Las siguientes acciones
 
 | Artefacto | Ubicación | Por qué es requerido |
 |---|---|---|
-| **Plantilla de Historia Técnica** | [technical-story-template.es.md](./04-artifact-templates/technical-story-template.es.md) | Descompone Historias Funcionales en unidades de implementación con criterios técnicos y evidencia DoD. |
+| **Historias Técnicas** | [technical-story-template.es.md](./04-artifact-templates/technical-story-template.es.md) | Descompone Historias Funcionales en unidades de implementación con criterios técnicos y evidencia DoD. Cada una debe llevar `functionalStoryRef` vinculando a una Historia Funcional de Fase 2. |
 | **Manifiesto de Ingeniería** | [engineering-manifesto.md](../standards/engineering/engineering-manifesto.md) | Gobierna SOLID, DRY, KISS, YAGNI, anti-patrones y disciplina de PR. |
 | **Framework SDLC Orientado a Construcción — §3 y §4** | [construction-focused-sdlc-framework.es.md](./02-engineering/construction-focused-sdlc-framework.es.md) | Define ciclo de construcción, métricas de umbral y checklist DoD. |
 | **Gates de Calidad SDLC** | [quality-gates.es.md](./quality-gates.es.md) | Define la baseline canónica bloqueante: cobertura >= 80%, complejidad <= 15, cero CVEs high/critical, deuda técnica < 5%. |

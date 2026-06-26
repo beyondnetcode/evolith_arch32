@@ -14,7 +14,7 @@ const PHASE_REQUIREMENTS: PhaseRequirement[] = [
   { phase: 'phase-0', artifacts: ['evolith.yaml', 'README.md', '.evolith/moscow/phase-0.json'] },
   { phase: 'phase-1', artifacts: ['package.json', 'src/'] },
   { phase: 'phase-2', artifacts: ['rulesets/', '.harness/'] },
-  { phase: 'phase-3', artifacts: ['ADR collection'] },
+  { phase: 'phase-3', artifacts: ['Technical Stories', 'Engineering Manifesto', 'SDLC Quality Gates', 'Canonical Patterns'] },
   { phase: 'phase-4', artifacts: ['Dockerfile', 'CI/CD pipeline'] },
 ];
 

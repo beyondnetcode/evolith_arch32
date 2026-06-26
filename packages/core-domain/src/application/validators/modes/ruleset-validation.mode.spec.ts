@@ -33,20 +33,23 @@ describe('RulesetValidationMode', () => {
   });
 
   describe('validate', () => {
-    it('should validate ruleset when rulesetId is provided', async () => {
+    it.each([
+      ['compliance-baseline', 7],
+      ['definition-of-done', 10],
+    ])('should validate %s ruleset when rulesetId is provided', async (rulesetId, expectedRuleCount) => {
       const repoRoot = path.resolve(__dirname, '../../../../../..');
       const context: ValidationContext = {
         satellitePath: repoRoot,
         corePath: repoRoot,
         engine: 'native',
-        rulesetId: 'compliance-baseline',
+        rulesetId,
       };
 
       const result = await mode.validate(context);
 
       expect(result.mode).toBe('ruleset');
       expect(result.status).toBe('passed');
-      expect(result.rulesChecked).toBe(7);
+      expect(result.rulesChecked).toBe(expectedRuleCount);
       expect(result.issues).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
@@ -55,7 +58,7 @@ describe('RulesetValidationMode', () => {
           }),
         ]),
       );
-      expect(result.metadata).toEqual({ rulesetId: 'compliance-baseline' });
+      expect(result.metadata).toEqual({ rulesetId });
     });
   });
 });

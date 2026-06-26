@@ -7,7 +7,7 @@ import test from 'node:test';
 const __filename = fileURLToPath(import.meta.url);
 const ROOT = path.resolve(path.dirname(__filename), '../..');
 
-test('GT-286 marks compliance-baseline WS1 path as implemented', () => {
+function runReport() {
   const result = spawnSync(
     process.execPath,
     ['.harness/scripts/run-evolith-intelligent-data-audit.mjs', '--report'],
@@ -18,9 +18,22 @@ test('GT-286 marks compliance-baseline WS1 path as implemented', () => {
   );
 
   assert.match(result.stdout, /^\{/);
-  const report = JSON.parse(result.stdout);
+  return JSON.parse(result.stdout);
+}
+
+test('GT-286 marks compliance-baseline WS1 path as implemented', () => {
+  const report = runReport();
   const ws1 = report.workstreams.find((workstream) => workstream.id === 'WS1');
   const check = ws1?.results.find((item) => item.path === 'rulesets/compliance-baseline');
+
+  assert.equal(check?.exists, true);
+  assert.equal(check?.status, 'PASS');
+});
+
+test('GT-287 marks definition-of-done WS1 path as implemented', () => {
+  const report = runReport();
+  const ws1 = report.workstreams.find((workstream) => workstream.id === 'WS1');
+  const check = ws1?.results.find((item) => item.path === 'rulesets/definition-of-done');
 
   assert.equal(check?.exists, true);
   assert.equal(check?.status, 'PASS');

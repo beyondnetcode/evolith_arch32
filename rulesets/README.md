@@ -44,6 +44,8 @@ If you are onboarding a new satellite repository, read the categories in this or
 rulesets/
 ├── compliance-baseline/        # WS1 executable compliance baseline entrypoint
 │   └── compliance-baseline.rules.json
+├── definition-of-done/         # WS1 executable Definition of Done entrypoint
+│   └── definition-of-done.rules.json
 ├── opa/                        # OPA policies and inputs schemas
 │   ├── schemas/                # OPA policy input schemas (9 schemas)
 │   ├── *.rego                  # Rego policy files

@@ -33,6 +33,7 @@ Directivas vinculantes. Sin relleno.
 | **R-25** | Paridad de Dos Motores | Toda adición o modificación de una regla arquitectónica debe implementarse tanto en el Evaluador TypeScript Nativo como en su archivo OPA `.rego` correspondiente. El CLI debe garantizar el cambio transparente entre ambos motores. |
 | **R-26** | Cierre Semántico de Gaps | Un gap `GT-*` solo puede estar `COMPLETADO` cuando todos sus criterios de cierre estén satisfechos y el registro canónico de cierres contenga un commit real, artefactos de evidencia fechados, comandos de validación reproducibles y disposición explícita de dependencias. Los gaps históricos `MT-*` están exentos salvo que se registren explícitamente. |
 | **R-27** | Paridad de Madurez de Topología | Una topología `accepted` DEBE proporcionar guía bilingüe de adopción/operaciones/evolución, ADRs aceptados, artefactos de conjunto de reglas Native y OPA existentes, exposición de plano de control compartido, y pruebas reproducibles equivalentes en madurez a la línea base del Monolito Modular. |
+| **R-28** | Integridad de Bundles OPA | Los sidecars OPA DEBEN obtener bundles mediante TLS o endpoints privados autenticados dentro del clúster, verificar bundles firmados con claves respaldadas por secretos, fijar metadata del digest SHA-256 esperado y fallar cerrado hasta que la activación del bundle tenga éxito. |
 
 ## Compuertas de Validación Obligatorias
 
@@ -42,6 +43,7 @@ Antes de que cualquier cambio de documentación o regla de agente se considere c
 2. Ejecute `node .harness/scripts/ci/01-validate-docs.mjs --render-mermaid` cuando los diagramas Mermaid hayan cambiado.
 3. Corrija enlaces relativos rotos, anclas Markdown faltantes, bloques Mermaid mal formados, navegación bilingüe inválida, contrapartes de idioma faltantes, y violaciones de UTF-8 o terminaciones de línea antes del merge.
 4. Ejecute `node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs` siempre que cambien manifiestos de topología, reglas de topología o referencias de reglas de satélites.
-5. Reporte cualquier anomalía restante explícitamente si no puede ser corregida en el mismo cambio.
+5. Ejecute `node .harness/scripts/ci/29-validate-opa-sidecar-bundles.mjs` siempre que cambien settings de bundle OPA sidecar en Helm, templates de sidecar o reglas de infraestructura para bundles OPA.
+6. Reporte cualquier anomalía restante explícitamente si no puede ser corregida en el mismo cambio.
 
 (End of file - total 40 lines)

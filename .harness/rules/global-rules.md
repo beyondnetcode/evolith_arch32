@@ -31,6 +31,7 @@ Binding directives. Zero fluff.
 | **R-25** | Dual-Engine Parity | Any addition or modification to an architectural rule must be implemented in both the Native TypeScript Evaluator and its corresponding OPA `.rego` file. The CLI must guarantee seamless switching between both engines. |
 | **R-26** | Semantic Gap Closure | A `GT-*` gap may be `DONE` only when every closure criterion is satisfied and the canonical closure registry records a real commit, dated evidence artifacts, reproducible validation commands, and explicit dependency disposition. Historical `MT-*` gaps are exempt unless explicitly registered. |
 | **R-27** | Topology Maturity Parity | An `accepted` topology MUST provide bilingual adoption/operations/evolution guidance, accepted ADRs, existing Native ruleset and OPA policy artifacts, shared control-plane exposure, and reproducible tests equivalent in maturity to the Modular Monolith baseline. |
+| **R-28** | OPA Bundle Integrity | OPA sidecars MUST fetch bundles through TLS or private authenticated in-cluster endpoints, verify signed bundles with secret-backed keys, pin expected SHA-256 digest metadata, and fail closed until bundle activation succeeds. |
 
 ## Mandatory Validation Gates
 
@@ -40,4 +41,5 @@ Before any documentation or agent-rule change is considered complete:
 2. Run `node .harness/scripts/ci/01-validate-docs.mjs --render-mermaid` when Mermaid diagrams changed.
 3. Correct broken relative links, missing Markdown anchors, malformed Mermaid blocks, invalid bilingual navigation, missing language counterparts, and UTF-8 or line-ending violations before merge.
 4. Run `node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs` whenever topology manifests, topology rules, or satellite rule references change.
-5. Report any remaining anomaly explicitly if it cannot be fixed in the same change.
+5. Run `node .harness/scripts/ci/29-validate-opa-sidecar-bundles.mjs` whenever Helm OPA sidecar bundle settings, sidecar templates, or infrastructure OPA bundle rules change.
+6. Report any remaining anomaly explicitly if it cannot be fixed in the same change.

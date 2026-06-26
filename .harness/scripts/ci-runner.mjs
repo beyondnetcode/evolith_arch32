@@ -25,7 +25,7 @@ const MODES = {
   },
   governance: {
     label: "GOBERNANZA (docs + tracking + maturity + contracts)",
-    scripts: ["01-validate-docs.mjs", "03-validate-root-cleanliness.mjs", "04-check-bilingual-parity.mjs", "05-validate-executive-summary.mjs", "08-validate-tracking.mjs", "09-reconcile-maturity.mjs", "10-validate-contract-conformance.mjs", "22-validate-topology-composition.mjs", "23-check-orphan-bilingual.mjs"],
+    scripts: ["01-validate-docs.mjs", "03-validate-root-cleanliness.mjs", "04-check-bilingual-parity.mjs", "05-validate-executive-summary.mjs", "08-validate-tracking.mjs", "09-reconcile-maturity.mjs", "10-validate-contract-conformance.mjs", "22-validate-topology-composition.mjs", "23-check-orphan-bilingual.mjs", "29-validate-opa-sidecar-bundles.mjs"],
   },
   full: {
     label: "COMPLETO (todos los scripts)",
@@ -73,6 +73,7 @@ function getAutoScripts() {
   }
   if (infraChanged) {
     scripts.push("07-generate-inventories.mjs");
+    scripts.push("29-validate-opa-sidecar-bundles.mjs");
   }
 
   return [...new Set(scripts)];

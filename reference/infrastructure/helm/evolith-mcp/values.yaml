@@ -22,21 +22,25 @@ opa:
   enabled: true
   image: openpolicyagent/opa:0.65.0
   bundle:
-    url: "http://ums-minio:9000/opa-bundles/bundle.tar.gz"
+    url: "https://ums-minio.ums-system.svc.cluster.local:9000"
+    resource: "opa-bundles/bundle.tar.gz"
+    expectedSha256: "sha256:7bffa731a4b3dfde851d0a2ee50a5bd654f8e2413ec4bb7f668a39550f9d42f7"
     pollingMinDelaySeconds: 10
     pollingMaxDelaySeconds: 20
     credentials:
-      existingSecretName: ""
-      accessKeyKey: ""
-      secretKeyKey: ""
+      existingSecretName: "opa-bundle-credentials"
+      accessKeyKey: "AWS_ACCESS_KEY_ID"
+      secretKeyKey: "AWS_SECRET_ACCESS_KEY"
+      regionKey: "AWS_REGION"
     signing:
-      enabled: false
-      existingSecretName: ""
-      keyIdKey: ""
-      keySecretKey: ""
-      algorithm: HS256
+      enabled: true
+      existingSecretName: "opa-bundle-signing-key"
+      keyId: "evolith-opa-bundle-rs256"
+      keySecretKey: "public-key.pem"
+      algorithm: RS256
+      scope: "evolith/reference"
     tls:
-      caCertSecretName: ""
+      caCertSecretName: "opa-bundle-ca"
       caCertKey: ca.crt
       skipVerify: false
     readinessFailClosed: true

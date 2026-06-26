@@ -85,18 +85,15 @@ spec:
           args:
             - "run"
             - "--server"
-            - "--set=services.s3.url={{ .Values.opa.bundle.url }}"
-            - "--set=bundles.authz.service=s3"
-            - "--set=bundles.authz.resource=bundle.tar.gz"
-            - "--set=bundles.authz.polling.min_delay_seconds={{ .Values.opa.bundle.pollingMinDelaySeconds }}"
-            - "--set=bundles.authz.polling.max_delay_seconds={{ .Values.opa.bundle.pollingMaxDelaySeconds }}"
+            - "--config-file=/var/run/opa/config/config.yaml"
             {{- if .Values.opa.bundle.signing.enabled }}
-            - "--set=bundles.authz.signing.keyid={{ .Values.opa.bundle.signing.algorithm }}-key"
-            - "--set=keys.{{ .Values.opa.bundle.signing.algorithm }}-key.algorithm={{ .Values.opa.bundle.signing.algorithm }}"
-            - "--set-file=keys.{{ .Values.opa.bundle.signing.algorithm }}-key.key=/var/run/opa/signing/key"
+            - "--set=keys.{{ .Values.opa.bundle.signing.keyId }}.algorithm={{ .Values.opa.bundle.signing.algorithm }}"
+            - "--set-file=keys.{{ .Values.opa.bundle.signing.keyId }}.key=/var/run/opa/signing/key"
             {{- end }}
-          {{- if .Values.opa.bundle.credentials.existingSecretName }}
           env:
+            - name: EVOLITH_OPA_BUNDLE_SHA256
+              value: {{ .Values.opa.bundle.expectedSha256 | quote }}
+          {{- if .Values.opa.bundle.credentials.existingSecretName }}
             - name: AWS_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
@@ -107,6 +104,15 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.opa.bundle.credentials.existingSecretName }}
                   key: {{ .Values.opa.bundle.credentials.secretKeyKey }}
+            - name: AWS_REGION
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.opa.bundle.credentials.existingSecretName }}
+                  key: {{ .Values.opa.bundle.credentials.regionKey }}
+          {{- end }}
+          {{- if .Values.opa.bundle.tls.caCertSecretName }}
+            - name: SSL_CERT_FILE
+              value: /var/run/opa/ca/ca.crt
           {{- end }}
           ports:
             - name: opa-http
@@ -121,8 +127,10 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 5
           {{- end }}
-          {{- if or .Values.opa.bundle.signing.enabled .Values.opa.bundle.tls.caCertSecretName }}
           volumeMounts:
+            - name: opa-config
+              mountPath: /var/run/opa/config
+              readOnly: true
             {{- if .Values.opa.bundle.signing.enabled }}
             - name: opa-signing-key
               mountPath: /var/run/opa/signing
@@ -133,9 +141,11 @@ spec:
               mountPath: /var/run/opa/ca
               readOnly: true
             {{- end }}
-          {{- end }}
-      {{- if or .Values.opa.bundle.signing.enabled .Values.opa.bundle.tls.caCertSecretName }}
+      {{- if .Values.opa.enabled }}
       volumes:
+        - name: opa-config
+          configMap:
+            name: {{ include "evolith-mcp.fullname" . }}-opa-config
         {{- if .Values.opa.bundle.signing.enabled }}
         - name: opa-signing-key
           secret:

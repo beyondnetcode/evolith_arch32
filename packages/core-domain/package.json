@@ -21,6 +21,10 @@
       "types": "./dist/application/validators/index.d.ts",
       "default": "./dist/application/validators/index.js"
     },
+    "./application/validators/modes": {
+      "types": "./dist/application/validators/modes/index.d.ts",
+      "default": "./dist/application/validators/modes/index.js"
+    },
     "./infrastructure/adapters/*": {
       "types": "./dist/infrastructure/adapters/*.d.ts",
       "default": "./dist/infrastructure/adapters/*.js"

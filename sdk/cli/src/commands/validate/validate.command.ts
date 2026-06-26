@@ -18,12 +18,97 @@ interface ValidateCommandOptions {
   engine?: string;
   manifest?: string;
   phase?: string;
+  adr?: string;
+  file?: string;
+  composable?: boolean;
 }
 
-@Command({
-  name: 'validate',
-  description: 'Verifica que el repositorio satélite cumpla los estándares mínimos de Evolith',
-})
+interface ComposableValidationResult {
+  status: 'passed' | 'failed' | 'warning';
+  modes: ModeValidationResult[];
+  totalRulesChecked: number;
+  totalIssues: number;
+  passedRules: number;
+  failedRules: number;
+  performanceMs: number;
+}
+
+interface ModeValidationResult {
+  mode: string;
+  status: string;
+  rulesChecked: number;
+  issues: ModeValidationIssue[];
+}
+
+interface ModeValidationIssue {
+  ruleId: string;
+  status: string;
+  message: string;
+  severity: string;
+  file?: string;
+  line?: number;
+  remediation?: string;
+}
+
+function createComposableEngine() {
+  return {
+    execute: async (context: any): Promise<ComposableValidationResult> => {
+      const { SdlcValidationMode } = require('@evolith/core-domain/application/validators/modes/sdlc-validation.mode');
+      const { ArchitectureValidationMode } = require('@evolith/core-domain/application/validators/modes/architecture-validation.mode');
+      const { RulesetValidationMode } = require('@evolith/core-domain/application/validators/modes/ruleset-validation.mode');
+      const { AdrValidationMode } = require('@evolith/core-domain/application/validators/modes/adr-validation.mode');
+      const { AdhocValidationMode } = require('@evolith/core-domain/application/validators/modes/adhoc-validation.mode');
+
+      const modes = [
+        new SdlcValidationMode(),
+        new ArchitectureValidationMode(),
+        new RulesetValidationMode(),
+        new AdrValidationMode(),
+        new AdhocValidationMode(),
+      ];
+
+      const resolvedModes = modes.filter((m: any) => m.canHandle(context));
+      const modesToRun = resolvedModes.length > 0 ? resolvedModes : modes.filter((m: any) => m.name === 'ruleset');
+
+      const modeResults: ModeValidationResult[] = [];
+      for (const mode of modesToRun) {
+        try {
+          const result = await mode.validate(context);
+          modeResults.push(result);
+        } catch (error) {
+          modeResults.push({
+            mode: mode.name,
+            status: 'failed',
+            rulesChecked: 0,
+            issues: [{
+              ruleId: 'MODE_ERROR',
+              status: 'fail',
+              message: (error as Error).message,
+              severity: 'error',
+            }],
+          });
+        }
+      }
+
+      const totalRulesChecked = modeResults.reduce((sum: number, r: ModeValidationResult) => sum + r.rulesChecked, 0);
+      const failedRules = modeResults.reduce(
+        (sum: number, r: ModeValidationResult) => sum + r.issues.filter((i: ModeValidationIssue) => i.status === 'fail').length,
+        0,
+      );
+
+      return {
+        status: modeResults.some((r: ModeValidationResult) => r.status === 'failed') ? 'failed' : 'passed',
+        modes: modeResults,
+        totalRulesChecked,
+        totalIssues: modeResults.reduce((sum: number, r: ModeValidationResult) => sum + r.issues.length, 0),
+        passedRules: totalRulesChecked - failedRules,
+        failedRules,
+        performanceMs: 0,
+      };
+    },
+  };
+}
+
 export class ValidateCommand extends BaseEvolithCommand {
   constructor(
     private readonly useCase: ValidateSatelliteUseCase,
@@ -44,73 +129,108 @@ export class ValidateCommand extends BaseEvolithCommand {
 
     let result: ValidationResult;
     let evaluationVerdict: any;
+    let composableResult: ComposableValidationResult | undefined;
 
     try {
       const engine = options?.engine === 'opa' ? 'opa' : 'native';
 
-      // If manifest or phase is provided, run the end-to-end pipeline
-      const useManifest = options?.manifest || options?.phase || options?.topology?.length;
-      if (useManifest) {
-        const out = await this.useCase.execute({
+      if (options?.composable || options?.adr || options?.file) {
+        const context = {
           satellitePath,
           corePath,
-          engine,
-          manifest: {
-            satellitePath,
-            corePath,
-            topology: options?.topology?.[0],
-            phase: options?.phase,
-          },
-        });
-        result = out.result;
-        evaluationVerdict = out.evaluationVerdict;
-      } else if (options?.ruleset) {
-        result = (await this.useCase.execute({
-          satellitePath,
-          corePath,
-          rulesetId: options.ruleset,
-          engine
-        })).result;
-      } else {
-        result = (await this.useCase.execute({ satellitePath, corePath, engine })).result;
-      }
-
-      if (options?.architecture || options?.topology?.length) {
-        const topologies: string[] = options?.topology || [];
-        const archLevel = options?.archLevel;
-
-        if (archLevel) {
-          this.promptService.showWarning(`⚠️ El parámetro --arch-level está deprecado. Use --topology en su lugar.`);
-          if (archLevel === 'F1') topologies.push('modular-monolith');
-          else if (archLevel === 'F2') topologies.push('distributed-modules');
-          else if (archLevel === 'F3') topologies.push('microservices');
-        }
-
-        interface ArchResult {
-          status: 'passed' | 'failed' | 'warning';
-          levels: string[];
-          rulesChecked: number;
-          issues: ValidationIssue[];
-          timestamp: string;
-        }
-
-        const validatorOptions = {
-          level: archLevel || (topologies.length === 0 ? 'ALL' : undefined),
-          topologies
+          engine: engine as 'native' | 'opa',
+          topology: options?.topology?.[0],
+          phase: options?.phase,
+          rulesetId: options?.ruleset,
+          adrId: options?.adr,
+          filePath: options?.file,
         };
 
-        const archResult: ArchResult = await this.validator.validateArchitecture(satellitePath, corePath, validatorOptions);
-
-        const allIssues = [...result.issues, ...archResult.issues];
-        const blockingCount = allIssues.filter(i => i.blocking).length;
+        const composableEngine = createComposableEngine();
+        composableResult = await composableEngine.execute(context);
 
         result = {
-          status: blockingCount > 0 ? 'failed' : allIssues.length > 0 ? 'warning' : 'passed',
-          rulesChecked: result.rulesChecked + archResult.rulesChecked,
-          issues: allIssues,
-          coreRef: result.coreRef,
+          status: composableResult.status,
+          rulesChecked: composableResult.totalRulesChecked,
+          issues: composableResult.modes.flatMap((m: ModeValidationResult) =>
+            m.issues.map((i: ModeValidationIssue) => ({
+              ruleId: i.ruleId,
+              severity: (i.severity === 'error' ? 'MUST' : i.severity === 'warning' ? 'SHOULD' : 'COULD') as 'MUST' | 'SHOULD' | 'COULD',
+              category: m.mode,
+              title: i.message,
+              description: i.message,
+              blocking: i.severity === 'error',
+              file: i.file,
+              line: i.line,
+            })),
+          ),
+          coreRef: { version: null, path: null },
           timestamp: new Date().toISOString(),
         };
+      } else {
+        const useManifest = options?.manifest || options?.phase || options?.topology?.length;
+        if (useManifest) {
+          const out = await (this.useCase as any).execute({
+            satellitePath,
+            corePath,
+            engine,
+            manifest: {
+              satellitePath,
+              corePath,
+              topology: options?.topology?.[0],
+              phase: options?.phase,
+            },
+          });
+          result = out.result;
+          evaluationVerdict = out.evaluationVerdict || null;
+        } else if (options?.ruleset) {
+          result = (await this.useCase.execute({
+            satellitePath,
+            corePath,
+            rulesetId: options.ruleset,
+            engine,
+          })).result;
+        } else {
+          result = (await this.useCase.execute({ satellitePath, corePath, engine })).result;
+        }
+
+        if (options?.architecture || options?.topology?.length) {
+          const topologies: string[] = options?.topology || [];
+          const archLevel = options?.archLevel;
+
+          if (archLevel) {
+            this.promptService.showWarning(`El parámetro --arch-level está deprecado. Use --topology en su lugar.`);
+            if (archLevel === 'F1') topologies.push('modular-monolith');
+            else if (archLevel === 'F2') topologies.push('distributed-modules');
+            else if (archLevel === 'F3') topologies.push('microservices');
+          }
+
+          interface ArchResult {
+            status: 'passed' | 'failed' | 'warning';
+            levels: string[];
+            rulesChecked: number;
+            issues: ValidationIssue[];
+            timestamp: string;
+          }
+
+          const validatorOptions = {
+            level: archLevel || (topologies.length === 0 ? 'ALL' : undefined),
+            topologies
+          };
+
+          const archResult: ArchResult = await this.validator.validateArchitecture(satellitePath, corePath, validatorOptions);
+
+          const allIssues = [...result.issues, ...archResult.issues];
+          const blockingCount = allIssues.filter(i => i.blocking).length;
+
+          result = {
+            status: blockingCount > 0 ? 'failed' : allIssues.length > 0 ? 'warning' : 'passed',
+            rulesChecked: result.rulesChecked + archResult.rulesChecked,
+            issues: allIssues,
+            coreRef: result.coreRef,
+            timestamp: new Date().toISOString(),
+          };
+        }
       }
     } catch (error) {
       this.promptService.stopSpinner();
@@ -157,21 +277,44 @@ export class ValidateCommand extends BaseEvolithCommand {
       this.printHumanReport(result);
     }
 
-    if (evaluationVerdict) {
-      const maxRemediationWidth = 72;
-      const truncate = (s: string) => s.length > maxRemediationWidth ? s.slice(0, maxRemediationWidth) + '…' : s;
+    if (composableResult) {
+      this.promptService.showInfo(`\nMotor Composable GT-312 — ${composableResult.status === 'passed' ? 'PASO' : composableResult.status === 'failed' ? 'FALLO' : 'ADVERTENCIAS'}`);
+      this.promptService.showInfo(`Modos ejecutados: ${composableResult.modes.map((m: ModeValidationResult) => m.mode).join(', ')}`);
+      this.promptService.showInfo(`Reglas: ${composableResult.totalRulesChecked} verificadas, ${composableResult.failedRules} fallaron`);
+      this.promptService.showInfo(`Rendimiento: ${composableResult.performanceMs}ms`);
 
-      this.promptService.showInfo(`\nPipeline de evaluación — ${evaluationVerdict.passed ? '✅ PASÓ' : '❌ FALLÓ'}`);
-      this.promptService.showInfo(`Topología: ${evaluationVerdict.resolvedTopology || 'no detectada'}`);
-      this.promptService.showInfo(`Gates: ${evaluationVerdict.summary.passedGates}✓ / ${evaluationVerdict.summary.failedGates}✗ / ${evaluationVerdict.summary.totalGates} total`);
+      for (const mode of composableResult.modes) {
+        const failedIssues = mode.issues.filter((i: ModeValidationIssue) => i.status === 'fail');
+        if (failedIssues.length > 0) {
+          this.promptService.showWarning(`  Modo ${mode.mode}: ${failedIssues.length} fallos`);
+          for (const issue of failedIssues) {
+            const icon = issue.severity === 'error' ? 'RED' : issue.severity === 'warning' ? 'YELLOW' : 'BLUE';
+            this.promptService.showWarning(`    [${icon}] [${issue.ruleId}] ${issue.message}`);
+            if (issue.remediation) {
+              this.promptService.showInfo(`       Remedio: ${issue.remediation}`);
+            }
+          }
+        }
+        const passedIssues = mode.issues.filter((i: ModeValidationIssue) => i.status === 'pass');
+        if (passedIssues.length > 0 && format !== 'json') {
+          this.promptService.showInfo(`  Modo ${mode.mode}: ${passedIssues.length} reglas OK`);
+        }
+      }
+    } else if (evaluationVerdict) {
+      const maxRemediationWidth = 72;
+      const truncate = (s: string) => s.length > maxRemediationWidth ? s.slice(0, maxRemediationWidth) + '...' : s;
+
+      this.promptService.showInfo(`\nPipeline de evaluacion — ${evaluationVerdict.passed ? 'PASO' : 'FALLO'}`);
+      this.promptService.showInfo(`Topologia: ${evaluationVerdict.resolvedTopology || 'no detectada'}`);
+      this.promptService.showInfo(`Gates: ${evaluationVerdict.summary.passedGates} / ${evaluationVerdict.summary.failedGates} / ${evaluationVerdict.summary.totalGates} total`);
       this.promptService.showInfo(`Reglas: ${evaluationVerdict.summary.totalRules} verificadas, ${evaluationVerdict.summary.failedRules} fallaron`);
       for (const gate of evaluationVerdict.gates) {
-        const failedEvals = gate.artifactEvaluations.filter(e => !e.passed);
+        const failedEvals = gate.artifactEvaluations.filter((e: any) => !e.passed);
         if (failedEvals.length > 0) {
           this.promptService.showWarning(`  Gate ${gate.gateName} (${gate.gateId}): ${failedEvals.length} fallos`);
           for (const ev of failedEvals) {
-            const icon = ev.severity === 'error' ? '🔴' : ev.severity === 'warning' ? '🟡' : '🔵';
-            this.promptService.showWarning(`    ${icon} [${ev.ruleId}] ${ev.artifact}`);
+            const icon = ev.severity === 'error' ? 'RED' : ev.severity === 'warning' ? 'YELLOW' : 'BLUE';
+            this.promptService.showWarning(`    [${icon}] [${ev.ruleId}] ${ev.artifact}`);
             this.promptService.showWarning(`       Mensaje: ${ev.message}`);
             if (ev.remediation) {
               this.promptService.showInfo(`       Remedio:  ${truncate(ev.remediation)}`);
@@ -179,7 +322,7 @@ export class ValidateCommand extends BaseEvolithCommand {
             this.promptService.showInfo(`       Severidad: ${ev.severity} | Gate: ${ev.gateRef} | Regla: ${ev.rulePath}`);
           }
         }
-        const passedEvals = gate.artifactEvaluations.filter(e => e.passed);
+        const passedEvals = gate.artifactEvaluations.filter((e: any) => e.passed);
         if (passedEvals.length > 0 && format !== 'json') {
           this.promptService.showInfo(`  Gate ${gate.gateName}: ${passedEvals.length} artifactos OK`);
         }
@@ -318,5 +461,29 @@ export class ValidateCommand extends BaseEvolithCommand {
   })
   parsePhase(val: string): string {
     return val;
+  }
+
+  @Option({
+    flags: '--adr [id]',
+    description: 'Validar contra reglas ADR específicas (adr-0002, adr-0005, adr-0010, adr-0018, adr-0032, adr-0040, adr-0050)',
+  })
+  parseAdr(val: string): string {
+    return val;
+  }
+
+  @Option({
+    flags: '--file [path]',
+    description: 'Validar archivo individual (modo ad-hoc)',
+  })
+  parseFile(val: string): string {
+    return val;
+  }
+
+  @Option({
+    flags: '--composable',
+    description: 'Usar motor de validación composable (GT-312) con resolución inteligente de modos',
+  })
+  parseComposable(): boolean {
+    return true;
   }
 }

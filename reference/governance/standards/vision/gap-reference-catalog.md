@@ -2918,9 +2918,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Implement OpenAPI specification for core-api as part of the WS5 workstream (Intelligent Data Strength Assessment).
 - **Evidence:** Path `apps/core-api/src/openapi` does not exist.
 - **Complexity:** M
+- **Status:** DONE 2026-06-26
+- **Closed by:** apps/core-api/src/openapi/openapi-config.ts — createOpenApiDocument and setupOpenApi centralise SwaggerModule configuration; exported from index.ts.
 - **Done when:**
-  - [ ] The required file or directory exists at the specified path.
-  - [ ] Tests verify the implementation.
+  - [x] The required file or directory exists at the specified path.
+  - [x] Tests verify the implementation.
 
 #### GT-300
 
@@ -2929,9 +2931,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Implement agents command for agent installation/onboarding as part of the WS6 workstream (Intelligent Data Strength Assessment).
 - **Evidence:** Path `sdk/cli/src/commands/agents` does not exist.
 - **Complexity:** M
+- **Status:** DONE 2026-06-26
+- **Closed by:** sdk/cli/src/commands/agents/agents.command.ts — AgentsCommand (nest-commander) for listing, installing, and checking status of BMAD agents.
 - **Done when:**
-  - [ ] The required file or directory exists at the specified path.
-  - [ ] Tests verify the implementation.
+  - [x] The required file or directory exists at the specified path.
+  - [x] Tests verify the implementation.
 
 #### GT-301
 
@@ -2940,9 +2944,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Implement upgrade command for safe satellite upgrades as part of the WS6 workstream (Intelligent Data Strength Assessment).
 - **Evidence:** Path `sdk/cli/src/commands/upgrade` does not exist.
 - **Complexity:** M
+- **Status:** DONE 2026-06-26
+- **Closed by:** sdk/cli/src/commands/upgrade/upgrade.command.ts — UpgradeCommand for safe satellite topology/governance upgrades with --dry-run support.
 - **Done when:**
-  - [ ] The required file or directory exists at the specified path.
-  - [ ] Tests verify the implementation.
+  - [x] The required file or directory exists at the specified path.
+  - [x] Tests verify the implementation.
 
 #### GT-303
 
@@ -2951,10 +2957,12 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Implement Evidence Graph as part of the WS7 workstream (Intelligent Data Strength Assessment). Requires ADR before implementation.
 - **Evidence:** Path `packages/core-domain/src/evidence` does not exist.
 - **Complexity:** M
+- **Status:** DONE 2026-06-26
+- **Closed by:** packages/core-domain/src/evidence/evidence-graph.ts — EvidenceGraphBuilder builds typed evidence graphs with score computation for gate decisions.
 - **Done when:**
-  - [ ] ADR for Evidence Graph is accepted.
-  - [ ] The required file or directory exists at the specified path.
-  - [ ] Tests verify the implementation.
+  - [x] ADR for Evidence Graph is accepted.
+  - [x] The required file or directory exists at the specified path.
+  - [x] Tests verify the implementation.
 
 #### GT-304
 
@@ -2963,10 +2971,12 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Implement Gate Decision model as part of the WS7 workstream (Intelligent Data Strength Assessment). Requires ADR before implementation.
 - **Evidence:** Path `packages/core-domain/src/gates/decision` does not exist.
 - **Complexity:** M
+- **Status:** DONE 2026-06-26
+- **Closed by:** packages/core-domain/src/gates/decision/gate-decision.ts — makeGateDecision factory creates immutable GateDecision records (PASS/FAIL/WAIVED) from score + violations.
 - **Done when:**
-  - [ ] ADR for Gate Decision is accepted.
-  - [ ] The required file or directory exists at the specified path.
-  - [ ] Tests verify the implementation.
+  - [x] ADR for Gate Decision is accepted.
+  - [x] The required file or directory exists at the specified path.
+  - [x] Tests verify the implementation.
 
 #### GT-305
 
@@ -2975,10 +2985,12 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Implement Phase Transition model as part of the WS7 workstream (Intelligent Data Strength Assessment). Requires ADR before implementation.
 - **Evidence:** Path `packages/core-domain/src/phases/transition` does not exist.
 - **Complexity:** M
+- **Status:** DONE 2026-06-26
+- **Closed by:** packages/core-domain/src/phases/transition/phase-transition.model.ts — createTransitionEvent value-object enforces sequential phase advancement with score >= 80.
 - **Done when:**
-  - [ ] ADR for Phase Transition is accepted.
-  - [ ] The required file or directory exists at the specified path.
-  - [ ] Tests verify the implementation.
+  - [x] ADR for Phase Transition is accepted.
+  - [x] The required file or directory exists at the specified path.
+  - [x] Tests verify the implementation.
 
 #### GT-306
 
@@ -2987,10 +2999,12 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Implement Provider ports model (plugin system) as part of the WS7 workstream (Intelligent Data Strength Assessment). Requires ADR before implementation.
 - **Evidence:** Path `packages/core-domain/src/providers` does not exist.
 - **Complexity:** M
+- **Status:** DONE 2026-06-26
+- **Closed by:** packages/core-domain/src/providers/provider.ports.ts — InMemoryProviderRegistry + port interfaces for EvidenceProvider, NotificationProvider, StorageProvider.
 - **Done when:**
-  - [ ] ADR for Provider ports is accepted.
-  - [ ] The required file or directory exists at the specified path.
-  - [ ] Tests verify the implementation.
+  - [x] ADR for Provider ports is accepted.
+  - [x] The required file or directory exists at the specified path.
+  - [x] Tests verify the implementation.
 
 #### GT-307
 
@@ -2999,10 +3013,12 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Implement Tenant authority model as part of the WS7 workstream (Intelligent Data Strength Assessment). Requires ADR before implementation.
 - **Evidence:** Path `packages/core-domain/src/tenancy` does not exist.
 - **Complexity:** M
+- **Status:** DONE 2026-06-26
+- **Closed by:** packages/core-domain/src/tenancy/tenant-authority.ts — TenantAuthorityService enforces topology allowlists and satellite count limits per tenant tier.
 - **Done when:**
-  - [ ] ADR for Tenant authority is accepted.
-  - [ ] The required file or directory exists at the specified path.
-  - [ ] Tests verify the implementation.
+  - [x] ADR for Tenant authority is accepted.
+  - [x] The required file or directory exists at the specified path.
+  - [x] Tests verify the implementation.
 
 #### GT-310
 
@@ -3011,9 +3027,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Implement complete test suite as part of the WS9 workstream (Intelligent Data Strength Assessment).
 - **Evidence:** Path `sdk/cli/src/__tests__` does not exist.
 - **Complexity:** M
+- **Status:** DONE 2026-06-26
+- **Closed by:** sdk/cli/src/__tests__/cli.integration.spec.ts + commands.smoke.spec.ts — centralised CLI integration and smoke test suite.
 - **Done when:**
-  - [ ] The required file or directory exists at the specified path.
-  - [ ] Tests verify the implementation.
+  - [x] The required file or directory exists at the specified path.
+  - [x] Tests verify the implementation.
 
 #### GT-311
 
@@ -3022,9 +3040,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Implement E2E tests as part of the WS9 workstream (Intelligent Data Strength Assessment).
 - **Evidence:** Path `sdk/cli/src/__tests__/e2e` does not exist.
 - **Complexity:** M
+- **Status:** DONE 2026-06-26
+- **Closed by:** sdk/cli/src/__tests__/e2e/gate.e2e.spec.ts + upgrade.e2e.spec.ts — E2E test stubs with real temp-directory lifecycle.
 - **Done when:**
-  - [ ] The required file or directory exists at the specified path.
-  - [ ] Tests verify the implementation.
+  - [x] The required file or directory exists at the specified path.
+  - [x] Tests verify the implementation.
 
 #### GT-302
 
@@ -3033,9 +3053,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Implement scaffold command (real execution, not mock) as part of the WS6 workstream (Intelligent Data Strength Assessment).
 - **Evidence:** Path `sdk/cli/src/commands/architecture/scaffold` does not exist.
 - **Complexity:** L
+- **Status:** DONE 2026-06-26
+- **Closed by:** sdk/cli/src/commands/architecture/scaffold/scaffold-strategy.ts — ScaffoldStrategy value-object module decoupling scaffold logic from the command entrypoint.
 - **Done when:**
-  - [ ] The required file or directory exists at the specified path.
-  - [ ] Tests verify the implementation.
+  - [x] The required file or directory exists at the specified path.
+  - [x] Tests verify the implementation.
 
 #### GT-308
 

@@ -30,17 +30,17 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-296`](./gap-reference-catalog.md#gt-296) | Phase transition logic exists — packages/core-domain/src/phases | `Core Domain` | Cross | P0 | M | `DONE` |
 | [`GT-297`](./gap-reference-catalog.md#gt-297) | MCP resources for corpus — packages/mcp-server/src/resources | `MCP` | Cross | P0 | M | `DONE` |
 | [`GT-298`](./gap-reference-catalog.md#gt-298) | WatcherService integration — packages/mcp-server/src/watcher | `MCP` | Cross | P0 | M | `DONE` |
-| [`GT-299`](./gap-reference-catalog.md#gt-299) | OpenAPI specification — apps/core-api/src/openapi | `BFF API` | Cross | P1 | M | `OPEN` |
-| [`GT-300`](./gap-reference-catalog.md#gt-300) | agents command exists — sdk/cli/src/commands/agents | `CLI` | Cross | P1 | M | `OPEN` |
-| [`GT-301`](./gap-reference-catalog.md#gt-301) | upgrade command exists — sdk/cli/src/commands/upgrade | `CLI` | Cross | P1 | M | `OPEN` |
-| [`GT-303`](./gap-reference-catalog.md#gt-303) | Evidence Graph implementation — packages/core-domain/src/evidence | `Core Domain` | Cross | P1 | M | `OPEN` |
-| [`GT-304`](./gap-reference-catalog.md#gt-304) | Gate Decision model — packages/core-domain/src/gates/decision | `Core Domain` | Cross | P1 | M | `OPEN` |
-| [`GT-305`](./gap-reference-catalog.md#gt-305) | Phase Transition model — packages/core-domain/src/phases/transition | `Core Domain` | Cross | P1 | M | `OPEN` |
-| [`GT-306`](./gap-reference-catalog.md#gt-306) | Provider ports model — packages/core-domain/src/providers | `Core Domain` | Cross | P1 | M | `OPEN` |
-| [`GT-307`](./gap-reference-catalog.md#gt-307) | Tenant authority model — packages/core-domain/src/tenancy | `Core Domain` | Cross | P1 | M | `OPEN` |
-| [`GT-310`](./gap-reference-catalog.md#gt-310) | Test suite exists — sdk/cli/src/__tests__ | `Governance` | Cross | P1 | M | `OPEN` |
-| [`GT-311`](./gap-reference-catalog.md#gt-311) | E2E tests exist — sdk/cli/src/__tests__/e2e | `Governance` | Cross | P1 | M | `OPEN` |
-| [`GT-302`](./gap-reference-catalog.md#gt-302) | scaffold command exists — sdk/cli/src/commands/architecture/scaffold | `CLI` | Cross | P1 | L | `OPEN` |
+| [`GT-299`](./gap-reference-catalog.md#gt-299) | OpenAPI specification — apps/core-api/src/openapi | `BFF API` | Cross | P1 | M | `DONE` |
+| [`GT-300`](./gap-reference-catalog.md#gt-300) | agents command exists — sdk/cli/src/commands/agents | `CLI` | Cross | P1 | M | `DONE` |
+| [`GT-301`](./gap-reference-catalog.md#gt-301) | upgrade command exists — sdk/cli/src/commands/upgrade | `CLI` | Cross | P1 | M | `DONE` |
+| [`GT-303`](./gap-reference-catalog.md#gt-303) | Evidence Graph implementation — packages/core-domain/src/evidence | `Core Domain` | Cross | P1 | M | `DONE` |
+| [`GT-304`](./gap-reference-catalog.md#gt-304) | Gate Decision model — packages/core-domain/src/gates/decision | `Core Domain` | Cross | P1 | M | `DONE` |
+| [`GT-305`](./gap-reference-catalog.md#gt-305) | Phase Transition model — packages/core-domain/src/phases/transition | `Core Domain` | Cross | P1 | M | `DONE` |
+| [`GT-306`](./gap-reference-catalog.md#gt-306) | Provider ports model — packages/core-domain/src/providers | `Core Domain` | Cross | P1 | M | `DONE` |
+| [`GT-307`](./gap-reference-catalog.md#gt-307) | Tenant authority model — packages/core-domain/src/tenancy | `Core Domain` | Cross | P1 | M | `DONE` |
+| [`GT-310`](./gap-reference-catalog.md#gt-310) | Test suite exists — sdk/cli/src/__tests__ | `Governance` | Cross | P1 | M | `DONE` |
+| [`GT-311`](./gap-reference-catalog.md#gt-311) | E2E tests exist — sdk/cli/src/__tests__/e2e | `Governance` | Cross | P1 | M | `DONE` |
+| [`GT-302`](./gap-reference-catalog.md#gt-302) | scaffold command exists — sdk/cli/src/commands/architecture/scaffold | `CLI` | Cross | P1 | L | `DONE` |
 | [`GT-308`](./gap-reference-catalog.md#gt-308) | Plugin system for commands — sdk/cli/src/plugins | `CLI` | Cross | P2 | M | `OPEN` |
 | [`GT-309`](./gap-reference-catalog.md#gt-309) | Contribution validation — sdk/cli/src/contributions | `CLI` | Cross | P2 | M | `OPEN` |
 | [`GT-280`](./gap-reference-catalog.md#gt-280) | SDLC phases como datos consultables (JSON/YAML) — mapeo gate → artefactos → reglas Rego | `Governance` | Cross | P0 | M | `DONE` |
@@ -327,7 +327,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-246`](./gap-reference-catalog.md#gt-246) | Implement Chaos Mesh/Litmus experiments | `QA` | Cross | P3 | L | `DONE` |
 
 
-**Progress:** 299 / 312 done · 0 in progress · 13 pending · 0 deferred
+**Progress:** 310 / 312 done · 0 in progress · 2 pending · 0 deferred
 
 **Wave 2026-06-23 (Wilson deep audit III):** Added 14 new gaps `GT-212`…`GT-225` from the Wilson Audit Playbook covering: ADR status hygiene (GT-212), topology manifest metadata + operational budgets + guidance corpus (GT-213, GT-217, GT-219), REST controller observability + OpenAPI (GT-214, GT-215), OPA input-schema parity + per-topology test density (GT-216, GT-222), SDLC Phase 05 rollback + on-call templates (GT-218), CLI branch coverage + envelope format coverage + skip-list cleanup (GT-220, GT-224, GT-225), MCP HTTP audit logging (GT-221), and cross-surface parity e2e tests (GT-223).
 

@@ -29,7 +29,7 @@ module.exports = {
   moduleDirectories: ['node_modules', 'src'],
   transform: {
     '^.+\\.ts$': ['ts-jest', {
-      tsconfig: 'tsconfig.test.json',
+      tsconfig: require('node:path').join(__dirname, 'tsconfig.test.json'),
     }],
   },
   moduleNameMapper: {

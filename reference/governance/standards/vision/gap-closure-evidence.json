@@ -3943,15 +3943,17 @@
     {
       "id": "GT-266",
       "closedAt": "2026-06-24",
-      "closureCommit": "c760bcfd",
+      "closureCommit": "041c89f6",
       "evidence": [
-        "packages/mcp-server/src/mcp/api-key-provisioning.service.ts"
+        "packages/mcp-server/src/mcp/api-key-provisioning.service.ts",
+        "packages/mcp-server/src/mcp/api-key-provisioning.service.spec.ts",
+        "packages/mcp-server/src/mcp/mcp.module.ts"
       ],
       "validationCommands": [
-        "grep evk_ packages/mcp-server/src/mcp/api-key-provisioning.service.ts"
+        "npx jest --config packages/mcp-server/jest.config.js --rootDir packages/mcp-server --testPathPatterns='api-key-provisioning' --no-coverage"
       ],
       "dependencyDisposition": "none",
-      "closureNote": "Complete API key provisioning: generation (evk_ prefix), SHA-256 validation, rotation, revocation, tenant isolation."
+      "closureNote": "ApiKeyProvisioningService with evk_ prefix, SHA-256 hashed storage, rotation, revocation, audit logging, and legacy migration."
     },
     {
       "id": "GT-268",
@@ -3973,9 +3975,35 @@
       "closureNote": "All 3 missing CI scripts recovered from git history (deleted in 79af9929). bilingual-coverage reports 100% coverage, coverage-dashboard generates COVERAGE_REPORT.md, topology-rule-coverage validates all 8 topologies with 0 errors."
     },
     {
+      "id": "GT-267",
+      "closedAt": "2026-06-26",
+      "closureCommit": "96dc111b",
+      "evidence": [
+        "apps/core-api/package.json",
+        "apps/core-api/src/presentation/controllers/architecture.controller.ts",
+        "apps/core-api/src/presentation/controllers/architecture.controller.spec.ts",
+        "packages/mcp-server/package.json",
+        "packages/mcp-server/src/mcp/mcp-cache.service.ts",
+        "packages/mcp-server/src/mcp/mcp-server.service.ts",
+        "packages/mcp-server/tsconfig.json",
+        "sdk/cli/src/commands/mcp/mcp-serve.command.ts",
+        "sdk/cli/src/types/evolith-mcp-server.d.ts",
+        "package-lock.json"
+      ],
+      "validationCommands": [
+        "npm -ws run build --if-present",
+        "npm --workspace apps/core-api test -- --runInBand",
+        "npm --workspace packages/mcp-server test -- --runInBand",
+        "npm --workspace sdk/cli run test:unit -- --runInBand",
+        "git diff --check"
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "Core API and MCP Server cache dependencies are declared in their workspace manifests and locked in package-lock.json."
+    },
+    {
       "id": "GT-270",
       "closedAt": "2026-06-25",
-      "closureCommit": "pending",
+      "closureCommit": "c5f42067",
       "evidence": [
         "reference/infrastructure/helm/evolith-bff/values.yaml",
         "reference/infrastructure/helm/evolith-mcp/values.yaml",
@@ -3992,8 +4020,15 @@
       "id": "GT-264",
       "closedAt": "2026-06-25",
       "closureCommit": "bbd2e517",
-      "evidence": [],
-      "validationCommands": [],
+      "evidence": [
+        ".github/workflows/sdk-cli-ci.yml",
+        "reference/governance/standards/vision/gap-reference-catalog.md",
+        "reference/governance/standards/vision/gap-reference-catalog.es.md"
+      ],
+      "validationCommands": [
+        "rg -n \"dast-scan|zaproxy/action-full-scan|gitleaks\" .github/workflows/sdk-cli-ci.yml",
+        "rg -n \"#### GT-273|long-term DAST plan|plan DAST de largo plazo\" reference/governance/standards/vision/gap-reference-catalog.md reference/governance/standards/vision/gap-reference-catalog.es.md"
+      ],
       "dependencyDisposition": "none",
       "closureNote": "DAST (OWASP ZAP) scan removed from sdk-cli-ci.yml. The step scanned against localhost:8000 without a server running, producing a silent no-op. Replaced by gitleaks secret detection (GT-265) and Trivy container scanning (GT-227) as higher-signal security controls. Long-term DAST plan tracked as GT-273."
     },
@@ -4017,19 +4052,41 @@
       "closureNote": "NativeEvaluator with 12 domain handlers, 17 parity fixtures, 65 passing tests, CI parity gate passing."
     },
     {
-      "id": "GT-266",
-      "closedAt": "2026-06-24",
-      "closureCommit": "6ba915c1",
+      "id": "GT-271",
+      "closedAt": "2026-06-25",
+      "closureCommit": "2d510597",
       "evidence": [
-        "packages/mcp-server/src/mcp/api-key-provisioning.service.ts",
-        "packages/mcp-server/src/mcp/api-key-provisioning.service.spec.ts",
-        "packages/mcp-server/src/mcp/mcp.module.ts"
+        "reference/infrastructure/helm/evolith-bff/templates/deployment.yaml",
+        "reference/infrastructure/helm/evolith-bff/templates/hpa.yaml",
+        "reference/infrastructure/helm/evolith-bff/templates/networkpolicy.yaml",
+        "reference/infrastructure/helm/evolith-bff/templates/pdb.yaml",
+        "reference/infrastructure/helm/evolith-bff/values.yaml",
+        "reference/infrastructure/helm/evolith-mcp/templates/deployment.yaml",
+        "reference/infrastructure/helm/evolith-mcp/templates/hpa.yaml",
+        "reference/infrastructure/helm/evolith-mcp/templates/networkpolicy.yaml",
+        "reference/infrastructure/helm/evolith-mcp/templates/pdb.yaml",
+        "reference/infrastructure/helm/evolith-mcp/values.yaml"
       ],
       "validationCommands": [
-        "npx jest --config packages/mcp-server/jest.config.js --rootDir packages/mcp-server --testPathPatterns='api-key-provisioning' --no-coverage"
+        "rg -n \"runAsNonRoot|readOnlyRootFilesystem|allowPrivilegeEscalation|livenessProbe|readinessProbe|startupProbe|resources:|kind: (HorizontalPodAutoscaler|PodDisruptionBudget|NetworkPolicy)\" reference/infrastructure/helm/evolith-bff reference/infrastructure/helm/evolith-mcp"
       ],
       "dependencyDisposition": "none",
-      "closureNote": "ApiKeyProvisioningService with evk_ prefix, SHA-256 hashed storage, rotation, revocation, audit logging, and legacy migration. 27 tests passing."
+      "closureNote": "BFF and MCP Helm charts define resources, probes, security contexts, NetworkPolicy, PodDisruptionBudget, and optional HPA defaults."
+    },
+    {
+      "id": "GT-20",
+      "closedAt": "2026-06-25",
+      "closureCommit": "2d510597",
+      "evidence": [
+        "reference/architecture/adrs/",
+        "reference/governance/standards/vision/gap-reference-catalog.md",
+        "reference/governance/standards/vision/gap-reference-catalog.es.md"
+      ],
+      "validationCommands": [
+        "rg -n \"GT-20\" reference/architecture/adrs"
+      ],
+      "dependencyDisposition": "none",
+      "closureNote": "ADR corpus backfill completed; only ADR authoring standard references to GT-20 remain as historical tracking links."
     },
     {
       "id": "GT-274",

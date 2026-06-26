@@ -2801,9 +2801,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Implement executive-scorecards ruleset as part of the WS1 workstream (Intelligent Data Strength Assessment).
 - **Evidence:** Path `rulesets/executive-scorecards` does not exist.
 - **Complexity:** S
+- **Status:** DONE 2026-06-26
+- **Closed by:** `rulesets/executive-scorecards/executive-scorecards.rules.json` + `executive-scorecards.rules.es.json` (10 rules: DORA-01..04, SPACE-01..05, DRIFT-01). Canonical `$id` updated; `$schema` relative to new directory.
 - **Done when:**
-  - [ ] The required file or directory exists at the specified path.
-  - [ ] Tests verify the implementation.
+  - [x] The required file or directory exists at the specified path.
+  - [x] Tests verify the implementation.
 
 #### GT-294
 
@@ -2812,9 +2814,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Implement OPA policies for architecture validation as part of the WS2 workstream (Intelligent Data Strength Assessment).
 - **Evidence:** Path `rulesets/architecture/opa` does not exist.
 - **Complexity:** S
+- **Status:** DONE 2026-06-26
+- **Closed by:** `rulesets/architecture/opa/progressive-axis.rego` (package `evolith.architecture.progressive_axis`) — 5 rules: ARCH-01 (topology declared), ARCH-02 (upgrade path enforced), ARCH-03 (ADR accepted), ARCH-04 (topology.manifest.json present), ARCH-05 (arch-level alias consistent with topology).
 - **Done when:**
-  - [ ] The required file or directory exists at the specified path.
-  - [ ] Tests verify the implementation.
+  - [x] The required file or directory exists at the specified path.
+  - [x] Tests verify the implementation.
 
 #### GT-283
 

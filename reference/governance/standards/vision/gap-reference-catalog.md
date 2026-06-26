@@ -2693,3 +2693,328 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
   - [x] Tests verifican los campos de evidencia detallada (severity, remediation, gateRef, outputEnvelope).
   - [x] `run-evolith-deep.mjs` reporta `SÓLIDO` para la dimensión "REPORTE ACCIONABLE".
 - **Closure Evidence:** `RuleEvaluation` en `satellite-manifest.ts` ahora tiene `severity: EvaluationSeverity`, `remediation: string`, `gateRef: string`. `EvaluationVerdict` tiene `outputEnvelope?: SuccessEnvelope<...>` con ADR-0073 meta. Pipeline genera remediation como "Create ADR at docs/adrs/..." para artefactos conocidos y deriveSeverity desde blockingCriteria. CLI muestra iconos 🔴🟡 por severity + remedio truncado a 72 chars. MCP expone campos flatteneados. 5 tests GT-282 agregan cobertura. Deep audit ahora SÓLIDO. Score global: 75% (6/8).
+
+
+#### GT-286
+
+**Title:** compliance-baseline ruleset exists — rulesets/compliance-baseline
+
+- **Purpose:** Implement compliance-baseline ruleset as part of the WS1 workstream (Intelligent Data Strength Assessment).
+- **Evidence:** Path `rulesets/compliance-baseline` does not exist.
+- **Complexity:** S
+- **Done when:**
+  - [ ] The required file or directory exists at the specified path.
+  - [ ] Tests verify the implementation.
+
+#### GT-287
+
+**Title:** definition-of-done ruleset exists — rulesets/definition-of-done
+
+- **Purpose:** Implement definition-of-done ruleset as part of the WS1 workstream (Intelligent Data Strength Assessment).
+- **Evidence:** Path `rulesets/definition-of-done` does not exist.
+- **Complexity:** S
+- **Done when:**
+  - [ ] The required file or directory exists at the specified path.
+  - [ ] Tests verify the implementation.
+
+#### GT-288
+
+**Title:** engineering-manifesto ruleset exists — rulesets/engineering-manifesto
+
+- **Purpose:** Implement engineering-manifesto ruleset as part of the WS1 workstream (Intelligent Data Strength Assessment).
+- **Evidence:** Path `rulesets/engineering-manifesto` does not exist.
+- **Complexity:** S
+- **Done when:**
+  - [ ] The required file or directory exists at the specified path.
+  - [ ] Tests verify the implementation.
+
+#### GT-289
+
+**Title:** repository-taxonomy ruleset exists — rulesets/repository-taxonomy
+
+- **Purpose:** Implement repository-taxonomy ruleset as part of the WS1 workstream (Intelligent Data Strength Assessment).
+- **Evidence:** Path `rulesets/repository-taxonomy` does not exist.
+- **Complexity:** S
+- **Done when:**
+  - [ ] The required file or directory exists at the specified path.
+  - [ ] Tests verify the implementation.
+
+#### GT-290
+
+**Title:** phase-gates ruleset exists — rulesets/phase-gates
+
+- **Purpose:** Implement phase-gates ruleset as part of the WS1 workstream (Intelligent Data Strength Assessment).
+- **Evidence:** Path `rulesets/phase-gates` does not exist.
+- **Complexity:** S
+- **Done when:**
+  - [ ] The required file or directory exists at the specified path.
+  - [ ] Tests verify the implementation.
+
+#### GT-291
+
+**Title:** quality-thresholds ruleset exists — rulesets/quality-thresholds
+
+- **Purpose:** Implement quality-thresholds ruleset as part of the WS1 workstream (Intelligent Data Strength Assessment).
+- **Evidence:** Path `rulesets/quality-thresholds` does not exist.
+- **Complexity:** S
+- **Done when:**
+  - [ ] The required file or directory exists at the specified path.
+  - [ ] Tests verify the implementation.
+
+#### GT-292
+
+**Title:** satellite-contracts ruleset exists — rulesets/satellite-contracts
+
+- **Purpose:** Implement satellite-contracts ruleset as part of the WS1 workstream (Intelligent Data Strength Assessment).
+- **Evidence:** Path `rulesets/satellite-contracts` does not exist.
+- **Complexity:** S
+- **Done when:**
+  - [ ] The required file or directory exists at the specified path.
+  - [ ] Tests verify the implementation.
+
+#### GT-293
+
+**Title:** executive-scorecards ruleset exists — rulesets/executive-scorecards
+
+- **Purpose:** Implement executive-scorecards ruleset as part of the WS1 workstream (Intelligent Data Strength Assessment).
+- **Evidence:** Path `rulesets/executive-scorecards` does not exist.
+- **Complexity:** S
+- **Done when:**
+  - [ ] The required file or directory exists at the specified path.
+  - [ ] Tests verify the implementation.
+
+#### GT-294
+
+**Title:** OPA policies for architecture — rulesets/architecture/opa
+
+- **Purpose:** Implement OPA policies for architecture validation as part of the WS2 workstream (Intelligent Data Strength Assessment).
+- **Evidence:** Path `rulesets/architecture/opa` does not exist.
+- **Complexity:** S
+- **Done when:**
+  - [ ] The required file or directory exists at the specified path.
+  - [ ] Tests verify the implementation.
+
+#### GT-283
+
+**Title:** f1-modular-monolith ruleset exists — rulesets/topologies/progressive-axis/modular-monolith
+
+- **Purpose:** Implement f1-modular-monolith ruleset as part of the WS1 workstream (Intelligent Data Strength Assessment).
+- **Evidence:** Path `rulesets/topologies/progressive-axis/modular-monolith` does not exist.
+- **Complexity:** M
+- **Done when:**
+  - [ ] The required file or directory exists at the specified path.
+  - [ ] Tests verify the implementation.
+
+#### GT-284
+
+**Title:** f2-distributed-modules ruleset exists — rulesets/topologies/progressive-axis/distributed-modules
+
+- **Purpose:** Implement f2-distributed-modules ruleset as part of the WS1 workstream (Intelligent Data Strength Assessment).
+- **Evidence:** Path `rulesets/topologies/progressive-axis/distributed-modules` does not exist.
+- **Complexity:** M
+- **Done when:**
+  - [ ] The required file or directory exists at the specified path.
+  - [ ] Tests verify the implementation.
+
+#### GT-285
+
+**Title:** f3-microservices ruleset exists — rulesets/topologies/progressive-axis/microservices
+
+- **Purpose:** Implement f3-microservices ruleset as part of the WS1 workstream (Intelligent Data Strength Assessment).
+- **Evidence:** Path `rulesets/topologies/progressive-axis/microservices` does not exist.
+- **Complexity:** M
+- **Done when:**
+  - [ ] The required file or directory exists at the specified path.
+  - [ ] Tests verify the implementation.
+
+#### GT-295
+
+**Title:** Gate evaluation logic exists — packages/core-domain/src/gates
+
+- **Purpose:** Implement Gate evaluation logic as part of the WS3 workstream (Intelligent Data Strength Assessment).
+- **Evidence:** Path `packages/core-domain/src/gates` does not exist.
+- **Complexity:** M
+- **Done when:**
+  - [ ] The required file or directory exists at the specified path.
+  - [ ] Tests verify the implementation.
+
+#### GT-296
+
+**Title:** Phase transition logic exists — packages/core-domain/src/phases
+
+- **Purpose:** Implement Phase transition logic as part of the WS3 workstream (Intelligent Data Strength Assessment).
+- **Evidence:** Path `packages/core-domain/src/phases` does not exist.
+- **Complexity:** M
+- **Done when:**
+  - [ ] The required file or directory exists at the specified path.
+  - [ ] Tests verify the implementation.
+
+#### GT-297
+
+**Title:** MCP resources for corpus — packages/mcp-server/src/resources
+
+- **Purpose:** Implement MCP resources for corpus retrieval as part of the WS4 workstream (Intelligent Data Strength Assessment).
+- **Evidence:** Path `packages/mcp-server/src/resources` does not exist.
+- **Complexity:** M
+- **Done when:**
+  - [ ] The required file or directory exists at the specified path.
+  - [ ] Tests verify the implementation.
+
+#### GT-298
+
+**Title:** WatcherService integration — packages/mcp-server/src/watcher
+
+- **Purpose:** Implement WatcherService integration for MCP drift notification as part of the WS4 workstream (Intelligent Data Strength Assessment).
+- **Evidence:** Path `packages/mcp-server/src/watcher` does not exist.
+- **Complexity:** M
+- **Done when:**
+  - [ ] The required file or directory exists at the specified path.
+  - [ ] Tests verify the implementation.
+
+#### GT-299
+
+**Title:** OpenAPI specification — apps/core-api/src/openapi
+
+- **Purpose:** Implement OpenAPI specification for core-api as part of the WS5 workstream (Intelligent Data Strength Assessment).
+- **Evidence:** Path `apps/core-api/src/openapi` does not exist.
+- **Complexity:** M
+- **Done when:**
+  - [ ] The required file or directory exists at the specified path.
+  - [ ] Tests verify the implementation.
+
+#### GT-300
+
+**Title:** agents command exists — sdk/cli/src/commands/agents
+
+- **Purpose:** Implement agents command for agent installation/onboarding as part of the WS6 workstream (Intelligent Data Strength Assessment).
+- **Evidence:** Path `sdk/cli/src/commands/agents` does not exist.
+- **Complexity:** M
+- **Done when:**
+  - [ ] The required file or directory exists at the specified path.
+  - [ ] Tests verify the implementation.
+
+#### GT-301
+
+**Title:** upgrade command exists — sdk/cli/src/commands/upgrade
+
+- **Purpose:** Implement upgrade command for safe satellite upgrades as part of the WS6 workstream (Intelligent Data Strength Assessment).
+- **Evidence:** Path `sdk/cli/src/commands/upgrade` does not exist.
+- **Complexity:** M
+- **Done when:**
+  - [ ] The required file or directory exists at the specified path.
+  - [ ] Tests verify the implementation.
+
+#### GT-303
+
+**Title:** Evidence Graph implementation — packages/core-domain/src/evidence
+
+- **Purpose:** Implement Evidence Graph as part of the WS7 workstream (Intelligent Data Strength Assessment). Requires ADR before implementation.
+- **Evidence:** Path `packages/core-domain/src/evidence` does not exist.
+- **Complexity:** M
+- **Done when:**
+  - [ ] ADR for Evidence Graph is accepted.
+  - [ ] The required file or directory exists at the specified path.
+  - [ ] Tests verify the implementation.
+
+#### GT-304
+
+**Title:** Gate Decision model — packages/core-domain/src/gates/decision
+
+- **Purpose:** Implement Gate Decision model as part of the WS7 workstream (Intelligent Data Strength Assessment). Requires ADR before implementation.
+- **Evidence:** Path `packages/core-domain/src/gates/decision` does not exist.
+- **Complexity:** M
+- **Done when:**
+  - [ ] ADR for Gate Decision is accepted.
+  - [ ] The required file or directory exists at the specified path.
+  - [ ] Tests verify the implementation.
+
+#### GT-305
+
+**Title:** Phase Transition model — packages/core-domain/src/phases/transition
+
+- **Purpose:** Implement Phase Transition model as part of the WS7 workstream (Intelligent Data Strength Assessment). Requires ADR before implementation.
+- **Evidence:** Path `packages/core-domain/src/phases/transition` does not exist.
+- **Complexity:** M
+- **Done when:**
+  - [ ] ADR for Phase Transition is accepted.
+  - [ ] The required file or directory exists at the specified path.
+  - [ ] Tests verify the implementation.
+
+#### GT-306
+
+**Title:** Provider ports model — packages/core-domain/src/providers
+
+- **Purpose:** Implement Provider ports model (plugin system) as part of the WS7 workstream (Intelligent Data Strength Assessment). Requires ADR before implementation.
+- **Evidence:** Path `packages/core-domain/src/providers` does not exist.
+- **Complexity:** M
+- **Done when:**
+  - [ ] ADR for Provider ports is accepted.
+  - [ ] The required file or directory exists at the specified path.
+  - [ ] Tests verify the implementation.
+
+#### GT-307
+
+**Title:** Tenant authority model — packages/core-domain/src/tenancy
+
+- **Purpose:** Implement Tenant authority model as part of the WS7 workstream (Intelligent Data Strength Assessment). Requires ADR before implementation.
+- **Evidence:** Path `packages/core-domain/src/tenancy` does not exist.
+- **Complexity:** M
+- **Done when:**
+  - [ ] ADR for Tenant authority is accepted.
+  - [ ] The required file or directory exists at the specified path.
+  - [ ] Tests verify the implementation.
+
+#### GT-310
+
+**Title:** Test suite exists — sdk/cli/src/__tests__
+
+- **Purpose:** Implement complete test suite as part of the WS9 workstream (Intelligent Data Strength Assessment).
+- **Evidence:** Path `sdk/cli/src/__tests__` does not exist.
+- **Complexity:** M
+- **Done when:**
+  - [ ] The required file or directory exists at the specified path.
+  - [ ] Tests verify the implementation.
+
+#### GT-311
+
+**Title:** E2E tests exist — sdk/cli/src/__tests__/e2e
+
+- **Purpose:** Implement E2E tests as part of the WS9 workstream (Intelligent Data Strength Assessment).
+- **Evidence:** Path `sdk/cli/src/__tests__/e2e` does not exist.
+- **Complexity:** M
+- **Done when:**
+  - [ ] The required file or directory exists at the specified path.
+  - [ ] Tests verify the implementation.
+
+#### GT-302
+
+**Title:** scaffold command exists — sdk/cli/src/commands/architecture/scaffold
+
+- **Purpose:** Implement scaffold command (real execution, not mock) as part of the WS6 workstream (Intelligent Data Strength Assessment).
+- **Evidence:** Path `sdk/cli/src/commands/architecture/scaffold` does not exist.
+- **Complexity:** L
+- **Done when:**
+  - [ ] The required file or directory exists at the specified path.
+  - [ ] Tests verify the implementation.
+
+#### GT-308
+
+**Title:** Plugin system for commands — sdk/cli/src/plugins
+
+- **Purpose:** Implement plugin system for commands as part of the WS8 workstream (Intelligent Data Strength Assessment).
+- **Evidence:** Path `sdk/cli/src/plugins` does not exist.
+- **Complexity:** M
+- **Done when:**
+  - [ ] The required file or directory exists at the specified path.
+  - [ ] Tests verify the implementation.
+
+#### GT-309
+
+**Title:** Contribution validation — sdk/cli/src/contributions
+
+- **Purpose:** Implement contribution validation for external collaborators as part of the WS8 workstream (Intelligent Data Strength Assessment).
+- **Evidence:** Path `sdk/cli/src/contributions` does not exist.
+- **Complexity:** M
+- **Done when:**
+  - [ ] The required file or directory exists at the specified path.
+  - [ ] Tests verify the implementation.

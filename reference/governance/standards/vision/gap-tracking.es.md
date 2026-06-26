@@ -4,7 +4,7 @@
 
 **Estado:** Seguimiento Activo
 **Responsable:** Evolith Architecture Board
-**Última Actualización:** 2026-06-26 (GT-277…GT-279 brechas de interfaces framework de topologías)
+**Última Actualización:** 2026-06-26 (GT-283-GT-311 abiertos desde auditoría de data inteligente)
 **Detalle de Gaps:** [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md)
 
 Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunidades, habilitadores, prioridad y estado. Selecciona un ID para abrir la descripción del problema, propósito, evidencia, criterios de cierre y referencias.
@@ -13,6 +13,35 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| [`GT-286`](./gap-reference-catalog.es.md#gt-286) | Ruleset compliance-baseline existe — rulesets/compliance-baseline | `Rulesets` | Cross | P0 | S | `ABIERTO` |
+| [`GT-287`](./gap-reference-catalog.es.md#gt-287) | Ruleset definition-of-done existe — rulesets/definition-of-done | `Rulesets` | Cross | P0 | S | `ABIERTO` |
+| [`GT-288`](./gap-reference-catalog.es.md#gt-288) | Ruleset engineering-manifesto existe — rulesets/engineering-manifesto | `Rulesets` | Cross | P0 | S | `ABIERTO` |
+| [`GT-289`](./gap-reference-catalog.es.md#gt-289) | Ruleset repository-taxonomy existe — rulesets/repository-taxonomy | `Rulesets` | Cross | P0 | S | `ABIERTO` |
+| [`GT-290`](./gap-reference-catalog.es.md#gt-290) | Ruleset phase-gates existe — rulesets/phase-gates | `Rulesets` | Cross | P0 | S | `ABIERTO` |
+| [`GT-291`](./gap-reference-catalog.es.md#gt-291) | Ruleset quality-thresholds existe — rulesets/quality-thresholds | `Rulesets` | Cross | P0 | S | `ABIERTO` |
+| [`GT-292`](./gap-reference-catalog.es.md#gt-292) | Ruleset satellite-contracts existe — rulesets/satellite-contracts | `Rulesets` | Cross | P0 | S | `ABIERTO` |
+| [`GT-293`](./gap-reference-catalog.es.md#gt-293) | Ruleset executive-scorecards existe — rulesets/executive-scorecards | `Rulesets` | Cross | P0 | S | `ABIERTO` |
+| [`GT-294`](./gap-reference-catalog.es.md#gt-294) | Políticas OPA para arquitectura — rulesets/architecture/opa | `Architecture` | Cross | P0 | S | `ABIERTO` |
+| [`GT-283`](./gap-reference-catalog.es.md#gt-283) | Ruleset f1-modular-monolith existe — rulesets/topologies/progressive-axis/modular-monolith | `Rulesets` | Cross | P0 | M | `ABIERTO` |
+| [`GT-284`](./gap-reference-catalog.es.md#gt-284) | Ruleset f2-distributed-modules existe — rulesets/topologies/progressive-axis/distributed-modules | `Rulesets` | Cross | P0 | M | `ABIERTO` |
+| [`GT-285`](./gap-reference-catalog.es.md#gt-285) | Ruleset f3-microservices existe — rulesets/topologies/progressive-axis/microservices | `Rulesets` | Cross | P0 | M | `ABIERTO` |
+| [`GT-295`](./gap-reference-catalog.es.md#gt-295) | Lógica de evaluación de gates existe — packages/core-domain/src/gates | `Core Domain` | Cross | P0 | M | `ABIERTO` |
+| [`GT-296`](./gap-reference-catalog.es.md#gt-296) | Lógica de transición de fases existe — packages/core-domain/src/phases | `Core Domain` | Cross | P0 | M | `ABIERTO` |
+| [`GT-297`](./gap-reference-catalog.es.md#gt-297) | Recursos MCP para corpus — packages/mcp-server/src/resources | `MCP` | Cross | P0 | M | `ABIERTO` |
+| [`GT-298`](./gap-reference-catalog.es.md#gt-298) | Integración WatcherService — packages/mcp-server/src/watcher | `MCP` | Cross | P0 | M | `ABIERTO` |
+| [`GT-299`](./gap-reference-catalog.es.md#gt-299) | Especificación OpenAPI — apps/core-api/src/openapi | `BFF API` | Cross | P1 | M | `ABIERTO` |
+| [`GT-300`](./gap-reference-catalog.es.md#gt-300) | Comando agents existe — sdk/cli/src/commands/agents | `CLI` | Cross | P1 | M | `ABIERTO` |
+| [`GT-301`](./gap-reference-catalog.es.md#gt-301) | Comando upgrade existe — sdk/cli/src/commands/upgrade | `CLI` | Cross | P1 | M | `ABIERTO` |
+| [`GT-303`](./gap-reference-catalog.es.md#gt-303) | Implementación Evidence Graph — packages/core-domain/src/evidence | `Core Domain` | Cross | P1 | M | `ABIERTO` |
+| [`GT-304`](./gap-reference-catalog.es.md#gt-304) | Modelo Gate Decision — packages/core-domain/src/gates/decision | `Core Domain` | Cross | P1 | M | `ABIERTO` |
+| [`GT-305`](./gap-reference-catalog.es.md#gt-305) | Modelo Phase Transition — packages/core-domain/src/phases/transition | `Core Domain` | Cross | P1 | M | `ABIERTO` |
+| [`GT-306`](./gap-reference-catalog.es.md#gt-306) | Modelo Provider ports — packages/core-domain/src/providers | `Core Domain` | Cross | P1 | M | `ABIERTO` |
+| [`GT-307`](./gap-reference-catalog.es.md#gt-307) | Modelo Tenant authority — packages/core-domain/src/tenancy | `Core Domain` | Cross | P1 | M | `ABIERTO` |
+| [`GT-310`](./gap-reference-catalog.es.md#gt-310) | Suite de tests existe — sdk/cli/src/__tests__ | `Governance` | Cross | P1 | M | `ABIERTO` |
+| [`GT-311`](./gap-reference-catalog.es.md#gt-311) | Tests E2E existen — sdk/cli/src/__tests__/e2e | `Governance` | Cross | P1 | M | `ABIERTO` |
+| [`GT-302`](./gap-reference-catalog.es.md#gt-302) | Comando scaffold existe — sdk/cli/src/commands/architecture/scaffold | `CLI` | Cross | P1 | L | `ABIERTO` |
+| [`GT-308`](./gap-reference-catalog.es.md#gt-308) | Sistema de plugins para comandos — sdk/cli/src/plugins | `CLI` | Cross | P2 | M | `ABIERTO` |
+| [`GT-309`](./gap-reference-catalog.es.md#gt-309) | Validación de contribuciones — sdk/cli/src/contributions | `CLI` | Cross | P2 | M | `ABIERTO` |
 | [`GT-277`](./gap-reference-catalog.es.md#gt-277) | Especificaciones OpenAPI de topologías — interfaces framework ausentes en las 8 topologías | `Architecture` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-278`](./gap-reference-catalog.es.md#gt-278) | Manifiestos MCP de topologías — interfaces framework ausentes en las 8 topologías | `Architecture` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-279`](./gap-reference-catalog.es.md#gt-279) | Flujos CLI de topologías — interfaces framework ausentes en las 8 topologías | `Architecture` | Cross | P1 | M | `COMPLETADO` |

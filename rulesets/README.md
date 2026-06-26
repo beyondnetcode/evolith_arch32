@@ -54,6 +54,8 @@ rulesets/
 │   └── phase-gates.rules.json
 ├── quality-thresholds/         # WS1 executable quality-thresholds entrypoint
 │   └── quality-thresholds.rules.json
+├── satellite-contracts/        # WS1 executable Satellite Contracts entrypoint
+│   └── satellite-contracts.rules.json
 ├── opa/                        # OPA policies and inputs schemas
 │   ├── schemas/                # OPA policy input schemas (9 schemas)
 │   ├── *.rego                  # Rego policy files

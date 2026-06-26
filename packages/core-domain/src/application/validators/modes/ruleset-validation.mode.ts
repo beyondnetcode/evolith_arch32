@@ -9,7 +9,7 @@ const RULESET_ID_MAP: Record<string, string> = {
   'acl': 'rulesets/acl/anti-corruption-layer.rules.json',
   'open-core': 'rulesets/governance/open-core-boundary.rules.json',
   'inheritance': 'rulesets/governance/inheritance.rules.json',
-  'satellite-contracts': 'rulesets/governance/satellite-contracts.rules.json',
+  'satellite-contracts': 'rulesets/satellite-contracts/satellite-contracts.rules.json',
   'executive-scorecards': 'rulesets/governance/executive-scorecards.rules.json',
   'cli-release': 'rulesets/cli/release-readiness.rules.json',
   'cli-parity': 'rulesets/cli/core-parity.rules.json',

@@ -252,11 +252,29 @@ Phase 2 implies a specific progressive topology. The following actions are requi
 
 **Exit gate:** RC Stamped
 
-### Required Artifacts
+### Gate Evidence (block the RC Stamp gate)
 
-| Artifact | Location | Why Required |
+| Artifact | File / System | Validation |
 |---|---|---|
-| **Test Summary Report Template** | [test-summary-report-template.md](./04-artifact-templates/test-summary-report-template.md) | Captures release scope, threshold metrics, test results, security scans, acceptance validation, and RC sign-off. |
+| Test Summary Report | [test-summary-report-template.md](./04-artifact-templates/test-summary-report-template.md) | All quality gates green or waived; RC stamped by QA Lead and Tech Lead |
+| Acceptance Validation | `.evolith/acceptance-validation.json` | Product Owner signs off on acceptance criteria verification |
+| Security Scan Report | [security-scan-report-template.md](./04-artifact-templates/security-scan-report-template.md) | Zero High/Critical CVEs; structure conforms to security-scan-report.schema.json |
+| Integration Evidence | [integration-evidence-template.md](./04-artifact-templates/integration-evidence-template.md) | Every declared contract exercised; no FAIL entries without waiver; integration-evidence.schema.json |
+| Pyramid Distribution | `coverage/coverage-summary.json` | 70% unit / 20% integration / 10% E2E target met or deviation explained |
+
+> **Blocking criteria notes:**
+> - "Any mandatory quality metric fails" → proxy: coverage-summary.json ≥ 80%
+> - "Technical debt ratio exceeds 5%" → requires tech-debt-report.json (format pending definition)
+> - "Acceptance criteria remain unverified" → verifies .evolith/acceptance-validation.json exists
+
+### Quality Thresholds
+
+Phase 4 applies all 8 rules from `quality-thresholds.rules.json`. The OPA rulesets `sdlc/pyramid-distribution.rego` (±10pp tolerance on 70/20/10 target) and `sdlc/coverage.rego` (≥80%) execute automatically via `evolith gate evaluate --phase qa`.
+
+### Framework Documents (consult and follow)
+
+| Artifact | Location | Why Consulted |
+|---|---|---|
 | **SDLC Quality Gates** | [quality-gates.md](./quality-gates.md) | Mathematical gate: coverage >= 80%, cyclomatic complexity <= 15, zero high/critical CVEs, tech debt ratio < 5%. |
 | **ADR-0018 — Testing Pyramid Quality Gates** | [ADR-0018](../../architecture/adrs/core/0018-testing-pyramid-quality-gates.md) | Defines the target test distribution: 70% unit / 20% integration / 10% E2E. |
 | **ADR-0052 — Unit Testing Isolation Strategy** | [ADR-0052](../../architecture/adrs/core/0052-unit-testing-isolation-strategy.md) | Governs mock and stub discipline. |
@@ -354,6 +372,10 @@ The following matrix provides a one-page view of artifact density per phase. An 
 | ADR-0005 — CI/CD Pipeline | — | — | **R** | **R** | **R** |
 | ADR-0050 — GitFlow Branching | — | — | **R** | — | — |
 | Test Summary Report | — | — | — | **R** | — |
+| Acceptance Validation | — | — | — | **R** | — |
+| Security Scan Report | — | — | — | **R** | — |
+| Integration Evidence | — | — | — | **R** | — |
+| Pyramid Distribution | — | — | — | **R** | — |
 | Release Notes | — | — | — | — | **R** |
 | Operations Hub | — | — | — | — | **R** |
 | Infrastructure Hub | — | — | — | — | **R** |

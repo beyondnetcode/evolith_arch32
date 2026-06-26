@@ -36,6 +36,36 @@ export class BlockingCriteriaValidator {
   ): Promise<boolean> {
     const criterionText = criterion.criterion.toLowerCase();
 
+    if (criterionText.includes('mandatory quality metric')) {
+      const summaryPath = path.join(projectPath, 'coverage', 'coverage-summary.json');
+      if (!await this.fs.exists(summaryPath)) return true;
+      try {
+        const content = await this.fs.readFile(summaryPath);
+        const summary = JSON.parse(content) as { total?: { statements?: { pct?: number } } };
+        const pct = summary.total?.statements?.pct;
+        return typeof pct !== 'number' || pct < 80;
+      } catch {
+        return true;
+      }
+    }
+
+    if (criterionText.includes('acceptance criteria remain unverified')) {
+      const acceptanceEvidence = evidenceResults.find(e => e.artifact === 'Acceptance Validation');
+      return !acceptanceEvidence?.found;
+    }
+
+    if (criterionText.includes('technical debt')) {
+      const debtPath = path.join(projectPath, '.evolith', 'tech-debt-report.json');
+      if (!await this.fs.exists(debtPath)) return false;
+      try {
+        const content = await this.fs.readFile(debtPath);
+        const report = JSON.parse(content) as { debtRatioPct?: number };
+        return typeof report.debtRatioPct === 'number' && report.debtRatioPct > 5;
+      } catch {
+        return false;
+      }
+    }
+
     if (criterionText.includes('scope is ambiguous') || criterionText.includes('funding')) {
       const prdEvidence = evidenceResults.find(e => e.artifact === 'PRD');
       const moscowEvidence = evidenceResults.find(e => e.artifact === 'MoSCoW Prioritization Matrix');

@@ -252,11 +252,29 @@ La Fase 2 implica una topología progresiva específica. Las siguientes acciones
 
 **Gate de salida:** RC Sellado
 
-### Artefactos Requeridos
+### Evidencia de Gate (bloquea la compuerta RC Stamp)
 
-| Artefacto | Ubicación | Por qué es requerido |
+| Artefacto | Archivo / Sistema | Validación |
 |---|---|---|
-| **Plantilla de Test Summary Report** | [test-summary-report-template.es.md](./04-artifact-templates/test-summary-report-template.es.md) | Captura alcance de release, métricas de umbral, resultados de pruebas, escaneos de seguridad, validación de aceptación y aprobación RC. |
+| Test Summary Report | [test-summary-report-template.es.md](./04-artifact-templates/test-summary-report-template.es.md) | Todos los gates de calidad en verde o con waiver; RC sellado por QA Lead y Tech Lead |
+| Acceptance Validation | `.evolith/acceptance-validation.json` | Product Owner firma verificación de criterios de aceptación |
+| Security Scan Report | [security-scan-report-template.es.md](./04-artifact-templates/security-scan-report-template.es.md) | Cero CVEs High/Critical; estructura conforme a security-scan-report.schema.json |
+| Integration Evidence | [integration-evidence-template.es.md](./04-artifact-templates/integration-evidence-template.es.md) | Cada contrato declarado ejercitado; sin entradas FAIL sin waiver; integration-evidence.schema.json |
+| Pyramid Distribution | `coverage/coverage-summary.json` | Objetivo 70% unit / 20% integración / 10% E2E alcanzado o desviación explicada |
+
+> **Notas de criterios de bloqueo:**
+> - "Any mandatory quality metric fails" → proxy: coverage-summary.json ≥ 80%
+> - "Technical debt ratio exceeds 5%" → requiere tech-debt-report.json (formato pendiente de definición)
+> - "Acceptance criteria remain unverified" → verifica que exista .evolith/acceptance-validation.json
+
+### Umbrales de Calidad
+
+La Fase 4 aplica las 8 reglas de `quality-thresholds.rules.json`. Los rulesets OPA `sdlc/pyramid-distribution.rego` (±10pp tolerancia en objetivo 70/20/10) y `sdlc/coverage.rego` (≥80%) se ejecutan automáticamente via `evolith gate evaluate --phase qa`.
+
+### Documentos de Marco (consultar y seguir)
+
+| Artefacto | Ubicación | Por qué se consulta |
+|---|---|---|
 | **Gates de Calidad SDLC** | [quality-gates.es.md](./quality-gates.es.md) | Gate matemático: cobertura >= 80%, complejidad ciclomática <= 15, cero CVEs high/critical, deuda técnica < 5%. |
 | **ADR-0018 — Pirámide de Testing** | [ADR-0018](../../architecture/adrs/core/0018-testing-pyramid-quality-gates.es.md) | Define la distribución objetivo de pruebas: 70% unitarias / 20% integración / 10% E2E. |
 | **ADR-0052 — Estrategia de Aislamiento Unit Testing** | [ADR-0052](../../architecture/adrs/core/0052-unit-testing-isolation-strategy.es.md) | Gobierna disciplina de mocks y stubs. |
@@ -354,6 +372,10 @@ La siguiente matriz ofrece una vista de una página de la densidad de artefactos
 | ADR-0005 — Pipeline CI/CD | — | — | **R** | **R** | **R** |
 | ADR-0050 — GitFlow Branching | — | — | **R** | — | — |
 | Test Summary Report | — | — | — | **R** | — |
+| Acceptance Validation | — | — | — | **R** | — |
+| Security Scan Report | — | — | — | **R** | — |
+| Integration Evidence | — | — | — | **R** | — |
+| Pyramid Distribution | — | — | — | **R** | — |
 | Release Notes | — | — | — | — | **R** |
 | Operations Hub | — | — | — | — | **R** |
 | Infrastructure Hub | — | — | — | — | **R** |

@@ -6,10 +6,6 @@ This repository-level navigation document has moved to the navigation hub:
 
 ## Why this file remains here
 
-- [Project Documentation Repository Structure](#project-documentation-repository-structure)
-- [Evolith SDK / CLI Oficial](./sdk/cli/README.md)
-- [Reference Directory Structure](#reference-directory-structure)
-
 This lightweight page is kept at the root path to preserve existing links, bookmarks, and references from older documentation.
 
 ## Related navigation

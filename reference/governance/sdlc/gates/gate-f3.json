@@ -4,7 +4,7 @@
   "name": "Successful Build",
   "phase": "f3",
   "description": "All code merged to main; CI passes; quality gates green; definition of done satisfied.",
-  "playbookRef": "# no dedicated playbook — CI/CD pipeline is the gate keeper",
+  "playbookRef": null,
   "accountableRole": "Tech Lead",
   "waiverAuthority": "Architecture Board (with exception for CVEs: Executive Risk Acceptance)",
   "requiredArtifacts": [

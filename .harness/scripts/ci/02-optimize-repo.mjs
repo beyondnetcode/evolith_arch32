@@ -45,6 +45,7 @@ const allowedDirectories = new Set([
   "sdk",
   "apps",
   "packages",
+  "wiki",
   "tests"
 ]);
 

@@ -1,0 +1,61 @@
+name: Wiki Sync
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**.md'
+      - 'reference/**'
+      - 'rulesets/**'
+      - 'CONTRIBUTING.md'
+      - 'AGENTS.md'
+
+permissions:
+  contents: write
+
+jobs:
+  sync-wiki:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+
+      - name: Generate wiki pages
+        run: node .harness/scripts/sync-wiki.mjs --force
+
+      - name: Clone wiki repo
+        run: |
+          git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.wiki.git /tmp/evolith-wiki || true
+          mkdir -p /tmp/evolith-wiki
+
+      - name: Sync wiki content
+        run: |
+          # Copy generated pages
+          cp wiki/*.md /tmp/evolith-wiki/
+
+          # Remove old pages that no longer exist
+          cd /tmp/evolith-wiki
+          for f in *.md; do
+            if [ ! -f "$GITHUB_WORKSPACE/wiki/$f" ] && [ "$f" != "_Sidebar.md" ] && [ "$f" != "_Footer.md" ]; then
+              rm -f "$f"
+            fi
+          done
+
+      - name: Push to wiki
+        run: |
+          cd /tmp/evolith-wiki
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --staged --quiet; then
+            echo "No wiki changes to push."
+          else
+            git commit -m "docs: auto-sync wiki from repository (sha: ${GITHUB_SHA::7})"
+            git push
+            echo "Wiki updated successfully."
+          fi

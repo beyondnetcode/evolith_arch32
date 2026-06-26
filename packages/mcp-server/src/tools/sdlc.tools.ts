@@ -14,8 +14,8 @@ const PHASE_REQUIREMENTS: PhaseRequirement[] = [
   { phase: 'phase-0', artifacts: ['evolith.yaml', 'README.md', '.evolith/moscow/phase-0.json'] },
   { phase: 'phase-1', artifacts: ['PRD', 'Discovery Canvas', 'Technical Feasibility Canvas', 'Ballpark Estimation', 'MoSCoW Prioritization Matrix', 'Build-versus-Compose Analysis'] },
   { phase: 'phase-2', artifacts: ['ADR Registry', 'Functional Stories', 'Reference Blueprint Alignment', 'Simplicity Checklist Phase 1', 'Bounded Context Map'] },
-  { phase: 'phase-3', artifacts: ['Technical Stories', 'Engineering Manifesto', 'SDLC Quality Gates', 'Canonical Patterns'] },
-  { phase: 'phase-4', artifacts: ['Dockerfile', 'CI/CD pipeline'] },
+  { phase: 'phase-3', artifacts: ['Technical Stories', 'CI Pipeline', 'Definition of Done Checklist', 'Documentation Delta', 'Coverage Report'] },
+  { phase: 'phase-4', artifacts: ['Test Summary Report', 'Acceptance Validation', 'Security Scan Report', 'Integration Evidence', 'Pyramid Distribution'] },
 ];
 
 const ARTIFACT_PATHS: Record<string, string> = {
@@ -34,6 +34,15 @@ const ARTIFACT_PATHS: Record<string, string> = {
   'Engineering Manifesto': 'reference/governance/sdlc/standards/engineering/engineering-manifesto.md',
   'SDLC Quality Gates': 'reference/governance/sdlc/quality-gates.md',
   'Canonical Patterns': 'reference/architecture/canonical-patterns',
+  'CI Pipeline': '.github/workflows',
+  'Definition of Done Checklist': 'reference/governance/sdlc/02-engineering/construction-focused-sdlc-framework.md',
+  'Documentation Delta': 'reference/governance/sdlc/03-documentation',
+  'Coverage Report': 'coverage/coverage-summary.json',
+  'Test Summary Report': 'reference/governance/sdlc/04-artifact-templates/test-summary-report-template.md',
+  'Acceptance Validation': '.evolith/acceptance-validation.json',
+  'Security Scan Report': 'reference/governance/sdlc/04-artifact-templates/security-scan-report-template.md',
+  'Integration Evidence': 'reference/governance/sdlc/04-artifact-templates/integration-evidence-template.md',
+  'Pyramid Distribution': 'coverage/coverage-summary.json',
 };
 
 /** SDLC tools: phase status, phase handoff (mutative), and DORA metrics. */

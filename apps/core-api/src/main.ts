@@ -25,14 +25,15 @@ async function bootstrap() {
 
   const config = app.get(ConfigService<EnvConfig>);
 
-  const swaggerConfig = new DocumentBuilder()
-    .setTitle('Evolith Core API')
-    .setDescription('Core API for gate evaluation, phase transitions, project initialization, and architecture drift detection')
-    .setVersion('1.0.0')
-    .build();
-
-  const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('api/docs', app, document);
+  if (config.get('NODE_ENV') !== 'production') {
+    const swaggerConfig = new DocumentBuilder()
+      .setTitle('Evolith Core API')
+      .setDescription('Core API for gate evaluation, phase transitions, project initialization, and architecture drift detection')
+      .setVersion('1.0.0')
+      .build();
+    const document = SwaggerModule.createDocument(app, swaggerConfig);
+    SwaggerModule.setup('api/docs', app, document);
+  }
 
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,

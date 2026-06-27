@@ -26,7 +26,7 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/package-lock.json ./
 
-RUN npm ci --omit=dev --legacy-peer-deps && npm cache clean --force
+RUN npm ci --omit=dev --legacy-peer-deps && npm cache clean --force && rm package-lock.json
 
 # Copy only runtime ruleset data — .md excluded via .dockerignore
 COPY rulesets/ ./corpus/rulesets/

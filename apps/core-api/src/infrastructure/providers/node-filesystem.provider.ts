@@ -58,7 +58,7 @@ export class NodeFileSystemProvider implements IFileSystemProvider, IFileSystem 
   async readdir(filePath: string): Promise<DirEntry[]> {
     const resolved = this.resolvePath(filePath);
     const entries = await fs.readdir(resolved, { withFileTypes: true });
-    return entries.map(entry => ({
+    return entries.map((entry: fs.Dirent) => ({
       name: entry.name,
       isDirectory: () => entry.isDirectory(),
       isFile: () => entry.isFile(),

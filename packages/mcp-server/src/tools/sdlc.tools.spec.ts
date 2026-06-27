@@ -30,7 +30,7 @@ describe('sdlc tools', () => {
       nextPhase: string;
     };
     expect(status.currentPhase).toBe('phase-1');
-    expect(status.phaseStatus).toHaveLength(5);
+    expect(status.phaseStatus).toHaveLength(6);
     expect(status.nextPhase).toBe('phase-2');
   });
 

@@ -53,8 +53,8 @@ jobs:
       - name: Validate product documentation synchronization
         run: node .harness/scripts/ci/11-validate-product-docs.mjs
 
-      - name: Generate coverage dashboard
-        run: node .harness/scripts/coverage-dashboard.mjs
+      - name: Check coverage dashboard is up to date
+        run: node .harness/scripts/coverage-dashboard.mjs --check
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v7

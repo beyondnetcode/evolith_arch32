@@ -23,6 +23,9 @@ export * from '../use-cases/phase-transition.use-case';
 export * from './topology-catalog.service';
 export * from './sdlc-data-loader.service';
 export * from './satellite-evaluation-pipeline.service';
+export * from './catalog.service';
+export * from './audit.service';
+export * from './gate-registry.service';
 
 export interface GateResult {
   id: string;

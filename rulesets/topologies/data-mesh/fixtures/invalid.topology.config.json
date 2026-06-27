@@ -1,0 +1,12 @@
+{
+  "topology": "data-mesh",
+  "isDataProduct": false,
+  "hasDataContracts": false,
+  "federatedGovernance": false,
+  "hasLineageTracking": false,
+  "hasRetentionPolicy": false,
+  "hasConsumptionContracts": false,
+  "hasDataQualitySLO": false,
+  "hasBackwardCompatibleContracts": false,
+  "hasDiscoveryRegistration": false
+}

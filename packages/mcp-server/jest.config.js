@@ -24,21 +24,21 @@ module.exports = {
   moduleNameMapper: {
     "^(\\.{1,2}/.*)\\.js$": "$1",
     "^@evolith/core-domain/(.*)$":
-      "/Users/beyondnet/Source/evolith/node_modules/@evolith/core-domain/dist/$1",
+      "<rootDir>/../../../node_modules/@evolith/core-domain/dist/$1",
     "^@evolith/core/(.*)$":
-      "/Users/beyondnet/Source/evolith/node_modules/@evolith/core-domain/dist/$1",
+      "<rootDir>/../../../node_modules/@evolith/core-domain/dist/$1",
     "^@modelcontextprotocol/sdk/types\\.js$":
-      "/Users/beyondnet/Source/evolith/node_modules/@modelcontextprotocol/sdk/dist/cjs/types.js",
+      "<rootDir>/../../../node_modules/@modelcontextprotocol/sdk/dist/cjs/types.js",
     "^@modelcontextprotocol/sdk/server/index\\.js$":
-      "/Users/beyondnet/Source/evolith/node_modules/@modelcontextprotocol/sdk/dist/cjs/server/index.js",
+      "<rootDir>/../../../node_modules/@modelcontextprotocol/sdk/dist/cjs/server/index.js",
     "^@modelcontextprotocol/sdk/server/stdio\\.js$":
-      "/Users/beyondnet/Source/evolith/node_modules/@modelcontextprotocol/sdk/dist/cjs/server/stdio.js",
+      "<rootDir>/../../../node_modules/@modelcontextprotocol/sdk/dist/cjs/server/stdio.js",
     "^@modelcontextprotocol/sdk/server/streamableHttp\\.js$":
-      "/Users/beyondnet/Source/evolith/node_modules/@modelcontextprotocol/sdk/dist/cjs/server/streamableHttp.js",
+      "<rootDir>/../../../node_modules/@modelcontextprotocol/sdk/dist/cjs/server/streamableHttp.js",
     "^@nestjs/cache-manager$":
-      "/Users/beyondnet/Source/evolith/packages/mcp-server/src/__mocks__/@nestjs/cache-manager.ts",
+      "<rootDir>/__mocks__/@nestjs/cache-manager.ts",
     "^cache-manager$":
-      "/Users/beyondnet/Source/evolith/packages/mcp-server/src/__mocks__/cache-manager.ts",
+      "<rootDir>/__mocks__/cache-manager.ts",
   },
   collectCoverageFrom: [
     "**/*.ts",

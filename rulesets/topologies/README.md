@@ -4,7 +4,7 @@
 
 This area defines the canonical topology-ruleset resolution model for Evolith Core governance.
 
-Human-readable topology guidance lives in `reference/architecture/topologies/`. This folder contains the machine-readable rules that CLI, MCP, Service CORE API, CI, and future topology resolvers consume.
+**GT-329:** The 5 advanced topologies (`serverless`, `edge-computing`, `event-driven`, `data-mesh`, `agentic-ai`) have been relocated here from `reference/architecture/topologies/` as their **canonical executable location**. The `progressive-axis` topologies remain in `reference/architecture/topologies/progressive-axis/` for historical reasons. Human-readable topology guidance lives in `reference/architecture/topologies/`. This folder contains the machine-readable rules that CLI, MCP, Service CORE API, CI, and future topology resolvers consume.
 
 ## Execution Model
 
@@ -20,10 +20,10 @@ Human-readable topology guidance lives in `reference/architecture/topologies/`. 
 | Dimension | Topologies | Rule Path Pattern |
 |---|---|---|
 | `progressive-axis` | `modular-monolith`, `distributed-modules`, `microservices` | `rulesets/topologies/progressive-axis/<topology>/` |
-| `execution` | `serverless`, `edge-computing` | `rulesets/topologies/execution/<topology>/` |
-| `integration` | `event-driven` | `rulesets/topologies/integration/<topology>/` |
-| `data` | `data-mesh` | `rulesets/topologies/data/<topology>/` |
-| `ai` | `agentic-ai` | `rulesets/topologies/ai/<topology>/` |
+| `execution` | `serverless`, `edge-computing` | `rulesets/topologies/serverless/`, `rulesets/topologies/edge-computing/` |
+| `integration` | `event-driven` | `rulesets/topologies/event-driven/` |
+| `data` | `data-mesh` | `rulesets/topologies/data-mesh/` |
+| `ai` | `agentic-ai` | `rulesets/topologies/agentic-ai/` |
 
 ## Enforcement Rules
 

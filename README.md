@@ -394,6 +394,8 @@ smart-cli mcp serve
 Before contributing, read:
 
 - [Open Source Contributing Guide](./CONTRIBUTING.md) — How to contribute as a community member using the BMAD method
+- [Code of Conduct](./CODE_OF_CONDUCT.md) — Community standards and expectations
+- [Security Policy](./SECURITY.md) — How to report a vulnerability responsibly
 - [AGENTS.md](./AGENTS.md) — Agent rules and conventions
 - [Repository Taxonomy](./reference/governance/standards/repository-taxonomy.md) — What goes where
 - [Child Repository Inheritance Guide](./reference/governance/standards/onboarding/child-repository-inheritance-guide.md) — How products inherit

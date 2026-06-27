@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Edge Computing Topology Configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["topology", "syncStrategy", "edgeIsolation", "conflictResolution"],
+  "properties": {
+    "topology": { "const": "edge-computing" },
+    "syncStrategy": { "type": "string", "enum": ["offline-first", "eventual", "real-time-fallback"] },
+    "edgeIsolation": { "const": true },
+    "conflictResolution": { "type": "string", "enum": ["last-write-wins", "merge", "manual"] }
+  }
+}

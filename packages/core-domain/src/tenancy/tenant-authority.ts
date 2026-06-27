@@ -1,3 +1,5 @@
+import { Role, hasRole, hasAnyRole } from '../domain/rbac';
+
 export interface Tenant {
   readonly id: string;
   readonly name: string;
@@ -9,7 +11,8 @@ export interface Tenant {
 export interface TenantContext {
   readonly tenantId: string;
   readonly actorId: string;
-  readonly roles: string[];
+  /** Typed actor roles — use Role enum values for ABAC checks. */
+  readonly roles: Role[];
 }
 
 export class TenantAuthorityService {
@@ -31,5 +34,15 @@ export class TenantAuthorityService {
   isWithinSatelliteLimit(tenantId: string, currentCount: number): boolean {
     const tenant = this.tenants.get(tenantId);
     return tenant ? currentCount < tenant.maxSatellites : false;
+  }
+
+  /** ABAC: returns true when the actor's roles include `requiredRole` (hierarchy-aware). */
+  actorHasRole(context: TenantContext, requiredRole: Role): boolean {
+    return hasRole(context.roles, requiredRole);
+  }
+
+  /** ABAC: returns true when the actor holds at least one of `requiredRoles` (hierarchy-aware). */
+  actorHasAnyRole(context: TenantContext, requiredRoles: Role[]): boolean {
+    return hasAnyRole(context.roles, requiredRoles);
   }
 }

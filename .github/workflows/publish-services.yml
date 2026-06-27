@@ -1,0 +1,150 @@
+name: Publish Services (GHCR)
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deploy environment'
+        required: false
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+jobs:
+  build-and-push:
+    name: Build & Push to GHCR
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    outputs:
+      core-api-digest: ${{ steps.push-core-api.outputs.digest }}
+      mcp-server-digest: ${{ steps.push-mcp-server.outputs.digest }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata for core-api
+        id: meta-core-api
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/evolith-core-api
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha,prefix=sha-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Extract metadata for mcp-server
+        id: meta-mcp-server
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/evolith-mcp-server
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha,prefix=sha-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push core-api
+        id: push-core-api
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: apps/core-api/Dockerfile
+          push: true
+          tags: ${{ steps.meta-core-api.outputs.tags }}
+          labels: ${{ steps.meta-core-api.outputs.labels }}
+          cache-from: type=gha,scope=core-api
+          cache-to: type=gha,mode=max,scope=core-api
+
+      - name: Scan core-api image for vulnerabilities
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ghcr.io/${{ github.repository_owner }}/evolith-core-api:latest
+          format: table
+          exit-code: '1'
+          ignore-unfixed: true
+          severity: CRITICAL,HIGH
+
+      - name: Build and push mcp-server
+        id: push-mcp-server
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: packages/mcp-server/Dockerfile
+          push: true
+          tags: ${{ steps.meta-mcp-server.outputs.tags }}
+          labels: ${{ steps.meta-mcp-server.outputs.labels }}
+          cache-from: type=gha,scope=mcp-server
+          cache-to: type=gha,mode=max,scope=mcp-server
+
+      - name: Scan mcp-server image for vulnerabilities
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ghcr.io/${{ github.repository_owner }}/evolith-mcp-server:latest
+          format: table
+          exit-code: '1'
+          ignore-unfixed: true
+          severity: CRITICAL,HIGH
+
+  deploy:
+    name: Deploy
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    # TODO: Set an environment protection rule in GitHub repo settings for production gating.
+    # environment: ${{ github.event.inputs.environment || 'staging' }}
+    steps:
+      - name: Log pushed image digests
+        run: |
+          echo "core-api digest:   ${{ needs.build-and-push.outputs.core-api-digest }}"
+          echo "mcp-server digest: ${{ needs.build-and-push.outputs.mcp-server-digest }}"
+
+      # TODO: Configure a real deploy target. Options:
+      #
+      # ── Google Cloud Run ────────────────────────────────────────────────────────
+      # - uses: google-github-actions/deploy-cloudrun@v2
+      #   with:
+      #     service: evolith-core-api
+      #     image: ghcr.io/${{ github.repository_owner }}/evolith-core-api@${{ needs.build-and-push.outputs.core-api-digest }}
+      #     region: us-central1
+      #
+      # ── Fly.io ──────────────────────────────────────────────────────────────────
+      # - uses: superfly/flyctl-actions/setup-flyctl@master
+      # - run: flyctl deploy --image ghcr.io/${{ github.repository_owner }}/evolith-core-api@${{ needs.build-and-push.outputs.core-api-digest }}
+      #   env:
+      #     FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      #
+      # ── Kubernetes (kubectl) ─────────────────────────────────────────────────────
+      # - run: |
+      #     kubectl set image deployment/core-api \
+      #       core-api=ghcr.io/${{ github.repository_owner }}/evolith-core-api@${{ needs.build-and-push.outputs.core-api-digest }}
+      #     kubectl set image deployment/mcp-server \
+      #       mcp-server=ghcr.io/${{ github.repository_owner }}/evolith-mcp-server@${{ needs.build-and-push.outputs.mcp-server-digest }}
+      #
+      - name: Deploy stub — configure target runtime
+        run: |
+          echo "Deploy target not yet configured."
+          echo "Set the environment to: ${{ github.event.inputs.environment || 'staging' }}"
+          echo "See TODO comments in this step for Cloud Run / Fly.io / K8s options."

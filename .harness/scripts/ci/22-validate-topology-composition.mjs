@@ -19,7 +19,11 @@ import addFormats from "ajv-formats";
 
 const root = process.cwd();
 const compositionSchemaPath = path.join(root, "rulesets/schema/topology-composition.schema.json");
-const topologyManifestRoot = path.join(root, "reference/architecture/topologies");
+// GT-329: canonical topology roots — progressive-axis stays in reference/; advanced topologies in rulesets/
+const topologyManifestRoots = [
+  path.join(root, "reference/architecture/topologies"),
+  path.join(root, "rulesets/topologies"),
+];
 const examplesRoot = path.join(root, "reference/knowledge/demo/examples");
 
 const failures = [];
@@ -58,7 +62,7 @@ function walkForManifests(directory) {
 
 function loadManifestIndex() {
   const index = new Map();
-  for (const manifestPath of walkForManifests(topologyManifestRoot)) {
+  for (const manifestPath of topologyManifestRoots.flatMap(walkForManifests)) {
     try {
       const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
       const profile = manifest.spec?.topologyType;

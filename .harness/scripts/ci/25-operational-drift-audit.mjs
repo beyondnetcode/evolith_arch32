@@ -16,7 +16,11 @@ import { auditSources, auditTopology, summarize } from './drift-audit.mjs';
 
 const ROOT = process.cwd();
 const CI_DIR = '.harness/scripts/ci';
-const TOPO_ROOT = 'reference/architecture/topologies';
+// GT-329: canonical topology roots — progressive-axis stays in reference/; advanced topologies in rulesets/
+const TOPO_ROOTS = [
+  'reference/architecture/topologies',
+  'rulesets/topologies',
+];
 
 function capabilityScripts() {
   return readdirSync(resolve(ROOT, CI_DIR))
@@ -39,7 +43,9 @@ function topologyManifests() {
       }
     }
   };
-  if (existsSync(resolve(ROOT, TOPO_ROOT))) walk(TOPO_ROOT);
+  for (const root of TOPO_ROOTS) {
+    if (existsSync(resolve(ROOT, root))) walk(root);
+  }
   return out;
 }
 

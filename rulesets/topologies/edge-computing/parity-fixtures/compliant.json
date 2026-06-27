@@ -1,0 +1,12 @@
+{
+  "input": {
+    "topology": "edge-computing",
+    "config": {
+      "networkSecurity": { "mtlsEnabled": true },
+      "syncStrategy": "offline-first",
+      "edgeIsolation": true,
+      "conflictResolution": "last-write-wins"
+    }
+  },
+  "expectedNative": []
+}

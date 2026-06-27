@@ -72,3 +72,24 @@ jobs:
 
       - name: "22 - Validate Topology Composition"
         run: node .harness/scripts/ci/22-validate-topology-composition.mjs
+
+      - name: "30 - ADR Ruleset Coverage (115/115, no drift)"
+        run: node .harness/scripts/generate-adr-rulesets.mjs --check
+
+      - name: "31 - Validate all rulesets against schema (ajv)"
+        run: node .harness/scripts/validate-rulesets.mjs
+
+      - name: "32 - ADR Coverage Index up to date"
+        run: |
+          node .harness/scripts/generate-adr-coverage.mjs
+          git diff --exit-code rulesets/adr/ADR_COVERAGE.md rulesets/adr/ADR_COVERAGE.es.md \
+            || (echo "ADR_COVERAGE index is stale — regenerate and commit." && exit 1)
+
+      - name: "33 - ESLint Boundaries (packages/* and apps/*)"
+        run: |
+          npm run lint:boundaries --workspace=packages/core-domain --if-present
+          npm run lint:boundaries --workspace=packages/mcp-server --if-present
+          npm run lint:boundaries --workspace=apps/core-api --if-present
+
+      - name: "34 - E2E Governance Flow (GT-326)"
+        run: npm run test:e2e --workspace=packages/core-domain

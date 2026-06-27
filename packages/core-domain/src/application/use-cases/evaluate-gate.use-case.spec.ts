@@ -1,4 +1,6 @@
 import { EvaluateGateUseCase, PHASE_GATES_RULESET_REF, PHASE_TO_GATE_NUMBER } from './evaluate-gate.use-case';
+import { Role } from '../../domain/rbac/role';
+import { GateAuthorizationError } from '../../domain/errors/gate-authorization.error';
 import { GateValidationResult, PhaseGateValidatorService } from '../application/validators/phase-gate-validator.service';
 import { GATE_PHASES } from '../../domain/gate-evidence';
 
@@ -117,5 +119,89 @@ describe('EvaluateGateUseCase (GT-03)', () => {
     expect(evidence.rulesetVersion).toBe('1.2.3');
     expect(evidence.evaluatedBy).toBe('ci');
     expect(new Date(evidence.evaluatedAt).toString()).not.toBe('Invalid Date');
+  });
+});
+
+// ─── GT-320: RBAC enforcement integration ──────────────────────────────────
+
+describe('EvaluateGateUseCase — GT-320 role enforcement', () => {
+  const passedResult = validationResult({
+    evidenceResults: [],
+    blockingChecks: [],
+    passed: true,
+    accountableRole: 'Product Owner',
+    waiverAuthority: 'Architecture Board',
+  });
+
+  it('does not throw when no actorRoles are provided (backward compat)', async () => {
+    const { useCase } = useCaseWith(passedResult);
+    await expect(
+      useCase.execute({ phase: 'design', projectPath: '/tmp/x' }),
+    ).resolves.toBeDefined();
+  });
+
+  it('allows the gate when actor holds the required accountableRole', async () => {
+    const { useCase } = useCaseWith(passedResult);
+    await expect(
+      useCase.execute({
+        phase: 'design',
+        projectPath: '/tmp/x',
+        actorRoles: [Role.PRODUCT_OWNER],
+      }),
+    ).resolves.toBeDefined();
+  });
+
+  it('rejects the gate when actor lacks the required accountableRole', async () => {
+    const { useCase } = useCaseWith(passedResult);
+    await expect(
+      useCase.execute({
+        phase: 'design',
+        projectPath: '/tmp/x',
+        actorRoles: [Role.DEVELOPER],
+      }),
+    ).rejects.toBeInstanceOf(GateAuthorizationError);
+  });
+
+  it('allows when actor is ADMIN regardless of accountableRole', async () => {
+    const { useCase } = useCaseWith(passedResult);
+    await expect(
+      useCase.execute({
+        phase: 'design',
+        projectPath: '/tmp/x',
+        actorRoles: [Role.ADMIN],
+      }),
+    ).resolves.toBeDefined();
+  });
+
+  it('allows waiver when actor holds the waiverAuthority role', async () => {
+    const waiverResult = validationResult({
+      accountableRole: 'Product Owner',
+      waiverAuthority: 'Software Architect',
+    });
+    const { useCase } = useCaseWith(waiverResult);
+    await expect(
+      useCase.execute({
+        phase: 'design',
+        projectPath: '/tmp/x',
+        actorRoles: [Role.ARCHITECT],
+        requestWaiver: true,
+      }),
+    ).resolves.toBeDefined();
+  });
+
+  it('rejects waiver when actor lacks the waiverAuthority role', async () => {
+    const waiverResult = validationResult({
+      accountableRole: 'Product Owner',
+      waiverAuthority: 'Software Architect',
+    });
+    const { useCase } = useCaseWith(waiverResult);
+    await expect(
+      useCase.execute({
+        phase: 'design',
+        projectPath: '/tmp/x',
+        actorRoles: [Role.DEVELOPER],
+        requestWaiver: true,
+      }),
+    ).rejects.toBeInstanceOf(GateAuthorizationError);
   });
 });

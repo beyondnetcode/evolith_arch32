@@ -1,3 +1,5 @@
+export * from './blueprint';
+
 import { Runtime, MonorepoOption, ArchitecturePattern, GateCheck } from '../interfaces';
 
 export class Phase {

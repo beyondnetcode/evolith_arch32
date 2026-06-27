@@ -12,6 +12,206 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 ## 1. Gap Details
 
+#### GT-313
+
+**Title:** Rotate and externalize GH_TOKEN via a secret manager
+
+- **Purpose:** Remove the live GitHub Personal Access Token from the on-disk `.env` and source it from a secret manager / CI secret, closing the only open critical security finding.
+- **Evidence:** `.env` contains `GH_TOKEN=ghp_…` in plaintext (git-ignored but live on disk); flagged in `CERTIFICACION_MADUREZ.md` §6.
+- **Complexity:** XS
+- **Done when:**
+  - [ ] The current token is revoked and reissued in GitHub.
+  - [ ] Credentials are sourced from a secret manager / CI secret, not a plaintext `.env`.
+
+#### GT-314
+
+**Title:** Validate the real satellite artifact, not the Core template
+
+- **Purpose:** Make gate evaluation validate the artifact produced by the satellite (structure, schema, completeness) instead of resolving to the Core template path, so AJV/semantic validation is meaningful for PRD/stories/feasibility.
+- **Evidence:** `packages/core-domain/src/application/validators/evidence-validator.ts` (`resolveArtifactPath`) maps each artifact to a template under Core; admitted as tech debt in-code. AJV is effectively inert for several artifacts.
+- **Complexity:** M
+- **Done when:**
+  - [ ] The validator resolves the satellite artifact path, not the Core template.
+  - [ ] AJV runs against real artifact data when a `schemaRef` exists.
+  - [ ] Tests cover existence + structural + completeness validation.
+
+#### GT-315
+
+**Title:** Domain event system: bus + outbox + versioned events
+
+- **Purpose:** Emit governed domain events so Tracker, pipelines, auditing and external systems can react asynchronously instead of polling.
+- **Evidence:** No event bus/emitter exists; only a one-shot `IWebhookNotifier.notify(url, evidence)` (`packages/core-domain/src/application/ports/webhook-notifier.port.ts`). No named events (`phase.*`, `gate.*`, `artifact.*`).
+- **Complexity:** L
+- **Done when:**
+  - [ ] A domain event bus + transactional outbox exist.
+  - [ ] Versioned events emitted: `phase.started/completed`, `gate.approved/rejected`, `artifact.created/updated/validated`, `blueprint.generated/validated`, `workflow.updated`.
+  - [ ] A versioned event catalog is documented and consumable.
+
+#### GT-316
+
+**Title:** Unified verdict + artifact/phase lifecycle state machine
+
+- **Purpose:** Provide a single canonical verdict model and a formal lifecycle (created → in-progress → pending-validation → approved/rejected/observed → versioned → archived) for phases and artifacts.
+- **Evidence:** Three divergent verdict models — `gate-evidence.ts` (`passed|failed|skipped`, canonical), `gates/decision/gate-decision.ts` (`PASS|FAIL|WAIVED`, orphan), `phases/transition/phase-transition.model.ts` (orphan). No artifact state machine.
+- **Complexity:** L
+- **Done when:**
+  - [ ] One canonical verdict vocabulary; orphan models integrated or removed.
+  - [ ] Artifact/phase state machine implemented and enforced.
+  - [ ] Tests cover all transitions.
+
+#### GT-317
+
+**Title:** validateWorkflow(definition) — Tracker composition seam
+
+- **Purpose:** Keep Core tenant-agnostic while letting Tracker supply a composed `WorkflowDefinition` that Core validates against its invariants (mandatory gates, OPA, non-omittable artifacts). Core does NOT store per-tenant config.
+- **Evidence:** `IWorkflowDefinitionProvider.getWorkflow(tenant?)` exists but no implementation consumes it and there is no operation to validate an externally supplied workflow.
+- **Complexity:** L
+- **Done when:**
+  - [ ] `validateWorkflow(definition)` validates a supplied flow against Core invariants.
+  - [ ] Composable catalogs of phases/gates/artifacts are exposed (not only topologies).
+  - [ ] Core stores no tenant config; Tracker drives composition.
+
+#### GT-318
+
+**Title:** Unify the two divergent gate sources and execute cited OPA
+
+- **Purpose:** Have a single executable gate source so the rules cited by gates actually run.
+- **Evidence:** `reference/governance/sdlc/gates/gate-f*.json` (cite `.rego`) diverge from `rulesets/phase-gates/phase-gates.rules.json` (what `PhaseGateValidatorService` consumes); cited `.rego` are not executed.
+- **Complexity:** M
+- **Done when:**
+  - [ ] One canonical gate source consumed by the engine.
+  - [ ] Cited OPA rules execute; routing by stable IDs (not substring).
+
+#### GT-319
+
+**Title:** Formal role model (RBAC enum/hierarchy)
+
+- **Purpose:** Replace free-string roles with a formal, enumerated role model with hierarchy, as the basis for approval governance.
+- **Evidence:** No `enum Role`/`ROLE_HIERARCHY`; roles are loose strings across ABAC inputs and gate `accountableRole`.
+- **Complexity:** M
+- **Done when:**
+  - [ ] A formal role model exists and is used by ABAC/gate checks.
+  - [ ] Tests cover role resolution.
+
+#### GT-320
+
+**Title:** Enforce gate approver/waiver role via OPA
+
+- **Purpose:** Verify that the actor approving or waiving a gate actually holds the gate's `accountableRole`/`waiverAuthority`.
+- **Evidence:** `accountableRole`/`waiverAuthority` are declarative fields in gate JSON; no code enforces them (only test data references them).
+- **Complexity:** M
+- **Done when:**
+  - [ ] OPA/code asserts the approver/waiver actor holds the required role.
+  - [ ] Depends on GT-319.
+
+#### GT-321
+
+**Title:** Persistent append-only audit ledger
+
+- **Purpose:** Persist governance audit events to a durable, queryable append-only store.
+- **Evidence:** `AuditLogger` and `CommandHistory` write in-memory/JSONL; no `AuditRepository`/ledger.
+- **Complexity:** M
+- **Done when:**
+  - [ ] Audit events persist to an append-only store.
+  - [ ] Queryable by tenant/phase/actor/correlationId.
+
+#### GT-322
+
+**Title:** Typed @evolith/sdk client (REST+MCP)
+
+- **Purpose:** Publish a typed client so agents/integrators do not reimplement clients.
+- **Evidence:** `sdk/` only contains the CLI; no `@evolith/sdk` client library; agents use MCP and REST directly.
+- **Complexity:** M
+- **Done when:**
+  - [ ] `@evolith/sdk` generated from OpenAPI/schemas.
+  - [ ] Covers REST + MCP surfaces with types.
+
+#### GT-323
+
+**Title:** Production Dockerfiles for core-api and mcp-server
+
+- **Purpose:** Make the two services deployable by shipping production Dockerfiles that bundle the corpus they read from disk.
+- **Evidence:** Only `sdk/cli/Dockerfile` exists; core-api/mcp-server have reference Dockerfiles under `reference/infrastructure/docker/` but none in their app dirs.
+- **Complexity:** M
+- **Done when:**
+  - [ ] Dockerfiles in `apps/core-api` and `packages/mcp-server`.
+  - [ ] Image bundles `rulesets/` + `reference/` (or mounts) with `CORE_PATH`/`WORKSPACE_ROOT`.
+
+#### GT-324
+
+**Title:** CD pipeline to GHCR + deploy core-api/mcp-server
+
+- **Purpose:** Continuously build, push and deploy the services.
+- **Evidence:** `ci-cd.yml` only publishes the CLI (npm + Docker Hub); no CD for core-api/mcp-server.
+- **Complexity:** M
+- **Done when:**
+  - [ ] Workflow builds and pushes images to GHCR.
+  - [ ] Deploys to the chosen runtime (Cloud Run/Fly/etc.).
+
+#### GT-325
+
+**Title:** Blueprint as a first-class governed entity
+
+- **Purpose:** Model the architectural Blueprint and validate it against rulesets, allowed topologies, tenant policy and OPA — not only check a file exists.
+- **Evidence:** "Blueprint" appears only as an evidence file (`evidence-validator.ts`, `sdlc.tools.ts`); no `Blueprint` entity or validation.
+- **Complexity:** L
+- **Done when:**
+  - [ ] Blueprint entity + builder.
+  - [ ] Validated against rulesets/topologies/policy/OPA/SDLC.
+
+#### GT-326
+
+**Title:** End-to-end integration validation Core ↔ Tracker and agents
+
+- **Purpose:** Prove the SDLC works end-to-end against real satellites and a live Tracker/agent, beyond unit tests.
+- **Evidence:** Tests are unit/contract level; no E2E governance flow with Tracker/agents.
+- **Complexity:** L
+- **Done when:**
+  - [ ] E2E suite drives phase→gate→artifact→verdict against a real satellite.
+  - [ ] Tracker/agent integration validated in CI.
+
+#### GT-327
+
+**Title:** Webhook to subscriptions + retries + HMAC
+
+- **Purpose:** Evolve the one-shot webhook into a reliable subscription mechanism.
+- **Evidence:** `webhook.adapter.ts` performs a single POST of GateEvidence; no subscriptions, retries or signing.
+- **Complexity:** M
+- **Done when:**
+  - [ ] Topic subscriptions, retry/backoff, and HMAC signature.
+
+#### GT-328
+
+**Title:** Roll out ESLint boundaries to packages/* and apps/*
+
+- **Purpose:** Enforce architectural import boundaries beyond `sdk/cli`.
+- **Evidence:** `eslint-plugin-boundaries` is configured only in `sdk/cli/.eslintrc.js`.
+- **Complexity:** M
+- **Done when:**
+  - [ ] Boundaries config + CI step for `packages/*` and `apps/*`.
+
+#### GT-329
+
+**Title:** Relocate the 5 advanced topologies to rulesets/topologies
+
+- **Purpose:** Unify topology location so all topologies live under `rulesets/topologies/`.
+- **Evidence:** Progressive-axis topologies live in `rulesets/topologies/`, but serverless/edge/event-driven/data-mesh/agentic-ai live under `reference/architecture/topologies/`.
+- **Complexity:** M
+- **Done when:**
+  - [ ] All topologies under a single canonical location.
+  - [ ] Links and topology validators updated; tests pass.
+
+#### GT-330
+
+**Title:** Mitigate bus factor (second maintainer + onboarding)
+
+- **Purpose:** Reduce continuity risk from a single human contributor.
+- **Evidence:** `git shortlog` shows one human contributor for ~1,475 commits.
+- **Complexity:** M
+- **Done when:**
+  - [ ] A second maintainer is onboarded.
+  - [ ] Deep onboarding documentation exists.
+
 #### GT-155
 
 **Title:** REST Core API envelope conformance with ADR-0073

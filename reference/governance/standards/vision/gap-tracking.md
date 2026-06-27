@@ -4,7 +4,7 @@
 
 **Status:** Active Tracking
 **Owner:** Evolith Architecture Board
-**Last Updated:** 2026-06-26 (GT-283-GT-311 opened from intelligent data audit)
+**Last Updated:** 2026-06-26 (GT-314–GT-330 closed — all 17 pending gaps resolved in parallel wave execution)
 **Gap Details:** [Gap Reference Catalog](./gap-reference-catalog.md)
 
 This board is the single source of truth for technical debt, gaps, opportunities, enablers, priority, and status. Select a gap ID to open its problem statement, purpose, evidence, closure criteria, and references.
@@ -13,6 +13,24 @@ This board is the single source of truth for technical debt, gaps, opportunities
 
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| [`GT-314`](./gap-reference-catalog.md#gt-314) | Validate the real satellite artifact, not the Core template (evidence-validator resolves template paths) | `Core Domain` | Cross | P0 | M | `DONE` |
+| [`GT-315`](./gap-reference-catalog.md#gt-315) | Domain event system: bus + outbox + versioned events (phase/gate/artifact/blueprint/workflow) | `Core Domain` | Cross | P0 | L | `DONE` |
+| [`GT-316`](./gap-reference-catalog.md#gt-316) | Unified verdict + artifact/phase lifecycle state machine (created to archived) | `Core Domain` | Cross | P0 | L | `DONE` |
+| [`GT-317`](./gap-reference-catalog.md#gt-317) | validateWorkflow(definition): validate Tracker-supplied flow against Core invariants (tenant-agnostic seam) | `Core Domain` | Cross | P0 | L | `DONE` |
+| [`GT-318`](./gap-reference-catalog.md#gt-318) | Unify the two divergent gate sources and execute the OPA rules they cite | `Governance` | Cross | P1 | M | `DONE` |
+| [`GT-319`](./gap-reference-catalog.md#gt-319) | Formal role model (RBAC enum/hierarchy) | `Core Domain` | Cross | P1 | M | `DONE` |
+| [`GT-320`](./gap-reference-catalog.md#gt-320) | Enforce gate approver/waiver role via OPA (accountableRole is declarative only) | `Governance` | Cross | P1 | M | `DONE` |
+| [`GT-321`](./gap-reference-catalog.md#gt-321) | Persistent append-only audit ledger (not only in-memory/JSONL) | `Core Domain` | Cross | P1 | M | `DONE` |
+| [`GT-322`](./gap-reference-catalog.md#gt-322) | Typed @evolith/sdk client (REST+MCP) generated from OpenAPI/schemas | `SDK` | Cross | P1 | M | `DONE` |
+| [`GT-323`](./gap-reference-catalog.md#gt-323) | Production Dockerfiles for core-api and mcp-server (bundle the corpus) | `Infra` | Cross | P1 | M | `DONE` |
+| [`GT-324`](./gap-reference-catalog.md#gt-324) | CD pipeline: build and push images to GHCR and deploy core-api/mcp-server | `Infra` | Cross | P1 | M | `DONE` |
+| [`GT-325`](./gap-reference-catalog.md#gt-325) | Blueprint as a first-class entity validated against rulesets/topologies/tenant policy/OPA | `Architecture` | F2 | P1 | L | `DONE` |
+| [`GT-326`](./gap-reference-catalog.md#gt-326) | End-to-end integration validation Core and Tracker and agents | `Quality` | Cross | P1 | L | `DONE` |
+| [`GT-327`](./gap-reference-catalog.md#gt-327) | Evolve the one-shot webhook into subscriptions + retries + HMAC signing | `Core Domain` | Cross | P2 | M | `DONE` |
+| [`GT-328`](./gap-reference-catalog.md#gt-328) | Roll out ESLint boundaries to packages/* and apps/* with a CI step | `Quality` | Cross | P2 | M | `DONE` |
+| [`GT-329`](./gap-reference-catalog.md#gt-329) | Relocate the 5 advanced topologies to rulesets/topologies | `Rulesets` | Cross | P2 | M | `DONE` |
+| [`GT-330`](./gap-reference-catalog.md#gt-330) | Mitigate bus factor (second maintainer + deep onboarding) | `Governance` | Cross | P3 | M | `DONE` |
+| [`GT-313`](./gap-reference-catalog.md#gt-313) | Rotate and externalize GH_TOKEN via a secret manager | `Security` | Cross | P0 | XS | `DEFERRED` |
 | [`GT-312`](./gap-reference-catalog.md#gt-312) | SDLC validation orchestration: phase → gate → artifacts → schemas → rulesets → topology → ADRs → OPA → blocking criteria | `Core Domain` | Cross | P0 | XL | `DONE` |
 | [`GT-286`](./gap-reference-catalog.md#gt-286) | compliance-baseline ruleset exists — rulesets/compliance-baseline | `Rulesets` | Cross | P0 | S | `DONE` |
 | [`GT-287`](./gap-reference-catalog.md#gt-287) | definition-of-done ruleset exists — rulesets/definition-of-done | `Rulesets` | Cross | P0 | S | `DONE` |
@@ -327,7 +345,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-246`](./gap-reference-catalog.md#gt-246) | Implement Chaos Mesh/Litmus experiments | `QA` | Cross | P3 | L | `DONE` |
 
 
-**Progress:** 312 / 312 done · 0 in progress · 0 pending · 0 deferred
+**Progress:** 329 / 330 done · 0 in progress · 0 pending · 1 deferred
 
 **Wave 2026-06-23 (Wilson deep audit III):** Added 14 new gaps `GT-212`…`GT-225` from the Wilson Audit Playbook covering: ADR status hygiene (GT-212), topology manifest metadata + operational budgets + guidance corpus (GT-213, GT-217, GT-219), REST controller observability + OpenAPI (GT-214, GT-215), OPA input-schema parity + per-topology test density (GT-216, GT-222), SDLC Phase 05 rollback + on-call templates (GT-218), CLI branch coverage + envelope format coverage + skip-list cleanup (GT-220, GT-224, GT-225), MCP HTTP audit logging (GT-221), and cross-surface parity e2e tests (GT-223).
 

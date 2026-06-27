@@ -1,0 +1,72 @@
+{
+  "protocolVersion": "2025-03-26",
+  "topologyId": "serverless",
+  "description": "MCP interface for the Serverless topology. Provides tools for inspecting and validating serverless function configurations, resources for manifest and ruleset access, and prompts for serverless-readiness and implementation guidance.",
+  "capabilities": {
+    "tools": {},
+    "resources": {},
+    "prompts": {}
+  },
+  "tools": [
+    {
+      "name": "evolith-topology-inspect",
+      "description": "Inspect a Serverless topology configuration and return its parsed manifest, function definitions, and corpus artifact references.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "configPath": {
+            "type": "string",
+            "description": "Path to the Serverless configuration file"
+          },
+          "includeFunctions": {
+            "type": "boolean",
+            "description": "Include function-level metadata and triggers"
+          }
+        },
+        "required": ["configPath"]
+      }
+    },
+    {
+      "name": "evolith-topology-validate",
+      "description": "Validate a Serverless configuration against the topology ruleset and OPA policies, returning pass/fail per gate.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "configPath": {
+            "type": "string",
+            "description": "Path to the Serverless configuration to validate"
+          },
+          "strictMode": {
+            "type": "boolean",
+            "description": "Fail on warnings, not just errors"
+          }
+        },
+        "required": ["configPath"]
+      }
+    }
+  ],
+  "resources": [
+    {
+      "uri": "evolith://topologies/serverless/manifest",
+      "name": "Serverless Topology Manifest",
+      "description": "Full topology manifest for Serverless, including metadata, artifact references, and corpus configuration.",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "evolith://topologies/serverless/rulesets",
+      "name": "Serverless Rulesets",
+      "description": "All ruleset files for Serverless: native rules JSON, OPA Rego policies, and WASM bundle.",
+      "mimeType": "application/json"
+    }
+  ],
+  "prompts": [
+    {
+      "name": "serverless-readiness-review",
+      "description": "Assesses whether a workload is suitable for serverless deployment, evaluating cold-start tolerance, statelessness, timeout limits, and cost profile."
+    },
+    {
+      "name": "topology-aware-implementation",
+      "description": "Guides AI-assisted implementation to respect Serverless topology constraints, ephemeral stateless design, and event-driven triggers."
+    }
+  ]
+}

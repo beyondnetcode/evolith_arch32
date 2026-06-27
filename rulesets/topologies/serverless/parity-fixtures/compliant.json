@@ -1,0 +1,13 @@
+{
+  "input": {
+    "topology": "serverless",
+    "config": {
+      "networkSecurity": { "mtlsEnabled": true },
+      "hasContract": true,
+      "isStateless": true,
+      "hasBoundedPackage": true,
+      "hasColdStartReadiness": true
+    }
+  },
+  "expectedNative": []
+}

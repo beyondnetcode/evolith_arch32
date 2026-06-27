@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/schema/opa/cli-release-readiness.input.schema.json",
+  "title": "CLI Release Readiness OPA Policy Input Schema",
+  "type": "object",
+  "required": ["satellite"],
+  "properties": {
+    "satellite": {
+      "type": "object",
+      "required": ["releaseReadiness"],
+      "properties": {
+        "releaseReadiness": {
+          "type": "object",
+          "required": ["buildPasses", "testsPass", "lockFilePresent", "mcpSmokePasses", "readmeExists"],
+          "properties": {
+            "buildPasses": { "type": "boolean" },
+            "testsPass": { "type": "boolean" },
+            "lockFilePresent": { "type": "boolean" },
+            "mcpSmokePasses": { "type": "boolean" },
+            "readmeExists": { "type": "boolean" }
+          }
+        }
+      }
+    }
+  }
+}

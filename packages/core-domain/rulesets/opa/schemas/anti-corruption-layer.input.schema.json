@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/schema/opa/anti-corruption-layer.input.schema.json",
+  "title": "Anti-Corruption Layer OPA Policy Input Schema",
+  "type": "object",
+  "required": ["adapter"],
+  "properties": {
+    "adapter": {
+      "type": "object",
+      "required": [
+        "schemaValidated",
+        "transformationTraceable",
+        "silentNormalization",
+        "location"
+      ],
+      "properties": {
+        "schemaValidated": { "type": "boolean" },
+        "transformationTraceable": { "type": "boolean" },
+        "silentNormalization": { "type": "boolean" },
+        "coreCompatibilityVersion": { "type": "string" },
+        "location": { "type": "string" }
+      }
+    }
+  }
+}

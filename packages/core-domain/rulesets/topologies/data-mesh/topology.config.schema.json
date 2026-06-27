@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Data Mesh Topology Configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "topology",
+    "isDataProduct",
+    "hasDataContracts",
+    "federatedGovernance",
+    "hasLineageTracking",
+    "hasRetentionPolicy",
+    "hasConsumptionContracts",
+    "hasDataQualitySLO",
+    "hasBackwardCompatibleContracts",
+    "hasDiscoveryRegistration"
+  ],
+  "properties": {
+    "topology": { "const": "data-mesh" },
+    "isDataProduct": { "const": true },
+    "hasDataContracts": { "const": true },
+    "federatedGovernance": { "const": true },
+    "hasLineageTracking": { "const": true },
+    "hasRetentionPolicy": { "const": true },
+    "hasConsumptionContracts": { "const": true },
+    "hasDataQualitySLO": { "const": true },
+    "hasBackwardCompatibleContracts": { "const": true },
+    "hasDiscoveryRegistration": { "const": true }
+  }
+}

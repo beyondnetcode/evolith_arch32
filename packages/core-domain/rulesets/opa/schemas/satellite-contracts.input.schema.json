@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/schema/opa/satellite-contracts.input.schema.json",
+  "title": "Satellite Contracts OPA Policy Input Schema",
+  "type": "object",
+  "required": ["satellite"],
+  "properties": {
+    "satellite": {
+      "type": "object",
+      "required": ["contracts"],
+      "properties": {
+        "contracts": {
+          "type": "object",
+          "required": [
+            "hasEvolyamlAtRoot",
+            "phase",
+            "hasAdr0047",
+            "hasExtractionReadinessScore",
+            "coreVersionExists",
+            "phaseTransitionWithoutApproval",
+            "isDeprecated",
+            "deprecatedStatusMarked"
+          ],
+          "properties": {
+            "hasEvolyamlAtRoot": { "type": "boolean" },
+            "phase": { "type": "string", "enum": ["F1", "F2", "F3"] },
+            "hasAdr0047": { "type": "boolean" },
+            "hasExtractionReadinessScore": { "type": "boolean" },
+            "coreVersionExists": { "type": "boolean" },
+            "phaseTransitionWithoutApproval": { "type": "boolean" },
+            "isDeprecated": { "type": "boolean" },
+            "deprecatedStatusMarked": { "type": "boolean" }
+          }
+        }
+      }
+    }
+  }
+}

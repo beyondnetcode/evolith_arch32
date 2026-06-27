@@ -1,0 +1,114 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/schema/cli-impact-analysis.schema.json",
+  "title": "CLI Impact Analysis",
+  "description": "JSON Schema for validating Evolith CLI Impact Analysis artifacts. Documents CLI capabilities required for scaffolding, validation, and handoff in Phases 1 and 2.",
+  "type": "object",
+  "required": ["initiativeId", "phases"],
+  "additionalProperties": false,
+  "properties": {
+    "initiativeId": {
+      "type": "string",
+      "description": "Reference to the initiative or epic this analysis belongs to."
+    },
+    "phases": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "phase1": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "scaffoldingCapabilities": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "capability": { "type": "string" },
+                  "command": { "type": "string" },
+                  "description": { "type": "string" },
+                  "status": {
+                    "type": "string",
+                    "enum": ["Available", "Pending", "Not Applicable"]
+                  }
+                }
+              }
+            },
+            "validationCapabilities": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "validationType": { "type": "string" },
+                  "command": { "type": "string" },
+                  "description": { "type": "string" },
+                  "status": {
+                    "type": "string",
+                    "enum": ["Available", "Pending", "Not Applicable"]
+                  }
+                }
+              }
+            },
+            "traceabilityCapabilities": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "capability": { "type": "string" },
+                  "command": { "type": "string" },
+                  "description": { "type": "string" },
+                  "status": {
+                    "type": "string",
+                    "enum": ["Available", "Pending", "Not Applicable"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "phase2": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "scaffoldingCapabilities": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "validationCapabilities": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "traceabilityCapabilities": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "rulesCompliance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "evolithRulesApplied": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of Evolith rules this CLI analysis complies with."
+        },
+        "deviationNotes": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Any deviations from standard rules and justification."
+        }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": ["Draft", "Reviewed", "Approved"],
+      "default": "Draft"
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/schema/opa/evidence.input.schema.json",
+  "title": "Evidence OPA Policy Input Schema",
+  "type": "object",
+  "required": ["core"],
+  "properties": {
+    "core": {
+      "type": "object",
+      "required": ["evidence"],
+      "properties": {
+        "evidence": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "source": { "type": "string" },
+              "generatedAt": { "type": "string" },
+              "producer": { "type": "string" },
+              "evaluatedRules": { "type": "array" },
+              "relatedRuleIds": { "type": "array" },
+              "relatedGateId": { "type": "string" },
+              "sourceRef": { "type": "string" },
+              "status": { "type": "string" },
+              "blockingFailures": { "type": "array" },
+              "retentionPeriod": { "type": "string" },
+              "owner": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

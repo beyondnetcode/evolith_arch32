@@ -1,0 +1,98 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/schema/build-vs-compose.schema.json",
+  "title": "Build-versus-Compose Analysis",
+  "description": "JSON Schema for the Build-versus-Compose analysis that Discovery must produce before native development is approved (Product Vision Master §5.3). Mandatory Business Sign-Off (Phase 1) gate evidence.",
+  "type": "object",
+  "required": [
+    "initiative",
+    "alternatives",
+    "disposition",
+    "threeYearCost",
+    "licensing",
+    "security",
+    "providerReplaceability",
+    "proofOfConcept"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "initiative": {
+      "type": "string",
+      "description": "Identifier or name of the capability under evaluation."
+    },
+    "alternatives": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Open-source, free-tier, and commercial capabilities evaluated, with their functional coverage.",
+      "items": {
+        "type": "object",
+        "required": ["name", "kind", "functionalCoverage"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string" },
+          "kind": { "type": "string", "enum": ["open-source", "free-tier", "commercial"] },
+          "functionalCoverage": {
+            "type": "string",
+            "description": "How much of the required functionality the alternative covers (e.g. 'full', 'partial — missing X')."
+          }
+        }
+      }
+    },
+    "disposition": {
+      "type": "string",
+      "enum": ["Adopt", "Embed", "Integrate", "Extend", "Build", "Reject"],
+      "description": "Governed disposition for the evaluated capability."
+    },
+    "threeYearCost": {
+      "type": "object",
+      "required": ["currency", "totalCost", "operatingBurden"],
+      "additionalProperties": false,
+      "properties": {
+        "currency": { "type": "string" },
+        "totalCost": { "type": "number", "minimum": 0, "description": "Three-year total cost of ownership." },
+        "operatingBurden": { "type": "string", "description": "Ongoing operating and maintenance burden." }
+      }
+    },
+    "licensing": {
+      "type": "object",
+      "required": ["license", "redistributionConstraints"],
+      "additionalProperties": false,
+      "properties": {
+        "license": { "type": "string" },
+        "redistributionConstraints": { "type": "string", "description": "Licensing and redistribution constraints that apply." }
+      }
+    },
+    "security": {
+      "type": "object",
+      "required": ["tenantIsolation", "dataOwnership"],
+      "additionalProperties": false,
+      "properties": {
+        "tenantIsolation": { "type": "string", "description": "How tenant isolation is preserved." },
+        "dataOwnership": { "type": "string", "description": "Where data ownership and residency land." }
+      }
+    },
+    "providerReplaceability": {
+      "type": "string",
+      "description": "How replaceable the provider is, and the cost of switching away."
+    },
+    "proofOfConcept": {
+      "type": "object",
+      "required": ["required"],
+      "additionalProperties": false,
+      "properties": {
+        "required": { "type": "boolean" },
+        "notes": { "type": "string" }
+      }
+    },
+    "nativeJustification": {
+      "type": "string",
+      "description": "Explicit justification for native implementation. Required when disposition is 'Build'."
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "disposition": { "const": "Build" } } },
+      "then": { "required": ["nativeJustification"] }
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "success": true,
+  "data": {
+    "gateId": "design-baseline-approved",
+    "phase": "design",
+    "verdict": "passed",
+    "rulesetRef": "rulesets/sdlc/phase-gates.rules.json",
+    "rulesetVersion": "1.2.0",
+    "violations": [],
+    "evaluatedAt": "2026-06-13T12:00:00Z",
+    "evaluatedBy": "ci"
+  },
+  "meta": {
+    "command": "evolith gate evaluate",
+    "executedAt": "2026-06-13T12:00:00Z",
+    "durationMs": 10,
+    "correlationId": "contract-fixture-001",
+    "context": {
+      "initiative": "GT-42",
+      "phase": "design"
+    }
+  }
+}

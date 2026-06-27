@@ -85,6 +85,6 @@ export class DefaultWorkflowDefinition implements WorkflowDefinition {
 }
 
 export function loadDefaultWorkflow(): DefaultWorkflowDefinition {
-  const content = fs.readFileSync(path.join(__dirname, '../../../../../rulesets/sdlc/default-workflow.yaml'), 'utf-8');
+  const content = fs.readFileSync(path.join(__dirname, '../../../rulesets/sdlc/default-workflow.yaml'), 'utf-8');
   return new DefaultWorkflowDefinition(yaml.parse(content));
 }

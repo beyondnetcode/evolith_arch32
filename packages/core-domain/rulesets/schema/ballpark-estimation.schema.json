@@ -1,0 +1,109 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/schema/ballpark-estimation.schema.json",
+  "title": "Ballpark Estimation",
+  "description": "JSON Schema for validating Evolith Ballpark Estimation artifacts. Phase 1 artifact for technical feasibility and team sizing.",
+  "type": "object",
+  "required": ["technicalFeasibilityId", "team", "estimates", "technicalConstraints"],
+  "additionalProperties": false,
+  "properties": {
+    "technicalFeasibilityId": {
+      "type": "string",
+      "description": "Reference to the parent Technical Feasibility Canvas."
+    },
+    "team": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["role", "count"],
+        "additionalProperties": false,
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": ["Tech Lead", "Backend Engineer", "Frontend Engineer", "QA Engineer", "DevOps Engineer", "Architect", "Product Owner"]
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          }
+        }
+      },
+      "minItems": 1
+    },
+    "durationSprints": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 52,
+      "description": "Estimated duration in sprints (2-week sprints default)."
+    },
+    "estimates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["component", "size"],
+        "additionalProperties": false,
+        "properties": {
+          "component": { "type": "string" },
+          "size": {
+            "type": "string",
+            "enum": ["S", "M", "L", "XL", "XXL"],
+            "description": "T-Shirt size: S=1-3 days, M=4-7 days, L=1-2 weeks, XL=2-4 weeks, XXL=4+ weeks"
+          },
+          "assumptions": { "type": "string" },
+          "risks": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      },
+      "minItems": 1,
+      "description": "Component-level T-Shirt sizing."
+    },
+    "technicalConstraints": {
+      "type": "object",
+      "required": ["cpuCoreLimit", "memoryGbLimit", "storageTbLimit"],
+      "additionalProperties": false,
+      "properties": {
+        "cpuCoreLimit": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum allowed CPU cores."
+        },
+        "memoryGbLimit": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum allowed RAM in gigabytes."
+        },
+        "storageTbLimit": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Maximum allowed storage in terabytes."
+        },
+        "maxMonthlyComputeHours": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum monthly compute hours."
+        }
+      }
+    },
+    "scopeExclusions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Explicitly excluded components or functionality."
+    },
+    "approvalStatus": {
+      "type": "string",
+      "enum": ["Draft", "Approved", "Rejected"],
+      "default": "Draft"
+    },
+    "architectSignOff": {
+      "type": "string",
+      "description": "Architect or Tech Lead who approved this estimation."
+    },
+    "approvalDate": {
+      "type": "string",
+      "format": "date"
+    }
+  }
+}

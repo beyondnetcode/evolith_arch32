@@ -1,0 +1,10 @@
+{
+  "gateId": "design-baseline-approved",
+  "phase": "design",
+  "verdict": "passed",
+  "rulesetRef": "rulesets/sdlc/phase-gates.rules.json",
+  "rulesetVersion": "1.2.0",
+  "violations": [],
+  "evaluatedAt": "2026-06-13T12:00:00Z",
+  "evaluatedBy": "ci"
+}

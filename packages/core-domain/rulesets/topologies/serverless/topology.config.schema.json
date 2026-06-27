@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Serverless Topology Configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["topology", "stateless", "package", "coldStart"],
+  "properties": {
+    "topology": { "const": "serverless" },
+    "stateless": { "const": true },
+    "package": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["maxSizeMb"],
+      "properties": {
+        "maxSizeMb": { "type": "integer", "minimum": 1, "maximum": 50 }
+      }
+    },
+    "coldStart": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["maxInitMilliseconds", "lazyInitialization"],
+      "properties": {
+        "maxInitMilliseconds": { "type": "integer", "minimum": 1 },
+        "lazyInitialization": { "const": true }
+      }
+    }
+  }
+}

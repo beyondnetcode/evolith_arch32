@@ -1,57 +1,42 @@
-# Evolith Core API Dockerfile
-# Multi-stage build for minimal production image
-
-# ── Stage 1: Builder ──────────────────────────────────────────────────────────
 FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files and tsconfig
 COPY apps/core-api/package*.json ./
 COPY apps/core-api/tsconfig*.json ./
 
-# Install all dependencies (including devDeps needed for build)
-RUN npm install --legacy-peer-deps
+# npm ci requires lockfile — deterministic, cached when package.json unchanged
+RUN npm ci --legacy-peer-deps
 
-# Copy source
 COPY apps/core-api/src/ ./src/
-
-# Build TypeScript → dist/
 RUN npm run build
 
-# ── Stage 2: Runner ───────────────────────────────────────────────────────────
+# ── Runner ────────────────────────────────────────────────────────────────────
 FROM node:20-alpine AS runner
 
 LABEL org.opencontainers.image.title="Evolith Core API"
-LABEL org.opencontainers.image.description="Evolith Core API — gate evaluation, phase transitions, and architecture drift detection"
-LABEL org.opencontainers.image.version="0.0.1"
-LABEL org.opencontainers.image.authors="Beyondnet"
 LABEL org.opencontainers.image.source="https://github.com/beyondnetcode/evolith_arch32"
 
-RUN apk add --no-cache bash curl
+RUN apk add --no-cache curl
 
 WORKDIR /app
 
-# Copy built artifacts
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package.json ./
+COPY --from=builder /app/package-lock.json ./
 
-# Install production dependencies only
-RUN npm install --omit=dev --legacy-peer-deps && npm cache clean --force
+# Production deps only — lockfile ensures deterministic cache hit
+RUN npm ci --omit=dev --legacy-peer-deps && npm cache clean --force
 
-# Copy corpus: rulesets + reference (built from monorepo root context)
+# Only rulesets needed at runtime (reference/ is docs, not runtime data — 22 MB saved)
 COPY rulesets/ ./corpus/rulesets/
-COPY reference/ ./corpus/reference/
 
-
-# Create non-root user
 RUN addgroup -g 1001 -S evolith && \
     adduser -S evolith -u 1001 -G evolith && \
     chown -R evolith:evolith /app
 
 USER evolith
 
-# Environment variables
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV WORKSPACE_ROOT=/app/corpus

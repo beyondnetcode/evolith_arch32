@@ -118,4 +118,12 @@ Every service in `docker-compose.yml` declares `deploy.resources.limits` to prev
 
 ---
 
+## Deployment Guides
+
+| Guide | Description |
+| :--- | :--- |
+| [VPS — Coolify on Hostinger](./vps-coolify/README.md) | Production deployment to a self-hosted VPS using Coolify, validated on 7.8 GB / 2 vCPU Hostinger instance |
+
+---
+
 [Back to Repository Root](../README.md)

@@ -28,8 +28,8 @@ COPY --from=builder /app/package-lock.json ./
 
 RUN npm ci --omit=dev --legacy-peer-deps && npm cache clean --force && rm package-lock.json
 
-# Copy only runtime ruleset data — .md excluded via .dockerignore
 COPY rulesets/ ./corpus/rulesets/
+COPY reference/ ./corpus/reference/
 
 RUN addgroup -g 1001 -S evolith && \
     adduser -S evolith -u 1001 -G evolith && \

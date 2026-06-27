@@ -14,8 +14,7 @@ coverage/
 .gitignore
 .gitattributes
 
-# Docs & reference (not runtime data)
-reference/
+# Docs only — reference/ JSON files are needed at runtime for topologies
 **/*.md
 **/*.es.md
 

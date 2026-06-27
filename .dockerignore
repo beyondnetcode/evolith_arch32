@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build artifacts
+dist/
+**/dist/
+**/*.tsbuildinfo
+coverage/
+**/coverage/
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Docs & reference (not runtime data)
+reference/
+**/*.md
+**/*.es.md
+
+# Dev / IDE
+.env*
+.vscode/
+.idea/
+*.log
+
+# CI / tooling
+.github/
+.harness/
+.husky/
+.nx/
+
+# Test artifacts
+**/__tests__/
+**/*.spec.ts
+**/*.test.ts
+**/test/

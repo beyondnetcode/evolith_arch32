@@ -5,11 +5,12 @@ WORKDIR /app
 COPY apps/core-api/package*.json ./
 COPY apps/core-api/tsconfig*.json ./
 
-# npm ci requires lockfile — deterministic, cached when package.json unchanged
 RUN npm ci --legacy-peer-deps
 
 COPY apps/core-api/src/ ./src/
-RUN npm run build
+
+# Build without sourcemaps or declaration files (prod tsconfig)
+RUN npx tsc -p tsconfig.prod.json
 
 # ── Runner ────────────────────────────────────────────────────────────────────
 FROM node:20-alpine AS runner
@@ -25,10 +26,9 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/package-lock.json ./
 
-# Production deps only — lockfile ensures deterministic cache hit
 RUN npm ci --omit=dev --legacy-peer-deps && npm cache clean --force
 
-# Only rulesets needed at runtime (reference/ is docs, not runtime data — 22 MB saved)
+# Copy only runtime ruleset data — .md excluded via .dockerignore
 COPY rulesets/ ./corpus/rulesets/
 
 RUN addgroup -g 1001 -S evolith && \

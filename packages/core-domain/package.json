@@ -1,6 +1,6 @@
 {
   "name": "@evolith/core-domain",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Shared Domain and Application logic for Evolith Core",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

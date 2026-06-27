@@ -1,12 +1,14 @@
 {
   "name": "@evolith/infra-providers",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Shared infrastructure providers for Evolith Core",
+  "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "publishConfig": {
     "access": "public",
@@ -16,7 +18,7 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@evolith/core-domain": "1.0.3",
+    "@evolith/core-domain": "1.0.4",
     "@nestjs/common": "11.1.27",
     "ajv": "8.20.0",
     "ajv-formats": "3.0.1",

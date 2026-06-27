@@ -3,6 +3,7 @@
   "version": "1.1.0",
   "private": true,
   "description": "Evolith Architecture Reference - Monorepo root",
+  "license": "MIT",
   "scripts": {
     "prepare": "husky",
     "build:policy": "node ./.harness/scripts/compile-opa-wasm.mjs",

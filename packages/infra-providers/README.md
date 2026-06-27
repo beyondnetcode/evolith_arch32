@@ -72,4 +72,4 @@ export class InfraModule {}
 
 ## License
 
-UNLICENSED — proprietary. Copyright © Beyondnet.
+MIT — Copyright © 2026 BeyondNet Code. See [LICENSE](./LICENSE) for details.

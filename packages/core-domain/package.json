@@ -1,7 +1,8 @@
 {
   "name": "@evolith/core-domain",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Shared Domain and Application logic for Evolith Core",
+  "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
@@ -48,7 +49,8 @@
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "publishConfig": {
     "access": "public",

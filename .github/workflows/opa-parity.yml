@@ -26,10 +26,8 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: package-lock.json
       - name: Install dependencies
-        run: npm ci
+        run: npm install --legacy-peer-deps
       - name: Compile OPA policies to WASM (pinned opa)
         run: npm run build:policy
       - name: Run full Native/OPA parity gate

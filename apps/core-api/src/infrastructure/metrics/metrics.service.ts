@@ -6,6 +6,7 @@ export class MetricsService implements OnModuleDestroy {
   private readonly registry: Registry;
   readonly gateEvaluationsTotal: Counter;
   readonly gateEvaluationDuration: Histogram;
+  readonly httpRequestsTotal: Counter;
 
   constructor() {
     this.registry = new Registry();
@@ -26,12 +27,16 @@ export class MetricsService implements OnModuleDestroy {
       registers: [this.registry],
     });
 
-    new Counter({
+    this.httpRequestsTotal = new Counter({
       name: 'evolith_http_requests_total',
       help: 'Total HTTP requests',
       labelNames: ['method', 'path', 'status'],
       registers: [this.registry],
     });
+  }
+
+  recordHttpRequest(method: string, path: string, status: number): void {
+    this.httpRequestsTotal.inc({ method, path, status: String(status) });
   }
 
   createCounter(config: CounterConfiguration<string>): Counter {

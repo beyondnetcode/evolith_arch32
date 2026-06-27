@@ -16,11 +16,15 @@ const sdk = new NodeSDK({
   serviceName: 'evolith-core-api',
 });
 
-if (process.env.NODE_ENV === 'production' || process.env.OTEL_ENABLED === 'true') {
+const otelEnabled =
+  process.env.NODE_ENV === 'production' || process.env.OTEL_ENABLED === 'true';
+
+if (otelEnabled) {
   sdk.start();
   console.log('OpenTelemetry tracing initialized');
 }
 
 process.on('SIGTERM', () => {
+  if (!otelEnabled) return;
   sdk.shutdown().then(() => console.log('OpenTelemetry shut down'));
 });

@@ -1,7 +1,22 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ConfigService } from '@nestjs/config';
 import { HealthController } from './health.controller';
 import { HealthService } from '../../application/services/health.service';
 import { MetricsService } from '../../infrastructure/metrics/metrics.service';
+import type { IFileSystem } from '@evolith/core-domain/domain/interfaces';
+
+const mockFs: jest.Mocked<IFileSystem> = {
+  exists: jest.fn(),
+  readFile: jest.fn(),
+  readJson: jest.fn(),
+  writeFile: jest.fn(),
+  mkdir: jest.fn(),
+  readdir: jest.fn(),
+  rename: jest.fn(),
+  rm: jest.fn(),
+  stat: jest.fn(),
+  copy: jest.fn(),
+};
 
 describe('HealthController', () => {
   let controller: HealthController;
@@ -11,28 +26,45 @@ describe('HealthController', () => {
       controllers: [HealthController],
       providers: [
         HealthService,
-        { provide: MetricsService, useValue: { getMetrics: jest.fn().mockResolvedValue(''), gateEvaluationsTotal: {}, gateEvaluationDuration: {} } },
+        {
+          provide: MetricsService,
+          useValue: {
+            getMetrics: jest.fn().mockResolvedValue(''),
+            gateEvaluationsTotal: {},
+            gateEvaluationDuration: {},
+          },
+        },
+        {
+          provide: ConfigService,
+          useValue: {
+            get: jest.fn().mockReturnValue('/corpus'),
+            getOrThrow: jest.fn().mockReturnValue('/corpus'),
+          },
+        },
+        { provide: 'IFileSystem', useValue: mockFs },
       ],
     }).compile();
 
     controller = module.get<HealthController>(HealthController);
   });
 
-  it('should return health status', () => {
-    const result = controller.check();
-    expect(result.status).toBe('OK');
-    expect(result.service).toBe('Evolith Core API');
-    expect(result.timestamp).toBeDefined();
-  });
+  afterEach(() => jest.clearAllMocks());
 
   it('should return liveness status', () => {
     const result = controller.live();
     expect(result.status).toBe('UP');
+    expect(result.timestamp).toBeDefined();
   });
 
-  it('should return readiness status', () => {
-    const result = controller.ready();
+  it('should return UP when corpus file exists', async () => {
+    mockFs.exists.mockResolvedValue(true);
+    const result = await controller.ready();
     expect(result.status).toBe('UP');
-    expect(result.checks.metrics).toBe('UP');
+    expect(result.checks.corpus).toBe('UP');
+  });
+
+  it('should throw 503 when corpus file is missing', async () => {
+    mockFs.exists.mockResolvedValue(false);
+    await expect(controller.ready()).rejects.toMatchObject({ status: 503 });
   });
 });

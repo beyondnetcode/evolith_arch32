@@ -11,6 +11,7 @@ import { HttpExceptionFilter } from './infrastructure/filters/http-exception.fil
 import { DeprecationInterceptor } from './infrastructure/interceptors/deprecation.interceptor';
 import { EnvelopeInterceptor } from './infrastructure/interceptors/envelope.interceptor';
 import { SecurityAuditInterceptor } from './infrastructure/interceptors/security-audit.interceptor';
+import { MetricsService } from './infrastructure/metrics/metrics.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -47,8 +48,9 @@ async function bootstrap() {
 
   app.useGlobalFilters(new HttpExceptionFilter());
 
+  const metricsService = app.get(MetricsService);
   app.useGlobalInterceptors(
-    new SecurityAuditInterceptor(),
+    new SecurityAuditInterceptor(metricsService),
     new DeprecationInterceptor(),
     new EnvelopeInterceptor(),
   );

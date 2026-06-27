@@ -119,6 +119,9 @@ export interface InitProjectRequest {
 export interface ProposeAdvanceRequest {
   /** Opaque workspace reference issued by the Tracker BFF */
   workspaceRef: string;
+  /** Current phase (gate to evaluate exit from) */
+  currentPhase: string;
+  /** Target phase to advance to */
   targetPhase: string;
   triggerDeploy?: boolean;
 }

@@ -131,10 +131,10 @@ export class EvolithRestClient {
 
   /**
    * Initialize a new project.
-   * POST /v1/projects/init
+   * POST /v1/projects/initialize
    */
   async initProject(body: InitProjectRequest): Promise<InitProjectResponse> {
-    return this.post<InitProjectResponse>('/v1/projects/init', body);
+    return this.post<InitProjectResponse>('/v1/projects/initialize', body);
   }
 
   /**

@@ -46,6 +46,14 @@
       "default": "./dist/*.js"
     }
   },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
   "scripts": {
     "build": "tsc",
     "lint:boundaries": "eslint \"src/**/*.ts\" --no-eslintrc -c .eslintrc.js",

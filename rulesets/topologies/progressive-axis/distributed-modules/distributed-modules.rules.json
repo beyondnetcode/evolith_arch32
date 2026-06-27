@@ -1,5 +1,5 @@
 {
-  "$schema": "../../../../schema/ruleset-standard.schema.json",
+  "$schema": "../../../schema/ruleset-standard.schema.json",
   "$id": "https://evolith.dev/rulesets/topologies/progressive-axis/distributed-modules/distributed-modules.rules.json",
   "title": "Distributed Modules Architecture Rules",
   "description": "Rules governing the distributed modules phase. Module boundaries are formalized; inter-module contracts are explicit and versioned.",

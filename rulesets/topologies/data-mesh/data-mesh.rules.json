@@ -1,5 +1,5 @@
 {
-  "$schema": "../../../../../rulesets/schema/ruleset-standard.schema.json",
+  "$schema": "../../schema/ruleset-standard.schema.json",
   "$id": "https://evolith.dev/rulesets/topologies/data-mesh.rules.json",
   "title": "Data Mesh Topology Rules",
   "description": "Architectural rules for the Data Mesh topology.",

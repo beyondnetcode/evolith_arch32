@@ -1,5 +1,5 @@
 {
-  "$schema": "../../../../../rulesets/schema/ruleset-standard.schema.json",
+  "$schema": "../../schema/ruleset-standard.schema.json",
   "$id": "https://evolith.dev/rulesets/topologies/edge-computing.rules.json",
   "title": "Edge Computing Topology Rules",
   "description": "Architectural rules for the Edge Computing topology.",

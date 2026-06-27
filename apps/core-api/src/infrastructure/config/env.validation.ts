@@ -3,7 +3,6 @@ import { z } from 'zod';
 export const envSchema = z.object({
   PORT: z.string().default('3000').transform(Number),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-  ALLOWED_ORIGINS: z.string().default('*'),
   CORS_ORIGINS: z.string().optional(),
   CORE_PATH: z.string().default(process.cwd()),
   WORKSPACE_ROOT: z.string().default('/tmp/evolith-workspaces'),

@@ -1,5 +1,5 @@
 {
-  "$schema": "../../../../../rulesets/schema/ruleset-standard.schema.json",
+  "$schema": "../../schema/ruleset-standard.schema.json",
   "$id": "https://evolith.dev/rulesets/topologies/event-driven.rules.json",
   "title": "Event-Driven Topology Rules",
   "description": "Architectural rules for the event-driven integration topology.",

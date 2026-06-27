@@ -1,5 +1,5 @@
 {
-  "$schema": "../../../../schema/ruleset-standard.schema.json",
+  "$schema": "../../../schema/ruleset-standard.schema.json",
   "$id": "https://evolith.dev/rulesets/topologies/progressive-axis/microservices/microservices.rules.json",
   "title": "Microservices Architecture Rules",
   "description": "Rules governing the microservices phase. Autonomous deployability is the core principle. Service mesh readiness is mandatory.",

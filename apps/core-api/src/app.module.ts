@@ -18,6 +18,7 @@ import { MetricsService } from './infrastructure/metrics/metrics.service';
 import { CircuitBreakerService } from './infrastructure/resilience/circuit-breaker.service';
 import { CoreReferenceQueryService } from './application/services/core-reference-query.service';
 import { ReferenceController } from './presentation/controllers/reference.controller';
+import { ComposableValidateController } from './presentation/controllers/composable-validate.controller';
 import { WorkspaceReferenceResolverService } from './application/services/workspace-reference-resolver.service';
 import { RedisCacheModule } from './infrastructure/cache/redis-cache.module';
 import { CacheMetricsService } from './infrastructure/cache/cache-metrics.service';
@@ -49,6 +50,7 @@ import { CacheMetricsService } from './infrastructure/cache/cache-metrics.servic
     PhasesController,
     MetricsController,
     ReferenceController,
+    ComposableValidateController,
   ],
   providers: [
     HealthService,

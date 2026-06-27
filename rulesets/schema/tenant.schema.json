@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/rulesets/schema/tenant.schema.json",
+  "title": "Evolith Tenant Schema",
+  "description": "Defines a tenant (satellite organization) configuration within the Evolith governance framework.",
+  "type": "object",
+  "required": ["tenantId", "name", "tier", "createdAt"],
+  "properties": {
+    "tenantId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{1,62}[a-z0-9]$",
+      "description": "Unique tenant slug, e.g. acme-corp"
+    },
+    "name": { "type": "string", "description": "Human-readable tenant name" },
+    "tier": {
+      "type": "string",
+      "enum": ["community", "professional", "enterprise"],
+      "description": "Determines which features and override capabilities are available"
+    },
+    "baselineRuleset": {
+      "type": "string",
+      "description": "URL of the base ruleset this tenant extends. Defaults to Evolith canonical."
+    },
+    "overridesRef": {
+      "type": "string",
+      "description": "Relative path to the tenant-override.json file"
+    },
+    "contacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["role", "email"],
+        "properties": {
+          "role": { "type": "string" },
+          "email": { "type": "string", "format": "email" }
+        }
+      }
+    },
+    "allowedTopologies": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Topology IDs this tenant is authorized to use. Empty = all allowed."
+    },
+    "phaseRange": {
+      "type": "object",
+      "properties": {
+        "min": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "max": { "type": "integer", "minimum": 1, "maximum": 5 }
+      },
+      "description": "SDLC phases this tenant can operate in"
+    },
+    "createdAt": { "type": "string", "format": "date" },
+    "updatedAt": { "type": "string", "format": "date" }
+  },
+  "additionalProperties": false
+}

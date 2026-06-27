@@ -1,6 +1,6 @@
 {
   "name": "@evolith/infra-providers",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Shared infrastructure providers for Evolith Core",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -16,7 +16,7 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@evolith/core-domain": "1.0.2",
+    "@evolith/core-domain": "1.0.3",
     "@nestjs/common": "11.1.27",
     "ajv": "8.20.0",
     "ajv-formats": "3.0.1",

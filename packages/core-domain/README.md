@@ -99,4 +99,4 @@ import type { IRulesetRepository }        from '@evolith/core-domain';
 
 ## License
 
-UNLICENSED — proprietary. Copyright © Beyondnet.
+MIT — Copyright © 2026 BeyondNet Code. See [LICENSE](./LICENSE) for details.

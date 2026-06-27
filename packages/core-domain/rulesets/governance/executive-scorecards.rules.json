@@ -1,0 +1,213 @@
+{
+  "$schema": "../schema/ruleset-standard.schema.json",
+  "$id": "https://evolith.dev/rulesets/governance/executive-scorecards.rules.json",
+  "title": "Executive Scorecards Rules",
+  "description": "Rules encoding DORA and SPACE metrics for executive visibility. These rules ensure Predictability, Adherencia (Architecture Drift Index), and Eficiencia across satellite products.",
+  "version": "1.0.0",
+  "effectiveDate": "2026-06-06",
+  "scope": "satellite",
+  "category": "executive-metrics",
+  "principles": [
+    {
+      "id": "DORA-01",
+      "principle": "Deployment Frequency",
+      "statement": "Satellite products MUST measure and report deployment frequency. Target: at least once per week to production.",
+      "rationale": "Evololith Product Vision §6: Deployment Frequency is a core DORA metric. High deployment frequency indicates healthy CD pipeline.",
+      "severity": "MUST",
+      "validationQuery": "CI/CD pipeline exports deployment frequency metric. Report shows deployments/week to production.",
+      "blocking": false,
+      "metrics": {
+        "name": "Deployment Frequency",
+        "unit": "deployments per week",
+        "target": ">= 1",
+        "measurement": "Count of production deployments in trailing 4 weeks / 4",
+        "dashboardRequired": true
+      },
+      "references": [
+        "reference/governance/standards/vision/evolith-product-vision-master.md#6-executive-vision-scorecards"
+      ]
+    },
+    {
+      "id": "DORA-02",
+      "principle": "Lead Time for Changes",
+      "statement": "Satellite products MUST measure and report lead time from commit to production. Target: less than 7 days for medium changes.",
+      "rationale": "Evololith Product Vision §6: Lead Time measures how quickly changes flow from commit to production. Short lead time indicates efficient pipeline.",
+      "severity": "MUST",
+      "validationQuery": "CI/CD pipeline exports lead time metric. Report shows median days from first commit to production deployment.",
+      "blocking": false,
+      "metrics": {
+        "name": "Lead Time for Changes",
+        "unit": "days",
+        "target": "<= 7",
+        "measurement": "Median time from first commit of a change to production deployment",
+        "dashboardRequired": true
+      },
+      "references": [
+        "reference/governance/standards/vision/evolith-product-vision-master.md#6-executive-vision-scorecards"
+      ]
+    },
+    {
+      "id": "DORA-03",
+      "principle": "Change Failure Rate",
+      "statement": "Satellite products MUST measure and report change failure rate. Target: less than 15% of deployments cause failures.",
+      "rationale": "Evololith Product Vision §6: Change Failure Rate measures the percentage of deployments causing production failures.",
+      "severity": "MUST",
+      "validationQuery": "CI/CD pipeline exports change failure rate. Report shows % of deployments requiring rollback or hotfix.",
+      "blocking": false,
+      "metrics": {
+        "name": "Change Failure Rate",
+        "unit": "percentage",
+        "target": "<= 15%",
+        "measurement": "(Failed deployments / Total deployments) * 100 in trailing 4 weeks",
+        "dashboardRequired": true
+      },
+      "references": [
+        "reference/governance/standards/vision/evolith-product-vision-master.md#6-executive-vision-scorecards"
+      ]
+    },
+    {
+      "id": "DORA-04",
+      "principle": "Time to Restore",
+      "statement": "Satellite products MUST measure and report MTTR (Mean Time To Restore). Target: less than 1 hour for critical failures.",
+      "rationale": "Evolith Product Vision §6: Time to Restore measures how quickly the team recovers from failures. Low MTTR indicates effective incident response.",
+      "severity": "MUST",
+      "validationQuery": "Incident management system exports MTTR. Report shows median hours from failure detection to service restoration.",
+      "blocking": false,
+      "metrics": {
+        "name": "Time to Restore",
+        "unit": "hours",
+        "target": "<= 1",
+        "measurement": "Median time from failure detection to restoration for P1/P2 incidents",
+        "dashboardRequired": true
+      },
+      "references": [
+        "reference/governance/standards/vision/evolith-product-vision-master.md#6-executive-vision-scorecards"
+      ]
+    },
+    {
+      "id": "SPACE-01",
+      "principle": "Reliability (Observability)",
+      "statement": "Satellite products MUST have observability infrastructure (traces, logs, metrics) operational in production.",
+      "rationale": "Evololith Product Vision §6: Reliability ensures production systems are observable. Evolith ADR-0007 mandates OpenTelemetry.",
+      "severity": "MUST",
+      "validationQuery": "Production observability dashboard accessible. OpenTelemetry traces flowing. Error rate < 1%.",
+      "blocking": true,
+      "metrics": {
+        "name": "Error Rate",
+        "unit": "percentage",
+        "target": "<= 1%",
+        "measurement": "(Failed requests / Total requests) * 100 in trailing 24 hours",
+        "dashboardRequired": true
+      },
+      "references": [
+        "reference/governance/standards/vision/evolith-product-vision-master.md#6-executive-vision-scorecards",
+        "reference/architecture/adrs/nodejs/0007-observability-telemetry-loki-opentelemetry.md"
+      ]
+    },
+    {
+      "id": "SPACE-02",
+      "principle": "Culture (Team Health)",
+      "statement": "Satellite products SHOULD measure team health quarterly. Target: > 70% positive sentiment.",
+      "rationale": "Evolith Product Vision §6: Culture measures team satisfaction and health. Teams that are healthy ship higher quality.",
+      "severity": "SHOULD",
+      "validationQuery": "Team health survey conducted quarterly. Results stored in product documentation. Trend tracked.",
+      "blocking": false,
+      "metrics": {
+        "name": "Team Health Score",
+        "unit": "percentage",
+        "target": ">= 70%",
+        "measurement": "% positive responses in quarterly team health survey",
+        "dashboardRequired": false
+      },
+      "references": [
+        "reference/governance/standards/vision/evolith-product-vision-master.md#6-executive-vision-scorecards"
+      ]
+    },
+    {
+      "id": "SPACE-03",
+      "principle": "Execution (Throughput)",
+      "statement": "Satellite products MUST measure and report sprint throughput. Target: > 80% of committed work delivered.",
+      "rationale": "Evolith Product Vision §6: Execution measures delivery effectiveness. Consistent throughput indicates predictable pipeline.",
+      "severity": "SHOULD",
+      "validationQuery": "Sprint metrics exported. Report shows % of story points delivered vs committed in trailing 4 sprints.",
+      "blocking": false,
+      "metrics": {
+        "name": "Sprint Throughput",
+        "unit": "percentage",
+        "target": ">= 80%",
+        "measurement": "(Delivered story points / Committed story points) * 100 in trailing 4 sprints",
+        "dashboardRequired": true
+      },
+      "references": [
+        "reference/governance/standards/vision/evolith-product-vision-master.md#6-executive-vision-scorecards"
+      ]
+    },
+    {
+      "id": "SPACE-04",
+      "principle": "Communication (Visibility)",
+      "statement": "Satellite products MUST have current SDLC state visible to all stakeholders. Target: phase gate status updated within 24h.",
+      "rationale": "Evolith Product Vision §6: Communication ensures stakeholders have real-time visibility into development state.",
+      "severity": "SHOULD",
+      "validationQuery": "Phase gate status board accessible. Updates made within 24h of state change. All stakeholders have access.",
+      "blocking": false,
+      "metrics": {
+        "name": "Gate Status Freshness",
+        "unit": "hours",
+        "target": "<= 24",
+        "measurement": "Max time between state change and status board update",
+        "dashboardRequired": true
+      },
+      "references": [
+        "reference/governance/standards/vision/evolith-product-vision-master.md#6-executive-vision-scorecards"
+      ]
+    },
+    {
+      "id": "SPACE-05",
+      "principle": "Sponsorship (Leadership Alignment)",
+      "statement": "Satellite products MUST have executive sponsor assigned and actively engaged. Sponsor must review quarterly status.",
+      "rationale": "Evolith Product Vision §6: Sponsorship ensures leadership alignment. Active sponsorship prevents strategic drift.",
+      "severity": "MUST",
+      "validationQuery": "evolith.yaml includes governance.executiveSponsor field. Quarterly review meeting documented.",
+      "blocking": false,
+      "metrics": {
+        "name": "Executive Engagement",
+        "unit": "reviews per quarter",
+        "target": ">= 1",
+        "measurement": "Count of executive sponsor reviews in trailing quarter",
+        "dashboardRequired": false
+      },
+      "references": [
+        "reference/governance/standards/vision/evolith-product-vision-master.md#6-executive-vision-scorecards"
+      ]
+    },
+    {
+      "id": "DRIFT-01",
+      "principle": "Architecture Drift Index",
+      "statement": "Satellite products MUST measure and report Architecture Drift Index. Target: < 10% drift from Evolith Core standards.",
+      "rationale": "Evolith Product Vision §6: Adherence measured via Architecture Drift Index. Drift > threshold indicates erosion of governance.",
+      "severity": "MUST",
+      "validationQuery": "Evolith CLI validate command run monthly. Report shows % of rules failed vs total applicable rules.",
+      "blocking": false,
+      "metrics": {
+        "name": "Architecture Drift Index",
+        "unit": "percentage",
+        "target": "<= 10%",
+        "measurement": "(Failed rules / Total applicable rules) * 100",
+        "dashboardRequired": true
+      },
+      "references": [
+        "reference/governance/standards/vision/evolith-product-vision-master.md#6-executive-vision-scorecards"
+      ]
+    }
+  ],
+  "governance": {
+    "complianceVerification": "DORA+SPACE metrics verified quarterly during governance review. Evolith CLI validate command provides drift index.",
+    "exceptionProcess": "Architecture Board review required when any metric exceeds target for 2+ consecutive quarters.",
+    "dashboardRequirements": "Metrics marked dashboardRequired: true MUST be visible in Evolith Tracker or equivalent executive dashboard.",
+    "reportingCadence": "DORA metrics reported monthly. SPACE metrics reported quarterly."
+  },
+  "bilingual": {
+    "en": "Executive Scorecards Rules",
+    "es": "Reglas de Scorecards Ejecutivos"
+  }
+}

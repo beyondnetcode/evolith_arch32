@@ -1,0 +1,106 @@
+{
+  "$schema": "../../../../schema/ruleset-standard.schema.json",
+  "$id": "https://evolith.dev/rulesets/topologies/progressive-axis/microservices/microservices.rules.json",
+  "title": "Microservices Architecture Rules",
+  "description": "Rules governing the microservices phase. Autonomous deployability is the core principle. Service mesh readiness is mandatory.",
+  "version": "1.0.0",
+  "phase": "microservices",
+  "effectiveDate": "2026-01-01",
+  "rules": [
+    {
+      "id": "MS-R01",
+      "severity": "MUST",
+      "category": "autonomous-deployment",
+      "title": "True Independent Deployability",
+      "description": "Each service MUST deploy independently with no coordination required with any other service. Contract-first approach ensures backward compatibility.",
+      "rationale": "Microservices exists only when services can truly evolve independently. Coordinated deployments indicate premature Microservices adoption.",
+      "validationQuery": "Each service has independent CI/CD. No service has a deployment dependency on another service's release schedule.",
+      "blocking": true
+    },
+    {
+      "id": "MS-R02",
+      "severity": "MUST",
+      "category": "service-mesh",
+      "title": "Service Mesh Readiness",
+      "description": "All services MUST be deployed behind a service mesh (Istio, Linkerd, or equivalent) or equivalent sidecar infrastructure. mTLS MUST be enforced for all in-cluster communication.",
+      "rationale": "Service mesh provides observability, traffic management, and security at the infrastructure level. core/ADR-0013 covers cloud topology and DR.",
+      "validationQuery": "Service-to-service communication uses mTLS. Service mesh provides routing, retries, and circuit breaking.",
+      "blocking": true
+    },
+    {
+      "id": "MS-R03",
+      "severity": "MUST",
+      "category": "failure-isolation",
+      "title": "Bulkhead Pattern per Service",
+      "description": "Each service MUST implement bulkhead isolation: resource pools (connections, threads) are isolated per upstream dependency.",
+      "rationale": "Bulkheads prevent a single upstream failure from consuming all resources and causing cascading failures.",
+      "validationQuery": "Each service has dedicated connection pools per upstream dependency. One upstream timeout does not exhaust shared pool.",
+      "blocking": false
+    },
+    {
+      "id": "MS-R04",
+      "severity": "MUST",
+      "category": "graceful-degradation",
+      "title": "Fallback Behavior for All External Calls",
+      "description": "All inter-service calls MUST have defined fallback behavior when the downstream service is unavailable. Graceful degradation is required.",
+      "rationale": "Microservices services must remain functional even when other services are degraded. No hard failure propagation to end user.",
+      "validationQuery": "All downstream calls have fallback: cached response, default value, or degraded mode. E2E tests validate fallback paths.",
+      "blocking": false
+    },
+    {
+      "id": "MS-R05",
+      "severity": "MUST",
+      "category": "contract-testing",
+      "title": "Contract Tests for All Inter-Service Contracts",
+      "description": "All inter-service contracts (synchronous gRPC/REST and asynchronous events) MUST have contract tests (Pact or equivalent) that validate backward compatibility before merge.",
+      "rationale": "Contract tests prevent breaking changes from reaching production. Consumer-driven contract testing is the gold standard.",
+      "validationQuery": "Contract tests exist for all inter-service contracts. CI fails on breaking contract changes.",
+      "blocking": true
+    },
+    {
+      "id": "MS-R06",
+      "severity": "MUST",
+      "category": "data-sovereignty",
+      "title": "Service Owns Its Data — No Shared Persistence",
+      "description": "Each service owns its data store exclusively. No shared databases, no cross-service table access, no data leakage through APIs.",
+      "rationale": "Data sovereignty is the foundation of service independence. Shared persistence creates hidden coupling that defeats F3.",
+      "validationQuery": "Each service has isolated persistence. No cross-service database queries. Data access only through published API.",
+      "blocking": true
+    },
+    {
+      "id": "MS-R07",
+      "severity": "MUST",
+      "category": "observability",
+      "title": "Service-Level Observability with SLOs",
+      "description": "Each service MUST define and monitor its SLOs (Service Level Objectives). Error budget tracking is required. Dashboard per service is mandatory.",
+      "rationale": "SLOs provide objective health metrics per service. Without them, there's no data-driven basis for reliability decisions.",
+      "validationQuery": "SLO dashboard per service. Error budget tracking active. Alerts fire when SLO is at risk.",
+      "blocking": false
+    },
+    {
+      "id": "MS-R08",
+      "severity": "MUST",
+      "category": "on-call",
+      "title": "Service-Level On-Call Ownership",
+      "description": "Each service MUST have a designated on-call owner. Runbooks exist for all common failure scenarios. Incident response time <= 15 minutes.",
+      "rationale": "Microservices requires service-level ownership. Shared on-call across all services loses the independence benefit.",
+      "validationQuery": "On-call roster per service exists. Runbooks documented and tested.",
+      "blocking": false
+    }
+  ],
+  "stabilityRequirements": {
+    "minDeploymentFrequency": "Daily",
+    "minMTTR": "15 minutes",
+    "minChangeFailureRate": "< 15%",
+    "reference": "adr/0013-cloud-infrastructure-topology-dr.md"
+  },
+  "exitGate": {
+    "description": "Microservices does not exit. Microservices is the terminal architecture phase. Any further evolution requires new architectural decision via ADR.",
+    "requiredArtifacts": [
+      "Service catalog with ownership",
+      "Contract registry with contract tests",
+      "SLO dashboards per service",
+      "Service mesh deployment evidence"
+    ]
+  }
+}

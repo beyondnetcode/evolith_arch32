@@ -21,7 +21,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@evolith/core-domain": "1.0.0",
+    "@evolith/core-domain": "1.0.1",
     "@evolith/infra-providers": "1.0.0",
     "@keyv/redis": "5.1.6",
     "@nestjs/cache-manager": "3.1.3",

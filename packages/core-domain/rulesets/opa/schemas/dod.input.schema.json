@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/schema/opa/dod.input.schema.json",
+  "title": "Definition of Done OPA Policy Input Schema",
+  "type": "object",
+  "required": ["story"],
+  "properties": {
+    "story": {
+      "type": "object",
+      "required": [
+        "reviewCount",
+        "coveragePercent",
+        "acceptanceCriteriaVerified",
+        "documentationUpdated",
+        "observabilityAdded",
+        "securityGatesPassed",
+        "architecturalDecisionMade",
+        "adrCreated",
+        "integrationTestsPassing",
+        "lintPassing",
+        "ciGreen"
+      ],
+      "properties": {
+        "reviewCount": { "type": "integer", "minimum": 0 },
+        "coveragePercent": { "type": "number", "minimum": 0, "maximum": 100 },
+        "acceptanceCriteriaVerified": { "type": "boolean" },
+        "documentationUpdated": { "type": "boolean" },
+        "observabilityAdded": { "type": "boolean" },
+        "securityGatesPassed": { "type": "boolean" },
+        "architecturalDecisionMade": { "type": "boolean" },
+        "adrCreated": { "type": "boolean" },
+        "integrationTestsPassing": { "type": "boolean" },
+        "lintPassing": { "type": "boolean" },
+        "ciGreen": { "type": "boolean" }
+      }
+    }
+  }
+}

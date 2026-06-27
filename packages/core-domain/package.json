@@ -1,6 +1,6 @@
 {
   "name": "@evolith/core-domain",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Shared Domain and Application logic for Evolith Core",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -48,6 +48,7 @@
   },
   "files": [
     "dist",
+    "rulesets",
     "README.md"
   ],
   "publishConfig": {

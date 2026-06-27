@@ -1,0 +1,129 @@
+{
+  "$schema": "../schema/ruleset-standard.schema.json",
+  "$id": "https://evolith.dev/rulesets/adr/adr-0010-multi-tenancy.rules.json",
+  "title": "ADR-0010 — Multi-Tenancy Architecture Strategy Rules",
+  "description": "Machine-readable rules encoding ADR-0010 Multi-Tenancy Architecture. Conditional rules for products serving multiple tenants with dual-layer filtering.",
+  "version": "1.0.0",
+  "adrId": "ADR-0010",
+  "adrTitle": "Multi-Tenancy Architecture Strategy",
+  "status": "Approved",
+  "date": "2026-05-08",
+  "effectiveDate": "2026-05-08",
+  "conditional": true,
+  "condition": "REQUIRED when product serves multiple tenants. Single-tenant products may defer.",
+  "rules": [
+    {
+      "id": "MTN-01",
+      "severity": "MUST",
+      "category": "filtering-layer",
+      "title": "Application-layer tenant filtering is primary",
+      "description": "Application-layer filtering (WHERE tenant_id = X) is the PRIMARY enforcement mechanism for tenant data isolation. Every query that returns tenant-owned data MUST include tenant_id filter.",
+      "rationale": "ADR-0010: Application-layer filtering as primary mechanism. Always filter by tenant context.",
+      "validationQuery": "All repository queries include tenant_id in WHERE clause. No raw queries that bypass application context.",
+      "blocking": true,
+      "layer": "Application"
+    },
+    {
+      "id": "MTN-02",
+      "severity": "MUST",
+      "category": "filtering-layer",
+      "title": "Database-native tenant enforcement is secondary",
+      "description": "Database-native enforcement (RLS policies, separate schemas) is the SECONDARY failsafe mechanism. Database enforcement supplements but does not replace application-layer filtering.",
+      "rationale": "ADR-0010: Dual-layer strategy. Database is failsafe, not primary.",
+      "validationQuery": "Database has RLS or schema-per-tenant. Application-layer filtering still enforced even when DB enforcement exists.",
+      "blocking": true,
+      "layer": "Infrastructure"
+    },
+    {
+      "id": "MTN-03",
+      "severity": "MUST",
+      "category": "context-propagation",
+      "title": "Tenant context propagated through all layers",
+      "description": "Tenant context (tenant_id) MUST be propagated through all layers without exception. Domain logic operates with explicit tenant context. No implicit tenant assumption.",
+      "rationale": "ADR-0010: Tenant context must be explicit and immutable for the duration of the request.",
+      "validationQuery": "TenantId passed as explicit parameter or via scoped context (not static). Domain methods signature includes tenant context.",
+      "blocking": true
+    },
+    {
+      "id": "MTN-04",
+      "severity": "MUST NOT",
+      "category": "data-isolation",
+      "title": "Cross-tenant data access prohibited",
+      "description": "Cross-tenant data access is strictly prohibited. No query, report, or export operation may access data from multiple tenants without explicit multi-tenant authorization.",
+      "rationale": "ADR-0010: Data isolation is non-negotiable. Cross-tenant access requires explicit corporate authorization.",
+      "validationQuery": "Audit logs verify no cross-tenant queries. Access control lists block cross-tenant operations.",
+      "blocking": true
+    },
+    {
+      "id": "MTN-05",
+      "severity": "MUST",
+      "category": "schema-per-tenant",
+      "title": "Multi-tenant schema strategy defined upfront",
+      "description": "The multi-tenant schema strategy (shared schema with tenant_id, separate schema per tenant, or separate database per tenant) MUST be defined before Phase 2 Design and documented in evolith.yaml.",
+      "rationale": "ADR-0010: Schema strategy affects all bounded contexts. Must be decided early.",
+      "validationQuery": "evolith.yaml specifies boundedContexts[].persistence strategy (shared-schema | schema-per-tenant | db-per-tenant).",
+      "blocking": true
+    },
+    {
+      "id": "MTN-06",
+      "severity": "MUST",
+      "category": "audit-trail",
+      "title": "Tenant-scoped audit trail maintained",
+      "description": "All tenant operations MUST be logged with tenant context. Audit trail enables compliance and security investigation per tenant.",
+      "rationale": "ADR-0010: Audit trail must be tenant-scoped for compliance and security.",
+      "validationQuery": "All audit logs include tenant_id field. Logs are immutable and retained per compliance requirements.",
+      "blocking": false,
+      "layer": "Infrastructure"
+    },
+    {
+      "id": "MTN-07",
+      "severity": "MUST",
+      "category": "data-migration",
+      "title": "Tenant migration path defined for schema changes",
+      "description": "When schema changes affect tenant data (new tenant column, migration scripts), the migration MUST include tenant-aware rollback and validation. No schema migration that breaks tenant data integrity.",
+      "rationale": "ADR-0010: Schema migrations in multi-tenant context are high-risk. Tenant data integrity must be preserved.",
+      "validationQuery": "Migration scripts include tenant validation tests. Rollback tested with tenant data present.",
+      "blocking": true
+    },
+    {
+      "id": "MTN-08",
+      "severity": "MUST",
+      "category": "external-api",
+      "title": "External APIs validate tenant context on every request",
+      "description": "Every API endpoint that handles tenant data MUST validate tenant context from authentication token or header. Requests without valid tenant context are rejected with 403 Forbidden.",
+      "rationale": "ADR-0010: API endpoints must enforce tenant context at the boundary.",
+      "validationQuery": "API middleware validates tenant_id from JWT/token on every request. Invalid tenant context returns 403.",
+      "blocking": true,
+      "layer": "Api"
+    }
+  ],
+  "schemaStrategies": [
+    {
+      "strategy": "shared-schema",
+      "description": "All tenants share same database schema with tenant_id column",
+      "useWhen": "Low sensitivity, high tenant count"
+    },
+    {
+      "strategy": "schema-per-tenant",
+      "description": "Each tenant has own PostgreSQL schema",
+      "useWhen": "Moderate sensitivity, moderate tenant count"
+    },
+    {
+      "strategy": "db-per-tenant",
+      "description": "Each tenant has own database",
+      "useWhen": "High sensitivity, low tenant count, strong isolation required"
+    }
+  ],
+  "references": [
+    "reference/architecture/adrs/core/0010-multi-tenancy-architecture-strategy.md",
+    "reference/architecture/adrs/dotnet/0060-dotnet-multi-tenancy-dual-layer-strategy.md"
+  ],
+  "exitCriteria": {
+    "description": "All tenant-scoped queries include tenant_id filter. Database RLS enforced. Tenant context propagated through all layers.",
+    "validationTools": [
+      "SQL analysis",
+      "integration tests with tenant isolation",
+      "security scan"
+    ]
+  }
+}

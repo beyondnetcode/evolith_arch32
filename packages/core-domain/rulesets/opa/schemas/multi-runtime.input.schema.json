@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/schema/opa/multi-runtime.input.schema.json",
+  "title": "Multi-Runtime OPA Policy Input Schema",
+  "type": "object",
+  "required": ["satellite"],
+  "properties": {
+    "satellite": {
+      "type": "object",
+      "required": ["runtime"],
+      "properties": {
+        "runtime": {
+          "type": "object",
+          "required": ["selectionDocumented", "webApisNotNodeJs", "highComputeNotDotNet", "hasDirectRuntimeDependency", "syncInteropNotGrpc", "contractsCentralized"],
+          "properties": {
+            "selectionDocumented": { "type": "boolean" },
+            "webApisNotNodeJs": { "type": "boolean" },
+            "highComputeNotDotNet": { "type": "boolean" },
+            "hasDirectRuntimeDependency": { "type": "boolean" },
+            "syncInteropNotGrpc": { "type": "boolean" },
+            "contractsCentralized": { "type": "boolean" }
+          }
+        }
+      }
+    }
+  }
+}

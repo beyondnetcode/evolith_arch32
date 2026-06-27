@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/schema/source-registry.schema.json",
+  "title": "External Knowledge Source Registry Entry",
+  "description": "Versioned SRC-* registry schema recording external source metadata and KI-* linkage.",
+  "type": "object",
+  "required": [
+    "source_registry_id",
+    "source_license",
+    "edition_or_url",
+    "retention_mode",
+    "content_fingerprint",
+    "review_cadence",
+    "ki_links"
+  ],
+  "properties": {
+    "source_registry_id": {
+      "type": "string",
+      "pattern": "^SRC-[A-Z0-9-]+$"
+    },
+    "source_license": {
+      "type": "string",
+      "minLength": 1
+    },
+    "edition_or_url": {
+      "type": "string",
+      "minLength": 1
+    },
+    "retention_mode": {
+      "enum": ["citation", "full-reference", "permanent"]
+    },
+    "content_fingerprint": {
+      "type": "string",
+      "minLength": 1
+    },
+    "review_cadence": {
+      "type": "string",
+      "pattern": "^[0-9]+-(months|years|weeks)$"
+    },
+    "ki_links": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "pattern": "^KI-[A-Z0-9-]+$"
+      },
+      "uniqueItems": true
+    }
+  },
+  "additionalProperties": false
+}

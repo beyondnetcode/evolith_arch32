@@ -1,0 +1,18 @@
+{
+  "input": {
+    "satellite": {
+      "eventDriven": {
+        "hasStrictAsyncApi": true,
+        "hasOutbox": true,
+        "hasDlq": true,
+        "hasOrderingGuarantee": true,
+        "hasIdempotencyKey": true,
+        "hasBackwardCompatibleSchema": true,
+        "hasRetentionPolicy": true,
+        "hasEventCorrelation": true,
+        "hasConsumerGroupRegistry": true
+      }
+    }
+  },
+  "expectedNative": []
+}

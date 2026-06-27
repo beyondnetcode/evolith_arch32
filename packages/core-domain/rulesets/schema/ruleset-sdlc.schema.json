@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/rulesets/schema/ruleset-sdlc.schema.json",
+  "title": "SDLC Ruleset Schema",
+  "type": "object",
+  "required": ["$id", "gates"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "$id": { "type": "string", "format": "uri" },
+    "title": { "type": "string" },
+    "description": { "type": "string" },
+    "version": { "type": "string" },
+    "effectiveDate": { "type": "string", "format": "date" },
+    "gates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["phase", "name", "description", "mandatoryEvidence"],
+        "properties": {
+          "phase": { "type": "integer" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "playbookRef": { "type": "string", "description": "Relative path to the operational playbook that procedurally implements this gate." },
+          "accountableRole": { "type": "string" },
+          "waiverAuthority": { "type": "string" },
+          "waiverRequiredFields": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "mandatoryEvidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["artifact", "validation"],
+              "properties": {
+                "artifact": { "type": "string" },
+                "schemaRef": { "type": "string" },
+                "templateRef": { "type": "string", "description": "Relative path to the canonical Markdown template that authors must use for this artifact." },
+                "status": { "type": "string" },
+                "validation": { "type": "string" }
+              }
+            }
+          },
+          "blockingCriteria": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["criterion", "action"],
+              "properties": {
+                "criterion": { "type": "string" },
+                "action": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

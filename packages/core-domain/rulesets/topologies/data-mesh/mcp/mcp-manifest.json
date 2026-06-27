@@ -1,0 +1,68 @@
+{
+  "protocolVersion": "2025-03-26",
+  "topologyId": "data-mesh",
+  "description": "MCP interface for the Data Mesh topology. Provides tools for inspecting and validating data product configurations, resources for manifest and ruleset access, and prompts for mesh-governed implementation guidance.",
+  "capabilities": {
+    "tools": {},
+    "resources": {},
+    "prompts": {}
+  },
+  "tools": [
+    {
+      "name": "evolith-topology-inspect",
+      "description": "Inspect a Data Mesh topology configuration and return its parsed manifest, data domain references, and corpus artifact links.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "configPath": {
+            "type": "string",
+            "description": "Path to the Data Mesh configuration file"
+          },
+          "includeDomains": {
+            "type": "boolean",
+            "description": "Include data domain references and ownership metadata"
+          }
+        },
+        "required": ["configPath"]
+      }
+    },
+    {
+      "name": "evolith-topology-validate",
+      "description": "Validate a Data Mesh configuration against the topology ruleset and OPA policies, returning pass/fail per gate.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "configPath": {
+            "type": "string",
+            "description": "Path to the Data Mesh configuration to validate"
+          },
+          "strictMode": {
+            "type": "boolean",
+            "description": "Fail on warnings, not just errors"
+          }
+        },
+        "required": ["configPath"]
+      }
+    }
+  ],
+  "resources": [
+    {
+      "uri": "evolith://topologies/data-mesh/manifest",
+      "name": "Data Mesh Topology Manifest",
+      "description": "Full topology manifest for Data Mesh, including metadata, artifact references, and corpus configuration.",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "evolith://topologies/data-mesh/rulesets",
+      "name": "Data Mesh Rulesets",
+      "description": "All ruleset files for Data Mesh: native rules JSON, OPA Rego policies, and WASM bundle.",
+      "mimeType": "application/json"
+    }
+  ],
+  "prompts": [
+    {
+      "name": "topology-aware-implementation",
+      "description": "Guides AI-assisted implementation to respect Data Mesh topology constraints, data domain isolation, and federated governance."
+    }
+  ]
+}

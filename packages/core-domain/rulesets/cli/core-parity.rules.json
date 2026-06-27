@@ -1,0 +1,61 @@
+{
+  "$schema": "../schema/ruleset-standard.schema.json",
+  "$id": "https://evolith.dev/rulesets/cli/core-parity.rules.json",
+  "title": "CLI/Core Parity Rules",
+  "description": "Rules ensuring Evolith Core governance capabilities are exposed consistently through CLI and MCP.",
+  "version": "1.0.0",
+  "effectiveDate": "2026-06-08",
+  "scope": "core-cli",
+  "category": "core-parity",
+  "rules": [
+    {
+      "id": "CLI-PAR-01",
+      "severity": "MUST",
+      "category": "traceability",
+      "title": "Every Executable Core Rule Has a Parity Record",
+      "description": "Each Core ruleset rule intended for automation MUST declare CLI status, MCP status, test status, and evidence status.",
+      "validationQuery": "Compare rulesets/**/*.rules.json against reference/governance/standards/vision/gap-tracking.md or generated parity manifest.",
+      "evidenceRequired": [
+        "parity manifest"
+      ],
+      "blocking": true
+    },
+    {
+      "id": "CLI-PAR-02",
+      "severity": "MUST",
+      "category": "shared-logic",
+      "title": "CLI and MCP Must Use Shared Validation Logic",
+      "description": "A validation capability MUST NOT implement divergent business logic in CLI and MCP adapters.",
+      "validationQuery": "Verify CLI commands and MCP tools call shared services or use cases for the same capability.",
+      "evidenceRequired": [
+        "source references",
+        "contract tests"
+      ],
+      "blocking": true
+    },
+    {
+      "id": "CLI-PAR-03",
+      "severity": "MUST",
+      "category": "outputs",
+      "title": "Equivalent CLI and MCP Results Must Be Semantically Consistent",
+      "description": "The same validation request through CLI and MCP MUST return the same rule outcomes, severities, and blocking status.",
+      "validationQuery": "Run paired CLI/MCP fixture tests and compare normalized JSON results.",
+      "evidenceRequired": [
+        "paired fixture report"
+      ],
+      "blocking": true
+    },
+    {
+      "id": "CLI-PAR-04",
+      "severity": "SHOULD",
+      "category": "documentation",
+      "title": "Parity Gaps Must Remain Visible",
+      "description": "Partial or missing parity SHOULD be documented with owner, priority, and planned closure date.",
+      "validationQuery": "Inspect parity tracking for owner, priority, and closure metadata.",
+      "evidenceRequired": [
+        "updated parity tracking"
+      ],
+      "blocking": false
+    }
+  ]
+}

@@ -4,7 +4,28 @@
 
 > **Bilingual navigation:** [Versión en Español](./README.es.md)
 
-Desacopla el servidor MCP del CLI. Ahora es un producto de primera clase que expone las herramientas MCP como un **Gateway** que se comunica con `@evolith/core` (capa de lógica de negocio reutilizable), en lugar de ejecutar subprocesos del CLI.
+Desacopla el servidor MCP del CLI. Es un producto de primera clase que expone las herramientas MCP como un **Gateway** que se comunica con `@evolith/core` (capa de lógica de negocio reutilizable), en lugar de ejecutar subprocesos del CLI.
+
+---
+
+## Tabla de contenidos
+
+1. [Diagrama de Arquitectura](#diagrama-de-arquitectura)
+2. [Transportes](#transportes)
+3. [Instalación y configuración](#instalación-y-configuración)
+4. [Autenticación](#autenticación)
+5. [Herramientas disponibles (27)](#herramientas-disponibles-27)
+6. [Resources disponibles (9 + dinámicos)](#resources-disponibles-9--dinámicos)
+7. [Prompts disponibles (8)](#prompts-disponibles-8)
+8. [Operaciones mutativas](#operaciones-mutativas)
+9. [Arquitectura interna](#arquitectura-interna)
+10. [Casos de uso con agentes](#casos-de-uso-con-agentes)
+11. [Configuración de clientes](#configuración-de-clientes)
+12. [Integración con SmartCLI](#integración-con-smartcli)
+13. [Guía de extensión](#guía-de-extensión)
+14. [Observabilidad](#observabilidad)
+15. [Buenas prácticas](#buenas-prácticas)
+16. [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -24,7 +45,8 @@ sequenceDiagram
 
     Gateway->>Gateway: 1. Generate correlationId (evl-xxx)
     Gateway->>Gateway: 2. Lookup tool in ToolRegistry
-    Gateway->>Gateway: 3. Start timing + structured log (Pino)
+    Gateway->>Gateway: 3. ABAC authorization check
+    Gateway->>Gateway: 4. Start timing + structured log (Pino)
 
     Gateway->>+Core: ValidateSatelliteUseCase.execute({ satellitePath })
     Core->>+FS: Read evolith.yaml, rulesets/
@@ -36,8 +58,8 @@ sequenceDiagram
     Core->>Core: Evaluate rules (Native + OPA)
     Core-->>-Gateway: ValidationResult { status, issues }
 
-    Gateway->>Gateway: 4. Wrap in SuccessEnvelope { success, data, meta }
-    Gateway->>Gateway: 5. Log completion + duration
+    Gateway->>Gateway: 5. Wrap in SuccessEnvelope { success, data, meta }
+    Gateway->>Gateway: 6. Audit log + completion duration
 
     Gateway-->>-Agent: { content: [{ type: "text", text: "{...}" }] }
 
@@ -48,14 +70,18 @@ sequenceDiagram
 
 ## Transportes
 
-| Transporte               | Uso                                     | Comando                                           |
-| ------------------------ | --------------------------------------- | ------------------------------------------------- |
-| **stdio** (JSON-RPC 2.0) | Agentes locales, Cursor, Claude Desktop | `evolith-mcp serve`                               |
-| **HTTP + SSE**           | Agentes remotos, escalabilidad          | `evolith-mcp serve --transport http --port 49100` |
+| Transporte | Uso | Comando |
+|---|---|---|
+| **stdio** (JSON-RPC 2.0) | Agentes locales, Cursor, Claude Desktop | `evolith-mcp serve` |
+| **HTTP + SSE** | Agentes remotos, escalabilidad | `evolith-mcp serve --transport http --port 49100` |
+
+> Los logs siempre se escriben a **stderr** (Pino), porque stdout está reservado para el stream JSON-RPC del transporte stdio.
 
 ---
 
-## Instalación
+## Instalación y configuración
+
+### Instalación
 
 ```bash
 # Desde el monorepo
@@ -65,7 +91,7 @@ npm install @evolith/mcp-server
 npm install -g @evolith/mcp-server
 ```
 
-## Uso
+### Uso
 
 ```bash
 # stdio (default) — para Cursor, Claude Desktop, etc.
@@ -77,92 +103,497 @@ evolith-mcp serve --transport http --port 49100
 
 ### Variables de entorno
 
-| Variable          | Default | Descripción                                    |
-| ----------------- | ------- | ---------------------------------------------- |
-| `TRANSPORT`       | `stdio` | Transporte: `stdio` o `http`                   |
-| `PORT`            | `3000`  | Puerto para HTTP                               |
-| `EVOLITH_API_KEY` | —       | API key para autenticación HTTP                |
-| `LOG_LEVEL`       | `info`  | Nivel de log: `trace`, `debug`, `info`, `warn`, `error` |
-
-> Los logs siempre se escriben a **stderr** (Pino), porque stdout está reservado para el stream JSON-RPC del transporte stdio.
-
----
-
-## Herramientas
-
-Las 24 tools se obtienen en runtime con la petición MCP `tools/list`. Resumen por familia:
-
-| Familia              | Tools                                                                                                                                | Mutativa |
-| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | -------- |
-| Validación           | `evolith-validate`                                                                                                                   | No       |
-| Arquitectura         | `evolith-architecture-validate`, `evolith-drift-detect`                                                                              | No       |
-| Gates SDLC           | `evolith-gate-evaluate`, `evolith-phase-advance`                                                                                     | No / Sí¹ |
-| SDLC                 | `evolith-sdlc-status`, `evolith-sdlc-handoff`, `evolith-dora-metrics`                                                                | No / Sí  |
-| MoSCoW               | `evolith-moscow-create/load/update/remove/list/validate/report`                                                                      | No²      |
-| Agentes              | `evolith-agent-install/list/validate/upgrade/remove`                                                                                 | Sí²      |
-| Remediación          | `evolith-auto-fix`                                                                                                                   | Sí       |
-| Configuración        | `evolith-config-get`, `evolith-config-set`                                                                                           | No / Sí  |
-| Observabilidad       | `evolith-metrics`                                                                                                                    | No       |
-
-Además expone **8 prompts** (`prompts/list`) y **8 resources** (`resources/list`).
-
-> ¹ `evolith-phase-advance` propone una transición (lectura). ² Las operaciones que escriben (`agent-install`, `config-set`, `sdlc-handoff`, `auto-fix`, mutaciones MoSCoW) están marcadas como mutativas y exigen `{ "confirm": true }` o `mcp.allowMutations: true` en `evolith.yaml`.
-
-**Esquema I/O de herramientas**
-
-Cada herramienta declara su `inputSchema` (JSON Schema) en su clase. El catálogo
-completo se obtiene en runtime mediante la petición MCP estándar `tools/list`,
-que devuelve el `schema` de cada tool registrada.
+| Variable | Default | Descripción |
+|---|---|---|
+| `TRANSPORT` | `stdio` | Transporte activo: `stdio` o `http` |
+| `PORT` | `3000` | Puerto para transporte HTTP |
+| `EVOLITH_API_KEY` | — | API key para autenticación en transporte HTTP |
+| `LOG_LEVEL` | `info` | Nivel de log Pino: `trace`, `debug`, `info`, `warn`, `error` |
+| `REDIS_URL` | — | URL de Redis para caché de resources (ej: `redis://localhost:6379`). La caché es opcional. |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | — | Endpoint OpenTelemetry para tracing |
+| `OTEL_SERVICE_NAME` | `evolith-mcp-server` | Nombre del servicio en los traces |
 
 ---
 
-## Arquitectura Interna
+## Autenticación
 
-El Gateway es una aplicación **NestJS** (módulos + inyección de dependencias). El
-único punto donde toca infraestructura concreta es `DomainModule`; las tools
-dependen solo del servicio de dominio compartido.
+### Transporte stdio
+
+No requiere autenticación. El proceso es local y ejecutado directamente por el agente.
+
+### Transporte HTTP
+
+Se requiere `EVOLITH_API_KEY` en el header de cada request:
 
 ```
-@evolith/mcp-server/              ← Este paquete (Gateway NestJS)
-├── nest-cli.json                 ← builder: tsc
+Authorization: Bearer evk_<key>
+```
+
+### Aprovisionamiento de API keys
+
+El `ApiKeyProvisioningService` gestiona el ciclo de vida de las keys:
+
+| Operación | Descripción |
+|---|---|
+| `generateKey(label, options)` | Genera una key con prefijo `evk_`, hash SHA-256, TTL configurable (default 90 días) |
+| `validateKey(rawKey)` | Valida la key contra el hash almacenado y verifica expiración |
+| `rotateKey(keyId)` | Revoca la key actual y genera una nueva para el mismo cliente |
+| `revokeKey(keyId)` | Revoca una key inmediatamente |
+
+Las keys tienen scopes: `read`, `write`, `admin`. Se asocian a un `tenant`.
+
+### Modelo ABAC
+
+El `AbacEvaluator` controla qué tools puede invocar cada usuario según sus roles:
+
+| Tipo de tool | Roles permitidos | Entorno |
+|---|---|---|
+| Read (list, get, status) | Todos los roles autenticados | Cualquiera |
+| Write (fix, install, set) | `operator`, `architect`, `admin` | Cualquiera |
+| Write | `developer`, `qa` | Solo no-producción |
+| Deploy (deploy, publish, merge) | `architect`, `operator` | Cualquiera |
+| Deploy | Cualquiera excepto `architect` | **Bloqueado en producción** |
+
+**Códigos ABAC:**
+
+| Código | Causa |
+|---|---|
+| `ABAC-01` | Tool denegada para el rol/entorno del usuario |
+| `ABAC-02` | Usuario sin roles — todas las tools denegadas |
+| `ABAC-03` | Tool no clasificada en ningún grupo conocido |
+
+---
+
+## Herramientas disponibles (27)
+
+Las tools se obtienen en runtime via `tools/list`. Todas retornan datos crudos que el Gateway envuelve en `SuccessEnvelope` o `ErrorEnvelope`.
+
+### Validación
+
+| Tool | Descripción | Mutativa |
+|---|---|---|
+| `evolith-validate` | Valida un repositorio contra las reglas de gobernanza Evolith (GOV, INH, ACL, OCB) | No |
+| `evolith-composable-validate` | Validación multi-modo combinable: SDLC, Architecture, Ruleset, ADR, Ad-hoc | No |
+
+**Schema `evolith-composable-validate`:**
+
+```json
+{
+  "path": "string (requerido) — ruta al repositorio satelital",
+  "corePath": "string — ruta al Core de Evolith",
+  "engine": "'native' | 'opa' — motor de evaluación (default: native)",
+  "topology": "'modular-monolith' | 'microservices' | 'serverless' | ... — activa modo Architecture",
+  "phase": "'f1' | 'f2' | 'f3' | 'f4' | 'f5' — activa modo SDLC",
+  "ruleset": "string — activa modo Ruleset",
+  "adr": "'adr-0002' | 'adr-0005' | 'adr-0010' | ... — activa modo ADR",
+  "file": "string — activa modo Ad-hoc sobre un archivo"
+}
+```
+
+Los modos se activan combinando campos. Se pueden usar varios en una sola llamada.
+
+---
+
+### Arquitectura
+
+| Tool | Descripción | Mutativa |
+|---|---|---|
+| `evolith-architecture-validate` | Valida un proyecto satelital contra las reglas de arquitectura | No |
+| `evolith-drift-detect` | Detecta drift entre la arquitectura declarada y la real | No |
+
+---
+
+### Topologías
+
+| Tool | Descripción | Mutativa |
+|---|---|---|
+| `evolith-topology-list` | Lista todas las topologías de arquitectura disponibles en Evolith Core | No |
+| `evolith-topology-get` | Obtiene el manifiesto completo de una topología por ID | No |
+
+**Schema `evolith-topology-list`:**
+
+```json
+{
+  "corePath": "string — ruta al Core (opcional, default: ../evolith)"
+}
+```
+
+**Schema `evolith-topology-get`:**
+
+```json
+{
+  "id": "string (requerido) — ID de la topología (ej: modular-monolith)",
+  "corePath": "string — ruta al Core (opcional)"
+}
+```
+
+**Topologías disponibles:** `modular-monolith`, `distributed-modules`, `microservices`, `serverless`, `edge-computing`, `event-driven`, `data-mesh`, `agentic-ai`
+
+---
+
+### Gates SDLC
+
+| Tool | Descripción | Mutativa |
+|---|---|---|
+| `evolith-gate-evaluate` | Evalúa un phase gate específico del SDLC | No |
+| `evolith-phase-advance` | Propone una transición de fase | No¹ |
+
+> ¹ `evolith-phase-advance` solo propone la transición — no la ejecuta. La ejecución es responsabilidad del operador o del Tracker.
+
+---
+
+### SDLC
+
+| Tool | Descripción | Mutativa |
+|---|---|---|
+| `evolith-sdlc-status` | Obtiene el estado actual de la fase SDLC del repositorio | No |
+| `evolith-sdlc-handoff` | Ejecuta el handoff de fase generando el manifiesto de evidencia | **Sí** |
+| `evolith-dora-metrics` | Calcula las métricas DORA (deployment frequency, lead time, MTTR, CFR) | No |
+
+---
+
+### MoSCoW
+
+| Tool | Descripción | Mutativa |
+|---|---|---|
+| `evolith-moscow-create` | Crea una matriz MoSCoW para una fase del proyecto | **Sí** |
+| `evolith-moscow-load` | Carga una matriz MoSCoW existente | No |
+| `evolith-moscow-update` | Actualiza ítems en la matriz MoSCoW | **Sí** |
+| `evolith-moscow-remove` | Elimina ítems de la matriz | **Sí** |
+| `evolith-moscow-list` | Lista las matrices MoSCoW del proyecto | No |
+| `evolith-moscow-validate` | Valida que la matriz está bien formada | No |
+| `evolith-moscow-report` | Genera un reporte de priorización MoSCoW | No |
+
+---
+
+### Agentes
+
+| Tool | Descripción | Mutativa |
+|---|---|---|
+| `evolith-agent-install` | Instala un agente Evolith en el repositorio | **Sí** |
+| `evolith-agent-list` | Lista los agentes instalados | No |
+| `evolith-agent-validate` | Valida la configuración de un agente | No |
+| `evolith-agent-upgrade` | Actualiza un agente a la última versión del template | **Sí** |
+| `evolith-agent-remove` | Elimina un agente del repositorio | **Sí** |
+
+---
+
+### Remediación
+
+| Tool | Descripción | Mutativa |
+|---|---|---|
+| `evolith-auto-fix` | Aplica correcciones automáticas a las violations detectadas | **Sí** |
+
+---
+
+### Configuración
+
+| Tool | Descripción | Mutativa |
+|---|---|---|
+| `evolith-config-get` | Obtiene valores de configuración del `evolith.yaml` | No |
+| `evolith-config-set` | Actualiza valores en el `evolith.yaml` | **Sí** |
+
+---
+
+### Observabilidad
+
+| Tool | Descripción | Mutativa |
+|---|---|---|
+| `evolith-metrics` | Retorna métricas internas del MCP Gateway (calls, latency, errors) | No |
+
+---
+
+## Resources disponibles (9 + dinámicos)
+
+Los resources se obtienen via `resources/list` y se leen via `resources/read`.
+
+### Resources estáticos (`resources/list`)
+
+| URI | Nombre | Descripción |
+|---|---|---|
+| `evolith://rulesets` | Rulesets | Lista todos los rulesets de Evolith Core |
+| `evolith://phase-gates` | Phase Gates | Definiciones y requisitos de los phase gates |
+| `evolith://agents` | Agents | Lista de agentes Evolith instalados |
+| `evolith://core/info` | Core Info | Información general del Core (versión, total rulesets, capacidades) |
+| `evolith://governance/version` | Governance Version | Versión del schema de gobernanza |
+| `evolith://core/version` | Core Version | Versión del schema del Core |
+| `evolith://repository/config` | Repository Config | Contenido del `evolith.yaml` del repositorio actual |
+| `evolith://moscow/phase-0` | MoSCoW Phase 0 | Matriz MoSCoW para la fase de discovery |
+| `evolith://architecture/topologies` | Architecture Topologies | Lista de todas las topologías disponibles |
+
+### URIs dinámicos (accesibles via `resources/read`)
+
+| URI Pattern | Descripción |
+|---|---|
+| `evolith://ruleset/{name}` | Contenido de un ruleset por nombre (ej: `evolith://ruleset/governance/base`) |
+| `evolith://agent/{name}` | Definición de un agente instalado (ej: `evolith://agent/winston`) |
+| `evolith://architecture/topology/{id}` | Manifiesto de una topología (ej: `evolith://architecture/topology/modular-monolith`) |
+| `evolith://open-core/artifacts` | Reglas de boundary Open-Core (OCB) |
+| `evolith://acl/rules` | Reglas Anti-Corruption Layer |
+| `evolith://moscow/{phase}` | Análisis MoSCoW de cualquier fase (ej: `evolith://moscow/phase-1`) |
+
+---
+
+## Prompts disponibles (8)
+
+Los prompts se obtienen via `prompts/list` y se invocan via `prompts/get`.
+
+| Prompt | Descripción | Argumentos |
+|---|---|---|
+| `evolith/validate-repository` | Validar un repositorio contra reglas de gobernanza | `path` (req), `ruleset` (opt) |
+| `evolith/agent-onboarding` | Instalar y configurar un nuevo agente | `name` (req), `template` (opt: standard/minimal/enterprise) |
+| `evolith/architecture-review` | Review de arquitectura F1/F2/F3 | `path` (req), `level` (opt: F1/F2/F3) |
+| `evolith/prepare-discovery` | Preparar artefactos de la fase de discovery | `path` (req) |
+| `evolith/phase-gate-check` | Verificar readiness de phase gate | `path` (req) |
+| `evolith/sdlc-handoff` | Ejecutar handoff de fase SDLC | `path` (req), `fromPhase` (req), `toPhase` (req) |
+| `evolith/ruleset-analysis` | Analizar cumplimiento de un ruleset | `ruleset` (req), `path` (opt) |
+| `evolith/moscow-prioritization` | Crear matriz MoSCoW para el SDLC | `path` (req), `phase` (opt, default: phase-0) |
+
+---
+
+## Operaciones mutativas
+
+Las tools marcadas como mutativas requieren confirmación explícita para prevenir cambios accidentales.
+
+### Métodos de confirmación
+
+**Opción 1 — Argumento `confirm`:**
+
+```json
+{
+  "name": "my-agent",
+  "dir": "/path/to/repo",
+  "confirm": true
+}
+```
+
+**Opción 2 — Config en `evolith.yaml`:**
+
+```yaml
+mcp:
+  allowMutations: true
+```
+
+### Tools mutativas
+
+| Tool | Operación |
+|---|---|
+| `evolith-agent-install` | Escribe archivos del agente en el repositorio |
+| `evolith-agent-upgrade` | Sobrescribe la configuración del agente |
+| `evolith-agent-remove` | Elimina el directorio del agente |
+| `evolith-config-set` | Modifica `evolith.yaml` |
+| `evolith-sdlc-handoff` | Genera el manifiesto de handoff y escribe estado |
+| `evolith-auto-fix` | Aplica correcciones automáticas al código |
+| `evolith-moscow-create` | Crea archivo `.evolith/moscow/{phase}.json` |
+| `evolith-moscow-update` | Modifica ítems en la matriz |
+| `evolith-moscow-remove` | Elimina ítems de la matriz |
+
+---
+
+## Arquitectura interna
+
+El Gateway es una aplicación **NestJS** (módulos + inyección de dependencias).
+
+```
+@evolith/mcp-server/
 ├── src/
-│   ├── main.ts                   ← Bootstrap (parseArgs + NestFactory + arranque del transporte)
-│   ├── app.module.ts             ← Módulo raíz
+│   ├── main.ts                         ← Bootstrap, parseArgs, arranque stdio/HTTP
+│   ├── app.module.ts                   ← Módulo raíz
 │   ├── common/
-│   │   ├── errors.ts             ← ErrorCodes + DomainException
-│   │   ├── envelopes.ts          ← SuccessEnvelope / ErrorEnvelope + correlationId
-│   │   └── stderr-logger.ts      ← LoggerService de Nest sobre Pino → stderr
+│   │   ├── errors.ts                   ← ErrorCodes + DomainException
+│   │   ├── envelopes.ts                ← SuccessEnvelope / ErrorEnvelope + correlationId
+│   │   └── stderr-logger.ts            ← LoggerService sobre Pino → stderr
 │   ├── mcp/
 │   │   ├── mcp.module.ts
-│   │   ├── tool.interface.ts     ← McpTool + token MCP_TOOLS
-│   │   ├── tool-registry.service.ts
-│   │   ├── metrics.service.ts
-│   │   └── mcp-server.service.ts ← MCP SDK Server + dispatch + transportes stdio/HTTP
+│   │   ├── tool.interface.ts           ← interfaz McpTool + token MCP_TOOLS
+│   │   ├── tool-registry.service.ts    ← registro dinámico de tools
+│   │   ├── mcp-server.service.ts       ← MCP SDK Server + dispatch + transportes
+│   │   ├── mcp-tool-dispatch.ts        ← dispatch con ABAC + audit + mutative guard
+│   │   ├── mcp-server-auth.ts          ← autenticación HTTP (EVOLITH_API_KEY)
+│   │   ├── abac-evaluator.ts           ← evaluador ABAC nativo + OPA
+│   │   ├── api-key-provisioning.service.ts  ← ciclo de vida de API keys
+│   │   ├── audit-logger.ts             ← log estructurado de cada tool call
+│   │   ├── mcp-cache.service.ts        ← caché de resources en Redis
+│   │   ├── metrics.service.ts          ← métricas internas del Gateway
+│   │   ├── prompts.service.ts          ← serve prompts/list y prompts/get
+│   │   └── resources.service.ts        ← serve resources/list y resources/read
 │   ├── tools/
-│   │   ├── tools.module.ts       ← Agrega las tools y alimenta el registry
-│   │   └── validate.tool.ts      ← evolith-validate
+│   │   ├── tools.module.ts             ← registra todas las tools
+│   │   ├── validate.tool.ts            ← evolith-validate
+│   │   ├── composable-validate.tool.ts ← evolith-composable-validate (GT-312)
+│   │   ├── architecture.tools.ts       ← evolith-architecture-validate, drift-detect
+│   │   ├── topology.tools.ts           ← evolith-topology-list, topology-get
+│   │   ├── gate.tools.ts               ← evolith-gate-evaluate
+│   │   ├── phase-advance.tools.ts      ← evolith-phase-advance
+│   │   ├── sdlc.tools.ts               ← sdlc-status, sdlc-handoff, dora-metrics
+│   │   ├── moscow.tools.ts             ← moscow-create/load/update/remove/list/validate/report
+│   │   ├── agent.tools.ts              ← agent-install/list/validate/upgrade/remove
+│   │   ├── auto-fix.tools.ts           ← evolith-auto-fix
+│   │   ├── config.tools.ts             ← config-get, config-set
+│   │   └── metrics.tool.ts             ← evolith-metrics
+│   ├── resources/
+│   │   └── corpus-resource.handler.ts  ← handler de recursos de corpus documentales
+│   ├── watcher/
+│   │   └── watcher.service.ts          ← observa cambios en archivos del workspace
 │   └── domain/
-│       └── domain.module.ts      ← Cablea @evolith/core con @evolith/infra-providers
+│       └── domain.module.ts            ← cablea @evolith/core con @evolith/infra-providers
 
-@evolith/core               ← Lógica de negocio (RulesetValidatorService, use-cases, tipos)
-@evolith/infra-providers    ← Adapters (NodeFileSystem, YamlConfigParser, DiskRulesetRepository)
+@evolith/core               ← lógica de negocio (use-cases, validators, tipos)
+@evolith/infra-providers    ← adapters (NodeFileSystem, YamlConfigParser, DiskRulesetRepository)
+```
+
+### WatcherService
+
+`WatcherService` observa archivos del workspace (ej: `evolith.yaml`) para invalidar cachés o disparar revalidaciones cuando el usuario modifica la configuración mientras el Gateway está corriendo. Se activa automáticamente en transporte stdio de larga duración.
+
+### CorpusResourceHandler
+
+Maneja el acceso a recursos de corpus documentales (ADRs, playbooks, specs) para que los agentes puedan leer contexto arquitectural estructurado sin invocar tools mutativas.
+
+---
+
+## Casos de uso con agentes
+
+### 1. Validación de repositorio desde Claude Desktop
+
+```json
+// prompts/get
+{
+  "name": "evolith/validate-repository",
+  "arguments": { "path": "/Users/me/my-service" }
+}
+```
+
+El prompt guía al agente a usar `evolith-validate` y reportar las violations bloqueantes.
+
+### 2. Onboarding de agente desde Cursor
+
+```json
+// prompts/get
+{
+  "name": "evolith/agent-onboarding",
+  "arguments": { "name": "guardian", "template": "enterprise" }
+}
+```
+
+El agente invocará `evolith-agent-install` y `evolith-agent-validate` en secuencia.
+
+### 3. Review de arquitectura automatizado
+
+```json
+// tools/call
+{
+  "name": "evolith-composable-validate",
+  "arguments": {
+    "path": "/repo",
+    "topology": "modular-monolith",
+    "phase": "f2",
+    "engine": "native"
+  }
+}
+```
+
+Combina validación SDLC + Architecture en una sola llamada.
+
+### 4. Ciclo SDLC completo con MoSCoW + gate check
+
+```
+1. tools/call evolith-sdlc-status     → estado actual de la fase
+2. tools/call evolith-moscow-create   → crear matriz de priorización
+3. tools/call evolith-gate-evaluate   → evaluar gate de la fase actual
+4. tools/call evolith-sdlc-handoff    → generar manifiesto de handoff
+5. tools/call evolith-phase-advance   → proponer avance a la siguiente fase
+```
+
+### 5. Consultar topologías antes de validar
+
+```json
+// tools/call
+{ "name": "evolith-topology-list" }
+// → lista de topologías disponibles
+
+{ "name": "evolith-topology-get", "arguments": { "id": "agentic-ai" } }
+// → manifiesto completo con reglas y requisitos
 ```
 
 ---
 
-## Guía de Extensión
+## Configuración de clientes
+
+### Cursor (`~/.cursor/config.json`)
+
+```json
+{
+  "mcpServers": {
+    "evolith": {
+      "command": "evolith-mcp",
+      "args": ["serve"],
+      "env": {
+        "LOG_LEVEL": "info"
+      }
+    }
+  }
+}
+```
+
+### Claude Desktop (`claude_desktop_config.json`)
+
+```json
+{
+  "mcpServers": {
+    "evolith": {
+      "command": "evolith-mcp",
+      "args": ["serve"]
+    }
+  }
+}
+```
+
+### Agente custom (transporte HTTP)
+
+```bash
+# Arrancar el servidor HTTP
+EVOLITH_API_KEY=evk_abc123 evolith-mcp serve --transport http --port 49100
+
+# Llamar desde el agente
+curl -X POST http://localhost:49100/mcp \
+  -H "Authorization: Bearer evk_abc123" \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"evolith-validate","arguments":{"path":"/repo"}},"id":1}'
+```
+
+---
+
+## Integración con SmartCLI
+
+### Plan de migración desde `smart-cli mcp`
+
+**Fase 1 — Coexistencia (actual):** `smart-cli mcp` sigue funcionando. `evolith-mcp serve` es el nuevo punto de entrada.
+
+**Fase 2 — Deprecación:** `smart-cli mcp` mostrará `console.warn`. Migrar configuraciones de Cursor/Claude Desktop a `evolith-mcp`.
+
+**Fase 3 — Remoción:** Eliminar código MCP de `@evolith/smart-cli` en major version bump. El CLI conserva sus comandos de validación.
+
+### Diferencias de comportamiento
+
+| Aspecto | `smart-cli mcp` (legacy) | `evolith-mcp` (nuevo) |
+|---|---|---|
+| Transporte | Solo stdio | stdio + HTTP/SSE |
+| Auth | Sin auth | ABAC + API keys en HTTP |
+| Caché | Sin caché | Redis opcional |
+| Observabilidad | Logs básicos | Pino + OTEL + audit logger |
+| Tools | Subconjunto | 27 tools completas |
+
+---
+
+## Guía de extensión
 
 Para añadir una nueva herramienta:
 
-1. Crear `src/tools/mi-herramienta.tool.ts` implementando la interfaz `McpTool`
-   (`schema`, `execute`, y `mutative: true` si modifica estado).
+1. Crear `src/tools/mi-herramienta.tool.ts` implementando `McpTool` (`schema`, `execute`; añadir `readonly mutative = true` si modifica estado).
 2. Inyectar el servicio de dominio que necesite (desde `@evolith/core`).
-3. Devolver datos crudos: `McpServerService` los envuelve en un `SuccessEnvelope`
-   y captura los errores en un `ErrorEnvelope` automáticamente.
-4. Registrar la tool en `tools.module.ts`: añadir el provider y sumarlo al
-   factory de `MCP_TOOLS`.
-
-**Patrón de tool:**
+3. Devolver datos crudos — `McpServerService` los envuelve automáticamente en `SuccessEnvelope` y captura errores en `ErrorEnvelope`.
+4. Registrar la tool en `tools.module.ts`: añadir el provider y sumarlo al factory de `MCP_TOOLS`.
 
 ```typescript
 import { Injectable } from "@nestjs/common";
@@ -180,66 +611,99 @@ export class MiHerramientaTool implements McpTool {
     },
   };
 
-  // constructor(private readonly servicio: AlgunServicioDeCore) {}
-
   async execute(args: Record<string, unknown>): Promise<unknown> {
     if (!args.param1) throw new Error("param1 is required");
-    // Lógica de negocio delegada a @evolith/core...
     return { ok: true };
   }
 }
 ```
 
-Para operaciones mutativas, marca `readonly mutative = true`: el dispatcher exige
-`{ "confirm": true }` en los argumentos o `mcp.allowMutations: true` en `evolith.yaml`.
+Para tools mutativas, añadir `readonly mutative = true`. El dispatcher exigirá `{ "confirm": true }` o `mcp.allowMutations: true` en `evolith.yaml`.
 
 ---
 
-## Plan de Migración
+## Observabilidad
 
-### Fase 1: Coexistencia (actual → próximo release)
+### Logs Pino → stderr
 
-El servidor MCP antiguo (`@evolith/smart-cli` → `smart-cli mcp`) sigue funcionando. El nuevo comando `evolith-mcp serve` se publica como paquete independiente.
+Todos los logs van a `stderr` (nunca `stdout`). Formato JSON estructurado con `correlationId`, `tool`, `duration`, `success`.
 
-### Fase 2: Deprecación
+```bash
+# Ver logs en tiempo real (stdio)
+evolith-mcp serve 2>&1 | grep '"level"'
+```
 
-- Marcar `smart-cli mcp` como **deprecated** en el README y CHANGELOG
-- Añadir advertencia (`console.warn`) al ejecutar `smart-cli mcp`
-- Migrar todas las integraciones (Cursor, Claude Desktop) a `evolith-mcp`
+### `evolith-metrics` tool
 
-### Fase 3: Remoción
-
-- Eliminar el código MCP de `@evolith/smart-cli` en una major version bump
-- El CLI conserva sus comandos de validación, pero ya no incluye el servidor MCP
-
-### Configuración de Cursor / Claude Desktop
-
-**Cursor** (`~/.cursor/config.json`):
+Retorna métricas internas del Gateway:
 
 ```json
 {
-  "mcpServers": {
-    "evolith": {
-      "command": "evolith-mcp",
-      "args": ["serve"],
-      "env": { "LOG_LEVEL": "info" }
-    }
+  "totalCalls": 142,
+  "successCalls": 138,
+  "errorCalls": 4,
+  "avgLatencyMs": 23,
+  "toolBreakdown": {
+    "evolith-validate": { "calls": 80, "avgMs": 18 },
+    "evolith-gate-evaluate": { "calls": 32, "avgMs": 31 }
   }
 }
 ```
 
-**Claude Desktop** (`claude_desktop_config.json`):
+### OpenTelemetry
 
-```json
-{
-  "mcpServers": {
-    "evolith": {
-      "command": "evolith-mcp",
-      "args": ["serve"]
-    }
-  }
-}
+```bash
+OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318 \
+OTEL_SERVICE_NAME=evolith-mcp-server \
+evolith-mcp serve
 ```
+
+### Audit Logger
+
+Cada tool call queda registrada con: `toolName`, `userId`, `tenant`, `environment`, `allowed` (ABAC), `durationMs`, `correlationId`. Los registros van a `stderr` en formato JSON.
+
+---
+
+## Buenas prácticas
+
+- **Usar prompts como punto de entrada** para workflows de agente — evitan que el agente tenga que razonar la secuencia de tools.
+- **No confirmar mutativas en bulk** sin validar primero con las tools de lectura equivalentes.
+- **Ejecutar `evolith-validate` antes de `evolith-auto-fix`** para conocer el scope real de los cambios.
+- **En producción HTTP**, rotar las API keys cada 90 días y restringir scopes al mínimo necesario.
+- **Redis es opcional pero recomendado** en instalaciones de larga duración para evitar lecturas repetidas de filesystem en `resources/read`.
+- **Usar `evolith-composable-validate`** en lugar de llamadas separadas cuando se necesitan múltiples modos — reduce latencia y correlaciona los resultados.
+
+---
+
+## Troubleshooting
+
+### stdio: logs aparecen mezclados con la respuesta MCP
+
+Los logs van a `stderr`. Si el cliente mezcla stdout/stderr, separar los streams:
+
+```bash
+evolith-mcp serve 2>/tmp/mcp.log
+```
+
+### HTTP: `401 Unauthorized`
+
+Verificar que `EVOLITH_API_KEY` está configurado en el servidor y que el header `Authorization: Bearer evk_<key>` es correcto. La key debe empezar con `evk_`.
+
+### Tool no encontrada (`Tool not found in registry`)
+
+La tool puede no estar registrada en `tools.module.ts`. Verificar que el provider está añadido y que el nombre en `schema.name` coincide exactamente con el invocado.
+
+### `ABAC-02: No roles present`
+
+El contexto de usuario (`mcp-user-context`) no tiene roles. En transporte HTTP, verificar que el JWT o el contexto de usuario lleva los claims de roles correctamente.
+
+### Redis no disponible
+
+La caché degrada gracefulmente. Los resources se servirán directamente desde el filesystem sin caché. Se emitirá un warning en los logs.
+
+### OPA: `policy.wasm not found`
+
+El evaluador OPA requiere `sdk/cli/rulesets/opa/policy.wasm` bajo `CORE_PATH`. Si el archivo no existe, el evaluador retorna `allowed: true` (fail-open) y registra el warning. Para usar evaluación nativa, no especificar `engine: "opa"`.
 
 ---
 

@@ -43,6 +43,10 @@ RUN npm install --omit=dev --legacy-peer-deps && npm cache clean --force
 COPY rulesets/ ./corpus/rulesets/
 COPY reference/ ./corpus/reference/
 
+# core-domain resolves rulesets via __dirname (5 levels up from dist/domain/services/)
+# which lands at /app/node_modules/rulesets/ when installed from npm
+COPY rulesets/ ./node_modules/rulesets/
+
 # Create non-root user
 RUN addgroup -g 1001 -S evolith && \
     adduser -S evolith -u 1001 -G evolith && \

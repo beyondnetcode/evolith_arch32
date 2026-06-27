@@ -202,11 +202,11 @@ if (command === "--check-only") {
       const filePath = path.join(runtimePath, file);
       const content = fs.readFileSync(filePath, "utf8");
 
-      if (!/\*\*Status\*\*/.test(content)) {
+      if (!/\*\*Status\*\*|^#{1,3}\s+Status/m.test(content)) {
         console.error(`  ✗ ${runtime}/${file}: missing Status header`);
         errors++;
       }
-      if (!/\*\*Date\*\*/.test(content)) {
+      if (!/\*\*Date\*\*|^#{1,3}\s+Date/m.test(content)) {
         console.error(`  ✗ ${runtime}/${file}: missing Date header`);
         errors++;
       }

@@ -16,12 +16,20 @@ const ignoredDirectories = new Set([
   ".nx",
 ]);
 
+// Paths (relative to root) whose markdown files are excluded from link validation.
+// packages/core-domain/rulesets is a bundled copy of rulesets/ for npm packaging;
+// its READMEs contain monorepo-relative links that are intentionally broken in that location.
+const ignoredPaths = new Set([
+  path.join(root, "packages", "core-domain", "rulesets"),
+]);
+
 const markdownFiles = [];
 const mermaidBlocks = [];
 const failures = [];
 const fileCache = new Map();
 
 function walk(directory) {
+  if (ignoredPaths.has(directory)) return;
   for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
     if (entry.isDirectory()) {
       if (!ignoredDirectories.has(entry.name)) {

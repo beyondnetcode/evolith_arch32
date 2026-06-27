@@ -1,0 +1,16 @@
+/**
+ * Domain layer barrel — re-exports all public domain types and utilities.
+ */
+
+export * from './gate-evidence';
+export * from './verdict';
+export * from './lifecycle';
+export * from './events';
+export * from './errors';
+export * from './entities';
+export * from './models/normalized-rule';
+export * from './services';
+export * from './workflow';
+export * from './rbac';
+export * from './metrics';
+export * from './webhook/webhook-subscription';

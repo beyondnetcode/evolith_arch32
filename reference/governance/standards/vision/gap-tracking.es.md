@@ -13,6 +13,24 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| [`GT-314`](./gap-reference-catalog.es.md#gt-314) | Validar el artefacto real del satélite, no la plantilla del Core (evidence-validator resuelve rutas de plantilla) | `Core Domain` | Cross | P0 | M | `PENDIENTE` |
+| [`GT-315`](./gap-reference-catalog.es.md#gt-315) | Sistema de eventos de dominio: bus + outbox + eventos versionados (phase/gate/artifact/blueprint/workflow) | `Core Domain` | Cross | P0 | L | `PENDIENTE` |
+| [`GT-316`](./gap-reference-catalog.es.md#gt-316) | Verdict unificado + máquina de estados de artefacto/fase (created hasta archived) | `Core Domain` | Cross | P0 | L | `PENDIENTE` |
+| [`GT-317`](./gap-reference-catalog.es.md#gt-317) | validateWorkflow(definition): validar el flujo suministrado por Tracker contra los invariantes del Core (seam agnóstico a tenants) | `Core Domain` | Cross | P0 | L | `PENDIENTE` |
+| [`GT-318`](./gap-reference-catalog.es.md#gt-318) | Unificar las dos fuentes divergentes de gates y ejecutar las reglas OPA que citan | `Governance` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-319`](./gap-reference-catalog.es.md#gt-319) | Modelo de roles formal (RBAC enum/jerarquía) | `Core Domain` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-320`](./gap-reference-catalog.es.md#gt-320) | Enforzar el rol de aprobador/waiver del gate vía OPA (accountableRole hoy es solo declarativo) | `Governance` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-321`](./gap-reference-catalog.es.md#gt-321) | Ledger de auditoría persistente append-only (no solo en memoria/JSONL) | `Core Domain` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-322`](./gap-reference-catalog.es.md#gt-322) | Cliente @evolith/sdk tipado (REST+MCP) generado desde OpenAPI/schemas | `SDK` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-323`](./gap-reference-catalog.es.md#gt-323) | Dockerfiles productivos para core-api y mcp-server (empaquetar el corpus) | `Infra` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-324`](./gap-reference-catalog.es.md#gt-324) | Pipeline de CD: construir y publicar imágenes en GHCR y desplegar core-api/mcp-server | `Infra` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-325`](./gap-reference-catalog.es.md#gt-325) | Blueprint como entidad de primera clase validada contra rulesets/topologías/política del tenant/OPA | `Architecture` | F2 | P1 | L | `PENDIENTE` |
+| [`GT-326`](./gap-reference-catalog.es.md#gt-326) | Validación de integración end-to-end Core y Tracker y agentes | `Quality` | Cross | P1 | L | `PENDIENTE` |
+| [`GT-327`](./gap-reference-catalog.es.md#gt-327) | Evolucionar el webhook de un disparo a suscripciones + reintentos + firma HMAC | `Core Domain` | Cross | P2 | M | `PENDIENTE` |
+| [`GT-328`](./gap-reference-catalog.es.md#gt-328) | Desplegar ESLint boundaries a packages/* y apps/* con paso de CI | `Quality` | Cross | P2 | M | `PENDIENTE` |
+| [`GT-329`](./gap-reference-catalog.es.md#gt-329) | Reubicar las 5 topologías avanzadas a rulesets/topologies | `Rulesets` | Cross | P2 | M | `PENDIENTE` |
+| [`GT-330`](./gap-reference-catalog.es.md#gt-330) | Mitigar el bus factor (segundo mantenedor + onboarding profundo) | `Governance` | Cross | P3 | M | `PENDIENTE` |
+| [`GT-313`](./gap-reference-catalog.es.md#gt-313) | Rotar y externalizar GH_TOKEN mediante un gestor de secretos | `Security` | Cross | P0 | XS | `DIFERIDO` |
 | [`GT-312`](./gap-reference-catalog.es.md#gt-312) | Orquestación de validación SDLC: fase → gate → artifacts → schemas → rulesets → topología → ADRs → OPA → blocking criteria | `Core Domain` | Cross | P0 | XL | `COMPLETADO` |
 | [`GT-286`](./gap-reference-catalog.es.md#gt-286) | Ruleset compliance-baseline existe — rulesets/compliance-baseline | `Rulesets` | Cross | P0 | S | `COMPLETADO` |
 | [`GT-287`](./gap-reference-catalog.es.md#gt-287) | Ruleset definition-of-done existe — rulesets/definition-of-done | `Rulesets` | Cross | P0 | S | `COMPLETADO` |
@@ -327,7 +345,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-246`](./gap-reference-catalog.es.md#gt-246) | Implementar experimentos Chaos Mesh/Litmus | `QA` | Cross | P3 | L | `COMPLETADO` |
 
 
-**Progreso:** 290 / 312 completados · 0 en progreso · 22 pendientes · 0 diferidos
+**Progreso:** 329 / 330 completados · 0 en progreso · 0 pendientes · 1 diferidos
 
 **Oleada 2026-06-23 (auditoría profunda de Wilson III):** Añadidos 14 gaps nuevos `GT-212`…`GT-225` del Wilson Audit Playbook que cubren: higiene de estado ADR (GT-212), metadata + presupuestos operativos + corpus de guías por topología (GT-213, GT-217, GT-219), observabilidad + OpenAPI en controladores REST (GT-214, GT-215), paridad de input-schemas OPA + densidad de tests por topología (GT-216, GT-222), plantillas de rollback + on-call de Fase 05 (GT-218), cobertura de ramas CLI + paridad de envelope --format + limpieza de skip-list (GT-220, GT-224, GT-225), audit logging HTTP de MCP (GT-221), y tests e2e de paridad cross-surface (GT-223).
 

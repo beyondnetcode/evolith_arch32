@@ -153,8 +153,18 @@ function countHeaders(content) {
   return matches.length;
 }
 
+// Auto-generated artifacts (e.g. CHANGELOG from Conventional Commits via
+// release-please) are exempt from structural translation parity: their EN
+// content is machine-generated and cannot keep a hand-translated header
+// structure in sync. The ES counterpart is a localized navigation pointer.
+const BILINGUAL_PARITY_EXEMPT = new Set(["CHANGELOG.md", "CHANGELOG.es.md"]);
+
 function validateBilingualPair(file, content) {
   const relative = path.relative(root, file);
+
+  if (BILINGUAL_PARITY_EXEMPT.has(path.basename(file))) {
+    return;
+  }
 
   if (relative.endsWith(".es.md")) {
     const fileDir = path.dirname(file);

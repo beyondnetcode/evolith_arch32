@@ -12,6 +12,206 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 ## 1. Detalle de Gaps
 
+#### GT-313
+
+**Título:** Rotar y externalizar GH_TOKEN mediante un gestor de secretos
+
+- **Propósito:** Quitar el Personal Access Token de GitHub en texto plano del `.env` en disco y obtenerlo desde un gestor de secretos / secreto de CI, cerrando el único hallazgo crítico de seguridad abierto.
+- **Evidencia:** `.env` contiene `GH_TOKEN=ghp_…` en texto plano (git-ignored pero vivo en disco); señalado en `CERTIFICACION_MADUREZ.md` §6.
+- **Complejidad:** XS
+- **Hecho cuando:**
+  - [ ] El token actual se revoca y se reemite en GitHub.
+  - [ ] Las credenciales provienen de un gestor de secretos / secreto de CI, no de un `.env` plano.
+
+#### GT-314
+
+**Título:** Validar el artefacto real del satélite, no la plantilla del Core
+
+- **Propósito:** Que la evaluación de gates valide el artefacto producido por el satélite (estructura, schema, completitud) en vez de resolver a la ruta de plantilla del Core, para que AJV/validación semántica sea significativa en PRD/historias/feasibility.
+- **Evidencia:** `packages/core-domain/src/application/validators/evidence-validator.ts` (`resolveArtifactPath`) mapea cada artefacto a una plantilla en el Core; admitido como deuda técnica en el código. AJV queda inerte para varios artefactos.
+- **Complejidad:** M
+- **Hecho cuando:**
+  - [ ] El validador resuelve la ruta del artefacto del satélite, no la plantilla del Core.
+  - [ ] AJV corre sobre datos reales cuando hay `schemaRef`.
+  - [ ] Tests cubren existencia + estructura + completitud.
+
+#### GT-315
+
+**Título:** Sistema de eventos de dominio: bus + outbox + eventos versionados
+
+- **Propósito:** Emitir eventos de dominio gobernados para que Tracker, pipelines, auditoría y sistemas externos reaccionen de forma asíncrona en vez de hacer polling.
+- **Evidencia:** No existe bus/emisor de eventos; solo un `IWebhookNotifier.notify(url, evidence)` de un disparo (`packages/core-domain/src/application/ports/webhook-notifier.port.ts`). Sin eventos nombrados (`phase.*`, `gate.*`, `artifact.*`).
+- **Complejidad:** L
+- **Hecho cuando:**
+  - [ ] Existe un bus de eventos de dominio + outbox transaccional.
+  - [ ] Se emiten eventos versionados: `phase.started/completed`, `gate.approved/rejected`, `artifact.created/updated/validated`, `blueprint.generated/validated`, `workflow.updated`.
+  - [ ] Catálogo de eventos versionado, documentado y consumible.
+
+#### GT-316
+
+**Título:** Verdict unificado + máquina de estados de artefacto/fase
+
+- **Propósito:** Un único modelo de verdict canónico y un ciclo de vida formal (created → in-progress → pending-validation → approved/rejected/observed → versioned → archived) para fases y artefactos.
+- **Evidencia:** Tres modelos de verdict divergentes — `gate-evidence.ts` (`passed|failed|skipped`, canónico), `gates/decision/gate-decision.ts` (`PASS|FAIL|WAIVED`, huérfano), `phases/transition/phase-transition.model.ts` (huérfano). Sin máquina de estados de artefacto.
+- **Complejidad:** L
+- **Hecho cuando:**
+  - [ ] Un vocabulario de verdict canónico; modelos huérfanos integrados o eliminados.
+  - [ ] Máquina de estados de artefacto/fase implementada y aplicada.
+  - [ ] Tests cubren todas las transiciones.
+
+#### GT-317
+
+**Título:** validateWorkflow(definition) — seam de composición para Tracker
+
+- **Propósito:** Mantener el Core agnóstico a tenants y permitir que Tracker suministre un `WorkflowDefinition` compuesto que el Core valida contra sus invariantes (gates mínimos, OPA, artefactos no omitibles). El Core NO almacena config por tenant.
+- **Evidencia:** `IWorkflowDefinitionProvider.getWorkflow(tenant?)` existe pero ninguna implementación lo usa y no hay operación para validar un flujo suministrado externamente.
+- **Complejidad:** L
+- **Hecho cuando:**
+  - [ ] `validateWorkflow(definition)` valida un flujo suministrado contra los invariantes del Core.
+  - [ ] Se exponen catálogos componibles de fases/gates/artefactos (no solo topologías).
+  - [ ] El Core no guarda config de tenant; Tracker conduce la composición.
+
+#### GT-318
+
+**Título:** Unificar las dos fuentes divergentes de gates y ejecutar las OPA citadas
+
+- **Propósito:** Una única fuente ejecutable de gates para que las reglas citadas realmente corran.
+- **Evidencia:** `reference/governance/sdlc/gates/gate-f*.json` (citan `.rego`) difieren de `rulesets/phase-gates/phase-gates.rules.json` (lo que consume `PhaseGateValidatorService`); los `.rego` citados no se ejecutan.
+- **Complejidad:** M
+- **Hecho cuando:**
+  - [ ] Una fuente de gates canónica consumida por el motor.
+  - [ ] Las reglas OPA citadas se ejecutan; ruteo por IDs estables (no substring).
+
+#### GT-319
+
+**Título:** Modelo de roles formal (RBAC enum/jerarquía)
+
+- **Propósito:** Reemplazar roles como strings sueltos por un modelo de roles formal y enumerado con jerarquía, base para la gobernanza de aprobaciones.
+- **Evidencia:** No hay `enum Role`/`ROLE_HIERARCHY`; los roles son strings en inputs ABAC y en `accountableRole` de gates.
+- **Complejidad:** M
+- **Hecho cuando:**
+  - [ ] Existe un modelo de roles formal usado por ABAC/checks de gate.
+  - [ ] Tests cubren la resolución de roles.
+
+#### GT-320
+
+**Título:** Enforzar el rol de aprobador/waiver del gate vía OPA
+
+- **Propósito:** Verificar que el actor que aprueba o waivea un gate posee el `accountableRole`/`waiverAuthority` del gate.
+- **Evidencia:** `accountableRole`/`waiverAuthority` son campos declarativos en el JSON del gate; ningún código los aplica (solo los referencian datos de test).
+- **Complejidad:** M
+- **Hecho cuando:**
+  - [ ] OPA/código verifica que el actor aprobador/waiver tiene el rol requerido.
+  - [ ] Depende de GT-319.
+
+#### GT-321
+
+**Título:** Ledger de auditoría persistente append-only
+
+- **Propósito:** Persistir los eventos de auditoría de governance en un almacén durable y consultable append-only.
+- **Evidencia:** `AuditLogger` y `CommandHistory` escriben en memoria/JSONL; no hay `AuditRepository`/ledger.
+- **Complejidad:** M
+- **Hecho cuando:**
+  - [ ] Los eventos de auditoría persisten en un almacén append-only.
+  - [ ] Consultable por tenant/fase/actor/correlationId.
+
+#### GT-322
+
+**Título:** Cliente @evolith/sdk tipado (REST+MCP)
+
+- **Propósito:** Publicar un cliente tipado para que agentes/integradores no reimplementen clientes.
+- **Evidencia:** `sdk/` solo contiene la CLI; no hay librería cliente `@evolith/sdk`; los agentes usan MCP y REST directo.
+- **Complejidad:** M
+- **Hecho cuando:**
+  - [ ] `@evolith/sdk` generado desde OpenAPI/schemas.
+  - [ ] Cubre las superficies REST + MCP con tipos.
+
+#### GT-323
+
+**Título:** Dockerfiles productivos para core-api y mcp-server
+
+- **Propósito:** Hacer desplegables ambos servicios con Dockerfiles productivos que empaqueten el corpus que leen de disco.
+- **Evidencia:** Solo existe `sdk/cli/Dockerfile`; core-api/mcp-server tienen Dockerfiles de referencia en `reference/infrastructure/docker/` pero ninguno en sus carpetas de app.
+- **Complejidad:** M
+- **Hecho cuando:**
+  - [ ] Dockerfiles en `apps/core-api` y `packages/mcp-server`.
+  - [ ] La imagen empaqueta `rulesets/` + `reference/` (o los monta) con `CORE_PATH`/`WORKSPACE_ROOT`.
+
+#### GT-324
+
+**Título:** Pipeline de CD a GHCR + despliegue de core-api/mcp-server
+
+- **Propósito:** Construir, publicar y desplegar los servicios de forma continua.
+- **Evidencia:** `ci-cd.yml` solo publica la CLI (npm + Docker Hub); no hay CD para core-api/mcp-server.
+- **Complejidad:** M
+- **Hecho cuando:**
+  - [ ] El workflow construye y publica imágenes en GHCR.
+  - [ ] Despliega al runtime elegido (Cloud Run/Fly/etc.).
+
+#### GT-325
+
+**Título:** Blueprint como entidad de governance de primera clase
+
+- **Propósito:** Modelar el Blueprint arquitectónico y validarlo contra rulesets, topologías permitidas, política del tenant y OPA — no solo verificar que un archivo existe.
+- **Evidencia:** "Blueprint" aparece solo como archivo de evidencia (`evidence-validator.ts`, `sdlc.tools.ts`); no hay entidad ni validación.
+- **Complejidad:** L
+- **Hecho cuando:**
+  - [ ] Entidad Blueprint + constructor.
+  - [ ] Validado contra rulesets/topologías/política/OPA/SDLC.
+
+#### GT-326
+
+**Título:** Validación de integración end-to-end Core ↔ Tracker y agentes
+
+- **Propósito:** Probar que el SDLC funciona end-to-end contra satélites reales y un Tracker/agente vivo, más allá de tests unitarios.
+- **Evidencia:** Los tests son de nivel unit/contract; no hay flujo de governance E2E con Tracker/agentes.
+- **Complejidad:** L
+- **Hecho cuando:**
+  - [ ] Suite E2E conduce fase→gate→artefacto→verdict contra un satélite real.
+  - [ ] Integración con Tracker/agente validada en CI.
+
+#### GT-327
+
+**Título:** Webhook a suscripciones + reintentos + HMAC
+
+- **Propósito:** Evolucionar el webhook de un disparo a un mecanismo de suscripción confiable.
+- **Evidencia:** `webhook.adapter.ts` hace un único POST de GateEvidence; sin suscripciones, reintentos ni firma.
+- **Complejidad:** M
+- **Hecho cuando:**
+  - [ ] Suscripciones por tópico, reintentos/backoff y firma HMAC.
+
+#### GT-328
+
+**Título:** Desplegar ESLint boundaries a packages/* y apps/*
+
+- **Propósito:** Aplicar límites de import arquitectónicos más allá de `sdk/cli`.
+- **Evidencia:** `eslint-plugin-boundaries` está configurado solo en `sdk/cli/.eslintrc.js`.
+- **Complejidad:** M
+- **Hecho cuando:**
+  - [ ] Config de boundaries + paso de CI para `packages/*` y `apps/*`.
+
+#### GT-329
+
+**Título:** Reubicar las 5 topologías avanzadas a rulesets/topologies
+
+- **Propósito:** Unificar la ubicación de topologías para que todas vivan bajo `rulesets/topologies/`.
+- **Evidencia:** Las topologías del eje progresivo viven en `rulesets/topologies/`, pero serverless/edge/event-driven/data-mesh/agentic-ai viven en `reference/architecture/topologies/`.
+- **Complejidad:** M
+- **Hecho cuando:**
+  - [ ] Todas las topologías bajo una única ubicación canónica.
+  - [ ] Enlaces y validadores de topología actualizados; tests pasan.
+
+#### GT-330
+
+**Título:** Mitigar el bus factor (segundo mantenedor + onboarding)
+
+- **Propósito:** Reducir el riesgo de continuidad por un único contribuidor humano.
+- **Evidencia:** `git shortlog` muestra un único contribuidor humano para ~1.475 commits.
+- **Complejidad:** M
+- **Hecho cuando:**
+  - [ ] Se incorpora un segundo mantenedor.
+  - [ ] Existe documentación de onboarding profundo.
+
 #### GT-155
 
 **Título:** Conformidad de envelope ADR-0073 en el REST del Core API

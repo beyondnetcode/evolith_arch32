@@ -118,4 +118,12 @@ Cada servicio en `docker-compose.yml` declara `deploy.resources.limits` para evi
 
 ---
 
+## Guías de Despliegue
+
+| Guía | Descripción |
+| :--- | :--- |
+| [VPS — Coolify en Hostinger](./vps-coolify/README.es.md) | Despliegue a producción en VPS autoalojado usando Coolify, validado en instancia Hostinger de 7.8 GB / 2 vCPU |
+
+---
+
 [Volver a la Raíz del Repositorio](../README.es.md)

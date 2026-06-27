@@ -11,6 +11,10 @@ import {
   deriveVerdict,
 } from '../../domain/gate-evidence';
 import { IWebhookNotifier } from '../ports/webhook-notifier.port';
+import { IDomainEventBus } from '../ports/event-bus.port';
+import { DomainEvents } from '../../domain/events/domain-events';
+import { Role } from '../../domain/rbac/role';
+import { gateRoleEnforcer } from '../../domain/rbac/gate-role-enforcer';
 
 /**
  * Evaluates one SDLC phase gate and emits the ADR-0073 `GateEvidence` payload.
@@ -44,13 +48,18 @@ export interface EvaluateGateInput {
   corePath?: string;
   evaluatedBy?: EvaluatorKind;
   webhookUrl?: string;
+  /** Roles held by the actor requesting the gate evaluation (GT-320 RBAC enforcement). */
+  actorRoles?: Role[];
+  /** When true, the actor is requesting a waiver rather than an approval (GT-320). */
+  requestWaiver?: boolean;
 }
 
 @Injectable()
 export class EvaluateGateUseCase {
   constructor(
     @Inject('VALIDATOR_FACTORY') private readonly validatorFactory: (corePath?: string) => PhaseGateValidatorService,
-    @Optional() @Inject('WEBHOOK_NOTIFIER') private readonly webhookNotifier?: IWebhookNotifier
+    @Optional() @Inject('WEBHOOK_NOTIFIER') private readonly webhookNotifier?: IWebhookNotifier,
+    @Optional() @Inject('EVENT_BUS') private readonly eventBus?: IDomainEventBus,
   ) {}
 
   async execute(input: EvaluateGateInput): Promise<GateEvidence> {
@@ -59,6 +68,17 @@ export class EvaluateGateUseCase {
     const result = await validator.validateGate(gateNumber, input.projectPath);
     const rulesetVersion = await validator.getRulesetVersion();
     const violations = this.toViolations(result);
+
+    // GT-320: enforce accountableRole / waiverAuthority before recording verdict
+    if (input.actorRoles && input.actorRoles.length > 0) {
+      const gateId = this.slugify(result.name);
+      const gateMeta = { accountableRole: result.accountableRole, waiverAuthority: result.waiverAuthority };
+      if (input.requestWaiver) {
+        gateRoleEnforcer.assertCanWaive(input.actorRoles, gateMeta, gateId);
+      } else {
+        gateRoleEnforcer.assertCanApprove(input.actorRoles, gateMeta, gateId);
+      }
+    }
 
     const evidence: GateEvidence = {
       gateId: this.slugify(result.name),
@@ -73,6 +93,26 @@ export class EvaluateGateUseCase {
 
     if (input.webhookUrl && this.webhookNotifier) {
       await this.webhookNotifier.notify(input.webhookUrl, evidence);
+    }
+
+    if (this.eventBus) {
+      const projectId = input.projectPath;
+      const commonFields = {
+        projectId,
+        phase: evidence.phase,
+        gateId: evidence.gateId,
+        rulesetRef: evidence.rulesetRef,
+        rulesetVersion: evidence.rulesetVersion,
+        evaluatedBy: evidence.evaluatedBy,
+        evaluatedAt: evidence.evaluatedAt,
+      };
+      if (evidence.verdict === 'passed') {
+        await this.eventBus.publish(DomainEvents.gateApproved(commonFields));
+      } else if (evidence.verdict === 'failed') {
+        await this.eventBus.publish(
+          DomainEvents.gateRejected({ ...commonFields, violationCount: evidence.violations.length }),
+        );
+      }
     }
 
     return evidence;

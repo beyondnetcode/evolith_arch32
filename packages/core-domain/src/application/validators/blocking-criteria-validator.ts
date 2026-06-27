@@ -110,7 +110,7 @@ export class BlockingCriteriaValidator {
     const adrEvidence = evidenceResults.find(e => e.artifact === 'ADR Registry');
     if (!adrEvidence?.found) return true;
     try {
-      const adrPath = path.join(projectPath, 'reference', 'architecture', 'adrs', 'adr-matrix.json');
+      const adrPath = this.evidenceValidator.resolveArtifactPath('ADR Registry', projectPath);
       if (await this.fs.exists(adrPath)) {
         const content = await this.fs.readFile(adrPath);
         const matrix = JSON.parse(content) as { adrs?: unknown[] };

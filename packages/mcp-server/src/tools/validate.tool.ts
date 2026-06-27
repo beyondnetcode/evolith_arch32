@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Optional } from '@nestjs/common';
 import { RulesetValidatorService, ValidationResult } from '@evolith/core';
 import { McpTool, McpToolSchema } from '../mcp/tool.interface';
 
@@ -38,7 +38,7 @@ export class ValidateTool implements McpTool {
 
   constructor(
     private readonly validator: RulesetValidatorService,
-    private readonly validateUseCase?: any,
+    @Optional() private readonly validateUseCase?: any,
   ) {}
 
   async execute(args: Record<string, unknown>): Promise<unknown> {

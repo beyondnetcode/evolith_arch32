@@ -176,7 +176,7 @@ describe('PhaseGateValidatorService', () => {
 
     it('should fail gate 1 when PRD artifact is missing', async () => {
       (mockFs.exists as jest.Mock).mockImplementation((p: string) => {
-        if (p.includes('prd-template.md')) return Promise.resolve(false);
+        if (p.endsWith('/docs/prd.md')) return Promise.resolve(false);
         return Promise.resolve(true);
       });
 
@@ -190,7 +190,7 @@ describe('PhaseGateValidatorService', () => {
 
     it('should fail gate when blocking criterion is triggered', async () => {
       (mockFs.exists as jest.Mock).mockImplementation((p: string) => {
-        if (p.includes('prd-template.md')) return Promise.resolve(false);
+        if (p.endsWith('/docs/prd.md')) return Promise.resolve(false);
         return Promise.resolve(true);
       });
 
@@ -348,27 +348,143 @@ describe('PhaseGateValidatorService', () => {
   });
 
   describe('resolveArtifactPath', () => {
-    it('should resolve PRD artifact to correct path', async () => {
-      await service.validateGate(1, '/project');
+    it('should resolve PRD to the satellite docs/prd.md path', async () => {
+      await service.validateGate(1, '/satellite');
 
-      expect(mockFs.exists).toHaveBeenCalledWith(
+      // GT-314: must resolve to satellite-native path, not Core template
+      expect(mockFs.exists).toHaveBeenCalledWith('/satellite/docs/prd.md');
+      expect(mockFs.exists).not.toHaveBeenCalledWith(
         expect.stringContaining('prd-template.md'),
       );
     });
 
-    it('should resolve ADR Registry to correct path', async () => {
-      await service.validateGate(2, '/project');
+    it('should resolve ADR Registry to satellite docs/architecture/adr-matrix.json', async () => {
+      await service.validateGate(2, '/satellite');
 
       expect(mockFs.exists).toHaveBeenCalledWith(
-        expect.stringContaining('adr-matrix.json'),
+        '/satellite/docs/architecture/adr-matrix.json',
       );
+    });
+
+    it('should resolve CI Pipeline to satellite .github/workflows', async () => {
+      await service.validateGate(3, '/satellite');
+
+      expect(mockFs.exists).toHaveBeenCalledWith('/satellite/.github/workflows');
+    });
+
+    it('should resolve Coverage Report to satellite coverage/coverage-summary.json', async () => {
+      await service.validateGate(3, '/satellite');
+
+      expect(mockFs.exists).toHaveBeenCalledWith(
+        '/satellite/coverage/coverage-summary.json',
+      );
+    });
+
+    it('should resolve Deployment Evidence to satellite .evolith/deployment-evidence.json', async () => {
+      await service.validateGate(5, '/satellite');
+
+      expect(mockFs.exists).toHaveBeenCalledWith(
+        '/satellite/.evolith/deployment-evidence.json',
+      );
+    });
+  });
+
+  describe('GT-318: GateRegistryService integration', () => {
+    const canonicalGateF1 = {
+      id: 'gate-f1',
+      name: 'Business Sign-Off',
+      phase: 'f1',
+      description: 'Scope frozen.',
+      accountableRole: 'Product Owner',
+      waiverAuthority: 'Executive Sponsor',
+      requiredArtifacts: [
+        { artifact: 'PRD', validation: 'PRD approved', rules: ['rulesets/opa/governance.rego'] },
+        { artifact: 'Discovery Canvas', validation: 'Canvas complete', rules: ['rulesets/opa/governance.rego'] },
+        { artifact: 'Business Case ROI', validation: 'Financial viability documented', rules: [] },
+        { artifact: 'Ballpark Estimation', validation: 'T-Shirt sizing completed', rules: ['rulesets/opa/version-pinning.rego'] },
+      ],
+      blockingCriteria: [
+        { criterion: 'Scope is ambiguous', action: 'BLOCK' },
+        { criterion: 'Funding outcome is unclear', action: 'BLOCK' },
+        { criterion: 'Architecture constraints are ignored', action: 'BLOCK' },
+      ],
+    };
+
+    it('uses canonical gate source when gate-f*.json files are present', async () => {
+      const registryFs = createMockFileSystem({
+        readdirNames: jest.fn().mockResolvedValue(['gate-f1.json']),
+        readFile: jest.fn().mockImplementation((p: string) => {
+          if (p.includes('gate-f1.json')) return Promise.resolve(JSON.stringify(canonicalGateF1));
+          if (p.includes('.schema.json')) return Promise.resolve(JSON.stringify({ type: 'object', properties: {} }));
+          if (p.includes('phase-gates.rules.json')) return Promise.resolve(JSON.stringify(mockRuleset));
+          return Promise.resolve('{}');
+        }),
+      });
+      const svc = new PhaseGateValidatorService('/core', { fileSystem: registryFs, logger: { warn: jest.fn(), error: jest.fn(), log: jest.fn(), info: jest.fn(), debug: jest.fn() } });
+
+      const ruleset = await svc.loadRuleset();
+
+      expect(ruleset.gates).toHaveLength(1);
+      expect(ruleset.gates[0].name).toBe('Business Sign-Off');
+      expect(ruleset.version).toBe('2.0.0');
+    });
+
+    it('validateGate populates canonicalGateId with stable ID, not substring', async () => {
+      const registryFs = createMockFileSystem({
+        readdirNames: jest.fn().mockResolvedValue(['gate-f1.json']),
+        readFile: jest.fn().mockImplementation((p: string) => {
+          if (p.includes('gate-f1.json')) return Promise.resolve(JSON.stringify(canonicalGateF1));
+          if (p.includes('.schema.json')) return Promise.resolve(JSON.stringify({ type: 'object', properties: {} }));
+          if (p.includes('phase-gates.rules.json')) return Promise.resolve(JSON.stringify(mockRuleset));
+          return Promise.resolve('{}');
+        }),
+      });
+      const svc = new PhaseGateValidatorService('/core', { fileSystem: registryFs, logger: { warn: jest.fn(), error: jest.fn(), log: jest.fn(), info: jest.fn(), debug: jest.fn() } });
+
+      const result = await svc.validateGate(1, '/project');
+
+      expect(result.canonicalGateId).toBe('gate-f1');
+    });
+
+    it('validateGate exposes opaRules from the canonical gate definition', async () => {
+      const registryFs = createMockFileSystem({
+        readdirNames: jest.fn().mockResolvedValue(['gate-f1.json']),
+        readFile: jest.fn().mockImplementation((p: string) => {
+          if (p.includes('gate-f1.json')) return Promise.resolve(JSON.stringify(canonicalGateF1));
+          if (p.includes('.schema.json')) return Promise.resolve(JSON.stringify({ type: 'object', properties: {} }));
+          if (p.includes('phase-gates.rules.json')) return Promise.resolve(JSON.stringify(mockRuleset));
+          return Promise.resolve('{}');
+        }),
+      });
+      const svc = new PhaseGateValidatorService('/core', { fileSystem: registryFs, logger: { warn: jest.fn(), error: jest.fn(), log: jest.fn(), info: jest.fn(), debug: jest.fn() } });
+
+      const result = await svc.validateGate(1, '/project');
+
+      expect(result.opaRules).toContain('rulesets/opa/governance.rego');
+      expect(result.opaRules).toContain('rulesets/opa/version-pinning.rego');
+    });
+
+    it('falls back to legacy source when no gate-f*.json files exist', async () => {
+      const legacyFs = createMockFileSystem({
+        readdirNames: jest.fn().mockResolvedValue([]),
+        readFile: jest.fn().mockImplementation((p: string) => {
+          if (p.includes('.schema.json')) return Promise.resolve(JSON.stringify({ type: 'object', properties: { gates: { type: 'array' } } }));
+          if (p.includes('phase-gates.rules.json')) return Promise.resolve(JSON.stringify(mockRuleset));
+          return Promise.resolve('{}');
+        }),
+      });
+      const svc = new PhaseGateValidatorService('/core', { fileSystem: legacyFs, logger: { warn: jest.fn(), error: jest.fn(), log: jest.fn(), info: jest.fn(), debug: jest.fn() } });
+
+      const ruleset = await svc.loadRuleset();
+
+      expect(ruleset.gates).toHaveLength(5);
     });
   });
 
   describe('blocking criteria checks', () => {
     it('should detect scope ambiguity when PRD is missing', async () => {
       (mockFs.exists as jest.Mock).mockImplementation((p: string) => {
-        if (p.includes('prd-template.md')) return Promise.resolve(false);
+        if (p.endsWith('/docs/prd.md')) return Promise.resolve(false);
         return Promise.resolve(true);
       });
 

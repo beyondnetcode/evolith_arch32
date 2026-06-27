@@ -2,6 +2,11 @@
  * Domain types for the unified machine output contract ratified by
  * core/ADR-0073 (Unified CLI/MCP Output Contract and Gate Evidence Schema).
  *
+ * GT-316: Canonical verdict vocabulary is now in `./verdict/verdict`.
+ * The legacy `GateVerdict = 'passed'|'failed'|'skipped'` type is kept for
+ * backward compatibility. Use `fromLegacyGateEvidence()` to convert to the
+ * canonical `Verdict` enum.
+ *
  * These types are the single source of truth consumed by every surface
  * (CLI command, MCP tool, REST endpoint). Canonical JSON Schemas:
  *   - rulesets/schema/gate-evidence.schema.json
@@ -153,3 +158,17 @@ export function isGatePhase(value: string): value is GatePhase {
 export function isErrorCode(value: string): value is ErrorCode {
   return (ERROR_CODES as readonly string[]).includes(value);
 }
+
+// ---------------------------------------------------------------------------
+// GT-316: Re-export canonical verdict vocabulary for convenience
+// ---------------------------------------------------------------------------
+
+export {
+  Verdict,
+  fromLegacyGateEvidence,
+  fromLegacyGateDecision,
+  toLegacyGateEvidence,
+  makeVerdictRecord,
+  isVerdict,
+} from './verdict/verdict';
+export type { VerdictReason, VerdictRecord } from './verdict/verdict';

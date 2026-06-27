@@ -6,6 +6,12 @@ import path from "node:path";
 const root = process.cwd();
 const failures = [];
 
+// Auto-generated artifacts are exempt from structural translation parity:
+// their EN content is machine-generated (e.g. CHANGELOG from Conventional
+// Commits via release-please) and cannot keep a hand-translated header
+// structure in sync. Their ES counterparts act as localized navigation pointers.
+const PARITY_EXEMPT_BASENAMES = new Set(["CHANGELOG.md", "CHANGELOG.es.md"]);
+
 function countHeaders(content) {
   const headingPattern = /^#{2,3}\s+.+$/gm;
   const matches = [...content.matchAll(headingPattern)];
@@ -28,6 +34,10 @@ function walk(directory, files = []) {
 
 function validateBilingualStructuralParity(file, content) {
   const relative = path.relative(root, file);
+
+  if (PARITY_EXEMPT_BASENAMES.has(path.basename(file))) {
+    return;
+  }
 
   if (relative.endsWith(".es.md")) {
     const englishFile = file.replace(/\.es\.md$/, ".md");

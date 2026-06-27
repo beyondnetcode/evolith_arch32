@@ -25,7 +25,11 @@ async function bootstrap() {
 
   const config = app.get(ConfigService<EnvConfig>);
 
-  if (config.get('NODE_ENV') !== 'production') {
+  const swaggerEnabled =
+    config.get('NODE_ENV') !== 'production' ||
+    config.get('SWAGGER_ENABLED') === 'true';
+
+  if (swaggerEnabled) {
     const swaggerConfig = new DocumentBuilder()
       .setTitle('Evolith Core API')
       .setDescription('Core API for gate evaluation, phase transitions, project initialization, and architecture drift detection')

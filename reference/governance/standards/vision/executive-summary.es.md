@@ -11,9 +11,9 @@ Instantánea estratégica generada desde el tablero canónico de gaps y la recon
 
 **Decisión actual:** NO-GO para expansión productiva o release mayor: existen bloqueadores P0 activos.
 
-**Mayor problema ahora:** `Rulesets` concentra el mayor riesgo abierto ponderado (4 pendientes, 4 P0). Ataca esa concentración antes de ampliar alcance.
+**Mayor problema ahora:** `Security` concentra el mayor riesgo abierto ponderado (1 pendientes, 1 P0). Ataca esa concentración antes de ampliar alcance.
 
-**Dónde atacar primero:** [GT-293](./gap-reference-catalog.es.md#gt-293), [GT-294](./gap-reference-catalog.es.md#gt-294), [GT-283](./gap-reference-catalog.es.md#gt-283), [GT-284](./gap-reference-catalog.es.md#gt-284), [GT-285](./gap-reference-catalog.es.md#gt-285), [GT-295](./gap-reference-catalog.es.md#gt-295), [GT-296](./gap-reference-catalog.es.md#gt-296), [GT-297](./gap-reference-catalog.es.md#gt-297), [GT-298](./gap-reference-catalog.es.md#gt-298).
+**Dónde atacar primero:** [GT-313](./gap-reference-catalog.es.md#gt-313).
 
 ## Diagnóstico Estratégico
 
@@ -25,48 +25,36 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 
 | Orden | Foco | Motivo | IDs |
 |---:|---|---|---|
-| 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | [GT-293](./gap-reference-catalog.es.md#gt-293), [GT-294](./gap-reference-catalog.es.md#gt-294), [GT-283](./gap-reference-catalog.es.md#gt-283), [GT-284](./gap-reference-catalog.es.md#gt-284), [GT-285](./gap-reference-catalog.es.md#gt-285), [GT-295](./gap-reference-catalog.es.md#gt-295), [GT-296](./gap-reference-catalog.es.md#gt-296), [GT-297](./gap-reference-catalog.es.md#gt-297), [GT-298](./gap-reference-catalog.es.md#gt-298) |
-| 2 | Área de mayor riesgo | `Rulesets` tiene la mayor carga ponderada abierta. | [GT-293](./gap-reference-catalog.es.md#gt-293), [GT-283](./gap-reference-catalog.es.md#gt-283), [GT-284](./gap-reference-catalog.es.md#gt-284), [GT-285](./gap-reference-catalog.es.md#gt-285) |
-| 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | [GT-293](./gap-reference-catalog.es.md#gt-293), [GT-294](./gap-reference-catalog.es.md#gt-294) |
-| 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-299](./gap-reference-catalog.es.md#gt-299), [GT-300](./gap-reference-catalog.es.md#gt-300), [GT-301](./gap-reference-catalog.es.md#gt-301), [GT-303](./gap-reference-catalog.es.md#gt-303), [GT-304](./gap-reference-catalog.es.md#gt-304), [GT-305](./gap-reference-catalog.es.md#gt-305), [GT-306](./gap-reference-catalog.es.md#gt-306), [GT-307](./gap-reference-catalog.es.md#gt-307), +3 |
-| 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-308](./gap-reference-catalog.es.md#gt-308), [GT-309](./gap-reference-catalog.es.md#gt-309) |
+| 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | [GT-313](./gap-reference-catalog.es.md#gt-313) |
+| 2 | Área de mayor riesgo | `Security` tiene la mayor carga ponderada abierta. | [GT-313](./gap-reference-catalog.es.md#gt-313) |
+| 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | [GT-313](./gap-reference-catalog.es.md#gt-313) |
+| 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | - |
+| 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | - |
 
 ## Bloqueadores Actuales
 
 | ID | Ataque | Componente | Esfuerzo |
 |---|---|---|---|
-| [GT-293](./gap-reference-catalog.es.md#gt-293) | Ruleset executive-scorecards existe — rulesets/executive-scorecards | `Rulesets` | P0/S |
-| [GT-294](./gap-reference-catalog.es.md#gt-294) | Políticas OPA para arquitectura — rulesets/architecture/opa | `Architecture` | P0/S |
-| [GT-283](./gap-reference-catalog.es.md#gt-283) | Ruleset f1-modular-monolith existe — rulesets/topologies/progressive-axis/modular-monolith | `Rulesets` | P0/M |
-| [GT-284](./gap-reference-catalog.es.md#gt-284) | Ruleset f2-distributed-modules existe — rulesets/topologies/progressive-axis/distributed-modules | `Rulesets` | P0/M |
-| [GT-285](./gap-reference-catalog.es.md#gt-285) | Ruleset f3-microservices existe — rulesets/topologies/progressive-axis/microservices | `Rulesets` | P0/M |
-| [GT-295](./gap-reference-catalog.es.md#gt-295) | Lógica de evaluación de gates existe — packages/core-domain/src/gates | `Core Domain` | P0/M |
-| [GT-296](./gap-reference-catalog.es.md#gt-296) | Lógica de transición de fases existe — packages/core-domain/src/phases | `Core Domain` | P0/M |
-| [GT-297](./gap-reference-catalog.es.md#gt-297) | Recursos MCP para corpus — packages/mcp-server/src/resources | `MCP` | P0/M |
-| [GT-298](./gap-reference-catalog.es.md#gt-298) | Integración WatcherService — packages/mcp-server/src/watcher | `MCP` | P0/M |
+| [GT-313](./gap-reference-catalog.es.md#gt-313) | Rotar y externalizar GH_TOKEN mediante un gestor de secretos | `Security` | P0/XS |
 
 ## Métricas
 
 | Indicador | Valor |
 |---|---:|
 | Fecha canónica del tablero | 2026-06-26 |
-| Gaps totales | 312 |
-| Gaps cerrados | 290 |
-| Gaps pendientes | 22 |
-| P0 abiertos | 9 |
-| P1 abiertos | 11 |
-| P2 abiertos | 2 |
-| Cierre total | 92.9% |
+| Gaps totales | 330 |
+| Gaps cerrados | 329 |
+| Gaps pendientes | 1 |
+| P0 abiertos | 1 |
+| P1 abiertos | 0 |
+| P2 abiertos | 0 |
+| Cierre total | 99.7% |
 | Registros de evidencia de cierre | 272 |
 | Readiness registrado | 3 PASS, 1 RESOLVED |
 
 | Área | Pendientes | P0 | P1 | Primeros IDs |
 |---|---:|---:|---:|---|
-| `Rulesets` | 4 | 4 | 0 | [GT-293](./gap-reference-catalog.es.md#gt-293), [GT-283](./gap-reference-catalog.es.md#gt-283), [GT-284](./gap-reference-catalog.es.md#gt-284), [GT-285](./gap-reference-catalog.es.md#gt-285) |
-| `Core Domain` | 7 | 2 | 5 | [GT-295](./gap-reference-catalog.es.md#gt-295), [GT-296](./gap-reference-catalog.es.md#gt-296), [GT-303](./gap-reference-catalog.es.md#gt-303), [GT-304](./gap-reference-catalog.es.md#gt-304), +3 |
-| `MCP` | 2 | 2 | 0 | [GT-297](./gap-reference-catalog.es.md#gt-297), [GT-298](./gap-reference-catalog.es.md#gt-298) |
-| `CLI` | 5 | 0 | 3 | [GT-300](./gap-reference-catalog.es.md#gt-300), [GT-301](./gap-reference-catalog.es.md#gt-301), [GT-302](./gap-reference-catalog.es.md#gt-302), [GT-308](./gap-reference-catalog.es.md#gt-308), +1 |
-| `Architecture` | 1 | 1 | 0 | [GT-294](./gap-reference-catalog.es.md#gt-294) |
+| `Security` | 1 | 1 | 0 | [GT-313](./gap-reference-catalog.es.md#gt-313) |
 
 ## Fuente y Regla de Actualización
 

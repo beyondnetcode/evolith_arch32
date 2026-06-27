@@ -33,17 +33,34 @@ const SIZE_OPTIONS = {
 console.log('--- Evolith Bidirectional Gap Sync ---');
 
 // 1. Determine priority (Local vs GitHub)
+// Local wins if: (a) file has uncommitted changes, OR (b) file was touched in the last commit.
+// This prevents GitHub Project (which may lag behind) from overwriting a just-committed local state.
 let isLocalModified = false;
 try {
   const gitStatus = execSync(`git status --porcelain ${TRACKING_FILE_ES}`, { encoding: 'utf-8' }).trim();
   if (gitStatus.length > 0) {
     isLocalModified = true;
-    console.log('📌 Local Markdown file has unstaged/staged changes. Local takes priority.');
-  } else {
-    console.log('☁️ Local Markdown file is clean. GitHub Project takes priority.');
+    console.log('📌 Local Markdown file has uncommitted changes. Local takes priority.');
   }
 } catch (e) {
-  console.log('⚠️ Failed to check git status. Defaulting to GitHub priority.');
+  console.log('⚠️ Failed to check git status.');
+}
+
+if (!isLocalModified) {
+  try {
+    const lastCommitFiles = execSync('git diff-tree --no-commit-id -r --name-only HEAD', { encoding: 'utf-8' });
+    const trackingRelPath = TRACKING_FILE_ES.replace(/^\.\//, '');
+    if (lastCommitFiles.includes(trackingRelPath)) {
+      isLocalModified = true;
+      console.log('📌 Tracking file was modified in the last commit. Local takes priority.');
+    }
+  } catch (e) {
+    console.log('⚠️ Failed to inspect last commit.');
+  }
+}
+
+if (!isLocalModified) {
+  console.log('☁️ Local Markdown file is clean and not in last commit. GitHub Project takes priority.');
 }
 
 // 2. Fetch GitHub items

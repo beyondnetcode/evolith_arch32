@@ -1,5 +1,5 @@
 {
-  "$schema": "../../../../../rulesets/schema/ruleset-standard.schema.json",
+  "$schema": "../../schema/ruleset-standard.schema.json",
   "$id": "https://evolith.dev/rulesets/topologies/serverless.rules.json",
   "title": "Serverless Topology Rules",
   "description": "Architectural rules for the serverless execution topology.",
@@ -24,10 +24,35 @@
     },
     {
       "id": "SV-R01",
-      "severity": "MUST", "category": "serverless-config", "title": "Declared Serverless Contract", "description": "A Serverless satellite MUST provide serverless.config.json.", "blocking": true
+      "severity": "MUST",
+      "category": "serverless-config",
+      "title": "Declared Serverless Contract",
+      "description": "A Serverless satellite MUST provide serverless.config.json.",
+      "blocking": true
     },
-    { "id": "SV-R02", "severity": "MUST", "category": "serverless-stateless", "title": "Stateless Execution", "description": "serverless.config.json MUST declare stateless=true.", "blocking": true },
-    { "id": "SV-R03", "severity": "MUST", "category": "serverless-package", "title": "Bounded Deployment Package", "description": "serverless.config.json MUST declare a positive package.maxSizeMb not exceeding 50.", "blocking": true },
-    { "id": "SV-R04", "severity": "MUST", "category": "serverless-cold-start", "title": "Cold-Start Readiness", "description": "serverless.config.json MUST declare positive coldStart.maxInitMilliseconds and coldStart.lazyInitialization=true.", "blocking": true }
+    {
+      "id": "SV-R02",
+      "severity": "MUST",
+      "category": "serverless-stateless",
+      "title": "Stateless Execution",
+      "description": "serverless.config.json MUST declare stateless=true.",
+      "blocking": true
+    },
+    {
+      "id": "SV-R03",
+      "severity": "MUST",
+      "category": "serverless-package",
+      "title": "Bounded Deployment Package",
+      "description": "serverless.config.json MUST declare a positive package.maxSizeMb not exceeding 50.",
+      "blocking": true
+    },
+    {
+      "id": "SV-R04",
+      "severity": "MUST",
+      "category": "serverless-cold-start",
+      "title": "Cold-Start Readiness",
+      "description": "serverless.config.json MUST declare positive coldStart.maxInitMilliseconds and coldStart.lazyInitialization=true.",
+      "blocking": true
+    }
   ]
 }

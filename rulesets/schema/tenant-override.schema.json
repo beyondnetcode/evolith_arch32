@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/rulesets/schema/tenant-override.schema.json",
+  "title": "Evolith Tenant Override Schema",
+  "description": "Defines per-tenant delta customizations over the canonical Evolith rulesets. Overrides must not remove mandatory evidence from blocking criteria.",
+  "type": "object",
+  "required": ["tenantId", "baseRulesetId", "version", "effectiveDate"],
+  "properties": {
+    "tenantId": { "type": "string" },
+    "baseRulesetId": {
+      "type": "string",
+      "description": "$id of the canonical ruleset being overridden"
+    },
+    "version": { "type": "string", "description": "Semver of this override document" },
+    "effectiveDate": { "type": "string", "format": "date" },
+    "approvedBy": { "type": "string" },
+    "rationale": { "type": "string" },
+    "overrides": {
+      "type": "object",
+      "description": "Map of JSON-pointer paths to override operations",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "add": {
+            "type": "array",
+            "description": "Items to add to the target array"
+          },
+          "remove": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Artifact names to remove from the target array. Cannot remove blocking criteria."
+          },
+          "set": {
+            "description": "Replace a scalar value"
+          }
+        }
+      }
+    },
+    "waivers": {
+      "type": "array",
+      "items": { "$ref": "waiver.schema.json" },
+      "description": "Active waivers for this tenant"
+    }
+  },
+  "additionalProperties": false
+}

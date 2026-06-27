@@ -56,15 +56,18 @@ async function bootstrap() {
   app.use(helmet());
 
   const nodeEnv = config.get('NODE_ENV');
+  const rawOrigins = config.get('CORS_ORIGINS');
+  // In production, CORS_ORIGINS must be set. Empty string/absent → deny all cross-origin.
+  // Set CORS_ORIGINS=* to allow all (internal/BFF deployments).
   const corsOrigin = nodeEnv === 'development'
     ? '*'
-    : (config.get('CORS_ORIGINS')?.split(',') ?? []);
+    : (rawOrigins ? rawOrigins.split(',').map((s: string) => s.trim()) : false);
 
   app.enableCors({
     origin: corsOrigin,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'x-correlation-id'],
-    credentials: nodeEnv !== 'development',
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-correlation-id', 'x-api-key'],
+    credentials: false,
   });
 
   app.flushLogs();

@@ -1,0 +1,16 @@
+{
+  "$schema": "../../schema/tenant.schema.json",
+  "tenantId": "example-corp",
+  "name": "Example Corporation",
+  "tier": "professional",
+  "baselineRuleset": "https://evolith.dev/rulesets/phase-gates/phase-gates.rules.json",
+  "overridesRef": "./overrides.json",
+  "contacts": [
+    { "role": "Technical Lead", "email": "tech@example.com" },
+    { "role": "Product Owner", "email": "po@example.com" }
+  ],
+  "allowedTopologies": ["modular-monolith", "microservices", "event-driven"],
+  "phaseRange": { "min": 1, "max": 5 },
+  "createdAt": "2026-01-01",
+  "updatedAt": "2026-01-01"
+}

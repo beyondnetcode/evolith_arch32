@@ -43,7 +43,7 @@ export class ProjectsController {
   @ApiEnvelopeResponse(undefined, { description: 'Advance proposal results' })
   async proposeAdvance(@Body() body: ProposeAdvanceDto) {
     return this.proposePhaseAdvanceUseCase.execute({
-      fromPhase: body.targetPhase as any,
+      fromPhase: body.currentPhase as any,
       toPhase: body.targetPhase as any,
       projectPath: this.workspaceResolver.resolve(body.workspaceRef),
       corePath: this.workspaceResolver.corePath(),

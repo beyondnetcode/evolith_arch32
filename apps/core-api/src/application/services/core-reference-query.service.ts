@@ -29,12 +29,15 @@ export class CoreReferenceQueryService {
       ...(await this.findRulesetFiles(path.join(corePath, 'rulesets'))),
       ...(await this.findRulesetFiles(path.join(corePath, 'reference', 'architecture', 'topologies')))
     ];
-    const rulesets = await Promise.all(files.map(async (file) => {
+    const results = await Promise.allSettled(files.map(async (file) => {
       const content = await this.fs.readFile(file);
       const parsed = JSON.parse(content) as Record<string, unknown>;
       return this.toSummary(parsed, path.relative(corePath, file));
     }));
-    return rulesets.sort((left, right) => left.id.localeCompare(right.id));
+    return results
+      .filter((r): r is PromiseFulfilledResult<RulesetSummary> => r.status === 'fulfilled')
+      .map((r) => r.value)
+      .sort((left, right) => left.id.localeCompare(right.id));
   }
 
   async getRuleset(corePath: string, rulesetId: string): Promise<Record<string, unknown> | undefined> {
@@ -43,9 +46,13 @@ export class CoreReferenceQueryService {
       ...(await this.findRulesetFiles(path.join(corePath, 'reference', 'architecture', 'topologies')))
     ];
     for (const file of files) {
-      const parsed = JSON.parse(await this.fs.readFile(file)) as Record<string, unknown>;
-      if (this.toSummary(parsed, path.relative(corePath, file)).id === rulesetId) {
-        return parsed;
+      try {
+        const parsed = JSON.parse(await this.fs.readFile(file)) as Record<string, unknown>;
+        if (this.toSummary(parsed, path.relative(corePath, file)).id === rulesetId) {
+          return parsed;
+        }
+      } catch {
+        // skip malformed file
       }
     }
     return undefined;
@@ -62,9 +69,18 @@ export class CoreReferenceQueryService {
   }
 
   private async loadPhaseGates(corePath: string): Promise<PhaseGate[]> {
-    const content = await this.fs.readFile(path.join(corePath, 'rulesets', 'sdlc', 'phase-gates.rules.json'));
-    const parsed = JSON.parse(content) as { gates?: PhaseGate[] };
-    return parsed.gates ?? [];
+    // Canonical location is rulesets/phase-gates/; rulesets/sdlc/ is a legacy duplicate.
+    const candidates = [
+      path.join(corePath, 'rulesets', 'phase-gates', 'phase-gates.rules.json'),
+      path.join(corePath, 'rulesets', 'sdlc', 'phase-gates.rules.json'),
+    ];
+    for (const candidate of candidates) {
+      if (await this.fs.exists(candidate)) {
+        const parsed = JSON.parse(await this.fs.readFile(candidate)) as { gates?: PhaseGate[] };
+        return parsed.gates ?? [];
+      }
+    }
+    return [];
   }
 
   private async findRulesetFiles(directory: string, depth = 0): Promise<string[]> {
@@ -80,11 +96,18 @@ export class CoreReferenceQueryService {
   }
 
   private toSummary(ruleset: Record<string, unknown>, relativePath: string): RulesetSummary {
+    // topology.manifest.json uses metadata.id; .rules.json uses $id
+    const metadata = ruleset.metadata as Record<string, unknown> | undefined;
+    const id = metadata?.id ?? ruleset.$id ?? relativePath.replace(/\.(rules|manifest)\.json$/, '');
+    const title = metadata?.name ?? ruleset.title ?? relativePath;
+    const spec = ruleset.spec as Record<string, unknown> | undefined;
+    const description = spec?.summary ?? ruleset.description ?? '';
+    const version = (metadata?.version ?? ruleset.version) as string | undefined;
     return {
-      id: String(ruleset.$id ?? relativePath.replace(/\.rules\.json$/, '')),
-      title: String(ruleset.title ?? relativePath),
-      description: String(ruleset.description ?? ''),
-      version: typeof ruleset.version === 'string' ? ruleset.version : undefined,
+      id: String(id),
+      title: String(title),
+      description: String(description),
+      version: typeof version === 'string' ? version : undefined,
     };
   }
 

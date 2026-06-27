@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/rulesets/schema/waiver.schema.json",
+  "title": "Evolith Gate Waiver Schema",
+  "description": "Formal waiver for a blocking gate criterion. All fields are mandatory — no verbal approvals accepted.",
+  "type": "object",
+  "required": ["waiverId", "criterion", "justification", "risk", "owner", "waiverAuthority", "expirationDate", "mitigationPlan", "gatePhase", "tenantId", "issuedAt"],
+  "properties": {
+    "waiverId": { "type": "string", "description": "Unique waiver ID, e.g. WVR-2026-001" },
+    "tenantId": { "type": "string" },
+    "gatePhase": { "type": "integer", "minimum": 1, "maximum": 5 },
+    "criterion": { "type": "string", "description": "Exact text of the blocking criterion being waived" },
+    "justification": { "type": "string", "minLength": 50 },
+    "risk": { "type": "string", "minLength": 20 },
+    "mitigationPlan": { "type": "string", "minLength": 30 },
+    "owner": { "type": "string", "description": "Person accountable for monitoring the waiver" },
+    "waiverAuthority": { "type": "string", "description": "Role that approved the waiver (must match gate.waiverAuthority)" },
+    "issuedAt": { "type": "string", "format": "date" },
+    "expirationDate": { "type": "string", "format": "date" },
+    "status": {
+      "type": "string",
+      "enum": ["active", "expired", "revoked"],
+      "default": "active"
+    }
+  },
+  "additionalProperties": false
+}

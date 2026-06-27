@@ -15,9 +15,10 @@ export const CacheKeys = {
   },
 } as const;
 
+// cache-manager v7 / @nestjs/cache-manager v3 use milliseconds
 export const CacheTTL = {
-  topology: 300,
-  opa: 60,
-  gate: 300,
-  mcp: 600,
+  topology: 300_000,   // 5 min
+  opa: 60_000,         // 1 min
+  gate: 300_000,       // 5 min
+  mcp: 600_000,        // 10 min
 } as const;

@@ -3,6 +3,7 @@
   "compilerOptions": {
     "sourceMap": false,
     "declaration": false,
-    "incremental": false
+    "incremental": false,
+    "paths": {}
   }
 }

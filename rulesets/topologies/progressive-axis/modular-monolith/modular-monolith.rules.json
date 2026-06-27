@@ -1,5 +1,5 @@
 {
-  "$schema": "../../../../schema/ruleset-standard.schema.json",
+  "$schema": "../../../schema/ruleset-standard.schema.json",
   "$id": "https://evolith.dev/rulesets/topologies/progressive-axis/modular-monolith/modular-monolith.rules.json",
   "title": "Modular Monolith Architecture Rules",
   "description": "Rules governing the mandatory starting topology for all Evolith satellites. Modular Monolith is the only permitted entry point unless extraction criteria are already satisfied.",

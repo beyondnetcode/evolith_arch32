@@ -85,6 +85,11 @@ export class DefaultWorkflowDefinition implements WorkflowDefinition {
 }
 
 export function loadDefaultWorkflow(): DefaultWorkflowDefinition {
-  const content = fs.readFileSync(path.join(__dirname, '../../../rulesets/sdlc/default-workflow.yaml'), 'utf-8');
+  // Prefer WORKSPACE_ROOT (set by Docker/runtime env) so the npm package stays
+  // ruleset-free. Fall back to __dirname for local monorepo development.
+  const rulesetBase = process.env.WORKSPACE_ROOT
+    ? path.join(process.env.WORKSPACE_ROOT, 'rulesets')
+    : path.join(__dirname, '../../../rulesets');
+  const content = fs.readFileSync(path.join(rulesetBase, 'sdlc/default-workflow.yaml'), 'utf-8');
   return new DefaultWorkflowDefinition(yaml.parse(content));
 }

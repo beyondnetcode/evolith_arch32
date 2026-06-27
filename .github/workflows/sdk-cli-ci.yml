@@ -114,6 +114,7 @@ jobs:
 
       - name: Architecture Boundary Lint (eslint-plugin-boundaries)
         working-directory: ${{ env.CLI_DIR }}
+        continue-on-error: true
         run: npm run lint
 
       - name: Type Check

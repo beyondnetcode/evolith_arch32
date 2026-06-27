@@ -75,7 +75,9 @@ describe('ADRCommand', () => {
   let logSpy: jest.SpyInstance;
 
   beforeEach(() => {
-    command = new ADRCommand();
+    const mockFs = { exists: jest.fn(), readFile: jest.fn(), writeFile: jest.fn(), readDir: jest.fn(), mkdir: jest.fn(), ensureDir: jest.fn(), ensureFile: jest.fn(), copyFile: jest.fn(), stat: jest.fn(), remove: jest.fn() } as any;
+    const mockPs = { showIntro: jest.fn(), showInfo: jest.fn(), showWarning: jest.fn(), showError: jest.fn(), showSuccess: jest.fn(), showOutro: jest.fn(), startSpinner: jest.fn(), stopSpinner: jest.fn(), updateSpinner: jest.fn() } as any;
+    command = new ADRCommand(mockFs, mockPs);
     logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
     jest.clearAllMocks();
     mockCreate.mockResolvedValue({ id: 'ADR-0001', title: 'Test', status: 'Proposed', date: '2024-01-01' });

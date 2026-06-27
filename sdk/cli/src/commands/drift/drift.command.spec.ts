@@ -67,7 +67,7 @@ describe('DriftCommand', () => {
   };
 
   beforeEach(() => {
-    command = new DriftCommand();
+    command = new DriftCommand({ showIntro: jest.fn(), showInfo: jest.fn(), showWarning: jest.fn(), showError: jest.fn(), showSuccess: jest.fn(), showOutro: jest.fn(), startSpinner: jest.fn(), stopSpinner: jest.fn(), updateSpinner: jest.fn() } as any);
     logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
     exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
     jest.clearAllMocks();

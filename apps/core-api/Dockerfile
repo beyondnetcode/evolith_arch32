@@ -11,7 +11,7 @@ COPY apps/core-api/package*.json ./
 COPY apps/core-api/tsconfig*.json ./
 
 # Install all dependencies (including devDeps needed for build)
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # Copy source
 COPY apps/core-api/src/ ./src/
@@ -37,7 +37,7 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package.json ./
 
 # Install production dependencies only
-RUN npm install --omit=dev && npm cache clean --force
+RUN npm install --omit=dev --legacy-peer-deps && npm cache clean --force
 
 # Copy corpus: rulesets + reference (built from monorepo root context)
 COPY rulesets/ ./corpus/rulesets/

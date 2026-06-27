@@ -148,10 +148,10 @@ const CoreDomainProviders = [
   },
   {
     provide: PhaseTransitionUseCase,
-    useFactory: (fs: IFileSystem, logger: ILogger, phaseGateValidator: PhaseGateValidatorService) => {
+    useFactory: (fs: IFileSystem, logger: ILogger) => {
       return new PhaseTransitionUseCase(fs, undefined, undefined, logger);
     },
-    inject: ['IFileSystem', 'ILogger', PhaseGateValidatorService],
+    inject: ['IFileSystem', 'ILogger'],
   }
 ];
 

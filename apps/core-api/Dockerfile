@@ -2,7 +2,8 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-COPY apps/core-api/package*.json ./
+COPY apps/core-api/package.json ./
+COPY package-lock.json ./
 COPY apps/core-api/tsconfig*.json ./
 
 RUN npm ci --legacy-peer-deps

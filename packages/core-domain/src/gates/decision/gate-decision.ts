@@ -6,7 +6,7 @@
  * `fromLegacyGateDecision` provides backward-compatible migration.
  */
 
-import { Verdict, fromLegacyGateDecision, makeVerdictRecord } from '../../domain/verdict/verdict';
+import { Verdict, fromLegacyGateDecision } from '../../domain/verdict/verdict';
 export type { Verdict };
 export { fromLegacyGateDecision };
 

@@ -22,7 +22,7 @@ import * as path from 'path';
 import { EvaluateGateUseCase } from '../application/use-cases/evaluate-gate.use-case';
 import { ValidateBlueprintUseCase } from '../application/use-cases/validate-blueprint.use-case';
 import { ValidateWorkflowUseCase } from '../application/use-cases/validate-workflow.use-case';
-import { PhaseGateValidatorService, GateValidationResult } from '../application/validators/phase-gate-validator.service';
+import { PhaseGateValidatorService } from '../application/validators/phase-gate-validator.service';
 import { AuditService } from '../application/services/audit.service';
 import { InMemoryEventBus } from '../infrastructure/events/in-memory-event-bus';
 import { InMemoryAuditRepository } from '../infrastructure/audit/in-memory-audit-repository';
@@ -117,7 +117,7 @@ function makeNodeFileSystem(): IFileSystem {
     ensureDir: async (p: string) => { fs.mkdirSync(p, { recursive: true }); },
     ensureFile: async (p: string) => {
       fs.mkdirSync(path.dirname(p), { recursive: true });
-      if (!fs.existsSync(p)) fs.writeFileSync(p, '', 'utf-8');
+      try { fs.writeFileSync(p, '', { flag: 'ax' }); } catch { /* already exists */ }
     },
     stat: async (p: string) => {
       const s = fs.statSync(p);

@@ -27,8 +27,8 @@ Use this summary with a simple rule: if you need context, open only the linked I
 |---:|---|---|---|
 | 1 | P0 blockers | They prevent production-readiness or major-release confidence. | [GT-313](./gap-reference-catalog.md#gt-313) |
 | 2 | Highest-risk area | `Security` has the largest weighted open load. | [GT-313](./gap-reference-catalog.md#gt-313) |
-| 3 | Quick wins | High criticality with XS/S complexity. | [GT-313](./gap-reference-catalog.md#gt-313), [GT-361](./gap-reference-catalog.md#gt-361) |
-| 4 | P1 wave | Next hardening after P0 is cleared. | [GT-361](./gap-reference-catalog.md#gt-361), [GT-324](./gap-reference-catalog.md#gt-324), [GT-360](./gap-reference-catalog.md#gt-360) |
+| 3 | Quick wins | High criticality with XS/S complexity. | [GT-313](./gap-reference-catalog.md#gt-313) |
+| 4 | P1 wave | Next hardening after P0 is cleared. | [GT-324](./gap-reference-catalog.md#gt-324) |
 | 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | - |
 
 ## Current Blockers
@@ -43,19 +43,18 @@ Use this summary with a simple rule: if you need context, open only the linked I
 |---|---:|
 | Canonical board date | 2026-06-28 |
 | Total gaps | 374 |
-| Closed gaps | 370 |
-| Open gaps | 4 |
+| Closed gaps | 372 |
+| Open gaps | 2 |
 | Open P0 | 1 |
-| Open P1 | 3 |
+| Open P1 | 1 |
 | Open P2 | 0 |
-| Total closure | 98.9% |
+| Total closure | 99.5% |
 | Closure evidence records | 350 |
 | Recorded readiness | 3 PASS, 1 RESOLVED |
 
 | Area | Open | P0 | P1 | First IDs |
 |---|---:|---:|---:|---|
 | `Security` | 1 | 1 | 0 | [GT-313](./gap-reference-catalog.md#gt-313) |
-| `Core API` | 2 | 0 | 2 | [GT-361](./gap-reference-catalog.md#gt-361), [GT-360](./gap-reference-catalog.md#gt-360) |
 | `Infra` | 1 | 0 | 1 | [GT-324](./gap-reference-catalog.md#gt-324) |
 
 ## Source and Refresh Rule

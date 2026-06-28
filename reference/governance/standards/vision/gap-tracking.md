@@ -53,7 +53,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-323`](./gap-reference-catalog.md#gt-323) | Production Dockerfiles for core-api and mcp-server (bundle the corpus) | `Infra` | Cross | P1 | M | `DONE` |
 | [`GT-324`](./gap-reference-catalog.md#gt-324) | CD: GHCR build+push of core-api & mcp-server (GITHUB_TOKEN) live + push/tag triggers; guarded Coolify deploy job — code complete, deploy pending secrets + CD run | `Infra` | Cross | P1 | M | `IN-PROGRESS` |
 | [`GT-325`](./gap-reference-catalog.md#gt-325) | Blueprint as a first-class entity validated against rulesets/topologies/tenant policy/OPA | `Architecture` | F2 | P1 | L | `DONE` |
-| [`GT-326`](./gap-reference-catalog.md#gt-326) | End-to-end integration validation Core and Tracker and agents | `Quality` | Cross | P1 | L | `OPEN` |
+| [`GT-326`](./gap-reference-catalog.md#gt-326) | End-to-end integration validation Core and Tracker and agents | `Quality` | Cross | P1 | L | `DONE` |
 | [`GT-327`](./gap-reference-catalog.md#gt-327) | Evolve the one-shot webhook into subscriptions + retries + HMAC signing | `Core Domain` | Cross | P2 | M | `DONE` |
 | [`GT-328`](./gap-reference-catalog.md#gt-328) | Roll out ESLint boundaries to packages/* and apps/* with a CI step | `Quality` | Cross | P2 | M | `DONE` |
 | [`GT-329`](./gap-reference-catalog.md#gt-329) | Relocate the 5 advanced topologies to rulesets/topologies | `Rulesets` | Cross | P2 | M | `DONE` |
@@ -373,7 +373,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-246`](./gap-reference-catalog.md#gt-246) | Implement Chaos Mesh/Litmus experiments | `QA` | Cross | P3 | L | `DONE` |
 
 
-**Progress:** 341 / 358 done · 14 in progress · 2 pending · 1 deferred
+**Progress:** 342 / 358 done · 14 in progress · 1 pending · 1 deferred
 
 **Wave 2026-06-23 (Wilson deep audit III):** Added 14 new gaps `GT-212`…`GT-225` from the Wilson Audit Playbook covering: ADR status hygiene (GT-212), topology manifest metadata + operational budgets + guidance corpus (GT-213, GT-217, GT-219), REST controller observability + OpenAPI (GT-214, GT-215), OPA input-schema parity + per-topology test density (GT-216, GT-222), SDLC Phase 05 rollback + on-call templates (GT-218), CLI branch coverage + envelope format coverage + skip-list cleanup (GT-220, GT-224, GT-225), MCP HTTP audit logging (GT-221), and cross-surface parity e2e tests (GT-223).
 

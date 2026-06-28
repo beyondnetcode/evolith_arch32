@@ -3478,7 +3478,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** infra-providers · **Prioridad:** P1 · **Riesgo:** alto · **Dependencias:** ninguna
 - **Archivos:** `packages/infra-providers/src/webhook.adapter.ts:23`, `…/README.md:31`, `…/disk-ruleset.repository.ts:175`
 - **Fix propuesto:** jest + tests por provider (≥80%); timeout + retry/backoff + allow-list de URL (SSRF); corregir README; ids canónicos en `deriveCategory`.
-- **Hecho cuando:** [ ] tests verdes ≥80%; [ ] timeout webhook; [ ] README compila.
+- **Fix aplicado (slice 1 — seguridad WebhookAdapter + harness de tests):** reescrito `WebhookAdapter` con timeout por intento (`AbortController`, 10s por defecto), retry acotado con backoff exponencial en fallos transitorios (red/5xx, nunca 4xx), y allow-list de esquema de URL (solo http/https — rechaza `file:`/SSRF + URLs malformadas). Constructor sigue siendo no-arg (opciones inyectables para tests). Añadido harness jest (`jest.config.js` + scripts `test`/`test:cov` + devDeps) y `webhook.adapter.spec.ts` (5 tests). La afirmación "with retry" del README ya es verdadera.
+- **Evidencia:** `npm run --workspace packages/infra-providers test` → 5/5 verde (antes 0). Build limpio; consumidores `new WebhookAdapter()` (domain.module) sin afectar.
+- **Restante (slice 2):** tests de los demás providers a ≥80%; corregir el ejemplo del README (config-parser/DiskRulesetRepository); reemplazar las claves f1/f2/f3 de `deriveCategory` por ids canónicos (liga con GT-343).
+- **Hecho cuando:** [x] webhook timeout + retry + guard SSRF, con tests; [ ] cobertura providers ≥80%; [ ] README compila; [ ] deriveCategory ids canónicos.
 
 #### GT-352
 

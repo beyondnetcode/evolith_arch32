@@ -3531,7 +3531,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** infra-providers · **Priority:** P1 · **Risk:** high · **Dependencies:** none
 - **Files:** `packages/infra-providers/src/webhook.adapter.ts:23`, `…/README.md:31`, `…/disk-ruleset.repository.ts:175`
 - **Proposed fix:** jest + provider unit tests (≥80%); AbortController timeout + bounded retry/backoff + URL scheme allow-list (SSRF); fix README signatures; canonical topology ids in `deriveCategory`.
-- **Done when:** [ ] test script green ≥80% cov; [ ] webhook timeout + documented retry; [ ] README compiles.
+- **Applied fix (slice 1 — WebhookAdapter security + test harness):** rewrote `WebhookAdapter` with a per-attempt `AbortController` timeout (default 10s), bounded exponential-backoff retry on transient failures (network/5xx, never 4xx), and a URL-scheme allow-list (http/https only — rejects `file:`/SSRF schemes + malformed URLs). Constructor stays no-arg compatible (options injectable for tests). Added a jest harness (`jest.config.js` + `test`/`test:cov` scripts + devDeps) and `webhook.adapter.spec.ts` (5 tests: 2xx success, scheme/SSRF reject, no-retry-4xx, 5xx retry-exhaust, network-error retry-then-success). The README "with retry" claim is now true.
+- **Evidence:** `npm run --workspace packages/infra-providers test` → 5/5 green (was 0 tests). Build clean; `new WebhookAdapter()` consumers (domain.module) unaffected.
+- **Remaining (slice 2):** unit tests for the other providers to ≥80% coverage; fix the README config-parser/DiskRulesetRepository example signatures; replace `deriveCategory` f1/f2/f3 keys with canonical topology ids (ties to GT-343).
+- **Done when:** [x] webhook timeout + retry + SSRF guard, tested; [ ] provider coverage ≥80%; [ ] README compiles; [ ] deriveCategory canonical ids.
 
 #### GT-352
 

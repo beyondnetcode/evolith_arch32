@@ -15,7 +15,9 @@
     "registry": "https://registry.npmjs.org"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "test": "jest",
+    "test:cov": "jest --coverage"
   },
   "dependencies": {
     "@evolith/core-domain": "1.0.4",
@@ -27,7 +29,10 @@
   },
   "devDependencies": {
     "@types/fs-extra": "11.0.4",
+    "@types/jest": "30.0.0",
     "@types/node": "26.0.0",
+    "jest": "30.4.2",
+    "ts-jest": "29.4.11",
     "typescript": "6.0.3"
   }
 }

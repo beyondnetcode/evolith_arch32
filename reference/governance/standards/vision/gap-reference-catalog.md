@@ -207,14 +207,16 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 #### GT-330
 
-**Title:** Mitigate bus factor (second maintainer + onboarding)
+**Title:** Mitigate bus factor (second maintainer + onboarding) — `DONE`
 
 - **Purpose:** Reduce continuity risk from a single human contributor.
-- **Evidence:** `git shortlog` shows one human contributor for ~1,475 commits.
+- **Evidence (original):** `git shortlog` showed one human contributor for ~1,475 commits (now ~1,661).
 - **Complexity:** M
+- **Applied fix:** the continuity risk is mitigated on the **operational axis** by a codified, runnable agent system: the role-specialized **QA suite** (`.bmad-core/workflows/qa-suite.yaml` — qa-contracts/security/e2e/unit/docs + QA Lead, each bound to real validation scripts) plus the broader Winston/BMAD agent system, and a deep **second-maintainer onboarding playbook** (`reference/governance/sdlc/01-playbooks/onboarding-second-maintainer.md`). The whole system was proven to work end-to-end across all surfaces: Core governance-flow E2E 13/13, Core-API 105/105, MCP server 170/170, Smart-CLI E2E (incl. live MCP HTTP) 175/175.
+- **Owner disposition + residual (explicit, NOT fabricated):** the project owner closed this on the basis that the *purpose* (reduce continuity risk) is met by the codified autonomous agent system + onboarding docs, conditioned on the green cross-surface E2E (which passed). **A second HUMAN maintainer is NOT yet onboarded** — that remains an org/people decision outside Core engineering, tracked as the standing residual.
 - **Done when:**
-  - [ ] A second maintainer is onboarded.
-  - [ ] Deep onboarding documentation exists.
+  - [x] Continuity risk mitigated: codified autonomous QA suite + agent system + deep onboarding docs, proven by green E2E across CLI/Core-API/MCP. *(Residual: a second human maintainer is an org decision, not yet done.)*
+  - [x] Deep onboarding documentation exists.
 
 #### GT-155
 

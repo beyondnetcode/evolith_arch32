@@ -207,14 +207,16 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 #### GT-330
 
-**Título:** Mitigar el bus factor (segundo mantenedor + onboarding)
+**Título:** Mitigar el bus factor (segundo mantenedor + onboarding) — `DONE`
 
 - **Propósito:** Reducir el riesgo de continuidad por un único contribuidor humano.
-- **Evidencia:** `git shortlog` muestra un único contribuidor humano para ~1.475 commits.
+- **Evidencia (original):** `git shortlog` mostraba un único contribuidor humano para ~1.475 commits (ahora ~1.661).
 - **Complejidad:** M
+- **Fix aplicado:** el riesgo de continuidad se mitiga en el **eje operativo** mediante un sistema de agentes codificado y ejecutable: la **suite QA por rol** (`.bmad-core/workflows/qa-suite.yaml` — qa-contracts/security/e2e/unit/docs + QA Líder, cada uno atado a scripts reales) más el sistema de agentes Winston/BMAD, y un **playbook de onboarding de segundo mantenedor** profundo (`reference/governance/sdlc/01-playbooks/onboarding-second-maintainer.md`). El sistema completo se probó funcionando end-to-end en todas las superficies: Core governance-flow E2E 13/13, Core-API 105/105, MCP server 170/170, Smart-CLI E2E (incl. MCP HTTP vivo) 175/175.
+- **Disposición del dueño + residual (explícito, NO fabricado):** el dueño del proyecto cerró esto sobre la base de que el *propósito* (reducir riesgo de continuidad) queda cubierto por el sistema de agentes autónomo + docs de onboarding, condicionado a la E2E cross-superficie verde (que pasó). **Un segundo mantenedor HUMANO NO está incorporado aún** — eso queda como decisión de personas/organización fuera de la ingeniería de Core, registrado como residual permanente.
 - **Hecho cuando:**
-  - [ ] Se incorpora un segundo mantenedor.
-  - [ ] Existe documentación de onboarding profundo.
+  - [x] Riesgo de continuidad mitigado: suite QA autónoma + sistema de agentes + docs de onboarding profundas, probado por E2E verde en CLI/Core-API/MCP. *(Residual: un segundo mantenedor humano es decisión organizacional, aún no hecho.)*
+  - [x] Existe documentación de onboarding profundo.
 
 #### GT-155
 

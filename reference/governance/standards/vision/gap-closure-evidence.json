@@ -5133,6 +5133,23 @@
         "npm run test:e2e --workspace @evolith/core-domain"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-330",
+      "closedAt": "2026-06-28",
+      "closureCommit": "f740774c",
+      "evidence": [
+        ".bmad-core/workflows/qa-suite.yaml",
+        "reference/governance/sdlc/01-playbooks/onboarding-second-maintainer.md",
+        "packages/core-domain/src/__e2e__/governance-flow.e2e.spec.ts"
+      ],
+      "validationCommands": [
+        "npm run test:e2e --workspace @evolith/core-domain",
+        "npm test --workspace core-api",
+        "npm run --workspace packages/mcp-server test",
+        "npm run --workspace sdk/cli test:e2e"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

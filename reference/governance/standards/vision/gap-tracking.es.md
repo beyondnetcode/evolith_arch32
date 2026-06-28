@@ -18,7 +18,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-347`](./gap-reference-catalog.es.md#gt-347) | Suite OPA core verde 197/197 + wasm compila + gate CI cableado (29-test-core-opa) | `Governance` | Cross | P0 | L | `EN-PROGRESO` |
 | [`GT-358`](./gap-reference-catalog.es.md#gt-358) | Suite OPA: 12 fallos de aserción corregidos (fixtures/mocks obsoletos) → 197/197 | `Governance` | Cross | P1 | M | `EN-PROGRESO` |
 | [`GT-357`](./gap-reference-catalog.es.md#gt-357) | META: el tablero sobre-reporta completitud vs build/test reales validados | `Governance` | Cross | P1 | M | `PENDIENTE` |
-| [`GT-345`](./gap-reference-catalog.es.md#gt-345) | Specs de Smart CLI corregidos 21→5 suites en rojo (errores TS resueltos; 5 reparaciones runtime restantes) | `Smart CLI` | Cross | P1 | L | `EN-PROGRESO` |
+| [`GT-345`](./gap-reference-catalog.es.md#gt-345) | Suite unitaria de Smart CLI VERDE 905/905 (antes 21 en rojo) + --version añadido; suite e2e (5) restante | `Smart CLI` | Cross | P1 | L | `EN-PROGRESO` |
 | [`GT-348`](./gap-reference-catalog.es.md#gt-348) | Política OPA recompilada en cada dispatch de tool (sin caché) | `MCP Server` | Cross | P1 | M | `PENDIENTE` |
 | [`GT-351`](./gap-reference-catalog.es.md#gt-351) | infra-providers: sin tests; webhook sin retry/timeout (SSRF); README incorrecto | `Infra` | Cross | P1 | L | `PENDIENTE` |
 | [`GT-346`](./gap-reference-catalog.es.md#gt-346) | Superficie de inyección de shell en CommandExecutor (exec con args interpolados) | `Smart CLI` | Cross | P2 | M | `PENDIENTE` |

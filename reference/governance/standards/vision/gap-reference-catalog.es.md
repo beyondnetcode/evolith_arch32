@@ -3407,8 +3407,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Fix propuesto:** reparar ctor/mocks; soportar `--version`; restaurar type-check de specs.
 - **Fix aplicado (parcial — 21→5 suites en rojo):** GT-344 ya resolvió la clase ENOENT. Luego corregidos todos los errores TS de specs para que cada suite corra: casts `as unknown`→`as any`, `as jest.Mock`→`as unknown as jest.Mock`, `(callbacks: unknown)`→`any`, llamadas a ctor actualizadas a las firmas actuales (InitCommand +fileSystem/+promptService, HandoffCommand +fileSystem, StandardsCommand +fileSystem, GateCommand cast promptService), casts de mock-fs, `step.validate!`, tipado de `commandModules`, literales de fixture (webhook `passed`). 17 specs. Resultado: **21→5 suites en rojo, 867 pasando (antes 640), 0 errores TS, sin regresiones.**
 - **Evidencia:** `npm run --workspace sdk/cli test` → 5 fallan / 59 pasan (antes 21/43).
-- **Restante (reparaciones runtime, próxima pasada):** adr.command.spec (promptService no inyectado), cli.integration.spec (`runCli` apunta a `sdk/bin/evolith.js` inexistente; debe ser `sdk/cli/dist/main.js`; + soporte `--version`), completion.command.spec (`install` es string de shell — mockear `installCompletion`), drift + fixtures (mock/aserción).
-- **Hecho cuando:** [ ] `npm test` de sdk/cli verde con cobertura.
+- **Fix aplicado (suite unitaria completa):** adr/drift usan PromptService real (delega al clack mockeado); completion espía los métodos privados de install; `test/mocks/index.ts` import corregido + MockFileSystem completado (existsSync/mkdir/copy/ensureFile); cli.integration runCli → `dist/main.js`; **añadido `--version` real al CLI** (main.ts lee package.json vía opción `version` de CommandFactory). Resultado: **suite unitaria (`jest`) = 64/64 suites, 905/905 tests verde** (antes 21 en rojo). `smart-cli --version` → 1.1.4.
+- **Restante (suite e2e `test:e2e` aparte, nunca corrió antes porque `test:unit` fallaba primero → preexistente):** 5 suites — 3 TS-rot (sdlc-gate-commands-e2e:12, gate.e2e-spec:157, wizard.e2e-spec:83) + cli-e2e (comando validate) + mcp-e2e (levanta servidor MCP HTTP, depende del entorno).
+- **Hecho cuando:** [x] suite unitaria verde; [ ] suite e2e (`test:e2e`) verde para que `npm test` completo pase.
 
 #### GT-346
 

@@ -18,7 +18,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-347`](./gap-reference-catalog.md#gt-347) | Core OPA suite green 197/197 + wasm builds + CI gate wired (29-test-core-opa) | `Governance` | Cross | P0 | L | `IN-PROGRESS` |
 | [`GT-358`](./gap-reference-catalog.md#gt-358) | OPA suite: 12 assertion failures fixed (stale fixtures/mocks) → 197/197 | `Governance` | Cross | P1 | M | `IN-PROGRESS` |
 | [`GT-357`](./gap-reference-catalog.md#gt-357) | META: gap board over-reports completion vs validated build/test reality | `Governance` | Cross | P1 | M | `OPEN` |
-| [`GT-345`](./gap-reference-catalog.md#gt-345) | Smart CLI unit-spec rot fixed 21→5 failing suites (TS errors cleared; 5 runtime repairs remain) | `Smart CLI` | Cross | P1 | L | `IN-PROGRESS` |
+| [`GT-345`](./gap-reference-catalog.md#gt-345) | Smart CLI unit suite GREEN 905/905 (was 21 red) + --version added; e2e suite (5) remains | `Smart CLI` | Cross | P1 | L | `IN-PROGRESS` |
 | [`GT-348`](./gap-reference-catalog.md#gt-348) | MCP OPA policy recompiled on every tool dispatch (no cache) | `MCP Server` | Cross | P1 | M | `OPEN` |
 | [`GT-351`](./gap-reference-catalog.md#gt-351) | infra-providers: no tests; webhook no retry/timeout (SSRF); README inaccurate | `Infra` | Cross | P1 | L | `OPEN` |
 | [`GT-346`](./gap-reference-catalog.md#gt-346) | Smart CLI CommandExecutor shell-injection surface (exec with interpolated args) | `Smart CLI` | Cross | P2 | M | `OPEN` |

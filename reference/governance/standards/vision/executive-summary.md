@@ -11,9 +11,9 @@ Strategic snapshot generated from the canonical gap board and maturity reconcili
 
 **Current decision:** NO-GO for production expansion or a major release: active P0 blockers remain.
 
-**Biggest problem now:** `Core Domain` carries the highest weighted open risk (2 open, 2 P0). Attack that concentration before expanding scope.
+**Biggest problem now:** `Core Domain` carries the highest weighted open risk (1 open, 1 P0). Attack that concentration before expanding scope.
 
-**Where to attack first:** [GT-313](./gap-reference-catalog.md#gt-313), [GT-359](./gap-reference-catalog.md#gt-359), [GT-362](./gap-reference-catalog.md#gt-362).
+**Where to attack first:** [GT-313](./gap-reference-catalog.md#gt-313), [GT-362](./gap-reference-catalog.md#gt-362).
 
 ## Strategic Diagnosis
 
@@ -25,8 +25,8 @@ Use this summary with a simple rule: if you need context, open only the linked I
 
 | Order | Focus | Reason | IDs |
 |---:|---|---|---|
-| 1 | P0 blockers | They prevent production-readiness or major-release confidence. | [GT-313](./gap-reference-catalog.md#gt-313), [GT-359](./gap-reference-catalog.md#gt-359), [GT-362](./gap-reference-catalog.md#gt-362) |
-| 2 | Highest-risk area | `Core Domain` has the largest weighted open load. | [GT-359](./gap-reference-catalog.md#gt-359), [GT-362](./gap-reference-catalog.md#gt-362) |
+| 1 | P0 blockers | They prevent production-readiness or major-release confidence. | [GT-313](./gap-reference-catalog.md#gt-313), [GT-362](./gap-reference-catalog.md#gt-362) |
+| 2 | Highest-risk area | `Core Domain` has the largest weighted open load. | [GT-362](./gap-reference-catalog.md#gt-362) |
 | 3 | Quick wins | High criticality with XS/S complexity. | [GT-313](./gap-reference-catalog.md#gt-313), [GT-361](./gap-reference-catalog.md#gt-361) |
 | 4 | P1 wave | Next hardening after P0 is cleared. | [GT-361](./gap-reference-catalog.md#gt-361), [GT-324](./gap-reference-catalog.md#gt-324), [GT-360](./gap-reference-catalog.md#gt-360) |
 | 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | - |
@@ -36,7 +36,6 @@ Use this summary with a simple rule: if you need context, open only the linked I
 | ID | Attack | Component | Effort |
 |---|---|---|---|
 | [GT-313](./gap-reference-catalog.md#gt-313) | Rotate and externalize GH_TOKEN via a secret manager | `Security` | P0/XS |
-| [GT-359](./gap-reference-catalog.md#gt-359) | Define SatelliteManifest ingestion contract schema | `Core Domain` | P0/M |
 | [GT-362](./gap-reference-catalog.md#gt-362) | Implement runtime enforcement for Rego policies in evaluation engine | `Core Domain` | P0/L |
 
 ## Metrics
@@ -45,18 +44,18 @@ Use this summary with a simple rule: if you need context, open only the linked I
 |---|---:|
 | Canonical board date | 2026-06-28 |
 | Total gaps | 374 |
-| Closed gaps | 368 |
-| Open gaps | 6 |
-| Open P0 | 3 |
+| Closed gaps | 369 |
+| Open gaps | 5 |
+| Open P0 | 2 |
 | Open P1 | 3 |
 | Open P2 | 0 |
-| Total closure | 98.4% |
+| Total closure | 98.7% |
 | Closure evidence records | 350 |
 | Recorded readiness | 3 PASS, 1 RESOLVED |
 
 | Area | Open | P0 | P1 | First IDs |
 |---|---:|---:|---:|---|
-| `Core Domain` | 2 | 2 | 0 | [GT-359](./gap-reference-catalog.md#gt-359), [GT-362](./gap-reference-catalog.md#gt-362) |
+| `Core Domain` | 1 | 1 | 0 | [GT-362](./gap-reference-catalog.md#gt-362) |
 | `Security` | 1 | 1 | 0 | [GT-313](./gap-reference-catalog.md#gt-313) |
 | `Core API` | 2 | 0 | 2 | [GT-361](./gap-reference-catalog.md#gt-361), [GT-360](./gap-reference-catalog.md#gt-360) |
 | `Infra` | 1 | 0 | 1 | [GT-324](./gap-reference-catalog.md#gt-324) |

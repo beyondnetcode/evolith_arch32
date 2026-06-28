@@ -1,6 +1,6 @@
 {
   "name": "@evolith/smart-cli",
-  "version": "1.1.1",
+  "version": "1.1.3",
   "description": "Evolith Smart CLI - Governance, standards validation, and AI agent integration for satellite repositories",
   "main": "dist/main.js",
   "bin": {

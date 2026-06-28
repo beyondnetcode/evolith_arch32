@@ -3413,12 +3413,14 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-346
 
-**Título:** Superficie de inyección de shell en CommandExecutor (seguridad) — `OPEN`
+**Título:** Superficie de inyección de shell en CommandExecutor (seguridad) — `IN-PROGRESS`
 
 - **Componente:** smart-cli · **Prioridad:** P2 · **Riesgo:** medio · **Dependencias:** ninguna
 - **Archivos:** `sdk/cli/src/infrastructure/cli/command-executor.ts`
 - **Fix propuesto:** `execFile`/`spawn` con arrays de args; validar nombres interpolados.
-- **Hecho cuando:** [ ] sin interpolación de shell sobre input no confiable; [ ] test.
+- **Fix aplicado:** añadido `CommandExecutor.executeFile(file, args[], cwd?)` con `execFile` (sin shell — argv literal, metacaracteres nunca interpretados; `.cmd` resuelto para npm/npx/nx en win32). Reescritos todos los providers estructurados de `providers/index.ts` (Npm/Dotnet/Python/Docker/Nx) para construir ARRAYS de argumentos en vez de interpolar nombres de paquete/scripts/templates/flags en strings de shell. Los strings de flags se parten en args discretos. El único path con shell que queda es `NpmProvider.exec(cmd)`, un escape hatch explícito del caller (documentado). `nx-workspace.strategy` (`executeOrThrow` con `command` construido internamente) es el único follow-up.
+- **Evidencia:** `command-executor.test.ts` prueba el comportamiento sin shell — `executeFile('node', ['-e','…','; echo HACKED'])` imprime solo `safe`, nunca ejecuta `echo HACKED`. `providers.spec.ts` reescrito para afirmar (file, args[], cwd), incl. test de nombre-de-script-malicioso-como-arg-literal. `npm test` de smart-cli 100% verde: unit 64/64 (909) + e2e 20/20 (175). Builds limpios.
+- **Hecho cuando:** [x] sin interpolación de shell sobre input no confiable (providers estructurados); [x] test.
 
 #### GT-347
 
@@ -3486,6 +3488,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Fix propuesto:** jest + tests por provider (≥80%); timeout + retry/backoff + allow-list de URL (SSRF); corregir README; ids canónicos en `deriveCategory`.
 - **Fix aplicado (slice 1 — seguridad WebhookAdapter + harness de tests):** reescrito `WebhookAdapter` con timeout por intento (`AbortController`, 10s por defecto), retry acotado con backoff exponencial en fallos transitorios (red/5xx, nunca 4xx), y allow-list de esquema de URL (solo http/https — rechaza `file:`/SSRF + URLs malformadas). Constructor sigue siendo no-arg (opciones inyectables para tests). Añadido harness jest (`jest.config.js` + scripts `test`/`test:cov` + devDeps) y `webhook.adapter.spec.ts` (5 tests). La afirmación "with retry" del README ya es verdadera.
 - **Evidencia:** `npm run --workspace packages/infra-providers test` → 5/5 verde (antes 0). Build limpio; consumidores `new WebhookAdapter()` (domain.module) sin afectar.
+- **Fix de follow-up (detectado al correr la suite completa por GT-346):** slice 1 tenía dos roturas latentes que solo aparecieron al correr la suite de `sdk/cli` (el workspace de infra-providers solo, pasaba): (a) el adapter capturaba `globalThis.fetch` en el constructor, rompiendo mocks de `global.fetch` de late-binding → ahora hace late-binding en cada llamada; (b) el nuevo `webhook.adapter.spec.ts` lo compilaba `tsc build` (sin exclude) y fallaba por falta de tipos de jest → añadidos `*.spec.ts`/`*.test.ts` al `exclude` del tsconfig de infra-providers. Actualizado `sdk/cli/.../webhook.adapter.spec.ts` para la nueva semántica de signal + retry. mcp-server 25/25 y smart-cli 100% verde confirman el fix.
 - **Restante (slice 2):** tests de los demás providers a ≥80%; corregir el ejemplo del README (config-parser/DiskRulesetRepository); reemplazar las claves f1/f2/f3 de `deriveCategory` por ids canónicos (liga con GT-343).
 - **Hecho cuando:** [x] webhook timeout + retry + guard SSRF, con tests; [ ] cobertura providers ≥80%; [ ] README compila; [ ] deriveCategory ids canónicos.
 

@@ -112,4 +112,27 @@ describe('CommandExecutor', () => {
       expect(check.version).toBeDefined();
     });
   });
+
+  describe('executeFile (GT-346: shell-free)', () => {
+    it('runs a binary with an args array', async () => {
+      const result = await executor.executeFile('node', ['-e', 'process.stdout.write("hi")']);
+      expect(result.success).toBe(true);
+      expect(result.stdout).toBe('hi');
+    });
+
+    it('treats shell metacharacters in args as literal data (no injection)', async () => {
+      // Under a shell, `; echo HACKED` would run a second command. With execFile
+      // it is just an extra literal argv entry to node, never executed.
+      const result = await executor.executeFile('node', ['-e', 'process.stdout.write("safe")', '; echo HACKED']);
+      expect(result.success).toBe(true);
+      expect(result.stdout).toBe('safe');
+      expect(result.stdout).not.toContain('HACKED');
+    });
+
+    it('returns an error result for a nonexistent binary', async () => {
+      const result = await executor.executeFile('nonexistent-binary-xyz', ['--version']);
+      expect(result.success).toBe(false);
+      expect(result.exitCode).not.toBe(0);
+    });
+  });
 });

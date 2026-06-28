@@ -40,7 +40,9 @@ export class WebhookAdapter implements IWebhookNotifier {
     this.maxAttempts = Math.max(1, options.maxAttempts ?? 3);
     this.baseDelayMs = options.baseDelayMs ?? 250;
     this.allowedProtocols = options.allowedProtocols ?? ['http:', 'https:'];
-    this.fetchImpl = options.fetchImpl ?? globalThis.fetch;
+    // Late-bind global fetch so the call respects a fetch reassigned after
+    // construction (test mocks) and never captures a stale reference.
+    this.fetchImpl = options.fetchImpl ?? ((...args: Parameters<typeof fetch>) => globalThis.fetch(...args));
     this.sleepImpl = options.sleepImpl ?? ((ms) => new Promise((r) => setTimeout(r, ms)));
   }
 

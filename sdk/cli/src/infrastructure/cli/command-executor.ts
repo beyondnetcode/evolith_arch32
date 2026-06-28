@@ -1,9 +1,13 @@
-import { exec } from 'child_process';
+import { exec, execFile } from 'child_process';
 import { promisify } from 'util';
 import { ICommandExecutor, PlatformCheck } from '@evolith/core-domain/domain/interfaces';
 import { CommandExecutionError } from '@evolith/core-domain/domain/errors';
 
 const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
+
+// Node-based CLIs ship as `.cmd` shims on Windows; execFile needs the explicit name.
+const WINDOWS_CMD_TOOLS = new Set(['npm', 'npx', 'nx']);
 
 export class CommandResult {
   constructor(
@@ -33,6 +37,27 @@ export class CommandExecutor implements ICommandExecutor {
         : { env: { ...process.env }, timeout: 120000 };
 
       const { stdout, stderr: _stderr } = await execAsync(command, options);
+      return CommandResult.ok(stdout);
+    } catch (error: unknown) {
+      const err = error as { code?: number; message?: string; stderr?: string };
+      return CommandResult.err(err.stderr || err.message || 'Unknown error', err.code || 1);
+    }
+  }
+
+  /**
+   * GT-346: shell-free execution. Unlike {@link execute} (which runs through a
+   * shell, so interpolated arguments are an injection vector), this passes
+   * `args` to the binary directly via execFile — shell metacharacters in
+   * arguments are treated as literal data and are never interpreted.
+   */
+  async executeFile(file: string, args: string[], cwd?: string): Promise<CommandResult> {
+    const bin = process.platform === 'win32' && WINDOWS_CMD_TOOLS.has(file) ? `${file}.cmd` : file;
+    try {
+      const options = cwd
+        ? { cwd, env: { ...process.env }, timeout: 120000 }
+        : { env: { ...process.env }, timeout: 120000 };
+
+      const { stdout } = await execFileAsync(bin, args, options);
       return CommandResult.ok(stdout);
     } catch (error: unknown) {
       const err = error as { code?: number; message?: string; stderr?: string };

@@ -5,14 +5,17 @@
  * promisify(exec) at module load time resolves to our controlled async fn.
  */
 
-// Shared async mock — declared before jest.mock factory
+// Shared async mocks — declared before jest.mock factory
 const execAsync = jest.fn();
+const execFileAsync = jest.fn();
 
 jest.mock('child_process', () => {
   const { promisify: prom } = require('util');
   const exec = jest.fn();
   (exec as any)[prom.custom] = execAsync;
-  return { exec };
+  const execFile = jest.fn();
+  (execFile as any)[prom.custom] = execFileAsync;
+  return { exec, execFile };
 });
 
 import { CommandExecutor, CommandResult } from './command-executor';

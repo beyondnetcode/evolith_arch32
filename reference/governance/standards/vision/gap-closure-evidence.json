@@ -5151,6 +5151,151 @@
         "npm run --workspace sdk/cli test:e2e"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-331",
+      "closedAt": "2026-06-28",
+      "closureCommit": "91cbd789",
+      "evidence": [
+        "packages/mcp-server/src/main.ts"
+      ],
+      "validationCommands": [
+        "npm run --workspace packages/mcp-server test"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-332",
+      "closedAt": "2026-06-28",
+      "closureCommit": "91cbd789",
+      "evidence": [
+        "packages/mcp-server/src/mcp/mcp-tool-dispatch.ts"
+      ],
+      "validationCommands": [
+        "npm run --workspace packages/mcp-server test"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-333",
+      "closedAt": "2026-06-28",
+      "closureCommit": "91cbd789",
+      "evidence": [
+        "packages/mcp-server/src/mcp/mcp-server-auth.ts"
+      ],
+      "validationCommands": [
+        "npm run --workspace packages/mcp-server test"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-334",
+      "closedAt": "2026-06-28",
+      "closureCommit": "91cbd789",
+      "evidence": [
+        "packages/mcp-server/package.json"
+      ],
+      "validationCommands": [
+        "npm run --workspace packages/mcp-server build"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-335",
+      "closedAt": "2026-06-28",
+      "closureCommit": "91cbd789",
+      "evidence": [
+        "packages/mcp-tools/src/tools/read-gap-tracking.js"
+      ],
+      "validationCommands": [
+        "npm run --workspace packages/mcp-tools test"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-336",
+      "closedAt": "2026-06-28",
+      "closureCommit": "91cbd789",
+      "evidence": [
+        "packages/sdk-client/src/rest/evolith-rest-client.ts"
+      ],
+      "validationCommands": [
+        "npm run --workspace packages/sdk-client test"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-337",
+      "closedAt": "2026-06-28",
+      "closureCommit": "91cbd789",
+      "evidence": [
+        "packages/sdk-client/src/rest/types.ts"
+      ],
+      "validationCommands": [
+        "npm run --workspace packages/sdk-client test"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-338",
+      "closedAt": "2026-06-28",
+      "closureCommit": "91cbd789",
+      "evidence": [
+        "packages/core/package.json",
+        "packages/core/README.md"
+      ],
+      "validationCommands": [
+        "npm test --workspace @evolith/core"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-339",
+      "closedAt": "2026-06-28",
+      "closureCommit": "91cbd789",
+      "evidence": [
+        "apps/core-api/src/presentation/controllers/projects.controller.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace core-api"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-340",
+      "closedAt": "2026-06-28",
+      "closureCommit": "91cbd789",
+      "evidence": [
+        "apps/core-api/test-setup.js"
+      ],
+      "validationCommands": [
+        "npm test --workspace core-api"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-341",
+      "closedAt": "2026-06-28",
+      "closureCommit": "91cbd789",
+      "evidence": [
+        ".harness/scripts/generate-product-inventory.mjs"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/07-generate-inventories.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-342",
+      "closedAt": "2026-06-28",
+      "closureCommit": "91cbd789",
+      "evidence": [
+        "README.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

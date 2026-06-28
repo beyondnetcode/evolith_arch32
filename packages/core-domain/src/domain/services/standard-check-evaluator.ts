@@ -101,7 +101,9 @@ function matchPredicate(p: string, code: string): boolean {
   }
 
   // /regex/flags.test(code)
-  const reMatch = p.match(/^\/((?:\\.|[^/])+)\/([gimsuy]*)\.test\(\s*code\s*\)$/);
+  // ReDoS-safe: `[^/\\]` excludes `\`, so it never overlaps the `\\.` branch
+  // (no ambiguous alternation → linear, no exponential backtracking).
+  const reMatch = p.match(/^\/((?:\\.|[^/\\])+)\/([gimsuy]*)\.test\(\s*code\s*\)$/);
   if (reMatch) {
     return new RegExp(reMatch[1], reMatch[2]).test(code);
   }

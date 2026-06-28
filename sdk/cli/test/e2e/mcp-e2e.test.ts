@@ -120,16 +120,6 @@ class McpStdioClient {
   }
 }
 
-function httpGet(url: string): Promise<{ statusCode: number; body: string }> {
-  return new Promise((resolve, reject) => {
-    http.get(url, (res) => {
-      let data = '';
-      res.on('data', (chunk) => { data += chunk; });
-      res.on('end', () => resolve({ statusCode: res.statusCode || 0, body: data }));
-    }).on('error', reject);
-  });
-}
-
 function httpPost(url: string, body: string, headers: Record<string, string> = {}): Promise<{ statusCode: number; body: string }> {
   return new Promise((resolve, reject) => {
     const urlObj = new URL(url);

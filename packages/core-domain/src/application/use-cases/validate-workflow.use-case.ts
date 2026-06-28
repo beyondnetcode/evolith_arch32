@@ -2,13 +2,20 @@
  * GT-317 — ValidateWorkflowUseCase
  *
  * Validates an externally supplied WorkflowDefinition against Core invariants:
- *   (a) All mandatory SDLC phases present (F1–F5).
+ *   (a) All mandatory SDLC phases present (the five canonical gate phases).
  *   (b) Each gate has at least one required artifact.
  *   (c) No gate omits a non-omittable artifact (derived from Core SDLC data).
  *   (d) OPA rules referenced by gates exist in the rulesets directory.
  *
  * Core stores ZERO tenant configuration — the WorkflowDefinition is always
  * supplied by the caller (Tracker).
+ *
+ * GT-343 (stage 2b) — phase/gate identifiers are routed through
+ * {@link normalizePhaseId} / {@link toLegacyPhaseId}. Callers may now declare
+ * either the canonical SDLC ids (`discovery|design|construction|qa|release`)
+ * OR the deprecated `f1..f5` / `gate-f1..f5` aliases — both are accepted and
+ * matched after normalization. The on-disk gate/artifact data is still keyed
+ * by the legacy `f#` id, so lookups normalize to it via `toLegacyPhaseId`.
  */
 
 import * as path from 'path';
@@ -19,20 +26,25 @@ import {
   WorkflowViolation,
   WorkflowGateDefinition,
 } from '../../domain/workflow';
+import {
+  CANONICAL_PHASE_IDS,
+  normalizePhaseId,
+  toLegacyPhaseId,
+} from '../../domain/sdlc/phase-id';
 import { CatalogService } from '../services/catalog.service';
 
 // ---------------------------------------------------------------------------
 // Constants derived from canonical Core SDLC data
 // ---------------------------------------------------------------------------
 
-/** Mandatory phase ids — every valid workflow MUST include all five. */
-const MANDATORY_PHASE_IDS = ['f1', 'f2', 'f3', 'f4', 'f5'] as const;
-
 /**
- * Non-omittable artifact names per gate.  These are artifacts whose absence
- * is always a blocking violation regardless of what the caller supplies.
+ * Non-omittable artifact names per legacy gate id.  These are artifacts whose
+ * absence is always a blocking violation regardless of what the caller supplies.
  *
- * Derived from reference/governance/sdlc/gates/gate-f*.json.
+ * Keyed by the on-disk legacy gate id (`gate-f1..f5`) because the underlying
+ * governance data files (reference/governance/sdlc/gates/gate-f*.json) still
+ * use that namespace. Lookups normalize the supplied gate id to this key so a
+ * caller may pass either `gate-f1` or a canonical `gate-discovery`.
  */
 const NON_OMITTABLE_ARTIFACTS: Record<string, string[]> = {
   'gate-f1': ['PRD', 'Technical Feasibility Canvas', 'Build-versus-Compose Analysis'],
@@ -41,6 +53,18 @@ const NON_OMITTABLE_ARTIFACTS: Record<string, string[]> = {
   'gate-f4': ['Test Summary Report', 'Security Scan Report'],
   'gate-f5': ['Release Notes', 'Rollback Procedure', 'Deployment Evidence'],
 };
+
+/**
+ * Resolve the legacy on-disk gate id (`gate-f#`) for an arbitrary supplied gate
+ * id. Accepts canonical (`gate-discovery`, `discovery`), legacy (`gate-f1`,
+ * `f1`) and bare ordinals. Returns `undefined` when the gate id carries no
+ * recognizable SDLC phase token.
+ */
+function toLegacyGateId(gateId: string): string | undefined {
+  const phaseToken = gateId.replace(/^gate-/i, '');
+  const legacy = toLegacyPhaseId(phaseToken);
+  return legacy ? `gate-${legacy}` : undefined;
+}
 
 // ---------------------------------------------------------------------------
 // ValidateWorkflowUseCase
@@ -94,13 +118,23 @@ export class ValidateWorkflowUseCase {
     definition: WorkflowDefinition,
     violations: WorkflowViolation[],
   ): void {
-    const suppliedIds = new Set(definition.phases.map(p => p.id));
-    for (const id of MANDATORY_PHASE_IDS) {
-      if (!suppliedIds.has(id)) {
+    // Normalize every supplied phase id to its canonical form so a caller may
+    // declare phases as canonical ids OR the deprecated `f1..f5` aliases.
+    // Unrecognized ids simply never satisfy a mandatory phase.
+    const suppliedCanonical = new Set(
+      definition.phases
+        .map(p => normalizePhaseId(p.id))
+        .filter((id): id is NonNullable<typeof id> => id !== undefined),
+    );
+    for (const canonical of CANONICAL_PHASE_IDS) {
+      if (!suppliedCanonical.has(canonical)) {
+        // Report the legacy `f#` id to keep on-disk-aligned, backward-compatible
+        // violation payloads (governance gate files are still `gate-f#`).
+        const legacy = toLegacyPhaseId(canonical) ?? canonical;
         violations.push({
           code: 'MISSING_MANDATORY_PHASE',
-          phase: id,
-          message: `Mandatory SDLC phase "${id}" is absent from the supplied WorkflowDefinition.`,
+          phase: legacy,
+          message: `Mandatory SDLC phase "${legacy}" is absent from the supplied WorkflowDefinition.`,
         });
       }
     }
@@ -126,7 +160,11 @@ export class ValidateWorkflowUseCase {
     gate: WorkflowGateDefinition,
     violations: WorkflowViolation[],
   ): void {
-    const mandatory = NON_OMITTABLE_ARTIFACTS[gate.id] ?? [];
+    // Normalize the supplied gate id to its legacy on-disk key so a caller may
+    // pass either `gate-f1` or a canonical `gate-discovery`. Fall back to the
+    // raw id for non-phase gate ids that may key the map directly.
+    const lookupKey = toLegacyGateId(gate.id) ?? gate.id;
+    const mandatory = NON_OMITTABLE_ARTIFACTS[lookupKey] ?? [];
     const supplied = new Set(gate.requiredArtifacts);
     for (const artifact of mandatory) {
       if (!supplied.has(artifact)) {

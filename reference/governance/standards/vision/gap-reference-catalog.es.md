@@ -139,14 +139,16 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 #### GT-324
 
-**Título:** Pipeline de CD a GHCR + despliegue de core-api/mcp-server
+**Título:** Pipeline de CD a GHCR + despliegue de core-api/mcp-server — `IN-PROGRESS`
 
 - **Propósito:** Construir, publicar y desplegar los servicios de forma continua.
-- **Evidencia:** `ci-cd.yml` solo publica la CLI (npm + Docker Hub); no hay CD para core-api/mcp-server.
+- **Evidencia (original):** `ci-cd.yml` solo publica la CLI (npm + Docker Hub); no hay CD para core-api/mcp-server.
 - **Complejidad:** M
+- **Fix aplicado:** extendido `.github/workflows/ci-cd.yml` — (1) un job matriz `docker-services` construye + publica imágenes de `core-api` y `mcp-server` en **GHCR** (`ghcr.io/<owner>/evolith-core-api` y `…-mcp-server`, tags `latest` + `${sha}`), autenticando con el `GITHUB_TOKEN` integrado (`permissions: packages: write`) — sin secret extra; contexto de build = raíz del repo (los Dockerfiles hacen COPY relativo a la raíz; todos los targets COPY verificados); (2) un job `deploy` guardado dispara Coolify por servicio, que **no hace nada (con warning)** hasta configurar los secrets `COOLIFY_API_TOKEN` + `COOLIFY_COREAPI_DEPLOY_HOOK` / `COOLIFY_MCP_DEPLOY_HOOK` (seguro de mergear ya); (3) triggers `push` (main + tags `v*`) para que la entrega sea continua. YAML validado (js-yaml).
+- **Residual (para llegar a DONE):** configurar los 3 secrets de Coolify en el repo y confirmar un run de CD verde que publique en GHCR y despliegue. La mitad de deploy no es verificable desde el entorno de dev — el board queda `IN-PROGRESS` hasta ese run.
 - **Hecho cuando:**
-  - [ ] El workflow construye y publica imágenes en GHCR.
-  - [ ] Despliega al runtime elegido (Cloud Run/Fly/etc.).
+  - [x] El workflow construye y publica imágenes en GHCR. (GITHUB_TOKEN; sin secret; verificado por el run de CD en push)
+  - [ ] Despliega al runtime elegido (necesita los secrets de Coolify + un run de CD).
 
 #### GT-325
 

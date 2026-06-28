@@ -57,7 +57,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-327`](./gap-reference-catalog.es.md#gt-327) | Evolucionar el webhook de un disparo a suscripciones + reintentos + firma HMAC | `Core Domain` | Cross | P2 | M | `COMPLETADO` |
 | [`GT-328`](./gap-reference-catalog.es.md#gt-328) | Desplegar ESLint boundaries a packages/* y apps/* con paso de CI | `Quality` | Cross | P2 | M | `COMPLETADO` |
 | [`GT-329`](./gap-reference-catalog.es.md#gt-329) | Reubicar las 5 topologías avanzadas a rulesets/topologies | `Rulesets` | Cross | P2 | M | `COMPLETADO` |
-| [`GT-330`](./gap-reference-catalog.es.md#gt-330) | Mitigar el bus factor (segundo mantenedor + onboarding profundo) | `Governance` | Cross | P3 | M | `COMPLETADO` |
+| [`GT-330`](./gap-reference-catalog.es.md#gt-330) | Mitigar el bus factor (segundo mantenedor + onboarding profundo) | `Governance` | Cross | P3 | M | `EN-PROGRESO` |
 | [`GT-313`](./gap-reference-catalog.es.md#gt-313) | Rotar y externalizar GH_TOKEN mediante un gestor de secretos | `Security` | Cross | P0 | XS | `DIFERIDO` |
 | [`GT-312`](./gap-reference-catalog.es.md#gt-312) | Orquestación de validación SDLC: fase → gate → artifacts → schemas → rulesets → topología → ADRs → OPA → blocking criteria | `Core Domain` | Cross | P0 | XL | `COMPLETADO` |
 | [`GT-286`](./gap-reference-catalog.es.md#gt-286) | Ruleset compliance-baseline existe — rulesets/compliance-baseline | `Rulesets` | Cross | P0 | S | `COMPLETADO` |
@@ -373,7 +373,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-246`](./gap-reference-catalog.es.md#gt-246) | Implementar experimentos Chaos Mesh/Litmus | `QA` | Cross | P3 | L | `COMPLETADO` |
 
 
-**Progreso:** 343 / 358 completados · 14 en progreso · 0 pendientes · 1 diferidos
+**Progreso:** 342 / 358 completados · 15 en progreso · 0 pendientes · 1 diferidos
 
 **Oleada 2026-06-23 (auditoría profunda de Wilson III):** Añadidos 14 gaps nuevos `GT-212`…`GT-225` del Wilson Audit Playbook que cubren: higiene de estado ADR (GT-212), metadata + presupuestos operativos + corpus de guías por topología (GT-213, GT-217, GT-219), observabilidad + OpenAPI en controladores REST (GT-214, GT-215), paridad de input-schemas OPA + densidad de tests por topología (GT-216, GT-222), plantillas de rollback + on-call de Fase 05 (GT-218), cobertura de ramas CLI + paridad de envelope --format + limpieza de skip-list (GT-220, GT-224, GT-225), audit logging HTTP de MCP (GT-221), y tests e2e de paridad cross-surface (GT-223).
 

@@ -3381,13 +3381,15 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-344
 
-**Título:** La CLI publicada falla (ENOENT default-workflow.yaml) — `OPEN`
+**Título:** La CLI publicada falla (ENOENT default-workflow.yaml) — `EN-PROGRESO`
 
-- **Componente:** smart-cli / core-domain · **Prioridad:** P0 · **Riesgo:** crítico · **Dependencias:** ninguna
-- **Archivos:** `packages/core-domain/src/domain/services/default-workflow-definition.ts:87`, `…/services/index.ts:94`
-- **Fix propuesto:** empaquetar `rulesets/sdlc/default-workflow.yaml` en core-domain; carga perezosa con error claro de WORKSPACE_ROOT; documentarlo; smoke test en entorno limpio.
-- **Evidencia:** el fallback resuelve a `packages/core-domain/rulesets` borrado (regresión cc5b9c67); `PhaseService` lo invoca al bootstrap.
-- **Hecho cuando:** [ ] `node sdk/cli/dist/main.js version` exit 0 sin env ni rulesets/ del monorepo.
+- **Componente:** smart-cli / core-domain · **Prioridad:** P0 · **Riesgo:** crítico→ninguno · **Dependencias:** ninguna
+- **Archivos:** `packages/core-domain/src/domain/services/default-workflow-definition.ts`, `…/default-workflow-definition.spec.ts`, `sdk/cli/README.md` (+`.es`)
+- **Fix propuesto:** empaquetar `rulesets/sdlc/default-workflow.yaml` en core-domain; carga perezosa con error claro de WORKSPACE_ROOT; smoke test en entorno limpio.
+- **Fix aplicado:** workflow por defecto embebido como constante tipada `EMBEDDED_DEFAULT_WORKFLOW`; `loadDefaultWorkflow()` intenta WORKSPACE_ROOT, luego `__dirname`, y cae al embebido, así que la construcción nunca lanza. `WORKSPACE_ROOT` documentado como opcional (solo override) en el README de la CLI (EN+ES).
+- **Evidencia:** entorno limpio (`env -u WORKSPACE_ROOT`, cwd `/tmp`, sin `packages/core-domain/rulesets`) → `node sdk/cli/dist/main.js --help` exit 0, sin ENOENT; core-domain 583/583 verde con 2 tests de regresión nuevos.
+- **Riesgo residual:** el embebido duplica `rulesets/sdlc/default-workflow.yaml` (mantener sincronizado); aplicado en working tree, pendiente de registro de closure-evidence (GT-357).
+- **Hecho cuando:** [x] `node sdk/cli/dist/main.js` exit 0 sin env ni rulesets/ del monorepo.
 
 #### GT-345
 

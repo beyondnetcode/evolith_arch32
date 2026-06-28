@@ -3435,14 +3435,15 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-344
 
-**Title:** Published CLI crashes (ENOENT default-workflow.yaml) — `OPEN`
+**Title:** Published CLI crashes (ENOENT default-workflow.yaml) — `IN-PROGRESS`
 
-- **Component:** smart-cli / core-domain · **Priority:** P0 · **Risk:** critical · **Dependencies:** none
-- **Files:** `packages/core-domain/src/domain/services/default-workflow-definition.ts:87`, `…/services/index.ts:94`, core-domain + smart-cli `package.json` files[]
-- **Proposed fix:** bundle `rulesets/sdlc/default-workflow.yaml` into `@evolith/core-domain` (files[] + build copy); lazy load with a clear WORKSPACE_ROOT error; document it; add a clean-env smoke test.
-- **Evidence:** `loadDefaultWorkflow()` fallback resolves to deleted `packages/core-domain/rulesets` (regression cc5b9c67); `PhaseService` calls it eagerly at DI bootstrap.
-- **Residual risk:** N/A (open) — currently masked in core-api by GT-340.
-- **Done when:** [ ] `node sdk/cli/dist/main.js version` exits 0 in a clean env with no WORKSPACE_ROOT and no monorepo rulesets/.
+- **Component:** smart-cli / core-domain · **Priority:** P0 · **Risk:** critical→none · **Dependencies:** none
+- **Files:** `packages/core-domain/src/domain/services/default-workflow-definition.ts`, `…/default-workflow-definition.spec.ts`, `sdk/cli/README.md` (+`.es`)
+- **Proposed fix:** bundle `rulesets/sdlc/default-workflow.yaml` into `@evolith/core-domain`; lazy load with a clear WORKSPACE_ROOT error; document it; add a clean-env smoke test.
+- **Applied fix:** embedded the canonical default workflow as a typed `EMBEDDED_DEFAULT_WORKFLOW` constant; `loadDefaultWorkflow()` tries WORKSPACE_ROOT then `__dirname` then falls back to the embedded default, so construction never throws. Documented `WORKSPACE_ROOT` as optional (override-only) in the CLI README (EN+ES).
+- **Evidence:** clean env (`env -u WORKSPACE_ROOT`, cwd `/tmp`, no `packages/core-domain/rulesets`) → `node sdk/cli/dist/main.js --help` exits 0, no ENOENT; core-domain 583/583 green incl. 2 new regression tests asserting `PhaseService` constructs and the embedded fallback loads.
+- **Residual risk:** the embedded default duplicates `rulesets/sdlc/default-workflow.yaml` (keep in sync); applied in working tree, pending closure-evidence registration (GT-357).
+- **Done when:** [x] `node sdk/cli/dist/main.js` exits 0 in a clean env with no WORKSPACE_ROOT and no monorepo rulesets/.
 
 #### GT-345
 

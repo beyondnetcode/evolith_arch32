@@ -435,7 +435,20 @@ describe('MCP E2E Tests - API key authentication', () => {
 
   describe('authentication', () => {
     it('should reject requests without API key', async () => {
-      const response = await httpGet(`http://127.0.0.1:${testPort}/health`);
+      // /health is intentionally public (liveness). Auth is enforced on the MCP
+      // endpoint (POST /), so assert rejection there.
+      const response = await new Promise<{ statusCode: number; body: string }>((resolve, reject) => {
+        const req = http.request(`http://127.0.0.1:${testPort}/`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+        }, (res) => {
+          let data = '';
+          res.on('data', (chunk) => { data += chunk; });
+          res.on('end', () => resolve({ statusCode: res.statusCode || 0, body: data }));
+        });
+        req.on('error', reject);
+        req.end(JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list' }));
+      });
 
       expect(response.statusCode).toBe(401);
       const body = JSON.parse(response.body);
@@ -479,16 +492,16 @@ describe('MCP E2E Tests - API key authentication', () => {
 
     it('should reject requests with invalid API key', async () => {
       const response = await new Promise<{ statusCode: number; body: string }>((resolve, reject) => {
-        const req = http.request(`http://127.0.0.1:${testPort}/health`, {
-          method: 'GET',
-          headers: { 'Authorization': 'Bearer wrong-key' },
+        const req = http.request(`http://127.0.0.1:${testPort}/`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer wrong-key' },
         }, (res) => {
           let data = '';
           res.on('data', (chunk) => { data += chunk; });
           res.on('end', () => resolve({ statusCode: res.statusCode || 0, body: data }));
         });
         req.on('error', reject);
-        req.end();
+        req.end(JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list' }));
       });
 
       expect(response.statusCode).toBe(401);
@@ -499,10 +512,13 @@ describe('MCP E2E Tests - API key authentication', () => {
 describe('MCP E2E Tests - HTTP transport protocol', () => {
   let serverProcess: ChildProcess;
   const testPort = 54000 + Math.floor(Math.random() * 1000);
+  const apiKey = 'test-secret-key-123';
   let sessionId: string;
 
   beforeAll(async () => {
-    serverProcess = spawn('node', [CLI_PATH, 'mcp', 'serve', '--transport', 'http', '--port', String(testPort)], {
+    // GT-250: the MCP HTTP server fails closed — it requires an API key. Provide
+    // one and authenticate every request (the previous no-auth dev mode is gone).
+    serverProcess = spawn('node', [CLI_PATH, 'mcp', 'serve', '--transport', 'http', '--port', String(testPort), '--api-key', apiKey], {
       stdio: ['pipe', 'pipe', 'pipe'],
     });
 
@@ -525,6 +541,7 @@ describe('MCP E2E Tests - HTTP transport protocol', () => {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json,text/event-stream',
+          'Authorization': `Bearer ${apiKey}`,
           ...(sessionId ? { 'Mcp-Session-Id': sessionId } : {}),
         },
       }, (res) => {
@@ -704,7 +721,7 @@ describe('MCP E2E Tests - HTTP transport protocol', () => {
     it('should reject requests without session ID', async () => {
       const response = await httpPost(`http://127.0.0.1:${testPort}/`, JSON.stringify({
         jsonrpc: '2.0', id: 11, method: 'tools/list',
-      }), { 'Content-Type': 'application/json', 'Accept': 'application/json,text/event-stream' });
+      }), { 'Content-Type': 'application/json', 'Accept': 'application/json,text/event-stream', 'Authorization': `Bearer ${apiKey}` });
 
       expect(response.statusCode).toBe(400);
       const body = JSON.parse(response.body);

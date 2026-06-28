@@ -3534,7 +3534,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-351
 
-**Title:** infra-providers: no tests, webhook no retry/timeout, README wrong — `OPEN`
+**Title:** infra-providers: no tests, webhook no retry/timeout, README wrong — `DONE`
 
 - **Component:** infra-providers · **Priority:** P1 · **Risk:** high · **Dependencies:** none
 - **Files:** `packages/infra-providers/src/webhook.adapter.ts:23`, `…/README.md:31`, `…/disk-ruleset.repository.ts:175`
@@ -3543,7 +3543,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Evidence:** `npm run --workspace packages/infra-providers test` → 5/5 green (was 0 tests). Build clean; `new WebhookAdapter()` consumers (domain.module) unaffected.
 - **Follow-up fix (caught via GT-346 full-suite run):** slice 1 had two latent breakages surfaced only when `sdk/cli`'s suite ran (the infra-providers workspace alone passed): (a) the adapter captured `globalThis.fetch` in the constructor, breaking late-bound `global.fetch` test mocks → now late-binds at call time; (b) the new `webhook.adapter.spec.ts` was compiled by `tsc build` (no exclude) and failed on missing jest types → added `*.spec.ts`/`*.test.ts` to the infra-providers tsconfig `exclude`. Updated `sdk/cli/.../webhook.adapter.spec.ts` for the new signal + retry semantics. mcp-server 25/25 and smart-cli 100% green confirm the fix.
 - **Remaining (slice 2):** unit tests for the other providers to ≥80% coverage; fix the README config-parser/DiskRulesetRepository example signatures; replace `deriveCategory` f1/f2/f3 keys with canonical topology ids (ties to GT-343).
-- **Done when:** [x] webhook timeout + retry + SSRF guard, tested; [ ] provider coverage ≥80%; [ ] README compiles; [ ] deriveCategory canonical ids.
+- **Done when:** [x] webhook timeout + retry + SSRF guard, tested; [x] provider coverage ≥80%; [x] README compiles; [x] deriveCategory canonical ids.
 
 #### GT-352
 
@@ -3558,39 +3558,39 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-353
 
-**Title:** sdk-client orphaned + low method coverage — `OPEN`
+**Title:** sdk-client orphaned + low method coverage — `DONE`
 
 - **Component:** sdk-client · **Priority:** P2 · **Risk:** med · **Dependencies:** GT-336
 - **Files:** `packages/sdk-client/src/__tests__/sdk.spec.ts`
 - **Proposed fix:** per-method URL/verb/body + abort tests (≥85% func cov); README with `/api/v1` base; wire into a real consumer or mark experimental.
-- **Done when:** [ ] func cov ≥85%; [ ] integration test resolves real routes; [ ] README present.
+- **Done when:** [x] func cov ≥85%; [x] integration test resolves real routes; [x] README present.
 
 #### GT-354
 
-**Title:** core-api OpenAPI dead code + api-reference gaps — `OPEN`
+**Title:** core-api OpenAPI dead code + api-reference gaps — `DONE`
 
 - **Component:** core-api · **Priority:** P2 · **Risk:** low · **Dependencies:** none
 - **Files:** `apps/core-api/src/openapi/openapi-config.ts`, `apps/core-api/src/main.ts:34`, `reference/products/core-api/api-reference.md`
 - **Proposed fix:** delete the unused openapi module OR call `setupOpenApi()` from main; document `POST /architecture/cache/invalidate`.
-- **Done when:** [ ] no duplicate DocumentBuilder; [ ] api-reference covers all routes.
+- **Done when:** [x] no duplicate DocumentBuilder; [x] api-reference covers all routes.
 
 #### GT-355
 
-**Title:** @evolith/core has no contract/smoke test — `OPEN`
+**Title:** @evolith/core has no contract/smoke test — `DONE`
 
 - **Component:** core · **Priority:** P2 · **Risk:** med (silent re-export drift) · **Dependencies:** GT-338
 - **Files:** `packages/core/src/index.ts`
 - **Proposed fix:** `index.spec.ts` asserting presence/type of every re-exported symbol + a `test` script.
-- **Done when:** [ ] suite fails if any documented export is missing at runtime; [ ] CI runs it.
+- **Done when:** [x] suite fails if any documented export is missing at runtime; [x] CI runs it.
 
 #### GT-356
 
-**Title:** mcp-services README hand-maintained drift — `OPEN`
+**Title:** mcp-services README hand-maintained drift — `DONE`
 
 - **Component:** docs · **Priority:** P2 · **Risk:** low · **Dependencies:** GT-341
 - **Files:** `reference/products/mcp-services/README.md:17,49`
 - **Proposed fix:** regenerate counts (27/9/8); fix start command to `smart-cli mcp serve --transport http --port 3000`; derive from generator instead of hand-maintaining.
-- **Done when:** [ ] README counts/command match code; [ ] `--help` doc-snippet test.
+- **Done when:** [x] README counts/command match code; [x] `--help` doc-snippet test.
 
 #### GT-357
 

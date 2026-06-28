@@ -110,11 +110,13 @@ These endpoints expose topology listings, satellite validation, and drift auditi
 ### List Topologies
 * **Route:** `GET /api/v1/architecture/topologies`
 * **Summary:** Lists all available topologies.
+* **Caching:** Responses are served from the Redis-backed cache (see `CacheInterceptor`) under the `topology` TTL. Use the [Invalidate Topology Cache](#invalidate-topology-cache) endpoint to force a refresh after the underlying topology manifests change.
 * **Response `data`:** Array of topology manifests.
 
 ### Get Topology
 * **Route:** `GET /api/v1/architecture/topologies/:id`
 * **Summary:** Retrieves details of a specific topology.
+* **Caching:** Cached under the `topology` TTL. Invalidated together with the topology list via [Invalidate Topology Cache](#invalidate-topology-cache).
 * **Parameters:** `id` (e.g., `modular-monolith`)
 
 ### Validate Satellite
@@ -143,6 +145,19 @@ These endpoints expose topology listings, satellite validation, and drift auditi
   }
   ```
 * **Response `data`:** List of drift violations and mismatch indicators.
+
+### Invalidate Topology Cache
+* **Route:** `POST /api/v1/architecture/cache/invalidate`
+* **Summary:** Evicts the cached topology entries so the next `List Topologies` / `Get Topology` request is recomputed from the source manifests.
+* **Body:** _none_
+* **Response:** `200 OK`
+* **Response `data`:**
+  ```json
+  {
+    "invalidated": true,
+    "keys": ["topology:list"]
+  }
+  ```
 
 ---
 

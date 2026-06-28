@@ -156,4 +156,82 @@ describe('ValidateWorkflowUseCase', () => {
     expect(result.valid).toBe(false);
     expect(result.violations.some(v => v.code === 'OPA_RULE_NOT_FOUND')).toBe(true);
   });
+
+  // -------------------------------------------------------------------------
+  // GT-343 (stage 2b) — canonical phase-id normalization
+  // -------------------------------------------------------------------------
+
+  /** Same content as validDefinition() but using canonical SDLC ids. */
+  function canonicalDefinition(): WorkflowDefinition {
+    const def = validDefinition();
+    const canonicalByLegacy: Record<string, { phase: string; gate: string }> = {
+      f1: { phase: 'discovery', gate: 'gate-discovery' },
+      f2: { phase: 'design', gate: 'gate-design' },
+      f3: { phase: 'construction', gate: 'gate-construction' },
+      f4: { phase: 'qa', gate: 'gate-qa' },
+      f5: { phase: 'release', gate: 'gate-release' },
+    };
+    for (const phase of def.phases) {
+      const mapping = canonicalByLegacy[phase.id];
+      phase.id = mapping.phase;
+      phase.name = mapping.phase;
+      for (const gate of phase.gates) {
+        gate.id = mapping.gate;
+        gate.name = mapping.gate;
+      }
+    }
+    return def;
+  }
+
+  it('should pass a valid workflow declared with canonical SDLC phase ids', () => {
+    const result = useCase.execute(canonicalDefinition());
+    expect(result.valid).toBe(true);
+    expect(result.violations).toHaveLength(0);
+  });
+
+  it('should still accept legacy f1..f5 phase ids as a deprecated alias', () => {
+    // validDefinition() uses f1..f5 — covered by the first test, asserted again
+    // here explicitly to document the backward-compatible alias path.
+    const result = useCase.execute(validDefinition());
+    expect(result.valid).toBe(true);
+  });
+
+  it('should report missing mandatory phase even when others use canonical ids', () => {
+    const def = canonicalDefinition();
+    def.phases = def.phases.filter(p => p.id !== 'construction');
+
+    const result = useCase.execute(def);
+    expect(result.valid).toBe(false);
+    expect(result.violations.map(v => v.code)).toContain('MISSING_MANDATORY_PHASE');
+    // missing-phase violations are reported with the legacy id for on-disk alignment
+    expect(result.violations.find(v => v.phase === 'f3')).toBeDefined();
+  });
+
+  it('should enforce non-omittable artifacts for canonical gate ids', () => {
+    const def = canonicalDefinition();
+    const gate = def.phases.find(p => p.id === 'discovery')!.gates[0];
+    gate.requiredArtifacts = gate.requiredArtifacts.filter(a => a !== 'PRD');
+
+    const result = useCase.execute(def);
+    expect(result.valid).toBe(false);
+    expect(
+      result.violations.some(
+        v =>
+          v.code === 'NON_OMITTABLE_ARTIFACT_MISSING' &&
+          v.gate === 'gate-discovery' &&
+          v.artifact === 'PRD',
+      ),
+    ).toBe(true);
+  });
+
+  it('should treat a mix of canonical and legacy phase ids as complete', () => {
+    const def = validDefinition();
+    // Convert just f3 to its canonical form; the rest stay legacy.
+    const f3 = def.phases.find(p => p.id === 'f3')!;
+    f3.id = 'construction';
+
+    const result = useCase.execute(def);
+    expect(result.valid).toBe(true);
+    expect(result.violations.filter(v => v.code === 'MISSING_MANDATORY_PHASE')).toHaveLength(0);
+  });
 });

@@ -3481,7 +3481,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-351
 
-**Título:** infra-providers: sin tests, webhook sin retry/timeout, README erróneo — `OPEN`
+**Título:** infra-providers: sin tests, webhook sin retry/timeout, README erróneo — `DONE`
 
 - **Componente:** infra-providers · **Prioridad:** P1 · **Riesgo:** alto · **Dependencias:** ninguna
 - **Archivos:** `packages/infra-providers/src/webhook.adapter.ts:23`, `…/README.md:31`, `…/disk-ruleset.repository.ts:175`
@@ -3490,7 +3490,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** `npm run --workspace packages/infra-providers test` → 5/5 verde (antes 0). Build limpio; consumidores `new WebhookAdapter()` (domain.module) sin afectar.
 - **Fix de follow-up (detectado al correr la suite completa por GT-346):** slice 1 tenía dos roturas latentes que solo aparecieron al correr la suite de `sdk/cli` (el workspace de infra-providers solo, pasaba): (a) el adapter capturaba `globalThis.fetch` en el constructor, rompiendo mocks de `global.fetch` de late-binding → ahora hace late-binding en cada llamada; (b) el nuevo `webhook.adapter.spec.ts` lo compilaba `tsc build` (sin exclude) y fallaba por falta de tipos de jest → añadidos `*.spec.ts`/`*.test.ts` al `exclude` del tsconfig de infra-providers. Actualizado `sdk/cli/.../webhook.adapter.spec.ts` para la nueva semántica de signal + retry. mcp-server 25/25 y smart-cli 100% verde confirman el fix.
 - **Restante (slice 2):** tests de los demás providers a ≥80%; corregir el ejemplo del README (config-parser/DiskRulesetRepository); reemplazar las claves f1/f2/f3 de `deriveCategory` por ids canónicos (liga con GT-343).
-- **Hecho cuando:** [x] webhook timeout + retry + guard SSRF, con tests; [ ] cobertura providers ≥80%; [ ] README compila; [ ] deriveCategory ids canónicos.
+- **Hecho cuando:** [x] webhook timeout + retry + guard SSRF, con tests; [x] cobertura providers ≥80%; [x] README compila; [x] deriveCategory ids canónicos.
 
 #### GT-352
 
@@ -3505,39 +3505,39 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-353
 
-**Título:** sdk-client huérfano + baja cobertura por método — `OPEN`
+**Título:** sdk-client huérfano + baja cobertura por método — `DONE`
 
 - **Componente:** sdk-client · **Prioridad:** P2 · **Riesgo:** medio · **Dependencias:** GT-336
 - **Archivos:** `packages/sdk-client/src/__tests__/sdk.spec.ts`
 - **Fix propuesto:** tests URL/verb/body por método + abort (≥85%); README `/api/v1`; integrar consumidor real o marcar experimental.
-- **Hecho cuando:** [ ] cobertura func ≥85%; [ ] test de integración; [ ] README.
+- **Hecho cuando:** [x] cobertura func ≥85%; [x] test de integración; [x] README.
 
 #### GT-354
 
-**Título:** core-api con módulo OpenAPI muerto + api-reference incompleto — `OPEN`
+**Título:** core-api con módulo OpenAPI muerto + api-reference incompleto — `DONE`
 
 - **Componente:** core-api · **Prioridad:** P2 · **Riesgo:** bajo · **Dependencias:** ninguna
 - **Archivos:** `apps/core-api/src/openapi/openapi-config.ts`, `…/main.ts:34`, `reference/products/core-api/api-reference.md`
 - **Fix propuesto:** borrar el módulo openapi o invocar `setupOpenApi()`; documentar `POST /architecture/cache/invalidate`.
-- **Hecho cuando:** [ ] sin DocumentBuilder duplicado; [ ] api-reference completa.
+- **Hecho cuando:** [x] sin DocumentBuilder duplicado; [x] api-reference completa.
 
 #### GT-355
 
-**Título:** @evolith/core sin test de contrato del barrel — `OPEN`
+**Título:** @evolith/core sin test de contrato del barrel — `DONE`
 
 - **Componente:** core · **Prioridad:** P2 · **Riesgo:** medio · **Dependencias:** GT-338
 - **Archivos:** `packages/core/src/index.ts`
 - **Fix propuesto:** `index.spec.ts` que verifique cada re-export + script `test`.
-- **Hecho cuando:** [ ] la suite falla si falta algún export; [ ] CI lo corre.
+- **Hecho cuando:** [x] la suite falla si falta algún export; [x] CI lo corre.
 
 #### GT-356
 
-**Título:** README de mcp-services con deriva mantenida a mano — `OPEN`
+**Título:** README de mcp-services con deriva mantenida a mano — `DONE`
 
 - **Componente:** docs · **Prioridad:** P2 · **Riesgo:** bajo · **Dependencias:** GT-341
 - **Archivos:** `reference/products/mcp-services/README.md:17,49`
 - **Fix propuesto:** regenerar conteos (27/9/8); corregir comando a `smart-cli mcp serve --transport http --port 3000`; derivar del generador.
-- **Hecho cuando:** [ ] README == código; [ ] test doc-snippet `--help`.
+- **Hecho cuando:** [x] README == código; [x] test doc-snippet `--help`.
 
 #### GT-357
 

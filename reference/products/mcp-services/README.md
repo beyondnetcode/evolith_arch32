@@ -14,9 +14,11 @@ The exact, installable surface is generated from the CLI sources and must not be
 
 | Capability | Count | Examples |
 |---|:---:|---|
-| **Tools** | 25 | `evolith-validate`, `evolith-composable-validate`, `evolith-gate-evaluate`, `evolith-architecture-validate`, `evolith-phase-advance`, `evolith-auto-fix`, `evolith-drift-detect`, `evolith-dora-metrics`, `evolith-metrics` |
-| **Resources** | 7 | `evolith://rulesets`, `evolith://phase-gates`, `evolith://agents`, `evolith://core/version` |
-| **Prompts** | 7 | `evolith/validate-repository`, `evolith/architecture-review`, `evolith/sdlc-handoff`, `evolith/moscow-prioritization` |
+| **Tools** | 27 | `evolith-validate`, `evolith-composable-validate`, `evolith-gate-evaluate`, `evolith-architecture-validate`, `evolith-phase-advance`, `evolith-auto-fix`, `evolith-drift-detect`, `evolith-dora-metrics`, `evolith-metrics` |
+| **Resources** | 9 | `evolith://rulesets`, `evolith://phase-gates`, `evolith://agents`, `evolith://core/version` |
+| **Prompts** | 8 | `evolith/validate-repository`, `evolith/architecture-review`, `evolith/sdlc-handoff`, `evolith/moscow-prioritization` |
+
+> Counts are verified against the generated [Product Surface Inventory](../smart-cli/product-inventory.md) and the MCP server sources (`tools/*.tool.ts`, `resources.service.ts`, `prompts.service.ts`); do not edit them by hand without re-deriving from those sources.
 
 ### GT-312: Composable Validation Engine
 
@@ -36,17 +38,17 @@ The system is **intelligent and flexible** — users can combine any entry point
 
 | Transport | Use case |
 |---|---|
-| **stdio (JSON-RPC 2.0)** | Local agents and editor integrations launched via `smart-cli mcp-server` |
+| **stdio (JSON-RPC 2.0)** | Local agents and editor integrations launched via `smart-cli mcp serve` |
 | **Streamable HTTP (official MCP SDK)** | Remote agents and services, with API-key authentication |
 
 ## Running the server
 
 ```bash
 # stdio (default)
-smart-cli mcp-server
+smart-cli mcp serve
 
 # Streamable HTTP
-smart-cli mcp-server --http --port 3000
+smart-cli mcp serve --transport http --port 3000
 ```
 
 ## Conformance

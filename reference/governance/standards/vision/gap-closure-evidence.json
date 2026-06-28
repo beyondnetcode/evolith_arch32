@@ -5053,6 +5053,73 @@
         "npm run --workspace packages/mcp-tools test"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-355",
+      "closedAt": "2026-06-28",
+      "closureCommit": "0a466459",
+      "evidence": [
+        "packages/core/src/index.spec.ts",
+        "packages/core/jest.config.js"
+      ],
+      "validationCommands": [
+        "npm run --workspace packages/core test"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-356",
+      "closedAt": "2026-06-28",
+      "closureCommit": "26441d3a",
+      "evidence": [
+        "reference/products/mcp-services/README.md",
+        "reference/products/mcp-services/README.es.md"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/04-check-bilingual-parity.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-353",
+      "closedAt": "2026-06-28",
+      "closureCommit": "92dbbd15",
+      "evidence": [
+        "packages/sdk-client/README.md",
+        "packages/sdk-client/src/__tests__/sdk.spec.ts"
+      ],
+      "validationCommands": [
+        "npm run --workspace packages/sdk-client test"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-354",
+      "closedAt": "2026-06-28",
+      "closureCommit": "56546549",
+      "evidence": [
+        "apps/core-api/src/main.ts",
+        "reference/products/core-api/api-reference.md"
+      ],
+      "validationCommands": [
+        "npm run --workspace apps/core-api build",
+        "npm run --workspace apps/core-api test"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-351",
+      "closedAt": "2026-06-28",
+      "closureCommit": "cb121075",
+      "evidence": [
+        "packages/infra-providers/src/disk-ruleset.repository.spec.ts",
+        "packages/infra-providers/README.md",
+        "packages/infra-providers/src/disk-ruleset.repository.ts"
+      ],
+      "validationCommands": [
+        "npm run --workspace packages/infra-providers test"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

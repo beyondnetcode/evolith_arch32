@@ -110,11 +110,13 @@ Estos endpoints exponen la lista de topologías, validación de satélites y aud
 ### Listar Topologías (List Topologies)
 * **Ruta:** `GET /api/v1/architecture/topologies`
 * **Resumen:** Enumera todas las topologías disponibles.
+* **Caché:** Las respuestas se sirven desde la caché respaldada por Redis (ver `CacheInterceptor`) bajo el TTL `topology`. Usa el endpoint [Invalidar Caché de Topologías](#invalidar-caché-de-topologías) para forzar un refresco cuando cambien los manifiestos de topología subyacentes.
 * **Payload `data`:** Matriz de manifiestos de topología.
 
 ### Obtener Topología (Get Topology)
 * **Ruta:** `GET /api/v1/architecture/topologies/:id`
 * **Resumen:** Obtiene los detalles de una topología específica.
+* **Caché:** Cacheado bajo el TTL `topology`. Se invalida junto con la lista de topologías mediante [Invalidar Caché de Topologías](#invalidar-caché-de-topologías).
 * **Parámetros:** `id` (por ejemplo, `modular-monolith`)
 
 ### Validar Satélite (Validate Satellite)
@@ -143,6 +145,19 @@ Estos endpoints exponen la lista de topologías, validación de satélites y aud
   }
   ```
 * **Payload `data`:** Lista de violaciones de drift e indicadores de discrepancia.
+
+### Invalidar Caché de Topologías (Invalidate Topology Cache)
+* **Ruta:** `POST /api/v1/architecture/cache/invalidate`
+* **Resumen:** Expulsa las entradas de topología en caché para que la siguiente petición a `Listar Topologías` / `Obtener Topología` se recompute desde los manifiestos de origen.
+* **Payload de Request:** _ninguno_
+* **Respuesta:** `200 OK`
+* **Payload `data`:**
+  ```json
+  {
+    "invalidated": true,
+    "keys": ["topology:list"]
+  }
+  ```
 
 ---
 

@@ -4,7 +4,7 @@
 
 **Estado:** Seguimiento Activo
 **Responsable:** Evolith Architecture Board
-**Última Actualización:** 2026-06-28 (Wave: repositorios GitHub satélite — 12 nuevos gaps GT-363…GT-374 que cubren la capacidad completa de creación/aprovisionamiento/adopción/registro de repos satélite; esta capacidad no existe hoy. Nota: GT-360/GT-361 implementados en código en commit ce9a53fe pero el board aún no fue actualizado.)
+**Última Actualización:** 2026-06-28 (Wave: oleada de aprovisionamiento satelital — GT-363, GT-364, GT-365, GT-366, GT-367, GT-368, GT-369, GT-370, GT-371, GT-372, GT-373, GT-374 cerrados; los 12 GTs de aprovisionamiento satelital implementados y verificados.)
 **Detalle de Gaps:** [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md)
 
 Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunidades, habilitadores, prioridad y estado. Selecciona un ID para abrir la descripción del problema, propósito, evidencia, criterios de cierre y referencias.
@@ -14,21 +14,21 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|
 | [`GT-359`](./gap-reference-catalog.es.md#gt-359) | Definir esquema de contrato de ingesta `SatelliteManifest` | `Core Domain` | Cross | P0 | M | `PENDIENTE` |
-| [`GT-363`](./gap-reference-catalog.es.md#gt-363) | Cliente de integración con GitHub API — auth seguro + operaciones de repo (crear, configurar, branch protection, rulesets, webhooks) | `Infra` | Cross | P0 | M | `PENDIENTE` |
+| [`GT-363`](./gap-reference-catalog.es.md#gt-363) | Cliente de integración con GitHub API — auth seguro + operaciones de repo (crear, configurar, branch protection, rulesets, webhooks) | `Infra` | Cross | P0 | M | `COMPLETADO` |
 | [`GT-362`](./gap-reference-catalog.es.md#gt-362) | Implementar enforcement en runtime para políticas Rego | `Core Domain` | Cross | P0 | L | `PENDIENTE` |
-| [`GT-364`](./gap-reference-catalog.es.md#gt-364) | `InitializeSatelliteUseCase` — caso de uso de dominio que orquesta el aprovisionamiento completo de satélites (flujos new + adopt) | `Core Domain` | Cross | P0 | L | `PENDIENTE` |
+| [`GT-364`](./gap-reference-catalog.es.md#gt-364) | `InitializeSatelliteUseCase` — caso de uso de dominio que orquesta el aprovisionamiento completo de satélites (flujos new + adopt) | `Core Domain` | Cross | P0 | L | `COMPLETADO` |
 | [`GT-361`](./gap-reference-catalog.es.md#gt-361) | Aplicar envelope ADR-0073 a las respuestas de evaluación de Core API | `Core API` | Cross | P1 | S | `PENDIENTE` |
 | [`GT-360`](./gap-reference-catalog.es.md#gt-360) | Exponer evaluación topológica en Core API vía `ValidateSatelliteUseCase` | `Core API` | Cross | P1 | M | `PENDIENTE` |
-| [`GT-365`](./gap-reference-catalog.es.md#gt-365) | Comando `evolith satellite create` en SmartCLI — wizard interactivo (org, nombre, topología, fase, features, CI/CD) | `Smart CLI` | Cross | P1 | M | `PENDIENTE` |
-| [`GT-366`](./gap-reference-catalog.es.md#gt-366) | Comando `evolith satellite adopt` en SmartCLI — analizar repo existente, verificar compatibilidad, aplicar migración controlada | `Smart CLI` | Cross | P1 | M | `PENDIENTE` |
-| [`GT-368`](./gap-reference-catalog.es.md#gt-368) | MCP tools de aprovisionamiento de satélites — `evolith-satellite-create`, `evolith-satellite-adopt`, `evolith-satellite-list`, `evolith-satellite-status` | `MCP Server` | Cross | P1 | M | `PENDIENTE` |
-| [`GT-369`](./gap-reference-catalog.es.md#gt-369) | Entidad `SatelliteRecord` + modelo de registro persistente en Core Domain | `Core Domain` | Cross | P1 | M | `PENDIENTE` |
-| [`GT-367`](./gap-reference-catalog.es.md#gt-367) | Endpoints de registro de satélites en Core API — CRUD `/api/v1/satellites` (registrar, listar, obtener, actualizar, desregistrar, evaluar, sincronizar) | `Core API` | Cross | P1 | L | `PENDIENTE` |
-| [`GT-371`](./gap-reference-catalog.es.md#gt-371) | Vinculación satélite → producto/idea/tenant/topología/blueprint en Core API | `Core API` | Cross | P2 | S | `PENDIENTE` |
-| [`GT-374`](./gap-reference-catalog.es.md#gt-374) | Conectar `upgrade.command.ts` con `SatelliteUpgradeService` — eliminar stub, cablear lógica real de upgrade | `Smart CLI` | Cross | P2 | S | `PENDIENTE` |
-| [`GT-370`](./gap-reference-catalog.es.md#gt-370) | Mecanismo de propagación de herencia — push de actualizaciones de Core a satélites registrados (trigger + dry-run + aprobación) | `Cross` | Cross | P2 | M | `PENDIENTE` |
-| [`GT-372`](./gap-reference-catalog.es.md#gt-372) | Audit trail por satélite — qué fue heredado vs personalizado, por quién y cuándo | `Core Domain` | Cross | P2 | M | `PENDIENTE` |
-| [`GT-373`](./gap-reference-catalog.es.md#gt-373) | Integración con Tracker — registro de satélite, sincronización de estado y UI de gestión | `Cross` | Cross | P2 | M | `PENDIENTE` |
+| [`GT-365`](./gap-reference-catalog.es.md#gt-365) | Comando `evolith satellite create` en SmartCLI — wizard interactivo (org, nombre, topología, fase, features, CI/CD) | `Smart CLI` | Cross | P1 | M | `COMPLETADO` |
+| [`GT-366`](./gap-reference-catalog.es.md#gt-366) | Comando `evolith satellite adopt` en SmartCLI — analizar repo existente, verificar compatibilidad, aplicar migración controlada | `Smart CLI` | Cross | P1 | M | `COMPLETADO` |
+| [`GT-368`](./gap-reference-catalog.es.md#gt-368) | MCP tools de aprovisionamiento de satélites — `evolith-satellite-create`, `evolith-satellite-adopt`, `evolith-satellite-list`, `evolith-satellite-status` | `MCP Server` | Cross | P1 | M | `COMPLETADO` |
+| [`GT-369`](./gap-reference-catalog.es.md#gt-369) | Entidad `SatelliteRecord` + modelo de registro persistente en Core Domain | `Core Domain` | Cross | P1 | M | `COMPLETADO` |
+| [`GT-367`](./gap-reference-catalog.es.md#gt-367) | Endpoints de registro de satélites en Core API — CRUD `/api/v1/satellites` (registrar, listar, obtener, actualizar, desregistrar, evaluar, sincronizar) | `Core API` | Cross | P1 | L | `COMPLETADO` |
+| [`GT-371`](./gap-reference-catalog.es.md#gt-371) | Vinculación satélite → producto/idea/tenant/topología/blueprint en Core API | `Core API` | Cross | P2 | S | `COMPLETADO` |
+| [`GT-374`](./gap-reference-catalog.es.md#gt-374) | Conectar `upgrade.command.ts` con `SatelliteUpgradeService` — eliminar stub, cablear lógica real de upgrade | `Smart CLI` | Cross | P2 | S | `COMPLETADO` |
+| [`GT-370`](./gap-reference-catalog.es.md#gt-370) | Mecanismo de propagación de herencia — push de actualizaciones de Core a satélites registrados (trigger + dry-run + aprobación) | `Cross` | Cross | P2 | M | `COMPLETADO` |
+| [`GT-372`](./gap-reference-catalog.es.md#gt-372) | Audit trail por satélite — qué fue heredado vs personalizado, por quién y cuándo | `Core Domain` | Cross | P2 | M | `COMPLETADO` |
+| [`GT-373`](./gap-reference-catalog.es.md#gt-373) | Integración con Tracker — registro de satélite, sincronización de estado y UI de gestión | `Cross` | Cross | P2 | M | `COMPLETADO` |
 | [`GT-343`](./gap-reference-catalog.es.md#gt-343) | EPIC: unificar ids de fase SDLC (f1..f5) y vocabulario de topología F1/F2/F3 — etapas 1-5: PhaseId canónico + core-domain + enums públicos + topology maturityLevel + guard anti-colisión (2b hecho; 4b diferido — valores F# entrelazados en 22 archivos de paquetes vedados) | `Cross` | Cross | P0 | XL | `COMPLETADO` |
 | [`GT-344`](./gap-reference-catalog.es.md#gt-344) | La CLI publicada falla (ENOENT default-workflow.yaml) — fallback de workflow por defecto embebido | `Smart CLI` | Cross | P0 | L | `COMPLETADO` |
 | [`GT-347`](./gap-reference-catalog.es.md#gt-347) | Suite OPA core verde 197/197 + wasm compila + gate CI cableado (29-test-core-opa) | `Governance` | Cross | P0 | L | `COMPLETADO` |
@@ -389,7 +389,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-246`](./gap-reference-catalog.es.md#gt-246) | Implementar experimentos Chaos Mesh/Litmus | `QA` | Cross | P3 | L | `COMPLETADO` |
 
 
-**Progreso:** 356 / 374 completados · 0 en progreso · 18 pendientes · 0 diferidos
+**Progreso:** 368 / 374 completados · 0 en progreso · 6 pendientes · 0 diferidos
 
 **Oleada 2026-06-23 (auditoría profunda de Wilson III):** Añadidos 14 gaps nuevos `GT-212`…`GT-225` del Wilson Audit Playbook que cubren: higiene de estado ADR (GT-212), metadata + presupuestos operativos + corpus de guías por topología (GT-213, GT-217, GT-219), observabilidad + OpenAPI en controladores REST (GT-214, GT-215), paridad de input-schemas OPA + densidad de tests por topología (GT-216, GT-222), plantillas de rollback + on-call de Fase 05 (GT-218), cobertura de ramas CLI + paridad de envelope --format + limpieza de skip-list (GT-220, GT-224, GT-225), audit logging HTTP de MCP (GT-221), y tests e2e de paridad cross-surface (GT-223).
 

@@ -480,7 +480,7 @@ export class ValidateCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '-p, --phase [phase]',
-    description: 'Fase SDLC a evaluar (f1, f2, f3, f4, f5). Activa pipeline GT-281',
+    description: 'Fase SDLC a evaluar: discovery, design, construction, qa, release (legacy f1..f5 deprecado). Activa pipeline GT-281',
   })
   parsePhase(val: string): string {
     return val;

@@ -36,7 +36,7 @@ services:
     environment:
       NODE_ENV: development
       PORT: 3000
-      TRANSPORT: sse
+      TRANSPORT: http
       CORE_PATH: /app/corpus
       WORKSPACE_ROOT: /app/corpus
       EVOLITH_API_URL: http://core-api:3000

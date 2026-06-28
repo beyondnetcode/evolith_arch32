@@ -1,24 +1,18 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "resolvePackageJsonExports": true,
     "ignoreDeprecations": "6.0",
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "target": "ES2021",
+    "target": "ES2023",
     "sourceMap": true,
     "outDir": "./dist",
     "rootDir": "./src",
-    "baseUrl": "./",
-    "paths": {
-      "@modelcontextprotocol/sdk/*": [
-        "../../node_modules/@modelcontextprotocol/sdk/dist/esm/*"
-      ],
-      "@evolith/core-domain/*": ["../../node_modules/@evolith/core-domain/dist/*"]
-    },
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,

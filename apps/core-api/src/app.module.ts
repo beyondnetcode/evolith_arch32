@@ -23,6 +23,8 @@ import { ComposableValidateController } from './presentation/controllers/composa
 import { WorkspaceReferenceResolverService } from './application/services/workspace-reference-resolver.service';
 import { RedisCacheModule } from './infrastructure/cache/redis-cache.module';
 import { CacheMetricsService } from './infrastructure/cache/cache-metrics.service';
+import { SatellitesController } from './presentation/controllers/satellites.controller';
+import { SatelliteRegistryService } from './application/services/satellite-registry.service';
 
 @Module({
   imports: [
@@ -53,6 +55,7 @@ import { CacheMetricsService } from './infrastructure/cache/cache-metrics.servic
     EvaluationController,
     ReferenceController,
     ComposableValidateController,
+    SatellitesController,
   ],
   providers: [
     HealthService,
@@ -61,6 +64,7 @@ import { CacheMetricsService } from './infrastructure/cache/cache-metrics.servic
     CircuitBreakerService,
     CoreReferenceQueryService,
     WorkspaceReferenceResolverService,
+    SatelliteRegistryService,
     {
       provide: APP_GUARD,
       useClass: AuditThrottlerGuard,

@@ -130,6 +130,20 @@ export class AbacEvaluator {
       
       const wasmPath = path.join(corePath, 'sdk', 'cli', 'rulesets', 'opa', 'policy.wasm');
       if (!await fs.pathExists(wasmPath)) {
+        // GT-349: never fail open. A missing ABAC policy must NOT silently grant
+        // the OPA decision (which could bypass rules OPA enforces beyond native).
+        // In production this is a hard deny (fail-closed). In non-production the
+        // OPA layer abstains and the native policy — also enforced by the caller
+        // (native AND opa) — governs, so access is still gated.
+        if (input.environment === 'production') {
+          return {
+            allowed: false,
+            violations: [{
+              id: 'ABAC_POLICY_MISSING',
+              message: `ABAC policy not found at ${wasmPath}; denying in production (fail-closed). Compile the OPA policy (.rego -> policy.wasm).`,
+            }],
+          };
+        }
         return { allowed: true, violations: [] };
       }
       

@@ -411,7 +411,10 @@ describe('ABAC dual-engine evaluation', () => {
     });
   });
 
-  it('allows read tools for developer in production environment', async () => {
+  it('fail-closed (GT-349): denies in production when the OPA policy is not compiled', async () => {
+    // Previously this returned success because evaluateOpa failed OPEN (missing
+    // policy.wasm -> allowed:true). It now fails CLOSED in production: with no
+    // compiled policy the OPA layer denies, so even a read tool is forbidden.
     await mcpContextStorage.run({
       id: 'dev-1',
       role: 'developer',
@@ -422,7 +425,9 @@ describe('ABAC dual-engine evaluation', () => {
     }, async () => {
       const result = await realService.handleCallTool('evolith-ping');
       const env = parseEnvelope(result);
-      expect(env.success).toBe(true);
+      expect(result.isError).toBe(true);
+      expect(env.error.code).toBe(ErrorCodes.FORBIDDEN);
+      expect(env.error.message).toContain('ABAC_POLICY_MISSING');
     });
   });
 

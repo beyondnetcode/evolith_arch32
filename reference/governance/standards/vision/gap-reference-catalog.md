@@ -3508,12 +3508,14 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-349
 
-**Title:** OPA fails open when wasm missing (security) — `OPEN`
+**Title:** OPA fails open when wasm missing (security) — `IN-PROGRESS`
 
 - **Component:** mcp-server · **Priority:** P2 · **Risk:** med · **Dependencies:** GT-347
 - **Files:** `packages/mcp-server/src/mcp/abac-evaluator.ts:132`
 - **Proposed fix:** fail-closed in production (or loud warn + metric) when policy.wasm is absent.
-- **Done when:** [ ] missing policy denies in prod; [ ] both paths tested.
+- **Applied fix:** `AbacEvaluator.evaluateOpa` no longer returns `{ allowed: true }` when `policy.wasm` is absent. In `environment === 'production'` it now hard-denies with an `ABAC_POLICY_MISSING` violation (fail-closed). In non-production the OPA layer abstains (`allowed: true`) and the native policy — which the dispatcher always ANDs (`native.allowed && opa.allowed`) — still governs, so dev/test stay usable. The catch path already failed closed and is unchanged.
+- **Evidence:** new `abac-evaluator.spec.ts` (6 tests) — incl. missing-wasm+production → denied `ABAC_POLICY_MISSING`, missing-wasm+staging → abstains; plus native ABAC-02/03/01 coverage (uses a nonexistent corePath so `pathExists` is genuinely false). Updated the `mcp-server.service` integration test that previously relied on the fail-open (prod read silently allowed) to assert the fail-closed denial. mcp-server suite 24/24 (168/168). Build clean.
+- **Done when:** [x] missing policy denies in prod; [x] both paths tested.
 
 #### GT-350
 

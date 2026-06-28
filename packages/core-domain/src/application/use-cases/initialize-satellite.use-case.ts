@@ -1,56 +1,61 @@
+import { randomUUID } from 'node:crypto';
 import type { IGitHubApiClient } from '../../domain/github-api-client.interface';
-import {
+import type {
   InitializeSatelliteInput,
   InitializeSatelliteOutput,
   SatelliteRecord,
 } from '../../domain/satellite-record';
 
-function generateId(): string {
-  return `sat_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
-}
-
-function generateRequestId(): string {
-  return `req_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
-}
-
+/**
+ * Use case: Initialize or adopt a satellite repository under Evolith governance.
+ *
+ * In 'create' mode a new GitHub repository is provisioned.
+ * In 'adopt' mode an existing repository is linked to Evolith governance
+ * without creating a new remote repository.
+ */
 export class InitializeSatelliteUseCase {
-  constructor(private readonly githubClient: IGitHubApiClient) {}
+  constructor(private readonly github: IGitHubApiClient) {}
 
   async execute(input: InitializeSatelliteInput): Promise<InitializeSatelliteOutput> {
-    if (input.mode === 'create') {
-      return this.createSatellite(input);
+    const now = new Date().toISOString();
+
+    if (input.mode === 'adopt') {
+      return this.adopt(input, now);
     }
-    return this.adoptSatellite(input);
+
+    return this.create(input, now);
   }
 
-  private async createSatellite(input: InitializeSatelliteInput): Promise<InitializeSatelliteOutput> {
-    const repo = await this.githubClient.createRepository({
-      owner: input.owner,
-      name: input.name,
-      description: input.description,
-      private: input.private ?? false,
-      autoInit: true,
-    });
+  // --------------------------------------------------------------------------
+  // Private helpers
+  // --------------------------------------------------------------------------
 
-    await this.githubClient.addTopics(input.owner, input.name, [
-      'evolith-satellite',
-      `topology-${input.topology}`,
-      `phase-${input.phase}`,
-    ]);
+  private async adopt(
+    input: InitializeSatelliteInput,
+    now: string,
+  ): Promise<InitializeSatelliteOutput> {
+    if (!input.existingRepoUrl) {
+      throw new Error('existingRepoUrl is required when mode is "adopt"');
+    }
 
-    const now = new Date().toISOString();
+    const { owner, name } = this.parseRepoUrl(input.existingRepoUrl);
+
+    const repo = await this.github.getRepository(owner, name);
+    if (!repo) {
+      throw new Error(`Repository ${owner}/${name} not found on GitHub`);
+    }
+
     const satellite: SatelliteRecord = {
-      id: generateId(),
-      name: repo.name,
-      owner: input.owner,
+      id: randomUUID(),
+      name: input.name || name,
+      owner: input.owner || owner,
       repoUrl: repo.htmlUrl,
       cloneUrl: repo.cloneUrl,
       sshUrl: repo.sshUrl,
       topology: input.topology,
       phase: input.phase,
-      status: 'active',
-      mode: 'create',
-      coreVersion: input.coreVersion,
+      status: 'linked',
+      mode: 'adopt',
       description: input.description,
       linkedAt: now,
       createdAt: now,
@@ -60,35 +65,37 @@ export class InitializeSatelliteUseCase {
     return this.buildOutput(satellite);
   }
 
-  private async adoptSatellite(input: InitializeSatelliteInput): Promise<InitializeSatelliteOutput> {
-    if (!input.existingRepoUrl) {
-      throw new Error('existingRepoUrl is required when mode is "adopt"');
-    }
+  private async create(
+    input: InitializeSatelliteInput,
+    now: string,
+  ): Promise<InitializeSatelliteOutput> {
+    const repo = await this.github.createRepository({
+      owner: input.owner,
+      name: input.name,
+      description: input.description,
+      private: input.private ?? false,
+      autoInit: true,
+    });
 
-    const urlParts = input.existingRepoUrl.replace(/\.git$/, '').split('/');
-    const repoName = urlParts.at(-1) ?? input.name;
-    const repoOwner = urlParts.at(-2) ?? input.owner;
+    await this.github.addTopics(input.owner, input.name, [
+      'evolith-satellite',
+      `topology-${input.topology}`,
+      `phase-${input.phase}`,
+    ]);
 
-    const repo = await this.githubClient.getRepository(repoOwner, repoName);
-    if (!repo) {
-      throw new Error(`Repository ${repoOwner}/${repoName} not found`);
-    }
-
-    const now = new Date().toISOString();
     const satellite: SatelliteRecord = {
-      id: generateId(),
+      id: randomUUID(),
       name: repo.name,
-      owner: repoOwner,
+      owner: input.owner,
       repoUrl: repo.htmlUrl,
       cloneUrl: repo.cloneUrl,
       sshUrl: repo.sshUrl,
       topology: input.topology,
       phase: input.phase,
-      status: 'linked',
-      mode: 'adopt',
+      status: 'provisioning',
+      mode: 'create',
       coreVersion: input.coreVersion,
-      description: input.description ?? repo.name,
-      linkedAt: now,
+      description: input.description,
       createdAt: now,
       updatedAt: now,
     };
@@ -97,17 +104,27 @@ export class InitializeSatelliteUseCase {
   }
 
   private buildOutput(satellite: SatelliteRecord): InitializeSatelliteOutput {
+    const now = new Date().toISOString();
     return {
       satellite,
       outputEnvelope: {
         success: true,
         data: { satellite },
         meta: {
-          requestId: generateRequestId(),
-          timestamp: new Date().toISOString(),
+          requestId: randomUUID(),
+          timestamp: now,
           version: '1.0.0',
         },
       },
     };
+  }
+
+  /** Parse owner and repo name from a GitHub URL such as https://github.com/owner/repo */
+  private parseRepoUrl(url: string): { owner: string; name: string } {
+    const match = url.match(/github\.com[/:]([^/]+)\/([^/.]+?)(?:\.git)?$/);
+    if (!match) {
+      throw new Error(`Cannot parse GitHub URL: ${url}`);
+    }
+    return { owner: match[1], name: match[2] };
   }
 }

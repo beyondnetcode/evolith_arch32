@@ -6,8 +6,8 @@
     "total": 358,
     "done": 356,
     "pending": 0,
-    "inProgress": 1,
-    "deferred": 1
+    "inProgress": 2,
+    "deferred": 0
   },
   "evidence": {
     "closureRecords": 338,

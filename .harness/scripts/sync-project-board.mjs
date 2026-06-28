@@ -1,17 +1,32 @@
 import fs from 'fs';
 import { execSync } from 'child_process';
-import path from 'path';
 
-// Intentar cargar GH_TOKEN desde un archivo oculto .env
-if (fs.existsSync('.env')) {
-  const envContent = fs.readFileSync('.env', 'utf-8');
-  envContent.split('\n').forEach(line => {
-    const match = line.match(/^GH_TOKEN=(.*)/);
-    if (match && match[1]) {
-      process.env.GH_TOKEN = match[1].trim();
-    }
-  });
+// GT-313: source the GitHub token securely — never from a plaintext .env.
+// Priority: explicit env (a CI secret / shell export) → the `gh` CLI's stored
+// credential (OS keychain) → fail closed with guidance. The `gh project …`
+// subcommands below inherit GH_TOKEN; the Projects API needs the `project` scope.
+function resolveGitHubToken() {
+  const fromEnv = (process.env.GH_TOKEN || process.env.GITHUB_TOKEN || '').trim();
+  if (fromEnv) return fromEnv;
+  try {
+    const ghToken = execSync('gh auth token', { encoding: 'utf-8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+    if (ghToken) return ghToken;
+  } catch {
+    /* gh CLI absent or not logged in */
+  }
+  return null;
 }
+
+const RESOLVED_GH_TOKEN = resolveGitHubToken();
+if (!RESOLVED_GH_TOKEN) {
+  console.error(
+    'No GitHub token available. Set GH_TOKEN/GITHUB_TOKEN (a CI secret) or run ' +
+    '`gh auth login` (add the project scope with `gh auth refresh -s project`). ' +
+    'GT-313: this script no longer reads a plaintext .env.',
+  );
+  process.exit(1);
+}
+process.env.GH_TOKEN = RESOLVED_GH_TOKEN;
 
 const TRACKING_FILE_ES = './reference/governance/standards/vision/gap-tracking.es.md';
 const TRACKING_FILE_EN = './reference/governance/standards/vision/gap-tracking.md';

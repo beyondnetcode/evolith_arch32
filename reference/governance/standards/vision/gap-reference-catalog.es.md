@@ -14,14 +14,16 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 #### GT-313
 
-**Título:** Rotar y externalizar GH_TOKEN mediante un gestor de secretos
+**Título:** Rotar y externalizar GH_TOKEN mediante un gestor de secretos — `IN-PROGRESS`
 
 - **Propósito:** Quitar el Personal Access Token de GitHub en texto plano del `.env` en disco y obtenerlo desde un gestor de secretos / secreto de CI, cerrando el único hallazgo crítico de seguridad abierto.
-- **Evidencia:** `.env` contiene `GH_TOKEN=ghp_…` en texto plano (git-ignored pero vivo en disco); señalado en `CERTIFICACION_MADUREZ.md` §6.
+- **Evidencia:** `.env` contiene `GH_TOKEN=ghp_…` en texto plano (git-ignored pero vivo en disco); señalado en `CERTIFICACION_MADUREZ.md` §6. **Verificado:** el PAT NO está commiteado, NO está en el historial de git, NO está en `origin/main` — exposición solo en disco local.
 - **Complejidad:** XS
+- **Fix aplicado (parte 1 — externalización, código):** `.harness/scripts/sync-project-board.mjs` (el único consumidor) ya no lee un `.env` plano. Ahora resuelve el token de forma segura vía `resolveGitHubToken()`: `GH_TOKEN`/`GITHUB_TOKEN` explícito (secreto de CI) → credencial del `gh` CLI en keychain (`gh auth token`) → falla cerrado con guía. Los subcomandos `gh project …` lo heredan. Verificado: el resolver obtiene un token del keychain de `gh` sin `.env` (0 referencias a `.env`).
+- **Residual (parte 2 — tu acción, criterio 1):** revocar el PAT actual en GitHub (estuvo en texto plano en disco → tratarlo como comprometido); usar `gh auth login` (keychain; añadir `gh auth refresh -s project` si la API de Projects lo requiere) en local y un GitHub Actions secret en CI; borrar la línea `GH_TOKEN=` del `.env` local. Sin nuevo PAT en texto plano.
 - **Hecho cuando:**
-  - [ ] El token actual se revoca y se reemite en GitHub.
-  - [ ] Las credenciales provienen de un gestor de secretos / secreto de CI, no de un `.env` plano.
+  - [ ] El token actual se revoca y se reemite en GitHub. *(Tu acción — es una credencial en manos humanas.)*
+  - [x] Las credenciales provienen de un gestor de secretos / secreto de CI (keychain de gh / env), no de un `.env` plano.
 
 #### GT-314
 

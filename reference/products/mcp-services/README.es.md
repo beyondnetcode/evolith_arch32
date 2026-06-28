@@ -14,9 +14,11 @@ La superficie instalable exacta se genera desde las fuentes del CLI y no debe ma
 
 | Capacidad | Conteo | Ejemplos |
 |---|:---:|---|
-| **Tools** | 25 | `evolith-validate`, `evolith-composable-validate`, `evolith-gate-evaluate`, `evolith-architecture-validate`, `evolith-phase-advance`, `evolith-auto-fix`, `evolith-drift-detect`, `evolith-dora-metrics`, `evolith-metrics` |
-| **Resources** | 7 | `evolith://rulesets`, `evolith://phase-gates`, `evolith://agents`, `evolith://core/version` |
-| **Prompts** | 7 | `evolith/validate-repository`, `evolith/architecture-review`, `evolith/sdlc-handoff`, `evolith/moscow-prioritization` |
+| **Tools** | 27 | `evolith-validate`, `evolith-composable-validate`, `evolith-gate-evaluate`, `evolith-architecture-validate`, `evolith-phase-advance`, `evolith-auto-fix`, `evolith-drift-detect`, `evolith-dora-metrics`, `evolith-metrics` |
+| **Resources** | 9 | `evolith://rulesets`, `evolith://phase-gates`, `evolith://agents`, `evolith://core/version` |
+| **Prompts** | 8 | `evolith/validate-repository`, `evolith/architecture-review`, `evolith/sdlc-handoff`, `evolith/moscow-prioritization` |
+
+> Los conteos se verifican contra el [Inventario de Superficie del Producto](../smart-cli/product-inventory.es.md) generado y las fuentes del servidor MCP (`tools/*.tool.ts`, `resources.service.ts`, `prompts.service.ts`); no los edites a mano sin re-derivarlos desde esas fuentes.
 
 ### GT-312: Motor de Validación Composable
 
@@ -36,17 +38,17 @@ El sistema es **inteligente y flexible** — los usuarios pueden combinar cualqu
 
 | Transporte | Caso de uso |
 |---|---|
-| **stdio (JSON-RPC 2.0)** | Agentes locales e integraciones de editor lanzados vía `smart-cli mcp-server` |
+| **stdio (JSON-RPC 2.0)** | Agentes locales e integraciones de editor lanzados vía `smart-cli mcp serve` |
 | **Streamable HTTP (SDK oficial MCP)** | Agentes y servicios remotos, con autenticación por API-key |
 
 ## Ejecutar el servidor
 
 ```bash
 # stdio (por defecto)
-smart-cli mcp-server
+smart-cli mcp serve
 
 # Streamable HTTP
-smart-cli mcp-server --http --port 3000
+smart-cli mcp serve --transport http --port 3000
 ```
 
 ## Conformidad

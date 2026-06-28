@@ -25,6 +25,7 @@ import type {
   ProposeAdvanceRequest,
   ProposeAdvanceResponse,
 } from './types.js';
+import { SatellitesClient } from '../satellites.client.js';
 
 export interface EvolithRestClientOptions {
   /** Base URL for the Evolith Core API, e.g. http://localhost:3000 */
@@ -46,6 +47,9 @@ export class EvolithRestClient {
   private readonly fetcher: typeof fetch;
   private readonly timeoutMs: number;
 
+  /** Satellites CRUD sub-client. */
+  readonly satellites: SatellitesClient;
+
   constructor(private readonly options: EvolithRestClientOptions) {
     this.baseUrl = options.baseUrl.replace(/\/$/, '');
     // Trim leading/trailing slashes WITHOUT a backtracking regex (ReDoS-safe).
@@ -60,6 +64,7 @@ export class EvolithRestClient {
     };
     this.fetcher = options.fetch ?? globalThis.fetch;
     this.timeoutMs = options.timeoutMs ?? 30_000;
+    this.satellites = new SatellitesClient(this.baseUrl, options.apiKey);
   }
 
   // ─── Gates ───────────────────────────────────────────────────────────────

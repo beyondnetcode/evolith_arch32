@@ -3,73 +3,87 @@ import {
   Get,
   Post,
   Patch,
-  Delete,
   Body,
   Param,
   HttpCode,
   HttpStatus,
+  NotFoundException,
 } from '@nestjs/common';
-import { ApiOperation, ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
-import { randomUUID } from 'crypto';
+import { ApiOperation, ApiBody, ApiParam } from '@nestjs/swagger';
 import { SatelliteRegistryService } from '../../application/services/satellite-registry.service';
-import { RegisterSatelliteDto, UpdateSatelliteDto } from '../dtos/satellite.dto';
+import {
+  CreateSatelliteDto,
+  UpdateSatelliteDto,
+  LinkSatelliteDto,
+} from '../dtos/satellite.dto';
+import { ApiEnvelopeResponse } from '../decorators/swagger-envelope.decorator';
 
-/** ADR-0073 response envelope */
-function envelope<T>(data: T, version = '1') {
-  return {
-    success: true,
-    data,
-    meta: {
-      requestId: randomUUID(),
-      timestamp: new Date().toISOString(),
-      version,
-    },
-  };
-}
-
-@ApiTags('satellites')
+/**
+ * GT-367: Satellite registry CRUD endpoints.
+ * GT-371: Extended with POST /satellites/:id/link for satellite-to-satellite linking.
+ */
 @Controller({ path: 'satellites', version: '1' })
 export class SatellitesController {
-  constructor(private readonly registry: SatelliteRegistryService) {}
+  constructor(private readonly registryService: SatelliteRegistryService) {}
+
+  // ── GT-367 ────────────────────────────────────────────────────────────────
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Register a new satellite' })
-  @ApiBody({ type: RegisterSatelliteDto })
-  register(@Body() dto: RegisterSatelliteDto) {
-    const record = this.registry.create(dto);
-    return envelope(record);
+  @ApiBody({ type: CreateSatelliteDto })
+  @ApiEnvelopeResponse(undefined, { status: 201, description: 'Satellite registered' })
+  register(@Body() body: CreateSatelliteDto) {
+    return this.registryService.register(body.id, body.name, body.parentCorePath);
   }
 
   @Get()
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'List all satellites' })
+  @ApiOperation({ summary: 'List all registered satellites' })
+  @ApiEnvelopeResponse(undefined, { description: 'List of satellite records' })
   findAll() {
-    return envelope(this.registry.findAll());
+    return this.registryService.findAll();
   }
 
   @Get(':id')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Get a satellite by id' })
-  @ApiParam({ name: 'id', description: 'Satellite UUID' })
+  @ApiOperation({ summary: 'Get a satellite by ID' })
+  @ApiParam({ name: 'id', description: 'Satellite ID' })
+  @ApiEnvelopeResponse(undefined, { description: 'Satellite record' })
   findOne(@Param('id') id: string) {
-    return envelope(this.registry.findById(id));
+    const record = this.registryService.findById(id);
+    if (!record) {
+      throw new NotFoundException(`Satellite '${id}' not found`);
+    }
+    return record;
   }
 
   @Patch(':id')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Update status or metadata of a satellite' })
-  @ApiParam({ name: 'id', description: 'Satellite UUID' })
+  @ApiOperation({ summary: 'Update a satellite record' })
+  @ApiParam({ name: 'id', description: 'Satellite ID' })
   @ApiBody({ type: UpdateSatelliteDto })
-  update(@Param('id') id: string, @Body() dto: UpdateSatelliteDto) {
-    return envelope(this.registry.update(id, dto));
+  @ApiEnvelopeResponse(undefined, { description: 'Updated satellite record' })
+  update(@Param('id') id: string, @Body() body: UpdateSatelliteDto) {
+    return this.registryService.update(id, body);
   }
 
-  @Delete(':id')
+  // ── GT-371 ────────────────────────────────────────────────────────────────
+
+  /**
+   * Link a satellite to a parent core satellite.
+   *
+   * POST /api/v1/satellites/:id/link
+   * Body: { targetSatelliteId: string }
+   *
+   * Sets source.linkedSatelliteId = target.id, source.status = 'linked',
+   * source.linkedAt = <now ISO>. Both source and target must already exist in
+   * the registry.
+   */
+  @Post(':id/link')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Soft-delete a satellite (sets status to archived)' })
-  @ApiParam({ name: 'id', description: 'Satellite UUID' })
-  remove(@Param('id') id: string) {
-    return envelope(this.registry.softDelete(id));
+  @ApiOperation({ summary: 'GT-371 — Link a satellite to a parent core satellite' })
+  @ApiParam({ name: 'id', description: 'Source satellite ID to be linked' })
+  @ApiBody({ type: LinkSatelliteDto })
+  @ApiEnvelopeResponse(undefined, { description: 'Updated source satellite record after linking' })
+  link(@Param('id') id: string, @Body() body: LinkSatelliteDto) {
+    return this.registryService.link(id, body.targetSatelliteId);
   }
 }

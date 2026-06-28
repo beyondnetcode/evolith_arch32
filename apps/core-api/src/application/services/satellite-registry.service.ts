@@ -1,96 +1,82 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { randomUUID } from 'crypto';
-import {
-  RegisterSatelliteDto,
-  UpdateSatelliteDto,
-  SatelliteStatus,
-} from '../../presentation/dtos/satellite.dto';
+import type { SatelliteRecord } from '../../presentation/dtos/satellite.dto';
 
 /**
- * In-memory record type for a registered satellite.
- * GT-369 will introduce a persistent repository; this MVP uses a Map-backed store
- * that can be swapped transparently via the repository pattern.
+ * GT-367: In-memory satellite registry service.
+ * GT-371: Extended with satellite-to-satellite linking capability.
+ *
+ * NOTE: The registry is currently in-memory (Map). A persistence layer
+ * (e.g. Redis or PostgreSQL) should be introduced in a follow-up ticket
+ * once the API contract stabilises.
  */
-export interface SatelliteRecord {
-  id: string;
-  name: string;
-  owner: string;
-  repoUrl: string;
-  cloneUrl: string;
-  sshUrl: string;
-  topology: string;
-  phase: string;
-  mode: string;
-  status: SatelliteStatus;
-  description?: string;
-  coreVersion?: string;
-  metadata?: Record<string, unknown>;
-  createdAt: string;
-  updatedAt: string;
-}
-
 @Injectable()
 export class SatelliteRegistryService {
-  /** In-memory store — will be replaced by a repository in GT-369 */
   private readonly registry = new Map<string, SatelliteRecord>();
 
-  create(dto: RegisterSatelliteDto): SatelliteRecord {
-    const now = new Date().toISOString();
+  // GT-367 ─────────────────────────────────────────────────────────────────
+
+  register(id: string, name: string, parentCorePath?: string): SatelliteRecord {
     const record: SatelliteRecord = {
-      id: randomUUID(),
-      name: dto.name,
-      owner: dto.owner,
-      repoUrl: dto.repoUrl,
-      cloneUrl: dto.cloneUrl,
-      sshUrl: dto.sshUrl,
-      topology: dto.topology,
-      phase: dto.phase,
-      mode: dto.mode,
-      status: SatelliteStatus.Active,
-      description: dto.description,
-      coreVersion: dto.coreVersion,
-      metadata: dto.metadata,
-      createdAt: now,
-      updatedAt: now,
+      id,
+      name,
+      status: 'registered',
+      parentCorePath,
+      registeredAt: new Date().toISOString(),
     };
-    this.registry.set(record.id, record);
+    this.registry.set(id, record);
     return record;
+  }
+
+  findById(id: string): SatelliteRecord | undefined {
+    return this.registry.get(id);
   }
 
   findAll(): SatelliteRecord[] {
     return Array.from(this.registry.values());
   }
 
-  findById(id: string): SatelliteRecord {
-    const record = this.registry.get(id);
-    if (!record) {
-      throw new NotFoundException(`Satellite with id '${id}' not found`);
+  update(id: string, patch: Partial<SatelliteRecord>): SatelliteRecord {
+    const existing = this.registry.get(id);
+    if (!existing) {
+      throw new NotFoundException(`Satellite '${id}' not found in registry`);
     }
-    return record;
-  }
-
-  update(id: string, dto: UpdateSatelliteDto): SatelliteRecord {
-    const existing = this.findById(id);
-    const updated: SatelliteRecord = {
-      ...existing,
-      ...(dto.status !== undefined && { status: dto.status }),
-      ...(dto.topology !== undefined && { topology: dto.topology }),
-      ...(dto.phase !== undefined && { phase: dto.phase }),
-      ...(dto.metadata !== undefined && { metadata: dto.metadata }),
-      updatedAt: new Date().toISOString(),
-    };
+    const updated: SatelliteRecord = { ...existing, ...patch };
     this.registry.set(id, updated);
     return updated;
   }
 
-  softDelete(id: string): SatelliteRecord {
-    const existing = this.findById(id);
-    const archived: SatelliteRecord = {
-      ...existing,
-      status: SatelliteStatus.Archived,
-      updatedAt: new Date().toISOString(),
+  // GT-371 ─────────────────────────────────────────────────────────────────
+
+  /**
+   * Link satellite `id` to the target core satellite `linkedSatelliteId`.
+   *
+   * Validates that both records exist in the registry, then marks the source
+   * satellite as 'linked' and captures the timestamp automatically.
+   *
+   * @param id               - ID of the satellite to be linked (source).
+   * @param linkedSatelliteId - ID of the parent core satellite (target).
+   * @returns The updated source {@link SatelliteRecord}.
+   * @throws NotFoundException if either satellite is not found in the registry.
+   */
+  link(id: string, linkedSatelliteId: string): SatelliteRecord {
+    const source = this.registry.get(id);
+    if (!source) {
+      throw new NotFoundException(`Source satellite '${id}' not found in registry`);
+    }
+
+    const target = this.registry.get(linkedSatelliteId);
+    if (!target) {
+      throw new NotFoundException(`Target satellite '${linkedSatelliteId}' not found in registry`);
+    }
+
+    const updated: SatelliteRecord = {
+      ...source,
+      linkedSatelliteId: target.id,
+      status: 'linked',
+      linkedAt: new Date().toISOString(),
     };
-    this.registry.set(id, archived);
-    return archived;
+
+    this.registry.set(id, updated);
+    return updated;
   }
 }

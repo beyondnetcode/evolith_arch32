@@ -20,7 +20,9 @@ import { CircuitBreakerService } from './infrastructure/resilience/circuit-break
 import { CoreReferenceQueryService } from './application/services/core-reference-query.service';
 import { ReferenceController } from './presentation/controllers/reference.controller';
 import { ComposableValidateController } from './presentation/controllers/composable-validate.controller';
+import { SatellitesController } from './presentation/controllers/satellites.controller';
 import { WorkspaceReferenceResolverService } from './application/services/workspace-reference-resolver.service';
+import { SatelliteRegistryService } from './application/services/satellite-registry.service';
 import { RedisCacheModule } from './infrastructure/cache/redis-cache.module';
 import { CacheMetricsService } from './infrastructure/cache/cache-metrics.service';
 import { SatellitesController } from './presentation/controllers/satellites.controller';

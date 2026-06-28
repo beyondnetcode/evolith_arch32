@@ -1,105 +1,75 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsOptional, IsEnum, IsObject } from 'class-validator';
+import { IsString, IsOptional, MinLength } from 'class-validator';
 
-/** Deployment topology of the satellite */
-export enum SatelliteTopology {
-  ModularMonolith = 'modular-monolith',
-  Microservices = 'microservices',
-  Serverless = 'serverless',
-  Hybrid = 'hybrid',
-}
-
-/** SDLC phase alias */
-export enum SatellitePhase {
-  F0 = 'f0',
-  F1 = 'f1',
-  F2 = 'f2',
-  F3 = 'f3',
-  F4 = 'f4',
-  F5 = 'f5',
-}
-
-/** Operational mode of the satellite */
-export enum SatelliteMode {
-  Active = 'active',
-  Maintenance = 'maintenance',
-  Deprecated = 'deprecated',
-}
-
-/** Lifecycle status of the satellite registry entry */
-export enum SatelliteStatus {
-  Active = 'active',
-  Inactive = 'inactive',
-  Archived = 'archived',
-}
-
-export class RegisterSatelliteDto {
-  @ApiProperty({ description: 'Human-readable name of the satellite', example: 'auth-service' })
+// GT-367: Base DTO for satellite registration
+export class CreateSatelliteDto {
+  @ApiProperty({ description: 'Unique satellite identifier', example: 'sat_001' })
   @IsString()
+  @MinLength(1)
+  id!: string;
+
+  @ApiProperty({ description: 'Human-readable satellite name', example: 'auth-service' })
+  @IsString()
+  @MinLength(1)
   name!: string;
 
-  @ApiProperty({ description: 'Owner team or individual', example: 'platform-team' })
-  @IsString()
-  owner!: string;
-
-  @ApiProperty({ description: 'Remote repository URL (HTTPS)', example: 'https://github.com/acme/auth-service' })
-  @IsString()
-  repoUrl!: string;
-
-  @ApiProperty({ description: 'Clone URL (HTTPS)', example: 'https://github.com/acme/auth-service.git' })
-  @IsString()
-  cloneUrl!: string;
-
-  @ApiProperty({ description: 'SSH clone URL', example: 'git@github.com:acme/auth-service.git' })
-  @IsString()
-  sshUrl!: string;
-
-  @ApiProperty({ enum: SatelliteTopology, description: 'Deployment topology' })
-  @IsEnum(SatelliteTopology)
-  topology!: SatelliteTopology;
-
-  @ApiProperty({ enum: SatellitePhase, description: 'Current SDLC phase' })
-  @IsEnum(SatellitePhase)
-  phase!: SatellitePhase;
-
-  @ApiProperty({ enum: SatelliteMode, description: 'Operational mode' })
-  @IsEnum(SatelliteMode)
-  mode!: SatelliteMode;
-
-  @ApiPropertyOptional({ description: 'Short description of the satellite' })
+  @ApiPropertyOptional({ description: 'Path to the core satellite this one extends', example: '/cores/auth' })
   @IsOptional()
   @IsString()
-  description?: string;
-
-  @ApiPropertyOptional({ description: 'Evolith Core version this satellite targets', example: '1.0.0' })
-  @IsOptional()
-  @IsString()
-  coreVersion?: string;
-
-  @ApiPropertyOptional({ description: 'Arbitrary metadata key-value pairs' })
-  @IsOptional()
-  @IsObject()
-  metadata?: Record<string, unknown>;
+  parentCorePath?: string;
 }
 
+// GT-367: DTO for updating a satellite record
+// GT-371: Extended with linking fields
 export class UpdateSatelliteDto {
-  @ApiPropertyOptional({ enum: SatelliteStatus, description: 'New lifecycle status' })
+  @ApiPropertyOptional({ description: 'Human-readable satellite name', example: 'auth-service' })
   @IsOptional()
-  @IsEnum(SatelliteStatus)
-  status?: SatelliteStatus;
+  @IsString()
+  name?: string;
 
-  @ApiPropertyOptional({ enum: SatelliteTopology, description: 'Updated topology' })
+  @ApiPropertyOptional({
+    description: 'GT-371: ID of the parent core satellite to link to',
+    example: 'sat_core_001',
+  })
   @IsOptional()
-  @IsEnum(SatelliteTopology)
-  topology?: SatelliteTopology;
+  @IsString()
+  linkedSatelliteId?: string;
 
-  @ApiPropertyOptional({ enum: SatellitePhase, description: 'Updated SDLC phase' })
+  @ApiPropertyOptional({
+    description: 'GT-371: Path to the parent core satellite',
+    example: '/cores/auth',
+  })
   @IsOptional()
-  @IsEnum(SatellitePhase)
-  phase?: SatellitePhase;
+  @IsString()
+  parentCorePath?: string;
 
-  @ApiPropertyOptional({ description: 'Updated metadata key-value pairs' })
+  @ApiPropertyOptional({
+    description: 'GT-371: ISO timestamp of when the link was established (auto-set by the service)',
+    example: '2026-06-28T00:00:00.000Z',
+  })
   @IsOptional()
-  @IsObject()
-  metadata?: Record<string, unknown>;
+  @IsString()
+  linkedAt?: string;
+}
+
+// GT-371: Request body for the link endpoint
+export class LinkSatelliteDto {
+  @ApiProperty({
+    description: 'ID of the target (parent core) satellite to link to',
+    example: 'sat_core_001',
+  })
+  @IsString()
+  @MinLength(1)
+  targetSatelliteId!: string;
+}
+
+// GT-367: Registry entry shape (internal, not a class-validator DTO)
+export interface SatelliteRecord {
+  id: string;
+  name: string;
+  status: 'registered' | 'linked';
+  parentCorePath?: string;
+  linkedSatelliteId?: string;
+  linkedAt?: string;
+  registeredAt: string;
 }

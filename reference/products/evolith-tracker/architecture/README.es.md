@@ -4,11 +4,12 @@
 
 **Clasificación:** Product-Specific Architecture  
 **Producto:** Evolith Tracker  
-**Core Gobernante:** [Evolith Core](../../../core/README.es.md)
+**Core Gobernante:** [Evolith Core](../../../core/README.es.md)  
+**Estado:** Conceptual / en fase de diseño — describe la arquitectura *objetivo*; aún no hay código de Tracker implementado.
 
-Esta área contiene la arquitectura interna de Evolith Tracker.
+Esta área define la arquitectura interna prevista de Evolith Tracker (diseño objetivo, no código entregado).
 
-## Alcance
+## Alcance (diseño objetivo)
 
 - arquitectura de contenedores y componentes;
 - bounded contexts y límites de agregados;
@@ -25,9 +26,11 @@ Esta área contiene la arquitectura interna de Evolith Tracker.
 - [Diseño de Interfaces Técnicas de Tracker](../../../governance/standards/vision/sdlc-tracker-technical-interfaces.es.md)
 - Secciones específicas de Tracker del [Diseño Objetivo de Composición Gobernada](../../../governance/standards/vision/evolith-governed-composition-target-design.es.md)
 
+> **Qué existe hoy.** No hay arquitectura de Tracker construida. Las únicas costuras entregadas que habilitan a Tracker viven en Core (`apps/core-api` solo REST bajo `/api/v1`, `packages/core-domain`); ver el delta [Qué Existe Hoy vs. el Objetivo](../README.es.md#31-qué-existe-hoy-vs-el-objetivo) en el README del producto para el inventario de costuras en vivo y sus referencias de gap-tracking.
+
 ## Límite
 
-Esta área implementa, pero no redefine:
+Por diseño, esta área implementa, pero no redefine:
 
 - principios arquitectónicos Core;
 - fases SDLC y semántica de Phase Gates;

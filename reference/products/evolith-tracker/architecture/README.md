@@ -4,11 +4,12 @@
 
 **Classification:** Product-Specific Architecture  
 **Product:** Evolith Tracker  
-**Governing Core:** [Evolith Core](../../../core/README.md)
+**Governing Core:** [Evolith Core](../../../core/README.md)  
+**Status:** Conceptual / design-stage — describes the *target* architecture; no Tracker code is implemented yet.
 
-This area contains the internal architecture of Evolith Tracker.
+This area defines the intended internal architecture of Evolith Tracker (design target, not shipped code).
 
-## Scope
+## Scope (design target)
 
 - container and component architecture;
 - bounded contexts and aggregate boundaries;
@@ -25,9 +26,11 @@ This area contains the internal architecture of Evolith Tracker.
 - [Tracker Technical Interface Design](../../../governance/standards/vision/sdlc-tracker-technical-interfaces.md)
 - Tracker-specific sections of the [Governed Composition Target Design](../../../governance/standards/vision/evolith-governed-composition-target-design.md)
 
+> **What exists today.** No Tracker architecture is built. The only shipped, Tracker-enabling seams live in Core (`apps/core-api` REST-only under `/api/v1`, `packages/core-domain`); see the [What Exists Today vs. the Target](../README.md#31-what-exists-today-vs-the-target) delta in the product README for the live-seam inventory and its gap-tracking references.
+
 ## Boundary
 
-This area implements, but does not redefine:
+By design, this area implements, but does not redefine:
 
 - Core architecture principles;
 - SDLC phases and Phase Gate semantics;

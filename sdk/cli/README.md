@@ -56,7 +56,7 @@ Or download the binary from [GitHub Releases](https://github.com/beyondnetcode/e
 
 ```bash
 smart-cli --version
-# smart-cli version 1.1.0
+# 1.1.4
 ```
 
 ### Troubleshooting
@@ -72,6 +72,22 @@ export PATH=$(npm config get prefix)/bin:$PATH
 ```
 
 **`WORKSPACE_ROOT` (optional):** the CLI ships a built-in default SDLC workflow, so it runs without any environment setup. Set `WORKSPACE_ROOT` to a checkout root only when you want to override the workflow/rulesets from disk (`$WORKSPACE_ROOT/rulesets/sdlc/default-workflow.yaml`).
+
+### Environment variables
+
+The CLI runs with zero configuration. The following variables are optional overrides. Those marked *(MCP)* are read by the bundled `@evolith/mcp-server` only while `smart-cli mcp serve` is running.
+
+| Variable | Read by | Purpose |
+|---|---|---|
+| `EVOLITH_PROFILE` | CLI | Selects the active named profile (per-environment defaults) instead of `default`. |
+| `EVOLITH_API_KEY` | CLI / MCP | API key for the MCP HTTP transport (equivalent to `--api-key`); required in production HTTP mode. |
+| `PORT` | CLI / MCP | Default HTTP port for `mcp serve --transport http` when `--port` is omitted (default `3000`). |
+| `OTEL_ENABLED` | CLI | When `true`, enables OpenTelemetry tracing export from the CLI. |
+| `WORKSPACE_ROOT` | Core | Checkout root for overriding the bundled workflow/rulesets from disk (see above). |
+| `MCP_HTTP_HOST` *(MCP)* | MCP | Bind host for the HTTP transport (default `0.0.0.0`; set `127.0.0.1` for local-only). |
+| `JWT_SECRET` *(MCP)* | MCP | HS256 secret enabling optional JWT bearer auth on the HTTP transport. |
+| `LOG_LEVEL` *(MCP)* | MCP | Log verbosity for the MCP server (default `info`). |
+| `NODE_ENV` *(MCP)* | MCP | `production` forces fail-closed auth/policy behavior in the MCP server. |
 
 ## Quickstart
 
@@ -129,6 +145,20 @@ smart-cli init --dry-run
 ```
 
 After `init` completes, the CLI prints suggested next steps including `validate`, `agents --install`, and `sdlc handoff`.
+
+---
+
+### init-wizard
+
+A fully guided, step-by-step alternative to `init` that walks through project name, runtime, monorepo strategy, and architecture pattern with interactive prompts. Use it for a first-time, hand-held setup; use `init` (with flags or `--config`) for scripted or non-interactive runs.
+
+```bash
+smart-cli init-wizard [options]
+
+Options:
+      --no-wizard        Fall back to the standard init flow instead of the wizard
+      --no-interactive   Run in non-interactive mode (CI/automation)
+```
 
 ---
 
@@ -208,6 +238,8 @@ Options:
 | `observability` | Logging, metrics, and tracing coverage |
 | `adr-0002` | ADR-0002 specific rules |
 
+The `rulesets` enum in `reference/config/evolith.config.schema.json` additionally recognizes: `satellite-contracts`, `executive-scorecards`, `compliance-baseline`, `definition-of-done`, `engineering-manifesto`, `repository-taxonomy`, `phase-gates`, `quality-thresholds`, and `dependency-pinning`. These are valid configuration values even though the common `--ruleset` shortcuts above cover the day-to-day set.
+
 **Available ADR rules (`--adr`):** `adr-0002`, `adr-0005`, `adr-0010`, `adr-0018`, `adr-0032`, `adr-0040`, `adr-0050`
 
 **Validation engines:**
@@ -221,6 +253,8 @@ When `--composable` is set, the CLI auto-resolves which validation modes to acti
 - `RulesetValidationMode` — activated when `--ruleset` is present
 - `AdrValidationMode` — activated when `--adr` is present
 - `AdhocValidationMode` — activated when `--file` is present
+
+**Exit codes:** `validate` exits `0` when the repository passes (including `warning` status) and `1` when the result status is `failed`. The `gate`, `phase advance`, and `scaffold` commands likewise exit `1` on failure, and any unhandled error during CLI startup exits `1`. This makes the CLI safe to gate CI pipelines on. In `--format json`, the failure detail is carried in the ADR-0073 envelope rather than printed as prose.
 
 **Examples:**
 
@@ -912,9 +946,13 @@ Pre-built scripts are also included in the package under `shell/`:
 
 ## MCP Server
 
-The Evolith CLI includes a production-ready MCP server for AI agent integration.
+The Evolith CLI bundles a production-ready MCP server for AI agent integration.
+
+> **Deprecation notice:** `smart-cli mcp` prints a deprecation warning on startup and will be removed in a future major version. The MCP server now ships as a standalone package — migrate to `@evolith/mcp-server` (`npx @evolith/mcp-server serve` or the `evolith-mcp serve` binary). The CLI command continues to work in the meantime by lazily delegating to that package.
 
 ### Starting the Server
+
+`mcp` takes an optional positional action that defaults to `serve`, so `smart-cli mcp` and `smart-cli mcp serve` are equivalent.
 
 ```bash
 # stdio transport (default — for Cursor, Claude Desktop)
@@ -928,13 +966,17 @@ smart-cli mcp serve --transport http --port 3000 --api-key <secret>
 ```
 
 ```bash
-smart-cli mcp serve [options]
+smart-cli mcp [action] [options]
+
+Actions:
+  serve       Start the MCP server (default)
+  version     Print a static MCP server version banner (does not read the @evolith/mcp-server package version)
 
 Options:
-  -t, --transport <type>   Transport: stdio (default) or http
-  -p, --port <number>      HTTP server port (default: 3000)
-      --api-key <key>      API key for HTTP transport authentication
-      --no-confirm         Skip confirmation prompts
+  -t, --transport <stdio|http>   Transport: stdio (default) or http
+  -p, --port <number>            HTTP server port (default: 3000, or $PORT)
+      --api-key <key>            API key for HTTP transport authentication (or $EVOLITH_API_KEY)
+      --no-confirm               Skip confirmation prompts
 ```
 
 ### Smoke Test
@@ -947,20 +989,52 @@ Verifies `initialize`, `tools/list`, `resources/list`, `prompts/list`, and a rea
 
 ### Available MCP Tools
 
+The bundled server registers **27 tools**. The live, authoritative set is always browsable with `smart-cli api --list --category tools`; the table below mirrors the current `@evolith/mcp-server` registry.
+
+**Validation & architecture**
+
 | Tool | Description |
 |------|-------------|
-| `evolith-validate` | Validate repository compliance |
+| `evolith-validate` | Validate a satellite repository against Evolith rules (end-to-end pipeline via manifest) |
+| `evolith-composable-validate` | Validate with the composable engine (GT-312): SDLC, Architecture, Ruleset, ADR, Ad-hoc modes (combinable) |
+| `evolith-architecture-validate` | Validate architecture against the declared topology with optional deep analysis |
+| `evolith-drift-detect` | Detect architecture drift in a repository |
+| `evolith-auto-fix` | Apply automatic fixes to architectural violations reported by Core rule evaluators |
+| `evolith-topology-list` | List all available architecture topologies in Evolith Core |
+| `evolith-topology-get` | Get a specific architecture topology by id |
+
+**SDLC, gates & metrics**
+
+| Tool | Description |
+|------|-------------|
+| `evolith-gate-evaluate` | Evaluate a specific SDLC phase gate |
+| `evolith-phase-advance` | Propose an SDLC phase transition by evaluating exit criteria |
+| `evolith-sdlc-handoff` | Perform a phase gate handoff (e.g. phase-0 → phase-1) |
+| `evolith-sdlc-status` | Get the current SDLC phase status |
+| `evolith-dora-metrics` | Calculate DORA metric approximations from git log history |
+| `evolith-metrics` | Get MCP server metrics (per-tool call counts, latency, failures) |
+
+**Agents**
+
+| Tool | Description |
+|------|-------------|
 | `evolith-agent-install` | Install a new BMAD agent |
 | `evolith-agent-list` | List installed agents |
-| `evolith-agent-validate` | Validate agent ruleset |
+| `evolith-agent-validate` | Validate an agent ruleset |
 | `evolith-agent-upgrade` | Upgrade an existing agent |
 | `evolith-agent-remove` | Remove an agent |
-| `evolith-architecture-validate` | Validate architecture (F1/F2/F3) with optional deep analysis |
-| `evolith-sdlc-handoff` | Generate phase handoff artifact manifest |
-| `evolith-sdlc-status` | Show SDLC phase gate status |
-| `evolith-config-get` | Get a configuration value from `evolith.yaml` |
-| `evolith-config-set` | Set a configuration value in `evolith.yaml` |
-| `evolith-metrics` | Get MCP server metrics |
+
+**Configuration**
+
+| Tool | Description |
+|------|-------------|
+| `evolith-config-get` | Get an Evolith configuration value |
+| `evolith-config-set` | Set an Evolith configuration value |
+
+**MoSCoW prioritization**
+
+| Tool | Description |
+|------|-------------|
 | `evolith-moscow-create` | Create a new MoSCoW prioritization analysis |
 | `evolith-moscow-load` | Load an existing MoSCoW analysis |
 | `evolith-moscow-update` | Update an item in a MoSCoW analysis |
@@ -1023,7 +1097,7 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 smart-cli validate --phase design --format json --output gate-evidence.json
 
 # With explicit SatelliteManifest
-smart-cli validate --manifest ./satellite-manifest.json --phase f3 --format json
+smart-cli validate --manifest ./satellite-manifest.json --phase construction --format json
 ```
 
 ### Gate Evaluation in CI
@@ -1183,6 +1257,8 @@ sdk/cli/
 ---
 
 ## Contributing
+
+See the repository-root [CONTRIBUTING.md](../../CONTRIBUTING.md) for the full workflow, branch/commit conventions, and authoring standards.
 
 1. Fork the repository
 2. Create a feature branch

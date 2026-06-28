@@ -25,6 +25,7 @@ Los documentos de producto implementan Evolith Core y SDLC Governance. No pueden
 | [Hub del Core API](./core-api/README.es.md) | Producto activo: servicio central de validación y gobernanza | Motor de evaluación de reglas Core | Hub de producto | No |
 | [Evolith MCP Services](./mcp-services/README.es.md) | Producto activo: servicios de interacción MCP gobernados (HTTP, fail-closed, API-key) | Exponer interacciones MCP gobernadas | Hub de producto | No |
 | [Hub de Referencia UMS](./ums-reference/README.es.md) | Producto de referencia: el satélite open-source UMS es el modelo aplicado oficial del corpus | Anclar la referencia empresarial aplicada | Hub de producto (referencia) | No |
+| [Mapa de Ecosistema y Comunicación](./ecosystem-and-communication.es.md) | Relaciones entre productos, superficies de comunicación, flujo SDLC y modelo de fuente de verdad (diagramas Mermaid) | Ver cómo encajan los productos | Vista cross-product | No |
 | Productos futuros | Se añaden solo tras aprobar su Product Vision | Crecer la suite bajo gobernanza | Hub de producto (planificado) | No |
 
 ## Contenido Permitido

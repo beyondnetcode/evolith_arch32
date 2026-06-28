@@ -4,6 +4,15 @@ Shared business-logic **facade** for the Evolith platform. It is a thin
 re-export barrel over [`@evolith/core-domain`](../core-domain), giving the Smart
 CLI, MCP Server and Core API a single, stable import surface.
 
+## Installation
+
+```bash
+npm install @evolith/core
+```
+
+Requires **Node.js 20+**. The only runtime dependency is `@evolith/core-domain`,
+which is the authoritative source for every re-exported symbol.
+
 ## Supported import surface
 
 Import everything from the **root specifier only** — there are no subpath
@@ -45,6 +54,11 @@ package only adjusts the import ergonomics and version surface.
 - Some re-exported services (e.g. `TopologyCatalogService`, the ruleset
   validators) read governance assets from a workspace root; consult the
   `@evolith/core-domain` README for the `WORKSPACE_ROOT` requirement.
+
+## Development
+
+Build and test locally with `npm run build` / `npm test`. Contributions follow the
+repo-root [CONTRIBUTING.md](../../CONTRIBUTING.md).
 
 ## License
 

@@ -57,17 +57,18 @@ smart-cli mcp serve
 
 ## Command reference
 
-The CLI exposes **20 command groups** (the generated inventory counts individual subcommands separately, hence a higher figure). One concise line each — for full options and examples, follow the link to the [code README](../../../sdk/cli/README.md).
+The CLI registers **21 top-level commands** (the generated inventory counts individual subcommands separately, hence a higher figure). One concise line each — for full options and examples, follow the link to the [code README](../../../sdk/cli/README.md).
 
 | Command | Purpose |
 |---|---|
 | `init` | Initialize a satellite repository (creates `evolith.yaml` and project structure). |
+| `init-wizard` | Interactive wizard for guided project initialization (alternative to `init`). |
 | `docs` | Scaffold base documentation (`README.md`, `AGENTS.md`, `MASTER_INDEX.md`, `evolith.yaml`). |
-| `validate` | Validate repository compliance against rulesets, topologies, ADRs, and SDLC phases. |
+| `validate` | Validate repository compliance against rulesets, topologies, ADRs, and SDLC phases (architecture validation runs via `validate --topology`). |
 | `adr` | Manage Architecture Decision Records (create, list, get, update, matrix). |
 | `standards` | Manage governance standards (init, list, get, validate, export). |
 | `agents` | Install, list, and remove Evolith BMAD agents. |
-| `architecture` | Inspect and validate architecture against the declared topology. |
+| `scaffold` | Scaffold a satellite along the progressive maturity axis (phase 1 modular-monolith → 2 distributed-modules → 3 microservices). |
 | `drift` | Detect architecture drift from the declared topology; track history and trends. |
 | `gate` | Evaluate SDLC phase gates and emit ADR-0073 `GateEvidence` artifacts. |
 | `phase` | Propose a transition between SDLC phases (emits a proposal artifact). |
@@ -144,7 +145,7 @@ The final SDLC phase is **Delivery & Operations**. Evaluate gates and emit evide
 
 ## MCP server (AI agent integration)
 
-The MCP server ships **inside** `@evolith/smart-cli` — there is no separate install. It exposes the full Evolith surface to AI agents.
+The CLI can launch the MCP server via `smart-cli mcp serve`, which exposes the full Evolith surface to AI agents. Under the hood this command prints a deprecation warning and lazily delegates to the **standalone `@evolith/mcp-server` package** (a dependency of the CLI). `smart-cli mcp` will be removed in a future major version — migrate to `npx @evolith/mcp-server serve` (or the `evolith-mcp serve` binary). See the [MCP Services product](../mcp-services/README.md) for the authoritative surface.
 
 | Surface | Count |
 |---|---|

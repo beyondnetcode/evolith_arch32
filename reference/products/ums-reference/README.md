@@ -18,6 +18,8 @@ The legacy To-Do sandbox was retired because it could not credibly demonstrate e
 
 UMS evidence is consumed by this corpus through ADR candidates, canonical pattern extraction, and traceability practices — never as authoritative policy. The boundary between corpus rules and product evidence is explicit (see [Reference vs Applied Model](../../knowledge/demo/demo-vs-reference.md)).
 
+> **Source and verification note:** UMS is an external satellite repository, not a submodule of this corpus. Architectural facts in this hub are sourced from the canonical [UMS Technical Overview](../../knowledge/demo/ums-technical-overview.md), not verified against live UMS source from inside this repo. For install, prerequisites, environment, and run steps, follow the [upstream repository](https://github.com/beyondnetcode/ums) — this hub is a pointer, not a replacement for upstream setup docs.
+
 ---
 
 ## 2. Product Surface
@@ -37,7 +39,7 @@ UMS evidence is consumed by this corpus through ADR candidates, canonical patter
 
 UMS implements a modular monolith satellite that adopts, extends, and specializes Evolith Core rulesets. Use it to study:
 
-- Bounded context isolation (Identity, Access, IGA, Audit, Compliance, Approvals, Configuration).
+- Bounded context isolation across the 8 canonical contexts: Identity (EP-01), Authorization (EP-02), Configuration (EP-03), Audit (EP-04), Console/Admin (EP-05), Approvals (EP-06), Compliance (EP-07), IGA (EP-08).
 - Clean / hexagonal architecture across .NET 8 + EF Core + SQL Server.
 - API protocol separation: REST commands + GraphQL queries.
 - Production-grade observability with OpenTelemetry context propagation.

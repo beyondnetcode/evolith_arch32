@@ -33,11 +33,11 @@ Desacopla el servidor MCP del CLI. Es un producto de primera clase que expone la
 
 ```mermaid
 sequenceDiagram
-    participant Agent as "🤖 AI Agent<br/>(Cursor, Claude Desktop, Custom)"
-    participant Gateway as "🚪 MCP Gateway<br/>@evolith/mcp-server"
-    participant Core as "🧠 Business Logic<br/>@evolith/core"
-    participant FS as "📁 File System"
-    participant Git as "🗃️ Git"
+    participant Agent as "AI Agent<br/>(Cursor, Claude Desktop, Custom)"
+    participant Gateway as "MCP Gateway<br/>@evolith/mcp-server"
+    participant Core as "Business Logic<br/>@evolith/core"
+    participant FS as "File System"
+    participant Git as "Git"
 
     Note over Agent,Gateway: Transport: stdio (local) or Streamable HTTP (remote)
 
@@ -75,6 +75,8 @@ sequenceDiagram
 | **stdio** (JSON-RPC 2.0) | Agentes locales, Cursor, Claude Desktop | `evolith-mcp serve` |
 | **Streamable HTTP** (SDK oficial MCP) | Agentes remotos, escalabilidad | `evolith-mcp serve --transport http --port 49100` |
 
+> El **puerto por defecto es `3000`** (`main.ts`: env `PORT` o `--port`, fallback `3000`). El `49100` de los ejemplos es un valor arbitrario, no el default.
+>
 > Los logs siempre se escriben a **stderr** (Pino), porque stdout está reservado para el stream JSON-RPC del transporte stdio.
 
 ---
@@ -160,9 +162,9 @@ El `AbacEvaluator` controla qué tools puede invocar cada usuario según sus rol
 | Tipo de tool | Roles permitidos | Entorno |
 |---|---|---|
 | Read (list, get, status) | Todos los roles autenticados | Cualquiera |
-| Write (fix, install, set) | `operator`, `architect`, `admin` | Cualquiera |
+| Write (fix, install, set) | `operator`, `sre`, `architect`, `admin` | Cualquiera |
 | Write | `developer`, `qa` | Solo no-producción |
-| Deploy (deploy, publish, merge) | `architect`, `operator` | Cualquiera |
+| Deploy (deploy, publish, merge) | `architect`, `admin`, `operator`, `sre` | Cualquiera |
 | Deploy | Cualquiera excepto `architect` | **Bloqueado en producción** |
 
 **Códigos ABAC:**
@@ -172,6 +174,10 @@ El `AbacEvaluator` controla qué tools puede invocar cada usuario según sus rol
 | `ABAC-01` | Tool denegada para el rol/entorno del usuario |
 | `ABAC-02` | Usuario sin roles — todas las tools denegadas |
 | `ABAC-03` | Tool no clasificada en ningún grupo conocido |
+
+**Clasificación de tools (heurística por substring).** Los conjuntos de roles internos son `DEVELOPER = {developer, qa}`, `OPERATOR = {operator, sre}`, `ARCHITECT = {architect, admin}`. La clasificación read/write/deploy de cada tool es heurística sobre su nombre (`abac-evaluator.ts`): cuenta como **read** si el nombre contiene `read`/`list`/`get` (o no empieza por `evolith-`); como **write** si contiene `write`/`replace`/`run`/`fix`/`advance`; como **deploy** si contiene `deploy`/`publish`/`merge`. Por esa heurística `evolith-phase-advance` se clasifica como **write** (substring `advance`), aunque solo proponga la transición. Una tool que no encaje en ningún grupo se rechaza con `ABAC-03`.
+
+**Precedencia de autenticación (HTTP).** El guard (`mcp-server-auth.ts`) evalúa primero la **API key**: si el `Authorization: Bearer <token>` o el header `x-api-key` coincide con `EVOLITH_API_KEY`, otorga un contexto `admin` (rol `admin`, todas las tools permitidas). Solo si la key no coincide y `JWT_SECRET` está definido se intenta validar el Bearer como **JWT HS256**; en ese caso los `roles` del payload JWT son los que alimentan ABAC. `/health` es público. En producción la auth es obligatoria (ignora `EVOLITH_MCP_ALLOW_NO_AUTH`).
 
 ---
 
@@ -194,7 +200,7 @@ Las tools se obtienen en runtime via `tools/list`. Todas retornan datos crudos q
   "corePath": "string — ruta al Core de Evolith",
   "engine": "'native' | 'opa' — motor de evaluación (default: native)",
   "topology": "'modular-monolith' | 'microservices' | 'serverless' | ... — activa modo Architecture",
-  "phase": "'discovery' | 'design' | 'construction' | 'qa' | 'release' — activa modo SDLC",
+  "phase": "'discovery' | 'design' | 'construction' | 'qa' | 'release' — activa modo SDLC (el schema también acepta los alias legacy 'f1'..'f5', deprecados)",
   "ruleset": "string — activa modo Ruleset",
   "adr": "'adr-0002' | 'adr-0005' | 'adr-0010' | ... — activa modo ADR",
   "file": "string — activa modo Ad-hoc sobre un archivo"
@@ -259,7 +265,7 @@ Los modos se activan combinando campos. Se pueden usar varios en una sola llamad
 |---|---|---|
 | `evolith-sdlc-status` | Obtiene el estado actual de la fase SDLC del repositorio | No |
 | `evolith-sdlc-handoff` | Ejecuta el handoff de fase generando el manifiesto de evidencia | **Sí** |
-| `evolith-dora-metrics` | Calcula las métricas DORA (deployment frequency, lead time, MTTR, CFR) | No |
+| `evolith-dora-metrics` | Aproxima métricas DORA desde el historial de Git: deployment frequency, lead time (aprox.), total y merge commits en la ventana (`days`, default 90) | No |
 
 ---
 
@@ -267,13 +273,15 @@ Los modos se activan combinando campos. Se pueden usar varios en una sola llamad
 
 | Tool | Descripción | Mutativa |
 |---|---|---|
-| `evolith-moscow-create` | Crea una matriz MoSCoW para una fase del proyecto | **Sí** |
+| `evolith-moscow-create` | Crea una matriz MoSCoW para una fase del proyecto | No² |
 | `evolith-moscow-load` | Carga una matriz MoSCoW existente | No |
-| `evolith-moscow-update` | Actualiza ítems en la matriz MoSCoW | **Sí** |
-| `evolith-moscow-remove` | Elimina ítems de la matriz | **Sí** |
+| `evolith-moscow-update` | Actualiza ítems en la matriz MoSCoW | No² |
+| `evolith-moscow-remove` | Elimina ítems de la matriz | No² |
 | `evolith-moscow-list` | Lista las matrices MoSCoW del proyecto | No |
 | `evolith-moscow-validate` | Valida que la matriz está bien formada | No |
 | `evolith-moscow-report` | Genera un reporte de priorización MoSCoW | No |
+
+> ² Las tools MoSCoW escriben en `.evolith/moscow/{phase}.json` pero **no** declaran `mutative: true` en el código (`moscow.tools.ts`), por lo que el dispatcher **no** exige `apply`/`approvalToken`. Trátalas como operaciones de escritura no protegidas por el guard mutativo.
 
 ---
 
@@ -390,9 +398,8 @@ Las tools marcadas como mutativas (`mutative: true`) requieren **aprobación exp
 | `evolith-config-set` | Modifica `evolith.yaml` |
 | `evolith-sdlc-handoff` | Genera el manifiesto de handoff y escribe estado |
 | `evolith-auto-fix` | Aplica correcciones automáticas al código |
-| `evolith-moscow-create` | Crea archivo `.evolith/moscow/{phase}.json` |
-| `evolith-moscow-update` | Modifica ítems en la matriz |
-| `evolith-moscow-remove` | Elimina ítems de la matriz |
+
+> Exactamente **6** tools declaran `mutative: true` en el código (`config-set`, `sdlc-handoff`, `agent-install`, `agent-upgrade`, `agent-remove`, `auto-fix`). Las tools MoSCoW escriben en disco pero **no** están marcadas como mutativas, por lo que el guard `apply`/`approvalToken` **no** aplica a ellas.
 
 ---
 
@@ -645,14 +652,14 @@ Retorna métricas internas del Gateway:
 
 ```json
 {
+  "uptimeMs": 1820345,
   "totalCalls": 142,
-  "successCalls": 138,
-  "errorCalls": 4,
-  "avgLatencyMs": 23,
-  "toolBreakdown": {
-    "evolith-validate": { "calls": 80, "avgMs": 18 },
-    "evolith-gate-evaluate": { "calls": 32, "avgMs": 31 }
-  }
+  "totalFailures": 4,
+  "tools": {
+    "evolith-validate": { "calls": 80, "failures": 1, "totalLatencyMs": 1440, "avgLatencyMs": 18 },
+    "evolith-gate-evaluate": { "calls": 32, "failures": 0, "totalLatencyMs": 992, "avgLatencyMs": 31 }
+  },
+  "recentErrors": ["RULESET_NOT_FOUND: ..."]
 }
 ```
 
@@ -709,7 +716,7 @@ La caché degrada gracefulmente. Los resources se servirán directamente desde e
 
 ### OPA: `policy.wasm not found`
 
-El evaluador OPA requiere `sdk/cli/rulesets/opa/policy.wasm` bajo `CORE_PATH`. Si el archivo no existe, el evaluador retorna `allowed: true` (fail-open) y registra el warning. Para usar evaluación nativa, no especificar `engine: "opa"`.
+El evaluador OPA requiere `sdk/cli/rulesets/opa/policy.wasm` bajo `CORE_PATH`. El comportamiento ante una policy ausente es **fail-closed** (GT-348/349), no fail-open: si el archivo no existe y `NODE_ENV === "production"`, el evaluador retorna `allowed: false` con la violación `ABAC_POLICY_MISSING` (denegación dura). Solo en entornos **no productivos** el evaluador OPA se abstiene devolviendo `allowed: true` para delegar en la política nativa. Un error del motor OPA siempre deniega. Para forzar evaluación nativa, no especificar `engine: "opa"`.
 
 ---
 

@@ -95,35 +95,53 @@ Los endpoints `/health` y `/metrics` son **version-neutral** (sin prefijo) para 
 
 ### Envelope Pattern
 
-Todos los responses de dominio se envuelven automáticamente:
+Todos los responses de dominio se envuelven automáticamente vía `EnvelopeInterceptor`. El objeto `meta` es **plano** (sin `timing` anidado):
 
 ```json
 {
   "success": true,
   "data": { ... },
   "meta": {
+    "command": "http POST /api/v1/projects/initialize",
+    "executedAt": "2026-06-27T10:00:00.000Z",
+    "durationMs": 42,
     "correlationId": "evl-abc123",
-    "timestamp": "2026-06-27T10:00:00Z"
+    "context": { "initiative": "gov-audit", "tenant": "default", "phase": "discovery" },
+    "schemaVersion": "1.0.0"
   }
 }
 ```
 
-En error:
+En error (vía `HttpExceptionFilter`, con `error.details` en formato RFC 9457 Problem Details y cabecera `X-Problem-Format: rfc9457`):
 
 ```json
 {
   "success": false,
   "error": {
-    "code": "VALIDATION_ERROR",
-    "message": "workspaceRef is required",
-    "details": [ ... ]
+    "code": "BAD_REQUEST",
+    "message": "Validation failed",
+    "details": {
+      "type": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400",
+      "title": "Bad Request",
+      "status": 400,
+      "detail": "Validation failed",
+      "instance": "/api/v1/projects/initialize",
+      "timestamp": "2026-06-27T10:00:00.000Z",
+      "errors": ["workspaceRef must be longer than or equal to 1 characters"]
+    }
   },
   "meta": {
+    "command": "http POST /api/v1/projects/initialize",
+    "executedAt": "2026-06-27T10:00:00.000Z",
+    "durationMs": 12,
     "correlationId": "evl-abc123",
-    "timestamp": "2026-06-27T10:00:00Z"
+    "context": {},
+    "schemaVersion": "1.0.0"
   }
 }
 ```
+
+> `error.code` ∈ `BAD_REQUEST`, `UNAUTHORIZED`, `FORBIDDEN`, `NOT_FOUND`, `CONFLICT`, `UNPROCESSABLE_ENTITY`, `TOO_MANY_REQUESTS`, `INTERNAL_ERROR`.
 
 ---
 
@@ -169,13 +187,16 @@ npm run start:prod
 | `NODE_ENV` | `development` | Entorno: `development`, `production`, `test` |
 | `CORE_PATH` | `process.cwd()` | **Ruta absoluta** al repositorio Evolith Core (contiene `rulesets/`, `reference/`, etc.) |
 | `WORKSPACE_ROOT` | `/tmp/evolith-workspaces` | Directorio raíz donde el Tracker monta los workspace de los tenants |
-| `ALLOWED_ORIGINS` | `*` | Orígenes CORS permitidos (legacy; preferir `CORS_ORIGINS` en prod) |
-| `CORS_ORIGINS` | — | CSV de orígenes permitidos en producción (ej: `https://tracker.evolith.io,https://app.evolith.io`) |
+| `CORS_ORIGINS` | — | CSV de orígenes permitidos en producción (ej: `https://tracker.evolith.io,https://app.evolith.io`). En `production` sin este valor se **deniega** todo cross-origin; `*` permite todos. |
 | `SWAGGER_ENABLED` | — | `"true"` para forzar Swagger en producción. En `development` siempre activo. |
 | `REDIS_URL` | — | URL completa Redis (ej: `redis://user:pass@host:6379`). Tiene prioridad sobre HOST/PORT. |
 | `REDIS_HOST` | `localhost` | Host Redis |
 | `REDIS_PORT` | `6379` | Puerto Redis |
 | `REDIS_PASSWORD` | — | Contraseña Redis |
+| `OTEL_ENABLED` | — | `"true"` para activar tracing OTel fuera de producción. En `production` siempre activo. |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | `http://localhost:4318/v1/traces` | Endpoint OTLP-HTTP del collector de trazas |
+
+> `OTEL_ENABLED` y `OTEL_EXPORTER_OTLP_ENDPOINT` se leen directamente en `tracing.ts` y no pasan por el `envSchema` de Zod.
 
 ### Archivo `.env` de ejemplo
 
@@ -202,10 +223,10 @@ REDIS_PASSWORD=
 ### CORS
 
 - **`development`**: permite `*` (todos los orígenes)
-- **`production`**: requiere `CORS_ORIGINS` con lista CSV de orígenes permitidos
-- Métodos: `GET, POST, PUT, PATCH, DELETE`
-- Headers: `Content-Type`, `x-correlation-id`
-- Credentials: habilitadas en producción
+- **`production`**: usa `CORS_ORIGINS` (CSV). Si está vacío/ausente → se deniega todo cross-origin; `CORS_ORIGINS=*` permite todos (despliegues internos/BFF)
+- Métodos: `GET, POST, PUT, PATCH, DELETE, OPTIONS`
+- Headers permitidos: `Content-Type`, `Authorization`, `x-correlation-id`, `x-api-key`
+- Credentials: `false` (deshabilitadas)
 
 ---
 
@@ -219,7 +240,9 @@ Los endpoints de Core-API **no requieren autenticación propia** en la capa REST
 
 - **Helmet**: habilitado globalmente (XSS, HSTS, CSP, etc.)
 - **`x-correlation-id`**: propagado en todos los requests. Si el cliente lo envía, se preserva; si no, se genera automáticamente.
+- **Headers de contexto de entrada**: `CorrelationIdMiddleware` lee `x-evolith-initiative`, `x-evolith-tenant` y `x-evolith-phase` (con fallback a query/body) y los propaga a `meta.context` del envelope de salida. Son cabeceras de **entrada** opcionales que el cliente (Tracker BFF) puede enviar para etiquetar la traza.
 - **SecurityAuditInterceptor**: loguea cada request con correlationId, método, path y resultado.
+- **Rate limiting**: `ThrottlerModule` global a **100 req / 60 s** por cliente (`AuditThrottlerGuard`, que además loguea cada `RATE_LIMIT_HIT`). Superarlo devuelve `429`. Los endpoints `/health*` y `/metrics` están exentos vía `@SkipThrottle()`.
 
 ### ValidationPipe
 
@@ -227,6 +250,13 @@ Todos los DTOs son validados con `class-validator`:
 - `whitelist: true` — descarta propiedades no declaradas en el DTO
 - `forbidNonWhitelisted: true` — retorna error 400 si se envían propiedades extra
 - `transform: true` — convierte tipos automáticamente (string → number, etc.)
+
+**Validación de `workspaceRef`:** además del DTO, `WorkspaceReferenceResolverService.resolve()` exige que el `workspaceRef` cumpla `/^[A-Za-z0-9_-]{1,128}$/` y que la ruta resuelta permanezca dentro de `WORKSPACE_ROOT`. Un formato inválido o un intento de path-traversal devuelven `400 BAD_REQUEST` — es el 4xx más probable que verá un cliente.
+
+### Mecanismos transversales opcionales
+
+- **Opt-out del envelope (`@RawResponse()`)**: decorador re-exportado desde `envelope.interceptor.ts` que marca una ruta (vía metadata `raw`) para que `EnvelopeInterceptor` devuelva el body sin envolver. Disponible como mecanismo; ninguna ruta de producción lo usa actualmente — `GET /metrics` emite texto Prometheus crudo usando `@Res()` (que ya evita los interceptores de Nest).
+- **Deprecación de rutas (`@Deprecated()` + `DeprecationInterceptor`)**: registrado globalmente, emite las cabeceras `Deprecation`, `Sunset` y `Link` (RFC 8594/9745) cuando una ruta se anota con `@Deprecated()`. Disponible como mecanismo; ninguna ruta actual lo usa todavía.
 
 ---
 
@@ -236,10 +266,10 @@ Todos los DTOs son validados con `class-validator`:
 
 #### `GET /health`
 
-Retorna el estado general del servicio.
+Retorna el estado general del servicio. Es un chequeo ligero del proceso (`HealthService.getHealthStatus()`); **no** verifica el corpus ni las dependencias — para la comprobación de readiness usar `GET /health/ready`.
 
 ```json
-{ "status": "UP", "version": "1.0.0" }
+{ "status": "OK", "service": "Evolith Core API", "timestamp": "2026-06-27T10:00:00.000Z" }
 ```
 
 #### `GET /health/live`
@@ -252,12 +282,12 @@ Liveness probe para Kubernetes. Responde `200` si el proceso está vivo.
 
 #### `GET /health/ready`
 
-Readiness probe para Kubernetes. Responde `200` si el servicio está listo para tráfico.
+Readiness probe para Kubernetes. Verifica que el corpus (`rulesets/phase-gates/phase-gates.rules.json` bajo `CORE_PATH`) y las métricas sean accesibles. Responde `200` si está listo, o `503` con `status: "DOWN"` si algún check falla.
 
 ```json
 {
   "status": "UP",
-  "checks": { "metrics": "UP" },
+  "checks": { "corpus": "UP", "metrics": "UP" },
   "timestamp": "2026-06-27T10:00:00Z"
 }
 ```
@@ -297,9 +327,9 @@ Inicializa un nuevo proyecto en el workspace del tenant.
 
 | Campo | Tipo | Requerido | Descripción |
 |---|---|---|---|
-| `workspaceRef` | `string` | ✅ | Referencia opaca de workspace emitida por el Tracker BFF |
-| `name` | `string` | ✅ | Nombre del proyecto (mínimo 1 carácter) |
-| `type` | `string` | ✅ | Tipo de proyecto (ej: `nestjs`, `nextjs`, `python`) |
+| `workspaceRef` | `string` | Sí | Referencia opaca de workspace emitida por el Tracker BFF |
+| `name` | `string` | Sí | Nombre del proyecto (mínimo 1 carácter) |
+| `type` | `string` | Sí | Tipo de proyecto (ej: `nestjs`, `nextjs`, `python`) |
 | `options` | `object` | — | Opciones de scaffolding (ver tabla de opciones) |
 
 **Opciones disponibles:**
@@ -315,6 +345,8 @@ Inicializa un nuevo proyecto en el workspace del tenant.
 | `observability` | `opentelemetry` | `opentelemetry`, `datadog`, `none` |
 | `features` | `[]` | Array de features adicionales |
 | `agents` | `[]` | Agentes Evolith a instalar |
+
+> **Nota de validación:** `options` es `@IsOptional()` `Record<string, unknown>` en el DTO — sus claves internas (incluido `apiProtocol`) **no** se validan contra un enum. Las columnas de "Valores" anteriores son pistas para el scaffolder, no un contrato impuesto por la API: cualquier string pasa la validación del DTO y se delega al scaffolder.
 
 **Response `201`:**
 
@@ -344,8 +376,8 @@ Propone un avance de fase para el proyecto del tenant.
 
 | Campo | Tipo | Requerido | Descripción |
 |---|---|---|---|
-| `workspaceRef` | `string` | ✅ | Referencia opaca del workspace |
-| `targetPhase` | `string` | ✅ | Fase destino (ej: `phase-1`, `phase-2`) |
+| `workspaceRef` | `string` | Sí | Referencia opaca del workspace |
+| `targetPhase` | `string` | Sí | Fase destino (ej: `phase-1`, `phase-2`) |
 | `triggerDeploy` | `boolean` | — | Si `true`, dispara deploy tras el avance |
 
 ---
@@ -369,10 +401,10 @@ Ejecuta una transición de fase orquestando las herramientas declaradas.
 
 | Campo | Tipo | Requerido | Descripción |
 |---|---|---|---|
-| `workspaceRef` | `string` | ✅ | Referencia opaca del workspace |
-| `from` | `string` | ✅ | Fase de origen (ej: `phase-0`) |
-| `to` | `string` | ✅ | Fase destino (ej: `phase-1`) |
-| `tools` | `string[]` | ✅ | Herramientas a ejecutar en la transición |
+| `workspaceRef` | `string` | Sí | Referencia opaca del workspace |
+| `from` | `string` | Sí | Fase de origen (ej: `phase-0`) |
+| `to` | `string` | Sí | Fase destino (ej: `phase-1`) |
+| `tools` | `string[]` | Sí | Herramientas a ejecutar en la transición |
 
 ---
 
@@ -403,16 +435,20 @@ Evalúa un gate de fase SDLC específico.
 }
 ```
 
-**Response `200`:**
+**Response `200`:** El controlador devuelve el payload `GateEvidence` de `EvaluateGateUseCase.execute(...)` tal cual; esta forma pertenece a `@evolith/core-domain` (`domain/gate-evidence.ts`). `phase` es el id canónico de fase SDLC resuelto desde `gateId` y `evaluatedBy` toma `human` por defecto.
 
 ```json
 {
   "success": true,
   "data": {
+    "gateId": "discovery-baseline-gate",
     "phase": "discovery",
-    "passed": true,
-    "issues": [],
-    "gateId": "PG1"
+    "verdict": "passed",
+    "rulesetRef": "rulesets/phase-gates/phase-gates.rules.json",
+    "rulesetVersion": "1.0.0",
+    "violations": [],
+    "evaluatedAt": "2026-06-21T14:00:00.000Z",
+    "evaluatedBy": "human"
   }
 }
 ```
@@ -445,12 +481,14 @@ GET /api/v1/phases/1/requirements
 
 Lista todos los rulesets disponibles en Evolith Core.
 
+Cada elemento es un `RulesetSummary` con campos `{ id, title, description, version? }` (no hay `name` ni `category`; `version` se omite cuando el manifiesto de origen no la declara).
+
 ```json
 {
   "success": true,
   "data": [
-    { "id": "governance/base", "name": "Base Governance", "category": "governance" },
-    { "id": "acl/anti-corruption-layer", "name": "ACL Rules", "category": "acl" }
+    { "id": "satellite-contracts", "title": "Satellite Contracts ruleset", "description": "Reglas de contrato de satélites.", "version": "1.0.0" },
+    { "id": "acl", "title": "ACL Rules", "description": "Reglas de la capa anticorrupción." }
   ]
 }
 ```
@@ -476,7 +514,8 @@ Lista todas las topologías de arquitectura disponibles. Resultado **cacheado en
   "success": true,
   "data": [
     { "id": "modular-monolith", "name": "Modular Monolith", "maturityLevel": "F1" },
-    { "id": "microservices", "name": "Microservices", "maturityLevel": "F3" }
+    { "id": "microservices", "name": "Microservices", "maturityLevel": "F3" },
+    { "id": "data-mesh", "name": "Data Mesh", "maturityLevel": "cross" }
   ]
 }
 ```
@@ -516,7 +555,7 @@ Detecta drift de arquitectura comparando el estado declarado con el real.
 
 | Campo | Tipo | Requerido | Descripción |
 |---|---|---|---|
-| `workspaceRef` | `string` | ✅ | Referencia opaca del workspace |
+| `workspaceRef` | `string` | Sí | Referencia opaca del workspace |
 | `declaredLevel` | `string` | — | Nivel de madurez arquitectural declarado (`F1`–`F5`) |
 
 #### `POST /api/v1/architecture/cache/invalidate`
@@ -546,11 +585,10 @@ Motor de validación multi-modo combinable. Permite combinar hasta 5 modos en un
 
 ```json
 {
-  "path": "/workspace/my-service",
-  "corePath": "/opt/evolith",
+  "workspaceRef": "op_01j7wq8e2n",
   "engine": "native",
   "topology": "modular-monolith",
-  "phase": "f2",
+  "phase": "design",
   "ruleset": "governance/base",
   "adr": "adr-0010",
   "file": "src/app.module.ts"
@@ -559,14 +597,15 @@ Motor de validación multi-modo combinable. Permite combinar hasta 5 modos en un
 
 | Campo | Tipo | Requerido | Descripción |
 |---|---|---|---|
-| `path` | `string` | ✅ | Ruta al repositorio satelital |
-| `corePath` | `string` | — | Ruta al Core de Evolith (default: `CORE_PATH`) |
+| `workspaceRef` | `string` | Sí | Referencia opaca del workspace emitida por el Tracker BFF. El resolver garantiza que la ruta resuelta no escape de `WORKSPACE_ROOT` |
 | `engine` | `"native" \| "opa"` | — | Motor de evaluación (default: `native`) |
 | `topology` | `string` | — | Activa el **modo Architecture** |
-| `phase` | `"f1"–"f5"` | — | Activa el **modo SDLC** |
+| `phase` | `string` | — | Activa el **modo SDLC**. Ids canónicos: `discovery`, `design`, `construction`, `qa`, `release`. Los legacy `f1`–`f5` se aceptan como alias deprecados (GT-343) |
 | `ruleset` | `string` | — | Activa el **modo Ruleset** |
 | `adr` | `string` | — | Activa el **modo ADR** |
 | `file` | `string` | — | Activa el **modo Ad-hoc** |
+
+> El `corePath` se toma siempre de la variable de entorno `CORE_PATH`; no se acepta como parámetro del body.
 
 **Modos activables:**
 
@@ -601,29 +640,31 @@ El Tracker BFF monta los workspaces de cada tenant bajo `WORKSPACE_ROOT`. Core-A
 ### Envelope de respuesta
 
 ```typescript
+interface EnvelopeMeta {
+  command: string;        // "http POST /api/v1/..."
+  executedAt: string;     // ISO-8601
+  durationMs: number;
+  correlationId: string;  // evl-<uuid> si el cliente no envía x-correlation-id
+  context: { initiative?: string; tenant?: string; phase?: string };
+  schemaVersion: string;  // "1.0.0"
+}
+
 // Éxito
 interface SuccessEnvelope<T> {
   success: true;
   data: T;
-  meta: {
-    correlationId: string;
-    timestamp: string;
-    version?: string;
-  };
+  meta: EnvelopeMeta;
 }
 
 // Error
 interface ErrorEnvelope {
   success: false;
   error: {
-    code: string;
+    code: string;                          // BAD_REQUEST, NOT_FOUND, ...
     message: string;
-    details?: unknown[];
+    details?: Record<string, unknown>;     // RFC 9457 Problem Details
   };
-  meta: {
-    correlationId: string;
-    timestamp: string;
-  };
+  meta: EnvelopeMeta;
 }
 ```
 
@@ -703,16 +744,18 @@ GET /api/v1/phases/2/requirements
 
 ### Topologías disponibles
 
-| ID | Nombre | Nivel de madurez |
+| ID | Nombre | Nivel de madurez (`maturityLevel` del manifiesto) |
 |---|---|---|
-| `modular-monolith` | Modular Monolith | F1 |
-| `distributed-modules` | Distributed Modules | F2 |
-| `microservices` | Microservices | F3 |
-| `serverless` | Serverless | F2 |
-| `edge-computing` | Edge Computing | F3 |
-| `event-driven` | Event-Driven | F2 |
-| `data-mesh` | Data Mesh | F4 |
-| `agentic-ai` | Agentic AI | F3 |
+| `modular-monolith` | Modular Monolith | `F1` |
+| `distributed-modules` | Distributed Modules | `F2` |
+| `microservices` | Microservices | `F3` |
+| `serverless` | Serverless | `cross` |
+| `edge-computing` | Edge Computing | `cross` |
+| `event-driven` | Event-Driven | `cross` |
+| `data-mesh` | Data Mesh | `cross` |
+| `agentic-ai` | Agentic AI | `cross` |
+
+> Las topologías marcadas como `cross` no pertenecen a un único nivel del eje progresivo F1–F3, sino que son transversales y pueden aplicarse en varios niveles. Valores tomados del campo `maturityLevel` de cada `topology.manifest.json`.
 
 ### Caché de topologías
 
@@ -768,13 +811,13 @@ GET /metrics
 
 ### OpenTelemetry
 
-La API instrumenta automáticamente las operaciones vía `tracing.ts`. Para configurar el exportador:
+La API instrumenta automáticamente las operaciones vía `tracing.ts` (auto-instrumentaciones HTTP/Express; el `serviceName` está fijado a `evolith-core-api`). El tracing solo se inicializa cuando `NODE_ENV=production` **o** `OTEL_ENABLED=true`. El exportador es OTLP-HTTP.
 
 ```bash
-# Ejemplos de variables OTEL
-OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
-OTEL_SERVICE_NAME=evolith-core-api
-OTEL_TRACES_EXPORTER=otlp
+# Activar fuera de producción
+OTEL_ENABLED=true
+# Endpoint del collector (default: http://localhost:4318/v1/traces)
+OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318/v1/traces
 ```
 
 ### Correlation ID
@@ -832,8 +875,8 @@ curl -X POST http://localhost:3000/api/v1/architecture/detect-drift \
 curl -X POST http://localhost:3000/api/v1/validate/composable \
   -H "Content-Type: application/json" \
   -d '{
-    "path": "/workspace/my-service",
-    "phase": "f2",
+    "workspaceRef": "op_01j7wq8e2n",
+    "phase": "design",
     "topology": "modular-monolith",
     "engine": "native"
   }'
@@ -894,10 +937,16 @@ CORS_ORIGINS=https://tracker.evolith.io,https://app.evolith.io
 
 `ValidationPipe` tiene `forbidNonWhitelisted: true`. Si el body incluye campos no declarados en el DTO, se retorna `400`. Revisar el schema del endpoint.
 
-### Workspace no encontrado
+### `workspaceRef` inválido — `400 BAD_REQUEST`
 
-Si `workspaceRef` no tiene un directorio correspondiente en `WORKSPACE_ROOT`, el resolver lanzará `404`. Verificar que el Tracker BFF montó el workspace antes de llamar a Core-API.
+`WorkspaceReferenceResolverService.resolve()` valida únicamente el **formato** de la referencia (`/^[A-Za-z0-9_-]{1,128}$/`) y que la ruta resuelta no escape de `WORKSPACE_ROOT`. Ambos fallos lanzan `BadRequestException` (`400`). El resolver **no** comprueba la existencia del directorio, por lo que un `workspaceRef` con formato válido pero sin directorio montado no produce `404` — la ausencia del directorio se manifiesta más adelante como un fallo del caso de uso. Verificar que el Tracker BFF montó el workspace bajo `WORKSPACE_ROOT` antes de llamar a Core-API.
 
 ### Swagger no disponible en producción
 
 Asegurarse de que `SWAGGER_ENABLED=true` esté en las variables de entorno de producción, o acceder desde un entorno de no-producción.
+
+---
+
+## Contribución
+
+Para clonar, construir, ejecutar las suites de tests y conocer las convenciones de ramas/commits del monorepo, consulta la guía raíz [`CONTRIBUTING.md`](../../CONTRIBUTING.md).

@@ -3466,13 +3466,26 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-347
 
-**Title:** Core OPA governance suite broken + no CI gate — `OPEN`
+**Title:** Core OPA governance suite broken + no CI gate — `IN-PROGRESS`
 
-- **Component:** governance/OPA · **Priority:** P0 · **Risk:** critical (governance integrity) · **Dependencies:** none
-- **Files:** `rulesets/opa/**` (3 failing rego), `.harness/scripts/compile-opa-wasm.mjs`, `.harness/scripts/ci/28-test-topology-opa.mjs`
+- **Component:** governance/OPA · **Priority:** P0 · **Risk:** critical (governance integrity) · **Dependencies:** GT-358 (exit-0 blocker)
+- **Files:** `rulesets/opa/compliance-baseline.rego`, `rulesets/opa/rbac/gate-role-enforcement.rego`, `rulesets/opa/phase-gates.rego`, `rulesets/opa/telemetry-evidence.rego`, `.harness/scripts/compile-opa-wasm.mjs`, `.harness/scripts/ci/28-test-topology-opa.mjs`
 - **Proposed fix:** fix rego parse/safety errors; add `opa test rulesets/opa/` CI gate; restore wasm build.
-- **Evidence:** `opa test rulesets/opa/` aborts loading (3 rego errors); `build:policy` can't emit core wasm; only topology OPA is gated.
-- **Done when:** [ ] `opa test rulesets/opa/` exit 0; [ ] wasm built; [ ] CI gate present.
+- **Applied fix:** fixed the 4 load/compile errors that aborted the whole suite — missing `future.keywords.if` (compliance-baseline) and `.in` (gate-role-enforcement); unsafe head var in phase-gates (`name := e.artifact`); `all_deps` made a proper set in telemetry-evidence (was a `{dep:true}` object, breaking `startswith`).
+- **Evidence:** `.harness/bin/opa test rulesets/opa/ --ignore=schemas` went from **27 load errors (0 tests run)** to **185/197 passing**. Remaining 12 assertion failures tracked as GT-358.
+- **Residual risk:** exit code still non-zero until GT-358; CI gate + `build:policy` wasm not yet added (would be red until GT-358).
+- **Done when:** [x] suite loads & runs (parse/safety fixed); [ ] `opa test rulesets/opa/` exit 0 (needs GT-358); [ ] wasm built; [ ] CI gate present.
+
+#### GT-358
+
+**Title:** OPA suite — 12 assertion failures surfaced after the GT-347 unblock — `OPEN`
+
+- **Component:** governance/OPA · **Priority:** P1 · **Risk:** med (governance correctness) · **Dependencies:** GT-347 (which made them visible)
+- **Files:** `rulesets/opa/main_test.rego` (4: empty/single/multi/new-policy — stale `with … as {}` mock list vs current main aggregation), `rulesets/opa/compliance-baseline.test.rego` (2), `rulesets/opa/executive-scorecards.test.rego`, `rulesets/opa/governance.test.rego`, `rulesets/opa/mcp.test.rego`, `rulesets/opa/multi-tenancy.test.rego`, `rulesets/opa/satellite-contracts.test.rego`, `rulesets/opa/testing-pyramid.test.rego` (1 each)
+- **Proposed fix:** triage each `test_compliant_*`/`*_has_no_violations`: determine per case whether the fixture is stale (make it genuinely compliant) or the policy drifted (correct the rule); refresh `main_test` mock list to current aggregated policies. Do NOT mask real policy intent.
+- **Evidence:** these never executed while the suite couldn't load; all are "compliant fixture now produces a violation" or "empty input now emits ACL-*/CB-*". Confirmed multi-root (7 policy areas).
+- **Residual risk:** N/A (open). Blocks GT-347 exit-0 + the CI gate.
+- **Done when:** [ ] `opa test rulesets/opa/ --ignore=schemas` is 197/197; [ ] each fix justified as fixture-staleness or real policy correction.
 
 #### GT-348
 

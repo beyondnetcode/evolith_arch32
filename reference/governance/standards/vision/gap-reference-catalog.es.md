@@ -3411,13 +3411,25 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-347
 
-**Título:** Suite OPA de gobernanza rota + sin gate CI — `OPEN`
+**Título:** Suite OPA de gobernanza rota + sin gate CI — `EN-PROGRESO`
 
-- **Componente:** gobernanza/OPA · **Prioridad:** P0 · **Riesgo:** crítico (integridad de gobernanza) · **Dependencias:** ninguna
-- **Archivos:** `rulesets/opa/**` (3 rego), `.harness/scripts/compile-opa-wasm.mjs`, `.harness/scripts/ci/28-test-topology-opa.mjs`
+- **Componente:** gobernanza/OPA · **Prioridad:** P0 · **Riesgo:** crítico (integridad de gobernanza) · **Dependencias:** GT-358 (bloquea exit-0)
+- **Archivos:** `rulesets/opa/compliance-baseline.rego`, `rulesets/opa/rbac/gate-role-enforcement.rego`, `rulesets/opa/phase-gates.rego`, `rulesets/opa/telemetry-evidence.rego`
 - **Fix propuesto:** corregir errores rego; gate CI `opa test rulesets/opa/`; restaurar build wasm.
-- **Evidencia:** `opa test rulesets/opa/` aborta (3 rego); `build:policy` no genera wasm.
-- **Hecho cuando:** [ ] `opa test rulesets/opa/` exit 0; [ ] wasm; [ ] gate.
+- **Fix aplicado:** corregidos los 4 errores de carga/compilación que abortaban toda la suite — faltaba `future.keywords.if` (compliance-baseline) y `.in` (gate-role-enforcement); var de cabeza insegura en phase-gates (`name := e.artifact`); `all_deps` convertido a set en telemetry-evidence (era objeto `{dep:true}` y rompía `startswith`).
+- **Evidencia:** `opa test rulesets/opa/ --ignore=schemas` pasó de **27 errores de carga (0 tests)** a **185/197 pasando**. Los 12 fallos restantes → GT-358.
+- **Riesgo residual:** exit code sigue ≠ 0 hasta GT-358; gate CI + wasm aún no añadidos.
+- **Hecho cuando:** [x] la suite carga y corre; [ ] `opa test rulesets/opa/` exit 0 (necesita GT-358); [ ] wasm; [ ] gate CI.
+
+#### GT-358
+
+**Título:** Suite OPA — 12 fallos de aserción surgidos tras desbloquear GT-347 — `OPEN`
+
+- **Componente:** gobernanza/OPA · **Prioridad:** P1 · **Riesgo:** medio (corrección de gobernanza) · **Dependencias:** GT-347 (que los hizo visibles)
+- **Archivos:** `rulesets/opa/main_test.rego` (4: lista de mocks `with … as {}` obsoleta vs agregación actual), `rulesets/opa/compliance-baseline.test.rego` (2), `executive-scorecards.test.rego`, `governance.test.rego`, `mcp.test.rego`, `multi-tenancy.test.rego`, `satellite-contracts.test.rego`, `testing-pyramid.test.rego` (1 c/u)
+- **Fix propuesto:** triar cada `test_compliant_*`/`*_has_no_violations`: decidir por caso si el fixture está obsoleto (hacerlo realmente conforme) o la política derivó (corregir la regla); refrescar la lista de mocks de `main_test`. No enmascarar la intención real de las políticas.
+- **Evidencia:** nunca se ejecutaron mientras la suite no cargaba; todos son "fixture conforme ahora produce violación" o "input vacío ahora emite ACL-*/CB-*". Multi-raíz (7 áreas de política).
+- **Hecho cuando:** [ ] `opa test rulesets/opa/ --ignore=schemas` 197/197; [ ] cada fix justificado.
 
 #### GT-348
 

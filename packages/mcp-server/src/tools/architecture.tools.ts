@@ -15,7 +15,26 @@ interface ArchIssue {
   blocking: boolean;
 }
 
-/** Architecture tools: F1/F2/F3 validation (optionally deep) and drift detection. */
+/**
+ * Maps a progressive-axis topology id (or legacy F1/F2/F3) to the internal
+ * maturity level the validators use. The progressive axis is
+ * modular-monolith → distributed-modules → microservices.
+ */
+const PROGRESSIVE_LEVEL: Record<string, 'F1' | 'F2' | 'F3'> = {
+  'modular-monolith': 'F1',
+  'distributed-modules': 'F2',
+  microservices: 'F3',
+  F1: 'F1',
+  F2: 'F2',
+  F3: 'F3',
+};
+
+function normalizeLevel(input: string | undefined): 'F1' | 'F2' | 'F3' {
+  if (!input) return 'F1';
+  return PROGRESSIVE_LEVEL[input.trim()] ?? 'F1';
+}
+
+/** Architecture tools: progressive-axis validation (optionally deep) and drift detection. */
 export function createArchitectureTools(
   fs: IFileSystem,
   configParser: IConfigParser,
@@ -26,12 +45,19 @@ export function createArchitectureTools(
       schema: {
         name: 'evolith-architecture-validate',
         description:
-          'Validate repository architecture against F1/F2/F3 rules. Use deep=true for import graph analysis, layer violations, and coupling metrics.',
+          'Validate repository architecture along the progressive maturity axis ' +
+          '(modular-monolith → distributed-modules → microservices). Use deep=true for ' +
+          'import graph analysis, layer violations, and coupling metrics.',
         inputSchema: {
           type: 'object',
           properties: {
             path: { type: 'string' },
-            level: { type: 'string', description: 'F1, F2, or F3' },
+            level: {
+              type: 'string',
+              description:
+                'Progressive-axis topology id (modular-monolith, distributed-modules, microservices). ' +
+                'Legacy F1/F2/F3 accepted. Default: modular-monolith.',
+            },
             deep: { type: 'boolean', description: 'Enable deep static analysis', default: false },
           },
           required: ['path'],
@@ -39,7 +65,7 @@ export function createArchitectureTools(
       },
       execute: async (args) => {
         const repoPath = args.path as string;
-        const level = (args.level as string) || 'F1';
+        const level = normalizeLevel(args.level as string | undefined);
         const deep = (args.deep as boolean) || false;
         if (!repoPath) return { error: true, message: 'path is required' };
 

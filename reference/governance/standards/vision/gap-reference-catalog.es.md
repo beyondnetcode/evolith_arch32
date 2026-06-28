@@ -3416,20 +3416,22 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** gobernanza/OPA · **Prioridad:** P0 · **Riesgo:** crítico (integridad de gobernanza) · **Dependencias:** GT-358 (bloquea exit-0)
 - **Archivos:** `rulesets/opa/compliance-baseline.rego`, `rulesets/opa/rbac/gate-role-enforcement.rego`, `rulesets/opa/phase-gates.rego`, `rulesets/opa/telemetry-evidence.rego`
 - **Fix propuesto:** corregir errores rego; gate CI `opa test rulesets/opa/`; restaurar build wasm.
-- **Fix aplicado:** corregidos los 4 errores de carga/compilación que abortaban toda la suite — faltaba `future.keywords.if` (compliance-baseline) y `.in` (gate-role-enforcement); var de cabeza insegura en phase-gates (`name := e.artifact`); `all_deps` convertido a set en telemetry-evidence (era objeto `{dep:true}` y rompía `startswith`).
-- **Evidencia:** `opa test rulesets/opa/ --ignore=schemas` pasó de **27 errores de carga (0 tests)** a **185/197 pasando**. Los 12 fallos restantes → GT-358.
-- **Riesgo residual:** exit code sigue ≠ 0 hasta GT-358; gate CI + wasm aún no añadidos.
-- **Hecho cuando:** [x] la suite carga y corre; [ ] `opa test rulesets/opa/` exit 0 (necesita GT-358); [ ] wasm; [ ] gate CI.
+- **Fix aplicado:** corregidos los 4 errores de carga/compilación que abortaban toda la suite — faltaba `future.keywords.if` (compliance-baseline) y `.in` (gate-role-enforcement); var de cabeza insegura en phase-gates (`name := e.artifact`); `all_deps` convertido a set en telemetry-evidence. Con la suite cargando, corregidos los 12 fallos surgidos (GT-358) → 197/197. Añadido gate CI `.harness/scripts/ci/29-test-core-opa.mjs` cableado en `sdk-cli-ci.yml`. Los fixes de parseo también desbloquearon `npm run build:policy` (el wasm ya compila).
+- **Evidencia:** `opa test rulesets/opa/ --ignore=schemas` pasó de **27 errores (0 tests)** a **197/197, exit 0**; `npm run build:policy` exitoso; el gate imprime "197/197 passing".
+- **Riesgo residual:** aplicado en working tree, pendiente de registro de closure-evidence (GT-357).
+- **Hecho cuando:** [x] la suite carga y corre; [x] `opa test rulesets/opa/` exit 0; [x] wasm; [x] gate CI.
 
 #### GT-358
 
-**Título:** Suite OPA — 12 fallos de aserción surgidos tras desbloquear GT-347 — `OPEN`
+**Título:** Suite OPA — 12 fallos de aserción surgidos tras desbloquear GT-347 — `EN-PROGRESO`
 
 - **Componente:** gobernanza/OPA · **Prioridad:** P1 · **Riesgo:** medio (corrección de gobernanza) · **Dependencias:** GT-347 (que los hizo visibles)
-- **Archivos:** `rulesets/opa/main_test.rego` (4: lista de mocks `with … as {}` obsoleta vs agregación actual), `rulesets/opa/compliance-baseline.test.rego` (2), `executive-scorecards.test.rego`, `governance.test.rego`, `mcp.test.rego`, `multi-tenancy.test.rego`, `satellite-contracts.test.rego`, `testing-pyramid.test.rego` (1 c/u)
-- **Fix propuesto:** triar cada `test_compliant_*`/`*_has_no_violations`: decidir por caso si el fixture está obsoleto (hacerlo realmente conforme) o la política derivó (corregir la regla); refrescar la lista de mocks de `main_test`. No enmascarar la intención real de las políticas.
-- **Evidencia:** nunca se ejecutaron mientras la suite no cargaba; todos son "fixture conforme ahora produce violación" o "input vacío ahora emite ACL-*/CB-*". Multi-raíz (7 áreas de política).
-- **Hecho cuando:** [ ] `opa test rulesets/opa/ --ignore=schemas` 197/197; [ ] cada fix justificado.
+- **Archivos:** `rulesets/opa/main_test.rego` (4), `compliance-baseline.test.rego` (2), `executive-scorecards.test.rego`, `governance.test.rego`, `mcp.test.rego`, `multi-tenancy.test.rego`, `satellite-contracts.test.rego`, `testing-pyramid.test.rego`
+- **Fix propuesto:** triar cada test: fixture obsoleto vs deriva de política; refrescar mocks de `main_test`.
+- **Fix aplicado:** los 12 eran **obsolescencia de fixtures/mocks** — los fixtures precedían a sub-reglas más nuevas. Fixtures actualizados para ser realmente conformes (lint workflow + dir `src`; flags SPACE/MTN/SVC/TPY; `coreVersionPinned`; keyword de métricas; y los 3 mocks faltantes en main_test: telemetry_evidence/helm/opa_sidecar). NO se cambió lógica de políticas — solo obsolescencia.
+- **Evidencia:** `opa test rulesets/opa/ --ignore=schemas` → **197/197, exit 0**.
+- **Riesgo residual:** aplicado en working tree, pendiente de closure-evidence (GT-357).
+- **Hecho cuando:** [x] 197/197; [x] cada fix justificado como obsolescencia (ninguno requirió cambio de política).
 
 #### GT-348
 

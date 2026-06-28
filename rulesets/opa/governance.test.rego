@@ -3,7 +3,7 @@ package evolith.governance_test
 import data.evolith.governance
 
 test_satellite_without_rulesets_has_no_violations {
-  violations := governance.violations with input as {"satellitePath": "/satellite", "corePath": "/core", "satellite": {"directories": ["src", "docs"], "files": ["DECISIONS.md", "README.md"]}}
+  violations := governance.violations with input as {"satellitePath": "/satellite", "corePath": "/core", "satellite": {"directories": ["src", "docs"], "files": ["DECISIONS.md", "README.md"], "contracts": {"coreVersionPinned": true}}}
   count(violations) == 0
 }
 

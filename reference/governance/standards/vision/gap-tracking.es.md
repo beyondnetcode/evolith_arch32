@@ -15,8 +15,8 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
 | [`GT-343`](./gap-reference-catalog.es.md#gt-343) | EPIC: unificar ids de fase SDLC (f1..f5) y vocabulario de topología F1/F2/F3; eliminar conflación fase/topología | `Cross` | Cross | P0 | XL | `PENDIENTE` |
 | [`GT-344`](./gap-reference-catalog.es.md#gt-344) | La CLI publicada falla (ENOENT default-workflow.yaml) — fallback de workflow por defecto embebido | `Smart CLI` | Cross | P0 | L | `EN-PROGRESO` |
-| [`GT-347`](./gap-reference-catalog.es.md#gt-347) | Suite OPA core: parse/safety corregido (carga, 185/197); exit-0 + gate CI + wasm aún pendientes | `Governance` | Cross | P0 | L | `EN-PROGRESO` |
-| [`GT-358`](./gap-reference-catalog.es.md#gt-358) | Suite OPA: 12 fallos de aserción surgidos tras desbloquear GT-347 (drift de política/fixtures) | `Governance` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-347`](./gap-reference-catalog.es.md#gt-347) | Suite OPA core verde 197/197 + wasm compila + gate CI cableado (29-test-core-opa) | `Governance` | Cross | P0 | L | `EN-PROGRESO` |
+| [`GT-358`](./gap-reference-catalog.es.md#gt-358) | Suite OPA: 12 fallos de aserción corregidos (fixtures/mocks obsoletos) → 197/197 | `Governance` | Cross | P1 | M | `EN-PROGRESO` |
 | [`GT-357`](./gap-reference-catalog.es.md#gt-357) | META: el tablero sobre-reporta completitud vs build/test reales validados | `Governance` | Cross | P1 | M | `PENDIENTE` |
 | [`GT-345`](./gap-reference-catalog.es.md#gt-345) | Podredumbre de specs de Smart CLI (21 suites: errores de compilación, mocks obsoletos, --version) | `Smart CLI` | Cross | P1 | L | `PENDIENTE` |
 | [`GT-348`](./gap-reference-catalog.es.md#gt-348) | Política OPA recompilada en cada dispatch de tool (sin caché) | `MCP Server` | Cross | P1 | M | `PENDIENTE` |
@@ -373,7 +373,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-246`](./gap-reference-catalog.es.md#gt-246) | Implementar experimentos Chaos Mesh/Litmus | `QA` | Cross | P3 | L | `COMPLETADO` |
 
 
-**Progreso:** 329 / 358 completados · 14 en progreso · 14 pendientes · 1 diferidos
+**Progreso:** 329 / 358 completados · 15 en progreso · 13 pendientes · 1 diferidos
 
 **Oleada 2026-06-23 (auditoría profunda de Wilson III):** Añadidos 14 gaps nuevos `GT-212`…`GT-225` del Wilson Audit Playbook que cubren: higiene de estado ADR (GT-212), metadata + presupuestos operativos + corpus de guías por topología (GT-213, GT-217, GT-219), observabilidad + OpenAPI en controladores REST (GT-214, GT-215), paridad de input-schemas OPA + densidad de tests por topología (GT-216, GT-222), plantillas de rollback + on-call de Fase 05 (GT-218), cobertura de ramas CLI + paridad de envelope --format + limpieza de skip-list (GT-220, GT-224, GT-225), audit logging HTTP de MCP (GT-221), y tests e2e de paridad cross-surface (GT-223).
 

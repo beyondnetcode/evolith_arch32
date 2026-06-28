@@ -13,6 +13,8 @@ compliant_input := {"satellite": {"testing": {
   "infrastructureCoverage": 65,
   "apiCoverage": 75,
   "unitTestsHaveIoOperations": false,
+  "integrationUsesEphemeralContainers": true,
+  "e2eCoversHttpRoutes": true,
 }}}
 
 test_compliant_testing_pyramid_has_no_violations {

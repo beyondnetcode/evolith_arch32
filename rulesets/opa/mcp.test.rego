@@ -3,7 +3,7 @@ package evolith.mcp_test
 import data.evolith.mcp
 
 test_complete_mcp_has_no_violations {
-  input := {"core": {"cli": {"mcpServerSource": "apiKey localhost"}, "evidence": {"mcp-smoke.json": {"results": {"initialize": {}, "tools/list": {}, "resources/list": {}}, "status": "passed"}}}}
+  input := {"core": {"cli": {"mcpServerSource": "apiKey localhost metrics latency counter"}, "evidence": {"mcp-smoke.json": {"results": {"initialize": {}, "tools/list": {}, "resources/list": {}}, "status": "passed"}}}}
   violations := mcp.violations with input as input
   count(violations) == 0
 }

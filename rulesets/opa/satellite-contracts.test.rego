@@ -11,6 +11,7 @@ compliant_f1_input := {"satellite": {"contracts": {
   "phaseTransitionWithoutApproval": false,
   "isDeprecated": false,
   "deprecatedStatusMarked": false,
+  "nameIsUnique": true,
 }}}
 
 test_compliant_f1_satellite_has_no_violations {

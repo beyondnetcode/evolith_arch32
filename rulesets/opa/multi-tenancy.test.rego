@@ -9,6 +9,8 @@ compliant_input := {"satellite": {"multiTenancy": {
   "crossTenantAccess": false,
   "schemaStrategyDefined": true,
   "apiTenantValidation": true,
+  "tenantAuditTrailEnabled": true,
+  "tenantMigrationPathDefined": true,
 }}}
 
 test_compliant_multi_tenancy_has_no_violations {

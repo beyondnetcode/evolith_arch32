@@ -3471,21 +3471,22 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** governance/OPA · **Priority:** P0 · **Risk:** critical (governance integrity) · **Dependencies:** GT-358 (exit-0 blocker)
 - **Files:** `rulesets/opa/compliance-baseline.rego`, `rulesets/opa/rbac/gate-role-enforcement.rego`, `rulesets/opa/phase-gates.rego`, `rulesets/opa/telemetry-evidence.rego`, `.harness/scripts/compile-opa-wasm.mjs`, `.harness/scripts/ci/28-test-topology-opa.mjs`
 - **Proposed fix:** fix rego parse/safety errors; add `opa test rulesets/opa/` CI gate; restore wasm build.
-- **Applied fix:** fixed the 4 load/compile errors that aborted the whole suite — missing `future.keywords.if` (compliance-baseline) and `.in` (gate-role-enforcement); unsafe head var in phase-gates (`name := e.artifact`); `all_deps` made a proper set in telemetry-evidence (was a `{dep:true}` object, breaking `startswith`).
-- **Evidence:** `.harness/bin/opa test rulesets/opa/ --ignore=schemas` went from **27 load errors (0 tests run)** to **185/197 passing**. Remaining 12 assertion failures tracked as GT-358.
-- **Residual risk:** exit code still non-zero until GT-358; CI gate + `build:policy` wasm not yet added (would be red until GT-358).
-- **Done when:** [x] suite loads & runs (parse/safety fixed); [ ] `opa test rulesets/opa/` exit 0 (needs GT-358); [ ] wasm built; [ ] CI gate present.
+- **Applied fix:** fixed the 4 load/compile errors that aborted the whole suite — missing `future.keywords.if` (compliance-baseline) and `.in` (gate-role-enforcement); unsafe head var in phase-gates (`name := e.artifact`); `all_deps` made a proper set in telemetry-evidence (was a `{dep:true}` object, breaking `startswith`). With the suite loading, fixed the 12 newly-surfaced assertion failures (GT-358) → 197/197. Added CI gate `.harness/scripts/ci/29-test-core-opa.mjs` wired into `sdk-cli-ci.yml`. The parse fixes also unblocked `npm run build:policy` (wasm now compiles).
+- **Evidence:** `.harness/bin/opa test rulesets/opa/ --ignore=schemas` went from **27 load errors (0 tests run)** to **197/197 passing, exit 0**; `npm run build:policy` succeeds ("Successfully compiled and installed policy.wasm"); the new gate prints "Core OPA governance suite: 197/197 passing".
+- **Residual risk:** applied in working tree, pending closure-evidence registration (GT-357).
+- **Done when:** [x] suite loads & runs (parse/safety fixed); [x] `opa test rulesets/opa/` exit 0; [x] wasm built; [x] CI gate present.
 
 #### GT-358
 
-**Title:** OPA suite — 12 assertion failures surfaced after the GT-347 unblock — `OPEN`
+**Title:** OPA suite — 12 assertion failures surfaced after the GT-347 unblock — `IN-PROGRESS`
 
 - **Component:** governance/OPA · **Priority:** P1 · **Risk:** med (governance correctness) · **Dependencies:** GT-347 (which made them visible)
-- **Files:** `rulesets/opa/main_test.rego` (4: empty/single/multi/new-policy — stale `with … as {}` mock list vs current main aggregation), `rulesets/opa/compliance-baseline.test.rego` (2), `rulesets/opa/executive-scorecards.test.rego`, `rulesets/opa/governance.test.rego`, `rulesets/opa/mcp.test.rego`, `rulesets/opa/multi-tenancy.test.rego`, `rulesets/opa/satellite-contracts.test.rego`, `rulesets/opa/testing-pyramid.test.rego` (1 each)
-- **Proposed fix:** triage each `test_compliant_*`/`*_has_no_violations`: determine per case whether the fixture is stale (make it genuinely compliant) or the policy drifted (correct the rule); refresh `main_test` mock list to current aggregated policies. Do NOT mask real policy intent.
-- **Evidence:** these never executed while the suite couldn't load; all are "compliant fixture now produces a violation" or "empty input now emits ACL-*/CB-*". Confirmed multi-root (7 policy areas).
-- **Residual risk:** N/A (open). Blocks GT-347 exit-0 + the CI gate.
-- **Done when:** [ ] `opa test rulesets/opa/ --ignore=schemas` is 197/197; [ ] each fix justified as fixture-staleness or real policy correction.
+- **Files:** `rulesets/opa/main_test.rego` (4), `compliance-baseline.test.rego` (2), `executive-scorecards.test.rego`, `governance.test.rego`, `mcp.test.rego`, `multi-tenancy.test.rego`, `satellite-contracts.test.rego`, `testing-pyramid.test.rego`
+- **Proposed fix:** triage each `test_compliant_*`/`*_has_no_violations`: fixture-staleness vs policy drift; refresh `main_test` mock list.
+- **Applied fix:** all 12 were **fixture/mock staleness** — fixtures predated newer compliance sub-rules and lacked their fields. Updated fixtures to be genuinely compliant: compliance-baseline (lint workflow + `src` dir for CB-03/CB-05); executive-scorecards (`performanceDashboardLinked`/`cognitivLoadSurveyCompleted`/`collaborationIndexComputed`); multi-tenancy (`tenantAuditTrailEnabled`/`tenantMigrationPathDefined`); satellite-contracts (`nameIsUnique`); testing-pyramid (`integrationUsesEphemeralContainers`/`e2eCoversHttpRoutes`); governance (`contracts.coreVersionPinned` for INH-02); mcp (metrics keyword for MCP-05); main_test (added the 3 missing mocks: telemetry_evidence, infrastructure.helm, infrastructure.opa_sidecar). No policy logic changed — staleness only.
+- **Evidence:** `opa test rulesets/opa/ --ignore=schemas` → **197/197, exit 0**.
+- **Residual risk:** applied in working tree, pending closure-evidence registration (GT-357).
+- **Done when:** [x] `opa test rulesets/opa/ --ignore=schemas` is 197/197; [x] each fix justified as fixture-staleness (none required a policy change).
 
 #### GT-348
 

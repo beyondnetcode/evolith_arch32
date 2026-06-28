@@ -17,7 +17,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-363`](./gap-reference-catalog.es.md#gt-363) | Cliente de integración con GitHub API — auth seguro + operaciones de repo (crear, configurar, branch protection, rulesets, webhooks) | `Infra` | Cross | P0 | M | `COMPLETADO` |
 | [`GT-362`](./gap-reference-catalog.es.md#gt-362) | Implementar enforcement en runtime para políticas Rego | `Core Domain` | Cross | P0 | L | `COMPLETADO` |
 | [`GT-364`](./gap-reference-catalog.es.md#gt-364) | `InitializeSatelliteUseCase` — caso de uso de dominio que orquesta el aprovisionamiento completo de satélites (flujos new + adopt) | `Core Domain` | Cross | P0 | L | `COMPLETADO` |
-| [`GT-361`](./gap-reference-catalog.es.md#gt-361) | Aplicar envelope ADR-0073 a las respuestas de evaluación de Core API | `Core API` | Cross | P1 | S | `PENDIENTE` |
+| [`GT-361`](./gap-reference-catalog.es.md#gt-361) | Aplicar envelope ADR-0073 a las respuestas de evaluación de Core API | `Core API` | Cross | P1 | S | `COMPLETADO` |
 | [`GT-360`](./gap-reference-catalog.es.md#gt-360) | Exponer evaluación topológica en Core API vía `ValidateSatelliteUseCase` | `Core API` | Cross | P1 | M | `PENDIENTE` |
 | [`GT-365`](./gap-reference-catalog.es.md#gt-365) | Comando `evolith satellite create` en SmartCLI — wizard interactivo (org, nombre, topología, fase, features, CI/CD) | `Smart CLI` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-366`](./gap-reference-catalog.es.md#gt-366) | Comando `evolith satellite adopt` en SmartCLI — analizar repo existente, verificar compatibilidad, aplicar migración controlada | `Smart CLI` | Cross | P1 | M | `COMPLETADO` |
@@ -389,7 +389,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-246`](./gap-reference-catalog.es.md#gt-246) | Implementar experimentos Chaos Mesh/Litmus | `QA` | Cross | P3 | L | `COMPLETADO` |
 
 
-**Progreso:** 370 / 374 completados · 0 en progreso · 4 pendientes · 0 diferidos
+**Progreso:** 371 / 374 completados · 0 en progreso · 3 pendientes · 0 diferidos
 
 **Oleada 2026-06-23 (auditoría profunda de Wilson III):** Añadidos 14 gaps nuevos `GT-212`…`GT-225` del Wilson Audit Playbook que cubren: higiene de estado ADR (GT-212), metadata + presupuestos operativos + corpus de guías por topología (GT-213, GT-217, GT-219), observabilidad + OpenAPI en controladores REST (GT-214, GT-215), paridad de input-schemas OPA + densidad de tests por topología (GT-216, GT-222), plantillas de rollback + on-call de Fase 05 (GT-218), cobertura de ramas CLI + paridad de envelope --format + limpieza de skip-list (GT-220, GT-224, GT-225), audit logging HTTP de MCP (GT-221), y tests e2e de paridad cross-surface (GT-223).
 

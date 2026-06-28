@@ -16,7 +16,7 @@ export class EvaluationController {
   @ApiBody({ type: EvaluateSatelliteDto })
   @ApiEnvelopeResponse(undefined, { description: 'Structured evaluation verdict envelope (ADR-0073)' })
   async evaluate(@Body() body: EvaluateSatelliteDto) {
-    const { result, evaluationVerdict } = await this.validateSatelliteUseCase.execute({
+    const { evaluationVerdict } = await this.validateSatelliteUseCase.execute({
       satellitePath: body.satellitePath,
       corePath: body.corePath,
       manifest: {
@@ -27,10 +27,6 @@ export class EvaluationController {
       },
     });
 
-    if (evaluationVerdict?.outputEnvelope) {
-      return evaluationVerdict.outputEnvelope;
-    }
-
-    return evaluationVerdict || result;
+    return evaluationVerdict!.outputEnvelope;
   }
 }

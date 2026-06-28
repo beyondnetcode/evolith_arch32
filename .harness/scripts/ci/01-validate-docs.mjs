@@ -61,7 +61,12 @@ function addFailure(file, index, content, message) {
 }
 
 function stripCodeBlocks(content) {
-  return content.replace(/```[\s\S]*?```/g, (match) => match.replace(/[^\r\n]/g, " "));
+  // Blank out fenced code blocks AND inline code spans (preserving line/column
+  // positions) so prose-corruption checks (??, mojibake, emoji) do not flag
+  // legitimate code — e.g. JS nullish-coalescing `a ?? b` inside backticks.
+  return content
+    .replace(/```[\s\S]*?```/g, (match) => match.replace(/[^\r\n]/g, " "))
+    .replace(/`[^`\r\n]+`/g, (match) => match.replace(/[^\r\n]/g, " "));
 }
 
 function githubSlug(value) {

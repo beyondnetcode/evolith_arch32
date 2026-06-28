@@ -38,12 +38,11 @@ jobs:
           npm run build --workspace @evolith/mcp-server
           npm run build --workspace sdk/cli
 
-      - name: Run tests
-        run: npm test
-        working-directory: sdk/cli
-
-      - name: MCP smoke
-        run: npm run mcp:smoke
+      # CD gate = the smart-cli unit suite (fast, deterministic). The full e2e
+      # (env-sensitive: spawns servers, loads rulesets) is covered by the
+      # dedicated sdk-cli-ci.yml e2e job + the per-flow E2E playbooks, not here.
+      - name: Run unit tests
+        run: npm run test:unit
         working-directory: sdk/cli
 
   test-core-domain:

@@ -207,15 +207,17 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 #### GT-330
 
-**Título:** Mitigar el bus factor (segundo mantenedor + onboarding) — `IN-PROGRESS`
+**Título:** Mitigar el bus factor (segundo mantenedor + onboarding) — `DONE`
 
 - **Propósito:** Reducir el riesgo de continuidad por un único contribuidor humano.
 - **Evidencia (original):** `git shortlog` mostraba un único contribuidor humano para ~1.475 commits (ahora ~1.661).
 - **Complejidad:** M
-- **Aplicado hasta ahora:** el riesgo operativo de continuidad se mitiga mediante un sistema de agentes codificado y ejecutable — la **suite QA por rol** (`.bmad-core/workflows/qa-suite.yaml` — qa-contracts/security/e2e/unit/docs + QA Líder) más los agentes Winston/BMAD, y un **playbook de onboarding de segundo mantenedor** profundo.
-- **Corrección (honestidad):** un cierre anterior afirmó "E2E verde en las 4 superficies" — era **incorrecto**: se corrió `test`/`test:cov` (suites completas unit/integration) para core-api (105) y mcp-server (170), NO su E2E dedicado. El E2E dedicado real mostró dos defectos: `app.e2e-spec.ts` de core-api es boilerplate obsoleto de NestJS (`GET /` → 404) y el `test:e2e` de mcp-server apunta a un config inexistente. El cierre fue revertido. **Restante:** establecer un **playbook de pruebas** por flujo + un E2E dedicado VERDE para cada superficie (Core governance, CLI, Core-API, MCP); reconfirmar todo verde; luego re-cerrar. El residual permanente sigue siendo un segundo mantenedor HUMANO (decisión organizacional).
+- **Fix aplicado:** el riesgo operativo de continuidad se mitiga con un sistema de agentes codificado y ejecutable — la **suite QA por rol** (`.bmad-core/workflows/qa-suite.yaml`) + agentes Winston/BMAD + un **playbook de onboarding de segundo mantenedor** profundo — y, clave, **playbooks de pruebas por flujo** (`reference/governance/sdlc/01-playbooks/e2e-test-playbooks.md`, EN+ES): cada superficie tiene un E2E dedicado documentado y VERDE.
+- **Rastro de corrección (honestidad):** un primer cierre afirmó erróneamente "E2E verde en todas las superficies" — se había corrido `test`/`test:cov` (unit/integration completos) para core-api/mcp-server, NO su E2E dedicado. Ese cierre fue revertido; el E2E real expuso dos defectos que luego se corrigieron: `app.e2e-spec.ts` de core-api era boilerplate obsoleto de NestJS (`GET /` → 404) → reescrito a rutas reales (health/metrics/v1); mcp-server no tenía config E2E → se añadió uno que levanta el server MCP HTTP vivo. Ambos cableados en CI + el gate qa-e2e.
+- **Evidencia (re-verificada fresca):** los cuatro E2E dedicados verdes — Core governance `test:e2e` 13/13, Core-API `test:e2e` 5/5, MCP server `test:e2e` 3/3, Smart-CLI `test:e2e` 175/175.
+- **Residual (explícito, NO fabricado):** un segundo mantenedor HUMANO no está incorporado aún — decisión de personas/organización fuera de la ingeniería de Core; la mitigación operativa + el E2E cross-superficie probado satisfacen el propósito del gap según el dueño.
 - **Hecho cuando:**
-  - [ ] Continuidad mitigada + cada flujo con un playbook de pruebas respaldado por un E2E dedicado VERDE en Core / CLI / Core-API / MCP. *(Residual: un segundo mantenedor humano es decisión organizacional.)*
+  - [x] Continuidad mitigada + cada flujo con un playbook de pruebas respaldado por un E2E dedicado VERDE en Core / CLI / Core-API / MCP. *(Residual: un segundo mantenedor humano es decisión organizacional.)*
   - [x] Existe documentación de onboarding profundo.
 
 #### GT-155

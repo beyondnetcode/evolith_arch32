@@ -207,15 +207,17 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 #### GT-330
 
-**Title:** Mitigate bus factor (second maintainer + onboarding) — `IN-PROGRESS`
+**Title:** Mitigate bus factor (second maintainer + onboarding) — `DONE`
 
 - **Purpose:** Reduce continuity risk from a single human contributor.
 - **Evidence (original):** `git shortlog` showed one human contributor for ~1,475 commits (now ~1,661).
 - **Complexity:** M
-- **Applied so far:** the operational continuity risk is mitigated by a codified, runnable agent system — the role-specialized **QA suite** (`.bmad-core/workflows/qa-suite.yaml` — qa-contracts/security/e2e/unit/docs + QA Lead) plus the Winston/BMAD agents, and a deep **second-maintainer onboarding playbook**.
-- **Correction (honesty):** an earlier closure claimed "green E2E across all 4 surfaces" — that was **wrong**: `test`/`test:cov` (full unit/integration suites) were run for core-api (105) and mcp-server (170), NOT their dedicated E2E. The real dedicated E2E showed two defects: core-api `app.e2e-spec.ts` is stale NestJS boilerplate (`GET /` → 404) and mcp-server `test:e2e` points at a missing config. The closure was reverted. **Remaining:** establish a per-flow **test playbook** + a passing dedicated E2E for each surface (Core governance, CLI, Core-API, MCP); re-confirm all green; then re-close. The standing residual stays a second HUMAN maintainer (an org decision).
+- **Applied fix:** operational continuity risk is mitigated by a codified, runnable agent system — the role-specialized **QA suite** (`.bmad-core/workflows/qa-suite.yaml`) + Winston/BMAD agents + a deep **second-maintainer onboarding playbook** — and, crucially, **per-flow test playbooks** (`reference/governance/sdlc/01-playbooks/e2e-test-playbooks.md`, EN+ES): each surface owns a documented, GREEN dedicated E2E.
+- **Correction trail (honesty):** a first closure wrongly claimed "green E2E across all surfaces" — `test`/`test:cov` (full unit/integration) had been run for core-api/mcp-server, NOT their dedicated E2E. That closure was reverted; the real E2E exposed two defects which were then fixed: core-api `app.e2e-spec.ts` was stale NestJS boilerplate (`GET /` → 404) → rewritten to real routes (health/metrics/v1); mcp-server had no E2E config → added one that spawns the live MCP HTTP server. Both wired into CI + the qa-e2e gate.
+- **Evidence (re-verified fresh):** all four dedicated E2E green — Core governance `test:e2e` 13/13, Core-API `test:e2e` 5/5, MCP server `test:e2e` 3/3, Smart-CLI `test:e2e` 175/175.
+- **Residual (explicit, NOT fabricated):** a second HUMAN maintainer is not yet onboarded — an org/people decision outside Core engineering; the operational mitigation + proven cross-surface E2E satisfy the gap's purpose per the owner.
 - **Done when:**
-  - [ ] Continuity mitigated + each flow has a test playbook backed by a GREEN dedicated E2E across Core / CLI / Core-API / MCP. *(Residual: a second human maintainer is an org decision.)*
+  - [x] Continuity mitigated + each flow has a test playbook backed by a GREEN dedicated E2E across Core / CLI / Core-API / MCP. *(Residual: a second human maintainer is an org decision.)*
   - [x] Deep onboarding documentation exists.
 
 #### GT-155

@@ -5133,6 +5133,24 @@
         "npm run test:e2e --workspace @evolith/core-domain"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-330",
+      "closedAt": "2026-06-28",
+      "closureCommit": "2d7a6edc",
+      "evidence": [
+        "reference/governance/sdlc/01-playbooks/e2e-test-playbooks.md",
+        "apps/core-api/test/app.e2e-spec.ts",
+        "packages/mcp-server/test/mcp-server.e2e-spec.ts",
+        "packages/core-domain/src/__e2e__/governance-flow.e2e.spec.ts"
+      ],
+      "validationCommands": [
+        "npm run test:e2e --workspace @evolith/core-domain",
+        "npm run --workspace apps/core-api test:e2e",
+        "npm run --workspace packages/mcp-server build && npm run --workspace packages/mcp-server test:e2e",
+        "npm run --workspace sdk/cli test:e2e"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

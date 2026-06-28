@@ -5,10 +5,11 @@ import { WorkspaceManagerStrategy } from '@evolith/core-domain/application/archi
 import { NxWorkspaceStrategy } from '../../infrastructure/architecture/nx-workspace.strategy';
 import { commandExecutor } from '../../infrastructure/cli/command-executor';
 import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@evolith/core-domain/domain/gate-evidence';
+import { toProgressivePhase } from '../../infrastructure/architecture/topology-catalog';
 
 @Command({
   name: 'scaffold',
-  description: 'Scaffolds the Evolith Monolithic Modular and Microfrontends architecture in the current workspace',
+  description: 'Scaffolds an Evolith satellite along the progressive maturity axis (phase 1 modular-monolith → 2 distributed-modules → 3 microservices). Phases 2–3 are generated as a Module Federation host + remotes.',
 })
 export class ScaffoldCommand extends BaseEvolithCommand {
   private strategy: WorkspaceManagerStrategy;
@@ -39,13 +40,26 @@ export class ScaffoldCommand extends BaseEvolithCommand {
       try {
         const frontendFramework = options?.frontend as string;
         const orm = options?.orm as string;
-        const phase = options?.phase as string;
+        const rawPhase = options?.phase as string;
         const apiName = (options?.apiName as string) || 'tracker-api';
 
-        if (!frontendFramework || !orm || !phase) {
+        if (!frontendFramework || !orm || !rawPhase) {
           console.log(JSON.stringify(createErrorEnvelope(
             'VALIDATION_FAILED',
             'In --format json mode, --frontend, --orm, and --phase are required.',
+            { ...meta, durationMs: Date.now() - startedAt },
+          ), null, 2));
+          process.exit(1);
+        }
+
+        // Accept progressive-axis ids (modular-monolith/distributed-modules/
+        // microservices) and legacy F1/F2/F3 in addition to plain 1/2/3.
+        const phase = toProgressivePhase(rawPhase);
+        if (!phase) {
+          console.log(JSON.stringify(createErrorEnvelope(
+            'VALIDATION_FAILED',
+            `Unknown --phase "${rawPhase}". Use 1|2|3, a progressive-axis id ` +
+            `(modular-monolith, distributed-modules, microservices) or legacy F1/F2/F3.`,
             { ...meta, durationMs: Date.now() - startedAt },
           ), null, 2));
           process.exit(1);
@@ -121,11 +135,11 @@ export class ScaffoldCommand extends BaseEvolithCommand {
     }
 
     const phase = await this.promptService.select({
-      message: '¿En qué fase de la Estrategia Evolutiva (Evolutionary Roadmap) se encuentra este proyecto?',
+      message: '¿En qué fase del eje progresivo (progressive axis) se encuentra este proyecto?',
       options: [
-        { value: '1', label: 'Fase 1: The Lean Foundation (Modular Monolith MVP)' },
-        { value: '2', label: 'Fase 2: Scale and Decoupling (Service Extraction)' },
-        { value: '3', label: 'Fase 3: North Star (Microservices & Microfrontends)' },
+        { value: '1', label: 'Fase 1 · modular-monolith (The Lean Foundation, MVP)' },
+        { value: '2', label: 'Fase 2 · distributed-modules (Scale & Decoupling, Service Extraction)' },
+        { value: '3', label: 'Fase 3 · microservices (North Star, Microservices & Microfrontends)' },
       ],
     });
 
@@ -253,7 +267,7 @@ export class ScaffoldCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '--phase [phase]',
-    description: 'Architecture phase (1, 2, 3) — required with --format json',
+    description: 'Progressive-axis phase — 1|2|3 or a canonical id (modular-monolith, distributed-modules, microservices); F1/F2/F3 accepted as legacy. Required with --format json',
   })
   parsePhase(val: string): string {
     return val;

@@ -5,6 +5,7 @@ import { ArchitectureDriftService, DriftReport, DriftViolation } from '@evolith/
 import { createSuccessEnvelope, createErrorEnvelope, OUTPUT_ENVELOPE_SCHEMA_VERSION } from '@evolith/core-domain/domain/gate-evidence';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
+import { toLegacyLevel } from '../../infrastructure/architecture/topology-catalog';
 
 interface DriftOptions {
   path?: string;
@@ -17,7 +18,7 @@ interface DriftOptions {
 
 @Command({
   name: 'drift',
-  description: 'Detect architecture drift from declared architecture level (F1/F2/F3)',
+  description: 'Detect architecture drift along the progressive maturity axis (modular-monolith → distributed-modules → microservices)',
 })
 export class DriftCommand extends BaseEvolithCommand {
   constructor(promptService: PromptService) {
@@ -29,7 +30,20 @@ export class DriftCommand extends BaseEvolithCommand {
     options?: DriftOptions,
   ): Promise<void> {
     const projectPath = options?.path || process.cwd();
-    const declaredLevel = options?.level as 'F1' | 'F2' | 'F3' | undefined;
+    // Drift is measured along the progressive maturity axis. Accept canonical
+    // ids (modular-monolith/distributed-modules/microservices) or legacy
+    // F1/F2/F3, and normalize to the level the core-domain service consumes.
+    let declaredLevel: 'F1' | 'F2' | 'F3' | undefined;
+    if (options?.level) {
+      const normalized = toLegacyLevel(options.level);
+      if (!normalized) {
+        throw new Error(
+          `Nivel desconocido: "${options.level}". Use un id del eje progresivo ` +
+          `(modular-monolith, distributed-modules, microservices) o el alias legacy F1/F2/F3.`,
+        );
+      }
+      declaredLevel = normalized;
+    }
     const json = options?.format === 'json' || options?.json === true;
     const commandId = 'evolith drift detect';
     const startedAt = Date.now();
@@ -230,7 +244,7 @@ export class DriftCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '-l, --level [level]',
-    description: 'Declared architecture level (F1, F2, F3)',
+    description: 'Declared progressive-axis topology: modular-monolith, distributed-modules, microservices (F1/F2/F3 accepted as legacy aliases)',
   })
   parseLevel(val: string): string {
     return val;

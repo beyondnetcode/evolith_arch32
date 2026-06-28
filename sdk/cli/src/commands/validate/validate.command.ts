@@ -5,6 +5,7 @@ import { OutputFormatterService, OutputFormat } from '../../infrastructure/forma
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
 import { PromptService } from '../../infrastructure/prompts/prompt.service';
 import { ConfigService } from '../../infrastructure/config/config.service';
+import { normalizeTopology, isLegacyLevel } from '../../infrastructure/architecture/topology-catalog';
 
 interface ValidateCommandOptions {
   format?: string;
@@ -195,14 +196,29 @@ export class ValidateCommand extends BaseEvolithCommand {
         }
 
         if (options?.architecture || options?.topology?.length) {
-          const topologies: string[] = options?.topology || [];
+          const rawTopologies: string[] = options?.topology || [];
           const archLevel = options?.archLevel;
 
-          if (archLevel) {
+          // Map legacy F1/F2/F3 aliases to canonical progressive-axis ids (with a
+          // deprecation warning). Canonical and custom ids pass through unchanged.
+          const topologies: string[] = [];
+          for (const raw of rawTopologies) {
+            if (isLegacyLevel(raw)) {
+              const canonical = normalizeTopology(raw)!;
+              this.promptService.showWarning(`"${raw}" es un alias legacy. Use "${canonical}" en su lugar.`);
+              topologies.push(canonical);
+            } else {
+              topologies.push(raw.trim());
+            }
+          }
+
+          if (archLevel && archLevel.toUpperCase() !== 'ALL') {
             this.promptService.showWarning(`El parámetro --arch-level está deprecado. Use --topology en su lugar.`);
-            if (archLevel === 'F1') topologies.push('modular-monolith');
-            else if (archLevel === 'F2') topologies.push('distributed-modules');
-            else if (archLevel === 'F3') topologies.push('microservices');
+            if (isLegacyLevel(archLevel)) {
+              topologies.push(normalizeTopology(archLevel)!);
+            } else {
+              topologies.push(archLevel.trim());
+            }
           }
 
           interface ArchResult {
@@ -419,7 +435,7 @@ export class ValidateCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '-a, --arch',
-    description: 'Incluir validación de arquitectura F1/F2/F3 (Deprecated: use --topology)',
+    description: 'Incluir validación de arquitectura (Deprecated: use --topology)',
   })
   parseArchitecture(): boolean {
     return true;
@@ -427,7 +443,7 @@ export class ValidateCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '-l, --arch-level [level]',
-    description: 'Nivel de arquitectura: F1, F2, F3, ALL (Deprecated: use --topology)',
+    description: 'Nivel de arquitectura legacy F1/F2/F3 (Deprecated: use --topology con un id canónico)',
   })
   parseArchLevel(val: string): string {
     return val;
@@ -435,7 +451,10 @@ export class ValidateCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '-t, --topology [id]',
-    description: 'Topología a validar (se puede usar múltiples veces)',
+    description:
+      'Topología canónica a validar (repetible): modular-monolith, distributed-modules, ' +
+      'microservices, serverless, edge-computing, event-driven, data-mesh, agentic-ai. ' +
+      'F1/F2/F3 se aceptan como alias legacy del eje progresivo.',
   })
   parseTopology(val: string, acc?: string[]): string[] {
     const list = acc || [];

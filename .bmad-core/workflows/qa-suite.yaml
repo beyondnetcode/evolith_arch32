@@ -1,0 +1,95 @@
+name: QA Suite — Role-Specialized Validation
+description: >
+  Orchestrates the role-specialized QA agents (contracts, security, e2e, unit, docs)
+  into a single quality gate. The five specialists run independently; the QA Lead
+  aggregates their verdicts and blocks merge on any failure. This codifies the full
+  Evolith quality gate as a runnable, role-decomposed process — a bus-factor
+  mitigation (GT-330): the review/test knowledge is captured and executable, not
+  resident only in one maintainer's head.
+version: 1.0.0
+
+steps:
+  - id: qa-contracts
+    agent: qa-contracts
+    action: >
+      Enforce R-25 Native↔OPA dual-engine parity (zero drift) + machine-contract
+      conformance + topology rule-ID coverage + phase/topology namespace guard.
+      Report PASS/FAIL with evidence; any drift blocks merge.
+    deliverable: ".bmad-core/deliverables/qa-contracts-report.md"
+    validationScripts:
+      - node .harness/scripts/ci/27-opa-parity-gate.mjs
+      - node .harness/scripts/ci/28-native-evaluator-parity.mjs
+      - node .harness/scripts/ci/28-test-topology-opa.mjs
+      - node .harness/scripts/ci/29-test-core-opa.mjs
+      - node .harness/scripts/ci/10-validate-contract-conformance.mjs
+      - node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs
+      - node .harness/scripts/ci/30-validate-phase-topology-disjoint.mjs
+
+  - id: qa-security
+    agent: qa-security
+    action: >
+      Verify ABAC fails closed, the CLI command executor is shell-injection-free,
+      the WebhookAdapter enforces timeout + SSRF allow-list, standard rule checks
+      never execute code, and run the agentic code review. Any confirmed
+      vulnerability blocks merge.
+    deliverable: ".bmad-core/deliverables/qa-security-report.md"
+    validationScripts:
+      - npm run --workspace packages/mcp-server test -- abac-evaluator
+      - npx jest --rootDir sdk/cli --config sdk/cli/jest.config.js -- command-executor
+      - npm run --workspace packages/infra-providers test -- webhook.adapter
+      - npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --testPathPatterns=standard-check-evaluator --no-coverage
+      - node .harness/scripts/ci/13-agentic-code-review.mjs
+
+  - id: qa-e2e
+    agent: qa-e2e
+    action: >
+      Drive the governance-flow E2E (phase→gate→artifact→verdict vs a real satellite),
+      the sdk/cli E2E, and cross-surface compatibility. Any failed scenario blocks merge.
+    deliverable: ".bmad-core/deliverables/qa-e2e-report.md"
+    validationScripts:
+      - npm run test:e2e --workspace @evolith/core-domain
+      - npm run --workspace sdk/cli test:e2e
+      - node .harness/scripts/ci/20-validate-surface-compatibility.mjs
+      - node .harness/scripts/ci/24-check-surface-parity.mjs
+
+  - id: qa-unit
+    agent: qa-unit
+    action: >
+      Run unit + integration coverage across every workspace. A failing test or
+      coverage below threshold blocks merge.
+    deliverable: ".bmad-core/deliverables/qa-unit-report.md"
+    validationScripts:
+      - npm run --workspace packages/core-domain test:cov
+      - npm test --workspace @evolith/core
+      - npm run --workspace packages/mcp-server test:cov
+      - npm test --workspace core-api
+      - npm run --workspace packages/infra-providers test
+      - npm run --workspace packages/sdk-client test
+      - npm run --workspace packages/mcp-tools test
+      - npm test --workspace sdk/cli
+
+  - id: qa-docs
+    agent: qa-docs
+    action: >
+      Run bilingual parity, doc validation, product-doc validation, gap-tracking
+      validation, maturity reconciliation check, orphan-bilingual and inventory drift.
+      Any mismatch or governance drift blocks merge.
+    deliverable: ".bmad-core/deliverables/qa-docs-report.md"
+    validationScripts:
+      - node .harness/scripts/ci/04-check-bilingual-parity.mjs
+      - node .harness/scripts/ci/01-validate-docs.mjs
+      - node .harness/scripts/ci/11-validate-product-docs.mjs
+      - node .harness/scripts/ci/08-validate-tracking.mjs
+      - node .harness/scripts/ci/09-reconcile-maturity.mjs --check
+      - node .harness/scripts/ci/23-check-orphan-bilingual.mjs
+      - node .harness/scripts/ci/07-generate-inventories.mjs
+
+  - id: qa-aggregate
+    agent: qa
+    action: >
+      Aggregate the five role reports into a single QA verdict. PASS only if all
+      five gates pass (zero parity drift, zero security findings, all suites green,
+      coverage thresholds met, docs/governance integrity clean). Any single FAIL
+      blocks merge. Write the consolidated report.
+    deliverable: ".bmad-core/deliverables/qa-suite-report.md"
+    dependsOn: [qa-contracts, qa-security, qa-e2e, qa-unit, qa-docs]

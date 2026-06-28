@@ -97,8 +97,27 @@ Analyst → PM → Architect → SM → Dev → QA → DevOps
 | Agent | Participates In | Role |
 |-------|----------------|------|
 | **Docs** | All stages | Bilingual parity gate, release orchestration |
-| **QA** | executable stage | OPA differential gate, validation |
+| **QA** | executable stage | QA Lead — aggregates the role-specialized QA suite, OPA differential gate |
 | **DevOps** | executable stage | CI pipeline, coverage dashboards |
+
+### QA Suite (role-specialized)
+
+The **QA** agent is the lead for a role-decomposed quality gate
+(`.bmad-core/workflows/qa-suite.yaml`). Each specialist owns a lens and a set of
+real validation scripts; the Lead aggregates and blocks merge on any failure.
+This codifies the full quality gate as a runnable, role-split process — the
+operational half of the **GT-330** bus-factor mitigation.
+
+| Specialist | Lens | Gate |
+|-----------|------|------|
+| **qa-contracts** | Native↔OPA parity + contracts | `27/28/29` OPA + `10/26/30` |
+| **qa-security** | OWASP / ABAC fail-closed / shell-inj / SSRF | security specs + `13-agentic-code-review` |
+| **qa-e2e** | governance-flow E2E + cross-surface | `test:e2e` + `20/24` |
+| **qa-unit** | unit + integration coverage | `test:cov` across 8 workspaces |
+| **qa-docs** | bilingual parity + doc/governance integrity | `04/01/11/08/09/23/07` |
+
+Run via the engine: each specialist step carries its `validationScripts`; the
+`qa-aggregate` step (`agent: qa`) depends on all five.
 
 ### Required Artifacts Per Stage
 

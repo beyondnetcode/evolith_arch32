@@ -108,13 +108,13 @@ Esta tabla es la ruta más rápida al documento correcto. Cuando ya sepas qué a
 | Consultar estándares, taxonomías y el glosario del ecosistema | [Estándares y Gobernanza](./reference/governance/README.es.md) · [Glosario](./reference/governance/glossary-ecosystem.es.md) | Hub de gobernanza |
 | Desplegar, ejecutar y operar (SRE, infra, compuertas de calidad) | [Hub de Operaciones](./reference/operations/README.es.md) | Hub de operaciones |
 | Onboarding por rol (arquitecto, dev, QA/SRE, PM, agente de IA) | [Inicio por Rol](./reference/getting-started/README.es.md) | Onboarding |
-| Revisar la salud de la suite (madurez, gaps, auditorías, evidencia) | [Hub de Madurez y Gaps](./reference/governance/standards/vision/README.es.md) | Hub de reportes |
+| Revisar la salud de la suite (madurez, gaps, auditorías, evidencia) | [Tablero de Gaps](./reference/governance/standards/vision/gap-tracking.es.md) · [Hub de Madurez y Gaps](./reference/governance/standards/vision/README.es.md) | Hub de reportes |
 | Configurar agentes de IA y el flujo asistido | [AGENTS.es.md](./AGENTS.es.md) | Reglas de agentes |
 | Localizar cualquier artefacto directamente | [Índice Maestro Global](./reference/navigation/MASTER_INDEX.es.md) | Índice de navegación |
 
 ## Contribución
 
-Antes de contribuir, lee la [Guía de Contribución](./CONTRIBUTING.es.md), el [Código de Conducta](./CODE_OF_CONDUCT.es.md), la [Política de Seguridad](./SECURITY.es.md) y [AGENTS.es.md](./AGENTS.es.md) para las convenciones de agentes. Consulta la [Taxonomía del Repositorio](./reference/governance/standards/repository-taxonomy.md) para saber qué va dónde.
+Antes de contribuir, lee la [Guía de Contribución](./CONTRIBUTING.es.md), la [Política de Seguridad](./SECURITY.es.md) y [AGENTS.es.md](./AGENTS.es.md) para las convenciones de agentes. Consulta la [Taxonomía del Repositorio](./reference/governance/standards/repository-taxonomy.md) para saber qué va dónde.
 
 ## Licencia
 

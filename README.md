@@ -1,4 +1,4 @@
-<ediv align="center">
+<div align="center">
 
 # Evolith: Executable Architectural Governance Framework
 
@@ -108,13 +108,13 @@ This table is the fastest route to the right document. When you already know the
 | Look up standards, taxonomies, and the ecosystem glossary | [Standards & Governance](./reference/governance/README.md) · [Glossary](./reference/governance/glossary-ecosystem.md) | Governance hub |
 | Deploy, run, and operate (SRE, infra, quality gates) | [Operations hub](./reference/operations/README.md) | Operations hub |
 | Onboard by role (architect, dev, QA/SRE, PM, AI agent) | [Getting Started by Role](./reference/getting-started/README.md) | Onboarding |
-| Review suite health (maturity, gaps, audits, evidence) | [Maturity & Gaps hub](./reference/governance/standards/vision/README.md) | Reporting hub |
+| Review suite health (maturity, gaps, audits, evidence) | [Gap Tracking Board](./reference/governance/standards/vision/gap-tracking.md) · [Maturity & Gaps hub](./reference/governance/standards/vision/README.md) | Reporting hub |
 | Configure AI agents and assisted flow | [AGENTS.md](./AGENTS.md) | Agent rules |
 | Locate any artifact directly | [Global Master Index](./reference/navigation/MASTER_INDEX.md) | Navigation index |
 
 ## Contributing
 
-Before contributing, read the [Contributing Guide](./CONTRIBUTING.md), the [Code of Conduct](./CODE_OF_CONDUCT.md), the [Security Policy](./SECURITY.md), and [AGENTS.md](./AGENTS.md) for agent conventions. See the [Repository Taxonomy](./reference/governance/standards/repository-taxonomy.md) for what goes where.
+Before contributing, read the [Contributing Guide](./CONTRIBUTING.md), the [Security Policy](./SECURITY.md), and [AGENTS.md](./AGENTS.md) for agent conventions. See the [Repository Taxonomy](./reference/governance/standards/repository-taxonomy.md) for what goes where.
 
 ## License
 

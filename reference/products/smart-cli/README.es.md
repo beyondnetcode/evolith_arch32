@@ -1,330 +1,169 @@
-# Evolith CLI
+# Smart CLI
 
-Interfaz de línea de comandos para gobernanza, validación de estándares e integración con agentes IA.
+> Hub de producto de **`@evolith/smart-cli`** — el punto de entrada por línea de comandos al ecosistema Evolith: gobernanza, validación de estándares, andamiaje de arquitectura, gestión del ciclo de vida SDLC e integración con agentes de IA (MCP).
 
-## Características
+| | |
+|---|---|
+| **Estado** | Activo |
+| **Paquete** | `@evolith/smart-cli` |
+| **Versión** | `1.1.4` |
+| **Binario** | `smart-cli` |
+| **Fuente de verdad** | [`sdk/cli/README.md`](../../../sdk/cli/README.md) (autoritativo, 1200+ líneas) |
+| **Inventario de superficie** | [`product-inventory.md`](./product-inventory.md) (generado — no editar a mano) |
 
-- **Gobernanza**: Gestión de ADR, seguimiento de estándares, instalación de agentes
-- **Validación**: Cumplimiento del repositorio contra los estándares de Evolith
-- **Integración IA**: Servidor MCP para llamadas de herramientas de agentes IA
-- **Observabilidad**: Logging estructurado, métricas, reporte de errores
+Esta página es un **hub**: te orienta y te dirige a la documentación profunda autoritativa. Para las opciones exhaustivas de cada comando, remítete siempre al [README de código](../../../sdk/cli/README.md) y al [Inventario de Superficie de Producto](./product-inventory.md) generado.
+
+## Qué hace
+
+- **Gobernanza** — gestión de ADRs, seguimiento de estándares, instalación de agentes BMAD.
+- **Validación** — cumplimiento del repositorio contra rulesets, topologías, ADRs y gates SDLC de Evolith (motor componible, GT-312).
+- **Arquitectura** — andamiaje y detección de deriva a lo largo del eje progresivo de madurez.
+- **Ciclo de vida SDLC** — gates de fase, transiciones, artefactos de handoff y métricas DORA.
+- **Integración con IA** — un servidor MCP listo para producción (stdio + HTTP) para Cursor, Claude Desktop y agentes propios.
 
 ## Instalación
 
-### npm (Recomendado)
-
 ```bash
 npm install -g @evolith/smart-cli
+# o: pnpm add -g @evolith/smart-cli
+# o: yarn global add @evolith/smart-cli
 ```
 
-### Manual
-
-Descarga el binario más reciente desde [GitHub Releases](https://github.com/beyondnetcode/evolith_arch32/releases) y agrégalo a tu PATH.
-
-### Verificar Instalación
+O descarga un binario desde [GitHub Releases](https://github.com/beyondnetcode/evolith_arch32/releases) y añádelo a tu PATH.
 
 ```bash
 smart-cli --version
-# smart-cli version 1.1.0
+# smart-cli version 1.1.4
 ```
 
-## Inicio Rápido
-
-### 1. Inicializar un Repositorio
+## Inicio rápido
 
 ```bash
-cd tu-proyecto
+# 1. Genera un proyecto de demostración para explorar la CLI
+smart-cli fixtures --type demo
+
+# 2. Inicializa un repositorio real (crea evolith.yaml)
 smart-cli init
-```
 
-Esto crea un archivo `evolith.yaml` con la configuración por defecto.
+# 3. Genera la documentación base
+smart-cli docs
 
-### 2. Ejecutar la Primera Validación
-
-```bash
-smart-cli validate
-```
-
-Salida:
-```
-✓ Validando repositorio...
-✓ El repositorio cumple con los estándares de Evolith
-```
-
-### 3. Instalar un Agente
-
-```bash
-smart-cli agents install
-# Seleccionar la plantilla "standard" cuando se solicite
-```
-
-## Comandos
-
-### validate
-
-Valida el cumplimiento del repositorio contra los estándares de Evolith con orquestación SDLC completa.
-
-```bash
-smart-cli validate [opciones]
-
-Opciones:
-  --satellite <ruta>    Ruta al repositorio satélite (por defecto: cwd)
-  --core <ruta>         Ruta a Evolith Core
-  --format <formato>    Formato de salida: json, table, yaml, markdown
-  --output <archivo>    Escribir salida a archivo
-  --topology <nombre>   Validar contra topología específica (modular-monolith, distributed-modules, microservices)
-  --ruleset <id>        Validar ruleset específico (acl, open-core, inheritance, satellite-contracts)
-  --engine <engine>     Motor de evaluación de políticas: native u opa (por defecto: native)
-  --phase <id>          Validar contra fase SDLC específica (f1-f5)
-  --manifest <ruta>     Usar manifest de topología para validación
-```
-
-**Motor de Validación Composable (GT-312):**
-El sistema de validación es inteligente y flexible — NO rígido. Puedes validar desde cualquier punto de entrada sin forzar un flujo específico.
-
-**Modos de Validación:**
-
-| Modo | Comando | Qué valida |
-|---|---|---|
-| **SDLC** | `smart-cli validate --phase f1` | Fase → Gate → Artifacts → Schemas → Rulesets → ADRs → OPA → Blocking |
-| **Arquitectura** | `smart-cli validate --topology modular-monolith` | Reglas de topología, límites hexagonales, aislamiento de dominio, multi-tenancy |
-| **Ruleset** | `smart-cli validate --ruleset compliance-baseline` | Ejecución de ruleset específico vía OPA |
-| **ADR** | `smart-cli validate --adr hexagonal-architecture` | Reglas arquitectónicas específicas de ADR |
-| **Ad-hoc** | `smart-cli validate --file src/domain/user.ts` | Validación de archivo/componente individual |
-| **Composable** | `smart-cli validate --topology modular-monolith --ruleset compliance-baseline` | Múltiples puntos de entrada combinados |
-
-**Resolución Inteligente:**
-- `smart-cli validate` (sin params) → lee `evolith.config.json` para defaults
-- `smart-cli validate --topology modular-monolith` → infiere reglas de arquitectura para esa topología
-- `smart-cli validate --phase f1` → resuelve gate-f1 y sus artifacts requeridos
-- El sistema combina todos los inputs proporcionados en el alcance óptimo de validación
-
-**Ejemplo `evolith.config.json` (defaults opcionales):**
-```json
-{
-  "topology": "modular-monolith",
-  "phase": "f1",
-  "rulesets": ["compliance-baseline", "definition-of-done"],
-  "engine": "opa"
-}
-```
-
-**Flujo de Validación (Modo SDLC):**
-1. Resuelve la fase y gate actuales desde config o flags
-2. Valida artifacts requeridos contra schemas
-3. Aplica rulesets específicos de la topología
-4. Aplica reglas arquitectónicas basadas en ADRs
-5. Ejecuta políticas OPA en paralelo para rendimiento
-6. Evalúa blocking criteria
-7. Retorna veredicto con pass/fail por regla, evidencia, estado blocking y guía de remediación
-
-**Rendimiento:** La validación completa se completa en <2s para proyectos estándar.
-
-**Evaluación de Políticas Dual-Engine:**
-La CLI soporta la evaluación de políticas utilizando el motor integrado en TypeScript (`native`) o módulos WebAssembly de Open Policy Agent (`opa`). Ver [Core ADR-0041](../../architecture/adrs/core/0041-dual-engine-policy-evaluation.es.md) para más detalles.
-
-**Ejemplos:**
-
-```bash
-# Validación básica
+# 4. Valida el cumplimiento
 smart-cli validate
 
-# Salida JSON para automatización
-smart-cli validate --format json
-
-# Salida en tabla para humanos
-smart-cli validate --format table
-
-# Validar ruleset específico
-smart-cli validate --ruleset acl
-```
-
-### adr
-
-Gestionar Registros de Decisiones de Arquitectura.
-
-```bash
-smart-cli adr <comando>
-
-Comandos:
-  create     Crear nuevo ADR
-  list       Listar todos los ADR
-  get        Mostrar detalles del ADR
-  update     Actualizar ADR existente
-  matrix     Mostrar matriz de ADR
-```
-
-**Ejemplos:**
-
-```bash
-# Crear nuevo ADR
-smart-cli adr create
-
-# Listar todos los ADR
-smart-cli adr list
-
-# Obtener ADR específico
-smart-cli adr get ADR-0002
-```
-
-### standards
-
-Gestionar estándares de gobernanza.
-
-```bash
-smart-cli standards <comando>
-
-Comandos:
-  init       Inicializar directorio de estándares
-  list       Listar todos los estándares
-  get        Mostrar detalles del estándar
-  validate   Validar contra estándares
-  export     Exportar estándar a markdown/json
-```
-
-**Ejemplos:**
-
-```bash
-# Inicializar estándares
-smart-cli standards init
-
-# Listar estándares
-smart-cli standards list
-```
-
-### agents
-
-Instalar y gestionar agentes de Evolith.
-
-```bash
-smart-cli agents <comando>
-
-Comandos:
-  install    Instalar nuevo agente
-  list       Listar agentes instalados
-  remove     Eliminar agente
-  validate   Validar ruleset del agente
-  upgrade    Actualizar agente
-```
-
-**Ejemplos:**
-
-```bash
-# Instalación interactiva
-smart-cli agents install
-
-# Listar agentes
-smart-cli agents list
-```
-
-### history
-
-Ver y gestionar historial de comandos.
-
-```bash
-smart-cli history [opciones]
-
-Opciones:
-  --list              Listar comandos recientes
-  --get <id>          Mostrar detalles del comando
-  --search <consulta> Buscar comandos
-  --stats             Mostrar estadísticas
-  --clear             Limpiar historial
-```
-
-**Ejemplos:**
-
-```bash
-# Mostrar últimos 20 comandos
-smart-cli history
-
-# Mostrar estadísticas
-smart-cli history --stats
-
-# Buscar comandos
-smart-cli history --search validate
-```
-
-### completion
-
-Generar scripts de completado de shell.
-
-```bash
-smart-cli completion --install <shell>
-
-Shells soportados: bash, zsh, fish
-```
-
-**Ejemplos:**
-
-```bash
-# Instalar completado bash
-smart-cli completion --install bash
-
-# Instalar completado zsh
-smart-cli completion --install zsh
-```
-
-## Servidor MCP (Integración con Agentes IA)
-
-La CLI de Evolith incluye un servidor MCP para integración con agentes IA.
-
-### Iniciar el Servidor MCP
-
-```bash
+# 5. Conecta un agente de IA
 smart-cli mcp serve
 ```
 
-El servidor se comunica vía stdio JSON-RPC.
+## Referencia de comandos
 
-### Smoke Test MCP
+La CLI expone **20 grupos de comandos** (el inventario generado cuenta subcomandos por separado, de ahí una cifra mayor). Una línea concisa por cada uno — para las opciones y ejemplos completos, sigue el enlace al [README de código](../../../sdk/cli/README.md).
 
-Usar el smoke test antes de releases o cambios de protocolo MCP:
+| Comando | Propósito |
+|---|---|
+| `init` | Inicializa un repositorio satélite (crea `evolith.yaml` y la estructura del proyecto). |
+| `docs` | Genera la documentación base (`README.md`, `AGENTS.md`, `MASTER_INDEX.md`, `evolith.yaml`). |
+| `validate` | Valida el cumplimiento del repositorio contra rulesets, topologías, ADRs y fases SDLC. |
+| `adr` | Gestiona Architecture Decision Records (create, list, get, update, matrix). |
+| `standards` | Gestiona estándares de gobernanza (init, list, get, validate, export). |
+| `agents` | Instala, lista y elimina agentes BMAD de Evolith. |
+| `architecture` | Inspecciona y valida la arquitectura contra la topología declarada. |
+| `drift` | Detecta la deriva de arquitectura respecto a la topología declarada; registra historial y tendencias. |
+| `gate` | Evalúa los gates de fase SDLC y emite artefactos `GateEvidence` (ADR-0073). |
+| `phase` | Propone una transición entre fases SDLC (emite un artefacto de propuesta). |
+| `sdlc` | Orquesta artefactos y ciclo de vida SDLC (`handoff`, `generate`, `gate-status`). |
+| `profile` | Gestiona perfiles de CLI con nombre (valores por defecto por entorno). |
+| `fixtures` | Genera archivos de fixtures reproducibles para demos, pruebas y onboarding. |
+| `api` | Explora e inspecciona la superficie de la API de Evolith (herramientas MCP, recursos, esquemas, comandos). |
+| `mcp` | Ejecuta el servidor MCP para integración con agentes de IA (stdio o HTTP). |
+| `alias` | Gestiona alias abreviados para comandos de la CLI. |
+| `history` | Visualiza y gestiona el historial de ejecución de comandos. |
+| `completion` | Genera e instala scripts de autocompletado de shell (bash, zsh, fish). |
+| `update` | Comprueba y aplica actualizaciones de la CLI. |
+| `upgrade` | Actualiza un repositorio satélite a la siguiente topología del eje progresivo o versión de gobernanza. |
+
+## Modos de validación (motor componible — GT-312)
+
+La validación es componible, no rígida — puedes entrar desde cualquier combinación de inputs y el motor resuelve el alcance óptimo.
+
+| Modo | Ejemplo | Valida |
+|---|---|---|
+| SDLC | `smart-cli validate --phase discovery` | Fase → gate → artefactos → esquemas → rulesets → ADRs → criterios de bloqueo |
+| Arquitectura | `smart-cli validate --topology modular-monolith` | Reglas de topología, límites hexagonales, aislamiento de dominio, multi-tenencia |
+| Ruleset | `smart-cli validate --ruleset evidence` | Un ruleset específico (motor native u OPA) |
+| ADR | `smart-cli validate --adr adr-0002` | Reglas arquitectónicas específicas de un ADR |
+| Ad-hoc | `smart-cli validate --file src/domain/user.ts` | Un único archivo o componente |
+| Componible | `smart-cli validate --topology microservices --ruleset evidence` | Varios puntos de entrada combinados |
+
+**Claves de fase SDLC** (los valores de `--phase` aceptados por la CLI y la API de `@evolith/sdk-client`): `discovery`, `design`, `construction`, `qa`, `release`. Mapean a las fases de gobernanza f1–f5 — *Conception & Discovery*, *Design & Architecture*, *Construction*, *Validation & QA*, *Delivery & Operations* — ver [Fases y gates](#fases-y-gates-sdlc) más abajo. Las claves heredadas `f1`–`f5` están **obsoletas** como valores de `--phase`; usa las claves canónicas anteriores.
 
 ```bash
-npm run mcp:smoke
+# Comprobación básica de cumplimiento
+smart-cli validate
+
+# Salida JSON para CI (envelope ADR-0073)
+smart-cli validate --format json --output report.json
+
+# Evaluación de fase SDLC (pipeline GT-281)
+smart-cli validate --phase discovery
+
+# Motor OPA contra un ruleset específico
+smart-cli validate --engine opa --ruleset acl
 ```
 
-El smoke verifica `initialize`, `tools/list`, `resources/list`, `prompts/list` y una llamada real `tools/call` mediante la CLI compilada.
+## Topologías soportadas
 
-También puedes iniciar en modo HTTP:
+Cualquier comando que acepte `--topology` referencia los **8 ids canónicos de topología** por su dimensión:
+
+| Topología (id) | Dimensión |
+|---|---|
+| `modular-monolith` | eje-progresivo |
+| `distributed-modules` | eje-progresivo |
+| `microservices` | eje-progresivo |
+| `serverless` | ejecución |
+| `edge-computing` | ejecución |
+| `event-driven` | integración |
+| `data-mesh` | datos |
+| `agentic-ai` | ia |
+
+El **eje progresivo** (`modular-monolith → distributed-modules → microservices`) es una progresión lineal de madurez. Las demás dimensiones (ejecución, integración, datos, ia) son complementarias y se eligen según las necesidades del proyecto. Los flags heredados `F1/F2/F3` mapean al eje progresivo pero están **obsoletos** — usa los ids canónicos.
+
+## Fases y gates SDLC
+
+F1–F5 son **niveles de madurez** en el eje progresivo de arquitectura, no fases SDLC. El ciclo de vida SDLC es un modelo independiente:
+
+| Fase de gobernanza | Nombre corto | Clave CLI `--phase` | Gate |
+|---|---|---|---|
+| Conception & Discovery | Discovery | `discovery` | Business Sign-Off |
+| Design & Architecture | Architecture | `design` | Design Baseline Approved |
+| Construction | Build | `construction` | Successful Build |
+| Validation & QA | Validation | `qa` | RC Stamped |
+| Delivery & Operations | Delivery | `release` | Production Live |
+
+La fase final del SDLC es **Delivery & Operations**. Evalúa gates y emite evidencia con `smart-cli gate evaluate --phase <clave>`; propón transiciones con `smart-cli phase advance`.
+
+## Servidor MCP (integración con agentes de IA)
+
+El servidor MCP se distribuye **dentro** de `@evolith/smart-cli` — no hay instalación aparte. Expone la superficie completa de Evolith a los agentes de IA.
+
+| Superficie | Cantidad |
+|---|---|
+| Herramientas | 27 |
+| Recursos | 9 |
+| Prompts | 8 |
+| Transportes | `stdio` (JSON-RPC 2.0) · Streamable HTTP (clave API, fail-closed) |
+
+El conjunto exacto de herramientas/recursos/prompts se enumera en el [Inventario de Superficie de Producto](./product-inventory.md) generado y se puede explorar en vivo con `smart-cli api --list --category tools`. Trátalos como la autoridad en lugar de cualquier lista mantenida a mano.
 
 ```bash
-smart-cli mcp serve --transport http --port 3000
+# Transporte stdio (por defecto — Cursor, Claude Desktop)
+smart-cli mcp serve
+
+# Transporte HTTP con autenticación por clave API (remoto / contenedorizado)
+smart-cli mcp serve --transport http --port 3000 --api-key <secret>
 ```
 
-### Herramientas MCP Disponibles
-
-| Herramienta | Descripción |
-|-------------|-------------|
-| `evolith-validate` | Validar cumplimiento del repositorio |
-| `evolith-agent-install` | Instalar nuevo agente |
-| `evolith-agent-list` | Listar agentes instalados |
-| `evolith-agent-validate` | Validar ruleset del agente |
-| `evolith-agent-upgrade` | Actualizar un agente existente |
-| `evolith-agent-remove` | Eliminar un agente |
-| `evolith-architecture-validate` | Validar arquitectura (F1/F2/F3) con análisis profundo opcional |
-| `evolith-sdlc-handoff` | Generar manifiesto de artefactos de transición de fase |
-| `evolith-sdlc-status` | Mostrar estado de phase gate SDLC |
-| `evolith-config-get` | Obtener valor de configuración de `evolith.yaml` |
-| `evolith-config-set` | Establecer valor de configuración en `evolith.yaml` |
-| `evolith-metrics` | Obtener métricas del servidor MCP |
-| `evolith-moscow-create` | Crear un nuevo análisis de priorización MoSCoW |
-| `evolith-moscow-load` | Cargar un análisis MoSCoW existente |
-| `evolith-moscow-update` | Actualizar un ítem en un análisis MoSCoW |
-| `evolith-moscow-remove` | Eliminar un ítem de un análisis MoSCoW |
-| `evolith-moscow-list` | Listar todos los análisis MoSCoW de un repositorio |
-| `evolith-moscow-validate` | Validar la corrección de un análisis MoSCoW |
-| `evolith-moscow-report` | Generar un reporte markdown desde un análisis MoSCoW |
-| `evolith-auto-fix` | Auto-corregir fallos arquitectónicos vía MCP |
-| `evolith-drift-detect` | Detectar deriva arquitectónica desde topología declarada |
-| `evolith-dora-metrics` | Obtener métricas DORA de ingeniería |
-| `evolith-gate-evaluate` | Evaluar criterios de gate de fase SDLC |
-| `evolith-phase-advance` | Avanzar a la siguiente fase SDLC |
-
-### Configuración para Cursor AI
-
-Agregar a `~/.cursor/mcp.json`:
+**Cursor** (`~/.cursor/mcp.json`) / **Claude Desktop** (`~/Library/Application Support/Claude/claude_desktop_config.json`):
 
 ```json
 {
@@ -335,54 +174,11 @@ Agregar a `~/.cursor/mcp.json`:
     }
   }
 }
-```
-
-### Configuración para Claude Desktop
-
-Agregar a `~/Library/Application Support/Claude/claude_desktop_config.json`:
-
-```json
-{
-  "mcpServers": {
-    "evolith": {
-      "command": "smart-cli",
-      "args": ["mcp", "serve"]
-    }
-  }
-}
-```
-
-## Ejemplo de Flujo de Trabajo con Agente IA
-
-Cuando está integrado con un agente IA, puedes tener conversaciones como:
-
-```
-Tú: Valida mi repositorio
-Agente: Déjame ejecutar la validación...
-
-      await mcp.callTool('evolith-validate', {
-        path: '/user/project',
-        format: 'summary'
-      })
-
-Resultado: ✓ El repositorio cumple con los estándares de Evolith
-         Reglas verificadas: 12
-         Todas las puertas pasaron
-
-Tú: Muéstrame el estado SDLC
-Agente: Déjame verificar el estado de los phase gates...
-
-      await mcp.callTool('evolith-sdlc-status', {
-        path: '/user/project'
-      })
-
-Resultado: Fase 1 — 3 gates pasados, 0 fallados
-         Todos los artefactos de evidencia presentes
 ```
 
 ## Configuración
 
-Evolith usa un archivo `evolith.yaml` en la raíz del repositorio:
+Evolith usa **`evolith.yaml`** en `.evolith/` o en la raíz del repositorio:
 
 ```yaml
 coreRef:
@@ -396,115 +192,27 @@ governance:
       status: "accepted"
 
 product:
-  name: "mi-proyecto"
+  name: "my-project"
   type: "library"
   runtime: "typescript"
+  topology: "modular-monolith"
 ```
 
-## Formatos de Salida
+Los valores por defecto opcionales que consume `validate` (topología, fase, rulesets, engine) también viven en `evolith.yaml` — `smart-cli validate` sin flags los lee. Usa una clave de fase canónica (`discovery`…`release`) y un id de topología canónico.
 
-Todos los comandos soportan múltiples formatos de salida:
+## Dónde encaja en Evolith
 
-```bash
-# JSON (por defecto para automatización)
-smart-cli validate --format json
-
-# Tabla (legible para humanos)
-smart-cli validate --format table
-
-# YAML (integración en pipelines)
-smart-cli validate --format yaml
-
-# Markdown (documentación)
-smart-cli validate --format markdown
-```
-
-## Solución de Problemas
-
-### Comando no encontrado
-
-Si `smart-cli` no se encuentra después de la instalación, asegúrate de que el binario global de npm está en tu PATH:
-
-```bash
-# Agregar a ~/.bashrc o ~/.zshrc
-export PATH="$(npm config get prefix)/bin:$PATH"
-```
-
-### Servidor MCP no responde
-
-Asegúrate de que el servidor MCP está corriendo:
-
-```bash
-smart-cli mcp serve &
-```
-
-### La validación falla
-
-Verifica que tu `evolith.yaml` existe y es válido:
-
-```bash
-cat evolith.yaml
-smart-cli validate --verbose
-```
-
-## Desarrollo
-
-### Construir desde el Código Fuente
-
-```bash
-cd sdk/cli
-npm install
-npm run build
-npm link  # Enlazar globalmente para pruebas
-```
-
-### Ejecutar Pruebas
-
-```bash
-# Ejecutar todas las pruebas
-npm test
-
-# Ejecutar con reporte de cobertura
-npm run test:cov
-```
-
-**Cobertura (v1.1.0):** 80.65% statements · 81.47% lines · 1.206 tests unitarios + 121 E2E. La superficie instalable se rastrea en el [Inventario de Superficie del Producto](./product-inventory.es.md) generado.
-
-### Estructura del Proyecto
-
-```
-sdk/cli/
-├── src/
-│   ├── commands/      # Comandos CLI (adr, validate, agents, etc.)
-│   ├── application/   # Casos de uso
-│   ├── domain/        # Lógica de negocio (servicios, entidades)
-│   ├── infrastructure/# Integraciones externas (catálogo, CLI)
-│   └── core/          # Compartido (DI, observabilidad, errores, MCP)
-├── shell/             # Scripts de completado de shell
-├── templates/         # Plantillas de configuración
-└── docs/              # Documentación
-```
+Smart CLI forma parte de la **suite Evolith**, construida sobre **Evolith Core** (`packages/core`, `core-domain`, `infra-providers`, `sdk-client`, `mcp-tools`). Productos hermanos: **Evolith Tracker**, **Core API** (`apps/core-api`), **Evolith MCP Services** y el modelo de referencia **UMS Reference**.
 
 ## Documentación
 
-- [Guía de Demo SMART CLI](docs/SMART-CLI-DEMO.es.md) - Guía completa que cubre todos los comandos, flujo SDLC, tipos de producto, integración MCP y validación de arquitectura
-- [Visión](docs/VISION.es.md) - Visión y hoja de ruta de la CLI
-- [Modelos de Datos](docs/data-models.es.md) - Modelos de datos del dominio
-- [Integración MCP](docs/MCP-INTEGRATION.md) - Detalles de integración del servidor MCP
-
-## Contribuir
-
-1. Haz fork del repositorio
-2. Crea una rama de característica
-3. Haz cambios con pruebas
-4. Envía un pull request
-
-## Licencia
-
-ISC
+- [README de código](../../../sdk/cli/README.md) — autoritativo, referencia completa por comando y ejemplos.
+- [Inventario de Superficie de Producto](./product-inventory.md) — recuentos generados de herramientas/recursos/prompts/comandos.
+- [Guía de demostración](../../../sdk/cli/docs/SMART-CLI-DEMO.md) — recorrido de extremo a extremo.
+- [Integración MCP](../../../sdk/cli/docs/MCP-INTEGRATION.md) — detalles del protocolo MCP.
+- [Protocolo de Handoff](../../../sdk/cli/docs/HANDOFF-PROTOCOL.md) — especificación del artefacto de handoff SDLC.
 
 ## Soporte
 
-- [Documentación](https://github.com/beyondnetcode/evolith_arch32#readme)
-- [Rastreador de Incidencias](https://github.com/beyondnetcode/evolith_arch32/issues)
-- [Discusiones](https://github.com/beyondnetcode/evolith_arch32/discussions)
+- [Issue Tracker](https://github.com/beyondnetcode/evolith_arch32/issues)
+- [Discussions](https://github.com/beyondnetcode/evolith_arch32/discussions)

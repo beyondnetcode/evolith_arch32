@@ -39,7 +39,7 @@ sequenceDiagram
     participant FS as "📁 File System"
     participant Git as "🗃️ Git"
 
-    Note over Agent,Gateway: Transport: stdio (local) or HTTP/SSE (remote)
+    Note over Agent,Gateway: Transport: stdio (local) or Streamable HTTP (remote)
 
     Agent->>+Gateway: tools/call { name: "evolith-validate", args: { path: "/repo" } }
 
@@ -73,7 +73,7 @@ sequenceDiagram
 | Transporte | Uso | Comando |
 |---|---|---|
 | **stdio** (JSON-RPC 2.0) | Agentes locales, Cursor, Claude Desktop | `evolith-mcp serve` |
-| **HTTP + SSE** | Agentes remotos, escalabilidad | `evolith-mcp serve --transport http --port 49100` |
+| **Streamable HTTP** (SDK oficial MCP) | Agentes remotos, escalabilidad | `evolith-mcp serve --transport http --port 49100` |
 
 > Los logs siempre se escriben a **stderr** (Pino), porque stdout está reservado para el stream JSON-RPC del transporte stdio.
 
@@ -107,11 +107,17 @@ evolith-mcp serve --transport http --port 49100
 |---|---|---|
 | `TRANSPORT` | `stdio` | Transporte activo: `stdio` o `http` |
 | `PORT` | `3000` | Puerto para transporte HTTP |
+| `MCP_HTTP_HOST` | `0.0.0.0` | Host de bind del servidor HTTP. Usar `127.0.0.1` para local-only |
 | `EVOLITH_API_KEY` | — | API key para autenticación en transporte HTTP |
+| `EVOLITH_MCP_ALLOW_NO_AUTH` | `false` | Permite arrancar HTTP sin API key (solo no-producción). Ignorado en `production` |
+| `JWT_SECRET` | — | Secreto opcional para validar Bearer JWT (HS256) además del API key |
+| `NODE_ENV` | `development` | En `production` la auth HTTP es obligatoria |
 | `LOG_LEVEL` | `info` | Nivel de log Pino: `trace`, `debug`, `info`, `warn`, `error` |
 | `REDIS_URL` | — | URL de Redis para caché de resources (ej: `redis://localhost:6379`). La caché es opcional. |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | — | Endpoint OpenTelemetry para tracing |
 | `OTEL_SERVICE_NAME` | `evolith-mcp-server` | Nombre del servicio en los traces |
+
+> El binario también acepta los flags `--transport`/`-t`, `--port`/`-p`, `--api-key` y `--allow-no-auth`, además del subcomando `evolith-mcp version`.
 
 ---
 
@@ -188,7 +194,7 @@ Las tools se obtienen en runtime via `tools/list`. Todas retornan datos crudos q
   "corePath": "string — ruta al Core de Evolith",
   "engine": "'native' | 'opa' — motor de evaluación (default: native)",
   "topology": "'modular-monolith' | 'microservices' | 'serverless' | ... — activa modo Architecture",
-  "phase": "'f1' | 'f2' | 'f3' | 'f4' | 'f5' — activa modo SDLC",
+  "phase": "'discovery' | 'design' | 'construction' | 'qa' | 'release' — activa modo SDLC",
   "ruleset": "string — activa modo Ruleset",
   "adr": "'adr-0002' | 'adr-0005' | 'adr-0010' | ... — activa modo ADR",
   "file": "string — activa modo Ad-hoc sobre un archivo"
@@ -358,26 +364,21 @@ Los prompts se obtienen via `prompts/list` y se invocan via `prompts/get`.
 
 ## Operaciones mutativas
 
-Las tools marcadas como mutativas requieren confirmación explícita para prevenir cambios accidentales.
-
-### Métodos de confirmación
-
-**Opción 1 — Argumento `confirm`:**
+Las tools marcadas como mutativas (`mutative: true`) requieren **aprobación explícita** para prevenir cambios accidentales. El dispatcher ([`mcp-tool-dispatch.ts:137`](./src/mcp/mcp-tool-dispatch.ts)) rechaza la llamada con `FORBIDDEN` salvo que el request incluya **ambos** campos:
 
 ```json
 {
-  "name": "my-agent",
+  "name": "winston",
   "dir": "/path/to/repo",
-  "confirm": true
+  "apply": true,
+  "approvalToken": "<token-no-vacío>"
 }
 ```
 
-**Opción 2 — Config en `evolith.yaml`:**
+- `apply` debe ser exactamente `true`.
+- `approvalToken` debe ser un string no vacío. El servidor nunca lo registra en claro: lo reduce a un fingerprint `sha256:…` antes de auditarlo.
 
-```yaml
-mcp:
-  allowMutations: true
-```
+> El `approvalToken` es el contrato de aprobación a nivel de protocolo. Algunos schemas de tool aún declaran un campo `confirm` y existe el helper `isMutationAllowed()` (lee `mcp.allowMutations` de `evolith.yaml`), pero **el guard que realmente bloquea la ejecución en `handleCallTool` es `apply` + `approvalToken`** — `confirm` y `mcp.allowMutations` no lo sustituyen.
 
 ### Tools mutativas
 
@@ -492,7 +493,7 @@ El agente invocará `evolith-agent-install` y `evolith-agent-validate` en secuen
   "arguments": {
     "path": "/repo",
     "topology": "modular-monolith",
-    "phase": "f2",
+    "phase": "design",
     "engine": "native"
   }
 }
@@ -583,7 +584,7 @@ curl -X POST http://localhost:49100/mcp \
 
 | Aspecto | `smart-cli mcp` (legacy) | `evolith-mcp` (nuevo) |
 |---|---|---|
-| Transporte | Solo stdio | stdio + HTTP/SSE |
+| Transporte | Solo stdio | stdio + Streamable HTTP |
 | Auth | Sin auth | ABAC + API keys en HTTP |
 | Caché | Sin caché | Redis opcional |
 | Observabilidad | Logs básicos | Pino + OTEL + audit logger |
@@ -623,7 +624,7 @@ export class MiHerramientaTool implements McpTool {
 }
 ```
 
-Para tools mutativas, añadir `readonly mutative = true`. El dispatcher exigirá `{ "confirm": true }` o `mcp.allowMutations: true` en `evolith.yaml`.
+Para tools mutativas, añadir `readonly mutative = true`. El dispatcher exigirá `{ "apply": true, "approvalToken": "..." }` en el request antes de ejecutar la tool.
 
 ---
 

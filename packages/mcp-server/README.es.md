@@ -188,7 +188,7 @@ Las tools se obtienen en runtime via `tools/list`. Todas retornan datos crudos q
   "corePath": "string — ruta al Core de Evolith",
   "engine": "'native' | 'opa' — motor de evaluación (default: native)",
   "topology": "'modular-monolith' | 'microservices' | ... — activa modo Architecture",
-  "phase": "'f1' | 'f2' | 'f3' | 'f4' | 'f5' — activa modo SDLC",
+  "phase": "discovery | design | construction | qa | release — activa modo SDLC",
   "ruleset": "string — activa modo Ruleset",
   "adr": "'adr-0002' | 'adr-0005' | ... — activa modo ADR",
   "file": "string — activa modo Ad-hoc sobre un archivo"
@@ -358,24 +358,21 @@ Los prompts se obtienen via `prompts/list` y se invocan via `prompts/get`.
 
 ## Operaciones mutativas
 
-Las tools marcadas como mutativas requieren confirmación explícita.
-
-**Opción 1 — Argumento `confirm`:**
+Las tools marcadas como mutativas (`mutative: true`) requieren **aprobación explícita** para prevenir cambios accidentales. El dispatcher ([`mcp-tool-dispatch.ts:137`](./src/mcp/mcp-tool-dispatch.ts)) rechaza la llamada con `FORBIDDEN` salvo que el request incluya **ambos** campos:
 
 ```json
 {
-  "name": "my-agent",
+  "name": "winston",
   "dir": "/path/to/repo",
-  "confirm": true
+  "apply": true,
+  "approvalToken": "<token-no-vacío>"
 }
 ```
 
-**Opción 2 — Config en `evolith.yaml`:**
+- `apply` debe ser exactamente `true`.
+- `approvalToken` debe ser un string no vacío. El servidor nunca lo registra en claro: lo reduce a un fingerprint `sha256:…` antes de auditarlo.
 
-```yaml
-mcp:
-  allowMutations: true
-```
+> El `approvalToken` es el contrato de aprobación a nivel de protocolo. Algunos schemas de tool aún declaran un campo `confirm` y existe el helper `isMutationAllowed()` (lee `mcp.allowMutations` de `evolith.yaml`), pero **el guard que realmente bloquea la ejecución en `handleCallTool` es `apply` + `approvalToken`** — `confirm` y `mcp.allowMutations` no lo sustituyen.
 
 ### Tools mutativas
 
@@ -483,7 +480,7 @@ Maneja el acceso a recursos de corpus documentales (ADRs, playbooks, specs) para
   "arguments": {
     "path": "/repo",
     "topology": "modular-monolith",
-    "phase": "f2",
+    "phase": "design",
     "engine": "native"
   }
 }

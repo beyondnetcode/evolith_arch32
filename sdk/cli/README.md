@@ -188,7 +188,7 @@ Options:
                            microservices, serverless, event-driven, agentic-ai (repeatable).
                            Legacy F1/F2/F3 aliases still map to the progressive axis.
   -m, --manifest <path>    SatelliteManifest JSON for end-to-end evaluation (GT-281 pipeline)
-  -p, --phase <phase>      SDLC phase to evaluate: f1, f2, f3, f4, f5 (activates GT-281 pipeline)
+  -p, --phase <phase>      SDLC phase to evaluate: discovery, design, construction, qa, release (legacy f1..f5 deprecated; activates GT-281 pipeline)
       --adr <id>           Validate against a specific ADR rule set
       --file <path>        Validate a single file (ad-hoc mode)
       --composable         Use the composable GT-312 engine with intelligent mode resolution
@@ -241,10 +241,10 @@ smart-cli validate --topology modular-monolith --topology event-driven
 smart-cli validate --ruleset evidence
 
 # Full SDLC phase evaluation (GT-281 pipeline)
-smart-cli validate --phase f1
+smart-cli validate --phase discovery
 
 # Validate with a SatelliteManifest
-smart-cli validate --manifest ./satellite-manifest.json --phase f2
+smart-cli validate --manifest ./satellite-manifest.json --phase design
 
 # Ad-hoc file validation
 smart-cli validate --file src/domain/user.entity.ts --composable
@@ -1020,7 +1020,7 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 
 ```bash
 # Validate a specific SDLC phase with full gate evaluation
-smart-cli validate --phase f2 --format json --output gate-evidence.json
+smart-cli validate --phase design --format json --output gate-evidence.json
 
 # With explicit SatelliteManifest
 smart-cli validate --manifest ./satellite-manifest.json --phase f3 --format json

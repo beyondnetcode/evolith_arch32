@@ -4,6 +4,8 @@
 
 Welcome to the **Evolith Core API** Product Hub. The Core API is the central validation, state, and governance engine of the Evolith ecosystem, exposing execution-gated verification capabilities to developers, CI pipelines, and autonomous AI agents.
 
+The Core API is the official REST exposure layer of the Evolith Core domain (`@evolith/core-domain`). It is the network boundary that serves the domain over HTTP, alongside `@evolith/mcp-server` (MCP protocol for agents) and the Smart CLI. External consumers — including the **Evolith Tracker** — connect to it as an HTTP client. It is **not** the Tracker BFF: the Tracker's Application Gateway (ADR-0075) lives in the `evolith_tracker` repository and consumes this API as an external client.
+
 ---
 
 ## 1. Product Vision & Architecture
@@ -12,19 +14,21 @@ The Core API serves as the run-time implementation of the Evolith governance rul
 
 ```mermaid
 graph TD
-    T[Evolith Tracker] -->|REST / GraphQL| API[Core API]
+    T[Evolith Tracker] -->|REST / api/v1| API[Core API]
     C[Smart CLI] -->|REST / Local| API
-    A[Autonomous Agents] -->|MCP / SSE| API
+    A[Autonomous Agents] -->|REST| API
     API -->|Validation| NE[Native Engine]
     API -->|Validation| OPA[OPA Engine]
     API -->|State Store| DB[(Registry Store)]
 ```
 
+The Core API exposes a **REST-only** surface — there is no GraphQL interface. All domain endpoints are URI-versioned under `/api/v1`.
+
 ### Key Capabilities
 
-1. **Gate Evaluation:** Validates whether a project satisfies all quality gate criteria for its current SDLC phase (conception, design, construction, QA, delivery).
+1. **Gate Evaluation:** Validates whether a project satisfies all quality gate criteria for its current SDLC phase. The five canonical governance phases are **Conception & Discovery**, **Design & Architecture**, **Construction**, **Validation & QA**, and **Delivery & Operations** (surfaced through the CLI/API operational phase keys `discovery`, `design`, `construction`, `qa`, `release`).
 2. **Phase Transitioning:** Automates transitions between SDLC phases based on evidence matching predefined rules.
-3. **Architecture Verification:** Audits satellite projects against declared multi-topology rulesets (Modular Monolith, Serverless, Event-Driven, Data Mesh, Edge, Agentic/AI-First).
+3. **Architecture Verification:** Audits satellite projects against declared multi-topology rulesets (Modular Monolith, Distributed Modules, Microservices, Serverless, Edge Computing, Event-Driven, Data Mesh, and Agentic/AI-First).
 4. **Drift Detection:** Tracks real-time divergence between declared topological standards and active workspace configurations.
 
 ---
@@ -33,10 +37,11 @@ graph TD
 
 - **Framework:** NestJS
 - **Language:** TypeScript
-- **Interfaces:** REST API (URI-versioned), Swagger/OpenAPI, and integrated SSE (Server-Sent Events) for streaming.
+- **Interfaces:** REST API (URI-versioned under `/api/v1`) and Swagger/OpenAPI. No GraphQL and no SSE.
 - **Validation Engines:**
   - **Native TypeScript Evaluator:** In-memory, high-speed validator.
   - **OPA WASM Evaluator:** Dual-engine evaluation parity running compiled WebAssembly policy targets.
+- **Cross-cutting:** Helmet security headers, ADR-0073 response-envelope interceptor, correlation-id propagation, Prometheus metrics, and OpenTelemetry tracing.
 
 ---
 
@@ -50,21 +55,21 @@ The Core API exposes its functionality via NestJS Controllers:
 - [PhasesController](../../../apps/core-api/src/presentation/controllers/phases.controller.ts): Phase advance and transitions.
 - [ProjectsController](../../../apps/core-api/src/presentation/controllers/projects.controller.ts): Project initialization and phase-advance proposals.
 - [ReferenceController](../../../apps/core-api/src/presentation/controllers/reference.controller.ts): Public query endpoints for active rulesets, gates, and requirements.
-- [HealthController](../../../apps/core-api/src/presentation/controllers/health.controller.ts): Liveness and readiness health checks.
-- [MetricsController](../../../apps/core-api/src/presentation/controllers/metrics.controller.ts): Prometheus metrics exporter.
+- [HealthController](../../../apps/core-api/src/presentation/controllers/health.controller.ts): Liveness and readiness health checks (version-neutral).
+- [MetricsController](../../../apps/core-api/src/presentation/controllers/metrics.controller.ts): Prometheus metrics exporter (version-neutral).
 
 ### GT-312: Composable Validation Endpoint
 
-The `POST /v1/validate/composable` endpoint exposes the composable validation engine:
+The `POST /api/v1/validate/composable` endpoint exposes the composable validation engine, combining up to five modes (SDLC, Architecture, Ruleset, ADR, Ad-hoc) in a single call:
 
 ```bash
 # Architecture validation only
-curl -X POST http://localhost:3000/v1/validate/composable \
+curl -X POST http://localhost:3000/api/v1/validate/composable \
   -H "Content-Type: application/json" \
   -d '{"path": "/path/to/satellite", "topology": "modular-monolith"}'
 
 # Combined: Architecture + Ruleset + ADR
-curl -X POST http://localhost:3000/v1/validate/composable \
+curl -X POST http://localhost:3000/api/v1/validate/composable \
   -H "Content-Type: application/json" \
   -d '{
     "path": "/path/to/satellite",
@@ -78,7 +83,7 @@ curl -X POST http://localhost:3000/v1/validate/composable \
 
 ## 4. API Consumption Overview
 
-Clients connect to the Core API via standard REST endpoints versioned under `/api/v1/...`. All responses conform to the **ADR-0073** unified payload envelope:
+Clients connect to the Core API via standard REST endpoints versioned under `/api/v1/...`. The `/health` and `/metrics` endpoints are version-neutral for orchestrator compatibility. All domain responses conform to the **ADR-0073** unified payload envelope:
 
 ```json
 {
@@ -88,21 +93,21 @@ Clients connect to the Core API via standard REST endpoints versioned under `/ap
     "violations": []
   },
   "meta": {
+    "command": "validate.composable",
+    "executedAt": "2026-06-21T14:00:00Z",
+    "durationMs": 45,
+    "correlationId": "5f3a76ef-c5b9-478a-a92c-0e78fde14022",
     "context": {
-      "correlationId": "5f3a76ef-c5b9-478a-a92c-0e78fde14022",
+      "initiative": "governance-audit",
       "tenant": "default",
-      "initiative": "governance-audit"
-    },
-    "timing": {
-      "startedAt": "2026-06-21T14:00:00Z",
-      "durationMs": 45
+      "phase": "discovery"
     },
     "schemaVersion": "1.0.0"
   }
 }
 ```
 
-Detailed endpoint documentation, request bodies, and error response envelopes can be found in the [API Reference](./api-reference.md).
+Detailed endpoint documentation, request bodies, and error response envelopes can be found in the [API Reference](./api-reference.md). For the complete operational reference (installation, configuration, security model, tenant flows, and observability), see the authoritative code README at [`apps/core-api/README.md`](../../../apps/core-api/README.md).
 
 ---
 

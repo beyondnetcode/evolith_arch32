@@ -14,17 +14,17 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
 | [`GT-343`](./gap-reference-catalog.md#gt-343) | EPIC: unify SDLC phase ids (f1..f5) and topology F1/F2/F3 vocabulary — stages 1-5: canonical PhaseId + core-domain + public enums + topology maturityLevel + anti-collision guard (4b/2b cleanup pending) | `Cross` | Cross | P0 | XL | `IN-PROGRESS` |
-| [`GT-344`](./gap-reference-catalog.md#gt-344) | Published CLI crashes (ENOENT default-workflow.yaml) — embedded default workflow fallback | `Smart CLI` | Cross | P0 | L | `IN-PROGRESS` |
-| [`GT-347`](./gap-reference-catalog.md#gt-347) | Core OPA suite green 197/197 + wasm builds + CI gate wired (29-test-core-opa) | `Governance` | Cross | P0 | L | `IN-PROGRESS` |
-| [`GT-358`](./gap-reference-catalog.md#gt-358) | OPA suite: 12 assertion failures fixed (stale fixtures/mocks) → 197/197 | `Governance` | Cross | P1 | M | `IN-PROGRESS` |
+| [`GT-344`](./gap-reference-catalog.md#gt-344) | Published CLI crashes (ENOENT default-workflow.yaml) — embedded default workflow fallback | `Smart CLI` | Cross | P0 | L | `DONE` |
+| [`GT-347`](./gap-reference-catalog.md#gt-347) | Core OPA suite green 197/197 + wasm builds + CI gate wired (29-test-core-opa) | `Governance` | Cross | P0 | L | `DONE` |
+| [`GT-358`](./gap-reference-catalog.md#gt-358) | OPA suite: 12 assertion failures fixed (stale fixtures/mocks) → 197/197 | `Governance` | Cross | P1 | M | `DONE` |
 | [`GT-357`](./gap-reference-catalog.md#gt-357) | META: gap board over-reports completion vs validated build/test reality | `Governance` | Cross | P1 | M | `DONE` |
-| [`GT-345`](./gap-reference-catalog.md#gt-345) | Smart CLI `npm test` 100% green: unit 905/905 + e2e 175/175 (validate restored, --version, mcp-e2e stale tests fixed) | `Smart CLI` | Cross | P1 | L | `IN-PROGRESS` |
-| [`GT-348`](./gap-reference-catalog.md#gt-348) | MCP ABAC OPA policy now CACHED (path+mtime) — loaded once, not recompiled per dispatch + 2 tests | `MCP Server` | Cross | P1 | M | `IN-PROGRESS` |
+| [`GT-345`](./gap-reference-catalog.md#gt-345) | Smart CLI `npm test` 100% green: unit 905/905 + e2e 175/175 (validate restored, --version, mcp-e2e stale tests fixed) | `Smart CLI` | Cross | P1 | L | `DONE` |
+| [`GT-348`](./gap-reference-catalog.md#gt-348) | MCP ABAC OPA policy now CACHED (path+mtime) — loaded once, not recompiled per dispatch + 2 tests | `MCP Server` | Cross | P1 | M | `DONE` |
 | [`GT-351`](./gap-reference-catalog.md#gt-351) | infra-providers: WebhookAdapter hardened (timeout+retry+SSRF guard) +5 tests +jest harness; README/coverage/deriveCategory remain | `Infra` | Cross | P1 | L | `IN-PROGRESS` |
-| [`GT-346`](./gap-reference-catalog.md#gt-346) | Smart CLI shell-injection surface CLOSED — providers now run shell-free (executeFile + arg arrays) + tests | `Smart CLI` | Cross | P2 | M | `IN-PROGRESS` |
-| [`GT-349`](./gap-reference-catalog.md#gt-349) | MCP ABAC OPA fail-open FIXED — missing policy.wasm now denies in prod (fail-closed) + 6 tests | `MCP Server` | Cross | P2 | S | `IN-PROGRESS` |
-| [`GT-350`](./gap-reference-catalog.md#gt-350) | standards.service rule-check `new Function()` sink REMOVED — restricted predicate evaluator + 6 tests (no-code-exec proven) | `Core Domain` | Cross | P2 | M | `IN-PROGRESS` |
-| [`GT-352`](./gap-reference-catalog.md#gt-352) | mcp-tools: inputSchema validation added (CallTool → isError) + README (EN/ES) + 7 tests | `MCP Tools` | Cross | P2 | S | `IN-PROGRESS` |
+| [`GT-346`](./gap-reference-catalog.md#gt-346) | Smart CLI shell-injection surface CLOSED — providers now run shell-free (executeFile + arg arrays) + tests | `Smart CLI` | Cross | P2 | M | `DONE` |
+| [`GT-349`](./gap-reference-catalog.md#gt-349) | MCP ABAC OPA fail-open FIXED — missing policy.wasm now denies in prod (fail-closed) + 6 tests | `MCP Server` | Cross | P2 | S | `DONE` |
+| [`GT-350`](./gap-reference-catalog.md#gt-350) | standards.service rule-check `new Function()` sink REMOVED — restricted predicate evaluator + 6 tests (no-code-exec proven) | `Core Domain` | Cross | P2 | M | `DONE` |
+| [`GT-352`](./gap-reference-catalog.md#gt-352) | mcp-tools: inputSchema validation added (CallTool → isError) + README (EN/ES) + 7 tests | `MCP Tools` | Cross | P2 | S | `DONE` |
 | [`GT-353`](./gap-reference-catalog.md#gt-353) | sdk-client orphaned (no consumer/README); low method coverage | `SDK` | Cross | P2 | M | `OPEN` |
 | [`GT-354`](./gap-reference-catalog.md#gt-354) | core-api OpenAPI module dead code; api-reference missing cache/invalidate | `Core API` | Cross | P2 | S | `OPEN` |
 | [`GT-355`](./gap-reference-catalog.md#gt-355) | @evolith/core has no contract/smoke test for the re-export barrel | `Core` | Cross | P2 | S | `OPEN` |
@@ -373,7 +373,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-246`](./gap-reference-catalog.md#gt-246) | Implement Chaos Mesh/Litmus experiments | `QA` | Cross | P3 | L | `DONE` |
 
 
-**Progress:** 327 / 358 done · 23 in progress · 7 pending · 1 deferred
+**Progress:** 336 / 358 done · 14 in progress · 7 pending · 1 deferred
 
 **Wave 2026-06-23 (Wilson deep audit III):** Added 14 new gaps `GT-212`…`GT-225` from the Wilson Audit Playbook covering: ADR status hygiene (GT-212), topology manifest metadata + operational budgets + guidance corpus (GT-213, GT-217, GT-219), REST controller observability + OpenAPI (GT-214, GT-215), OPA input-schema parity + per-topology test density (GT-216, GT-222), SDLC Phase 05 rollback + on-call templates (GT-218), CLI branch coverage + envelope format coverage + skip-list cleanup (GT-220, GT-224, GT-225), MCP HTTP audit logging (GT-221), and cross-surface parity e2e tests (GT-223).
 

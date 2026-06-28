@@ -97,8 +97,28 @@ Analyst → PM → Architect → SM → Dev → QA → DevOps
 | Agente | Participa En | Rol |
 |--------|-------------|-----|
 | **Docs** | Todas las etapas | Gate de paridad bilingüe, orquestación de releases |
-| **QA** | Etapa executable | Gate diferencial OPA, validación |
+| **QA** | Etapa executable | QA Líder — agrega la suite QA por rol, gate diferencial OPA |
 | **DevOps** | Etapa executable | Pipeline CI, paneles de cobertura |
+
+### Suite QA (por rol)
+
+El agente **QA** es el líder de un gate de calidad descompuesto por rol
+(`.bmad-core/workflows/qa-suite.yaml`). Cada especialista posee una lente y un
+conjunto de scripts de validación reales; el Líder agrega y bloquea el merge ante
+cualquier fallo. Esto codifica el gate de calidad completo como un proceso
+ejecutable y dividido por rol — la mitad operativa de la mitigación de bus-factor
+**GT-330**.
+
+| Especialista | Lente | Gate |
+|-----------|------|------|
+| **qa-contracts** | Paridad Native↔OPA + contratos | `27/28/29` OPA + `10/26/30` |
+| **qa-security** | OWASP / ABAC fail-closed / shell-inj / SSRF | specs de seguridad + `13-agentic-code-review` |
+| **qa-e2e** | E2E governance-flow + cross-surface | `test:e2e` + `20/24` |
+| **qa-unit** | Cobertura unit + integration | `test:cov` en 8 workspaces |
+| **qa-docs** | Paridad bilingüe + integridad docs/governance | `04/01/11/08/09/23/07` |
+
+Ejecución vía engine: cada paso de especialista lleva sus `validationScripts`; el
+paso `qa-aggregate` (`agent: qa`) depende de los cinco.
 
 ### Artefactos Requeridos por Etapa
 

@@ -4916,6 +4916,23 @@
         "node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-357",
+      "closedAt": "2026-06-28",
+      "closureCommit": "f5261bbf",
+      "evidence": [
+        "reference/governance/standards/vision/gap-closure-evidence.json",
+        "reference/governance/standards/vision/maturity-reconciliation.json",
+        ".harness/scripts/ci/08-validate-tracking.mjs",
+        ".harness/scripts/ci/09-reconcile-maturity.mjs"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/08-validate-tracking.mjs",
+        "node .harness/scripts/ci/09-reconcile-maturity.mjs --check"
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "GT-341 (inventory reconciliation) satisfied; GT-357 reconciles board status against executed build/test evidence (closure-evidence + maturity), which is independent of GT-347’s separate core-OPA-suite remediation."
     }
   ]
 }

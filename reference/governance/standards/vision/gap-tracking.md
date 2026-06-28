@@ -22,8 +22,8 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-348`](./gap-reference-catalog.md#gt-348) | MCP OPA policy recompiled on every tool dispatch (no cache) | `MCP Server` | Cross | P1 | M | `OPEN` |
 | [`GT-351`](./gap-reference-catalog.md#gt-351) | infra-providers: WebhookAdapter hardened (timeout+retry+SSRF guard) +5 tests +jest harness; README/coverage/deriveCategory remain | `Infra` | Cross | P1 | L | `IN-PROGRESS` |
 | [`GT-346`](./gap-reference-catalog.md#gt-346) | Smart CLI CommandExecutor shell-injection surface (exec with interpolated args) | `Smart CLI` | Cross | P2 | M | `OPEN` |
-| [`GT-349`](./gap-reference-catalog.md#gt-349) | MCP OPA fails open (allowed) when policy.wasm missing | `MCP Server` | Cross | P2 | S | `OPEN` |
-| [`GT-350`](./gap-reference-catalog.md#gt-350) | standards.service.ts evaluates rule check via new Function() (code-exec sink) | `Core Domain` | Cross | P2 | M | `OPEN` |
+| [`GT-349`](./gap-reference-catalog.md#gt-349) | MCP ABAC OPA fail-open FIXED — missing policy.wasm now denies in prod (fail-closed) + 6 tests | `MCP Server` | Cross | P2 | S | `IN-PROGRESS` |
+| [`GT-350`](./gap-reference-catalog.md#gt-350) | standards.service rule-check `new Function()` sink REMOVED — restricted predicate evaluator + 6 tests (no-code-exec proven) | `Core Domain` | Cross | P2 | M | `IN-PROGRESS` |
 | [`GT-352`](./gap-reference-catalog.md#gt-352) | mcp-tools: no input validation vs inputSchema; no README | `MCP Tools` | Cross | P2 | S | `OPEN` |
 | [`GT-353`](./gap-reference-catalog.md#gt-353) | sdk-client orphaned (no consumer/README); low method coverage | `SDK` | Cross | P2 | M | `OPEN` |
 | [`GT-354`](./gap-reference-catalog.md#gt-354) | core-api OpenAPI module dead code; api-reference missing cache/invalidate | `Core API` | Cross | P2 | S | `OPEN` |
@@ -373,7 +373,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-246`](./gap-reference-catalog.md#gt-246) | Implement Chaos Mesh/Litmus experiments | `QA` | Cross | P3 | L | `DONE` |
 
 
-**Progress:** 329 / 358 done · 18 in progress · 10 pending · 1 deferred
+**Progress:** 329 / 358 done · 20 in progress · 8 pending · 1 deferred
 
 **Wave 2026-06-23 (Wilson deep audit III):** Added 14 new gaps `GT-212`…`GT-225` from the Wilson Audit Playbook covering: ADR status hygiene (GT-212), topology manifest metadata + operational budgets + guidance corpus (GT-213, GT-217, GT-219), REST controller observability + OpenAPI (GT-214, GT-215), OPA input-schema parity + per-topology test density (GT-216, GT-222), SDLC Phase 05 rollback + on-call templates (GT-218), CLI branch coverage + envelope format coverage + skip-list cleanup (GT-220, GT-224, GT-225), MCP HTTP audit logging (GT-221), and cross-surface parity e2e tests (GT-223).
 

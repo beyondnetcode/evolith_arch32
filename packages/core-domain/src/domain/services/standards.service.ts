@@ -1,4 +1,5 @@
 import { IFileSystem } from '../interfaces';
+import { evaluateStandardCheck } from './standard-check-evaluator';
 
 export type StandardCategory = 'architecture' | 'governance' | 'operations' | 'infrastructure';
 
@@ -134,12 +135,8 @@ export class StandardsService {
   }
 
   private evaluateRule(check: string, code: string): boolean {
-    try {
-      const checkFn = new Function('code', `return ${check}`);
-      return Boolean(checkFn(code));
-    } catch {
-      return true;
-    }
+    // GT-350: no `new Function`/eval — restricted, audited predicate evaluator.
+    return evaluateStandardCheck(check, code);
   }
 
   private renderMarkdown(standard: Standard): string {

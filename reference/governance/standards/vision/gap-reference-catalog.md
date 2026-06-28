@@ -3508,21 +3508,25 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-349
 
-**Title:** OPA fails open when wasm missing (security) — `OPEN`
+**Title:** OPA fails open when wasm missing (security) — `IN-PROGRESS`
 
 - **Component:** mcp-server · **Priority:** P2 · **Risk:** med · **Dependencies:** GT-347
 - **Files:** `packages/mcp-server/src/mcp/abac-evaluator.ts:132`
 - **Proposed fix:** fail-closed in production (or loud warn + metric) when policy.wasm is absent.
-- **Done when:** [ ] missing policy denies in prod; [ ] both paths tested.
+- **Applied fix:** `AbacEvaluator.evaluateOpa` no longer returns `{ allowed: true }` when `policy.wasm` is absent. In `environment === 'production'` it now hard-denies with an `ABAC_POLICY_MISSING` violation (fail-closed). In non-production the OPA layer abstains (`allowed: true`) and the native policy — which the dispatcher always ANDs (`native.allowed && opa.allowed`) — still governs, so dev/test stay usable. The catch path already failed closed and is unchanged.
+- **Evidence:** new `abac-evaluator.spec.ts` (6 tests) — incl. missing-wasm+production → denied `ABAC_POLICY_MISSING`, missing-wasm+staging → abstains; plus native ABAC-02/03/01 coverage (uses a nonexistent corePath so `pathExists` is genuinely false). Updated the `mcp-server.service` integration test that previously relied on the fail-open (prod read silently allowed) to assert the fail-closed denial. mcp-server suite 24/24 (168/168). Build clean.
+- **Done when:** [x] missing policy denies in prod; [x] both paths tested.
 
 #### GT-350
 
-**Title:** standards.service.ts uses `new Function()` (security) — `OPEN`
+**Title:** standards.service.ts uses `new Function()` (security) — `IN-PROGRESS`
 
 - **Component:** core-domain · **Priority:** P2 · **Risk:** med (code-exec sink) · **Dependencies:** none
 - **Files:** `packages/core-domain/src/domain/services/standards.service.ts:136`
 - **Proposed fix:** declarative/allow-listed predicate evaluator; trust-boundary flag.
-- **Done when:** [ ] no `new Function()`/eval; [ ] malicious check string inert; [ ] tests green.
+- **Applied fix:** removed the `new Function('code', 'return ' + check)` sink. Added `standard-check-evaluator.ts` exporting `evaluateStandardCheck(check, code)` — a restricted, audited predicate evaluator that NEVER executes arbitrary JS. It matches a small grammar (`code.includes/startsWith/endsWith('lit')`, `/regex/flags.test(code)`, `code.length <op> N`, joined by `&&`/`||` with optional `!`/parens) via a quote/regex/paren-aware top-level splitter; anything outside the grammar is non-blocking (`true`), preserving the old fail-open default but with zero execution. `standards.service.evaluateRule` now delegates to it.
+- **Evidence:** `standard-check-evaluator.spec.ts` 6/6 — incl. a payload test proving `(globalThis.__pwned = true) || true` and `code.constructor.constructor('…')()` are inert (no side effects, returns non-blocking). `grep new Function/eval` in core-domain src → only a doc comment remains. core-domain full suite 60/60 (595/595). Build clean.
+- **Done when:** [x] no `new Function()`/eval; [x] malicious check string inert; [x] tests green.
 
 #### GT-351
 

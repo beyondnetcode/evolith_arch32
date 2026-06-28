@@ -13,7 +13,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| [`GT-343`](./gap-reference-catalog.md#gt-343) | EPIC: unify SDLC phase ids (f1..f5) and topology F1/F2/F3 vocabulary — stages 1-4: canonical PhaseId + core-domain + public SDLC enums + topology maturityLevel (4b/2b/5 pending) | `Cross` | Cross | P0 | XL | `IN-PROGRESS` |
+| [`GT-343`](./gap-reference-catalog.md#gt-343) | EPIC: unify SDLC phase ids (f1..f5) and topology F1/F2/F3 vocabulary — stages 1-5: canonical PhaseId + core-domain + public enums + topology maturityLevel + anti-collision guard (4b/2b cleanup pending) | `Cross` | Cross | P0 | XL | `IN-PROGRESS` |
 | [`GT-344`](./gap-reference-catalog.md#gt-344) | Published CLI crashes (ENOENT default-workflow.yaml) — embedded default workflow fallback | `Smart CLI` | Cross | P0 | L | `IN-PROGRESS` |
 | [`GT-347`](./gap-reference-catalog.md#gt-347) | Core OPA suite green 197/197 + wasm builds + CI gate wired (29-test-core-opa) | `Governance` | Cross | P0 | L | `IN-PROGRESS` |
 | [`GT-358`](./gap-reference-catalog.md#gt-358) | OPA suite: 12 assertion failures fixed (stale fixtures/mocks) → 197/197 | `Governance` | Cross | P1 | M | `IN-PROGRESS` |

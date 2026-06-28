@@ -43,6 +43,10 @@ describe('Tool registration (full DI graph)', () => {
       'evolith-config-get',
       'evolith-config-set',
       'evolith-metrics',
+      'evolith-satellite-create',
+      'evolith-satellite-adopt',
+      'evolith-satellite-list',
+      'evolith-satellite-status',
     ];
 
     for (const name of expected) {

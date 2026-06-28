@@ -9,6 +9,10 @@ import { MetricsService } from '../mcp/metrics.service';
 import { McpTool, MCP_TOOLS } from '../mcp/tool.interface';
 import { ValidateTool } from './validate.tool';
 import { ComposableValidateTool } from './composable-validate.tool';
+import { SatelliteCreateTool } from './satellite-create.tool';
+import { SatelliteAdoptTool } from './satellite-adopt.tool';
+import { SatelliteListTool } from './satellite-list.tool';
+import { SatelliteStatusTool } from './satellite-status.tool';
 import { createAgentTools } from './agent.tools';
 import { createArchitectureTools } from './architecture.tools';
 import { createGateTools } from './gate.tools';
@@ -32,12 +36,20 @@ import { createTopologyTools } from './topology.tools';
   providers: [
     ValidateTool,
     ComposableValidateTool,
+    SatelliteCreateTool,
+    SatelliteAdoptTool,
+    SatelliteListTool,
+    SatelliteStatusTool,
     MetricsService,
     {
       provide: MCP_TOOLS,
       useFactory: (
         validate: ValidateTool,
         composableValidate: ComposableValidateTool,
+        satelliteCreate: SatelliteCreateTool,
+        satelliteAdopt: SatelliteAdoptTool,
+        satelliteList: SatelliteListTool,
+        satelliteStatus: SatelliteStatusTool,
         fs: IFileSystem,
         configParser: IConfigParser,
         validator: RulesetValidatorService,
@@ -47,6 +59,10 @@ import { createTopologyTools } from './topology.tools';
       ): McpTool[] => [
         validate,
         composableValidate,
+        satelliteCreate,
+        satelliteAdopt,
+        satelliteList,
+        satelliteStatus,
         ...createAgentTools(fs),
         ...createArchitectureTools(fs, configParser, validator),
         ...createGateTools(webhook, fs, new NestLoggerProvider().createLogger('GateTool')),
@@ -61,6 +77,10 @@ import { createTopologyTools } from './topology.tools';
       inject: [
         ValidateTool,
         ComposableValidateTool,
+        SatelliteCreateTool,
+        SatelliteAdoptTool,
+        SatelliteListTool,
+        SatelliteStatusTool,
         FILE_SYSTEM,
         CONFIG_PARSER,
         RulesetValidatorService,

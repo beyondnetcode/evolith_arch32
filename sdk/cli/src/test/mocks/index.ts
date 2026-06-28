@@ -1,4 +1,4 @@
-import { IFileSystem, IConfigParser, ILogger } from '../../../domain/interfaces';
+import { IFileSystem, IConfigParser, ILogger } from '@evolith/core-domain/domain/interfaces';
 
 export class MockFileSystem implements IFileSystem {
   private files: Map<string, string> = new Map();
@@ -81,6 +81,23 @@ export class MockFileSystem implements IFileSystem {
       isDirectory: () => this.directories.has(path),
       isFile: () => this.files.has(path)
     };
+  }
+
+  existsSync(path: string): boolean {
+    return this.files.has(path) || this.directories.has(path);
+  }
+
+  async mkdir(path: string): Promise<void> {
+    this.directories.add(path);
+  }
+
+  async copy(src: string, dest: string): Promise<void> {
+    const content = this.files.get(src);
+    if (content !== undefined) this.files.set(dest, content);
+  }
+
+  async ensureFile(path: string): Promise<void> {
+    if (!this.files.has(path)) this.files.set(path, '');
   }
 
   setFile(path: string, content: string): void {

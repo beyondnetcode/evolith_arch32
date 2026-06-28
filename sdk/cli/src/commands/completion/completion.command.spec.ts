@@ -31,12 +31,15 @@ describe('CompletionCommand', () => {
     });
 
     it('should handle install option', async () => {
-      (fsExtra.pathExists as jest.Mock).mockResolvedValue(true);
-      await expect(command.executeCommand([], { install: 'bash' })).resolves.not.toThrow();
+      const installSpy = jest.spyOn(command as any, 'installCompletion').mockResolvedValue(undefined);
+      await command.executeCommand([], { install: 'bash' });
+      expect(installSpy).toHaveBeenCalledWith('bash');
     });
 
     it('should handle installHooks option', async () => {
-      await expect(command.executeCommand([], { installHooks: 'bash' })).resolves.not.toThrow();
+      const hooksSpy = jest.spyOn(command as any, 'installHooks').mockResolvedValue(undefined);
+      await command.executeCommand([], { installHooks: 'bash' });
+      expect(hooksSpy).toHaveBeenCalledWith('bash');
     });
   });
 

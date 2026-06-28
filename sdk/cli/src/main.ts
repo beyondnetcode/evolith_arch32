@@ -1,8 +1,22 @@
 #!/usr/bin/env node
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { initCliOtel, shutdownCliOtel } from './infrastructure/observability/otel-tracing';
 import { CommandFactory } from 'nest-commander';
 import { AppModule } from './app.module';
 import { AliasService } from './config/alias.service';
+
+/** GT-345: read the CLI version from the package manifest so `--version` works and never drifts. */
+const CLI_VERSION: string = (() => {
+  try {
+    return (
+      (JSON.parse(readFileSync(join(__dirname, '..', 'package.json'), 'utf-8')) as { version?: string }).version ||
+      '0.0.0'
+    );
+  } catch {
+    return '0.0.0';
+  }
+})();
 
 initCliOtel();
 
@@ -18,7 +32,7 @@ async function bootstrap() {
       process.argv = [process.argv[0], process.argv[1], ...args];
     }
   }
-  await CommandFactory.run(AppModule, ['warn', 'error']);
+  await CommandFactory.run(AppModule, { logger: ['warn', 'error'], version: CLI_VERSION });
 }
 
 bootstrap()

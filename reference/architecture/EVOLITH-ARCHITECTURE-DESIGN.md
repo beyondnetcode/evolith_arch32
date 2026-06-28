@@ -1,8 +1,8 @@
 # Evolith Architecture Design — Corregido y Verificado
 
-**Versión:** 2.0.0  
+**Versión:** 2.1.0  
 **Fecha:** 2026-06-27  
-**Estado:** Aprobado — diseño objetivo post-auditoría  
+**Estado:** Aprobado — core-api y mcp-server desplegados y verificados en producción  
 **Autor:** Alberto Arroyo Raygada · Revisado por Claude Sonnet 4.6
 
 ---
@@ -337,65 +337,73 @@ Nuevos schemas (rulesets/schema/):
 | 16 | Rulesets | Schemas `tenant`, `blueprint`, `waiver`, `tenant-override` inexistentes | Creados en `rulesets/schema/` | 4 nuevos archivos `.schema.json` | ALTA | Sin contrato → tenant config no validable | ✅ Aplicada |
 | 17 | Rulesets | `rulesets/tenants/` no existía | Creado con README + ejemplo funcional | `rulesets/tenants/` | ALTA | Sin modelo de tenant → personalización imposible | ✅ Aplicada |
 | 18 | OPA | Sin policy para phase gates | `rulesets/opa/phase-gates.rego` con validación de evidence + waivers | `phase-gates.rego` | ALTA | Gates solo evaluados por native engine; OPA no cubre este dominio | ✅ Aplicada |
-| 19 | MCP Server | `tsconfig.json` paths usan `../../node_modules/` (breaks Docker) | `tsconfig.prod.json` overrides `"paths": {}` | `tsconfig.prod.json` | CRÍTICA | Build TypeScript falla en Docker standalone | ✅ Aplicada |
-| 20 | MCP Server | `@evolith/infra-providers` y `fs-extra` faltantes en package.json | Agregados a `dependencies` y `devDependencies` | `package.json`, `package-lock.json` | CRÍTICA | `npm ci` resuelve deps sin esas librerías; runtime crash | ✅ Aplicada |
+| 19 | MCP Server | `tsconfig.json` usa `commonjs`/`node` + paths a `../../node_modules/` (no existen en Docker standalone) | Migrado a `module`/`moduleResolution: nodenext` + `resolvePackageJsonExports` (mismo patrón que core-api). Resuelve vía el campo `exports` de cada paquete; el SDK MCP (ESM-only) cae a su build CJS por la condición `require`. Sin paths hacks | `tsconfig.json`, `tsconfig.prod.json` | CRÍTICA | Build TypeScript falla en Docker standalone (un `paths: {}` NO basta — rompe la resolución de subpaths) | ✅ Aplicada |
+| 20 | MCP Server | `@evolith/core`, `@evolith/infra-providers` y `fs-extra` faltantes en package.json (el código los importa) | Agregados a `dependencies`/`devDependencies`; lockfile standalone regenerado (resuelven al registry npm) | `package.json`, `package-lock.json` | CRÍTICA | `npm ci` resuelve deps sin esas librerías; runtime crash | ✅ Aplicada |
 | 21 | Ecosystem | Sin `docker-compose.yml` para desarrollo local | Creado con core-api, mcp-server, redis, otel-collector | `docker-compose.yml` | MEDIA | Onboarding de nuevos devs requiere setup manual | ✅ Aplicada |
-| 22 | Ecosystem | Machine contracts no incluye MCP, CLI, core-api como consumers | **Pendiente** — requiere actualizar `evolith-machine-contracts.json` | `rulesets/contracts/` | MEDIA | Contrato desactualizado → consumidores fuera de spec | ⏳ Pendiente |
-| 23 | Ecosystem | `@evolith/core` no publicado en npm pero importado por MCP server | **Pendiente** — requiere `npm publish` con autorización | `packages/core/` | CRÍTICA | MCP server build falla hasta que se publique | ⏳ Pendiente (requiere auth) |
-| 24 | Seguridad | Sin auth guard en ningún endpoint | **Pendiente** — implementar `ApiKeyGuard` + `@UseGuards()` | `app.module.ts` + nueva guard | ALTA | Todos los endpoints mutadores son públicos | ⏳ Pendiente (decisión arq.) |
-| 25 | Seguridad | `/metrics` sin auth (expone métricas internas) | **Pendiente** — network policy o puerto interno separado | `metrics.controller.ts` | ALTA | Prometheus expuesto públicamente | ⏳ Pendiente |
+| 23 | Ecosystem | `@evolith/core` no publicado en npm pero importado por MCP server | Publicado `@evolith/core@1.0.0`, `@evolith/mcp-server@1.0.0`, `@evolith/smart-cli@1.1.1` al registry npm | `packages/core/`, `packages/mcp-server/`, `sdk/cli/` | CRÍTICA | MCP server build falla hasta que se publique | ✅ Aplicada |
+| 24 | MCP Server | Transporte `sse` en Dockerfile/compose cae a stdio (`McpTransport` = `stdio`\|`http`) → sin servidor HTTP | Cambiado a `--transport http` (StreamableHTTP, que internamente hace SSE). `/health` movido antes de `validateAuth` (probe público). Bind `0.0.0.0` (override `MCP_HTTP_HOST`) para que Traefik enrute | `mcp-server.service.ts`, `Dockerfile`, `docker-compose.yml` | CRÍTICA | El deploy arranca en stdio → healthcheck HTTP falla | ✅ Aplicada |
+| 25 | Deploy | Env vars del mcp-server en Coolify en texto plano (no cifradas) → `DecryptException` rompe deploy y UI | Re-cifradas con `encrypt()` (Laravel APP_KEY); `EVOLITH_API_KEY` configurado para auth en producción | Coolify DB `environment_variables` | CRÍTICA | Deploy del mcp-server falla tras build; UI de Coolify da 500 | ✅ Aplicada |
+| 26 | Seguridad | Sin auth guard en endpoints del core-api | **Pendiente** — implementar `ApiKeyGuard` + `@UseGuards()` | `app.module.ts` + nueva guard | ALTA | Endpoints mutadores del core-api públicos | ⏳ Pendiente (decisión arq.) |
+| 27 | Seguridad | `/metrics` del core-api sin auth (expone métricas internas) | **Pendiente** — network policy o puerto interno separado | `metrics.controller.ts` | ALTA | Prometheus expuesto públicamente | ⏳ Pendiente |
+| 28 | Ecosystem | Machine contracts no incluye MCP, CLI, core-api como consumers | **Pendiente** — actualizar `evolith-machine-contracts.json` | `rulesets/contracts/` | MEDIA | Contrato desactualizado → consumidores fuera de spec | ⏳ Pendiente |
 
 ---
 
-## 14. Cambios Pendientes
+## 14. Estado de Deployment (2026-06-27)
 
-### Críticos (bloquean operación)
+Ambos servicios desplegados en Coolify (VPS Hostinger) sobre branch `main`, healthy:
 
-1. **Publicar `@evolith/core` en npm** — MCP server no puede buildear sin él. Requiere `npm publish` en `packages/core/`.
+| Servicio | URL | Build | Auth |
+|----------|-----|-------|------|
+| `evolith-core-api` (Coolify id 12) | http://evolith.beyondnet.cloud | `nodenext`, Docker standalone | sin guard (pendiente) |
+| `evolith-mcp-server` (Coolify id 13) | http://mcpevolith.beyondnet.cloud | `nodenext`, transporte `http`, bind `0.0.0.0` | `EVOLITH_API_KEY` (obligatorio en producción) |
+
+Paquetes npm publicados: `@evolith/core@1.0.0`, `@evolith/mcp-server@1.0.0`, `@evolith/smart-cli@1.1.1` (además de `@evolith/core-domain@1.0.4`, `@evolith/infra-providers@1.0.2`). Detalle operativo del deploy en [[project-coolify-deploy]].
+
+---
+
+## 15. Cambios Pendientes
 
 ### Altos (degradan seguridad/gobernanza)
 
-2. **API Key Guard** — implementar `PassportStrategy` con `x-api-key` header; aplicar en todos los endpoints `POST`.
-3. **`/metrics` en puerto interno** — separar del puerto público con Traefik middleware o segundo listener.
-4. **Paginación** en `GET /rulesets` y `GET /topologies`.
-5. **`rulesets/sdlc/phase-gates.rules.json`** — eliminar el duplicado (mantener solo `rulesets/phase-gates/`).
+1. **API Key Guard en core-api** — implementar `PassportStrategy` con `x-api-key` header; aplicar en todos los endpoints `POST`. (El mcp-server ya tiene auth vía `EVOLITH_API_KEY`.)
+2. **`/metrics` en puerto interno** — separar del puerto público con Traefik middleware o segundo listener.
+3. **Paginación** en `GET /rulesets` y `GET /topologies`.
+4. **`rulesets/sdlc/phase-gates.rules.json`** — eliminar el duplicado (mantener solo `rulesets/phase-gates/`).
 
 ### Medios (mejoran calidad)
 
-6. **CI schema validation** — `ajv-cli` validando todos `*.rules.json` contra su `$schema`.
-7. **CI cross-reference check** — detectar `playbookRef` en `.rules.json` que apunten a `.md` inexistentes.
-8. **Cache hit/miss metrics** — conectar `CacheMetricsService.recordHit/Miss()` al `CacheInterceptor`.
-9. **Índice de rulesets** en startup — evitar filesystem scan en cada `GET /rulesets`.
-10. **Blueprints estructurados** — crear `rulesets/blueprints/` con `blueprint.json` para cada blueprint existente en `reference/`.
+5. **CI schema validation** — `ajv-cli` validando todos `*.rules.json` contra su `$schema`.
+6. **CI cross-reference check** — detectar `playbookRef` en `.rules.json` que apunten a `.md` inexistentes.
+7. **Cache hit/miss metrics** — conectar `CacheMetricsService.recordHit/Miss()` al `CacheInterceptor`.
+8. **Índice de rulesets** en startup — evitar filesystem scan en cada `GET /rulesets`.
+9. **Blueprints estructurados** — crear `rulesets/blueprints/` con `blueprint.json` para cada blueprint existente en `reference/`.
 
 ---
 
-## 15. Riesgos Detectados
+## 16. Riesgos Detectados
 
 | Riesgo | Probabilidad | Impacto | Mitigación |
 |--------|-------------|---------|-----------|
-| `@evolith/core` nunca publicado → MCP server no deployable | ALTA | CRÍTICO | Publicar inmediatamente o restructurar imports en MCP server |
 | Divergencia entre `rulesets/sdlc/` y `rulesets/phase-gates/` | MEDIA | ALTA | Eliminar duplicado; CI que detecte archivos con mismo nombre |
 | Corpus no montado en pod → todos los endpoints devuelven vacío/500 | MEDIA | CRÍTICO | `/health/ready` ahora verifica; k8s no envía tráfico |
-| MCP server importa `@evolith/core` (no publicado) → crash en runtime | ALTA | CRÍTICO | Bloqueado por `@evolith/core` publish |
+| Env vars insertadas crudas en Coolify DB → `DecryptException` rompe deploy y UI | MEDIA | ALTA | Siempre cifrar con `encrypt()`/UI; ver [[project-coolify-deploy]] |
 | Tenants pueden leer rulesets de otros tenants | BAJA | ALTA | Implementar ABAC a nivel de corpus access en Core-API |
 | OPA `.wasm` ausente → validaciones sin política formal | ALTA | MEDIA | Native engine como fallback; generar `.wasm` en CI |
 
 ---
 
-## 16. Recomendaciones Finales
+## 17. Recomendaciones Finales
 
-1. **Publicar `@evolith/core`** — es la única acción que desbloquea el MCP server en producción.
+1. **Una sola ubicación canónica para cada artefacto** — el patrón ya existe; aplicarlo rigurosamente. `rulesets/` para reglas, `reference/` para lectura humana, sin cruces.
 
-2. **Una sola ubicación canónica para cada artefacto** — el patrón ya existe; aplicarlo rigurosamente. `rulesets/` para reglas, `reference/` para lectura humana, sin cruces.
-
-3. **CI como contrato de consistencia** — agregar tres checks de CI:
+2. **CI como contrato de consistencia** — agregar tres checks de CI:
    - `ajv validate` en todos `*.rules.json` contra su `$schema`
    - `opa test rulesets/opa/` — suite de tests OPA debe pasar
    - Cross-reference: toda `playbookRef` en `.rules.json` apunta a un `.md` existente
 
-4. **Tenant model es el próximo hito** — los schemas están, el directorio está. El siguiente paso es la API de tenant discovery en Core-API y la evaluación de overrides en el gate evaluator.
+3. **Tenant model es el próximo hito** — los schemas están, el directorio está. El siguiente paso es la API de tenant discovery en Core-API y la evaluación de overrides en el gate evaluator.
 
-5. **Auth como decisión urgente** — el API está públicamente expuesto. Aunque la red puede restringir acceso (VPC, k8s NetworkPolicy), implementar API Key guard es recomendable para producción.
+4. **Auth del core-api como decisión urgente** — el core-api está públicamente expuesto sin guard. Aunque la red puede restringir acceso (VPC, k8s NetworkPolicy), implementar API Key guard es recomendable para producción. (El mcp-server ya exige `EVOLITH_API_KEY` en producción.)
 
-6. **OTEL en staging siempre activo** — activar `OTEL_ENABLED=true` en el entorno de staging por defecto para capturar traces antes de llegar a producción.
+5. **OTEL en staging siempre activo** — activar `OTEL_ENABLED=true` en el entorno de staging por defecto para capturar traces antes de llegar a producción.

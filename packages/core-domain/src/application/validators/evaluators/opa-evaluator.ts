@@ -52,11 +52,11 @@ export class OpaEvaluator implements IRuleEvaluatorStrategy {
   ): Promise<RuleEvaluationResult[]> {
     const wasmPath = path.join(ctx.corePath, 'rulesets', 'opa', 'policy.wasm');
     if (!await this.fs.exists(wasmPath)) {
-      this.logger.warn(`OPA WebAssembly policy not found at ${wasmPath}. Please compile the .rego rules.`);
+      this.logger.error(`OPA WebAssembly policy not found at ${wasmPath}. Compile .rego rules first (run the OPA build step).`);
       return rules.map(rule => ({
         rule,
-        result: 'skipped',
-        message: 'OPA Wasm policy not compiled yet.',
+        result: 'failed' as const,
+        message: `OPA policy not compiled — enforcement blocked. Expected wasm at: ${wasmPath}`,
       }));
     }
 
@@ -124,8 +124,8 @@ export class OpaEvaluator implements IRuleEvaluatorStrategy {
       this.logger.error(`Failed to evaluate OPA policy: ${msg}`);
       return rules.map(rule => ({
         rule,
-        result: 'skipped',
-        message: `OPA Engine Error: ${msg}`
+        result: 'failed' as const,
+        message: `OPA engine error — enforcement blocked: ${msg}`,
       }));
     }
   }

@@ -16,6 +16,15 @@ jest.mock('./sdlc-data-loader.service', () => ({
   })),
 }));
 
+// Mock OpaEvaluator so pipeline tests don't depend on wasm being present.
+// GT-362: individual OpaEvaluator behaviour is tested in opa-evaluator.spec.ts.
+const mockEvaluateAll = jest.fn();
+jest.mock('../validators/evaluators/opa-evaluator', () => ({
+  OpaEvaluator: jest.fn().mockImplementation(() => ({
+    evaluateAll: mockEvaluateAll,
+  })),
+}));
+
 describe('SatelliteEvaluationPipeline (GT-281)', () => {
   let mockFs: jest.Mocked<IFileSystem>;
   let mockLogger: jest.Mocked<ILogger>;
@@ -24,6 +33,9 @@ describe('SatelliteEvaluationPipeline (GT-281)', () => {
 
   beforeEach(() => {
     mockLoadGatesForPhase.mockReset();
+    // Default: OPA evaluates all rules as passed
+    mockEvaluateAll.mockReset();
+    mockEvaluateAll.mockResolvedValue([{ rule: {} as any, result: 'passed' }]);
 
     mockFs = {
       exists: jest.fn(),
@@ -147,6 +159,8 @@ describe('SatelliteEvaluationPipeline (GT-281)', () => {
     beforeEach(() => {
       mockLoadGatesForPhase.mockReset();
       mockLoadGatesForPhase.mockResolvedValue([gateData]);
+      mockEvaluateAll.mockReset();
+      mockEvaluateAll.mockResolvedValue([{ rule: {} as any, result: 'passed' }]);
     });
 
     it('should include severity, remediation, and gateRef in failed evaluations', async () => {
@@ -239,6 +253,95 @@ describe('SatelliteEvaluationPipeline (GT-281)', () => {
       expect(prdEval.artifact).toBe('docs/prd.md');
       expect(prdEval.remediation).toContain('Ensure');
       expect(prdEval.remediation).toContain('docs/prd.md');
+    });
+  });
+
+  describe('GT-362: Rego runtime enforcement', () => {
+    const gateData = {
+      id: 'gate-f1', name: 'Business Sign-Off', phase: 'f1',
+      description: 'Scope frozen',
+      requiredArtifacts: [
+        { artifact: 'docs/prd.md', validation: 'PRD must exist', rules: ['rulesets/opa/governance.rego'] },
+      ],
+      blockingCriteria: [{ criterion: 'PRD missing', action: 'BLOCK' }],
+    };
+
+    beforeEach(() => {
+      mockLoadGatesForPhase.mockReset();
+      mockLoadGatesForPhase.mockResolvedValue([gateData]);
+      mockEvaluateAll.mockReset();
+    });
+
+    it('blocks the gate when OPA returns failed (policy violation)', async () => {
+      mockFs.exists.mockResolvedValue(true); // artifact and rule exist
+      mockEvaluateAll.mockResolvedValue([{
+        rule: {} as any,
+        result: 'failed',
+        message: 'PRD is missing required section: executive-summary',
+      }]);
+
+      const result = await pipeline.evaluate({
+        satellitePath: '/satellite',
+        corePath: '/core',
+        phase: 'f1',
+      });
+
+      expect(result.passed).toBe(false);
+      expect(result.gates[0].verdict).toBe('failed');
+      const ev = result.gates[0].artifactEvaluations[0];
+      expect(ev.passed).toBe(false);
+      expect(ev.message).toContain('PRD is missing required section');
+    });
+
+    it('blocks the gate when OPA returns failed due to missing wasm (enforcement required)', async () => {
+      mockFs.exists.mockResolvedValue(true);
+      mockEvaluateAll.mockResolvedValue([{
+        rule: {} as any,
+        result: 'failed',
+        message: 'OPA policy not compiled — enforcement blocked. Expected wasm at: /core/rulesets/opa/policy.wasm',
+      }]);
+
+      const result = await pipeline.evaluate({
+        satellitePath: '/satellite',
+        corePath: '/core',
+        phase: 'f1',
+      });
+
+      expect(result.passed).toBe(false);
+      expect(result.gates[0].artifactEvaluations[0].passed).toBe(false);
+      expect(result.gates[0].artifactEvaluations[0].message).toContain('enforcement blocked');
+    });
+
+    it('blocks the gate when OPA returns skipped (defense-in-depth)', async () => {
+      mockFs.exists.mockResolvedValue(true);
+      mockEvaluateAll.mockResolvedValue([{
+        rule: {} as any,
+        result: 'skipped',
+        message: 'OPA evaluation skipped',
+      }]);
+
+      const result = await pipeline.evaluate({
+        satellitePath: '/satellite',
+        corePath: '/core',
+        phase: 'f1',
+      });
+
+      expect(result.passed).toBe(false);
+      expect(result.gates[0].artifactEvaluations[0].passed).toBe(false);
+    });
+
+    it('passes the gate only when OPA explicitly returns passed', async () => {
+      mockFs.exists.mockResolvedValue(true);
+      mockEvaluateAll.mockResolvedValue([{ rule: {} as any, result: 'passed' }]);
+
+      const result = await pipeline.evaluate({
+        satellitePath: '/satellite',
+        corePath: '/core',
+        phase: 'f1',
+      });
+
+      expect(result.passed).toBe(true);
+      expect(result.gates[0].artifactEvaluations[0].passed).toBe(true);
     });
   });
 });

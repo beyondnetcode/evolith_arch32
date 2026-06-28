@@ -15,7 +15,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 |---|---|:---:|:---:|:---:|:---:|:---:|
 | [`GT-359`](./gap-reference-catalog.md#gt-359) | Define `SatelliteManifest` ingestion contract schema | `Core Domain` | Cross | P0 | M | `DONE` |
 | [`GT-363`](./gap-reference-catalog.md#gt-363) | GitHub API integration client — secure auth + repo operations (create, configure, branch protection, rulesets, webhooks) | `Infra` | Cross | P0 | M | `DONE` |
-| [`GT-362`](./gap-reference-catalog.md#gt-362) | Implement runtime enforcement for Rego policies in evaluation engine | `Core Domain` | Cross | P0 | L | `PENDING` |
+| [`GT-362`](./gap-reference-catalog.md#gt-362) | Implement runtime enforcement for Rego policies in evaluation engine | `Core Domain` | Cross | P0 | L | `DONE` |
 | [`GT-364`](./gap-reference-catalog.md#gt-364) | `InitializeSatelliteUseCase` — domain use case orchestrating full satellite provisioning (new + adopt flows) | `Core Domain` | Cross | P0 | L | `DONE` |
 | [`GT-361`](./gap-reference-catalog.md#gt-361) | Apply ADR-0073 standard envelope to Core API evaluation responses | `Core API` | Cross | P1 | S | `PENDING` |
 | [`GT-360`](./gap-reference-catalog.md#gt-360) | Expose topology evaluation in Core API via `ValidateSatelliteUseCase` | `Core API` | Cross | P1 | M | `PENDING` |
@@ -389,7 +389,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-246`](./gap-reference-catalog.md#gt-246) | Implement Chaos Mesh/Litmus experiments | `QA` | Cross | P3 | L | `DONE` |
 
 
-**Progress:** 369 / 374 done · 2 in progress · 3 pending · 0 deferred
+**Progress:** 370 / 374 done · 2 in progress · 2 pending · 0 deferred
 
 **Wave 2026-06-23 (Wilson deep audit III):** Added 14 new gaps `GT-212`…`GT-225` from the Wilson Audit Playbook covering: ADR status hygiene (GT-212), topology manifest metadata + operational budgets + guidance corpus (GT-213, GT-217, GT-219), REST controller observability + OpenAPI (GT-214, GT-215), OPA input-schema parity + per-topology test density (GT-216, GT-222), SDLC Phase 05 rollback + on-call templates (GT-218), CLI branch coverage + envelope format coverage + skip-list cleanup (GT-220, GT-224, GT-225), MCP HTTP audit logging (GT-221), and cross-surface parity e2e tests (GT-223).
 

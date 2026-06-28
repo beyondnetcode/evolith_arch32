@@ -19,15 +19,22 @@ satellite repository
 
 ## Supported Architectures
 
-SmartCLI operates on three progressive architecture topologies. All commands that accept a `--topology` or `--phase` flag reference these levels:
+Evolith Core defines **8 architecture topologies** across complementary dimensions. Any command that accepts `--topology` references them by their canonical id:
 
-| Level | Name | Description |
-|-------|------|-------------|
-| F1 | Monolithic Modular | Single deployable with clean hexagonal layers |
-| F2 | Microfrontend | Module Federation with a host app and remote modules |
-| F3 | Distributed Microfrontend | Independent deployment of each remote with its own CI/CD |
+| Topology (id) | Name | Dimension |
+|---------------|------|-----------|
+| `modular-monolith` | Modular Monolith | progressive-axis |
+| `distributed-modules` | Distributed Modules | progressive-axis |
+| `microservices` | Microservices | progressive-axis |
+| `serverless` | Serverless | execution |
+| `edge-computing` | Edge Computing | execution |
+| `event-driven` | Event-Driven | integration |
+| `data-mesh` | Data Mesh | data |
+| `agentic-ai` | Agentic AI | ai |
 
-Progression is linear: F1 → F2 → F3. The `upgrade` command manages topology transitions.
+The **progressive axis** (`modular-monolith → distributed-modules → microservices`) is a linear maturity progression managed by the `upgrade` command. The other dimensions (execution, integration, data, ai) are complementary and chosen per project needs.
+
+> **Legacy `F1/F2/F3`:** earlier versions used `--arch F1|F2|F3` mapping to the progressive axis (`F1 = modular-monolith`, `F2 = distributed-modules`, `F3 = microservices`). These flags are **deprecated** — use `--topology <id>` with the canonical ids above. (The old "Microfrontend / Distributed Microfrontend" labels are obsolete and no longer reflect the corpus.)
 
 ## Installation
 
@@ -175,7 +182,9 @@ Options:
   -o, --output <file>      Write output to file
   -r, --ruleset <id>       Validate a specific ruleset (see table below)
   -e, --engine <engine>    Validation engine: native (default) or opa
-  -t, --topology <id>      Topology to validate: F1, F2, F3, ALL (repeatable)
+  -t, --topology <id>      Topology to validate by canonical id, e.g. modular-monolith,
+                           microservices, serverless, event-driven, agentic-ai (repeatable).
+                           Legacy F1/F2/F3 aliases still map to the progressive axis.
   -m, --manifest <path>    SatelliteManifest JSON for end-to-end evaluation (GT-281 pipeline)
   -p, --phase <phase>      SDLC phase to evaluate: f1, f2, f3, f4, f5 (activates GT-281 pipeline)
       --adr <id>           Validate against a specific ADR rule set
@@ -220,11 +229,11 @@ smart-cli validate
 # JSON output for CI
 smart-cli validate --format json --output report.json
 
-# Validate F2 topology
-smart-cli validate --topology F2
+# Validate a single topology
+smart-cli validate --topology microservices
 
 # Validate multiple topologies
-smart-cli validate --topology F1 --topology F2
+smart-cli validate --topology modular-monolith --topology event-driven
 
 # Validate a specific ruleset
 smart-cli validate --ruleset evidence
@@ -364,7 +373,7 @@ smart-cli agents --remove minimal
 
 ### scaffold
 
-Scaffolds the Evolith architecture in the current workspace. Supports all three topology phases (F1, F2, F3) with configurable frontend frameworks, ORMs, and domain names.
+Scaffolds the Evolith architecture in the current workspace **along the progressive axis** — phase 1 (`modular-monolith`), phase 2 (`distributed-modules`) and phase 3 (`microservices`). Phases 2–3 are generated as a Module Federation host + remotes (microfrontends), with configurable frontend frameworks, ORMs, and domain names. (`F1/F2/F3` remain accepted as legacy aliases for phases 1/2/3.)
 
 ```bash
 smart-cli scaffold [options]
@@ -1120,7 +1129,7 @@ smart-cli mcp serve --no-confirm
 ```
 
 **Unknown topology in scaffold or drift:**
-Ensure your `evolith.yaml` has a valid `product.topology` field: `F1`, `F2`, or `F3`.
+Ensure your `evolith.yaml` has a valid `product.topology` field using a canonical topology id — `modular-monolith`, `distributed-modules`, `microservices`, `serverless`, `edge-computing`, `event-driven`, `data-mesh` or `agentic-ai` (per `reference/config/evolith.config.schema.json`). Legacy `F1/F2/F3` are accepted only as deprecated CLI flags, not as manifest values.
 
 ---
 

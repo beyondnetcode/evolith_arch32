@@ -123,11 +123,16 @@ No requiere autenticación. El proceso es local y ejecutado directamente por el 
 
 ### Transporte HTTP
 
-Se requiere `EVOLITH_API_KEY` en el header de cada request:
+En producción (`NODE_ENV=production`) la autenticación es **obligatoria**: `validateAuth()` ignora `EVOLITH_MCP_ALLOW_NO_AUTH` y rechaza todo request sin credencial válida (401). El valor de `EVOLITH_API_KEY` es un secreto arbitrario (cualquier string; **no** requiere prefijo) que se compara por igualdad. Se acepta en cualquiera de estos dos headers:
 
 ```
-Authorization: Bearer evk_<key>
+Authorization: Bearer <EVOLITH_API_KEY>
+x-api-key: <EVOLITH_API_KEY>
 ```
+
+`/health` es público (probe de liveness) y no requiere credencial.
+
+> El `ApiKeyProvisioningService` (abajo) es un mecanismo **avanzado y opcional** para emitir keys con prefijo `evk_`, hash SHA-256 y TTL. Es independiente del `EVOLITH_API_KEY` de arranque descrito aquí.
 
 ### Aprovisionamiento de API keys
 
@@ -687,7 +692,7 @@ evolith-mcp serve 2>/tmp/mcp.log
 
 ### HTTP: `401 Unauthorized`
 
-Verificar que `EVOLITH_API_KEY` está configurado en el servidor y que el header `Authorization: Bearer evk_<key>` es correcto. La key debe empezar con `evk_`.
+Verificar que `EVOLITH_API_KEY` está configurado en el servidor y que el request envía el mismo valor en `Authorization: Bearer <key>` o `x-api-key: <key>`. El valor se compara por igualdad exacta (no requiere prefijo `evk_`). En `NODE_ENV=production` la auth es obligatoria aunque `EVOLITH_MCP_ALLOW_NO_AUTH=true`.
 
 ### Tool no encontrada (`Tool not found in registry`)
 

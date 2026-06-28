@@ -1,6 +1,6 @@
 {
   "name": "@evolith/core-domain",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Shared Domain and Application logic for Evolith Core",
   "license": "MIT",
   "main": "dist/index.js",

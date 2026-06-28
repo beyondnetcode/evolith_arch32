@@ -37,7 +37,7 @@ USER evolith
 
 ENV NODE_ENV=production
 ENV PORT=3000
-ENV TRANSPORT=sse
+ENV TRANSPORT=http
 ENV WORKSPACE_ROOT=/app/corpus
 ENV CORE_PATH=/app/corpus
 ENV EVOLITH_LOG_LEVEL=info
@@ -48,4 +48,4 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
   CMD curl -f http://localhost:3000/health || exit 1
 
-CMD ["node", "dist/main", "serve", "--transport", "sse", "--port", "3000"]
+CMD ["node", "dist/main", "serve", "--transport", "http", "--port", "3000"]

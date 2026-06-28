@@ -193,18 +193,23 @@ describe('McpServerService — HTTP transport', () => {
     });
   }
 
-  it('serves /health and enforces the API key', async () => {
+  it('serves /health publicly and enforces the API key on MCP endpoints', async () => {
     const service = new McpServerService(new ToolRegistryService([]), new MetricsService(), new MockAbacEvaluator());
     await service.start({ transport: 'http', port: 0, apiKey: 'secret' });
     const port = service.boundPort()!;
 
     try {
-      const unauthorized = await httpGet(port, '/health');
+      // /health is a public liveness probe — reachable without credentials.
+      const health = await httpGet(port, '/health');
+      expect(health.status).toBe(200);
+      expect(JSON.parse(health.body)).toMatchObject({ status: 'ok', transport: 'http' });
+
+      // MCP endpoints require the API key.
+      const unauthorized = await httpGet(port, '/mcp');
       expect(unauthorized.status).toBe(401);
 
-      const ok = await httpGet(port, '/health', { 'x-api-key': 'secret' });
-      expect(ok.status).toBe(200);
-      expect(JSON.parse(ok.body)).toMatchObject({ status: 'ok', transport: 'http' });
+      const authorized = await httpGet(port, '/mcp', { 'x-api-key': 'secret' });
+      expect(authorized.status).not.toBe(401);
     } finally {
       await service.stop();
     }
@@ -223,27 +228,27 @@ describe('McpServerService — HTTP transport', () => {
     }
   });
 
-  it('rejects /health without auth when no API key and allowNoAuth is false', async () => {
+  it('rejects MCP requests without auth when no API key and allowNoAuth is false', async () => {
     const service = new McpServerService(new ToolRegistryService([]), new MetricsService(), new MockAbacEvaluator());
     await service.start({ transport: 'http', port: 0 });
     const port = service.boundPort()!;
 
     try {
-      const res = await httpGet(port, '/health');
+      const res = await httpGet(port, '/mcp');
       expect(res.status).toBe(401);
     } finally {
       await service.stop();
     }
   });
 
-  it('serves /health with valid API key via Authorization header', async () => {
+  it('accepts a valid API key via Authorization header on MCP endpoints', async () => {
     const service = new McpServerService(new ToolRegistryService([]), new MetricsService(), new MockAbacEvaluator());
     await service.start({ transport: 'http', port: 0, apiKey: 'secret' });
     const port = service.boundPort()!;
 
     try {
-      const ok = await httpGet(port, '/health', { 'authorization': 'Bearer secret' });
-      expect(ok.status).toBe(200);
+      const ok = await httpGet(port, '/mcp', { 'authorization': 'Bearer secret' });
+      expect(ok.status).not.toBe(401);
     } finally {
       await service.stop();
     }
@@ -267,14 +272,14 @@ describe('McpServerService — HTTP transport', () => {
     }
   });
 
-  it('rejects /health with invalid JWT signature or format', async () => {
+  it('rejects MCP requests with invalid JWT signature or format', async () => {
     const service = new McpServerService(new ToolRegistryService([]), new MetricsService(), new MockAbacEvaluator());
     process.env.JWT_SECRET = 'secret_key';
     await service.start({ transport: 'http', port: 0, apiKey: 'secret' });
     const port = service.boundPort()!;
 
     try {
-      const res = await httpGet(port, '/health', { 'authorization': 'Bearer bad.token.here' });
+      const res = await httpGet(port, '/mcp', { 'authorization': 'Bearer bad.token.here' });
       expect(res.status).toBe(401);
       const body = JSON.parse(res.body);
       expect(body.success).toBe(false);
@@ -293,8 +298,8 @@ describe('McpServerService — HTTP transport', () => {
 
     try {
       const token = generateTestJwt({ role: 'operator', scope: 'read write' }, 'secret_key', 60000);
-      const ok = await httpGet(port, '/health', { 'authorization': `Bearer ${token}` });
-      expect(ok.status).toBe(200);
+      const ok = await httpGet(port, '/mcp', { 'authorization': `Bearer ${token}` });
+      expect(ok.status).not.toBe(401);
     } finally {
       await service.stop();
       delete process.env.JWT_SECRET;
@@ -309,7 +314,7 @@ describe('McpServerService — HTTP transport', () => {
 
     try {
       const token = generateTestJwt({ role: 'operator', scope: 'read write' }, 'secret_key', -10000);
-      const res = await httpGet(port, '/health', { 'authorization': `Bearer ${token}` });
+      const res = await httpGet(port, '/mcp', { 'authorization': `Bearer ${token}` });
       expect(res.status).toBe(401);
     } finally {
       await service.stop();

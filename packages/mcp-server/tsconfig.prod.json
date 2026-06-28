@@ -3,7 +3,13 @@
   "compilerOptions": {
     "sourceMap": false,
     "declaration": false,
-    "incremental": false,
-    "paths": {}
-  }
+    "incremental": false
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/**/*.spec.ts",
+    "src/**/*.test.ts",
+    "src/**/__mocks__/**"
+  ]
 }

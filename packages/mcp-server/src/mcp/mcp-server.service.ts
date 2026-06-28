@@ -201,15 +201,18 @@ export class McpServerService {
       res.setHeader('Referrer-Policy', 'no-referrer');
       res.setHeader('X-XSS-Protection', '0');
 
-      const context = validateAuth(req, res, this.apiKey, this.allowNoAuth);
-      if (!context) return;
-
       const url = new URL(req.url || '/', `http://127.0.0.1:${port}`);
+
+      // Health check is public — orchestrators (Coolify/k8s) must reach the
+      // liveness probe without credentials. It exposes no MCP data.
       if (req.method === 'GET' && url.pathname === '/health') {
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ status: 'ok', transport: 'http', protocol: 'mcp' }));
         return;
       }
+
+      const context = validateAuth(req, res, this.apiKey, this.allowNoAuth);
+      if (!context) return;
 
       const headerCorrelationId = (req.headers['x-correlation-id'] as string) || generateCorrelationId();
 
@@ -243,9 +246,12 @@ export class McpServerService {
       });
     });
 
+    // Bind 0.0.0.0 by default so reverse proxies (Traefik/Coolify/k8s) can route
+    // to the container. Override with MCP_HTTP_HOST=127.0.0.1 for local-only use.
+    const host = process.env.MCP_HTTP_HOST ?? '0.0.0.0';
     await new Promise<void>((resolve, reject) => {
-      this.httpServer!.listen(port, '127.0.0.1', () => {
-        this.logger.log(`Evolith MCP HTTP server listening on http://127.0.0.1:${port}`);
+      this.httpServer!.listen(port, host, () => {
+        this.logger.log(`Evolith MCP HTTP server listening on http://${host}:${port}`);
         resolve();
       });
       this.httpServer!.on('error', reject);

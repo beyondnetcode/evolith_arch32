@@ -46,6 +46,17 @@ export type {
   ProposeAdvanceResponse,
 } from './rest/types.js';
 
+// Satellites surface
+export { SatellitesClient } from './satellites.client.js';
+export type {
+  SatelliteRecord,
+  SatelliteStatus,
+  SatelliteMode,
+  SatelliteTopology,
+  InitializeSatelliteInput,
+  RegisterSatelliteInput,
+} from './satellites.client.js';
+
 // MCP surface
 export { EvolithMcpClient, createJsonRpcTransport } from './mcp/evolith-mcp-client.js';
 export type { EvolithMcpClientOptions, McpTransport, McpCallResult } from './mcp/evolith-mcp-client.js';

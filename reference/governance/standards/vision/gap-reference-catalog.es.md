@@ -3541,10 +3541,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-357
 
-**Título:** META — el tablero sobre-reporta completitud — `OPEN`
+**Título:** META — el tablero sobre-reporta completitud — `DONE`
 
 - **Componente:** gobernanza · **Prioridad:** P1 · **Riesgo:** alto (falsa confianza) · **Dependencias:** GT-341, GT-347
 - **Archivos:** `reference/governance/standards/vision/gap-tracking.md`, `…/maturity-evidence.json`, `.harness/scripts/ci/09-reconcile-maturity.mjs`
 - **Fix propuesto:** alimentar maturity-evidence con build/test reales por producto; condicionar "DONE" a evidencia validada.
 - **Evidencia:** el tablero marcaba 329/330 con ≥15 GAPS reales (3 críticos); `09-reconcile-maturity.mjs` ya falla `closures 272 vs 323`.
-- **Hecho cuando:** [ ] el tablero reconcilia con la evidencia ejecutada.
+- **Hecho cuando:** [x] el tablero reconcilia con la evidencia ejecutada.

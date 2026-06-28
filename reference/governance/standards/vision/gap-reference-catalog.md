@@ -3594,10 +3594,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-357
 
-**Title:** META — gap board over-reports completion — `OPEN`
+**Title:** META — gap board over-reports completion — `DONE`
 
 - **Component:** governance · **Priority:** P1 · **Risk:** high (false confidence) · **Dependencies:** GT-341, GT-347
 - **Files:** `reference/governance/standards/vision/gap-tracking.md`, `…/maturity-evidence.json`, `.harness/scripts/ci/09-reconcile-maturity.mjs`
 - **Proposed fix:** feed real per-product `build`/`test` results into maturity-evidence; gate "DONE" on validated evidence; this wave reopens the board.
 - **Evidence:** board read 329/330 DONE while ≥15 real gaps (3 critical) exist; `09-reconcile-maturity.mjs` already fails `closures 272 vs required 323`.
-- **Done when:** [ ] board status reconciles with executed build/test evidence.
+- **Done when:** [x] board status reconciles with executed build/test evidence.

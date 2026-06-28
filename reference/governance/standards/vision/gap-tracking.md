@@ -4,7 +4,7 @@
 
 **Status:** Active Tracking
 **Owner:** Evolith Architecture Board
-**Last Updated:** 2026-06-28 (GT-357 META reconciliation: registered 36 missing closure-evidence records for genuinely-shipped gaps GT-283–GT-329, and REOPENED GT-324/GT-326/GT-330 whose acceptance criteria are not yet met (deploy workflow removed, CI gate disabled, no second human maintainer). Board now reconciles with build/test evidence. Detail: [Gap Reference Catalog §2](./gap-reference-catalog.md))
+**Last Updated:** 2026-06-28 (Wave: GitHub satellite repositories — 12 new gaps GT-363…GT-374 covering creation/provisioning/adoption/registry of GitHub satellite repos; none of these capabilities exist today. Also noted: GT-360/GT-361 code-implemented in commit ce9a53fe but board not yet updated.)
 **Gap Details:** [Gap Reference Catalog](./gap-reference-catalog.md)
 
 This board is the single source of truth for technical debt, gaps, opportunities, enablers, priority, and status. Select a gap ID to open its problem statement, purpose, evidence, closure criteria, and references.
@@ -14,9 +14,21 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
 | [`GT-359`](./gap-reference-catalog.md#gt-359) | Define `SatelliteManifest` ingestion contract schema | `Core Domain` | Cross | P0 | M | `PENDING` |
-| [`GT-360`](./gap-reference-catalog.md#gt-360) | Expose topology evaluation in Core API via `ValidateSatelliteUseCase` | `Core API` | Cross | P1 | M | `PENDING` |
-| [`GT-361`](./gap-reference-catalog.md#gt-361) | Apply ADR-0073 standard envelope to Core API evaluation responses | `Core API` | Cross | P1 | S | `PENDING` |
+| [`GT-363`](./gap-reference-catalog.md#gt-363) | GitHub API integration client — secure auth + repo operations (create, configure, branch protection, rulesets, webhooks) | `Infra` | Cross | P0 | M | `PENDING` |
 | [`GT-362`](./gap-reference-catalog.md#gt-362) | Implement runtime enforcement for Rego policies in evaluation engine | `Core Domain` | Cross | P0 | L | `PENDING` |
+| [`GT-364`](./gap-reference-catalog.md#gt-364) | `InitializeSatelliteUseCase` — domain use case orchestrating full satellite provisioning (new + adopt flows) | `Core Domain` | Cross | P0 | L | `PENDING` |
+| [`GT-361`](./gap-reference-catalog.md#gt-361) | Apply ADR-0073 standard envelope to Core API evaluation responses | `Core API` | Cross | P1 | S | `PENDING` |
+| [`GT-360`](./gap-reference-catalog.md#gt-360) | Expose topology evaluation in Core API via `ValidateSatelliteUseCase` | `Core API` | Cross | P1 | M | `PENDING` |
+| [`GT-365`](./gap-reference-catalog.md#gt-365) | `evolith satellite create` command in SmartCLI — interactive wizard (org, name, topology, phase, features, CI/CD) | `Smart CLI` | Cross | P1 | M | `PENDING` |
+| [`GT-366`](./gap-reference-catalog.md#gt-366) | `evolith satellite adopt` command in SmartCLI — analyze existing repo, check compatibility, apply controlled migration | `Smart CLI` | Cross | P1 | M | `PENDING` |
+| [`GT-368`](./gap-reference-catalog.md#gt-368) | MCP tools for satellite provisioning — `evolith-satellite-create`, `evolith-satellite-adopt`, `evolith-satellite-list`, `evolith-satellite-status` | `MCP Server` | Cross | P1 | M | `PENDING` |
+| [`GT-369`](./gap-reference-catalog.md#gt-369) | `SatelliteRecord` entity + persistent registry model in Core Domain | `Core Domain` | Cross | P1 | M | `PENDING` |
+| [`GT-367`](./gap-reference-catalog.md#gt-367) | Core API satellite registry endpoints — CRUD `/api/v1/satellites` (register, list, get, update, deregister, evaluate, sync) | `Core API` | Cross | P1 | L | `PENDING` |
+| [`GT-371`](./gap-reference-catalog.md#gt-371) | Satellite → product/idea/tenant/topology/blueprint linking in Core API | `Core API` | Cross | P2 | S | `PENDING` |
+| [`GT-374`](./gap-reference-catalog.md#gt-374) | Connect `upgrade.command.ts` to `SatelliteUpgradeService` — remove stub, wire real upgrade logic | `Smart CLI` | Cross | P2 | S | `PENDING` |
+| [`GT-370`](./gap-reference-catalog.md#gt-370) | Inheritance propagation mechanism — push Core updates to registered satellites (trigger + dry-run + approval) | `Cross` | Cross | P2 | M | `PENDING` |
+| [`GT-372`](./gap-reference-catalog.md#gt-372) | Audit trail per satellite — what was inherited vs customized, by whom, when | `Core Domain` | Cross | P2 | M | `PENDING` |
+| [`GT-373`](./gap-reference-catalog.md#gt-373) | Tracker integration — satellite registration, state sync, and satellite management UI | `Cross` | Cross | P2 | M | `PENDING` |
 | [`GT-343`](./gap-reference-catalog.md#gt-343) | EPIC: unify SDLC phase ids (f1..f5) and topology F1/F2/F3 vocabulary — stages 1-5: canonical PhaseId + core-domain + public enums + topology maturityLevel + anti-collision guard (2b done; 4b deferred — F# values interlock 22 files across forbidden packages) | `Cross` | Cross | P0 | XL | `DONE` |
 | [`GT-344`](./gap-reference-catalog.md#gt-344) | Published CLI crashes (ENOENT default-workflow.yaml) — embedded default workflow fallback | `Smart CLI` | Cross | P0 | L | `DONE` |
 | [`GT-347`](./gap-reference-catalog.md#gt-347) | Core OPA suite green 197/197 + wasm builds + CI gate wired (29-test-core-opa) | `Governance` | Cross | P0 | L | `DONE` |
@@ -377,7 +389,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-246`](./gap-reference-catalog.md#gt-246) | Implement Chaos Mesh/Litmus experiments | `QA` | Cross | P3 | L | `DONE` |
 
 
-**Progress:** 356 / 358 done · 2 in progress · 0 pending · 0 deferred
+**Progress:** 356 / 374 done · 2 in progress · 16 pending · 0 deferred
 
 **Wave 2026-06-23 (Wilson deep audit III):** Added 14 new gaps `GT-212`…`GT-225` from the Wilson Audit Playbook covering: ADR status hygiene (GT-212), topology manifest metadata + operational budgets + guidance corpus (GT-213, GT-217, GT-219), REST controller observability + OpenAPI (GT-214, GT-215), OPA input-schema parity + per-topology test density (GT-216, GT-222), SDLC Phase 05 rollback + on-call templates (GT-218), CLI branch coverage + envelope format coverage + skip-list cleanup (GT-220, GT-224, GT-225), MCP HTTP audit logging (GT-221), and cross-surface parity e2e tests (GT-223).
 
@@ -408,6 +420,8 @@ This board is the single source of truth for technical debt, gaps, opportunities
 **Wave 2026-06-25 (Wilson control-plane audit):** Added 3 new gaps `GT-274`…`GT-276`, reopened `GT-267` because current Core API/MCP/CLI tests still fail, and reopened `GT-272` because the Helm defaults still fetch unsigned HTTP OPA bundles. The audit explicitly covered all accepted topologies (`modular-monolith`, `distributed-modules`, `microservices`, `serverless`, `event-driven`, `data-mesh`, `edge-computing`, `agentic-ai`) and both rule engines: topology manifests passed, Native/OPA rule coverage passed, topology OPA tests passed, and `EVOLITH_PARITY_FULL=true node .harness/scripts/ci/27-opa-parity-gate.mjs` evaluated 16 fixtures with 0 drift.
 
 **Wave 2026-06-27 (maturity audit + execution):** Re-validated every product against real `build`+`test` runs and found the board's prior "329/330 done" over-reported reality. Added `GT-331`…`GT-357`. **APPLIED + validated this wave:** GT-331 (MCP version), GT-332/333 (MCP secret-log redaction + timing-safe key, security), GT-334 (opa-wasm dep), GT-335 (read-gap-tracking fix), GT-336/337 (SDK /api prefix + envelope), GT-338 (core exports + README), GT-339 (core-api propose-advance contract bug), GT-340 (core-api WORKSPACE_ROOT → 105/105), GT-341 (inventory generator → 27/9/8), GT-342 (README 8 topologies). **OPEN (P0):** GT-343 phase-vocabulary EPIC, GT-344 CLI ENOENT crash, GT-347 broken core OPA suite. Full detail (impact/risk/files/fix/evidence/acceptance): [Gap Reference Catalog §2](./gap-reference-catalog.md). No product is production-ready while the three P0s remain open.
+
+**Wave 2026-06-28 (GitHub satellite repositories audit):** Added 12 new gaps `GT-363`…`GT-374` covering the complete satellite repository creation and provisioning capability — none of this capability existed: GitHub API client (GT-363), `InitializeSatelliteUseCase` (GT-364), `evolith satellite create` CLI command (GT-365), `evolith satellite adopt` CLI command (GT-366), Core API registry CRUD (GT-367), MCP provisioning tools (GT-368), `SatelliteRecord` entity (GT-369), inheritance propagation (GT-370), satellite-to-product/tenant linking (GT-371), audit trail (GT-372), Tracker integration (GT-373), and `upgrade.command` de-stub (GT-374). **Critical observation:** GT-360/GT-361 code-implemented in commit `ce9a53fe` (EvaluationController + ADR-0073 envelope) but board status not yet updated — flagged for formal closure by Architecture Board.
 
 **Ordering:** one table, ordered by status (pending then completed), then criticality (`P0` → `P1` → `P2` → `P3`), then complexity (`XS` → `S` → `M` → `L` → `XL`). `GT-*` IDs link to the [Gap Reference Catalog](./gap-reference-catalog.md); `MT-A*` IDs link to the supporting [Multi-Topology implementation plan](./multi-topology-reference-corpus-implementation-plan.md).
 

@@ -12,6 +12,204 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 ## 1. Gap Details
 
+#### GT-363
+
+**Title:** GitHub API integration client — secure auth + repo operations
+
+- **Purpose:** Evolith has no GitHub API client. Without it, no satellite repository can be created, configured, or linked remotely. This is the foundational blocker for the entire satellite provisioning capability.
+- **Evidence:** Full codebase audit 2026-06-28 — no GitHub API adapter, no OAuth/PAT/GitHub App integration found in any package (`packages/`, `apps/`, `sdk/`). `satellite-sync.mjs` only copies files locally.
+- **Impact:** Blocks GT-364, GT-365, GT-366, GT-367, GT-368. Without this, satellite creation is impossible.
+- **Risk:** Without GitHub App auth, each user must supply their own PAT — security surface increases.
+- **Affected files:** New file `packages/infra-providers/src/adapters/github-api.adapter.ts` (to be created)
+- **Complexity:** M
+- **Proposed fix:** Implement `GitHubApiAdapter` in `packages/infra-providers` using `@octokit/rest` (or GitHub App JWT auth). Expose: `createRepository`, `getRepository`, `applyBranchProtection`, `applyRepositoryRuleset`, `configureWebhook`, `pushFiles`, `validateScopes`. Register in DI as `IGitHubApiClient`.
+- **Acceptance criteria:**
+  - [ ] `GitHubApiAdapter` implements `IGitHubApiClient` interface
+  - [ ] Supports PAT + GitHub App JWT auth (selectable at runtime)
+  - [ ] Validates required scopes before any operation
+  - [ ] Unit tests with mocked Octokit (≥ 80% coverage)
+  - [ ] Registered in `infra-providers` barrel and available via DI
+- **Dependencies:** None (foundational)
+
+#### GT-364
+
+**Title:** `InitializeSatelliteUseCase` — domain use case orchestrating full satellite provisioning
+
+- **Purpose:** Domain layer entry point for satellite provisioning. Orchestrates: GitHub auth validation → repository creation/connection → structure scaffolding → inheritance application → registry recording → Tracker notification. Separates "new satellite" from "adopt existing" flows via strategy.
+- **Evidence:** `ValidateSatelliteUseCase` exists for evaluation only. No provisioning use case exists. `SatelliteUpgradeService` covers governance upgrades but not initial provisioning.
+- **Impact:** Without this, SmartCLI/MCP/API have no domain logic to call for creation.
+- **Risk:** If implemented without domain isolation, GitHub-specific logic leaks into application layer.
+- **Affected files:** New `packages/core-domain/src/application/use-cases/initialize-satellite.use-case.ts`
+- **Complexity:** L
+- **Proposed fix:** Create `InitializeSatelliteUseCase` with two strategies: `CreateSatelliteStrategy` (new repo) and `AdoptSatelliteStrategy` (existing repo). Orchestrates: (1) validate GitHub access via `IGitHubApiClient`, (2) check/create repo, (3) apply scaffold from `TemplateEngine`, (4) copy inherited elements (rulesets, agents, CI workflows, OPA policies), (5) persist `SatelliteRecord`, (6) emit `SatelliteRegisteredEvent`.
+- **Acceptance criteria:**
+  - [ ] `InitializeSatelliteUseCase` accepts `InitializeSatelliteInput` with `mode: 'create' | 'adopt'`
+  - [ ] Uses `IGitHubApiClient` (injectable, testable with mock)
+  - [ ] Emits domain event `SatelliteRegisteredEvent`
+  - [ ] Unit tests cover both strategies (≥ 80% coverage)
+- **Dependencies:** GT-363 (GitHub client), GT-369 (SatelliteRecord entity)
+
+#### GT-365
+
+**Title:** `evolith satellite create` command in SmartCLI
+
+- **Purpose:** Interactive wizard that guides users through creating a new GitHub satellite repository with full Evolith standard inheritance. Surface parity with MCP tool (GT-368).
+- **Evidence:** SmartCLI `validate` command supports satellite evaluation. No `satellite` subcommand exists. `upgrade.command.ts` is a stub. `init.command.ts` scaffolds locally only (no GitHub repo creation).
+- **Impact:** Without this, the primary user-facing entry point for satellite creation is absent.
+- **Affected files:** New `sdk/cli/src/commands/satellite/satellite.command.ts`, `satellite-create.command.ts`
+- **Complexity:** M
+- **Proposed fix:** Add `evolith satellite` command group with `create` subcommand. Steps: (1) prompt for GitHub org/name/topology/phase/features/CI, (2) validate GitHub token scopes, (3) call `InitializeSatelliteUseCase` with `mode: 'create'`, (4) display structured result with inherited elements list.
+- **Acceptance criteria:**
+  - [ ] `evolith satellite create` runs interactive wizard
+  - [ ] `--org`, `--name`, `--topology`, `--phase` flags skip corresponding prompts
+  - [ ] `--dry-run` shows plan without executing
+  - [ ] JSON output supported via `--format json`
+  - [ ] Unit tests ≥ 80%; e2e test for `--dry-run` path
+- **Dependencies:** GT-363, GT-364
+
+#### GT-366
+
+**Title:** `evolith satellite adopt` command in SmartCLI
+
+- **Purpose:** Allows adopting an existing GitHub repository as an Evolith satellite — analyzes current structure, determines compatibility with Evolith standard, proposes a migration plan, and applies it with user approval.
+- **Evidence:** No `adopt` flow exists anywhere in Evolith (CLI, MCP, API). `satellite-sync.mjs` can sync files but has no compatibility analysis or migration planning.
+- **Affected files:** New `sdk/cli/src/commands/satellite/satellite-adopt.command.ts`
+- **Complexity:** M
+- **Proposed fix:** `evolith satellite adopt --repo <github-url>` — steps: (1) clone/access repo, (2) run `CompatibilityAnalyzer` (detects tech stack, proposes topology, lists missing Evolith artifacts), (3) display compatibility report (✓/△/✗ per element), (4) confirm with user, (5) call `InitializeSatelliteUseCase` with `mode: 'adopt'`, (6) run `evolith validate` post-migration.
+- **Acceptance criteria:**
+  - [ ] `evolith satellite adopt --repo <url>` works end-to-end
+  - [ ] Compatibility report is printed before applying changes
+  - [ ] `--dry-run` shows migration plan without applying
+  - [ ] Post-adoption validation runs automatically
+- **Dependencies:** GT-363, GT-364
+
+#### GT-367
+
+**Title:** Core API satellite registry endpoints — CRUD `/api/v1/satellites`
+
+- **Purpose:** Persistent, queryable satellite registry in Core API. Enables listing, filtering, evaluating on-demand, and triggering inheritance sync for all registered satellites.
+- **Evidence:** Core API has `EvaluationController` (`/api/v1/evaluate`) but no entity CRUD for satellites. No `SatelliteRecord` is stored. No listing/filtering of satellites.
+- **Affected files:** New `apps/core-api/src/presentation/controllers/satellites.controller.ts`, `dtos/satellite.dto.ts`, `application/services/satellite-registry.service.ts`
+- **Complexity:** L
+- **Proposed fix:** Implement `SatellitesController` with endpoints: `POST /api/v1/satellites` (register), `GET /api/v1/satellites` (list with filters), `GET /api/v1/satellites/:id`, `PATCH /api/v1/satellites/:id`, `DELETE /api/v1/satellites/:id`, `POST /api/v1/satellites/:id/evaluate` (trigger evaluation), `POST /api/v1/satellites/:id/sync` (trigger inheritance sync), `GET /api/v1/satellites/:id/inheritance` (audit trail). All responses in ADR-0073 envelope.
+- **Acceptance criteria:**
+  - [ ] All 8 endpoints implemented and documented in OpenAPI
+  - [ ] ABAC OPA gate applied (GT-320) — tenant isolation
+  - [ ] All responses in ADR-0073 envelope
+  - [ ] Unit tests ≥ 80%; e2e test for register + list + evaluate flow
+- **Dependencies:** GT-369 (SatelliteRecord entity), GT-363 (GitHub client for validation)
+
+#### GT-368
+
+**Title:** MCP tools for satellite provisioning
+
+- **Purpose:** Expose satellite creation and adoption as MCP tools so AI agents can provision satellites programmatically. Surface parity with SmartCLI (GT-365, GT-366).
+- **Evidence:** `evolith-validate` tool covers evaluation. No provisioning tools exist in `packages/mcp-server/src/tools/`.
+- **Affected files:** New `packages/mcp-server/src/tools/satellite-create.tool.ts`, `satellite-adopt.tool.ts`, `satellite-list.tool.ts`, `satellite-status.tool.ts`
+- **Complexity:** M
+- **Proposed fix:** Add 4 MCP tools: `evolith-satellite-create` (calls `InitializeSatelliteUseCase` create), `evolith-satellite-adopt` (calls adopt strategy), `evolith-satellite-list` (calls Core API `/satellites`), `evolith-satellite-status` (calls evaluate endpoint). Each with full inputSchema validation (GT-352 pattern).
+- **Acceptance criteria:**
+  - [ ] 4 tools registered in `tools.module.ts`
+  - [ ] Each tool validates inputSchema before executing
+  - [ ] Unit tests ≥ 80% per tool
+  - [ ] Product inventory generator updated to reflect new tool count
+- **Dependencies:** GT-363, GT-364, GT-367
+
+#### GT-369
+
+**Title:** `SatelliteRecord` entity + persistent registry model in Core Domain
+
+- **Purpose:** Domain entity to represent a registered satellite repository. Required by all provisioning, listing, and sync capabilities.
+- **Evidence:** No `SatelliteRecord` entity exists in `packages/core-domain/src/domain/`. The only satellite domain type is `SatelliteManifest` (evaluation input only). No persistence model for registered satellites.
+- **Affected files:** New `packages/core-domain/src/domain/satellite-record.ts`, `schemas/satellite-record.schema.ts`
+- **Complexity:** M
+- **Proposed fix:** Define `SatelliteRecord` interface with: `id`, `name`, `githubUrl`, `organization`, `topologyId`, `phase`, `maturityLevel`, `tenantId?`, `productId?`, `blueprintId?`, `registeredAt`, `registeredBy`, `status: 'active'|'archived'|'migrating'`, `inheritedElements: InheritedElement[]`, `customizations: Customization[]`, `lastSyncAt?`, `coreVersion`. Add JSON schema for validation. Export from core-domain barrel.
+- **Acceptance criteria:**
+  - [ ] `SatelliteRecord` type defined and exported
+  - [ ] `InheritedElement` and `Customization` sub-types defined
+  - [ ] JSON schema added to `rulesets/schema/`
+  - [ ] Exported from `@evolith/core-domain` barrel
+  - [ ] Unit tests for schema validation
+- **Dependencies:** None (foundational entity)
+
+#### GT-370
+
+**Title:** Inheritance propagation mechanism — push Core updates to registered satellites
+
+- **Purpose:** When Evolith Core rulesets, OPA policies, agent specs, CI templates, or schemas are updated, registered satellites should be notifiable and able to receive controlled updates.
+- **Evidence:** `satellite-sync.mjs` exists but is a standalone script with no trigger mechanism, no Core API integration, and no approval flow. It's not invocable from CLI, MCP, or API.
+- **Affected files:** `packages/core-domain/src/application/use-cases/sync-satellite.use-case.ts`, `.harness/scripts/satellite-sync.mjs` (refactor)
+- **Complexity:** M
+- **Proposed fix:** Create `SyncSatelliteUseCase` that: (1) identifies changed elements since last sync (compare `coreVersion` in `SatelliteRecord` vs current Core version), (2) generates diff of changed inherited elements, (3) applies changes with dry-run support, (4) records sync event in audit trail, (5) emits `SatelliteSyncedEvent`. Wire to `POST /api/v1/satellites/:id/sync` (GT-367) and `evolith satellite sync` CLI command.
+- **Acceptance criteria:**
+  - [ ] `SyncSatelliteUseCase` implemented with dry-run support
+  - [ ] Only propagates elements the satellite originally inherited (respects customizations)
+  - [ ] Records sync event in audit trail
+  - [ ] Unit tests ≥ 80%
+- **Dependencies:** GT-367, GT-369, GT-372
+
+#### GT-371
+
+**Title:** Satellite → product/idea/tenant/topology/blueprint linking in Core API
+
+- **Purpose:** Satellites are not isolated — they implement products, belong to tenants, follow blueprints, and are positioned in a topology. Core API must record and expose these associations.
+- **Evidence:** `SatelliteRecord` (to be created, GT-369) has optional `tenantId`, `productId`, `blueprintId` fields but no API to set or query them. No linking endpoints exist.
+- **Affected files:** `apps/core-api/src/presentation/controllers/satellites.controller.ts` (extend GT-367)
+- **Complexity:** S
+- **Proposed fix:** Extend `PATCH /api/v1/satellites/:id` to accept `tenantId`, `productId`, `blueprintId`, `topologyId` as linkable associations. Add `GET /api/v1/satellites?tenantId=<id>` and `GET /api/v1/satellites?productId=<id>` query filters. Ensure ABAC checks tenant boundary.
+- **Acceptance criteria:**
+  - [ ] `PATCH /api/v1/satellites/:id` accepts linking fields
+  - [ ] Query filters by tenantId/productId work
+  - [ ] ABAC prevents cross-tenant access
+- **Dependencies:** GT-367, GT-369
+
+#### GT-372
+
+**Title:** Audit trail per satellite — inherited vs customized elements
+
+- **Purpose:** Governance requires knowing exactly which elements each satellite inherited from Core, which were customized (and why), and when sync events occurred. Without this, compliance audits are blind.
+- **Evidence:** `SatelliteRecord` will have `inheritedElements[]` and `customizations[]` fields (GT-369), but no service writes to them. No audit log of sync events exists.
+- **Affected files:** New `packages/core-domain/src/application/services/satellite-audit.service.ts`
+- **Complexity:** M
+- **Proposed fix:** Create `SatelliteAuditService` that: (1) records each inherited element at provisioning time with version + timestamp, (2) records customizations when a satellite diverges from inherited content, (3) records sync events, (4) exposes `GET /api/v1/satellites/:id/inheritance` (GT-367). Wire to `InitializeSatelliteUseCase` (GT-364) and `SyncSatelliteUseCase` (GT-370).
+- **Acceptance criteria:**
+  - [ ] Provisioning records all inherited elements with version + timestamp
+  - [ ] Customization detection writes to `customizations[]`
+  - [ ] `GET /api/v1/satellites/:id/inheritance` returns full audit trail
+  - [ ] Unit tests ≥ 80%
+- **Dependencies:** GT-364, GT-367, GT-369, GT-370
+
+#### GT-373
+
+**Title:** Tracker integration — satellite registration, state sync, and satellite management UI
+
+- **Purpose:** The Tracker (external product) is where teams manage products, ideas, and blueprints. Satellites must be registerable from Tracker, and their compliance state must be visible there.
+- **Evidence:** No Tracker integration for satellites exists. The Tracker repo (`evolith_tracker`) has a gap analysis for CLI/MCP but no satellite registration flow.
+- **Affected files:** Tracker repo (external); Core API `POST /api/v1/satellites` must be Tracker-callable via the SDK client
+- **Complexity:** M
+- **Proposed fix:** (1) Ensure `@evolith/sdk` client exposes `registerSatellite`, `listSatellites`, `getSatelliteStatus` methods (extend GT-322 SDK). (2) Document the webhook event `satellite.registered` emitted by Core and consumable by Tracker. (3) Add Tracker satellite management screens: `Satellites` list, `Satellite Detail` (compliance score, inheritance view), `Satellite Create Wizard`, `Satellite Adopt` flow.
+- **Acceptance criteria:**
+  - [ ] `@evolith/sdk` client methods for satellite CRUD exist and are typed
+  - [ ] `satellite.registered` webhook event documented and emitted
+  - [ ] Tracker can register a satellite via SDK (integration test)
+- **Dependencies:** GT-367, GT-369
+
+#### GT-374
+
+**Title:** Connect `upgrade.command.ts` to `SatelliteUpgradeService` — remove stub
+
+- **Purpose:** `SatelliteUpgradeService` exists with full plan/execute/report logic but `upgrade.command.ts` is a stub that only prints messages. Users invoking `evolith upgrade` get no real behavior.
+- **Evidence:** `sdk/cli/src/commands/upgrade/upgrade.command.ts:14-30` — only calls `this.promptService.showInfo(...)`. `SatelliteUpgradeService` in `packages/core-domain/src/application/upgrade/satellite-upgrade.service.ts` is fully implemented with `planUpgrade`, `executeUpgrade`, `getUpgradeReport`.
+- **Affected files:** `sdk/cli/src/commands/upgrade/upgrade.command.ts`
+- **Complexity:** S
+- **Proposed fix:** Wire `UpgradeCommand.executeCommand` to: (1) resolve `satellitePath` (current dir) and `corePath`, (2) call `SatelliteUpgradeService.planUpgrade(...)`, (3) if `--dry-run`, display plan and exit, (4) otherwise call `executeUpgrade(...)`, (5) display `getUpgradeReport(result)`.
+- **Acceptance criteria:**
+  - [ ] `evolith upgrade` executes `SatelliteUpgradeService.executeUpgrade`
+  - [ ] `evolith upgrade --dry-run` calls `planUpgrade` only and displays plan
+  - [ ] `--target <version>` passed to upgrade options
+  - [ ] Unit tests cover happy path + dry-run + force flag
+- **Dependencies:** None (all services already exist)
+
 #### GT-359
 
 **Title:** Define `SatelliteManifest` ingestion contract schema

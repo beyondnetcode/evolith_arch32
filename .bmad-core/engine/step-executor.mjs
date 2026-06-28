@@ -63,6 +63,51 @@ Run all validation scripts and document results. Ensure zero drift between Nativ
 ${validationScripts?.length ? `Scripts to run: ${validationScripts.join(', ')}` : ''}
 `,
 
+  'qa-contracts': (action, validationScripts) => `
+You are the QA-Contracts specialist (.bmad-core/agents/qa-contracts.md) — Native↔OPA parity & contract conformance.
+
+${action}
+
+Enforce R-25 dual-engine parity (zero drift) and fail-closed contract conformance; any drift blocks merge.
+${validationScripts?.length ? `Scripts to run: ${validationScripts.join(', ')}` : ''}
+`,
+
+  'qa-security': (action, validationScripts) => `
+You are the QA-Security specialist (.bmad-core/agents/qa-security.md) — OWASP, ABAC fail-closed, shell-injection, SSRF, agent sandbox.
+
+${action}
+
+Treat any confirmed vulnerability as merge-blocking. Report PASS/FAIL with evidence.
+${validationScripts?.length ? `Scripts to run: ${validationScripts.join(', ')}` : ''}
+`,
+
+  'qa-e2e': (action, validationScripts) => `
+You are the QA-E2E specialist (.bmad-core/agents/qa-e2e.md) — governance-flow E2E + cross-surface compatibility.
+
+${action}
+
+Drive phase→gate→artifact→verdict against real fixtures; any failed scenario blocks merge.
+${validationScripts?.length ? `Scripts to run: ${validationScripts.join(', ')}` : ''}
+`,
+
+  'qa-unit': (action, validationScripts) => `
+You are the QA-Unit specialist (.bmad-core/agents/qa-unit.md) — unit + integration coverage across all workspaces.
+
+${action}
+
+A failing test or coverage below threshold blocks merge. Report per-workspace results.
+${validationScripts?.length ? `Scripts to run: ${validationScripts.join(', ')}` : ''}
+`,
+
+  'qa-docs': (action, validationScripts) => `
+You are the QA-Docs specialist (.bmad-core/agents/qa-docs.md) — bilingual parity + doc/governance integrity.
+
+${action}
+
+A bilingual mismatch, doc-validation failure, or tracking/maturity drift blocks merge.
+${validationScripts?.length ? `Scripts to run: ${validationScripts.join(', ')}` : ''}
+`,
+
   devops: (action) => `
 You are the DevOps agent. Execute the following operations task:
 
@@ -98,7 +143,7 @@ export function executeStep(step, context) {
   try {
     const agentType = step.agent.toLowerCase();
 
-    if (agentType === 'qa' && step.validationScripts?.length > 0) {
+    if ((agentType === 'qa' || agentType.startsWith('qa-')) && step.validationScripts?.length > 0) {
       return executeValidationScripts(step, context, result, startTime);
     }
 

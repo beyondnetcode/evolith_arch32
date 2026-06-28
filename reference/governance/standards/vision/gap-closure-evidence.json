@@ -5311,6 +5311,157 @@
         "npm run --workspace packages/core-domain test"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-363",
+      "closedAt": "2026-06-28",
+      "closureCommit": "daab4f74",
+      "evidence": [
+        "packages/infra-providers/src/github/github-api.adapter.ts",
+        "packages/infra-providers/src/github/i-github-api-client.interface.ts"
+      ],
+      "validationCommands": [
+        "npm run --workspace packages/infra-providers test"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-364",
+      "closedAt": "2026-06-28",
+      "closureCommit": "2ff50b10",
+      "evidence": [
+        "packages/core-domain/src/application/use-cases/satellite/initialize-satellite.use-case.ts"
+      ],
+      "validationCommands": [
+        "npm run --workspace packages/core-domain test"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-365",
+      "closedAt": "2026-06-28",
+      "closureCommit": "d57e5e42",
+      "evidence": [
+        "sdk/cli/src/commands/satellite/create.command.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace sdk/cli -- --runInBand"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-366",
+      "closedAt": "2026-06-28",
+      "closureCommit": "34ebcff1",
+      "evidence": [
+        "sdk/cli/src/commands/satellite/adopt.command.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace sdk/cli -- --runInBand"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-367",
+      "closedAt": "2026-06-28",
+      "closureCommit": "4e2380cc",
+      "evidence": [
+        "apps/core-api/src/presentation/controllers/satellites.controller.ts",
+        "apps/core-api/src/application/services/satellite-registry.service.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace core-api"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-368",
+      "closedAt": "2026-06-28",
+      "closureCommit": "3dd62152",
+      "evidence": [
+        "packages/mcp-server/src/tools/satellite-create.tool.ts",
+        "packages/mcp-server/src/tools/satellite-adopt.tool.ts",
+        "packages/mcp-server/src/tools/satellite-list.tool.ts",
+        "packages/mcp-server/src/tools/satellite-status.tool.ts"
+      ],
+      "validationCommands": [
+        "npm run --workspace packages/mcp-server test"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-369",
+      "closedAt": "2026-06-28",
+      "closureCommit": "880e17eb",
+      "evidence": [
+        "packages/core-domain/src/domain/satellite/satellite-record.entity.ts",
+        "packages/core-domain/src/domain/satellite/satellite-record.schema.ts"
+      ],
+      "validationCommands": [
+        "npm run --workspace packages/core-domain test"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-370",
+      "closedAt": "2026-06-28",
+      "closureCommit": "6f1e2bae",
+      "evidence": [
+        "packages/core-domain/src/application/services/satellite-inheritance-propagation.service.ts"
+      ],
+      "validationCommands": [
+        "npm run --workspace packages/core-domain test"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-371",
+      "closedAt": "2026-06-28",
+      "closureCommit": "38334bf0",
+      "evidence": [
+        "apps/core-api/src/presentation/controllers/satellites.controller.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace core-api"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-372",
+      "closedAt": "2026-06-28",
+      "closureCommit": "94cad958",
+      "evidence": [
+        "packages/core-domain/src/application/services/satellite-audit.service.ts",
+        "packages/core-domain/src/domain/satellite/satellite-audit-entry.type.ts"
+      ],
+      "validationCommands": [
+        "npm run --workspace packages/core-domain test"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-373",
+      "closedAt": "2026-06-28",
+      "closureCommit": "51e1577d",
+      "evidence": [
+        "packages/sdk-client/src/satellites.client.ts"
+      ],
+      "validationCommands": [
+        "npm run --workspace packages/sdk-client test"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-374",
+      "closedAt": "2026-06-28",
+      "closureCommit": "556f7c9d",
+      "evidence": [
+        "sdk/cli/src/commands/init/upgrade.command.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace sdk/cli -- --runInBand"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

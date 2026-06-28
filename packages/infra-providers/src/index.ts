@@ -9,3 +9,12 @@ export {
   MoscowAnalysis,
   MoscowPriority,
 } from './moscow-prioritization.service';
+export { GitHubApiAdapter } from './adapters/github-api.adapter';
+export type {
+  IGitHubApiClient,
+  CreateRepoParams,
+  GitHubRepo,
+  BranchProtectionRules,
+  GitHubFileParams,
+  GitHubTokenInfo,
+} from '@evolith/core-domain';

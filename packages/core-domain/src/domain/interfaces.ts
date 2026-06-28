@@ -340,3 +340,5 @@ export interface FileWriteOptions {
 }
 
 export interface IFileSystemProvider extends IFileSystem {}
+
+export * from './github-api-client.interface';

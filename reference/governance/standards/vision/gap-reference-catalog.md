@@ -14,14 +14,16 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 #### GT-313
 
-**Title:** Rotate and externalize GH_TOKEN via a secret manager
+**Title:** Rotate and externalize GH_TOKEN via a secret manager — `IN-PROGRESS`
 
 - **Purpose:** Remove the live GitHub Personal Access Token from the on-disk `.env` and source it from a secret manager / CI secret, closing the only open critical security finding.
-- **Evidence:** `.env` contains `GH_TOKEN=ghp_…` in plaintext (git-ignored but live on disk); flagged in `CERTIFICACION_MADUREZ.md` §6.
+- **Evidence:** `.env` contains `GH_TOKEN=ghp_…` in plaintext (git-ignored but live on disk); flagged in `CERTIFICACION_MADUREZ.md` §6. **Verified:** the PAT is NOT committed, NOT in git history, NOT on `origin/main` — exposure is local-disk only.
 - **Complexity:** XS
+- **Applied fix (part 1 — externalization, code):** `.harness/scripts/sync-project-board.mjs` (the only consumer) no longer reads a plaintext `.env`. It now resolves the token securely via `resolveGitHubToken()`: explicit `GH_TOKEN`/`GITHUB_TOKEN` (a CI secret) → the `gh` CLI's keychain credential (`gh auth token`) → fail-closed with guidance. The `gh project …` subcommands inherit it. Verified the resolver yields a token from the `gh` keychain with no `.env` (0 `.env` references remain).
+- **Residual (part 2 — your action, criterion 1):** revoke the current PAT in GitHub (it sat in plaintext on disk → treat as compromised); rely on `gh auth login` (keychain, add `gh auth refresh -s project` if the Projects API needs the scope) locally and a GitHub Actions secret in CI; delete the `GH_TOKEN=` line from the local `.env`. No new plaintext PAT.
 - **Done when:**
-  - [ ] The current token is revoked and reissued in GitHub.
-  - [ ] Credentials are sourced from a secret manager / CI secret, not a plaintext `.env`.
+  - [ ] The current token is revoked and reissued in GitHub. *(Your action — the token is a human-held credential.)*
+  - [x] Credentials are sourced from a secret manager / CI secret (gh keychain / env), not a plaintext `.env`.
 
 #### GT-314
 

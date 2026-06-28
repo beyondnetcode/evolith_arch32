@@ -55,6 +55,25 @@ jobs:
       - name: Run core-domain tests with coverage
         run: npm run test:cov --workspace @evolith/core-domain
 
+  test-core:
+    name: Test core
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run core barrel contract tests
+        run: npm test --workspace @evolith/core
+
   test-mcp-server:
     name: Test mcp-server
     runs-on: ubuntu-latest
@@ -103,7 +122,7 @@ jobs:
 
   publish-npm:
     name: Publish npm
-    needs: [test, test-core-domain, test-mcp-server, test-core-api]
+    needs: [test, test-core-domain, test-core, test-mcp-server, test-core-api]
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
@@ -127,7 +146,7 @@ jobs:
 
   docker:
     name: Build & Push Docker
-    needs: [test, test-core-domain, test-mcp-server, test-core-api]
+    needs: [test, test-core-domain, test-core, test-mcp-server, test-core-api]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:

@@ -42,6 +42,10 @@
       "types": "./dist/domain/services/index.d.ts",
       "default": "./dist/domain/services/index.js"
     },
+    "./schemas": {
+      "types": "./dist/schemas/index.d.ts",
+      "default": "./dist/schemas/index.js"
+    },
     "./*": {
       "types": "./dist/*.d.ts",
       "default": "./dist/*.js"
@@ -68,7 +72,8 @@
     "ajv": "8.20.0",
     "ajv-formats": "3.0.1",
     "typescript": "6.0.3",
-    "yaml": "1.10.3"
+    "yaml": "1.10.3",
+    "zod": "4.4.3"
   },
   "devDependencies": {
     "@types/fs-extra": "11.0.4",

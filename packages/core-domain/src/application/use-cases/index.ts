@@ -5,3 +5,4 @@ export * from './propose-phase-advance.use-case';
 export * from './validate-satellite.use-case';
 export * from './validate-workflow.use-case';
 export * from './validate-blueprint.use-case';
+export * from './initialize-satellite.use-case';

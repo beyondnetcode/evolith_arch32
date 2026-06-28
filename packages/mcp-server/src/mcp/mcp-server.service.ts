@@ -176,8 +176,15 @@ export class McpServerService {
     this.server = this.buildServer();
 
     if (transport === 'http') {
-      if (!this.apiKey && this.allowNoAuth) {
-        this.logger.warn('MCP HTTP started without API key (--allow-no-auth) — every request gets ADMIN scope');
+      const isProduction = (process.env.NODE_ENV || 'development') === 'production';
+      if (!this.apiKey) {
+        if (isProduction) {
+          // validateAuth() ignores allowNoAuth in production for safety: every
+          // request is rejected with 401 until EVOLITH_API_KEY / --api-key is set.
+          this.logger.warn('MCP HTTP started without an API key in production — all requests will be rejected (401). Set EVOLITH_API_KEY or --api-key.');
+        } else if (this.allowNoAuth) {
+          this.logger.warn('MCP HTTP started without API key (--allow-no-auth) — every request gets ADMIN scope. Not honored in production.');
+        }
       }
       await this.startHttp(options.port ?? 3000);
     } else {

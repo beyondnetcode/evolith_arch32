@@ -8,7 +8,6 @@
 [![Method](https://img.shields.io/badge/Method-Spec--driven_AI--DD-blueviolet?style=for-the-badge)]()
 [![License](https://img.shields.io/badge/License-MIT-informational?style=for-the-badge)]()
 [![CI](https://img.shields.io/github/actions/workflow/status/beyondnetcode/evolith_arch32/docs.yml?style=for-the-badge&label=CI)](https://github.com/beyondnetcode/evolith_arch32/actions)
-[![Coverage](https://img.shields.io/badge/Docs-100%25-brightgreen?style=for-the-badge)](./COVERAGE_REPORT.md)
 
 <br/>
 
@@ -21,100 +20,222 @@
 
 <sub>↑ Visión General del Producto Evolith E2E · MD3 — <i>clic para ampliar</i></sub>
 
-<br/>
-
-**Evolith es un framework de gobernanza arquitectónica ejecutable, no un corpus de documentación.** Codifica *cómo* se construye el software — a lo largo de ocho topologías de arquitectura — como rulesets verificables, ADRs y compuertas de fase que los equipos, las plataformas de entrega y los agentes de IA pueden ejecutar. La misma gobernanza llega a tu flujo de trabajo mediante tres interfaces: una **CLI**, un **servidor MCP** y una **API REST Core**.
-
-> _**Arquitectura Progresiva:** la capacidad del framework para escalar un sistema mutando entre topologías según lo exige el ciclo de vida del negocio — previniendo el sobre-diseño y preservando la coherencia arquitectónica mediante ejecución automática._
-
 </div>
 
 ---
 
-## Qué es Evolith
+## Menú
 
-Evolith convierte la gobernanza arquitectónica en una capacidad operativa. Los ADRs, rulesets, políticas, contratos e instrucciones de IA no son documentos pasivos — son artefactos autoritativos expuestos a través de canales de ejecución obligatorios, para que los equipos validen, consulten, generen y apliquen una arquitectura elegida *antes* de que el código llegue a producción.
+- [¿Qué es Evolith?](#qué-es-evolith)
+- [¿Por qué Evolith?](#por-qué-evolith)
+- [Conceptos Clave](#conceptos-clave)
+- [Ecosistema de Productos](#ecosistema-de-productos)
+- [Cómo Funciona](#cómo-funciona)
+- [Visión de Arquitectura](#visión-de-arquitectura)
+- [Componentes Principales](#componentes-principales)
+- [Inicio Rápido](#inicio-rápido)
+- [Documentación](#documentación)
+- [Casos de Uso](#casos-de-uso)
+- [Roadmap](#roadmap)
+- [Contribución](#contribución)
+- [Licencia](#licencia)
 
-Evolith Core define el **Qué** y el **Cómo** técnicos y permanece neutral respecto al proveedor y al runtime: sin acoplamiento a un lenguaje, nube, runtime o base de datos. El cuándo del negocio, la propiedad, la financiación y el ROI — el **Cuándo** y el **Quién** — viven fuera de Core y los gobierna Evolith Tracker.
+---
 
-## El ecosistema Evolith
+## ¿Qué es Evolith?
 
-Evolith Core es la base. La Suite entrega y demuestra esa base como productos en funcionamiento.
+Evolith es un **framework de gobernanza arquitectónica ejecutable**. Codifica cómo se construye el software — a través de múltiples estilos de arquitectura — como reglas verificables, ADRs y compuertas de fase que equipos, plataformas y agentes de IA pueden ejecutar de verdad.
 
-| Componente | Rol | En una línea | Hub |
-| --- | --- | --- | --- |
-| **Evolith Core** | Base | Constitución de ingeniería neutral al proveedor: principios, ADRs, rulesets, topologías y contratos que cada producto hereda. | [Hub de Core](./reference/core/README.es.md) |
-| **Evolith Tracker** | Suite · Activo | Gobierna el ciclo de vida del negocio (Cuándo/Quién) y orquesta Core mediante su ACL y el Funnel 0. | [Hub de Tracker](./reference/products/evolith-tracker/README.es.md) |
-| **Smart CLI** | Suite · Activo (v1.1.4) | Aplicación local: valida código, gestiona ADRs, ejecuta compuertas y fases contra tu topología. | [Hub de Smart CLI](./reference/products/smart-cli/README.es.md) |
-| **Core API** | Suite · Activo (v0.0.1) | Servicio REST (versionado por URI `/api/v1`) para que los sistemas de orquestación consulten y evalúen la gobernanza de forma remota. | [Hub de Core API](./reference/products/core-api/README.es.md) |
-| **Evolith MCP Services** | Suite · Activo | Gobernanza como contexto en vivo para LLMs y agentes — 27 tools, 9 resources, 8 prompts. Se distribuye dentro de `@evolith/smart-cli`. | [Hub de MCP Services](./reference/products/mcp-services/README.es.md) |
-| **UMS Reference** | Suite · Modelo de referencia | El satélite UMS de código abierto es la referencia aplicada oficial que demuestra Core en la práctica. | [Hub de UMS Reference](./reference/products/ums-reference/README.es.md) |
+La gobernanza en Evolith no es un documento. Es una capacidad operativa expuesta a través de una CLI, un servidor MCP y una API REST.
 
-Nuevo glosario de todo el ecosistema: **[Glosario del Ecosistema](./reference/governance/glossary-ecosystem.es.md)** (términos canónicos de fases, compuertas, topologías y productos).
+---
 
-## Conceptos clave
+## ¿Por qué Evolith?
 
-Dos ejes independientes — manténlos diferenciados.
+La mayoría de proyectos acumulan ADRs y documentos de arquitectura que nadie lee y nadie aplica. Los sistemas se desvían. Las decisiones se olvidan. La consistencia se rompe en silencio.
 
-- **Fases del SDLC** gobiernan el camino de la idea a producción. Las cinco fases de gobernanza son **Conception & Discovery**, **Design & Architecture**, **Construction**, **Validation & QA** y **Delivery & Operations**, cada una cerrada por una compuerta (Business Sign-Off, Design Baseline Approved, Successful Build, RC Stamped, Production Live). La CLI y la Core API direccionan estas fases con las claves operativas `discovery`, `design`, `construction`, `qa`, `release`.
-- **Topologías** agrupan estilos de arquitectura. **F1–F5** son *niveles de madurez* en el eje progresivo (modular-monolith → distributed-modules → microservices, y luego madurez operativa) — **no** son fases del SDLC.
+Evolith hace que la gobernanza sea **ejecutable**:
 
-Evolith gobierna **8 topologías**, cada una un bounded context aislado con sus propios ADRs, políticas OPA, rulesets de IA y contratos UMS:
+- Las reglas se validan automáticamente, no se revisan manualmente.
+- Las compuertas de fase bloquean el avance hasta que se cumplen los criterios de calidad.
+- Los agentes de IA y los pipelines de CI consumen los mismos artefactos de gobernanza que los humanos.
+- Las decisiones de arquitectura son trazables desde el ADR hasta el código en producción.
+
+---
+
+## Conceptos Clave
+
+| Concepto | Qué es |
+|---|---|
+| **Fases SDLC** | Las cinco etapas de la idea a producción: Discovery → Design → Construction → QA → Delivery |
+| **Compuertas** | Puntos de control automatizados que cierran cada fase antes de pasar a la siguiente |
+| **Topologías** | Estilos de arquitectura (ej. monolito modular, microservicios, event-driven, agentic-AI) |
+| **ADRs** | Architecture Decision Records — el registro autoritativo de decisiones arquitectónicas |
+| **Blueprints** | Plantillas de diseño canónicas para cada topología |
+| **Rulesets** | Reglas legibles por máquina aplicadas por la CLI y la Core API |
+| **Políticas OPA** | Políticas de Open Policy Agent para controles de gobernanza granulares |
+| **Artefactos** | Salidas estructuradas en cada fase: specs, schemas, manifests, contratos |
+| **Agentes de IA** | Agentes especializados (Winston y otros) que participan en el SDLC como colaboradores de primer nivel |
+
+Detalles completos: [Conceptos Core](./reference/core/README.es.md) · [Topologías](./reference/architecture/topologies/README.es.md)
+
+---
+
+## Ecosistema de Productos
+
+Evolith se distribuye como una suite de productos coordinados sobre una base común.
+
+| Producto | Rol |
+|---|---|
+| **Evolith Core** | Constitución neutral al proveedor: principios, ADRs, rulesets, topologías y contratos |
+| **Smart CLI** | Aplicación local — valida código, ejecuta compuertas, gestiona ADRs, sirve MCP |
+| **Core API** | Servicio REST para consultas y evaluación de gobernanza de forma remota |
+| **MCP Services** | Gobernanza como contexto en vivo para LLMs y agentes de IA (27 tools, 9 resources, 8 prompts) |
+| **Evolith Tracker** | Gobernanza del ciclo de vida del negocio — fases, propietarios, financiación y ROI |
+| **Rulesets** | Reglas de aplicación legibles por máquina por topología |
+| **Políticas OPA** | Controles de política granulares integrados en el pipeline |
+| **Schemas y Manifests** | Contratos estructurados para artefactos y definiciones de topología |
+
+---
+
+## Cómo Funciona
+
+```
+Desarrollador / Agente de IA
+        │
+        ▼
+  Smart CLI  ──────────────────────────────► Servidor MCP
+  (aplicación local)                         (contexto para agentes de IA)
+        │
+        ▼
+   Core API  ────────────────────────────►  Evolith Tracker
+  (gobernanza remota)                        (ciclo de vida del negocio)
+        │
+        ▼
+  Rulesets · Políticas OPA · ADRs · Blueprints
+  (los artefactos de gobernanza compartidos)
+```
+
+1. **Smart CLI** valida el código localmente contra los rulesets y ejecuta las compuertas de fase.
+2. **Core API** expone la misma gobernanza de forma remota para pipelines de CI y orquestadores.
+3. **Servidor MCP** entrega contexto de gobernanza a LLMs y agentes de IA en tiempo real.
+4. **Evolith Tracker** coordina el lado del negocio — quién es responsable, qué está financiado, qué se entrega cuándo.
+
+Todos los productos comparten los mismos artefactos definidos en **Evolith Core**.
+
+---
+
+## Visión de Arquitectura
+
+Evolith gobierna **8 topologías** en cuatro ejes:
 
 | Eje | Topologías |
-| --- | --- |
+|---|---|
 | Progresivo | `modular-monolith` · `distributed-modules` · `microservices` |
 | Integración | `event-driven` |
 | Ejecución | `serverless` · `edge-computing` |
 | Datos | `data-mesh` |
 | IA | `agentic-ai` |
 
-Descripciones y artefactos completos: **[Hub de Topologías](./reference/architecture/topologies/README.es.md)**.
+Cada topología tiene sus propios ADRs, políticas OPA, rulesets de IA y contratos UMS. Los sistemas migran entre topologías a medida que el negocio escala — esto es **Arquitectura Progresiva**.
 
-## Inicio rápido
+Referencia completa: [Hub de Arquitectura](./reference/architecture/README.es.md)
 
-Instala el tooling oficial y valida un repositorio contra los rulesets de su topología.
+---
+
+## Componentes Principales
+
+```
+evolith/
+├── reference/core/          # Constitución de ingeniería y principios
+├── reference/architecture/  # Topologías, blueprints y ADRs
+├── reference/governance/    # Fases SDLC, compuertas, estándares y glosario
+├── reference/products/      # Smart CLI, Core API, MCP, Tracker, UMS
+└── reference/operations/    # SRE, infra, compuertas de calidad
+```
+
+Punto de entrada para cada área: [Índice Maestro Global](./reference/navigation/MASTER_INDEX.es.md)
+
+---
+
+## Inicio Rápido
 
 ```bash
-# Inicializa un nuevo repositorio satélite
+# Instala Smart CLI
 npx @evolith/smart-cli@1.1.4 init
 
-# Valida el código contra los rulesets de la topología elegida
+# Valida tu código contra los rulesets de tu topología
 smart-cli validate
 
-# Valida una fase específica del SDLC (claves: discovery | design | construction | qa | release)
+# Valida una fase específica del SDLC
 smart-cli validate --phase qa
 
 # Gestiona Architecture Decision Records
 smart-cli adr create
 smart-cli adr list
 
-# Sirve la gobernanza como contexto en vivo para agentes de IA (MCP)
+# Sirve la gobernanza como contexto en vivo para agentes de IA
 smart-cli mcp serve
 ```
 
-Smart CLI incluye **20 comandos** (`adr`, `agents`, `alias`, `api`, `architecture`, `completion`, `docs`, `drift`, `fixtures`, `gate`, `history`, `init`, `mcp`, `phase`, `profile`, `sdlc`, `standards`, `update`, `upgrade`, `validate`) y se configura mediante **`evolith.yaml`**. Referencia completa: **[Hub de Smart CLI](./reference/products/smart-cli/README.es.md)**.
+Smart CLI incluye **20 comandos** y se configura mediante **`evolith.yaml`**. Referencia completa: [Hub de Smart CLI](./reference/products/smart-cli/README.es.md)
 
-## Mapa de navegación
+---
 
-Esta tabla es la ruta más rápida al documento correcto. Cuando ya sepas qué artefacto necesitas, abre el [Índice Maestro Global](./reference/navigation/MASTER_INDEX.es.md).
+## Documentación
 
-| Quiero… | Ir a | Superficie |
-| --- | --- | --- |
-| Entender la constitución neutral al proveedor (principios, ADRs de Core, contratos) | [Hub de Evolith Core](./reference/core/README.es.md) | Hub de dominio |
-| Gobernar el ciclo de vida (fases, compuertas, artefactos, trazabilidad) | [Centro de Gobernanza SDLC](./reference/governance/sdlc/README.es.md) | Hub de gobernanza |
-| Usar o diseñar un producto de la Suite (Tracker, Smart CLI, Core API, MCP, UMS) | [Diseños de Producto](./reference/products/README.es.md) · [Product Suite](./reference/product-suite/README.es.md) | Hubs de producto |
-| Elegir un estilo de arquitectura o topología | [Hub de Arquitectura](./reference/architecture/README.es.md) · [Topologías](./reference/architecture/topologies/README.es.md) | Hubs de arquitectura |
-| Consultar estándares, taxonomías y el glosario del ecosistema | [Estándares y Gobernanza](./reference/governance/README.es.md) · [Glosario](./reference/governance/glossary-ecosystem.es.md) | Hub de gobernanza |
-| Desplegar, ejecutar y operar (SRE, infra, compuertas de calidad) | [Hub de Operaciones](./reference/operations/README.es.md) | Hub de operaciones |
-| Onboarding por rol (arquitecto, dev, QA/SRE, PM, agente de IA) | [Inicio por Rol](./reference/getting-started/README.es.md) | Onboarding |
-| Revisar la salud de la suite (madurez, gaps, auditorías, evidencia) | [Tablero de Gaps](./reference/governance/standards/vision/gap-tracking.es.md) · [Hub de Madurez y Gaps](./reference/governance/standards/vision/README.es.md) | Hub de reportes |
-| Configurar agentes de IA y el flujo asistido | [AGENTS.es.md](./AGENTS.es.md) | Reglas de agentes |
-| Localizar cualquier artefacto directamente | [Índice Maestro Global](./reference/navigation/MASTER_INDEX.es.md) | Índice de navegación |
+| Área | Enlace |
+|---|---|
+| Constitución Core | [Hub de Evolith Core](./reference/core/README.es.md) |
+| Gobernanza SDLC | [Centro de Gobernanza SDLC](./reference/governance/sdlc/README.es.md) |
+| Topologías | [Hub de Topologías](./reference/architecture/topologies/README.es.md) |
+| Smart CLI | [Hub de Smart CLI](./reference/products/smart-cli/README.es.md) |
+| Core API | [Hub de Core API](./reference/products/core-api/README.es.md) |
+| MCP Services | [Hub de MCP Services](./reference/products/mcp-services/README.es.md) |
+| Evolith Tracker | [Hub de Tracker](./reference/products/evolith-tracker/README.es.md) |
+| Operaciones y SRE | [Hub de Operaciones](./reference/operations/README.es.md) |
+| Onboarding por rol | [Inicio por Rol](./reference/getting-started/README.es.md) |
+| Glosario del ecosistema | [Glosario](./reference/governance/glossary-ecosystem.es.md) |
+| Seguimiento de gaps | [Tablero de Gaps](./reference/governance/standards/vision/gap-tracking.md) |
+| Todos los artefactos | [Índice Maestro Global](./reference/navigation/MASTER_INDEX.es.md) |
+
+---
+
+## Casos de Uso
+
+**Para equipos de ingeniería**
+Aplica decisiones de arquitectura automáticamente. Ejecuta compuertas de fase en CI. Mantén los ADRs vivos y trazables.
+
+**Para equipos de plataforma**
+Consulta la gobernanza de forma remota vía Core API. Integra rulesets en pipelines de despliegue. Bloquea artefactos no conformes antes de que lleguen a producción.
+
+**Para desarrollo asistido por IA**
+Entrega contexto de gobernanza a LLMs a través de MCP. Permite que los agentes de IA validen sus propias salidas contra los rulesets de arquitectura antes de hacer commit.
+
+**Para productos en crecimiento**
+Empieza con un monolito modular. Migra a módulos distribuidos o microservicios cuando el negocio lo exija — Evolith rastrea la transición y aplica consistencia en cada paso.
+
+---
+
+## Roadmap
+
+Consulta el tablero de seguimiento de gaps para prioridades actuales y elementos abiertos:
+
+- [Tablero de Gaps](./reference/governance/standards/vision/gap-tracking.md)
+- [Hub de Madurez y Gaps](./reference/governance/standards/vision/README.md)
+
+---
 
 ## Contribución
 
-Antes de contribuir, lee la [Guía de Contribución](./CONTRIBUTING.es.md), la [Política de Seguridad](./SECURITY.es.md) y [AGENTS.es.md](./AGENTS.es.md) para las convenciones de agentes. Consulta la [Taxonomía del Repositorio](./reference/governance/standards/repository-taxonomy.md) para saber qué va dónde.
+Lee esto antes de abrir un PR:
+
+- [Guía de Contribución](./CONTRIBUTING.es.md)
+- [Política de Seguridad](./SECURITY.es.md)
+- [AGENTS.es.md](./AGENTS.es.md) — convenciones para contribuidores agentes de IA
+- [Taxonomía del Repositorio](./reference/governance/standards/repository-taxonomy.md) — qué va dónde
+
+---
 
 ## Licencia
 

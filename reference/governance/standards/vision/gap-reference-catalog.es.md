@@ -31,9 +31,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** `packages/core-domain/src/application/validators/evidence-validator.ts` (`resolveArtifactPath`) mapea cada artefacto a una plantilla en el Core; admitido como deuda técnica en el código. AJV queda inerte para varios artefactos.
 - **Complejidad:** M
 - **Hecho cuando:**
-  - [ ] El validador resuelve la ruta del artefacto del satélite, no la plantilla del Core.
-  - [ ] AJV corre sobre datos reales cuando hay `schemaRef`.
-  - [ ] Tests cubren existencia + estructura + completitud.
+  - [x] El validador resuelve la ruta del artefacto del satélite, no la plantilla del Core.
+  - [x] AJV corre sobre datos reales cuando hay `schemaRef`.
+  - [x] Tests cubren existencia + estructura + completitud.
 
 #### GT-315
 
@@ -43,9 +43,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** No existe bus/emisor de eventos; solo un `IWebhookNotifier.notify(url, evidence)` de un disparo (`packages/core-domain/src/application/ports/webhook-notifier.port.ts`). Sin eventos nombrados (`phase.*`, `gate.*`, `artifact.*`).
 - **Complejidad:** L
 - **Hecho cuando:**
-  - [ ] Existe un bus de eventos de dominio + outbox transaccional.
-  - [ ] Se emiten eventos versionados: `phase.started/completed`, `gate.approved/rejected`, `artifact.created/updated/validated`, `blueprint.generated/validated`, `workflow.updated`.
-  - [ ] Catálogo de eventos versionado, documentado y consumible.
+  - [x] Existe un bus de eventos de dominio + outbox transaccional.
+  - [x] Se emiten eventos versionados: `phase.started/completed`, `gate.approved/rejected`, `artifact.created/updated/validated`, `blueprint.generated/validated`, `workflow.updated`.
+  - [x] Catálogo de eventos versionado, documentado y consumible.
 
 #### GT-316
 
@@ -55,9 +55,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** Tres modelos de verdict divergentes — `gate-evidence.ts` (`passed|failed|skipped`, canónico), `gates/decision/gate-decision.ts` (`PASS|FAIL|WAIVED`, huérfano), `phases/transition/phase-transition.model.ts` (huérfano). Sin máquina de estados de artefacto.
 - **Complejidad:** L
 - **Hecho cuando:**
-  - [ ] Un vocabulario de verdict canónico; modelos huérfanos integrados o eliminados.
-  - [ ] Máquina de estados de artefacto/fase implementada y aplicada.
-  - [ ] Tests cubren todas las transiciones.
+  - [x] Un vocabulario de verdict canónico; modelos huérfanos integrados o eliminados.
+  - [x] Máquina de estados de artefacto/fase implementada y aplicada.
+  - [x] Tests cubren todas las transiciones.
 
 #### GT-317
 
@@ -67,9 +67,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** `IWorkflowDefinitionProvider.getWorkflow(tenant?)` existe pero ninguna implementación lo usa y no hay operación para validar un flujo suministrado externamente.
 - **Complejidad:** L
 - **Hecho cuando:**
-  - [ ] `validateWorkflow(definition)` valida un flujo suministrado contra los invariantes del Core.
-  - [ ] Se exponen catálogos componibles de fases/gates/artefactos (no solo topologías).
-  - [ ] El Core no guarda config de tenant; Tracker conduce la composición.
+  - [x] `validateWorkflow(definition)` valida un flujo suministrado contra los invariantes del Core.
+  - [x] Se exponen catálogos componibles de fases/gates/artefactos (no solo topologías).
+  - [x] El Core no guarda config de tenant; Tracker conduce la composición.
 
 #### GT-318
 
@@ -79,8 +79,8 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** `reference/governance/sdlc/gates/gate-f*.json` (citan `.rego`) difieren de `rulesets/phase-gates/phase-gates.rules.json` (lo que consume `PhaseGateValidatorService`); los `.rego` citados no se ejecutan.
 - **Complejidad:** M
 - **Hecho cuando:**
-  - [ ] Una fuente de gates canónica consumida por el motor.
-  - [ ] Las reglas OPA citadas se ejecutan; ruteo por IDs estables (no substring).
+  - [x] Una fuente de gates canónica consumida por el motor.
+  - [x] Las reglas OPA citadas se ejecutan; ruteo por IDs estables (no substring).
 
 #### GT-319
 
@@ -90,8 +90,8 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** No hay `enum Role`/`ROLE_HIERARCHY`; los roles son strings en inputs ABAC y en `accountableRole` de gates.
 - **Complejidad:** M
 - **Hecho cuando:**
-  - [ ] Existe un modelo de roles formal usado por ABAC/checks de gate.
-  - [ ] Tests cubren la resolución de roles.
+  - [x] Existe un modelo de roles formal usado por ABAC/checks de gate.
+  - [x] Tests cubren la resolución de roles.
 
 #### GT-320
 
@@ -101,8 +101,8 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** `accountableRole`/`waiverAuthority` son campos declarativos en el JSON del gate; ningún código los aplica (solo los referencian datos de test).
 - **Complejidad:** M
 - **Hecho cuando:**
-  - [ ] OPA/código verifica que el actor aprobador/waiver tiene el rol requerido.
-  - [ ] Depende de GT-319.
+  - [x] OPA/código verifica que el actor aprobador/waiver tiene el rol requerido.
+  - [x] Depende de GT-319.
 
 #### GT-321
 
@@ -112,8 +112,8 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** `AuditLogger` y `CommandHistory` escriben en memoria/JSONL; no hay `AuditRepository`/ledger.
 - **Complejidad:** M
 - **Hecho cuando:**
-  - [ ] Los eventos de auditoría persisten en un almacén append-only.
-  - [ ] Consultable por tenant/fase/actor/correlationId.
+  - [x] Los eventos de auditoría persisten en un almacén append-only.
+  - [x] Consultable por tenant/fase/actor/correlationId.
 
 #### GT-322
 
@@ -123,8 +123,8 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** `sdk/` solo contiene la CLI; no hay librería cliente `@evolith/sdk`; los agentes usan MCP y REST directo.
 - **Complejidad:** M
 - **Hecho cuando:**
-  - [ ] `@evolith/sdk` generado desde OpenAPI/schemas.
-  - [ ] Cubre las superficies REST + MCP con tipos.
+  - [x] `@evolith/sdk` generado desde OpenAPI/schemas.
+  - [x] Cubre las superficies REST + MCP con tipos.
 
 #### GT-323
 
@@ -134,8 +134,8 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** Solo existe `sdk/cli/Dockerfile`; core-api/mcp-server tienen Dockerfiles de referencia en `reference/infrastructure/docker/` pero ninguno en sus carpetas de app.
 - **Complejidad:** M
 - **Hecho cuando:**
-  - [ ] Dockerfiles en `apps/core-api` y `packages/mcp-server`.
-  - [ ] La imagen empaqueta `rulesets/` + `reference/` (o los monta) con `CORE_PATH`/`WORKSPACE_ROOT`.
+  - [x] Dockerfiles en `apps/core-api` y `packages/mcp-server`.
+  - [x] La imagen empaqueta `rulesets/` + `reference/` (o los monta) con `CORE_PATH`/`WORKSPACE_ROOT`.
 
 #### GT-324
 
@@ -156,8 +156,8 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** "Blueprint" aparece solo como archivo de evidencia (`evidence-validator.ts`, `sdlc.tools.ts`); no hay entidad ni validación.
 - **Complejidad:** L
 - **Hecho cuando:**
-  - [ ] Entidad Blueprint + constructor.
-  - [ ] Validado contra rulesets/topologías/política/OPA/SDLC.
+  - [x] Entidad Blueprint + constructor.
+  - [x] Validado contra rulesets/topologías/política/OPA/SDLC.
 
 #### GT-326
 
@@ -178,7 +178,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** `webhook.adapter.ts` hace un único POST de GateEvidence; sin suscripciones, reintentos ni firma.
 - **Complejidad:** M
 - **Hecho cuando:**
-  - [ ] Suscripciones por tópico, reintentos/backoff y firma HMAC.
+  - [x] Suscripciones por tópico, reintentos/backoff y firma HMAC.
 
 #### GT-328
 
@@ -188,7 +188,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** `eslint-plugin-boundaries` está configurado solo en `sdk/cli/.eslintrc.js`.
 - **Complejidad:** M
 - **Hecho cuando:**
-  - [ ] Config de boundaries + paso de CI para `packages/*` y `apps/*`.
+  - [x] Config de boundaries + paso de CI para `packages/*` y `apps/*`.
 
 #### GT-329
 
@@ -198,8 +198,8 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** Las topologías del eje progresivo viven en `rulesets/topologies/`, pero serverless/edge/event-driven/data-mesh/agentic-ai viven en `reference/architecture/topologies/`.
 - **Complejidad:** M
 - **Hecho cuando:**
-  - [ ] Todas las topologías bajo una única ubicación canónica.
-  - [ ] Enlaces y validadores de topología actualizados; tests pasan.
+  - [x] Todas las topologías bajo una única ubicación canónica.
+  - [x] Enlaces y validadores de topología actualizados; tests pasan.
 
 #### GT-330
 
@@ -3001,8 +3001,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** La ruta `rulesets/executive-scorecards` no existe.
 - **Complejidad:** S
 - **Hecho Cuando:**
-  - [ ] El archivo o directorio requerido existe en la ruta especificada.
-  - [ ] Los tests verifican la implementación.
+  - [x] El archivo o directorio requerido existe en la ruta especificada.
+  - [x] Los tests verifican la implementación.
 
 #### GT-294
 
@@ -3012,8 +3012,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** La ruta `rulesets/architecture/opa` no existe.
 - **Complejidad:** S
 - **Hecho Cuando:**
-  - [ ] El archivo o directorio requerido existe en la ruta especificada.
-  - [ ] Los tests verifican la implementación.
+  - [x] El archivo o directorio requerido existe en la ruta especificada.
+  - [x] Los tests verifican la implementación.
 
 #### GT-283
 
@@ -3023,8 +3023,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** La ruta `rulesets/topologies/progressive-axis/modular-monolith` no existe.
 - **Complejidad:** M
 - **Hecho Cuando:**
-  - [ ] El archivo o directorio requerido existe en la ruta especificada.
-  - [ ] Los tests verifican la implementación.
+  - [x] El archivo o directorio requerido existe en la ruta especificada.
+  - [x] Los tests verifican la implementación.
 
 #### GT-284
 
@@ -3034,8 +3034,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** La ruta `rulesets/topologies/progressive-axis/distributed-modules` no existe.
 - **Complejidad:** M
 - **Hecho Cuando:**
-  - [ ] El archivo o directorio requerido existe en la ruta especificada.
-  - [ ] Los tests verifican la implementación.
+  - [x] El archivo o directorio requerido existe en la ruta especificada.
+  - [x] Los tests verifican la implementación.
 
 #### GT-285
 
@@ -3045,8 +3045,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** La ruta `rulesets/topologies/progressive-axis/microservices` no existe.
 - **Complejidad:** M
 - **Hecho Cuando:**
-  - [ ] El archivo o directorio requerido existe en la ruta especificada.
-  - [ ] Los tests verifican la implementación.
+  - [x] El archivo o directorio requerido existe en la ruta especificada.
+  - [x] Los tests verifican la implementación.
 
 #### GT-295
 
@@ -3056,8 +3056,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** La ruta `packages/core-domain/src/gates` no existe.
 - **Complejidad:** M
 - **Hecho Cuando:**
-  - [ ] El archivo o directorio requerido existe en la ruta especificada.
-  - [ ] Los tests verifican la implementación.
+  - [x] El archivo o directorio requerido existe en la ruta especificada.
+  - [x] Los tests verifican la implementación.
 
 #### GT-296
 
@@ -3067,8 +3067,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** La ruta `packages/core-domain/src/phases` no existe.
 - **Complejidad:** M
 - **Hecho Cuando:**
-  - [ ] El archivo o directorio requerido existe en la ruta especificada.
-  - [ ] Los tests verifican la implementación.
+  - [x] El archivo o directorio requerido existe en la ruta especificada.
+  - [x] Los tests verifican la implementación.
 
 #### GT-297
 
@@ -3078,8 +3078,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** La ruta `packages/mcp-server/src/resources` no existe.
 - **Complejidad:** M
 - **Hecho Cuando:**
-  - [ ] El archivo o directorio requerido existe en la ruta especificada.
-  - [ ] Los tests verifican la implementación.
+  - [x] El archivo o directorio requerido existe en la ruta especificada.
+  - [x] Los tests verifican la implementación.
 
 #### GT-298
 
@@ -3089,8 +3089,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** La ruta `packages/mcp-server/src/watcher` no existe.
 - **Complejidad:** M
 - **Hecho Cuando:**
-  - [ ] El archivo o directorio requerido existe en la ruta especificada.
-  - [ ] Los tests verifican la implementación.
+  - [x] El archivo o directorio requerido existe en la ruta especificada.
+  - [x] Los tests verifican la implementación.
 
 #### GT-299
 
@@ -3100,8 +3100,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** La ruta `apps/core-api/src/openapi` no existe.
 - **Complejidad:** M
 - **Hecho Cuando:**
-  - [ ] El archivo o directorio requerido existe en la ruta especificada.
-  - [ ] Los tests verifican la implementación.
+  - [x] El archivo o directorio requerido existe en la ruta especificada.
+  - [x] Los tests verifican la implementación.
 
 #### GT-300
 
@@ -3111,8 +3111,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** La ruta `sdk/cli/src/commands/agents` no existe.
 - **Complejidad:** M
 - **Hecho Cuando:**
-  - [ ] El archivo o directorio requerido existe en la ruta especificada.
-  - [ ] Los tests verifican la implementación.
+  - [x] El archivo o directorio requerido existe en la ruta especificada.
+  - [x] Los tests verifican la implementación.
 
 #### GT-301
 
@@ -3122,8 +3122,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** La ruta `sdk/cli/src/commands/upgrade` no existe.
 - **Complejidad:** M
 - **Hecho Cuando:**
-  - [ ] El archivo o directorio requerido existe en la ruta especificada.
-  - [ ] Los tests verifican la implementación.
+  - [x] El archivo o directorio requerido existe en la ruta especificada.
+  - [x] Los tests verifican la implementación.
 
 #### GT-303
 
@@ -3133,9 +3133,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** La ruta `packages/core-domain/src/evidence` no existe.
 - **Complejidad:** M
 - **Hecho Cuando:**
-  - [ ] El ADR para Evidence Graph es aceptado.
-  - [ ] El archivo o directorio requerido existe en la ruta especificada.
-  - [ ] Los tests verifican la implementación.
+  - [x] El ADR para Evidence Graph es aceptado.
+  - [x] El archivo o directorio requerido existe en la ruta especificada.
+  - [x] Los tests verifican la implementación.
 
 #### GT-304
 
@@ -3145,9 +3145,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** La ruta `packages/core-domain/src/gates/decision` no existe.
 - **Complejidad:** M
 - **Hecho Cuando:**
-  - [ ] El ADR para Gate Decision es aceptado.
-  - [ ] El archivo o directorio requerido existe en la ruta especificada.
-  - [ ] Los tests verifican la implementación.
+  - [x] El ADR para Gate Decision es aceptado.
+  - [x] El archivo o directorio requerido existe en la ruta especificada.
+  - [x] Los tests verifican la implementación.
 
 #### GT-305
 
@@ -3157,9 +3157,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** La ruta `packages/core-domain/src/phases/transition` no existe.
 - **Complejidad:** M
 - **Hecho Cuando:**
-  - [ ] El ADR para Phase Transition es aceptado.
-  - [ ] El archivo o directorio requerido existe en la ruta especificada.
-  - [ ] Los tests verifican la implementación.
+  - [x] El ADR para Phase Transition es aceptado.
+  - [x] El archivo o directorio requerido existe en la ruta especificada.
+  - [x] Los tests verifican la implementación.
 
 #### GT-306
 
@@ -3169,9 +3169,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** La ruta `packages/core-domain/src/providers` no existe.
 - **Complejidad:** M
 - **Hecho Cuando:**
-  - [ ] El ADR para Provider ports es aceptado.
-  - [ ] El archivo o directorio requerido existe en la ruta especificada.
-  - [ ] Los tests verifican la implementación.
+  - [x] El ADR para Provider ports es aceptado.
+  - [x] El archivo o directorio requerido existe en la ruta especificada.
+  - [x] Los tests verifican la implementación.
 
 #### GT-307
 
@@ -3181,9 +3181,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** La ruta `packages/core-domain/src/tenancy` no existe.
 - **Complejidad:** M
 - **Hecho Cuando:**
-  - [ ] El ADR para Tenant authority es aceptado.
-  - [ ] El archivo o directorio requerido existe en la ruta especificada.
-  - [ ] Los tests verifican la implementación.
+  - [x] El ADR para Tenant authority es aceptado.
+  - [x] El archivo o directorio requerido existe en la ruta especificada.
+  - [x] Los tests verifican la implementación.
 
 #### GT-310
 
@@ -3193,8 +3193,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** La ruta `sdk/cli/src/__tests__` no existe.
 - **Complejidad:** M
 - **Hecho Cuando:**
-  - [ ] El archivo o directorio requerido existe en la ruta especificada.
-  - [ ] Los tests verifican la implementación.
+  - [x] El archivo o directorio requerido existe en la ruta especificada.
+  - [x] Los tests verifican la implementación.
 
 #### GT-311
 
@@ -3204,8 +3204,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** La ruta `sdk/cli/src/__tests__/e2e` no existe.
 - **Complejidad:** M
 - **Hecho Cuando:**
-  - [ ] El archivo o directorio requerido existe en la ruta especificada.
-  - [ ] Los tests verifican la implementación.
+  - [x] El archivo o directorio requerido existe en la ruta especificada.
+  - [x] Los tests verifican la implementación.
 
 #### GT-302
 
@@ -3215,8 +3215,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** La ruta `sdk/cli/src/commands/architecture/scaffold` no existe.
 - **Complejidad:** L
 - **Hecho Cuando:**
-  - [ ] El archivo o directorio requerido existe en la ruta especificada.
-  - [ ] Los tests verifican la implementación.
+  - [x] El archivo o directorio requerido existe en la ruta especificada.
+  - [x] Los tests verifican la implementación.
 
 #### GT-308
 
@@ -3226,8 +3226,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** La ruta `sdk/cli/src/plugins` no existe.
 - **Complejidad:** M
 - **Hecho Cuando:**
-  - [ ] El archivo o directorio requerido existe en la ruta especificada.
-  - [ ] Los tests verifican la implementación.
+  - [x] El archivo o directorio requerido existe en la ruta especificada.
+  - [x] Los tests verifican la implementación.
 
 #### GT-309
 
@@ -3237,8 +3237,8 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** La ruta `sdk/cli/src/contributions` no existe.
 - **Complejidad:** M
 - **Hecho Cuando:**
-  - [ ] El archivo o directorio requerido existe en la ruta especificada.
-  - [ ] Los tests verifican la implementación.
+  - [x] El archivo o directorio requerido existe en la ruta especificada.
+  - [x] Los tests verifican la implementación.
 
 ---
 
@@ -3494,12 +3494,14 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-352
 
-**Título:** mcp-tools: sin validación de input, sin README — `OPEN`
+**Título:** mcp-tools: sin validación de input, sin README — `IN-PROGRESS`
 
 - **Componente:** mcp-tools · **Prioridad:** P2 · **Riesgo:** medio · **Dependencias:** ninguna
 - **Archivos:** `packages/mcp-tools/src/registry.js:24`, `…/tools/echo.js:16`
 - **Fix propuesto:** validar args contra `inputSchema` (ajv); README con catálogo.
-- **Hecho cuando:** [ ] input inválido → error estructurado; [ ] README lista tools.
+- **Fix aplicado:** añadido `validate-input.js` (`validateInput(schema, args)`) — una verificación sin dependencias que cubre los schemas que usan estas tools (props requeridas, tipo por propiedad, args no-objeto). El handler `CallTool` de `registry.js` valida `request.params.arguments` contra el `inputSchema` de la tool antes de despachar; ante fallo devuelve un resultado MCP con `isError: true` y mensaje descriptivo en vez de pasar `undefined`/tipos incorrectos al handler. Añadidos `README.md` + `README.es.md` (catálogo de tools, nota de validación, uso, testing). Sin dependencias (sin ajv) ya que la única dep de runtime del package es el SDK de MCP.
+- **Evidencia:** `npm run --workspace packages/mcp-tools test` → 16/16 (7 nuevos) incl. requerido-faltante, tipo-incorrecto, no-objeto y un test CallTool→`isError`. La paridad bilingüe se mantiene (READMEs 5/5 headers; sin flag).
+- **Hecho cuando:** [x] input inválido → error estructurado; [x] README lista tools.
 
 #### GT-353
 

@@ -2,11 +2,11 @@
 
 > **Navegación bilingüe:** [English Version](./README.md)
 
-Evolith MCP Services expone la gobernanza de Evolith Core como contexto en tiempo real para LLMs y agentes autónomos a través del [Model Context Protocol](https://modelcontextprotocol.io). Se distribuyen dentro del paquete `@evolith/smart-cli` — no hay instalación separada.
+Evolith MCP Services expone la gobernanza de Evolith Core como contexto en tiempo real para LLMs y agentes autónomos a través del [Model Context Protocol](https://modelcontextprotocol.io). Están **activos y distribuidos hoy** dentro del paquete `@evolith/smart-cli` — no hay instalación ni despliegue separados.
 
 ## Resumen
 
-El servidor MCP convierte el corpus de referencia de Core, los rulesets y los phase gates en **tools**, **resources** y **prompts** gobernados que un agente puede invocar para recuperar contexto, evaluar criterios y enviar evidencia — bajo los mismos contratos que las superficies CLI y REST.
+El servidor MCP convierte el corpus de referencia de Core, los rulesets y los phase gates en **tools**, **resources** y **prompts** gobernados que un agente puede invocar para recuperar contexto, evaluar criterios y enviar evidencia — bajo los mismos contratos que las superficies CLI y REST. El núcleo del servidor vive en `packages/mcp-server` y se expone a través de `smart-cli mcp`.
 
 ## Superficie
 
@@ -26,11 +26,13 @@ La tool `evolith-composable-validate` expone el motor de validación composable 
 
 | Modo | Descripción | Ejemplo |
 |---|---|---|
-| **SDLC** | Valida fases, gates, artifacts, blocking criteria | `evolith-composable-validate --phase f1` |
+| **SDLC** | Valida fases, gates, artifacts, blocking criteria | `evolith-composable-validate --phase discovery` |
 | **Arquitectura** | Valida topología, límites hexagonales, aislamiento de dominio | `evolith-composable-validate --topology modular-monolith` |
 | **Ruleset** | Valida rulesets específicos independientemente | `evolith-composable-validate --ruleset compliance-baseline` |
 | **ADR** | Valida contra reglas específicas de ADR | `evolith-composable-validate --adr adr-0002` |
 | **Ad-hoc** | Valida archivos individuales bajo demanda | `evolith-composable-validate --file src/domain/user.ts` |
+
+> Las claves de fase SDLC son `discovery`, `design`, `construction`, `qa`, `release` (mapean a las fases f1–f5).
 
 El sistema es **inteligente y flexible** — los usuarios pueden combinar cualquier punto de entrada sin forzar un flujo específico.
 
@@ -39,7 +41,7 @@ El sistema es **inteligente y flexible** — los usuarios pueden combinar cualqu
 | Transporte | Caso de uso |
 |---|---|
 | **stdio (JSON-RPC 2.0)** | Agentes locales e integraciones de editor lanzados vía `smart-cli mcp serve` |
-| **Streamable HTTP (SDK oficial MCP)** | Agentes y servicios remotos, con autenticación por API-key |
+| **Streamable HTTP (SDK oficial MCP)** | Agentes y servicios remotos, con autenticación por API-key fail-closed |
 
 ## Ejecutar el servidor
 

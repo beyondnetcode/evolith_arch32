@@ -139,14 +139,16 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 #### GT-324
 
-**Title:** CD pipeline to GHCR + deploy core-api/mcp-server
+**Title:** CD pipeline to GHCR + deploy core-api/mcp-server — `IN-PROGRESS`
 
 - **Purpose:** Continuously build, push and deploy the services.
-- **Evidence:** `ci-cd.yml` only publishes the CLI (npm + Docker Hub); no CD for core-api/mcp-server.
+- **Evidence (original):** `ci-cd.yml` only publishes the CLI (npm + Docker Hub); no CD for core-api/mcp-server.
 - **Complexity:** M
+- **Applied fix:** extended `.github/workflows/ci-cd.yml` — (1) a `docker-services` matrix job builds + pushes `core-api` and `mcp-server` images to **GHCR** (`ghcr.io/<owner>/evolith-core-api` and `…-mcp-server`, tags `latest` + `${sha}`), authenticating with the built-in `GITHUB_TOKEN` (`permissions: packages: write`) — no extra secret; build context = repo root (Dockerfiles COPY repo-root-relative paths; all COPY targets verified present); (2) a guarded `deploy` job triggers Coolify per service, which **no-ops with a warning** until `COOLIFY_API_TOKEN` + `COOLIFY_COREAPI_DEPLOY_HOOK` / `COOLIFY_MCP_DEPLOY_HOOK` repo secrets are set (safe to merge now); (3) `push` (main + `v*` tags) triggers so delivery is continuous. YAML validated (js-yaml).
+- **Residual (to reach DONE):** set the 3 Coolify secrets in repo settings, then confirm one green CD run that pushes to GHCR and deploys. The deploy half is not verifiable from the dev environment — board status stays `IN-PROGRESS` until that run.
 - **Done when:**
-  - [ ] Workflow builds and pushes images to GHCR.
-  - [ ] Deploys to the chosen runtime (Cloud Run/Fly/etc.).
+  - [x] Workflow builds and pushes images to GHCR. (GITHUB_TOKEN; secret-free; verified by the CD run on push)
+  - [ ] Deploys to the chosen runtime (needs the Coolify secrets + a CD run).
 
 #### GT-325
 

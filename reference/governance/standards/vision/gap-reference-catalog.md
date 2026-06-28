@@ -12,6 +12,48 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 ## 1. Gap Details
 
+#### GT-359
+
+**Title:** Define `SatelliteManifest` ingestion contract schema
+
+- **Purpose:** Formalize the data contract (schema) that external clients must provide to initialize an SDLC evaluation in the system.
+- **Evidence:** SDLC Deep Audit Report (Dimension 4: Client Ingestion Contract - PARTIAL). Partial schemas exist but no formal unified contract.
+- **Complexity:** M
+- **Done when:**
+  - [ ] The `SatelliteManifest` (or `ProjectInput`) schema is formally defined in TypeScript and validated.
+  - [ ] Interfaces expose this schema as their expected input contract.
+
+#### GT-360
+
+**Title:** Expose topology evaluation in Core API via `ValidateSatelliteUseCase`
+
+- **Purpose:** Allow external clients to execute the SDLC evaluation pipeline through the Core API, unifying the experience that already exists in CLI and MCP.
+- **Evidence:** SDLC Deep Audit Report (Dimension 5: The Three Interfaces As Facade). The Core API does not yet expose the evaluation operation.
+- **Complexity:** M
+- **Done when:**
+  - [ ] The evaluation endpoint (`/api/v1/evaluate` or similar) is implemented in the Core API.
+  - [ ] The endpoint successfully invokes `ValidateSatelliteUseCase`.
+
+#### GT-361
+
+**Title:** Apply ADR-0073 standard envelope to Core API evaluation responses
+
+- **Purpose:** Standardize evaluation responses in the Core API to ensure consistency with CLI and MCP, using the structured format defined by ADR-0073.
+- **Evidence:** SDLC Deep Audit Report (Dimension 6: Actionable Report / Opportunities). The envelope is implemented in CLI and MCP, but needs extension to the API.
+- **Complexity:** S
+- **Done when:**
+  - [ ] Core API evaluation responses return the exact structure defined by ADR-0073 (severity, remediation, gateRef).
+
+#### GT-362
+
+**Title:** Implement runtime enforcement for Rego policies in evaluation engine
+
+- **Purpose:** Guarantee that Rego policies do not exist just as files, but are actually executed and block validations at runtime.
+- **Evidence:** SDLC Deep Audit Report (Risks / Debt). Missing guarantee of runtime execution for Rego policies.
+- **Complexity:** L
+- **Done when:**
+  - [ ] The evaluation pipeline loads and executes the corresponding Rego policies.
+  - [ ] A failed policy halts the evaluation and returns the corresponding error.
 #### GT-313
 
 **Title:** Rotate and externalize GH_TOKEN via a secret manager — `IN-PROGRESS`

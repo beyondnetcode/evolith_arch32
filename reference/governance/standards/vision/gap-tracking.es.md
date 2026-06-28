@@ -13,6 +13,10 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| [`GT-359`](./gap-reference-catalog.es.md#gt-359) | Definir esquema de contrato de ingesta `SatelliteManifest` | `Core Domain` | Cross | P0 | M | `PENDIENTE` |
+| [`GT-360`](./gap-reference-catalog.es.md#gt-360) | Exponer evaluación topológica en Core API vía `ValidateSatelliteUseCase` | `Core API` | Cross | P1 | M | `PENDIENTE` |
+| [`GT-361`](./gap-reference-catalog.es.md#gt-361) | Aplicar envelope ADR-0073 a las respuestas de evaluación de Core API | `Core API` | Cross | P1 | S | `PENDIENTE` |
+| [`GT-362`](./gap-reference-catalog.es.md#gt-362) | Implementar enforcement en runtime para políticas Rego | `Core Domain` | Cross | P0 | L | `PENDIENTE` |
 | [`GT-343`](./gap-reference-catalog.es.md#gt-343) | EPIC: unificar ids de fase SDLC (f1..f5) y vocabulario de topología F1/F2/F3 — etapas 1-5: PhaseId canónico + core-domain + enums públicos + topology maturityLevel + guard anti-colisión (2b hecho; 4b diferido — valores F# entrelazados en 22 archivos de paquetes vedados) | `Cross` | Cross | P0 | XL | `COMPLETADO` |
 | [`GT-344`](./gap-reference-catalog.es.md#gt-344) | La CLI publicada falla (ENOENT default-workflow.yaml) — fallback de workflow por defecto embebido | `Smart CLI` | Cross | P0 | L | `COMPLETADO` |
 | [`GT-347`](./gap-reference-catalog.es.md#gt-347) | Suite OPA core verde 197/197 + wasm compila + gate CI cableado (29-test-core-opa) | `Governance` | Cross | P0 | L | `COMPLETADO` |

@@ -13,6 +13,10 @@ This board is the single source of truth for technical debt, gaps, opportunities
 
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| [`GT-359`](./gap-reference-catalog.md#gt-359) | Define `SatelliteManifest` ingestion contract schema | `Core Domain` | Cross | P0 | M | `PENDING` |
+| [`GT-360`](./gap-reference-catalog.md#gt-360) | Expose topology evaluation in Core API via `ValidateSatelliteUseCase` | `Core API` | Cross | P1 | M | `PENDING` |
+| [`GT-361`](./gap-reference-catalog.md#gt-361) | Apply ADR-0073 standard envelope to Core API evaluation responses | `Core API` | Cross | P1 | S | `PENDING` |
+| [`GT-362`](./gap-reference-catalog.md#gt-362) | Implement runtime enforcement for Rego policies in evaluation engine | `Core Domain` | Cross | P0 | L | `PENDING` |
 | [`GT-343`](./gap-reference-catalog.md#gt-343) | EPIC: unify SDLC phase ids (f1..f5) and topology F1/F2/F3 vocabulary — stages 1-5: canonical PhaseId + core-domain + public enums + topology maturityLevel + anti-collision guard (2b done; 4b deferred — F# values interlock 22 files across forbidden packages) | `Cross` | Cross | P0 | XL | `DONE` |
 | [`GT-344`](./gap-reference-catalog.md#gt-344) | Published CLI crashes (ENOENT default-workflow.yaml) — embedded default workflow fallback | `Smart CLI` | Cross | P0 | L | `DONE` |
 | [`GT-347`](./gap-reference-catalog.md#gt-347) | Core OPA suite green 197/197 + wasm builds + CI gate wired (29-test-core-opa) | `Governance` | Cross | P0 | L | `DONE` |

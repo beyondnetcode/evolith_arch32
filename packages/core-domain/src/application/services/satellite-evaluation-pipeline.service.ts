@@ -5,6 +5,7 @@ import { SdlcDataLoaderService, StructuredGate } from './sdlc-data-loader.servic
 import { RulesetValidatorService } from '../validators/ruleset-validator.service';
 import { createSuccessEnvelope } from '../../domain/gate-evidence';
 import { toLegacyPhaseId } from '../../domain/sdlc/phase-id';
+import { OpaEvaluator } from '../validators/evaluators/opa-evaluator';
 import * as path from 'path';
 
 /**
@@ -22,6 +23,7 @@ import * as path from 'path';
 export class SatelliteEvaluationPipeline {
   private readonly topologyCatalog: TopologyCatalogService;
   private readonly sdlcDataLoader: SdlcDataLoaderService;
+  private readonly opaEvaluator: OpaEvaluator;
 
   constructor(
     private readonly fs: IFileSystem,
@@ -31,6 +33,7 @@ export class SatelliteEvaluationPipeline {
   ) {
     this.topologyCatalog = new TopologyCatalogService(fs, logger);
     this.sdlcDataLoader = new SdlcDataLoaderService(fs, logger, corePath);
+    this.opaEvaluator = new OpaEvaluator(fs, logger);
   }
 
   async evaluate(manifest: SatelliteManifest): Promise<EvaluationVerdict> {
@@ -151,8 +154,7 @@ export class SatelliteEvaluationPipeline {
           continue;
         }
 
-        // If the rule file exists, we consider it evaluated (in production
-        // this calls OpaEvaluator with the satellite context)
+        // Evaluate the rule using OpaEvaluator (GT-362)
         const ruleExists = await this.fs.exists(resolved);
         if (!ruleExists) {
           evaluations.push({
@@ -168,12 +170,39 @@ export class SatelliteEvaluationPipeline {
           continue;
         }
 
+        const opaResults = await this.opaEvaluator.evaluateAll(
+          [{
+            id: ruleId,
+            category: 'sdlc',
+            severity: severity === 'error' ? 'MUST' : 'SHOULD',
+            title: ruleId,
+            description: artifact.validation,
+            engine: 'opa',
+          } as any],
+          { satellitePath, corePath }
+        );
+
+        const opaResult = opaResults[0];
+        if (opaResult && opaResult.result === 'failed') {
+          evaluations.push({
+            ruleId,
+            rulePath,
+            artifact: artifact.artifact,
+            passed: false,
+            message: opaResult.message || `OPA policy evaluation failed`,
+            severity,
+            remediation: this.remediationFor(artifact.artifact, ruleId, artifact.validation),
+            gateRef: gate.id,
+          });
+          continue;
+        }
+
         evaluations.push({
           ruleId,
           rulePath,
           artifact: artifact.artifact,
           passed: true,
-          message: `Artifact '${artifact.artifact}' present, rule ${ruleId} applies`,
+          message: `Artifact '${artifact.artifact}' present and satisfies rule ${ruleId}`,
           severity,
           remediation: '',
           gateRef: gate.id,

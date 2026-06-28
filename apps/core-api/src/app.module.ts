@@ -10,6 +10,7 @@ import { ProjectsController } from './presentation/controllers/projects.controll
 import { ArchitectureController } from './presentation/controllers/architecture.controller';
 import { PhasesController } from './presentation/controllers/phases.controller';
 import { MetricsController } from './presentation/controllers/metrics.controller';
+import { EvaluationController } from './presentation/controllers/evaluation.controller';
 import { CoreDomainModule } from './core-domain.module';
 import { CorrelationIdMiddleware } from './infrastructure/middleware/correlation-id.middleware';
 import { validateEnv } from './infrastructure/config/env.validation';
@@ -49,6 +50,7 @@ import { CacheMetricsService } from './infrastructure/cache/cache-metrics.servic
     ArchitectureController,
     PhasesController,
     MetricsController,
+    EvaluationController,
     ReferenceController,
     ComposableValidateController,
   ],

@@ -35,11 +35,10 @@ function walk(dir) {
 }
 
 function globFiles(pattern) {
-  const parts = pattern.split("/");
-  const startDir = parts[0];
-  const rest = parts.slice(1).join("/");
-  const all = walk(startDir);
-  return all.filter(f => f.endsWith(rest));
+  const all = walk("");
+  const regexPattern = pattern.replace(/\*\*/g, ".*").replace(/\*/g, "[^/]*");
+  const regex = new RegExp("^" + regexPattern + "$");
+  return all.filter(f => regex.test(f));
 }
 
 // ── 1. CORPUS DE REFERENCIA ──────────────────────────────────────────

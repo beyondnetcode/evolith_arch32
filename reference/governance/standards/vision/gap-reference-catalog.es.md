@@ -12,6 +12,48 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 ## 1. Detalle de Gaps
 
+#### GT-359
+
+**Título:** Definir esquema de contrato de ingesta `SatelliteManifest`
+
+- **Propósito:** Formalizar el contrato de datos (schema) que los clientes externos deben proporcionar para inicializar una evaluación SDLC en el sistema.
+- **Evidencia:** Reporte de Auditoría SDLC (Dimensión 4: Contrato de Ingestión del Cliente - PARCIAL). Existen schemas parciales pero no un contrato formal unificado.
+- **Complejidad:** M
+- **Hecho cuando:**
+  - [ ] El esquema `SatelliteManifest` (o `ProjectInput`) está definido formalmente en TypeScript y validado.
+  - [ ] Las interfaces exponen este esquema como su contrato de entrada esperado.
+
+#### GT-360
+
+**Título:** Exponer evaluación topológica en Core API vía `ValidateSatelliteUseCase`
+
+- **Propósito:** Permitir que clientes externos ejecuten el pipeline de evaluación SDLC a través del Core API, unificando la experiencia que ya existe en CLI y MCP.
+- **Evidencia:** Reporte de Auditoría SDLC (Dimensión 5: Las Tres Interfaces Como Fachada). La API Core aún no expone la operación de evaluación.
+- **Complejidad:** M
+- **Hecho cuando:**
+  - [ ] El endpoint de evaluación (`/api/v1/evaluate` o similar) está implementado en la API Core.
+  - [ ] El endpoint invoca exitosamente el `ValidateSatelliteUseCase`.
+
+#### GT-361
+
+**Título:** Aplicar envelope ADR-0073 a las respuestas de evaluación de Core API
+
+- **Propósito:** Estandarizar las respuestas de evaluación en la API Core para asegurar consistencia con el CLI y MCP, utilizando el formato estructurado definido por ADR-0073.
+- **Evidencia:** Reporte de Auditoría SDLC (Dimensión 6: Reporte Accionable / Oportunidades). El envelope ya está implementado en CLI y MCP, falta extenderlo a la API.
+- **Complejidad:** S
+- **Hecho cuando:**
+  - [ ] Las respuestas de evaluación de la API Core devuelven la estructura exacta definida por ADR-0073 (severidad, remediación, gateRef).
+
+#### GT-362
+
+**Título:** Implementar enforcement en runtime para políticas Rego
+
+- **Propósito:** Garantizar que las políticas Rego no existan solo como archivos, sino que efectivamente se ejecuten y bloqueen validaciones en tiempo de ejecución.
+- **Evidencia:** Reporte de Auditoría SDLC (Riesgos / Deuda). Falta garantía de ejecución en runtime de las políticas Rego.
+- **Complejidad:** L
+- **Hecho cuando:**
+  - [ ] El pipeline de evaluación carga y ejecuta las políticas Rego correspondientes.
+  - [ ] Una política fallida detiene la evaluación y retorna el error correspondiente.
 #### GT-313
 
 **Título:** Rotar y externalizar GH_TOKEN mediante un gestor de secretos — `IN-PROGRESS`

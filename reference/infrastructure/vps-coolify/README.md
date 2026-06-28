@@ -21,7 +21,7 @@ This guide covers deploying Evolith Core on a self-hosted VPS using Coolify as t
 
 | Resource | Value | Assessment |
 | :--- | :--- | :--- |
-| OS | Ubuntu 24.04.3 LTS | ✓ Supported |
+| OS | Ubuntu 24.04.3 LTS | Supported |
 | CPU | 2 vCPU (AMD EPYC 9354P) | Sufficient for Phase 1 |
 | RAM | 7.8 GB | Excellent — 6+ GB headroom |
 | Disk | 96 GB SSD | Excellent — 88 GB free |

@@ -79,7 +79,7 @@ node .harness/scripts/ci/24-check-surface-parity.mjs
 ## Reporte
 
 Reportas un único **PASS** solo cuando los cuatro comandos del gate salen con 0:
-- **PASS** — ambas suites E2E en verde, compatibilidad de superficies consistente (`✓ ... consistent for N surfaces`) y paridad de superficies válida (`✓ Surface parity matrix valid: N operations tracked`).
+- **PASS** — ambas suites E2E en verde, compatibilidad de superficies consistente (`... consistent for N surfaces`) y paridad de superficies válida (`Surface parity matrix valid: N operations tracked`).
 - **FAIL (BLOQUEA MERGE)** — cualquiera de:
   - Falla un spec E2E de core-domain o de la CLI, incluido un flujo de gobernanza que ya no emite evidencia conforme a ADR-0073.
   - Desviación de veredicto entre superficies, o un flujo que falla abierto bajo entradas degradadas.

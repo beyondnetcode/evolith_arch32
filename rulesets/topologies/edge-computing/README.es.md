@@ -30,10 +30,10 @@ Los workloads edge deben permanecer gobernados por reglas explicitas de sincroni
 
 | Artefacto | Rol |
 |---|---|
-| [ADR-0079: Corpus de Referencia Multi-Topologia](../../../adrs/core/0079-multi-topology-reference-corpus.md) | Gobierna los manifiestos de topologia y composicion. |
-| [ADR-0096: Gobernanza de Arquitectura Edge Computing](../../../adrs/core/0096-edge-computing-architecture-governance.md) | Gobierna las restricciones arquitectonicas especificas de edge. |
+| [ADR-0079: Corpus de Referencia Multi-Topologia](../../../reference/architecture/adrs/core/0079-multi-topology-reference-corpus.md) | Gobierna los manifiestos de topologia y composicion. |
+| [ADR-0096: Gobernanza de Arquitectura Edge Computing](../../../reference/architecture/adrs/core/0096-edge-computing-architecture-governance.md) | Gobierna las restricciones arquitectonicas especificas de edge. |
 | [Reglas de Arquitectura Edge Computing](./edge-computing.rules.json) | Reglas de compatibilidad ejecutables existentes. |
-| [Modelo de Dimensiones de Topologia](../../topology-dimensions.md) | Define reglas de composicion y compatibilidad. |
+| [Modelo de Dimensiones de Topologia](../../../reference/architecture/topologies/topology-dimensions.md) | Define reglas de composicion y compatibilidad. |
 
 ## Contrato Ejecutable
 
@@ -75,7 +75,7 @@ Este perfil es solo tecnico. No define ROI, modelo de costos, gasto de hardware,
 
 ## Presupuestos Operativos
 
-Esta topología declara envelopes arquitectónicos de latencia, cold-start y costo por ejecución en `spec.operationalBudgets` de [`topology.manifest.json`](./topology.manifest.json). Los operadores verifican los satélites contra estos envelopes siguiendo el [Runbook de Presupuestos Operativos](../operational-budgets-runbook.es.md) compartido.
+Esta topología declara envelopes arquitectónicos de latencia, cold-start y costo por ejecución en `spec.operationalBudgets` de [`topology.manifest.json`](./topology.manifest.json). Los operadores verifican los satélites contra estos envelopes siguiendo el [Runbook de Presupuestos Operativos](../../../reference/architecture/topologies/execution/operational-budgets-runbook.es.md) compartido.
 
 ---
 [Volver al Hub de Topologias](../../README.es.md)

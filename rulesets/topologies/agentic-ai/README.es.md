@@ -108,7 +108,7 @@ El sandbox es la unica ruta hacia la ejecucion de herramientas. Los prompts apor
 
 ## Decisiones Rectoras y Validacion
 
-[ADR-0058](../../../adrs/core/0058-ai-consumable-architecture-knowledge.es.md) gobierna el conocimiento de arquitectura consumible por IA. [ADR-0081](../../../adrs/core/0081-agentic-ai-sandbox-isolation.es.md), [ADR-0082](../../../adrs/core/0082-agentic-ai-trust-boundary.es.md) y [ADR-0083](../../../adrs/core/0083-agentic-ai-action-authorization-audit.es.md) establecen los limites de sandbox, confianza y autorizacion. [ADR-AI-001](../../../../governance/standards/ai-augmented/06-adrs/adr-ai-001-harness-strategy.es.md) y [ADR-AI-005](../../../../governance/standards/ai-augmented/06-adrs/adr-ai-005-human-in-the-loop-policy.es.md) siguen siendo decisiones propuestas de apoyo.
+[ADR-0058](../../../reference/architecture/adrs/core/0058-ai-consumable-architecture-knowledge.es.md) gobierna el conocimiento de arquitectura consumible por IA. [ADR-0081](../../../reference/architecture/adrs/core/0081-agentic-ai-sandbox-isolation.es.md), [ADR-0082](../../../reference/architecture/adrs/core/0082-agentic-ai-trust-boundary.es.md) y [ADR-0083](../../../reference/architecture/adrs/core/0083-agentic-ai-action-authorization-audit.es.md) establecen los limites de sandbox, confianza y autorizacion. [ADR-AI-001](../../../reference/governance/standards/ai-augmented/06-adrs/adr-ai-001-harness-strategy.es.md) y [ADR-AI-005](../../../reference/governance/standards/ai-augmented/06-adrs/adr-ai-005-human-in-the-loop-policy.es.md) siguen siendo decisiones propuestas de apoyo.
 
 Ejecuta el perfil mediante el validador consciente de topologias:
 
@@ -136,7 +136,7 @@ El corpus de IA agentica es la linea base de implementacion obligatoria para est
 | Evolucion | [Guia de evolucion](./evolution.es.md) |
 | Resumen | [Guia de adopcion, operacion y evolucion](./maturity.es.md) |
 
-Este corpus implementa el [Estandar de Corpus de Topologias](../../topology-corpus-standard.es.md) para IA agentica. Un perfil no esta listo para aceptacion hasta que esten presentes y validados todas estas guias, controles ejecutables, fixtures de contrato, pruebas e interfaces de plano de control.
+Este corpus implementa el [Estandar de Corpus de Topologias](../../../reference/architecture/topologies/topology-corpus-standard.es.md) para IA agentica. Un perfil no esta listo para aceptacion hasta que esten presentes y validados todas estas guias, controles ejecutables, fixtures de contrato, pruebas e interfaces de plano de control.
 
 ---
 [Volver al Hub de Topologias](../../README.es.md)

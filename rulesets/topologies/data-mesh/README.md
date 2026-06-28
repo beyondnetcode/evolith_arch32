@@ -30,10 +30,10 @@ Data mesh does not weaken transactional ownership. Domain data boundaries remain
 
 | Artifact | Role |
 |---|---|
-| [ADR-0084: Data Mesh and Data as a Product](../../../adrs/core/0084-data-mesh-data-products.md) | Governs data mesh topology and data product contracts. |
-| [ADR-0079: Multi-Topology Reference Corpus](../../../adrs/core/0079-multi-topology-reference-corpus.md) | Governs topology manifests and composition. |
+| [ADR-0084: Data Mesh and Data as a Product](../../../reference/architecture/adrs/core/0084-data-mesh-data-products.md) | Governs data mesh topology and data product contracts. |
+| [ADR-0079: Multi-Topology Reference Corpus](../../../reference/architecture/adrs/core/0079-multi-topology-reference-corpus.md) | Governs topology manifests and composition. |
 | [Data Mesh Architecture Rules](./data-mesh.rules.json) | Existing executable compatibility rules. |
-| [Topology Dimensions Model](../../topology-dimensions.md) | Defines composition and compatibility rules. |
+| [Topology Dimensions Model](../../../reference/architecture/topologies/topology-dimensions.md) | Defines composition and compatibility rules. |
 
 ## Executable Contract
 

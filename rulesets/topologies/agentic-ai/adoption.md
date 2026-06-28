@@ -31,7 +31,7 @@ Do not adopt this topology for deterministic work that a normal application serv
 
 ## Related Guidance
 
-Read the [security guide](./security.md), [operations guide](./operations.md), and [evolution guide](./evolution.md) before production adoption. [ADR-0081](../../../adrs/core/0081-agentic-ai-sandbox-isolation.md), [ADR-0082](../../../adrs/core/0082-agentic-ai-trust-boundary.md), and [ADR-0083](../../../adrs/core/0083-agentic-ai-action-authorization-audit.md) are mandatory authority.
+Read the [security guide](./security.md), [operations guide](./operations.md), and [evolution guide](./evolution.md) before production adoption. [ADR-0081](../../../reference/architecture/adrs/core/0081-agentic-ai-sandbox-isolation.md), [ADR-0082](../../../reference/architecture/adrs/core/0082-agentic-ai-trust-boundary.md), and [ADR-0083](../../../reference/architecture/adrs/core/0083-agentic-ai-action-authorization-audit.md) are mandatory authority.
 
 ---
 [Back to Agentic AI Profile](./README.md)

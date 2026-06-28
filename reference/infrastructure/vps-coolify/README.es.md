@@ -21,7 +21,7 @@ Esta guía cubre el despliegue de Evolith Core en un VPS autoalojado usando Cool
 
 | Recurso | Valor | Evaluación |
 | :--- | :--- | :--- |
-| SO | Ubuntu 24.04.3 LTS | ✓ Soportado |
+| SO | Ubuntu 24.04.3 LTS | Soportado |
 | CPU | 2 vCPU (AMD EPYC 9354P) | Suficiente para Fase 1 |
 | RAM | 7.8 GB | Excelente — 6+ GB libres |
 | Disco | 96 GB SSD | Excelente — 88 GB libres |

@@ -301,11 +301,11 @@ rulesets/tenants/{tenant-id}/
   waivers/WVR-*.json   ← excepciones aprobadas
 
 Reglas de override (OPA multi-tenancy.rego):
-  ✓ Puede agregar evidencia adicional a un gate
-  ✓ Puede activar waivers con autoridad declarada en el gate
-  ✗ No puede eliminar blockingCriteria
-  ✗ No puede cambiar waiverAuthority
-  ✗ No puede reducir mandatoryEvidence sin waiver
+  Puede agregar evidencia adicional a un gate
+  Puede activar waivers con autoridad declarada en el gate
+  No puede eliminar blockingCriteria
+  No puede cambiar waiverAuthority
+  No puede reducir mandatoryEvidence sin waiver
 
 Nuevos schemas (rulesets/schema/):
   tenant.schema.json
@@ -319,30 +319,30 @@ Nuevos schemas (rulesets/schema/):
 
 | # | Área | Problema | Corrección Aplicada | Artefacto | Prioridad | Riesgo si no se corrige | Estado |
 |---|------|---------|-------------------|-----------|-----------|------------------------|--------|
-| 1 | Core-API | `fromPhase = toPhase` en propose-advance | Agregado `currentPhase` a DTO; `fromPhase = body.currentPhase` | `projects.controller.ts`, `projects.dto.ts` | CRÍTICA | Gate evalúa siempre la misma fase (resultado incorrecto) | ✅ Aplicada |
-| 2 | Core-API | CORS bloquea todo en producción sin `CORS_ORIGINS` | `origin: rawOrigins?.split(',') ?? false` (false = bloquea; * = permite todo) | `main.ts` | CRÍTICA | API inaccesible para BFF en producción | ✅ Aplicada |
-| 3 | Core-API | `ALLOWED_ORIGINS` definido pero nunca usado | Eliminado del schema Zod | `env.validation.ts` | ALTA | Confusión de operadores → CORS mal configurado | ✅ Aplicada |
-| 4 | Core-API | `composable-validate` expone paths raw del filesystem | Migrado a `workspaceRef` opaco; usa `WorkspaceReferenceResolverService` | `composable-validate.controller.ts` | CRÍTICA | Path traversal → leer archivos arbitrarios del container | ✅ Aplicada |
-| 5 | Core-API | `ComposableValidateController` no registrado → 404 | Registrado en `AppModule` | `app.module.ts` | ALTA | Endpoint siempre 404; feature muerta | ✅ Aplicada |
-| 6 | Core-API | `loadPhaseGates()` con ruta hardcoded incorrecta | Busca en ambas ubicaciones con fallback | `core-reference-query.service.ts` | CRÍTICA | Gates siempre devuelven 500 o vacío | ✅ Aplicada |
-| 7 | Core-API | `JSON.parse` sin try/catch → 500 en archivo malformado | `Promise.allSettled` + try/catch por archivo | `core-reference-query.service.ts` | ALTA | Un archivo corrupto bloquea todos los endpoints | ✅ Aplicada |
-| 8 | Core-API | `toSummary` no entiende topology manifests (usa `$id`) | Detecta `metadata.id` (manifests) vs `$id` (rulesets) | `core-reference-query.service.ts` | ALTA | Topologías devuelven IDs con paths relativos | ✅ Aplicada |
-| 9 | Core-API | `@CacheTTL(300)` = 300ms (no 5 minutos) | Corregido a `300_000` ms en todos los TTL | `cache-keys.ts`, `architecture.controller.ts` | ALTA | Cache efectivamente deshabilitado; filesystem I/O en cada request | ✅ Aplicada |
-| 10 | Core-API | Health ready solo verifica MetricsService (always UP) | Verifica existencia de `phase-gates.rules.json` en corpus | `health.controller.ts` | ALTA | Pod reporta "ready" con corpus roto | ✅ Aplicada |
-| 11 | Core-API | Health/metrics consumen rate limit de k8s probes | `@SkipThrottle()` en HealthController | `health.controller.ts` | MEDIA | Probes de k8s causan 429 bajo carga; pod reiniciado erroneamente | ✅ Aplicada |
-| 12 | Core-API | `Authorization` faltante en `allowedHeaders` CORS | Agregado `Authorization`, `x-api-key` | `main.ts` | BAJA | BFF con bearer token bloqueado por CORS preflight | ✅ Aplicada |
-| 13 | Rulesets | 8 topology rules.json con `$schema` inaccesibles | Corregidos a `../../schema/` y `../../../schema/` | 8 archivos en `rulesets/topologies/` | ALTA | `ajv validate` falla; CI schema validation no funciona | ✅ Aplicada |
-| 14 | Rulesets | `rule-definition.schema.json` referenciado pero inexistente | Creado en `rulesets/schema/` | `rule-definition.schema.json` | ALTA | 2 infra rules.json no validables | ✅ Aplicada |
-| 15 | Rulesets | Schemas `sdlc-gate` y `sdlc-phase` en `reference/` | Copiados a `rulesets/schema/` | `sdlc-gate.schema.json`, `sdlc-phase.schema.json` | MEDIA | Schemas operativos inaccesibles desde `rulesets/schema/` | ✅ Aplicada |
-| 16 | Rulesets | Schemas `tenant`, `blueprint`, `waiver`, `tenant-override` inexistentes | Creados en `rulesets/schema/` | 4 nuevos archivos `.schema.json` | ALTA | Sin contrato → tenant config no validable | ✅ Aplicada |
-| 17 | Rulesets | `rulesets/tenants/` no existía | Creado con README + ejemplo funcional | `rulesets/tenants/` | ALTA | Sin modelo de tenant → personalización imposible | ✅ Aplicada |
-| 18 | OPA | Sin policy para phase gates | `rulesets/opa/phase-gates.rego` con validación de evidence + waivers | `phase-gates.rego` | ALTA | Gates solo evaluados por native engine; OPA no cubre este dominio | ✅ Aplicada |
-| 19 | MCP Server | `tsconfig.json` usa `commonjs`/`node` + paths a `../../node_modules/` (no existen en Docker standalone) | Migrado a `module`/`moduleResolution: nodenext` + `resolvePackageJsonExports` (mismo patrón que core-api). Resuelve vía el campo `exports` de cada paquete; el SDK MCP (ESM-only) cae a su build CJS por la condición `require`. Sin paths hacks | `tsconfig.json`, `tsconfig.prod.json` | CRÍTICA | Build TypeScript falla en Docker standalone (un `paths: {}` NO basta — rompe la resolución de subpaths) | ✅ Aplicada |
-| 20 | MCP Server | `@evolith/core`, `@evolith/infra-providers` y `fs-extra` faltantes en package.json (el código los importa) | Agregados a `dependencies`/`devDependencies`; lockfile standalone regenerado (resuelven al registry npm) | `package.json`, `package-lock.json` | CRÍTICA | `npm ci` resuelve deps sin esas librerías; runtime crash | ✅ Aplicada |
-| 21 | Ecosystem | Sin `docker-compose.yml` para desarrollo local | Creado con core-api, mcp-server, redis, otel-collector | `docker-compose.yml` | MEDIA | Onboarding de nuevos devs requiere setup manual | ✅ Aplicada |
-| 23 | Ecosystem | `@evolith/core` no publicado en npm pero importado por MCP server | Publicado `@evolith/core@1.0.0`, `@evolith/mcp-server@1.0.0`, `@evolith/smart-cli@1.1.1` al registry npm | `packages/core/`, `packages/mcp-server/`, `sdk/cli/` | CRÍTICA | MCP server build falla hasta que se publique | ✅ Aplicada |
-| 24 | MCP Server | Transporte `sse` en Dockerfile/compose cae a stdio (`McpTransport` = `stdio`\|`http`) → sin servidor HTTP | Cambiado a `--transport http` (StreamableHTTP, que internamente hace SSE). `/health` movido antes de `validateAuth` (probe público). Bind `0.0.0.0` (override `MCP_HTTP_HOST`) para que Traefik enrute | `mcp-server.service.ts`, `Dockerfile`, `docker-compose.yml` | CRÍTICA | El deploy arranca en stdio → healthcheck HTTP falla | ✅ Aplicada |
-| 25 | Deploy | Env vars del mcp-server en Coolify en texto plano (no cifradas) → `DecryptException` rompe deploy y UI | Re-cifradas con `encrypt()` (Laravel APP_KEY); `EVOLITH_API_KEY` configurado para auth en producción | Coolify DB `environment_variables` | CRÍTICA | Deploy del mcp-server falla tras build; UI de Coolify da 500 | ✅ Aplicada |
+| 1 | Core-API | `fromPhase = toPhase` en propose-advance | Agregado `currentPhase` a DTO; `fromPhase = body.currentPhase` | `projects.controller.ts`, `projects.dto.ts` | CRÍTICA | Gate evalúa siempre la misma fase (resultado incorrecto) | Sí Aplicada |
+| 2 | Core-API | CORS bloquea todo en producción sin `CORS_ORIGINS` | `origin: rawOrigins?.split(',') ?? false` (false = bloquea; * = permite todo) | `main.ts` | CRÍTICA | API inaccesible para BFF en producción | Sí Aplicada |
+| 3 | Core-API | `ALLOWED_ORIGINS` definido pero nunca usado | Eliminado del schema Zod | `env.validation.ts` | ALTA | Confusión de operadores → CORS mal configurado | Sí Aplicada |
+| 4 | Core-API | `composable-validate` expone paths raw del filesystem | Migrado a `workspaceRef` opaco; usa `WorkspaceReferenceResolverService` | `composable-validate.controller.ts` | CRÍTICA | Path traversal → leer archivos arbitrarios del container | Sí Aplicada |
+| 5 | Core-API | `ComposableValidateController` no registrado → 404 | Registrado en `AppModule` | `app.module.ts` | ALTA | Endpoint siempre 404; feature muerta | Sí Aplicada |
+| 6 | Core-API | `loadPhaseGates()` con ruta hardcoded incorrecta | Busca en ambas ubicaciones con fallback | `core-reference-query.service.ts` | CRÍTICA | Gates siempre devuelven 500 o vacío | Sí Aplicada |
+| 7 | Core-API | `JSON.parse` sin try/catch → 500 en archivo malformado | `Promise.allSettled` + try/catch por archivo | `core-reference-query.service.ts` | ALTA | Un archivo corrupto bloquea todos los endpoints | Sí Aplicada |
+| 8 | Core-API | `toSummary` no entiende topology manifests (usa `$id`) | Detecta `metadata.id` (manifests) vs `$id` (rulesets) | `core-reference-query.service.ts` | ALTA | Topologías devuelven IDs con paths relativos | Sí Aplicada |
+| 9 | Core-API | `@CacheTTL(300)` = 300ms (no 5 minutos) | Corregido a `300_000` ms en todos los TTL | `cache-keys.ts`, `architecture.controller.ts` | ALTA | Cache efectivamente deshabilitado; filesystem I/O en cada request | Sí Aplicada |
+| 10 | Core-API | Health ready solo verifica MetricsService (always UP) | Verifica existencia de `phase-gates.rules.json` en corpus | `health.controller.ts` | ALTA | Pod reporta "ready" con corpus roto | Sí Aplicada |
+| 11 | Core-API | Health/metrics consumen rate limit de k8s probes | `@SkipThrottle()` en HealthController | `health.controller.ts` | MEDIA | Probes de k8s causan 429 bajo carga; pod reiniciado erroneamente | Sí Aplicada |
+| 12 | Core-API | `Authorization` faltante en `allowedHeaders` CORS | Agregado `Authorization`, `x-api-key` | `main.ts` | BAJA | BFF con bearer token bloqueado por CORS preflight | Sí Aplicada |
+| 13 | Rulesets | 8 topology rules.json con `$schema` inaccesibles | Corregidos a `../../schema/` y `../../../schema/` | 8 archivos en `rulesets/topologies/` | ALTA | `ajv validate` falla; CI schema validation no funciona | Sí Aplicada |
+| 14 | Rulesets | `rule-definition.schema.json` referenciado pero inexistente | Creado en `rulesets/schema/` | `rule-definition.schema.json` | ALTA | 2 infra rules.json no validables | Sí Aplicada |
+| 15 | Rulesets | Schemas `sdlc-gate` y `sdlc-phase` en `reference/` | Copiados a `rulesets/schema/` | `sdlc-gate.schema.json`, `sdlc-phase.schema.json` | MEDIA | Schemas operativos inaccesibles desde `rulesets/schema/` | Sí Aplicada |
+| 16 | Rulesets | Schemas `tenant`, `blueprint`, `waiver`, `tenant-override` inexistentes | Creados en `rulesets/schema/` | 4 nuevos archivos `.schema.json` | ALTA | Sin contrato → tenant config no validable | Sí Aplicada |
+| 17 | Rulesets | `rulesets/tenants/` no existía | Creado con README + ejemplo funcional | `rulesets/tenants/` | ALTA | Sin modelo de tenant → personalización imposible | Sí Aplicada |
+| 18 | OPA | Sin policy para phase gates | `rulesets/opa/phase-gates.rego` con validación de evidence + waivers | `phase-gates.rego` | ALTA | Gates solo evaluados por native engine; OPA no cubre este dominio | Sí Aplicada |
+| 19 | MCP Server | `tsconfig.json` usa `commonjs`/`node` + paths a `../../node_modules/` (no existen en Docker standalone) | Migrado a `module`/`moduleResolution: nodenext` + `resolvePackageJsonExports` (mismo patrón que core-api). Resuelve vía el campo `exports` de cada paquete; el SDK MCP (ESM-only) cae a su build CJS por la condición `require`. Sin paths hacks | `tsconfig.json`, `tsconfig.prod.json` | CRÍTICA | Build TypeScript falla en Docker standalone (un `paths: {}` NO basta — rompe la resolución de subpaths) | Sí Aplicada |
+| 20 | MCP Server | `@evolith/core`, `@evolith/infra-providers` y `fs-extra` faltantes en package.json (el código los importa) | Agregados a `dependencies`/`devDependencies`; lockfile standalone regenerado (resuelven al registry npm) | `package.json`, `package-lock.json` | CRÍTICA | `npm ci` resuelve deps sin esas librerías; runtime crash | Sí Aplicada |
+| 21 | Ecosystem | Sin `docker-compose.yml` para desarrollo local | Creado con core-api, mcp-server, redis, otel-collector | `docker-compose.yml` | MEDIA | Onboarding de nuevos devs requiere setup manual | Sí Aplicada |
+| 23 | Ecosystem | `@evolith/core` no publicado en npm pero importado por MCP server | Publicado `@evolith/core@1.0.0`, `@evolith/mcp-server@1.0.0`, `@evolith/smart-cli@1.1.1` al registry npm | `packages/core/`, `packages/mcp-server/`, `sdk/cli/` | CRÍTICA | MCP server build falla hasta que se publique | Sí Aplicada |
+| 24 | MCP Server | Transporte `sse` en Dockerfile/compose cae a stdio (`McpTransport` = `stdio`\|`http`) → sin servidor HTTP | Cambiado a `--transport http` (StreamableHTTP, que internamente hace SSE). `/health` movido antes de `validateAuth` (probe público). Bind `0.0.0.0` (override `MCP_HTTP_HOST`) para que Traefik enrute | `mcp-server.service.ts`, `Dockerfile`, `docker-compose.yml` | CRÍTICA | El deploy arranca en stdio → healthcheck HTTP falla | Sí Aplicada |
+| 25 | Deploy | Env vars del mcp-server en Coolify en texto plano (no cifradas) → `DecryptException` rompe deploy y UI | Re-cifradas con `encrypt()` (Laravel APP_KEY); `EVOLITH_API_KEY` configurado para auth en producción | Coolify DB `environment_variables` | CRÍTICA | Deploy del mcp-server falla tras build; UI de Coolify da 500 | Sí Aplicada |
 | 26 | Seguridad | Sin auth guard en endpoints del core-api | **Pendiente** — implementar `ApiKeyGuard` + `@UseGuards()` | `app.module.ts` + nueva guard | ALTA | Endpoints mutadores del core-api públicos | ⏳ Pendiente (decisión arq.) |
 | 27 | Seguridad | `/metrics` del core-api sin auth (expone métricas internas) | **Pendiente** — network policy o puerto interno separado | `metrics.controller.ts` | ALTA | Prometheus expuesto públicamente | ⏳ Pendiente |
 | 28 | Ecosystem | Machine contracts no incluye MCP, CLI, core-api como consumers | **Pendiente** — actualizar `evolith-machine-contracts.json` | `rulesets/contracts/` | MEDIA | Contrato desactualizado → consumidores fuera de spec | ⏳ Pendiente |

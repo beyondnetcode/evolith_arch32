@@ -20,7 +20,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-357`](./gap-reference-catalog.es.md#gt-357) | META: el tablero sobre-reporta completitud vs build/test reales validados | `Governance` | Cross | P1 | M | `PENDIENTE` |
 | [`GT-345`](./gap-reference-catalog.es.md#gt-345) | Smart CLI `npm test` 100% verde: unit 905/905 + e2e 175/175 (validate restaurado, --version, tests obsoletos de mcp-e2e corregidos) | `Smart CLI` | Cross | P1 | L | `EN-PROGRESO` |
 | [`GT-348`](./gap-reference-catalog.es.md#gt-348) | Política OPA recompilada en cada dispatch de tool (sin caché) | `MCP Server` | Cross | P1 | M | `PENDIENTE` |
-| [`GT-351`](./gap-reference-catalog.es.md#gt-351) | infra-providers: sin tests; webhook sin retry/timeout (SSRF); README incorrecto | `Infra` | Cross | P1 | L | `PENDIENTE` |
+| [`GT-351`](./gap-reference-catalog.es.md#gt-351) | infra-providers: WebhookAdapter endurecido (timeout+retry+guard SSRF) +5 tests +harness jest; README/cobertura/deriveCategory restan | `Infra` | Cross | P1 | L | `EN-PROGRESO` |
 | [`GT-346`](./gap-reference-catalog.es.md#gt-346) | Superficie de inyección de shell en CommandExecutor (exec con args interpolados) | `Smart CLI` | Cross | P2 | M | `PENDIENTE` |
 | [`GT-349`](./gap-reference-catalog.es.md#gt-349) | OPA falla abierto (permitido) si falta policy.wasm | `MCP Server` | Cross | P2 | S | `PENDIENTE` |
 | [`GT-350`](./gap-reference-catalog.es.md#gt-350) | standards.service.ts evalúa el check de regla con new Function() (sink de ejecución) | `Core Domain` | Cross | P2 | M | `PENDIENTE` |
@@ -373,7 +373,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-246`](./gap-reference-catalog.es.md#gt-246) | Implementar experimentos Chaos Mesh/Litmus | `QA` | Cross | P3 | L | `COMPLETADO` |
 
 
-**Progreso:** 329 / 358 completados · 17 en progreso · 11 pendientes · 1 diferidos
+**Progreso:** 329 / 358 completados · 18 en progreso · 10 pendientes · 1 diferidos
 
 **Oleada 2026-06-23 (auditoría profunda de Wilson III):** Añadidos 14 gaps nuevos `GT-212`…`GT-225` del Wilson Audit Playbook que cubren: higiene de estado ADR (GT-212), metadata + presupuestos operativos + corpus de guías por topología (GT-213, GT-217, GT-219), observabilidad + OpenAPI en controladores REST (GT-214, GT-215), paridad de input-schemas OPA + densidad de tests por topología (GT-216, GT-222), plantillas de rollback + on-call de Fase 05 (GT-218), cobertura de ramas CLI + paridad de envelope --format + limpieza de skip-list (GT-220, GT-224, GT-225), audit logging HTTP de MCP (GT-221), y tests e2e de paridad cross-surface (GT-223).
 

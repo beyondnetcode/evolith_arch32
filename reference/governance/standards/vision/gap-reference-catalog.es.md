@@ -3388,7 +3388,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-344
 
-**Título:** La CLI publicada falla (ENOENT default-workflow.yaml) — `EN-PROGRESO`
+**Título:** La CLI publicada falla (ENOENT default-workflow.yaml) — `DONE`
 
 - **Componente:** smart-cli / core-domain · **Prioridad:** P0 · **Riesgo:** crítico→ninguno · **Dependencias:** ninguna
 - **Archivos:** `packages/core-domain/src/domain/services/default-workflow-definition.ts`, `…/default-workflow-definition.spec.ts`, `sdk/cli/README.md` (+`.es`)
@@ -3400,7 +3400,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-345
 
-**Título:** Podredumbre de specs de Smart CLI (21 suites) — `OPEN`
+**Título:** Podredumbre de specs de Smart CLI (21 suites) — `DONE`
 
 - **Componente:** smart-cli / calidad · **Prioridad:** P1 · **Riesgo:** medio · **Dependencias:** GT-344
 - **Archivos:** `sdk/cli/src/infrastructure/plugins/plugin-loader.spec.ts:55`, `…/standards/standards.command.spec.ts:73`, `…/__tests__/cli.integration.spec.ts:20`
@@ -3413,7 +3413,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-346
 
-**Título:** Superficie de inyección de shell en CommandExecutor (seguridad) — `IN-PROGRESS`
+**Título:** Superficie de inyección de shell en CommandExecutor (seguridad) — `DONE`
 
 - **Componente:** smart-cli · **Prioridad:** P2 · **Riesgo:** medio · **Dependencias:** ninguna
 - **Archivos:** `sdk/cli/src/infrastructure/cli/command-executor.ts`
@@ -3424,7 +3424,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-347
 
-**Título:** Suite OPA de gobernanza rota + sin gate CI — `EN-PROGRESO`
+**Título:** Suite OPA de gobernanza rota + sin gate CI — `DONE`
 
 - **Componente:** gobernanza/OPA · **Prioridad:** P0 · **Riesgo:** crítico (integridad de gobernanza) · **Dependencias:** GT-358 (bloquea exit-0)
 - **Archivos:** `rulesets/opa/compliance-baseline.rego`, `rulesets/opa/rbac/gate-role-enforcement.rego`, `rulesets/opa/phase-gates.rego`, `rulesets/opa/telemetry-evidence.rego`
@@ -3436,7 +3436,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-358
 
-**Título:** Suite OPA — 12 fallos de aserción surgidos tras desbloquear GT-347 — `EN-PROGRESO`
+**Título:** Suite OPA — 12 fallos de aserción surgidos tras desbloquear GT-347 — `DONE`
 
 - **Componente:** gobernanza/OPA · **Prioridad:** P1 · **Riesgo:** medio (corrección de gobernanza) · **Dependencias:** GT-347 (que los hizo visibles)
 - **Archivos:** `rulesets/opa/main_test.rego` (4), `compliance-baseline.test.rego` (2), `executive-scorecards.test.rego`, `governance.test.rego`, `mcp.test.rego`, `multi-tenancy.test.rego`, `satellite-contracts.test.rego`, `testing-pyramid.test.rego`
@@ -3448,7 +3448,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-348
 
-**Título:** Política OPA recompilada por cada dispatch (perf) — `IN-PROGRESS`
+**Título:** Política OPA recompilada por cada dispatch (perf) — `DONE`
 
 - **Componente:** mcp-server · **Prioridad:** P1 · **Riesgo:** medio · **Dependencias:** ninguna
 - **Archivos:** `packages/mcp-server/src/mcp/abac-evaluator.ts:125`
@@ -3459,7 +3459,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-349
 
-**Título:** OPA falla abierto si falta el wasm (seguridad) — `IN-PROGRESS`
+**Título:** OPA falla abierto si falta el wasm (seguridad) — `DONE`
 
 - **Componente:** mcp-server · **Prioridad:** P2 · **Riesgo:** medio · **Dependencias:** GT-347
 - **Archivos:** `packages/mcp-server/src/mcp/abac-evaluator.ts:132`
@@ -3470,7 +3470,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-350
 
-**Título:** standards.service.ts usa `new Function()` (seguridad) — `IN-PROGRESS`
+**Título:** standards.service.ts usa `new Function()` (seguridad) — `DONE`
 
 - **Componente:** core-domain · **Prioridad:** P2 · **Riesgo:** medio · **Dependencias:** ninguna
 - **Archivos:** `packages/core-domain/src/domain/services/standards.service.ts:136`
@@ -3494,7 +3494,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-352
 
-**Título:** mcp-tools: sin validación de input, sin README — `IN-PROGRESS`
+**Título:** mcp-tools: sin validación de input, sin README — `DONE`
 
 - **Componente:** mcp-tools · **Prioridad:** P2 · **Riesgo:** medio · **Dependencias:** ninguna
 - **Archivos:** `packages/mcp-tools/src/registry.js:24`, `…/tools/echo.js:16`

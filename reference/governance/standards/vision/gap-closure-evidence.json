@@ -4933,6 +4933,126 @@
       ],
       "dependencyDisposition": "accepted-scope",
       "dependencyRationale": "GT-341 (inventory reconciliation) satisfied; GT-357 reconciles board status against executed build/test evidence (closure-evidence + maturity), which is independent of GT-347’s separate core-OPA-suite remediation."
+    },
+    {
+      "id": "GT-344",
+      "closedAt": "2026-06-28",
+      "closureCommit": "1bdbc478",
+      "evidence": [
+        "packages/core-domain/src/domain/services/default-workflow-definition.ts",
+        "packages/core-domain/src/domain/services/default-workflow-definition.spec.ts"
+      ],
+      "validationCommands": [
+        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --testPathPatterns='default-workflow-definition' --no-coverage"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-347",
+      "closedAt": "2026-06-28",
+      "closureCommit": "c5998d1a",
+      "evidence": [
+        "rulesets/opa",
+        ".harness/scripts/ci/29-test-core-opa.mjs"
+      ],
+      "validationCommands": [
+        ".harness/bin/opa test rulesets/opa/ --ignore=schemas",
+        "node .harness/scripts/ci/29-test-core-opa.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-358",
+      "closedAt": "2026-06-28",
+      "closureCommit": "c5998d1a",
+      "evidence": [
+        "rulesets/opa"
+      ],
+      "validationCommands": [
+        ".harness/bin/opa test rulesets/opa/ --ignore=schemas"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-345",
+      "closedAt": "2026-06-28",
+      "closureCommit": "92750656",
+      "evidence": [
+        "sdk/cli/test/e2e/mcp-e2e.test.ts",
+        "sdk/cli/src/commands/validate/validate.command.ts",
+        "sdk/cli/src/main.ts"
+      ],
+      "validationCommands": [
+        "npm run --workspace sdk/cli test"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-348",
+      "closedAt": "2026-06-28",
+      "closureCommit": "b857b7f3",
+      "evidence": [
+        "packages/mcp-server/src/mcp/abac-evaluator.ts",
+        "packages/mcp-server/src/mcp/abac-evaluator.cache.spec.ts"
+      ],
+      "validationCommands": [
+        "npm run --workspace packages/mcp-server test"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-349",
+      "closedAt": "2026-06-28",
+      "closureCommit": "460e65f7",
+      "evidence": [
+        "packages/mcp-server/src/mcp/abac-evaluator.ts",
+        "packages/mcp-server/src/mcp/abac-evaluator.spec.ts"
+      ],
+      "validationCommands": [
+        "npm run --workspace packages/mcp-server test"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-350",
+      "closedAt": "2026-06-28",
+      "closureCommit": "d243bab7",
+      "evidence": [
+        "packages/core-domain/src/domain/services/standard-check-evaluator.ts",
+        "packages/core-domain/src/domain/services/standard-check-evaluator.spec.ts"
+      ],
+      "validationCommands": [
+        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --testPathPatterns='standard-check-evaluator' --no-coverage"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-346",
+      "closedAt": "2026-06-28",
+      "closureCommit": "d34bc3a5",
+      "evidence": [
+        "sdk/cli/src/infrastructure/cli/command-executor.ts",
+        "sdk/cli/src/infrastructure/cli/providers/index.ts",
+        "sdk/cli/src/infrastructure/cli/providers/providers.spec.ts"
+      ],
+      "validationCommands": [
+        "npm run --workspace sdk/cli test"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-352",
+      "closedAt": "2026-06-28",
+      "closureCommit": "30b62b9e",
+      "evidence": [
+        "packages/mcp-tools/src/validate-input.js",
+        "packages/mcp-tools/src/registry.js",
+        "packages/mcp-tools/README.md"
+      ],
+      "validationCommands": [
+        "npm run --workspace packages/mcp-tools test"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

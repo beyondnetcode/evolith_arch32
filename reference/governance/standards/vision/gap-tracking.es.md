@@ -14,17 +14,17 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
 | [`GT-343`](./gap-reference-catalog.es.md#gt-343) | EPIC: unificar ids de fase SDLC (f1..f5) y vocabulario de topología F1/F2/F3 — etapas 1-5: PhaseId canónico + core-domain + enums públicos + topology maturityLevel + guard anti-colisión (4b/2b cleanup pendiente) | `Cross` | Cross | P0 | XL | `EN-PROGRESO` |
-| [`GT-344`](./gap-reference-catalog.es.md#gt-344) | La CLI publicada falla (ENOENT default-workflow.yaml) — fallback de workflow por defecto embebido | `Smart CLI` | Cross | P0 | L | `EN-PROGRESO` |
-| [`GT-347`](./gap-reference-catalog.es.md#gt-347) | Suite OPA core verde 197/197 + wasm compila + gate CI cableado (29-test-core-opa) | `Governance` | Cross | P0 | L | `EN-PROGRESO` |
-| [`GT-358`](./gap-reference-catalog.es.md#gt-358) | Suite OPA: 12 fallos de aserción corregidos (fixtures/mocks obsoletos) → 197/197 | `Governance` | Cross | P1 | M | `EN-PROGRESO` |
+| [`GT-344`](./gap-reference-catalog.es.md#gt-344) | La CLI publicada falla (ENOENT default-workflow.yaml) — fallback de workflow por defecto embebido | `Smart CLI` | Cross | P0 | L | `COMPLETADO` |
+| [`GT-347`](./gap-reference-catalog.es.md#gt-347) | Suite OPA core verde 197/197 + wasm compila + gate CI cableado (29-test-core-opa) | `Governance` | Cross | P0 | L | `COMPLETADO` |
+| [`GT-358`](./gap-reference-catalog.es.md#gt-358) | Suite OPA: 12 fallos de aserción corregidos (fixtures/mocks obsoletos) → 197/197 | `Governance` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-357`](./gap-reference-catalog.es.md#gt-357) | META: el tablero sobre-reporta completitud vs build/test reales validados | `Governance` | Cross | P1 | M | `COMPLETADO` |
-| [`GT-345`](./gap-reference-catalog.es.md#gt-345) | Smart CLI `npm test` 100% verde: unit 905/905 + e2e 175/175 (validate restaurado, --version, tests obsoletos de mcp-e2e corregidos) | `Smart CLI` | Cross | P1 | L | `EN-PROGRESO` |
-| [`GT-348`](./gap-reference-catalog.es.md#gt-348) | política ABAC OPA ahora EN CACHÉ (path+mtime) — cargada una vez, no recompilada por dispatch + 2 tests | `MCP Server` | Cross | P1 | M | `EN-PROGRESO` |
+| [`GT-345`](./gap-reference-catalog.es.md#gt-345) | Smart CLI `npm test` 100% verde: unit 905/905 + e2e 175/175 (validate restaurado, --version, tests obsoletos de mcp-e2e corregidos) | `Smart CLI` | Cross | P1 | L | `COMPLETADO` |
+| [`GT-348`](./gap-reference-catalog.es.md#gt-348) | política ABAC OPA ahora EN CACHÉ (path+mtime) — cargada una vez, no recompilada por dispatch + 2 tests | `MCP Server` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-351`](./gap-reference-catalog.es.md#gt-351) | infra-providers: WebhookAdapter endurecido (timeout+retry+guard SSRF) +5 tests +harness jest; README/cobertura/deriveCategory restan | `Infra` | Cross | P1 | L | `EN-PROGRESO` |
-| [`GT-346`](./gap-reference-catalog.es.md#gt-346) | superficie de shell-injection del CLI CERRADA — providers ahora corren sin shell (executeFile + arrays de args) + tests | `Smart CLI` | Cross | P2 | M | `EN-PROGRESO` |
-| [`GT-349`](./gap-reference-catalog.es.md#gt-349) | fail-open de ABAC OPA CORREGIDO — sin policy.wasm ahora deniega en prod (fail-closed) + 6 tests | `MCP Server` | Cross | P2 | S | `EN-PROGRESO` |
-| [`GT-350`](./gap-reference-catalog.es.md#gt-350) | sink `new Function()` del check de regla en standards.service ELIMINADO — evaluador de predicados restringido + 6 tests (no-ejecución probada) | `Core Domain` | Cross | P2 | M | `EN-PROGRESO` |
-| [`GT-352`](./gap-reference-catalog.es.md#gt-352) | mcp-tools: validación de inputSchema añadida (CallTool → isError) + README (EN/ES) + 7 tests | `MCP Tools` | Cross | P2 | S | `EN-PROGRESO` |
+| [`GT-346`](./gap-reference-catalog.es.md#gt-346) | superficie de shell-injection del CLI CERRADA — providers ahora corren sin shell (executeFile + arrays de args) + tests | `Smart CLI` | Cross | P2 | M | `COMPLETADO` |
+| [`GT-349`](./gap-reference-catalog.es.md#gt-349) | fail-open de ABAC OPA CORREGIDO — sin policy.wasm ahora deniega en prod (fail-closed) + 6 tests | `MCP Server` | Cross | P2 | S | `COMPLETADO` |
+| [`GT-350`](./gap-reference-catalog.es.md#gt-350) | sink `new Function()` del check de regla en standards.service ELIMINADO — evaluador de predicados restringido + 6 tests (no-ejecución probada) | `Core Domain` | Cross | P2 | M | `COMPLETADO` |
+| [`GT-352`](./gap-reference-catalog.es.md#gt-352) | mcp-tools: validación de inputSchema añadida (CallTool → isError) + README (EN/ES) + 7 tests | `MCP Tools` | Cross | P2 | S | `COMPLETADO` |
 | [`GT-353`](./gap-reference-catalog.es.md#gt-353) | sdk-client huérfano (sin consumidor/README); baja cobertura por método | `SDK` | Cross | P2 | M | `PENDIENTE` |
 | [`GT-354`](./gap-reference-catalog.es.md#gt-354) | módulo OpenAPI muerto en core-api; api-reference sin cache/invalidate | `Core API` | Cross | P2 | S | `PENDIENTE` |
 | [`GT-355`](./gap-reference-catalog.es.md#gt-355) | @evolith/core sin test de contrato del barrel de re-exports | `Core` | Cross | P2 | S | `PENDIENTE` |
@@ -373,7 +373,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-246`](./gap-reference-catalog.es.md#gt-246) | Implementar experimentos Chaos Mesh/Litmus | `QA` | Cross | P3 | L | `COMPLETADO` |
 
 
-**Progreso:** 327 / 358 completados · 23 en progreso · 7 pendientes · 1 diferidos
+**Progreso:** 336 / 358 completados · 14 en progreso · 7 pendientes · 1 diferidos
 
 **Oleada 2026-06-23 (auditoría profunda de Wilson III):** Añadidos 14 gaps nuevos `GT-212`…`GT-225` del Wilson Audit Playbook que cubren: higiene de estado ADR (GT-212), metadata + presupuestos operativos + corpus de guías por topología (GT-213, GT-217, GT-219), observabilidad + OpenAPI en controladores REST (GT-214, GT-215), paridad de input-schemas OPA + densidad de tests por topología (GT-216, GT-222), plantillas de rollback + on-call de Fase 05 (GT-218), cobertura de ramas CLI + paridad de envelope --format + limpieza de skip-list (GT-220, GT-224, GT-225), audit logging HTTP de MCP (GT-221), y tests e2e de paridad cross-surface (GT-223).
 

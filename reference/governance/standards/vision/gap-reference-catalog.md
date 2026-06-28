@@ -3441,7 +3441,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-344
 
-**Title:** Published CLI crashes (ENOENT default-workflow.yaml) — `IN-PROGRESS`
+**Title:** Published CLI crashes (ENOENT default-workflow.yaml) — `DONE`
 
 - **Component:** smart-cli / core-domain · **Priority:** P0 · **Risk:** critical→none · **Dependencies:** none
 - **Files:** `packages/core-domain/src/domain/services/default-workflow-definition.ts`, `…/default-workflow-definition.spec.ts`, `sdk/cli/README.md` (+`.es`)
@@ -3453,7 +3453,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-345
 
-**Title:** Smart CLI unit-spec rot (21 suites) — `OPEN`
+**Title:** Smart CLI unit-spec rot (21 suites) — `DONE`
 
 - **Component:** smart-cli / quality · **Priority:** P1 · **Risk:** med · **Dependencies:** GT-344
 - **Files:** `sdk/cli/src/infrastructure/plugins/plugin-loader.spec.ts:55`, `…/standards/standards.command.spec.ts:73`, `…/adr/adr.command.spec.ts`, `…/__tests__/cli.integration.spec.ts:20`
@@ -3466,7 +3466,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-346
 
-**Title:** CommandExecutor shell-injection surface (security) — `IN-PROGRESS`
+**Title:** CommandExecutor shell-injection surface (security) — `DONE`
 
 - **Component:** smart-cli · **Priority:** P2 · **Risk:** med · **Dependencies:** none
 - **Files:** `sdk/cli/src/infrastructure/cli/command-executor.ts`, `…/cli/providers/index.ts`
@@ -3477,7 +3477,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-347
 
-**Title:** Core OPA governance suite broken + no CI gate — `IN-PROGRESS`
+**Title:** Core OPA governance suite broken + no CI gate — `DONE`
 
 - **Component:** governance/OPA · **Priority:** P0 · **Risk:** critical (governance integrity) · **Dependencies:** GT-358 (exit-0 blocker)
 - **Files:** `rulesets/opa/compliance-baseline.rego`, `rulesets/opa/rbac/gate-role-enforcement.rego`, `rulesets/opa/phase-gates.rego`, `rulesets/opa/telemetry-evidence.rego`, `.harness/scripts/compile-opa-wasm.mjs`, `.harness/scripts/ci/28-test-topology-opa.mjs`
@@ -3489,7 +3489,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-358
 
-**Title:** OPA suite — 12 assertion failures surfaced after the GT-347 unblock — `IN-PROGRESS`
+**Title:** OPA suite — 12 assertion failures surfaced after the GT-347 unblock — `DONE`
 
 - **Component:** governance/OPA · **Priority:** P1 · **Risk:** med (governance correctness) · **Dependencies:** GT-347 (which made them visible)
 - **Files:** `rulesets/opa/main_test.rego` (4), `compliance-baseline.test.rego` (2), `executive-scorecards.test.rego`, `governance.test.rego`, `mcp.test.rego`, `multi-tenancy.test.rego`, `satellite-contracts.test.rego`, `testing-pyramid.test.rego`
@@ -3501,7 +3501,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-348
 
-**Title:** OPA policy recompiled per tool dispatch (perf) — `IN-PROGRESS`
+**Title:** OPA policy recompiled per tool dispatch (perf) — `DONE`
 
 - **Component:** mcp-server · **Priority:** P1 · **Risk:** med (latency) · **Dependencies:** none
 - **Files:** `packages/mcp-server/src/mcp/abac-evaluator.ts:125`, `mcp-tool-dispatch.ts:102`
@@ -3512,7 +3512,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-349
 
-**Title:** OPA fails open when wasm missing (security) — `IN-PROGRESS`
+**Title:** OPA fails open when wasm missing (security) — `DONE`
 
 - **Component:** mcp-server · **Priority:** P2 · **Risk:** med · **Dependencies:** GT-347
 - **Files:** `packages/mcp-server/src/mcp/abac-evaluator.ts:132`
@@ -3523,7 +3523,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-350
 
-**Title:** standards.service.ts uses `new Function()` (security) — `IN-PROGRESS`
+**Title:** standards.service.ts uses `new Function()` (security) — `DONE`
 
 - **Component:** core-domain · **Priority:** P2 · **Risk:** med (code-exec sink) · **Dependencies:** none
 - **Files:** `packages/core-domain/src/domain/services/standards.service.ts:136`
@@ -3547,7 +3547,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-352
 
-**Title:** mcp-tools: no input validation, no README — `IN-PROGRESS`
+**Title:** mcp-tools: no input validation, no README — `DONE`
 
 - **Component:** mcp-tools · **Priority:** P2 · **Risk:** med · **Dependencies:** none
 - **Files:** `packages/mcp-tools/src/registry.js:24`, `…/tools/echo.js:16`

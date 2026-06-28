@@ -3499,12 +3499,14 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-348
 
-**Title:** OPA policy recompiled per tool dispatch (perf) — `OPEN`
+**Title:** OPA policy recompiled per tool dispatch (perf) — `IN-PROGRESS`
 
 - **Component:** mcp-server · **Priority:** P1 · **Risk:** med (latency) · **Dependencies:** none
 - **Files:** `packages/mcp-server/src/mcp/abac-evaluator.ts:125`, `mcp-tool-dispatch.ts:102`
 - **Proposed fix:** lazy singleton compiled policy keyed by wasm mtime; only `evaluate(input)` per call.
-- **Done when:** [ ] loadPolicy/readFile invoked ≤1× per process / wasm change.
+- **Applied fix:** `AbacEvaluator` now holds a `policyCache: Map<wasmPath, { mtimeMs, policy }>`. `evaluateOpa` does a cheap `fs.stat` and only `readFile`+`loadPolicy` when the entry is absent or the wasm's `mtimeMs` changed; otherwise it reuses the compiled policy and just calls `evaluate(input)`. `AbacEvaluator` is a Nest singleton, so the cache persists across dispatches. (The `fail-closed` and `catch` paths from GT-349 are unchanged.)
+- **Evidence:** new `abac-evaluator.cache.spec.ts` (2 tests, opa-wasm + fs-extra module-mocked): 3 dispatches → `loadPolicy`/`readFile` called exactly once; mtime change → recompiled (2×). mcp-server suite 25/25 (170/170). Build clean.
+- **Done when:** [x] loadPolicy/readFile invoked ≤1× per process / wasm change.
 
 #### GT-349
 

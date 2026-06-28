@@ -27,20 +27,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # sdk/cli imports @evolith/* subpaths that resolve to dist — build the chain first
-      - name: Build workspace dependencies
+      # sdk/cli imports @evolith/* subpaths that resolve to dist, and its
+      # integration tests spawn the built dist/main.js — build the chain AND the
+      # CLI before running the tests.
+      - name: Build workspace dependencies + CLI
         run: |
           npm run build --workspace @evolith/core-domain
           npm run build --workspace @evolith/core
           npm run build --workspace @evolith/infra-providers
           npm run build --workspace @evolith/mcp-server
+          npm run build --workspace sdk/cli
 
       - name: Run tests
         run: npm test
-        working-directory: sdk/cli
-
-      - name: Build
-        run: npm run build
         working-directory: sdk/cli
 
       - name: MCP smoke

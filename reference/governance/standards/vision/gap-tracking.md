@@ -12,7 +12,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 > One table with every gap and tracked activity. `GT-*` IDs link to their full detail in the catalog; `MT-A*` IDs link to the supporting Multi-Topology implementation plan, but this table remains the canonical status source. Order: pending first (by criticality P0→P3, then complexity XS→XL), then completed (same criteria). GitHub renders Markdown statically (no interactive sorting or search): the **Component** column categorizes and GitHub file search (`/`) finds an ID or term.
 
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
-|---|---|:---:|:---:|:---:|:---:|:---:|:---:|
+|---|---|:---:|:---:|:---:|:---:|:---:|
 | [`GT-359`](./gap-reference-catalog.md#gt-359) | Define `SatelliteManifest` ingestion contract schema | `Core Domain` | Cross | P0 | M | `PENDING` |
 | [`GT-363`](./gap-reference-catalog.md#gt-363) | GitHub API integration client — secure auth + repo operations (create, configure, branch protection, rulesets, webhooks) | `Infra` | Cross | P0 | M | `PENDING` |
 | [`GT-362`](./gap-reference-catalog.md#gt-362) | Implement runtime enforcement for Rego policies in evaluation engine | `Core Domain` | Cross | P0 | L | `PENDING` |

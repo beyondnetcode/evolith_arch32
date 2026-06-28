@@ -23,6 +23,7 @@ Ordered from vocabulary (most general) to lifecycle execution (most specific):
 | [Architecture Glossary](./glossary.md) | Canonical terminology shared by the whole corpus | Keep language consistent | Glossary | Yes |
 | [Standards and Governance Center](./standards/README.md) | Manifestos, taxonomies, technical directives, vision, onboarding, and AI-augmented standards | Align teams to unified policies | Area hub | Yes |
 | [SDLC Governance Center](./sdlc/README.md) | Phases, gates, artifacts, evidence, roles, traceability, and metrics | Govern the full lifecycle | Domain hub | Yes |
+| [Decisions & Upstream Proposals](./DECISIONS.md) | Key architectural decisions and proposals submitted by satellite repositories | Track ecosystem-level governance decisions | Index | Yes |
 
 The EN/ES pairing status for every governance document is tracked in the [Bilingual Index](./BILINGUAL_INDEX.md).
 

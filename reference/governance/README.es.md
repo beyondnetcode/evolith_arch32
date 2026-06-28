@@ -23,6 +23,7 @@ Ordenados del vocabulario (lo más general) a la ejecución del ciclo de vida (l
 | [Glosario Arquitectónico](./glossary.es.md) | Terminología canónica compartida por todo el corpus | Mantener el lenguaje consistente | Glosario | Sí |
 | [Centro de Estándares y Gobernanza](./standards/README.es.md) | Manifiestos, taxonomías, directivas técnicas, visión, onboarding y estándares AI-augmented | Alinear equipos a políticas unificadas | Hub de área | Sí |
 | [Centro de Gobernanza SDLC](./sdlc/README.es.md) | Fases, gates, artefactos, evidencias, roles, trazabilidad y métricas | Gobernar el ciclo de vida completo | Hub de dominio | Sí |
+| [Decisiones y Propuestas Upstream](./DECISIONS.es.md) | Decisiones arquitectónicas clave y propuestas enviadas por repositorios satélite | Rastrear decisiones de gobernanza a nivel de ecosistema | Índice | Sí |
 
 El estado de emparejamiento EN/ES de cada documento de gobernanza se rastrea en el [Índice Bilingüe](./BILINGUAL_INDEX.es.md).
 

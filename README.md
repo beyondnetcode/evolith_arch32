@@ -8,7 +8,6 @@
 [![Method](https://img.shields.io/badge/Method-Spec--driven_AI--DD-blueviolet?style=for-the-badge)]()
 [![License](https://img.shields.io/badge/License-MIT-informational?style=for-the-badge)]()
 [![CI](https://img.shields.io/github/actions/workflow/status/beyondnetcode/evolith_arch32/docs.yml?style=for-the-badge&label=CI)](https://github.com/beyondnetcode/evolith_arch32/actions)
-[![Coverage](https://img.shields.io/badge/Docs-100%25-brightgreen?style=for-the-badge)](./COVERAGE_REPORT.md)
 
 <br/>
 
@@ -21,100 +20,222 @@
 
 <sub>↑ Evolith E2E Product Vision · MD3 — <i>click to enlarge</i></sub>
 
-<br/>
-
-**Evolith is an executable architectural governance framework, not a documentation corpus.** It encodes *how* software is built — across eight architecture topologies — as verifiable rulesets, ADRs, and phase gates that teams, delivery platforms, and AI agents can run. The same governance reaches your workflow through three interfaces: a **CLI**, an **MCP server**, and a **REST Core API**.
-
-> _**Progressive Architecture:** the framework's ability to scale a system by mutating between topologies as the business lifecycle demands — preventing over-engineering and preserving architectural coherence through automated execution._
-
 </div>
 
 ---
 
-## What Evolith is
+## Menu
 
-Evolith turns architectural governance into an operational capability. ADRs, rulesets, policies, contracts, and AI instructions are not passive documents — they are authoritative artifacts exposed through mandatory execution channels, so teams can validate, query, scaffold, and enforce a chosen architecture *before* code reaches production.
+- [What is Evolith?](#what-is-evolith)
+- [Why Evolith?](#why-evolith)
+- [Core Concepts](#core-concepts)
+- [Product Ecosystem](#product-ecosystem)
+- [How It Works](#how-it-works)
+- [Architecture Overview](#architecture-overview)
+- [Main Components](#main-components)
+- [Quick Start](#quick-start)
+- [Documentation](#documentation)
+- [Use Cases](#use-cases)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+- [License](#license)
 
-Evolith Core defines the technical **What** and **How** and stays provider-neutral and runtime-neutral: no language, cloud, runtime, or database lock-in. Business timing, ownership, funding, and ROI — the **When** and **Who** — live outside Core and are governed by Evolith Tracker.
+---
 
-## The Evolith ecosystem
+## What is Evolith?
 
-Evolith Core is the foundation. The Suite delivers and proves that foundation as working products.
+Evolith is an **executable architectural governance framework**. It encodes how software is built — across multiple architecture styles — as verifiable rules, ADRs, and phase gates that teams, platforms, and AI agents can actually run.
 
-| Component | Role | One-liner | Hub |
-| --- | --- | --- | --- |
-| **Evolith Core** | Foundation | Provider-neutral engineering constitution: principles, ADRs, rulesets, topologies, and contracts every product inherits. | [Core hub](./reference/core/README.md) |
-| **Evolith Tracker** | Suite · Active | Governs the business lifecycle (When/Who) and orchestrates Core through its ACL and Funnel 0. | [Tracker hub](./reference/products/evolith-tracker/README.md) |
-| **Smart CLI** | Suite · Active (v1.1.4) | Local enforcement: validate code, manage ADRs, run gates and phases against your topology. | [Smart CLI hub](./reference/products/smart-cli/README.md) |
-| **Core API** | Suite · Active (v0.0.1) | REST service (URI-versioned `/api/v1`) for orchestration systems to query and evaluate governance remotely. | [Core API hub](./reference/products/core-api/README.md) |
-| **Evolith MCP Services** | Suite · Active | Governance as live context for LLMs and agents — 27 tools, 9 resources, 8 prompts. Ships inside `@evolith/smart-cli`. | [MCP Services hub](./reference/products/mcp-services/README.md) |
-| **UMS Reference** | Suite · Reference model | The open-source UMS satellite is the official applied reference that demonstrates Core in practice. | [UMS Reference hub](./reference/products/ums-reference/README.md) |
+Governance in Evolith is not a document. It is an operational capability exposed through a CLI, an MCP server, and a REST API.
 
-New glossary of the whole ecosystem: **[Ecosystem Glossary](./reference/governance/glossary-ecosystem.md)** (canonical terms for phases, gates, topologies, and products).
+---
 
-## Core concepts
+## Why Evolith?
 
-Two independent axes — keep them distinct.
+Most projects accumulate ADRs and architecture docs that nobody reads and nobody enforces. Systems drift. Decisions are forgotten. Consistency breaks silently.
 
-- **SDLC phases** govern the path from idea to production. The five governance phases are **Conception & Discovery**, **Design & Architecture**, **Construction**, **Validation & QA**, and **Delivery & Operations**, each closed by a gate (Business Sign-Off, Design Baseline Approved, Successful Build, RC Stamped, Production Live). The CLI and Core API address these phases with the operational keys `discovery`, `design`, `construction`, `qa`, `release`.
-- **Topologies** group architecture styles. **F1–F5** are *maturity levels* on the progressive axis (modular-monolith → distributed-modules → microservices, then operational maturity) — they are **not** SDLC phases.
+Evolith makes governance **executable**:
 
-Evolith governs **8 topologies**, each an isolated bounded context with its own ADRs, OPA policies, AI rulesets, and UMS contracts:
+- Rules are validated automatically, not reviewed manually.
+- Phase gates block progression until quality criteria are met.
+- AI agents and CI pipelines consume the same governance artifacts as humans.
+- Architecture decisions are traceable from ADR to production code.
+
+---
+
+## Core Concepts
+
+| Concept | What it is |
+|---|---|
+| **SDLC Phases** | The five stages from idea to production: Discovery → Design → Construction → QA → Delivery |
+| **Gates** | Automated checkpoints that close each phase before the next begins |
+| **Topologies** | Architecture styles (e.g., modular monolith, microservices, event-driven, agentic-AI) |
+| **ADRs** | Architecture Decision Records — the authoritative log of architectural choices |
+| **Blueprints** | Canonical design templates for each topology |
+| **Rulesets** | Machine-readable rules enforced by the CLI and Core API |
+| **OPA Policies** | Open Policy Agent policies for fine-grained governance checks |
+| **Artifacts** | Structured outputs at each phase: specs, schemas, manifests, contracts |
+| **AI Agents** | Specialized agents (Winston and others) that participate in the SDLC as first-class contributors |
+
+Full details: [Core Concepts](./reference/core/README.md) · [Topologies](./reference/architecture/topologies/README.md)
+
+---
+
+## Product Ecosystem
+
+Evolith ships as a suite of coordinated products built on a common foundation.
+
+| Product | Role |
+|---|---|
+| **Evolith Core** | Provider-neutral constitution: principles, ADRs, rulesets, topologies, and contracts |
+| **Smart CLI** | Local enforcement — validate code, run gates, manage ADRs, serve MCP |
+| **Core API** | REST service for remote governance queries and evaluation |
+| **MCP Services** | Governance as live context for LLMs and AI agents (27 tools, 9 resources, 8 prompts) |
+| **Evolith Tracker** | Business lifecycle governance — phases, owners, funding, and ROI |
+| **Rulesets** | Machine-readable enforcement rules per topology |
+| **OPA Policies** | Fine-grained policy checks integrated into the pipeline |
+| **Schemas & Manifests** | Structured contracts for artifacts and topology definitions |
+
+---
+
+## How It Works
+
+```
+Developer / AI Agent
+        │
+        ▼
+  Smart CLI  ──────────────────────────────► MCP Server
+  (local enforcement)                        (AI agent context)
+        │
+        ▼
+   Core API  ────────────────────────────►  Evolith Tracker
+  (remote governance)                        (business lifecycle)
+        │
+        ▼
+  Rulesets · OPA Policies · ADRs · Blueprints
+  (the shared governance artifacts)
+```
+
+1. **Smart CLI** validates code locally against rulesets and runs phase gates.
+2. **Core API** exposes the same governance remotely for CI pipelines and orchestrators.
+3. **MCP Server** feeds governance context to LLMs and AI agents in real time.
+4. **Evolith Tracker** coordinates the business side — who owns what, what's funded, what ships when.
+
+All products share the same artifacts defined in **Evolith Core**.
+
+---
+
+## Architecture Overview
+
+Evolith governs **8 topologies** across four axes:
 
 | Axis | Topologies |
-| --- | --- |
+|---|---|
 | Progressive | `modular-monolith` · `distributed-modules` · `microservices` |
 | Integration | `event-driven` |
 | Execution | `serverless` · `edge-computing` |
 | Data | `data-mesh` |
 | AI | `agentic-ai` |
 
-Full descriptions and artifacts: **[Topologies hub](./reference/architecture/topologies/README.md)**.
+Each topology has its own ADRs, OPA policies, AI rulesets, and UMS contracts. Systems migrate between topologies as the business scales — this is **Progressive Architecture**.
 
-## Quickstart
+Full reference: [Architecture hub](./reference/architecture/README.md)
 
-Install the official tooling and validate a repository against its topology rulesets.
+---
+
+## Main Components
+
+```
+evolith/
+├── reference/core/          # Engineering constitution and principles
+├── reference/architecture/  # Topologies, blueprints, and ADRs
+├── reference/governance/    # SDLC phases, gates, standards, and glossary
+├── reference/products/      # Smart CLI, Core API, MCP, Tracker, UMS
+└── reference/operations/    # SRE, infra, quality gates
+```
+
+Entry point for each area: [Global Master Index](./reference/navigation/MASTER_INDEX.md)
+
+---
+
+## Quick Start
 
 ```bash
-# Initialize a new satellite repository
+# Install Smart CLI
 npx @evolith/smart-cli@1.1.4 init
 
-# Validate code against the rulesets of your chosen topology
+# Validate your code against your topology's rulesets
 smart-cli validate
 
-# Validate a specific SDLC phase (keys: discovery | design | construction | qa | release)
+# Validate a specific SDLC phase
 smart-cli validate --phase qa
 
 # Manage Architecture Decision Records
 smart-cli adr create
 smart-cli adr list
 
-# Serve governance as live context for AI agents (MCP)
+# Serve governance as live context for AI agents
 smart-cli mcp serve
 ```
 
-Smart CLI ships **20 commands** (`adr`, `agents`, `alias`, `api`, `architecture`, `completion`, `docs`, `drift`, `fixtures`, `gate`, `history`, `init`, `mcp`, `phase`, `profile`, `sdlc`, `standards`, `update`, `upgrade`, `validate`) and is configured via **`evolith.yaml`**. Full reference: **[Smart CLI hub](./reference/products/smart-cli/README.md)**.
+Smart CLI ships **20 commands** and is configured via **`evolith.yaml`**. Full reference: [Smart CLI hub](./reference/products/smart-cli/README.md)
 
-## Navigation map
+---
 
-This table is the fastest route to the right document. When you already know the artifact you need, open the [Global Master Index](./reference/navigation/MASTER_INDEX.md).
+## Documentation
 
-| I want to… | Go to | Surface |
-| --- | --- | --- |
-| Understand the provider-neutral constitution (principles, Core ADRs, contracts) | [Evolith Core hub](./reference/core/README.md) | Domain hub |
-| Govern the lifecycle (phases, gates, artifacts, traceability) | [SDLC Governance Center](./reference/governance/sdlc/README.md) | Governance hub |
-| Use or design a Suite product (Tracker, Smart CLI, Core API, MCP, UMS) | [Product Designs](./reference/products/README.md) · [Product Suite](./reference/product-suite/README.md) | Product hubs |
-| Choose an architecture style or topology | [Architecture hub](./reference/architecture/README.md) · [Topologies](./reference/architecture/topologies/README.md) | Architecture hubs |
-| Look up standards, taxonomies, and the ecosystem glossary | [Standards & Governance](./reference/governance/README.md) · [Glossary](./reference/governance/glossary-ecosystem.md) | Governance hub |
-| Deploy, run, and operate (SRE, infra, quality gates) | [Operations hub](./reference/operations/README.md) | Operations hub |
-| Onboard by role (architect, dev, QA/SRE, PM, AI agent) | [Getting Started by Role](./reference/getting-started/README.md) | Onboarding |
-| Review suite health (maturity, gaps, audits, evidence) | [Gap Tracking Board](./reference/governance/standards/vision/gap-tracking.md) · [Maturity & Gaps hub](./reference/governance/standards/vision/README.md) | Reporting hub |
-| Configure AI agents and assisted flow | [AGENTS.md](./AGENTS.md) | Agent rules |
-| Locate any artifact directly | [Global Master Index](./reference/navigation/MASTER_INDEX.md) | Navigation index |
+| Area | Link |
+|---|---|
+| Core constitution | [Evolith Core hub](./reference/core/README.md) |
+| SDLC governance | [SDLC Governance Center](./reference/governance/sdlc/README.md) |
+| Topologies | [Topologies hub](./reference/architecture/topologies/README.md) |
+| Smart CLI | [Smart CLI hub](./reference/products/smart-cli/README.md) |
+| Core API | [Core API hub](./reference/products/core-api/README.md) |
+| MCP Services | [MCP Services hub](./reference/products/mcp-services/README.md) |
+| Evolith Tracker | [Tracker hub](./reference/products/evolith-tracker/README.md) |
+| Operations & SRE | [Operations hub](./reference/operations/README.md) |
+| Onboarding by role | [Getting Started by Role](./reference/getting-started/README.md) |
+| Ecosystem glossary | [Glossary](./reference/governance/glossary-ecosystem.md) |
+| Gap tracking | [Gap Tracking Board](./reference/governance/standards/vision/gap-tracking.md) |
+| All artifacts | [Global Master Index](./reference/navigation/MASTER_INDEX.md) |
+
+---
+
+## Use Cases
+
+**For engineering teams**
+Enforce architecture decisions automatically. Run phase gates in CI. Keep ADRs alive and traceable.
+
+**For platform teams**
+Query governance remotely via Core API. Integrate rulesets into deployment pipelines. Block non-compliant artifacts before they reach production.
+
+**For AI-assisted development**
+Feed governance context to LLMs through MCP. Let AI agents validate their own outputs against architecture rulesets before committing.
+
+**For growing products**
+Start with a modular monolith. Migrate to distributed modules or microservices when the business demands it — Evolith tracks the transition and enforces consistency at every step.
+
+---
+
+## Roadmap
+
+See the active gap tracking board for current priorities and open items:
+
+- [Gap Tracking Board](./reference/governance/standards/vision/gap-tracking.md)
+- [Maturity & Gaps hub](./reference/governance/standards/vision/README.md)
+
+---
 
 ## Contributing
 
-Before contributing, read the [Contributing Guide](./CONTRIBUTING.md), the [Security Policy](./SECURITY.md), and [AGENTS.md](./AGENTS.md) for agent conventions. See the [Repository Taxonomy](./reference/governance/standards/repository-taxonomy.md) for what goes where.
+Read these before opening a PR:
+
+- [Contributing Guide](./CONTRIBUTING.md)
+- [Security Policy](./SECURITY.md)
+- [AGENTS.md](./AGENTS.md) — conventions for AI agent contributors
+- [Repository Taxonomy](./reference/governance/standards/repository-taxonomy.md) — what goes where
+
+---
 
 ## License
 

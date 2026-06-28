@@ -3405,6 +3405,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** smart-cli / calidad · **Prioridad:** P1 · **Riesgo:** medio · **Dependencias:** GT-344
 - **Archivos:** `sdk/cli/src/infrastructure/plugins/plugin-loader.spec.ts:55`, `…/standards/standards.command.spec.ts:73`, `…/__tests__/cli.integration.spec.ts:20`
 - **Fix propuesto:** reparar ctor/mocks; soportar `--version`; restaurar type-check de specs.
+- **Fix aplicado (parcial — 21→5 suites en rojo):** GT-344 ya resolvió la clase ENOENT. Luego corregidos todos los errores TS de specs para que cada suite corra: casts `as unknown`→`as any`, `as jest.Mock`→`as unknown as jest.Mock`, `(callbacks: unknown)`→`any`, llamadas a ctor actualizadas a las firmas actuales (InitCommand +fileSystem/+promptService, HandoffCommand +fileSystem, StandardsCommand +fileSystem, GateCommand cast promptService), casts de mock-fs, `step.validate!`, tipado de `commandModules`, literales de fixture (webhook `passed`). 17 specs. Resultado: **21→5 suites en rojo, 867 pasando (antes 640), 0 errores TS, sin regresiones.**
+- **Evidencia:** `npm run --workspace sdk/cli test` → 5 fallan / 59 pasan (antes 21/43).
+- **Restante (reparaciones runtime, próxima pasada):** adr.command.spec (promptService no inyectado), cli.integration.spec (`runCli` apunta a `sdk/bin/evolith.js` inexistente; debe ser `sdk/cli/dist/main.js`; + soporte `--version`), completion.command.spec (`install` es string de shell — mockear `installCompletion`), drift + fixtures (mock/aserción).
 - **Hecho cuando:** [ ] `npm test` de sdk/cli verde con cobertura.
 
 #### GT-346

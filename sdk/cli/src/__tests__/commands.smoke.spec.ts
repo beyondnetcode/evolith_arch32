@@ -1,5 +1,5 @@
 describe('CLI command smoke tests', () => {
-  const commandModules = [
+  const commandModules: Array<[string, () => unknown]> = [
     ['AgentsCommand', () => require('../commands/agents')],
     ['UpgradeCommand', () => require('../commands/upgrade')],
   ];

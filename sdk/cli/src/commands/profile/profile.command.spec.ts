@@ -62,11 +62,11 @@ describe('ProfileCommand', () => {
     });
 
     it('should create profile when "create" action provided', async () => {
-      (p.text as jest.Mock).mockResolvedValueOnce('test-profile');
-      (p.text as jest.Mock).mockResolvedValueOnce('../evolith');
-      (p.text as jest.Mock).mockResolvedValueOnce('');
-      (p.text as jest.Mock).mockResolvedValueOnce('');
-      (p.text as jest.Mock).mockResolvedValueOnce('');
+      (p.text as unknown as jest.Mock).mockResolvedValueOnce('test-profile');
+      (p.text as unknown as jest.Mock).mockResolvedValueOnce('../evolith');
+      (p.text as unknown as jest.Mock).mockResolvedValueOnce('');
+      (p.text as unknown as jest.Mock).mockResolvedValueOnce('');
+      (p.text as unknown as jest.Mock).mockResolvedValueOnce('');
       mockConfigService.profileExists.mockReturnValue(false);
       
       await expect(command.executeCommand(['create'], {})).resolves.not.toThrow();
@@ -75,8 +75,8 @@ describe('ProfileCommand', () => {
 
     it('should handle cancelled profile creation', async () => {
       const cancelSymbol = Symbol('CANCEL');
-      (p.text as jest.Mock).mockResolvedValueOnce(cancelSymbol);
-      (p.isCancel as jest.Mock).mockReturnValueOnce(true);
+      (p.text as unknown as jest.Mock).mockResolvedValueOnce(cancelSymbol);
+      (p.isCancel as unknown as jest.Mock).mockReturnValueOnce(true);
       
       await expect(command.executeCommand(['create'], {})).resolves.not.toThrow();
     });

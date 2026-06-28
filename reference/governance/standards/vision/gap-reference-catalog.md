@@ -3458,7 +3458,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** smart-cli / quality · **Priority:** P1 · **Risk:** med · **Dependencies:** GT-344
 - **Files:** `sdk/cli/src/infrastructure/plugins/plugin-loader.spec.ts:55`, `…/standards/standards.command.spec.ts:73`, `…/adr/adr.command.spec.ts`, `…/__tests__/cli.integration.spec.ts:20`
 - **Proposed fix:** repair ctor/mocks; add `--version`; restore spec type-checking.
-- **Evidence:** `npm test` → 42/661 failing (22 suites) without env; ~21 still fail with WORKSPACE_ROOT set (genuine rot).
+- **Applied fix (partial — 21→5 failing suites):** GT-344 already cleared the ENOENT class. Then fixed all spec TS-compile errors so every suite runs: `as unknown`→`as any` member-access casts, `as jest.Mock`→`as unknown as jest.Mock`, `(callbacks: unknown)`→`any`, updated ctor calls to current signatures (InitCommand +fileSystem/+promptService, HandoffCommand +fileSystem, StandardsCommand +fileSystem, GateCommand promptService cast), mock-fs casts, `step.validate!` non-null, typed `commandModules`, fixture literals (webhook `passed`). 17 spec files. Result: **21→5 failed suites, 867 passing (was 640), 0 TS errors, no regressions.**
+- **Evidence:** `npm run --workspace sdk/cli test` → 5 failed / 59 passed suites (was 21/43).
+- **Remaining (runtime repairs, next pass):** adr.command.spec (promptService not injected — likely ctor-arg shift), cli.integration.spec (`runCli` points at non-existent `sdk/bin/evolith.js`; should target `sdk/cli/dist/main.js`; plus `--version` support), completion.command.spec (`install` is a shell string — mock `installCompletion`), drift.command.spec + fixtures.command.spec (mock/assertion repair).
 - **Done when:** [ ] sdk/cli `npm test` green with coverage emitted.
 
 #### GT-346

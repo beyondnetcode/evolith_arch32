@@ -32,11 +32,11 @@ describe('CompletionCommand', () => {
 
     it('should handle install option', async () => {
       (fsExtra.pathExists as jest.Mock).mockResolvedValue(true);
-      await expect(command.executeCommand([], { install: true })).resolves.not.toThrow();
+      await expect(command.executeCommand([], { install: 'bash' })).resolves.not.toThrow();
     });
 
     it('should handle installHooks option', async () => {
-      await expect(command.executeCommand([], { installHooks: true })).resolves.not.toThrow();
+      await expect(command.executeCommand([], { installHooks: 'bash' })).resolves.not.toThrow();
     });
   });
 

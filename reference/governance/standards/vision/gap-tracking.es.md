@@ -12,7 +12,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 > Una sola tabla con todos los gaps y actividades rastreadas. Los IDs `GT-*` enlazan a su detalle completo en el catálogo; los IDs `MT-A*` enlazan al plan de implementación Multi-Topology de apoyo, pero esta tabla sigue siendo la fuente canónica de estado. Orden: pendientes primero (por criticidad P0→P3, luego complejidad XS→XL), después completados (mismo criterio). GitHub renderiza Markdown de forma estática (sin orden ni búsqueda interactivos): la columna **Componente** categoriza y la búsqueda de archivo de GitHub (`/`) encuentra un ID o término.
 
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
-|---|---|:---:|:---:|:---:|:---:|:---:|:---:|
+|---|---|:---:|:---:|:---:|:---:|:---:|
 | [`GT-359`](./gap-reference-catalog.es.md#gt-359) | Definir esquema de contrato de ingesta `SatelliteManifest` | `Core Domain` | Cross | P0 | M | `PENDIENTE` |
 | [`GT-363`](./gap-reference-catalog.es.md#gt-363) | Cliente de integración con GitHub API — auth seguro + operaciones de repo (crear, configurar, branch protection, rulesets, webhooks) | `Infra` | Cross | P0 | M | `PENDIENTE` |
 | [`GT-362`](./gap-reference-catalog.es.md#gt-362) | Implementar enforcement en runtime para políticas Rego | `Core Domain` | Cross | P0 | L | `PENDIENTE` |

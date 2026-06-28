@@ -3256,7 +3256,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-331
 
-**Título:** Deriva de versión del binario MCP — `APLICADO`
+**Título:** Deriva de versión del binario MCP — `DONE`
 
 - **Componente:** mcp-server · **Prioridad:** P2 · **Riesgo:** bajo→ninguno · **Dependencias:** ninguna
 - **Archivos:** `packages/mcp-server/src/main.ts:10`
@@ -3266,7 +3266,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-332
 
-**Título:** El dispatch mutativo filtraba approvalToken + args (seguridad) — `APLICADO`
+**Título:** El dispatch mutativo filtraba approvalToken + args (seguridad) — `DONE`
 
 - **Componente:** mcp-server · **Prioridad:** P1 · **Riesgo:** medio→ninguno · **Dependencias:** ninguna
 - **Archivos:** `packages/mcp-server/src/mcp/mcp-tool-dispatch.ts:128`
@@ -3277,7 +3277,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-333
 
-**Título:** Comparación de API key con `===` (canal de tiempo, seguridad) — `APLICADO`
+**Título:** Comparación de API key con `===` (canal de tiempo, seguridad) — `DONE`
 
 - **Componente:** mcp-server · **Prioridad:** P2 · **Riesgo:** medio→bajo · **Dependencias:** ninguna
 - **Archivos:** `packages/mcp-server/src/mcp/mcp-server-auth.ts:43`
@@ -3287,7 +3287,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-334
 
-**Título:** opa-wasm no es dependencia directa de mcp-server — `APLICADO`
+**Título:** opa-wasm no es dependencia directa de mcp-server — `DONE`
 
 - **Componente:** mcp-server · **Prioridad:** P2 · **Riesgo:** medio→ninguno · **Dependencias:** ninguna
 - **Archivos:** `packages/mcp-server/package.json`
@@ -3296,7 +3296,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-335
 
-**Título:** Herramienta read-gap-tracking inservible — `APLICADO`
+**Título:** Herramienta read-gap-tracking inservible — `DONE`
 
 - **Componente:** mcp-tools · **Prioridad:** P1 · **Riesgo:** medio→ninguno · **Dependencias:** ninguna
 - **Archivos:** `packages/mcp-tools/src/tools/read-gap-tracking.js`
@@ -3306,7 +3306,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-336
 
-**Título:** Las rutas REST del SDK omiten el prefijo `/api` (crítico) — `APLICADO`
+**Título:** Las rutas REST del SDK omiten el prefijo `/api` (crítico) — `DONE`
 
 - **Componente:** sdk-client · **Prioridad:** P0 · **Riesgo:** crítico→ninguno · **Dependencias:** ninguna
 - **Archivos:** `packages/sdk-client/src/rest/evolith-rest-client.ts`
@@ -3317,7 +3317,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-337
 
-**Título:** Tipo ApiEnvelope no coincide — `APLICADO`
+**Título:** Tipo ApiEnvelope no coincide — `DONE`
 
 - **Componente:** sdk-client · **Prioridad:** P1 · **Riesgo:** medio→bajo · **Dependencias:** GT-336
 - **Archivos:** `packages/sdk-client/src/rest/types.ts`
@@ -3327,7 +3327,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-338
 
-**Título:** Exports de subruta rotos en @evolith/core — `APLICADO`
+**Título:** Exports de subruta rotos en @evolith/core — `DONE`
 
 - **Componente:** core · **Prioridad:** P1 · **Riesgo:** medio→ninguno · **Dependencias:** ninguna
 - **Archivos:** `packages/core/package.json`, `packages/core/README.md`
@@ -3338,7 +3338,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-339
 
-**Título:** core-api propone-advance con fromPhase undefined (bug de contrato) — `APLICADO`
+**Título:** core-api propone-advance con fromPhase undefined (bug de contrato) — `DONE`
 
 - **Componente:** core-api · **Prioridad:** P1 · **Riesgo:** alto→ninguno · **Dependencias:** ninguna
 - **Archivos:** `apps/core-api/src/presentation/controllers/projects.controller.ts:44`, `dtos/projects.dto.ts:30`
@@ -3349,7 +3349,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-340
 
-**Título:** El harness de tests de core-api no fija WORKSPACE_ROOT — `APLICADO`
+**Título:** El harness de tests de core-api no fija WORKSPACE_ROOT — `DONE`
 
 - **Componente:** core-api / calidad · **Prioridad:** P1 · **Riesgo:** alto→ninguno · **Dependencias:** GT-344
 - **Archivos:** `apps/core-api/test-setup.js`
@@ -3360,7 +3360,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-341
 
-**Título:** El generador de inventario escanea una ruta MCP muerta — `APLICADO`
+**Título:** El generador de inventario escanea una ruta MCP muerta — `DONE`
 
 - **Componente:** gobernanza/docs · **Prioridad:** P1 · **Riesgo:** alto→ninguno · **Dependencias:** ninguna
 - **Archivos:** `.harness/scripts/generate-product-inventory.mjs:43`
@@ -3370,7 +3370,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-342
 
-**Título:** El README lista 6 topologías en vez de 8 — `APLICADO`
+**Título:** El README lista 6 topologías en vez de 8 — `DONE`
 
 - **Componente:** docs · **Prioridad:** P1 · **Riesgo:** bajo · **Dependencias:** ninguna
 - **Archivos:** `README.md:67`, `README.es.md:67`

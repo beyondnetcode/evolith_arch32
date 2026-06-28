@@ -29,18 +29,18 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-354`](./gap-reference-catalog.es.md#gt-354) | módulo OpenAPI muerto en core-api; api-reference sin cache/invalidate | `Core API` | Cross | P2 | S | `COMPLETADO` |
 | [`GT-355`](./gap-reference-catalog.es.md#gt-355) | @evolith/core sin test de contrato del barrel de re-exports | `Core` | Cross | P2 | S | `COMPLETADO` |
 | [`GT-356`](./gap-reference-catalog.es.md#gt-356) | README de mcp-services con conteos/comando mantenidos a mano | `Docs` | Cross | P2 | S | `COMPLETADO` |
-| [`GT-331`](./gap-reference-catalog.es.md#gt-331) | Versión del binario MCP leída de package.json (antes hardcodeada 1.0.0) | `MCP Server` | Cross | P2 | XS | `EN-PROGRESO` |
-| [`GT-332`](./gap-reference-catalog.es.md#gt-332) | Redactar approvalToken + args en el log de dispatch mutativo | `MCP Server` | Cross | P1 | S | `EN-PROGRESO` |
-| [`GT-333`](./gap-reference-catalog.es.md#gt-333) | Comparación de API key en tiempo constante (timingSafeEqual) | `MCP Server` | Cross | P2 | XS | `EN-PROGRESO` |
-| [`GT-334`](./gap-reference-catalog.es.md#gt-334) | Declarar @open-policy-agent/opa-wasm como dependencia directa de mcp-server | `MCP Server` | Cross | P2 | XS | `EN-PROGRESO` |
-| [`GT-335`](./gap-reference-catalog.es.md#gt-335) | Arreglar el filtro PENDING muerto de read-gap-tracking (parser de status + raíz inyectable) | `MCP Tools` | Cross | P1 | S | `EN-PROGRESO` |
-| [`GT-336`](./gap-reference-catalog.es.md#gt-336) | Cliente REST del SDK sin prefijo /api — todas las llamadas 404 | `SDK` | Cross | P0 | S | `EN-PROGRESO` |
-| [`GT-337`](./gap-reference-catalog.es.md#gt-337) | Tipo ApiEnvelope como unión discriminada que refleja core-api | `SDK` | Cross | P1 | S | `EN-PROGRESO` |
-| [`GT-338`](./gap-reference-catalog.es.md#gt-338) | Exports de subruta rotos de @evolith/core (MODULE_NOT_FOUND) podados + README | `Core` | Cross | P1 | S | `EN-PROGRESO` |
-| [`GT-339`](./gap-reference-catalog.es.md#gt-339) | core-api propone-advance pasaba fromPhase undefined (bug de contrato) | `Core API` | Cross | P1 | S | `EN-PROGRESO` |
-| [`GT-340`](./gap-reference-catalog.es.md#gt-340) | El harness de tests de core-api fija WORKSPACE_ROOT — npm test 105/105 (antes 23 fallando) | `Core API` | Cross | P1 | S | `EN-PROGRESO` |
-| [`GT-341`](./gap-reference-catalog.es.md#gt-341) | Generador de product-inventory reapuntado a packages/mcp-server (antes 0/0/0, ahora 27/9/8) | `Governance` | Cross | P1 | S | `EN-PROGRESO` |
-| [`GT-342`](./gap-reference-catalog.es.md#gt-342) | El README lista 8 topologías (añadidas Módulos Distribuidos + Microservicios, EN+ES) | `Docs` | Cross | P1 | XS | `EN-PROGRESO` |
+| [`GT-331`](./gap-reference-catalog.es.md#gt-331) | Versión del binario MCP leída de package.json (antes hardcodeada 1.0.0) | `MCP Server` | Cross | P2 | XS | `COMPLETADO` |
+| [`GT-332`](./gap-reference-catalog.es.md#gt-332) | Redactar approvalToken + args en el log de dispatch mutativo | `MCP Server` | Cross | P1 | S | `COMPLETADO` |
+| [`GT-333`](./gap-reference-catalog.es.md#gt-333) | Comparación de API key en tiempo constante (timingSafeEqual) | `MCP Server` | Cross | P2 | XS | `COMPLETADO` |
+| [`GT-334`](./gap-reference-catalog.es.md#gt-334) | Declarar @open-policy-agent/opa-wasm como dependencia directa de mcp-server | `MCP Server` | Cross | P2 | XS | `COMPLETADO` |
+| [`GT-335`](./gap-reference-catalog.es.md#gt-335) | Arreglar el filtro PENDING muerto de read-gap-tracking (parser de status + raíz inyectable) | `MCP Tools` | Cross | P1 | S | `COMPLETADO` |
+| [`GT-336`](./gap-reference-catalog.es.md#gt-336) | Cliente REST del SDK sin prefijo /api — todas las llamadas 404 | `SDK` | Cross | P0 | S | `COMPLETADO` |
+| [`GT-337`](./gap-reference-catalog.es.md#gt-337) | Tipo ApiEnvelope como unión discriminada que refleja core-api | `SDK` | Cross | P1 | S | `COMPLETADO` |
+| [`GT-338`](./gap-reference-catalog.es.md#gt-338) | Exports de subruta rotos de @evolith/core (MODULE_NOT_FOUND) podados + README | `Core` | Cross | P1 | S | `COMPLETADO` |
+| [`GT-339`](./gap-reference-catalog.es.md#gt-339) | core-api propone-advance pasaba fromPhase undefined (bug de contrato) | `Core API` | Cross | P1 | S | `COMPLETADO` |
+| [`GT-340`](./gap-reference-catalog.es.md#gt-340) | El harness de tests de core-api fija WORKSPACE_ROOT — npm test 105/105 (antes 23 fallando) | `Core API` | Cross | P1 | S | `COMPLETADO` |
+| [`GT-341`](./gap-reference-catalog.es.md#gt-341) | Generador de product-inventory reapuntado a packages/mcp-server (antes 0/0/0, ahora 27/9/8) | `Governance` | Cross | P1 | S | `COMPLETADO` |
+| [`GT-342`](./gap-reference-catalog.es.md#gt-342) | El README lista 8 topologías (añadidas Módulos Distribuidos + Microservicios, EN+ES) | `Docs` | Cross | P1 | XS | `COMPLETADO` |
 | [`GT-314`](./gap-reference-catalog.es.md#gt-314) | Validar el artefacto real del satélite, no la plantilla del Core (evidence-validator resuelve rutas de plantilla) | `Core Domain` | Cross | P0 | M | `COMPLETADO` |
 | [`GT-315`](./gap-reference-catalog.es.md#gt-315) | Sistema de eventos de dominio: bus + outbox + eventos versionados (phase/gate/artifact/blueprint/workflow) | `Core Domain` | Cross | P0 | L | `COMPLETADO` |
 | [`GT-316`](./gap-reference-catalog.es.md#gt-316) | Verdict unificado + máquina de estados de artefacto/fase (created hasta archived) | `Core Domain` | Cross | P0 | L | `COMPLETADO` |
@@ -373,7 +373,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-246`](./gap-reference-catalog.es.md#gt-246) | Implementar experimentos Chaos Mesh/Litmus | `QA` | Cross | P3 | L | `COMPLETADO` |
 
 
-**Progreso:** 343 / 358 completados · 14 en progreso · 0 pendientes · 1 diferidos
+**Progreso:** 355 / 358 completados · 2 en progreso · 0 pendientes · 1 diferidos
 
 **Oleada 2026-06-23 (auditoría profunda de Wilson III):** Añadidos 14 gaps nuevos `GT-212`…`GT-225` del Wilson Audit Playbook que cubren: higiene de estado ADR (GT-212), metadata + presupuestos operativos + corpus de guías por topología (GT-213, GT-217, GT-219), observabilidad + OpenAPI en controladores REST (GT-214, GT-215), paridad de input-schemas OPA + densidad de tests por topología (GT-216, GT-222), plantillas de rollback + on-call de Fase 05 (GT-218), cobertura de ramas CLI + paridad de envelope --format + limpieza de skip-list (GT-220, GT-224, GT-225), audit logging HTTP de MCP (GT-221), y tests e2e de paridad cross-surface (GT-223).
 

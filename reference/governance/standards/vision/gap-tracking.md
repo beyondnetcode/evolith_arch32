@@ -29,18 +29,18 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-354`](./gap-reference-catalog.md#gt-354) | core-api OpenAPI module dead code; api-reference missing cache/invalidate | `Core API` | Cross | P2 | S | `DONE` |
 | [`GT-355`](./gap-reference-catalog.md#gt-355) | @evolith/core has no contract/smoke test for the re-export barrel | `Core` | Cross | P2 | S | `DONE` |
 | [`GT-356`](./gap-reference-catalog.md#gt-356) | mcp-services README hand-maintained counts/command stale | `Docs` | Cross | P2 | S | `DONE` |
-| [`GT-331`](./gap-reference-catalog.md#gt-331) | MCP binary version read from package.json (was hardcoded 1.0.0) | `MCP Server` | Cross | P2 | XS | `IN-PROGRESS` |
-| [`GT-332`](./gap-reference-catalog.md#gt-332) | Redact approvalToken + args in mutative dispatch audit log | `MCP Server` | Cross | P1 | S | `IN-PROGRESS` |
-| [`GT-333`](./gap-reference-catalog.md#gt-333) | Constant-time API-key comparison (timingSafeEqual) | `MCP Server` | Cross | P2 | XS | `IN-PROGRESS` |
-| [`GT-334`](./gap-reference-catalog.md#gt-334) | Declare @open-policy-agent/opa-wasm as direct mcp-server dependency | `MCP Server` | Cross | P2 | XS | `IN-PROGRESS` |
-| [`GT-335`](./gap-reference-catalog.md#gt-335) | Fix read-gap-tracking dead PENDING filter (status parser + injectable root) | `MCP Tools` | Cross | P1 | S | `IN-PROGRESS` |
-| [`GT-336`](./gap-reference-catalog.md#gt-336) | SDK REST client missing /api prefix — all calls 404 | `SDK` | Cross | P0 | S | `IN-PROGRESS` |
-| [`GT-337`](./gap-reference-catalog.md#gt-337) | SDK ApiEnvelope type as discriminated union matching core-api | `SDK` | Cross | P1 | S | `IN-PROGRESS` |
-| [`GT-338`](./gap-reference-catalog.md#gt-338) | @evolith/core broken subpath exports (MODULE_NOT_FOUND) pruned + README | `Core` | Cross | P1 | S | `IN-PROGRESS` |
-| [`GT-339`](./gap-reference-catalog.md#gt-339) | core-api propose-advance forwarded fromPhase undefined (contract bug) | `Core API` | Cross | P1 | S | `IN-PROGRESS` |
-| [`GT-340`](./gap-reference-catalog.md#gt-340) | core-api test harness sets WORKSPACE_ROOT — npm test 105/105 (was 23 failing) | `Core API` | Cross | P1 | S | `IN-PROGRESS` |
-| [`GT-341`](./gap-reference-catalog.md#gt-341) | product-inventory generator repointed to packages/mcp-server (was 0/0/0, now 27/9/8) | `Governance` | Cross | P1 | S | `IN-PROGRESS` |
-| [`GT-342`](./gap-reference-catalog.md#gt-342) | README lists 8 topologies (added Distributed Modules + Microservices, EN+ES) | `Docs` | Cross | P1 | XS | `IN-PROGRESS` |
+| [`GT-331`](./gap-reference-catalog.md#gt-331) | MCP binary version read from package.json (was hardcoded 1.0.0) | `MCP Server` | Cross | P2 | XS | `DONE` |
+| [`GT-332`](./gap-reference-catalog.md#gt-332) | Redact approvalToken + args in mutative dispatch audit log | `MCP Server` | Cross | P1 | S | `DONE` |
+| [`GT-333`](./gap-reference-catalog.md#gt-333) | Constant-time API-key comparison (timingSafeEqual) | `MCP Server` | Cross | P2 | XS | `DONE` |
+| [`GT-334`](./gap-reference-catalog.md#gt-334) | Declare @open-policy-agent/opa-wasm as direct mcp-server dependency | `MCP Server` | Cross | P2 | XS | `DONE` |
+| [`GT-335`](./gap-reference-catalog.md#gt-335) | Fix read-gap-tracking dead PENDING filter (status parser + injectable root) | `MCP Tools` | Cross | P1 | S | `DONE` |
+| [`GT-336`](./gap-reference-catalog.md#gt-336) | SDK REST client missing /api prefix — all calls 404 | `SDK` | Cross | P0 | S | `DONE` |
+| [`GT-337`](./gap-reference-catalog.md#gt-337) | SDK ApiEnvelope type as discriminated union matching core-api | `SDK` | Cross | P1 | S | `DONE` |
+| [`GT-338`](./gap-reference-catalog.md#gt-338) | @evolith/core broken subpath exports (MODULE_NOT_FOUND) pruned + README | `Core` | Cross | P1 | S | `DONE` |
+| [`GT-339`](./gap-reference-catalog.md#gt-339) | core-api propose-advance forwarded fromPhase undefined (contract bug) | `Core API` | Cross | P1 | S | `DONE` |
+| [`GT-340`](./gap-reference-catalog.md#gt-340) | core-api test harness sets WORKSPACE_ROOT — npm test 105/105 (was 23 failing) | `Core API` | Cross | P1 | S | `DONE` |
+| [`GT-341`](./gap-reference-catalog.md#gt-341) | product-inventory generator repointed to packages/mcp-server (was 0/0/0, now 27/9/8) | `Governance` | Cross | P1 | S | `DONE` |
+| [`GT-342`](./gap-reference-catalog.md#gt-342) | README lists 8 topologies (added Distributed Modules + Microservices, EN+ES) | `Docs` | Cross | P1 | XS | `DONE` |
 | [`GT-314`](./gap-reference-catalog.md#gt-314) | Validate the real satellite artifact, not the Core template (evidence-validator resolves template paths) | `Core Domain` | Cross | P0 | M | `DONE` |
 | [`GT-315`](./gap-reference-catalog.md#gt-315) | Domain event system: bus + outbox + versioned events (phase/gate/artifact/blueprint/workflow) | `Core Domain` | Cross | P0 | L | `DONE` |
 | [`GT-316`](./gap-reference-catalog.md#gt-316) | Unified verdict + artifact/phase lifecycle state machine (created to archived) | `Core Domain` | Cross | P0 | L | `DONE` |
@@ -373,7 +373,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-246`](./gap-reference-catalog.md#gt-246) | Implement Chaos Mesh/Litmus experiments | `QA` | Cross | P3 | L | `DONE` |
 
 
-**Progress:** 343 / 358 done · 14 in progress · 0 pending · 1 deferred
+**Progress:** 355 / 358 done · 2 in progress · 0 pending · 1 deferred
 
 **Wave 2026-06-23 (Wilson deep audit III):** Added 14 new gaps `GT-212`…`GT-225` from the Wilson Audit Playbook covering: ADR status hygiene (GT-212), topology manifest metadata + operational budgets + guidance corpus (GT-213, GT-217, GT-219), REST controller observability + OpenAPI (GT-214, GT-215), OPA input-schema parity + per-topology test density (GT-216, GT-222), SDLC Phase 05 rollback + on-call templates (GT-218), CLI branch coverage + envelope format coverage + skip-list cleanup (GT-220, GT-224, GT-225), MCP HTTP audit logging (GT-221), and cross-surface parity e2e tests (GT-223).
 

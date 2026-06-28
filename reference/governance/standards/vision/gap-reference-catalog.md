@@ -3301,7 +3301,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-331
 
-**Title:** MCP binary version drift — `APPLIED`
+**Title:** MCP binary version drift — `DONE`
 
 - **Component:** mcp-server · **Priority:** P2 · **Risk:** low→none · **Dependencies:** none
 - **Files:** `packages/mcp-server/src/main.ts:10`
@@ -3312,7 +3312,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-332
 
-**Title:** Mutative dispatch leaked approvalToken + args (security) — `APPLIED`
+**Title:** Mutative dispatch leaked approvalToken + args (security) — `DONE`
 
 - **Component:** mcp-server · **Priority:** P1 · **Risk:** med→none · **Dependencies:** none
 - **Files:** `packages/mcp-server/src/mcp/mcp-tool-dispatch.ts:128`
@@ -3323,7 +3323,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-333
 
-**Title:** API-key compared with `===` (timing channel, security) — `APPLIED`
+**Title:** API-key compared with `===` (timing channel, security) — `DONE`
 
 - **Component:** mcp-server · **Priority:** P2 · **Risk:** med→low · **Dependencies:** none
 - **Files:** `packages/mcp-server/src/mcp/mcp-server-auth.ts:43`
@@ -3334,7 +3334,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-334
 
-**Title:** opa-wasm not a direct mcp-server dependency — `APPLIED`
+**Title:** opa-wasm not a direct mcp-server dependency — `DONE`
 
 - **Component:** mcp-server · **Priority:** P2 · **Risk:** med (hoist break)→none · **Dependencies:** none
 - **Files:** `packages/mcp-server/package.json`
@@ -3345,7 +3345,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-335
 
-**Title:** read-gap-tracking tool functionally dead — `APPLIED`
+**Title:** read-gap-tracking tool functionally dead — `DONE`
 
 - **Component:** mcp-tools · **Priority:** P1 · **Risk:** med→none · **Dependencies:** none
 - **Files:** `packages/mcp-tools/src/tools/read-gap-tracking.js`
@@ -3356,7 +3356,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-336
 
-**Title:** SDK REST paths miss `/api` prefix (critical) — `APPLIED`
+**Title:** SDK REST paths miss `/api` prefix (critical) — `DONE`
 
 - **Component:** sdk-client · **Priority:** P0 · **Risk:** critical→none · **Dependencies:** none
 - **Files:** `packages/sdk-client/src/rest/evolith-rest-client.ts`
@@ -3367,7 +3367,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-337
 
-**Title:** ApiEnvelope type mismatch — `APPLIED`
+**Title:** ApiEnvelope type mismatch — `DONE`
 
 - **Component:** sdk-client · **Priority:** P1 · **Risk:** med→low · **Dependencies:** GT-336
 - **Files:** `packages/sdk-client/src/rest/types.ts`
@@ -3378,7 +3378,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-338
 
-**Title:** @evolith/core broken subpath exports — `APPLIED`
+**Title:** @evolith/core broken subpath exports — `DONE`
 
 - **Component:** core · **Priority:** P1 · **Risk:** med→none · **Dependencies:** none
 - **Files:** `packages/core/package.json`, `packages/core/README.md`
@@ -3389,7 +3389,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-339
 
-**Title:** core-api propose-advance forwards fromPhase undefined (contract bug) — `APPLIED`
+**Title:** core-api propose-advance forwards fromPhase undefined (contract bug) — `DONE`
 
 - **Component:** core-api · **Priority:** P1 · **Risk:** high→none · **Dependencies:** none
 - **Files:** `apps/core-api/src/presentation/controllers/projects.controller.ts:44`, `dtos/projects.dto.ts:30`
@@ -3400,7 +3400,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-340
 
-**Title:** core-api test harness misses WORKSPACE_ROOT — `APPLIED`
+**Title:** core-api test harness misses WORKSPACE_ROOT — `DONE`
 
 - **Component:** core-api / quality · **Priority:** P1 · **Risk:** high→none · **Dependencies:** GT-344 (shared root cause)
 - **Files:** `apps/core-api/test-setup.js`
@@ -3411,7 +3411,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-341
 
-**Title:** product-inventory generator scans a dead MCP path — `APPLIED`
+**Title:** product-inventory generator scans a dead MCP path — `DONE`
 
 - **Component:** governance/docs · **Priority:** P1 · **Risk:** high→none · **Dependencies:** none
 - **Files:** `.harness/scripts/generate-product-inventory.mjs:43`
@@ -3422,7 +3422,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-342
 
-**Title:** README lists 6 topologies vs 8 — `APPLIED`
+**Title:** README lists 6 topologies vs 8 — `DONE`
 
 - **Component:** docs · **Priority:** P1 · **Risk:** low · **Dependencies:** none
 - **Files:** `README.md:67`, `README.es.md:67`

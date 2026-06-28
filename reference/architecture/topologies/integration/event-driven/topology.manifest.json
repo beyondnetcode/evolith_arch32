@@ -17,7 +17,7 @@
     "topologyType": "event-driven",
     "compatibility": {
       "progressiveAxis": {
-        "phase": "cross",
+        "maturityLevel": "cross",
         "profile": "cross"
       },
       "composableWith": [

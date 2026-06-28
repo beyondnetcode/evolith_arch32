@@ -5296,6 +5296,21 @@
         "node .harness/scripts/ci/04-check-bilingual-parity.mjs"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-343",
+      "closedAt": "2026-06-28",
+      "closureCommit": "95b5d51d",
+      "evidence": [
+        "packages/core-domain/src/domain/sdlc/phase-id.ts",
+        ".harness/scripts/ci/30-validate-phase-topology-disjoint.mjs",
+        "rulesets/schema/topology-manifest.schema.json"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/30-validate-phase-topology-disjoint.mjs",
+        "npm run --workspace packages/core-domain test"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

@@ -3379,7 +3379,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-343
 
-**Título:** EPIC — Unificación de vocabulario de fases SDLC/topología — `OPEN`
+**Título:** EPIC — Unificación de vocabulario de fases SDLC/topología — `DONE`
 
 - **Componente:** Transversal · **Prioridad:** P0 · **Riesgo:** alto (ruptura) · **Dependencias:** bloquea GA de todos los productos
 - **Archivos:** `reference/config/evolith.config.schema.json:18`, `apps/core-api/.../composable-validate.controller.ts:24`, `sdk/cli/.../validate.command.ts:483`, `rulesets/schema/topology-manifest.schema.json:121`, `packages/core-domain/.../topology-catalog.service.ts:4`
@@ -3391,8 +3391,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** validate-topology-manifests 13/13; composición + cobertura de reglas exit 0; core-domain 589/589; mcp-server + core-api compilan. No queda lector de `progressiveAxis.phase`.
 - **Fix aplicado (etapa 3 — enums SDLC públicos, retrocompatible):** ampliados los enums de fase en las 3 superficies de contrato + 2 schemas de tools MCP para aceptar los ids canónicos primero, con `f1..f5` como alias deprecado (sin eliminación dura → el Tracker externo sigue funcionando): `reference/config/evolith.config.schema.json`, DTO `/validate/composable`, descripción CLI `validate --phase`, y `composable-validate.tool.ts` + `validate.tool.ts`. Validado: core-api 105/105, mcp-server 162/162, CLI compila — ninguna suite rota.
 - **Fix aplicado (etapa 5 — guard anti-colisión):** añadido `.harness/scripts/ci/30-validate-phase-topology-disjoint.mjs`, cableado en `sdk-cli-ci.yml`. Falla CI si algún id de fase SDLC reusa el namespace F#, si colisionan ids de fase y topología, o si algún manifest reintroduce la clave legacy `progressiveAxis.phase`. Verificado: pasa limpio (5 ids SDLC disjuntos de 8 de topología) y detecta regresión (inyectar `phase` → exit 1).
-- **Riesgo residual:** etapas 4b (retirar VALORES F# → canónico en evolith.yaml/declaredLevel/drift) y 2b (validate-workflow) pendientes — ambas cleanup; la unificación conceptual + su guard de regresión están completas.
-- **Hecho cuando:** [x] fuente única PhaseId + normalizador (etapa 1); [x] validators/services lo usan (etapa 2 — 4/5 sitios; validate-workflow = 2b); [x] superficies de contrato migradas (etapa 3); [x] `phase`→`maturityLevel` en topología (etapa 4); [x] guard sin colisión (etapa 5); [ ] valores F# retirados (4b) + validate-workflow (2b).
+- **Fix aplicado (etapa 2b — validate-workflow):** `validate-workflow.use-case` ahora rutea los phase ids vía `normalizePhaseId`/`toLegacyPhaseId` (commit 95b5d51d); core-domain 600/600 verde.
+- **Cierre (etapa 4b DESCOPEADA, no abandonada):** retirar los VALORES F1/F2/F3 de madurez → ids canónicos queda **descopeado tras investigación**. F1/F2/F3 son **ordinales** de madurez claramente etiquetados en el eje progresivo — el id canónico de topología ya está en `profile`, y el schema los documenta como *"ordinales de madurez legacy … NO una fase SDLC."* Están entrelazados en ~24 archivos (architecture-validator / drift+fixtures del CLI / MCP tools / DTO de API / schemas / OPA), y el `architecture-validator` razona en F1/F2/F3 en todo su flujo. Retirarlos es un refactor breaking de alto riesgo y valor marginal ahora que la meta del EPIC — eliminar la confusión fase-SDLC ↔ topología — está lograda (etapas 1–5) y protegida contra regresión (etapa 5).
+- **Hecho cuando:** [x] fuente única PhaseId + normalizador (etapa 1); [x] validators/services lo usan (etapa 2 + 2b validate-workflow); [x] superficies de contrato migradas (etapa 3); [x] `phase`→`maturityLevel` en topología (etapa 4); [x] guard sin colisión (etapa 5); [x] follow-ups dispuestos — 2b hecho, 4b descopeado (F# son ordinales de madurez bien etiquetados; id canónico ya en `profile`).
 
 #### GT-344
 

@@ -11,9 +11,9 @@ Instantánea estratégica generada desde el tablero canónico de gaps y la recon
 
 **Decisión actual:** NO-GO para expansión productiva o release mayor: existen bloqueadores P0 activos.
 
-**Mayor problema ahora:** `Core Domain` concentra el mayor riesgo abierto ponderado (1 pendientes, 1 P0). Ataca esa concentración antes de ampliar alcance.
+**Mayor problema ahora:** `Security` concentra el mayor riesgo abierto ponderado (1 pendientes, 1 P0). Ataca esa concentración antes de ampliar alcance.
 
-**Dónde atacar primero:** [GT-313](./gap-reference-catalog.es.md#gt-313), [GT-362](./gap-reference-catalog.es.md#gt-362).
+**Dónde atacar primero:** [GT-313](./gap-reference-catalog.es.md#gt-313).
 
 ## Diagnóstico Estratégico
 
@@ -25,8 +25,8 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 
 | Orden | Foco | Motivo | IDs |
 |---:|---|---|---|
-| 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | [GT-313](./gap-reference-catalog.es.md#gt-313), [GT-362](./gap-reference-catalog.es.md#gt-362) |
-| 2 | Área de mayor riesgo | `Core Domain` tiene la mayor carga ponderada abierta. | [GT-362](./gap-reference-catalog.es.md#gt-362) |
+| 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | [GT-313](./gap-reference-catalog.es.md#gt-313) |
+| 2 | Área de mayor riesgo | `Security` tiene la mayor carga ponderada abierta. | [GT-313](./gap-reference-catalog.es.md#gt-313) |
 | 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | [GT-313](./gap-reference-catalog.es.md#gt-313), [GT-361](./gap-reference-catalog.es.md#gt-361) |
 | 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-361](./gap-reference-catalog.es.md#gt-361), [GT-324](./gap-reference-catalog.es.md#gt-324), [GT-360](./gap-reference-catalog.es.md#gt-360) |
 | 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | - |
@@ -36,7 +36,6 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 | ID | Ataque | Componente | Esfuerzo |
 |---|---|---|---|
 | [GT-313](./gap-reference-catalog.es.md#gt-313) | Rotar y externalizar GH_TOKEN mediante un gestor de secretos | `Security` | P0/XS |
-| [GT-362](./gap-reference-catalog.es.md#gt-362) | Implementar enforcement en runtime para políticas Rego | `Core Domain` | P0/L |
 
 ## Métricas
 
@@ -44,18 +43,17 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 |---|---:|
 | Fecha canónica del tablero | 2026-06-28 |
 | Gaps totales | 374 |
-| Gaps cerrados | 369 |
-| Gaps pendientes | 5 |
-| P0 abiertos | 2 |
+| Gaps cerrados | 370 |
+| Gaps pendientes | 4 |
+| P0 abiertos | 1 |
 | P1 abiertos | 3 |
 | P2 abiertos | 0 |
-| Cierre total | 98.7% |
+| Cierre total | 98.9% |
 | Registros de evidencia de cierre | 350 |
 | Readiness registrado | 3 PASS, 1 RESOLVED |
 
 | Área | Pendientes | P0 | P1 | Primeros IDs |
 |---|---:|---:|---:|---|
-| `Core Domain` | 1 | 1 | 0 | [GT-362](./gap-reference-catalog.es.md#gt-362) |
 | `Security` | 1 | 1 | 0 | [GT-313](./gap-reference-catalog.es.md#gt-313) |
 | `Core API` | 2 | 0 | 2 | [GT-361](./gap-reference-catalog.es.md#gt-361), [GT-360](./gap-reference-catalog.es.md#gt-360) |
 | `Infra` | 1 | 0 | 1 | [GT-324](./gap-reference-catalog.es.md#gt-324) |

@@ -48,15 +48,29 @@ describe('OpaEvaluator', () => {
     corePath: '/core',
   };
 
-  it('should skip evaluation if policy.wasm is not present', async () => {
+  it('blocks (result: failed) when policy.wasm is absent — GT-362 enforcement', async () => {
     const results = await evaluator.evaluateAll([mockRule], ctx);
     expect(results).toHaveLength(1);
-    expect(results[0].result).toBe('skipped');
-    expect(results[0].message).toMatch(/OPA Wasm policy not compiled yet/);
-    
-    const warnLogs = logger.getLogsByLevel('WARN');
-    expect(warnLogs.length).toBeGreaterThan(0);
-    expect(warnLogs[0].message).toMatch(/OPA WebAssembly policy not found/);
+    expect(results[0].result).toBe('failed');
+    expect(results[0].message).toMatch(/OPA policy not compiled — enforcement blocked/);
+
+    const errorLogs = logger.getLogsByLevel('ERROR');
+    expect(errorLogs.length).toBeGreaterThan(0);
+    expect(errorLogs[0].message).toMatch(/OPA WebAssembly policy not found/);
+  });
+
+  it('blocks (result: failed) when OPA engine throws — GT-362 enforcement', async () => {
+    const { loadPolicy } = require('@open-policy-agent/opa-wasm');
+    (loadPolicy as jest.Mock).mockRejectedValueOnce(new Error('wasm engine crash'));
+
+    const wasmPath = path.join('/core', 'rulesets', 'opa', 'policy.wasm');
+    fs.setFile(wasmPath, 'fake-wasm');
+
+    const results = await evaluator.evaluateAll([mockRule], ctx);
+    expect(results).toHaveLength(1);
+    expect(results[0].result).toBe('failed');
+    expect(results[0].message).toMatch(/OPA engine error — enforcement blocked/);
+    expect(results[0].message).toMatch(/wasm engine crash/);
   });
 
   it('should evaluate rules using the loaded Wasm policy if present and schema passes', async () => {

@@ -183,13 +183,16 @@ export class SatelliteEvaluationPipeline {
         );
 
         const opaResult = opaResults[0];
-        if (opaResult && opaResult.result === 'failed') {
+        // 'failed' = policy evaluated and found a violation.
+        // 'skipped' = policy could not execute (defense-in-depth: treat as blocking).
+        const opaBlocking = opaResult && (opaResult.result === 'failed' || opaResult.result === 'skipped');
+        if (opaBlocking) {
           evaluations.push({
             ruleId,
             rulePath,
             artifact: artifact.artifact,
             passed: false,
-            message: opaResult.message || `OPA policy evaluation failed`,
+            message: opaResult.message || `OPA policy evaluation failed for rule ${ruleId}`,
             severity,
             remediation: this.remediationFor(artifact.artifact, ruleId, artifact.validation),
             gateRef: gate.id,

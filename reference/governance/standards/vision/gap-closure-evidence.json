@@ -3671,7 +3671,8 @@
       "closedAt": "2026-06-23",
       "closureCommit": "f1d9814f",
       "evidence": [
-        ".github/workflows/governance-ci.yml"
+        ".github/workflows/docs.yml",
+        ".github/workflows/sdk-cli-ci.yml"
       ],
       "validationCommands": [
         "echo validated"
@@ -3865,7 +3866,7 @@
       "closureCommit": "dae62ce3",
       "evidence": [
         ".github/workflows/sdk-cli-ci.yml",
-        ".github/workflows/governance-ci.yml"
+        ".github/workflows/docs.yml"
       ],
       "validationCommands": [
         "grep concurrency .github/workflows/sdk-cli-ci.yml"
@@ -4134,7 +4135,6 @@
         "rulesets/infrastructure/opa/opa-sidecar-bundle.rego",
         "rulesets/infrastructure/opa/opa-sidecar-bundle.test.rego",
         ".harness/scripts/ci/29-validate-opa-sidecar-bundles.mjs",
-        ".github/workflows/governance-ci.yml",
         ".harness/rules/global-rules.md",
         ".harness/rules/global-rules.es.md"
       ],
@@ -4467,6 +4467,453 @@
       "validationCommands": [
         "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --testPathPatterns='ruleset-validation.mode' --no-coverage",
         ".harness/bin/opa test rulesets/opa/satellite-contracts.rego rulesets/opa/satellite-contracts.test.rego -v"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-283",
+      "closedAt": "2026-06-26",
+      "closureCommit": "856912b9",
+      "evidence": [
+        "rulesets/topologies/progressive-axis/modular-monolith/modular-monolith.rules.json"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-284",
+      "closedAt": "2026-06-26",
+      "closureCommit": "856912b9",
+      "evidence": [
+        "rulesets/topologies/progressive-axis/distributed-modules/distributed-modules.rules.json"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-285",
+      "closedAt": "2026-06-26",
+      "closureCommit": "856912b9",
+      "evidence": [
+        "rulesets/topologies/progressive-axis/microservices/microservices.rules.json"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-293",
+      "closedAt": "2026-06-26",
+      "closureCommit": "ad0fe74c",
+      "evidence": [
+        "rulesets/executive-scorecards/executive-scorecards.rules.json"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/validate-rulesets.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-294",
+      "closedAt": "2026-06-26",
+      "closureCommit": "ad0fe74c",
+      "evidence": [
+        "rulesets/architecture/opa/progressive-axis.rego"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-295",
+      "closedAt": "2026-06-26",
+      "closureCommit": "856912b9",
+      "evidence": [
+        "packages/core-domain/src/gates/gate-evaluator.ts"
+      ],
+      "validationCommands": [
+        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-296",
+      "closedAt": "2026-06-26",
+      "closureCommit": "856912b9",
+      "evidence": [
+        "packages/core-domain/src/phases/phase-transition.ts"
+      ],
+      "validationCommands": [
+        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-297",
+      "closedAt": "2026-06-26",
+      "closureCommit": "856912b9",
+      "evidence": [
+        "packages/mcp-server/src/resources/corpus-resource.handler.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace packages/mcp-server"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-298",
+      "closedAt": "2026-06-26",
+      "closureCommit": "856912b9",
+      "evidence": [
+        "packages/mcp-server/src/watcher/watcher.service.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace packages/mcp-server"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-299",
+      "closedAt": "2026-06-26",
+      "closureCommit": "817986cf",
+      "evidence": [
+        "apps/core-api/src/openapi"
+      ],
+      "validationCommands": [
+        "npm test --workspace apps/core-api"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-300",
+      "closedAt": "2026-06-26",
+      "closureCommit": "817986cf",
+      "evidence": [
+        "sdk/cli/src/commands/agents"
+      ],
+      "validationCommands": [
+        "npm test --workspace sdk/cli"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-301",
+      "closedAt": "2026-06-26",
+      "closureCommit": "817986cf",
+      "evidence": [
+        "sdk/cli/src/commands/upgrade"
+      ],
+      "validationCommands": [
+        "npm test --workspace sdk/cli"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-302",
+      "closedAt": "2026-06-26",
+      "closureCommit": "817986cf",
+      "evidence": [
+        "sdk/cli/src/commands/architecture/scaffold"
+      ],
+      "validationCommands": [
+        "npm test --workspace sdk/cli"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-303",
+      "closedAt": "2026-06-26",
+      "closureCommit": "817986cf",
+      "evidence": [
+        "packages/core-domain/src/evidence"
+      ],
+      "validationCommands": [
+        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-304",
+      "closedAt": "2026-06-26",
+      "closureCommit": "817986cf",
+      "evidence": [
+        "packages/core-domain/src/gates/decision"
+      ],
+      "validationCommands": [
+        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-305",
+      "closedAt": "2026-06-26",
+      "closureCommit": "817986cf",
+      "evidence": [
+        "packages/core-domain/src/phases/transition"
+      ],
+      "validationCommands": [
+        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-306",
+      "closedAt": "2026-06-26",
+      "closureCommit": "817986cf",
+      "evidence": [
+        "packages/core-domain/src/providers"
+      ],
+      "validationCommands": [
+        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-307",
+      "closedAt": "2026-06-26",
+      "closureCommit": "817986cf",
+      "evidence": [
+        "packages/core-domain/src/tenancy"
+      ],
+      "validationCommands": [
+        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-308",
+      "closedAt": "2026-06-26",
+      "closureCommit": "34c0abd0",
+      "evidence": [
+        "sdk/cli/src/plugins/plugin-registry.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace sdk/cli"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-309",
+      "closedAt": "2026-06-26",
+      "closureCommit": "34c0abd0",
+      "evidence": [
+        "sdk/cli/src/contributions/contribution-validator.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace sdk/cli"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-310",
+      "closedAt": "2026-06-26",
+      "closureCommit": "817986cf",
+      "evidence": [
+        "sdk/cli/src/__tests__"
+      ],
+      "validationCommands": [
+        "npm test --workspace sdk/cli"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-311",
+      "closedAt": "2026-06-26",
+      "closureCommit": "817986cf",
+      "evidence": [
+        "sdk/cli/src/__tests__/e2e"
+      ],
+      "validationCommands": [
+        "npm test --workspace sdk/cli"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-314",
+      "closedAt": "2026-06-26",
+      "closureCommit": "d2b7d2b7",
+      "evidence": [
+        "packages/core-domain/src/application/validators/evidence-validator.ts",
+        "packages/core-domain/src/application/validators/evidence-validator.spec.ts"
+      ],
+      "validationCommands": [
+        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-315",
+      "closedAt": "2026-06-26",
+      "closureCommit": "d2b7d2b7",
+      "evidence": [
+        "packages/core-domain/src/domain/events/event-catalog.ts",
+        "packages/core-domain/src/domain/events/domain-events.ts",
+        "packages/core-domain/src/infrastructure/events/in-memory-event-bus.ts",
+        "packages/core-domain/src/infrastructure/events/outbox.ts"
+      ],
+      "validationCommands": [
+        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-316",
+      "closedAt": "2026-06-26",
+      "closureCommit": "d2b7d2b7",
+      "evidence": [
+        "packages/core-domain/src/domain/lifecycle/artifact-state-machine.ts",
+        "packages/core-domain/src/domain/lifecycle/phase-state-machine.ts"
+      ],
+      "validationCommands": [
+        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-317",
+      "closedAt": "2026-06-26",
+      "closureCommit": "d2b7d2b7",
+      "evidence": [
+        "packages/core-domain/src/application/services/catalog.service.ts",
+        "packages/core-domain/src/application/use-cases/validate-workflow.use-case.ts"
+      ],
+      "validationCommands": [
+        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-318",
+      "closedAt": "2026-06-26",
+      "closureCommit": "d2b7d2b7",
+      "evidence": [
+        "packages/core-domain/src/application/services/gate-registry.service.ts"
+      ],
+      "validationCommands": [
+        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-319",
+      "closedAt": "2026-06-26",
+      "closureCommit": "d2b7d2b7",
+      "evidence": [
+        "packages/core-domain/src/domain/rbac/role.ts",
+        "packages/core-domain/src/domain/rbac/index.ts"
+      ],
+      "validationCommands": [
+        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-320",
+      "closedAt": "2026-06-26",
+      "closureCommit": "d2b7d2b7",
+      "evidence": [
+        "packages/core-domain/src/domain/rbac/gate-role-enforcer.ts"
+      ],
+      "validationCommands": [
+        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
+      ],
+      "dependencyDisposition": "satisfied",
+      "dependencyRationale": "GT-319 formal RBAC role model closed in the same wave (commit d2b7d2b7); GateRoleEnforcer consumes it."
+    },
+    {
+      "id": "GT-321",
+      "closedAt": "2026-06-26",
+      "closureCommit": "d2b7d2b7",
+      "evidence": [
+        "packages/core-domain/src/application/services/audit.service.ts",
+        "packages/core-domain/src/domain/audit/audit-entry.ts"
+      ],
+      "validationCommands": [
+        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-322",
+      "closedAt": "2026-06-26",
+      "closureCommit": "d2b7d2b7",
+      "evidence": [
+        "packages/sdk-client/package.json",
+        "packages/sdk-client/src"
+      ],
+      "validationCommands": [
+        "npm run build --workspace packages/sdk-client"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-323",
+      "closedAt": "2026-06-26",
+      "closureCommit": "d2b7d2b7",
+      "evidence": [
+        "apps/core-api/Dockerfile",
+        "packages/mcp-server/Dockerfile"
+      ],
+      "validationCommands": [
+        "test -f apps/core-api/Dockerfile && test -f packages/mcp-server/Dockerfile"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-325",
+      "closedAt": "2026-06-26",
+      "closureCommit": "d2b7d2b7",
+      "evidence": [
+        "packages/core-domain/src/domain/entities/blueprint.ts",
+        "packages/core-domain/src/application/use-cases/validate-blueprint.use-case.ts"
+      ],
+      "validationCommands": [
+        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-327",
+      "closedAt": "2026-06-26",
+      "closureCommit": "d2b7d2b7",
+      "evidence": [
+        "packages/core-domain/src/domain/webhook/webhook-subscription.ts",
+        "packages/core-domain/src/infrastructure/webhook/webhook-dispatcher.ts"
+      ],
+      "validationCommands": [
+        "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-328",
+      "closedAt": "2026-06-26",
+      "closureCommit": "d2b7d2b7",
+      "evidence": [
+        "apps/core-api/.eslintrc.js",
+        "packages/core-domain/.eslintrc.js",
+        "packages/mcp-server/.eslintrc.js"
+      ],
+      "validationCommands": [
+        "npm run lint:boundaries --workspace packages/core-domain"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-329",
+      "closedAt": "2026-06-26",
+      "closureCommit": "d2b7d2b7",
+      "evidence": [
+        "rulesets/topologies"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs"
       ],
       "dependencyDisposition": "none"
     }

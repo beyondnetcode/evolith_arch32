@@ -396,7 +396,7 @@ jobs:
   # Cleanup on Failure
   # ============================================
   failure-notification:
-    needs: [publish-npm, package-binaries, smoke-test, smoke-test-functional, upload-assets]
+    needs: [release-please, publish-npm, package-binaries, smoke-test, smoke-test-functional, upload-assets]
     if: failure()
     runs-on: ubuntu-latest
     permissions:
@@ -409,8 +409,10 @@ jobs:
           echo "Please check the logs above for details"
         shell: bash
 
+      # Only file a tracking issue when a real release was attempted and failed —
+      # not on routine pushes where no release was created (avoids issue spam).
       - name: Create Issue on Failure
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ github.event_name == 'push' && needs.release-please.outputs.release_created == 'true' }}
         uses: actions/github-script@v9
         with:
           script: |

@@ -172,9 +172,11 @@ export class DiskRulesetRepository implements IRulesetRepository {
       "cli-rr": "build",
       "cli-par": "shared-logic",
       mcp: "protocol",
-      f1: "topology",
-      f2: "module-autonomy",
-      f3: "autonomous-deployment",
+      // Canonical progressive-axis topology ids (see reference/architecture/topologies/progressive-axis/*).
+      // Previously stale F#-phase keys (f1/f2/f3); GT-351/GT-343.
+      "modular-monolith": "topology",
+      "distributed-modules": "module-autonomy",
+      microservices: "autonomous-deployment",
     };
 
     return map[prefix] ?? "general";

@@ -34,17 +34,26 @@ npm install @evolith/infra-providers
 ## Usage
 
 ```ts
-import { NodeFileSystemProvider } from '@evolith/infra-providers';
-import { YamlConfigParserProvider } from '@evolith/infra-providers';
-import { DiskRulesetRepository } from '@evolith/infra-providers';
-import { EvaluateGateUseCase } from '@evolith/core-domain/application/use-cases';
+import {
+  NodeFileSystemProvider,
+  YamlConfigParserProvider,
+  ConsoleLoggerProvider,
+  DiskRulesetRepository,
+} from '@evolith/infra-providers';
 
+// IFileSystem — concrete Node.js adapter
 const fs = new NodeFileSystemProvider().createFileSystem();
-const configParser = new YamlConfigParserProvider();
-const rulesetRepo = new DiskRulesetRepository(fs, configParser);
 
-const useCase = new EvaluateGateUseCase(rulesetRepo, fs, new ConsoleLoggerProvider());
-const result = await useCase.execute({ projectId, phase, artifacts });
+// IConfigParser — createConfigParser takes the source format
+const configParser = new YamlConfigParserProvider().createConfigParser('yaml');
+
+// ILogger — createLogger takes a context label
+const logger = new ConsoleLoggerProvider().createLogger('ruleset');
+
+// DiskRulesetRepository(fs: IFileSystem, logger: ILogger)
+const rulesetRepo = new DiskRulesetRepository(fs, logger);
+
+const rules = await rulesetRepo.loadAllRulesets('/path/to/core');
 ```
 
 ### With NestJS

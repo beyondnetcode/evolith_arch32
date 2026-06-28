@@ -37,13 +37,17 @@ describe('WebhookAdapter', () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(dummyEvidence),
+      // GT-351: each attempt is bounded by an AbortController timeout.
+      signal: expect.any(AbortSignal),
     });
   });
 
   it('should throw error if response is not ok', async () => {
-    globalFetch.mockResolvedValueOnce({ ok: false, status: 500 });
+    globalFetch.mockResolvedValue({ ok: false, status: 500 });
+    // maxAttempts:1 — assert the single-attempt failure surfaces the status.
+    const noRetry = new WebhookAdapter({ maxAttempts: 1 });
 
-    await expect(adapter.notify('https://example.com/webhook', dummyEvidence))
+    await expect(noRetry.notify('https://example.com/webhook', dummyEvidence))
       .rejects.toThrow('Webhook delivery failed with status: 500');
   });
 });

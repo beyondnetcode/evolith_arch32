@@ -3466,12 +3466,14 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-346
 
-**Title:** CommandExecutor shell-injection surface (security) — `OPEN`
+**Title:** CommandExecutor shell-injection surface (security) — `IN-PROGRESS`
 
 - **Component:** smart-cli · **Priority:** P2 · **Risk:** med · **Dependencies:** none
 - **Files:** `sdk/cli/src/infrastructure/cli/command-executor.ts`, `…/cli/providers/index.ts`
 - **Proposed fix:** replace `exec` with `execFile`/`spawn` + arg arrays; validate interpolated names.
-- **Done when:** [ ] no shell-string interpolation of untrusted input; [ ] covering test.
+- **Applied fix:** added `CommandExecutor.executeFile(file, args[], cwd?)` using `execFile` (no shell — argv passed literally, metacharacters never interpreted; `.cmd` resolved for npm/npx/nx on win32). Rewrote every structured provider in `providers/index.ts` (Npm/Dotnet/Python/Docker/Nx) to build argument ARRAYS instead of interpolating package names/scripts/templates/flags into shell strings. Flag strings are split into discrete args. The only remaining shell path is `NpmProvider.exec(cmd)`, an explicit caller-owned escape hatch (documented). `nx-workspace.strategy` (`executeOrThrow` with an internally-built `command`) is the lone follow-up.
+- **Evidence:** `command-executor.test.ts` proves shell-free behavior — `executeFile('node', ['-e','…','; echo HACKED'])` prints only `safe`, never runs `echo HACKED`. `providers.spec.ts` rewritten to assert (file, args[], cwd), incl. a malicious-script-name-as-literal-arg test. smart-cli `npm test` 100% green: unit 64/64 (909) + e2e 20/20 (175). Builds clean.
+- **Done when:** [x] no shell-string interpolation of untrusted input (structured providers); [x] covering test.
 
 #### GT-347
 
@@ -3539,6 +3541,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Proposed fix:** jest + provider unit tests (≥80%); AbortController timeout + bounded retry/backoff + URL scheme allow-list (SSRF); fix README signatures; canonical topology ids in `deriveCategory`.
 - **Applied fix (slice 1 — WebhookAdapter security + test harness):** rewrote `WebhookAdapter` with a per-attempt `AbortController` timeout (default 10s), bounded exponential-backoff retry on transient failures (network/5xx, never 4xx), and a URL-scheme allow-list (http/https only — rejects `file:`/SSRF schemes + malformed URLs). Constructor stays no-arg compatible (options injectable for tests). Added a jest harness (`jest.config.js` + `test`/`test:cov` scripts + devDeps) and `webhook.adapter.spec.ts` (5 tests: 2xx success, scheme/SSRF reject, no-retry-4xx, 5xx retry-exhaust, network-error retry-then-success). The README "with retry" claim is now true.
 - **Evidence:** `npm run --workspace packages/infra-providers test` → 5/5 green (was 0 tests). Build clean; `new WebhookAdapter()` consumers (domain.module) unaffected.
+- **Follow-up fix (caught via GT-346 full-suite run):** slice 1 had two latent breakages surfaced only when `sdk/cli`'s suite ran (the infra-providers workspace alone passed): (a) the adapter captured `globalThis.fetch` in the constructor, breaking late-bound `global.fetch` test mocks → now late-binds at call time; (b) the new `webhook.adapter.spec.ts` was compiled by `tsc build` (no exclude) and failed on missing jest types → added `*.spec.ts`/`*.test.ts` to the infra-providers tsconfig `exclude`. Updated `sdk/cli/.../webhook.adapter.spec.ts` for the new signal + retry semantics. mcp-server 25/25 and smart-cli 100% green confirm the fix.
 - **Remaining (slice 2):** unit tests for the other providers to ≥80% coverage; fix the README config-parser/DiskRulesetRepository example signatures; replace `deriveCategory` f1/f2/f3 keys with canonical topology ids (ties to GT-343).
 - **Done when:** [x] webhook timeout + retry + SSRF guard, tested; [ ] provider coverage ≥80%; [ ] README compiles; [ ] deriveCategory canonical ids.
 

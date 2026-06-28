@@ -3428,10 +3428,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 - **Component:** Cross · **Priority:** P0 · **Risk:** high (breaking) · **Dependencies:** blocks GA of every product
 - **Files:** `reference/config/evolith.config.schema.json:18`, `apps/core-api/.../composable-validate.controller.ts:24`, `sdk/cli/.../validate.command.ts:483`, `rulesets/schema/topology-manifest.schema.json:121`, `packages/core-domain/.../topology-catalog.service.ts:4`, `…/modes/sdlc-validation.mode.ts:21`, `…/handlers/satellite-contract-rule.handler.ts:41`
-- **Proposed fix:** canonical `PhaseId` (discovery|design|construction|validation|delivery) + alias map; rename topology `phase`→`maturityLevel`/`profile`; OPA anti-collision rule; staged migration accepting `f1..f5`/`F1..F3` as deprecated aliases.
-- **Evidence:** ~897 `f1..f5`/`F1..F3` occurrences swept across rulesets/core-domain/mcp-server/cli/core-api+docs.
-- **Residual risk:** N/A (open).
-- **Done when:** [ ] zero `f1..f5` SDLC ids in non-test src; [ ] topologies resolved by id; [ ] no namespace collision; [ ] all suites green.
+- **Proposed fix:** canonical `PhaseId` + alias map; rename topology `phase`→`maturityLevel`/`profile`; OPA anti-collision rule; staged migration accepting `f1..f5`/`F1..F3` as deprecated aliases.
+- **Applied fix (stage 1 — foundation, non-breaking):** added `packages/core-domain/src/domain/sdlc/phase-id.ts` — the single canonical source. Canonical ids are the existing `GATE_PHASES` (`discovery|design|construction|qa|release`); `normalizePhaseId()` accepts `f1..f5`/`gate-f*`/`phase-*`/`1..5` and returns canonical; `toLegacyPhaseId()` maps back to the on-disk `f1..f5`; `phase-0` correctly rejected (workflow foundation, not an SDLC gate phase). Exported from the domain barrel. Confirmed no `F#` namespace reuse.
+- **Evidence:** ~897 `f1..f5`/`F1..F3` occurrences swept; core-domain 589/589 green (6 new phase-id tests). Stage 1 changes no existing behavior (additive).
+- **Residual risk:** stages 2+ still pending — migrate core-domain validators/services, then the contract surfaces (config schema enum, composable-validate DTO, CLI `--phase`, topology manifest `phase`→`maturityLevel`) to consume the canonical module; add the OPA anti-collision rule. Each stage breaking → per-suite validation.
+- **Done when:** [x] canonical PhaseId single source + alias normalizer (stage 1); [ ] core-domain validators/services use it (stage 2); [ ] contract surfaces migrated, `f1..f5` accepted only as deprecated alias; [ ] topology `phase`→`maturityLevel`; [ ] no namespace collision; [ ] all suites green.
 
 #### GT-344
 

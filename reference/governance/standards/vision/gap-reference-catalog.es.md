@@ -3375,9 +3375,11 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 - **Componente:** Transversal · **Prioridad:** P0 · **Riesgo:** alto (ruptura) · **Dependencias:** bloquea GA de todos los productos
 - **Archivos:** `reference/config/evolith.config.schema.json:18`, `apps/core-api/.../composable-validate.controller.ts:24`, `sdk/cli/.../validate.command.ts:483`, `rulesets/schema/topology-manifest.schema.json:121`, `packages/core-domain/.../topology-catalog.service.ts:4`
-- **Fix propuesto:** `PhaseId` canónico (discovery|design|construction|validation|delivery) + mapa de alias; renombrar `phase`→`maturityLevel`/`profile` en topología; regla OPA anti-colisión; migración por etapas.
-- **Evidencia:** ~897 ocurrencias `f1..f5`/`F1..F3` barridas.
-- **Hecho cuando:** [ ] cero ids `f1..f5` en src no-test; [ ] topologías por id; [ ] sin colisión; [ ] suites verdes.
+- **Fix propuesto:** `PhaseId` canónico + mapa de alias; renombrar `phase`→`maturityLevel`/`profile` en topología; regla OPA anti-colisión; migración por etapas.
+- **Fix aplicado (etapa 1 — fundación, no rompe nada):** añadido `packages/core-domain/src/domain/sdlc/phase-id.ts` — fuente canónica única. Los ids canónicos son los `GATE_PHASES` existentes (`discovery|design|construction|qa|release`); `normalizePhaseId()` acepta `f1..f5`/`gate-f*`/`phase-*`/`1..5` y devuelve canónico; `toLegacyPhaseId()` mapea de vuelta al `f1..f5` en disco; `phase-0` rechazado correctamente. Exportado desde el barrel de dominio.
+- **Evidencia:** ~897 ocurrencias barridas; core-domain 589/589 verde (6 tests nuevos). La etapa 1 no cambia comportamiento (aditiva).
+- **Riesgo residual:** etapas 2+ pendientes — migrar validators/services de core-domain y luego las superficies de contrato (enum del schema de config, DTO composable-validate, `--phase` del CLI, `phase`→`maturityLevel` en manifest de topología); añadir regla OPA anti-colisión. Cada etapa breaking → validación por suite.
+- **Hecho cuando:** [x] fuente única PhaseId + normalizador (etapa 1); [ ] validators/services lo usan (etapa 2); [ ] superficies de contrato migradas; [ ] `phase`→`maturityLevel` en topología; [ ] sin colisión; [ ] suites verdes.
 
 #### GT-344
 

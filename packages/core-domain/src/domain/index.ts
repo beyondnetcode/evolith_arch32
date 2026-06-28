@@ -16,3 +16,4 @@ export * from './rbac';
 export * from './metrics';
 export * from './webhook/webhook-subscription';
 export * from './satellite-record';
+export * from './satellite-audit';

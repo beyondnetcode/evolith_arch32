@@ -64,7 +64,9 @@ Evolith Core gobierna y proporciona artefactos de referencia para las siguientes
 
 | Topología                   | Descripción                                                                                                        |
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| **Monolito Modular**        | Topología fundamental para sistemas que comienzan simples y maduran sin distribución prematura                     |
+| **Monolito Modular**        | Entrada del eje progresivo: un único desplegable con contextos acotados y preparación para extracción (alias `F1`) |
+| **Módulos Distribuidos**    | Etapa intermedia del eje progresivo: módulos desplegables de forma independiente tras contratos explícitos (alias `F2`) |
+| **Microservicios**          | Objetivo del eje progresivo: servicios totalmente extraídos y escalados de forma independiente (alias `F3`)        |
 | **Cloud-Native Serverless** | Arquitecturas event-driven, auto-escalables y de pago-por-ejecución sobre FaaS y servicios gestionados             |
 | **Event-Driven**            | Sistemas async-first con brokers de mensajes, event sourcing y CQRS                                                |
 | **Data Mesh**               | Plataformas de datos orientadas a dominio, autoservicio y con gobernanza federada                                  |

@@ -42,8 +42,13 @@ export class ProjectsController {
   @ApiBody({ type: ProposeAdvanceDto })
   @ApiEnvelopeResponse(undefined, { description: 'Advance proposal results' })
   async proposeAdvance(@Body() body: ProposeAdvanceDto) {
+    // GAP API-PROPOSE: the controller previously forwarded body.currentPhase
+    // verbatim, so when the BFF omitted it fromPhase reached the use-case as
+    // undefined. Fall back to targetPhase so fromPhase is always defined.
+    // (The `as any` casts persist until the phase-vocabulary epic GT-EVO-PHASE
+    // unifies the API's phase-N strings with the domain GatePhase union.)
     return this.proposePhaseAdvanceUseCase.execute({
-      fromPhase: body.currentPhase as any,
+      fromPhase: (body.currentPhase ?? body.targetPhase) as any,
       toPhase: body.targetPhase as any,
       projectPath: this.workspaceResolver.resolve(body.workspaceRef),
       corePath: this.workspaceResolver.corePath(),

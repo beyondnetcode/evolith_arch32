@@ -3239,3 +3239,271 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Hecho Cuando:**
   - [ ] El archivo o directorio requerido existe en la ruta especificada.
   - [ ] Los tests verifican la implementación.
+
+---
+
+## 2. Ola de madurez 2026-06-27 (validada con build/test reales)
+
+> Cada GAP fue reproducido con `build` + `test` reales por producto. Campos: Componente · Prioridad · Riesgo · Dependencias · Archivos · Fix propuesto/aplicado · Evidencia · Riesgo residual · Hecho cuando (aceptación).
+
+#### GT-331
+
+**Título:** Deriva de versión del binario MCP — `APLICADO`
+
+- **Componente:** mcp-server · **Prioridad:** P2 · **Riesgo:** bajo→ninguno · **Dependencias:** ninguna
+- **Archivos:** `packages/mcp-server/src/main.ts:10`
+- **Fix:** leer `version` de package.json en runtime (antes literal hardcodeado).
+- **Evidencia:** `node packages/mcp-server/dist/main.js version` → `v1.0.1`.
+- **Hecho cuando:** [x] la versión reportada == package.json.
+
+#### GT-332
+
+**Título:** El dispatch mutativo filtraba approvalToken + args (seguridad) — `APLICADO`
+
+- **Componente:** mcp-server · **Prioridad:** P1 · **Riesgo:** medio→ninguno · **Dependencias:** ninguna
+- **Archivos:** `packages/mcp-server/src/mcp/mcp-tool-dispatch.ts:128`
+- **Fix:** `fingerprintToken()` + `redactArgs()`; el log emite huella + args redactados.
+- **Evidencia:** spec asegura ausencia del token crudo; 162/162 verde.
+- **Riesgo residual:** redacción superficial (solo nivel superior).
+- **Hecho cuando:** [x] el log omite el token; [x] test lo verifica.
+
+#### GT-333
+
+**Título:** Comparación de API key con `===` (canal de tiempo, seguridad) — `APLICADO`
+
+- **Componente:** mcp-server · **Prioridad:** P2 · **Riesgo:** medio→bajo · **Dependencias:** ninguna
+- **Archivos:** `packages/mcp-server/src/mcp/mcp-server-auth.ts:43`
+- **Fix:** `safeKeyEqual()` con `crypto.timingSafeEqual` sobre buffers hasheados.
+- **Evidencia:** 162/162 verde.
+- **Hecho cuando:** [x] comparación de tiempo constante.
+
+#### GT-334
+
+**Título:** opa-wasm no es dependencia directa de mcp-server — `APLICADO`
+
+- **Componente:** mcp-server · **Prioridad:** P2 · **Riesgo:** medio→ninguno · **Dependencias:** ninguna
+- **Archivos:** `packages/mcp-server/package.json`
+- **Fix:** añadido `@open-policy-agent/opa-wasm@1.10.0`.
+- **Hecho cuando:** [x] declarado como dependencia directa.
+
+#### GT-335
+
+**Título:** Herramienta read-gap-tracking inservible — `APLICADO`
+
+- **Componente:** mcp-tools · **Prioridad:** P1 · **Riesgo:** medio→ninguno · **Dependencias:** ninguna
+- **Archivos:** `packages/mcp-tools/src/tools/read-gap-tracking.js`
+- **Fix:** parser de columna Status + raíz inyectable (`EVOLITH_REPO_ROOT`) + 3 tests.
+- **Evidencia:** 9/9 verde; en vivo → `1 open of 330` (antes 0).
+- **Hecho cuando:** [x] tablero real surfaced; [x] test de comportamiento.
+
+#### GT-336
+
+**Título:** Las rutas REST del SDK omiten el prefijo `/api` (crítico) — `APLICADO`
+
+- **Componente:** sdk-client · **Prioridad:** P0 · **Riesgo:** crítico→ninguno · **Dependencias:** ninguna
+- **Archivos:** `packages/sdk-client/src/rest/evolith-rest-client.ts`
+- **Fix:** opción `apiPrefix` (por defecto `/api`) antepuesta en `request()`.
+- **Evidencia:** build + 10/10 verde (`/api/v1/...`).
+- **Riesgo residual:** sin test de integración real aún (GT-353).
+- **Hecho cuando:** [x] métodos apuntan a `/api/v1/...`.
+
+#### GT-337
+
+**Título:** Tipo ApiEnvelope no coincide — `APLICADO`
+
+- **Componente:** sdk-client · **Prioridad:** P1 · **Riesgo:** medio→bajo · **Dependencias:** GT-336
+- **Archivos:** `packages/sdk-client/src/rest/types.ts`
+- **Fix:** unión discriminada `SuccessEnvelope<T> | ErrorEnvelope`.
+- **Evidencia:** build + 10/10 verde.
+- **Hecho cuando:** [x] coincide con el envelope de core-api.
+
+#### GT-338
+
+**Título:** Exports de subruta rotos en @evolith/core — `APLICADO`
+
+- **Componente:** core · **Prioridad:** P1 · **Riesgo:** medio→ninguno · **Dependencias:** ninguna
+- **Archivos:** `packages/core/package.json`, `packages/core/README.md`
+- **Fix:** `exports` reducido a `"."`; deps no usadas removidas; README añadido.
+- **Evidencia:** build verde; `require('@evolith/core')` resuelve; pack lista README.
+- **Riesgo residual:** sin test de contrato (GT-355).
+- **Hecho cuando:** [x] sin MODULE_NOT_FOUND de subruta.
+
+#### GT-339
+
+**Título:** core-api propone-advance con fromPhase undefined (bug de contrato) — `APLICADO`
+
+- **Componente:** core-api · **Prioridad:** P1 · **Riesgo:** alto→ninguno · **Dependencias:** ninguna
+- **Archivos:** `apps/core-api/src/presentation/controllers/projects.controller.ts:44`, `dtos/projects.dto.ts:30`
+- **Fix:** `fromPhase: currentPhase ?? targetPhase`; `currentPhase` opcional.
+- **Evidencia:** projects.controller.spec 5/5 verde.
+- **Riesgo residual:** casts `as any` pendientes de GT-343.
+- **Hecho cuando:** [x] fromPhase nunca undefined.
+
+#### GT-340
+
+**Título:** El harness de tests de core-api no fija WORKSPACE_ROOT — `APLICADO`
+
+- **Componente:** core-api / calidad · **Prioridad:** P1 · **Riesgo:** alto→ninguno · **Dependencias:** GT-344
+- **Archivos:** `apps/core-api/test-setup.js`
+- **Fix:** fijar `WORKSPACE_ROOT`/`CORE_PATH` a la raíz del monorepo.
+- **Evidencia:** `npm test` → 105/105 verde (antes 23 fallando).
+- **Riesgo residual:** enmascara el empaquetado runtime GT-344 (mitigación solo-tests).
+- **Hecho cuando:** [x] `npm test` verde sin env manual.
+
+#### GT-341
+
+**Título:** El generador de inventario escanea una ruta MCP muerta — `APLICADO`
+
+- **Componente:** gobernanza/docs · **Prioridad:** P1 · **Riesgo:** alto→ninguno · **Dependencias:** ninguna
+- **Archivos:** `.harness/scripts/generate-product-inventory.mjs:43`
+- **Fix:** reapuntado a `packages/mcp-server/src`.
+- **Evidencia:** inventario → 27 tools / 9 resources / 8 prompts; `--check` exit 0.
+- **Hecho cuando:** [x] inventario == superficie instalable.
+
+#### GT-342
+
+**Título:** El README lista 6 topologías en vez de 8 — `APLICADO`
+
+- **Componente:** docs · **Prioridad:** P1 · **Riesgo:** bajo · **Dependencias:** ninguna
+- **Archivos:** `README.md:67`, `README.es.md:67`
+- **Fix:** añadidas Módulos Distribuidos + Microservicios (EN+ES), eje progresivo + alias F.
+- **Hecho cuando:** [x] README == 8 topologías canónicas.
+
+#### GT-343
+
+**Título:** EPIC — Unificación de vocabulario de fases SDLC/topología — `OPEN`
+
+- **Componente:** Transversal · **Prioridad:** P0 · **Riesgo:** alto (ruptura) · **Dependencias:** bloquea GA de todos los productos
+- **Archivos:** `reference/config/evolith.config.schema.json:18`, `apps/core-api/.../composable-validate.controller.ts:24`, `sdk/cli/.../validate.command.ts:483`, `rulesets/schema/topology-manifest.schema.json:121`, `packages/core-domain/.../topology-catalog.service.ts:4`
+- **Fix propuesto:** `PhaseId` canónico (discovery|design|construction|validation|delivery) + mapa de alias; renombrar `phase`→`maturityLevel`/`profile` en topología; regla OPA anti-colisión; migración por etapas.
+- **Evidencia:** ~897 ocurrencias `f1..f5`/`F1..F3` barridas.
+- **Hecho cuando:** [ ] cero ids `f1..f5` en src no-test; [ ] topologías por id; [ ] sin colisión; [ ] suites verdes.
+
+#### GT-344
+
+**Título:** La CLI publicada falla (ENOENT default-workflow.yaml) — `OPEN`
+
+- **Componente:** smart-cli / core-domain · **Prioridad:** P0 · **Riesgo:** crítico · **Dependencias:** ninguna
+- **Archivos:** `packages/core-domain/src/domain/services/default-workflow-definition.ts:87`, `…/services/index.ts:94`
+- **Fix propuesto:** empaquetar `rulesets/sdlc/default-workflow.yaml` en core-domain; carga perezosa con error claro de WORKSPACE_ROOT; documentarlo; smoke test en entorno limpio.
+- **Evidencia:** el fallback resuelve a `packages/core-domain/rulesets` borrado (regresión cc5b9c67); `PhaseService` lo invoca al bootstrap.
+- **Hecho cuando:** [ ] `node sdk/cli/dist/main.js version` exit 0 sin env ni rulesets/ del monorepo.
+
+#### GT-345
+
+**Título:** Podredumbre de specs de Smart CLI (21 suites) — `OPEN`
+
+- **Componente:** smart-cli / calidad · **Prioridad:** P1 · **Riesgo:** medio · **Dependencias:** GT-344
+- **Archivos:** `sdk/cli/src/infrastructure/plugins/plugin-loader.spec.ts:55`, `…/standards/standards.command.spec.ts:73`, `…/__tests__/cli.integration.spec.ts:20`
+- **Fix propuesto:** reparar ctor/mocks; soportar `--version`; restaurar type-check de specs.
+- **Hecho cuando:** [ ] `npm test` de sdk/cli verde con cobertura.
+
+#### GT-346
+
+**Título:** Superficie de inyección de shell en CommandExecutor (seguridad) — `OPEN`
+
+- **Componente:** smart-cli · **Prioridad:** P2 · **Riesgo:** medio · **Dependencias:** ninguna
+- **Archivos:** `sdk/cli/src/infrastructure/cli/command-executor.ts`
+- **Fix propuesto:** `execFile`/`spawn` con arrays de args; validar nombres interpolados.
+- **Hecho cuando:** [ ] sin interpolación de shell sobre input no confiable; [ ] test.
+
+#### GT-347
+
+**Título:** Suite OPA de gobernanza rota + sin gate CI — `OPEN`
+
+- **Componente:** gobernanza/OPA · **Prioridad:** P0 · **Riesgo:** crítico (integridad de gobernanza) · **Dependencias:** ninguna
+- **Archivos:** `rulesets/opa/**` (3 rego), `.harness/scripts/compile-opa-wasm.mjs`, `.harness/scripts/ci/28-test-topology-opa.mjs`
+- **Fix propuesto:** corregir errores rego; gate CI `opa test rulesets/opa/`; restaurar build wasm.
+- **Evidencia:** `opa test rulesets/opa/` aborta (3 rego); `build:policy` no genera wasm.
+- **Hecho cuando:** [ ] `opa test rulesets/opa/` exit 0; [ ] wasm; [ ] gate.
+
+#### GT-348
+
+**Título:** Política OPA recompilada por cada dispatch (perf) — `OPEN`
+
+- **Componente:** mcp-server · **Prioridad:** P1 · **Riesgo:** medio · **Dependencias:** ninguna
+- **Archivos:** `packages/mcp-server/src/mcp/abac-evaluator.ts:125`
+- **Fix propuesto:** singleton perezoso por mtime del wasm; solo `evaluate(input)` por llamada.
+- **Hecho cuando:** [ ] loadPolicy/readFile ≤1× por proceso/cambio de wasm.
+
+#### GT-349
+
+**Título:** OPA falla abierto si falta el wasm (seguridad) — `OPEN`
+
+- **Componente:** mcp-server · **Prioridad:** P2 · **Riesgo:** medio · **Dependencias:** GT-347
+- **Archivos:** `packages/mcp-server/src/mcp/abac-evaluator.ts:132`
+- **Fix propuesto:** fallar cerrado en producción (o warn + métrica).
+- **Hecho cuando:** [ ] sin política deniega en prod; [ ] ambos caminos probados.
+
+#### GT-350
+
+**Título:** standards.service.ts usa `new Function()` (seguridad) — `OPEN`
+
+- **Componente:** core-domain · **Prioridad:** P2 · **Riesgo:** medio · **Dependencias:** ninguna
+- **Archivos:** `packages/core-domain/src/domain/services/standards.service.ts:136`
+- **Fix propuesto:** evaluador declarativo con allow-list; flag de confianza.
+- **Hecho cuando:** [ ] sin `new Function()`; [ ] cadena maliciosa inerte; [ ] tests verdes.
+
+#### GT-351
+
+**Título:** infra-providers: sin tests, webhook sin retry/timeout, README erróneo — `OPEN`
+
+- **Componente:** infra-providers · **Prioridad:** P1 · **Riesgo:** alto · **Dependencias:** ninguna
+- **Archivos:** `packages/infra-providers/src/webhook.adapter.ts:23`, `…/README.md:31`, `…/disk-ruleset.repository.ts:175`
+- **Fix propuesto:** jest + tests por provider (≥80%); timeout + retry/backoff + allow-list de URL (SSRF); corregir README; ids canónicos en `deriveCategory`.
+- **Hecho cuando:** [ ] tests verdes ≥80%; [ ] timeout webhook; [ ] README compila.
+
+#### GT-352
+
+**Título:** mcp-tools: sin validación de input, sin README — `OPEN`
+
+- **Componente:** mcp-tools · **Prioridad:** P2 · **Riesgo:** medio · **Dependencias:** ninguna
+- **Archivos:** `packages/mcp-tools/src/registry.js:24`, `…/tools/echo.js:16`
+- **Fix propuesto:** validar args contra `inputSchema` (ajv); README con catálogo.
+- **Hecho cuando:** [ ] input inválido → error estructurado; [ ] README lista tools.
+
+#### GT-353
+
+**Título:** sdk-client huérfano + baja cobertura por método — `OPEN`
+
+- **Componente:** sdk-client · **Prioridad:** P2 · **Riesgo:** medio · **Dependencias:** GT-336
+- **Archivos:** `packages/sdk-client/src/__tests__/sdk.spec.ts`
+- **Fix propuesto:** tests URL/verb/body por método + abort (≥85%); README `/api/v1`; integrar consumidor real o marcar experimental.
+- **Hecho cuando:** [ ] cobertura func ≥85%; [ ] test de integración; [ ] README.
+
+#### GT-354
+
+**Título:** core-api con módulo OpenAPI muerto + api-reference incompleto — `OPEN`
+
+- **Componente:** core-api · **Prioridad:** P2 · **Riesgo:** bajo · **Dependencias:** ninguna
+- **Archivos:** `apps/core-api/src/openapi/openapi-config.ts`, `…/main.ts:34`, `reference/products/core-api/api-reference.md`
+- **Fix propuesto:** borrar el módulo openapi o invocar `setupOpenApi()`; documentar `POST /architecture/cache/invalidate`.
+- **Hecho cuando:** [ ] sin DocumentBuilder duplicado; [ ] api-reference completa.
+
+#### GT-355
+
+**Título:** @evolith/core sin test de contrato del barrel — `OPEN`
+
+- **Componente:** core · **Prioridad:** P2 · **Riesgo:** medio · **Dependencias:** GT-338
+- **Archivos:** `packages/core/src/index.ts`
+- **Fix propuesto:** `index.spec.ts` que verifique cada re-export + script `test`.
+- **Hecho cuando:** [ ] la suite falla si falta algún export; [ ] CI lo corre.
+
+#### GT-356
+
+**Título:** README de mcp-services con deriva mantenida a mano — `OPEN`
+
+- **Componente:** docs · **Prioridad:** P2 · **Riesgo:** bajo · **Dependencias:** GT-341
+- **Archivos:** `reference/products/mcp-services/README.md:17,49`
+- **Fix propuesto:** regenerar conteos (27/9/8); corregir comando a `smart-cli mcp serve --transport http --port 3000`; derivar del generador.
+- **Hecho cuando:** [ ] README == código; [ ] test doc-snippet `--help`.
+
+#### GT-357
+
+**Título:** META — el tablero sobre-reporta completitud — `OPEN`
+
+- **Componente:** gobernanza · **Prioridad:** P1 · **Riesgo:** alto (falsa confianza) · **Dependencias:** GT-341, GT-347
+- **Archivos:** `reference/governance/standards/vision/gap-tracking.md`, `…/maturity-evidence.json`, `.harness/scripts/ci/09-reconcile-maturity.mjs`
+- **Fix propuesto:** alimentar maturity-evidence con build/test reales por producto; condicionar "DONE" a evidencia validada.
+- **Evidencia:** el tablero marcaba 329/330 con ≥15 GAPS reales (3 críticos); `09-reconcile-maturity.mjs` ya falla `closures 272 vs 323`.
+- **Hecho cuando:** [ ] el tablero reconcilia con la evidencia ejecutada.

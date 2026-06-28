@@ -3284,3 +3284,282 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Done when:**
   - [x] The required file or directory exists at the specified path.
   - [x] Tests verify the implementation.
+
+---
+
+## 2. Maturity wave 2026-06-27 (validated against real build/test)
+
+> Each gap below was reproduced via real per-product `build` + `test` runs. Fields: Component · Priority · Risk · Dependencies · Files · Proposed/Applied fix · Evidence · Residual risk · Done when (acceptance).
+
+#### GT-331
+
+**Title:** MCP binary version drift — `APPLIED`
+
+- **Component:** mcp-server · **Priority:** P2 · **Risk:** low→none · **Dependencies:** none
+- **Files:** `packages/mcp-server/src/main.ts:10`
+- **Proposed/Applied fix:** read `version` from package.json at runtime instead of a hardcoded literal.
+- **Evidence:** `node packages/mcp-server/dist/main.js version` → `@evolith/mcp-server v1.0.1`.
+- **Residual risk:** none.
+- **Done when:** [x] reported version equals package.json version.
+
+#### GT-332
+
+**Title:** Mutative dispatch leaked approvalToken + args (security) — `APPLIED`
+
+- **Component:** mcp-server · **Priority:** P1 · **Risk:** med→none · **Dependencies:** none
+- **Files:** `packages/mcp-server/src/mcp/mcp-tool-dispatch.ts:128`
+- **Proposed/Applied fix:** `fingerprintToken()` (sha256 prefix + last-4) and `redactArgs()` allow-list; log emits fingerprint + redacted args.
+- **Evidence:** `mcp-server.service.spec.ts` asserts no raw token; mcp-server 162/162 green.
+- **Residual risk:** shallow (top-level) redaction only.
+- **Done when:** [x] audit log omits raw approvalToken; [x] test asserts redaction.
+
+#### GT-333
+
+**Title:** API-key compared with `===` (timing channel, security) — `APPLIED`
+
+- **Component:** mcp-server · **Priority:** P2 · **Risk:** med→low · **Dependencies:** none
+- **Files:** `packages/mcp-server/src/mcp/mcp-server-auth.ts:43`
+- **Proposed/Applied fix:** `safeKeyEqual()` via `crypto.timingSafeEqual` over hashed buffers.
+- **Evidence:** mcp-server 162/162 green.
+- **Residual risk:** none material.
+- **Done when:** [x] constant-time compare; empty/undefined tokens rejected.
+
+#### GT-334
+
+**Title:** opa-wasm not a direct mcp-server dependency — `APPLIED`
+
+- **Component:** mcp-server · **Priority:** P2 · **Risk:** med (hoist break)→none · **Dependencies:** none
+- **Files:** `packages/mcp-server/package.json`
+- **Proposed/Applied fix:** added `@open-policy-agent/opa-wasm@1.10.0` to dependencies.
+- **Evidence:** build green.
+- **Residual risk:** none.
+- **Done when:** [x] declared as direct dependency.
+
+#### GT-335
+
+**Title:** read-gap-tracking tool functionally dead — `APPLIED`
+
+- **Component:** mcp-tools · **Priority:** P1 · **Risk:** med→none · **Dependencies:** none
+- **Files:** `packages/mcp-tools/src/tools/read-gap-tracking.js`
+- **Proposed/Applied fix:** status-column parser surfacing non-terminal gaps; injectable `rootDir`/`EVOLITH_REPO_ROOT`; 3 behavioral tests added.
+- **Evidence:** mcp-tools 9/9 green; live run → `1 open of 330 tracked gaps` (was 0).
+- **Residual risk:** none.
+- **Done when:** [x] non-empty board reflecting real open count; [x] behavioral test.
+
+#### GT-336
+
+**Title:** SDK REST paths miss `/api` prefix (critical) — `APPLIED`
+
+- **Component:** sdk-client · **Priority:** P0 · **Risk:** critical→none · **Dependencies:** none
+- **Files:** `packages/sdk-client/src/rest/evolith-rest-client.ts`
+- **Proposed/Applied fix:** `apiPrefix` option (default `/api`) prepended centrally in `request()`.
+- **Evidence:** build + sdk-client 10/10 green (asserts `/api/v1/...`).
+- **Residual risk:** no live integration test yet (GT-353).
+- **Done when:** [x] methods target `/api/v1/...`.
+
+#### GT-337
+
+**Title:** ApiEnvelope type mismatch — `APPLIED`
+
+- **Component:** sdk-client · **Priority:** P1 · **Risk:** med→low · **Dependencies:** GT-336
+- **Files:** `packages/sdk-client/src/rest/types.ts`
+- **Proposed/Applied fix:** discriminated union `SuccessEnvelope<T> | ErrorEnvelope` on `success`; response aliases now `SuccessEnvelope<…>`.
+- **Evidence:** build + 10/10 green.
+- **Residual risk:** none.
+- **Done when:** [x] type structurally matches core-api envelope.
+
+#### GT-338
+
+**Title:** @evolith/core broken subpath exports — `APPLIED`
+
+- **Component:** core · **Priority:** P1 · **Risk:** med→none · **Dependencies:** none
+- **Files:** `packages/core/package.json`, `packages/core/README.md`
+- **Proposed/Applied fix:** reduced `exports` to `"."`; removed unused deps; added README.
+- **Evidence:** build green; `require('@evolith/core')` resolves; `npm pack --dry-run` lists README.
+- **Residual risk:** still no contract test (GT-355).
+- **Done when:** [x] no subpath MODULE_NOT_FOUND; [x] README packaged.
+
+#### GT-339
+
+**Title:** core-api propose-advance forwards fromPhase undefined (contract bug) — `APPLIED`
+
+- **Component:** core-api · **Priority:** P1 · **Risk:** high→none · **Dependencies:** none
+- **Files:** `apps/core-api/src/presentation/controllers/projects.controller.ts:44`, `dtos/projects.dto.ts:30`
+- **Proposed/Applied fix:** `fromPhase: currentPhase ?? targetPhase`; `currentPhase` optional.
+- **Evidence:** projects.controller.spec 5/5 green.
+- **Residual risk:** `as any` casts remain pending GT-343.
+- **Done when:** [x] fromPhase never undefined.
+
+#### GT-340
+
+**Title:** core-api test harness misses WORKSPACE_ROOT — `APPLIED`
+
+- **Component:** core-api / quality · **Priority:** P1 · **Risk:** high→none · **Dependencies:** GT-344 (shared root cause)
+- **Files:** `apps/core-api/test-setup.js`
+- **Proposed/Applied fix:** anchor `WORKSPACE_ROOT`/`CORE_PATH` to the monorepo root in the jest setup.
+- **Evidence:** `npm run --workspace apps/core-api test` → 105/105 green (was 23 failing) with no manual env.
+- **Residual risk:** masks the runtime packaging gap GT-344 (test-only mitigation).
+- **Done when:** [x] `npm test` green without manual env.
+
+#### GT-341
+
+**Title:** product-inventory generator scans a dead MCP path — `APPLIED`
+
+- **Component:** governance/docs · **Priority:** P1 · **Risk:** high→none · **Dependencies:** none
+- **Files:** `.harness/scripts/generate-product-inventory.mjs:43`
+- **Proposed/Applied fix:** repointed tool/resource/prompt sources to `packages/mcp-server/src`.
+- **Evidence:** regenerated inventory → 27 tools / 9 resources / 8 prompts; `--check` exit 0.
+- **Residual risk:** none.
+- **Done when:** [x] inventory matches installable surface.
+
+#### GT-342
+
+**Title:** README lists 6 topologies vs 8 — `APPLIED`
+
+- **Component:** docs · **Priority:** P1 · **Risk:** low · **Dependencies:** none
+- **Files:** `README.md:67`, `README.es.md:67`
+- **Proposed/Applied fix:** added Distributed Modules + Microservices rows (EN+ES), progressive-axis + legacy F-aliases.
+- **Evidence:** both tables now list 8.
+- **Done when:** [x] README == 8 canonical topologies.
+
+#### GT-343
+
+**Title:** EPIC — SDLC/topology phase-vocabulary unification — `OPEN`
+
+- **Component:** Cross · **Priority:** P0 · **Risk:** high (breaking) · **Dependencies:** blocks GA of every product
+- **Files:** `reference/config/evolith.config.schema.json:18`, `apps/core-api/.../composable-validate.controller.ts:24`, `sdk/cli/.../validate.command.ts:483`, `rulesets/schema/topology-manifest.schema.json:121`, `packages/core-domain/.../topology-catalog.service.ts:4`, `…/modes/sdlc-validation.mode.ts:21`, `…/handlers/satellite-contract-rule.handler.ts:41`
+- **Proposed fix:** canonical `PhaseId` (discovery|design|construction|validation|delivery) + alias map; rename topology `phase`→`maturityLevel`/`profile`; OPA anti-collision rule; staged migration accepting `f1..f5`/`F1..F3` as deprecated aliases.
+- **Evidence:** ~897 `f1..f5`/`F1..F3` occurrences swept across rulesets/core-domain/mcp-server/cli/core-api+docs.
+- **Residual risk:** N/A (open).
+- **Done when:** [ ] zero `f1..f5` SDLC ids in non-test src; [ ] topologies resolved by id; [ ] no namespace collision; [ ] all suites green.
+
+#### GT-344
+
+**Title:** Published CLI crashes (ENOENT default-workflow.yaml) — `OPEN`
+
+- **Component:** smart-cli / core-domain · **Priority:** P0 · **Risk:** critical · **Dependencies:** none
+- **Files:** `packages/core-domain/src/domain/services/default-workflow-definition.ts:87`, `…/services/index.ts:94`, core-domain + smart-cli `package.json` files[]
+- **Proposed fix:** bundle `rulesets/sdlc/default-workflow.yaml` into `@evolith/core-domain` (files[] + build copy); lazy load with a clear WORKSPACE_ROOT error; document it; add a clean-env smoke test.
+- **Evidence:** `loadDefaultWorkflow()` fallback resolves to deleted `packages/core-domain/rulesets` (regression cc5b9c67); `PhaseService` calls it eagerly at DI bootstrap.
+- **Residual risk:** N/A (open) — currently masked in core-api by GT-340.
+- **Done when:** [ ] `node sdk/cli/dist/main.js version` exits 0 in a clean env with no WORKSPACE_ROOT and no monorepo rulesets/.
+
+#### GT-345
+
+**Title:** Smart CLI unit-spec rot (21 suites) — `OPEN`
+
+- **Component:** smart-cli / quality · **Priority:** P1 · **Risk:** med · **Dependencies:** GT-344
+- **Files:** `sdk/cli/src/infrastructure/plugins/plugin-loader.spec.ts:55`, `…/standards/standards.command.spec.ts:73`, `…/adr/adr.command.spec.ts`, `…/__tests__/cli.integration.spec.ts:20`
+- **Proposed fix:** repair ctor/mocks; add `--version`; restore spec type-checking.
+- **Evidence:** `npm test` → 42/661 failing (22 suites) without env; ~21 still fail with WORKSPACE_ROOT set (genuine rot).
+- **Done when:** [ ] sdk/cli `npm test` green with coverage emitted.
+
+#### GT-346
+
+**Title:** CommandExecutor shell-injection surface (security) — `OPEN`
+
+- **Component:** smart-cli · **Priority:** P2 · **Risk:** med · **Dependencies:** none
+- **Files:** `sdk/cli/src/infrastructure/cli/command-executor.ts`, `…/cli/providers/index.ts`
+- **Proposed fix:** replace `exec` with `execFile`/`spawn` + arg arrays; validate interpolated names.
+- **Done when:** [ ] no shell-string interpolation of untrusted input; [ ] covering test.
+
+#### GT-347
+
+**Title:** Core OPA governance suite broken + no CI gate — `OPEN`
+
+- **Component:** governance/OPA · **Priority:** P0 · **Risk:** critical (governance integrity) · **Dependencies:** none
+- **Files:** `rulesets/opa/**` (3 failing rego), `.harness/scripts/compile-opa-wasm.mjs`, `.harness/scripts/ci/28-test-topology-opa.mjs`
+- **Proposed fix:** fix rego parse/safety errors; add `opa test rulesets/opa/` CI gate; restore wasm build.
+- **Evidence:** `opa test rulesets/opa/` aborts loading (3 rego errors); `build:policy` can't emit core wasm; only topology OPA is gated.
+- **Done when:** [ ] `opa test rulesets/opa/` exit 0; [ ] wasm built; [ ] CI gate present.
+
+#### GT-348
+
+**Title:** OPA policy recompiled per tool dispatch (perf) — `OPEN`
+
+- **Component:** mcp-server · **Priority:** P1 · **Risk:** med (latency) · **Dependencies:** none
+- **Files:** `packages/mcp-server/src/mcp/abac-evaluator.ts:125`, `mcp-tool-dispatch.ts:102`
+- **Proposed fix:** lazy singleton compiled policy keyed by wasm mtime; only `evaluate(input)` per call.
+- **Done when:** [ ] loadPolicy/readFile invoked ≤1× per process / wasm change.
+
+#### GT-349
+
+**Title:** OPA fails open when wasm missing (security) — `OPEN`
+
+- **Component:** mcp-server · **Priority:** P2 · **Risk:** med · **Dependencies:** GT-347
+- **Files:** `packages/mcp-server/src/mcp/abac-evaluator.ts:132`
+- **Proposed fix:** fail-closed in production (or loud warn + metric) when policy.wasm is absent.
+- **Done when:** [ ] missing policy denies in prod; [ ] both paths tested.
+
+#### GT-350
+
+**Title:** standards.service.ts uses `new Function()` (security) — `OPEN`
+
+- **Component:** core-domain · **Priority:** P2 · **Risk:** med (code-exec sink) · **Dependencies:** none
+- **Files:** `packages/core-domain/src/domain/services/standards.service.ts:136`
+- **Proposed fix:** declarative/allow-listed predicate evaluator; trust-boundary flag.
+- **Done when:** [ ] no `new Function()`/eval; [ ] malicious check string inert; [ ] tests green.
+
+#### GT-351
+
+**Title:** infra-providers: no tests, webhook no retry/timeout, README wrong — `OPEN`
+
+- **Component:** infra-providers · **Priority:** P1 · **Risk:** high · **Dependencies:** none
+- **Files:** `packages/infra-providers/src/webhook.adapter.ts:23`, `…/README.md:31`, `…/disk-ruleset.repository.ts:175`
+- **Proposed fix:** jest + provider unit tests (≥80%); AbortController timeout + bounded retry/backoff + URL scheme allow-list (SSRF); fix README signatures; canonical topology ids in `deriveCategory`.
+- **Done when:** [ ] test script green ≥80% cov; [ ] webhook timeout + documented retry; [ ] README compiles.
+
+#### GT-352
+
+**Title:** mcp-tools: no input validation, no README — `OPEN`
+
+- **Component:** mcp-tools · **Priority:** P2 · **Risk:** med · **Dependencies:** none
+- **Files:** `packages/mcp-tools/src/registry.js:24`, `…/tools/echo.js:16`
+- **Proposed fix:** validate args against `inputSchema` (ajv) in CallTool; add README tool catalog.
+- **Done when:** [ ] invalid input → structured error; [ ] README lists all tools.
+
+#### GT-353
+
+**Title:** sdk-client orphaned + low method coverage — `OPEN`
+
+- **Component:** sdk-client · **Priority:** P2 · **Risk:** med · **Dependencies:** GT-336
+- **Files:** `packages/sdk-client/src/__tests__/sdk.spec.ts`
+- **Proposed fix:** per-method URL/verb/body + abort tests (≥85% func cov); README with `/api/v1` base; wire into a real consumer or mark experimental.
+- **Done when:** [ ] func cov ≥85%; [ ] integration test resolves real routes; [ ] README present.
+
+#### GT-354
+
+**Title:** core-api OpenAPI dead code + api-reference gaps — `OPEN`
+
+- **Component:** core-api · **Priority:** P2 · **Risk:** low · **Dependencies:** none
+- **Files:** `apps/core-api/src/openapi/openapi-config.ts`, `apps/core-api/src/main.ts:34`, `reference/products/core-api/api-reference.md`
+- **Proposed fix:** delete the unused openapi module OR call `setupOpenApi()` from main; document `POST /architecture/cache/invalidate`.
+- **Done when:** [ ] no duplicate DocumentBuilder; [ ] api-reference covers all routes.
+
+#### GT-355
+
+**Title:** @evolith/core has no contract/smoke test — `OPEN`
+
+- **Component:** core · **Priority:** P2 · **Risk:** med (silent re-export drift) · **Dependencies:** GT-338
+- **Files:** `packages/core/src/index.ts`
+- **Proposed fix:** `index.spec.ts` asserting presence/type of every re-exported symbol + a `test` script.
+- **Done when:** [ ] suite fails if any documented export is missing at runtime; [ ] CI runs it.
+
+#### GT-356
+
+**Title:** mcp-services README hand-maintained drift — `OPEN`
+
+- **Component:** docs · **Priority:** P2 · **Risk:** low · **Dependencies:** GT-341
+- **Files:** `reference/products/mcp-services/README.md:17,49`
+- **Proposed fix:** regenerate counts (27/9/8); fix start command to `smart-cli mcp serve --transport http --port 3000`; derive from generator instead of hand-maintaining.
+- **Done when:** [ ] README counts/command match code; [ ] `--help` doc-snippet test.
+
+#### GT-357
+
+**Title:** META — gap board over-reports completion — `OPEN`
+
+- **Component:** governance · **Priority:** P1 · **Risk:** high (false confidence) · **Dependencies:** GT-341, GT-347
+- **Files:** `reference/governance/standards/vision/gap-tracking.md`, `…/maturity-evidence.json`, `.harness/scripts/ci/09-reconcile-maturity.mjs`
+- **Proposed fix:** feed real per-product `build`/`test` results into maturity-evidence; gate "DONE" on validated evidence; this wave reopens the board.
+- **Evidence:** board read 329/330 DONE while ≥15 real gaps (3 critical) exist; `09-reconcile-maturity.mjs` already fails `closures 272 vs required 323`.
+- **Done when:** [ ] board status reconciles with executed build/test evidence.

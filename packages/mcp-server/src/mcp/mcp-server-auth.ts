@@ -4,6 +4,18 @@ import { ErrorCodes } from '../common/errors';
 import { failure, generateCorrelationId } from '../common/envelopes';
 import type { McpUserContext } from './mcp-user-context';
 
+/**
+ * Constant-time API-key comparison (GAP MCP-TIMING). Guards against the timing
+ * side-channel of `===` by hashing to fixed-length buffers before comparing.
+ * A configured key is required; empty/undefined presented tokens never match.
+ */
+function safeKeyEqual(presented: string | undefined, configured: string | undefined): boolean {
+  if (!presented || !configured) return false;
+  const a = crypto.createHash('sha256').update(presented).digest();
+  const b = crypto.createHash('sha256').update(configured).digest();
+  return crypto.timingSafeEqual(a, b);
+}
+
 const ADMIN_CONTEXT: McpUserContext = Object.freeze({
   id: 'admin-api-key',
   role: 'admin',
@@ -40,7 +52,7 @@ export function validateAuth(
   const bearerToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
   const apiKeyHeader = req.headers['x-api-key'] as string | undefined;
 
-  if (bearerToken === apiKey || apiKeyHeader === apiKey) {
+  if (safeKeyEqual(bearerToken, apiKey) || safeKeyEqual(apiKeyHeader, apiKey)) {
     return { ...ADMIN_CONTEXT, environment: process.env.NODE_ENV || 'development' };
   }
 

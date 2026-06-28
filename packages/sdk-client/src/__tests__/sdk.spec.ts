@@ -46,7 +46,7 @@ describe('EvolithRestClient', () => {
     const result = await client.evaluateGate('PG1-01', body);
 
     expect(mockFetch).toHaveBeenCalledWith(
-      'http://localhost:3000/v1/gates/PG1-01/evaluate',
+      'http://localhost:3000/api/v1/gates/PG1-01/evaluate',
       expect.objectContaining({ method: 'POST' }),
     );
     expect(result.data.phase).toBe('discovery');
@@ -67,7 +67,7 @@ describe('EvolithRestClient', () => {
     await client.listTopologies();
 
     expect(mockFetch).toHaveBeenCalledWith(
-      'http://localhost:3000/v1/architecture/topologies',
+      'http://localhost:3000/api/v1/architecture/topologies',
       expect.objectContaining({ method: 'GET' }),
     );
   });

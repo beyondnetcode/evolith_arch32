@@ -4,7 +4,7 @@
 
 **Status:** Active Tracking
 **Owner:** Evolith Architecture Board
-**Last Updated:** 2026-06-26 (GT-314–GT-330 closed — all 17 pending gaps resolved in parallel wave execution)
+**Last Updated:** 2026-06-27 (Maturity wave: 27 gaps added GT-331–GT-357 — 12 APPLIED + validated, 15 OPEN incl. 3 P0; board no longer "all done". Detail: [Gap Reference Catalog §2](./gap-reference-catalog.md))
 **Gap Details:** [Gap Reference Catalog](./gap-reference-catalog.md)
 
 This board is the single source of truth for technical debt, gaps, opportunities, enablers, priority, and status. Select a gap ID to open its problem statement, purpose, evidence, closure criteria, and references.
@@ -13,6 +13,33 @@ This board is the single source of truth for technical debt, gaps, opportunities
 
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| [`GT-343`](./gap-reference-catalog.md#gt-343) | EPIC: unify SDLC phase ids (f1..f5) and topology F1/F2/F3 vocabulary; remove phase/topology conflation | `Cross` | Cross | P0 | XL | `OPEN` |
+| [`GT-344`](./gap-reference-catalog.md#gt-344) | Published CLI crashes (ENOENT default-workflow.yaml) — rulesets not bundled (regression cc5b9c67) | `Smart CLI` | Cross | P0 | L | `OPEN` |
+| [`GT-347`](./gap-reference-catalog.md#gt-347) | Core OPA governance test suite broken (3 rego abort); no CI gate runs opa test; build:policy cannot emit wasm | `Governance` | Cross | P0 | L | `OPEN` |
+| [`GT-357`](./gap-reference-catalog.md#gt-357) | META: gap board over-reports completion vs validated build/test reality | `Governance` | Cross | P1 | M | `OPEN` |
+| [`GT-345`](./gap-reference-catalog.md#gt-345) | Smart CLI unit-spec rot (21 suites: compile errors, stale mocks, --version) | `Smart CLI` | Cross | P1 | L | `OPEN` |
+| [`GT-348`](./gap-reference-catalog.md#gt-348) | MCP OPA policy recompiled on every tool dispatch (no cache) | `MCP Server` | Cross | P1 | M | `OPEN` |
+| [`GT-351`](./gap-reference-catalog.md#gt-351) | infra-providers: no tests; webhook no retry/timeout (SSRF); README inaccurate | `Infra` | Cross | P1 | L | `OPEN` |
+| [`GT-346`](./gap-reference-catalog.md#gt-346) | Smart CLI CommandExecutor shell-injection surface (exec with interpolated args) | `Smart CLI` | Cross | P2 | M | `OPEN` |
+| [`GT-349`](./gap-reference-catalog.md#gt-349) | MCP OPA fails open (allowed) when policy.wasm missing | `MCP Server` | Cross | P2 | S | `OPEN` |
+| [`GT-350`](./gap-reference-catalog.md#gt-350) | standards.service.ts evaluates rule check via new Function() (code-exec sink) | `Core Domain` | Cross | P2 | M | `OPEN` |
+| [`GT-352`](./gap-reference-catalog.md#gt-352) | mcp-tools: no input validation vs inputSchema; no README | `MCP Tools` | Cross | P2 | S | `OPEN` |
+| [`GT-353`](./gap-reference-catalog.md#gt-353) | sdk-client orphaned (no consumer/README); low method coverage | `SDK` | Cross | P2 | M | `OPEN` |
+| [`GT-354`](./gap-reference-catalog.md#gt-354) | core-api OpenAPI module dead code; api-reference missing cache/invalidate | `Core API` | Cross | P2 | S | `OPEN` |
+| [`GT-355`](./gap-reference-catalog.md#gt-355) | @evolith/core has no contract/smoke test for the re-export barrel | `Core` | Cross | P2 | S | `OPEN` |
+| [`GT-356`](./gap-reference-catalog.md#gt-356) | mcp-services README hand-maintained counts/command stale | `Docs` | Cross | P2 | S | `OPEN` |
+| [`GT-331`](./gap-reference-catalog.md#gt-331) | MCP binary version read from package.json (was hardcoded 1.0.0) | `MCP Server` | Cross | P2 | XS | `IN-PROGRESS` |
+| [`GT-332`](./gap-reference-catalog.md#gt-332) | Redact approvalToken + args in mutative dispatch audit log | `MCP Server` | Cross | P1 | S | `IN-PROGRESS` |
+| [`GT-333`](./gap-reference-catalog.md#gt-333) | Constant-time API-key comparison (timingSafeEqual) | `MCP Server` | Cross | P2 | XS | `IN-PROGRESS` |
+| [`GT-334`](./gap-reference-catalog.md#gt-334) | Declare @open-policy-agent/opa-wasm as direct mcp-server dependency | `MCP Server` | Cross | P2 | XS | `IN-PROGRESS` |
+| [`GT-335`](./gap-reference-catalog.md#gt-335) | Fix read-gap-tracking dead PENDING filter (status parser + injectable root) | `MCP Tools` | Cross | P1 | S | `IN-PROGRESS` |
+| [`GT-336`](./gap-reference-catalog.md#gt-336) | SDK REST client missing /api prefix — all calls 404 | `SDK` | Cross | P0 | S | `IN-PROGRESS` |
+| [`GT-337`](./gap-reference-catalog.md#gt-337) | SDK ApiEnvelope type as discriminated union matching core-api | `SDK` | Cross | P1 | S | `IN-PROGRESS` |
+| [`GT-338`](./gap-reference-catalog.md#gt-338) | @evolith/core broken subpath exports (MODULE_NOT_FOUND) pruned + README | `Core` | Cross | P1 | S | `IN-PROGRESS` |
+| [`GT-339`](./gap-reference-catalog.md#gt-339) | core-api propose-advance forwarded fromPhase undefined (contract bug) | `Core API` | Cross | P1 | S | `IN-PROGRESS` |
+| [`GT-340`](./gap-reference-catalog.md#gt-340) | core-api test harness sets WORKSPACE_ROOT — npm test 105/105 (was 23 failing) | `Core API` | Cross | P1 | S | `IN-PROGRESS` |
+| [`GT-341`](./gap-reference-catalog.md#gt-341) | product-inventory generator repointed to packages/mcp-server (was 0/0/0, now 27/9/8) | `Governance` | Cross | P1 | S | `IN-PROGRESS` |
+| [`GT-342`](./gap-reference-catalog.md#gt-342) | README lists 8 topologies (added Distributed Modules + Microservices, EN+ES) | `Docs` | Cross | P1 | XS | `IN-PROGRESS` |
 | [`GT-314`](./gap-reference-catalog.md#gt-314) | Validate the real satellite artifact, not the Core template (evidence-validator resolves template paths) | `Core Domain` | Cross | P0 | M | `DONE` |
 | [`GT-315`](./gap-reference-catalog.md#gt-315) | Domain event system: bus + outbox + versioned events (phase/gate/artifact/blueprint/workflow) | `Core Domain` | Cross | P0 | L | `DONE` |
 | [`GT-316`](./gap-reference-catalog.md#gt-316) | Unified verdict + artifact/phase lifecycle state machine (created to archived) | `Core Domain` | Cross | P0 | L | `DONE` |
@@ -345,7 +372,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-246`](./gap-reference-catalog.md#gt-246) | Implement Chaos Mesh/Litmus experiments | `QA` | Cross | P3 | L | `DONE` |
 
 
-**Progress:** 329 / 330 done · 0 in progress · 0 pending · 1 deferred
+**Progress:** 329 / 357 done · 12 in progress · 15 pending · 1 deferred
 
 **Wave 2026-06-23 (Wilson deep audit III):** Added 14 new gaps `GT-212`…`GT-225` from the Wilson Audit Playbook covering: ADR status hygiene (GT-212), topology manifest metadata + operational budgets + guidance corpus (GT-213, GT-217, GT-219), REST controller observability + OpenAPI (GT-214, GT-215), OPA input-schema parity + per-topology test density (GT-216, GT-222), SDLC Phase 05 rollback + on-call templates (GT-218), CLI branch coverage + envelope format coverage + skip-list cleanup (GT-220, GT-224, GT-225), MCP HTTP audit logging (GT-221), and cross-surface parity e2e tests (GT-223).
 
@@ -374,6 +401,8 @@ This board is the single source of truth for technical debt, gaps, opportunities
 **Wave 2026-06-25 (Topology compliance audit):** Added 3 new gaps `GT-277`…`GT-279` from the automated topology compliance audit playbook (`.harness/playbooks/topology-compliance-audit.mjs`). All 8 accepted topologies scored 18/21 (86%) — missing the 3 mandatory framework interfaces: OpenAPI specs, MCP tool manifests, and CLI flow files. The audit script is now executable standalone and registered as a Wilson-executable tool via `run-wilson-audit.mjs --topology`.
 
 **Wave 2026-06-25 (Wilson control-plane audit):** Added 3 new gaps `GT-274`…`GT-276`, reopened `GT-267` because current Core API/MCP/CLI tests still fail, and reopened `GT-272` because the Helm defaults still fetch unsigned HTTP OPA bundles. The audit explicitly covered all accepted topologies (`modular-monolith`, `distributed-modules`, `microservices`, `serverless`, `event-driven`, `data-mesh`, `edge-computing`, `agentic-ai`) and both rule engines: topology manifests passed, Native/OPA rule coverage passed, topology OPA tests passed, and `EVOLITH_PARITY_FULL=true node .harness/scripts/ci/27-opa-parity-gate.mjs` evaluated 16 fixtures with 0 drift.
+
+**Wave 2026-06-27 (maturity audit + execution):** Re-validated every product against real `build`+`test` runs and found the board's prior "329/330 done" over-reported reality. Added `GT-331`…`GT-357`. **APPLIED + validated this wave:** GT-331 (MCP version), GT-332/333 (MCP secret-log redaction + timing-safe key, security), GT-334 (opa-wasm dep), GT-335 (read-gap-tracking fix), GT-336/337 (SDK /api prefix + envelope), GT-338 (core exports + README), GT-339 (core-api propose-advance contract bug), GT-340 (core-api WORKSPACE_ROOT → 105/105), GT-341 (inventory generator → 27/9/8), GT-342 (README 8 topologies). **OPEN (P0):** GT-343 phase-vocabulary EPIC, GT-344 CLI ENOENT crash, GT-347 broken core OPA suite. Full detail (impact/risk/files/fix/evidence/acceptance): [Gap Reference Catalog §2](./gap-reference-catalog.md). No product is production-ready while the three P0s remain open.
 
 **Ordering:** one table, ordered by status (pending then completed), then criticality (`P0` → `P1` → `P2` → `P3`), then complexity (`XS` → `S` → `M` → `L` → `XL`). `GT-*` IDs link to the [Gap Reference Catalog](./gap-reference-catalog.md); `MT-A*` IDs link to the supporting [Multi-Topology implementation plan](./multi-topology-reference-corpus-implementation-plan.md).
 

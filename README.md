@@ -64,7 +64,9 @@ Evolith Core governs and provides reference artifacts for the following architec
 
 | Topology                    | Description                                                                                                     |
 | --------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| **Modular Monolith**        | Foundational topology for systems that start simple and mature without premature distribution                   |
+| **Modular Monolith**        | Progressive-axis entry: one deployable with strict bounded contexts and extraction readiness (legacy alias `F1`) |
+| **Distributed Modules**     | Progressive-axis mid-stage: independently deployable modules behind explicit contracts (legacy alias `F2`)       |
+| **Microservices**           | Progressive-axis target: fully extracted, independently scaled services (legacy alias `F3`)                      |
 | **Cloud-Native Serverless** | Event-driven, auto-scaling, pay-per-execution architectures on FaaS and managed services                        |
 | **Event-Driven**            | Async-first systems with message brokers, event sourcing, and CQRS                                              |
 | **Data Mesh**               | Domain-oriented, self-serve data platforms with federated governance                                            |

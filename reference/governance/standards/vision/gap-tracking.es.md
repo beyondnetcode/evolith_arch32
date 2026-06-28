@@ -13,7 +13,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| [`GT-343`](./gap-reference-catalog.es.md#gt-343) | EPIC: unificar ids de fase SDLC (f1..f5) y vocabulario de topología F1/F2/F3 — etapa 1: módulo PhaseId canónico aterrizado | `Cross` | Cross | P0 | XL | `EN-PROGRESO` |
+| [`GT-343`](./gap-reference-catalog.es.md#gt-343) | EPIC: unificar ids de fase SDLC (f1..f5) y vocabulario de topología F1/F2/F3 — etapas 1-2: PhaseId canónico + validators de core-domain migrados | `Cross` | Cross | P0 | XL | `EN-PROGRESO` |
 | [`GT-344`](./gap-reference-catalog.es.md#gt-344) | La CLI publicada falla (ENOENT default-workflow.yaml) — fallback de workflow por defecto embebido | `Smart CLI` | Cross | P0 | L | `EN-PROGRESO` |
 | [`GT-347`](./gap-reference-catalog.es.md#gt-347) | Suite OPA core verde 197/197 + wasm compila + gate CI cableado (29-test-core-opa) | `Governance` | Cross | P0 | L | `EN-PROGRESO` |
 | [`GT-358`](./gap-reference-catalog.es.md#gt-358) | Suite OPA: 12 fallos de aserción corregidos (fixtures/mocks obsoletos) → 197/197 | `Governance` | Cross | P1 | M | `EN-PROGRESO` |

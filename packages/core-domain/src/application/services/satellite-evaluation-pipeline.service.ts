@@ -4,6 +4,7 @@ import { TopologyCatalogService, TopologyManifest } from './topology-catalog.ser
 import { SdlcDataLoaderService, StructuredGate } from './sdlc-data-loader.service';
 import { RulesetValidatorService } from '../validators/ruleset-validator.service';
 import { createSuccessEnvelope } from '../../domain/gate-evidence';
+import { toLegacyPhaseId } from '../../domain/sdlc/phase-id';
 import * as path from 'path';
 
 /**
@@ -38,9 +39,10 @@ export class SatelliteEvaluationPipeline {
     // Step 1: Resolve topology
     const topology = manifest.topology || await this.resolveTopology(manifest.satellitePath, corePath);
 
-    // Step 2: Determine which phases to evaluate
+    // Step 2: Determine which phases to evaluate (GT-343: accept canonical ids,
+    // normalize to the legacy f1..f5 the structured gate data is keyed by).
     const phaseIds = manifest.phase
-      ? [manifest.phase]
+      ? [toLegacyPhaseId(manifest.phase) ?? manifest.phase]
       : ['f1', 'f2', 'f3', 'f4', 'f5'];
 
     // Step 3: Load gates from GT-280 structured data

@@ -1,0 +1,89 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://evolith.dev/rulesets/schema/satellite-record.schema.json",
+  "title": "Evolith Satellite Record Schema",
+  "description": "Defines the canonical entity for a satellite repository registered in the Evolith provisioning system.",
+  "type": "object",
+  "required": ["id", "name", "owner", "repoUrl", "cloneUrl", "sshUrl", "topology", "phase", "status", "mode", "createdAt", "updatedAt"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the satellite record"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human-readable name for the satellite repository"
+    },
+    "owner": {
+      "type": "string",
+      "minLength": 1,
+      "description": "GitHub organization or user that owns the satellite repository"
+    },
+    "repoUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "HTTPS URL of the satellite repository on GitHub"
+    },
+    "cloneUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "HTTPS clone URL for the satellite repository"
+    },
+    "sshUrl": {
+      "type": "string",
+      "description": "SSH clone URL for the satellite repository"
+    },
+    "topology": {
+      "type": "string",
+      "description": "Architecture topology of the satellite. Well-known values: monolith, modular, micro, distributed, custom"
+    },
+    "phase": {
+      "type": "string",
+      "description": "Current SDLC phase of the satellite (e.g. f1, f2, f3, f4, f5)"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["provisioning", "active", "linked", "error", "archived"],
+      "description": "Lifecycle status of the satellite record"
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["create", "adopt"],
+      "description": "Whether this satellite was created by Evolith or adopted from an existing repository"
+    },
+    "coreVersion": {
+      "type": "string",
+      "description": "Version of Evolith Core this satellite is linked to"
+    },
+    "parentCorePath": {
+      "type": "string",
+      "description": "Filesystem path to the parent Evolith Core repository, when running locally"
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional human-readable description of the satellite's purpose"
+    },
+    "linkedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the satellite was linked to Evolith Core"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when this satellite record was created"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when this satellite record was last updated"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Arbitrary extensible metadata for the satellite record",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

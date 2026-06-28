@@ -5120,6 +5120,19 @@
         "npm run --workspace packages/infra-providers test"
       ],
       "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-326",
+      "closedAt": "2026-06-28",
+      "closureCommit": "262d29d5",
+      "evidence": [
+        "packages/core-domain/src/__e2e__/governance-flow.e2e.spec.ts",
+        ".github/workflows/ci-cd.yml"
+      ],
+      "validationCommands": [
+        "npm run test:e2e --workspace @evolith/core-domain"
+      ],
+      "dependencyDisposition": "none"
     }
   ]
 }

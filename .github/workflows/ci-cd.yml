@@ -58,6 +58,12 @@ jobs:
       - name: Run core-domain tests with coverage
         run: npm run test:cov --workspace @evolith/core-domain
 
+      # GT-326: end-to-end governance flow (phase → gate → artifact → verdict)
+      # against a real tmpdir satellite, exercising Core's Tracker/agent
+      # integration contract (events, webhook dispatch, audit) in CI.
+      - name: Run core-domain governance E2E (GT-326)
+        run: npm run test:e2e --workspace @evolith/core-domain
+
   test-core:
     name: Test core
     runs-on: ubuntu-latest

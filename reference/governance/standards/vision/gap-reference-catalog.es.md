@@ -163,14 +163,16 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 #### GT-326
 
-**Título:** Validación de integración end-to-end Core ↔ Tracker y agentes
+**Título:** Validación de integración end-to-end Core ↔ Tracker y agentes — `DONE` (scope Core)
 
 - **Propósito:** Probar que el SDLC funciona end-to-end contra satélites reales y un Tracker/agente vivo, más allá de tests unitarios.
-- **Evidencia:** Los tests son de nivel unit/contract; no hay flujo de governance E2E con Tracker/agentes.
+- **Evidencia (original):** Los tests eran de nivel unit/contract; no había flujo de governance E2E con Tracker/agentes.
 - **Complejidad:** L
+- **Fix aplicado:** `packages/core-domain/src/__e2e__/governance-flow.e2e.spec.ts` (13 tests, 5 escenarios) conduce el flujo completo — fase → gate → artefacto → verdict — contra un **satélite real en tmpdir** (artefactos reales + los `gate-f*.json` del repo): happy-path con aprobación de ARCHITECT (verdict PASS + `GateApprovedEvent` + auditoría + transiciones de fase), artefacto-faltante FAIL (`GateRejectedEvent` + violaciones), autorización RBAC (`GateAuthorizationError` cuando un DEVELOPER aprueba), **entrega de webhook** de `gate.approved` a un subscriber (el contrato de integración con Tracker) registrada en el delivery repo, y validación de WorkflowDefinition de 5 fases + Blueprint. Cableado en CI (job `test-core-domain` de `ci-cd.yml` corre `npm run test:e2e`).
+- **Nota de scope (residual, fuera de Core por diseño):** la suite ejerce el *lado* Core del contrato Tracker/agente vía puertos in-memory (event bus, dispatch de webhook, auditoría). Un E2E **vivo** Core↔Tracker (un Tracker corriendo consumiendo el webhook) pertenece a un harness cross-producto — Evolith Tracker es un producto independiente (`maturityIncluded: false` en maturity-reconciliation), por lo que intencionalmente NO está en la CI de Core.
 - **Hecho cuando:**
-  - [ ] Suite E2E conduce fase→gate→artefacto→verdict contra un satélite real.
-  - [ ] Integración con Tracker/agente validada en CI.
+  - [x] Suite E2E conduce fase→gate→artefacto→verdict contra un satélite real.
+  - [x] Integración con Tracker/agente (contrato lado-Core: eventos + dispatch de webhook + auditoría) validada en CI.
 
 #### GT-327
 

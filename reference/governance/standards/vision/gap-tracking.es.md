@@ -53,7 +53,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-323`](./gap-reference-catalog.es.md#gt-323) | Dockerfiles productivos para core-api y mcp-server (empaquetar el corpus) | `Infra` | Cross | P1 | M | `COMPLETADO` |
 | [`GT-324`](./gap-reference-catalog.es.md#gt-324) | CD: build+push a GHCR de core-api y mcp-server (GITHUB_TOKEN) vivo + triggers push/tag; job de deploy Coolify guardado — código completo, deploy pendiente de secrets + run CD | `Infra` | Cross | P1 | M | `EN-PROGRESO` |
 | [`GT-325`](./gap-reference-catalog.es.md#gt-325) | Blueprint como entidad de primera clase validada contra rulesets/topologías/política del tenant/OPA | `Architecture` | F2 | P1 | L | `COMPLETADO` |
-| [`GT-326`](./gap-reference-catalog.es.md#gt-326) | Validación de integración end-to-end Core y Tracker y agentes | `Quality` | Cross | P1 | L | `PENDIENTE` |
+| [`GT-326`](./gap-reference-catalog.es.md#gt-326) | Validación de integración end-to-end Core y Tracker y agentes | `Quality` | Cross | P1 | L | `COMPLETADO` |
 | [`GT-327`](./gap-reference-catalog.es.md#gt-327) | Evolucionar el webhook de un disparo a suscripciones + reintentos + firma HMAC | `Core Domain` | Cross | P2 | M | `COMPLETADO` |
 | [`GT-328`](./gap-reference-catalog.es.md#gt-328) | Desplegar ESLint boundaries a packages/* y apps/* con paso de CI | `Quality` | Cross | P2 | M | `COMPLETADO` |
 | [`GT-329`](./gap-reference-catalog.es.md#gt-329) | Reubicar las 5 topologías avanzadas a rulesets/topologies | `Rulesets` | Cross | P2 | M | `COMPLETADO` |
@@ -373,7 +373,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-246`](./gap-reference-catalog.es.md#gt-246) | Implementar experimentos Chaos Mesh/Litmus | `QA` | Cross | P3 | L | `COMPLETADO` |
 
 
-**Progreso:** 341 / 358 completados · 14 en progreso · 2 pendientes · 1 diferidos
+**Progreso:** 342 / 358 completados · 14 en progreso · 1 pendientes · 1 diferidos
 
 **Oleada 2026-06-23 (auditoría profunda de Wilson III):** Añadidos 14 gaps nuevos `GT-212`…`GT-225` del Wilson Audit Playbook que cubren: higiene de estado ADR (GT-212), metadata + presupuestos operativos + corpus de guías por topología (GT-213, GT-217, GT-219), observabilidad + OpenAPI en controladores REST (GT-214, GT-215), paridad de input-schemas OPA + densidad de tests por topología (GT-216, GT-222), plantillas de rollback + on-call de Fase 05 (GT-218), cobertura de ramas CLI + paridad de envelope --format + limpieza de skip-list (GT-220, GT-224, GT-225), audit logging HTTP de MCP (GT-221), y tests e2e de paridad cross-surface (GT-223).
 

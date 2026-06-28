@@ -73,6 +73,22 @@ export PATH=$(npm config get prefix)/bin:$PATH
 
 **`WORKSPACE_ROOT` (optional):** the CLI ships a built-in default SDLC workflow, so it runs without any environment setup. Set `WORKSPACE_ROOT` to a checkout root only when you want to override the workflow/rulesets from disk (`$WORKSPACE_ROOT/rulesets/sdlc/default-workflow.yaml`).
 
+### Environment variables
+
+The CLI runs with zero configuration. The following variables are optional overrides. Those marked *(MCP)* are read by the bundled `@evolith/mcp-server` only while `smart-cli mcp serve` is running.
+
+| Variable | Read by | Purpose |
+|---|---|---|
+| `EVOLITH_PROFILE` | CLI | Selects the active named profile (per-environment defaults) instead of `default`. |
+| `EVOLITH_API_KEY` | CLI / MCP | API key for the MCP HTTP transport (equivalent to `--api-key`); required in production HTTP mode. |
+| `PORT` | CLI / MCP | Default HTTP port for `mcp serve --transport http` when `--port` is omitted (default `3000`). |
+| `OTEL_ENABLED` | CLI | When `true`, enables OpenTelemetry tracing export from the CLI. |
+| `WORKSPACE_ROOT` | Core | Checkout root for overriding the bundled workflow/rulesets from disk (see above). |
+| `MCP_HTTP_HOST` *(MCP)* | MCP | Bind host for the HTTP transport (default `0.0.0.0`; set `127.0.0.1` for local-only). |
+| `JWT_SECRET` *(MCP)* | MCP | HS256 secret enabling optional JWT bearer auth on the HTTP transport. |
+| `LOG_LEVEL` *(MCP)* | MCP | Log verbosity for the MCP server (default `info`). |
+| `NODE_ENV` *(MCP)* | MCP | `production` forces fail-closed auth/policy behavior in the MCP server. |
+
 ## Quickstart
 
 ```bash
@@ -129,6 +145,20 @@ smart-cli init --dry-run
 ```
 
 After `init` completes, the CLI prints suggested next steps including `validate`, `agents --install`, and `sdlc handoff`.
+
+---
+
+### init-wizard
+
+A fully guided, step-by-step alternative to `init` that walks through project name, runtime, monorepo strategy, and architecture pattern with interactive prompts. Use it for a first-time, hand-held setup; use `init` (with flags or `--config`) for scripted or non-interactive runs.
+
+```bash
+smart-cli init-wizard [options]
+
+Options:
+      --no-wizard        Fall back to the standard init flow instead of the wizard
+      --no-interactive   Run in non-interactive mode (CI/automation)
+```
 
 ---
 
@@ -208,6 +238,8 @@ Options:
 | `observability` | Logging, metrics, and tracing coverage |
 | `adr-0002` | ADR-0002 specific rules |
 
+The `rulesets` enum in `reference/config/evolith.config.schema.json` additionally recognizes: `satellite-contracts`, `executive-scorecards`, `compliance-baseline`, `definition-of-done`, `engineering-manifesto`, `repository-taxonomy`, `phase-gates`, `quality-thresholds`, and `dependency-pinning`. These are valid configuration values even though the common `--ruleset` shortcuts above cover the day-to-day set.
+
 **Available ADR rules (`--adr`):** `adr-0002`, `adr-0005`, `adr-0010`, `adr-0018`, `adr-0032`, `adr-0040`, `adr-0050`
 
 **Validation engines:**
@@ -221,6 +253,8 @@ When `--composable` is set, the CLI auto-resolves which validation modes to acti
 - `RulesetValidationMode` — activated when `--ruleset` is present
 - `AdrValidationMode` — activated when `--adr` is present
 - `AdhocValidationMode` — activated when `--file` is present
+
+**Exit codes:** `validate` exits `0` when the repository passes (including `warning` status) and `1` when the result status is `failed`. The `gate`, `phase advance`, and `scaffold` commands likewise exit `1` on failure, and any unhandled error during CLI startup exits `1`. This makes the CLI safe to gate CI pipelines on. In `--format json`, the failure detail is carried in the ADR-0073 envelope rather than printed as prose.
 
 **Examples:**
 
@@ -936,7 +970,7 @@ smart-cli mcp [action] [options]
 
 Actions:
   serve       Start the MCP server (default)
-  version     Print the bundled MCP server version
+  version     Print a static MCP server version banner (does not read the @evolith/mcp-server package version)
 
 Options:
   -t, --transport <stdio|http>   Transport: stdio (default) or http
@@ -955,7 +989,7 @@ Verifies `initialize`, `tools/list`, `resources/list`, `prompts/list`, and a rea
 
 ### Available MCP Tools
 
-The bundled server registers **26 tools**. The live, authoritative set is always browsable with `smart-cli api --list --category tools`; the table below mirrors the current `@evolith/mcp-server` registry.
+The bundled server registers **27 tools**. The live, authoritative set is always browsable with `smart-cli api --list --category tools`; the table below mirrors the current `@evolith/mcp-server` registry.
 
 **Validation & architecture**
 
@@ -1223,6 +1257,8 @@ sdk/cli/
 ---
 
 ## Contributing
+
+See the repository-root [CONTRIBUTING.md](../../CONTRIBUTING.md) for the full workflow, branch/commit conventions, and authoring standards.
 
 1. Fork the repository
 2. Create a feature branch

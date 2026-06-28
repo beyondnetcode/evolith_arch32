@@ -14,6 +14,19 @@ Reglas de gobernanza machine-readable que los repositorios satélite heredan y c
 
 Los Rulesets de Evolith son la **capa de ejecución machine-readable** del framework de gobernanza Evolith. Mientras `reference/` contiene estándares escritos por humanos, ADRs y documentación, `rulesets/` contiene las reglas concretas, esquemas y contratos que las herramientas (CLI, pipelines CI, linters) consumen para **validar** el cumplimiento de satélites.
 
+### Fuente de verdad
+
+| Capa | Ubicación | Autoritativa para |
+|---|---|---|
+| Estándares humanos / ADRs / constitución | `reference/**` | Intención, justificación, diseño (el *porqué*) |
+| Rulesets Native (`*.rules.json`) | `rulesets/<categoría>/*.rules.json` | La definición de regla canónica legible por máquina (el *qué*) |
+| JSON Schemas | `rulesets/schema/*.schema.json` | El contrato estructural de cada artefacto |
+| Políticas OPA (`*.rego`) | `rulesets/opa/**` | Motor de paridad; no debe divergir de la semántica Native |
+
+Markdown explica, los `*.rules.json` Native definen, los schemas validan la estructura, y OPA + el evaluador Native ambos aplican. Donde OPA y Native aplican, deben coincidir (Paridad de Doble Motor).
+
+> **Dos ejes independientes.** El **eje SDLC** (idea → producto, cinco fases con gates) es una preocupación *separada* del **eje de topología** (agrupadores de arquitectura resueltos mediante `topology.manifest.json`). Los legacy `f1/f2/f3` **no** son fases SDLC — son aliases obsoletos del eje progresivo de *topología* (`modular-monolith` → `distributed-modules` → `microservices`). No confundas "fase" en el sentido SDLC con estos aliases de topología.
+
 ---
 
 ## Categorías de Reglas
@@ -57,10 +70,10 @@ rulesets/
 ├── satellite-contracts/        # Punto de entrada WS1 de Satellite Contracts
 │   └── satellite-contracts.rules.json
 ├── opa/                        # Políticas OPA y schemas de entrada
-│   ├── schemas/                # Schemas de entrada de políticas OPA (9 schemas)
-│   ├── *.rego                  # Archivos de políticas Rego
+│   ├── schemas/                # Schemas de entrada de políticas OPA (26 schemas)
+│   ├── *.rego                  # Archivos de políticas Rego (34 sin tests; main.rego agrega)
 │   └── README.es.md            # Índice OPA
-├── schema/                     # Definiciones de JSON Schema (19 schemas)
+├── schema/                     # Definiciones de JSON Schema (36 schemas)
 │   ├── adr.schema.json         # Validación de artefacto ADR
 │   ├── prd.schema.json         # Validación de artefacto PRD
 │   ├── discovery-canvas.schema.json     # Fase 1
@@ -79,25 +92,33 @@ rulesets/
 │   └── README.md               # Resuelve alias mediante manifiestos topológicos
 ├── topologies/                 # Reglas ejecutables especificas por topologia
 │   └── README.es.md
-├── adr/                        # Reglas encoding ADR
+├── adr/                        # Reglas encoding ADR (7 de nivel superior + adr/generated/)
 │   ├── adr-0002-hexagonal-architecture.rules.json
 │   ├── adr-0005-cicd-quality-gates.rules.json
 │   ├── adr-0018-testing-pyramid.rules.json
 │   ├── adr-0032-protocol-selection.rules.json
 │   ├── adr-0040-multi-runtime.rules.json
 │   ├── adr-0050-gitflow-branching.rules.json
-│   └── adr-0010-multi-tenancy.rules.json
-├── cross-cutting/              # Solo aliases — los archivos canónicos están en sus carpetas de dominio arriba
-│   ├── compliance-baseline.rules.json    # alias → compliance-baseline/compliance-baseline.rules.json
-│   ├── definition-of-done.rules.json     # alias → definition-of-done/definition-of-done.rules.json
-│   ├── engineering-manifesto.rules.json  # alias → engineering-manifesto/engineering-manifesto.rules.json
-│   └── repository-taxonomy.rules.json    # alias → repository-taxonomy/repository-taxonomy.rules.json
+│   ├── adr-0010-multi-tenancy.rules.json
+│   └── generated/              # 108 *.rules.json autogenerados (uno por ADR aceptado); no editar a mano
+├── cross-cutting/              # Copias completas standalone (NO symlinks/aliases); su contenido diverge de los archivos canónicos
+│   ├── compliance-baseline.rules.json    # copia divergente de compliance-baseline/compliance-baseline.rules.json
+│   ├── definition-of-done.rules.json     # copia divergente de definition-of-done/definition-of-done.rules.json
+│   ├── engineering-manifesto.rules.json  # copia divergente de engineering-manifesto/engineering-manifesto.rules.json
+│   └── repository-taxonomy.rules.json    # copia divergente de repository-taxonomy/repository-taxonomy.rules.json
 ├── acl/                        # Reglas Anti-Corruption Layer
 │   ├── anti-corruption-layer.rules.json  # Aplicación ACL
 │   └── anti-corruption-layer.rules.es.json
+├── contracts/                  # Contratos de máquina + fixtures (evolith-machine-contracts.json)
+├── executive-scorecards/       # Reglas de scorecards DORA + SPACE (también replicadas bajo governance/)
+│   └── executive-scorecards.rules.json
+├── tenants/                    # Reglas de tenant multi-tenancy y overrides de ejemplo
+├── infrastructure/             # Reglas Helm + sidecar OPA (helm-enforcement, opa-sidecar-bundle)
+│   └── opa/                    # Fuentes *.rego co-ubicadas (ver nota abajo sobre opa/infrastructure/)
 ├── sdlc/                       # Reglas de gates SDLC
 │   ├── phase-gates.rules.json
-│   └── quality-thresholds.rules.json
+│   ├── quality-thresholds.rules.json
+│   └── dependency-pinning.rules.json
 ├── cli/                        # Reglas de release y paridad del Smart CLI
 │   ├── release-readiness.rules.json
 │   └── core-parity.rules.json
@@ -111,12 +132,17 @@ rulesets/
     ├── inheritance.rules.json
     ├── satellite-contracts.rules.json
     ├── open-core-boundary.rules.json  # Frontera Core vs Enterprise
-    └── executive-scorecards.rules.json  # Métricas DORA + SPACE
+    └── executive-scorecards.rules.json  # Métricas DORA + SPACE (réplica de executive-scorecards/)
 ```
+
+> **Notas sobre fuentes duplicadas.** Algunas áreas mantienen más de una copia de las mismas reglas lógicas; es un estado conocido, no una garantía de contenido idéntico:
+> - `cross-cutting/*.rules.json` son copias completas standalone de los archivos de dominio (`compliance-baseline/`, `definition-of-done/`, `engineering-manifesto/`, `repository-taxonomy/`) y su contenido actualmente **diverge** de esas fuentes canónicas — no son aliases ni symlinks.
+> - `executive-scorecards.rules.json` existe tanto en el nivel superior (`executive-scorecards/`) como bajo `governance/`.
+> - El Rego de infraestructura vive bajo `infrastructure/opa/*.rego` y `opa/infrastructure/*.rego` con tamaños distintos; las políticas agregadas por `main.rego` son las que están bajo [`opa/infrastructure/`](./opa/README.es.md).
 
 ---
 
-El artefacto canónico de reglas topológicas es el archivo declarado por cada `topology.manifest.json`; los artefactos actuales del eje progresivo viven bajo `reference/architecture/topologies/progressive-axis/`. Los consumidores deben resolver el manifiesto en lugar de construir rutas legacy `rulesets/architecture/f*.rules.json`.
+El artefacto canónico de reglas topológicas es el archivo declarado por cada `topology.manifest.json`. Los artefactos del eje progresivo están presentes en **dos** ubicaciones: las copias ejecutables bajo [`rulesets/topologies/progressive-axis/`](./topologies/README.es.md) (`{topology}.rules.json`, más `.rego`/`.wasm`/`topology.manifest.json` donde se compila) y las copias de deep-dive bajo `reference/architecture/topologies/progressive-axis/`. Los consumidores deben resolver el manifiesto (que nombra el archivo autoritativo) en lugar de construir rutas legacy `rulesets/architecture/f*.rules.json`.
 
 ## Cómo Funcionan los Rulesets
 
@@ -158,6 +184,7 @@ flowchart LR
 
 | Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
 |---|---|---|---|---|
+| [CONTRIBUTING.md](../CONTRIBUTING.md) | Clone/setup, tests, convenciones de branch/commit/PR, estándares de autoría de ruleset/OPA/schema | Onboarding de contribuidores | Guía de contribución | Sí |
 | [AGENTS.md](../AGENTS.es.md) | Reglas y convenciones de agentes | Gobernar las contribuciones de agentes | Estándar | Sí |
 | [Taxonomía del Repositorio](../reference/governance/standards/repository-taxonomy.es.md) | Qué va dónde en Evolith | Mantener el repositorio organizado | Estándar de gobernanza | Sí |
 | [Guía de Herencia de Repositorios Hijos](../reference/governance/standards/onboarding/child-repository-inheritance-guide.es.md) | Cómo los productos heredan de Evolith | Estandarizar la herencia | Guía | Sí |

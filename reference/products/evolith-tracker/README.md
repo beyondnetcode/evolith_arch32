@@ -27,7 +27,7 @@ As designed, it will implement Core and SDLC Governance by owning:
 
 By design, Tracker does not redefine Core rules or SDLC Governance — it executes them.
 
-> **Integration boundary (ADR-0074 + ADR-0075).** Tracker reaches Core strictly as an **external client** of the **Core API Exposure Layer** (`apps/core-api` REST/GraphQL, plus MCP) defined in [ADR-0074](../../architecture/adrs/core/0074-evolith-core-api-exposure-layer.md). The composition/adaptation logic for web and mobile lives in Tracker's **BFF / Application Gateway** ([ADR-0075](../../architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.md), NestJS) **inside the `evolith_tracker` repository** — not in Core. See the [Product Vision — Technical Interface Layer](../../product-suite/vision/evolith-product-vision-master.md) for the layered diagram.
+> **Integration boundary (ADR-0074 + ADR-0075).** Tracker reaches Core strictly as an **external client** of the **Core API Exposure Layer** (`apps/core-api`, **REST-only** under `/api/v1` — no GraphQL and no SSE — plus the MCP gateway) defined in [ADR-0074](../../architecture/adrs/core/0074-evolith-core-api-exposure-layer.md). The composition/adaptation logic for web and mobile lives in Tracker's **BFF / Application Gateway** ([ADR-0075](../../architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.md), NestJS). ADR-0075 motivates that gateway by *seamless integration with the existing Node.js monorepo ecosystem*; the future Tracker codebase (working name `evolith_tracker`) does not exist in this corpus yet, so its repository location is design intent, not a shipped fact. See the [Product Vision — Technical Interface Layer](../../product-suite/vision/evolith-product-vision-master.md) for the layered diagram.
 
 ---
 
@@ -54,6 +54,27 @@ By design, Tracker does not redefine Core rules or SDLC Governance — it execut
 - [SDLC Traceability and Evidence Graph](../../governance/sdlc/traceability-model.md)
 
 > These files remain in legacy locations during migration. Their classification is now explicit: Tracker-specific design belongs here; universal principles remain in Core; SDLC semantics remain under Governance.
+
+---
+
+## 3.1 What Exists Today vs. the Target
+
+No Tracker application or `evolith_tracker` repository ships in this corpus. The only **real, shipped** code touchpoints that prepare for Tracker are Core-side enabling seams, tracked in [gap-tracking](../../governance/standards/vision/gap-tracking.md):
+
+| Real seam shipping today | Where | Tracking | Relation to target design |
+|---|---|---|---|
+| Opaque `workspaceRef` issued by the Tracker BFF (DTO field + resolver) | `apps/core-api/src/presentation/dtos/*.dto.ts`, `apps/core-api/src/application/services/workspace-reference-resolver.service.ts`, `packages/sdk-client/src/rest/types.ts` | [GT-117](../../governance/standards/vision/gap-tracking.md) | Lets Core-API accept Tracker-supplied workspace references without coupling to Tracker. |
+| `POST /api/v1/phases/transition` (live, REST-only) | `apps/core-api/src/presentation/controllers/phases.controller.ts` → `PhaseTransitionUseCase` | — | Executes `from → to` transitions today; the design's `PhaseTransition` ownership (§4.4 of the interface design) is the **target**, not yet enforced. |
+| `GateDecision` value object (already named in Core) | `packages/core-domain/src/gates/decision/gate-decision.ts` | [GT-316](../../governance/standards/vision/gap-tracking.md) | Different shape from the target `GateDecision` (see interface design §4.3 note) — a name already taken in Core. |
+| `validateWorkflow(definition)` — validate Tracker-supplied flows against Core invariants | `packages/core-domain/src/application/use-cases/validate-workflow.use-case.ts` | [GT-317](../../governance/standards/vision/gap-tracking.md) | Tenant-agnostic seam Tracker will call. |
+| Redis caching layer for Core-API / MCP / Tracker consumption | `apps/core-api` | [GT-249](../../governance/standards/vision/gap-tracking.md) | Shared infrastructure prepared for Tracker reads. |
+| End-to-end Core + Tracker + agents integration validation | `packages/core-domain` e2e | [GT-326](../../governance/standards/vision/gap-tracking.md) | Cross-cutting integration seam. |
+
+Everything in the [Tracker Technical Interface Design](./sdlc-tracker-technical-interfaces.md) (REST endpoints under `tracker.evolith.io`, the `evolith criterion evaluate` / `evolith gate assess` tools, provider ports, Evidence Graph, Gate Decision Engine) is **target design** with **no implementation**.
+
+### Output and error contract (target)
+
+Tracker REST/MCP responses are expected to reuse Core's [ADR-0073](../../architecture/adrs/core/0073-unified-cli-output-contract.md) flat envelope — `meta.command`, `meta.executedAt`, `meta.durationMs`, `meta.correlationId`, `meta.context`, `meta.schemaVersion` — and RFC 9457 (`application/problem+json`) for errors, as Core-API does today. The interface design (§11) notes ADR-0073 *remains valid but requires a companion decision* to separate evaluation-versus-decision semantics before Tracker implementation.
 
 ---
 
@@ -88,6 +109,14 @@ reference/products/evolith-tracker/
 ```
 
 Content migration into these folders must preserve bilingual parity and legacy-link compatibility.
+
+---
+
+## 6. Install, Run, and Contribution
+
+There is **no installable or runnable Tracker artifact yet** — no package, binary, container image, environment variables, or commands exist. Install / prerequisites / local-run / troubleshooting guidance will be authored alongside the first implementation increment once the [Pre-Code Approval Checklist](./sdlc-tracker-technical-interfaces.md#12-pre-code-approval-checklist) clears the Architecture Board. To exercise the **Core-side seams Tracker will consume today**, use the running [Core API](../core-api/README.md) (`POST /api/v1/phases/transition`, the validation endpoints) and the [MCP services](../mcp-services/README.md).
+
+Contribution standards for this repository (clone/dev-setup, test commands, branch/commit conventions, doc/schema/ruleset/OPA authoring) live in the repo-root [CONTRIBUTING.md](../../../CONTRIBUTING.md); Tracker-specific contribution rules will be added when the codebase exists.
 
 ---
 

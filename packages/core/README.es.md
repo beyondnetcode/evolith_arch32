@@ -4,6 +4,15 @@
 fino de re-exportación sobre [`@evolith/core-domain`](../core-domain), que da al Smart
 CLI, al MCP Server y al Core API una única superficie de imports estable.
 
+## Instalación
+
+```bash
+npm install @evolith/core
+```
+
+Requiere **Node.js 20+**. La única dependencia de runtime es `@evolith/core-domain`,
+que es la fuente autoritativa de cada símbolo re-exportado.
+
 ## Superficie de imports soportada
 
 Importa todo desde el **especificador raíz únicamente** — no hay subpath exports:
@@ -44,6 +53,11 @@ solo ajusta la ergonomía de imports y la superficie de versión.
 - Algunos servicios re-exportados (p. ej. `TopologyCatalogService`, los validadores
   de ruleset) leen activos de gobernanza desde una raíz de workspace; consulta el
   README de `@evolith/core-domain` para el requisito de `WORKSPACE_ROOT`.
+
+## Desarrollo
+
+Compila y prueba en local con `npm run build` / `npm test`. Las contribuciones siguen
+el [CONTRIBUTING.md](../../CONTRIBUTING.md) de la raíz del repo.
 
 ## Licencia
 

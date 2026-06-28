@@ -13,7 +13,7 @@ Cómo Evolith trata a UMS como modelo de referencia aplicado oficial, y qué ele
 |---|---|
 | Principios universales de arquitectura | Código de producto, esquemas, despliegue |
 | ADRs y rulesets Core | ADRs de producto y ADRs locales del producto |
-| Reglas multi-topología | Realización concreta de topología (Monolito Modular) |
+| Reglas multi-topología | Realización concreta de topología (`modular-monolith`, madurez F1) |
 | Gobernanza SDLC | Backlog del producto y operación de releases |
 | Quality gates y umbrales | Métricas observadas, resultados de escaneo, release notes |
 
@@ -38,7 +38,7 @@ Nada fuera de estos cuatro puede entrar al Core solo porque UMS lo use. Las sele
 
 | Preocupación | Evidencia en UMS |
 |---|---|
-| Bounded contexts y alcance del producto | Identity, Access, Audit, Configuration, Approvals, IGA, Compliance |
+| Bounded contexts y alcance del producto | 8 contextos (EP-01..EP-08): Identity, Authorization, Configuration, Audit, Console/Admin, Approvals, Compliance, IGA |
 | Arquitectura limpia / hexagonal | Separación Dominio ↔ Aplicación ↔ Infraestructura en cada contexto |
 | Frontera de consultas y comandos | Consultas GraphQL + comandos REST (CQRS a nivel de protocolo) |
 | Seguridad y rendición de cuentas | Grafo de autorización, auditoría inmutable, RLS, idempotencia |

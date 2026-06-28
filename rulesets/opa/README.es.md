@@ -16,7 +16,7 @@ En resumen: Markdown explica, los `*.rules.json` Native definen, y OPA + el eval
 - Descarga OPA `v0.65.0` y luego ejecuta `opa build -t wasm` sobre `rulesets/opa/` con `--ignore=schemas`.
 - **Entrypoints Wasm:** `evolith/main/violations` y `evolith/abac/violations`.
 - El `policy.wasm` extraído se instala en `sdk/cli/rulesets/opa/policy.wasm` para el evaluador del Smart CLI.
-- `evolith.main` ([main.rego](./main.rego)) agrega los conjuntos `violations` de las políticas individuales; `evolith.abac` ([abac-mcp-tool-access.rego](./abac-mcp-tool-access.rego)) se compila como entrypoint separado para decisiones de acceso a herramientas MCP en runtime.
+- `evolith.main` ([main.rego](./main.rego)) agrega los conjuntos `violations` de las políticas individuales. `evolith.abac` ([abac-mcp-tool-access.rego](./abac-mcp-tool-access.rego)) se **publica de forma dual**: se importa y se une en `evolith/main/violations` (`main.rego` línea 10 importa `data.evolith.abac.violations` y la línea 62 lo une), *y además* se expone como el entrypoint dedicado `evolith/abac/violations` para decisiones de acceso a herramientas MCP en runtime.
 
 ## Políticas de enforcement agregadas
 
@@ -24,6 +24,7 @@ Estas políticas son importadas y unidas por [`main.rego`](./main.rego) en el en
 
 | Política | Paquete | Schema de entrada | Aplica |
 |---|---|---|---|
+| [abac-mcp-tool-access.rego](./abac-mcp-tool-access.rego) | `evolith.abac` | sí | ABAC para ejecución de herramientas MCP agénticas. **También se publica como el entrypoint separado `evolith/abac/violations`** (ver abajo). |
 | [version-pinning.rego](./version-pinning.rego) | `evolith.version_pinning` | sí | Pinning estricto de dependencias. |
 | [taxonomy.rego](./taxonomy.rego) | `evolith.taxonomy` | sí | Taxonomía de directorios, nombres de ADR, pares bilingües. |
 | [cli-readiness.rego](./cli-readiness.rego) | `evolith.cli_readiness` | sí | Preparación de compilación/doc/lock del Smart CLI. |
@@ -53,11 +54,16 @@ Estas políticas son importadas y unidas por [`main.rego`](./main.rego) en el en
 | [infrastructure/helm-enforcement.rego](./infrastructure/helm-enforcement.rego) | `evolith.infrastructure.helm` | _ninguno_ | Enforcement de chart Helm. |
 | [infrastructure/opa-sidecar-bundle.rego](./infrastructure/opa-sidecar-bundle.rego) | `evolith.infrastructure.opa_sidecar` | _ninguno_ | Requisitos de bundle de sidecar OPA. |
 
-## Políticas standalone / compiladas por separado
+## Segundo entrypoint Wasm
+
+`evolith.abac` ([abac-mcp-tool-access.rego](./abac-mcp-tool-access.rego)) se expone adicionalmente como su propio entrypoint `evolith/abac/violations` para que el gateway MCP pueda evaluar decisiones de acceso a herramientas de forma aislada en runtime. La **misma** política también se agrega en `evolith/main/violations` (aparece en la tabla anterior); no está excluida de `main`.
+
+## Políticas standalone (no conectadas a `main.rego`)
+
+Estas políticas están presentes en la carpeta pero **no** son importadas por `main.rego`, por lo que no contribuyen al entrypoint `evolith/main/violations`. Se evalúan directamente (p. ej. por el motor Native o un harness dedicado) y aún no están agregadas.
 
 | Política | Paquete | Schema de entrada | Notas |
 |---|---|---|---|
-| [abac-mcp-tool-access.rego](./abac-mcp-tool-access.rego) | `evolith.abac` | sí | ABAC para ejecución de herramientas MCP agénticas; segundo entrypoint Wasm (`evolith/abac/violations`). |
 | [phase-gates.rego](./phase-gates.rego) | `evolith.phase_gates` | _ninguno_ | Evaluación de phase-gates SDLC; aún no conectada a `main.rego`. |
 | [rbac/gate-role-enforcement.rego](./rbac/gate-role-enforcement.rego) | `evolith.rbac.gate` | _ninguno_ | Enforcement de rol de gate (RBAC). |
 | [sdlc/coverage.rego](./sdlc/coverage.rego) | `evolith.sdlc.coverage` | _ninguno_ | Chequeos de cobertura SDLC. |
@@ -67,9 +73,32 @@ Estas políticas son importadas y unidas por [`main.rego`](./main.rego) en el en
 
 ## Ejecutar pruebas de políticas
 
+Prerrequisitos: un binario OPA local. `npm run build:policy` descarga OPA `v0.65.0` en `.harness/bin/opa`; alternativamente instala OPA tú mismo y agrégalo al `PATH`. No se requieren variables de entorno para ejecutar las pruebas.
+
 ```bash
+# 1. (Una vez) obtener el binario OPA fijado y construir el bundle Wasm
+npm run build:policy
+
+# 2. Ejecutar todas las suites *.test.rego co-ubicadas
 .harness/bin/opa test rulesets/opa/ -v
+
+# 3. Evaluar el entrypoint agregado contra una entrada de ejemplo
+.harness/bin/opa eval -b rulesets/opa --input input.json 'data.evolith.main.violations'
+
+# 4. Evaluar solo el entrypoint de acceso a herramientas ABAC
+.harness/bin/opa eval -b rulesets/opa --input input.json 'data.evolith.abac.violations'
 ```
+
+## Resolución de problemas
+
+| Síntoma | Causa probable | Resolución |
+|---|---|---|
+| `opa: command not found` / falta `.harness/bin/opa` | Binario fijado no descargado | Ejecuta `npm run build:policy` (descarga OPA `v0.65.0`), o instala OPA y úsalo directamente. |
+| El Smart CLI no toma `policy.wasm` | Bundle obsoleto o ausente | Re-ejecuta `npm run build:policy`; el build instala `policy.wasm` en `sdk/cli/rulesets/opa/policy.wasm`. |
+| Una política nueva no se aplica vía `evolith/main/violations` | No importada/unida en `main.rego` | Agrega un `import data.evolith.<pkg>.violations` y una regla de unión en [`main.rego`](./main.rego); las políticas en *Políticas standalone* no se agregan intencionalmente. |
+| OPA y Native devuelven veredictos distintos | Drift de Paridad de Doble Motor | Trátalo como bug de paridad — alinea el `.rego` a la semántica del `*.rules.json` Native (ver [backlog de paridad](../../reference/governance/standards/vision/gap-tracking.md)). |
+
+Los estándares de autoría y el flujo de contribución de esta capa están en el [`CONTRIBUTING.md`](../../CONTRIBUTING.md) raíz del repositorio.
 
 ---
 [Volver al Hub de Rulesets](../README.es.md)

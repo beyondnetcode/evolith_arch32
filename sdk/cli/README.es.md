@@ -73,6 +73,22 @@ export PATH=$(npm config get prefix)/bin:$PATH
 
 **`WORKSPACE_ROOT` (opcional):** la CLI incluye un workflow SDLC por defecto, así que funciona sin configurar nada. Define `WORKSPACE_ROOT` apuntando a la raíz de un checkout solo si quieres sobreescribir el workflow/rulesets desde disco (`$WORKSPACE_ROOT/rulesets/sdlc/default-workflow.yaml`).
 
+### Variables de entorno
+
+La CLI funciona sin configuración. Las siguientes variables son overrides opcionales. Las marcadas *(MCP)* las lee únicamente el paquete incluido `@evolith/mcp-server` mientras `smart-cli mcp serve` está en ejecución.
+
+| Variable | Leída por | Propósito |
+|---|---|---|
+| `EVOLITH_PROFILE` | CLI | Selecciona el perfil con nombre activo (valores por defecto por entorno) en lugar de `default`. |
+| `EVOLITH_API_KEY` | CLI / MCP | API key para el transporte HTTP del MCP (equivalente a `--api-key`); requerida en modo HTTP de producción. |
+| `PORT` | CLI / MCP | Puerto HTTP por defecto para `mcp serve --transport http` cuando se omite `--port` (por defecto `3000`). |
+| `OTEL_ENABLED` | CLI | Cuando es `true`, habilita la exportación de trazas OpenTelemetry desde la CLI. |
+| `WORKSPACE_ROOT` | Core | Raíz del checkout para sobreescribir el workflow/rulesets incluidos desde disco (ver arriba). |
+| `MCP_HTTP_HOST` *(MCP)* | MCP | Host de enlace para el transporte HTTP (por defecto `0.0.0.0`; usa `127.0.0.1` para acceso local). |
+| `JWT_SECRET` *(MCP)* | MCP | Secreto HS256 que habilita la autenticación JWT bearer opcional en el transporte HTTP. |
+| `LOG_LEVEL` *(MCP)* | MCP | Nivel de detalle de logs del servidor MCP (por defecto `info`). |
+| `NODE_ENV` *(MCP)* | MCP | `production` fuerza el comportamiento fail-closed de auth/policy en el servidor MCP. |
+
 ## Inicio Rápido
 
 ```bash
@@ -129,6 +145,20 @@ smart-cli init --dry-run
 ```
 
 Tras completar `init`, la CLI imprime los siguientes pasos sugeridos, incluyendo `validate`, `agents --install` y `sdlc handoff`.
+
+---
+
+### init-wizard
+
+Una alternativa totalmente guiada, paso a paso, a `init` que recorre nombre del proyecto, runtime, estrategia de monorepo y patrón de arquitectura con prompts interactivos. Úsalo para una configuración inicial asistida; usa `init` (con flags o `--config`) para ejecuciones automatizadas o no interactivas.
+
+```bash
+smart-cli init-wizard [opciones]
+
+Opciones:
+      --no-wizard        Usa el flujo estándar de init en lugar del asistente
+      --no-interactive   Ejecuta en modo no interactivo (CI/automatización)
+```
 
 ---
 
@@ -208,6 +238,8 @@ Opciones:
 | `observability` | Cobertura de logging, métricas y trazas |
 | `adr-0002` | Reglas específicas de ADR-0002 |
 
+El enum `rulesets` de `reference/config/evolith.config.schema.json` reconoce además: `satellite-contracts`, `executive-scorecards`, `compliance-baseline`, `definition-of-done`, `engineering-manifesto`, `repository-taxonomy`, `phase-gates`, `quality-thresholds` y `dependency-pinning`. Son valores de configuración válidos aunque los atajos `--ruleset` de arriba cubran el conjunto del día a día.
+
 **Reglas ADR disponibles (`--adr`):** `adr-0002`, `adr-0005`, `adr-0010`, `adr-0018`, `adr-0032`, `adr-0040`, `adr-0050`
 
 **Motores de validación:**
@@ -221,6 +253,8 @@ Cuando se activa `--composable`, la CLI resuelve automáticamente qué modos de 
 - `RulesetValidationMode` — se activa cuando hay `--ruleset`
 - `AdrValidationMode` — se activa cuando hay `--adr`
 - `AdhocValidationMode` — se activa cuando hay `--file`
+
+**Códigos de salida:** `validate` sale con `0` cuando el repositorio pasa (incluido el estado `warning`) y con `1` cuando el estado del resultado es `failed`. Los comandos `gate`, `phase advance` y `scaffold` también salen con `1` ante un fallo, y cualquier error no controlado durante el arranque de la CLI sale con `1`. Esto hace que la CLI sea segura para condicionar pipelines de CI. En `--format json`, el detalle del fallo viaja en el sobre ADR-0073 en lugar de imprimirse como texto.
 
 **Ejemplos:**
 
@@ -936,7 +970,7 @@ smart-cli mcp [acción] [opciones]
 
 Acciones:
   serve       Iniciar el servidor MCP (por defecto)
-  version     Imprimir la versión del servidor MCP incluido
+  version     Imprime un banner de versión estático del servidor MCP (no lee la versión del paquete @evolith/mcp-server)
 
 Opciones:
   -t, --transport <stdio|http>   Transporte: stdio (por defecto) o http
@@ -955,7 +989,7 @@ Verifica `initialize`, `tools/list`, `resources/list`, `prompts/list` y un `tool
 
 ### Herramientas MCP Disponibles
 
-El servidor incluido registra **26 herramientas**. El conjunto vigente y autoritativo siempre se puede explorar con `smart-cli api --list --category tools`; la tabla siguiente refleja el registro actual de `@evolith/mcp-server`.
+El servidor incluido registra **27 herramientas**. El conjunto vigente y autoritativo siempre se puede explorar con `smart-cli api --list --category tools`; la tabla siguiente refleja el registro actual de `@evolith/mcp-server`.
 
 **Validación y arquitectura**
 
@@ -1223,6 +1257,8 @@ sdk/cli/
 ---
 
 ## Contribuir
+
+Consulta el [CONTRIBUTING.md](../../CONTRIBUTING.md) en la raíz del repositorio para el flujo completo, las convenciones de ramas/commits y los estándares de autoría.
 
 1. Haz un fork del repositorio
 2. Crea una rama de feature

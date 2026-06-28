@@ -75,4 +75,31 @@ Definiciones de JSON Schema para validar los artefactos de gobernanza y SDLC de 
 
 ---
 
+## Validar un artefacto contra un schema
+
+Todos los schemas son JSON Schema estándar (draft 2020-12 / draft-07) validados con [Ajv](https://ajv.js.org/) (`ajv@8`, ya dependencia de `@evolith/core-domain`). Dos caminos:
+
+- **A través de Evolith** — el `RulesetValidatorService` / `ruleset-loader` en `@evolith/core-domain` carga cada `*.rules.json` y valida cada entrada contra [`rule-definition.schema.json`](./rule-definition.schema.json) antes de evaluar; los rulesets de categoría se chequean contra [`ruleset-sdlc.schema.json`](./ruleset-sdlc.schema.json) o [`ruleset-standard.schema.json`](./ruleset-standard.schema.json). Esto se ejecuta automáticamente cuando el CLI/Core cargan un ruleset, así una regla mal formada falla rápido.
+- **Ad hoc** — valida cualquier artefacto directamente con Ajv. Ejemplo, validando un documento ADR contra el schema ADR:
+
+```bash
+npx ajv-cli validate -c ajv-formats \
+  -s rulesets/schema/adr.schema.json \
+  -d path/to/your-adr.json
+```
+
+Para validar una entrada `*.rules.json` escrita a mano, apunta `-s` a `rulesets/schema/rule-definition.schema.json` y `-d` a la entrada. `ajv-formats` es necesario porque varios schemas usan keywords `format` (`date-time`, `uri`, etc.).
+
+### Resolución de problemas
+
+| Síntoma | Causa | Resolución |
+|---|---|---|
+| `unknown format "date-time"` | `ajv-formats` no cargado | Agrega `-c ajv-formats` (CLI) o `addFormats(ajv)` (programático). |
+| Valida localmente pero Core rechaza la regla | Validado contra el schema equivocado | Las entradas individuales usan `rule-definition.schema.json`; los archivos de categoría completos usan `ruleset-sdlc`/`ruleset-standard`. |
+| Error de resolución de `$ref` | `$ref` relativo resuelto desde la base equivocada | Ejecuta Ajv desde la raíz del repo para que los `$ref` a schemas hermanos resuelvan. |
+
+Los estándares de autoría y el flujo de contribución de schemas están en el [`CONTRIBUTING.md`](../../CONTRIBUTING.md) raíz del repositorio.
+
+---
+
 Volver al [Hub de Rulesets](../README.es.md)

@@ -75,12 +75,13 @@ Estos endpoints proporcionan metadatos sobre rulesets activos, gates y requisito
 ### Listar Rulesets (List Rulesets)
 * **Ruta:** `GET /api/v1/rulesets`
 * **Resumen:** Enumera todos los rulesets actualmente disponibles para los clientes de la API.
-* **Payload `data`:**
+* **Payload `data`:** Array de objetos `RulesetSummary` con campos `{ id, title, description, version? }` (`version` se omite cuando el manifiesto de origen no la tiene). No existe campo `name` ni `category`.
   ```json
   [
     {
-      "id": "rulesets/governance/satellite-contracts.rules.json",
-      "name": "Satellite Contracts ruleset",
+      "id": "satellite-contracts",
+      "title": "Satellite Contracts ruleset",
+      "description": "Reglas de contrato que todo repositorio satélite debe cumplir.",
       "version": "1.0.0"
     }
   ]
@@ -95,21 +96,31 @@ Estos endpoints proporcionan metadatos sobre rulesets activos, gates y requisito
 ### Obtener Gate (Get Gate)
 * **Ruta:** `GET /api/v1/gates/:gateId`
 * **Resumen:** Obtiene la definición de un gate de fase de SDLC.
-* **Parámetros:** `gateId` (por ejemplo, `PG1`)
-* **Payload `data`:**
+* **Parámetros:** `gateId` (por ejemplo, `PG1`). El handler parsea el primer entero de `gateId` y lo compara contra `gate.phase` (un número); `404 NOT_FOUND` cuando ningún gate coincide.
+* **Payload `data`:** Un objeto `PhaseGate`. `phase` es un **número** (el número de gate parseado); no existe campo `id`.
   ```json
   {
-    "id": "PG1",
-    "phase": "conception",
-    "name": "Conception Baseline Gate",
-    "mandatoryEvidence": ["PRD", "architecture-proposal"]
+    "phase": 1,
+    "name": "Business Sign-Off",
+    "description": "Scope frozen; funding authorized; architectural constraints aligned.",
+    "playbookRef": "../../reference/governance/sdlc/01-playbooks/phase-1-business-signoff.md",
+    "mandatoryEvidence": [
+      { "artifact": "PRD", "schemaRef": "../schema/prd.schema.json", "status": "Approved" }
+    ],
+    "blockingCriteria": [
+      { "criterion": "Scope is ambiguous", "action": "BLOCK — return to Phase 1" }
+    ],
+    "accountableRole": "Product Owner",
+    "waiverAuthority": "Executive Sponsor",
+    "waiverRequiredFields": ["criterion", "justification", "risk", "owner", "expirationDate", "mitigationPlan"]
   }
   ```
 
 ### Obtener Requisitos de Fase (Get Phase Requirements)
 * **Ruta:** `GET /api/v1/phases/:phase/requirements`
 * **Resumen:** Obtiene los requisitos de evidencia para una fase de SDLC.
-* **Parámetros:** `phase` (por ejemplo, `1`, `2`, `3`)
+* **Parámetros:** `phase` (por ejemplo, `1`, `2`, `3`). El handler parsea el primer entero y compara `gate.phase`; `404 NOT_FOUND` cuando ningún gate coincide.
+* **Payload `data`:** La misma forma `PhaseGate` que devuelve [Obtener Gate](#obtener-gate-get-gate).
 
 ---
 
@@ -184,15 +195,17 @@ Estos endpoints desencadenan validaciones, propuestas de avance de fase y transi
     "workspaceRef": "satellite-name-or-path"
   }
   ```
-* **Payload `data`:** Cumple con la estructura de `GateEvidence`:
+* **Payload `data`:** El controlador devuelve el payload `GateEvidence` producido por `EvaluateGateUseCase.execute(...)` tal cual. Esta forma pertenece a `@evolith/core-domain` (`domain/gate-evidence.ts`). `phase` es el id canónico de fase SDLC resuelto desde `gateId`, y `evaluatedBy` toma el valor `human` por defecto cuando el llamante no lo suministra.
   ```json
   {
+    "gateId": "discovery-baseline-gate",
+    "phase": "discovery",
     "verdict": "passed",
-    "violations": [],
-    "rulesetRef": "rulesets/governance/satellite-contracts.rules.json",
+    "rulesetRef": "rulesets/phase-gates/phase-gates.rules.json",
     "rulesetVersion": "1.0.0",
-    "evaluatedAt": "2026-06-21T14:00:00Z",
-    "evaluatedBy": "core-api"
+    "violations": [],
+    "evaluatedAt": "2026-06-21T14:00:00.000Z",
+    "evaluatedBy": "human"
   }
   ```
 
@@ -224,6 +237,7 @@ Estos endpoints desencadenan validaciones, propuestas de avance de fase y transi
     }
   }
   ```
+* **Nota:** `options` es un objeto libre opcional (`@IsOptional()` `Record<string, unknown>`); sus claves internas (`runtime`, `architecture`, `database`, `apiProtocol`, ...) **no** se validan contra un enum en el DTO. Se pasan al scaffolder como pistas, por lo que valores como `apiProtocol: "graphql"` son aceptados por la API independientemente de si el scaffolder los soporta.
 * **Respuesta:** `201 Created`
 
 ### Proponer Avance de Fase (Propose Phase Advance)
@@ -259,8 +273,9 @@ Estos endpoints desencadenan validaciones, propuestas de avance de fase y transi
   }
   ```
 * **Campos:** `workspaceRef` (**requerido**, ref opaca); `engine` (`native` | `opa`, default `native`); `topology` activa el modo Arquitectura; `phase` activa el modo SDLC (ids canónicos `discovery`, `design`, `construction`, `qa`, `release`; los legacy `f1`–`f5` se aceptan como alias deprecados según GT-343); `ruleset` activa el modo Ruleset; `adr` activa el modo ADR; `file` activa el modo Ad-hoc.
-* **Topologías válidas:** `modular-monolith`, `distributed-modules`, `microservices`, `serverless`, `edge-computing`, `event-driven`, `data-mesh`, `agentic-ai`.
-* **ADRs válidos:** `adr-0002`, `adr-0005`, `adr-0010`, `adr-0018`, `adr-0032`, `adr-0040`, `adr-0050`.
+* **Topologías reconocidas:** `modular-monolith`, `distributed-modules`, `microservices`, `serverless`, `edge-computing`, `event-driven`, `data-mesh`, `agentic-ai`.
+* **ADRs reconocidos:** `adr-0002`, `adr-0005`, `adr-0010`, `adr-0018`, `adr-0032`, `adr-0040`, `adr-0050`.
+* **Nota de validación:** `engine`, `topology` y `adr` se declaran solo con `@IsString()` — las listas de enum anteriores son metadatos de documentación de Swagger, no restricciones de validación. Un string arbitrario pasa la validación del DTO; un valor no reconocido se rechaza (o ignora) aguas abajo en el motor de validación, no como un `400` en la capa del DTO.
 
 ---
 
@@ -268,8 +283,8 @@ Estos endpoints desencadenan validaciones, propuestas de avance de fase y transi
 
 Estos endpoints **no** están versionados (sin prefijo `/api/v1`) y están exentos de rate limiting (`@SkipThrottle()`) para que las probes de orquestadores y los scrapers de Prometheus vean URIs estables entre versiones mayores.
 
-### Health (combinado)
-* **Ruta:** `GET /health` — liveness + readiness combinados; devuelve el estado de salud del servicio.
+### Health
+* **Ruta:** `GET /health` — devuelve `{ "status": "OK", "service": "Evolith Core API", "timestamp": "..." }`. Es un chequeo ligero del proceso; **no** verifica el corpus ni las dependencias (para eso usa [Readiness](#readiness)).
 
 ### Liveness
 * **Ruta:** `GET /health/live` — devuelve `{ "status": "UP", "timestamp": "..." }` cuando el proceso está vivo.

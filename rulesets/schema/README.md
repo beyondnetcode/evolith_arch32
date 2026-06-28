@@ -75,4 +75,31 @@ JSON Schema definitions for validating Evolith governance and SDLC artifacts.
 
 ---
 
+## Validating an artifact against a schema
+
+All schemas are standard JSON Schema (draft 2020-12 / draft-07) validated with [Ajv](https://ajv.js.org/) (`ajv@8`, already a dependency of `@evolith/core-domain`). Two paths:
+
+- **Through Evolith** — the `RulesetValidatorService` / `ruleset-loader` in `@evolith/core-domain` loads each `*.rules.json` and validates every entry against [`rule-definition.schema.json`](./rule-definition.schema.json) before evaluation; category rulesets are checked against [`ruleset-sdlc.schema.json`](./ruleset-sdlc.schema.json) or [`ruleset-standard.schema.json`](./ruleset-standard.schema.json). This runs automatically when the CLI/Core load a ruleset, so a malformed rule fails fast.
+- **Ad hoc** — validate any artifact directly with Ajv. Example, checking an ADR document against the ADR schema:
+
+```bash
+npx ajv-cli validate -c ajv-formats \
+  -s rulesets/schema/adr.schema.json \
+  -d path/to/your-adr.json
+```
+
+To validate a hand-authored `*.rules.json` entry, point `-s` at `rulesets/schema/rule-definition.schema.json` and `-d` at the entry. `ajv-formats` is required because several schemas use `format` keywords (`date-time`, `uri`, etc.).
+
+### Troubleshooting
+
+| Symptom | Cause | Resolution |
+|---|---|---|
+| `unknown format "date-time"` | `ajv-formats` not loaded | Add `-c ajv-formats` (CLI) or `addFormats(ajv)` (programmatic). |
+| Validation passes locally but Core rejects the rule | Validated against the wrong schema | Individual entries use `rule-definition.schema.json`; whole category files use `ruleset-sdlc`/`ruleset-standard`. |
+| `$ref` resolution error | Relative `$ref` resolved from the wrong base | Run Ajv from the repo root so sibling schema `$ref`s resolve. |
+
+Authoring standards and the contribution workflow for schemas live in the repo-root [`CONTRIBUTING.md`](../../CONTRIBUTING.md).
+
+---
+
 Back to [Rulesets Hub](../README.md)

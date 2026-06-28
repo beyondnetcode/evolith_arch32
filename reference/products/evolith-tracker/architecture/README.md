@@ -26,6 +26,8 @@ This area defines the intended internal architecture of Evolith Tracker (design 
 - [Tracker Technical Interface Design](../../../governance/standards/vision/sdlc-tracker-technical-interfaces.md)
 - Tracker-specific sections of the [Governed Composition Target Design](../../../governance/standards/vision/evolith-governed-composition-target-design.md)
 
+> **What exists today.** No Tracker architecture is built. The only shipped, Tracker-enabling seams live in Core (`apps/core-api` REST-only under `/api/v1`, `packages/core-domain`); see the [What Exists Today vs. the Target](../README.md#31-what-exists-today-vs-the-target) delta in the product README for the live-seam inventory and its gap-tracking references.
+
 ## Boundary
 
 By design, this area implements, but does not redefine:

@@ -179,6 +179,8 @@ interface TechnicalEvaluationResult {
 
 Solo la produce Tracker.
 
+> **Nota de colisión de nombres.** Ya existe en Core un tipo `GateDecision` (`packages/core-domain/src/gates/decision/gate-decision.ts`) con una **forma distinta y más estrecha** — `{ gateId, phase: number, verdict: Verdict (PASS/FAIL), score, violations[], decidedAt, decidedBy, waiverRef? }`, creado por `makeGateDecision()` dentro de Core, no por Tracker. El `GateDecision` canónico de Tracker que se muestra abajo (registro rico con `status`, snapshots, aprobaciones, excepciones) es el **objetivo** y es distinto del value object existente en Core. Quienes implementen deben desambiguar ambos nombres (p. ej. namespace o renombrado) antes de construir Tracker.
+
 ```typescript
 interface GateDecision {
   id: string;
@@ -373,6 +375,8 @@ evolith-drift-detect
 - evidencia sin identidad de tenant y fuente;
 - payloads de proveedores aceptados sin ACL;
 - selección hard-coded de un proveedor por defecto.
+
+> **Reconciliación con endpoint en vivo.** Core-API hoy entrega `POST /api/v1/phases/transition` (`apps/core-api/src/presentation/controllers/phases.controller.ts` → `PhaseTransitionUseCase`), que ejecuta transiciones `from → to` vía REST. Ese endpoint es anterior a este diseño; el invariante "no debe mutar estado canónico de fase" de arriba es un **objetivo** a aplicar una vez que Tracker posea el estado de fase, no un invariante que el Core-API actual ya respete. Hasta que Tracker exista, este endpoint REST es la única vía de transición.
 
 ---
 

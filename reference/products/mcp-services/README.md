@@ -32,7 +32,7 @@ The `evolith-composable-validate` tool exposes the composable validation engine 
 | **ADR** | Validates against ADR-specific rules | `evolith-composable-validate --adr adr-0002` |
 | **Ad-hoc** | Validates individual files on demand | `evolith-composable-validate --file src/domain/user.ts` |
 
-> SDLC phase keys are `discovery`, `design`, `construction`, `qa`, `release` (mapping to phases f1–f5).
+> SDLC phase keys are `discovery`, `design`, `construction`, `qa`, `release` (mapping to phases f1–f5). The live `evolith-composable-validate` schema also still accepts the legacy `f1`–`f5` aliases (marked deprecated); prefer the canonical keys.
 
 The system is **intelligent and flexible** — users can combine any entry points without forcing a specific flow.
 
@@ -42,6 +42,21 @@ The system is **intelligent and flexible** — users can combine any entry point
 |---|---|
 | **stdio (JSON-RPC 2.0)** | Local agents and editor integrations launched via `evolith-mcp serve` |
 | **Streamable HTTP (official MCP SDK)** | Remote agents and services, with fail-closed API-key authentication |
+
+## Install and prerequisites
+
+- **Prerequisite:** Node.js `>=20.0.0` (`engines.node` in `packages/mcp-server/package.json`). No database is required; HTTP API keys are stored in-process.
+- **Install:**
+
+```bash
+# From the monorepo
+npm install @evolith/mcp-server
+
+# Or globally (exposes the evolith-mcp binary)
+npm install -g @evolith/mcp-server
+```
+
+The binary is `evolith-mcp` (`package.json` `bin`); the only subcommands are `serve` and `version`.
 
 ## Running the server
 
@@ -53,9 +68,43 @@ evolith-mcp serve
 evolith-mcp serve --transport http --port 3000
 ```
 
+CLI flags: `--transport|-t stdio|http`, `--port|-p <n>` (default `3000`), `--api-key <key>`, `--allow-no-auth` (ignored in production). In production, authentication is mandatory: the server forces auth even if `--allow-no-auth` / `EVOLITH_MCP_ALLOW_NO_AUTH` is set.
+
+## Environment variables
+
+| Variable | Purpose | Default |
+|---|---|---|
+| `EVOLITH_API_KEY` | HTTP transport API key (Bearer or `x-api-key`); grants `admin` context | (none) |
+| `JWT_SECRET` | Optional HS256 secret; when set, a non-matching Bearer is validated as a JWT and its `roles` drive ABAC | (none) |
+| `EVOLITH_MCP_ALLOW_NO_AUTH` | Allows running HTTP without auth in non-production only | `false` |
+| `PORT` | HTTP listen port (overridden by `--port`) | `3000` |
+| `MCP_HTTP_HOST` | HTTP bind host | (SDK default) |
+| `NODE_ENV` | `production` enables fail-closed auth and fail-closed ABAC policy resolution | `development` |
+| `LOG_LEVEL` | Pino log level (logs are always written to **stderr**) | `info` |
+| `OTEL_ENABLED` | Enables OpenTelemetry tracing | `false` |
+
+Authentication, ABAC roles/codes, the mutative-tool contract, and the full per-tool reference live in the package [README](../../../packages/mcp-server/README.md).
+
+## Lightweight tools registry (`@evolith/mcp-tools`)
+
+Distinct from the 27-tool gateway, **`@evolith/mcp-tools`** is a dependency-free JS registry exposing 3 diagnostic tools — `evolith-ping`, `evolith-echo`, `evolith-read-gap-tracking` — registered via `registerEvolithTools(server)`. It is a minimal building block, not the governance gateway; see its [README](../../../packages/mcp-tools/README.md).
+
+## Troubleshooting
+
+| Symptom | Cause / fix |
+|---|---|
+| stdio: logs mixed into the MCP response | Expected — logs go to **stderr**, stdout is reserved for the JSON-RPC stream. Read stderr separately. |
+| HTTP `401 Unauthorized` | Missing/incorrect `EVOLITH_API_KEY`, or an invalid JWT when `JWT_SECRET` is set. |
+| `ABAC-02: No roles present` | The authenticated principal has no roles; supply roles via the JWT `roles` claim, or use the API key (admin context). |
+| `OPA: policy.wasm not found` | `engine: "opa"` needs `sdk/cli/rulesets/opa/policy.wasm` under `CORE_PATH`. A missing policy is **fail-closed in production** (hard deny, `ABAC_POLICY_MISSING`) and abstains only in non-production; use `engine: "native"` to bypass OPA. |
+
 ## Conformance
 
 Initialize, discovery (tools/resources/prompts), metrics, and gate evaluation are verified over both transports by the MCP E2E and smoke suites. See the [MCP Capability Catalog](../smart-cli/docs/planning/mcp-capability-catalog.md) for the per-capability schema breakdown.
+
+## Contributing
+
+For clone/dev-setup, test commands, and branch/commit conventions, see the repo-root [CONTRIBUTING.md](../../../CONTRIBUTING.md). To add a tool, see the extension guide in the package [README](../../../packages/mcp-server/README.md).
 
 ---
 [Back to Products Index](../README.md)

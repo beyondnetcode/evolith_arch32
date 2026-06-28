@@ -75,12 +75,13 @@ These endpoints provide metadata about active rulesets, gates, and SDLC requirem
 ### List Rulesets
 * **Route:** `GET /api/v1/rulesets`
 * **Summary:** Lists all rulesets currently available to API clients.
-* **Response `data`:**
+* **Response `data`:** Array of `RulesetSummary` objects with fields `{ id, title, description, version? }` (`version` is omitted when the source manifest has none). There is no `name` or `category` field.
   ```json
   [
     {
-      "id": "rulesets/governance/satellite-contracts.rules.json",
-      "name": "Satellite Contracts ruleset",
+      "id": "satellite-contracts",
+      "title": "Satellite Contracts ruleset",
+      "description": "Contract rules every satellite repository must satisfy.",
       "version": "1.0.0"
     }
   ]
@@ -95,21 +96,31 @@ These endpoints provide metadata about active rulesets, gates, and SDLC requirem
 ### Get Gate
 * **Route:** `GET /api/v1/gates/:gateId`
 * **Summary:** Retrieves definition of an SDLC phase gate.
-* **Parameters:** `gateId` (e.g. `PG1`)
-* **Response `data`:**
+* **Parameters:** `gateId` (e.g. `PG1`). The handler parses the first integer in `gateId` and matches it against `gate.phase` (a number); `404 NOT_FOUND` when no gate matches.
+* **Response `data`:** A `PhaseGate` object. `phase` is a **number** (the parsed gate number); there is no `id` field.
   ```json
   {
-    "id": "PG1",
-    "phase": "conception",
-    "name": "Conception Baseline Gate",
-    "mandatoryEvidence": ["PRD", "architecture-proposal"]
+    "phase": 1,
+    "name": "Business Sign-Off",
+    "description": "Scope frozen; funding authorized; architectural constraints aligned.",
+    "playbookRef": "../../reference/governance/sdlc/01-playbooks/phase-1-business-signoff.md",
+    "mandatoryEvidence": [
+      { "artifact": "PRD", "schemaRef": "../schema/prd.schema.json", "status": "Approved" }
+    ],
+    "blockingCriteria": [
+      { "criterion": "Scope is ambiguous", "action": "BLOCK — return to Phase 1" }
+    ],
+    "accountableRole": "Product Owner",
+    "waiverAuthority": "Executive Sponsor",
+    "waiverRequiredFields": ["criterion", "justification", "risk", "owner", "expirationDate", "mitigationPlan"]
   }
   ```
 
 ### Get Phase Requirements
 * **Route:** `GET /api/v1/phases/:phase/requirements`
 * **Summary:** Retrieves evidence requirements for an SDLC phase.
-* **Parameters:** `phase` (e.g., `1`, `2`, `3`)
+* **Parameters:** `phase` (e.g., `1`, `2`, `3`). The handler parses the first integer and matches `gate.phase`; `404 NOT_FOUND` when no gate matches.
+* **Response `data`:** The same `PhaseGate` shape returned by [Get Gate](#get-gate).
 
 ---
 
@@ -184,15 +195,17 @@ These endpoints trigger validation, proposed state advances, and phase transitio
     "workspaceRef": "satellite-name-or-path"
   }
   ```
-* **Response `data`:** Conforms to `GateEvidence` structure:
+* **Response `data`:** The controller returns the `GateEvidence` payload produced by `EvaluateGateUseCase.execute(...)` verbatim. This shape is owned by `@evolith/core-domain` (`domain/gate-evidence.ts`). `phase` is the canonical SDLC phase id resolved from `gateId`, and `evaluatedBy` defaults to `human` when the caller does not supply it.
   ```json
   {
+    "gateId": "discovery-baseline-gate",
+    "phase": "discovery",
     "verdict": "passed",
-    "violations": [],
-    "rulesetRef": "rulesets/governance/satellite-contracts.rules.json",
+    "rulesetRef": "rulesets/phase-gates/phase-gates.rules.json",
     "rulesetVersion": "1.0.0",
-    "evaluatedAt": "2026-06-21T14:00:00Z",
-    "evaluatedBy": "core-api"
+    "violations": [],
+    "evaluatedAt": "2026-06-21T14:00:00.000Z",
+    "evaluatedBy": "human"
   }
   ```
 
@@ -224,6 +237,7 @@ These endpoints trigger validation, proposed state advances, and phase transitio
     }
   }
   ```
+* **Note:** `options` is an optional free-form object (`@IsOptional()` `Record<string, unknown>`); its inner keys (`runtime`, `architecture`, `database`, `apiProtocol`, ...) are **not** validated against an enum by the DTO. They are passed through to the scaffolder as hints, so values such as `apiProtocol: "graphql"` are accepted by the API regardless of whether the scaffolder supports them.
 * **Response:** `201 Created`
 
 ### Propose Phase Advance
@@ -259,8 +273,9 @@ These endpoints trigger validation, proposed state advances, and phase transitio
   }
   ```
 * **Fields:** `workspaceRef` (**required**, opaque ref); `engine` (`native` | `opa`, default `native`); `topology` activates Architecture mode; `phase` activates SDLC mode (canonical ids `discovery`, `design`, `construction`, `qa`, `release`; legacy `f1`–`f5` accepted as deprecated aliases per GT-343); `ruleset` activates Ruleset mode; `adr` activates ADR mode; `file` activates Ad-hoc mode.
-* **Valid topologies:** `modular-monolith`, `distributed-modules`, `microservices`, `serverless`, `edge-computing`, `event-driven`, `data-mesh`, `agentic-ai`.
-* **Valid ADRs:** `adr-0002`, `adr-0005`, `adr-0010`, `adr-0018`, `adr-0032`, `adr-0040`, `adr-0050`.
+* **Recognised topologies:** `modular-monolith`, `distributed-modules`, `microservices`, `serverless`, `edge-computing`, `event-driven`, `data-mesh`, `agentic-ai`.
+* **Recognised ADRs:** `adr-0002`, `adr-0005`, `adr-0010`, `adr-0018`, `adr-0032`, `adr-0040`, `adr-0050`.
+* **Validation note:** `engine`, `topology`, and `adr` are declared with `@IsString()` only — the enum lists above are Swagger documentation metadata, not validation constraints. An arbitrary string passes DTO validation; an unrecognised value is rejected (or ignored) downstream by the validation engine, not as a `400` at the DTO layer.
 
 ---
 
@@ -268,8 +283,8 @@ These endpoints trigger validation, proposed state advances, and phase transitio
 
 These endpoints are **not** versioned (no `/api/v1` prefix) and are exempt from rate limiting (`@SkipThrottle()`) so orchestrator probes and Prometheus scrapers see stable URIs across major versions.
 
-### Health (combined)
-* **Route:** `GET /health` — liveness + readiness combined; returns the service health status.
+### Health
+* **Route:** `GET /health` — returns `{ "status": "OK", "service": "Evolith Core API", "timestamp": "..." }`. This is a lightweight process check; it does **not** verify the corpus or dependencies (use [Readiness](#readiness) for that).
 
 ### Liveness
 * **Route:** `GET /health/live` — returns `{ "status": "UP", "timestamp": "..." }` when the process is running.

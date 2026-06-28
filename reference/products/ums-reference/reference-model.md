@@ -13,7 +13,7 @@ How Evolith treats UMS as the official applied reference model, and which archit
 |---|---|
 | Universal architecture principles | Product code, schemas, deployment |
 | Core ADRs and rulesets | Product ADRs and product-local ADRs |
-| Multi-topology rules | Concrete topology realisation (Modular Monolith) |
+| Multi-topology rules | Concrete topology realisation (`modular-monolith`, maturity F1) |
 | SDLC governance | Product backlog and release operations |
 | Quality gates and thresholds | Observed metrics, scan results, release notes |
 
@@ -38,7 +38,7 @@ Anything outside these four cannot enter Core simply because UMS uses it. Runtim
 
 | Concern | UMS Evidence |
 |---|---|
-| Bounded contexts and product scope | Identity, Access, Audit, Configuration, Approvals, IGA, Compliance |
+| Bounded contexts and product scope | 8 contexts (EP-01..EP-08): Identity, Authorization, Configuration, Audit, Console/Admin, Approvals, Compliance, IGA |
 | Clean / Hexagonal Architecture | Domain ↔ Application ↔ Infrastructure separation across every context |
 | Query and command boundary | GraphQL queries + REST commands (protocol-level CQRS) |
 | Security and accountability | Authorization graph, immutable audit, RLS, idempotency |

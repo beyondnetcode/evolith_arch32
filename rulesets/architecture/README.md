@@ -18,6 +18,8 @@ F1, F2, and F3 remain supported compatibility aliases for existing CLI, MCP, Ser
 | `--arch-level F2` | `--topology distributed-modules` |
 | `--arch-level F3` | `--topology microservices` |
 
+> **Where the rule files live.** The files linked above are the deep-dive copies under `reference/architecture/topologies/progressive-axis/`. The executable rule copies live under [`rulesets/topologies/progressive-axis/`](../topologies/README.md) as `{topology}.rules.json` (with `.es.json` companions); OPA policy compilation is centralized in `rulesets/opa/` (`main.rego`). Resolve the manifest rather than hard-coding either path. Authoring and contribution standards are in the repo-root [`CONTRIBUTING.md`](../../CONTRIBUTING.md).
+
 ---
 
 Back to [Rulesets Hub](../README.md)

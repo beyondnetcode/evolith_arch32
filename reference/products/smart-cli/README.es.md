@@ -57,17 +57,18 @@ smart-cli mcp serve
 
 ## Referencia de comandos
 
-La CLI expone **20 grupos de comandos** (el inventario generado cuenta subcomandos por separado, de ahí una cifra mayor). Una línea concisa por cada uno — para las opciones y ejemplos completos, sigue el enlace al [README de código](../../../sdk/cli/README.md).
+La CLI registra **21 comandos de nivel superior** (el inventario generado cuenta subcomandos por separado, de ahí una cifra mayor). Una línea concisa por cada uno — para las opciones y ejemplos completos, sigue el enlace al [README de código](../../../sdk/cli/README.md).
 
 | Comando | Propósito |
 |---|---|
 | `init` | Inicializa un repositorio satélite (crea `evolith.yaml` y la estructura del proyecto). |
+| `init-wizard` | Asistente interactivo para la inicialización guiada del proyecto (alternativa a `init`). |
 | `docs` | Genera la documentación base (`README.md`, `AGENTS.md`, `MASTER_INDEX.md`, `evolith.yaml`). |
-| `validate` | Valida el cumplimiento del repositorio contra rulesets, topologías, ADRs y fases SDLC. |
+| `validate` | Valida el cumplimiento del repositorio contra rulesets, topologías, ADRs y fases SDLC (la validación de arquitectura se ejecuta vía `validate --topology`). |
 | `adr` | Gestiona Architecture Decision Records (create, list, get, update, matrix). |
 | `standards` | Gestiona estándares de gobernanza (init, list, get, validate, export). |
 | `agents` | Instala, lista y elimina agentes BMAD de Evolith. |
-| `architecture` | Inspecciona y valida la arquitectura contra la topología declarada. |
+| `scaffold` | Genera un satélite a lo largo del eje de madurez progresivo (fase 1 modular-monolith → 2 distributed-modules → 3 microservices). |
 | `drift` | Detecta la deriva de arquitectura respecto a la topología declarada; registra historial y tendencias. |
 | `gate` | Evalúa los gates de fase SDLC y emite artefactos `GateEvidence` (ADR-0073). |
 | `phase` | Propone una transición entre fases SDLC (emite un artefacto de propuesta). |
@@ -144,7 +145,7 @@ La fase final del SDLC es **Delivery & Operations**. Evalúa gates y emite evide
 
 ## Servidor MCP (integración con agentes de IA)
 
-El servidor MCP se distribuye **dentro** de `@evolith/smart-cli` — no hay instalación aparte. Expone la superficie completa de Evolith a los agentes de IA.
+La CLI puede arrancar el servidor MCP con `smart-cli mcp serve`, que expone la superficie completa de Evolith a los agentes de IA. Internamente este comando imprime una advertencia de deprecación y delega de forma perezosa (lazy) en el **paquete independiente `@evolith/mcp-server`** (una dependencia de la CLI). `smart-cli mcp` será removido en una futura versión mayor — migra a `npx @evolith/mcp-server serve` (o el binario `evolith-mcp serve`). Consulta el [producto MCP Services](../mcp-services/README.md) para la superficie autoritativa.
 
 | Superficie | Cantidad |
 |---|---|

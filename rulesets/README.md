@@ -92,22 +92,29 @@ rulesets/
 │   └── README.md               # Resolves aliases through topology manifests
 ├── topologies/                 # Topology-specific executable rules
 │   └── README.md
-├── adr/                        # ADR-encoded rules (7 ADRs)
+├── adr/                        # ADR-encoded rules (7 top-level + adr/generated/)
 │   ├── adr-0002-hexagonal-architecture.rules.json
 │   ├── adr-0005-cicd-quality-gates.rules.json
 │   ├── adr-0018-testing-pyramid.rules.json
 │   ├── adr-0032-protocol-selection.rules.json
 │   ├── adr-0040-multi-runtime.rules.json
 │   ├── adr-0050-gitflow-branching.rules.json
-│   └── adr-0010-multi-tenancy.rules.json
-├── cross-cutting/              # Aliases only — canonical files are in domain-specific dirs above
-│   ├── compliance-baseline.rules.json    # alias → compliance-baseline/compliance-baseline.rules.json
-│   ├── definition-of-done.rules.json     # alias → definition-of-done/definition-of-done.rules.json
-│   ├── engineering-manifesto.rules.json  # alias → engineering-manifesto/engineering-manifesto.rules.json
-│   └── repository-taxonomy.rules.json    # alias → repository-taxonomy/repository-taxonomy.rules.json
-├── acl/                        # Anti-Corruption Layer rules (NEW)
+│   ├── adr-0010-multi-tenancy.rules.json
+│   └── generated/              # 108 auto-generated *.rules.json (one per accepted ADR); do not hand-edit
+├── cross-cutting/              # Standalone full copies (NOT symlinks/aliases); content diverges from the canonical files
+│   ├── compliance-baseline.rules.json    # divergent copy of compliance-baseline/compliance-baseline.rules.json
+│   ├── definition-of-done.rules.json     # divergent copy of definition-of-done/definition-of-done.rules.json
+│   ├── engineering-manifesto.rules.json  # divergent copy of engineering-manifesto/engineering-manifesto.rules.json
+│   └── repository-taxonomy.rules.json    # divergent copy of repository-taxonomy/repository-taxonomy.rules.json
+├── acl/                        # Anti-Corruption Layer rules
 │   ├── anti-corruption-layer.rules.json  # ACL enforcement
 │   └── anti-corruption-layer.rules.es.json
+├── contracts/                  # Machine contracts + fixtures (evolith-machine-contracts.json)
+├── executive-scorecards/       # DORA + SPACE scorecard rules (also mirrored under governance/)
+│   └── executive-scorecards.rules.json
+├── tenants/                    # Multi-tenancy tenant rules and example overrides
+├── infrastructure/             # Helm + OPA-sidecar rules (helm-enforcement, opa-sidecar-bundle)
+│   └── opa/                    # Co-located *.rego sources (see note below on opa/infrastructure/)
 ├── sdlc/                       # SDLC gate rules
 │   ├── phase-gates.rules.json
 │   ├── quality-thresholds.rules.json
@@ -125,12 +132,17 @@ rulesets/
     ├── inheritance.rules.json
     ├── satellite-contracts.rules.json
     ├── open-core-boundary.rules.json  # Core vs Enterprise separation
-    └── executive-scorecards.rules.json  # DORA + SPACE metrics
+    └── executive-scorecards.rules.json  # DORA + SPACE metrics (mirror of executive-scorecards/)
 ```
+
+> **Duplicate-source notes.** A few areas keep more than one copy of the same logical rules; this is a known state, not a guarantee of identical content:
+> - `cross-cutting/*.rules.json` are full standalone copies of the domain-specific files (`compliance-baseline/`, `definition-of-done/`, `engineering-manifesto/`, `repository-taxonomy/`) and their content currently **diverges** from those canonical sources — they are not aliases or symlinks.
+> - `executive-scorecards.rules.json` exists both at the top level (`executive-scorecards/`) and under `governance/`.
+> - The infrastructure Rego lives under both `infrastructure/opa/*.rego` and `opa/infrastructure/*.rego` with differing file sizes; the policies aggregated by `main.rego` are the ones under [`opa/infrastructure/`](./opa/README.md).
 
 ---
 
-The canonical topology rule artifact is the file declared by each `topology.manifest.json`; the current progressive-axis artifacts live under `reference/architecture/topologies/progressive-axis/`. Consumers must resolve the manifest rather than construct legacy `rulesets/architecture/f*.rules.json` paths.
+The canonical topology rule artifact is the file declared by each `topology.manifest.json`. Progressive-axis artifacts are present in **two** locations: the executable copies under [`rulesets/topologies/progressive-axis/`](./topologies/README.md) (`{topology}.rules.json`, plus `.rego`/`.wasm`/`topology.manifest.json` where compiled) and the deep-dive copies under `reference/architecture/topologies/progressive-axis/`. Consumers must resolve the manifest (which names the authoritative file) rather than construct legacy `rulesets/architecture/f*.rules.json` paths.
 
 ## How Rulesets Work
 
@@ -172,6 +184,7 @@ flowchart LR
 
 | Document | Description | Goal / Objective | Type | Mandatory |
 |---|---|---|---|---|
+| [CONTRIBUTING.md](../CONTRIBUTING.md) | Clone/dev-setup, tests, branch/commit/PR conventions, ruleset/OPA/schema authoring standards | Onboard contributors | Contribution guide | Yes |
 | [AGENTS.md](../AGENTS.md) | Agent rules and conventions | Govern agent contributions | Standard | Yes |
 | [Repository Taxonomy](../reference/governance/standards/repository-taxonomy.md) | What goes where in Evolith | Keep the repository organized | Governance standard | Yes |
 | [Child Repository Inheritance](../reference/governance/standards/onboarding/child-repository-inheritance-guide.md) | How products inherit from Evolith | Standardize inheritance | Guide | Yes |

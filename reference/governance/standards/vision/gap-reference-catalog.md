@@ -147,10 +147,11 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence (original):** `ci-cd.yml` only publishes the CLI (npm + Docker Hub); no CD for core-api/mcp-server.
 - **Complexity:** M
 - **Applied fix:** extended `.github/workflows/ci-cd.yml` — (1) a `docker-services` matrix job builds + pushes `core-api` and `mcp-server` images to **GHCR** (`ghcr.io/<owner>/evolith-core-api` and `…-mcp-server`, tags `latest` + `${sha}`), authenticating with the built-in `GITHUB_TOKEN` (`permissions: packages: write`) — no extra secret; build context = repo root (Dockerfiles COPY repo-root-relative paths; all COPY targets verified present); (2) a guarded `deploy` job triggers Coolify per service, which **no-ops with a warning** until `COOLIFY_API_TOKEN` + `COOLIFY_COREAPI_DEPLOY_HOOK` / `COOLIFY_MCP_DEPLOY_HOOK` repo secrets are set (safe to merge now); (3) `push` (main + `v*` tags) triggers so delivery is continuous. YAML validated (js-yaml).
-- **Residual (to reach DONE):** set the 3 Coolify secrets in repo settings, then confirm one green CD run that pushes to GHCR and deploys. The deploy half is not verifiable from the dev environment — board status stays `IN-PROGRESS` until that run.
+- **Verified in CI (run 28321628592 → 28321997377):** GHCR build+push is now PROVEN green — both `evolith-core-api` and `evolith-mcp-server` images built (build context = repo root) and pushed to GHCR. En route, repaired the CI that was fully broken: regenerated the drifted root `package-lock.json` (npm ci EUSAGE), and fixed the smart-cli Test job (build the `@evolith/*` deps + the CLI before tests; gate on the deterministic unit suite, leaving the env-sensitive e2e to its dedicated job + the per-flow E2E playbooks).
+- **Residual (criterion 2 — owner's infra):** the Coolify `deploy` job runs but `curl` fails with `Could not resolve host` — the `COOLIFY_COREAPI_DEPLOY_HOOK` / `COOLIFY_MCP_DEPLOY_HOOK` secrets must be **full deploy-webhook URLs** (`https://<coolify-host>/api/v1/deploy?uuid=<app-uuid>`), not a UUID/path. The owner must re-set those 2 secret values; the deploy targets their infra and is not verifiable from dev → stays `IN-PROGRESS` until a green deploy. *(Separate, non-GT-324: the legacy CLI→Docker Hub `docker` job fails because sdk/cli has no per-package lockfile for its standalone Dockerfile.)*
 - **Done when:**
-  - [x] Workflow builds and pushes images to GHCR. (GITHUB_TOKEN; secret-free; verified by the CD run on push)
-  - [ ] Deploys to the chosen runtime (needs the Coolify secrets + a CD run).
+  - [x] Workflow builds and pushes images to GHCR. (GITHUB_TOKEN; secret-free; **verified green in CI run 28321997377**)
+  - [ ] Deploys to the chosen runtime (deploy job wired; needs full Coolify deploy-webhook URLs in the secrets — owner action).
 
 #### GT-325
 

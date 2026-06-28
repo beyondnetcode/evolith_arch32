@@ -6,6 +6,21 @@ Stdio. The tools themselves live in the canonical registry package
 [`@evolith/mcp-tools`](../../packages/mcp-tools) and are wired in through
 `registerEvolithTools`.
 
+This is a working sandbox/demo app with real code (~30 lines in `index.js`),
+not a reference document. Use it to run and test AI agents against Evolith MCP
+tools over stdio.
+
+## Relation to the other apps and packages
+
+| Component | What it is | How it differs from this sandbox |
+|---|---|---|
+| `apps/agent-sandbox` (this app) | A minimal **stdio** MCP server for local agent experiments. | Single-process, no HTTP, no auth — meant for a local agent/LLM to connect and exercise the shared tools. |
+| [`packages/mcp-tools`](../../packages/mcp-tools) | Canonical tool registry (`registerEvolithTools`). | The sandbox is just a host that mounts these tools; the tool definitions/handlers live here and are unit-tested here. |
+| [`apps/core-api`](../core-api) | The Evolith **Core API exposure layer** (NestJS, REST/GraphQL + MCP). | Production exposure surface with full governance domain; the sandbox shares neither its server stack nor its scope. |
+
+The sandbox does **not** call `core-api` or any network service at runtime; it
+loads tools in-process from `@evolith/mcp-tools`.
+
 ## Usage
 
 Start the sandbox MCP server (it speaks MCP over stdio):

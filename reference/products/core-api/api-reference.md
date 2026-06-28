@@ -8,7 +8,9 @@ This document provides detailed technical specifications for all public endpoint
 
 ## 1. Global Standards & Envelope Conformance
 
-All API endpoints enforce versioning in their URI path using the `/api/v1/...` prefix. Every request response conforms to the **ADR-0073** standard output envelope.
+All domain endpoints enforce versioning in their URI path using the `/api/v1/...` prefix; `/health*` and `/metrics` are version-neutral. Every JSON response is automatically wrapped by the `EnvelopeInterceptor` (success) or `HttpExceptionFilter` (error) into the **ADR-0073** standard output envelope. The `/metrics` endpoint is exempt (raw Prometheus text).
+
+The `meta` object is **flat** — `command`, `executedAt`, `durationMs`, `correlationId`, `context`, and `schemaVersion` are siblings (there is no nested `timing` object). The `context` object only carries the request scope (`initiative`, `tenant`, `phase`) and is populated from `x-evolith-*` headers, query params, or the request body when present.
 
 ### Successful Response Envelope (`200 OK` / `201 Created`)
 
@@ -19,14 +21,14 @@ All API endpoints enforce versioning in their URI path using the `/api/v1/...` p
     "...": "Endpoint-specific response payload"
   },
   "meta": {
+    "command": "http POST /api/v1/validate/composable",
+    "executedAt": "2026-06-21T14:00:00.000Z",
+    "durationMs": 42,
+    "correlationId": "evl-5f3a76ef-c5b9-478a-a92c-0e78fde14022",
     "context": {
-      "correlationId": "uuid-string",
-      "tenant": "tenant-id",
-      "initiative": "initiative-id"
-    },
-    "timing": {
-      "startedAt": "ISO8601-timestamp",
-      "durationMs": 42
+      "initiative": "governance-audit",
+      "tenant": "default",
+      "phase": "discovery"
     },
     "schemaVersion": "1.0.0"
   }
@@ -35,22 +37,30 @@ All API endpoints enforce versioning in their URI path using the `/api/v1/...` p
 
 ### Error Response Envelope (`4xx` / `5xx`)
 
+Errors carry the same envelope and `meta` shape. The `error.details` object is an RFC 9457 Problem Details body (`type`, `title`, `status`, `detail`, `instance`, `timestamp`, optional `traceId`/`errors`); the response also sets `X-Problem-Format: rfc9457`. The `error.code` is one of `BAD_REQUEST`, `UNAUTHORIZED`, `FORBIDDEN`, `NOT_FOUND`, `CONFLICT`, `UNPROCESSABLE_ENTITY`, `TOO_MANY_REQUESTS`, or `INTERNAL_ERROR`.
+
 ```json
 {
   "success": false,
   "error": {
-    "code": "ERROR_CODE_STRING",
-    "message": "Human readable description of the error",
-    "details": []
+    "code": "BAD_REQUEST",
+    "message": "Validation failed",
+    "details": {
+      "type": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400",
+      "title": "Bad Request",
+      "status": 400,
+      "detail": "Validation failed",
+      "instance": "/api/v1/projects/initialize",
+      "timestamp": "2026-06-21T14:00:00.000Z",
+      "errors": ["workspaceRef must be longer than or equal to 1 characters"]
+    }
   },
   "meta": {
-    "context": {
-      "correlationId": "uuid-string"
-    },
-    "timing": {
-      "startedAt": "ISO8601-timestamp",
-      "durationMs": 12
-    },
+    "command": "http POST /api/v1/projects/initialize",
+    "executedAt": "2026-06-21T14:00:00.000Z",
+    "durationMs": 12,
+    "correlationId": "evl-5f3a76ef-c5b9-478a-a92c-0e78fde14022",
+    "context": {},
     "schemaVersion": "1.0.0"
   }
 }
@@ -221,11 +231,56 @@ These endpoints trigger validation, proposed state advances, and phase transitio
 * **Body:**
   ```json
   {
-    "targetPhase": "design",
     "workspaceRef": "satellite-name-or-path",
+    "currentPhase": "phase-1",
+    "targetPhase": "phase-2",
     "triggerDeploy": false
   }
   ```
+* **Notes:** `currentPhase` is optional — when the caller omits it, the controller falls back to `targetPhase` so the exit gate is always evaluated.
+
+---
+
+## 5. Composable Validation (GT-312)
+
+### Composable Validate
+* **Route:** `POST /api/v1/validate/composable`
+* **Summary:** Runs the composable validation engine, combining up to five modes (SDLC, Architecture, Ruleset, ADR, Ad-hoc) in a single call. Each mode activates when its trigger field is present.
+* **Body:**
+  ```json
+  {
+    "workspaceRef": "op_01j7wq8e2n",
+    "engine": "native",
+    "topology": "modular-monolith",
+    "phase": "design",
+    "ruleset": "governance/base",
+    "adr": "adr-0010",
+    "file": "src/app.module.ts"
+  }
+  ```
+* **Fields:** `workspaceRef` (**required**, opaque ref); `engine` (`native` | `opa`, default `native`); `topology` activates Architecture mode; `phase` activates SDLC mode (canonical ids `discovery`, `design`, `construction`, `qa`, `release`; legacy `f1`–`f5` accepted as deprecated aliases per GT-343); `ruleset` activates Ruleset mode; `adr` activates ADR mode; `file` activates Ad-hoc mode.
+* **Valid topologies:** `modular-monolith`, `distributed-modules`, `microservices`, `serverless`, `edge-computing`, `event-driven`, `data-mesh`, `agentic-ai`.
+* **Valid ADRs:** `adr-0002`, `adr-0005`, `adr-0010`, `adr-0018`, `adr-0032`, `adr-0040`, `adr-0050`.
+
+---
+
+## 6. Operational Endpoints (version-neutral)
+
+These endpoints are **not** versioned (no `/api/v1` prefix) and are exempt from rate limiting (`@SkipThrottle()`) so orchestrator probes and Prometheus scrapers see stable URIs across major versions.
+
+### Health (combined)
+* **Route:** `GET /health` — liveness + readiness combined; returns the service health status.
+
+### Liveness
+* **Route:** `GET /health/live` — returns `{ "status": "UP", "timestamp": "..." }` when the process is running.
+
+### Readiness
+* **Route:** `GET /health/ready` — verifies the corpus (`phase-gates.rules.json` under `CORE_PATH`) and metrics are reachable. Returns `200` with `{ "status": "UP", "checks": { "corpus": "UP", "metrics": "UP" }, "timestamp": "..." }`, or `503` with `status: "DOWN"` when a check fails.
+
+### Metrics
+* **Route:** `GET /metrics` — Prometheus text exposition (`Content-Type: text/plain`). Combines application and Redis-cache metrics. Returned raw (no envelope).
+
+> **Rate limiting:** all other routes are throttled globally to **100 requests / 60 s** per client (`ThrottlerModule`); exceeding the limit returns `429 TOO_MANY_REQUESTS`.
 
 ---
 

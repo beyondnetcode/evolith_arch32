@@ -1,58 +1,73 @@
-# Evolith CLI
+# @evolith/smart-cli
 
-Interfaz de línea de comandos para gobernanza, validación de estándares e integración con agentes IA.
+Interfaz de línea de comandos para Evolith — gobernanza, validación de estándares, scaffolding de arquitectura, gestión del ciclo de vida SDLC e integración con agentes IA.
 
-## Características
+## Visión General
 
-- **Gobernanza**: Gestión de ADR, seguimiento de estándares, instalación de agentes
-- **Validación**: Cumplimiento del repositorio contra los estándares de Evolith
-- **Integración IA**: Servidor MCP para llamadas de herramientas de agentes IA
-- **Observabilidad**: Logging estructurado, métricas, reporte de errores
+SmartCLI es el punto de entrada principal al ecosistema Evolith. Conecta tres capas:
+
+```
+repositorio satélite
+       │
+       ▼
+  smart-cli  ──────── evolith.yaml (configuración)
+       │
+       ├── Evolith Core (rulesets, ADRs, estándares, evidencia de gates)
+       │
+       └── Servidor MCP ──── Agentes IA (Cursor, Claude Desktop, propios)
+```
+
+## Arquitecturas Soportadas
+
+Evolith Core define **8 topologías de arquitectura** a través de dimensiones complementarias. Cualquier comando que acepte `--topology` las referencia por su id canónico:
+
+| Topología (id) | Nombre | Dimensión |
+|---------------|------|-----------|
+| `modular-monolith` | Monolito Modular | eje progresivo |
+| `distributed-modules` | Módulos Distribuidos | eje progresivo |
+| `microservices` | Microservicios | eje progresivo |
+| `serverless` | Serverless | ejecución |
+| `edge-computing` | Edge Computing | ejecución |
+| `event-driven` | Orientada a Eventos | integración |
+| `data-mesh` | Data Mesh | datos |
+| `agentic-ai` | Agentic AI | ia |
+
+El **eje progresivo** (`modular-monolith → distributed-modules → microservices`) es una progresión lineal de madurez gestionada por el comando `upgrade`. Las demás dimensiones (ejecución, integración, datos, ia) son complementarias y se eligen según las necesidades del proyecto.
+
+> **Legado `F1/F2/F3`:** versiones anteriores usaban `--arch F1|F2|F3` mapeando al eje progresivo (`F1 = modular-monolith`, `F2 = distributed-modules`, `F3 = microservices`). Estos flags están **deprecados** — usa `--topology <id>` con los ids canónicos anteriores. (Las antiguas etiquetas "Microfrontend / Microfrontend Distribuido" son obsoletas y ya no reflejan el corpus.)
 
 ## Instalación
-
-El CLI se publica en npm registry y es compatible con todos los gestores de paquetes JavaScript.
-
-### npm
 
 ```bash
 npm install -g @evolith/smart-cli
 ```
 
-### pnpm
-
 ```bash
 pnpm add -g @evolith/smart-cli
 ```
-
-### yarn
 
 ```bash
 yarn global add @evolith/smart-cli
 ```
 
-### Binario Manual
+O descarga el binario desde [GitHub Releases](https://github.com/beyondnetcode/evolith_arch32/releases) y agrégalo a tu PATH.
 
-Descarga el binario más reciente desde [GitHub Releases](https://github.com/beyondnetcode/evolith_arch32/releases) y agrégalo a tu PATH.
-
-### Verificar Instalación
+### Verificar
 
 ```bash
 smart-cli --version
-# smart-cli version 1.1.0
+# 1.1.4
 ```
 
 ### Solución de Problemas
 
-**Errores de permisos en macOS/Linux:**
+**EACCES en macOS/Linux:**
 ```bash
-# Si obtienes errores EACCES, intenta:
 sudo npm install -g @evolith/smart-cli --unsafe-perm
 ```
 
-**Usando nvm (Node Version Manager):**
+**nvm — binario no encontrado tras instalar:**
 ```bash
-# Asegúrate de que el path global esté en PATH
 export PATH=$(npm config get prefix)/bin:$PATH
 ```
 
@@ -60,241 +75,932 @@ export PATH=$(npm config get prefix)/bin:$PATH
 
 ## Inicio Rápido
 
-### 1. Inicializar un Repositorio
-
 ```bash
-cd tu-proyecto
+# 1. Sembrar un proyecto demo para explorar la CLI
+smart-cli fixtures --type demo
+
+# 2. Inicializar un repositorio real
 smart-cli init
-```
 
-Esto crea un archivo `evolith.yaml` con la configuración por defecto.
+# 3. Generar la documentación base
+smart-cli docs
 
-### 2. Ejecutar la Primera Validación
-
-```bash
+# 4. Validar cumplimiento
 smart-cli validate
+
+# 5. Scaffolding de arquitectura (fase 1)
+smart-cli scaffold --phase 1
+
+# 6. Conectar un agente IA
+smart-cli mcp serve
 ```
 
-Salida:
-```
-✓ Validando repositorio...
-✓ El repositorio cumple con los estándares de Evolith
-```
-
-### 3. Instalar un Agente
-
-```bash
-smart-cli agents install
-# Seleccionar la plantilla "standard" cuando se solicite
-```
+---
 
 ## Comandos
 
+### init
+
+Inicializa un repositorio satélite con selección interactiva de herramientas. Crea `evolith.yaml` y la estructura del proyecto.
+
+```bash
+smart-cli init [opciones]
+
+Opciones:
+  -d, --dry-run          Ejecuta sin escribir archivos
+  -c, --config <ruta>    Ruta a evolith.setup.json para modo batch
+  -r, --runtime <id>     Runtime: nodejs, dotnet, python
+  -m, --monorepo <id>    Estrategia monorepo: none, nx, npm-workspaces, rush
+  -a, --arch <id>        Patrón de arquitectura: clean, hexagonal, ddd
+      --db <id>          Base de datos: postgresql, mongodb, sqlserver
+```
+
+**Ejemplos:**
+
+```bash
+# Wizard interactivo
+smart-cli init
+
+# Modo batch (no interactivo)
+smart-cli init --config evolith.setup.json
+
+# Previsualizar sin escribir
+smart-cli init --dry-run
+```
+
+Tras completar `init`, la CLI imprime los siguientes pasos sugeridos, incluyendo `validate`, `agents --install` y `sdlc handoff`.
+
+---
+
+### docs
+
+Genera los archivos de documentación base que Evolith requiere en el directorio actual.
+
+Archivos creados por defecto:
+- `README.md` — plantilla de visión general del proyecto
+- `AGENTS.md` — configuración y reglas de agentes IA
+- `MASTER_INDEX.md` — índice de documentación
+- `.evolith/evolith.yaml` — configuración de Evolith
+
+```bash
+smart-cli docs [opciones]
+
+Opciones:
+  -d, --dry-run          Previsualiza archivos sin escribir
+  -f, --force            Sobreescribe archivos existentes
+  -t, --template <tipo>  Tipo de plantilla: default (los 4 archivos), minimal (solo README + AGENTS)
+      --format <formato> Formato de salida: json (envelope ADR-0073) o human (por defecto)
+```
+
+**Ejemplos:**
+
+```bash
+# Generar toda la documentación
+smart-cli docs
+
+# Previsualizar lo que se crearía
+smart-cli docs --dry-run
+
+# Scaffold mínimo
+smart-cli docs --template minimal
+
+# Forzar sobreescritura y emitir envelope JSON
+smart-cli docs --force --format json
+```
+
+---
+
 ### validate
 
-Valida el cumplimiento del repositorio contra los estándares de Evolith.
+Valida el cumplimiento del repositorio contra los estándares de Evolith. Soporta múltiples motores, rulesets, topologías y fases SDLC.
 
 ```bash
 smart-cli validate [opciones]
 
 Opciones:
-  --satellite <ruta>    Ruta al repositorio satélite (por defecto: cwd)
-  --core <ruta>         Ruta a Evolith Core
-  --format <formato>    Formato de salida: json, table, yaml, markdown
-  --output <archivo>    Escribir salida a archivo
-  --ruleset <id>        Validar ruleset específico (acl, open-core, inheritance)
-  --engine <engine>     Motor de evaluación de políticas: native u opa (por defecto: native)
+  -s, --satellite <ruta>   Ruta al repositorio satélite (por defecto: cwd)
+  -c, --core <ruta>        Ruta a Evolith Core (por defecto: auto-detect)
+  -f, --format <formato>   Formato de salida: json, table, yaml, markdown (por defecto: markdown)
+  -o, --output <archivo>   Escribe la salida a un archivo
+  -r, --ruleset <id>       Valida un ruleset específico (ver tabla abajo)
+  -e, --engine <motor>     Motor de validación: native (por defecto) u opa
+  -t, --topology <id>      Topología a validar por id canónico, p. ej. modular-monolith,
+                           microservices, serverless, event-driven, agentic-ai (repetible).
+                           Los alias legacy F1/F2/F3 siguen mapeando al eje progresivo.
+  -m, --manifest <ruta>    SatelliteManifest JSON para evaluación end-to-end (pipeline GT-281)
+  -p, --phase <fase>       Fase SDLC a evaluar: discovery, design, construction, qa, release (legacy f1..f5 deprecado; activa pipeline GT-281)
+      --adr <id>           Validar contra un conjunto de reglas ADR específico
+      --file <ruta>        Validar un solo archivo (modo ad-hoc)
+      --composable         Usar el motor composable GT-312 con resolución inteligente de modos
 ```
 
-**Evaluación de Políticas Dual-Engine:**
-La CLI soporta la evaluación de políticas utilizando el motor integrado en TypeScript (`native`) o módulos WebAssembly de Open Policy Agent (`opa`). Ver [Core ADR-0041](../../reference/architecture/adrs/core/0041-dual-engine-policy-evaluation.es.md) para más detalles.
+**Rulesets disponibles (`--ruleset`):**
+
+| ID | Valida |
+|----|-----------|
+| `acl` | Reglas de la capa de control de acceso |
+| `open-core` | Límites de módulos open-core |
+| `inheritance` | Contratos de herencia y extensión |
+| `cli-release` | Preparación de release de la CLI |
+| `cli-parity` | Paridad de comandos CLI entre versiones |
+| `evidence` | Completitud de artefactos de evidencia de gates |
+| `mcp` | Cumplimiento del contrato del servidor MCP |
+| `observability` | Cobertura de logging, métricas y trazas |
+| `adr-0002` | Reglas específicas de ADR-0002 |
+
+**Reglas ADR disponibles (`--adr`):** `adr-0002`, `adr-0005`, `adr-0010`, `adr-0018`, `adr-0032`, `adr-0040`, `adr-0050`
+
+**Motores de validación:**
+- `native` — motor TypeScript integrado (por defecto, sin dependencias externas)
+- `opa` — módulos WebAssembly de Open Policy Agent
+
+**Motor composable (GT-312):**
+Cuando se activa `--composable`, la CLI resuelve automáticamente qué modos de validación activar según el contexto proporcionado:
+- `SdlcValidationMode` — se activa cuando hay `--phase`
+- `ArchitectureValidationMode` — se activa cuando hay `--topology`
+- `RulesetValidationMode` — se activa cuando hay `--ruleset`
+- `AdrValidationMode` — se activa cuando hay `--adr`
+- `AdhocValidationMode` — se activa cuando hay `--file`
 
 **Ejemplos:**
 
 ```bash
-# Validación básica
+# Chequeo básico de cumplimiento
 smart-cli validate
 
-# Salida JSON para automatización
-smart-cli validate --format json
+# Salida JSON para CI
+smart-cli validate --format json --output report.json
 
-# Salida en tabla para humanos
-smart-cli validate --format table
+# Validar una sola topología
+smart-cli validate --topology microservices
 
-# Validar ruleset específico
-smart-cli validate --ruleset acl
+# Validar múltiples topologías
+smart-cli validate --topology modular-monolith --topology event-driven
+
+# Validar un ruleset específico
+smart-cli validate --ruleset evidence
+
+# Evaluación completa de fase SDLC (pipeline GT-281)
+smart-cli validate --phase discovery
+
+# Validar con un SatelliteManifest
+smart-cli validate --manifest ./satellite-manifest.json --phase design
+
+# Validación ad-hoc de un archivo
+smart-cli validate --file src/domain/user.entity.ts --composable
+
+# Motor OPA
+smart-cli validate --engine opa --ruleset acl
 ```
+
+---
 
 ### adr
 
-Gestionar Registros de Decisiones de Arquitectura.
+Gestiona Architecture Decision Records.
 
 ```bash
-smart-cli adr <comando>
+smart-cli adr [opciones]
 
-Comandos:
-  create     Crear nuevo ADR
-  list       Listar todos los ADR
-  get        Mostrar detalles del ADR
-  update     Actualizar ADR existente
-  matrix     Mostrar matriz de ADR
+Opciones:
+  -c, --create           Crear un nuevo ADR (interactivo)
+  -l, --list             Listar todos los ADRs
+  -g, --get <id>         Mostrar un ADR específico
+  -u, --update <id>      Actualizar el estado de un ADR
+  -s, --status <estado>  Nuevo estado: Accepted, Deprecated, Superseded, Amended
+  -r, --reason <texto>   Razón del cambio de estado
+  -m, --matrix           Mostrar el resumen de la matriz de ADRs
+  -d, --dry-run          Previsualizar sin escribir archivos
 ```
 
 **Ejemplos:**
 
 ```bash
-# Crear nuevo ADR
-smart-cli adr create
+# Creación interactiva
+smart-cli adr --create
 
-# Listar todos los ADR
-smart-cli adr list
+# Listar todos
+smart-cli adr --list
 
-# Obtener ADR específico
-smart-cli adr get ADR-0002
+# Mostrar un ADR específico
+smart-cli adr --get ADR-0002
+
+# Actualizar estado
+smart-cli adr --update ADR-0005 --status Accepted --reason "Aprobado en revisión de diseño"
+
+# Mostrar matriz
+smart-cli adr --matrix
 ```
+
+---
 
 ### standards
 
-Gestionar estándares de gobernanza.
+Gestiona los estándares de gobernanza de Evolith (arquitectura, gobernanza, operaciones).
 
 ```bash
-smart-cli standards <comando>
+smart-cli standards [opciones]
 
-Comandos:
-  init       Inicializar directorio de estándares
-  list       Listar todos los estándares
-  get        Mostrar detalles del estándar
-  validate   Validar contra estándares
-  export     Exportar estándar a markdown/json
+Opciones:
+      --init             Inicializar la estructura de directorios de standards
+  -l, --list             Listar todos los standards
+  -g, --get <id>         Mostrar un standard específico
+  -v, --validate <code>  Validar código contra los standards
+  -e, --export <id>      Exportar un standard
+  -f, --format <formato> Formato de exportación: markdown, json
+  -c, --category <id>    Filtrar por categoría
 ```
 
 **Ejemplos:**
 
 ```bash
-# Inicializar estándares
-smart-cli standards init
+# Inicializar
+smart-cli standards --init
 
-# Listar estándares
-smart-cli standards list
+# Listar todos los standards
+smart-cli standards --list
+
+# Filtrar por categoría
+smart-cli standards --list --category governance
+
+# Exportar como markdown
+smart-cli standards --export STD-001 --format markdown
 ```
+
+---
 
 ### agents
 
-Instalar y gestionar agentes de Evolith.
+Gestiona los agentes BMAD de Evolith — instala, lista y elimina agentes de gobernanza en el repositorio satélite.
 
 ```bash
-smart-cli agents <comando>
+smart-cli agents [opciones]
 
-Comandos:
-  install    Instalar nuevo agente
-  list       Listar agentes instalados
-  remove     Eliminar agente
-  validate   Validar ruleset del agente
-  upgrade    Actualizar agente
+Opciones:
+  -l, --list             Listar agentes instalados
+  -i, --install [name]   Instalar un agente nombrado (interactivo si se omite el nombre)
+  -r, --remove [name]    Eliminar un agente instalado
+  -d, --dry-run          Previsualizar sin hacer cambios
+```
+
+**Plantillas de agente disponibles:**
+
+| Plantilla | Descripción |
+|---|---|
+| `standard` | Agente por defecto con reglas básicas de gobernanza (ACL-01 a ACL-06) |
+| `minimal` | Agente ligero solo con reglas esenciales |
+| `full-compliance` | Agente de cumplimiento completo con audit trail y cadenas de aprobación |
+
+**Ejemplos:**
+
+```bash
+# Listar agentes instalados
+smart-cli agents --list
+
+# Instalación interactiva
+smart-cli agents --install
+
+# Instalar una plantilla específica
+smart-cli agents --install standard
+smart-cli agents --install full-compliance
+
+# Previsualizar instalación sin escribir
+smart-cli agents --install standard --dry-run
+
+# Eliminar un agente
+smart-cli agents --remove minimal
+```
+
+---
+
+### scaffold
+
+Genera la arquitectura de Evolith en el workspace actual **a lo largo del eje progresivo** — fase 1 (`modular-monolith`), fase 2 (`distributed-modules`) y fase 3 (`microservices`). Las fases 2–3 se generan como un host + remotes de Module Federation (microfrontends), con frameworks de frontend, ORMs y nombres de dominio configurables. (`F1/F2/F3` siguen aceptándose como alias legacy de las fases 1/2/3.)
+
+```bash
+smart-cli scaffold [opciones]
+
+Opciones:
+      --frontend <framework>   Framework frontend: react, angular
+      --orm <orm>              ORM: prisma, typeorm
+  -d, --dry-run                Previsualizar sin escribir archivos
+  -f, --format <formato>       Formato de salida: json (envelope ADR-0073) o human (por defecto)
+      --phase <fase>           Fase de arquitectura: 1 (F1), 2 (F2), 3 (F3) — requerida con --format json
+      --api-name <name>        Nombre de la app backend (por defecto: tracker-api)
+      --web-app-name <name>    Nombre de la web app para fase 1 (por defecto: tracker-web)
+      --host-name <name>       Nombre de la app host para fase 2/3 (por defecto: tracker-host)
+      --remotes <names>        Nombres de remotes separados por comas para fase 2/3
+      --domains <names>        Nombres de dominio separados por comas a generar
 ```
 
 **Ejemplos:**
 
 ```bash
-# Instalación interactiva
-smart-cli agents install
+# Scaffold de fase 1 (Monolito Modular) interactivo
+smart-cli scaffold
 
-# Listar agentes
-smart-cli agents list
+# Scaffold de fase 1 con React + Prisma, dry run
+smart-cli scaffold --phase 1 --frontend react --orm prisma --dry-run
+
+# Scaffold de fase 2 (Microfrontend) con nombres personalizados
+smart-cli scaffold --phase 2 --host-name shell-app --remotes catalog,checkout
+
+# Scaffold de fase 3 con dominios personalizados y salida JSON
+smart-cli scaffold --phase 3 --domains orders,payments,users --format json
+
+# Generar solo dominios específicos
+smart-cli scaffold --domains auth,notifications
 ```
+
+---
+
+### drift
+
+Detecta drift de arquitectura entre el nivel de topología declarado y la estructura real del código. Guarda histórico para análisis de tendencias.
+
+```bash
+smart-cli drift [opciones]
+
+Opciones:
+  -p, --path <ruta>    Ruta del proyecto a analizar (por defecto: cwd)
+  -l, --level <nivel>  Nivel de arquitectura declarado: F1, F2, F3
+      --json           Salida como JSON crudo
+      --history        Mostrar el histórico de escaneos de drift
+      --trend          Mostrar el análisis de tendencia de drift (mejorando / estable / degradando)
+  -f, --format <fmt>   Formato de salida: json (envelope ADR-0073) o human (por defecto)
+```
+
+El reporte de drift incluye:
+- **Nivel declarado** vs **nivel detectado**
+- **Score general** (0–100%)
+- **Severidad del drift**: critical, high, medium, low, none
+- **Violaciones nuevas** — introducidas desde el último escaneo
+- **Violaciones persistentes** — no resueltas a través de varios escaneos
+- **Violaciones resueltas** — corregidas desde el último escaneo
+
+**Ejemplos:**
+
+```bash
+# Detectar drift (auto-detecta el nivel declarado desde evolith.yaml)
+smart-cli drift
+
+# Especificar el nivel declarado explícitamente
+smart-cli drift --level F2
+
+# Analizar una ruta de proyecto diferente
+smart-cli drift --path ../my-satellite
+
+# Mostrar escaneos históricos
+smart-cli drift --history
+
+# Mostrar tendencia (requiere al menos 2 escaneos previos)
+smart-cli drift --trend
+
+# Salida JSON para CI
+smart-cli drift --format json
+```
+
+---
+
+### gate
+
+Evalúa los phase gates SDLC y emite artefactos `GateEvidence` ADR-0073. Soporta entrega por webhook y contextos multi-actor.
+
+```bash
+smart-cli gate <acción> [opciones]
+
+Acciones:
+  evaluate    Evaluar gates para la fase indicada
+
+Opciones:
+  -p, --phase <fase>          Fase SDLC: discovery, design, construction, qa, release
+      --project <ruta>        Ruta del proyecto satélite (por defecto: cwd)
+  -c, --core <ruta>           Ruta a Evolith Core (por defecto: auto-detect)
+  -f, --format <formato>      Formato de salida: json (envelope ADR-0073) o human (por defecto)
+      --evaluated-by <actor>  Clase de actor: human (por defecto), agent, ci
+      --initiative <id>       Contexto de iniciativa — reflejado en meta.context
+      --tenant <id>           Contexto de tenant — reflejado en meta.context
+      --webhook-url <url>     POST de la evidencia del gate a esta URL al completar
+```
+
+**Ejemplos:**
+
+```bash
+# Evaluar gates de la fase design
+smart-cli gate evaluate --phase design
+
+# Evaluación CI con salida JSON
+smart-cli gate evaluate --phase construction --evaluated-by ci --format json
+
+# Evaluación dirigida por agente con entrega por webhook
+smart-cli gate evaluate --phase qa --evaluated-by agent --webhook-url https://ci.example.com/hooks/evolith
+
+# Contexto multi-tenant
+smart-cli gate evaluate --phase release --tenant acme --initiative Q3-launch
+```
+
+---
+
+### phase
+
+Propone una transición entre fases SDLC. Emite un artefacto de propuesta de transición.
+
+```bash
+smart-cli phase advance [opciones]
+
+Opciones:
+      --from <fase>           Fase SDLC actual
+      --to <fase>             Fase SDLC objetivo
+      --project <ruta>        Ruta del proyecto satélite (por defecto: cwd)
+  -c, --core <ruta>           Ruta a Evolith Core (por defecto: auto-detect)
+  -f, --format <formato>      Formato de salida: json (envelope ADR-0073) o human (por defecto)
+      --evaluated-by <actor>  Clase de actor: human, agent (por defecto), ci
+      --initiative <id>       Contexto de iniciativa — reflejado en meta.context
+      --tenant <id>           Contexto de tenant — reflejado en meta.context
+      --webhook-url <url>     POST de la propuesta de transición a esta URL
+```
+
+**Ejemplos:**
+
+```bash
+# Proponer avanzar de design a construction
+smart-cli phase advance --from design --to construction
+
+# Dirigido por agente con salida JSON
+smart-cli phase advance --from construction --to qa --evaluated-by agent --format json
+
+# Con webhook y contexto de tenant
+smart-cli phase advance --from qa --to release --webhook-url https://ci.example.com/hooks/evolith --tenant acme
+```
+
+---
+
+### sdlc
+
+Comando padre que orquesta los artefactos SDLC y las transiciones del ciclo de vida. Ejecútalo sin subcomando para ver los subcomandos disponibles.
+
+```bash
+smart-cli sdlc <subcomando>
+
+Subcomandos:
+  handoff       Transferir artefactos entre fases con flujo guiado interactivo
+  generate      Generar scaffold de Arquitectura Hexagonal desde un archivo de modelo DDD
+  gate-status   Mostrar el estado de validación de phase gates y métricas DORA
+```
+
+#### sdlc handoff
+
+Guía una transición de fase interactiva, valida gates y genera artefactos de evidencia.
+
+```bash
+smart-cli sdlc handoff [opciones]
+
+Opciones:
+  -f, --from <fase>    Fase origen (phase-0, phase-1, etc.)
+  -t, --to <fase>      Fase destino (phase-0, phase-1, etc.)
+  -a, --artifacts      Generar artefactos de evidencia
+      --validate       Validar los phase gates antes del handoff
+      --force          Forzar el handoff aunque los gates fallen
+```
+
+**Ejemplos:**
+
+```bash
+# Wizard de handoff interactivo
+smart-cli sdlc handoff
+
+# Handoff de phase-0 a phase-1 con validación de gates
+smart-cli sdlc handoff --from phase-0 --to phase-1 --validate
+
+# Generar artefactos y forzar aunque los gates fallen
+smart-cli sdlc handoff --from phase-1 --to phase-2 --artifacts --force
+```
+
+#### sdlc generate
+
+Genera un scaffold completo de Arquitectura Hexagonal leyendo un `classDiagram` de Mermaid desde un archivo de modelo DDD en Markdown.
+
+```bash
+smart-cli sdlc generate [opciones]
+
+Opciones:
+  -f, --from <ruta>   Ruta al archivo Markdown que contiene el classDiagram de Mermaid
+  -o, --output <dir>  Directorio destino para los archivos generados (por defecto: cwd)
+      --dry-run       Imprimir lo que se generaría sin escribir archivos
+```
+
+**Ejemplos:**
+
+```bash
+# Generar desde un archivo de modelo DDD
+smart-cli sdlc generate --from docs/domain-model.md
+
+# Previsualizar sin escribir
+smart-cli sdlc generate --from docs/domain-model.md --dry-run
+
+# Salida a un directorio específico
+smart-cli sdlc generate --from docs/domain-model.md --output src/domain
+```
+
+El archivo de entrada debe contener un bloque Mermaid con cercado (fenced) que incluya un `classDiagram`. El generador crea entidades, value objects, repositorios, casos de uso y puertos siguiendo las convenciones de la arquitectura hexagonal.
+
+#### sdlc gate-status
+
+Muestra el estado actual de validación de phase gates SDLC junto con métricas DORA calculadas a partir del histórico de git.
+
+```bash
+smart-cli sdlc gate-status [opciones]
+
+Opciones:
+  --since <días>   Días de histórico de git a analizar para las métricas DORA (por defecto: 90)
+```
+
+Métricas DORA reportadas:
+- **Deployment Frequency** — con qué frecuencia despliega el equipo a producción
+- **Lead Time for Changes** — tiempo desde el commit hasta producción
+- **Change Failure Rate** — porcentaje de despliegues que causan fallos
+- **Time to Restore** — tiempo para recuperarse de un fallo en producción
+
+**Ejemplos:**
+
+```bash
+# Estado de gates con ventana DORA de 90 días
+smart-cli sdlc gate-status
+
+# Analizar solo los últimos 30 días
+smart-cli sdlc gate-status --since 30
+```
+
+---
+
+### profile
+
+Gestiona perfiles de CLI nombrados. Cada perfil guarda un conjunto de valores por defecto (ruta del satélite, ruta de core, tenant, iniciativa) que se aplican automáticamente a los comandos posteriores.
+
+```bash
+smart-cli profile <acción> [opciones]
+
+Acciones:
+  current   Mostrar el perfil activo
+  list      Listar todos los perfiles
+  create    Crear un nuevo perfil
+  switch    Cambiar a un perfil nombrado
+  delete    Eliminar un perfil
+
+Opciones:
+  -n, --name <name>   Nombre del perfil (usado con create y switch)
+```
+
+**Ejemplos:**
+
+```bash
+# Mostrar el perfil actual
+smart-cli profile current
+
+# Listar todos los perfiles
+smart-cli profile list
+
+# Crear un perfil interactivamente
+smart-cli profile create
+
+# Crear con nombre
+smart-cli profile create --name staging
+
+# Cambiar de perfil
+smart-cli profile switch --name staging
+
+# Eliminar un perfil
+smart-cli profile delete --name staging
+```
+
+---
+
+### fixtures
+
+Siembra archivos de fixtures reproducibles para demos, tests y onboarding. El primer paso recomendado en cualquier entorno nuevo.
+
+```bash
+smart-cli fixtures [tipo] [opciones]
+
+Argumentos:
+  tipo   Tipo de fixture (por defecto: demo)
+
+Opciones:
+  -d, --dir <directorio>  Directorio destino (por defecto: cwd)
+  -n, --dry-run           Previsualizar archivos sin escribir
+  -t, --type <tipo>       Tipo de fixture: demo, adr, ruleset, evolith, full
+```
+
+**Tipos de fixture:**
+
+| Tipo | Contenido |
+|------|----------|
+| `demo` | Proyecto de ejemplo con evolith.yaml y estructura demo |
+| `adr` | Entradas ADR pre-pobladas |
+| `ruleset` | Rulesets de ejemplo (dominio, naming, convenciones de archivos) |
+| `evolith` | Archivos de configuración completos de Evolith |
+| `full` | Todo lo anterior combinado |
+
+**Ejemplos:**
+
+```bash
+# Sembrar un proyecto demo (la forma más rápida de explorar la CLI)
+smart-cli fixtures --type demo
+
+# Previsualizar lo que se crearía
+smart-cli fixtures --type full --dry-run
+
+# Sembrar fixtures ADR en un directorio específico
+smart-cli fixtures --type adr --dir ./reference/architecture/adrs
+```
+
+---
+
+### api
+
+Navega e inspecciona la superficie de API de Evolith: herramientas MCP, recursos, schemas y comandos CLI.
+
+```bash
+smart-cli api [opciones]
+
+Opciones:
+  -l, --list                  Listar todas las operaciones de API disponibles
+  -i, --inspect <name>        Inspeccionar una operación, recurso o comando específico
+  -c, --category <category>   Filtrar por categoría: tools, resources, schemas, commands
+```
+
+**Ejemplos:**
+
+```bash
+# Listar todo
+smart-cli api --list
+
+# Filtrar solo herramientas MCP
+smart-cli api --list --category tools
+
+# Inspeccionar una herramienta específica
+smart-cli api --inspect evolith-validate
+
+# Inspeccionar el schema de un comando CLI
+smart-cli api --inspect validate --category commands
+```
+
+---
+
+### update
+
+Comprueba y aplica actualizaciones de la CLI.
+
+```bash
+smart-cli update [opciones]
+
+Opciones:
+  -c, --current   Mostrar la versión instalada actual de la CLI
+      --check     Comprobar actualizaciones disponibles sin instalar
+  -i, --install   Instalar la última versión disponible
+```
+
+**Ejemplos:**
+
+```bash
+# Mostrar la versión actual
+smart-cli update --current
+
+# Comprobar actualizaciones
+smart-cli update --check
+
+# Instalar la última
+smart-cli update --install
+```
+
+---
+
+### upgrade
+
+Actualiza un repositorio satélite a la siguiente topología del eje progresivo o versión de gobernanza.
+
+```bash
+smart-cli upgrade [opciones]
+
+Opciones:
+      --dry-run          Simular el upgrade sin hacer cambios
+      --target <target>  Versión de gobernanza o topología objetivo (p. ej., F2, 1.1.0)
+      --force            Saltar las comprobaciones de elegibilidad
+```
+
+**Ejemplos:**
+
+```bash
+# Previsualizar upgrade a la siguiente topología
+smart-cli upgrade --dry-run
+
+# Upgrade a F2
+smart-cli upgrade --target F2
+
+# Forzar upgrade ignorando las comprobaciones de elegibilidad
+smart-cli upgrade --target F3 --force
+```
+
+---
+
+### alias
+
+Gestiona alias abreviados para comandos de la CLI.
+
+```bash
+smart-cli alias [opciones]
+
+Opciones:
+  --add <alias=comando>   Agregar un nuevo alias (formato: nombre=comando)
+  --remove <alias>        Eliminar un alias
+  --list                  Listar todos los alias
+```
+
+**Ejemplos:**
+
+```bash
+# Agregar un alias
+smart-cli alias --add "v=validate --format table"
+
+# Listar alias
+smart-cli alias --list
+
+# Eliminar un alias
+smart-cli alias --remove v
+```
+
+---
 
 ### history
 
-Ver y gestionar historial de comandos.
+Visualiza y gestiona el histórico de ejecución de comandos de la CLI.
 
 ```bash
 smart-cli history [opciones]
 
 Opciones:
-  --list              Listar comandos recientes
-  --get <id>          Mostrar detalles del comando
-  --search <consulta> Buscar comandos
-  --stats             Mostrar estadísticas
-  --clear             Limpiar historial
+  -l, --list             Listar comandos recientes
+  -g, --get <id>         Mostrar detalles del comando por ID
+  -s, --search <query>   Buscar en el histórico
+      --stats            Mostrar estadísticas del histórico
+      --clear            Limpiar todo el histórico
+  -n, --limit <número>   Número de entradas a mostrar (por defecto: 20)
+      --replay <id>      Mostrar la cadena del comando de una entrada del histórico
 ```
 
 **Ejemplos:**
 
 ```bash
-# Mostrar últimos 20 comandos
+# Mostrar los últimos 20 comandos
 smart-cli history
+
+# Mostrar los últimos 50
+smart-cli history --limit 50
+
+# Buscar ejecuciones de validate
+smart-cli history --search validate
 
 # Mostrar estadísticas
 smart-cli history --stats
 
-# Buscar comandos
-smart-cli history --search validate
+# Limpiar histórico
+smart-cli history --clear
 ```
+
+---
 
 ### completion
 
-Generar scripts de completado de shell.
+Genera e instala scripts de autocompletado de shell. También provee funciones hook de shell para mostrar contexto y estado.
 
 ```bash
-smart-cli completion --install <shell>
+smart-cli completion [opciones]
 
-Shells soportados: bash, zsh, fish
+Opciones:
+  --install <shell>   Instalar autocompletado para el shell indicado: bash, zsh, fish
+  --shell <shell>     Generar script de autocompletado para el shell indicado (imprime a stdout)
+  --hooks             Generar funciones hook de shell para contexto/estado
 ```
 
 **Ejemplos:**
 
 ```bash
-# Instalar completado bash
+# Instalar autocompletado zsh
+smart-cli completion --install zsh
+
+# Instalar autocompletado bash
 smart-cli completion --install bash
 
-# Instalar completado zsh
-smart-cli completion --install zsh
+# Instalar autocompletado fish
+smart-cli completion --install fish
+
+# Imprimir el script de autocompletado a stdout (para configuración manual)
+smart-cli completion --shell zsh
+
+# Generar funciones hook
+smart-cli completion --hooks
 ```
 
-## Servidor MCP (Integración con Agentes IA)
+Los scripts pre-construidos también vienen incluidos en el paquete bajo `shell/`:
+- `shell/completion.bash`
+- `shell/completion.zsh`
+- `shell/completion.fish`
+- `shell/hooks.bash`
+- `shell/hooks.zsh`
 
-La CLI de Evolith incluye un servidor MCP para integración con agentes IA.
+---
 
-### Iniciar el Servidor MCP
+## Servidor MCP
+
+La CLI de Evolith incluye un servidor MCP listo para producción para la integración con agentes IA.
+
+> **Aviso de deprecación:** `smart-cli mcp` imprime una advertencia de deprecación al arrancar y será removido en una futura versión mayor. El servidor MCP ahora se distribuye como paquete independiente — migra a `@evolith/mcp-server` (`npx @evolith/mcp-server serve` o el binario `evolith-mcp serve`). El comando CLI sigue funcionando mientras tanto delegando de forma perezosa (lazy) en ese paquete.
+
+### Iniciar el Servidor
+
+`mcp` acepta una acción posicional opcional que por defecto es `serve`, por lo que `smart-cli mcp` y `smart-cli mcp serve` son equivalentes.
 
 ```bash
+# Transporte stdio (por defecto — para Cursor, Claude Desktop)
 smart-cli mcp serve
+
+# Transporte HTTP (para despliegues remotos o en contenedor)
+smart-cli mcp serve --transport http --port 3000
+
+# HTTP con autenticación por API key
+smart-cli mcp serve --transport http --port 3000 --api-key <secret>
 ```
 
-El servidor se comunica vía stdio JSON-RPC.
+```bash
+smart-cli mcp [acción] [opciones]
 
-### Smoke Test MCP
+Acciones:
+  serve       Iniciar el servidor MCP (por defecto)
+  version     Imprimir la versión del servidor MCP incluido
 
-Usar el smoke test antes de releases o cambios de protocolo MCP:
+Opciones:
+  -t, --transport <stdio|http>   Transporte: stdio (por defecto) o http
+  -p, --port <número>            Puerto del servidor HTTP (por defecto: 3000, o $PORT)
+      --api-key <key>            API key para autenticación del transporte HTTP (o $EVOLITH_API_KEY)
+      --no-confirm               Saltar los prompts de confirmación
+```
+
+### Smoke Test
 
 ```bash
 npm run mcp:smoke
 ```
 
-El smoke verifica `initialize`, `tools/list`, `resources/list`, `prompts/list` y una llamada real `tools/call` mediante la CLI compilada.
-
-También puedes iniciar en modo HTTP:
-
-```bash
-smart-cli mcp serve --transport http --port 3000
-```
+Verifica `initialize`, `tools/list`, `resources/list`, `prompts/list` y un `tools/call` real de extremo a extremo a través de la CLI construida.
 
 ### Herramientas MCP Disponibles
 
+El servidor incluido registra **26 herramientas**. El conjunto vigente y autoritativo siempre se puede explorar con `smart-cli api --list --category tools`; la tabla siguiente refleja el registro actual de `@evolith/mcp-server`.
+
+**Validación y arquitectura**
+
 | Herramienta | Descripción |
-|-------------|-------------|
-| `evolith-validate` | Validar cumplimiento del repositorio |
-| `evolith-agent-install` | Instalar nuevo agente |
+|------|-------------|
+| `evolith-validate` | Validar un repositorio satélite contra las reglas de Evolith (pipeline end-to-end vía manifest) |
+| `evolith-composable-validate` | Validar con el motor composable (GT-312): modos SDLC, Architecture, Ruleset, ADR, Ad-hoc (combinables) |
+| `evolith-architecture-validate` | Validar la arquitectura contra la topología declarada con análisis profundo opcional |
+| `evolith-drift-detect` | Detectar drift de arquitectura en un repositorio |
+| `evolith-auto-fix` | Aplicar correcciones automáticas a violaciones arquitectónicas reportadas por los evaluadores de reglas de Core |
+| `evolith-topology-list` | Listar todas las topologías de arquitectura disponibles en Evolith Core |
+| `evolith-topology-get` | Obtener una topología de arquitectura específica por id |
+
+**SDLC, gates y métricas**
+
+| Herramienta | Descripción |
+|------|-------------|
+| `evolith-gate-evaluate` | Evaluar un phase gate SDLC específico |
+| `evolith-phase-advance` | Proponer una transición de fase SDLC evaluando los criterios de salida |
+| `evolith-sdlc-handoff` | Realizar un handoff de phase gate (p. ej. phase-0 → phase-1) |
+| `evolith-sdlc-status` | Obtener el estado actual de la fase SDLC |
+| `evolith-dora-metrics` | Calcular aproximaciones de métricas DORA desde el histórico de git |
+| `evolith-metrics` | Obtener métricas del servidor MCP (conteos de llamadas por herramienta, latencia, fallos) |
+
+**Agentes**
+
+| Herramienta | Descripción |
+|------|-------------|
+| `evolith-agent-install` | Instalar un nuevo agente BMAD |
 | `evolith-agent-list` | Listar agentes instalados |
-| `evolith-agent-validate` | Validar ruleset del agente |
+| `evolith-agent-validate` | Validar un ruleset de agente |
 | `evolith-agent-upgrade` | Actualizar un agente existente |
 | `evolith-agent-remove` | Eliminar un agente |
-| `evolith-architecture-validate` | Validar arquitectura (F1/F2/F3) con análisis profundo opcional |
-| `evolith-sdlc-handoff` | Generar manifiesto de artefactos de transición de fase |
-| `evolith-sdlc-status` | Mostrar estado de phase gate SDLC |
-| `evolith-config-get` | Obtener valor de configuración de `evolith.yaml` |
-| `evolith-config-set` | Establecer valor de configuración en `evolith.yaml` |
-| `evolith-metrics` | Obtener métricas del servidor MCP |
+
+**Configuración**
+
+| Herramienta | Descripción |
+|------|-------------|
+| `evolith-config-get` | Obtener un valor de configuración de Evolith |
+| `evolith-config-set` | Establecer un valor de configuración de Evolith |
+
+**Priorización MoSCoW**
+
+| Herramienta | Descripción |
+|------|-------------|
 | `evolith-moscow-create` | Crear un nuevo análisis de priorización MoSCoW |
 | `evolith-moscow-load` | Cargar un análisis MoSCoW existente |
 | `evolith-moscow-update` | Actualizar un ítem en un análisis MoSCoW |
@@ -305,7 +1011,7 @@ smart-cli mcp serve --transport http --port 3000
 
 ### Configuración para Cursor AI
 
-Agregar a `~/.cursor/mcp.json`:
+Añade a `~/.cursor/mcp.json`:
 
 ```json
 {
@@ -320,7 +1026,7 @@ Agregar a `~/.cursor/mcp.json`:
 
 ### Configuración para Claude Desktop
 
-Agregar a `~/Library/Application Support/Claude/claude_desktop_config.json`:
+Añade a `~/Library/Application Support/Claude/claude_desktop_config.json`:
 
 ```json
 {
@@ -333,37 +1039,63 @@ Agregar a `~/Library/Application Support/Claude/claude_desktop_config.json`:
 }
 ```
 
-## Ejemplo de Flujo de Trabajo con Agente IA
+### Transporte HTTP (despliegue remoto)
 
-Cuando está integrado con un agente IA, puedes tener conversaciones como:
-
+```json
+{
+  "mcpServers": {
+    "evolith": {
+      "url": "http://localhost:3000",
+      "headers": { "x-api-key": "<secret>" }
+    }
+  }
+}
 ```
-Tú: Valida mi repositorio
-Agente: Déjame ejecutar la validación...
 
-      await mcp.callTool('evolith-validate', {
-        path: '/user/project',
-        format: 'summary'
-      })
+---
 
-Resultado: ✓ El repositorio cumple con los estándares de Evolith
-         Reglas verificadas: 12
-         Todas las puertas pasaron
+## Integración CI/CD
 
-Tú: Muéstrame el estado SDLC
-Agente: Déjame verificar el estado de los phase gates...
+### Validación de Fase SDLC (Pipeline GT-281)
 
-      await mcp.callTool('evolith-sdlc-status', {
-        path: '/user/project'
-      })
+```bash
+# Validar una fase SDLC específica con evaluación completa de gates
+smart-cli validate --phase design --format json --output gate-evidence.json
 
-Resultado: Fase 1 — 3 gates pasados, 0 fallados
-         Todos los artefactos de evidencia presentes
+# Con SatelliteManifest explícito
+smart-cli validate --manifest ./satellite-manifest.json --phase construction --format json
 ```
+
+### Evaluación de Gates en CI
+
+```bash
+# Evaluar gates de construction desde CI
+smart-cli gate evaluate \
+  --phase construction \
+  --evaluated-by ci \
+  --format json \
+  --webhook-url $WEBHOOK_URL
+```
+
+### Ejemplo de GitHub Actions
+
+```yaml
+- name: Evolith Gate Evaluation
+  run: |
+    smart-cli gate evaluate \
+      --phase ${{ env.SDLC_PHASE }} \
+      --evaluated-by ci \
+      --format json \
+      --output gate-evidence.json
+  env:
+    SDLC_PHASE: construction
+```
+
+---
 
 ## Configuración
 
-Evolith usa un archivo `evolith.yaml` en la raíz del repositorio:
+Evolith usa `evolith.yaml` en `.evolith/` o en la raíz del repositorio:
 
 ```yaml
 coreRef:
@@ -377,56 +1109,71 @@ governance:
       status: "accepted"
 
 product:
-  name: "mi-proyecto"
+  name: "my-project"
   type: "library"
   runtime: "typescript"
 ```
 
-## Formatos de Salida
-
-Todos los comandos soportan múltiples formatos de salida:
+### Perfiles Multi-Entorno
 
 ```bash
-# JSON (por defecto para automatización)
-smart-cli validate --format json
+# Crear un perfil por entorno
+smart-cli profile create --name local
+smart-cli profile create --name staging
+smart-cli profile create --name ci
 
-# Tabla (legible para humanos)
+# Cambiar antes de ejecutar comandos
+smart-cli profile switch --name staging
+smart-cli validate
+```
+
+---
+
+## Formatos de Salida
+
+La mayoría de comandos aceptan `--format`:
+
+```bash
+# Legible para humanos (por defecto en la mayoría de comandos)
+smart-cli validate
+
+# Markdown
+smart-cli validate --format markdown
+
+# Tabla
 smart-cli validate --format table
 
-# YAML (integración en pipelines)
+# YAML
 smart-cli validate --format yaml
 
-# Markdown (documentación)
-smart-cli validate --format markdown
+# JSON (envelope ADR-0073 — para automatización y CI)
+smart-cli validate --format json
 ```
+
+---
 
 ## Solución de Problemas
 
-### Comando no encontrado
-
-Si `evolith` no se encuentra después de la instalación, asegúrate de que el binario global de npm está en tu PATH:
-
+**Comando no encontrado tras instalar:**
 ```bash
-# Agregar a ~/.bashrc o ~/.zshrc
 export PATH="$(npm config get prefix)/bin:$PATH"
 ```
 
-### Servidor MCP no responde
-
-Asegúrate de que el servidor MCP está corriendo:
-
+**La validación falla sin evolith.yaml:**
 ```bash
-smart-cli mcp serve &
+smart-cli docs         # generar evolith.yaml y docs base
+smart-cli validate
 ```
 
-### La validación falla
-
-Verifica que tu `evolith.yaml` existe y es válido:
-
+**El servidor MCP no responde:**
 ```bash
-cat evolith.yaml
-smart-cli validate --verbose
+smart-cli mcp serve --no-confirm
 ```
+
+**Topología desconocida en scaffold o drift:**
+Asegúrate de que tu `evolith.yaml` tenga un campo `product.topology` válido usando un id de topología canónico — `modular-monolith`, `distributed-modules`, `microservices`, `serverless`, `edge-computing`, `event-driven`, `data-mesh` o `agentic-ai` (según `reference/config/evolith.config.schema.json`). `F1/F2/F3` legacy se aceptan solo como flags CLI deprecados, no como valores de manifest.
+
+---
 
 ## Desarrollo
 
@@ -436,56 +1183,60 @@ smart-cli validate --verbose
 cd sdk/cli
 npm install
 npm run build
-npm link  # Enlazar globalmente para pruebas
+npm link
 ```
 
-### Ejecutar Pruebas
+### Tests
 
 ```bash
-# Ejecutar todas las pruebas
-npm test
-
-# Ejecutar con reporte de cobertura
-npm run test:cov
+npm test               # unit + e2e
+npm run test:unit      # solo unit
+npm run test:e2e       # solo e2e
+npm run test:cov       # reporte de cobertura
+npm run mcp:smoke      # smoke test del protocolo MCP
 ```
-
-**Cobertura (v0.0.3-beta):** 88.7% statements · 89.8% lines · 77.0% branches · 83.6% functions · 1 369 tests
 
 ### Estructura del Proyecto
 
 ```
 sdk/cli/
 ├── src/
-│   ├── commands/      # Comandos CLI (adr, validate, agents, etc.)
-│   ├── application/   # Casos de uso
-│   ├── domain/        # Lógica de negocio (servicios, entidades)
-│   ├── infrastructure/# Integraciones externas (catálogo, CLI)
-│   └── core/          # Compartido (DI, observabilidad, errores, MCP)
-├── shell/             # Scripts de completado de shell
-├── templates/         # Plantillas de configuración
-└── docs/              # Documentación
+│   ├── commands/       # Comandos CLI (un directorio por comando)
+│   ├── config/         # Catálogo de runtimes, matriz de comandos CLI, alias
+│   ├── contributions/  # Validación de contribuciones
+│   ├── infrastructure/ # Config, filesystem, formatters, prompts, plugins
+│   └── plugins/        # Registro y módulo de plugins
+├── shell/              # Autocompletado y hooks Bash, Zsh, Fish
+├── templates/          # Plantillas de configuración
+├── test/               # Suite de tests E2E
+└── docs/               # Documentación extendida
 ```
 
-## Documentación
+### Documentación Extendida
 
-- [Guía de Demo SMART CLI](docs/SMART-CLI-DEMO.es.md) - Guía completa que cubre todos los comandos, flujo SDLC, tipos de producto, integración MCP y validación de arquitectura
-- [Visión](docs/VISION.es.md) - Visión y hoja de ruta de la CLI
-- [Modelos de Datos](docs/data-models.es.md) - Modelos de datos del dominio
-- [Integración MCP](docs/MCP-INTEGRATION.md) - Detalles de integración del servidor MCP
+- [Guía Demo](docs/SMART-CLI-DEMO.es.md) — recorrido end-to-end de todos los comandos y flujos SDLC
+- [Visión](docs/VISION.es.md) — visión y roadmap de la CLI
+- [Modelos de Datos](docs/data-models.es.md) — referencia del modelo de datos del dominio
+- [Integración MCP](docs/MCP-INTEGRATION.md) — detalles del protocolo del servidor MCP
+- [Protocolo de Handoff](docs/HANDOFF-PROTOCOL.md) — especificación del artefacto de handoff SDLC
+
+---
 
 ## Contribuir
 
-1. Haz fork del repositorio
-2. Crea una rama de característica
-3. Haz cambios con pruebas
+1. Haz un fork del repositorio
+2. Crea una rama de feature
+3. Realiza cambios con tests
 4. Envía un pull request
+
+---
 
 ## Licencia
 
-ISC
+MIT
 
 ## Soporte
 
+- [Issue Tracker](https://github.com/beyondnetcode/evolith_arch32/issues)
+- [Discussions](https://github.com/beyondnetcode/evolith_arch32/discussions)
 - [Documentación](https://github.com/beyondnetcode/evolith_arch32#readme)
-- [Rastreador de Incidencias](https://github.com/beyondnetcode/evolith_arch32/issues)
-- [Discusiones](https://github.com/beyondnetcode/evolith_arch32/discussions)

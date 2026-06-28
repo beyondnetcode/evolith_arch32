@@ -14,6 +14,19 @@ Machine-readable governance rules that satellite repositories inherit and valida
 
 Evolith Rulesets are the **machine-readable enforcement layer** of the Evolith governance framework. While `reference/` contains human-authored standards, ADRs, and documentation, `rulesets/` contains the concrete rules, schemas, and contracts that tools (CLI, CI pipelines, linters) consume to **validate** satellite compliance.
 
+### Source of truth
+
+| Layer | Location | Authoritative for |
+|---|---|---|
+| Human standards / ADRs / constitution | `reference/**` | Intent, rationale, design (the *why*) |
+| Native rulesets (`*.rules.json`) | `rulesets/<category>/*.rules.json` | The canonical machine-readable rule definition (the *what*) |
+| JSON Schemas | `rulesets/schema/*.schema.json` | The structural contract of each artifact |
+| OPA policies (`*.rego`) | `rulesets/opa/**` | Parity enforcement engine; must not drift from Native semantics |
+
+Markdown explains, Native `*.rules.json` defines, schemas validate structure, and OPA + the Native evaluator both enforce. Where OPA and Native both apply, they must agree (Dual-Engine Parity).
+
+> **Two independent axes.** The **SDLC axis** (idea → product, five phases with gates) is a *separate* concern from the **topology axis** (architecture groupers resolved through `topology.manifest.json`). Legacy `f1/f2/f3` are **not** SDLC phases — they are obsolete aliases of the *topology* progressive axis (`modular-monolith` → `distributed-modules` → `microservices`). Do not conflate "phase" in the SDLC sense with these topology aliases.
+
 ---
 
 ## Rule Categories
@@ -23,7 +36,7 @@ If you are onboarding a new satellite repository, read the categories in this or
 | Document | Description | Goal / Objective | Type | Mandatory |
 |---|---|---|---|---|
 | [Governance Rules](./governance/README.md) | `evolith.yaml` contract and inheritance rules | Govern satellite inheritance | Ruleset category | Yes |
-| [Architecture Rules](./architecture/README.md) | F1/F2/F3 phase progression rules | Gate architecture phases | Ruleset category | Yes |
+| [Architecture Rules](./architecture/README.md) | Progressive-axis topology aliases (F1/F2/F3 → modular-monolith/distributed-modules/microservices) | Resolve topology aliases | Ruleset category | Yes |
 | [ADR-Encoded Rules](./adr/README.md) | Rules derived from accepted ADRs | Enforce ADR decisions automatically | Ruleset category | Yes |
 | [Cross-Cutting Rules](./cross-cutting/README.md) | Compliance baseline, Definition of Done, manifesto, and taxonomy rules | Enforce cross-cutting compliance | Ruleset category | Yes |
 | [SDLC Rules](./sdlc/README.md) | Quality gates and threshold definitions | Enforce lifecycle quality | Ruleset category | Yes |
@@ -56,11 +69,11 @@ rulesets/
 │   └── quality-thresholds.rules.json
 ├── satellite-contracts/        # WS1 executable Satellite Contracts entrypoint
 │   └── satellite-contracts.rules.json
-├── opa/                        # OPA policies and inputs schemas
-│   ├── schemas/                # OPA policy input schemas (9 schemas)
-│   ├── *.rego                  # Rego policy files
+├── opa/                        # OPA policies and input schemas
+│   ├── schemas/                # OPA policy input schemas (26 schemas)
+│   ├── *.rego                  # Rego policy files (34 non-test; main.rego aggregates)
 │   └── README.md               # OPA index
-├── schema/                     # JSON Schema definitions (19 schemas)
+├── schema/                     # JSON Schema definitions (36 schemas)
 │   ├── adr.schema.json         # ADR artifact validation
 │   ├── prd.schema.json         # PRD artifact validation
 │   ├── discovery-canvas.schema.json     # Phase 1
@@ -75,7 +88,7 @@ rulesets/
 │   ├── release-notes.schema.json         # Phase 5
 │   ├── evolith-yaml.schema.json          # Satellite governance
 │   └── topology-manifest.schema.json     # Topology manifest contract
-├── architecture/               # F1/F2/F3 compatibility aliases and migration guidance
+├── architecture/               # Topology progressive-axis alias index (F1/F2/F3 → topologies)
 │   └── README.md               # Resolves aliases through topology manifests
 ├── topologies/                 # Topology-specific executable rules
 │   └── README.md
@@ -97,7 +110,8 @@ rulesets/
 │   └── anti-corruption-layer.rules.es.json
 ├── sdlc/                       # SDLC gate rules
 │   ├── phase-gates.rules.json
-│   └── quality-thresholds.rules.json
+│   ├── quality-thresholds.rules.json
+│   └── dependency-pinning.rules.json
 ├── cli/                        # Smart CLI release and parity rules
 │   ├── release-readiness.rules.json
 │   └── core-parity.rules.json
@@ -148,7 +162,7 @@ flowchart LR
 |---|---|
 | **Versioned rules** | Every rule has a version; satellites pin to a specific version |
 | **Fail-fast validation** | CI must fail on rule violations; no bypass without explicit waiver |
-| **Topology-aware** | F1/F2/F3 remain progressive-axis compatibility aliases while topology manifests drive broader topology-specific validation |
+| **Topology-aware** | `f1/f2/f3` are obsolete aliases of the *topology* progressive axis (modular-monolith → distributed-modules → microservices); topology manifests drive broader topology-specific validation. They are not SDLC phases. |
 | **Federated inheritance** | Satellites inherit from Core; they do not modify Core rules |
 | **Schema-first** | All artifacts have JSON Schema for machine validation |
 

@@ -43,3 +43,9 @@ npm run --workspace packages/mcp-tools test
 ```
 
 Tests run with the Node built-in test runner (`node --test`).
+
+## Contributing
+
+To add a tool: create `src/tools/<name>.js` exporting `<name>Def` (`{ name, description, inputSchema }`) and `<name>Handler(args)`, then register both in [`src/registry.js`](./src/registry.js) (`tools` array + `handlers` map). Keep `inputSchema` accurate — `validateInput` rejects requests that don't match it before the handler runs. Add a test under `src/__tests__/` and a row in the Tools table above (EN + ES). Issues and pull requests are welcome.
+
+> This package (`@evolith/mcp-tools`) holds the lightweight, dependency-free tool registry. The full NestJS MCP Gateway with the 27 governance tools, ABAC, and HTTP transport lives in [`@evolith/mcp-server`](../mcp-server/README.md).

@@ -56,7 +56,7 @@ Or download the binary from [GitHub Releases](https://github.com/beyondnetcode/e
 
 ```bash
 smart-cli --version
-# smart-cli version 1.1.0
+# 1.1.4
 ```
 
 ### Troubleshooting
@@ -912,9 +912,13 @@ Pre-built scripts are also included in the package under `shell/`:
 
 ## MCP Server
 
-The Evolith CLI includes a production-ready MCP server for AI agent integration.
+The Evolith CLI bundles a production-ready MCP server for AI agent integration.
+
+> **Deprecation notice:** `smart-cli mcp` prints a deprecation warning on startup and will be removed in a future major version. The MCP server now ships as a standalone package — migrate to `@evolith/mcp-server` (`npx @evolith/mcp-server serve` or the `evolith-mcp serve` binary). The CLI command continues to work in the meantime by lazily delegating to that package.
 
 ### Starting the Server
+
+`mcp` takes an optional positional action that defaults to `serve`, so `smart-cli mcp` and `smart-cli mcp serve` are equivalent.
 
 ```bash
 # stdio transport (default — for Cursor, Claude Desktop)
@@ -928,13 +932,17 @@ smart-cli mcp serve --transport http --port 3000 --api-key <secret>
 ```
 
 ```bash
-smart-cli mcp serve [options]
+smart-cli mcp [action] [options]
+
+Actions:
+  serve       Start the MCP server (default)
+  version     Print the bundled MCP server version
 
 Options:
-  -t, --transport <type>   Transport: stdio (default) or http
-  -p, --port <number>      HTTP server port (default: 3000)
-      --api-key <key>      API key for HTTP transport authentication
-      --no-confirm         Skip confirmation prompts
+  -t, --transport <stdio|http>   Transport: stdio (default) or http
+  -p, --port <number>            HTTP server port (default: 3000, or $PORT)
+      --api-key <key>            API key for HTTP transport authentication (or $EVOLITH_API_KEY)
+      --no-confirm               Skip confirmation prompts
 ```
 
 ### Smoke Test
@@ -947,20 +955,52 @@ Verifies `initialize`, `tools/list`, `resources/list`, `prompts/list`, and a rea
 
 ### Available MCP Tools
 
+The bundled server registers **26 tools**. The live, authoritative set is always browsable with `smart-cli api --list --category tools`; the table below mirrors the current `@evolith/mcp-server` registry.
+
+**Validation & architecture**
+
 | Tool | Description |
 |------|-------------|
-| `evolith-validate` | Validate repository compliance |
+| `evolith-validate` | Validate a satellite repository against Evolith rules (end-to-end pipeline via manifest) |
+| `evolith-composable-validate` | Validate with the composable engine (GT-312): SDLC, Architecture, Ruleset, ADR, Ad-hoc modes (combinable) |
+| `evolith-architecture-validate` | Validate architecture against the declared topology with optional deep analysis |
+| `evolith-drift-detect` | Detect architecture drift in a repository |
+| `evolith-auto-fix` | Apply automatic fixes to architectural violations reported by Core rule evaluators |
+| `evolith-topology-list` | List all available architecture topologies in Evolith Core |
+| `evolith-topology-get` | Get a specific architecture topology by id |
+
+**SDLC, gates & metrics**
+
+| Tool | Description |
+|------|-------------|
+| `evolith-gate-evaluate` | Evaluate a specific SDLC phase gate |
+| `evolith-phase-advance` | Propose an SDLC phase transition by evaluating exit criteria |
+| `evolith-sdlc-handoff` | Perform a phase gate handoff (e.g. phase-0 → phase-1) |
+| `evolith-sdlc-status` | Get the current SDLC phase status |
+| `evolith-dora-metrics` | Calculate DORA metric approximations from git log history |
+| `evolith-metrics` | Get MCP server metrics (per-tool call counts, latency, failures) |
+
+**Agents**
+
+| Tool | Description |
+|------|-------------|
 | `evolith-agent-install` | Install a new BMAD agent |
 | `evolith-agent-list` | List installed agents |
-| `evolith-agent-validate` | Validate agent ruleset |
+| `evolith-agent-validate` | Validate an agent ruleset |
 | `evolith-agent-upgrade` | Upgrade an existing agent |
 | `evolith-agent-remove` | Remove an agent |
-| `evolith-architecture-validate` | Validate architecture (F1/F2/F3) with optional deep analysis |
-| `evolith-sdlc-handoff` | Generate phase handoff artifact manifest |
-| `evolith-sdlc-status` | Show SDLC phase gate status |
-| `evolith-config-get` | Get a configuration value from `evolith.yaml` |
-| `evolith-config-set` | Set a configuration value in `evolith.yaml` |
-| `evolith-metrics` | Get MCP server metrics |
+
+**Configuration**
+
+| Tool | Description |
+|------|-------------|
+| `evolith-config-get` | Get an Evolith configuration value |
+| `evolith-config-set` | Set an Evolith configuration value |
+
+**MoSCoW prioritization**
+
+| Tool | Description |
+|------|-------------|
 | `evolith-moscow-create` | Create a new MoSCoW prioritization analysis |
 | `evolith-moscow-load` | Load an existing MoSCoW analysis |
 | `evolith-moscow-update` | Update an item in a MoSCoW analysis |
@@ -1023,7 +1063,7 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 smart-cli validate --phase design --format json --output gate-evidence.json
 
 # With explicit SatelliteManifest
-smart-cli validate --manifest ./satellite-manifest.json --phase f3 --format json
+smart-cli validate --manifest ./satellite-manifest.json --phase construction --format json
 ```
 
 ### Gate Evaluation in CI

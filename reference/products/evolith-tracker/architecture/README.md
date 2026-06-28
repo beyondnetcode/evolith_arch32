@@ -4,11 +4,12 @@
 
 **Classification:** Product-Specific Architecture  
 **Product:** Evolith Tracker  
-**Governing Core:** [Evolith Core](../../../core/README.md)
+**Governing Core:** [Evolith Core](../../../core/README.md)  
+**Status:** Conceptual / design-stage — describes the *target* architecture; no Tracker code is implemented yet.
 
-This area contains the internal architecture of Evolith Tracker.
+This area defines the intended internal architecture of Evolith Tracker (design target, not shipped code).
 
-## Scope
+## Scope (design target)
 
 - container and component architecture;
 - bounded contexts and aggregate boundaries;
@@ -27,7 +28,7 @@ This area contains the internal architecture of Evolith Tracker.
 
 ## Boundary
 
-This area implements, but does not redefine:
+By design, this area implements, but does not redefine:
 
 - Core architecture principles;
 - SDLC phases and Phase Gate semantics;

@@ -66,15 +66,15 @@ El endpoint `POST /api/v1/validate/composable` expone el motor de validación co
 # Solo validación de arquitectura
 curl -X POST http://localhost:3000/api/v1/validate/composable \
   -H "Content-Type: application/json" \
-  -d '{"path": "/ruta/al/satellite", "topology": "modular-monolith"}'
+  -d '{"workspaceRef": "op_01j7wq8e2n", "topology": "modular-monolith"}'
 
 # Combinado: Arquitectura + Ruleset + ADR
 curl -X POST http://localhost:3000/api/v1/validate/composable \
   -H "Content-Type: application/json" \
   -d '{
-    "path": "/ruta/al/satellite",
+    "workspaceRef": "op_01j7wq8e2n",
     "topology": "modular-monolith",
-    "ruleset": "compliance-baseline",
+    "ruleset": "governance/base",
     "adr": "adr-0002"
   }'
 ```

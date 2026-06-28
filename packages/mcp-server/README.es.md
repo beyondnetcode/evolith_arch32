@@ -39,7 +39,7 @@ sequenceDiagram
     participant FS as "📁 Sistema de Archivos"
     participant Git as "🗃️ Git"
 
-    Note over Agent,Gateway: Transporte: stdio (local) o HTTP/SSE (remoto)
+    Note over Agent,Gateway: Transporte: stdio (local) o Streamable HTTP (remoto)
 
     Agent->>+Gateway: tools/call { name: "evolith-validate", args: { path: "/repo" } }
 
@@ -73,7 +73,7 @@ sequenceDiagram
 | Transporte | Uso | Comando |
 |---|---|---|
 | **stdio** (JSON-RPC 2.0) | Agentes locales, Cursor, Claude Desktop | `evolith-mcp serve` |
-| **HTTP + SSE** | Agentes remotos, escalabilidad | `evolith-mcp serve --transport http --port 49100` |
+| **Streamable HTTP** (SDK oficial MCP) | Agentes remotos, escalabilidad | `evolith-mcp serve --transport http --port 49100` |
 
 > Los logs siempre se escriben a **stderr** (Pino), porque stdout está reservado para el stream JSON-RPC del transporte stdio.
 
@@ -107,11 +107,17 @@ evolith-mcp serve --transport http --port 49100
 |---|---|---|
 | `TRANSPORT` | `stdio` | Transporte activo: `stdio` o `http` |
 | `PORT` | `3000` | Puerto para transporte HTTP |
+| `MCP_HTTP_HOST` | `0.0.0.0` | Host de bind del servidor HTTP. Usar `127.0.0.1` para local-only |
 | `EVOLITH_API_KEY` | — | API key para autenticación en transporte HTTP |
+| `EVOLITH_MCP_ALLOW_NO_AUTH` | `false` | Permite arrancar HTTP sin API key (solo no-producción). Ignorado en `production` |
+| `JWT_SECRET` | — | Secreto opcional para validar Bearer JWT (HS256) además del API key |
+| `NODE_ENV` | `development` | En `production` la auth HTTP es obligatoria |
 | `LOG_LEVEL` | `info` | Nivel de log Pino: `trace`, `debug`, `info`, `warn`, `error` |
 | `REDIS_URL` | — | URL de Redis para caché de resources (ej: `redis://localhost:6379`). La caché es opcional. |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | — | Endpoint OpenTelemetry para tracing |
 | `OTEL_SERVICE_NAME` | `evolith-mcp-server` | Nombre del servicio en los traces |
+
+> El binario también acepta los flags `--transport`/`-t`, `--port`/`-p`, `--api-key` y `--allow-no-auth`, además del subcomando `evolith-mcp version`.
 
 ---
 
@@ -253,7 +259,7 @@ Los modos se activan combinando campos. Se pueden usar varios en una sola llamad
 |---|---|---|
 | `evolith-sdlc-status` | Obtiene el estado actual de la fase SDLC del repositorio | No |
 | `evolith-sdlc-handoff` | Ejecuta el handoff de fase generando el manifiesto de evidencia | **Sí** |
-| `evolith-dora-metrics` | Calcula las métricas DORA (deployment frequency, lead time, MTTR, CFR) | No |
+| `evolith-dora-metrics` | Aproxima métricas DORA desde el historial de Git: deployment frequency, lead time (aprox.), total y merge commits en la ventana (`days`, default 90) | No |
 
 ---
 
@@ -562,7 +568,7 @@ curl -X POST http://localhost:49100/mcp \
 
 | Aspecto | `smart-cli mcp` (legacy) | `evolith-mcp` (nuevo) |
 |---|---|---|
-| Transporte | Solo stdio | stdio + HTTP/SSE |
+| Transporte | Solo stdio | stdio + Streamable HTTP |
 | Auth | Sin auth | ABAC + API keys en HTTP |
 | Caché | Sin caché | Redis opcional |
 | Observabilidad | Logs básicos | Pino + OTEL + audit logger |
@@ -600,7 +606,7 @@ export class MiHerramientaTool implements McpTool {
 }
 ```
 
-Para tools mutativas: añadir `readonly mutative = true`.
+Para tools mutativas: añadir `readonly mutative = true`. El dispatcher exigirá `{ "apply": true, "approvalToken": "..." }` en el request antes de ejecutar la tool.
 
 ---
 
@@ -617,13 +623,13 @@ tail -f /tmp/mcp.log | jq .
 
 ```json
 {
+  "uptimeMs": 1820345,
   "totalCalls": 142,
-  "successCalls": 138,
-  "errorCalls": 4,
-  "avgLatencyMs": 23,
-  "toolBreakdown": {
-    "evolith-validate": { "calls": 80, "avgMs": 18 }
-  }
+  "totalFailures": 4,
+  "tools": {
+    "evolith-validate": { "calls": 80, "failures": 1, "totalLatencyMs": 1440, "avgLatencyMs": 18 }
+  },
+  "recentErrors": ["RULESET_NOT_FOUND: ..."]
 }
 ```
 

@@ -1,22 +1,75 @@
 # OPA Policies and Input Schemas
 
-This directory contains the core Open Policy Agent (OPA) `.rego` policies used for architecture and governance validation in the Evolith platform.
+This directory contains the Open Policy Agent (OPA) `.rego` policies used for architecture and governance validation in the Evolith platform. Each enforcement policy publishes a `violations` set under the `evolith.*` package namespace, and most are backed by a versioned JSON Schema describing their input under [`schemas/`](./schemas/).
 
-Every OPA policy defines a formal contract for its input, backed by a versioned JSON Schema.
+## Source of truth (Markdown vs OPA vs Native rules)
 
-## OPA Policies and Schemas
+- **Human-authored standards, ADRs, and the engineering constitution under `reference/`** are authoritative for *intent and rationale* — the *why*.
+- **`*.rules.json` "Native" rulesets** (under `rulesets/<category>/`) are the canonical machine-readable encoding of each rule — the *what*.
+- **OPA `.rego` policies** are a **parity engine**: they re-express the same rule semantics so they can be enforced inside an OPA/Wasm sidecar or CI gate. **OPA must not drift from Native rule semantics** — where both engines apply, they must agree (Dual-Engine Parity).
 
-| Policy File | Test File | Input JSON Schema | Description |
+In short: Markdown explains, Native `*.rules.json` defines, and OPA + the Native evaluator both enforce. When OPA and Native disagree, that is a parity bug, not a license to diverge.
+
+## Compilation and loading
+
+- Script: [`.harness/scripts/compile-opa-wasm.mjs`](../../.harness/scripts/compile-opa-wasm.mjs), invoked via `npm run build:policy`.
+- It downloads OPA `v0.65.0`, then runs `opa build -t wasm` over `rulesets/opa/` with `--ignore=schemas`.
+- **Wasm entrypoints:** `evolith/main/violations` and `evolith/abac/violations`.
+- The extracted `policy.wasm` is installed to `sdk/cli/rulesets/opa/policy.wasm` for the Smart CLI evaluator.
+- `evolith.main` ([main.rego](./main.rego)) aggregates the `violations` sets of the individual policies; `evolith.abac` ([abac-mcp-tool-access.rego](./abac-mcp-tool-access.rego)) is compiled as a separate entrypoint for runtime MCP tool-access decisions.
+
+## Aggregated enforcement policies
+
+These policies are imported and unioned by [`main.rego`](./main.rego) into the `evolith/main/violations` Wasm entrypoint. Each has a co-located `*.test.rego` and (unless noted) an input schema under `schemas/`.
+
+| Policy | Package | Input schema | Enforces |
 |---|---|---|---|
-| [governance.rego](./governance.rego) | [governance.test.rego](./governance.test.rego) | [governance.input.schema.json](./schemas/governance.input.schema.json) | Verifies satellite inheritance boundaries and mandatory decisions. |
-| [mcp.rego](./mcp.rego) | [mcp.test.rego](./mcp.test.rego) | [mcp.input.schema.json](./schemas/mcp.input.schema.json) | Verifies Model Context Protocol (MCP) compliance and smoke testing evidence. |
-| [version-pinning.rego](./version-pinning.rego) | [version-pinning.test.rego](./version-pinning.test.rego) | [version-pinning.input.schema.json](./schemas/version-pinning.input.schema.json) | Enforces strict package dependency pinning rules. |
-| [cli-readiness.rego](./cli-readiness.rego) | [cli-readiness.test.rego](./cli-readiness.test.rego) | [cli-readiness.input.schema.json](./schemas/cli-readiness.input.schema.json) | Validates Smart CLI compilation, documentation, and lock file readiness. |
-| [knowledge-intake.rego](./knowledge-intake.rego) | [knowledge-intake.test.rego](./knowledge-intake.test.rego) | [knowledge-intake.input.schema.json](./schemas/knowledge-intake.input.schema.json) | Governs the intake lifecycle, review status, and topology matching of external knowledge. |
-| [taxonomy.rego](./taxonomy.rego) | [taxonomy.test.rego](./taxonomy.test.rego) | [taxonomy.input.schema.json](./schemas/taxonomy.input.schema.json) | Validates repository directory taxonomy, ADR file names, and bilingual pairs. |
-| [ci-cd.rego](./ci-cd.rego) | [ci-cd.test.rego](./ci-cd.test.rego) | [ci-cd.input.schema.json](./schemas/ci-cd.input.schema.json) | Asserts that dependency scanning, workflow scripts, and dependency updates are present. |
-| [evidence.rego](./evidence.rego) | [evidence.test.rego](./evidence.test.rego) | [evidence.input.schema.json](./schemas/evidence.input.schema.json) | Validates the schema, retention periods, and ownership of gate evidence artifacts. |
-| [abac-mcp-tool-access.rego](./abac-mcp-tool-access.rego) | [abac-mcp-tool-access.test.rego](./abac-mcp-tool-access.test.rego) | [abac-mcp-tool-access.input.schema.json](./schemas/abac-mcp-tool-access.input.schema.json) | Restricts Model Context Protocol (MCP) tool execution by role, action, and environment. |
+| [version-pinning.rego](./version-pinning.rego) | `evolith.version_pinning` | yes | Strict dependency pinning. |
+| [taxonomy.rego](./taxonomy.rego) | `evolith.taxonomy` | yes | Directory taxonomy, ADR file naming, bilingual pairs. |
+| [cli-readiness.rego](./cli-readiness.rego) | `evolith.cli_readiness` | yes | Smart CLI compile/doc/lock-file readiness. |
+| [evidence.rego](./evidence.rego) | `evolith.evidence` | yes | Schema, retention and ownership of gate evidence. |
+| [mcp.rego](./mcp.rego) | `evolith.mcp` | yes | MCP protocol compliance and smoke evidence. |
+| [ci-cd.rego](./ci-cd.rego) | `evolith.ci_cd` | yes | Dependency scanning, workflow scripts, dependency updates. |
+| [governance.rego](./governance.rego) | `evolith.governance` | yes | Satellite inheritance boundaries and mandatory decisions. |
+| [anti-corruption-layer.rego](./anti-corruption-layer.rego) | `evolith.acl` | yes | Anti-Corruption Layer / domain-boundary protection. |
+| [cicd-quality-gates.rego](./cicd-quality-gates.rego) | `evolith.cicd_quality_gates` | yes | CI/CD quality-gate controls. |
+| [cli-core-parity.rego](./cli-core-parity.rego) | `evolith.cli_core_parity` | yes | Every Core rule traced to CLI/MCP/tests/evidence. |
+| [cli-release-readiness.rego](./cli-release-readiness.rego) | `evolith.cli_release_readiness` | yes | CLI build/test/package/MCP-smoke release evidence. |
+| [compliance-baseline.rego](./compliance-baseline.rego) | `evolith.compliance_baseline` | yes | Executable compliance baseline controls. |
+| [dod.rego](./dod.rego) | `evolith.dod` | yes | Definition of Done story-closure checklist. |
+| [engineering-manifesto.rego](./engineering-manifesto.rego) | `evolith.engineering_manifesto` | yes | SOLID/DRY/KISS/YAGNI and anti-pattern constraints. |
+| [executive-scorecards.rego](./executive-scorecards.rego) | `evolith.executive_scorecards` | yes | DORA + SPACE scorecard evidence. |
+| [gitflow-branching.rego](./gitflow-branching.rego) | `evolith.gitflow_branching` | yes | GitFlow branching policy. |
+| [hexagonal-architecture.rego](./hexagonal-architecture.rego) | `evolith.hexagonal_architecture` | yes | Ports/adapters hexagonal boundaries (ADR-0002). |
+| [knowledge-intake.rego](./knowledge-intake.rego) | `evolith.knowledge_intake` | yes | Knowledge intake lifecycle, review status, topology match. |
+| [multi-runtime.rego](./multi-runtime.rego) | `evolith.multi_runtime` | yes | Multi-runtime support (ADR-0040). |
+| [multi-tenancy.rego](./multi-tenancy.rego) | `evolith.multi_tenancy` | yes | Multi-tenancy isolation (ADR-0010). |
+| [open-core-boundary.rego](./open-core-boundary.rego) | `evolith.open_core_boundary` | yes | Core vs Enterprise separation. |
+| [protocol-selection.rego](./protocol-selection.rego) | `evolith.protocol_selection` | yes | Protocol selection rules (ADR-0032). |
+| [repository-taxonomy.rego](./repository-taxonomy.rego) | `evolith.repository_taxonomy` | yes | Repository taxonomy enforcement. |
+| [satellite-contracts.rego](./satellite-contracts.rego) | `evolith.satellite_contracts` | yes | Satellite contract requirements. |
+| [testing-pyramid.rego](./testing-pyramid.rego) | `evolith.testing_pyramid` | yes | Testing pyramid distribution (ADR-0018). |
+| [telemetry-evidence.rego](./telemetry-evidence.rego) | `evolith.telemetry_evidence` | _none_ | Observability/telemetry evidence presence. |
+| [infrastructure/helm-enforcement.rego](./infrastructure/helm-enforcement.rego) | `evolith.infrastructure.helm` | _none_ | Helm chart enforcement. |
+| [infrastructure/opa-sidecar-bundle.rego](./infrastructure/opa-sidecar-bundle.rego) | `evolith.infrastructure.opa_sidecar` | _none_ | OPA sidecar bundle requirements. |
+
+## Standalone / separately-compiled policies
+
+| Policy | Package | Input schema | Notes |
+|---|---|---|---|
+| [abac-mcp-tool-access.rego](./abac-mcp-tool-access.rego) | `evolith.abac` | yes | ABAC for agentic MCP tool execution; second Wasm entrypoint (`evolith/abac/violations`). |
+| [phase-gates.rego](./phase-gates.rego) | `evolith.phase_gates` | _none_ | SDLC phase-gate evaluation; not yet wired into `main.rego`. |
+| [rbac/gate-role-enforcement.rego](./rbac/gate-role-enforcement.rego) | `evolith.rbac.gate` | _none_ | Gate role enforcement (RBAC). |
+| [sdlc/coverage.rego](./sdlc/coverage.rego) | `evolith.sdlc.coverage` | _none_ | SDLC coverage checks. |
+| [sdlc/pyramid-distribution.rego](./sdlc/pyramid-distribution.rego) | `evolith.sdlc.pyramid` | _none_ | SDLC testing-pyramid distribution. |
+
+> **Inventory:** 34 `.rego` files (excluding `*.test.rego` and `main_test.rego`); `main.rego` is the aggregator. There are 26 input schemas under `schemas/`. Policies listed with input schema **_none_** validate their input inline or are not yet schema-pinned — see [Brechas / parity backlog](../../reference/governance/standards/vision/gap-tracking.md).
+
+## Running policy tests
+
+```bash
+.harness/bin/opa test rulesets/opa/ -v
+```
 
 ---
 [Back to Rulesets Hub](../README.md)

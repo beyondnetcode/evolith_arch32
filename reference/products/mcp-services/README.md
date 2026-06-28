@@ -2,11 +2,11 @@
 
 > **Bilingual navigation:** [Versión en Español](./README.es.md)
 
-Evolith MCP Services expose Evolith Core governance as real-time context for LLMs and autonomous agents through the [Model Context Protocol](https://modelcontextprotocol.io). They are **active and shipped today** inside the `@evolith/smart-cli` package — there is no separate install or deployment.
+Evolith MCP Services expose Evolith Core governance as real-time context for LLMs and autonomous agents through the [Model Context Protocol](https://modelcontextprotocol.io). They ship as the standalone **`@evolith/mcp-server`** package (binary `evolith-mcp`), which can also be launched programmatically by other surfaces.
 
 ## Overview
 
-The MCP server turns the Core reference corpus, rulesets, and phase gates into governed **tools**, **resources**, and **prompts** that an agent can call to retrieve context, evaluate criteria, and submit evidence — under the same contracts as the CLI and REST surfaces. The server core lives in `packages/mcp-server` and is exposed through `smart-cli mcp`.
+The MCP server turns the Core reference corpus, rulesets, and phase gates into governed **tools**, **resources**, and **prompts** that an agent can call to retrieve context, evaluate criteria, and submit evidence — under the same contracts as the CLI and REST surfaces. The server lives in [`packages/mcp-server`](../../../packages/mcp-server) and is started via the `evolith-mcp` binary; see its [README](../../../packages/mcp-server/README.md) for the full tool/resource/prompt reference, auth model, and deployment guide.
 
 ## Surface
 
@@ -40,17 +40,17 @@ The system is **intelligent and flexible** — users can combine any entry point
 
 | Transport | Use case |
 |---|---|
-| **stdio (JSON-RPC 2.0)** | Local agents and editor integrations launched via `smart-cli mcp serve` |
+| **stdio (JSON-RPC 2.0)** | Local agents and editor integrations launched via `evolith-mcp serve` |
 | **Streamable HTTP (official MCP SDK)** | Remote agents and services, with fail-closed API-key authentication |
 
 ## Running the server
 
 ```bash
 # stdio (default)
-smart-cli mcp serve
+evolith-mcp serve
 
-# Streamable HTTP
-smart-cli mcp serve --transport http --port 3000
+# Streamable HTTP (set EVOLITH_API_KEY for production auth)
+evolith-mcp serve --transport http --port 3000
 ```
 
 ## Conformance

@@ -66,15 +66,15 @@ The `POST /api/v1/validate/composable` endpoint exposes the composable validatio
 # Architecture validation only
 curl -X POST http://localhost:3000/api/v1/validate/composable \
   -H "Content-Type: application/json" \
-  -d '{"path": "/path/to/satellite", "topology": "modular-monolith"}'
+  -d '{"workspaceRef": "op_01j7wq8e2n", "topology": "modular-monolith"}'
 
 # Combined: Architecture + Ruleset + ADR
 curl -X POST http://localhost:3000/api/v1/validate/composable \
   -H "Content-Type: application/json" \
   -d '{
-    "path": "/path/to/satellite",
+    "workspaceRef": "op_01j7wq8e2n",
     "topology": "modular-monolith",
-    "ruleset": "compliance-baseline",
+    "ruleset": "governance/base",
     "adr": "adr-0002"
   }'
 ```

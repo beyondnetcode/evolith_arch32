@@ -4,11 +4,12 @@
 
 **Clasificación:** Product-Specific Architecture  
 **Producto:** Evolith Tracker  
-**Core Gobernante:** [Evolith Core](../../../core/README.es.md)
+**Core Gobernante:** [Evolith Core](../../../core/README.es.md)  
+**Estado:** Conceptual / en fase de diseño — describe la arquitectura *objetivo*; aún no hay código de Tracker implementado.
 
-Esta área contiene la arquitectura interna de Evolith Tracker.
+Esta área define la arquitectura interna prevista de Evolith Tracker (diseño objetivo, no código entregado).
 
-## Alcance
+## Alcance (diseño objetivo)
 
 - arquitectura de contenedores y componentes;
 - bounded contexts y límites de agregados;
@@ -27,7 +28,7 @@ Esta área contiene la arquitectura interna de Evolith Tracker.
 
 ## Límite
 
-Esta área implementa, pero no redefine:
+Por diseño, esta área implementa, pero no redefine:
 
 - principios arquitectónicos Core;
 - fases SDLC y semántica de Phase Gates;

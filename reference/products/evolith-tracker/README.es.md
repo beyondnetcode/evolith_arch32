@@ -4,16 +4,19 @@
 
 **Clasificación:** Product-Specific Design  
 **Producto:** Evolith Tracker  
+**Estado:** Conceptual / en fase de diseño — **aún no implementado**. Hoy no existe código fuente de Evolith Tracker ni un repositorio `evolith_tracker` en este corpus; esta carpeta contiene únicamente el diseño objetivo.  
 **Suite Padre:** [Evolith Product Suite](../../product-suite/README.es.md)  
 **Core Gobernante:** [Evolith Core](../../core/README.es.md)
 
+> **Estado de implementación.** Todo lo descrito a continuación define el rol y el diseño objetivo *previsto*, no comportamiento entregado. El diseño de interfaces autoritativo ([Diseño de Interfaces Técnicas de Tracker](./sdlc-tracker-technical-interfaces.es.md)) está marcado explícitamente como *Diseño Propuesto — Pendiente de Revisión del Architecture Board* y *no autoriza cambios de código*. Lee cada afirmación en presente como "poseerá / está diseñado para poseer".
+
 ---
 
-## 1. Rol del Producto
+## 1. Rol del Producto (objetivo)
 
-Evolith Tracker es el producto runtime de gobernanza de Evolith Product Suite.
+Evolith Tracker está diseñado para ser el producto runtime de gobernanza de Evolith Product Suite.
 
-Implementa Core y SDLC Governance al poseer:
+Según su diseño, implementará Core y SDLC Governance al poseer:
 
 - estado runtime de tenant, producto, proceso y fase;
 - Gate Decisions y Phase Transitions canónicas;
@@ -22,7 +25,7 @@ Implementa Core y SDLC Governance al poseer:
 - historial de auditoría y experiencia unificada;
 - administración de plugins, adapters y proveedores.
 
-Tracker no redefine las reglas Core ni la gobernanza SDLC. Las ejecuta.
+Por diseño, Tracker no redefine las reglas Core ni la gobernanza SDLC — las ejecuta.
 
 > **Frontera de integración (ADR-0074 + ADR-0075).** Tracker accede al Core estrictamente como **cliente externo** de la **Capa de Exposición del Core** (`apps/core-api` REST/GraphQL, más MCP) definida en el [ADR-0074](../../architecture/adrs/core/0074-evolith-core-api-exposure-layer.es.md). La lógica de composición/adaptación para web y móvil vive en el **BFF / Application Gateway** del Tracker ([ADR-0075](../../architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.es.md), NestJS) **dentro del repositorio `evolith_tracker`** — no en Core. Ver la [Visión de Producto §2.5](../../product-suite/vision/evolith-product-vision-master.es.md) para el diagrama por capas.
 

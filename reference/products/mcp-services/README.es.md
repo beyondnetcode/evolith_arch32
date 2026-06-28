@@ -2,11 +2,11 @@
 
 > **Navegación bilingüe:** [English Version](./README.md)
 
-Evolith MCP Services expone la gobernanza de Evolith Core como contexto en tiempo real para LLMs y agentes autónomos a través del [Model Context Protocol](https://modelcontextprotocol.io). Están **activos y distribuidos hoy** dentro del paquete `@evolith/smart-cli` — no hay instalación ni despliegue separados.
+Evolith MCP Services expone la gobernanza de Evolith Core como contexto en tiempo real para LLMs y agentes autónomos a través del [Model Context Protocol](https://modelcontextprotocol.io). Se distribuye como el paquete independiente **`@evolith/mcp-server`** (binario `evolith-mcp`), que también puede arrancarse de forma programática desde otras superficies.
 
 ## Resumen
 
-El servidor MCP convierte el corpus de referencia de Core, los rulesets y los phase gates en **tools**, **resources** y **prompts** gobernados que un agente puede invocar para recuperar contexto, evaluar criterios y enviar evidencia — bajo los mismos contratos que las superficies CLI y REST. El núcleo del servidor vive en `packages/mcp-server` y se expone a través de `smart-cli mcp`.
+El servidor MCP convierte el corpus de referencia de Core, los rulesets y los phase gates en **tools**, **resources** y **prompts** gobernados que un agente puede invocar para recuperar contexto, evaluar criterios y enviar evidencia — bajo los mismos contratos que las superficies CLI y REST. El servidor vive en [`packages/mcp-server`](../../../packages/mcp-server) y se arranca con el binario `evolith-mcp`; ver su [README](../../../packages/mcp-server/README.es.md) para la referencia completa de tools/resources/prompts, el modelo de auth y la guía de despliegue.
 
 ## Superficie
 
@@ -40,17 +40,17 @@ El sistema es **inteligente y flexible** — los usuarios pueden combinar cualqu
 
 | Transporte | Caso de uso |
 |---|---|
-| **stdio (JSON-RPC 2.0)** | Agentes locales e integraciones de editor lanzados vía `smart-cli mcp serve` |
+| **stdio (JSON-RPC 2.0)** | Agentes locales e integraciones de editor lanzados vía `evolith-mcp serve` |
 | **Streamable HTTP (SDK oficial MCP)** | Agentes y servicios remotos, con autenticación por API-key fail-closed |
 
 ## Ejecutar el servidor
 
 ```bash
 # stdio (por defecto)
-smart-cli mcp serve
+evolith-mcp serve
 
-# Streamable HTTP
-smart-cli mcp serve --transport http --port 3000
+# Streamable HTTP (define EVOLITH_API_KEY para auth en producción)
+evolith-mcp serve --transport http --port 3000
 ```
 
 ## Conformidad

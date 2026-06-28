@@ -8,7 +8,9 @@ Este documento proporciona especificaciones técnicas detalladas de todos los en
 
 ## 1. Estándares Globales y Conformidad del Envelope
 
-Todos los endpoints de la API aplican versionado en sus rutas URI utilizando el prefijo `/api/v1/...`. Cada respuesta de solicitud cumple con el envelope de salida estándar definido en la **ADR-0073**.
+Todos los endpoints de dominio aplican versionado en sus rutas URI utilizando el prefijo `/api/v1/...`; `/health*` y `/metrics` son version-neutral. Cada respuesta JSON se envuelve automáticamente mediante el `EnvelopeInterceptor` (éxito) o el `HttpExceptionFilter` (error) en el envelope de salida estándar definido en la **ADR-0073**. El endpoint `/metrics` está exento (texto Prometheus crudo).
+
+El objeto `meta` es **plano** — `command`, `executedAt`, `durationMs`, `correlationId`, `context` y `schemaVersion` son hermanos (no existe un objeto anidado `timing`). El objeto `context` solo lleva el ámbito de la petición (`initiative`, `tenant`, `phase`) y se rellena a partir de cabeceras `x-evolith-*`, query params o el body cuando están presentes.
 
 ### Envelope de Respuesta Exitosa (`200 OK` / `201 Created`)
 
@@ -19,14 +21,14 @@ Todos los endpoints de la API aplican versionado en sus rutas URI utilizando el 
     "...": "Payload de respuesta específico del endpoint"
   },
   "meta": {
+    "command": "http POST /api/v1/validate/composable",
+    "executedAt": "2026-06-21T14:00:00.000Z",
+    "durationMs": 42,
+    "correlationId": "evl-5f3a76ef-c5b9-478a-a92c-0e78fde14022",
     "context": {
-      "correlationId": "uuid-string",
-      "tenant": "tenant-id",
-      "initiative": "initiative-id"
-    },
-    "timing": {
-      "startedAt": "ISO8601-timestamp",
-      "durationMs": 42
+      "initiative": "governance-audit",
+      "tenant": "default",
+      "phase": "discovery"
     },
     "schemaVersion": "1.0.0"
   }
@@ -35,22 +37,30 @@ Todos los endpoints de la API aplican versionado en sus rutas URI utilizando el 
 
 ### Envelope de Respuesta con Error (`4xx` / `5xx`)
 
+Los errores llevan el mismo envelope y la misma forma de `meta`. El objeto `error.details` es un body Problem Details RFC 9457 (`type`, `title`, `status`, `detail`, `instance`, `timestamp`, opcionalmente `traceId`/`errors`); la respuesta también fija la cabecera `X-Problem-Format: rfc9457`. El `error.code` es uno de `BAD_REQUEST`, `UNAUTHORIZED`, `FORBIDDEN`, `NOT_FOUND`, `CONFLICT`, `UNPROCESSABLE_ENTITY`, `TOO_MANY_REQUESTS` o `INTERNAL_ERROR`.
+
 ```json
 {
   "success": false,
   "error": {
-    "code": "ERROR_CODE_STRING",
-    "message": "Descripción legible por humanos sobre el error",
-    "details": []
+    "code": "BAD_REQUEST",
+    "message": "Validation failed",
+    "details": {
+      "type": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400",
+      "title": "Bad Request",
+      "status": 400,
+      "detail": "Validation failed",
+      "instance": "/api/v1/projects/initialize",
+      "timestamp": "2026-06-21T14:00:00.000Z",
+      "errors": ["workspaceRef must be longer than or equal to 1 characters"]
+    }
   },
   "meta": {
-    "context": {
-      "correlationId": "uuid-string"
-    },
-    "timing": {
-      "startedAt": "ISO8601-timestamp",
-      "durationMs": 12
-    },
+    "command": "http POST /api/v1/projects/initialize",
+    "executedAt": "2026-06-21T14:00:00.000Z",
+    "durationMs": 12,
+    "correlationId": "evl-5f3a76ef-c5b9-478a-a92c-0e78fde14022",
+    "context": {},
     "schemaVersion": "1.0.0"
   }
 }
@@ -221,11 +231,56 @@ Estos endpoints desencadenan validaciones, propuestas de avance de fase y transi
 * **Payload de Request:**
   ```json
   {
-    "targetPhase": "design",
     "workspaceRef": "satellite-name-or-path",
+    "currentPhase": "phase-1",
+    "targetPhase": "phase-2",
     "triggerDeploy": false
   }
   ```
+* **Notas:** `currentPhase` es opcional — cuando el llamante lo omite, el controlador usa `targetPhase` como fallback para que el gate de salida siempre se evalúe.
+
+---
+
+## 5. Validación Composable (GT-312)
+
+### Validación Composable (Composable Validate)
+* **Ruta:** `POST /api/v1/validate/composable`
+* **Resumen:** Ejecuta el motor de validación composable, combinando hasta cinco modos (SDLC, Arquitectura, Ruleset, ADR, Ad-hoc) en una sola llamada. Cada modo se activa cuando su campo disparador está presente.
+* **Payload de Request:**
+  ```json
+  {
+    "workspaceRef": "op_01j7wq8e2n",
+    "engine": "native",
+    "topology": "modular-monolith",
+    "phase": "design",
+    "ruleset": "governance/base",
+    "adr": "adr-0010",
+    "file": "src/app.module.ts"
+  }
+  ```
+* **Campos:** `workspaceRef` (**requerido**, ref opaca); `engine` (`native` | `opa`, default `native`); `topology` activa el modo Arquitectura; `phase` activa el modo SDLC (ids canónicos `discovery`, `design`, `construction`, `qa`, `release`; los legacy `f1`–`f5` se aceptan como alias deprecados según GT-343); `ruleset` activa el modo Ruleset; `adr` activa el modo ADR; `file` activa el modo Ad-hoc.
+* **Topologías válidas:** `modular-monolith`, `distributed-modules`, `microservices`, `serverless`, `edge-computing`, `event-driven`, `data-mesh`, `agentic-ai`.
+* **ADRs válidos:** `adr-0002`, `adr-0005`, `adr-0010`, `adr-0018`, `adr-0032`, `adr-0040`, `adr-0050`.
+
+---
+
+## 6. Endpoints Operativos (version-neutral)
+
+Estos endpoints **no** están versionados (sin prefijo `/api/v1`) y están exentos de rate limiting (`@SkipThrottle()`) para que las probes de orquestadores y los scrapers de Prometheus vean URIs estables entre versiones mayores.
+
+### Health (combinado)
+* **Ruta:** `GET /health` — liveness + readiness combinados; devuelve el estado de salud del servicio.
+
+### Liveness
+* **Ruta:** `GET /health/live` — devuelve `{ "status": "UP", "timestamp": "..." }` cuando el proceso está vivo.
+
+### Readiness
+* **Ruta:** `GET /health/ready` — verifica el corpus (`phase-gates.rules.json` bajo `CORE_PATH`) y las métricas. Devuelve `200` con `{ "status": "UP", "checks": { "corpus": "UP", "metrics": "UP" }, "timestamp": "..." }`, o `503` con `status: "DOWN"` cuando un check falla.
+
+### Metrics
+* **Ruta:** `GET /metrics` — exposición de texto Prometheus (`Content-Type: text/plain`). Combina métricas de aplicación y de la caché Redis. Devuelto crudo (sin envelope).
+
+> **Rate limiting:** el resto de rutas están limitadas globalmente a **100 peticiones / 60 s** por cliente (`ThrottlerModule`); superar el límite devuelve `429 TOO_MANY_REQUESTS`.
 
 ---
 

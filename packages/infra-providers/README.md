@@ -21,15 +21,19 @@ npm install @evolith/infra-providers
 
 | Export | Implements | Description |
 |--------|-----------|-------------|
-| `NodeFileSystemProvider` | `IFileSystemProvider` | Full filesystem adapter using Node.js `fs` + `fs-extra` |
-| `NestLoggerProvider` | `ILogger` | NestJS `LoggerService` wrapper |
-| `ConsoleLoggerProvider` | `ILogger` | Plain `console.*` logger (useful in scripts/tests) |
-| `NoOpLoggerProvider` | `ILogger` | Silent logger (testing) |
-| `YamlConfigParserProvider` | `IConfigParser` | Parses `.yaml` / `.yml` files |
-| `JsonConfigParserProvider` | `IConfigParser` | Parses `.json` files |
-| `DiskRulesetRepository` | `IRulesetRepository` | Loads governance rulesets from disk |
-| `WebhookAdapter` | — | HTTP webhook delivery with retry |
-| `MoscowPrioritizationService` | — | MoSCoW prioritization logic |
+| `NodeFileSystemProvider` | `IFileSystemProvider` (+ `IFileSystem`) | Full filesystem adapter using Node.js `fs` + `fs-extra` |
+| `NestLoggerProvider` | `ILoggerProvider` | Factory for a NestJS `Logger`-backed `ILogger` |
+| `ConsoleLoggerProvider` | `ILoggerProvider` | Factory for a plain `console.*` `ILogger` (useful in scripts/tests) |
+| `NoOpLoggerProvider` | `ILoggerProvider` | Factory for a silent `ILogger` (testing) |
+| `YamlConfigParserProvider` | `IConfigParserProvider` | Factory for a `.yaml` / `.yml` `IConfigParser` |
+| `JsonConfigParserProvider` | `IConfigParserProvider` | Factory for a `.json` `IConfigParser` |
+| `DiskRulesetRepository` | `IRulesetRepository` | Loads governance rulesets from disk via `loadAllRulesets(corePath)` |
+| `WebhookAdapter` | `IWebhookNotifier` | HTTP webhook delivery with retry — `notify(url, evidence)` |
+| `MoscowPrioritizationService` | — | MoSCoW prioritization logic (`MoscowItem`, `MoscowAnalysis`, `MoscowPriority`) |
+
+> Each provider is a small factory: `createFileSystem()`, `createLogger(context)`,
+> `createConfigParser(format)`. The logger/config classes shown above implement the
+> `*Provider` factory port and hand back the inner `ILogger` / `IConfigParser`.
 
 ## Usage
 
@@ -76,8 +80,13 @@ export class InfraModule {}
 
 | Package | Role |
 |---------|------|
-| [`@evolith/core-domain`](https://www.npmjs.com/package/@evolith/core-domain) | Domain logic and rule engine |
+| [`@evolith/core-domain`](https://www.npmjs.com/package/@evolith/core-domain) | Domain logic and rule engine (defines the ports this package implements) |
 | **`@evolith/infra-providers`** | Infrastructure adapters ← you are here |
+| [`@evolith/core`](../core) | Facade barrel over `core-domain` |
+| [`@evolith/sdk`](../sdk-client) | Typed HTTP/MCP client |
+
+Consumed by **`apps/core-api`** and **`packages/mcp-server`**, which wire these
+adapters into the `core-domain` ports at runtime.
 
 ## License
 

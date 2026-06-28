@@ -4,16 +4,19 @@
 
 **Classification:** Product-Specific Design  
 **Product:** Evolith Tracker  
+**Status:** Conceptual / design-stage — **not yet implemented**. No Evolith Tracker source code or `evolith_tracker` repository exists in this corpus today; this folder holds the target design only.  
 **Parent Suite:** [Evolith Product Suite](../../product-suite/README.md)  
 **Governing Core:** [Evolith Core](../../core/README.md)
 
+> **Implementation status.** Everything below describes the *intended* product role and design target, not shipped behavior. The authoritative interface design ([Tracker Technical Interface Design](./sdlc-tracker-technical-interfaces.md)) is explicitly marked *Proposed Design — Pending Architecture Board Review* with *no source-code change authorized*. Read every present-tense statement here as "will own / is designed to own".
+
 ---
 
-## 1. Product Role
+## 1. Product Role (target)
 
-Evolith Tracker is the runtime governance product of the Evolith Product Suite.
+Evolith Tracker is designed to be the runtime governance product of the Evolith Product Suite.
 
-It implements Core and SDLC Governance by owning:
+As designed, it will implement Core and SDLC Governance by owning:
 
 - tenant, product, process, and phase runtime state;
 - canonical Gate Decisions and Phase Transitions;
@@ -22,7 +25,7 @@ It implements Core and SDLC Governance by owning:
 - audit history and unified product experience;
 - plugin, adapter, and provider administration.
 
-Tracker does not redefine Core rules or SDLC Governance. It executes them.
+By design, Tracker does not redefine Core rules or SDLC Governance — it executes them.
 
 > **Integration boundary (ADR-0074 + ADR-0075).** Tracker reaches Core strictly as an **external client** of the **Core API Exposure Layer** (`apps/core-api` REST/GraphQL, plus MCP) defined in [ADR-0074](../../architecture/adrs/core/0074-evolith-core-api-exposure-layer.md). The composition/adaptation logic for web and mobile lives in Tracker's **BFF / Application Gateway** ([ADR-0075](../../architecture/adrs/nodejs/0075-application-gateway-bff-nestjs.md), NestJS) **inside the `evolith_tracker` repository** — not in Core. See the [Product Vision — Technical Interface Layer](../../product-suite/vision/evolith-product-vision-master.md) for the layered diagram.
 

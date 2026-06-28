@@ -259,7 +259,7 @@ Los modos se activan combinando campos. Se pueden usar varios en una sola llamad
 |---|---|---|
 | `evolith-sdlc-status` | Obtiene el estado actual de la fase SDLC del repositorio | No |
 | `evolith-sdlc-handoff` | Ejecuta el handoff de fase generando el manifiesto de evidencia | **Sí** |
-| `evolith-dora-metrics` | Calcula las métricas DORA (deployment frequency, lead time, MTTR, CFR) | No |
+| `evolith-dora-metrics` | Aproxima métricas DORA desde el historial de Git: deployment frequency, lead time (aprox.), total y merge commits en la ventana (`days`, default 90) | No |
 
 ---
 
@@ -645,14 +645,14 @@ Retorna métricas internas del Gateway:
 
 ```json
 {
+  "uptimeMs": 1820345,
   "totalCalls": 142,
-  "successCalls": 138,
-  "errorCalls": 4,
-  "avgLatencyMs": 23,
-  "toolBreakdown": {
-    "evolith-validate": { "calls": 80, "avgMs": 18 },
-    "evolith-gate-evaluate": { "calls": 32, "avgMs": 31 }
-  }
+  "totalFailures": 4,
+  "tools": {
+    "evolith-validate": { "calls": 80, "failures": 1, "totalLatencyMs": 1440, "avgLatencyMs": 18 },
+    "evolith-gate-evaluate": { "calls": 32, "failures": 0, "totalLatencyMs": 992, "avgLatencyMs": 31 }
+  },
+  "recentErrors": ["RULESET_NOT_FOUND: ..."]
 }
 ```
 

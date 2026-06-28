@@ -31,9 +31,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** `packages/core-domain/src/application/validators/evidence-validator.ts` (`resolveArtifactPath`) maps each artifact to a template under Core; admitted as tech debt in-code. AJV is effectively inert for several artifacts.
 - **Complexity:** M
 - **Done when:**
-  - [ ] The validator resolves the satellite artifact path, not the Core template.
-  - [ ] AJV runs against real artifact data when a `schemaRef` exists.
-  - [ ] Tests cover existence + structural + completeness validation.
+  - [x] The validator resolves the satellite artifact path, not the Core template.
+  - [x] AJV runs against real artifact data when a `schemaRef` exists.
+  - [x] Tests cover existence + structural + completeness validation.
 
 #### GT-315
 
@@ -43,9 +43,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** No event bus/emitter exists; only a one-shot `IWebhookNotifier.notify(url, evidence)` (`packages/core-domain/src/application/ports/webhook-notifier.port.ts`). No named events (`phase.*`, `gate.*`, `artifact.*`).
 - **Complexity:** L
 - **Done when:**
-  - [ ] A domain event bus + transactional outbox exist.
-  - [ ] Versioned events emitted: `phase.started/completed`, `gate.approved/rejected`, `artifact.created/updated/validated`, `blueprint.generated/validated`, `workflow.updated`.
-  - [ ] A versioned event catalog is documented and consumable.
+  - [x] A domain event bus + transactional outbox exist.
+  - [x] Versioned events emitted: `phase.started/completed`, `gate.approved/rejected`, `artifact.created/updated/validated`, `blueprint.generated/validated`, `workflow.updated`.
+  - [x] A versioned event catalog is documented and consumable.
 
 #### GT-316
 
@@ -55,9 +55,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** Three divergent verdict models — `gate-evidence.ts` (`passed|failed|skipped`, canonical), `gates/decision/gate-decision.ts` (`PASS|FAIL|WAIVED`, orphan), `phases/transition/phase-transition.model.ts` (orphan). No artifact state machine.
 - **Complexity:** L
 - **Done when:**
-  - [ ] One canonical verdict vocabulary; orphan models integrated or removed.
-  - [ ] Artifact/phase state machine implemented and enforced.
-  - [ ] Tests cover all transitions.
+  - [x] One canonical verdict vocabulary; orphan models integrated or removed.
+  - [x] Artifact/phase state machine implemented and enforced.
+  - [x] Tests cover all transitions.
 
 #### GT-317
 
@@ -67,9 +67,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** `IWorkflowDefinitionProvider.getWorkflow(tenant?)` exists but no implementation consumes it and there is no operation to validate an externally supplied workflow.
 - **Complexity:** L
 - **Done when:**
-  - [ ] `validateWorkflow(definition)` validates a supplied flow against Core invariants.
-  - [ ] Composable catalogs of phases/gates/artifacts are exposed (not only topologies).
-  - [ ] Core stores no tenant config; Tracker drives composition.
+  - [x] `validateWorkflow(definition)` validates a supplied flow against Core invariants.
+  - [x] Composable catalogs of phases/gates/artifacts are exposed (not only topologies).
+  - [x] Core stores no tenant config; Tracker drives composition.
 
 #### GT-318
 
@@ -79,8 +79,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** `reference/governance/sdlc/gates/gate-f*.json` (cite `.rego`) diverge from `rulesets/phase-gates/phase-gates.rules.json` (what `PhaseGateValidatorService` consumes); cited `.rego` are not executed.
 - **Complexity:** M
 - **Done when:**
-  - [ ] One canonical gate source consumed by the engine.
-  - [ ] Cited OPA rules execute; routing by stable IDs (not substring).
+  - [x] One canonical gate source consumed by the engine.
+  - [x] Cited OPA rules execute; routing by stable IDs (not substring).
 
 #### GT-319
 
@@ -90,8 +90,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** No `enum Role`/`ROLE_HIERARCHY`; roles are loose strings across ABAC inputs and gate `accountableRole`.
 - **Complexity:** M
 - **Done when:**
-  - [ ] A formal role model exists and is used by ABAC/gate checks.
-  - [ ] Tests cover role resolution.
+  - [x] A formal role model exists and is used by ABAC/gate checks.
+  - [x] Tests cover role resolution.
 
 #### GT-320
 
@@ -101,8 +101,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** `accountableRole`/`waiverAuthority` are declarative fields in gate JSON; no code enforces them (only test data references them).
 - **Complexity:** M
 - **Done when:**
-  - [ ] OPA/code asserts the approver/waiver actor holds the required role.
-  - [ ] Depends on GT-319.
+  - [x] OPA/code asserts the approver/waiver actor holds the required role.
+  - [x] Depends on GT-319.
 
 #### GT-321
 
@@ -112,8 +112,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** `AuditLogger` and `CommandHistory` write in-memory/JSONL; no `AuditRepository`/ledger.
 - **Complexity:** M
 - **Done when:**
-  - [ ] Audit events persist to an append-only store.
-  - [ ] Queryable by tenant/phase/actor/correlationId.
+  - [x] Audit events persist to an append-only store.
+  - [x] Queryable by tenant/phase/actor/correlationId.
 
 #### GT-322
 
@@ -123,8 +123,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** `sdk/` only contains the CLI; no `@evolith/sdk` client library; agents use MCP and REST directly.
 - **Complexity:** M
 - **Done when:**
-  - [ ] `@evolith/sdk` generated from OpenAPI/schemas.
-  - [ ] Covers REST + MCP surfaces with types.
+  - [x] `@evolith/sdk` generated from OpenAPI/schemas.
+  - [x] Covers REST + MCP surfaces with types.
 
 #### GT-323
 
@@ -134,8 +134,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** Only `sdk/cli/Dockerfile` exists; core-api/mcp-server have reference Dockerfiles under `reference/infrastructure/docker/` but none in their app dirs.
 - **Complexity:** M
 - **Done when:**
-  - [ ] Dockerfiles in `apps/core-api` and `packages/mcp-server`.
-  - [ ] Image bundles `rulesets/` + `reference/` (or mounts) with `CORE_PATH`/`WORKSPACE_ROOT`.
+  - [x] Dockerfiles in `apps/core-api` and `packages/mcp-server`.
+  - [x] Image bundles `rulesets/` + `reference/` (or mounts) with `CORE_PATH`/`WORKSPACE_ROOT`.
 
 #### GT-324
 
@@ -156,8 +156,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** "Blueprint" appears only as an evidence file (`evidence-validator.ts`, `sdlc.tools.ts`); no `Blueprint` entity or validation.
 - **Complexity:** L
 - **Done when:**
-  - [ ] Blueprint entity + builder.
-  - [ ] Validated against rulesets/topologies/policy/OPA/SDLC.
+  - [x] Blueprint entity + builder.
+  - [x] Validated against rulesets/topologies/policy/OPA/SDLC.
 
 #### GT-326
 
@@ -178,7 +178,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** `webhook.adapter.ts` performs a single POST of GateEvidence; no subscriptions, retries or signing.
 - **Complexity:** M
 - **Done when:**
-  - [ ] Topic subscriptions, retry/backoff, and HMAC signature.
+  - [x] Topic subscriptions, retry/backoff, and HMAC signature.
 
 #### GT-328
 
@@ -188,7 +188,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** `eslint-plugin-boundaries` is configured only in `sdk/cli/.eslintrc.js`.
 - **Complexity:** M
 - **Done when:**
-  - [ ] Boundaries config + CI step for `packages/*` and `apps/*`.
+  - [x] Boundaries config + CI step for `packages/*` and `apps/*`.
 
 #### GT-329
 
@@ -198,8 +198,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Evidence:** Progressive-axis topologies live in `rulesets/topologies/`, but serverless/edge/event-driven/data-mesh/agentic-ai live under `reference/architecture/topologies/`.
 - **Complexity:** M
 - **Done when:**
-  - [ ] All topologies under a single canonical location.
-  - [ ] Links and topology validators updated; tests pass.
+  - [x] All topologies under a single canonical location.
+  - [x] Links and topology validators updated; tests pass.
 
 #### GT-330
 
@@ -3547,12 +3547,14 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-352
 
-**Title:** mcp-tools: no input validation, no README — `OPEN`
+**Title:** mcp-tools: no input validation, no README — `IN-PROGRESS`
 
 - **Component:** mcp-tools · **Priority:** P2 · **Risk:** med · **Dependencies:** none
 - **Files:** `packages/mcp-tools/src/registry.js:24`, `…/tools/echo.js:16`
 - **Proposed fix:** validate args against `inputSchema` (ajv) in CallTool; add README tool catalog.
-- **Done when:** [ ] invalid input → structured error; [ ] README lists all tools.
+- **Applied fix:** added `validate-input.js` (`validateInput(schema, args)`) — a dependency-free check covering the schemas these tools use (required props, per-property type, non-object args). The `CallTool` handler in `registry.js` validates `request.params.arguments` against the tool's `inputSchema` before dispatching; on failure it returns an MCP result with `isError: true` and a descriptive message instead of passing `undefined`/wrong types to the handler. Added `README.md` + `README.es.md` (tool catalog, validation note, usage, testing). Kept dependency-free (no ajv) since the package's only runtime dep is the MCP SDK.
+- **Evidence:** `npm run --workspace packages/mcp-tools test` → 16/16 (7 new) incl. missing-required, wrong-type, non-object, and a CallTool→`isError` test. Bilingual parity holds (READMEs 5/5 headers; not flagged).
+- **Done when:** [x] invalid input → structured error; [x] README lists all tools.
 
 #### GT-353
 

@@ -4,7 +4,7 @@
 
 **Status:** Active Tracking
 **Owner:** Evolith Architecture Board
-**Last Updated:** 2026-06-27 (Maturity wave: 27 gaps added GT-331–GT-357 — 12 APPLIED + validated, 15 OPEN incl. 3 P0; board no longer "all done". Detail: [Gap Reference Catalog §2](./gap-reference-catalog.md))
+**Last Updated:** 2026-06-28 (GT-357 META reconciliation: registered 36 missing closure-evidence records for genuinely-shipped gaps GT-283–GT-329, and REOPENED GT-324/GT-326/GT-330 whose acceptance criteria are not yet met (deploy workflow removed, CI gate disabled, no second human maintainer). Board now reconciles with build/test evidence. Detail: [Gap Reference Catalog §2](./gap-reference-catalog.md))
 **Gap Details:** [Gap Reference Catalog](./gap-reference-catalog.md)
 
 This board is the single source of truth for technical debt, gaps, opportunities, enablers, priority, and status. Select a gap ID to open its problem statement, purpose, evidence, closure criteria, and references.
@@ -24,7 +24,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-346`](./gap-reference-catalog.md#gt-346) | Smart CLI shell-injection surface CLOSED — providers now run shell-free (executeFile + arg arrays) + tests | `Smart CLI` | Cross | P2 | M | `IN-PROGRESS` |
 | [`GT-349`](./gap-reference-catalog.md#gt-349) | MCP ABAC OPA fail-open FIXED — missing policy.wasm now denies in prod (fail-closed) + 6 tests | `MCP Server` | Cross | P2 | S | `IN-PROGRESS` |
 | [`GT-350`](./gap-reference-catalog.md#gt-350) | standards.service rule-check `new Function()` sink REMOVED — restricted predicate evaluator + 6 tests (no-code-exec proven) | `Core Domain` | Cross | P2 | M | `IN-PROGRESS` |
-| [`GT-352`](./gap-reference-catalog.md#gt-352) | mcp-tools: no input validation vs inputSchema; no README | `MCP Tools` | Cross | P2 | S | `OPEN` |
+| [`GT-352`](./gap-reference-catalog.md#gt-352) | mcp-tools: inputSchema validation added (CallTool → isError) + README (EN/ES) + 7 tests | `MCP Tools` | Cross | P2 | S | `IN-PROGRESS` |
 | [`GT-353`](./gap-reference-catalog.md#gt-353) | sdk-client orphaned (no consumer/README); low method coverage | `SDK` | Cross | P2 | M | `OPEN` |
 | [`GT-354`](./gap-reference-catalog.md#gt-354) | core-api OpenAPI module dead code; api-reference missing cache/invalidate | `Core API` | Cross | P2 | S | `OPEN` |
 | [`GT-355`](./gap-reference-catalog.md#gt-355) | @evolith/core has no contract/smoke test for the re-export barrel | `Core` | Cross | P2 | S | `OPEN` |
@@ -51,13 +51,13 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-321`](./gap-reference-catalog.md#gt-321) | Persistent append-only audit ledger (not only in-memory/JSONL) | `Core Domain` | Cross | P1 | M | `DONE` |
 | [`GT-322`](./gap-reference-catalog.md#gt-322) | Typed @evolith/sdk client (REST+MCP) generated from OpenAPI/schemas | `SDK` | Cross | P1 | M | `DONE` |
 | [`GT-323`](./gap-reference-catalog.md#gt-323) | Production Dockerfiles for core-api and mcp-server (bundle the corpus) | `Infra` | Cross | P1 | M | `DONE` |
-| [`GT-324`](./gap-reference-catalog.md#gt-324) | CD pipeline: build and push images to GHCR and deploy core-api/mcp-server | `Infra` | Cross | P1 | M | `DONE` |
+| [`GT-324`](./gap-reference-catalog.md#gt-324) | CD pipeline: build and push images to GHCR and deploy core-api/mcp-server | `Infra` | Cross | P1 | M | `OPEN` |
 | [`GT-325`](./gap-reference-catalog.md#gt-325) | Blueprint as a first-class entity validated against rulesets/topologies/tenant policy/OPA | `Architecture` | F2 | P1 | L | `DONE` |
-| [`GT-326`](./gap-reference-catalog.md#gt-326) | End-to-end integration validation Core and Tracker and agents | `Quality` | Cross | P1 | L | `DONE` |
+| [`GT-326`](./gap-reference-catalog.md#gt-326) | End-to-end integration validation Core and Tracker and agents | `Quality` | Cross | P1 | L | `OPEN` |
 | [`GT-327`](./gap-reference-catalog.md#gt-327) | Evolve the one-shot webhook into subscriptions + retries + HMAC signing | `Core Domain` | Cross | P2 | M | `DONE` |
 | [`GT-328`](./gap-reference-catalog.md#gt-328) | Roll out ESLint boundaries to packages/* and apps/* with a CI step | `Quality` | Cross | P2 | M | `DONE` |
 | [`GT-329`](./gap-reference-catalog.md#gt-329) | Relocate the 5 advanced topologies to rulesets/topologies | `Rulesets` | Cross | P2 | M | `DONE` |
-| [`GT-330`](./gap-reference-catalog.md#gt-330) | Mitigate bus factor (second maintainer + deep onboarding) | `Governance` | Cross | P3 | M | `DONE` |
+| [`GT-330`](./gap-reference-catalog.md#gt-330) | Mitigate bus factor (second maintainer + deep onboarding) | `Governance` | Cross | P3 | M | `OPEN` |
 | [`GT-313`](./gap-reference-catalog.md#gt-313) | Rotate and externalize GH_TOKEN via a secret manager | `Security` | Cross | P0 | XS | `DEFERRED` |
 | [`GT-312`](./gap-reference-catalog.md#gt-312) | SDLC validation orchestration: phase → gate → artifacts → schemas → rulesets → topology → ADRs → OPA → blocking criteria | `Core Domain` | Cross | P0 | XL | `DONE` |
 | [`GT-286`](./gap-reference-catalog.md#gt-286) | compliance-baseline ruleset exists — rulesets/compliance-baseline | `Rulesets` | Cross | P0 | S | `DONE` |
@@ -373,7 +373,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-246`](./gap-reference-catalog.md#gt-246) | Implement Chaos Mesh/Litmus experiments | `QA` | Cross | P3 | L | `DONE` |
 
 
-**Progress:** 329 / 358 done · 22 in progress · 6 pending · 1 deferred
+**Progress:** 326 / 358 done · 23 in progress · 8 pending · 1 deferred
 
 **Wave 2026-06-23 (Wilson deep audit III):** Added 14 new gaps `GT-212`…`GT-225` from the Wilson Audit Playbook covering: ADR status hygiene (GT-212), topology manifest metadata + operational budgets + guidance corpus (GT-213, GT-217, GT-219), REST controller observability + OpenAPI (GT-214, GT-215), OPA input-schema parity + per-topology test density (GT-216, GT-222), SDLC Phase 05 rollback + on-call templates (GT-218), CLI branch coverage + envelope format coverage + skip-list cleanup (GT-220, GT-224, GT-225), MCP HTTP audit logging (GT-221), and cross-surface parity e2e tests (GT-223).
 

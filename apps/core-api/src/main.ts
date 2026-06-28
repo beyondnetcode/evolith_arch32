@@ -3,8 +3,8 @@ import './tracing';
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { setupOpenApi } from './openapi';
 import helmet from 'helmet';
 import { EnvConfig } from './infrastructure/config/env.validation';
 import { HttpExceptionFilter } from './infrastructure/filters/http-exception.filter';
@@ -31,13 +31,7 @@ async function bootstrap() {
     config.get('SWAGGER_ENABLED') === 'true';
 
   if (swaggerEnabled) {
-    const swaggerConfig = new DocumentBuilder()
-      .setTitle('Evolith Core API')
-      .setDescription('Core API for gate evaluation, phase transitions, project initialization, and architecture drift detection')
-      .setVersion('1.0.0')
-      .build();
-    const document = SwaggerModule.createDocument(app, swaggerConfig);
-    SwaggerModule.setup('api/docs', app, document);
+    setupOpenApi(app);
   }
 
   app.useGlobalPipes(new ValidationPipe({

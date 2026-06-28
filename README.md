@@ -1,4 +1,4 @@
-e<div align="center">
+<ediv align="center">
 
 # Evolith: Executable Architectural Governance Framework
 

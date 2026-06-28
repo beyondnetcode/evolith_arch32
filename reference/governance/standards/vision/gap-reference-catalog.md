@@ -3517,12 +3517,14 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-350
 
-**Title:** standards.service.ts uses `new Function()` (security) — `OPEN`
+**Title:** standards.service.ts uses `new Function()` (security) — `IN-PROGRESS`
 
 - **Component:** core-domain · **Priority:** P2 · **Risk:** med (code-exec sink) · **Dependencies:** none
 - **Files:** `packages/core-domain/src/domain/services/standards.service.ts:136`
 - **Proposed fix:** declarative/allow-listed predicate evaluator; trust-boundary flag.
-- **Done when:** [ ] no `new Function()`/eval; [ ] malicious check string inert; [ ] tests green.
+- **Applied fix:** removed the `new Function('code', 'return ' + check)` sink. Added `standard-check-evaluator.ts` exporting `evaluateStandardCheck(check, code)` — a restricted, audited predicate evaluator that NEVER executes arbitrary JS. It matches a small grammar (`code.includes/startsWith/endsWith('lit')`, `/regex/flags.test(code)`, `code.length <op> N`, joined by `&&`/`||` with optional `!`/parens) via a quote/regex/paren-aware top-level splitter; anything outside the grammar is non-blocking (`true`), preserving the old fail-open default but with zero execution. `standards.service.evaluateRule` now delegates to it.
+- **Evidence:** `standard-check-evaluator.spec.ts` 6/6 — incl. a payload test proving `(globalThis.__pwned = true) || true` and `code.constructor.constructor('…')()` are inert (no side effects, returns non-blocking). `grep new Function/eval` in core-domain src → only a doc comment remains. core-domain full suite 60/60 (595/595). Build clean.
+- **Done when:** [x] no `new Function()`/eval; [x] malicious check string inert; [x] tests green.
 
 #### GT-351
 

@@ -3464,12 +3464,14 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-350
 
-**Título:** standards.service.ts usa `new Function()` (seguridad) — `OPEN`
+**Título:** standards.service.ts usa `new Function()` (seguridad) — `IN-PROGRESS`
 
 - **Componente:** core-domain · **Prioridad:** P2 · **Riesgo:** medio · **Dependencias:** ninguna
 - **Archivos:** `packages/core-domain/src/domain/services/standards.service.ts:136`
 - **Fix propuesto:** evaluador declarativo con allow-list; flag de confianza.
-- **Hecho cuando:** [ ] sin `new Function()`; [ ] cadena maliciosa inerte; [ ] tests verdes.
+- **Fix aplicado:** eliminado el sink `new Function('code', 'return ' + check)`. Añadido `standard-check-evaluator.ts` que exporta `evaluateStandardCheck(check, code)` — un evaluador de predicados restringido y auditado que NUNCA ejecuta JS arbitrario. Matchea una gramática pequeña (`code.includes/startsWith/endsWith('lit')`, `/regex/flags.test(code)`, `code.length <op> N`, unidos por `&&`/`||` con `!`/paréntesis opcionales) vía un splitter de nivel superior consciente de comillas/regex/paréntesis; lo que cae fuera de la gramática es no-bloqueante (`true`), preservando el default fail-open anterior pero con cero ejecución. `standards.service.evaluateRule` delega en él.
+- **Evidencia:** `standard-check-evaluator.spec.ts` 6/6 — incl. un test de payload que prueba que `(globalThis.__pwned = true) || true` y `code.constructor.constructor('…')()` son inertes (sin efectos, retorna no-bloqueante). `grep new Function/eval` en core-domain src → solo queda un comentario. Suite completa core-domain 60/60 (595/595). Build limpio.
+- **Hecho cuando:** [x] sin `new Function()`; [x] cadena maliciosa inerte; [x] tests verdes.
 
 #### GT-351
 

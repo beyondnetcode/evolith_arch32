@@ -49,6 +49,9 @@ steps:
     validationScripts:
       - npm run test:e2e --workspace @evolith/core-domain
       - npm run --workspace sdk/cli test:e2e
+      - npm run --workspace apps/core-api test:e2e
+      - npm run --workspace packages/mcp-server build
+      - npm run --workspace packages/mcp-server test:e2e
       - node .harness/scripts/ci/20-validate-surface-compatibility.mjs
       - node .harness/scripts/ci/24-check-surface-parity.mjs
 

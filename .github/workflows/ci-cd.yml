@@ -103,9 +103,16 @@ jobs:
         run: |
           npm run build --workspace @evolith/core-domain
           npm run build --workspace @evolith/core
+          npm run build --workspace @evolith/infra-providers
 
       - name: Run mcp-server tests with coverage
         run: npm run test:cov --workspace @evolith/mcp-server
+
+      # GT-330: MCP server dedicated E2E (spawns the live MCP HTTP server)
+      - name: Build mcp-server + run E2E
+        run: |
+          npm run build --workspace @evolith/mcp-server
+          npm run --workspace packages/mcp-server test:e2e
 
   test-core-api:
     name: Test core-api
@@ -124,10 +131,16 @@ jobs:
         run: npm ci
 
       - name: Build workspace dependencies
-        run: npm run build --workspace @evolith/core-domain
+        run: |
+          npm run build --workspace @evolith/core-domain
+          npm run build --workspace @evolith/infra-providers
 
       - name: Run core-api tests
         run: npm test --workspace core-api
+
+      # GT-330: core-api dedicated E2E (real HTTP surface — health/metrics/v1)
+      - name: Run core-api E2E
+        run: npm run --workspace core-api test:e2e
 
   publish-npm:
     name: Publish npm

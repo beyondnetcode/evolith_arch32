@@ -29,7 +29,7 @@ export class ValidateTool implements McpTool {
           description: 'Optional explicit path to the Evolith core repository',
         },
         topology: { type: 'string', description: 'Topology to target (auto-detects from manifest if omitted). Triggers end-to-end pipeline.' },
-        phase: { type: 'string', description: 'SDLC phase to evaluate (f1-f5). Triggers end-to-end pipeline.' },
+        phase: { type: 'string', description: 'SDLC phase to evaluate (canonical: discovery|design|construction|qa|release; legacy f1-f5 deprecated). Triggers end-to-end pipeline.' },
         manifest: { type: 'string', description: 'JSON string or path to SatelliteManifest for pipeline evaluation. Overrides path/topology/phase.' },
       },
       required: ['path'],

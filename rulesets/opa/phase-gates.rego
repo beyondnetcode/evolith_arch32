@@ -23,7 +23,7 @@ allow if {
 
 evidence_artifacts contains name if {
   some e in input.evidence
-  e.artifact == name
+  name := e.artifact
 }
 
 missing_evidence contains artifact if {

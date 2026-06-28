@@ -4,6 +4,7 @@
  */
 
 import { ValidationContext, ValidationMode, ModeValidationResult, ModeValidationIssue } from './validation-mode.interface';
+import { toLegacyPhaseId } from '../../../domain/sdlc/phase-id';
 
 export class SdlcValidationMode implements ValidationMode {
   readonly name = 'sdlc' as const;
@@ -16,8 +17,11 @@ export class SdlcValidationMode implements ValidationMode {
     const issues: ModeValidationIssue[] = [];
     let rulesChecked = 0;
 
+    // GT-343: accept canonical phase ids (discovery…release) as well as the
+    // legacy f1..f5; the on-disk phase/gate files are keyed by f1..f5, so
+    // normalize to the legacy id for file resolution.
     const phases = context.phase
-      ? [context.phase]
+      ? [toLegacyPhaseId(context.phase) ?? context.phase]
       : ['f1', 'f2', 'f3', 'f4', 'f5'];
 
     for (const phaseId of phases) {

@@ -2,6 +2,7 @@ package evolith.rbac.gate
 
 import future.keywords.if
 import future.keywords.contains
+import future.keywords.in
 
 # ---------------------------------------------------------------------------
 # GT-320 — Gate role enforcement

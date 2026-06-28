@@ -24,7 +24,7 @@ describe('MoscowPrioritizationService', () => {
 
   beforeEach(() => {
     mockFs = createMockFs();
-    service = new MoscowPrioritizationService({ fileSystem: mockFs });
+    service = new MoscowPrioritizationService({ fileSystem: mockFs as any });
   });
 
   const sampleItems = [

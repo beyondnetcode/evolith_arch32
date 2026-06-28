@@ -1,7 +1,10 @@
 import * as path from 'path';
 import { IFileSystem, ILogger } from '../../domain/interfaces';
 
-export type ProgressivePhase = 'F1' | 'F2' | 'F3' | 'cross';
+/** Architecture maturity level on the progressive axis (GT-343 — NOT an SDLC phase). */
+export type ProgressiveMaturityLevel = 'F1' | 'F2' | 'F3' | 'cross';
+/** @deprecated Use {@link ProgressiveMaturityLevel}. Kept for backward-compatible re-exports. */
+export type ProgressivePhase = ProgressiveMaturityLevel;
 
 export interface TopologyManifest {
   apiVersion: 'evolith.dev/topology/v1';
@@ -10,7 +13,7 @@ export interface TopologyManifest {
   spec: {
     summary: string;
     topologyType: string;
-    compatibility: { progressiveAxis: { phase: ProgressivePhase; profile: string }; composableWith: string[] };
+    compatibility: { progressiveAxis: { maturityLevel: ProgressiveMaturityLevel; profile: string }; composableWith: string[] };
     artifacts: { adrs: string[]; rulesets: string[]; opaPolicies: string[]; aiRulesets: string[]; umsContracts: string[] };
     corpus?: {
       guidance: { profile: string; maturityGuide: string };
@@ -38,8 +41,8 @@ export class TopologyCatalogService {
     return (await this.list(corePath)).find((manifest) => manifest.metadata.id === topologyId);
   }
 
-  async resolveProgressivePhase(corePath: string, phase: Exclude<ProgressivePhase, 'cross'>): Promise<TopologyManifest | undefined> {
-    return (await this.list(corePath)).find((manifest) => manifest.spec.compatibility.progressiveAxis.phase === phase);
+  async resolveProgressivePhase(corePath: string, maturityLevel: Exclude<ProgressiveMaturityLevel, 'cross'>): Promise<TopologyManifest | undefined> {
+    return (await this.list(corePath)).find((manifest) => manifest.spec.compatibility.progressiveAxis.maturityLevel === maturityLevel);
   }
 
   private async findManifestFiles(directory: string, depth = 0): Promise<string[]> {

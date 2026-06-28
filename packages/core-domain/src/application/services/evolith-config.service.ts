@@ -6,6 +6,7 @@
 import { promises as fs } from 'fs';
 import * as path from 'path';
 import { ValidationContext } from '../validators/modes/validation-mode.interface';
+import { normalizePhaseId, CANONICAL_PHASE_IDS } from '../../domain/sdlc/phase-id';
 
 export interface EvolithConfig {
   topology?: string;
@@ -95,9 +96,10 @@ export class EvolithConfigService {
     }
 
     if (config.phase) {
-      const validPhases = ['f1', 'f2', 'f3', 'f4', 'f5'];
-      if (!validPhases.includes(config.phase)) {
-        errors.push(`Invalid phase: ${config.phase}. Valid: ${validPhases.join(', ')}`);
+      // GT-343: accept canonical SDLC ids (discovery…release); legacy f1..f5
+      // still accepted as deprecated aliases via the normalizer.
+      if (!normalizePhaseId(config.phase)) {
+        errors.push(`Invalid phase: ${config.phase}. Valid: ${CANONICAL_PHASE_IDS.join(', ')} (legacy f1..f5 accepted)`);
       }
     }
 

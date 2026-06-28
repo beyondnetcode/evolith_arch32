@@ -1,7 +1,7 @@
 import { execSync } from 'child_process';
 import * as path from 'node:path';
 
-const CLI_BIN = path.resolve(__dirname, '../../../bin/evolith.js');
+const CLI_BIN = path.resolve(__dirname, '../../dist/main.js');
 
 function runCli(args: string): { stdout: string; stderr: string; exitCode: number } {
   try {

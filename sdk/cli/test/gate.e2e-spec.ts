@@ -88,7 +88,7 @@ describe('Gate Command (e2e) — ADR-0073 contract', () => {
       expect(data.phase).toBe(phase);
       expect(data.evaluatedBy).toBe('ci');
       expect(data.rulesetRef).toBe('rulesets/sdlc/phase-gates.rules.json');
-      expect(data.rulesetVersion).toBe('1.0.0');
+      expect(data.rulesetVersion).toBe('2.0.0');
       // empty tmp project: gates must fail with actionable violations
       expect(data.verdict).toBe('failed');
       expect((data.violations as unknown[]).length).toBeGreaterThan(0);
@@ -153,7 +153,7 @@ describe('Gate Command (e2e) — ADR-0073 contract', () => {
       });
     });
 
-    const address = server.address() as unknown;
+    const address = server.address() as { port: number };
     const port = address.port;
     const webhookUrl = `http://127.0.0.1:${port}/webhook`;
 

@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { context as otelContext, propagation, SpanStatusCode, trace } from '@opentelemetry/api';
 import * as path from 'node:path';
+import { createHash } from 'node:crypto';
 import { ToolRegistryService } from './tool-registry.service';
 import { MetricsService } from './metrics.service';
 import { AbacEvaluator, AbacInput } from './abac-evaluator';
@@ -8,6 +9,25 @@ import { ErrorCodes } from '../common/errors';
 import { failure, generateCorrelationId, success, toErrorEnvelope } from '../common/envelopes';
 import { runWithContext } from '@evolith/core-domain/common/request-context';
 import { mcpContextStorage, McpUserContext } from './mcp-user-context';
+
+/** Keys whose values must never reach the log sink in cleartext. */
+const SENSITIVE_ARG_KEYS = new Set(['approvalToken', 'apiKey', 'api_key', 'token', 'secret', 'password', 'authorization']);
+
+/** Reduce an approval token to a non-reversible fingerprint (algo + last 4). */
+function fingerprintToken(token: string | undefined): string {
+  if (!token || typeof token !== 'string') return 'none';
+  const digest = createHash('sha256').update(token).digest('hex').slice(0, 12);
+  return `sha256:${digest}…${token.slice(-4)}`;
+}
+
+/** Shallow-redact secret-bearing keys before logging tool arguments. */
+function redactArgs(args: Record<string, unknown>): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(args)) {
+    out[key] = SENSITIVE_ARG_KEYS.has(key) ? '[redacted]' : value;
+  }
+  return out;
+}
 
 export interface ToolCallResult {
   content: Array<{ type: 'text'; text: string }>;
@@ -125,13 +145,15 @@ export async function handleCallTool(
         Date.now() - startTime,
       );
     }
+    // GAP MCP-SECLOG: never log the raw approval token or raw arguments; redact
+    // the token to a short fingerprint and strip secret-bearing arg keys.
     deps.logger.log(JSON.stringify({
       event: 'MUTATIVE_TOOL_EXECUTION',
       user: { id: userContext.id, roles: userContext.roles, tenant: tenant || userContext.tenant },
       scopes: userContext.scopes,
       tool: name,
-      approvalToken: args.approvalToken,
-      arguments: args,
+      approvalTokenFingerprint: fingerprintToken(args.approvalToken as string),
+      arguments: redactArgs(args),
       timestamp: new Date().toISOString(),
     }));
   }

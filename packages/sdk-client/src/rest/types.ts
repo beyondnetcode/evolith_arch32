@@ -7,12 +7,28 @@
  */
 
 // ─── Common envelope ─────────────────────────────────────────────────────────
+// Mirrors apps/core-api/src/infrastructure/interceptors/envelope.interceptor.ts:
+// every response is { success, data|error, meta }.
 
-export interface ApiEnvelope<T> {
-  data: T;
-  meta?: Record<string, unknown>;
-  timestamp?: string;
+export interface EnvelopeMeta {
+  durationMs?: number;
+  [key: string]: unknown;
 }
+
+export interface SuccessEnvelope<T> {
+  success: true;
+  data: T;
+  meta: EnvelopeMeta;
+}
+
+export interface ErrorEnvelope {
+  success: false;
+  error: { code: string; message: string; details?: unknown };
+  meta: EnvelopeMeta;
+}
+
+/** Discriminated union on `success` — narrow before accessing data/error. */
+export type ApiEnvelope<T> = SuccessEnvelope<T> | ErrorEnvelope;
 
 // ─── Gate Evaluation ─────────────────────────────────────────────────────────
 
@@ -42,7 +58,7 @@ export interface GateEvidence {
   summary?: { errors: number; warnings: number };
 }
 
-export type EvaluateGateResponse = ApiEnvelope<GateEvidence>;
+export type EvaluateGateResponse = SuccessEnvelope<GateEvidence>;
 
 // ─── Phase Transition ────────────────────────────────────────────────────────
 
@@ -64,7 +80,7 @@ export interface PhaseTransitionResult {
   message?: string;
 }
 
-export type TransitionPhaseResponse = ApiEnvelope<PhaseTransitionResult>;
+export type TransitionPhaseResponse = SuccessEnvelope<PhaseTransitionResult>;
 
 // ─── Architecture / Topology ─────────────────────────────────────────────────
 
@@ -76,8 +92,8 @@ export interface TopologyManifest {
   [key: string]: unknown;
 }
 
-export type ListTopologiesResponse = ApiEnvelope<TopologyManifest[]>;
-export type GetTopologyResponse = ApiEnvelope<TopologyManifest>;
+export type ListTopologiesResponse = SuccessEnvelope<TopologyManifest[]>;
+export type GetTopologyResponse = SuccessEnvelope<TopologyManifest>;
 
 export interface ValidateSatelliteRequest {
   /** Opaque workspace reference issued by the Tracker BFF */
@@ -87,7 +103,7 @@ export interface ValidateSatelliteRequest {
 export interface DetectDriftRequest {
   /** Opaque workspace reference issued by the Tracker BFF */
   workspaceRef: string;
-  /** Declared architecture maturity level, e.g. "F2" */
+  /** Declared architecture topology / maturity, e.g. "distributed-modules" */
   declaredLevel?: string;
 }
 
@@ -103,8 +119,8 @@ export interface ValidationResult {
   rulesChecked?: number;
 }
 
-export type ValidateSatelliteResponse = ApiEnvelope<ValidationResult>;
-export type DetectDriftResponse = ApiEnvelope<unknown>;
+export type ValidateSatelliteResponse = SuccessEnvelope<ValidationResult>;
+export type DetectDriftResponse = SuccessEnvelope<unknown>;
 
 // ─── Projects ────────────────────────────────────────────────────────────────
 
@@ -126,5 +142,5 @@ export interface ProposeAdvanceRequest {
   triggerDeploy?: boolean;
 }
 
-export type InitProjectResponse = ApiEnvelope<unknown>;
-export type ProposeAdvanceResponse = ApiEnvelope<unknown>;
+export type InitProjectResponse = SuccessEnvelope<unknown>;
+export type ProposeAdvanceResponse = SuccessEnvelope<unknown>;

@@ -207,6 +207,12 @@ jobs:
       - name: Native Evaluator Parity Gate (GT-229)
         run: node .harness/scripts/ci/28-native-evaluator-parity.mjs
 
+      - name: Core OPA Governance Suite (GT-347)
+        run: node .harness/scripts/ci/29-test-core-opa.mjs
+
+      - name: Phase/Topology Namespace Guard (GT-343)
+        run: node .harness/scripts/ci/30-validate-phase-topology-disjoint.mjs
+
   # ============================================
   # JOB 6: Package Integrity
   # ============================================

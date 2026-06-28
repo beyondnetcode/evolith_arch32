@@ -18,7 +18,7 @@ describe('WebhookAdapter', () => {
   const dummyEvidence: GateEvidence = {
     gateId: 'test-gate',
     phase: 'design',
-    verdict: 'pass',
+    verdict: 'passed',
     rulesetRef: 'test',
     rulesetVersion: '1.0',
     violations: [],

@@ -15,8 +15,8 @@
     },
     "phase": {
       "type": "string",
-      "enum": ["f1", "f2", "f3", "f4", "f5"],
-      "description": "Current SDLC phase"
+      "enum": ["discovery", "design", "construction", "qa", "release", "f1", "f2", "f3", "f4", "f5"],
+      "description": "Current SDLC phase. Canonical: discovery|design|construction|qa|release. Legacy f1..f5 accepted as deprecated aliases (GT-343)."
     },
     "rulesets": {
       "type": "array",

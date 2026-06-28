@@ -39,16 +39,16 @@ export function buildInventory(root = ROOT) {
   const cli = path.join(root, 'sdk/cli');
   const pkg = JSON.parse(read(path.join(cli, 'package.json')) || '{}');
 
-  // MCP surfaces — counted from the canonical registration sources (no specs).
-  const mcpDir = path.join(cli, 'src/infrastructure/mcp');
-  const toolSources = [
-    ...walk(path.join(mcpDir, 'tools'), (f) => f.endsWith('.ts') && !f.includes('.spec.')),
-    path.join(mcpDir, 'server.ts'),
-  ].map(read).join('\n');
+  // MCP surfaces — counted from the canonical mcp-server registration sources
+  // (GAP DOC-INVENTORY: the server moved to packages/mcp-server in cc5b9c67;
+  // the old sdk/cli/src/infrastructure/mcp path was deleted and reported 0/0/0).
+  const mcpSrc = path.join(root, 'packages/mcp-server/src');
+  const toolSources = walk(path.join(mcpSrc, 'tools'), (f) => f.endsWith('.ts') && !f.includes('.spec.'))
+    .map(read).join('\n');
   const tools = uniqueMatches(toolSources, /name:\s*['"](evolith-[a-z-]+)['"]/g)
     .filter((name) => !META_TOOLS.has(name));
-  const resources = uniqueMatches(read(path.join(mcpDir, 'resources/index.ts')), /uri:\s*['"](evolith:\/\/[^'"]+)['"]/g);
-  const prompts = uniqueMatches(read(path.join(mcpDir, 'prompts/index.ts')), /name:\s*['"](evolith\/[a-z-]+)['"]/g)
+  const resources = uniqueMatches(read(path.join(mcpSrc, 'mcp/resources.service.ts')), /uri:\s*['"](evolith:\/\/[^'"]+)['"]/g);
+  const prompts = uniqueMatches(read(path.join(mcpSrc, 'mcp/prompts.service.ts')), /name:\s*['"](evolith\/[a-z-]+)['"]/g)
     .filter((name) => name !== 'evolith/unknown');
 
   const commands = walk(path.join(cli, 'src/commands'), (f) => f.endsWith('.command.ts') && !f.includes('.spec.')).length;

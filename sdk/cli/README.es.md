@@ -56,6 +56,8 @@ sudo npm install -g @evolith/smart-cli --unsafe-perm
 export PATH=$(npm config get prefix)/bin:$PATH
 ```
 
+**`WORKSPACE_ROOT` (opcional):** la CLI incluye un workflow SDLC por defecto, así que funciona sin configurar nada. Define `WORKSPACE_ROOT` apuntando a la raíz de un checkout solo si quieres sobreescribir el workflow/rulesets desde disco (`$WORKSPACE_ROOT/rulesets/sdlc/default-workflow.yaml`).
+
 ## Inicio Rápido
 
 ### 1. Inicializar un Repositorio

@@ -306,7 +306,7 @@ describe('WizardService', () => {
       };
       
       expect(step.validate).toBeDefined();
-      expect(step.validate({})).toBeUndefined();
+      expect(step.validate!({})).toBeUndefined();
     });
 
     it('should return error message when validation fails', () => {
@@ -322,8 +322,8 @@ describe('WizardService', () => {
         },
       };
       
-      expect(step.validate({ name: '' })).toBe('Name too short');
-      expect(step.validate({ name: 'valid' })).toBeUndefined();
+      expect(step.validate!({ name: '' })).toBe('Name too short');
+      expect(step.validate!({ name: 'valid' })).toBeUndefined();
     });
 
     it('should proceed when validation passes', async () => {

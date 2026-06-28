@@ -36,6 +36,7 @@ jest.mock('@evolith/core-domain/application/validators/architecture-drift.servic
 
 import * as p from '@clack/prompts';
 import { ArchitectureDriftService } from '@evolith/core-domain/application/validators/architecture-drift.service';
+import { PromptService } from '../../infrastructure/prompts/prompt.service';
 
 const mockDetectDrift = jest.fn();
 const mockGetDriftHistory = jest.fn();
@@ -67,7 +68,8 @@ describe('DriftCommand', () => {
   };
 
   beforeEach(() => {
-    command = new DriftCommand({ showIntro: jest.fn(), showInfo: jest.fn(), showWarning: jest.fn(), showError: jest.fn(), showSuccess: jest.fn(), showOutro: jest.fn(), startSpinner: jest.fn(), stopSpinner: jest.fn(), updateSpinner: jest.fn() } as any);
+    // GT-345: real PromptService so showError routes through the mocked @clack/prompts log.error.
+    command = new DriftCommand(new PromptService());
     logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
     exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
     jest.clearAllMocks();

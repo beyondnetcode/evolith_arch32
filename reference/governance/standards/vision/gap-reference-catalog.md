@@ -3284,3 +3284,306 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Done when:**
   - [x] The required file or directory exists at the specified path.
   - [x] Tests verify the implementation.
+
+---
+
+## 2. Maturity wave 2026-06-27 (validated against real build/test)
+
+> Each gap below was reproduced via real per-product `build` + `test` runs. Fields: Component · Priority · Risk · Dependencies · Files · Proposed/Applied fix · Evidence · Residual risk · Done when (acceptance).
+
+#### GT-331
+
+**Title:** MCP binary version drift — `APPLIED`
+
+- **Component:** mcp-server · **Priority:** P2 · **Risk:** low→none · **Dependencies:** none
+- **Files:** `packages/mcp-server/src/main.ts:10`
+- **Proposed/Applied fix:** read `version` from package.json at runtime instead of a hardcoded literal.
+- **Evidence:** `node packages/mcp-server/dist/main.js version` → `@evolith/mcp-server v1.0.1`.
+- **Residual risk:** none.
+- **Done when:** [x] reported version equals package.json version.
+
+#### GT-332
+
+**Title:** Mutative dispatch leaked approvalToken + args (security) — `APPLIED`
+
+- **Component:** mcp-server · **Priority:** P1 · **Risk:** med→none · **Dependencies:** none
+- **Files:** `packages/mcp-server/src/mcp/mcp-tool-dispatch.ts:128`
+- **Proposed/Applied fix:** `fingerprintToken()` (sha256 prefix + last-4) and `redactArgs()` allow-list; log emits fingerprint + redacted args.
+- **Evidence:** `mcp-server.service.spec.ts` asserts no raw token; mcp-server 162/162 green.
+- **Residual risk:** shallow (top-level) redaction only.
+- **Done when:** [x] audit log omits raw approvalToken; [x] test asserts redaction.
+
+#### GT-333
+
+**Title:** API-key compared with `===` (timing channel, security) — `APPLIED`
+
+- **Component:** mcp-server · **Priority:** P2 · **Risk:** med→low · **Dependencies:** none
+- **Files:** `packages/mcp-server/src/mcp/mcp-server-auth.ts:43`
+- **Proposed/Applied fix:** `safeKeyEqual()` via `crypto.timingSafeEqual` over hashed buffers.
+- **Evidence:** mcp-server 162/162 green.
+- **Residual risk:** none material.
+- **Done when:** [x] constant-time compare; empty/undefined tokens rejected.
+
+#### GT-334
+
+**Title:** opa-wasm not a direct mcp-server dependency — `APPLIED`
+
+- **Component:** mcp-server · **Priority:** P2 · **Risk:** med (hoist break)→none · **Dependencies:** none
+- **Files:** `packages/mcp-server/package.json`
+- **Proposed/Applied fix:** added `@open-policy-agent/opa-wasm@1.10.0` to dependencies.
+- **Evidence:** build green.
+- **Residual risk:** none.
+- **Done when:** [x] declared as direct dependency.
+
+#### GT-335
+
+**Title:** read-gap-tracking tool functionally dead — `APPLIED`
+
+- **Component:** mcp-tools · **Priority:** P1 · **Risk:** med→none · **Dependencies:** none
+- **Files:** `packages/mcp-tools/src/tools/read-gap-tracking.js`
+- **Proposed/Applied fix:** status-column parser surfacing non-terminal gaps; injectable `rootDir`/`EVOLITH_REPO_ROOT`; 3 behavioral tests added.
+- **Evidence:** mcp-tools 9/9 green; live run → `1 open of 330 tracked gaps` (was 0).
+- **Residual risk:** none.
+- **Done when:** [x] non-empty board reflecting real open count; [x] behavioral test.
+
+#### GT-336
+
+**Title:** SDK REST paths miss `/api` prefix (critical) — `APPLIED`
+
+- **Component:** sdk-client · **Priority:** P0 · **Risk:** critical→none · **Dependencies:** none
+- **Files:** `packages/sdk-client/src/rest/evolith-rest-client.ts`
+- **Proposed/Applied fix:** `apiPrefix` option (default `/api`) prepended centrally in `request()`.
+- **Evidence:** build + sdk-client 10/10 green (asserts `/api/v1/...`).
+- **Residual risk:** no live integration test yet (GT-353).
+- **Done when:** [x] methods target `/api/v1/...`.
+
+#### GT-337
+
+**Title:** ApiEnvelope type mismatch — `APPLIED`
+
+- **Component:** sdk-client · **Priority:** P1 · **Risk:** med→low · **Dependencies:** GT-336
+- **Files:** `packages/sdk-client/src/rest/types.ts`
+- **Proposed/Applied fix:** discriminated union `SuccessEnvelope<T> | ErrorEnvelope` on `success`; response aliases now `SuccessEnvelope<…>`.
+- **Evidence:** build + 10/10 green.
+- **Residual risk:** none.
+- **Done when:** [x] type structurally matches core-api envelope.
+
+#### GT-338
+
+**Title:** @evolith/core broken subpath exports — `APPLIED`
+
+- **Component:** core · **Priority:** P1 · **Risk:** med→none · **Dependencies:** none
+- **Files:** `packages/core/package.json`, `packages/core/README.md`
+- **Proposed/Applied fix:** reduced `exports` to `"."`; removed unused deps; added README.
+- **Evidence:** build green; `require('@evolith/core')` resolves; `npm pack --dry-run` lists README.
+- **Residual risk:** still no contract test (GT-355).
+- **Done when:** [x] no subpath MODULE_NOT_FOUND; [x] README packaged.
+
+#### GT-339
+
+**Title:** core-api propose-advance forwards fromPhase undefined (contract bug) — `APPLIED`
+
+- **Component:** core-api · **Priority:** P1 · **Risk:** high→none · **Dependencies:** none
+- **Files:** `apps/core-api/src/presentation/controllers/projects.controller.ts:44`, `dtos/projects.dto.ts:30`
+- **Proposed/Applied fix:** `fromPhase: currentPhase ?? targetPhase`; `currentPhase` optional.
+- **Evidence:** projects.controller.spec 5/5 green.
+- **Residual risk:** `as any` casts remain pending GT-343.
+- **Done when:** [x] fromPhase never undefined.
+
+#### GT-340
+
+**Title:** core-api test harness misses WORKSPACE_ROOT — `APPLIED`
+
+- **Component:** core-api / quality · **Priority:** P1 · **Risk:** high→none · **Dependencies:** GT-344 (shared root cause)
+- **Files:** `apps/core-api/test-setup.js`
+- **Proposed/Applied fix:** anchor `WORKSPACE_ROOT`/`CORE_PATH` to the monorepo root in the jest setup.
+- **Evidence:** `npm run --workspace apps/core-api test` → 105/105 green (was 23 failing) with no manual env.
+- **Residual risk:** masks the runtime packaging gap GT-344 (test-only mitigation).
+- **Done when:** [x] `npm test` green without manual env.
+
+#### GT-341
+
+**Title:** product-inventory generator scans a dead MCP path — `APPLIED`
+
+- **Component:** governance/docs · **Priority:** P1 · **Risk:** high→none · **Dependencies:** none
+- **Files:** `.harness/scripts/generate-product-inventory.mjs:43`
+- **Proposed/Applied fix:** repointed tool/resource/prompt sources to `packages/mcp-server/src`.
+- **Evidence:** regenerated inventory → 27 tools / 9 resources / 8 prompts; `--check` exit 0.
+- **Residual risk:** none.
+- **Done when:** [x] inventory matches installable surface.
+
+#### GT-342
+
+**Title:** README lists 6 topologies vs 8 — `APPLIED`
+
+- **Component:** docs · **Priority:** P1 · **Risk:** low · **Dependencies:** none
+- **Files:** `README.md:67`, `README.es.md:67`
+- **Proposed/Applied fix:** added Distributed Modules + Microservices rows (EN+ES), progressive-axis + legacy F-aliases.
+- **Evidence:** both tables now list 8.
+- **Done when:** [x] README == 8 canonical topologies.
+
+#### GT-343
+
+**Title:** EPIC — SDLC/topology phase-vocabulary unification — `OPEN`
+
+- **Component:** Cross · **Priority:** P0 · **Risk:** high (breaking) · **Dependencies:** blocks GA of every product
+- **Files:** `reference/config/evolith.config.schema.json:18`, `apps/core-api/.../composable-validate.controller.ts:24`, `sdk/cli/.../validate.command.ts:483`, `rulesets/schema/topology-manifest.schema.json:121`, `packages/core-domain/.../topology-catalog.service.ts:4`, `…/modes/sdlc-validation.mode.ts:21`, `…/handlers/satellite-contract-rule.handler.ts:41`
+- **Proposed fix:** canonical `PhaseId` + alias map; rename topology `phase`→`maturityLevel`/`profile`; OPA anti-collision rule; staged migration accepting `f1..f5`/`F1..F3` as deprecated aliases.
+- **Applied fix (stage 1 — foundation, non-breaking):** added `packages/core-domain/src/domain/sdlc/phase-id.ts` — the single canonical source. Canonical ids are the existing `GATE_PHASES` (`discovery|design|construction|qa|release`); `normalizePhaseId()` accepts `f1..f5`/`gate-f*`/`phase-*`/`1..5` and returns canonical; `toLegacyPhaseId()` maps back to the on-disk `f1..f5`; `phase-0` correctly rejected (workflow foundation, not an SDLC gate phase). Exported from the domain barrel. Confirmed no `F#` namespace reuse.
+- **Evidence:** ~897 `f1..f5`/`F1..F3` occurrences swept; core-domain 589/589 green (6 new phase-id tests). Stage 1 changes no existing behavior (additive).
+- **Applied fix (stage 2 — core-domain consumers, backward-compatible):** migrated `evolith-config.service` and `validate-blueprint.use-case` to validate via `normalizePhaseId` (canonical accepted, `f1..f5` still valid); `sdlc-validation.mode` and `satellite-evaluation-pipeline` now normalize a canonical `context/manifest.phase` to the legacy id for on-disk file/gate resolution via `toLegacyPhaseId`. `validate-workflow.use-case` deferred to stage 2b (entangled with on-disk `gate-f*` ids + NON_OMITTABLE_ARTIFACTS map). core-domain 589/589 green; no behavior regression (additive widening).
+- **Applied fix (stage 4 — topology de-conflation):** renamed `spec.compatibility.progressiveAxis.phase` → `maturityLevel` across the topology manifest schema + all 13 manifests (8 under `reference/architecture/topologies/`, 5 under `rulesets/topologies/`) + the `TopologyManifest` type and `resolveProgressivePhase` lookup. `profile` documented as the canonical topology id; the `ProgressivePhase` type kept as a deprecated alias of `ProgressiveMaturityLevel` so `@evolith/core` re-exports don't break. The SDLC word "phase" is gone from the topology contract. (F1/F2/F3 remain as the maturity-level VALUES — retiring those to canonical ids across `evolith.yaml`/`declaredLevel`/drift is the follow-on stage 4b.)
+- **Evidence:** validate-topology-manifests 13/13; topology composition + rule-coverage exit 0; core-domain 589/589; mcp-server + core-api build clean. No reader of `progressiveAxis.phase` remains.
+- **Applied fix (stage 3 — public SDLC enums, backward-compatible):** widened the phase enums on the 3 contract surfaces + 2 MCP tool schemas to accept the canonical ids first, with `f1..f5` kept as deprecated aliases (no hard removal → the external Tracker keeps working): `reference/config/evolith.config.schema.json`, the `/validate/composable` DTO (`composable-validate.controller.ts`), CLI `validate --phase` description, and `composable-validate.tool.ts` + `validate.tool.ts` MCP schemas. Validated: core-api 105/105, mcp-server 162/162, CLI builds — no suite broke.
+- **Applied fix (stage 5 — anti-collision guard):** added `.harness/scripts/ci/30-validate-phase-topology-disjoint.mjs`, wired into `sdk-cli-ci.yml`. Fails CI if any SDLC phase id reuses the F# namespace, if SDLC phase ids and topology ids collide, or if any manifest reintroduces the legacy `progressiveAxis.phase` key. Verified: passes clean (5 SDLC ids disjoint from 8 topology ids) and catches a regression (injecting `phase` → exit 1).
+- **Residual risk:** stages 4b (retire F# maturity VALUES → canonical across evolith.yaml/declaredLevel/drift) and 2b (validate-workflow) pending — both cleanup; the conceptual unification + its regression guard are complete.
+- **Done when:** [x] canonical PhaseId single source + alias normalizer (stage 1); [x] core-domain validators/services use it (stage 2 — 4/5 sites; validate-workflow = 2b); [x] contract surfaces migrated, `f1..f5` accepted as deprecated alias (stage 3); [x] topology `phase`→`maturityLevel` (stage 4); [x] no namespace collision guard (stage 5); [ ] F# maturity values retired (4b) + validate-workflow (2b).
+
+#### GT-344
+
+**Title:** Published CLI crashes (ENOENT default-workflow.yaml) — `IN-PROGRESS`
+
+- **Component:** smart-cli / core-domain · **Priority:** P0 · **Risk:** critical→none · **Dependencies:** none
+- **Files:** `packages/core-domain/src/domain/services/default-workflow-definition.ts`, `…/default-workflow-definition.spec.ts`, `sdk/cli/README.md` (+`.es`)
+- **Proposed fix:** bundle `rulesets/sdlc/default-workflow.yaml` into `@evolith/core-domain`; lazy load with a clear WORKSPACE_ROOT error; document it; add a clean-env smoke test.
+- **Applied fix:** embedded the canonical default workflow as a typed `EMBEDDED_DEFAULT_WORKFLOW` constant; `loadDefaultWorkflow()` tries WORKSPACE_ROOT then `__dirname` then falls back to the embedded default, so construction never throws. Documented `WORKSPACE_ROOT` as optional (override-only) in the CLI README (EN+ES).
+- **Evidence:** clean env (`env -u WORKSPACE_ROOT`, cwd `/tmp`, no `packages/core-domain/rulesets`) → `node sdk/cli/dist/main.js --help` exits 0, no ENOENT; core-domain 583/583 green incl. 2 new regression tests asserting `PhaseService` constructs and the embedded fallback loads.
+- **Residual risk:** the embedded default duplicates `rulesets/sdlc/default-workflow.yaml` (keep in sync); applied in working tree, pending closure-evidence registration (GT-357).
+- **Done when:** [x] `node sdk/cli/dist/main.js` exits 0 in a clean env with no WORKSPACE_ROOT and no monorepo rulesets/.
+
+#### GT-345
+
+**Title:** Smart CLI unit-spec rot (21 suites) — `OPEN`
+
+- **Component:** smart-cli / quality · **Priority:** P1 · **Risk:** med · **Dependencies:** GT-344
+- **Files:** `sdk/cli/src/infrastructure/plugins/plugin-loader.spec.ts:55`, `…/standards/standards.command.spec.ts:73`, `…/adr/adr.command.spec.ts`, `…/__tests__/cli.integration.spec.ts:20`
+- **Proposed fix:** repair ctor/mocks; add `--version`; restore spec type-checking.
+- **Applied fix (partial — 21→5 failing suites):** GT-344 already cleared the ENOENT class. Then fixed all spec TS-compile errors so every suite runs: `as unknown`→`as any` member-access casts, `as jest.Mock`→`as unknown as jest.Mock`, `(callbacks: unknown)`→`any`, updated ctor calls to current signatures (InitCommand +fileSystem/+promptService, HandoffCommand +fileSystem, StandardsCommand +fileSystem, GateCommand promptService cast), mock-fs casts, `step.validate!` non-null, typed `commandModules`, fixture literals (webhook `passed`). 17 spec files. Result: **21→5 failed suites, 867 passing (was 640), 0 TS errors, no regressions.**
+- **Evidence:** `npm run --workspace sdk/cli test` → 5 failed / 59 passed suites (was 21/43).
+- **Applied fix (unit suite complete):** adr/drift specs use a real PromptService (delegates to mocked clack); completion spec spies on private install methods; `test/mocks/index.ts` import fixed + MockFileSystem completed (existsSync/mkdir/copy/ensureFile); cli.integration runCli → `dist/main.js`; **added real `--version` to the CLI** (main.ts reads package.json via CommandFactory `version` option). Result: **unit suite (`jest`) = 64/64 suites, 905/905 tests green** (was 21 failing). `smart-cli --version` → 1.1.4.
+- **e2e suite (`test:e2e`) — 19/20 green (162/175):** fixed TS-rot (sdlc-gate-commands-e2e + wizard.e2e); gate.e2e-spec (rulesetVersion 1.0.0→2.0.0, GT-318); **restored the missing `validate` @Command registration** (real regression — the flagship command was unregistered: "unknown command 'validate'") → cli-e2e 28/28. **Only `mcp-e2e` remains (13 tests):** spawns `mcp serve --transport http` and exercises MCP HTTP auth + JSON-RPC session/protocol; auth assertions get 200 where 401 expected → the CLI `mcp serve` HTTP auth/protocol behavior diverges from the test's expectations. This touches production MCP HTTP auth/protocol (Tracker/agents depend on it) → its own careful workstream, not unit rot.
+- **Done when:** [x] unit suite green (GT-345 core); [x] e2e TS-rot + validate command + gate version; [ ] mcp-e2e (MCP HTTP integration) green so full `npm test` passes.
+
+#### GT-346
+
+**Title:** CommandExecutor shell-injection surface (security) — `OPEN`
+
+- **Component:** smart-cli · **Priority:** P2 · **Risk:** med · **Dependencies:** none
+- **Files:** `sdk/cli/src/infrastructure/cli/command-executor.ts`, `…/cli/providers/index.ts`
+- **Proposed fix:** replace `exec` with `execFile`/`spawn` + arg arrays; validate interpolated names.
+- **Done when:** [ ] no shell-string interpolation of untrusted input; [ ] covering test.
+
+#### GT-347
+
+**Title:** Core OPA governance suite broken + no CI gate — `IN-PROGRESS`
+
+- **Component:** governance/OPA · **Priority:** P0 · **Risk:** critical (governance integrity) · **Dependencies:** GT-358 (exit-0 blocker)
+- **Files:** `rulesets/opa/compliance-baseline.rego`, `rulesets/opa/rbac/gate-role-enforcement.rego`, `rulesets/opa/phase-gates.rego`, `rulesets/opa/telemetry-evidence.rego`, `.harness/scripts/compile-opa-wasm.mjs`, `.harness/scripts/ci/28-test-topology-opa.mjs`
+- **Proposed fix:** fix rego parse/safety errors; add `opa test rulesets/opa/` CI gate; restore wasm build.
+- **Applied fix:** fixed the 4 load/compile errors that aborted the whole suite — missing `future.keywords.if` (compliance-baseline) and `.in` (gate-role-enforcement); unsafe head var in phase-gates (`name := e.artifact`); `all_deps` made a proper set in telemetry-evidence (was a `{dep:true}` object, breaking `startswith`). With the suite loading, fixed the 12 newly-surfaced assertion failures (GT-358) → 197/197. Added CI gate `.harness/scripts/ci/29-test-core-opa.mjs` wired into `sdk-cli-ci.yml`. The parse fixes also unblocked `npm run build:policy` (wasm now compiles).
+- **Evidence:** `.harness/bin/opa test rulesets/opa/ --ignore=schemas` went from **27 load errors (0 tests run)** to **197/197 passing, exit 0**; `npm run build:policy` succeeds ("Successfully compiled and installed policy.wasm"); the new gate prints "Core OPA governance suite: 197/197 passing".
+- **Residual risk:** applied in working tree, pending closure-evidence registration (GT-357).
+- **Done when:** [x] suite loads & runs (parse/safety fixed); [x] `opa test rulesets/opa/` exit 0; [x] wasm built; [x] CI gate present.
+
+#### GT-358
+
+**Title:** OPA suite — 12 assertion failures surfaced after the GT-347 unblock — `IN-PROGRESS`
+
+- **Component:** governance/OPA · **Priority:** P1 · **Risk:** med (governance correctness) · **Dependencies:** GT-347 (which made them visible)
+- **Files:** `rulesets/opa/main_test.rego` (4), `compliance-baseline.test.rego` (2), `executive-scorecards.test.rego`, `governance.test.rego`, `mcp.test.rego`, `multi-tenancy.test.rego`, `satellite-contracts.test.rego`, `testing-pyramid.test.rego`
+- **Proposed fix:** triage each `test_compliant_*`/`*_has_no_violations`: fixture-staleness vs policy drift; refresh `main_test` mock list.
+- **Applied fix:** all 12 were **fixture/mock staleness** — fixtures predated newer compliance sub-rules and lacked their fields. Updated fixtures to be genuinely compliant: compliance-baseline (lint workflow + `src` dir for CB-03/CB-05); executive-scorecards (`performanceDashboardLinked`/`cognitivLoadSurveyCompleted`/`collaborationIndexComputed`); multi-tenancy (`tenantAuditTrailEnabled`/`tenantMigrationPathDefined`); satellite-contracts (`nameIsUnique`); testing-pyramid (`integrationUsesEphemeralContainers`/`e2eCoversHttpRoutes`); governance (`contracts.coreVersionPinned` for INH-02); mcp (metrics keyword for MCP-05); main_test (added the 3 missing mocks: telemetry_evidence, infrastructure.helm, infrastructure.opa_sidecar). No policy logic changed — staleness only.
+- **Evidence:** `opa test rulesets/opa/ --ignore=schemas` → **197/197, exit 0**.
+- **Residual risk:** applied in working tree, pending closure-evidence registration (GT-357).
+- **Done when:** [x] `opa test rulesets/opa/ --ignore=schemas` is 197/197; [x] each fix justified as fixture-staleness (none required a policy change).
+
+#### GT-348
+
+**Title:** OPA policy recompiled per tool dispatch (perf) — `OPEN`
+
+- **Component:** mcp-server · **Priority:** P1 · **Risk:** med (latency) · **Dependencies:** none
+- **Files:** `packages/mcp-server/src/mcp/abac-evaluator.ts:125`, `mcp-tool-dispatch.ts:102`
+- **Proposed fix:** lazy singleton compiled policy keyed by wasm mtime; only `evaluate(input)` per call.
+- **Done when:** [ ] loadPolicy/readFile invoked ≤1× per process / wasm change.
+
+#### GT-349
+
+**Title:** OPA fails open when wasm missing (security) — `OPEN`
+
+- **Component:** mcp-server · **Priority:** P2 · **Risk:** med · **Dependencies:** GT-347
+- **Files:** `packages/mcp-server/src/mcp/abac-evaluator.ts:132`
+- **Proposed fix:** fail-closed in production (or loud warn + metric) when policy.wasm is absent.
+- **Done when:** [ ] missing policy denies in prod; [ ] both paths tested.
+
+#### GT-350
+
+**Title:** standards.service.ts uses `new Function()` (security) — `OPEN`
+
+- **Component:** core-domain · **Priority:** P2 · **Risk:** med (code-exec sink) · **Dependencies:** none
+- **Files:** `packages/core-domain/src/domain/services/standards.service.ts:136`
+- **Proposed fix:** declarative/allow-listed predicate evaluator; trust-boundary flag.
+- **Done when:** [ ] no `new Function()`/eval; [ ] malicious check string inert; [ ] tests green.
+
+#### GT-351
+
+**Title:** infra-providers: no tests, webhook no retry/timeout, README wrong — `OPEN`
+
+- **Component:** infra-providers · **Priority:** P1 · **Risk:** high · **Dependencies:** none
+- **Files:** `packages/infra-providers/src/webhook.adapter.ts:23`, `…/README.md:31`, `…/disk-ruleset.repository.ts:175`
+- **Proposed fix:** jest + provider unit tests (≥80%); AbortController timeout + bounded retry/backoff + URL scheme allow-list (SSRF); fix README signatures; canonical topology ids in `deriveCategory`.
+- **Done when:** [ ] test script green ≥80% cov; [ ] webhook timeout + documented retry; [ ] README compiles.
+
+#### GT-352
+
+**Title:** mcp-tools: no input validation, no README — `OPEN`
+
+- **Component:** mcp-tools · **Priority:** P2 · **Risk:** med · **Dependencies:** none
+- **Files:** `packages/mcp-tools/src/registry.js:24`, `…/tools/echo.js:16`
+- **Proposed fix:** validate args against `inputSchema` (ajv) in CallTool; add README tool catalog.
+- **Done when:** [ ] invalid input → structured error; [ ] README lists all tools.
+
+#### GT-353
+
+**Title:** sdk-client orphaned + low method coverage — `OPEN`
+
+- **Component:** sdk-client · **Priority:** P2 · **Risk:** med · **Dependencies:** GT-336
+- **Files:** `packages/sdk-client/src/__tests__/sdk.spec.ts`
+- **Proposed fix:** per-method URL/verb/body + abort tests (≥85% func cov); README with `/api/v1` base; wire into a real consumer or mark experimental.
+- **Done when:** [ ] func cov ≥85%; [ ] integration test resolves real routes; [ ] README present.
+
+#### GT-354
+
+**Title:** core-api OpenAPI dead code + api-reference gaps — `OPEN`
+
+- **Component:** core-api · **Priority:** P2 · **Risk:** low · **Dependencies:** none
+- **Files:** `apps/core-api/src/openapi/openapi-config.ts`, `apps/core-api/src/main.ts:34`, `reference/products/core-api/api-reference.md`
+- **Proposed fix:** delete the unused openapi module OR call `setupOpenApi()` from main; document `POST /architecture/cache/invalidate`.
+- **Done when:** [ ] no duplicate DocumentBuilder; [ ] api-reference covers all routes.
+
+#### GT-355
+
+**Title:** @evolith/core has no contract/smoke test — `OPEN`
+
+- **Component:** core · **Priority:** P2 · **Risk:** med (silent re-export drift) · **Dependencies:** GT-338
+- **Files:** `packages/core/src/index.ts`
+- **Proposed fix:** `index.spec.ts` asserting presence/type of every re-exported symbol + a `test` script.
+- **Done when:** [ ] suite fails if any documented export is missing at runtime; [ ] CI runs it.
+
+#### GT-356
+
+**Title:** mcp-services README hand-maintained drift — `OPEN`
+
+- **Component:** docs · **Priority:** P2 · **Risk:** low · **Dependencies:** GT-341
+- **Files:** `reference/products/mcp-services/README.md:17,49`
+- **Proposed fix:** regenerate counts (27/9/8); fix start command to `smart-cli mcp serve --transport http --port 3000`; derive from generator instead of hand-maintaining.
+- **Done when:** [ ] README counts/command match code; [ ] `--help` doc-snippet test.
+
+#### GT-357
+
+**Title:** META — gap board over-reports completion — `OPEN`
+
+- **Component:** governance · **Priority:** P1 · **Risk:** high (false confidence) · **Dependencies:** GT-341, GT-347
+- **Files:** `reference/governance/standards/vision/gap-tracking.md`, `…/maturity-evidence.json`, `.harness/scripts/ci/09-reconcile-maturity.mjs`
+- **Proposed fix:** feed real per-product `build`/`test` results into maturity-evidence; gate "DONE" on validated evidence; this wave reopens the board.
+- **Evidence:** board read 329/330 DONE while ≥15 real gaps (3 critical) exist; `09-reconcile-maturity.mjs` already fails `closures 272 vs required 323`.
+- **Done when:** [ ] board status reconciles with executed build/test evidence.

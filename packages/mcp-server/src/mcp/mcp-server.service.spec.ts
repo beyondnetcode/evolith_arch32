@@ -141,7 +141,11 @@ describe('McpServerService — dispatch', () => {
       expect(logArg).toBeDefined();
       const parsedLog = JSON.parse(logArg[0]);
       expect(parsedLog.event).toBe('MUTATIVE_TOOL_EXECUTION');
-      expect(parsedLog.approvalToken).toBe('test-token-123');
+      // GAP MCP-SECLOG: the raw approval token must never be logged; only a
+      // non-reversible fingerprint is emitted.
+      expect(parsedLog.approvalToken).toBeUndefined();
+      expect(logArg[0]).not.toContain('test-token-123');
+      expect(parsedLog.approvalTokenFingerprint).toMatch(/^sha256:/);
     });
   });
 

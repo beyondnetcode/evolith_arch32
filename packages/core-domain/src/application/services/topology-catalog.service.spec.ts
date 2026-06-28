@@ -3,7 +3,7 @@ import { TopologyCatalogService } from './topology-catalog.service';
 const manifest = (id: string, phase: 'F1' | 'F2' | 'F3') => JSON.stringify({
   apiVersion: 'evolith.dev/topology/v1', kind: 'TopologyManifest',
   metadata: { id, name: id, dimension: 'progressive-axis', status: 'accepted', version: '1.0.0' },
-  spec: { summary: 'Topology test manifest', topologyType: id, compatibility: { progressiveAxis: { phase, profile: id }, composableWith: [] }, artifacts: { adrs: [], rulesets: [], opaPolicies: [], aiRulesets: [], umsContracts: [] } },
+  spec: { summary: 'Topology test manifest', topologyType: id, compatibility: { progressiveAxis: { maturityLevel: phase, profile: id }, composableWith: [] }, artifacts: { adrs: [], rulesets: [], opaPolicies: [], aiRulesets: [], umsContracts: [] } },
 });
 
 describe('TopologyCatalogService', () => {

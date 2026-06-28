@@ -1,5 +1,9 @@
 package evolith.compliance_baseline
 
+# GT-347: `if` is used below (e.g. any_workflow_has_lint) and must be imported
+# under OPA 0.65, otherwise the file fails to load ("var cannot be used for rule name").
+import future.keywords.if
+
 # ---------------------------------------------------------------------------
 # Native counterpart: rulesets/compliance-baseline/compliance-baseline.rules.json
 # CB-VAL-*: format validation (evolith.yaml structure)

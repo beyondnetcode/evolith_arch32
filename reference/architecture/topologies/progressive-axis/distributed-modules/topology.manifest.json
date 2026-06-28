@@ -17,7 +17,7 @@
     "topologyType": "distributed-modules",
     "compatibility": {
       "progressiveAxis": {
-        "phase": "F2",
+        "maturityLevel": "F2",
         "profile": "distributed-modules"
       },
       "composableWith": [

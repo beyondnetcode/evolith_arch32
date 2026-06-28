@@ -17,11 +17,15 @@ import rego.v1
 # Helpers: combined dependency map
 # ---------------------------------------------------------------------------
 
-all_deps[pkg] if {
+# GT-347: define all_deps as a SET of dependency names. As a partial object
+# (`all_deps[pkg] if`) it compiled to {dep: true}, so `some pkg in all_deps`
+# iterated boolean values and broke startswith(pkg, ...). `contains` yields the
+# name strings while `all_deps["x"]` membership checks still work.
+all_deps contains pkg if {
     input.satellite.packageJson.dependencies[pkg]
 }
 
-all_deps[pkg] if {
+all_deps contains pkg if {
     input.satellite.packageJson.devDependencies[pkg]
 }
 

@@ -138,7 +138,7 @@ describe('GateCommand', () => {
   });
 
   describe('option parsers', () => {
-    const c = new GateCommand({} as never, undefined, undefined);
+    const c = new GateCommand({} as never, undefined as never, undefined);
     it('each parser returns its input verbatim', () => {
       expect(c.parsePhase('design')).toBe('design');
       expect(c.parseProject('/p')).toBe('/p');

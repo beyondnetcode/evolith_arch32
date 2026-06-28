@@ -80,17 +80,17 @@ describe('WizardService E2E', () => {
         {
           id: 'runtime',
           title: 'Runtime',
-          run: async (state) => ({ ...state, runtime: 'nodejs' }),
+          run: async (state: Record<string, unknown>) => ({ ...state, runtime: 'nodejs' }),
         },
         {
           id: 'monorepo',
           title: 'Monorepo',
-          run: async (state) => ({ ...state, monorepo: 'npm' }),
+          run: async (state: Record<string, unknown>) => ({ ...state, monorepo: 'npm' }),
         },
         {
           id: 'arch',
           title: 'Architecture',
-          run: async (state) => ({ ...state, arch: 'clean' }),
+          run: async (state: Record<string, unknown>) => ({ ...state, arch: 'clean' }),
         },
       ];
 

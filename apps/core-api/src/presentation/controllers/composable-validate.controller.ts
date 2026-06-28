@@ -21,7 +21,7 @@ export class ComposableValidateDto {
   @IsString()
   topology?: string;
 
-  @ApiPropertyOptional({ enum: ['f1', 'f2', 'f3', 'f4', 'f5'] })
+  @ApiPropertyOptional({ enum: ['discovery', 'design', 'construction', 'qa', 'release', 'f1', 'f2', 'f3', 'f4', 'f5'], description: 'Canonical SDLC phase ids; legacy f1..f5 accepted as deprecated aliases (GT-343).' })
   @IsOptional()
   @IsString()
   phase?: string;

@@ -17,7 +17,7 @@
     "topologyType": "agentic-ai",
     "compatibility": {
       "progressiveAxis": {
-        "phase": "cross",
+        "maturityLevel": "cross",
         "profile": "cross"
       },
       "composableWith": [

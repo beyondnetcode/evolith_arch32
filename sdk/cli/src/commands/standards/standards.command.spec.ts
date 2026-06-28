@@ -70,7 +70,7 @@ describe('StandardsCommand', () => {
   let clearSpy: jest.SpyInstance;
 
   beforeEach(() => {
-    command = new StandardsCommand();
+    command = new StandardsCommand({} as never);
     logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
     tableSpy = jest.spyOn(console, 'table').mockImplementation(() => {});
     clearSpy = jest.spyOn(console, 'clear').mockImplementation(() => {});

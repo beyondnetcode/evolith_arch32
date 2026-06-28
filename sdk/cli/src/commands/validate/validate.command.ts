@@ -1,4 +1,4 @@
-import { Option } from 'nest-commander';
+import { Command, Option } from 'nest-commander';
 import { ValidateSatelliteUseCase } from '@evolith/core-domain/application/use-cases/validate-satellite.use-case';
 import { ValidationResult, ValidationIssue, RulesetValidatorService } from '@evolith/core-domain/application/validators/ruleset-validator.service';
 import { OutputFormatterService, OutputFormat } from '../../infrastructure/formatters/output-formatter.service';
@@ -110,6 +110,10 @@ function createComposableEngine() {
   };
 }
 
+@Command({
+  name: 'validate',
+  description: 'Validate a satellite repository against Evolith rulesets, topology and SDLC phase gates',
+})
 export class ValidateCommand extends BaseEvolithCommand {
   constructor(
     private readonly useCase: ValidateSatelliteUseCase,
@@ -480,7 +484,7 @@ export class ValidateCommand extends BaseEvolithCommand {
 
   @Option({
     flags: '-p, --phase [phase]',
-    description: 'Fase SDLC a evaluar (f1, f2, f3, f4, f5). Activa pipeline GT-281',
+    description: 'Fase SDLC a evaluar: discovery, design, construction, qa, release (legacy f1..f5 deprecado). Activa pipeline GT-281',
   })
   parsePhase(val: string): string {
     return val;

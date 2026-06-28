@@ -10,6 +10,9 @@ compliant_input := {"satellite": {"scorecards": {
   "observabilityOperational": true,
   "executiveSponsorAssigned": true,
   "architectureDriftIndex": 5,
+  "performanceDashboardLinked": true,
+  "cognitivLoadSurveyCompleted": true,
+  "collaborationIndexComputed": true,
 }}}
 
 test_compliant_scorecards_has_no_violations {

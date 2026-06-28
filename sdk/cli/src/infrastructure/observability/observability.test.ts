@@ -218,7 +218,7 @@ describe('ErrorReporter', () => {
     it('should return copy of reports array', () => {
       reporter.report(new Error('error'));
       const reports = reporter.getReports();
-      reports.push({} as unknown);
+      reports.push({} as any);
 
       expect(reporter.getReports()).toHaveLength(1);
     });

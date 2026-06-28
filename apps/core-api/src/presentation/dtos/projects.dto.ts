@@ -27,9 +27,10 @@ export class ProposeAdvanceDto {
   @MinLength(1)
   workspaceRef!: string;
 
-  @ApiProperty({ description: 'Current phase (gate to evaluate exit from)', example: 'phase-1' })
+  @ApiPropertyOptional({ description: 'Current phase (gate to evaluate exit from). Defaults to targetPhase when omitted by the BFF.', example: 'phase-1' })
+  @IsOptional()
   @IsString()
-  currentPhase!: string;
+  currentPhase?: string;
 
   @ApiProperty({ description: 'Target phase to advance to', example: 'phase-2' })
   @IsString()

@@ -35,8 +35,8 @@ export class ComposableValidateTool implements McpTool {
         },
         phase: {
           type: 'string',
-          description: 'SDLC phase to validate (f1-f5)',
-          enum: ['f1', 'f2', 'f3', 'f4', 'f5'],
+          description: 'SDLC phase to validate (canonical: discovery|design|construction|qa|release; legacy f1-f5 deprecated)',
+          enum: ['discovery', 'design', 'construction', 'qa', 'release', 'f1', 'f2', 'f3', 'f4', 'f5'],
         },
         ruleset: {
           type: 'string',

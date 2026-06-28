@@ -120,7 +120,7 @@ describe('InitCommand', () => {
     jest.spyOn(PromptService.prototype, 'askInitOptions').mockImplementation(mockAskInitOptions);
     const { CatalogLoader } = require('../../infrastructure/catalog/catalog-loader');
     const catalogLoader = new CatalogLoader();
-    command = new InitCommand(catalogLoader);
+    command = new InitCommand(catalogLoader, {} as never, new PromptService());
     logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
     exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
     jest.clearAllMocks();

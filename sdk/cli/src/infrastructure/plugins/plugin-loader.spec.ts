@@ -39,7 +39,7 @@ describe('PluginLoader', () => {
   });
 
   it('should return empty lists when no plugins directory or config exist', async () => {
-    (fsExtra.pathExists as jest.Mock).mockResolvedValue(false);
+    (fsExtra.pathExists as unknown as jest.Mock).mockResolvedValue(false);
 
     const result = await PluginLoader.loadPlugins('/workspace');
     expect(result.providers).toEqual([]);
@@ -47,13 +47,13 @@ describe('PluginLoader', () => {
   });
 
   it('should load local command plugins from .evolith/plugins', async () => {
-    (fsExtra.pathExists as jest.Mock).mockImplementation((path: string) => {
+    (fsExtra.pathExists as unknown as jest.Mock).mockImplementation((path: string) => {
       if (path.includes('.evolith/plugins')) return Promise.resolve(true);
       return Promise.resolve(false);
     });
 
-    (fsExtra.readdir as jest.Mock).mockResolvedValue(['test-plugin.js']);
-    (fsExtra.stat as jest.Mock).mockResolvedValue({
+    (fsExtra.readdir as unknown as jest.Mock).mockResolvedValue(['test-plugin.js']);
+    (fsExtra.stat as unknown as jest.Mock).mockResolvedValue({
       isDirectory: () => false,
     });
 
@@ -62,13 +62,13 @@ describe('PluginLoader', () => {
   });
 
   it('should load module plugins from evolith.yaml config list', async () => {
-    (fsExtra.pathExists as jest.Mock).mockImplementation((path: string) => {
+    (fsExtra.pathExists as unknown as jest.Mock).mockImplementation((path: string) => {
       if (path.includes('evolith.yaml')) return Promise.resolve(true);
       return Promise.resolve(false);
     });
 
-    (fsExtra.readFile as jest.Mock).mockResolvedValue('plugins:\n  - my-npm-plugin');
-    (yaml.parse as jest.Mock).mockReturnValue({
+    (fsExtra.readFile as unknown as jest.Mock).mockResolvedValue('plugins:\n  - my-npm-plugin');
+    (yaml.parse as unknown as jest.Mock).mockReturnValue({
       plugins: ['my-npm-plugin'],
     });
 

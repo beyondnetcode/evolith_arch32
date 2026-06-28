@@ -17,7 +17,7 @@
     "topologyType": "microservices",
     "compatibility": {
       "progressiveAxis": {
-        "phase": "F3",
+        "maturityLevel": "F3",
         "profile": "microservices"
       },
       "composableWith": [

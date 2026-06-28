@@ -17,7 +17,7 @@
     "topologyType": "modular-monolith",
     "compatibility": {
       "progressiveAxis": {
-        "phase": "F1",
+        "maturityLevel": "F1",
         "profile": "modular-monolith"
       },
       "composableWith": [

@@ -7,12 +7,12 @@ Generated inventory of the installable Smart CLI and MCP surface. Do not edit by
 
 | Field | Value |
 |---|---|
-| Package | `@evolith/smart-cli@1.1.0` |
+| Package | `@evolith/smart-cli@1.1.4` |
 | Binary | `smart-cli` |
-| CLI commands | 23 |
-| MCP tools | 0 |
-| MCP resources | 0 |
-| MCP prompts | 0 |
+| CLI commands | 25 |
+| MCP tools | 27 |
+| MCP resources | 9 |
+| MCP prompts | 8 |
 | MCP transports | `stdio (JSON-RPC 2.0)`, `Streamable HTTP (official MCP SDK)` |
-| Phase-gate schemas | 29 |
+| Phase-gate schemas | 36 |
 | Statement coverage | pending a coverage run |

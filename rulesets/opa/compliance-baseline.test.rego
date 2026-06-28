@@ -12,7 +12,8 @@ test_compliant_baseline_has_no_violations {
                 "definitionOfDone": "reference/dod.md",
                 "repositoryTaxonomy": "reference/taxonomy.md"
             }
-        }
+        },
+        "satellite": { "workflows": ["lint"], "directories": ["src"] }
     }
     count(violations) == 0
 }
@@ -83,7 +84,8 @@ test_all_empty_references {
                 "definitionOfDone": "",
                 "repositoryTaxonomy": ""
             }
-        }
+        },
+        "satellite": { "workflows": ["lint"], "directories": ["src"] }
     }
     count(violations) == 5
 }

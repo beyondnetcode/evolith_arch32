@@ -115,18 +115,18 @@
           "properties": {
             "progressiveAxis": {
               "type": "object",
-              "required": ["phase", "profile"],
+              "required": ["maturityLevel", "profile"],
               "additionalProperties": false,
               "properties": {
-                "phase": {
+                "maturityLevel": {
                   "type": "string",
                   "enum": ["F1", "F2", "F3", "cross"],
-                  "description": "Progressive architecture compatibility phase. Use cross for topologies that combine with multiple F1/F2/F3 phases."
+                  "description": "GT-343: architecture maturity level on the progressive axis — NOT an SDLC phase. F1/F2/F3 are legacy maturity ordinals (canonical topology id is in `profile`); use cross for topologies composable across multiple levels."
                 },
                 "profile": {
                   "type": "string",
                   "enum": ["modular-monolith", "distributed-modules", "microservices", "cross"],
-                  "description": "Compatibility mapping for the progressive-axis model."
+                  "description": "Canonical topology id for the progressive-axis model (the authoritative identifier)."
                 }
               }
             },

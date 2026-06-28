@@ -3,6 +3,7 @@
  */
 
 export * from './gate-evidence';
+export * from './sdlc/phase-id';
 export * from './verdict';
 export * from './lifecycle';
 export * from './events';

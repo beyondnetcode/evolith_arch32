@@ -29,6 +29,9 @@ test_empty_violations {
 		with data.evolith.repository_taxonomy.violations as {}
 		with data.evolith.satellite_contracts.violations as {}
 		with data.evolith.testing_pyramid.violations as {}
+		with data.evolith.telemetry_evidence.violations as {}
+		with data.evolith.infrastructure.helm.violations as {}
+		with data.evolith.infrastructure.opa_sidecar.violations as {}
 
 	count(violations) == 0
 }
@@ -60,6 +63,9 @@ test_single_source_violations {
 		with data.evolith.repository_taxonomy.violations as {}
 		with data.evolith.satellite_contracts.violations as {}
 		with data.evolith.testing_pyramid.violations as {}
+		with data.evolith.telemetry_evidence.violations as {}
+		with data.evolith.infrastructure.helm.violations as {}
+		with data.evolith.infrastructure.opa_sidecar.violations as {}
 
 	count(violations) == 1
 	violations[_].id == "DEP-01"
@@ -92,6 +98,9 @@ test_multi_source_violations {
 		with data.evolith.repository_taxonomy.violations as {}
 		with data.evolith.satellite_contracts.violations as {}
 		with data.evolith.testing_pyramid.violations as {}
+		with data.evolith.telemetry_evidence.violations as {}
+		with data.evolith.infrastructure.helm.violations as {}
+		with data.evolith.infrastructure.opa_sidecar.violations as {}
 
 	count(violations) == 2
 	violations[_].id == "DEP-01"
@@ -125,6 +134,9 @@ test_new_policy_violations {
 		with data.evolith.repository_taxonomy.violations as {{"id": "TAX-05", "message": "taxonomy fail"}}
 		with data.evolith.satellite_contracts.violations as {{"id": "SVC-01", "message": "satellite fail"}}
 		with data.evolith.testing_pyramid.violations as {{"id": "TPY-01", "message": "testing fail"}}
+		with data.evolith.telemetry_evidence.violations as {}
+		with data.evolith.infrastructure.helm.violations as {}
+		with data.evolith.infrastructure.opa_sidecar.violations as {}
 
 	count(violations) == 19
 	violations[_].id == "ABAC-01"

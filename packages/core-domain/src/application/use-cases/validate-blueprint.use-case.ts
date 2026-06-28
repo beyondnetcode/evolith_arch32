@@ -20,6 +20,7 @@ import { ArtifactState, ArtifactStateMachine } from '../../domain/lifecycle/arti
 import { Verdict, VerdictRecord } from '../../domain/verdict/verdict';
 import { DomainEvents } from '../../domain/events/domain-events';
 import { Role } from '../../domain/rbac/role';
+import { normalizePhaseId, CANONICAL_PHASE_IDS } from '../../domain/sdlc/phase-id';
 import type { IDomainEventBus } from '../ports/event-bus.port';
 
 // ---------------------------------------------------------------------------
@@ -46,12 +47,6 @@ export interface BlueprintValidationResult {
   violations: BlueprintViolation[];
   validatedAt: string;
 }
-
-// ---------------------------------------------------------------------------
-// Valid SDLC phases
-// ---------------------------------------------------------------------------
-
-const VALID_PHASES = new Set(['f1', 'f2', 'f3', 'f4', 'f5']);
 
 // ---------------------------------------------------------------------------
 // ValidateBlueprintUseCase
@@ -207,11 +202,13 @@ export class ValidateBlueprintUseCase {
   }
 
   private checkPhase(phase: string, violations: BlueprintViolation[]): void {
-    if (!VALID_PHASES.has(phase)) {
+    // GT-343: accept canonical SDLC ids (discovery…release); legacy f1..f5 are
+    // accepted as deprecated aliases via the normalizer.
+    if (!normalizePhaseId(phase)) {
       violations.push({
         code: 'INVALID_PHASE',
         field: 'phase',
-        message: `Phase "${phase}" is not a valid SDLC phase. Expected one of: ${[...VALID_PHASES].join(', ')}.`,
+        message: `Phase "${phase}" is not a valid SDLC phase. Expected one of: ${CANONICAL_PHASE_IDS.join(', ')} (legacy f1..f5 accepted).`,
       });
     }
   }

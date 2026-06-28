@@ -1,8 +1,11 @@
 /**
  * EvolithRestClient — typed fetch wrapper for the Evolith Core REST API.
  *
- * Endpoints follow NestJS versioning: /v1/<resource>.
- * All responses are unwrapped from the ApiEnvelope<T> before returning.
+ * core-api enables URI versioning with the global prefix `api/v` (see
+ * apps/core-api/src/main.ts), so live routes are `/api/v1/<resource>`. The
+ * client prepends `apiPrefix` (default `/api`) to every path.
+ * Each method returns the full SuccessEnvelope<T> ({ success, data, meta });
+ * non-2xx responses throw EvolithApiError.
  */
 
 import type {
@@ -32,16 +35,21 @@ export interface EvolithRestClientOptions {
   fetch?: typeof fetch;
   /** Default request timeout in milliseconds (default: 30_000) */
   timeoutMs?: number;
+  /** Global API prefix prepended to every path (default '/api', matching core-api's `api/v` versioning). */
+  apiPrefix?: string;
 }
 
 export class EvolithRestClient {
   private readonly baseUrl: string;
+  private readonly apiPrefix: string;
   private readonly headers: Record<string, string>;
   private readonly fetcher: typeof fetch;
   private readonly timeoutMs: number;
 
   constructor(private readonly options: EvolithRestClientOptions) {
     this.baseUrl = options.baseUrl.replace(/\/$/, '');
+    const prefix = options.apiPrefix ?? '/api';
+    this.apiPrefix = prefix ? `/${prefix.replace(/^\/+|\/+$/g, '')}` : '';
     this.headers = {
       'Content-Type': 'application/json',
       Accept: 'application/json',
@@ -156,7 +164,7 @@ export class EvolithRestClient {
   }
 
   private async request<T>(method: string, path: string, body: unknown): Promise<T> {
-    const url = `${this.baseUrl}${path}`;
+    const url = `${this.baseUrl}${this.apiPrefix}${path}`;
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), this.timeoutMs);
 

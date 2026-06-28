@@ -1,13 +1,29 @@
 #!/usr/bin/env node
 import './tracing';
 import 'reflect-metadata';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { McpServerService, McpTransport } from './mcp/mcp-server.service';
 import { StderrLogger } from './common/stderr-logger';
 import { shutdownOtel } from './tracing';
 
-const VERSION = '1.0.0';
+/**
+ * Single source of truth for the reported version: read it from the package
+ * manifest at runtime so the binary banner and `version` command can never
+ * drift from package.json (GAP MCP-VERSION).
+ */
+const VERSION: string = (() => {
+  try {
+    return (
+      (JSON.parse(readFileSync(join(__dirname, '..', 'package.json'), 'utf-8')) as { version?: string }).version ||
+      '0.0.0'
+    );
+  } catch {
+    return '0.0.0';
+  }
+})();
 
 interface CliArgs {
   command: string;

@@ -1,6 +1,7 @@
 import { Injectable, Optional } from '@nestjs/common';
 import { RulesetValidatorService, ValidationResult } from '@evolith/core';
 import { McpTool, McpToolSchema } from '../mcp/tool.interface';
+import { safeParseSatelliteManifest } from '@evolith/core-domain/schemas';
 
 /**
  * `evolith-validate` — validate a satellite repository against Evolith rules.
@@ -56,13 +57,21 @@ export class ValidateTool implements McpTool {
 
     // End-to-end pipeline mode (GT-281)
     if (manifestArg || topology || phase) {
-      const manifest = manifestArg
+      const raw = manifestArg
         ? (typeof manifestArg === 'string' && manifestArg.startsWith('{')
             ? JSON.parse(manifestArg)
             : { satellitePath: path, corePath, topology: manifestArg === path ? topology : undefined })
         : { satellitePath: path, corePath, topology, phase };
 
-      return this.runPipeline(manifest);
+      const parsed = safeParseSatelliteManifest(raw);
+      if (!parsed.success) {
+        return {
+          isError: true,
+          content: [{ type: 'text', text: `Invalid SatelliteManifest: ${parsed.error.message}` }],
+        };
+      }
+
+      return this.runPipeline(parsed.data);
     }
 
     if (ruleset) {

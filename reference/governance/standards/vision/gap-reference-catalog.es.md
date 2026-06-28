@@ -216,8 +216,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** Reporte de Auditoría SDLC (Dimensión 4: Contrato de Ingestión del Cliente - PARCIAL). Existen schemas parciales pero no un contrato formal unificado.
 - **Complejidad:** M
 - **Hecho cuando:**
-  - [ ] El esquema `SatelliteManifest` (o `ProjectInput`) está definido formalmente en TypeScript y validado.
-  - [ ] Las interfaces exponen este esquema como su contrato de entrada esperado.
+  - [x] El esquema `SatelliteManifest` (o `ProjectInput`) está definido formalmente en TypeScript y validado. `SatelliteManifestSchema` (Zod) en `packages/core-domain/src/schemas/satellite-manifest.schema.ts`; `parseSatelliteManifest()` y `safeParseSatelliteManifest()` exportados como API pública vía subpath `@evolith/core-domain/schemas`; 14 tests verdes.
+  - [x] Las interfaces exponen este esquema como su contrato de entrada esperado. `SatelliteManifest` exportado del barrel `domain/index.ts`; MCP validate tool valida el manifest con `safeParseSatelliteManifest()` antes de invocar el pipeline; Core API usa `EvaluateSatelliteDto` (class-validator) alineado con el mismo contrato.
+- **Cerrado:** 2026-06-28
 
 #### GT-360
 

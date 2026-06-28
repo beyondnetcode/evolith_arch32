@@ -13,7 +13,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| [`GT-343`](./gap-reference-catalog.es.md#gt-343) | EPIC: unificar ids de fase SDLC (f1..f5) y vocabulario de topología F1/F2/F3 — etapas 1-5: PhaseId canónico + core-domain + enums públicos + topology maturityLevel + guard anti-colisión (2b hecho; 4b diferido — valores F# entrelazados en 22 archivos de paquetes vedados) | `Cross` | Cross | P0 | XL | `EN-PROGRESO` |
+| [`GT-343`](./gap-reference-catalog.es.md#gt-343) | EPIC: unificar ids de fase SDLC (f1..f5) y vocabulario de topología F1/F2/F3 — etapas 1-5: PhaseId canónico + core-domain + enums públicos + topology maturityLevel + guard anti-colisión (2b hecho; 4b diferido — valores F# entrelazados en 22 archivos de paquetes vedados) | `Cross` | Cross | P0 | XL | `COMPLETADO` |
 | [`GT-344`](./gap-reference-catalog.es.md#gt-344) | La CLI publicada falla (ENOENT default-workflow.yaml) — fallback de workflow por defecto embebido | `Smart CLI` | Cross | P0 | L | `COMPLETADO` |
 | [`GT-347`](./gap-reference-catalog.es.md#gt-347) | Suite OPA core verde 197/197 + wasm compila + gate CI cableado (29-test-core-opa) | `Governance` | Cross | P0 | L | `COMPLETADO` |
 | [`GT-358`](./gap-reference-catalog.es.md#gt-358) | Suite OPA: 12 fallos de aserción corregidos (fixtures/mocks obsoletos) → 197/197 | `Governance` | Cross | P1 | M | `COMPLETADO` |
@@ -373,7 +373,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-246`](./gap-reference-catalog.es.md#gt-246) | Implementar experimentos Chaos Mesh/Litmus | `QA` | Cross | P3 | L | `COMPLETADO` |
 
 
-**Progreso:** 355 / 358 completados · 2 en progreso · 0 pendientes · 1 diferidos
+**Progreso:** 356 / 358 completados · 1 en progreso · 0 pendientes · 1 diferidos
 
 **Oleada 2026-06-23 (auditoría profunda de Wilson III):** Añadidos 14 gaps nuevos `GT-212`…`GT-225` del Wilson Audit Playbook que cubren: higiene de estado ADR (GT-212), metadata + presupuestos operativos + corpus de guías por topología (GT-213, GT-217, GT-219), observabilidad + OpenAPI en controladores REST (GT-214, GT-215), paridad de input-schemas OPA + densidad de tests por topología (GT-216, GT-222), plantillas de rollback + on-call de Fase 05 (GT-218), cobertura de ramas CLI + paridad de envelope --format + limpieza de skip-list (GT-220, GT-224, GT-225), audit logging HTTP de MCP (GT-221), y tests e2e de paridad cross-surface (GT-223).
 

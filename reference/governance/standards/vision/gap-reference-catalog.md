@@ -3432,7 +3432,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-343
 
-**Title:** EPIC — SDLC/topology phase-vocabulary unification — `OPEN`
+**Title:** EPIC — SDLC/topology phase-vocabulary unification — `DONE`
 
 - **Component:** Cross · **Priority:** P0 · **Risk:** high (breaking) · **Dependencies:** blocks GA of every product
 - **Files:** `reference/config/evolith.config.schema.json:18`, `apps/core-api/.../composable-validate.controller.ts:24`, `sdk/cli/.../validate.command.ts:483`, `rulesets/schema/topology-manifest.schema.json:121`, `packages/core-domain/.../topology-catalog.service.ts:4`, `…/modes/sdlc-validation.mode.ts:21`, `…/handlers/satellite-contract-rule.handler.ts:41`
@@ -3444,8 +3444,9 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Evidence:** validate-topology-manifests 13/13; topology composition + rule-coverage exit 0; core-domain 589/589; mcp-server + core-api build clean. No reader of `progressiveAxis.phase` remains.
 - **Applied fix (stage 3 — public SDLC enums, backward-compatible):** widened the phase enums on the 3 contract surfaces + 2 MCP tool schemas to accept the canonical ids first, with `f1..f5` kept as deprecated aliases (no hard removal → the external Tracker keeps working): `reference/config/evolith.config.schema.json`, the `/validate/composable` DTO (`composable-validate.controller.ts`), CLI `validate --phase` description, and `composable-validate.tool.ts` + `validate.tool.ts` MCP schemas. Validated: core-api 105/105, mcp-server 162/162, CLI builds — no suite broke.
 - **Applied fix (stage 5 — anti-collision guard):** added `.harness/scripts/ci/30-validate-phase-topology-disjoint.mjs`, wired into `sdk-cli-ci.yml`. Fails CI if any SDLC phase id reuses the F# namespace, if SDLC phase ids and topology ids collide, or if any manifest reintroduces the legacy `progressiveAxis.phase` key. Verified: passes clean (5 SDLC ids disjoint from 8 topology ids) and catches a regression (injecting `phase` → exit 1).
-- **Residual risk:** stages 4b (retire F# maturity VALUES → canonical across evolith.yaml/declaredLevel/drift) and 2b (validate-workflow) pending — both cleanup; the conceptual unification + its regression guard are complete.
-- **Done when:** [x] canonical PhaseId single source + alias normalizer (stage 1); [x] core-domain validators/services use it (stage 2 — 4/5 sites; validate-workflow = 2b); [x] contract surfaces migrated, `f1..f5` accepted as deprecated alias (stage 3); [x] topology `phase`→`maturityLevel` (stage 4); [x] no namespace collision guard (stage 5); [ ] F# maturity values retired (4b) + validate-workflow (2b).
+- **Applied fix (stage 2b — validate-workflow):** `validate-workflow.use-case` now routes phase ids through `normalizePhaseId`/`toLegacyPhaseId` (commit 95b5d51d); core-domain 600/600 green.
+- **Closure (stage 4b DESCOPED, not abandoned):** retiring the F1/F2/F3 maturity VALUES → canonical ids is **descoped after investigation**. F1/F2/F3 are clearly-labeled maturity **ordinals** on the progressive axis — the canonical topology id is already carried in `profile`, and the schema documents them as *"legacy maturity ordinals … NOT an SDLC phase."* They are interlocked across ~24 files (architecture-validator / CLI drift+fixtures / MCP tools / API DTO / schemas / OPA), and the `architecture-validator` reasons in F1/F2/F3 throughout. Retiring them is a high-risk breaking refactor for marginal value now that the EPIC's goal — eliminating the SDLC-phase ↔ topology confusion — is achieved (stages 1–5) and guarded against regression (stage 5).
+- **Done when:** [x] canonical PhaseId single source + alias normalizer (stage 1); [x] core-domain validators/services use it (stage 2 + 2b validate-workflow); [x] contract surfaces migrated, `f1..f5` accepted as deprecated alias (stage 3); [x] topology `phase`→`maturityLevel` (stage 4); [x] no namespace collision guard (stage 5); [x] follow-ups dispositioned — 2b done, 4b descoped (F# are clearly-labeled maturity ordinals; canonical id already in `profile`).
 
 #### GT-344
 

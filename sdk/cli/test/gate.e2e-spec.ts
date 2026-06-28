@@ -153,7 +153,7 @@ describe('Gate Command (e2e) — ADR-0073 contract', () => {
       });
     });
 
-    const address = server.address() as unknown;
+    const address = server.address() as { port: number };
     const port = address.port;
     const webhookUrl = `http://127.0.0.1:${port}/webhook`;
 

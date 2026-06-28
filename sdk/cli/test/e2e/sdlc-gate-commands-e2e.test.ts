@@ -9,7 +9,8 @@ import { AppModule } from '../../src/app.module';
 async function runCommand(instance: TestingModule, args: string[]): Promise<string> {
   const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => undefined as never);
   try {
-    return await CommandTestFactory.run(instance, args);
+    await CommandTestFactory.run(instance, args);
+    return '';
   } catch (err: unknown) {
     return String(err instanceof Error ? err.message : err);
   } finally {

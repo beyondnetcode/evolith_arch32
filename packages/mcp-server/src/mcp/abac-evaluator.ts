@@ -133,26 +133,34 @@ export class AbacEvaluator {
       const { loadPolicy } = await import('@open-policy-agent/opa-wasm');
       
       const wasmPath = path.join(corePath, 'sdk', 'cli', 'rulesets', 'opa', 'policy.wasm');
-      if (!await fs.pathExists(wasmPath)) {
-        // GT-349: never fail open. A missing ABAC policy must NOT silently grant
-        // the OPA decision (which could bypass rules OPA enforces beyond native).
-        // In production this is a hard deny (fail-closed). In non-production the
-        // OPA layer abstains and the native policy — also enforced by the caller
-        // (native AND opa) — governs, so access is still gated.
-        if (input.environment === 'production') {
-          return {
-            allowed: false,
-            violations: [{
-              id: 'ABAC_POLICY_MISSING',
-              message: `ABAC policy not found at ${wasmPath}; denying in production (fail-closed). Compile the OPA policy (.rego -> policy.wasm).`,
-            }],
-          };
+
+      // GT-348/349: stat the policy directly (no check-then-use TOCTOU race). A
+      // missing policy surfaces as ENOENT and is handled fail-closed below.
+      let stat;
+      try {
+        stat = await fs.stat(wasmPath);
+      } catch (err) {
+        if ((err as NodeJS.ErrnoException)?.code === 'ENOENT') {
+          // GT-349: never fail open. A missing ABAC policy must NOT silently grant
+          // the OPA decision (which could bypass rules OPA enforces beyond native).
+          // In production this is a hard deny (fail-closed). In non-production the
+          // OPA layer abstains and the native policy — also enforced by the caller
+          // (native AND opa) — governs, so access is still gated.
+          if (input.environment === 'production') {
+            return {
+              allowed: false,
+              violations: [{
+                id: 'ABAC_POLICY_MISSING',
+                message: `ABAC policy not found at ${wasmPath}; denying in production (fail-closed). Compile the OPA policy (.rego -> policy.wasm).`,
+              }],
+            };
+          }
+          return { allowed: true, violations: [] };
         }
-        return { allowed: true, violations: [] };
+        throw err;
       }
-      
+
       // GT-348: reuse the compiled policy; only reload when the wasm changes.
-      const stat = await fs.stat(wasmPath);
       let cached = this.policyCache.get(wasmPath);
       if (!cached || cached.mtimeMs !== stat.mtimeMs) {
         const wasmBuffer = await fs.readFile(wasmPath);

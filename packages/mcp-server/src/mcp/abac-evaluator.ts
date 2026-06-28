@@ -48,6 +48,10 @@ const DEPLOY_TOOLS = new Set([
 
 @Injectable()
 export class AbacEvaluator {
+  // GT-348: cache compiled OPA policies by wasm path, invalidated on file mtime
+  // change. AbacEvaluator is a singleton, so this persists across dispatches.
+  private readonly policyCache = new Map<string, { mtimeMs: number; policy: any }>();
+
   evaluateNative(input: AbacInput): AbacDecision {
     const { user, tool_name, environment } = input;
     const roles = user?.roles || [];
@@ -147,10 +151,17 @@ export class AbacEvaluator {
         return { allowed: true, violations: [] };
       }
       
-      const wasmBuffer = await fs.readFile(wasmPath);
-      const policy = await loadPolicy(wasmBuffer);
-      
-      const resultSet = policy.evaluate(input, 'evolith/abac/violations');
+      // GT-348: reuse the compiled policy; only reload when the wasm changes.
+      const stat = await fs.stat(wasmPath);
+      let cached = this.policyCache.get(wasmPath);
+      if (!cached || cached.mtimeMs !== stat.mtimeMs) {
+        const wasmBuffer = await fs.readFile(wasmPath);
+        const policy = await loadPolicy(wasmBuffer);
+        cached = { mtimeMs: stat.mtimeMs, policy };
+        this.policyCache.set(wasmPath, cached);
+      }
+
+      const resultSet = cached.policy.evaluate(input, 'evolith/abac/violations');
       const violationsList = (resultSet && resultSet[0] && Array.isArray(resultSet[0].result))
         ? resultSet[0].result
         : [];

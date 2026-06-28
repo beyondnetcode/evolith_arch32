@@ -48,8 +48,11 @@ export class EvolithRestClient {
 
   constructor(private readonly options: EvolithRestClientOptions) {
     this.baseUrl = options.baseUrl.replace(/\/$/, '');
-    const prefix = options.apiPrefix ?? '/api';
-    this.apiPrefix = prefix ? `/${prefix.replace(/^\/+|\/+$/g, '')}` : '';
+    // Trim leading/trailing slashes WITHOUT a backtracking regex (ReDoS-safe).
+    let prefix = options.apiPrefix ?? '/api';
+    while (prefix.startsWith('/')) prefix = prefix.slice(1);
+    while (prefix.endsWith('/')) prefix = prefix.slice(0, -1);
+    this.apiPrefix = prefix ? `/${prefix}` : '';
     this.headers = {
       'Content-Type': 'application/json',
       Accept: 'application/json',

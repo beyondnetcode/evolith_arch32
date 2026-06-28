@@ -1,5 +1,4 @@
 import { CompletionCommand } from './completion.command';
-import * as fsExtra from 'fs-extra';
 
 jest.mock('fs-extra');
 

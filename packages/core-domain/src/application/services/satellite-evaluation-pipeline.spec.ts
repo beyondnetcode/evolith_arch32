@@ -344,4 +344,50 @@ describe('SatelliteEvaluationPipeline (GT-281)', () => {
       expect(result.gates[0].artifactEvaluations[0].passed).toBe(true);
     });
   });
+
+  describe('GT-382 — EvaluationContext facts threading + verdict propagation', () => {
+    const dodGate = {
+      id: 'gate-f3', name: 'Successful Build', phase: 'f3', description: '',
+      requiredArtifacts: [
+        { artifact: 'docs/definition-of-done.md', validation: 'DoD satisfied', rules: ['rulesets/opa/dod.rego'] },
+      ],
+      blockingCriteria: [],
+    };
+
+    it('threads manifest.facts into the OpaEvaluator context (so input.context reaches OPA)', async () => {
+      mockLoadGatesForPhase.mockResolvedValue([dodGate]);
+      mockFs.exists.mockResolvedValue(true);
+      let capturedCtx: any;
+      mockEvaluateAll.mockImplementation(async (_rules: any, ctx: any) => {
+        capturedCtx = ctx;
+        return [{ rule: {} as any, result: 'passed' }];
+      });
+
+      await pipeline.evaluate({
+        satellitePath: '/satellite', corePath: '/core', topology: 'modular-monolith', phase: 'f3',
+        facts: { context: { dod: { coveragePercent: 60 } } } as any,
+      });
+
+      expect(capturedCtx).toBeDefined();
+      expect(capturedCtx.facts?.context?.dod?.coveragePercent).toBe(60);
+    });
+
+    it('flips the gate verdict to failed when the dod policy reports a violation', async () => {
+      mockLoadGatesForPhase.mockResolvedValue([dodGate]);
+      mockFs.exists.mockResolvedValue(true);
+      // OpaEvaluator (tested in opa-evaluator.spec.ts) maps a DOD-* violation for the
+      // 'opa-dod' rule to result:'failed'; here we assert the pipeline propagates it.
+      mockEvaluateAll.mockResolvedValue([{ rule: {} as any, result: 'failed', message: 'Test coverage must be >= 80%' }]);
+
+      const result = await pipeline.evaluate({
+        satellitePath: '/satellite', corePath: '/core', topology: 'modular-monolith', phase: 'f3',
+        facts: { context: { dod: { coveragePercent: 60 } } } as any,
+      });
+
+      expect(result.passed).toBe(false);
+      expect(result.gates[0].verdict).toBe('failed');
+      expect(result.gates[0].artifactEvaluations[0].passed).toBe(false);
+      expect(result.gates[0].artifactEvaluations[0].message).toContain('coverage');
+    });
+  });
 });

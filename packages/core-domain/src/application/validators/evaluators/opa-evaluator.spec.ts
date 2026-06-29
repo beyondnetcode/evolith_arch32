@@ -105,10 +105,62 @@ describe('OpaEvaluator', () => {
     }));
     
     const results = await evaluator.evaluateAll([mockRule], ctx);
-    
+
     expect(results).toHaveLength(1);
     expect(results[0].result).toBe('failed');
     expect(results[0].message).toContain('OPA Input Schema Validation Failed');
     expect(results[0].message).toContain('must have required property');
+  });
+
+  // --- GT-382: context-aware policies emit namespaced ids (DOD-*/CB-*/PG-*) that
+  // never equal the path-derived rule id (opa-dod/...). A gate rule referencing the
+  // policy file owns ALL of that policy's violations — matched by prefix. -----------
+
+  const wasmPath = path.join('/core', 'rulesets', 'opa', 'policy.wasm');
+  const sdlcRule = (id: string): NormalizedRule => ({
+    id,
+    severity: 'MUST',
+    category: 'sdlc', // no sdlc.input.schema.json → schema validation skipped
+    title: id,
+    description: 'gate artifact rule',
+    blocking: true,
+    sourceFile: 'gate',
+  });
+  const withViolations = (vs: Array<{ id: string; message: string }>) => {
+    const { loadPolicy } = require('@open-policy-agent/opa-wasm');
+    (loadPolicy as jest.Mock).mockResolvedValueOnce({ evaluate: () => [{ result: vs }] });
+    fs.setFile(wasmPath, 'fake-wasm');
+  };
+
+  it('GT-382: opa-dod rule FAILS when the dod policy emits a DOD-* violation', async () => {
+    withViolations([{ id: 'DOD-02', message: 'Test coverage must be >= 80%' }]);
+    const results = await evaluator.evaluateAll([sdlcRule('opa-dod')], ctx);
+    expect(results[0].result).toBe('failed');
+    expect(results[0].message).toContain('coverage');
+  });
+
+  it('GT-382: opa-dod rule PASSES when no DOD-* violation is emitted (no false positive)', async () => {
+    withViolations([{ id: 'GOV-001', message: 'unrelated' }]);
+    const results = await evaluator.evaluateAll([sdlcRule('opa-dod')], ctx);
+    expect(results[0].result).toBe('passed');
+  });
+
+  it('GT-382: opa-compliance-baseline rule FAILS on a CB-* violation', async () => {
+    withViolations([{ id: 'CB-01', message: 'Agnostic Baseline missing' }]);
+    const results = await evaluator.evaluateAll([sdlcRule('opa-compliance-baseline')], ctx);
+    expect(results[0].result).toBe('failed');
+  });
+
+  it('GT-382: opa-phase-gates rule FAILS on a PG-* violation', async () => {
+    withViolations([{ id: 'PG-EVIDENCE-MISSING', message: 'mandatory artifact missing' }]);
+    const results = await evaluator.evaluateAll([sdlcRule('opa-phase-gates')], ctx);
+    expect(results[0].result).toBe('failed');
+  });
+
+  it('GT-382: non-context-aware rules keep EXACT id matching (prefix map does not leak)', async () => {
+    // A DOD-* violation must NOT satisfy an unrelated exact-id rule.
+    withViolations([{ id: 'DOD-02', message: 'coverage' }]);
+    const results = await evaluator.evaluateAll([sdlcRule('DEP-01')], ctx);
+    expect(results[0].result).toBe('passed');
   });
 });

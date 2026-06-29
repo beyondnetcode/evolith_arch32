@@ -116,9 +116,9 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Roadmap phase:** R4 (follow-on to GT-380). **Impact:** `packages/core-domain/.../opa-evaluator.ts`, `rulesets/opa/{dod,compliance-baseline}.rego`.
 - **Complexity:** M
 - **Acceptance criteria:**
-  - [ ] A failing threaded fact (e.g. `input.context.dod.coveragePercent < 80`) flips the corresponding gate verdict to `failed` (integration test through `SatelliteEvaluationPipeline.evaluate`), for dod AND compliance-baseline AND phase-gates.
-  - [ ] No FS-path regression: when no `input.context.dod`/`spec` is declared, the policies emit no violations (add a "no-facts → no-opinion" guard to `dod.rego`/`compliance-baseline.rego` so the existing satellite-validation path stays green — TODAY they would fire `DOD-03..10`/`CB-*` if the id filter were naively fixed).
-  - [ ] Native+OPA parity 0 drift; full OPA + core-domain/CLI/MCP suites green.
+  - [x] A failing threaded fact (e.g. `input.context.dod.coveragePercent < 80`) flips the corresponding gate verdict to `failed` (integration test through `SatelliteEvaluationPipeline.evaluate`), for dod AND compliance-baseline AND phase-gates.
+  - [x] No FS-path regression: when no `input.context.dod`/`spec` is declared, the policies emit no violations (add a "no-facts → no-opinion" guard to `dod.rego`/`compliance-baseline.rego` so the existing satellite-validation path stays green — TODAY they would fire `DOD-03..10`/`CB-*` if the id filter were naively fixed).
+  - [x] Native+OPA parity 0 drift; full OPA + core-domain/CLI/MCP suites green.
 - **Dependencies:** `GT-380`.
 
 #### GT-363

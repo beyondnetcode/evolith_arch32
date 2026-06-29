@@ -20,7 +20,7 @@
     "test:cov": "jest --coverage"
   },
   "dependencies": {
-    "@evolith/core-domain": "1.0.4",
+    "@evolith/core-domain": "*",
     "@nestjs/common": "11.1.27",
     "ajv": "8.20.0",
     "ajv-formats": "3.0.1",

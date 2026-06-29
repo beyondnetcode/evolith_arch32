@@ -25,7 +25,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@evolith/core-domain": "1.0.4"
+    "@evolith/core-domain": "*"
   },
   "devDependencies": {
     "@types/jest": "30.0.0",

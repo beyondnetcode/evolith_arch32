@@ -198,10 +198,13 @@ async function runHttpSmoke() {
   console.log('--- Transport 2: HTTP/SSE ---');
 
   const port = 49400;
+  // GT-250: the MCP HTTP server fails closed — it requires an API key. Start it
+  // with one and authenticate the client below.
+  const apiKey = 'smoke-test-key-123';
 
   const server = spawn(
     'node',
-    ['dist/main.js', 'mcp', 'serve', '--transport', 'http', '--port', String(port)],
+    ['dist/main.js', 'mcp', 'serve', '--transport', 'http', '--port', String(port), '--api-key', apiKey],
     {
       cwd: cliRoot,
       env: { ...process.env, EVOLITH_CORE_PATH: repoRoot },
@@ -229,7 +232,9 @@ async function runHttpSmoke() {
     const { z } = require('zod');
     
     // We send requests to the root endpoint which is handled by StreamableHTTPServerTransport
-    const transport = new StreamableHTTPClientTransport(new URL(`http://localhost:${port}/`));
+    const transport = new StreamableHTTPClientTransport(new URL(`http://localhost:${port}/`), {
+      requestInit: { headers: { Authorization: `Bearer ${apiKey}` } },
+    });
     const client = new Client({ name: 'evolith-smoke-client', version: '1.0.0' }, { capabilities: {} });
     
     await client.connect(transport);

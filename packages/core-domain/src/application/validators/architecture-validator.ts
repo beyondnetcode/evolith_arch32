@@ -1,4 +1,3 @@
-/* eslint-disable boundaries/element-types */
 import * as path from 'path';
 import { IFileSystem } from '../../domain/interfaces';
 import { NormalizedRule } from '../../domain/models/normalized-rule';

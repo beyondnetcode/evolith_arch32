@@ -4,6 +4,9 @@
 
 Accepted
 
+## Date
+2026-05-27
+
 ## Context and Problem Statement
 
 Evolith starts product implementations as a progressive architecture, commonly beginning with a Modular Monolith before any justified migration to distributed modules or microservices.

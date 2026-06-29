@@ -5,6 +5,9 @@
 ## Estado
 Aceptado
 
+## Fecha
+2026-06-20
+
 ## Contexto
 La adopción de la Topología de IA Agéntica en Evolith introduce agentes autónomos que iteran, razonan y llaman a herramientas externas (MCP) a través de múltiples ciclos. A diferencia de las solicitudes de API deterministas estándar, las interacciones agénticas (como los bucles ReAct) pueden consumir cantidades muy variables de tokens LLM por interacción de usuario.
 Sin una observabilidad estricta, un bucle atascado o una alucinación puede agotar los presupuestos de la API rápidamente, y se vuelve imposible atribuir costos a dominios, usuarios o flujos de trabajo específicos.

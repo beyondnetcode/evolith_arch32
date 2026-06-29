@@ -5,6 +5,9 @@
 
 ## Status
 Aceptado
+## Fecha
+2026-06-03
+
 ## Context
 Evolith es un corpus de referencia de arquitectura progresiva. A medida que crece el ecosistema, los equipos necesitan una forma gobernada de capturar ideas arquitectónicas útiles de fuentes externas, como libros, charlas, vídeos, repositorios, experiencia de producción y lecciones de UMS.
 

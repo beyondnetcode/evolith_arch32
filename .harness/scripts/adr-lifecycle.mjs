@@ -198,15 +198,33 @@ if (command === "--check-only") {
 
     for (const file of fs.readdirSync(runtimePath)) {
       if (!file.endsWith(".md")) continue;
+      // README/index files (e.g. android/README.es.md) are navigation indexes,
+      // not ADRs, so they carry no Status/Date header — skip them.
+      if (/^README(\.[a-z]{2})?\.md$/i.test(file)) continue;
       checked++;
       const filePath = path.join(runtimePath, file);
       const content = fs.readFileSync(filePath, "utf8");
 
-      if (!/\*\*Status\*\*|^#{1,3}\s+Status/m.test(content)) {
+      // ADRs declare Status/Date in several valid shapes across the bilingual
+      // corpus: as a heading (`## Status` / `## Estado` / `## Estatus`), as a
+      // bold field (`**Status:**`, `* **Date:**`, `**Fecha:**`), or inside a
+      // `## Metadata` / `## Metadatos` section. Accept all of them (EN + ES) so
+      // legitimately-formatted ADRs are not flagged.
+      // Match the field as: a heading (`## Status`, `## 1. Status`), a bold field
+      // including inside a table or list (`**Status:**`, `| **Status** |`,
+      // `* **Date:**`), or inside a `## Metadata` / `## Metadatos` section.
+      const hasMetadataSection = /^#{1,4}\s+(\d+\.\s+)?.*\b(Metadata|Metadatos)\b/im.test(content);
+      const hasStatus = hasMetadataSection
+        || /^[ \t>*|-]*\*\*\s*(Status|Estado|Estatus)\b/im.test(content)
+        || /^#{1,4}\s+(\d+\.\s+)?(Status|Estado|Estatus)\b/im.test(content);
+      const hasDate = hasMetadataSection
+        || /^[ \t>*|-]*\*\*\s*(Date|Fecha)\b/im.test(content)
+        || /^#{1,4}\s+(\d+\.\s+)?(Date|Fecha)\b/im.test(content);
+      if (!hasStatus) {
         console.error(`  ✗ ${runtime}/${file}: missing Status header`);
         errors++;
       }
-      if (!/\*\*Date\*\*|^#{1,3}\s+Date/m.test(content)) {
+      if (!hasDate) {
         console.error(`  ✗ ${runtime}/${file}: missing Date header`);
         errors++;
       }

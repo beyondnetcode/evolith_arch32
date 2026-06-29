@@ -3,6 +3,9 @@
 ## Estado
 Aceptado
 
+## Fecha
+2026-06-03
+
 ## Contexto
 Los repositorios satelite necesitan un modelo comun de ramas que mantenga estable la produccion sin esconder el trabajo en ramas locales de larga vida. La linea base debe soportar integracion continua, validacion tecnica, aceptacion de usuario, preparacion de releases y correcciones urgentes de produccion sin agregar complejidad innecesaria para equipos pequenos.
 

@@ -3,6 +3,9 @@
 ## Estado
 Aceptado
 
+## Fecha
+2026-05-29
+
 ## Contexto
 A medida que el ecosistema evoluciona hacia un Monolito Progresivo, la proliferación de carpetas anidadas y la falta de convenciones estrictas de nombres han generado una alta carga cognitiva para los equipos de ingeniería. Se requería una política inmutable que unificara la estructura de directorios, redujera el ruido visual de la raíz, separara el código fuente del corpus de referencia y garantizara el principio de **Docs-as-Code**.
 

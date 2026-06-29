@@ -3,6 +3,9 @@
 ## Status
 Superseded by [ADR 0085](./0085-agnostic-opa-wasm-distribution.md)
 
+## Date
+2026-06-22
+
 ## Context
 As defined in [ADR 0041 (Dual-Engine Policy Evaluation)](./0041-dual-engine-policy-evaluation.md), Evolith utilizes Open Policy Agent (OPA) to enforce architectural constraints and rules. The BFF (Backend-For-Frontend) and MCP (Model Context Protocol) components also rely on these rulesets dynamically during runtime. 
 

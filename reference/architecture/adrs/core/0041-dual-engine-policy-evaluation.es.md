@@ -3,6 +3,9 @@
 ## Estado
 Aceptado
 
+## Fecha
+2026-06-11
+
 ## Contexto
 El gobierno arquitectónico de Evolith actualmente se basa en archivos JSON que contienen reglas y un CLI personalizado en TypeScript (`RuleEvaluationEngine`) para analizarlos y evaluar el espacio de trabajo físico de los repositorios satélite. Este modelo es óptimo para GitOps y el consumo por parte de agentes de IA (a través de esquemas JSON). Sin embargo, a medida que las reglas se vuelven más complejas, escribir código imperativo en TypeScript para cada nuevo invariante arquitectónico se convierte en un cuello de botella y restringe la interoperabilidad con los ecosistemas de políticas cloud-native estándar.
 

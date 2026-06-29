@@ -8,6 +8,12 @@ on:
   push:
     branches: [main]
     tags: ['v*']
+  # GT-324/W-Enforce: run the engine test + boundary-guard jobs on every PR to
+  # main/develop. The deploy/docker/publish jobs below stay ref-guarded
+  # (if: github.ref == main || tags), so PRs exercise tests + the
+  # STATELESS_CORE_REPOSITORY_BAN guard without triggering any deploy.
+  pull_request:
+    branches: [main, develop]
   workflow_dispatch:
 
 jobs:

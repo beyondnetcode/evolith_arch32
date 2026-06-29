@@ -1,5 +1,5 @@
 import { IFileSystem, ILogger } from '../../domain/interfaces';
-import { SatelliteManifest, EvaluationVerdict, GateEvaluationResult, RuleEvaluation, EvaluationSeverity } from '../../domain/satellite-manifest';
+import { SatelliteManifest, EvaluationVerdict, GateEvaluationResult, RuleEvaluation, EvaluationSeverity, EvaluationFacts } from '../../domain/satellite-manifest';
 import { TopologyCatalogService, TopologyManifest } from './topology-catalog.service';
 import { SdlcDataLoaderService, StructuredGate } from './sdlc-data-loader.service';
 import { RulesetValidatorService } from '../validators/ruleset-validator.service';
@@ -53,7 +53,7 @@ export class SatelliteEvaluationPipeline {
     for (const phaseId of phaseIds) {
       const gates = await this.sdlcDataLoader.loadGatesForPhase(phaseId);
       for (const gate of gates) {
-        const result = await this.evaluateGate(gate, manifest.satellitePath, corePath, topology);
+        const result = await this.evaluateGate(gate, manifest.satellitePath, corePath, topology, manifest.facts);
         gateResults.push(result);
       }
     }
@@ -128,6 +128,7 @@ export class SatelliteEvaluationPipeline {
     satellitePath: string,
     corePath: string,
     topology: string | null,
+    facts?: EvaluationFacts,
   ): Promise<GateEvaluationResult> {
     const evaluations: RuleEvaluation[] = [];
 
@@ -179,7 +180,7 @@ export class SatelliteEvaluationPipeline {
             description: artifact.validation,
             engine: 'opa',
           } as any],
-          { satellitePath, corePath }
+          { satellitePath, corePath, facts }
         );
 
         const opaResult = opaResults[0];

@@ -108,6 +108,19 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
   - [ ] Bilingual docs; English for machine-readable artifacts (ADR-0090).
 - **Dependencies:** `GT-380`; Tracker availability.
 
+#### GT-382
+
+**Title:** Context-aware OPA verdicts are inert — make threaded `input.context` facts affect the gate verdict
+
+- **Purpose:** GT-380 threads the canonical `EvaluationContext` facts into the OPA `input` (`input.context`/`input.gate`/`input.evidence`), but `OpaEvaluator.evaluateAll` filters policy violations with `violations.filter(v => v.id === rule.id)` where `rule.id` is the path-derived id (`deriveRuleId('rulesets/opa/dod.rego') === 'opa-dod'`). The context-aware policies emit namespaced ids (`DOD-*`, `CB-*`, `PG-*`), so a real violation produced from threaded facts is **silently discarded** and the gate is reported `passed`. The threading machinery is correct but currently has zero effect on any verdict.
+- **Roadmap phase:** R4 (follow-on to GT-380). **Impact:** `packages/core-domain/.../opa-evaluator.ts`, `rulesets/opa/{dod,compliance-baseline}.rego`.
+- **Complexity:** M
+- **Acceptance criteria:**
+  - [ ] A failing threaded fact (e.g. `input.context.dod.coveragePercent < 80`) flips the corresponding gate verdict to `failed` (integration test through `SatelliteEvaluationPipeline.evaluate`), for dod AND compliance-baseline AND phase-gates.
+  - [ ] No FS-path regression: when no `input.context.dod`/`spec` is declared, the policies emit no violations (add a "no-facts → no-opinion" guard to `dod.rego`/`compliance-baseline.rego` so the existing satellite-validation path stays green — TODAY they would fire `DOD-03..10`/`CB-*` if the id filter were naively fixed).
+  - [ ] Native+OPA parity 0 drift; full OPA + core-domain/CLI/MCP suites green.
+- **Dependencies:** `GT-380`.
+
 #### GT-363
 
 **Title:** GitHub API integration client — secure auth + repo operations

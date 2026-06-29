@@ -39,6 +39,35 @@ describe('OpaInputBuilder', () => {
     expect(input.core.cli.mcpServerSource).toBeNull();
   });
 
+  it('omits context/gate/evidence when ctx.facts is undefined (GT-380 byte-for-byte fallback)', async () => {
+    const input = await new OpaInputBuilder(fsMock()).build(ctx) as any;
+    expect(input.context).toBeUndefined();
+    expect(input.gate).toBeUndefined();
+    expect(input.evidence).toBeUndefined();
+    expect(input.waiver).toBeUndefined();
+    expect(input.tenantId).toBeUndefined();
+    expect(input.evaluationDate).toBeUndefined();
+  });
+
+  it('merges declared facts into input.gate/evidence/context/tenantId without touching satellite/core (GT-380)', async () => {
+    const facts = {
+      context: { tenant: { tenantId: 't1' }, dod: { coveragePercent: 90 } },
+      gate: { phase: 1, mandatoryEvidence: [{ artifact: 'adr.md' }] },
+      evidence: [{ artifact: 'adr.md', status: 'present' }],
+      tenantId: 't1',
+    };
+    const input = await new OpaInputBuilder(fsMock()).build({ ...ctx, facts }) as any;
+    expect(input.gate.mandatoryEvidence[0].artifact).toBe('adr.md');
+    expect(input.evidence[0].artifact).toBe('adr.md');
+    expect(input.context.tenant.tenantId).toBe('t1');
+    expect(input.context.dod.coveragePercent).toBe(90);
+    expect(input.tenantId).toBe('t1');
+    // FS-scanned surfaces remain intact (not overwritten).
+    expect(input.satellitePath).toBe(SAT);
+    expect(input.satellite.directories).toEqual([]);
+    expect(input.core.adrs).toEqual([]);
+  });
+
   it('builds a populated input across satellite and core surfaces', async () => {
     const satPkg = path.join(SAT, 'package.json');
     const satLock = path.join(SAT, 'package-lock.json');

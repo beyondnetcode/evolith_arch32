@@ -1,11 +1,11 @@
 package evolith.dod
 
-# GT-380 / L1c: read Definition-of-Done facts from the canonical EvaluationContext
-# (`input.context.dod`) when present, falling back to the legacy `input.story`.
-# This removes the hard dependency on a Tracker "story" entity at the input root
-# (the conflation flagged by the Tracker<->Core compatibility audit). Behavior is
-# unchanged for callers that still send `input.story`.
-dod := object.get(object.get(input, "context", {}), "dod", object.get(input, "story", {}))
+# GT-380 / L1c: Definition-of-Done facts are read ONLY from the canonical
+# EvaluationContext (`input.context.dod`). The legacy `input.story` root (a Tracker
+# "story" entity) has been removed — no Core rule depends on stories. When the
+# consumer declares no DoD facts, `dod` resolves to `{}` and the checks evaluate
+# against it.
+dod := object.get(object.get(input, "context", {}), "dod", {})
 
 violations[{"id": "DOD-01", "message": "Code review count must be >= 1"}] {
     dod.reviewCount < 1

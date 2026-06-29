@@ -14,6 +14,39 @@ import { GateVerdict } from './gate-evidence';
  * In production, this is typically read from the satellite's
  * `evolith.yaml` or `topology.manifest.json`.
  */
+/**
+ * Projected, OPA-input-shaped view of the *declared facts* a consumer sends on
+ * an `EvaluationContext` (artifacts/evidence/gate/constraints). GT-380 L1c.
+ *
+ * Carried OPTIONALLY on the manifest so the OpaInputBuilder can merge it into
+ * the OPA `input` document (`input.context` / `input.gate` / `input.evidence` /
+ * `input.waiver` / root `tenantId` / `evaluationDate`). Absent for legacy /
+ * minimal callers — when undefined, the OPA input is byte-for-byte identical to
+ * the FS-only build, so the disk-scan path and Native/OPA parity are unchanged.
+ */
+export interface EvaluationFacts {
+  /** Echoed canonical context + declared sub-configs (dod/spec) for context-aware policies. */
+  readonly context?: Readonly<Record<string, unknown>>;
+  /** Phase-gate shape consumed by phase-gates.rego (`input.gate`). */
+  readonly gate?: {
+    readonly phase?: number;
+    readonly mandatoryEvidence?: readonly { readonly artifact: string }[];
+    readonly blockingCriteria?: readonly { readonly criterion: string }[];
+  };
+  /** Presented-artifact evidence (`input.evidence[].artifact`) for phase-gates.rego. */
+  readonly evidence?: readonly { readonly artifact: string; readonly status?: string }[];
+  /** Waivers (`input.waiver`) for phase-gates.rego. */
+  readonly waiver?: readonly {
+    readonly criterion: string;
+    readonly status: string;
+    readonly expirationDate?: string;
+  }[];
+  /** Opaque tenant echo for the gate audit field (`input.tenantId`). */
+  readonly tenantId?: string;
+  /** ISO-8601 date for waiver-expiry comparison (`input.evaluationDate`). */
+  readonly evaluationDate?: string;
+}
+
 export interface SatelliteManifest {
   /** Filesystem path to the satellite repository */
   satellitePath: string;
@@ -33,6 +66,12 @@ export interface SatelliteManifest {
    * Values: f1, f2, f3, f4, f5
    */
   phase?: string;
+
+  /**
+   * GT-380 L1c: declared facts projected from the canonical EvaluationContext,
+   * threaded down to the OPA input. Absent on the legacy CLI/MCP manifest path.
+   */
+  facts?: EvaluationFacts;
 }
 
 /**

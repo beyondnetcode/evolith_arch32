@@ -32,6 +32,16 @@ The five Evolith Compliance Baseline artifacts listed in Section 7 are **always 
 
 ---
 
+## Artifact Ownership — Core definitions vs. external work items (ADR-0101 / GT-380)
+
+> **Normative (ADR-0101, Accepted 2026-06-29):** Evolith Core is a **stateless Evaluation Engine**. It owns only **versioned definitions/standards** (phases, gates, artifact *templates*, blueprints, topologies, rulesets, OPA policies) and **evaluates** the context a consumer sends. It never owns, persists, or mandates **operational work items**.
+
+Agile/delivery work items — **Epics, Functional Stories, Technical Stories, Evolith User Stories, the Agile Backlog, Story Seeds, the Epic Candidate Matrix, Sprints and tasks** — are **`ExternalReferenceContext`**: owned and persisted by **Evolith Tracker** and the external delivery tools (Jira / Azure DevOps / GitHub Projects). They enter Core evaluation only as **references** (system + id + content hash) or as **declared evidence/facts** inside the `EvaluationContext`, **never as Core-owned gate artifacts**.
+
+Consequently, **as of GT-380 no Core gate mandates a story/epic/backlog artifact**: the canonical gates `gate-f2.json` / `gate-f3.json` no longer require "Functional Stories" / "Technical Stories", and `dod.rego` reads DoD facts from `input.context.dod` (not a Tracker `input.story`). Where the per-phase tables below still list these work items as inputs, read them as the **agile authoring workflow the consumer (Tracker) runs** — they are the consumer's responsibility and reach the Core as `ExternalReferenceContext`, **not** as Core gate evidence whose absence the Core blocks on. The artifact **templates/standards** the Core publishes (e.g. `functional-story-template.md`) remain valid as **authoring guidance** (Core definitions), distinct from the **instances** (Tracker-owned references).
+
+---
+
 ## 1. Overview: Where Evolith Enters the Lifecycle
 
 ```mermaid

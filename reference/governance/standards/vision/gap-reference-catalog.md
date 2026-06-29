@@ -54,8 +54,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Roadmap phase:** R1. **Impact:** `core-domain`, `rulesets/schema/`.
 - **Complexity:** L
 - **Acceptance criteria:**
-  - [ ] `evaluation-context.schema.json` / `evaluation-result.schema.json` validate round-trip; `schemaVersion` mandatory.
-  - [ ] `tenantId`/`productId`/`initiativeId` are `string`; `DecisionRecommendation.binding` literal `false`.
+  - [x] `evaluation-context.schema.json` / `evaluation-result.schema.json` validate round-trip; `schemaVersion` mandatory.
+  - [x] `tenantId`/`productId`/`initiativeId` are `string`; `DecisionRecommendation.binding` literal `false`.
   - [ ] ESLint boundary guard fails CI if a `*Repository` for product/initiative/evidence/decision appears.
 - **Dependencies:** `GT-376`.
 

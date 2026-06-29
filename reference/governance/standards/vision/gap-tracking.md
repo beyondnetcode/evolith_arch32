@@ -4,7 +4,7 @@
 
 **Status:** Active Tracking
 **Owner:** Evolith Architecture Board
-**Last Updated:** 2026-06-28 (Wave: satellite provisioning wave — GT-363, GT-364, GT-365, GT-366, GT-367, GT-368, GT-369, GT-370, GT-371, GT-372, GT-373, GT-374 closed; all 12 satellite provisioning GTs implemented and verified.)
+**Last Updated:** 2026-06-28 (Wave: Product/Initiative governance redesign — added `GT-375` (PENDING, P0/XL) for the governance↔execution boundary; see ADR-0100 and UP-002. Prior wave: satellite provisioning — GT-363…GT-374 closed.)
 **Gap Details:** [Gap Reference Catalog](./gap-reference-catalog.md)
 
 This board is the single source of truth for technical debt, gaps, opportunities, enablers, priority, and status. Select a gap ID to open its problem statement, purpose, evidence, closure criteria, and references.
@@ -13,6 +13,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|:---:|
+| [`GT-375`](./gap-reference-catalog.md#gt-375) | Product/Initiative governance model — separate SDLC governance from operational execution; `Producto`/`Iniciativa` as primary units; epics/stories as optional `ExternalReference`; advisory capability (`AdvisoryRecord`). Per ADR-0100 / UP-002. | `Cross` | Cross | P0 | XL | `PENDING` |
 | [`GT-359`](./gap-reference-catalog.md#gt-359) | Define `SatelliteManifest` ingestion contract schema | `Core Domain` | Cross | P0 | M | `DONE` |
 | [`GT-363`](./gap-reference-catalog.md#gt-363) | GitHub API integration client — secure auth + repo operations (create, configure, branch protection, rulesets, webhooks) | `Infra` | Cross | P0 | M | `DONE` |
 | [`GT-362`](./gap-reference-catalog.md#gt-362) | Implement runtime enforcement for Rego policies in evaluation engine | `Core Domain` | Cross | P0 | L | `DONE` |
@@ -422,6 +423,8 @@ This board is the single source of truth for technical debt, gaps, opportunities
 **Wave 2026-06-27 (maturity audit + execution):** Re-validated every product against real `build`+`test` runs and found the board's prior "329/330 done" over-reported reality. Added `GT-331`…`GT-357`. **APPLIED + validated this wave:** GT-331 (MCP version), GT-332/333 (MCP secret-log redaction + timing-safe key, security), GT-334 (opa-wasm dep), GT-335 (read-gap-tracking fix), GT-336/337 (SDK /api prefix + envelope), GT-338 (core exports + README), GT-339 (core-api propose-advance contract bug), GT-340 (core-api WORKSPACE_ROOT → 105/105), GT-341 (inventory generator → 27/9/8), GT-342 (README 8 topologies). **OPEN (P0):** GT-343 phase-vocabulary EPIC, GT-344 CLI ENOENT crash, GT-347 broken core OPA suite. Full detail (impact/risk/files/fix/evidence/acceptance): [Gap Reference Catalog §2](./gap-reference-catalog.md). No product is production-ready while the three P0s remain open.
 
 **Wave 2026-06-28 (GitHub satellite repositories audit):** Added 12 new gaps `GT-363`…`GT-374` covering the complete satellite repository creation and provisioning capability — none of this capability existed: GitHub API client (GT-363), `InitializeSatelliteUseCase` (GT-364), `evolith satellite create` CLI command (GT-365), `evolith satellite adopt` CLI command (GT-366), Core API registry CRUD (GT-367), MCP provisioning tools (GT-368), `SatelliteRecord` entity (GT-369), inheritance propagation (GT-370), satellite-to-product/tenant linking (GT-371), audit trail (GT-372), Tracker integration (GT-373), and `upgrade.command` de-stub (GT-374). **Critical observation:** GT-360/GT-361 code-implemented in commit `ce9a53fe` (EvaluationController + ADR-0073 envelope) but board status not yet updated — flagged for formal closure by Architecture Board.
+
+**Wave 2026-06-28 (Product/Initiative governance redesign):** Added `GT-375` (P0/XL, PENDING) capturing the governance↔execution boundary redesign: `Producto`/`Iniciativa` as primary governance units (one product → one or many concurrent initiatives, each governing its own SDLC flow), epics/stories/tasks demoted to optional `ExternalReference`, three output types separated (`ValidationResult` evaluation / `DecisionRecord` binding decision / `AdvisoryRecord` non-binding architectural advisory), and the Core positioned as both governance authority and architectural advisor. Anchored in `reference/core/product-initiative-governance-redesign.es.md`, **ADR-0100**, and **UP-002**. Documentation-only proposal — no code change authorized until Architecture Board approval.
 
 **Ordering:** one table, ordered by status (pending then completed), then criticality (`P0` → `P1` → `P2` → `P3`), then complexity (`XS` → `S` → `M` → `L` → `XL`). `GT-*` IDs link to the [Gap Reference Catalog](./gap-reference-catalog.md); `MT-A*` IDs link to the supporting [Multi-Topology implementation plan](./multi-topology-reference-corpus-implementation-plan.md).
 

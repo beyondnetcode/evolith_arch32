@@ -12,6 +12,25 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 
 ## 1. Detalle de Gaps
 
+#### GT-375
+
+**Título:** Modelo de gobierno Producto/Iniciativa — separar gobierno SDLC de ejecución operativa
+
+- **Propósito:** Resolver la conflación gobierno↔ejecución: el Core declara no ser una plataforma de gestión de tareas pero exige artefactos ágiles como evidencia bloqueante de gate, y no tiene entidad `Producto`/`Iniciativa`. Convertir `Producto` e `Iniciativa` en las unidades primarias de gobierno (un Producto tiene una o muchas Iniciativas concurrentes, cada una gobernando su propio flujo SDLC), degradar épicas/historias/tareas a `ExternalReference` opcional, y añadir una capacidad de asesoría arquitectónica no vinculante (`AdvisoryRecord`).
+- **Evidencia:** `reference/core/README.md:47` ("a task-management platform" en "What Evolith Core Is Not", encabezado `:41`) contradicho por `reference/governance/sdlc/sdlc-evolith-artifact-mapping.md:130,132,133,223` (Stories/Backlog/Technical Stories **Required**) y `:209` ("story readiness" cierra el gate F2). `packages/core-domain/src/domain/entities/` solo tiene `blueprint.ts` (sin Producto/Iniciativa); `gate-evidence.ts:87-89` (`initiative?: string`, "Never persisted or interpreted"). Precedente de frontera ya aplicado: `executive-scorecard-rule.handler.ts:55` ("Sprint throughput requires tracker data").
+- **Impacto:** Transversal — Core Domain, Core API, Rulesets, OPA, Blueprints, Documentación, integración con Tracker.
+- **Riesgo:** Sobre-modelado, ruptura de satélites, doble fuente de verdad con Jira; mitigado por roadmap incremental R0–R5, deprecación con grandfathering, y `ExternalReference` como única costura operativa.
+- **Archivos afectados:** `packages/core-domain/src/domain/entities/`, `gate-evidence.ts`, `gates/decision/gate-decision.ts`, `rulesets/schema/*`, `rulesets/sdlc/phase-gates.rules.json`, `rulesets/opa/{phase-gates,dod,multi-tenancy,abac-mcp-tool-access}.rego`, `rulesets/satellite-contracts/satellite-contracts.rules.json`, `reference/governance/sdlc/sdlc-evolith-artifact-mapping.md`, `reference/core/README.md`, `apps/core-api/src/presentation/controllers/`.
+- **Complejidad:** XL
+- **Solución propuesta:** Ejecutar el roadmap R0–R5 de [Rediseño de Gobierno Producto/Iniciativa](./../../../core/product-initiative-governance-redesign.es.md), gobernado por **ADR-0100** y **UP-002**: (R0) ADR + `GateDecision`→`CoreGateVerdict` + `'WAIVED'`→`Verdict.WAIVE`; (R1) entidades `Producto`/`Iniciativa` + anclaje de `Evidencia`; (R2) externalizar schemas ágiles; (R3) `input.context` en rulesets/OPA; (R4) blueprints/docs; (R5) integración Tracker + runtime de `AdvisoryRecord`.
+- **Criterios de aceptación:**
+  - [ ] ADR-0100 aprobado; `Producto`/`Iniciativa` son las unidades primarias de gobierno (1:N, concurrentes, cada una con su flujo SDLC).
+  - [ ] Épicas/historias/tareas solo como `ExternalReference` opcional; ningún gate del Core depende de historias.
+  - [ ] `ValidationResult` / `DecisionRecord` / `AdvisoryRecord` separados; `Verdict` reutilizado; `GateDecision`→`CoreGateVerdict`.
+  - [ ] `AdvisoryRecord` (asistencia arquitectónica no vinculante) modelado y expuesto vía REST/CLI/MCP.
+  - [ ] `EVOLITH_PARITY_FULL=true` con 0 drift; satélites grandfathered (contrato arranca en `warn`).
+- **Dependencias:** ADR-0100, UP-002. Disponibilidad del Tracker para la emisión runtime de `DecisionRecord` (R5).
+
 #### GT-363
 
 **Título:** Cliente de integración con GitHub API — auth seguro + operaciones de repositorio

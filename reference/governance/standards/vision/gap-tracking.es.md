@@ -4,7 +4,7 @@
 
 **Estado:** Seguimiento Activo
 **Responsable:** Evolith Architecture Board
-**Última Actualización:** 2026-06-28 (Wave: oleada de aprovisionamiento satelital — GT-363, GT-364, GT-365, GT-366, GT-367, GT-368, GT-369, GT-370, GT-371, GT-372, GT-373, GT-374 cerrados; los 12 GTs de aprovisionamiento satelital implementados y verificados.)
+**Última Actualización:** 2026-06-28 (Wave: rediseño de gobierno Producto/Iniciativa — añadido `GT-375` (PENDIENTE, P0/XL) para la frontera gobierno↔ejecución; ver ADR-0100 y UP-002. Wave previa: aprovisionamiento satelital — GT-363…GT-374 cerrados.)
 **Detalle de Gaps:** [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md)
 
 Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunidades, habilitadores, prioridad y estado. Selecciona un ID para abrir la descripción del problema, propósito, evidencia, criterios de cierre y referencias.
@@ -13,6 +13,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 
 | ID | Gap | Componente | Fase | Criticidad | Complejidad | Estado |
 |---|---|:---:|:---:|:---:|:---:|:---:|
+| [`GT-375`](./gap-reference-catalog.es.md#gt-375) | Modelo de gobierno Producto/Iniciativa — separar gobierno SDLC de ejecución operativa; `Producto`/`Iniciativa` como unidades primarias; épicas/historias como `ExternalReference` opcional; capacidad de asesoría (`AdvisoryRecord`). Según ADR-0100 / UP-002. | `Cross` | Cross | P0 | XL | `PENDIENTE` |
 | [`GT-359`](./gap-reference-catalog.es.md#gt-359) | Definir esquema de contrato de ingesta `SatelliteManifest` | `Core Domain` | Cross | P0 | M | `COMPLETADO` |
 | [`GT-363`](./gap-reference-catalog.es.md#gt-363) | Cliente de integración con GitHub API — auth seguro + operaciones de repo (crear, configurar, branch protection, rulesets, webhooks) | `Infra` | Cross | P0 | M | `COMPLETADO` |
 | [`GT-362`](./gap-reference-catalog.es.md#gt-362) | Implementar enforcement en runtime para políticas Rego | `Core Domain` | Cross | P0 | L | `COMPLETADO` |
@@ -408,6 +409,8 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 **Oleada 2026-06-25 (Auditoría de cumplimiento de topologías):** Añadidos 3 gaps nuevos `GT-277`…`GT-279` del playbook de auditoría automatizada de topologías (`.harness/playbooks/topology-compliance-audit.mjs`). Las 8 topologías aceptadas puntuaron 18/21 (86%) — faltan las 3 interfaces framework obligatorias: especificaciones OpenAPI, manifiestos MCP y archivos de flujo CLI. El script de auditoría ahora es ejecutable autónomo y está registrado como herramienta ejecutable por Wilson vía `run-wilson-audit.mjs --topology`.
 
 **Oleada 2026-06-25 (auditoría Wilson de plano de control):** Añadidos 3 gaps nuevos `GT-274`…`GT-276`, reabierto `GT-267` porque los tests actuales de Core API/MCP/CLI siguen fallando y reabierto `GT-272` porque los defaults Helm aún descargan bundles OPA por HTTP sin firma. La auditoría cubrió explícitamente todas las topologías aceptadas (`modular-monolith`, `distributed-modules`, `microservices`, `serverless`, `event-driven`, `data-mesh`, `edge-computing`, `agentic-ai`) y ambos motores de reglas: manifiestos topológicos pasaron, cobertura Native/OPA pasó, tests OPA topológicos pasaron y `EVOLITH_PARITY_FULL=true node .harness/scripts/ci/27-opa-parity-gate.mjs` evaluó 16 fixtures con 0 drift.
+
+**Oleada 2026-06-28 (rediseño de gobierno Producto/Iniciativa):** Añadido `GT-375` (P0/XL, PENDIENTE) que captura el rediseño de la frontera gobierno↔ejecución: `Producto`/`Iniciativa` como unidades primarias de gobierno (un producto → una o muchas iniciativas concurrentes, cada una gobernando su propio flujo SDLC), épicas/historias/tareas degradadas a `ExternalReference` opcional, tres tipos de salida separados (`ValidationResult` evaluación / `DecisionRecord` decisión vinculante / `AdvisoryRecord` asesoría arquitectónica no vinculante), y el Core posicionado como autoridad de gobierno y asesor arquitectónico. Anclado en `reference/core/product-initiative-governance-redesign.es.md`, **ADR-0100** y **UP-002**. Propuesta solo-documentación — sin cambio de código autorizado hasta aprobación del Architecture Board.
 
 **Ordenamiento:** una sola tabla, ordenada por estado (pendientes luego completados), luego criticidad (`P0` → `P1` → `P2` → `P3`), luego complejidad (`XS` → `S` → `M` → `L` → `XL`). Los IDs `GT-*` enlazan al [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md); los IDs `MT-A*` enlazan al [plan de implementación Multi-Topology](./multi-topology-reference-corpus-implementation-plan.es.md).
 

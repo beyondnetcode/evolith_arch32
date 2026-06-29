@@ -10,6 +10,10 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./evaluation/contracts": {
+      "types": "./dist/evaluation/contracts/index.d.ts",
+      "default": "./dist/evaluation/contracts/index.js"
+    },
     "./application/use-cases": {
       "types": "./dist/application/use-cases/index.d.ts",
       "default": "./dist/application/use-cases/index.js"

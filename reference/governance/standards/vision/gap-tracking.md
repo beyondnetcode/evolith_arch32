@@ -446,6 +446,8 @@ This board is the single source of truth for technical debt, gaps, opportunities
 
 **Wave 2026-06-28 (GT-376 — code renames, R0):** Renamed the Core value object `GateDecision` → `CoreGateVerdict` (`makeCoreGateVerdict`), freeing `GateDecision` for the Tracker's canonical binding decision (ADR-0101). Deprecated `GateDecision`/`makeGateDecision` aliases kept (non-breaking). `migrateLegacyGateDecision` maps legacy `'WAIVED'` → `Verdict.WAIVE` (now tested). `GT-376` stays `IN-PROGRESS` — R0 **code** debt closed; ADR-0101 formal acceptance remains an Architecture Board step. core-domain **657/657**. Commit `5b705d8f`.
 
+**Wave 2026-06-28 (GT-379 — extract + test kind-evaluators):** Moved the inline architecture/checkpoint/topology `KindEvaluator`s out of `AppModule` into a unit-tested module (`apps/core-api/.../application/evaluation/kind-evaluators.ts`, +10 tests). Behavior unchanged; mapping logic now covered. core-api **122/122** (pre-existing satellites suite still red). **L1c/GT-380 (OPA rego) is environment-blocked locally** (no `opa` binary → cannot compile `policy.wasm` / run the native↔OPA parity gate); the rego edits (`input.context`, wire `phase-gates.rego`, re-anchor `dod`/`compliance`) are deferred to CI / an `opa`-equipped environment. Commit pending in this wave.
+
 **Ordering:** one table, ordered by status (pending then completed), then criticality (`P0` → `P1` → `P2` → `P3`), then complexity (`XS` → `S` → `M` → `L` → `XL`). `GT-*` IDs link to the [Gap Reference Catalog](./gap-reference-catalog.md); `MT-A*` IDs link to the supporting [Multi-Topology implementation plan](./multi-topology-reference-corpus-implementation-plan.md).
 
 ---

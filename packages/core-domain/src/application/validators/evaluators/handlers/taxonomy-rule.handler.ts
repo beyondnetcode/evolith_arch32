@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { IFileSystem } from '../../../../domain/interfaces';
 import { NormalizedRule } from '../../../../domain/models/normalized-rule';
-import { EvaluationContext, RuleEvaluationResult } from '../evaluator.interface';
+import { WorkspaceEvaluationContext, RuleEvaluationResult } from '../evaluator.interface';
 import { INativeRuleHandler } from './rule-handler.interface';
 
 export class TaxonomyRuleHandler implements INativeRuleHandler {
@@ -11,14 +11,14 @@ export class TaxonomyRuleHandler implements INativeRuleHandler {
     return rule.id === 'TAX-05' || rule.id === 'TAX-06' || rule.id === 'TAX-07' || rule.id === 'TAX-08';
   }
 
-  async evaluate(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  async evaluate(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     if (rule.id === 'TAX-05' || rule.id === 'TAX-06') return this.evalDirectoryStructure(rule, ctx);
     if (rule.id === 'TAX-07' || rule.id === 'TAX-08') return this.evalAdrNaming(rule, ctx);
 
     return { rule, result: 'skipped', message: 'Unhandled TAX rule' };
   }
 
-  private async evalDirectoryStructure(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  private async evalDirectoryStructure(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     if (rule.id === 'TAX-05') {
       const expected = ['reference', 'rulesets', 'sdk', '.harness'];
       const missing = [];
@@ -53,7 +53,7 @@ export class TaxonomyRuleHandler implements INativeRuleHandler {
     return { rule, result: 'skipped', message: 'Unhandled TAX rule' };
   }
 
-  private async evalAdrNaming(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  private async evalAdrNaming(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     const adrDir = path.join(ctx.corePath, 'reference', 'architecture', 'adrs');
     if (!await this.fs.exists(adrDir)) {
       return { rule, result: 'skipped', message: 'ADR directory not found' };

@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { IFileSystem, IConfigParser } from '../../../../domain/interfaces';
 import { NormalizedRule } from '../../../../domain/models/normalized-rule';
-import { EvaluationContext, RuleEvaluationResult } from '../evaluator.interface';
+import { WorkspaceEvaluationContext, RuleEvaluationResult } from '../evaluator.interface';
 import { INativeRuleHandler } from './rule-handler.interface';
 
 export class SatelliteContractRuleHandler implements INativeRuleHandler {
@@ -11,7 +11,7 @@ export class SatelliteContractRuleHandler implements INativeRuleHandler {
     return rule.id.startsWith('SVC-');
   }
 
-  async evaluate(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  async evaluate(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     switch (rule.id) {
       case 'SVC-01': return this.evalSingleEvolithYaml(rule, ctx);
       case 'SVC-02': return { rule, result: 'skipped', message: 'Satellite name uniqueness requires registry check' };
@@ -22,7 +22,7 @@ export class SatelliteContractRuleHandler implements INativeRuleHandler {
     }
   }
 
-  private async evalSingleEvolithYaml(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  private async evalSingleEvolithYaml(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     const evolithYaml = path.join(ctx.satellitePath, 'evolith.yaml');
     if (!await this.fs.exists(evolithYaml)) {
       return { rule, result: 'failed', message: 'Satellite must have exactly one evolith.yaml in repository root' };
@@ -30,7 +30,7 @@ export class SatelliteContractRuleHandler implements INativeRuleHandler {
     return { rule, result: 'passed' };
   }
 
-  private async evalF1AdrRegistry(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  private async evalF1AdrRegistry(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     const evolithYaml = path.join(ctx.satellitePath, 'evolith.yaml');
     if (!await this.fs.exists(evolithYaml)) {
       return { rule, result: 'skipped', message: 'No evolith.yaml found' };
@@ -50,7 +50,7 @@ export class SatelliteContractRuleHandler implements INativeRuleHandler {
     return { rule, result: 'passed', message: 'Rule applies only to F1 phase satellites' };
   }
 
-  private async evalExtractionReadiness(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  private async evalExtractionReadiness(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     const evolithYaml = path.join(ctx.satellitePath, 'evolith.yaml');
     if (!await this.fs.exists(evolithYaml)) {
       return { rule, result: 'skipped', message: 'No evolith.yaml found' };

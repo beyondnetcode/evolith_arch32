@@ -1,7 +1,7 @@
 /* eslint-disable boundaries/element-types */
 import { IFileSystem, ILogger, IConfigParser } from '../../domain/interfaces';
 import { ValidationIssue } from './ruleset-validator.service';
-import { IRuleEvaluatorStrategy, EvaluationContext, RuleEvaluationResult } from './evaluators/evaluator.interface';
+import { IRuleEvaluatorStrategy, WorkspaceEvaluationContext, RuleEvaluationResult } from './evaluators/evaluator.interface';
 import { NativeEvaluator } from './evaluators/native-evaluator';
 import { IRulesetRepository } from '../../domain/ports/ruleset-repository.port';
 
@@ -41,7 +41,7 @@ export class RuleEvaluationEngine {
     corePath: string,
   ): Promise<RuleEvaluationResult[]> {
     const rules = await this.rulesetRepo.loadAllRulesets(corePath);
-    const ctx: EvaluationContext = { satellitePath, corePath };
+    const ctx: WorkspaceEvaluationContext = { satellitePath, corePath };
     const results: RuleEvaluationResult[] = [];
     
     results.push(...await this.strategy.evaluateAll(rules, ctx));

@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { IFileSystem } from '../../../../domain/interfaces';
 import { NormalizedRule } from '../../../../domain/models/normalized-rule';
-import { EvaluationContext, RuleEvaluationResult } from '../evaluator.interface';
+import { WorkspaceEvaluationContext, RuleEvaluationResult } from '../evaluator.interface';
 import { INativeRuleHandler } from './rule-handler.interface';
 
 export class CliReleaseRuleHandler implements INativeRuleHandler {
@@ -11,7 +11,7 @@ export class CliReleaseRuleHandler implements INativeRuleHandler {
     return rule.id.startsWith('CLI-RR-');
   }
 
-  async evaluate(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  async evaluate(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     if (rule.id === 'CLI-RR-01') return this.evalBuild(rule, ctx);
     if (rule.id === 'CLI-RR-02') return this.evalTestArtifacts(rule, ctx);
     if (rule.id === 'CLI-RR-03') return this.evalDependencyLock(rule, ctx);
@@ -21,13 +21,13 @@ export class CliReleaseRuleHandler implements INativeRuleHandler {
     return { rule, result: 'skipped', message: 'Unhandled CLI-RR rule' };
   }
 
-  private async evalBuild(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  private async evalBuild(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     const distMain = path.join(ctx.corePath, 'sdk', 'cli', 'dist', 'main.js');
     if (await this.fs.exists(distMain)) return { rule, result: 'passed' };
     return { rule, result: 'failed', message: `dist/main.js not found — run npm run build in sdk/cli` };
   }
 
-  private async evalTestArtifacts(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  private async evalTestArtifacts(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     const distDir = path.join(ctx.corePath, 'sdk', 'cli', 'dist');
     if (!await this.fs.exists(distDir)) {
       return { rule, result: 'failed', message: 'dist/ not found — run npm run build' };
@@ -39,7 +39,7 @@ export class CliReleaseRuleHandler implements INativeRuleHandler {
     return { rule, result: 'passed' };
   }
 
-  private async evalDependencyLock(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  private async evalDependencyLock(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     const candidates = [
       path.join(ctx.corePath, 'package-lock.json'),
       path.join(ctx.corePath, 'sdk', 'cli', 'package-lock.json'),
@@ -50,7 +50,7 @@ export class CliReleaseRuleHandler implements INativeRuleHandler {
     return { rule, result: 'failed', message: 'package-lock.json not found' };
   }
 
-  private async evalMcpSmoke(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  private async evalMcpSmoke(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     const evidenceDir = path.join(ctx.corePath, '.harness', 'evidence');
     if (!await this.fs.exists(evidenceDir)) {
       return { rule, result: 'failed', message: 'No .harness/evidence directory' };
@@ -69,7 +69,7 @@ export class CliReleaseRuleHandler implements INativeRuleHandler {
     return { rule, result: 'passed' };
   }
 
-  private async evalCliDocs(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  private async evalCliDocs(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     const cliDir = path.join(ctx.corePath, 'sdk', 'cli');
     const readme = path.join(cliDir, 'README.md');
     const arch = path.join(cliDir, 'ARCHITECTURE.md');

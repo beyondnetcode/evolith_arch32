@@ -1,7 +1,7 @@
 import { OpaEvaluator } from './opa-evaluator';
 import { createMockFileSystem, createMockLogger } from '../../../test/mocks';
 import { NormalizedRule } from '../../../domain/models/normalized-rule';
-import { EvaluationContext } from './evaluator.interface';
+import { WorkspaceEvaluationContext } from './evaluator.interface';
 import * as path from 'path';
 
 jest.mock('@open-policy-agent/opa-wasm', () => {
@@ -43,7 +43,7 @@ describe('OpaEvaluator', () => {
     sourceFile: 'rules.json',
   };
 
-  const ctx: EvaluationContext = {
+  const ctx: WorkspaceEvaluationContext = {
     satellitePath: '/satellite',
     corePath: '/core',
   };

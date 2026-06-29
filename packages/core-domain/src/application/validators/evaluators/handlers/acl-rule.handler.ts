@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { IFileSystem } from '../../../../domain/interfaces';
 import { NormalizedRule } from '../../../../domain/models/normalized-rule';
-import { EvaluationContext, RuleEvaluationResult } from '../evaluator.interface';
+import { WorkspaceEvaluationContext, RuleEvaluationResult } from '../evaluator.interface';
 import { INativeRuleHandler } from './rule-handler.interface';
 
 export class AclRuleHandler implements INativeRuleHandler {
@@ -12,7 +12,7 @@ export class AclRuleHandler implements INativeRuleHandler {
            rule.id === 'ACL-05' || rule.id === 'ACL-06';
   }
 
-  async evaluate(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  async evaluate(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     switch (rule.id) {
       case 'ACL-02': return this.evalTransformationTraceability(rule, ctx);
       case 'ACL-03': return this.evalRejectNonCompliant(rule, ctx);
@@ -24,7 +24,7 @@ export class AclRuleHandler implements INativeRuleHandler {
   }
 
   private async evalTransformationTraceability(
-    rule: NormalizedRule, ctx: EvaluationContext,
+    rule: NormalizedRule, ctx: WorkspaceEvaluationContext,
   ): Promise<RuleEvaluationResult> {
     const aclDir = path.join(ctx.satellitePath, 'acl');
     if (!await this.fs.exists(aclDir)) {
@@ -45,7 +45,7 @@ export class AclRuleHandler implements INativeRuleHandler {
   }
 
   private async evalRejectNonCompliant(
-    rule: NormalizedRule, ctx: EvaluationContext,
+    rule: NormalizedRule, ctx: WorkspaceEvaluationContext,
   ): Promise<RuleEvaluationResult> {
     const aclDir = path.join(ctx.satellitePath, 'acl');
     if (!await this.fs.exists(aclDir)) {
@@ -55,7 +55,7 @@ export class AclRuleHandler implements INativeRuleHandler {
   }
 
   private async evalVersionSync(
-    rule: NormalizedRule, ctx: EvaluationContext,
+    rule: NormalizedRule, ctx: WorkspaceEvaluationContext,
   ): Promise<RuleEvaluationResult> {
     const evolithYaml = path.join(ctx.satellitePath, 'evolith.yaml');
     if (!await this.fs.exists(evolithYaml)) {
@@ -65,7 +65,7 @@ export class AclRuleHandler implements INativeRuleHandler {
   }
 
   private async evalExplicitContract(
-    rule: NormalizedRule, ctx: EvaluationContext,
+    rule: NormalizedRule, ctx: WorkspaceEvaluationContext,
   ): Promise<RuleEvaluationResult> {
     const aclDir = path.join(ctx.satellitePath, 'acl');
     if (!await this.fs.exists(aclDir)) {
@@ -75,7 +75,7 @@ export class AclRuleHandler implements INativeRuleHandler {
   }
 
   private async evalIsolateExternal(
-    rule: NormalizedRule, ctx: EvaluationContext,
+    rule: NormalizedRule, ctx: WorkspaceEvaluationContext,
   ): Promise<RuleEvaluationResult> {
     const srcDir = path.join(ctx.satellitePath, 'src');
     if (!await this.fs.exists(srcDir)) {

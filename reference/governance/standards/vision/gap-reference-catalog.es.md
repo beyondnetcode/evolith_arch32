@@ -108,6 +108,19 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [ ] Docs bilingües; inglés para artefactos machine-readable (ADR-0090).
 - **Dependencias:** `GT-380`; disponibilidad del Tracker.
 
+#### GT-382
+
+**Título:** Los veredictos OPA context-aware son inertes — hacer que los facts de `input.context` threadeados afecten el veredicto del gate
+
+- **Propósito:** GT-380 threadea los facts del `EvaluationContext` canónico al `input` de OPA (`input.context`/`input.gate`/`input.evidence`), pero `OpaEvaluator.evaluateAll` filtra las violaciones con `violations.filter(v => v.id === rule.id)` donde `rule.id` es el id derivado del path (`deriveRuleId('rulesets/opa/dod.rego') === 'opa-dod'`). Las policies context-aware emiten ids namespaced (`DOD-*`, `CB-*`, `PG-*`), así que una violación real producida desde los facts threadeados se **descarta en silencio** y el gate se reporta `passed`. La maquinaria de threading es correcta pero hoy no tiene efecto en ningún veredicto.
+- **Fase roadmap:** R4 (continuación de GT-380). **Impacto:** `packages/core-domain/.../opa-evaluator.ts`, `rulesets/opa/{dod,compliance-baseline}.rego`.
+- **Complejidad:** M
+- **Criterios de aceptación:**
+  - [ ] Un fact threadeado en fallo (ej. `input.context.dod.coveragePercent < 80`) cambia el veredicto del gate a `failed` (test de integración por `SatelliteEvaluationPipeline.evaluate`), para dod Y compliance-baseline Y phase-gates.
+  - [ ] Sin regresión del path FS: cuando no se declara `input.context.dod`/`spec`, las policies no emiten violaciones (añadir un guard "sin-facts → sin-opinión" a `dod.rego`/`compliance-baseline.rego` para que el path de validación de satélites siga verde — HOY dispararían `DOD-03..10`/`CB-*` si se arreglara el filtro de id ingenuamente).
+  - [ ] Paridad Native+OPA 0 drift; suites OPA + core-domain/CLI/MCP verdes.
+- **Dependencias:** `GT-380`.
+
 #### GT-363
 
 **Título:** Cliente de integración con GitHub API — auth seguro + operaciones de repositorio

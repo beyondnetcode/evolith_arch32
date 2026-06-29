@@ -35,7 +35,21 @@ import {
   createArchitectureKindEvaluator,
   createCheckpointKindEvaluator,
   createTopologyKindEvaluator,
+  createBlueprintKindEvaluator,
+  createDeploymentKindEvaluator,
 } from './application/evaluation/kind-evaluators';
+import * as fs from 'fs';
+import * as path from 'path';
+
+/** Resolves whether an opaque blueprintRef matches a Core blueprint definition on disk. */
+const blueprintExists = async (corePath: string, blueprintRef: string): Promise<boolean> => {
+  const base = path.join(corePath, 'reference', 'architecture', 'blueprints');
+  return [
+    path.join(base, blueprintRef),
+    path.join(base, `${blueprintRef}.md`),
+    path.join(corePath, blueprintRef),
+  ].some((p) => fs.existsSync(p));
+};
 
 /** Core version stamped into EvaluationResult.versions.core (GT-378). */
 const CORE_VERSION = '1.0.5';
@@ -119,6 +133,8 @@ import { CacheMetricsService } from './infrastructure/cache/cache-metrics.servic
           createArchitectureKindEvaluator(driftService),
           createCheckpointKindEvaluator(proposeAdvance),
           createTopologyKindEvaluator(topologyCatalog, () => workspaceResolver.corePath()),
+          createBlueprintKindEvaluator(blueprintExists, () => workspaceResolver.corePath()),
+          createDeploymentKindEvaluator(),
         ]);
       },
       inject: [

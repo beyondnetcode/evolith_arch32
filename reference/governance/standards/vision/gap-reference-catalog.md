@@ -79,8 +79,8 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Roadmap phase:** R3. **Impact:** `core-domain` use-cases + `IBlueprintRepository` (definition only).
 - **Complexity:** L
 - **Acceptance criteria:**
-  - [ ] Each result emitted through the contract; checkpoint engine does not mutate state (test).
-  - [ ] `DecisionRecommendation.binding === false`; topology is recommended, not imposed.
+  - [x] Each result emitted through the contract; checkpoint engine does not mutate state (test).
+  - [x] `DecisionRecommendation.binding === false`; topology is recommended, not imposed.
 - **Dependencies:** `GT-378`.
 
 #### GT-380

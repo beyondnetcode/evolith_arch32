@@ -1,42 +1,49 @@
 package evolith.dod
 
+# GT-380 / L1c: read Definition-of-Done facts from the canonical EvaluationContext
+# (`input.context.dod`) when present, falling back to the legacy `input.story`.
+# This removes the hard dependency on a Tracker "story" entity at the input root
+# (the conflation flagged by the Tracker<->Core compatibility audit). Behavior is
+# unchanged for callers that still send `input.story`.
+dod := object.get(object.get(input, "context", {}), "dod", object.get(input, "story", {}))
+
 violations[{"id": "DOD-01", "message": "Code review count must be >= 1"}] {
-    input.story.reviewCount < 1
+    dod.reviewCount < 1
 }
 
 violations[{"id": "DOD-02", "message": "Test coverage must be >= 80%"}] {
-    input.story.coveragePercent < 80
+    dod.coveragePercent < 80
 }
 
 violations[{"id": "DOD-03", "message": "Acceptance criteria must be verified"}] {
-    not input.story.acceptanceCriteriaVerified
+    not dod.acceptanceCriteriaVerified
 }
 
 violations[{"id": "DOD-04", "message": "Documentation must be updated"}] {
-    not input.story.documentationUpdated
+    not dod.documentationUpdated
 }
 
 violations[{"id": "DOD-05", "message": "Observability instrumentation must be added"}] {
-    not input.story.observabilityAdded
+    not dod.observabilityAdded
 }
 
 violations[{"id": "DOD-06", "message": "Security gates must pass"}] {
-    not input.story.securityGatesPassed
+    not dod.securityGatesPassed
 }
 
 violations[{"id": "DOD-07", "message": "ADR must be created when architectural decision is made"}] {
-    input.story.architecturalDecisionMade
-    not input.story.adrCreated
+    dod.architecturalDecisionMade
+    not dod.adrCreated
 }
 
 violations[{"id": "DOD-08", "message": "Integration tests must be passing"}] {
-    not input.story.integrationTestsPassing
+    not dod.integrationTestsPassing
 }
 
 violations[{"id": "DOD-09", "message": "Linting must pass"}] {
-    not input.story.lintPassing
+    not dod.lintPassing
 }
 
 violations[{"id": "DOD-10", "message": "CI pipeline must be green"}] {
-    not input.story.ciGreen
+    not dod.ciGreen
 }

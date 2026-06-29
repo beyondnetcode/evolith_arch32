@@ -116,6 +116,46 @@ test_observability_not_added_is_violation {
     violations[_].id == "DOD-05"
 }
 
+# --- GT-380 / L1c: canonical input.context.dod path -------------------------
+
+test_canonical_context_compliant_has_no_violations {
+    violations := dod.violations with input as {
+        "context": {"dod": {
+            "reviewCount": 2, "coveragePercent": 90, "acceptanceCriteriaVerified": true,
+            "documentationUpdated": true, "observabilityAdded": true, "securityGatesPassed": true,
+            "architecturalDecisionMade": false, "adrCreated": false,
+            "integrationTestsPassing": true, "lintPassing": true, "ciGreen": true
+        }}
+    }
+    count(violations) == 0
+}
+
+test_canonical_context_low_coverage_is_violation {
+    violations := dod.violations with input as {
+        "context": {"dod": {
+            "reviewCount": 2, "coveragePercent": 60, "acceptanceCriteriaVerified": true,
+            "documentationUpdated": true, "observabilityAdded": true, "securityGatesPassed": true,
+            "architecturalDecisionMade": false, "adrCreated": false,
+            "integrationTestsPassing": true, "lintPassing": true, "ciGreen": true
+        }}
+    }
+    violations[_].id == "DOD-02"
+}
+
+# input.context.dod takes precedence over the legacy input.story.
+test_context_takes_precedence_over_legacy_story {
+    violations := dod.violations with input as {
+        "context": {"dod": {
+            "reviewCount": 2, "coveragePercent": 90, "acceptanceCriteriaVerified": true,
+            "documentationUpdated": true, "observabilityAdded": true, "securityGatesPassed": true,
+            "architecturalDecisionMade": false, "adrCreated": false,
+            "integrationTestsPassing": true, "lintPassing": true, "ciGreen": true
+        }},
+        "story": {"reviewCount": 0, "coveragePercent": 10}
+    }
+    count(violations) == 0
+}
+
 test_security_gates_not_passed_is_violation {
     violations := dod.violations with input as {
         "story": {

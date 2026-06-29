@@ -59,9 +59,9 @@ describe('EvidenceValidator — GT-314', () => {
       expect(resolved).toBe(`${SATELLITE_ROOT}/docs/technical-feasibility.md`);
     });
 
-    it('resolves Functional Stories to satellite docs/stories path', () => {
-      const resolved = validator.resolveArtifactPath('Functional Stories', SATELLITE_ROOT);
-      expect(resolved).toBe(`${SATELLITE_ROOT}/docs/stories/functional-stories.md`);
+    it('resolves Bounded Context Map to satellite docs/architecture path', () => {
+      const resolved = validator.resolveArtifactPath('Bounded Context Map', SATELLITE_ROOT);
+      expect(resolved).toBe(`${SATELLITE_ROOT}/docs/architecture/bounded-context-map.md`);
     });
 
     it('resolves ADR Registry to satellite docs/architecture path', () => {

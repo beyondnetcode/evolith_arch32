@@ -9,19 +9,13 @@
   "waiverAuthority": "Architecture Board (with exception for CVEs: Executive Risk Acceptance)",
   "requiredArtifacts": [
     {
-      "artifact": "Technical Stories",
-      "schemaRef": "../../../rulesets/schema/technical-story.schema.json",
-      "validation": "All technical stories Done; traceable to Functional Stories",
-      "rules": ["rulesets/opa/dod.rego"]
-    },
-    {
       "artifact": "CI Pipeline",
       "validation": "CI run green on main branch. No failing tests, no lint errors, no security scan failures",
       "rules": ["rulesets/opa/cli-readiness.rego"]
     },
     {
       "artifact": "Definition of Done Checklist",
-      "validation": "All DoD items checked per Technical Story",
+      "validation": "All Definition of Done items checked.",
       "rules": ["rulesets/opa/dod.rego"]
     },
     {

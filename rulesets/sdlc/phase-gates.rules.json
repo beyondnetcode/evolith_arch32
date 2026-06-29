@@ -69,17 +69,12 @@
     {
       "phase": 2,
       "name": "Design Baseline Approved",
-      "description": "Architecture decisions are documented; bounded contexts defined; functional stories written.",
+      "description": "Architecture decisions are documented; bounded contexts defined.",
       "playbookRef": "../../reference/governance/sdlc/01-playbooks/phase-2-design-baseline.md",
       "mandatoryEvidence": [
         {
           "artifact": "ADR Registry",
           "validation": "All architecture decisions have corresponding ADR. No undocumented decisions."
-        },
-        {
-          "artifact": "Functional Stories",
-          "schemaRef": "../schema/functional-story.schema.json",
-          "validation": "All Functional Stories in Ready state with BDD acceptance criteria"
         },
         {
           "artifact": "Reference Blueprint Alignment",
@@ -102,10 +97,6 @@
         {
           "criterion": "Bounded context boundaries are contradictory",
           "action": "BLOCK — require context map resolution"
-        },
-        {
-          "criterion": "Functional stories lack acceptance criteria",
-          "action": "BLOCK — return to story writing"
         }
       ],
       "accountableRole": "Software Architect",
@@ -125,17 +116,12 @@
       "description": "All code merged to main; CI passes; quality gates green; definition of done satisfied.",
       "mandatoryEvidence": [
         {
-          "artifact": "Technical Stories",
-          "schemaRef": "../schema/technical-story.schema.json",
-          "validation": "All technical stories Done; traceable to Functional Stories"
-        },
-        {
           "artifact": "CI Pipeline",
           "validation": "CI run green on main branch. No failing tests, no lint errors, no security scan failures"
         },
         {
           "artifact": "Definition of Done Checklist",
-          "validation": "All DoD items checked per Technical Story"
+          "validation": "All Definition of Done items checked."
         },
         {
           "artifact": "Documentation Delta",

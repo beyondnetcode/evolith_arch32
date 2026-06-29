@@ -27,7 +27,6 @@ export class BlockingCriteriaValidator {
       { keywords: ['architecture constraints are ignored'], handler: (_, ev) => this.checkArchitectureConstraints(ev) },
       { keywords: ['architecture decisions are undocumented'], handler: (p, ev) => this.checkArchitectureDecisions(p, ev) },
       { keywords: ['bounded context'],                    handler: (_, ev) => this.checkBoundedContext(ev) },
-      { keywords: ['functional stories lack'],            handler: (_, ev) => this.checkFunctionalStories(ev) },
       { keywords: ['code review approval'],               handler: (p, ev) => this.checkCodeReviewApproval(p, ev) },
       { keywords: ['ci fails'],                           handler: (p) => this.checkCiFailure(p) },
       { keywords: ['coverage below'],                     handler: (p) => this.checkCoverageBelow(p) },
@@ -125,10 +124,6 @@ export class BlockingCriteriaValidator {
 
   private async checkBoundedContext(evidenceResults: EvidenceValidationResult[]): Promise<boolean> {
     return !evidenceResults.find(e => e.artifact === 'Bounded Context Map')?.found;
-  }
-
-  private async checkFunctionalStories(evidenceResults: EvidenceValidationResult[]): Promise<boolean> {
-    return !evidenceResults.find(e => e.artifact === 'Functional Stories')?.found;
   }
 
   private async checkCodeReviewApproval(projectPath: string, _evidenceResults: EvidenceValidationResult[]): Promise<boolean> {

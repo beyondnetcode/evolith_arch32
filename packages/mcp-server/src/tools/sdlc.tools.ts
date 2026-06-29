@@ -13,8 +13,8 @@ interface PhaseRequirement {
 const PHASE_REQUIREMENTS: PhaseRequirement[] = [
   { phase: 'phase-0', artifacts: ['evolith.yaml', 'README.md', '.evolith/moscow/phase-0.json'] },
   { phase: 'phase-1', artifacts: ['PRD', 'Discovery Canvas', 'Technical Feasibility Canvas', 'Ballpark Estimation', 'MoSCoW Prioritization Matrix', 'Build-versus-Compose Analysis'] },
-  { phase: 'phase-2', artifacts: ['ADR Registry', 'Functional Stories', 'Reference Blueprint Alignment', 'Simplicity Checklist Phase 1', 'Bounded Context Map'] },
-  { phase: 'phase-3', artifacts: ['Technical Stories', 'CI Pipeline', 'Definition of Done Checklist', 'Documentation Delta', 'Coverage Report'] },
+  { phase: 'phase-2', artifacts: ['ADR Registry', 'Reference Blueprint Alignment', 'Simplicity Checklist Phase 1', 'Bounded Context Map'] },
+  { phase: 'phase-3', artifacts: ['CI Pipeline', 'Definition of Done Checklist', 'Documentation Delta', 'Coverage Report'] },
   { phase: 'phase-4', artifacts: ['Test Summary Report', 'Acceptance Validation', 'Security Scan Report', 'Integration Evidence', 'Pyramid Distribution'] },
   { phase: 'phase-5', artifacts: ['Release Notes', 'Observability Validation', 'Rollback Procedure', 'On-Call Handoff', 'Deployment Evidence'] },
 ];
@@ -27,11 +27,9 @@ const ARTIFACT_PATHS: Record<string, string> = {
   'MoSCoW Prioritization Matrix': '.evolith/moscow/phase-0.json',
   'Build-versus-Compose Analysis': '.evolith/build-vs-compose.json',
   'ADR Registry': 'reference/architecture/adrs/adr-matrix.json',
-  'Functional Stories': 'reference/governance/sdlc/04-artifact-templates/functional-story-template.md',
   'Reference Blueprint Alignment': 'reference/architecture/blueprints/reference-blueprint.md',
   'Simplicity Checklist Phase 1': 'reference/architecture/blueprints/simplicity-checklist-phase-01.md',
   'Bounded Context Map': 'reference/architecture/contexts/bounded-context-map.md',
-  'Technical Stories': 'reference/governance/sdlc/04-artifact-templates/technical-story-template.md',
   'Engineering Manifesto': 'reference/governance/sdlc/standards/engineering/engineering-manifesto.md',
   'SDLC Quality Gates': 'reference/governance/sdlc/quality-gates.md',
   'Canonical Patterns': 'reference/architecture/canonical-patterns',

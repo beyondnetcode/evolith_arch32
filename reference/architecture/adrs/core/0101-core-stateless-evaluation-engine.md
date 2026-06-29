@@ -5,7 +5,7 @@
 > **Agent Signature:** Architect Agent (Winston)
 
 ## Status
-Proposed — **supersedes Decision 1 of [ADR-0100](./0100-governance-execution-boundary-product-initiative.md)**
+Accepted (2026-06-29 — Architecture Board) — **supersedes Decision 1 of [ADR-0100](./0100-governance-execution-boundary-product-initiative.md)**
 
 ## Date
 2026-06-28

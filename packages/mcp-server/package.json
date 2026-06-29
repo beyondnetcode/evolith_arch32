@@ -14,7 +14,7 @@
     "start:dev": "nest start --watch",
     "start:stdio": "TRANSPORT=stdio node dist/main",
     "start:sse": "TRANSPORT=sse PORT=3000 node dist/main",
-    "lint:boundaries": "eslint \"src/**/*.ts\" --no-eslintrc -c .eslintrc.js",
+    "lint:boundaries": "eslint \"src/**/*.ts\"",
     "test": "jest --passWithNoTests",
     "test:cov": "jest --coverage --passWithNoTests",
     "test:e2e": "jest --config ./test/jest-e2e.json --passWithNoTests"

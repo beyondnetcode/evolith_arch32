@@ -41,10 +41,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Fase del roadmap:** R0. **Impacto:** Docs de gobierno (ADR-0100/0101, UP-002, diseño previo, board/catálogo GT).
 - **Complejidad:** M
 - **Criterios de aceptación:**
-  - [ ] ADR-0101 `Accepted`; ADR-0100 Decisión 1 marcada superseded.
-  - [ ] UP-002 sin repos/casos de uso/endpoints operativos; diseño previo Entregables 2/4/10/11/12 + flujos de escritura del 13 marcados SUPERSEDED.
-  - [ ] Sin referencias vivas a `IProductRepository`/`POST /products` en docs de gobierno.
-- **Dependencias:** Ninguna (punto de partida). Mayormente redactado en commit `7cc62942`; pendiente de aceptación del Architecture Board.
+  - [x] ADR-0101 `Accepted`; ADR-0100 Decisión 1 marcada superseded.
+  - [x] UP-002 sin repos/casos de uso/endpoints operativos; diseño previo Entregables 2/4/10/11/12 + flujos de escritura del 13 marcados SUPERSEDED.
+  - [x] Sin referencias vivas a `IProductRepository`/`POST /products` en docs de gobierno.
+- **Dependencias:** Ninguna (punto de partida). Mayormente redactado en commit `7cc62942`; **Architecture Board lo aceptó el 2026-06-29** (estado de ADR-0101 + ADR-0100 actualizado).
 
 #### GT-377
 
@@ -54,8 +54,8 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Fase del roadmap:** R1. **Impacto:** `core-domain`, `rulesets/schema/`.
 - **Complejidad:** L
 - **Criterios de aceptación:**
-  - [ ] `evaluation-context.schema.json` / `evaluation-result.schema.json` validan round-trip; `schemaVersion` obligatorio.
-  - [ ] `tenantId`/`productId`/`initiativeId` son `string`; `DecisionRecommendation.binding` literal `false`.
+  - [x] `evaluation-context.schema.json` / `evaluation-result.schema.json` validan round-trip; `schemaVersion` obligatorio.
+  - [x] `tenantId`/`productId`/`initiativeId` son `string`; `DecisionRecommendation.binding` literal `false`.
   - [x] Guard ESLint falla el CI si aparece un `*Repository` de producto/iniciativa/evidencia/decisión. **(MET — Oleada 2026-06-29)** `packages/core-domain/eslint.config.mjs` (flat config, ESLint 9) prohíbe `Identifier[name=/(Product|Initiative|Evidence|Decision)Repository/]` vía `no-restricted-syntax` (regla compartida desde `eslint.guards.cjs`); gateado por el step `Run core-domain architecture boundary guard (GT-377)` en `ci-cd.yml` (`test-core-domain`); test de regresión negativo `src/evaluation/stateless-core-repository.guard.spec.ts` (14 casos) prueba que dispara en las cuatro entidades prohibidas y nunca en `*Repository` legítimo (`AuditRepository`, `createRepository`, …). La rotura previa (override global `ajv:8.17.1` en conflicto con el dep directo `ajv:8.20.0` de los workspaces, dejando a `eslint`/`@eslint/eslintrc` sin `ajv@6`) se corrige con `overrides` acotados en el `package.json` raíz.
 - **Dependencias:** `GT-376`.
 
@@ -79,8 +79,8 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Fase del roadmap:** R3. **Impacto:** casos de uso de `core-domain` + `IBlueprintRepository` (solo definición).
 - **Complejidad:** L
 - **Criterios de aceptación:**
-  - [ ] Cada resultado emitido por el contrato; el checkpoint engine no muta estado (test).
-  - [ ] `DecisionRecommendation.binding === false`; la topología se recomienda, no se impone.
+  - [x] Cada resultado emitido por el contrato; el checkpoint engine no muta estado (test).
+  - [x] `DecisionRecommendation.binding === false`; la topología se recomienda, no se impone.
 - **Dependencias:** `GT-378`.
 
 #### GT-380

@@ -32,6 +32,16 @@ Los cinco artefactos de la Baseline de Cumplimiento Evolith listados en la Secci
 
 ---
 
+## Propiedad de artefactos — definiciones del Core vs. work items externos (ADR-0101 / GT-380)
+
+> **Normativo (ADR-0101, Aceptado 2026-06-29):** Evolith Core es un **motor de evaluación stateless**. Solo posee **definiciones/estándares versionados** (fases, gates, *plantillas* de artefactos, blueprints, topologías, rulesets, policies OPA) y **evalúa** el contexto que el consumidor envía. Nunca posee, persiste ni exige **work items operativos**.
+
+Los work items ágiles/de entrega — **Epics, Functional Stories, Technical Stories, Evolith User Stories, el Agile Backlog, Story Seeds, la Epic Candidate Matrix, Sprints y tareas** — son **`ExternalReferenceContext`**: propiedad de **Evolith Tracker** y las herramientas de entrega externas (Jira / Azure DevOps / GitHub Projects), que los persisten. Entran a la evaluación del Core solo como **referencias** (sistema + id + hash de contenido) o como **evidencia/facts declarados** dentro del `EvaluationContext`, **nunca como artefactos de gate propiedad del Core**.
+
+En consecuencia, **desde GT-380 ningún gate del Core exige un artefacto de story/epic/backlog**: los gates canónicos `gate-f2.json` / `gate-f3.json` ya no requieren "Functional Stories" / "Technical Stories", y `dod.rego` lee los facts de DoD desde `input.context.dod` (no un `input.story` del Tracker). Donde las tablas por fase de abajo aún listan estos work items como entradas, léelas como el **flujo de autoría ágil que ejecuta el consumidor (Tracker)** — son responsabilidad del consumidor y llegan al Core como `ExternalReferenceContext`, **no** como evidencia de gate del Core cuya ausencia el Core bloquea. Las **plantillas/estándares** de artefacto que el Core publica (ej. `functional-story-template.md`) siguen válidos como **guía de autoría** (definiciones del Core), distintos de las **instancias** (referencias propiedad del Tracker).
+
+---
+
 ## 1. Vista General: Dónde Entra Evolith en el Ciclo de Vida
 
 ```mermaid

@@ -5,7 +5,7 @@
 > **Agent Signature:** Architect Agent (Winston)
 
 ## Status
-Proposed — **Decision 1 superseded by [ADR-0101](./0101-core-stateless-evaluation-engine.md)** (2026-06-28).
+Accepted (2026-06-29 — Architecture Board; diagnosis + Decisions 2–6 valid) — **Decision 1 superseded by [ADR-0101](./0101-core-stateless-evaluation-engine.md) (Accepted 2026-06-29)**.
 
 > **Correction:** Decision 1 below framed `Producto`/`Iniciativa` as Core governance units with persistence/anchoring. [ADR-0101](./0101-core-stateless-evaluation-engine.md) corrects the *altitude*: the Core is a **stateless evaluator**; product/tenant/initiative are **opaque context identifiers only**, owned and persisted by the Tracker. The diagnosis and Decisions 2–6 of this ADR remain valid.
 

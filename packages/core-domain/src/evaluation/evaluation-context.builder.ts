@@ -1,15 +1,34 @@
 /**
  * Builds the legacy pipeline input (SatelliteManifest) from the canonical
- * EvaluationContext, resolving the opaque workspaceRef server-side. GT-378.
+ * EvaluationContext. GT-378.
  *
  * The Core never sees a raw filesystem path from the consumer: the consumer
- * sends `workspaceRef`, and the injected resolver maps it to concrete paths.
+ * sends `workspaceRef`, the orchestrator resolves it via an injected resolver,
+ * and this pure function maps the resolved workspace + context to a manifest.
  */
 
 import type { SatelliteManifest } from '../domain/satellite-manifest';
 import type { EvaluationContext } from './contracts';
-import type { IWorkspaceReferenceResolver } from './ports/workspace-reference-resolver.port';
+import type {
+  IWorkspaceReferenceResolver,
+  ResolvedWorkspace,
+} from './ports/workspace-reference-resolver.port';
 
+/** Pure: build the pipeline manifest from a context + an already-resolved workspace. */
+export function manifestFromWorkspace(
+  ctx: EvaluationContext,
+  workspace: ResolvedWorkspace,
+): SatelliteManifest {
+  return {
+    satellitePath: workspace.satellitePath,
+    corePath: workspace.corePath,
+    topology: ctx.topologyRef,
+    // Canonical phaseId; the pipeline normalizes to the legacy f1..f5 keying.
+    phase: ctx.phaseId,
+  };
+}
+
+/** Convenience: resolve the workspaceRef then build the manifest. */
 export async function buildSatelliteManifest(
   ctx: EvaluationContext,
   resolver: IWorkspaceReferenceResolver,
@@ -20,11 +39,5 @@ export async function buildSatelliteManifest(
     );
   }
   const ws = await resolver.resolve(ctx.workspaceRef);
-  return {
-    satellitePath: ws.satellitePath,
-    corePath: ws.corePath,
-    topology: ctx.topologyRef,
-    // Canonical phaseId; the pipeline normalizes to the legacy f1..f5 keying.
-    phase: ctx.phaseId,
-  };
+  return manifestFromWorkspace(ctx, ws);
 }

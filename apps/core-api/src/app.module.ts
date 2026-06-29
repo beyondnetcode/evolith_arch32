@@ -24,14 +24,24 @@ import { SatellitesController } from './presentation/controllers/satellites.cont
 import { WorkspaceReferenceResolverService } from './application/services/workspace-reference-resolver.service';
 import { SatelliteRegistryService } from './application/services/satellite-registry.service';
 import { ValidateSatelliteUseCase } from '@evolith/core-domain/application/use-cases';
+import { ArchitectureDriftService } from '@evolith/core-domain/application/validators';
+import { Verdict } from '@evolith/core-domain';
 import {
   EvaluationOrchestrator,
   type IEvaluationPipeline,
   type IWorkspaceReferenceResolver,
+  type KindEvaluator,
 } from '@evolith/core-domain/evaluation';
 
 /** Core version stamped into EvaluationResult.versions.core (GT-378). */
 const CORE_VERSION = '1.0.5';
+
+/** Maps a MUST/SHOULD/COULD severity to a canonical RiskLevel. */
+function severityToRisk(s: string): 'low' | 'medium' | 'high' | 'critical' {
+  if (s === 'MUST') return 'high';
+  if (s === 'SHOULD') return 'medium';
+  return 'low';
+}
 import { RedisCacheModule } from './infrastructure/cache/redis-cache.module';
 import { CacheMetricsService } from './infrastructure/cache/cache-metrics.service';
 
@@ -82,6 +92,7 @@ import { CacheMetricsService } from './infrastructure/cache/cache-metrics.servic
       useFactory: (
         validateSatellite: ValidateSatelliteUseCase,
         workspaceResolver: WorkspaceReferenceResolverService,
+        driftService: ArchitectureDriftService,
       ) => {
         const pipeline: IEvaluationPipeline = {
           evaluate: async (manifest) => {
@@ -102,9 +113,45 @@ import { CacheMetricsService } from './infrastructure/cache/cache-metrics.servic
             corePath: workspaceResolver.corePath(),
           }),
         };
-        return new EvaluationOrchestrator(pipeline, resolver, CORE_VERSION);
+
+        // GT-379: architecture kind — wraps ArchitectureDriftService and maps
+        // its DriftReport to the canonical ArchitectureEvaluationResult.
+        const architectureEvaluator: KindEvaluator = {
+          kind: 'architecture',
+          evaluate: async (ctx, ws) => {
+            const report = await driftService.detectDrift({
+              projectPath: ws.satellitePath,
+              corePath: ws.corePath,
+              declaredLevel: ctx.topologyRef as 'F1' | 'F2' | 'F3' | undefined,
+            });
+            const violations = [...report.newViolations, ...report.persistentViolations];
+            const risks = violations.map((v) => ({
+              id: v.ruleId,
+              level: severityToRisk(v.severity),
+              category: v.category || 'architecture',
+              message: v.title,
+            }));
+            const gaps = violations.map((v) => ({
+              id: v.ruleId,
+              requirementRef: v.ruleId,
+              severity: (v.blocking ? 'error' : 'warning') as 'error' | 'warning' | 'info',
+              message: v.description,
+            }));
+            const verdict = report.driftDetected ? Verdict.FAIL : Verdict.PASS;
+            return {
+              verdict,
+              results: {
+                architecture: { verdict, definitionRef: report.detectedLevel, risks, gaps, recommendations: [] },
+              },
+              gaps,
+              risks,
+            };
+          },
+        };
+
+        return new EvaluationOrchestrator(pipeline, resolver, CORE_VERSION, [architectureEvaluator]);
       },
-      inject: [ValidateSatelliteUseCase, WorkspaceReferenceResolverService],
+      inject: [ValidateSatelliteUseCase, WorkspaceReferenceResolverService, ArchitectureDriftService],
     },
     {
       provide: APP_GUARD,

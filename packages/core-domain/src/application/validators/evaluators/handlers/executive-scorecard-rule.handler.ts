@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { IFileSystem } from '../../../../domain/interfaces';
 import { NormalizedRule } from '../../../../domain/models/normalized-rule';
-import { EvaluationContext, RuleEvaluationResult } from '../evaluator.interface';
+import { WorkspaceEvaluationContext, RuleEvaluationResult } from '../evaluator.interface';
 import { INativeRuleHandler } from './rule-handler.interface';
 
 export class ExecutiveScorecardRuleHandler implements INativeRuleHandler {
@@ -11,14 +11,14 @@ export class ExecutiveScorecardRuleHandler implements INativeRuleHandler {
     return rule.id.startsWith('DORA-') || rule.id.startsWith('SPACE-') || rule.id.startsWith('DRIFT-');
   }
 
-  async evaluate(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  async evaluate(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     if (rule.id.startsWith('DORA-')) return this.evalDora(rule, ctx);
     if (rule.id.startsWith('SPACE-')) return this.evalSpace(rule, ctx);
     if (rule.id.startsWith('DRIFT-')) return this.evalDrift(rule, ctx);
     return { rule, result: 'skipped', message: 'Unhandled scorecard rule' };
   }
 
-  private async evalDora(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  private async evalDora(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     const ciDir = path.join(ctx.satellitePath, '.github', 'workflows');
     const hasCi = await this.fs.exists(ciDir);
     switch (rule.id) {
@@ -36,7 +36,7 @@ export class ExecutiveScorecardRuleHandler implements INativeRuleHandler {
     }
   }
 
-  private async evalSpace(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  private async evalSpace(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     switch (rule.id) {
       case 'SPACE-01': {
         const observabilityFiles = [
@@ -62,7 +62,7 @@ export class ExecutiveScorecardRuleHandler implements INativeRuleHandler {
     }
   }
 
-  private async evalDrift(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  private async evalDrift(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     const evidenceDir = path.join(ctx.corePath, '.harness', 'evidence');
     if (await this.fs.exists(evidenceDir)) {
       return { rule, result: 'passed', message: 'Drift evidence directory present' };
@@ -71,7 +71,7 @@ export class ExecutiveScorecardRuleHandler implements INativeRuleHandler {
   }
 
   private async checkPhaseGateVisibility(
-    rule: NormalizedRule, ctx: EvaluationContext,
+    rule: NormalizedRule, ctx: WorkspaceEvaluationContext,
   ): Promise<RuleEvaluationResult> {
     const evolithYaml = path.join(ctx.satellitePath, 'evolith.yaml');
     if (await this.fs.exists(evolithYaml)) {
@@ -84,7 +84,7 @@ export class ExecutiveScorecardRuleHandler implements INativeRuleHandler {
   }
 
   private async checkExecutiveSponsor(
-    rule: NormalizedRule, ctx: EvaluationContext,
+    rule: NormalizedRule, ctx: WorkspaceEvaluationContext,
   ): Promise<RuleEvaluationResult> {
     const evolithYaml = path.join(ctx.satellitePath, 'evolith.yaml');
     if (await this.fs.exists(evolithYaml)) {

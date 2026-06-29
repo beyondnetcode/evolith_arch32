@@ -12,6 +12,102 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 ## 1. Gap Details
 
+#### GT-375
+
+**Title:** Core stateless evaluation contracts — `EvaluationContext` / `EvaluationResult` (corrects the entity-ownership framing)
+
+> **Correction (2026-06-28, ADR-0101):** originally framed as "Product/Initiative governance model with Core-owned entities". Corrected: the Core is a **stateless evaluator**; product/tenant/initiative are **opaque context only**, never Core entities.
+
+- **Purpose:** Resolve the governance↔execution conflation AND keep the Core stateless. Formalize `EvaluationContext` (input) and `EvaluationResult` (output): consumers (Evolith Tracker) send context, the Core evaluates against versioned definitions/standards and returns structured verdicts/recommendations. Product/tenant/initiative are opaque context identifiers (`ProductContext`/`InitiativeContext`); epics/stories/tasks as `ExternalReferenceContext`; the Core emits non-binding `Recommendation`/`DecisionRecommendation`. The Core never owns/persists product/tenant/initiative/evidence/decision (that is the Tracker's). No write repositories/use-cases/endpoints for business entities.
+- **Evidence:** `reference/core/README.md:47` ("a task-management platform" in "What Evolith Core Is Not", header `:41`) contradicted by `reference/governance/sdlc/sdlc-evolith-artifact-mapping.md:130,132,133,223` (Stories/Backlog/Technical Stories **Required**) and `:209` ("story readiness" closes gate F2). `packages/core-domain/src/domain/entities/` has only `blueprint.ts` (no Producto/Iniciativa); `gate-evidence.ts:87-89` (`initiative?: string`, "Never persisted or interpreted"). Boundary precedent already applied: `executive-scorecard-rule.handler.ts:55` ("Sprint throughput requires tracker data").
+- **Impact:** Cross-cutting — Core Domain (contracts + engines), Core API (`/evaluate`), Rulesets, OPA, Blueprints, Documentation, Tracker integration.
+- **Risk:** Central risk R-01 — the Core drifting into **owning/persisting operational entities** (the superseded prior design). Mitigated by the stateless contract, an ESLint boundary guard banning `*Repository` for product/initiative/evidence/decision, and ADR-0101 as authority.
+- **Affected files:** `packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts`, `domain/verdict/verdict.ts`, `domain/sdlc/phase-id.ts`, new `rulesets/schema/evaluation-context.schema.json`/`evaluation-result.schema.json`, `rulesets/opa/{phase-gates,dod,multi-tenancy,abac-mcp-tool-access}.rego`, `reference/governance/sdlc/sdlc-evolith-artifact-mapping.md`, `apps/core-api/src/presentation/controllers/evaluation.controller.ts`.
+- **Complexity:** XL
+- **Proposed fix:** Execute the corrected **R0–R5 roadmap** in [Core Evaluation Engine Design](./../../../core/core-evaluation-engine-design.es.md), governed by **ADR-0101** (corrects ADR-0100) / **UP-002**. **Umbrella epic — decomposed into `GT-376` (R0) … `GT-381` (R5).**
+- **Acceptance criteria:**
+  - [ ] ADR-0101 accepted; the Core is a stateless evaluator (`EvaluationContext` → `EvaluationResult`); product/tenant/initiative are opaque context only.
+  - [ ] No write repositories/use-cases/endpoints for business entities; the only governance repo is `IBlueprintRepository` (definition).
+  - [ ] The Core emits non-binding `Recommendation`/`DecisionRecommendation`; the Tracker decides, persists and audits.
+  - [ ] `EVOLITH_PARITY_FULL=true` with 0 drift; the Core degrades to evaluation-only without the Tracker.
+  - [ ] All six child GTs (`GT-376`…`GT-381`) closed.
+- **Dependencies:** ADR-0101, UP-002. Tracker availability for runtime `GateDecision` emission (R5, `GT-381`).
+
+#### GT-376
+
+**Title:** R0 — Core stateless evaluator decision + documentation reconciliation
+
+- **Purpose:** Lock the corrected authority before touching code: finalize ADR-0101, correct ADR-0100 Decision 1, UP-002 Deliverables 2/7, supersede the prior design's entity/repo sections, and reframe GT-375. Includes `GateDecision`→`CoreGateVerdict` and `'WAIVED'`→`Verdict.WAIVE`.
+- **Roadmap phase:** R0. **Impact:** Governance docs (ADR-0100/0101, UP-002, prior design, GT board/catalog).
+- **Complexity:** M
+- **Acceptance criteria:**
+  - [ ] ADR-0101 `Accepted`; ADR-0100 Decision 1 marked superseded.
+  - [ ] UP-002 has no operational repos/use-cases/write endpoints; prior design §Deliverables 2/4/10/11/12 + write-flows of 13 marked SUPERSEDED.
+  - [ ] No live references to `IProductRepository`/`POST /products` in governance docs.
+- **Dependencies:** None (starting point). Largely drafted in commit `7cc62942`; pending Architecture Board acceptance.
+
+#### GT-377
+
+**Title:** R1 — `EvaluationContext` / `EvaluationResult` contracts + Contract Schema Registry
+
+- **Purpose:** Materialize the interaction contract without introducing persistence: canonical types in `core-domain` reusing `Verdict` (`verdict.ts:14`) and `PhaseId` (`phase-id.ts:14`); `*Context` inputs and `*Result`/`Finding` outputs; versioned schemas; ADR-0073 envelope.
+- **Roadmap phase:** R1. **Impact:** `core-domain`, `rulesets/schema/`.
+- **Complexity:** L
+- **Acceptance criteria:**
+  - [ ] `evaluation-context.schema.json` / `evaluation-result.schema.json` validate round-trip; `schemaVersion` mandatory.
+  - [ ] `tenantId`/`productId`/`initiativeId` are `string`; `DecisionRecommendation.binding` literal `false`.
+  - [ ] ESLint boundary guard fails CI if a `*Repository` for product/initiative/evidence/decision appears.
+- **Dependencies:** `GT-376`.
+
+#### GT-378
+
+**Title:** R2 — Wrap existing engines behind the contract (Gate/Artifact/Evidence/Ruleset/OPA + Compliance)
+
+- **Purpose:** Expose current evaluators through the contract with maximum reuse, minimum risk: adapter `EvaluationContext → SatelliteManifest → EvaluationResult` over `satellite-evaluation-pipeline.service.ts:39-98`; legacy verdict compatibility (`'passed'|'failed'` ↔ `Verdict` via `verdict.ts:63-100`).
+- **Roadmap phase:** R2. **Impact:** `core-domain` services, `apps/core-api` `/evaluate`.
+- **Complexity:** L
+- **Acceptance criteria:**
+  - [ ] `POST /api/v1/evaluate` accepts `EvaluationContext` and returns `EvaluationResult` (ADR-0073 envelope).
+  - [ ] Native+OPA parity `EVOLITH_PARITY_FULL=true` 0 drift; SDK/Tracker unbroken (adapter).
+- **Dependencies:** `GT-377`.
+
+#### GT-379
+
+**Title:** R3 — Architectural engines (Architecture/Blueprint/Topology/Checkpoint/Recommendation)
+
+- **Purpose:** Tie `validate-satellite`/`validate-blueprint`/`topology-catalog`/`propose-phase-advance` to the contract; emit `ArchitectureEvaluationResult`/`BlueprintEvaluationResult`/`CheckpointEvaluationResult`/`Recommendation`/`DecisionRecommendation` (`binding: false`).
+- **Roadmap phase:** R3. **Impact:** `core-domain` use-cases + `IBlueprintRepository` (definition only).
+- **Complexity:** L
+- **Acceptance criteria:**
+  - [ ] Each result emitted through the contract; checkpoint engine does not mutate state (test).
+  - [ ] `DecisionRecommendation.binding === false`; topology is recommended, not imposed.
+- **Dependencies:** `GT-378`.
+
+#### GT-380
+
+**Title:** R4 — OPA `input.context` aligned to `EvaluationContext` + rulesets
+
+- **Purpose:** Make OPA evaluate the canonical `input.context` (tenant/product/initiative/phase/gate/artifacts/evidence/externalReferences/rulesetSnapshot); re-anchor `dod.rego` off `input.story.*`; remove story artifacts from `phase-gates.rules.json` `mandatoryEvidence`; add multi-tenancy MTN-09..11 + ABAC scoping.
+- **Roadmap phase:** R4. **Impact:** `rulesets/opa/`, `rulesets/sdlc/`.
+- **Complexity:** M
+- **Acceptance criteria:**
+  - [ ] No Rego rule reads `input.story.*`; no Core gate depends on stories.
+  - [ ] Native+OPA parity 0 drift; OPA suite green (`GT-347`).
+- **Dependencies:** `GT-379`.
+
+#### GT-381
+
+**Title:** R5 — Docs/taxonomy + final reconciliation + Tracker integration
+
+- **Purpose:** Reclassify agile artifacts in `sdlc-evolith-artifact-mapping.md` to `ExternalReferenceContext`; publish/finish the canonical Core Evaluation Engine doc (EN mirror); Tracker sends `EvaluationContext`, consumes `EvaluationResult`, emits the canonical `GateDecision`; the Core degrades to evaluation-only without the Tracker; CLI/MCP/API parity (BR-008).
+- **Roadmap phase:** R5. **Impact:** Docs, taxonomy, Tracker integration.
+- **Complexity:** M
+- **Acceptance criteria:**
+  - [ ] Zero divergent formats; satellites grandfathered (contract `warn`→`fail`).
+  - [ ] The Core operates without the Tracker (degrades, does not block); surface parity (CLI/MCP/API).
+  - [ ] Bilingual docs; English for machine-readable artifacts (ADR-0090).
+- **Dependencies:** `GT-380`; Tracker availability.
+
 #### GT-363
 
 **Title:** GitHub API integration client — secure auth + repo operations

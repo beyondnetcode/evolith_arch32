@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { IFileSystem } from '../../../../domain/interfaces';
 import { NormalizedRule } from '../../../../domain/models/normalized-rule';
-import { EvaluationContext, RuleEvaluationResult } from '../evaluator.interface';
+import { WorkspaceEvaluationContext, RuleEvaluationResult } from '../evaluator.interface';
 import { INativeRuleHandler } from './rule-handler.interface';
 
 export class EvidenceRuleHandler implements INativeRuleHandler {
@@ -11,7 +11,7 @@ export class EvidenceRuleHandler implements INativeRuleHandler {
     return rule.id.startsWith('EVD-');
   }
 
-  async evaluate(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  async evaluate(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     const evidenceDir = path.join(ctx.corePath, '.harness', 'evidence');
     if (!await this.fs.exists(evidenceDir)) {
       return { rule, result: 'failed', message: '.harness/evidence directory not found' };

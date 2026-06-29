@@ -1,6 +1,6 @@
 import { IFileSystem } from '../../../../../domain/interfaces';
 import { NormalizedRule } from '../../../../../domain/models/normalized-rule';
-import { EvaluationContext } from '../../evaluator.interface';
+import { WorkspaceEvaluationContext } from '../../evaluator.interface';
 import { SubResult, PASSED, SKIPPED, asRecord, isPositiveNumber, readJsonConfig } from './shared';
 
 export const CONFIG_CATEGORIES = new Set([
@@ -10,7 +10,7 @@ export const CONFIG_CATEGORIES = new Set([
   'edge-computing-sync', 'edge-computing-isolation', 'edge-computing-conflict',
 ]);
 
-export async function evaluateConfigRule(rule: NormalizedRule, ctx: EvaluationContext, fs: IFileSystem): Promise<SubResult> {
+export async function evaluateConfigRule(rule: NormalizedRule, ctx: WorkspaceEvaluationContext, fs: IFileSystem): Promise<SubResult> {
   const sat = ctx.satellitePath;
   const fail = (file: string): SubResult => ({ result: 'failed', message: `${rule.description} - ${file} does not satisfy ${rule.id}` });
 

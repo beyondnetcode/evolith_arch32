@@ -1,6 +1,6 @@
 import { IFileSystem, ILogger, IConfigParser } from '../../../domain/interfaces';
 import { NormalizedRule } from '../../../domain/models/normalized-rule';
-import { IRuleEvaluatorStrategy, EvaluationContext, RuleEvaluationResult } from './evaluator.interface';
+import { IRuleEvaluatorStrategy, WorkspaceEvaluationContext, RuleEvaluationResult } from './evaluator.interface';
 import { INativeRuleHandler } from './handlers/rule-handler.interface';
 import { EvidenceRuleHandler } from './handlers/evidence-rule.handler';
 import { CliReleaseRuleHandler } from './handlers/cli-release-rule.handler';
@@ -41,7 +41,7 @@ export class NativeEvaluator implements IRuleEvaluatorStrategy {
 
   async evaluateAll(
     rules: NormalizedRule[],
-    ctx: EvaluationContext,
+    ctx: WorkspaceEvaluationContext,
   ): Promise<RuleEvaluationResult[]> {
     const results: RuleEvaluationResult[] = [];
     for (const rule of rules) {
@@ -52,7 +52,7 @@ export class NativeEvaluator implements IRuleEvaluatorStrategy {
 
   private async evaluateRule(
     rule: NormalizedRule,
-    ctx: EvaluationContext,
+    ctx: WorkspaceEvaluationContext,
   ): Promise<RuleEvaluationResult> {
     const handler = this.handlers.find(h => h.canHandle(rule));
     

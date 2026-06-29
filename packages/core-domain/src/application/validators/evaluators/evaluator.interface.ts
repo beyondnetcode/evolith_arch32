@@ -1,6 +1,6 @@
 import { NormalizedRule } from '../../../domain/models/normalized-rule';
 
-export interface EvaluationContext {
+export interface WorkspaceEvaluationContext {
   satellitePath: string;
   corePath: string;
 }
@@ -17,5 +17,5 @@ export interface IRuleEvaluatorStrategy {
    * Evaluate a set of normalized rules against the given context.
    * Return an array of validation results.
    */
-  evaluateAll(rules: NormalizedRule[], context: EvaluationContext): Promise<RuleEvaluationResult[]>;
+  evaluateAll(rules: NormalizedRule[], context: WorkspaceEvaluationContext): Promise<RuleEvaluationResult[]>;
 }

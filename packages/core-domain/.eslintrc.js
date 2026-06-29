@@ -40,6 +40,7 @@ module.exports = {
       { type: 'tenancy',        pattern: 'src/tenancy/**/*' },
       { type: 'providers',      pattern: 'src/providers/**/*' },
       { type: 'evidence',       pattern: 'src/evidence/**/*' },
+      { type: 'evaluation',     pattern: 'src/evaluation/**/*' },
     ],
     'boundaries/ignore': [
       'src/**/*.spec.ts',
@@ -73,6 +74,10 @@ module.exports = {
           { from: 'tenancy',    allow: ['tenancy', 'domain', 'common'] },
           { from: 'providers',  allow: ['providers', 'infrastructure', 'domain', 'common'] },
           { from: 'evidence',   allow: ['evidence', 'domain', 'application', 'common'] },
+
+          // evaluation: stateless Core Evaluation Engine (GT-377/ADR-0101) —
+          // canonical contracts + orchestrator; composes domain + application.
+          { from: 'evaluation', allow: ['evaluation', 'domain', 'application', 'common'] },
         ],
       },
     ],

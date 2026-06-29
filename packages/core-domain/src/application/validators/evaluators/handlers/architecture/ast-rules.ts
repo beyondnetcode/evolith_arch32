@@ -2,7 +2,7 @@ import * as path from 'path';
 import * as ts from 'typescript';
 import { IFileSystem } from '../../../../../domain/interfaces';
 import { NormalizedRule } from '../../../../../domain/models/normalized-rule';
-import { EvaluationContext } from '../../evaluator.interface';
+import { WorkspaceEvaluationContext } from '../../evaluator.interface';
 import { SubResult, PASSED, SKIPPED, getAllFilesRecursive } from './shared';
 
 export const AST_CATEGORIES = new Set([
@@ -22,7 +22,7 @@ function importPath(node: any): string {
   return node.moduleSpecifier.getText().replace(/['"]/g, '');
 }
 
-export async function evaluateAstRule(rule: NormalizedRule, ctx: EvaluationContext, fs: IFileSystem): Promise<SubResult> {
+export async function evaluateAstRule(rule: NormalizedRule, ctx: WorkspaceEvaluationContext, fs: IFileSystem): Promise<SubResult> {
   const srcPath = path.join(ctx.satellitePath, 'src');
   if (!await fs.exists(srcPath)) return PASSED;
   const fail = (reason: string): SubResult => ({ result: 'failed', message: `${rule.description} - ${reason}` });

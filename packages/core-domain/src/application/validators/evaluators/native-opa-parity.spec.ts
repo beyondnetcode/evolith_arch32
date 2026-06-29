@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import { NativeEvaluator } from './native-evaluator';
-import { EvaluationContext } from './evaluator.interface';
+import { WorkspaceEvaluationContext } from './evaluator.interface';
 import { NormalizedRule } from '../../domain/models/normalized-rule';
 import { IFileSystem, IConfigParser, ILogger } from '../../domain/interfaces';
 
@@ -13,7 +13,7 @@ interface LegacyScenario {
     json?: Record<string, unknown>;
     directories?: string[];
   };
-  context: EvaluationContext;
+  context: WorkspaceEvaluationContext;
   expectedResults: Array<{ ruleId: string; result: string; severity?: string }>;
 }
 
@@ -177,7 +177,7 @@ describe('Native Evaluator Parity (GT-229)', () => {
           const mockFs = createNewFs(fixture.input);
           const evaluator = new NativeEvaluator(mockFs, mockLogger, mockConfigParser);
 
-          const ctx: EvaluationContext = {
+          const ctx: WorkspaceEvaluationContext = {
             satellitePath: fixture.input.satellitePath,
             corePath: fixture.input.corePath,
           };

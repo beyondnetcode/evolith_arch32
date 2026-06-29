@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { IFileSystem } from '../../../../domain/interfaces';
 import { NormalizedRule } from '../../../../domain/models/normalized-rule';
-import { EvaluationContext, RuleEvaluationResult } from '../evaluator.interface';
+import { WorkspaceEvaluationContext, RuleEvaluationResult } from '../evaluator.interface';
 import { INativeRuleHandler } from './rule-handler.interface';
 
 export class CrossCuttingRuleHandler implements INativeRuleHandler {
@@ -14,7 +14,7 @@ export class CrossCuttingRuleHandler implements INativeRuleHandler {
     );
   }
 
-  async evaluate(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  async evaluate(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     if (rule.id.startsWith('DOD-')) return this.evalDod(rule, ctx);
     if (rule.id.startsWith('EM-')) return this.evalEngineeringManifesto(rule, ctx);
     if (rule.id.startsWith('CB-')) return this.evalComplianceBaseline(rule, ctx);
@@ -22,7 +22,7 @@ export class CrossCuttingRuleHandler implements INativeRuleHandler {
     return { rule, result: 'skipped', message: 'Unhandled cross-cutting rule' };
   }
 
-  private async evalDod(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  private async evalDod(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     switch (rule.id) {
       case 'DOD-01':
         return this.checkForCiWorkflow(rule, ctx, 'pull request');
@@ -53,7 +53,7 @@ export class CrossCuttingRuleHandler implements INativeRuleHandler {
     }
   }
 
-  private async evalEngineeringManifesto(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  private async evalEngineeringManifesto(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     if (rule.id === 'EM-S-03' || rule.id === 'EM-S-05' || rule.id === 'EM-K-01') {
       return this.checkForEvidence(rule, ctx, 'ESLint config', [
         '.eslintrc.js', '.eslintrc.json', '.eslintrc.yml', 'eslint.config.js', 'eslint.config.mjs',
@@ -65,7 +65,7 @@ export class CrossCuttingRuleHandler implements INativeRuleHandler {
     return { rule, result: 'passed', message: 'Engineering manifesto rule verified at code review level' };
   }
 
-  private async evalComplianceBaseline(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  private async evalComplianceBaseline(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     if (rule.id.startsWith('CB-VAL')) return this.evalComplianceVal(rule, ctx);
     const evolithYaml = path.join(ctx.satellitePath, 'evolith.yaml');
     if (await this.fs.exists(evolithYaml)) return { rule, result: 'passed' };
@@ -73,7 +73,7 @@ export class CrossCuttingRuleHandler implements INativeRuleHandler {
     return { rule, result: 'failed', message: 'Satellite missing evolith.yaml for compliance baseline' };
   }
 
-  private async evalComplianceVal(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  private async evalComplianceVal(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     if (rule.id === 'CB-VAL-01') {
       const evolithYaml = path.join(ctx.satellitePath, 'evolith.yaml');
       if (!await this.fs.exists(evolithYaml)) {
@@ -89,7 +89,7 @@ export class CrossCuttingRuleHandler implements INativeRuleHandler {
     return { rule, result: 'skipped', message: 'Unhandled CB-VAL rule' };
   }
 
-  private async evalTaxonomy(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  private async evalTaxonomy(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     switch (rule.id) {
       case 'TAX-01': return this.evalFileNaming(rule, ctx);
       case 'TAX-02': return this.evalNamingConvention(rule, ctx, 'PascalCase');
@@ -102,7 +102,7 @@ export class CrossCuttingRuleHandler implements INativeRuleHandler {
     }
   }
 
-  private async evalFileNaming(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  private async evalFileNaming(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     const srcDir = path.join(ctx.satellitePath, 'src');
     if (!await this.fs.exists(srcDir)) return { rule, result: 'passed' };
     const files = await this.listFilesRecursive(srcDir);
@@ -120,18 +120,18 @@ export class CrossCuttingRuleHandler implements INativeRuleHandler {
   }
 
   private async evalNamingConvention(
-    rule: NormalizedRule, _ctx: EvaluationContext, convention: string,
+    rule: NormalizedRule, _ctx: WorkspaceEvaluationContext, convention: string,
   ): Promise<RuleEvaluationResult> {
     return { rule, result: 'passed', message: `${convention} naming convention verified at lint level` };
   }
 
-  private async evalNoProductInReference(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  private async evalNoProductInReference(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     const refDir = path.join(ctx.corePath, 'reference');
     if (!await this.fs.exists(refDir)) return { rule, result: 'passed' };
     return { rule, result: 'passed', message: 'Product artifact exclusion from reference verified' };
   }
 
-  private async evalNoRootTopologies(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  private async evalNoRootTopologies(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     const topDir = path.join(ctx.corePath, 'topologies');
     if (await this.fs.exists(topDir)) {
       return { rule, result: 'failed', message: 'Root-level /topologies/ directory is prohibited' };
@@ -140,7 +140,7 @@ export class CrossCuttingRuleHandler implements INativeRuleHandler {
   }
 
   private async checkForCiWorkflow(
-    rule: NormalizedRule, ctx: EvaluationContext, needle: string,
+    rule: NormalizedRule, ctx: WorkspaceEvaluationContext, needle: string,
   ): Promise<RuleEvaluationResult> {
     const candidates = [
       path.join(ctx.satellitePath, '.github', 'workflows'),
@@ -158,7 +158,7 @@ export class CrossCuttingRuleHandler implements INativeRuleHandler {
     return { rule, result: 'skipped', message: `CI workflow with "${needle}" not found` };
   }
 
-  private async checkForCoverage(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  private async checkForCoverage(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     const candidates = ['coverage', 'lcov.info', 'coverage-summary.json'];
     for (const c of candidates) {
       if (await this.fs.exists(path.join(ctx.satellitePath, c))) return { rule, result: 'passed' };
@@ -167,7 +167,7 @@ export class CrossCuttingRuleHandler implements INativeRuleHandler {
   }
 
   private async checkForTestInfrastructure(
-    rule: NormalizedRule, ctx: EvaluationContext,
+    rule: NormalizedRule, ctx: WorkspaceEvaluationContext,
   ): Promise<RuleEvaluationResult> {
     const pkgPath = path.join(ctx.satellitePath, 'package.json');
     if (await this.fs.exists(pkgPath)) {
@@ -180,7 +180,7 @@ export class CrossCuttingRuleHandler implements INativeRuleHandler {
     return { rule, result: 'skipped', message: 'Test infrastructure requires runtime verification' };
   }
 
-  private async checkForDocs(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  private async checkForDocs(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     const docPaths = ['docs', 'README.md', 'ARCHITECTURE.md'];
     for (const d of docPaths) {
       if (await this.fs.exists(path.join(ctx.satellitePath, d))) return { rule, result: 'passed' };
@@ -189,7 +189,7 @@ export class CrossCuttingRuleHandler implements INativeRuleHandler {
   }
 
   private async checkForEvidence(
-    rule: NormalizedRule, ctx: EvaluationContext, label: string, candidates: string[],
+    rule: NormalizedRule, ctx: WorkspaceEvaluationContext, label: string, candidates: string[],
   ): Promise<RuleEvaluationResult> {
     for (const c of candidates) {
       if (await this.fs.exists(path.join(ctx.satellitePath, c))) return { rule, result: 'passed' };

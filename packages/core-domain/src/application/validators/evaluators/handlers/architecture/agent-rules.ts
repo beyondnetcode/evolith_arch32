@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { IFileSystem } from '../../../../../domain/interfaces';
 import { NormalizedRule } from '../../../../../domain/models/normalized-rule';
-import { EvaluationContext } from '../../evaluator.interface';
+import { WorkspaceEvaluationContext } from '../../evaluator.interface';
 import { SubResult, PASSED, SKIPPED, asRecord, asStringArray, isRestrictedAccess, isPositiveNumber, pathsOverlap, readJsonConfig } from './shared';
 
 export const AGENT_CATEGORIES = new Set([
@@ -10,7 +10,7 @@ export const AGENT_CATEGORIES = new Set([
   'agent-operational-budgets', 'agent-credential-lifecycle',
 ]);
 
-export async function evaluateAgentRule(rule: NormalizedRule, ctx: EvaluationContext, fs: IFileSystem): Promise<SubResult> {
+export async function evaluateAgentRule(rule: NormalizedRule, ctx: WorkspaceEvaluationContext, fs: IFileSystem): Promise<SubResult> {
   const config = await readJsonConfig(fs, ctx.satellitePath, 'agent.config.json');
   const fail = (reason: string): SubResult => ({ result: 'failed', message: `${rule.description} - ${reason}` });
 

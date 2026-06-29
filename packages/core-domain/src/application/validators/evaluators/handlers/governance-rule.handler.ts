@@ -2,7 +2,7 @@
 import * as path from 'path';
 import { IFileSystem, IConfigParser } from '../../../../domain/interfaces';
 import { NormalizedRule } from '../../../../domain/models/normalized-rule';
-import { EvaluationContext, RuleEvaluationResult } from '../evaluator.interface';
+import { WorkspaceEvaluationContext, RuleEvaluationResult } from '../evaluator.interface';
 import { INativeRuleHandler } from './rule-handler.interface';
 
 export class GovernanceRuleHandler implements INativeRuleHandler {
@@ -13,7 +13,7 @@ export class GovernanceRuleHandler implements INativeRuleHandler {
     return ['INH-01', 'INH-06', 'GOV-01', 'GOV-02', 'INH-02', 'OCB-01', 'ACL-01'].includes(rule.id);
   }
 
-  async evaluate(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  async evaluate(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     if (rule.id === 'INH-01') {
       const satelliteRulesets = path.join(ctx.satellitePath, 'rulesets');
       if (ctx.satellitePath !== ctx.corePath && await this.fs.exists(satelliteRulesets)) {

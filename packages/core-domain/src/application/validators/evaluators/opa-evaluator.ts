@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { IFileSystem, ILogger } from '../../../domain/interfaces';
 import { NormalizedRule } from '../../../domain/models/normalized-rule';
-import { IRuleEvaluatorStrategy, EvaluationContext, RuleEvaluationResult } from './evaluator.interface';
+import { IRuleEvaluatorStrategy, WorkspaceEvaluationContext, RuleEvaluationResult } from './evaluator.interface';
 import { loadPolicy } from '@open-policy-agent/opa-wasm';
 import { OpaInputBuilder } from './opa-input-builder';
 import Ajv from 'ajv';
@@ -48,7 +48,7 @@ export class OpaEvaluator implements IRuleEvaluatorStrategy {
 
   async evaluateAll(
     rules: NormalizedRule[],
-    ctx: EvaluationContext,
+    ctx: WorkspaceEvaluationContext,
   ): Promise<RuleEvaluationResult[]> {
     const wasmPath = path.join(ctx.corePath, 'rulesets', 'opa', 'policy.wasm');
     if (!await this.fs.exists(wasmPath)) {

@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { IFileSystem } from '../../../../domain/interfaces';
 import { NormalizedRule } from '../../../../domain/models/normalized-rule';
-import { EvaluationContext, RuleEvaluationResult } from '../evaluator.interface';
+import { WorkspaceEvaluationContext, RuleEvaluationResult } from '../evaluator.interface';
 import { INativeRuleHandler } from './rule-handler.interface';
 
 export class McpRuleHandler implements INativeRuleHandler {
@@ -11,7 +11,7 @@ export class McpRuleHandler implements INativeRuleHandler {
     return rule.id.startsWith('MCP-');
   }
 
-  async evaluate(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  async evaluate(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     if (rule.id === 'MCP-01' || rule.id === 'MCP-02' || rule.id === 'MCP-03') {
       return this.evalMcpEvidence(rule, ctx);
     }
@@ -21,7 +21,7 @@ export class McpRuleHandler implements INativeRuleHandler {
     return { rule, result: 'skipped', message: 'Unhandled MCP rule' };
   }
 
-  private async evalMcpEvidence(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  private async evalMcpEvidence(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     const evidenceDir = path.join(ctx.corePath, '.harness', 'evidence');
     const files = await this.fs.exists(evidenceDir)
       ? await this.fs.readdirNames(evidenceDir)
@@ -52,7 +52,7 @@ export class McpRuleHandler implements INativeRuleHandler {
     return { rule, result: 'passed' };
   }
 
-  private async evalMcpSecurity(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  private async evalMcpSecurity(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     const serverFile = path.join(ctx.corePath, 'sdk', 'cli', 'src', 'core', 'mcp', 'server.ts');
     if (!await this.fs.exists(serverFile)) {
       return { rule, result: 'skipped', message: 'MCP server.ts not found' };

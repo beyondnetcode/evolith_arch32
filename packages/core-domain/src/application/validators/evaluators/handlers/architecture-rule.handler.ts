@@ -1,6 +1,6 @@
 import { IFileSystem } from '../../../../domain/interfaces';
 import { NormalizedRule } from '../../../../domain/models/normalized-rule';
-import { EvaluationContext, RuleEvaluationResult } from '../evaluator.interface';
+import { WorkspaceEvaluationContext, RuleEvaluationResult } from '../evaluator.interface';
 import { INativeRuleHandler } from './rule-handler.interface';
 import { AGENT_CATEGORIES, evaluateAgentRule } from './architecture/agent-rules';
 import { STRUCTURAL_CATEGORIES, evaluateStructuralRule } from './architecture/structural-rules';
@@ -22,12 +22,12 @@ export class ArchitectureRuleHandler implements INativeRuleHandler {
     return Boolean(rule.category) && SUPPORTED_CATEGORIES.has(rule.category);
   }
 
-  async evaluate(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  async evaluate(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     const sub = await this.dispatch(rule, ctx);
     return { rule, result: sub.result, message: sub.message };
   }
 
-  private async dispatch(rule: NormalizedRule, ctx: EvaluationContext): Promise<SubResult> {
+  private async dispatch(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<SubResult> {
     if (AGENT_CATEGORIES.has(rule.category)) return evaluateAgentRule(rule, ctx, this.fs);
     if (STRUCTURAL_CATEGORIES.has(rule.category)) return evaluateStructuralRule(rule, ctx, this.fs);
     if (AST_CATEGORIES.has(rule.category)) return evaluateAstRule(rule, ctx, this.fs);

@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { IFileSystem } from '../../../../../domain/interfaces';
 import { NormalizedRule } from '../../../../../domain/models/normalized-rule';
-import { EvaluationContext } from '../../evaluator.interface';
+import { WorkspaceEvaluationContext } from '../../evaluator.interface';
 import { SubResult, PASSED, SKIPPED } from './shared';
 
 export const STRUCTURAL_CATEGORIES = new Set([
@@ -11,7 +11,7 @@ export const STRUCTURAL_CATEGORIES = new Set([
   'containerization', 'service-boundaries',
 ]);
 
-export async function evaluateStructuralRule(rule: NormalizedRule, ctx: EvaluationContext, fs: IFileSystem): Promise<SubResult> {
+export async function evaluateStructuralRule(rule: NormalizedRule, ctx: WorkspaceEvaluationContext, fs: IFileSystem): Promise<SubResult> {
   const sat = ctx.satellitePath;
   const fail = (reason: string): SubResult => ({ result: 'failed', message: `${rule.description} - ${reason}` });
 

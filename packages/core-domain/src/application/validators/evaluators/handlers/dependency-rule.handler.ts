@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { IFileSystem } from '../../../../domain/interfaces';
 import { NormalizedRule } from '../../../../domain/models/normalized-rule';
-import { EvaluationContext, RuleEvaluationResult } from '../evaluator.interface';
+import { WorkspaceEvaluationContext, RuleEvaluationResult } from '../evaluator.interface';
 import { INativeRuleHandler } from './rule-handler.interface';
 
 export class DependencyRuleHandler implements INativeRuleHandler {
@@ -11,7 +11,7 @@ export class DependencyRuleHandler implements INativeRuleHandler {
     return rule.category === 'version-pinning' || rule.id.startsWith('DEP-0') || rule.id.startsWith('DEP-1');
   }
 
-  async evaluate(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  async evaluate(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     if (rule.id === 'DEP-04') return this.evalLockFile(rule, ctx);
     if (rule.id === 'DEP-05') return this.evalCiInstall(rule, ctx);
     if (rule.id === 'DEP-06' || rule.id === 'DEP-07') return this.evalCiAudit(rule, ctx);
@@ -21,7 +21,7 @@ export class DependencyRuleHandler implements INativeRuleHandler {
     return { rule, result: 'skipped', message: 'Unhandled DEP rule' };
   }
 
-  private async evalVersionPinning(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  private async evalVersionPinning(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     const violations: string[] = [];
     const targets = rule.id === 'DEP-10'
       ? await this.findWorkspacePackageJsons(ctx.satellitePath)
@@ -62,7 +62,7 @@ export class DependencyRuleHandler implements INativeRuleHandler {
     return { rule, result: 'passed' };
   }
 
-  private async evalLockFile(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  private async evalLockFile(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     const candidates = [
       path.join(ctx.satellitePath, 'package-lock.json'),
       path.join(ctx.corePath, 'package-lock.json'),
@@ -75,15 +75,15 @@ export class DependencyRuleHandler implements INativeRuleHandler {
     return { rule, result: 'failed', message: 'package-lock.json not found at project or workspace root' };
   }
 
-  private async evalCiInstall(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  private async evalCiInstall(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     return this.evalCiWorkflowContains(rule, ctx, 'npm ci', 'CI workflow does not use "npm ci"');
   }
 
-  private async evalCiAudit(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  private async evalCiAudit(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     return this.evalCiWorkflowContains(rule, ctx, 'npm audit', 'CI workflow does not run "npm audit"');
   }
 
-  private async evalDependabot(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  private async evalDependabot(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     const candidates = [
       path.join(ctx.satellitePath, '.github', 'dependabot.yml'),
       path.join(ctx.satellitePath, '.renovaterc.json'),
@@ -99,7 +99,7 @@ export class DependencyRuleHandler implements INativeRuleHandler {
 
   private async evalCiWorkflowContains(
     rule: NormalizedRule,
-    ctx: EvaluationContext,
+    ctx: WorkspaceEvaluationContext,
     needle: string,
     failMsg: string,
   ): Promise<RuleEvaluationResult> {

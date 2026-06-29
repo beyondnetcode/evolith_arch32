@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { IFileSystem } from '../../../../domain/interfaces';
 import { NormalizedRule } from '../../../../domain/models/normalized-rule';
-import { EvaluationContext, RuleEvaluationResult } from '../evaluator.interface';
+import { WorkspaceEvaluationContext, RuleEvaluationResult } from '../evaluator.interface';
 import { INativeRuleHandler } from './rule-handler.interface';
 
 export class SdlcRuleHandler implements INativeRuleHandler {
@@ -11,7 +11,7 @@ export class SdlcRuleHandler implements INativeRuleHandler {
     return rule.id.startsWith('QT-');
   }
 
-  async evaluate(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  async evaluate(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     switch (rule.id) {
       case 'QT-01': return this.checkForEvidence(rule, ctx, 'coverage report', ['coverage', 'lcov.info']);
       case 'QT-02': return this.checkForEvidence(rule, ctx, 'complexity report', ['complexity-report.json']);
@@ -28,7 +28,7 @@ export class SdlcRuleHandler implements INativeRuleHandler {
   }
 
   private async checkForEvidence(
-    rule: NormalizedRule, ctx: EvaluationContext, label: string, candidates: string[],
+    rule: NormalizedRule, ctx: WorkspaceEvaluationContext, label: string, candidates: string[],
   ): Promise<RuleEvaluationResult> {
     for (const c of candidates) {
       if (await this.fs.exists(path.join(ctx.satellitePath, c))) return { rule, result: 'passed' };
@@ -39,7 +39,7 @@ export class SdlcRuleHandler implements INativeRuleHandler {
     return { rule, result: 'skipped', message: `Requires external verification: ${label}` };
   }
 
-  private async evalDocumentationDelta(rule: NormalizedRule, ctx: EvaluationContext): Promise<RuleEvaluationResult> {
+  private async evalDocumentationDelta(rule: NormalizedRule, ctx: WorkspaceEvaluationContext): Promise<RuleEvaluationResult> {
     const candidates = ['docs', 'README.md'];
     for (const c of candidates) {
       if (await this.fs.exists(path.join(ctx.satellitePath, c))) return { rule, result: 'passed' };

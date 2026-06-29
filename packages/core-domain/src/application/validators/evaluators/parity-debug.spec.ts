@@ -2,7 +2,7 @@ import * as path from 'path';
 import { NativeEvaluator } from './native-evaluator';
 import { NormalizedRule } from '../../domain/models/normalized-rule';
 import { IFileSystem, IConfigParser, ILogger } from '../../domain/interfaces';
-import { EvaluationContext } from './evaluator.interface';
+import { WorkspaceEvaluationContext } from './evaluator.interface';
 
 function createMockFileSystem(cfg: {
   existing?: string[];
@@ -56,7 +56,7 @@ function rule(id: string, cat = 'test'): NormalizedRule {
 
 describe('EVIDENCE handler deep debug', () => {
   const evDir = '/core/.harness/evidence';
-  const ctx: EvaluationContext = { satellitePath: '/sat', corePath: '/core' };
+  const ctx: WorkspaceEvaluationContext = { satellitePath: '/sat', corePath: '/core' };
 
   it('EVD-01 with complete manifest', async () => {
     const manifest = { id: 'ev-001', source: 'cli', generatedAt: 't', producer: 'p', relatedGateId: 'g', sourceRef: 'r', status: 'passed', evaluatedRules: 5, blockingFailures: 0, retentionPeriod: '90d', owner: 'team' };
@@ -73,7 +73,7 @@ describe('EVIDENCE handler deep debug', () => {
 });
 
 describe('CLI-RR handler deep debug', () => {
-  const ctx: EvaluationContext = { satellitePath: '/sat', corePath: '/core' };
+  const ctx: WorkspaceEvaluationContext = { satellitePath: '/sat', corePath: '/core' };
 
   it('CLI-RR-02 with dist/main.js', async () => {
     const distDir = path.join('/core', 'sdk', 'cli', 'dist');
@@ -91,7 +91,7 @@ describe('CLI-RR handler deep debug', () => {
 
 describe('GOV OCB-01 deep debug', () => {
   const sat = '/sat';
-  const ctx: EvaluationContext = { satellitePath: sat, corePath: '/core' };
+  const ctx: WorkspaceEvaluationContext = { satellitePath: sat, corePath: '/core' };
 
   it('OCB-01 with UNLICENSED package', async () => {
     const pkg = path.join(sat, 'package.json');
@@ -107,7 +107,7 @@ describe('GOV OCB-01 deep debug', () => {
 });
 
 describe('TAX-05 deep debug', () => {
-  const ctx: EvaluationContext = { satellitePath: '/sat', corePath: '/core' };
+  const ctx: WorkspaceEvaluationContext = { satellitePath: '/sat', corePath: '/core' };
 
   it('TAX-05 with all core dirs', async () => {
     const dirs = ['reference', 'rulesets', 'sdk', '.harness'].map(d => path.join('/core', d));
@@ -128,7 +128,7 @@ describe('TAX-05 deep debug', () => {
 });
 
 describe('MM-R01 deep debug', () => {
-  const ctx: EvaluationContext = { satellitePath: '/sat', corePath: '/core' };
+  const ctx: WorkspaceEvaluationContext = { satellitePath: '/sat', corePath: '/core' };
 
   it('MM-R01 with workspace', async () => {
     const pkg = path.join('/sat', 'package.json');
@@ -156,7 +156,7 @@ describe('MM-R01 deep debug', () => {
 });
 
 describe('MM-R03 deep debug', () => {
-  const ctx: EvaluationContext = { satellitePath: '/sat', corePath: '/core' };
+  const ctx: WorkspaceEvaluationContext = { satellitePath: '/sat', corePath: '/core' };
 
   it('MM-R03 without ports', async () => {
     const fsMock = createMockFileSystem({});

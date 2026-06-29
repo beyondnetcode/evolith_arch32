@@ -1,11 +1,11 @@
 import * as path from 'path';
 import { IFileSystem } from '../../../domain/interfaces';
-import { EvaluationContext } from './evaluator.interface';
+import { WorkspaceEvaluationContext } from './evaluator.interface';
 
 export class OpaInputBuilder {
   constructor(private readonly fs: IFileSystem) {}
 
-  public async build(ctx: EvaluationContext): Promise<unknown> {
+  public async build(ctx: WorkspaceEvaluationContext): Promise<unknown> {
     const satelliteWorkflows = await this.readWorkflows(ctx.satellitePath);
     const coreEvidence = await this.readEvidence(ctx.corePath);
     const mcpServerContent = await this.safeReadFile(path.join(ctx.corePath, 'sdk', 'cli', 'src', 'core', 'mcp', 'server.ts'));

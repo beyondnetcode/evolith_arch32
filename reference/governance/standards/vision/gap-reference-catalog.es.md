@@ -79,8 +79,8 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Fase del roadmap:** R3. **Impacto:** casos de uso de `core-domain` + `IBlueprintRepository` (solo definición).
 - **Complejidad:** L
 - **Criterios de aceptación:**
-  - [ ] Cada resultado emitido por el contrato; el checkpoint engine no muta estado (test).
-  - [ ] `DecisionRecommendation.binding === false`; la topología se recomienda, no se impone.
+  - [x] Cada resultado emitido por el contrato; el checkpoint engine no muta estado (test).
+  - [x] `DecisionRecommendation.binding === false`; la topología se recomienda, no se impone.
 - **Dependencias:** `GT-378`.
 
 #### GT-380

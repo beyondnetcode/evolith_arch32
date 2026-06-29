@@ -83,25 +83,28 @@ export default [
       'boundaries/ignore': ['src/**/*.spec.ts', 'src/**/*.test.ts'],
     },
     rules: {
-      'boundaries/element-types': [
+      'boundaries/dependencies': [
         'error',
         {
           default: 'disallow',
           rules: [
             // application: innermost app layer
-            { from: 'application', allow: ['application'] },
+            { from: { type: 'application' }, allow: { to: { type: ['application'] } } },
 
             // infrastructure: adapters — may use application
-            { from: 'infrastructure', allow: ['infrastructure', 'application'] },
+            {
+              from: { type: 'infrastructure' },
+              allow: { to: { type: ['infrastructure', 'application'] } },
+            },
 
             // presentation: controllers — outermost, may use all
             {
-              from: 'presentation',
-              allow: ['presentation', 'infrastructure', 'application', 'openapi'],
+              from: { type: 'presentation' },
+              allow: { to: { type: ['presentation', 'infrastructure', 'application', 'openapi'] } },
             },
 
             // openapi: cross-cutting decorators/specs
-            { from: 'openapi', allow: ['openapi', 'application'] },
+            { from: { type: 'openapi' }, allow: { to: { type: ['openapi', 'application'] } } },
 
             // Type-only imports are permitted across all layers: they are erased
             // at compile time and create NO runtime coupling, so they don't
@@ -110,16 +113,13 @@ export default [
             // (e.g. an application service may reference a DTO/`z.infer` type
             // from another layer via `import type`, but never import its values.)
             {
-              from: ['application', 'infrastructure', 'presentation', 'openapi'],
-              importKind: 'type',
-              allow: ['application', 'infrastructure', 'presentation', 'openapi'],
+              from: { type: ['application', 'infrastructure', 'presentation', 'openapi'] },
+              dependency: { kind: 'type' },
+              allow: { to: { type: ['application', 'infrastructure', 'presentation', 'openapi'] } },
             },
           ],
         },
       ],
-
-      // External npm packages (including @evolith/* workspace packages) are allowed.
-      'boundaries/no-external': 'off',
     },
   },
 ];

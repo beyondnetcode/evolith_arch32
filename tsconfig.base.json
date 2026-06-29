@@ -1,0 +1,15 @@
+{
+  "$comment": "Shared TypeScript base for all Evolith workspaces (W-Build). Every package extends this and overrides only structural settings it genuinely needs (module/moduleResolution, rootDir/outDir, decorators, types). Behavioural settings live here so they cannot drift. Target stays ES2021 deliberately: ES2022+ flips useDefineForClassFields to true, which breaks NestJS constructor-DI and decorator metadata.",
+  "compilerOptions": {
+    "target": "ES2021",
+    "composite": true,
+    "strict": true,
+    "declaration": true,
+    "removeComments": true,
+    "sourceMap": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  }
+}

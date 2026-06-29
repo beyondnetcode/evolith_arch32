@@ -7,7 +7,7 @@ import {
   nextPhase,
   severityToRisk,
 } from './kind-evaluators';
-import { Verdict } from '@evolith/core-domain';
+import { Verdict } from '../domain/verdict/verdict';
 
 const ctx: any = { kinds: ['architecture'], workspaceRef: 'ws', topologyRef: 'modular-monolith', phaseId: 'design' };
 const ws = { satellitePath: '/ws/sat', corePath: '/ws/core' };

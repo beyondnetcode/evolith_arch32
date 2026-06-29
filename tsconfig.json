@@ -1,0 +1,13 @@
+{
+  "$comment": "Root solution file for `tsc -b` (W-Build). References every workspace in dependency order so the whole graph builds incrementally with one command. Per-package `npm run build` (plain `tsc`) still works independently.",
+  "files": [],
+  "references": [
+    { "path": "./packages/core-domain" },
+    { "path": "./packages/infra-providers" },
+    { "path": "./packages/core" },
+    { "path": "./packages/mcp-server" },
+    { "path": "./packages/sdk-client" },
+    { "path": "./apps/core-api" },
+    { "path": "./sdk/cli" }
+  ]
+}

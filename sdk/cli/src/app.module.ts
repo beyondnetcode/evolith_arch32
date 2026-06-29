@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { InitCommand } from './commands/init/init.command';
 import { AgentsCommand } from './commands/init/agents.command';
 import { ValidateCommand } from './commands/validate/validate.command';
+import { EvaluateCommand } from './commands/evaluate/evaluate.command';
 import { AliasService } from './config/alias.service';
 import { AliasCommand } from './commands/alias/alias.command';
 import { DocsCommand } from './commands/docs/docs.command';
@@ -56,6 +57,7 @@ import { PluginModule } from './infrastructure/plugins/plugin.module';
     InitCommand,
     AgentsCommand,
     ValidateCommand,
+    EvaluateCommand,
     DocsCommand,
     UpgradeCommand,
     McpServeCommand,

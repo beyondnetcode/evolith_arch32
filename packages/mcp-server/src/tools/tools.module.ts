@@ -8,6 +8,7 @@ import { ToolRegistryService } from '../mcp/tool-registry.service';
 import { MetricsService } from '../mcp/metrics.service';
 import { McpTool, MCP_TOOLS } from '../mcp/tool.interface';
 import { ValidateTool } from './validate.tool';
+import { EvaluateTool } from './evaluate.tool';
 import { ComposableValidateTool } from './composable-validate.tool';
 import { SatelliteCreateTool } from './satellite-create.tool';
 import { SatelliteAdoptTool } from './satellite-adopt.tool';
@@ -35,6 +36,7 @@ import { createTopologyTools } from './topology.tools';
   imports: [DomainModule],
   providers: [
     ValidateTool,
+    EvaluateTool,
     ComposableValidateTool,
     SatelliteCreateTool,
     SatelliteAdoptTool,
@@ -45,6 +47,7 @@ import { createTopologyTools } from './topology.tools';
       provide: MCP_TOOLS,
       useFactory: (
         validate: ValidateTool,
+        evaluate: EvaluateTool,
         composableValidate: ComposableValidateTool,
         satelliteCreate: SatelliteCreateTool,
         satelliteAdopt: SatelliteAdoptTool,
@@ -58,6 +61,7 @@ import { createTopologyTools } from './topology.tools';
         metrics: MetricsService,
       ): McpTool[] => [
         validate,
+        evaluate,
         composableValidate,
         satelliteCreate,
         satelliteAdopt,
@@ -76,6 +80,7 @@ import { createTopologyTools } from './topology.tools';
       ],
       inject: [
         ValidateTool,
+        EvaluateTool,
         ComposableValidateTool,
         SatelliteCreateTool,
         SatelliteAdoptTool,

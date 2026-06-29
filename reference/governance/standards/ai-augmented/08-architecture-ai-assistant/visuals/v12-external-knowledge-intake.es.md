@@ -59,7 +59,7 @@ flowchart LR
 | `SRC-EVANS-DDD` | Eric Evans, *Domain-Driven Design* | Localizador bibliográfico, cita corta permitida, síntesis original | Evaluación de límites de Aggregate |
 | `SRC-CONTEXT7-OFFICIAL` | Recuperación Context7 de documentación oficial | Localizador de fuente versionado y síntesis original; sin transferencia de autoridad | Evidencia de implementación específica de runtime |
 
-El primer piloto es un único candidato: `KI-EVANS-AGGREGATE-001`. Puede respaldar la guía existente de aggregates pequeños, pero no puede modificar una regla ni la autoridad del corpus hasta completar el flujo de promoción.
+El primer piloto es un único candidato: `KI-EVANS-AGGREGATE-001`. Puede respaldar la guía existente de agregados pequeños, pero no puede modificar una regla ni la autoridad del corpus hasta completar el flujo de promoción.
 
 ## Gates de Control de Winston
 

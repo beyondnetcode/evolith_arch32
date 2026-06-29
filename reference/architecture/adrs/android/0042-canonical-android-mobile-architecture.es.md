@@ -18,7 +18,7 @@ The canonical Android stack consists of:
 ### A. Core Tech Stack
 * **Language**: 100% Kotlin (Modern coroutines for async execution).
 * **UI Engine**: **Jetpack Compose** (Declarative, reactive UI mapping state directly).
-* **Local Storage**: **Room Database** with full SQLCipher encryption if managing PII.
+* **Local Storage**: **Room Base de datos** with full SQLCipher encryption if managing PII.
 
 ### B. Architectural Style
 * **Pattern**: **MVVM (Model-View-ViewModel)** combined with strict **Clean Architecture** principles.

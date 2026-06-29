@@ -13,7 +13,7 @@
 * **URL Upstream Evolith:** `En construcción - Solicitar a Upstream`
 * **Entradas Requeridas:** Historias de Usuario Evolith redactadas.
 * **Salidas Esperadas:** Backlog priorizado listo para ejecución iterativa (Sprints).
-* **Taxonomía Aplicada:** Sprint, MVP, Technical Debt.
+* **Taxonomía Aplicada:** Sprint, MVP, Deuda Técnica.
 * **Rules Evolith Aplicables:** R-03 (UTF-8 Clean), R-06 (Split Stories), R-11 (Order).
 
 ## 1. Estructura Documental (Markdown)

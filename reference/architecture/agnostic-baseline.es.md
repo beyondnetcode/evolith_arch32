@@ -43,7 +43,7 @@ El catálogo extendido de principios vive en [`principles/`](./principles/README
 
 Patrones estructurales obligatorios, agnósticos al runtime:
 
-- **Arquitectura Hexagonal (Ports & Adapters).** Un puerto por capacidad propiedad del dominio; un adaptador directo en Fase 1, adaptadores adicionales solo cuando un ADR lo justifique.
+- **Arquitectura Hexagonal (Puertos y Adaptadores).** Un puerto por capacidad propiedad del dominio; un adaptador directo en Fase 1, adaptadores adicionales solo cuando un ADR lo justifique.
 - **Integración Contract-First.** Las superficies públicas son RESTful (OpenAPI v3); las llamadas síncronas internas escalan a gRPC (Protocol Buffers) desde la Fase 2; la integración asíncrona usa AMQP / CloudEvents con Transactional Outbox.
 - **Frontend Atómico & Estado Cache-First.** Un monolito React modular hasta la Fase 3+, Module Federation solo por excepción, estado asíncrono cache-first (`stale-while-revalidate`), tokens de diseño atómicos compartidos.
 - **Infraestructura Fundamental Neutral al Proveedor.** Caché vía puerto abstracto (Redis-compatible como referencia). Almacenamiento de objetos vía protocolo S3-compatible (MinIO como referencia). Persistencia relacional por ADR-0051 con aislamiento schema-por-contexto y normalización según ADR-0054.

@@ -139,7 +139,7 @@ smart-cli validate project [--satellite <path>] [--format json]
 ```bash
 smart-cli validate architecture [--satellite <path>]
 ```
-**Usa:** f1-modular-monolith, f2-distributed-modules, f3-microservices
+**Usa:** f1-modular-monolith, f2-distributed-modules, f3-microservicios
 
 ### `smart-cli validate sdlc`
 **Propósito:** Validar reglas SDLC

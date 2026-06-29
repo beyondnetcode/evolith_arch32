@@ -15,7 +15,7 @@
 | 1 | **5 commands with 12-31% coverage** | `agents.command.ts`, `gate.command.ts`, `phase-advance.command.ts`, `init.wizard.ts` | User-facing commands unvalidated |
 | 2 | **19 files with @ts-nocheck** | `server.ts`, `app.module.ts`, 8 MCP tools, 5 commands | Entire type system bypassed |
 | 3 | **4 cross-boundary require() calls** | `architecture.ts`, `sdlc.ts`, `gate.ts`, `validate.ts` | Layer architecture violation |
-| 4 | **6 files >300 lines** | `server.ts` (420L), `api.command.ts` (364L), `prompt.service.ts` (355L) | Maintainability risk |
+| 4 | **6 files >300 lines** | `server.ts` (420L), `api.command.ts` (364L), `prompt.service.ts` (355L) | Mantenibilidad risk |
 
 ### MEDIUM Severity
 

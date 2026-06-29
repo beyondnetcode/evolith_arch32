@@ -28,7 +28,7 @@ Adoptar formalmente el **Patrón Transactional Outbox** para garantizar la propa
 - Requiere el despliegue operativo de un trabajador/servicio de relevo (Relay) para reenviar los eventos encolados.
 
 ## Referencias
-- [Transactional Outbox Pattern (Microservices.io)](https://microservices.io/patterns/data/transactional-outbox.html)
+- [Transactional Outbox Pattern (Microservicios.io)](https://microservices.io/patterns/data/transactional-outbox.html)
 - [ADR-0015: Bus de Eventos Inyectable](./0015-event-driven-architecture-intra-domain.es.md)
 
 
@@ -50,7 +50,7 @@ Desconocido (registro histórico; evaluado contra principios generales de arquit
 
 ## Decisiones y Estándares Relacionados
 
-- [Transactional Outbox Pattern (Microservices.io)](https://microservices.io/patterns/data/transactional-outbox.html)
+- [Transactional Outbox Pattern (Microservicios.io)](https://microservices.io/patterns/data/transactional-outbox.html)
 - [ADR-0015: Bus de Eventos Inyectable](./0015-event-driven-architecture-intra-domain.es.md)
 
 ---

@@ -16,7 +16,7 @@
 4. **Validación** – Los scripts de pre‑commit (`check-orphan-bilingual.mjs`, `validate-docs.mjs`) se configuran para ignorar los files `*.json` al validar paridad de idioma.
 
 ## Consecuencias
-- Reducción del *technical debt* asociado a la traducción de artefactos de máquina.
+- Reducción del *deuda Técnica* asociado a la traducción de artefactos de máquina.
 - Los equipos deben consultar la documentación bilingüe para comprender la intención de la regla.
 - En caso de que se requiera una regla distinta para una región, se deberá crear un nuevo ruleset con su propio identificador.
 

@@ -44,8 +44,8 @@ Which monorepo orchestrator?
 | Patrón | Herramientas | Acción CLI | Notas |
 |---------|-------|------------|-------|
 | **Clean Architecture** | NestJS + Capas | `smart-cli init --arch=clean` | Controller → Service → Repository |
-| **Hexagonal (Ports & Adapters)** | NestJS + Ports | `smart-cli init --arch=hexagonal` | Ports de dominio, adapters de infraestructura |
-| **DDD (Domain-Driven Design)** | NestJS + patrones DDD | `smart-cli init --arch=ddd` | Aggregates, Value Objects, Domain Events |
+| **Hexagonal (Puertos y Adaptadores)** | NestJS + Ports | `smart-cli init --arch=hexagonal` | Ports de dominio, adapters de infraestructura |
+| **DDD (Domain-Driven Design)** | NestJS + patrones DDD | `smart-cli init --arch=ddd` | Agregados, Objetos de Valor, Domain Events |
 | **Clean + Hexagonal** | Combinado | `smart-cli init --arch=clean-hex` | Estructura limpia + ports explícitos |
 | **Hexagonal + DDD** | Combinado | `smart-cli init --arch=hex-ddd` | Ports + modelo de dominio rico |
 | **Clean + Hex + DDD** | Stack Completo | `smart-cli init --arch=full` | Todos los patrones combinados |
@@ -251,7 +251,7 @@ Herramientas explícitamente rechazadas por Evolith Core (requieren ADR para rev
 |------|----------|--------|
 | Bun | Runtime | No auditado, compatibilidad del ecosistema no probada |
 | Deno | Runtime | Preparación para producción no confirmada |
-| Prisma | ORM (Node.js) | Problemas de performance en escenarios de alta carga (requiere ADR) |
+| Prisma | ORM (Node.js) | Problemas de rendimiento en escenarios de alta carga (requiere ADR) |
 | Sequelize | ORM | No recomendado, usar TypeORM/Drizzle |
 | Mocha | Testing | Usar Jest por consistencia |
 | Fastify | Web Host | Salvo ADR aprobado, usar NestJS/Express |

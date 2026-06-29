@@ -28,7 +28,7 @@ El Core API expone una superficie **exclusivamente REST** — no existe interfaz
 
 1. **Evaluación de Gates:** Valida si un proyecto cumple con todos los criterios de calidad de sus gates para la fase actual del SDLC. Las cinco fases canónicas de gobernanza son **Conception & Discovery**, **Design & Architecture**, **Construction**, **Validation & QA** y **Delivery & Operations** (expuestas mediante las claves operativas de fase de la CLI/API `discovery`, `design`, `construction`, `qa`, `release`).
 2. **Transición de Fases:** Automatiza las transiciones entre fases de SDLC basándose en la coincidencia de evidencias con reglas predefinidas.
-3. **Verificación de Arquitectura:** Audita proyectos satélite contra rulesets multi-topología declarados (Modular Monolith, Distributed Modules, Microservices, Serverless, Edge Computing, Event-Driven, Data Mesh y Agentic/AI-First).
+3. **Verificación de Arquitectura:** Audita proyectos satélite contra rulesets multi-topología declarados (Monolito Modular, Distributed Modules, Microservicios, Serverless, Edge Computing, Event-Driven, Data Mesh y Agentic/AI-First).
 4. **Detección de Deriva (Drift):** Rastrea en tiempo real la divergencia entre los estándares topológicos declarados y las configuraciones de los workspaces activos.
 
 ---
@@ -37,7 +37,7 @@ El Core API expone una superficie **exclusivamente REST** — no existe interfaz
 
 - **Framework:** NestJS
 - **Lenguaje:** TypeScript
-- **Interfaces:** REST API (versionada por URI bajo `/api/v1`) y Swagger/OpenAPI. Sin GraphQL ni SSE.
+- **Interfaces:** API REST (versionada por URI bajo `/api/v1`) y Swagger/OpenAPI. Sin GraphQL ni SSE.
 - **Motores de Validación:**
   - **Validador Nativo de TypeScript:** Validador en memoria de alta velocidad.
   - **Validador OPA WASM:** Paridad de evaluación con motor dual ejecutando políticas compiladas en WebAssembly.

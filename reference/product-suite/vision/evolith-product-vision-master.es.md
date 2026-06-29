@@ -158,11 +158,11 @@ flowchart TB
 
 | Interfaz | Consumidor | Propósito |
 |---|---|---|
-| **REST API** | UI del Tracker, CI/CD e integraciones empresariales | Gestionar procesos, fases, evidencias, gates y configuración |
+| **API REST** | UI del Tracker, CI/CD e integraciones empresariales | Gestionar procesos, fases, evidencias, gates y configuración |
 | **MCP HTTP/SSE** | LLMs y agentes autónomos | Obtener contexto gobernado, evaluar criterios y registrar evidencias |
 | **CLI y Chatbox** | Roles de ingeniería y producto | Interacción guiada usando contexto actual de tenant, producto y fase |
 | **Agent Execution Port** | Claude, OpenAI, Gemini, agentes locales o futuros | Ejecutar actividades acotadas detrás de un contrato neutral respecto del proveedor |
-| **Webhook / Event Bus** | Sistemas internos y externos | Propagar comandos, evidencias, cambios de estado y resultados de gates |
+| **Webhook / Bus de Eventos** | Sistemas internos y externos | Propagar comandos, evidencias, cambios de estado y resultados de gates |
 
 ---
 

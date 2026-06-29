@@ -2,7 +2,7 @@
 
 ## Status
 
-**Proposed** - supersedes the naming scope of [ADR-0049 (Naming Semantics & Clean Code Policy)](./0049-naming-semantics-clean-code-policy.md) with binding, language-specific, and platform-specific rules.
+**Proposed** - supersedes the naming scope of [ADR-0049 (Naming Semantics & Código Limpio Policy)](./0049-naming-semantics-clean-code-policy.md) with binding, language-specific, and platform-specific rules.
 
 ## Date
 
@@ -23,7 +23,7 @@ This organization operates a polyglot, multi-platform architecture spanning:
 - **Databases:** SQL Server 2022, PostgreSQL 16, analytical stores (BigQuery / Synapse)
 - **Messaging:** Domain events (CloudEvents 1.0), commands, integration events via RabbitMQ / Dapr pub/sub
 - **Design paradigm:** Domain-Driven Design (DDD) - strategic and tactical
-- **Quality standard:** ISO/IEC 25010 (maintainability, reliability, portability)
+- **Quality standard:** ISO/IEC 25010 (maintainability, reliability, portabilidad)
 - **Metadata standard:** ISO/IEC 11179 (data element naming)
 
 Naming inconsistency is the most frequently cited source of onboarding friction, integration bugs, and security misconfigurations (e.g., mismatched JSON/DB field names leaking PII). A binding corporate standard eliminates ambiguity and enables automated enforcement.
@@ -95,7 +95,7 @@ Ubiquitous Language Term (English noun/verb phrase)
 **Rejected.** Violates C# and Java idioms. Forces non-idiomatic code in strongly-typed languages where compilers and IDEs assume PascalCase types. ISO/IEC 25010 maintainability requires convention alignment with each ecosystem.
 
 ### 4.2 Full camelCase everywhere (JavaScript-centric)
-**Rejected.** `workOrderId` as a SQL column name is non-idiomatic, breaks SQL Server and PostgreSQL naming conventions, reduces readability in DDL. Database-level tooling (pg_dump, schema migrations, DBA tooling) expects `snake_case`.
+**Rejected.** `workOrderId` as a SQL column name is non-idiomatic, breaks SQL Server and PostgreSQL naming conventions, reduces readability in DDL. Base de datos-level tooling (pg_dump, schema migrations, DBA tooling) expects `snake_case`.
 
 ### 4.3 Per-team autonomy with a shared glossary
 **Rejected.** Creates integration seams. When Team A names the API field `customerId` and Team B names the DB column `customer_code`, synchronization failures cause data bugs that are expensive to trace.
@@ -310,7 +310,7 @@ CREATE INDEX ix_work_orders_customer_id_status ON work_orders (customer_id, stat
 
 All names must originate from the **domain ubiquitous language glossary** defined per bounded context. Names not present in the glossary require a glossary update before code can be written.
 
-### 6.1 Aggregates
+### 6.1 Agregados
 
 - Noun phrase from ubiquitous language.
 - PascalCase in all OO languages; snake_case in Python.
@@ -327,7 +327,7 @@ public sealed class WorkOrderAggregate : AggregateRoot<WorkOrderId> { }
 ### 6.2 Entities (non-root)
 
 - Noun phrase. No suffix.
-- Distinguish from Value Objects: Entities have identity (`Id`); Value Objects do not.
+- Distinguish from Objetos de Valor: Entities have identity (`Id`); Objetos de Valor do not.
 
 ```csharp
 public sealed class OrderItem { }         // OK: Entity - has OrderItemId
@@ -376,7 +376,7 @@ public sealed class OrderPricingService { }          // OK: cross-aggregate calc
 public sealed class WorkOrderCompletionService { }   // WRONG: belongs inside WorkOrder.Complete()
 ```
 
-### 6.6 Domain Events
+### 6.6 Eventos de Dominio
 
 - **Naming:** `{Aggregate}{PastParticiple}` - always past tense; the event has already happened.
 - Append `Event` suffix in strongly-typed languages to distinguish from commands.
@@ -759,7 +759,7 @@ aliasing = explicit     # Always name aliases explicitly
 | :--- | :--- | :--- |
 | Coverage (new code) | ≥ 80% | All languages |
 | Duplicated lines (new code) | ≤ 3% | All languages |
-| Maintainability rating (new code) | A | All languages |
+| Mantenibilidad rating (new code) | A | All languages |
 | Reliability rating (new code) | A | All languages |
 | Security hotspots reviewed | 100% | All languages |
 | Cognitive complexity per method | ≤ 15 | All languages |
@@ -1064,7 +1064,7 @@ paths:
 
 ### Positive
 
-- **Maintainability (ISO/IEC 25010).** Consistent naming reduces cognitive load and accelerates onboarding. New developers can predict names without consulting implementation.
+- **Mantenibilidad (ISO/IEC 25010).** Consistent naming reduces cognitive load and accelerates onboarding. New developers can predict names without consulting implementation.
 - **Integration reliability.** A single canonical concept name prevents data mapping bugs between API, database, and event consumers.
 - **Automated enforcement.** All rules are checkable by existing tooling - no manual review required for naming compliance.
 - **DDD alignment.** Ubiquitous language as the naming source eliminates the "translation layer" between business and engineering.
@@ -1091,7 +1091,7 @@ paths:
 - [Spectral OpenAPI Linter](https://stoplight.io/open-source/spectral)
 - [sqlfluff - SQL Linter](https://docs.sqlfluff.com)
 - [ArchUnit - Architecture Testing](https://www.archunit.org)
-- [ADR-0049 - Naming Semantics & Clean Code Policy](./0049-naming-semantics-clean-code-policy.md) <- superseded scope
+- [ADR-0049 - Naming Semantics & Código Limpio Policy](./0049-naming-semantics-clean-code-policy.md) <- superseded scope
 - [ADR-0048 - Enterprise Taxonomy Reference Layout](./0048-enterprise-taxonomy-reference-layout.md)
 
 ---

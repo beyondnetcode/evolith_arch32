@@ -2,7 +2,7 @@
 
 ## 1. Metadata
 * **ADR ID:** 0054
-* **Title:** Database Design and Normalization Standards
+* **Title:** Base de datos Design and Normalization Standards
 * **Status:** Approved
 * **Authors:** Enterprise Architecture Office
 * **Reviewers:** Corporate Architecture Committee, CTO Office
@@ -10,7 +10,7 @@
 * **Tags:** `Database`, `Design`, `Normalization`, `SQL`, `NoSQL`, `Best-Practices`
 * **Related ADRs:**
   * [ADR-0031: Schema-per-Context Isolation](./0031-schema-per-context-domain-event-catalog.es.md)
-  * [ADR-0051: Enterprise Database Engine Strategy](./0051-enterprise-database-engine-strategy.es.md)
+  * [ADR-0051: Enterprise Base de datos Engine Strategy](./0051-enterprise-database-engine-strategy.es.md)
 
 ---
 
@@ -22,7 +22,7 @@ Data is the most valuable and permanent asset of the enterprise. While applicati
 ## 2. Problem Context
 Inconsistent modeling patterns between different teams have caused:
 1. **Data Anomalies:** Update, insertion, and deletion anomalies due to poor SQL normalization.
-2. **Performance Degradation:** Oversized documents and infinite arrays in NoSQL (MongoDB).
+2. **Rendimiento Degradation:** Oversized documents and infinite arrays in NoSQL (MongoDB).
 3. **Governance Friction:** Difficulty understanding and integrating data between bounded contexts due to non-standard nomenclature and structure.
 4. **Inadequate Engine Selection:** Using SQL for unstructured data or NoSQL for complex relational graphs.
 
@@ -45,7 +45,7 @@ Modeling MUST follow **Design-for-Access** patterns instead of normalization.
 
 * **Embedding (Atomicity):** Favor embedding for data that is always read together and has a 1-to-1 or small 1-to-N relationship.
 * **Referencing (Scaling):** Use referencing for large 1-to-N relationships (>1000 sub-items) or when data is shared among multiple entities.
-* **Anti-Pattern Warning:** The use of "Infinite Arrays" (arrays that grow without limit) is strictly PROHIBITED. Use the "Bucket Pattern" or referencing instead.
+* **Anti-Patrón Warning:** The use of "Infinite Arrays" (arrays that grow without limit) is strictly PROHIBITED. Use the "Bucket Pattern" or referencing instead.
 
 ### 3.3 Naming Conventions
 | Component | .NET / SQL Server | Node.js / Postgres / Mongo |
@@ -72,7 +72,7 @@ Modeling MUST follow **Design-for-Access** patterns instead of normalization.
 ### Positives:
 * **Consistency:** Universal language for data modeling across the organization.
 * **Integrity:** Reduced risk of data corruption or orphaned records.
-* **Predictability:** Database performance is easier to tune when structures are standardized.
+* **Predictability:** Base de datos performance is easier to tune when structures are standardized.
 
 ### Negatives:
 * **Design Effort:** Requires more initial thought compared to ad-hoc "schemaless" development.
@@ -81,7 +81,7 @@ Modeling MUST follow **Design-for-Access** patterns instead of normalization.
 ---
 
 ## Strategic Conclusion
-A well-designed database is the foundation of a resilient system. By enforcing 3NF for relational data and access-optimized patterns in NoSQL, we ensure our data remains a strategic asset rather than a technical debt liability.
+A well-designed database is the foundation of a resilient system. By enforcing 3NF for relational data and access-optimized patterns in NoSQL, we ensure our data remains a strategic asset rather than a deuda Técnica liability.
 
 
 
@@ -93,7 +93,7 @@ Backfill histórico: Abordar la tensión arquitectónica donde context is unavai
 
 ## Opciones Consideradas
 
-- **Seleccionada:** Database Design and Normalization Standards
+- **Seleccionada:** Base de datos Design and Normalization Standards
 - **Otras:** Desconocido (el registro histórico no enumera explícitamente alternativas rechazadas).
 
 ## Evidencias y Criterios de Evaluación

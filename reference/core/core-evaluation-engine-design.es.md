@@ -1473,7 +1473,7 @@ Entrada a añadir en `reference/governance/glossary.md` para impedir que el leng
 | Términos `Definition`, `Context`, `Result`, `Core Evaluation Engine`, `EvaluationContext`, `EvaluationResult`, `DecisionRecommendation` | `reference/governance/glossary.md` | Filas nuevas en la tabla (`:7-19`), con `Usage rule` que cite la prueba decisiva (status/repo/POST = mal clasificado). |
 | Distinción de **vocabulario Core vs Tracker** (tabla 22.2) | `reference/governance/glossary.md` | Subsección "Core vs Tracker lexicon" al final del glosario. |
 | Refuerzo del límite (Core no posee/persiste) | `reference/core/README.md` | §2 (D1) y nuevo Invariante 9 (D3); enlazar a la taxonomía §2.1. |
-| Anti-pattern "Core persiste entidad de negocio" | `reference/governance/sdlc/traceability-model.md:213-224` (tabla Anti-Patterns) | Fila nueva: "Core persists product/tenant/initiative/decision as own state → Core stops being a stateless evaluator; ownership ambiguity with Tracker." Complementa la fila existente `:219` ("Technical evaluator directly approves a gate"). |
+| Anti-patrón "Core persiste entidad de negocio" | `reference/governance/sdlc/traceability-model.md:213-224` (tabla Anti-Patterns) | Fila nueva: "Core persists product/tenant/initiative/decision as own state → Core stops being a stateless evaluator; ownership ambiguity with Tracker." Complementa la fila existente `:219` ("Technical evaluator directly approves a gate"). |
 
 ### 22.4 Recommended classification values — adición
 

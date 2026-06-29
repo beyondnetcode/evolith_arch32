@@ -29,10 +29,10 @@
 | ID | Title | Component | Purpose | Entregables | Estado |
 |----|-------|-----------|---------|--------------|--------|
 | **OPP-001** | Implement auto-fix domain strategies | CLI | Complete GT-115 vision; auto-fix existed but only had 3 strategies | - Expanded to 8 strategies:<br>  1. domain-purity<br>  2. hexagonal-boundaries<br>  3. missing-domain-interface<br>  4. layer-isolation<br>  5. artifact-coherence<br>  6. service-purity<br>  7. dependency-injection<br>  8. error-handling<br>- 12 tests (100% coverage) | DONE |
-| **OPP-002** | Add MCP distributed tracing | CLI | Observability; MCP calls not traced | - Already implemented via McpMetricsService<br>- Records tool calls, latency, errors<br>- Integrated with OpenTelemetry | DONE |
+| **OPP-002** | Add MCP distributed tracing | CLI | Observabilidad; MCP calls not traced | - Already implemented via McpMetricsService<br>- Records tool calls, latency, errors<br>- Integrated with OpenTelemetry | DONE |
 | **OPP-003** | Eliminate test console noise | CLI | Developer experience; console.log cluttering test output | - Added `silent: true` to jest.config.js<br>- Clean test output (980 tests)<br>- Tests still verifiable via mocks | DONE |
 | **OPP-004** | Optimize pre-commit validation | Platform | Developer experience; validation slow | - Already optimized via incremental validation<br>- Impact analysis only validates affected files<br>- Average: 50-80ms execution | DONE |
-| **OPP-005** | Add MCP metrics dashboard | CLI | Observability; no visibility into MCP usage | - McpMetricsService implemented<br>- Tracks: call count, latency, error rate<br>- `evolith-metrics` tool for querying | DONE |
+| **OPP-005** | Add MCP metrics dashboard | CLI | Observabilidad; no visibility into MCP usage | - McpMetricsService implemented<br>- Tracks: call count, latency, error rate<br>- `evolith-metrics` tool for querying | DONE |
 | **OPP-009** | Generate HTML coverage reports | CLI | Better visibility; only text reports available | - Already existed via `coverageReporters: ['html']`<br>- Available at sdk/cli/coverage/index.html<br>- Includes annotated source files | DONE |
 | **OPP-010** | Add confirmation timeout config | CLI | Better UX; confirmation could hang indefinitely | - Added `timeoutMs` option (default 30s)<br>- Timeout denies by default (safe fallback)<br>- 3 new tests for timeout behavior | DONE |
 

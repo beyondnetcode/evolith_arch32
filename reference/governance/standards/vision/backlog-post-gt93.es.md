@@ -28,7 +28,7 @@
 
 **Orden:** P1 primero, luego por esfuerzo ascendente (S → M → L)
 
-### P2 - Medio (Technical Debt) - 5 items, 16 horas
+### P2 - Medio (Deuda Técnica) - 5 items, 16 horas
 
 | ID | Título | Componente | Impacto | Esfuerzo | Size | Estado | GitHub Project |
 |----|--------|------------|---------|----------|------|--------|----------------|
@@ -52,8 +52,8 @@
 | ~~**OPP-009**~~ | ~~Generar reportes HTML de cobertura~~ | ~~CLI~~ | ~~Better visibility~~ | ~~2h~~ | ~~S~~ | **DONE** | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BOPP-009%5D) |
 | ~~**OPP-010**~~ | ~~Agregar timeout de confirmación~~ | ~~CLI~~ | ~~Better UX~~ | ~~2h~~ | ~~S~~ | **DONE** | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BOPP-010%5D) |
 | ~~**OPP-004**~~ | ~~Optimizar validación pre-commit~~ | ~~Platform~~ | ~~Developer experience~~ | ~~4h~~ | ~~M~~ | **DONE** | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BOPP-004%5D) |
-| ~~**OPP-002**~~ | ~~Agregar trazas distribuidas MCP~~ | ~~CLI~~ | ~~Observability~~ | ~~6h~~ | ~~M~~ | **DONE** | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BOPP-002%5D) |
-| ~~**OPP-005**~~ | ~~Agregar dashboard de métricas MCP~~ | ~~CLI~~ | ~~Observability~~ | ~~6h~~ | ~~M~~ | **DONE** | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BOPP-005%5D) |
+| ~~**OPP-002**~~ | ~~Agregar trazas distribuidas MCP~~ | ~~CLI~~ | ~~Observabilidad~~ | ~~6h~~ | ~~M~~ | **DONE** | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BOPP-002%5D) |
+| ~~**OPP-005**~~ | ~~Agregar dashboard de métricas MCP~~ | ~~CLI~~ | ~~Observabilidad~~ | ~~6h~~ | ~~M~~ | **DONE** | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BOPP-005%5D) |
 | ~~**OPP-001**~~ | ~~Implementar estrategias domain auto-fix~~ | ~~CLI~~ | ~~Complete GT-115 vision~~ | ~~8h~~ | ~~L~~ | **DONE** | [`[DONE]`](https://github.com/users/beyondnetcode/projects/1/views/1?filterQuery=%5BOPP-001%5D) |
 
 **Orden:** Por esfuerzo ascendente (S → M → L) para facilitar quick wins
@@ -114,7 +114,7 @@ Los items están ordenados por:
 - [ ] GAP-005: Add tests for zero-coverage files
 - [x] **GAP-007: Eliminar emoji de la documentación** [DONE] DONE
 
-### Mes 1 (Technical Debt)
+### Mes 1 (Deuda Técnica)
 - [ ] GAP-008: Complete tool design principles
 - [ ] GAP-009: Complete MCP security guidelines
 - [ ] GAP-010: Audit BFF documentation coherence

@@ -355,7 +355,7 @@ Estos son los ADRs Evolith más fuertemente probados por UMS — organizados por
 ### Eventos y Flujos de Trabajo
 | ADR | Decisión | Evidencia UMS |
 |---|---|---|
-| [ADR-0015](../../architecture/adrs/core/0015-event-driven-architecture-intra-domain.es.md) | Event Bus Inyectable | Bus in-process actualizable a RabbitMQ sin cambios en el dominio |
+| [ADR-0015](../../architecture/adrs/core/0015-event-driven-architecture-intra-domain.es.md) | Bus de Eventos Inyectable | Bus in-process actualizable a RabbitMQ sin cambios en el dominio |
 | [ADR-0033](../../architecture/adrs/core/0033-transactional-outbox-pattern.es.md) | Transactional Outbox | TE-04, usado por los contextos Compliance y Approvals |
 | [ADR-0035](../../architecture/adrs/core/0035-distributed-saga-pattern-strategy.es.md) | Sagas Distribuidas | TE-05 vía Dapr, usado por Approvals (EP-06) e IGA (EP-08) |
 | [ADR-0034](../../architecture/adrs/core/0034-cqrs-pattern-applicability-matrix.es.md) | Aplicabilidad CQRS | Split lectura/escritura a nivel de protocolo (consultas Dapper / comandos EF Core) |

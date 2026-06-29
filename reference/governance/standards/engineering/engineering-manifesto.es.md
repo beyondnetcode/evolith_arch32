@@ -12,7 +12,7 @@ Todo código, wrappers y diseños arquitectónicos dentro del monorepo de refere
 * **KISS (Keep It Simple, Stupid)**: Evitar la sobre-ingeniería. Escribir código que sea fácil de leer, entender y depurar.
 * **YAGNI (You Aren't Gonna Need It)**: No añadir funcionalidad, abstracciones o herramientas hasta que sean estrictamente necesarias.
 * **SoC (Separation of Concerns)**: Mantener las capas completamente aisladas. Un controlador no debe escribir lógica de negocio; un caso de uso no debe ejecutar SQL puro.
-* **Clean Code y Arquitectura Limpia**: Proteger el dominio. Los Puertos (interfaces) y Adaptadores (implementaciones simples) son OBLIGATORIOS desde la Fase 1 para evitar acoplamiento técnico estructural. La complejidad adicional (wrappers) se difiere.
+* **Código Limpio y Arquitectura Limpia**: Proteger el dominio. Los Puertos (interfaces) y Adaptadores (implementaciones simples) son OBLIGATORIOS desde la Fase 1 para evitar acoplamiento técnico estructural. La complejidad adicional (wrappers) se difiere.
 * **Seguro por Diseño & OWASP**: Validar todas las entradas (DTOs), sanear las salidas, imponer RBAC de forma nativa y prevenir inyecciones SQL/NoSQL por defecto.
 
 ---

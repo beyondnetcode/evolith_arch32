@@ -99,7 +99,7 @@ Estos schemas operativos son contratos canónicos del Core (`rulesets/schema/`),
 
 ### 1.3 Evidencia del precedente correcto: el Core ya rechaza datos operativos en runtime
 
-El handler `executive-scorecard-rule.handler.ts:55` ya devuelve `{ result: 'skipped', message: 'Sprint throughput requires tracker data' }`, y de forma análoga `:53` (team health), `:51` (observability runtime). **El Core ya admite que velocity/sprint/throughput NO se resuelven en Core** — pero esa frontera no está aplicada de forma consistente: las historias y el backlog sí siguen siendo evidencia obligatoria.
+El handler `executive-scorecard-rule.handler.ts:55` ya devuelve `{ result: 'skipped', message: 'Sprint throughput requires tracker data' }`, y de forma análoga `:53` (team health), `:51` (observabilidad runtime). **El Core ya admite que velocity/sprint/throughput NO se resuelven en Core** — pero esa frontera no está aplicada de forma consistente: las historias y el backlog sí siguen siendo evidencia obligatoria.
 
 ### 1.4 Evidencia de la ausencia de Producto e Iniciativa como entidad de primera clase
 
@@ -1679,7 +1679,7 @@ sequenceDiagram
 - **Gap accionable principal:** Tracker no tiene agregado `Iniciativa`; salta `PRODUCT → SDLC_PROCESS` (`sdlc-tracker-technical-interfaces.md:416`). Recomendación firme: `INITIATIVE` como contenedor/disparador de `SDLC_PROCESS`, con `StartProcessRequest` (`:281`) ganando `initiativeId`.
 - **Enum a extender:** `EvidenceItem.references[].type` (`:129`) carece de `epic|story|issue|task`; debe ampliarse para representar `ExternalReference` operativos como evidencia **opcional**.
 - **ACL/Ports son 100% diseño:** no existe código (`ProviderConnection`/`ProviderPort`/`AntiCorruption` sin coincidencias en `packages/core-domain/src` ni `apps/core-api/src`). Toda afirmación de runtime de proveedor es target.
-- **Precedente de frontera operativa:** `executive-scorecard-rule.handler.ts:50-53` (DORA/observability/team-health → `skipped`) confirma que ejecución/velocity no se resuelve en Core.
+- **Precedente de frontera operativa:** `executive-scorecard-rule.handler.ts:50-53` (DORA/observabilidad/team-health → `skipped`) confirma que ejecución/velocity no se resuelve en Core.
 - **Aislamiento Core:** patrón `workspaceRef` (`workspace-reference-resolver.service.ts:9-11`) es el modelo a replicar para `productId`/`initiativeId` como contexto opaco.
 
 ---

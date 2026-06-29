@@ -48,7 +48,7 @@ La evaluación usa los 5 niveles estándar del ACMM (1: Inicial a 5: Optimizante
   * Audit trails inmutables vía CDC ([ADR-0016](../../../architecture/adrs/core/0016-immutable-business-audit-trail.es.md)).
 * **Camino al Nivel 5:** penetration testing automatizado en CI; rotación dinámica de secretos.
 
-### Pilar 2: Eficiencia de Performance — **Nivel 4 (Gestionado)**
+### Pilar 2: Eficiencia de Rendimiento — **Nivel 4 (Gestionado)**
 * **Estado:** `Implementado` (Requiere validación por load testing)
 * **Evidencia:**
   * Compilación del grafo de auth bajo 5 ms usando Redis ([ADR-0021](../../../architecture/adrs/nodejs/0021-high-performance-auth-and-graph-compilation.es.md)).

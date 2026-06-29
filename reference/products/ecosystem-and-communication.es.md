@@ -80,7 +80,7 @@ graph LR
     MCP -->|envelope ADR-0073| CORE
 ```
 
-**Sync vs. async.** Todas las superficies actuales son **síncronas request/response**: las llamadas REST `/api/v1`, las invocaciones de la CLI y las llamadas a herramientas MCP por `stdio`/HTTP devuelven cada una un único envelope. **No hay event bus ni entrega por webhooks** en las superficies entregadas, y Core API no expone stream SSE — la integración asíncrona y orientada a eventos es una *opción* de topología (`event-driven`), no un canal actual del ecosistema. La única noción "async" en alcance es el propio SDLC: la evidencia se acumula a lo largo de las fases con el tiempo, pero cada llamada individual a una superficie es síncrona.
+**Sync vs. async.** Todas las superficies actuales son **síncronas request/response**: las llamadas REST `/api/v1`, las invocaciones de la CLI y las llamadas a herramientas MCP por `stdio`/HTTP devuelven cada una un único envelope. **No hay bus de Eventos ni entrega por webhooks** en las superficies entregadas, y Core API no expone stream SSE — la integración asíncrona y orientada a eventos es una *opción* de topología (`event-driven`), no un canal actual del ecosistema. La única noción "async" en alcance es el propio SDLC: la evidencia se acumula a lo largo de las fases con el tiempo, pero cada llamada individual a una superficie es síncrona.
 
 ## 3. De la idea al producto a través de las fases del SDLC
 
@@ -96,7 +96,7 @@ graph LR
     F5["f5 Delivery & Operations<br/>clave: release"] -->|gate-f5<br/>Production Live| PROD(["Producto en operación"])
 ```
 
-**Notas.** Una fase avanza solo cuando pasa su gate de salida; un gate obligatorio fallido no puede anularse con aprobación informal (solo aplica un waiver de gobernanza explícito). Estas fases del SDLC son distintas de los **niveles de madurez F1–F5** (posiciones en el eje progresivo de arquitectura: `modular-monolith` → `distributed-modules` → `microservices`) y de las **8 topologías** (`modular-monolith`, `distributed-modules`, `microservices`, `event-driven`, `serverless`, `edge-computing`, `data-mesh`, `agentic-ai`). Las fases responden "¿en qué punto del ciclo de idea a producto estoy?"; la madurez y la topología responden "¿qué tan descompuesta / qué forma tiene la arquitectura?" — nunca las mezcles (ver [`topology-dimensions.md`](../architecture/topologies/topology-dimensions.md)).
+**Notas.** Una fase avanza solo cuando pasa su gate de salida; un gate obligatorio fallido no puede anularse con aprobación informal (solo aplica un waiver de gobernanza explícito). Estas fases del SDLC son distintas de los **niveles de madurez F1–F5** (posiciones en el eje progresivo de arquitectura: `modular-monolith` → `distributed-modules` → `microservices`) y de las **8 topologías** (`modular-monolith`, `distributed-modules`, `microservices`, `event-driven`, `serverless`, `edge-computing`, `data-mesh`, `agentic-ai`). Las fases responden "¿en qué punto del ciclo de idea a producto estoy?"; la madurez y la topología responden "¿qué tan descompuesta / qué forma tiene la arquitectura?" — nunca las mezcles (ver [ 11 ](../architecture/topologies/topology-dimensions.md)).
 
 ## 4. Modelo de fuente de verdad
 

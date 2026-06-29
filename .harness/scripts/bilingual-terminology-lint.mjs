@@ -114,12 +114,25 @@ for (const file of files) {
   const enFile = file.replace(/\.es\.md$/, ".md");
   if (!fs.existsSync(enFile)) continue;
 
-  const esContent = fs.readFileSync(file, "utf8");
-  const enContent = fs.readFileSync(enFile, "utf8");
+  const esRaw = fs.readFileSync(file, "utf8");
+  const enRaw = fs.readFileSync(enFile, "utf8");
+
+  // Terminology is a PROSE rule. Code identifiers (a `Database` type, a ```ts```
+  // block) and link references (ADR filename slugs like
+  // `[0006-microservices-...](./0006-microservices-...es.md)`) are not
+  // translatable prose. Strip fenced + inline code AND markdown links before
+  // matching, mirroring 01-validate-docs / 04-check-bilingual-parity.
+  const stripCode = (s) =>
+    s
+      .replace(/```[\s\S]*?```/g, " ")
+      .replace(/`[^`\r\n]+`/g, " ")
+      .replace(/\[[^\]]*\]\([^)]*\)/g, " ");
+  const esContent = stripCode(esRaw);
+  const enContent = stripCode(enRaw);
 
   // Skip auto-generated files (BILINGUAL_INDEX cross-references or GENERATED FILE marker)
   const relPath = path.relative(root, file);
-  if (relPath.includes('BILINGUAL_INDEX') || esContent.includes("<!-- GENERATED FILE -->") || enContent.includes("<!-- GENERATED FILE -->")) {
+  if (relPath.includes('BILINGUAL_INDEX') || esRaw.includes("<!-- GENERATED FILE -->") || enRaw.includes("<!-- GENERATED FILE -->")) {
     if (verbose) console.log(`  ℹ Skipping generated file: ${relPath}`);
     continue;
   }

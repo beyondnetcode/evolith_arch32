@@ -20,7 +20,7 @@ Sin límites explícitos, los equipos corren el riesgo de:
 
 - Mezclar estrategias ORM de forma ad-hoc, generando patrones de acceso a datos inconsistentes entre bounded contexts
 - Optimizar prematuramente rutas de lectura con Dapper antes de haber confirmado un cuello de botella real con EF Core mediante profiling
-- Usar Dapper para operaciones de escritura (command-side) y eludir involuntariamente el change tracking, la consistencia de aggregates y el patrón Unit of Work
+- Usar Dapper para operaciones de escritura (command-side) y eludir involuntariamente el change tracking, la consistencia de agregados y el patrón Unit of Work
 - Perder la infraestructura de auditoría y eventos de dominio provista por los interceptores de EF Core al cambiar a Dapper sin conciencia de las consecuencias
 
 Este ADR establece una política clara y aplicable que define cuándo corresponde usar cada herramienta, garantizando consistencia, mantenibilidad y alineación con los principios de DDD y Clean Architecture.
@@ -62,7 +62,7 @@ EF Core no es simplemente un ORM — es el punto de integración de varios aspec
 | Soft-delete / Auditoría | Filtros globales aplican `is_deleted = false`; interceptores completan columnas de auditoría |
 | Unit of Work | `DbContext` registra todos los cambios en una transacción; `SaveChangesAsync` los persiste atómicamente |
 | Concurrencia Optimista | `[ConcurrencyToken]` / `rowversion` gestionados automáticamente |
-| Despacho de Domain Events | Los eventos recolectados en aggregates son obtenidos en el `Save()` del repositorio antes del commit |
+| Despacho de Domain Events | Los eventos recolectados en agregados son obtenidos en el `Save()` del repositorio antes del commit |
 
 Eludir EF Core para escrituras elimina todo lo anterior de forma silenciosa. Dapper no tiene ningún mecanismo equivalente.
 

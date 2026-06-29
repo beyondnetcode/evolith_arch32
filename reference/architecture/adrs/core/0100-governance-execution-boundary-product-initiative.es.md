@@ -5,7 +5,7 @@
 > **Firma del agente:** Architect Agent (Winston)
 
 ## Estado
-Proposed — **Decisión 1 superseded por [ADR-0101](./0101-core-stateless-evaluation-engine.es.md)** (2026-06-28).
+Accepted (2026-06-29 — Architecture Board; diagnóstico + Decisiones 2–6 válidas) — **Decisión 1 superseded por [ADR-0101](./0101-core-stateless-evaluation-engine.es.md) (Accepted 2026-06-29)**.
 
 > **Corrección:** la Decisión 1 de abajo planteaba `Producto`/`Iniciativa` como unidades de gobierno del Core con persistencia/anclaje. [ADR-0101](./0101-core-stateless-evaluation-engine.es.md) corrige la *altitud*: el Core es un **evaluador stateless**; producto/tenant/iniciativa son **solo identificadores de contexto opacos**, propiedad del Tracker que los persiste. El diagnóstico y las Decisiones 2–6 de este ADR siguen siendo válidos.
 

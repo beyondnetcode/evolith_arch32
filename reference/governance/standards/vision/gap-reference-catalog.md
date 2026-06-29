@@ -41,10 +41,10 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Roadmap phase:** R0. **Impact:** Governance docs (ADR-0100/0101, UP-002, prior design, GT board/catalog).
 - **Complexity:** M
 - **Acceptance criteria:**
-  - [ ] ADR-0101 `Accepted`; ADR-0100 Decision 1 marked superseded.
-  - [ ] UP-002 has no operational repos/use-cases/write endpoints; prior design §Deliverables 2/4/10/11/12 + write-flows of 13 marked SUPERSEDED.
-  - [ ] No live references to `IProductRepository`/`POST /products` in governance docs.
-- **Dependencies:** None (starting point). Largely drafted in commit `7cc62942`; pending Architecture Board acceptance.
+  - [x] ADR-0101 `Accepted`; ADR-0100 Decision 1 marked superseded.
+  - [x] UP-002 has no operational repos/use-cases/write endpoints; prior design §Deliverables 2/4/10/11/12 + write-flows of 13 marked SUPERSEDED.
+  - [x] No live references to `IProductRepository`/`POST /products` in governance docs.
+- **Dependencies:** None (starting point). Largely drafted in commit `7cc62942`; **Architecture Board Accepted 2026-06-29** (ADR-0101 + ADR-0100 status flipped).
 
 #### GT-377
 

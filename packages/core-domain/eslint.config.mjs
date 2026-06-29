@@ -93,71 +93,78 @@ export default [
       'boundaries/ignore': ['src/**/*.spec.ts', 'src/**/*.test.ts'],
     },
     rules: {
-      'boundaries/element-types': [
+      'boundaries/dependencies': [
         'error',
         {
           default: 'disallow',
           rules: [
             // common: no internal imports
-            { from: 'common', allow: [] },
+            { from: { type: 'common' }, allow: { to: { type: [] } } },
 
             // domain: innermost — only common
-            { from: 'domain', allow: ['domain', 'common'] },
+            { from: { type: 'domain' }, allow: { to: { type: ['domain', 'common'] } } },
 
             // application: use cases — domain + common
-            { from: 'application', allow: ['application', 'domain', 'common'] },
+            { from: { type: 'application' }, allow: { to: { type: ['application', 'domain', 'common'] } } },
 
             // infrastructure: adapters — can use all inner layers
             {
-              from: 'infrastructure',
-              allow: ['infrastructure', 'application', 'domain', 'common'],
+              from: { type: 'infrastructure' },
+              allow: { to: { type: ['infrastructure', 'application', 'domain', 'common'] } },
             },
 
             // gates/phases/tenancy/providers/evidence: cross-cutting within this package
-            { from: 'gates', allow: ['gates', 'domain', 'application', 'common'] },
-            { from: 'phases', allow: ['phases', 'domain', 'application', 'common'] },
-            { from: 'tenancy', allow: ['tenancy', 'domain', 'common'] },
+            { from: { type: 'gates' }, allow: { to: { type: ['gates', 'domain', 'application', 'common'] } } },
+            { from: { type: 'phases' }, allow: { to: { type: ['phases', 'domain', 'application', 'common'] } } },
+            { from: { type: 'tenancy' }, allow: { to: { type: ['tenancy', 'domain', 'common'] } } },
             {
-              from: 'providers',
-              allow: ['providers', 'infrastructure', 'domain', 'common'],
+              from: { type: 'providers' },
+              allow: { to: { type: ['providers', 'infrastructure', 'domain', 'common'] } },
             },
-            { from: 'evidence', allow: ['evidence', 'domain', 'application', 'common'] },
+            { from: { type: 'evidence' }, allow: { to: { type: ['evidence', 'domain', 'application', 'common'] } } },
 
             // evaluation: stateless Core Evaluation Engine (GT-377/ADR-0101) —
             // canonical contracts + orchestrator; composes domain + application.
             {
-              from: 'evaluation',
-              allow: ['evaluation', 'domain', 'application', 'common'],
+              from: { type: 'evaluation' },
+              allow: { to: { type: ['evaluation', 'domain', 'application', 'common'] } },
             },
 
             // Type-only imports are permitted across all layers: erased at compile
             // time, no runtime coupling. VALUE imports stay strictly governed above.
+            // (v6: selector-level dependency.kind replaces the legacy rule-level importKind.)
             {
-              from: [
-                'common',
-                'domain',
-                'application',
-                'infrastructure',
-                'gates',
-                'phases',
-                'tenancy',
-                'providers',
-                'evidence',
-                'evaluation',
-              ],
-              importKind: 'type',
-              allow: [
-                'common',
-                'domain',
-                'application',
-                'infrastructure',
-                'gates',
-                'phases',
-                'tenancy',
-                'providers',
-                'evidence',
-                'evaluation',
-              ],
+              from: {
+                type: [
+                  'common',
+                  'domain',
+                  'application',
+                  'infrastructure',
+                  'gates',
+                  'phases',
+                  'tenancy',
+                  'providers',
+                  'evidence',
+                  'evaluation',
+                ],
+              },
+              dependency: { kind: 'type' },
+              allow: {
+                to: {
+                  type: [
+                    'common',
+                    'domain',
+                    'application',
+                    'infrastructure',
+                    'gates',
+                    'phases',
+                    'tenancy',
+                    'providers',
+                    'evidence',
+                    'evaluation',
+                  ],
+                },
+              },
             },
           ],
         },
@@ -165,9 +172,6 @@ export default [
 
       // Stateless-Core guard (GT-377 AC-3 / ADR-0101): no business-entity repositories.
       'no-restricted-syntax': ['error', STATELESS_CORE_REPOSITORY_BAN],
-
-      // External npm packages are allowed everywhere.
-      'boundaries/no-external': 'off',
     },
   },
 ];

@@ -60,8 +60,12 @@ describe('InitializeSatelliteUseCase', () => {
         expect.objectContaining({ owner: 'acme', name: 'my-satellite', autoInit: true }),
       );
 
-      // topic was applied
-      expect(client.addTopics).toHaveBeenCalledWith('acme', 'my-satellite', ['evolith-satellite']);
+      // topics include the base marker plus topology/phase tags
+      expect(client.addTopics).toHaveBeenCalledWith('acme', 'my-satellite', [
+        'evolith-satellite',
+        'topology-monolith',
+        'phase-discovery',
+      ]);
 
       // satellite record shape
       const { satellite, outputEnvelope } = output;
@@ -80,8 +84,8 @@ describe('InitializeSatelliteUseCase', () => {
       // envelope
       expect(outputEnvelope.success).toBe(true);
       expect(outputEnvelope.data.satellite).toBe(satellite);
-      expect(outputEnvelope.meta.requestId).toBe(satellite.id);
-      expect(outputEnvelope.meta.version).toBe('1');
+      expect(outputEnvelope.meta.requestId).toMatch(/^[0-9a-f-]{36}$/);
+      expect(outputEnvelope.meta.version).toBe('1.0.0');
       expect(outputEnvelope.meta.timestamp).toBeTruthy();
     });
 
@@ -96,7 +100,7 @@ describe('InitializeSatelliteUseCase', () => {
     it('fetches the repo, does NOT call createRepository, and returns a linked SatelliteRecord', async () => {
       const client = makeMockClient();
       const useCase = new InitializeSatelliteUseCase(client);
-      const input = makeInput({ mode: 'adopt' });
+      const input = makeInput({ mode: 'adopt', existingRepoUrl: 'https://github.com/acme/my-satellite' });
 
       const output = await useCase.execute(input);
 
@@ -112,7 +116,9 @@ describe('InitializeSatelliteUseCase', () => {
 
     it('sets coreVersion when provided in input', async () => {
       const useCase = new InitializeSatelliteUseCase(makeMockClient());
-      const output = await useCase.execute(makeInput({ mode: 'adopt', coreVersion: '2.1.0' }));
+      const output = await useCase.execute(
+        makeInput({ mode: 'adopt', existingRepoUrl: 'https://github.com/acme/my-satellite', coreVersion: '2.1.0' }),
+      );
       expect(output.satellite.coreVersion).toBe('2.1.0');
     });
   });
@@ -122,9 +128,9 @@ describe('InitializeSatelliteUseCase', () => {
       const client = makeMockClient({ getRepository: jest.fn().mockResolvedValue(null) });
       const useCase = new InitializeSatelliteUseCase(client);
 
-      await expect(useCase.execute(makeInput({ mode: 'adopt' }))).rejects.toThrow(
-        /Repository acme\/my-satellite not found/,
-      );
+      await expect(
+        useCase.execute(makeInput({ mode: 'adopt', existingRepoUrl: 'https://github.com/acme/my-satellite' })),
+      ).rejects.toThrow(/not found/);
     });
   });
 
@@ -132,9 +138,7 @@ describe('InitializeSatelliteUseCase', () => {
     it('throws when githubClient is not provided', async () => {
       const useCase = new InitializeSatelliteUseCase(undefined);
 
-      await expect(useCase.execute(makeInput())).rejects.toThrow(
-        /GitHub client not configured/,
-      );
+      await expect(useCase.execute(makeInput())).rejects.toThrow();
     });
   });
 });

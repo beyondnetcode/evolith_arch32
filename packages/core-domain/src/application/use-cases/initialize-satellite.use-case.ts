@@ -56,6 +56,7 @@ export class InitializeSatelliteUseCase {
       phase: input.phase,
       status: 'linked',
       mode: 'adopt',
+      coreVersion: input.coreVersion,
       description: input.description,
       linkedAt: now,
       createdAt: now,

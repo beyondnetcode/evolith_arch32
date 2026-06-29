@@ -26,6 +26,7 @@ const allowedFiles = new Set([
   ".editorconfig",
   ".gitignore",
   ".dockerignore",
+  ".gitleaks.toml",
   "docker-compose.yml",
   ".markdownlint.json",
   "COVERAGE_REPORT.md",

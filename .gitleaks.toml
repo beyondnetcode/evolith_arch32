@@ -1,0 +1,23 @@
+# Gitleaks configuration (GT-265 / CI Secret Detection).
+# Keeps ALL default rules active; only allowlists known documentation examples and
+# test fixtures that match secret patterns but contain NO real credentials.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Documentation examples + test fixtures — placeholder/fake values, not real secrets"
+paths = [
+  # Demo/example workspace: every credential-looking string is illustrative.
+  '''ums-workspace/.*''',
+  # Unit test fixture for the review-input secret REDACTION logic: the "secrets"
+  # here (ghp_0123…, AWS …EXAMPLEKEY) are deliberately fake and exist to be redacted.
+  '''\.harness/scripts/ci/review-input\.test\.mjs''',
+  # Product READMEs / API references with example API keys + curl auth headers.
+  '''apps/core-api/README\.md''',
+  '''packages/mcp-server/README(\.es)?\.md''',
+]
+# Belt-and-suspenders: the obviously-fake sequential-hex placeholders themselves.
+regexes = [
+  '''ghp_0123456789abcdef0123456789abcdef0123''',
+  '''wJalrXUtnFEMI1234567890bPxRfiCYEXAMPLEKEY''',
+]

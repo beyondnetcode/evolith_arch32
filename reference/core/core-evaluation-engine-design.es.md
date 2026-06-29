@@ -786,9 +786,9 @@ Reconciliación con el embrión del Tracker: el `EvaluateCriterionRequest { proc
 ```mermaid
 sequenceDiagram
     autonumber
-    participant TK as Tracker (owns product/phase/gate state)
-    participant CORE as Evolith Core (STATELESS)
-    participant DEFS as Definitions/Standards (versioned)
+    participant TK as "Tracker (owns product/phase/gate state)"
+    participant CORE as "Evolith Core (STATELESS)"
+    participant DEFS as "Definitions/Standards (versioned)"
 
     TK->>TK: Resuelve workspaceRef opaco + snapshot de evidencia (PERSISTE)
     TK->>CORE: POST /api/v1/gates/evaluate<br/>EvaluationContext { kinds:['gate'], phaseId, gateId,<br/>artifactIds[], evidence[], rulesetRef, workspaceRef }
@@ -848,7 +848,7 @@ sequenceDiagram
     autonumber
     participant TK as Tracker
     participant CORE as Evolith Core
-    participant DEFS as Definitions (blueprints/rulesets/ADRs)
+    participant DEFS as "Definitions (blueprints/rulesets/ADRs)"
 
     TK->>CORE: POST /api/v1/architecture/evaluate<br/>EvaluationContext { kinds:['architecture'], architecture{style,components[],decisionRefs[]},<br/>blueprintRef?, rulesetRef?, workspaceRef }
     CORE->>DEFS: Standard Catalog (13) + Contract Schema (12): ArchitectureDefinition / blueprint
@@ -892,9 +892,9 @@ Un checkpoint externo (un hito producido por un sistema externo: pipeline CI ver
 ```mermaid
 sequenceDiagram
     autonumber
-    participant EXT as Sistema externo (CI/CD, security, deploy)
-    participant TK as Tracker (Provider Registry + Evidence Graph)
-    participant CORE as Evolith Core (STATELESS)
+    participant EXT as "Sistema externo (CI/CD, security, deploy)"
+    participant TK as "Tracker (Provider Registry + Evidence Graph)"
+    participant CORE as "Evolith Core (STATELESS)"
 
     EXT-->>TK: Hecho operativo nativo (pipeline verde, deploy ref, scan report)
     TK->>TK: Normaliza vía ACL a EvidenceContext/DeploymentContext + contentHash (PERSISTE en Evidence Graph)
@@ -1773,4 +1773,4 @@ Mantener invariante: `Cross`/Cross/`P0`/`XL`/`PENDING` (no cambia prioridad/comp
 | Herramientas externas = fuente de verdad del detalle operativo | ✅ | §3 |
 | Diseño desacoplado, modular, auditable, extensible, multi-consumidor | ✅ | §4, §10 (REST stateless), §23 R-01 |
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
+Generated with [Claude Code](https://claude.com/claude-code)

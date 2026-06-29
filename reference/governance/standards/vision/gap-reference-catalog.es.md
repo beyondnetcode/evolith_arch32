@@ -54,8 +54,8 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Fase del roadmap:** R1. **Impacto:** `core-domain`, `rulesets/schema/`.
 - **Complejidad:** L
 - **Criterios de aceptación:**
-  - [ ] `evaluation-context.schema.json` / `evaluation-result.schema.json` validan round-trip; `schemaVersion` obligatorio.
-  - [ ] `tenantId`/`productId`/`initiativeId` son `string`; `DecisionRecommendation.binding` literal `false`.
+  - [x] `evaluation-context.schema.json` / `evaluation-result.schema.json` validan round-trip; `schemaVersion` obligatorio.
+  - [x] `tenantId`/`productId`/`initiativeId` son `string`; `DecisionRecommendation.binding` literal `false`.
   - [ ] Guard ESLint falla el CI si aparece un `*Repository` de producto/iniciativa/evidencia/decisión.
 - **Dependencias:** `GT-376`.
 

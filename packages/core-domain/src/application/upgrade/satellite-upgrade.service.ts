@@ -1,4 +1,3 @@
-/* eslint-disable boundaries/element-types */
 import { IFileSystem, ILogger } from '../../domain/interfaces';
 import { UpgradeOptions, UpgradePlan, UpgradeResult } from './satellite-upgrade.types';
 import { createBackup } from './satellite-upgrade-fs';

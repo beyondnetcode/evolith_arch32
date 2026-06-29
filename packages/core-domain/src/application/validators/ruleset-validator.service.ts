@@ -1,4 +1,3 @@
-/* eslint-disable boundaries/element-types */
 import { Injectable, Optional, Inject } from '@nestjs/common';
 import * as path from 'path';
 import { ILogger, IFileSystem, IConfigParser } from '../../domain/interfaces';

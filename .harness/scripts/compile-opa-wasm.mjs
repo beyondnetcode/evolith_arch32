@@ -37,9 +37,25 @@ function getOpaUrl() {
   return `https://openpolicyagent.org/downloads/v0.65.0/opa_${opaOs}_${opaArch}${osPlatform === 'win32' ? '.exe' : ''}`;
 }
 
+/** A cached binary is only reusable if it actually executes on THIS platform. */
+function opaRunsHere() {
+  if (!existsSync(opaBinPath)) return false;
+  try {
+    execSync(`${opaBinPath} version`, { stdio: 'ignore' });
+    return true;
+  } catch {
+    // Wrong-arch (e.g. a committed macOS binary on a linux runner → "Exec format
+    // error") or corrupt → drop it and re-download the correct one.
+    return false;
+  }
+}
+
 async function downloadOpa() {
-  if (existsSync(opaBinPath)) {
+  if (opaRunsHere()) {
     return;
+  }
+  if (existsSync(opaBinPath)) {
+    unlinkSync(opaBinPath);
   }
 
   if (!existsSync(harnessBinDir)) {

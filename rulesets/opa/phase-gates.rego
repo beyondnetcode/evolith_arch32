@@ -75,3 +75,22 @@ criterion_exists(c) if {
   some b in input.gate.blockingCriteria
   b.criterion == c
 }
+
+# --- Aggregated violations (consumed by evolith.main) -----------------------
+# Empty when `input.gate` is absent, so wiring this into main.rego is additive
+# for inputs that carry no gate context (GT-380 / L1c).
+
+violations contains v if {
+  some artifact in missing_evidence
+  v := {"id": "PG-EVIDENCE-MISSING", "message": sprintf("Mandatory artifact '%v' is missing for the gate", [artifact])}
+}
+
+violations contains v if {
+  some criterion in active_blocks
+  v := {"id": "PG-CRITERION-BLOCKING", "message": sprintf("Blocking criterion '%v' is active and not waived", [criterion])}
+}
+
+violations contains v if {
+  some criterion in invalid_waivers
+  v := {"id": "PG-WAIVER-INVALID", "message": sprintf("Waiver references unknown blocking criterion '%v'", [criterion])}
+}

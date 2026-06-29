@@ -288,12 +288,12 @@ export interface IPhaseGates {
   canTransition(from: string, to: string): boolean;
 }
 
-export interface GateResult {
-  id: string;
-  passed: boolean;
-  description: string;
-  error?: string;
-}
+// GateResult unified onto the canonical leaf value object (W-Contracts). Imported
+// locally (used by IPhaseGates above) and re-exported so existing importers
+// (`from '../interfaces'`) keep resolving it; the leaf has no imports, so this does
+// not create an interfaces↔entities cycle.
+import type { GateResult } from './entities/gate-result';
+export type { GateResult };
 
 export interface IToolExecutor {
   execute(tool: string, context: ToolContext): Promise<ToolResult>;

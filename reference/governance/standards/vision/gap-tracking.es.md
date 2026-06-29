@@ -74,7 +74,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-328`](./gap-reference-catalog.es.md#gt-328) | Desplegar ESLint boundaries a packages/* y apps/* con paso de CI | `Quality` | Cross | P2 | M | `COMPLETADO` |
 | [`GT-329`](./gap-reference-catalog.es.md#gt-329) | Reubicar las 5 topologías avanzadas a rulesets/topologies | `Rulesets` | Cross | P2 | M | `COMPLETADO` |
 | [`GT-330`](./gap-reference-catalog.es.md#gt-330) | Mitigar el bus factor (segundo mantenedor + onboarding profundo) | `Governance` | Cross | P3 | M | `COMPLETADO` |
-| [`GT-313`](./gap-reference-catalog.es.md#gt-313) | Rotar y externalizar GH_TOKEN mediante un gestor de secretos | `Security` | Cross | P0 | XS | `EN-PROGRESO` |
+| [`GT-313`](./gap-reference-catalog.es.md#gt-313) | Rotar y externalizar GH_TOKEN mediante un gestor de secretos | `Security` | Cross | P0 | XS | `COMPLETADO` |
 | [`GT-312`](./gap-reference-catalog.es.md#gt-312) | Orquestación de validación SDLC: fase → gate → artifacts → schemas → rulesets → topología → ADRs → OPA → blocking criteria | `Core Domain` | Cross | P0 | XL | `COMPLETADO` |
 | [`GT-286`](./gap-reference-catalog.es.md#gt-286) | Ruleset compliance-baseline existe — rulesets/compliance-baseline | `Rulesets` | Cross | P0 | S | `COMPLETADO` |
 | [`GT-287`](./gap-reference-catalog.es.md#gt-287) | Ruleset definition-of-done existe — rulesets/definition-of-done | `Rulesets` | Cross | P0 | S | `COMPLETADO` |

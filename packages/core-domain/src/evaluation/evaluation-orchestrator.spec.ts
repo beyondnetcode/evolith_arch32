@@ -87,4 +87,48 @@ describe('EvaluationOrchestrator (GT-378)', () => {
     const orch = new EvaluationOrchestrator(pipeline, resolver, '1.0.5');
     await expect(orch.evaluate({ kinds: ['gate'] } as EvaluationContext)).rejects.toThrow(/workspaceRef/);
   });
+
+  describe('multi-kind dispatch (GT-379)', () => {
+    it('merges a registered KindEvaluator result and folds its verdict into the overall', async () => {
+      const pipeline: IEvaluationPipeline = { evaluate: async () => makeVerdict(true) }; // pipeline PASS
+      const archEvaluator = {
+        kind: 'architecture' as const,
+        evaluate: jest.fn(async () => ({
+          verdict: Verdict.FAIL,
+          results: {
+            architecture: {
+              verdict: Verdict.FAIL,
+              risks: [{ id: 'r1', level: 'high' as const, category: 'architecture', message: 'layer leak' }],
+              gaps: [{ id: 'g1', requirementRef: 'ADR-0002', severity: 'error' as const, message: 'boundary violation' }],
+              recommendations: [],
+            },
+          },
+          gaps: [{ id: 'g1', requirementRef: 'ADR-0002', severity: 'error' as const, message: 'boundary violation' }],
+          risks: [{ id: 'r1', level: 'high' as const, category: 'architecture', message: 'layer leak' }],
+        })),
+      };
+
+      const orch = new EvaluationOrchestrator(pipeline, resolver, '1.0.5', [archEvaluator]);
+      const r = await orch.evaluate({ ...ctx, kinds: ['gate', 'architecture'] });
+
+      expect(archEvaluator.evaluate).toHaveBeenCalledTimes(1);
+      expect(r.results.gate).toHaveLength(2);          // pipeline kinds still present
+      expect(r.results.architecture?.verdict).toBe(Verdict.FAIL);
+      expect(r.overallVerdict).toBe(Verdict.FAIL);     // pipeline PASS folded with arch FAIL -> FAIL
+      expect(r.outcome).toBe('rejected');
+      expect(r.gaps.some((g) => g.id === 'g1')).toBe(true);
+      expect(r.risks.some((x) => x.id === 'r1')).toBe(true);
+      expect(r.decisionRecommendation?.recommendedVerdict).toBe(Verdict.FAIL);
+    });
+
+    it('ignores a requested kind with no registered evaluator (sub-result absent)', async () => {
+      const pipeline: IEvaluationPipeline = { evaluate: async () => makeVerdict(true) };
+      const orch = new EvaluationOrchestrator(pipeline, resolver, '1.0.5'); // no evaluators
+      const r = await orch.evaluate({ ...ctx, kinds: ['gate', 'blueprint'] });
+
+      expect(r.overallVerdict).toBe(Verdict.PASS);
+      expect(r.results.blueprint).toBeUndefined();
+      expect(r.results.gate).toHaveLength(2);
+    });
+  });
 });

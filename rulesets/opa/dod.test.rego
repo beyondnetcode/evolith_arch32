@@ -160,3 +160,14 @@ test_multiple_violations_detected {
     }
     count(violations) == 9
 }
+
+# GT-382: no DoD facts declared → no opinion (FS-path / no-context safety).
+test_absent_dod_context_yields_no_violations {
+    violations := dod.violations with input as {}
+    count(violations) == 0
+}
+
+test_context_without_dod_yields_no_violations {
+    violations := dod.violations with input as {"context": {"tenant": {"tenantId": "t1"}}}
+    count(violations) == 0
+}

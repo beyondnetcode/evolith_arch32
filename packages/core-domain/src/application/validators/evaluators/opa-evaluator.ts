@@ -7,6 +7,20 @@ import { OpaInputBuilder } from './opa-input-builder';
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 
+/**
+ * GT-382: context-aware policies emit namespaced violation ids (`DOD-*`, `CB-*`,
+ * `PG-*`) that can never equal the path-derived rule id produced for a gate's
+ * `rules: ["rulesets/opa/<file>.rego"]` reference (e.g. `deriveRuleId` →
+ * `opa-dod`). For these policies a gate rule referencing the policy file owns
+ * ALL of that policy's violations, so they are matched by id PREFIX. Every other
+ * rule keeps exact-id matching, so this changes no other policy's behavior.
+ */
+const CONTEXT_AWARE_VIOLATION_PREFIXES: Readonly<Record<string, string>> = {
+  'opa-dod': 'DOD-',
+  'opa-compliance-baseline': 'CB-',
+  'opa-phase-gates': 'PG-',
+};
+
 export class OpaEvaluator implements IRuleEvaluatorStrategy {
   private policyCache: any = null;
   private inputBuilder: OpaInputBuilder;
@@ -102,7 +116,10 @@ export class OpaEvaluator implements IRuleEvaluatorStrategy {
         const violations: Record<string, unknown>[] = (resultSet?.[0]?.result) ? resultSet[0].result as Record<string, unknown>[] : [];
         
         opaResults = passedRules.map(rule => {
-          const ruleViolations = violations.filter((v: Record<string, unknown>) => v.id === rule.id);
+          const prefix = CONTEXT_AWARE_VIOLATION_PREFIXES[rule.id];
+          const ruleViolations = prefix
+            ? violations.filter((v: Record<string, unknown>) => typeof v.id === 'string' && (v.id as string).startsWith(prefix))
+            : violations.filter((v: Record<string, unknown>) => v.id === rule.id);
           if (ruleViolations.length > 0) {
             return {
               rule,

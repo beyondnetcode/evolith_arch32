@@ -17,8 +17,7 @@ test_missing_mandatory_artifact_is_flagged {
     "gate": {"phase": 2, "mandatoryEvidence": [{"artifact": "prd.md"}], "blockingCriteria": []},
     "evidence": [],
   }
-  some v in violations
-  v.id == "PG-EVIDENCE-MISSING"
+  violations[_].id == "PG-EVIDENCE-MISSING"
 }
 
 # An active, un-waived blocking criterion → PG-CRITERION-BLOCKING.
@@ -28,8 +27,7 @@ test_active_blocking_criterion_is_flagged {
     "evidence": [],
     "waiver": [],
   }
-  some v in violations
-  v.id == "PG-CRITERION-BLOCKING"
+  violations[_].id == "PG-CRITERION-BLOCKING"
 }
 
 # A blocking criterion covered by an active, non-expired waiver → no blocking violation.
@@ -40,7 +38,7 @@ test_waived_criterion_is_not_blocking {
     "waiver": [{"criterion": "security-review", "status": "active", "expirationDate": "2099-01-01"}],
     "evaluationDate": "2026-06-28",
   }
-  count({v | some v in violations; v.id == "PG-CRITERION-BLOCKING"}) == 0
+  count({v | violations[v]; v.id == "PG-CRITERION-BLOCKING"}) == 0
 }
 
 # No gate context → no violations (additive aggregation is safe in evolith.main).

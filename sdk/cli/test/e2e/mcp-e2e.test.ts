@@ -4,6 +4,32 @@ import * as http from 'http';
 
 const CLI_PATH = path.join(__dirname, '../../dist/main.js');
 
+/**
+ * Poll the MCP server's public /health endpoint until it is listening, instead of
+ * a fixed sleep. A fixed wait flaked on slow CI runners (the process had not bound
+ * the port yet → ECONNREFUSED). Resolves on the first response; rejects after the
+ * deadline so a genuinely-dead server still fails fast.
+ */
+function waitForHealth(port: number, timeoutMs = 20000): Promise<void> {
+  const deadline = Date.now() + timeoutMs;
+  return new Promise((resolve, reject) => {
+    const attempt = () => {
+      const req = http.get({ hostname: '127.0.0.1', port, path: '/health' }, (res) => {
+        res.resume();
+        resolve();
+      });
+      req.on('error', () => {
+        if (Date.now() >= deadline) {
+          reject(new Error(`MCP server did not become ready on :${port} within ${timeoutMs}ms`));
+        } else {
+          setTimeout(attempt, 200);
+        }
+      });
+    };
+    attempt();
+  });
+}
+
 interface JsonRpcMessage {
   jsonrpc: '2.0';
   id: number | string;
@@ -416,7 +442,7 @@ describe('MCP E2E Tests - API key authentication', () => {
       stdio: ['pipe', 'pipe', 'pipe'],
     });
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await waitForHealth(testPort);
   });
 
   afterAll(() => {
@@ -512,7 +538,7 @@ describe('MCP E2E Tests - HTTP transport protocol', () => {
       stdio: ['pipe', 'pipe', 'pipe'],
     });
 
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await waitForHealth(testPort);
   });
 
   afterAll(() => {

@@ -25,8 +25,6 @@ import { WorkspaceReferenceResolverService } from './application/services/worksp
 import { SatelliteRegistryService } from './application/services/satellite-registry.service';
 import { RedisCacheModule } from './infrastructure/cache/redis-cache.module';
 import { CacheMetricsService } from './infrastructure/cache/cache-metrics.service';
-import { SatellitesController } from './presentation/controllers/satellites.controller';
-import { SatelliteRegistryService } from './application/services/satellite-registry.service';
 
 @Module({
   imports: [

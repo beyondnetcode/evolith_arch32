@@ -41,10 +41,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Fase del roadmap:** R0. **Impacto:** Docs de gobierno (ADR-0100/0101, UP-002, diseño previo, board/catálogo GT).
 - **Complejidad:** M
 - **Criterios de aceptación:**
-  - [ ] ADR-0101 `Accepted`; ADR-0100 Decisión 1 marcada superseded.
-  - [ ] UP-002 sin repos/casos de uso/endpoints operativos; diseño previo Entregables 2/4/10/11/12 + flujos de escritura del 13 marcados SUPERSEDED.
-  - [ ] Sin referencias vivas a `IProductRepository`/`POST /products` en docs de gobierno.
-- **Dependencias:** Ninguna (punto de partida). Mayormente redactado en commit `7cc62942`; pendiente de aceptación del Architecture Board.
+  - [x] ADR-0101 `Accepted`; ADR-0100 Decisión 1 marcada superseded.
+  - [x] UP-002 sin repos/casos de uso/endpoints operativos; diseño previo Entregables 2/4/10/11/12 + flujos de escritura del 13 marcados SUPERSEDED.
+  - [x] Sin referencias vivas a `IProductRepository`/`POST /products` en docs de gobierno.
+- **Dependencias:** Ninguna (punto de partida). Mayormente redactado en commit `7cc62942`; **Architecture Board lo aceptó el 2026-06-29** (estado de ADR-0101 + ADR-0100 actualizado).
 
 #### GT-377
 

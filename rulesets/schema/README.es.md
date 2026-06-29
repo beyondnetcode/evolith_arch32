@@ -4,7 +4,7 @@ Definiciones de JSON Schema para validar los artefactos de gobernanza y SDLC de 
 
 > **Fuente de verdad:** estos schemas son el **contrato autoritativo** de la *estructura* de cada artefacto. Cuando una plantilla Markdown y un schema discrepan sobre campos obligatorios, el schema gana para la validación automática. Las plantillas Markdown bajo `reference/governance/sdlc/04-artifact-templates/` siguen siendo autoritativas para la *guía humana, la intención y la prosa*.
 
-**Conteo:** este directorio contiene **36** archivos `*.schema.json`, agrupados abajo por propósito. Los schemas de *entrada* de las políticas OPA viven aparte en [`../opa/schemas/`](../opa/schemas/) (26 archivos) y se indexan en el [README de OPA](../opa/README.es.md).
+**Conteo:** este directorio contiene **39** archivos `*.schema.json`, agrupados abajo por propósito. Los schemas de *entrada* de las políticas OPA viven aparte en [`../opa/schemas/`](../opa/schemas/) (26 archivos) y se indexan en el [README de OPA](../opa/README.es.md).
 
 > **Nota de ejes:** el eje SDLC (idea → producto, cinco fases) es **independiente** del eje de topologías (agrupadores de arquitectura). La columna "Fase" abajo se refiere solo al eje progresivo del SDLC. Los artefactos de topología (`topology-manifest`, `topology-composition`, `blueprint`) no están atados a una fase del SDLC.
 
@@ -42,6 +42,15 @@ Definiciones de JSON Schema para validar los artefactos de gobernanza y SDLC de 
 | [sdlc-phase.schema.json](./sdlc-phase.schema.json) | Fase SDLC | Definición del eje SDLC |
 | [sdlc-gate.schema.json](./sdlc-gate.schema.json) | Gate SDLC | Definición del eje SDLC |
 
+## Contratos de evaluación del Core
+
+Los contratos de entrada/salida del Core de Evaluación stateless (ADR-0101). Reflejan los contratos TypeScript bajo `packages/core-domain/src/evaluation/contracts/`.
+
+| Schema | Título | Alcance |
+|---|---|---|
+| [evaluation-context.schema.json](./evaluation-context.schema.json) | Contexto de Evaluación | Entrada del Core stateless (GT-377 / ADR-0101) |
+| [evaluation-result.schema.json](./evaluation-result.schema.json) | Resultado de Evaluación | Salida del Core stateless (GT-377 / ADR-0101) |
+
 ## Schemas de ruleset y definición de reglas (meta-schemas)
 
 | Schema | Título | Alcance |
@@ -55,6 +64,7 @@ Definiciones de JSON Schema para validar los artefactos de gobernanza y SDLC de 
 | Schema | Título | Alcance |
 |---|---|---|
 | [evolith-yaml.schema.json](./evolith-yaml.schema.json) | Contrato de Satélite Evolith (`evolith.yaml`) | Gobernanza de satélites |
+| [satellite-record.schema.json](./satellite-record.schema.json) | Registro de Satélite | Aprovisionamiento de satélites |
 | [tenant.schema.json](./tenant.schema.json) | Tenant Evolith | Multi-tenancy |
 | [tenant-override.schema.json](./tenant-override.schema.json) | Override de Tenant Evolith | Multi-tenancy |
 | [topology-manifest.schema.json](./topology-manifest.schema.json) | Manifiesto de Topología Evolith | Eje de topologías (resolución de manifiesto) |

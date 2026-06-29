@@ -1,7 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { EvaluationController } from './evaluation.controller';
 import { ValidateSatelliteUseCase } from '@evolith/core-domain/application/use-cases';
-import { EvaluateSatelliteDto } from '../dtos/evaluation.dto';
+import { EvaluationOrchestrator } from '@evolith/core-domain/evaluation';
+import { EvaluateSatelliteDto, EvaluationContextDto } from '../dtos/evaluation.dto';
 
 const SAMPLE_GATE_EVAL = {
   artifactEvaluations: [
@@ -47,15 +48,20 @@ const SAMPLE_ENVELOPE = {
 describe('EvaluationController (GT-361)', () => {
   let controller: EvaluationController;
   let useCase: jest.Mocked<ValidateSatelliteUseCase>;
+  let orchestrator: { evaluate: jest.Mock };
 
   beforeEach(async () => {
     const mockUseCase = {
       execute: jest.fn(),
     };
+    orchestrator = { evaluate: jest.fn() };
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [EvaluationController],
-      providers: [{ provide: ValidateSatelliteUseCase, useValue: mockUseCase }],
+      providers: [
+        { provide: EvaluationOrchestrator, useValue: orchestrator },
+        { provide: ValidateSatelliteUseCase, useValue: mockUseCase },
+      ],
     }).compile();
 
     controller = module.get<EvaluationController>(EvaluationController);
@@ -157,6 +163,44 @@ describe('EvaluationController (GT-361)', () => {
         },
       });
       expect(response).toBe(minimalEnvelope);
+    });
+  });
+
+  describe('canonical EvaluationContext path (GT-378)', () => {
+    const CANONICAL_RESULT = {
+      overallVerdict: 'PASS',
+      outcome: 'approved',
+      results: {},
+      rulesExecuted: [],
+      policiesApplied: [],
+      gaps: [],
+      risks: [],
+      missingEvidence: [],
+      incompleteArtifacts: [],
+      recommendations: [],
+      requiredActions: [],
+      confidence: 1,
+      rationale: 'ok',
+      versions: { core: '1.0.5' },
+      evaluatedAt: '2026-06-28T12:00:00.000Z',
+      schemaVersion: '1.0.0',
+    };
+
+    it('delegates to the orchestrator and returns the raw EvaluationResult', async () => {
+      orchestrator.evaluate.mockResolvedValue(CANONICAL_RESULT);
+      const ctx: EvaluationContextDto = { kinds: ['gate', 'compliance'], workspaceRef: 'ws-3f9a', phaseId: 'design', gateId: 'gate-f2' };
+
+      const response = await controller.evaluate(ctx);
+
+      expect(orchestrator.evaluate).toHaveBeenCalledWith(ctx);
+      expect(useCase.execute).not.toHaveBeenCalled();
+      expect(response).toBe(CANONICAL_RESULT);
+    });
+
+    it('rejects a body with neither workspaceRef nor satellitePath', async () => {
+      await expect(controller.evaluate({ kinds: ['gate'] } as EvaluationContextDto)).rejects.toThrow(/workspaceRef.*satellitePath/);
+      expect(orchestrator.evaluate).not.toHaveBeenCalled();
+      expect(useCase.execute).not.toHaveBeenCalled();
     });
   });
 });

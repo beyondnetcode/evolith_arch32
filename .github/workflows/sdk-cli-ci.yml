@@ -390,6 +390,9 @@ jobs:
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Org accounts require a (free) gitleaks license key — wired from the
+          # GITLEAKS_LICENSE repo secret so the scan can run.
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
 
   agentic-review:
     name: Winston Agentic Review

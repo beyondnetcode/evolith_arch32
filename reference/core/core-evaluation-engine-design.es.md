@@ -906,7 +906,7 @@ sequenceDiagram
         TK->>TK: Marca evidencia ACEPTADA en Evidence Graph
     else evidencia insuficiente / no íntegra
         CORE-->>TK: { evidenceResults:[{verdict:'FAIL', sufficient:false}], gaps[], requiredActions[] }
-        TK->>TK: Marca evidencia RECHAZADA; expone required actions al cliente
+        TK->>TK: Marca evidencia RECHAZADA - expone required actions al cliente
     end
 ```
 

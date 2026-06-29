@@ -432,6 +432,8 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 
 **Oleada 2026-06-28 (GT-376 — renombrados de código, R0):** Renombrado el value object del Core `GateDecision` → `CoreGateVerdict` (`makeCoreGateVerdict`), liberando `GateDecision` para la decisión vinculante canónica del Tracker (ADR-0101). Alias deprecados `GateDecision`/`makeGateDecision` conservados (no destructivo). `migrateLegacyGateDecision` mapea el legacy `'WAIVED'` → `Verdict.WAIVE` (ahora con test). `GT-376` sigue `EN-PROGRESO` — deuda de **código** R0 cerrada; la aceptación formal de ADR-0101 queda como paso del Architecture Board. core-domain **657/657**. Commit `5b705d8f`.
 
+**Oleada 2026-06-28 (GT-379 — extraer + testear kind-evaluators):** Movidos los `KindEvaluator`s inline (architecture/checkpoint/topology) de `AppModule` a un módulo con tests (`apps/core-api/.../application/evaluation/kind-evaluators.ts`, +10 tests). Comportamiento sin cambios; lógica de mapeo ahora cubierta. core-api **122/122** (suite satellites preexistente sigue roja). **L1c/GT-380 (rego OPA) está bloqueado localmente por entorno** (sin binario `opa` → no se puede compilar `policy.wasm` / correr el gate de paridad native↔OPA); las ediciones rego (`input.context`, wire `phase-gates.rego`, re-anclar `dod`/`compliance`) se difieren a CI / entorno con `opa`.
+
 **Ordenamiento:** una sola tabla, ordenada por estado (pendientes luego completados), luego criticidad (`P0` → `P1` → `P2` → `P3`), luego complejidad (`XS` → `S` → `M` → `L` → `XL`). Los IDs `GT-*` enlazan al [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md); los IDs `MT-A*` enlazan al [plan de implementación Multi-Topology](./multi-topology-reference-corpus-implementation-plan.es.md).
 
 ---

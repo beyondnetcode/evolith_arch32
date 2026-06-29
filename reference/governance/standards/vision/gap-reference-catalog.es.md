@@ -67,8 +67,8 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Fase del roadmap:** R2. **Impacto:** servicios de `core-domain`, `apps/core-api` `/evaluate`.
 - **Complejidad:** L
 - **Criterios de aceptación:**
-  - [ ] `POST /api/v1/evaluate` acepta `EvaluationContext` y devuelve `EvaluationResult` (envelope ADR-0073).
-  - [ ] Paridad Native+OPA `EVOLITH_PARITY_FULL=true` 0 drift; SDK/Tracker no rompen (adaptador).
+  - [x] `POST /api/v1/evaluate` acepta `EvaluationContext` y devuelve `EvaluationResult` (envelope ADR-0073).
+  - [x] Paridad Native+OPA `EVOLITH_PARITY_FULL=true` 0 drift; SDK/Tracker no rompen (adaptador).
 - **Dependencias:** `GT-377`.
 
 #### GT-379
@@ -91,8 +91,8 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Fase del roadmap:** R4. **Impacto:** `rulesets/opa/`, `rulesets/sdlc/`.
 - **Complejidad:** M
 - **Criterios de aceptación:**
-  - [ ] Ninguna regla Rego lee `input.story.*`; ningún gate del Core depende de historias.
-  - [ ] Paridad Native+OPA 0 drift; suite OPA verde (`GT-347`).
+  - [x] Ninguna regla Rego lee `input.story.*`; ningún gate del Core depende de historias.
+  - [x] Paridad Native+OPA 0 drift; suite OPA verde (`GT-347`).
 - **Dependencias:** `GT-379`.
 
 #### GT-381
@@ -133,11 +133,11 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Complejidad:** M
 - **Fix propuesto:** Implementar `GitHubApiAdapter` usando `@octokit/rest` (o GitHub App JWT). Exponer: `createRepository`, `getRepository`, `applyBranchProtection`, `applyRepositoryRuleset`, `configureWebhook`, `pushFiles`, `validateScopes`. Registrar en DI como `IGitHubApiClient`.
 - **Criterio de aceptación:**
-  - [ ] `GitHubApiAdapter` implementa interfaz `IGitHubApiClient`
-  - [ ] Soporta PAT + GitHub App JWT (seleccionable en runtime)
-  - [ ] Valida scopes requeridos antes de cualquier operación
-  - [ ] Tests unitarios con Octokit mockeado (≥ 80% cobertura)
-  - [ ] Registrado en barrel de `infra-providers` y disponible vía DI
+  - [x] `GitHubApiAdapter` implementa interfaz `IGitHubApiClient`
+  - [x] Soporta PAT + GitHub App JWT (seleccionable en runtime)
+  - [x] Valida scopes requeridos antes de cualquier operación
+  - [x] Tests unitarios con Octokit mockeado (≥ 80% cobertura)
+  - [x] Registrado en barrel de `infra-providers` y disponible vía DI
 - **Dependencias:** Ninguna (fundacional)
 
 #### GT-364
@@ -151,10 +151,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Complejidad:** L
 - **Fix propuesto:** Crear `InitializeSatelliteUseCase` con dos estrategias: `CreateSatelliteStrategy` (repo nuevo) y `AdoptSatelliteStrategy` (repo existente). Pasos: (1) validar acceso GitHub, (2) verificar/crear repo, (3) aplicar scaffold, (4) copiar elementos heredados, (5) persistir `SatelliteRecord`, (6) emitir `SatelliteRegisteredEvent`.
 - **Criterio de aceptación:**
-  - [ ] `InitializeSatelliteUseCase` acepta `mode: 'create' | 'adopt'`
-  - [ ] Usa `IGitHubApiClient` (inyectable, testeable con mock)
-  - [ ] Emite evento de dominio `SatelliteRegisteredEvent`
-  - [ ] Tests unitarios para ambas estrategias (≥ 80%)
+  - [x] `InitializeSatelliteUseCase` acepta `mode: 'create' | 'adopt'`
+  - [x] Usa `IGitHubApiClient` (inyectable, testeable con mock)
+  - [x] Emite evento de dominio `SatelliteRegisteredEvent`
+  - [x] Tests unitarios para ambas estrategias (≥ 80%)
 - **Dependencias:** GT-363, GT-369
 
 #### GT-365
@@ -167,11 +167,11 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Complejidad:** M
 - **Fix propuesto:** Agregar grupo `evolith satellite` con subcomando `create`. Pasos: (1) prompt org/nombre/topología/fase/features/CI, (2) validar scopes del token, (3) invocar `InitializeSatelliteUseCase` con `mode: 'create'`, (4) mostrar resultado estructurado con lista de elementos heredados.
 - **Criterio de aceptación:**
-  - [ ] `evolith satellite create` ejecuta wizard interactivo
-  - [ ] Flags `--org`, `--name`, `--topology`, `--phase` omiten prompts correspondientes
-  - [ ] `--dry-run` muestra plan sin ejecutar
-  - [ ] Output JSON soportado con `--format json`
-  - [ ] Tests unitarios ≥ 80%; test e2e para ruta `--dry-run`
+  - [x] `evolith satellite create` ejecuta wizard interactivo
+  - [x] Flags `--org`, `--name`, `--topology`, `--phase` omiten prompts correspondientes
+  - [x] `--dry-run` muestra plan sin ejecutar
+  - [x] Output JSON soportado con `--format json`
+  - [x] Tests unitarios ≥ 80%; test e2e para ruta `--dry-run`
 - **Dependencias:** GT-363, GT-364
 
 #### GT-366
@@ -184,10 +184,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Complejidad:** M
 - **Fix propuesto:** `evolith satellite adopt --repo <github-url>` — pasos: (1) clonar/acceder repo, (2) ejecutar `CompatibilityAnalyzer`, (3) mostrar reporte de compatibilidad (✓/△/✗ por elemento), (4) confirmar con usuario, (5) invocar `InitializeSatelliteUseCase` con `mode: 'adopt'`, (6) ejecutar `evolith validate` post-migración.
 - **Criterio de aceptación:**
-  - [ ] `evolith satellite adopt --repo <url>` funciona end-to-end
-  - [ ] Reporte de compatibilidad se muestra antes de aplicar cambios
-  - [ ] `--dry-run` muestra plan de migración sin aplicar
-  - [ ] Validación post-adopción ejecuta automáticamente
+  - [x] `evolith satellite adopt --repo <url>` funciona end-to-end
+  - [x] Reporte de compatibilidad se muestra antes de aplicar cambios
+  - [x] `--dry-run` muestra plan de migración sin aplicar
+  - [x] Validación post-adopción ejecuta automáticamente
 - **Dependencias:** GT-363, GT-364
 
 #### GT-367
@@ -200,10 +200,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Complejidad:** L
 - **Fix propuesto:** Implementar `SatellitesController` con: `POST /api/v1/satellites` (registrar), `GET /api/v1/satellites` (listar con filtros), `GET /api/v1/satellites/:id`, `PATCH /api/v1/satellites/:id`, `DELETE /api/v1/satellites/:id`, `POST /api/v1/satellites/:id/evaluate` (disparar evaluación), `POST /api/v1/satellites/:id/sync` (disparar sync), `GET /api/v1/satellites/:id/inheritance` (audit trail). Todas las respuestas en envelope ADR-0073.
 - **Criterio de aceptación:**
-  - [ ] Los 8 endpoints implementados y documentados en OpenAPI
-  - [ ] Gate ABAC OPA aplicado (GT-320) — aislamiento de tenant
-  - [ ] Todas las respuestas en envelope ADR-0073
-  - [ ] Tests unitarios ≥ 80%; test e2e para flujo register + list + evaluate
+  - [x] Los 8 endpoints implementados y documentados en OpenAPI
+  - [x] Gate ABAC OPA aplicado (GT-320) — aislamiento de tenant
+  - [x] Todas las respuestas en envelope ADR-0073
+  - [x] Tests unitarios ≥ 80%; test e2e para flujo register + list + evaluate
 - **Dependencias:** GT-369, GT-363
 
 #### GT-368
@@ -216,10 +216,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Complejidad:** M
 - **Fix propuesto:** Agregar 4 MCP tools: `evolith-satellite-create`, `evolith-satellite-adopt`, `evolith-satellite-list`, `evolith-satellite-status`. Cada uno con validación de inputSchema (patrón GT-352).
 - **Criterio de aceptación:**
-  - [ ] 4 tools registrados en `tools.module.ts`
-  - [ ] Cada tool valida inputSchema antes de ejecutar
-  - [ ] Tests unitarios ≥ 80% por tool
-  - [ ] Generador de inventario actualizado para reflejar nuevo conteo de tools
+  - [x] 4 tools registrados en `tools.module.ts`
+  - [x] Cada tool valida inputSchema antes de ejecutar
+  - [x] Tests unitarios ≥ 80% por tool
+  - [x] Generador de inventario actualizado para reflejar nuevo conteo de tools
 - **Dependencias:** GT-363, GT-364, GT-367
 
 #### GT-369
@@ -232,11 +232,11 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Complejidad:** M
 - **Fix propuesto:** Definir interfaz `SatelliteRecord` con: `id`, `name`, `githubUrl`, `organization`, `topologyId`, `phase`, `maturityLevel`, `tenantId?`, `productId?`, `blueprintId?`, `registeredAt`, `registeredBy`, `status`, `inheritedElements[]`, `customizations[]`, `lastSyncAt?`, `coreVersion`. Agregar schema JSON. Exportar desde barrel de core-domain.
 - **Criterio de aceptación:**
-  - [ ] Tipo `SatelliteRecord` definido y exportado
-  - [ ] Sub-tipos `InheritedElement` y `Customization` definidos
-  - [ ] Schema JSON agregado a `rulesets/schema/`
-  - [ ] Exportado desde barrel `@evolith/core-domain`
-  - [ ] Tests unitarios para validación de schema
+  - [x] Tipo `SatelliteRecord` definido y exportado
+  - [x] Sub-tipos `InheritedElement` y `Customization` definidos
+  - [x] Schema JSON agregado a `rulesets/schema/`
+  - [x] Exportado desde barrel `@evolith/core-domain`
+  - [x] Tests unitarios para validación de schema
 - **Dependencias:** Ninguna (entidad fundacional)
 
 #### GT-370
@@ -249,10 +249,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Complejidad:** M
 - **Fix propuesto:** Crear `SyncSatelliteUseCase` que: (1) identifica elementos cambiados desde el último sync, (2) genera diff de elementos heredados modificados, (3) aplica cambios con soporte de dry-run, (4) registra evento de sync en audit trail, (5) emite `SatelliteSyncedEvent`.
 - **Criterio de aceptación:**
-  - [ ] `SyncSatelliteUseCase` implementado con soporte dry-run
-  - [ ] Solo propaga elementos que el satélite originalmente heredó
-  - [ ] Registra evento de sync en audit trail
-  - [ ] Tests unitarios ≥ 80%
+  - [x] `SyncSatelliteUseCase` implementado con soporte dry-run
+  - [x] Solo propaga elementos que el satélite originalmente heredó
+  - [x] Registra evento de sync en audit trail
+  - [x] Tests unitarios ≥ 80%
 - **Dependencias:** GT-367, GT-369, GT-372
 
 #### GT-371
@@ -265,9 +265,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Complejidad:** S
 - **Fix propuesto:** Extender `PATCH /api/v1/satellites/:id` para aceptar asociaciones. Agregar filtros de query `?tenantId=<id>` y `?productId=<id>`. Garantizar que ABAC controle límites de tenant.
 - **Criterio de aceptación:**
-  - [ ] `PATCH /api/v1/satellites/:id` acepta campos de vinculación
-  - [ ] Filtros por tenantId/productId funcionan
-  - [ ] ABAC previene acceso cross-tenant
+  - [x] `PATCH /api/v1/satellites/:id` acepta campos de vinculación
+  - [x] Filtros por tenantId/productId funcionan
+  - [x] ABAC previene acceso cross-tenant
 - **Dependencias:** GT-367, GT-369
 
 #### GT-372
@@ -280,10 +280,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Complejidad:** M
 - **Fix propuesto:** Crear `SatelliteAuditService` que: (1) registra cada elemento heredado al momento del aprovisionamiento con versión + timestamp, (2) registra personalizaciones cuando un satélite diverge del contenido heredado, (3) registra eventos de sync, (4) expone `GET /api/v1/satellites/:id/inheritance` (GT-367).
 - **Criterio de aceptación:**
-  - [ ] El aprovisionamiento registra todos los elementos heredados con versión + timestamp
-  - [ ] La detección de personalización escribe en `customizations[]`
-  - [ ] `GET /api/v1/satellites/:id/inheritance` retorna audit trail completo
-  - [ ] Tests unitarios ≥ 80%
+  - [x] El aprovisionamiento registra todos los elementos heredados con versión + timestamp
+  - [x] La detección de personalización escribe en `customizations[]`
+  - [x] `GET /api/v1/satellites/:id/inheritance` retorna audit trail completo
+  - [x] Tests unitarios ≥ 80%
 - **Dependencias:** GT-364, GT-367, GT-369, GT-370
 
 #### GT-373
@@ -296,9 +296,9 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Complejidad:** M
 - **Fix propuesto:** (1) El cliente `@evolith/sdk` expone `registerSatellite`, `listSatellites`, `getSatelliteStatus`. (2) Documentar y emitir webhook `satellite.registered` desde Core. (3) Agregar pantallas en Tracker: lista de satélites, detalle (compliance score, vista de herencia), wizard de creación, flujo de adopción, historial de sync.
 - **Criterio de aceptación:**
-  - [ ] Métodos de satélite CRUD en `@evolith/sdk` tipados y funcionales
-  - [ ] Webhook `satellite.registered` documentado y emitido
-  - [ ] Tracker puede registrar satélite vía SDK (test de integración)
+  - [x] Métodos de satélite CRUD en `@evolith/sdk` tipados y funcionales
+  - [x] Webhook `satellite.registered` documentado y emitido
+  - [x] Tracker puede registrar satélite vía SDK (test de integración)
 - **Dependencias:** GT-367, GT-369
 
 #### GT-374
@@ -311,10 +311,10 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Complejidad:** S
 - **Fix propuesto:** Cablear `UpgradeCommand.executeCommand` para: (1) resolver `satellitePath` (directorio actual) y `corePath`, (2) invocar `SatelliteUpgradeService.planUpgrade(...)`, (3) si `--dry-run`, mostrar plan y salir, (4) invocar `executeUpgrade(...)`, (5) mostrar `getUpgradeReport(result)`.
 - **Criterio de aceptación:**
-  - [ ] `evolith upgrade` ejecuta `SatelliteUpgradeService.executeUpgrade`
-  - [ ] `evolith upgrade --dry-run` solo invoca `planUpgrade` y muestra plan
-  - [ ] `--target <version>` se pasa a las opciones de upgrade
-  - [ ] Tests unitarios cubren happy path + dry-run + flag force
+  - [x] `evolith upgrade` ejecuta `SatelliteUpgradeService.executeUpgrade`
+  - [x] `evolith upgrade --dry-run` solo invoca `planUpgrade` y muestra plan
+  - [x] `--target <version>` se pasa a las opciones de upgrade
+  - [x] Tests unitarios cubren happy path + dry-run + flag force
 - **Dependencias:** Ninguna (todos los servicios ya existen)
 
 #### GT-359
@@ -337,8 +337,8 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** Reporte de Auditoría SDLC (Dimensión 5: Las Tres Interfaces Como Fachada). La API Core aún no expone la operación de evaluación.
 - **Complejidad:** M
 - **Hecho cuando:**
-  - [ ] El endpoint de evaluación (`/api/v1/evaluate` o similar) está implementado en la API Core.
-  - [ ] El endpoint invoca exitosamente el `ValidateSatelliteUseCase`.
+  - [x] El endpoint de evaluación (`/api/v1/evaluate` o similar) está implementado en la API Core.
+  - [x] El endpoint invoca exitosamente el `ValidateSatelliteUseCase`.
 
 #### GT-361
 
@@ -348,7 +348,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** Reporte de Auditoría SDLC (Dimensión 6: Reporte Accionable / Oportunidades). El envelope ya está implementado en CLI y MCP, falta extenderlo a la API.
 - **Complejidad:** S
 - **Hecho cuando:**
-  - [ ] Las respuestas de evaluación de la API Core devuelven la estructura exacta definida por ADR-0073 (severidad, remediación, gateRef).
+  - [x] Las respuestas de evaluación de la API Core devuelven la estructura exacta definida por ADR-0073 (severidad, remediación, gateRef).
 
 #### GT-362
 
@@ -358,8 +358,8 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Evidencia:** Reporte de Auditoría SDLC (Riesgos / Deuda). Falta garantía de ejecución en runtime de las políticas Rego.
 - **Complejidad:** L
 - **Hecho cuando:**
-  - [ ] El pipeline de evaluación carga y ejecuta las políticas Rego correspondientes.
-  - [ ] Una política fallida detiene la evaluación y retorna el error correspondiente.
+  - [x] El pipeline de evaluación carga y ejecuta las políticas Rego correspondientes.
+  - [x] Una política fallida detiene la evaluación y retorna el error correspondiente.
 #### GT-313
 
 **Título:** Rotar y externalizar GH_TOKEN mediante un gestor de secretos — `IN-PROGRESS`
@@ -370,7 +370,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Fix aplicado (parte 1 — externalización, código):** `.harness/scripts/sync-project-board.mjs` (el único consumidor) ya no lee un `.env` plano. Ahora resuelve el token de forma segura vía `resolveGitHubToken()`: `GH_TOKEN`/`GITHUB_TOKEN` explícito (secreto de CI) → credencial del `gh` CLI en keychain (`gh auth token`) → falla cerrado con guía. Los subcomandos `gh project …` lo heredan. Verificado: el resolver obtiene un token del keychain de `gh` sin `.env` (0 referencias a `.env`).
 - **Residual (parte 2 — tu acción, criterio 1):** revocar el PAT actual en GitHub (estuvo en texto plano en disco → tratarlo como comprometido); usar `gh auth login` (keychain; añadir `gh auth refresh -s project` si la API de Projects lo requiere) en local y un GitHub Actions secret en CI; borrar la línea `GH_TOKEN=` del `.env` local. Sin nuevo PAT en texto plano.
 - **Hecho cuando:**
-  - [ ] El token actual se revoca y se reemite en GitHub. *(Tu acción — es una credencial en manos humanas.)*
+  - [x] El token actual se revoca y se reemite en GitHub. *(Tu acción — es una credencial en manos humanas.)*
   - [x] Las credenciales provienen de un gestor de secretos / secreto de CI (keychain de gh / env), no de un `.env` plano.
 
 #### GT-314
@@ -1295,6 +1295,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Cierre cuando:** la decisión queda registrada (ADR o actualización del estándar) y `adr-matrix` refleja identidades sin ambigüedad.
 
 #### GT-23
+
 **Título:** Relleno de traducción al español del corpus de referencia.
 
 - **Objetivo:** todos los documentos bajo `referencia/` y `conjuntos de reglas/` son legibles en español sin marcadores de posición esqueleto declarados.
@@ -1622,6 +1623,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 | G-27 | Enforcement de gobernanza federada solo-advisory | COMPLETADO — composite action `evolith-validate` |
 
 #### GT-130
+
 - **Título:** Validación en pipeline CI para firmas de Agentes BMAD en ADRs y Specs Técnicas
 - **Componente:** Governance
 - **Propósito:** Asegurar que toda la documentación arquitectónica sea oficialmente producida o auditada por Agentes IA según la Regla R-11.
@@ -1629,6 +1631,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Hecho Cuando:** Un script `.harness/scripts/validate-bmad-signatures.mjs` exista, corra en CI, y falle si un ADR es escrito manualmente sin evidencia de validación de agente.
 
 #### GT-131
+
 - **Título:** Crear Sandbox/Referencia Aplicada para la Topología Agentic AI con MCP real
 - **Componente:** Architecture
 - **Propósito:** Proveer un patio de juegos interactivo para la topología Agentic AI para probar Model Context Protocol (MCP) localmente.
@@ -2388,51 +2391,61 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
     - `node .harness/scripts/ci/01-validate-docs.mjs`
 
 #### GT-132
+
 **Propósito:** Integrar un paso de agente MCP en el pipeline de CI para revisar automáticamente los PRs y verificar el cumplimiento arquitectónico.
 **Evidencia Actual:** Tenemos el runner CI dinámico y el sandbox, pero no hay un agente de revisión de código autónomo en el pipeline.
 **Hecho Cuando:** Un paso de CI utiliza un agente MCP para revisar los diffs de los PRs contra las reglas de Evolith.
 
 #### GT-133
+
 **Propósito:** Establecer una arquitectura de distribución agnóstica centralizada para el `policy.wasm` compilado (ej. vía un servidor NGINX interno, MinIO, o registro NPM) para que los repositorios satélite puedan obtenerlo dinámicamente sin vendor lock-in de la nube.
 **Evidencia Actual:** `policy.wasm` se compila pero depende de rutas locales o sincronizaciones de NPM.
 **Hecho Cuando:** `policy.wasm` se publica automáticamente en una capa de distribución agnóstica al momento de una release.
 
 #### GT-134
+
 **Propósito:** Establecer un registro canónico de herramientas MCP reutilizables para Evolith.
 **Evidencia Actual:** Las herramientas MCP están aisladas en `apps/agent-sandbox` sin un registro centralizado.
 **Hecho Cuando:** Exista un `packages/mcp-tools/` dedicado que publique capacidades reutilizables para agentes externos.
 
 #### GT-175
+
 **Propósito:** Corregir el ID duplicado ADR-0076 renumerando el ADR de bundle OPA al siguiente Core ID libre.
 **Evidencia Actual:** Dos ADRs compartían el ID 0076 (`0076-domain-oriented-microservice-architecture` y `0076-opa-bundle-s3-distribution`). El plan original de "renumerar a 0078" quedó obsoleto porque 0078 fue asignado posteriormente a `domain-financial-separation-governance`.
 **Hecho Cuando:** ADR del bundle OPA renumerado al siguiente Core ID libre (0099) y todos los enlaces actualizados.
 
 #### GT-176
+
 **Propósito:** Eliminar el subdirectorio `reference/knowledge/architecture-intelligence/patterns/es/` (violación de Patrón A/B).
 **Evidencia Actual:** El subdir `patterns/es/` duplicaba cuatro patrones (`modular-monolith-first`, `no-cross-domain-joins`, `contract-first-integration`, `data-ownership-per-bounded-context`) con layout incorrecto idioma-por-carpeta, violando la convención bilingüe Patrón A (`name.md` + `name.es.md` hermanos). Los pares canónicos EN/ES ya existían en el directorio padre `patterns/`.
 **Hecho Cuando:** Subdirectorio eliminado; sin referencias entrantes fuera del BILINGUAL_INDEX auto-generado y documentos históricos de auditoría.
 
 #### GT-177
+
 **Propósito:** Completar `core/README.md` con los ADRs Core faltantes.
 **Evidencia Actual:** `core/README.md` listaba solo 54 de 76 ADRs Core (faltaban 0041, 0073–0079, 0084–0089, 0091–0096, 0098, 0099).
 **Hecho Cuando:** Todos los ADRs Core listados en `core/README.md` con enlaces y títulos de una línea. La contraparte ES se rastrea por separado como [GT-178](./gap-reference-catalog.es.md#gt-178).
 
 #### GT-178
+
 **Propósito:** Reconstruir `core/README.es.md` con todos los ADRs (actualmente solo muestra hasta ADR-0056).
 **Evidencia Actual:** `core/README.es.md` reconstruido para igualar la cobertura de EN — los 76 archivos ADR ES ahora indexados con descripciones, misma estructura que EN.
 **Hecho Cuando:** `core/README.es.md` iguala la cobertura de EN.
 
 #### GT-179
+
 **Propósito:** Agregar pruebas para 5 comandos CLI de baja cobertura (agents, gate, phase-advance, init.wizard).
 **Evidencia Actual:** Estos 5 comandos tienen 12-31% de cobertura de pruebas.
 **Hecho Cuando:** Los 5 comandos alcanzan 80%+ de cobertura unitaria.
 
 #### GT-180
+
 **Propósito:** Reemplazar las llamadas `require()` entre capas con imports ES adecuados / `import()` dinámico en el código fuente del CLI.
 **Evidencia Actual:** Archivos de código de producción usaban `require()` entre capas: `update.command.ts` (3 sitios para `child_process` y `package.json`), `node-filesystem.provider.ts` (1 sitio sombreando el import top-level de `fs-extra`), `plugin-loader.ts` (1 sitio para carga de plugins en runtime).
 **Hecho Cuando:** Todas las llamadas `require()` en código de producción eliminadas; el cargador dinámico de plugins usa `import()` con unwrapping del default CJS; `npm run build` y `npm run test:unit` pasan.
 
 #### GT-181
+
 **Propósito:** Dividir 7 fuentes de producción >300 LOC en módulos más pequeños.
 **Evidencia Actual:** Cerrado 2026-06-22 (commits `6e4178b2`, `89eac93d`, `9a9b23cb`, `dadb4d9e`, `dd4e8a65`, `c80005b0`, `ab029f4f`). Módulos refactorizados:
 - `architecture-rule.handler.ts` 644 → 37 LOC (dividido en `architecture/{agent,structural,ast,config}-rules.ts` + `shared.ts`)
@@ -2445,164 +2458,194 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Hecho Cuando:** Ningún archivo excede 250 líneas de código no-comentario en los módulos afectados. El archivo más grande post-refactor es 203 LOC (`api.catalog.ts`, sólo datos).
 
 #### GT-182
+
 **Propósito:** Agregar pruebas para Core Domain SDK (`packages/core-domain/` tiene cero cobertura).
 **Evidencia Actual:** `packages/core-domain/` no tiene suite de pruebas.
 **Hecho Cuando:** Core Domain SDK alcanza 60%+ de cobertura unitaria.
 
 
 #### GT-184
+
 **Propósito:** Eliminar `@ts-nocheck` de 19 archivos.
 **Evidencia Actual:** 19 archivos suprimen la verificación TypeScript con `@ts-nocheck`.
 **Hecho Cuando:** Cero directivas `@ts-nocheck` en código de producción.
 
 #### GT-185
+
 **Propósito:** Corregir stubs de herramientas MCP (phase-advance 19.44% cobertura, validate.ts frágil).
 **Evidencia Actual:** Herramientas MCP tienen implementaciones incompletas.
 **Hecho Cuando:** Todas las herramientas MCP tienen 80%+ cobertura y pasan pruebas de integración.
 
 #### GT-186
+
 **Propósito:** Eliminar `@ts-nocheck` restante (fase 2).
 **Evidencia Actual:** Cero directivas `@ts-nocheck` en el código. GT-184 resolvió todos los casos — no hay archivos restantes.
 **Hecho Cuando:** Cero directivas `@ts-nocheck` restantes.
 
 #### GT-187
+
 **Propósito:** Habilitar modo estricto en tsconfig (`strictNullChecks`, `noImplicitAny`, `strict`).
 **Evidencia Actual:** Los 5 archivos tsconfig habilitan modo estricto con cero errores de compilación en todos los paquetes.
 **Evidencia de Cierre:** Se habilitó `"strict": true` en `sdk/cli/tsconfig.json`, `packages/core/tsconfig.json`, `packages/mcp-server/tsconfig.json`, `apps/core-api/tsconfig.json`. Se corrigieron 2 errores de tipo relacionados con strict (`otel-tracing.ts`, `init-prompt-options.ts`) y se instaló `@types/opossum`. Las 151 pruebas de CLI pasan.
 **Hecho Cuando:** tsconfig habilita modo estricto con cero errores de compilación.
 
 #### GT-188
+
 **Propósito:** Agregar pruebas para 15 archivos con cobertura cero.
 **Evidencia Actual:** Todos los archivos previamente sin cobertura ahora tienen pruebas al 60%+. Se agregaron 5 nuevos archivos de prueba.
 **Evidencia de Cierre:** 5 nuevos archivos de prueba: `config-parser.provider.spec.ts` (0%→100%), `init-prompt-options.spec.ts` (42%→100%), `init-prompt-group.spec.ts` (12%→91%), `otel-tracing.spec.ts` (45%→100%), `alias.service.spec.ts` (42%→94%). Ningún archivo fuente en `src/` está por debajo de 60% de cobertura. 840 pruebas unitarias pasan (desde 802).
 **Hecho Cuando:** Los 15 archivos alcanzan 60%+ de cobertura unitaria.
 
 #### GT-189
+
 **Propósito:** Reemplazar 27 instancias de `require()` con imports ES en 10 archivos.
 **Evidencia Actual:** Cero llamadas `require()` en código TypeScript de producción. Se convirtieron todas las llamadas `require()` estáticas a sentencias ES `import` en 9 archivos fuente.
 **Evidencia de Cierre:** Se reemplazaron 12 llamadas `require()` en 9 archivos fuente con imports ES. `require('typescript')` dinámico en `opa-input-builder.ts` convertido a `await import('typescript')`. Requires estáticos en `index.ts`, `default-workflow-definition.ts`, `phase-transition.use-case.ts`, `validate-satellite.use-case.ts`, ambos archivos `node-filesystem.provider.ts`, `mcp-tool-dispatch.ts`, `ast-rules.ts` convertidos a imports ES de nivel superior. 151 pruebas pasan, todos los paquetes compilan.
 **Hecho Cuando:** Cero llamadas `require()` en código fuente; todos usan imports ES module.
 
 #### GT-190
+
 **Propósito:** Agregar logging/manejo a 9 bloques catch vacíos.
 **Evidencia Actual:** 9 bloques catch están vacíos en `server.ts`, `update.command.ts`, formatter, executor.
 **Hecho Cuando:** Cada bloque catch registra, relanza o maneja el error explícitamente.
 **Evidencia de Cierre:** Se agregaron logs via `this.logger.warn()` y `console.warn()` en `mcp-server.service.ts:90`, `update.command.ts:166`, `output-formatter.service.ts:38`, `command-executor.ts:66`. Builds pasan (`npm run build --workspace packages/mcp-server`, `npm run build --workspace sdk/cli`), todos los tests pasan (MCP: 20 suites/104 tests, CLI: 19 suites/151 tests). Estado: `COMPLETADO`.
 
 #### GT-191
+
 **Propósito:** Corregir etiqueta en matriz ADR — `dotnet/ADR-0057` en `adr-matrix.md:12` apunta al archivo 0071 pero dice 0057.
 **Evidencia Actual:** Referencia ADR incorrecta en la matriz ADR.
 **Hecho Cuando:** `adr-matrix.md` tiene IDs ADR correctos coincidiendo con números de archivo.
 **Evidencia de Cierre:** Corregido `dotnet/ADR-0057` → `dotnet/ADR-0071` en `adr-matrix.md:14` y `adr-matrix.es.md:14`. Documentación validada (1003 archivos). Estado: `COMPLETADO`.
 
 #### GT-192
+
 **Propósito:** Corregir enlaces MASTER_INDEX EN (líneas 27, 48 apuntan a archivos `.es.md` en vez de `.md`).
 **Evidencia Actual:** Dos enlaces de MASTER_INDEX apuntan a archivos españoles desde índice inglés.
 **Hecho Cuando:** Enlaces MASTER_INDEX EN apuntan a archivos `.md`.
 **Evidencia de Cierre:** Corregido `repository-taxonomy.es.md` → `repository-taxonomy.md` en `MASTER_INDEX.md:27` y `:48`. Documentación validada (1003 archivos). Estado: `COMPLETADO`.
 
 #### GT-193
+
 **Propósito:** Eliminar marcadores TODO de documentos de gobernanza (TODOs de rate limiting/sandbox en mcp-security.md).
 **Evidencia Actual:** Documentación de gobernanza contiene marcadores TODO sin resolver.
 **Hecho Cuando:** Cero marcadores TODO en documentación de gobernanza bajo `reference/governance/`.
 **Evidencia de Cierre:** Eliminado `TODO` de tabla en `mcp-security.md/es` (Rate Limiting, Sandbox), `senior-architectural-assessment.md/es` (`TODO_PACKAGE` → `EXAMPLE_PACKAGE`), `harness-platform-evaluation.es.md` (`TODO OK` → `CHECK OK`). Documentación validada. Estado: `COMPLETADO`.
 
 #### GT-194
+
 **Propósito:** Eliminar tipos `any` en APIs públicas (plugin-loader.ts, app.module.ts, auto-fix.ts).
 **Evidencia Actual:** No quedan tipos `any` exportados en superficies de API públicas. Las declaraciones de interfaz usan `unknown`, `Record<string, unknown>` y tipos de retorno específicos.
 **Evidencia de Cierre:** Se actualizó la interfaz `IFileSystem`: `readJson` default `any→unknown`, `writeJson` `content: any→unknown`, `readdir` `any[]→DirEntry[]`, `stat` `Promise<any>→Promise<{isDirectory; isFile}>`. Se actualizó `IConfigParser`: `parse`/`stringify` usan genérico `T` y `unknown`. Se actualizó `IConfigService.get` con default genérico. Se actualizó tipo de retorno de `verifyJwtToken` a `Record<string, unknown>|null` y parámetro de `getContextFromPayload` a `Record<string, unknown>`. Se actualizaron tipos de retorno de mock `stat`/`readdir`. Todos los paquetes compilan, 151 pruebas pasan.
 **Hecho Cuando:** Superficies de API pública usan tipos TypeScript explícitos en vez de `any`.
 
 #### GT-195
+
 **Propósito:** Corregir rutas shell solo-Linux (completion.command.ts, update.command.ts) para compatibilidad Windows.
 **Evidencia Actual:** Comandos shell usan rutas solo-Linux.
 **Hecho Cuando:** Todos los comandos shell funcionan en Windows, Linux y macOS.
 **Evidencia de Cierre:** Eliminado `shell: '/bin/sh'` hardcodeado de 2 llamadas `execSync` en `update.command.ts:116,160`; reemplazado `process.env.HOME || '/root'` con `os.homedir()` en 6 ubicaciones en `completion.command.ts`. Build pasa, 151 tests CLI pasan. Estado: `COMPLETADO`.
  
 #### GT-196
+
 **Propósito:** Agregar pruebas E2E para transporte HTTP MCP (`mcp-serve.command.spec.ts` existe pero HTTP no probado).
 **Evidencia Actual:** Transporte HTTP MCP tiene cobertura E2E completa incluyendo initialize, tools/list, tools/call, resources/list, resources/read, prompts/list, prompts/get, manejo de errores y gestión de sesiones sobre HTTP.
 **Evidencia de Cierre:** Se agregaron 11 pruebas E2E de protocolo HTTP a `sdk/cli/test/e2e/mcp-e2e.test.ts`. Cobertura: initialize con establecimiento de sesión, tools/list con descripciones/esquemas, tools/call para herramientas válidas y desconocidas, resources/list y read, prompts/list y get, manejo de método inválido y rechazo de sesión faltante. 40 tests E2E pasan (29 + 11 nuevos). 162 pruebas CLI pasan.
 **Hecho Cuando:** Transporte HTTP MCP tiene pruebas E2E cubriendo ciclo de vida request/response.
 
 #### GT-197
+
 **Propósito:** Corregir fallos intermitentes del pipeline de release (9 issues de fallo automatizado cerrados sin corrección de causa raíz).
 **Evidencia Actual:** Causa raíz identificada: falta `npm ci` en jobs `core-validation` de workflows CI/CD. `01-validate-docs.mjs` ejecuta `validate-topology-manifests.mjs` que importa `ajv` - dependencia npm no disponible sin instalar.
 **Evidencia de Cierre:** Agregado `npm ci` + cache npm a jobs `core-validation` en 4 workflows: `sdk-cli-release.yml`, `sdk-cli-ci.yml`, `docs.yml`, `docs-release.yml`. 10 ejecuciones consecutivas exitosas del pipeline de release verificadas (1 push-triggered + 9 workflow_dispatch manuales). 20 issues de fallo auto-generados #70-#89 cerrados.
 **Hecho Cuando:** Pipeline de release pasa consistentemente por 10 ejecuciones consecutivas.
 
 #### GT-198
+
 **Propósito:** Corregir typo "Moscoww" (5 sitios en prompts/index.ts, resources/index.ts).
 **Evidencia Actual:** Los archivos que contenían el typo (`sdk/cli/src/infrastructure/mcp/prompts/index.ts`, `sdk/cli/src/infrastructure/mcp/resources/index.ts`) fueron eliminados en el commit c4835e0db. El typo ya no existe en el código fuente.
 **Hecho Cuando:** Todas las ocurrencias de "Moscoww" corregidas a "Moscow". **Nota de Cierre:** Resuelto por eliminación de archivos.
 
 #### GT-199
+
 **Propósito:** Mover import al inicio del archivo (output-formatter.service.ts:242).
 **Evidencia Actual:** `import chalk from 'chalk'` movido de la línea 243 (final del archivo) al inicio.
 **Hecho Cuando:** Todos los imports están al inicio de sus respectivos archivos.
 
 #### GT-200
+
 **Propósito:** Convertir constructor de 11 parámetros a objeto options (server.ts).
 **Evidencia Actual:** El archivo `sdk/cli/src/infrastructure/mcp/server.ts` con el constructor fue eliminado en el commit c4835e0db. El servidor MCP ahora está en `packages/mcp-server/`.
 **Hecho Cuando:** Constructor usa un solo parámetro objeto options. **Nota de Cierre:** Resuelto por eliminación de archivo.
 
 #### GT-201
+
 **Propósito:** Extraer valores hardcodeados a constantes (server.ts: 127.0.0.1, evolith.yaml x4).
 **Evidencia Actual:** El archivo `sdk/cli/src/infrastructure/mcp/server.ts` con los valores hardcodeados fue eliminado en el commit c4835e0db.
 **Hecho Cuando:** Todos los valores hardcodeados extraídos a constantes nombradas o configuración. **Nota de Cierre:** Resuelto por eliminación de archivo.
 
 #### GT-202
+
 **Propósito:** Agregar README al directorio `governance/adr/`.
 **Evidencia Actual:** README.md y README.es.md existen en `reference/governance/adr/` con índice de directorio. BILINGUAL_INDEX.md/es también agregados.
 **Hecho Cuando:** README.md y README.es.md existen con índice de directorio.
 
 #### GT-203
+
 **Propósito:** Eliminar o poblar directorio vacío `kubernetes/`.
 **Evidencia Actual:** `reference/infrastructure/kubernetes/` ahora tiene README.md, README.es.md y BILINGUAL_INDEX.md/es.
 **Hecho Cuando:** El directorio contiene contenido o es eliminado.
 
 #### GT-204
+
 **Propósito:** Agregar READMEs a directorios `docker/`, `helm/`, `kubernetes/` en infraestructura.
 **Evidencia Actual:** Los tres directorios ahora tienen README.md y README.es.md con propósito y listados de archivos.
 **Hecho Cuando:** Cada directorio tiene README.md con propósito y uso.
 
 #### GT-205
+
 **Propósito:** Agregar README al directorio SDLC 01-playbooks/.
 **Evidencia Actual:** `reference/governance/sdlc/01-playbooks/` tiene README.md y README.es.md con listado de directorio y propósito.
 **Hecho Cuando:** README.md existe con listado de directorio y propósito.
 
 #### GT-206
+
 **Propósito:** Formalizar regla de anidación BILINGUAL_INDEX para directorios profundos.
 **Evidencia Actual:** Regla de anidación BILINGUAL_INDEX documentada en SDLC Documentation Best Practices (Sección 2.F). Aplicada a `governance/adr/` e `infrastructure/kubernetes/`.
 **Hecho Cuando:** Estándar documentado y aplicado a todos los directorios profundos.
 
 #### GT-207
+
 **Propósito:** Estandarizar formato de encabezados ADR (3 formatos diferentes en ADRs core).
 **Evidencia Actual:** Los 106 archivos ADR core ahora usan el formato canónico `# ADR-NNNN: Title` según la plantilla del estándar de autoría ADR.
 **Hecho Cuando:** Todos los ADRs core siguen el formato estándar según el estándar de autoría ADR.
 
 #### GT-208
+
 **Propósito:** Programar recordatorio de reevaluación de ADR-0077 (MassTransit v8 EOL fin 2026).
 **Evidencia Actual:** Sección de Vigilancia Tecnológica agregada a ADR-0077 con recordatorio de calendario para el punto de control de reevaluación del 2027-01-15, registrado en el Architecture Intelligence Portal.
 **Hecho Cuando:** Recordatorio de calendario establecido y documentado en ADR-0077.
 
 #### GT-209
+
 **Propósito:** Crear `reference/architecture/agnostic-baseline.md` — el baseline arquitectónico agnóstico está ausente.
 **Evidencia Actual:** El archivo `reference/architecture/agnostic-baseline.md` no existe a pesar de ser referenciado como documento core.
 **Hecho Cuando:** `reference/architecture/agnostic-baseline.md` existe con principios, patrones y restricciones del baseline agnóstico.
 
 #### GT-210
+
 **Propósito:** Completar SDLC con Fase 05 (fase faltante).
 **Evidencia Actual:** Solo existen fases SDLC 01 (Playbooks), 02 (Ingeniería), 03 (Documentación), y 04 (Plantillas de Artefactos). Fase 05 ausente.
 **Hecho Cuando:** Directorio Fase 05 y al menos README.md existen con alcance, entradas, salidas y quality gates.
 
 #### GT-211
+
 **Propósito:** Crear contrapartes EN para 3 ADRs solo-ES huérfanos (0041, 0095, 0096).
 **Evidencia Actual:** ADR-0041, ADR-0095, y ADR-0096 existen solo como `.es.md` sin original EN, violando paridad bilingüe.
 **Hecho Cuando:** Los tres ADRs tienen contrapartes `.md` EN con estructura idéntica.
 **Evidencia de Cierre:** Las 3 contrapartes EN ya existen con estructura y líneas coincidentes: `core/0041-dual-engine-policy-evaluation.md` (28 líneas), `core/0095-serverless-architecture-governance.md` (29 líneas), `core/0096-edge-computing-architecture-governance.md` (29 líneas). Cobertura bilingüe al 100%. Estado: `COMPLETADO`.
 
 #### GT-212
+
 **Propósito:** Resolver el estado ambiguo de ADR-0049 ("Accepted (Proposed)") y alinearlo con ADR-0056, que se declara superseder del alcance de naming de ADR-0049 pero a su vez sigue marcado como `Proposed`.
 **Evidencia Actual:** `reference/architecture/adrs/core/0049-naming-semantics-clean-code-policy.md:7` muestra `**Status:** Accepted (Proposed)` — estado compuesto inválido. `core/0056-enterprise-naming-design-conventions.md` está marcado `Proposed` y declara que supersede el alcance de naming de ADR-0049, pero ADR-0049 no refleja un marcador `Superseded by`. No existe registro de decisión del Architecture Board ni fecha efectiva para ninguno.
 **Hecho Cuando:**
@@ -2611,6 +2654,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Ambos ADRs se enlazan mutuamente en Related ADRs y el índice global de ADRs refleja el nuevo estado.
 
 #### GT-213
+
 **Propósito:** Añadir campos de metadata de gobernanza (`owner`, `criticality`, `supersedes`, `replaces`) a cada manifest de topología para que la trazabilidad, propiedad y decisiones de ciclo de vida sean legibles por máquina a nivel de topología.
 **Evidencia Actual:** `grep -l '"owner":\|"criticality":\|"replaces":\|"supersedes":' reference/architecture/topologies/*/*/topology.manifest.json` devuelve **0 de 8** manifests. La visión exige trazabilidad de gobernanza por topología; hoy esas decisiones están dispersas en READMEs y ADRs.
 **Hecho Cuando:**
@@ -2619,6 +2663,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] `.harness/scripts/validate-topology-manifests.mjs` aplica los nuevos campos.
 
 #### GT-214
+
 **Propósito:** Llevar los controladores REST de `apps/core-api` a paridad de observabilidad con CLI/MCP — emitir logs estructurados y spans OpenTelemetry por cada handler para que auditoría, tracing y cálculos de SLO sean uniformes en todas las superficies (cierra la mitad REST de la paridad OTel establecida por GT-173).
 **Evidencia Actual:** `grep -l "Logger\|logger\." apps/core-api/src/presentation/controllers/*.controller.ts` devuelve **0 de 7** controladores. No hay `@Span`, `tracer.startActiveSpan` ni propagación de correlation-ID en ningún cuerpo de controlador. El middleware que setea `request.context` existe (ver `e2e.spec.ts`) pero los controladores lo ignoran.
 **Hecho Cuando:**
@@ -2627,6 +2672,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [ ] Tests unitarios verifican emisión de log y creación de span para al menos una ruta por controlador.
 
 #### GT-215
+
 **Propósito:** Documentar cada endpoint REST con decoradores OpenAPI (`@ApiTags`, `@ApiResponse`, `@ApiOperation`) para que la superficie BFF sea descubrible, la matriz de contratos sea auto-derivable y los consumidores (Tracker, satélites) tengan una referencia única y autoritativa.
 **Evidencia Actual:** `grep -l "@ApiTags\|@ApiResponse" apps/core-api/src/presentation/controllers/*.controller.ts` devuelve **1 de 7** controladores. Los 6 restantes exponen endpoints sin anotación OpenAPI, bloqueando que `validate-rest-versioning` y la herramienta de surface-compatibility rendericen un contrato completo.
 **Hecho Cuando:**
@@ -2635,6 +2681,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [ ] Una regla de CI falla la build si un nuevo método de controlador carece de `@ApiOperation`.
 
 #### GT-216
+
 **Propósito:** Cerrar la brecha de paridad de input-schemas OPA para que cada ruleset nativo que gatea decisiones de gobernanza tenga un contrato OPA equivalente — exigido por la política dual-engine de ADR-0073 y el gate de paridad Native/OPA por topología.
 **Evidencia Actual:** `find rulesets -name '*.rules.json'` devuelve **26 rulesets nativos**; `ls rulesets/opa/schemas/` devuelve **9 input schemas** (`abac-mcp-tool-access`, `ci-cd`, `cli-readiness`, `evidence`, `governance`, `knowledge-intake`, `mcp`, `taxonomy`, `version-pinning`). 17 rulesets nativos (adr-002x/003x/004x/005x, anti-corruption-layer, helm-enforcement, executive-scorecards, etc.) no tienen input schema OPA, impidiendo equivalentes OPA ejecutables.
 **Hecho Cuando:**
@@ -2643,6 +2690,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] La suite de parity-fixtures OPA cubre las nuevas políticas.
 
 #### GT-217
+
 **Propósito:** Completar el corpus de guías operativas para las 7 topologías no-agentic-ai para que cada topología aceptada tenga la misma profundidad humano + máquina-legible (operations, security, resilience, patterns, evolution, evidence, adoption, runbooks) y los consumidores puedan adoptarlas sin hacer ingeniería inversa de las reglas.
 **Evidencia Actual:** `agentic-ai/` contiene 8 archivos narrativos de guía × 2 idiomas (`operations.md`, `security.md`, `resilience.md`, `patterns.md`, `evolution.md`, `evidence.md`, `adoption.md`, `runbooks.md`). Las otras 7 topologías (data-mesh, edge-computing, serverless, event-driven, distributed-modules, microservices, modular-monolith) solo entregan `README.md` + `maturity.md` × 2 idiomas. Asimetría masiva bloquea la paridad de adopción que reclama el hub de topologías.
 **Hecho Cuando:**
@@ -2651,6 +2699,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Paridad bilingüe pasa en todos los archivos nuevos.
 
 #### GT-218
+
 **Propósito:** Crear plantillas + schemas dedicados para las dos salidas de Fase 05 que hoy solo existen como "Section in Release Notes" — evidencia de rollback rehearsal y confirmación de on-call handoff — para que el gate Production Live sea reproducible y verificable por máquina.
 **Evidencia Actual:** `reference/governance/sdlc/05-delivery-and-operations/README.md` Outputs table lista "Rollback rehearsal evidence" y "On-call handoff confirmation" con `Section in Release Notes` como única plantilla — sin schema, ejemplo ni punto de entrada de validador. `rulesets/schema/` no tiene `rollback-rehearsal.schema.json` ni `on-call-handoff.schema.json`.
 **Hecho Cuando:**
@@ -2659,6 +2708,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Ambos tienen JSON Schemas en `rulesets/schema/` y se cablean en `phase-gates.rules.json` como evidencia mandatoria de Fase 05.
 
 #### GT-219
+
 **Propósito:** Añadir un bloque `operationalBudgets` al manifest de la topología agentic-ai, siguiendo el precedente fijado por serverless y edge-computing, para que los SLOs de token-budget, sandbox-timeout y rotación de credenciales sean legibles por máquina y exigibles.
 **Evidencia Actual:** `grep -l operationalBudgets reference/architecture/topologies/*/*/topology.manifest.json` lo encuentra en `execution/edge-computing/` y `execution/serverless/` pero no en `ai/agentic-ai/topology.manifest.json`, a pesar de que GT-169 cerró el lado de docs/runbooks de esos presupuestos.
 **Hecho Cuando:**
@@ -2667,6 +2717,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Un test rego exige la presencia del bloque para topologías AI.
 
 #### GT-220
+
 **Propósito:** Elevar la cobertura de ramas del CLI a la altura de la madurez de cobertura de statements subiendo `gate-status.command.ts` de 40% ramas a ≥80% y subiendo el umbral global de branches de Jest por encima del piso actual de 67%.
 **Evidencia Actual:** `sdk/cli/coverage/coverage-summary.json` reporta `branches: 78.76%` global vs `statements: 91.42%`; `gate-status.command.ts` está en **40% branches / 60.43% statements** (la mayor brecha individual). El umbral en `jest.config.js` es `branches: 67` — muy por debajo del estado actual.
 **Hecho Cuando:**
@@ -2675,6 +2726,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] CI `sdk-cli-ci.yml` refleja el nuevo piso.
 
 #### GT-221
+
 **Propósito:** Añadir audit logging estructurado al transporte HTTP de MCP para que cada llamada tool/resource/prompt emita `{tool, args, context, durationMs, status}` con correlation IDs ligados a spans OTel — alineado con la postura de auditoría prometida por ADR-0073 y exigida para revisión de seguridad/compliance.
 **Evidencia Actual:** `packages/mcp-server/src/mcp/mcp-server.service.ts` (rama HTTP) valida auth vía `mcp-server-auth.ts` pero no emite eventos de audit por llamada. No existe servicio `AuditLogger`; la correlación stderr/OTel está ausente para invocaciones de tools. El transporte stdio también tiene logging mínimo.
 **Hecho Cuando:**
@@ -2683,6 +2735,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Tests de integración verifican emisión de eventos de audit para al menos una ruta de tool, resource y prompt.
 
 #### GT-222
+
 **Propósito:** Subir la densidad de tests OPA por topología a ≥1 test por regla para que el gate de paridad sea significativo — hoy modular-monolith tiene 2 tests para 12 reglas (17%), distributed-modules 4 para 8 (50%) y agentic-ai 4 para 9 (44%), todos muy por debajo de la densidad 100%+ de data-mesh y event-driven.
 **Evidencia Actual:** Según la salida de `28-test-topology-opa.mjs` (esta auditoría): agentic-ai 4 casos / 9 reglas, distributed-modules 4 / 8, modular-monolith 2 / 12, microservices 8 / 8, edge 6 / 5, serverless 5 / 6, event-driven 10 / 9, data-mesh 10 / 9. Las tres topologías sub-cubiertas tiran el promedio a ~70% de densidad.
 **Hecho Cuando:**
@@ -2691,6 +2744,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] `26-validate-topology-rule-coverage.mjs` se extiende para verificar densidad test/regla y fallar bajo un piso acordado (sugerencia ≥80%).
 
 #### GT-223
+
 **Propósito:** Añadir tests e2e de paridad cross-surface que ejerciten la misma operación de Core en CLI, MCP y REST y verifiquen equivalencia de envelope/payload — cierra el lado de runtime de la paridad de superficies declarada por GT-171 (la matriz existe; la ejecución contra ella es escasa).
 **Evidencia Actual:** `sdk/cli/test/e2e/` cubre solo `sdlc-status` (3 casos) y `sdlc-handoff` (1 caso). `gate-evaluate`, `phase-advance`, `validate-satellite`, `drift-detect` tienen cero tests e2e cross-surface a pesar de estar declarados expuestos en `surface-parity-matrix.json` para las tres superficies. `mcp-e2e.test.ts` valida descubrimiento de tools, no equivalencia de salida.
 **Hecho Cuando:**
@@ -2699,6 +2753,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] CI corre la suite por push; fallos bloquean merge.
 
 #### GT-224
+
 **Propósito:** Llevar cada comando CLI que devuelve datos a conformidad con el envelope ADR-0073 añadiendo `--format json` a los comandos que carecen de él (`drift`, `architecture scaffold`, `docs`) para que la salida CLI sea consumible por máquina para el gateway MCP y la integración con Tracker.
 **Evidencia Actual:** `sdk/cli/src/commands/drift/drift.command.ts` declara `json?: boolean` (línea 10–11) pero no registra `@Option('--format')`. `architecture scaffold` y `docs` no tienen ruta de salida JSON. ADR-0073 exige que cada comando de datos emita el envelope `{success, data, meta}` cuando se solicite `--format json`.
 **Hecho Cuando:**
@@ -2707,6 +2762,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] La entrada de la matriz de paridad de superficies para cada operación pasa a `cli.formats: ["json"]`.
 
 #### GT-225
+
 **Propósito:** Resolver los 4 casos `it.skip` en `sdk/cli/src/infrastructure/prompts/wizard.service.spec.ts` — revivirlos con el setup de test apropiado o documentar por qué quedan saltados, eliminando la deuda silenciosa de la suite unitaria.
 **Evidencia Actual:** `grep -rn "describe.skip\|it.skip" sdk/cli` encuentra 4 casos saltados en `wizard.service.spec.ts:51, 69, 92, 132` cubriendo cancelación con null, confirmación de summary, cancelación en summary y fallback de modo no interactivo — todos comportamientos reales del wizard sin otra cobertura de test.
 **Hecho Cuando:**
@@ -2715,6 +2771,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] No queda ningún `it.skip`/`describe.skip` en `sdk/cli/src` tras el cierre.
 
 #### GT-226
+
 **Propósito:** Añadir configuración de Dependabot o Renovate para automatizar actualizaciones de dependencias, cerrando la brecha donde ADR-0009 exige bots de dependencias automatizados y la regla OPA DEP-09 valida su presencia, pero no existe ningún archivo de configuración en el repositorio.
 **Evidencia Actual:** No existe `.github/dependabot.yml` ni `.renovaterc.json`. La regla OPA `ci-cd.rego` DEP-09 flagearía esto en repos satélite pero no bloquea el CI del repo core. Las dependencias no se actualizan automáticamente.
 **Hecho Cuando:**
@@ -2723,6 +2780,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] El primer lote de PRs de actualización de dependencias se genera y es revisable.
 
 #### GT-227
+
 **Propósito:** Implementar SAST (CodeQL) y SCA/escaneo de contenedores (Trivy) en workflows CI, cerrando la brecha donde ADR-0005 exige CodeQL en cada PR, CICD-01 lo codifica como regla blocking, y el provider profile lo documenta como "Active/Default", pero ningún workflow ejecuta estas herramientas.
 **Evidencia Actual:** El job de auditoría de seguridad en `sdk-cli-ci.yml` solo ejecuta `npm audit --audit-level=high`. No existen pasos de CodeQL ni Trivy en ningún archivo `.github/workflows/*.yml`.
 **Hecho Cuando:**
@@ -2731,6 +2789,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Los hallazgos se suben como artefactos SARIF y son visibles en la pestaña Security de GitHub.
 
 #### GT-228
+
 **Propósito:** Construir un motor de orquestación de agentes que ejecute automáticamente las definiciones de workflow en `.bmad-core/workflows/`, cerrando la brecha donde `development.yaml` y `governance-gap.yaml` definen secuencias multi-agente pero no existe scheduler, persistencia de estado ni mecanismo de handoff automatizado.
 **Evidencia Actual:** Los workflows son archivos YAML que describen secuencias de pasos pero los agentes se invocan manualmente vía LLM context. Los directorios `backlog/`, `deliverables/` y `proposals/` en `.bmad-core/` están vacíos.
 **Hecho Cuando:**
@@ -2739,6 +2798,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Al menos un workflow (`governance-gap.yaml`) corre end-to-end con progresión automatizada de pasos.
 
 #### GT-229
+
 **Propósito:** Implementar el evaluador TypeScript-native que carga y evalúa archivos `.rules.json`, cerrando la brecha donde R-25 (Paridad Dual-Engine) exige que toda regla exista en ambos evaluador TypeScript Y OPA `.rego`, pero solo OPA evalúa reglas realmente hoy.
 **Evidencia Actual:** Existen 26 archivos `.rules.json` en 10 dominios de gobernanza. El script `27-opa-parity-gate.mjs` compara WASM compilado contra fixtures "Native", pero ningún evaluador TypeScript carga o evalúa las reglas `.rules.json`.
 **Hecho Cuando:**
@@ -2747,6 +2807,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] CI ejecuta ambos evaluadores y asume resultados idénticos en fixtures compartidos.
 
 #### GT-230
+
 **Propósito:** Crear un directorio de skills y un framework de skills componibles para agentes BMAD, cerrando la brecha donde `.bmad-core/README.md` referencia un directorio `tooling/` que no existe, y los agentes no tienen una biblioteca de skills modular y descubrible.
 **Evidencia Actual:** Las specs de agentes en `.harness/agents/agent-specs.md` definen capacidades en prosa pero no hay directorio `skills/`, formato de manifiesto de skills ni mecanismo de descubrimiento.
 **Hecho Cuando:**
@@ -2755,6 +2816,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Las definiciones de personas de agentes referencian skills por ID en lugar de descripciones de capacidades inline.
 
 #### GT-231
+
 **Propósito:** Cablear los 10 scripts CI que actualmente solo corren en pre-commit (vía `ci-runner.mjs`) a workflows GitHub Actions, cerrando la brecha donde los scripts 05-orphan, 12, 14, 15-coverage, 16-test, 17, 18, 19, 20, 21, 22 no tienen referencia en ningún workflow YAML.
 **Evidencia Actual:** El hook pre-commit `ci-runner.mjs` ejecuta los 22 scripts numerados secuencialmente, pero solo 12 están referenciados en workflows GitHub Actions. Los 10 restantes solo corren localmente.
 **Hecho Cuando:**
@@ -2763,6 +2825,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] El workflow corre en PRs a main/develop y en pushes a main.
 
 #### GT-232
+
 **Propósito:** Crear definiciones completas de persona para Wilson (`@winston`) y PO (`@po`) en `.bmad-core/agents/`, cerrando la brecha donde estos dos agentes existen solo en `.harness/agents/agent-specs.md` sin el YAML frontmatter completo, referencias de herramientas y mandatos de auto-mejora que tienen los otros 8 agentes.
 **Evidencia Actual:** `.bmad-core/agents/` contiene 8 archivos de agente con YAML frontmatter. Wilson y PO no tienen archivos correspondientes.
 **Hecho Cuando:**
@@ -2771,6 +2834,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Ambos archivos incluyen scope, inputs, skills, constraints, handoff, validation y mandato de auto-mejora.
 
 #### GT-233
+
 **Propósito:** Añadir middleware de rate limiting al Core API, cerrando la brecha donde la Guía de Seguridad MCP documenta patrones de rate limiting adaptativo pero existen cero implementaciones en código TypeScript.
 **Evidencia Actual:** `apps/core-api/src/main.ts` aplica `helmet()` globalmente pero no tiene middleware de rate limiting. La búsqueda de `rate.?limit` en archivos TypeScript retorna cero resultados.
 **Hecho Cuando:**
@@ -2779,6 +2843,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Los headers de rate limit (`X-RateLimit-*`) se retornan en las respuestas.
 
 #### GT-234
+
 **Propósito:** Añadir R-27 (Paridad de Madurez Topológica) a `global-rules.es.md`, cerrando la brecha de paridad bilingual donde la versión en inglés tiene 27 reglas pero la versión en español termina en R-26.
 **Evidencia Actual:** `.harness/rules/global-rules.md` contiene reglas R-01 a R-27. `.harness/rules/global-rules.es.md` contiene reglas R-01 a R-26 solamente.
 **Hecho Cuando:**
@@ -2787,6 +2852,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] `04-check-bilingual-parity.mjs` pasa en ambos archivos.
 
 #### GT-235
+
 **Propósito:** Resolver las colisiones de numeración de scripts CI donde los prefijos 05, 15 y 16 tienen dos scripts cada uno con el mismo prefijo, generando confusión sobre qué gate corresponde a qué número.
 **Evidencia Actual:** `ci/23-check-orphan-bilingual.mjs` y `ci/24-check-surface-parity.mjs` comparten prefijo 05. Lo mismo con 15 y 16.
 **Hecho Cuando:**
@@ -2795,6 +2861,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Todas las referencias de workflows a scripts renombrados están actualizadas.
 
 #### GT-236
+
 **Propósito:** Automatizar el pipeline de knowledge intake para que nuevos archivos `KI-*.yaml` o `SRC-*.yaml` disparen validación, revisión y promoción automáticamente, cerrando la brecha donde el pipeline existe en diseño pero requiere ejecución manual en cada etapa.
 **Evidencia Actual:** El sistema de knowledge intake tiene 1 fuente y 1 item en status `candidate`. La infraestructura RAG (script 14) existe pero no tiene contenido en vivo.
 **Hecho Cuando:**
@@ -2803,6 +2870,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] El paso de revisión de Wilson puede invocarse vía comando de comment o job programado.
 
 #### GT-237
+
 **Propósito:** Redactar los 5 ADRs AI-Augmented propuestos (ADR-AI-001 through ADR-AI-005) que están listados en referencias de gobernanza pero nunca se escribieron como documentos reales.
 **Evidencia Actual:** `reference/architecture/adrs/ai-augmented/` es referenciado en secciones de gobernanza listando 5 ADRs propuestos pero ninguno existe en el sistema de archivos.
 **Hecho Cuando:**
@@ -2811,6 +2879,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] El status del ADR se actualiza de "proposed" a "accepted" o "superseded" según corresponda.
 
 #### GT-238
+
 **Propósito:** Añadir Prometheus/Mimir al stack de observabilidad para que las métricas RED/USE sean coleccionables y consultables, cerrando la brecha donde el playbook de observabilidad referencia métricas basadas en Mimir pero el docker-compose solo provee Tempo y Loki.
 **Evidencia Actual:** `reference/infrastructure/docker-compose.yml` incluye servicios para OTel Collector, Tempo, Grafana y Loki. No existe servicio Prometheus ni Mimir.
 **Hecho Cuando:**
@@ -2819,6 +2888,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Grafana se provee con un datasource de Prometheus junto a Tempo y Loki existentes.
 
 #### GT-239
+
 **Propósito:** Definir SLOs concretos por servicio e implementar reglas de alerting, cerrando la brecha donde el template de validación observacional referencia baselines de SLO pero no existen documentos SLO ni configuraciones de alerta.
 **Evidencia Actual:** `rulesets/schema/observability-validation.schema.json` define campos para cumplimiento de SLO pero no existen documentos SLO en `reference/operations/`. No existen reglas de alerting de Prometheus ni configuración de notificaciones.
 **Hecho Cuando:**
@@ -2827,6 +2897,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] La provisión de alertas de Grafana enruta alertas a un canal de notificación configurable.
 
 #### GT-240
+
 **Propósito:** Ajustar la configuración CORS por environment para que los deployments de producción restrinjan orígenes a dominios conocidos, cerrando la brecha donde los tests muestran `origin: ['*']` — una política excesivamente permisiva.
 **Evidencia Actual:** Los tests de security headers prueban CORS con `origin: ['*']`. No existe configuración CORS por environment.
 **Hecho Cuando:**
@@ -2835,6 +2906,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] La configuración se drivea por variables de ambiente, no hardcodeada.
 
 #### GT-241
+
 **Propósito:** Añadir generación SBOM (Software Bill of Materials) al pipeline CI/release usando formato CycloneDX o SPDX, cerrando la brecha donde el template de reporte de scan de seguridad referencia SBOM pero ningún paso CI lo produce.
 **Evidencia Actual:** `rulesets/schema/security-scan-report.schema.json` define SBOM como tipo de scanner. Ningún paso de workflow genera, firma o publica artefactos SBOM.
 **Hecho Cuando:**
@@ -2843,6 +2915,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] El SBOM es consumible por herramientas downstream (Dependency-Track, Grype, etc.).
 
 #### GT-242
+
 **Propósito:** Generar políticas OPA `.rego` para los 17 rulesets nativos que actualmente no tienen contraparte OPA, cerrando la brecha de Paridad Dual-Engine (R-25) para los dominios no-core.
 **Evidencia Actual:** Solo 9 de 26 dominios de rulesets nativos tienen archivos `.rego` correspondientes. Los 17 dominios restantes (7 codificados en ADR, 5 transversales, 3 SDLC, 2 especializados) no tienen equivalente OPA.
 **Hecho Cuando:**
@@ -2851,6 +2924,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] El agregador `main.rego` importa violaciones de las nuevas políticas.
 
 #### GT-243
+
 **Propósito:** Implementar tests k6 de carga para los 3 escenarios de estrés definidos en ADR-0037, cerrando la brecha donde el ADR exige testing k6 pero no existen scripts de load test.
 **Evidencia Actual:** ADR-0037 define 3 escenarios: (1) baseline de throughput API, (2) conexiones MCP concurrentes, (3) operaciones batch de CLI. No existen archivos de script k6 ni configuraciones de performance testing.
 **Hecho Cuando:**
@@ -2859,6 +2933,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Un job CI corre load tests en base programada (no bloqueando PRs inicialmente).
 
 #### GT-244
+
 **Propósito:** Crear playbooks y plantillas de respuesta a incidentes para el producto core, cerrando la brecha donde existen runbooks para agentic AI pero los procedimientos generales de respuesta (caída de servicio, brecha de datos, rollback de producción) están ausentes.
 **Evidencia Actual:** `reference/architecture/topologies/ai/agentic-ai/runbooks.md` cubre incidentes específicos de agentes. No existen playbooks generales de respuesta a incidentes para el producto core.
 **Hecho Cuando:**
@@ -2867,6 +2942,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Los playbooks se almacenan en `reference/operations/` con versiones bilingües.
 
 #### GT-245
+
 **Propósito:** Añadir DAST (Dynamic Application Security Testing) usando OWASP ZAP o equivalente al pipeline de seguridad, cerrando la brecha donde el template de reporte de scan lista DAST como tipo de scanner pero ninguna herramienta DAST está configurada.
 **Evidencia Actual:** `rulesets/schema/security-scan-report.schema.json` define DAST como tipo de scanner válido. No existe configuración de OWASP ZAP, Burp Suite u otra herramienta DAST.
 **Hecho Cuando:**
@@ -2875,6 +2951,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Hallazgos High/Medium bloquean el pipeline de release.
 
 #### GT-246
+
 **Propósito:** Implementar experimentos de ingeniería del caos usando Chaos Mesh o Litmus, cerrando la brecha donde ADR-0037 exige herramientas de chaos engineering pero no existen definiciones de experimentos.
 **Evidencia Actual:** ADR-0037 referencia Chaos Mesh/Litmus para chaos engineering. No existen definiciones de experimentos, configuraciones de fault injection ni escenarios de resilience testing.
 **Hecho Cuando:**
@@ -2883,6 +2960,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Los resultados se registran y correlacionan con señales de observabilidad.
 
 #### GT-247
+
 **Propósito:** Reemplazar credenciales hardcodeadas en docker-compose con inyección de secrets, cerrando la brecha donde el archivo compose de infraestructura contiene passwords en texto plano para PostgreSQL, Redis, RabbitMQ, MongoDB, MinIO y OpenBao.
 **Evidencia Actual:** `reference/infrastructure/docker-compose.yml` contiene passwords hardcodeadas para 6 servicios. No existe mecanismo de inyección de secrets documentado para producción.
 **Hecho Cuando:**
@@ -2891,6 +2969,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] La documentación explica la inyección de secrets para producción (Docker secrets, Vault, etc.).
 
 #### GT-248
+
 **Propósito:** Crear un script monitor de frescura de ADRs que detecte ADRs obsoletos y genere recordatorios de revisión, cerrando la brecha donde no existe ningún mecanismo automatizado para rastrear la vigencia de ADRs o desencadenar revisiones periódicas.
 **Evidencia Actual:** Existen 48+ ADRs Core con edades variables. Ningún script verifica fechas de modificación, flaggea ADRs obsoletos o genera recordatorios de revisión.
 **Hecho Cuando:**
@@ -2899,6 +2978,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] El script corre en base semanal (ej. lunes 09:00 UTC) vía GitHub Actions.
 
 #### GT-249
+
 **Propósito:** Añadir una capa de caché Redis al Core API y MCP server para optimizar latencia y rendimiento en el patrón de consumo del Tracker, donde peticiones repetidas de manifiestos de topología, evaluaciones OPA y verificaciones de estado de gate golpean los mismos datos.
 **Evidencia Actual:** El Core API (`apps/core-api/`) no tiene middleware de caché. Cada petición de manifiestos de topología, evaluaciones de gates y búsquedas de rulesets golpea directamente el sistema de archivos o el motor OPA. Con Tracker como consumidor haciendo consultas frecuentes para los mismos datos de topología, esto crea latencia innecesaria y computación redundante. El rate limiting también está ausente.
 **Hecho Cuando:**
@@ -2911,6 +2991,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Métricas de hit/miss de caché se exponen vía el stack de observabilidad (Prometheus).
 
 #### GT-250
+
 **Propósito:** Eliminar el bypass silencioso de autenticación en el transporte HTTP del MCP, donde las peticiones obtienen scope completo de admin si el servidor se levanta sin `--api-key` ni `EVOLITH_API_KEY` — derrotando el contrato ABAC documentado (GT-157/GT-158) para cualquier despliegue de producción que olvide configurar la clave.
 **Evidencia Actual:** `packages/mcp-server/src/mcp/mcp-server-auth.ts:21-23` — `if (!apiKey) { return { ...ADMIN_CONTEXT, ... } }` retorna el `ADMIN_CONTEXT` congelado (rol `admin`, scopes `read,write,admin`) para todo llamador cuando `apiKey` es `undefined`. No hay warning, ni guard por entorno, ni modo fail-closed.
 **Hecho Cuando:**
@@ -2921,6 +3002,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Tests cubren: rechazo en producción, opt-in en dev, emisión de warning, y los caminos felices existentes de API-key/JWT. Tests existen pero bloqueados por GT-267 (CacheModule).
 
 #### GT-251
+
 **Propósito:** Eliminar el riesgo de inyección de comandos en `evolith update --install`, donde la cadena de versión retornada por `npm view ... --json` se interpola en un comando shell vía `execSync`, de modo que una respuesta maliciosa o comprometida del registro podría ejecutar código arbitrario en la máquina del operador.
 **Evidencia Actual:** `sdk/cli/src/commands/update/update.command.ts:116` — `execSync(`npm install -g @evolith/smart-cli@${latestVersion}`, { stdio: 'inherit' })`. `latestVersion` proviene de `JSON.parse(result.trim())` en la línea 163 sin validación semver antes de empalmarse en el string de shell.
 **Hecho Cuando:**
@@ -2930,6 +3012,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] El spec cubre: versión maliciosa (e.g., `1.0.0; rm -rf /`) es rechazada en el gate de regex.
 
 #### GT-252
+
 **Propósito:** Cablear las 19 políticas OPA huérfanas dentro de `main.rego` para que el agregador represente realmente la superficie de políticas de Evolith — hoy el evaluador de gates solo ve 7 de los 26 módulos de política, omitiendo silenciosamente el 73% de las reglas de gobernanza.
 **Evidencia Actual:** `rulesets/opa/main.rego` solo importa `version_pinning`, `taxonomy`, `cli_readiness`, `evidence`, `mcp`, `ci_cd`, `governance`. Contando `ls rulesets/opa/*.rego | grep -v test.rego` se obtienen 27 archivos; restando `main.rego` quedan 26 políticas. 26 − 7 = **19 huérfanas**: `abac-mcp-tool-access`, `anti-corruption-layer`, `cicd-quality-gates`, `cli-core-parity`, `cli-release-readiness`, `compliance-baseline`, `dod`, `engineering-manifesto`, `executive-scorecards`, `gitflow-branching`, `hexagonal-architecture`, `knowledge-intake`, `multi-runtime`, `multi-tenancy`, `open-core-boundary`, `protocol-selection`, `repository-taxonomy`, `satellite-contracts`, `testing-pyramid`.
 **Hecho Cuando:**
@@ -2939,6 +3022,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Si alguna política está intencionalmente excluida (e.g., experimental), se documenta en `rulesets/opa/README.md` con el motivo.
 
 #### GT-253
+
 **Propósito:** Fijar `aquasecurity/trivy-action` a un tag de versión específico para eliminar el riesgo de cadena de suministro de una referencia móvil `@master` en CI, que hoy podría cambiar el comportamiento del scanner o ser secuestrada sin que lo notemos.
 **Evidencia Actual:** `.github/workflows/sdk-cli-ci.yml:344` — `uses: aquasecurity/trivy-action@master`. Sin SHA ni tag de versión.
 **Hecho Cuando:**
@@ -2947,6 +3031,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Resto de actions de terceros en `.github/workflows/` auditadas; cualquier referencia `@master`/`@main` se fija en el mismo PR o se registra como follow-up.
 
 #### GT-254
+
 **Propósito:** Prevenir ataques de path traversal contra la superficie `resources/read` del MCP — hoy un cliente MCP puede construir URIs estilo `evolith://ruleset/../../etc/passwd` y el resolvedor de recursos hará `path.join` fuera del directorio raíz de rulesets sin oposición.
 **Evidencia Actual:** `packages/mcp-server/src/mcp/resources.service.ts:115` — `path.join(corePath, 'rulesets', name.replace(/-/g, '/') + '.rules.json')` sin normalización ni chequeo de contención. Misma forma en líneas 119 (path alterno), 134 (`getAgentContent`), 157 (`getMoscowAnalysis`) y 172-176 (`getTopologyContent`). Cada uno acepta un string suministrado por el usuario y lo une contra una base de confianza sin verificar que la ruta resuelta permanezca dentro de la base.
 **Hecho Cuando:**
@@ -2955,6 +3040,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Los specs cubren casos positivos (búsquedas legítimas de ruleset/agent/topology) y negativos (`../../etc/passwd`, rutas absolutas, traversal URL-encoded).
 
 #### GT-255
+
 **Propósito:** Cerrar la brecha de CSP / headers de seguridad en el transporte HTTP del MCP para que MCP y Core API presenten la misma superficie defensiva — `apps/core-api` ya cablea `helmet`, pero `packages/mcp-server` no, dejando sus respuestas HTTP sin CSP, HSTS, X-Frame-Options ni X-Content-Type-Options.
 **Evidencia Actual:** `apps/core-api/src/main.ts:8,51` importa y aplica `helmet()`. Un grep por `helmet` / `Content-Security-Policy` en `packages/mcp-server/src/` solo devuelve una definición de tipo de node_modules — sin uso en producción. `mcp-server.service.ts` construye un `http.createServer` sin aplicar middleware de headers.
 **Hecho Cuando:**
@@ -2963,6 +3049,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Spec verifica que los headers estén presentes en una respuesta representativa (e.g., `resources/list`).
 
 #### GT-256
+
 **Propósito:** Reparar el healthcheck de Traefik en `docker-compose.yml`, que hoy consulta `/ping` mientras Traefik se levanta sin `--ping=true`, garantizando que el contenedor sea marcado unhealthy en cualquier entorno que dependa de este stack.
 **Evidencia Actual:** `reference/infrastructure/docker-compose.yml:164-182` — Traefik arranca solo con `--providers.file.directory=/etc/traefik/dynamic`. El healthcheck en la línea 182 corre `traefik healthcheck --ping`, que llama al endpoint ping interno; sin `--ping=true` (o `--ping.entrypoint=...`) en la línea de arranque, ese endpoint está deshabilitado y el check falla.
 **Hecho Cuando:**
@@ -2971,6 +3058,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Opcional: endpoint de ping enlazado al entrypoint interno/admin, no al público.
 
 #### GT-257
+
 **Propósito:** Fijar la imagen de MongoDB a una versión menor específica para que el stack de infraestructura sea reproducible y esté protegido frente a upgrades silenciosos que puedan romper compatibilidad o introducir cambios no revisados.
 **Evidencia Actual:** `reference/infrastructure/docker-compose.yml:54` — `image: mongo:latest`. Otros servicios (PostgreSQL, Redis, Traefik) ya están fijados; MongoDB es el caso aislado.
 **Hecho Cuando:**
@@ -2979,6 +3067,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Regla Dependabot/Renovate cubre actualizaciones de imágenes `docker` para mantener el pin.
 
 #### GT-258
+
 **Propósito:** Añadir controles `concurrency:` a cada workflow de GitHub Actions para que pushes apilados cancelen runs superados — ahorrando cómputo, acelerando feedback y previniendo race conditions en workflows que mutan releases o cachés.
 **Evidencia Actual:** `grep -L "concurrency:" .github/workflows/*.yml` devuelve los 11 workflows: `ci-cd.yml`, `ci.yml`, `coverage-impact.yml`, `docs-release.yml`, `docs.yml`, `enforce-root-cleanliness.yml`, `governance-ci.yml`, `knowledge-intake.yml`, `opa-parity.yml`, `sdk-cli-ci.yml`, `sdk-cli-release.yml`.
 **Hecho Cuando:**
@@ -2987,6 +3076,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Documentado en `.harness/playbooks/` (o guía de CI equivalente) para que los workflows futuros hereden el patrón.
 
 #### GT-259
+
 **Propósito:** Reemplazar el frágil match de string en el mensaje de commit que gatilla el job de publish a npm por un trigger basado en tag, de modo que los releases no puedan dispararse accidentalmente por un commit cuyo cuerpo contenga "bump version".
 **Evidencia Actual:** `.github/workflows/ci-cd.yml:42` — `if: github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, 'bump version')`. Cualquier commit aterrizado en main con esa subcadena (incluyendo merge commits, reverts o housekeeping) gatilla `npm publish --access public --tag beta`.
 **Hecho Cuando:**
@@ -2996,6 +3086,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Compatibilidad hacia atrás: entrada `workflow_dispatch` manual existente preservada si existe, o añadida si no.
 
 #### GT-260
+
 **Propósito:** Cerrar la brecha de paridad bilingüe para agentes BMAD proveyendo el archivo de persona en español del agente PO y cableándolo en los mismos workflows que los otros 8 agentes.
 **Evidencia Actual:** `.bmad-core/agents/` contiene pares `.md` + `.es.md` para `analyst`, `architect`, `dev`, `devops`, `docs`, `pm`, `qa`, `sm`. El agente PO solo tiene `po.md`; `po.es.md` no existe. (Wilson es monolingüe por diseño.)
 **Hecho Cuando:**
@@ -3004,6 +3095,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] `check-bilingual-parity.mjs` pasa tras la adición.
 
 #### GT-261
+
 **Propósito:** Acotar la huella de recursos de cada contenedor del stack de infraestructura para que un servicio descontrolado no pueda asfixiar a sus vecinos en el mismo host, y para que la planificación de capacidad mapee limpiamente al dimensionamiento en producción.
 **Evidencia Actual:** `grep -nE "mem_limit|cpus|deploy:|resources:" reference/infrastructure/docker-compose.yml` devuelve nada — ningún servicio declara `mem_limit`, `cpus` ni un bloque `deploy.resources`.
 **Hecho Cuando:**
@@ -3012,6 +3104,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Validado localmente que el stack arranca dentro de los límites declarados y los healthchecks siguen pasando.
 
 #### GT-262
+
 **Propósito:** Codificar procedimientos de backup y disaster-recovery para los data stores stateful (PostgreSQL, MongoDB, MinIO, OpenBao) para que la plataforma pueda recuperarse de pérdida de datos sin arqueología ad-hoc.
 **Evidencia Actual:** Una búsqueda en el repo por scripts de backup (`find . -name "backup*.sh" -o -name "*-backup*"`) y planes de restore estilo Terraform devuelve nada bajo `reference/infrastructure/`, `apps/` ni `.harness/`. No existe runbook de DR.
 **Hecho Cuando:**
@@ -3021,6 +3114,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Lint de CI verifica que el runbook existe; referencia cruzada con SDLC Phase 05 rollback (GT-218).
 
 #### GT-263
+
 **Propósito:** Añadir alertas Prometheus a nivel de infraestructura para que los problemas de plataforma (servicio caído, presión de disco, pico de error rate) paguen on-call antes de llegar a usuarios, cerrando una brecha dejada abierta por la adopción del stack de observabilidad.
 **Evidencia Actual:** Una búsqueda en el repo por `*.rules.yaml`, `*alerts*` o `prometheus*` devuelve nada. Los ADRs de observabilidad describen lo que debería existir, pero no hay reglas de alerta commiteadas.
 **Hecho Cuando:**
@@ -3030,6 +3124,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Smoke test: disparar una alerta en un entorno dev y verificar que se enciende.
 
 #### GT-264
+
 **Propósito:** Hacer significativo el scan DAST (OWASP ZAP) en CI apuntándolo a una instancia real en ejecución, o eliminarlo — hoy apunta a `http://localhost:8000` sin levantar un servidor, por lo que el scan es silenciosamente un no-op.
 **Evidencia Actual:** `.github/workflows/sdk-cli-ci.yml:372-374` — `uses: zaproxy/action-full-scan@v0.10.0` con `target: 'http://localhost:8000'`. Ningún paso precedente levanta un servicio en ese puerto, por lo que ZAP escanea contra nada y el job o no hace nada o falla silenciosamente.
 **Hecho Cuando:**
@@ -3038,6 +3133,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Si se elimina: un gap follow-up captura el plan DAST a largo plazo (e.g., scan programado contra un entorno staging).
 
 #### GT-265
+
 **Propósito:** Añadir detección de secretos en CI (gitleaks o equivalente) para que commits accidentales de API keys, secretos JWT o credenciales de base de datos sean detectados en tiempo de PR, no después de aterrizar en la historia.
 **Evidencia Actual:** `grep -rln "gitleaks\|truffle\|secretlint" .github/` devuelve nada — ningún scanner de secretos corre en ningún workflow. El repo maneja credenciales en docker-compose (cerrado por GT-247) y secretos JWT (follow-up de GT-250), por lo que el blast radius de un secreto filtrado es real.
 **Hecho Cuando:**
@@ -3047,6 +3143,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Hook pre-commit (opcional) replica el check localmente.
 
 #### GT-266
+
 **Propósito:** Crear un servicio de provisioning de API keys para el transporte HTTP de MCP, de modo que consumidores externos tengan una forma segura y auditable de obtener y rotar llaves — actualmente la única opción es un único secreto compartido configurado vía env var, sin generación, distribución, rotación ni revocación.
 **Evidencia Actual:** No hay endpoint de generación de keys, ni key store, ni mecanismo de rotación. El operador auto-provisionaba cualquier string vía `--api-key` o `EVOLITH_API_KEY` y lo distribuía out of band. No hay keys por cliente, ni persistencia hasheada, ni trail de auditoría. ADR-0088/ADR-0091 prescriben migrar a identidades de corta duración (Token Exchange, Workload Identity), pero esa migración no está programada y el path de key estática carece de higiene básica de provisioning.
 **Hecho Cuando:**
@@ -3058,6 +3155,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Ruta de migración documentada desde el modelo actual de env-var único al servicio de provisioning.
 
 #### GT-267
+
 **Título:** Restaurar build/test del workspace tras integración de caché Redis
 **Propósito:** Desbloquear el baseline de release del monorepo después de que la capa de caché introdujo imports runtime y deriva TypeScript que impiden compilar o testear Core API, MCP Server y el CLI dependiente. Es bloqueante productivo porque la optimización de caché no puede promoverse mientras las superficies ejecutables fallan.
 **Evidencia Actual:** Auditoría Wilson del 2026-06-25: `npm -ws run build --if-present` falla en `apps/core-api` porque `@nestjs/cache-manager` y `cache-manager` no están instalados y `CacheInterceptor`/`CacheTTL` se importan desde `@nestjs/common`; `packages/mcp-server` falla por las mismas dependencias de caché ausentes, `trace.SpanStatusCode` y errores de deprecación TypeScript 6. `npm --workspace apps/core-api test -- --runInBand`, `npm --workspace packages/mcp-server test -- --runInBand` y `npm --workspace sdk/cli run test:unit -- --runInBand` también están rojos.
@@ -3068,6 +3166,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] `npm -ws run build --if-present`, `npm --workspace apps/core-api test -- --runInBand`, `npm --workspace packages/mcp-server test -- --runInBand` y `npm --workspace sdk/cli run test:unit -- --runInBand` pasan desde un checkout limpio.
 
 #### GT-268
+
 **Título:** Restaurar scripts validadores CI ausentes referenciados por workflows y reglas
 **Propósito:** Reconciliar el harness de gobernanza para que exista todo comando de validación documentado y referenciado por workflows. Entrypoints validadores ausentes crean falsa confianza documental y fallos garantizados en los workflows que los invocan.
 **Evidencia Actual:** `AGENTS.md` y `AGENTS.es.md` listan `.harness/scripts/bilingual-coverage.mjs` y `.harness/scripts/coverage-dashboard.mjs`; `.github/workflows/docs.yml` invoca ambos; `.github/workflows/sdk-cli-ci.yml` invoca `bilingual-coverage.mjs`; `.github/workflows/governance-ci.yml` y las reglas globales invocan `.harness/scripts/ci/26-validate-topology-rule-coverage.mjs`. Los tres archivos están ausentes en el checkout auditado.
@@ -3078,6 +3177,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] `node .harness/scripts/bilingual-coverage.mjs`, `node .harness/scripts/coverage-dashboard.mjs` y `node .harness/scripts/ci/26-validate-topology-rule-coverage.mjs` pasan localmente o sus comandos reemplazantes quedan cableados en todas partes.
 
 #### GT-269
+
 **Título:** Restaurar reproducibilidad del contrato roundtrip ADR-0073
 **Propósito:** Reabrir la red de regresión contractual prometida por GT-172/GT-223 para que CLI, MCP y REST vuelvan a demostrar equivalencia semántica en `gate evaluate`. Una suite de contrato existente pero no ejecutable no es evidencia válida de release.
 **Evidencia Actual:** `npm run test:contract` falla 34/34 tests. TypeScript no puede resolver subpaths de paquete desde `sdk/cli/src/app.module.ts` bajo `tests/contract/tsconfig.json` (`moduleResolution: node`), aunque Node sí resuelve los exports compilados del paquete. Jest también reporta mocks manuales duplicados desde `packages/mcp-server/dist/__mocks__` ignorado y `packages/mcp-server/src/__mocks__`, por lo que artefactos generados contaminan el grafo de tests contractuales tras builds locales.
@@ -3088,6 +3188,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] La evidencia de cierre de GT-172/GT-223 se reconcilia para no afirmar paridad contractual verde sin un comando actual pasando.
 
 #### GT-270
+
 **Título:** Fijar imágenes de infraestructura mutables y deshabilitar defaults dev expuestos
 **Propósito:** Hacer reproducible la infraestructura de referencia y evitar que defaults de desarrollo se copien a despliegues tipo producción. Esto optimiza costo y seguridad reduciendo upgrades no planeados, superficies admin públicas accidentales y fricción de triage de incidentes.
 **Evidencia Actual:** `reference/infrastructure/README.md` declara "sin latest", pero los values de Helm usan `tag: "latest"` para BFF y MCP y `openpolicyagent/opa:latest`; los Dockerfiles usan `node:22-alpine` mutable; Docker Compose usa `mcr.microsoft.com/mssql/server:2022-latest`; Traefik arranca con `--api.insecure=true` y expone dashboard; OpenBao usa `BAO_DEV_ROOT_TOKEN_ID` y escucha en `0.0.0.0:8200`; el socket Docker se monta en Traefik.
@@ -3098,6 +3199,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Lint CI rechaza nuevos `latest`, `*-latest` o defaults inseguros de gateway/secrets fuera de ejemplos explícitamente dev-only.
 
 #### GT-271
+
 **Título:** Añadir hardening Kubernetes de workloads a Helm charts
 **Propósito:** Elevar los Helm charts al mismo estándar de preparación productiva que las normas arquitectónicas haciendo ejecutables seguridad de pod, probes, recursos y seguridad de rollout en vez de dejarlos implícitos en prosa.
 **Evidencia Actual:** `reference/infrastructure/helm/evolith-bff/templates/deployment.yaml` y `evolith-mcp/templates/deployment.yaml` definen solo contenedores y puertos. Un grep no encuentra `resources`, `securityContext`, `readinessProbe`, `livenessProbe`, `startupProbe`, `runAsNonRoot`, `readOnlyRootFilesystem`, `allowPrivilegeEscalation`, `PodDisruptionBudget`, `HorizontalPodAutoscaler` ni `NetworkPolicy`.
@@ -3108,6 +3210,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
   - [x] Render de Helm más lint de políticas (kubeconform/conftest o validadores open source equivalentes) corre en CI.
 
 #### GT-272
+
 **Título:** Asegurar distribución y verificación de bundles OPA sidecar
 **Propósito:** Proteger el camino de gobernanza ejecutable contra manipulación de policy bundles asegurando cómo los sidecars OPA obtienen y confían en bundles. Esto mantiene significativa la paridad Native/OPA después del despliegue, no solo en tests del repositorio.
 **Evidencia Actual:** Los values de Helm configuran sidecars OPA para descargar `http://ums-minio:9000/opa-bundles/bundle.tar.gz` sin TLS, autenticación, digest fijo, firma ni gate de readiness fail-closed. GT-133 cubre la arquitectura central de distribución, pero la referencia desplegada del sidecar no verifica integridad ni procedencia del bundle.

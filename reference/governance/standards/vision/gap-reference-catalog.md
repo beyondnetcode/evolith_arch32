@@ -56,7 +56,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Acceptance criteria:**
   - [ ] `evaluation-context.schema.json` / `evaluation-result.schema.json` validate round-trip; `schemaVersion` mandatory.
   - [ ] `tenantId`/`productId`/`initiativeId` are `string`; `DecisionRecommendation.binding` literal `false`.
-  - [ ] ESLint boundary guard fails CI if a `*Repository` for product/initiative/evidence/decision appears.
+  - [x] ESLint boundary guard fails CI if a `*Repository` for product/initiative/evidence/decision appears. **(MET — Wave 2026-06-29)** `packages/core-domain/eslint.config.mjs` (flat config, ESLint 9) bans `Identifier[name=/(Product|Initiative|Evidence|Decision)Repository/]` via `no-restricted-syntax` (rule shared from `eslint.guards.cjs`); gated by the `Run core-domain architecture boundary guard (GT-377)` step in `ci-cd.yml` (`test-core-domain`); negative regression test `src/evaluation/stateless-core-repository.guard.spec.ts` (14 cases) proves it fires on the four banned entities and never on legit `*Repository` (`AuditRepository`, `createRepository`, …). The prior breakage (global `ajv:8.17.1` override conflicting with workspaces' direct `ajv:8.20.0`, starving `eslint`/`@eslint/eslintrc` of `ajv@6`) is fixed with scoped `overrides` in the root `package.json`.
 - **Dependencies:** `GT-376`.
 
 #### GT-378

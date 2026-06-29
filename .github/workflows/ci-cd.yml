@@ -61,6 +61,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # GT-377 AC-3: stateless-Core architecture boundary guard. Fails the build
+      # if a *Repository for product/initiative/evidence/decision appears in
+      # core-domain (Core is a stateless Evaluation Engine — those are context,
+      # not entities — per ADR-0101), and enforces the inner-layer import rules.
+      - name: Run core-domain architecture boundary guard (GT-377)
+        run: npm run lint:boundaries --workspace @evolith/core-domain
+
       - name: Run core-domain tests with coverage
         run: npm run test:cov --workspace @evolith/core-domain
 

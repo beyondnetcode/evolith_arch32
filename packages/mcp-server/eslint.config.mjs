@@ -80,42 +80,40 @@ export default [
       'boundaries/ignore': ['src/**/*.spec.ts', 'src/**/*.test.ts'],
     },
     rules: {
-      'boundaries/element-types': [
+      'boundaries/dependencies': [
         'error',
         {
           default: 'disallow',
           rules: [
             // domain: innermost local models
-            { from: 'domain', allow: ['domain'] },
+            { from: { type: 'domain' }, allow: { to: { type: ['domain'] } } },
 
             // application: may use local domain
-            { from: 'application', allow: ['application', 'domain'] },
+            { from: { type: 'application' }, allow: { to: { type: ['application', 'domain'] } } },
 
             // mcp/tools/resources/watcher: adapters — may use all inner layers.
             // `mcp` is also the composition root: `mcp.module.ts` wires the
             // adapter NestJS modules (e.g. `imports: [ToolsModule]`), so `mcp`
             // is allowed to import `tools` for that module composition.
-            { from: 'mcp', allow: ['mcp', 'application', 'domain', 'tools'] },
-            { from: 'tools', allow: ['tools', 'application', 'domain', 'mcp'] },
-            { from: 'resources', allow: ['resources', 'application', 'domain', 'mcp'] },
-            { from: 'watcher', allow: ['watcher', 'application', 'domain'] },
-            { from: 'core', allow: ['core', 'domain'] },
+            { from: { type: 'mcp' }, allow: { to: { type: ['mcp', 'application', 'domain', 'tools'] } } },
+            { from: { type: 'tools' }, allow: { to: { type: ['tools', 'application', 'domain', 'mcp'] } } },
+            { from: { type: 'resources' }, allow: { to: { type: ['resources', 'application', 'domain', 'mcp'] } } },
+            { from: { type: 'watcher' }, allow: { to: { type: ['watcher', 'application', 'domain'] } } },
+            { from: { type: 'core' }, allow: { to: { type: ['core', 'domain'] } } },
 
             // Type-only imports are permitted across all layers: they are erased
             // at compile time and create NO runtime coupling, so they don't
             // breach the architecture's dependency direction. The guard still
             // enforces VALUE (runtime) imports strictly via the rules above.
+            // (v6: selector-level dependency.kind replaces the legacy rule-level importKind.)
             {
-              from: ['domain', 'application', 'mcp', 'tools', 'resources', 'watcher', 'core'],
-              importKind: 'type',
-              allow: ['domain', 'application', 'mcp', 'tools', 'resources', 'watcher', 'core'],
+              from: { type: ['domain', 'application', 'mcp', 'tools', 'resources', 'watcher', 'core'] },
+              dependency: { kind: 'type' },
+              allow: { to: { type: ['domain', 'application', 'mcp', 'tools', 'resources', 'watcher', 'core'] } },
             },
           ],
         },
       ],
-
-      // External npm packages (including @evolith/core-domain) are allowed.
-      'boundaries/no-external': 'off',
     },
   },
 ];

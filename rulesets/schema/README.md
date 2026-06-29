@@ -4,7 +4,7 @@ JSON Schema definitions for validating Evolith governance and SDLC artifacts.
 
 > **Source of truth:** these schemas are the **authoritative contract** for the *structure* of each artifact. When a Markdown template and a schema disagree about required fields, the schema wins for machine validation. The Markdown templates under `reference/governance/sdlc/04-artifact-templates/` remain authoritative for *human guidance, intent, and prose*.
 
-**Count:** this directory contains **36** `*.schema.json` files. They are grouped below by purpose. OPA policy *input* schemas live separately under [`../opa/schemas/`](../opa/schemas/) (26 files) and are indexed in the [OPA README](../opa/README.md).
+**Count:** this directory contains **39** `*.schema.json` files. They are grouped below by purpose. OPA policy *input* schemas live separately under [`../opa/schemas/`](../opa/schemas/) (26 files) and are indexed in the [OPA README](../opa/README.md).
 
 > **Axis note:** the SDLC axis (idea → product, five phases) is **separate** from the topology axis (architecture groupers). The "Phase" column below refers to the SDLC progressive axis only. Topology artifacts (`topology-manifest`, `topology-composition`, `blueprint`) are not tied to an SDLC phase.
 
@@ -42,6 +42,15 @@ JSON Schema definitions for validating Evolith governance and SDLC artifacts.
 | [sdlc-phase.schema.json](./sdlc-phase.schema.json) | SDLC Phase | SDLC axis definition |
 | [sdlc-gate.schema.json](./sdlc-gate.schema.json) | SDLC Gate | SDLC axis definition |
 
+## Core evaluation contracts
+
+The stateless Core Evaluation Engine's input/output contracts (ADR-0101). Mirror the TypeScript contracts under `packages/core-domain/src/evaluation/contracts/`.
+
+| Schema | Title | Scope |
+|---|---|---|
+| [evaluation-context.schema.json](./evaluation-context.schema.json) | Evaluation Context | Stateless Core input (GT-377 / ADR-0101) |
+| [evaluation-result.schema.json](./evaluation-result.schema.json) | Evaluation Result | Stateless Core output (GT-377 / ADR-0101) |
+
 ## Ruleset and rule-definition schemas (meta-schemas)
 
 | Schema | Title | Scope |
@@ -55,6 +64,7 @@ JSON Schema definitions for validating Evolith governance and SDLC artifacts.
 | Schema | Title | Scope |
 |---|---|---|
 | [evolith-yaml.schema.json](./evolith-yaml.schema.json) | Evolith Satellite Contract (`evolith.yaml`) | Satellite governance |
+| [satellite-record.schema.json](./satellite-record.schema.json) | Satellite Record | Satellite provisioning |
 | [tenant.schema.json](./tenant.schema.json) | Evolith Tenant | Multi-tenancy |
 | [tenant-override.schema.json](./tenant-override.schema.json) | Evolith Tenant Override | Multi-tenancy |
 | [topology-manifest.schema.json](./topology-manifest.schema.json) | Evolith Topology Manifest | Topology axis (manifest resolution) |

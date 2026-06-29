@@ -1,4 +1,3 @@
-/* eslint-disable boundaries/element-types */
 import * as path from 'path';
 import { IFileSystem, ILogger } from '../../domain/interfaces';
 

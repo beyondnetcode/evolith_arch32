@@ -1,4 +1,3 @@
-/* eslint-disable boundaries/element-types */
 import { ILogger, IFileSystem, IConfigParser } from '../../domain/interfaces';
 import { IRulesetRepository } from '../../domain/ports/ruleset-repository.port';
 import { TopologyCatalogService } from '../services/topology-catalog.service';

@@ -61,6 +61,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Architecture boundary guard: enforces the core-domain inner-layer
+      # hierarchy on VALUE imports AND the stateless-Core *Repository ban
+      # (GT-377/ADR-0101 — product/initiative/evidence/decision are context, not
+      # entities). Parses the import graph only (no type-aware services / built
+      # deps needed).
+      - name: Run core-domain architecture boundary guard
+        run: npm run lint:boundaries --workspace @evolith/core-domain
+
       # GT-382 follow-up: the core-domain OPA integration test loads the real
       # compiled policy.wasm. Build it (pinned opa toolchain) so the test runs
       # end-to-end; it self-skips if the artifact is absent.

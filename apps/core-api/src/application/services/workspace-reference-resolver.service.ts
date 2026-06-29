@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { EnvConfig } from '../../infrastructure/config/env.validation';
+import type { EnvConfig } from '../../infrastructure/config/env.validation';
 
 /**
  * Resolves an opaque workspace reference issued by the Tracker BFF.

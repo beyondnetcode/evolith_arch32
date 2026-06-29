@@ -4,6 +4,15 @@ package evolith.compliance_baseline
 # under OPA 0.65, otherwise the file fails to load ("var cannot be used for rule name").
 import future.keywords.if
 
+# GT-380 / L1c: read spec/satellite facts from the canonical EvaluationContext
+# (`input.context.{spec,satellite}`) when present, falling back to the legacy
+# `input.{spec,satellite}`. Removes the hard dependency on a Tracker-shaped input
+# root (the conflation flagged by the Tracker<->Core audit); behavior is unchanged
+# for callers that still send `spec` / `satellite`.
+spec := object.get(object.get(input, "context", {}), "spec", object.get(input, "spec", {}))
+
+satellite := object.get(object.get(input, "context", {}), "satellite", object.get(input, "satellite", {}))
+
 # ---------------------------------------------------------------------------
 # Native counterpart: rulesets/compliance-baseline/compliance-baseline.rules.json
 # CB-VAL-*: format validation (evolith.yaml structure)
@@ -18,21 +27,21 @@ required_pillars := {"agnosticBaseline", "referenceBlueprint", "engineeringManif
 # ---------------------------------------------------------------------------
 
 violations[{"id": "CB-VAL-01", "message": msg}] {
-    missing := required_pillars - {p | p := object.keys(input.spec.compliance)[_]}
+    missing := required_pillars - {p | p := object.keys(spec.compliance)[_]}
     count(missing) > 0
     msg := sprintf("Missing compliance pillars: %v", [concat(", ", missing)])
 }
 
 violations[{"id": "CB-VAL-02", "message": msg}] {
     pillar := required_pillars[_]
-    val := input.spec.compliance[pillar]
+    val := spec.compliance[pillar]
     not is_string(val)
     msg := sprintf("Pillar '%s' reference must be a non-empty string", [pillar])
 }
 
 violations[{"id": "CB-VAL-02", "message": msg}] {
     pillar := required_pillars[_]
-    val := input.spec.compliance[pillar]
+    val := spec.compliance[pillar]
     is_string(val)
     count(val) == 0
     msg := sprintf("Pillar '%s' reference must be a non-empty string", [pillar])
@@ -45,7 +54,7 @@ violations[{"id": "CB-VAL-02", "message": msg}] {
 # ---------------------------------------------------------------------------
 
 violations[{"id": "CB-01", "message": "Technology selection must be validated against Agnostic Baseline. Declare spec.compliance.agnosticBaseline in evolith.yaml pointing to the authoritative tech stack document."}] {
-    not input.spec.compliance.agnosticBaseline
+    not spec.compliance.agnosticBaseline
 }
 
 # ---------------------------------------------------------------------------
@@ -53,7 +62,7 @@ violations[{"id": "CB-01", "message": "Technology selection must be validated ag
 # ---------------------------------------------------------------------------
 
 violations[{"id": "CB-02", "message": "Product architecture must be traceable to the Reference Blueprint. Declare spec.compliance.referenceBlueprint in evolith.yaml."}] {
-    not input.spec.compliance.referenceBlueprint
+    not spec.compliance.referenceBlueprint
 }
 
 # ---------------------------------------------------------------------------
@@ -62,16 +71,16 @@ violations[{"id": "CB-02", "message": "Product architecture must be traceable to
 # ---------------------------------------------------------------------------
 
 violations[{"id": "CB-03", "message": "Engineering Manifesto principles must be enforced. Declare spec.compliance.engineeringManifesto in evolith.yaml."}] {
-    not input.spec.compliance.engineeringManifesto
+    not spec.compliance.engineeringManifesto
 }
 
 violations[{"id": "CB-03", "message": "Engineering Manifesto requires linting enforcement. No CI workflow containing 'lint' detected in satellite .github/workflows/."}] {
-    input.spec.compliance.engineeringManifesto
+    spec.compliance.engineeringManifesto
     not any_workflow_has_lint
 }
 
 any_workflow_has_lint if {
-    wf := input.satellite.workflows[_]
+    wf := satellite.workflows[_]
     contains(wf, "lint")
 }
 
@@ -80,7 +89,7 @@ any_workflow_has_lint if {
 # ---------------------------------------------------------------------------
 
 violations[{"id": "CB-04", "message": "Definition of Done must be satisfied before story closure. Declare spec.compliance.definitionOfDone in evolith.yaml."}] {
-    not input.spec.compliance.definitionOfDone
+    not spec.compliance.definitionOfDone
 }
 
 # ---------------------------------------------------------------------------
@@ -89,11 +98,11 @@ violations[{"id": "CB-04", "message": "Definition of Done must be satisfied befo
 # ---------------------------------------------------------------------------
 
 violations[{"id": "CB-05", "message": "Repository structure must follow Taxonomy rules. Declare spec.compliance.repositoryTaxonomy in evolith.yaml."}] {
-    not input.spec.compliance.repositoryTaxonomy
+    not spec.compliance.repositoryTaxonomy
 }
 
 violations[{"id": "CB-05", "message": "Repository Taxonomy requires 'src' directory. Satellite is missing expected top-level directory."}] {
-    input.spec.compliance.repositoryTaxonomy
-    satellite_dirs := {d | d := input.satellite.directories[_]}
+    spec.compliance.repositoryTaxonomy
+    satellite_dirs := {d | d := satellite.directories[_]}
     not satellite_dirs["src"]
 }

@@ -11,9 +11,11 @@
 | **Dirigido a** | Evolith Core Architecture Board |
 | **Prioridad** | P0 |
 | **Complejidad estimada** | XL |
-| **ADR relacionado** | ADR-0100 (Frontera Gobierno/Ejecución) |
+| **ADR relacionado** | ADR-0100 (Frontera Gobierno/Ejecución) · **ADR-0101 (Core como Stateless Evaluation Engine — corrección)** |
 | **GTs relacionados** | GT-375 |
-| **Documento de diseño** | [Rediseño de Gobierno Producto/Iniciativa](../../core/product-initiative-governance-redesign.es.md) |
+| **Documento de diseño** | [Core Evaluation Engine Design](../../core/core-evaluation-engine-design.es.md) (corregido) · [Rediseño de Gobierno Producto/Iniciativa](../../core/product-initiative-governance-redesign.es.md) (superseded en parte) |
+
+> **⚠ Corrección (2026-06-28).** Los Entregables 2 y 7 de abajo proponían originalmente **entidades** `Producto`/`Iniciativa` propiedad del Core **con repositorios y endpoints de escritura**. Según [ADR-0101](../../architecture/adrs/core/0101-core-stateless-evaluation-engine.es.md), eso queda **corregido**: el Core es un **evaluador stateless** que define los contratos `EvaluationContext` (entrada) / `EvaluationResult` (salida). Producto/tenant/iniciativa son **solo contexto** (`ProductContext`/`InitiativeContext`/`EvidenceContext`); el Core **no tiene puertos/casos de uso/endpoints de escritura** de entidades de negocio (solo `IBlueprintRepository`, una definición). Su única superficie es `POST /api/v1/evaluate` (`EvaluationContext` → `EvaluationResult`, envelope ADR-0073). El Core emite un `DecisionRecommendation` **no vinculante**; el Tracker decide, persiste y audita.
 
 ## Contexto
 

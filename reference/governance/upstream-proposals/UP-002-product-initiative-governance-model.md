@@ -11,9 +11,11 @@
 | **Addressed to** | Evolith Core Architecture Board |
 | **Priority** | P0 |
 | **Estimated Complexity** | XL |
-| **Related ADR** | ADR-0100 (Governance/Execution Boundary) |
+| **Related ADR** | ADR-0100 (Governance/Execution Boundary) · **ADR-0101 (Core as Stateless Evaluation Engine — correction)** |
 | **Related GTs** | GT-375 |
-| **Design Document** | [Product/Initiative Governance Redesign](../../core/product-initiative-governance-redesign.es.md) |
+| **Design Document** | [Core Evaluation Engine Design](../../core/core-evaluation-engine-design.es.md) (corrected) · [Product/Initiative Governance Redesign](../../core/product-initiative-governance-redesign.es.md) (superseded in part) |
+
+> **⚠ Correction (2026-06-28).** Deliverable 2 and Deliverable 7 below originally proposed Core-owned `Producto`/`Iniciativa` **entities with repositories and write endpoints**. Per [ADR-0101](../../architecture/adrs/core/0101-core-stateless-evaluation-engine.md), that is **corrected**: the Core is a **stateless evaluator** that defines the `EvaluationContext` (input) / `EvaluationResult` (output) contracts. Product/tenant/initiative are **context only** (`ProductContext`/`InitiativeContext`/`EvidenceContext`); the Core has **no write ports/use-cases/endpoints** for business entities (only `IBlueprintRepository`, a definition). Its single surface is `POST /api/v1/evaluate` (`EvaluationContext` → `EvaluationResult`, ADR-0073 envelope). The Core emits a **non-binding** `DecisionRecommendation`; the Tracker decides, persists and audits.
 
 ## Context
 

@@ -14,9 +14,11 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 
 #### GT-375
 
-**Title:** Product/Initiative governance model — separate SDLC governance from operational execution
+**Title:** Core stateless evaluation contracts — `EvaluationContext` / `EvaluationResult` (corrects the entity-ownership framing)
 
-- **Purpose:** Resolve the governance↔execution conflation: the Core declares it is not a task-management platform yet requires agile artifacts as blocking gate evidence, and it has no `Producto`/`Iniciativa` entity. Make `Producto` and `Iniciativa` the primary governance units (a Producto has one or many concurrent Iniciativas, each governing its own SDLC flow), demote epics/stories/tasks to optional `ExternalReference`, and add a non-binding architectural advisory capability (`AdvisoryRecord`).
+> **Correction (2026-06-28, ADR-0101):** originally framed as "Product/Initiative governance model with Core-owned entities". Corrected: the Core is a **stateless evaluator**; product/tenant/initiative are **opaque context only**, never Core entities.
+
+- **Purpose:** Resolve the governance↔execution conflation AND keep the Core stateless. Formalize `EvaluationContext` (input) and `EvaluationResult` (output): consumers (Evolith Tracker) send context, the Core evaluates against versioned definitions/standards and returns structured verdicts/recommendations. Product/tenant/initiative are opaque context identifiers (`ProductContext`/`InitiativeContext`); epics/stories/tasks as `ExternalReferenceContext`; the Core emits non-binding `Recommendation`/`DecisionRecommendation`. The Core never owns/persists product/tenant/initiative/evidence/decision (that is the Tracker's). No write repositories/use-cases/endpoints for business entities.
 - **Evidence:** `reference/core/README.md:47` ("a task-management platform" in "What Evolith Core Is Not", header `:41`) contradicted by `reference/governance/sdlc/sdlc-evolith-artifact-mapping.md:130,132,133,223` (Stories/Backlog/Technical Stories **Required**) and `:209` ("story readiness" closes gate F2). `packages/core-domain/src/domain/entities/` has only `blueprint.ts` (no Producto/Iniciativa); `gate-evidence.ts:87-89` (`initiative?: string`, "Never persisted or interpreted"). Boundary precedent already applied: `executive-scorecard-rule.handler.ts:55` ("Sprint throughput requires tracker data").
 - **Impact:** Cross-cutting — Core Domain, Core API, Rulesets, OPA, Blueprints, Documentation, Tracker integration.
 - **Risk:** Over-modeling, satellite breakage, double source of truth with Jira; mitigated by incremental R0–R5 roadmap, deprecation-with-grandfathering, and `ExternalReference` as the only operational seam.

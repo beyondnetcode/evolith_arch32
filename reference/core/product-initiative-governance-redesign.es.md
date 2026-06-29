@@ -3,7 +3,20 @@
 > **Navegación bilingüe:** [English version](./product-initiative-governance-redesign.md)
 
 **Clasificación:** Propuesta de Diseño — Modelo de Gobierno del Core
-**Estado:** *Proposed Design — Pending Architecture Board Review*
+**Estado:** *SUPERSEDED EN PARTE (2026-06-28) — corregido por [ADR-0101](../architecture/adrs/core/0101-core-stateless-evaluation-engine.es.md) y [Core Evaluation Engine Design](./core-evaluation-engine-design.es.md).*
+
+> **⚠ Aviso de corrección (error de altitud).** Este documento diagnosticó bien la conflación gobierno↔ejecución, pero modeló `Producto`/`Iniciativa`/`Evidencia`/`Decisión` como **entidades de dominio del Core con repositorios, casos de uso mutadores y endpoints de escritura** (`IProductRepository`, `RegisterProduct`, `POST /api/v1/products`, …). Eso **viola el criterio corregido**: el Core es un **evaluador STATELESS** y nunca posee/persiste producto/tenant/iniciativa/evidencia/decisión. **Los Entregables 2, 4, 10, 11, 12 y los flujos de escritura del 13 quedan SUPERSEDED** — reemplazados por los contratos `EvaluationContext` (entrada) / `EvaluationResult` (salida). Ver el diseño canónico en [Core Evaluation Engine Design](./core-evaluation-engine-design.es.md) y [ADR-0101](../architecture/adrs/core/0101-core-stateless-evaluation-engine.es.md).
+>
+> **Sigue siendo válido:** Entregable 1 (diagnóstico de conflación), Entregable 5 (`ExternalReference` como única costura operativa → ahora `ExternalReferenceContext`), externalizar schemas ágiles, dual-engine native+OPA, y evaluación ≠ decisión (el Core emite un `DecisionRecommendation` **no vinculante**; el Tracker decide/persiste).
+>
+> | Concepto previo (entidad/repo/endpoint) | Contrato corregido |
+> |---|---|
+> | `Producto` (`IProductRepository`, `POST /products`) | `ProductContext` (entrada, opaco) |
+> | `Iniciativa` (`IInitiativeRepository`, `POST /initiatives`) | `InitiativeContext` (entrada, opaco) |
+> | `Evidencia` (`IEvidenceRepository`, `POST /evidence`) | `EvidenceContext` (entrada) + `EvidenceEvaluationResult` (salida) |
+> | `DecisionRecord` (`IDecisionRecordRepository`, `POST /decisions`) | `DecisionRecommendation` (salida, `binding: false`) |
+> | `AdvisoryRecord` (`IAdvisoryRepository`, `POST /advisories`) | `Recommendation` (salida) |
+> | use-cases `Register/Open/Record/Attach` | ninguno — el Core no muta; solo evalúa |
 **Alcance:** Solo documentación — no autoriza cambios de código hasta aprobación del Architecture Board (mismo régimen que `reference/products/evolith-tracker/sdlc-tracker-technical-interfaces.md`).
 **Owner:** Evolith Architecture Board
 **Origen:** Análisis multi-agente anclado en código real (9 agentes, verificación adversarial). Ver Apéndice B.

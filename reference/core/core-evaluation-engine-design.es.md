@@ -1,6 +1,6 @@
 # Evolith Core — Diseño Corregido: Stateless Core Evaluation Engine
 
-> **Navegación bilingüe:** *El espejo en inglés (`core-evaluation-engine-design.md`) queda como entregable de la fase de documentación (R5).*
+> **Navegación bilingüe:** [English version](./core-evaluation-engine-design.md)
 
 **Clasificación:** Propuesta de Diseño Corregida — Modelo de Evaluación del Core
 **Estado:** *Proposed Design — Pending Architecture Board Review* (corrige, en altitud, a `product-initiative-governance-redesign`)

@@ -57,6 +57,23 @@ export class OpaInputBuilder {
         }
       }
     };
+
+    // GT-380 L1c: additively merge declared facts from the canonical
+    // EvaluationContext, so context-aware policies (phase-gates / dod /
+    // compliance-baseline) receive `input.context` / `input.gate` /
+    // `input.evidence` at runtime. When ctx.facts is undefined (legacy /
+    // FS-only path) the returned object is byte-for-byte the disk-only build,
+    // and input.satellite / input.core are never overwritten.
+    const facts = ctx.facts;
+    if (facts) {
+      const merged = input as Record<string, unknown>;
+      if (facts.context) merged.context = facts.context;
+      if (facts.gate) merged.gate = facts.gate;
+      if (facts.evidence) merged.evidence = facts.evidence;
+      if (facts.waiver) merged.waiver = facts.waiver;
+      if (facts.tenantId) merged.tenantId = facts.tenantId;
+      if (facts.evaluationDate) merged.evaluationDate = facts.evaluationDate;
+    }
     return input;
   }
 

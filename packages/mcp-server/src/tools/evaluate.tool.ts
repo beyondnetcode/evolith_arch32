@@ -1,14 +1,18 @@
 import * as path from 'path';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { RulesetValidatorService } from '@evolith/core';
 import { createSuccessEnvelope } from '@evolith/core-domain';
+import type { IFileSystem } from '@evolith/core-domain/domain/interfaces';
+import { NestLoggerProvider } from '@evolith/infra-providers';
 import {
   EvaluationOrchestrator,
+  createDefaultKindEvaluators,
   type EvaluationContext,
   type IEvaluationPipeline,
   type IWorkspaceReferenceResolver,
 } from '@evolith/core-domain/evaluation';
 import { McpTool, McpToolSchema } from '../mcp/tool.interface';
+import { FILE_SYSTEM } from '../domain/domain.tokens';
 
 const CORE_VERSION = '1.0.5';
 
@@ -46,7 +50,10 @@ export class EvaluateTool implements McpTool {
     },
   };
 
-  constructor(private readonly validator: RulesetValidatorService) {}
+  constructor(
+    private readonly validator: RulesetValidatorService,
+    @Inject(FILE_SYSTEM) private readonly fs: IFileSystem,
+  ) {}
 
   async execute(args: Record<string, unknown>): Promise<unknown> {
     const corePath = args.corePath as string | undefined;
@@ -90,7 +97,15 @@ export class EvaluateTool implements McpTool {
       resolve: async (ref: string) => ({ satellitePath: path.resolve(ref), corePath }),
     };
 
-    const orchestrator = new EvaluationOrchestrator(pipeline, resolver, CORE_VERSION);
+    // BR-008 parity: register the same KindEvaluator set as core-api so non-core
+    // kinds (architecture/checkpoint/topology/blueprint/deployment) actually evaluate
+    // here instead of silently returning nothing.
+    const evaluators = createDefaultKindEvaluators({
+      fileSystem: this.fs,
+      logger: new NestLoggerProvider().createLogger('McpEvaluate'),
+      resolveCorePath: () => corePath ?? process.cwd(),
+    });
+    const orchestrator = new EvaluationOrchestrator(pipeline, resolver, CORE_VERSION, evaluators);
     const result = await orchestrator.evaluate(ctx);
 
     return createSuccessEnvelope(result, {

@@ -1,7 +1,7 @@
 import { EvaluateTool } from './evaluate.tool';
 
 describe('EvaluateTool (GT-378, MCP surface)', () => {
-  const tool = new EvaluateTool({} as any);
+  const tool = new EvaluateTool({} as any, {} as any);
 
   it('exposes the canonical evolith-evaluate schema', () => {
     expect(tool.schema.name).toBe('evolith-evaluate');

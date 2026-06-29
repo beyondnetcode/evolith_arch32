@@ -30,14 +30,14 @@ import {
   EvaluationOrchestrator,
   type IEvaluationPipeline,
   type IWorkspaceReferenceResolver,
-} from '@evolith/core-domain/evaluation';
-import {
+  // KindEvaluator factories now live in @evolith/core-domain/evaluation (W-Parity)
+  // so core-api, CLI and MCP register the same evaluator set.
   createArchitectureKindEvaluator,
   createCheckpointKindEvaluator,
   createTopologyKindEvaluator,
   createBlueprintKindEvaluator,
   createDeploymentKindEvaluator,
-} from './application/evaluation/kind-evaluators';
+} from '@evolith/core-domain/evaluation';
 import * as fs from 'fs';
 import * as path from 'path';
 

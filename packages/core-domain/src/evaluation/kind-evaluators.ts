@@ -1,18 +1,31 @@
 /**
- * Core Evaluation Engine — concrete KindEvaluators for core-api (GT-379).
+ * Core Evaluation Engine — canonical KindEvaluators (GT-379 / W-Parity).
  *
- * Each factory wraps an existing DI-provided service and maps its native output
- * to the canonical sub-result, so the EvaluationOrchestrator can dispatch the
- * `architecture`, `checkpoint` and `topology` kinds. Extracted from AppModule
- * for testability (the mapping logic now has unit tests).
+ * Each factory wraps a Core domain service and maps its native output to the
+ * canonical sub-result so the EvaluationOrchestrator can dispatch the
+ * `architecture`, `checkpoint`, `topology`, `blueprint` and `deployment` kinds.
+ *
+ * These factories used to live in apps/core-api; they were promoted here so ALL
+ * surfaces (core-api, CLI, MCP) register the SAME evaluator set — closing the
+ * BR-008 parity gap where the CLI/MCP orchestrators registered ZERO evaluators
+ * and silently returned nothing for non-core kinds. Use `createDefaultKindEvaluators`
+ * for a fully-wired set built from just a filesystem + logger.
+ *
+ * Lives in the `evaluation` layer (not `application`) because the boundary rules
+ * allow evaluation→application but not application→evaluation (the KindEvaluator
+ * port is an evaluation contract).
  */
 
-import { Verdict, CANONICAL_PHASE_IDS, normalizePhaseId } from '@evolith/core-domain';
-import type { PhaseId } from '@evolith/core-domain';
-import type { KindEvaluator } from '@evolith/core-domain/evaluation';
-import type { ArchitectureDriftService } from '@evolith/core-domain/application/validators';
-import type { ProposePhaseAdvanceUseCase } from '@evolith/core-domain/application/use-cases';
-import type { TopologyCatalogService } from '@evolith/core-domain/application/services';
+import { Verdict } from '../domain/verdict/verdict';
+import { CANONICAL_PHASE_IDS, normalizePhaseId } from '../domain/sdlc/phase-id';
+import type { PhaseId } from '../domain/sdlc/phase-id';
+import type { IFileSystem, ILogger } from '../domain/interfaces';
+import type { KindEvaluator } from './ports/kind-evaluator.port';
+import { ArchitectureDriftService } from '../application/validators/architecture-drift.service';
+import { PhaseGateValidatorService } from '../application/validators/phase-gate-validator.service';
+import { EvaluateGateUseCase } from '../application/use-cases/evaluate-gate.use-case';
+import { ProposePhaseAdvanceUseCase } from '../application/use-cases/propose-phase-advance.use-case';
+import { TopologyCatalogService } from '../application/services/topology-catalog.service';
 
 /** Maps a MUST/SHOULD/COULD severity to a canonical RiskLevel. */
 export function severityToRisk(s: string): 'low' | 'medium' | 'high' | 'critical' {
@@ -229,4 +242,46 @@ export function createDeploymentKindEvaluator(): KindEvaluator {
       };
     },
   };
+}
+
+/** Dependencies for the fully-wired default evaluator set. */
+export interface DefaultKindEvaluatorDeps {
+  readonly fileSystem: IFileSystem;
+  readonly logger: ILogger;
+  /** Resolves the Core repository path when a context/workspace omits corePath. */
+  readonly resolveCorePath: () => string;
+}
+
+/**
+ * Build the canonical set of all five KindEvaluators from minimal primitives
+ * (a filesystem + logger). This is the single composition root every surface
+ * (core-api, CLI, MCP) shares, so the registered evaluator set cannot drift —
+ * the structural guarantee behind BR-008 parity.
+ */
+export function createDefaultKindEvaluators(deps: DefaultKindEvaluatorDeps): KindEvaluator[] {
+  const { fileSystem, logger, resolveCorePath } = deps;
+
+  const validatorFactory = (corePath?: string) =>
+    new PhaseGateValidatorService(corePath, { fileSystem, logger });
+  const evaluateGate = new EvaluateGateUseCase(validatorFactory);
+  const proposeAdvance = new ProposePhaseAdvanceUseCase(evaluateGate);
+  const driftService = new ArchitectureDriftService(undefined, { fileSystem, logger });
+  const topologyCatalog = new TopologyCatalogService(fileSystem, logger);
+
+  const blueprintExists = async (corePath: string, blueprintRef: string): Promise<boolean> => {
+    const base = `${corePath}/reference/architecture/blueprints`;
+    const candidates = [`${base}/${blueprintRef}`, `${base}/${blueprintRef}.md`, `${corePath}/${blueprintRef}`];
+    for (const candidate of candidates) {
+      if (await fileSystem.exists(candidate)) return true;
+    }
+    return false;
+  };
+
+  return [
+    createArchitectureKindEvaluator(driftService),
+    createCheckpointKindEvaluator(proposeAdvance),
+    createTopologyKindEvaluator(topologyCatalog, resolveCorePath),
+    createBlueprintKindEvaluator(blueprintExists, resolveCorePath),
+    createDeploymentKindEvaluator(),
+  ];
 }

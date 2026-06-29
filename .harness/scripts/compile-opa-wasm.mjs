@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 import { execSync } from 'child_process';
-import { existsSync, mkdirSync, writeFileSync, renameSync, unlinkSync } from 'fs';
-import { join } from 'path';
+import { existsSync, mkdirSync, writeFileSync, copyFileSync, unlinkSync } from 'fs';
+import { join, dirname } from 'path';
 import { platform, arch } from 'os';
 import https from 'https';
 
@@ -110,17 +110,27 @@ async function compileWasm() {
      process.exit(1);
   }
   
-  // Move policy.wasm to the SDK location
-  const destDir = join(rootDir, 'sdk', 'cli', 'rulesets', 'opa');
-  if (!existsSync(destDir)) {
-    mkdirSync(destDir, { recursive: true });
+  // GT-382 follow-up: install the compiled policy.wasm to EVERY location a runtime
+  // consumer looks for it, so OPA enforcement actually executes (instead of
+  // fail-closed on a missing wasm). Two lookup conventions exist:
+  //   - core-domain OpaEvaluator reads `<corePath>/rulesets/opa/policy.wasm`, where
+  //     corePath is resolved by findCoreFromSatellite (first ancestor with `rulesets/`
+  //     — the repo root for an in-repo run); must co-locate with the .rego sources.
+  //   - the MCP/SDK bundle reads `<corePath>/sdk/cli/rulesets/opa/policy.wasm`.
+  // policy.wasm is a build artifact (gitignored) — wired here, never committed.
+  const extracted = join(tmpDir, 'policy.wasm');
+  const destinations = [
+    join(rootDir, 'rulesets', 'opa', 'policy.wasm'),
+    join(rootDir, 'sdk', 'cli', 'rulesets', 'opa', 'policy.wasm'),
+  ];
+  for (const dest of destinations) {
+    mkdirSync(dirname(dest), { recursive: true });
+    copyFileSync(extracted, dest);
   }
-  
-  renameSync(join(tmpDir, 'policy.wasm'), join(destDir, 'policy.wasm'));
   unlinkSync(outputPath);
   execSync(`rm -rf ${tmpDir}`, { cwd: rootDir });
-  
-  console.log('Successfully compiled and installed policy.wasm.');
+
+  console.log(`Successfully compiled and installed policy.wasm to:\n  ${destinations.join('\n  ')}`);
 }
 
 async function main() {

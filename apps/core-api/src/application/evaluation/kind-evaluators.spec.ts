@@ -2,6 +2,8 @@ import {
   createArchitectureKindEvaluator,
   createCheckpointKindEvaluator,
   createTopologyKindEvaluator,
+  createBlueprintKindEvaluator,
+  createDeploymentKindEvaluator,
   nextPhase,
   severityToRisk,
 } from './kind-evaluators';
@@ -94,6 +96,49 @@ describe('kind-evaluators (GT-379)', () => {
       expect(r.verdict).toBe(Verdict.FAIL);
       expect(r.results.topology?.conformant).toBe(false);
       expect(r.recommendations?.[0].references).toEqual(['microservices', 'serverless']);
+    });
+  });
+
+  describe('blueprint (GT-379 AC-3)', () => {
+    const exists = (v: boolean) => jest.fn(async () => v);
+    it('SKIPs when no blueprintRef is declared', async () => {
+      const probe = exists(true);
+      const r = await createBlueprintKindEvaluator(probe, () => '/core').evaluate({ ...ctx, blueprintRef: undefined }, ws);
+      expect(r.verdict).toBe(Verdict.SKIP);
+      expect(probe).not.toHaveBeenCalled();
+    });
+    it('PASSes when the blueprintRef resolves to a Core definition', async () => {
+      const r = await createBlueprintKindEvaluator(exists(true), () => '/core').evaluate({ ...ctx, blueprintRef: 'authoritative-tech-stack-nodejs' }, ws);
+      expect(r.verdict).toBe(Verdict.PASS);
+      expect(r.results.blueprint).toMatchObject({ blueprintRef: 'authoritative-tech-stack-nodejs', verdict: Verdict.PASS });
+      expect(r.gaps).toEqual([]);
+    });
+    it('FAILs an unknown blueprintRef with a gap + required action', async () => {
+      const r = await createBlueprintKindEvaluator(exists(false), () => '/core').evaluate({ ...ctx, blueprintRef: 'nope' }, ws);
+      expect(r.verdict).toBe(Verdict.FAIL);
+      expect(r.gaps?.[0]).toMatchObject({ id: 'BLUEPRINT_UNKNOWN', requirementRef: 'nope', severity: 'error' });
+      expect(r.requiredActions?.[0]).toMatchObject({ blocking: true });
+    });
+  });
+
+  describe('deployment (GT-379 AC-3)', () => {
+    it('SKIPs when no deployment context is declared', async () => {
+      const r = await createDeploymentKindEvaluator().evaluate({ ...ctx, deployment: undefined }, ws);
+      expect(r.verdict).toBe(Verdict.SKIP);
+    });
+    it('PASSes a complete deployment context', async () => {
+      const r = await createDeploymentKindEvaluator().evaluate({ ...ctx, deployment: { environment: 'prod', releaseRef: 'v1.2.3' } }, ws);
+      expect(r.verdict).toBe(Verdict.PASS);
+      expect(r.results.deployment).toMatchObject({ environment: 'prod', releaseRef: 'v1.2.3', verdict: Verdict.PASS });
+    });
+    it('FAILs when required deployment fields are missing', async () => {
+      const r = await createDeploymentKindEvaluator().evaluate({ ...ctx, deployment: { environment: '', releaseRef: '' } }, ws);
+      expect(r.verdict).toBe(Verdict.FAIL);
+      expect(r.gaps?.map((g) => g.id)).toEqual(expect.arrayContaining(['DEPLOY-ENV-MISSING', 'DEPLOY-RELEASE-MISSING']));
+    });
+    it('flags an adverse declared deployment status as a risk', async () => {
+      const r = await createDeploymentKindEvaluator().evaluate({ ...ctx, deployment: { environment: 'prod', releaseRef: 'v1', status: 'rolled-back' } }, ws);
+      expect(r.risks?.[0]).toMatchObject({ id: 'DEPLOY-STATUS-ADVERSE', level: 'high' });
     });
   });
 });

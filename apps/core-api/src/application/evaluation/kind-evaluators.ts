@@ -146,3 +146,87 @@ export function createTopologyKindEvaluator(
     },
   };
 }
+
+type Gap = { id: string; requirementRef: string; severity: 'error' | 'warning' | 'info'; message: string };
+type Risk = { id: string; level: 'low' | 'medium' | 'high' | 'critical'; category: string; message: string };
+
+/**
+ * blueprint kind (GT-379) — stateless conformance of the declared `ctx.blueprintRef`
+ * against the Core's published blueprint definitions. The Core receives an opaque ref
+ * (not a Blueprint entity), so evaluation is ref-resolution against the Core catalog —
+ * the same altitude as the topology evaluator, and side-effect-free (does NOT use the
+ * mutating ValidateBlueprintUseCase). SKIP when no blueprintRef is declared.
+ */
+export function createBlueprintKindEvaluator(
+  blueprintExists: (corePath: string, blueprintRef: string) => Promise<boolean>,
+  resolveCorePath: () => string,
+): KindEvaluator {
+  return {
+    kind: 'blueprint',
+    evaluate: async (ctx, ws) => {
+      if (!ctx.blueprintRef) {
+        return { verdict: Verdict.SKIP, results: {} };
+      }
+      const corePath = ws.corePath ?? resolveCorePath();
+      const found = await blueprintExists(corePath, ctx.blueprintRef);
+      const verdict = found ? Verdict.PASS : Verdict.FAIL;
+      const gaps: Gap[] = found
+        ? []
+        : [{
+            id: 'BLUEPRINT_UNKNOWN',
+            requirementRef: ctx.blueprintRef,
+            severity: 'error',
+            message: `Blueprint "${ctx.blueprintRef}" does not resolve to a Core blueprint definition.`,
+          }];
+      const requiredActions = found
+        ? []
+        : [{
+            id: 'declare-known-blueprint',
+            description: 'Reference a blueprint published in the Core (reference/architecture/blueprints/).',
+            blocking: true,
+            remediation: 'Use a blueprintRef that resolves to a Core blueprint definition.',
+          }];
+      return {
+        verdict,
+        results: { blueprint: { blueprintRef: ctx.blueprintRef, verdict, gaps, requiredActions } },
+        gaps,
+        requiredActions,
+      };
+    },
+  };
+}
+
+/**
+ * deployment kind (GT-379) — stateless evaluation of the declared `ctx.deployment`
+ * (environment/releaseRef/status). The Core has no deployment engine; it evaluates the
+ * facts the consumer declares. SKIP when no deployment context is declared.
+ */
+export function createDeploymentKindEvaluator(): KindEvaluator {
+  return {
+    kind: 'deployment',
+    evaluate: async (ctx) => {
+      const dep = ctx.deployment;
+      if (!dep) {
+        return { verdict: Verdict.SKIP, results: {} };
+      }
+      const gaps: Gap[] = [];
+      if (!dep.environment) {
+        gaps.push({ id: 'DEPLOY-ENV-MISSING', requirementRef: 'deployment.environment', severity: 'error', message: 'Deployment environment is required.' });
+      }
+      if (!dep.releaseRef) {
+        gaps.push({ id: 'DEPLOY-RELEASE-MISSING', requirementRef: 'deployment.releaseRef', severity: 'error', message: 'Deployment releaseRef is required.' });
+      }
+      const risks: Risk[] = [];
+      if (dep.status === 'failed' || dep.status === 'rolled-back') {
+        risks.push({ id: 'DEPLOY-STATUS-ADVERSE', level: 'high', category: 'deployment', message: `Declared deployment status is "${dep.status}".` });
+      }
+      const verdict = gaps.length > 0 ? Verdict.FAIL : Verdict.PASS;
+      return {
+        verdict,
+        results: { deployment: { environment: dep.environment ?? '', releaseRef: dep.releaseRef ?? '', verdict, gaps, risks } },
+        gaps,
+        risks,
+      };
+    },
+  };
+}

@@ -29,6 +29,7 @@ import data.evolith.testing_pyramid.violations as tpy_violations
 import data.evolith.telemetry_evidence.violations as telemetry_violations
 import data.evolith.infrastructure.helm.violations as helm_violations
 import data.evolith.infrastructure.opa_sidecar.violations as opa_sidecar_violations
+import data.evolith.phase_gates.violations as pg_violations
 
 violations[v] {
 	v := vp_violations[_]
@@ -144,4 +145,8 @@ violations[v] {
 
 violations[v] {
 	v := opa_sidecar_violations[_]
+}
+
+violations[v] {
+	v := pg_violations[_]
 }

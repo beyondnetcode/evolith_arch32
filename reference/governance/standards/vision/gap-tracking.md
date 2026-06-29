@@ -444,6 +444,8 @@ This board is the single source of truth for technical debt, gaps, opportunities
 
 **Wave 2026-06-28 (GT-379 — checkpoint + topology kinds):** Wired two more `KindEvaluator`s in core-api, reusing DI services: **checkpoint** (`ProposePhaseAdvanceUseCase`, non-mutating → `CheckpointEvaluationResult`) and **topology** (`TopologyCatalogService` → `TopologyEvaluationResult`, conformance + recommendations). `POST /v1/evaluate` with `kinds:['checkpoint'|'topology']` now returns those sub-results. `GT-379` still `IN-PROGRESS`: **architecture + checkpoint + topology done**; `blueprint` (needs blueprint-entity loading via repo) and `deployment` (no backing service) remain follow-ups. core-api **112/112** (pre-existing satellites suite still red). Commit `c61464e8`.
 
+**Wave 2026-06-28 (GT-376 — code renames, R0):** Renamed the Core value object `GateDecision` → `CoreGateVerdict` (`makeCoreGateVerdict`), freeing `GateDecision` for the Tracker's canonical binding decision (ADR-0101). Deprecated `GateDecision`/`makeGateDecision` aliases kept (non-breaking). `migrateLegacyGateDecision` maps legacy `'WAIVED'` → `Verdict.WAIVE` (now tested). `GT-376` stays `IN-PROGRESS` — R0 **code** debt closed; ADR-0101 formal acceptance remains an Architecture Board step. core-domain **657/657**. Commit `5b705d8f`.
+
 **Ordering:** one table, ordered by status (pending then completed), then criticality (`P0` → `P1` → `P2` → `P3`), then complexity (`XS` → `S` → `M` → `L` → `XL`). `GT-*` IDs link to the [Gap Reference Catalog](./gap-reference-catalog.md); `MT-A*` IDs link to the supporting [Multi-Topology implementation plan](./multi-topology-reference-corpus-implementation-plan.md).
 
 ---

@@ -16,7 +16,16 @@ export { fromLegacyGateDecision };
  */
 export type LegacyGateVerdict = 'PASS' | 'FAIL' | 'WAIVED';
 
-export interface GateDecision {
+/**
+ * Core gate verdict value object (GT-376 / ADR-0101).
+ *
+ * Renamed from `GateDecision` to `CoreGateVerdict` to free the `GateDecision`
+ * name for the Tracker's canonical, binding gate decision. The Core EVALUATES
+ * and produces this technical verdict; the Tracker DECIDES and persists the
+ * canonical GateDecision. `violations` here is `string[]` (codes), distinct from
+ * `GateEvidence.violations: GateViolation[]`.
+ */
+export interface CoreGateVerdict {
   readonly gateId: string;
   readonly phase: number;
   readonly verdict: Verdict;
@@ -27,13 +36,16 @@ export interface GateDecision {
   readonly waiverRef?: string;
 }
 
-export function makeGateDecision(
+/** @deprecated Renamed to `CoreGateVerdict` (GT-376/ADR-0101). Kept for backward compatibility. */
+export type GateDecision = CoreGateVerdict;
+
+export function makeCoreGateVerdict(
   gateId: string,
   phase: number,
   score: number,
   violations: string[],
   decidedBy = 'system',
-): GateDecision {
+): CoreGateVerdict {
   const verdict: Verdict = violations.length === 0 && score >= 80 ? Verdict.PASS : Verdict.FAIL;
   return {
     gateId,
@@ -46,12 +58,15 @@ export function makeGateDecision(
   };
 }
 
+/** @deprecated Renamed to `makeCoreGateVerdict` (GT-376/ADR-0101). */
+export const makeGateDecision = makeCoreGateVerdict;
+
 /**
- * Migrate a legacy GateDecision (with 'PASS'|'FAIL'|'WAIVED' verdict string)
- * to one with the canonical `Verdict` enum value.
+ * Migrate a legacy gate verdict (with 'PASS'|'FAIL'|'WAIVED' verdict string)
+ * to one with the canonical `Verdict` enum value. 'WAIVED' → `Verdict.WAIVE`.
  */
 export function migrateLegacyGateDecision(
-  legacy: Omit<GateDecision, 'verdict'> & { verdict: LegacyGateVerdict },
-): GateDecision {
+  legacy: Omit<CoreGateVerdict, 'verdict'> & { verdict: LegacyGateVerdict },
+): CoreGateVerdict {
   return { ...legacy, verdict: fromLegacyGateDecision(legacy.verdict) };
 }

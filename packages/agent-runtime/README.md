@@ -52,7 +52,32 @@ The package is hexagonal: `domain` (contracts, ports, tokens), `application`
 
 Defaults are in-memory/stub. Real adapters: `HarnessProcessAdapter` (reads
 `.harness/manifest.yaml`), `OpaCliPolicyValidationAdapter`,
-`HttpTrackerTraceAdapter`, and `HermesAgentAdapter` (optional engine).
+`HttpTrackerTraceAdapter`, `InProcessCoreEvaluationAdapter` /
+`HttpCoreEvaluationAdapter` (run the real stateless Core, in-process or over the
+Core API), `FileSchedulerAdapter` / `FileMemoryAdapter` (durable, file-backed),
+and `HermesAgentAdapter` (optional engine).
+
+## Versioning & contract stability
+
+This package follows **SemVer**. The public surface is the three subpath exports
+declared in `package.json` — `.` (main), `./ports`, and `./adapters`. The
+`public-surface.spec.ts` guard freezes the runtime value surface of `.` and
+`./adapters`, so adding, removing or renaming a public export is a deliberate,
+reviewed change.
+
+- **`./ports`** is a type-only surface (port interfaces + canonical contract
+  types). It is frozen at the type level — the consumer's `tsc` is the guard.
+- **`schemaVersion`** on `EvaluationResult` (and any other versioned contract)
+  is independent of the package version: it is bumped **only** on an
+  incompatible change to that contract's shape, never for additive fields.
+- **Deprecation:** a public export is marked `@deprecated` (naming its
+  replacement) for at least one minor before removal; a removal or rename ships
+  in a **major**, additive exports ship in a **minor**.
+
+> **Pre-1.0 note:** the package stays on `0.x` while the default Core-evaluation
+> adapter is a stub (see `GT-384`). It will not be tagged `1.0.0` until the real
+> Core adapter and these guarantees are in force over a non-simulated Core; `0.x`
+> minors may still adjust the surface.
 
 ## Scripts
 

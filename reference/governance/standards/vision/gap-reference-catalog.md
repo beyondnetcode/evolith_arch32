@@ -196,6 +196,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Purpose:** `1.0.0` is a promise that the public API will not break without a major. Before making it, freeze the three export entrypoints (`.`, `./ports`, `./adapters`) and the canonical contract types, and define how `schemaVersion` (the runtime currently emits `1.0.0`) evolves plus a deprecation/compat policy. The bump must follow `GT-384` — there is no stable contract while the Core port is a simulator.
 - **Impact:** `packages/agent-runtime/package.json` (`exports`, `version`); a CONTRACT/compat doc.
 - **Complexity:** S
+- **Status (2026-06-30, IN-PROGRESS):** `public-surface.spec.ts` guard freezes the runtime value surface of `.` + `./adapters` (23 frozen exports; `./ports` is type-only, frozen by consumers' `tsc`). "Versioning & contract stability" policy added to the README (EN+ES): SemVer, `schemaVersion` incompatible-only evolution, one-minor `@deprecated` before a major. jest 30/30. Version intentionally NOT bumped (stays `0.1.0`). Remaining: the `0.1.0`→`1.0.0` bump, gated on closing `GT-384`.
 - **Acceptance criteria:**
   - [ ] Export surface and public types declared stable; deprecation/compat + `schemaVersion` evolution policy documented.
   - [ ] `version` bumped `0.1.0`→`1.0.0` only after `GT-384` is `DONE`.

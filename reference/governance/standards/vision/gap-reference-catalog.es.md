@@ -196,6 +196,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Propósito:** `1.0.0` es una promesa de que la API pública no romperá sin un major. Antes de hacerla, congelar los tres entrypoints de export (`.`, `./ports`, `./adapters`) y los tipos de contrato canónicos, y definir cómo evoluciona `schemaVersion` (el runtime hoy emite `1.0.0`) más una política de deprecación/compatibilidad. El bump debe seguir a `GT-384` — no hay contrato estable mientras el puerto del Core sea un simulador.
 - **Impacto:** `packages/agent-runtime/package.json` (`exports`, `version`); un doc de CONTRATO/compatibilidad.
 - **Complejidad:** S
+- **Estado (2026-06-30, EN-PROGRESO):** el guardián `public-surface.spec.ts` congela la superficie de valores en runtime de `.` + `./adapters` (23 exports congelados; `./ports` es solo-tipos, congelado por el `tsc` del consumidor). Política "Versionado y estabilidad de contrato" añadida al README (EN+ES): SemVer, evolución de `schemaVersion` solo-incompatible, `@deprecated` un minor antes de un major. jest 30/30. Versión NO subida a propósito (sigue `0.1.0`). Falta: el bump `0.1.0`→`1.0.0`, gated por cerrar `GT-384`.
 - **Criterios de aceptación:**
   - [ ] Superficie de exports y tipos públicos declarados estables; política de deprecación/compatibilidad + evolución de `schemaVersion` documentada.
   - [ ] `version` subida `0.1.0`→`1.0.0` solo tras que `GT-384` esté `COMPLETADO`.

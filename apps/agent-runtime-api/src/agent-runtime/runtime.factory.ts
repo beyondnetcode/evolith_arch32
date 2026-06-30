@@ -10,6 +10,7 @@ import {
   HarnessProcessAdapter,
   OpaCliPolicyValidationAdapter,
   HttpTrackerTraceAdapter,
+  HttpCoreEvaluationAdapter,
   type AgentRuntimeBundle,
   type AgentRuntimeOverrides,
 } from '@evolith/agent-runtime';
@@ -45,6 +46,21 @@ export function createRuntimeFromEnv(env: NodeJS.ProcessEnv = process.env): Agen
         policyDir: env.AGENT_RUNTIME_OPA_POLICY_DIR,
         cwd: env.AGENT_RUNTIME_WORKSPACE_ROOT ?? undefined,
       }),
+    };
+  }
+
+  // Core evaluation — call the real stateless Core over HTTP (Core API
+  // `/api/v1/evaluate`) instead of the deterministic stub. Without this the
+  // runtime governs over a simulated Core (see GT-384).
+  const coreEndpoint = env.AGENT_RUNTIME_CORE_ENDPOINT;
+  if (coreEndpoint) {
+    const headers: Record<string, string> = {};
+    if (env.AGENT_RUNTIME_CORE_TOKEN) {
+      headers.authorization = `Bearer ${env.AGENT_RUNTIME_CORE_TOKEN}`;
+    }
+    overrides = {
+      ...overrides,
+      coreEvaluation: new HttpCoreEvaluationAdapter({ endpoint: coreEndpoint, headers }),
     };
   }
 

@@ -8,6 +8,10 @@ export type { HarnessCapabilityRuntime } from './harness/harness-manifest';
 // Core evaluation
 export { StubCoreEvaluationAdapter } from './core/stub-core-evaluation.adapter';
 export type { StubCoreOptions } from './core/stub-core-evaluation.adapter';
+export { InProcessCoreEvaluationAdapter } from './core/in-process-core-evaluation.adapter';
+export type { CoreEvaluationOrchestrator } from './core/in-process-core-evaluation.adapter';
+export { HttpCoreEvaluationAdapter } from './core/http-core-evaluation.adapter';
+export type { HttpCoreOptions } from './core/http-core-evaluation.adapter';
 
 // Policy / OPA
 export { StubPolicyValidationAdapter, denyOnFailedEvaluation } from './policy/stub-policy-validation.adapter';

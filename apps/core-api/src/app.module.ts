@@ -15,6 +15,7 @@ import { CoreDomainModule } from './core-domain.module';
 import { CorrelationIdMiddleware } from './infrastructure/middleware/correlation-id.middleware';
 import { validateEnv } from './infrastructure/config/env.validation';
 import { AuditThrottlerGuard } from './infrastructure/guards/audit-throttler.guard';
+import { ApiKeyGuard } from './infrastructure/guards/api-key.guard';
 import { MetricsService } from './infrastructure/metrics/metrics.service';
 import { CircuitBreakerService } from './infrastructure/resilience/circuit-breaker.service';
 import { CoreReferenceQueryService } from './application/services/core-reference-query.service';
@@ -148,6 +149,13 @@ import { CacheMetricsService } from './infrastructure/cache/cache-metrics.servic
     {
       provide: APP_GUARD,
       useClass: AuditThrottlerGuard,
+    },
+    {
+      // Closes ARCH item 26: API-key auth on CORE-API. Opt-in (enforced only
+      // when EVOLITH_API_KEY is set) so enabling it never breaks prod in one
+      // deploy. @Public() routes (health probes) bypass it.
+      provide: APP_GUARD,
+      useClass: ApiKeyGuard,
     },
   ],
 })

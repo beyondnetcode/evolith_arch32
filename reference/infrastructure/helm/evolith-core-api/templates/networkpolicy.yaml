@@ -1,0 +1,19 @@
+{{- if .Values.networkPolicy.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "evolith-core-api.fullname" . }}
+  labels:
+    app: {{ include "evolith-core-api.name" . }}
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ include "evolith-core-api.name" . }}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    {{- toYaml .Values.networkPolicy.ingressRules | nindent 4 }}
+  egress:
+    {{- toYaml .Values.networkPolicy.egressRules | nindent 4 }}
+{{- end }}

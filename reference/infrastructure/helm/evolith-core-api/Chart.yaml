@@ -1,0 +1,6 @@
+apiVersion: v2
+name: evolith-core-api
+description: A Helm chart for the Evolith CORE-API — the official stateless REST evaluation layer (ADR-0074)
+type: application
+version: 0.1.0
+appVersion: "0.0.2"

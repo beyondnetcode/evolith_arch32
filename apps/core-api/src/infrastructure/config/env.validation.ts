@@ -11,6 +11,11 @@ export const envSchema = z.object({
   REDIS_PORT: z.coerce.number().default(6379),
   REDIS_PASSWORD: z.string().optional(),
   SWAGGER_ENABLED: z.string().optional(),
+  // API-key auth (ApiKeyGuard). When set, all non-public routes require this key
+  // via `Authorization: Bearer` or `x-api-key`. When unset, the API is open
+  // (migration-safe) unless CORE_API_AUTH_REQUIRED=true forces fail-closed.
+  EVOLITH_API_KEY: z.string().optional(),
+  CORE_API_AUTH_REQUIRED: z.string().optional(),
 });
 
 export type EnvConfig = z.infer<typeof envSchema>;

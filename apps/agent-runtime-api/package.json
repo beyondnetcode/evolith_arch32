@@ -1,0 +1,28 @@
+{
+  "name": "agent-runtime-api",
+  "version": "0.1.0",
+  "private": true,
+  "description": "HTTP service that exposes the Evolith Agent Runtime (deployed at evolithruntime.beyondnet.cloud)",
+  "license": "MIT",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.prod.json",
+    "start": "node dist/main",
+    "start:dev": "node --watch dist/main",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@evolith/agent-runtime": "*",
+    "@nestjs/common": "11.1.27",
+    "@nestjs/config": "4.0.4",
+    "@nestjs/core": "11.1.27",
+    "@nestjs/platform-express": "11.1.27",
+    "helmet": "8.2.0",
+    "reflect-metadata": "0.2.2",
+    "rxjs": "7.8.2"
+  },
+  "devDependencies": {
+    "@types/node": "26.0.0",
+    "typescript": "6.0.3"
+  }
+}

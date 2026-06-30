@@ -1,0 +1,148 @@
+replicaCount: 2
+
+image:
+  repository: ghcr.io/beyondnetcode/evolith-agent-runtime
+  pullPolicy: IfNotPresent
+  tag: "0.1.0"
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 3000
+
+ingressRoute:
+  enabled: true
+  entryPoints:
+    - web
+    - websecure
+  host: evolithruntime.beyondnet.cloud
+  pathPrefix: /
+
+# API-key auth. The runtime fails closed in production when no key is present,
+# so a secret is expected. Reference an existing secret (do NOT inline keys here).
+#   kubectl create secret generic agent-runtime-auth \
+#     --from-literal=AGENT_RUNTIME_API_KEY=<key>
+auth:
+  existingSecretName: agent-runtime-auth
+  apiKeyKey: AGENT_RUNTIME_API_KEY
+
+# Extra environment for the runtime's adapters. The image bundles the corpus at
+# /repo/corpus, so the real .harness / OPA adapters can be enabled here.
+extraEnv:
+  NODE_ENV: production
+  PORT: "3000"
+  # AGENT_RUNTIME_HARNESS_ROOT: /repo/corpus/.harness
+  # AGENT_RUNTIME_OPA_ENABLED: "true"
+  # AGENT_RUNTIME_OPA_PATH: /repo/corpus/.harness/bin/opa
+  # AGENT_RUNTIME_OPA_POLICY_DIR: /repo/corpus/rulesets/opa
+  # AGENT_RUNTIME_TRACKER_ENDPOINT: https://tracker.beyondnet.cloud/api/v1/traces
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1001
+  runAsGroup: 1001
+  fsGroup: 1001
+  seccompProfile:
+    type: RuntimeDefault
+
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  privileged: false
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1001
+  capabilities:
+    drop:
+      - ALL
+
+# The runtime exposes a single combined /health endpoint (liveness + readiness).
+probes:
+  liveness:
+    enabled: true
+    path: /health
+    port: 3000
+    initialDelaySeconds: 10
+    periodSeconds: 15
+    timeoutSeconds: 5
+    failureThreshold: 3
+    successThreshold: 1
+  readiness:
+    enabled: true
+    path: /health
+    port: 3000
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 3
+    failureThreshold: 3
+    successThreshold: 1
+  startup:
+    enabled: true
+    path: /health
+    port: 3000
+    initialDelaySeconds: 0
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 30
+    successThreshold: 1
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - evolith-agent-runtime
+          topologyKey: kubernetes.io/hostname
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+horizontalPodAutoscaler:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 75
+  targetMemoryUtilizationPercentage: 80
+
+networkPolicy:
+  enabled: true
+  ingressRules:
+    - from:
+        - namespaceSelector: {}
+      ports:
+        - port: 3000
+          protocol: TCP
+    - from:
+        - podSelector:
+            matchLabels:
+              app: traefik
+      ports:
+        - port: 3000
+          protocol: TCP
+  egressRules:
+    - to:
+        - namespaceSelector: {}
+      ports:
+        - port: 53
+          protocol: UDP
+        - port: 443
+          protocol: TCP
+        - port: 80
+          protocol: TCP

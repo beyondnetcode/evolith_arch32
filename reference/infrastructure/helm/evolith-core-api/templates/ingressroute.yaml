@@ -1,0 +1,17 @@
+{{- if .Values.ingressRoute.enabled -}}
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ include "evolith-core-api.fullname" . }}
+  labels:
+    app: {{ include "evolith-core-api.name" . }}
+spec:
+  entryPoints:
+{{ toYaml .Values.ingressRoute.entryPoints | indent 4 }}
+  routes:
+    - match: Host(`{{ .Values.ingressRoute.host }}`) && PathPrefix(`{{ .Values.ingressRoute.pathPrefix }}`)
+      kind: Rule
+      services:
+        - name: {{ include "evolith-core-api.fullname" . }}
+          port: {{ .Values.service.port }}
+{{- end }}

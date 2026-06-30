@@ -1,0 +1,121 @@
+# ──────────────────────────────────────────────────────────────────────────
+# .harness capability manifest
+#
+# This file makes `.harness` DISCOVERABLE as an official capability provider for
+# the Evolith Agent Runtime (ADR-0102, design rule #4). `.harness` remains the
+# versioned, auditable, governed mechanism that ACTUALLY runs scripts,
+# playbooks, validators, audits and skills — the runtime only discovers what is
+# declared here and executes it through `IHarnessPort`
+# (packages/agent-runtime: HarnessProcessAdapter).
+#
+# Each capability declares its CONTRACT and its GOVERNANCE POSTURE so the runtime
+# can enforce approval / policy / trazability uniformly:
+#   name            unique capability id (referenced by a SkillDescriptor)
+#   type            playbook | validator | audit | script | skill | adapter
+#   description     human summary
+#   entry           path (repo-relative) the runner executes
+#   runner          node | opa | shell  (HOW the entry is launched)
+#   inputs          declared arguments (informational/loose schema)
+#   outputs         declared outputs the capability emits
+#   permissions     scopes required to run
+#   requiresApproval whether a human must approve before execution (HITL)
+#   emitsTrace      whether execution publishes a Tracker trace event
+#   requiresPolicy  whether the result must pass OPA/ruleset validation
+#   policyRef       (optional) the OPA package to evaluate against
+#
+# Tenant/product/initiative state is NEVER embedded here. The runtime passes it
+# per-execution via env (AGENT_RUNTIME_CONTEXT) so the same capability serves
+# every tenant (design rule #8).
+# ──────────────────────────────────────────────────────────────────────────
+version: 1
+
+capabilities:
+  - name: sdlc-phase-gate-validator
+    type: validator
+    description: >-
+      Validate a SDLC phase/gate by checking required vs presented artifacts and
+      that every required artifact has at least one associated rule.
+    entry: .harness/playbooks/sdlc-phase-gate-validator.mjs
+    runner: node
+    inputs:
+      phase: { type: string, description: "Canonical SDLC phase id (e.g. discovery)" }
+      gate: { type: string, description: "Gate id (e.g. prd_readiness)" }
+      requiredArtifacts: { type: array, items: { type: string } }
+      presentArtifacts: { type: array, items: { type: string } }
+    outputs:
+      status: { type: string, enum: [passed, blocked, warning, error] }
+      missing_artifacts: { type: array, items: { type: string } }
+      findings: { type: array }
+    permissions: [read:repo, run:validator]
+    requiresApproval: false
+    emitsTrace: true
+    requiresPolicy: true
+    policyRef: evolith.gates.discovery
+
+  - name: adr-architecture-validator
+    type: validator
+    description: Validate an ADR against architecture rules and freshness policy.
+    entry: .harness/scripts/skills/adr-freshness-monitor.mjs
+    runner: node
+    inputs:
+      adr: { type: string, description: "ADR id or path (e.g. ADR-0102)" }
+    outputs:
+      status: { type: string }
+      findings: { type: array }
+    permissions: [read:repo, run:validator]
+    requiresApproval: false
+    emitsTrace: true
+    requiresPolicy: true
+    policyRef: evolith.architecture.adr
+
+  - name: opa-audit
+    type: audit
+    description: Run an OPA/ruleset audit using the bundled OPA binary.
+    entry: .harness/bin/opa
+    runner: opa
+    inputs:
+      argv: { type: array, items: { type: string }, description: "Raw opa subcommand args" }
+    outputs:
+      status: { type: string }
+      findings: { type: array }
+    permissions: [read:repo, run:audit]
+    requiresApproval: false
+    emitsTrace: true
+    requiresPolicy: false # the audit IS the policy engine
+
+  - name: topology-compliance-audit
+    type: audit
+    description: Audit repository compliance against declared topology manifests.
+    entry: .harness/playbooks/topology-compliance-audit.mjs
+    runner: node
+    outputs:
+      status: { type: string }
+      findings: { type: array }
+    permissions: [read:repo, run:audit]
+    requiresApproval: false
+    emitsTrace: true
+    requiresPolicy: false
+
+  - name: requirements-traceability-mapper
+    type: skill
+    description: Map requirements to artifacts/evidence to surface traceability gaps.
+    entry: .harness/scripts/skills/requirements-traceability-mapper.mjs
+    runner: node
+    outputs:
+      status: { type: string }
+      findings: { type: array }
+    permissions: [read:repo]
+    requiresApproval: false
+    emitsTrace: true
+    requiresPolicy: false
+
+  - name: emit-trace
+    type: script
+    description: >-
+      No-op placeholder; the runtime itself publishes Tracker trace events. Kept
+      so a 'publish_trace' intent resolves to a governed, declared capability.
+    runner: node
+    permissions: [write:trace]
+    requiresApproval: false
+    emitsTrace: true
+    requiresPolicy: false

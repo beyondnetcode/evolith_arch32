@@ -8,8 +8,15 @@ Este directorio contiene charts Helm para desplegar componentes de la aplicació
 
 | Chart | Descripción |
 | :--- | :--- |
-| `evolith-bff/` | Chart Helm para el servicio BFF API |
-| `evolith-mcp/` | Chart Helm para el servidor MCP |
+| `evolith-core-api/` | Chart Helm para CORE-API (ADR-0074); `evolith.beyondnet.cloud`, secret de API key, OPA in-process (sin sidecar) |
+| `evolith-mcp/` | Chart Helm para el servidor MCP; `mcpevolith.beyondnet.cloud`, sidecar OPA |
+| `evolith-agent-runtime/` | Chart Helm para el servicio Agent Runtime; `evolithruntime.beyondnet.cloud`, secret de API key, OPA de la imagen |
+
+> **Nota:** la antigua plantilla genérica `evolith-bff` se renombró a
+> `evolith-core-api` (apuntando a la imagen real de `apps/core-api`). Todos los
+> charts están alineados al dominio `beyondnet.cloud` y al registry
+> `ghcr.io/beyondnetcode/*`. Ver [Topología de despliegue](../deployment-topology.es.md)
+> para el mapa canónico de servicios.
 
 ## Configuración del Sidecar OPA
 

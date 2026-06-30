@@ -1,0 +1,42 @@
+// Harness
+export { InMemoryHarnessAdapter } from './harness/in-memory-harness.adapter';
+export { HarnessProcessAdapter } from './harness/harness-process.adapter';
+export type { HarnessProcessOptions } from './harness/harness-process.adapter';
+export { loadManifest, parseManifest } from './harness/harness-manifest';
+export type { HarnessCapabilityRuntime } from './harness/harness-manifest';
+
+// Core evaluation
+export { StubCoreEvaluationAdapter } from './core/stub-core-evaluation.adapter';
+export type { StubCoreOptions } from './core/stub-core-evaluation.adapter';
+
+// Policy / OPA
+export { StubPolicyValidationAdapter, denyOnFailedEvaluation } from './policy/stub-policy-validation.adapter';
+export type { PolicyDecider } from './policy/stub-policy-validation.adapter';
+export { OpaCliPolicyValidationAdapter } from './policy/opa-cli-policy-validation.adapter';
+export type { OpaCliOptions } from './policy/opa-cli-policy-validation.adapter';
+
+// Tracker
+export { InMemoryTrackerTraceAdapter } from './tracker/in-memory-tracker-trace.adapter';
+export { HttpTrackerTraceAdapter } from './tracker/http-tracker-trace.adapter';
+export type { HttpTrackerOptions } from './tracker/http-tracker-trace.adapter';
+
+// Memory
+export { InMemoryMemoryAdapter } from './memory/in-memory-memory.adapter';
+
+// Skills
+export { LocalSkillRegistryAdapter } from './skills/local-skill-registry.adapter';
+export { DEFAULT_SKILLS } from './skills/default-skills';
+
+// Gateway
+export { CliCommunicationGatewayAdapter } from './gateway/cli-communication-gateway.adapter';
+
+// Scheduler
+export { InMemorySchedulerAdapter } from './scheduler/in-memory-scheduler.adapter';
+
+// Approval
+export { AutoApprovalAdapter, DenyByDefaultApprovalAdapter } from './approval/policy-approval.adapter';
+
+// Engine (Hermes is OPTIONAL and lives only here, never in the domain)
+export { StubAgentEngineAdapter } from './engine/stub-agent-engine.adapter';
+export { HermesAgentAdapter } from './engine/hermes-agent.adapter';
+export type { HermesClient, HermesAdapterOptions } from './engine/hermes-agent.adapter';

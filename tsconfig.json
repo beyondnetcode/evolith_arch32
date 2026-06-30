@@ -5,9 +5,11 @@
     { "path": "./packages/core-domain" },
     { "path": "./packages/infra-providers" },
     { "path": "./packages/core" },
+    { "path": "./packages/agent-runtime" },
     { "path": "./packages/mcp-server" },
     { "path": "./packages/sdk-client" },
     { "path": "./apps/core-api" },
+    { "path": "./apps/agent-runtime-api" },
     { "path": "./sdk/cli" }
   ]
 }

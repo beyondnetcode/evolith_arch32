@@ -170,6 +170,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 - **Propósito:** `InMemorySchedulerAdapter` no arranca timers y pierde las tareas al reiniciar; `InMemoryMemoryAdapter` es volátil. Producción necesita un adaptador durable cron/cola tras `ISchedulerPort` y un almacén persistente tras `IMemoryPort`, conservando las versiones in-memory como default de test.
 - **Impacto:** `packages/agent-runtime/src/adapters/{scheduler,memory}/*`.
 - **Complejidad:** M
+- **Estado (2026-06-30, EN-PROGRESO):** entregados `FileSchedulerAdapter` + `FileMemoryAdapter` — respaldados por archivo JSON, así que tareas/memoria sobreviven un reinicio (una instancia nueva sobre el mismo archivo reproduce lo escrito antes). Backend filesystem cero-infra; memoria durable cableada por env vía `AGENT_RUNTIME_STATE_DIR`; el in-memory sigue como default de test. Verificado jest 28/28. Falta: una cola/cron en red o store Redis/vector, y scheduling real por expresión cron (el scheduler de archivo, como el in-memory, trata las cron strings como no-vencidas).
 - **Criterios de aceptación:**
   - [ ] Las tareas programadas sobreviven a un reinicio del proceso y se reproducen cuando vencen.
   - [ ] Las escrituras de memoria persisten entre ejecuciones tras `IMemoryPort`.

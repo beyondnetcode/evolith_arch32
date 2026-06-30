@@ -26,6 +26,8 @@ export type { HttpTrackerOptions } from './tracker/http-tracker-trace.adapter';
 
 // Memory
 export { InMemoryMemoryAdapter } from './memory/in-memory-memory.adapter';
+export { FileMemoryAdapter } from './memory/file-memory.adapter';
+export type { FileMemoryOptions } from './memory/file-memory.adapter';
 
 // Skills
 export { LocalSkillRegistryAdapter } from './skills/local-skill-registry.adapter';
@@ -36,6 +38,8 @@ export { CliCommunicationGatewayAdapter } from './gateway/cli-communication-gate
 
 // Scheduler
 export { InMemorySchedulerAdapter } from './scheduler/in-memory-scheduler.adapter';
+export { FileSchedulerAdapter } from './scheduler/file-scheduler.adapter';
+export type { FileSchedulerOptions } from './scheduler/file-scheduler.adapter';
 
 // Approval
 export { AutoApprovalAdapter, DenyByDefaultApprovalAdapter } from './approval/policy-approval.adapter';

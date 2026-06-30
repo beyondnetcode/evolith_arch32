@@ -170,6 +170,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Purpose:** `InMemorySchedulerAdapter` starts no timers and loses tasks on restart; `InMemoryMemoryAdapter` is volatile. Production needs a durable cron/queue adapter behind `ISchedulerPort` and a persistent store behind `IMemoryPort`, with the in-memory versions retained as the test default.
 - **Impact:** `packages/agent-runtime/src/adapters/{scheduler,memory}/*`.
 - **Complexity:** M
+- **Status (2026-06-30, IN-PROGRESS):** `FileSchedulerAdapter` + `FileMemoryAdapter` shipped — JSON-file-backed, so tasks/memory survive a restart (a fresh instance on the same file replays prior writes). Zero-infra filesystem backend chosen; durable memory env-wired via `AGENT_RUNTIME_STATE_DIR`; in-memory stays the test default. Verified jest 28/28. Remaining: a networked queue/cron or Redis/vector store, and true cron-expression scheduling (the file scheduler, like the in-memory one, treats cron strings as not-due).
 - **Acceptance criteria:**
   - [ ] Scheduled tasks survive a process restart and are replayed when due.
   - [ ] Memory writes persist across runs behind `IMemoryPort`.

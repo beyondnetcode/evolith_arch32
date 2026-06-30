@@ -5,7 +5,7 @@
 
 ## 1. Executive Summary
 
-The .NET ecosystem (.NET 8+) has established **Minimal APIs** not as a simplistic prototyping tool, but as the **canonical, high-performance foundation** for modern, cloud-native architectures. While Controllers remain supported for backward compatibility, Minimal APIs are technically superior for new enterprise workloads, particularly those targeting Native AOT, Serverless, and microservices.
+The .NET ecosystem (.NET 8+) has established **Minimal APIs** not as a simplistic prototyping tool, but as the **canonical, high-rendimiento foundation** for modern, cloud-native architectures. While Controllers remain supported for backward compatibility, Minimal APIs are technically superior for new enterprise workloads, particularly those targeting Native AOT, Serverless, and microservices.
 
 ---
 
@@ -17,7 +17,7 @@ The .NET ecosystem (.NET 8+) has established **Minimal APIs** not as a simplisti
 | **Throughput & Memory** | Extremely lightweight. Direct routing table. | High overhead due to Controller instantiation, Filters & Model binding. | Minimal APIs save 15-30% overhead under high load. |
 | **Startup Time (Cold Start)** | sub-100ms (Near zero reflection). | Higher due to assembly scanning for controllers. | Essential for serverless scaling. |
 | **Security** | Seamless integration with ASP.NET Core Auth & Endpoints. | Requires MVC-specific Filter lifecycle. | Minimal APIs are simpler but require middleware-based global rules. |
-| **Observability** | Fully integrated with OpenTelemetry & Activity API. | Fully integrated. | Parity. |
+| **Observabilidad** | Fully integrated with OpenTelemetry & Activity API. | Fully integrated. | Parity. |
 | **Versionment** | Supported via `Microsoft.AspNetCore.OpenApi` / `Asp.Versioning.Http`. | Native attribute routing. | Parity, though syntax differs. |
 
 ---
@@ -33,7 +33,7 @@ The .NET ecosystem (.NET 8+) has established **Minimal APIs** not as a simplisti
 - **Controllers**: Enforce folder-level splitting (Controllers vs Models vs Handlers), hindering feature encapsulation.
 
 ### Modular Monoliths & Multi-Team Scale
-- **Risk**: Without strict governance, `Program.cs` becomes a massive anti-pattern.
+- **Risk**: Without strict governance, `Program.cs` becomes a massive anti-patrón.
 - **Mitigation**: Adopt an "Endpoint Mapping" standard (e.g., `IEndpointRouteBuilder` extensions or libraries like **FastEndpoints**) to separate boundaries per module.
 
 ---
@@ -43,7 +43,7 @@ The .NET ecosystem (.NET 8+) has established **Minimal APIs** not as a simplisti
 ### Where Minimal APIs Bring Maximum Value
 1. **Cloud-Native / Containerized Apps**: High-scale deployments requiring fast cold starts and minimal memory footprint.
 2. **CQRS & MediatR implementations**: Direct 1-to-1 endpoint-to-request mapping.
-3. **Microservices & BFF (Backend-for-Frontend)**: Small, focused, fast-evolving codebases.
+3. **Microservicios & BFF (Backend-for-Frontend)**: Small, focused, fast-evolving codebases.
 
 ### Where Controllers Remain Tolerable
 1. **Legacy Migration (Brownfield)**: Heavy dependency on legacy ASP.NET MVC custom action filters/binding logic.
@@ -53,14 +53,14 @@ The .NET ecosystem (.NET 8+) has established **Minimal APIs** not as a simplisti
 
 ## 5. Operational and Organizational Impact
 - **Developer Experience (DX)**: Steeper initial learning curve for teams accustomed to structured folder layouts. Once adopted, it speeds up PR reviews due to localized changes (Vertical Slices).
-- **Testing**: `WebApplicationFactory` provides superior integration testing for Minimal APIs by mocking services at the root level easily.
+- **Testing**: `WebApplicationFactory` provides superior pruebas de Integración for Minimal APIs by mocking services at the root level easily.
 
 ---
 
 ## 6. Strategic Recommendation
 
 **Recommendation: Structured Minimal APIs Strategy**
-Do not build "naked" Minimal APIs directly in `Program.cs`. Enforce an abstraction layer (`ICarter`, standard `MapGroup` extensions, or **FastEndpoints**) to guarantee maintainability, automatic Swagger integration, and clean separation of concerns without reverting to the legacy MVC pipeline.
+Do not build "naked" Minimal APIs directly in `Program.cs`. Enforce an abstraction layer (`ICarter`, standard `MapGroup` extensions, or **FastEndpoints**) to guarantee mantenibilidad, automatic Swagger integration, and clean separation of concerns without reverting to the legacy MVC pipeline.
 
 ---
 [Back to Index](./README.md)

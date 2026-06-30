@@ -8,9 +8,11 @@ import { ConfigService } from '@nestjs/config';
 import type { IFileSystem } from '@evolith/core-domain/domain/interfaces';
 import * as path from 'path';
 import { EnvConfig } from '../../infrastructure/config/env.validation';
+import { Public } from '../../infrastructure/auth/public.decorator';
 
 // version-neutral-justification: liveness/readiness probes are scraped by
 // orchestrators (k8s) that cannot tolerate URI churn between major versions.
+@Public() // probes must be reachable without an API key (ApiKeyGuard bypass)
 @SkipThrottle()
 @Controller({ path: 'health', version: VERSION_NEUTRAL })
 export class HealthController {

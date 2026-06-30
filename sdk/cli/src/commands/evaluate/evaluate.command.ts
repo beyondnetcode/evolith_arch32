@@ -1,9 +1,12 @@
 import * as path from 'path';
+import { Inject } from '@nestjs/common';
 import { Command, Option } from 'nest-commander';
 import { ValidateSatelliteUseCase } from '@evolith/core-domain/application/use-cases/validate-satellite.use-case';
 import { createSuccessEnvelope } from '@evolith/core-domain';
+import type { IFileSystem, ILogger } from '@evolith/core-domain/domain/interfaces';
 import {
   EvaluationOrchestrator,
+  createDefaultKindEvaluators,
   type EvaluationContext,
   type IEvaluationPipeline,
   type IWorkspaceReferenceResolver,
@@ -38,6 +41,8 @@ interface EvaluateCommandOptions {
 export class EvaluateCommand extends BaseEvolithCommand {
   constructor(
     private readonly useCase: ValidateSatelliteUseCase,
+    @Inject('IFileSystem') private readonly fileSystem: IFileSystem,
+    @Inject('ILogger') private readonly coreLogger: ILogger,
     promptService: PromptService,
     configService?: ConfigService,
   ) {
@@ -69,7 +74,15 @@ export class EvaluateCommand extends BaseEvolithCommand {
       }),
     };
 
-    const orchestrator = new EvaluationOrchestrator(pipeline, resolver, CORE_VERSION);
+    // BR-008 parity: register the same KindEvaluator set as core-api so non-core
+    // kinds (architecture/checkpoint/topology/blueprint/deployment) actually evaluate
+    // here instead of silently returning nothing.
+    const evaluators = createDefaultKindEvaluators({
+      fileSystem: this.fileSystem,
+      logger: this.coreLogger,
+      resolveCorePath: () => options?.core || this.profile.core || process.cwd(),
+    });
+    const orchestrator = new EvaluationOrchestrator(pipeline, resolver, CORE_VERSION, evaluators);
     const result = await orchestrator.evaluate(ctx);
 
     const envelope = createSuccessEnvelope(result, {

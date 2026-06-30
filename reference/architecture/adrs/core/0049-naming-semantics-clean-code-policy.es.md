@@ -2,7 +2,7 @@
 
 ## 1. Metadata
 * **ADR ID:** 0049
-* **Título:** Estándares de Semántica y Nomenclatura Clean Code (E2E y Global)
+* **Título:** Estándares de Semántica y Nomenclatura Código Limpio (E2E y Global)
 * **Estado:** Aprobado (Propuesto)
 * **Autores:** Oficina de Arquitectura Enterprise
 * **Revisores:** Junta Arquitectónica Corporativa, Oficina del CTO
@@ -29,7 +29,7 @@ La falta de una política global y unificada de nomenclatura genera los siguient
 ---
 
 ## 3. Decisión Estratégica
-Se impone el cumplimiento de los estándares de **Clean Code** para toda la nomenclatura y semántica en el ciclo de vida de desarrollo (E2E).
+Se impone el cumplimiento de los estándares de **Código Limpio** para toda la nomenclatura y semántica en el ciclo de vida de desarrollo (E2E).
 
 ### 3.1. Convenciones Técnicas de Casing
 - **`lowerCamelCase`**: Variables, instancias de objetos, funciones y miembros de interfaces.
@@ -76,7 +76,7 @@ Esta utilización es una **Política Requerida** y se auditará mediante:
 ---
 
 ## 6. Referencias
-- *Clean Code: A Handbook of Agile Software Craftsmanship* (Robert C. Martin).
+- *Código Limpio: A Handbook of Agile Software Craftsmanship* (Robert C. Martin).
 - [Google TypeScript Style Guide](https://google.github.io/styleguide/tsguide.html).
 - [ADR-0003: Estándares Estrictos de TypeScript](../nodejs/0003-strict-typescript-standards.es.md)
 
@@ -90,7 +90,7 @@ Backfill histórico: Abordar la tensión arquitectónica donde context is unavai
 
 ## Opciones Consideradas
 
-- **Seleccionada:** Estándares de Semántica y Nomenclatura Clean Code (E2E y Global)
+- **Seleccionada:** Estándares de Semántica y Nomenclatura Código Limpio (E2E y Global)
 - **Otras:** Desconocido (el registro histórico no enumera explícitamente alternativas rechazadas).
 
 ## Evidencias y Criterios de Evaluación

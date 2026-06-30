@@ -262,7 +262,7 @@ sequenceDiagram
 
 ---
 
-## 6. REST API del Tracker
+## 6. API REST del Tracker
 
 **Base URL:** `https://tracker.evolith.io/api/v1`  
 **Autorización:** Bearer token delegado a UMS y grafo del tenant

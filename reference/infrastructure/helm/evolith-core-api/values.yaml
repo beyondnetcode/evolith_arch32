@@ -1,0 +1,149 @@
+replicaCount: 2
+
+# CORE-API evaluates OPA in-process (opa-wasm) + native engine — NO OPA sidecar
+# (that was the generic `evolith-bff` template's pattern, which did not match how
+# core-api actually runs). The corpus (rulesets/ + reference/) is baked into the
+# image at /app/corpus by apps/core-api/Dockerfile.
+image:
+  repository: ghcr.io/beyondnetcode/evolith-core-api
+  pullPolicy: IfNotPresent
+  tag: "0.0.2"
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 3000
+
+ingressRoute:
+  enabled: true
+  entryPoints:
+    - web
+    - websecure
+  host: evolith.beyondnet.cloud
+  pathPrefix: /
+
+# API-key auth (ApiKeyGuard). Enforced when EVOLITH_API_KEY is present.
+#   kubectl create secret generic core-api-auth \
+#     --from-literal=EVOLITH_API_KEY=<key>
+auth:
+  existingSecretName: core-api-auth
+  apiKeyKey: EVOLITH_API_KEY
+
+extraEnv:
+  NODE_ENV: production
+  PORT: "3000"
+  CORE_PATH: /app/corpus
+  WORKSPACE_ROOT: /app/corpus
+  # REDIS_URL: redis://redis:6379
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 192Mi
+  limits:
+    cpu: "1"
+    memory: 512Mi
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1001
+  runAsGroup: 1001
+  fsGroup: 1001
+  seccompProfile:
+    type: RuntimeDefault
+
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  privileged: false
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1001
+  capabilities:
+    drop:
+      - ALL
+
+# CORE-API exposes a single combined /health endpoint (liveness + readiness).
+probes:
+  liveness:
+    enabled: true
+    path: /health
+    port: 3000
+    initialDelaySeconds: 10
+    periodSeconds: 15
+    timeoutSeconds: 5
+    failureThreshold: 3
+    successThreshold: 1
+  readiness:
+    enabled: true
+    path: /health
+    port: 3000
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 3
+    failureThreshold: 3
+    successThreshold: 1
+  startup:
+    enabled: true
+    path: /health
+    port: 3000
+    initialDelaySeconds: 0
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 30
+    successThreshold: 1
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - evolith-core-api
+          topologyKey: kubernetes.io/hostname
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+horizontalPodAutoscaler:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 75
+  targetMemoryUtilizationPercentage: 80
+
+networkPolicy:
+  enabled: true
+  ingressRules:
+    - from:
+        - namespaceSelector: {}
+      ports:
+        - port: 3000
+          protocol: TCP
+    - from:
+        - podSelector:
+            matchLabels:
+              app: traefik
+      ports:
+        - port: 3000
+          protocol: TCP
+  egressRules:
+    - to:
+        - namespaceSelector: {}
+      ports:
+        - port: 53
+          protocol: UDP
+        - port: 443
+          protocol: TCP
+        - port: 80
+          protocol: TCP
+        - port: 6379
+          protocol: TCP

@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Date
+2026-06-11
+
 ## Context
 Evolith's architectural governance currently relies on JSON files containing rules and a custom TypeScript CLI (`RuleEvaluationEngine`) to parse these files and evaluate the physical workspace of satellite repositories against them. This model is optimal for GitOps and AI agent consumption (via JSON schemas). However, as rules become more complex, writing imperative TypeScript code for every new architectural invariant becomes a bottleneck and restricts interoperability with standard cloud-native policy ecosystems.
 

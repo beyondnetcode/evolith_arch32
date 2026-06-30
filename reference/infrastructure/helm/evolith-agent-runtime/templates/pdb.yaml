@@ -1,0 +1,13 @@
+{{- if .Values.podDisruptionBudget.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "evolith-agent-runtime.fullname" . }}
+  labels:
+    app: {{ include "evolith-agent-runtime.name" . }}
+spec:
+  minAvailable: {{ .Values.podDisruptionBudget.minAvailable }}
+  selector:
+    matchLabels:
+      app: {{ include "evolith-agent-runtime.name" . }}
+{{- end }}

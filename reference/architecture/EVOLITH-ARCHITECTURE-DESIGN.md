@@ -1,9 +1,14 @@
 # Evolith Architecture Design — Corregido y Verificado
 
-**Versión:** 2.1.0  
-**Fecha:** 2026-06-27  
-**Estado:** Aprobado — core-api y mcp-server desplegados y verificados en producción  
+**Versión:** 2.2.0  
+**Fecha:** 2026-06-29  
+**Estado:** Aprobado — core-api y mcp-server desplegados y verificados en producción; Agent Runtime incorporado  
 **Autor:** Alberto Arroyo Raygada · Revisado por Claude Sonnet 4.6
+
+> **Cambios 2.2.0 (2026-06-29):** se incorpora **Evolith Agent Runtime** (capa
+> agéntica desacoplada, dominio `evolithruntime.beyondnet.cloud`) al modelo;
+> diagrama de sistema canónico en Mermaid (§1); `ApiKeyGuard` opt-in en CORE-API
+> (item 26); aclaración del rol stateless de CORE-API frente a tenant/trazabilidad.
 
 ---
 
@@ -29,6 +34,48 @@ Evolith es un framework de gobernanza de software que permite a organizaciones (
                Interfaces humanas
                (Swagger UI, docs generados)
 ```
+
+### 1.1 Diagrama de sistema (canónico)
+
+Vista renderizable de las interfaces, el Core stateless, la capa de gobierno y el
+ejecutor `.harness`. El **Agent Runtime** es la capa agéntica desacoplada: Tracker
+la consume para acciones agentic y consume CORE-API para operaciones
+determinísticas.
+
+```mermaid
+flowchart TB
+  subgraph clients["Consumidores"]
+    tracker["Evolith Tracker (web/UI)"]
+    devs["Devs / CI/CD"]
+    agents["Agentes / LLMs"]
+  end
+  cli["SMART-CLI (@evolith/smart-cli)"]
+  api["CORE-API (evolith.beyondnet.cloud)"]
+  mcp["MCP Server (mcpevolith.beyondnet.cloud)"]
+  runtime["Agent Runtime (evolithruntime.beyondnet.cloud)"]
+  core["Core stateless evaluation (@evolith/core-domain, ADR-0101)"]
+  gov["rulesets / OPA / contracts / tenants"]
+  harness[".harness (ejecutor oficial)"]
+
+  devs --> cli
+  agents --> mcp
+  tracker -->|"agentic"| runtime
+  tracker -->|"determinístico"| api
+  cli --> core
+  api --> core
+  mcp --> core
+  runtime -->|"puertos"| harness
+  runtime -->|"puertos"| core
+  runtime -->|"puertos"| gov
+  core --> gov
+  cli -.->|"local: lee CORE_PATH"| gov
+```
+
+> **Aclaración de altitud (CORE-API stateless, ADR-0101):** CORE-API *evalúa*
+> contra la configuración de tenant que recibe como contexto y *emite*
+> recomendaciones no vinculantes; **no posee ni persiste** tenant, iniciativa ni
+> trazabilidad. Esa propiedad operativa es de **Evolith Tracker**. Por eso CORE-API
+> no expone CRUD de tenant ni un store de trazas: es correcto por diseño.
 
 ---
 
@@ -288,7 +335,20 @@ Core-API
   ├── Lee corpus desde CORE_PATH/rulesets/ y CORE_PATH/reference/
   ├── Evalúa gates via OPA (wasm) + Native Engine
   └── Cachea en Redis; fallback in-memory
+
+Agent Runtime (evolithruntime.beyondnet.cloud)
+  ├── Recibe AgentRuntimeRequest (tenant/producto/iniciativa como contexto)
+  ├── Resuelve skill/tool y aplica aprobación + política (OPA) + trazabilidad
+  ├── Invoca capacidades vía puertos: IHarnessPort (.harness), ICoreEvaluationPort
+  │     (Core), IPolicyValidationPort (OPA), ITrackerTracePort (Tracker)
+  ├── Hermes (u otro motor) sólo como adapter detrás de IAgentEnginePort
+  └── HTTP NestJS (POST /v1/agent/handle, GET /v1/agent/skills) + auth API key
 ```
+
+> **Separación de responsabilidades.** El Agent Runtime *decide y orquesta*;
+> `.harness` *ejecuta*; el Core *gobierna* (evaluación determinística); OPA aplica
+> *política*. El runtime no reemplaza `.harness` ni acopla el Core a Hermes
+> (ver [Agent Runtime](./agent-runtime/README.md) y [ADR-0102](./adrs/core/0102-evolith-agent-runtime.md)).
 
 ---
 
@@ -343,7 +403,7 @@ Nuevos schemas (rulesets/schema/):
 | 23 | Ecosystem | `@evolith/core` no publicado en npm pero importado por MCP server | Publicado `@evolith/core@1.0.0`, `@evolith/mcp-server@1.0.0`, `@evolith/smart-cli@1.1.1` al registry npm | `packages/core/`, `packages/mcp-server/`, `sdk/cli/` | CRÍTICA | MCP server build falla hasta que se publique | Sí Aplicada |
 | 24 | MCP Server | Transporte `sse` en Dockerfile/compose cae a stdio (`McpTransport` = `stdio`\|`http`) → sin servidor HTTP | Cambiado a `--transport http` (StreamableHTTP, que internamente hace SSE). `/health` movido antes de `validateAuth` (probe público). Bind `0.0.0.0` (override `MCP_HTTP_HOST`) para que Traefik enrute | `mcp-server.service.ts`, `Dockerfile`, `docker-compose.yml` | CRÍTICA | El deploy arranca en stdio → healthcheck HTTP falla | Sí Aplicada |
 | 25 | Deploy | Env vars del mcp-server en Coolify en texto plano (no cifradas) → `DecryptException` rompe deploy y UI | Re-cifradas con `encrypt()` (Laravel APP_KEY); `EVOLITH_API_KEY` configurado para auth en producción | Coolify DB `environment_variables` | CRÍTICA | Deploy del mcp-server falla tras build; UI de Coolify da 500 | Sí Aplicada |
-| 26 | Seguridad | Sin auth guard en endpoints del core-api | **Pendiente** — implementar `ApiKeyGuard` + `@UseGuards()` | `app.module.ts` + nueva guard | ALTA | Endpoints mutadores del core-api públicos | ⏳ Pendiente (decisión arq.) |
+| 26 | Seguridad | Sin auth guard en endpoints del core-api | `ApiKeyGuard` global (opt-in vía `EVOLITH_API_KEY`; `@Public()` en health; consistente con mcp-server) | `api-key.guard.ts`, `public.decorator.ts`, `app.module.ts`, `env.validation.ts` | ALTA | Endpoints mutadores del core-api públicos | Sí Aplicada (activar con `EVOLITH_API_KEY`) |
 | 27 | Seguridad | `/metrics` del core-api sin auth (expone métricas internas) | **Pendiente** — network policy o puerto interno separado | `metrics.controller.ts` | ALTA | Prometheus expuesto públicamente | ⏳ Pendiente |
 | 28 | Ecosystem | Machine contracts no incluye MCP, CLI, core-api como consumers | **Pendiente** — actualizar `evolith-machine-contracts.json` | `rulesets/contracts/` | MEDIA | Contrato desactualizado → consumidores fuera de spec | ⏳ Pendiente |
 
@@ -357,6 +417,9 @@ Ambos servicios desplegados en Coolify (VPS Hostinger) sobre branch `main`, heal
 |----------|-----|-------|------|
 | `evolith-core-api` (Coolify id 12) | http://evolith.beyondnet.cloud | `nodenext`, Docker standalone | sin guard (pendiente) |
 | `evolith-mcp-server` (Coolify id 13) | http://mcpevolith.beyondnet.cloud | `nodenext`, transporte `http`, bind `0.0.0.0` | `EVOLITH_API_KEY` (obligatorio en producción) |
+| `agent-runtime-api` (preparado) | https://evolithruntime.beyondnet.cloud | Dockerfile monorepo (compila `@evolith/agent-runtime`) | `AGENT_RUNTIME_API_KEY` (fail-closed en prod) |
+
+> **Nota:** `agent-runtime-api` está **preparado** (servicio + Dockerfile + guía Coolify) pero pendiente de creación de la app en el panel Coolify y registro DNS del subdominio. Ver [guía de despliegue](../infrastructure/vps-coolify/agent-runtime-deploy.md).
 
 Paquetes npm publicados: `@evolith/core@1.0.0`, `@evolith/mcp-server@1.0.0`, `@evolith/smart-cli@1.1.1` (además de `@evolith/core-domain@1.0.4`, `@evolith/infra-providers@1.0.2`). Detalle operativo del deploy en [[project-coolify-deploy]].
 

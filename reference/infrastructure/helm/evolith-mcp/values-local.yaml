@@ -1,0 +1,25 @@
+# Local Kubernetes (Docker Desktop) overrides for evolith-mcp.
+# The OPA sidecar is DISABLED locally (it fetches signed bundles from an in-cluster
+# MinIO that does not exist on Docker Desktop). Reach the service with:
+#   kubectl -n evolith-local port-forward svc/<release>-evolith-mcp 8081:80
+image:
+  repository: evolith-mcp-server
+  tag: local
+  pullPolicy: Never
+
+replicaCount: 1
+
+opa:
+  enabled: false
+
+ingressRoute:
+  enabled: false
+
+horizontalPodAutoscaler:
+  enabled: false
+
+podDisruptionBudget:
+  enabled: false
+
+networkPolicy:
+  enabled: false

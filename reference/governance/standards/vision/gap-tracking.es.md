@@ -4,7 +4,7 @@
 
 **Estado:** Seguimiento Activo
 **Responsable:** Evolith Architecture Board
-**Última Actualización:** 2026-06-28 (Wave: rediseño de gobierno Producto/Iniciativa — añadido `GT-375` (PENDIENTE, P0/XL) para la frontera gobierno↔ejecución; ver ADR-0100 y UP-002. Wave previa: aprovisionamiento satelital — GT-363…GT-374 cerrados.)
+**Última Actualización:** 2026-06-29 (Wave: reconciliación de superficies de gobernanza — restaurada la paridad EN/ES de `GT-313` (cerrado según commit `1ffb1064`, externalización de GH_TOKEN completa; rotación diferida bajo riesgo aceptado) y registrados los 9 closure-evidence records faltantes (GT-359/360/361/362, GT-376/378/379/380/382) para que los generadores de madurez/resumen ejecutivo reconcilien contra el board de 382 gaps. Wave previa: rediseño de gobierno Producto/Iniciativa — añadido `GT-375` (P0/XL) para la frontera gobierno↔ejecución; ver ADR-0100 y UP-002.)
 **Detalle de Gaps:** [Catálogo de Referencia de Gaps](./gap-reference-catalog.es.md)
 
 Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunidades, habilitadores, prioridad y estado. Selecciona un ID para abrir la descripción del problema, propósito, evidencia, criterios de cierre y referencias.
@@ -397,7 +397,7 @@ Este tablero es la única fuente de verdad para deuda técnica, gaps, oportunida
 | [`GT-246`](./gap-reference-catalog.es.md#gt-246) | Implementar experimentos Chaos Mesh/Litmus | `QA` | Cross | P3 | L | `COMPLETADO` |
 
 
-**Progreso:** 373 / 374 completados · 0 en progreso · 1 pendientes · 0 diferidos
+**Progreso:** 378 / 382 completados · 4 en progreso · 0 pendientes · 0 diferidos
 
 **Oleada 2026-06-23 (auditoría profunda de Wilson III):** Añadidos 14 gaps nuevos `GT-212`…`GT-225` del Wilson Audit Playbook que cubren: higiene de estado ADR (GT-212), metadata + presupuestos operativos + corpus de guías por topología (GT-213, GT-217, GT-219), observabilidad + OpenAPI en controladores REST (GT-214, GT-215), paridad de input-schemas OPA + densidad de tests por topología (GT-216, GT-222), plantillas de rollback + on-call de Fase 05 (GT-218), cobertura de ramas CLI + paridad de envelope --format + limpieza de skip-list (GT-220, GT-224, GT-225), audit logging HTTP de MCP (GT-221), y tests e2e de paridad cross-surface (GT-223).
 

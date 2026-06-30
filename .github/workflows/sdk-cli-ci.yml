@@ -390,6 +390,9 @@ jobs:
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Org accounts require a (free) gitleaks license key — wired from the
+          # GITLEAKS_LICENSE repo secret so the scan can run.
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
 
   agentic-review:
     name: Winston Agentic Review
@@ -411,7 +414,15 @@ jobs:
         env:
           EVOLITH_AGENTIC_REVIEW: "true"
           EVOLITH_LLM_API_KEY: ${{ secrets.EVOLITH_LLM_API_KEY }}
-        run: node .harness/scripts/ci/13-agentic-code-review.mjs
+        run: |
+          # Advisory: the LLM review is opt-in. With no provider key configured,
+          # skip cleanly instead of failing the gate. Set the EVOLITH_LLM_API_KEY
+          # repo secret to enable the real Winston review on PRs.
+          if [ -z "$EVOLITH_LLM_API_KEY" ]; then
+            echo "::notice::EVOLITH_LLM_API_KEY not set — skipping Winston agentic review (advisory)."
+            exit 0
+          fi
+          node .harness/scripts/ci/13-agentic-code-review.mjs
 
   # ============================================
   # JOB 12: DAST OWASP ZAP Scan (GT-273)

@@ -104,9 +104,15 @@ export interface RuleEvaluation {
 }
 
 /**
- * Result of evaluating one phase gate.
+ * Result of evaluating one phase gate inside the satellite evaluation pipeline.
+ *
+ * This is the pipeline's internal DTO (W-Contracts: formerly named
+ * `GateEvaluationResult`, which collided with the canonical ADR-0101 contract of
+ * the same name in `evaluation/contracts/evaluation-result.ts`). The GT-378 mapper
+ * (`canonical-result.mapper.ts`) bridges these into the canonical
+ * `GateEvaluationResult`, so the public evaluation contract stays canonical-only.
  */
-export interface GateEvaluationResult {
+export interface PipelineGateResult {
   gateId: string;
   gateName: string;
   phase: string;
@@ -126,7 +132,7 @@ export interface EvaluationVerdict {
   resolvedTopology: string | null;
 
   /** Evaluated phase gates */
-  gates: GateEvaluationResult[];
+  gates: PipelineGateResult[];
 
   /** Summary counts */
   summary: {
@@ -148,7 +154,7 @@ export interface EvaluationVerdict {
    */
   outputEnvelope?: import('./gate-evidence').SuccessEnvelope<{
     topology: string | null;
-    gates: GateEvaluationResult[];
+    gates: PipelineGateResult[];
     summary: EvaluationVerdict['summary'];
   }>;
 }

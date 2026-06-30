@@ -25,7 +25,7 @@ El arnés intercepta la invocación de la herramienta antes de enviarla al backe
 5. Tras la aprobación manual, el webhook activa el arnés y concluye la ejecución de la herramienta con el resultado real.
 ### B. Pre-Execution Plan Review
 Se utiliza junto con el patrón Planificar y ejecutar. El Agente genera la lista de 10 comandos Bash que pretende ejecutar. El sistema muestra la lista al desarrollador, quien debe hacer clic en "Aprobar y ejecutar" para continuar.
-## Critical Anti-Pattern: The Illusion of Control
+## Critical Anti-Patrón: The Illusion of Control
 **Los agentes con acceso ilimitado a herramientas destructivas que se basan únicamente en el mensaje del sistema ("No elimine nada importante") representan una negligencia operativa grave.** El control DEBE residir en el código compilado del arnés, no en las intenciones textuales del modelo.
 
 ---

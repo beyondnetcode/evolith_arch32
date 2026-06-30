@@ -131,7 +131,7 @@ flowchart LR
 | Artefacto | Ubicación | Por qué es requerido |
 |---|---|---|
 | **Blueprint de Referencia** | [reference-blueprint.md](../../architecture/blueprints/reference-blueprint.md) | Consultar — no es un artefacto que produces. El Gate F2 verifica que tus diagramas de arquitectura sean trazables a él; las desviaciones requieren ADRs. |
-| **ADR-0002 — Arquitectura Hexagonal** | [ADR-0002](../../architecture/adrs/nodejs/0002-clean-architecture-nestjs.es.md) | Límite obligatorio de Ports and Adapters. |
+| **ADR-0002 — Arquitectura Hexagonal** | [ADR-0002](../../architecture/adrs/nodejs/0002-clean-architecture-nestjs.es.md) | Límite obligatorio de Puertos y Adaptadores. |
 | **ADR-0018 — Pirámide de Testing** | [ADR-0018](../../architecture/adrs/core/0018-testing-pyramid-quality-gates.es.md) | La arquitectura de pruebas y la distribución por tipo deben diseñarse antes de validación. |
 | **ADR-0031 — Schema-per-Context** | [ADR-0031](../../architecture/adrs/core/0031-schema-per-context-domain-event-catalog.es.md) | Los límites de esquema por bounded context deben decidirse antes de construcción. |
 | **ADR-0032 — Matriz de Selección de Protocolo** | [ADR-0032](../../architecture/adrs/core/0032-api-protocol-decision-matrix-rest-grpc-graphql.es.md) | El uso de REST, gRPC y GraphQL debe resolverse antes de producir contratos API. |
@@ -236,7 +236,7 @@ La Fase 2 implica una topología progresiva específica. Las siguientes acciones
 | **Gates de Calidad SDLC** | [quality-gates.es.md](./quality-gates.es.md) | Define la baseline canónica bloqueante: cobertura >= 80%, complejidad <= 15, cero CVEs high/critical, deuda técnica < 5%. |
 | **ADR-0005 — Pipeline CI/CD** | [ADR-0005](../../architecture/adrs/core/0005-automated-sast-quality-gates.es.md) | Ningún merge se autoriza sin CI, linting, testing y escaneo de seguridad aprobados. |
 | **ADR-0018 — Pirámide de Testing** | [ADR-0018](../../architecture/adrs/core/0018-testing-pyramid-quality-gates.es.md) | Define la distribución objetivo de pruebas: 70% unitarias / 20% integración / 10% E2E. El umbral bloqueante de cobertura lo gobiernan los Gates de Calidad SDLC. |
-| **ADR-0049 — Naming Semantics y Clean Code** | [ADR-0049](../../architecture/adrs/core/0049-naming-semantics-clean-code-policy.es.md) | La disciplina de naming se valida desde el primer commit. |
+| **ADR-0049 — Naming Semantics y Código Limpio** | [ADR-0049](../../architecture/adrs/core/0049-naming-semantics-clean-code-policy.es.md) | La disciplina de naming se valida desde el primer commit. |
 | **ADR-0050 — Estrategia GitFlow Branching** | [ADR-0050](../../architecture/adrs/core/0050-gitflow-branching-strategy.es.md) | Naming de ramas, políticas de merge y tagging de release son contractuales. Alternativas requieren excepción ADR explícita. |
 | **Buenas Prácticas de Documentación SDLC** | [sdlc-documentation-best-practices.es.md](./03-documentation/sdlc-documentation-best-practices.es.md) | El delta documental es parte del DoD. |
 | **Patrones Canónicos** | [canonical-patterns](../../architecture/canonical-patterns/README.es.md) | Las implementaciones runtime-specific deben seguir patrones gobernados por ADR. |
@@ -247,7 +247,7 @@ La Fase 2 implica una topología progresiva específica. Las siguientes acciones
 |---|---|---|
 | Guía de Contract Testing | [contract-testing-guideline.md](../standards/engineering/contract-testing-guideline.md) | Condicional: cuando el producto expone o consume contratos entre servicios. |
 | Vendor Risk Assessment | [vendor-risk-assessment.md](../standards/engineering/vendor-risk-assessment.md) | Al introducir una librería o servicio de tercero. |
-| ADR-0019 — Primitivas DDD Tácticas | [ADR-0019](../../architecture/adrs/core/0019-tactical-design-patterns-future-proofing.es.md) | Al aplicar Aggregates, Value Objects, Domain Events o patrones DDD tácticos similares. |
+| ADR-0019 — Primitivas DDD Tácticas | [ADR-0019](../../architecture/adrs/core/0019-tactical-design-patterns-future-proofing.es.md) | Al aplicar Agregados, Objetos de Valor, Eventos de Dominio o patrones DDD tácticos similares. |
 | ADR-0033 — Transactional Outbox | [ADR-0033](../../architecture/adrs/core/0033-transactional-outbox-pattern.es.md) | Al implementar publicación asíncrona confiable de eventos. |
 | ADR-0034 — Aplicabilidad CQRS | [ADR-0034](../../architecture/adrs/core/0034-cqrs-pattern-applicability-matrix.es.md) | Al aplicar separación comando/consulta. |
 | ADR-0035 — Sagas Distribuidas | [ADR-0035](../../architecture/adrs/core/0035-distributed-saga-pattern-strategy.es.md) | Al implementar workflows de múltiples pasos con compensaciones. |
@@ -287,15 +287,15 @@ La Fase 4 aplica las 8 reglas de `quality-thresholds.rules.json`. Los rulesets O
 |---|---|---|
 | **Gates de Calidad SDLC** | [quality-gates.es.md](./quality-gates.es.md) | Gate matemático: cobertura >= 80%, complejidad ciclomática <= 15, cero CVEs high/critical, deuda técnica < 5%. |
 | **ADR-0018 — Pirámide de Testing** | [ADR-0018](../../architecture/adrs/core/0018-testing-pyramid-quality-gates.es.md) | Define la distribución objetivo de pruebas: 70% unitarias / 20% integración / 10% E2E. |
-| **ADR-0052 — Estrategia de Aislamiento Unit Testing** | [ADR-0052](../../architecture/adrs/core/0052-unit-testing-isolation-strategy.es.md) | Gobierna disciplina de mocks y stubs. |
-| **ADR-0053 — Estrategia Integration y E2E Testing** | [ADR-0053](../../architecture/adrs/core/0053-integration-e2e-testing-strategy.es.md) | Define integration testing basado en Testcontainers y alcance E2E. |
+| **ADR-0052 — Estrategia de Aislamiento Pruebas Unitarias** | [ADR-0052](../../architecture/adrs/core/0052-unit-testing-isolation-strategy.es.md) | Gobierna disciplina de mocks y stubs. |
+| **ADR-0053 — Estrategia Integration y Pruebas E2E** | [ADR-0053](../../architecture/adrs/core/0053-integration-e2e-testing-strategy.es.md) | Define pruebas de Integración basado en Testcontainers y alcance E2E. |
 | **Guía de Contract Testing** | [contract-testing-guideline.md](../standards/engineering/contract-testing-guideline.md) | Condicional: requerido cuando el producto expone contratos entre servicios. |
 
 ### Artefactos Opcionales
 
 | Artefacto | Ubicación | Cuándo usarlo |
 |---|---|---|
-| ADR-0037 — Verificación Performance y Chaos | [ADR-0037](../../architecture/adrs/core/0037-performance-concurrency-chaos-strategy.es.md) | Cuando validación incluye carga, stress, performance o chaos scenarios. |
+| ADR-0037 — Verificación Rendimiento y Chaos | [ADR-0037](../../architecture/adrs/core/0037-performance-concurrency-chaos-strategy.es.md) | Cuando validación incluye carga, stress, performance o chaos scenarios. |
 | Vendor Risk Assessment | [vendor-risk-assessment.md](../standards/engineering/vendor-risk-assessment.md) | Cuando validación incluye auditoría de dependencias de terceros. |
 | Flujo de Arquitectura de Observabilidad | [observability-architecture-flow.md](../../architecture/blueprints/observability-architecture-flow.md) | Al validar telemetría, logs estructurados y especificación de cobertura productiva. |
 | UMS Architecture Portal | https://github.com/beyondnetcode/ums/blob/main/docs/architecture/index.md | Referencia para un producto .NET real aplicando guías de testing Evolith. |

@@ -19,7 +19,7 @@ Evolith Core es un motor de gobernanza para el cumplimiento del ciclo de vida de
 | Capa de aplicación | `packages/core-domain/src/application/` | Casos de uso, servicios, puertos |
 | Infraestructura | `packages/core-domain/src/infrastructure/` | Bus de eventos, auditoría, webhook, adaptadores |
 | Servidor MCP | `packages/mcp-server/src/` | Definiciones de herramientas MCP y transporte |
-| REST API Core | `apps/core-api/src/` | Superficie API NestJS |
+| API REST Core | `apps/core-api/src/` | Superficie API NestJS |
 | CLI | `sdk/cli/src/` | Comandos Smart CLI |
 | Rulesets | `rulesets/` | Políticas OPA + reglas de topología |
 | Datos SDLC | `reference/governance/sdlc/` | Definiciones JSON de fases/gates |

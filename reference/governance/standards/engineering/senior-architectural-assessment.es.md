@@ -67,7 +67,7 @@ Un bounded context DEBE considerarse candidato a extracción cuando cumpla 2 de 
 
 **Hallazgo:** La arquitectura tiene `schema-per-context` ([ADR-0031](../../../architecture/adrs/core/0031-schema-per-context-domain-event-catalog.es.md)) pero no documenta cómo se gestiona la **transición desde una DB compartida a DBs aisladas por servicio** durante la fase de extracción.
 
-**Problema:** El anti-pattern más peligroso en migraciones es el "shared database with microservices" que genera acoplamiento temporal. La arquitectura menciona PostgreSQL con múltiples schemas pero no define el mecanismo de sincronización inter-schema durante coexistencia.
+**Problema:** El anti-patrón más peligroso en migraciones es el "shared database with microservices" que genera acoplamiento temporal. La arquitectura menciona PostgreSQL con múltiples schemas pero no define el mecanismo de sincronización inter-schema durante coexistencia.
 
 **Recomendación:**
 

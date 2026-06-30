@@ -1496,8 +1496,7 @@
       "closureCommit": "ee57f82",
       "evidence": [
         "reference/architecture/adrs/core/0075-core-api-auth-strategy.md",
-        "apps/core-api/src/presentation/controllers/health.controller.ts",
-        "reference/architecture/adrs/core/0075-core-api-auth-strategy.md"
+        "apps/core-api/src/presentation/controllers/health.controller.ts"
       ],
       "validationCommands": [
         "npm test --workspace apps/core-api -- --no-coverage"
@@ -4607,7 +4606,7 @@
       "closedAt": "2026-06-26",
       "closureCommit": "817986cf",
       "evidence": [
-        "sdk/cli/src/commands/upgrade"
+        "sdk/cli/src/commands/update/update.command.ts"
       ],
       "validationCommands": [
         "npm test --workspace sdk/cli"
@@ -4896,9 +4895,9 @@
       "closedAt": "2026-06-26",
       "closureCommit": "d2b7d2b7",
       "evidence": [
-        "apps/core-api/.eslintrc.js",
-        "packages/core-domain/.eslintrc.js",
-        "packages/mcp-server/.eslintrc.js"
+        "apps/core-api/eslint.config.mjs",
+        "packages/core-domain/eslint.config.mjs",
+        "packages/mcp-server/eslint.config.mjs"
       ],
       "validationCommands": [
         "npm run lint:boundaries --workspace packages/core-domain"
@@ -5317,8 +5316,8 @@
       "closedAt": "2026-06-28",
       "closureCommit": "daab4f74",
       "evidence": [
-        "packages/infra-providers/src/github/github-api.adapter.ts",
-        "packages/infra-providers/src/github/i-github-api-client.interface.ts"
+        "packages/infra-providers/src/adapters/github-api.adapter.ts",
+        "packages/core-domain/src/domain/github-api-client.interface.ts"
       ],
       "validationCommands": [
         "npm run --workspace packages/infra-providers test"
@@ -5330,7 +5329,7 @@
       "closedAt": "2026-06-28",
       "closureCommit": "2ff50b10",
       "evidence": [
-        "packages/core-domain/src/application/use-cases/satellite/initialize-satellite.use-case.ts"
+        "packages/core-domain/src/application/use-cases/initialize-satellite.use-case.ts"
       ],
       "validationCommands": [
         "npm run --workspace packages/core-domain test"
@@ -5342,7 +5341,7 @@
       "closedAt": "2026-06-28",
       "closureCommit": "d57e5e42",
       "evidence": [
-        "sdk/cli/src/commands/satellite/create.command.ts"
+        "sdk/cli/src/commands/satellite/satellite-create.command.ts"
       ],
       "validationCommands": [
         "npm test --workspace sdk/cli -- --runInBand"
@@ -5354,7 +5353,7 @@
       "closedAt": "2026-06-28",
       "closureCommit": "34ebcff1",
       "evidence": [
-        "sdk/cli/src/commands/satellite/adopt.command.ts"
+        "sdk/cli/src/commands/satellite/satellite-adopt.command.ts"
       ],
       "validationCommands": [
         "npm test --workspace sdk/cli -- --runInBand"
@@ -5394,8 +5393,7 @@
       "closedAt": "2026-06-28",
       "closureCommit": "880e17eb",
       "evidence": [
-        "packages/core-domain/src/domain/satellite/satellite-record.entity.ts",
-        "packages/core-domain/src/domain/satellite/satellite-record.schema.ts"
+        "packages/core-domain/src/domain/satellite-record.ts"
       ],
       "validationCommands": [
         "npm run --workspace packages/core-domain test"
@@ -5407,7 +5405,7 @@
       "closedAt": "2026-06-28",
       "closureCommit": "6f1e2bae",
       "evidence": [
-        "packages/core-domain/src/application/services/satellite-inheritance-propagation.service.ts"
+        "packages/core-domain/src/application/sync/sync.service.ts"
       ],
       "validationCommands": [
         "npm run --workspace packages/core-domain test"
@@ -5431,8 +5429,8 @@
       "closedAt": "2026-06-28",
       "closureCommit": "94cad958",
       "evidence": [
-        "packages/core-domain/src/application/services/satellite-audit.service.ts",
-        "packages/core-domain/src/domain/satellite/satellite-audit-entry.type.ts"
+        "packages/core-domain/src/application/audit/satellite-audit.service.ts",
+        "packages/core-domain/src/domain/satellite-audit.ts"
       ],
       "validationCommands": [
         "npm run --workspace packages/core-domain test"
@@ -5460,6 +5458,135 @@
       ],
       "validationCommands": [
         "npm test --workspace sdk/cli -- --runInBand"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-313",
+      "closedAt": "2026-06-28",
+      "closureCommit": "1ffb1064",
+      "evidence": [
+        "sdk/cli/src/commands/satellite/satellite-create.command.ts",
+        "sdk/cli/src/commands/satellite/satellite-adopt.command.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace sdk/cli -- --runInBand"
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "GH_TOKEN externalized to environment/secret (commit 1ffb1064); credential rotation deferred under owner-accepted risk."
+    },
+    {
+      "id": "GT-359",
+      "closedAt": "2026-06-28",
+      "closureCommit": "0896b1e9",
+      "evidence": [
+        "packages/core-domain/src/domain/satellite-manifest.ts"
+      ],
+      "validationCommands": [
+        "npm run build --workspace @evolith/core-domain",
+        "npm test --workspace @evolith/core-domain -- --runInBand"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-360",
+      "closedAt": "2026-06-28",
+      "closureCommit": "3e6f0556",
+      "evidence": [
+        "apps/core-api/src/presentation/controllers/evaluation.controller.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace core-api -- --runInBand"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-361",
+      "closedAt": "2026-06-28",
+      "closureCommit": "3e6f0556",
+      "evidence": [
+        "apps/core-api/src/presentation/controllers/evaluation.controller.ts",
+        "apps/core-api/src/presentation/controllers/evaluation.controller.spec.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace core-api -- --runInBand"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-362",
+      "closedAt": "2026-06-28",
+      "closureCommit": "e2b1c12b",
+      "evidence": [
+        "packages/core-domain/src/application/validators/evaluators/opa-evaluator.ts",
+        "packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace @evolith/core-domain -- --runInBand"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-376",
+      "closedAt": "2026-06-29",
+      "closureCommit": "4e9c50be",
+      "evidence": [
+        "packages/core-domain/src/evaluation/contracts/evaluation-result.ts",
+        "packages/core-domain/src/evaluation/contracts/evaluation-context.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace @evolith/core-domain -- --runInBand"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-378",
+      "closedAt": "2026-06-29",
+      "closureCommit": "3ca91bb0",
+      "evidence": [
+        "packages/core-domain/src/evaluation/canonical-result.mapper.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace @evolith/core-domain -- --runInBand"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-379",
+      "closedAt": "2026-06-29",
+      "closureCommit": "5b21cbda",
+      "evidence": [
+        "apps/core-api/src/application/evaluation/kind-evaluators.ts",
+        "apps/core-api/src/app.module.ts"
+      ],
+      "validationCommands": [
+        "npm test --workspace core-api -- --runInBand"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-380",
+      "closedAt": "2026-06-29",
+      "closureCommit": "44dfdb41",
+      "evidence": [
+        "packages/core-domain/src/evaluation/contracts/evaluation-context.ts",
+        "reference/governance/sdlc/sdlc-evolith-artifact-mapping.md"
+      ],
+      "validationCommands": [
+        "npm test --workspace @evolith/core-domain -- --runInBand"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
+      "id": "GT-382",
+      "closedAt": "2026-06-29",
+      "closureCommit": "c3ca99f3",
+      "evidence": [
+        "packages/core-domain/eslint.config.mjs",
+        "packages/core-domain/src/evaluation/contracts/evaluation-result.ts"
+      ],
+      "validationCommands": [
+        "npm run build --workspace @evolith/core-domain"
       ],
       "dependencyDisposition": "none"
     }

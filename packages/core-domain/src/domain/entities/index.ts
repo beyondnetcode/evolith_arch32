@@ -148,20 +148,8 @@ export class TransitionResult {
   }
 }
 
-export class GateResult {
-  constructor(
-    public readonly id: string,
-    public readonly passed: boolean,
-    public readonly description: string,
-    public readonly required: boolean,
-    public readonly error?: string
-  ) {}
-
-  static pass(id: string, description: string, required: boolean): GateResult {
-    return new GateResult(id, true, description, required);
-  }
-
-  static fail(id: string, description: string, required: boolean, error: string): GateResult {
-    return new GateResult(id, false, description, required, error);
-  }
-}
+// Canonical GateResult lives in its own dependency-free leaf module (W-Contracts)
+// so it can also be consumed by domain/interfaces.ts without an import cycle.
+// Imported locally (used by the entity types below) and re-exported for the barrel.
+import { GateResult } from './gate-result';
+export { GateResult };

@@ -1,3 +1,6 @@
+// GateResult unified onto the canonical domain value object (W-Contracts).
+import type { GateResult } from '../../domain/entities';
+
 export interface InitProjectInput {
   name: string;
   runtime: string;
@@ -26,13 +29,6 @@ export * from './satellite-evaluation-pipeline.service';
 export * from './catalog.service';
 export * from './audit.service';
 export * from './gate-registry.service';
-
-export interface GateResult {
-  id: string;
-  passed: boolean;
-  description: string;
-  required: boolean;
-}
 
 export interface PhaseTransitionResult {
   success: boolean;

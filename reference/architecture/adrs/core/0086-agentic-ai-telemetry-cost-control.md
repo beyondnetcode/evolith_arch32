@@ -5,6 +5,9 @@
 ## Status
 Accepted
 
+## Date
+2026-06-20
+
 ## Context
 Evolith's adoption of the Agentic AI Topology introduces autonomous agents that iterate, reason, and call external Model Context Protocol (MCP) tools over multiple cycles. Unlike standard deterministic API requests, agentic interactions (like ReAct loops) can consume highly variable amounts of LLM tokens per user interaction.
 Without stringent observability, a stuck agent loop or a hallucination can exhaust API budgets rapidly, and it becomes impossible to attribute costs back to specific domains, users, or workflows. 

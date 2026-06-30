@@ -1,18 +1,30 @@
+# ──────────────────────────────────────────────────────────────────────────
+# Evolith CORE-API — monorepo Docker build.
+#
+# BUILD CONTEXT: the repository ROOT. The previous standalone build (copy only
+# apps/core-api + npm ci from the registry) broke because (1) the app tsconfig
+# extends ../../tsconfig.base.json, and (2) core-api imports
+# `@evolith/core-domain/evaluation/*`, a subpath newer than the published npm
+# package. This image builds the workspace packages from source instead.
+#   Coolify: Dockerfile = apps/core-api/Dockerfile, base directory = /
+# ──────────────────────────────────────────────────────────────────────────
 FROM node:20-alpine AS builder
 
-WORKDIR /app
+WORKDIR /repo
 
-COPY apps/core-api/package.json apps/core-api/package-lock.json ./
-COPY apps/core-api/tsconfig*.json ./
+COPY package.json package-lock.json tsconfig.base.json tsconfig.json ./
+COPY packages ./packages
+COPY apps ./apps
+COPY sdk ./sdk
 
 RUN npm ci --legacy-peer-deps
 
-COPY apps/core-api/src/ ./src/
+# Build the workspace deps + the app via the composite project graph. (`tsc -p`
+# with the prod tsconfig fails here: composite projects — inherited from
+# tsconfig.base.json — may not disable declaration/incremental emit.)
+RUN npx tsc -b packages/core-domain packages/infra-providers apps/core-api/tsconfig.json
 
-# Build without sourcemaps or declaration files (prod tsconfig)
-RUN npx tsc -p tsconfig.prod.json
-
-# ── Runner ────────────────────────────────────────────────────────────────────
+# ── Runner ──────────────────────────────────────────────────────────────────
 FROM node:20-alpine AS runner
 
 LABEL org.opencontainers.image.title="Evolith Core API"
@@ -20,20 +32,27 @@ LABEL org.opencontainers.image.source="https://github.com/beyondnetcode/evolith_
 
 RUN apk add --no-cache curl
 
-WORKDIR /app
+WORKDIR /repo
 
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/package.json ./
-COPY --from=builder /app/package-lock.json ./
+COPY --from=builder /repo/node_modules ./node_modules
+COPY --from=builder /repo/package.json ./package.json
+COPY --from=builder /repo/packages/core-domain/dist ./packages/core-domain/dist
+COPY --from=builder /repo/packages/core-domain/package.json ./packages/core-domain/package.json
+COPY --from=builder /repo/packages/infra-providers/dist ./packages/infra-providers/dist
+COPY --from=builder /repo/packages/infra-providers/package.json ./packages/infra-providers/package.json
+COPY --from=builder /repo/apps/core-api/dist ./apps/core-api/dist
+COPY --from=builder /repo/apps/core-api/package.json ./apps/core-api/package.json
+# Non-hoisted workspace deps (e.g. @nestjs/cache-manager) live here, not at root.
+COPY --from=builder /repo/apps/core-api/node_modules ./apps/core-api/node_modules
 
-RUN npm ci --omit=dev --legacy-peer-deps && npm cache clean --force && rm package-lock.json
-
-COPY rulesets/ ./corpus/rulesets/
-COPY reference/ ./corpus/reference/
+# Corpus (rulesets + human reference) the Core reads at runtime — copied from the
+# build context (the builder stage does not vendor these).
+COPY rulesets /app/corpus/rulesets
+COPY reference /app/corpus/reference
 
 RUN addgroup -g 1001 -S evolith && \
     adduser -S evolith -u 1001 -G evolith && \
-    chown -R evolith:evolith /app
+    chown -R evolith:evolith /repo /app
 
 USER evolith
 
@@ -42,6 +61,8 @@ ENV PORT=3000
 ENV WORKSPACE_ROOT=/app/corpus
 ENV CORE_PATH=/app/corpus
 ENV EVOLITH_LOG_LEVEL=info
+
+WORKDIR /repo/apps/core-api
 
 EXPOSE 3000
 

@@ -202,7 +202,7 @@ Pero solo registra recomendaciones, no se integra con el protocolo MCP.
 
 | Categoría | Rulesets |
 |-----------|----------|
-| Arquitectura | f1-modular-monolith, f2-distributed-modules, f3-microservices |
+| Arquitectura | f1-modular-monolith, f2-distributed-modules, f3-microservicios |
 | Transversales | compliance-baseline, definition-of-done, engineering-manifesto, repository-taxonomy |
 | SDLC | phase-gates, quality-thresholds |
 | Gobernanza | satellite-contracts, executive-scorecards |

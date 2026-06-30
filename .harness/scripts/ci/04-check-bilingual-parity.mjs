@@ -10,7 +10,13 @@ const failures = [];
 // their EN content is machine-generated (e.g. CHANGELOG from Conventional
 // Commits via release-please) and cannot keep a hand-translated header
 // structure in sync. Their ES counterparts act as localized navigation pointers.
-const PARITY_EXEMPT_BASENAMES = new Set(["CHANGELOG.md", "CHANGELOG.es.md"]);
+const PARITY_EXEMPT_BASENAMES = new Set([
+  "CHANGELOG.md",
+  "CHANGELOG.es.md",
+  // Point-in-time, Spanish-only audit working document (no standing EN counterpart).
+  "tracker-core-evaluation-compat-audit.md",
+  "tracker-core-evaluation-compat-audit.es.md",
+]);
 
 function countHeaders(content) {
   const headingPattern = /^#{2,3}\s+.+$/gm;
@@ -21,7 +27,13 @@ function countHeaders(content) {
 function walk(directory, files = []) {
   for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
     if (entry.isDirectory()) {
-      if (entry.name === ".git" || entry.name === "node_modules" || entry.name === ".husky") {
+      if (
+        entry.name === ".git" ||
+        entry.name === "node_modules" ||
+        entry.name === ".husky" ||
+        entry.name === ".claude" || // tool-internal worktree copies, not project docs
+        entry.name === "dist"
+      ) {
         continue;
       }
       walk(path.join(directory, entry.name), files);

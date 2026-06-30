@@ -1588,8 +1588,8 @@ All flows respect: **Core defines. Providers execute. CLI and MCP evaluate. Trac
 sequenceDiagram
     autonumber
     participant C as Cliente / Humano / Agente
-    participant T as Tracker (Governance API)
-    participant CO as Evolith Core (read-only)
+    participant T as "Tracker (Governance API)"
+    participant CO as "Evolith Core (read-only)"
     C->>T: POST /products/:id/initiatives { title, kind }
     T->>T: Validar tenant + que el Producto existe
     T->>CO: Resolver perfil de fases (FaseSDLC, gates) del governanceProfile
@@ -1619,8 +1619,8 @@ sequenceDiagram
     participant P as Provider Runtime / ACL
     participant E as Evidence Graph
     participant R as Policy Resolver
-    participant V as CLI / MCP (Core, stateless)
-    participant D as Gate Decision Engine (Tracker)
+    participant V as "CLI / MCP (Core, stateless)"
+    participant D as "Gate Decision Engine (Tracker)"
     C->>T: POST /processes/:id/transitions { targetPhase }
     T->>P: Recolectar/refrescar evidencia de proveedores
     P-->>E: EvidenceItems normalizados (con lineage)
@@ -1860,4 +1860,4 @@ A critic agent re-verified the dossier against the code using `Grep`/`Read`. Ver
 
 *Document generated from a multi-agent analysis with adversarial verification. It is a design proposal; it does not authorize code changes until approved by the Architecture Board.*
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
+Generated with [Claude Code](https://claude.com/claude-code)

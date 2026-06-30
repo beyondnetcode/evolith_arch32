@@ -3,6 +3,9 @@
 ## Status
 Accepted
 
+## Date
+2026-05-15
+
 ## Context
 Satellite repositories need a common branching model that keeps production stable without hiding work in long-lived local branches. The baseline must support continuous integration, technical validation, user acceptance, release preparation, and urgent production fixes while staying simple enough for small product teams.
 

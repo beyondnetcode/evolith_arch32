@@ -11,9 +11,9 @@ Strategic snapshot generated from the canonical gap board and maturity reconcili
 
 **Current decision:** NO-GO for production expansion or a major release: active P0 blockers remain.
 
-**Biggest problem now:** `Security` carries the highest weighted open risk (1 open, 1 P0). Attack that concentration before expanding scope.
+**Biggest problem now:** `Cross` carries the highest weighted open risk (2 open, 1 P0). Attack that concentration before expanding scope.
 
-**Where to attack first:** [GT-313](./gap-reference-catalog.md#gt-313).
+**Where to attack first:** [GT-377](./gap-reference-catalog.md#gt-377), [GT-375](./gap-reference-catalog.md#gt-375).
 
 ## Strategic Diagnosis
 
@@ -25,36 +25,38 @@ Use this summary with a simple rule: if you need context, open only the linked I
 
 | Order | Focus | Reason | IDs |
 |---:|---|---|---|
-| 1 | P0 blockers | They prevent production-readiness or major-release confidence. | [GT-313](./gap-reference-catalog.md#gt-313) |
-| 2 | Highest-risk area | `Security` has the largest weighted open load. | [GT-313](./gap-reference-catalog.md#gt-313) |
-| 3 | Quick wins | High criticality with XS/S complexity. | [GT-313](./gap-reference-catalog.md#gt-313) |
+| 1 | P0 blockers | They prevent production-readiness or major-release confidence. | [GT-377](./gap-reference-catalog.md#gt-377), [GT-375](./gap-reference-catalog.md#gt-375) |
+| 2 | Highest-risk area | `Cross` has the largest weighted open load. | [GT-375](./gap-reference-catalog.md#gt-375), [GT-381](./gap-reference-catalog.md#gt-381) |
+| 3 | Quick wins | High criticality with XS/S complexity. | - |
 | 4 | P1 wave | Next hardening after P0 is cleared. | [GT-324](./gap-reference-catalog.md#gt-324) |
-| 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | - |
+| 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-381](./gap-reference-catalog.md#gt-381) |
 
 ## Current Blockers
 
 | ID | Attack | Component | Effort |
 |---|---|---|---|
-| [GT-313](./gap-reference-catalog.md#gt-313) | Rotate and externalize GH_TOKEN via a secret manager | `Security` | P0/XS |
+| [GT-377](./gap-reference-catalog.md#gt-377) | R1 — EvaluationContext/EvaluationResult contracts + Contract Schema Registry (canonical types reusing Verdict/PhaseId; versioned schemas; ADR-0073 envelope; ESLint boundary guard banning *Repository for business entities) | `Core Domain` | P0/L |
+| [GT-375](./gap-reference-catalog.md#gt-375) | Core stateless evaluation contracts — formalize EvaluationContext (input) / EvaluationResult (output): consumers (Evolith Tracker) send context, the Core returns structured verdicts/recommendations. Product/tenant/initiative are **opaque context identifiers only**, never Core entities; epics/stories as ExternalReferenceContext. The Core emits non-binding Recommendation/DecisionRecommendation; the Tracker decides, persists and audits. Per ADR-0101 (corrects ADR-0100) / UP-002. **Umbrella epic — decomposed into GT-376…GT-381 (R0–R5).** | `Cross` | P0/XL |
 
 ## Metrics
 
 | Indicator | Value |
 |---|---:|
-| Canonical board date | 2026-06-28 |
-| Total gaps | 374 |
-| Closed gaps | 372 |
-| Open gaps | 2 |
-| Open P0 | 1 |
+| Canonical board date | 2026-06-29 |
+| Total gaps | 382 |
+| Closed gaps | 378 |
+| Open gaps | 4 |
+| Open P0 | 2 |
 | Open P1 | 1 |
-| Open P2 | 0 |
-| Total closure | 99.5% |
-| Closure evidence records | 350 |
+| Open P2 | 1 |
+| Total closure | 99% |
+| Closure evidence records | 360 |
 | Recorded readiness | 3 PASS, 1 RESOLVED |
 
 | Area | Open | P0 | P1 | First IDs |
 |---|---:|---:|---:|---|
-| `Security` | 1 | 1 | 0 | [GT-313](./gap-reference-catalog.md#gt-313) |
+| `Cross` | 2 | 1 | 0 | [GT-375](./gap-reference-catalog.md#gt-375), [GT-381](./gap-reference-catalog.md#gt-381) |
+| `Core Domain` | 1 | 1 | 0 | [GT-377](./gap-reference-catalog.md#gt-377) |
 | `Infra` | 1 | 0 | 1 | [GT-324](./gap-reference-catalog.md#gt-324) |
 
 ## Source and Refresh Rule

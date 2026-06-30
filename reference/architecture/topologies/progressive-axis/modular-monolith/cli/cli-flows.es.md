@@ -1,4 +1,4 @@
-# Modular Monolith — Flujos CLI
+# Monolito Modular — Flujos CLI
 
 > **Navegación Bilingüe:** [English Version](./cli-flows.md)
 

@@ -94,7 +94,7 @@ El hijo crea un ADR local que construye sobre un ADR base sin contradecirlo. El 
 
 **Señal:** El ADR base es correcto en principio pero está subespecificado para el dominio del hijo.
 
-**Ejemplo:** El ADR-0015 base define el patrón de event bus inyectable (in-memory → RabbitMQ → Kafka). El ADR-0001 del hijo lo extiende especificando la topología exacta de exchanges de RabbitMQ para el dominio de pagos, la estrategia de dead-letter y la nomenclatura de consumer groups.
+**Ejemplo:** El ADR-0015 base define el patrón de bus de Eventos inyectable (in-memory → RabbitMQ → Kafka). El ADR-0001 del hijo lo extiende especificando la topología exacta de exchanges de RabbitMQ para el dominio de pagos, la estrategia de dead-letter y la nomenclatura de consumer groups.
 
 **Obligación:** El encabezado del ADR local debe incluir `Extends: ADR-0015`.
 

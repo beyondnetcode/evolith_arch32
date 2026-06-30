@@ -1,0 +1,20 @@
+# Local Kubernetes (Docker Desktop) overrides for evolith-agent-runtime.
+# Reach the service with: kubectl -n evolith-local port-forward svc/<release>-evolith-agent-runtime 8082:80
+image:
+  repository: evolith-agent-runtime
+  tag: local
+  pullPolicy: Never
+
+replicaCount: 1
+
+ingressRoute:
+  enabled: false
+
+horizontalPodAutoscaler:
+  enabled: false
+
+podDisruptionBudget:
+  enabled: false
+
+networkPolicy:
+  enabled: false

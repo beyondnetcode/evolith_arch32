@@ -1,4 +1,4 @@
-# Microservices — Flujos CLI
+# Microservicios — Flujos CLI
 
 > **Navegación Bilingüe:** [English Version](./cli-flows.md)
 

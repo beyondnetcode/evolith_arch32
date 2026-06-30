@@ -5,6 +5,9 @@
 
 ## Status
 Aceptado
+## Fecha
+2026-06-03
+
 ## Context
 Evolith está destinado a guiar a los humanos y a los agentes de ingeniería asistidos por IA. Las herramientas de inteligencia artificial como Claude, Codex, Copilot, Cursor y Harness Agents requieren un conocimiento de arquitectura estructurado, estable y semánticamente claro para operar de manera segura.
 

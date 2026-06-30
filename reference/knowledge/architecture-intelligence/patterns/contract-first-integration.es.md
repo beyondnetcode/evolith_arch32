@@ -75,14 +75,14 @@ High. AI agents can generate safer code when integration contracts are explicit 
 ## Related ADRs
 
 - [ADR-0032: API Protocol Decision Matrix](../../../architecture/adrs/core/0032-api-protocol-decision-matrix-rest-grpc-graphql.md)
-- [ADR-0053: Integration and E2E Testing Strategy](../../../architecture/adrs/core/0053-integration-e2e-testing-strategy.md)
+- [ADR-0053: Integration and Pruebas E2E Strategy](../../../architecture/adrs/core/0053-integration-e2e-testing-strategy.md)
 - [ADR-0058: AI-Consumable Architecture Knowledge](../../../architecture/adrs/core/0058-ai-consumable-architecture-knowledge.md)
 
 ## Anti-Patterns
 
 - direct entity sharing across modules
 - undocumented events
-- using database schema as integration contract
+- using base de datos schema as integration contract
 - breaking consumers without compatibility strategy
 
 ---

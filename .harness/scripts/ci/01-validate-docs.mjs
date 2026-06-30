@@ -9,6 +9,7 @@ const root = process.cwd();
 const shouldRenderMermaid = process.argv.includes("--render-mermaid");
 const ignoredDirectories = new Set([
   ".git",
+  ".claude", // tool-internal worktree copies (.claude/worktrees/*) are not project docs
   "node_modules",
   "dist",
   "build",
@@ -108,12 +109,19 @@ function collectAnchors(content) {
 function validateCharacters(file, content) {
   const cleanContent = stripCodeBlocks(content);
 
+  // Curated status/typography glyphs accepted as house style across the
+  // governance + ADR corpus (status markers in tables and wave notes):
+  // \u2705 \u2713 \u2714 \u274C \u2717 \u2718 \u26A0. They are stripped before the emoji checks so they are not
+  // flagged as corruption; genuine pictographic emoji (\uD83E\uDD16, \uD83D\uDE80, \u2026) still are.
+  const ALLOWED_STATUS_GLYPHS = /[\u2705\u2713\u2714\u274C\u2717\u2718\u26A0]/gu;
+  const emojiScan = cleanContent.replace(ALLOWED_STATUS_GLYPHS, " ");
+
   const disallowedPatterns = [
     { pattern: /\uFEFF/g, message: "contains UTF-8 BOM marker" },
     { pattern: /\uFFFD/g, message: "contains replacement character U+FFFD" },
     { pattern: /\?\?/g, message: "contains corrupted or placeholder marker ??" },
-    { pattern: /[\u{1F000}-\u{1FAFF}]/gu, message: "contains emoji or pictographic symbol" },
-    { pattern: /[\u2600-\u27BF]/gu, message: "contains emoji-like symbol" },
+    { pattern: /[\u{1F000}-\u{1FAFF}]/gu, message: "contains emoji or pictographic symbol", source: emojiScan },
+    { pattern: /[\u2600-\u27BF]/gu, message: "contains emoji-like symbol", source: emojiScan },
     { pattern: /¡/g, message: "contains inverted exclamation marker; avoid decorative punctuation in standard Markdown" },
     { pattern: /(?:ínico|ínica|íNICAMENTE|NINGíN|ípica|ípicas|íltima|íltimo|ípoca|írbol|ínfasis|ítil)/g, message: "contains corrupted Spanish mojibake word" },
     { pattern: /TíCNICA/g, message: "contains corrupted uppercase accented text" },
@@ -122,7 +130,7 @@ function validateCharacters(file, content) {
   ];
 
   for (const rule of disallowedPatterns) {
-    for (const match of cleanContent.matchAll(rule.pattern)) {
+    for (const match of (rule.source ?? cleanContent).matchAll(rule.pattern)) {
       addFailure(file, match.index ?? 0, content, rule.message);
     }
   }
@@ -139,7 +147,11 @@ function validateRelativeLinks(file, content) {
   const linkPattern = /!?\[[^\]]*\]\(((?:\.\/?|\.\.\/)[^)\s]+)\)/g;
   const base = path.dirname(file);
 
-  for (const match of content.matchAll(linkPattern)) {
+  // Strip fenced/inline code first (positions preserved) so links that appear
+  // inside code examples — e.g. a `## Registration` snippet showing a row to add
+  // — are not validated as real links. Mirrors the anchor/character checks.
+  const scannable = stripCodeBlocks(content);
+  for (const match of scannable.matchAll(linkPattern)) {
     const rawTarget = match[1];
     const [targetPath, rawAnchor] = rawTarget.split("#");
     const resolved = path.resolve(base, decodeURI(targetPath));
@@ -170,7 +182,12 @@ function countHeaders(content) {
 // release-please) are exempt from structural translation parity: their EN
 // content is machine-generated and cannot keep a hand-translated header
 // structure in sync. The ES counterpart is a localized navigation pointer.
-const BILINGUAL_PARITY_EXEMPT = new Set(["CHANGELOG.md", "CHANGELOG.es.md"]);
+const BILINGUAL_PARITY_EXEMPT = new Set([
+  "CHANGELOG.md",
+  "CHANGELOG.es.md",
+  // Point-in-time, Spanish-only audit working document (not standing bilingual docs).
+  "tracker-core-evaluation-compat-audit.es.md",
+]);
 
 function validateBilingualPair(file, content) {
   const relative = path.relative(root, file);

@@ -11,9 +11,9 @@ Instantánea estratégica generada desde el tablero canónico de gaps y la recon
 
 **Decisión actual:** NO-GO para expansión productiva o release mayor: existen bloqueadores P0 activos.
 
-**Mayor problema ahora:** `Security` concentra el mayor riesgo abierto ponderado (1 pendientes, 1 P0). Ataca esa concentración antes de ampliar alcance.
+**Mayor problema ahora:** `Cross` concentra el mayor riesgo abierto ponderado (2 pendientes, 1 P0). Ataca esa concentración antes de ampliar alcance.
 
-**Dónde atacar primero:** [GT-313](./gap-reference-catalog.es.md#gt-313).
+**Dónde atacar primero:** [GT-377](./gap-reference-catalog.es.md#gt-377), [GT-375](./gap-reference-catalog.es.md#gt-375).
 
 ## Diagnóstico Estratégico
 
@@ -25,36 +25,38 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 
 | Orden | Foco | Motivo | IDs |
 |---:|---|---|---|
-| 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | [GT-313](./gap-reference-catalog.es.md#gt-313) |
-| 2 | Área de mayor riesgo | `Security` tiene la mayor carga ponderada abierta. | [GT-313](./gap-reference-catalog.es.md#gt-313) |
-| 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | [GT-313](./gap-reference-catalog.es.md#gt-313) |
+| 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | [GT-377](./gap-reference-catalog.es.md#gt-377), [GT-375](./gap-reference-catalog.es.md#gt-375) |
+| 2 | Área de mayor riesgo | `Cross` tiene la mayor carga ponderada abierta. | [GT-375](./gap-reference-catalog.es.md#gt-375), [GT-381](./gap-reference-catalog.es.md#gt-381) |
+| 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | - |
 | 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-324](./gap-reference-catalog.es.md#gt-324) |
-| 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | - |
+| 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-381](./gap-reference-catalog.es.md#gt-381) |
 
 ## Bloqueadores Actuales
 
 | ID | Ataque | Componente | Esfuerzo |
 |---|---|---|---|
-| [GT-313](./gap-reference-catalog.es.md#gt-313) | Rotar y externalizar GH_TOKEN mediante un gestor de secretos | `Security` | P0/XS |
+| [GT-377](./gap-reference-catalog.es.md#gt-377) | R1 — Contratos EvaluationContext/EvaluationResult + Contract Schema Registry (tipos canónicos reutilizando Verdict/PhaseId; schemas versionados; envelope ADR-0073; guard ESLint que prohíbe *Repository para entidades de negocio) | `Core Domain` | P0/L |
+| [GT-375](./gap-reference-catalog.es.md#gt-375) | Contratos de evaluación stateless del Core — formalizar EvaluationContext (entrada) / EvaluationResult (salida): el consumidor (Evolith Tracker) envía contexto y el Core devuelve veredictos/recomendaciones estructurados. Producto/tenant/iniciativa son **solo identificadores de contexto opacos**, nunca entidades del Core; épicas/historias como ExternalReferenceContext. El Core emite Recommendation/DecisionRecommendation no vinculante; el Tracker decide, persiste y audita. Según ADR-0101 (corrige ADR-0100) / UP-002. **Épica paraguas — decompuesta en GT-376…GT-381 (R0–R5).** | `Cross` | P0/XL |
 
 ## Métricas
 
 | Indicador | Valor |
 |---|---:|
-| Fecha canónica del tablero | 2026-06-28 |
-| Gaps totales | 374 |
-| Gaps cerrados | 372 |
-| Gaps pendientes | 2 |
-| P0 abiertos | 1 |
+| Fecha canónica del tablero | 2026-06-29 |
+| Gaps totales | 382 |
+| Gaps cerrados | 378 |
+| Gaps pendientes | 4 |
+| P0 abiertos | 2 |
 | P1 abiertos | 1 |
-| P2 abiertos | 0 |
-| Cierre total | 99.5% |
-| Registros de evidencia de cierre | 350 |
+| P2 abiertos | 1 |
+| Cierre total | 99% |
+| Registros de evidencia de cierre | 360 |
 | Readiness registrado | 3 PASS, 1 RESOLVED |
 
 | Área | Pendientes | P0 | P1 | Primeros IDs |
 |---|---:|---:|---:|---|
-| `Security` | 1 | 1 | 0 | [GT-313](./gap-reference-catalog.es.md#gt-313) |
+| `Cross` | 2 | 1 | 0 | [GT-375](./gap-reference-catalog.es.md#gt-375), [GT-381](./gap-reference-catalog.es.md#gt-381) |
+| `Core Domain` | 1 | 1 | 0 | [GT-377](./gap-reference-catalog.es.md#gt-377) |
 | `Infra` | 1 | 0 | 1 | [GT-324](./gap-reference-catalog.es.md#gt-324) |
 
 ## Fuente y Regla de Actualización

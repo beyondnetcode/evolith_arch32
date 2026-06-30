@@ -1,5 +1,5 @@
 import { IFileSystem, ILogger } from '../../domain/interfaces';
-import { SatelliteManifest, EvaluationVerdict, GateEvaluationResult, RuleEvaluation, EvaluationSeverity, EvaluationFacts } from '../../domain/satellite-manifest';
+import { SatelliteManifest, EvaluationVerdict, PipelineGateResult, RuleEvaluation, EvaluationSeverity, EvaluationFacts } from '../../domain/satellite-manifest';
 import { TopologyCatalogService, TopologyManifest } from './topology-catalog.service';
 import { SdlcDataLoaderService, StructuredGate } from './sdlc-data-loader.service';
 import { RulesetValidatorService } from '../validators/ruleset-validator.service';
@@ -49,7 +49,7 @@ export class SatelliteEvaluationPipeline {
       : ['f1', 'f2', 'f3', 'f4', 'f5'];
 
     // Step 3: Load gates from GT-280 structured data
-    const gateResults: GateEvaluationResult[] = [];
+    const gateResults: PipelineGateResult[] = [];
     for (const phaseId of phaseIds) {
       const gates = await this.sdlcDataLoader.loadGatesForPhase(phaseId);
       for (const gate of gates) {
@@ -129,7 +129,7 @@ export class SatelliteEvaluationPipeline {
     corePath: string,
     topology: string | null,
     facts?: EvaluationFacts,
-  ): Promise<GateEvaluationResult> {
+  ): Promise<PipelineGateResult> {
     const evaluations: RuleEvaluation[] = [];
 
     for (const artifact of gate.requiredArtifacts) {

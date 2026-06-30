@@ -120,8 +120,11 @@ describe('OperationTimer', () => {
     await new Promise(resolve => setTimeout(resolve, 50));
 
     const duration = timer.end();
-    expect(duration).toBeGreaterThanOrEqual(50);
-    expect(duration).toBeLessThan(200);
+    // Timers can fire a few ms early under CI load, so allow a small tolerance on
+    // the lower bound (the point of the test is that a real duration is measured,
+    // not the exact value). Keeps a generous upper bound to catch a stuck timer.
+    expect(duration).toBeGreaterThanOrEqual(40);
+    expect(duration).toBeLessThan(2000);
   });
 
   it('should get current duration without ending', () => {

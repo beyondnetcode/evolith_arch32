@@ -4,7 +4,7 @@
 
 **Status:** Active Tracking
 **Owner:** Evolith Architecture Board
-**Last Updated:** 2026-06-28 (Wave: Product/Initiative governance redesign — added `GT-375` (PENDING, P0/XL) for the governance↔execution boundary; see ADR-0100 and UP-002. Prior wave: satellite provisioning — GT-363…GT-374 closed.)
+**Last Updated:** 2026-06-29 (Wave: governance-surface reconciliation — restored EN/ES parity on `GT-313` (closed per commit `1ffb1064`, GH_TOKEN externalization complete; rotation deferred under accepted risk) and registered the 9 missing closure-evidence records (GT-359/360/361/362, GT-376/378/379/380/382) so the maturity/exec-summary generators reconcile against the 382-gap board. Prior wave: Product/Initiative governance redesign — added `GT-375` (P0/XL) for the governance↔execution boundary; see ADR-0100 and UP-002.)
 **Gap Details:** [Gap Reference Catalog](./gap-reference-catalog.md)
 
 This board is the single source of truth for technical debt, gaps, opportunities, enablers, priority, and status. Select a gap ID to open its problem statement, purpose, evidence, closure criteria, and references.
@@ -82,7 +82,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-328`](./gap-reference-catalog.md#gt-328) | Roll out ESLint boundaries to packages/* and apps/* with a CI step | `Quality` | Cross | P2 | M | `DONE` |
 | [`GT-329`](./gap-reference-catalog.md#gt-329) | Relocate the 5 advanced topologies to rulesets/topologies | `Rulesets` | Cross | P2 | M | `DONE` |
 | [`GT-330`](./gap-reference-catalog.md#gt-330) | Mitigate bus factor (second maintainer + deep onboarding) | `Governance` | Cross | P3 | M | `DONE` |
-| [`GT-313`](./gap-reference-catalog.md#gt-313) | Rotate and externalize GH_TOKEN via a secret manager | `Security` | Cross | P0 | XS | `IN-PROGRESS` |
+| [`GT-313`](./gap-reference-catalog.md#gt-313) | Rotate and externalize GH_TOKEN via a secret manager | `Security` | Cross | P0 | XS | `DONE` |
 | [`GT-312`](./gap-reference-catalog.md#gt-312) | SDLC validation orchestration: phase → gate → artifacts → schemas → rulesets → topology → ADRs → OPA → blocking criteria | `Core Domain` | Cross | P0 | XL | `DONE` |
 | [`GT-286`](./gap-reference-catalog.md#gt-286) | compliance-baseline ruleset exists — rulesets/compliance-baseline | `Rulesets` | Cross | P0 | S | `DONE` |
 | [`GT-287`](./gap-reference-catalog.md#gt-287) | definition-of-done ruleset exists — rulesets/definition-of-done | `Rulesets` | Cross | P0 | S | `DONE` |
@@ -397,7 +397,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-246`](./gap-reference-catalog.md#gt-246) | Implement Chaos Mesh/Litmus experiments | `QA` | Cross | P3 | L | `DONE` |
 
 
-**Progress:** 372 / 374 done · 2 in progress · 0 pending · 0 deferred
+**Progress:** 378 / 382 done · 4 in progress · 0 pending · 0 deferred
 
 **Wave 2026-06-23 (Wilson deep audit III):** Added 14 new gaps `GT-212`…`GT-225` from the Wilson Audit Playbook covering: ADR status hygiene (GT-212), topology manifest metadata + operational budgets + guidance corpus (GT-213, GT-217, GT-219), REST controller observability + OpenAPI (GT-214, GT-215), OPA input-schema parity + per-topology test density (GT-216, GT-222), SDLC Phase 05 rollback + on-call templates (GT-218), CLI branch coverage + envelope format coverage + skip-list cleanup (GT-220, GT-224, GT-225), MCP HTTP audit logging (GT-221), and cross-surface parity e2e tests (GT-223).
 

@@ -645,7 +645,7 @@
       "closureCommit": "d050b9e",
       "evidence": [
         "reference/infrastructure/docker-compose.yml",
-        "reference/infrastructure/helm/evolith-bff/templates/ingressroute.yaml"
+        "reference/infrastructure/helm/evolith-core-api/templates/ingressroute.yaml"
       ],
       "validationCommands": [
         "node .harness/scripts/validate-docs.mjs"
@@ -4005,7 +4005,7 @@
       "closedAt": "2026-06-25",
       "closureCommit": "c5f42067",
       "evidence": [
-        "reference/infrastructure/helm/evolith-bff/values.yaml",
+        "reference/infrastructure/helm/evolith-core-api/values.yaml",
         "reference/infrastructure/helm/evolith-mcp/values.yaml",
         "reference/infrastructure/docker-compose.yml"
       ],
@@ -4056,11 +4056,11 @@
       "closedAt": "2026-06-25",
       "closureCommit": "2d510597",
       "evidence": [
-        "reference/infrastructure/helm/evolith-bff/templates/deployment.yaml",
-        "reference/infrastructure/helm/evolith-bff/templates/hpa.yaml",
-        "reference/infrastructure/helm/evolith-bff/templates/networkpolicy.yaml",
-        "reference/infrastructure/helm/evolith-bff/templates/pdb.yaml",
-        "reference/infrastructure/helm/evolith-bff/values.yaml",
+        "reference/infrastructure/helm/evolith-core-api/templates/deployment.yaml",
+        "reference/infrastructure/helm/evolith-core-api/templates/hpa.yaml",
+        "reference/infrastructure/helm/evolith-core-api/templates/networkpolicy.yaml",
+        "reference/infrastructure/helm/evolith-core-api/templates/pdb.yaml",
+        "reference/infrastructure/helm/evolith-core-api/values.yaml",
         "reference/infrastructure/helm/evolith-mcp/templates/deployment.yaml",
         "reference/infrastructure/helm/evolith-mcp/templates/hpa.yaml",
         "reference/infrastructure/helm/evolith-mcp/templates/networkpolicy.yaml",
@@ -4122,9 +4122,6 @@
       "closedAt": "2026-06-26",
       "closureCommit": "e26aa2eb",
       "evidence": [
-        "reference/infrastructure/helm/evolith-bff/values.yaml",
-        "reference/infrastructure/helm/evolith-bff/templates/deployment.yaml",
-        "reference/infrastructure/helm/evolith-bff/templates/opa-configmap.yaml",
         "reference/infrastructure/helm/evolith-mcp/values.yaml",
         "reference/infrastructure/helm/evolith-mcp/templates/deployment.yaml",
         "reference/infrastructure/helm/evolith-mcp/templates/opa-configmap.yaml",
@@ -4534,7 +4531,7 @@
       "closedAt": "2026-06-26",
       "closureCommit": "856912b9",
       "evidence": [
-        "packages/core-domain/src/gates/gate-evaluator.ts"
+        "packages/core-domain/src/gates/decision/gate-decision.ts"
       ],
       "validationCommands": [
         "npx jest --config packages/core-domain/jest.config.js --rootDir packages/core-domain --no-coverage"
@@ -5556,7 +5553,7 @@
       "closedAt": "2026-06-29",
       "closureCommit": "5b21cbda",
       "evidence": [
-        "apps/core-api/src/application/evaluation/kind-evaluators.ts",
+        "packages/core-domain/src/evaluation/kind-evaluators.ts",
         "apps/core-api/src/app.module.ts"
       ],
       "validationCommands": [

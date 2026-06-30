@@ -158,10 +158,13 @@ sdk/cli/rulesets/opa/policy.wasm
 .git/EVOLITH_*
 .mimocode/plans/
 
-# CI control files
-.git/EVOLITH_*
-.mimocode/plans/
-
-# CI control files
-.git/EVOLITH_*
-.mimocode/plans/
+# Obsidian internal authoring/navigation vault — see reference/navigation/OBSIDIAN.md
+# Versioned: app.json, core-plugins.json, graph.json. Per-user state below is ignored.
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache
+.obsidian/.cache
+.obsidian/hotkeys.json
+.obsidian/plugins/
+.obsidian/themes/
+.obsidian/snippets/

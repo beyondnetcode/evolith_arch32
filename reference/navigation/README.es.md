@@ -24,6 +24,7 @@ Mantenerlos aquí reduce el ruido en la raíz y preserva la experiencia de usuar
 | [Índice Maestro](./MASTER_INDEX.es.md) | Índice completo de navegación del repositorio por intención, rol y dominio | Localizar cualquier artefacto rápidamente | Índice de navegación | Sí |
 | [Índice Bilingüe](./BILINGUAL_INDEX.es.md) | Estado autogenerado del emparejamiento EN/ES de cada documento de referencia | Auditar cobertura bilingüe | Índice autogenerado | No |
 | [Registro de Versiones de Documentación](./DOCUMENTATION_VERSIONS.es.md) | Historial y política de releases documentales | Trazar releases documentales | Registro de versiones | No |
+| [Vault de Obsidian](./OBSIDIAN.es.md) | Vault interno de Obsidian para autoría/navegación de docs (grafo, backlinks, búsqueda) | Navegar ~1.400 docs localmente | Guía de herramienta | No |
 
 ## Compatibilidad
 

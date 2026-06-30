@@ -31,18 +31,22 @@ Evolith es un framework de gobernanza de software que permite a organizaciones (
 │                    CORPUS (fuente de verdad)             │
 │  rulesets/*.rules.json   manifests/*.manifest.json       │
 │  rulesets/opa/*.rego     rulesets/schema/*.schema.json   │
-│  rulesets/tenants/{id}/  (overrides por tenant)          │
 └───────────────────┬─────────────────────────────────────┘
                     │ sirve datos estructurados
                Core-API (REST)
-    ┌───────────────┼──────────────┬─────────────────┐
-  SmartCLI       MCP Server    Tracker BFF      Agentes IA
-  (validate,     (SSE/stdio,   (UI + auth,      (MCP tools,
-   gate-check,    tools,        state mgmt)      audit)
+    ┌───────────────┼────────────────┐
+  SmartCLI       MCP Server      Agentes IA
+  (validate,     (SSE/stdio,     (MCP tools,
+   gate-check,    tools,          audit)
    scaffold)      resources)
                     │
                Interfaces humanas
                (Swagger UI, docs generados)
+
+  Cliente externo (NO es interfaz del Core):
+  Tracker BFF · Evolith Tracker (UI + auth, state mgmt) —
+  consume Core-API como cliente; vive en el repo evolith_tracker
+  (ADR-0074 rechazó alojar el BFF en el Core).
 ```
 
 ### 1.1 Diagrama de sistema (canónico)
@@ -64,7 +68,7 @@ flowchart TB
   mcp["MCP Server (mcpevolith.beyondnet.cloud)"]
   runtime["Agent Runtime (evolithruntime.beyondnet.cloud)"]
   core["Core stateless evaluation (@evolith/core-domain, ADR-0101)"]
-  gov["rulesets / OPA / contracts / tenants"]
+  gov["rulesets / OPA / contracts (tenants/ = legacy, no interpretado · ADR-0101)"]
   harness[".harness (ejecutor oficial)"]
 
   devs --> cli
@@ -81,9 +85,10 @@ flowchart TB
   cli -.->|"local: lee CORE_PATH"| gov
 ```
 
-> **Aclaración de altitud (CORE-API stateless, ADR-0101):** CORE-API *evalúa*
-> contra la configuración de tenant que recibe como contexto y *emite*
-> recomendaciones no vinculantes; **no posee ni persiste** tenant, iniciativa ni
+> **Aclaración de altitud (CORE-API stateless, ADR-0101):** CORE-API *evalúa* el
+> `ExecutionContext` que recibe (tenant/producto/iniciativa son identificadores
+> **opacos de contexto**, nunca interpretados ni persistidos) y *emite* recomendaciones
+> no vinculantes; **no posee, persiste ni interpreta** tenant, iniciativa ni
 > trazabilidad. Esa propiedad operativa es de **Evolith Tracker**. Por eso CORE-API
 > no expone CRUD de tenant ni un store de trazas: es correcto por diseño.
 
@@ -109,8 +114,8 @@ corpus/
     phase-gates/
       phase-gates.rules.json         ← Canonical (rulesets/sdlc/ es alias legacy)
     schema/                          ← Contratos de todos los artefactos
-      tenant.schema.json             ← NUEVO
-      tenant-override.schema.json    ← NUEVO
+      tenant.schema.json             ← legacy — superado por ADR-0101 (Core no interpreta tenant)
+      tenant-override.schema.json    ← legacy — superado por ADR-0101 (Core no interpreta tenant)
       waiver.schema.json             ← NUEVO
       blueprint.schema.json          ← NUEVO
       rule-definition.schema.json    ← NUEVO
@@ -118,12 +123,12 @@ corpus/
       sdlc-phase.schema.json         ← MOVIDO desde reference/
     opa/
       phase-gates.rego               ← NUEVO — valida gates con evidence + waivers
-      multi-tenancy.rego             ← previene overrides que rompen gobernanza
-    tenants/                         ← NUEVO
+      multi-tenancy.rego             ← legacy — superado por ADR-0101 (Core no aplica overrides por tenant)
+    tenants/                         ← legacy — superado por ADR-0101; existe en disco, el Core no lo interpreta
       {tenant-id}/
-        tenant.json                  ← identidad y capacidades
-        overrides.json               ← deltas sobre ruleset base
-        waivers/{WVR-ID}.json        ← waivers activos
+        tenant.json                  ← (legacy) identidad y capacidades
+        overrides.json               ← (legacy) deltas sobre ruleset base
+        waivers/{WVR-ID}.json        ← (legacy) waivers activos
     topologies/
       */
         *.rules.json                 ← $schema paths corregidos
@@ -291,7 +296,11 @@ readinessProbe:
 ### 9.2 Pendiente (requiere decisión arquitectónica)
 
 - **Separar `/metrics`** detrás de un puerto interno (e.g., 9100) no expuesto en Traefik — ver `GT-393`
-- **ABAC por-tenant** sobre el acceso al corpus en Core-API — ver `GT-394`
+- **Autorización por-tenant** sobre el acceso al corpus: el Core-API es tenant-agnóstico
+  ([ADR-0101](./adrs/core/0101-core-stateless-evaluation-engine.md): nunca recibe ni
+  interpreta un identificador de tenant), por lo que el ABAC por-tenant pertenece al
+  cliente (Evolith Tracker), no al Core. En Core-API solo cabe authz a nivel de API key /
+  alcance del corpus, no por tenant — ver `GT-394`
 - **mTLS** entre servicios internos (core-api ↔ MCP server) cuando se despliegue en k8s
 
 ---
@@ -299,7 +308,7 @@ readinessProbe:
 ## 10. Modelo de Integración entre Componentes
 
 ```
-Tracker BFF
+Tracker BFF (cliente externo de Evolith Tracker · ADR-0074)
   ├── Emite workspaceRef (opaque token)
   ├── Llama Core-API: POST /gates/:id/evaluate { workspaceRef, evidence }
   ├── Llama Core-API: POST /projects/initialize { workspaceRef, name, currentPhase, targetPhase }
@@ -335,26 +344,35 @@ Agent Runtime (evolithruntime.beyondnet.cloud)
 
 ---
 
-## 11. Modelo de Configuración por Tenant
+## 11. Modelo de Tenant (Core tenant-agnóstico, ADR-0101)
 
-```
-rulesets/tenants/{tenant-id}/
-  tenant.json          ← identidad (tier, topologías permitidas, fases)
-  overrides.json       ← deltas sobre el ruleset base
-  waivers/WVR-*.json   ← excepciones aprobadas
+El Core **no es multi-tenant**: es un motor de evaluación stateless
+([ADR-0101](./adrs/core/0101-core-stateless-evaluation-engine.md), ACCEPTED
+2026-06-29, que **supersede** la Decisión 1 de ADR-0100). El Core *nunca posee,
+persiste ni interpreta* producto, tenant ni iniciativa.
 
-Reglas de override (OPA multi-tenancy.rego):
-  Puede agregar evidencia adicional a un gate
-  Puede activar waivers con autoridad declarada en el gate
-  No puede eliminar blockingCriteria
-  No puede cambiar waiverAuthority
-  No puede reducir mandatoryEvidence sin waiver
+- **Tenant/producto/iniciativa son contexto opaco, no entidades del Core.** Llegan
+  dentro de `ExecutionContext { initiative?; tenant?; phase? }`
+  (`packages/core-domain/src/domain/gate-evidence.ts:87-89`), marcado explícitamente
+  como *"Never persisted or interpreted"*. El Core "nunca recibe un user path, token
+  UMS, credencial de repositorio ni identificador de tenant"
+  (`apps/core-api/src/application/services/workspace-reference-resolver.service.ts:9-11`);
+  el consumidor pasa una referencia opaca (`workspaceRef`), y Tracker pasa
+  `productId`/`initiativeId` opacos como contexto.
+- **La personalización por tenant, identidad, tiers y propiedad de negocio viven en
+  Evolith Tracker** (ADR-0074 / 0075 / 0100 / 0101), no en el Core. Tracker registra,
+  persiste y audita ese estado operativo; el Core solo evalúa el contexto que recibe y
+  devuelve un `EvaluationResult` no vinculante.
 
-Nuevos schemas (rulesets/schema/):
-  tenant.schema.json
-  tenant-override.schema.json
-  waiver.schema.json
-```
+### Artefactos legacy (diseño tenant-aware superado)
+
+`rulesets/tenants/`, `rulesets/schema/tenant.schema.json`,
+`rulesets/schema/tenant-override.schema.json` y `rulesets/opa/multi-tenancy.rego`
+**existen físicamente en disco**, pero son artefactos **legacy** del diseño
+pre-ADR-0101 (tenant-aware). ADR-0101 supersede ese modelo: el Core no aplica
+overrides por tenant ni evalúa identidad de tenant. Su remoción física es una
+decisión de código aparte; este documento solo deja de presentarlos como el modelo
+operativo vigente del Core.
 
 ---
 
@@ -367,6 +385,12 @@ Nuevos schemas (rulesets/schema/):
    - `opa test rulesets/opa/` — suite de tests OPA debe pasar
    - Cross-reference: toda `playbookRef` en `.rules.json` apunta a un `.md` existente
 
-3. **Tenant model es el próximo hito** — los schemas están, el directorio está. El siguiente paso es la API de tenant discovery en Core-API y la evaluación de overrides en el gate evaluator.
+3. **Sin tenant model en el Core (superado por ADR-0101)** — la idea previa de una
+   API de tenant discovery en Core-API y de evaluar overrides por tenant en el gate
+   evaluator queda **superada por [ADR-0101](./adrs/core/0101-core-stateless-evaluation-engine.md)**:
+   el Core es stateless y tenant-agnóstico, nunca recibe un identificador de tenant, y
+   no existe ni existirá tenant discovery en Core-API ni evaluación de overrides por
+   tenant. Esa responsabilidad es de Evolith Tracker. Los schemas/directorio de tenant
+   en disco son artefactos legacy (ver §11).
 
 4. **OTEL en staging siempre activo** — activar `OTEL_ENABLED=true` en el entorno de staging por defecto para capturar traces antes de llegar a producción.

@@ -24,6 +24,7 @@ Keeping them here reduces root-level noise while preserving user experience thro
 | [Master Index](./MASTER_INDEX.md) | Complete repository navigation index by intent, role, and domain | Locate any artifact quickly | Navigation index | Yes |
 | [Bilingual Index](./BILINGUAL_INDEX.md) | Auto-generated EN/ES pairing status for every reference document | Audit bilingual coverage | Auto-generated index | No |
 | [Documentation Version Log](./DOCUMENTATION_VERSIONS.md) | Documentation release history and release policy | Trace documentation releases | Version log | No |
+| [Obsidian Vault](./OBSIDIAN.md) | Internal Obsidian vault for authoring/navigating docs (graph, backlinks, search) | Navigate ~1,400 docs locally | Tooling guide | No |
 
 ## Compatibility
 

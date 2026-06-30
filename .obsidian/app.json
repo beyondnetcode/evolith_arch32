@@ -1,0 +1,27 @@
+{
+  "useMarkdownLinks": true,
+  "newLinkFormat": "relative",
+  "alwaysUpdateLinks": true,
+  "showUnsupportedFiles": false,
+  "promptDelete": true,
+  "trashOption": "system",
+  "attachmentFolderPath": "reference/governance/sdlc/assets",
+  "userIgnoreFilters": [
+    "node_modules",
+    ".claude",
+    ".git",
+    ".husky",
+    ".vscode",
+    ".mimocode",
+    "dist",
+    "build",
+    "coverage",
+    ".next",
+    "out",
+    ".cache",
+    "packages",
+    "apps",
+    "sdk/cli/node_modules",
+    "sdk/cli/dist"
+  ]
+}

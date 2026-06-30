@@ -38,13 +38,14 @@ Evolith Core exists to become the definitive enterprise-grade operating system f
 
 ---
 
-## Three Interfaces
+## Interfaces
 
 | Interface | Purpose |
 |-----------|---------|
 | **CLI** (`@evolith/smart-cli`) | Validate code locally against rulesets |
 | **MCP** (Model Context Protocol) | Inject architectural context into AI agents |
-| **Core API** (REST) | Programmatic access for orchestration systems
+| **Core API** (REST) | Programmatic access for orchestration systems |
+| **Agent Runtime** (REST + Agentic) | Orchestrate Core via Ports & Adapters; Hermes is one pluggable adapter |
 
 ---
 

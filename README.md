@@ -91,6 +91,7 @@ Evolith ships as a suite of coordinated products built on a common foundation.
 | **Smart CLI** | Local enforcement — validate code, run gates, manage ADRs, serve MCP |
 | **Core API** | REST service for remote governance queries and evaluation |
 | **MCP Services** | Governance as live context for LLMs and AI agents (27 tools, 9 resources, 8 prompts) |
+| **Agent Runtime** | Agentic mediation layer — orchestrates Core through Ports & Adapters; Hermes is one replaceable adapter |
 | **Evolith Tracker** | Business lifecycle governance — phases, owners, funding, and ROI |
 | **Rulesets** | Machine-readable enforcement rules per topology |
 | **OPA Policies** | Fine-grained policy checks integrated into the pipeline |
@@ -101,7 +102,7 @@ Evolith ships as a suite of coordinated products built on a common foundation.
 ## How It Works
 
 ```
-Developer / AI Agent
+Developer / AI Agent / External Trigger
         │
         ▼
   Smart CLI  ──────────────────────────────► MCP Server
@@ -112,6 +113,10 @@ Developer / AI Agent
   (remote governance)                        (business lifecycle)
         │
         ▼
+  Agent Runtime ───────────────────────────► Hermes (adapter)
+  (agentic mediation, Ports & Adapters)       (.harness · OPA · Tracker · Memory)
+        │
+        ▼
   Rulesets · OPA Policies · ADRs · Blueprints
   (the shared governance artifacts)
 ```
@@ -119,7 +124,8 @@ Developer / AI Agent
 1. **Smart CLI** validates code locally against rulesets and runs phase gates.
 2. **Core API** exposes the same governance remotely for CI pipelines and orchestrators.
 3. **MCP Server** feeds governance context to LLMs and AI agents in real time.
-4. **Evolith Tracker** coordinates the business side — who owns what, what's funded, what ships when.
+4. **Agent Runtime** orchestrates Core capabilities through a Ports & Adapters model — Hermes is one replaceable adapter.
+5. **Evolith Tracker** coordinates the business side — who owns what, what's funded, what ships when.
 
 All products share the same artifacts defined in **Evolith Core**.
 
@@ -147,8 +153,10 @@ Full reference: [Architecture hub](./reference/architecture/README.md)
 
 ```
 evolith/
+├── packages/agent-runtime/  # @evolith/agent-runtime — Ports & Adapters agentic layer
+├── apps/agent-runtime-api/  # NestJS HTTP service wrapping the runtime (POST /v1/agent/handle)
 ├── reference/core/          # Engineering constitution and principles
-├── reference/architecture/  # Topologies, blueprints, and ADRs
+├── reference/architecture/  # Topologies, blueprints, ADRs, and agent-runtime docs
 ├── reference/governance/    # SDLC phases, gates, standards, and glossary
 ├── reference/products/      # Smart CLI, Core API, MCP, Tracker, UMS
 └── reference/operations/    # SRE, infra, quality gates
@@ -192,6 +200,7 @@ Smart CLI ships **20 commands** and is configured via **`evolith.yaml`**. Full r
 | Smart CLI | [Smart CLI hub](./reference/products/smart-cli/README.md) |
 | Core API | [Core API hub](./reference/products/core-api/README.md) |
 | MCP Services | [MCP Services hub](./reference/products/mcp-services/README.md) |
+| Agent Runtime | [Agent Runtime hub](./reference/architecture/agent-runtime/README.md) |
 | Evolith Tracker | [Tracker hub](./reference/products/evolith-tracker/README.md) |
 | Operations & SRE | [Operations hub](./reference/operations/README.md) |
 | Onboarding by role | [Getting Started by Role](./reference/getting-started/README.md) |

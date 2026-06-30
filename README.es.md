@@ -91,6 +91,7 @@ Evolith se distribuye como una suite de productos coordinados sobre una base com
 | **Smart CLI** | Aplicación local — valida código, ejecuta compuertas, gestiona ADRs, sirve MCP |
 | **Core API** | Servicio REST para consultas y evaluación de gobernanza de forma remota |
 | **MCP Services** | Gobernanza como contexto en vivo para LLMs y agentes de IA (27 tools, 9 resources, 8 prompts) |
+| **Agent Runtime** | Capa de mediación agéntica — orquesta el Core mediante Puertos y Adaptadores; Hermes es uno de los adaptadores reemplazables |
 | **Evolith Tracker** | Gobernanza del ciclo de vida del negocio — fases, propietarios, financiación y ROI |
 | **Rulesets** | Reglas de aplicación legibles por máquina por topología |
 | **Políticas OPA** | Controles de política granulares integrados en el pipeline |
@@ -101,7 +102,7 @@ Evolith se distribuye como una suite de productos coordinados sobre una base com
 ## Cómo Funciona
 
 ```
-Desarrollador / Agente de IA
+Desarrollador / Agente de IA / Disparador Externo
         │
         ▼
   Smart CLI  ──────────────────────────────► Servidor MCP
@@ -112,6 +113,10 @@ Desarrollador / Agente de IA
   (gobernanza remota)                        (ciclo de vida del negocio)
         │
         ▼
+  Agent Runtime ───────────────────────────► Hermes (adaptador)
+  (mediación agéntica, Puertos y Adaptadores) (.harness · OPA · Tracker · Memoria)
+        │
+        ▼
   Rulesets · Políticas OPA · ADRs · Blueprints
   (los artefactos de gobernanza compartidos)
 ```
@@ -119,7 +124,8 @@ Desarrollador / Agente de IA
 1. **Smart CLI** valida el código localmente contra los rulesets y ejecuta las compuertas de fase.
 2. **Core API** expone la misma gobernanza de forma remota para pipelines de CI y orquestadores.
 3. **Servidor MCP** entrega contexto de gobernanza a LLMs y agentes de IA en tiempo real.
-4. **Evolith Tracker** coordina el lado del negocio — quién es responsable, qué está financiado, qué se entrega cuándo.
+4. **Agent Runtime** orquesta las capacidades del Core mediante Puertos y Adaptadores — Hermes es uno de los adaptadores reemplazables.
+5. **Evolith Tracker** coordina el lado del negocio — quién es responsable, qué está financiado, qué se entrega cuándo.
 
 Todos los productos comparten los mismos artefactos definidos en **Evolith Core**.
 
@@ -147,8 +153,10 @@ Referencia completa: [Hub de Arquitectura](./reference/architecture/README.es.md
 
 ```
 evolith/
+├── packages/agent-runtime/  # @evolith/agent-runtime — capa agéntica Puertos y Adaptadores
+├── apps/agent-runtime-api/  # Servicio HTTP NestJS que envuelve el runtime (POST /v1/agent/handle)
 ├── reference/core/          # Constitución de ingeniería y principios
-├── reference/architecture/  # Topologías, blueprints y ADRs
+├── reference/architecture/  # Topologías, blueprints, ADRs y docs del agent-runtime
 ├── reference/governance/    # Fases SDLC, compuertas, estándares y glosario
 ├── reference/products/      # Smart CLI, Core API, MCP, Tracker, UMS
 └── reference/operations/    # SRE, infra, compuertas de calidad
@@ -192,6 +200,7 @@ Smart CLI incluye **20 comandos** y se configura mediante **`evolith.yaml`**. Re
 | Smart CLI | [Hub de Smart CLI](./reference/products/smart-cli/README.es.md) |
 | Core API | [Hub de Core API](./reference/products/core-api/README.es.md) |
 | MCP Services | [Hub de MCP Services](./reference/products/mcp-services/README.es.md) |
+| Agent Runtime | [Hub de Agent Runtime](./reference/architecture/agent-runtime/README.es.md) |
 | Evolith Tracker | [Hub de Tracker](./reference/products/evolith-tracker/README.es.md) |
 | Operaciones y SRE | [Hub de Operaciones](./reference/operations/README.es.md) |
 | Onboarding por rol | [Inicio por Rol](./reference/getting-started/README.es.md) |

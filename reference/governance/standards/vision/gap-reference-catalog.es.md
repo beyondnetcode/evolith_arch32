@@ -215,6 +215,67 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [ ] El CI de release corre `build`+`test` para el paquete.
 - **Dependencias:** `GT-388`.
 
+#### GT-390
+
+**Título:** Eliminar el duplicado `phase-gates.rules.json` (ubicación canónica única del ruleset)
+
+- **Propósito:** `rulesets/sdlc/phase-gates.rules.json` duplica `rulesets/phase-gates/phase-gates.rules.json` bajo un `$id` distinto. Dos archivos con el mismo nombre e ids divergentes pueden derivar en silencio, y los consumidores pueden cargar el equivocado. Consolidar a una ubicación canónica y protegerlo en CI.
+- **Evidencia:** `ls rulesets/sdlc/phase-gates.rules.json` → presente (2026-06-30); duplicado vivo confirmado. Extraído de `reference/architecture/EVOLITH-ARCHITECTURE-DESIGN.md` §15 (#4) / §16 (riesgo).
+- **Impacto:** `rulesets/sdlc/`, `rulesets/phase-gates/`, cualquier loader que resuelva reglas de phase-gate.
+- **Complejidad:** S
+- **Criterios de aceptación:**
+  - [ ] Un único `phase-gates.rules.json` canónico; el duplicado eliminado y todos los loaders apuntan a él.
+  - [ ] Guard de CI que falle ante dos `*.rules.json` con el mismo basename + `$id` distinto.
+- **Dependencias:** ninguna.
+
+#### GT-391
+
+**Título:** Validación de esquemas en CI — `ajv` sobre cada `*.rules.json` contra su `$schema`
+
+- **Propósito:** No hay gate de CI que valide los rulesets contra su `$schema` declarado, así que rutas de `$schema` rotas/inaccesibles (ej. las 8 reglas de topología con rutas relativas erróneas) pasaban inadvertidas hasta encontrarlas a mano. Añadir un paso de validación basado en `ajv`.
+- **Evidencia:** `grep ajv .github/workflows/*` → sin match (2026-06-30). Extraído de `EVOLITH-ARCHITECTURE-DESIGN.md` §15 (#5) / §17 (recomendación 2).
+- **Impacto:** `.github/workflows/`, `.harness/scripts/ci/`, todos los `rulesets/**/*.rules.json`.
+- **Complejidad:** S
+- **Criterios de aceptación:**
+  - [ ] CI valida cada `*.rules.json` contra su `$schema` y falla ante una violación o un `$schema` irresoluble.
+- **Dependencias:** ninguna.
+
+#### GT-392
+
+**Título:** Blueprints estructurados — `rulesets/blueprints/*.json`
+
+- **Propósito:** Los blueprints existen hoy solo como Markdown de lectura humana en `reference/`, sin representación estructurada/operativa, así que no pueden validarse por máquina ni evaluarse. Crear `rulesets/blueprints/*.json` (uno por blueprint existente) tras un schema.
+- **Evidencia:** `ls rulesets/blueprints` → ausente (2026-06-30). Extraído de `EVOLITH-ARCHITECTURE-DESIGN.md` §15 (#9). Se relaciona con la asimetría MD↔estructurado que el doc señaló (1085 `.md` vs 91 `.json`).
+- **Impacto:** nuevo `rulesets/blueprints/`, un `blueprint.schema.json`, el evaluador de blueprint (`GT-379`).
+- **Complejidad:** M
+- **Criterios de aceptación:**
+  - [ ] Cada blueprint de `reference/` tiene un `rulesets/blueprints/*.json` estructurado validado contra un schema.
+- **Dependencias:** ninguna.
+
+#### GT-393
+
+**Título:** Aislamiento del scrape de `/metrics` en core-api
+
+- **Propósito:** core-api sirve `/metrics` Prometheus en el listener público; la única protección es `@SkipThrottle`, y el guard de API key es opt-in, así que las métricas internas pueden ser scrapeables públicamente. Servir las métricas en un puerto interno / tras una NetworkPolicy.
+- **Evidencia:** `metrics.controller.ts` tiene `@SkipThrottle()` y sin distinción de auth/`@Public`; el guard es opt-in (`EVOLITH_API_KEY`). Extraído de `EVOLITH-ARCHITECTURE-DESIGN.md` §13 (#27, pendiente) / §16.
+- **Impacto:** `apps/core-api/.../metrics.controller.ts`, deployment/NetworkPolicy.
+- **Complejidad:** S
+- **Criterios de aceptación:**
+  - [ ] Las métricas Prometheus no son alcanzables desde el listener público (puerto interno separado o NetworkPolicy).
+- **Dependencias:** ninguna.
+
+#### GT-394
+
+**Título:** ABAC por-tenant en el acceso al corpus en core-api
+
+- **Propósito:** El Core stateless sirve un corpus compartido; no hay control de acceso por-tenant, así que un tenant podría leer los rulesets/corpus de otro tenant. Aplicar ABAC en la capa de acceso al corpus en core-api.
+- **Evidencia:** Extraído de `EVOLITH-ARCHITECTURE-DESIGN.md` §16 riesgo ("Tenants pueden leer rulesets de otros tenants"). Se relaciona con el precedente ABAC del MCP (`GT-348`/`GT-349`).
+- **Impacto:** capa de query/resolver del corpus en core-api, contexto de tenant, política ABAC.
+- **Complejidad:** M
+- **Criterios de aceptación:**
+  - [ ] Las lecturas de corpus están acotadas por tenant; un tenant no puede leer los rulesets de otro.
+- **Dependencias:** modelo de tenant (ver `GT-369`/contexto de tenant).
+
 #### GT-363
 
 **Título:** Cliente de integración con GitHub API — auth seguro + operaciones de repositorio

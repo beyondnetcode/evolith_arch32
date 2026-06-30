@@ -59,6 +59,7 @@ reference/architecture/
   ├── adrs/                    # Architecture Decision Records
   │   ├── core/                # Core ADRs (ADR-0001 to ADR-0099)
   │   └── ai/                  # AI-specific ADRs
+  ├── agent-runtime/           # Agent Runtime docs (ADR-0102, Ports & Adapters, Hermes)
   ├── topologies/
   │   ├── progressive-axis/    # F1/F2/F3 topologies
   │   │   ├── modular-monolith/

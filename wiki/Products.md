@@ -5,7 +5,7 @@
 
 ---
 
-CLI, MCP Services, Core API — the three operational interfaces.
+CLI, MCP Services, Core API, Agent Runtime — the four operational interfaces.
 
 ---
 
@@ -16,6 +16,7 @@ CLI, MCP Services, Core API — the three operational interfaces.
 | **Smart CLI** | `@evolith/smart-cli` | Developer-facing governance tool |
 | **MCP Services** | (bundled in CLI) | AI agent integration via MCP |
 | **Core API** | `apps/core-api` | REST API for orchestration systems |
+| **Agent Runtime** | `packages/agent-runtime` + `apps/agent-runtime-api` | Agentic mediation layer over Core |
 
 ---
 
@@ -67,6 +68,33 @@ Central validation, state, and governance engine. NestJS + TypeScript.
 
 Docs: [reference/products/core-api/](https://github.com/beyondnetcode/evolith_arch32/tree/main/reference/products/core-api)
 
+
+---
+
+## Agent Runtime
+
+Decoupled agentic layer that sits between external callers and Evolith Core. Implements a **Ports & Adapters (Hexagonal)** model — every dependency (Core evaluation, OPA, .harness, Tracker, Memory, Scheduler, Hermes) is hidden behind a port and satisfied by a swappable adapter.
+
+```
+External Client / Tracker / Chat / CLI
+        → Agent Runtime (POST /v1/agent/handle)
+        → Ports  →  Adapters
+        → .harness · Evolith Core · OPA · Tracker · Hermes
+```
+
+| Capability | Description |
+|------------|-------------|
+| **Skill dispatch** | Routes intents to the correct governance tool via `.harness` |
+| **Hermes integration** | Hermes Agent is one pluggable adapter — the runtime does not depend on it |
+| **Policy validation** | OPA CLI adapter enforces governance policies per request |
+| **Tracing** | HTTP Tracker adapter emits structured traces for every handled request |
+| **Auth** | API key guard (Bearer / x-api-key), fail-closed in production |
+
+**Package**: `@evolith/agent-runtime` · **Service**: `apps/agent-runtime-api` · **Deploy**: `evolithruntime.beyondnet.cloud`
+
+**Key endpoints**: `POST /v1/agent/handle` · `GET /v1/agent/skills` · `GET /health`
+
+Docs: [reference/architecture/agent-runtime/](https://github.com/beyondnetcode/evolith_arch32/tree/main/reference/architecture/agent-runtime)
 
 ---
 

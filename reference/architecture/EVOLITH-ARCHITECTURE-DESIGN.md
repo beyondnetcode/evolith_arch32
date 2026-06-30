@@ -1,14 +1,24 @@
-# Evolith Architecture Design — Corregido y Verificado
+# Evolith Architecture Design
 
-**Versión:** 2.2.0  
-**Fecha:** 2026-06-29  
+**Versión:** 2.3.0  
+**Fecha:** 2026-06-30  
 **Estado:** Aprobado — core-api y mcp-server desplegados y verificados en producción; Agent Runtime incorporado  
 **Autor:** Alberto Arroyo Raygada · Revisado por Claude Sonnet 4.6
 
+> **Cambios 2.3.0 (2026-06-30):** se retiró el registro de correcciones y pendientes
+> operativos que vivía aquí (antes §2 "Problema Identificado", §13 "Tabla de
+> Correcciones", §14 "Estado de Deployment", §15 "Cambios Pendientes", §16 "Riesgos"):
+> el seguimiento de gaps/deuda es responsabilidad **única** del
+> [Gap Tracking Board](../governance/standards/vision/gap-tracking.md), no de este
+> documento. Los items que seguían abiertos están registrados como
+> [`GT-390`](../governance/standards/vision/gap-reference-catalog.md#gt-390)…[`GT-394`](../governance/standards/vision/gap-reference-catalog.md#gt-394);
+> el historial de fixes ya aplicados vive en el historial git. Este documento
+> conserva solo el diseño arquitectónico vigente.
+
 > **Cambios 2.2.0 (2026-06-29):** se incorpora **Evolith Agent Runtime** (capa
 > agéntica desacoplada, dominio `evolithruntime.beyondnet.cloud`) al modelo;
-> diagrama de sistema canónico en Mermaid (§1); `ApiKeyGuard` opt-in en CORE-API
-> (item 26); aclaración del rol stateless de CORE-API frente a tenant/trazabilidad.
+> diagrama de sistema canónico en Mermaid (§1); `ApiKeyGuard` opt-in en CORE-API;
+> aclaración del rol stateless de CORE-API frente a tenant/trazabilidad.
 
 ---
 
@@ -21,18 +31,22 @@ Evolith es un framework de gobernanza de software que permite a organizaciones (
 │                    CORPUS (fuente de verdad)             │
 │  rulesets/*.rules.json   manifests/*.manifest.json       │
 │  rulesets/opa/*.rego     rulesets/schema/*.schema.json   │
-│  rulesets/tenants/{id}/  (overrides por tenant)          │
 └───────────────────┬─────────────────────────────────────┘
                     │ sirve datos estructurados
                Core-API (REST)
-    ┌───────────────┼──────────────┬─────────────────┐
-  SmartCLI       MCP Server    Tracker BFF      Agentes IA
-  (validate,     (SSE/stdio,   (UI + auth,      (MCP tools,
-   gate-check,    tools,        state mgmt)      audit)
+    ┌───────────────┼────────────────┐
+  SmartCLI       MCP Server      Agentes IA
+  (validate,     (SSE/stdio,     (MCP tools,
+   gate-check,    tools,          audit)
    scaffold)      resources)
                     │
                Interfaces humanas
                (Swagger UI, docs generados)
+
+  Cliente externo (NO es interfaz del Core):
+  Tracker BFF · Evolith Tracker (UI + auth, state mgmt) —
+  consume Core-API como cliente; vive en el repo evolith_tracker
+  (ADR-0074 rechazó alojar el BFF en el Core).
 ```
 
 ### 1.1 Diagrama de sistema (canónico)
@@ -54,7 +68,7 @@ flowchart TB
   mcp["MCP Server (mcpevolith.beyondnet.cloud)"]
   runtime["Agent Runtime (evolithruntime.beyondnet.cloud)"]
   core["Core stateless evaluation (@evolith/core-domain, ADR-0101)"]
-  gov["rulesets / OPA / contracts / tenants"]
+  gov["rulesets / OPA / contracts (tenants/ = legacy, no interpretado · ADR-0101)"]
   harness[".harness (ejecutor oficial)"]
 
   devs --> cli
@@ -71,40 +85,16 @@ flowchart TB
   cli -.->|"local: lee CORE_PATH"| gov
 ```
 
-> **Aclaración de altitud (CORE-API stateless, ADR-0101):** CORE-API *evalúa*
-> contra la configuración de tenant que recibe como contexto y *emite*
-> recomendaciones no vinculantes; **no posee ni persiste** tenant, iniciativa ni
+> **Aclaración de altitud (CORE-API stateless, ADR-0101):** CORE-API *evalúa* el
+> `ExecutionContext` que recibe (tenant/producto/iniciativa son identificadores
+> **opacos de contexto**, nunca interpretados ni persistidos) y *emite* recomendaciones
+> no vinculantes; **no posee, persiste ni interpreta** tenant, iniciativa ni
 > trazabilidad. Esa propiedad operativa es de **Evolith Tracker**. Por eso CORE-API
 > no expone CRUD de tenant ni un store de trazas: es correcto por diseño.
 
 ---
 
-## 2. Problema Identificado
-
-### Problema Principal — Confusión entre lectura humana y fuente operativa
-
-| Síntoma | Causa Raíz |
-|---------|-----------|
-| `GET /api/v1/architecture/topologies` retornaba `data: []` | `reference/` excluida de `.dockerignore`; `COPY reference/` faltaba en Dockerfile |
-| `GET /api/v1/gates/:id` retornaba 500 silencioso | `loadPhaseGates()` usaba ruta `rulesets/sdlc/phase-gates.rules.json` (path incorrecto) |
-| Topologías devuelven IDs con rutas relativas | `toSummary()` leía `$id` de los manifests que usan `metadata.id` |
-| `POST /projects/propose-advance` evaluaba fase incorrecta | `fromPhase` y `toPhase` ambos asignados a `body.targetPhase` |
-| `POST /validate/composable` retornaba 404 | `ComposableValidateController` no registrado en `AppModule` |
-| Cache de 300ms en vez de 5 minutos | `@CacheTTL(300)` = 300ms en cache-manager v7; debía ser 300_000 |
-| CORS bloqueaba todo en producción | `CORS_ORIGINS` vacío → `origin: []` → deniega todo cross-origin |
-| 8 topology rules.json con $schema inaccesibles | Paths relativos incorrectos (`../../../../../` vs `../../`) |
-| `rule-definition.schema.json` faltante | Referenciado por 2 archivos de infra pero nunca creado |
-| Schemas de tenant, blueprint, waiver inexistentes | No definidos; impedía validación y contratos |
-
-### Problema Secundario — Asimetría entre MD y datos estructurados
-
-- `reference/` tiene 1085 `.md` vs 91 `.json` — mayoría de información sin representación estructurada
-- `rulesets/sdlc/phase-gates.rules.json` duplicaba `rulesets/phase-gates/phase-gates.rules.json` con `$id` diferente
-- Schemas `sdlc-gate.schema.json` y `sdlc-phase.schema.json` vivían en `reference/` en vez de `rulesets/schema/`
-
----
-
-## 3. Principios Arquitectónicos Aplicados
+## 2. Principios Arquitectónicos Aplicados
 
 1. **Structured-first**: toda información consumida por interfaces existe en formato estructurado. El Markdown es derivado o complementario.
 2. **Single source of truth**: una sola ubicación canónica por artefacto. Duplicados eliminados.
@@ -116,7 +106,7 @@ flowchart TB
 
 ---
 
-## 4. Fuente de Verdad Operativa
+## 3. Fuente de Verdad Operativa
 
 ```
 corpus/
@@ -124,8 +114,8 @@ corpus/
     phase-gates/
       phase-gates.rules.json         ← Canonical (rulesets/sdlc/ es alias legacy)
     schema/                          ← Contratos de todos los artefactos
-      tenant.schema.json             ← NUEVO
-      tenant-override.schema.json    ← NUEVO
+      tenant.schema.json             ← legacy — superado por ADR-0101 (Core no interpreta tenant)
+      tenant-override.schema.json    ← legacy — superado por ADR-0101 (Core no interpreta tenant)
       waiver.schema.json             ← NUEVO
       blueprint.schema.json          ← NUEVO
       rule-definition.schema.json    ← NUEVO
@@ -133,12 +123,12 @@ corpus/
       sdlc-phase.schema.json         ← MOVIDO desde reference/
     opa/
       phase-gates.rego               ← NUEVO — valida gates con evidence + waivers
-      multi-tenancy.rego             ← previene overrides que rompen gobernanza
-    tenants/                         ← NUEVO
+      multi-tenancy.rego             ← legacy — superado por ADR-0101 (Core no aplica overrides por tenant)
+    tenants/                         ← legacy — superado por ADR-0101; existe en disco, el Core no lo interpreta
       {tenant-id}/
-        tenant.json                  ← identidad y capacidades
-        overrides.json               ← deltas sobre ruleset base
-        waivers/{WVR-ID}.json        ← waivers activos
+        tenant.json                  ← (legacy) identidad y capacidades
+        overrides.json               ← (legacy) deltas sobre ruleset base
+        waivers/{WVR-ID}.json        ← (legacy) waivers activos
     topologies/
       */
         *.rules.json                 ← $schema paths corregidos
@@ -153,7 +143,7 @@ reference/                           ← LECTURA HUMANA ÚNICAMENTE
 
 ---
 
-## 5. Relación Markdown ↔ Rulesets ↔ Schemas ↔ OPA
+## 4. Relación Markdown ↔ Rulesets ↔ Schemas ↔ OPA
 
 ```
 Tier 1 — Source of Truth (rulesets/)
@@ -176,9 +166,9 @@ Invariante: si un `.md` de playbook menciona un artefacto obligatorio, ese artef
 
 ---
 
-## 6. Arquitectura de Alta Disponibilidad 24/7
+## 5. Arquitectura de Alta Disponibilidad 24/7
 
-### 6.1 Puntos de Falla Identificados y Mitigaciones
+### 5.1 Puntos de Falla Identificados y Mitigaciones
 
 | Componente | Punto de Falla | Mitigación |
 |-----------|---------------|-----------|
@@ -188,7 +178,7 @@ Invariante: si un `.md` de playbook menciona un artefacto obligatorio, ese artef
 | MCP Server | Pod único | 2+ réplicas con SSE stateless |
 | OPA | `.wasm` ausente | Fallback a native evaluator (ya implementado); `.wasm` como artefacto de release |
 
-### 6.2 Health Checks (implementado)
+### 5.2 Health Checks (implementado)
 
 ```
 GET /health/live   → 200 siempre si el proceso responde (liveness)
@@ -196,7 +186,7 @@ GET /health/ready  → 200 solo si corpus accesible + MetricsService disponible 
 GET /health        → estado completo (para monitoreo)
 ```
 
-### 6.3 Probes en Docker / k8s
+### 5.3 Probes en Docker / k8s
 
 ```yaml
 livenessProbe:
@@ -211,7 +201,7 @@ readinessProbe:
   failureThreshold: 3
 ```
 
-### 6.4 Degradación Controlada
+### 5.4 Degradación Controlada
 
 | Dependencia falla | Comportamiento |
 |---|---|
@@ -222,15 +212,12 @@ readinessProbe:
 
 ---
 
-## 7. Estrategia de Performance
+## 6. Estrategia de Performance
 
-### 7.1 Cache (corregido)
+### 6.1 Cache
 
 ```typescript
-// ANTES (bug): 300ms
-@CacheTTL(300)
-
-// DESPUÉS (correcto): 5 minutos en ms
+// cache-manager v7 usa MILISEGUNDOS: 5 minutos = 300_000 (no 300)
 @CacheTTL(300_000)
 ```
 
@@ -242,14 +229,14 @@ readinessProbe:
 | `POST /gates/evaluate` | 1 min | Cache por hash(input) via CacheKeys.opa |
 | `GET /health/live` | No cache | SkipThrottle |
 
-### 7.2 Rate Limiting
+### 6.2 Rate Limiting
 
 ```typescript
 // Global: 100 requests / 60 segundos por IP
 // Health y metrics: @SkipThrottle() (no consumen límite)
 ```
 
-### 7.3 Pendientes de Implementar
+### 6.3 Pendientes de Implementar
 
 - Paginación en `GET /rulesets` y `GET /topologies` (`?page=1&limit=50`)
 - `ETag` + `If-None-Match` para cache HTTP en clientes
@@ -257,15 +244,15 @@ readinessProbe:
 
 ---
 
-## 8. Estrategia de Resiliencia
+## 7. Estrategia de Resiliencia
 
-### 8.1 Implementado
+### 7.1 Implementado
 
 - `Promise.allSettled` en `listRulesets()` — un JSON malformado no bloquea el endpoint
 - `CircuitBreakerService` en core-api (ya existía)
 - `AuditThrottlerGuard` — rate limiting con logging de audit
 
-### 8.2 Pendiente
+### 7.2 Pendiente
 
 - Circuit breaker en llamadas Redis (actualmente `try/catch` simple)
 - Retry con backoff exponencial para llamadas MCP → Core-API
@@ -274,29 +261,29 @@ readinessProbe:
 
 ---
 
-## 9. Estrategia de Observabilidad
+## 8. Estrategia de Observabilidad
 
-### 9.1 Implementado
+### 8.1 Implementado
 
 | Señal | Herramienta | Estado |
 |-------|------------|--------|
 | Traces | OpenTelemetry → OTLP → Tempo | `OTEL_ENABLED=true` activa |
 | Logs | nestjs-pino → JSON estructurado | Activo en prod |
-| Metrics | prom-client → `GET /metrics` | Activo; sin auth (TODO) |
+| Metrics | prom-client → `GET /metrics` | Activo; sin auth (ver `GT-393`) |
 | Audit trail | `SecurityAuditInterceptor` | Activo en core-api |
 | Correlation ID | `CorrelationIdMiddleware` | Activo; `x-correlation-id` header |
 
-### 9.2 Gaps Pendientes
+### 8.2 Gaps Pendientes
 
-- `/metrics` necesita auth (API key o network policy que restrinja acceso a Prometheus)
+- `/metrics` necesita aislamiento de scrape (puerto interno / NetworkPolicy) — ver `GT-393`
 - `CacheMetricsService.recordHit/Miss()` nunca se llaman — contadores en 0
 - OTel en MCP server gateado estrictamente en `OTEL_ENABLED=true` — activar en staging por default
 
 ---
 
-## 10. Estrategia de Seguridad y Gobernanza
+## 9. Estrategia de Seguridad y Gobernanza
 
-### 10.1 Implementado
+### 9.1 Implementado
 
 - `Helmet.js` en core-api
 - `ValidationPipe` global con `whitelist: true, forbidNonWhitelisted: true`
@@ -304,19 +291,24 @@ readinessProbe:
 - CORS configurable via `CORS_ORIGINS` (ya no bloquea por defecto en prod)
 - `allowedHeaders` ahora incluye `Authorization` y `x-api-key`
 - `ComposableValidateController` ahora usa `workspaceRef` (opaque) en vez de paths raw
+- `ApiKeyGuard` global opt-in (`EVOLITH_API_KEY`; `@Public()` en health; consistente con mcp-server)
 
-### 10.2 Pendiente (requiere decisión arquitectónica)
+### 9.2 Pendiente (requiere decisión arquitectónica)
 
-- **API Key guard**: `passport-custom` ya está en deps pero sin estrategia registrada. Implementar `@UseGuards(ApiKeyGuard)` en todos los endpoints mutadores.
-- **Separar `/metrics`** detrás de un puerto interno (e.g., 9100) no expuesto en Traefik
+- **Separar `/metrics`** detrás de un puerto interno (e.g., 9100) no expuesto en Traefik — ver `GT-393`
+- **Autorización por-tenant** sobre el acceso al corpus: el Core-API es tenant-agnóstico
+  ([ADR-0101](./adrs/core/0101-core-stateless-evaluation-engine.md): nunca recibe ni
+  interpreta un identificador de tenant), por lo que el ABAC por-tenant pertenece al
+  cliente (Evolith Tracker), no al Core. En Core-API solo cabe authz a nivel de API key /
+  alcance del corpus, no por tenant — ver `GT-394`
 - **mTLS** entre servicios internos (core-api ↔ MCP server) cuando se despliegue en k8s
 
 ---
 
-## 11. Modelo de Integración entre Componentes
+## 10. Modelo de Integración entre Componentes
 
 ```
-Tracker BFF
+Tracker BFF (cliente externo de Evolith Tracker · ADR-0074)
   ├── Emite workspaceRef (opaque token)
   ├── Llama Core-API: POST /gates/:id/evaluate { workspaceRef, evidence }
   ├── Llama Core-API: POST /projects/initialize { workspaceRef, name, currentPhase, targetPhase }
@@ -352,121 +344,53 @@ Agent Runtime (evolithruntime.beyondnet.cloud)
 
 ---
 
-## 12. Modelo de Configuración por Tenant
+## 11. Modelo de Tenant (Core tenant-agnóstico, ADR-0101)
 
-```
-rulesets/tenants/{tenant-id}/
-  tenant.json          ← identidad (tier, topologías permitidas, fases)
-  overrides.json       ← deltas sobre el ruleset base
-  waivers/WVR-*.json   ← excepciones aprobadas
+El Core **no es multi-tenant**: es un motor de evaluación stateless
+([ADR-0101](./adrs/core/0101-core-stateless-evaluation-engine.md), ACCEPTED
+2026-06-29, que **supersede** la Decisión 1 de ADR-0100). El Core *nunca posee,
+persiste ni interpreta* producto, tenant ni iniciativa.
 
-Reglas de override (OPA multi-tenancy.rego):
-  Puede agregar evidencia adicional a un gate
-  Puede activar waivers con autoridad declarada en el gate
-  No puede eliminar blockingCriteria
-  No puede cambiar waiverAuthority
-  No puede reducir mandatoryEvidence sin waiver
+- **Tenant/producto/iniciativa son contexto opaco, no entidades del Core.** Llegan
+  dentro de `ExecutionContext { initiative?; tenant?; phase? }`
+  (`packages/core-domain/src/domain/gate-evidence.ts:87-89`), marcado explícitamente
+  como *"Never persisted or interpreted"*. El Core "nunca recibe un user path, token
+  UMS, credencial de repositorio ni identificador de tenant"
+  (`apps/core-api/src/application/services/workspace-reference-resolver.service.ts:9-11`);
+  el consumidor pasa una referencia opaca (`workspaceRef`), y Tracker pasa
+  `productId`/`initiativeId` opacos como contexto.
+- **La personalización por tenant, identidad, tiers y propiedad de negocio viven en
+  Evolith Tracker** (ADR-0074 / 0075 / 0100 / 0101), no en el Core. Tracker registra,
+  persiste y audita ese estado operativo; el Core solo evalúa el contexto que recibe y
+  devuelve un `EvaluationResult` no vinculante.
 
-Nuevos schemas (rulesets/schema/):
-  tenant.schema.json
-  tenant-override.schema.json
-  waiver.schema.json
-```
+### Artefactos legacy (diseño tenant-aware superado)
 
----
-
-## 13. Tabla de Correcciones
-
-| # | Área | Problema | Corrección Aplicada | Artefacto | Prioridad | Riesgo si no se corrige | Estado |
-|---|------|---------|-------------------|-----------|-----------|------------------------|--------|
-| 1 | Core-API | `fromPhase = toPhase` en propose-advance | Agregado `currentPhase` a DTO; `fromPhase = body.currentPhase` | `projects.controller.ts`, `projects.dto.ts` | CRÍTICA | Gate evalúa siempre la misma fase (resultado incorrecto) | Sí Aplicada |
-| 2 | Core-API | CORS bloquea todo en producción sin `CORS_ORIGINS` | `origin: rawOrigins?.split(',') ?? false` (false = bloquea; * = permite todo) | `main.ts` | CRÍTICA | API inaccesible para BFF en producción | Sí Aplicada |
-| 3 | Core-API | `ALLOWED_ORIGINS` definido pero nunca usado | Eliminado del schema Zod | `env.validation.ts` | ALTA | Confusión de operadores → CORS mal configurado | Sí Aplicada |
-| 4 | Core-API | `composable-validate` expone paths raw del filesystem | Migrado a `workspaceRef` opaco; usa `WorkspaceReferenceResolverService` | `composable-validate.controller.ts` | CRÍTICA | Path traversal → leer archivos arbitrarios del container | Sí Aplicada |
-| 5 | Core-API | `ComposableValidateController` no registrado → 404 | Registrado en `AppModule` | `app.module.ts` | ALTA | Endpoint siempre 404; feature muerta | Sí Aplicada |
-| 6 | Core-API | `loadPhaseGates()` con ruta hardcoded incorrecta | Busca en ambas ubicaciones con fallback | `core-reference-query.service.ts` | CRÍTICA | Gates siempre devuelven 500 o vacío | Sí Aplicada |
-| 7 | Core-API | `JSON.parse` sin try/catch → 500 en archivo malformado | `Promise.allSettled` + try/catch por archivo | `core-reference-query.service.ts` | ALTA | Un archivo corrupto bloquea todos los endpoints | Sí Aplicada |
-| 8 | Core-API | `toSummary` no entiende topology manifests (usa `$id`) | Detecta `metadata.id` (manifests) vs `$id` (rulesets) | `core-reference-query.service.ts` | ALTA | Topologías devuelven IDs con paths relativos | Sí Aplicada |
-| 9 | Core-API | `@CacheTTL(300)` = 300ms (no 5 minutos) | Corregido a `300_000` ms en todos los TTL | `cache-keys.ts`, `architecture.controller.ts` | ALTA | Cache efectivamente deshabilitado; filesystem I/O en cada request | Sí Aplicada |
-| 10 | Core-API | Health ready solo verifica MetricsService (always UP) | Verifica existencia de `phase-gates.rules.json` en corpus | `health.controller.ts` | ALTA | Pod reporta "ready" con corpus roto | Sí Aplicada |
-| 11 | Core-API | Health/metrics consumen rate limit de k8s probes | `@SkipThrottle()` en HealthController | `health.controller.ts` | MEDIA | Probes de k8s causan 429 bajo carga; pod reiniciado erroneamente | Sí Aplicada |
-| 12 | Core-API | `Authorization` faltante en `allowedHeaders` CORS | Agregado `Authorization`, `x-api-key` | `main.ts` | BAJA | BFF con bearer token bloqueado por CORS preflight | Sí Aplicada |
-| 13 | Rulesets | 8 topology rules.json con `$schema` inaccesibles | Corregidos a `../../schema/` y `../../../schema/` | 8 archivos en `rulesets/topologies/` | ALTA | `ajv validate` falla; CI schema validation no funciona | Sí Aplicada |
-| 14 | Rulesets | `rule-definition.schema.json` referenciado pero inexistente | Creado en `rulesets/schema/` | `rule-definition.schema.json` | ALTA | 2 infra rules.json no validables | Sí Aplicada |
-| 15 | Rulesets | Schemas `sdlc-gate` y `sdlc-phase` en `reference/` | Copiados a `rulesets/schema/` | `sdlc-gate.schema.json`, `sdlc-phase.schema.json` | MEDIA | Schemas operativos inaccesibles desde `rulesets/schema/` | Sí Aplicada |
-| 16 | Rulesets | Schemas `tenant`, `blueprint`, `waiver`, `tenant-override` inexistentes | Creados en `rulesets/schema/` | 4 nuevos archivos `.schema.json` | ALTA | Sin contrato → tenant config no validable | Sí Aplicada |
-| 17 | Rulesets | `rulesets/tenants/` no existía | Creado con README + ejemplo funcional | `rulesets/tenants/` | ALTA | Sin modelo de tenant → personalización imposible | Sí Aplicada |
-| 18 | OPA | Sin policy para phase gates | `rulesets/opa/phase-gates.rego` con validación de evidence + waivers | `phase-gates.rego` | ALTA | Gates solo evaluados por native engine; OPA no cubre este dominio | Sí Aplicada |
-| 19 | MCP Server | `tsconfig.json` usa `commonjs`/`node` + paths a `../../node_modules/` (no existen en Docker standalone) | Migrado a `module`/`moduleResolution: nodenext` + `resolvePackageJsonExports` (mismo patrón que core-api). Resuelve vía el campo `exports` de cada paquete; el SDK MCP (ESM-only) cae a su build CJS por la condición `require`. Sin paths hacks | `tsconfig.json`, `tsconfig.prod.json` | CRÍTICA | Build TypeScript falla en Docker standalone (un `paths: {}` NO basta — rompe la resolución de subpaths) | Sí Aplicada |
-| 20 | MCP Server | `@evolith/core`, `@evolith/infra-providers` y `fs-extra` faltantes en package.json (el código los importa) | Agregados a `dependencies`/`devDependencies`; lockfile standalone regenerado (resuelven al registry npm) | `package.json`, `package-lock.json` | CRÍTICA | `npm ci` resuelve deps sin esas librerías; runtime crash | Sí Aplicada |
-| 21 | Ecosystem | Sin `docker-compose.yml` para desarrollo local | Creado con core-api, mcp-server, redis, otel-collector | `docker-compose.yml` | MEDIA | Onboarding de nuevos devs requiere setup manual | Sí Aplicada |
-| 23 | Ecosystem | `@evolith/core` no publicado en npm pero importado por MCP server | Publicado `@evolith/core@1.0.0`, `@evolith/mcp-server@1.0.0`, `@evolith/smart-cli@1.1.1` al registry npm | `packages/core/`, `packages/mcp-server/`, `sdk/cli/` | CRÍTICA | MCP server build falla hasta que se publique | Sí Aplicada |
-| 24 | MCP Server | Transporte `sse` en Dockerfile/compose cae a stdio (`McpTransport` = `stdio`\|`http`) → sin servidor HTTP | Cambiado a `--transport http` (StreamableHTTP, que internamente hace SSE). `/health` movido antes de `validateAuth` (probe público). Bind `0.0.0.0` (override `MCP_HTTP_HOST`) para que Traefik enrute | `mcp-server.service.ts`, `Dockerfile`, `docker-compose.yml` | CRÍTICA | El deploy arranca en stdio → healthcheck HTTP falla | Sí Aplicada |
-| 25 | Deploy | Env vars del mcp-server en Coolify en texto plano (no cifradas) → `DecryptException` rompe deploy y UI | Re-cifradas con `encrypt()` (Laravel APP_KEY); `EVOLITH_API_KEY` configurado para auth en producción | Coolify DB `environment_variables` | CRÍTICA | Deploy del mcp-server falla tras build; UI de Coolify da 500 | Sí Aplicada |
-| 26 | Seguridad | Sin auth guard en endpoints del core-api | `ApiKeyGuard` global (opt-in vía `EVOLITH_API_KEY`; `@Public()` en health; consistente con mcp-server) | `api-key.guard.ts`, `public.decorator.ts`, `app.module.ts`, `env.validation.ts` | ALTA | Endpoints mutadores del core-api públicos | Sí Aplicada (activar con `EVOLITH_API_KEY`) |
-| 27 | Seguridad | `/metrics` del core-api sin auth (expone métricas internas) | **Pendiente** — network policy o puerto interno separado | `metrics.controller.ts` | ALTA | Prometheus expuesto públicamente | ⏳ Pendiente |
-| 28 | Ecosystem | Machine contracts no incluye MCP, CLI, core-api como consumers | **Pendiente** — actualizar `evolith-machine-contracts.json` | `rulesets/contracts/` | MEDIA | Contrato desactualizado → consumidores fuera de spec | ⏳ Pendiente |
+`rulesets/tenants/`, `rulesets/schema/tenant.schema.json`,
+`rulesets/schema/tenant-override.schema.json` y `rulesets/opa/multi-tenancy.rego`
+**existen físicamente en disco**, pero son artefactos **legacy** del diseño
+pre-ADR-0101 (tenant-aware). ADR-0101 supersede ese modelo: el Core no aplica
+overrides por tenant ni evalúa identidad de tenant. Su remoción física es una
+decisión de código aparte; este documento solo deja de presentarlos como el modelo
+operativo vigente del Core.
 
 ---
 
-## 14. Estado de Deployment (2026-06-27)
-
-Ambos servicios desplegados en Coolify (VPS Hostinger) sobre branch `main`, healthy:
-
-| Servicio | URL | Build | Auth |
-|----------|-----|-------|------|
-| `evolith-core-api` (Coolify id 12) | http://evolith.beyondnet.cloud | `nodenext`, Docker standalone | sin guard (pendiente) |
-| `evolith-mcp-server` (Coolify id 13) | http://mcpevolith.beyondnet.cloud | `nodenext`, transporte `http`, bind `0.0.0.0` | `EVOLITH_API_KEY` (obligatorio en producción) |
-| `agent-runtime-api` (preparado) | https://evolithruntime.beyondnet.cloud | Dockerfile monorepo (compila `@evolith/agent-runtime`) | `AGENT_RUNTIME_API_KEY` (fail-closed en prod) |
-
-> **Nota:** `agent-runtime-api` está **preparado** (servicio + Dockerfile + guía Coolify) pero pendiente de creación de la app en el panel Coolify y registro DNS del subdominio. Ver [guía de despliegue](../infrastructure/vps-coolify/agent-runtime-deploy.md).
-
-Paquetes npm publicados: `@evolith/core@1.0.0`, `@evolith/mcp-server@1.0.0`, `@evolith/smart-cli@1.1.1` (además de `@evolith/core-domain@1.0.4`, `@evolith/infra-providers@1.0.2`). Detalle operativo del deploy en [[project-coolify-deploy]].
-
----
-
-## 15. Cambios Pendientes
-
-### Altos (degradan seguridad/gobernanza)
-
-1. **API Key Guard en core-api** — implementar `PassportStrategy` con `x-api-key` header; aplicar en todos los endpoints `POST`. (El mcp-server ya tiene auth vía `EVOLITH_API_KEY`.)
-2. **`/metrics` en puerto interno** — separar del puerto público con Traefik middleware o segundo listener.
-3. **Paginación** en `GET /rulesets` y `GET /topologies`.
-4. **`rulesets/sdlc/phase-gates.rules.json`** — eliminar el duplicado (mantener solo `rulesets/phase-gates/`).
-
-### Medios (mejoran calidad)
-
-5. **CI schema validation** — `ajv-cli` validando todos `*.rules.json` contra su `$schema`.
-6. **CI cross-reference check** — detectar `playbookRef` en `.rules.json` que apunten a `.md` inexistentes.
-7. **Cache hit/miss metrics** — conectar `CacheMetricsService.recordHit/Miss()` al `CacheInterceptor`.
-8. **Índice de rulesets** en startup — evitar filesystem scan en cada `GET /rulesets`.
-9. **Blueprints estructurados** — crear `rulesets/blueprints/` con `blueprint.json` para cada blueprint existente en `reference/`.
-
----
-
-## 16. Riesgos Detectados
-
-| Riesgo | Probabilidad | Impacto | Mitigación |
-|--------|-------------|---------|-----------|
-| Divergencia entre `rulesets/sdlc/` y `rulesets/phase-gates/` | MEDIA | ALTA | Eliminar duplicado; CI que detecte archivos con mismo nombre |
-| Corpus no montado en pod → todos los endpoints devuelven vacío/500 | MEDIA | CRÍTICO | `/health/ready` ahora verifica; k8s no envía tráfico |
-| Env vars insertadas crudas en Coolify DB → `DecryptException` rompe deploy y UI | MEDIA | ALTA | Siempre cifrar con `encrypt()`/UI; ver [[project-coolify-deploy]] |
-| Tenants pueden leer rulesets de otros tenants | BAJA | ALTA | Implementar ABAC a nivel de corpus access en Core-API |
-| OPA `.wasm` ausente → validaciones sin política formal | ALTA | MEDIA | Native engine como fallback; generar `.wasm` en CI |
-
----
-
-## 17. Recomendaciones Finales
+## 12. Recomendaciones Finales
 
 1. **Una sola ubicación canónica para cada artefacto** — el patrón ya existe; aplicarlo rigurosamente. `rulesets/` para reglas, `reference/` para lectura humana, sin cruces.
 
 2. **CI como contrato de consistencia** — agregar tres checks de CI:
-   - `ajv validate` en todos `*.rules.json` contra su `$schema`
+   - `ajv validate` en todos `*.rules.json` contra su `$schema` (ver `GT-391`)
    - `opa test rulesets/opa/` — suite de tests OPA debe pasar
    - Cross-reference: toda `playbookRef` en `.rules.json` apunta a un `.md` existente
 
-3. **Tenant model es el próximo hito** — los schemas están, el directorio está. El siguiente paso es la API de tenant discovery en Core-API y la evaluación de overrides en el gate evaluator.
+3. **Sin tenant model en el Core (superado por ADR-0101)** — la idea previa de una
+   API de tenant discovery en Core-API y de evaluar overrides por tenant en el gate
+   evaluator queda **superada por [ADR-0101](./adrs/core/0101-core-stateless-evaluation-engine.md)**:
+   el Core es stateless y tenant-agnóstico, nunca recibe un identificador de tenant, y
+   no existe ni existirá tenant discovery en Core-API ni evaluación de overrides por
+   tenant. Esa responsabilidad es de Evolith Tracker. Los schemas/directorio de tenant
+   en disco son artefactos legacy (ver §11).
 
-4. **Auth del core-api como decisión urgente** — el core-api está públicamente expuesto sin guard. Aunque la red puede restringir acceso (VPC, k8s NetworkPolicy), implementar API Key guard es recomendable para producción. (El mcp-server ya exige `EVOLITH_API_KEY` en producción.)
-
-5. **OTEL en staging siempre activo** — activar `OTEL_ENABLED=true` en el entorno de staging por defecto para capturar traces antes de llegar a producción.
+4. **OTEL en staging siempre activo** — activar `OTEL_ENABLED=true` en el entorno de staging por defecto para capturar traces antes de llegar a producción.

@@ -87,7 +87,7 @@ La autenticación, los roles/códigos ABAC, el contrato de tools mutativas y la 
 
 ## Registro ligero de tools (`@evolith/mcp-tools`)
 
-Distinto del gateway de 27 tools, **`@evolith/mcp-tools`** es un registro JS sin dependencias que expone 3 tools de diagnóstico — `evolith-ping`, `evolith-echo`, `evolith-read-gap-tracking` — registradas vía `registerEvolithTools(server)`. Es un building block mínimo, no el gateway de gobernanza; ver su [README](../../../packages/mcp-tools/README.es.md).
+Distinto del gateway `@evolith/mcp-server`, **`@evolith/mcp-tools`** es un registro JS sin dependencias que expone 3 tools de diagnóstico — `evolith-ping`, `evolith-echo`, `evolith-read-gap-tracking` — registradas vía `registerEvolithTools(server)`. Es un building block mínimo, no el gateway de gobernanza; ver su [README](../../../packages/mcp-tools/README.es.md).
 
 ## Troubleshooting
 

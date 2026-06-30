@@ -53,6 +53,7 @@ To view distributed traces: open Grafana → Explore → select **Tempo** dataso
 | [Agentic CI and RAG Support](./agentic-ci-rag-support.md) | Gemini/Winston review and RAG index support runbook | Operate AI-assisted CI safely | Support runbook | Yes |
 | [Data Store Backup & DR](./data-store-backup-dr.md) | Backup and disaster-recovery procedures for PostgreSQL, MongoDB, MinIO, OpenBao | Recover from data loss without ad-hoc archeology | DR runbook | Yes |
 | [Prometheus Alerting Rules](./alerts/prometheus-alerts.yml) | Infrastructure-level alert rules (service-down, CPU, disk, error rate) | Page on-call before problems reach users | Alert rules | Yes |
+| [Core API SLO](./slo/core-api-slo.md) | Service-level objectives and error budgets for the Core API | Hold the Core API to explicit reliability targets | SLO definition | Yes |
 
 ---
 

@@ -1,0 +1,111 @@
+# ──────────────────────────────────────────────────────────────────────────
+# Evolith services — focused local compose.
+#
+# Runs the THREE real Evolith services (CORE-API, MCP, Agent Runtime) from their
+# monorepo-aware Dockerfiles, reachable on localhost. This is the docker-compose
+# counterpart of the local kind kit (reference/infrastructure/helm/local-test.sh).
+#
+#   cd reference/infrastructure
+#   EVOLITH_API_KEY=local-dev-key docker compose -f docker-compose.evolith.yml up -d --build
+#   curl localhost:3001/health           # CORE-API
+#   curl localhost:3002/health           # MCP
+#   curl localhost:3003/health           # Agent Runtime
+#   docker compose -f docker-compose.evolith.yml down
+#
+# NOTE: the big UMS reference stack (docker-compose.yml) keeps its `bff`/`mcp`
+# services as generic *templates* (see deployment-topology.md). This file is the
+# real, runnable one.
+# ──────────────────────────────────────────────────────────────────────────
+name: evolith
+
+x-api-key: &api_key ${EVOLITH_API_KEY:-local-dev-key}
+
+services:
+  redis:
+    image: redis:7.2-alpine
+    container_name: evolith-redis
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks: [evolith]
+
+  core-api:
+    build:
+      # Context is the repository ROOT (monorepo Dockerfile builds workspace pkgs).
+      context: ../..
+      dockerfile: apps/core-api/Dockerfile
+    image: evolith-core-api:local
+    container_name: evolith-core-api
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      EVOLITH_API_KEY: *api_key
+      CORE_PATH: /app/corpus
+      WORKSPACE_ROOT: /app/corpus
+      REDIS_URL: redis://redis:6379
+    ports:
+      - "3001:3000"
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    networks: [evolith]
+
+  mcp:
+    build:
+      context: ../..
+      dockerfile: packages/mcp-server/Dockerfile
+    image: evolith-mcp-server:local
+    container_name: evolith-mcp
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      TRANSPORT: http
+      EVOLITH_API_KEY: *api_key
+      EVOLITH_MCP_ALLOW_NO_AUTH: "false"
+      CORE_PATH: /app/corpus
+      WORKSPACE_ROOT: /app/corpus
+    ports:
+      - "3002:3000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    networks: [evolith]
+
+  agent-runtime:
+    build:
+      context: ../..
+      dockerfile: apps/agent-runtime-api/Dockerfile
+    image: evolith-agent-runtime:local
+    container_name: evolith-agent-runtime
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      AGENT_RUNTIME_API_KEY: *api_key
+    ports:
+      - "3003:3000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    networks: [evolith]
+
+networks:
+  evolith:
+    driver: bridge

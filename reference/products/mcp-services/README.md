@@ -87,7 +87,7 @@ Authentication, ABAC roles/codes, the mutative-tool contract, and the full per-t
 
 ## Lightweight tools registry (`@evolith/mcp-tools`)
 
-Distinct from the 27-tool gateway, **`@evolith/mcp-tools`** is a dependency-free JS registry exposing 3 diagnostic tools — `evolith-ping`, `evolith-echo`, `evolith-read-gap-tracking` — registered via `registerEvolithTools(server)`. It is a minimal building block, not the governance gateway; see its [README](../../../packages/mcp-tools/README.md).
+Distinct from the `@evolith/mcp-server` gateway, **`@evolith/mcp-tools`** is a dependency-free JS registry exposing 3 diagnostic tools — `evolith-ping`, `evolith-echo`, `evolith-read-gap-tracking` — registered via `registerEvolithTools(server)`. It is a minimal building block, not the governance gateway; see its [README](../../../packages/mcp-tools/README.md).
 
 ## Troubleshooting
 

@@ -121,6 +121,100 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
   - [x] Paridad Native+OPA 0 drift; suites OPA + core-domain/CLI/MCP verdes.
 - **Dependencias:** `GT-380`.
 
+#### GT-383
+
+**Título:** Productización y publicación de `@evolith/agent-runtime` v1.0.0 (paraguas)
+
+- **Propósito:** `@evolith/agent-runtime` (ADR-0102) es la capa agéntica hexagonal que opera el Core stateless a través de puertos. Es un paquete workspace interno del monorepo en `0.1.0`, no publicado, y su cableado por defecto (`createAgentRuntime`) arranca íntegramente sobre adaptadores stub/in-memory. Llegar a un `1.0.0` creíble ("garantía de producto") significa dos cosas distintas que deben aterrizar juntas: (a) **comportamiento de producción** — graduar los stubs que importan a adaptadores reales; y (b) **estabilidad de contrato** — congelar la superficie pública para que `1.0.0` sea una promesa SemVer real. El problema de honestidad central: hoy el runtime gobierna sobre un Core *simulado*.
+- **Evidencia:** `packages/agent-runtime/src/bootstrap.ts` cablea `StubCoreEvaluationAdapter`, `StubAgentEngineAdapter`, `InMemoryScheduler/Memory/Tracker`, aprobación `Auto/DenyByDefault` como defaults. `package.json`: `version 0.1.0`, `publishConfig.access:public`, `"@evolith/core-domain":"*"`. `npm view @evolith/agent-runtime` → 404 (no publicado). Tres adaptadores de producción ya existen (`HarnessProcessAdapter`, `OpaCliPolicyValidationAdapter`, `HttpTrackerTraceAdapter`).
+- **Impacto:** `packages/agent-runtime/*`. Sin consumidor externo hoy (solo `apps/agent-runtime-api`), así que publicar es prematuro hasta que el contrato sea real.
+- **Complejidad:** XL
+- **Fix propuesto:** Ejecutar `GT-384` (R1) … `GT-389` (R6). NO taguear `1.0.0` antes de que aterrice `GT-384`.
+- **Criterios de aceptación:**
+  - [ ] `GT-384`…`GT-389` cerrados.
+  - [ ] `createAgentRuntime` puede cablearse a Core real, motor, scheduler/memoria durables y aprobación HITL sin tocar dominio/aplicación.
+  - [ ] Exports públicos congelados; el paquete compila y resuelve para un consumidor externo.
+- **Dependencias:** decompuesta en `GT-384`…`GT-389`. Relacionada: `GT-375` (contratos stateless del Core que el adaptador consume).
+
+#### GT-384
+
+**Título:** R1 — Adaptador real de evaluación del Core (reemplazar el stub tras `ICoreEvaluationPort`)
+
+- **Propósito:** El stub es una regla transparente, no un evaluador: lee `passthrough.missing_artifacts`/`expectedVerdict` y emite un `EvaluationResult` canónico con `results:{}`, `rulesExecuted:[]`, `policiesApplied:[]`. No corre ninguna regla ni política OPA real, así que toda decisión de gobierno aguas abajo en el runtime descansa sobre una simulación. Es el bloqueador central de `GT-383`.
+- **Propósito (ruta):** El contrato ya coincide — `ICoreEvaluationPort.evaluate(EvaluationContext): EvaluationResult` es exactamente la firma de `EvaluationOrchestrator.evaluate(ctx)` del Core (`packages/core-domain/src/evaluation/evaluation-orchestrator.service.ts`), ya cableado en `apps/core-api/src/app.module.ts` y exportado desde `@evolith/core-domain/evaluation`. Así que el adaptador in-process construye/inyecta el orquestador y delega; el adaptador REST llama al controlador `/evaluate` existente (`apps/core-api/.../evaluation.controller.ts`). El único trabajo real es componer las deps del orquestador (pipeline, resolver de workspace, kind-evaluators) y resolver `EvaluationContext.workspaceRef`.
+- **Impacto:** nuevos `packages/agent-runtime/src/adapters/core/{in-process,rest}-core-evaluation.adapter.ts`; ejemplo de cableado de producción en `bootstrap.ts`.
+- **Complejidad:** M (cableado + resolución de workspaceRef; la lógica de evaluación ya existe por `GT-378`/`GT-379`).
+- **Estado (2026-06-30, EN-PROGRESO):** ambos adapters entregados en `@evolith/agent-runtime` — `InProcessCoreEvaluationAdapter` (seam delgado sobre un `EvaluationOrchestrator` inyectado, tipo estructural, sin import concreto) y `HttpCoreEvaluationAdapter` (`POST /api/v1/evaluate`, desenvuelve el envelope ADR-0073 `{success,data}`, lanza en non-2xx). Cableados por env en `apps/agent-runtime-api/.../runtime.factory.ts` vía `AGENT_RUNTIME_CORE_ENDPOINT` (+ `AGENT_RUNTIME_CORE_TOKEN` opcional); el stub sigue como default offline/test. Spec de paridad verde (jest 22/22; stub↔real 0 drift; el path real puebla `rulesExecuted`/`policiesApplied`). Falta: construir el orquestador in-process real en un host + un test end-to-end contra un Core vivo.
+- **Criterios de aceptación:**
+  - [ ] El adaptador in-process delega a `EvaluationOrchestrator.evaluate(ctx)` y devuelve el `EvaluationResult` canónico sin alterar.
+  - [ ] El adaptador REST llama a `/evaluate` del Core API y mapea el envelope ADR-0073 de vuelta a `EvaluationResult`.
+  - [ ] Test de paridad stub↔real: mismo `EvaluationContext` → `EvaluationResult` de forma idéntica en contrato (0 drift); el adaptador real puebla `rulesExecuted`/`policiesApplied`.
+- **Dependencias:** `GT-377`/`GT-378` (contratos del Core + wrap del motor). Bloquea `GT-388`.
+
+#### GT-385
+
+**Título:** R2 — Cableado del motor de producción (cliente Hermes real + enrutado multimotor)
+
+- **Propósito:** `IAgentEnginePort` usa por defecto `StubAgentEngineAdapter` (emparejador heurístico). El `HermesAgentAdapter` lazy/opcional existe pero nunca es el default. Una instalación de producción necesita un motor real cableado y una política de enrutado para múltiples motores, conservando el stub determinístico como default offline/test (regla de diseño #5 — el paquete debe compilar y arrancar sin motor instalado).
+- **Impacto:** `packages/agent-runtime/src/adapters/engine/*`; `bootstrap.ts`.
+- **Complejidad:** M
+- **Criterios de aceptación:**
+  - [ ] Cliente Hermes real inyectado tras `IAgentEnginePort`; enrutado multimotor selecciona motor por capacidad/política.
+  - [ ] El stub sigue siendo el default; el paquete compila con Hermes NO instalado.
+- **Dependencias:** ninguna (el adaptador es opcional/reemplazable).
+
+#### GT-386
+
+**Título:** R3 — Adaptadores de persistencia durable (scheduler + memoria)
+
+- **Propósito:** `InMemorySchedulerAdapter` no arranca timers y pierde las tareas al reiniciar; `InMemoryMemoryAdapter` es volátil. Producción necesita un adaptador durable cron/cola tras `ISchedulerPort` y un almacén persistente tras `IMemoryPort`, conservando las versiones in-memory como default de test.
+- **Impacto:** `packages/agent-runtime/src/adapters/{scheduler,memory}/*`.
+- **Complejidad:** M
+- **Estado (2026-06-30, EN-PROGRESO):** entregados `FileSchedulerAdapter` + `FileMemoryAdapter` — respaldados por archivo JSON, así que tareas/memoria sobreviven un reinicio (una instancia nueva sobre el mismo archivo reproduce lo escrito antes). Backend filesystem cero-infra; memoria durable cableada por env vía `AGENT_RUNTIME_STATE_DIR`; el in-memory sigue como default de test. Verificado jest 28/28. Falta: una cola/cron en red o store Redis/vector, y scheduling real por expresión cron (el scheduler de archivo, como el in-memory, trata las cron strings como no-vencidas).
+- **Criterios de aceptación:**
+  - [ ] Las tareas programadas sobreviven a un reinicio del proceso y se reproducen cuando vencen.
+  - [ ] Las escrituras de memoria persisten entre ejecuciones tras `IMemoryPort`.
+  - [ ] Los adaptadores in-memory siguen siendo el default para tests/ejemplos.
+- **Dependencias:** ninguna.
+
+#### GT-387
+
+**Título:** R4 — Flujo de aprobación HITL (chat/Tracker)
+
+- **Propósito:** Los defaults de aprobación son `AutoApprovalAdapter` (concede lo de bajo impacto automáticamente, nunca lo de alto impacto) y `DenyByDefaultApprovalAdapter` (default seguro de producción). Ninguno es un flujo real human-in-the-loop. Producción necesita un flujo de aprobación tras `IApprovalPort` que enrute las capacidades de alto impacto a un humano vía chat/Tracker y registre la decisión.
+- **Impacto:** `packages/agent-runtime/src/adapters/approval/*`.
+- **Complejidad:** M
+- **Criterios de aceptación:**
+  - [ ] Las capacidades de alto impacto bloquean en una aprobación humana real enrutada a chat/Tracker.
+  - [ ] Las decisiones se trazan; deny-by-default sigue siendo el fallback cuando no hay flujo cableado.
+- **Dependencias:** disponibilidad del Tracker.
+
+#### GT-388
+
+**Título:** R5 — Congelar contrato público + SemVer 1.0.0
+
+- **Propósito:** `1.0.0` es una promesa de que la API pública no romperá sin un major. Antes de hacerla, congelar los tres entrypoints de export (`.`, `./ports`, `./adapters`) y los tipos de contrato canónicos, y definir cómo evoluciona `schemaVersion` (el runtime hoy emite `1.0.0`) más una política de deprecación/compatibilidad. El bump debe seguir a `GT-384` — no hay contrato estable mientras el puerto del Core sea un simulador.
+- **Impacto:** `packages/agent-runtime/package.json` (`exports`, `version`); un doc de CONTRATO/compatibilidad.
+- **Complejidad:** S
+- **Estado (2026-06-30, EN-PROGRESO):** el guardián `public-surface.spec.ts` congela la superficie de valores en runtime de `.` + `./adapters` (23 exports congelados; `./ports` es solo-tipos, congelado por el `tsc` del consumidor). Política "Versionado y estabilidad de contrato" añadida al README (EN+ES): SemVer, evolución de `schemaVersion` solo-incompatible, `@deprecated` un minor antes de un major. jest 30/30. Versión NO subida a propósito (sigue `0.1.0`). Falta: el bump `0.1.0`→`1.0.0`, gated por cerrar `GT-384`.
+- **Criterios de aceptación:**
+  - [ ] Superficie de exports y tipos públicos declarados estables; política de deprecación/compatibilidad + evolución de `schemaVersion` documentada.
+  - [ ] `version` subida `0.1.0`→`1.0.0` solo tras que `GT-384` esté `COMPLETADO`.
+- **Dependencias:** `GT-384`.
+
+#### GT-389
+
+**Título:** R6 — Higiene de empaquetado y release
+
+- **Propósito:** El paquete no es publish-safe: depende de `@evolith/core-domain` con el rango `"*"`, que resolvería a cualquier versión para un instalador externo. Hacerlo publicable — pinear un rango SemVer real, asegurar que `@evolith/core-domain` (1.0.5) esté publicado en el registro elegido, verificar que los `files`/`exports`/`dist` declarados resuelven para un consumidor fuera del monorepo, y cablear `build`+`test` en el CI de release.
+- **Impacto:** `packages/agent-runtime/package.json`; publicación de `packages/core-domain`; CI de release.
+- **Complejidad:** S
+- **Criterios de aceptación:**
+  - [ ] `"@evolith/core-domain":"*"` → `^1.x`; `@evolith/core-domain` publicado.
+  - [ ] Una instalación externa limpia resuelve tipos y entrypoints de runtime desde `dist`.
+  - [ ] El CI de release corre `build`+`test` para el paquete.
+- **Dependencias:** `GT-388`.
+
 #### GT-363
 
 **Título:** Cliente de integración con GitHub API — auth seguro + operaciones de repositorio

@@ -87,15 +87,15 @@ Evolith ships as a suite of coordinated products built on a common foundation.
 
 | Product | Role |
 |---|---|
-| **Evolith Core** | Provider-neutral constitution: principles, ADRs, rulesets, topologies, and contracts |
-| **Smart CLI** | Local enforcement — validate code, run gates, manage ADRs, serve MCP |
-| **Core API** | REST service for remote governance queries and evaluation |
-| **MCP Services** | Governance as live context for LLMs and AI agents (27 tools, 9 resources, 8 prompts) |
-| **Agent Runtime** | Agentic mediation layer — orchestrates Core through Ports & Adapters; Hermes is one replaceable adapter |
-| **Evolith Tracker** | Business lifecycle governance — phases, owners, funding, and ROI |
-| **Rulesets** | Machine-readable enforcement rules per topology |
-| **OPA Policies** | Fine-grained policy checks integrated into the pipeline |
-| **Schemas & Manifests** | Structured contracts for artifacts and topology definitions |
+| **[Evolith Core](reference/README.md)** | Provider-neutral constitution: principles, ADRs, rulesets, topologies, and contracts |
+| **[Smart CLI](reference/products/smart-cli/README.md)** | Local enforcement — validate code, run gates, manage ADRs, serve MCP |
+| **[Core API](reference/products/core-api/README.md)** | REST service for remote governance queries and evaluation |
+| **[MCP Services](reference/products/mcp-services/README.md)** | Governance as live context for LLMs and AI agents (27 tools, 9 resources, 8 prompts) |
+| **[Agent Runtime](reference/architecture/agent-runtime/README.md)** | Agentic mediation layer — orchestrates Core through Ports & Adapters; Hermes is one replaceable adapter |
+| **[Evolith Tracker](reference/products/evolith-tracker/README.md)** | Business lifecycle governance — phases, owners, funding, and ROI |
+| **[Rulesets](rulesets/README.md)** | Machine-readable enforcement rules per topology |
+| **[OPA Policies](rulesets/opa/README.md)** | Fine-grained policy checks integrated into the pipeline |
+| **[Schemas & Manifests](rulesets/schema/README.md)** | Structured contracts for artifacts and topology definitions |
 
 ---
 

@@ -1,4 +1,3 @@
-<div align="center">
 
 # Evolith: Framework de Gobernanza Arquitectónica Ejecutable
 
@@ -85,17 +84,17 @@ Detalles completos: [Conceptos Core](./reference/core/README.es.md) · [Topolog�
 
 Evolith se distribuye como una suite de productos coordinados sobre una base común.
 
-| Producto | Rol |
-|---|---|
-| **Evolith Core** | Constitución neutral al proveedor: principios, ADRs, rulesets, topologías y contratos |
-| **Smart CLI** | Aplicación local — valida código, ejecuta compuertas, gestiona ADRs, sirve MCP |
-| **Core API** | Servicio REST para consultas y evaluación de gobernanza de forma remota |
-| **MCP Services** | Gobernanza como contexto en vivo para LLMs y agentes de IA (27 tools, 9 resources, 8 prompts) |
-| **Agent Runtime** | Capa de mediación agéntica — orquesta el Core mediante Puertos y Adaptadores; Hermes es uno de los adaptadores reemplazables |
-| **Evolith Tracker** | Gobernanza del ciclo de vida del negocio — fases, propietarios, financiación y ROI |
-| **Rulesets** | Reglas de aplicación legibles por máquina por topología |
-| **Políticas OPA** | Controles de política granulares integrados en el pipeline |
-| **Schemas y Manifests** | Contratos estructurados para artefactos y definiciones de topología |
+| Producto                | Rol                                                                                                                          |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| **[Evolith Core](reference/README.es.md)**        | Constitución neutral al proveedor: principios, ADRs, rulesets, topologías y contratos                                        |
+| **[Smart CLI](reference/products/smart-cli/README.es.md)**           | Aplicación local — valida código, ejecuta compuertas, gestiona ADRs, sirve MCP                                               |
+| **[Core API](reference/products/core-api/README.es.md)**            | Servicio REST para consultas y evaluación de gobernanza de forma remota                                                      |
+| **[MCP Services](reference/products/mcp-services/README.es.md)**        | Gobernanza como contexto en vivo para LLMs y agentes de IA (27 tools, 9 resources, 8 prompts)                                |
+| **[Agent Runtime](reference/architecture/agent-runtime/README.es.md)**       | Capa de mediación agéntica — orquesta el Core mediante Puertos y Adaptadores; Hermes es uno de los adaptadores reemplazables |
+| **[Evolith Tracker](reference/products/evolith-tracker/README.es.md)**     | Gobernanza del ciclo de vida del negocio — fases, propietarios, financiación y ROI                                           |
+| **[Rulesets](rulesets/README.es.md)**            | Reglas de aplicación legibles por máquina por topología                                                                      |
+| **[Políticas OPA](rulesets/opa/README.es.md)**       | Controles de política granulares integrados en el pipeline                                                                   |
+| **[Schemas y Manifests](rulesets/schema/README.es.md)** | Contratos estructurados para artefactos y definiciones de topología                                                          |
 
 ---
 

@@ -8,6 +8,10 @@ export type { HarnessCapabilityRuntime } from './harness/harness-manifest';
 // Core evaluation
 export { StubCoreEvaluationAdapter } from './core/stub-core-evaluation.adapter';
 export type { StubCoreOptions } from './core/stub-core-evaluation.adapter';
+export { InProcessCoreEvaluationAdapter } from './core/in-process-core-evaluation.adapter';
+export type { CoreEvaluationOrchestrator } from './core/in-process-core-evaluation.adapter';
+export { HttpCoreEvaluationAdapter } from './core/http-core-evaluation.adapter';
+export type { HttpCoreOptions } from './core/http-core-evaluation.adapter';
 
 // Policy / OPA
 export { StubPolicyValidationAdapter, denyOnFailedEvaluation } from './policy/stub-policy-validation.adapter';
@@ -22,6 +26,8 @@ export type { HttpTrackerOptions } from './tracker/http-tracker-trace.adapter';
 
 // Memory
 export { InMemoryMemoryAdapter } from './memory/in-memory-memory.adapter';
+export { FileMemoryAdapter } from './memory/file-memory.adapter';
+export type { FileMemoryOptions } from './memory/file-memory.adapter';
 
 // Skills
 export { LocalSkillRegistryAdapter } from './skills/local-skill-registry.adapter';
@@ -32,6 +38,8 @@ export { CliCommunicationGatewayAdapter } from './gateway/cli-communication-gate
 
 // Scheduler
 export { InMemorySchedulerAdapter } from './scheduler/in-memory-scheduler.adapter';
+export { FileSchedulerAdapter } from './scheduler/file-scheduler.adapter';
+export type { FileSchedulerOptions } from './scheduler/file-scheduler.adapter';
 
 // Approval
 export { AutoApprovalAdapter, DenyByDefaultApprovalAdapter } from './approval/policy-approval.adapter';

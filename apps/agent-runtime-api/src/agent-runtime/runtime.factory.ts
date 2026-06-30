@@ -10,9 +10,13 @@ import {
   HarnessProcessAdapter,
   OpaCliPolicyValidationAdapter,
   HttpTrackerTraceAdapter,
+  HttpCoreEvaluationAdapter,
+  FileMemoryAdapter,
   type AgentRuntimeBundle,
   type AgentRuntimeOverrides,
 } from '@evolith/agent-runtime';
+
+import * as path from 'node:path';
 
 export const AGENT_RUNTIME_BUNDLE = 'AGENT_RUNTIME_BUNDLE';
 
@@ -48,6 +52,21 @@ export function createRuntimeFromEnv(env: NodeJS.ProcessEnv = process.env): Agen
     };
   }
 
+  // Core evaluation — call the real stateless Core over HTTP (Core API
+  // `/api/v1/evaluate`) instead of the deterministic stub. Without this the
+  // runtime governs over a simulated Core (see GT-384).
+  const coreEndpoint = env.AGENT_RUNTIME_CORE_ENDPOINT;
+  if (coreEndpoint) {
+    const headers: Record<string, string> = {};
+    if (env.AGENT_RUNTIME_CORE_TOKEN) {
+      headers.authorization = `Bearer ${env.AGENT_RUNTIME_CORE_TOKEN}`;
+    }
+    overrides = {
+      ...overrides,
+      coreEvaluation: new HttpCoreEvaluationAdapter({ endpoint: coreEndpoint, headers }),
+    };
+  }
+
   // Tracker — publish trazability events to a live Evolith Tracker over HTTP.
   const trackerEndpoint = env.AGENT_RUNTIME_TRACKER_ENDPOINT;
   if (trackerEndpoint) {
@@ -58,6 +77,18 @@ export function createRuntimeFromEnv(env: NodeJS.ProcessEnv = process.env): Agen
     overrides = {
       ...overrides,
       tracker: new HttpTrackerTraceAdapter({ endpoint: trackerEndpoint, headers }),
+    };
+  }
+
+  // Durable state — persist the runtime's working memory to disk so it survives
+  // a restart (GT-386). Point at a mounted volume in production; unset keeps the
+  // volatile in-memory default (tests, first boot). The scheduler is not part of
+  // the runtime bundle — a host scheduling loop drives `FileSchedulerAdapter`.
+  const stateDir = env.AGENT_RUNTIME_STATE_DIR;
+  if (stateDir) {
+    overrides = {
+      ...overrides,
+      memory: new FileMemoryAdapter({ filePath: path.join(stateDir, 'memory.json') }),
     };
   }
 

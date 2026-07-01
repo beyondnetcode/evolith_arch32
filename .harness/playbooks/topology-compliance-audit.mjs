@@ -93,8 +93,8 @@ for (const dim of dimensions) {
     // Check each required doc type exists in EN
     const docResults = {};
     for (const doc of requiredDocSet) {
-      const hasEn = files.includes(doc);
-      const hasEs = files.includes(doc.replace(".md", ".es.md"));
+      const hasEn = files.some(f => f.endsWith(`/${doc}`) || f === doc);
+      const hasEs = files.some(f => f.endsWith(`/${doc.replace(".md", ".es.md")}`) || f === doc.replace(".md", ".es.md"));
       docResults[doc] = hasEn && hasEs ? "COMPLETO" : hasEn ? "PARCIAL (solo EN)" : "AUSENTE";
     }
 
@@ -159,9 +159,9 @@ for (const dim of dimensions) {
       parityFixtures,
       docEn: `${enDoc.length} de ${requiredDocSet.length}`,
       docEs: `${esDoc.length} de ${requiredDocSet.length}`,
-      docStatus: enDoc.length === requiredDocSet.length && esDoc.length === requiredDocSet.length
+      docStatus: Object.values(docResults).every(v => v === "COMPLETO")
         ? "COMPLETO"
-        : enDoc.length === requiredDocSet.length
+        : Object.values(docResults).every(v => v.startsWith("PARCIAL") || v === "COMPLETO")
           ? "PARCIAL (falta ES)"
           : "AUSENTE",
       // Framework interface gaps

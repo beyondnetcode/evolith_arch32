@@ -144,7 +144,7 @@ Evolith gobierna **8 topologías** en cuatro ejes:
 
 Cada topología tiene sus propios ADRs, políticas OPA, rulesets de IA y contratos UMS. Los sistemas migran entre topologías a medida que el negocio escala — esto es **Arquitectura Progresiva**.
 
-Referencia completa: [Hub de Arquitectura](./reference/architecture/README.es.md)
+Referencia completa: [Hub de Arquitectura](./reference/architecture/README.es.md) · [Arquitectura Maestra C4](./reference/architecture/C4-MASTER-ARCHITECTURE.es.md)
 
 ---
 
@@ -194,6 +194,7 @@ Smart CLI incluye **20 comandos** y se configura mediante **`evolith.yaml`**. Re
 | Área | Enlace |
 |---|---|
 | Constitución Core | [Hub de Evolith Core](./reference/core/README.es.md) |
+| Arquitectura Maestra | [Arquitectura Maestra C4](./reference/architecture/C4-MASTER-ARCHITECTURE.es.md) |
 | Gobernanza SDLC | [Centro de Gobernanza SDLC](./reference/governance/sdlc/README.es.md) |
 | Topologías | [Hub de Topologías](./reference/architecture/topologies/README.es.md) |
 | Smart CLI | [Hub de Smart CLI](./reference/products/smart-cli/README.es.md) |

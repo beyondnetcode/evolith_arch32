@@ -145,7 +145,7 @@ Evolith governs **8 topologies** across four axes:
 
 Each topology has its own ADRs, OPA policies, AI rulesets, and UMS contracts. Systems migrate between topologies as the business scales — this is **Progressive Architecture**.
 
-Full reference: [Architecture hub](./reference/architecture/README.md)
+Full reference: [Architecture hub](./reference/architecture/README.md) · [C4 Master Architecture](./reference/architecture/C4-MASTER-ARCHITECTURE.md)
 
 ---
 
@@ -195,6 +195,7 @@ Smart CLI ships **20 commands** and is configured via **`evolith.yaml`**. Full r
 | Area | Link |
 |---|---|
 | Core constitution | [Evolith Core hub](./reference/core/README.md) |
+| Master Architecture | [C4 Master Architecture](./reference/architecture/C4-MASTER-ARCHITECTURE.md) |
 | SDLC governance | [SDLC Governance Center](./reference/governance/sdlc/README.md) |
 | Topologies | [Topologies hub](./reference/architecture/topologies/README.md) |
 | Smart CLI | [Smart CLI hub](./reference/products/smart-cli/README.md) |

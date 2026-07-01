@@ -33,6 +33,7 @@ import type {
   RuntimeStatus,
   RuntimeTrace,
 } from '../domain/contracts/agent-runtime-result';
+import type { RuntimeEvent } from '../domain/contracts/runtime-event';
 import type { SkillDescriptor } from '../domain/contracts/capability';
 import type { TraceEvent, TraceEventType } from '../domain/contracts/trace';
 import type { HarnessExecutionResult } from '../domain/ports/harness.port';
@@ -82,6 +83,23 @@ export class AgentRuntimeService implements IAgentRuntime {
   }
 
   async handle(request: AgentRuntimeRequest): Promise<AgentRuntimeResult> {
+    let result: AgentRuntimeResult | undefined;
+    
+    // Consume the stream, discard intermediate events, return final result
+    for await (const event of this.handleStream(request)) {
+      if (event.type === 'result_assembled' || event.type === 'error') {
+        result = event.result;
+      }
+    }
+
+    if (!result) {
+      throw new Error('Stream ended without a final result');
+    }
+    
+    return result;
+  }
+
+  async *handleStream(request: AgentRuntimeRequest): AsyncGenerator<RuntimeEvent, void> {
     const startedAt = this.now();
     const steps: string[] = [];
     const baseTrace = (): RuntimeTrace => ({
@@ -103,6 +121,7 @@ export class AgentRuntimeService implements IAgentRuntime {
         tool: request.tool,
         at: startedAt,
       });
+      yield { type: 'context_resolved', timestamp: this.now() };
 
       // 2. Select capability/tool. If unknown and an engine is available, let
       //    the engine PROPOSE a tool (still governed afterwards).
@@ -121,7 +140,8 @@ export class AgentRuntimeService implements IAgentRuntime {
 
       if (!skill) {
         steps.push('tool-not-found');
-        return this.fail(
+        yield { type: 'capability_not_found', timestamp: this.now() };
+        const result = await this.fail(
           request,
           baseTrace(),
           startedAt,
@@ -130,12 +150,17 @@ export class AgentRuntimeService implements IAgentRuntime {
           }.`,
           'tool-not-found',
         );
+        yield { type: 'error', timestamp: this.now(), result };
+        return;
       }
+      
+      yield { type: 'capability_selected', timestamp: this.now(), capabilityId: skill.id };
 
       // 3. Approval (HITL) when the capability requires it.
       let approvedBy: string | undefined;
       if (skill.requiresApproval) {
         steps.push('approval');
+        yield { type: 'approval_required', timestamp: this.now(), capabilityId: skill.id };
         const decision = request.approval?.granted
           ? { granted: true, approver: request.approval.approver }
           : await this.deps.approval.requireApproval({ skill, request });
@@ -146,14 +171,19 @@ export class AgentRuntimeService implements IAgentRuntime {
 
         if (!decision.granted) {
           steps.push('approval-denied');
-          return this.blocked(
+          yield { type: 'approval_denied', timestamp: this.now(), capabilityId: skill.id, payload: { approver: decision.approver } };
+          const result = await this.blocked(
             request,
             skill,
             { ...baseTrace(), capability: skill.id },
             startedAt,
             `Capability '${skill.id}' requires human approval; not granted.`,
           );
+          yield { type: 'result_assembled', timestamp: this.now(), result };
+          return;
         }
+        
+        yield { type: 'approval_decided', timestamp: this.now(), capabilityId: skill.id, payload: { approver: decision.approver } };
         approvedBy = decision.approver;
       }
 
@@ -163,6 +193,7 @@ export class AgentRuntimeService implements IAgentRuntime {
 
       if (skill.kind === 'harness' || skill.kind === 'composite') {
         steps.push('harness-execute');
+        yield { type: 'harness_started', timestamp: this.now(), capabilityId: skill.id };
         harnessResult = await this.deps.harness.execute({
           capability: skill.harnessCapability ?? skill.id,
           args: request.parameters,
@@ -173,16 +204,19 @@ export class AgentRuntimeService implements IAgentRuntime {
           capability: harnessResult.capability,
           exitCode: harnessResult.exitCode,
         });
+        yield { type: 'harness_executed', timestamp: this.now(), capabilityId: skill.id, payload: { exitCode: harnessResult.exitCode, ok: harnessResult.ok } };
       }
 
       if (skill.kind === 'evaluation' || skill.kind === 'composite') {
         steps.push('core-evaluate');
+        yield { type: 'evaluation_started', timestamp: this.now(), capabilityId: skill.id };
         const evalCtx = buildEvaluationContext(request, skill, harnessResult?.data);
         evaluation = await this.deps.coreEvaluation.evaluate(evalCtx);
         await this.emit(request, skill, 'core.evaluated', undefined, {
           verdict: String(evaluation.overallVerdict),
           outcome: evaluation.outcome,
         });
+        yield { type: 'evaluation_completed', timestamp: this.now(), capabilityId: skill.id, payload: { verdict: String(evaluation.overallVerdict), outcome: evaluation.outcome } };
       }
 
       // 5. Assemble base parts from whatever ran.
@@ -191,6 +225,7 @@ export class AgentRuntimeService implements IAgentRuntime {
       // 6. Policy validation (OPA) when required.
       if (skill.requiresPolicy) {
         steps.push('policy-validate');
+        yield { type: 'policy_validation_started', timestamp: this.now(), capabilityId: skill.id };
         const policy = await this.deps.policy.validate({
           policyRef: skill.policyRef,
           input: buildPolicyInput(request, skill, { harness: harnessResult, evaluation }),
@@ -201,6 +236,7 @@ export class AgentRuntimeService implements IAgentRuntime {
           policyRef: policy.policyRef,
           violations: policy.violations.length,
         });
+        yield { type: 'policy_validated', timestamp: this.now(), capabilityId: skill.id, payload: { allowed: policy.allowed, violations: policy.violations.length } };
       }
 
       // 7. Assemble final result + provenance trace.
@@ -242,11 +278,12 @@ export class AgentRuntimeService implements IAgentRuntime {
         at: finishedAt,
       });
 
-      return result;
+      yield { type: 'result_assembled', timestamp: this.now(), result };
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       steps.push('exception');
-      return this.fail(request, baseTrace(), startedAt, `Runtime failure: ${message}`, 'exception');
+      const result = await this.fail(request, baseTrace(), startedAt, `Runtime failure: ${message}`, 'exception');
+      yield { type: 'error', timestamp: this.now(), result };
     }
   }
 

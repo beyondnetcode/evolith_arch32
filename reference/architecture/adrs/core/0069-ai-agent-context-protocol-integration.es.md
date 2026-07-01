@@ -26,6 +26,8 @@ La integración debe proporcionar:
 
 *(Ejemplo de implementación: Servidor Model Context Protocol (MCP) envolviendo un CLI/SDK subyacente).*
 
+**Actualización de Arquitectura (2026-06-30):** El servidor MCP estaba empaquetado inicialmente dentro del CLI. Para preservar un límite limpio y reducir el tamaño del CLI, el servidor MCP ha sido desacoplado completamente del paquete del CLI y ahora se despliega como un ejecutable independiente.
+
 ## Evidencias y Criterios de Evaluación
 Evaluado contra el principio de automatización y estandarización. Utilizar un protocolo estandarizado permite que múltiples agentes de IA compatibles (ej. Claude Desktop, bots personalizados) consuman la gobernanza de Evolith de manera consistente sin integraciones a medida.
 

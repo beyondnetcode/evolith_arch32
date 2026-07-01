@@ -88,6 +88,10 @@ runtime aplica aprobación (HITL), política de OPA y trazabilidad de forma
 uniforme. El runtime puede proponer, ejecutar tools autorizadas y recomendar,
 pero no puede saltarse gates ni reescribir reglas.
 
+### 5. Ejecución Basada en Eventos (SSE)
+
+El runtime soporta Streaming Basado en Eventos a través de Server-Sent Events (SSE). En lugar de bloquearse en una ejecución síncrona, el orquestador del runtime retorna un `AsyncGenerator` cediendo eventos intermedios en tiempo real (ej. selección de herramientas, aprobaciones de humanos en el bucle, fragmentos de ejecución de harness). La API (`agent-runtime-api`) adapta este generador a un Observable de RxJS para empujar los estados en tiempo real a los clientes.
+
 ## Evidence and Evaluation Criteria
 
 La implementación ([`packages/agent-runtime`](../../../../packages/agent-runtime/README.es.md))

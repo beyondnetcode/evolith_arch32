@@ -26,6 +26,8 @@ The integration must provide:
 
 *(Example implementation: Model Context Protocol (MCP) server wrapping an underlying CLI/SDK).*
 
+**Architecture Update (2026-06-30):** The MCP server was initially bundled inside the CLI. To preserve a clean boundary and reduce CLI bloat, the MCP server has been completely decoupled from the CLI package and is now deployed as a standalone executable.
+
 ## Evidence and Evaluation Criteria
 Evaluated against the principle of automation and standardization. Utilizing a standardized protocol enables multiple compatible AI agents (e.g., Claude Desktop, custom bots) to consume Evolith governance consistently without bespoke integrations.
 

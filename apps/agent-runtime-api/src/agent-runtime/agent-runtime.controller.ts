@@ -9,7 +9,8 @@
  * governance (approval, policy, trazability) happens inside the runtime.
  */
 
-import { BadRequestException, Body, Controller, Get, Inject, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Inject, Post, Sse, MessageEvent } from '@nestjs/common';
+import { Observable } from 'rxjs';
 import {
   parseAgentRuntimeRequest,
   type AgentRuntimeBundle,
@@ -30,6 +31,36 @@ export class AgentRuntimeController {
       throw new BadRequestException(err instanceof Error ? err.message : 'Invalid request payload.');
     }
     return this.bundle.runtime.handle(request);
+  }
+
+  @Post('stream')
+  @Sse('stream')
+  stream(@Body() body: AgentRuntimeRequestWire): Observable<MessageEvent> {
+    let request;
+    try {
+      request = parseAgentRuntimeRequest(body);
+    } catch (err) {
+      throw new BadRequestException(err instanceof Error ? err.message : 'Invalid request payload.');
+    }
+
+    // Convert AsyncGenerator to Observable
+    const asyncGenerator = this.bundle.runtime.handleStream(request);
+    return new Observable<MessageEvent>((subscriber) => {
+      (async () => {
+        try {
+          for await (const event of asyncGenerator) {
+            subscriber.next({
+              data: event,
+              id: Date.now().toString(),
+              type: event.type
+            });
+          }
+          subscriber.complete();
+        } catch (error) {
+          subscriber.error(error);
+        }
+      })();
+    });
   }
 
   @Get('skills')

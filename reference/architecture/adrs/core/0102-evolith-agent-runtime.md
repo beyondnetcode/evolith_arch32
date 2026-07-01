@@ -85,6 +85,10 @@ runtime enforces approval (HITL), OPA policy and trazability uniformly. The
 runtime may propose, execute authorized tools and recommend, but it cannot skip
 gates or rewrite rules.
 
+### 5. Event-Driven Execution (SSE)
+
+The runtime supports Event-Driven Streaming via Server-Sent Events (SSE). Instead of blocking on a synchronous execution, the runtime orchestrator returns an `AsyncGenerator` yielding real-time intermediate events (e.g., tool selection, human-in-the-loop approvals, harness execution chunks). The API (`agent-runtime-api`) adapts this generator into an RxJS Observable to push real-time states to callers.
+
 ## Evidence and Evaluation Criteria
 
 The implementation ([`packages/agent-runtime`](../../../../packages/agent-runtime/README.md))

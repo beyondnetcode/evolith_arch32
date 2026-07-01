@@ -22,6 +22,7 @@ Ordered from general policy to concrete evidence:
 |---|---|---|---|---|
 | [Agnostic Baseline](./agnostic-baseline.md) | Top-level runtime-agnostic principles, patterns, and non-negotiable constraints | Anchor every product and runtime to one baseline | Baseline policy | Yes |
 | [C4 Master Architecture](./C4-MASTER-ARCHITECTURE.md) | Consolidated, verified end-to-end system design (deployed core-api, MCP server, Agent Runtime) | See the architecture as actually built and deployed | System design | No |
+| [Visual Map](./visual-map/index.html) | Interactive explorer for the Evolith architecture | Navigate the C4 model and its components visually | Interactive map | No |
 | [Core Interface Flows](./views/view-by-interface-flow.md) | IN/OUT contracts, processing paths, resilience, audit, and client guidance for Core interfaces | Understand how communication crosses every Core boundary | Architecture view | No |
 | [Principles](./principles/README.md) | Foundational architecture principles | Ground all decisions in shared principles | Area hub | Yes |
 | [Blueprints Hub](./blueprints/README.md) | Runtime-agnostic principles, topology, and selection criteria | Define the architectural baseline | Area hub | Yes |

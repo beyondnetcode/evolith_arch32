@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Evolith Governance Atlas</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <svg class="brand-mark" viewBox="0 0 64 76" aria-hidden="true">
+          <path d="M32 2 61 18v12L32 14 3 30V18L32 2Z" fill="#52a69c"/>
+          <path d="M3 35 32 51l29-16v12L32 63 3 47V35Z" fill="#214d70"/>
+          <path d="M3 20 32 36l29-16v12L32 48 3 32V20Z" fill="#17344d"/>
+          <path d="M18 28 32 36l14-8 11 6-25 14L7 34l11-6Z" fill="#eef7f8"/>
+        </svg>
+        <div>
+          <p class="eyebrow">Dynamic product and architecture vision</p>
+          <h1>Evolith Governance Atlas</h1>
+        </div>
+      </div>
+
+      <div class="top-actions" aria-label="Controles principales">
+        <label class="search-box">
+          <span>Buscar</span>
+          <input id="searchInput" type="search" placeholder="Core API, MCP, evidence...">
+        </label>
+        <button id="playButton" type="button" class="primary-action">Play E2E</button>
+        <button id="resetButton" type="button">Reset</button>
+      </div>
+    </header>
+
+    <nav class="mode-strip" aria-label="Modos de exploracion" id="modeStrip"></nav>
+
+    <main class="workspace">
+      <aside class="rail left-rail">
+        <section class="rail-card">
+          <h2>Scenario</h2>
+          <div id="scenarioList" class="scenario-list"></div>
+        </section>
+
+        <section class="rail-card">
+          <h2>Layers</h2>
+          <div id="layerList" class="layer-list"></div>
+        </section>
+      </aside>
+
+      <section class="canvas-panel">
+        <div class="canvas-toolbar">
+          <div>
+            <strong id="activeModeName">Executive Flow</strong>
+            <span id="activeModeDescription">Idea to production under governed evidence.</span>
+          </div>
+          <div class="canvas-actions">
+            <button type="button" id="fitButton">Fit</button>
+            <button type="button" id="compactButton">Compact</button>
+          </div>
+        </div>
+
+        <div id="atlasCanvas" class="atlas-canvas" tabindex="0" aria-label="Mapa dinamico de arquitectura Evolith">
+          <svg id="atlasSvg" viewBox="0 0 1600 940" role="img" aria-labelledby="atlasTitle atlasDesc">
+            <title id="atlasTitle">Evolith Governance Atlas</title>
+            <desc id="atlasDesc">Mapa dinamico de vision de producto, interfaces, runtime, gobierno, evidencia e integraciones de Evolith.</desc>
+            <defs>
+              <marker id="arrowDefault" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+                <path d="M2 2 L10 6 L2 10 Z"></path>
+              </marker>
+              <marker id="arrowActive" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto">
+                <path d="M2 2 L12 7 L2 12 Z"></path>
+              </marker>
+              <filter id="softShadow" x="-25%" y="-25%" width="150%" height="150%">
+                <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#102030" flood-opacity=".18"/>
+              </filter>
+            </defs>
+            <g id="viewport">
+              <g id="layersGroup"></g>
+              <g id="edgesGroup"></g>
+              <g id="nodesGroup"></g>
+              <g id="packetsGroup"></g>
+            </g>
+          </svg>
+          <div class="zoom-hint">Scroll para zoom, arrastra para mover, click para inspeccionar.</div>
+        </div>
+
+        <footer class="timeline" aria-label="Timeline E2E">
+          <div id="timelineTrack" class="timeline-track"></div>
+        </footer>
+      </section>
+
+      <aside class="rail detail-rail">
+        <section class="detail-card" id="detailCard">
+          <p class="detail-domain" id="detailDomain">Atlas</p>
+          <h2 id="detailTitle">Selecciona un componente</h2>
+          <p id="detailSummary">Explora la vision dinamica de Evolith por flujo, autoridad, interfaz, evidencia, runtime agentic, satelites o integraciones.</p>
+
+          <div class="detail-grid">
+            <div>
+              <strong>Autoridad</strong>
+              <span id="detailAuthority">Seleccion dinamica</span>
+            </div>
+            <div>
+              <strong>Consume</strong>
+              <span id="detailConsumes">Nodos, relaciones y escenarios</span>
+            </div>
+            <div>
+              <strong>Expone</strong>
+              <span id="detailExposes">Contexto de arquitectura</span>
+            </div>
+            <div>
+              <strong>Protocolo</strong>
+              <span id="detailProtocol">CLI, REST, MCP, eventos, Git</span>
+            </div>
+          </div>
+
+          <div class="doc-links">
+            <strong>Fuentes</strong>
+            <div id="detailDocs"></div>
+          </div>
+        </section>
+
+        <section class="rail-card">
+          <h2>Relation</h2>
+          <p id="relationSummary">Activa un modo o escenario para ver protocolos, ownership y direccion de flujo.</p>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <script src="./app.js" type="module"></script>
+</body>
+</html>

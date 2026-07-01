@@ -13,16 +13,16 @@ Topology profiles, ADRs, and architectural decisions.
 
 Each topology is a fully isolated bounded context with its own ADRs, OPA policies, AI rulesets, and UMS contracts.
 
-| Topology | Phase | Description |
-|----------|-------|-------------|
-| **Modular Monolith** | F1 | Starting point. Monolithic with strict module boundaries |
-| **Distributed Modules** | F2 | Services with extraction readiness ≥ 70% |
-| **Microservices** | F3 | Full decomposition with extraction readiness ≥ 80% |
-| **Serverless** | Draft | FaaS and managed services |
-| **Event-Driven** | Draft | Async-first with message brokers |
-| **Data Mesh** | Draft | Domain-oriented data platforms |
-| **Edge Computing** | Draft | Distributed compute at network edge |
-| **Agentic / AI-First** | Draft | AI agents as first-class actors |
+| Topology                | Phase | Description                                              |
+| ----------------------- | ----- | -------------------------------------------------------- |
+| **Modular Monolith**    | F1    | Starting point. Monolithic with strict module boundaries |
+| **Distributed Modules** | F2    | Services with extraction readiness ≥ 70%                 |
+| **Microservices**       | F3    | Full decomposition with extraction readiness ≥ 80%       |
+| **Serverless**          | Draft | FaaS and managed services                                |
+| **Event-Driven**        | Draft | Async-first with message brokers                         |
+| **Data Mesh**           | Draft | Domain-oriented data platforms                           |
+| **Edge Computing**      | Draft | Distributed compute at network edge                      |
+| **Agentic / AI-First**  | Draft | AI agents as first-class actors                          |
 
 ---
 

@@ -1,6 +1,10 @@
-# Evolith Architecture Design
+# Evolith Architecture Design [DEPRECATED]
 
-**Versión:** 2.3.0  
+> **⚠️ DEPRECATION NOTICE:**  
+> This document has been deprecated and superseded by the new **C4 Master Architecture Hub**.  
+> Please refer to the new definitive source of truth: **[C4-MASTER-ARCHITECTURE.md](./C4-MASTER-ARCHITECTURE.md)**
+
+**Versión:** 2.3.0
 **Fecha:** 2026-06-30  
 **Estado:** Aprobado — core-api y mcp-server desplegados y verificados en producción; Agent Runtime incorporado  
 **Autor:** Alberto Arroyo Raygada · Revisado por Claude Sonnet 4.6

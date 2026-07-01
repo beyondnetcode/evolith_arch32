@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { InitCommand } from './commands/init/init.command';
-import { AgentsCommand } from './commands/init/agents.command';
+import { AgentsCommand } from './commands/agents/agents.command';
 import { ValidateCommand } from './commands/validate/validate.command';
 import { EvaluateCommand } from './commands/evaluate/evaluate.command';
 import { AliasService } from './config/alias.service';
 import { AliasCommand } from './commands/alias/alias.command';
 import { DocsCommand } from './commands/docs/docs.command';
-import { UpgradeCommand } from './commands/init/upgrade.command';
+import { UpgradeCommand } from './commands/upgrade/upgrade.command';
 import { McpServeCommand } from './commands/mcp/mcp-serve.command';
 import { ConfigService } from './infrastructure/config/config.service';
 import { FileManagerService } from './infrastructure/filesystem/file-manager.service';

@@ -30,7 +30,7 @@ jobs:
       - name: Analyze changed files
         id: analyze
         run: |
-          CHANGED=$(git diff --name-only origin/main...HEAD -- '*.md' | grep -v '.es.md' | grep -v node_modules)
+          CHANGED=$(git diff --name-only origin/main...HEAD -- '*.md' | grep -v '.es.md' | grep -v node_modules || true)
           echo "Changed EN files: $CHANGED"
 
           PAIRS_COUNT=0

@@ -108,6 +108,8 @@ jobs:
       - name: Build workspace dependencies
         run: |
           npm run build -w @evolith/core-domain
+          npm run build -w @evolith/agent-runtime
+          npm run build -w @evolith/sdk
           npm run build -w @evolith/infra-providers
           npm run build -w @evolith/core
           npm run build -w @evolith/mcp-server
@@ -148,6 +150,8 @@ jobs:
       - name: Build workspace dependencies
         run: |
           npm run build -w @evolith/core-domain
+          npm run build -w @evolith/agent-runtime
+          npm run build -w @evolith/sdk
           npm run build -w @evolith/infra-providers
           npm run build -w @evolith/core
           npm run build -w @evolith/mcp-server
@@ -234,6 +238,8 @@ jobs:
       - name: Build workspace dependencies
         run: |
           npm run build -w @evolith/core-domain
+          npm run build -w @evolith/agent-runtime
+          npm run build -w @evolith/sdk
           npm run build -w @evolith/infra-providers
           npm run build -w @evolith/core
           npm run build -w @evolith/mcp-server
@@ -298,6 +304,8 @@ jobs:
       - name: Build workspace dependencies
         run: |
           npm run build -w @evolith/core-domain
+          npm run build -w @evolith/agent-runtime
+          npm run build -w @evolith/sdk
           npm run build -w @evolith/infra-providers
           npm run build -w @evolith/core
           npm run build -w @evolith/mcp-server
@@ -448,6 +456,8 @@ jobs:
       - name: Build workspace dependencies
         run: |
           npm run build -w @evolith/core-domain
+          npm run build -w @evolith/agent-runtime
+          npm run build -w @evolith/sdk
           npm run build -w @evolith/infra-providers
           npm run build -w @evolith/core
           npm run build -w @evolith/mcp-server

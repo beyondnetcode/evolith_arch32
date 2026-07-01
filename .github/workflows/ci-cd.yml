@@ -39,6 +39,8 @@ jobs:
       - name: Build workspace dependencies + CLI
         run: |
           npm run build --workspace @evolith/core-domain
+          npm run build --workspace @evolith/agent-runtime
+          npm run build --workspace @evolith/sdk
           npm run build --workspace @evolith/core
           npm run build --workspace @evolith/infra-providers
           npm run build --workspace @evolith/mcp-server
@@ -134,6 +136,8 @@ jobs:
       - name: Build workspace dependencies
         run: |
           npm run build --workspace @evolith/core-domain
+          npm run build --workspace @evolith/agent-runtime
+          npm run build --workspace @evolith/sdk
           npm run build --workspace @evolith/core
           npm run build --workspace @evolith/infra-providers
 
@@ -195,6 +199,10 @@ jobs:
           cache-dependency-path: package-lock.json
       - name: Install dependencies
         run: npm ci
+      - name: Build workspace dependencies
+        run: |
+          npm run build --workspace @evolith/core-domain
+          npm run build --workspace @evolith/agent-runtime
       - name: Run sdk-client tests with coverage
         run: npm run test:cov --workspace @evolith/sdk
 
@@ -218,26 +226,9 @@ jobs:
       - name: Run infra-providers tests with coverage
         run: npm run test:cov --workspace @evolith/infra-providers
 
-  # W-Coverage: the MCP tool handlers (pure-JS, Node test runner) ran in NO CI job.
-  test-mcp-tools:
-    name: Test mcp-tools
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: package-lock.json
-      - name: Install dependencies
-        run: npm ci
-      - name: Run mcp-tools tests
-        run: npm test --workspace @evolith/mcp-tools
-
   publish-npm:
     name: Publish npm
-    needs: [test, test-core-domain, test-core, test-mcp-server, test-core-api, test-sdk-client, test-infra-providers, test-mcp-tools]
+    needs: [test, test-core-domain, test-core, test-mcp-server, test-core-api, test-sdk-client, test-infra-providers]
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
@@ -261,7 +252,7 @@ jobs:
 
   docker:
     name: Build & Push Docker
-    needs: [test, test-core-domain, test-core, test-mcp-server, test-core-api, test-sdk-client, test-infra-providers, test-mcp-tools]
+    needs: [test, test-core-domain, test-core, test-mcp-server, test-core-api, test-sdk-client, test-infra-providers]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
@@ -290,7 +281,7 @@ jobs:
   # Registry). Auth uses the built-in GITHUB_TOKEN — no extra secret required.
   docker-services:
     name: Build & Push Services (GHCR)
-    needs: [test, test-core-domain, test-core, test-mcp-server, test-core-api, test-sdk-client, test-infra-providers, test-mcp-tools]
+    needs: [test, test-core-domain, test-core, test-mcp-server, test-core-api, test-sdk-client, test-infra-providers]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
     permissions:

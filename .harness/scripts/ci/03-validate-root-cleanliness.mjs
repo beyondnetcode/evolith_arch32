@@ -45,6 +45,7 @@ const allowedDirectories = new Set([
   ".github",
   ".harness",
   ".husky",
+  ".obsidian",
   ".mimocode",
   ".vscode",
   "node_modules",

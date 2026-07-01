@@ -16,6 +16,7 @@ This document establishes the official taxonomy and authority limits for this ar
   .harness/                     # Document and agent validation rules
   .husky/                       # Git hooks (root required)
   .mimocode/                    # MiMoCode configuration (root required)
+  .obsidian/                    # Optional Obsidian authoring/navigation lens
   .vscode/                      # VS Code configuration (root required)
   sdk/                          # CLI, MCP, and executable access tooling
   rulesets/                     # Machine-readable architecture rules
@@ -86,8 +87,8 @@ This repository owns the architectural baseline and promotion mechanism. A produ
 The root should be kept small and navigable. Permitted categories are:
 
 - Public navigation and legal files: `README.md`, `README.es.md`, `MASTER_INDEX.md`, `MASTER_INDEX.es.md`, `DOCUMENTATION_VERSIONS.md`, `DOCUMENTATION_VERSIONS.es.md`, `AGENTS.md`, `AGENTS.es.md` and `LICENSE`.
-- Tooling and platform dot-folders: `.github/`, `.harness/`, `.husky/`, `.vscode/`, `.bmad-core/`, `.mimocode/`, `.claude/`, and editor or automation configuration (`.editorconfig`, `.gitignore`, `.markdownlint.json`).
-- **Tool folder convention:** Each AI/IDE tool gets its own dot-folder at repository root (`.claude/`, `.mimocode/`, `.vscode/`). These cannot be nested inside a parent folder because each tool's runtime expects its configuration at the workspace root. Do NOT create `.setup/` or similar grouping folders — tool contracts require root-level placement.
+- Tooling and platform dot-folders: `.github/`, `.harness/`, `.husky/`, `.vscode/`, `.bmad-core/`, `.mimocode/`, `.claude/`, `.obsidian/`, and editor or automation configuration (`.editorconfig`, `.gitignore`, `.markdownlint.json`).
+- **Tool folder convention:** Each AI/IDE/authoring tool gets its own dot-folder at repository root (`.claude/`, `.mimocode/`, `.obsidian/`, `.vscode/`). These cannot be nested inside a parent folder because each tool's runtime expects its configuration at the workspace root. Do NOT create `.setup/` or similar grouping folders — tool contracts require root-level placement.
 - `reference/` for the documentary and architectural corpus.
 - `sdk/` for CLI, MCP, and executable access tooling.
 - `rulesets/` for machine-readable governance rules, including `rulesets/topologies/` for topology-specific executable rules.

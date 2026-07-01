@@ -16,6 +16,7 @@ Este documento establece la taxonomia oficial y los limites de autoridad de este
   .harness/                     # Reglas de validacion documental y de agentes
   .husky/                       # Git hooks (requiere raiz)
   .mimocode/                    # Configuracion de MiMoCode (requiere raiz)
+  .obsidian/                    # Lente opcional de autoria/navegacion Obsidian
   .vscode/                      # Configuracion de VS Code (requiere raiz)
   sdk/                          # Tooling de acceso ejecutable, CLI y MCP
   rulesets/                     # Reglas arquitectonicas legibles por maquina
@@ -86,8 +87,8 @@ Este repositorio es propietario de la linea base arquitectonica y el mecanismo d
 La raiz debe mantenerse pequena y navegable. Las categorias permitidas son:
 
 - Archivos publicos de navegacion y legales: `README.md`, `README.es.md`, `MASTER_INDEX.md`, `MASTER_INDEX.es.md`, `DOCUMENTATION_VERSIONS.md`, `DOCUMENTATION_VERSIONS.es.md`, `AGENTS.md`, `AGENTS.es.md` y `LICENSE`.
-- Dot-folders de tooling y plataforma: `.github/`, `.harness/`, `.husky/`, `.vscode/`, `.bmad-core/`, `.mimocode/`, `.claude/`, y configuracion de editores o automatizacion (`.editorconfig`, `.gitignore`, `.markdownlint.json`).
-- **Convencion de carpetas de herramientas:** Cada herramienta de IA/IDE obtiene su propia carpeta con punto en la raiz del repositorio (`.claude/`, `.mimocode/`, `.vscode/`). No se pueden anidar dentro de una carpeta padre porque cada runtime espera su configuracion en la raiz del workspace. NO crear carpetas de agrupacion como `.setup/` o similares — los contratos de las herramientas requieren ubicacion en la raiz.
+- Dot-folders de tooling y plataforma: `.github/`, `.harness/`, `.husky/`, `.vscode/`, `.bmad-core/`, `.mimocode/`, `.claude/`, `.obsidian/`, y configuracion de editores o automatizacion (`.editorconfig`, `.gitignore`, `.markdownlint.json`).
+- **Convencion de carpetas de herramientas:** Cada herramienta de IA/IDE/autoria obtiene su propia carpeta con punto en la raiz del repositorio (`.claude/`, `.mimocode/`, `.obsidian/`, `.vscode/`). No se pueden anidar dentro de una carpeta padre porque cada runtime espera su configuracion en la raiz del workspace. NO crear carpetas de agrupacion como `.setup/` o similares — los contratos de las herramientas requieren ubicacion en la raiz.
 - `reference/` para el corpus documental y arquitectonico.
 - `sdk/` para tooling de acceso ejecutable, CLI y MCP.
 - `rulesets/` para reglas de gobernanza legibles por maquina, incluyendo `rulesets/topologies/` para reglas ejecutables especificas por topologia.

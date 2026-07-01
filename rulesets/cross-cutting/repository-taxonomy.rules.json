@@ -68,7 +68,7 @@
       "severity": "MUST",
       "category": "directory-structure",
       "title": "Evolith Core structure: reference/, sdk/, rulesets/",
-      "description": "Evolith Core repository uses three primary directories: reference/ (human-authored standards), sdk/ (CLI, MCP, and executable access tooling), rulesets/ (machine-readable rules, including rulesets/topologies/ for executable topology rules). No other top-level content directories.",
+      "description": "Evolith Core repository uses three primary content directories: reference/ (human-authored standards), sdk/ (CLI, MCP, and executable access tooling), rulesets/ (machine-readable rules, including rulesets/topologies/ for executable topology rules). Approved tool dot-folders such as .claude/, .mimocode/, .obsidian/, and .vscode/ may live at the root because their runtimes require workspace-root configuration.",
       "rationale": "Repository Taxonomy defines three entry points with clear ownership.",
       "validationQuery": "Top-level directories match taxonomy. No arbitrary content directories added.",
       "blocking": true,
@@ -76,7 +76,8 @@
         "reference/",
         "sdk/",
         "rulesets/",
-        "rulesets/topologies/"
+        "rulesets/topologies/",
+        ".obsidian/"
       ]
     },
     {

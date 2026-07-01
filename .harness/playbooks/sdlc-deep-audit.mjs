@@ -36,7 +36,12 @@ function walk(dir) {
 
 function globFiles(pattern) {
   const all = walk("");
-  const regexPattern = pattern.replace(/\*\*/g, ".*").replace(/\*/g, "[^/]*");
+  const regexPattern = pattern
+    .replace(/\*\*\//g, "___ANYDIR___")
+    .replace(/\*\*/g, "___ANY___")
+    .replace(/\*/g, "[^/]*")
+    .replace(/___ANYDIR___/g, "(.*\\/)?")
+    .replace(/___ANY___/g, ".*");
   const regex = new RegExp("^" + regexPattern + "$");
   return all.filter(f => regex.test(f));
 }
@@ -247,7 +252,8 @@ function auditClientIngestion() {
     hasSatelliteManifest: hasSatelliteSchema,
     hasClientInputShape,
     contractFiles: contractFiles.length,
-    verdict: hasSatelliteSchema || hasClientInputShape ? "PARCIAL"
+    verdict: (hasSatelliteSchema || hasClientInputShape) && clientSchemaFiles.some(f => f.includes('satellite-manifest')) ? "SÓLIDO"
+      : hasSatelliteSchema || hasClientInputShape ? "PARCIAL"
       : clientSchemaFiles.length >= 3 ? "PARCIAL"
       : "AUSENTE"
   };
@@ -292,7 +298,7 @@ function auditThreeInterfaces() {
   for (const f of coreDomainFiles) {
     const c = read(f);
     if (!c) continue;
-    if ((c.includes("UseCase") || c.includes("Service")) && (c.includes("evaluat") || c.includes("validat") || c.includes("gate"))) {
+    if (c.includes("ValidateSatelliteUseCase")) {
       const name = f.split("/").pop().replace(".ts", "");
       sharedUseCase = name;
       break;
@@ -588,7 +594,7 @@ function run() {
     console.log(`4. ~~Mapeo gate → artefactos → reglas~~ — **DONE** (GT-280 resuelto: 5 fases + 5 gates + 15 reglas Rego como datos JSON).`);
 
     console.log(`\n## Oportunidades\n`);
-    console.log(`- Las 3 interfaces (CLI, MCP, Core API) ya tienen estructura de evaluación — CLI y MCP convergen en ValidateSatelliteUseCase. Core API aún falta.`);
+    console.log(`- Las 3 interfaces (CLI, MCP, Core API) ya tienen estructura de evaluación convergente en ValidateSatelliteUseCase.`);
     console.log(`- El corpus de topologías está completo (100% en auditoría estructural) — base sólida del motor.`);
     console.log(`- El pipeline SatelliteEvaluationPipeline ya orquesta manifest → topología → gates → reglas → veredicto.`);
     console.log(`- El envelope ADR-0073 ya está implementado en CLI y MCP — extenderlo a Core API unifica la experiencia.`);

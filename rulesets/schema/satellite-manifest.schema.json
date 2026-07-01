@@ -1,0 +1,101 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schema.evolith.com/satellite-manifest.schema.json",
+  "title": "SatelliteManifest",
+  "description": "Input contract for the end-to-end evaluation pipeline. Declares what repository to evaluate, and optionally which topology and SDLC phase apply.",
+  "type": "object",
+  "required": ["satellitePath"],
+  "properties": {
+    "satellitePath": {
+      "type": "string",
+      "description": "Filesystem path to the satellite repository"
+    },
+    "corePath": {
+      "type": "string",
+      "description": "Optional explicit path to the Evolith Core repository"
+    },
+    "topology": {
+      "type": "string",
+      "description": "Optional topology override. If omitted, the pipeline auto-detects by analyzing the satellite's tech stack against the topology catalog."
+    },
+    "phase": {
+      "type": "string",
+      "description": "Optional SDLC phase. If provided, the pipeline evaluates only the gates for that phase. If omitted, all phases are checked.",
+      "enum": ["f1", "f2", "f3", "f4", "f5"]
+    },
+    "facts": {
+      "type": "object",
+      "description": "GT-380 L1c: declared facts projected from the canonical EvaluationContext, threaded down to the OPA input.",
+      "properties": {
+        "context": {
+          "type": "object",
+          "description": "Echoed canonical context + declared sub-configs (dod/spec) for context-aware policies.",
+          "additionalProperties": true
+        },
+        "gate": {
+          "type": "object",
+          "description": "Phase-gate shape consumed by phase-gates.rego (input.gate).",
+          "properties": {
+            "phase": {
+              "type": "number"
+            },
+            "mandatoryEvidence": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["artifact"],
+                "properties": {
+                  "artifact": { "type": "string" }
+                }
+              }
+            },
+            "blockingCriteria": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["criterion"],
+                "properties": {
+                  "criterion": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "description": "Presented-artifact evidence (input.evidence[].artifact) for phase-gates.rego.",
+          "items": {
+            "type": "object",
+            "required": ["artifact"],
+            "properties": {
+              "artifact": { "type": "string" },
+              "status": { "type": "string" }
+            }
+          }
+        },
+        "waiver": {
+          "type": "array",
+          "description": "Waivers (input.waiver) for phase-gates.rego.",
+          "items": {
+            "type": "object",
+            "required": ["criterion", "status"],
+            "properties": {
+              "criterion": { "type": "string" },
+              "status": { "type": "string" },
+              "expirationDate": { "type": "string", "format": "date-time" }
+            }
+          }
+        },
+        "tenantId": {
+          "type": "string",
+          "description": "Opaque tenant echo for the gate audit field (input.tenantId)."
+        },
+        "evaluationDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 date for waiver-expiry comparison (input.evaluationDate)."
+        }
+      }
+    }
+  }
+}

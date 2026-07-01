@@ -33,7 +33,7 @@ Más allá del modelo jerárquico C4, la arquitectura puede analizarse a través
 
 - **Despliegue e Infraestructura:** Topologías físicas (VPS, Coolify, futuro Kubernetes). [Explorar Despliegues](./views/view-by-deployment.es.md)
 - **Flujos y Trazabilidad E2E:** Flujos de datos desde la intención inicial a través de validación, rulesets y salidas. [Explorar Flujos](./views/view-by-flow.es.md)
-- **Flujos de Interfaces del Core:** Contratos IN/OUT, rutas de procesamiento, resiliencia, auditoría y guía de clientes para cada interfaz Core. [Explorar Flujos de Interfaces](./views/view-by-interface-flow.es.md)
+- **Flujos de Interfaces del Core:** Contratos IN/OUT, rutas de procesamiento, resiliencia, auditoría y guía de clientes para cada interfaz Core (incluye **Ejemplos de Contratos JSON**). [Explorar Flujos de Interfaces](./views/view-by-interface-flow.es.md)
 - **Integraciones y Ecosistema:** Capacidades externas compuestas mediante Puertos de Proveedor (LLMs, Jira, GitHub, Observabilidad). [Explorar Integraciones](./views/view-by-integration.es.md)
 - **Multi-Tenancy y Autorización:** Cómo el tracker garantiza el aislamiento de tenants sobre el Core stateless. [Explorar Tenants](./views/view-by-tenant.es.md)
 

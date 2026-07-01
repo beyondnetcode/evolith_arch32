@@ -263,5 +263,248 @@ Todo flujo externo debe preservar un correlation id mediante envelope, metadata 
 - [Matriz de Trazabilidad E2E](../traceability/e2e-traceability-matrix.es.md)
 - [Mapa de Ecosistema y Comunicación](../../products/ecosystem-and-communication.es.md)
 
+## 10. Ejemplos de Contratos JSON (IN/OUT)
+
+A continuación se presentan ejemplos representativos de las estructuras JSON para las interfaces principales (ADR-0073). Estos payloads ilustran el formato esperado y pueden usarse como referencia. Están organizados por superficie de interfaz.
+
+<details>
+<summary><b>10.1 Core API REST</b></summary>
+
+El Core API expone endpoints síncronos HTTP para evaluación stateless y gobernanza.
+
+#### `POST /api/v1/evaluate`
+**IN (EvaluationContext):**
+```json
+{
+  "workspaceId": "ws-12345",
+  "topologyId": "top-mono-01",
+  "evidence": {
+    "files": ["src/main.ts", "package.json"],
+    "dependencies": ["@nestjs/core"]
+  },
+  "context": {
+    "initiativeId": "init-789",
+    "opaqueToken": "ey..."
+  }
+}
+```
+
+**OUT (EvaluationResult Envelope ADR-0073):**
+```json
+{
+  "status": "success",
+  "data": {
+    "evaluationId": "eval-001",
+    "passed": true,
+    "violations": [],
+    "warnings": [
+      {
+        "code": "WARN_DEPRECATED_PACKAGE",
+        "message": "The package xyz is deprecated."
+      }
+    ]
+  },
+  "meta": {
+    "timestamp": "2026-07-01T12:00:00Z",
+    "correlationId": "corr-abc-123"
+  }
+}
+```
+
+#### `POST /api/v1/gates/:gateId/evaluate`
+**IN:**
+```json
+{
+  "phaseId": "discovery",
+  "actorClass": "architect",
+  "evidence": {
+    "documents": ["docs/architecture.md"],
+    "approvals": ["usr-999"]
+  }
+}
+```
+
+**OUT:**
+```json
+{
+  "status": "success",
+  "data": {
+    "gateId": "gate-arch-review",
+    "recommendation": "proceed",
+    "details": [
+      {
+        "check": "Document completeness",
+        "passed": true
+      }
+    ]
+  },
+  "meta": {
+    "timestamp": "2026-07-01T12:05:00Z",
+    "correlationId": "corr-def-456"
+  }
+}
+```
+
+#### `POST /api/v1/phases/transition`
+**IN:**
+```json
+{
+  "workspaceId": "ws-12345",
+  "fromPhase": "discovery",
+  "toPhase": "ballpark",
+  "evidence": {
+    "gatesPassed": ["gate-arch-review"]
+  }
+}
+```
+
+**OUT (Envelope):**
+```json
+{
+  "status": "success",
+  "data": {
+    "transitionId": "trn-888",
+    "recommendation": "approved",
+    "details": []
+  },
+  "meta": {
+    "timestamp": "2026-07-01T12:15:00Z"
+  }
+}
+```
+
+#### `GET /health/ready`
+**OUT:**
+```json
+{
+  "status": "ok",
+  "info": {
+    "redis": { "status": "up" },
+    "database": { "status": "up" }
+  },
+  "error": {},
+  "details": {
+    "redis": { "status": "up" },
+    "database": { "status": "up" }
+  }
+}
+```
+</details>
+
+<details>
+<summary><b>10.2 Agent Runtime API</b></summary>
+
+La API del Agent Runtime maneja la ejecución orquestada de tareas de agentes. Separa los comandos (intenciones) del flujo de eventos (ejecución).
+
+#### `POST /v1/agent/handle` (Request Síncrono)
+**IN (AgentRuntimeRequest):**
+```json
+{
+  "command": "analyze-code",
+  "parameters": {
+    "path": "src/domain/"
+  },
+  "correlationId": "corr-ghi-789"
+}
+```
+
+**OUT (AgentRuntimeResult Envelope):**
+```json
+{
+  "status": "success",
+  "data": {
+    "taskId": "task-555",
+    "status": "completed",
+    "output": {
+      "summary": "Analysis complete without issues.",
+      "findings": []
+    }
+  },
+  "meta": {
+    "timestamp": "2026-07-01T12:10:00Z",
+    "correlationId": "corr-ghi-789"
+  }
+}
+```
+
+#### `POST /v1/agent/stream` (Eventos SSE)
+**OUT (Event Stream):**
+```text
+event: progress
+data: {"taskId": "task-555", "step": "analyzing", "percent": 50}
+
+event: tool_call
+data: {"tool": "read_file", "params": {"path": "src/main.ts"}}
+
+event: final
+data: {"taskId": "task-555", "status": "completed", "summary": "Done."}
+```
+</details>
+
+<details>
+<summary><b>10.3 Model Context Protocol (MCP) Server</b></summary>
+
+El servidor MCP expone las capacidades como Tools, permitiendo la integración nativa con orquestadores LLM y agentes.
+
+#### Tool Call Request (JSON-RPC)
+**IN:**
+```json
+{
+  "jsonrpc": "2.0",
+  "id": "1",
+  "method": "tools/call",
+  "params": {
+    "name": "evaluate_architecture",
+    "arguments": {
+      "path": "./docs"
+    }
+  }
+}
+```
+
+#### Tool Call Response (JSON-RPC)
+**OUT:**
+```json
+{
+  "jsonrpc": "2.0",
+  "id": "1",
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Evaluation passed. No violations."
+      }
+    ],
+    "isError": false
+  }
+}
+```
+</details>
+
+<details>
+<summary><b>10.4 Smart CLI</b></summary>
+
+La interfaz de línea de comandos provee ejecución local para pipelines CI/CD y validación en las estaciones de los desarrolladores.
+
+#### Ejecución de Comando (Salida JSON)
+**Comando:** `evolith evaluate --workspace ./src --format json`
+
+**OUT (Console stdout JSON):**
+```json
+{
+  "status": "success",
+  "data": {
+    "evaluationId": "cli-local-001",
+    "passed": true,
+    "violations": []
+  },
+  "meta": {
+    "timestamp": "2026-07-01T12:00:00Z",
+    "executionMode": "local-cli"
+  }
+}
+```
+</details>
+
 ---
 [Volver a la Arquitectura Maestra](../C4-MASTER-ARCHITECTURE.es.md)

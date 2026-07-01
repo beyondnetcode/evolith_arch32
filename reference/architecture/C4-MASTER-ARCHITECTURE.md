@@ -33,7 +33,7 @@ Beyond the hierarchical C4 model, the architecture can be analyzed through cross
 
 - **Deployment & Infrastructure:** Physical topologies (VPS, Coolify, future Kubernetes). [Explore Deployments](./views/view-by-deployment.md)
 - **E2E Traceability & Flows:** Data flows from initial intent through validation, rulesets, and outputs. [Explore Flows](./views/view-by-flow.md)
-- **Core Interface Flows:** IN/OUT contracts, processing paths, resilience, audit, and client guidance for every Core interface. [Explore Interface Flows](./views/view-by-interface-flow.md)
+- **Core Interface Flows:** IN/OUT contracts, processing paths, resilience, audit, and client guidance for every Core interface (includes **JSON Contract Examples**). [Explore Interface Flows](./views/view-by-interface-flow.md)
 - **Integrations & Ecosystem:** External capabilities composed via Provider Ports (LLMs, Jira, GitHub, Observability). [Explore Integrations](./views/view-by-integration.md)
 - **Multi-Tenancy & Authorization:** How the tracker guarantees tenant isolation over the stateless Core. [Explore Tenants](./views/view-by-tenant.md)
 

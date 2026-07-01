@@ -15,7 +15,7 @@ This matrix maps high-level product interfaces down to their specific container,
 |----------------------|------------------|------------------|------------|--------------------------|
 | **Canonical Evaluation Request** | Core API | `EvaluationOrchestrator` -> Kind Evaluators / Validation Pipeline | NestJS, TypeScript, Native Evaluator, OPA/Rego | REST (`POST /api/v1/evaluate`), `EvaluationContext` JSON payload |
 | **Specific Gate Evaluation Request** | Core API | `EvaluateGateUseCase` -> `PhaseGateValidatorService` | NestJS, TypeScript, Native/OPA validators | REST (`POST /api/v1/gates/:gateId/evaluate`), JSON payload |
-| **Agent Task Execution** | Agent Runtime API / Engine | `AgentRuntimeController` -> `AgentRuntimeService` -> Ports | NestJS, RxJS, TypeScript | HTTP (`POST /v1/agent/handle`) or SSE (`POST /v1/agent/stream`) |
+| **Agent Task Execution** | Agent Runtime API / Engine | `AgentRuntimeController` -> `AgentRuntimeService` -> Ports | NestJS, RxJS, TypeScript | Command/Event HTTP (`POST /v1/agent/handle` for one result, `POST /v1/agent/stream` for command plus event stream) |
 | **LLM Tool Call** | MCP Server | `EvolithMcpServer` -> `ToolRegistryService` -> `ToolHandler` | NestJS, @modelcontextprotocol/sdk | MCP Protocol (stdio or Streamable HTTP) |
 | **Local Artifact Validation** | Smart CLI | `ValidateCommand` / `EvaluateCommand` -> `@evolith/core-domain` | Nest Commander, TypeScript | Local File System I/O |
 | **Ruleset Read** | Core API | `ReferenceController` / `CoreReferenceQueryService` | NestJS, cache-manager, Node.js `fs` | REST (`GET /api/v1/rulesets`) |
@@ -24,8 +24,10 @@ This matrix maps high-level product interfaces down to their specific container,
 ## 3. Communication Patterns
 
 - **Synchronous Deterministic (REST):** Used strictly for fast, state-free evaluations (e.g., OPA gate evaluation).
-- **Asynchronous Streaming (SSE):** Used for non-deterministic, multi-turn AI interactions to ensure the client stays informed of intermediate tool calls without timing out.
-- **Bi-Directional Interactive (MCP):** Standardized protocol for external intelligence to discover and execute tools securely over stdio or Streamable HTTP.
+- **Command/Event Runtime (HTTP + optional SSE):** Used for governed multi-step agent execution. Commands are explicit HTTP requests; SSE is only the server-to-client event transport for progress, tool results, violations, and final output.
+- **Interactive Tool Access (MCP):** Standardized protocol for external intelligence to discover and execute tools securely over stdio or Streamable HTTP.
+
+For IN/OUT contracts, resilience behavior, and client guidance by interface, see [Core Interface Flows](../views/view-by-interface-flow.md).
 
 ---
 [Back to Master Architecture](../C4-MASTER-ARCHITECTURE.md)

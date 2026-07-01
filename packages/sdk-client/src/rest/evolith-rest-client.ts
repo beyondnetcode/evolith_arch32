@@ -26,10 +26,13 @@ import type {
   ProposeAdvanceResponse,
 } from './types.js';
 import { SatellitesClient } from '../satellites.client.js';
+import { AgentClient } from './agent.client.js';
 
 export interface EvolithRestClientOptions {
   /** Base URL for the Evolith Core API, e.g. http://localhost:3000 */
   baseUrl: string;
+  /** Base URL for the Agent Runtime API (defaults to baseUrl) */
+  agentUrl?: string;
   /** Bearer token for Authorization header */
   apiKey?: string;
   /** Custom fetch implementation (defaults to global fetch) */
@@ -49,6 +52,9 @@ export class EvolithRestClient {
 
   /** Satellites CRUD sub-client. */
   readonly satellites: SatellitesClient;
+  
+  /** Agent Runtime sub-client. */
+  readonly agent: AgentClient;
 
   constructor(private readonly options: EvolithRestClientOptions) {
     this.baseUrl = options.baseUrl.replace(/\/$/, '');
@@ -65,6 +71,7 @@ export class EvolithRestClient {
     this.fetcher = options.fetch ?? globalThis.fetch;
     this.timeoutMs = options.timeoutMs ?? 30_000;
     this.satellites = new SatellitesClient(this.baseUrl, options.apiKey);
+    this.agent = new AgentClient(options.agentUrl || this.baseUrl, options.apiKey);
   }
 
   // ─── Gates ───────────────────────────────────────────────────────────────

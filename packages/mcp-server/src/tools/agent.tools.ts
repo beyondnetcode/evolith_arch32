@@ -1,6 +1,8 @@
 import * as path from 'node:path';
 import type { IFileSystem } from '@evolith/core';
 import { McpTool } from '../mcp/tool.interface';
+import { EvolithRestClient } from '@evolith/sdk';
+import type { AgentRuntimeRequestWire } from '@evolith/agent-runtime';
 
 interface AgentInfo {
   name: string;
@@ -91,6 +93,22 @@ export function createAgentTools(fs: IFileSystem): McpTool[] {
       mutative: true,
       execute: async (args) => agentRemove(args.name as string, (args.dir as string) || process.cwd(), fs),
     },
+    {
+      schema: {
+        name: 'evolith-agent-run',
+        description: 'Run an intent through the Agent Runtime pipeline',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            intent: { type: 'string', description: 'The intent or goal for the agent' },
+            url: { type: 'string', description: 'Agent Runtime API URL (defaults to http://localhost:3000)' },
+          },
+          required: ['intent'],
+        },
+      },
+      mutative: true,
+      execute: async (args) => agentRun(args.intent as string, (args.url as string) || 'http://localhost:3000'),
+    },
   ];
 }
 
@@ -172,6 +190,21 @@ async function agentRemove(name: string, dir: string, fs: IFileSystem) {
   if (!(await fs.exists(agentDir))) throw new Error(`Agent '${name}' not found`);
   await fs.remove(agentDir);
   return { success: true, agent: name, message: `Agent '${name}' removed successfully` };
+}
+
+async function agentRun(intent: string, url: string) {
+  const client = new EvolithRestClient({ baseUrl: url, agentUrl: url });
+  const request: AgentRuntimeRequestWire = {
+    intent,
+    parameters: { cwd: process.cwd() }
+  };
+
+  try {
+    const result = await client.agent.handle(request);
+    return { success: true, result };
+  } catch (err: any) {
+    return { success: false, error: err.message };
+  }
 }
 
 function getAgentTemplate(name: string, template: string) {

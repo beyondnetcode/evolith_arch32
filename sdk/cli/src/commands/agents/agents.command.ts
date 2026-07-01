@@ -6,6 +6,8 @@ import type { IFileSystem } from '@evolith/core-domain/domain/interfaces';
 import { AgentRegistryService, AgentInfo } from '../../infrastructure/adapters/agent-registry.service';
 import { buildAgentRuleset } from '@evolith/core-domain/application/agents/agent-ruleset-builder';
 import { BaseEvolithCommand } from '../../infrastructure/cli/base-command';
+import { EvolithRestClient } from '@evolith/sdk';
+import type { AgentRuntimeRequestWire } from '@evolith/agent-runtime';
 
 let cachedFileSystem: IFileSystem | null = null;
 
@@ -21,6 +23,7 @@ interface AgentsCommandOptions {
   install?: string;
   remove?: string;
   list?: boolean;
+  run?: string;
   dryRun?: boolean;
 }
 
@@ -78,6 +81,7 @@ export class AgentsCommand extends BaseEvolithCommand {
       case 'list': await this.listAgents(options); break;
       case 'validate': await this.validateAgent(options); break;
       case 'upgrade': await this.upgradeAgent(options); break;
+      case 'run': await this.runAgent(options); break;
       case 'menu':
       default: await this.showMenu(); break;
     }
@@ -93,6 +97,7 @@ export class AgentsCommand extends BaseEvolithCommand {
         { value: 'list', label: 'List Installed Agents', hint: 'Show all agents in this repository' },
         { value: 'validate', label: 'Validate Agent', hint: 'Check agent ruleset compliance' },
         { value: 'upgrade', label: 'Upgrade Agent', hint: 'Update agent to latest version' },
+        { value: 'run', label: 'Run Agent (Runtime)', hint: 'Execute an intent on the Agent Runtime API' },
         { value: 'remove', label: 'Remove Agent', hint: 'Delete an installed agent' },
         { value: 'exit', label: 'Exit', hint: 'Close agent management' },
       ],
@@ -108,6 +113,7 @@ export class AgentsCommand extends BaseEvolithCommand {
       case 'list': await this.listAgents({}); break;
       case 'validate': await this.validateAgent({}); break;
       case 'upgrade': await this.upgradeAgent({}); break;
+      case 'run': await this.runAgent({}); break;
       case 'remove': await this.removeAgent({}); break;
     }
   }
@@ -327,6 +333,41 @@ export class AgentsCommand extends BaseEvolithCommand {
     this.promptService.showOutro(chalk.green('Agent upgrade complete.'));
   }
 
+  private async runAgent(options?: AgentsCommandOptions): Promise<void> {
+    this.promptService.showIntro('Evolith SDK - Agent Runtime Execution');
+
+    const intent = options?.run || await this.promptService.text({
+      message: 'Enter your request intent for the Agent Runtime:',
+      placeholder: 'e.g. Generate architecture plan for new microservice',
+    });
+
+    if (!intent) {
+      this.promptService.showError('Intent is required to run the agent.');
+      return;
+    }
+
+    const apiUrl = process.env.AGENT_RUNTIME_URL || 'http://localhost:3000';
+    this.promptService.showInfo(`Connecting to Agent Runtime at: ${apiUrl}`);
+    
+    try {
+      const client = new EvolithRestClient({ baseUrl: apiUrl, agentUrl: apiUrl });
+      
+      this.promptService.showInfo('Sending request to Agent Runtime API...');
+      const request: AgentRuntimeRequestWire = {
+        intent: String(intent),
+        parameters: { cwd: process.cwd() }
+      };
+
+      const result = await client.agent.handle(request);
+      
+      this.promptService.showSuccess(`\n✓ Agent Runtime execution completed`);
+      this.promptService.showInfo(`Result:\n${JSON.stringify(result, null, 2)}`);
+      this.promptService.showOutro(chalk.green('Run complete.'));
+    } catch (err: any) {
+      this.promptService.showError(`\n✗ Agent Runtime execution failed: ${err.message}`);
+    }
+  }
+
   @Option({ flags: '-i, --install [name]', description: 'Install a new agent' })
   parseInstall(val: string): string { return val; }
 
@@ -338,4 +379,7 @@ export class AgentsCommand extends BaseEvolithCommand {
 
   @Option({ flags: '-d, --dry-run', description: 'Dry run' })
   parseDryRun(): boolean { return true; }
+
+  @Option({ flags: '--run [intent]', description: 'Run agent with intent' })
+  parseRun(val: string): string { return val; }
 }

@@ -469,6 +469,32 @@ function auditPointChecks() {
   };
 }
 
+// ── 9. INTEGRACIÓN AGENT RUNTIME ─────────────────────────────────────
+
+function auditAgentRuntimeConnectivity() {
+  const hasAgentRuntimeApi = exists("apps/agent-runtime-api");
+  
+  const sdkAgentClient = exists("packages/sdk-client/src/rest/agent.client.ts");
+  
+  const cliAgentCmd = "sdk/cli/src/commands/agents/agents.command.ts";
+  const cliHasAgentRun = exists(cliAgentCmd) ? (read(cliAgentCmd) || "").includes("runAgent") : false;
+  
+  const mcpAgentTool = "packages/mcp-server/src/tools/agent.tools.ts";
+  const mcpHasAgentRun = exists(mcpAgentTool) ? (read(mcpAgentTool) || "").includes("evolith-agent-run") : false;
+
+  const connected = hasAgentRuntimeApi && sdkAgentClient && cliHasAgentRun && mcpHasAgentRun;
+
+  return {
+    hasAgentRuntimeApi,
+    hasSdkAgentClient: sdkAgentClient,
+    cliHasAgentRun,
+    mcpHasAgentRun,
+    verdict: connected ? "SÓLIDO" 
+      : hasAgentRuntimeApi ? "PARCIAL (runtime existe, interfaces desconectadas)" 
+      : "AUSENTE"
+  };
+}
+
 // ── MAIN ─────────────────────────────────────────────────────────────
 
 function run() {
@@ -480,6 +506,7 @@ function run() {
   const reports = auditActionableReports();
   const governance = auditGovernance();
   const points = auditPointChecks();
+  const agentRuntime = auditAgentRuntimeConnectivity();
 
   const report = {
     generatedAt: new Date().toISOString(),
@@ -497,6 +524,7 @@ function run() {
       cliCommandGroups: interfaces.cliCommandGroups,
       mcpToolFiles: interfaces.mcpToolFiles,
       coreApiControllers: interfaces.coreApiControllers,
+      agentRuntimeConnected: agentRuntime.verdict.startsWith("SÓLIDO"),
     },
     dimensions: [
       {
@@ -554,17 +582,24 @@ function run() {
         verdict: points.verdict,
         evidence: `scaffold command: ${points.scaffoldCommandExists}. ADRs rotos: ${points.brokenAdrReferences}. Comandos inventados: ${points.potentiallyInventedCommands}`,
         gap: points.potentiallyInventedCommands > 0 ? `${points.potentiallyInventedCommands} comandos en docs que no existen en el CLI real` : ""
+      },
+      {
+        id: 9,
+        name: "INTEGRACIÓN AGENT RUNTIME",
+        verdict: agentRuntime.verdict,
+        evidence: `Agent API: ${agentRuntime.hasAgentRuntimeApi}. SDK Client: ${agentRuntime.hasSdkAgentClient}. CLI --run: ${agentRuntime.cliHasAgentRun}. MCP Tool: ${agentRuntime.mcpHasAgentRun}`,
+        gap: agentRuntime.verdict === "SÓLIDO" ? "Ninguna — el runtime agentic está conectado a las interfaces" : "El runtime agentic está aislado de las interfaces cliente"
       }
     ]
   };
 
-  report.globalScore = `${report.dimensions.filter(d => d.verdict.startsWith("SÓLIDO")).length}/8 dimensiones SÓLIDO`;
+  report.globalScore = `${report.dimensions.filter(d => d.verdict.startsWith("SÓLIDO")).length}/9 dimensiones SÓLIDO`;
 
   if (markdown) {
     const solid = report.dimensions.filter(d => d.verdict.startsWith("SÓLIDO")).length;
     const parcial = report.dimensions.filter(d => d.verdict.startsWith("PARCIAL")).length;
     const ausente = report.dimensions.filter(d => d.verdict.startsWith("AUSENTE")).length;
-    const pct = Math.round((solid / 8) * 100);
+    const pct = Math.round((solid / 9) * 100);
 
     console.log(`# SDLC Deep Audit — Evolith Core\n`);
     console.log(`**Generated:** ${report.generatedAt}`);
@@ -572,7 +607,7 @@ function run() {
 
     console.log(`## Veredicto\n`);
     console.log(`Evolith Core hoy es un **"corpus de referencia"** con capacidades parciales de motor de evaluación.`);
-    console.log(`Camino recorrido hacia la visión: **${pct}%** (${solid}/8 dimensiones SÓLIDO, ${parcial} PARCIAL, ${ausente} AUSENTE).\n`);
+    console.log(`Camino recorrido hacia la visión: **${pct}%** (${solid}/9 dimensiones SÓLIDO, ${parcial} PARCIAL, ${ausente} AUSENTE).\n`);
 
     console.log(`## Tabla por dimensiones\n`);
     console.log(`| # | Dimensión | Estado | Brecha |`);

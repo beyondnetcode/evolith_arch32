@@ -16,7 +16,7 @@ Esta área contiene el modelo de arquitectura reutilizable. Léelo desde la pol�
 
 ## Capas
 
-Ordenadas de la política general a la evidencia concreta:
+Ordenadas de la [[política]] general a la evidencia concreta:
 
 | Documento | Descripción | Objetivo / Meta | Tipo | Obligatorio |
 |---|---|---|---|---|

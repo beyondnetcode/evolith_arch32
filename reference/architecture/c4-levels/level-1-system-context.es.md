@@ -21,7 +21,7 @@ C4Context
     title Diagrama de Contexto de Sistema del Ecosistema Evolith
 
     Person(human, "Ingeniero / Product Owner", "Humanos que dirigen o aprueban el SDLC vía UI o CLI.")
-    Person(agent, "Agente IA", "Agentes autónomos que ejecutan tareas técnicas vía MCP y SSE.")
+    Person(agent, "Agente IA", "Agentes autónomos que ejecutan tareas técnicas mediante MCP o canales runtime de comandos/eventos.")
 
     System_Boundary(evolithEcosystem, "Plataforma Evolith") {
         System(tracker, "Evolith Tracker", "Orquestador SaaS con estado. Gestiona tenants, ejecución de fases SDLC, aprobaciones y trazabilidad.")
@@ -35,7 +35,7 @@ C4Context
 
     Rel(human, tracker, "Gestiona y aprueba fases SDLC vía", "HTTPS/Web")
     Rel(human, core, "Valida artefactos localmente vía", "CLI")
-    Rel(agent, core, "Ejecuta tareas y consume herramientas vía", "SSE / MCP")
+    Rel(agent, core, "Envía comandos y recibe eventos gobernados vía", "MCP / HTTP + stream de eventos")
     
     Rel(tracker, core, "Solicita evaluación stateless y ejecución de agentes vía", "REST / HTTP")
     Rel(core, tracker, "Retorna resultados de evaluación y publica eventos de traza a", "REST / HTTP")
@@ -49,7 +49,7 @@ C4Context
 ## 3. Interacciones Clave
 
 1. **Tracker hacia Core:** Tracker es un cliente del Core. Solicita al Core evaluar payloads canónicos `EvaluationContext`, o pide al Agent Runtime ejecutar una tarea gobernada.
-2. **Agentes hacia Core:** Los agentes se conectan al Core mediante streams MCP o SSE para recibir contexto gobernado y herramientas. *No* se conectan directamente a Tracker.
+2. **Agentes hacia Core:** Los agentes interactúan con el Core mediante MCP o el patrón de comandos/eventos del Agent Runtime. Los comandos son requests explícitos MCP/HTTP; el progreso, resultados de tools, violaciones y salida final pueden entregarse por un stream de eventos como SSE. *No* se conectan directamente a Tracker.
 3. **Core hacia Externos:** Core se conecta a LLMs para inteligencia, y a Git para recuperar los rulesets corporativos (el corpus de referencia).
 4. **Límite de estado del Core:** Core puede ecoar contexto opaco y mantener memoria/caché local de runtime, pero Tracker sigue siendo el owner canónico del estado tenant/product/initiative y de las decisiones vinculantes de gate.
 

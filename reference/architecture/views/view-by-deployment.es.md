@@ -25,7 +25,7 @@ flowchart TB
                 api1[Core API Réplica 1]
                 api2[Core API Réplica 2]
                 mcp[MCP Server Node.js]
-                sse[Agent Runtime API NestJS]
+                agentApi[Agent Runtime Command/Event API]
             end
             
             subgraph data_tier [Capa de Datos Docker]
@@ -36,7 +36,7 @@ flowchart TB
     
     gateway -->|Balancea carga HTTP a| api1
     gateway -->|Balancea carga HTTP a| api2
-    gateway -->|Enruta streams SSE a| sse
+    gateway -->|Enruta tráfico de comandos y eventos a| agentApi
     api1 -->|Cachea rulesets en| redis
     api2 -->|Cachea rulesets en| redis
 ```
@@ -61,8 +61,8 @@ flowchart TB
             subgraph pod_mcp [Deployment: mcp-server HPA]
                 mcp[MCP Server Node.js]
             end
-            subgraph pod_sse [Deployment: agent-runtime HPA]
-                sse[Agent Runtime API NestJS]
+            subgraph pod_agent_runtime [Deployment: agent-runtime HPA]
+                agentApi[Agent Runtime Command/Event API]
             end
             subgraph sts_redis [StatefulSet: redis]
                 redis[(Redis HA)]
@@ -71,7 +71,7 @@ flowchart TB
     end
 
     gateway -->|HTTP / REST| pod_api
-    gateway -->|HTTP / SSE| pod_sse
+    gateway -->|Comandos HTTP / stream de eventos| pod_agent_runtime
     pod_api -->|TCP / Protocolo Redis| sts_redis
 ```
 

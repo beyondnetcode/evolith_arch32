@@ -21,7 +21,7 @@ C4Context
     title System Context Diagram for Evolith Ecosystem
 
     Person(human, "Engineer / Product Owner", "Humans driving or approving the SDLC via UI or CLI.")
-    Person(agent, "AI Agent", "Autonomous agents executing technical tasks via MCP and SSE.")
+    Person(agent, "AI Agent", "Autonomous agents executing technical tasks through MCP or command/event runtime channels.")
 
     System_Boundary(evolithEcosystem, "Evolith Platform") {
         System(tracker, "Evolith Tracker", "Stateful SaaS Orchestrator. Manages tenants, SDLC phase execution, approvals, and traceability.")
@@ -35,7 +35,7 @@ C4Context
 
     Rel(human, tracker, "Manages and approves SDLC phases via", "HTTPS/Web")
     Rel(human, core, "Validates artifacts locally via", "CLI")
-    Rel(agent, core, "Executes tasks and consumes tools via", "SSE / MCP")
+    Rel(agent, core, "Sends commands and receives governed events via", "MCP / HTTP + event stream")
     
     Rel(tracker, core, "Requests stateless evaluation and agent execution via", "REST / HTTP")
     Rel(core, tracker, "Returns evaluation results and publishes trace events to", "REST / HTTP")
@@ -49,7 +49,7 @@ C4Context
 ## 3. Key Interactions
 
 1. **Tracker to Core:** Tracker is a client of Core. It asks Core to evaluate canonical `EvaluationContext` payloads, or asks Agent Runtime to execute a governed task.
-2. **Agents to Core:** Agents connect to Core via MCP or SSE streams to receive governed context and tools. They do *not* connect to Tracker directly.
+2. **Agents to Core:** Agents interact with Core through MCP or the Agent Runtime command/event pattern. Commands are explicit MCP/HTTP requests; progress, tool results, violations, and final output may be delivered on an event stream such as SSE. Agents do *not* connect to Tracker directly.
 3. **Core to External:** Core connects to LLMs for intelligence, and Git for retrieving the corporate rulesets (the reference corpus).
 4. **Core state boundary:** Core can echo opaque context and keep local runtime memory/cache, but Tracker remains the canonical owner of tenant/product/initiative state and binding gate decisions.
 

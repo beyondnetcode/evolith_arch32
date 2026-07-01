@@ -65,6 +65,22 @@ const result = await runtime.handle(
 Hay un script ejecutable en
 [`packages/agent-runtime/examples/validate-discovery-gate.mjs`](../../../packages/agent-runtime/examples/validate-discovery-gate.mjs).
 
+## Patrón de interacción de clientes
+
+Los clientes usan un patrón de **comando/evento**:
+
+- `POST /v1/agent/handle` envía un comando y espera un único
+  `AgentRuntimeResult` final.
+- `POST /v1/agent/stream` envía un comando y mantiene abierto un stream de
+  eventos para progreso, resultados de tools, violaciones de política,
+  solicitudes de aprobación y salida final.
+- SSE es solo un transporte de eventos servidor-a-cliente. No transporta
+  comandos del cliente de regreso al runtime; las acciones adicionales del
+  cliente son requests HTTP o MCP explícitos correlacionados con la tarea activa.
+- Los agentes deben llamar tools MCP o comandos del Agent Runtime directamente.
+  No deben conectarse a Tracker para contexto gobernado, tools, estado tenant ni
+  decisiones de aprobación.
+
 ## Garantías clave
 
 - Toda integración externa pasa por un **puerto**; la tecnología concreta vive

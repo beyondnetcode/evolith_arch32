@@ -20,7 +20,7 @@ C4Component
 
     Container_Boundary(runtime, "Agent Runtime Container") {
         
-        Component(api, "Runtime HTTP/SSE API", "NestJS @Controller", "Exposes /v1/agent/handle, /v1/agent/stream, and /v1/agent/skills.")
+        Component(api, "Runtime Command/Event API", "NestJS @Controller", "Exposes command requests and optional event streams through /v1/agent/handle, /v1/agent/stream, and /v1/agent/skills.")
         
         Component(orchestrator, "AgentOrchestratorService", "Application Service", "The core coordinator. Uses resolvers and ports to execute multi-step agent flows.")
         
@@ -54,7 +54,7 @@ C4Component
 
 | Component | Responsibility |
 |-----------|----------------|
-| **Runtime HTTP/SSE API** | Receives an `AgentRuntimeRequest` through `POST /v1/agent/handle` or `POST /v1/agent/stream`, and exposes skill discovery through `GET /v1/agent/skills`. |
+| **Runtime Command/Event API** | Receives an `AgentRuntimeRequest` through explicit HTTP commands. `POST /v1/agent/handle` returns one result envelope; `POST /v1/agent/stream` starts the command and keeps an event stream open for progress/tool-result/violation/final events. `GET /v1/agent/skills` exposes discovery. |
 | **AgentOrchestratorService** | Coordinates the entire agent loop. It retrieves the task, asks the LLM engine for the next action, executes the action if allowed, and loops until completion. |
 | **Skill & Tool Resolver** | Resolves default or registered capabilities such as gate validation, artifact checks, OPA audits, ADR validation, unblock recommendations, and trace publishing. |
 | **Ports (IAgentEnginePort, etc)** | Define strict contracts for LLM planning, harness execution, Core evaluation, policy validation, Tracker trace publishing, memory, approval, and scheduling. |

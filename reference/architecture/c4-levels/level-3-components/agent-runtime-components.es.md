@@ -20,7 +20,7 @@ C4Component
 
     Container_Boundary(runtime, "Contenedor Agent Runtime") {
         
-        Component(api, "Runtime HTTP/SSE API", "NestJS @Controller", "Expone /v1/agent/handle, /v1/agent/stream y /v1/agent/skills.")
+        Component(api, "Runtime Command/Event API", "NestJS @Controller", "Expone requests de comando y streams opcionales de eventos mediante /v1/agent/handle, /v1/agent/stream y /v1/agent/skills.")
         
         Component(orchestrator, "AgentOrchestratorService", "Servicio de Aplicación", "El coordinador central. Usa resolvedores y puertos para ejecutar flujos de agente de múltiples pasos.")
         
@@ -54,7 +54,7 @@ C4Component
 
 | Componente | Responsabilidad |
 |------------|-----------------|
-| **Runtime HTTP/SSE API** | Recibe un `AgentRuntimeRequest` mediante `POST /v1/agent/handle` o `POST /v1/agent/stream`, y expone descubrimiento de skills mediante `GET /v1/agent/skills`. |
+| **Runtime Command/Event API** | Recibe un `AgentRuntimeRequest` mediante comandos HTTP explícitos. `POST /v1/agent/handle` retorna un envelope de resultado; `POST /v1/agent/stream` inicia el comando y mantiene abierto un stream de eventos para progreso/resultados de tool/violaciones/finalización. `GET /v1/agent/skills` expone descubrimiento. |
 | **AgentOrchestratorService** | Coordina el ciclo completo del agente. Recupera la tarea, pregunta al motor LLM por la siguiente acción, ejecuta la acción si está permitida, y repite hasta completar. |
 | **Resolvedor de Skills y Tools** | Resuelve capacidades default o registradas como validación de gates, chequeo de artefactos, auditorías OPA, validación ADR, recomendaciones de desbloqueo y publicación de trazas. |
 | **Puertos (IAgentEnginePort, etc)** | Definen contratos estrictos para planificación LLM, ejecución harness, evaluación Core, validación de políticas, publicación de trazas Tracker, memoria, aprobación y scheduling. |

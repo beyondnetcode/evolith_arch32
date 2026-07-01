@@ -65,6 +65,21 @@ const result = await runtime.handle(
 A runnable script lives at
 [`packages/agent-runtime/examples/validate-discovery-gate.mjs`](../../../packages/agent-runtime/examples/validate-discovery-gate.mjs).
 
+## Client interaction pattern
+
+Clients use a **command/event** pattern:
+
+- `POST /v1/agent/handle` submits a command and waits for one final
+  `AgentRuntimeResult`.
+- `POST /v1/agent/stream` submits a command and keeps an event stream open for
+  progress, tool results, policy violations, approval prompts, and final output.
+- SSE is only a server-to-client event transport. It does not carry client
+  commands back to the runtime; additional client actions are explicit HTTP or
+  MCP requests correlated to the active task.
+- Agents should call MCP tools or Agent Runtime commands directly. They should
+  not connect to Tracker for governed context, tools, tenant state, or approval
+  decisions.
+
 ## Key guarantees
 
 - Every external integration goes through a **port**; concrete technology lives

@@ -43,22 +43,22 @@ sequenceDiagram
     Tracker-->>User: Presenta Veredicto Final
 ```
 
-## 3. Flujo de Trabajo Agéntico (SSE)
+## 3. Flujo de Trabajo Agéntico (Comando/Evento)
 
-Esta secuencia muestra cómo se gobierna a un Agente IA en tiempo real al realizar tareas de múltiples pasos.
+Esta secuencia muestra cómo se gobierna a un Agente IA en tiempo real al realizar tareas de múltiples pasos. El cliente envía comandos explícitos; SSE es solo un transporte posible para eventos servidor-a-cliente después de aceptar el comando.
 
 ```mermaid
 sequenceDiagram
     autonumber
     actor Tracker as Tracker SaaS
-    participant SSE as Agent Runtime API
+    participant RuntimeAPI as Agent Runtime Command/Event API
     participant Orch as AgentOrchestrator
     participant Boundary as "Enforcer de Límites (OPA)"
     participant LLM as LLM Externo
     participant Exec as .harness Exec Port
 
-    Tracker->>SSE: Solicita Tarea (POST /v1/agent/handle o /v1/agent/stream)
-    SSE-->>Tracker: Retorna resultado o abre Stream (SSE)
+    Tracker->>RuntimeAPI: Envía comando (POST /v1/agent/handle o /v1/agent/stream)
+    RuntimeAPI-->>Tracker: Retorna envelope de resultado o acepta comando y abre stream de eventos
     
     Orch->>LLM: Envía Contexto y Herramientas Permitidas
     loop Hasta que la Tarea se Complete
@@ -70,15 +70,16 @@ sequenceDiagram
         alt Permitido
             Orch->>Exec: Ejecuta script de herramienta
             Exec-->>Orch: Salida del Script
-            Orch-->>SSE: Envia Evento de Resultado al Tracker
+            Orch-->>RuntimeAPI: Emite evento de resultado de tool
             Orch->>LLM: Retorna Salida
         else Denegado
-            Orch-->>SSE: Envia Evento de Violación al Tracker
+            Orch-->>RuntimeAPI: Emite evento de violación
             Orch->>LLM: Error - Acción no permitida
         end
     end
     
-    Orch-->>SSE: Envia Evento de Salida Final
+    Orch-->>RuntimeAPI: Emite evento de salida final
+    RuntimeAPI-->>Tracker: Entrega eventos por SSE o stream equivalente
 ```
 
 ---

@@ -43,22 +43,22 @@ sequenceDiagram
     Tracker-->>User: Present Final Verdict
 ```
 
-## 3. Agentic Workflow (SSE)
+## 3. Agentic Workflow (Command/Event)
 
-This sequence shows how an AI Agent is governed in real time when performing multi-step tasks.
+This sequence shows how an AI Agent is governed in real time when performing multi-step tasks. The caller sends explicit commands; SSE is only one possible transport for server-to-client events after the command is accepted.
 
 ```mermaid
 sequenceDiagram
     autonumber
     actor Tracker as Tracker SaaS
-    participant SSE as Agent Runtime API
+    participant RuntimeAPI as Agent Runtime Command/Event API
     participant Orch as AgentOrchestrator
     participant Boundary as OPA Boundary Enforcer
     participant LLM as External LLM
     participant Exec as .harness Exec Port
 
-    Tracker->>SSE: Request Task (POST /v1/agent/handle or /v1/agent/stream)
-    SSE-->>Tracker: Return result or open Stream (SSE)
+    Tracker->>RuntimeAPI: Submit command (POST /v1/agent/handle or /v1/agent/stream)
+    RuntimeAPI-->>Tracker: Return result envelope or accept command and open event stream
     
     Orch->>LLM: Send Context & Allowed Tools
     loop Until Task Complete
@@ -70,15 +70,16 @@ sequenceDiagram
         alt Allowed
             Orch->>Exec: Run tool script
             Exec-->>Orch: Script Output
-            Orch-->>SSE: Stream Tool Result Event to Tracker
+            Orch-->>RuntimeAPI: Emit tool-result event
             Orch->>LLM: Return Output
         else Denied
-            Orch-->>SSE: Stream Violation Event to Tracker
+            Orch-->>RuntimeAPI: Emit violation event
             Orch->>LLM: Error - Action not permitted
         end
     end
     
-    Orch-->>SSE: Stream Final Output Event
+    Orch-->>RuntimeAPI: Emit final-output event
+    RuntimeAPI-->>Tracker: Deliver events over SSE or equivalent event stream
 ```
 
 ---

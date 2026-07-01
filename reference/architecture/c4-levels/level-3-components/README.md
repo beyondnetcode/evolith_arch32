@@ -17,7 +17,7 @@ Evolith follows **Clean Architecture** and **Domain-Driven Design (DDD)** princi
 Select a container to explore its internal components:
 
 - **[Core API Components](./core-api-components.md):** Exploring the stateless evaluation engine, workspace resolution, cache/reference access, and transitional satellite registry surface.
-- **[Agent Runtime Components](./agent-runtime-components.md):** Exploring the ports-and-adapters orchestration layer, including HTTP/SSE APIs, skill resolution, approval, memory, policy validation, and trace publishing.
+- **[Agent Runtime Components](./agent-runtime-components.md):** Exploring the ports-and-adapters orchestration layer, including the command/event API, skill resolution, approval, memory, policy validation, and trace publishing.
 - **[MCP Server Components](./mcp-server-components.md):** Exploring the standalone MCP gateway, tool registry, resources, prompts, ABAC, audit, metrics, and Agent Runtime bridge.
 - **[Smart CLI Components](./smart-cli-components.md):** Exploring Nest Commander commands, local evaluation, validation, profiles, plugins, satellite workflows, and SDK integration.
 

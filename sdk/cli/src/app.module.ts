@@ -7,7 +7,6 @@ import { AliasService } from './config/alias.service';
 import { AliasCommand } from './commands/alias/alias.command';
 import { DocsCommand } from './commands/docs/docs.command';
 import { UpgradeCommand } from './commands/upgrade/upgrade.command';
-import { McpServeCommand } from './commands/mcp/mcp-serve.command';
 import { ConfigService } from './infrastructure/config/config.service';
 import { FileManagerService } from './infrastructure/filesystem/file-manager.service';
 import { SyncService } from '@evolith/core-domain/application/sync/sync.service';
@@ -60,7 +59,6 @@ import { PluginModule } from './infrastructure/plugins/plugin.module';
     EvaluateCommand,
     DocsCommand,
     UpgradeCommand,
-    McpServeCommand,
     ConfigService,
     FileManagerService,
     SyncService,

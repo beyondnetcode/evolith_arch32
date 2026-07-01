@@ -1,11 +1,10 @@
 import { Test } from '@nestjs/testing';
 import { AppModule } from './app.module';
 import { InitCommand } from './commands/init/init.command';
-import { AgentsCommand } from './commands/init/agents.command';
+import { AgentsCommand } from './commands/agents/agents.command';
 import { ValidateCommand } from './commands/validate/validate.command';
 import { DocsCommand } from './commands/docs/docs.command';
-import { UpgradeCommand } from './commands/init/upgrade.command';
-import { McpServeCommand } from './commands/mcp/mcp-serve.command';
+import { UpgradeCommand } from './commands/upgrade/upgrade.command';
 import { ConfigService } from './infrastructure/config/config.service';
 import { FileManagerService } from './infrastructure/filesystem/file-manager.service';
 import { SyncService } from '@evolith/core-domain/application/sync/sync.service';
@@ -159,16 +158,6 @@ describe('AppModule', () => {
     expect(command).toBeInstanceOf(UpgradeCommand);
   });
 
-  it('should provide McpServeCommand', async () => {
-    const module = await Test.createTestingModule({
-      imports: [AppModule],
-      providers: [{ provide: 'IFileSystem', useValue: {} }, { provide: 'ILogger', useValue: {} }, { provide: 'IConfigParser', useValue: {} }]
-    }).compile();
-
-    const command = module.get(McpServeCommand);
-    expect(command).toBeDefined();
-    expect(command).toBeInstanceOf(McpServeCommand);
-  });
 
   it('should provide ConfigService', async () => {
     const module = await Test.createTestingModule({

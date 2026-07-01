@@ -1,4 +1,4 @@
-# Wilson Audit Playbook
+# Winston Audit Playbook
 
 ## Persona: Winston (Principal Architect; repository agent ID `@winston`)
 
@@ -52,8 +52,11 @@ Para cada componente, aplica los siguientes criterios y **traduce los hallazgos 
 7. **Alineación con la Visión:** ¿Contribuye directamente a la visión de "sistema operativo de gobernanza"?
 8. **Sincronización de Diagramas C4 y Arquitectura (MANDATORIO):** Cada vez que se detecten cambios técnicos de diseño en la arquitectura o código, ¿se ha actualizado y fiscalizado la sincronización de los diagramas C4 y la documentación del Master Hub C4? Cualquier desincronización detectada entre código/ADRs y la arquitectura documentada DEBE registrarse como un gap crítico.
 9. **Eficiencia y riqueza topológica (obligatorio):** Para cada topología aceptada, inspecciona la cobertura y la paridad de los rulesets nativos y políticas OPA, la calidad y trazabilidad de sus datos (manifiesto, corpus, ADRs, contratos y evidencias), y oportunidades de reducir latencia, consumo de tokens, tamaño de contexto, I/O, duplicación y trabajo de CI. Identifica controles ejecutables que falten, reglas redundantes o costosas, datos huérfanos o pobres, y relaciones que deberían incorporarse al catálogo topológico. No declares una topología madura si su información no permite adopción, operación, validación y evolución sin reconstrucción manual.
+10. **Deriva de Contratos JSON (Drift-Detection):** Compara los contratos de payload en la arquitectura C4 contra las firmas e interfaces de código TypeScript reales. Si detectas desviaciones o campos huérfanos, repórtalo como un gap.
+11. **Fronteras de Interfaces:** Evalúa y busca fugas de lógica de dominio hacia adaptadores de infraestructura u operacionales (CLI, MCP, etc).
+12. **Auditoría Inteligente de Datos (WS1-WS9):** Evalúa la fuerza de los datos en esquemas JSON. ¿Proveen los esquemas el contexto semántico y relacional suficiente para modelos LLM (prevención de alucinaciones) sin requerir llamadas RAG excesivas?
 
-Antes de emitir resultados, Wilson debe confirmar explícitamente que este análisis cubrió cada topología aceptada y ambos motores de reglas. Toda oportunidad repetible debe convertirse en un `GT-*` priorizado; toda optimización que no pueda automatizarse debe documentar la razón y la métrica que permitirá reevaluarla.
+Antes de emitir resultados, Winston debe confirmar explícitamente que este análisis cubrió cada topología aceptada y ambos motores de reglas. Toda oportunidad repetible debe convertirse en un `GT-*` priorizado (¡si encuentras bugs de código de validadores, proporciona también el parche `diff`!); toda optimización que no pueda automatizarse debe documentar la razón y la métrica que permitirá reevaluarla.
 
 ---
 
@@ -95,7 +98,7 @@ No generes un nuevo documento suelto. **Debes leer, analizar y modificar directa
      - **Hecho cuando (Done when):** Los criterios de aceptación claros para cerrar el gap.
      - Para hallazgos de topología, incluye el artefacto Native, OPA, manifiesto/corpus y evidencia de rendimiento o consumo afectados.
 
-3. **Artefacto Resumen Opcional (`wilson-audit-summary.md`)**:
+3. **Artefacto Resumen Opcional (`winston-audit-summary.md`)**:
     - Como entregable complementario (no persistido en el repositorio como código final), puedes generar un artefacto para el usuario con:
       - Resumen Ejecutivo (puntuación de salud y madurez global).
       - Backlog de refactoring estructural sugerido (Eliminar, Mover, Crear, Fusionar archivos).
@@ -162,7 +165,7 @@ Piensa como arquitecto empresarial, platform engineer, DevOps lead, security eng
 
 ## The Topology Compliance Audit
 
-An executable script that Wilson can run on demand to evaluate compliance of all 8 accepted topologies against the canonical corpus structure:
+An executable script that Winston can run on demand to evaluate compliance of all 8 accepted topologies against the canonical corpus structure:
 
 ```bash
 # Human-readable Markdown report
@@ -172,10 +175,10 @@ node .harness/playbooks/topology-compliance-audit.mjs --markdown
 node .harness/playbooks/topology-compliance-audit.mjs
 ```
 
-The audit evaluates each topology across 21 checkpoints (docs EN/ES, OPA Rego, rules, WASM, schema, manifest, fixtures, parity fixtures, OpenAPI, MCP, CLI) and produces a global score. Use the `--topology` flag with `run-wilson-audit.mjs`:
+The audit evaluates each topology across 21 checkpoints (docs EN/ES, OPA Rego, rules, WASM, schema, manifest, fixtures, parity fixtures, OpenAPI, MCP, CLI) and produces a global score. Use the `--topology` flag with `run-winston-audit.mjs`:
 
 ```bash
-node .harness/scripts/run-wilson-audit.mjs --topology
+node .harness/scripts/run-winston-audit.mjs --topology
 ```
 
 ---

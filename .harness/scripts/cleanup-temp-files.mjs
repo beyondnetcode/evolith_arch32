@@ -43,7 +43,7 @@ const TEMP_FILES_SPECIFIC = [
 
 const TEMP_DIRS_SPECIFIC = [
   '.harness/tmp/audit',
-  '.harness/tmp/wilson-review-KI-EVANS-AGGREGATE-001.md'
+  '.harness/tmp/winston-review-KI-EVANS-AGGREGATE-001.md'
 ];
 
 function formatSize(bytes) {

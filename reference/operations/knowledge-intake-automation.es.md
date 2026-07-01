@@ -9,7 +9,7 @@
 
 ## Proposito
 
-Automatizar el ciclo de vida de ingesta de conocimiento desde la ingestion de candidatos hasta la promocion a estado ejecutable. El pipeline aplica validacion de esquema, cumplimiento de politicas OPA, paridad de doble motor y revisiones Wilson estructuradas — todo controlado por verificaciones CI de fallo cerrado.
+Automatizar el ciclo de vida de ingesta de conocimiento desde la ingestion de candidatos hasta la promocion a estado ejecutable. El pipeline aplica validacion de esquema, cumplimiento de politicas OPA, paridad de doble motor y revisiones Winston estructuradas — todo controlado por verificaciones CI de fallo cerrado.
 
 ## Descripcion del Pipeline
 
@@ -18,7 +18,7 @@ El pipeline de ingesta de conocimiento opera a traves de cuatro etapas:
 ```
 ┌─────────────┐    ┌──────────────┐    ┌─────────────┐    ┌──────────────┐
 │ Ingestar KI │───▶│  Validar     │───▶│  Promocionar│───▶│  Revision    │
-│ (merge PR)  │    │  (puerta CI) │    │  (manual)   │    │  Wilson      │
+│ (merge PR)  │    │  (puerta CI) │    │  (manual)   │    │  Winston      │
 └─────────────┘    └──────────────┘    └─────────────┘    └──────────────┘
        │                  │                   │                   │
        ▼                  ▼                   ▼                   ▼
@@ -89,31 +89,31 @@ El script:
 4. Valida el archivo actualizado contra esquema JSON y politica OPA
 5. Escribe el YAML actualizado de vuelta al archivo
 
-## Disparador de Revision Wilson
+## Disparador de Revision Winston
 
 Preparar un prompt de revision estructurado para que Winston (\`@winston\`) evaluede un candidato de conocimiento:
 
 ```bash
-node .harness/scripts/knowledge-wilson-review.mjs <ki-file>
+node .harness/scripts/knowledge-winston-review.mjs <ki-file>
 ```
 
 ### Ejemplo
 
 ```bash
-node .harness/scripts/knowledge-wilson-review.mjs reference/knowledge/intake/KI-EVANS-AGGREGATE-001.yaml
+node .harness/scripts/knowledge-winston-review.mjs reference/knowledge/intake/KI-EVANS-AGGREGATE-001.yaml
 ```
 
 El script:
 1. Lee el archivo KI y su entrada de registro de fuente vinculada
 2. Construye un prompt de revision estructurado con todos los metadatos del candidato
-3. Escribe el prompt en `.harness/tmp/wilson-review-<KI-ID>.md`
+3. Escribe el prompt en `.harness/tmp/winston-review-<KI-ID>.md`
 4. Muestra una vista previa del prompt
 
 ### Disparador CI
 
-La revision Wilson tambien se puede activar via comando de comentario en PR:
+La revision Winston tambien se puede activar via comando de comentario en PR:
 ```
-/wilson-review reference/knowledge/intake/KI-EVANS-AGGREGATE-001.yaml
+/winston-review reference/knowledge/intake/KI-EVANS-AGGREGATE-001.yaml
 ```
 
 ## Modo Auto-Correccion
@@ -189,7 +189,7 @@ Despues de corregir, el script re-valida para confirmar que todos los problemas 
 
 3. **Enviar un PR** — el workflow CI valida automaticamente.
 
-4. **Promocionar** una vez que la revision Wilson apruebe:
+4. **Promocionar** una vez que la revision Winston apruebe:
    ```bash
    node .harness/scripts/knowledge-promote.mjs reference/knowledge/intake/KI-MY-KNOWLEDGE-001.yaml evaluated
    ```
@@ -206,7 +206,7 @@ Despues de corregir, el script re-valida para confirmar que todos los problemas 
 ## Autoridad Relacionada
 
 - [Soporte para CI Agentico y RAG](./agentic-ci-rag-support.es.md)
-- [Playbook de Auditoria Wilson](../../.harness/playbooks/wilson-audit-playbook.es.md)
+- [Playbook de Auditoria Winston](../../.harness/playbooks/winston-audit-playbook.es.md)
 - [Esquema de Ingesta de Conocimiento](../../rulesets/schema/knowledge-intake.schema.json)
 - [Politica OPA de Ingesta de Conocimiento](../../rulesets/opa/knowledge-intake.rego)
 

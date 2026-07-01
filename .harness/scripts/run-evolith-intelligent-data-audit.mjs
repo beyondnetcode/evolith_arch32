@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * run-evolith-intelligent-data-audit — Wilson intelligent data strength audit.
+ * run-evolith-intelligent-data-audit — Winston intelligent data strength audit.
  *
  * Evaluates the strength of Evolith Core as intelligent data by checking
  * the implementation status of WS1-WS9 workstreams defined in

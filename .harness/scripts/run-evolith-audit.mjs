@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * run-evolith-audit — Wilson architectural audit prompt printer.
+ * run-evolith-audit — Winston architectural audit prompt printer.
  *
  * Handles the prompt-based modes (architectural, BMAD) that require an LLM
  * context. Does NOT handle executable audits (topology, deep) — those have
@@ -21,7 +21,7 @@ async function main() {
   const language = args.includes('--es') ? 'es' : 'en';
   const mode = args.includes('--bmad') ? 'bmad' : args.includes('--all') ? 'all' : 'architectural';
 
-  const playbookFile = language === 'es' ? 'wilson-audit-playbook.es.md' : 'wilson-audit-playbook.md';
+  const playbookFile = language === 'es' ? 'winston-audit-playbook.es.md' : 'winston-audit-playbook.md';
   const playbookPath = path.join(rootDir, '.harness', 'playbooks', playbookFile);
 
   try {

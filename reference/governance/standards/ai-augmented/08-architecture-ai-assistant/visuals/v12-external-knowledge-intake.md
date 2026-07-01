@@ -28,7 +28,7 @@ assessment:
   concerns: ["domain-modeling", "consistency"]
 promotion:
   status: "candidate"
-  owner: "wilson"
+  owner: "winston"
   adr: null
   native_rule: null
   opa_policy: null

@@ -1149,7 +1149,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Title:** Automated Operational Capability and Efficiency Drift Audit
 
 - **Purpose:** Continuously detect divergence between declared CI/operations capabilities and executable behavior, while identifying avoidable latency, token use, and unnecessary work before those gaps reach production workflows.
-- **Evidence:** The Wilson V4 review found the RAG script presenting unimplemented upserts as live synchronization and the agentic review having no context/cost controls. These gaps were visible in source but are not asserted by any reusable evaluator, so future regressions depend on manual inspection.
+- **Evidence:** The Winston V4 review found the RAG script presenting unimplemented upserts as live synchronization and the agentic review having no context/cost controls. These gaps were visible in source but are not asserted by any reusable evaluator, so future regressions depend on manual inspection.
 - **Done when:**
   - [x] A reproducible CI evaluator maps declared operational modes, environment flags, and ADR claims to executable adapters or explicit dry-run semantics.
   - [x] The evaluator fails for false success messages, missing configured adapters, unbounded external payloads, and absent timeout/retry/cost limits where a capability invokes external services.
@@ -1163,7 +1163,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Title:** Topology-Aware Rule Reference and Coverage Migration Repair
 
 - **Purpose:** Restore a trustworthy, topology-aware coverage report and remove obsolete phase-path references so rule discovery, satellite inheritance, and governance reporting use the canonical topology corpus.
-- **Evidence:** Wilson V5 ran the coverage generator; it fails before producing a matrix because it reads the deleted `rulesets/architecture/f1-modular-monolith.rules.json` and `rulesets/opa/architecture.rego`. `rulesets/governance/satellite-contracts.rules.json` still declares the same missing F1/F2/F3 files, while the canonical artifacts live beneath `reference/architecture/topologies/progressive-axis/`.
+- **Evidence:** Winston V5 ran the coverage generator; it fails before producing a matrix because it reads the deleted `rulesets/architecture/f1-modular-monolith.rules.json` and `rulesets/opa/architecture.rego`. `rulesets/governance/satellite-contracts.rules.json` still declares the same missing F1/F2/F3 files, while the canonical artifacts live beneath `reference/architecture/topologies/progressive-axis/`.
 - **Done when:**
   - [x] The coverage generator discovers rules from topology manifests rather than hard-coded legacy paths and emits per-topology Native/OPA coverage with source locations.
   - [x] Satellite contracts, documentation, and machine-readable references resolve only to canonical artifacts; an automated reference-resolution test prevents recurrence.
@@ -1176,7 +1176,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Title:** Executable OPA Tests and Native/OPA Semantic Parity Gate
 
 - **Purpose:** Verify behavior—not only file existence—of every topology policy, and ensure Native and OPA engines reach equivalent allow/deny decisions for the same contracts.
-- **Evidence:** Wilson V5 found no OPA test files and the 14-step CI runner does not execute `opa test` or an equivalent pinned evaluator. `validate-topology-manifests.mjs` confirms that declared Native/OPA files exist but does not evaluate policy decisions; the current coverage generator is also broken (GT-148).
+- **Evidence:** Winston V5 found no OPA test files and the 14-step CI runner does not execute `opa test` or an equivalent pinned evaluator. `validate-topology-manifests.mjs` confirms that declared Native/OPA files exist but does not evaluate policy decisions; the current coverage generator is also broken (GT-148).
 - **Closed by:** 8 `.test.rego` files for central `rulesets/opa/*` policies (version-pinning, evidence, governance, taxonomy, ci-cd, cli-readiness, mcp, abac) + 16 `parity-fixtures/` JSON files (2 per topology: compliant + violation) + 8 compiled `<topology>.wasm` bundles + pinned `@open-policy-agent/opa-wasm` evaluator + `27-opa-parity-gate.mjs` and `28-test-topology-opa.mjs` CI steps. Verified: `opa test` runs 25 topology test cases (0 failures); parity gate evaluates 16 fixtures across 8 topologies (0 drift); WASM compiled with OPA v0.65.0.
 - **Done when:**
   - [x] A pinned, reproducible OPA evaluator executes positive, negative, and boundary fixtures for every accepted topology without relying on an undeclared host binary.
@@ -1189,7 +1189,7 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 **Title:** Mature Remaining Draft Topologies to Accepted Corpus Parity
 
 - **Purpose:** Make every published Evolith topology usable at the Modular Monolith baseline, not merely a discoverable draft with isolated rules.
-- **Evidence:** Wilson V5 manifest inventory reports Data Mesh, Edge Computing, Serverless, and Event-Driven as `draft` with no `spec.corpus`; R-27 is therefore not applied to them. Their earlier baseline-rule gaps may remain historically closed, but they do not provide the accepted-topology corpus, control-plane, and evidence maturity requested for Evolith.
+- **Evidence:** Winston V5 manifest inventory reports Data Mesh, Edge Computing, Serverless, and Event-Driven as `draft` with no `spec.corpus`; R-27 is therefore not applied to them. Their earlier baseline-rule gaps may remain historically closed, but they do not provide the accepted-topology corpus, control-plane, and evidence maturity requested for Evolith.
 - **Closed by:** All four topologies promoted from `draft` to `accepted` with `spec.corpus`, maturity guides, config schemas, fixtures, OPA tests, manifest fixes, and topology-specific ADRs (ADR-0095 for Serverless, ADR-0096 for Edge Computing). Verified by documentation validation and bilingual parity checks.
 - **Done when:**
   - [x] Data Mesh, Edge Computing, Serverless, and Event-Driven have bilingual adoption, composition, operations, security, observability, resilience, and evolution guidance plus topology-specific accepted ADRs.
@@ -2982,10 +2982,10 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 #### GT-232
 
-**Purpose:** Create complete persona definitions for Wilson (`@winston`) and PO (`@po`) in `.bmad-core/agents/`, closing the gap where these two agents exist only in `.harness/agents/agent-specs.md` without the full YAML frontmatter, tool references, and self-improvement mandates that the other 8 agents have.
-**Current Evidence:** `.bmad-core/agents/` contains 8 agent files (analyst, architect, dev, devops, docs, pm, qa, sm) with YAML frontmatter. Wilson and PO have no corresponding files — they are defined only in the harness-level specs.
+**Purpose:** Create complete persona definitions for Winston (`@winston`) and PO (`@po`) in `.bmad-core/agents/`, closing the gap where these two agents exist only in `.harness/agents/agent-specs.md` without the full YAML frontmatter, tool references, and self-improvement mandates that the other 8 agents have.
+**Current Evidence:** `.bmad-core/agents/` contains 8 agent files (analyst, architect, dev, devops, docs, pm, qa, sm) with YAML frontmatter. Winston and PO have no corresponding files — they are defined only in the harness-level specs.
 **Done When:**
-  - [x] `.bmad-core/agents/wilson.md` exists with YAML frontmatter matching the format of other agent personas.
+  - [x] `.bmad-core/agents/winston.md` exists with YAML frontmatter matching the format of other agent personas.
   - [x] `.bmad-core/agents/po.md` exists with YAML frontmatter matching the format of other agent personas.
   - [x] Both files include scope, inputs, skills, constraints, handoff, validation, and self-improvement mandate.
 
@@ -3019,11 +3019,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 #### GT-236
 
 **Purpose:** Automate the knowledge intake pipeline so new `KI-*.yaml` and `SRC-*.yaml` files trigger validation, review, and promotion automatically, closing the gap where the pipeline exists in design but requires manual execution at every stage.
-**Current Evidence:** The knowledge intake system has 1 source (SRC-EVANS-001) and 1 item (KI-EVANS-AGGREGATE-001) in status `candidate`. The RAG vector sync infrastructure (script 14) exists but has no live content. No automation connects schema validation → OPA evaluation → Wilson review → promotion.
+**Current Evidence:** The knowledge intake system has 1 source (SRC-EVANS-001) and 1 item (KI-EVANS-AGGREGATE-001) in status `candidate`. The RAG vector sync infrastructure (script 14) exists but has no live content. No automation connects schema validation → OPA evaluation → Winston review → promotion.
 **Done When:**
   - [x] A PR adding `KI-*.yaml` or `SRC-*.yaml` triggers automated schema + OPA validation.
   - [x] Validation passing creates or updates the item's promotion status automatically.
-  - [x] Wilson review step can be triggered via comment command or scheduled job.
+  - [x] Winston review step can be triggered via comment command or scheduled job.
 
 #### GT-237
 
@@ -3244,7 +3244,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 #### GT-260
 
 **Purpose:** Close the bilingual-parity gap for BMAD agents by providing the Spanish persona file for the PO agent and wiring it through the same workflows as the other 8 agents.
-**Current Evidence:** `.bmad-core/agents/` contains `.md` + `.es.md` pairs for `analyst`, `architect`, `dev`, `devops`, `docs`, `pm`, `qa`, `sm`. The PO agent has only `po.md`; `po.es.md` does not exist. (Wilson is single-language by design.)
+**Current Evidence:** `.bmad-core/agents/` contains `.md` + `.es.md` pairs for `analyst`, `architect`, `dev`, `devops`, `docs`, `pm`, `qa`, `sm`. The PO agent has only `po.md`; `po.es.md` does not exist. (Winston is single-language by design.)
 **Done When:**
   - [x] `.bmad-core/agents/po.es.md` created with a faithful translation of `po.md`'s persona, responsibilities, and outputs.
   - [x] Any agent-loading scripts/workflows that enumerate `*.es.md` pairs include the new file.
@@ -3314,7 +3314,7 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 
 **Title:** Restore workspace build/test after Redis cache integration
 **Purpose:** Unblock the monorepo release baseline after the cache layer introduced runtime imports and TypeScript drift that Core API, MCP Server, and the dependent CLI cannot build or test through. This is a production blocker because the cache optimization cannot be promoted while the executable surfaces fail.
-**Current Evidence:** Wilson audit on 2026-06-25: `npm -ws run build --if-present` fails in `apps/core-api` because `@nestjs/cache-manager` and `cache-manager` are not installed and `CacheInterceptor`/`CacheTTL` are imported from `@nestjs/common`; `packages/mcp-server` fails on the same missing cache dependencies, `trace.SpanStatusCode`, and TypeScript 6 deprecation errors. `npm --workspace apps/core-api test -- --runInBand`, `npm --workspace packages/mcp-server test -- --runInBand`, and `npm --workspace sdk/cli run test:unit -- --runInBand` are also red.
+**Current Evidence:** Winston audit on 2026-06-25: `npm -ws run build --if-present` fails in `apps/core-api` because `@nestjs/cache-manager` and `cache-manager` are not installed and `CacheInterceptor`/`CacheTTL` are imported from `@nestjs/common`; `packages/mcp-server` fails on the same missing cache dependencies, `trace.SpanStatusCode`, and TypeScript 6 deprecation errors. `npm --workspace apps/core-api test -- --runInBand`, `npm --workspace packages/mcp-server test -- --runInBand`, and `npm --workspace sdk/cli run test:unit -- --runInBand` are also red.
 **Done When:**
   - [x] Core API declares and installs the cache dependencies it uses (`@nestjs/cache-manager`, `cache-manager`, Redis store package such as `@keyv/redis` if retained) and imports Nest cache decorators/interceptors from the package that actually exports them for Nest 11.
   - [x] MCP Server declares its cache dependencies, fixes the OpenTelemetry status import (`SpanStatusCode` from `@opentelemetry/api`), and either migrates or silences TypeScript 6 deprecations intentionally.
@@ -3391,13 +3391,13 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 #### GT-274
 
 **Title:** Harden cleanup-temp-files against tracked-file deletion
-**Purpose:** Make the mandatory Wilson pre-audit cleanup safe for a versioned governance repository. A cleanup helper must never delete tracked scripts, rules, policies, or documentation just because their path contains a temporary-word substring.
-**Current Evidence:** Running `node .harness/scripts/cleanup-temp-files.mjs` during the 2026-06-25 Wilson control-plane audit deleted tracked scripts whose paths contained `coverage`: `.harness/scripts/bilingual-coverage.mjs`, `.harness/scripts/coverage-dashboard.mjs`, `.harness/scripts/generate-rule-coverage.mjs`, `.harness/scripts/generate-rule-coverage.test.mjs`, and `.harness/scripts/ci/26-validate-topology-rule-coverage.mjs`. Root cause: `isInTempDir(filePath)` used substring matching (`filePath.includes("coverage")`) rather than path-segment matching and did not skip `git ls-files` tracked content. The files were restored immediately from Git.
+**Purpose:** Make the mandatory Winston pre-audit cleanup safe for a versioned governance repository. A cleanup helper must never delete tracked scripts, rules, policies, or documentation just because their path contains a temporary-word substring.
+**Current Evidence:** Running `node .harness/scripts/cleanup-temp-files.mjs` during the 2026-06-25 Winston control-plane audit deleted tracked scripts whose paths contained `coverage`: `.harness/scripts/bilingual-coverage.mjs`, `.harness/scripts/coverage-dashboard.mjs`, `.harness/scripts/generate-rule-coverage.mjs`, `.harness/scripts/generate-rule-coverage.test.mjs`, and `.harness/scripts/ci/26-validate-topology-rule-coverage.mjs`. Root cause: `isInTempDir(filePath)` used substring matching (`filePath.includes("coverage")`) rather than path-segment matching and did not skip `git ls-files` tracked content. The files were restored immediately from Git.
 **Done When:**
   - [x] `cleanup-temp-files.mjs` matches temp directories by path segment, not arbitrary substring.
   - [x] The cleanup script skips all tracked files from `git ls-files`, even if they match a temp filename or directory pattern.
   - [x] A regression test fixture proves files named `bilingual-coverage.mjs`, `coverage-dashboard.mjs`, and `26-validate-topology-rule-coverage.mjs` are not deleted.
-  - [x] The Wilson audit playbook references the safe cleanup behavior and warns that any deleted tracked file is a blocker.
+  - [x] The Winston audit playbook references the safe cleanup behavior and warns that any deleted tracked file is a blocker.
 
 #### GT-275
 

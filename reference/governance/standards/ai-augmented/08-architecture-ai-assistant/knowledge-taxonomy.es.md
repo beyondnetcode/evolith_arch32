@@ -329,7 +329,7 @@ rights_status: "citation-and-synthesis-only"
 trust_level: "primary"
 promotion_status: "candidate" # candidate | evaluated | accepted | executable | retired
 topologies: ["modular-monolith", "microservices"]
-owner: "wilson"
+owner: "winston"
 ```
 
 Solo el conocimiento `accepted` puede recuperarse como guía. Solo el conocimiento `executable` puede declarar un mapeo de enforcement Evolith, que requiere un ADR aprobado más regla Native, política OPA y fixtures cuando el patrón sea aplicable de forma ejecutable.

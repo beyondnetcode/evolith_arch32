@@ -4,7 +4,7 @@
  * DEPRECATED — Compatibility alias.
  *
  * Use the new entry points instead:
- *   run-evolith-audit.mjs       — Wilson architectural / BMAD prompt audit
+ *   run-evolith-audit.mjs       — Winston architectural / BMAD prompt audit
  *   run-evolith-topology.mjs    — Topology compliance audit
  *   run-evolith-deep.mjs        — SDLC Deep Audit (8-dimension)
  *
@@ -40,7 +40,7 @@ if (isTopology) {
 
 const scriptPath = path.join(rootDir, '.harness/scripts', targetScript);
 
-console.warn(`⚠️  [run-wilson-audit] DEPRECATED — use ${targetScript} instead. Delegating...\n`);
+console.warn(`⚠️  [run-winston-audit] DEPRECATED — use ${targetScript} instead. Delegating...\n`);
 
 const result = spawnSync('node', [scriptPath, ...extraArgs], { stdio: 'inherit', cwd: rootDir });
 process.exit(result.status ?? 1);

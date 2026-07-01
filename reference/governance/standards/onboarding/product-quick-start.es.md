@@ -51,7 +51,7 @@ node .harness/scripts/ci/01-validate-docs.mjs --render-mermaid
 
 Evolith Core utiliza el Método BMAD para orquestar agentes de IA especializados. Puedes invocarlos por su nombre específico en tu IDE o prompts para obtener soporte en diferentes fases del ciclo de vida:
 
-- **Wilson (Arquitecto Principal):** Invócalo para auditorías arquitectónicas profundas, chequeos de madurez del repositorio y actualización del tracking de GAPs.
+- **Winston (Arquitecto Principal):** Invócalo para auditorías arquitectónicas profundas, chequeos de madurez del repositorio y actualización del tracking de GAPs.
 - **Agente Arquitecto (Architect):** Invócalo para diseñar estructuras multi-topología (Data Mesh, Serverless, Edge), definir contratos OPA/Rego y redactar ADRs.
 - **Agente Desarrollador (Developer):** Invócalo para implementar capas de Clean Architecture, patrones distribuidos (ej. Transactional Outbox) y componentes seguros.
 - **Agente QA:** Invócalo para escribir tests automatizados, validar payloads de eventos entre dominios y aplicar mitigaciones de seguridad OWASP.

@@ -21,7 +21,7 @@ Este repositorio define la línea base arquitectónica, los estándares de gober
 | `node .harness/scripts/generate-es-skeleton.mjs <file.md>` | Crea un esqueleto ES desde un archivo EN (con bandera --dry-run) |
 | `python ./.bmad-core/scripts/cleanup_markdown_encoding.py` | Sanea problemas de codificación UTF-8 |
 | `node .harness/scripts/ci/01-validate-docs.mjs --render-mermaid` | Renderiza diagramas Mermaid a SVG para validación visual |
-| `node .harness/scripts/run-wilson-audit.mjs` | Imprime el prompt para ejecutar una auditoría arquitectónica profunda vía Wilson (Arquitecto Principal) |
+| `node .harness/scripts/run-winston-audit.mjs` | Imprime el prompt para ejecutar una auditoría arquitectónica profunda vía Winston (Arquitecto Principal) |
 
 ### Pre-commit Hook
 El hook pre-commit (`.husky/pre-commit`) se ejecuta automáticamente en cada commit:

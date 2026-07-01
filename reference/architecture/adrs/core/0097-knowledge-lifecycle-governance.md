@@ -108,7 +108,7 @@ The CI validation (`17-validate-knowledge-intake.mjs`) enforces:
 - **Audit trail**: The full lifecycle of every KI-* candidate is recoverable from the YAML record alone.
 
 ### Negative
-- **Process overhead**: Each promotion requires explicit evidence — lightweight for `evaluated` (Wilson review), heavier for `accepted`/`executable` (ADR).
+- **Process overhead**: Each promotion requires explicit evidence — lightweight for `evaluated` (Winston review), heavier for `accepted`/`executable` (ADR).
 - **Transition latency**: Candidates may remain in `evaluated` while awaiting Architecture Board cycles; the governance model accepts this as a feature (no silent promotions).
 
 ## References

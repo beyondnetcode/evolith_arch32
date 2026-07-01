@@ -215,7 +215,7 @@ Todos los scripts viven en `.harness/scripts/`. Cada agente debe conocer el inve
 | `coverage-dashboard.mjs` | Genera reporte visual HTML/MD de cobertura por área |
 | `compile-opa-wasm.mjs` | Descarga binario OPA fijado + compila `.rego` a `.wasm` |
 | `opa-runtime.mjs` | Asegura que el binario OPA fijado esté disponible |
-| `run-wilson-audit.mjs` | Imprime el prompt de auditoría de Wilson (Arquitecto Principal) |
+| `run-winston-audit.mjs` | Imprime el prompt de auditoría de Winston (Arquitecto Principal) |
 
 ### 6.4 Mapa de Scripts por Agente
 

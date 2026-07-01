@@ -9,7 +9,7 @@
 
 ## Purpose
 
-Automate the knowledge intake lifecycle from candidate ingestion through promotion to executable status. The pipeline enforces schema validation, OPA policy compliance, dual-engine parity, and structured Wilson reviews — all gated by fail-closed CI checks.
+Automate the knowledge intake lifecycle from candidate ingestion through promotion to executable status. The pipeline enforces schema validation, OPA policy compliance, dual-engine parity, and structured Winston reviews — all gated by fail-closed CI checks.
 
 ## Pipeline Overview
 
@@ -17,7 +17,7 @@ The knowledge intake pipeline operates through four stages:
 
 ```
 ┌─────────────┐    ┌──────────────┐    ┌─────────────┐    ┌──────────────┐
-│  Ingest KI  │───▶│  Validate    │───▶│  Promote    │───▶│  Wilson      │
+│  Ingest KI  │───▶│  Validate    │───▶│  Promote    │───▶│  Winston      │
 │  (PR merge) │    │  (CI gate)   │    │  (manual)   │    │  Review      │
 └─────────────┘    └──────────────┘    └─────────────┘    └──────────────┘
        │                  │                   │                   │
@@ -89,31 +89,31 @@ The script:
 4. Validates the updated file against JSON Schema and OPA policy
 5. Writes the updated YAML back to the file
 
-## Wilson Review Trigger
+## Winston Review Trigger
 
 Prepare a structured review prompt for Winston (\`@winston\`) to evaluate a knowledge candidate:
 
 ```bash
-node .harness/scripts/knowledge-wilson-review.mjs <ki-file>
+node .harness/scripts/knowledge-winston-review.mjs <ki-file>
 ```
 
 ### Example
 
 ```bash
-node .harness/scripts/knowledge-wilson-review.mjs reference/knowledge/intake/KI-EVANS-AGGREGATE-001.yaml
+node .harness/scripts/knowledge-winston-review.mjs reference/knowledge/intake/KI-EVANS-AGGREGATE-001.yaml
 ```
 
 The script:
 1. Reads the KI file and its linked source registry entry
 2. Constructs a structured review prompt with all candidate metadata
-3. Writes the prompt to `.harness/tmp/wilson-review-<KI-ID>.md`
+3. Writes the prompt to `.harness/tmp/winston-review-<KI-ID>.md`
 4. Outputs a preview of the prompt
 
 ### CI Trigger
 
-Wilson review can also be triggered via PR comment command:
+Winston review can also be triggered via PR comment command:
 ```
-/wilson-review reference/knowledge/intake/KI-EVANS-AGGREGATE-001.yaml
+/winston-review reference/knowledge/intake/KI-EVANS-AGGREGATE-001.yaml
 ```
 
 ## Auto-Fix Mode
@@ -189,7 +189,7 @@ After fixing, the script re-validates to confirm all issues are resolved.
 
 3. **Submit a PR** — the CI workflow validates automatically.
 
-4. **Promote** once the Wilson review approves:
+4. **Promote** once the Winston review approves:
    ```bash
    node .harness/scripts/knowledge-promote.mjs reference/knowledge/intake/KI-MY-KNOWLEDGE-001.yaml evaluated
    ```
@@ -206,7 +206,7 @@ After fixing, the script re-validates to confirm all issues are resolved.
 ## Related Authority
 
 - [Agentic CI and RAG Support](./agentic-ci-rag-support.md)
-- [Wilson Audit Playbook](../../.harness/playbooks/wilson-audit-playbook.md)
+- [Winston Audit Playbook](../../.harness/playbooks/winston-audit-playbook.md)
 - [Knowledge Intake Schema](../../rulesets/schema/knowledge-intake.schema.json)
 - [Knowledge Intake OPA Policy](../../rulesets/opa/knowledge-intake.rego)
 

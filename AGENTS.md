@@ -21,19 +21,19 @@ This repository defines the architectural baseline, governance standards, harnes
 | `node .harness/scripts/generate-es-skeleton.mjs <file.md>` | Create ES skeleton from EN file (with --dry-run flag) |
 | `python ./.bmad-core/scripts/cleanup_markdown_encoding.py` | Sanitize UTF-8 encoding issues |
 | `node .harness/scripts/ci/01-validate-docs.mjs --render-mermaid` | Render Mermaid diagrams to SVG for visual validation |
-| `node .harness/scripts/run-evolith-audit.mjs` | Print the Wilson architectural audit prompt for LLM context |
+| `node .harness/scripts/run-evolith-audit.mjs` | Print the Winston architectural audit prompt for LLM context |
 | `node .harness/scripts/run-evolith-audit.mjs --bmad` | Print the BMAD Agent Evolution prompt |
 | `node .harness/scripts/run-evolith-topology.mjs` | Run topology compliance audit (structural parity across all topologies) |
 | `node .harness/scripts/run-evolith-deep.mjs` | Run SDLC Deep Audit — 8-dimensional executable SDLC evaluation (JSON) |
 | `node .harness/scripts/run-evolith-deep.mjs --markdown` | SDLC Deep Audit with human-readable Markdown report |
-| `node .harness/scripts/run-evolith-intelligent-data-audit.mjs` | Wilson intelligent data strength audit — evaluates WS1-WS9 workstream coverage |
+| `node .harness/scripts/run-evolith-intelligent-data-audit.mjs` | Winston intelligent data strength audit — evaluates WS1-WS9 workstream coverage |
 | `node .harness/scripts/run-evolith-intelligent-data-audit.mjs --es` | Intelligent data strength audit in Spanish |
 | `node .harness/scripts/run-evolith-intelligent-data-audit.mjs --ws1` | Check only specific workstream (WS1-WS9) |
 | `node .harness/scripts/run-evolith-intelligent-data-audit.mjs --report` | Output JSON report only |
 
 > **Full taxonomy:** See [`reference/harness/scripts-taxonomy.md`](./reference/harness/scripts-taxonomy.md) for the complete script classification, playbook details, CI hooks, and design rules.
 >
-> Warning: `run-wilson-audit.mjs` is **deprecated** — it still works as a compatibility alias but emits a warning. Use the `run-evolith-*` equivalents.
+> Warning: `run-winston-audit.mjs` is **deprecated** — it still works as a compatibility alias but emits a warning. Use the `run-evolith-*` equivalents.
 
 ### Pre-commit Hook
 The pre-commit hook (`.husky/pre-commit`) runs automatically on every commit:

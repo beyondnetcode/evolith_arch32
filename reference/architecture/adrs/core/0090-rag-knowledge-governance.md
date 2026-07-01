@@ -9,7 +9,7 @@ Accepted
 2026-06-20
 
 ## Context and Problem
-The Evolith architectural corpus — 101 ADRs, 142 gap entries, 25 rulesets, and their bilingual counterparts — cannot fit within a single LLM context window at full scale. As the corpus grows, architectural assistants (like Wilson) relying on static file reads will produce increasingly incomplete or stale responses.
+The Evolith architectural corpus — 101 ADRs, 142 gap entries, 25 rulesets, and their bilingual counterparts — cannot fit within a single LLM context window at full scale. As the corpus grows, architectural assistants (like Winston) relying on static file reads will produce increasingly incomplete or stale responses.
 
 Retrieval-Augmented Generation (RAG) solves this by chunking documents into semantically coherent units, embedding them into a vector store, and retrieving only the most relevant chunks at query time. However, without a governance standard for **how** documents are chunked, what **metadata** they carry, and **when** embeddings are regenerated, RAG results become untrustworthy and diverge from the authoritative markdown source.
 
@@ -97,7 +97,7 @@ This standard does **not** mandate a specific vector database. All of the follow
 ## Consequences
 
 ### Positive
-- **Scalability**: Wilson and future agents can query the full 101-ADR corpus semantically without context-window exhaustion.
+- **Scalability**: Winston and future agents can query the full 101-ADR corpus semantically without context-window exhaustion.
 - **Trustworthiness**: Delta sync ensures the vector store never lags more than one commit behind the authoritative markdown.
 - **Auditability**: The `corpus_version` (git SHA) in each chunk's metadata allows exact reconstruction of which version of knowledge was used for any given query.
 

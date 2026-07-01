@@ -3251,14 +3251,14 @@
       "evidence": [
         ".github/workflows/knowledge-intake.yml",
         ".harness/scripts/knowledge-promote.mjs",
-        ".harness/scripts/knowledge-wilson-review.mjs",
+        ".harness/scripts/knowledge-winston-review.mjs",
         "reference/operations/knowledge-intake-automation.md"
       ],
       "validationCommands": [
         "node .harness/scripts/ci/17-validate-knowledge-intake.mjs"
       ],
       "dependencyDisposition": "none",
-      "closureNote": "Automated knowledge intake pipeline with CI workflow, promotion script, Wilson review trigger, and --fix flag."
+      "closureNote": "Automated knowledge intake pipeline with CI workflow, promotion script, Winston review trigger, and --fix flag."
     },
     {
       "id": "GT-246",
@@ -3447,14 +3447,14 @@
       "closedAt": "2026-06-23",
       "closureCommit": "f1d9814f",
       "evidence": [
-        ".bmad-core/agents/wilson.md",
+        ".bmad-core/agents/winston.md",
         ".bmad-core/agents/po.md"
       ],
       "validationCommands": [
-        "ls .bmad-core/agents/wilson.md .bmad-core/agents/po.md"
+        "ls .bmad-core/agents/winston.md .bmad-core/agents/po.md"
       ],
       "dependencyDisposition": "none",
-      "closureNote": "Created Wilson and PO persona definitions."
+      "closureNote": "Created Winston and PO persona definitions."
     },
     {
       "id": "GT-234",
@@ -4095,14 +4095,14 @@
       "evidence": [
         ".harness/scripts/cleanup-temp-files.mjs",
         ".harness/scripts/cleanup-temp-files.test.mjs",
-        ".harness/playbooks/wilson-audit-playbook.md",
-        ".harness/playbooks/wilson-audit-playbook.es.md"
+        ".harness/playbooks/winston-audit-playbook.md",
+        ".harness/playbooks/winston-audit-playbook.es.md"
       ],
       "validationCommands": [
         "node --test .harness/scripts/cleanup-temp-files.test.mjs"
       ],
       "dependencyDisposition": "none",
-      "closureNote": "isInTempDir uses path-segment matching; isTrackedFile guard added to TEMP_DIRS_SPECIFIC loop; both functions accept injectable root for testability; main() guarded with import.meta.url; 8/8 regression tests pass proving bilingual-coverage.mjs, coverage-dashboard.mjs, and 26-validate-topology-rule-coverage.mjs are never deleted; Wilson playbook updated with BLOQUEANTE warning."
+      "closureNote": "isInTempDir uses path-segment matching; isTrackedFile guard added to TEMP_DIRS_SPECIFIC loop; both functions accept injectable root for testability; main() guarded with import.meta.url; 8/8 regression tests pass proving bilingual-coverage.mjs, coverage-dashboard.mjs, and 26-validate-topology-rule-coverage.mjs are never deleted; Winston playbook updated with BLOQUEANTE warning."
     },
     {
       "id": "GT-273",

@@ -9,7 +9,7 @@ Aceptado
 2026-06-20
 
 ## Contexto y Problema
-El corpus arquitectónico de Evolith — 101 ADRs, 142 entradas de gaps, 25 rulesets y sus contrapartes bilingües — no cabe en una única ventana de contexto de LLM a escala completa. A medida que el corpus crece, los asistentes arquitectónicos (como Wilson) que dependen de lecturas estáticas de archivos producirán respuestas cada vez más incompletas o desactualizadas.
+El corpus arquitectónico de Evolith — 101 ADRs, 142 entradas de gaps, 25 rulesets y sus contrapartes bilingües — no cabe en una única ventana de contexto de LLM a escala completa. A medida que el corpus crece, los asistentes arquitectónicos (como Winston) que dependen de lecturas estáticas de archivos producirán respuestas cada vez más incompletas o desactualizadas.
 
 La Generación Aumentada por Recuperación (RAG) resuelve esto dividiendo los documentos en unidades semánticamente coherentes, incrustándolas en un almacén vectorial y recuperando solo los fragmentos más relevantes en el momento de la consulta. Sin embargo, sin un estándar de gobernanza para **cómo** se dividen los documentos, qué **metadatos** llevan, y **cuándo** se regeneran los embeddings, los resultados RAG se vuelven poco confiables y divergen de la fuente markdown autoritativa.
 
@@ -97,7 +97,7 @@ Este estándar **no** obliga a una base de datos vectorial específica. Todos lo
 ## Consecuencias
 
 ### Positivas
-- **Escalabilidad**: Wilson y los agentes futuros pueden consultar semánticamente el corpus completo de 101 ADRs sin agotamiento de la ventana de contexto.
+- **Escalabilidad**: Winston y los agentes futuros pueden consultar semánticamente el corpus completo de 101 ADRs sin agotamiento de la ventana de contexto.
 - **Confiabilidad**: La sincronización delta garantiza que el almacén vectorial nunca esté más de un commit detrás del markdown autoritativo.
 - **Auditabilidad**: El `corpus_version` (SHA de git) en los metadatos de cada fragmento permite reconstruir exactamente qué versión del conocimiento se usó para cualquier consulta.
 

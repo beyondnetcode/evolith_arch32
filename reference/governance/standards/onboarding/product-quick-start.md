@@ -51,7 +51,7 @@ node .harness/scripts/ci/01-validate-docs.mjs --render-mermaid
 
 Evolith Core uses the BMAD Method to orchestrate specialized AI agents. You can invoke them by their specific persona names in your IDE or prompts to assist with different lifecycle tasks:
 
-- **Wilson (Principal Architect):** Invoke for deep architectural audits, repository maturity checks, and automated gap tracking updates.
+- **Winston (Principal Architect):** Invoke for deep architectural audits, repository maturity checks, and automated gap tracking updates.
 - **Architect Agent:** Invoke to design multi-topology structures (Data Mesh, Serverless, Edge), define OPA/Rego contracts, and draft new ADRs.
 - **Developer Agent:** Invoke to implement clean architecture layers, distributed patterns (e.g., Transactional Outbox), and secure UI components.
 - **QA Agent:** Invoke to write automated tests, validate inter-domain event payloads, and enforce OWASP security mitigations.

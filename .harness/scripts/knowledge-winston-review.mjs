@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 /**
- * @file knowledge-wilson-review.mjs
- * @description Prepare a Wilson review prompt for a KI candidate.
+ * @file knowledge-winston-review.mjs
+ * @description Prepare a Winston review prompt for a KI candidate.
  *
  * Reads a KI file, extracts the relevant fields, and outputs a structured
  * review prompt suitable for Winston (@winston) to evaluate.
  *
  * Usage:
- *   node .harness/scripts/knowledge-wilson-review.mjs <ki-file>
+ *   node .harness/scripts/knowledge-winston-review.mjs <ki-file>
  *
  * Can be run manually or triggered via CI comment command:
- *   /wilson-review <ki-file>
+ *   /winston-review <ki-file>
  *
  * Exit codes:
  *   0 — prompt generated successfully
@@ -131,20 +131,20 @@ async function main() {
   const args = process.argv.slice(2);
 
   if (args.length < 1) {
-    console.error('Usage: node .harness/scripts/knowledge-wilson-review.mjs <ki-file>');
+    console.error('Usage: node .harness/scripts/knowledge-winston-review.mjs <ki-file>');
     console.error('');
     console.error('Examples:');
-    console.error('  node .harness/scripts/knowledge-wilson-review.mjs reference/knowledge/intake/KI-EVANS-AGGREGATE-001.yaml');
+    console.error('  node .harness/scripts/knowledge-winston-review.mjs reference/knowledge/intake/KI-EVANS-AGGREGATE-001.yaml');
     console.error('');
     console.error('CI trigger:');
-    console.error('  /wilson-review <ki-file>    (as a PR comment command)');
+    console.error('  /winston-review <ki-file>    (as a PR comment command)');
     process.exit(1);
   }
 
   const kiFileArg = args[0];
   const kiFilePath = path.resolve(ROOT, kiFileArg);
 
-  console.log(`\n🔍 Wilson Knowledge Intake Review`);
+  console.log(`\n🔍 Winston Knowledge Intake Review`);
   console.log(`   File: ${kiFileArg}`);
 
   const kiDoc = loadKiFile(kiFilePath);
@@ -156,7 +156,7 @@ async function main() {
 
   const prompt = buildReviewPrompt(kiDoc, srcDoc, kiFileArg);
 
-  const outputPath = path.join(ROOT, `.harness/tmp/wilson-review-${kiDoc.knowledge_id}.md`);
+  const outputPath = path.join(ROOT, `.harness/tmp/winston-review-${kiDoc.knowledge_id}.md`);
   const tmpDir = path.dirname(outputPath);
   if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir, { recursive: true });
   fs.writeFileSync(outputPath, prompt, 'utf8');
@@ -169,7 +169,7 @@ async function main() {
   console.log(`\n   Total prompt length: ${prompt.length} characters`);
 
   console.log(`\n💡 To evaluate with Winston, provide the prompt content to your LLM context.`);
-  console.log(`   Or use the CI command: /wilson-review ${kiFileArg}`);
+  console.log(`   Or use the CI command: /winston-review ${kiFileArg}`);
 }
 
 main().catch((error) => {

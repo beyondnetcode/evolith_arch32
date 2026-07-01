@@ -45,8 +45,8 @@ node .harness/scripts/generate-es-skeleton.mjs <file.md> --dry-run
 # Generate visual coverage report
 node .harness/scripts/coverage-dashboard.mjs
 
-# Run Wilson deep audit
-node .harness/scripts/run-wilson-audit.mjs
+# Run Winston deep audit
+node .harness/scripts/run-winston-audit.mjs
 
 # Sanitize encoding issues
 python ./.bmad-core/scripts/cleanup_markdown_encoding.py

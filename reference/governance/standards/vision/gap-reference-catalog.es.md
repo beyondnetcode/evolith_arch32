@@ -1148,7 +1148,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 **Título:** Auditoría Automatizada de Deriva de Capacidades Operativas y Eficiencia
 
 - **Propósito:** Detectar continuamente divergencias entre capacidades declaradas de CI/operaciones y comportamiento ejecutable, identificando además latencia evitable, uso de tokens y trabajo innecesario antes de que estos gaps lleguen a flujos productivos.
-- **Evidencia:** La revisión Wilson V4 encontró que el script RAG presenta upserts no implementados como sincronización live y que la revisión agéntica no tiene controles de contexto/costo. Estos gaps eran visibles en el código, pero ningún evaluador reutilizable los afirma; por tanto futuras regresiones dependen de inspección manual.
+- **Evidencia:** La revisión Winston V4 encontró que el script RAG presenta upserts no implementados como sincronización live y que la revisión agéntica no tiene controles de contexto/costo. Estos gaps eran visibles en el código, pero ningún evaluador reutilizable los afirma; por tanto futuras regresiones dependen de inspección manual.
 - **Hecho cuando:**
   - [x] Un evaluador CI reproducible mapea modos operativos declarados, flags de entorno y afirmaciones ADR a adaptadores ejecutables o semántica dry-run explícita.
   - [x] El evaluador falla ante mensajes de éxito falsos, adaptadores configurados ausentes, payloads externos no acotados y límites ausentes de timeout/retry/costo cuando una capacidad invoca servicios externos.
@@ -1162,7 +1162,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 **Título:** Reparación de Migración de Referencias y Cobertura de Reglas Consciente de Topologías
 
 - **Propósito:** Restaurar un reporte de cobertura confiable y consciente de topologías y eliminar referencias obsoletas de rutas por fase, para que el descubrimiento de reglas, herencia de satélites y reportes de gobernanza usen el corpus topológico canónico.
-- **Evidencia:** Wilson V5 ejecutó `.harness/scripts/generate-rule-coverage.mjs`; falla antes de producir una matriz porque lee los archivos eliminados `rulesets/architecture/f1-modular-monolith.rules.json` y `rulesets/opa/architecture.rego`. `rulesets/governance/satellite-contracts.rules.json` aún declara los mismos archivos F1/F2/F3 inexistentes, mientras que los artefactos canónicos viven bajo `reference/architecture/topologies/progressive-axis/`.
+- **Evidencia:** Winston V5 ejecutó `.harness/scripts/generate-rule-coverage.mjs`; falla antes de producir una matriz porque lee los archivos eliminados `rulesets/architecture/f1-modular-monolith.rules.json` y `rulesets/opa/architecture.rego`. `rulesets/governance/satellite-contracts.rules.json` aún declara los mismos archivos F1/F2/F3 inexistentes, mientras que los artefactos canónicos viven bajo `reference/architecture/topologies/progressive-axis/`.
 - **Hecho cuando:**
   - [x] El generador de cobertura descubre reglas desde manifiestos topológicos en vez de rutas legacy hard-coded y emite cobertura Native/OPA por topología con ubicaciones fuente.
   - [x] Contratos de satélite, documentación y referencias machine-readable resuelven solo artefactos canónicos; una prueba automática de resolución de referencias evita recurrencia.
@@ -1175,7 +1175,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 **Título:** Pruebas OPA Ejecutables y Gate de Paridad Semántica Native/OPA
 
 - **Propósito:** Verificar comportamiento —no solo existencia de archivos— de cada política topológica, y asegurar que los motores Native y OPA lleguen a decisiones allow/deny equivalentes para los mismos contratos.
-- **Evidencia:** Wilson V5 no encontró archivos de pruebas OPA y el runner CI de 14 pasos no ejecuta `opa test` ni un evaluador equivalente fijado. `validate-topology-manifests.mjs` confirma que existen archivos Native/OPA declarados, pero no evalúa decisiones de política; el generador de cobertura actual también está roto (GT-148).
+- **Evidencia:** Winston V5 no encontró archivos de pruebas OPA y el runner CI de 14 pasos no ejecuta `opa test` ni un evaluador equivalente fijado. `validate-topology-manifests.mjs` confirma que existen archivos Native/OPA declarados, pero no evalúa decisiones de política; el generador de cobertura actual también está roto (GT-148).
 - **Cerrado por:** 8 archivos `.test.rego` para políticas centrales `rulesets/opa/*` (version-pinning, evidence, governance, taxonomy, ci-cd, cli-readiness, mcp, abac) + 16 archivos JSON `parity-fixtures/` (2 por topología: compliant + violation) + 8 bundles WASM compilados `<topology>.wasm` + evaluador `@open-policy-agent/opa-wasm` fijado + pasos CI `27-opa-parity-gate.mjs` y `28-test-topology-opa.mjs`. Verificado: `opa test` ejecuta 25 casos de prueba topológicos (0 fallos); gate de paridad evalúa 16 fixtures en 8 topologías (0 deriva); WASM compilado con OPA v0.65.0.
 - **Hecho cuando:**
   - [x] Un evaluador OPA fijado y reproducible ejecuta fixtures positivos, negativos y de límite para cada topología aceptada sin depender de un binario host no declarado.
@@ -1188,7 +1188,7 @@ Este catálogo explica cada gap: problema, propósito, evidencia, criterios de c
 **Título:** Madurar las Topologías Draft Restantes a Paridad de Corpus Aceptado
 
 - **Propósito:** Hacer que toda topología Evolith publicada sea utilizable al nivel base de Monolito Modular, no solo un draft descubrible con reglas aisladas.
-- **Evidencia:** El inventario de manifiestos de Wilson V5 informa Data Mesh, Edge Computing, Serverless y Event-Driven como `draft` sin `spec.corpus`; por tanto R-27 no se les aplica. Sus gaps anteriores de reglas base pueden mantenerse históricamente cerrados, pero no entregan la madurez de corpus, control-plane y evidencia de una topología aceptada solicitada para Evolith.
+- **Evidencia:** El inventario de manifiestos de Winston V5 informa Data Mesh, Edge Computing, Serverless y Event-Driven como `draft` sin `spec.corpus`; por tanto R-27 no se les aplica. Sus gaps anteriores de reglas base pueden mantenerse históricamente cerrados, pero no entregan la madurez de corpus, control-plane y evidencia de una topología aceptada solicitada para Evolith.
 - **Cerrado por:** Las cuatro topologías ascendidas de `draft` a `accepted` con `spec.corpus`, guías de madurez, schemas de configuración, fixtures, pruebas OPA, correcciones de manifiesto y ADRs específicos de topología (ADR-0095 para Serverless, ADR-0096 para Edge Computing). Verificado por validación de documentación y controles de paridad bilingüe.
 - **Hecho cuando:**
   - [x] Data Mesh, Edge Computing, Serverless y Event-Driven cuentan con guía bilingüe de adopción, composición, operaciones, seguridad, observabilidad, resiliencia y evolución, más ADRs específicos de topología aceptados.
@@ -2981,10 +2981,10 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 #### GT-232
 
-**Propósito:** Crear definiciones completas de persona para Wilson (`@winston`) y PO (`@po`) en `.bmad-core/agents/`, cerrando la brecha donde estos dos agentes existen solo en `.harness/agents/agent-specs.md` sin el YAML frontmatter completo, referencias de herramientas y mandatos de auto-mejora que tienen los otros 8 agentes.
-**Evidencia Actual:** `.bmad-core/agents/` contiene 8 archivos de agente con YAML frontmatter. Wilson y PO no tienen archivos correspondientes.
+**Propósito:** Crear definiciones completas de persona para Winston (`@winston`) y PO (`@po`) en `.bmad-core/agents/`, cerrando la brecha donde estos dos agentes existen solo en `.harness/agents/agent-specs.md` sin el YAML frontmatter completo, referencias de herramientas y mandatos de auto-mejora que tienen los otros 8 agentes.
+**Evidencia Actual:** `.bmad-core/agents/` contiene 8 archivos de agente con YAML frontmatter. Winston y PO no tienen archivos correspondientes.
 **Hecho Cuando:**
-  - [x] `.bmad-core/agents/wilson.md` existe con YAML frontmatter coincidente con el formato de otros agentes.
+  - [x] `.bmad-core/agents/winston.md` existe con YAML frontmatter coincidente con el formato de otros agentes.
   - [x] `.bmad-core/agents/po.md` existe con YAML frontmatter coincidente con el formato de otros agentes.
   - [x] Ambos archivos incluyen scope, inputs, skills, constraints, handoff, validation y mandato de auto-mejora.
 
@@ -3022,7 +3022,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Hecho Cuando:**
   - [x] Un PR que añade `KI-*.yaml` o `SRC-*.yaml` dispara validación automatizada schema + OPA.
   - [x] La validación exitosa crea o actualiza el status de promoción del item automáticamente.
-  - [x] El paso de revisión de Wilson puede invocarse vía comando de comment o job programado.
+  - [x] El paso de revisión de Winston puede invocarse vía comando de comment o job programado.
 
 #### GT-237
 
@@ -3243,7 +3243,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 #### GT-260
 
 **Propósito:** Cerrar la brecha de paridad bilingüe para agentes BMAD proveyendo el archivo de persona en español del agente PO y cableándolo en los mismos workflows que los otros 8 agentes.
-**Evidencia Actual:** `.bmad-core/agents/` contiene pares `.md` + `.es.md` para `analyst`, `architect`, `dev`, `devops`, `docs`, `pm`, `qa`, `sm`. El agente PO solo tiene `po.md`; `po.es.md` no existe. (Wilson es monolingüe por diseño.)
+**Evidencia Actual:** `.bmad-core/agents/` contiene pares `.md` + `.es.md` para `analyst`, `architect`, `dev`, `devops`, `docs`, `pm`, `qa`, `sm`. El agente PO solo tiene `po.md`; `po.es.md` no existe. (Winston es monolingüe por diseño.)
 **Hecho Cuando:**
   - [x] `.bmad-core/agents/po.es.md` creado con una traducción fiel de la persona, responsabilidades y outputs de `po.md`.
   - [x] Cualquier script/workflow de carga de agentes que enumere pares `*.es.md` incluye el nuevo archivo.
@@ -3313,7 +3313,7 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 **Título:** Restaurar build/test del workspace tras integración de caché Redis
 **Propósito:** Desbloquear el baseline de release del monorepo después de que la capa de caché introdujo imports runtime y deriva TypeScript que impiden compilar o testear Core API, MCP Server y el CLI dependiente. Es bloqueante productivo porque la optimización de caché no puede promoverse mientras las superficies ejecutables fallan.
-**Evidencia Actual:** Auditoría Wilson del 2026-06-25: `npm -ws run build --if-present` falla en `apps/core-api` porque `@nestjs/cache-manager` y `cache-manager` no están instalados y `CacheInterceptor`/`CacheTTL` se importan desde `@nestjs/common`; `packages/mcp-server` falla por las mismas dependencias de caché ausentes, `trace.SpanStatusCode` y errores de deprecación TypeScript 6. `npm --workspace apps/core-api test -- --runInBand`, `npm --workspace packages/mcp-server test -- --runInBand` y `npm --workspace sdk/cli run test:unit -- --runInBand` también están rojos.
+**Evidencia Actual:** Auditoría Winston del 2026-06-25: `npm -ws run build --if-present` falla en `apps/core-api` porque `@nestjs/cache-manager` y `cache-manager` no están instalados y `CacheInterceptor`/`CacheTTL` se importan desde `@nestjs/common`; `packages/mcp-server` falla por las mismas dependencias de caché ausentes, `trace.SpanStatusCode` y errores de deprecación TypeScript 6. `npm --workspace apps/core-api test -- --runInBand`, `npm --workspace packages/mcp-server test -- --runInBand` y `npm --workspace sdk/cli run test:unit -- --runInBand` también están rojos.
 **Hecho Cuando:**
   - [x] Core API declara e instala las dependencias de caché que usa (`@nestjs/cache-manager`, `cache-manager`, store Redis como `@keyv/redis` si se conserva) e importa decorators/interceptors de caché desde el paquete que realmente los exporta para Nest 11.
   - [x] MCP Server declara sus dependencias de caché, corrige el import de estado OpenTelemetry (`SpanStatusCode` desde `@opentelemetry/api`) y migra o silencia intencionalmente las deprecaciones TypeScript 6.
@@ -3390,13 +3390,13 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 #### GT-274
 
 **Título:** Blindar cleanup-temp-files contra eliminación de archivos versionados
-**Propósito:** Hacer segura la limpieza obligatoria pre-auditoría de Wilson para un repositorio de gobernanza versionado. Un helper de limpieza nunca debe borrar scripts, reglas, políticas o documentación versionada solo porque la ruta contiene una palabra asociada a temporales.
-**Evidencia Actual:** Al ejecutar `node .harness/scripts/cleanup-temp-files.mjs` durante la auditoría Wilson de plano de control del 2026-06-25, el script eliminó archivos versionados cuyas rutas contenían `coverage`: `.harness/scripts/bilingual-coverage.mjs`, `.harness/scripts/coverage-dashboard.mjs`, `.harness/scripts/generate-rule-coverage.mjs`, `.harness/scripts/generate-rule-coverage.test.mjs` y `.harness/scripts/ci/26-validate-topology-rule-coverage.mjs`. La causa raíz fue que `isInTempDir(filePath)` usaba coincidencia por substring (`filePath.includes("coverage")`) en vez de segmentos de ruta y no excluía contenido rastreado por `git ls-files`. Los archivos se restauraron inmediatamente desde Git.
+**Propósito:** Hacer segura la limpieza obligatoria pre-auditoría de Winston para un repositorio de gobernanza versionado. Un helper de limpieza nunca debe borrar scripts, reglas, políticas o documentación versionada solo porque la ruta contiene una palabra asociada a temporales.
+**Evidencia Actual:** Al ejecutar `node .harness/scripts/cleanup-temp-files.mjs` durante la auditoría Winston de plano de control del 2026-06-25, el script eliminó archivos versionados cuyas rutas contenían `coverage`: `.harness/scripts/bilingual-coverage.mjs`, `.harness/scripts/coverage-dashboard.mjs`, `.harness/scripts/generate-rule-coverage.mjs`, `.harness/scripts/generate-rule-coverage.test.mjs` y `.harness/scripts/ci/26-validate-topology-rule-coverage.mjs`. La causa raíz fue que `isInTempDir(filePath)` usaba coincidencia por substring (`filePath.includes("coverage")`) en vez de segmentos de ruta y no excluía contenido rastreado por `git ls-files`. Los archivos se restauraron inmediatamente desde Git.
 **Hecho Cuando:**
   - [x] `cleanup-temp-files.mjs` detecta directorios temporales por segmento de ruta, no por substring arbitrario.
   - [x] El script de limpieza omite todos los archivos rastreados por `git ls-files`, aunque coincidan con un patrón de archivo o directorio temporal.
   - [x] Un fixture de regresión demuestra que archivos llamados `bilingual-coverage.mjs`, `coverage-dashboard.mjs` y `26-validate-topology-rule-coverage.mjs` no se eliminan.
-  - [x] El playbook de auditoría Wilson referencia el comportamiento seguro de limpieza y advierte que cualquier archivo versionado eliminado es bloqueante.
+  - [x] El playbook de auditoría Winston referencia el comportamiento seguro de limpieza y advierte que cualquier archivo versionado eliminado es bloqueante.
 
 #### GT-275
 

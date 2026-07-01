@@ -329,7 +329,7 @@ rights_status: "citation-and-synthesis-only"
 trust_level: "primary"
 promotion_status: "candidate" # candidate | evaluated | accepted | executable | retired
 topologies: ["modular-monolith", "microservices"]
-owner: "wilson"
+owner: "winston"
 ```
 
 Only `accepted` knowledge may be retrieved as guidance. Only `executable` knowledge may claim an Evolith enforcement mapping, which requires an approved ADR plus Native rule, OPA policy, and fixtures where the pattern is enforceable.

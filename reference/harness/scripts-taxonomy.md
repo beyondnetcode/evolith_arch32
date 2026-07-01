@@ -20,7 +20,7 @@ Each script is classified by:
 
 | Attribute | Values |
 |---|---|
-| **Type** | `executable` — produces output directly (structured report, HTML, SVG); `prompt` — prints an LLM prompt for a persona (Wilson, etc.) |
+| **Type** | `executable` — produces output directly (structured report, HTML, SVG); `prompt` — prints an LLM prompt for a persona (Winston, etc.) |
 | **Scope** | `entry` — user-facing entry point; `playbook` — reusable engine called by entry points; `ci` — runs in pre-commit/pre-push hooks; `utility` — helper/one-shot |
 | **Output** | JSON, Markdown, HTML, SVG, plain text, or prompt block |
 
@@ -32,15 +32,15 @@ User-facing entry points under `.harness/scripts/`. These are the scripts you ru
 
 | Script | Type | Delegates To | Purpose |
 |---|---|---|---|
-| `run-evolith-audit.mjs` | `prompt` | `.harness/playbooks/wilson-audit-playbook.md` | Prints the Wilson architectural audit prompt for copy-paste into an LLM context |
+| `run-evolith-audit.mjs` | `prompt` | `.harness/playbooks/winston-audit-playbook.md` | Prints the Winston architectural audit prompt for copy-paste into an LLM context |
 | `run-evolith-audit.mjs --bmad` | `prompt` | same playbook (BMAD section) | Prints the BMAD Agent Evolution prompt |
 | `run-evolith-audit.mjs --all` | `prompt` | same playbook (both sections) | Prints both prompts sequentially |
-| `run-evolith-audit.mjs --es` | `prompt` | `.harness/playbooks/wilson-audit-playbook.es.md` | Spanish version of the architectural audit prompt |
+| `run-evolith-audit.mjs --es` | `prompt` | `.harness/playbooks/winston-audit-playbook.es.md` | Spanish version of the architectural audit prompt |
 | `run-evolith-topology.mjs` | `executable` | `.harness/playbooks/topology-compliance-audit.mjs` | Evaluates structural parity across all topology directories against the exemplar |
 | `run-evolith-topology.mjs --markdown` | `executable` | same playbook | Same audit, formatted as human-readable Markdown |
 | `run-evolith-deep.mjs` | `executable` | `.harness/playbooks/sdlc-deep-audit.mjs` | Evaluates Evolith Core against the 8-dimensional executable SDLC vision (JSON) |
 | `run-evolith-deep.mjs --markdown` | `executable` | same playbook | Same 8-dimension audit, formatted as Markdown report |
-| `run-wilson-audit.mjs` | `alias` | delegates to the three above | DEPRECATED — compatibility alias that detects `--topology`, `--deep`, or defaults to `run-evolith-audit.mjs` |
+| `run-winston-audit.mjs` | `alias` | delegates to the three above | DEPRECATED — compatibility alias that detects `--topology`, `--deep`, or defaults to `run-evolith-audit.mjs` |
 
 ### Usage examples
 
@@ -65,8 +65,8 @@ Reusable audit logic under `.harness/playbooks/`. These are called by entry poin
 |---|---|---|---|
 | `topology-compliance-audit.mjs` | JSON / Markdown | `run-evolith-topology.mjs` | Checks every topology directory for structural parity with the agentic-ai exemplar |
 | `sdlc-deep-audit.mjs` | JSON / Markdown | `run-evolith-deep.mjs` | 8-dimension evaluation of Evolith Core against the executable SDLC vision |
-| `wilson-audit-playbook.md` | LLM prompt block | `run-evolith-audit.mjs` | The Wilson persona prompt for architectural analysis |
-| `wilson-audit-playbook.es.md` | LLM prompt block | `run-evolith-audit.mjs --es` | Spanish version of the Wilson architectural analysis prompt |
+| `winston-audit-playbook.md` | LLM prompt block | `run-evolith-audit.mjs` | The Winston persona prompt for architectural analysis |
+| `winston-audit-playbook.es.md` | LLM prompt block | `run-evolith-audit.mjs --es` | Spanish version of the Winston architectural analysis prompt |
 
 ---
 
@@ -114,7 +114,7 @@ Numbered scripts under `.harness/scripts/ci/` triggered by `ci-runner.mjs`.
 
 1. **Name pattern**: `run-evolith-<purpose>.mjs` where `<purpose>` is a single noun or short compound (`topology`, `deep`, `audit`).
 2. **Single responsibility**: Each entry point does one thing. If a script supports multiple modes via `--flags`, extract each mode into its own entry point when the logic diverges significantly.
-3. **Alias lifecycle**: Deprecated aliases (`run-wilson-audit.mjs`) emit a warning to stderr and delegate. Remove after one minor version.
+3. **Alias lifecycle**: Deprecated aliases (`run-winston-audit.mjs`) emit a warning to stderr and delegate. Remove after one minor version.
 
 ### Playbook rules
 

@@ -35,9 +35,9 @@ Full board: [gap-tracking.md](https://github.com/beyondnetcode/evolith_arch32/bl
 
 ---
 
-## Wilson Audit Waves
+## Winston Audit Waves
 
-The Wilson Audit is an automated architectural review that runs 3-5 expert lenses in parallel:
+The Winston Audit is an automated architectural review that runs 3-5 expert lenses in parallel:
 
 - **Wave III** (2026-06-23): GT-212 to GT-225 (14 gaps)
 - **Wave IV** (2026-06-23): GT-226 to GT-248 (23 gaps from BMAD agent evolution)

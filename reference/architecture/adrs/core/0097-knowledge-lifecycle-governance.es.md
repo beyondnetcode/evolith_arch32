@@ -108,7 +108,7 @@ La validación CI (`17-validate-knowledge-intake.mjs`) hace cumplir:
 - **Pista de auditoría**: El ciclo de vida completo de cada candidato KI-* es recuperable solo desde el registro YAML.
 
 ### Negativas
-- **Sobrecarga de proceso**: Cada promoción requiere evidencia explícita — ligera para `evaluated` (revisión de Wilson), más pesada para `accepted`/`executable` (ADR).
+- **Sobrecarga de proceso**: Cada promoción requiere evidencia explícita — ligera para `evaluated` (revisión de Winston), más pesada para `accepted`/`executable` (ADR).
 - **Latencia de transición**: Los candidatos pueden permanecer en `evaluated` mientras esperan ciclos del Architecture Board; el modelo de gobernanza acepta esto como una característica (sin promociones silenciosas).
 
 ## Referencias

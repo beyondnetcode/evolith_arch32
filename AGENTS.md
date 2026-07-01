@@ -13,7 +13,7 @@ This repository defines the architectural baseline, governance standards, harnes
 | Script | Purpose |
 |--------|---------|
 | `node .harness/scripts/ci/01-validate-docs.mjs` | Full documentation validation (links, anchors, encoding, Mermaid) |
-| `node .harness/scripts/ci/04-check-bilingual-parity.mjs` | Verify EN/ES pairs have identical ## and ### header counts |
+| `node .harness/scripts/ci/suites/bilingual-suite.mjs` | Verify EN/ES document coverage, reciprocity, and structural parity |
 | `node .harness/scripts/bilingual-coverage.mjs` | Report bilingual coverage (which files lack counterparts) |
 | `node .harness/scripts/coverage-dashboard.mjs` | Generate visual HTML/MD coverage report by area |
 | `node .harness/scripts/generate-executive-summary.mjs` | Generate the bilingual executive governance summary from the canonical gap and maturity evidence |

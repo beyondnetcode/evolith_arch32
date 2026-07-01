@@ -8,7 +8,7 @@
 
 ## 1. Container Context
 
-The **Standalone MCP Server** exposes Evolith's governance capabilities to external AI Agents (such as Claude via Claude Desktop, or other capable agentic workflows) using the standard Model Context Protocol. It is fully decoupled from the Smart CLI.
+The **Standalone MCP Server** exposes Evolith governance capabilities to external AI agents using the standard Model Context Protocol. It is fully decoupled from the Smart CLI as a runtime, but it shares domain packages and the same canonical evaluation contracts.
 
 ## 2. Component Diagram
 
@@ -18,25 +18,29 @@ C4Component
 
     Container_Boundary(mcp, "MCP Server Container") {
         
-        Component(transport, "Transport Layer", "@modelcontextprotocol/sdk", "Handles Stdio and SSE transport for incoming MCP connections.")
+        Component(transport, "Transport Layer", "@modelcontextprotocol/sdk", "Handles stdio and Streamable HTTP transports for incoming MCP connections.")
         
-        Component(server, "EvolithMcpServer", "App Service", "Main coordination class for registering tools and resources.")
+        Component(server, "EvolithMcpServer", "App Service", "Main coordination service for MCP request handlers, resources, prompts, audit and metrics.")
         
-        Component(tool_validate, "Validate Tool", "Tool Handler", "MCP Tool: Validates local files against OPA rulesets via Agent Runtime / Core API.")
+        Component(registry, "Tool Registry", "NestJS Provider", "Registers validate, evaluate, satellites, agents, architecture, gates, phase, SDLC, topology, config, auto-fix, metrics and other tools.")
+        Component(authz, "Auth / ABAC / Audit", "MCP Services", "Validates API key/JWT context, evaluates ABAC policies, emits audit logs and metrics.")
+        Component(tool_validate, "Validate / Evaluate Tools", "Tool Handlers", "MCP Tools: validate repositories and evaluate canonical EvaluationContext locally through shared core-domain logic.")
         
         Component(tool_gate, "Gate Check Tool", "Tool Handler", "MCP Tool: Checks if an SDLC phase gate is passing.")
         
-        Component(resource_corpus, "Corpus Resource", "Resource Handler", "MCP Resource: Exposes the physical rulesets and OPA files as readable context.")
+        Component(resource_corpus, "Resources and Prompts", "Resource/Prompt Handlers", "MCP resources and prompts expose corpus, rulesets and reusable guidance as readable context.")
         
-        Component(client, "Core API Client", "Adapter", "Communicates with the Core API (BFF) to execute evaluations.")
+        Component(runtime, "Agent Runtime Bridge", "@evolith/agent-runtime / SDK", "Runs agent intents or calls Agent Runtime API when requested by MCP tools.")
 
         Rel(transport, server, "Routes requests to")
-        Rel(server, tool_validate, "Dispatches tool call")
+        Rel(server, registry, "Lists and dispatches tools via")
+        Rel(server, authz, "Authorizes and audits via")
+        Rel(registry, tool_validate, "Dispatches tool call")
         Rel(server, tool_gate, "Dispatches tool call")
         Rel(server, resource_corpus, "Dispatches resource read")
         
-        Rel(tool_validate, client, "Executes validation via")
-        Rel(tool_gate, client, "Executes gate check via")
+        Rel(tool_validate, runtime, "Can invoke agent/runtime flow via")
+        Rel(tool_gate, runtime, "Can invoke governed checks via")
     }
 ```
 
@@ -44,11 +48,12 @@ C4Component
 
 | Component | Responsibility |
 |-----------|----------------|
-| **Transport Layer** | Standard MCP SDK managing connection lifecycle (Stdio for local processes, SSE for remote streaming). |
-| **EvolithMcpServer** | The application entry point that registers the available tool and resource schema with the connecting LLM. |
-| **Tool Handlers** | Specific, bounded actions the AI can take (e.g., `validate_artifact`, `check_gate`). |
-| **Resource Handlers** | Read-only context the AI can request (e.g., `ruleset://...`). |
-| **Core API Client** | Instead of duplicating business logic, the MCP Server makes REST calls to the `Core API` to process validations and read topologies. |
+| **Transport Layer** | Standard MCP SDK managing stdio and Streamable HTTP connection lifecycles. HTTP mode is fail-closed in production without an API key. |
+| **EvolithMcpServer** | Application entry point wiring MCP request handlers to the registry, resources, prompts, metrics, ABAC and audit services. |
+| **Tool Registry** | Module-composed registry fed by `packages/mcp-server/src/tools/tools.module.ts`; it is the canonical replacement for the retired lightweight `@evolith/mcp-tools` package. |
+| **Tool Handlers** | Governed actions including `evolith-validate`, `evolith-evaluate`, satellite tools, agent tools, architecture tools, gate/phase tools, SDLC tools, topology tools, config tools, metrics and auto-fix tools. |
+| **Resources and Prompts** | Read-only context and reusable prompt payloads exposed through MCP resource and prompt handlers. |
+| **Auth / ABAC / Audit** | API key/JWT authentication, ABAC checks, mutative-tool gating, tool-call audit logs, and metrics. |
 
 ---
 [Back to Level 3: Components Hub](./README.md)

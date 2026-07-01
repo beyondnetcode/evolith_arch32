@@ -13,18 +13,19 @@ Esta matriz mapea las interfaces de producto de alto nivel hasta su contenedor e
 
 | Interfaz de Alto Nivel | Contenedor Destino | Componente Destino | Tecnología | Comunicación / Contrato |
 |------------------------|--------------------|--------------------|------------|-------------------------|
-| **Petición de Evaluación de Gate** | Core API (BFF) | `GateEvaluationUseCase` -> `Evaluador OPA` | NestJS, WASM, Rego | REST (`POST /v1/gates/evaluate`), JSON Payload |
-| **Ejecución de Tarea por Agente** | Agent Runtime Engine | `AgentOrchestrator` -> `IAgentEnginePort` | NestJS, RxJS, TypeScript | SSE (`POST /v1/agent/stream`), Server-Sent Events |
-| **Llamada a Herramienta por LLM** | MCP Server | `EvolithMcpServer` -> `ToolHandler` | Node.js, @modelcontextprotocol/sdk | Protocolo MCP (Stdio o SSE) |
-| **Validación Local de Artefacto** | Smart CLI | `@evolith/sdk` -> `LocalFileLoader` | Node.js, Commander.js | I/O de Sistema de Archivos Local |
-| **Lectura de Ruleset** | Core API (BFF) | `CacheAdapter` / `WorkspaceResolver` | Redis, Node.js `fs` | REST (`GET /v1/rulesets`) |
-| **Check Remoto desde CLI** | Smart CLI | `@evolith/sdk` -> `RestClient` | Node.js, Axios/Fetch | REST sobre HTTPS |
+| **Petición Canónica de Evaluación** | Core API | `EvaluationOrchestrator` -> Kind Evaluators / Validation Pipeline | NestJS, TypeScript, Evaluador Native, OPA/Rego | REST (`POST /api/v1/evaluate`), payload JSON `EvaluationContext` |
+| **Petición Específica de Evaluación de Gate** | Core API | `EvaluateGateUseCase` -> `PhaseGateValidatorService` | NestJS, TypeScript, validators Native/OPA | REST (`POST /api/v1/gates/:gateId/evaluate`), payload JSON |
+| **Ejecución de Tarea por Agente** | Agent Runtime API / Engine | `AgentRuntimeController` -> `AgentRuntimeService` -> Puertos | NestJS, RxJS, TypeScript | HTTP (`POST /v1/agent/handle`) o SSE (`POST /v1/agent/stream`) |
+| **Llamada a Herramienta por LLM** | MCP Server | `EvolithMcpServer` -> `ToolRegistryService` -> `ToolHandler` | NestJS, @modelcontextprotocol/sdk | Protocolo MCP (stdio o Streamable HTTP) |
+| **Validación Local de Artefacto** | Smart CLI | `ValidateCommand` / `EvaluateCommand` -> `@evolith/core-domain` | Nest Commander, TypeScript | I/O de Sistema de Archivos Local |
+| **Lectura de Ruleset** | Core API | `ReferenceController` / `CoreReferenceQueryService` | NestJS, cache-manager, Node.js `fs` | REST (`GET /api/v1/rulesets`) |
+| **Check Remoto desde CLI** | Smart CLI | `@evolith/sdk` -> clientes REST | Node.js Fetch | REST sobre HTTPS |
 
 ## 3. Patrones de Comunicación
 
 - **Síncrono Determinístico (REST):** Usado estrictamente para evaluaciones rápidas y sin estado (ej., evaluación OPA).
 - **Streaming Asíncrono (SSE):** Usado para interacciones de IA no determinísticas y de múltiples turnos para asegurar que el cliente se mantenga informado sobre llamadas intermedias a herramientas sin recibir timeout.
-- **Interactivo Bi-Direccional (MCP):** Protocolo estandarizado para que la inteligencia externa (como Claude Desktop) descubra y ejecute herramientas de manera segura.
+- **Interactivo Bi-Direccional (MCP):** Protocolo estandarizado para que la inteligencia externa descubra y ejecute herramientas de manera segura sobre stdio o Streamable HTTP.
 
 ---
 [Volver a la Arquitectura Maestra](../C4-MASTER-ARCHITECTURE.es.md)

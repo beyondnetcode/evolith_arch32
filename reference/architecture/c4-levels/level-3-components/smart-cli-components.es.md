@@ -8,7 +8,7 @@
 
 ## 1. Contexto del Contenedor
 
-La **Smart CLI** es la interfaz interactiva local para ingenieros que trabajan dentro de Evolith. Utiliza el `@evolith/sdk-client` para comunicarse con el Core API remoto, o bien para cargar reglas físicas localmente si la variable `CORE_PATH` está configurada.
+La **Smart CLI** es la interfaz interactiva local para ingenieros que trabajan con Evolith y repositorios satélite. Usa comandos Nest Commander, casos de uso compartidos de `@evolith/core-domain`, providers locales de filesystem y clientes `@evolith/sdk` para soportar gobernanza local/offline y llamadas remotas a Core/Agent Runtime.
 
 ## 2. Diagrama de Componentes
 
@@ -18,21 +18,25 @@ C4Component
 
     Container_Boundary(cli, "Contenedor Smart CLI") {
         
-        Component(commands, "Comandos CLI", "Commander.js", "Parsea el input del usuario. Ej., 'evolith validate', 'evolith scaffold'.")
+        Component(commands, "Comandos CLI", "Nest Commander", "Parsea comandos como validate, evaluate, gate, phase, sdlc, agents, satellites, init, upgrade, docs, drift y api.")
         
-        Component(prompts, "Prompts Interactivos", "Inquirer.js", "Provee menús interactivos y asistentes (wizards) para desarrolladores.")
+        Component(prompts, "Prompts Interactivos", "@clack/prompts", "Provee menús interactivos, wizards, formateo de salida y feedback de progreso.")
         
-        Component(sdk, "SDK Client (@evolith/sdk)", "Node.js Library", "Librería de cliente unificada. Abstrae si el backend es remoto o local.")
+        Component(localEval, "Pipeline de Evaluación Local", "@evolith/core-domain", "Ejecuta ValidateSatelliteUseCase, EvaluationOrchestrator y evaluadores kind default localmente.")
+        Component(sdk, "SDK Client (@evolith/sdk)", "Node.js Library", "Cliente tipado para Core API, Agent Runtime y endpoints de satélites.")
+        Component(config, "Perfiles / Plugins / Config", "Infraestructura CLI", "Gestiona perfiles, aliases, plugins, telemetría, historial de comandos y config local.")
         
         Component(localLoader, "Local File Loader", "Patrón Strategy", "SDK Strategy: Lee rulesets directamente desde el disco (usado para CI local o dev offline).")
         
         Component(restClient, "REST Client", "Patrón Strategy", "SDK Strategy: Hace llamadas HTTP al Core API.")
 
         Rel(commands, prompts, "Dispara")
-        Rel(commands, sdk, "Ejecuta operaciones vía")
+        Rel(commands, localEval, "Ejecuta gobernanza local vía")
+        Rel(commands, sdk, "Llama APIs remotas vía")
+        Rel(commands, config, "Lee configuración desde")
         
-        Rel(sdk, localLoader, "Usa cuando CORE_PATH está configurado")
         Rel(sdk, restClient, "Usa cuando se configura remoto")
+        Rel(localEval, localLoader, "Lee corpus/rulesets vía")
     }
 ```
 
@@ -40,10 +44,11 @@ C4Component
 
 | Componente | Responsabilidad |
 |------------|-----------------|
-| **Comandos CLI** | Los puntos de entrada (`bin/evolith.js`). Manejados por Commander.js para parsear argumentos y flags. |
-| **Prompts Interactivos** | Entrevistas tipo wizard para recolectar metadatos necesarios si el usuario omite flags (ej. preguntar qué artefacto generar). |
-| **SDK Client** | La librería central que expone métodos como `.validateArtifact()`. La CLI no contiene lógica de negocio; delega todo al SDK. |
-| **Estrategias Local / REST** | El SDK determina en runtime si puede resolver la solicitud localmente (leyendo el sistema de archivos) o si debe llamar al Core API. |
+| **Comandos CLI** | Puntos de entrada implementados como providers Nest Commander en `sdk/cli/src/commands/**`. |
+| **Prompts Interactivos** | Flujos tipo wizard, menús, progreso y salida formateada para workflows de desarrollador. |
+| **Pipeline de Evaluación Local** | Ejecuta `ValidateSatelliteUseCase`, `EvaluationOrchestrator`, evaluadores native/OPA, chequeos de topología y validación de phase gates localmente. |
+| **SDK Client** | Cliente HTTP tipado para Core API remoto, Agent Runtime y flujos de registro de satélites. |
+| **Perfiles / Plugins / Config** | Shell local para aliases, perfiles, carga de plugins, telemetría, historial de comandos y defaults por ambiente. |
 
 ---
 [Volver al Nivel 3: Hub de Componentes](./README.es.md)

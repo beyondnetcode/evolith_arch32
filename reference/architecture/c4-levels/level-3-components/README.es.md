@@ -16,10 +16,10 @@ Evolith sigue los principios de **Arquitectura Limpia (Clean Architecture)** y *
 
 Selecciona un contenedor para explorar sus componentes internos:
 
-- **[Componentes del Core API (BFF)](./core-api-components.es.md):** Explorando el motor de evaluación stateless, el evaluador OPA y la resolución de workspaces.
-- **[Componentes del Agent Runtime](./agent-runtime-components.es.md):** Explorando la capa de orquestación (ports and adapters), incluyendo la API de streaming SSE y los resolvedores de habilidades.
-- **[Componentes del MCP Server](./mcp-server-components.es.md):** (Pendiente) Explorando las herramientas y recursos independientes de MCP.
-- **[Componentes de Smart CLI](./smart-cli-components.es.md):** (Pendiente) Explorando la estructura de comandos locales de terminal y la integración con el SDK.
+- **[Componentes del Core API](./core-api-components.es.md):** Explorando el motor de evaluación stateless, la resolución de workspaces, acceso a caché/referencia y la superficie transitoria de registro de satélites.
+- **[Componentes del Agent Runtime](./agent-runtime-components.es.md):** Explorando la capa de orquestación (ports and adapters), incluyendo APIs HTTP/SSE, resolución de skills, aprobación, memoria, validación de políticas y publicación de trazas.
+- **[Componentes del MCP Server](./mcp-server-components.es.md):** Explorando el gateway MCP standalone, registro de tools, resources, prompts, ABAC, auditoría, métricas y puente hacia Agent Runtime.
+- **[Componentes de Smart CLI](./smart-cli-components.es.md):** Explorando comandos Nest Commander, evaluación local, validación, perfiles, plugins, flujos de satélites e integración SDK.
 
 ---
 [Volver al Nivel 2: Contenedores](../level-2-containers.es.md)

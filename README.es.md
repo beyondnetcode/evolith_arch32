@@ -240,7 +240,7 @@ Consulta el tablero de seguimiento de gaps para prioridades actuales y elementos
 Lee esto antes de abrir un PR:
 
 - [Guía de Contribución](./CONTRIBUTING.es.md)
-- [Política de Seguridad](./SECURITY.es.md)
+- [Política de Seguridad](./SECURITY.md)
 - [AGENTS.es.md](./AGENTS.es.md) — convenciones para contribuidores agentes de IA
 - [Taxonomía del Repositorio](./reference/governance/standards/repository-taxonomy.md) — qué va dónde
 

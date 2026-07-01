@@ -85,9 +85,9 @@ Flags del CLI: `--transport|-t stdio|http`, `--port|-p <n>` (default `3000`), `-
 
 La autenticación, los roles/códigos ABAC, el contrato de tools mutativas y la referencia completa por tool viven en el [README](../../../packages/mcp-server/README.es.md) del paquete.
 
-## Registro ligero de tools (`@evolith/mcp-tools`)
+## Registro de tools
 
-Distinto del gateway `@evolith/mcp-server`, **`@evolith/mcp-tools`** es un registro JS sin dependencias que expone 3 tools de diagnóstico — `evolith-ping`, `evolith-echo`, `evolith-read-gap-tracking` — registradas vía `registerEvolithTools(server)`. Es un building block mínimo, no el gateway de gobernanza; ver su [README](../../../packages/mcp-tools/README.es.md).
+El paquete ligero `@evolith/mcp-tools` fue retirado. El registro canónico vive ahora dentro del gateway standalone en [packages/mcp-server/src/tools](../../../packages/mcp-server/src/tools/tools.module.ts), donde los schemas de tools, chequeos ABAC, auditoría, resources, prompts y comportamiento de transporte se gobiernan juntos.
 
 ## Troubleshooting
 

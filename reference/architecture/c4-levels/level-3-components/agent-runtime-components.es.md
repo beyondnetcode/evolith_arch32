@@ -8,7 +8,7 @@
 
 ## 1. Contexto del Contenedor
 
-El **Agent Runtime Engine** orquesta ejecuciones gobernadas de agentes de IA. Recibe tareas desde el Tracker o vía streams SSE, resuelve las habilidades, hace cumplir los límites mediante políticas OPA, e invoca capacidades a través de puertos abstraídos (de modo que no está acoplado directamente a `.harness` o a Hermes).
+El **Agent Runtime Engine** orquesta ejecuciones gobernadas de agentes de IA. Recibe tareas desde Tracker, MCP, CLI o clientes HTTP, resuelve skills, aplica límites de aprobación y política, invoca capacidades a través de puertos abstraídos y publica eventos de traza/memoria.
 
 Utiliza la **Arquitectura Hexagonal (Ports and Adapters)**.
 
@@ -20,17 +20,19 @@ C4Component
 
     Container_Boundary(runtime, "Contenedor Agent Runtime") {
         
-        Component(api, "SSE Runtime API", "NestJS @Controller", "Expone /v1/agent/stream para streaming de ejecución en tiempo real (Server-Sent Events).")
+        Component(api, "Runtime HTTP/SSE API", "NestJS @Controller", "Expone /v1/agent/handle, /v1/agent/stream y /v1/agent/skills.")
         
         Component(orchestrator, "AgentOrchestratorService", "Servicio de Aplicación", "El coordinador central. Usa resolvedores y puertos para ejecutar flujos de agente de múltiples pasos.")
         
-        Component(resolver, "Resolvedor de Skills y Tools", "Servicio de Dominio", "Resuelve las habilidades y herramientas requeridas para el contexto de una iniciativa dada.")
+        Component(resolver, "Resolvedor de Skills y Tools", "Servicio de Dominio", "Resuelve skills default o registradas y mapea intents hacia capacidades gobernadas.")
         
-        Component(boundary, "Boundary Enforcer (OPA)", "Servicio de Dominio", "Consulta políticas OPA antes de ejecutar cualquier herramienta o efecto secundario.")
+        Component(boundary, "Límite de Política / Aprobación", "Servicio de Dominio", "Aplica aprobación HITL y validación de políticas OPA antes de completar efectos gobernados.")
         
         Component(enginePort, "IAgentEnginePort", "Interfaz (Puerto)", "Contrato para el motor LLM subyacente (ej. Hermes).")
         Component(harnessPort, "IHarnessPort", "Interfaz (Puerto)", "Contrato para ejecutar comandos de shell/sandbox.")
         Component(corePort, "ICoreEvaluationPort", "Interfaz (Puerto)", "Contrato para evaluar gates de manera determinística.")
+        Component(memoryPort, "IMemoryPort", "Interfaz (Puerto)", "Contrato para memoria runtime y estado durable de conversación.")
+        Component(tracePort, "ITrackerTracePort", "Interfaz (Puerto)", "Contrato para publicar eventos de traza hacia Tracker.")
         
         Component(hermesAdapter, "Adaptador Hermes Engine", "Adaptador de Infraestructura", "Implementa IAgentEnginePort usando la librería local Hermes.")
         Component(harnessAdapter, "Adaptador Harness Exec", "Adaptador de Infraestructura", "Implementa IHarnessPort invocando scripts .harness.")
@@ -52,11 +54,11 @@ C4Component
 
 | Componente | Responsabilidad |
 |------------|-----------------|
-| **SSE Runtime API** | Recibe un `AgentRuntimeRequest` y mantiene una conexión HTTP persistente, haciendo streaming del estado y los logs de ejecución de herramientas hacia el cliente. |
+| **Runtime HTTP/SSE API** | Recibe un `AgentRuntimeRequest` mediante `POST /v1/agent/handle` o `POST /v1/agent/stream`, y expone descubrimiento de skills mediante `GET /v1/agent/skills`. |
 | **AgentOrchestratorService** | Coordina el ciclo completo del agente. Recupera la tarea, pregunta al motor LLM por la siguiente acción, ejecuta la acción si está permitida, y repite hasta completar. |
-| **Resolvedor de Skills y Tools** | Inspecciona el `workspaceRef` y el contexto del tenant para determinar qué herramientas y prompts específicos tiene permitido usar el agente. |
-| **Puertos (IAgentEnginePort, etc)** | Definen contratos estrictos. El orquestador depende *solo* de los puertos, asegurando que el motor subyacente o el ejecutor de scripts puedan ser intercambiados. |
-| **Adaptador Hermes Engine** | Conecta el motor de ejecución interno Hermes en el runtime. |
+| **Resolvedor de Skills y Tools** | Resuelve capacidades default o registradas como validación de gates, chequeo de artefactos, auditorías OPA, validación ADR, recomendaciones de desbloqueo y publicación de trazas. |
+| **Puertos (IAgentEnginePort, etc)** | Definen contratos estrictos para planificación LLM, ejecución harness, evaluación Core, validación de políticas, publicación de trazas Tracker, memoria, aprobación y scheduling. |
+| **Adaptadores** | Los adaptadores de producción incluyen evaluación Core HTTP, validación OPA CLI, ejecución harness por proceso, publicación HTTP a Tracker y memoria en archivo. Los stubs seguros siguen disponibles para bootstrap local y tests. |
 
 ---
 [Volver al Nivel 3: Hub de Componentes](./README.es.md)

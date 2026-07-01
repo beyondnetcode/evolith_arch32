@@ -8,7 +8,7 @@
 
 ## 1. Container Context
 
-The **Smart CLI** is the local interactive interface for engineers working within Evolith. It uses the `@evolith/sdk-client` to either communicate with the remote Core API or to load physical rulesets locally if the `CORE_PATH` is set.
+The **Smart CLI** is the local interactive interface for engineers working with Evolith and satellite repositories. It uses Nest Commander commands, shared `@evolith/core-domain` use cases, local filesystem providers, and `@evolith/sdk` clients to support both local/offline governance and remote Core/Agent Runtime calls.
 
 ## 2. Component Diagram
 
@@ -18,21 +18,25 @@ C4Component
 
     Container_Boundary(cli, "Smart CLI Container") {
         
-        Component(commands, "CLI Commands", "Commander.js", "Parses user input. E.g., 'evolith validate', 'evolith scaffold'.")
+        Component(commands, "CLI Commands", "Nest Commander", "Parses commands such as validate, evaluate, gate, phase, sdlc, agents, satellites, init, upgrade, docs, drift and api.")
         
-        Component(prompts, "Interactive Prompts", "Inquirer.js", "Provides interactive menus and wizards for developers.")
+        Component(prompts, "Interactive Prompts", "@clack/prompts", "Provides interactive menus, wizards, output formatting and progress feedback.")
         
-        Component(sdk, "SDK Client (@evolith/sdk)", "Node.js Library", "The unified client library. Abstracts whether the backend is remote or local.")
+        Component(localEval, "Local Evaluation Pipeline", "@evolith/core-domain", "Runs ValidateSatelliteUseCase, EvaluationOrchestrator and default kind evaluators locally.")
+        Component(sdk, "SDK Client (@evolith/sdk)", "Node.js Library", "Typed client for Core API, Agent Runtime and satellite endpoints.")
+        Component(config, "Profiles / Plugins / Config", "CLI Infrastructure", "Manages profiles, aliases, plugins, telemetry, command history and local config.")
         
         Component(localLoader, "Local File Loader", "Strategy Pattern", "SDK Strategy: Reads rulesets directly from the disk (used for local CI or offline dev).")
         
         Component(restClient, "REST Client", "Strategy Pattern", "SDK Strategy: Makes HTTP calls to the Core API.")
 
         Rel(commands, prompts, "Triggers")
-        Rel(commands, sdk, "Executes operations via")
+        Rel(commands, localEval, "Executes local governance via")
+        Rel(commands, sdk, "Calls remote APIs via")
+        Rel(commands, config, "Reads settings from")
         
-        Rel(sdk, localLoader, "Uses when CORE_PATH is set")
         Rel(sdk, restClient, "Uses when remote configured")
+        Rel(localEval, localLoader, "Reads corpus/rulesets via")
     }
 ```
 
@@ -40,10 +44,11 @@ C4Component
 
 | Component | Responsibility |
 |-----------|----------------|
-| **CLI Commands** | The entry points (`bin/evolith.js`). Handled by Commander.js to parse arguments and flags. |
-| **Interactive Prompts** | Wizard-style interviews to gather necessary metadata if the user omits flags (e.g., asking which artifact to scaffold). |
-| **SDK Client** | The core library that exposes methods like `.validateArtifact()`. The CLI does not contain business logic; it delegates entirely to the SDK. |
-| **Local / REST Strategies** | The SDK determines at runtime whether it can fulfill the request locally (by reading the file system directly) or if it must call out to the Core API. |
+| **CLI Commands** | Entry points implemented as Nest Commander providers in `sdk/cli/src/commands/**`. |
+| **Interactive Prompts** | Wizard-style flows, menus, progress output, and formatted command feedback for developer workflows. |
+| **Local Evaluation Pipeline** | Runs `ValidateSatelliteUseCase`, `EvaluationOrchestrator`, native/OPA evaluators, topology checks, and phase gate validation locally. |
+| **SDK Client** | Typed HTTP client for remote Core API, Agent Runtime, and satellite registry workflows. |
+| **Profiles / Plugins / Config** | Local shell around aliases, profiles, plugin loading, telemetry, command history, and environment-specific defaults. |
 
 ---
 [Back to Level 3: Components Hub](./README.md)

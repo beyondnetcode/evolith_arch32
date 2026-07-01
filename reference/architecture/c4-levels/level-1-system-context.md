@@ -8,9 +8,11 @@
 
 ## 1. System Overview
 
-Evolith is designed to act as the authoritative governance engine for the entire SDLC. At the highest level, it interacts with Humans, AI Agents, and external SaaS platforms.
+Evolith is designed to act as the authoritative governance engine for the SDLC reference corpus and its executable governance surfaces. At the highest level, it interacts with humans, AI agents, CI/CD, and external SaaS platforms.
 
-The system is fundamentally composed of **Evolith Tracker** (the stateful SaaS product that manages processes and UI) and **Evolith Core** (the stateless evaluation and AI agent orchestration engine).
+The system is fundamentally composed of **Evolith Tracker** (the external stateful SaaS product that owns tenants, product state, approvals, and UI) and **Evolith Core** (the implementation in this repository: Core API, MCP Server, Agent Runtime, Smart CLI, rulesets, schemas, and packages).
+
+Evolith Core is stateless for canonical product decisions: it may receive tenant/product/initiative identifiers as opaque evaluation context, but it does not authorize end users, persist tenant ownership, or issue binding gate decisions. The current Core API includes a small in-memory satellite registry surface for reference and compatibility workflows; it is not the long-term tenant or product state authority.
 
 ## 2. Context Diagram
 
@@ -23,7 +25,7 @@ C4Context
 
     System_Boundary(evolithEcosystem, "Evolith Platform") {
         System(tracker, "Evolith Tracker", "Stateful SaaS Orchestrator. Manages tenants, SDLC phase execution, approvals, and traceability.")
-        System(core, "Evolith Core", "Stateless Rule & AI Engine. Provides rule evaluation (OPA), schemas, and AI agent execution capabilities (Agent Runtime).")
+        System(core, "Evolith Core", "Executable governance runtime. Provides stateless evaluation, rulesets, schemas, MCP tools, CLI workflows, and Agent Runtime capabilities.")
     }
 
     System_Ext(github, "Source Control / CI", "GitHub, GitLab. Holds source code and runs pipelines.")
@@ -35,8 +37,8 @@ C4Context
     Rel(human, core, "Validates artifacts locally via", "CLI")
     Rel(agent, core, "Executes tasks and consumes tools via", "SSE / MCP")
     
-    Rel(tracker, core, "Requests agent execution and rule evaluation via", "REST / HTTP")
-    Rel(core, tracker, "Sends execution evidence and audit logs to", "REST / HTTP")
+    Rel(tracker, core, "Requests stateless evaluation and agent execution via", "REST / HTTP")
+    Rel(core, tracker, "Returns evaluation results and publishes trace events to", "REST / HTTP")
 
     Rel(core, llm, "Orchestrates prompts and tool calls with", "API")
     Rel(core, github, "Reads configuration and repositories from", "Git / API")
@@ -46,9 +48,10 @@ C4Context
 
 ## 3. Key Interactions
 
-1. **Tracker to Core:** Tracker is a client of Core. It asks Core to validate evidence against OPA rulesets, or asks Core's Agent Runtime to execute a complex task.
+1. **Tracker to Core:** Tracker is a client of Core. It asks Core to evaluate canonical `EvaluationContext` payloads, or asks Agent Runtime to execute a governed task.
 2. **Agents to Core:** Agents connect to Core via MCP or SSE streams to receive governed context and tools. They do *not* connect to Tracker directly.
 3. **Core to External:** Core connects to LLMs for intelligence, and Git for retrieving the corporate rulesets (the reference corpus).
+4. **Core state boundary:** Core can echo opaque context and keep local runtime memory/cache, but Tracker remains the canonical owner of tenant/product/initiative state and binding gate decisions.
 
 ## 4. Zoom In
 

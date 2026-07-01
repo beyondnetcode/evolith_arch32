@@ -2,15 +2,15 @@
 
 > **Navegación Bilingüe:** [See English Version](./C4-MASTER-ARCHITECTURE.md)
 
-**Estado:** Arquitectura Objetivo (Aprobada)  
+**Estado:** Baseline Implementada + Evolución Objetivo (Aprobada)  
 **Propietario:** Evolith Architecture Board  
-**Última Actualización:** 2026-06-30
+**Última Actualización:** 2026-07-01
 
 ## 1. Resumen Ejecutivo
 
-Evolith es el plano de control y gobernanza para la ingeniería de software nativa de IA. Este documento sirve como la **Única Fuente de Verdad** para la arquitectura de extremo a extremo de Evolith, mapeando la intención de negocio hasta los módulos de código individuales. 
+Evolith es el plano de control y gobernanza para la ingeniería de software nativa de IA. Este documento sirve como la **Única Fuente de Verdad** para la arquitectura de extremo a extremo de Evolith, mapeando la intención de negocio hasta servicios ejecutables, paquetes, rulesets y módulos de código.
 
-Esta arquitectura maestra adopta el **Modelo C4** (Context, Containers, Components, Code) para permitir un acercamiento progresivo desde una visión sistémica de alto nivel hasta microservicios y esquemas específicos.
+Esta arquitectura maestra adopta el **Modelo C4** (Context, Containers, Components, Code) para permitir un acercamiento progresivo desde una visión sistémica de alto nivel hasta runtimes implementados, límites de paquetes, esquemas y políticas. Cuando la implementación de referencia contiene comportamiento transitorio, las vistas de menor nivel lo declaran explícitamente en lugar de tratarlo como el límite de producto de largo plazo.
 
 ---
 
@@ -21,8 +21,8 @@ Elige un nivel de abstracción para explorar la arquitectura:
 | Nivel | Alcance | Descripción | Enlace |
 |-------|---------|-------------|--------|
 | **Nivel 1** | System Context | La visión panorámica de Evolith: ecosistema, Tracker SaaS, Core Governance y proveedores externos. | [Nivel 1: Context](./c4-levels/level-1-system-context.es.md) |
-| **Nivel 2** | Containers | Los runtimes lógicos: Frontend, Core-API, MCP Server, Agent Runtime, CLI, bases de datos y brokers de mensajes. | [Nivel 2: Containers](./c4-levels/level-2-containers.es.md) |
-| **Nivel 3** | Components | Los bloques internos de cada contenedor: casos de uso, controladores, adaptadores y servicios de dominio. | [Nivel 3: Components](./c4-levels/level-3-components/README.es.md) |
+| **Nivel 2** | Containers | Los runtimes lógicos implementados: Core API, MCP Server, Agent Runtime API/Engine, Smart CLI, caché Redis y corpus de referencia. Tracker permanece externo a este repositorio. | [Nivel 2: Containers](./c4-levels/level-2-containers.es.md) |
+| **Nivel 3** | Components | Los bloques internos de cada contenedor: controladores, comandos, registros de tools, casos de uso, adaptadores, evaluadores y servicios de dominio. | [Nivel 3: Components](./c4-levels/level-3-components/README.es.md) |
 | **Nivel 4** | Code/Modules | El mapeo de más bajo nivel: archivos, esquemas, reglas OPA y clases específicas. | [Nivel 4: Code & Modules](./c4-levels/level-4-code-modules/README.es.md) |
 
 ---

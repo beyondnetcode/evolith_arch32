@@ -24,7 +24,7 @@ sequenceDiagram
     participant Redis as Caché
 
     User->>Tracker: Solicita Evaluación de Gate (ej. "RC Stamped")
-    Tracker->>CoreAPI: POST /v1/gates/evaluate { workspaceRef, evidence }
+    Tracker->>CoreAPI: POST /api/v1/evaluate { workspaceRef, kinds, evidence, phaseId, gateId }
     
     CoreAPI->>Resolver: Resuelve workspaceRef
     Resolver-->>CoreAPI: Ruta Absoluta al Corpus
@@ -35,8 +35,8 @@ sequenceDiagram
         CoreAPI->>Redis: Guarda ruleset en caché
     end
     
-    CoreAPI->>OPA: Ejecuta phase-gates.rego (input = evidence + ruleset)
-    OPA-->>CoreAPI: Resultado de Evaluación (Compliant / Non-Compliant)
+    CoreAPI->>OPA: Ejecuta evaluadores native/OPA (input = EvaluationContext + rulesets)
+    OPA-->>CoreAPI: EvaluationResult (overallVerdict + recomendación no vinculante)
     
     CoreAPI-->>Tracker: Resultado de Evaluación Técnica
     Tracker->>Tracker: Actualiza Estado Canónico (Gate Decision)
@@ -57,8 +57,8 @@ sequenceDiagram
     participant LLM as LLM Externo
     participant Exec as .harness Exec Port
 
-    Tracker->>SSE: Solicita Tarea (POST /v1/agent/stream)
-    SSE-->>Tracker: Abre Stream (SSE)
+    Tracker->>SSE: Solicita Tarea (POST /v1/agent/handle o /v1/agent/stream)
+    SSE-->>Tracker: Retorna resultado o abre Stream (SSE)
     
     Orch->>LLM: Envía Contexto y Herramientas Permitidas
     loop Hasta que la Tarea se Complete

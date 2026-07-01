@@ -8,7 +8,7 @@
 
 ## 1. Container Context
 
-The **Agent Runtime Engine** orchestrates governed AI agent executions. It receives tasks from the Tracker or SSE streams, resolves skills, enforces boundaries using OPA, and invokes capabilities via abstracted ports (so it isn't coupled directly to `.harness` or Hermes).
+The **Agent Runtime Engine** orchestrates governed AI agent executions. It receives tasks from Tracker, MCP, CLI, or HTTP clients, resolves skills, enforces approval and policy boundaries, invokes capabilities through abstracted ports, and publishes trace/memory events.
 
 It uses **Ports and Adapters (Hexagonal Architecture)**.
 
@@ -20,17 +20,19 @@ C4Component
 
     Container_Boundary(runtime, "Agent Runtime Container") {
         
-        Component(api, "SSE Runtime API", "NestJS @Controller", "Exposes /v1/agent/stream for real-time Server-Sent Events execution streaming.")
+        Component(api, "Runtime HTTP/SSE API", "NestJS @Controller", "Exposes /v1/agent/handle, /v1/agent/stream, and /v1/agent/skills.")
         
         Component(orchestrator, "AgentOrchestratorService", "Application Service", "The core coordinator. Uses resolvers and ports to execute multi-step agent flows.")
         
-        Component(resolver, "Skill & Tool Resolver", "Domain Service", "Resolves required skills and tools for a given initiative context.")
+        Component(resolver, "Skill & Tool Resolver", "Domain Service", "Resolves default or registered skills and maps intents to governed capabilities.")
         
-        Component(boundary, "Boundary Enforcer (OPA)", "Domain Service", "Consults OPA policies before executing any tool or side effect.")
+        Component(boundary, "Policy / Approval Boundary", "Domain Service", "Applies HITL approval and OPA policy validation before governed effects complete.")
         
         Component(enginePort, "IAgentEnginePort", "Interface (Port)", "Contract for the underlying LLM engine (e.g. Hermes).")
         Component(harnessPort, "IHarnessPort", "Interface (Port)", "Contract for executing shell/sandbox commands.")
         Component(corePort, "ICoreEvaluationPort", "Interface (Port)", "Contract for evaluating gates deterministically.")
+        Component(memoryPort, "IMemoryPort", "Interface (Port)", "Contract for runtime memory and durable conversation state.")
+        Component(tracePort, "ITrackerTracePort", "Interface (Port)", "Contract for publishing trace events to Tracker.")
         
         Component(hermesAdapter, "Hermes Engine Adapter", "Infrastructure Adapter", "Implements IAgentEnginePort using the local Hermes library.")
         Component(harnessAdapter, "Harness Exec Adapter", "Infrastructure Adapter", "Implements IHarnessPort by calling .harness scripts.")
@@ -52,11 +54,11 @@ C4Component
 
 | Component | Responsibility |
 |-----------|----------------|
-| **SSE Runtime API** | Receives an `AgentRuntimeRequest` and maintains a long-lived HTTP connection, streaming state updates and tool execution logs back to the client. |
+| **Runtime HTTP/SSE API** | Receives an `AgentRuntimeRequest` through `POST /v1/agent/handle` or `POST /v1/agent/stream`, and exposes skill discovery through `GET /v1/agent/skills`. |
 | **AgentOrchestratorService** | Coordinates the entire agent loop. It retrieves the task, asks the LLM engine for the next action, executes the action if allowed, and loops until completion. |
-| **Skill & Tool Resolver** | Inspects the `workspaceRef` and tenant context to determine what specific tools or prompts the agent is allowed to use. |
-| **Ports (IAgentEnginePort, etc)** | Define strict contracts. The orchestrator depends *only* on the ports, ensuring the underlying engine or script executor can be swapped out. |
-| **Hermes Engine Adapter** | Plugs the internal Hermes execution engine into the runtime. |
+| **Skill & Tool Resolver** | Resolves default or registered capabilities such as gate validation, artifact checks, OPA audits, ADR validation, unblock recommendations, and trace publishing. |
+| **Ports (IAgentEnginePort, etc)** | Define strict contracts for LLM planning, harness execution, Core evaluation, policy validation, Tracker trace publishing, memory, approval, and scheduling. |
+| **Adapters** | Production adapters include HTTP Core evaluation, OPA CLI policy validation, harness process execution, HTTP Tracker trace publishing, and file-backed memory. Safe stubs remain available for local bootstrapping and tests. |
 
 ---
 [Back to Level 3: Components Hub](./README.md)

@@ -8,24 +8,35 @@
 
 ## 1. Contexto del Módulo de Dominio
 
-El Evolith Core Domain es donde reside toda la lógica stateless de gobernanza arquitectónica. Consiste en los modelos TypeScript (`@evolith/core-domain`), los rulesets JSON que declaran la intención arquitectónica, los esquemas JSON que los validan y los archivos OPA Rego que los ejecutan.
+El Evolith Core Domain es donde residen los contratos ejecutables de gobernanza y la lógica stateless de evaluación arquitectónica. Consiste en módulos TypeScript de dominio/aplicación/evaluación (`@evolith/core-domain`), rulesets JSON que declaran la intención arquitectónica, esquemas JSON que validan payloads y artefactos de política OPA Rego/WASM.
 
 ## 2. Mapa de Organización de Código
 
 ```text
 evolith/
 ├── packages/core-domain/           # La Librería de Dominio Base
-│   ├── src/domain/                 # Entidades Puras y Value Objects
-│   │   ├── gate-evidence.ts        # Modelos para envío de evidencia
-│   │   ├── execution-context.ts    # Contexto opaco (tenant, producto, iniciativa)
-│   │   └── gate-decision.ts        # Resultado de evaluación de Core (NO es el GateDecision de Tracker)
-│   └── src/ports/                  # Interfaces de Salida (Puertos)
-│       └── i-gate-evaluator.ts
+│   ├── src/domain/                 # Entidades puras, value objects, eventos, puertos y autoridad tenant
+│   │   ├── gate-evidence.ts        # Modelos de evidencia y contexto de ejecución
+│   │   ├── gates/decision/         # Modelo de recomendación no vinculante de gate del Core
+│   │   ├── phases/transition/      # Modelo de transición de fase y reglas de estado
+│   │   ├── providers/              # Puertos de provider
+│   │   └── tenancy/                # Guardrails de autoridad tenant
+│   ├── src/application/            # Casos de uso, servicios, validators, generators y sync flows
+│   │   ├── use-cases/              # Flujos validate/evaluate/sync/init/propose
+│   │   ├── validators/             # Evaluadores native + OPA y modos de validación
+│   │   └── services/               # Gate registry, topology catalog y servicios de proyecto
+│   ├── src/evaluation/             # Orquestador canónico EvaluationContext/EvaluationResult
+│   ├── src/evidence/               # Soporte de evidence graph
+│   └── src/schemas/                # Helpers runtime de schema
 │
 ├── rulesets/                       # La Fuente de Verdad Física (Corpus)
 │   ├── phase-gates/                # Rulesets Declarados
 │   │   └── phase-gates.rules.json
+│   ├── sdlc/                       # Workflow SDLC y rulesets de phase gates
+│   │   └── phase-gates.rules.json
 │   ├── schema/                     # Contratos para los Rulesets
+│   │   ├── evaluation-context.schema.json
+│   │   ├── evaluation-result.schema.json
 │   │   ├── sdlc-gate.schema.json
 │   │   ├── sdlc-phase.schema.json
 │   │   └── rule-definition.schema.json
@@ -36,9 +47,10 @@ evolith/
 
 ## 3. Relaciones Clave
 
-1. **Paquete `core-domain`:** Utilizado universalmente por `apps/core-api`, `packages/agent-runtime` y `packages/smart-cli`. No contiene *ninguna* dependencia de framework (ni NestJS, ni Traefik).
-2. **`phase-gates.rego`:** El archivo open-policy-agent evalúa las condiciones establecidas en `phase-gates.rules.json` en contra de la `gate-evidence` pasada en runtime.
-3. **`execution-context.ts`:** Demuestra que el core es verdaderamente stateless. Maneja el `workspaceRef` e identificadores opacos, nunca persistiendo la lógica de tenant de forma interna.
+1. **Paquete `core-domain`:** Utilizado universalmente por `apps/core-api`, `packages/agent-runtime`, `packages/mcp-server` y `sdk/cli`. Mantiene el wiring específico de NestJS/runtime fuera de los contratos de dominio.
+2. **Evaluación canónica:** `src/evaluation/` define `EvaluationContext`, `EvaluationResult`, `EvaluationOrchestrator`, evaluadores kind y puertos compartidos por Core API, MCP y CLI.
+3. **Paridad Native + OPA:** `src/application/validators/evaluators/` y `rulesets/opa/` proveen el camino dual-engine requerido por la gobernanza del repositorio.
+4. **Contexto opaco:** Los identificadores tenant/product/initiative se aceptan solo como contexto temporal. Core puede ecoarlos en trazas/resultados, pero no posee autorización, persistencia tenant ni decisiones vinculantes de gate.
 
 ---
 [Volver al Nivel 4: Hub de Código y Módulos](./README.es.md)

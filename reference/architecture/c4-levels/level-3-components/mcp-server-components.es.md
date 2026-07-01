@@ -8,7 +8,7 @@
 
 ## 1. Contexto del Contenedor
 
-El **Standalone MCP Server** expone las capacidades de gobernanza de Evolith hacia Agentes IA externos (como Claude vía Claude Desktop, u otros flujos de trabajo agénticos) utilizando el Model Context Protocol estándar. Está completamente desacoplado del Smart CLI.
+El **Standalone MCP Server** expone las capacidades de gobernanza de Evolith hacia agentes IA externos utilizando el Model Context Protocol estándar. Está desacoplado del Smart CLI como runtime, pero comparte paquetes de dominio y los mismos contratos canónicos de evaluación.
 
 ## 2. Diagrama de Componentes
 
@@ -18,25 +18,29 @@ C4Component
 
     Container_Boundary(mcp, "Contenedor MCP Server") {
         
-        Component(transport, "Capa de Transporte", "@modelcontextprotocol/sdk", "Maneja transporte Stdio y SSE para conexiones MCP entrantes.")
+        Component(transport, "Capa de Transporte", "@modelcontextprotocol/sdk", "Maneja transportes stdio y Streamable HTTP para conexiones MCP entrantes.")
         
-        Component(server, "EvolithMcpServer", "Servicio de Aplicación", "Clase principal de coordinación para registrar herramientas y recursos.")
+        Component(server, "EvolithMcpServer", "Servicio de Aplicación", "Servicio principal de coordinación para handlers MCP, resources, prompts, auditoría y métricas.")
         
-        Component(tool_validate, "Validate Tool", "Manejador de Herramienta", "Herramienta MCP: Valida archivos locales contra rulesets OPA vía Agent Runtime / Core API.")
+        Component(registry, "Registro de Tools", "Provider NestJS", "Registra validate, evaluate, satellites, agents, architecture, gates, phase, SDLC, topology, config, auto-fix, metrics y otras tools.")
+        Component(authz, "Auth / ABAC / Auditoría", "Servicios MCP", "Valida contexto API key/JWT, evalúa políticas ABAC, emite auditoría y métricas.")
+        Component(tool_validate, "Tools Validate / Evaluate", "Manejadores de Herramienta", "Tools MCP: valida repositorios y evalúa EvaluationContext canónico localmente mediante lógica compartida de core-domain.")
         
         Component(tool_gate, "Gate Check Tool", "Manejador de Herramienta", "Herramienta MCP: Verifica si una fase/puerta del SDLC está pasando.")
         
-        Component(resource_corpus, "Corpus Resource", "Manejador de Recurso", "Recurso MCP: Expone los rulesets físicos y archivos OPA como contexto legible.")
+        Component(resource_corpus, "Resources y Prompts", "Manejadores de Resource/Prompt", "Resources y prompts MCP exponen corpus, rulesets y guía reutilizable como contexto legible.")
         
-        Component(client, "Core API Client", "Adaptador", "Se comunica con el Core API (BFF) para ejecutar las evaluaciones.")
+        Component(runtime, "Puente Agent Runtime", "@evolith/agent-runtime / SDK", "Ejecuta intents de agente o llama al Agent Runtime API cuando lo solicitan las tools MCP.")
 
         Rel(transport, server, "Enruta peticiones a")
-        Rel(server, tool_validate, "Despacha llamada a herramienta")
+        Rel(server, registry, "Lista y despacha tools vía")
+        Rel(server, authz, "Autoriza y audita vía")
+        Rel(registry, tool_validate, "Despacha llamada a herramienta")
         Rel(server, tool_gate, "Despacha llamada a herramienta")
         Rel(server, resource_corpus, "Despacha lectura de recurso")
         
-        Rel(tool_validate, client, "Ejecuta validación vía")
-        Rel(tool_gate, client, "Ejecuta verificación de gate vía")
+        Rel(tool_validate, runtime, "Puede invocar flujo agent/runtime vía")
+        Rel(tool_gate, runtime, "Puede invocar chequeos gobernados vía")
     }
 ```
 
@@ -44,11 +48,12 @@ C4Component
 
 | Componente | Responsabilidad |
 |------------|-----------------|
-| **Capa de Transporte** | SDK estándar de MCP que maneja el ciclo de vida de la conexión (Stdio para procesos locales, SSE para streaming remoto). |
-| **EvolithMcpServer** | El punto de entrada de la aplicación que registra el esquema de herramientas y recursos disponibles con el LLM que se conecta. |
-| **Manejadores de Herramientas** | Acciones específicas y limitadas que la IA puede tomar (ej. `validate_artifact`, `check_gate`). |
-| **Manejadores de Recursos** | Contexto de solo-lectura que la IA puede solicitar (ej. `ruleset://...`). |
-| **Core API Client** | En lugar de duplicar lógica de negocio, el MCP Server hace llamadas REST al `Core API` para procesar validaciones y leer topologías. |
+| **Capa de Transporte** | SDK estándar de MCP que maneja ciclos de vida stdio y Streamable HTTP. En HTTP producción falla cerrado si no hay API key. |
+| **EvolithMcpServer** | Punto de entrada que conecta handlers MCP con registro, resources, prompts, métricas, ABAC y auditoría. |
+| **Registro de Tools** | Registro compuesto por módulo desde `packages/mcp-server/src/tools/tools.module.ts`; reemplaza canónicamente al paquete ligero retirado `@evolith/mcp-tools`. |
+| **Manejadores de Herramientas** | Acciones gobernadas incluyendo `evolith-validate`, `evolith-evaluate`, tools de satélites, agentes, arquitectura, gates/fases, SDLC, topología, configuración, métricas y auto-fix. |
+| **Resources y Prompts** | Contexto de solo lectura y payloads de prompt reutilizables expuestos mediante handlers MCP de resource y prompt. |
+| **Auth / ABAC / Auditoría** | Autenticación por API key/JWT, chequeos ABAC, gating de tools mutativas, auditoría de llamadas de tools y métricas. |
 
 ---
 [Volver al Nivel 3: Hub de Componentes](./README.es.md)

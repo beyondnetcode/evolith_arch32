@@ -8,24 +8,35 @@
 
 ## 1. Domain Module Context
 
-The Evolith Core Domain is where all stateless architectural governance logic lives. It consists of the TypeScript models (`@evolith/core-domain`), the JSON rulesets that declare architectural intent, the JSON schemas that validate them, and the OPA Rego files that enforce them.
+The Evolith Core Domain is where the executable governance contracts and stateless architectural evaluation logic live. It consists of TypeScript domain/application/evaluation modules (`@evolith/core-domain`), JSON rulesets declaring architectural intent, JSON schemas validating payloads, and OPA Rego/WASM policy artifacts.
 
 ## 2. Code Organization Map
 
 ```text
 evolith/
 ├── packages/core-domain/           # The Core Domain Library
-│   ├── src/domain/                 # Pure Entities & Value Objects
-│   │   ├── gate-evidence.ts        # Evidence submission models
-│   │   ├── execution-context.ts    # Opaque context (tenant, product, initiative)
-│   │   └── gate-decision.ts        # Core's EvaluationResult (NOT Tracker's GateDecision)
-│   └── src/ports/                  # Outbound Interfaces
-│       └── i-gate-evaluator.ts
+│   ├── src/domain/                 # Pure entities, value objects, events, ports and tenant authority
+│   │   ├── gate-evidence.ts        # Evidence submission and execution context models
+│   │   ├── gates/decision/         # Non-binding Core gate recommendation model
+│   │   ├── phases/transition/      # Phase transition model and state rules
+│   │   ├── providers/              # Provider ports
+│   │   └── tenancy/                # Tenant authority guardrails
+│   ├── src/application/            # Use cases, services, validators, generators and sync flows
+│   │   ├── use-cases/              # Validate/evaluate/sync/init/propose workflows
+│   │   ├── validators/             # Native + OPA rule evaluators and validation modes
+│   │   └── services/               # Gate registry, topology catalog and project services
+│   ├── src/evaluation/             # Canonical EvaluationContext/EvaluationResult orchestrator
+│   ├── src/evidence/               # Evidence graph support
+│   └── src/schemas/                # Runtime schema helpers
 │
 ├── rulesets/                       # The Physical Source of Truth (Corpus)
 │   ├── phase-gates/                # Declared Rulesets
 │   │   └── phase-gates.rules.json
+│   ├── sdlc/                       # SDLC workflow and phase-gate rulesets
+│   │   └── phase-gates.rules.json
 │   ├── schema/                     # Contracts for Rulesets
+│   │   ├── evaluation-context.schema.json
+│   │   ├── evaluation-result.schema.json
 │   │   ├── sdlc-gate.schema.json
 │   │   ├── sdlc-phase.schema.json
 │   │   └── rule-definition.schema.json
@@ -36,9 +47,10 @@ evolith/
 
 ## 3. Key Relationships
 
-1. **`core-domain` package:** Used universally by `apps/core-api`, `packages/agent-runtime`, and `packages/smart-cli`. It contains *zero* framework dependencies (no NestJS, no Traefik).
-2. **`phase-gates.rego`:** The open-policy-agent file evaluates the conditions laid out in `phase-gates.rules.json` against the `gate-evidence` passed in at runtime.
-3. **`execution-context.ts`:** Proves that the core is stateless. It handles the `workspaceRef` and opaque identifiers, never persisting tenant logic internally.
+1. **`core-domain` package:** Used universally by `apps/core-api`, `packages/agent-runtime`, `packages/mcp-server` and `sdk/cli`. It keeps framework-specific NestJS/runtime wiring outside the domain contracts.
+2. **Canonical evaluation:** `src/evaluation/` defines `EvaluationContext`, `EvaluationResult`, `EvaluationOrchestrator`, kind evaluators, and ports shared by Core API, MCP and CLI.
+3. **Native + OPA parity:** `src/application/validators/evaluators/` and `rulesets/opa/` provide the dual-engine evaluation path required by repository governance.
+4. **Opaque context:** Tenant/product/initiative identifiers are accepted as temporary context only. Core may echo them in traces/results but does not own authorization, tenant persistence, or binding gate decisions.
 
 ---
 [Back to Level 4: Code & Modules Hub](./README.md)

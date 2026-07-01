@@ -8,9 +8,11 @@
 
 ## 1. Visión General del Sistema
 
-Evolith está diseñado para actuar como el motor de gobernanza autoritativo de todo el SDLC. En el nivel más alto, interactúa con Humanos, Agentes de IA y plataformas SaaS externas.
+Evolith está diseñado para actuar como el motor de gobernanza autoritativo del corpus de referencia SDLC y de sus superficies ejecutables de gobernanza. En el nivel más alto, interactúa con humanos, agentes de IA, CI/CD y plataformas SaaS externas.
 
-El sistema se compone fundamentalmente de **Evolith Tracker** (el producto SaaS con estado que gestiona procesos y UI) y **Evolith Core** (el motor stateless de evaluación y orquestación de agentes IA).
+El sistema se compone fundamentalmente de **Evolith Tracker** (el producto SaaS externo con estado que posee tenants, estado de producto, aprobaciones y UI) y **Evolith Core** (la implementación en este repositorio: Core API, MCP Server, Agent Runtime, Smart CLI, rulesets, esquemas y paquetes).
+
+Evolith Core es stateless para decisiones canónicas de producto: puede recibir identificadores tenant/product/initiative como contexto opaco de evaluación, pero no autoriza usuarios finales, no persiste ownership de tenants ni emite decisiones de gate vinculantes. El Core API actual incluye una pequeña superficie in-memory de registro de satélites para flujos de referencia y compatibilidad; no es la autoridad de estado tenant o producto de largo plazo.
 
 ## 2. Diagrama de Contexto
 
@@ -23,7 +25,7 @@ C4Context
 
     System_Boundary(evolithEcosystem, "Plataforma Evolith") {
         System(tracker, "Evolith Tracker", "Orquestador SaaS con estado. Gestiona tenants, ejecución de fases SDLC, aprobaciones y trazabilidad.")
-        System(core, "Evolith Core", "Motor Stateless de Reglas e IA. Provee evaluación de reglas (OPA), esquemas, y capacidades de ejecución de agentes IA (Agent Runtime).")
+        System(core, "Evolith Core", "Runtime ejecutable de gobernanza. Provee evaluación stateless, rulesets, esquemas, tools MCP, flujos CLI y capacidades de Agent Runtime.")
     }
 
     System_Ext(github, "Source Control / CI", "GitHub, GitLab. Aloja código fuente y ejecuta pipelines.")
@@ -35,8 +37,8 @@ C4Context
     Rel(human, core, "Valida artefactos localmente vía", "CLI")
     Rel(agent, core, "Ejecuta tareas y consume herramientas vía", "SSE / MCP")
     
-    Rel(tracker, core, "Solicita ejecución de agentes y evaluación de reglas vía", "REST / HTTP")
-    Rel(core, tracker, "Envía evidencia de ejecución y logs de auditoría a", "REST / HTTP")
+    Rel(tracker, core, "Solicita evaluación stateless y ejecución de agentes vía", "REST / HTTP")
+    Rel(core, tracker, "Retorna resultados de evaluación y publica eventos de traza a", "REST / HTTP")
 
     Rel(core, llm, "Orquesta prompts y llamadas a herramientas con", "API")
     Rel(core, github, "Lee configuración y repositorios desde", "Git / API")
@@ -46,9 +48,10 @@ C4Context
 
 ## 3. Interacciones Clave
 
-1. **Tracker hacia Core:** Tracker es un cliente del Core. Solicita al Core validar evidencia contra los rulesets OPA, o pide al Agent Runtime del Core ejecutar una tarea compleja.
+1. **Tracker hacia Core:** Tracker es un cliente del Core. Solicita al Core evaluar payloads canónicos `EvaluationContext`, o pide al Agent Runtime ejecutar una tarea gobernada.
 2. **Agentes hacia Core:** Los agentes se conectan al Core mediante streams MCP o SSE para recibir contexto gobernado y herramientas. *No* se conectan directamente a Tracker.
 3. **Core hacia Externos:** Core se conecta a LLMs para inteligencia, y a Git para recuperar los rulesets corporativos (el corpus de referencia).
+4. **Límite de estado del Core:** Core puede ecoar contexto opaco y mantener memoria/caché local de runtime, pero Tracker sigue siendo el owner canónico del estado tenant/product/initiative y de las decisiones vinculantes de gate.
 
 ## 4. Acercamiento (Zoom In)
 

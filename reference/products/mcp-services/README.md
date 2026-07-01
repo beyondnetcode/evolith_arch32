@@ -85,9 +85,9 @@ CLI flags: `--transport|-t stdio|http`, `--port|-p <n>` (default `3000`), `--api
 
 Authentication, ABAC roles/codes, the mutative-tool contract, and the full per-tool reference live in the package [README](../../../packages/mcp-server/README.md).
 
-## Lightweight tools registry (`@evolith/mcp-tools`)
+## Tool Registry
 
-Distinct from the `@evolith/mcp-server` gateway, **`@evolith/mcp-tools`** is a dependency-free JS registry exposing 3 diagnostic tools — `evolith-ping`, `evolith-echo`, `evolith-read-gap-tracking` — registered via `registerEvolithTools(server)`. It is a minimal building block, not the governance gateway; see its [README](../../../packages/mcp-tools/README.md).
+The lightweight `@evolith/mcp-tools` package has been retired. The canonical registry now lives inside the standalone gateway under [packages/mcp-server/src/tools](../../../packages/mcp-server/src/tools/tools.module.ts), where tool schemas, ABAC checks, audit logging, resources, prompts, and transport behavior are governed together.
 
 ## Troubleshooting
 

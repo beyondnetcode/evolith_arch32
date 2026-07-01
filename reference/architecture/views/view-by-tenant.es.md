@@ -7,9 +7,9 @@
 
 ## 1. Estrategia Multi-Tenancy
 
-Evolith sigue una estricta separación de responsabilidades con respecto a multi-tenancy. Tal como lo decreta el **ADR-0101**, el motor Core de Evolith es completamente **stateless (sin estado) y agnóstico de tenant**.
+Evolith sigue una estricta separación de responsabilidades con respecto a multi-tenancy. Tal como lo decreta el **ADR-0101**, el motor Core de Evolith es **stateless para estado canónico de producto y ownership tenant**.
 
-La responsabilidad del aislamiento de tenants, la autorización de usuarios y los registros de propiedad recae enteramente en **Evolith Tracker**.
+La responsabilidad del aislamiento de tenants, la autorización de usuarios y los registros de propiedad recae enteramente en **Evolith Tracker**. Core puede recibir `tenant`, `product` e `initiative` como contexto opaco de request para trazabilidad y correlación de evaluación, pero no debe tratar esos identificadores como hechos de autorización ni ownership persistido.
 
 ## 2. Flujo de Autorización
 
@@ -29,8 +29,8 @@ sequenceDiagram
     Tracker->>Tracker: Valida Autorización del Tenant y Roles
     
     alt Autorizado
-        Tracker->>Core: POST /v1/gates/evaluate { workspaceRef }
-        Note over Tracker, Core: Tracker mapea el Tenant a un workspaceRef opaco. Core NUNCA ve el Tenant ID.
+        Tracker->>Core: POST /api/v1/evaluate { workspaceRef, tenant?, product?, initiative? }
+        Note over Tracker, Core: Tracker autoriza el alcance tenant primero. Core recibe solo contexto opaco y workspaceRef, nunca credenciales de usuario ni autoridad de ownership.
         Core-->>Tracker: Resultado de Evaluación
         Tracker-->>User: Éxito
     else No Autorizado
@@ -40,8 +40,9 @@ sequenceDiagram
 
 ## 3. Reglas de Límite (Boundaries)
 1. **Core API** y **Agent Runtime API** utilizan API Keys (ej., `x-api-key`) para autenticación máquina-a-máquina con el Tracker.
-2. **Core API** nunca interpreta un `tenantId`.
-3. **Tracker** maneja la validación del JWT, el Control de Acceso Basado en Roles (RBAC), y el mapeo del tenant hacia los subconjuntos de reglas correctos.
+2. **Core API** puede ecoar contexto opaco tenant/product/initiative para correlación, pero nunca autoriza, persiste ni deriva ownership desde `tenantId`.
+3. **Tracker** maneja la validación del JWT, el Control de Acceso Basado en Roles (RBAC), y el mapeo del tenant hacia el workspace y subconjuntos de reglas correctos.
+4. **Advertencia sobre registro de satélites:** `/api/v1/satellites` es actualmente una superficie in-memory de compatibilidad/referencia en Core API. No es el registro canónico de tenants ni debe usarse como store de estado de Tracker.
 
 ---
 [Volver a la Arquitectura Maestra](../C4-MASTER-ARCHITECTURE.es.md)

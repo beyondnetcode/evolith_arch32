@@ -50,7 +50,7 @@ evolith/
 1. **Paquete `core-domain`:** Utilizado universalmente por `apps/core-api`, `packages/agent-runtime`, `packages/mcp-server` y `sdk/cli`. Mantiene el wiring específico de NestJS/runtime fuera de los contratos de dominio.
 2. **Evaluación canónica:** `src/evaluation/` define `EvaluationContext`, `EvaluationResult`, `EvaluationOrchestrator`, evaluadores kind y puertos compartidos por Core API, MCP y CLI.
 3. **Paridad Native + OPA:** `src/application/validators/evaluators/` y `rulesets/opa/` proveen el camino dual-engine requerido por la gobernanza del repositorio.
-4. **Contexto opaco:** Los identificadores tenant/product/initiative se aceptan solo como contexto temporal. Core puede ecoarlos en trazas/resultados, pero no posee autorización, persistencia tenant ni decisiones vinculantes de gate.
+4. **Contexto opaco:** Los identificadores tenant/product/initiative se aceptan solo como contexto temporal. Core puede reflejarlos en trazas/resultados, pero no posee autorización, persistencia tenant ni decisiones vinculantes de gate.
 
 ---
 [Volver al Nivel 4: Hub de Código y Módulos](./README.es.md)

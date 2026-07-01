@@ -40,7 +40,7 @@ sequenceDiagram
 
 ## 3. Reglas de Límite (Boundaries)
 1. **Core API** y **Agent Runtime API** utilizan API Keys (ej., `x-api-key`) para autenticación máquina-a-máquina con el Tracker.
-2. **Core API** puede ecoar contexto opaco tenant/product/initiative para correlación, pero nunca autoriza, persiste ni deriva ownership desde `tenantId`.
+2. **Core API** puede reflejar contexto opaco tenant/product/initiative para correlación, pero nunca autoriza, persiste ni deriva ownership desde `tenantId`.
 3. **Tracker** maneja la validación del JWT, el Control de Acceso Basado en Roles (RBAC), y el mapeo del tenant hacia el workspace y subconjuntos de reglas correctos.
 4. **Advertencia sobre registro de satélites:** `/api/v1/satellites` es actualmente una superficie in-memory de compatibilidad/referencia en Core API. No es el registro canónico de tenants ni debe usarse como store de estado de Tracker.
 

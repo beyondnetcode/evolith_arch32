@@ -51,7 +51,7 @@ C4Context
 1. **Tracker to Core:** Tracker is a client of Core. It asks Core to evaluate canonical `EvaluationContext` payloads, or asks Agent Runtime to execute a governed task.
 2. **Agents to Core:** Agents interact with Core through MCP or the Agent Runtime command/event pattern. Commands are explicit MCP/HTTP requests; progress, tool results, violations, and final output may be delivered on an event stream such as SSE. Agents do *not* connect to Tracker directly.
 3. **Core to External:** Core connects to LLMs for intelligence, and Git for retrieving the corporate rulesets (the reference corpus).
-4. **Core state boundary:** Core can echo opaque context and keep local runtime memory/cache, but Tracker remains the canonical owner of tenant/product/initiative state and binding gate decisions.
+4. **Core state boundary:** Core can reflect opaque context and keep local runtime memory/cache, but Tracker remains the canonical owner of tenant/product/initiative state and binding gate decisions.
 
 ## 4. Zoom In
 

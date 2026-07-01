@@ -51,7 +51,7 @@ C4Context
 1. **Tracker hacia Core:** Tracker es un cliente del Core. Solicita al Core evaluar payloads canónicos `EvaluationContext`, o pide al Agent Runtime ejecutar una tarea gobernada.
 2. **Agentes hacia Core:** Los agentes interactúan con el Core mediante MCP o el patrón de comandos/eventos del Agent Runtime. Los comandos son requests explícitos MCP/HTTP; el progreso, resultados de tools, violaciones y salida final pueden entregarse por un stream de eventos como SSE. *No* se conectan directamente a Tracker.
 3. **Core hacia Externos:** Core se conecta a LLMs para inteligencia, y a Git para recuperar los rulesets corporativos (el corpus de referencia).
-4. **Límite de estado del Core:** Core puede ecoar contexto opaco y mantener memoria/caché local de runtime, pero Tracker sigue siendo el owner canónico del estado tenant/product/initiative y de las decisiones vinculantes de gate.
+4. **Límite de estado del Core:** Core puede reflejar contexto opaco y mantener memoria/caché local de runtime, pero Tracker sigue siendo el owner canónico del estado tenant/product/initiative y de las decisiones vinculantes de gate.
 
 ## 4. Acercamiento (Zoom In)
 

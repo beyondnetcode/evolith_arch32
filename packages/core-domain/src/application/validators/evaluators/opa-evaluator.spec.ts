@@ -23,6 +23,8 @@ describe('OpaEvaluator', () => {
   let logger: ReturnType<typeof createMockLogger>;
   let evaluator: OpaEvaluator;
 
+  let wasmCounter = 0;
+
   beforeEach(() => {
     fs = createMockFileSystem();
     logger = createMockLogger();
@@ -64,7 +66,7 @@ describe('OpaEvaluator', () => {
     (loadPolicy as jest.Mock).mockRejectedValueOnce(new Error('wasm engine crash'));
 
     const wasmPath = path.join('/core', 'rulesets', 'opa', 'policy.wasm');
-    fs.setFile(wasmPath, 'fake-wasm');
+    fs.setFile(wasmPath, `fake-wasm-error-${++wasmCounter}`);
 
     const results = await evaluator.evaluateAll([mockRule], ctx);
     expect(results).toHaveLength(1);
@@ -78,7 +80,7 @@ describe('OpaEvaluator', () => {
     const schemaPath = path.join('/core', 'rulesets', 'opa', 'schemas', 'version-pinning.input.schema.json');
     
     // Write fake wasm bytes and valid schema
-    fs.setFile(wasmPath, 'fake-wasm-content');
+    fs.setFile(wasmPath, `fake-wasm-valid-${++wasmCounter}`);
     fs.setFile(schemaPath, JSON.stringify({
       type: 'object',
       properties: {
@@ -97,7 +99,7 @@ describe('OpaEvaluator', () => {
     const wasmPath = path.join('/core', 'rulesets', 'opa', 'policy.wasm');
     const schemaPath = path.join('/core', 'rulesets', 'opa', 'schemas', 'version-pinning.input.schema.json');
     
-    fs.setFile(wasmPath, 'fake-wasm-content');
+    fs.setFile(wasmPath, `fake-wasm-schema-${++wasmCounter}`);
     // Require a field that doesn't exist on standard input builder output to force failure
     fs.setFile(schemaPath, JSON.stringify({
       type: 'object',
@@ -129,7 +131,7 @@ describe('OpaEvaluator', () => {
   const withViolations = (vs: Array<{ id: string; message: string }>) => {
     const { loadPolicy } = require('@open-policy-agent/opa-wasm');
     (loadPolicy as jest.Mock).mockResolvedValueOnce({ evaluate: () => [{ result: vs }] });
-    fs.setFile(wasmPath, 'fake-wasm');
+    fs.setFile(wasmPath, `fake-wasm-viol-${++wasmCounter}`);
   };
 
   it('GT-382: opa-dod rule FAILS when the dod policy emits a DOD-* violation', async () => {

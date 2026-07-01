@@ -26,7 +26,9 @@ const allowedFiles = new Set([
   "COVERAGE_REPORT.md",
   "package.json",
   "package-lock.json",
-  ".env"
+  ".env",
+  "tsconfig.json",
+  "tsconfig.base.json"
 ]);
 
 const allowedDirectories = new Set([

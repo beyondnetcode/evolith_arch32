@@ -6,6 +6,11 @@ import { loadPolicy } from '@open-policy-agent/opa-wasm';
 import { OpaInputBuilder } from './opa-input-builder';
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
+import * as crypto from 'crypto';
+
+// Module-level caches to share compiled instances across OpaEvaluator lifecycles
+const globalPolicyCache = new Map<string, any>();
+const globalSchemaCache = new Map<string, any>();
 
 /**
  * GT-382: context-aware policies emit namespaced violation ids (`DOD-*`, `CB-*`,
@@ -22,10 +27,8 @@ const CONTEXT_AWARE_VIOLATION_PREFIXES: Readonly<Record<string, string>> = {
 };
 
 export class OpaEvaluator implements IRuleEvaluatorStrategy {
-  private policyCache: any = null;
   private inputBuilder: OpaInputBuilder;
   private ajv: Ajv;
-  private schemaCache: Map<string, any> = new Map();
 
   constructor(
     private readonly fs: IFileSystem,
@@ -42,12 +45,13 @@ export class OpaEvaluator implements IRuleEvaluatorStrategy {
       return null;
     }
     try {
-      let validate = this.schemaCache.get(schemaPath);
+      const schemaContent = await this.fs.readFile(schemaPath);
+      const hash = crypto.createHash('sha256').update(schemaContent).digest('hex');
+      let validate = globalSchemaCache.get(hash);
       if (!validate) {
-        const schemaContent = await this.fs.readFile(schemaPath);
         const schema = JSON.parse(schemaContent);
         validate = this.ajv.compile(schema);
-        this.schemaCache.set(schemaPath, validate);
+        globalSchemaCache.set(hash, validate);
       }
       const valid = validate(input);
       if (!valid) {
@@ -75,10 +79,16 @@ export class OpaEvaluator implements IRuleEvaluatorStrategy {
     }
 
     try {
-      if (!this.policyCache) {
-        const wasmBuffer = await this.fs.readFileBuffer(wasmPath);
-        this.policyCache = await loadPolicy(wasmBuffer);
+      const wasmBuffer = await this.fs.readFileBuffer(wasmPath);
+      const hash = crypto.createHash('sha256').update(wasmBuffer).digest('hex');
+      
+      if (!globalPolicyCache.has(hash)) {
+        // Keep only the latest to prevent memory leaks if WASM is rebuilt
+        globalPolicyCache.clear(); 
+        const policy = await loadPolicy(wasmBuffer);
+        globalPolicyCache.set(hash, policy);
       }
+      const policyCache = globalPolicyCache.get(hash);
 
       // Build the input for OPA
       const input = await this.inputBuilder.build(ctx);
@@ -112,7 +122,7 @@ export class OpaEvaluator implements IRuleEvaluatorStrategy {
       let opaResults: RuleEvaluationResult[] = [];
       if (passedRules.length > 0) {
         // Evaluate against the OPA policy
-        const resultSet: any = this.policyCache.evaluate(input);
+        const resultSet: any = policyCache.evaluate(input);
         const violations: Record<string, unknown>[] = (resultSet?.[0]?.result) ? resultSet[0].result as Record<string, unknown>[] : [];
         
         opaResults = passedRules.map(rule => {

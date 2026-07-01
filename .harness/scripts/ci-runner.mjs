@@ -2,7 +2,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import { spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 
 const root = process.cwd();
 const ciDir = path.join(root, ".harness/scripts/ci");
@@ -14,21 +14,51 @@ if (!fs.existsSync(ciDir)) {
 
 const mode = process.argv[2] || "fast";
 
-const allScripts = fs.readdirSync(ciDir)
-  .filter(file => file.endsWith(".mjs") && /^\d{2}-/.test(file))
-  .sort();
+// Recursively find all executable mjs scripts except tests
+function getAllScripts(dir, baseDir = "") {
+  let results = [];
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+    const relPath = path.join(baseDir, entry.name);
+    if (entry.isDirectory()) {
+      results = results.concat(getAllScripts(fullPath, relPath));
+    } else if (entry.isFile() && entry.name.endsWith(".mjs") && !entry.name.endsWith(".test.mjs") && !entry.name.startsWith("review-")) {
+      results.push(relPath);
+    }
+  }
+  return results.sort();
+}
+
+const allScripts = getAllScripts(ciDir);
 
 const MODES = {
   fast: {
     label: "RAPIDO (docs + tracking)",
-    scripts: ["01-validate-docs.mjs", "03-validate-root-cleanliness.mjs", "04-check-bilingual-parity.mjs", "05-validate-executive-summary.mjs", "08-validate-tracking.mjs"],
+    scripts: [
+      "01-validate-docs.mjs", 
+      "03-validate-root-cleanliness.mjs", 
+      "suites/bilingual-suite.mjs", 
+      "05-validate-executive-summary.mjs", 
+      "08-validate-tracking.mjs"
+    ],
   },
   governance: {
     label: "GOBERNANZA (docs + tracking + maturity + contracts)",
-    scripts: ["01-validate-docs.mjs", "03-validate-root-cleanliness.mjs", "04-check-bilingual-parity.mjs", "05-validate-executive-summary.mjs", "08-validate-tracking.mjs", "09-reconcile-maturity.mjs", "10-validate-contract-conformance.mjs", "22-validate-topology-composition.mjs", "23-check-orphan-bilingual.mjs", "29-validate-opa-sidecar-bundles.mjs"],
+    scripts: [
+      "01-validate-docs.mjs", 
+      "03-validate-root-cleanliness.mjs", 
+      "suites/bilingual-suite.mjs", 
+      "05-validate-executive-summary.mjs", 
+      "08-validate-tracking.mjs", 
+      "09-reconcile-maturity.mjs", 
+      "10-validate-contract-conformance.mjs", 
+      "22-validate-topology-composition.mjs", 
+      "29-validate-opa-sidecar-bundles.mjs"
+    ],
   },
   full: {
-    label: "COMPLETO (todos los scripts)",
+    label: "COMPLETO (todos los scripts en paralelo por fases)",
     scripts: allScripts,
   },
   auto: {
@@ -51,8 +81,7 @@ function getAutoScripts() {
   const scripts = ["01-validate-docs.mjs", "03-validate-root-cleanliness.mjs"];
 
   if (docsChanged) {
-    scripts.push("04-check-bilingual-parity.mjs");
-    scripts.push("23-check-orphan-bilingual.mjs");
+    scripts.push("suites/bilingual-suite.mjs");
   }
   if (trackingChanged || governanceChanged) {
     scripts.push("08-validate-tracking.mjs");
@@ -70,6 +99,8 @@ function getAutoScripts() {
     scripts.push("11-validate-product-docs.mjs");
     scripts.push("19-validate-rest-versioning.mjs");
     scripts.push("20-validate-surface-compatibility.mjs");
+    // Also include agentic code review if code changed
+    scripts.push("agentic/13-agentic-code-review.mjs");
   }
   if (infraChanged) {
     scripts.push("07-generate-inventories.mjs");
@@ -79,60 +110,113 @@ function getAutoScripts() {
   return [...new Set(scripts)];
 }
 
-let scriptsToRun;
-if (mode === "auto") {
-  scriptsToRun = getAutoScripts();
-} else if (MODES[mode]) {
-  scriptsToRun = MODES[mode].scripts;
-} else if (mode === "--help" || mode === "-h") {
-  console.log("Usage: ci-runner.mjs [mode]");
-  console.log("");
-  console.log("Modes:");
-  console.log("  fast        Docs + tracking validation (~2s)");
-  console.log("  governance  Docs + tracking + maturity + contracts (~3s)");
-  console.log("  full        All 30 CI scripts (~6-8s)");
-  console.log("  auto        Detect changed files, run relevant scripts (~1-3s)");
-  console.log("  --help      Show this help");
-  process.exit(0);
-} else {
-  console.error(`Unknown mode: ${mode}. Use --help for available modes.`);
-  process.exit(1);
-}
-
-if (scriptsToRun.length === 0) {
-  console.log("No relevant scripts to run for the changed files.");
-  process.exit(0);
-}
-
-const modeLabel = mode === "auto" ? `AUTOMATICO (${scriptsToRun.length} scripts)` : MODES[mode].label;
-console.log(`🚀 Evolith CI — ${modeLabel}`);
-console.log(`══════════════════════════════════════════════════════════════════════`);
-
-let failures = 0;
-
-for (const script of scriptsToRun) {
-  const scriptPath = path.join(ciDir, script);
-  if (!fs.existsSync(scriptPath)) continue;
-
-  console.log(`\n▶️ Running: ${script}`);
-  const result = spawnSync(process.execPath, [scriptPath], {
-    cwd: root,
-    stdio: "inherit"
-  });
-
-  if (result.status !== 0) {
-    console.error(`\n❌ Step failed: ${script} (Exit Code: ${result.status})`);
-    failures++;
-    break;
+async function resolveAutoScripts() {
+  if (mode === "auto") {
+    return getAutoScripts();
   }
-  console.log(`✅ Step completed: ${script}`);
+  return MODES[mode]?.scripts || [];
 }
 
-console.log(`\n══════════════════════════════════════════════════════════════════════`);
-if (failures > 0) {
-  console.error("❌ CI Pipeline Failed.");
-  process.exit(1);
-} else {
-  console.log(`✅ CI Pipeline Passed! (${scriptsToRun.length} scripts executed)`);
-  process.exit(0);
+async function main() {
+  let scriptsToRun = await resolveAutoScripts();
+
+  if (mode === "--help" || mode === "-h" || (!MODES[mode] && mode !== "auto")) {
+    console.log("Usage: ci-runner.mjs [mode]");
+    console.log("");
+    console.log("Modes:");
+    console.log("  fast        Docs + tracking validation (~2s)");
+    console.log("  governance  Docs + tracking + maturity + contracts (~3s)");
+    console.log("  full        All CI scripts in parallel phases (~2-3s)");
+    console.log("  auto        Detect changed files, run relevant scripts");
+    console.log("  --help      Show this help");
+    process.exit(mode === "--help" || mode === "-h" ? 0 : 1);
+  }
+
+  if (scriptsToRun.length === 0) {
+    console.log("No relevant scripts to run for the changed files.");
+    process.exit(0);
+  }
+
+  const modeLabel = mode === "auto" ? `AUTOMATICO (${scriptsToRun.length} scripts)` : MODES[mode].label;
+  console.log(`🚀 Evolith CI — ${modeLabel} (Ejecución Paralela)`);
+  console.log(`══════════════════════════════════════════════════════════════════════`);
+
+  // Group scripts by stages based on known heavy tasks
+  const stage1 = []; // fast checks
+  const stage2 = []; // normal governance checks
+  const stage3 = []; // heavy / agentic tasks
+
+  for (const script of scriptsToRun) {
+    if (script.startsWith("agentic/") || script.includes("rag-") || script.includes("synchronizer")) {
+      stage3.push(script);
+    } else if (script.includes("topology-") || script.includes("contract-") || script.includes("opa-") || script.includes("maturity")) {
+      stage2.push(script);
+    } else {
+      stage1.push(script);
+    }
+  }
+
+  const stages = [stage1, stage2, stage3].filter(s => s.length > 0);
+  let totalFailures = 0;
+  let executedCount = 0;
+
+  for (let i = 0; i < stages.length; i++) {
+    const stageScripts = stages[i];
+    console.log(`\n⏳ Iniciando Fase ${i + 1} (${stageScripts.length} scripts en paralelo)...`);
+    
+    const promises = stageScripts.map(script => {
+      const scriptPath = path.join(ciDir, script);
+      if (!fs.existsSync(scriptPath)) {
+        return Promise.resolve({ script, status: 0, stdout: "", stderr: `Skip: Not found` });
+      }
+
+      return new Promise((resolve) => {
+        const proc = spawn(process.execPath, [scriptPath], { cwd: root });
+        let stdout = "";
+        let stderr = "";
+
+        proc.stdout.on("data", data => stdout += data.toString());
+        proc.stderr.on("data", data => stderr += data.toString());
+
+        proc.on("close", status => resolve({ script, status, stdout, stderr }));
+      });
+    });
+
+    const results = await Promise.all(promises);
+
+    for (const res of results) {
+      if (res.stderr === "Skip: Not found") continue;
+      executedCount++;
+      
+      if (res.status === 0) {
+        console.log(`\x1b[32m✅ [OK]\x1b[0m ${res.script}`);
+      } else {
+        console.error(`\x1b[31m❌ [FAIL]\x1b[0m ${res.script} (Exit Code: ${res.status})`);
+        totalFailures++;
+      }
+      
+      // Print output nicely indented
+      const combinedOutput = (res.stdout + "\n" + res.stderr).trim();
+      if (combinedOutput) {
+        console.log(combinedOutput.split("\n").map(line => `   │ ${line}`).join("\n"));
+        console.log("   └────────────────────────────────────────────────────────");
+      }
+    }
+
+    if (totalFailures > 0) {
+      // Fail fast to prevent proceeding to next stages if current stage fails
+      break; 
+    }
+  }
+
+  console.log(`\n══════════════════════════════════════════════════════════════════════`);
+  if (totalFailures > 0) {
+    console.error("❌ CI Pipeline Failed.");
+    process.exit(1);
+  } else {
+    console.log(`✅ CI Pipeline Passed! (${executedCount} scripts executed)`);
+    process.exit(0);
+  }
 }
+
+main().catch(console.error);

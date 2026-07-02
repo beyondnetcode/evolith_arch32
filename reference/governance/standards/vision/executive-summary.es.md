@@ -13,7 +13,7 @@ Instantánea estratégica generada desde el tablero canónico de gaps y la recon
 
 **Mayor problema ahora:** `Agent Runtime` concentra el mayor riesgo abierto ponderado (14 pendientes, 0 P0). Ataca esa concentración antes de ampliar alcance.
 
-**Dónde atacar primero:** [GT-377](./gap-reference-catalog.es.md#gt-377), [GT-395](./gap-reference-catalog.es.md#gt-395), [GT-375](./gap-reference-catalog.es.md#gt-375).
+**Dónde atacar primero:** [GT-377](./gap-reference-catalog.es.md#gt-377), [GT-375](./gap-reference-catalog.es.md#gt-375).
 
 ## Diagnóstico Estratégico
 
@@ -25,7 +25,7 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 
 | Orden | Foco | Motivo | IDs |
 |---:|---|---|---|
-| 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | [GT-377](./gap-reference-catalog.es.md#gt-377), [GT-395](./gap-reference-catalog.es.md#gt-395), [GT-375](./gap-reference-catalog.es.md#gt-375) |
+| 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | [GT-377](./gap-reference-catalog.es.md#gt-377), [GT-375](./gap-reference-catalog.es.md#gt-375) |
 | 2 | Área de mayor riesgo | `Agent Runtime` tiene la mayor carga ponderada abierta. | [GT-405](./gap-reference-catalog.es.md#gt-405), [GT-384](./gap-reference-catalog.es.md#gt-384), [GT-399](./gap-reference-catalog.es.md#gt-399), [GT-403](./gap-reference-catalog.es.md#gt-403), [GT-406](./gap-reference-catalog.es.md#gt-406), [GT-407](./gap-reference-catalog.es.md#gt-407), +8 |
 | 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | [GT-390](./gap-reference-catalog.es.md#gt-390), [GT-405](./gap-reference-catalog.es.md#gt-405), [GT-410](./gap-reference-catalog.es.md#gt-410), [GT-411](./gap-reference-catalog.es.md#gt-411) |
 | 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-390](./gap-reference-catalog.es.md#gt-390), [GT-405](./gap-reference-catalog.es.md#gt-405), [GT-410](./gap-reference-catalog.es.md#gt-410), [GT-411](./gap-reference-catalog.es.md#gt-411), [GT-324](./gap-reference-catalog.es.md#gt-324), [GT-384](./gap-reference-catalog.es.md#gt-384), [GT-396](./gap-reference-catalog.es.md#gt-396), [GT-399](./gap-reference-catalog.es.md#gt-399), +6 |
@@ -36,7 +36,6 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 | ID | Ataque | Componente | Esfuerzo |
 |---|---|---|---|
 | [GT-377](./gap-reference-catalog.es.md#gt-377) | R1 — Contratos EvaluationContext/EvaluationResult + Contract Schema Registry (tipos canónicos reutilizando Verdict/PhaseId; schemas versionados; envelope ADR-0073; guard ESLint que prohíbe *Repository para entidades de negocio) | `Core Domain` | P0/L |
-| [GT-395](./gap-reference-catalog.es.md#gt-395) | **WS7 Gobernanza Transversal:** Las reglas de gobernanza agnósticas existen como archivos estáticos pero carecen de aplicación universal en runtime. | `Core Domain` | P0/L |
 | [GT-375](./gap-reference-catalog.es.md#gt-375) | Contratos de evaluación stateless del Core — formalizar EvaluationContext (entrada) / EvaluationResult (salida): el consumidor (Evolith Tracker) envía contexto y el Core devuelve veredictos/recomendaciones estructurados. Producto/tenant/iniciativa son **solo identificadores de contexto opacos**, nunca entidades del Core; épicas/historias como ExternalReferenceContext. El Core emite Recommendation/DecisionRecommendation no vinculante; el Tracker decide, persiste y audita. Según ADR-0101 (corrige ADR-0100) / UP-002. **Épica paraguas — decompuesta en GT-376…GT-381 (R0–R5).** | `Cross` | P0/XL |
 
 ## Métricas
@@ -45,19 +44,19 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 |---|---:|
 | Fecha canónica del tablero | 2026-07-02 |
 | Gaps totales | 412 |
-| Gaps cerrados | 382 |
-| Gaps pendientes | 30 |
-| P0 abiertos | 3 |
+| Gaps cerrados | 383 |
+| Gaps pendientes | 29 |
+| P0 abiertos | 2 |
 | P1 abiertos | 14 |
 | P2 abiertos | 13 |
-| Cierre total | 92.7% |
+| Cierre total | 93% |
 | Registros de evidencia de cierre | 364 |
 | Readiness registrado | 3 PASS, 1 RESOLVED |
 
 | Área | Pendientes | P0 | P1 | Primeros IDs |
 |---|---:|---:|---:|---|
 | `Agent Runtime` | 14 | 0 | 8 | [GT-405](./gap-reference-catalog.es.md#gt-405), [GT-384](./gap-reference-catalog.es.md#gt-384), [GT-399](./gap-reference-catalog.es.md#gt-399), [GT-403](./gap-reference-catalog.es.md#gt-403), +10 |
-| `Core Domain` | 3 | 2 | 1 | [GT-377](./gap-reference-catalog.es.md#gt-377), [GT-395](./gap-reference-catalog.es.md#gt-395), [GT-396](./gap-reference-catalog.es.md#gt-396) |
+| `Core Domain` | 2 | 1 | 1 | [GT-377](./gap-reference-catalog.es.md#gt-377), [GT-396](./gap-reference-catalog.es.md#gt-396) |
 | `Cross` | 2 | 1 | 0 | [GT-375](./gap-reference-catalog.es.md#gt-375), [GT-381](./gap-reference-catalog.es.md#gt-381) |
 | `Core API` | 4 | 0 | 2 | [GT-411](./gap-reference-catalog.es.md#gt-411), [GT-400](./gap-reference-catalog.es.md#gt-400), [GT-393](./gap-reference-catalog.es.md#gt-393), [GT-394](./gap-reference-catalog.es.md#gt-394) |
 | `Governance` | 3 | 0 | 1 | [GT-390](./gap-reference-catalog.es.md#gt-390), [GT-391](./gap-reference-catalog.es.md#gt-391), [GT-392](./gap-reference-catalog.es.md#gt-392) |

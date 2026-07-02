@@ -4174,8 +4174,9 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Componente:** Core Domain · **Prioridad:** P0 · **Riesgo:** alto (las políticas existen en el repositorio pero son inertes)
 - **Propósito:** Asegurar que las reglas de gobernanza agnósticas se traduzcan en bloqueos efectivos en runtime (ej. en el pipeline de evaluación) en lugar de permanecer pasivas como archivos markdown/JSON.
 - **Evidencia:** El SDLC Deep Audit reportó "Gobernanza transversal: Las reglas de gobernanza existen como archivos pero no se aplican en runtime" (Dimensión 7: AUSENTE).
-- **Fix propuesto:** Implementar un mecanismo transversal en el pipeline de evaluación que exija estrictamente la validación de los rulesets canónicos (no solo Rego) antes de emitir un veredicto APROBADO.
-- **Hecho cuando:** [ ] El pipeline valida automáticamente contra los rulesets JSON canónicos y falla explícitamente ante incumplimientos.
+- **Fix aplicado:** Se conectó el resultado de `RulesetValidatorService.validate()` al veredicto del pipeline mediante un gate sintético `general-rulesets` (`buildGeneralRulesetsGate`). Los issues blocking de los rulesets JSON canónicos ahora producen un gate fallido que participa en la verificación `EvaluationVerdict.passed`. Los issues no-blocking (warnings) producen un gate aprobado. Los contadores del summary incluyen las evaluaciones de rulesets generales.
+- **Hecho cuando:** [x] El pipeline valida automáticamente contra los rulesets JSON canónicos y falla explícitamente ante incumplimientos.
+- **Evidencia de cierre:** Validación: `npx jest --config packages/core-domain/jest.config.js --runTestsByPath packages/core-domain/src/application/services/satellite-evaluation-pipeline.spec.ts --no-coverage` (18/18 tests pasando, incluyendo 4 tests específicos de GT-395).
 
 #### GT-396
 

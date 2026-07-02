@@ -4,7 +4,7 @@
 
 **Status:** Active Tracking
 **Owner:** Evolith Architecture Board
-**Last Updated:** 2026-07-02 (GT-412 closure — enforced runtime policy preflight before governed capability execution, made OPA the hosted runtime default with explicit stub mode, and updated EN/ES progress counts.)
+**Last Updated:** 2026-07-02 (GT-395 closure — wired canonical JSON ruleset validation into pipeline verdict via synthetic general-rulesets gate; GT-412 closure — enforced runtime policy preflight before governed capability execution, made OPA the hosted runtime default with explicit stub mode, and updated EN/ES progress counts.)
 **Gap Details:** [Gap Reference Catalog](./gap-reference-catalog.md)
 
 This board is the single source of truth for technical debt, gaps, opportunities, enablers, priority, and status. Select a gap ID to open its problem statement, purpose, evidence, closure criteria, and references.
@@ -14,7 +14,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|:---:|
 | [`GT-377`](./gap-reference-catalog.md#gt-377) | R1 — `EvaluationContext`/`EvaluationResult` contracts + Contract Schema Registry (canonical types reusing `Verdict`/`PhaseId`; versioned schemas; ADR-0073 envelope; ESLint boundary guard banning `*Repository` for business entities) | `Core Domain` | Cross | P0 | L | `IN-PROGRESS` |
-| [`GT-395`](./gap-reference-catalog.md#gt-395) | **WS7 Gobernanza Transversal:** Las reglas de gobernanza agnósticas existen como archivos estáticos pero carecen de aplicación universal en runtime. | `Core Domain` | Cross | P0 | L | `PENDING` |
+| [`GT-395`](./gap-reference-catalog.md#gt-395) | **WS7 Gobernanza Transversal:** Las reglas de gobernanza agnósticas existen como archivos estáticos pero carecen de aplicación universal en runtime. | `Core Domain` | Cross | P0 | L | `DONE` |
 | [`GT-375`](./gap-reference-catalog.md#gt-375) | Core stateless evaluation contracts — formalize `EvaluationContext` (input) / `EvaluationResult` (output): consumers (Evolith Tracker) send context, the Core returns structured verdicts/recommendations. Product/tenant/initiative are **opaque context identifiers only**, never Core entities; epics/stories as `ExternalReferenceContext`. The Core emits non-binding `Recommendation`/`DecisionRecommendation`; the Tracker decides, persists and audits. Per ADR-0101 (corrects ADR-0100) / UP-002. **Umbrella epic — decomposed into `GT-376`…`GT-381` (R0–R5).** | `Cross` | Cross | P0 | XL | `IN-PROGRESS` |
 | [`GT-390`](./gap-reference-catalog.md#gt-390) | Remove the duplicate `rulesets/sdlc/phase-gates.rules.json` — it collides with `rulesets/phase-gates/phase-gates.rules.json` under a different `$id`, so the two can silently diverge. Consolidate to the one canonical location + add a CI guard that fails on same-named `*.rules.json`. (Extracted from `EVOLITH-ARCHITECTURE-DESIGN.md` §15/§16.) | `Governance` | Cross | P1 | S | `PENDING` |
 | [`GT-405`](./gap-reference-catalog.md#gt-405) | **MCP interaction adapter:** Not formalized. MCP bypasses strict runtime port. | `Agent Runtime` | Cross | P1 | S | `PENDING` |

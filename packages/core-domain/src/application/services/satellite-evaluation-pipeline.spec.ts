@@ -390,4 +390,158 @@ describe('SatelliteEvaluationPipeline (GT-281)', () => {
       expect(result.gates[0].artifactEvaluations[0].message).toContain('coverage');
     });
   });
+
+  describe('GT-395: WS7 Canonical Ruleset Enforcement', () => {
+    it('should fail the pipeline when general ruleset validation has blocking issues', async () => {
+      mockLoadGatesForPhase.mockResolvedValue([{
+        id: 'gate-f1', name: 'Business Sign-Off', phase: 'f1',
+        description: 'Scope frozen',
+        requiredArtifacts: [
+          { artifact: 'docs/prd.md', validation: 'PRD must exist', rules: ['rulesets/opa/governance.rego'] },
+        ],
+        blockingCriteria: [],
+      }]);
+      mockFs.exists.mockResolvedValue(true); // gate artifact exists
+
+      // General ruleset validation returns blocking issues
+      mockValidator.validate.mockResolvedValue({
+        status: 'failed',
+        rulesChecked: 5,
+        issues: [
+          {
+            ruleId: 'GOV-001',
+            severity: 'MUST',
+            category: 'governance',
+            title: 'Missing ADR registry',
+            description: 'evolith.yaml must declare an ADR registry',
+            blocking: true,
+          },
+        ],
+        coreRef: { version: null, path: '/core' },
+        timestamp: new Date().toISOString(),
+      });
+
+      const result = await pipeline.evaluate({
+        satellitePath: '/satellite',
+        corePath: '/core',
+        topology: 'modular-monolith',
+        phase: 'f1',
+      });
+
+      expect(result.passed).toBe(false);
+      // Synthetic general-rulesets gate should be present
+      const generalGate = result.gates.find(g => g.gateId === 'general-rulesets');
+      expect(generalGate).toBeDefined();
+      expect(generalGate!.verdict).toBe('failed');
+      expect(generalGate!.artifactEvaluations[0].passed).toBe(false);
+      expect(generalGate!.artifactEvaluations[0].message).toContain('Missing ADR registry');
+    });
+
+    it('should pass the pipeline when general ruleset validation has only non-blocking issues', async () => {
+      mockLoadGatesForPhase.mockResolvedValue([{
+        id: 'gate-f1', name: 'Business Sign-Off', phase: 'f1',
+        description: 'Scope frozen',
+        requiredArtifacts: [
+          { artifact: 'docs/prd.md', validation: 'PRD must exist', rules: ['rulesets/opa/governance.rego'] },
+        ],
+        blockingCriteria: [],
+      }]);
+      mockFs.exists.mockResolvedValue(true);
+
+      // General ruleset validation returns only non-blocking issues (warnings)
+      mockValidator.validate.mockResolvedValue({
+        status: 'warning',
+        rulesChecked: 5,
+        issues: [
+          {
+            ruleId: 'GOV-002',
+            severity: 'SHOULD',
+            category: 'governance',
+            title: 'Optional metadata missing',
+            description: 'Consider adding description to evolith.yaml',
+            blocking: false,
+          },
+        ],
+        coreRef: { version: null, path: '/core' },
+        timestamp: new Date().toISOString(),
+      });
+
+      const result = await pipeline.evaluate({
+        satellitePath: '/satellite',
+        corePath: '/core',
+        topology: 'modular-monolith',
+        phase: 'f1',
+      });
+
+      expect(result.passed).toBe(true);
+      const generalGate = result.gates.find(g => g.gateId === 'general-rulesets');
+      expect(generalGate).toBeDefined();
+      expect(generalGate!.verdict).toBe('passed');
+      expect(generalGate!.artifactEvaluations[0].passed).toBe(true);
+    });
+
+    it('should not add a synthetic gate when there are no general issues', async () => {
+      mockLoadGatesForPhase.mockResolvedValue([{
+        id: 'gate-f1', name: 'Business Sign-Off', phase: 'f1',
+        description: 'Scope frozen',
+        requiredArtifacts: [
+          { artifact: 'docs/prd.md', validation: 'PRD must exist', rules: ['rulesets/opa/governance.rego'] },
+        ],
+        blockingCriteria: [],
+      }]);
+      mockFs.exists.mockResolvedValue(true);
+
+      mockValidator.validate.mockResolvedValue({
+        status: 'passed',
+        rulesChecked: 10,
+        issues: [],
+        coreRef: { version: null, path: '/core' },
+        timestamp: new Date().toISOString(),
+      });
+
+      const result = await pipeline.evaluate({
+        satellitePath: '/satellite',
+        corePath: '/core',
+        topology: 'modular-monolith',
+        phase: 'f1',
+      });
+
+      expect(result.passed).toBe(true);
+      const generalGate = result.gates.find(g => g.gateId === 'general-rulesets');
+      expect(generalGate).toBeUndefined();
+      // Only the real gate should be present
+      expect(result.gates).toHaveLength(1);
+    });
+
+    it('should include general-rulesets in summary counts', async () => {
+      mockLoadGatesForPhase.mockResolvedValue([]);
+
+      mockValidator.validate.mockResolvedValue({
+        status: 'failed',
+        rulesChecked: 3,
+        issues: [
+          {
+            ruleId: 'GOV-001', severity: 'MUST', category: 'governance',
+            title: 'X', description: 'Y', blocking: true,
+          },
+          {
+            ruleId: 'GOV-002', severity: 'MUST', category: 'governance',
+            title: 'A', description: 'B', blocking: true,
+          },
+        ],
+        coreRef: { version: null, path: '/core' },
+        timestamp: new Date().toISOString(),
+      });
+
+      const result = await pipeline.evaluate({
+        satellitePath: '/satellite',
+        corePath: '/core',
+        topology: 'modular-monolith',
+      });
+
+      expect(result.summary.totalGates).toBe(1); // only general-rulesets gate
+      expect(result.summary.failedGates).toBe(1);
+      expect(result.summary.failedRules).toBe(2);
+    });
+  });
 });

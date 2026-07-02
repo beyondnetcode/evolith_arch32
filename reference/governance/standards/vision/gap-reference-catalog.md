@@ -4231,10 +4231,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Impact:** Core evaluation verdicts may report success while required governance rules are never executed.
 - **Affected files:** `packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts`, `rulesets/**/*.rules.json`, `rulesets/opa/`, `.harness/scripts/run-evolith-deep.mjs`.
 - **Complexity:** L
-- **Proposed fix:** Implement a cross-cutting mechanism in the evaluation pipeline that strictly mandates the passage of core rulesets (not just Rego) before returning a PASSED verdict.
+- **Applied fix:** Wired general `RulesetValidatorService.validate()` result into the pipeline verdict via a synthetic `general-rulesets` gate (`buildGeneralRulesetsGate`). Blocking issues from canonical JSON rulesets now produce a failed gate that participates in the top-level `EvaluationVerdict.passed` check. Non-blocking issues (warnings) produce a passing gate. The summary counts include general-ruleset evaluations.
 - **Acceptance criteria:**
-  - [ ] Pipeline automatically validates against canonical JSON rulesets and fails explicitly on non-compliance.
+  - [x] Pipeline automatically validates against canonical JSON rulesets and fails explicitly on non-compliance.
   - [ ] Deep audit reports WS7 governance enforcement as solid.
+- **Closure evidence:** Commit TBD. Validation: `npx jest --config packages/core-domain/jest.config.js --runTestsByPath packages/core-domain/src/application/services/satellite-evaluation-pipeline.spec.ts --no-coverage` (18/18 tests passing including 4 GT-395-specific tests covering blocking issues, non-blocking issues, no-issues, and summary counts).
 - **Dependencies:** `GT-412`.
 
 #### GT-396

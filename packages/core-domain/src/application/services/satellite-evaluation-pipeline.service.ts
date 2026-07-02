@@ -58,8 +58,15 @@ export class SatelliteEvaluationPipeline {
       }
     }
 
-    // Step 4: Run general ruleset validation as well
+    // Step 4: Run general ruleset validation (GT-395: enforce canonical rulesets)
     const generalResult = await this.validator.validate(manifest.satellitePath, corePath);
+
+    // GT-395: Convert blocking general-result issues into a synthetic gate so
+    // they are visible in the output and participate in the top-level verdict.
+    const generalGate = this.buildGeneralRulesetsGate(generalResult);
+    if (generalGate) {
+      gateResults.push(generalGate);
+    }
 
     // Step 5: Build summary
     const allEvals = gateResults.flatMap(g => g.artifactEvaluations);
@@ -88,6 +95,7 @@ export class SatelliteEvaluationPipeline {
     );
 
     return {
+      // GT-395: gate-level verdicts AND general ruleset enforcement both gate the verdict
       passed: gateResults.every(g => g.verdict === 'passed'),
       resolvedTopology: topology,
       gates: gateResults,
@@ -262,6 +270,37 @@ export class SatelliteEvaluationPipeline {
       }
     }
     return path.join(satellitePath, '..', 'evolith');
+  }
+
+  /**
+   * GT-395: Converts the general ruleset validation result into a synthetic
+   * PipelineGateResult. Blocking issues produce a 'failed' gate; non-blocking
+   * issues produce a 'passed' gate (warnings only). Returns null when there
+   * are no issues at all (no synthetic gate needed).
+   */
+  private buildGeneralRulesetsGate(
+    generalResult: { status: string; issues: Array<{ ruleId: string; severity: string; category: string; title: string; description: string; blocking: boolean; file?: string }>; rulesChecked: number },
+  ): PipelineGateResult | null {
+    if (generalResult.issues.length === 0) return null;
+
+    const evaluations: RuleEvaluation[] = generalResult.issues.map(issue => ({
+      ruleId: issue.ruleId,
+      rulePath: `rulesets/${issue.category}/${issue.ruleId}`,
+      artifact: issue.file || issue.category,
+      passed: !issue.blocking,
+      message: `${issue.title}: ${issue.description}`,
+      severity: issue.severity === 'MUST' ? 'error' as EvaluationSeverity : 'warning' as EvaluationSeverity,
+      remediation: '',
+      gateRef: 'general-rulesets',
+    }));
+
+    return {
+      gateId: 'general-rulesets',
+      gateName: 'Canonical Ruleset Enforcement',
+      phase: 'cross',
+      verdict: evaluations.every(e => e.passed) ? 'passed' : 'failed',
+      artifactEvaluations: evaluations,
+    };
   }
 
   private deriveRuleId(rulePath: string): string {

@@ -2,6 +2,8 @@ import {
   AgentRuntimeService,
   AutoApprovalAdapter,
   DEFAULT_SKILLS,
+  type AgentRuntimeRequestWire,
+  type AgentRuntimeResult,
   InMemoryHarnessAdapter,
   InMemoryMemoryAdapter,
   InMemoryTrackerTraceAdapter,
@@ -32,5 +34,17 @@ export class AgentRuntimeFactory {
   
   static createChatAdapter(): SmartCliChatInteractionAdapter {
       return new SmartCliChatInteractionAdapter();
+  }
+
+  static async executeCommand(input: AgentRuntimeRequestWire): Promise<AgentRuntimeResult> {
+    const adapter = this.createCommandAdapter();
+    const runtime = this.createDefaultRuntime();
+    return runtime.handle(adapter.toRuntimeRequest(input));
+  }
+
+  static async executeChat(input: AgentRuntimeRequestWire): Promise<AgentRuntimeResult> {
+    const adapter = this.createChatAdapter();
+    const runtime = this.createDefaultRuntime();
+    return runtime.handle(adapter.toRuntimeRequest(input));
   }
 }

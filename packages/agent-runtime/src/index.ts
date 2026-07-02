@@ -18,3 +18,6 @@ export * from './domain/index';
 export * from './application/index';
 export * from './adapters/index';
 export * from './bootstrap';
+export { ArchitecturePlanInterpreter } from './capabilities/architecture-plan-interpreter';
+export { GeminiProvider } from './providers/GeminiProvider';
+export type { ILLMProvider } from './providers/ILLMProvider';

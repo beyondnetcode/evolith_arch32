@@ -56,7 +56,9 @@ describe('public surface freeze (GT-388)', () => {
 
   it('the root re-exports the bootstrap factory, the request parser, and every adapter', () => {
     const main = keys(mainEntry);
+    expect(main).toContain('ArchitecturePlanInterpreter');
     expect(main).toContain('createAgentRuntime'); // bootstrap
+    expect(main).toContain('GeminiProvider');
     expect(main).toContain('parseAgentRuntimeRequest'); // domain contract helper
     for (const name of ADAPTERS_SURFACE) {
       expect(main).toContain(name);

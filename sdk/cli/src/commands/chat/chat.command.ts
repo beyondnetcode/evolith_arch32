@@ -21,19 +21,13 @@ export class ChatCommand extends BaseEvolithCommand {
       return;
     }
 
-    const adapter = AgentRuntimeFactory.createChatAdapter();
-    const runtime = AgentRuntimeFactory.createDefaultRuntime();
-
-    // Map through the new InteractionAdapterPort
-    const request = adapter.toRuntimeRequest({
-      intent: message,
-      // Chat is dry_run by default, but user can override if supported
-      dry_run: options?.dryRun,
-    });
-
     try {
-      this.promptService.showInfo(`Processing intent via Agent Runtime: "${request.intent}"`);
-      const result = await runtime.handle(request);
+      this.promptService.showInfo(`Processing intent via Agent Runtime: "${message}"`);
+      const result = await AgentRuntimeFactory.executeChat({
+        intent: message,
+        // Chat is dry_run by default, but user can override if supported.
+        dry_run: options?.dryRun,
+      });
       
       this.promptService.showSuccess(`Status: ${result.status}`);
       if (result.summary) {

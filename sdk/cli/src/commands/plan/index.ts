@@ -2,8 +2,7 @@ import { Command } from 'commander';
 import * as fs from 'fs';
 import * as path from 'path';
 import { CoreApiClient } from '../../CoreApiClient';
-import { ArchitecturePlanInterpreter } from '@evolith/agent-runtime/capabilities/architecture-plan-interpreter';
-import { GeminiProvider } from '@evolith/agent-runtime/providers/GeminiProvider';
+import { ArchitecturePlanInterpreter, GeminiProvider } from '@evolith/agent-runtime';
 import { ArchitecturePlanStatus } from '@evolith/core-domain';
 import { AgentRuntimeFactory } from '../../infrastructure/agent/agent-runtime.factory';
 
@@ -38,7 +37,8 @@ export function makePlanCommand() {
         console.log(`[Evolith CLI] Architecture Plan Draft saved to .bmad-core/architecture-plan.json`);
         console.log(`[Evolith CLI] Run 'evolith plan evaluate' to obtain SDLC mode from the Core Engine.`);
       } catch (err) {
-        console.error(`[Evolith CLI] Failed to generate plan: ${err.message}`);
+        const message = err instanceof Error ? err.message : String(err);
+        console.error(`[Evolith CLI] Failed to generate plan: ${message}`);
       }
     });
 
@@ -57,17 +57,12 @@ export function makePlanCommand() {
       
       console.log(`[Evolith CLI] Routing evaluation request through Agent Runtime...`);
       
-      const runtime = AgentRuntimeFactory.createDefaultRuntime();
-      const adapter = AgentRuntimeFactory.createCommandAdapter();
-      
-      const request = adapter.toRuntimeRequest({
-        intent: 'evaluate architecture plan',
-        tool: 'evaluate-architecture-plan',
-        parameters: { plan }
-      });
-      
       try {
-        const result = await runtime.handle(request);
+        const result = await AgentRuntimeFactory.executeCommand({
+          intent: 'evaluate architecture plan',
+          tool: 'evaluate-architecture-plan',
+          parameters: { plan },
+        });
         if (result.status === 'error' || result.status === 'blocked') {
           console.error(`[Evolith CLI] Evaluation failed: ${result.summary}`);
           return;

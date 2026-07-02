@@ -1304,6 +1304,76 @@
       "docs": [
         "reference/architecture/agent-runtime/README.md"
       ]
+    },
+    {
+      "id": "interaction-adapter-port",
+      "label": {
+        "en": "Interaction Adapter Port",
+        "es": "Puerto de Interacción"
+      },
+      "shortLabel": {
+        "en": "Interaction Port",
+        "es": "Puerto Interacción"
+      },
+      "type": "port",
+      "layerId": "core",
+      "status": "partial"
+    },
+    {
+      "id": "smart-cli-adapter",
+      "label": {
+        "en": "Smart CLI Adapter",
+        "es": "Adaptador Smart CLI"
+      },
+      "shortLabel": {
+        "en": "CLI Adapter",
+        "es": "Adaptador CLI"
+      },
+      "type": "adapter",
+      "layerId": "experience",
+      "status": "partial"
+    },
+    {
+      "id": "hermes-chat-adapter",
+      "label": {
+        "en": "Hermes Chat Box Adapter",
+        "es": "Adaptador Hermes Chat Box"
+      },
+      "shortLabel": {
+        "en": "Hermes Adapter",
+        "es": "Adaptador Hermes"
+      },
+      "type": "adapter",
+      "layerId": "experience",
+      "status": "partial"
+    },
+    {
+      "id": "opencode-adapter",
+      "label": {
+        "en": "OpenCode Interaction Adapter",
+        "es": "Adaptador OpenCode"
+      },
+      "shortLabel": {
+        "en": "OpenCode",
+        "es": "OpenCode"
+      },
+      "type": "adapter",
+      "layerId": "experience",
+      "status": "not-implemented"
+    },
+    {
+      "id": "mcp-interaction-adapter",
+      "label": {
+        "en": "MCP Interaction Adapter",
+        "es": "Adaptador Interacción MCP"
+      },
+      "shortLabel": {
+        "en": "MCP",
+        "es": "MCP"
+      },
+      "type": "adapter",
+      "layerId": "experience",
+      "status": "partial"
     }
   ],
   "edges": [
@@ -2446,6 +2516,44 @@
       "gate": {
         "en": "Production Live",
         "es": "Production Live"
+      }
+    }
+  ],
+  "links": [
+    {
+      "source": "smart-cli-adapter",
+      "target": "interaction-adapter-port",
+      "type": "delegates-to",
+      "label": {
+        "en": "Uses Port",
+        "es": "Usa Puerto"
+      }
+    },
+    {
+      "source": "hermes-chat-adapter",
+      "target": "interaction-adapter-port",
+      "type": "delegates-to",
+      "label": {
+        "en": "Uses Port",
+        "es": "Usa Puerto"
+      }
+    },
+    {
+      "source": "opencode-adapter",
+      "target": "interaction-adapter-port",
+      "type": "delegates-to",
+      "label": {
+        "en": "Uses Port",
+        "es": "Usa Puerto"
+      }
+    },
+    {
+      "source": "mcp-interaction-adapter",
+      "target": "interaction-adapter-port",
+      "type": "delegates-to",
+      "label": {
+        "en": "Uses Port",
+        "es": "Usa Puerto"
       }
     }
   ]

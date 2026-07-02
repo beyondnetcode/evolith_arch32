@@ -112,7 +112,44 @@ The assessment scores against the 5 standard TOGAF ACMM levels (1: Initial to 5:
 
 ---
 
-## 5. Pattern Maturity Matrix (International Pattern Catalog)
+## 5. Adapter Capability Maturity (Agent Runtime)
+
+This dimension measures the maturity of the interaction surfaces and internal orchestration ports against the Evolith Core stateless boundary rules.
+
+**Maturity Levels:**
+* **M0 — Not identified:** Capability conceptualized but no port/interface defined.
+* **M1 — Documented:** Documented requirement or design, no code.
+* **M2 — Port defined:** TypeScript interface (`IPort`) exists.
+* **M3 — Stub/InMemory adapter implemented:** Implementation exists but simulates behavior (not production-ready).
+* **M4 — Production adapter implemented:** Real integration implemented (e.g., HTTP, Redis).
+* **M5 — Governed, observable and tested:** Fully covered by OPA, tracing, approval flows, and CI gates.
+
+| Capability / Port | Objective | Currently Implemented in Core/Runtime | State | Pending / Recommended | Closing Benefit | Priority |
+|---|---|---|---|---|---|---|
+| **Agent Engine** | Replaceable agentic reasoning. | `StubAgentEngineAdapter`, `HermesAgentAdapter`, `SwarmsAgentAdapter`, `RoutingAgentAdapter` | `Implemented` | `OpenCodeAgentAdapter`, `OllamaLocalAgentAdapter`, `OpenAIAdapter`, `ClaudeAdapter`, `GeminiAdapter` | Allows various agentic engines without coupling Evolith to Hermes. Favors privacy, cost, flexibility. | Medium |
+| **Engine Routing** | Select engine by intent or context. | `RoutingAgentAdapter` | `Partial` | `PolicyBasedEngineRouter`, `RiskAwareEngineRouter`, `CostAwareEngineRouter`, `PrivacyAwareEngineRouter` | Allows choosing engine by risk, cost, SDLC phase, privacy, or policy. | High |
+| **Harness Execution** | Execute simulated or real `.harness` capabilities. | `InMemoryHarnessAdapter`, `HarnessProcessAdapter` | `Implemented` | `DockerHarnessAdapter`, `KubernetesJobHarnessAdapter`, `RemoteHarnessAdapter`, `GitHubActionsHarnessAdapter` | Isolates validations, allows remote execution, CI/CD, and Kubernetes. | Medium |
+| **Core Evaluation** | Evaluate rules, gaps, risks, and governance. | `StubCoreEvaluationAdapter`, `InProcessCoreEvaluationAdapter`, `HttpCoreEvaluationAdapter` | `Implemented` | `GrpcCoreEvaluationAdapter`, `BatchCoreEvaluationAdapter`, `CachedCoreEvaluationAdapter` | Improves performance, scalability, and massive evaluation. | Medium |
+| **Policy / OPA** | Validate policies and block forbidden actions. | `StubPolicyValidationAdapter`, `OpaCliPolicyValidationAdapter` | `Implemented` | `OpaHttpAdapter`, `ConftestAdapter`, `KyvernoAdapter`, `PolicyBundleRegistryAdapter` | Enables remote policy-as-code, K8s validation, and versioned bundles. | High |
+| **Tracker Trace** | Publish traceability to memory or Tracker. | `InMemoryTrackerTraceAdapter`, `HttpTrackerTraceAdapter` | `Implemented` | `EventBusTraceAdapter`, `KafkaTraceAdapter`, `OpenTelemetryTraceAdapter`, `AuditLogTraceAdapter` | Enhances enterprise traceability, auditing, and observability. | Medium |
+| **Memory** | Maintain temporary/persisted runtime memory. | `InMemoryMemoryAdapter`, `FileMemoryAdapter` | `Implemented` | `RedisMemoryAdapter`, `PostgresMemoryAdapter`, `VectorMemoryAdapter`, `ObsidianVaultMemoryAdapter` | Enables shared, persistent, and semantic memory for agents. | Medium |
+| **Skill Registry** | Resolve intents/tools to governed capabilities. | `LocalSkillRegistryAdapter`, `DEFAULT_SKILLS` | `Implemented` | `RemoteSkillRegistryAdapter`, `GitSkillRegistryAdapter`, `MarketplaceSkillRegistryAdapter`, `TenantSkillBundleAdapter` | Allows versioned, inheritable, extensible capabilities by product/bundle. | High |
+| **Communication Gateway** | Adapt existing communication surfaces. | `CliCommunicationGatewayAdapter` | `Partial` | `InteractionAdapterPort`, `SmartCliCommandInteractionAdapter`, `SmartCliChatInteractionAdapter`, `HermesChatBoxInteractionAdapter`, `OpenCodeInteractionAdapter`, `McpInteractionAdapter`, `WebhookInteractionAdapter` | **Critical piece** to allow multiple interfaces without duplicating commands or bypassing governance. | Critical |
+| **Scheduler** | Schedule or defer runtime executions. | `InMemorySchedulerAdapter`, `FileSchedulerAdapter` | `Implemented` | `CronSchedulerAdapter`, `TemporalAdapter`, `BullMQSchedulerAdapter`, `KubernetesCronJobAdapter` | Allows recurrent audits, durable jobs, and scheduled re-validations. | Low |
+| **Approval / HITL** | Manage human-in-the-loop approval or default blocking. | `AutoApprovalAdapter`, `DenyByDefaultApprovalAdapter` | `Partial` | `TrackerApprovalAdapter`, `GitHubApprovalAdapter`, `SlackApprovalAdapter`, `TeamsApprovalAdapter`, `EmailApprovalAdapter` | Enables real human approval for sensitive actions. | High |
+| **MCP Interaction** | Expose Evolith to external agents via MCP. | MCP exists as ecosystem component, but lacks formal runtime adapter. | `Partial` | `McpInteractionAdapter`, `McpToolRegistryAdapter`, `McpPolicyGuardAdapter` | External agents consume Evolith capabilities with governance. | High |
+| **Smart CLI Interaction** | Keep Smart CLI as official console and governed entry. | Smart CLI exists, but not formalized as a common interaction adapter. | `Partial` | `SmartCliCommandInteractionAdapter`, `SmartCliChatInteractionAdapter`, `CommandCapabilityAdapter` | CLI command and CLI chat use the same runtime/capability layer. | Critical |
+| **Hermes Chat Box Interaction** | Use Hermes Chat Box as optional conversational UI. | `HermesAgentAdapter` exists as engine, but Chat Box not formalized as source/interface adapter. | `Partial` | `HermesChatBoxInteractionAdapter` | Expose Hermes Chat Box without it executing commands directly. | High |
+| **OpenCode Interaction** | Use OpenCode as external chat/agent UI. | Not implemented. | `Not implemented` | `OpenCodeInteractionAdapter`, `OpenCodeMcpAdapter`, `OpenCodeCliBridgeAdapter` | Use OpenCode as external chat box without free shell access. | Medium |
+| **GitHub Automation** | Create satellite repos, issues, PRs, CI from governed flows. | Not implemented as direct runtime adapter. | `Not implemented` | `GitHubRepositoryAdapter`, `GitHubIssueAdapter`, `GitHubPullRequestAdapter`, `GitHubActionsAdapter` | Governed SDLC automation over GitHub. | Medium |
+| **Notifications / Collaboration** | Notify blocked gates, pending approvals, and results. | Not implemented as direct runtime adapter. | `Not implemented` | `SlackAdapter`, `TeamsAdapter`, `EmailNotificationAdapter`, `DiscordAdapter` | Improves collaboration, alerts, and approvals. | Medium |
+| **Observability** | Observe runtime, engines, latency, errors, and blocks. | Partial via Tracker Trace. | `Partial` | `OpenTelemetryAdapter`, `PrometheusMetricsAdapter`, `StructuredAuditAdapter` | Enterprise monitoring and technical auditing. | Medium |
+| **Knowledge / RAG** | Query ADRs, blueprints, rulesets before suggesting actions. | Not implemented as consolidated adapter. | `Not implemented` | `RagKnowledgeAdapter`, `DocsSearchAdapter`, `VectorStoreAdapter`, `GitDocsAdapter`, `ObsidianAdapter` | Enhances agentic recommendation quality using internal evidence. | High |
+| **Secrets / Config** | Manage credentials, endpoints, engine selection, and config. | Partial via bootstrap/overrides. | `Partial` | `VaultSecretAdapter`, `EnvConfigAdapter`, `RemoteConfigAdapter`, `PolicyBundleConfigAdapter` | Avoids hardcoding, improves per-environment configuration security. | High |
+
+---
+
+## 6. Pattern Maturity Matrix (International Pattern Catalog)
 
 | Pattern Cluster | Specific Pattern | Applicability | Evidence-Backed State | Rationale |
 | :--- | :--- | :--- | :--- | :--- |
@@ -128,7 +165,7 @@ The assessment scores against the 5 standard TOGAF ACMM levels (1: Initial to 5:
 
 ---
 
-## 6. Anti-Pattern Immunization
+## 7. Anti-Pattern Immunization
 
 The architecture deploys explicit "antibodies" against the six highest-risk anti-patterns. Summary (criticality · defense):
 
@@ -147,7 +184,7 @@ The architecture deploys explicit "antibodies" against the six highest-risk anti
 
 ---
 
-## 7. Product Vision Alignment
+## 8. Product Vision Alignment
 
 Pillar-by-pillar match against the [Product Vision Master](../../../product-suite/vision/evolith-product-vision-master.md). Detailed component scores live in the [Baseline Snapshot](./gap-reference-catalog.md#2-historical-baseline-snapshot) of the Gap Reference Catalog.
 
@@ -162,7 +199,7 @@ Pillar-by-pillar match against the [Product Vision Master](../../../product-suit
 
 ---
 
-## 8. Executive Scoring & Open Gaps
+## 9. Executive Scoring & Open Gaps
 
 ### Combined Score (TOGAF ACMM)
 
@@ -183,11 +220,24 @@ Tracker and Product Suite maturity are explicitly excluded from the Core score b
 
 ---
 
-## 9. AI-Augmented Dimension (Optional)
+## 10. AI-Augmented Dimension (Optional)
 
 For products adopting the AI-Augmented engineering section, a complementary maturity matrix exists with 3 levels: AI-Assisted, AI-Integrated, and AI-Orchestrated.
 
 -> [View AI Maturity Matrix](../ai-augmented/07-maturity-model/ai-maturity-matrix.md)
+
+---
+
+## 11. BMAD Intelligence Update
+
+This maturity assessment explicitly feeds the **BMAD Intelligence Feedback Loop**. Insights generated here inform internal agent capabilities, evaluation rules, and standard checklists:
+
+* **Updated Agents:** `winston` (Audit), `architect` (Architecture) now evaluate port/adapter compliance.
+* **New Skills Added:** `adapter-maturity-analysis`, `interaction-adapter-gap-analysis`.
+* **New Rules Added:** `core-must-remain-stateless`, `external-tech-must-use-adapter`, `chat-interfaces-cannot-execute-critical-actions`.
+* **New Checklists:** `Adapter Maturity Checklist`, `Interaction Adapter Readiness Checklist`.
+
+These intelligence resources are versioned inside `.bmad-core/agents/` and apply continuously to future PRs and governance audits.
 
 ---
 

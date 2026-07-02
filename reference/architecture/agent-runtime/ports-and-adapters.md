@@ -78,3 +78,118 @@ The application service (`AgentRuntimeService`) folds whatever ran:
 All three are pure functions in
 [`result-assembler.ts`](../../../packages/agent-runtime/src/application/result-assembler.ts),
 so the status/finding mapping is unit-testable in isolation.
+
+## Architecture Maps & Maturity Evolution
+
+The following diagrams illustrate the strategic alignment, current gaps, and governance loops related to the `InteractionAdapterPort` and overall capability maturity.
+
+### 1. Adapter Capability Map (Interface Routing)
+
+All external surfaces must route through the single `InteractionAdapterPort` to prevent bypassing governance.
+
+```mermaid
+graph TD
+    subgraph Interfaces
+        CLI[Smart CLI]
+        Chat[Hermes Chat Box]
+        MCP[MCP Server]
+        OpenCode[OpenCode UI]
+        Webhook[Webhook]
+    end
+
+    subgraph Runtime [Agent Runtime Orchestration]
+        IAP(InteractionAdapterPort)
+        Core[Core Evaluation Port]
+        OPA[Policy Validation Port]
+        Engine[Agent Engine Router]
+        Harness[Harness Execution]
+        HITL[Approval Port]
+    end
+
+    CLI --> IAP
+    Chat --> IAP
+    MCP --> IAP
+    OpenCode --> IAP
+    Webhook --> IAP
+
+    IAP --> OPA
+    OPA --> Core
+    Core --> Engine
+    Engine --> HITL
+    HITL --> Harness
+```
+
+### 2. Current vs Target Gap (Interaction Port)
+
+The current fragmented state allows certain interfaces (like Chat or MCP) to occasionally bypass the core runtime. The target state enforces the boundary.
+
+```mermaid
+graph TD
+    subgraph Current State (Fragmented)
+        CLI_C[Smart CLI] --> Runtime_C[Runtime Orchestrator]
+        Chat_C[Hermes Chat Box] -.->|Bypasses Governance| Engine_C[Hermes Engine]
+        MCP_C[MCP Server] -.->|Direct| Core_C[Core API]
+    end
+
+    subgraph Target State (Governed)
+        CLI_T[Smart CLI] --> IAP_T(InteractionAdapterPort)
+        Chat_T[Hermes Chat Box] --> IAP_T
+        MCP_T[MCP Server] --> IAP_T
+        IAP_T --> Runtime_T[Runtime Orchestrator]
+        Runtime_T --> Core_T[Core API / Engines]
+    end
+```
+
+### 3. Governance Flow (HITL & OPA)
+
+The logical sequence that every request entering the `InteractionAdapterPort` must traverse before reaching `.harness` execution.
+
+```mermaid
+sequenceDiagram
+    participant UI as Interaction Port
+    participant OPA as Policy Engine
+    participant Core as Core Evaluation
+    participant HITL as Approval Port
+    participant Engine as Agent Engine
+    participant Exec as Harness Execution
+
+    UI->>OPA: 1. Validate Intent & Source
+    OPA-->>UI: Blocked (if policy fails)
+    UI->>Core: 2. Evaluate Capabilities & Risk
+    Core-->>UI: Requirements/Gaps
+    UI->>Engine: 3. Propose Plan
+    Engine-->>UI: Plan Proposed
+    UI->>HITL: 4. Request Human Approval (if critical)
+    HITL-->>UI: Approved / Denied
+    UI->>Exec: 5. Execute Action
+    Exec-->>UI: Result
+```
+
+### 4. BMAD Feedback Loop
+
+How runtime adapters feed intelligence back into `.bmad-core` agents to close gaps.
+
+```mermaid
+graph LR
+    subgraph Runtime Telemetry
+        Trace[Tracker Trace]
+        Audit[Observability]
+    end
+
+    subgraph BMAD Intelligence
+        Winston[Winston Agent]
+        Architect[Architect Agent]
+        Rules[Governance Rules]
+    end
+
+    subgraph Evolution
+        PR[PR Checks]
+        Gaps[Gap Tracking]
+    end
+
+    Trace -->|Identifies drift| Winston
+    Audit -->|Maturity Gaps| Architect
+    Winston -->|Proposes| Rules
+    Architect -->|Updates| Gaps
+    Rules -->|Enforces| PR
+```

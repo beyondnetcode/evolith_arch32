@@ -4229,3 +4229,113 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 **Evidencia:** Endpoint creado en la API de NestJS validado vía E2E.
 **Cierre:** Se expone una ruta API capaz de recibir un `AgentRuntimeRequestWire`.
 **Referencias:** ADR-0104, `run-evolith-deep.mjs` (Audit)
+
+#### GT-401
+
+**Título:** `InteractionAdapterPort` ausente o no formalizado
+
+> **Problema (2026-07-02, BMAD Intelligence Update):** Sin un `InteractionAdapterPort` formal, múltiples interfaces (CLI, Chat, MCP, Webhooks) corren el riesgo de duplicar lógica de comandos o evadir las capas de orquestación y gobernanza del Agent Runtime.
+
+**Propósito:** Establecer un único punto de entrada gobernado para todas las fuentes de interacción de UI o máquinas.
+**Evidencia:** El código contiene gateways dispares o invocación directa de motores.
+**Cierre:** `InteractionAdapterPort` está completamente integrado en la arquitectura de runtime y actúa como límite estricto.
+**Referencias:** Evaluación de Madurez (Adapter Capability Maturity)
+
+#### GT-402
+
+**Título:** Smart CLI no formalizado como adaptador de interacción runtime
+
+> **Problema (2026-07-02, BMAD Intelligence Update):** Smart CLI ejecuta sus capacidades directamente o duplica la orquestación en lugar de delegar al `InteractionAdapterPort`.
+
+**Propósito:** Formalizar Smart CLI (modos comando y chat) como un adaptador más que consume el core gobernado.
+**Evidencia:** `SmartCliCommandInteractionAdapter` está pendiente de integración completa.
+**Cierre:** Smart CLI enruta todos sus comandos a través de la orquestación del Agent Runtime.
+**Referencias:** Evaluación de Madurez (Adapter Capability Maturity)
+
+#### GT-403
+
+**Título:** Hermes Chat Box no formalizado como adaptador de origen/interfaz
+
+> **Problema (2026-07-02, BMAD Intelligence Update):** La interfaz Hermes opera como par del CLI o evade la resolución estricta de capacidades.
+
+**Propósito:** Asegurar que Hermes Chat Box no pueda ejecutar comandos directamente y pase por el `InteractionAdapterPort`.
+**Evidencia:** Falta `HermesChatBoxInteractionAdapter` en el despliegue de producción.
+**Cierre:** La UI de Hermes solo envía intenciones a través del puerto de interacción.
+**Referencias:** Evaluación de Madurez (Adapter Capability Maturity)
+
+#### GT-404
+
+**Título:** Adaptador de OpenCode no implementado
+
+> **Problema (2026-07-02, BMAD Intelligence Update):** OpenCode se visiona como una UI externa de chat/agente, pero carece de un adaptador controlado para interactuar de forma segura.
+
+**Propósito:** Implementar un `OpenCodeInteractionAdapter` para evitar acceso libre de shell.
+**Evidencia:** No existe implementación de adaptador para OpenCode.
+**Cierre:** Las peticiones de OpenCode se mapean a capacidades gobernadas mediante su adaptador.
+**Referencias:** Evaluación de Madurez (Adapter Capability Maturity)
+
+#### GT-405
+
+**Título:** Adaptador de interacción MCP no formalizado
+
+> **Problema (2026-07-02, BMAD Intelligence Update):** MCP existe como componente, pero carece de un `McpInteractionAdapter` formal conectado al puerto runtime.
+
+**Propósito:** Asegurar que agentes externos usando MCP estén sujetos a la misma gobernanza de OPA y phase-gates.
+**Evidencia:** El servidor MCP evade o se acopla de forma laxa al nuevo orquestador.
+**Cierre:** Las interacciones MCP usan estrictamente el `InteractionAdapterPort`.
+**Referencias:** Evaluación de Madurez (Adapter Capability Maturity)
+
+#### GT-406
+
+**Título:** Adaptadores externos de aprobación HITL ausentes
+
+> **Problema (2026-07-02, BMAD Intelligence Update):** Las operaciones sensibles usan `DenyByDefaultApprovalAdapter` porque faltan adaptadores reales de humanos en el loop (Tracker, Slack, GitHub).
+
+**Propósito:** Implementar adaptadores de aprobación externa para destrabar acciones de alto impacto de manera segura.
+**Evidencia:** No hay puertos de aprobación Slack/GitHub/Tracker implementados.
+**Cierre:** Una capacidad que requiere aprobación puede ser autorizada por un humano en una plataforma externa.
+**Referencias:** Evaluación de Madurez (Adapter Capability Maturity)
+
+#### GT-407
+
+**Título:** Enrutamiento de motores basado en políticas ausente
+
+> **Problema (2026-07-02, BMAD Intelligence Update):** El runtime no puede enrutar dinámicamente a distintos motores (Ollama, OpenAI, Hermes) según riesgo, costo o políticas de privacidad.
+
+**Propósito:** Implementar un `PolicyBasedEngineRouter`.
+**Evidencia:** Configuración de un solo motor o hardcodeada.
+**Cierre:** El runtime selecciona el motor correcto vía política respaldada por OPA.
+**Referencias:** Evaluación de Madurez (Adapter Capability Maturity)
+
+#### GT-408
+
+**Título:** Adaptador Knowledge/RAG ausente
+
+> **Problema (2026-07-02, BMAD Intelligence Update):** Los agentes recomiendan acciones sin base nativa contra ADRs, blueprints o rulesets.
+
+**Propósito:** Implementar un adaptador RAG/Knowledge para que los agentes BMAD internos consulten el corpus.
+**Evidencia:** No hay mecanismo RAG en la capa del runtime.
+**Cierre:** Los agentes pueden consultar documentos arquitectónicos directamente a través de una capacidad.
+**Referencias:** Evaluación de Madurez (Adapter Capability Maturity)
+
+#### GT-409
+
+**Título:** Verificaciones de frescura de documentación/diagramas ausentes
+
+> **Problema (2026-07-02, BMAD Intelligence Update):** Los mapas visuales, diagramas Mermaid y documentación de adaptadores pueden desfasarse silenciosamente del código.
+
+**Propósito:** Crear scripts de validación en CI (`validate-adapter-maturity-matrix.mjs`) para bloquear desincronizaciones.
+**Evidencia:** Mapas y diagramas requieren actualizaciones manuales.
+**Cierre:** CI falla si cambian configuraciones sin actualizaciones de documentación correspondientes.
+**Referencias:** Evaluación de Madurez (Adapter Capability Maturity)
+
+#### GT-410
+
+**Título:** Bucle de retroalimentación de inteligencia BMAD ausente o incompleto
+
+> **Problema (2026-07-02, BMAD Intelligence Update):** Se hacen auditorías pero no alimentan estructuralmente a los agentes `.bmad-core` con nuevas reglas o skills.
+
+**Propósito:** Sistematizar la creación de reglas y skills para agentes BMAD tras análisis de gaps importantes.
+**Evidencia:** Faltan skills de análisis de madurez en agentes BMAD.
+**Cierre:** Winston y Architect alertan proactivamente de violaciones de madurez en PRs.
+**Referencias:** Evaluación de Madurez (Adapter Capability Maturity)

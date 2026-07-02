@@ -112,7 +112,44 @@ La evaluación usa los 5 niveles estándar del ACMM (1: Inicial a 5: Optimizante
 
 ---
 
-## 5. Matriz de Madurez de Patrones (Catálogo Internacional de Patrones)
+## 5. Madurez de Capacidades de Adaptadores (Agent Runtime)
+
+Esta dimensión mide la madurez de las superficies de interacción y los puertos de orquestación internos contra las reglas de límites stateless del Evolith Core.
+
+**Niveles de Madurez:**
+* **M0 — No identificado:** Capacidad conceptualizada pero no se ha definido puerto/interfaz.
+* **M1 — Documentado:** Requisito o diseño documentado, sin código.
+* **M2 — Puerto definido:** Existe interfaz de TypeScript (`IPort`).
+* **M3 — Adaptador Stub/InMemory implementado:** La implementación existe pero simula el comportamiento (no listo para producción).
+* **M4 — Adaptador de Producción implementado:** Integración real implementada (ej. HTTP, Redis).
+* **M5 — Gobernado, observable y testeado:** Completamente cubierto por OPA, tracing, flujos de aprobación y gates de CI.
+
+| Capacidad / Puerto | Objetivo | Implementado Actualmente en Core/Runtime | Estado | Pendiente / Recomendado | Beneficio de Cerrar | Prioridad |
+|---|---|---|---|---|---|---|
+| **Agent Engine** | Razonamiento agentic reemplazable. | `StubAgentEngineAdapter`, `HermesAgentAdapter`, `SwarmsAgentAdapter`, `RoutingAgentAdapter` | `Implementado` | `OpenCodeAgentAdapter`, `OllamaLocalAgentAdapter`, `OpenAIAdapter`, `ClaudeAdapter`, `GeminiAdapter` | Permite usar distintos motores sin acoplar Evolith a Hermes. Favorece privacidad, costo. | Media |
+| **Engine Routing** | Elegir motor según contexto o intención. | `RoutingAgentAdapter` | `Parcial` | `PolicyBasedEngineRouter`, `RiskAwareEngineRouter`, `CostAwareEngineRouter`, `PrivacyAwareEngineRouter` | Seleccionar motor por riesgo, costo, fase SDLC o política. | Alta |
+| **Harness Execution** | Ejecutar capacidades `.harness` (simuladas o reales). | `InMemoryHarnessAdapter`, `HarnessProcessAdapter` | `Implementado` | `DockerHarnessAdapter`, `KubernetesJobHarnessAdapter`, `RemoteHarnessAdapter`, `GitHubActionsHarnessAdapter` | Aísla validaciones, permite ejecución remota, CI/CD y K8s. | Media |
+| **Core Evaluation** | Evaluar reglas, gaps y gobernanza. | `StubCoreEvaluationAdapter`, `InProcessCoreEvaluationAdapter`, `HttpCoreEvaluationAdapter` | `Implementado` | `GrpcCoreEvaluationAdapter`, `BatchCoreEvaluationAdapter`, `CachedCoreEvaluationAdapter` | Mejora performance, escalabilidad y evaluación masiva. | Media |
+| **Policy / OPA** | Validar políticas y bloquear acciones. | `StubPolicyValidationAdapter`, `OpaCliPolicyValidationAdapter` | `Implementado` | `OpaHttpAdapter`, `ConftestAdapter`, `KyvernoAdapter`, `PolicyBundleRegistryAdapter` | Permite policy-as-code remota, validación K8s y bundles. | Alta |
+| **Tracker Trace** | Publicar trazabilidad al Tracker o memoria. | `InMemoryTrackerTraceAdapter`, `HttpTrackerTraceAdapter` | `Implementado` | `EventBusTraceAdapter`, `KafkaTraceAdapter`, `OpenTelemetryTraceAdapter`, `AuditLogTraceAdapter` | Mejora trazabilidad empresarial, auditoría y observabilidad. | Media |
+| **Memory** | Memoria temporal o persistida. | `InMemoryMemoryAdapter`, `FileMemoryAdapter` | `Implementado` | `RedisMemoryAdapter`, `PostgresMemoryAdapter`, `VectorMemoryAdapter`, `ObsidianVaultMemoryAdapter` | Memoria semántica compartida y persistente para agentes. | Media |
+| **Skill Registry** | Resolver intents a capacidades gobernadas. | `LocalSkillRegistryAdapter`, `DEFAULT_SKILLS` | `Implementado` | `RemoteSkillRegistryAdapter`, `GitSkillRegistryAdapter`, `MarketplaceSkillRegistryAdapter`, `TenantSkillBundleAdapter` | Capacidades versionables, heredables y extensibles. | Alta |
+| **Communication Gateway** | Adaptar superficies de comunicación. | `CliCommunicationGatewayAdapter` | `Parcial` | `InteractionAdapterPort`, `SmartCliCommandInteractionAdapter`, `SmartCliChatInteractionAdapter`, `HermesChatBoxInteractionAdapter`, `OpenCodeInteractionAdapter`, `McpInteractionAdapter`, `WebhookInteractionAdapter` | **Pieza crítica** para permitir múltiples interfaces sin duplicar comandos ni saltar governance. | Crítica |
+| **Scheduler** | Programar o diferir ejecuciones. | `InMemorySchedulerAdapter`, `FileSchedulerAdapter` | `Implementado` | `CronSchedulerAdapter`, `TemporalAdapter`, `BullMQSchedulerAdapter`, `KubernetesCronJobAdapter` | Auditorías recurrentes, jobs durables y re-validaciones. | Baja |
+| **Approval / HITL** | Flujo de aprobación humana en el loop. | `AutoApprovalAdapter`, `DenyByDefaultApprovalAdapter` | `Parcial` | `TrackerApprovalAdapter`, `GitHubApprovalAdapter`, `SlackApprovalAdapter`, `TeamsApprovalAdapter`, `EmailApprovalAdapter` | Aprobación humana real para acciones de alto impacto. | Alta |
+| **MCP Interaction** | Exponer a agentes externos vía MCP. | MCP existe, falta adaptador formal runtime. | `Parcial` | `McpInteractionAdapter`, `McpToolRegistryAdapter`, `McpPolicyGuardAdapter` | Agentes externos consumen capacidades bajo gobernanza. | Alta |
+| **Smart CLI Interaction** | Mantener Smart CLI como entrada gobernada. | Smart CLI existe, falta formalizar adaptador común. | `Parcial` | `SmartCliCommandInteractionAdapter`, `SmartCliChatInteractionAdapter`, `CommandCapabilityAdapter` | CLI en modo chat y comando usan la misma capa runtime. | Crítica |
+| **Hermes Chat Box Interaction** | Interfaz conversacional (UI) opcional de Hermes. | `HermesAgentAdapter` existe (engine), falta adaptador source/interface. | `Parcial` | `HermesChatBoxInteractionAdapter` | Exponer Hermes Chat Box sin ejecución directa de shell. | Alta |
+| **OpenCode Interaction** | UI de chat/agente externa de OpenCode. | No implementado. | `No implementado` | `OpenCodeInteractionAdapter`, `OpenCodeMcpAdapter`, `OpenCodeCliBridgeAdapter` | Uso de OpenCode como caja de chat sin permisos libres. | Media |
+| **GitHub Automation** | Crear repos, PRs y CI desde flujos gobernados. | No implementado como adaptador directo. | `No implementado` | `GitHubRepositoryAdapter`, `GitHubIssueAdapter`, `GitHubPullRequestAdapter`, `GitHubActionsAdapter` | Automatización de SDLC gobernada en GitHub. | Media |
+| **Notifications / Collaboration** | Notificar puertas bloqueadas, aprobaciones, etc. | No implementado como adaptador directo. | `No implementado` | `SlackAdapter`, `TeamsAdapter`, `EmailNotificationAdapter`, `DiscordAdapter` | Mejora de alertas, colaboración y flujos de aprobación. | Media |
+| **Observability** | Observar runtime, motores y latencias. | Parcial vía Tracker Trace. | `Parcial` | `OpenTelemetryAdapter`, `PrometheusMetricsAdapter`, `StructuredAuditAdapter` | Monitoreo enterprise y auditoría técnica detallada. | Media |
+| **Knowledge / RAG** | Consultar ADRs, reglas, manuales antes de actuar. | No implementado como adaptador consolidado. | `No implementado` | `RagKnowledgeAdapter`, `DocsSearchAdapter`, `VectorStoreAdapter`, `GitDocsAdapter`, `ObsidianAdapter` | Evidencia interna para mejorar recomendaciones agentic. | Alta |
+| **Secrets / Config** | Gestión de credenciales, selección de engine, config. | Parcial vía bootstrap/overrides. | `Parcial` | `VaultSecretAdapter`, `EnvConfigAdapter`, `RemoteConfigAdapter`, `PolicyBundleConfigAdapter` | Evita hardcoding y asegura la configuración por entorno. | Alta |
+
+---
+
+## 6. Matriz de Madurez de Patrones (Catálogo Internacional de Patrones)
 
 | Cluster de Patrón | Patrón Específico | Aplicabilidad | Estado Basado en Evidencia | Justificación |
 | :--- | :--- | :--- | :--- | :--- |
@@ -128,7 +165,7 @@ La evaluación usa los 5 niveles estándar del ACMM (1: Inicial a 5: Optimizante
 
 ---
 
-## 6. Inmunización contra Anti-Patrones
+## 7. Inmunización contra Anti-Patrones
 
 La arquitectura despliega "anticuerpos" explícitos contra los seis anti-patrones de mayor riesgo. Resumen (criticidad · defensa):
 
@@ -147,7 +184,7 @@ La arquitectura despliega "anticuerpos" explícitos contra los seis anti-patrone
 
 ---
 
-## 7. Alineación con la Visión del Producto
+## 8. Alineación con la Visión del Producto
 
 Match pilar por pilar contra la [Visión Maestra del Producto](../../../product-suite/vision/evolith-product-vision-master.es.md). Los scores detallados por componente viven en el [Snapshot de Línea Base](./gap-reference-catalog.es.md#2-snapshot-histórico-de-línea-base) del Catálogo de Referencia de Gaps.
 
@@ -162,7 +199,7 @@ Match pilar por pilar contra la [Visión Maestra del Producto](../../../product-
 
 ---
 
-## 8. Scoring Ejecutivo y Gaps Abiertos
+## 9. Scoring Ejecutivo y Gaps Abiertos
 
 ### Score Combinado (TOGAF ACMM)
 
@@ -183,7 +220,7 @@ La madurez de Tracker y Product Suite se excluye explícitamente del score de Co
 
 ---
 
-## 9. Dimensión AI-Augmented (Opcional)
+## 10. Dimensión AI-Augmented (Opcional)
 
 Para productos que adoptan la sección de ingeniería AI-Augmented, existe una matriz de madurez complementaria con 3 niveles: AI-Assisted, AI-Integrated y AI-Orchestrated.
 
@@ -191,7 +228,20 @@ Para productos que adoptan la sección de ingeniería AI-Augmented, existe una m
 
 ---
 
-*Esta es la única evaluación de madurez de Evolith Core. El tracking de gaps vive exclusivamente en el [Tablero de Seguimiento de Gaps](./gap-tracking.es.md).*
+## 11. Actualización de Inteligencia BMAD (BMAD Intelligence Update)
+
+Esta evaluación de madurez alimenta explícitamente el **Bucle de Retroalimentación de Inteligencia BMAD**. Los insights generados aquí instruyen las capacidades de los agentes internos, sus reglas de evaluación y listas de verificación estándar:
+
+* **Agentes Actualizados:** `winston` (Auditoría), `architect` (Arquitectura) ahora evalúan el cumplimiento de puertos/adaptadores.
+* **Nuevas Skills:** `adapter-maturity-analysis`, `interaction-adapter-gap-analysis`.
+* **Nuevas Reglas:** `core-must-remain-stateless`, `external-tech-must-use-adapter`, `chat-interfaces-cannot-execute-critical-actions`.
+* **Nuevos Checklists:** `Adapter Maturity Checklist`, `Interaction Adapter Readiness Checklist`.
+
+Estos recursos de inteligencia se versionan dentro de `.bmad-core/agents/` y aplican continuamente a futuros PRs y auditorías de gobernanza.
+
+---
+
+*Esta es la única evaluación de madurez del Evolith Core. El seguimiento de gaps vive exclusivamente en el [Tablero de Seguimiento de Gaps](./gap-tracking.es.md).*
 
 ---
 [Volver al Índice de Visión](./README.es.md)

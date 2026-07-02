@@ -4283,3 +4283,113 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 **Evidence:** Endpoint created in NestJS API and validated via E2E.
 **Closure:** An API route capable of receiving an `AgentRuntimeRequestWire` is exposed.
 **References:** ADR-0104, `run-evolith-deep.mjs` (Audit)
+
+#### GT-401
+
+**Title:** `InteractionAdapterPort` missing or not formalized
+
+> **Problem (2026-07-02, BMAD Intelligence Update):** Without a formal `InteractionAdapterPort`, multiple interfaces (CLI, Chat, MCP, Webhooks) risk duplicating command logic or bypassing the Agent Runtime orchestration and governance layers.
+
+**Purpose:** Establish a single governed entry point for all UI and machine interaction sources.
+**Evidence:** Code contains disparate gateways or direct engine invocation.
+**Closure:** `InteractionAdapterPort` is fully integrated into the runtime architecture and acts as the strict boundary.
+**References:** Maturity Assessment (Adapter Capability Maturity)
+
+#### GT-402
+
+**Title:** Smart CLI not formalized as runtime interaction adapter
+
+> **Problem (2026-07-02, BMAD Intelligence Update):** Smart CLI executes its capabilities directly or duplicates orchestration rather than delegating to the `InteractionAdapterPort`.
+
+**Purpose:** Formalize the Smart CLI (command and chat modes) as just another adapter consuming the governed core.
+**Evidence:** `SmartCliCommandInteractionAdapter` is pending full integration.
+**Closure:** Smart CLI routes all commands through the Agent Runtime orchestration.
+**References:** Maturity Assessment (Adapter Capability Maturity)
+
+#### GT-403
+
+**Title:** Hermes Chat Box not formalized as source/interface adapter
+
+> **Problem (2026-07-02, BMAD Intelligence Update):** The Hermes interface operates as a peer to the CLI or bypasses strict capability resolution.
+
+**Purpose:** Ensure Hermes Chat Box cannot execute commands directly and must pass through the `InteractionAdapterPort`.
+**Evidence:** Missing `HermesChatBoxInteractionAdapter` in production deployment.
+**Closure:** Hermes UI only submits intents via the interaction port.
+**References:** Maturity Assessment (Adapter Capability Maturity)
+
+#### GT-404
+
+**Title:** OpenCode adapter not implemented
+
+> **Problem (2026-07-02, BMAD Intelligence Update):** OpenCode is envisioned as an external chat/agent UI, but lacks a controlled adapter to interact with Evolith securely.
+
+**Purpose:** Implement an `OpenCodeInteractionAdapter` to prevent free shell access.
+**Evidence:** No adapter implementation exists for OpenCode.
+**Closure:** OpenCode requests are mapped to governed capabilities via an adapter.
+**References:** Maturity Assessment (Adapter Capability Maturity)
+
+#### GT-405
+
+**Title:** MCP interaction adapter not formalized
+
+> **Problem (2026-07-02, BMAD Intelligence Update):** MCP exists as a component, but lacks a formal `McpInteractionAdapter` connected to the runtime port.
+
+**Purpose:** Ensure external agents consuming Evolith via MCP are subjected to the same phase-gate and OPA governance.
+**Evidence:** MCP server bypasses or loosely couples to the new runtime orchestrator.
+**Closure:** MCP interactions strictly use `InteractionAdapterPort`.
+**References:** Maturity Assessment (Adapter Capability Maturity)
+
+#### GT-406
+
+**Title:** External HITL approval adapters missing
+
+> **Problem (2026-07-02, BMAD Intelligence Update):** Sensitive operations rely on `DenyByDefaultApprovalAdapter` because real human-in-the-loop (HITL) adapters (Tracker, Slack, GitHub) are absent.
+
+**Purpose:** Implement external approval adapters to unblock high-impact actions securely.
+**Evidence:** No Slack/GitHub/Tracker approval ports implemented.
+**Closure:** A capability requiring approval can be authorized by a human via an external platform.
+**References:** Maturity Assessment (Adapter Capability Maturity)
+
+#### GT-407
+
+**Title:** Policy-based engine routing missing
+
+> **Problem (2026-07-02, BMAD Intelligence Update):** The runtime cannot dynamically route to different agent engines (Ollama, OpenAI, Hermes) based on risk, cost, or privacy policies.
+
+**Purpose:** Implement a `PolicyBasedEngineRouter`.
+**Evidence:** Hardcoded or single-engine configuration.
+**Closure:** The runtime selects the correct engine via an OPA-backed routing policy.
+**References:** Maturity Assessment (Adapter Capability Maturity)
+
+#### GT-408
+
+**Title:** Knowledge/RAG adapter missing
+
+> **Problem (2026-07-02, BMAD Intelligence Update):** Agents recommend actions without grounding against ADRs, blueprints, or rulesets natively.
+
+**Purpose:** Implement a RAG/Knowledge adapter so internal BMAD agents can consult the repository corpus before acting.
+**Evidence:** No RAG mechanism in the agent runtime layer.
+**Closure:** Agents can query architectural documents directly through a capability.
+**References:** Maturity Assessment (Adapter Capability Maturity)
+
+#### GT-409
+
+**Title:** Documentation/diagram/visual map freshness checks missing
+
+> **Problem (2026-07-02, BMAD Intelligence Update):** Architecture maps, Mermaid diagrams, and port/adapter documentation can silently drift from code truth.
+
+**Purpose:** Create CI validation scripts (e.g., `validate-adapter-maturity-matrix.mjs`) to block desynchronization.
+**Evidence:** Visual map and diagrams require manual updates.
+**Closure:** CI fails if capability configurations change without matching documentation updates.
+**References:** Maturity Assessment (Adapter Capability Maturity)
+
+#### GT-410
+
+**Title:** BMAD intelligence feedback loop missing or incomplete
+
+> **Problem (2026-07-02, BMAD Intelligence Update):** Audits are performed but do not structurally feed back into the `.bmad-core` agents with new rules, checklists, or skills.
+
+**Purpose:** Systematize the creation of rules and skills for BMAD agents after every major gap analysis.
+**Evidence:** BMAD agents missing adapter-maturity analysis skills.
+**Closure:** Winston and Architect agents proactively flag adapter maturity violations in PRs.
+**References:** Maturity Assessment (Adapter Capability Maturity)

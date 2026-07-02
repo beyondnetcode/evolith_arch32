@@ -39,6 +39,16 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-398`](./gap-reference-catalog.md#gt-398) | **Dual-Engine Parity for `allowedSourceInterfaces`:** Missing OPA policy to validate interaction origins (e.g., chat). | `Rulesets` | Cross | P0 | S | `PENDING` |
 | [`GT-399`](./gap-reference-catalog.md#gt-399) | **Real Adapters Injection:** Replace Stubs with HTTP/Harness adapters in CLI `AgentRuntimeFactory`. | `Agent Runtime` | Cross | P1 | M | `PENDING` |
 | [`GT-400`](./gap-reference-catalog.md#gt-400) | **REST Endpoint Hermes:** Create a controller in `core-api` to serve external conversational requests. | `Core API` | Cross | P1 | M | `PENDING` |
+| [`GT-401`](./gap-reference-catalog.md#gt-401) | **InteractionAdapterPort formalized:** Missing or not fully integrated single governed entry point for interfaces. | `Agent Runtime` | Cross | P0 | M | `PENDING` |
+| [`GT-402`](./gap-reference-catalog.md#gt-402) | **Smart CLI adapter:** Formalize CLI as interaction adapter to prevent bypassing runtime layer. | `Smart CLI` | Cross | P0 | M | `PENDING` |
+| [`GT-403`](./gap-reference-catalog.md#gt-403) | **Hermes Chat Box adapter:** Ensure Hermes cannot execute shell directly and uses interaction port. | `Agent Runtime` | Cross | P1 | M | `PENDING` |
+| [`GT-404`](./gap-reference-catalog.md#gt-404) | **OpenCode adapter:** Not implemented. OpenCode lacks secure runtime capability adapter. | `Agent Runtime` | Cross | P2 | M | `PENDING` |
+| [`GT-405`](./gap-reference-catalog.md#gt-405) | **MCP interaction adapter:** Not formalized. MCP bypasses strict runtime port. | `Agent Runtime` | Cross | P1 | S | `PENDING` |
+| [`GT-406`](./gap-reference-catalog.md#gt-406) | **External HITL adapters:** Missing real Slack/Tracker/GitHub human approval ports. | `Agent Runtime` | Cross | P1 | M | `PENDING` |
+| [`GT-407`](./gap-reference-catalog.md#gt-407) | **Policy-based routing:** Missing dynamic routing to engines based on risk/privacy. | `Agent Runtime` | Cross | P1 | M | `PENDING` |
+| [`GT-408`](./gap-reference-catalog.md#gt-408) | **Knowledge/RAG adapter:** Missing internal corpus context querying for agents. | `Agent Runtime` | Cross | P1 | L | `PENDING` |
+| [`GT-409`](./gap-reference-catalog.md#gt-409) | **Freshness checks:** Missing CI guards for visual map and adapter capability desynchronization. | `.harness` | Cross | P2 | M | `PENDING` |
+| [`GT-410`](./gap-reference-catalog.md#gt-410) | **BMAD Intelligence feedback:** BMAD agents missing adapter maturity skills and automated feedback loop. | `.bmad-core` | Cross | P1 | S | `PENDING` |
 | [`GT-359`](./gap-reference-catalog.md#gt-359) | Define `SatelliteManifest` ingestion contract schema | `Core Domain` | Cross | P0 | M | `DONE` |
 | [`GT-363`](./gap-reference-catalog.md#gt-363) | GitHub API integration client — secure auth + repo operations (create, configure, branch protection, rulesets, webhooks) | `Infra` | Cross | P0 | M | `DONE` |
 | [`GT-362`](./gap-reference-catalog.md#gt-362) | Implement runtime enforcement for Rego policies in evaluation engine | `Core Domain` | Cross | P0 | L | `DONE` |

@@ -15,7 +15,9 @@ a governed capability, invokes the right ports, runs validations, returns an
 `AgentRuntimeResult`, and emits trazability. It is implemented in
 [`packages/agent-runtime`](../../../packages/agent-runtime/README.md) following
 **Puertos y Adaptadores** so no runtime/LLM technology becomes a domain
-dependency.
+dependency. 
+
+> **Important:** The runtime capabilities and their implementation maturity (like the `InteractionAdapterPort`) are strictly governed by the [Adapter Capability Maturity Matrix](../../governance/standards/vision/maturity-assessment.md#5-adapter-capability-maturity-agent-runtime).
 
 ## 2. Why a new layer that does not replace .harness
 

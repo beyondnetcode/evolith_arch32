@@ -1,7 +1,7 @@
 const state = {
   data: null,
   lang: "es", // Default language
-  modeId: "executive",
+  modeId: null,
   selectedNodeId: null,
   selectedScenarioId: "e2e",
   hiddenLayers: new Set(),
@@ -390,8 +390,13 @@ function renderTimeline() {
 
 function renderActiveMode() {
   const mode = modeById(state.modeId);
-  els.activeModeName.textContent = t(mode.label);
-  els.activeModeDescription.textContent = t(mode.description);
+  if (mode) {
+    els.activeModeName.textContent = t(mode.label);
+    els.activeModeDescription.textContent = t(mode.description);
+  } else {
+    els.activeModeName.textContent = state.lang === "es" ? "Vista Libre" : "Free View";
+    els.activeModeDescription.textContent = state.lang === "es" ? "Todos los componentes visibles sin filtros." : "All components visible without filters.";
+  }
 }
 
 function render() {
@@ -631,7 +636,7 @@ function stopPlayback(clearStep = true) {
 
 function reset() {
   stopPlayback();
-  state.modeId = "executive";
+  state.modeId = null;
   state.selectedNodeId = null;
   state.search = "";
   state.hiddenLayers.clear();

@@ -44,6 +44,8 @@ export type { HermesChatBoxInput } from './interaction/HermesChatBoxInteractionA
 export { ExternalTriggerInteractionAdapter } from './interaction/ExternalTriggerInteractionAdapter';
 export { McpInteractionAdapter } from './interaction/McpInteractionAdapter';
 export type { McpToolInput } from './interaction/McpInteractionAdapter';
+export { OpenCodeInteractionAdapter } from './interaction/OpenCodeInteractionAdapter';
+export type { OpenCodeToolInput } from './interaction/OpenCodeInteractionAdapter';
 
 // Gateway
 export { CliCommunicationGatewayAdapter } from './gateway/cli-communication-gateway.adapter';
@@ -55,6 +57,8 @@ export type { FileSchedulerOptions } from './scheduler/file-scheduler.adapter';
 
 // Approval
 export { AutoApprovalAdapter, DenyByDefaultApprovalAdapter } from './approval/policy-approval.adapter';
+export { ChatApprovalAdapter } from './approval/chat-approval.adapter';
+export { SlackApprovalAdapter } from './approval/slack-approval.adapter';
 
 // Engine (Hermes is OPTIONAL and lives only here, never in the domain)
 export { StubAgentEngineAdapter } from './engine/stub-agent-engine.adapter';

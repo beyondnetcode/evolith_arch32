@@ -22,7 +22,7 @@ Ordenadas de la [[política]] general a la evidencia concreta:
 |---|---|---|---|---|
 | [Baseline Agnóstica](./agnostic-baseline.es.md) | Principios, patrones y restricciones no negociables agnósticos al runtime de máximo nivel | Anclar cada producto y runtime a una sola baseline | Política de baseline | Sí |
 | [Arquitectura Maestra C4](./C4-MASTER-ARCHITECTURE.es.md) | Diseño de sistema end-to-end consolidado y verificado (core-api, servidor MCP y Agent Runtime desplegados) | Ver la arquitectura tal como está construida y desplegada | Diseño de sistema | No |
-| [Visual Map](./visual-map/index.html) | Explorador interactivo de la arquitectura de Evolith | Navegar visualmente el modelo C4 y sus componentes | Mapa interactivo | No |
+| [Visual Map](https://beyondnetcode.github.io/evolith_arch32/) | Explorador interactivo de la arquitectura de Evolith | Navegar visualmente el modelo C4 y sus componentes | Mapa interactivo | No |
 | [Flujos de Interfaces del Core](./views/view-by-interface-flow.es.md) | Contratos IN/OUT, rutas de procesamiento, resiliencia, auditoría y guía de clientes para interfaces Core | Entender cómo la comunicación cruza cada límite del Core | Vista de arquitectura | No |
 | [Principios](./principles/README.es.md) | Principios arquitectónicos fundacionales | Fundamentar todas las decisiones en principios compartidos | Hub de área | Sí |
 | [Hub de Blueprints](./blueprints/README.es.md) | Principios agnósticos al runtime, topología y criterios de selección | Definir la línea base arquitectónica | Hub de área | Sí |

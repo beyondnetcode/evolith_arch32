@@ -4368,10 +4368,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Impact:** Conversational execution could skip approval, source-interface checks, or runtime audit.
 - **Affected files:** `packages/agent-runtime/src/adapters/`, `apps/core-api/src/presentation/controllers/`, `apps/agent-runtime-api/src/`.
 - **Complexity:** M
-- **Proposed fix:** Register Hermes as a source/interface adapter and enforce runtime capability resolution for every submitted intent.
+- **Applied fix:** GT-400 created `POST /v1/agent/hermes` endpoint that routes through `HermesChatBoxInteractionAdapter.toRuntimeRequest()` into the governed runtime pipeline. Audit verified: (1) adapter is pure input mapping with no shell execution, (2) engine adapter only proposes tools via LLM, never executes, (3) runtime pipeline enforces 7 sequential governance gates including interface permission checks, OPA policy, HITL approval, and port-only execution. No direct shell execution paths bypass governance.
 - **Acceptance criteria:**
-  - [ ] Hermes UI submits intents through the interaction port.
-  - [ ] Hermes cannot execute shell or backend commands outside governed capabilities.
+  - [x] Hermes UI submits intents through the interaction port.
+  - [x] Hermes cannot execute shell or backend commands outside governed capabilities.
+- **Closure evidence:** Full audit of `HermesChatBoxInteractionAdapter`, `HermesAgentAdapter`, `/v1/agent/hermes` endpoint, and `AgentRuntimeService` pipeline confirmed no governance bypass paths. All execution flows through `IHarnessPort` and `ICoreEvaluationPort` only.
 - **Dependencies:** `GT-400`, `GT-401`.
 
 #### GT-404

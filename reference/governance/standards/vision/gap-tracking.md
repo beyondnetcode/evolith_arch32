@@ -25,7 +25,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-396`](./gap-reference-catalog.md#gt-396) | **Contrato de Ingesta Cliente:** Existen esquemas parciales pero falta un `SatelliteManifest` o `ProjectInput` formal y unificado para validaciones. | `Core Domain` | Cross | P1 | M | `DONE` |
 | [`GT-399`](./gap-reference-catalog.md#gt-399) | **Real Adapters Injection:** Replace Stubs with HTTP/Harness adapters in CLI `AgentRuntimeFactory`. | `Agent Runtime` | Cross | P1 | M | `DONE` |
 | [`GT-400`](./gap-reference-catalog.md#gt-400) | **REST Endpoint Hermes:** Create a controller in `core-api` to serve external conversational requests. | `Core API` | Cross | P1 | M | `DONE` |
-| [`GT-403`](./gap-reference-catalog.md#gt-403) | **Hermes Chat Box adapter:** Ensure Hermes cannot execute shell directly and uses interaction port. | `Agent Runtime` | Cross | P1 | M | `PENDING` |
+| [`GT-403`](./gap-reference-catalog.md#gt-403) | **Hermes Chat Box adapter:** Ensure Hermes cannot execute shell directly and uses interaction port. | `Agent Runtime` | Cross | P1 | M | `DONE` |
 | [`GT-406`](./gap-reference-catalog.md#gt-406) | **External HITL adapters:** Missing real Slack/Tracker/GitHub human approval ports. | `Agent Runtime` | Cross | P1 | M | `PENDING` |
 | [`GT-407`](./gap-reference-catalog.md#gt-407) | **Policy-based routing:** Missing dynamic routing to engines based on risk/privacy. | `Agent Runtime` | Cross | P1 | M | `PENDING` |
 | [`GT-408`](./gap-reference-catalog.md#gt-408) | **Knowledge/RAG adapter:** Missing internal corpus context querying for agents. | `Agent Runtime` | Cross | P1 | L | `PENDING` |

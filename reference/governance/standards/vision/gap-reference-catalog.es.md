@@ -4201,161 +4201,239 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 
 **Título:** Paridad Dual-Engine para `allowedSourceInterfaces`
 
-> **Problema (2026-07-02, SDLC Deep Audit):** El flag de seguridad `allowedSourceInterfaces` se definió en TypeScript (`GovernancePosture`) pero no se implementó en `.rego`, rompiendo la regla de *Dual-Engine Parity*.
-
-**Propósito:** Asegurar que el motor OPA externo pueda auditar las interfaces de origen de igual manera que el motor nativo de TS.
-**Evidencia:** Regla OPA añadida y cubierta por tests automatizados.
-**Cierre:** La suite de pruebas de OPA está verde e incluye la validación de `allowedSourceInterfaces`.
-**Referencias:** ADR-0104, `run-evolith-deep.mjs` (Audit)
+- **Componente:** Rulesets · **Prioridad:** P0 · **Riesgo:** alto (la política de origen puede divergir entre Native y OPA)
+- **Propósito:** Asegurar que el motor OPA audite los orígenes de interacción permitidos con la misma lógica del evaluador TypeScript nativo.
+- **Evidencia:** SDLC Deep Audit reportó `allowedSourceInterfaces` en `GovernancePosture` sin política `.rego` equivalente.
+- **Impacto:** Chat, CLI, MCP u otras interfaces pueden evadir gobierno de origen según el motor seleccionado.
+- **Archivos afectados:** `rulesets/opa/`, `packages/core-domain/src/application/validators/`, `.harness/scripts/ci/27-opa-parity-gate.mjs`.
+- **Complejidad:** S
+- **Propuesta de corrección:** Añadir la regla OPA faltante, fixtures conformes/no conformes y cablearla al gate de paridad.
+- **Criterios de aceptación:**
+  - [ ] OPA valida `allowedSourceInterfaces` con la misma semántica que el evaluador Native.
+  - [ ] La paridad Native/OPA mantiene 0 drift.
+- **Dependencias:** R-25 Dual-Engine Parity.
 
 #### GT-399
 
-**Título:** Inyección de Adaptadores reales HTTP/Harness en el CLI `AgentRuntimeFactory`
+**Título:** Inyección de adaptadores HTTP/Harness reales en `AgentRuntimeFactory` del CLI
 
-> **Problema (2026-07-02, SDLC Deep Audit):** El CLI (`evolith plan evaluate`) utiliza `StubCoreEvaluationAdapter` e `InMemoryHarnessAdapter` en vez de los clientes que impactan el backend real, degradando su madurez a un prototipo.
-
-**Propósito:** Reconectar la ejecución del Smart CLI con la infraestructura real del Core API y el ejecutor de playbooks.
-**Evidencia:** `AgentRuntimeFactory` inyecta adaptadores HTTP reales.
-**Cierre:** El comando `evolith plan evaluate` logra consultar `localhost:3000` y emite resultados reales.
-**Referencias:** ADR-0104, `run-evolith-deep.mjs` (Audit)
+- **Componente:** Agent Runtime · **Prioridad:** P1 · **Riesgo:** medio (CLI puede evaluar contra stubs y no contra servicios productivos)
+- **Propósito:** Reconectar la ejecución de Smart CLI con Core API y el runner harness/playbook reales mediante adaptadores productivos.
+- **Evidencia:** SDLC Deep Audit encontró `evolith plan evaluate` usando `StubCoreEvaluationAdapter` e `InMemoryHarnessAdapter`.
+- **Impacto:** La madurez del CLI queda en nivel prototipo aunque el backend tenga capacidades reales de gobernanza.
+- **Archivos afectados:** `sdk/cli/src/`, `packages/agent-runtime/src/`, `apps/agent-runtime-api/src/`.
+- **Complejidad:** M
+- **Propuesta de corrección:** Inyectar adaptadores HTTP Core y harness en `AgentRuntimeFactory`, dejando stubs determinísticos solo para modos offline/test.
+- **Criterios de aceptación:**
+  - [ ] `evolith plan evaluate` puede consultar un Core API activo y emitir resultados reales.
+  - [ ] El modo offline/test conserva adaptadores stub determinísticos.
+- **Dependencias:** `GT-384`, `GT-412`.
 
 #### GT-400
 
 **Título:** Endpoint REST/WebSocket (Hermes Entrypoint) en Core API
 
-> **Problema (2026-07-02, SDLC Deep Audit):** Se cuenta con el adaptador `HermesChatBoxInteractionAdapter` pero no hay un controlador expuesto en `apps/core-api` para recibir el request entrante.
-
-**Propósito:** Establecer una puerta de enlace para que las interfaces tipo Chat (Hermes) puedan interactuar con el `AgentRuntimeService` alojado.
-**Evidencia:** Endpoint creado en la API de NestJS validado vía E2E.
-**Cierre:** Se expone una ruta API capaz de recibir un `AgentRuntimeRequestWire`.
-**Referencias:** ADR-0104, `run-evolith-deep.mjs` (Audit)
+- **Componente:** Core API · **Prioridad:** P1 · **Riesgo:** medio (el adaptador Hermes no puede hospedarse tras un límite API gobernado)
+- **Propósito:** Establecer una puerta de enlace Core API para que interfaces tipo chat interactúen con el `AgentRuntimeService` alojado.
+- **Evidencia:** SDLC Deep Audit encontró `HermesChatBoxInteractionAdapter` sin controlador expuesto en `apps/core-api`.
+- **Impacto:** Las interfaces conversacionales no pueden integrarse o deben evadir el límite runtime previsto.
+- **Archivos afectados:** `apps/core-api/src/presentation/controllers/`, `apps/agent-runtime-api/src/`, `packages/agent-runtime/src/`.
+- **Complejidad:** M
+- **Propuesta de corrección:** Crear un endpoint REST para `AgentRuntimeRequestWire` y validarlo mediante tests de controlador/e2e. Si WebSocket se requiere después, registrarlo como gap separado por protocolo.
+- **Criterios de aceptación:**
+  - [ ] Core API expone una ruta gobernada que recibe `AgentRuntimeRequestWire`.
+  - [ ] El endpoint devuelve envelope ADR-0073 y queda cubierto por tests.
+- **Dependencias:** `GT-411`, `GT-401`.
 
 #### GT-401
 
 **Título:** `InteractionAdapterPort` ausente o no formalizado
 
-> **Problema (2026-07-02, BMAD Intelligence Update):** Sin un `InteractionAdapterPort` formal, múltiples interfaces (CLI, Chat, MCP, Webhooks) corren el riesgo de duplicar lógica de comandos o evadir las capas de orquestación y gobernanza del Agent Runtime.
-
-**Propósito:** Establecer un único punto de entrada gobernado para todas las fuentes de interacción de UI o máquinas.
-**Evidencia:** El código contiene gateways dispares o invocación directa de motores.
-**Cierre:** `InteractionAdapterPort` está completamente integrado en la arquitectura de runtime y actúa como límite estricto.
-**Referencias:** Evaluación de Madurez (Adapter Capability Maturity)
+- **Componente:** Agent Runtime · **Prioridad:** P0 · **Riesgo:** alto (las interfaces pueden evadir gobernanza de runtime)
+- **Propósito:** Establecer un único punto de entrada gobernado para todas las fuentes de interacción de UI o máquinas.
+- **Evidencia:** BMAD Intelligence update encontró que CLI, Chat, MCP y Webhooks pueden duplicar lógica de comandos o evadir orquestación runtime.
+- **Impacto:** Autorización de capacidades, phase gates, auditoría y enforcement de políticas quedan inconsistentes por interfaz.
+- **Archivos afectados:** `packages/agent-runtime/src/domain/ports/`, `packages/agent-runtime/src/application/`, `sdk/cli/src/`, `packages/mcp-server/src/`.
+- **Complejidad:** M
+- **Propuesta de corrección:** Formalizar `InteractionAdapterPort` en el contrato runtime y exigir que todos los adaptadores de interfaz entren por ese puerto.
+- **Criterios de aceptación:**
+  - [ ] `InteractionAdapterPort` forma parte del contrato público runtime.
+  - [ ] CLI, Hermes, MCP y webhook adapters enrutan por el puerto en vez de invocar motores directamente.
+- **Dependencias:** `GT-412`.
 
 #### GT-402
 
 **Título:** Smart CLI no formalizado como adaptador de interacción runtime
 
-> **Problema (2026-07-02, BMAD Intelligence Update):** Smart CLI ejecuta sus capacidades directamente o duplica la orquestación en lugar de delegar al `InteractionAdapterPort`.
-
-**Propósito:** Formalizar Smart CLI (modos comando y chat) como un adaptador más que consume el core gobernado.
-**Evidencia:** `SmartCliCommandInteractionAdapter` está pendiente de integración completa.
-**Cierre:** Smart CLI enruta todos sus comandos a través de la orquestación del Agent Runtime.
-**Referencias:** Evaluación de Madurez (Adapter Capability Maturity)
+- **Componente:** Smart CLI · **Prioridad:** P0 · **Riesgo:** alto (CLI puede evadir la capa runtime)
+- **Propósito:** Formalizar los modos comando/chat de Smart CLI como adaptadores que consumen el core gobernado de Agent Runtime.
+- **Evidencia:** BMAD Intelligence update encontró `SmartCliCommandInteractionAdapter` pendiente de integración completa y flujos CLI todavía capaces de orquestar directamente.
+- **Impacto:** La interfaz local más usada puede divergir del comportamiento de política y auditoría runtime.
+- **Archivos afectados:** `sdk/cli/src/commands/`, `sdk/cli/src/app.module.ts`, `packages/agent-runtime/src/`.
+- **Complejidad:** M
+- **Propuesta de corrección:** Enrutar comandos Smart CLI que ejecutan capacidades gobernadas a través de `InteractionAdapterPort`.
+- **Criterios de aceptación:**
+  - [ ] El modo comando de Smart CLI delega capacidades gobernadas mediante la orquestación de Agent Runtime.
+  - [ ] Tests del CLI prueban que política/auditoría no se evaden.
+- **Dependencias:** `GT-401`, `GT-399`.
 
 #### GT-403
 
 **Título:** Hermes Chat Box no formalizado como adaptador de origen/interfaz
 
-> **Problema (2026-07-02, BMAD Intelligence Update):** La interfaz Hermes opera como par del CLI o evade la resolución estricta de capacidades.
-
-**Propósito:** Asegurar que Hermes Chat Box no pueda ejecutar comandos directamente y pase por el `InteractionAdapterPort`.
-**Evidencia:** Falta `HermesChatBoxInteractionAdapter` en el despliegue de producción.
-**Cierre:** La UI de Hermes solo envía intenciones a través del puerto de interacción.
-**Referencias:** Evaluación de Madurez (Adapter Capability Maturity)
+- **Componente:** Agent Runtime · **Prioridad:** P1 · **Riesgo:** medio (la interfaz chat puede evadir resolución de capacidades)
+- **Propósito:** Asegurar que Hermes Chat Box no pueda ejecutar comandos directamente y deba enviar intenciones por `InteractionAdapterPort`.
+- **Evidencia:** BMAD Intelligence update encontró que `HermesChatBoxInteractionAdapter` no está integrado en producción.
+- **Impacto:** La ejecución conversacional podría saltar aprobaciones, checks de origen o auditoría runtime.
+- **Archivos afectados:** `packages/agent-runtime/src/adapters/`, `apps/core-api/src/presentation/controllers/`, `apps/agent-runtime-api/src/`.
+- **Complejidad:** M
+- **Propuesta de corrección:** Registrar Hermes como adaptador de origen/interfaz y exigir resolución runtime de capacidades para cada intención.
+- **Criterios de aceptación:**
+  - [ ] Hermes UI envía intenciones por el puerto de interacción.
+  - [ ] Hermes no puede ejecutar shell ni comandos backend fuera de capacidades gobernadas.
+- **Dependencias:** `GT-400`, `GT-401`.
 
 #### GT-404
 
 **Título:** Adaptador de OpenCode no implementado
 
-> **Problema (2026-07-02, BMAD Intelligence Update):** OpenCode se visiona como una UI externa de chat/agente, pero carece de un adaptador controlado para interactuar de forma segura.
-
-**Propósito:** Implementar un `OpenCodeInteractionAdapter` para evitar acceso libre de shell.
-**Evidencia:** No existe implementación de adaptador para OpenCode.
-**Cierre:** Las peticiones de OpenCode se mapean a capacidades gobernadas mediante su adaptador.
-**Referencias:** Evaluación de Madurez (Adapter Capability Maturity)
+- **Componente:** Agent Runtime · **Prioridad:** P2 · **Riesgo:** medio (UI agente externa sin límite gobernado de capacidades)
+- **Propósito:** Implementar un `OpenCodeInteractionAdapter` para mapear peticiones de OpenCode a capacidades gobernadas en lugar de ejecución libre.
+- **Evidencia:** BMAD Intelligence update encontró que no existe implementación de adapter para OpenCode.
+- **Impacto:** Una integración futura de OpenCode quedaría bloqueada o insegura por defecto.
+- **Archivos afectados:** `packages/agent-runtime/src/adapters/`, `packages/agent-runtime/src/domain/ports/`.
+- **Complejidad:** M
+- **Propuesta de corrección:** Añadir un adaptador de interacción OpenCode detrás de `InteractionAdapterPort` con checks de origen y capacidad.
+- **Criterios de aceptación:**
+  - [ ] Las peticiones de OpenCode se mapean a capacidades runtime gobernadas.
+  - [ ] OpenCode no tiene ruta de ejecución shell directa.
+- **Dependencias:** `GT-401`, `GT-412`.
 
 #### GT-405
 
 **Título:** Adaptador de interacción MCP no formalizado
 
-> **Problema (2026-07-02, BMAD Intelligence Update):** MCP existe como componente, pero carece de un `McpInteractionAdapter` formal conectado al puerto runtime.
-
-**Propósito:** Asegurar que agentes externos usando MCP estén sujetos a la misma gobernanza de OPA y phase-gates.
-**Evidencia:** El servidor MCP evade o se acopla de forma laxa al nuevo orquestador.
-**Cierre:** Las interacciones MCP usan estrictamente el `InteractionAdapterPort`.
-**Referencias:** Evaluación de Madurez (Adapter Capability Maturity)
+- **Componente:** Agent Runtime · **Prioridad:** P1 · **Riesgo:** medio (MCP puede quedar fuera de la orquestación runtime)
+- **Propósito:** Asegurar que agentes externos consumiendo Evolith vía MCP estén sujetos a la misma gobernanza OPA y phase-gates que otras interfaces.
+- **Evidencia:** BMAD Intelligence update encontró que MCP carece de un `McpInteractionAdapter` formal conectado al puerto runtime.
+- **Impacto:** MCP puede divergir del comportamiento runtime de política, aprobación y auditoría.
+- **Archivos afectados:** `packages/mcp-server/src/`, `packages/agent-runtime/src/adapters/`, `packages/agent-runtime/src/domain/ports/`.
+- **Complejidad:** S
+- **Propuesta de corrección:** Introducir `McpInteractionAdapter` y enrutar operaciones MCP mutativas/gobernadas por `InteractionAdapterPort`.
+- **Criterios de aceptación:**
+  - [ ] Las interacciones MCP que ejecutan capacidades gobernadas usan `InteractionAdapterPort`.
+  - [ ] MCP conserva los checks ABAC existentes y suma paridad de política runtime.
+- **Dependencias:** `GT-401`, `GT-412`.
 
 #### GT-406
 
 **Título:** Adaptadores externos de aprobación HITL ausentes
 
-> **Problema (2026-07-02, BMAD Intelligence Update):** Las operaciones sensibles usan `DenyByDefaultApprovalAdapter` porque faltan adaptadores reales de humanos en el loop (Tracker, Slack, GitHub).
-
-**Propósito:** Implementar adaptadores de aprobación externa para destrabar acciones de alto impacto de manera segura.
-**Evidencia:** No hay puertos de aprobación Slack/GitHub/Tracker implementados.
-**Cierre:** Una capacidad que requiere aprobación puede ser autorizada por un humano en una plataforma externa.
-**Referencias:** Evaluación de Madurez (Adapter Capability Maturity)
+- **Componente:** Agent Runtime · **Prioridad:** P1 · **Riesgo:** medio (acciones de alto impacto no pueden aprobarse por workflows reales)
+- **Propósito:** Implementar adaptadores externos de aprobación para destrabar acciones de alto impacto de forma segura.
+- **Evidencia:** BMAD Intelligence update encontró operaciones sensibles dependiendo de `DenyByDefaultApprovalAdapter` porque faltan adaptadores Tracker, Slack y GitHub.
+- **Impacto:** Producción queda bloqueada para acciones de alto impacto o tentada a auto-aprobación insegura.
+- **Archivos afectados:** `packages/agent-runtime/src/adapters/approval/`, `packages/agent-runtime/src/domain/ports/approval.port.ts`.
+- **Complejidad:** M
+- **Propuesta de corrección:** Añadir al menos un adaptador real de aprobación y mantener deny-by-default cuando no exista workflow externo configurado.
+- **Criterios de aceptación:**
+  - [ ] Una capacidad que requiere aprobación puede ser autorizada por un humano en una plataforma externa.
+  - [ ] Las decisiones de aprobación quedan trazadas y auditables.
+- **Dependencias:** disponibilidad de Tracker o plataforma externa de aprobación.
 
 #### GT-407
 
 **Título:** Enrutamiento de motores basado en políticas ausente
 
-> **Problema (2026-07-02, BMAD Intelligence Update):** El runtime no puede enrutar dinámicamente a distintos motores (Ollama, OpenAI, Hermes) según riesgo, costo o políticas de privacidad.
-
-**Propósito:** Implementar un `PolicyBasedEngineRouter`.
-**Evidencia:** Configuración de un solo motor o hardcodeada.
-**Cierre:** El runtime selecciona el motor correcto vía política respaldada por OPA.
-**Referencias:** Evaluación de Madurez (Adapter Capability Maturity)
+- **Componente:** Agent Runtime · **Prioridad:** P1 · **Riesgo:** medio (la selección de motor no puede aplicar riesgo, costo o privacidad)
+- **Propósito:** Implementar un router de motores respaldado por políticas para Ollama, OpenAI, Hermes u otros motores.
+- **Evidencia:** BMAD Intelligence update encontró configuración hardcodeada o de un solo motor sin enrutamiento por políticas.
+- **Impacto:** Peticiones sensibles pueden enviarse a un motor o frontera de despliegue inapropiada.
+- **Archivos afectados:** `packages/agent-runtime/src/adapters/engine/`, `packages/agent-runtime/src/domain/ports/agent-engine.port.ts`, `rulesets/opa/`.
+- **Complejidad:** M
+- **Propuesta de corrección:** Añadir `PolicyBasedEngineRouter` respaldado por evaluación de políticas runtime.
+- **Criterios de aceptación:**
+  - [ ] Runtime selecciona motor según política de riesgo, privacidad, costo y capacidad.
+  - [ ] Las decisiones de enrutamiento quedan trazadas.
+- **Dependencias:** `GT-385`, `GT-412`.
 
 #### GT-408
 
 **Título:** Adaptador Knowledge/RAG ausente
 
-> **Problema (2026-07-02, BMAD Intelligence Update):** Los agentes recomiendan acciones sin base nativa contra ADRs, blueprints o rulesets.
-
-**Propósito:** Implementar un adaptador RAG/Knowledge para que los agentes BMAD internos consulten el corpus.
-**Evidencia:** No hay mecanismo RAG en la capa del runtime.
-**Cierre:** Los agentes pueden consultar documentos arquitectónicos directamente a través de una capacidad.
-**Referencias:** Evaluación de Madurez (Adapter Capability Maturity)
+- **Componente:** Agent Runtime · **Prioridad:** P1 · **Riesgo:** medio (los agentes pueden recomendar acciones sin grounding en el corpus)
+- **Propósito:** Implementar un adaptador Knowledge/RAG para que los agentes consulten ADRs, blueprints, estándares y rulesets antes de actuar.
+- **Evidencia:** BMAD Intelligence update encontró que no hay mecanismo RAG en la capa Agent Runtime.
+- **Impacto:** Las decisiones de agentes pueden desviarse del corpus de referencia corporativo.
+- **Archivos afectados:** `packages/agent-runtime/src/adapters/`, `reference/`, `rulesets/`, `.harness/scripts/`.
+- **Complejidad:** L
+- **Propuesta de corrección:** Añadir una capacidad de consulta de corpus detrás de un puerto runtime y exigir su uso cuando se requiere contexto arquitectónico.
+- **Criterios de aceptación:**
+  - [ ] Los agentes pueden consultar documentos arquitectónicos mediante una capacidad gobernada.
+  - [ ] Las respuestas citan o trazan los artefactos de corpus utilizados.
+- **Dependencias:** estrategia de indexación de corpus y `GT-401`.
 
 #### GT-409
 
 **Título:** Verificaciones de frescura de documentación/diagramas ausentes
 
-> **Problema (2026-07-02, BMAD Intelligence Update):** Los mapas visuales, diagramas Mermaid y documentación de adaptadores pueden desfasarse silenciosamente del código.
-
-**Propósito:** Crear scripts de validación en CI (`validate-adapter-maturity-matrix.mjs`) para bloquear desincronizaciones.
-**Evidencia:** Mapas y diagramas requieren actualizaciones manuales.
-**Cierre:** CI falla si cambian configuraciones sin actualizaciones de documentación correspondientes.
-**Referencias:** Evaluación de Madurez (Adapter Capability Maturity)
+- **Componente:** .harness · **Prioridad:** P2 · **Riesgo:** medio (los mapas arquitectónicos pueden desfasarse del código)
+- **Propósito:** Añadir checks CI que mantengan mapas arquitectónicos, diagramas Mermaid y documentación de adaptadores sincronizados con la configuración de capacidades runtime.
+- **Evidencia:** BMAD Intelligence update encontró que mapas visuales y diagramas requieren actualización manual.
+- **Impacto:** Revisores e implementadores pueden depender de diagramas runtime obsoletos.
+- **Archivos afectados:** `.harness/scripts/ci/`, `reference/architecture/`, `reference/governance/`, `packages/agent-runtime/src/`.
+- **Complejidad:** M
+- **Propuesta de corrección:** Crear un validador de frescura como `validate-adapter-maturity-matrix.mjs` y cablearlo al CI documental.
+- **Criterios de aceptación:**
+  - [ ] CI falla cuando cambia la configuración de capacidades sin actualizaciones documentales correspondientes.
+  - [ ] Los diagramas Mermaid modificados siguen pasando validación de sintaxis/render.
+- **Dependencias:** fuente de verdad de la matriz de capacidades de adaptadores.
 
 #### GT-410
 
 **Título:** Bucle de retroalimentación de inteligencia BMAD ausente o incompleto
 
-> **Problema (2026-07-02, BMAD Intelligence Update):** Se hacen auditorías pero no alimentan estructuralmente a los agentes `.bmad-core` con nuevas reglas o skills.
+- **Componente:** .bmad-core · **Prioridad:** P1 · **Riesgo:** medio (los hallazgos de auditoría no se convierten en conducta reutilizable de agentes)
+- **Propósito:** Sistematizar la creación de reglas, checklists y skills para agentes BMAD tras análisis de gaps mayores.
+- **Evidencia:** BMAD Intelligence update encontró que señales de auditoría de madurez de adaptadores no se retroalimentan estructuralmente a agentes `.bmad-core`.
+- **Impacto:** Winston y Architect pueden repetir omisiones que auditorías previas ya descubrieron.
+- **Archivos afectados:** `.bmad-core/agents/`, `.harness/rules/`, `.harness/playbooks/`, `.agents/skills/`.
+- **Complejidad:** S
+- **Propuesta de corrección:** Añadir un bucle de feedback de madurez de adaptadores y actualizar checklists/reglas de agentes tras oleadas de auditoría.
+- **Criterios de aceptación:**
+  - [ ] Winston y Architect alertan proactivamente violaciones de madurez de adaptadores.
+  - [ ] Auditorías mayores declaran qué reglas o skills de agentes se actualizaron, o por qué no aplicó ninguna actualización.
+- **Dependencias:** `GT-409`.
 
-**Propósito:** Sistematizar la creación de reglas y skills para agentes BMAD tras análisis de gaps importantes.
-**Evidencia:** Faltan skills de análisis de madurez en agentes BMAD.
-**Cierre:** Winston y Architect alertan proactivamente de violaciones de madurez en PRs.
-**Referencias:** Evaluación de Madurez (Adapter Capability Maturity)
+#### GT-411
 
-### `GT-411`
-- **Título**: Unificación de Envelope ADR-0073 en Core API
-- **Área**: Core API
-- **Fecha de registro**: 2026-07-02
-- **Prioridad**: P1
-- **Complejidad**: S
-- **Estado**: PENDING
-- **Problema**: El Core API carece actualmente de la respuesta estructurada estándar ADR-0073 (`{success, data, warnings}`) que ya implementan las interfaces CLI y MCP. Esto crea un contrato inconsistente para consumidores externos.
-- **Evidencia de cierre**: Los endpoints del Core API devuelven el envelope ADR-0073, y `ValidateSatelliteUseCase` está empaquetado de manera consistente.
+**Título:** Unificación de Envelope ADR-0073 en Core API
 
-### `GT-412`
-- **Título**: Garantía de Ejecución de Políticas en Runtime
-- **Área**: Agent Runtime
-- **Fecha de registro**: 2026-07-02
-- **Prioridad**: P0
-- **Complejidad**: M
-- **Estado**: PENDING
-- **Problema**: El Deep Audit reporta la Gobernanza Transversal como "Ausente en runtime". Aunque existen archivos Rego con paridad, no se aplican sistemáticamente en tiempo de ejecución. El `Agent Runtime` carece de la inyección de adaptadores reales (OPA) que fuerce la política en cada petición.
-- **Evidencia de cierre**: `OpaCliPolicyValidationAdapter` está inyectado en el `AgentRuntimeFactory` (resolviendo GT-399), y el Deep Audit reporta "Gobernanza Transversal" como SOLID.
+- **Componente:** Core API · **Prioridad:** P1 · **Riesgo:** medio (consumidores externos reciben contratos de respuesta inconsistentes)
+- **Propósito:** Alinear respuestas de Core API con el envelope estructurado ADR-0073 ya esperado por consumidores CLI y MCP.
+- **Evidencia:** SDLC Deep Audit reportó respuestas de Core API sin el envelope estándar `{success, data, warnings}` en superficies nuevas orientadas a runtime.
+- **Impacto:** Hermes y otros consumidores externos necesitan manejo especial de API en lugar de un contrato transversal.
+- **Archivos afectados:** `apps/core-api/src/presentation/`, `apps/core-api/src/common/`, `reference/architecture/adrs/core/0073-unified-cli-mcp-output-contract-and-gate-evidence-schema.md`.
+- **Complejidad:** S
+- **Propuesta de corrección:** Envolver endpoints de Core API, incluyendo endpoints Hermes/runtime, en el envelope ADR-0073 y documentar excepciones aceptadas.
+- **Criterios de aceptación:**
+  - [ ] Los endpoints Core API involucrados en flujos de evaluación/runtime devuelven el envelope ADR-0073.
+  - [ ] `ValidateSatelliteUseCase` y rutas relacionadas quedan empaquetadas de forma consistente.
+- **Dependencias:** ADR-0073, `GT-400`.
+
+#### GT-412
+
+**Título:** Garantía de Ejecución de Políticas en Runtime
+
+- **Componente:** Agent Runtime · **Prioridad:** P0 · **Riesgo:** alto (las políticas de gobernanza existen pero no se fuerzan en cada request runtime)
+- **Propósito:** Garantizar que los flujos de ejecución runtime invoquen validación de políticas antes de ejecutar capacidades.
+- **Evidencia:** SDLC Deep Audit reportó reglas de gobernanza ausentes en runtime aunque existen archivos Rego y la paridad pasa.
+- **Impacto:** Agent Runtime puede ejecutar capacidades gobernadas sin aplicar las mismas políticas usadas por evaluación/auditoría.
+- **Archivos afectados:** `packages/agent-runtime/src/`, `packages/agent-runtime/src/adapters/policy/`, `sdk/cli/src/`, `rulesets/opa/`.
+- **Complejidad:** M
+- **Propuesta de corrección:** Inyectar el adaptador real de validación de políticas en factories runtime y hacer obligatoria la evaluación de política para capacidades gobernadas.
+- **Criterios de aceptación:**
+  - [ ] Los requests runtime invocan validación de políticas antes de ejecutar capacidades.
+  - [ ] Deep Audit reporta enforcement de gobernanza transversal como sólido.
+  - [ ] Los stubs offline/test son explícitos y no pueden usarse como defaults productivos.
+- **Dependencias:** `GT-398`, `GT-399`, `GT-401`.

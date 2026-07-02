@@ -4,7 +4,7 @@
 
 **Status:** Active Tracking
 **Owner:** Evolith Architecture Board
-**Last Updated:** 2026-06-30 (Wave: Agent Runtime productionization — registered the `@evolith/agent-runtime` v1.0.0 epic `GT-383` (umbrella) decomposed into `GT-384`…`GT-389` (R1–R6), grounded in code: the default `StubCoreEvaluationAdapter` fabricates results with no real rules/policies, and the real adapter (`GT-384`, central blocker) only wraps the existing `EvaluationOrchestrator.evaluate(ctx)` — wiring, not new logic. `GT-384` adapters then implemented (in-process + REST, env-wired into agent-runtime-api, parity jest 22/22) → `GT-383`/`GT-384` IN-PROGRESS. Later same day: GT-386 (fs-durable scheduler/memory) + GT-388 (public-contract freeze, no bump) → IN-PROGRESS. Plus: extracted the ad-hoc fix-log from `EVOLITH-ARCHITECTURE-DESIGN.md` (a competing tracking surface) — its still-open items registered here as `GT-390`…`GT-394` and the postmortem sections removed from that doc. Board grows to a 394-gap board. Prior wave: governance-surface reconciliation — restored EN/ES parity on `GT-313` and registered the 9 missing closure-evidence records (GT-359/360/361/362, GT-376/378/379/380/382) so the maturity/exec-summary generators reconcile.)
+**Last Updated:** 2026-07-02 (Tracking normalization — reconciled the active board to 412 tracked rows, moved every non-DONE item into the active block, corrected EN/ES progress counts, normalized `GT-411`/`GT-412` catalog anchors, expanded the new runtime-governance gaps toward the canonical catalog format, and refreshed moved closure-evidence paths so `08-validate-tracking` passes.)
 **Gap Details:** [Gap Reference Catalog](./gap-reference-catalog.md)
 
 This board is the single source of truth for technical debt, gaps, opportunities, enablers, priority, and status. Select a gap ID to open its problem statement, purpose, evidence, closure criteria, and references.
@@ -13,107 +13,51 @@ This board is the single source of truth for technical debt, gaps, opportunities
 
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|:---:|
-| [`GT-375`](./gap-reference-catalog.md#gt-375) | Core stateless evaluation contracts — formalize `EvaluationContext` (input) / `EvaluationResult` (output): consumers (Evolith Tracker) send context, the Core returns structured verdicts/recommendations. Product/tenant/initiative are **opaque context identifiers only**, never Core entities; epics/stories as `ExternalReferenceContext`. The Core emits non-binding `Recommendation`/`DecisionRecommendation`; the Tracker decides, persists and audits. Per ADR-0101 (corrects ADR-0100) / UP-002. **Umbrella epic — decomposed into `GT-376`…`GT-381` (R0–R5).** | `Cross` | Cross | P0 | XL | `IN-PROGRESS` |
-| [`GT-376`](./gap-reference-catalog.md#gt-376) | R0 — Core stateless evaluator decision + documentation reconciliation (finalize ADR-0101; correct ADR-0100 Decision 1, UP-002 d2/d7; supersede prior design entity/repo sections; `GateDecision`→`CoreGateVerdict`, `'WAIVED'`→`Verdict.WAIVE`) | `Cross` | Cross | P0 | M | `DONE` |
-| [`GT-377`](./gap-reference-catalog.md#gt-377) | R1 — `EvaluationContext`/`EvaluationResult` contracts + Contract Schema Registry (canonical types reusing `Verdict`/`PhaseId`; versioned schemas; ADR-0073 envelope; ESLint boundary guard banning `*Repository` for business entities) | `Core Domain` | Cross | P0 | L | `IN-PROGRESS` |
-| [`GT-378`](./gap-reference-catalog.md#gt-378) | R2 — Wrap existing engines behind the contract (adapter over `satellite-evaluation-pipeline`; Gate/Artifact/Evidence/Ruleset/OPA + Compliance emit canonical results; legacy verdict compatibility; Native+OPA parity 0 drift) | `Core Domain` | Cross | P0 | L | `DONE` |
-| [`GT-379`](./gap-reference-catalog.md#gt-379) | R3 — Architectural engines (Architecture/Blueprint/Topology/Checkpoint/Recommendation; `DecisionRecommendation` `binding:false`; checkpoint does not mutate state) | `Core Domain` | Cross | P1 | L | `DONE` |
-| [`GT-381`](./gap-reference-catalog.md#gt-381) | R5 — Docs/taxonomy + final reconciliation + Tracker integration (reclassify agile artifacts to `ExternalReferenceContext`; publish canonical Core Evaluation Engine doc; Tracker sends context/consumes result/emits `GateDecision`; Core degrades to evaluation-only; CLI/MCP/API parity) | `Cross` | Cross | P2 | M | `IN-PROGRESS` |
-| [`GT-382`](./gap-reference-catalog.md#gt-382) | R4 follow-on — context-aware OPA verdicts were inert (`OpaEvaluator` matched `v.id === rule.id`, discarding threaded `DOD-*`/`CB-*`/`PG-*`). Fixed: prefix-match for the 3 context-aware rule ids (collision-free) + `dod_declared`/`spec_declared` "no-facts→no-opinion" guards so the FS path cannot newly fail; phase-gates already no-ops without `input.gate`. Adversarially reviewed (MERGE, no blockers); opa-parity CI green. Follow-up (non-blocking): wasm install path vs `corePath` resolution — see chip. | `OPA` | Cross | P1 | M | `DONE` |
-| [`GT-380`](./gap-reference-catalog.md#gt-380) | R4 — OPA `input.context` aligned to `EvaluationContext`: `dod.rego` re-anchored off `input.story.*`; story artifacts removed from canonical gates (`gate-f2/f3.json`) + legacy `phase-gates` rulesets + validators/MCP; `EvaluationContext` facts threaded into the OPA input. **AC1 (no Rego reads `input.story`; no Core gate depends on stories) ✓ + AC2 (Native+OPA parity 0 drift; OPA suite green) ✓.** Verdict-consumption of threaded facts split to `GT-382`. | `OPA` | Cross | P1 | M | `DONE` |
-| [`GT-383`](./gap-reference-catalog.md#gt-383) | EPIC — `@evolith/agent-runtime` v1.0.0 productionization & publish: graduate the default stub/in-memory adapters to production, freeze the public contract (`.`/`./ports`/`./adapters` exports), and make the package publish-safe. Central blocker is the Core-evaluation port — today `StubCoreEvaluationAdapter` fabricates a canonical `EvaluationResult` from `passthrough` facts (`results:{}`, `rulesExecuted:[]`, `policiesApplied:[]`), so the runtime governs over a simulated Core. Per ADR-0102. **Umbrella — decomposed into `GT-384`…`GT-389`.** | `Agent Runtime` | Cross | P1 | XL | `IN-PROGRESS` |
-| [`GT-384`](./gap-reference-catalog.md#gt-384) | R1 — Real Core-evaluation adapter: replace `StubCoreEvaluationAdapter` behind `ICoreEvaluationPort`. In-process variant wraps the Core's `EvaluationOrchestrator.evaluate(ctx)` (constructed in `apps/core-api/src/app.module.ts`, exported from `@evolith/core-domain/evaluation`); REST variant calls the existing `/evaluate` controller. Contracts already match (`EvaluationContext`→`EvaluationResult`), so this is wiring + `workspaceRef` resolution, not new evaluation logic. Stub↔real parity tests (0 contract drift). **Central blocker for GT-383.** | `Agent Runtime` | Cross | P1 | M | `IN-PROGRESS` |
-| [`GT-395`](./gap-reference-catalog.md#gt-395) | **WS7 Gobernanza Transversal:** Las reglas de gobernanza agnósticas existen como archivos estáticos pero carecen de aplicación universal en runtime. | `Core Domain` | Cross | P0 | L | `PENDING` |
-| [`GT-396`](./gap-reference-catalog.md#gt-396) | **Contrato de Ingesta Cliente:** Existen esquemas parciales pero falta un `SatelliteManifest` o `ProjectInput` formal y unificado para validaciones. | `Core Domain` | Cross | P1 | M | `PENDING` |
-| [`GT-385`](./gap-reference-catalog.md#gt-385) | R2 — Production engine wiring: default `IAgentEnginePort` to a real Hermes client (the lazy `HermesAgentAdapter` exists; the bootstrap default is `StubAgentEngineAdapter`) and add multi-engine routing; keep the deterministic stub as the offline/test default (design rule #5). | `Agent Runtime` | Cross | P2 | M | `PENDING` |
-| [`GT-386`](./gap-reference-catalog.md#gt-386) | R3 — Durable persistence adapters: replace `InMemorySchedulerAdapter` (no timers; lost on restart) with a durable cron/queue adapter behind `ISchedulerPort`, and `InMemoryMemoryAdapter` with a persistent store behind `IMemoryPort`. In-memory stays the test default. | `Agent Runtime` | Cross | P2 | M | `IN-PROGRESS` |
-| [`GT-387`](./gap-reference-catalog.md#gt-387) | R4 — HITL approval workflow: replace `AutoApprovalAdapter`/`DenyByDefaultApprovalAdapter` with a real chat/Tracker human-in-the-loop workflow behind `IApprovalPort` (production currently deny-by-default for high-impact capabilities). | `Agent Runtime` | Cross | P2 | M | `PENDING` |
-| [`GT-388`](./gap-reference-catalog.md#gt-388) | R5 — Public-contract freeze + SemVer 1.0.0: freeze the `.`/`./ports`/`./adapters` export surface and the canonical contract types; define the `schemaVersion` evolution + deprecation/compat policy; bump `0.1.0`→`1.0.0` only after GT-384 (no stable contract over a simulated Core). | `Agent Runtime` | Cross | P2 | S | `IN-PROGRESS` |
-| [`GT-389`](./gap-reference-catalog.md#gt-389) | R6 — Packaging & release hygiene: replace `@evolith/core-domain: "*"` with a real SemVer range (`^1.x`) and publish `@evolith/core-domain` (1.0.5); verify `files`/`exports`/`dist` resolve for an external consumer; wire `build`+`test` into release CI. | `Agent Runtime` | Cross | P2 | S | `PENDING` |
-| [`GT-390`](./gap-reference-catalog.md#gt-390) | Remove the duplicate `rulesets/sdlc/phase-gates.rules.json` — it collides with `rulesets/phase-gates/phase-gates.rules.json` under a different `$id`, so the two can silently diverge. Consolidate to the one canonical location + add a CI guard that fails on same-named `*.rules.json`. (Extracted from `EVOLITH-ARCHITECTURE-DESIGN.md` §15/§16.) | `Governance` | Cross | P1 | S | `PENDING` |
-| [`GT-391`](./gap-reference-catalog.md#gt-391) | CI schema validation — run `ajv` over every `*.rules.json` against its declared `$schema` (no such gate today; broken/inaccessible `$schema` paths went undetected). (Extracted from `EVOLITH-ARCHITECTURE-DESIGN.md` §15/§17.) | `Governance` | Cross | P2 | S | `PENDING` |
-| [`GT-392`](./gap-reference-catalog.md#gt-392) | Structured blueprints — create `rulesets/blueprints/*.json` for the blueprints that today live only as human-read `reference/` Markdown, so they are machine-validatable and operative (not just prose). (Extracted from `EVOLITH-ARCHITECTURE-DESIGN.md` §15.) | `Governance` | Cross | P2 | M | `PENDING` |
-| [`GT-393`](./gap-reference-catalog.md#gt-393) | `/metrics` scrape isolation in core-api — serve Prometheus metrics on an internal port / behind a NetworkPolicy instead of the public listener (today only `@SkipThrottle`; the API-key guard is opt-in, so metrics can be publicly scrapable). (Extracted from `EVOLITH-ARCHITECTURE-DESIGN.md` §13/§16.) | `Core API` | Cross | P2 | S | `PENDING` |
-| [`GT-394`](./gap-reference-catalog.md#gt-394) | Per-tenant ABAC on corpus access in core-api — prevent a tenant reading another tenant's rulesets/corpus (the stateless Core serves a shared corpus today). (Extracted from `EVOLITH-ARCHITECTURE-DESIGN.md` §16 risk.) | `Core API` | Cross | P2 | M | `PENDING` |
-| [`GT-397`](./gap-reference-catalog.md#gt-397) | **WS9 Paridad Bilingüe:** Script `04-check-bilingual-parity.mjs` ausente, degradando el coverage del gate de calidad a 75%. | `.harness` | Cross | P2 | S | `PENDING` |
 | [`GT-398`](./gap-reference-catalog.md#gt-398) | **Dual-Engine Parity for `allowedSourceInterfaces`:** Missing OPA policy to validate interaction origins (e.g., chat). | `Rulesets` | Cross | P0 | S | `PENDING` |
-| [`GT-399`](./gap-reference-catalog.md#gt-399) | **Real Adapters Injection:** Replace Stubs with HTTP/Harness adapters in CLI `AgentRuntimeFactory`. | `Agent Runtime` | Cross | P1 | M | `PENDING` |
-| [`GT-400`](./gap-reference-catalog.md#gt-400) | **REST Endpoint Hermes:** Create a controller in `core-api` to serve external conversational requests. | `Core API` | Cross | P1 | M | `PENDING` |
 | [`GT-401`](./gap-reference-catalog.md#gt-401) | **InteractionAdapterPort formalized:** Missing or not fully integrated single governed entry point for interfaces. | `Agent Runtime` | Cross | P0 | M | `PENDING` |
 | [`GT-402`](./gap-reference-catalog.md#gt-402) | **Smart CLI adapter:** Formalize CLI as interaction adapter to prevent bypassing runtime layer. | `Smart CLI` | Cross | P0 | M | `PENDING` |
-| [`GT-403`](./gap-reference-catalog.md#gt-403) | **Hermes Chat Box adapter:** Ensure Hermes cannot execute shell directly and uses interaction port. | `Agent Runtime` | Cross | P1 | M | `PENDING` |
-| [`GT-404`](./gap-reference-catalog.md#gt-404) | **OpenCode adapter:** Not implemented. OpenCode lacks secure runtime capability adapter. | `Agent Runtime` | Cross | P2 | M | `PENDING` |
+| [`GT-412`](./gap-reference-catalog.md#gt-412) | **Runtime Policy Enforcement Guarantee:** Governance policies are absent in runtime execution flows. | `Agent Runtime` | Cross | P0 | M | `PENDING` |
+| [`GT-377`](./gap-reference-catalog.md#gt-377) | R1 — `EvaluationContext`/`EvaluationResult` contracts + Contract Schema Registry (canonical types reusing `Verdict`/`PhaseId`; versioned schemas; ADR-0073 envelope; ESLint boundary guard banning `*Repository` for business entities) | `Core Domain` | Cross | P0 | L | `IN-PROGRESS` |
+| [`GT-395`](./gap-reference-catalog.md#gt-395) | **WS7 Gobernanza Transversal:** Las reglas de gobernanza agnósticas existen como archivos estáticos pero carecen de aplicación universal en runtime. | `Core Domain` | Cross | P0 | L | `PENDING` |
+| [`GT-375`](./gap-reference-catalog.md#gt-375) | Core stateless evaluation contracts — formalize `EvaluationContext` (input) / `EvaluationResult` (output): consumers (Evolith Tracker) send context, the Core returns structured verdicts/recommendations. Product/tenant/initiative are **opaque context identifiers only**, never Core entities; epics/stories as `ExternalReferenceContext`. The Core emits non-binding `Recommendation`/`DecisionRecommendation`; the Tracker decides, persists and audits. Per ADR-0101 (corrects ADR-0100) / UP-002. **Umbrella epic — decomposed into `GT-376`…`GT-381` (R0–R5).** | `Cross` | Cross | P0 | XL | `IN-PROGRESS` |
+| [`GT-390`](./gap-reference-catalog.md#gt-390) | Remove the duplicate `rulesets/sdlc/phase-gates.rules.json` — it collides with `rulesets/phase-gates/phase-gates.rules.json` under a different `$id`, so the two can silently diverge. Consolidate to the one canonical location + add a CI guard that fails on same-named `*.rules.json`. (Extracted from `EVOLITH-ARCHITECTURE-DESIGN.md` §15/§16.) | `Governance` | Cross | P1 | S | `PENDING` |
 | [`GT-405`](./gap-reference-catalog.md#gt-405) | **MCP interaction adapter:** Not formalized. MCP bypasses strict runtime port. | `Agent Runtime` | Cross | P1 | S | `PENDING` |
+| [`GT-410`](./gap-reference-catalog.md#gt-410) | **BMAD Intelligence feedback:** BMAD agents missing adapter maturity skills and automated feedback loop. | `.bmad-core` | Cross | P1 | S | `PENDING` |
+| [`GT-411`](./gap-reference-catalog.md#gt-411) | **Core API ADR-0073 Envelope Unification:** Missing envelope in Core API responses. | `Core API` | Cross | P1 | S | `PENDING` |
+| [`GT-324`](./gap-reference-catalog.md#gt-324) | CD: GHCR build+push of core-api & mcp-server (GITHUB_TOKEN) live + push/tag triggers; guarded Coolify deploy job — code complete, deploy pending secrets + CD run | `Infra` | Cross | P1 | M | `IN-PROGRESS` |
+| [`GT-384`](./gap-reference-catalog.md#gt-384) | R1 — Real Core-evaluation adapter: replace `StubCoreEvaluationAdapter` behind `ICoreEvaluationPort`. In-process variant wraps the Core's `EvaluationOrchestrator.evaluate(ctx)` (constructed in `apps/core-api/src/app.module.ts`, exported from `@evolith/core-domain/evaluation`); REST variant calls the existing `/evaluate` controller. Contracts already match (`EvaluationContext`→`EvaluationResult`), so this is wiring + `workspaceRef` resolution, not new evaluation logic. Stub↔real parity tests (0 contract drift). **Central blocker for GT-383.** | `Agent Runtime` | Cross | P1 | M | `IN-PROGRESS` |
+| [`GT-396`](./gap-reference-catalog.md#gt-396) | **Contrato de Ingesta Cliente:** Existen esquemas parciales pero falta un `SatelliteManifest` o `ProjectInput` formal y unificado para validaciones. | `Core Domain` | Cross | P1 | M | `PENDING` |
+| [`GT-399`](./gap-reference-catalog.md#gt-399) | **Real Adapters Injection:** Replace Stubs with HTTP/Harness adapters in CLI `AgentRuntimeFactory`. | `Agent Runtime` | Cross | P1 | M | `PENDING` |
+| [`GT-400`](./gap-reference-catalog.md#gt-400) | **REST Endpoint Hermes:** Create a controller in `core-api` to serve external conversational requests. | `Core API` | Cross | P1 | M | `PENDING` |
+| [`GT-403`](./gap-reference-catalog.md#gt-403) | **Hermes Chat Box adapter:** Ensure Hermes cannot execute shell directly and uses interaction port. | `Agent Runtime` | Cross | P1 | M | `PENDING` |
 | [`GT-406`](./gap-reference-catalog.md#gt-406) | **External HITL adapters:** Missing real Slack/Tracker/GitHub human approval ports. | `Agent Runtime` | Cross | P1 | M | `PENDING` |
 | [`GT-407`](./gap-reference-catalog.md#gt-407) | **Policy-based routing:** Missing dynamic routing to engines based on risk/privacy. | `Agent Runtime` | Cross | P1 | M | `PENDING` |
 | [`GT-408`](./gap-reference-catalog.md#gt-408) | **Knowledge/RAG adapter:** Missing internal corpus context querying for agents. | `Agent Runtime` | Cross | P1 | L | `PENDING` |
+| [`GT-383`](./gap-reference-catalog.md#gt-383) | EPIC — `@evolith/agent-runtime` v1.0.0 productionization & publish: graduate the default stub/in-memory adapters to production, freeze the public contract (`.`/`./ports`/`./adapters` exports), and make the package publish-safe. Central blocker is the Core-evaluation port — today `StubCoreEvaluationAdapter` fabricates a canonical `EvaluationResult` from `passthrough` facts (`results:{}`, `rulesExecuted:[]`, `policiesApplied:[]`), so the runtime governs over a simulated Core. Per ADR-0102. **Umbrella — decomposed into `GT-384`…`GT-389`.** | `Agent Runtime` | Cross | P1 | XL | `IN-PROGRESS` |
+| [`GT-388`](./gap-reference-catalog.md#gt-388) | R5 — Public-contract freeze + SemVer 1.0.0: freeze the `.`/`./ports`/`./adapters` export surface and the canonical contract types; define the `schemaVersion` evolution + deprecation/compat policy; bump `0.1.0`→`1.0.0` only after GT-384 (no stable contract over a simulated Core). | `Agent Runtime` | Cross | P2 | S | `IN-PROGRESS` |
+| [`GT-389`](./gap-reference-catalog.md#gt-389) | R6 — Packaging & release hygiene: replace `@evolith/core-domain: "*"` with a real SemVer range (`^1.x`) and publish `@evolith/core-domain` (1.0.5); verify `files`/`exports`/`dist` resolve for an external consumer; wire `build`+`test` into release CI. | `Agent Runtime` | Cross | P2 | S | `PENDING` |
+| [`GT-391`](./gap-reference-catalog.md#gt-391) | CI schema validation — run `ajv` over every `*.rules.json` against its declared `$schema` (no such gate today; broken/inaccessible `$schema` paths went undetected). (Extracted from `EVOLITH-ARCHITECTURE-DESIGN.md` §15/§17.) | `Governance` | Cross | P2 | S | `PENDING` |
+| [`GT-393`](./gap-reference-catalog.md#gt-393) | `/metrics` scrape isolation in core-api — serve Prometheus metrics on an internal port / behind a NetworkPolicy instead of the public listener (today only `@SkipThrottle`; the API-key guard is opt-in, so metrics can be publicly scrapable). (Extracted from `EVOLITH-ARCHITECTURE-DESIGN.md` §13/§16.) | `Core API` | Cross | P2 | S | `PENDING` |
+| [`GT-397`](./gap-reference-catalog.md#gt-397) | **WS9 Paridad Bilingüe:** Script `04-check-bilingual-parity.mjs` ausente, degradando el coverage del gate de calidad a 75%. | `.harness` | Cross | P2 | S | `PENDING` |
+| [`GT-381`](./gap-reference-catalog.md#gt-381) | R5 — Docs/taxonomy + final reconciliation + Tracker integration (reclassify agile artifacts to `ExternalReferenceContext`; publish canonical Core Evaluation Engine doc; Tracker sends context/consumes result/emits `GateDecision`; Core degrades to evaluation-only; CLI/MCP/API parity) | `Cross` | Cross | P2 | M | `IN-PROGRESS` |
+| [`GT-386`](./gap-reference-catalog.md#gt-386) | R3 — Durable persistence adapters: replace `InMemorySchedulerAdapter` (no timers; lost on restart) with a durable cron/queue adapter behind `ISchedulerPort`, and `InMemoryMemoryAdapter` with a persistent store behind `IMemoryPort`. In-memory stays the test default. | `Agent Runtime` | Cross | P2 | M | `IN-PROGRESS` |
+| [`GT-385`](./gap-reference-catalog.md#gt-385) | R2 — Production engine wiring: default `IAgentEnginePort` to a real Hermes client (the lazy `HermesAgentAdapter` exists; the bootstrap default is `StubAgentEngineAdapter`) and add multi-engine routing; keep the deterministic stub as the offline/test default (design rule #5). | `Agent Runtime` | Cross | P2 | M | `PENDING` |
+| [`GT-387`](./gap-reference-catalog.md#gt-387) | R4 — HITL approval workflow: replace `AutoApprovalAdapter`/`DenyByDefaultApprovalAdapter` with a real chat/Tracker human-in-the-loop workflow behind `IApprovalPort` (production currently deny-by-default for high-impact capabilities). | `Agent Runtime` | Cross | P2 | M | `PENDING` |
+| [`GT-392`](./gap-reference-catalog.md#gt-392) | Structured blueprints — create `rulesets/blueprints/*.json` for the blueprints that today live only as human-read `reference/` Markdown, so they are machine-validatable and operative (not just prose). (Extracted from `EVOLITH-ARCHITECTURE-DESIGN.md` §15.) | `Governance` | Cross | P2 | M | `PENDING` |
+| [`GT-394`](./gap-reference-catalog.md#gt-394) | Per-tenant ABAC on corpus access in core-api — prevent a tenant reading another tenant's rulesets/corpus (the stateless Core serves a shared corpus today). (Extracted from `EVOLITH-ARCHITECTURE-DESIGN.md` §16 risk.) | `Core API` | Cross | P2 | M | `PENDING` |
+| [`GT-404`](./gap-reference-catalog.md#gt-404) | **OpenCode adapter:** Not implemented. OpenCode lacks secure runtime capability adapter. | `Agent Runtime` | Cross | P2 | M | `PENDING` |
 | [`GT-409`](./gap-reference-catalog.md#gt-409) | **Freshness checks:** Missing CI guards for visual map and adapter capability desynchronization. | `.harness` | Cross | P2 | M | `PENDING` |
-| [`GT-410`](./gap-reference-catalog.md#gt-410) | **BMAD Intelligence feedback:** BMAD agents missing adapter maturity skills and automated feedback loop. | `.bmad-core` | Cross | P1 | S | `PENDING` |
-| [`GT-411`](./gap-reference-catalog.md#gt-411) | **Core API ADR-0073 Envelope Unification:** Missing envelope in Core API responses. | `Core API` | Cross | P1 | S | `PENDING` |
-| [`GT-412`](./gap-reference-catalog.md#gt-412) | **Runtime Policy Enforcement Guarantee:** Governance policies are absent in runtime execution flows. | `Agent Runtime` | Cross | P0 | M | `PENDING` |
-| [`GT-359`](./gap-reference-catalog.md#gt-359) | Define `SatelliteManifest` ingestion contract schema | `Core Domain` | Cross | P0 | M | `DONE` |
-| [`GT-363`](./gap-reference-catalog.md#gt-363) | GitHub API integration client — secure auth + repo operations (create, configure, branch protection, rulesets, webhooks) | `Infra` | Cross | P0 | M | `DONE` |
-| [`GT-362`](./gap-reference-catalog.md#gt-362) | Implement runtime enforcement for Rego policies in evaluation engine | `Core Domain` | Cross | P0 | L | `DONE` |
-| [`GT-364`](./gap-reference-catalog.md#gt-364) | `InitializeSatelliteUseCase` — domain use case orchestrating full satellite provisioning (new + adopt flows) | `Core Domain` | Cross | P0 | L | `DONE` |
-| [`GT-361`](./gap-reference-catalog.md#gt-361) | Apply ADR-0073 standard envelope to Core API evaluation responses | `Core API` | Cross | P1 | S | `DONE` |
-| [`GT-360`](./gap-reference-catalog.md#gt-360) | Expose topology evaluation in Core API via `ValidateSatelliteUseCase` | `Core API` | Cross | P1 | M | `DONE` |
-| [`GT-365`](./gap-reference-catalog.md#gt-365) | `evolith satellite create` command in SmartCLI — interactive wizard (org, name, topology, phase, features, CI/CD) | `Smart CLI` | Cross | P1 | M | `DONE` |
-| [`GT-366`](./gap-reference-catalog.md#gt-366) | `evolith satellite adopt` command in SmartCLI — analyze existing repo, check compatibility, apply controlled migration | `Smart CLI` | Cross | P1 | M | `DONE` |
-| [`GT-368`](./gap-reference-catalog.md#gt-368) | MCP tools for satellite provisioning — `evolith-satellite-create`, `evolith-satellite-adopt`, `evolith-satellite-list`, `evolith-satellite-status` | `MCP Server` | Cross | P1 | M | `DONE` |
-| [`GT-369`](./gap-reference-catalog.md#gt-369) | `SatelliteRecord` entity + persistent registry model in Core Domain | `Core Domain` | Cross | P1 | M | `DONE` |
-| [`GT-367`](./gap-reference-catalog.md#gt-367) | Core API satellite registry endpoints — CRUD `/api/v1/satellites` (register, list, get, update, deregister, evaluate, sync) | `Core API` | Cross | P1 | L | `DONE` |
-| [`GT-371`](./gap-reference-catalog.md#gt-371) | Satellite → product/idea/tenant/topology/blueprint linking in Core API | `Core API` | Cross | P2 | S | `DONE` |
-| [`GT-374`](./gap-reference-catalog.md#gt-374) | Connect `upgrade.command.ts` to `SatelliteUpgradeService` — remove stub, wire real upgrade logic | `Smart CLI` | Cross | P2 | S | `DONE` |
-| [`GT-370`](./gap-reference-catalog.md#gt-370) | Inheritance propagation mechanism — push Core updates to registered satellites (trigger + dry-run + approval) | `Cross` | Cross | P2 | M | `DONE` |
-| [`GT-372`](./gap-reference-catalog.md#gt-372) | Audit trail per satellite — what was inherited vs customized, by whom, when | `Core Domain` | Cross | P2 | M | `DONE` |
-| [`GT-373`](./gap-reference-catalog.md#gt-373) | Tracker integration — satellite registration, state sync, and satellite management UI | `Cross` | Cross | P2 | M | `DONE` |
-| [`GT-343`](./gap-reference-catalog.md#gt-343) | EPIC: unify SDLC phase ids (f1..f5) and topology F1/F2/F3 vocabulary — stages 1-5: canonical PhaseId + core-domain + public enums + topology maturityLevel + anti-collision guard (2b done; 4b deferred — F# values interlock 22 files across forbidden packages) | `Cross` | Cross | P0 | XL | `DONE` |
-| [`GT-344`](./gap-reference-catalog.md#gt-344) | Published CLI crashes (ENOENT default-workflow.yaml) — embedded default workflow fallback | `Smart CLI` | Cross | P0 | L | `DONE` |
-| [`GT-347`](./gap-reference-catalog.md#gt-347) | Core OPA suite green 197/197 + wasm builds + CI gate wired (29-test-core-opa) | `Governance` | Cross | P0 | L | `DONE` |
-| [`GT-358`](./gap-reference-catalog.md#gt-358) | OPA suite: 12 assertion failures fixed (stale fixtures/mocks) → 197/197 | `Governance` | Cross | P1 | M | `DONE` |
-| [`GT-357`](./gap-reference-catalog.md#gt-357) | META: gap board over-reports completion vs validated build/test reality | `Governance` | Cross | P1 | M | `DONE` |
-| [`GT-345`](./gap-reference-catalog.md#gt-345) | Smart CLI `npm test` 100% green: unit 905/905 + e2e 175/175 (validate restored, --version, mcp-e2e stale tests fixed) | `Smart CLI` | Cross | P1 | L | `DONE` |
-| [`GT-348`](./gap-reference-catalog.md#gt-348) | MCP ABAC OPA policy now CACHED (path+mtime) — loaded once, not recompiled per dispatch + 2 tests | `MCP Server` | Cross | P1 | M | `DONE` |
-| [`GT-351`](./gap-reference-catalog.md#gt-351) | infra-providers: WebhookAdapter hardened (timeout+retry+SSRF guard) +5 tests +jest harness; README/coverage/deriveCategory remain | `Infra` | Cross | P1 | L | `DONE` |
-| [`GT-346`](./gap-reference-catalog.md#gt-346) | Smart CLI shell-injection surface CLOSED — providers now run shell-free (executeFile + arg arrays) + tests | `Smart CLI` | Cross | P2 | M | `DONE` |
-| [`GT-349`](./gap-reference-catalog.md#gt-349) | MCP ABAC OPA fail-open FIXED — missing policy.wasm now denies in prod (fail-closed) + 6 tests | `MCP Server` | Cross | P2 | S | `DONE` |
-| [`GT-350`](./gap-reference-catalog.md#gt-350) | standards.service rule-check `new Function()` sink REMOVED — restricted predicate evaluator + 6 tests (no-code-exec proven) | `Core Domain` | Cross | P2 | M | `DONE` |
-| [`GT-352`](./gap-reference-catalog.md#gt-352) | mcp-tools: inputSchema validation added (CallTool → isError) + README (EN/ES) + 7 tests | `MCP Tools` | Cross | P2 | S | `DONE` |
-| [`GT-353`](./gap-reference-catalog.md#gt-353) | sdk-client orphaned (no consumer/README); low method coverage | `SDK` | Cross | P2 | M | `DONE` |
-| [`GT-354`](./gap-reference-catalog.md#gt-354) | core-api OpenAPI module dead code; api-reference missing cache/invalidate | `Core API` | Cross | P2 | S | `DONE` |
-| [`GT-355`](./gap-reference-catalog.md#gt-355) | @evolith/core has no contract/smoke test for the re-export barrel | `Core` | Cross | P2 | S | `DONE` |
-| [`GT-356`](./gap-reference-catalog.md#gt-356) | mcp-services README hand-maintained counts/command stale | `Docs` | Cross | P2 | S | `DONE` |
-| [`GT-331`](./gap-reference-catalog.md#gt-331) | MCP binary version read from package.json (was hardcoded 1.0.0) | `MCP Server` | Cross | P2 | XS | `DONE` |
-| [`GT-332`](./gap-reference-catalog.md#gt-332) | Redact approvalToken + args in mutative dispatch audit log | `MCP Server` | Cross | P1 | S | `DONE` |
-| [`GT-333`](./gap-reference-catalog.md#gt-333) | Constant-time API-key comparison (timingSafeEqual) | `MCP Server` | Cross | P2 | XS | `DONE` |
-| [`GT-334`](./gap-reference-catalog.md#gt-334) | Declare @open-policy-agent/opa-wasm as direct mcp-server dependency | `MCP Server` | Cross | P2 | XS | `DONE` |
-| [`GT-335`](./gap-reference-catalog.md#gt-335) | Fix read-gap-tracking dead PENDING filter (status parser + injectable root) | `MCP Tools` | Cross | P1 | S | `DONE` |
-| [`GT-336`](./gap-reference-catalog.md#gt-336) | SDK REST client missing /api prefix — all calls 404 | `SDK` | Cross | P0 | S | `DONE` |
-| [`GT-337`](./gap-reference-catalog.md#gt-337) | SDK ApiEnvelope type as discriminated union matching core-api | `SDK` | Cross | P1 | S | `DONE` |
-| [`GT-338`](./gap-reference-catalog.md#gt-338) | @evolith/core broken subpath exports (MODULE_NOT_FOUND) pruned + README | `Core` | Cross | P1 | S | `DONE` |
-| [`GT-339`](./gap-reference-catalog.md#gt-339) | core-api propose-advance forwarded fromPhase undefined (contract bug) | `Core API` | Cross | P1 | S | `DONE` |
-| [`GT-340`](./gap-reference-catalog.md#gt-340) | core-api test harness sets WORKSPACE_ROOT — npm test 105/105 (was 23 failing) | `Core API` | Cross | P1 | S | `DONE` |
-| [`GT-341`](./gap-reference-catalog.md#gt-341) | product-inventory generator repointed to packages/mcp-server (was 0/0/0, now 27/9/8) | `Governance` | Cross | P1 | S | `DONE` |
-| [`GT-342`](./gap-reference-catalog.md#gt-342) | README lists 8 topologies (added Distributed Modules + Microservices, EN+ES) | `Docs` | Cross | P1 | XS | `DONE` |
-| [`GT-314`](./gap-reference-catalog.md#gt-314) | Validate the real satellite artifact, not the Core template (evidence-validator resolves template paths) | `Core Domain` | Cross | P0 | M | `DONE` |
-| [`GT-315`](./gap-reference-catalog.md#gt-315) | Domain event system: bus + outbox + versioned events (phase/gate/artifact/blueprint/workflow) | `Core Domain` | Cross | P0 | L | `DONE` |
-| [`GT-316`](./gap-reference-catalog.md#gt-316) | Unified verdict + artifact/phase lifecycle state machine (created to archived) | `Core Domain` | Cross | P0 | L | `DONE` |
-| [`GT-317`](./gap-reference-catalog.md#gt-317) | validateWorkflow(definition): validate Tracker-supplied flow against Core invariants (tenant-agnostic seam) | `Core Domain` | Cross | P0 | L | `DONE` |
-| [`GT-318`](./gap-reference-catalog.md#gt-318) | Unify the two divergent gate sources and execute the OPA rules they cite | `Governance` | Cross | P1 | M | `DONE` |
-| [`GT-319`](./gap-reference-catalog.md#gt-319) | Formal role model (RBAC enum/hierarchy) | `Core Domain` | Cross | P1 | M | `DONE` |
-| [`GT-320`](./gap-reference-catalog.md#gt-320) | Enforce gate approver/waiver role via OPA (accountableRole is declarative only) | `Governance` | Cross | P1 | M | `DONE` |
-| [`GT-321`](./gap-reference-catalog.md#gt-321) | Persistent append-only audit ledger (not only in-memory/JSONL) | `Core Domain` | Cross | P1 | M | `DONE` |
-| [`GT-322`](./gap-reference-catalog.md#gt-322) | Typed @evolith/sdk client (REST+MCP) generated from OpenAPI/schemas | `SDK` | Cross | P1 | M | `DONE` |
-| [`GT-323`](./gap-reference-catalog.md#gt-323) | Production Dockerfiles for core-api and mcp-server (bundle the corpus) | `Infra` | Cross | P1 | M | `DONE` |
-| [`GT-324`](./gap-reference-catalog.md#gt-324) | CD: GHCR build+push of core-api & mcp-server (GITHUB_TOKEN) live + push/tag triggers; guarded Coolify deploy job — code complete, deploy pending secrets + CD run | `Infra` | Cross | P1 | M | `IN-PROGRESS` |
-| [`GT-325`](./gap-reference-catalog.md#gt-325) | Blueprint as a first-class entity validated against rulesets/topologies/tenant policy/OPA | `Architecture` | F2 | P1 | L | `DONE` |
-| [`GT-326`](./gap-reference-catalog.md#gt-326) | End-to-end integration validation Core and Tracker and agents | `Quality` | Cross | P1 | L | `DONE` |
-| [`GT-327`](./gap-reference-catalog.md#gt-327) | Evolve the one-shot webhook into subscriptions + retries + HMAC signing | `Core Domain` | Cross | P2 | M | `DONE` |
-| [`GT-328`](./gap-reference-catalog.md#gt-328) | Roll out ESLint boundaries to packages/* and apps/* with a CI step | `Quality` | Cross | P2 | M | `DONE` |
-| [`GT-329`](./gap-reference-catalog.md#gt-329) | Relocate the 5 advanced topologies to rulesets/topologies | `Rulesets` | Cross | P2 | M | `DONE` |
-| [`GT-330`](./gap-reference-catalog.md#gt-330) | Mitigate bus factor (second maintainer + deep onboarding) | `Governance` | Cross | P3 | M | `DONE` |
 | [`GT-313`](./gap-reference-catalog.md#gt-313) | Rotate and externalize GH_TOKEN via a secret manager | `Security` | Cross | P0 | XS | `DONE` |
-| [`GT-312`](./gap-reference-catalog.md#gt-312) | SDLC validation orchestration: phase → gate → artifacts → schemas → rulesets → topology → ADRs → OPA → blocking criteria | `Core Domain` | Cross | P0 | XL | `DONE` |
+| [`GT-01`](./gap-reference-catalog.md#gt-01) | Unified contract ADR | `Governance` | F0 | P0 | S | `DONE` |
+| [`GT-27`](./gap-reference-catalog.md#gt-27) | Canonical tracking semantic consistency | `Governance` | Cross | P0 | S | `DONE` |
+| [`GT-59`](./gap-reference-catalog.md#gt-59) | Hardening HTTP — Helmet + CORS + Rate Limiting (OWASP API4/8) | `BFF API` | Cross | P0 | S | `DONE` |
+| [`GT-152`](./gap-reference-catalog.md#gt-152) | External Knowledge Contract and Source Registry Schema | `Governance` | Cross | P0 | S | `DONE` |
+| [`GT-226`](./gap-reference-catalog.md#gt-226) | Wire Dependabot/Renovate config (ADR-0009 compliance) | `Governance` | Cross | P0 | S | `DONE` |
+| [`GT-250`](./gap-reference-catalog.md#gt-250) | Fix MCP auth bypass when no API key configured | `Security` | Cross | P0 | S | `DONE` |
+| [`GT-251`](./gap-reference-catalog.md#gt-251) | Fix command injection in update command via execSync | `Security` | Cross | P0 | S | `DONE` |
+| [`GT-253`](./gap-reference-catalog.md#gt-253) | Pin trivy-action to specific version tag instead of master branch | `CI/CD` | Cross | P0 | S | `DONE` |
+| [`GT-268`](./gap-reference-catalog.md#gt-268) | Restore missing CI validator scripts referenced by workflows and rules | `Governance CI` | Cross | P0 | S | `DONE` |
+| [`GT-274`](./gap-reference-catalog.md#gt-274) | Harden cleanup-temp-files against tracked-file deletion | `Harness` | Cross | P0 | S | `DONE` |
 | [`GT-286`](./gap-reference-catalog.md#gt-286) | compliance-baseline ruleset exists — rulesets/compliance-baseline | `Rulesets` | Cross | P0 | S | `DONE` |
 | [`GT-287`](./gap-reference-catalog.md#gt-287) | definition-of-done ruleset exists — rulesets/definition-of-done | `Rulesets` | Cross | P0 | S | `DONE` |
 | [`GT-288`](./gap-reference-catalog.md#gt-288) | engineering-manifesto ruleset exists — rulesets/engineering-manifesto | `Rulesets` | Cross | P0 | S | `DONE` |
@@ -123,6 +67,31 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-292`](./gap-reference-catalog.md#gt-292) | satellite-contracts ruleset exists — rulesets/satellite-contracts | `Rulesets` | Cross | P0 | S | `DONE` |
 | [`GT-293`](./gap-reference-catalog.md#gt-293) | executive-scorecards ruleset exists — rulesets/executive-scorecards | `Rulesets` | Cross | P0 | S | `DONE` |
 | [`GT-294`](./gap-reference-catalog.md#gt-294) | OPA policies for architecture — rulesets/architecture/opa | `Architecture` | Cross | P0 | S | `DONE` |
+| [`GT-336`](./gap-reference-catalog.md#gt-336) | SDK REST client missing /api prefix — all calls 404 | `SDK` | Cross | P0 | S | `DONE` |
+| [`MT-A01`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Ratify the Multi-Topology Reference Corpus ADR | `Governance` | Cross | P0 | S | `DONE` |
+| [`MT-A02`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Freeze the root-taxonomy decision: no root `/topologies/` without superseding ADR | `Governance` | Cross | P0 | S | `DONE` |
+| [`MT-A03`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Authorize `reference/architecture/topologies/` as the canonical human-readable topology corpus | `Taxonomy` | Cross | P0 | S | `DONE` |
+| [`MT-A04`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Authorize `rulesets/topologies/` as the canonical executable topology rules location | `Rulesets` | Cross | P0 | S | `DONE` |
+| [`GT-02`](./gap-reference-catalog.md#gt-02) | `GateEvidence` modeled in the domain layer | `Core Domain` | F1 | P0 | M | `DONE` |
+| [`GT-03`](./gap-reference-catalog.md#gt-03) | `EvaluateGateUseCase` and `gate evaluate` command | `Core Domain` | F1 | P0 | M | `DONE` |
+| [`GT-06`](./gap-reference-catalog.md#gt-06) | MCP tool `evolith-gate-evaluate` | `CLI` | F2 | P0 | M | `DONE` |
+| [`GT-28`](./gap-reference-catalog.md#gt-28) | Restore CLI build, test, and smoke baseline | `CLI` | F0 | P0 | M | `DONE` |
+| [`GT-37`](./gap-reference-catalog.md#gt-37) | Evidence-gated semantic gap closure | `Governance` | Cross | P0 | M | `DONE` |
+| [`GT-41`](./gap-reference-catalog.md#gt-41) | Automated maturity reconciliation | `Governance` | Cross | P0 | M | `DONE` |
+| [`GT-44`](./gap-reference-catalog.md#gt-44) | Deterministic release pipeline integrity | `CLI` | F5 | P0 | M | `DONE` |
+| [`GT-60`](./gap-reference-catalog.md#gt-60) | Validación Global DTOs con class-validator (OWASP API3) | `BFF API` | Cross | P0 | M | `DONE` |
+| [`GT-64`](./gap-reference-catalog.md#gt-64) | Structured Logging con Correlation ID | `BFF API` | Cross | P0 | M | `DONE` |
+| [`GT-151`](./gap-reference-catalog.md#gt-151) | Complete Native/OPA Rule-ID Coverage for Accepted Topologies | `Rulesets` | Cross | P0 | M | `DONE` |
+| [`GT-153`](./gap-reference-catalog.md#gt-153) | Knowledge Lifecycle Governance by Winston | `Governance` | Cross | P0 | M | `DONE` |
+| [`GT-154`](./gap-reference-catalog.md#gt-154) | RAG Projection and Native/OPA Parity for External Knowledge | `Governance` | Cross | P0 | M | `DONE` |
+| [`GT-155`](./gap-reference-catalog.md#gt-155) | REST Core API envelope conformance with ADR-0073 | `BFF API` | Cross | P0 | M | `DONE` |
+| [`GT-209`](./gap-reference-catalog.md#gt-209) | Create agnostic baseline (`agnostic-baseline.md` missing) | `Architecture` | Cross | P0 | M | `DONE` |
+| [`GT-227`](./gap-reference-catalog.md#gt-227) | Add CodeQL + Trivy SAST/SCA to CI workflows | `Security` | Cross | P0 | M | `DONE` |
+| [`GT-252`](./gap-reference-catalog.md#gt-252) | Wire all 19 orphaned OPA policies into main.rego aggregator | `Rulesets` | Cross | P0 | M | `DONE` |
+| [`GT-267`](./gap-reference-catalog.md#gt-267) | Restore workspace build/test after Redis cache integration | `Core API/MCP` | Cross | P0 | M | `DONE` |
+| [`GT-269`](./gap-reference-catalog.md#gt-269) | Restore ADR-0073 contract roundtrip reproducibility | `Contracts` | Cross | P0 | M | `DONE` |
+| [`GT-275`](./gap-reference-catalog.md#gt-275) | Reconcile closure evidence registry with canonical tracking semantics | `Governance` | Cross | P0 | M | `DONE` |
+| [`GT-280`](./gap-reference-catalog.md#gt-280) | SDLC phases como datos consultables (JSON/YAML) — mapeo gate → artefactos → reglas Rego | `Governance` | Cross | P0 | M | `DONE` |
 | [`GT-283`](./gap-reference-catalog.md#gt-283) | f1-modular-monolith ruleset exists — rulesets/topologies/progressive-axis/modular-monolith | `Rulesets` | Cross | P0 | M | `DONE` |
 | [`GT-284`](./gap-reference-catalog.md#gt-284) | f2-distributed-modules ruleset exists — rulesets/topologies/progressive-axis/distributed-modules | `Rulesets` | Cross | P0 | M | `DONE` |
 | [`GT-285`](./gap-reference-catalog.md#gt-285) | f3-microservices ruleset exists — rulesets/topologies/progressive-axis/microservices | `Rulesets` | Cross | P0 | M | `DONE` |
@@ -130,6 +99,134 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-296`](./gap-reference-catalog.md#gt-296) | Phase transition logic exists — packages/core-domain/src/phases | `Core Domain` | Cross | P0 | M | `DONE` |
 | [`GT-297`](./gap-reference-catalog.md#gt-297) | MCP resources for corpus — packages/mcp-server/src/resources | `MCP` | Cross | P0 | M | `DONE` |
 | [`GT-298`](./gap-reference-catalog.md#gt-298) | WatcherService integration — packages/mcp-server/src/watcher | `MCP` | Cross | P0 | M | `DONE` |
+| [`GT-314`](./gap-reference-catalog.md#gt-314) | Validate the real satellite artifact, not the Core template (evidence-validator resolves template paths) | `Core Domain` | Cross | P0 | M | `DONE` |
+| [`GT-359`](./gap-reference-catalog.md#gt-359) | Define `SatelliteManifest` ingestion contract schema | `Core Domain` | Cross | P0 | M | `DONE` |
+| [`GT-363`](./gap-reference-catalog.md#gt-363) | GitHub API integration client — secure auth + repo operations (create, configure, branch protection, rulesets, webhooks) | `Infra` | Cross | P0 | M | `DONE` |
+| [`GT-376`](./gap-reference-catalog.md#gt-376) | R0 — Core stateless evaluator decision + documentation reconciliation (finalize ADR-0101; correct ADR-0100 Decision 1, UP-002 d2/d7; supersede prior design entity/repo sections; `GateDecision`→`CoreGateVerdict`, `'WAIVED'`→`Verdict.WAIVE`) | `Cross` | Cross | P0 | M | `DONE` |
+| [`MT-A05`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create `topology-manifest.schema.json` | `Schema` | Cross | P0 | M | `DONE` |
+| [`MT-A06`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Add manifest validation to documentation and ruleset gates | `Harness` | Cross | P0 | M | `DONE` |
+| [`MT-A07`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Define the dimensional topology model | `Architecture` | Cross | P0 | M | `DONE` |
+| [`MT-A08`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Preserve F1/F2/F3 as the `progressive-axis` compatibility model | `Architecture` | Cross | P0 | M | `DONE` |
+| [`GT-29`](./gap-reference-catalog.md#gt-29) | Native/OPA rule execution parity | `Core Domain` | F1 | P0 | L | `DONE` |
+| [`GT-48`](./gap-reference-catalog.md#gt-48) | Restore the normative CLI coverage threshold | `CLI` | F0 | P0 | L | `DONE` |
+| [`GT-62`](./gap-reference-catalog.md#gt-62) | Autenticación API Key + JWT (OWASP API1/2/5) | `BFF API` | F2 | P0 | L | `DONE` |
+| [`GT-72`](./gap-reference-catalog.md#gt-72) | Eliminar @ts-nocheck del application layer | `Core Domain` | Cross | P0 | L | `DONE` |
+| [`GT-73`](./gap-reference-catalog.md#gt-73) | Tests Unit + Integration + E2E del Core API | `BFF API` | Cross | P0 | L | `DONE` |
+| [`GT-110`](./gap-reference-catalog.md#gt-110) | Migrate ingress off the abandoned Kong OSS to Traefik/NGINX | `Platform` | Cross | P0 | L | `DONE` |
+| [`GT-112`](./gap-reference-catalog.md#gt-112) | Replace HashiCorp commercial binaries with OpenTofu + OpenBao | `Platform` | Cross | P0 | L | `DONE` |
+| [`GT-146`](./gap-reference-catalog.md#gt-146) | Secure, Provider-Neutral, and Token-Bounded Agentic CI Review | `Governance` | Cross | P0 | L | `DONE` |
+| [`GT-156`](./gap-reference-catalog.md#gt-156) | Core API product hub, API reference, and deployment runbook | `Product` | Cross | P0 | L | `DONE` |
+| [`GT-315`](./gap-reference-catalog.md#gt-315) | Domain event system: bus + outbox + versioned events (phase/gate/artifact/blueprint/workflow) | `Core Domain` | Cross | P0 | L | `DONE` |
+| [`GT-316`](./gap-reference-catalog.md#gt-316) | Unified verdict + artifact/phase lifecycle state machine (created to archived) | `Core Domain` | Cross | P0 | L | `DONE` |
+| [`GT-317`](./gap-reference-catalog.md#gt-317) | validateWorkflow(definition): validate Tracker-supplied flow against Core invariants (tenant-agnostic seam) | `Core Domain` | Cross | P0 | L | `DONE` |
+| [`GT-344`](./gap-reference-catalog.md#gt-344) | Published CLI crashes (ENOENT default-workflow.yaml) — embedded default workflow fallback | `Smart CLI` | Cross | P0 | L | `DONE` |
+| [`GT-347`](./gap-reference-catalog.md#gt-347) | Core OPA suite green 197/197 + wasm builds + CI gate wired (29-test-core-opa) | `Governance` | Cross | P0 | L | `DONE` |
+| [`GT-362`](./gap-reference-catalog.md#gt-362) | Implement runtime enforcement for Rego policies in evaluation engine | `Core Domain` | Cross | P0 | L | `DONE` |
+| [`GT-364`](./gap-reference-catalog.md#gt-364) | `InitializeSatelliteUseCase` — domain use case orchestrating full satellite provisioning (new + adopt flows) | `Core Domain` | Cross | P0 | L | `DONE` |
+| [`GT-378`](./gap-reference-catalog.md#gt-378) | R2 — Wrap existing engines behind the contract (adapter over `satellite-evaluation-pipeline`; Gate/Artifact/Evidence/Ruleset/OPA + Compliance emit canonical results; legacy verdict compatibility; Native+OPA parity 0 drift) | `Core Domain` | Cross | P0 | L | `DONE` |
+| [`GT-281`](./gap-reference-catalog.md#gt-281) | Pipeline de evaluación end-to-end: cliente → topología → reglas → veredicto | `Core Domain` | Cross | P0 | XL | `DONE` |
+| [`GT-312`](./gap-reference-catalog.md#gt-312) | SDLC validation orchestration: phase → gate → artifacts → schemas → rulesets → topology → ADRs → OPA → blocking criteria | `Core Domain` | Cross | P0 | XL | `DONE` |
+| [`GT-343`](./gap-reference-catalog.md#gt-343) | EPIC: unify SDLC phase ids (f1..f5) and topology F1/F2/F3 vocabulary — stages 1-5: canonical PhaseId + core-domain + public enums + topology maturityLevel + anti-collision guard (2b done; 4b deferred — F# values interlock 22 files across forbidden packages) | `Cross` | Cross | P0 | XL | `DONE` |
+| [`GT-212`](./gap-reference-catalog.md#gt-212) | Resolve ADR-0049/0056 status ambiguity | `Docs` | Cross | P1 | XS | `DONE` |
+| [`GT-234`](./gap-reference-catalog.md#gt-234) | Fix R-27 bilingual parity gap in global-rules.es.md | `Docs` | Cross | P1 | XS | `DONE` |
+| [`GT-342`](./gap-reference-catalog.md#gt-342) | README lists 8 topologies (added Distributed Modules + Microservices, EN+ES) | `Docs` | Cross | P1 | XS | `DONE` |
+| [`GT-04`](./gap-reference-catalog.md#gt-04) | Remove service locator from domain | `Core Domain` | F1 | P1 | S | `DONE` |
+| [`GT-07`](./gap-reference-catalog.md#gt-07) | MCP gate-evaluation release smoke | `CLI` | F2 | P1 | S | `DONE` |
+| [`GT-08`](./gap-reference-catalog.md#gt-08) | Phase 2 real ADR registry validation | `CLI` | F3 | P1 | S | `DONE` |
+| [`GT-09`](./gap-reference-catalog.md#gt-09) | Phase 3 real coverage enforcement | `CLI` | F3 | P1 | S | `DONE` |
+| [`GT-12`](./gap-reference-catalog.md#gt-12) | `--dry-run` on all write operations | `CLI` | F3 | P1 | S | `DONE` |
+| [`GT-14`](./gap-reference-catalog.md#gt-14) | Outbound webhook on gate completion | `CLI` | F4 | P1 | S | `DONE` |
+| [`GT-18`](./gap-reference-catalog.md#gt-18) | Publish `@evolith/smart-cli` to npm | `CLI` | F5 | P1 | S | `DONE` |
+| [`GT-34`](./gap-reference-catalog.md#gt-34) | Roadmap reprioritization around governance proof | `Governance` | Product | P1 | S | `DONE` |
+| [`GT-47`](./gap-reference-catalog.md#gt-47) | Product documentation and release synchronization | `Governance` | Cross | P1 | S | `DONE` |
+| [`GT-61`](./gap-reference-catalog.md#gt-61) | Manejo de errores RFC 9457 Problem Details | `BFF API` | Cross | P1 | S | `DONE` |
+| [`GT-63`](./gap-reference-catalog.md#gt-63) | Auditoría y logging de seguridad (OWASP API9) | `BFF API` | Cross | P1 | S | `DONE` |
+| [`GT-69`](./gap-reference-catalog.md#gt-69) | Richardson Level 2 — HTTP Verbs y Status Codes | `BFF API` | Cross | P1 | S | `DONE` |
+| [`GT-70`](./gap-reference-catalog.md#gt-70) | Graceful Shutdown y manejo de señales OS | `BFF API` | Cross | P1 | S | `DONE` |
+| [`GT-74`](./gap-reference-catalog.md#gt-74) | ConfigModule con validación de env vars (Zod) | `BFF API` | Cross | P1 | S | `DONE` |
+| [`GT-79`](./gap-reference-catalog.md#gt-79) | Restore the green CLI CI validation pipeline | `Governance` | Cross | P1 | S | `DONE` |
+| [`GT-159`](./gap-reference-catalog.md#gt-159) | REST API URI versioning and deprecation policy | `BFF API` | Cross | P1 | S | `DONE` |
+| [`GT-165`](./gap-reference-catalog.md#gt-165) | Concrete SLO and cost budgets for serverless and edge topologies | `Documentation` | Cross | P1 | S | `DONE` |
+| [`GT-175`](./gap-reference-catalog.md#gt-175) | Fix ADR-0076 duplicate (renumber OPA bundle to next free Core ID) | `Docs` | Cross | P1 | S | `DONE` |
+| [`GT-176`](./gap-reference-catalog.md#gt-176) | Remove duplicate `patterns/es/` subdirectory (Pattern A/B mix) | `Docs` | Cross | P1 | S | `DONE` |
+| [`GT-177`](./gap-reference-catalog.md#gt-177) | Complete `core/README.md` with all missing Core ADRs | `Docs` | Cross | P1 | S | `DONE` |
+| [`GT-213`](./gap-reference-catalog.md#gt-213) | Add governance metadata to topology manifests | `Architecture` | Cross | P1 | S | `DONE` |
+| [`GT-232`](./gap-reference-catalog.md#gt-232) | Create Winston and PO full personas in .bmad-core/agents | `Governance` | Cross | P1 | S | `DONE` |
+| [`GT-233`](./gap-reference-catalog.md#gt-233) | Add rate limiting middleware to Core API | `Security` | Cross | P1 | S | `DONE` |
+| [`GT-235`](./gap-reference-catalog.md#gt-235) | Resolve CI script numbering collisions (05/15/16) | `CI` | Cross | P1 | S | `DONE` |
+| [`GT-254`](./gap-reference-catalog.md#gt-254) | Add path traversal protection to MCP resource resolution | `Security` | Cross | P1 | S | `DONE` |
+| [`GT-255`](./gap-reference-catalog.md#gt-255) | Add Content-Security-Policy headers to MCP HTTP transport | `Security` | Cross | P1 | S | `DONE` |
+| [`GT-256`](./gap-reference-catalog.md#gt-256) | Fix Traefik healthcheck by adding --ping=true to command | `Infrastructure` | Cross | P1 | S | `DONE` |
+| [`GT-257`](./gap-reference-catalog.md#gt-257) | Pin MongoDB image version instead of using latest | `Infrastructure` | Cross | P1 | S | `DONE` |
+| [`GT-259`](./gap-reference-catalog.md#gt-259) | Fix ci-cd.yml publish trigger to use tag-based instead of string match | `CI/CD` | Cross | P1 | S | `DONE` |
+| [`GT-260`](./gap-reference-catalog.md#gt-260) | Create PO agent Spanish language file and add to workflows | `BMAD Agents` | Cross | P1 | S | `DONE` |
+| [`GT-332`](./gap-reference-catalog.md#gt-332) | Redact approvalToken + args in mutative dispatch audit log | `MCP Server` | Cross | P1 | S | `DONE` |
+| [`GT-335`](./gap-reference-catalog.md#gt-335) | Fix read-gap-tracking dead PENDING filter (status parser + injectable root) | `MCP Tools` | Cross | P1 | S | `DONE` |
+| [`GT-337`](./gap-reference-catalog.md#gt-337) | SDK ApiEnvelope type as discriminated union matching core-api | `SDK` | Cross | P1 | S | `DONE` |
+| [`GT-338`](./gap-reference-catalog.md#gt-338) | @evolith/core broken subpath exports (MODULE_NOT_FOUND) pruned + README | `Core` | Cross | P1 | S | `DONE` |
+| [`GT-339`](./gap-reference-catalog.md#gt-339) | core-api propose-advance forwarded fromPhase undefined (contract bug) | `Core API` | Cross | P1 | S | `DONE` |
+| [`GT-340`](./gap-reference-catalog.md#gt-340) | core-api test harness sets WORKSPACE_ROOT — npm test 105/105 (was 23 failing) | `Core API` | Cross | P1 | S | `DONE` |
+| [`GT-341`](./gap-reference-catalog.md#gt-341) | product-inventory generator repointed to packages/mcp-server (was 0/0/0, now 27/9/8) | `Governance` | Cross | P1 | S | `DONE` |
+| [`GT-361`](./gap-reference-catalog.md#gt-361) | Apply ADR-0073 standard envelope to Core API evaluation responses | `Core API` | Cross | P1 | S | `DONE` |
+| [`MT-A09`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create the English and Spanish Topology Hub | `Documentation` | Cross | P1 | S | `DONE` |
+| [`MT-A10`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create the English and Spanish Rulesets Topologies Hub | `Rulesets` | Cross | P1 | S | `DONE` |
+| [`GT-05`](./gap-reference-catalog.md#gt-05) | MCP SDK Streamable HTTP transport | `CLI` | F2 | P1 | M | `DONE` |
+| [`GT-10`](./gap-reference-catalog.md#gt-10) | Phase 4 security scan content validation | `CLI` | F3 | P1 | M | `DONE` |
+| [`GT-11`](./gap-reference-catalog.md#gt-11) | Phase 5 observability and rollback validation | `CLI` | F3 | P1 | M | `DONE` |
+| [`GT-13`](./gap-reference-catalog.md#gt-13) | `evolith-phase-advance` proposal runner | `CLI` | F4 | P1 | M | `DONE` |
+| [`GT-17`](./gap-reference-catalog.md#gt-17) | DI consolidation and strict boundaries | `CLI` | F5 | P1 | M | `DONE` |
+| [`GT-33`](./gap-reference-catalog.md#gt-33) | Evidence-backed maturity scoring | `Governance` | Product | P1 | M | `DONE` |
+| [`GT-35`](./gap-reference-catalog.md#gt-35) | Automated inventories and tracking validation | `Governance` | Cross | P1 | M | `DONE` |
+| [`GT-42`](./gap-reference-catalog.md#gt-42) | Cross-repository contract conformance | `Governance` | Cross | P1 | M | `DONE` |
+| [`GT-45`](./gap-reference-catalog.md#gt-45) | MCP transport and tool conformance suite | `CLI` | F2 | P1 | M | `DONE` |
+| [`GT-46`](./gap-reference-catalog.md#gt-46) | Core HTTP service ownership boundary | `CLI` | F2 | P1 | M | `DONE` |
+| [`GT-49`](./gap-reference-catalog.md#gt-49) | Enforce TypeScript strict mode and typed filesystem ports | `CLI` | Cross | P1 | M | `DONE` |
+| [`GT-51`](./gap-reference-catalog.md#gt-51) | Build-versus-Compose gate evidence validation | `CLI` | F3 | P1 | M | `DONE` |
+| [`GT-55`](./gap-reference-catalog.md#gt-55) | TypeScript strictness and implicit any elimination | `CLI` | Cross | P1 | M | `DONE` |
+| [`GT-56`](./gap-reference-catalog.md#gt-56) | Silent failures and missing mocks in CLI E2E tests | `CLI` | Cross | P1 | M | `DONE` |
+| [`GT-65`](./gap-reference-catalog.md#gt-65) | Prometheus Metrics + Health checks liveness/readiness | `BFF API` | F2 | P1 | M | `DONE` |
+| [`GT-67`](./gap-reference-catalog.md#gt-67) | Especificación OpenAPI 3.1 completa | `BFF API` | F2 | P1 | M | `DONE` |
+| [`GT-76`](./gap-reference-catalog.md#gt-76) | PhaseTransitionUseCase expuesto en Core API | `BFF API` | F1 | P1 | M | `DONE` |
+| [`GT-80`](./gap-reference-catalog.md#gt-80) | Type-check the CLI test suite | `CLI` | Cross | P1 | M | `DONE` |
+| [`GT-97`](./gap-reference-catalog.md#gt-97) | Multiple CLI profiles | `CLI` | Cross | P1 | M | `DONE` |
+| [`GT-113`](./gap-reference-catalog.md#gt-113) | Clean Architecture Purification in core-domain | `Core Domain` | Transversal | P1 | M | `DONE` |
+| [`GT-114`](./gap-reference-catalog.md#gt-114) | Human-in-the-Loop for Mutative MCP Tools | `CLI` | Transversal | P1 | M | `DONE` |
+| [`GT-117`](./gap-reference-catalog.md#gt-117) | Read/query (GET) endpoints on Core API for Tracker BFF composition | `BFF API` | F2 | P1 | M | `DONE` |
+| [`GT-130`](./gap-reference-catalog.md#gt-130) | CI pipeline validation for BMAD Agent signatures on ADRs and Technical Specs | `Governance` | Cross | P1 | M | `DONE` |
+| [`GT-132`](./gap-reference-catalog.md#gt-132) | Autonomous Agentic Code Reviews in CI | `Governance` | Cross | P1 | M | `DONE` |
+| [`GT-135`](./gap-reference-catalog.md#gt-135) | Agentic AI Telemetry & Cost Control Standard | `Architecture` | Cross | P1 | M | `DONE` |
+| [`GT-140`](./gap-reference-catalog.md#gt-140) | Workload Identity Token Rotation Standard for Satellite Reference | `Architecture` | Cross | P1 | M | `DONE` |
+| [`GT-144`](./gap-reference-catalog.md#gt-144) | Infinite Loop Prevention and Circuit Breaker Rules for Agents | `Governance` | Cross | P1 | M | `DONE` |
+| [`GT-147`](./gap-reference-catalog.md#gt-147) | Automated Operational Capability and Efficiency Drift Audit | `Governance` | Cross | P1 | M | `DONE` |
+| [`GT-148`](./gap-reference-catalog.md#gt-148) | Topology-Aware Rule Reference and Coverage Migration Repair | `Rulesets` | Cross | P1 | M | `DONE` |
+| [`GT-157`](./gap-reference-catalog.md#gt-157) | MCP authentication and authorization parity with REST | `MCP Services` | Cross | P1 | M | `DONE` |
+| [`GT-158`](./gap-reference-catalog.md#gt-158) | Human-in-the-loop and ABAC scoping for mutative MCP tools | `MCP Services` | Cross | P1 | M | `DONE` |
+| [`GT-160`](./gap-reference-catalog.md#gt-160) | Cross-surface correlation-ID and request-context propagation | `Cross` | Cross | P1 | M | `DONE` |
+| [`GT-161`](./gap-reference-catalog.md#gt-161) | Formal JSON input schemas for core OPA policies | `Schema` | Cross | P1 | M | `DONE` |
+| [`GT-162`](./gap-reference-catalog.md#gt-162) | Aggregator `main.rego` unit tests and parity follow-through | `Rulesets` | Cross | P1 | M | `DONE` |
+| [`GT-163`](./gap-reference-catalog.md#gt-163) | Topology manifest CI validation for referenced artifacts | `Rulesets` | Cross | P1 | M | `DONE` |
+| [`GT-164`](./gap-reference-catalog.md#gt-164) | Event-driven and data-mesh ruleset richness | `Rulesets` | Cross | P1 | M | `DONE` |
+| [`GT-166`](./gap-reference-catalog.md#gt-166) | Missing SDLC phase runbooks for Phases 1, 2, and 4 | `Documentation` | Cross | P1 | M | `DONE` |
+| [`GT-167`](./gap-reference-catalog.md#gt-167) | Phase-gate evidence templates and acceptance checklists | `Documentation` | Cross | P1 | M | `DONE` |
+| [`GT-170`](./gap-reference-catalog.md#gt-170) | UMS reference product hub | `Product` | Cross | P1 | M | `DONE` |
+| [`GT-180`](./gap-reference-catalog.md#gt-180) | Replace cross-boundary `require()` with ES imports / dynamic `import()` | `CLI` | Cross | P1 | M | `DONE` |
+| [`GT-181`](./gap-reference-catalog.md#gt-181) | Split large files into smaller modules | `CLI` | Cross | P1 | M | `DONE` |
+| [`GT-182`](./gap-reference-catalog.md#gt-182) | Add tests for Core Domain SDK | `SDK` | Cross | P1 | M | `DONE` |
+| [`GT-184`](./gap-reference-catalog.md#gt-184) | Remove `@ts-nocheck` from 19 files | `CLI` | Cross | P1 | M | `DONE` |
+| [`GT-185`](./gap-reference-catalog.md#gt-185) | Fix MCP tool stubs | `MCP Services` | Cross | P1 | M | `DONE` |
+| [`GT-210`](./gap-reference-catalog.md#gt-210) | Complete SDLC Phase 05 (missing phase) | `SDLC` | Cross | P1 | M | `DONE` |
+| [`GT-216`](./gap-reference-catalog.md#gt-216) | Close OPA input-schema parity gap (17 native rulesets uncovered) | `Rulesets` | Cross | P1 | M | `DONE` |
+| [`GT-231`](./gap-reference-catalog.md#gt-231) | Wire 10 unlinked CI scripts to GitHub Actions workflows | `CI` | Cross | P1 | M | `DONE` |
+| [`GT-237`](./gap-reference-catalog.md#gt-237) | Author 5 proposed AI ADRs (ADR-AI-001 through 005) | `Architecture` | Cross | P1 | M | `DONE` |
+| [`GT-249`](./gap-reference-catalog.md#gt-249) | Add Redis caching layer for Core API, MCP, and Tracker consumption | `Architecture` | Cross | P1 | M | `DONE` |
+| [`GT-258`](./gap-reference-catalog.md#gt-258) | Add concurrency controls to all GitHub Actions workflows | `CI/CD` | Cross | P1 | M | `DONE` |
+| [`GT-270`](./gap-reference-catalog.md#gt-270) | Pin mutable infrastructure images and disable dev-only exposed defaults | `Infrastructure` | Cross | P1 | M | `DONE` |
+| [`GT-271`](./gap-reference-catalog.md#gt-271) | Add Kubernetes workload hardening to Helm charts | `Infrastructure` | Cross | P1 | M | `DONE` |
+| [`GT-272`](./gap-reference-catalog.md#gt-272) | Secure OPA sidecar bundle distribution and verification | `Rulesets` | Cross | P1 | M | `DONE` |
+| [`GT-277`](./gap-reference-catalog.md#gt-277) | Topology OpenAPI specs — framework interfaces ausentes en las 8 topologías | `Architecture` | Cross | P1 | M | `DONE` |
+| [`GT-278`](./gap-reference-catalog.md#gt-278) | Topology MCP manifests — framework interfaces ausentes en las 8 topologías | `Architecture` | Cross | P1 | M | `DONE` |
+| [`GT-279`](./gap-reference-catalog.md#gt-279) | Topology CLI flows — framework interfaces ausentes en las 8 topologías | `Architecture` | Cross | P1 | M | `DONE` |
+| [`GT-282`](./gap-reference-catalog.md#gt-282) | Reporte accionable con evidencia detallada (qué regla falló, qué artefacto falta, por qué) | `Core Domain` | Cross | P1 | M | `DONE` |
 | [`GT-299`](./gap-reference-catalog.md#gt-299) | OpenAPI specification — apps/core-api/src/openapi | `BFF API` | Cross | P1 | M | `DONE` |
 | [`GT-300`](./gap-reference-catalog.md#gt-300) | agents command exists — sdk/cli/src/commands/agents | `CLI` | Cross | P1 | M | `DONE` |
 | [`GT-301`](./gap-reference-catalog.md#gt-301) | upgrade command exists — sdk/cli/src/commands/upgrade | `CLI` | Cross | P1 | M | `DONE` |
@@ -140,177 +237,56 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-307`](./gap-reference-catalog.md#gt-307) | Tenant authority model — packages/core-domain/src/tenancy | `Core Domain` | Cross | P1 | M | `DONE` |
 | [`GT-310`](./gap-reference-catalog.md#gt-310) | Test suite exists — sdk/cli/src/__tests__ | `Governance` | Cross | P1 | M | `DONE` |
 | [`GT-311`](./gap-reference-catalog.md#gt-311) | E2E tests exist — sdk/cli/src/__tests__/e2e | `Governance` | Cross | P1 | M | `DONE` |
-| [`GT-302`](./gap-reference-catalog.md#gt-302) | scaffold command exists — sdk/cli/src/commands/architecture/scaffold | `CLI` | Cross | P1 | L | `DONE` |
-| [`GT-308`](./gap-reference-catalog.md#gt-308) | Plugin system for commands — sdk/cli/src/plugins | `CLI` | Cross | P2 | M | `DONE` |
-| [`GT-309`](./gap-reference-catalog.md#gt-309) | Contribution validation — sdk/cli/src/contributions | `CLI` | Cross | P2 | M | `DONE` |
-| [`GT-280`](./gap-reference-catalog.md#gt-280) | SDLC phases como datos consultables (JSON/YAML) — mapeo gate → artefactos → reglas Rego | `Governance` | Cross | P0 | M | `DONE` |
-| [`GT-281`](./gap-reference-catalog.md#gt-281) | Pipeline de evaluación end-to-end: cliente → topología → reglas → veredicto | `Core Domain` | Cross | P0 | XL | `DONE` |
-| [`GT-282`](./gap-reference-catalog.md#gt-282) | Reporte accionable con evidencia detallada (qué regla falló, qué artefacto falta, por qué) | `Core Domain` | Cross | P1 | M | `DONE` |
-| [`GT-277`](./gap-reference-catalog.md#gt-277) | Topology OpenAPI specs — framework interfaces ausentes en las 8 topologías | `Architecture` | Cross | P1 | M | `DONE` |
-| [`GT-278`](./gap-reference-catalog.md#gt-278) | Topology MCP manifests — framework interfaces ausentes en las 8 topologías | `Architecture` | Cross | P1 | M | `DONE` |
-| [`GT-279`](./gap-reference-catalog.md#gt-279) | Topology CLI flows — framework interfaces ausentes en las 8 topologías | `Architecture` | Cross | P1 | M | `DONE` |
-| [`GT-274`](./gap-reference-catalog.md#gt-274) | Harden cleanup-temp-files against tracked-file deletion | `Harness` | Cross | P0 | S | `DONE` |
-| [`GT-267`](./gap-reference-catalog.md#gt-267) | Restore workspace build/test after Redis cache integration | `Core API/MCP` | Cross | P0 | M | `DONE` |
-| [`GT-275`](./gap-reference-catalog.md#gt-275) | Reconcile closure evidence registry with canonical tracking semantics | `Governance` | Cross | P0 | M | `DONE` |
-| [`GT-272`](./gap-reference-catalog.md#gt-272) | Secure OPA sidecar bundle distribution and verification | `Rulesets` | Cross | P1 | M | `DONE` |
-| [`GT-276`](./gap-reference-catalog.md#gt-276) | Correct bilingual coverage dashboard area pairing logic | `Governance CI` | Cross | P2 | S | `DONE` |
-| [`GT-250`](./gap-reference-catalog.md#gt-250) | Fix MCP auth bypass when no API key configured | `Security` | Cross | P0 | S | `DONE` |
-| [`GT-251`](./gap-reference-catalog.md#gt-251) | Fix command injection in update command via execSync | `Security` | Cross | P0 | S | `DONE` |
-| [`GT-253`](./gap-reference-catalog.md#gt-253) | Pin trivy-action to specific version tag instead of master branch | `CI/CD` | Cross | P0 | S | `DONE` |
-| [`GT-268`](./gap-reference-catalog.md#gt-268) | Restore missing CI validator scripts referenced by workflows and rules | `Governance CI` | Cross | P0 | S | `DONE` |
-| [`GT-252`](./gap-reference-catalog.md#gt-252) | Wire all 19 orphaned OPA policies into main.rego aggregator | `Rulesets` | Cross | P0 | M | `DONE` |
-| [`GT-269`](./gap-reference-catalog.md#gt-269) | Restore ADR-0073 contract roundtrip reproducibility | `Contracts` | Cross | P0 | M | `DONE` |
-| [`GT-233`](./gap-reference-catalog.md#gt-233) | Add rate limiting middleware to Core API | `Security` | Cross | P1 | S | `DONE` |
-| [`GT-254`](./gap-reference-catalog.md#gt-254) | Add path traversal protection to MCP resource resolution | `Security` | Cross | P1 | S | `DONE` |
-| [`GT-255`](./gap-reference-catalog.md#gt-255) | Add Content-Security-Policy headers to MCP HTTP transport | `Security` | Cross | P1 | S | `DONE` |
-| [`GT-256`](./gap-reference-catalog.md#gt-256) | Fix Traefik healthcheck by adding --ping=true to command | `Infrastructure` | Cross | P1 | S | `DONE` |
-| [`GT-257`](./gap-reference-catalog.md#gt-257) | Pin MongoDB image version instead of using latest | `Infrastructure` | Cross | P1 | S | `DONE` |
-| [`GT-259`](./gap-reference-catalog.md#gt-259) | Fix ci-cd.yml publish trigger to use tag-based instead of string match | `CI/CD` | Cross | P1 | S | `DONE` |
-| [`GT-260`](./gap-reference-catalog.md#gt-260) | Create PO agent Spanish language file and add to workflows | `BMAD Agents` | Cross | P1 | S | `DONE` |
-| [`GT-258`](./gap-reference-catalog.md#gt-258) | Add concurrency controls to all GitHub Actions workflows | `CI/CD` | Cross | P1 | M | `DONE` |
-| [`GT-270`](./gap-reference-catalog.md#gt-270) | Pin mutable infrastructure images and disable dev-only exposed defaults | `Infrastructure` | Cross | P1 | M | `DONE` |
-| [`GT-271`](./gap-reference-catalog.md#gt-271) | Add Kubernetes workload hardening to Helm charts | `Infrastructure` | Cross | P1 | M | `DONE` |
-| [`GT-20`](./gap-reference-catalog.md#gt-20) | ADR content backfill to authoring standard | `Governance` | Cross | P1 | L | `DONE` |
-| [`GT-228`](./gap-reference-catalog.md#gt-228) | Create agent orchestration engine for BMAD workflows | `Governance` | Cross | P1 | XL | `DONE` |
-| [`GT-229`](./gap-reference-catalog.md#gt-229) | Complete Dual-Engine TypeScript evaluator (R-25 compliance) | `Core Domain` | Cross | P1 | XL | `DONE` |
-| [`GT-261`](./gap-reference-catalog.md#gt-261) | Add resource limits to all Docker containers | `Infrastructure` | Cross | P2 | S | `DONE` |
-| [`GT-263`](./gap-reference-catalog.md#gt-263) | Add infrastructure-level Prometheus alerts | `Observability` | Cross | P2 | S | `DONE` |
-| [`GT-264`](./gap-reference-catalog.md#gt-264) | Fix DAST scan to target real server or remove | `CI/CD` | Cross | P2 | S | `DONE` |
-| [`GT-273`](./gap-reference-catalog.md#gt-273) | Restore DAST scan against staging or ephemeral environment | `CI/CD` | Cross | P3 | S | `DONE` |
-| [`GT-265`](./gap-reference-catalog.md#gt-265) | Add secret detection (gitleaks) to CI pipeline | `Security` | Cross | P2 | S | `DONE` |
-| [`GT-262`](./gap-reference-catalog.md#gt-262) | Add backup/DR procedures for data stores | `Infrastructure` | Cross | P2 | M | `DONE` |
-| [`GT-266`](./gap-reference-catalog.md#gt-266) | Create API key provisioning service for MCP HTTP transport | `Security` | Cross | P2 | M | `DONE` |
-| [`GT-226`](./gap-reference-catalog.md#gt-226) | Wire Dependabot/Renovate config (ADR-0009 compliance) | `Governance` | Cross | P0 | S | `DONE` |
-| [`GT-152`](./gap-reference-catalog.md#gt-152) | External Knowledge Contract and Source Registry Schema | `Governance` | Cross | P0 | S | `DONE` |
-| [`GT-59`](./gap-reference-catalog.md#gt-59) | Hardening HTTP — Helmet + CORS + Rate Limiting (OWASP API4/8) | `BFF API` | Cross | P0 | S | `DONE` |
-| [`GT-27`](./gap-reference-catalog.md#gt-27) | Canonical tracking semantic consistency | `Governance` | Cross | P0 | S | `DONE` |
-| [`GT-01`](./gap-reference-catalog.md#gt-01) | Unified contract ADR | `Governance` | F0 | P0 | S | `DONE` |
-| [`MT-A01`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Ratify the Multi-Topology Reference Corpus ADR | `Governance` | Cross | P0 | S | `DONE` |
-| [`MT-A02`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Freeze the root-taxonomy decision: no root `/topologies/` without superseding ADR | `Governance` | Cross | P0 | S | `DONE` |
-| [`MT-A04`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Authorize `rulesets/topologies/` as the canonical executable topology rules location | `Rulesets` | Cross | P0 | S | `DONE` |
-| [`MT-A03`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Authorize `reference/architecture/topologies/` as the canonical human-readable topology corpus | `Taxonomy` | Cross | P0 | S | `DONE` |
-| [`GT-227`](./gap-reference-catalog.md#gt-227) | Add CodeQL + Trivy SAST/SCA to CI workflows | `Security` | Cross | P0 | M | `DONE` |
-| [`GT-209`](./gap-reference-catalog.md#gt-209) | Create agnostic baseline (`agnostic-baseline.md` missing) | `Architecture` | Cross | P0 | M | `DONE` |
-| [`GT-153`](./gap-reference-catalog.md#gt-153) | Knowledge Lifecycle Governance by Winston | `Governance` | Cross | P0 | M | `DONE` |
-| [`GT-154`](./gap-reference-catalog.md#gt-154) | RAG Projection and Native/OPA Parity for External Knowledge | `Governance` | Cross | P0 | M | `DONE` |
-| [`GT-151`](./gap-reference-catalog.md#gt-151) | Complete Native/OPA Rule-ID Coverage for Accepted Topologies | `Rulesets` | Cross | P0 | M | `DONE` |
-| [`GT-60`](./gap-reference-catalog.md#gt-60) | Validación Global DTOs con class-validator (OWASP API3) | `BFF API` | Cross | P0 | M | `DONE` |
-| [`GT-64`](./gap-reference-catalog.md#gt-64) | Structured Logging con Correlation ID | `BFF API` | Cross | P0 | M | `DONE` |
-| [`GT-155`](./gap-reference-catalog.md#gt-155) | REST Core API envelope conformance with ADR-0073 | `BFF API` | Cross | P0 | M | `DONE` |
-| [`GT-44`](./gap-reference-catalog.md#gt-44) | Deterministic release pipeline integrity | `CLI` | F5 | P0 | M | `DONE` |
-| [`GT-28`](./gap-reference-catalog.md#gt-28) | Restore CLI build, test, and smoke baseline | `CLI` | F0 | P0 | M | `DONE` |
-| [`GT-06`](./gap-reference-catalog.md#gt-06) | MCP tool `evolith-gate-evaluate` | `CLI` | F2 | P0 | M | `DONE` |
-| [`GT-03`](./gap-reference-catalog.md#gt-03) | `EvaluateGateUseCase` and `gate evaluate` command | `Core Domain` | F1 | P0 | M | `DONE` |
-| [`GT-02`](./gap-reference-catalog.md#gt-02) | `GateEvidence` modeled in the domain layer | `Core Domain` | F1 | P0 | M | `DONE` |
-| [`MT-A07`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Define the dimensional topology model | `Architecture` | Cross | P0 | M | `DONE` |
-| [`MT-A08`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Preserve F1/F2/F3 as the `progressive-axis` compatibility model | `Architecture` | Cross | P0 | M | `DONE` |
-| [`MT-A06`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Add manifest validation to documentation and ruleset gates | `Harness` | Cross | P0 | M | `DONE` |
-| [`GT-41`](./gap-reference-catalog.md#gt-41) | Automated maturity reconciliation | `Governance` | Cross | P0 | M | `DONE` |
-| [`GT-37`](./gap-reference-catalog.md#gt-37) | Evidence-gated semantic gap closure | `Governance` | Cross | P0 | M | `DONE` |
-| [`MT-A05`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create `topology-manifest.schema.json` | `Schema` | Cross | P0 | M | `DONE` |
-| [`GT-146`](./gap-reference-catalog.md#gt-146) | Secure, Provider-Neutral, and Token-Bounded Agentic CI Review | `Governance` | Cross | P0 | L | `DONE` |
-| [`GT-62`](./gap-reference-catalog.md#gt-62) | Autenticación API Key + JWT (OWASP API1/2/5) | `BFF API` | F2 | P0 | L | `DONE` |
-| [`GT-73`](./gap-reference-catalog.md#gt-73) | Tests Unit + Integration + E2E del Core API | `BFF API` | Cross | P0 | L | `DONE` |
-| [`GT-48`](./gap-reference-catalog.md#gt-48) | Restore the normative CLI coverage threshold | `CLI` | F0 | P0 | L | `DONE` |
-| [`GT-72`](./gap-reference-catalog.md#gt-72) | Eliminar @ts-nocheck del application layer | `Core Domain` | Cross | P0 | L | `DONE` |
-| [`GT-29`](./gap-reference-catalog.md#gt-29) | Native/OPA rule execution parity | `Core Domain` | F1 | P0 | L | `DONE` |
-| [`GT-110`](./gap-reference-catalog.md#gt-110) | Migrate ingress off the abandoned Kong OSS to Traefik/NGINX | `Platform` | Cross | P0 | L | `DONE` |
-| [`GT-112`](./gap-reference-catalog.md#gt-112) | Replace HashiCorp commercial binaries with OpenTofu + OpenBao | `Platform` | Cross | P0 | L | `DONE` |
-| [`GT-156`](./gap-reference-catalog.md#gt-156) | Core API product hub, API reference, and deployment runbook | `Product` | Cross | P0 | L | `DONE` |
-| [`GT-212`](./gap-reference-catalog.md#gt-212) | Resolve ADR-0049/0056 status ambiguity | `Docs` | Cross | P1 | XS | `DONE` |
-| [`GT-234`](./gap-reference-catalog.md#gt-234) | Fix R-27 bilingual parity gap in global-rules.es.md | `Docs` | Cross | P1 | XS | `DONE` |
-| [`GT-213`](./gap-reference-catalog.md#gt-213) | Add governance metadata to topology manifests | `Architecture` | Cross | P1 | S | `DONE` |
-| [`GT-232`](./gap-reference-catalog.md#gt-232) | Create Winston and PO full personas in .bmad-core/agents | `Governance` | Cross | P1 | S | `DONE` |
-| [`GT-235`](./gap-reference-catalog.md#gt-235) | Resolve CI script numbering collisions (05/15/16) | `CI` | Cross | P1 | S | `DONE` |
-| [`MT-A09`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create the English and Spanish Topology Hub | `Documentation` | Cross | P1 | S | `DONE` |
-| [`GT-165`](./gap-reference-catalog.md#gt-165) | Concrete SLO and cost budgets for serverless and edge topologies | `Documentation` | Cross | P1 | S | `DONE` |
-| [`GT-61`](./gap-reference-catalog.md#gt-61) | Manejo de errores RFC 9457 Problem Details | `BFF API` | Cross | P1 | S | `DONE` |
-| [`GT-63`](./gap-reference-catalog.md#gt-63) | Auditoría y logging de seguridad (OWASP API9) | `BFF API` | Cross | P1 | S | `DONE` |
-| [`GT-69`](./gap-reference-catalog.md#gt-69) | Richardson Level 2 — HTTP Verbs y Status Codes | `BFF API` | Cross | P1 | S | `DONE` |
-| [`GT-70`](./gap-reference-catalog.md#gt-70) | Graceful Shutdown y manejo de señales OS | `BFF API` | Cross | P1 | S | `DONE` |
-| [`GT-74`](./gap-reference-catalog.md#gt-74) | ConfigModule con validación de env vars (Zod) | `BFF API` | Cross | P1 | S | `DONE` |
-| [`GT-159`](./gap-reference-catalog.md#gt-159) | REST API URI versioning and deprecation policy | `BFF API` | Cross | P1 | S | `DONE` |
-| [`GT-79`](./gap-reference-catalog.md#gt-79) | Restore the green CLI CI validation pipeline | `Governance` | Cross | P1 | S | `DONE` |
-| [`GT-18`](./gap-reference-catalog.md#gt-18) | Publish `@evolith/smart-cli` to npm | `CLI` | F5 | P1 | S | `DONE` |
-| [`GT-14`](./gap-reference-catalog.md#gt-14) | Outbound webhook on gate completion | `CLI` | F4 | P1 | S | `DONE` |
-| [`GT-12`](./gap-reference-catalog.md#gt-12) | `--dry-run` on all write operations | `CLI` | F3 | P1 | S | `DONE` |
-| [`GT-09`](./gap-reference-catalog.md#gt-09) | Phase 3 real coverage enforcement | `CLI` | F3 | P1 | S | `DONE` |
-| [`GT-08`](./gap-reference-catalog.md#gt-08) | Phase 2 real ADR registry validation | `CLI` | F3 | P1 | S | `DONE` |
-| [`GT-07`](./gap-reference-catalog.md#gt-07) | MCP gate-evaluation release smoke | `CLI` | F2 | P1 | S | `DONE` |
-| [`GT-04`](./gap-reference-catalog.md#gt-04) | Remove service locator from domain | `Core Domain` | F1 | P1 | S | `DONE` |
-| [`GT-47`](./gap-reference-catalog.md#gt-47) | Product documentation and release synchronization | `Governance` | Cross | P1 | S | `DONE` |
-| [`GT-34`](./gap-reference-catalog.md#gt-34) | Roadmap reprioritization around governance proof | `Governance` | Product | P1 | S | `DONE` |
-| [`GT-175`](./gap-reference-catalog.md#gt-175) | Fix ADR-0076 duplicate (renumber OPA bundle to next free Core ID) | `Docs` | Cross | P1 | S | `DONE` |
-| [`GT-176`](./gap-reference-catalog.md#gt-176) | Remove duplicate `patterns/es/` subdirectory (Pattern A/B mix) | `Docs` | Cross | P1 | S | `DONE` |
-| [`GT-177`](./gap-reference-catalog.md#gt-177) | Complete `core/README.md` with all missing Core ADRs | `Docs` | Cross | P1 | S | `DONE` |
-| [`MT-A10`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create the English and Spanish Rulesets Topologies Hub | `Rulesets` | Cross | P1 | S | `DONE` |
-| [`GT-216`](./gap-reference-catalog.md#gt-216) | Close OPA input-schema parity gap (17 native rulesets uncovered) | `Rulesets` | Cross | P1 | M | `DONE` |
-| [`GT-231`](./gap-reference-catalog.md#gt-231) | Wire 10 unlinked CI scripts to GitHub Actions workflows | `CI` | Cross | P1 | M | `DONE` |
-| [`GT-237`](./gap-reference-catalog.md#gt-237) | Author 5 proposed AI ADRs (ADR-AI-001 through 005) | `Architecture` | Cross | P1 | M | `DONE` |
-| [`GT-249`](./gap-reference-catalog.md#gt-249) | Add Redis caching layer for Core API, MCP, and Tracker consumption | `Architecture` | Cross | P1 | M | `DONE` |
-| [`GT-164`](./gap-reference-catalog.md#gt-164) | Event-driven and data-mesh ruleset richness | `Rulesets` | Cross | P1 | M | `DONE` |
-| [`GT-147`](./gap-reference-catalog.md#gt-147) | Automated Operational Capability and Efficiency Drift Audit | `Governance` | Cross | P1 | M | `DONE` |
-| [`GT-140`](./gap-reference-catalog.md#gt-140) | Workload Identity Token Rotation Standard for Satellite Reference | `Architecture` | Cross | P1 | M | `DONE` |
-| [`GT-144`](./gap-reference-catalog.md#gt-144) | Infinite Loop Prevention and Circuit Breaker Rules for Agents | `Governance` | Cross | P1 | M | `DONE` |
-| [`GT-148`](./gap-reference-catalog.md#gt-148) | Topology-Aware Rule Reference and Coverage Migration Repair | `Rulesets` | Cross | P1 | M | `DONE` |
-| [`GT-135`](./gap-reference-catalog.md#gt-135) | Agentic AI Telemetry & Cost Control Standard | `Architecture` | Cross | P1 | M | `DONE` |
-| [`GT-132`](./gap-reference-catalog.md#gt-132) | Autonomous Agentic Code Reviews in CI | `Governance` | Cross | P1 | M | `DONE` |
-| [`GT-130`](./gap-reference-catalog.md#gt-130) | CI pipeline validation for BMAD Agent signatures on ADRs and Technical Specs | `Governance` | Cross | P1 | M | `DONE` |
-| [`GT-117`](./gap-reference-catalog.md#gt-117) | Read/query (GET) endpoints on Core API for Tracker BFF composition | `BFF API` | F2 | P1 | M | `DONE` |
-| [`MT-A23`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Preserve CLI `--arch-level F1/F2/F3` compatibility | `Smart CLI` | Cross | P1 | M | `DONE` |
-| [`GT-166`](./gap-reference-catalog.md#gt-166) | Missing SDLC phase runbooks for Phases 1, 2, and 4 | `Documentation` | Cross | P1 | M | `DONE` |
-| [`GT-167`](./gap-reference-catalog.md#gt-167) | Phase-gate evidence templates and acceptance checklists | `Documentation` | Cross | P1 | M | `DONE` |
-| [`GT-65`](./gap-reference-catalog.md#gt-65) | Prometheus Metrics + Health checks liveness/readiness | `BFF API` | F2 | P1 | M | `DONE` |
-| [`GT-67`](./gap-reference-catalog.md#gt-67) | Especificación OpenAPI 3.1 completa | `BFF API` | F2 | P1 | M | `DONE` |
-| [`GT-76`](./gap-reference-catalog.md#gt-76) | PhaseTransitionUseCase expuesto en Core API | `BFF API` | F1 | P1 | M | `DONE` |
-| [`GT-80`](./gap-reference-catalog.md#gt-80) | Type-check the CLI test suite | `CLI` | Cross | P1 | M | `DONE` |
-| [`GT-97`](./gap-reference-catalog.md#gt-97) | Multiple CLI profiles | `CLI` | Cross | P1 | M | `DONE` |
-| [`GT-114`](./gap-reference-catalog.md#gt-114) | Human-in-the-Loop for Mutative MCP Tools | `CLI` | Transversal | P1 | M | `DONE` |
-| [`GT-56`](./gap-reference-catalog.md#gt-56) | Silent failures and missing mocks in CLI E2E tests | `CLI` | Cross | P1 | M | `DONE` |
-| [`GT-55`](./gap-reference-catalog.md#gt-55) | TypeScript strictness and implicit any elimination | `CLI` | Cross | P1 | M | `DONE` |
-| [`GT-51`](./gap-reference-catalog.md#gt-51) | Build-versus-Compose gate evidence validation | `CLI` | F3 | P1 | M | `DONE` |
-| [`GT-49`](./gap-reference-catalog.md#gt-49) | Enforce TypeScript strict mode and typed filesystem ports | `CLI` | Cross | P1 | M | `DONE` |
-| [`GT-180`](./gap-reference-catalog.md#gt-180) | Replace cross-boundary `require()` with ES imports / dynamic `import()` | `CLI` | Cross | P1 | M | `DONE` |
-| [`GT-181`](./gap-reference-catalog.md#gt-181) | Split large files into smaller modules | `CLI` | Cross | P1 | M | `DONE` |
-| [`GT-182`](./gap-reference-catalog.md#gt-182) | Add tests for Core Domain SDK | `SDK` | Cross | P1 | M | `DONE` |
-| [`GT-185`](./gap-reference-catalog.md#gt-185) | Fix MCP tool stubs | `MCP Services` | Cross | P1 | M | `DONE` |
-| [`GT-184`](./gap-reference-catalog.md#gt-184) | Remove `@ts-nocheck` from 19 files | `CLI` | Cross | P1 | M | `DONE` |
-| [`GT-210`](./gap-reference-catalog.md#gt-210) | Complete SDLC Phase 05 (missing phase) | `SDLC` | Cross | P1 | M | `DONE` |
-| [`GT-46`](./gap-reference-catalog.md#gt-46) | Core HTTP service ownership boundary | `CLI` | F2 | P1 | M | `DONE` |
-| [`GT-45`](./gap-reference-catalog.md#gt-45) | MCP transport and tool conformance suite | `CLI` | F2 | P1 | M | `DONE` |
-| [`GT-17`](./gap-reference-catalog.md#gt-17) | DI consolidation and strict boundaries | `CLI` | F5 | P1 | M | `DONE` |
-| [`GT-13`](./gap-reference-catalog.md#gt-13) | `evolith-phase-advance` proposal runner | `CLI` | F4 | P1 | M | `DONE` |
-| [`GT-11`](./gap-reference-catalog.md#gt-11) | Phase 5 observability and rollback validation | `CLI` | F3 | P1 | M | `DONE` |
-| [`GT-10`](./gap-reference-catalog.md#gt-10) | Phase 4 security scan content validation | `CLI` | F3 | P1 | M | `DONE` |
-| [`GT-05`](./gap-reference-catalog.md#gt-05) | MCP SDK Streamable HTTP transport | `CLI` | F2 | P1 | M | `DONE` |
-| [`GT-113`](./gap-reference-catalog.md#gt-113) | Clean Architecture Purification in core-domain | `Core Domain` | Transversal | P1 | M | `DONE` |
+| [`GT-318`](./gap-reference-catalog.md#gt-318) | Unify the two divergent gate sources and execute the OPA rules they cite | `Governance` | Cross | P1 | M | `DONE` |
+| [`GT-319`](./gap-reference-catalog.md#gt-319) | Formal role model (RBAC enum/hierarchy) | `Core Domain` | Cross | P1 | M | `DONE` |
+| [`GT-320`](./gap-reference-catalog.md#gt-320) | Enforce gate approver/waiver role via OPA (accountableRole is declarative only) | `Governance` | Cross | P1 | M | `DONE` |
+| [`GT-321`](./gap-reference-catalog.md#gt-321) | Persistent append-only audit ledger (not only in-memory/JSONL) | `Core Domain` | Cross | P1 | M | `DONE` |
+| [`GT-322`](./gap-reference-catalog.md#gt-322) | Typed @evolith/sdk client (REST+MCP) generated from OpenAPI/schemas | `SDK` | Cross | P1 | M | `DONE` |
+| [`GT-323`](./gap-reference-catalog.md#gt-323) | Production Dockerfiles for core-api and mcp-server (bundle the corpus) | `Infra` | Cross | P1 | M | `DONE` |
+| [`GT-348`](./gap-reference-catalog.md#gt-348) | MCP ABAC OPA policy now CACHED (path+mtime) — loaded once, not recompiled per dispatch + 2 tests | `MCP Server` | Cross | P1 | M | `DONE` |
+| [`GT-357`](./gap-reference-catalog.md#gt-357) | META: gap board over-reports completion vs validated build/test reality | `Governance` | Cross | P1 | M | `DONE` |
+| [`GT-358`](./gap-reference-catalog.md#gt-358) | OPA suite: 12 assertion failures fixed (stale fixtures/mocks) → 197/197 | `Governance` | Cross | P1 | M | `DONE` |
+| [`GT-360`](./gap-reference-catalog.md#gt-360) | Expose topology evaluation in Core API via `ValidateSatelliteUseCase` | `Core API` | Cross | P1 | M | `DONE` |
+| [`GT-365`](./gap-reference-catalog.md#gt-365) | `evolith satellite create` command in SmartCLI — interactive wizard (org, name, topology, phase, features, CI/CD) | `Smart CLI` | Cross | P1 | M | `DONE` |
+| [`GT-366`](./gap-reference-catalog.md#gt-366) | `evolith satellite adopt` command in SmartCLI — analyze existing repo, check compatibility, apply controlled migration | `Smart CLI` | Cross | P1 | M | `DONE` |
+| [`GT-368`](./gap-reference-catalog.md#gt-368) | MCP tools for satellite provisioning — `evolith-satellite-create`, `evolith-satellite-adopt`, `evolith-satellite-list`, `evolith-satellite-status` | `MCP Server` | Cross | P1 | M | `DONE` |
+| [`GT-369`](./gap-reference-catalog.md#gt-369) | `SatelliteRecord` entity + persistent registry model in Core Domain | `Core Domain` | Cross | P1 | M | `DONE` |
+| [`GT-380`](./gap-reference-catalog.md#gt-380) | R4 — OPA `input.context` aligned to `EvaluationContext`: `dod.rego` re-anchored off `input.story.*`; story artifacts removed from canonical gates (`gate-f2/f3.json`) + legacy `phase-gates` rulesets + validators/MCP; `EvaluationContext` facts threaded into the OPA input. **AC1 (no Rego reads `input.story`; no Core gate depends on stories) ✓ + AC2 (Native+OPA parity 0 drift; OPA suite green) ✓.** Verdict-consumption of threaded facts split to `GT-382`. | `OPA` | Cross | P1 | M | `DONE` |
+| [`GT-382`](./gap-reference-catalog.md#gt-382) | R4 follow-on — context-aware OPA verdicts were inert (`OpaEvaluator` matched `v.id === rule.id`, discarding threaded `DOD-*`/`CB-*`/`PG-*`). Fixed: prefix-match for the 3 context-aware rule ids (collision-free) + `dod_declared`/`spec_declared` "no-facts→no-opinion" guards so the FS path cannot newly fail; phase-gates already no-ops without `input.gate`. Adversarially reviewed (MERGE, no blockers); opa-parity CI green. Follow-up (non-blocking): wasm install path vs `corePath` resolution — see chip. | `OPA` | Cross | P1 | M | `DONE` |
 | [`MT-A11`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create the modular-monolith topology profile | `Architecture` | Cross | P1 | M | `DONE` |
 | [`MT-A12`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create the distributed-modules topology profile | `Architecture` | Cross | P1 | M | `DONE` |
 | [`MT-A13`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create the microservices topology profile | `Architecture` | Cross | P1 | M | `DONE` |
 | [`MT-A14`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create draft profiles for serverless and edge computing | `Architecture` | Cross | P1 | M | `DONE` |
 | [`MT-A15`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create draft profiles for event-driven and data mesh | `Architecture` | Cross | P1 | M | `DONE` |
 | [`MT-A16`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Create draft profile for agentic AI | `Architecture` | Cross | P1 | M | `DONE` |
-| [`GT-42`](./gap-reference-catalog.md#gt-42) | Cross-repository contract conformance | `Governance` | Cross | P1 | M | `DONE` |
-| [`GT-35`](./gap-reference-catalog.md#gt-35) | Automated inventories and tracking validation | `Governance` | Cross | P1 | M | `DONE` |
-| [`GT-33`](./gap-reference-catalog.md#gt-33) | Evidence-backed maturity scoring | `Governance` | Product | P1 | M | `DONE` |
-| [`GT-162`](./gap-reference-catalog.md#gt-162) | Aggregator `main.rego` unit tests and parity follow-through | `Rulesets` | Cross | P1 | M | `DONE` |
-| [`GT-163`](./gap-reference-catalog.md#gt-163) | Topology manifest CI validation for referenced artifacts | `Rulesets` | Cross | P1 | M | `DONE` |
-| [`GT-161`](./gap-reference-catalog.md#gt-161) | Formal JSON input schemas for core OPA policies | `Schema` | Cross | P1 | M | `DONE` |
-| [`GT-170`](./gap-reference-catalog.md#gt-170) | UMS reference product hub | `Product` | Cross | P1 | M | `DONE` |
-| [`GT-157`](./gap-reference-catalog.md#gt-157) | MCP authentication and authorization parity with REST | `MCP Services` | Cross | P1 | M | `DONE` |
-| [`GT-158`](./gap-reference-catalog.md#gt-158) | Human-in-the-loop and ABAC scoping for mutative MCP tools | `MCP Services` | Cross | P1 | M | `DONE` |
-| [`GT-160`](./gap-reference-catalog.md#gt-160) | Cross-surface correlation-ID and request-context propagation | `Cross` | Cross | P1 | M | `DONE` |
+| [`MT-A23`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Preserve CLI `--arch-level F1/F2/F3` compatibility | `Smart CLI` | Cross | P1 | M | `DONE` |
+| [`GT-19`](./gap-reference-catalog.md#gt-19) | Incremental hexagonal migration of `core/` | `CLI` | Cross | P1 | L | `DONE` |
+| [`GT-20`](./gap-reference-catalog.md#gt-20) | ADR content backfill to authoring standard | `Governance` | Cross | P1 | L | `DONE` |
+| [`GT-57`](./gap-reference-catalog.md#gt-57) | Incomplete MCP tooling and validation implementation | `CLI` | F2 | P1 | L | `DONE` |
+| [`GT-66`](./gap-reference-catalog.md#gt-66) | Distributed Tracing con OpenTelemetry | `BFF API` | F3 | P1 | L | `DONE` |
+| [`GT-98`](./gap-reference-catalog.md#gt-98) | CLI extension/plugin system | `CLI` | Cross | P1 | L | `DONE` |
+| [`GT-111`](./gap-reference-catalog.md#gt-111) | Plan the MassTransit v9 commercial pivot (stay v8 OSS or move to Rebus) | `Platform` | Cross | P1 | L | `DONE` |
+| [`GT-118`](./gap-reference-catalog.md#gt-118) | Remote/SaaS consumption model — decouple Core API from local filesystem paths | `BFF API` | F3 | P1 | L | `DONE` |
+| [`GT-123`](./gap-reference-catalog.md#gt-123) | CLI does not build — pre-existing TypeScript errors block `tsc` (init.wizard, progress.service, alias, old MCP auto-fix) | `CLI` | Cross | P1 | L | `DONE` |
+| [`GT-125`](./gap-reference-catalog.md#gt-125) | Maturation of Agentic AI Topology — modular-monolith maturity parity | `Architecture` | Cross | P1 | L | `DONE` |
+| [`GT-136`](./gap-reference-catalog.md#gt-136) | Context-Aware Access Control (ABAC for LLMs) | `Governance` | Cross | P1 | L | `DONE` |
+| [`GT-142`](./gap-reference-catalog.md#gt-142) | Real LLM Bridge Pipeline in CI for Agentic Reviews | `Governance` | Cross | P1 | L | `DONE` |
+| [`GT-145`](./gap-reference-catalog.md#gt-145) | Truthful Provider-Neutral RAG Vector Synchronization | `Operations` | Cross | P1 | L | `DONE` |
+| [`GT-149`](./gap-reference-catalog.md#gt-149) | Executable OPA Tests and Native/OPA Semantic Parity Gate | `Rulesets` | Cross | P1 | L | `DONE` |
+| [`GT-150`](./gap-reference-catalog.md#gt-150) | Mature Remaining Draft Topologies to Accepted Corpus Parity | `Architecture` | Cross | P1 | L | `DONE` |
+| [`GT-168`](./gap-reference-catalog.md#gt-168) | Cross-topology composition reference application | `Architecture` | Cross | P1 | L | `DONE` |
+| [`GT-169`](./gap-reference-catalog.md#gt-169) | Agentic AI operational budgets, credential lifecycle, and runbooks | `Architecture` | Cross | P1 | L | `DONE` |
+| [`GT-179`](./gap-reference-catalog.md#gt-179) | Add tests for 5 low-coverage CLI commands | `CLI` | Cross | P1 | L | `DONE` |
 | [`GT-217`](./gap-reference-catalog.md#gt-217) | Backfill topology operational guidance corpus (7 topologies) | `Architecture` | Cross | P1 | L | `DONE` |
 | [`GT-230`](./gap-reference-catalog.md#gt-230) | Create skills directory and composable skill framework | `Governance` | Cross | P1 | L | `DONE` |
 | [`GT-236`](./gap-reference-catalog.md#gt-236) | Implement knowledge intake pipeline automation | `Governance` | Cross | P1 | L | `DONE` |
-| [`GT-169`](./gap-reference-catalog.md#gt-169) | Agentic AI operational budgets, credential lifecycle, and runbooks | `Architecture` | Cross | P1 | L | `DONE` |
-| [`GT-150`](./gap-reference-catalog.md#gt-150) | Mature Remaining Draft Topologies to Accepted Corpus Parity | `Architecture` | Cross | P1 | L | `DONE` |
-| [`GT-168`](./gap-reference-catalog.md#gt-168) | Cross-topology composition reference application | `Architecture` | Cross | P1 | L | `DONE` |
-| [`GT-145`](./gap-reference-catalog.md#gt-145) | Truthful Provider-Neutral RAG Vector Synchronization | `Operations` | Cross | P1 | L | `DONE` |
-| [`GT-149`](./gap-reference-catalog.md#gt-149) | Executable OPA Tests and Native/OPA Semantic Parity Gate | `Rulesets` | Cross | P1 | L | `DONE` |
-| [`GT-142`](./gap-reference-catalog.md#gt-142) | Real LLM Bridge Pipeline in CI for Agentic Reviews | `Governance` | Cross | P1 | L | `DONE` |
-| [`GT-136`](./gap-reference-catalog.md#gt-136) | Context-Aware Access Control (ABAC for LLMs) | `Governance` | Cross | P1 | L | `DONE` |
-| [`GT-118`](./gap-reference-catalog.md#gt-118) | Remote/SaaS consumption model — decouple Core API from local filesystem paths | `BFF API` | F3 | P1 | L | `DONE` |
+| [`GT-302`](./gap-reference-catalog.md#gt-302) | scaffold command exists — sdk/cli/src/commands/architecture/scaffold | `CLI` | Cross | P1 | L | `DONE` |
+| [`GT-325`](./gap-reference-catalog.md#gt-325) | Blueprint as a first-class entity validated against rulesets/topologies/tenant policy/OPA | `Architecture` | F2 | P1 | L | `DONE` |
+| [`GT-326`](./gap-reference-catalog.md#gt-326) | End-to-end integration validation Core and Tracker and agents | `Quality` | Cross | P1 | L | `DONE` |
+| [`GT-345`](./gap-reference-catalog.md#gt-345) | Smart CLI `npm test` 100% green: unit 905/905 + e2e 175/175 (validate restored, --version, mcp-e2e stale tests fixed) | `Smart CLI` | Cross | P1 | L | `DONE` |
+| [`GT-351`](./gap-reference-catalog.md#gt-351) | infra-providers: WebhookAdapter hardened (timeout+retry+SSRF guard) +5 tests +jest harness; README/coverage/deriveCategory remain | `Infra` | Cross | P1 | L | `DONE` |
+| [`GT-367`](./gap-reference-catalog.md#gt-367) | Core API satellite registry endpoints — CRUD `/api/v1/satellites` (register, list, get, update, deregister, evaluate, sync) | `Core API` | Cross | P1 | L | `DONE` |
+| [`GT-379`](./gap-reference-catalog.md#gt-379) | R3 — Architectural engines (Architecture/Blueprint/Topology/Checkpoint/Recommendation; `DecisionRecommendation` `binding:false`; checkpoint does not mutate state) | `Core Domain` | Cross | P1 | L | `DONE` |
 | [`MT-A17`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Move or mirror current F1/F2/F3 rules into topology-aware ruleset discovery | `Core Domain` | Cross | P1 | L | `DONE` |
 | [`MT-A18`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Add Native + OPA starter rules for serverless | `Rulesets` | Cross | P1 | L | `DONE` |
 | [`MT-A19`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Add Native + OPA starter rules for event-driven | `Rulesets` | Cross | P1 | L | `DONE` |
@@ -319,42 +295,81 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`MT-A22`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Add CLI `--topology` support to validation | `Smart CLI` | Cross | P1 | L | `DONE` |
 | [`MT-A24`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Add MCP topology resources and tools | `MCP Services` | Cross | P1 | L | `DONE` |
 | [`MT-A25`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Add Service CORE API topology discovery and validation endpoints | `Core API` | Cross | P1 | L | `DONE` |
-| [`GT-66`](./gap-reference-catalog.md#gt-66) | Distributed Tracing con OpenTelemetry | `BFF API` | F3 | P1 | L | `DONE` |
-| [`GT-123`](./gap-reference-catalog.md#gt-123) | CLI does not build — pre-existing TypeScript errors block `tsc` (init.wizard, progress.service, alias, old MCP auto-fix) | `CLI` | Cross | P1 | L | `DONE` |
-| [`GT-179`](./gap-reference-catalog.md#gt-179) | Add tests for 5 low-coverage CLI commands | `CLI` | Cross | P1 | L | `DONE` |
-| [`GT-98`](./gap-reference-catalog.md#gt-98) | CLI extension/plugin system | `CLI` | Cross | P1 | L | `DONE` |
-| [`GT-57`](./gap-reference-catalog.md#gt-57) | Incomplete MCP tooling and validation implementation | `CLI` | F2 | P1 | L | `DONE` |
-| [`GT-19`](./gap-reference-catalog.md#gt-19) | Incremental hexagonal migration of `core/` | `CLI` | Cross | P1 | L | `DONE` |
-| [`GT-111`](./gap-reference-catalog.md#gt-111) | Plan the MassTransit v9 commercial pivot (stay v8 OSS or move to Rebus) | `Platform` | Cross | P1 | L | `DONE` |
-| [`GT-125`](./gap-reference-catalog.md#gt-125) | Maturation of Agentic AI Topology — modular-monolith maturity parity | `Architecture` | Cross | P1 | L | `DONE` |
-| [`GT-218`](./gap-reference-catalog.md#gt-218) | Author Phase 05 rollback rehearsal + on-call handoff templates | `SDLC` | F5 | P2 | S | `DONE` |
-| [`GT-219`](./gap-reference-catalog.md#gt-219) | Add `operationalBudgets` to agentic-ai topology manifest | `Architecture` | Cross | P2 | S | `DONE` |
-| [`GT-240`](./gap-reference-catalog.md#gt-240) | Tighten CORS by environment (dev/staging/prod) | `Security` | Cross | P2 | S | `DONE` |
-| [`GT-241`](./gap-reference-catalog.md#gt-241) | Add SBOM generation (CycloneDX) to CI pipeline | `Security` | Cross | P2 | S | `DONE` |
+| [`GT-228`](./gap-reference-catalog.md#gt-228) | Create agent orchestration engine for BMAD workflows | `Governance` | Cross | P1 | XL | `DONE` |
+| [`GT-229`](./gap-reference-catalog.md#gt-229) | Complete Dual-Engine TypeScript evaluator (R-25 compliance) | `Core Domain` | Cross | P1 | XL | `DONE` |
+| [`GT-331`](./gap-reference-catalog.md#gt-331) | MCP binary version read from package.json (was hardcoded 1.0.0) | `MCP Server` | Cross | P2 | XS | `DONE` |
+| [`GT-333`](./gap-reference-catalog.md#gt-333) | Constant-time API-key comparison (timingSafeEqual) | `MCP Server` | Cross | P2 | XS | `DONE` |
+| [`GT-334`](./gap-reference-catalog.md#gt-334) | Declare @open-policy-agent/opa-wasm as direct mcp-server dependency | `MCP Server` | Cross | P2 | XS | `DONE` |
+| [`GT-16`](./gap-reference-catalog.md#gt-16) | Documentation consolidation | `Governance` | F5 | P2 | S | `DONE` |
+| [`GT-22`](./gap-reference-catalog.md#gt-22) | ADR ID uniqueness scheme | `Governance` | Cross | P2 | S | `DONE` |
+| [`GT-26`](./gap-reference-catalog.md#gt-26) | Zero-Downtime Release Playbook | `Governance` | Cross | P2 | S | `DONE` |
+| [`GT-50`](./gap-reference-catalog.md#gt-50) | Enforce coverage thresholds in Jest configuration | `CLI` | F0 | P2 | S | `DONE` |
+| [`GT-52`](./gap-reference-catalog.md#gt-52) | Remove dead dependency-injection container stubs | `CLI` | Cross | P2 | S | `DONE` |
+| [`GT-53`](./gap-reference-catalog.md#gt-53) | Repair migrated product-vision references | `Governance` | Cross | P2 | S | `DONE` |
+| [`GT-58`](./gap-reference-catalog.md#gt-58) | Clean up TODO stubs injected by Hexagonal Scaffolder | `Core Domain` | Cross | P2 | S | `DONE` |
+| [`GT-68`](./gap-reference-catalog.md#gt-68) | Versionado de API con estrategia URI | `BFF API` | F3 | P2 | S | `DONE` |
+| [`GT-77`](./gap-reference-catalog.md#gt-77) | CoreDomainModule extraído de AppModule | `BFF API` | Cross | P2 | S | `DONE` |
+| [`GT-78`](./gap-reference-catalog.md#gt-78) | Eliminar scripts de debug de la raíz del repositorio | `Governance` | Cross | P2 | S | `DONE` |
+| [`GT-82`](./gap-reference-catalog.md#gt-82) | Revive or remove the dead gate-status spec | `CLI` | Cross | P2 | S | `DONE` |
+| [`GT-103`](./gap-reference-catalog.md#gt-103) | CLI subcommand depth | `CLI` | Cross | P2 | S | `DONE` |
+| [`GT-105`](./gap-reference-catalog.md#gt-105) | CLI Docker image | `CLI` | Cross | P2 | S | `DONE` |
+| [`GT-106`](./gap-reference-catalog.md#gt-106) | CLI command aliases | `CLI` | Cross | P2 | S | `DONE` |
+| [`GT-108`](./gap-reference-catalog.md#gt-108) | CLI fixtures/test data | `CLI` | Cross | P2 | S | `DONE` |
+| [`GT-109`](./gap-reference-catalog.md#gt-109) | CLI shell integration | `CLI` | Cross | P2 | S | `DONE` |
+| [`GT-119`](./gap-reference-catalog.md#gt-119) | Reconcile ADR-0074 §5 (MCP in NestJS) with the standalone `@evolith/mcp-server` | `Governance` | Cross | P2 | S | `DONE` |
+| [`GT-174`](./gap-reference-catalog.md#gt-174) | Envelope `meta.schemaVersion` and producer/consumer compatibility matrix | `Cross` | Cross | P2 | S | `DONE` |
 | [`GT-190`](./gap-reference-catalog.md#gt-190) | Add logging to 9 empty catch blocks | `CLI` | Cross | P2 | S | `DONE` |
 | [`GT-191`](./gap-reference-catalog.md#gt-191) | Fix ADR matrix label mismatch | `Docs` | Cross | P2 | S | `DONE` |
 | [`GT-192`](./gap-reference-catalog.md#gt-192) | Fix MASTER_INDEX EN links `.es.md` → `.md` | `Docs` | Cross | P2 | S | `DONE` |
 | [`GT-193`](./gap-reference-catalog.md#gt-193) | Remove TODO placeholders from governance docs | `Docs` | Cross | P2 | S | `DONE` |
 | [`GT-195`](./gap-reference-catalog.md#gt-195) | Fix Linux-only shell paths for Windows compat | `CLI` | Cross | P2 | S | `DONE` |
 | [`GT-211`](./gap-reference-catalog.md#gt-211) | Create EN counterparts for 3 orphan ES-only ADRs | `Docs` | Cross | P2 | S | `DONE` |
-| [`GT-119`](./gap-reference-catalog.md#gt-119) | Reconcile ADR-0074 §5 (MCP in NestJS) with the standalone `@evolith/mcp-server` | `Governance` | Cross | P2 | S | `DONE` |
-| [`GT-68`](./gap-reference-catalog.md#gt-68) | Versionado de API con estrategia URI | `BFF API` | F3 | P2 | S | `DONE` |
-| [`GT-77`](./gap-reference-catalog.md#gt-77) | CoreDomainModule extraído de AppModule | `BFF API` | Cross | P2 | S | `DONE` |
-| [`GT-106`](./gap-reference-catalog.md#gt-106) | CLI command aliases | `CLI` | Cross | P2 | S | `DONE` |
-| [`GT-108`](./gap-reference-catalog.md#gt-108) | CLI fixtures/test data | `CLI` | Cross | P2 | S | `DONE` |
-| [`GT-109`](./gap-reference-catalog.md#gt-109) | CLI shell integration | `CLI` | Cross | P2 | S | `DONE` |
-| [`GT-103`](./gap-reference-catalog.md#gt-103) | CLI subcommand depth | `CLI` | Cross | P2 | S | `DONE` |
-| [`GT-105`](./gap-reference-catalog.md#gt-105) | CLI Docker image | `CLI` | Cross | P2 | S | `DONE` |
-| [`GT-52`](./gap-reference-catalog.md#gt-52) | Remove dead dependency-injection container stubs | `CLI` | Cross | P2 | S | `DONE` |
-| [`GT-82`](./gap-reference-catalog.md#gt-82) | Revive or remove the dead gate-status spec | `CLI` | Cross | P2 | S | `DONE` |
-| [`GT-50`](./gap-reference-catalog.md#gt-50) | Enforce coverage thresholds in Jest configuration | `CLI` | F0 | P2 | S | `DONE` |
-| [`GT-58`](./gap-reference-catalog.md#gt-58) | Clean up TODO stubs injected by Hexagonal Scaffolder | `Core Domain` | Cross | P2 | S | `DONE` |
-| [`GT-78`](./gap-reference-catalog.md#gt-78) | Eliminar scripts de debug de la raíz del repositorio | `Governance` | Cross | P2 | S | `DONE` |
-| [`GT-53`](./gap-reference-catalog.md#gt-53) | Repair migrated product-vision references | `Governance` | Cross | P2 | S | `DONE` |
-| [`GT-26`](./gap-reference-catalog.md#gt-26) | Zero-Downtime Release Playbook | `Governance` | Cross | P2 | S | `DONE` |
-| [`GT-22`](./gap-reference-catalog.md#gt-22) | ADR ID uniqueness scheme | `Governance` | Cross | P2 | S | `DONE` |
-| [`GT-16`](./gap-reference-catalog.md#gt-16) | Documentation consolidation | `Governance` | F5 | P2 | S | `DONE` |
-| [`GT-174`](./gap-reference-catalog.md#gt-174) | Envelope `meta.schemaVersion` and producer/consumer compatibility matrix | `Cross` | Cross | P2 | S | `DONE` |
+| [`GT-218`](./gap-reference-catalog.md#gt-218) | Author Phase 05 rollback rehearsal + on-call handoff templates | `SDLC` | F5 | P2 | S | `DONE` |
+| [`GT-219`](./gap-reference-catalog.md#gt-219) | Add `operationalBudgets` to agentic-ai topology manifest | `Architecture` | Cross | P2 | S | `DONE` |
+| [`GT-240`](./gap-reference-catalog.md#gt-240) | Tighten CORS by environment (dev/staging/prod) | `Security` | Cross | P2 | S | `DONE` |
+| [`GT-241`](./gap-reference-catalog.md#gt-241) | Add SBOM generation (CycloneDX) to CI pipeline | `Security` | Cross | P2 | S | `DONE` |
+| [`GT-261`](./gap-reference-catalog.md#gt-261) | Add resource limits to all Docker containers | `Infrastructure` | Cross | P2 | S | `DONE` |
+| [`GT-263`](./gap-reference-catalog.md#gt-263) | Add infrastructure-level Prometheus alerts | `Observability` | Cross | P2 | S | `DONE` |
+| [`GT-264`](./gap-reference-catalog.md#gt-264) | Fix DAST scan to target real server or remove | `CI/CD` | Cross | P2 | S | `DONE` |
+| [`GT-265`](./gap-reference-catalog.md#gt-265) | Add secret detection (gitleaks) to CI pipeline | `Security` | Cross | P2 | S | `DONE` |
+| [`GT-276`](./gap-reference-catalog.md#gt-276) | Correct bilingual coverage dashboard area pairing logic | `Governance CI` | Cross | P2 | S | `DONE` |
+| [`GT-349`](./gap-reference-catalog.md#gt-349) | MCP ABAC OPA fail-open FIXED — missing policy.wasm now denies in prod (fail-closed) + 6 tests | `MCP Server` | Cross | P2 | S | `DONE` |
+| [`GT-352`](./gap-reference-catalog.md#gt-352) | mcp-tools: inputSchema validation added (CallTool → isError) + README (EN/ES) + 7 tests | `MCP Tools` | Cross | P2 | S | `DONE` |
+| [`GT-354`](./gap-reference-catalog.md#gt-354) | core-api OpenAPI module dead code; api-reference missing cache/invalidate | `Core API` | Cross | P2 | S | `DONE` |
+| [`GT-355`](./gap-reference-catalog.md#gt-355) | @evolith/core has no contract/smoke test for the re-export barrel | `Core` | Cross | P2 | S | `DONE` |
+| [`GT-356`](./gap-reference-catalog.md#gt-356) | mcp-services README hand-maintained counts/command stale | `Docs` | Cross | P2 | S | `DONE` |
+| [`GT-371`](./gap-reference-catalog.md#gt-371) | Satellite → product/idea/tenant/topology/blueprint linking in Core API | `Core API` | Cross | P2 | S | `DONE` |
+| [`GT-374`](./gap-reference-catalog.md#gt-374) | Connect `upgrade.command.ts` to `SatelliteUpgradeService` — remove stub, wire real upgrade logic | `Smart CLI` | Cross | P2 | S | `DONE` |
+| [`GT-21`](./gap-reference-catalog.md#gt-21) | Placement review of tool-centric Core ADRs | `Governance` | Cross | P2 | M | `DONE` |
+| [`GT-24`](./gap-reference-catalog.md#gt-24) | Execute declared documentation migrations | `Governance` | Cross | P2 | M | `DONE` |
+| [`GT-71`](./gap-reference-catalog.md#gt-71) | Circuit Breaker para llamadas a servicios externos | `BFF API` | F3 | P2 | M | `DONE` |
+| [`GT-75`](./gap-reference-catalog.md#gt-75) | Paquete @evolith/infra-providers compartido | `Cross` | Cross | P2 | M | `DONE` |
+| [`GT-81`](./gap-reference-catalog.md#gt-81) | Raise CLI branch coverage to the statement floor | `CLI` | F0 | P2 | M | `DONE` |
+| [`GT-100`](./gap-reference-catalog.md#gt-100) | CLI API browser/explorer | `CLI` | Cross | P2 | M | `DONE` |
+| [`GT-101`](./gap-reference-catalog.md#gt-101) | CLI auto-update mechanism | `CLI` | Cross | P2 | M | `DONE` |
+| [`GT-102`](./gap-reference-catalog.md#gt-102) | CLI real-time progress/streaming | `CLI` | Cross | P2 | M | `DONE` |
+| [`GT-104`](./gap-reference-catalog.md#gt-104) | CLI package-manager distribution | `CLI` | Cross | P2 | M | `DONE` |
+| [`GT-107`](./gap-reference-catalog.md#gt-107) | CLI interactive wizards | `CLI` | Cross | P2 | M | `DONE` |
+| [`GT-116`](./gap-reference-catalog.md#gt-116) | Elimination of Blocking I/O Operations in the CLI | `CLI` | Transversal | P2 | M | `DONE` |
+| [`GT-120`](./gap-reference-catalog.md#gt-120) | GraphQL exposure for the Core API (ADR-0074 scope) | `BFF API` | F3 | P2 | M | `DONE` |
+| [`GT-121`](./gap-reference-catalog.md#gt-121) | Decommission the in-process MCP subsystem in the Smart CLI (post-delegation, ADR-0074/0075 Phase 3) | `CLI` | Cross | P2 | M | `DONE` |
+| [`GT-122`](./gap-reference-catalog.md#gt-122) | Consolidate duplicated infrastructure adapters across sdk/cli, apps/core-api and packages/infra-providers | `Cross` | Cross | P2 | M | `DONE` |
+| [`GT-124`](./gap-reference-catalog.md#gt-124) | CLI e2e suite broken — missing fixtures (SDLC templates, shell hooks) and stale old-MCP prompt naming | `CLI` | Cross | P2 | M | `DONE` |
+| [`GT-126`](./gap-reference-catalog.md#gt-126) | Maturation of Serverless Topology | `Architecture` | Cross | P2 | M | `DONE` |
+| [`GT-127`](./gap-reference-catalog.md#gt-127) | Maturation of Event-Driven Topology | `Architecture` | Cross | P2 | M | `DONE` |
+| [`GT-128`](./gap-reference-catalog.md#gt-128) | Baseline Ruleset for Data Mesh | `Architecture` | Cross | P2 | M | `DONE` |
+| [`GT-129`](./gap-reference-catalog.md#gt-129) | Baseline Ruleset for Edge Computing | `Architecture` | Cross | P2 | M | `DONE` |
+| [`GT-134`](./gap-reference-catalog.md#gt-134) | Standardized MCP Tools Registry | `Architecture` | Cross | P2 | M | `DONE` |
+| [`GT-137`](./gap-reference-catalog.md#gt-137) | Sovereign Identity for Agentic AI | `Architecture` | Cross | P2 | M | `DONE` |
+| [`GT-138`](./gap-reference-catalog.md#gt-138) | Event-Driven Agentic Workflows | `Architecture` | Cross | P2 | M | `DONE` |
+| [`GT-141`](./gap-reference-catalog.md#gt-141) | Concurrency Control and Resource Locking Standard for MCP Tools | `Architecture` | Cross | P2 | M | `DONE` |
+| [`GT-173`](./gap-reference-catalog.md#gt-173) | OpenTelemetry export parity across CLI, MCP, and REST | `Cross` | Cross | P2 | M | `DONE` |
+| [`GT-178`](./gap-reference-catalog.md#gt-178) | Rebuild `core/README.es.md` with all ADRs | `Docs` | Cross | P2 | M | `DONE` |
+| [`GT-186`](./gap-reference-catalog.md#gt-186) | Remove `@ts-nocheck` from 19 files (phased) | `CLI` | Cross | P2 | M | `DONE` |
+| [`GT-187`](./gap-reference-catalog.md#gt-187) | Enable strict mode in tsconfig | `CLI` | Cross | P2 | M | `DONE` |
+| [`GT-189`](./gap-reference-catalog.md#gt-189) | Replace `require()` with ES imports | `CLI` | Cross | P2 | M | `DONE` |
+| [`GT-194`](./gap-reference-catalog.md#gt-194) | Eliminate `any` types in public APIs | `CLI` | Cross | P2 | M | `DONE` |
+| [`GT-196`](./gap-reference-catalog.md#gt-196) | Add E2E tests for MCP HTTP transport | `MCP Services` | Cross | P2 | M | `DONE` |
 | [`GT-220`](./gap-reference-catalog.md#gt-220) | Raise gate-status branch coverage (40% → ≥80%) and lift CLI branches threshold | `CLI` | Cross | P2 | M | `DONE` |
 | [`GT-221`](./gap-reference-catalog.md#gt-221) | Add structured audit logging to MCP HTTP transport | `MCP Services` | Cross | P2 | M | `DONE` |
 | [`GT-222`](./gap-reference-catalog.md#gt-222) | Add OPA test cases for under-covered topologies (modular-monolith 2/12, distributed-modules 4/8, agentic-ai 4/9) | `Rulesets` | Cross | P2 | M | `DONE` |
@@ -363,55 +378,35 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-239`](./gap-reference-catalog.md#gt-239) | Define SLOs per service with alerting rules | `Operations` | Cross | P2 | M | `DONE` |
 | [`GT-243`](./gap-reference-catalog.md#gt-243) | Implement k6 load tests (3 ADR-0037 scenarios) | `QA` | Cross | P2 | M | `DONE` |
 | [`GT-244`](./gap-reference-catalog.md#gt-244) | Create incident response playbooks and templates | `Operations` | Cross | P2 | M | `DONE` |
-| [`GT-178`](./gap-reference-catalog.md#gt-178) | Rebuild `core/README.es.md` with all ADRs | `Docs` | Cross | P2 | M | `DONE` |
-| [`GT-186`](./gap-reference-catalog.md#gt-186) | Remove `@ts-nocheck` from 19 files (phased) | `CLI` | Cross | P2 | M | `DONE` |
-| [`GT-187`](./gap-reference-catalog.md#gt-187) | Enable strict mode in tsconfig | `CLI` | Cross | P2 | M | `DONE` |
-| [`GT-189`](./gap-reference-catalog.md#gt-189) | Replace `require()` with ES imports | `CLI` | Cross | P2 | M | `DONE` |
-| [`GT-194`](./gap-reference-catalog.md#gt-194) | Eliminate `any` types in public APIs | `CLI` | Cross | P2 | M | `DONE` |
-| [`GT-196`](./gap-reference-catalog.md#gt-196) | Add E2E tests for MCP HTTP transport | `MCP Services` | Cross | P2 | M | `DONE` |
-| [`GT-173`](./gap-reference-catalog.md#gt-173) | OpenTelemetry export parity across CLI, MCP, and REST | `Cross` | Cross | P2 | M | `DONE` |
-| [`GT-141`](./gap-reference-catalog.md#gt-141) | Concurrency Control and Resource Locking Standard for MCP Tools | `Architecture` | Cross | P2 | M | `DONE` |
-| [`GT-137`](./gap-reference-catalog.md#gt-137) | Sovereign Identity for Agentic AI | `Architecture` | Cross | P2 | M | `DONE` |
-| [`GT-138`](./gap-reference-catalog.md#gt-138) | Event-Driven Agentic Workflows | `Architecture` | Cross | P2 | M | `DONE` |
-| [`GT-134`](./gap-reference-catalog.md#gt-134) | Standardized MCP Tools Registry | `Architecture` | Cross | P2 | M | `DONE` |
-| [`GT-120`](./gap-reference-catalog.md#gt-120) | GraphQL exposure for the Core API (ADR-0074 scope) | `BFF API` | F3 | P2 | M | `DONE` |
-| [`GT-121`](./gap-reference-catalog.md#gt-121) | Decommission the in-process MCP subsystem in the Smart CLI (post-delegation, ADR-0074/0075 Phase 3) | `CLI` | Cross | P2 | M | `DONE` |
-| [`GT-122`](./gap-reference-catalog.md#gt-122) | Consolidate duplicated infrastructure adapters across sdk/cli, apps/core-api and packages/infra-providers | `Cross` | Cross | P2 | M | `DONE` |
-| [`GT-124`](./gap-reference-catalog.md#gt-124) | CLI e2e suite broken — missing fixtures (SDLC templates, shell hooks) and stale old-MCP prompt naming | `CLI` | Cross | P2 | M | `DONE` |
+| [`GT-262`](./gap-reference-catalog.md#gt-262) | Add backup/DR procedures for data stores | `Infrastructure` | Cross | P2 | M | `DONE` |
+| [`GT-266`](./gap-reference-catalog.md#gt-266) | Create API key provisioning service for MCP HTTP transport | `Security` | Cross | P2 | M | `DONE` |
+| [`GT-308`](./gap-reference-catalog.md#gt-308) | Plugin system for commands — sdk/cli/src/plugins | `CLI` | Cross | P2 | M | `DONE` |
+| [`GT-309`](./gap-reference-catalog.md#gt-309) | Contribution validation — sdk/cli/src/contributions | `CLI` | Cross | P2 | M | `DONE` |
+| [`GT-327`](./gap-reference-catalog.md#gt-327) | Evolve the one-shot webhook into subscriptions + retries + HMAC signing | `Core Domain` | Cross | P2 | M | `DONE` |
+| [`GT-328`](./gap-reference-catalog.md#gt-328) | Roll out ESLint boundaries to packages/* and apps/* with a CI step | `Quality` | Cross | P2 | M | `DONE` |
+| [`GT-329`](./gap-reference-catalog.md#gt-329) | Relocate the 5 advanced topologies to rulesets/topologies | `Rulesets` | Cross | P2 | M | `DONE` |
+| [`GT-346`](./gap-reference-catalog.md#gt-346) | Smart CLI shell-injection surface CLOSED — providers now run shell-free (executeFile + arg arrays) + tests | `Smart CLI` | Cross | P2 | M | `DONE` |
+| [`GT-350`](./gap-reference-catalog.md#gt-350) | standards.service rule-check `new Function()` sink REMOVED — restricted predicate evaluator + 6 tests (no-code-exec proven) | `Core Domain` | Cross | P2 | M | `DONE` |
+| [`GT-353`](./gap-reference-catalog.md#gt-353) | sdk-client orphaned (no consumer/README); low method coverage | `SDK` | Cross | P2 | M | `DONE` |
+| [`GT-370`](./gap-reference-catalog.md#gt-370) | Inheritance propagation mechanism — push Core updates to registered satellites (trigger + dry-run + approval) | `Cross` | Cross | P2 | M | `DONE` |
+| [`GT-372`](./gap-reference-catalog.md#gt-372) | Audit trail per satellite — what was inherited vs customized, by whom, when | `Core Domain` | Cross | P2 | M | `DONE` |
+| [`GT-373`](./gap-reference-catalog.md#gt-373) | Tracker integration — satellite registration, state sync, and satellite management UI | `Cross` | Cross | P2 | M | `DONE` |
 | [`MT-A26`](./multi-topology-reference-corpus-implementation-plan.md#6-tracking-authority) | Update navigation, indexes, validation evidence, and tracker status | `Documentation` | Cross | P2 | M | `DONE` |
-| [`GT-71`](./gap-reference-catalog.md#gt-71) | Circuit Breaker para llamadas a servicios externos | `BFF API` | F3 | P2 | M | `DONE` |
-| [`GT-100`](./gap-reference-catalog.md#gt-100) | CLI API browser/explorer | `CLI` | Cross | P2 | M | `DONE` |
-| [`GT-101`](./gap-reference-catalog.md#gt-101) | CLI auto-update mechanism | `CLI` | Cross | P2 | M | `DONE` |
-| [`GT-102`](./gap-reference-catalog.md#gt-102) | CLI real-time progress/streaming | `CLI` | Cross | P2 | M | `DONE` |
-| [`GT-104`](./gap-reference-catalog.md#gt-104) | CLI package-manager distribution | `CLI` | Cross | P2 | M | `DONE` |
-| [`GT-107`](./gap-reference-catalog.md#gt-107) | CLI interactive wizards | `CLI` | Cross | P2 | M | `DONE` |
-| [`GT-81`](./gap-reference-catalog.md#gt-81) | Raise CLI branch coverage to the statement floor | `CLI` | F0 | P2 | M | `DONE` |
-| [`GT-116`](./gap-reference-catalog.md#gt-116) | Elimination of Blocking I/O Operations in the CLI | `CLI` | Transversal | P2 | M | `DONE` |
-| [`GT-75`](./gap-reference-catalog.md#gt-75) | Paquete @evolith/infra-providers compartido | `Cross` | Cross | P2 | M | `DONE` |
-| [`GT-24`](./gap-reference-catalog.md#gt-24) | Execute declared documentation migrations | `Governance` | Cross | P2 | M | `DONE` |
-| [`GT-21`](./gap-reference-catalog.md#gt-21) | Placement review of tool-centric Core ADRs | `Governance` | Cross | P2 | M | `DONE` |
-| [`GT-126`](./gap-reference-catalog.md#gt-126) | Maturation of Serverless Topology | `Architecture` | Cross | P2 | M | `DONE` |
-| [`GT-127`](./gap-reference-catalog.md#gt-127) | Maturation of Event-Driven Topology | `Architecture` | Cross | P2 | M | `DONE` |
-| [`GT-128`](./gap-reference-catalog.md#gt-128) | Baseline Ruleset for Data Mesh | `Architecture` | Cross | P2 | M | `DONE` |
-| [`GT-129`](./gap-reference-catalog.md#gt-129) | Baseline Ruleset for Edge Computing | `Architecture` | Cross | P2 | M | `DONE` |
-| [`GT-242`](./gap-reference-catalog.md#gt-242) | Complete OPA parity for 17 uncovered native rulesets | `Rulesets` | Cross | P2 | L | `DONE` |
-| [`GT-188`](./gap-reference-catalog.md#gt-188) | Add tests for 15 zero-coverage files | `CLI` | Cross | P2 | L | `DONE` |
+| [`GT-23`](./gap-reference-catalog.md#gt-23) | Spanish translation backfill | `Governance` | Cross | P2 | L | `DONE` |
+| [`GT-25`](./gap-reference-catalog.md#gt-25) | First provider profiles | `Governance` | Cross | P2 | L | `DONE` |
+| [`GT-36`](./gap-reference-catalog.md#gt-36) | Machine-readable rules language coverage | `Governance` | Cross | P2 | L | `DONE` |
+| [`GT-54`](./gap-reference-catalog.md#gt-54) | Complete strict hexagonal boundary enforcement | `Cross` | Cross | P2 | L | `DONE` |
+| [`GT-115`](./gap-reference-catalog.md#gt-115) | Auto-fix of Architectural Failures via MCP Tools | `CLI` | Transversal | P2 | L | `DONE` |
+| [`GT-131`](./gap-reference-catalog.md#gt-131) | Create Sandbox/Reference App for Agentic AI Topology with live MCP | `Architecture` | Cross | P2 | L | `DONE` |
+| [`GT-133`](./gap-reference-catalog.md#gt-133) | Centralized Agnostic OPA Wasm Distribution Architecture | `Architecture` | Cross | P2 | L | `DONE` |
+| [`GT-139`](./gap-reference-catalog.md#gt-139) | RAG Knowledge Governance Standard | `Governance` | Cross | P2 | L | `DONE` |
+| [`GT-143`](./gap-reference-catalog.md#gt-143) | Multi-Agent Handoff and Task Delegation Standards | `Governance` | Cross | P2 | L | `DONE` |
 | [`GT-171`](./gap-reference-catalog.md#gt-171) | Command-as-a-service surface parity audit (CLI vs MCP vs REST) | `Cross` | Cross | P2 | L | `DONE` |
 | [`GT-172`](./gap-reference-catalog.md#gt-172) | Cross-surface contract roundtrip test suite | `Cross` | Cross | P2 | L | `DONE` |
-| [`GT-143`](./gap-reference-catalog.md#gt-143) | Multi-Agent Handoff and Task Delegation Standards | `Governance` | Cross | P2 | L | `DONE` |
-| [`GT-139`](./gap-reference-catalog.md#gt-139) | RAG Knowledge Governance Standard | `Governance` | Cross | P2 | L | `DONE` |
-| [`GT-133`](./gap-reference-catalog.md#gt-133) | Centralized Agnostic OPA Wasm Distribution Architecture | `Architecture` | Cross | P2 | L | `DONE` |
-| [`GT-131`](./gap-reference-catalog.md#gt-131) | Create Sandbox/Reference App for Agentic AI Topology with live MCP | `Architecture` | Cross | P2 | L | `DONE` |
-| [`GT-115`](./gap-reference-catalog.md#gt-115) | Auto-fix of Architectural Failures via MCP Tools | `CLI` | Transversal | P2 | L | `DONE` |
-| [`GT-54`](./gap-reference-catalog.md#gt-54) | Complete strict hexagonal boundary enforcement | `Cross` | Cross | P2 | L | `DONE` |
-| [`GT-36`](./gap-reference-catalog.md#gt-36) | Machine-readable rules language coverage | `Governance` | Cross | P2 | L | `DONE` |
-| [`GT-25`](./gap-reference-catalog.md#gt-25) | First provider profiles | `Governance` | Cross | P2 | L | `DONE` |
-| [`GT-23`](./gap-reference-catalog.md#gt-23) | Spanish translation backfill | `Governance` | Cross | P2 | L | `DONE` |
+| [`GT-188`](./gap-reference-catalog.md#gt-188) | Add tests for 15 zero-coverage files | `CLI` | Cross | P2 | L | `DONE` |
+| [`GT-242`](./gap-reference-catalog.md#gt-242) | Complete OPA parity for 17 uncovered native rulesets | `Rulesets` | Cross | P2 | L | `DONE` |
 | [`GT-197`](./gap-reference-catalog.md#gt-197) | Fix intermittent release pipeline failures | `CI` | Cross | P2 | XL | `DONE` |
 | [`GT-225`](./gap-reference-catalog.md#gt-225) | Revive or document 4 `it.skip` cases in `wizard.service.spec` | `CLI` | Cross | P3 | XS | `DONE` |
-| [`GT-224`](./gap-reference-catalog.md#gt-224) | Add `--format json` to `drift`/`scaffold`/`docs` CLI commands (ADR-0073 envelope) | `CLI` | Cross | P3 | S | `DONE` |
-| [`GT-247`](./gap-reference-catalog.md#gt-247) | Replace hardcoded Docker-compose credentials | `Platform` | Cross | P3 | S | `DONE` |
-| [`GT-248`](./gap-reference-catalog.md#gt-248) | Create ADR freshness monitor and weekly review script | `Governance` | Cross | P3 | S | `DONE` |
 | [`GT-198`](./gap-reference-catalog.md#gt-198) | Fix `Moscoww` typo (5 sites) | `CLI` | Cross | P3 | S | `DONE` |
 | [`GT-199`](./gap-reference-catalog.md#gt-199) | Move import to top of file | `CLI` | Cross | P3 | S | `DONE` |
 | [`GT-200`](./gap-reference-catalog.md#gt-200) | Convert 11-param constructor to options object | `CLI` | Cross | P3 | S | `DONE` |
@@ -423,11 +418,16 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-206`](./gap-reference-catalog.md#gt-206) | Formalize BILINGUAL_INDEX nesting rule | `Docs` | Cross | P3 | S | `DONE` |
 | [`GT-207`](./gap-reference-catalog.md#gt-207) | Standardize ADR heading format | `Docs` | Cross | P3 | S | `DONE` |
 | [`GT-208`](./gap-reference-catalog.md#gt-208) | Schedule ADR-0077 re-evaluation reminder | `Docs` | Cross | P3 | S | `DONE` |
+| [`GT-224`](./gap-reference-catalog.md#gt-224) | Add `--format json` to `drift`/`scaffold`/`docs` CLI commands (ADR-0073 envelope) | `CLI` | Cross | P3 | S | `DONE` |
+| [`GT-247`](./gap-reference-catalog.md#gt-247) | Replace hardcoded Docker-compose credentials | `Platform` | Cross | P3 | S | `DONE` |
+| [`GT-248`](./gap-reference-catalog.md#gt-248) | Create ADR freshness monitor and weekly review script | `Governance` | Cross | P3 | S | `DONE` |
+| [`GT-273`](./gap-reference-catalog.md#gt-273) | Restore DAST scan against staging or ephemeral environment | `CI/CD` | Cross | P3 | S | `DONE` |
+| [`GT-330`](./gap-reference-catalog.md#gt-330) | Mitigate bus factor (second maintainer + deep onboarding) | `Governance` | Cross | P3 | M | `DONE` |
 | [`GT-245`](./gap-reference-catalog.md#gt-245) | Add DAST (OWASP ZAP) to security pipeline | `Security` | Cross | P3 | L | `DONE` |
 | [`GT-246`](./gap-reference-catalog.md#gt-246) | Implement Chaos Mesh/Litmus experiments | `QA` | Cross | P3 | L | `DONE` |
 
 
-**Progress:** 378 / 394 done · 8 in progress · 8 pending · 0 deferred
+**Progress:** 378 / 412 done · 8 in progress · 26 pending · 0 deferred
 
 **Wave 2026-06-23 (Winston deep audit III):** Added 14 new gaps `GT-212`…`GT-225` from the Winston Audit Playbook covering: ADR status hygiene (GT-212), topology manifest metadata + operational budgets + guidance corpus (GT-213, GT-217, GT-219), REST controller observability + OpenAPI (GT-214, GT-215), OPA input-schema parity + per-topology test density (GT-216, GT-222), SDLC Phase 05 rollback + on-call templates (GT-218), CLI branch coverage + envelope format coverage + skip-list cleanup (GT-220, GT-224, GT-225), MCP HTTP audit logging (GT-221), and cross-surface parity e2e tests (GT-223).
 

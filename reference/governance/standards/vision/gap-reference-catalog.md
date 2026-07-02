@@ -4228,8 +4228,14 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** Core Domain · **Priority:** P0 · **Risk:** high (policies exist in repo but are inert)
 - **Purpose:** Ensure that the agnostic governance rules are translated into effective runtime blockers (e.g., pipeline evaluation enforcement) rather than remaining as passive markdown/JSON files.
 - **Evidence:** SDLC Deep Audit reported "Gobernanza transversal: Las reglas de gobernanza existen como archivos pero no se aplican en runtime" (Dimension 7: AUSENTE).
+- **Impact:** Core evaluation verdicts may report success while required governance rules are never executed.
+- **Affected files:** `packages/core-domain/src/application/services/satellite-evaluation-pipeline.service.ts`, `rulesets/**/*.rules.json`, `rulesets/opa/`, `.harness/scripts/run-evolith-deep.mjs`.
+- **Complexity:** L
 - **Proposed fix:** Implement a cross-cutting mechanism in the evaluation pipeline that strictly mandates the passage of core rulesets (not just Rego) before returning a PASSED verdict.
-- **Done when:** [ ] Pipeline automatically validates against canonical JSON rulesets and fails explicitly on non-compliance.
+- **Acceptance criteria:**
+  - [ ] Pipeline automatically validates against canonical JSON rulesets and fails explicitly on non-compliance.
+  - [ ] Deep audit reports WS7 governance enforcement as solid.
+- **Dependencies:** `GT-412`.
 
 #### GT-396
 
@@ -4238,8 +4244,14 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** Core Domain · **Priority:** P1 · **Risk:** med (clients send fragmented data)
 - **Purpose:** Establish a unified, formal input contract (`SatelliteManifest` or `ProjectInput` schema) that all consumers (Tracker, Smart CLI, UMS) must send to initiate validation.
 - **Evidence:** SDLC Deep Audit reported "Contrato de ingesta cliente: Existen schemas parciales pero no un contrato formal de ingesta cliente".
+- **Impact:** Consumers can send incompatible payloads that only fail late or are interpreted differently by CLI, MCP, and Core API.
+- **Affected files:** `rulesets/schema/`, `packages/core-domain/src/domain/satellite-manifest.ts`, `apps/core-api/src/presentation/controllers/evaluation.controller.ts`, `sdk/cli/src/commands/validate/validate.command.ts`, `packages/mcp-server/src/tools/validate.tool.ts`.
+- **Complexity:** M
 - **Proposed fix:** Define a canonical JSON schema for the payload expected by the Core API and MCP `validate` tools, ensuring all clients provide a strictly typed manifest.
-- **Done when:** [ ] Formal schema published; [ ] CLI/MCP/Core API enforce the schema strictly.
+- **Acceptance criteria:**
+  - [ ] Formal schema published.
+  - [ ] CLI, MCP, and Core API enforce the schema strictly.
+- **Dependencies:** `GT-377`.
 
 #### GT-397
 
@@ -4248,168 +4260,252 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Component:** .harness · **Priority:** P2 · **Risk:** med (silent bilingual divergence)
 - **Purpose:** Restore the missing validation script `04-check-bilingual-parity.mjs` to ensure the release gate verifies 100% Spanish/English translation parity.
 - **Evidence:** Intelligent Data Audit reported "WS9: Quality and Release-Gate (75%) - Missing: Bilingual parity check Path: .harness/scripts/ci/04-check-bilingual-parity.mjs".
+- **Impact:** Bilingual drift can pass CI without a dedicated parity gate.
+- **Affected files:** `.harness/scripts/ci/`, `.harness/scripts/ci/suites/bilingual-suite.mjs`, `.github/workflows/`.
+- **Complexity:** S
 - **Proposed fix:** Create the missing script based on existing suite logic and wire it back into the CI pipeline.
-- **Done when:** [ ] Script created and executing; [ ] WS9 reaches 100% coverage.
+- **Acceptance criteria:**
+  - [ ] Script created and executing.
+  - [ ] WS9 reaches 100% coverage.
+- **Dependencies:** none.
 
 #### GT-398
 
 **Title:** Dual-Engine Parity for `allowedSourceInterfaces`
 
-> **Problem (2026-07-02, SDLC Deep Audit):** The security flag `allowedSourceInterfaces` was defined in TypeScript (`GovernancePosture`) but not implemented in `.rego`, breaking the *Dual-Engine Parity* standard rule.
-
-**Purpose:** Ensure the external OPA engine can audit source interfaces with the exact same logic as the native TS engine.
-**Evidence:** OPA rule added and covered by automated tests.
-**Closure:** OPA test suite is green and includes `allowedSourceInterfaces` validation.
-**References:** ADR-0104, `run-evolith-deep.mjs` (Audit)
+- **Component:** Rulesets · **Priority:** P0 · **Risk:** high (source-interface policy can drift between Native and OPA engines)
+- **Purpose:** Ensure the external OPA engine audits allowed interaction origins with the same logic as the Native TypeScript evaluator.
+- **Evidence:** SDLC Deep Audit reported `allowedSourceInterfaces` in `GovernancePosture` without an equivalent `.rego` policy.
+- **Impact:** Chat, CLI, MCP, or other interfaces can bypass source-origin governance depending on the selected rule engine.
+- **Affected files:** `rulesets/opa/`, `packages/core-domain/src/application/validators/`, `.harness/scripts/ci/27-opa-parity-gate.mjs`.
+- **Complexity:** S
+- **Proposed fix:** Add the missing OPA rule, include fixtures for compliant and violating source interfaces, and wire it into the parity gate.
+- **Acceptance criteria:**
+  - [ ] OPA validates `allowedSourceInterfaces` with the same decision semantics as the Native evaluator.
+  - [ ] Native/OPA parity remains 0 drift.
+- **Dependencies:** R-25 Dual-Engine Parity.
 
 #### GT-399
 
 **Title:** Injection of Real HTTP/Harness Adapters in CLI `AgentRuntimeFactory`
 
-> **Problem (2026-07-02, SDLC Deep Audit):** The CLI (`evolith plan evaluate`) uses `StubCoreEvaluationAdapter` and `InMemoryHarnessAdapter` instead of clients that hit the real backend, degrading its maturity to a prototype.
-
-**Purpose:** Reconnect the Smart CLI execution with the real Core API infrastructure and playbook runner.
-**Evidence:** `AgentRuntimeFactory` injects real HTTP adapters.
-**Closure:** The `evolith plan evaluate` command successfully queries `localhost:3000` and emits real results.
-**References:** ADR-0104, `run-evolith-deep.mjs` (Audit)
+- **Component:** Agent Runtime · **Priority:** P1 · **Risk:** med (CLI may evaluate against stubs instead of production services)
+- **Purpose:** Reconnect Smart CLI execution to the real Core API and harness/playbook runner through production adapters.
+- **Evidence:** SDLC Deep Audit found `evolith plan evaluate` using `StubCoreEvaluationAdapter` and `InMemoryHarnessAdapter`.
+- **Impact:** CLI maturity remains prototype-level even when the backend has real governance capabilities.
+- **Affected files:** `sdk/cli/src/`, `packages/agent-runtime/src/`, `apps/agent-runtime-api/src/`.
+- **Complexity:** M
+- **Proposed fix:** Inject HTTP Core and harness adapters in `AgentRuntimeFactory`, keeping deterministic stubs only for offline/test modes.
+- **Acceptance criteria:**
+  - [ ] `evolith plan evaluate` can call a running Core API and emit real evaluation results.
+  - [ ] Offline/test mode still supports deterministic stub adapters.
+- **Dependencies:** `GT-384`, `GT-412`.
 
 #### GT-400
 
 **Title:** REST/WebSocket Endpoint (Hermes Entrypoint) in Core API
 
-> **Problem (2026-07-02, SDLC Deep Audit):** The `HermesChatBoxInteractionAdapter` adapter exists but there is no controller exposed in `apps/core-api` to receive incoming requests.
-
-**Purpose:** Establish a gateway for Chat-like interfaces (Hermes) to interact with the hosted `AgentRuntimeService`.
-**Evidence:** Endpoint created in NestJS API and validated via E2E.
-**Closure:** An API route capable of receiving an `AgentRuntimeRequestWire` is exposed.
-**References:** ADR-0104, `run-evolith-deep.mjs` (Audit)
+- **Component:** Core API · **Priority:** P1 · **Risk:** med (Hermes adapter cannot be hosted through a governed API boundary)
+- **Purpose:** Establish a Core API gateway for chat-like interfaces to interact with the hosted `AgentRuntimeService`.
+- **Evidence:** SDLC Deep Audit found `HermesChatBoxInteractionAdapter` without a controller exposed in `apps/core-api`.
+- **Impact:** Conversational interfaces either cannot integrate or must bypass the intended runtime boundary.
+- **Affected files:** `apps/core-api/src/presentation/controllers/`, `apps/agent-runtime-api/src/`, `packages/agent-runtime/src/`.
+- **Complexity:** M
+- **Proposed fix:** Create a REST endpoint for `AgentRuntimeRequestWire` and validate it through controller/e2e tests. If WebSocket is needed later, register it as a separate protocol-specific gap.
+- **Acceptance criteria:**
+  - [ ] Core API exposes a governed route that receives `AgentRuntimeRequestWire`.
+  - [ ] Endpoint returns the ADR-0073 envelope and is covered by tests.
+- **Dependencies:** `GT-411`, `GT-401`.
 
 #### GT-401
 
 **Title:** `InteractionAdapterPort` missing or not formalized
 
-> **Problem (2026-07-02, BMAD Intelligence Update):** Without a formal `InteractionAdapterPort`, multiple interfaces (CLI, Chat, MCP, Webhooks) risk duplicating command logic or bypassing the Agent Runtime orchestration and governance layers.
-
-**Purpose:** Establish a single governed entry point for all UI and machine interaction sources.
-**Evidence:** Code contains disparate gateways or direct engine invocation.
-**Closure:** `InteractionAdapterPort` is fully integrated into the runtime architecture and acts as the strict boundary.
-**References:** Maturity Assessment (Adapter Capability Maturity)
+- **Component:** Agent Runtime · **Priority:** P0 · **Risk:** high (interfaces can bypass runtime governance)
+- **Purpose:** Establish a single governed entry point for all UI and machine interaction sources.
+- **Evidence:** BMAD Intelligence update found CLI, Chat, MCP, and Webhook paths at risk of duplicating command logic or bypassing runtime orchestration.
+- **Impact:** Capability authorization, phase gates, audit, and policy enforcement become inconsistent per interface.
+- **Affected files:** `packages/agent-runtime/src/domain/ports/`, `packages/agent-runtime/src/application/`, `sdk/cli/src/`, `packages/mcp-server/src/`.
+- **Complexity:** M
+- **Proposed fix:** Formalize `InteractionAdapterPort` in the runtime contract and require every interface adapter to enter through it.
+- **Acceptance criteria:**
+  - [ ] `InteractionAdapterPort` is part of the public runtime contract.
+  - [ ] CLI, Hermes, MCP, and webhook adapters route through the port rather than invoking engines directly.
+- **Dependencies:** `GT-412`.
 
 #### GT-402
 
 **Title:** Smart CLI not formalized as runtime interaction adapter
 
-> **Problem (2026-07-02, BMAD Intelligence Update):** Smart CLI executes its capabilities directly or duplicates orchestration rather than delegating to the `InteractionAdapterPort`.
-
-**Purpose:** Formalize the Smart CLI (command and chat modes) as just another adapter consuming the governed core.
-**Evidence:** `SmartCliCommandInteractionAdapter` is pending full integration.
-**Closure:** Smart CLI routes all commands through the Agent Runtime orchestration.
-**References:** Maturity Assessment (Adapter Capability Maturity)
+- **Component:** Smart CLI · **Priority:** P0 · **Risk:** high (CLI can bypass the runtime layer)
+- **Purpose:** Formalize Smart CLI command/chat modes as adapters consuming the governed Agent Runtime core.
+- **Evidence:** BMAD Intelligence update found `SmartCliCommandInteractionAdapter` pending full integration and CLI flows still capable of direct orchestration.
+- **Impact:** The most used local interface can diverge from runtime policy and audit behavior.
+- **Affected files:** `sdk/cli/src/commands/`, `sdk/cli/src/app.module.ts`, `packages/agent-runtime/src/`.
+- **Complexity:** M
+- **Proposed fix:** Route Smart CLI commands that execute governed capabilities through the `InteractionAdapterPort`.
+- **Acceptance criteria:**
+  - [ ] Smart CLI command mode delegates governed capabilities through Agent Runtime orchestration.
+  - [ ] CLI tests prove policy/audit behavior is not bypassed.
+- **Dependencies:** `GT-401`, `GT-399`.
 
 #### GT-403
 
 **Title:** Hermes Chat Box not formalized as source/interface adapter
 
-> **Problem (2026-07-02, BMAD Intelligence Update):** The Hermes interface operates as a peer to the CLI or bypasses strict capability resolution.
-
-**Purpose:** Ensure Hermes Chat Box cannot execute commands directly and must pass through the `InteractionAdapterPort`.
-**Evidence:** Missing `HermesChatBoxInteractionAdapter` in production deployment.
-**Closure:** Hermes UI only submits intents via the interaction port.
-**References:** Maturity Assessment (Adapter Capability Maturity)
+- **Component:** Agent Runtime · **Priority:** P1 · **Risk:** med (chat interface can bypass capability resolution)
+- **Purpose:** Ensure Hermes Chat Box cannot execute commands directly and must submit intents through the `InteractionAdapterPort`.
+- **Evidence:** BMAD Intelligence update found no production integration of `HermesChatBoxInteractionAdapter`.
+- **Impact:** Conversational execution could skip approval, source-interface checks, or runtime audit.
+- **Affected files:** `packages/agent-runtime/src/adapters/`, `apps/core-api/src/presentation/controllers/`, `apps/agent-runtime-api/src/`.
+- **Complexity:** M
+- **Proposed fix:** Register Hermes as a source/interface adapter and enforce runtime capability resolution for every submitted intent.
+- **Acceptance criteria:**
+  - [ ] Hermes UI submits intents through the interaction port.
+  - [ ] Hermes cannot execute shell or backend commands outside governed capabilities.
+- **Dependencies:** `GT-400`, `GT-401`.
 
 #### GT-404
 
 **Title:** OpenCode adapter not implemented
 
-> **Problem (2026-07-02, BMAD Intelligence Update):** OpenCode is envisioned as an external chat/agent UI, but lacks a controlled adapter to interact with Evolith securely.
-
-**Purpose:** Implement an `OpenCodeInteractionAdapter` to prevent free shell access.
-**Evidence:** No adapter implementation exists for OpenCode.
-**Closure:** OpenCode requests are mapped to governed capabilities via an adapter.
-**References:** Maturity Assessment (Adapter Capability Maturity)
+- **Component:** Agent Runtime · **Priority:** P2 · **Risk:** med (external agent UI lacks a governed capability boundary)
+- **Purpose:** Implement an `OpenCodeInteractionAdapter` so OpenCode requests map to governed capabilities rather than free-form execution.
+- **Evidence:** BMAD Intelligence update found no OpenCode adapter implementation.
+- **Impact:** Future OpenCode integration would either be blocked or unsafe by default.
+- **Affected files:** `packages/agent-runtime/src/adapters/`, `packages/agent-runtime/src/domain/ports/`.
+- **Complexity:** M
+- **Proposed fix:** Add an OpenCode interaction adapter behind `InteractionAdapterPort` with source-interface and capability checks.
+- **Acceptance criteria:**
+  - [ ] OpenCode requests are mapped to governed runtime capabilities.
+  - [ ] OpenCode has no direct shell execution path.
+- **Dependencies:** `GT-401`, `GT-412`.
 
 #### GT-405
 
 **Title:** MCP interaction adapter not formalized
 
-> **Problem (2026-07-02, BMAD Intelligence Update):** MCP exists as a component, but lacks a formal `McpInteractionAdapter` connected to the runtime port.
-
-**Purpose:** Ensure external agents consuming Evolith via MCP are subjected to the same phase-gate and OPA governance.
-**Evidence:** MCP server bypasses or loosely couples to the new runtime orchestrator.
-**Closure:** MCP interactions strictly use `InteractionAdapterPort`.
-**References:** Maturity Assessment (Adapter Capability Maturity)
+- **Component:** Agent Runtime · **Priority:** P1 · **Risk:** med (MCP tools can remain outside runtime orchestration)
+- **Purpose:** Ensure external agents consuming Evolith via MCP are subject to the same phase-gate and OPA governance as other interfaces.
+- **Evidence:** BMAD Intelligence update found MCP lacks a formal `McpInteractionAdapter` connected to the runtime port.
+- **Impact:** MCP can diverge from runtime policy, approval, and audit behavior.
+- **Affected files:** `packages/mcp-server/src/`, `packages/agent-runtime/src/adapters/`, `packages/agent-runtime/src/domain/ports/`.
+- **Complexity:** S
+- **Proposed fix:** Introduce `McpInteractionAdapter` and route mutative/governed MCP operations through `InteractionAdapterPort`.
+- **Acceptance criteria:**
+  - [ ] MCP interactions that execute governed capabilities use `InteractionAdapterPort`.
+  - [ ] MCP keeps existing ABAC checks and gains runtime policy parity.
+- **Dependencies:** `GT-401`, `GT-412`.
 
 #### GT-406
 
 **Title:** External HITL approval adapters missing
 
-> **Problem (2026-07-02, BMAD Intelligence Update):** Sensitive operations rely on `DenyByDefaultApprovalAdapter` because real human-in-the-loop (HITL) adapters (Tracker, Slack, GitHub) are absent.
-
-**Purpose:** Implement external approval adapters to unblock high-impact actions securely.
-**Evidence:** No Slack/GitHub/Tracker approval ports implemented.
-**Closure:** A capability requiring approval can be authorized by a human via an external platform.
-**References:** Maturity Assessment (Adapter Capability Maturity)
+- **Component:** Agent Runtime · **Priority:** P1 · **Risk:** med (high-impact actions cannot be approved through real workflows)
+- **Purpose:** Implement external approval adapters to unblock high-impact actions securely.
+- **Evidence:** BMAD Intelligence update found sensitive operations relying on `DenyByDefaultApprovalAdapter` because Tracker, Slack, and GitHub approval adapters are absent.
+- **Impact:** Production runtime is either blocked for high-impact actions or tempted toward unsafe auto-approval.
+- **Affected files:** `packages/agent-runtime/src/adapters/approval/`, `packages/agent-runtime/src/domain/ports/approval.port.ts`.
+- **Complexity:** M
+- **Proposed fix:** Add at least one real approval adapter and keep deny-by-default when no external workflow is configured.
+- **Acceptance criteria:**
+  - [ ] A capability requiring approval can be authorized by a human via an external platform.
+  - [ ] Approval decisions are traced and auditable.
+- **Dependencies:** Tracker or external approval platform availability.
 
 #### GT-407
 
 **Title:** Policy-based engine routing missing
 
-> **Problem (2026-07-02, BMAD Intelligence Update):** The runtime cannot dynamically route to different agent engines (Ollama, OpenAI, Hermes) based on risk, cost, or privacy policies.
-
-**Purpose:** Implement a `PolicyBasedEngineRouter`.
-**Evidence:** Hardcoded or single-engine configuration.
-**Closure:** The runtime selects the correct engine via an OPA-backed routing policy.
-**References:** Maturity Assessment (Adapter Capability Maturity)
+- **Component:** Agent Runtime · **Priority:** P1 · **Risk:** med (engine choice cannot enforce risk, cost, or privacy policy)
+- **Purpose:** Implement a policy-backed engine router for Ollama, OpenAI, Hermes, or other engines.
+- **Evidence:** BMAD Intelligence update found hardcoded or single-engine configuration with no policy-based routing.
+- **Impact:** Sensitive requests may be sent to an inappropriate engine or deployment boundary.
+- **Affected files:** `packages/agent-runtime/src/adapters/engine/`, `packages/agent-runtime/src/domain/ports/agent-engine.port.ts`, `rulesets/opa/`.
+- **Complexity:** M
+- **Proposed fix:** Add `PolicyBasedEngineRouter` backed by runtime policy evaluation.
+- **Acceptance criteria:**
+  - [ ] Runtime selects an engine according to risk, privacy, cost, and capability policy.
+  - [ ] Routing decisions are traced.
+- **Dependencies:** `GT-385`, `GT-412`.
 
 #### GT-408
 
 **Title:** Knowledge/RAG adapter missing
 
-> **Problem (2026-07-02, BMAD Intelligence Update):** Agents recommend actions without grounding against ADRs, blueprints, or rulesets natively.
-
-**Purpose:** Implement a RAG/Knowledge adapter so internal BMAD agents can consult the repository corpus before acting.
-**Evidence:** No RAG mechanism in the agent runtime layer.
-**Closure:** Agents can query architectural documents directly through a capability.
-**References:** Maturity Assessment (Adapter Capability Maturity)
+- **Component:** Agent Runtime · **Priority:** P1 · **Risk:** med (agents can recommend action without corpus grounding)
+- **Purpose:** Implement a Knowledge/RAG adapter so internal agents can consult ADRs, blueprints, standards, and rulesets before acting.
+- **Evidence:** BMAD Intelligence update found no RAG mechanism in the agent runtime layer.
+- **Impact:** Agent decisions can drift from the corporate reference corpus.
+- **Affected files:** `packages/agent-runtime/src/adapters/`, `reference/`, `rulesets/`, `.harness/scripts/`.
+- **Complexity:** L
+- **Proposed fix:** Add a corpus query capability behind a runtime port and require agents to use it where architectural context is needed.
+- **Acceptance criteria:**
+  - [ ] Agents can query architectural documents through a governed capability.
+  - [ ] Responses cite or trace the corpus artifacts used.
+- **Dependencies:** corpus indexing strategy and `GT-401`.
 
 #### GT-409
 
 **Title:** Documentation/diagram/visual map freshness checks missing
 
-> **Problem (2026-07-02, BMAD Intelligence Update):** Architecture maps, Mermaid diagrams, and port/adapter documentation can silently drift from code truth.
-
-**Purpose:** Create CI validation scripts (e.g., `validate-adapter-maturity-matrix.mjs`) to block desynchronization.
-**Evidence:** Visual map and diagrams require manual updates.
-**Closure:** CI fails if capability configurations change without matching documentation updates.
-**References:** Maturity Assessment (Adapter Capability Maturity)
+- **Component:** .harness · **Priority:** P2 · **Risk:** med (architecture maps can silently drift from code)
+- **Purpose:** Add CI checks that keep architecture maps, Mermaid diagrams, and adapter documentation synchronized with runtime capability configuration.
+- **Evidence:** BMAD Intelligence update found visual maps and diagrams require manual updates.
+- **Impact:** Reviewers and implementers may rely on stale runtime diagrams.
+- **Affected files:** `.harness/scripts/ci/`, `reference/architecture/`, `reference/governance/`, `packages/agent-runtime/src/`.
+- **Complexity:** M
+- **Proposed fix:** Create a freshness validator such as `validate-adapter-maturity-matrix.mjs` and wire it into documentation CI.
+- **Acceptance criteria:**
+  - [ ] CI fails when capability configuration changes without matching documentation updates.
+  - [ ] Modified Mermaid diagrams still pass render/syntax validation.
+- **Dependencies:** adapter capability matrix source of truth.
 
 #### GT-410
 
 **Title:** BMAD intelligence feedback loop missing or incomplete
 
-> **Problem (2026-07-02, BMAD Intelligence Update):** Audits are performed but do not structurally feed back into the `.bmad-core` agents with new rules, checklists, or skills.
+- **Component:** .bmad-core · **Priority:** P1 · **Risk:** med (audit findings do not become reusable agent behavior)
+- **Purpose:** Systematize the creation of BMAD agent rules, checklists, and skills after major gap analyses.
+- **Evidence:** BMAD Intelligence update found adapter-maturity audit signals are not structurally fed back into `.bmad-core` agents.
+- **Impact:** Winston and Architect can miss repeat violations that previous audits already discovered.
+- **Affected files:** `.bmad-core/agents/`, `.harness/rules/`, `.harness/playbooks/`, `.agents/skills/`.
+- **Complexity:** S
+- **Proposed fix:** Add an adapter-maturity feedback loop and update agent checklists/rules after audit waves.
+- **Acceptance criteria:**
+  - [ ] Winston and Architect proactively flag adapter maturity violations.
+  - [ ] Major audits declare which agent rules or skills were updated, or why none were required.
+- **Dependencies:** `GT-409`.
 
-**Purpose:** Systematize the creation of rules and skills for BMAD agents after every major gap analysis.
-**Evidence:** BMAD agents missing adapter-maturity analysis skills.
-**Closure:** Winston and Architect agents proactively flag adapter maturity violations in PRs.
-**References:** Maturity Assessment (Adapter Capability Maturity)
+#### GT-411
 
-### `GT-411`
-- **Title**: Core API ADR-0073 Envelope Unification
-- **Area**: Core API
-- **Date logged**: 2026-07-02
-- **Priority**: P1
-- **Complexity**: S
-- **Status**: PENDING
-- **Problem Statement**: The Core API currently lacks the standardized ADR-0073 structured envelope response (`{success, data, warnings}`) which is already implemented by the CLI and MCP interfaces. This creates an inconsistent contract for external consumers (like Hermes).
-- **Evidence of closure**: Core API endpoints (including any new Hermes endpoints) return the ADR-0073 envelope, and `ValidateSatelliteUseCase` is consistently wrapped.
+**Title:** Core API ADR-0073 Envelope Unification
 
-### `GT-412`
-- **Title**: Runtime Policy Enforcement Guarantee
-- **Area**: Agent Runtime
-- **Date logged**: 2026-07-02
-- **Priority**: P0
-- **Complexity**: M
-- **Status**: PENDING
-- **Problem Statement**: The SDLC Deep Audit reports Governance rules as "Absent in runtime". While Rego files exist and pass parity checks, they are not systematically enforced at runtime. The `Agent Runtime` lacks the wiring of real adapters (OPA validation) that forces policy on every request.
-- **Evidence of closure**: `OpaCliPolicyValidationAdapter` is injected in the `AgentRuntimeFactory` (resolving GT-399), and Deep Audit reports "Gobernanza Transversal" as SOLID.
+- **Component:** Core API · **Priority:** P1 · **Risk:** med (external consumers receive inconsistent response contracts)
+- **Purpose:** Align Core API responses with the ADR-0073 structured envelope already expected by CLI and MCP consumers.
+- **Evidence:** SDLC Deep Audit reported Core API responses without the standardized `{success, data, warnings}` envelope in the new runtime-facing surfaces.
+- **Impact:** Hermes and other external consumers need special-case API handling instead of one cross-surface contract.
+- **Affected files:** `apps/core-api/src/presentation/`, `apps/core-api/src/common/`, `reference/architecture/adrs/core/0073-unified-cli-mcp-output-contract-and-gate-evidence-schema.md`.
+- **Complexity:** S
+- **Proposed fix:** Wrap Core API endpoints, including Hermes/runtime endpoints, in the ADR-0073 envelope and document any accepted exceptions.
+- **Acceptance criteria:**
+  - [ ] Core API endpoints involved in evaluation/runtime flows return the ADR-0073 envelope.
+  - [ ] `ValidateSatelliteUseCase` and related response paths are consistently wrapped.
+- **Dependencies:** ADR-0073, `GT-400`.
+
+#### GT-412
+
+**Title:** Runtime Policy Enforcement Guarantee
+
+- **Component:** Agent Runtime · **Priority:** P0 · **Risk:** high (governance policies are present but not forced on every runtime request)
+- **Purpose:** Guarantee that runtime execution flows invoke policy validation before capabilities execute.
+- **Evidence:** SDLC Deep Audit reported governance rules as absent in runtime even though Rego files exist and parity checks pass.
+- **Impact:** The Agent Runtime can execute governed capabilities without enforcing the same policies used by evaluation/audit.
+- **Affected files:** `packages/agent-runtime/src/`, `packages/agent-runtime/src/adapters/policy/`, `sdk/cli/src/`, `rulesets/opa/`.
+- **Complexity:** M
+- **Proposed fix:** Inject the real policy validation adapter into runtime factories and make policy evaluation mandatory for governed capabilities.
+- **Acceptance criteria:**
+  - [ ] Runtime requests invoke policy validation before capability execution.
+  - [ ] Deep Audit reports cross-cutting governance enforcement as solid.
+  - [ ] Offline/test stubs remain explicit and cannot be used as production defaults.
+- **Dependencies:** `GT-398`, `GT-399`, `GT-401`.

@@ -1142,7 +1142,7 @@
         "packages/mcp-server/src/tools/gate.tools.spec.ts",
         "packages/mcp-server/src/tools/architecture.tools.spec.ts",
         "packages/mcp-server/src/tools/sdlc.tools.spec.ts",
-        "sdk/cli/test/e2e/mcp-e2e.test.ts"
+        "sdk/cli/test/mcp-serve.e2e-spec.ts"
       ],
       "validationCommands": [
         "npm run lint --workspace sdk/cli",
@@ -1368,7 +1368,7 @@
         "sdk/cli/test/agents.e2e-spec.ts",
         "sdk/cli/test/mock-prompt.service.ts",
         "sdk/cli/src/commands/init/init.command.ts",
-        "sdk/cli/src/commands/init/agents.command.ts",
+        "sdk/cli/src/commands/agents/agents.command.ts",
         "sdk/cli/src/commands/adr/adr.command.ts"
       ],
       "validationCommands": [
@@ -1737,7 +1737,7 @@
         "sdk/cli/src/commands/profile/profile.command.ts",
         "sdk/cli/src/commands/validate/validate.command.ts",
         "sdk/cli/src/commands/gate/gate.command.ts",
-        "sdk/cli/src/commands/init/upgrade.command.ts",
+        "sdk/cli/src/commands/upgrade/upgrade.command.ts",
         "sdk/cli/src/app.module.ts"
       ],
       "validationCommands": [
@@ -1864,8 +1864,8 @@
       "evidence": [
         "packages/mcp-server/src/tools/auto-fix.tools.ts",
         "packages/mcp-server/src/tools/tools.module.ts",
-        "sdk/cli/src/commands/mcp/mcp-serve.command.ts",
-        "sdk/cli/src/commands/init/agents.command.ts",
+        "sdk/cli/test/mcp-serve.e2e-spec.ts",
+        "sdk/cli/src/commands/agents/agents.command.ts",
         "packages/mcp-server/src/main.ts"
       ],
       "validationCommands": [
@@ -1987,8 +1987,8 @@
       "closedAt": "2026-06-19",
       "closureCommit": "c4835e0db3006d7cc6cb88205537a8086e302066",
       "evidence": [
-        "sdk/cli/src/commands/init/agents.command.ts",
-        "sdk/cli/src/commands/mcp/mcp-serve.command.ts",
+        "sdk/cli/src/commands/agents/agents.command.ts",
+        "sdk/cli/test/mcp-serve.e2e-spec.ts",
         "sdk/cli/src/infrastructure/providers/node-filesystem.provider.ts",
         "packages/mcp-server/src/main.ts"
       ],
@@ -2006,7 +2006,7 @@
         "sdk/cli/src/commands/completion/completion.command.ts",
         "sdk/cli/src/commands/sdlc/handoff.command.ts",
         "packages/mcp-server/src/mcp/prompts.service.ts",
-        "sdk/cli/test/e2e/mcp-e2e.test.ts"
+        "sdk/cli/test/mcp-serve.e2e-spec.ts"
       ],
       "validationCommands": [
         "npm run build --workspace packages/mcp-server",
@@ -2091,8 +2091,8 @@
       "closedAt": "2026-06-20",
       "closureCommit": "5d4dc982",
       "evidence": [
-        "apps/agent-sandbox/index.js",
-        "apps/agent-sandbox/package.json"
+        "packages/agent-runtime/src/domain/ports/skill-registry.port.ts",
+        "packages/agent-runtime/src/adapters/skills/local-skill-registry.adapter.ts"
       ],
       "validationCommands": [
         "node apps/agent-sandbox/index.js"
@@ -2104,9 +2104,9 @@
       "closedAt": "2026-06-20",
       "closureCommit": "f84c3ac4",
       "evidence": [
-        "packages/mcp-tools/package.json",
-        "packages/mcp-tools/src/registry.js",
-        "packages/mcp-tools/src/tools/read-gap-tracking.js"
+        "packages/mcp-server/package.json",
+        "packages/mcp-server/src/tools/tools.module.ts",
+        ".harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs"
@@ -2118,7 +2118,7 @@
       "closedAt": "2026-06-20",
       "closureCommit": "0b6eb03a",
       "evidence": [
-        ".harness/scripts/ci/13-agentic-code-review.mjs"
+        ".harness/scripts/ci/agentic/13-agentic-code-review.mjs"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs"
@@ -2223,7 +2223,7 @@
       "closedAt": "2026-06-20",
       "closureCommit": "929ac878",
       "evidence": [
-        ".harness/scripts/ci/13-agentic-code-review.mjs"
+        ".harness/scripts/ci/agentic/13-agentic-code-review.mjs"
       ],
       "validationCommands": [
         "node .harness/scripts/ci-runner.mjs"
@@ -2274,10 +2274,10 @@
       "closedAt": "2026-06-20",
       "closureCommit": "3efbb5900405322751edd139e4cf87095ddf82b3",
       "evidence": [
-        ".harness/scripts/ci/review-input.mjs",
-        ".harness/scripts/ci/review-result.mjs",
-        ".harness/scripts/ci/review-provider.mjs",
-        ".harness/scripts/ci/13-agentic-code-review.mjs",
+        ".harness/scripts/ci/agentic/review-input.mjs",
+        ".harness/scripts/ci/agentic/review-result.mjs",
+        ".harness/scripts/ci/agentic/review-provider.mjs",
+        ".harness/scripts/ci/agentic/13-agentic-code-review.mjs",
         ".github/workflows/sdk-cli-ci.yml"
       ],
       "validationCommands": [
@@ -2597,7 +2597,7 @@
       "closureCommit": "6694314d",
       "evidence": [
         "sdk/cli/src/commands/gate/gate.command.spec.ts",
-        "sdk/cli/src/commands/init/agents.command.spec.ts",
+        "sdk/cli/src/commands/agents/agents.command.spec.ts",
         "sdk/cli/src/commands/init/init.wizard.spec.ts",
         "sdk/cli/src/commands/phase/phase-advance.command.spec.ts"
       ],
@@ -2862,7 +2862,7 @@
       "closedAt": "2026-06-23",
       "closureCommit": "31e4e079",
       "evidence": [
-        "sdk/cli/test/e2e/mcp-e2e.test.ts"
+        "sdk/cli/test/mcp-serve.e2e-spec.ts"
       ],
       "validationCommands": [
         "NODE_OPTIONS=--max-old-space-size=4096 npx jest --config sdk/cli/test/jest-e2e.json --runInBand --no-bail --testPathPatterns='mcp-e2e'"
@@ -3474,7 +3474,7 @@
       "closedAt": "2026-06-23",
       "closureCommit": "f1d9814f",
       "evidence": [
-        ".harness/scripts/ci/23-check-orphan-bilingual.mjs",
+        ".harness/scripts/ci/suites/bilingual-suite.mjs",
         ".harness/scripts/ci/24-check-surface-parity.mjs",
         ".harness/scripts/ci/25-operational-drift-audit.mjs",
         ".harness/scripts/ci/27-opa-parity-gate.mjs",
@@ -3986,8 +3986,8 @@
         "packages/mcp-server/src/mcp/mcp-cache.service.ts",
         "packages/mcp-server/src/mcp/mcp-server.service.ts",
         "packages/mcp-server/tsconfig.json",
-        "sdk/cli/src/commands/mcp/mcp-serve.command.ts",
-        "sdk/cli/src/types/evolith-mcp-server.d.ts",
+        "sdk/cli/test/mcp-serve.e2e-spec.ts",
+        "sdk/cli/src/types/mcp-sdk.d.ts",
         "package-lock.json"
       ],
       "validationCommands": [
@@ -4974,7 +4974,7 @@
       "closedAt": "2026-06-28",
       "closureCommit": "92750656",
       "evidence": [
-        "sdk/cli/test/e2e/mcp-e2e.test.ts",
+        "sdk/cli/test/mcp-serve.e2e-spec.ts",
         "sdk/cli/src/commands/validate/validate.command.ts",
         "sdk/cli/src/main.ts"
       ],
@@ -5041,9 +5041,9 @@
       "closedAt": "2026-06-28",
       "closureCommit": "30b62b9e",
       "evidence": [
-        "packages/mcp-tools/src/validate-input.js",
-        "packages/mcp-tools/src/registry.js",
-        "packages/mcp-tools/README.md"
+        "packages/mcp-server/src/mcp/mcp-tool-dispatch.ts",
+        "packages/mcp-server/src/tools/tools.module.ts",
+        "packages/mcp-server/README.md"
       ],
       "validationCommands": [
         "npm run --workspace packages/mcp-tools test"
@@ -5201,7 +5201,7 @@
       "closedAt": "2026-06-28",
       "closureCommit": "91cbd789",
       "evidence": [
-        "packages/mcp-tools/src/tools/read-gap-tracking.js"
+        ".harness/scripts/ci/08-validate-tracking.mjs"
       ],
       "validationCommands": [
         "npm run --workspace packages/mcp-tools test"
@@ -5451,7 +5451,7 @@
       "closedAt": "2026-06-28",
       "closureCommit": "556f7c9d",
       "evidence": [
-        "sdk/cli/src/commands/init/upgrade.command.ts"
+        "sdk/cli/src/commands/upgrade/upgrade.command.ts"
       ],
       "validationCommands": [
         "npm test --workspace sdk/cli -- --runInBand"

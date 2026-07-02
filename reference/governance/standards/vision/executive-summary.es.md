@@ -11,7 +11,7 @@ Instantánea estratégica generada desde el tablero canónico de gaps y la recon
 
 **Decisión actual:** NO-GO para expansión productiva o release mayor: existen bloqueadores P0 activos.
 
-**Mayor problema ahora:** `Agent Runtime` concentra el mayor riesgo abierto ponderado (13 pendientes, 0 P0). Ataca esa concentración antes de ampliar alcance.
+**Mayor problema ahora:** `Agent Runtime` concentra el mayor riesgo abierto ponderado (12 pendientes, 0 P0). Ataca esa concentración antes de ampliar alcance.
 
 **Dónde atacar primero:** [GT-377](./gap-reference-catalog.es.md#gt-377), [GT-375](./gap-reference-catalog.es.md#gt-375).
 
@@ -26,9 +26,9 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 | Orden | Foco | Motivo | IDs |
 |---:|---|---|---|
 | 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | [GT-377](./gap-reference-catalog.es.md#gt-377), [GT-375](./gap-reference-catalog.es.md#gt-375) |
-| 2 | Área de mayor riesgo | `Agent Runtime` tiene la mayor carga ponderada abierta. | [GT-384](./gap-reference-catalog.es.md#gt-384), [GT-399](./gap-reference-catalog.es.md#gt-399), [GT-403](./gap-reference-catalog.es.md#gt-403), [GT-406](./gap-reference-catalog.es.md#gt-406), [GT-407](./gap-reference-catalog.es.md#gt-407), [GT-408](./gap-reference-catalog.es.md#gt-408), +7 |
+| 2 | Área de mayor riesgo | `Agent Runtime` tiene la mayor carga ponderada abierta. | [GT-384](./gap-reference-catalog.es.md#gt-384), [GT-403](./gap-reference-catalog.es.md#gt-403), [GT-406](./gap-reference-catalog.es.md#gt-406), [GT-407](./gap-reference-catalog.es.md#gt-407), [GT-408](./gap-reference-catalog.es.md#gt-408), [GT-383](./gap-reference-catalog.es.md#gt-383), +6 |
 | 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | - |
-| 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-324](./gap-reference-catalog.es.md#gt-324), [GT-384](./gap-reference-catalog.es.md#gt-384), [GT-399](./gap-reference-catalog.es.md#gt-399), [GT-400](./gap-reference-catalog.es.md#gt-400), [GT-403](./gap-reference-catalog.es.md#gt-403), [GT-406](./gap-reference-catalog.es.md#gt-406), [GT-407](./gap-reference-catalog.es.md#gt-407), [GT-408](./gap-reference-catalog.es.md#gt-408), +1 |
+| 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-324](./gap-reference-catalog.es.md#gt-324), [GT-384](./gap-reference-catalog.es.md#gt-384), [GT-400](./gap-reference-catalog.es.md#gt-400), [GT-403](./gap-reference-catalog.es.md#gt-403), [GT-406](./gap-reference-catalog.es.md#gt-406), [GT-407](./gap-reference-catalog.es.md#gt-407), [GT-408](./gap-reference-catalog.es.md#gt-408), [GT-383](./gap-reference-catalog.es.md#gt-383) |
 | 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-388](./gap-reference-catalog.es.md#gt-388), [GT-389](./gap-reference-catalog.es.md#gt-389), [GT-391](./gap-reference-catalog.es.md#gt-391), [GT-393](./gap-reference-catalog.es.md#gt-393), [GT-397](./gap-reference-catalog.es.md#gt-397), [GT-381](./gap-reference-catalog.es.md#gt-381), +7 |
 
 ## Bloqueadores Actuales
@@ -44,18 +44,18 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 |---|---:|
 | Fecha canónica del tablero | 2026-07-02 |
 | Gaps totales | 412 |
-| Gaps cerrados | 388 |
-| Gaps pendientes | 24 |
+| Gaps cerrados | 389 |
+| Gaps pendientes | 23 |
 | P0 abiertos | 2 |
-| P1 abiertos | 9 |
+| P1 abiertos | 8 |
 | P2 abiertos | 13 |
-| Cierre total | 94.2% |
+| Cierre total | 94.4% |
 | Registros de evidencia de cierre | 364 |
 | Readiness registrado | 3 PASS, 1 RESOLVED |
 
 | Área | Pendientes | P0 | P1 | Primeros IDs |
 |---|---:|---:|---:|---|
-| `Agent Runtime` | 13 | 0 | 7 | [GT-384](./gap-reference-catalog.es.md#gt-384), [GT-399](./gap-reference-catalog.es.md#gt-399), [GT-403](./gap-reference-catalog.es.md#gt-403), [GT-406](./gap-reference-catalog.es.md#gt-406), +9 |
+| `Agent Runtime` | 12 | 0 | 6 | [GT-384](./gap-reference-catalog.es.md#gt-384), [GT-403](./gap-reference-catalog.es.md#gt-403), [GT-406](./gap-reference-catalog.es.md#gt-406), [GT-407](./gap-reference-catalog.es.md#gt-407), +8 |
 | `Cross` | 2 | 1 | 0 | [GT-375](./gap-reference-catalog.es.md#gt-375), [GT-381](./gap-reference-catalog.es.md#gt-381) |
 | `Core Domain` | 1 | 1 | 0 | [GT-377](./gap-reference-catalog.es.md#gt-377) |
 | `Core API` | 3 | 0 | 1 | [GT-400](./gap-reference-catalog.es.md#gt-400), [GT-393](./gap-reference-catalog.es.md#gt-393), [GT-394](./gap-reference-catalog.es.md#gt-394) |

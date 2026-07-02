@@ -4166,3 +4166,33 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Fix propuesto:** alimentar maturity-evidence con build/test reales por producto; condicionar "DONE" a evidencia validada.
 - **Evidencia:** el tablero marcaba 329/330 con ≥15 GAPS reales (3 críticos); `09-reconcile-maturity.mjs` ya falla `closures 272 vs 323`.
 - **Hecho cuando:** [x] el tablero reconcilia con la evidencia ejecutada.
+
+#### GT-395
+
+**Título:** WS7 Gobernanza Transversal - Las reglas existen como archivos estáticos pero no se aplican universalmente en runtime
+
+- **Componente:** Core Domain · **Prioridad:** P0 · **Riesgo:** alto (las políticas existen en el repositorio pero son inertes)
+- **Propósito:** Asegurar que las reglas de gobernanza agnósticas se traduzcan en bloqueos efectivos en runtime (ej. en el pipeline de evaluación) en lugar de permanecer pasivas como archivos markdown/JSON.
+- **Evidencia:** El SDLC Deep Audit reportó "Gobernanza transversal: Las reglas de gobernanza existen como archivos pero no se aplican en runtime" (Dimensión 7: AUSENTE).
+- **Fix propuesto:** Implementar un mecanismo transversal en el pipeline de evaluación que exija estrictamente la validación de los rulesets canónicos (no solo Rego) antes de emitir un veredicto APROBADO.
+- **Hecho cuando:** [ ] El pipeline valida automáticamente contra los rulesets JSON canónicos y falla explícitamente ante incumplimientos.
+
+#### GT-396
+
+**Título:** WS4 Contrato de Ingesta Cliente - Falta esquema formal `SatelliteManifest`
+
+- **Componente:** Core Domain · **Prioridad:** P1 · **Riesgo:** medio (los clientes envían datos fragmentados)
+- **Propósito:** Establecer un contrato de entrada unificado y formal (esquema `SatelliteManifest` o `ProjectInput`) que todos los consumidores (Tracker, Smart CLI, UMS) deben enviar para iniciar validaciones.
+- **Evidencia:** El SDLC Deep Audit reportó "Contrato de ingesta cliente: Existen schemas parciales pero no un contrato formal de ingesta cliente".
+- **Fix propuesto:** Definir un JSON schema canónico para el payload que esperan las herramientas de validación de Core API y MCP, asegurando que todos los clientes provean un manifiesto estrictamente tipado.
+- **Hecho cuando:** [ ] Esquema formal publicado; [ ] CLI/MCP/Core API exigen el esquema de manera estricta.
+
+#### GT-397
+
+**Título:** WS9 Script de Paridad Bilingüe Ausente
+
+- **Componente:** .harness · **Prioridad:** P2 · **Riesgo:** medio (divergencia bilingüe silenciosa)
+- **Propósito:** Restaurar el script de validación faltante `04-check-bilingual-parity.mjs` para garantizar que el release gate verifica el 100% de paridad de traducción Español/Inglés.
+- **Evidencia:** El Intelligent Data Audit reportó "WS9: Quality and Release-Gate (75%) - Missing: Bilingual parity check Path: .harness/scripts/ci/04-check-bilingual-parity.mjs".
+- **Fix propuesto:** Crear el script faltante basándose en la lógica existente de la suite y conectarlo de nuevo en el pipeline CI.
+- **Hecho cuando:** [ ] Script creado y ejecutándose; [ ] WS9 alcanza 100% de cobertura.

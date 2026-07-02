@@ -4220,3 +4220,33 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Proposed fix:** feed real per-product `build`/`test` results into maturity-evidence; gate "DONE" on validated evidence; this wave reopens the board.
 - **Evidence:** board read 329/330 DONE while ≥15 real gaps (3 critical) exist; `09-reconcile-maturity.mjs` already fails `closures 272 vs required 323`.
 - **Done when:** [x] board status reconciles with executed build/test evidence.
+
+#### GT-395
+
+**Title:** WS7 Gobernanza Transversal - Rulesets exist as static files but are not universally enforced at runtime
+
+- **Component:** Core Domain · **Priority:** P0 · **Risk:** high (policies exist in repo but are inert)
+- **Purpose:** Ensure that the agnostic governance rules are translated into effective runtime blockers (e.g., pipeline evaluation enforcement) rather than remaining as passive markdown/JSON files.
+- **Evidence:** SDLC Deep Audit reported "Gobernanza transversal: Las reglas de gobernanza existen como archivos pero no se aplican en runtime" (Dimension 7: AUSENTE).
+- **Proposed fix:** Implement a cross-cutting mechanism in the evaluation pipeline that strictly mandates the passage of core rulesets (not just Rego) before returning a PASSED verdict.
+- **Done when:** [ ] Pipeline automatically validates against canonical JSON rulesets and fails explicitly on non-compliance.
+
+#### GT-396
+
+**Title:** WS4 Client Ingestion Contract - Formal `SatelliteManifest` schema missing
+
+- **Component:** Core Domain · **Priority:** P1 · **Risk:** med (clients send fragmented data)
+- **Purpose:** Establish a unified, formal input contract (`SatelliteManifest` or `ProjectInput` schema) that all consumers (Tracker, Smart CLI, UMS) must send to initiate validation.
+- **Evidence:** SDLC Deep Audit reported "Contrato de ingesta cliente: Existen schemas parciales pero no un contrato formal de ingesta cliente".
+- **Proposed fix:** Define a canonical JSON schema for the payload expected by the Core API and MCP `validate` tools, ensuring all clients provide a strictly typed manifest.
+- **Done when:** [ ] Formal schema published; [ ] CLI/MCP/Core API enforce the schema strictly.
+
+#### GT-397
+
+**Title:** WS9 Bilingual Parity Check Script Missing
+
+- **Component:** .harness · **Priority:** P2 · **Risk:** med (silent bilingual divergence)
+- **Purpose:** Restore the missing validation script `04-check-bilingual-parity.mjs` to ensure the release gate verifies 100% Spanish/English translation parity.
+- **Evidence:** Intelligent Data Audit reported "WS9: Quality and Release-Gate (75%) - Missing: Bilingual parity check Path: .harness/scripts/ci/04-check-bilingual-parity.mjs".
+- **Proposed fix:** Create the missing script based on existing suite logic and wire it back into the CI pipeline.
+- **Done when:** [ ] Script created and executing; [ ] WS9 reaches 100% coverage.

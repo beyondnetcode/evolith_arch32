@@ -4250,3 +4250,36 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Evidence:** Intelligent Data Audit reported "WS9: Quality and Release-Gate (75%) - Missing: Bilingual parity check Path: .harness/scripts/ci/04-check-bilingual-parity.mjs".
 - **Proposed fix:** Create the missing script based on existing suite logic and wire it back into the CI pipeline.
 - **Done when:** [ ] Script created and executing; [ ] WS9 reaches 100% coverage.
+
+#### GT-398
+
+**Title:** Dual-Engine Parity for `allowedSourceInterfaces`
+
+> **Problem (2026-07-02, SDLC Deep Audit):** The security flag `allowedSourceInterfaces` was defined in TypeScript (`GovernancePosture`) but not implemented in `.rego`, breaking the *Dual-Engine Parity* standard rule.
+
+**Purpose:** Ensure the external OPA engine can audit source interfaces with the exact same logic as the native TS engine.
+**Evidence:** OPA rule added and covered by automated tests.
+**Closure:** OPA test suite is green and includes `allowedSourceInterfaces` validation.
+**References:** ADR-0104, `run-evolith-deep.mjs` (Audit)
+
+#### GT-399
+
+**Title:** Injection of Real HTTP/Harness Adapters in CLI `AgentRuntimeFactory`
+
+> **Problem (2026-07-02, SDLC Deep Audit):** The CLI (`evolith plan evaluate`) uses `StubCoreEvaluationAdapter` and `InMemoryHarnessAdapter` instead of clients that hit the real backend, degrading its maturity to a prototype.
+
+**Purpose:** Reconnect the Smart CLI execution with the real Core API infrastructure and playbook runner.
+**Evidence:** `AgentRuntimeFactory` injects real HTTP adapters.
+**Closure:** The `evolith plan evaluate` command successfully queries `localhost:3000` and emits real results.
+**References:** ADR-0104, `run-evolith-deep.mjs` (Audit)
+
+#### GT-400
+
+**Title:** REST/WebSocket Endpoint (Hermes Entrypoint) in Core API
+
+> **Problem (2026-07-02, SDLC Deep Audit):** The `HermesChatBoxInteractionAdapter` adapter exists but there is no controller exposed in `apps/core-api` to receive incoming requests.
+
+**Purpose:** Establish a gateway for Chat-like interfaces (Hermes) to interact with the hosted `AgentRuntimeService`.
+**Evidence:** Endpoint created in NestJS API and validated via E2E.
+**Closure:** An API route capable of receiving an `AgentRuntimeRequestWire` is exposed.
+**References:** ADR-0104, `run-evolith-deep.mjs` (Audit)

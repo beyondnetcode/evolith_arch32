@@ -4196,3 +4196,36 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Evidencia:** El Intelligent Data Audit reportó "WS9: Quality and Release-Gate (75%) - Missing: Bilingual parity check Path: .harness/scripts/ci/04-check-bilingual-parity.mjs".
 - **Fix propuesto:** Crear el script faltante basándose en la lógica existente de la suite y conectarlo de nuevo en el pipeline CI.
 - **Hecho cuando:** [ ] Script creado y ejecutándose; [ ] WS9 alcanza 100% de cobertura.
+
+#### GT-398
+
+**Título:** Paridad Dual-Engine para `allowedSourceInterfaces`
+
+> **Problema (2026-07-02, SDLC Deep Audit):** El flag de seguridad `allowedSourceInterfaces` se definió en TypeScript (`GovernancePosture`) pero no se implementó en `.rego`, rompiendo la regla de *Dual-Engine Parity*.
+
+**Propósito:** Asegurar que el motor OPA externo pueda auditar las interfaces de origen de igual manera que el motor nativo de TS.
+**Evidencia:** Regla OPA añadida y cubierta por tests automatizados.
+**Cierre:** La suite de pruebas de OPA está verde e incluye la validación de `allowedSourceInterfaces`.
+**Referencias:** ADR-0104, `run-evolith-deep.mjs` (Audit)
+
+#### GT-399
+
+**Título:** Inyección de Adaptadores reales HTTP/Harness en el CLI `AgentRuntimeFactory`
+
+> **Problema (2026-07-02, SDLC Deep Audit):** El CLI (`evolith plan evaluate`) utiliza `StubCoreEvaluationAdapter` e `InMemoryHarnessAdapter` en vez de los clientes que impactan el backend real, degradando su madurez a un prototipo.
+
+**Propósito:** Reconectar la ejecución del Smart CLI con la infraestructura real del Core API y el ejecutor de playbooks.
+**Evidencia:** `AgentRuntimeFactory` inyecta adaptadores HTTP reales.
+**Cierre:** El comando `evolith plan evaluate` logra consultar `localhost:3000` y emite resultados reales.
+**Referencias:** ADR-0104, `run-evolith-deep.mjs` (Audit)
+
+#### GT-400
+
+**Título:** Endpoint REST/WebSocket (Hermes Entrypoint) en Core API
+
+> **Problema (2026-07-02, SDLC Deep Audit):** Se cuenta con el adaptador `HermesChatBoxInteractionAdapter` pero no hay un controlador expuesto en `apps/core-api` para recibir el request entrante.
+
+**Propósito:** Establecer una puerta de enlace para que las interfaces tipo Chat (Hermes) puedan interactuar con el `AgentRuntimeService` alojado.
+**Evidencia:** Endpoint creado en la API de NestJS validado vía E2E.
+**Cierre:** Se expone una ruta API capaz de recibir un `AgentRuntimeRequestWire`.
+**Referencias:** ADR-0104, `run-evolith-deep.mjs` (Audit)

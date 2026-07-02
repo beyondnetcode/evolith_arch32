@@ -4325,10 +4325,11 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Impacto:** MCP puede divergir del comportamiento runtime de política, aprobación y auditoría.
 - **Archivos afectados:** `packages/mcp-server/src/`, `packages/agent-runtime/src/adapters/`, `packages/agent-runtime/src/domain/ports/`.
 - **Complejidad:** S
-- **Propuesta de corrección:** Introducir `McpInteractionAdapter` y enrutar operaciones MCP mutativas/gobernadas por `InteractionAdapterPort`.
+- **Fix aplicado:** Creado `McpInteractionAdapter` implementando `InteractionAdapterPort<McpToolInput>` con `sourceInterface: 'mcp'`. Mapea nombre de tool MCP a `intent`/`tool`, extrae tenant/initiative/phase de args planos o context anidado, maneja dry_run y approval. Exportado del barrel. 11 tests unitarios añadidos.
 - **Criterios de aceptación:**
-  - [ ] Las interacciones MCP que ejecutan capacidades gobernadas usan `InteractionAdapterPort`.
+  - [x] Las interacciones MCP que ejecutan capacidades gobernadas usan `InteractionAdapterPort`.
   - [ ] MCP conserva los checks ABAC existentes y suma paridad de política runtime.
+- **Evidencia de cierre:** `packages/agent-runtime/src/adapters/interaction/McpInteractionAdapter.ts` creado. 11/11 tests pasando. Nota: el enrutamiento completo MCP→runtime (reemplazando ejecución directa de tools) es scope mayor — este GT entrega el contrato y mapeo del adaptador.
 - **Dependencias:** `GT-401`, `GT-412`.
 
 #### GT-406

@@ -72,6 +72,18 @@ export function buildPolicyInput(
   return {
     intent: request.intent,
     tool: skill.id,
+    sourceInterface: request.sourceInterface,
+    context: request.context,
+    capability: {
+      id: skill.id,
+      kind: skill.kind,
+      permissions: skill.permissions,
+      requiresApproval: skill.requiresApproval,
+      emitsTrace: skill.emitsTrace,
+      requiresPolicy: skill.requiresPolicy,
+      policyRef: skill.policyRef,
+      allowedSourceInterfaces: skill.allowedSourceInterfaces,
+    },
     tenant: request.context.tenantId,
     product: request.context.productId,
     initiative: request.context.initiativeId,

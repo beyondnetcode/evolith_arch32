@@ -8,6 +8,7 @@ import data.evolith.mcp.violations as mcp_violations
 import data.evolith.ci_cd.violations as ci_cd_violations
 import data.evolith.governance.violations as gov_violations
 import data.evolith.abac.violations as abac_violations
+import data.evolith.capability_source_interface.violations as csi_violations
 import data.evolith.acl.violations as acl_violations
 import data.evolith.cicd_quality_gates.violations as cicd_qg_violations
 import data.evolith.cli_core_parity.violations as cli_cp_violations
@@ -61,6 +62,10 @@ violations[v] {
 
 violations[v] {
 	v := abac_violations[_]
+}
+
+violations[v] {
+	v := csi_violations[_]
 }
 
 violations[v] {

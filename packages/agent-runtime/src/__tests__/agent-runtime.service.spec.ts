@@ -8,8 +8,10 @@
 import { createAgentRuntime } from '../bootstrap';
 import { parseAgentRuntimeRequest } from '../domain/contracts/agent-runtime-request';
 import { StubPolicyValidationAdapter } from '../adapters/policy/stub-policy-validation.adapter';
+import { LocalSkillRegistryAdapter } from '../adapters/skills/local-skill-registry.adapter';
 import type { IHarnessPort, HarnessExecutionResult } from '../domain/ports/harness.port';
 import type { InMemoryTrackerTraceAdapter } from '../adapters/tracker/in-memory-tracker-trace.adapter';
+import type { SkillDescriptor } from '../domain/contracts/capability';
 
 const FIXED_NOW = '2026-06-29T00:00:00.000Z';
 
@@ -102,6 +104,34 @@ describe('AgentRuntimeService', () => {
 
     expect(result.status).toBe('blocked');
     expect(result.findings.some((f) => f.source === 'opa' && f.id === 'gate.denied')).toBe(true);
+  });
+
+  it('BLOCKS when the source interface is not allowed by the capability posture', async () => {
+    const restricted: SkillDescriptor = {
+      id: 'restricted-tool',
+      description: 'Only MCP may trigger this capability.',
+      intents: ['restricted_action'],
+      kind: 'harness',
+      harnessCapability: 'opa-audit',
+      permissions: ['run:audit'],
+      requiresApproval: false,
+      emitsTrace: true,
+      requiresPolicy: false,
+      allowedSourceInterfaces: ['mcp'],
+    };
+    const { runtime } = createAgentRuntime({
+      skillRegistry: new LocalSkillRegistryAdapter([restricted]),
+    });
+
+    const result = await runtime.handle(parseAgentRuntimeRequest({
+      source_interface: 'smart_cli_chat',
+      intent: 'restricted_action',
+      tool: 'restricted-tool',
+    }));
+
+    expect(result.status).toBe('blocked');
+    expect(result.summary).toContain("is not allowed to be executed from interface 'smart_cli_chat'");
+    expect(result.trace.steps).toContain('blocked-by-interface');
   });
 
   it('GENERATES trazability events to the Tracker port', async () => {

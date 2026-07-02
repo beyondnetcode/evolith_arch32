@@ -4,7 +4,7 @@
  */
 
 import { verdictToStatus, mergeStatus, fromHarness, applyPolicy } from '../application/result-assembler';
-import { toPhaseId, buildEvaluationContext } from '../application/context-mapper';
+import { toPhaseId, buildEvaluationContext, buildPolicyInput } from '../application/context-mapper';
 import { parseManifest } from '../adapters/harness/harness-manifest';
 import { CliCommunicationGatewayAdapter } from '../adapters/gateway/cli-communication-gateway.adapter';
 import { parseAgentRuntimeRequest } from '../domain/contracts/agent-runtime-request';
@@ -72,6 +72,26 @@ describe('context-mapper (pure)', () => {
     expect(ctx.initiative?.initiativeId).toBe('init');
     expect(ctx.phaseId).toBe('discovery');
     expect((ctx.passthrough as Record<string, unknown>).missing_artifacts).toEqual(['x']);
+  });
+
+  it('builds OPA policy input with capability source-interface posture', () => {
+    const skill: SkillDescriptor = {
+      id: 'restricted-tool', description: 'd', intents: ['i'], kind: 'harness',
+      harnessCapability: 'h', permissions: ['run:harness'], requiresApproval: false,
+      emitsTrace: true, requiresPolicy: true, policyRef: 'evolith.capability_source_interface',
+      allowedSourceInterfaces: ['mcp'],
+    };
+    const req = parseAgentRuntimeRequest({
+      source_interface: 'smart_cli_chat',
+      tenant: 't',
+      intent: 'i',
+      tool: 'restricted-tool',
+    });
+
+    const input = buildPolicyInput(req, skill, {});
+    expect(input.sourceInterface).toBe('smart_cli_chat');
+    expect((input.context as Record<string, unknown>).sourceInterface).toBe('smart_cli_chat');
+    expect((input.capability as Record<string, unknown>).allowedSourceInterfaces).toEqual(['mcp']);
   });
 });
 

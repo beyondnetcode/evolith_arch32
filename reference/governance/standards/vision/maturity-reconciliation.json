@@ -4,9 +4,9 @@
   "asOf": "2026-07-02",
   "gaps": {
     "total": 412,
-    "done": 407,
+    "done": 410,
     "pending": 0,
-    "inProgress": 5,
+    "inProgress": 2,
     "deferred": 0
   },
   "evidence": {

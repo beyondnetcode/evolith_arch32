@@ -29,14 +29,13 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 | 2 | Área de mayor riesgo | `Infra` tiene la mayor carga ponderada abierta. | [GT-324](./gap-reference-catalog.es.md#gt-324) |
 | 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | - |
 | 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-324](./gap-reference-catalog.es.md#gt-324) |
-| 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-386](./gap-reference-catalog.es.md#gt-386) |
+| 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | - |
 
 ## Bloqueadores Actuales
 
 | ID | Ataque | Componente | Esfuerzo |
 |---|---|---|---|
 | [GT-324](./gap-reference-catalog.es.md#gt-324) | CD: build+push a GHCR de core-api y mcp-server (GITHUB_TOKEN) vivo + triggers push/tag; job de deploy Coolify guardado — código completo, deploy pendiente de secrets + run CD | `Infra` | P1/M |
-| [GT-386](./gap-reference-catalog.es.md#gt-386) | R3 — Adaptadores de persistencia durable: reemplazar InMemorySchedulerAdapter (sin timers; se pierde al reiniciar) por un adaptador durable cron/cola tras ISchedulerPort, y InMemoryMemoryAdapter por un almacén persistente tras IMemoryPort. El in-memory queda como default de test. | `Agent Runtime` | P2/M |
 
 ## Métricas
 
@@ -44,19 +43,18 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 |---|---:|
 | Fecha canónica del tablero | 2026-07-02 |
 | Gaps totales | 412 |
-| Gaps cerrados | 410 |
-| Gaps pendientes | 2 |
+| Gaps cerrados | 411 |
+| Gaps pendientes | 1 |
 | P0 abiertos | 0 |
 | P1 abiertos | 1 |
-| P2 abiertos | 1 |
-| Cierre total | 99.5% |
+| P2 abiertos | 0 |
+| Cierre total | 99.8% |
 | Registros de evidencia de cierre | 364 |
 | Readiness registrado | 3 PASS, 1 RESOLVED |
 
 | Área | Pendientes | P0 | P1 | Primeros IDs |
 |---|---:|---:|---:|---|
 | `Infra` | 1 | 0 | 1 | [GT-324](./gap-reference-catalog.es.md#gt-324) |
-| `Agent Runtime` | 1 | 0 | 0 | [GT-386](./gap-reference-catalog.es.md#gt-386) |
 
 ## Fuente y Regla de Actualización
 

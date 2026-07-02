@@ -4,7 +4,7 @@
 
 **Estado:** Aprobado  
 **Propietario:** Evolith Architecture Board  
-**Última Actualización:** 2026-06-17
+**Última Actualización:** 2026-07-02
 
 ---
 
@@ -57,13 +57,16 @@ Evolith Core es el Reference Corpus vivo y la **Constitución** de ingeniería. 
 ```text
 Reference Corpus (Constitución)
 ├── Directivas Arquitectónicas
-├── ADRs Core y Específicos por Plataforma
+├── ADRs Core y Específicos por Plataforma (incluyendo categoría ai-augmented/)
 ├── Estándares y Taxonomías
-├── Rulesets y Skills
+├── Rulesets (26 categorías) y Skills
 ├── Schemas de Artefactos y Evidencias
 ├── Definiciones de Phase Gates
+├── OPA Policies (25+ .rego) con dual-engine parity
 └── Contratos de Adaptadores e Integraciones
 ```
+
+**ADR-0101: Core es un Evaluation Engine stateless.** Core recibe un `EvaluationContext` con identificadores opacos, ejecuta evaluaciones multi-kind (gate, artifact, evidence, architecture, blueprint, topology, checkpoint, deployment, rule, compliance) y devuelve un `EvaluationResult` con veredictos y recomendaciones no vinculantes. Core **no persiste** estado — Tracker es propietario del estado de gobernanza en runtime.
 
 Core permanece neutral respecto de proveedores. Las decisiones específicas de productos pertenecen a adaptadores, referencias específicas de plataforma o repositorios satélite, salvo que se generalicen como patrones reutilizables respaldados por evidencia.
 
@@ -89,15 +92,16 @@ No es simplemente un gestor de tareas. Tracker es propietario del estado de gobe
 Evolith debe construir y poseer:
 
 1. el SDLC canónico de cinco fases y la máquina de estados de Phase Gates;
-2. rulesets, schemas, estándares, taxonomía y herencia del Core;
+2. rulesets (26 categorías), schemas, estándares, taxonomía y herencia del Core;
 3. el modelo canónico de artefactos y evidencias;
-4. la lógica de evaluación de gates, excepciones, aprobaciones y auditoría inmutable;
+4. el **EvaluationOrchestrator** stateless con 10 EvaluationKinds y 5 KindEvaluators;
 5. la trazabilidad desde la intención de negocio hasta arquitectura, código, QA y release;
-6. Architecture Drift y score de adherencia;
-7. reglas, skills, políticas de modelos y autorización por tenant;
-8. contratos neutrales respecto del proveedor para sistemas de trabajo, agentes, observabilidad, analítica, repositorios, CI/CD, testing y despliegue;
-9. autoridad final sobre cada transición de fase;
-10. promoción de lecciones validadas de los satélites hacia Core.
+6. Architecture Drift y score de adherencia (eje progresivo F1/F2/F3);
+7. el **Agent Runtime** con puertos hexagonales, adaptadores de interacción y orquestación gobernada;
+8. rulesets OPA (25+ policies) con dual-engine parity (Native TypeScript + OPA/WASM);
+9. contratos neutrales respecto del proveedor para sistemas de trabajo, agentes, observabilidad, analítica, repositorios, CI/CD, testing y despliegue;
+10. autoridad final sobre cada transición de fase (recomendaciones no vinculantes; Tracker decide);
+11. promoción de lecciones validadas de los satélites hacia Core.
 
 ### 2.4 Modos de Ejecución
 
@@ -121,14 +125,20 @@ flowchart TB
   end
   subgraph CORE["repo · evolith_arch32 (Evolith Core · Constitución)"]
     subgraph EXP["Capa de Exposición del Core · ADR-0074"]
-      API["apps/core-api<br/>REST"]
-      MCP["mcp-server<br/>MCP · agentes IA"]
-      CLI["smart-cli<br/>CLI · humanos"]
+      API["apps/core-api<br/>REST · 8 controllers"]
+      MCP["mcp-server<br/>MCP · 26 tools · 9 resources"]
+      CLI["smart-cli<br/>CLI · 20 commands"]
     end
-    DOM["@evolith/core-domain<br/>rulesets JSON · OPA/WASM · schemas"]
+    subgraph RT["Agent Runtime · @evolith/agent-runtime"]
+      ARS["AgentRuntimeService<br/>12 puertos · 30 adaptadores"]
+      IA["InteractionAdapters<br/>CLI · Chat · Hermes · MCP · External"]
+    end
+    DOM["@evolith/core-domain<br/>EvaluationOrchestrator · 10 Kinds<br/>rulesets JSON · OPA/WASM · schemas"]
     API --> DOM
     MCP --> DOM
     CLI --> DOM
+    ARS --> DOM
+    IA --> ARS
   end
   BFF -->|cliente externo| API
 ```
@@ -157,10 +167,10 @@ flowchart TB
 
 | Interfaz | Consumidor | Propósito |
 |---|---|---|
-| **API REST** | UI del Tracker, CI/CD e integraciones empresariales | Gestionar procesos, fases, evidencias, gates y configuración |
-| **MCP HTTP/SSE** | LLMs y agentes autónomos | Obtener contexto gobernado, evaluar criterios y registrar evidencias |
-| **CLI y Chatbox** | Roles de ingeniería y producto | Interacción guiada usando contexto actual de tenant, producto y fase |
-| **Agent Execution Port** | Claude, OpenAI, Gemini, agentes locales o futuros | Ejecutar actividades acotadas detrás de un contrato neutral respecto del proveedor |
+| **API REST** | UI del Tracker, CI/CD e integraciones empresariales | 8 controllers, ~20 endpoints: evaluación, gates, fases, arquitectura, proyectos,.satélites, caché, salud |
+| **MCP HTTP/SSE** | LLMs y agentes autónomos | 26 tools, 9 resources, 8 prompts: evaluación, validación, agentes, ADRs, MoSCoW, drift, configuración |
+| **CLI** | Roles de ingeniería y producto | 20 comandos: validate, evaluate, gate, drift, scaffold, ADR lifecycle, agents, chat, satellite, sdlc |
+| **Agent Runtime** | Agentes IA, chatboxes, triggers externos | 12 puertos hexagonales, 5 interaction adapters (CLI, Chat, Hermes, MCP, External), orquestación gobernada con OPA + HITL |
 | **Webhook / Bus de Eventos** | Sistemas internos y externos | Propagar comandos, evidencias, cambios de estado y resultados de gates |
 
 ---
@@ -210,7 +220,7 @@ La decisión debe evaluar diferenciación estratégica, cobertura funcional, com
 ```text
 Contratos de Proveedores Evolith
 ├── Work Management Port
-├── Agent Execution Port
+├── Agent Execution Port (IAgentEnginePort)
 ├── LLM Observability Port
 ├── Analytics Port
 ├── Repository Port
@@ -218,7 +228,20 @@ Contratos de Proveedores Evolith
 ├── Testing Port
 ├── Security Scanner Port
 ├── Deployment Port
-└── Collaboration Port
+├── Collaboration Port
+├── Core Evaluation Port (ICoreEvaluationPort)
+├── Policy Validation Port (IPolicyValidationPort)
+├── Tracker Trace Port (ITrackerTracePort)
+├── Memory Port (IMemoryPort)
+├── Approval Port (IApprovalPort)
+├── Scheduler Port (ISchedulerPort)
+├── Harness Port (IHarnessPort)
+└── Interaction Adapter Port (InteractionAdapterPort<T>)
+     ├── SmartCliCommandInteractionAdapter
+     ├── SmartCliChatInteractionAdapter
+     ├── HermesChatBoxInteractionAdapter
+     ├── McpInteractionAdapter (GT-405)
+     └── ExternalTriggerInteractionAdapter
 ```
 
 Ningún schema específico de proveedor puede filtrarse al modelo canónico de dominio. Cambiar un proveedor no debe exigir reescribir bounded contexts de Evolith.

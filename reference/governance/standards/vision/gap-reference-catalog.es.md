@@ -4271,12 +4271,13 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Propósito:** Formalizar los modos comando/chat de Smart CLI como adaptadores que consumen el core gobernado de Agent Runtime.
 - **Evidencia:** BMAD Intelligence update encontró `SmartCliCommandInteractionAdapter` pendiente de integración completa y flujos CLI todavía capaces de orquestar directamente.
 - **Impacto:** La interfaz local más usada puede divergir del comportamiento de política y auditoría runtime.
-- **Archivos afectados:** `sdk/cli/src/commands/`, `sdk/cli/src/app.module.ts`, `packages/agent-runtime/src/`.
+- **Archivos afectados:** `sdk/cli/src/commands/`, `sdk/cli/src/infrastructure/agent/`, `packages/agent-runtime/src/`.
 - **Complejidad:** M
-- **Propuesta de corrección:** Enrutar comandos Smart CLI que ejecutan capacidades gobernadas a través de `InteractionAdapterPort`.
+- **Corrección aplicada:** Añadidos `AgentRuntimeFactory.executeCommand()` y `executeChat()` como gateway de Smart CLI para que los modos comando/chat siempre traduzcan mediante `SmartCliCommandInteractionAdapter` o `SmartCliChatInteractionAdapter` antes de llamar `runtime.handle`; actualizados `chat` y `plan evaluate` para usar el gateway; reemplazados imports privados de subpaths runtime en `plan`; añadidos tests CLI que prueban que el adapter se invoca antes de ejecutar runtime.
 - **Criterios de aceptación:**
-  - [ ] El modo comando de Smart CLI delega capacidades gobernadas mediante la orquestación de Agent Runtime.
-  - [ ] Tests del CLI prueban que política/auditoría no se evaden.
+  - [x] El modo comando de Smart CLI delega capacidades gobernadas mediante la orquestación de Agent Runtime.
+  - [x] Tests del CLI prueban que política/auditoría no se evaden.
+- **Evidencia de cierre:** Commit `9ef081b9`. Validación: `npm run build --workspace packages/agent-runtime`, `npm run test --workspace packages/agent-runtime` (42/42 tests pasan), `npx jest --config sdk/cli/jest.config.js --runTestsByPath sdk/cli/src/infrastructure/agent/agent-runtime.factory.spec.ts sdk/cli/src/commands/chat/chat.command.spec.ts --no-coverage --runInBand` (4/4 tests pasan) y `npm run build --workspace sdk/cli`.
 - **Dependencias:** `GT-401`, `GT-399`.
 
 #### GT-403

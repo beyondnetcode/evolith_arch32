@@ -3,6 +3,28 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-402",
+      "closedAt": "2026-07-02",
+      "closureCommit": "9ef081b9",
+      "evidence": [
+        "sdk/cli/src/infrastructure/agent/agent-runtime.factory.ts",
+        "sdk/cli/src/infrastructure/agent/agent-runtime.factory.spec.ts",
+        "sdk/cli/src/commands/chat/chat.command.ts",
+        "sdk/cli/src/commands/chat/chat.command.spec.ts",
+        "sdk/cli/src/commands/plan/index.ts",
+        "packages/agent-runtime/src/index.ts",
+        "packages/agent-runtime/src/__tests__/public-surface.spec.ts"
+      ],
+      "validationCommands": [
+        "npm run build --workspace packages/agent-runtime",
+        "npm run test --workspace packages/agent-runtime",
+        "npx jest --config sdk/cli/jest.config.js --runTestsByPath sdk/cli/src/infrastructure/agent/agent-runtime.factory.spec.ts sdk/cli/src/commands/chat/chat.command.spec.ts --no-coverage --runInBand",
+        "npm run build --workspace sdk/cli"
+      ],
+      "dependencyDisposition": "accepted-scope",
+      "dependencyRationale": "GT-402 closes the Smart CLI interaction-adapter routing layer. GT-399 remains open for replacing stub/in-memory runtime adapters with real HTTP/Harness adapters."
+    },
+    {
       "id": "GT-401",
       "closedAt": "2026-07-02",
       "closureCommit": "2e0814d3",

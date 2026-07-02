@@ -4343,12 +4343,13 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Formalize Smart CLI command/chat modes as adapters consuming the governed Agent Runtime core.
 - **Evidence:** BMAD Intelligence update found `SmartCliCommandInteractionAdapter` pending full integration and CLI flows still capable of direct orchestration.
 - **Impact:** The most used local interface can diverge from runtime policy and audit behavior.
-- **Affected files:** `sdk/cli/src/commands/`, `sdk/cli/src/app.module.ts`, `packages/agent-runtime/src/`.
+- **Affected files:** `sdk/cli/src/commands/`, `sdk/cli/src/infrastructure/agent/`, `packages/agent-runtime/src/`.
 - **Complexity:** M
-- **Proposed fix:** Route Smart CLI commands that execute governed capabilities through the `InteractionAdapterPort`.
+- **Applied fix:** Added `AgentRuntimeFactory.executeCommand()` and `executeChat()` as the Smart CLI gateway so command/chat modes always translate through `SmartCliCommandInteractionAdapter` or `SmartCliChatInteractionAdapter` before calling `runtime.handle`; updated `chat` and `plan evaluate` to use the gateway; replaced private runtime subpath imports in `plan`; added CLI tests proving the adapter is invoked before runtime execution.
 - **Acceptance criteria:**
-  - [ ] Smart CLI command mode delegates governed capabilities through Agent Runtime orchestration.
-  - [ ] CLI tests prove policy/audit behavior is not bypassed.
+  - [x] Smart CLI command mode delegates governed capabilities through Agent Runtime orchestration.
+  - [x] CLI tests prove policy/audit behavior is not bypassed.
+- **Closure evidence:** Commit `9ef081b9`. Validation: `npm run build --workspace packages/agent-runtime`, `npm run test --workspace packages/agent-runtime` (42/42 tests passing), `npx jest --config sdk/cli/jest.config.js --runTestsByPath sdk/cli/src/infrastructure/agent/agent-runtime.factory.spec.ts sdk/cli/src/commands/chat/chat.command.spec.ts --no-coverage --runInBand` (4/4 tests passing), and `npm run build --workspace sdk/cli`.
 - **Dependencies:** `GT-401`, `GT-399`.
 
 #### GT-403

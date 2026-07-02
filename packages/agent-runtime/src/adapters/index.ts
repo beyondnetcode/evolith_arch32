@@ -61,3 +61,5 @@ export { SwarmsAgentAdapter } from './engine/swarms-agent.adapter';
 export type { SwarmsClient, SwarmsAdapterOptions } from './engine/swarms-agent.adapter';
 export { RoutingAgentAdapter } from './engine/routing-agent.adapter';
 export type { EngineRouterConfig } from './engine/routing-agent.adapter';
+export { PolicyBasedEngineRouter } from './engine/policy-based-engine-router';
+export type { RiskAssessment, PrivacyClassification, CostBudget, RoutingPolicyContext, RoutingDecision } from './engine/policy-based-engine-router';

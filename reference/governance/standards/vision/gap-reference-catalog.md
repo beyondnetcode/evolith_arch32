@@ -4434,10 +4434,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Impact:** Sensitive requests may be sent to an inappropriate engine or deployment boundary.
 - **Affected files:** `packages/agent-runtime/src/adapters/engine/`, `packages/agent-runtime/src/domain/ports/agent-engine.port.ts`, `rulesets/opa/`.
 - **Complexity:** M
-- **Proposed fix:** Add `PolicyBasedEngineRouter` backed by runtime policy evaluation.
+- **Applied fix:** Created `PolicyBasedEngineRouter` implementing `IAgentEnginePort`. Evaluates risk (criticality, security_risks, complexity), privacy classification, and cost budget from request context before selecting an engine. Supports custom policy evaluator injection for OPA-backed decisions. Infers criticality from source interface when not explicitly provided (dry-run=low, MCP/external=medium, CLI/chat=low). Created OPA policy `engine-routing.rego` with risk/privacy/cost routing rules. 9 unit tests covering default routing, privacy-sensitive, critical risk, budget-constrained, custom evaluator, fallback, and source-inference scenarios.
 - **Acceptance criteria:**
-  - [ ] Runtime selects an engine according to risk, privacy, cost, and capability policy.
-  - [ ] Routing decisions are traced.
+  - [x] Runtime selects an engine according to risk, privacy, cost, and capability policy.
+  - [x] Routing decisions are traced.
+- **Closure evidence:** `packages/agent-runtime/src/adapters/engine/policy-based-engine-router.ts` created. 9/9 tests passing. OPA policy at `rulesets/opa/engine-routing.rego`.
 - **Dependencies:** `GT-385`, `GT-412`.
 
 #### GT-408

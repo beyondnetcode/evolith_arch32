@@ -3,9 +3,9 @@
   "scope": "evolith-core",
   "asOf": "2026-06-30",
   "gaps": {
-    "total": 394,
+    "total": 397,
     "done": 378,
-    "pending": 8,
+    "pending": 11,
     "inProgress": 8,
     "deferred": 0
   },
@@ -14,7 +14,7 @@
     "cliPackage": "@evolith/smart-cli@1.1.4",
     "adrCount": 118,
     "rulesetCount": 152,
-    "schemaCount": 39
+    "schemaCount": 40
   },
   "readiness": [
     {

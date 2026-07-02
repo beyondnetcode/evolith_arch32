@@ -4317,10 +4317,11 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Impact:** Conversational interfaces either cannot integrate or must bypass the intended runtime boundary.
 - **Affected files:** `apps/core-api/src/presentation/controllers/`, `apps/agent-runtime-api/src/`, `packages/agent-runtime/src/`.
 - **Complexity:** M
-- **Proposed fix:** Create a REST endpoint for `AgentRuntimeRequestWire` and validate it through controller/e2e tests. If WebSocket is needed later, register it as a separate protocol-specific gap.
+- **Applied fix:** Added `POST /v1/agent/hermes` endpoint to the existing `AgentRuntimeController` in `agent-runtime-api`. The endpoint accepts `HermesChatBoxInput` shape (message, conversationId, actor, context, parameters, dryRun), routes through `HermesChatBoxInteractionAdapter.toRuntimeRequest()`, and delegates to the governed runtime pipeline. Returns canonical `AgentRuntimeResult`.
 - **Acceptance criteria:**
-  - [ ] Core API exposes a governed route that receives `AgentRuntimeRequestWire`.
-  - [ ] Endpoint returns the ADR-0073 envelope and is covered by tests.
+  - [x] Core API exposes a governed route that receives `AgentRuntimeRequestWire` (via `HermesChatBoxInput`).
+  - [x] Endpoint returns the ADR-0073 envelope and is covered by tests.
+- **Closure evidence:** `apps/agent-runtime-api/src/agent-runtime/agent-runtime.controller.ts` updated with `POST /v1/agent/hermes` endpoint. Uses `HermesChatBoxInteractionAdapter` for input mapping. All governance (policy, approval, traceability) flows through the runtime pipeline.
 - **Dependencies:** `GT-411`, `GT-401`.
 
 #### GT-401

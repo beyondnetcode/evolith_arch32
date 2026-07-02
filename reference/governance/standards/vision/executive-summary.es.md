@@ -29,7 +29,7 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 | 2 | Área de mayor riesgo | `Agent Runtime` tiene la mayor carga ponderada abierta. | [GT-384](./gap-reference-catalog.es.md#gt-384), [GT-406](./gap-reference-catalog.es.md#gt-406), [GT-383](./gap-reference-catalog.es.md#gt-383), [GT-388](./gap-reference-catalog.es.md#gt-388), [GT-385](./gap-reference-catalog.es.md#gt-385), [GT-386](./gap-reference-catalog.es.md#gt-386), +2 |
 | 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | - |
 | 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-324](./gap-reference-catalog.es.md#gt-324), [GT-384](./gap-reference-catalog.es.md#gt-384), [GT-406](./gap-reference-catalog.es.md#gt-406), [GT-383](./gap-reference-catalog.es.md#gt-383) |
-| 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-388](./gap-reference-catalog.es.md#gt-388), [GT-391](./gap-reference-catalog.es.md#gt-391), [GT-393](./gap-reference-catalog.es.md#gt-393), [GT-397](./gap-reference-catalog.es.md#gt-397), [GT-381](./gap-reference-catalog.es.md#gt-381), [GT-385](./gap-reference-catalog.es.md#gt-385), +6 |
+| 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-388](./gap-reference-catalog.es.md#gt-388), [GT-393](./gap-reference-catalog.es.md#gt-393), [GT-397](./gap-reference-catalog.es.md#gt-397), [GT-381](./gap-reference-catalog.es.md#gt-381), [GT-385](./gap-reference-catalog.es.md#gt-385), [GT-386](./gap-reference-catalog.es.md#gt-386), +5 |
 
 ## Bloqueadores Actuales
 
@@ -44,12 +44,12 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 |---|---:|
 | Fecha canónica del tablero | 2026-07-02 |
 | Gaps totales | 412 |
-| Gaps cerrados | 394 |
-| Gaps pendientes | 18 |
+| Gaps cerrados | 395 |
+| Gaps pendientes | 17 |
 | P0 abiertos | 2 |
 | P1 abiertos | 4 |
-| P2 abiertos | 12 |
-| Cierre total | 95.6% |
+| P2 abiertos | 11 |
+| Cierre total | 95.9% |
 | Registros de evidencia de cierre | 364 |
 | Readiness registrado | 3 PASS, 1 RESOLVED |
 

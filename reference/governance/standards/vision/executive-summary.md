@@ -11,7 +11,7 @@ Strategic snapshot generated from the canonical gap board and maturity reconcili
 
 **Current decision:** NO-GO for production expansion or a major release: active P0 blockers remain.
 
-**Biggest problem now:** `Agent Runtime` carries the highest weighted open risk (7 open, 0 P0). Attack that concentration before expanding scope.
+**Biggest problem now:** `Cross` carries the highest weighted open risk (2 open, 1 P0). Attack that concentration before expanding scope.
 
 **Where to attack first:** [GT-377](./gap-reference-catalog.md#gt-377), [GT-375](./gap-reference-catalog.md#gt-375).
 
@@ -26,10 +26,10 @@ Use this summary with a simple rule: if you need context, open only the linked I
 | Order | Focus | Reason | IDs |
 |---:|---|---|---|
 | 1 | P0 blockers | They prevent production-readiness or major-release confidence. | [GT-377](./gap-reference-catalog.md#gt-377), [GT-375](./gap-reference-catalog.md#gt-375) |
-| 2 | Highest-risk area | `Agent Runtime` has the largest weighted open load. | [GT-384](./gap-reference-catalog.md#gt-384), [GT-406](./gap-reference-catalog.md#gt-406), [GT-383](./gap-reference-catalog.md#gt-383), [GT-388](./gap-reference-catalog.md#gt-388), [GT-386](./gap-reference-catalog.md#gt-386), [GT-387](./gap-reference-catalog.md#gt-387), +1 |
+| 2 | Highest-risk area | `Cross` has the largest weighted open load. | [GT-375](./gap-reference-catalog.md#gt-375), [GT-381](./gap-reference-catalog.md#gt-381) |
 | 3 | Quick wins | High criticality with XS/S complexity. | - |
-| 4 | P1 wave | Next hardening after P0 is cleared. | [GT-324](./gap-reference-catalog.md#gt-324), [GT-384](./gap-reference-catalog.md#gt-384), [GT-406](./gap-reference-catalog.md#gt-406), [GT-383](./gap-reference-catalog.md#gt-383) |
-| 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-388](./gap-reference-catalog.md#gt-388), [GT-381](./gap-reference-catalog.md#gt-381), [GT-386](./gap-reference-catalog.md#gt-386), [GT-387](./gap-reference-catalog.md#gt-387), [GT-394](./gap-reference-catalog.md#gt-394), [GT-404](./gap-reference-catalog.md#gt-404) |
+| 4 | P1 wave | Next hardening after P0 is cleared. | [GT-324](./gap-reference-catalog.md#gt-324), [GT-384](./gap-reference-catalog.md#gt-384), [GT-383](./gap-reference-catalog.md#gt-383) |
+| 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-388](./gap-reference-catalog.md#gt-388), [GT-381](./gap-reference-catalog.md#gt-381), [GT-386](./gap-reference-catalog.md#gt-386) |
 
 ## Current Blockers
 
@@ -44,22 +44,21 @@ Use this summary with a simple rule: if you need context, open only the linked I
 |---|---:|
 | Canonical board date | 2026-07-02 |
 | Total gaps | 412 |
-| Closed gaps | 400 |
-| Open gaps | 12 |
+| Closed gaps | 404 |
+| Open gaps | 8 |
 | Open P0 | 2 |
-| Open P1 | 4 |
-| Open P2 | 6 |
-| Total closure | 97.1% |
+| Open P1 | 3 |
+| Open P2 | 3 |
+| Total closure | 98.1% |
 | Closure evidence records | 364 |
 | Recorded readiness | 3 PASS, 1 RESOLVED |
 
 | Area | Open | P0 | P1 | First IDs |
 |---|---:|---:|---:|---|
-| `Agent Runtime` | 7 | 0 | 3 | [GT-384](./gap-reference-catalog.md#gt-384), [GT-406](./gap-reference-catalog.md#gt-406), [GT-383](./gap-reference-catalog.md#gt-383), [GT-388](./gap-reference-catalog.md#gt-388), +3 |
 | `Cross` | 2 | 1 | 0 | [GT-375](./gap-reference-catalog.md#gt-375), [GT-381](./gap-reference-catalog.md#gt-381) |
+| `Agent Runtime` | 4 | 0 | 2 | [GT-384](./gap-reference-catalog.md#gt-384), [GT-383](./gap-reference-catalog.md#gt-383), [GT-388](./gap-reference-catalog.md#gt-388), [GT-386](./gap-reference-catalog.md#gt-386) |
 | `Core Domain` | 1 | 1 | 0 | [GT-377](./gap-reference-catalog.md#gt-377) |
 | `Infra` | 1 | 0 | 1 | [GT-324](./gap-reference-catalog.md#gt-324) |
-| `Core API` | 1 | 0 | 0 | [GT-394](./gap-reference-catalog.md#gt-394) |
 
 ## Source and Refresh Rule
 

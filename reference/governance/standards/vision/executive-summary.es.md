@@ -11,7 +11,7 @@ Instantánea estratégica generada desde el tablero canónico de gaps y la recon
 
 **Decisión actual:** NO-GO para expansión productiva o release mayor: existen bloqueadores P0 activos.
 
-**Mayor problema ahora:** `Agent Runtime` concentra el mayor riesgo abierto ponderado (8 pendientes, 0 P0). Ataca esa concentración antes de ampliar alcance.
+**Mayor problema ahora:** `Agent Runtime` concentra el mayor riesgo abierto ponderado (7 pendientes, 0 P0). Ataca esa concentración antes de ampliar alcance.
 
 **Dónde atacar primero:** [GT-377](./gap-reference-catalog.es.md#gt-377), [GT-375](./gap-reference-catalog.es.md#gt-375).
 
@@ -26,10 +26,10 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 | Orden | Foco | Motivo | IDs |
 |---:|---|---|---|
 | 1 | Bloqueadores P0 | Impiden afirmar readiness productivo o release mayor. | [GT-377](./gap-reference-catalog.es.md#gt-377), [GT-375](./gap-reference-catalog.es.md#gt-375) |
-| 2 | Área de mayor riesgo | `Agent Runtime` tiene la mayor carga ponderada abierta. | [GT-384](./gap-reference-catalog.es.md#gt-384), [GT-406](./gap-reference-catalog.es.md#gt-406), [GT-383](./gap-reference-catalog.es.md#gt-383), [GT-388](./gap-reference-catalog.es.md#gt-388), [GT-385](./gap-reference-catalog.es.md#gt-385), [GT-386](./gap-reference-catalog.es.md#gt-386), +2 |
+| 2 | Área de mayor riesgo | `Agent Runtime` tiene la mayor carga ponderada abierta. | [GT-384](./gap-reference-catalog.es.md#gt-384), [GT-406](./gap-reference-catalog.es.md#gt-406), [GT-383](./gap-reference-catalog.es.md#gt-383), [GT-388](./gap-reference-catalog.es.md#gt-388), [GT-386](./gap-reference-catalog.es.md#gt-386), [GT-387](./gap-reference-catalog.es.md#gt-387), +1 |
 | 3 | Ganancias rápidas | Alta criticidad con complejidad XS/S. | - |
 | 4 | Ola P1 | Endurecimiento siguiente después de limpiar P0. | [GT-324](./gap-reference-catalog.es.md#gt-324), [GT-384](./gap-reference-catalog.es.md#gt-384), [GT-406](./gap-reference-catalog.es.md#gt-406), [GT-383](./gap-reference-catalog.es.md#gt-383) |
-| 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-388](./gap-reference-catalog.es.md#gt-388), [GT-381](./gap-reference-catalog.es.md#gt-381), [GT-385](./gap-reference-catalog.es.md#gt-385), [GT-386](./gap-reference-catalog.es.md#gt-386), [GT-387](./gap-reference-catalog.es.md#gt-387), [GT-392](./gap-reference-catalog.es.md#gt-392), +3 |
+| 5 | P2/P3 | Solo después de estabilizar seguridad, CI, reglas y contratos. | [GT-388](./gap-reference-catalog.es.md#gt-388), [GT-381](./gap-reference-catalog.es.md#gt-381), [GT-386](./gap-reference-catalog.es.md#gt-386), [GT-387](./gap-reference-catalog.es.md#gt-387), [GT-394](./gap-reference-catalog.es.md#gt-394), [GT-404](./gap-reference-catalog.es.md#gt-404) |
 
 ## Bloqueadores Actuales
 
@@ -44,22 +44,22 @@ La forma correcta de usar este resumen es simple: si necesitas contexto, abre so
 |---|---:|
 | Fecha canónica del tablero | 2026-07-02 |
 | Gaps totales | 412 |
-| Gaps cerrados | 397 |
-| Gaps pendientes | 15 |
+| Gaps cerrados | 400 |
+| Gaps pendientes | 12 |
 | P0 abiertos | 2 |
 | P1 abiertos | 4 |
-| P2 abiertos | 9 |
-| Cierre total | 96.4% |
+| P2 abiertos | 6 |
+| Cierre total | 97.1% |
 | Registros de evidencia de cierre | 364 |
 | Readiness registrado | 3 PASS, 1 RESOLVED |
 
 | Área | Pendientes | P0 | P1 | Primeros IDs |
 |---|---:|---:|---:|---|
-| `Agent Runtime` | 8 | 0 | 3 | [GT-384](./gap-reference-catalog.es.md#gt-384), [GT-406](./gap-reference-catalog.es.md#gt-406), [GT-383](./gap-reference-catalog.es.md#gt-383), [GT-388](./gap-reference-catalog.es.md#gt-388), +4 |
+| `Agent Runtime` | 7 | 0 | 3 | [GT-384](./gap-reference-catalog.es.md#gt-384), [GT-406](./gap-reference-catalog.es.md#gt-406), [GT-383](./gap-reference-catalog.es.md#gt-383), [GT-388](./gap-reference-catalog.es.md#gt-388), +3 |
 | `Cross` | 2 | 1 | 0 | [GT-375](./gap-reference-catalog.es.md#gt-375), [GT-381](./gap-reference-catalog.es.md#gt-381) |
 | `Core Domain` | 1 | 1 | 0 | [GT-377](./gap-reference-catalog.es.md#gt-377) |
 | `Infra` | 1 | 0 | 1 | [GT-324](./gap-reference-catalog.es.md#gt-324) |
-| `.harness` | 1 | 0 | 0 | [GT-409](./gap-reference-catalog.es.md#gt-409) |
+| `Core API` | 1 | 0 | 0 | [GT-394](./gap-reference-catalog.es.md#gt-394) |
 
 ## Fuente y Regla de Actualización
 

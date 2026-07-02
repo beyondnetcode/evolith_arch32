@@ -11,7 +11,7 @@ Strategic snapshot generated from the canonical gap board and maturity reconcili
 
 **Current decision:** NO-GO for production expansion or a major release: active P0 blockers remain.
 
-**Biggest problem now:** `Agent Runtime` carries the highest weighted open risk (14 open, 0 P0). Attack that concentration before expanding scope.
+**Biggest problem now:** `Agent Runtime` carries the highest weighted open risk (13 open, 0 P0). Attack that concentration before expanding scope.
 
 **Where to attack first:** [GT-377](./gap-reference-catalog.md#gt-377), [GT-375](./gap-reference-catalog.md#gt-375).
 
@@ -26,9 +26,9 @@ Use this summary with a simple rule: if you need context, open only the linked I
 | Order | Focus | Reason | IDs |
 |---:|---|---|---|
 | 1 | P0 blockers | They prevent production-readiness or major-release confidence. | [GT-377](./gap-reference-catalog.md#gt-377), [GT-375](./gap-reference-catalog.md#gt-375) |
-| 2 | Highest-risk area | `Agent Runtime` has the largest weighted open load. | [GT-405](./gap-reference-catalog.md#gt-405), [GT-384](./gap-reference-catalog.md#gt-384), [GT-399](./gap-reference-catalog.md#gt-399), [GT-403](./gap-reference-catalog.md#gt-403), [GT-406](./gap-reference-catalog.md#gt-406), [GT-407](./gap-reference-catalog.md#gt-407), +8 |
-| 3 | Quick wins | High criticality with XS/S complexity. | [GT-405](./gap-reference-catalog.md#gt-405), [GT-410](./gap-reference-catalog.md#gt-410), [GT-411](./gap-reference-catalog.md#gt-411) |
-| 4 | P1 wave | Next hardening after P0 is cleared. | [GT-405](./gap-reference-catalog.md#gt-405), [GT-410](./gap-reference-catalog.md#gt-410), [GT-411](./gap-reference-catalog.md#gt-411), [GT-324](./gap-reference-catalog.md#gt-324), [GT-384](./gap-reference-catalog.md#gt-384), [GT-396](./gap-reference-catalog.md#gt-396), [GT-399](./gap-reference-catalog.md#gt-399), [GT-400](./gap-reference-catalog.md#gt-400), +5 |
+| 2 | Highest-risk area | `Agent Runtime` has the largest weighted open load. | [GT-384](./gap-reference-catalog.md#gt-384), [GT-399](./gap-reference-catalog.md#gt-399), [GT-403](./gap-reference-catalog.md#gt-403), [GT-406](./gap-reference-catalog.md#gt-406), [GT-407](./gap-reference-catalog.md#gt-407), [GT-408](./gap-reference-catalog.md#gt-408), +7 |
+| 3 | Quick wins | High criticality with XS/S complexity. | [GT-410](./gap-reference-catalog.md#gt-410), [GT-411](./gap-reference-catalog.md#gt-411) |
+| 4 | P1 wave | Next hardening after P0 is cleared. | [GT-410](./gap-reference-catalog.md#gt-410), [GT-411](./gap-reference-catalog.md#gt-411), [GT-324](./gap-reference-catalog.md#gt-324), [GT-384](./gap-reference-catalog.md#gt-384), [GT-396](./gap-reference-catalog.md#gt-396), [GT-399](./gap-reference-catalog.md#gt-399), [GT-400](./gap-reference-catalog.md#gt-400), [GT-403](./gap-reference-catalog.md#gt-403), +4 |
 | 5 | P2/P3 | Only after security, CI, rules, and contracts stabilize. | [GT-388](./gap-reference-catalog.md#gt-388), [GT-389](./gap-reference-catalog.md#gt-389), [GT-391](./gap-reference-catalog.md#gt-391), [GT-393](./gap-reference-catalog.md#gt-393), [GT-397](./gap-reference-catalog.md#gt-397), [GT-381](./gap-reference-catalog.md#gt-381), +7 |
 
 ## Current Blockers
@@ -44,18 +44,18 @@ Use this summary with a simple rule: if you need context, open only the linked I
 |---|---:|
 | Canonical board date | 2026-07-02 |
 | Total gaps | 412 |
-| Closed gaps | 384 |
-| Open gaps | 28 |
+| Closed gaps | 385 |
+| Open gaps | 27 |
 | Open P0 | 2 |
-| Open P1 | 13 |
+| Open P1 | 12 |
 | Open P2 | 13 |
-| Total closure | 93.2% |
+| Total closure | 93.4% |
 | Closure evidence records | 364 |
 | Recorded readiness | 3 PASS, 1 RESOLVED |
 
 | Area | Open | P0 | P1 | First IDs |
 |---|---:|---:|---:|---|
-| `Agent Runtime` | 14 | 0 | 8 | [GT-405](./gap-reference-catalog.md#gt-405), [GT-384](./gap-reference-catalog.md#gt-384), [GT-399](./gap-reference-catalog.md#gt-399), [GT-403](./gap-reference-catalog.md#gt-403), +10 |
+| `Agent Runtime` | 13 | 0 | 7 | [GT-384](./gap-reference-catalog.md#gt-384), [GT-399](./gap-reference-catalog.md#gt-399), [GT-403](./gap-reference-catalog.md#gt-403), [GT-406](./gap-reference-catalog.md#gt-406), +9 |
 | `Core Domain` | 2 | 1 | 1 | [GT-377](./gap-reference-catalog.md#gt-377), [GT-396](./gap-reference-catalog.md#gt-396) |
 | `Cross` | 2 | 1 | 0 | [GT-375](./gap-reference-catalog.md#gt-375), [GT-381](./gap-reference-catalog.md#gt-381) |
 | `Core API` | 4 | 0 | 2 | [GT-411](./gap-reference-catalog.md#gt-411), [GT-400](./gap-reference-catalog.md#gt-400), [GT-393](./gap-reference-catalog.md#gt-393), [GT-394](./gap-reference-catalog.md#gt-394) |

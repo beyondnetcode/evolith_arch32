@@ -4205,12 +4205,13 @@ Serie histórica de gaps registrada en el antiguo `gap-analysis-core.es.md`, pre
 - **Propósito:** Asegurar que el motor OPA audite los orígenes de interacción permitidos con la misma lógica del evaluador TypeScript nativo.
 - **Evidencia:** SDLC Deep Audit reportó `allowedSourceInterfaces` en `GovernancePosture` sin política `.rego` equivalente.
 - **Impacto:** Chat, CLI, MCP u otras interfaces pueden evadir gobierno de origen según el motor seleccionado.
-- **Archivos afectados:** `rulesets/opa/`, `packages/core-domain/src/application/validators/`, `.harness/scripts/ci/27-opa-parity-gate.mjs`.
+- **Archivos afectados:** `rulesets/opa/`, `packages/agent-runtime/src/application/context-mapper.ts`, `packages/agent-runtime/src/__tests__/`, `.harness/scripts/ci/29-test-core-opa.mjs`.
 - **Complejidad:** S
-- **Propuesta de corrección:** Añadir la regla OPA faltante, fixtures conformes/no conformes y cablearla al gate de paridad.
+- **Corrección aplicada:** Añadidos `rulesets/opa/capability-source-interface.rego` y sus tests para casos conforme, violatorio, sin allowlist y sin origen; cableadas sus violaciones en `rulesets/opa/main.rego`; extendido el input de política runtime con `sourceInterface`, `context` y postura de capability; añadida cobertura nativa del bloqueo por origen no permitido.
 - **Criterios de aceptación:**
-  - [ ] OPA valida `allowedSourceInterfaces` con la misma semántica que el evaluador Native.
-  - [ ] La paridad Native/OPA mantiene 0 drift.
+  - [x] OPA valida `allowedSourceInterfaces` con la misma semántica que el evaluador Native.
+  - [x] La paridad Native/OPA mantiene 0 drift.
+- **Evidencia de cierre:** Commit `f826a927`. Validación: `node .harness/scripts/ci/29-test-core-opa.mjs` (216/216 tests OPA pasan) y `npx jest --config packages/agent-runtime/jest.config.js --runTestsByPath packages/agent-runtime/src/__tests__/units.spec.ts packages/agent-runtime/src/__tests__/agent-runtime.service.spec.ts --no-coverage` (18/18 tests runtime pasan).
 - **Dependencias:** R-25 Dual-Engine Parity.
 
 #### GT-399

@@ -3,6 +3,24 @@
   "policy": "./gap-closure-evidence-standard.md",
   "closures": [
     {
+      "id": "GT-398",
+      "closedAt": "2026-07-02",
+      "closureCommit": "f826a927",
+      "evidence": [
+        "rulesets/opa/capability-source-interface.rego",
+        "rulesets/opa/capability-source-interface.test.rego",
+        "rulesets/opa/main.rego",
+        "packages/agent-runtime/src/application/context-mapper.ts",
+        "packages/agent-runtime/src/__tests__/units.spec.ts",
+        "packages/agent-runtime/src/__tests__/agent-runtime.service.spec.ts"
+      ],
+      "validationCommands": [
+        "node .harness/scripts/ci/29-test-core-opa.mjs",
+        "npx jest --config packages/agent-runtime/jest.config.js --runTestsByPath packages/agent-runtime/src/__tests__/units.spec.ts packages/agent-runtime/src/__tests__/agent-runtime.service.spec.ts --no-coverage"
+      ],
+      "dependencyDisposition": "none"
+    },
+    {
       "id": "GT-164",
       "closedAt": "2026-06-22",
       "closureCommit": "fcd5d2af",

@@ -4,7 +4,7 @@
 
 **Status:** Active Tracking
 **Owner:** Evolith Architecture Board
-**Last Updated:** 2026-07-02 (Tracking normalization — reconciled the active board to 412 tracked rows, moved every non-DONE item into the active block, corrected EN/ES progress counts, normalized `GT-411`/`GT-412` catalog anchors, expanded the new runtime-governance gaps toward the canonical catalog format, and refreshed moved closure-evidence paths so `08-validate-tracking` passes.)
+**Last Updated:** 2026-07-02 (GT-398 closure — added OPA parity for `allowedSourceInterfaces`, recorded closure evidence, and updated EN/ES progress counts.)
 **Gap Details:** [Gap Reference Catalog](./gap-reference-catalog.md)
 
 This board is the single source of truth for technical debt, gaps, opportunities, enablers, priority, and status. Select a gap ID to open its problem statement, purpose, evidence, closure criteria, and references.
@@ -13,7 +13,6 @@ This board is the single source of truth for technical debt, gaps, opportunities
 
 | ID | Gap | Component | Phase | Criticality | Complexity | Status |
 |---|---|:---:|:---:|:---:|:---:|:---:|
-| [`GT-398`](./gap-reference-catalog.md#gt-398) | **Dual-Engine Parity for `allowedSourceInterfaces`:** Missing OPA policy to validate interaction origins (e.g., chat). | `Rulesets` | Cross | P0 | S | `PENDING` |
 | [`GT-401`](./gap-reference-catalog.md#gt-401) | **InteractionAdapterPort formalized:** Missing or not fully integrated single governed entry point for interfaces. | `Agent Runtime` | Cross | P0 | M | `PENDING` |
 | [`GT-402`](./gap-reference-catalog.md#gt-402) | **Smart CLI adapter:** Formalize CLI as interaction adapter to prevent bypassing runtime layer. | `Smart CLI` | Cross | P0 | M | `PENDING` |
 | [`GT-412`](./gap-reference-catalog.md#gt-412) | **Runtime Policy Enforcement Guarantee:** Governance policies are absent in runtime execution flows. | `Agent Runtime` | Cross | P0 | M | `PENDING` |
@@ -48,6 +47,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-404`](./gap-reference-catalog.md#gt-404) | **OpenCode adapter:** Not implemented. OpenCode lacks secure runtime capability adapter. | `Agent Runtime` | Cross | P2 | M | `PENDING` |
 | [`GT-409`](./gap-reference-catalog.md#gt-409) | **Freshness checks:** Missing CI guards for visual map and adapter capability desynchronization. | `.harness` | Cross | P2 | M | `PENDING` |
 | [`GT-313`](./gap-reference-catalog.md#gt-313) | Rotate and externalize GH_TOKEN via a secret manager | `Security` | Cross | P0 | XS | `DONE` |
+| [`GT-398`](./gap-reference-catalog.md#gt-398) | **Dual-Engine Parity for `allowedSourceInterfaces`:** Missing OPA policy to validate interaction origins (e.g., chat). | `Rulesets` | Cross | P0 | S | `DONE` |
 | [`GT-01`](./gap-reference-catalog.md#gt-01) | Unified contract ADR | `Governance` | F0 | P0 | S | `DONE` |
 | [`GT-27`](./gap-reference-catalog.md#gt-27) | Canonical tracking semantic consistency | `Governance` | Cross | P0 | S | `DONE` |
 | [`GT-59`](./gap-reference-catalog.md#gt-59) | Hardening HTTP — Helmet + CORS + Rate Limiting (OWASP API4/8) | `BFF API` | Cross | P0 | S | `DONE` |
@@ -427,7 +427,7 @@ This board is the single source of truth for technical debt, gaps, opportunities
 | [`GT-246`](./gap-reference-catalog.md#gt-246) | Implement Chaos Mesh/Litmus experiments | `QA` | Cross | P3 | L | `DONE` |
 
 
-**Progress:** 378 / 412 done · 8 in progress · 26 pending · 0 deferred
+**Progress:** 379 / 412 done · 8 in progress · 25 pending · 0 deferred
 
 **Wave 2026-06-23 (Winston deep audit III):** Added 14 new gaps `GT-212`…`GT-225` from the Winston Audit Playbook covering: ADR status hygiene (GT-212), topology manifest metadata + operational budgets + guidance corpus (GT-213, GT-217, GT-219), REST controller observability + OpenAPI (GT-214, GT-215), OPA input-schema parity + per-topology test density (GT-216, GT-222), SDLC Phase 05 rollback + on-call templates (GT-218), CLI branch coverage + envelope format coverage + skip-list cleanup (GT-220, GT-224, GT-225), MCP HTTP audit logging (GT-221), and cross-surface parity e2e tests (GT-223).
 

@@ -4277,12 +4277,13 @@ Historical gap series tracked in the former `gap-analysis-core.md`, preserved fo
 - **Purpose:** Ensure the external OPA engine audits allowed interaction origins with the same logic as the Native TypeScript evaluator.
 - **Evidence:** SDLC Deep Audit reported `allowedSourceInterfaces` in `GovernancePosture` without an equivalent `.rego` policy.
 - **Impact:** Chat, CLI, MCP, or other interfaces can bypass source-origin governance depending on the selected rule engine.
-- **Affected files:** `rulesets/opa/`, `packages/core-domain/src/application/validators/`, `.harness/scripts/ci/27-opa-parity-gate.mjs`.
+- **Affected files:** `rulesets/opa/`, `packages/agent-runtime/src/application/context-mapper.ts`, `packages/agent-runtime/src/__tests__/`, `.harness/scripts/ci/29-test-core-opa.mjs`.
 - **Complexity:** S
-- **Proposed fix:** Add the missing OPA rule, include fixtures for compliant and violating source interfaces, and wire it into the parity gate.
+- **Applied fix:** Added `rulesets/opa/capability-source-interface.rego` and tests for compliant, violating, no-allowlist, and no-source cases; wired its violations into `rulesets/opa/main.rego`; extended runtime policy input with `sourceInterface`, `context`, and capability posture; added native runtime coverage for blocked source-interface execution.
 - **Acceptance criteria:**
-  - [ ] OPA validates `allowedSourceInterfaces` with the same decision semantics as the Native evaluator.
-  - [ ] Native/OPA parity remains 0 drift.
+  - [x] OPA validates `allowedSourceInterfaces` with the same decision semantics as the Native evaluator.
+  - [x] Native/OPA parity remains 0 drift.
+- **Closure evidence:** Commit `f826a927`. Validation: `node .harness/scripts/ci/29-test-core-opa.mjs` (216/216 OPA tests passing) and `npx jest --config packages/agent-runtime/jest.config.js --runTestsByPath packages/agent-runtime/src/__tests__/units.spec.ts packages/agent-runtime/src/__tests__/agent-runtime.service.spec.ts --no-coverage` (18/18 runtime tests passing).
 - **Dependencies:** R-25 Dual-Engine Parity.
 
 #### GT-399

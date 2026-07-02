@@ -99,7 +99,7 @@ Un ADR Core:
 - aplica entre productos;
 - permanece neutral respecto de proveedores;
 - define decisiones, patrones, contratos o restricciones universales;
-- no puede seleccionar Langfuse, Jira, Claude, Superset, GitHub, Azure DevOps u otro vendor como requisito universal.
+- no puede imponer ningún proveedor, herramienta o plataforma como dependencia universal — la selección de vendors corresponde a ADRs Específicos de Plataforma.
 
 ### ADR de Producto
 

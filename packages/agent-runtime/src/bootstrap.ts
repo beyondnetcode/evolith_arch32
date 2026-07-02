@@ -28,8 +28,14 @@ import { InMemoryMemoryAdapter } from './adapters/memory/in-memory-memory.adapte
 import { LocalSkillRegistryAdapter } from './adapters/skills/local-skill-registry.adapter';
 import { AutoApprovalAdapter } from './adapters/approval/policy-approval.adapter';
 import { StubAgentEngineAdapter } from './adapters/engine/stub-agent-engine.adapter';
+import { HermesAgentAdapter } from './adapters/engine/hermes-agent.adapter';
+import { SwarmsAgentAdapter } from './adapters/engine/swarms-agent.adapter';
+import { RoutingAgentAdapter, type EngineRouterConfig } from './adapters/engine/routing-agent.adapter';
 
-export type AgentRuntimeOverrides = Partial<AgentRuntimeDeps>;
+export type AgentRuntimeOverrides = Partial<AgentRuntimeDeps> & {
+  /** Optional routing configuration. If provided and `engine` is not overridden, a Router is automatically wired. */
+  readonly engineRouterConfig?: EngineRouterConfig;
+};
 
 export interface AgentRuntimeBundle {
   readonly runtime: IAgentRuntime;
@@ -38,6 +44,20 @@ export interface AgentRuntimeBundle {
 
 /** Build a fully-wired runtime; pass overrides to replace any default adapter. */
 export function createAgentRuntime(overrides: AgentRuntimeOverrides = {}): AgentRuntimeBundle {
+  let engine = overrides.engine;
+
+  if (!engine) {
+    if (overrides.engineRouterConfig) {
+      engine = new RoutingAgentAdapter(overrides.engineRouterConfig, {
+        stub: new StubAgentEngineAdapter(),
+        hermes: new HermesAgentAdapter(),
+        swarms: new SwarmsAgentAdapter(),
+      });
+    } else {
+      engine = new StubAgentEngineAdapter();
+    }
+  }
+
   const deps: AgentRuntimeDeps = {
     skillRegistry: overrides.skillRegistry ?? new LocalSkillRegistryAdapter(),
     harness: overrides.harness ?? new InMemoryHarnessAdapter(),
@@ -46,7 +66,7 @@ export function createAgentRuntime(overrides: AgentRuntimeOverrides = {}): Agent
     tracker: overrides.tracker ?? new InMemoryTrackerTraceAdapter(),
     memory: overrides.memory ?? new InMemoryMemoryAdapter(),
     approval: overrides.approval ?? new AutoApprovalAdapter(),
-    engine: overrides.engine ?? new StubAgentEngineAdapter(),
+    engine,
     now: overrides.now,
     id: overrides.id,
   };

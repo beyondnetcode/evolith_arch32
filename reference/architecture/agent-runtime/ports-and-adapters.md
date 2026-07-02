@@ -21,7 +21,7 @@ Tracker, and even `.harness` swappable. Source:
 | `ISchedulerPort` | Defer/recur work | extension |
 | `ICommunicationGatewayPort` | Adapt CLI/chat/webhook surfaces | #5 |
 | `IApprovalPort` | Human-in-the-loop sign-off | #7 |
-| `IAgentEnginePort` | Reasoning engine abstraction (Hermes) | #1/#2 decoupling |
+| `IAgentEnginePort` | Reasoning engine abstraction (Router/Hermes/Swarms) | #1/#2 decoupling |
 
 Each port has a DI token in
 [`tokens.ts`](../../../packages/agent-runtime/src/domain/tokens.ts) (framework
@@ -43,7 +43,7 @@ no `.harness` checkout (design rule #5). `createAgentRuntime()` wires them all.
 | `ISchedulerPort` | `InMemorySchedulerAdapter` |
 | `ICommunicationGatewayPort` | `CliCommunicationGatewayAdapter` |
 | `IApprovalPort` | `AutoApprovalAdapter` |
-| `IAgentEnginePort` | `StubAgentEngineAdapter` (heuristic matcher) |
+| `IAgentEnginePort` | `RoutingAgentAdapter` (defaults to Stub heuristic matcher) |
 
 ## Production-facing adapters
 
@@ -56,11 +56,11 @@ Swap any default for a real adapter without touching the runtime:
 | `ITrackerTracePort` | `HttpTrackerTraceAdapter` | POSTs events (inject `fetch`/headers) |
 | `ICoreEvaluationPort` | (documented) in-process `EvaluationOrchestrator` or Core REST | Future extension |
 
-## Optional engine adapters (Hermes)
+## Optional engine adapters (Hermes / Swarms)
 
-`IAgentEnginePort` is where any LLM/agent framework plugs in. `HermesAgentAdapter`
-lazy-loads Hermes (dynamic import) so the package builds and the runtime boots
-with Hermes **not** installed. The engine only **proposes** a tool + arguments;
+`IAgentEnginePort` is where any LLM/agent framework plugs in. `HermesAgentAdapter` and `SwarmsAgentAdapter`
+lazy-load their clients (dynamic import) so the package builds and the runtime boots
+with external dependencies **not** installed. The engine only **proposes** a tool + arguments;
 the runtime still enforces approval, policy and trazability on the proposal. See
 [Extending](./extending.md#integrating-hermes-as-a-replaceable-adapter).
 

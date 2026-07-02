@@ -38,6 +38,8 @@ const ADAPTERS_SURFACE = [
   'StubAgentEngineAdapter',
   'StubCoreEvaluationAdapter',
   'StubPolicyValidationAdapter',
+  'SwarmsAgentAdapter',
+  'RoutingAgentAdapter',
   'denyOnFailedEvaluation',
   'loadManifest',
   'parseManifest',

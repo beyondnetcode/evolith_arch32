@@ -48,3 +48,7 @@ export { AutoApprovalAdapter, DenyByDefaultApprovalAdapter } from './approval/po
 export { StubAgentEngineAdapter } from './engine/stub-agent-engine.adapter';
 export { HermesAgentAdapter } from './engine/hermes-agent.adapter';
 export type { HermesClient, HermesAdapterOptions } from './engine/hermes-agent.adapter';
+export { SwarmsAgentAdapter } from './engine/swarms-agent.adapter';
+export type { SwarmsClient, SwarmsAdapterOptions } from './engine/swarms-agent.adapter';
+export { RoutingAgentAdapter } from './engine/routing-agent.adapter';
+export type { EngineRouterConfig } from './engine/routing-agent.adapter';

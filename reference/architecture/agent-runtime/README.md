@@ -6,7 +6,7 @@ The Evolith Agent Runtime is a decoupled **agentic layer** that operates Evolith
 Core through **Puertos y Adaptadores** (`Ports & Adapters` / Hexagonal
 Architecture). It orchestrates, converses, remembers, automates and **executes**
 Core capabilities through ports — without becoming coupled to any specific agent
-framework. Hermes Agent, another framework, or an in-house engine are all just
+framework. Hermes Agent, Swarms (OpenAI), another framework, or an in-house engine are all just
 replaceable adapters.
 
 Implementation: [`packages/agent-runtime`](../../../packages/agent-runtime/README.md)
@@ -26,7 +26,8 @@ Evolith Tracker / Chat / CLI / External Client
 ```
 
 It does **not** replace `.harness` (the official, versioned, governed executor),
-and it does **not** depend on Hermes. It coordinates them behind ports.
+and it does **not** depend on Hermes or Swarms. It coordinates them behind ports,
+even supporting multi-engine routing based on capabilities.
 
 ## Documents
 

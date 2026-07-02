@@ -89,7 +89,26 @@ const { runtime } = createAgentRuntime({ engine: new HermesAgentAdapter({ client
 createAgentRuntime({ engine: new HermesAgentAdapter({ moduleName: '@evolith/hermes-agent' }) });
 ```
 
-To replace Hermes with another framework (or an in-house engine), write a new
+### Multi-Engine Routing (Hermes + Swarms)
+
+You can also use the `RoutingAgentAdapter` to route requests dynamically to different engines (like Swarms or Hermes) based on the intent:
+
+```ts
+import { createAgentRuntime, type EngineRouterConfig } from '@evolith/agent-runtime';
+
+const engineRouterConfig: EngineRouterConfig = {
+  defaultEngine: 'hermes',
+  routes: [
+    { intentMatches: 'complex-multi-agent', engine: 'swarms' },
+    { intentMatches: 'chat', engine: 'hermes' }
+  ]
+};
+
+// The runtime will automatically wire the Router, SwarmsAgentAdapter, and HermesAgentAdapter
+const { runtime } = createAgentRuntime({ engineRouterConfig });
+```
+
+To replace Hermes or Swarms with another framework (or an in-house engine), write a new
 adapter implementing `IAgentEnginePort` and inject it. The domain and the Core
 never change — that is the whole point of the port.
 

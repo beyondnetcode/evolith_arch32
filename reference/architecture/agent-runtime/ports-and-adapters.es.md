@@ -21,7 +21,7 @@ intercambiables a Hermes, OPA, el Tracker e incluso `.harness`. Fuente:
 | `ISchedulerPort` | Diferir/recurrir trabajo | extensión |
 | `ICommunicationGatewayPort` | Adaptar superficies CLI/chat/webhook | #5 |
 | `IApprovalPort` | Aprobación humana en el bucle | #7 |
-| `IAgentEnginePort` | Abstracción del motor de razonamiento (Hermes) | #1/#2 desacople |
+| `IAgentEnginePort` | Abstracción del motor de razonamiento (Router/Hermes/Swarms) | #1/#2 desacople |
 
 Cada puerto tiene un token de inyección en
 [`tokens.ts`](../../../packages/agent-runtime/src/domain/tokens.ts) (`Symbol`s
@@ -44,7 +44,7 @@ en vivo y sin un checkout de `.harness` (regla de diseño #5).
 | `ISchedulerPort` | `InMemorySchedulerAdapter` |
 | `ICommunicationGatewayPort` | `CliCommunicationGatewayAdapter` |
 | `IApprovalPort` | `AutoApprovalAdapter` |
-| `IAgentEnginePort` | `StubAgentEngineAdapter` (emparejador heurístico) |
+| `IAgentEnginePort` | `RoutingAgentAdapter` (por defecto usa el emparejador heurístico Stub) |
 
 ## Adaptadores para producción
 
@@ -57,11 +57,11 @@ Sustituye cualquier adaptador por defecto por uno real sin tocar el runtime:
 | `ITrackerTracePort` | `HttpTrackerTraceAdapter` | Hace POST de eventos (inyecta `fetch`/headers) |
 | `ICoreEvaluationPort` | (documentado) `EvaluationOrchestrator` en proceso o Core REST | Extensión futura |
 
-## Adaptadores de motor opcionales (Hermes)
+## Adaptadores de motor opcionales (Hermes / Swarms)
 
 `IAgentEnginePort` es donde se enchufa cualquier framework de LLM/agente.
-`HermesAgentAdapter` carga Hermes de forma perezosa (import dinámico) para que el
-paquete compile y el runtime arranque con Hermes **no** instalado. El motor solo
+`HermesAgentAdapter` y `SwarmsAgentAdapter` cargan sus clientes de forma perezosa (import dinámico) para que el
+paquete compile y el runtime arranque con dependencias externas **no** instaladas. El motor solo
 **propone** un tool y argumentos; el runtime sigue aplicando aprobación, política
 y trazabilidad sobre la propuesta. Consulta
 [Extender](./extending.es.md#integrar-hermes-como-adaptador-reemplazable).

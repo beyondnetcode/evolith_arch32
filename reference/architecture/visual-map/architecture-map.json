@@ -1226,12 +1226,12 @@
     {
       "id": "hermes",
       "label": {
-        "en": "Hermes / LLM Engines",
-        "es": "Hermes / Motores LLM"
+        "en": "Engines (Router/Swarms/Hermes)",
+        "es": "Motores (Router/Swarms/Hermes)"
       },
       "shortLabel": {
-        "en": "Hermes",
-        "es": "Hermes"
+        "en": "Engines",
+        "es": "Motores"
       },
       "layer": "execution",
       "type": "external",

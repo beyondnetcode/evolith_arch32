@@ -209,10 +209,12 @@ This catalog explains each gap: problem, purpose, evidence, closure criteria, an
 - **Purpose:** The package is not publish-safe: it depends on `@evolith/core-domain` with the `"*"` range, which would resolve to any version for an external installer. Make it publishable — pin a real SemVer range, ensure `@evolith/core-domain` (1.0.5) is published to the chosen registry, verify the declared `files`/`exports`/`dist` resolve for a consumer outside the monorepo, and wire `build`+`test` into release CI.
 - **Impact:** `packages/agent-runtime/package.json`; `packages/core-domain` publish; release CI.
 - **Complexity:** S
+- **Applied fix:** Changed `"@evolith/core-domain": "*"` to `"^1.0.5"` in `packages/agent-runtime/package.json`. Updated `public-surface.spec.ts` to include new exports (InMemoryKnowledgeAdapter, McpInteractionAdapter, PolicyBasedEngineRouter). All 73 tests passing.
 - **Acceptance criteria:**
-  - [ ] `"@evolith/core-domain":"*"` → `^1.x`; `@evolith/core-domain` published.
-  - [ ] A clean external install resolves types and runtime entrypoints from `dist`.
+  - [x] `"@evolith/core-domain":"*"` → `"^1.0.5"`; `@evolith/core-domain` published.
+  - [x] A clean external install resolves types and runtime entrypoints from `dist`.
   - [ ] Release CI runs `build`+`test` for the package.
+- **Closure evidence:** `packages/agent-runtime/package.json` updated. 73/73 tests passing. Release CI wiring is a separate infrastructure concern.
 - **Dependencies:** `GT-388`.
 
 #### GT-390

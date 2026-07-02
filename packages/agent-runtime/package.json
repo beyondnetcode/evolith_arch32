@@ -34,7 +34,7 @@
     "example:discovery-gate": "node examples/validate-discovery-gate.mjs"
   },
   "dependencies": {
-    "@evolith/core-domain": "*",
+    "@evolith/core-domain": "^1.0.5",
     "yaml": "1.10.3"
   },
   "devDependencies": {

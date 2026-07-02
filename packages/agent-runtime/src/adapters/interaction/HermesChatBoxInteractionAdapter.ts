@@ -21,7 +21,7 @@ export interface HermesChatBoxInput {
 }
 
 export class HermesChatBoxInteractionAdapter implements InteractionAdapterPort<HermesChatBoxInput> {
-  readonly sourceInterface = 'hermes_agent_chatbox';
+  readonly sourceInterface = 'hermes_agent_chatbox' as const;
 
   toRuntimeRequest(input: HermesChatBoxInput): AgentRuntimeRequest {
     return parseAgentRuntimeRequest({

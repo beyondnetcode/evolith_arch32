@@ -33,6 +33,13 @@ export type { FileMemoryOptions } from './memory/file-memory.adapter';
 export { LocalSkillRegistryAdapter } from './skills/local-skill-registry.adapter';
 export { DEFAULT_SKILLS } from './skills/default-skills';
 
+// Interaction adapters
+export { SmartCliCommandInteractionAdapter } from './interaction/SmartCliCommandInteractionAdapter';
+export { SmartCliChatInteractionAdapter } from './interaction/SmartCliChatInteractionAdapter';
+export { HermesChatBoxInteractionAdapter } from './interaction/HermesChatBoxInteractionAdapter';
+export type { HermesChatBoxInput } from './interaction/HermesChatBoxInteractionAdapter';
+export { ExternalTriggerInteractionAdapter } from './interaction/ExternalTriggerInteractionAdapter';
+
 // Gateway
 export { CliCommunicationGatewayAdapter } from './gateway/cli-communication-gateway.adapter';
 
